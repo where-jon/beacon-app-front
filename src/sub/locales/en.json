@@ -1,0 +1,12 @@
+{
+  "label": {
+    "title": "EXBeacon Visualization",
+    "login": "Log In",
+    "dummy": ""
+  },
+  "message": {
+    "error": "Error occurred.",
+    "loginFailed": "Invalid ID or password",
+    "dummy": "" 
+  }
+}

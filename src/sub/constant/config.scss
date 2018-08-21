@@ -1,0 +1,12 @@
+// scss variables
+
+$txdetail-bg: #9cd5e4;
+$menu-bg: #17a2b8;
+$undetect: #f1b0b7;
+
+// To use css value in js, export as the follwing
+:export {
+    txdetailbg: $txdetail-bg;
+}
+
+

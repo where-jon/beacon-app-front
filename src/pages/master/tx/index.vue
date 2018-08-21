@@ -1,0 +1,64 @@
+<template>
+  <m-list :params="params" :list="txs" >
+  </m-list>
+</template>
+
+<script>
+import mList from '../../../components/list.vue'
+import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
+import { addLabelByKey } from '../../../sub/helper/ViewHelper'
+import listmixinVue from '../../../components/listmixin.vue';
+
+export default {
+  components: {
+    mList, 
+  },
+  mixins: [listmixinVue],
+  data() {
+    return {
+      params: {
+        name: 'tx',
+        id: 'txId',
+        editPath: '/master/tx/edit',
+        appServicePath: '/core/tx',
+        fields: addLabelByKey(this.$i18n, [ 
+          {key: "txId", sortable: true },
+          {key: "btxId", sortable: true },
+          {key: "txName", sortable: true,},
+          {key: "displayName", sortable: true,},
+          {key: "minor", sortable: true,},
+          {key: "actions", thStyle: {width: '130px !important'} }
+        ]),
+        initTotalRows: this.$store.state.app_service.txs.length
+      }
+    }
+  },
+  computed: {
+    ...mapState('app_service', [
+      'txs',
+      'txImages',
+    ]),
+  },
+  methods: {
+    async fetchData(payload) {
+      try {
+        this.replace({showProgress: true})
+        let txs = await AppServiceHelper.fetchList('/core/tx')
+        if (payload && payload.done) {
+          payload.done()
+        }
+        this.replaceAS({txs})
+      }
+      catch(e) {
+        console.error(e)
+      }
+      this.replace({showProgress: false})
+    }
+  }
+}
+</script>
+
+<style scoped lang="scss">
+
+</style>
