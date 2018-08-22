@@ -21,6 +21,15 @@ export const getAppService = async (path, config) => {
   }
 }
 
+export const deleteAppService = async (path, config) => {
+  try {
+    let res = await apServiceClient.delete(APP_SERVICE.BASE_URL + path)
+    return res.data
+  } catch (e) {
+    handleError(e, path)
+  }
+}
+
 export const getExCloud = async (url, config) => {
   try {
     let res = await exCloudClient.get(url, config)

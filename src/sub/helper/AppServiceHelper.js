@@ -19,7 +19,7 @@ export const fetch = async (target, id) => {
 }
 
 export const save = async (target, entity) => {
-    const path = target + "/save/"
+    const path = target
     var params = new URLSearchParams()
     _.forEach(entity, (value, key) => {
         params.append(key, value || '')
@@ -32,7 +32,7 @@ export const save = async (target, entity) => {
 }
 
 export const bulkSave = async (target, entities, updateOnlyNN = 0) => {
-    const path = target + "/bulkSave/?updateOnlyNN=" + updateOnlyNN + "&_=" + new Date().getTime()
+    const path = target + "/bulk/?updateOnlyNN=" + updateOnlyNN + "&_=" + new Date().getTime()
     let data = DEV.USE_MOCK_POS? mock[target]:
         await HttpHelper.postAppService(path, entities)
 
@@ -40,8 +40,8 @@ export const bulkSave = async (target, entities, updateOnlyNN = 0) => {
 }
 
 export const deleteEntity = async (target, id) => {
-    const path = target + "/delete/"
+    const path = target + "/"
     let data = DEV.USE_MOCK_POS? mock[path + id]:
-        await HttpHelper.getAppService(path + id + "?_=" + new Date().getTime())
+        await HttpHelper.deleteAppService(path + id + "?_=" + new Date().getTime())
     return data
 }
