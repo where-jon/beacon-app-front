@@ -4,10 +4,10 @@ import * as mock from '../../assets/mock/mock'
 import { sleep } from '../util/Util'
 import * as HttpHelper from './HttpHelper'
 
-export const fetchList = async (target) => {
+export const fetchList = async (target, sortBy) => {
     let data = DEV.USE_MOCK_POS? mock[target]:
         await HttpHelper.getAppService(target + "?_=" + new Date().getTime())
-        return _(data)
+        return _(data).sortBy((val) => val[sortBy])
     .compact().value()
 }
 

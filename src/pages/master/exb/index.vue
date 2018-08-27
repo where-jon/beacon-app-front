@@ -45,7 +45,7 @@ export default {
     async fetchData(payload) {
       try {
         this.replace({showProgress: true})
-        let exbs = await AppServiceHelper.fetchList('/core/exb/withLocation')
+        let exbs = await AppServiceHelper.fetchList('/core/exb/withLocation', 'exbId')
         exbs = exbs.map((exb) => {
           return {...exb, deviceIdX: exb.deviceId.toString(16).toUpperCase()}
         })

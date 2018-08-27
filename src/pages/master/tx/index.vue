@@ -44,7 +44,7 @@ export default {
     async fetchData(payload) {
       try {
         this.replace({showProgress: true})
-        let txs = await AppServiceHelper.fetchList('/core/tx')
+        let txs = await AppServiceHelper.fetchList('/core/tx', 'txId')
         if (payload && payload.done) {
           payload.done()
         }

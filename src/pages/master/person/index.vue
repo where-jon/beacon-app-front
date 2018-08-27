@@ -46,7 +46,7 @@ export default {
     async fetchData(payload) {
       try {
         this.replace({showProgress: true})
-        let persons = await AppServiceHelper.fetchList("/basic/person/withThumbnail")
+        let persons = await AppServiceHelper.fetchList("/basic/person/withThumbnail", 'personId')
         let personImages = persons.map((val) => val.thumbnail)
         persons = persons.map((val) => ({...val, thumbnail: ""})) // omit images to avoid being filtering target
         if (payload && payload.done) {

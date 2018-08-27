@@ -113,12 +113,12 @@ export default {
       try {
         this.replace({showProgress: true})
         if (this.isFirstTime) {
-          let areas = await AppServiceHelper.fetchList('/core/area')
+          let areas = await AppServiceHelper.fetchList('/core/area', 'areaId')
           this.selectedArea = areas && {label:areas[0].areaName, value:areas[0].areaId}
           this.replaceAS({areas})
 
-          this.exbs = await AppServiceHelper.fetchList('/core/exb/withLocation')
-          this.txs = await AppServiceHelper.fetchList('/core/tx')
+          this.exbs = await AppServiceHelper.fetchList('/core/exb/withLocation', 'exbId')
+          this.txs = await AppServiceHelper.fetchList('/core/tx', 'txId')
           this.isFirstTime = false
         }
 

@@ -136,10 +136,10 @@ export default {
     },
     async fetchData(payload) {
       try {
-        let areas = await AppServiceHelper.fetchList('/core/area')
+        let areas = await AppServiceHelper.fetchList('/core/area', 'areaId')
         this.selectedArea = areas && {label:areas[0].areaName, value: areas[0].areaId}
 
-        let exbs = await AppServiceHelper.fetchList('/core/exb/withLocation')
+        let exbs = await AppServiceHelper.fetchList('/core/exb/withLocation', 'exbId')
         if (payload && payload.done) {
           payload.done()
         }
