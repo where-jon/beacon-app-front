@@ -3,16 +3,25 @@
     <m-nav></m-nav>
     <b-container fluid>
       <b-row class="flex-xl-nowrap2" v-if="!isLoginPage">
-        <b-col cols="12" md="2" xl="2" class="bd-sidebar">
+        <b-col md="2" xl="2" class="bd-sidebar" v-if="showSidebar">
           <m-sidebar></m-sidebar>
         </b-col>        
-        <b-col xl="1" class="d-none d-xl-block bd-toc pt-4">
-        </b-col>
-        <b-col cols="12" md="9" xl="10" class="pb-md-3 pl-md-5 pl-xl-5 pr-xl-5 bd-content">
-          <nuxt/>
-          <div class="spinner-parent" v-if="showProgress">
-            <vue-simple-spinner size="large" line-fg-color="#a09e9e" line-bg-color="#dee2e6"></vue-simple-spinner>
-          </div>
+        <b-col :md="showSidebar? 10: 12" class="pl-0 pr-0">
+          <b-container fluid>
+            <b-row>
+              <b-col>
+                <h3 class="page-header">{{ title }}</h3>
+              </b-col>
+            </b-row>
+            <b-row>
+              <b-col class="pb-md-3 pl-md-5 pl-xl-5 pr-xl-5 bd-content">
+                <nuxt/>
+                <div class="spinner-parent" v-if="showProgress">
+                  <vue-simple-spinner size="large" line-fg-color="#a09e9e" line-bg-color="#dee2e6"></vue-simple-spinner>
+                </div>
+              </b-col>
+            </b-row>
+          </b-container>
         </b-col>
       </b-row>
       <nuxt v-else />
@@ -26,7 +35,7 @@ import Vue from 'vue'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import _ from 'lodash'
 import { EventBus } from '../sub/helper/EventHelper'
-import { APP } from '../sub/constant/config'
+import { APP, DISP } from '../sub/constant/config'
 import styles from '../sub/constant/config.scss'
 
 import mSidebar from '~/components/sidebar.vue'
@@ -56,6 +65,7 @@ export default {
   },
   data() {
     return {
+      showSidebar: DISP.SHOW_SIDEBAR,
     }
   },
   computed: {
@@ -64,6 +74,7 @@ export default {
     },
     ...mapState([
       'showProgress',
+      'title',
     ]),
   },
   methods: {
@@ -80,7 +91,7 @@ export default {
 
 <style lang="scss">
 @import "../sub/constant/config.scss";
-
+@import "~bootstrap/scss/bootstrap"; 
 
 html {
   font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -104,9 +115,10 @@ html {
 }
 
 
-h2 {
-  margin-top: 10px;
-  margin-bottom: 10px;
+.page-header {
+  padding: 0 0 9px 5px;
+  margin: 10px 0 20px 0;
+  border-bottom: 1px solid #eee;
 }
 
 .pointer {

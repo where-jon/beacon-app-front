@@ -1,7 +1,5 @@
 <template>
-  <div class="container">
-    <h2 class="display-5">{{ title }}</h2>
-    <p></p>
+  <div class="container-fluid">
     <!-- searchbox -->
     <b-row>
       <b-col md="6" class="my-1">
@@ -14,18 +12,18 @@
           </b-input-group>
         </b-form-group>
       </b-col>
-    </b-row>
-
-    <slot></slot>
-
-    <b-row align-h="end">
       <b-col class="mb-2 justify-content-end">
         <b-button variant='outline-primary' @click="edit()" v-t="'label.createNew'"  class="float-right"/>
       </b-col>
     </b-row>
+
+    <slot></slot>
+
+    <b-row class="mt-3">
+    </b-row>
   
     <!-- table -->
-    <b-table show-empty stacked="md" striped hover :items="list" :fields="fields" :current-page="currentPage" :per-page="perPage"
+    <b-table show-empty stacked="md" striped hover :items="list" :fields="fields" :current-page="currentPage" :per-page="perPage" outlined
             :filter="filter" @filtered="onFiltered">
       <template slot="actions" slot-scope="row">
         <b-button size="sm" @click.stop="edit(row.item, row.index, $event.target)" variant="outline-primary" class="mr-2 my-1" v-t="'label.' + crud" />
@@ -74,9 +72,6 @@ export default {
     crud() {
       return !this.isEditable? 'refer':  'update'
     },
-    title() {
-      return this.$i18n.t('label.' + this.name) + this.$i18n.t('label.list')
-    },
     isEditable() {
       return MenuHelper.isEditable(this.appServicePath)
     },
@@ -86,6 +81,7 @@ export default {
   },
   mounted() {
     this.$parent.$options.methods.fetchData.apply(this.$parent)
+    this.replace({title: this.$i18n.t('label.' + this.name) + this.$i18n.t('label.list')})
   },
   methods: {
     ...mapMutations([

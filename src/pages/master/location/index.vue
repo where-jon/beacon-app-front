@@ -1,7 +1,5 @@
 <template>
   <div id="locationSetting">
-    <h2 v-t="'label.location'"></h2>
-    <p></p>
     <b-alert variant="info" :show="showInfo">{{ message }}</b-alert>
     <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">{{ message }}</b-alert>
 
@@ -113,6 +111,7 @@ export default {
   },
   mounted() {
     that = this
+    this.replace({title: this.$i18n.t('label.location')})
     this.fetchData()
   },
   created() {

@@ -26,15 +26,15 @@ export default {
     crud() {
       return !this.isEditable? 'refer': this.isUpdate? 'update': 'register'
     },
-    title() {
-      return this.$i18n.t('label.' + this.name) + this.label
-    },
     isUpdate() {
       return this[this.name][this.id] != null
     },
     isEditable() {
       return MenuHelper.isEditable(this.appServicePath)
     }
+  },
+  mounted() {
+    this.replace({title: this.$i18n.t('label.' + this.name) + this.label})
   },
   methods: {
     ...mapMutations('app_service', [

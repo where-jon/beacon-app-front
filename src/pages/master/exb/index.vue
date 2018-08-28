@@ -29,6 +29,9 @@ export default {
           {key: "location.locationName", label:'locationName', sortable: true,},
           {key: "location.displayName", label:'displayName', sortable: true,},
           {key: "location.posId", label:'posId', sortable: true,},
+          {key: "location.areaId", label:'areaId', sortable: true,},
+          {key: "location.x", label:'locationX', sortable: true,},
+          {key: "location.y", label:'locationY', sortable: true,},
           {key: "actions", thStyle: {width: '130px !important'} }
         ]),
         initTotalRows: this.$store.state.app_service.exbs.length

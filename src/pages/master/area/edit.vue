@@ -1,7 +1,5 @@
 <template>
   <div class="container">
-    <h2 class="display-5">{{ title }}</h2>
-
     <b-alert variant="info" :show="showInfo">{{ message }}</b-alert>
     <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">{{ message }}</b-alert>
 

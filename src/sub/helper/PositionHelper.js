@@ -1,7 +1,7 @@
 import { EXB, DISP } from '../constant/config'
 import styles from '../constant/config.scss'
 
-export const adjustPosition = (positions, ratio, exbs) => {
+export const adjustPosition = (positions, ratio, exbs = []) => {
   const ret = []
   exbs.forEach((exb) => {
     let samePos = positions.filter((pos) => pos.pos_id == exb.location.posId)

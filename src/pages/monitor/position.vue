@@ -1,14 +1,13 @@
 <template>
   <div class="container scroll">
   <main class="bd-content">
-    <h2 class="display-5" v-t="'label.position'"></h2>
     <p></p>
     <b-row align-h="end">
-      <b-col md="2" class="mb-2 mr-3">
+      <b-col md="2" class="mb-3 mr-3">
         <b-button variant='outline-primary' @click="download()" v-t="'label.download'" />
       </b-col>
     </b-row>
-      <table class="table table-hover">
+      <table class="table table-hover table-bordered">
         <thead>
           <tr>
             <th scope="col">btx_id</th>
@@ -61,6 +60,7 @@ export default {
   },
   mounted() {
     this.fetchData()
+    this.replace({title: this.$i18n.t('label.position')})
   },
   created(){
     EventBus.$on('reload', (payload)=>{
@@ -86,6 +86,9 @@ export default {
     download() {
       HtmlUtil.fileDL("position.csv", Util.converToCsv(this.positions, ["btx_id","device_id","pos_id","phase","power_level","updatetime","nearest"]))
     },
+    ...mapMutations([
+      'replace', 
+    ]),
     ...mapMutations('monitor', [
       'replaceMonitor', 
     ]),

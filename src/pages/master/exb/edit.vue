@@ -1,6 +1,5 @@
 <template>
   <div class="container">
-    <h2 class="display-5">{{ title }}</h2>
 
     <b-alert variant="info" :show="showInfo">{{ message }}</b-alert>
     <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">{{ message }}</b-alert>
@@ -27,8 +26,20 @@
         <b-form-input type="text" v-model="form.displayName" maxlength="3" :readonly="!isEditable" />
       </b-form-group>
       <b-form-group>
+        <label v-t="'label.areaId'" />
+        <b-form-input type="number" v-model="form.areaId" required :readonly="!isEditable" />
+      </b-form-group>
+      <b-form-group>
         <label v-t="'label.posId'" />
         <b-form-input type="number" v-model="form.posId" required :readonly="!isEditable" />
+      </b-form-group>
+      <b-form-group>
+        <label v-t="'label.locationX'" />
+        <b-form-input type="number" v-model="form.x" required :readonly="!isEditable" />
+      </b-form-group>
+      <b-form-group>
+        <label v-t="'label.locationY'" />
+        <b-form-input type="number" v-model="form.y" required :readonly="!isEditable" />
       </b-form-group>
       <b-form-group>
         <b-form-checkbox v-model="form.enabled" value="true" unchecked-value="false" :readonly="!isEditable">
@@ -74,7 +85,7 @@ export default {
       form: ViewHelper.extract(this.$store.state.app_service.exb, [
         "exbId", "deviceId", "enabled",
         "location.locationName", "location.areaId", "location.locationId", "location.displayName", "location.posId",
-        "location.visible", "location.txViewType"
+        "location.x", "location.y", "location.visible", "location.txViewType"
       ]),
       deviceId: null,
       deviceIdX: null,
@@ -133,7 +144,10 @@ export default {
           displayName: this.form.displayName,
           visible: this.form.visible,
           txViewType: this.form.txViewType,
-          posId: this.form.posId
+          posId: this.form.posId,
+          areaId: this.form.areaId,
+          x: this.form.x,
+          y: this.form.y,
         }
       }
       this.deviceId = null

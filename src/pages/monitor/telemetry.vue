@@ -1,13 +1,12 @@
 <template>
   <div class="container">
-    <h2 class="display-5" v-t="'label.telemetry'"></h2>
     <p></p>
     <b-row align-h="end">
-      <b-col md="2" class="mb-2 mr-3">
+      <b-col md="2" class="mb-3 mr-3">
         <b-button variant='outline-primary' @click="download()" v-t="'label.download'" />
       </b-col>
     </b-row>
-    <table class="table table-hover table-responsive">
+    <table class="table table-hover table-responsive table-bordered">
       <thead>
         <tr>
           <th scope="col" v-for="(val, key) in telemetrys[0]" :key="key" >{{ key }}</th>
@@ -37,6 +36,7 @@ export default {
     ])
   },
   mounted() {
+    this.replace({title: this.$i18n.t('label.telemetry')})
     this.fetchData()
   },
   created(){
@@ -63,6 +63,9 @@ export default {
     download() {
       HtmlUtil.fileDL("telemetry.csv", Util.converToCsv(this.telemetrys))
     },
+    ...mapMutations([
+      'replace', 
+    ]),
     ...mapMutations('monitor', [
       'replaceMonitor', 
     ]),

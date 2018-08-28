@@ -1,5 +1,5 @@
 <template>
-  <m-list :params="params" :list="areas" >
+  <m-list :params="params" :list="areas">
   </m-list>
 </template>
 

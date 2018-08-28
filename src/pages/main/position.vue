@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div id="mapContainer" class="container-fluid">
     <b-row class="mt-2">
       <b-form inline class="mt-2">
         <label class="mr-2">{{ $t('label.area') }}</label>
@@ -9,8 +9,8 @@
     <b-row class="mt-3">
       <canvas id="map" ref="map"></canvas>
     </b-row>
-    <div v-if="selectedTx.txId" :class="selectedTx.class" :style="{left: selectedTx.left+'px', top: selectedTx.top+'px'}" >
-      <txdetail :txInfo="selectedTx" @resetDetail="resetDetail"></txdetail>
+    <div v-if="selectedTx.txId" >
+      <txdetail :selectedTx="selectedTx" @resetDetail="resetDetail"></txdetail>
     </div>
   </div>
 </template>
@@ -67,6 +67,7 @@ export default {
   },
   mounted() {
     that = this
+    this.replace({title: this.$i18n.t('label.showPosition')})
     this.fetchData()
   },
   created(){
@@ -90,7 +91,7 @@ export default {
       let rev = y > 400
 
       let map = HtmlUtil.getRect("#map")
-      let containerParent = HtmlUtil.getRect(".container", "parentNode")
+      let containerParent = HtmlUtil.getRect("#mapContainer", "parentNode")
       let offsetX = map.left - containerParent.left
       let offsetY = map.top - containerParent.top
       const tipOffsetX = -34.5
@@ -246,38 +247,5 @@ export default {
   display: none; 
 }
 
-/* 吹き出し本体 */
-.balloon, .balloon-u {
-  position: absolute;
-  top: 100px;
-  left: 100px;
-  box-shadow: 0px 0px 10px 0px $txdetail-bg; 
-}
-
-.balloon-before {
-  content: '';
-  position: absolute;
-  display: block;
-  width: 0;
-  height: 0;
-}
-
-.balloon::before {
-  @extend .balloon-before;
-  left: 20px;
-  top: -15px;
-  border-right: 15px solid transparent;
-  border-bottom: 15px solid $txdetail-bg;
-  border-left: 15px solid transparent;
-}
-
-.balloon-u::before {
-  @extend .balloon-before;
-  left: 27px;
-  bottom: -15px;
-  border-top: 15px solid $txdetail-bg;
-  border-right: 15px solid transparent;
-  border-left: 15px solid transparent;
-}
 
 </style>

@@ -5,8 +5,8 @@
         <i :class="group.icon"></i>&nbsp;{{ $t("label." + group.key) }}
       </router-link>
       <b-nav class="bd-sidenav">
-        <b-nav-item v-for="page in group.pages" :to="'/' + group.base + page.path" :key="page.key" class="ml-2">
-          <i :class="page.icon"></i>&nbsp;{{ $t("label." + page.key) }}
+        <b-nav-item v-for="page in group.pages" :to="'/' + group.base + page.path" :key="page.key">
+          <i :class="page.icon" class="ml-3"></i>&nbsp;{{ $t("label." + page.key) }}
         </b-nav-item>
       </b-nav>
     </router-link>
@@ -69,14 +69,14 @@ export default {
 
 .bd-sidebar {
   order: 0;
-  // background-color: #f5f2f9;
   border-bottom: 1px solid rgba(0, 0, 0, .1);
+  background-color: #f8f8f8;
+  border-color: #e7e7e7;
 
   @media (min-width: 768px) {
     @supports (position: sticky) {
       position: sticky;
-      top: 4rem;
-      z-index: 1000;
+      z-index: 100;
       height: calc(100vh - 4rem);
     }
     border-right: 1px solid rgba(0, 0, 0, .1);
@@ -88,10 +88,10 @@ export default {
 }
 
 .bd-links {
-  padding-top: 1rem;
+  // padding-top: 1rem;
   padding-bottom: 1rem;
-  margin-right: -15px;
-  margin-left: -15px;
+  margin-right: -0.9rem;
+  margin-left: -0.9rem;
 
   @media (min-width: 768px) {
     @supports (position: sticky) {
@@ -108,14 +108,15 @@ export default {
 
 .bd-sidenav {
   display: none;
+  padding-top: 0.25rem;
 }
 
 .bd-toc-link {
   display: block;
-  padding: .25rem 1.5rem;
+  padding-left: 1.5rem;
   font-weight: 500;
-  font-size: 20px;
-  color: rgba(0, 0, 0, .65);
+  // font-size: 20px;
+  color:#337ab7;
 
   &:hover {
     color: rgba(0, 0, 0, .85);
@@ -124,18 +125,20 @@ export default {
 }
 
 .bd-toc-item {
+  padding-top: 0.6rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid #e7e7e7;
   &.active {
-    margin-bottom: 1rem;
 
     &:not(:first-child) {
-      margin-top: 1rem;
+      // margin-top: 1rem;
     }
 
     > .bd-toc-link {
-      color: rgba(0, 0, 0, .85);
+      color: #337ab7;
 
       &:hover {
-        background-color: transparent;
+        background-color: #ccc;
       }
     }
 
@@ -148,15 +151,15 @@ export default {
 // All levels of nav
 .bd-sidebar .nav > li > a {
   display: block;
-  padding: .25rem 1.5rem;
+  padding: .2rem 1.5rem;
   font-size: 90%;
-  color: rgba(0, 0, 0, .65);
+  color: #337ab7;
 }
 
 .bd-sidebar .nav > li > a:hover {
   color: rgba(0, 0, 0, .85);
   text-decoration: none;
-  background-color: transparent;
+  background-color: #eee;
 }
 
 .bd-sidebar .nav > .active > a,
@@ -169,8 +172,9 @@ export default {
 
 .bd-sidebar .nav > li > a.active {
   /*color: #0275d8;*/
-  color: black;
+  color: #337ab7;
   font-weight: bold;
+  background-color: #eee;
 }
 
 </style>

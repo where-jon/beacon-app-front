@@ -34,7 +34,7 @@ export const MENU = [
     path: 'main/position',
     icon: 'fas fa-home',
     pages: [{
-        key: 'position',
+        key: 'showPosition',
         path: 'position',
         feature: '',
         icon: 'fas fa-map-marker-alt',
