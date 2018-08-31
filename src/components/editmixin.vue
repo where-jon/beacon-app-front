@@ -88,14 +88,15 @@ export default {
       }
       this.replace({showProgress: false})
     },
-    readImageView(e, imgViewName, imgWidthName, imgHeightName) {
+    readImageView(e, imgViewName, imgWidthName, imgHeightName, thumbnailName, resize) {
       let that = this
-      HtmlUtil.readImage(e, (evt, width, height) => {
+      HtmlUtil.readImage(e, (evt, width, height, thumbnail) => {
           that.$refs[imgViewName].src = evt.target.result
           that.form[imgViewName] = evt.target.result
-          that.form[imgWidthName] = width
-          that.form[imgHeightName] = height
-      })
+          if (imgWidthName) that.form[imgWidthName] = width
+          if (imgHeightName) that.form[imgHeightName] = height
+          if (thumbnailName) that.form[thumbnailName] = thumbnail
+      }, resize)
     }
   }
 }

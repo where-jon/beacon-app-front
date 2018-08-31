@@ -31,16 +31,26 @@ export const fileDL = (name, content) => {
   document.body.removeChild(e)
 }
 
-export const readImage = (e, onload) => {
+export const readImage = (e, onload, resize) => {
   let files = e.target.files
   let that = this
   if ( files && files[0] ) {
-    var fr = new FileReader()
+    let fr = new FileReader()
     fr.onload = (evt) => {
-      var image = new Image()
+      let image = new Image()
       image.src = evt.target.result
+      image.crossOrigin = "Anonymous"
       image.onload = function() {
-        onload && onload(evt, this.width, this.height)
+        let thumbnail
+        if (resize) {
+          let canvas = document.createElement('canvas')
+          let ctx = canvas.getContext('2d')
+          canvas.width = (this.width > this.height)? resize: this.width * resize / this.height
+          canvas.height = (this.width > this.height)? this.height * resize / this.width: resize
+          ctx.drawImage(this, 0, 0, this.width, this.height, 0, 0, canvas.width, canvas.height)
+          thumbnail = canvas.toDataURL()            
+        }
+        onload && onload(evt, this.width, this.height, thumbnail)
       }
     }       
     fr.readAsDataURL(files[0])

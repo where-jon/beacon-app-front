@@ -35,11 +35,11 @@
       </b-form-group>
       <b-form-group>
         <label v-t="'label.locationX'" />
-        <b-form-input type="number" v-model="form.x" required :readonly="!isEditable" />
+        <b-form-input type="number" v-model="form.x" :readonly="!isEditable" />
       </b-form-group>
       <b-form-group>
         <label v-t="'label.locationY'" />
-        <b-form-input type="number" v-model="form.y" required :readonly="!isEditable" />
+        <b-form-input type="number" v-model="form.y" :readonly="!isEditable" />
       </b-form-group>
       <b-form-group>
         <b-form-checkbox v-model="form.enabled" value="true" unchecked-value="false" :readonly="!isEditable">

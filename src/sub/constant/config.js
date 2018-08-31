@@ -15,7 +15,8 @@ export const APP = {
   TOP_PAGE: "/master/person", // must not be / otherwise recursive infinitely
   LOGIN_PAGE: "/login", // if no login then /
   LOGIN_MODE: LOGIN_MODE.APP_SERVICE,
-  UNDETECT_TIME: 10 * 60 * 1000, // used on telemetry  
+  UNDETECT_TIME: 10 * 60 * 1000, // used on telemetry 
+  AREA_THUMBNAIL_MAX: 200,
 }
 
 export const LOCAL_LOGIN = { // local login md5 hash of id:pass // TODO: add Role

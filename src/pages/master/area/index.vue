@@ -43,8 +43,8 @@ export default {
       try {
         this.replace({showProgress: true})
         let areas = await AppServiceHelper.fetchList('/core/area', 'areaId')
-        let areaImages = areas.map((val) => val.mapImage)
-        areas = areas.map((val) => ({...val, mapImage: ""})) // omit images to avoid being filtering target
+        let areaImages = areas.map((val) => val.thumbnail)
+        areas = areas.map((val) => ({...val, mapImage: "", thumbnail: ""})) // omit images to avoid being filtering target
         if (payload && payload.done) {
           payload.done()
         }

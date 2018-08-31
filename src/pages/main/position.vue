@@ -114,7 +114,7 @@ export default {
       try {
         this.replace({showProgress: true})
         if (this.isFirstTime) {
-          let areas = await AppServiceHelper.fetchList('/core/area', 'areaId')
+          let areas = await AppServiceHelper.fetchList('/core/area/withImage', 'areaId')
           this.selectedArea = areas && {label:areas[0].areaName, value:areas[0].areaId}
           this.replaceAS({areas})
 

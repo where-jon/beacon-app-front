@@ -86,14 +86,14 @@ export default {
         } 
       }
       else if (this.oldSelectedArea) {
-        let area = _.find(this.$store.state.app_service.areas, (area) => area.areaId == this.oldSelectedArea.value)
+        let area = _.find(this.$store.state.app_service.areas, (area) => this.oldSelectedArea && area.areaId == this.oldSelectedArea.value)
         if (area && area.mapRatio) {
          return area.mapRatio / this.mapImageScale
         }
       }
     },
     mapImage() {
-      let area = _.find(this.$store.state.app_service.areas, (area) => area.areaId == this.selectedArea.value)
+      let area = _.find(this.$store.state.app_service.areas, (area) => this.selectedArea && area.areaId == this.selectedArea.value)
       return area && area.mapImage
     },
     areaOptions() {
@@ -135,7 +135,7 @@ export default {
     },
     async fetchData(payload) {
       try {
-        let areas = await AppServiceHelper.fetchList('/core/area', 'areaId')
+        let areas = await AppServiceHelper.fetchList('/core/area/withImage', 'areaId')
         this.selectedArea = areas && {label:areas[0].areaName, value: areas[0].areaId}
 
         let exbs = await AppServiceHelper.fetchList('/core/exb/withLocation', 'exbId')

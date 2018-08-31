@@ -29,6 +29,7 @@ import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import _ from 'lodash'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import editmixinVue from '../../../components/editmixin.vue';
+import { APP } from '../../../sub/constant/config'
 
 export default {
   mixins: [editmixinVue],
@@ -48,7 +49,7 @@ export default {
   },
   methods: {
     readImage(e) {
-      this.readImageView(e, 'mapImage', 'mapWidth', 'mapHeight')
+      this.readImageView(e, 'mapImage', 'mapWidth', 'mapHeight', 'thumbnail', APP.AREA_THUMBNAIL_MAX)
     }
   }
 }
