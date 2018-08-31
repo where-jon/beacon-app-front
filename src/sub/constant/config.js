@@ -11,7 +11,7 @@ export const DEV = {
 
 export const APP = {
   VERSION: "Version 0.1.2", // this application version
-  TIMEOUT: 30 * 60 * 1000, // session timeout(using local storage)
+  TIMEOUT: 60 * 60 * 1000, // session timeout(using local storage)
   TOP_PAGE: "/master/person", // must not be / otherwise recursive infinitely
   LOGIN_PAGE: "/login", // if no login then /
   LOGIN_MODE: LOGIN_MODE.APP_SERVICE,

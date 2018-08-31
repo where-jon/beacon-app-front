@@ -100,6 +100,7 @@ export default {
       EventBus.$emit('reload', {
         done() {
           HtmlUtil.removeClass(e, "rotate")
+          AuthHelper.checkSession()
         }
       })
     },
