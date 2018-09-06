@@ -10,7 +10,7 @@
 
       <!-- left (navi dropdown menu) -->
       <b-navbar-nav>
-        <b-nav-item-dropdown v-for="group in nav" :key="group.path" >
+        <b-nav-item-dropdown v-for="group in nav" :key="group.path">
           <template slot="button-content">
             <em v-t="'label.' + group.key" />
           </template>
@@ -118,8 +118,16 @@ export default {
   animation: fa-spin 2s infinite linear;
 }
 
+nav.navbar {
+  height: 40px;
+}
+
 .navbar-dark .navbar-nav .nav-link {
   color: white;
+}
+
+ul.navbar-nav {
+  margin-left: 6%;
 }
 
 </style>

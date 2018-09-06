@@ -1,8 +1,28 @@
 <template>
+    <ul class="menu-items">
+      <li class="menu-item" v-for="(group, i) in nav" :key="group.path" :to="'/' + group.base" active-class="active" @click="onMenuClick(i)">
+        <div class="clearfix">
+          <router-link class="bd-toc-link" :to="'/' + group.path">
+            <i :class="group.icon"></i>&nbsp;&nbsp;{{ $t("label." + group.key) }}
+          </router-link>
+          <span class="direction">
+            <i v-if="selectedItem != i" class="fa fa-angle-left"></i>
+            <i v-if="selectedItem === i" class="fa fa-angle-down"></i>
+          </span>
+        </div>
+        <div v-if="selectedItem === i" >
+          <b-nav-item v-for="page in group.pages" :to="'/' + group.base + page.path" :key="page.key">
+            <i :class="page.icon" class="ml-3"></i>&nbsp;{{ $t("label." + page.key) }}
+          </b-nav-item>
+        </div>
+      </li>
+    </ul>
+<!--
   <b-collapse tag="nav" is-nav class="bd-links" id="bd-docs-nav">
-    <router-link tag="div" class="bd-toc-item" v-for="group in nav" :key="group.path" :to="'/' + group.base" active-class="active" >
-      <router-link class="bd-toc-link" :to="'/' + group.path">
+    <router-link tag="div" class="bd-toc-item" v-for="group in nav" :key="group.path" :to="'/' + group.base" active-class="active">
+      <router-link class="bd-toc-link" :to="'/' + group.path" @click="onMenuClick()">
         <i :class="group.icon"></i>&nbsp;{{ $t("label." + group.key) }}
+        <span><i class="fa fa-angle-left"></i></span>
       </router-link>
       <b-nav class="bd-sidenav">
         <b-nav-item v-for="page in group.pages" :to="'/' + group.base + page.path" :key="page.key">
@@ -11,6 +31,7 @@
       </b-nav>
     </router-link>
   </b-collapse>
+  -->
 </template>
 
 <script>
@@ -18,7 +39,13 @@
 export default {
   data() {
     return {
-      nav : this.$store.state.menu
+      nav : this.$store.state.menu,
+      selectedItem: -1
+    }
+  },
+  methods: {
+    onMenuClick (index) {
+      this.selectedItem = index
     }
   }
 }
@@ -113,15 +140,15 @@ export default {
 
 .bd-toc-link {
   display: block;
-  padding-left: 1.5rem;
   font-weight: 500;
   // font-size: 20px;
   color:#337ab7;
-
   &:hover {
     color: rgba(0, 0, 0, .85);
     text-decoration: none;
   }
+  float: left;
+  width: 80%;
 }
 
 .bd-toc-item {
@@ -171,10 +198,39 @@ export default {
 
 
 .bd-sidebar .nav > li > a.active {
-  /*color: #0275d8;*/
   color: #337ab7;
   font-weight: bold;
   background-color: #eee;
+}
+
+
+ul.menu-items {
+  padding-left: 0px;
+}
+
+li.menu-item {
+  display: block;
+  list-style: none;
+  padding: 12px 12px 12px 0px;
+  border-bottom: 1px solid #e4e4e4;
+  cursor: pointer;
+}
+
+.clearfix::after {
+  content: "";
+  display: block;
+  clear: both;
+}
+
+span.direction {
+  display: block;
+  float: left;
+  width: 20%;
+  text-align: right;
+}
+
+a.nav-link {
+  padding-left: 0px;
 }
 
 </style>
