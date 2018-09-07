@@ -1,21 +1,30 @@
 <template>
-    <ul class="menu-items">
-      <li class="menu-item" v-for="(group, i) in nav" :key="group.path" :to="'/' + group.base" active-class="active" @click="onMenuClick(i)">
-        <div class="clearfix">
+    <ul class="menu-groups">
+      <li class="menu-group" v-for="(group, i) in nav" :key="group.path" :to="'/' + group.base" active-class="active">
+        <ul class="menu-group-items">
+          <li class="menu-item menu-title clearfix" @click.stop="onMenuClick(i)">
+            <span class="title"><i :class="group.icon"></i>&nbsp;&nbsp;{{ $t("label." + group.key) }}</span>
+            <span class="direction">
+              <i class="fa fa-angle-left" v-if="selectedItem !== i"></i>
+              <i class="fa fa-angle-down" v-if="selectedItem === i"></i>
+            </span>
+          </li>
+          <li class="menu-item item" v-for="(page, j) in group.pages" :key="page.key" v-if="selectedItem === i">
+            <router-link class="bd-toc-link" :to="'/' + group.base + page.path">
+              <i :class="page.icon" class="ml-3"></i>&nbsp;{{ $t("label." + page.key) }}
+            </router-link>
+          </li>
+        </ul>
+      </li>
+      <!--
           <router-link class="bd-toc-link" :to="'/' + group.path">
-            <i :class="group.icon"></i>&nbsp;&nbsp;{{ $t("label." + group.key) }}
           </router-link>
-          <span class="direction">
-            <i v-if="selectedItem != i" class="fa fa-angle-left"></i>
-            <i v-if="selectedItem === i" class="fa fa-angle-down"></i>
-          </span>
-        </div>
-        <div v-if="selectedItem === i" >
-          <b-nav-item v-for="page in group.pages" :to="'/' + group.base + page.path" :key="page.key">
+      <div>
+          <b-nav-item v-for="page in group.pages" :to="'/' + group.base + page.path" :key="page.key" @click.stop="onMenuItemClick()">
             <i :class="page.icon" class="ml-3"></i>&nbsp;{{ $t("label." + page.key) }}
           </b-nav-item>
-        </div>
-      </li>
+      </div>
+      -->
     </ul>
 <!--
   <b-collapse tag="nav" is-nav class="bd-links" id="bd-docs-nav">
@@ -45,7 +54,7 @@ export default {
   },
   methods: {
     onMenuClick (index) {
-      this.selectedItem = index
+      this.selectedItem = index === this.selectedItem ? -1 : index
     }
   }
 }
@@ -99,6 +108,8 @@ export default {
   border-bottom: 1px solid rgba(0, 0, 0, .1);
   background-color: #f8f8f8;
   border-color: #e7e7e7;
+  padding-left: 0px;
+  padding-right: 0px;
 
   @media (min-width: 768px) {
     @supports (position: sticky) {
@@ -140,15 +151,11 @@ export default {
 
 .bd-toc-link {
   display: block;
-  font-weight: 500;
-  // font-size: 20px;
   color:#337ab7;
   &:hover {
-    color: rgba(0, 0, 0, .85);
     text-decoration: none;
   }
-  float: left;
-  width: 80%;
+  padding-left: 10px;
 }
 
 .bd-toc-item {
@@ -203,17 +210,25 @@ export default {
   background-color: #eee;
 }
 
+ul.menu-groups {
+  padding: 0;
+}
 
-ul.menu-items {
-  padding-left: 0px;
+li.menu-group {
+  display: block;
+  list-style: none;
+  cursor: pointer;
+}
+
+ul.menu-group-items {
+  list-style: none;
+  padding: 0;
+  border-bottom: 1px solid #e4e4e4;
 }
 
 li.menu-item {
   display: block;
-  list-style: none;
-  padding: 12px 12px 12px 0px;
-  border-bottom: 1px solid #e4e4e4;
-  cursor: pointer;
+  padding: 10px;
 }
 
 .clearfix::after {
@@ -222,15 +237,18 @@ li.menu-item {
   clear: both;
 }
 
-span.direction {
+span.title {
   display: block;
+  color:#337ab7;
   float: left;
-  width: 20%;
-  text-align: right;
+  width: 90%;
 }
 
-a.nav-link {
-  padding-left: 0px;
+span.direction {
+  display: block;
+  color:#337ab7;
+  float: left;
+  text-align: right;
 }
 
 </style>
