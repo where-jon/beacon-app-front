@@ -25,6 +25,7 @@
     <!-- table -->
     <b-table show-empty stacked="md" striped hover :items="list" :fields="fields" :current-page="currentPage" :per-page="perPage" outlined
             :filter="filter" @filtered="onFiltered">
+      <!--
       <template slot="actions" slot-scope="row">
         <b-button size="sm" @click.stop="edit(row.item, row.index, $event.target)" variant="outline-primary" class="mr-2 my-1" v-t="'label.' + crud" />
         <b-button v-if="isEditable" size="sm" @click.stop="deleteConfirm(row.item, row.index, $event.target)" variant="outline-danger" class="mr-1" v-t="'label.delete'" />
@@ -32,6 +33,7 @@
       <template slot="thumbnail" slot-scope="row">
         <img v-if="thumbnail(row.index)" :src="thumbnail(row.index)" width="100" />
       </template>
+      -->
     </b-table>
 
     <!-- pager -->

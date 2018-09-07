@@ -2,7 +2,7 @@
     <ul class="menu-groups">
       <li class="menu-group" v-for="(group, i) in nav" :key="group.path" :to="'/' + group.base" active-class="active">
         <ul class="menu-group-items">
-          <li class="menu-item menu-title clearfix" @click.stop="onMenuClick(i)">
+          <li class="menu-item title clearfix" @click.stop="onMenuClick(i)">
             <span class="title"><i :class="group.icon"></i>&nbsp;&nbsp;{{ $t("label." + group.key) }}</span>
             <span class="direction">
               <i class="fa fa-angle-left" v-if="selectedItem !== i"></i>
@@ -106,8 +106,7 @@ export default {
 .bd-sidebar {
   order: 0;
   border-bottom: 1px solid rgba(0, 0, 0, .1);
-  background-color: #f8f8f8;
-  border-color: #e7e7e7;
+  background-color: #eee;
   padding-left: 0px;
   padding-right: 0px;
 
@@ -126,7 +125,6 @@ export default {
 }
 
 .bd-links {
-  // padding-top: 1rem;
   padding-bottom: 1rem;
   margin-right: -0.9rem;
   margin-left: -0.9rem;
@@ -163,10 +161,6 @@ export default {
   padding-bottom: 0.6rem;
   border-bottom: 1px solid #e7e7e7;
   &.active {
-
-    &:not(:first-child) {
-      // margin-top: 1rem;
-    }
 
     > .bd-toc-link {
       color: #337ab7;
@@ -223,12 +217,20 @@ li.menu-group {
 ul.menu-group-items {
   list-style: none;
   padding: 0;
-  border-bottom: 1px solid #e4e4e4;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 li.menu-item {
   display: block;
   padding: 10px;
+}
+
+li.menu-item.item {
+  background: #f5f5f5;
+}
+
+li.menu-item.item:hover {
+  background: #eee;
 }
 
 .clearfix::after {

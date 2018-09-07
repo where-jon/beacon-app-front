@@ -1,5 +1,5 @@
 <template>
-  <b-navbar toggleable="md" type="dark" variant="info">
+  <b-navbar toggleable="md" type="dark">
     <!-- Responsive menu -->
     <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>  
 
@@ -119,6 +119,7 @@ export default {
 }
 
 nav.navbar {
+  background-color: #337ab7;
   height: 40px;
 }
 
