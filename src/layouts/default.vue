@@ -9,11 +9,6 @@
         <b-col :md="showSidebar? 10: 12" class="pl-0 pr-0">
           <b-container fluid>
             <b-row>
-              <b-col>
-                <h3 class="page-header">{{ title }}</h3>
-              </b-col>
-            </b-row>
-            <b-row>
               <b-col class="pb-md-3 pl-md-5 pl-xl-5 pr-xl-5 bd-content">
                 <nuxt/>
                 <div class="spinner-parent" v-if="showProgress">
@@ -83,7 +78,7 @@ export default {
     return {
       title: this.$t('label.title')
     }
-  }
+  },
 }
 
 </script>

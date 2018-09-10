@@ -1,6 +1,8 @@
 <template>
-  <m-list :params="params" :list="areas">
-  </m-list>
+  <div>
+    <breadcrumb :items="items" />
+    <m-list :params="params" :list="areas"></m-list>
+  </div>
 </template>
 
 <script>
@@ -9,10 +11,12 @@ import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import { addLabelByKey } from '../../../sub/helper/ViewHelper'
 import listmixinVue from '../../../components/listmixin.vue';
+import breadcrumb from '../../../components/breadcrumb.vue'
 
 export default {
   components: {
     mList, 
+    breadcrumb,
   },
   mixins: [listmixinVue],
   data() {
@@ -29,7 +33,17 @@ export default {
           {key: "actions", thStyle: {width: '130px !important'} }
         ]),
         initTotalRows: this.$store.state.app_service.areas.length
-      }
+      },
+      items: [
+        {
+          text: this.$i18n.t('label.master'),
+          active: true
+        },
+        {
+          text: this.$i18n.t('label.area'),
+          active: true
+        }
+      ]
     }
   },
   computed: {
@@ -58,10 +72,8 @@ export default {
     thumbnail(index) {
       return this.areaImages[index]
     },
-  }
+  },
 }
 </script>
 
-<style scoped lang="scss">
-
-</style>
+<style scoped lang="scss"></style>

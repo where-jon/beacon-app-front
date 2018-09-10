@@ -16,31 +16,7 @@
           </li>
         </ul>
       </li>
-      <!--
-          <router-link class="bd-toc-link" :to="'/' + group.path">
-          </router-link>
-      <div>
-          <b-nav-item v-for="page in group.pages" :to="'/' + group.base + page.path" :key="page.key" @click.stop="onMenuItemClick()">
-            <i :class="page.icon" class="ml-3"></i>&nbsp;{{ $t("label." + page.key) }}
-          </b-nav-item>
-      </div>
-      -->
     </ul>
-<!--
-  <b-collapse tag="nav" is-nav class="bd-links" id="bd-docs-nav">
-    <router-link tag="div" class="bd-toc-item" v-for="group in nav" :key="group.path" :to="'/' + group.base" active-class="active">
-      <router-link class="bd-toc-link" :to="'/' + group.path" @click="onMenuClick()">
-        <i :class="group.icon"></i>&nbsp;{{ $t("label." + group.key) }}
-        <span><i class="fa fa-angle-left"></i></span>
-      </router-link>
-      <b-nav class="bd-sidenav">
-        <b-nav-item v-for="page in group.pages" :to="'/' + group.base + page.path" :key="page.key">
-          <i :class="page.icon" class="ml-3"></i>&nbsp;{{ $t("label." + page.key) }}
-        </b-nav-item>
-      </b-nav>
-    </router-link>
-  </b-collapse>
-  -->
 </template>
 
 <script>
@@ -222,10 +198,11 @@ ul.menu-group-items {
 
 li.menu-item {
   display: block;
-  padding: 10px;
+  height: 56px;
 }
 
 li.menu-item.item {
+  line-height: 56px;
   background: #f5f5f5;
 }
 
@@ -242,6 +219,8 @@ li.menu-item.item:hover {
 span.title {
   display: block;
   color:#337ab7;
+  line-height: 56px;
+  padding-left: 10px;
   float: left;
   width: 90%;
 }
@@ -249,6 +228,7 @@ span.title {
 span.direction {
   display: block;
   color:#337ab7;
+  line-height: 56px;
   float: left;
   text-align: right;
 }

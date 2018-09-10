@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <p></p>
+    <breadcrumb :items="items" />
     <b-row align-h="end">
       <b-col md="2" class="mb-3 mr-3">
         <b-button variant='outline-primary' @click="download()" v-t="'label.download'" />
@@ -28,8 +28,26 @@ import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
 import { EventBus } from '../../sub/helper/EventHelper'
 import { EXB, DISP, APP } from '../../sub/constant/config'
+import breadcrumb from '../../components/breadcrumb.vue'
 
 export default {
+  components: {
+    breadcrumb,
+  },
+  data () {
+    return {
+      items: [
+        {
+          text: this.$i18n.t('label.master'),
+          active: true
+        },
+        {
+          text: this.$i18n.t('label.telemetry'),
+          active: true
+        }
+      ]
+    }
+  },
   computed: {
     ...mapState('monitor', [
       'telemetrys',

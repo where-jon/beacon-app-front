@@ -120,7 +120,6 @@ export default {
 
 nav.navbar {
   background-color: #337ab7;
-  height: 40px;
 }
 
 .navbar-dark .navbar-nav .nav-link {
@@ -128,7 +127,7 @@ nav.navbar {
 }
 
 ul.navbar-nav {
-  margin-left: 6%;
+  margin-left: 5%;
 }
 
 </style>

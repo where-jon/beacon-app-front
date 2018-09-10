@@ -1,5 +1,5 @@
 <template>
-  <div class="container-fluid">
+  <div>
     <!-- searchbox -->
     <b-row>
       <b-col md="6" class="my-1">
@@ -83,7 +83,7 @@ export default {
   },
   mounted() {
     this.$parent.$options.methods.fetchData.apply(this.$parent)
-    this.replace({title: this.$i18n.t('label.' + this.name) + this.$i18n.t('label.list')})
+    // this.replace({title: this.$i18n.t('label.' + this.name) + this.$i18n.t('label.list')})
   },
   methods: {
     ...mapMutations([

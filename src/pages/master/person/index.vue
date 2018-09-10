@@ -1,6 +1,8 @@
 <template>
-  <m-list :params="params" :list="persons" >
-  </m-list>
+  <div>
+    <breadcrumb :items="items" />
+    <m-list :params="params" :list="persons" />
+  </div>
 </template>
 
 <script>
@@ -8,11 +10,13 @@ import mList from '../../../components/list.vue'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import { addLabelByKey } from '../../../sub/helper/ViewHelper'
-import listmixinVue from '../../../components/listmixin.vue';
+import listmixinVue from '../../../components/listmixin.vue'
+import breadcrumb from '../../../components/breadcrumb.vue'
 
 export default {
   components: {
-    mList, 
+    mList,
+    breadcrumb,
   },
   mixins: [listmixinVue],
   data() {
@@ -32,8 +36,18 @@ export default {
           {key: "post" },
           {key: "actions", thStyle: {width:'130px !important'} }
         ]),
-        initTotalRows: this.$store.state.app_service.persons.length
-      }
+        initTotalRows: this.$store.state.app_service.persons.length,
+      },
+      items: [
+        {
+          text: this.$i18n.t('label.master'),
+          active: true
+        },
+        {
+          text: this.$i18n.t('label.person'),
+          active: true
+        }
+      ]
     }
   },
   computed: {

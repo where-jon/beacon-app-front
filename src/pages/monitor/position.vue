@@ -1,4 +1,8 @@
 <template>
+  <div>
+  <div class="container">
+    <breadcrumb :items="items" />
+  </div>
   <div class="container scroll">
   <main class="bd-content">
     <p></p>
@@ -42,6 +46,7 @@
       </table>
     </main>
   </div>
+  </div>
 </template>
 
 <script>
@@ -51,8 +56,26 @@ import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
 import { EventBus } from '../../sub/helper/EventHelper'
 import { EXB, DISP, APP } from '../../sub/constant/config'
+import breadcrumb from '../../components/breadcrumb.vue'
 
 export default {
+  components: {
+    breadcrumb,
+  },
+  data () {
+    return {
+      items: [
+        {
+          text: this.$i18n.t('label.monitor'),
+          active: true
+        },
+        {
+          text: this.$i18n.t('label.position'),
+          active: true
+        }
+      ]
+    }
+  },
   computed: {
     ...mapState('monitor', [
       'positions',
