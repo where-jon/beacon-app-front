@@ -109,6 +109,10 @@ html {
   background-color: $menu-bg;
 }
 
+.dropdown-item:hover {
+  color:aliceblue;
+  background-color: $menu-bg-hover;
+}
 
 .page-header {
   padding: 0 0 9px 5px;

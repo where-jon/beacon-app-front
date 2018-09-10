@@ -90,8 +90,8 @@ export default {
     @supports (position: sticky) {
       position: sticky;
       z-index: 100;
-      height: calc(100vh - 4rem);
     }
+    min-height: 92vh;
     border-right: 1px solid rgba(0, 0, 0, .1);
   }
 
@@ -198,11 +198,11 @@ ul.menu-group-items {
 
 li.menu-item {
   display: block;
-  height: 56px;
+  height: 55px;
 }
 
 li.menu-item.item {
-  line-height: 56px;
+  line-height: 55px;
   background: #f5f5f5;
 }
 
@@ -219,7 +219,7 @@ li.menu-item.item:hover {
 span.title {
   display: block;
   color:#337ab7;
-  line-height: 56px;
+  line-height: 55px;
   padding-left: 10px;
   float: left;
   width: 90%;
@@ -228,7 +228,7 @@ span.title {
 span.direction {
   display: block;
   color:#337ab7;
-  line-height: 56px;
+  line-height: 55px;
   float: left;
   text-align: right;
 }
