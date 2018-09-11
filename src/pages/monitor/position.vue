@@ -1,51 +1,40 @@
 <template>
-  <div>
   <div class="container">
     <breadcrumb :items="items" />
-  </div>
-  <div class="container scroll">
-  <main class="bd-content">
-    <p></p>
-    <b-row align-h="end">
-      <b-col md="2" class="mb-3 mr-3">
-        <b-button variant='outline-primary' @click="download()" v-t="'label.download'" />
-      </b-col>
-    </b-row>
-      <table class="table table-hover table-bordered">
-        <thead>
-          <tr>
-            <th scope="col">btx_id</th>
-            <th scope="col">device_id</th>
-            <th scope="col">pos_id</th>
-            <th scope="col">phase</th>
-            <th scope="col">power_level</th>
-            <th scope="col">updatetime</th>
-            <th scope="col">nearest1</th>
-            <th scope="col">nearest2</th>
-            <th scope="col">nearest3</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(pos, index) in positions" :key="index" :class="{undetect: isUndetect(pos.updatetime)}">
-            <td scope="row">{{ pos.btx_id }}</td>
-            <td>{{ pos.device_id }}</td>
-            <td>{{ pos.pos_id }}</td>
-            <td variant="danger" >{{ pos.phase }}</td>
-            <td>{{ pos.power_level }}</td>
-            <td>{{ pos.updatetime }}</td>
-            <td v-for="index in [0,1,2]" :key="index">
-              <table v-if="pos.nearest && pos.nearest[index]" class="table-sm borderless">
-                <tr v-for="(value, key) in pos.nearest[index]" :key="key">
-                  <td>{{ key }}</td>
-                  <td>{{ value }}</td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </main>
-  </div>
+    <NowLoading v-if="loading" />
+    <div v-if="!loading">
+      <b-row align-h="end">
+        <b-col md="2" class="mb-3 mr-3">
+          <b-button variant='outline-primary' @click="download()" v-t="'label.download'" />
+        </b-col>
+      </b-row>
+      <div class="table-area">
+        <vue-scrolling-table>
+          <template slot="thead">
+            <th scope="col"
+            v-for="(val, key) in ['btx_id','device_id','pos_id','phase','power_level','updatetime','nearest1','nearest2','nearest3']"
+            :key="key" >{{ val }}</th>
+          </template>
+          <template slot="tbody">
+            <tr v-for="(pos, index) in positions" :key="index" :class="{undetect: isUndetect(pos.updatetime)}">
+              <td scope="row">{{ pos.btx_id }}</td>
+              <td>{{ pos.device_id }}</td>
+              <td>{{ pos.pos_id }}</td>
+              <td variant="danger" >{{ pos.phase }}</td>
+              <td>{{ pos.power_level }}</td>
+              <td>{{ pos.updatetime }}</td>
+              <td v-for="index in [0,1,2]" :key="index">
+                <div v-if="pos.nearest && pos.nearest[index]">
+                  <div v-for="(value, key) in pos.nearest[index]" :key="key">
+                    {{ key }}:{{ value }}
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </template>
+        </vue-scrolling-table>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -57,13 +46,18 @@ import * as Util from '../../sub/util/Util'
 import { EventBus } from '../../sub/helper/EventHelper'
 import { EXB, DISP, APP } from '../../sub/constant/config'
 import breadcrumb from '../../components/breadcrumb.vue'
+import NowLoading from '../../components/nowloading.vue'
+import VueScrollingTable from "vue-scrolling-table"
 
 export default {
   components: {
     breadcrumb,
+    VueScrollingTable,
+    NowLoading,
   },
   data () {
     return {
+      loading: true,
       items: [
         {
           text: this.$i18n.t('label.monitor'),
@@ -92,15 +86,18 @@ export default {
   },
   methods: {
     async fetchData(payload) {
+      this.loading = true
       try {
         let positions = await EXCloudHelper.fetchRawPosition()
         if (payload && payload.done) {
           payload.done()
         }
         this.replaceMonitor({positions})
+        this.loading = false
       }
       catch(e) {
         console.error(e)
+        this.loading = false
       }
     },
     isUndetect(updated) {
@@ -120,14 +117,5 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
-.scroll{
-  overflow: auto;
-  white-space: nowrap;
-}
-
-.borderless td, .borderless th {
-    border: none;
-}
-
+  @import "../../sub/constant/scrolltable.scss";
 </style>
