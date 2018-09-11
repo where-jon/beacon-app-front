@@ -61,6 +61,7 @@ export const authByAppService = async (loginId, password, success, err) => {
 }
 
 export const login = (login) => {
+    console.log(login)
     store.commit('replace', login)
     window.localStorage.setItem('login', JSON.stringify({...login, dt: new Date().getTime()}))
 }

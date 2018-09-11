@@ -10,7 +10,7 @@
 
       <!-- left (navi dropdown menu) -->
       <b-navbar-nav>
-        <b-nav-item-dropdown v-for="group in nav" :key="group.path">
+        <b-nav-item-dropdown v-for="group in this.$store.state.menu" :key="group.path">
           <template slot="button-content">
             <em v-t="'label.' + group.key" />
           </template>
@@ -19,7 +19,7 @@
       </b-navbar-nav>
 
       <!-- right -->
-      <b-navbar-nav class="ml-auto" v-if="!isNoLogin">
+      <b-navbar-nav class="ml-auto">
         <!-- reload -->
         <b-nav-item right>
           <div v-show="!isLoginPage && showReload">
@@ -107,7 +107,7 @@ export default {
     ...mapMutations('app_service', [
       'replaceAS', 
     ])
-  },
+  }
 }
 </script>
 
