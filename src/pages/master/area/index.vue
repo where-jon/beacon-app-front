@@ -27,10 +27,10 @@ export default {
         editPath: '/master/area/edit',
         appServicePath: '/core/area',
         fields: addLabelByKey(this.$i18n, [ 
-          {key: "areaId", sortable: true },
-          {key: "areaName", sortable: true,},
-          {key: "thumbnail" },
-          {key: "actions", thStyle: {width: '130px !important'} }
+          {key: "areaId", sortable: true, tdClass: "action-rowdata" },
+          {key: "areaName", sortable: true, tdClass: "action-rowdata"},
+          {key: "thumbnail", tdClass: "action-rowdata" },
+          {key: "actions", thStyle: {width: '130px !important'}, tdClass: "action-rowdata" }
         ]),
         initTotalRows: this.$store.state.app_service.areas.length
       },

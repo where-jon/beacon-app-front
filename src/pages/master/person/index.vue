@@ -27,14 +27,14 @@ export default {
         editPath: '/master/person/edit',
         appServicePath: '/basic/person',
         fields: addLabelByKey(this.$i18n, [ 
-          {key: "personId", sortable: true },
-          {key: "thumbnail" },
-          {key: "personCd", sortable: true },
-          {key: "personName", sortable: true },
-          {key: "ruby", sortable: true},
-          {key: "txId", sortable: true, 'class': 'text-center' },
-          {key: "post" },
-          {key: "actions", thStyle: {width:'130px !important'} }
+          {key: "personId", sortable: true, tdClass: "thumb-rowdata"},
+          {key: "thumbnail", tdClass: "thumb-rowdata" },
+          {key: "personCd", sortable: true , tdClass: "thumb-rowdata"},
+          {key: "personName", sortable: true , tdClass: "thumb-rowdata"},
+          {key: "ruby", sortable: true, tdClass: "thumb-rowdata"},
+          {key: "txId", sortable: true, 'class': 'text-center' , tdClass: "thumb-rowdata"},
+          {key: "post" , tdClass: "thumb-rowdata"},
+          {key: "actions", thStyle: {width:'130px !important'} , tdClass: "thumb-rowdata"}
         ]),
         initTotalRows: this.$store.state.app_service.persons.length,
       },

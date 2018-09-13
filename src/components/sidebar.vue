@@ -37,6 +37,7 @@ export default {
 </script>
 
 <style lang="scss">
+@import "../sub/constant/config.scss";
 
 .bd-toc {
   @supports (position: sticky) {
@@ -125,7 +126,7 @@ export default {
 
 .bd-toc-link {
   display: block;
-  color:#337ab7;
+  color: $menu-bg;
   &:hover {
     text-decoration: none;
   }

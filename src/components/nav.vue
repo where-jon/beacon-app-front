@@ -119,7 +119,7 @@ export default {
 }
 
 nav.navbar {
-  background-color: #337ab7;
+  background-color: $menu-bg;
 }
 
 .navbar-dark .navbar-nav .nav-link {

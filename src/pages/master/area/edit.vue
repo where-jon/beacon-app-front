@@ -3,6 +3,8 @@
     <b-alert variant="info" :show="showInfo">{{ message }}</b-alert>
     <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">{{ message }}</b-alert>
 
+    <breadcrumb :items="items" />
+
     <b-form @submit="onSubmit" v-if="show">
       <b-form-group v-if="form.areaId">
         <label v-t="'label.areaId'" />
@@ -19,7 +21,7 @@
       </b-form-group>
       <b-button v-if="isEditable" type="submit" variant="outline-primary" @click="register(false)" >{{ label }}</b-button>
       <b-button v-if="isEditable && !isUpdate" type="submit" variant="outline-primary" @click="register(true)" class="ml-2" v-t="'label.registerAgain'"/>
-      <b-button type="button" variant="outline-danger" @click="backToList" class="ml-2" v-t="'label.back'"/>
+      <b-button type="button" variant="outline-danger" @click="backToList" class="ml-2" v-t="'label.back'" />
     </b-form>
   </div>
 </template>
@@ -29,9 +31,13 @@ import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import _ from 'lodash'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import editmixinVue from '../../../components/editmixin.vue';
+import breadcrumb from '../../../components/breadcrumb.vue'
 import { APP } from '../../../sub/constant/config'
 
 export default {
+  components: {
+    breadcrumb,
+  },
   mixins: [editmixinVue],
   data() {
     return {
@@ -39,7 +45,21 @@ export default {
       id: 'areaId',
       backPath: '/master/area',
       appServicePath: '/core/area',
-      form: ViewHelper.extract(this.$store.state.app_service.area, ["areaId", "areaName", "mapImage"])
+      form: ViewHelper.extract(this.$store.state.app_service.area, ["areaId", "areaName", "mapImage"]),
+      items: [
+        {
+          text: this.$i18n.t('label.master'),
+          active: true
+        },
+        {
+          text: this.$i18n.t('label.area'),
+          href: '/master/area',
+        },
+        {
+          text: this.$i18n.t('label.area') + this.$i18n.t('label.detail'),
+          active: true
+        }
+      ]
     }
   },
   computed: {

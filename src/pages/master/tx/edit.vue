@@ -4,6 +4,8 @@
     <b-alert variant="info" :show="showInfo">{{ message }}</b-alert>
     <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">{{ message }}</b-alert>
 
+    <breadcrumb :items="items" />
+
     <b-form @submit="onSubmit" v-if="show">
       <b-form-group v-if="form.txId">
         <label v-t="'label.txId'" />
@@ -37,16 +39,35 @@ import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import _ from 'lodash'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import editmixinVue from '../../../components/editmixin.vue';
+import breadcrumb from '../../../components/breadcrumb.vue'
 
 export default {
+  components: {
+    breadcrumb,
+  },
   mixins: [editmixinVue],
   data() {
+    const labelTx = this.$i18n.t('label.tx')
     return {
       name: 'tx',
       id: 'txId',
       backPath: '/master/tx',
       appServicePath: '/core/tx',
-      form: ViewHelper.extract(this.$store.state.app_service.tx, ["txId", "btxId", "minor", "txName", "displayName",  "mapImage"])
+      form: ViewHelper.extract(this.$store.state.app_service.tx, ["txId", "btxId", "minor", "txName", "displayName",  "mapImage"]),
+      items: [
+        {
+          text: this.$i18n.t('label.master'),
+          active: true
+        },
+        {
+          text: labelTx,
+          href: '/master/tx'
+        },
+        {
+          text: labelTx + this.$i18n.t('label.detail'),
+          active: true
+        },
+      ]
     }
   },
   computed: {

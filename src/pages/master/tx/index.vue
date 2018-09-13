@@ -27,12 +27,12 @@ export default {
         editPath: '/master/tx/edit',
         appServicePath: '/core/tx',
         fields: addLabelByKey(this.$i18n, [ 
-          {key: "txId", sortable: true },
-          {key: "btxId", sortable: true },
-          {key: "txName", sortable: true,},
-          {key: "displayName", sortable: true,},
-          {key: "minor", sortable: true,},
-          {key: "actions", thStyle: {width: '130px !important'} }
+          {key: "txId", sortable: true, tdClass: "action-rowdata" },
+          {key: "btxId", sortable: true, tdClass: "action-rowdata" },
+          {key: "txName", sortable: true, tdClass: "action-rowdata" },
+          {key: "displayName", sortable: true, tdClass: "action-rowdata" },
+          {key: "minor", sortable: true, tdClass: "action-rowdata" },
+          {key: "actions", thStyle: {width: '130px !important'}, tdClass: "action-rowdata" }
         ]),
         initTotalRows: this.$store.state.app_service.txs.length
       },
@@ -62,6 +62,7 @@ export default {
         if (payload && payload.done) {
           payload.done()
         }
+        console.log(txs)
         this.replaceAS({txs})
       }
       catch(e) {

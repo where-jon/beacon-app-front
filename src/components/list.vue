@@ -30,7 +30,7 @@
         <b-button v-if="isEditable" size="sm" @click.stop="deleteConfirm(row.item, row.index, $event.target)" variant="outline-danger" class="mr-1" v-t="'label.delete'" />
       </template>
       <template slot="thumbnail" slot-scope="row">
-        <img v-if="thumbnail(row.index)" :src="thumbnail(row.index)" width="100" />
+        <img v-if="thumbnail(row.index)" :src="thumbnail(row.index)" height="70" />
       </template>
     </b-table>
 
@@ -81,6 +81,7 @@ export default {
   },
   mounted() {
     this.$parent.$options.methods.fetchData.apply(this.$parent)
+    console.log(this.list)
     // this.replace({title: this.$i18n.t('label.' + this.name) + this.$i18n.t('label.list')})
   },
   methods: {
@@ -124,4 +125,13 @@ export default {
 </script>
 
 <style>
+  td.thumb-rowdata {
+    padding: 5px;
+    line-height: 70px;
+  }
+
+  td.action-rowdata {
+    padding: 5px;
+    line-height: 35px;
+  }
 </style>
