@@ -3,9 +3,9 @@
     <m-nav></m-nav>
     <b-container fluid>
       <b-row class="flex-xl-nowrap2" v-if="!isLoginPage">
-        <b-col md="2" xl="2" class="bd-sidebar" v-if="showSidebar">
+        <b-col md="2" xl="2" id="bd-sidebar" :class="sidebarClasses" v-if="showSidebar">
           <m-sidebar></m-sidebar>
-        </b-col>        
+        </b-col>
         <b-col :md="showSidebar? 10: 12" class="pl-0 pr-0">
           <b-container fluid>
             <b-row>
@@ -61,6 +61,18 @@ export default {
   data() {
     return {
       showSidebar: DISP.SHOW_SIDEBAR,
+      sidebarClasses: {
+        'bd-sidebar': true,
+        default: DISP.THEME === 'default',
+        primary: DISP.THEME === 'primary',
+        secondary: DISP.THEME === 'secondary',
+        success: DISP.THEME === 'success',
+        info: DISP.THEME === 'info',
+        warning: DISP.THEME === 'warning',
+        danger: DISP.THEME === 'danger',
+        light: DISP.THEME === 'light',
+        dark: DISP.THEME === 'dark',
+      },
     }
   },
   computed: {
@@ -159,6 +171,42 @@ html {
   &.open input[type=search] {
     width: auto !important;
   }
+}
+
+.bd-sidebar.default {
+  background-color: $menu-bg;
+}
+
+.bd-sidebar.primary {
+  background-color: $blue;
+}
+
+.bd-sidebar.secondary {
+  background-color: $gray-600;
+}
+
+.bd-sidebar.success {
+  background-color: $green;
+}
+
+.bd-sidebar.info {
+  background-color: $cyan;
+}
+
+.bd-sidebar.warning {
+  background-color: $yellow;
+}
+
+.bd-sidebar.danger {
+  background-color: $red;
+}
+
+.bd-sidebar.light {
+  background-color: $gray-100;
+}
+
+.bd-sidebar.dark {
+  background-color: $gray-800;
 }
 
 </style>

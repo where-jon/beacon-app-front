@@ -48,6 +48,7 @@ export const DISP = {
   TX_DIV_3: 0.5, // Txが重なった際に３つ左右に並べる場合にずらす倍率
   AUTO_RELOAD: 60000, // 自動リロード間隔(ミリ秒)
   SHOW_SIDEBAR: true, // show sidebar  
+  THEME: "default",
 
   EXB_LOC_SIZE: {w: 60, h: 30},
   EXB_LOC_BGCOLOR: "#76ccf7",

@@ -1,5 +1,5 @@
 <template>
-  <b-navbar toggleable="md" type="dark">
+  <b-navbar toggleable="md" type="dark" :class="navbarClasses">
     <!-- Responsive menu -->
     <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>  
 
@@ -65,7 +65,18 @@ export default {
   data() {
     return {
       version: APP.VERSION,
-      nav : this.$store.state.menu
+      nav : this.$store.state.menu,
+      navbarClasses: {
+        default: DISP.THEME === 'default',
+        'bg-primary': DISP.THEME === 'primary',
+        'bg-secondary': DISP.THEME === 'secondary',
+        'bg-success': DISP.THEME === 'success',
+        'bg-info': DISP.THEME === 'info',
+        'bg-warning': DISP.THEME === 'warning',
+        'bg-danger': DISP.THEME === 'danger',
+        'bg-light': DISP.THEME === 'light',
+        'bg-dark': DISP.THEME === 'dark',
+      },
     }
   },
   computed: {
@@ -120,6 +131,10 @@ export default {
 
 nav.navbar {
   background-color: $menu-bg;
+}
+
+nav.navbar.success {
+  background-color: $green;
 }
 
 .navbar-dark .navbar-nav .nav-link {

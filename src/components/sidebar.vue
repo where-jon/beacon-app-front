@@ -9,7 +9,7 @@
               <i class="fa fa-angle-down" v-if="selectedItem === i"></i>
             </span>
           </li>
-          <li class="menu-item item" v-for="(page, j) in group.pages" :key="page.key" v-if="selectedItem === i">
+          <li :class="menuItemClasses" v-for="(page, j) in group.pages" :key="page.key" v-if="selectedItem === i">
             <router-link class="bd-toc-link" :to="'/' + group.base + page.path">
               <i :class="page.icon" class="ml-3"></i>&nbsp;{{ $t("label." + page.key) }}
             </router-link>
@@ -21,17 +21,32 @@
 
 <script>
 
+import { DISP } from '../sub/constant/config'
+
 export default {
   data() {
     return {
       nav : this.$store.state.menu,
-      selectedItem: -1
+      selectedItem: -1,
+      menuItemClasses: {
+        'menu-item': true,
+        item: true,
+        default: DISP.THEME === 'default',
+        primary: DISP.THEME === 'primary',
+        secondary: DISP.THEME === 'secondary',
+        success: DISP.THEME === 'success',
+        info: DISP.THEME === 'info',
+        warning: DISP.THEME === 'warning',
+        danger: DISP.THEME === 'danger',
+        light: DISP.THEME === 'light',
+        dark: DISP.THEME === 'dark',
+      }
     }
   },
   methods: {
     onMenuClick (index) {
       this.selectedItem = index === this.selectedItem ? -1 : index
-    }
+    },
   }
 }
 </script>
@@ -39,51 +54,9 @@ export default {
 <style lang="scss">
 @import "../sub/constant/config.scss";
 
-.bd-toc {
-  @supports (position: sticky) {
-    position: sticky;
-    top: 4rem;
-    height: calc(100vh - 4rem);
-    overflow-y: auto;
-  }
-  order: 2;
-  padding-top: 1.5rem;
-  padding-bottom: 1.5rem;
-  font-size: .875rem;
-}
-
-.section-nav {
-  padding-left: 0;
-  border-left: 1px solid #eee;
-
-  ul {
-    padding-left: 1rem;
-
-    ul {
-      display: none;
-    }
-  }
-}
-
-.toc-entry {
-  display: block;
-
-  a {
-    display: block;
-    padding: .125rem 1.5rem;
-    color: #99979c;
-
-    &:hover {
-      color: #0000ff;
-      text-decoration: none;
-    }
-  }
-}
-
 .bd-sidebar {
   order: 0;
   border-bottom: 1px solid rgba(0, 0, 0, .1);
-  background-color: #eee;
   padding-left: 0px;
   padding-right: 0px;
 
@@ -92,8 +65,7 @@ export default {
       position: sticky;
       z-index: 100;
     }
-    min-height: 92vh;
-    border-right: 1px solid rgba(0, 0, 0, .1);
+    min-height: calc(100vh - 56px)
   }
 
   @media (min-width: 1200px) {
@@ -119,16 +91,12 @@ export default {
   }
 }
 
-.bd-sidenav {
-  display: none;
-  padding-top: 0.25rem;
-}
-
 .bd-toc-link {
   display: block;
-  color: $menu-bg;
+  color: white;
   &:hover {
     text-decoration: none;
+    color: white;
   }
   padding-left: 10px;
 }
@@ -140,7 +108,7 @@ export default {
   &.active {
 
     > .bd-toc-link {
-      color: #337ab7;
+      color: white;
 
       &:hover {
         background-color: #ccc;
@@ -151,34 +119,6 @@ export default {
       display: block;
     }
   }
-}
-
-// All levels of nav
-.bd-sidebar .nav > li > a {
-  display: block;
-  padding: .2rem 1.5rem;
-  font-size: 90%;
-  color: #337ab7;
-}
-
-.bd-sidebar .nav > li > a:hover {
-  color: rgba(0, 0, 0, .85);
-  text-decoration: none;
-  background-color: #eee;
-}
-
-.bd-sidebar .nav > .active > a,
-.bd-sidebar .nav > .active:hover > a {
-  font-weight: 500;
-  color: rgba(0, 0, 0, .85);
-  background-color: transparent;
-}
-
-
-.bd-sidebar .nav > li > a.active {
-  color: #337ab7;
-  font-weight: bold;
-  background-color: #eee;
 }
 
 ul.menu-groups {
@@ -194,21 +134,81 @@ li.menu-group {
 ul.menu-group-items {
   list-style: none;
   padding: 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid #eee;
 }
 
 li.menu-item {
   display: block;
   height: 55px;
+  color: white;
 }
 
 li.menu-item.item {
   line-height: 55px;
-  background: #f5f5f5;
 }
 
-li.menu-item.item:hover {
-  background: #eee;
+li.menu-item.item.default {
+  background: #478dca;
+}
+
+li.menu-item.item.default:hover {
+  background: #4288c5;
+}
+
+li.menu-item.item.info {
+  background: #59b9c6;
+}
+
+li.menu-item.item.info:hover {
+  background: #59bad4;
+}
+
+li.menu-item.item.primary {
+  background:#118cff;
+}
+
+li.menu-item.item.primary:hover {
+  background:#119fff;
+}
+
+li.menu-item.item.secondary {
+  background: #979ea7;
+}
+
+li.menu-item.item.secondary:hover {
+  background: #9198a2;
+}
+
+li.menu-item.item.success {
+  background: #39b856;
+}
+
+li.menu-item.item.success:hover {
+  background: #27b744;
+}
+
+li.menu-item.item.warning {
+  background: #ffda3f;
+}
+
+li.menu-item.item.warning:hover {
+  background: #ffd439;
+}
+
+li.menu-item.item.danger {
+  background: #de5767;
+}
+
+li.menu-item.item.danger:hover {
+  background: #dc4555;
+}
+
+li.menu-item.item.dark {
+  background: #464c52;
+}
+
+li.menu-item.item.dark:hover {
+  background: #404450;
 }
 
 .clearfix::after {
@@ -219,7 +219,6 @@ li.menu-item.item:hover {
 
 span.title {
   display: block;
-  color:#337ab7;
   line-height: 55px;
   padding-left: 10px;
   float: left;
@@ -228,7 +227,6 @@ span.title {
 
 span.direction {
   display: block;
-  color:#337ab7;
   line-height: 55px;
   float: left;
   text-align: right;
