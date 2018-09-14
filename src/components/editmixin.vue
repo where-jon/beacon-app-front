@@ -24,7 +24,7 @@ export default {
       return this.$i18n.t('label.' + this.crud)
     },
     crud() {
-      return !this.isEditable? 'refer': this.isUpdate? 'update': 'register'
+      return this.bulkRegister? 'bulkRegister': !this.isEditable? 'refer': this.isUpdate? 'update': 'register'
     },
     isUpdate() {
       return this[this.name][this.id] != null
@@ -61,6 +61,7 @@ export default {
       evt.preventDefault()
       try {
         let res = await this.save()
+        console.log("FIN save")
         this.message = this.$i18n.t('message.' + this.crud + 'Completed', {target: this.$i18n.t('label.' + this.name)})
         this.showInfo = true
         if (this.again) {
@@ -77,6 +78,7 @@ export default {
         }
       }
       catch(e) {
+        console.error(e)
         if (e.key) {
           this.message = this.$i18n.t('message.' + e.type, {key: this.$i18n.t('label.' + Util.snake2camel(e.key)), val: e.val})
         }
@@ -97,7 +99,51 @@ export default {
           if (imgHeightName) that.form[imgHeightName] = height
           if (thumbnailName) that.form[thumbnailName] = thumbnail
       }, resize)
-    }
+    },
+    async bulkSave(convert2Entities) {
+      console.log(this.form.csvFile)
+      if (!this.form.csvFile) {
+        throw new Error(this.$t('message.emptyFile'))
+      }
+
+      const reader = new FileReader()
+      let readFin = false
+      let error = null
+      let entities = null
+      reader.addEventListener('load', (e) => {
+        try {
+          console.log("encode:", Util.detectEncoding(e.target.result))
+          let str = Util.convert2Unicode(e.target.result)
+          let csv = Util.convertCsv2Obj(str)
+          if (csv.errors && csv.errors.length > 0) {
+            console.error(csv.errors)
+            if (csv.errors[0].startsWith("message.")) {
+              error = this.$t(csv.errors[0])
+            }
+          }
+          console.debug(csv)
+          entities = convert2Entities(csv)
+          console.debug({entities})
+        } catch (e) {
+          console.error(e)
+          error = e.message
+        }
+
+        readFin = true
+      });
+      
+      reader.readAsBinaryString(this.form.csvFile)
+
+      if (!readFin) {
+        await Util.sleep(100)
+      }
+      
+      if (error || !entities || entities.length == 0) {
+        throw new Error(error)
+      }
+
+      await AppServiceHelper.bulkSave(this.appServicePath, entities)          
+   },
   }
 }
 
