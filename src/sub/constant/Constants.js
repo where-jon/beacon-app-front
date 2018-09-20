@@ -52,7 +52,14 @@ export const MENU = [
     base: 'master/',
     path: 'master/area',
     icon: 'fas fa-database',
-    pages: [{
+    pages: [
+      {
+        key: 'region',
+        path: 'region',
+        feature: '/core/region',
+        icon: 'fas fa-building',
+      },
+      {
         key: 'area',
         path: 'area',
         feature: '/core/area',
