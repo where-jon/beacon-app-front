@@ -5,6 +5,8 @@ export const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 
 export const snake2camel = (str) => str.replace(/_./g, (s) => s.charAt(1).toUpperCase())
 
+export const hasValue = (str) => str !== undefined && str.length != 0
+
 export const converToCsv = (array, headers) => {
   if (!array || array.length == 0) {
     return null

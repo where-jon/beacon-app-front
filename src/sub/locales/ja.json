@@ -125,6 +125,12 @@
     "ruby": "ふりがな",
     "tel": "電話番号",
 
+    "loginId": "ログインID",
+    "password": "パスワード",
+    "passwordConfirm": "確認パスワード",
+    "name": "名前",
+    "email": "email",
+
     "category": "カテゴリ",
     "categoryId": "カテゴリID",
     "categoryName": "カテゴリ名",
@@ -189,6 +195,9 @@
     "completed": "{target}が完了しました。",
     "failed": "{target}に失敗しました。（{code}）",
     "selectFile": "ファイルを選択してください",
+    "required": "{target}を入力してください。",
+    "validate": "{target}を確認してください。",
+    "lengthRange": "{target}は{min}文字以上{max}文字以下で指定してください。",
     "mapRatioSetting": "実際の距離（mm単位）とマップイメージのサイズ（px単位）との比率を設定します。まず実際の距離がわかっている箇所に該当するマップ上の２点を順にクリックし、ついで「実際の幅」の欄にmm単位で値を設定し、「設定中」となっているボタンを押してください。",
     "unsavedData": "保存されていないデータは全て破棄されますがよろしいですか？",
 
