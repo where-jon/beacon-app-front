@@ -52,6 +52,7 @@ import * as Util from '../sub/util/Util'
 import * as AuthHelper from '../sub/helper/AuthHelper'
 import { DISP, APP } from '../sub/constant/config'
 import { LOGIN_MODE } from '../sub/constant/Constants'
+import { getThemeClasses  } from '../sub/helper/MenuHelper'
 
 export default {
   mounted() {
@@ -66,17 +67,6 @@ export default {
     return {
       version: APP.VERSION,
       nav : this.$store.state.menu,
-      navbarClasses: {
-        default: DISP.THEME === 'default',
-        'bg-primary': DISP.THEME === 'primary',
-        'bg-secondary': DISP.THEME === 'secondary',
-        'bg-success': DISP.THEME === 'success',
-        'bg-info': DISP.THEME === 'info',
-        'bg-warning': DISP.THEME === 'warning',
-        'bg-danger': DISP.THEME === 'danger',
-        'bg-light': DISP.THEME === 'light',
-        'bg-dark': DISP.THEME === 'dark',
-      },
     }
   },
   computed: {
@@ -94,7 +84,22 @@ export default {
     },
     ...mapState('app_service', [
       'persons',
-    ])
+    ]),
+    navbarClasses () {
+      let themeClasses = getThemeClasses(this.$store.state.setting.theme)
+      const array = Object.keys(themeClasses).map((e) => {
+        const key = 'bg-' + e
+        const obj = {}
+        obj[key] = themeClasses[e]
+        return obj
+      })
+      themeClasses = {}
+      Object.assign(themeClasses, ...array)
+      return {
+        default: this.$store.state.setting.theme === 'default',
+        ...themeClasses
+      }
+    }
   },
   methods: {
     logout() {

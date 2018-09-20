@@ -61,18 +61,6 @@ export default {
   data() {
     return {
       showSidebar: DISP.SHOW_SIDEBAR,
-      sidebarClasses: {
-        'bd-sidebar': true,
-        default: DISP.THEME === 'default',
-        primary: DISP.THEME === 'primary',
-        secondary: DISP.THEME === 'secondary',
-        success: DISP.THEME === 'success',
-        info: DISP.THEME === 'info',
-        warning: DISP.THEME === 'warning',
-        danger: DISP.THEME === 'danger',
-        light: DISP.THEME === 'light',
-        dark: DISP.THEME === 'dark',
-      },
     }
   },
   computed: {
@@ -83,6 +71,21 @@ export default {
       'showProgress',
       'title',
     ]),
+    sidebarClasses () {
+      const theme = this.$store.state.setting.theme
+      return {
+        'bd-sidebar': true,
+        default: this.$store.state.setting.theme === 'default',
+        primary: this.$store.state.setting.theme === 'primary',
+        secondary: this.$store.state.setting.theme === 'secondary',
+        success: this.$store.state.setting.theme === 'success',
+        info: this.$store.state.setting.theme === 'info',
+        warning: this.$store.state.setting.theme === 'warning',
+        danger: this.$store.state.setting.theme === 'danger',
+        light: this.$store.state.setting.theme === 'light',
+        dark: this.$store.state.setting.theme === 'dark',
+      }
+    }
   },
   methods: {
   },

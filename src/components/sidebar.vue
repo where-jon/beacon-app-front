@@ -22,24 +22,21 @@
 <script>
 
 import { DISP } from '../sub/constant/config'
+import { getThemeClasses  } from '../sub/helper/MenuHelper'
 
 export default {
   data() {
     return {
       nav : this.$store.state.menu,
       selectedItem: -1,
-      menuItemClasses: {
+    }
+  },
+  computed: {
+    menuItemClasses () {
+      return {
         'menu-item': true,
         item: true,
-        default: DISP.THEME === 'default',
-        primary: DISP.THEME === 'primary',
-        secondary: DISP.THEME === 'secondary',
-        success: DISP.THEME === 'success',
-        info: DISP.THEME === 'info',
-        warning: DISP.THEME === 'warning',
-        danger: DISP.THEME === 'danger',
-        light: DISP.THEME === 'light',
-        dark: DISP.THEME === 'dark',
+        ...getThemeClasses(this.$store.state.setting.theme)
       }
     }
   },
@@ -47,7 +44,7 @@ export default {
     onMenuClick (index) {
       this.selectedItem = index === this.selectedItem ? -1 : index
     },
-  }
+  },
 }
 </script>
 
