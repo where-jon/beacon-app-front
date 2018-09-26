@@ -1,5 +1,16 @@
 <template>
   <div class="container-fluid">
+    <b-row v-if="csv"> 
+      <b-col md="4" class="mb-3">
+      </b-col>
+      <b-col class="mb-3 justify-content-end">
+        <b-input-group>
+          <b-form-file v-model="file" accept=".csv" :placeholder="$t('message.selectFile') " ></b-form-file>
+          <b-button type="submit" variant="outline-primary" @click="importCsv" class="ml-2">IMPORT</b-button>
+          <b-button type="submit" variant="outline-primary" @click="exportCsv" class="ml-4">EXPORT</b-button>
+        </b-input-group>
+      </b-col>
+    </b-row>
     <!-- searchbox -->
     <b-row>
       <b-col md="6" class="my-1">
@@ -55,9 +66,11 @@ import * as AppServiceHelper from '../sub/helper/AppServiceHelper'
 import { addLabelByKey } from '../sub/helper/ViewHelper'
 import { EventBus } from '../sub/helper/EventHelper'
 import * as MenuHelper from '../sub/helper/MenuHelper'
+import * as HtmlUtil from '../sub/util/HtmlUtil'
+import * as Util from '../sub/util/Util'
 
 export default {
-  props: ['params', 'list'],
+  props: ['params', 'list', 'csv'],
   data() {
     return {
       currentPage: 1,
@@ -65,6 +78,7 @@ export default {
       filter: null,
       modalInfo: { title: '', content: '', id:'' },
       totalRows: this.initTotalRows,
+      file: null,
       ...this.params
     }
   },
@@ -91,7 +105,18 @@ export default {
       'replaceAS', 
     ]),
     thumbnail(index) {
-      return this.$parent.$options.methods.thumbnail.call(this.$parent, index)
+      return this.$parent.$options.methods.thumbnail.call(this.$parent, this.perPage * (this.currentPage - 1) + index)
+    },
+    importCsv() {
+      Util.readCsvFile(this.file, this.importCsvOnload, this.autoInsertId)
+    },
+    async importCsvOnload(data) {
+      await AppServiceHelper.bulkSave(this.params.appServicePath, data)
+      this.$parent.$options.methods.fetchData.apply(this.$parent)
+    },
+    exportCsv() {
+      const headers = this.params.fields.filter((val) => val.key !== "actions").map((val) => val.key)
+      HtmlUtil.fileDL(this.params.name + ".csv", Util.converToCsv(this.list, headers))
     },
     async edit(item, index, target) {
       console.log({item, index, target})

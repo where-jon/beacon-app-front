@@ -85,6 +85,12 @@ export const MENU = [
         feature: '/basic/person',
         icon: 'far fa-id-card',
       },
+      {
+        key: 'thing',
+        path: 'thing',
+        feature: '/basic/thing',
+        icon: 'fas fa-cube',
+      },
     ]
   },
   {
