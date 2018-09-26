@@ -2,7 +2,7 @@
   <div class="container">
 
     <b-alert variant="info" :show="showInfo">{{ message }}</b-alert>
-    <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">{{ message }}</b-alert>
+    <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false" v-html="message"></b-alert>
 
     <b-form @submit="onSubmit" v-if="show">
       <b-form-group>
@@ -52,25 +52,34 @@ export default {
   methods: {
     async save() {
       await this.bulkSave((csv) => {
+        if (!csv || !csv.data) return
         let entities = []
         let header
         let dummyKey = -1
-        let location = ["locationId","areaId","locationName","displayName","visible","txViewType","posId","x","y"]
+        
+        let MAIN_COL = "exbId"
+        let LOCATION = ["locationId","areaName","locationName","visible","txViewType","posId","x","y"]
+        let INT_TYPE_LIST = ["deviceId", "exbId", "areaId", "locationId", "posId", "x", "y", "z", "txViewType", "zoneName"]
+        let BOOL_TYPE_LIST = ["visible", "enabled"]
+
         csv.data.forEach((line, lineIdx) => {
           if (lineIdx == 0) {
             header = line
+            if (!header.includes(MAIN_COL)) {
+              throw Error(that.$i18n.t('message.csvHeaderRequired'))
+            }
           }
           else {
-            let entity = {location:{}}
+            let entity = {location:{locationId:dummyKey--}}
             line.forEach((val, idx) => {
-              if (Util.equalsAny(header[idx], ["visible", "enabled"])) { // Boolean type
+              if (Util.equalsAny(header[idx], BOOL_TYPE_LIST)) { // Boolean type
                 val = Boolean(val)
               }
-              else if (Util.equalsAny(header[idx], ["deviceId", "exbId", "locationId", "posId", "areaId", "x", "y", "z", "txViewType", "zoneId"])) { // Number type
+              else if (Util.equalsAny(header[idx], INT_TYPE_LIST)) { // Number type
                 val = Number(val)
               }
 
-              if (Util.equalsAny(header[idx], location)) {
+              if (Util.equalsAny(header[idx], LOCATION)) {
                 if (header[idx] == "locationId" && !val) {
                   val = dummyKey--
                 }

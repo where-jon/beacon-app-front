@@ -82,6 +82,12 @@ export default {
         if (e.key) {
           this.message = this.$i18n.t('message.' + e.type, {key: this.$i18n.t('label.' + Util.snake2camel(e.key)), val: e.val})
         }
+        else if (e.bulkError) {
+          this.message = _.map(e.bulkError, (err) => {
+            return this.$i18n.t('message.bulk' + err.type + 'Failed', 
+              {line: err.line, col: err.col, value: err.value, min: err.min, max: err.max, candidates: err.candidates})
+          }).join("<br>")
+        }
         else {
           this.message = this.$i18n.t('message.' + this.crud + 'Failed', {target: this.$i18n.t('label.' + this.name), code: e.message})
         }
@@ -113,11 +119,10 @@ export default {
       reader.addEventListener('load', (e) => {
         try {
           console.log("encode:", Util.detectEncoding(e.target.result))
-          let str = Util.convert2Unicode(e.target.result)
-          let csv = Util.convertCsv2Obj(str)
+          let csv = Util.csv2Obj(e.target.result)
           if (csv.errors && csv.errors.length > 0) {
             console.error(csv.errors)
-            if (csv.errors[0].startsWith("message.")) {
+            if (typeof csv.errors[0] == 'string' && csv.errors[0].startsWith("message.")) {
               error = this.$t(csv.errors[0])
             }
           }
