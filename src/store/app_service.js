@@ -11,6 +11,8 @@ export const state = () => ({
   exb: {},
   txs: [],
   tx: {},
+  categories: [],
+  category: {},
 })
 
 const initState = state()

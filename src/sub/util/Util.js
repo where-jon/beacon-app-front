@@ -5,6 +5,18 @@ export const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 
 export const snake2camel = (str) => str.replace(/_./g, (s) => s.charAt(1).toUpperCase())
 
+export const colorCd4db = (str) => {
+  const color = str.replace("#", "")
+  return color.slice(0, 8)
+}
+
+export const colorCd4display = (str) => {
+  if(str === undefined){
+    return "#000000"
+  }
+  return "#" + str.replace("#", "").slice(0, 8)
+}
+
 export const converToCsv = (array, headers) => {
   if (!array || array.length == 0) {
     return null

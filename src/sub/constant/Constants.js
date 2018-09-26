@@ -27,6 +27,13 @@ export const txViewTypes = [
   {value: 3, text: "pattern3"},
 ]
 
+export const CATEGORY = {
+  TYPES: [
+    {value: 0, text: "人"},
+    {value: 1, text: "物"},
+  ],
+}
+
 export const MENU = [
   {
     key: 'main',
@@ -84,6 +91,12 @@ export const MENU = [
         path: 'person',
         feature: '/basic/person',
         icon: 'far fa-id-card',
+      },
+      {
+        key: 'category',
+        path: 'category',
+        feature: '/basic/category',
+        icon: 'fas fa-sitemap',
       },
     ]
   },

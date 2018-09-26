@@ -25,6 +25,9 @@
     <!-- table -->
     <b-table show-empty stacked="md" striped hover :items="list" :fields="fields" :current-page="currentPage" :per-page="perPage" outlined
             :filter="filter" @filtered="onFiltered">
+      <template slot="style" slot-scope="row">
+        <div v-bind:style="row.item.style">A</div>
+      </template>
       <template slot="actions" slot-scope="row">
         <b-button size="sm" @click.stop="edit(row.item, row.index, $event.target)" variant="outline-primary" class="mr-2 my-1" v-t="'label.' + crud" />
         <b-button v-if="isEditable" size="sm" @click.stop="deleteConfirm(row.item, row.index, $event.target)" variant="outline-danger" class="mr-1" v-t="'label.delete'" />
