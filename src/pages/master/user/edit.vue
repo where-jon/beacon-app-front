@@ -23,7 +23,7 @@
       </b-form-group>
       <b-form-group>
         <label v-t="'label.role'" />
-        <b-form-select v-model="selectOption" :options="roleOptions" required ></b-form-select>
+        <b-form-select v-model="role" :options="roles" required ></b-form-select>
       </b-form-group>
       <b-form-group>
         <label v-t="'label.description'" />
@@ -31,7 +31,7 @@
       </b-form-group>
       <b-form-group>
         <label v-t="'label.password'" />
-        <b-form-input type="password" v-model="form.pass" pattern="^[a-zA-Z0-9_\-\/!#\$%&]*$" :readonly="!isEditable" />
+        <b-form-input type="password" v-model="pass" pattern="^[a-zA-Z0-9_\-\/!#\$%&]*$" :readonly="!isEditable" />
       </b-form-group>
       <b-form-group>
         <label v-t="'label.passwordConfirm'" />
@@ -61,18 +61,19 @@ export default {
       id: 'userId',
       backPath: '/master/user',
       appServicePath: '/meta/user',
-      form: ViewHelper.extract(this.$store.state.app_service.user, ["userId", "loginId", "pass", "name", "email", "roleId", "description"]),
-      roleOptions: [],
-      selectOption: null,
-      passConfirm: "",
+      form: ViewHelper.extract(this.$store.state.app_service.user, ["userId", "loginId", "name", "email", "roleId", "description"]),
+      roles: [],
+      role: null,
+      pass: undefined,
+      passConfirm: undefined,
       passMinLength: 3,
       passMaxLength: 16,
     }
   },
   async created(){
-    this.roleOptions = await AppServiceHelper.fetchList("/meta/role/", 'roleId')
-    this.roleOptions = this.roleOptions.map((val) => ({text: val.roleName, value: val.roleId}))
-    this.selectOption = this.form.roleId
+    this.roles = await AppServiceHelper.fetchList("/meta/role/", 'roleId')
+    this.roles = this.roles.map((val) => ({text: val.roleName, value: val.roleId}))
+    this.role = this.form.roleId
   },
   computed: {
     ...mapState('app_service', [
@@ -84,27 +85,27 @@ export default {
       if(Util.hasValue(this.form.userId)){
         return false
       }
-      if(Util.hasValue(this.form.pass)){
+      if(Util.hasValue(this.pass)){
         return false
       }
       return true
     },
     isErrorPasswordLength(){
-      if(!Util.hasValue(this.form.pass)){
+      if(!Util.hasValue(this.pass)){
         return false
       }
-      if(this.passMinLength <= this.form.pass.length && this.form.pass.length <= this.passMaxLength){
+      if(this.passMinLength <= this.pass.length && this.pass.length <= this.passMaxLength){
         return false
       }
       return true
     },
     isErrorPasswordValue(){
       if(Util.hasValue(this.form.userId)){
-        if(!Util.hasValue(this.form.pass) && !Util.hasValue(this.passConfirm)){
+        if(!Util.hasValue(this.pass) && !Util.hasValue(this.passConfirm)){
           return false
         }
       }
-      if(this.form.pass === this.passConfirm){
+      if(this.pass === this.passConfirm){
         return false
       }
       return true
@@ -124,7 +125,7 @@ export default {
         this.showAlert = true
       }
       else if(this.isErrorPasswordValue()){
-        this.message = this.$i18n.t('message.validate', {target: this.$i18n.t('label.password')})
+        this.message = this.$i18n.t('message.validatePassword')
         this.showAlert = true
       }
       if(this.showAlert){
@@ -133,7 +134,8 @@ export default {
         return false;
       }
       this.form.userId = Util.hasValue(this.form.userId) ? String(this.form.userId) : undefined
-      this.form.roleId = String(this.selectOption)
+      this.form.roleId = String(this.role)
+      this.form.pass = this.pass
       this.register(again)
     }
   },

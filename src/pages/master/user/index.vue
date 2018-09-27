@@ -27,7 +27,7 @@ export default {
           {key: "name", sortable: true  },
           {key: "loginId", sortable: true  },
           {key: "email", sortable: true },
-          {key: "role", sortable: true },
+          {key: "roleName", label: "role", sortable: true },
           {key: "description", sortable: true },
           {key: "actions", thStyle: {width:'130px !important'} }
         ]),
@@ -45,7 +45,7 @@ export default {
       try {
         this.replace({showProgress: true})
         let users = await AppServiceHelper.fetchList("/meta/user/", 'userId')
-        users = users.map((val) => ({...val, role: val.role.roleName}))
+        users = users.map((val) => ({...val, roleName: val.role.roleName}))
         if (payload && payload.done) {
           payload.done()
         }
