@@ -145,7 +145,6 @@ export default {
           visible: this.form.visible,
           txViewType: this.form.txViewType,
           posId: this.form.posId,
-          areaId: this.form.areaId,
           x: this.form.x,
           y: this.form.y,
         }
