@@ -1,11 +1,11 @@
 <template>
   <div class="container">
-    <breadcrumb :items="items" />
+    <breadcrumb :items="items" :reload="true" />
     <NowLoading v-if="loading" />
     <div v-if="!loading">
       <b-row align-h="end">
         <b-col md="2" class="mb-3 mr-3">
-          <b-button variant='outline-primary' @click="download()" v-t="'label.download'" />
+          <b-button :variant='getTheme' @click="download()" v-t="'label.download'" />
         </b-col>
       </b-row>
       <div class="table-area">
@@ -48,6 +48,7 @@ import { EXB, DISP, APP } from '../../sub/constant/config'
 import breadcrumb from '../../components/breadcrumb.vue'
 import NowLoading from '../../components/nowloading.vue'
 import VueScrollingTable from "vue-scrolling-table"
+import { getTheme } from '../../sub/helper/ThemeHelper'
 
 export default {
   components: {
@@ -71,6 +72,10 @@ export default {
     }
   },
   computed: {
+    getTheme () {
+      const theme = getTheme(this.$store.state.loginId)
+      return 'outline-' + theme
+    },
     ...mapState('monitor', [
       'positions',
     ])

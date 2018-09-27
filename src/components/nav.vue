@@ -20,19 +20,12 @@
 
       <!-- right -->
       <b-navbar-nav class="ml-auto">
-        <!-- reload -->
-        <b-nav-item right>
-          <div v-show="!isLoginPage && showReload">
-            <i class="fas fa-sync-alt" :title="$t('label.reload')" @click="fetchData" ><span class="d-md-none" v-t="'label.reload'"></span></i>
-          </div>
-        </b-nav-item>
-
         <!-- user & logout -->
         <b-nav-item-dropdown right>
           <template slot="button-content">
             <i class="fa fa-user" aria-hidden="true"></i>&nbsp;<em>{{ loginId }}</em>
           </template>
-          <b-dropdown-item href="#" @click="profile">Profile</b-dropdown-item>
+          <b-dropdown-item href="#" @click="move('/setting/personal')">Profile</b-dropdown-item>
           <b-dropdown-item href="#" @click="logout"><i class="fas fa-sign-out-alt"></i>&nbsp;Logout</b-dropdown-item>
           <b-dropdown-divider/>
           <b-dropdown-item>{{ version }}</b-dropdown-item>

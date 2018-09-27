@@ -30,7 +30,7 @@ import Vue from 'vue'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import _ from 'lodash'
 import { EventBus } from '../sub/helper/EventHelper'
-import { getTheme } from '../sub/helper/ThemeHelper'
+import { getTheme, themeColors } from '../sub/helper/ThemeHelper'
 import { APP, DISP } from '../sub/constant/config'
 import styles from '../sub/constant/config.scss'
 
@@ -58,6 +58,15 @@ export default {
     mNav
   },
   mounted() {
+    const setColor = (className, color) => {
+      [].forEach.call(document.getElementsByClassName(className), (e) => {
+        e.style.backgroundColor = color
+      })
+    }
+    const theme = getTheme(this.loginId)
+    const color = themeColors[theme]
+    setColor('dropdown-menu', color)
+    setColor('dropdown-item', color)
   },
   data() {
     return {

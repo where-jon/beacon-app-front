@@ -5,7 +5,8 @@
     <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">{{ message }}</b-alert>
 
     <breadcrumb :items="items" />
-
+    <b-row>
+      <b-col md="8">
         <b-form @submit="onSubmit" v-if="show">
           <b-form-group v-if="form.personId">
             <label v-t="'label.personId'" />
@@ -45,10 +46,13 @@
             <b-form-textarea v-model="form.description" :rows="3" :max-rows="6" :readonly="!isEditable" ></b-form-textarea>
           </b-form-group>
 
-          <b-button v-if="isEditable" type="submit" variant="outline-primary" @click="register(false)" >{{ label }}</b-button>
-          <b-button v-if="isEditable && !isUpdate" type="submit" variant="outline-primary" @click="register(true)" class="ml-2" v-t="'label.registerAgain'"/>
-          <b-button type="button" variant="outline-danger" @click="backToList" class="ml-2" v-t="'label.back'"/>
+          <b-button type="button" variant="outline-danger" @click="backToList" v-t="'label.back'"/>
+          <b-button v-if="isEditable" type="submit" :variant="getTheme" @click="register(false)" class="ml-2"  >{{ label }}</b-button>
+          <b-button v-if="isEditable && !isUpdate" type="submit" :variant="getTheme" @click="register(true)" class="ml-2" v-t="'label.registerAgain'"/>
         </b-form>
+      </b-col>
+    </b-row>
+
 
   </div>
 </template>
@@ -59,6 +63,7 @@ import _ from 'lodash'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import editmixinVue from '../../../components/editmixin.vue';
 import breadcrumb from '../../../components/breadcrumb.vue'
+import { getTheme } from '../../../sub/helper/ThemeHelper'
 
 export default {
   components: {
@@ -89,6 +94,10 @@ export default {
     }
   },
   computed: {
+    getTheme () {
+      const theme = getTheme(this.$store.state.loginId)
+      return 'outline-' + theme
+    },
     ...mapState('app_service', [
       'person',
     ]),

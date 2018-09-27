@@ -1,10 +1,10 @@
 <template>
   <div class="container">
-    <breadcrumb :items="items" />
+    <breadcrumb :items="items" :reload="true" />
     <p></p>
     <b-row align-h="end">
       <b-col md="2" class="mb-3 mr-3">
-        <b-button variant='outline-primary' @click="download()" v-t="'label.download'" />
+        <b-button :variant="getTheme" @click="download()" v-t="'label.download'" />
       </b-col>
     </b-row>
     <table class="table table-hover table-bordered">
@@ -30,6 +30,7 @@ import * as Util from '../../sub/util/Util'
 import { EventBus } from '../../sub/helper/EventHelper'
 import { EXB, DISP, APP } from '../../sub/constant/config'
 import breadcrumb from '../../components/breadcrumb.vue'
+import { getTheme } from '../../sub/helper/ThemeHelper'
 
 export default {
   components: {
@@ -50,6 +51,10 @@ export default {
     }
   },
   computed: {
+    getTheme () {
+      const theme = getTheme(this.$store.state.loginId)
+      return 'outline-' + theme
+    },
     ...mapState('monitor', [
       'gateways',
     ])

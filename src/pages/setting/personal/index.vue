@@ -7,16 +7,21 @@
     <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">{{ message }}</b-alert>
     -->
 
-    <b-form>
-      <b-form-group>
-        <label v-t="'label.loginId'" />
-        <b-form-input type="text" :value="loginId" readonly="readonly" />
-      </b-form-group>
-      <b-form-group>
-        <label v-t="'label.theme'" />
-        <b-form-select v-model="selectedTheme" :options="theme" class="mb-3" @change="themeSelected"/>
-      </b-form-group>
-    </b-form>
+    <b-row>
+      <b-col md="8">
+        <b-form>
+          <b-form-group>
+            <label v-t="'label.loginId'" />
+            <b-form-input type="text" :value="loginId" readonly="readonly" />
+          </b-form-group>
+          <b-form-group>
+            <label v-t="'label.theme'" />
+            <b-form-select v-model="selectedTheme" :options="theme" class="mb-3" @change="themeSelected"/>
+          </b-form-group>
+        </b-form>
+      </b-col>
+    </b-row>
+
   </div>
 </template>
 

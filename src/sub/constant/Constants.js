@@ -121,7 +121,7 @@ export const MENU = [
         key: 'personal',
         path: 'personal',
         feature: '/core/personal',
-        icon: 'fa fa-person',
+        icon: 'fas fa-user-cog',
       },
     ]
   },
