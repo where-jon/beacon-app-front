@@ -21,8 +21,8 @@
 
 <script>
 
-import { DISP } from '../sub/constant/config'
-import { getThemeClasses  } from '../sub/helper/MenuHelper'
+import { DISP, THEME } from '../sub/constant/config'
+import { getTheme } from '../sub/helper/ThemeHelper'
 
 export default {
   data() {
@@ -32,11 +32,23 @@ export default {
     }
   },
   computed: {
+    loginId() {
+      return this.$store.state.loginId
+    },
     menuItemClasses () {
+      const theme = getTheme(this.loginId)
+      const array = THEME.map((e) => {
+        const obj = {}
+        obj[e.name] = e.name === theme
+        return obj
+      })
+      let themeClasses = {}
+      Object.assign(themeClasses, ...array)
+      const storeTheme = this.$store.state.setting.theme
       return {
         'menu-item': true,
         item: true,
-        ...getThemeClasses(this.$store.state.setting.theme)
+        ...themeClasses
       }
     }
   },

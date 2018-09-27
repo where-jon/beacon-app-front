@@ -30,6 +30,7 @@ import Vue from 'vue'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import _ from 'lodash'
 import { EventBus } from '../sub/helper/EventHelper'
+import { getTheme } from '../sub/helper/ThemeHelper'
 import { APP, DISP } from '../sub/constant/config'
 import styles from '../sub/constant/config.scss'
 
@@ -64,6 +65,9 @@ export default {
     }
   },
   computed: {
+    loginId() {
+      return this.$store.state.loginId
+    },
     isLoginPage() {
       return this.$router.app._route.path == APP.LOGIN_PAGE
     },
@@ -72,18 +76,19 @@ export default {
       'title',
     ]),
     sidebarClasses () {
-      const theme = this.$store.state.setting.theme
+      const theme = getTheme(this.loginId)
+      const storeTheme = this.$store.state.setting.theme
       return {
         'bd-sidebar': true,
-        default: this.$store.state.setting.theme === 'default',
-        primary: this.$store.state.setting.theme === 'primary',
-        secondary: this.$store.state.setting.theme === 'secondary',
-        success: this.$store.state.setting.theme === 'success',
-        info: this.$store.state.setting.theme === 'info',
-        warning: this.$store.state.setting.theme === 'warning',
-        danger: this.$store.state.setting.theme === 'danger',
-        light: this.$store.state.setting.theme === 'light',
-        dark: this.$store.state.setting.theme === 'dark',
+        default: theme === 'default',
+        primary: theme === 'primary',
+        secondary: theme === 'secondary',
+        success: theme === 'success',
+        info: theme === 'info',
+        warning: theme === 'warning',
+        danger: theme === 'danger',
+        light: theme === 'light',
+        dark: theme === 'dark',
       }
     }
   },

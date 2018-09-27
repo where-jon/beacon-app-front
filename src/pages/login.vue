@@ -37,6 +37,8 @@ export default {
       AuthHelper.auth(this.userId, this.password, ()=>{
         this.$router.push(APP.TOP_PAGE)
         this.message = ""
+        const theme = window.localStorage.getItem(this.userId + '-theme')
+        this.replaceSetting({theme})
       },
       () => {
         console.error("failed")
@@ -45,8 +47,11 @@ export default {
     },
     ...mapMutations('app_service', [
       'replaceAS', 
-    ])
-  }
+    ]),
+    ...mapMutations('setting', [
+      'replaceSetting', 
+    ]),
+  },
 }
 
 </script>

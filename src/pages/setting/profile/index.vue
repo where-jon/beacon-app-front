@@ -24,7 +24,6 @@
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import breadcrumb from '../../../components/breadcrumb.vue'
 import { DISP, THEME } from '../../../sub/constant/config'
-import { getTheme } from '../../../sub/helper/ThemeHelper'
 
 export default {
   components: {
@@ -38,7 +37,7 @@ export default {
           active: true
         },
         {
-          text: this.$i18n.t('label.personal'),
+          text: this.$i18n.t('label.profile'),
           active: true
         },
       ],
@@ -52,29 +51,27 @@ export default {
     },
   },
   created () {
-    const theme = getTheme(this.loginId)
-    const selected = THEME.find((item) => {
-      return item.name === theme
+    const init = THEME.find((e) => {
+      return e.name === this.$store.state.setting.theme
     })
-    this.selectedTheme = (typeof selected) !== 'undefined' ? selected.id : THEME[0].id
+    this.selectedTheme = (typeof init) !== 'undefined' ? init.id : THEME[0].id
     this.theme = THEME.map((e) => {
         return { value: e.id, text: e.label }
     })
   },
   methods: {
     themeSelected (selected) {
-      const t = THEME.find((e) => {
-        return e.id === selected
-      })
-      const theme = (typeof t !== 'undefined') ? t.name : 'default'
-      // storeにテーマをセット。navbar,sidebar,menu-itemのcomputedプロパティにて
-      // storeを参照しているため、テーマの変更を検知する
-      this.replaceSetting({theme})
-      window.localStorage.setItem(this.loginId + '-theme', theme)
+      // console.log('@@@@@@@@@@@@@')
+      // const t = THEME.find((e) => {
+      //   return e.id === selected
+      // })
+      // const theme = (typeof t !== 'undefined') ? t.name : 'default'
+      // this.replaceSetting({theme})
+      // window.localStorage.setItem(this.loginId + '-theme', theme)
     },
-    ...mapMutations('setting', [
-      'replaceSetting', 
-    ]),
+    // ...mapMutations('setting', [
+    //   'replaceSetting', 
+    // ]),
   }
 }
 </script>

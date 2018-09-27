@@ -9,7 +9,6 @@ const initState = state()
 export const mutations = {
   replaceSetting(state, obj) {
     if (obj) {
-      console.log(obj)
       for (let key in obj) {
         Vue.set(state, key, obj[key])
       }

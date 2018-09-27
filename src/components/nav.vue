@@ -50,9 +50,9 @@ import { EventBus } from '../sub/helper/EventHelper'
 import * as HtmlUtil from '../sub/util/HtmlUtil'
 import * as Util from '../sub/util/Util'
 import * as AuthHelper from '../sub/helper/AuthHelper'
-import { DISP, APP } from '../sub/constant/config'
+import { DISP, APP, THEME } from '../sub/constant/config'
 import { LOGIN_MODE } from '../sub/constant/Constants'
-import { getThemeClasses  } from '../sub/helper/MenuHelper'
+import { getTheme } from '../sub/helper/ThemeHelper'
 
 export default {
   mounted() {
@@ -86,18 +86,34 @@ export default {
       'persons',
     ]),
     navbarClasses () {
-      let themeClasses = getThemeClasses(this.$store.state.setting.theme)
-      const array = Object.keys(themeClasses).map((e) => {
-        const key = 'bg-' + e
+      const theme = getTheme(this.loginId)
+      const array = THEME.map((e) => {
+        const themeName = e.name
+        const key = 'bg-' + themeName
         const obj = {}
-        obj[key] = themeClasses[e]
+        obj[key] = themeName === theme
         return obj
       })
-      themeClasses = {}
+      let themeClasses = {}
       Object.assign(themeClasses, ...array)
       return {
         default: this.$store.state.setting.theme === 'default',
         ...themeClasses
+      }
+    },
+    dropdownClasses () {
+      const theme = getTheme(this.loginId)
+      const storeTheme = this.$store.state.setting.theme
+      return {
+        default: theme === 'default',
+        primary: theme === 'primary',
+        secondary: theme === 'secondary',
+        success: theme === 'success',
+        info: theme === 'info',
+        warning: theme === 'warning',
+        danger: theme === 'danger',
+        light: theme === 'light',
+        dark: theme === 'dark',
       }
     }
   },
@@ -148,6 +164,42 @@ nav.navbar.success {
 
 ul.navbar-nav {
   margin-left: 5%;
+}
+
+.dropdown-menu.default {
+  background-color: $menu-bg;
+}
+
+.dropdown-menu.primary {
+  background-color: $blue;
+}
+
+.dropdown-menu.secondary {
+  background-color: $gray-600;
+}
+
+.dropdown-menu.success {
+  background-color: $green;
+}
+
+.dropdown-menu.info {
+  background-color: $cyan;
+}
+
+.dropdown-menu.warning {
+  background-color: $yellow;
+}
+
+.dropdown-menu.danger {
+  background-color: $red;
+}
+
+.dropdown-menu.light {
+  background-color: $gray-100;
+}
+
+.dropdown-menu.dark {
+  background-color: $gray-800;
 }
 
 </style>
