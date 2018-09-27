@@ -24,7 +24,8 @@
         </b-form-group>
       </b-col>
       <b-col class="mb-2 justify-content-end">
-        <b-button variant='outline-primary' @click="edit()" v-t="'label.createNew'"  class="float-right"/>
+        <b-button variant='outline-primary' @click="edit()" v-t="'label.createNew'"  class="float-right ml-1"/>
+        <b-button v-if="params.bulkEditPath" variant='outline-primary' @click="bulkEdit()" v-t="'label.bulkRegister'"  class="float-right"/>
       </b-col>
     </b-row>
 
@@ -123,6 +124,10 @@ export default {
       let list = item != null? await AppServiceHelper.fetch(this.appServicePath, item[this.id]): {}
       this.replaceAS({[this.name]: list})
       this.$router.push(this.editPath)
+    },
+    async bulkEdit(item, index, target) {
+      console.log({item, index, target})
+      this.$router.push(this.params.bulkEditPath)
     },
     deleteConfirm(item, index, button) {
       this.modalInfo.title = this.$i18n.t('label.confirm')
