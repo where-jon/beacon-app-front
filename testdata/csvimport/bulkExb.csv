@@ -1,0 +1,4 @@
+exbId,deviceId,enabled,posId,locationName,areaName,x,y,visible,txViewType
+1,123,TRUE,19,あああ,f727,1,345,45,あ,TRUE,1
+,321,,20,いいい,f727,222,333,い,TRUE,2
+,4213,,21,ううう,f727,,,う,TRUE,3

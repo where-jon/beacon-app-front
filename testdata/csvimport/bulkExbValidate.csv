@@ -1,0 +1,4 @@
+exbId,deviceId,locationId,enabled,posId,locationName,areaName,x,y,displayName,visible,txViewType
+1,123334,1,TRUE,19,あああ,F26,345,45,あ,TRUE,1
+,321,,,20,い123456789012345678890,,222,333,い,TRUE,2
+,4213,,,21,ううう,愛エリア,,,う,TRUE,100

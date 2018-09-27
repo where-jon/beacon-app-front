@@ -1,5 +1,5 @@
 <template>
-  <m-list :params="params" :list="exbs" >
+  <m-list :params="params" :list="exbs">
   </m-list>
 </template>
 
@@ -21,6 +21,7 @@ export default {
         name: 'exb',
         id: 'exbId',
         editPath: '/master/exb/edit',
+        bulkEditPath: '/master/exb/bulkedit',
         appServicePath: '/core/exb',
         fields: addLabelByKey(this.$i18n, [ 
           {key: "exbId", sortable: true },
