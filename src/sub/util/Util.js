@@ -18,6 +18,8 @@ export const colorCd4display = (str) => {
     return "#000000"
   }
   return "#" + str.replace("#", "").slice(0, 8)
+}
+
 export const detectEncoding = (str) => jschardet.detect(str)
 
 export const csv2Obj = (str) => {
