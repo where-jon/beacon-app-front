@@ -27,6 +27,7 @@
     "actions": "アクション",
     "download": "ダウンロード",
     "csvFile": "CSVファイル",
+    "deleteThumbnail": "画像を削除",
 
     "---------------- App common ---------------":"",
     "login": "ログイン",
@@ -46,6 +47,7 @@
     "bgColor": "背景色",
     "color": "色",
     "dt": "日時",
+    "export": "EXPORT",
 
     "---------------- App exbeacon ---------------":"",
 
@@ -146,7 +148,7 @@
     "sensorName": "センサー名",
     "detectCount": "検知回数",
     
-    "thing": "物マスタ",
+    "thing": "物",
     "thingCd": "管理コード",
     "thingId": "物ID",
     "thingName": "名前",

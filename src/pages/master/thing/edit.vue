@@ -23,7 +23,8 @@
       </b-form-group>
       <b-form-group>
         <label v-t="'label.thumbnail'" />
-        <b-form-file v-if="isEditable" @change="readImage" v-model="form.thumbnail" accept="image/jpeg, image/png, image/gif" :placeholder="$t('message.selectFile') "></b-form-file>
+        <b-form-file v-if="isEditable" @change="readImage" v-model="form.thumbnail" ref="inputThumbnail" accept="image/jpeg, image/png, image/gif" :placeholder="$t('message.selectFile') "></b-form-file>
+        <b-button v-if="isEditable" type="button" variant="outline-primary" @click="clearImage" class="float-right mt-3">{{ deleteThumbnail }}</b-button>
         <img v-if="form.thumbnail" ref="thumbnail" :src="form.thumbnail" width="100" class="mt-1 ml-3" />
       </b-form-group>
       <b-form-group>
@@ -61,7 +62,6 @@ import * as Util from '../../../sub/util/Util'
 export default {
   mixins: [editmixinVue],
   data() {
-    console.log(this.$store.state.app_service.thing)
     return {
       name: 'thing',
       id: 'thingId',
@@ -69,6 +69,7 @@ export default {
       appServicePath: '/basic/thing',
       form: ViewHelper.extract(this.$store.state.app_service.thing, ["thingId", "thingCd", "thingName", "displayName", "thumbnail", "description", "exbId", "txId", "thingCategoryList.0"]),
       categories: [],
+      deleteThumbnail: this.$i18n.t('label.deleteThumbnail'),
     }
   },
   async created(){
@@ -87,19 +88,22 @@ export default {
     readImage(e) {
       this.readImageView(e, 'thumbnail')
     },
+    clearImage(e) {
+      this.$refs.inputThumbnail.reset();
+    },
     async save(ev) {
       let entity = {
-        thingId: this.form.thingId? this.form.thingId: -1,
+        thingId: this.form.thingId !== undefined? this.form.thingId: -1,
         thingCd: this.form.thingCd,
         thingName: this.form.thingName,
         displayName: this.form.displayName,
         thumbnail: this.form.thumbnail,
         description: this.form.description,
-        exbId: this.form.exbId,
+        exbId: this.form.exbId !== undefined? String(this.form.exbId): undefined,
         txId: this.form.txId,
         thingCategoryList: this.form.categoryId !== undefined? [{
           thingCategoryPK: {
-            thingId: this.form.thingId,
+            thingId: this.form.thingId !== undefined? this.form.thingId: -1,
             categoryId: this.form.categoryId,
           }
         }]: undefined

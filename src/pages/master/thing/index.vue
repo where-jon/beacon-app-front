@@ -1,5 +1,5 @@
 <template>
-  <m-list :params="params" :list="things" :csv=true >
+  <m-list :params="params" :list="things">
   </m-list>
 </template>
 
@@ -21,7 +21,9 @@ export default {
         name: 'thing',
         id: 'thingId',
         editPath: '/master/thing/edit',
+        bulkEditPath: '/master/thing/bulkedit',
         appServicePath: '/basic/thing',
+        csvOut: true,
         fields: addLabelByKey(this.$i18n, [ 
           {key: "thingId", sortable: true },
           {key: "thingCd", sortable: true },
@@ -54,7 +56,7 @@ export default {
         things = things.map((val) => {
           return {
             ...val,
-            categoryName: (val.thingCategoryList != undefined && val.thingCategoryList.length != 0? val.thingCategoryList[0].category.categoryName: null),
+            categoryName: (val.thingCategoryList !== undefined && val.thingCategoryList.length != 0? val.thingCategoryList[0].category.categoryName: ""),
             thumbnail: ""
           }
         }) // omit images to avoid being filtering target
