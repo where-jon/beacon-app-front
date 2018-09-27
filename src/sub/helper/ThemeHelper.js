@@ -15,7 +15,8 @@ export const getTheme = (loginId) => {
   if (!loginId || (typeof loginId) === 'undefined') {
     return 'default'
   }
-  return window.localStorage.getItem(loginId + '-theme')
+  const theme = window.localStorage.getItem(loginId + '-theme')
+  return theme && ((typeof theme) !== 'undefined') ? theme : 'default'
 }
 
 export const themeColors = {
