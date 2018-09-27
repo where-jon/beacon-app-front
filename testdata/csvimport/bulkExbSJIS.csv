@@ -1,0 +1,4 @@
+exbId,deviceId,locationId,enabled,posId,locationName,areaId,x,y,displayName,visible,txViewType
+1,123,1,TRUE,19,‚ ‚ ‚ ,1,345,45,‚ ,TRUE,1
+,321,,,20,‚¢‚¢‚¢,2,222,333,‚¢,TRUE,2
+,4213,,,21,‚¤‚¤‚¤,2,,,‚¤,TRUE,3
