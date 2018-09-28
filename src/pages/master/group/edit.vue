@@ -19,11 +19,11 @@
       </b-form-group>
       <b-form-group>
         <label v-t="'label.color'" />
-        <b-form-input type="color" v-model="form.color" required :readonly="!isEditable" />
+        <b-form-input type="color" v-model="color" required :readonly="!isEditable" />
       </b-form-group>
       <b-form-group>
         <label v-t="'label.bgColor'" />
-        <b-form-input type="color" v-model="form.bgColor" required :readonly="!isEditable" />
+        <b-form-input type="color" v-model="bgColor" required :readonly="!isEditable" />
       </b-form-group>
       <b-form-group>
         <label v-t="'label.description'" />
@@ -52,12 +52,14 @@ export default {
       id: 'groupId',
       backPath: '/master/group',
       appServicePath: '/basic/group',
-      form: ViewHelper.extract(this.$store.state.app_service.group, ["groupId", "groupName", "ruby", "color", "bgColor", "description"])
+      form: ViewHelper.extract(this.$store.state.app_service.group, ["groupId", "groupName", "ruby", "color", "bgColor", "description"]),
+      color: null,
+      bgColor: null,
     }
   },
   created() {
-    this.form.color = Util.colorCd4display(this.form.color)
-    this.form.bgColor = Util.colorCd4display(this.form.bgColor)
+    this.color = Util.colorCd4display(this.form.color)
+    this.bgColor = Util.colorCd4display(this.form.bgColor)
   },
   computed: {
     ...mapState('app_service', [
@@ -69,8 +71,8 @@ export default {
       if(this.form.groupId !== undefined){
         this.form.groupId = String(this.form.groupId)
       }
-      this.form.color = Util.colorCd4db(this.form.color)
-      this.form.bgColor = Util.colorCd4db(this.form.bgColor)
+      this.form.color = Util.colorCd4db(this.color)
+      this.form.bgColor = Util.colorCd4db(this.bgColor)
       this.register(again)
     }
   },
