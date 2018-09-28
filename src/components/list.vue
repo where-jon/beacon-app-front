@@ -58,7 +58,7 @@ import * as AppServiceHelper from '../sub/helper/AppServiceHelper'
 import { addLabelByKey } from '../sub/helper/ViewHelper'
 import { EventBus } from '../sub/helper/EventHelper'
 import * as MenuHelper from '../sub/helper/MenuHelper'
-import { getTheme, themeColors } from '../sub/helper/ThemeHelper'
+import { getButtonTheme, getTheme, themeColors } from '../sub/helper/ThemeHelper'
 
 export default {
   props: ['params', 'list'],
@@ -86,7 +86,7 @@ export default {
       return this.$store.state.loginId
     },
     getTheme () {
-      const theme = getTheme(this.loginId)
+      const theme = getButtonTheme(this.loginId)
       return 'outline-' + theme
     }
   },

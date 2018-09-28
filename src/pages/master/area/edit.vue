@@ -38,7 +38,7 @@ import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import editmixinVue from '../../../components/editmixin.vue';
 import breadcrumb from '../../../components/breadcrumb.vue'
 import { APP } from '../../../sub/constant/config'
-import { getTheme } from '../../../sub/helper/ThemeHelper'
+import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 
 export default {
   components: {
@@ -70,7 +70,7 @@ export default {
   },
   computed: {
     getTheme () {
-      const theme = getTheme(this.$store.state.loginId)
+      const theme = getButtonTheme(this.$store.state.loginId)
       return 'outline-' + theme
     },
     ...mapState('app_service', [

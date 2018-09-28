@@ -11,6 +11,11 @@ export const getThemeClasses = (keyPrefix = '') => {
   return obj
 }
 
+export const getButtonTheme = (loginId) => {
+  const theme = getTheme(loginId)
+  return theme !== 'default' ? theme : 'primary'
+}
+
 export const getTheme = (loginId) => {
   if (!loginId || (typeof loginId) === 'undefined') {
     return 'default'
