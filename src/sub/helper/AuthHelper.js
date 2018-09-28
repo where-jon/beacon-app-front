@@ -2,6 +2,7 @@ import md5 from 'md5'
 import _ from 'lodash'
 import * as HttpHelper from './HttpHelper'
 import * as MenuHelper from './MenuHelper'
+import * as ConfigHelper from './ConfigHelper'
 import { APP, LOCAL_LOGIN } from '../constant/config'
 import { LOGIN_MODE, MENU } from '../constant/Constants'
 
@@ -16,9 +17,11 @@ export const setApp = (pRouter, pStore) => {
 export const auth = async (loginId, password, success, err) => {
     switch(APP.LOGIN_MODE) {
     case LOGIN_MODE.APP_SERVICE:
+        console.log('@@@@ APP_SERVICE')
         await authByAppService(loginId, password, success, err)
         break
     case LOGIN_MODE.LOCAL:
+        console.log('@@@@ LOCAL')
         await authByLocal(loginId, password, success, err)
         break
     case LOGIN_MODE.NO_LOGIN:
@@ -52,7 +55,13 @@ export const authByAppService = async (loginId, password, success, err) => {
         }).sortBy((val) => val.path.length * -1).value()
         let menu = MenuHelper.fetchNav(featureList)
 
-        await login({loginId, role:data.role, featureList, menu})
+        // get setting
+        let setting = await HttpHelper.getAppService('/meta/setting')
+        console.log({setting})
+        ConfigHelper.applyAppServiceSetting(setting)
+
+        await login({loginId, username:user.username, role:data.role, featureList, menu}, setting)
+
         success()
     } catch (e) {
         console.error(e)
@@ -60,14 +69,15 @@ export const authByAppService = async (loginId, password, success, err) => {
     }
 }
 
-export const login = (login) => {
-    console.log(login)
+export const login = (login, setting) => {
     store.commit('replace', login)
     window.localStorage.setItem('login', JSON.stringify({...login, dt: new Date().getTime()}))
-}
+    window.localStorage.setItem('setting', JSON.stringify(setting))
+  }
 
 export const logout = () => {
     window.localStorage.removeItem('login')
+    window.localStorage.removeItem('setting')
     store.commit('clearAll')
     store.commit('app_service/clearAll')
     store.commit('main/clearAll')

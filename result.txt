@@ -1,0 +1,98 @@
+
+> exbeaconproject@1.0.0 build C:\repo\exbeacon-app-front
+> nuxt build
+
+
+
+ WARNING  Compiled with 1 warnings11:04:25
+
+ warning  
+
+asset size limit: The following asset(s) exceed the recommended size limit (300 kB).
+This can impact web performance.
+Assets: 
+  img/fa-solid-900.e98a92a.svg (488 kB)
+  img/fa-brands-400.8e04d33.svg (600 kB)
+  layouts_default.0777cebbca7391c01fdf.js (1.27 MB)
+  pages_monitor_telemetry.28b299a8d2b6ef562e6e.js (905 kB)
+  pages_monitor_position.3bae24c1878fe24f198d.js (905 kB)
+  pages_monitor_gateway.dd16c0f9cb5943be1e8c.js (893 kB)
+  pages_main_position.f85fbc84fc7e80974ae6.js (1000 kB)
+  pages_master_tx_index.9547e733edcf48db2d92.js (664 kB)
+  pages_master_person_index.f66fda04ec4f1bf1c001.js (665 kB)
+  pages_master_exb_index.4c2cee37dd2fa27b778c.js (665 kB)
+  pages_master_area_index.bca8ceb50d6f9b575be0.js (664 kB)
+  pages_master_location_index.94683e31e9b736519f97.js (777 kB)
+  pages_master_exb_edit.3e7947755e9ad296a8b9.js (667 kB)
+  pages_master_tx_edit.b673090ad82c2232052d.js (663 kB)
+  pages_master_person_edit.a82cce98561446b44d71.js (665 kB)
+  pages_master_area_edit.c766fc862b3383ddd85a.js (663 kB)
+  pages_master_exb_bulkedit.ac79f45abe7ea09cffd8.js (650 kB)
+  pages_login.3386b746dddef7fd3f1d.js (643 kB)
+
+Hash: [1mec6bcd800a6861150ab9[39m[22m
+Version: webpack [1m3.12.0[39m[22m
+Time: [1m88839[39m[22mms
+                                               [1mAsset[39m[22m       [1mSize[39m[22m  [1mChunks[39m[22m  [1m[39m[22m           [1m[39m[22m       [1mChunk Names[39m[22m
+         [1m[33mpages_main_position.f85fbc84fc7e80974ae6.js[39m[22m    [1m[33m1000 kB[39m[22m       [1m4[39m[22m  [1m[32m[emitted][39m[22m  [1m[33m[big][39m[22m  pages_main_position
+                   [1m[32mfonts/fa-regular-400.222941b.woff[39m[22m    14.7 kB        [1m[39m[22m  [1m[32m[emitted][39m[22m         
+                     [1m[32mfonts/fa-solid-900.140f414.woff[39m[22m    63.8 kB        [1m[39m[22m  [1m[32m[emitted][39m[22m         
+                      [1m[32mfonts/fa-solid-900.4910ec7.eot[39m[22m     133 kB        [1m[39m[22m  [1m[32m[emitted][39m[22m         
+                  [1m[32mfonts/fa-regular-400.914437d.woff2[39m[22m    12.2 kB        [1m[39m[22m  [1m[32m[emitted][39m[22m         
+                    [1m[32mfonts/fa-regular-400.6bf2d6c.ttf[39m[22m      31 kB        [1m[39m[22m  [1m[32m[emitted][39m[22m         
+                    [1m[32mfonts/fa-brands-400.030846b.woff[39m[22m    71.6 kB        [1m[39m[22m  [1m[32m[emitted][39m[22m         
+                        [1m[33mimg/fa-solid-900.e98a92a.svg[39m[22m     [1m[33m488 kB[39m[22m        [1m[39m[22m  [1m[32m[emitted][39m[22m  [1m[33m[big][39m[22m  
+                      [1m[32mfonts/fa-solid-900.e57e108.ttf[39m[22m     133 kB        [1m[39m[22m  [1m[32m[emitted][39m[22m         
+                       [1m[33mimg/fa-brands-400.8e04d33.svg[39m[22m     [1m[33m600 kB[39m[22m        [1m[39m[22m  [1m[32m[emitted][39m[22m  [1m[33m[big][39m[22m  
+                      [1m[32mimg/fa-regular-400.47d19ec.svg[39m[22m     105 kB        [1m[39m[22m  [1m[32m[emitted][39m[22m         
+                    [1m[32mfonts/fa-regular-400.d30b801.eot[39m[22m    31.3 kB        [1m[39m[22m  [1m[32m[emitted][39m[22m         
+                   [1m[32mfonts/fa-brands-400.65e3be4.woff2[39m[22m    61.3 kB        [1m[39m[22m  [1m[32m[emitted][39m[22m         
+                    [1m[32mfonts/fa-solid-900.813b8ae.woff2[39m[22m    50.4 kB        [1m[39m[22m  [1m[32m[emitted][39m[22m         
+                     [1m[32mfonts/fa-brands-400.3f5a250.ttf[39m[22m     111 kB        [1m[39m[22m  [1m[32m[emitted][39m[22m         
+             [1m[33mlayouts_default.0777cebbca7391c01fdf.js[39m[22m    [1m[33m1.27 MB[39m[22m       [1m0[39m[22m  [1m[32m[emitted][39m[22m  [1m[33m[big][39m[22m  layouts_default
+     [1m[33mpages_monitor_telemetry.28b299a8d2b6ef562e6e.js[39m[22m     [1m[33m905 kB[39m[22m       [1m1[39m[22m  [1m[32m[emitted][39m[22m  [1m[33m[big][39m[22m  pages_monitor_telemetry
+      [1m[33mpages_monitor_position.3bae24c1878fe24f198d.js[39m[22m     [1m[33m905 kB[39m[22m       [1m2[39m[22m  [1m[32m[emitted][39m[22m  [1m[33m[big][39m[22m  pages_monitor_position
+       [1m[33mpages_monitor_gateway.dd16c0f9cb5943be1e8c.js[39m[22m     [1m[33m893 kB[39m[22m       [1m3[39m[22m  [1m[32m[emitted][39m[22m  [1m[33m[big][39m[22m  pages_monitor_gateway
+                     [1m[32mfonts/fa-brands-400.4291d4b.eot[39m[22m     112 kB        [1m[39m[22m  [1m[32m[emitted][39m[22m         
+       [1m[33mpages_master_tx_index.9547e733edcf48db2d92.js[39m[22m     [1m[33m664 kB[39m[22m       [1m5[39m[22m  [1m[32m[emitted][39m[22m  [1m[33m[big][39m[22m  pages_master_tx_index
+   [1m[33mpages_master_person_index.f66fda04ec4f1bf1c001.js[39m[22m     [1m[33m665 kB[39m[22m       [1m6[39m[22m  [1m[32m[emitted][39m[22m  [1m[33m[big][39m[22m  pages_master_person_index
+      [1m[33mpages_master_exb_index.4c2cee37dd2fa27b778c.js[39m[22m     [1m[33m665 kB[39m[22m       [1m7[39m[22m  [1m[32m[emitted][39m[22m  [1m[33m[big][39m[22m  pages_master_exb_index
+     [1m[33mpages_master_area_index.bca8ceb50d6f9b575be0.js[39m[22m     [1m[33m664 kB[39m[22m       [1m8[39m[22m  [1m[32m[emitted][39m[22m  [1m[33m[big][39m[22m  pages_master_area_index
+ [1m[33mpages_master_location_index.94683e31e9b736519f97.js[39m[22m     [1m[33m777 kB[39m[22m       [1m9[39m[22m  [1m[32m[emitted][39m[22m  [1m[33m[big][39m[22m  pages_master_location_index
+       [1m[33mpages_master_exb_edit.3e7947755e9ad296a8b9.js[39m[22m     [1m[33m667 kB[39m[22m      [1m10[39m[22m  [1m[32m[emitted][39m[22m  [1m[33m[big][39m[22m  pages_master_exb_edit
+        [1m[33mpages_master_tx_edit.b673090ad82c2232052d.js[39m[22m     [1m[33m663 kB[39m[22m      [1m11[39m[22m  [1m[32m[emitted][39m[22m  [1m[33m[big][39m[22m  pages_master_tx_edit
+    [1m[33mpages_master_person_edit.a82cce98561446b44d71.js[39m[22m     [1m[33m665 kB[39m[22m      [1m12[39m[22m  [1m[32m[emitted][39m[22m  [1m[33m[big][39m[22m  pages_master_person_edit
+      [1m[33mpages_master_area_edit.c766fc862b3383ddd85a.js[39m[22m     [1m[33m663 kB[39m[22m      [1m13[39m[22m  [1m[32m[emitted][39m[22m  [1m[33m[big][39m[22m  pages_master_area_edit
+   [1m[33mpages_master_exb_bulkedit.ac79f45abe7ea09cffd8.js[39m[22m     [1m[33m650 kB[39m[22m      [1m14[39m[22m  [1m[32m[emitted][39m[22m  [1m[33m[big][39m[22m  pages_master_exb_bulkedit
+                 [1m[33mpages_login.3386b746dddef7fd3f1d.js[39m[22m     [1m[33m643 kB[39m[22m      [1m15[39m[22m  [1m[32m[emitted][39m[22m  [1m[33m[big][39m[22m  pages_login
+[1m[32mpages_setting_personal_index.3354ca506b7ed67c9c01.js[39m[22m      14 kB      [1m16[39m[22m  [1m[32m[emitted][39m[22m         pages_setting_personal_index
+          [1m[32mpages_sample_index.7b8e54daaf67f3e0acbf.js[39m[22m    1.79 kB      [1m17[39m[22m  [1m[32m[emitted][39m[22m         pages_sample_index
+                 [1m[32mpages_index.3f3aed635e7611acb879.js[39m[22m  770 bytes      [1m18[39m[22m  [1m[32m[emitted][39m[22m         pages_index
+          [1m[32mpages_sample_table.0eebfb821faf9dcd99e1.js[39m[22m    3.05 kB      [1m19[39m[22m  [1m[32m[emitted][39m[22m         pages_sample_table
+                      [1m[32mvendor.620a457f2d8af9a431cc.js[39m[22m     260 kB      [1m20[39m[22m  [1m[32m[emitted][39m[22m         vendor
+                         [1m[32mapp.fd36ddcfaca5962d92e7.js[39m[22m    53.7 kB      [1m21[39m[22m  [1m[32m[emitted][39m[22m         app
+                    [1m[32mmanifest.ec6bcd800a6861150ab9.js[39m[22m    2.42 kB      [1m22[39m[22m  [1m[32m[emitted][39m[22m         manifest
+                                            [1m[32mLICENSES[39m[22m    27.6 kB        [1m[39m[22m  [1m[32m[emitted][39m[22m         
+ + 2 hidden assets
+
+[1m[33mWARNING in asset size limit: The following asset(s) exceed the recommended size limit (300 kB).
+This can impact web performance.
+Assets: 
+  img/fa-solid-900.e98a92a.svg (488 kB)
+  img/fa-brands-400.8e04d33.svg (600 kB)
+  layouts_default.0777cebbca7391c01fdf.js (1.27 MB)
+  pages_monitor_telemetry.28b299a8d2b6ef562e6e.js (905 kB)
+  pages_monitor_position.3bae24c1878fe24f198d.js (905 kB)
+  pages_monitor_gateway.dd16c0f9cb5943be1e8c.js (893 kB)
+  pages_main_position.f85fbc84fc7e80974ae6.js (1000 kB)
+  pages_master_tx_index.9547e733edcf48db2d92.js (664 kB)
+  pages_master_person_index.f66fda04ec4f1bf1c001.js (665 kB)
+  pages_master_exb_index.4c2cee37dd2fa27b778c.js (665 kB)
+  pages_master_area_index.bca8ceb50d6f9b575be0.js (664 kB)
+  pages_master_location_index.94683e31e9b736519f97.js (777 kB)
+  pages_master_exb_edit.3e7947755e9ad296a8b9.js (667 kB)
+  pages_master_tx_edit.b673090ad82c2232052d.js (663 kB)
+  pages_master_person_edit.a82cce98561446b44d71.js (665 kB)
+  pages_master_area_edit.c766fc862b3383ddd85a.js (663 kB)
+  pages_master_exb_bulkedit.ac79f45abe7ea09cffd8.js (650 kB)
+  pages_login.3386b746dddef7fd3f1d.js (643 kB)[39m[22m
