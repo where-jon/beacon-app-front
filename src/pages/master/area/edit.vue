@@ -1,33 +1,32 @@
 <template>
-  <div class="container">
-    <b-alert variant="info" :show="showInfo">{{ message }}</b-alert>
-    <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">{{ message }}</b-alert>
-
+  <div>
     <breadcrumb :items="items" />
-
-    <b-row>
-      <b-col md="8">
-        <b-form @submit="onSubmit" v-if="show">
-          <b-form-group v-if="form.areaId">
-            <label v-t="'label.areaId'" />
-            <b-form-input type="text" v-model="form.areaId" readonly="readonly" />
-          </b-form-group>
-          <b-form-group>
-            <label v-t="'label.areaName'" />
-            <b-form-input type="text" v-model="form.areaName" required :readonly="!isEditable" />
-          </b-form-group>
-          <b-form-group>
-            <label v-t="'label.map'" />
-            <b-form-file v-if="isEditable" @change="readImage" v-model="form.mapImage" accept="image/jpeg, image/png, image/gif" :placeholder="$t('message.selectFile') "></b-form-file>
-            <img v-if="form.mapImage" ref="mapImage" :src="form.mapImage" width="100" class="mt-1 ml-3" />
-          </b-form-group>
-          <b-button type="button" variant="outline-danger" @click="backToList" v-t="'label.back'" />
-          <b-button v-if="isEditable" type="submit" :variant="getTheme" @click="register(false)" class="ml-2">{{ label }}</b-button>
-          <b-button v-if="isEditable && !isUpdate" type="submit" variant="outline-primary" @click="register(true)" class="ml-2" v-t="'label.registerAgain'"/>
-        </b-form>
-      </b-col>
-    </b-row>
-
+    <div class="container">
+      <b-alert variant="info" :show="showInfo">{{ message }}</b-alert>
+      <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">{{ message }}</b-alert>
+      <b-row>
+        <b-col md="10" offset-md="1">
+          <b-form @submit="onSubmit" v-if="show">
+            <b-form-group v-if="form.areaId">
+              <label v-t="'label.areaId'" />
+              <b-form-input type="text" v-model="form.areaId" readonly="readonly" />
+            </b-form-group>
+            <b-form-group>
+              <label v-t="'label.areaName'" />
+              <b-form-input type="text" v-model="form.areaName" required :readonly="!isEditable" />
+            </b-form-group>
+            <b-form-group>
+              <label v-t="'label.map'" />
+              <b-form-file v-if="isEditable" @change="readImage" v-model="form.mapImage" accept="image/jpeg, image/png, image/gif" :placeholder="$t('message.selectFile') "></b-form-file>
+              <img v-if="form.mapImage" ref="mapImage" :src="form.mapImage" width="100" class="mt-1 ml-3" />
+            </b-form-group>
+            <b-button type="button" variant="outline-danger" @click="backToList" v-t="'label.back'" />
+            <b-button v-if="isEditable" type="submit" :variant="getTheme" @click="register(false)" class="ml-2">{{ label }}</b-button>
+            <b-button v-if="isEditable && !isUpdate" type="submit" variant="outline-primary" @click="register(true)" class="ml-2" v-t="'label.registerAgain'"/>
+          </b-form>
+        </b-col>
+      </b-row>
+    </div>
   </div>
 </template>
 

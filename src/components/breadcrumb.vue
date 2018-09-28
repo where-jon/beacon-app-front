@@ -1,16 +1,15 @@
 <template>
-  <!-- <b-breadcrumb :items="items" :style="{ marginTop: '20px'}"/> -->
   <div class="breadcrumb navigation">
     <div class="col-md-11 list-container">
       <ol class="breadcrumb-items">
         <li v-for="(item, index) in items" :key="index">
           <span v-if="isActive(item)" v-text="item.text"></span>
-          <a v-if="isLink(item)" v-text="item.text" :href="item.href"></a>
+          <a v-if="isLink(item)" v-text="item.text" href="#" @click="move(item.href)"></a>
         </li>
       </ol>
     </div>
-    <div class="col-md-1" :style="{ textAlign: 'right' }">
-      <a href="#" v-if="reload" :style="{ color: 'white' }"><i title="リロード" class="fas fa-sync-alt"></i></a>
+    <div class="col-md-1 reload-button-container">
+      <a href="#" v-if="reload"><i title="リロード" class="fas fa-sync-alt"></i></a>
     </div>
   </div>
 </template>
@@ -38,7 +37,10 @@
      },
      isLink (item) {
        return (!this.isActive(item)) && item.href !== 'undefined'
-     }
+     },
+     move(page) {
+        this.$router.push(page)
+     },
    }
   }
 
@@ -49,9 +51,7 @@
 
   div.breadcrumb.navigation {
     margin-top: 20px;
-    padding-top: 7px;
-    padding-bottom: 7px;
-    padding-left: 7px;
+    padding: 7px;
   }
 
   div.list-container {
@@ -76,6 +76,11 @@
 
   ol.breadcrumb-items li:not(:first-child):before {
     content: '　/　';
+  }
+
+  div.reload-button-container {
+    text-align: right;
+    padding-right: 7px;
   }
 
 </style>

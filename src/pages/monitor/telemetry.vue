@@ -1,22 +1,24 @@
 <template>
-  <div class="container">
+  <div>
     <breadcrumb :items="items" :reload="true" />
-    <b-row align-h="end">
-      <b-col md="2" class="mb-3 mr-3">
-        <b-button :variant='getTheme' @click="download()" v-t="'label.download'" />
-      </b-col>
-    </b-row>
-    <div class="table-area">
-      <vue-scrolling-table>
-        <template slot="thead">
-          <th scope="col" v-for="(val, key) in telemetrys[0]" :key="key" >{{ key }}</th>
-        </template>
-        <template slot="tbody">
-          <tr v-for="(telemetry, index) in telemetrys" :key="index">
-            <td scope="row" v-for="(val, key) in telemetry" :key="key" :class="getTdClass(index, telemetry.timestamp)">{{ val }}</td>
-          </tr>
-        </template>
-      </vue-scrolling-table>
+    <div class="container">
+      <b-row align-h="end">
+        <b-col md="2" class="mb-3 mr-3">
+          <b-button :variant='getTheme' @click="download()" v-t="'label.download'" />
+        </b-col>
+      </b-row>
+      <div class="table-area">
+        <vue-scrolling-table>
+          <template slot="thead">
+            <th scope="col" v-for="(val, key) in telemetrys[0]" :key="key" >{{ key }}</th>
+          </template>
+          <template slot="tbody">
+            <tr v-for="(telemetry, index) in telemetrys" :key="index">
+              <td scope="row" v-for="(val, key) in telemetry" :key="key" :class="getTdClass(index, telemetry.timestamp)">{{ val }}</td>
+            </tr>
+          </template>
+        </vue-scrolling-table>
+      </div>
     </div>
   </div>
 </template>

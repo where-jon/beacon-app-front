@@ -1,24 +1,26 @@
 <template>
-  <div class="container">
+  <div>
     <breadcrumb :items="items" :reload="true" />
-    <p></p>
-    <b-row align-h="end">
-      <b-col md="2" class="mb-3 mr-3">
-        <b-button :variant="getTheme" @click="download()" v-t="'label.download'" />
-      </b-col>
-    </b-row>
-    <table class="table table-hover table-bordered">
-      <thead>
-        <tr>
-          <th scope="col" v-for="(val, key) in gateways[0]" :key="key" >{{ key }}</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(gateway, index) in gateways" :key="index" :class="{undetect: isUndetect(gateway.updated)}">
-          <td scope="row" v-for="(val, key) in gateway" :key="key" >{{ val }}</td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="container">
+      <p></p>
+      <b-row align-h="end">
+        <b-col md="2" class="mb-3 mr-3">
+          <b-button :variant="getTheme" @click="download()" v-t="'label.download'" />
+        </b-col>
+      </b-row>
+      <table class="table table-hover table-bordered">
+        <thead>
+          <tr>
+            <th scope="col" v-for="(val, key) in gateways[0]" :key="key" >{{ key }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(gateway, index) in gateways" :key="index" :class="{undetect: isUndetect(gateway.updated)}">
+            <td scope="row" v-for="(val, key) in gateway" :key="key" >{{ val }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </template>
 

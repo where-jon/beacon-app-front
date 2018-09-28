@@ -1,71 +1,69 @@
 <template>
-  <div class="container">
-
-    <b-alert variant="info" :show="showInfo">{{ message }}</b-alert>
-    <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">{{ message }}</b-alert>
-
+  <div>
     <breadcrumb :items="items" />
-
-    <b-row>
-      <b-col md="8">
-        <b-form @submit="onSubmit" v-if="show">
-          <b-form-group v-if="form.exbId">
-            <label v-t="'label.exbId'" />
-            <b-form-input type="text" v-model="form.exbId" readonly="readonly" />
-          </b-form-group>
-          <b-form-group>
-            <label v-t="'label.deviceId'" />
-            <b-form-input type="number" v-model.lazy="deviceId" required :readonly="!isEditable" />
-          </b-form-group>
-          <b-form-group>
-            <label v-t="'label.deviceIdX'" />
-            <b-form-input type="text" v-model.lazy="deviceIdX" required :readonly="!isEditable" />
-          </b-form-group>
-          <b-form-group>
-            <label v-t="'label.locationName'" />
-            <b-form-input type="text" v-model="form.locationName" maxlength="20" required :readonly="!isEditable" />
-          </b-form-group>
-          <b-form-group>
-            <label v-t="'label.displayName'" />
-            <b-form-input type="text" v-model="form.displayName" maxlength="3" :readonly="!isEditable" />
-          </b-form-group>
-          <b-form-group>
-            <label v-t="'label.areaId'" />
-            <b-form-input type="number" v-model="form.areaId" required :readonly="!isEditable" />
-          </b-form-group>
-          <b-form-group>
-            <label v-t="'label.posId'" />
-            <b-form-input type="number" v-model="form.posId" required :readonly="!isEditable" />
-          </b-form-group>
-          <b-form-group>
-            <label v-t="'label.locationX'" />
-            <b-form-input type="number" v-model="form.x" :readonly="!isEditable" />
-          </b-form-group>
-          <b-form-group>
-            <label v-t="'label.locationY'" />
-            <b-form-input type="number" v-model="form.y" :readonly="!isEditable" />
-          </b-form-group>
-          <b-form-group>
-            <b-form-checkbox v-model="form.enabled" value="true" unchecked-value="false" :readonly="!isEditable">
-              {{ $t('label.enabled') }}
-            </b-form-checkbox>
-          </b-form-group>
-          <b-form-group>
-            <b-form-checkbox v-model="form.visible" value="true" unchecked-value="false" :readonly="!isEditable">
-              {{ $t('label.visible') }}
-            </b-form-checkbox>
-          </b-form-group>
-          <b-form-group>
-            <label v-t="'label.txViewType'" />
-            <b-form-select v-model="form.txViewType" :options="txViewTypes" class="mb-3 ml-3 col-3" :readonly="!isEditable" />
-          </b-form-group>
-          <b-button type="button" variant="outline-danger" @click="backToList" v-t="'label.back'"/>
-          <b-button v-if="isEditable" type="submit" variant="outline-primary" @click="register(false)" class="ml-2" >{{ label }}</b-button>
-          <b-button v-if="isEditable && !isUpdate" type="submit" variant="outline-primary" @click="register(true)" class="ml-2" v-t="'label.registerAgain'"/>
-        </b-form>
-      </b-col>
-    </b-row>
-
+    <div class="container">
+      <b-alert variant="info" :show="showInfo">{{ message }}</b-alert>
+      <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">{{ message }}</b-alert>
+      <b-row>
+        <b-col md="10" offset-md="1">
+          <b-form @submit="onSubmit" v-if="show">
+            <b-form-group v-if="form.exbId">
+              <label v-t="'label.exbId'" />
+              <b-form-input type="text" v-model="form.exbId" readonly="readonly" />
+            </b-form-group>
+            <b-form-group>
+              <label v-t="'label.deviceId'" />
+              <b-form-input type="number" v-model.lazy="deviceId" required :readonly="!isEditable" />
+            </b-form-group>
+            <b-form-group>
+              <label v-t="'label.deviceIdX'" />
+              <b-form-input type="text" v-model.lazy="deviceIdX" required :readonly="!isEditable" />
+            </b-form-group>
+            <b-form-group>
+              <label v-t="'label.locationName'" />
+              <b-form-input type="text" v-model="form.locationName" maxlength="20" required :readonly="!isEditable" />
+            </b-form-group>
+            <b-form-group>
+              <label v-t="'label.displayName'" />
+              <b-form-input type="text" v-model="form.displayName" maxlength="3" :readonly="!isEditable" />
+            </b-form-group>
+            <b-form-group>
+              <label v-t="'label.areaId'" />
+              <b-form-input type="number" v-model="form.areaId" required :readonly="!isEditable" />
+            </b-form-group>
+            <b-form-group>
+              <label v-t="'label.posId'" />
+              <b-form-input type="number" v-model="form.posId" required :readonly="!isEditable" />
+            </b-form-group>
+            <b-form-group>
+              <label v-t="'label.locationX'" />
+              <b-form-input type="number" v-model="form.x" :readonly="!isEditable" />
+            </b-form-group>
+            <b-form-group>
+              <label v-t="'label.locationY'" />
+              <b-form-input type="number" v-model="form.y" :readonly="!isEditable" />
+            </b-form-group>
+            <b-form-group>
+              <b-form-checkbox v-model="form.enabled" value="true" unchecked-value="false" :readonly="!isEditable">
+                {{ $t('label.enabled') }}
+              </b-form-checkbox>
+            </b-form-group>
+            <b-form-group>
+              <b-form-checkbox v-model="form.visible" value="true" unchecked-value="false" :readonly="!isEditable">
+                {{ $t('label.visible') }}
+              </b-form-checkbox>
+            </b-form-group>
+            <b-form-group>
+              <label v-t="'label.txViewType'" />
+              <b-form-select v-model="form.txViewType" :options="txViewTypes" class="mb-3 ml-3 col-3" :readonly="!isEditable" />
+            </b-form-group>
+            <b-button type="button" variant="outline-danger" @click="backToList" v-t="'label.back'"/>
+            <b-button v-if="isEditable" type="submit" variant="outline-primary" @click="register(false)" class="ml-2" >{{ label }}</b-button>
+            <b-button v-if="isEditable && !isUpdate" type="submit" variant="outline-primary" @click="register(true)" class="ml-2" v-t="'label.registerAgain'"/>
+          </b-form>
+        </b-col>
+      </b-row>
+    </div>
   </div>
 </template>
 

@@ -1,36 +1,38 @@
 <template>
-  <div class="container">
+  <div>
     <breadcrumb :items="items" :reload="true" />
-    <b-row align-h="end">
-      <b-col md="2" class="mb-3 mr-3">
-        <b-button :variant='getTheme' @click="download()" v-t="'label.download'" />
-      </b-col>
-    </b-row>
-    <div class="table-area">
-      <vue-scrolling-table>
-        <template slot="thead">
-          <th scope="col"
-          v-for="(val, key) in ['btx_id','device_id','pos_id','phase','power_level','updatetime','nearest1','nearest2','nearest3']"
-          :key="key" >{{ val }}</th>
-        </template>
-        <template slot="tbody">
-          <tr v-for="(pos, index) in positions" :key="index" :class="{undetect: isUndetect(pos.updatetime)}">
-            <td scope="row">{{ pos.btx_id }}</td>
-            <td>{{ pos.device_id }}</td>
-            <td>{{ pos.pos_id }}</td>
-            <td variant="danger" >{{ pos.phase }}</td>
-            <td>{{ pos.power_level }}</td>
-            <td>{{ pos.updatetime }}</td>
-            <td v-for="index in [0,1,2]" :key="index">
-              <div v-if="pos.nearest && pos.nearest[index]">
-                <div v-for="(value, key) in pos.nearest[index]" :key="key">
-                  {{ key }}:{{ value }}
+    <div class="container">
+      <b-row align-h="end">
+        <b-col md="2" class="mb-3 mr-3">
+          <b-button :variant='getTheme' @click="download()" v-t="'label.download'" />
+        </b-col>
+      </b-row>
+      <div class="table-area">
+        <vue-scrolling-table>
+          <template slot="thead">
+            <th scope="col"
+            v-for="(val, key) in ['btx_id','device_id','pos_id','phase','power_level','updatetime','nearest1','nearest2','nearest3']"
+            :key="key" >{{ val }}</th>
+          </template>
+          <template slot="tbody">
+            <tr v-for="(pos, index) in positions" :key="index" :class="{undetect: isUndetect(pos.updatetime)}">
+              <td scope="row">{{ pos.btx_id }}</td>
+              <td>{{ pos.device_id }}</td>
+              <td>{{ pos.pos_id }}</td>
+              <td variant="danger" >{{ pos.phase }}</td>
+              <td>{{ pos.power_level }}</td>
+              <td>{{ pos.updatetime }}</td>
+              <td v-for="index in [0,1,2]" :key="index">
+                <div v-if="pos.nearest && pos.nearest[index]">
+                  <div v-for="(value, key) in pos.nearest[index]" :key="key">
+                    {{ key }}:{{ value }}
+                  </div>
                 </div>
-              </div>
-            </td>
-          </tr>
-        </template>
-      </vue-scrolling-table>
+              </td>
+            </tr>
+          </template>
+        </vue-scrolling-table>
+      </div>
     </div>
   </div>
 </template>

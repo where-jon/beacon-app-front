@@ -15,7 +15,8 @@
       <b-col class="mb-2 justify-content-end">
         <!-- 新規作成ボタン -->
         <b-button :variant='getTheme' @click="edit()" v-t="'label.createNew'"  class="float-right"/>
-        <b-button v-if="params.bulkEditPath" variant='outline-primary' @click="bulkEdit()" v-t="'label.bulkRegister'"  class="float-right"/>
+        <b-button v-if="params.bulkEditPath" :variant='getTheme'
+          @click="bulkEdit()" v-t="'label.bulkRegister'"  class="float-right" :style="{ marginRight: '10px'}"/>
       </b-col>
     </b-row>
 
