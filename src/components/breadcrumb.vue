@@ -1,7 +1,7 @@
 <template>
   <!-- <b-breadcrumb :items="items" :style="{ marginTop: '20px'}"/> -->
-  <div :class="breadcrumbClasses" :style="{ marginTop: '20px'}">
-    <div class="col-md-11">
+  <div class="breadcrumb navigation">
+    <div class="col-md-11 list-container">
       <ol class="breadcrumb-items">
         <li v-for="(item, index) in items" :key="index">
           <span v-if="isActive(item)" v-text="item.text"></span>
@@ -31,21 +31,6 @@
      loginId() {
        return this.$store.state.loginId
      },
-     breadcrumbClasses () {
-       const storeTheme = this.$store.state.setting.theme
-       const theme = getTheme(this.loginId)
-       const array = THEME.map((e) => {
-         const obj = {}
-         obj[e.name] = e.name === theme
-         return obj
-       })
-       let themeClasses = {}
-       Object.assign(themeClasses, ...array)
-       return {
-         breadcrumb: true,
-         ...themeClasses
-       }
-     }
    },
    methods: {
      isActive (item) {
@@ -62,6 +47,17 @@
 <style lang="scss">
   @import "../sub/constant/config.scss";
 
+  div.breadcrumb.navigation {
+    margin-top: 20px;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    padding-left: 7px;
+  }
+
+  div.list-container {
+    padding: 0px 0px 0px 5px;
+  }
+
   ol.breadcrumb-items {
     list-style: none;
     list-style-type: none;
@@ -71,60 +67,15 @@
 
   ol.breadcrumb-items li {
     display: inline;
-    font-size: 1em;
+    color: #777;
   }
 
   ol.breadcrumb-items li a {
     text-decoration: none;
-    color: white;
   }
 
   ol.breadcrumb-items li:not(:first-child):before {
     content: '　/　';
   }
 
-  div.breadcrumb.default {
-    background-color: #e4e4e4;
-    color: #444;
-  }
-
-  div.breadcrumb.primary {
-    background-color: $blue;
-    color: white;
-  }
-
-  div.breadcrumb.secondary {
-    background-color: $gray-600;
-    color: white;
-  }
-
-  div.breadcrumb.success {
-    background-color: $green;
-    color: white;
-  }
-
-  div.breadcrumb.info {
-    background-color: $cyan;
-    color: white;
-  }
-
-  div.breadcrumb.warning {
-    background-color: $yellow;
-    color: #444;
-  }
-
-  div.breadcrumb.danger {
-    background-color: $red;
-    color: white;
-  }
-
-  div.breadcrumb.light {
-    background-color: $gray-100;
-    color: white;
-  }
-
-  div.breadcrumb.dark {
-    background-color: $gray-800;
-    color: white;
-  }
 </style>

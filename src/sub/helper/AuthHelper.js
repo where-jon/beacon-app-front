@@ -50,6 +50,9 @@ export const authByAppService = async (loginId, password, success, err) => {
 
         // get role feature list
         let user = await HttpHelper.getAppService('/meta/user/currentUser')
+        console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+        console.log(user)
+        console.log(user.name)
         let featureList = _(user.role.roleFeatureList).map((roleFeature) => {
             return {path: roleFeature.feature.path, mode: roleFeature.mode}
         }).sortBy((val) => val.path.length * -1).value()
@@ -60,7 +63,9 @@ export const authByAppService = async (loginId, password, success, err) => {
         console.log({setting})
         ConfigHelper.applyAppServiceSetting(setting)
 
-        await login({loginId, username:user.username, role:data.role, featureList, menu}, setting)
+        console.log('2222222222222222222222')
+        console.log(user.name)
+        await login({loginId, username:user.name, role:data.role, featureList, menu}, setting)
 
         success()
     } catch (e) {
@@ -90,8 +95,6 @@ export const logout = () => {
 
 export const checkSession = () => {
     const login = JSON.parse(window.localStorage.getItem('login'))
-    console.log({login})
-
     if (login) {
       const now = new Date().getTime()
       if (now - Number(login.dt) < APP.TIMEOUT) {
