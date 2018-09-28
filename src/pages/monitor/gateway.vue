@@ -70,9 +70,9 @@ export default {
   },
   methods: {
     async fetchData(payload) {
+      this.replace({showProgress: true})
       try {
         let gateways = await EXCloudHelper.fetchGateway()
-        console.log({gateways})
         if (payload && payload.done) {
           payload.done()
         }
@@ -81,6 +81,7 @@ export default {
       catch(e) {
         console.error(e)
       }
+      this.replace({showProgress: false})
     },
     isUndetect(updated) {
       return updated == "" || new Date() - new Date(updated) > APP.UNDETECT_TIME
