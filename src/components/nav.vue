@@ -1,5 +1,5 @@
 <template>
-  <b-navbar toggleable="md" type="dark" variant="info">
+  <b-navbar toggleable="md" type="dark" :class="navbarClasses">
     <!-- Responsive menu -->
     <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>  
 
@@ -10,7 +10,7 @@
 
       <!-- left (navi dropdown menu) -->
       <b-navbar-nav>
-        <b-nav-item-dropdown v-for="group in nav" :key="group.path" >
+        <b-nav-item-dropdown v-for="group in this.$store.state.menu" :key="group.path">
           <template slot="button-content">
             <em v-t="'label.' + group.key" />
           </template>
@@ -19,20 +19,13 @@
       </b-navbar-nav>
 
       <!-- right -->
-      <b-navbar-nav class="ml-auto" v-if="!isNoLogin">
-        <!-- reload -->
-        <b-nav-item right>
-          <div v-show="!isLoginPage && showReload">
-            <i class="fas fa-sync-alt" :title="$t('label.reload')" @click="fetchData" ><span class="d-md-none" v-t="'label.reload'"></span></i>
-          </div>
-        </b-nav-item>
-
+      <b-navbar-nav class="ml-auto">
         <!-- user & logout -->
         <b-nav-item-dropdown right>
           <template slot="button-content">
             <i class="fa fa-user" aria-hidden="true"></i>&nbsp;<em>{{ loginId }}</em>
           </template>
-          <b-dropdown-item href="#" @click="profile">Profile</b-dropdown-item>
+          <b-dropdown-item href="#" @click="move('/setting/personal')">Profile</b-dropdown-item>
           <b-dropdown-item href="#" @click="logout"><i class="fas fa-sign-out-alt"></i>&nbsp;Logout</b-dropdown-item>
           <b-dropdown-divider/>
           <b-dropdown-item>{{ version }}</b-dropdown-item>
@@ -50,8 +43,9 @@ import { EventBus } from '../sub/helper/EventHelper'
 import * as HtmlUtil from '../sub/util/HtmlUtil'
 import * as Util from '../sub/util/Util'
 import * as AuthHelper from '../sub/helper/AuthHelper'
-import { DISP, APP } from '../sub/constant/config'
+import { DISP, APP, THEME } from '../sub/constant/config'
 import { LOGIN_MODE } from '../sub/constant/Constants'
+import { getTheme } from '../sub/helper/ThemeHelper'
 
 export default {
   mounted() {
@@ -65,7 +59,7 @@ export default {
   data() {
     return {
       version: APP.VERSION,
-      nav : this.$store.state.menu
+      nav : this.$store.state.menu,
     }
   },
   computed: {
@@ -83,7 +77,38 @@ export default {
     },
     ...mapState('app_service', [
       'persons',
-    ])
+    ]),
+    navbarClasses () {
+      const theme = getTheme(this.loginId)
+      const array = THEME.map((e) => {
+        const themeName = e.name
+        const key = 'bg-' + themeName
+        const obj = {}
+        obj[key] = themeName === theme
+        return obj
+      })
+      let themeClasses = {}
+      Object.assign(themeClasses, ...array)
+      return {
+        default: this.$store.state.setting.theme === 'default',
+        ...themeClasses
+      }
+    },
+    dropdownClasses () {
+      const theme = getTheme(this.loginId)
+      const storeTheme = this.$store.state.setting.theme
+      return {
+        default: theme === 'default',
+        primary: theme === 'primary',
+        secondary: theme === 'secondary',
+        success: theme === 'success',
+        info: theme === 'info',
+        warning: theme === 'warning',
+        danger: theme === 'danger',
+        light: theme === 'light',
+        dark: theme === 'dark',
+      }
+    }
   },
   methods: {
     logout() {
@@ -107,7 +132,7 @@ export default {
     ...mapMutations('app_service', [
       'replaceAS', 
     ])
-  },
+  }
 }
 </script>
 
@@ -118,8 +143,56 @@ export default {
   animation: fa-spin 2s infinite linear;
 }
 
+nav.navbar {
+  background-color: $menu-bg;
+}
+
+nav.navbar.success {
+  background-color: $green;
+}
+
 .navbar-dark .navbar-nav .nav-link {
   color: white;
+}
+
+ul.navbar-nav {
+  margin-left: 5%;
+}
+
+.dropdown-menu.default {
+  background-color: $menu-bg;
+}
+
+.dropdown-menu.primary {
+  background-color: $blue;
+}
+
+.dropdown-menu.secondary {
+  background-color: $gray-600;
+}
+
+.dropdown-menu.success {
+  background-color: $green;
+}
+
+.dropdown-menu.info {
+  background-color: $cyan;
+}
+
+.dropdown-menu.warning {
+  background-color: $yellow;
+}
+
+.dropdown-menu.danger {
+  background-color: $red;
+}
+
+.dropdown-menu.light {
+  background-color: $gray-100;
+}
+
+.dropdown-menu.dark {
+  background-color: $gray-800;
 }
 
 </style>

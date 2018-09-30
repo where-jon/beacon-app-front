@@ -30,6 +30,7 @@
 
     "---------------- App common ---------------":"",
     "login": "ログイン",
+    "loginId": "ログインID",
     "user": "ユーザ",
     "userId": "ユーザID",
     "id": "ID",
@@ -46,6 +47,8 @@
     "bgColor": "背景色",
     "color": "色",
     "dt": "日時",
+    "no": "No.",
+    "theme": "テーマ",
 
     "---------------- App exbeacon ---------------":"",
 
@@ -53,7 +56,7 @@
     "telemetry": "テレメトリ",
     "gateway": "ゲートウェイ",
     "position": "測位",
-    "monitor": "モニター",
+    "monitor": "モニタ",
     "area": "エリア",
     "exb": "EXBeacon",
     "location": "EXB配置設定",
@@ -175,6 +178,9 @@
     "tenantCd": "テナントコード",
     "tenantId": "テナントID",
     "tenantName": "テナント名",
+
+    "personal": "個人設定",
+    "changePassword": "パスワードを変更する",
   
     "dummy": ""
   },
