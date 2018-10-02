@@ -1,4 +1,5 @@
 import { ROLE_FEATURE, MENU } from "../constant/Constants"
+import { THEME } from "../constant/config"
 
 let store
 
@@ -34,4 +35,18 @@ export const getMode = (path, featureList = store.state.featureList) => {
 
 export const isEditable = (path) => {
   return getMode(path) == ROLE_FEATURE.MODE.RW
+}
+
+export const getThemeClasses = (selectedTheme) => {
+  return {
+    default: selectedTheme === 'default',
+    primary: selectedTheme === 'primary',
+    secondary: selectedTheme === 'secondary',
+    success: selectedTheme === 'success',
+    info: selectedTheme === 'info',
+    warning: selectedTheme === 'warning',
+    danger: selectedTheme === 'danger',
+    light: selectedTheme === 'light',
+    dark: selectedTheme === 'dark',
+  }
 }

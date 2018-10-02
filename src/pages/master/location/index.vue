@@ -1,5 +1,6 @@
 <template>
   <div id="locationSetting">
+    <breadcrumb :items="items" />
     <b-alert variant="info" :show="showInfo">{{ message }}</b-alert>
     <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">{{ message }}</b-alert>
 
@@ -46,11 +47,13 @@ import { APP, DISP } from '../../../sub/constant/config'
 import { UPDATE_ONLY_NN } from '../../../sub/constant/Constants'
 import { Shape, Stage, Container, Bitmap, Text, Touch } from '@createjs/easeljs/dist/easeljs.module'
 import { Tween, Ticker } from '@createjs/tweenjs/dist/tweenjs.module'
+import breadcrumb from '../../../components/breadcrumb.vue'
 
 let that;
 
 export default {
   components: {
+    breadcrumb,
   },
   data() {
      return {
@@ -68,6 +71,16 @@ export default {
       positionedExb: [],
       exbOptions: [],
       deleteTarget: null,
+      items: [
+        {
+          text: this.$i18n.t('label.master'),
+          active: true
+        },
+        {
+          text: this.$i18n.t('label.location'),
+          active: true
+        }
+      ]
     }
   },
   watch: {

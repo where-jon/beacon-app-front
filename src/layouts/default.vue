@@ -3,16 +3,11 @@
     <m-nav></m-nav>
     <b-container fluid>
       <b-row class="flex-xl-nowrap2" v-if="!isLoginPage">
-        <b-col md="2" xl="2" class="bd-sidebar" v-if="showSidebar">
+        <b-col md="2" xl="2" id="bd-sidebar" :class="sidebarClasses" v-if="showSidebar">
           <m-sidebar></m-sidebar>
-        </b-col>        
+        </b-col>
         <b-col :md="showSidebar? 10: 12" class="pl-0 pr-0">
           <b-container fluid>
-            <b-row>
-              <b-col>
-                <h3 class="page-header">{{ title }}</h3>
-              </b-col>
-            </b-row>
             <b-row>
               <b-col class="pb-md-3 pl-md-5 pl-xl-5 pr-xl-5 bd-content">
                 <nuxt/>
@@ -35,6 +30,7 @@ import Vue from 'vue'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import _ from 'lodash'
 import { EventBus } from '../sub/helper/EventHelper'
+import { getTheme, themeColors } from '../sub/helper/ThemeHelper'
 import { APP, DISP } from '../sub/constant/config'
 import styles from '../sub/constant/config.scss'
 
@@ -62,6 +58,15 @@ export default {
     mNav
   },
   mounted() {
+    const setColor = (className, color) => {
+      [].forEach.call(document.getElementsByClassName(className), (e) => {
+        e.style.backgroundColor = color
+      })
+    }
+    const theme = getTheme(this.loginId)
+    const color = themeColors[theme]
+    setColor('dropdown-menu', color)
+    setColor('dropdown-item', color)
   },
   data() {
     return {
@@ -69,6 +74,9 @@ export default {
     }
   },
   computed: {
+    loginId() {
+      return this.$store.state.loginId
+    },
     isLoginPage() {
       return this.$router.app._route.path == APP.LOGIN_PAGE
     },
@@ -76,6 +84,22 @@ export default {
       'showProgress',
       'title',
     ]),
+    sidebarClasses () {
+      const theme = getTheme(this.loginId)
+      const storeTheme = this.$store.state.setting.theme
+      return {
+        'bd-sidebar': true,
+        default: theme === 'default',
+        primary: theme === 'primary',
+        secondary: theme === 'secondary',
+        success: theme === 'success',
+        info: theme === 'info',
+        warning: theme === 'warning',
+        danger: theme === 'danger',
+        light: theme === 'light',
+        dark: theme === 'dark',
+      }
+    }
   },
   methods: {
   },
@@ -83,7 +107,7 @@ export default {
     return {
       title: this.$t('label.title')
     }
-  }
+  },
 }
 
 </script>
@@ -114,6 +138,10 @@ html {
   background-color: $menu-bg;
 }
 
+.dropdown-item:hover {
+  color:aliceblue;
+  background-color: $menu-bg-hover;
+}
 
 .page-header {
   padding: 0 0 9px 5px;
@@ -160,6 +188,42 @@ html {
   &.open input[type=search] {
     width: auto !important;
   }
+}
+
+.bd-sidebar.default {
+  background-color: $menu-bg;
+}
+
+.bd-sidebar.primary {
+  background-color: $blue;
+}
+
+.bd-sidebar.secondary {
+  background-color: $gray-600;
+}
+
+.bd-sidebar.success {
+  background-color: $green;
+}
+
+.bd-sidebar.info {
+  background-color: $cyan;
+}
+
+.bd-sidebar.warning {
+  background-color: $yellow;
+}
+
+.bd-sidebar.danger {
+  background-color: $red;
+}
+
+.bd-sidebar.light {
+  background-color: $gray-100;
+}
+
+.bd-sidebar.dark {
+  background-color: $gray-800;
 }
 
 </style>

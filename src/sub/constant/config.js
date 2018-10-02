@@ -48,6 +48,7 @@ export const DISP = {
   TX_DIV_3: 0.5, // Txが重なった際に３つ左右に並べる場合にずらす倍率
   AUTO_RELOAD: 60000, // 自動リロード間隔(ミリ秒)
   SHOW_SIDEBAR: true, // show sidebar  
+  THEME: "default",
 
   EXB_LOC_SIZE: {w: 60, h: 30},
   EXB_LOC_BGCOLOR: "#76ccf7",
@@ -98,4 +99,14 @@ export const Tx = [ // used when APP.LOGIN_MODE != APP_SERVICE with excloud old 
   {id: 181},
   {id: 799},
   {id: 800},
+]
+
+export const THEME = [
+  {id: 1, label: '通常', name: 'default'},
+  {id: 2, label: 'シック', name: 'secondary'},
+  {id: 3, label: 'グリーン', name: 'success'},
+  {id: 4, label: 'ブルー', name: 'info'},
+  {id: 5, label: 'イエロー', name: 'warning'},
+  {id: 6, label: 'レッド', name: 'danger'},
+  {id: 7, label: 'ダーク', name: 'dark'},
 ]
