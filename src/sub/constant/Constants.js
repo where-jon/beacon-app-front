@@ -57,7 +57,7 @@ export const MENU = [
         key: 'region',
         path: 'region',
         feature: '/core/region',
-        icon: 'fas fa-broadcast-tower',
+        icon: 'fas fa-industry',
       },
       {
         key: 'area',

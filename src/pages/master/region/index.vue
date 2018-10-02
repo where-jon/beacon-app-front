@@ -1,6 +1,9 @@
 <template>
-  <m-list :params="params" :list="regions" >
-  </m-list>
+  <div>
+    <breadcrumb :items="items" />
+    <m-list :params="params" :list="regions" >
+    </m-list>
+  </div>
 </template>
 
 <script>
@@ -9,10 +12,12 @@ import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import { addLabelByKey } from '../../../sub/helper/ViewHelper'
 import listmixinVue from '../../../components/listmixin.vue';
+import breadcrumb from '../../../components/breadcrumb.vue'
 
 export default {
   components: {
     mList, 
+    breadcrumb,
   },
   mixins: [listmixinVue],
   data() {
@@ -30,7 +35,17 @@ export default {
           {key: "actions", thStyle: {width:'130px !important'} }
         ]),
         initTotalRows: this.$store.state.app_service.regions.length
-      }
+      },
+      items: [
+        {
+          text: this.$i18n.t('label.master'),
+          active: true
+        },
+        {
+          text: this.$i18n.t('label.person'),
+          active: true
+        }
+      ]
     }
   },
   computed: {
