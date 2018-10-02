@@ -7,7 +7,7 @@
       <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">{{ message }}</b-alert>
 
       <b-form @submit="onSubmit" v-if="show">
-        <b-form-group v-if="form.regionId !== undefined">
+        <b-form-group v-if="hasId">
           <label v-t="'label.regionId'" />
           <b-form-input type="text" v-model="form.regionId" readonly="readonly" />
         </b-form-group>
@@ -36,7 +36,8 @@
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import _ from 'lodash'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
-import editmixinVue from '../../../components/editmixin.vue';
+import editmixinVue from '../../../components/editmixin.vue'
+import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/breadcrumb.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 
@@ -69,6 +70,9 @@ export default {
     }
   },
   computed: {
+    hasId(){
+      return Util.hasValue(this.form.regionId)
+    },
     getTheme () {
       const theme = getButtonTheme(this.$store.state.loginId)
       return 'outline-' + theme
