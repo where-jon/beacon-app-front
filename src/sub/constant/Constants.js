@@ -118,4 +118,17 @@ export const MENU = [
       },
     ]
   },
+  {
+    key: 'setting',
+    base: 'setting/',
+    path: 'setting/personal',
+    icon: 'fas fa-cog',
+    pages: [{
+        key: 'personal',
+        path: 'personal',
+        feature: '/core/personal',
+        icon: 'fas fa-user-cog',
+      },
+    ]
+  },
 ]

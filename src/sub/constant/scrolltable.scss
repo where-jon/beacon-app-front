@@ -1,0 +1,19 @@
+  @import "./config.scss";
+
+  div.table-area {
+    height: 500px;
+    margin-top: 4px;
+  }
+
+  table.scrolling th,
+  table.scrolling td {
+    padding: 0.43rem;
+  }
+
+  table.scrolling td.odd {
+    background: #eee;
+  }
+
+  table.scrolling td.undetect {
+    background: $undetect;
+  }

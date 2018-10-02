@@ -1,8 +1,10 @@
 // scss variables
 
 $txdetail-bg: #9cd5e4;
-$menu-bg: #17a2b8;
-$undetect: #f1b0b7;
+$menu-bg: #337ab7;
+$menu-bg-hover: #559cd9;
+$menu-bg-border: #2269a6;
+$undetect: #eebbcb;
 
 // To use css value in js, export as the follwing
 :export {
@@ -12,7 +14,7 @@ $undetect: #f1b0b7;
 $blue:    #007bff !default;
 $indigo:  #6610f2 !default;
 $purple:  #6f42c1 !default;
-$pink:    #e83e8c !default;
+$pink:    #eebbcb !default;
 $red:     #dc3545 !default;
 $orange:  #fd7e14 !default;
 $yellow:  #ffc107 !default;
