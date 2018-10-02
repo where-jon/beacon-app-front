@@ -3,14 +3,14 @@
         <div class="error-message">{{ message }}</div>
         <input type="text" v-model="userId" class="form-control" maxlength="20" placeholder="ID" />
         <input type="password" v-model="password" class="form-control" maxlength="20" placeholder="PASSWORD" />
-        <button class="btn-lg btn-primary btn-block" type="submit"><i class="fa fa-sign-in" v-t="'label.login'"></i></button>
+        <button class="btn-lg btn-block" :class="btnClasses" type="submit"><i class="fa fa-sign-in" v-t="'label.login'"></i></button>
     </form>
 </template>
 
 <script>
 import axios from 'axios'
 import * as AuthHelper from '../sub/helper/AuthHelper'
-import { APP } from '../sub/constant/config'
+import { APP,DISP } from '../sub/constant/config'
 import * as Util from '../sub/util/Util'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 
@@ -19,7 +19,16 @@ export default {
     return {
       userId: "",
       password: "",
-      message: ""
+      message: "",
+      btnClasses: {
+        'btn-primary': DISP.THEME === 'primary' || DISP.THEME === 'default',
+        'btn-secondary': DISP.THEME === 'secondary',
+        'btn-success': DISP.THEME === 'success',
+        'btn-info': DISP.THEME === 'info',
+        'btn-warning': DISP.THEME === 'warning',
+        'btn-danger': DISP.THEME === 'danger',
+        'btn-dark': DISP.THEME === 'dark',
+      }
     }
   },
   methods: {
@@ -28,6 +37,8 @@ export default {
       AuthHelper.auth(this.userId, this.password, ()=>{
         this.$router.push(APP.TOP_PAGE)
         this.message = ""
+        const theme = window.localStorage.getItem(this.userId + '-theme')
+        this.replaceSetting({theme})
       },
       () => {
         console.error("failed")
@@ -36,8 +47,11 @@ export default {
     },
     ...mapMutations('app_service', [
       'replaceAS', 
-    ])
-  }
+    ]),
+    ...mapMutations('setting', [
+      'replaceSetting', 
+    ]),
+  },
 }
 
 </script>

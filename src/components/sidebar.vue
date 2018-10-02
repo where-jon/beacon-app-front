@@ -1,85 +1,80 @@
 <template>
-  <b-collapse tag="nav" is-nav class="bd-links" id="bd-docs-nav">
-    <router-link tag="div" class="bd-toc-item" v-for="group in nav" :key="group.path" :to="'/' + group.base" active-class="active" >
-      <router-link class="bd-toc-link" :to="'/' + group.path">
-        <i :class="group.icon"></i>&nbsp;{{ $t("label." + group.key) }}
-      </router-link>
-      <b-nav class="bd-sidenav">
-        <b-nav-item v-for="page in group.pages" :to="'/' + group.base + page.path" :key="page.key">
-          <i :class="page.icon" class="ml-3"></i>&nbsp;{{ $t("label." + page.key) }}
-        </b-nav-item>
-      </b-nav>
-    </router-link>
-  </b-collapse>
+    <ul class="menu-groups">
+      <li class="menu-group" v-for="(group, i) in nav" :key="group.path" :to="'/' + group.base" active-class="active">
+        <ul class="menu-group-items">
+          <li class="menu-item title clearfix" @click.stop="onMenuClick(i)">
+            <span class="title"><i :class="group.icon"></i>&nbsp;&nbsp;{{ $t("label." + group.key) }}</span>
+            <span class="direction">
+              <i class="fa fa-angle-left" v-if="selectedItem !== i"></i>
+              <i class="fa fa-angle-down" v-if="selectedItem === i"></i>
+            </span>
+          </li>
+          <li :class="menuItemClasses" v-for="(page, j) in group.pages" :key="page.key" v-if="selectedItem === i">
+            <router-link class="bd-toc-link" :to="'/' + group.base + page.path">
+              <i :class="page.icon" class="ml-3"></i>&nbsp;{{ $t("label." + page.key) }}
+            </router-link>
+          </li>
+        </ul>
+      </li>
+    </ul>
 </template>
 
 <script>
 
+import { DISP, THEME } from '../sub/constant/config'
+import { getTheme } from '../sub/helper/ThemeHelper'
+
 export default {
   data() {
     return {
-      nav : this.$store.state.menu
+      nav : this.$store.state.menu,
+      selectedItem: -1,
     }
-  }
+  },
+  computed: {
+    loginId() {
+      return this.$store.state.loginId
+    },
+    menuItemClasses () {
+      const theme = getTheme(this.loginId)
+      const array = THEME.map((e) => {
+        const obj = {}
+        obj[e.name] = e.name === theme
+        return obj
+      })
+      let themeClasses = {}
+      Object.assign(themeClasses, ...array)
+      const storeTheme = this.$store.state.setting.theme
+      return {
+        'menu-item': true,
+        item: true,
+        ...themeClasses
+      }
+    }
+  },
+  methods: {
+    onMenuClick (index) {
+      this.selectedItem = index === this.selectedItem ? -1 : index
+    },
+  },
 }
 </script>
 
 <style lang="scss">
-
-.bd-toc {
-  @supports (position: sticky) {
-    position: sticky;
-    top: 4rem;
-    height: calc(100vh - 4rem);
-    overflow-y: auto;
-  }
-  order: 2;
-  padding-top: 1.5rem;
-  padding-bottom: 1.5rem;
-  font-size: .875rem;
-}
-
-.section-nav {
-  padding-left: 0;
-  border-left: 1px solid #eee;
-
-  ul {
-    padding-left: 1rem;
-
-    ul {
-      display: none;
-    }
-  }
-}
-
-.toc-entry {
-  display: block;
-
-  a {
-    display: block;
-    padding: .125rem 1.5rem;
-    color: #99979c;
-
-    &:hover {
-      color: #0000ff;
-      text-decoration: none;
-    }
-  }
-}
+@import "../sub/constant/config.scss";
 
 .bd-sidebar {
   order: 0;
   border-bottom: 1px solid rgba(0, 0, 0, .1);
-  background-color: #f8f8f8;
-  border-color: #e7e7e7;
+  padding-left: 0px;
+  padding-right: 0px;
 
   @media (min-width: 768px) {
     @supports (position: sticky) {
       position: sticky;
       z-index: 100;
-      height: calc(100vh - 4rem);
     }
-    border-right: 1px solid rgba(0, 0, 0, .1);
+    min-height: calc(100vh - 56px)
   }
 
   @media (min-width: 1200px) {
@@ -88,7 +83,6 @@ export default {
 }
 
 .bd-links {
-  // padding-top: 1rem;
   padding-bottom: 1rem;
   margin-right: -0.9rem;
   margin-left: -0.9rem;
@@ -106,22 +100,14 @@ export default {
   }
 }
 
-.bd-sidenav {
-  display: none;
-  padding-top: 0.25rem;
-}
-
 .bd-toc-link {
   display: block;
-  padding-left: 1.5rem;
-  font-weight: 500;
-  // font-size: 20px;
-  color:#337ab7;
-
+  color: white;
   &:hover {
-    color: rgba(0, 0, 0, .85);
     text-decoration: none;
+    color: white;
   }
+  padding-left: 10px;
 }
 
 .bd-toc-item {
@@ -130,12 +116,8 @@ export default {
   border-bottom: 1px solid #e7e7e7;
   &.active {
 
-    &:not(:first-child) {
-      // margin-top: 1rem;
-    }
-
     > .bd-toc-link {
-      color: #337ab7;
+      color: white;
 
       &:hover {
         background-color: #ccc;
@@ -148,33 +130,115 @@ export default {
   }
 }
 
-// All levels of nav
-.bd-sidebar .nav > li > a {
+ul.menu-groups {
+  padding: 0;
+}
+
+li.menu-group {
   display: block;
-  padding: .2rem 1.5rem;
-  font-size: 90%;
-  color: #337ab7;
+  list-style: none;
+  cursor: pointer;
 }
 
-.bd-sidebar .nav > li > a:hover {
-  color: rgba(0, 0, 0, .85);
-  text-decoration: none;
-  background-color: #eee;
+ul.menu-group-items {
+  list-style: none;
+  padding: 0;
+  border-bottom: 1px solid #eee;
 }
 
-.bd-sidebar .nav > .active > a,
-.bd-sidebar .nav > .active:hover > a {
-  font-weight: 500;
-  color: rgba(0, 0, 0, .85);
-  background-color: transparent;
+li.menu-item {
+  display: block;
+  height: 55px;
+  color: white;
 }
 
+li.menu-item.item {
+  line-height: 55px;
+}
 
-.bd-sidebar .nav > li > a.active {
-  /*color: #0275d8;*/
-  color: #337ab7;
-  font-weight: bold;
-  background-color: #eee;
+li.menu-item.item.default {
+  background: #478dca;
+}
+
+li.menu-item.item.default:hover {
+  background: #4288c5;
+}
+
+li.menu-item.item.info {
+  background: #59b9c6;
+}
+
+li.menu-item.item.info:hover {
+  background: #59bad4;
+}
+
+li.menu-item.item.primary {
+  background:#118cff;
+}
+
+li.menu-item.item.primary:hover {
+  background:#119fff;
+}
+
+li.menu-item.item.secondary {
+  background: #979ea7;
+}
+
+li.menu-item.item.secondary:hover {
+  background: #9198a2;
+}
+
+li.menu-item.item.success {
+  background: #39b856;
+}
+
+li.menu-item.item.success:hover {
+  background: #27b744;
+}
+
+li.menu-item.item.warning {
+  background: #ffda3f;
+}
+
+li.menu-item.item.warning:hover {
+  background: #ffd439;
+}
+
+li.menu-item.item.danger {
+  background: #de5767;
+}
+
+li.menu-item.item.danger:hover {
+  background: #dc4555;
+}
+
+li.menu-item.item.dark {
+  background: #464c52;
+}
+
+li.menu-item.item.dark:hover {
+  background: #404450;
+}
+
+.clearfix::after {
+  content: "";
+  display: block;
+  clear: both;
+}
+
+span.title {
+  display: block;
+  line-height: 55px;
+  padding-left: 10px;
+  float: left;
+  width: 90%;
+}
+
+span.direction {
+  display: block;
+  line-height: 55px;
+  float: left;
+  text-align: right;
 }
 
 </style>
