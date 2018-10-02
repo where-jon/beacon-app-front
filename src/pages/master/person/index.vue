@@ -1,6 +1,8 @@
 <template>
-  <m-list :params="params" :list="persons" >
-  </m-list>
+  <div>
+    <breadcrumb :items="items" />
+    <m-list :params="params" :list="persons" />
+  </div>
 </template>
 
 <script>
@@ -8,11 +10,13 @@ import mList from '../../../components/list.vue'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import { addLabelByKey } from '../../../sub/helper/ViewHelper'
-import listmixinVue from '../../../components/listmixin.vue';
+import listmixinVue from '../../../components/listmixin.vue'
+import breadcrumb from '../../../components/breadcrumb.vue'
 
 export default {
   components: {
-    mList, 
+    mList,
+    breadcrumb,
   },
   mixins: [listmixinVue],
   data() {
@@ -23,17 +27,27 @@ export default {
         editPath: '/master/person/edit',
         appServicePath: '/basic/person',
         fields: addLabelByKey(this.$i18n, [ 
-          {key: "personId", sortable: true },
-          {key: "thumbnail" },
-          {key: "personCd", sortable: true },
-          {key: "personName", sortable: true },
-          {key: "ruby", sortable: true},
-          {key: "txId", sortable: true, 'class': 'text-center' },
-          {key: "post" },
-          {key: "actions", thStyle: {width:'130px !important'} }
+          {key: "personId", sortable: true, tdClass: "thumb-rowdata"},
+          {key: "thumbnail", tdClass: "thumb-rowdata" },
+          {key: "personCd", sortable: true , tdClass: "thumb-rowdata"},
+          {key: "personName", sortable: true , tdClass: "thumb-rowdata"},
+          {key: "ruby", sortable: true, tdClass: "thumb-rowdata"},
+          {key: "txId", sortable: true, 'class': 'text-center' , tdClass: "thumb-rowdata"},
+          {key: "post" , tdClass: "thumb-rowdata"},
+          {key: "actions", thStyle: {width:'130px !important'} , tdClass: "thumb-rowdata"}
         ]),
-        initTotalRows: this.$store.state.app_service.persons.length
-      }
+        initTotalRows: this.$store.state.app_service.persons.length,
+      },
+      items: [
+        {
+          text: this.$i18n.t('label.master'),
+          active: true
+        },
+        {
+          text: this.$i18n.t('label.person'),
+          active: true
+        }
+      ]
     }
   },
   computed: {

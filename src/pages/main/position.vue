@@ -1,5 +1,6 @@
 <template>
   <div id="mapContainer" class="container-fluid">
+    <breadcrumb :items="items" />
     <b-row class="mt-2">
       <b-form inline class="mt-2">
         <label class="mr-2">{{ $t('label.area') }}</label>
@@ -26,12 +27,14 @@ import txdetail from '../../components/txdetail.vue'
 import { Tx, EXB, DISP } from '../../sub/constant/config'
 import { Shape, Stage, Container, Bitmap, Text, Touch } from '@createjs/easeljs/dist/easeljs.module'
 import { Tween, Ticker } from '@createjs/tweenjs/dist/tweenjs.module'
+import breadcrumb from '../../components/breadcrumb.vue'
 
 let that
 
 export default {
   components: {
     'txdetail': txdetail,
+    breadcrumb,
   },
   data() {
      return {
@@ -39,6 +42,16 @@ export default {
        isShownMapImage: false,
        positionedExb: [],
        isFirstTime: true,
+      items: [
+        {
+          text: this.$i18n.t('label.main'),
+          active: true
+        },
+        {
+          text: this.$i18n.t('label.showPosition'),
+          active: true
+        },
+      ],
     }
   },
   watch: {

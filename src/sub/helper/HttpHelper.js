@@ -41,6 +41,7 @@ export const getExCloud = async (url, config) => {
 
 export const postAppService = async (path, config) => {
   try {
+    console.log('@@@@@@@@@@@@ URL = ' + APP_SERVICE.BASE_URL + path)
     let res = await apServiceClient.post(APP_SERVICE.BASE_URL + path, config)
     return res.data
   } catch (e) {
