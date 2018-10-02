@@ -67,7 +67,7 @@
 
   ol.breadcrumb-items li {
     display: inline;
-    color: #777;
+    color: #333;
   }
 
   ol.breadcrumb-items li a {
@@ -81,6 +81,11 @@
   div.reload-button-container {
     text-align: right;
     padding-right: 7px;
+  }
+
+  div.reload-button-container a {
+    color: #333;
+    text-decoration: none;
   }
 
 </style>

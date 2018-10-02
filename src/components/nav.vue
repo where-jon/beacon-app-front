@@ -4,7 +4,12 @@
     <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>  
 
     <!-- Title -->
-    <b-navbar-brand><span v-t="'label.title'" /></b-navbar-brand>
+    <b-navbar-brand>
+      <!--
+      <span v-t="'label.title'" />
+      -->
+      <img src="/toplogo.png" width=166 height=27 />
+    </b-navbar-brand>
 
     <b-collapse is-nav id="nav_collapse" v-if="!isLoginPage">
 
@@ -45,7 +50,7 @@ import * as Util from '../sub/util/Util'
 import * as AuthHelper from '../sub/helper/AuthHelper'
 import { DISP, APP, THEME } from '../sub/constant/config'
 import { LOGIN_MODE } from '../sub/constant/Constants'
-import { getTheme } from '../sub/helper/ThemeHelper'
+import { getThemeClasses } from '../sub/helper/ThemeHelper'
 
 export default {
   mounted() {
@@ -79,36 +84,9 @@ export default {
       'persons',
     ]),
     navbarClasses () {
-      const theme = getTheme(this.loginId)
-      const array = THEME.map((e) => {
-        const themeName = e.name
-        const key = 'bg-' + themeName
-        const obj = {}
-        obj[key] = themeName === theme
-        return obj
-      })
-      let themeClasses = {}
-      Object.assign(themeClasses, ...array)
-      return {
-        default: this.$store.state.setting.theme === 'default',
-        ...themeClasses
-      }
-    },
-    dropdownClasses () {
-      const theme = getTheme(this.loginId)
       const storeTheme = this.$store.state.setting.theme
-      return {
-        default: theme === 'default',
-        primary: theme === 'primary',
-        secondary: theme === 'secondary',
-        success: theme === 'success',
-        info: theme === 'info',
-        warning: theme === 'warning',
-        danger: theme === 'danger',
-        light: theme === 'light',
-        dark: theme === 'dark',
-      }
-    }
+      return getThemeClasses(this.loginId)
+    },
   },
   methods: {
     logout() {
@@ -141,14 +119,6 @@ export default {
 
 .rotate {
   animation: fa-spin 2s infinite linear;
-}
-
-nav.navbar {
-  background-color: $menu-bg;
-}
-
-nav.navbar.success {
-  background-color: $green;
 }
 
 .navbar-dark .navbar-nav .nav-link {

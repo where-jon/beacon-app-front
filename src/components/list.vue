@@ -95,14 +95,14 @@ export default {
   mounted() {
     this.$parent.$options.methods.fetchData.apply(this.$parent)
     const theme = getTheme(this.loginId)
-    const color = themeColors[theme]
-    const pageLinks = document.getElementsByClassName('.page-link')
-    for (let i = pageLinks.length ; i--;) {
-      pageLinks[0].style.color = color
-    }
-    const pageActive = document.querySelector('a.page-link.btn-primary')
-    pageActive.style.backgroundColor = color
-    pageActive.style.color = '#ffffff'
+    // const color = themeColors[theme]
+    // const pageLinks = document.getElementsByClassName('.page-link')
+    // for (let i = pageLinks.length ; i--;) {
+    //   pageLinks[0].style.color = color
+    // }
+    // const pageActive = document.querySelector('a.page-link.btn-primary')
+    // pageActive.style.backgroundColor = color
+    // pageActive.style.color = '#ffffff'
   },
   methods: {
     ...mapMutations([
@@ -115,13 +115,11 @@ export default {
       return this.$parent.$options.methods.thumbnail.call(this.$parent, index)
     },
     async edit(item, index, target) {
-      console.log({item, index, target})
       let list = item != null? await AppServiceHelper.fetch(this.appServicePath, item[this.id]): {}
       this.replaceAS({[this.name]: list})
       this.$router.push(this.editPath)
     },
     async bulkEdit(item, index, target) {
-      console.log({item, index, target})
       this.$router.push(this.params.bulkEditPath)
     },
     deleteConfirm(item, index, button) {
