@@ -13,6 +13,7 @@ export const state = () => ({
   tx: {},
   categories: [],
   category: {},
+  categoryStyles: [],
 })
 
 const initState = state()

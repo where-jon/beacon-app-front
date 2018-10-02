@@ -29,7 +29,7 @@
     <b-table show-empty stacked="md" striped hover :items="list" :fields="fields" :current-page="currentPage" :per-page="perPage" outlined
             :filter="filter" @filtered="onFiltered">
       <template slot="style" slot-scope="row">
-        <div v-bind:style="row.item.style">A</div>
+        <div v-bind:style="style(row.index)">A</div>
       </template>
       <template slot="actions" slot-scope="row">
         <!-- 更新ボタン -->
@@ -116,6 +116,9 @@ export default {
     ]),
     thumbnail(index) {
       return this.$parent.$options.methods.thumbnail.call(this.$parent, index)
+    },
+    style(index) {
+      return this.$parent.$options.methods.style.call(this.$parent, index)
     },
     async edit(item, index, target) {
       console.log({item, index, target})

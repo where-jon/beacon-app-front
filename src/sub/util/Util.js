@@ -20,6 +20,7 @@ export const colorCd4display = (str) => {
   return "#" + str.replace("#", "").slice(0, 8)
 }
 
+export const hasValue = (str) => str !== undefined && str.length != 0
 export const detectEncoding = (str) => jschardet.detect(str)
 
 export const csv2Obj = (str) => {

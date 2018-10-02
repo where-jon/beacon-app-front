@@ -1,6 +1,9 @@
 <template>
-  <m-list :params="params" :list="categories" >
-  </m-list>
+  <div>
+    <breadcrumb :items="items" />
+    <m-list :params="params" :list="categories" >
+    </m-list>
+  </div>
 </template>
 
 <script>
@@ -10,11 +13,13 @@ import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import { addLabelByKey } from '../../../sub/helper/ViewHelper'
 import listmixinVue from '../../../components/listmixin.vue';
 import * as Util from '../../../sub/util/Util'
+import breadcrumb from '../../../components/breadcrumb.vue'
 import { CATEGORY } from '../../../sub/constant/Constants'
 
 export default {
   components: {
     mList, 
+    breadcrumb,
   },
   mixins: [listmixinVue],
   data() {
@@ -33,7 +38,17 @@ export default {
           {key: "actions", thStyle: {width:'130px !important'} }
         ]),
         initTotalRows: this.$store.state.app_service.categories.length
-      }
+      },
+      items: [
+        {
+          text: this.$i18n.t('label.master'),
+          active: true
+        },
+        {
+          text: this.$i18n.t('label.category'),
+          active: true
+        }
+      ]
     }
   },
   computed: {
@@ -50,26 +65,30 @@ export default {
       try {
         this.replace({showProgress: true})
         let categories = await AppServiceHelper.fetchList("/basic/category/", 'categoryId')
+        let categoryStyles = categories.map((val) => ({
+          "color": Util.colorCd4display(val.color),
+          "background-color": Util.colorCd4display(val.bgColor),
+          "text-align": "center",
+        }))
         categories = categories.map((val) => ({
           ...val,
           categoryTypeName: this.getCategoryTypeName(val),
           color: "",
           bgColor: "",
-          style: {
-            "color": Util.colorCd4display(val.color),
-            "background-color": Util.colorCd4display(val.bgColor),
-            "text-align": "center",
-          },
+          categoryType: "",
         }))
         if (payload && payload.done) {
           payload.done()
         }
-        this.replaceAS({categories})
+        this.replaceAS({categories, categoryStyles})
       }
       catch(e) {
         console.error(e)
       }
       this.replace({showProgress: false})
+    },
+    style(index) {
+      return this.$store.state.app_service.categoryStyles[index]
     },
   }
 }
