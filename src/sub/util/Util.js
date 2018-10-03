@@ -16,11 +16,9 @@ export const colorCd4db = (str) => {
   return color.slice(0, 8)
 }
 
-export const colorCd4display = (str) => {
-  if(!str){
-    return "#000000"
-  }
-  return "#" + str.replace("#", "").slice(0, 8)
+export const colorCd4display = (str, defaultColor) => {
+  let color = str? str: (defaultColor? defaultColor: "#000000")
+  return "#" + color.replace("#", "").slice(0, 8)
 }
 
 export const hasValue = (str) => str !== undefined && str !== null && str.length != 0
