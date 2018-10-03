@@ -188,6 +188,11 @@
     "personal": "個人設定",
     "changePassword": "パスワードを変更する",
   
+    "region": "リージョン",
+    "regionId": "リージョンID",
+    "regionName": "リージョン名",
+    "meshId": "メッシュID",
+
     "dummy": ""
   },
   "message": {
