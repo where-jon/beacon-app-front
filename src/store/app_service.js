@@ -11,6 +11,17 @@ export const state = () => ({
   exb: {},
   txs: [],
   tx: {},
+  categories: [],
+  category: {},
+  categoryStyles: [],
+  groups: [],
+  group: {},
+  groupStyles: [],
+  regions: [],
+  region: {},
+  user: {},
+  users: [],
+  roleOptions: [],
 })
 
 const initState = state()

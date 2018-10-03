@@ -27,6 +27,25 @@ export const txViewTypes = [
   {value: 3, text: "pattern3"},
 ]
 
+export const CATEGORY = {
+  TYPES: [
+    {value: 0, text: "人"},
+    {value: 1, text: "物"},
+  ],
+}
+
+export const SENSOR = {
+  TEMPARATURE: 1,
+  PIR: 2,
+  THERMOPILE: 3
+}
+
+export const DISCOMFORT = {
+  HOT: "hot",
+  COMFORT: "comfort",
+  COLD: "cold",
+}
+
 export const MENU = [
   {
     key: 'main',
@@ -38,6 +57,18 @@ export const MENU = [
         path: 'position',
         feature: '',
         icon: 'fas fa-map-marker-alt',
+      },
+      {
+        key: 'pir',
+        path: 'pir',
+        feature: '',
+        icon: 'fas fa-users',
+      },
+      {
+        key: 'thermohumidity',
+        path: 'thermohumidity',
+        feature: '',
+        icon: 'fas fa-thermometer-half',
       },
       {
         key: 'person',
@@ -52,7 +83,14 @@ export const MENU = [
     base: 'master/',
     path: 'master/area',
     icon: 'fas fa-database',
-    pages: [{
+    pages: [
+      {
+        key: 'region',
+        path: 'region',
+        feature: '/core/region',
+        icon: 'fas fa-industry',
+      },
+      {
         key: 'area',
         path: 'area',
         feature: '/core/area',
@@ -84,6 +122,24 @@ export const MENU = [
         path: 'person',
         feature: '/basic/person',
         icon: 'far fa-id-card',
+      },
+      {
+        key: 'category',
+        path: 'category',
+        feature: '/basic/category',
+        icon: 'fas fa-sitemap',
+      },
+      {
+        key: 'group',
+        path: 'group',
+        feature: '/basic/group',
+        icon: 'fas fa-users',
+      },
+      {
+        key: 'user',
+        path: 'user',
+        feature: '/core/user',
+        icon: 'fas fa-user',
       },
     ]
   },

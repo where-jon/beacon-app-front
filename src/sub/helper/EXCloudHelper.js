@@ -21,6 +21,13 @@ export const fetchPosition = async (exbs, txs) => {
     .compact().value()
 }
 
+export const fetchSensor = async (sensorId) => {
+  let data = DEV.USE_MOCK_POS? mock.position:
+      await HttpHelper.getExCloud(EXCLOUD.SENSOR_URL.replace("{id}", sensorId) + new Date().getTime())
+  return _(data)
+  .compact().value()
+}
+
 export const fetchRawPosition = async () => {
     let data = DEV.USE_MOCK_POS? mock.position:
         await HttpHelper.getExCloud(EXCLOUD.POSITION_URL + new Date().getTime())

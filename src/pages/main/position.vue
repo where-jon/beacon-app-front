@@ -1,6 +1,6 @@
 <template>
   <div id="mapContainer" class="container-fluid">
-    <breadcrumb :items="items" />
+    <breadcrumb :items="items" :reload="true" />
     <b-row class="mt-2">
       <b-form inline class="mt-2">
         <label class="mr-2">{{ $t('label.area') }}</label>
@@ -13,6 +13,13 @@
     <div v-if="selectedTx.txId" >
       <txdetail :selectedTx="selectedTx" @resetDetail="resetDetail"></txdetail>
     </div>
+    <!-- modal -->
+    <b-modal id="modalError" :title="$t('label.error')" ok-only>
+      {{ $t('message.noMapImage') }}
+    </b-modal>
+    <b-modal id="modalInfo" :title="$t('label.error')" ok-only>
+      {{ $t('message.noMapImage') }}
+    </b-modal>
   </div>
 </template>
 
@@ -20,28 +27,24 @@
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as PositionHelper from '../../sub/helper/PositionHelper'
-import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
-import { EventBus } from '../../sub/helper/EventHelper'
 import txdetail from '../../components/txdetail.vue'
 import { Tx, EXB, DISP } from '../../sub/constant/config'
 import { Shape, Stage, Container, Bitmap, Text, Touch } from '@createjs/easeljs/dist/easeljs.module'
 import { Tween, Ticker } from '@createjs/tweenjs/dist/tweenjs.module'
 import breadcrumb from '../../components/breadcrumb.vue'
+import showmapmixin from '../../components/showmapmixin.vue';
 
 let that
 
 export default {
+  mixins: [showmapmixin],
   components: {
     'txdetail': txdetail,
     breadcrumb,
   },
   data() {
      return {
-       selectedArea: null,
-       isShownMapImage: false,
-       positionedExb: [],
-       isFirstTime: true,
       items: [
         {
           text: this.$i18n.t('label.main'),
@@ -54,27 +57,10 @@ export default {
       ],
     }
   },
-  watch: {
-    selectedArea: function(newVal, oldVal) {
-    }
-  },
   computed: {
-    mapImage() {
-      let area = _.find(this.$store.state.app_service.areas, (area) => this.selectedArea && (area.areaId == this.selectedArea.value))
-      return area && area.mapImage
-    },
-    areaOptions() {
-      let ret = _(this.$store.state.app_service.areas).map((val) => {
-        return {label: val.areaName, value: val.areaId}
-      }).value()
-      return ret
-    },
     ...mapState('main', [
       'positions',
       'selectedTx',
-    ]),
-    ...mapState('app_service', [
-      'areas',
     ]),
   },
   mounted() {
@@ -82,16 +68,8 @@ export default {
     this.replace({title: this.$i18n.t('label.showPosition')})
     this.fetchData()
   },
-  created(){
-    EventBus.$on('reload', (payload)=>{
-       this.fetchData(payload)
-    })
-    window.addEventListener('resize', () => {
-      const positions = PositionHelper.adjustPosition(this.positions)
-      that.replaceMain({positions})
-    })
-  },
   updated(){
+    if (this.isFirstTime) return
     this.fetchData()
   },
   methods: {
@@ -123,15 +101,7 @@ export default {
     async fetchData(payload) {
       try {
         this.replace({showProgress: true})
-        if (this.isFirstTime) {
-          let areas = await AppServiceHelper.fetchList('/core/area/withImage', 'areaId')
-          this.selectedArea = areas && {label:areas[0].areaName, value:areas[0].areaId}
-          this.replaceAS({areas})
-
-          this.exbs = await AppServiceHelper.fetchList('/core/exb/withLocation', 'exbId')
-          this.txs = await AppServiceHelper.fetchList('/core/tx', 'txId')
-          this.isFirstTime = false
-        }
+        await this.fetchAreaExbs(true)
 
         let positions = await EXCloudHelper.fetchPosition(this.exbs, this.txs)
 
@@ -152,45 +122,16 @@ export default {
       this.replace({showProgress: false})
     },
     showMapImage() {
-      if (this.isShownMapImage) return
-      console.debug("showMapImage")
-      let parent = document.getElementById("map").parentElement
-      let canvas = this.$refs.map
-      var bg = new Image()
-      if (!this.mapImage) {
-        console.warn("no mapImage")
+      if (this.showMapImageDef()) {
         return
       }
-      bg.src = this.mapImage
-      if (bg.height == 0 || bg.width == 0) {
-        this.$nextTick(() => {
-          console.debug("again")
-          that.showMapImage()
-        })
-        return
-      }
-      this.mapWidth = bg.width
-      this.mapHeight = bg.height
-      this.isShownMapImage = true
-      canvas.width = parent.clientWidth
-      canvas.height = parent.clientWidth * bg.height / bg.width
 
-      const stage = new Stage("map")
-      stage.canvas = canvas
-      stage.mouseEnabled = true
-
-      var bitmap = new Bitmap(bg)
-      this.mapImageScale = bitmap.scaleY = bitmap.scaleX = parent.clientWidth / bg.width
-      bitmap.width = parent.clientWidth
-      bitmap.height = parent.clientWidth * bg.height / bg.width
-      stage.addChild(bitmap)
       this.txCont = new Container()
-      this.txCont.width = bitmap.width
-      this.txCont.height = bitmap.height
-      stage.addChild(this.txCont)
+      this.txCont.width = this.bitmap.width
+      this.txCont.height = this.bitmap.height
+      this.stage.addChild(this.txCont)
 
-      stage.update()
-      this.stage = stage      
+      this.stage.update()
     },
     showTxAll(positions) {
       // console.debug('showTxAll', {positions})
@@ -229,22 +170,6 @@ export default {
       this.txCont.addChild(txBtn)
       stage.update()
     },
-    changeArea(val) {
-      if (val.value) {
-        this.reset()
-        this.selectedArea = val
-        this.showMapImage()
-      }      
-    },
-    ...mapMutations([
-      'replace', 
-    ]),
-    ...mapMutations('main', [
-      'replaceMain', 
-    ]),
-    ...mapMutations('app_service', [
-      'replaceAS', 
-    ]),
   }
 }
 </script>

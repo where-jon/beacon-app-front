@@ -46,6 +46,7 @@
     "visible": "表示フラグ",
     "bgColor": "背景色",
     "color": "色",
+    "displayColor": "表示色",
     "dt": "日時",
     "no": "No.",
     "theme": "テーマ",
@@ -97,6 +98,9 @@
     "positionHistory": "位置情報",
     "positionHistoryId": "tx位置ID",
 
+    "pir": "人感センサ",
+    "thermohumidity":"温湿度",
+
     "zoneId": "ゾーンID",
     "zoneName": "ゾーン名",
     "zoneType": "ゾーンタイプ",
@@ -133,6 +137,12 @@
     "ruby": "ふりがな",
     "tel": "電話番号",
 
+    "loginId": "ログインID",
+    "password": "パスワード",
+    "passwordConfirm": "確認パスワード",
+    "name": "名前",
+    "email": "email",
+
     "category": "カテゴリ",
     "categoryId": "カテゴリID",
     "categoryName": "カテゴリ名",
@@ -144,12 +154,12 @@
     "groupName": "グループ名",
     "parentGroupId": "親グループID",
     
-    "sensor": "センサー",
+    "sensor": "センサ",
     "sensorDt": "日時",
-    "sensorHistory": "センサー情報",
-    "sensorHistoryId": "センサー履歴ID",
-    "sensorId": "センサーID",
-    "sensorName": "センサー名",
+    "sensorHistory": "センサ情報",
+    "sensorHistoryId": "センサ履歴ID",
+    "sensorId": "センサID",
+    "sensorName": "センサ名",
     "detectCount": "検知回数",
     
     "thing": "物マスタ",
@@ -185,6 +195,11 @@
     "personal": "個人設定",
     "changePassword": "パスワードを変更する",
   
+    "region": "リージョン",
+    "regionId": "リージョンID",
+    "regionName": "リージョン名",
+    "meshId": "メッシュID",
+
     "dummy": ""
   },
   "message": {
@@ -198,10 +213,14 @@
     "bulkRegisterFailed": "{target}の一括登録に失敗しました。（{code}）",
     "duplicate": "{key}（{val}）はすでに使用されています。",
     "foreignKey": "{key}（{val}）は存在しません。",
+    "noMapImage": "マップイメージが登録されていません。",
     "deleteConfirm": "{target}を削除してもよろしいですか？",
     "completed": "{target}が完了しました。",
     "failed": "{target}に失敗しました。（{code}）",
     "selectFile": "ファイルを選択してください",
+    "required": "{target}を入力してください。",
+    "validatePassword": "パスワードと確認パスワードが一致していません。",
+    "lengthRange": "{target}は{min}文字以上{max}文字以下で指定してください。",
     "emptyFile": "ファイルの中身が空です。",
     "invalidFile": "不正なファイルです。",
     "csvHeaderRequired": "CSVファイルにヘッダがありません",
