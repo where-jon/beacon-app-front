@@ -9,7 +9,7 @@ export const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 export const snake2camel = (str) => str.replace(/_./g, (s) => s.charAt(1).toUpperCase())
 
 export const colorCd4db = (str) => {
-  if(!hasValue(str)){
+  if(!str){
     return "000000"
   }
   const color = str.replace("#", "")
@@ -17,7 +17,7 @@ export const colorCd4db = (str) => {
 }
 
 export const colorCd4display = (str) => {
-  if(!hasValue(str)){
+  if(!str){
     return "#000000"
   }
   return "#" + str.replace("#", "").slice(0, 8)
