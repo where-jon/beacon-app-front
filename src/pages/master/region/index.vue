@@ -42,7 +42,7 @@ export default {
           active: true
         },
         {
-          text: this.$i18n.t('label.person'),
+          text: this.$i18n.t('label.region'),
           active: true
         }
       ]
