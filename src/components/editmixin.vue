@@ -67,6 +67,9 @@ export default {
           _.forEach(this.form, (value, key) => {
             this.form[key] = ''
           })
+          if(typeof this.beforeReload === "function"){
+            this.beforeReload()
+          }
           let customFileLabel = document.getElementsByClassName("custom-file-label")
           if (customFileLabel && customFileLabel[0]) {
             customFileLabel[0].innerText =''
