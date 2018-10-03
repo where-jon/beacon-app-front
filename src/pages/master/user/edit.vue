@@ -13,7 +13,7 @@
         </b-form-group>
         <b-form-group>
           <label v-t="'label.name'" />
-          <b-form-input type="text" v-model="form.name" maxlength="20" required :readonly="!isEditable" />
+          <b-form-input type="text" v-model="form.name" maxlength="20" :readonly="!isEditable" />
         </b-form-group>
         <b-form-group>
           <label v-t="'label.loginId'" />
@@ -21,7 +21,7 @@
         </b-form-group>
         <b-form-group>
           <label v-t="'label.email'" />
-          <b-form-input type="email" v-model="form.email" maxlength="255" required :readonly="!isEditable" />
+          <b-form-input type="email" v-model="form.email" maxlength="255" :readonly="!isEditable" />
         </b-form-group>
         <b-form-group>
           <label v-t="'label.role'" />
