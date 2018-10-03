@@ -9,18 +9,21 @@ export const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 export const snake2camel = (str) => str.replace(/_./g, (s) => s.charAt(1).toUpperCase())
 
 export const colorCd4db = (str) => {
+  if(!hasValue(str)){
+    return "000000"
+  }
   const color = str.replace("#", "")
   return color.slice(0, 8)
 }
 
 export const colorCd4display = (str) => {
-  if(str === undefined){
+  if(!hasValue(str)){
     return "#000000"
   }
   return "#" + str.replace("#", "").slice(0, 8)
 }
 
-export const hasValue = (str) => str !== undefined && str.length != 0
+export const hasValue = (str) => str !== undefined && str !== null && str.length != 0
 export const detectEncoding = (str) => jschardet.detect(str)
 
 export const csv2Obj = (str) => {
