@@ -30,7 +30,7 @@ import Vue from 'vue'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import _ from 'lodash'
 import { EventBus } from '../sub/helper/EventHelper'
-import { getTheme, themeColors } from '../sub/helper/ThemeHelper'
+import { getTheme, themeColors, getThemeClasses } from '../sub/helper/ThemeHelper'
 import { APP, DISP } from '../sub/constant/config'
 import styles from '../sub/constant/config.scss'
 
@@ -58,15 +58,7 @@ export default {
     mNav
   },
   mounted() {
-    const setColor = (className, color) => {
-      [].forEach.call(document.getElementsByClassName(className), (e) => {
-        e.style.backgroundColor = color
-      })
-    }
-    const theme = getTheme(this.loginId)
-    const color = themeColors[theme]
-    setColor('dropdown-menu', color)
-    setColor('dropdown-item', color)
+    this.setDropdownMenuColor()
   },
   data() {
     return {
@@ -85,23 +77,31 @@ export default {
       'title',
     ]),
     sidebarClasses () {
-      const theme = getTheme(this.loginId)
       const storeTheme = this.$store.state.setting.theme
+      const loginId = this.loginId
       return {
         'bd-sidebar': true,
-        default: theme === 'default',
-        primary: theme === 'primary',
-        secondary: theme === 'secondary',
-        success: theme === 'success',
-        info: theme === 'info',
-        warning: theme === 'warning',
-        danger: theme === 'danger',
-        light: theme === 'light',
-        dark: theme === 'dark',
+        ...getThemeClasses(loginId)
       }
     }
   },
+  watch: {
+    sidebarClasses: function(newVal, oldVal) {
+      this.setDropdownMenuColor()
+    }
+  },
   methods: {
+    setColor(className, color) {
+      [].forEach.call(document.getElementsByClassName(className), (e) => {
+        e.style.backgroundColor = color
+      })
+    },
+    setDropdownMenuColor() {
+      const theme = getTheme(this.loginId)
+      const color = themeColors[theme]
+      this.setColor('dropdown-menu', color)
+      this.setColor('dropdown-item', color)
+    }
   },
   head() { // browser tab title
     return {
@@ -190,40 +190,30 @@ html {
   }
 }
 
-.bd-sidebar.default {
-  background-color: $menu-bg;
+em {
+  font-style: normal;
 }
 
-.bd-sidebar.primary {
-  background-color: $blue;
-}
-
-.bd-sidebar.secondary {
-  background-color: $gray-600;
-}
-
-.bd-sidebar.success {
-  background-color: $green;
-}
-
-.bd-sidebar.info {
-  background-color: $cyan;
-}
-
-.bd-sidebar.warning {
-  background-color: $yellow;
-}
-
-.bd-sidebar.danger {
-  background-color: $red;
-}
-
-.bd-sidebar.light {
-  background-color: $gray-100;
-}
-
-.bd-sidebar.dark {
-  background-color: $gray-800;
+textarea:focus,
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="datetime"]:focus,
+input[type="datetime-local"]:focus,
+input[type="date"]:focus,
+input[type="month"]:focus,
+input[type="time"]:focus,
+input[type="week"]:focus,
+input[type="number"]:focus,
+input[type="email"]:focus,
+input[type="url"]:focus,
+input[type="search"]:focus,
+input[type="tel"]:focus,
+input[type="color"]:focus,
+input[type="file"]:focus,
+.uneditable-input:focus {   
+  border-color: rgba(203, 206, 209, 0.8);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 13px rgba(203, 206, 209, 0.6);
+  outline: 0 none;
 }
 
 </style>

@@ -29,9 +29,9 @@ export default {
         appServicePath: '/meta/user',
         fields: addLabelByKey(this.$i18n, [ 
           {key: "userId", sortable: true },
-          {key: "name", sortable: true  },
+          // {key: "name", sortable: true  },
           {key: "loginId", sortable: true  },
-          {key: "email", sortable: true },
+          // {key: "email", sortable: true },
           {key: "roleName", label: "role", sortable: true },
           {key: "description", sortable: true },
           {key: "actions", thStyle: {width:'130px !important'} }

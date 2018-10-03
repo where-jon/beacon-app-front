@@ -12,12 +12,15 @@ export const addNoSelect = (option) => option.unshift({value: undefined, text: "
 export const getByteLength = (str) => encodeURI(str == null? "": str).replace(/%../g, "*").length
 
 export const colorCd4db = (str) => {
+  if(!str){
+    return "000000"
+  }
   const color = str.replace("#", "")
   return color.slice(0, 8)
 }
 
 export const colorCd4display = (str) => {
-  if(str === undefined){
+  if(!str){
     return "#000000"
   }
   return "#" + str.replace("#", "").slice(0, 8)

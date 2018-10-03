@@ -119,11 +119,8 @@ export const Tx = [ // used when APP.LOGIN_MODE != APP_SERVICE with excloud old 
 ]
 
 export const THEME = [
-  {id: 1, label: '通常', name: 'default'},
-  {id: 2, label: 'シック', name: 'secondary'},
-  {id: 3, label: 'グリーン', name: 'success'},
-  {id: 4, label: 'ブルー', name: 'info'},
-  {id: 5, label: 'イエロー', name: 'warning'},
-  {id: 6, label: 'レッド', name: 'danger'},
-  {id: 7, label: 'ダーク', name: 'dark'},
+  {id: 1, label: 'コーポレート', name: 'default'},
+  {id: 2, label: 'アースカラー', name: 'earthcolor'},
+  {id: 3, label: 'オータム', name: 'autumn'},
+  {id: 4, label: 'ビビッド', name: 'vivid'},
 ]

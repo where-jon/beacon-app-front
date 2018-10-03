@@ -7,7 +7,7 @@
       <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">{{ message }}</b-alert>
 
       <b-row>
-        <b-col md="10" offset-md="1">
+        <b-col md="8" offset-md="2">
           <b-form @submit="onSubmit" v-if="show">
             <b-form-group v-if="form.personId">
               <label v-t="'label.personId'" />
