@@ -11,6 +11,7 @@ export const snake2camel = (str) => str.replace(/_./g, (s) => s.charAt(1).toUppe
 export const addNoSelect = (option) => option.unshift({value: undefined, text: ""})
 
 export const getByteLength = (str) => encodeURI(str == null? "": str).replace(/%../g, "*").length
+export const hasValue = (str) => str !== undefined && str.length != 0
 export const detectEncoding = (str) => jschardet.detect(str)
 
 export const csv2Obj = (str) => {
