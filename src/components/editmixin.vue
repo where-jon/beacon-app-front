@@ -61,7 +61,6 @@ export default {
       evt.preventDefault()
       try {
         let res = await this.save()
-        console.log("FIN save")
         this.message = this.$i18n.t('message.' + this.crud + 'Completed', {target: this.$i18n.t('label.' + this.name)})
         this.showInfo = true
         if (this.again) {
@@ -110,7 +109,6 @@ export default {
       }, resize)
     },
     async bulkSave(convert2Entities) {
-      console.log(this.form.csvFile)
       if (!this.form.csvFile) {
         throw new Error(this.$t('message.emptyFile'))
       }
@@ -121,7 +119,6 @@ export default {
       let entities = null
       reader.addEventListener('load', (e) => {
         try {
-          console.log("encode:", Util.detectEncoding(e.target.result))
           let csv = Util.csv2Obj(e.target.result)
           if (csv.errors && csv.errors.length > 0) {
             console.error(csv.errors)

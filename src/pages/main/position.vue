@@ -77,7 +77,6 @@ export default {
       this.isShownMapImage = false
     },
     showDetail(txId, x, y) {
-      console.log(txId, x, y)
       let rev = y > 400
 
       let map = HtmlUtil.getRect("#map")
@@ -96,7 +95,6 @@ export default {
       this.replaceMain({selectedTx})
     },
     resetDetail() {
-      console.log("resetDetail")
       let selectedTx = {}
       this.replaceMain({selectedTx})
     },

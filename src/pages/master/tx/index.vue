@@ -62,7 +62,6 @@ export default {
         if (payload && payload.done) {
           payload.done()
         }
-        console.log(txs)
         this.replaceAS({txs})
       }
       catch(e) {

@@ -22,7 +22,7 @@
 <script>
 
 import { DISP, THEME } from '../sub/constant/config'
-import { getTheme } from '../sub/helper/ThemeHelper'
+import { getThemeClasses } from '../sub/helper/ThemeHelper'
 
 export default {
   data() {
@@ -36,19 +36,11 @@ export default {
       return this.$store.state.loginId
     },
     menuItemClasses () {
-      const theme = getTheme(this.loginId)
-      const array = THEME.map((e) => {
-        const obj = {}
-        obj[e.name] = e.name === theme
-        return obj
-      })
-      let themeClasses = {}
-      Object.assign(themeClasses, ...array)
       const storeTheme = this.$store.state.setting.theme
       return {
         'menu-item': true,
         item: true,
-        ...themeClasses
+        ...getThemeClasses(this.loginId)
       }
     }
   },
@@ -157,67 +149,35 @@ li.menu-item.item {
 }
 
 li.menu-item.item.default {
-  background: #478dca;
+  background: $default-menu-item;
 }
 
 li.menu-item.item.default:hover {
-  background: #4288c5;
+  background: #7EA0C4;
 }
 
-li.menu-item.item.info {
-  background: #59b9c6;
+li.menu-item.item.earthcolor {
+  background: $earth-color-menu-item;
 }
 
-li.menu-item.item.info:hover {
-  background: #59bad4;
+li.menu-item.item.earthcolor:hover {
+  background: #819E6E;
 }
 
-li.menu-item.item.primary {
-  background:#118cff;
+li.menu-item.item.autumn {
+  background: $autumn-menu-item;
 }
 
-li.menu-item.item.primary:hover {
-  background:#119fff;
+li.menu-item.item.autumn:hover {
+  background:#C5AA78;
 }
 
-li.menu-item.item.secondary {
-  background: #979ea7;
+li.menu-item.item.vivid {
+  background: $vivid-menu-item;
 }
 
-li.menu-item.item.secondary:hover {
-  background: #9198a2;
-}
-
-li.menu-item.item.success {
-  background: #39b856;
-}
-
-li.menu-item.item.success:hover {
-  background: #27b744;
-}
-
-li.menu-item.item.warning {
-  background: #ffda3f;
-}
-
-li.menu-item.item.warning:hover {
-  background: #ffd439;
-}
-
-li.menu-item.item.danger {
-  background: #de5767;
-}
-
-li.menu-item.item.danger:hover {
-  background: #dc4555;
-}
-
-li.menu-item.item.dark {
-  background: #464c52;
-}
-
-li.menu-item.item.dark:hover {
-  background: #404450;
+li.menu-item.item.vivid:hover {
+  background: #EE5588;
 }
 
 .clearfix::after {
