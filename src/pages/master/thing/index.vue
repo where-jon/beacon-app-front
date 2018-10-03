@@ -1,6 +1,9 @@
 <template>
-  <m-list :params="params" :list="things">
-  </m-list>
+  <div>
+    <breadcrumb :items="items" />
+    <m-list :params="params" :list="things">
+    </m-list>
+  </div>
 </template>
 
 <script>
@@ -8,11 +11,14 @@ import mList from '../../../components/list.vue'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import { addLabelByKey } from '../../../sub/helper/ViewHelper'
-import listmixinVue from '../../../components/listmixin.vue';
+import * as Util from '../../../sub/util/Util'
+import listmixinVue from '../../../components/listmixin.vue'
+import breadcrumb from '../../../components/breadcrumb.vue'
 
 export default {
   components: {
-    mList
+    mList,
+    breadcrumb,
   },
   mixins: [listmixinVue],
   data() {
@@ -38,7 +44,17 @@ export default {
         ]),
         initTotalRows: this.$store.state.app_service.things.length,
         autoInsertId: ["thingId"],
-      }
+      },
+      items: [
+        {
+          text: this.$i18n.t('label.master'),
+          active: true
+        },
+        {
+          text: this.$i18n.t('label.thing'),
+          active: true
+        }
+      ]
     }
   },
   computed: {
@@ -56,7 +72,7 @@ export default {
         things = things.map((val) => {
           return {
             ...val,
-            categoryName: (val.thingCategoryList !== undefined && val.thingCategoryList.length != 0? val.thingCategoryList[0].category.categoryName: ""),
+            categoryName: Util.hasValue(val.thingCategoryList)? val.thingCategoryList[0].category.categoryName: "",
             thumbnail: ""
           }
         }) // omit images to avoid being filtering target
@@ -71,7 +87,7 @@ export default {
       this.replace({showProgress: false})
     },
     thumbnail(index) {
-      return this.$store.state.app_service.thingImages[index]
+      return this.thingImages[index]
     },
   }
 }

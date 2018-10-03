@@ -17,7 +17,7 @@
         <b-button :variant='getTheme' @click="edit()" v-t="'label.createNew'"  class="float-right"/>
         <b-button v-if="params.bulkEditPath" :variant='getTheme'
           @click="bulkEdit()" v-t="'label.bulkRegister'"  class="float-right" :style="{ marginRight: '10px'}"/>
-        <b-button v-if="params.csvOut" variant='outline-primary' @click="exportCsv" v-t="'label.export'"  class="float-right mr-1"/>
+        <b-button v-if="params.csvOut" variant='outline-primary' @click="exportCsv" v-t="'label.export'"  class="float-right" :style="{ marginRight: '10px'}"/>
       </b-col>
     </b-row>
 

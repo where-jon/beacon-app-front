@@ -211,7 +211,7 @@
     "deleteConfirm": "{target}を削除してもよろしいですか？",
     "completed": "{target}が完了しました。",
     "failed": "{target}に失敗しました。（{code}）",
-    "overLength": "{target}の文字数が長すぎます。",
+    "overLength": "{target}には{length}以内の文字列を入力してください",
     "selectFile": "ファイルを選択してください",
     "required": "{target}を入力してください。",
     "validatePassword": "パスワードと確認パスワードが一致していません。",
