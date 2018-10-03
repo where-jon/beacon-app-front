@@ -130,6 +130,12 @@ export const MENU = [
         icon: 'fas fa-sitemap',
       },
       {
+        key: 'group',
+        path: 'group',
+        feature: '/basic/group',
+        icon: 'fas fa-users',
+      },
+      {
         key: 'user',
         path: 'user',
         feature: '/core/user',
