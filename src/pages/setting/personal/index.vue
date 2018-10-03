@@ -9,7 +9,7 @@
       -->
       <b-row>
         <b-col md="10" offset-md="1">
-          <h3 class="loginuser-profile">ログインユーザ・プロフィール</h3>
+          <pagetitle title="label.login-user-profile" />
           <b-form>
             <b-form-group>
               <label v-t="'label.loginId'" />
@@ -40,12 +40,14 @@
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import breadcrumb from '../../../components/breadcrumb.vue'
+import pagetitle from '../../../components/pagetitle.vue'
 import { DISP, THEME } from '../../../sub/constant/config'
 import { getTheme, getButtonTheme } from '../../../sub/helper/ThemeHelper'
 
 export default {
   components: {
     breadcrumb,
+    pagetitle,
   },
   data () {
     return {
