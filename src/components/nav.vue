@@ -8,7 +8,7 @@
       <!--
       <span v-t="'label.title'" />
       -->
-      <img src="/toplogo.png" width=166 height=27 />
+      <img src="/toplogo.png" width=220 height=36 />
     </b-navbar-brand>
 
     <b-collapse is-nav id="nav_collapse" v-if="!isLoginPage">

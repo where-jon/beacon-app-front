@@ -1,5 +1,4 @@
 import { THEME } from "../constant/config"
-import styles from '../../sub/constant/config.scss'
 
 export const getButtonTheme = (loginId) => {
   const theme = getTheme(loginId)
@@ -20,6 +19,7 @@ export const getThemeClasses = (loginId) => {
   THEME.forEach((e) => {
     obj[e.name] = e.name === theme
   })
+  console.log(obj)
   return obj
 }
 
