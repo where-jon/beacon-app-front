@@ -5,6 +5,7 @@ import styles from './config.scss'
 import { LOGIN_MODE } from './Constants'
 
 export const DEV = {
+  DEBUG: 0, // デバッグモード (0:なし、1以上デバッグレベル)
   USE_MOCK_POS: false, // 測位APIの代わりにモックデータを使用する
   USE_MOCK_SENS: false, // センサーデータの代わりにモックデータを使用する
 }
@@ -17,6 +18,7 @@ export const APP = {
   LOGIN_MODE: LOGIN_MODE.APP_SERVICE,
   UNDETECT_TIME: 10 * 60 * 1000, // used on telemetry 
   AREA_THUMBNAIL_MAX: 200,
+  USE_THERMOPILE: true,
 }
 
 export const LOCAL_LOGIN = { // local login md5 hash of id:pass // TODO: add Role
@@ -36,6 +38,7 @@ export const EXCLOUD = {
   POSITION_URL: APP_SERVICE.BASE_URL + "/core/excloud/position?_=",
   GATEWAY_URL: APP_SERVICE.BASE_URL + "/core/excloud/gateway?_=",
   TELEMETRY_URL: APP_SERVICE.BASE_URL + "/core/excloud/telemetry?_=",
+  SENSOR_URL: APP_SERVICE.BASE_URL + "/core/excloud/sensor/{id}?_=",
 }
 
 
@@ -54,6 +57,20 @@ export const DISP = {
   EXB_LOC_BGCOLOR: "#76ccf7",
   EXB_LOC_COLOR: "#000",
   EXB_LOC_FONT: "16px Arial",
+
+  THERMOH_DISP: "icon", // icon / color
+  THERMOH_FONT: "12px Arial",
+  DISCOMFORT_HOT: "#fc5800",
+  DISCOMFORT_COMFORT: "#15db75",
+  DISCOMFORT_COLD: "#7da6e8",
+
+  PIR_R_SIZE: 20,
+  PIR_MIN_COUNT: 2,
+  PIR_BGCOLOR: "#E2A6A5",
+
+  THERMOPILE_S_SIZE: 20,
+  THERMOPILE_M_SIZE: 40,
+  THERMOPILE_L_SIZE: 60,
 }
 
 export const EXB = [ // used when APP.LOGIN_MODE != APP_SERVICE with excloud old api

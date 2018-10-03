@@ -1,8 +1,7 @@
 <template>
   <div>
     <breadcrumb :items="items" />
-    <m-list :params="params" :list="regions" >
-    </m-list>
+    <m-list :params="params" :list="groups" />
   </div>
 </template>
 
@@ -11,8 +10,9 @@ import mList from '../../../components/list.vue'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import { addLabelByKey } from '../../../sub/helper/ViewHelper'
-import listmixinVue from '../../../components/listmixin.vue';
+import listmixinVue from '../../../components/listmixin.vue'
 import breadcrumb from '../../../components/breadcrumb.vue'
+import * as Util from '../../../sub/util/Util'
 
 export default {
   components: {
@@ -23,18 +23,19 @@ export default {
   data() {
     return {
       params: {
-        name: 'region',
-        id: 'regionId',
-        editPath: '/master/region/edit',
-        appServicePath: '/core/region',
+        name: 'group',
+        id: 'groupId',
+        editPath: '/master/group/edit',
+        appServicePath: '/basic/group',
         fields: addLabelByKey(this.$i18n, [ 
-          {key: "regionId", sortable: true },
-          {key: "regionName", sortable: true },
-          {key: "meshId", sortable: true},
-          {key: "description", sortable: true },
+          {key: "groupId", sortable: true },
+          {key: "groupName", sortable: true },
+          {key: "ruby", sortable: true },
+          {key: "style", label: "displayColor" } ,
+          {key: "description" },
           {key: "actions", thStyle: {width:'130px !important'} }
         ]),
-        initTotalRows: this.$store.state.app_service.regions.length
+        initTotalRows: this.$store.state.app_service.groups.length
       },
       items: [
         {
@@ -42,7 +43,7 @@ export default {
           active: true
         },
         {
-          text: this.$i18n.t('label.region'),
+          text: this.$i18n.t('label.group'),
           active: true
         }
       ]
@@ -50,23 +51,36 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'regions',
+      'groups', 'groupStyles',
     ]),
   },
   methods: {
     async fetchData(payload) {
       try {
         this.replace({showProgress: true})
-        let regions = await AppServiceHelper.fetchList("/core/region/", 'regionId')
+        let groups = await AppServiceHelper.fetchList("/basic/group/", 'groupId')
+        let groupStyles = groups.map((val) => ({
+          "color": Util.colorCd4display(val.color),
+          "background-color": Util.colorCd4display(val.bgColor),
+          "text-align": "center",
+        }))
+        groups = groups.map((val) => ({
+          ...val,
+          color: "",
+          bgColor: "",
+        }))
         if (payload && payload.done) {
           payload.done()
         }
-        this.replaceAS({regions})
+        this.replaceAS({groups, groupStyles})
       }
       catch(e) {
         console.error(e)
       }
       this.replace({showProgress: false})
+    },
+    style(index) {
+      return this.groupStyles[index]
     },
   }
 }

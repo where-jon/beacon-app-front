@@ -34,6 +34,18 @@ export const CATEGORY = {
   ],
 }
 
+export const SENSOR = {
+  TEMPARATURE: 1,
+  PIR: 2,
+  THERMOPILE: 3
+}
+
+export const DISCOMFORT = {
+  HOT: "hot",
+  COMFORT: "comfort",
+  COLD: "cold",
+}
+
 export const MENU = [
   {
     key: 'main',
@@ -45,6 +57,18 @@ export const MENU = [
         path: 'position',
         feature: '',
         icon: 'fas fa-map-marker-alt',
+      },
+      {
+        key: 'pir',
+        path: 'pir',
+        feature: '',
+        icon: 'fas fa-users',
+      },
+      {
+        key: 'thermohumidity',
+        path: 'thermohumidity',
+        feature: '',
+        icon: 'fas fa-thermometer-half',
       },
       {
         key: 'person',
@@ -104,6 +128,12 @@ export const MENU = [
         path: 'category',
         feature: '/basic/category',
         icon: 'fas fa-sitemap',
+      },
+      {
+        key: 'group',
+        path: 'group',
+        feature: '/basic/group',
+        icon: 'fas fa-users',
       },
       {
         key: 'thing',
