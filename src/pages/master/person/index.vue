@@ -74,7 +74,7 @@ export default {
       this.replace({showProgress: false})
     },
     thumbnail(index) {
-      return this.$store.state.app_service.personImages[index]
+      return this.personImages[index]
     },
   }
 }

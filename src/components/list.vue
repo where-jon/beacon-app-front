@@ -29,6 +29,9 @@
     <!-- table -->
     <b-table show-empty stacked="md" striped hover :items="list" :fields="fields" :current-page="currentPage" :per-page="perPage" outlined
             :filter="filter" @filtered="onFiltered">
+      <template slot="style" slot-scope="row">
+        <div v-bind:style="style(row.index)">A</div>
+      </template>
       <template slot="actions" slot-scope="row">
         <!-- 更新ボタン -->
         <b-button size="sm" @click.stop="edit(row.item, row.index, $event.target)" :variant="getTheme" class="mr-2 my-1" v-t="'label.' + crud" />
@@ -121,6 +124,9 @@ export default {
     exportCsv() {
       const headers = this.params.fields.filter((val) => !["thumbnail", "actions"].includes(val.key)).map((val) => val.key)
       HtmlUtil.fileDL(this.params.name + ".csv", Util.converToCsv(this.list, headers))
+    },
+    style(index) {
+      return this.$parent.$options.methods.style.call(this.$parent, index)
     },
     async edit(item, index, target) {
       console.log({item, index, target})

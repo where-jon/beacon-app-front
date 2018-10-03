@@ -47,6 +47,7 @@
     "visible": "表示フラグ",
     "bgColor": "背景色",
     "color": "色",
+    "displayColor": "表示色",
     "dt": "日時",
     "export": "EXPORT",
     "no": "No.",
