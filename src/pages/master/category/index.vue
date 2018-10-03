@@ -53,7 +53,7 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'categories',
+      'categories', 'categoryStyles',
     ]),
   },
   methods: {
@@ -88,7 +88,7 @@ export default {
       this.replace({showProgress: false})
     },
     style(index) {
-      return this.$store.state.app_service.categoryStyles[index]
+      return this.categoryStyles[index]
     },
   }
 }
