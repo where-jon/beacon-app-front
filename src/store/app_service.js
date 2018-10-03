@@ -11,6 +11,9 @@ export const state = () => ({
   exb: {},
   txs: [],
   tx: {},
+  user: {},
+  users: [],
+  roleOptions: [],
 })
 
 const initState = state()

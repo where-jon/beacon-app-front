@@ -8,6 +8,7 @@ export const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 
 export const snake2camel = (str) => str.replace(/_./g, (s) => s.charAt(1).toUpperCase())
 
+export const hasValue = (str) => str !== undefined && str.length != 0
 export const detectEncoding = (str) => jschardet.detect(str)
 
 export const csv2Obj = (str) => {
