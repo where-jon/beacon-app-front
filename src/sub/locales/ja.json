@@ -30,6 +30,7 @@
 
     "---------------- App common ---------------":"",
     "login": "ログイン",
+    "loginId": "ログインID",
     "user": "ユーザ",
     "userId": "ユーザID",
     "id": "ID",
@@ -47,6 +48,8 @@
     "color": "色",
     "displayColor": "表示色",
     "dt": "日時",
+    "no": "No.",
+    "theme": "テーマ",
 
     "---------------- App exbeacon ---------------":"",
 
@@ -54,7 +57,7 @@
     "telemetry": "テレメトリ",
     "gateway": "ゲートウェイ",
     "position": "測位",
-    "monitor": "モニター",
+    "monitor": "モニタ",
     "area": "エリア",
     "exb": "EXBeacon",
     "location": "EXB配置設定",
@@ -128,6 +131,12 @@
     "ruby": "ふりがな",
     "tel": "電話番号",
 
+    "loginId": "ログインID",
+    "password": "パスワード",
+    "passwordConfirm": "確認パスワード",
+    "name": "名前",
+    "email": "email",
+
     "category": "カテゴリ",
     "categoryId": "カテゴリID",
     "categoryName": "カテゴリ名",
@@ -176,7 +185,15 @@
     "tenantCd": "テナントコード",
     "tenantId": "テナントID",
     "tenantName": "テナント名",
+
+    "personal": "個人設定",
+    "changePassword": "パスワードを変更する",
   
+    "region": "リージョン",
+    "regionId": "リージョンID",
+    "regionName": "リージョン名",
+    "meshId": "メッシュID",
+
     "dummy": ""
   },
   "message": {
@@ -194,6 +211,9 @@
     "completed": "{target}が完了しました。",
     "failed": "{target}に失敗しました。（{code}）",
     "selectFile": "ファイルを選択してください",
+    "required": "{target}を入力してください。",
+    "validatePassword": "パスワードと確認パスワードが一致していません。",
+    "lengthRange": "{target}は{min}文字以上{max}文字以下で指定してください。",
     "emptyFile": "ファイルの中身が空です。",
     "invalidFile": "不正なファイルです。",
     "csvHeaderRequired": "CSVファイルにヘッダがありません",

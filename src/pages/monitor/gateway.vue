@@ -1,23 +1,26 @@
 <template>
-  <div class="container">
-    <p></p>
-    <b-row align-h="end">
-      <b-col md="2" class="mb-3 mr-3">
-        <b-button variant='outline-primary' @click="download()" v-t="'label.download'" />
-      </b-col>
-    </b-row>
-    <table class="table table-hover table-bordered">
-      <thead>
-        <tr>
-          <th scope="col" v-for="(val, key) in gateways[0]" :key="key" >{{ key }}</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(gateway, index) in gateways" :key="index" :class="{undetect: isUndetect(gateway.updated)}">
-          <td scope="row" v-for="(val, key) in gateway" :key="key" >{{ val }}</td>
-        </tr>
-      </tbody>
-    </table>
+  <div>
+    <breadcrumb :items="items" :reload="true" />
+    <div class="container">
+      <p></p>
+      <b-row align-h="end">
+        <b-col md="2" class="mb-3 mr-3">
+          <b-button :variant="getTheme" @click="download()" v-t="'label.download'" />
+        </b-col>
+      </b-row>
+      <table class="table table-hover table-bordered">
+        <thead>
+          <tr>
+            <th scope="col" v-for="(val, key) in gateways[0]" :key="key" >{{ key }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(gateway, index) in gateways" :key="index" :class="{undetect: isUndetect(gateway.updated)}">
+            <td scope="row" v-for="(val, key) in gateway" :key="key" >{{ val }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </template>
 
@@ -28,9 +31,32 @@ import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
 import { EventBus } from '../../sub/helper/EventHelper'
 import { EXB, DISP, APP } from '../../sub/constant/config'
+import breadcrumb from '../../components/breadcrumb.vue'
+import { getTheme } from '../../sub/helper/ThemeHelper'
 
 export default {
+  components: {
+    breadcrumb,
+  },
+  data () {
+    return {
+      items: [
+        {
+          text: this.$i18n.t('label.monitor'),
+          active: true
+        },
+        {
+          text: this.$i18n.t('label.gateway'),
+          active: true
+        }
+      ]
+    }
+  },
   computed: {
+    getTheme () {
+      const theme = getTheme(this.$store.state.loginId)
+      return 'outline-' + theme
+    },
     ...mapState('monitor', [
       'gateways',
     ])
@@ -46,9 +72,9 @@ export default {
   },
   methods: {
     async fetchData(payload) {
+      this.replace({showProgress: true})
       try {
         let gateways = await EXCloudHelper.fetchGateway()
-        console.log({gateways})
         if (payload && payload.done) {
           payload.done()
         }
@@ -57,6 +83,7 @@ export default {
       catch(e) {
         console.error(e)
       }
+      this.replace({showProgress: false})
     },
     isUndetect(updated) {
       return updated == "" || new Date() - new Date(updated) > APP.UNDETECT_TIME

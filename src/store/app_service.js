@@ -13,6 +13,14 @@ export const state = () => ({
   tx: {},
   groups: [],
   group: {},
+  categories: [],
+  category: {},
+  categoryStyles: [],
+  regions: [],
+  region: {},
+  user: {},
+  users: [],
+  roleOptions: [],
 })
 
 const initState = state()

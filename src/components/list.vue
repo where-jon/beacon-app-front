@@ -1,5 +1,5 @@
 <template>
-  <div class="container-fluid">
+  <div>
     <!-- searchbox -->
     <b-row>
       <b-col md="6" class="my-1">
@@ -13,8 +13,10 @@
         </b-form-group>
       </b-col>
       <b-col class="mb-2 justify-content-end">
-        <b-button variant='outline-primary' @click="edit()" v-t="'label.createNew'"  class="float-right ml-1"/>
-        <b-button v-if="params.bulkEditPath" variant='outline-primary' @click="bulkEdit()" v-t="'label.bulkRegister'"  class="float-right"/>
+        <!-- 新規作成ボタン -->
+        <b-button :variant='getTheme' @click="edit()" v-t="'label.createNew'"  class="float-right"/>
+        <b-button v-if="params.bulkEditPath" :variant='getTheme'
+          @click="bulkEdit()" v-t="'label.bulkRegister'"  class="float-right" :style="{ marginRight: '10px'}"/>
       </b-col>
     </b-row>
 
@@ -27,14 +29,16 @@
     <b-table show-empty stacked="md" striped hover :items="list" :fields="fields" :current-page="currentPage" :per-page="perPage" outlined
             :filter="filter" @filtered="onFiltered">
       <template slot="style" slot-scope="row">
-        <div v-bind:style="row.item.style">A</div>
+        <div v-bind:style="style(row.index)">A</div>
       </template>
       <template slot="actions" slot-scope="row">
-        <b-button size="sm" @click.stop="edit(row.item, row.index, $event.target)" variant="outline-primary" class="mr-2 my-1" v-t="'label.' + crud" />
+        <!-- 更新ボタン -->
+        <b-button size="sm" @click.stop="edit(row.item, row.index, $event.target)" :variant="getTheme" class="mr-2 my-1" v-t="'label.' + crud" />
+        <!-- 削除ボタン -->
         <b-button v-if="isEditable" size="sm" @click.stop="deleteConfirm(row.item, row.index, $event.target)" variant="outline-danger" class="mr-1" v-t="'label.delete'" />
       </template>
       <template slot="thumbnail" slot-scope="row">
-        <img v-if="thumbnail(row.index)" :src="thumbnail(row.index)" width="100" />
+        <img v-if="thumbnail(row.index)" :src="thumbnail(row.index)" height="70" />
       </template>
     </b-table>
 
@@ -59,6 +63,7 @@ import * as AppServiceHelper from '../sub/helper/AppServiceHelper'
 import { addLabelByKey } from '../sub/helper/ViewHelper'
 import { EventBus } from '../sub/helper/EventHelper'
 import * as MenuHelper from '../sub/helper/MenuHelper'
+import { getButtonTheme, getTheme, themeColors } from '../sub/helper/ThemeHelper'
 
 export default {
   props: ['params', 'list'],
@@ -82,10 +87,25 @@ export default {
     ...mapState([
       'featureList',
     ]),
+    loginId() {
+      return this.$store.state.loginId
+    },
+    getTheme () {
+      const theme = getButtonTheme(this.loginId)
+      return 'outline-' + theme
+    }
   },
   mounted() {
     this.$parent.$options.methods.fetchData.apply(this.$parent)
-    this.replace({title: this.$i18n.t('label.' + this.name) + this.$i18n.t('label.list')})
+    const theme = getTheme(this.loginId)
+    const color = themeColors[theme]
+    const pageLinks = document.getElementsByClassName('.page-link')
+    for (let i = pageLinks.length ; i--;) {
+      pageLinks[0].style.color = color
+    }
+    const pageActive = document.querySelector('a.page-link.btn-primary')
+    pageActive.style.backgroundColor = color
+    pageActive.style.color = '#ffffff'
   },
   methods: {
     ...mapMutations([
@@ -96,6 +116,9 @@ export default {
     ]),
     thumbnail(index) {
       return this.$parent.$options.methods.thumbnail.call(this.$parent, index)
+    },
+    style(index) {
+      return this.$parent.$options.methods.style.call(this.$parent, index)
     },
     async edit(item, index, target) {
       console.log({item, index, target})
@@ -132,4 +155,13 @@ export default {
 </script>
 
 <style>
+  td.thumb-rowdata {
+    padding: 5px;
+    line-height: 70px;
+  }
+
+  td.action-rowdata {
+    padding: 5px;
+    line-height: 35px;
+  }
 </style>

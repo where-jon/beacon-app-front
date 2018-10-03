@@ -1,7 +1,8 @@
 <template>
   <div>
     <breadcrumb :items="items" />
-    <m-list :params="params" :list="txs" />
+    <m-list :params="params" :list="users" >
+    </m-list>
   </div>
 </template>
 
@@ -22,19 +23,20 @@ export default {
   data() {
     return {
       params: {
-        name: 'tx',
-        id: 'txId',
-        editPath: '/master/tx/edit',
-        appServicePath: '/core/tx',
+        name: 'user',
+        id: 'userId',
+        editPath: '/master/user/edit',
+        appServicePath: '/meta/user',
         fields: addLabelByKey(this.$i18n, [ 
-          {key: "txId", sortable: true, tdClass: "action-rowdata" },
-          {key: "btxId", sortable: true, tdClass: "action-rowdata" },
-          {key: "txName", sortable: true, tdClass: "action-rowdata" },
-          {key: "displayName", sortable: true, tdClass: "action-rowdata" },
-          {key: "minor", sortable: true, tdClass: "action-rowdata" },
-          {key: "actions", thStyle: {width: '130px !important'}, tdClass: "action-rowdata" }
+          {key: "userId", sortable: true },
+          {key: "name", sortable: true  },
+          {key: "loginId", sortable: true  },
+          {key: "email", sortable: true },
+          {key: "roleName", label: "role", sortable: true },
+          {key: "description", sortable: true },
+          {key: "actions", thStyle: {width:'130px !important'} }
         ]),
-        initTotalRows: this.$store.state.app_service.txs.length
+        initTotalRows: this.$store.state.app_service.users.length
       },
       items: [
         {
@@ -42,7 +44,7 @@ export default {
           active: true
         },
         {
-          text: this.$i18n.t('label.tx'),
+          text: this.$i18n.t('label.user'),
           active: true
         }
       ]
@@ -50,26 +52,25 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'txs',
-      'txImages',
+      'users',
     ]),
   },
   methods: {
     async fetchData(payload) {
       try {
         this.replace({showProgress: true})
-        let txs = await AppServiceHelper.fetchList('/core/tx', 'txId')
+        let users = await AppServiceHelper.fetchList("/meta/user/", 'userId')
+        users = users.map((val) => ({...val, roleName: val.role.roleName}))
         if (payload && payload.done) {
           payload.done()
         }
-        console.log(txs)
-        this.replaceAS({txs})
+        this.replaceAS({users})
       }
       catch(e) {
         console.error(e)
       }
       this.replace({showProgress: false})
-    }
+    },
   }
 }
 </script>

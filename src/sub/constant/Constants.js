@@ -27,6 +27,13 @@ export const txViewTypes = [
   {value: 3, text: "pattern3"},
 ]
 
+export const CATEGORY = {
+  TYPES: [
+    {value: 0, text: "人"},
+    {value: 1, text: "物"},
+  ],
+}
+
 export const MENU = [
   {
     key: 'main',
@@ -52,7 +59,14 @@ export const MENU = [
     base: 'master/',
     path: 'master/area',
     icon: 'fas fa-database',
-    pages: [{
+    pages: [
+      {
+        key: 'region',
+        path: 'region',
+        feature: '/core/region',
+        icon: 'fas fa-industry',
+      },
+      {
         key: 'area',
         path: 'area',
         feature: '/core/area',
@@ -86,10 +100,22 @@ export const MENU = [
         icon: 'far fa-id-card',
       },
       {
+        key: 'category',
+        path: 'category',
+        feature: '/basic/category',
+        icon: 'fas fa-sitemap',
+      },
+      {
         key: 'group',
         path: 'group',
         feature: '/basic/group',
         icon: 'fas fa-users',
+      },
+      {
+        key: 'user',
+        path: 'user',
+        feature: '/core/user',
+        icon: 'fas fa-user',
       },
     ]
   },
@@ -117,5 +143,18 @@ export const MENU = [
         icon: 'fa fa-battery-three-quarters',
       },
     ]
-  }
+  },
+  {
+    key: 'setting',
+    base: 'setting/',
+    path: 'setting/personal',
+    icon: 'fas fa-cog',
+    pages: [{
+        key: 'personal',
+        path: 'personal',
+        feature: '/core/personal',
+        icon: 'fas fa-user-cog',
+      },
+    ]
+  },
 ]
