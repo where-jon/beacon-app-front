@@ -98,6 +98,9 @@
     "positionHistory": "位置情報",
     "positionHistoryId": "tx位置ID",
 
+    "pir": "人感センサ",
+    "thermohumidity":"温湿度",
+
     "zoneId": "ゾーンID",
     "zoneName": "ゾーン名",
     "zoneType": "ゾーンタイプ",
@@ -148,12 +151,12 @@
     "groupName": "グループ名",
     "parentGroupId": "親グループID",
     
-    "sensor": "センサー",
+    "sensor": "センサ",
     "sensorDt": "日時",
-    "sensorHistory": "センサー情報",
-    "sensorHistoryId": "センサー履歴ID",
-    "sensorId": "センサーID",
-    "sensorName": "センサー名",
+    "sensorHistory": "センサ情報",
+    "sensorHistoryId": "センサ履歴ID",
+    "sensorId": "センサID",
+    "sensorName": "センサ名",
     "detectCount": "検知回数",
     
     "thing": "物マスタ",
@@ -207,6 +210,7 @@
     "bulkRegisterFailed": "{target}の一括登録に失敗しました。（{code}）",
     "duplicate": "{key}（{val}）はすでに使用されています。",
     "foreignKey": "{key}（{val}）は存在しません。",
+    "noMapImage": "マップイメージが登録されていません。",
     "deleteConfirm": "{target}を削除してもよろしいですか？",
     "completed": "{target}が完了しました。",
     "failed": "{target}に失敗しました。（{code}）",

@@ -27,6 +27,9 @@
       <canvas id="map" ref="map"></canvas>
     </div>
     <!-- modal -->
+    <b-modal id="modalError" :title="$t('label.error')" ok-only>
+      {{ $t('message.noMapImage') }}
+    </b-modal>
     <b-modal id="modalInfo" :title="$t('label.mapRatioSetting')" ok-only>
       {{ $t('message.mapRatioSetting') }}
     </b-modal>
@@ -48,10 +51,12 @@ import { UPDATE_ONLY_NN } from '../../../sub/constant/Constants'
 import { Shape, Stage, Container, Bitmap, Text, Touch } from '@createjs/easeljs/dist/easeljs.module'
 import { Tween, Ticker } from '@createjs/tweenjs/dist/tweenjs.module'
 import breadcrumb from '../../../components/breadcrumb.vue'
+import showmapmixin from '../../../components/showmapmixin.vue';
 
 let that;
 
 export default {
+  mixins: [showmapmixin],
   components: {
     breadcrumb,
   },
@@ -60,15 +65,11 @@ export default {
       showInfo: false,
       showAlert: false,
       message: '',
-      selectedArea: null,
       selectedExb_: null,
       pixelWidth: null,
-      realWidth: null,
       mapRatioChanged: false,
       settingStart: false,
       isChanged: false,
-      isShownMapImage: false,
-      positionedExb: [],
       exbOptions: [],
       deleteTarget: null,
       items: [
@@ -105,22 +106,6 @@ export default {
         }
       }
     },
-    mapImage() {
-      let area = _.find(this.$store.state.app_service.areas, (area) => this.selectedArea && area.areaId == this.selectedArea.value)
-      return area && area.mapImage
-    },
-    areaOptions() {
-      let ret = _(this.$store.state.app_service.areas).map((val) => {
-        return {label: val.areaName, value: val.areaId}
-      }).value()
-      return ret
-    },
-    ...mapState('main', [
-    ]),
-    ...mapState('app_service', [
-      'areas',
-      'exbs',
-    ]),
   },
   mounted() {
     that = this
@@ -130,6 +115,9 @@ export default {
   created() {
   },
   updated(){
+    if (this.isShownMapImage || !this.mapImage) {
+      return
+    }
     this.showMapImage()
   },
   methods: {
@@ -148,16 +136,13 @@ export default {
     },
     async fetchData(payload) {
       try {
-        let areas = await AppServiceHelper.fetchList('/core/area/withImage', 'areaId')
-        this.selectedArea = areas && {label:areas[0].areaName, value: areas[0].areaId}
-
-        let exbs = await AppServiceHelper.fetchList('/core/exb/withLocation', 'exbId')
+        await this.fetchAreaExbs()
         if (payload && payload.done) {
           payload.done()
         }
-        this.replaceAS({areas, exbs})
 
         this.setExbPosition()
+        this.showMapImage()
       }
       catch(e) {
         console.error(e)
@@ -176,55 +161,17 @@ export default {
       }).value()
     },
     showMapImage() {
-      if (this.isShownMapImage) return
-      console.debug("showMapImage")
-      let parent = document.getElementById("map").parentElement
-      let canvas = this.$refs.map
-      var bg = new Image()
-      if (!this.mapImage) {
-        console.warn("no mapImage")
+      if (this.showMapImageDef()) {
         return
       }
-      bg.src = this.mapImage
-      if (bg.height == 0 || bg.width == 0) {
-        this.$nextTick(() => {
-          console.debug("again")
-          that.showMapImage()
-        })
-        return
-      }
-      this.mapWidth = bg.width
-      this.mapHeight = bg.height
-      this.isShownMapImage = true
-      canvas.width = parent.clientWidth
-      canvas.height = parent.clientWidth * bg.height / bg.width
-
-      const stage = new Stage("map")
-      stage.canvas = canvas
-      stage.mouseEnabled = true
-
-      var bitmap = new Bitmap(bg)
-      this.mapImageScale = bitmap.scaleY = bitmap.scaleX = parent.clientWidth / bg.width
-      bitmap.width = parent.clientWidth
-      bitmap.height = parent.clientWidth * bg.height / bg.width
-      stage.addChild(bitmap)
-
-      stage.update()
-
-      this.stage = stage
 
       this.positionedExb.forEach((exb) => {
         exb.location.x *= this.mapImageScale
         exb.location.y *= this.mapImageScale
         this.showExb(exb)
       })
-      this.oldSelectedArea = this.selectedArea
-      if (!this.realWidth) { // Due to force update computed property mapRatio
-        this.realWidth = 1
-        this.$nextTick(() => {
-          that.realWidth = ""
-        })
-      }
+
+      this.forceUpdateRealWidth()
     },
     showExb(exb) {
       console.log({exb})
@@ -422,15 +369,6 @@ export default {
       }
       this.replace({showProgress: false})
     },
-    ...mapMutations([
-      'replace', 
-    ]),
-    ...mapMutations('main', [
-      'replaceMain', 
-    ]),
-    ...mapMutations('app_service', [
-      'replaceAS', 
-    ]),
   }
 }
 </script>
