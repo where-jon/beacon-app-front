@@ -28,7 +28,7 @@
               <b-form-select v-model="selectedTheme" :options="theme" class="mb-3" @change="themeSelected"/>
             </b-form-group>
             <b-form-group>
-              <b-button type="button" :variant="getTheme" class="btn-block" v-t="'label.changePassword'" />
+              <b-button type="button" :variant="theme" class="btn-block" v-t="'label.changePassword'" />
             </b-form-group>
           </b-form>
         </b-col>
@@ -74,7 +74,7 @@ export default {
     loginId () {
       return this.$store.state.loginId
     },
-    getTheme() {
+    theme() {
       const storeTheme = this.$store.state.setting.theme
       return 'outline-' + getButtonTheme(this.loginId)
     }

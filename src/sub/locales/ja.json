@@ -27,6 +27,7 @@
     "actions": "アクション",
     "download": "ダウンロード",
     "csvFile": "CSVファイル",
+    "deleteThumbnail": "画像を削除",
 
     "---------------- App common ---------------":"",
     "login": "ログイン",
@@ -137,7 +138,6 @@
     "ruby": "ふりがな",
     "tel": "電話番号",
 
-    "loginId": "ログインID",
     "password": "パスワード",
     "passwordConfirm": "確認パスワード",
     "name": "名前",
@@ -162,7 +162,7 @@
     "sensorName": "センサ名",
     "detectCount": "検知回数",
     
-    "thing": "物マスタ",
+    "thing": "物",
     "thingCd": "管理コード",
     "thingId": "物ID",
     "thingName": "名前",
@@ -217,6 +217,7 @@
     "deleteConfirm": "{target}を削除してもよろしいですか？",
     "completed": "{target}が完了しました。",
     "failed": "{target}に失敗しました。（{code}）",
+    "overLength": "{target}には{length}以内の文字列を入力してください",
     "selectFile": "ファイルを選択してください",
     "required": "{target}を入力してください。",
     "validatePassword": "パスワードと確認パスワードが一致していません。",

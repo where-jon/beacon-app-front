@@ -8,6 +8,9 @@ export const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 
 export const snake2camel = (str) => str.replace(/_./g, (s) => s.charAt(1).toUpperCase())
 
+export const addNoSelect = (option) => option.unshift({value: undefined, text: ""})
+export const getByteLength = (str) => encodeURI(str == null? "": str).replace(/%../g, "*").length
+
 export const colorCd4db = (str) => {
   if(!str){
     return "000000"
@@ -75,6 +78,9 @@ export const converToCsv = (array, headers) => {
     return '"' + headers.map((key) => {
       let val = row[key]
       if (typeof val === 'object' || typeof val === 'array') {
+        if(val === null){
+          return val
+        }
         return JSON.stringify(val).split('"').join("'")
       }
       else {
