@@ -60,6 +60,8 @@ export default {
       id: 'groupId',
       backPath: '/master/group',
       appServicePath: '/basic/group',
+      defaultColor: "#000000",
+      defaultBgColor: "#ffffff",
       form: ViewHelper.extract(this.$store.state.app_service.group, ["groupId", "groupName", "ruby", "color", "bgColor", "description"]),
       items: [
         {
@@ -78,8 +80,7 @@ export default {
     }
   },
   created() {
-    this.form.displayColor = Util.colorCd4display(this.form.color)
-    this.form.displayBgColor = Util.colorCd4display(this.form.bgColor)
+    this.beforeReload()
   },
   computed: {
     hasId(){
@@ -94,6 +95,10 @@ export default {
     ]),
   },
   methods: {
+    beforeReload(){
+      this.form.displayColor = Util.colorCd4display(this.form.color, this.defaultColor)
+      this.form.displayBgColor = Util.colorCd4display(this.form.bgColor, this.defaultBgColor)
+    },
     beforeSubmit(again){
       if(this.form.groupId !== undefined){
         this.form.groupId = String(this.form.groupId)
