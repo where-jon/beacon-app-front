@@ -104,7 +104,7 @@ export default {
     },
     changeArea(val) {
       if (this.isFirstTime) return
-      if (val.value) {
+      if (val && val.value) {
         this.reset()
         this.selectedArea = val
         console.log(this.selectedArea.value)

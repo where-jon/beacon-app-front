@@ -75,46 +75,23 @@ export default {
   },
   methods: {
     async save() {
-      await this.bulkSave((csv) => {
-        if (!csv || !csv.data) return
-        let entities = []
-        let header
-        let dummyKey = -1
-        
-        let MAIN_COL = "thingId"
-        let THING_CATEGORY = ["categoryId"]
-        let INT_TYPE_LIST = ["exbId", "txId", "categoryId"]
+      let MAIN_COL = "thingId"
+      let THING_CATEGORY = ["categoryId"]
+      let INT_TYPE_LIST = ["exbId", "txId", "categoryId"]
 
-        csv.data.forEach((line, lineIdx) => {
-          if (lineIdx == 0) {
-            header = line
-            if (!header.includes(MAIN_COL)) {
-              throw Error(that.$i18n.t('message.csvHeaderRequired'))
-            }
+      await this.bulkSave(MAIN_COL, INT_TYPE_LIST, null, (entity, headerName, val, dummyKey) => {
+        if (Util.equalsAny(headerName, THING_CATEGORY)) {
+          if (headerName== "categoryId" && val.length != 0) {
+            entity.thingCategoryList = [{thingCategoryPK: {categoryId: val}}]
           }
-          else {
-            let entity = {thingId:dummyKey--}
-            line.forEach((val, idx) => {
-              if (Util.equalsAny(header[idx], INT_TYPE_LIST)) { // Number type
-                val = String(val)
-              }
-
-              if (Util.equalsAny(header[idx], THING_CATEGORY)) {
-                if (header[idx] == "categoryId" && val.length != 0) {
-                  entity.thingCategoryList = [{thingCategoryPK: {categoryId: val}}]
-                }
-              }
-              else {
-                if (header[idx] == "thingId" && val.length != 0) {
-                  val = dummyKey--
-                }
-                entity[header[idx]] = val
-              }
-            })
-            entities.push(entity)
+        }
+        else {
+          if (headerName == MAIN_COL && val.length != 0) {
+            val = dummyKey--
           }
-        })
-        return entities
+          entity[headerName] = val
+        }
+        return dummyKey
       })
     },
   }

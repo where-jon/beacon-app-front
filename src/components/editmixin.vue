@@ -108,7 +108,7 @@ export default {
           if (thumbnailName) that.form[thumbnailName] = thumbnail
       }, resize)
     },
-    async bulkSave(convert2Entities) {
+    async bulkSave(mainCol, intTypeList, boolTypeList, callback) {
       if (!this.form.csvFile) {
         throw new Error(this.$t('message.emptyFile'))
       }
@@ -116,18 +116,56 @@ export default {
       const reader = new FileReader()
       let readFin = false
       let error = null
-      let entities = null
+      let entities = []
       reader.addEventListener('load', (e) => {
         try {
           let csv = Util.csv2Obj(e.target.result)
-          if (csv.errors && csv.errors.length > 0) {
+          if (!csv || !csv.data || csv.errors && csv.errors.length > 0) {
             console.error(csv.errors)
-            if (typeof csv.errors[0] == 'string' && csv.errors[0].startsWith("message.")) {
+            if (csv.errors && typeof csv.errors[0] == 'string' && csv.errors[0].startsWith("message.")) {
               error = this.$t(csv.errors[0])
             }
+            readFin = true
+            return
           }
           console.debug(csv)
-          entities = convert2Entities(csv)
+          let header
+          let dummyKey = -1
+          
+          csv.data.forEach((line, lineIdx) => {
+            if (lineIdx == 0) {
+              header = line
+              if (!header.includes(mainCol)) {
+                throw Error(that.$i18n.t('message.csvHeaderRequired'))
+              }
+            }
+            else {
+              let entity = {}
+              line.forEach((val, idx) => {
+                let headerName = header[idx]
+                if (!headerName) {
+                  return
+                }
+                if (Util.equalsAny(headerName, boolTypeList)) { // Boolean type
+                  val = Boolean(val)
+                }
+                else if (Util.equalsAny(headerName, intTypeList)) { // Number type
+                  val = Number(val)
+                }
+
+                if (callback) {
+                  dummyKey = callback(entity, headerName, val, dummyKey)
+                }
+                else {
+                  if (headerName == mainCol && !val) {
+                    val = dummyKey--
+                  }
+                  entity[headerName] = val
+                }
+              })
+              entities.push(entity)
+            }
+          })
           console.debug({entities})
         } catch (e) {
           console.error(e)

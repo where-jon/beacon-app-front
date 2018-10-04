@@ -51,51 +51,28 @@ export default {
   },
   methods: {
     async save() {
-      await this.bulkSave((csv) => {
-        if (!csv || !csv.data) return
-        let entities = []
-        let header
-        let dummyKey = -1
-        
-        let MAIN_COL = "exbId"
-        let LOCATION = ["locationId","areaName","locationName","visible","txViewType","posId","x","y"]
-        let INT_TYPE_LIST = ["deviceId", "exbId", "areaId", "locationId", "posId", "x", "y", "z", "txViewType", "zoneName"]
-        let BOOL_TYPE_LIST = ["visible", "enabled"]
+      let MAIN_COL = "exbId"
+      let LOCATION = ["locationId","areaName","locationName","visible","txViewType","posId","x","y"]
+      let INT_TYPE_LIST = ["deviceId", "exbId", "areaId", "locationId", "posId", "x", "y", "z", "txViewType", "zoneName"]
+      let BOOL_TYPE_LIST = ["visible", "enabled"]
 
-        csv.data.forEach((line, lineIdx) => {
-          if (lineIdx == 0) {
-            header = line
-            if (!header.includes(MAIN_COL)) {
-              throw Error(that.$i18n.t('message.csvHeaderRequired'))
-            }
+      await this.bulkSave(MAIN_COL, INT_TYPE_LIST, BOOL_TYPE_LIST, (entity, headerName, val, dummyKey) => {
+        if (Util.equalsAny(headerName, LOCATION)) {
+          if (headerName == "locationId" && !val) {
+            val = dummyKey--          
           }
-          else {
-            let entity = {location:{locationId:dummyKey--}}
-            line.forEach((val, idx) => {
-              if (Util.equalsAny(header[idx], BOOL_TYPE_LIST)) { // Boolean type
-                val = Boolean(val)
-              }
-              else if (Util.equalsAny(header[idx], INT_TYPE_LIST)) { // Number type
-                val = Number(val)
-              }
-
-              if (Util.equalsAny(header[idx], LOCATION)) {
-                if (header[idx] == "locationId" && !val) {
-                  val = dummyKey--
-                }
-                entity.location[header[idx]] = val
-              }
-              else {
-                if (header[idx] == "exbId" && !val) {
-                  val = dummyKey--
-                }
-                entity[header[idx]] = val
-              }
-            })
-            entities.push(entity)
+          if (!entity.location) {
+            entity.location = {locationId: dummyKey--}
           }
-        })
-        return entities
+          entity.location[headerName] = val
+        }
+        else {
+          if (headerName == MAIN_COL && !val) {
+            val = dummyKey--
+          }
+          entity[headerName] = val
+        }
+        return dummyKey
       })
     },
   }
