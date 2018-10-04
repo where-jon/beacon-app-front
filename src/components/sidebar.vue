@@ -9,7 +9,7 @@
               <i class="fa fa-angle-down" v-if="selectedItem === i"></i>
             </span>
           </li>
-          <li :class="menuItemClasses" v-for="(page, j) in group.pages" :key="page.key" v-if="selectedItem === i">
+          <li :class="menuItemClasses" v-for="(page, j) in group.pages" :key="page.key" v-if="selectedItem === i && isDispMenuItem(page)">
             <router-link class="bd-toc-link" :to="'/' + group.base + page.path">
               <i :class="page.icon" class="ml-3"></i>&nbsp;{{ $t("label." + page.key) }}
             </router-link>
@@ -21,7 +21,7 @@
 
 <script>
 
-import { DISP, THEME } from '../sub/constant/config'
+import { DISP, THEME, DEV } from '../sub/constant/config'
 import { getThemeClasses } from '../sub/helper/ThemeHelper'
 
 export default {
@@ -29,6 +29,7 @@ export default {
     return {
       nav : this.$store.state.menu,
       selectedItem: -1,
+      debugLevel: -1
     }
   },
   computed: {
@@ -48,6 +49,15 @@ export default {
     onMenuClick (index) {
       this.selectedItem = index === this.selectedItem ? -1 : index
     },
+    isDispMenuItem(page) {
+      if (this.debugLevel < 1) {
+        return (typeof page.debug) === 'undefined'
+      }
+      return ((typeof page.debug) !== 'undefined') && page.debug <= this.debugLevel
+    }
+  },
+  created() {
+    this.debugLevel = DEV.DEBUG
   },
 }
 </script>

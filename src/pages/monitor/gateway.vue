@@ -2,7 +2,6 @@
   <div>
     <breadcrumb :items="items" :reload="true" :isLoad="isLoad" @click-reload-button="fetchData" />
     <div class="container">
-      <p></p>
       <b-row align-h="end">
         <b-col md="2" class="mb-3 mr-3">
           <b-button :variant="getTheme" @click="download()" v-t="'label.download'" />
