@@ -26,7 +26,9 @@ export default {
         name: 'user',
         id: 'userId',
         editPath: '/master/user/edit',
+        bulkEditPath: '/master/user/bulkedit',
         appServicePath: '/meta/user',
+        csvOut: true,
         fields: addLabelByKey(this.$i18n, [ 
           {key: "userId", sortable: true },
           // {key: "name", sortable: true  },

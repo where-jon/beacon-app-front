@@ -28,7 +28,9 @@ export default {
         name: 'category',
         id: 'categoryId',
         editPath: '/master/category/edit',
+        bulkEditPath: '/master/category/bulkedit',
         appServicePath: '/basic/category',
+        csvOut: true,
         fields: addLabelByKey(this.$i18n, [ 
           {key: "categoryId", sortable: true },
           {key: "categoryName", sortable: true },

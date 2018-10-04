@@ -122,7 +122,7 @@ export default {
       return this.$parent.$options.methods.thumbnail.call(this.$parent, this.perPage * (this.currentPage - 1) + index)
     },
     exportCsv() {
-      const headers = this.params.fields.filter((val) => !["thumbnail", "actions"].includes(val.key)).map((val) => val.key)
+      const headers = this.params.fields.filter((val) => !["style", "thumbnail", "actions"].includes(val.key)).map((val) => val.key)
       HtmlUtil.fileDL(this.params.name + ".csv", Util.converToCsv(this.list, headers))
     },
     style(index) {

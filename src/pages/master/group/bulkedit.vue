@@ -36,10 +36,10 @@ export default {
   mixins: [editmixinVue],
   data() {
     return {
-      name: 'thing',
-      id: 'thingId',
-      backPath: '/master/thing',
-      appServicePath: '/basic/thing',
+      name: 'group',
+      id: 'groupId',
+      backPath: '/master/group',
+      appServicePath: '/basic/group',
       mutex: false,
       bulkRegister: true,
       form: {},
@@ -49,11 +49,11 @@ export default {
           active: true
         },
         {
-          text: this.$i18n.t('label.thing'),
-          href: '/master/thing',
+          text: this.$i18n.t('label.group'),
+          href: '/master/group',
         },
         {
-          text: this.$i18n.t('label.thing') + this.$i18n.t('label.bulkRegister'),
+          text: this.$i18n.t('label.group') + this.$i18n.t('label.bulkRegister'),
           active: true
         }
       ]
@@ -69,34 +69,13 @@ export default {
       const theme = getTheme(this.$store.state.loginId)
       return 'outline-' + theme
     },
-    ...mapState('app_service', [
-      'thing',
-    ]),
   },
   methods: {
     async save() {
-      const MAIN_COL = "thingId"
-      const NULLABLE_NUMBER_COL = ["txId", "exbId"]
-      const THING_CATEGORY = ["categoryId"]
-      const INT_TYPE_LIST = ["thingId"]
+      const MAIN_COL = "groupId"
+      const INT_TYPE_LIST = ["groupId"]
 
-      await this.bulkSave(MAIN_COL, INT_TYPE_LIST, null, (entity, headerName, val, dummyKey) => {
-        if (Util.equalsAny(headerName, THING_CATEGORY)) {
-          if (headerName === "categoryId" && Util.hasValue(val)) {
-            entity.thingCategoryList = [{thingCategoryPK: {categoryId: Number(val)}}]
-          }
-        }
-        else {
-          if (headerName === MAIN_COL && val.length != 0) {
-            val = dummyKey--
-          }
-          if (NULLABLE_NUMBER_COL.includes(headerName) && Util.hasValue(val)) {
-            val = Number(val)
-          }
-          entity[headerName] = val
-        }
-        return dummyKey
-      })
+      await this.bulkSave(MAIN_COL, INT_TYPE_LIST, null, null)
     },
   }
 }
