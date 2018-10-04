@@ -78,6 +78,9 @@ export const converToCsv = (array, headers) => {
     return '"' + headers.map((key) => {
       let val = row[key]
       if (typeof val === 'object' || typeof val === 'array') {
+        if(val === null){
+          return val
+        }
         return JSON.stringify(val).split('"').join("'")
       }
       else {

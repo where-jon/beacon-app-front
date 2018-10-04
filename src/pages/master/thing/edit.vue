@@ -77,7 +77,7 @@ export default {
       backPath: '/master/thing',
       appServicePath: '/basic/thing',
       form: ViewHelper.extract(this.$store.state.app_service.thing, ["thingId", "thingCd", "thingName", "displayName", "thumbnail", "description", "exbId", "txId"]),
-      categoryId: Util.hasValue(this.$store.state.app_service.thing.thingCategoryList)? this.$store.state.app_service.thing.thingCategoryList[0].category.categoryId: undefined,
+      categoryId: Util.hasValue(this.$store.state.app_service.thing.thingCategoryList)? this.$store.state.app_service.thing.thingCategoryList[0].thingCategoryPK.categoryId: undefined,
       categories: [],
       deleteThumbnail: this.$i18n.t('label.deleteThumbnail'),
       displayNameLength: "3バイト",
@@ -117,12 +117,15 @@ export default {
     ]),
   },
   methods: {
+    beforeReload(){
+      this.clearImage()
+    },
     readImage(e) {
       this.readImageView(e, 'thumbnail')
     },
     clearImage(e) {
-      this.form.thumbnail = undefined;
-      this.$refs.inputThumbnail.reset();
+      this.form.thumbnail = undefined
+      this.$refs.inputThumbnail.reset()
     },
     async save(ev) {
       let entity = {
@@ -142,7 +145,6 @@ export default {
         }]: undefined
       }
       const ret = await AppServiceHelper.bulkSave(this.appServicePath, [entity])
-      this.clearImage()
       return ret;
     },
     beforeSubmit(event, again){

@@ -49,7 +49,6 @@
     "color": "色",
     "displayColor": "表示色",
     "dt": "日時",
-    "export": "EXPORT",
     "no": "No.",
     "theme": "テーマ",
 
@@ -139,7 +138,6 @@
     "ruby": "ふりがな",
     "tel": "電話番号",
 
-    "loginId": "ログインID",
     "password": "パスワード",
     "passwordConfirm": "確認パスワード",
     "name": "名前",
