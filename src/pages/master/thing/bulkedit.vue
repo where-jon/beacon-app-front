@@ -11,7 +11,7 @@
           <label v-t="'label.csvFile'" />
           <b-form-file v-model="form.csvFile" accept="text/csv" :placeholder="$t('message.selectFile') "></b-form-file>
         </b-form-group>
-        <b-button type="submit" :variant="getTheme" @click="register(true)" >{{ label }}</b-button>
+        <b-button type="submit" :variant="theme" @click="register(true)" >{{ label }}</b-button>
         <b-button type="button" variant="outline-danger" @click="backToList" class="ml-2" v-t="'label.back'"/>
       </b-form>
     </div>
@@ -65,7 +65,7 @@ export default {
     that = this
   },
   computed: {
-    getTheme () {
+    theme () {
       const theme = getTheme(this.$store.state.loginId)
       return 'outline-' + theme
     },

@@ -26,7 +26,7 @@
         <b-form-group>
           <label v-t="'label.thumbnail'" />
           <b-form-file v-if="isEditable" @change="readImage" v-model="form.thumbnail" ref="inputThumbnail" accept="image/jpeg, image/png, image/gif" :placeholder="$t('message.selectFile') "></b-form-file>
-          <b-button v-if="isEditable" type="button" variant="outline-primary" @click="clearImage" class="float-right mt-3">{{ deleteThumbnail }}</b-button>
+          <b-button v-if="isEditable" type="button" :variant="theme" @click="clearImage" class="float-right mt-3">{{ deleteThumbnail }}</b-button>
           <img v-if="form.thumbnail" ref="thumbnail" :src="form.thumbnail" width="100" class="mt-1 ml-3" />
         </b-form-group>
         <b-form-group>
@@ -47,8 +47,8 @@
         </b-form-group>
 
         <b-button type="button" variant="outline-danger" @click="backToList" v-t="'label.back'"/>
-        <b-button v-if="isEditable" type="submit" :variant="getTheme" @click="beforeSubmit($event, false)" class="ml-2" >{{ label }}</b-button>
-        <b-button v-if="isEditable && !isUpdate" type="submit" :variant="getTheme" @click="beforeSubmit($event, true)" class="ml-2" v-t="'label.registerAgain'"/>
+        <b-button v-if="isEditable" type="submit" :variant="theme" @click="beforeSubmit($event, false)" class="ml-2" >{{ label }}</b-button>
+        <b-button v-if="isEditable && !isUpdate" type="submit" :variant="theme" @click="beforeSubmit($event, true)" class="ml-2" v-t="'label.registerAgain'"/>
       </b-form>
     </div>
   </div>
@@ -108,7 +108,7 @@ export default {
     hasId(){
       return Util.hasValue(this.form.thingId)
     },
-    getTheme () {
+    theme () {
       const theme = getTheme(this.$store.state.loginId)
       return 'outline-' + theme
     },

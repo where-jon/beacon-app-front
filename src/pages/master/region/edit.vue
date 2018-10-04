@@ -25,8 +25,8 @@
         </b-form-group>
 
         <b-button type="button" variant="outline-danger" @click="backToList" v-t="'label.back'"/>
-        <b-button v-if="isEditable" type="submit" :variant="getTheme" @click="register(false)" class="ml-2" >{{ label }}</b-button>
-        <b-button v-if="isEditable && !isUpdate" type="submit" :variant="getTheme" @click="register(true)" class="ml-2" v-t="'label.registerAgain'"/>
+        <b-button v-if="isEditable" type="submit" :variant="theme" @click="register(false)" class="ml-2" >{{ label }}</b-button>
+        <b-button v-if="isEditable && !isUpdate" type="submit" :variant="theme" @click="register(true)" class="ml-2" v-t="'label.registerAgain'"/>
       </b-form>
     </div>
   </div>
@@ -73,7 +73,7 @@ export default {
     hasId(){
       return Util.hasValue(this.form.regionId)
     },
-    getTheme () {
+    theme () {
       const theme = getButtonTheme(this.$store.state.loginId)
       return 'outline-' + theme
     },

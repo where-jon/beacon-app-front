@@ -14,10 +14,10 @@
       </b-col>
       <b-col class="mb-2 justify-content-end">
         <!-- 新規作成ボタン -->
-        <b-button :variant='getTheme' @click="edit()" v-t="'label.createNew'"  class="float-right"/>
-        <b-button v-if="params.bulkEditPath" :variant='getTheme'
+        <b-button :variant='theme' @click="edit()" v-t="'label.createNew'"  class="float-right"/>
+        <b-button v-if="params.bulkEditPath" :variant='theme'
           @click="bulkEdit()" v-t="'label.bulkRegister'"  class="float-right" :style="{ marginRight: '10px'}"/>
-        <b-button v-if="params.csvOut" :variant='getTheme' @click="exportCsv" v-t="'label.download'"  class="float-right" :style="{ marginRight: '10px'}"/>
+        <b-button v-if="params.csvOut" :variant='theme' @click="exportCsv" v-t="'label.download'"  class="float-right" :style="{ marginRight: '10px'}"/>
       </b-col>
     </b-row>
 
@@ -34,7 +34,7 @@
       </template>
       <template slot="actions" slot-scope="row">
         <!-- 更新ボタン -->
-        <b-button size="sm" @click.stop="edit(row.item, row.index, $event.target)" :variant="getTheme" class="mr-2 my-1" v-t="'label.' + crud" />
+        <b-button size="sm" @click.stop="edit(row.item, row.index, $event.target)" :variant="theme" class="mr-2 my-1" v-t="'label.' + crud" />
         <!-- 削除ボタン -->
         <b-button v-if="isEditable" size="sm" @click.stop="deleteConfirm(row.item, row.index, $event.target)" variant="outline-danger" class="mr-1" v-t="'label.delete'" />
       </template>
@@ -94,7 +94,7 @@ export default {
     loginId() {
       return this.$store.state.loginId
     },
-    getTheme () {
+    theme () {
       const theme = getButtonTheme(this.loginId)
       return 'outline-' + theme
     }

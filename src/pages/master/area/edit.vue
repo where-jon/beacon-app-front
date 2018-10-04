@@ -21,7 +21,7 @@
               <img v-if="form.mapImage" ref="mapImage" :src="form.mapImage" width="100" class="mt-1 ml-3" />
             </b-form-group>
             <b-button type="button" variant="outline-danger" @click="backToList" v-t="'label.back'" />
-            <b-button v-if="isEditable" type="submit" :variant="getTheme" @click="register(false)" class="ml-2">{{ label }}</b-button>
+            <b-button v-if="isEditable" type="submit" :variant="theme" @click="register(false)" class="ml-2">{{ label }}</b-button>
             <b-button v-if="isEditable && !isUpdate" type="submit" variant="outline-primary" @click="register(true)" class="ml-2" v-t="'label.registerAgain'"/>
           </b-form>
         </b-col>
@@ -68,7 +68,7 @@ export default {
     }
   },
   computed: {
-    getTheme () {
+    theme () {
       const theme = getButtonTheme(this.$store.state.loginId)
       return 'outline-' + theme
     },
