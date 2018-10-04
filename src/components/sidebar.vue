@@ -76,7 +76,7 @@ export default {
       position: sticky;
       z-index: 100;
     }
-    min-height: calc(100vh - 56px)
+    min-height: calc(100vh - 62px)
   }
 
   @media (min-width: 1200px) {

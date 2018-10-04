@@ -29,10 +29,11 @@ import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
 import { EventBus } from '../../sub/helper/EventHelper'
-import { EXB, DISP, APP } from '../../sub/constant/config'
+import { EXB, DISP, APP, DEV } from '../../sub/constant/config'
 import breadcrumb from '../../components/breadcrumb.vue'
 import VueScrollingTable from "vue-scrolling-table"
 import { getTheme } from '../../sub/helper/ThemeHelper'
+import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 
 export default {
   components: {
@@ -51,7 +52,13 @@ export default {
           active: true
         }
       ],
-      isLoad: false
+      isLoad: false,
+    }
+  },
+  props: {
+    isDev: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {
@@ -78,6 +85,7 @@ export default {
       this.isLoad = true
       try {
         let telemetrys = await EXCloudHelper.fetchTelemetry()
+        telemetrys = await this.makeTelemetryRecords(telemetrys)
         if (payload && payload.done) {
           payload.done()
         }
@@ -93,7 +101,8 @@ export default {
       return updated == "" || new Date() - new Date(updated) > APP.UNDETECT_TIME
     },
     getTdClass (index, timestamp) {
-      return this.isUndetect(timestamp) ? 'undetect' : (index % 2 === 1 ? 'odd' : '')
+      const color = this.isUndetect(timestamp) ? 'undetect' : (index % 2 === 1 ? 'odd' : '')
+      return color + ' ' + (DEV.DEBUG < 1 ? 'equality' : '')
     },
     download() {
       HtmlUtil.fileDL("telemetry.csv", Util.converToCsv(this.telemetrys))
@@ -104,10 +113,41 @@ export default {
     ...mapMutations('monitor', [
       'replaceMonitor', 
     ]),
+    async makeTelemetryRecords(telemetrys) {
+      if (this.isDev) {
+        return telemetrys
+      }
+      const exbs = await AppServiceHelper.fetchList('/core/exb/withLocation', 'exbId')
+      const map = {}
+      exbs.forEach((e) => {
+        map[e.deviceId.toString(16)] = e.location.locationName
+      })
+
+      const label_deviceId = this.$i18n.t('label.deviceId')
+      const label_deviceIdX = this.$i18n.t('label.deviceIdX')
+      const label_name = this.$i18n.t('label.name')
+      const label_timestamp = this.$i18n.t('label.final-receive-timestamp')
+      const label_powerLevel = this.$i18n.t('label.power-level')
+
+      return telemetrys.map((e) => {
+        const name = map[e.deviceid]
+        const record = {}
+        record[label_deviceId] = parseInt(e.deviceid, 16)
+        record[label_deviceIdX] = e.deviceid.toUpperCase()
+        record[label_name] = (typeof name) !== 'undefined' ? name : 'ー'
+        record[label_timestamp] = e.timestamp
+        record[label_powerLevel] = e.power_level * 2
+        return record
+      })
+    }
   }
 }
 </script>
 
 <style scoped lang="scss">
   @import "../../sub/constant/scrolltable.scss";
+
+  table.scrolling td.equality {
+    width: 20%;
+  }
 </style>

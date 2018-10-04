@@ -68,6 +68,8 @@
     "exbId": "exb ID",
     "deviceId": "デバイスID",
     "deviceIdX": "デバイスID(16進数)",
+    "final-receive-timestamp": "最終取得時間",
+    "power-level": "電池残量",
 
     "tx": "Tx",
     "txId": "TXID",
