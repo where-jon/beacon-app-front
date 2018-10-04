@@ -1,6 +1,6 @@
 <template>
   <div>
-    <breadcrumb :items="items" :reload="true" />
+    <breadcrumb :items="items" :reload="true" :isLoad="isLoad" @click-reload-button="fetchData" />
     <div class="container">
       <p></p>
       <b-row align-h="end">
@@ -49,7 +49,8 @@ export default {
           text: this.$i18n.t('label.gateway'),
           active: true
         }
-      ]
+      ],
+      isLoad: false
     }
   },
   computed: {
@@ -73,6 +74,7 @@ export default {
   methods: {
     async fetchData(payload) {
       this.replace({showProgress: true})
+      this.isLoad = true
       try {
         let gateways = await EXCloudHelper.fetchGateway()
         if (payload && payload.done) {
@@ -84,6 +86,7 @@ export default {
         console.error(e)
       }
       this.replace({showProgress: false})
+      this.isLoad = false
     },
     isUndetect(updated) {
       return updated == "" || new Date() - new Date(updated) > APP.UNDETECT_TIME

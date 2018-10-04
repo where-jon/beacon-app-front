@@ -9,7 +9,7 @@
       </ol>
     </div>
     <div class="col-md-1 reload-button-container">
-      <a href="#" v-if="reload"><i title="リロード" class="fas fa-sync-alt"></i></a>
+      <a href="#" v-if="reload" @click="onClickReloadButton"><i title="リロード" :class="classes"></i></a>
     </div>
   </div>
 </template>
@@ -25,11 +25,24 @@
       return {
       }
    },
-   props: ['items', 'reload'],
+   props: {
+     items: Array,
+     reload: {
+       type: Boolean,
+       default: false
+     },
+     isLoad: {
+       type: Boolean,
+       default: false
+     }
+   },
    computed: {
      loginId() {
        return this.$store.state.loginId
      },
+     classes() {
+       return 'fas fa-sync-alt' + (!this.isLoad ? '' : ' fa-spin')
+     }
    },
    methods: {
      isActive (item) {
@@ -41,6 +54,9 @@
      move(page) {
         this.$router.push(page)
      },
+     onClickReloadButton() {
+       this.$emit('click-reload-button')
+     }
    }
   }
 
