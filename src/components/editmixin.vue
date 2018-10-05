@@ -8,9 +8,7 @@ import * as MenuHelper from '../sub/helper/MenuHelper'
 import { sleep } from '../sub/util/Util'
 import * as HtmlUtil from '../sub/util/HtmlUtil'
 import * as Util from '../sub/util/Util'
-
 let that
-
 export default {
   data() {
     return {
@@ -120,6 +118,7 @@ export default {
       let readFin = false
       let error = null
       let entities = []
+      const that = this
       reader.addEventListener('load', (e) => {
         try {
           let csv = Util.csv2Obj(e.target.result)
@@ -138,7 +137,14 @@ export default {
           csv.data.forEach((line, lineIdx) => {
             if (lineIdx == 0) {
               header = line
-              if (!header.includes(mainCol)) {
+              if(Util.isArray(mainCol)){
+                let hasHeader = true
+                mainCol.forEach((val) => hasHeader = header.includes(val)? hasHeader: false)
+                if (!hasHeader) {
+                  throw Error(that.$i18n.t('message.csvHeaderRequired'))
+                }
+              }
+              else if (!header.includes(mainCol)) {
                 throw Error(that.$i18n.t('message.csvHeaderRequired'))
               }
             }
@@ -192,5 +198,4 @@ export default {
    },
   }
 }
-
 </script>

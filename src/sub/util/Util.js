@@ -27,6 +27,7 @@ export const colorCd4display = (str, defaultColor) => {
   return "#" + color.replace("#", "").slice(0, 8)
 }
 
+export const isArray = (obj) => Object.prototype.toString.call(obj) === '[object Array]'
 export const hasValue = (obj) => obj !== undefined && obj !== null && obj.length !== 0
 export const detectEncoding = (str) => jschardet.detect(str)
 

@@ -25,6 +25,7 @@
     "list": "一覧",
     "search": "検索",
     "actions": "アクション",
+    "updateAction": "アクション",
     "download": "ダウンロード",
     "csvFile": "CSVファイル",
     "deleteThumbnail": "画像を削除",
@@ -128,6 +129,7 @@
     "role": "ロール",
     "roleId": "ロールID",
     "roleName": "ロール名",
+    "roleFeatures": "機能",
     
     "operationLog": "操作ログ",
     "operationLogId": "操作ログID",
@@ -202,6 +204,8 @@
     "regionId": "リージョンID",
     "regionName": "リージョン名",
     "meshId": "メッシュID",
+
+    "mode": "モード",
 
     "dummy": ""
   },

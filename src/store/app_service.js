@@ -25,6 +25,10 @@ export const state = () => ({
   user: {},
   users: [],
   roleOptions: [],
+  roles: [],
+  role: {},
+  features: [],
+  feature: {},
 })
 
 const initState = state()

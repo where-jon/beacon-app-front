@@ -14,7 +14,7 @@
       </b-col>
       <b-col class="mb-2 justify-content-end">
         <!-- 新規作成ボタン -->
-        <b-button :variant='theme' @click="edit()" v-t="'label.createNew'"  class="float-right"/>
+        <b-button v-if="!params.systemProp" :variant='theme' @click="edit()" v-t="'label.createNew'"  class="float-right"/>
         <b-button v-if="params.bulkEditPath" :variant='theme'
           @click="bulkEdit()" v-t="'label.bulkRegister'"  class="float-right" :style="{ marginRight: '10px'}"/>
         <b-button v-if="params.csvOut" :variant='theme' @click="exportCsv" v-t="'label.download'"  class="float-right" :style="{ marginRight: '10px'}"/>
@@ -28,7 +28,7 @@
   
     <!-- table -->
     <b-table show-empty stacked="md" striped hover :items="list" :fields="fields" :current-page="currentPage" :per-page="perPage" outlined
-            :filter="filter" @filtered="onFiltered">
+            :filter="filterGrid" @filtered="onFiltered">
       <template slot="style" slot-scope="row">
         <div v-bind:style="style(row.index)">A</div>
       </template>
@@ -37,6 +37,10 @@
         <b-button size="sm" @click.stop="edit(row.item, row.index, $event.target)" :variant="theme" class="mr-2 my-1" v-t="'label.' + crud" />
         <!-- 削除ボタン -->
         <b-button v-if="isEditable" size="sm" @click.stop="deleteConfirm(row.item, row.index, $event.target)" variant="outline-danger" class="mr-1" v-t="'label.delete'" />
+      </template>
+      <template slot="updateAction" slot-scope="row">
+        <!-- 更新ボタン -->
+        <b-button size="sm" @click.stop="edit(row.item, row.index, $event.target)" :variant="theme" class="my-1" v-t="'label.' + crud" />
       </template>
       <template slot="thumbnail" slot-scope="row">
         <img v-if="thumbnail(row.index)" :src="thumbnail(row.index)" height="70" />
@@ -122,7 +126,7 @@ export default {
       return this.$parent.$options.methods.thumbnail.call(this.$parent, this.perPage * (this.currentPage - 1) + index)
     },
     exportCsv() {
-      const headers = this.params.fields.filter((val) => !["style", "thumbnail", "actions"].includes(val.key)).map((val) => val.key)
+      const headers = this.params.fields.filter((val) => !["style", "thumbnail", "actions", "updateAction"].includes(val.key)).map((val) => val.key)
       HtmlUtil.fileDL(this.params.name + ".csv", Util.converToCsv(this.list, headers))
     },
     style(index) {
@@ -146,6 +150,24 @@ export default {
       this.modalInfo.title = ''
       this.modalInfo.content = ''
       this.modalInfo.id = ''
+    },
+    filterGrid(originItem) {
+      if(!this.filter){
+        return true
+      }
+      try{
+        const regExp = new RegExp(".*" + this.filter + ".*", "i")
+        const param = this.params.fields.map((val) => {
+          let itemValue = originItem
+          const keys = val.key.split("\.")
+          keys.forEach(key => itemValue = itemValue[key])
+          return itemValue
+        })
+        return regExp.test(JSON.stringify(param))
+      }
+      catch(e){
+        return false
+      }
     },
     onFiltered(filteredItems) {
       this.totalRows = filteredItems.length

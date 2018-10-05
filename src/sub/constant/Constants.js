@@ -12,7 +12,24 @@ export const ROLE_FEATURE = {
     RO_SYS: 1,
     RO: 2,
     RW: 3,
-  }
+  },
+  MODE_OPTIONS: [
+    {text: "すべて拒否", value: 0},
+    {text: "システムの読み取りのみ許可", value: 1},
+    {text: "読み取りのみ許可", value: 2},
+    {text: "すべて許可", value: 3},
+  ]
+}
+
+export const FEATURE = {
+  TYPE_OPTIONS: [
+    {text: "制限なし", value: 0},
+    {text: "制限あり", value: 1},
+  ],
+  ENABLED_OPTIONS: [
+    {text: "無効", value: false},
+    {text: "有効", value: true},
+  ]
 }
 
 export const UPDATE_ONLY_NN = {
@@ -146,6 +163,12 @@ export const MENU = [
         path: 'user',
         feature: '/core/user',
         icon: 'fas fa-user',
+      },
+      {
+        key: 'role',
+        path: 'role',
+        feature: '/meta/role',
+        icon: 'fas fa-chalkboard-teacher',
       },
     ]
   },
