@@ -70,13 +70,13 @@ export default {
   border-bottom: 1px solid rgba(0, 0, 0, .1);
   padding-left: 0px;
   padding-right: 0px;
+  min-height: calc(100vh - 62px);
 
   @media (min-width: 768px) {
     @supports (position: sticky) {
       position: sticky;
       z-index: 100;
     }
-    min-height: calc(100vh - 62px)
   }
 
   @media (min-width: 1200px) {

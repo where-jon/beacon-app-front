@@ -8,13 +8,26 @@
         </b-col>
       </b-row>
       <div class="table-area">
-        <vue-scrolling-table>
+        <table v-if="!isDev" class="table striped">
+          <thead>
+            <th scope="col" v-for="(val, key) in telemetrys[0]" :key="key" >{{ key }}</th>
+          </thead>
+          <tbody>
+            <tr v-for="(telemetry, index) in telemetrys" :key="index">
+              <td scope="row" v-for="(val, key) in telemetry" :key="key" :class="getTdClass(index, telemetry.timestamp, key)">
+                <i :class="getPowerLevelClass(val)" v-if="key === label_powerLevel"></i>
+                {{ val + (key !== label_powerLevel ? '' : '%') }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <vue-scrolling-table v-if="isDev">
           <template slot="thead">
             <th scope="col" v-for="(val, key) in telemetrys[0]" :key="key" >{{ key }}</th>
           </template>
           <template slot="tbody">
             <tr v-for="(telemetry, index) in telemetrys" :key="index">
-              <td scope="row" v-for="(val, key) in telemetry" :key="key" :class="getTdClass(index, telemetry.timestamp)">{{ val }}</td>
+              <td scope="row" v-for="(val, key) in telemetry" :key="key" :class="getTdClass(index, telemetry.timestamp, key)">{{ val }}</td>
             </tr>
           </template>
         </vue-scrolling-table>
@@ -53,6 +66,12 @@ export default {
         }
       ],
       isLoad: false,
+      label_deviceId: null,
+      label_deviceIdX: null,
+      label_name: null,
+      label_timestamp: null,
+      label_powerLevel: null,
+      interval: null,
     }
   },
   props: {
@@ -71,6 +90,9 @@ export default {
     ])
   },
   mounted() {
+    this.interval = setInterval(()=>{
+      this.fetchData()
+    }, DISP.AUTO_RELOAD)
     this.replace({title: this.$i18n.t('label.telemetry')})
     this.fetchData()
   },
@@ -78,6 +100,14 @@ export default {
     EventBus.$on('reload', (payload)=>{
        this.fetchData(payload)
     })
+    this.label_deviceId = this.$i18n.t('label.deviceId')
+    this.label_deviceIdX = this.$i18n.t('label.deviceIdX')
+    this.label_name = this.$i18n.t('label.name')
+    this.label_timestamp = this.$i18n.t('label.final-receive-timestamp')
+    this.label_powerLevel = this.$i18n.t('label.power-level')
+  },
+  beforeDestroy() {
+    clearInterval(this.interval)
   },
   methods: {
     async fetchData(payload) {
@@ -100,9 +130,9 @@ export default {
     isUndetect(updated) {
       return updated == "" || new Date() - new Date(updated) > APP.UNDETECT_TIME
     },
-    getTdClass (index, timestamp) {
+    getTdClass (index, timestamp, key) {
       const color = this.isUndetect(timestamp) ? 'undetect' : (index % 2 === 1 ? 'odd' : '')
-      return color + ' ' + (DEV.DEBUG < 1 ? 'equality' : '')
+      return color + ' ' + (!this.isDev && key === this.label_powerLevel ? 'powerlevel' : '')
     },
     download() {
       HtmlUtil.fileDL("telemetry.csv", Util.converToCsv(this.telemetrys))
@@ -123,22 +153,38 @@ export default {
         map[e.deviceId.toString(16)] = e.location.locationName
       })
 
-      const label_deviceId = this.$i18n.t('label.deviceId')
-      const label_deviceIdX = this.$i18n.t('label.deviceIdX')
-      const label_name = this.$i18n.t('label.name')
-      const label_timestamp = this.$i18n.t('label.final-receive-timestamp')
-      const label_powerLevel = this.$i18n.t('label.power-level')
+      const deviceId = this.label_deviceId
+      const deviceIdX = this.label_deviceIdX
+      const locationName = this.label_name
+      const timestamp = this.label_timestamp
+      const powerLevel = this.label_powerLevel
 
       return telemetrys.map((e) => {
         const name = map[e.deviceid]
         const record = {}
-        record[label_deviceId] = parseInt(e.deviceid, 16)
-        record[label_deviceIdX] = e.deviceid.toUpperCase()
-        record[label_name] = (typeof name) !== 'undefined' ? name : 'ー'
-        record[label_timestamp] = e.timestamp
-        record[label_powerLevel] = e.power_level * 2
+        record[deviceId] = parseInt(e.deviceid, 16)
+        record[deviceIdX] = e.deviceid.toUpperCase()
+        record[locationName] = (typeof name) !== 'undefined' ? name : 'ー'
+        record[timestamp] = e.timestamp
+        record[powerLevel] = e.power_level * 2
         return record
       })
+    },
+    getPowerLevelClass(val) {
+      const num = parseInt(val , 10)
+      if (79 < num) {
+        return "fas fa-battery-full power-safe"
+      }
+      if (59 < num) {
+        return "fas fa-three-quarters power-safe"
+      }
+      if (39 < num) {
+        return "fas fa-half power-warning"
+      }
+      if (19 < num) {
+        return "fas fa-battery-quarter power-empty"
+      }
+      return "fas fa-battery-empty power-empty"
     }
   }
 }
@@ -147,7 +193,29 @@ export default {
 <style scoped lang="scss">
   @import "../../sub/constant/scrolltable.scss";
 
-  table.scrolling td.equality {
-    width: 20%;
+  tbody {
+    display:block;
+    height:400px;
+    overflow:auto;
+  }
+  thead, tbody tr {
+    display:table;
+    width:100%;
+    table-layout:fixed;
+  }
+  thead {
+    width: calc( 100% - 1em )
+  }
+
+  .power-safe {
+    color: #00ff00;
+  }
+  
+  .power-warning {
+    color: #ffd700;
+  }
+
+  .power-empty {
+    color: #b22222;
   }
 </style>
