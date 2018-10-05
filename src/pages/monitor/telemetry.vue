@@ -198,11 +198,13 @@ export default {
     height:400px;
     overflow:auto;
   }
+
   thead, tbody tr {
     display:table;
     width:100%;
     table-layout:fixed;
   }
+  
   thead {
     width: calc( 100% - 1em )
   }

@@ -26,7 +26,7 @@ export const LOCAL_LOGIN = { // local login md5 hash of id:pass // TODO: add Rol
 }
 
 export const APP_SERVICE = { // used if APP.LOGIN_MODE == APP_SERVICE
-  BASE_URL: "https://exbeacon-evalkit-service.herokuapp.com"
+  BASE_URL: "http://localhost:8080"
 }
 export const EXCLOUD_BASE_URL = "https://nsome8q880.execute-api.ap-northeast-1.amazonaws.com/prod" // used if APP.LOGIN_MODE != APP_SERVICE
 
@@ -124,3 +124,8 @@ export const THEME = [
   {id: 3, label: 'オータム', name: 'autumn'},
   {id: 4, label: 'ビビッド', name: 'vivid'},
 ]
+
+export const MONITOR_TX = {
+  ABSENT: 20 * 60 * 1000,
+  UNDETECT: 24 * 60 * 60 * 1000
+}

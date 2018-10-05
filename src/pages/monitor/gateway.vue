@@ -10,7 +10,7 @@
       <table class="table table-hover table-bordered">
         <thead>
           <tr>
-            <th scope="col" v-for="(val, key) in gateways[0]" :key="key" >{{ key }}</th>
+            <th scope="col" v-for="(val, key) in [labelNo,labelDeviceId,labelTimestamp]" :key="key" >{{ val }}</th>
           </tr>
         </thead>
         <tbody>
@@ -49,7 +49,10 @@ export default {
           active: true
         }
       ],
-      isLoad: false
+      isLoad: false,
+      labelNo: this.$i18n.t('label.no'),
+      labelDeviceId: this.$i18n.t('label.deviceId'),
+      labelTimestamp: this.$i18n.t('label.final-receive-timestamp'),
     }
   },
   computed: {
