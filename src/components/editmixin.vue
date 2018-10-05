@@ -9,6 +9,8 @@ import { sleep } from '../sub/util/Util'
 import * as HtmlUtil from '../sub/util/HtmlUtil'
 import * as Util from '../sub/util/Util'
 
+let that
+
 export default {
   data() {
     return {
@@ -34,6 +36,7 @@ export default {
     }
   },
   mounted() {
+    that = this
     this.replace({title: this.$i18n.t('label.' + this.name) + this.label})
   },
   methods: {

@@ -35,7 +35,7 @@ export const CATEGORY = {
 }
 
 export const SENSOR = {
-  TEMPARATURE: 1,
+  TEMPERATURE: 1,
   PIR: 2,
   THERMOPILE: 3
 }

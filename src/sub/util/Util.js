@@ -9,7 +9,10 @@ export const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 export const snake2camel = (str) => str.replace(/_./g, (s) => s.charAt(1).toUpperCase())
 
 export const addNoSelect = (option) => option.unshift({value: undefined, text: ""})
+
 export const getByteLength = (str) => encodeURI(str == null? "": str).replace(/%../g, "*").length
+
+export const numberRange = (start, end) => new Array(end - start + 1).fill().map((d, i) => i + start)
 
 export const colorCd4db = (str) => {
   if(!str){

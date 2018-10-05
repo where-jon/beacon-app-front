@@ -102,6 +102,8 @@
 
     "pir": "人感センサ",
     "thermohumidity":"温湿度",
+    "temperature":"温度",
+    "humidity":"湿度",
 
     "zoneId": "ゾーンID",
     "zoneName": "ゾーン名",
@@ -235,6 +237,7 @@
     "bulkSizeFailed": "{line}行目: {col}（{value}）は{min}から{max}の文字数である必要があります。",
     "bulkNotNullFailed": "{line}行目: {col}は必須です。",
     "bulkExistFailed": "{line}行目: {col}（{value}）は存在していません。",
+    "monthDayTemperature": "{month}月{day}日の温湿度",
 
     "dummy": "" 
   }

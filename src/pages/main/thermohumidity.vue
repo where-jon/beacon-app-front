@@ -14,12 +14,22 @@
     <b-modal id="modalError" :title="$t('label.error')" ok-only>
       {{ $t('message.noMapImage') }}
     </b-modal>
+    <b-modal v-model="isShownChart" size="lg" :title="chartTitle" header-bg-variant="light" hide-footer>
+       <b-container fluid style="height:350px;">
+         <b-row class="mb-1">
+           <b-col cols="12">
+            <canvas id="dayChart" width="450" height="200"></canvas>
+           </b-col>
+         </b-row>
+       </b-container>
+    </b-modal>
   </div>
 </template>
 
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
+import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as SensorHelper from '../../sub/helper/SensorHelper'
 import txdetail from '../../components/txdetail.vue'
 import { DEV, DISP, APP } from '../../sub/constant/config'
@@ -52,6 +62,8 @@ export default {
           active: true
         },
       ],
+      isShownChart: false,
+      chartTitle: ""
     }
   },
   computed: {
@@ -74,7 +86,7 @@ export default {
         this.replace({showProgress: true})
         await this.fetchAreaExbs()
 
-        let sensors = await EXCloudHelper.fetchSensor(SENSOR.TEMPARATURE)
+        let sensors = await EXCloudHelper.fetchSensor(SENSOR.TEMPERATURE)
 
         this.positionedExb = _(this.exbs).filter((exb) => {
           return exb.location.areaId == this.selectedArea.value && exb.location.x && exb.location.y > 0
@@ -85,7 +97,7 @@ export default {
             exbId: exb.exbId, deviceId: exb.deviceId, x: exb.location.x, y: exb.location.y,
             humidity: sensor? sensor.humidity: null,
             temperature: sensor? sensor.temperature: null,
-            sensorId: SENSOR.TEMPARATURE
+            sensorId: SENSOR.TEMPERATURE
           }
         })
         .filter((exb) => exb.temperature != null)
@@ -158,10 +170,23 @@ export default {
       exbBtn.exbId = exb.exbId
       exbBtn.x = exb.x
       exbBtn.y = exb.y
+      exbBtn.cursor = 'pointer'
+      stage.enableMouseOver()
+
+      exbBtn.on('click', async (evt) =>{
+        let exbBtn = evt.currentTarget
+        let sensorData = await AppServiceHelper.fetchList('/basic/sensorHistory/1/' + exb.exbId + '/today/hour', null, false)
+        this.showChart(sensorData)
+      })
 
       stage.addChild(exbBtn)
       stage.update()
     },
+    showChart(sensorData) {
+      const dayChart = SensorHelper.showThermoHumidityChart("dayChart", sensorData.data, this.$i18n)
+      this.isShownChart = true
+      this.chartTitle = this.$i18n.t('message.monthDayTemperature', {month: sensorData.month, day: sensorData.day})
+    }
   }
 }
 </script>
@@ -172,6 +197,5 @@ export default {
 ::-webkit-scrollbar { 
   display: none; 
 }
-
 
 </style>
