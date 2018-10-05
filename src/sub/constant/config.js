@@ -119,10 +119,10 @@ export const Tx = [ // used when APP.LOGIN_MODE != APP_SERVICE with excloud old 
 ]
 
 export const THEME = [
-  {id: 1, label: 'コーポレート', name: 'default'},
-  {id: 2, label: 'アースカラー', name: 'earthcolor'},
-  {id: 3, label: 'オータム', name: 'autumn'},
-  {id: 4, label: 'ビビッド', name: 'vivid'},
+  {id: 1,  name: 'default'},
+  {id: 2,  name: 'earthcolor'},
+  {id: 3,  name: 'autumn'},
+  {id: 4,  name: 'vivid'},
 ]
 
 export const MONITOR_TX = {
