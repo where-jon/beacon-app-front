@@ -26,7 +26,9 @@ export default {
         name: 'group',
         id: 'groupId',
         editPath: '/master/group/edit',
+        bulkEditPath: '/master/group/bulkedit',
         appServicePath: '/basic/group',
+        csvOut: true,
         fields: addLabelByKey(this.$i18n, [ 
           {key: "groupId", sortable: true },
           {key: "groupName", sortable: true },

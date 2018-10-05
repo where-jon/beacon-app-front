@@ -37,8 +37,8 @@ export default {
           {key: "thumbnail" },
           {key: "displayName", sortable: true },
           {key: "description", sortable: true},
-          {key: "exbId", sortable: true, 'class': 'text-center' },
-          {key: "txId", sortable: true, 'class': 'text-center' },
+          {key: "exbName", sortable: true },
+          {key: "txName", sortable: true },
           {key: "categoryName" },
           {key: "actions", thStyle: {width:'130px !important'} }
         ]),
@@ -72,7 +72,9 @@ export default {
         things = things.map((val) => {
           return {
             ...val,
-            categoryName: Util.hasValue(val.thingCategoryList)? val.thingCategoryList[0].category.categoryName: "",
+            categoryName: Util.hasValue(val.thingCategoryList) && Util.hasValue(val.thingCategoryList[0].category)? val.thingCategoryList[0].category.categoryName: "",
+            exbName: Util.hasValue(val.exb) && Util.hasValue(val.exb.location)? val.exb.location.locationName: "",
+            txName: Util.hasValue(val.tx)? val.tx.txName: "",
             thumbnail: ""
           }
         }) // omit images to avoid being filtering target

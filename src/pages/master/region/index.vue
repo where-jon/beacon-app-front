@@ -26,7 +26,9 @@ export default {
         name: 'region',
         id: 'regionId',
         editPath: '/master/region/edit',
+        bulkEditPath: '/master/region/bulkedit',
         appServicePath: '/core/region',
+        csvOut: true,
         fields: addLabelByKey(this.$i18n, [ 
           {key: "regionId", sortable: true },
           {key: "regionName", sortable: true },

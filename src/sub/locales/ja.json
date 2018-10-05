@@ -64,6 +64,7 @@
     "location": "EXB配置設定",
 
     "exbId": "exb ID",
+    "exbName": "exb名",
     "deviceId": "デバイスID",
     "deviceIdX": "デバイスID(16進数)",
 
