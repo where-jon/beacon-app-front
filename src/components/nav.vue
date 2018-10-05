@@ -69,7 +69,7 @@ export default {
   },
   computed: {
     isLoginPage() {
-      return this.$route.path == APP.LOGIN_PAGE
+      return this.$route.path == APP.LOGIN_PAGE || this.$route.path == (APP.LOGIN_PAGE + '/')
     },
     showReload() {
       return !this.$route.path.endsWith("edit") && this.$route.path != '/master/location'
