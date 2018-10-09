@@ -8,6 +8,7 @@ export const DEV = {
   DEBUG: 0, // デバッグモード (0:なし、1以上デバッグレベル)
   USE_MOCK_POS: false, // 測位APIの代わりにモックデータを使用する
   USE_MOCK_SENS: false, // センサーデータの代わりにモックデータを使用する
+  USE_MOCK_ANALYZE: false, // 分析APIの代わりにモックデータを使用する
 }
 
 export const APP = {
