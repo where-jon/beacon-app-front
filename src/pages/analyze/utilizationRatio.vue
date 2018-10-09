@@ -76,15 +76,22 @@ export default {
   },
   computed: {
     analyzeMonthOptions() {
-      return [
-        {label: "2018/10", value: 201810 },
-        {label: "2018/09", value: 201809 },
-        {label: "2018/08", value: 201808 },
-        {label: "2018/07", value: 201807 },
-        {label: "2018/06", value: 201806 },
-        {label: "2018/05", value: 201805 },
-        {label: "2018/04", value: 201804 },
-      ]
+      var today = new Date()
+      var yyyy = today.getFullYear()
+      var mm = today.getMonth() + 1
+      var pullDowns = []
+      for (var idx = 0; idx < 6; idx++) {
+        pullDowns.push({
+          label: yyyy + "/" + ("00" + mm).substr(-2),
+          value: yyyy*100 + mm
+        })
+        mm--
+        if (mm < 1) {
+          mm = 1
+          yyyy--;
+        }
+      }
+      return pullDowns
     },
     analyzeDayOptions() {
       return [
