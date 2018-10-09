@@ -3,6 +3,7 @@ import Vue from 'vue'
 export const state = () => ({
   persons: [],
   person: {},
+  led: {},
   personImages: [],
   areas: [],
   areaImages: [],

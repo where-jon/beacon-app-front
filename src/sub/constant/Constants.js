@@ -46,6 +46,28 @@ export const DISCOMFORT = {
   COLD: "cold",
 }
 
+export const LED_COLORS = {
+  BLUE: 1,
+  RED: 2,
+  PURPLE: 3,
+  GREEN: 4,
+  PALEBLUE: 5,
+  YELLOW: 6,
+  WHITE: 7,
+}
+
+export const LED_BLINK_TYPES = {
+  CHANGE_SLOW: 1,
+  CHANGE_FAST: 2,
+  BLINK_SLOW: 3,
+  BLINK_FAST: 4,
+}
+
+export const LED_STATE = {
+  ON: 1,
+  OFF: 0,
+}
+
 export const MENU = [
   {
     key: 'main',
@@ -76,6 +98,12 @@ export const MENU = [
         feature: '/basic/person',
         icon: 'far fa-id-card',
       },
+      {
+        key: 'led',
+        path: 'led',
+        feature: '/basic/led',
+        icon: 'far fa-lightbulb',
+      }
     ]
   },
   {
