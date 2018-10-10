@@ -60,7 +60,7 @@ export default {
   },
   methods: {
     getCategoryTypeName(category){
-      const categoryTypeName = CATEGORY.TYPES.find((tval) => tval.value === category.categoryType)
+      const categoryTypeName = CATEGORY.getTypes().find((tval) => tval.value === category.categoryType)
       return categoryTypeName !== undefined? categoryTypeName.text: undefined
     },
     async fetchData(payload) {
