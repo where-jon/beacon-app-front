@@ -17,11 +17,9 @@ export const setApp = (pRouter, pStore) => {
 export const auth = async (loginId, password, success, err) => {
     switch(APP.LOGIN_MODE) {
     case LOGIN_MODE.APP_SERVICE:
-        console.log('@@@@ APP_SERVICE')
         await authByAppService(loginId, password, success, err)
         break
     case LOGIN_MODE.LOCAL:
-        console.log('@@@@ LOCAL')
         await authByLocal(loginId, password, success, err)
         break
     case LOGIN_MODE.NO_LOGIN:
@@ -50,9 +48,6 @@ export const authByAppService = async (loginId, password, success, err) => {
 
         // get role feature list
         let user = await HttpHelper.getAppService('/meta/user/currentUser')
-        console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-        console.log(user)
-        console.log(user.name)
         let featureList = _(user.role.roleFeatureList).map((roleFeature) => {
             return {path: roleFeature.feature.path, mode: roleFeature.mode}
         }).sortBy((val) => val.path.length * -1).value()
@@ -62,11 +57,7 @@ export const authByAppService = async (loginId, password, success, err) => {
         let setting = await HttpHelper.getAppService('/meta/setting')
         console.log({setting})
         ConfigHelper.applyAppServiceSetting(setting)
-
-        console.log('2222222222222222222222')
-        console.log(user.name)
         await login({loginId, username:user.name, role:data.role, featureList, menu}, setting)
-
         success()
     } catch (e) {
         console.error(e)

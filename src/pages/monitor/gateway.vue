@@ -1,8 +1,7 @@
 <template>
   <div>
-    <breadcrumb :items="items" :reload="true" />
+    <breadcrumb :items="items" :reload="true" :isLoad="isLoad" @reload="fetchData" />
     <div class="container">
-      <p></p>
       <b-row align-h="end">
         <b-col md="2" class="mb-3 mr-3">
           <b-button :variant="theme" @click="download()" v-t="'label.download'" />
@@ -11,7 +10,7 @@
       <table class="table table-hover table-bordered">
         <thead>
           <tr>
-            <th scope="col" v-for="(val, key) in gateways[0]" :key="key" >{{ key }}</th>
+            <th scope="col" v-for="(val, key) in [labelNo,labelDeviceId,labelTimestamp]" :key="key" >{{ val }}</th>
           </tr>
         </thead>
         <tbody>
@@ -33,8 +32,10 @@ import { EventBus } from '../../sub/helper/EventHelper'
 import { EXB, DISP, APP } from '../../sub/constant/config'
 import breadcrumb from '../../components/breadcrumb.vue'
 import { getTheme } from '../../sub/helper/ThemeHelper'
+import reloadmixinVue from '../../components/reloadmixin.vue'
 
 export default {
+  mixins: [reloadmixinVue],
   components: {
     breadcrumb,
   },
@@ -49,7 +50,11 @@ export default {
           text: this.$i18n.t('label.gateway'),
           active: true
         }
-      ]
+      ],
+      isLoad: false,
+      labelNo: this.$i18n.t('label.no'),
+      labelDeviceId: this.$i18n.t('label.deviceId'),
+      labelTimestamp: this.$i18n.t('label.final-receive-timestamp'),
     }
   },
   computed: {
@@ -65,14 +70,10 @@ export default {
     this.fetchData()
     this.replace({title: this.$i18n.t('label.gateway')})
   },
-  created(){
-    EventBus.$on('reload', (payload)=>{
-       this.fetchData(payload)
-    })
-  },
   methods: {
     async fetchData(payload) {
       this.replace({showProgress: true})
+      this.isLoad = true
       try {
         let gateways = await EXCloudHelper.fetchGateway()
         if (payload && payload.done) {
@@ -84,6 +85,7 @@ export default {
         console.error(e)
       }
       this.replace({showProgress: false})
+      this.isLoad = false
     },
     isUndetect(updated) {
       return updated == "" || new Date() - new Date(updated) > APP.UNDETECT_TIME
