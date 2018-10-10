@@ -72,7 +72,7 @@ export default {
       }
       bg.src = this.mapImage
       let that = this
-      if (bg.height == 0 || bg.width == 0) {
+      if (bg.height == 0 || bg.width == 0 || !canvas) {
         this.$nextTick(() => {
           console.debug("again")
           that.showMapImage()

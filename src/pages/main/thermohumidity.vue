@@ -33,6 +33,7 @@ import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as SensorHelper from '../../sub/helper/SensorHelper'
 import txdetail from '../../components/txdetail.vue'
 import { DEV, DISP, APP } from '../../sub/constant/config'
+import * as mock from '../../assets/mock/mock'
 import { SENSOR, DISCOMFORT } from '../../sub/constant/Constants'
 import { Shape, Stage, Container, Bitmap, Text, Touch } from '@createjs/easeljs/dist/easeljs.module'
 import { Tween, Ticker } from '@createjs/tweenjs/dist/tweenjs.module'
@@ -118,6 +119,10 @@ export default {
         return
       }
 
+      if (this.exbCon) {
+        this.exbCon.removeAllChildren()
+      }
+
       this.positionedExb.forEach((exb) => {
         exb.x *= this.mapImageScale
         exb.y *= this.mapImageScale
@@ -129,6 +134,9 @@ export default {
       console.log({exb})
 
       let stage = this.stage
+      if (!this.exbCon) {
+        this.exbCon = new Container()
+      }
       let exbBtn = new Container()
 
       if (DISP.THERMOH_DISP == 'icon') {
@@ -175,11 +183,15 @@ export default {
 
       exbBtn.on('click', async (evt) =>{
         let exbBtn = evt.currentTarget
-        let sensorData = await AppServiceHelper.fetchList('/basic/sensorHistory/1/' + exb.exbId + '/today/hour', null, false)
+        if (DEV.USE_MOCK_EXC) {
+          var pMock = mock['/basic/sensorHistory/1/1/today/hour']
+        }
+        let sensorData = await AppServiceHelper.fetchList('/basic/sensorHistory/1/' + exb.exbId + '/today/hour', null, pMock)
         this.showChart(sensorData)
       })
 
-      stage.addChild(exbBtn)
+      this.exbCon.addChild(exbBtn)
+      stage.addChild(this.exbCon)
       stage.update()
     },
     showChart(sensorData) {

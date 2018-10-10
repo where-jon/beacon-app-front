@@ -79,26 +79,56 @@ positions[33] = [{"btx_id":1,"minor":1,"pos_id":-1,"device_id":2,"updatetime":"2
 positions[34] = [{"btx_id":1,"minor":1,"pos_id":-1,"device_id":2,"updatetime":"2018-09-07T11:05:15.417Z","nearest":[{"device_id":2,"timestamp":1536318315417,"rssi":-31.34233743752459,"place_id":-1},{"device_id":1,"timestamp":1536318315417,"rssi":-64.8170305761716,"place_id":-1},{"device_id":3,"timestamp":1536318317572,"rssi":-84.09802619622995,"place_id":-1}],"power_level":100},{"btx_id":2,"minor":2,"pos_id":-1,"device_id":1,"updatetime":"2018-09-07T11:05:13.305Z","nearest":[{"device_id":1,"timestamp":1536318313305,"rssi":-26.228020771214002,"place_id":-1},{"device_id":2,"timestamp":1536318312559,"rssi":-71.11667674181834,"place_id":-1},{"device_id":3,"timestamp":1536318317572,"rssi":-80.74161424914088,"place_id":-1}],"power_level":100},{"btx_id":3,"minor":3,"pos_id":-1,"device_id":3,"updatetime":"2018-09-07T11:05:17.572Z","nearest":[{"device_id":3,"timestamp":1536318317572,"rssi":-27.720564558599296,"place_id":-1},{"device_id":2,"timestamp":1536318317572,"rssi":-71.59128641400855,"place_id":-1},{"device_id":1,"timestamp":1536318315417,"rssi":-75.24923967329188,"place_id":-1}],"power_level":100},{"btx_id":4,"minor":4,"pos_id":-1,"device_id":2,"updatetime":"2018-09-07T11:05:17.572Z","nearest":[{"device_id":2,"timestamp":1536318317572,"rssi":-54.08332556466789,"place_id":-1},{"device_id":1,"timestamp":1536318315417,"rssi":-76.3802467727668,"place_id":-1},{"device_id":3,"timestamp":1536318313305,"rssi":-81.65587600413396,"place_id":-1}],"power_level":100},{"btx_id":5,"minor":5,"pos_id":-1,"device_id":3,"updatetime":"2018-09-07T11:05:15.417Z","nearest":[{"device_id":3,"timestamp":1536318315417,"rssi":-66.36497912220078,"place_id":-1},{"device_id":2,"timestamp":1536318317572,"rssi":-71.9698878455831,"place_id":-1},{"device_id":1,"timestamp":1536318315417,"rssi":-73.9883842686839,"place_id":-1}],"power_level":100}]
 positions[35] = [{"btx_id":1,"minor":1,"pos_id":-1,"device_id":2,"updatetime":"2018-09-07T11:05:21.736Z","nearest":[{"device_id":2,"timestamp":1536318321736,"rssi":-30.3718849165248,"place_id":-1},{"device_id":1,"timestamp":1536318321736,"rssi":-65.13661711447307,"place_id":-1},{"device_id":3,"timestamp":1536318322864,"rssi":-85.15216865787885,"place_id":-1}],"power_level":100},{"btx_id":2,"minor":2,"pos_id":-1,"device_id":1,"updatetime":"2018-09-07T11:05:21.736Z","nearest":[{"device_id":1,"timestamp":1536318321736,"rssi":-26.166419543434777,"place_id":-1},{"device_id":2,"timestamp":1536318319402,"rssi":-70.0045309477486,"place_id":-1},{"device_id":3,"timestamp":1536318317572,"rssi":-80.74161424914088,"place_id":-1}],"power_level":100},{"btx_id":3,"minor":3,"pos_id":-1,"device_id":3,"updatetime":"2018-09-07T11:05:21.736Z","nearest":[{"device_id":3,"timestamp":1536318321736,"rssi":-27.255743355167507,"place_id":-1},{"device_id":2,"timestamp":1536318322864,"rssi":-68.5109934205733,"place_id":-1},{"device_id":1,"timestamp":1536318321736,"rssi":-75.18190602730722,"place_id":-1}],"power_level":100},{"btx_id":4,"minor":4,"pos_id":-1,"device_id":2,"updatetime":"2018-09-07T11:05:17.572Z","nearest":[{"device_id":2,"timestamp":1536318317572,"rssi":-54.08332556466789,"place_id":-1},{"device_id":1,"timestamp":1536318315417,"rssi":-76.3802467727668,"place_id":-1},{"device_id":3,"timestamp":1536318313305,"rssi":-81.65587600413396,"place_id":-1}],"power_level":100},{"btx_id":5,"minor":5,"pos_id":-1,"device_id":3,"updatetime":"2018-09-07T11:05:21.736Z","nearest":[{"device_id":3,"timestamp":1536318321736,"rssi":-71.39934577069599,"place_id":-1},{"device_id":2,"timestamp":1536318322864,"rssi":-71.51663205490495,"place_id":-1},{"device_id":1,"timestamp":1536318315417,"rssi":-73.9883842686839,"place_id":-1}],"power_level":100}]
 
+export const sensor = []
 
-this['/basic/sensorHistory/1/today/byHour'] = {
+let now = new Date().getTime()
+sensor[1] = [
+  {"deviceid":1,"timestamp":now,"temperature":15.69,"humidity":52},
+  {"deviceid":2,"timestamp":now,"temperature":26.03,"humidity":90},
+  {"deviceid":3,"timestamp":now,"temperature":25.72,"humidity":51},
+  {"deviceid":4,"timestamp":now,"temperature":35.5,"humidity":51},
+  {"deviceid":5,"timestamp":now,"temperature":26.28,"humidity":11},
+  {"deviceid":11,"timestamp":now,"temperature":25.13,"humidity":60},
+  {"deviceid":12,"timestamp":now,"temperature":25.08,"humidity":61},
+  {"deviceid":13,"timestamp":now,"temperature":24.94,"humidity":61},
+  {"deviceid":14,"timestamp":now,"temperature":25,"humidity":61}
+]
+
+sensor[2] = [
+  {"deviceid":1,"count":3,"timestamp":now},
+  {"deviceid":2,"count":0,"timestamp":now},
+  {"deviceid":3,"count":2,"timestamp":now},
+  {"deviceid":4,"count":1,"timestamp":now},
+  {"deviceid":5,"count":5,"timestamp":now},
+]
+
+sensor[3] = [
+  {"deviceid":11,"count":16,"timestamp":now},
+  {"deviceid":12,"count":0,"timestamp":now},
+  {"deviceid":13,"count":10,"timestamp":now},
+  {"deviceid":14,"count":1,"timestamp":now},
+  {"deviceid":15,"count":5,"timestamp":now},
+]
+
+this['/basic/sensorHistory/1/1/today/hour'] = {
   month: 10,
   day: 14,
   data:[
-  {hour:5, temperature:12.2, humidity:30},
-  {hour:6, temperature:15.2, humidity:40},
-  {hour:7, temperature:16.2, humidity:50},
-  {hour:8, temperature:17.2, humidity:60},
-  {hour:9, temperature:null, humidity:null},
-  {hour:10, temperature:23.2, humidity:80},
-  {hour:11, temperature:24.2, humidity:90},
-  {hour:14, temperature:28.2, humidity:30},
-  {hour:15, temperature:31.2, humidity:50},
-  {hour:16, temperature:27.2, humidity:60},
-  {hour:17, temperature:22.2, humidity:70},
-  {hour:18, temperature:18.2, humidity:40},
-  {hour:20, temperature:12.2, humidity:20},
-  {hour:21, temperature:4.2, humidity:10},
-  {hour:22, temperature:4.2, humidity:10},
+  {key:5, temperature:12.2, humidity:30},
+  {key:6, temperature:15.2, humidity:40},
+  {key:7, temperature:16.2, humidity:50},
+  {key:8, temperature:17.2, humidity:60},
+  {key:9, temperature:null, humidity:null},
+  {key:10, temperature:23.2, humidity:80},
+  {key:11, temperature:24.2, humidity:90},
+  {key:14, temperature:28.2, humidity:30},
+  {key:15, temperature:31.2, humidity:50},
+  {key:16, temperature:27.2, humidity:60},
+  {key:17, temperature:22.2, humidity:70},
+  {key:18, temperature:18.2, humidity:40},
+  {key:20, temperature:12.2, humidity:20},
+  {key:21, temperature:4.2, humidity:10},
+  {key:22, temperature:4.2, humidity:10},
 ]}
 
 export const utilizationRatio = [

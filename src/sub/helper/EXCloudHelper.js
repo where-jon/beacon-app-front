@@ -22,7 +22,7 @@ export const fetchPosition = async (exbs, txs, pMock) => {
 }
 
 export const fetchSensor = async (sensorId) => {
-  let data = DEV.USE_MOCK_EXC? mock.position:
+  let data = DEV.USE_MOCK_EXC? mock.sensor[sensorId]:
       await HttpHelper.getExCloud(EXCLOUD.SENSOR_URL.replace("{id}", sensorId) + new Date().getTime())
   return _(data)
   .compact().value()

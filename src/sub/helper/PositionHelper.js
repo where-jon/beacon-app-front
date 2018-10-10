@@ -52,7 +52,6 @@ export const correctPosId = (orgPositions, now) => {
       if (DISP.TX_POS_ONE_TO_ONE) {
         usedPos.push(val.pos_id)
       }
-      console.error(now - val.timestamp)
       result.push({...val, rssi:val.rssiAvg, transparent: val.timestamp < now - DISP.TRANSPARENT_TIME})
     }
     return result

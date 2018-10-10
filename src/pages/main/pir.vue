@@ -103,6 +103,9 @@ export default {
         return
       }
 
+      if (this.exbCon) {
+        this.exbCon.removeAllChildren()
+      }
       this.positionedExb.forEach((exb) => {
         exb.x *= this.mapImageScale
         exb.y *= this.mapImageScale
@@ -114,6 +117,9 @@ export default {
       console.log({exb})
 
       let stage = this.stage
+      if (!this.exbCon) {
+        this.exbCon = new Container()
+      }
       let exbBtn = new Container()
       let btnBg = new Shape()
       let w = DISP.PIR_R_SIZE
@@ -148,7 +154,8 @@ export default {
       exbBtn.y = exb.y
       exbBtn.cursor = ""
 
-      stage.addChild(exbBtn)
+      this.exbCon.addChild(exbBtn)
+      stage.addChild(this.exbCon)
       stage.update()
     },
   }
