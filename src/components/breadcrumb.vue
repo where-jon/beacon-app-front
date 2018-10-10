@@ -9,56 +9,73 @@
       </ol>
     </div>
     <div class="col-md-1 reload-button-container">
-      <a href="#" v-if="reload" @click="onClickReloadButton"><i title="リロード" :class="classes"></i></a>
+      <a href="#" id="reload" v-if="reload" @click="onClickReload"><i title="リロード" :class="classes"></i></a>
     </div>
   </div>
 </template>
 
 <script>
 
-  import bBreadcrumb from 'bootstrap-vue/es/components/breadcrumb/breadcrumb';
-  import { THEME } from '../sub/constant/config'
-  import { getTheme } from '../sub/helper/ThemeHelper'
+import bBreadcrumb from 'bootstrap-vue/es/components/breadcrumb/breadcrumb';
+import { getTheme } from '../sub/helper/ThemeHelper'
+import * as HtmlUtil from '../sub/util/HtmlUtil'
+import * as AuthHelper from '../sub/helper/AuthHelper'
+import { EventBus } from '../sub/helper/EventHelper'
+import { DISP, APP, THEME } from '../sub/constant/config'
 
-  export default {
-    data () {
-      return {
-      }
-   },
-   props: {
-     items: Array,
-     reload: {
-       type: Boolean,
-       default: false
-     },
-     isLoad: {
-       type: Boolean,
-       default: false
-     }
-   },
-   computed: {
-     loginId() {
-       return this.$store.state.loginId
-     },
-     classes() {
-       return 'fas fa-sync-alt' + (!this.isLoad ? '' : ' fa-spin')
-     }
-   },
-   methods: {
-     isActive (item) {
-       return (typeof item.active) !== 'undefined' && item.active
-     },
-     isLink (item) {
-       return (!this.isActive(item)) && item.href !== 'undefined'
-     },
-     move(page) {
-        this.$router.push(page)
-     },
-     onClickReloadButton() {
-       this.$emit('click-reload-button')
-     }
-   }
+export default {
+  data () {
+    return {
+    }
+  },
+  props: {
+    items: Array,
+    reload: {
+      type: Boolean,
+      default: false
+    },
+    isLoad: {
+      type: Boolean,
+      default: false
+    }
+  },
+  mounted() {
+    let reload = document.getElementById("reload")
+    if (reload) {
+      HtmlUtil.registerInterval(()=>{
+        reload.click()
+      }, DISP.AUTO_RELOAD)  
+    }
+  },
+  computed: {
+    loginId() {
+      return this.$store.state.loginId
+    },
+    classes() {
+      return 'fas fa-sync-alt' + (!this.isLoad ? '' : ' fa-spin')
+    }
+  },
+  methods: {
+    isActive (item) {
+      return (typeof item.active) !== 'undefined' && item.active
+    },
+    isLink (item) {
+      return (!this.isActive(item)) && item.href !== 'undefined'
+    },
+    move(page) {
+      this.$router.push(page)
+    },
+    onClickReload(e) {
+      HtmlUtil.addClass(e, "rotate")
+      EventBus.$emit('reload', {
+        done() {
+          HtmlUtil.removeClass(e, "rotate")
+          AuthHelper.checkSession()
+        }
+      })
+    },
   }
+}
 
 </script>
 

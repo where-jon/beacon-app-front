@@ -1,7 +1,7 @@
 <template>
   <div>
-    <breadcrumb :items="items" :reload="true" :isLoad="isLoad" @click-reload-button="fetchData" />
-    <div class="container">
+    <breadcrumb :items="items" :reload="true" :isLoad="isLoad" @reload="fetchData" />
+    <div class="container" v-show="!isLoad">
       <b-row align-h="end">
         <b-col md="2" class="mb-3 mr-3">
           <b-button :variant='theme' @click="download()" v-t="'label.download'" />
@@ -21,7 +21,7 @@
             </tr>
           </tbody>
         </table>
-        <vue-scrolling-table v-if="isDev">
+        <vue-scrolling-table v-if="isDev && !isLoad">
           <template slot="thead">
             <th scope="col"
             v-for="(val, key) in ['btx_id','device_id','pos_id','phase','power_level','updatetime','nearest1','nearest2','nearest3']"
@@ -62,8 +62,10 @@ import breadcrumb from '../../components/breadcrumb.vue'
 import VueScrollingTable from "vue-scrolling-table"
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import moment from 'moment'
+import reloadmixinVue from '../../components/reloadmixin.vue'
 
 export default {
+  mixins: [reloadmixinVue],
   components: {
     breadcrumb,
     VueScrollingTable,
@@ -113,11 +115,6 @@ export default {
   mounted() {
     this.fetchData()
     this.replace({title: this.$i18n.t('label.position')})
-  },
-  created(){
-    EventBus.$on('reload', (payload)=>{
-       this.fetchData(payload)
-    })
     if (!this.isDev) {
       return
     }

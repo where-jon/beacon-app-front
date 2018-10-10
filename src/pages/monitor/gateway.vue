@@ -1,7 +1,7 @@
 <template>
   <div>
-    <breadcrumb :items="items" :reload="true" :isLoad="isLoad" @click-reload-button="fetchData" />
-    <div class="container">
+    <breadcrumb :items="items" :reload="true" :isLoad="isLoad" @reload="fetchData" />
+    <div class="container" v-show="!isLoad">
       <b-row align-h="end">
         <b-col md="2" class="mb-3 mr-3">
           <b-button :variant="theme" @click="download()" v-t="'label.download'" />
@@ -32,8 +32,10 @@ import { EventBus } from '../../sub/helper/EventHelper'
 import { EXB, DISP, APP } from '../../sub/constant/config'
 import breadcrumb from '../../components/breadcrumb.vue'
 import { getTheme } from '../../sub/helper/ThemeHelper'
+import reloadmixinVue from '../../components/reloadmixin.vue'
 
 export default {
+  mixins: [reloadmixinVue],
   components: {
     breadcrumb,
   },
@@ -73,11 +75,6 @@ export default {
   mounted() {
     this.fetchData()
     this.replace({title: this.$i18n.t('label.gateway')})
-  },
-  created(){
-    EventBus.$on('reload', (payload)=>{
-       this.fetchData(payload)
-    })
     if (!this.isDev) {
       return
     }

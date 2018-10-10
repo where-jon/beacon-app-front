@@ -7,8 +7,8 @@ import * as HttpHelper from './HttpHelper'
 
 const dateform = (time) => moment(time).format('YYYY/MM/DD hh:mm:ss')
 
-export const fetchPosition = async (exbs, txs) => {
-    let data = DEV.USE_MOCK_POS? mock.position:
+export const fetchPosition = async (exbs, txs, pMock) => {
+    let data = pMock? pMock: DEV.USE_MOCK_EXC? mock.position:
         await HttpHelper.getExCloud(EXCLOUD.POSITION_URL + new Date().getTime())
     return _(data)
     // .filter((val) => txs.some((tx) => tx.btxId == val.btx_id))
@@ -22,14 +22,14 @@ export const fetchPosition = async (exbs, txs) => {
 }
 
 export const fetchSensor = async (sensorId) => {
-  let data = DEV.USE_MOCK_POS? mock.position:
+  let data = DEV.USE_MOCK_EXC? mock.position:
       await HttpHelper.getExCloud(EXCLOUD.SENSOR_URL.replace("{id}", sensorId) + new Date().getTime())
   return _(data)
   .compact().value()
 }
 
 export const fetchRawPosition = async () => {
-    let data = DEV.USE_MOCK_POS? mock.position:
+    let data = DEV.USE_MOCK_EXC? mock.position:
         await HttpHelper.getExCloud(EXCLOUD.POSITION_URL + new Date().getTime())
     return _(data)
     .map((val) => {
@@ -40,7 +40,7 @@ export const fetchRawPosition = async () => {
 }
 
 export const fetchGateway = async () => {
-    let data = DEV.USE_MOCK_POS? mock.position:
+    let data = DEV.USE_MOCK_EXC? mock.position:
         await HttpHelper.getExCloud(EXCLOUD.GATEWAY_URL + new Date().getTime())
     return _(data)
     .map((val) => {
@@ -50,7 +50,7 @@ export const fetchGateway = async () => {
 }
 
 export const fetchTelemetry = async () => {
-    let data = DEV.USE_MOCK_POS? mock.position:
+    let data = DEV.USE_MOCK_EXC? mock.position:
         await HttpHelper.getExCloud(EXCLOUD.TELEMETRY_URL + new Date().getTime())
     return _(data)
     // .filter((val) => EXB.some((exb) => exb.pos_id == val.pos_id))

@@ -1,7 +1,7 @@
 <template>
   <div>
-    <breadcrumb :items="items" :reload="true" :isLoad="isLoad"  @click-reload-button="fetchData" />
-    <div class="container">
+    <breadcrumb :items="items" :reload="true" :isLoad="isLoad"  @reload="fetchData" />
+    <div class="container" v-show="!isLoad">
       <b-row align-h="end">
         <b-col md="2" class="mb-3 mr-3">
           <b-button :variant='theme' @click="download()" v-t="'label.download'" />
@@ -47,8 +47,10 @@ import breadcrumb from '../../components/breadcrumb.vue'
 import VueScrollingTable from "vue-scrolling-table"
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
+import reloadmixinVue from '../../components/reloadmixin.vue'
 
 export default {
+  mixins: [reloadmixinVue],
   components: {
     breadcrumb,
     VueScrollingTable,
@@ -90,16 +92,8 @@ export default {
     ])
   },
   mounted() {
-    this.interval = setInterval(()=>{
-      this.fetchData()
-    }, DISP.AUTO_RELOAD)
     this.replace({title: this.$i18n.t('label.telemetry')})
     this.fetchData()
-  },
-  created(){
-    EventBus.$on('reload', (payload)=>{
-       this.fetchData(payload)
-    })
     if (!this.isDev) {
       return
     }
@@ -113,9 +107,6 @@ export default {
         active: true
       }
     ]
-  },
-  beforeDestroy() {
-    clearInterval(this.interval)
   },
   methods: {
     async fetchData(payload) {
