@@ -95,7 +95,7 @@ export default {
       'category',
     ]),
     categoryTypes(){
-      return CATEGORY.TYPES
+      return CATEGORY.getTypes()
     }
   },
   methods: {

@@ -142,6 +142,7 @@
     "role": "ロール",
     "roleId": "ロールID",
     "roleName": "ロール名",
+    "roleFeature": "機能",
     
     "operationLog": "操作ログ",
     "operationLogId": "操作ログID",
@@ -217,6 +218,7 @@
     "regionName": "リージョン名",
     "meshId": "メッシュID",
 
+    "mode": "モード",
     "analyze": "分析",
     "utilizationRatio": "利用率",
     "utilizationRatioP": "利用率[%]",
@@ -235,6 +237,18 @@
     "temperatureHistoryType0": "すべての温湿度",
     "temperatureHistoryType1": "時間毎",
 
+    "allRejection": "すべて拒否",
+    "systemReadOnly": "システムの読み取りのみ許可",
+    "readOnly": "読み取りのみ許可",
+    "allAuthorization": "すべて許可",
+
+    "noLimitType": "制限なし",
+    "limitType": "制限あり",
+    "disabledType": "無効",
+    "enabledType": "有効",
+
+    "personThing": "人",
+    "objectThing": "物",
 
     "dummy": ""
   },

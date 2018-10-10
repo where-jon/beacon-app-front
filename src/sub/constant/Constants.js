@@ -1,5 +1,9 @@
 // Various constants or types come here. Basically constants does not change by environment. 
 
+let i18n
+
+export const setI18n = (pI18n) => i18n = pI18n
+
 export const LOGIN_MODE = {
   APP_SERVICE: 0,
   LOCAL: 1,
@@ -12,6 +16,29 @@ export const ROLE_FEATURE = {
     RO_SYS: 1,
     RO: 2,
     RW: 3,
+  },
+  getModeOptions(){
+    return [
+      {text: i18n.t('label.allRejection'), value: 0},
+      {text: i18n.t('label.systemReadOnly'), value: 1},
+      {text: i18n.t('label.readOnly'), value: 2},
+      {text: i18n.t('label.allAuthorization'), value: 3},
+    ]
+  }
+}
+
+export const FEATURE = {
+  getTypeOptions(){
+    return [
+      {text: i18n.t('label.noLimitType'), value: 0},
+      {text: i18n.t('label.limitType'), value: 1},
+    ]
+  },
+  getEnabledOptions(){
+    return [
+      {text: i18n.t('label.disabledType'), value: false},
+      {text: i18n.t('label.enabledType'), value: true},
+    ]
   }
 }
 
@@ -28,10 +55,12 @@ export const txViewTypes = [
 ]
 
 export const CATEGORY = {
-  TYPES: [
-    {value: 0, text: "人"},
-    {value: 1, text: "物"},
-  ],
+  getTypes(){ 
+    return [
+      {value: 0, text: i18n.t('label.personThing')},
+      {value: 1, text: i18n.t('label.objectThing')},
+    ]
+  },
 }
 
 export const SENSOR = {
@@ -146,6 +175,12 @@ export const MENU = [
         path: 'user',
         feature: '/core/user',
         icon: 'fas fa-user',
+      },
+      {
+        key: 'role',
+        path: 'role',
+        feature: '/meta/role',
+        icon: 'fas fa-chalkboard-teacher',
       },
     ]
   },
