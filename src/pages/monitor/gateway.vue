@@ -1,7 +1,7 @@
 <template>
   <div>
     <breadcrumb :items="items" :reload="true" :isLoad="isLoad" @reload="fetchData" />
-    <div class="container">
+    <div class="container" v-show="!isLoad">
       <b-row align-h="end">
         <b-col md="2" class="mb-3 mr-3">
           <b-button :variant="theme" @click="download()" v-t="'label.download'" />
@@ -10,7 +10,7 @@
       <table class="table table-hover table-bordered">
         <thead>
           <tr>
-            <th scope="col" v-for="(val, key) in [labelNo,labelDeviceId,labelTimestamp]" :key="key" >{{ val }}</th>
+            <th scope="col" v-for="(val, key) in getTableHeaders()" :key="key" >{{ val }}</th>
           </tr>
         </thead>
         <tbody>
@@ -57,6 +57,12 @@ export default {
       labelTimestamp: this.$i18n.t('label.final-receive-timestamp'),
     }
   },
+  props: {
+    isDev: {
+      type: Boolean,
+      default: false
+    }
+  },
   computed: {
     theme () {
       const theme = getTheme(this.$store.state.loginId)
@@ -69,6 +75,19 @@ export default {
   mounted() {
     this.fetchData()
     this.replace({title: this.$i18n.t('label.gateway')})
+    if (!this.isDev) {
+      return
+    }
+    this.items = [
+      {
+        text: this.$i18n.t('label.develop'),
+        active: true
+      },
+      {
+        text: this.$i18n.t('label.gateway'),
+        active: true
+      }
+    ]
   },
   methods: {
     async fetchData(payload) {
@@ -79,6 +98,7 @@ export default {
         if (payload && payload.done) {
           payload.done()
         }
+        console.log(gateways[0])
         this.replaceMonitor({gateways})
       }
       catch(e) {
@@ -88,7 +108,13 @@ export default {
       this.isLoad = false
     },
     isUndetect(updated) {
+      if ((typeof updated) === 'undefined') {
+        return false
+      }
       return updated == "" || new Date() - new Date(updated) > APP.UNDETECT_TIME
+    },
+    getTableHeaders() {
+      return !this.isDev ? [this.labelNo,this.labelDeviceId,this.labelTimestamp] : [this.labelNo,'deviceid','updated']
     },
     download() {
       HtmlUtil.fileDL("gateway.csv", Util.converToCsv(this.gateways))

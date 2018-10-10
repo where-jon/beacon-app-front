@@ -1,7 +1,7 @@
 <template>
   <div>
     <breadcrumb :items="items" :reload="true" :isLoad="isLoad"  @reload="fetchData" />
-    <div class="container">
+    <div class="container" v-show="!isLoad">
       <b-row align-h="end">
         <b-col md="2" class="mb-3 mr-3">
           <b-button :variant='theme' @click="download()" v-t="'label.download'" />
@@ -94,6 +94,19 @@ export default {
   mounted() {
     this.replace({title: this.$i18n.t('label.telemetry')})
     this.fetchData()
+    if (!this.isDev) {
+      return
+    }
+    this.items = [
+      {
+        text: this.$i18n.t('label.develop'),
+        active: true
+      },
+      {
+        text: this.$i18n.t('label.telemetry'),
+        active: true
+      }
+    ]
   },
   methods: {
     async fetchData(payload) {

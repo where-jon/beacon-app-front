@@ -50,3 +50,15 @@ export const getThemeClasses = (selectedTheme) => {
     dark: selectedTheme === 'dark',
   }
 }
+
+export const isShowMenu = (page, role) => {
+  if ((typeof page.roles) === 'undefined' || page.roles.length < 1) {
+    return true
+  }
+
+  const result = page.roles.find((e) => {
+    return role === e
+  })
+
+  return (typeof result) !== 'undefined'
+}

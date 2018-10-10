@@ -25,7 +25,7 @@
             </b-form-group>
             <b-form-group>
               <label v-t="'label.theme'" />
-              <b-form-select v-model="selectedTheme" :options="theme" class="mb-3" @change="themeSelected"/>
+              <b-form-select v-model="selectedTheme" :options="themes" class="mb-3" @change="themeSelected"/>
             </b-form-group>
             <b-form-group>
               <b-button type="button" :variant="theme" class="btn-block" v-t="'label.changePassword'" />
@@ -61,8 +61,8 @@ export default {
           active: true
         },
       ],
+      themes: [],
       selectedTheme: null,
-      theme: [],
       loginUser: {
         loginId: this.loginId,
         name: null,
@@ -89,7 +89,7 @@ export default {
     })
     this.selectedTheme = (typeof selected) !== 'undefined' ? selected.id : THEME[0].id
     const that = this
-    this.theme = THEME.map((e) => {
+    this.themes = THEME.map((e) => {
       const text = that.$i18n.t('label.' + e.name)
       return { value: e.id, text: text }
     })

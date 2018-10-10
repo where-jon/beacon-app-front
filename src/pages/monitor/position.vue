@@ -1,7 +1,7 @@
 <template>
   <div>
     <breadcrumb :items="items" :reload="true" :isLoad="isLoad" @reload="fetchData" />
-    <div class="container">
+    <div class="container" v-show="!isLoad">
       <b-row align-h="end">
         <b-col md="2" class="mb-3 mr-3">
           <b-button :variant='theme' @click="download()" v-t="'label.download'" />
@@ -21,7 +21,7 @@
             </tr>
           </tbody>
         </table>
-        <vue-scrolling-table v-if="isDev">
+        <vue-scrolling-table v-if="isDev && !isLoad">
           <template slot="thead">
             <th scope="col"
             v-for="(val, key) in ['btx_id','device_id','pos_id','phase','power_level','updatetime','nearest1','nearest2','nearest3']"
@@ -115,6 +115,19 @@ export default {
   mounted() {
     this.fetchData()
     this.replace({title: this.$i18n.t('label.position')})
+    if (!this.isDev) {
+      return
+    }
+    this.items = [
+      {
+        text: this.$i18n.t('label.develop'),
+        active: true
+      },
+      {
+        text: this.$i18n.t('label.position'),
+        active: true
+      }
+    ]
   },
   methods: {
     async fetchData(payload) {
@@ -178,6 +191,10 @@ export default {
       return isClass ? (classes + 'danger') : this.label_powerLevelPoor
     },
     isUndetect(updated) {
+      if ((typeof updated) === 'undefined' ||
+      (typeof updated.length) === 'undefined') {
+        return false
+      }
       return updated.length < 1 ||
       updated === this.label_undetect ||
       new Date() - new Date(updated) > APP.UNDETECT_TIME
