@@ -48,6 +48,7 @@ export const authByAppService = async (loginId, password, success, err) => {
 
         // get role feature list
         let user = await HttpHelper.getAppService('/meta/user/currentUser')
+        console.log(user)
         let featureList = _(user.role.roleFeatureList).map((roleFeature) => {
             return {path: roleFeature.feature.path, mode: roleFeature.mode}
         }).sortBy((val) => val.path.length * -1).value()
@@ -55,7 +56,6 @@ export const authByAppService = async (loginId, password, success, err) => {
 
         // get setting
         let setting = await HttpHelper.getAppService('/meta/setting')
-        console.log({setting})
         ConfigHelper.applyAppServiceSetting(setting)
         await login({loginId, username:user.name, role:data.role, featureList, menu}, setting)
         success()

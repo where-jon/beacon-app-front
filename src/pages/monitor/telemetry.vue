@@ -100,6 +100,19 @@ export default {
     EventBus.$on('reload', (payload)=>{
        this.fetchData(payload)
     })
+    if (!this.isDev) {
+      return
+    }
+    this.items = [
+      {
+        text: this.$i18n.t('label.develop'),
+        active: true
+      },
+      {
+        text: this.$i18n.t('label.telemetry'),
+        active: true
+      }
+    ]
   },
   beforeDestroy() {
     clearInterval(this.interval)

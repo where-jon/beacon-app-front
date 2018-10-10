@@ -150,6 +150,25 @@ export const MENU = [
     ]
   },
   {
+    key: 'analyze',
+    base: 'analyze/',
+    path: 'analyze/utilizationRatio',
+    icon: 'fas fa-balance-scale',
+    pages: [      {
+        key: 'utilizationRatio',
+        path: 'utilizationRatio',
+        feature: '/analyze/utilizationRatio',
+        icon: 'fas fa-balance-scale'
+      },
+      {
+        key: 'numUsers',
+        path: 'numUsers',
+        feature: '/analyze/numUsers',
+        icon: 'fas fa-balance-scale'
+      },
+    ]
+  },
+  {
     key: 'monitor',
     base: 'monitor/',
     path: 'monitor/position',
@@ -173,46 +192,6 @@ export const MENU = [
         feature: '/core/telemetry',
         icon: 'fa fa-battery-three-quarters',
       },
-      {
-        key: 'gateway-dev',
-        path: 'gateway',
-        feature: '/core/gateway',
-        icon: 'fas fa-road',
-        debug: 1,
-      },
-      {
-        key: 'position-dev',
-        path: 'position',
-        feature: '/core/position',
-        icon: 'fas fa-location-arrow',
-        debug: 1,
-      },
-      {
-        key: 'telemetry-dev',
-        path: 'telemetry',
-        feature: '/core/telemetry',
-        icon: 'fa fa-battery-three-quarters',
-        debug: 1,
-      },
-    ]
-  },
-  {
-    key: 'analyze',
-    base: 'analyze/',
-    path: 'analyze/utilizationRatio',
-    icon: 'fas fa-balance-scale',
-    pages: [      {
-        key: 'utilizationRatio',
-        path: 'utilizationRatio',
-        feature: '/analyze/utilizationRatio',
-        icon: 'fas fa-balance-scale'
-      },
-      {
-        key: 'numUsers',
-        path: 'numUsers',
-        feature: '/analyze/numUsers',
-        icon: 'fas fa-balance-scale'
-      },
     ]
   },
   {
@@ -227,5 +206,32 @@ export const MENU = [
         icon: 'fas fa-user-cog',
       },
     ]
+  },
+  {
+    key: 'develop',
+    base: 'develop/',
+    path: 'develop/position-dev',
+    icon: 'fas fa-wrench',
+    roles: ['SYS_ADMIN'],
+    pages: [
+      {
+        key: 'gateway',
+        path: 'gateway',
+        feature: '/develop/gateway',
+        icon: 'fas fa-road',
+      },
+      {
+        key: 'position',
+        path: 'position',
+        feature: '/develop/position',
+        icon: 'fas fa-location-arrow',
+      },
+      {
+        key: 'telemetry',
+        path: 'telemetry',
+        feature: '/develop/telemetry',
+        icon: 'fa fa-battery-three-quarters',
+      },
+    ],
   },
 ]

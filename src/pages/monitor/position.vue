@@ -118,6 +118,19 @@ export default {
     EventBus.$on('reload', (payload)=>{
        this.fetchData(payload)
     })
+    if (!this.isDev) {
+      return
+    }
+    this.items = [
+      {
+        text: this.$i18n.t('label.develop'),
+        active: true
+      },
+      {
+        text: this.$i18n.t('label.position'),
+        active: true
+      }
+    ]
   },
   methods: {
     async fetchData(payload) {
@@ -181,6 +194,10 @@ export default {
       return isClass ? (classes + 'danger') : this.label_powerLevelPoor
     },
     isUndetect(updated) {
+      if ((typeof updated) === 'undefined' ||
+      (typeof updated.length) === 'undefined') {
+        return false
+      }
       return updated.length < 1 ||
       updated === this.label_undetect ||
       new Date() - new Date(updated) > APP.UNDETECT_TIME

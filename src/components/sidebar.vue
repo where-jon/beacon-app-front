@@ -29,7 +29,7 @@ export default {
     return {
       nav : this.$store.state.menu,
       selectedItem: -1,
-      debugLevel: -1
+      userRole: this.$store.state.role
     }
   },
   computed: {
@@ -50,14 +50,8 @@ export default {
       this.selectedItem = index === this.selectedItem ? -1 : index
     },
     isDispMenuItem(page) {
-      if (this.debugLevel < 1) {
-        return (typeof page.debug) === 'undefined'
-      }
-      return ((typeof page.debug) !== 'undefined') && page.debug <= this.debugLevel
+      return true 
     }
-  },
-  created() {
-    this.debugLevel = DEV.DEBUG
   },
 }
 </script>
