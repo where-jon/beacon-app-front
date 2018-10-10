@@ -112,7 +112,7 @@ export default {
               value: elm.categoryId/1
             })
           }
-        });
+        })
         //
         this.zones = await AppServiceHelper.fetchList2(
           '/core/zone',
@@ -134,7 +134,7 @@ export default {
       }
     },
     categoryChange(val) {
-      if (this.zones == null) return;
+      if (this.zones == null) return
       if (val == undefined || val.value == undefined) { 
         this.zoneList = []
         this.zones.forEach(elm => {
@@ -143,7 +143,7 @@ export default {
             value: elm.zoneId
           })
         })
-        this.categoryId = null;
+        this.categoryId = null
         this.zone = ""
         return 
       }
