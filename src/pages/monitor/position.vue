@@ -1,6 +1,6 @@
 <template>
   <div>
-    <breadcrumb :items="items" :reload="true" :isLoad="isLoad" @click-reload-button="fetchData" />
+    <breadcrumb :items="items" :reload="true" :isLoad="isLoad" @reload="fetchData" />
     <div class="container">
       <b-row align-h="end">
         <b-col md="2" class="mb-3 mr-3">
@@ -62,8 +62,10 @@ import breadcrumb from '../../components/breadcrumb.vue'
 import VueScrollingTable from "vue-scrolling-table"
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import moment from 'moment'
+import reloadmixinVue from '../../components/reloadmixin.vue'
 
 export default {
+  mixins: [reloadmixinVue],
   components: {
     breadcrumb,
     VueScrollingTable,
@@ -113,11 +115,6 @@ export default {
   mounted() {
     this.fetchData()
     this.replace({title: this.$i18n.t('label.position')})
-  },
-  created(){
-    EventBus.$on('reload', (payload)=>{
-       this.fetchData(payload)
-    })
   },
   methods: {
     async fetchData(payload) {

@@ -46,8 +46,10 @@ import { EventBus } from '../../sub/helper/EventHelper'
 import { EXB, DISP, APP } from '../../sub/constant/config'
 import breadcrumb from '../../components/breadcrumb.vue'
 import { getTheme } from '../../sub/helper/ThemeHelper'
+import reloadmixinVue from '../../components/reloadmixin.vue'
 
 export default {
+  mixins: [reloadmixinVue],
   components: {
     breadcrumb,
   },
@@ -104,11 +106,6 @@ export default {
   mounted() {
     this.fetchData()
     this.replace({title: this.$i18n.t('label.numUsers')})
-  },
-  created(){
-    EventBus.$on('reload', (payload)=>{
-       this.fetchData(payload)
-    })
   },
   methods: {
     async fetchData(payload) {

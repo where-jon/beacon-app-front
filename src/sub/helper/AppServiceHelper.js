@@ -4,8 +4,8 @@ import * as mock from '../../assets/mock/mock'
 import { sleep } from '../util/Util'
 import * as HttpHelper from './HttpHelper'
 
-export const fetchList = async (target, sortBy, useMock) => {
-    let data = (DEV.USE_MOCK_POS || useMock)? mock[target]:
+export const fetchList = async (target, sortBy, pMock) => {
+    let data = pMock? pMock: DEV.USE_MOCK_APS? mock[target]:
         await HttpHelper.getAppService(target + "?_=" + new Date().getTime())
     if (!sortBy) {
       return data
@@ -22,7 +22,7 @@ export const fetchList2 = async (target, url, sortBy) => {
 
 export const fetch = async (target, id) => {
     const path = target + "/"
-    let data = DEV.USE_MOCK_POS? mock[path + id]:
+    let data = DEV.USE_MOCK_APS? mock[path + id]:
         await HttpHelper.getAppService(path + id + "?_=" + new Date().getTime())
     return data
 }
@@ -34,7 +34,7 @@ export const save = async (target, entity) => {
         params.append(key, value || '')
     })
 
-    let data = DEV.USE_MOCK_POS? mock[target]:
+    let data = DEV.USE_MOCK_APS? mock[target]:
         await HttpHelper.postAppService(path + "?_=" + new Date().getTime(), params)
 
     return data
@@ -42,7 +42,7 @@ export const save = async (target, entity) => {
 
 export const bulkSave = async (target, entities, updateOnlyNN = 0) => {
     const path = target + "/bulk/?updateOnlyNN=" + updateOnlyNN + "&_=" + new Date().getTime()
-    let data = DEV.USE_MOCK_POS? mock[target]:
+    let data = DEV.USE_MOCK_APS? mock[target]:
         await HttpHelper.postAppService(path, entities)
 
     return data
@@ -50,7 +50,7 @@ export const bulkSave = async (target, entities, updateOnlyNN = 0) => {
 
 export const deleteEntity = async (target, id) => {
     const path = target + "/"
-    let data = DEV.USE_MOCK_POS? mock[path + id]:
+    let data = DEV.USE_MOCK_APS? mock[path + id]:
         await HttpHelper.deleteAppService(path + id + "?_=" + new Date().getTime())
     return data
 }
