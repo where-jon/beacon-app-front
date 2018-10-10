@@ -3,7 +3,7 @@
     <breadcrumb :items="items" :reload="true" />
     <b-row class="mt-2">
       <b-form inline class="mt-2">
-        <label class="mr-2">{{ $t('label.area') }}</label>
+        <label class="ml-3 mr-2">{{ $t('label.area') }}</label>
         <v-select v-model="selectedArea" :options="areaOptions" :on-change="changeArea" required class="ml-2"></v-select>
       </b-form>
     </b-row>
@@ -37,7 +37,7 @@ import { SENSOR, DISCOMFORT } from '../../sub/constant/Constants'
 import { Shape, Stage, Container, Bitmap, Text, Touch } from '@createjs/easeljs/dist/easeljs.module'
 import { Tween, Ticker } from '@createjs/tweenjs/dist/tweenjs.module'
 import breadcrumb from '../../components/breadcrumb.vue'
-import showmapmixin from '../../components/showmapmixin.vue';
+import showmapmixin from '../../components/showmapmixin.vue'
 import cold from '../../assets/icon/cold.png'
 import hot from '../../assets/icon/hot.png'
 import comfort from '../../assets/icon/comfort.png'
@@ -142,7 +142,7 @@ export default {
           icon.scaleY = icon.scaleX 
           icon.regX = icon.image.width / 2
           icon.regY = icon.image.height / 2
-          stage.update();
+          stage.update()
         }
         exbBtn.addChild(icon)
       }

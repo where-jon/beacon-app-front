@@ -1,6 +1,6 @@
 <template>
   <div>
-    <breadcrumb :items="items" :reload="true" />
+    <breadcrumb :items="items" :reload="false" />
     <div class="container">
       <p></p>
       <b-row>
@@ -64,7 +64,8 @@ export default {
           text: this.$i18n.t('label.numUsers'),
           active: true
         }
-      ]
+      ],
+      analyzeMonth: null
     }
   },
   computed: {

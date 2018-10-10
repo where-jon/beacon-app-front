@@ -21,10 +21,10 @@ export default {
   mixins: [editmixinVue],
   data() {
     return {
-      name: 'group',
-      id: 'groupId',
-      backPath: '/master/group',
-      appServicePath: '/basic/group',
+      name: 'role',
+      id: 'roleId',
+      backPath: '/master/role',
+      appServicePath: '/meta/role',
       form: {
         csvFile: undefined,
       },
@@ -34,11 +34,11 @@ export default {
           active: true
         },
         {
-          text: this.$i18n.t('label.group'),
-          href: '/master/group',
+          text: this.$i18n.t('label.role'),
+          href: '/master/role',
         },
         {
-          text: this.$i18n.t('label.group') + this.$i18n.t('label.bulkRegister'),
+          text: this.$i18n.t('label.role') + this.$i18n.t('label.bulkRegister'),
           active: true
         }
       ]
@@ -46,13 +46,13 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'group',
+      'role',
     ]),
   },
   methods: {
     async save() {
-      const MAIN_COL = "groupId"
-      const NUMBER_TYPE_LIST = ["groupId"]
+      const MAIN_COL = "roleId"
+      const NUMBER_TYPE_LIST = ["roleId"]
       await this.bulkSave(MAIN_COL, NUMBER_TYPE_LIST)
     },
   }
