@@ -181,7 +181,7 @@ export default {
         }
 
         readFin = true
-      });
+      })
       
       reader.readAsBinaryString(this.form.csvFile)
 

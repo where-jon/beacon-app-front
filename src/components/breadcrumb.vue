@@ -16,7 +16,7 @@
 
 <script>
 
-import bBreadcrumb from 'bootstrap-vue/es/components/breadcrumb/breadcrumb';
+import bBreadcrumb from 'bootstrap-vue/es/components/breadcrumb/breadcrumb'
 import { getTheme } from '../sub/helper/ThemeHelper'
 import * as HtmlUtil from '../sub/util/HtmlUtil'
 import * as AuthHelper from '../sub/helper/AuthHelper'

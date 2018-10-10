@@ -34,10 +34,10 @@ export const applyAppServiceSetting = (settingArr) => {
       switch(valType) {
       case "int":
         val = Number(val)
-        break;
+        break
       case "array":
         val = val.split(",")
-        break;
+        break
       }
     }
     result[key] = val

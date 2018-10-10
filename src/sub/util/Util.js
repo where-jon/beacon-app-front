@@ -46,8 +46,8 @@ export const convert2Unicode = (str) => {
 
 export const removeCrLfDup = (str) => {
   if (!str) return str
-  str = str.replace(/\r?\n/g,"\n");
-  str = str.replace(/\r/g,"\n");
+  str = str.replace(/\r?\n/g,"\n")
+  str = str.replace(/\r/g,"\n")
   let strArr = _.filter(str.split("\n"), (line) => {
     return line && line.trim() != ""
   })

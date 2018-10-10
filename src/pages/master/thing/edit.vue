@@ -59,7 +59,7 @@ import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import _ from 'lodash'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
-import editmixinVue from '../../../components/editmixin.vue';
+import editmixinVue from '../../../components/editmixin.vue'
 import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/breadcrumb.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
@@ -145,7 +145,7 @@ export default {
         }]: undefined
       }
       const ret = await AppServiceHelper.bulkSave(this.appServicePath, [entity])
-      return ret;
+      return ret
     },
     beforeSubmit(event, again){
       this.showInfo = false
