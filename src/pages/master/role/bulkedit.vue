@@ -52,8 +52,8 @@ export default {
   methods: {
     async save() {
       const MAIN_COL = "roleId"
-      const INT_TYPE_LIST = ["roleId"]
-      await this.bulkSave(MAIN_COL, INT_TYPE_LIST)
+      const NUMBER_TYPE_LIST = ["roleId"]
+      await this.bulkSave(MAIN_COL, NUMBER_TYPE_LIST)
     },
   }
 }

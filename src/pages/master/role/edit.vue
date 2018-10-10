@@ -18,7 +18,7 @@
 
         <b-form-group>
           <label v-t="'label.feature'" />
-          <rolefeature-index :roleFeatures="roleFeatures"></rolefeature-index>
+          <rolefeature-index/>
         </b-form-group>
 
         <b-button type="button" variant="outline-danger" @click="backToList" v-t="'label.back'"/>
@@ -52,7 +52,7 @@ export default {
       id: 'roleId',
       backPath: '/master/role',
       appServicePath: '/meta/role',
-      form: ViewHelper.extract(this.$store.state.app_service.role, ["roleId", "roleName", "roleFeatureList"]),
+      form: ViewHelper.extract(this.$store.state.app_service.role, ["roleId", "roleName"]),
       items: [
         {
           text: this.$i18n.t('label.master'),
@@ -78,11 +78,8 @@ export default {
       return 'outline-' + theme
     },
     ...mapState('app_service', [
-      'role'
+      'role',
     ]),
-    roleFeatures(){
-      return this.form.roleFeatureList
-    }
   },
   methods: {
     async save() {

@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- searchbox -->
-    <b-row>
+    <b-row v-if="!params.hideSearchBox">
       <b-col md="6" class="my-1">
         <b-form-group horizontal class="mb-0" :label="$t('label.filter') ">
           <b-input-group>
@@ -14,7 +14,7 @@
       </b-col>
       <b-col class="mb-2 justify-content-end">
         <!-- 新規作成ボタン -->
-        <b-button v-if="!params.systemProp" :variant='theme' @click="edit()" v-t="'label.createNew'"  class="float-right"/>
+        <b-button :variant='theme' @click="edit()" v-t="'label.createNew'"  class="float-right"/>
         <b-button v-if="params.bulkEditPath" :variant='theme'
           @click="bulkEdit()" v-t="'label.bulkRegister'"  class="float-right" :style="{ marginRight: '10px'}"/>
         <b-button v-if="params.csvOut" :variant='theme' @click="exportCsv" v-t="'label.download'"  class="float-right" :style="{ marginRight: '10px'}"/>
@@ -37,10 +37,6 @@
         <b-button size="sm" @click.stop="edit(row.item, row.index, $event.target)" :variant="theme" class="mr-2 my-1" v-t="'label.' + crud" />
         <!-- 削除ボタン -->
         <b-button v-if="isEditable" size="sm" @click.stop="deleteConfirm(row.item, row.index, $event.target)" variant="outline-danger" class="mr-1" v-t="'label.delete'" />
-      </template>
-      <template slot="updateAction" slot-scope="row">
-        <!-- 更新ボタン -->
-        <b-button size="sm" @click.stop="edit(row.item, row.index, $event.target)" :variant="theme" class="my-1" v-t="'label.' + crud" />
       </template>
       <template slot="thumbnail" slot-scope="row">
         <img v-if="thumbnail(row.index)" :src="thumbnail(row.index)" height="70" />
@@ -101,7 +97,7 @@ export default {
     theme () {
       const theme = getButtonTheme(this.loginId)
       return 'outline-' + theme
-    }
+    },
   },
   mounted() {
     this.$parent.$options.methods.fetchData.apply(this.$parent)

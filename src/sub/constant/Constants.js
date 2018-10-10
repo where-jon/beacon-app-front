@@ -1,5 +1,9 @@
 // Various constants or types come here. Basically constants does not change by environment. 
 
+let i18n
+
+export const setI18n = (pI18n) => i18n = pI18n
+
 export const LOGIN_MODE = {
   APP_SERVICE: 0,
   LOCAL: 1,
@@ -13,23 +17,29 @@ export const ROLE_FEATURE = {
     RO: 2,
     RW: 3,
   },
-  MODE_OPTIONS: [
-    {text: "すべて拒否", value: 0},
-    {text: "システムの読み取りのみ許可", value: 1},
-    {text: "読み取りのみ許可", value: 2},
-    {text: "すべて許可", value: 3},
-  ]
+  getModeOptions(){
+    return [
+      {text: i18n.t('label.allRejection'), value: 0},
+      {text: i18n.t('label.systemReadOnly'), value: 1},
+      {text: i18n.t('label.readOnly'), value: 2},
+      {text: i18n.t('label.allAuthorization'), value: 3},
+    ]
+  }
 }
 
 export const FEATURE = {
-  TYPE_OPTIONS: [
-    {text: "制限なし", value: 0},
-    {text: "制限あり", value: 1},
-  ],
-  ENABLED_OPTIONS: [
-    {text: "無効", value: false},
-    {text: "有効", value: true},
-  ]
+  getTypeOptions(){
+    return [
+      {text: i18n.t('label.noLimitType'), value: 0},
+      {text: i18n.t('label.limitType'), value: 1},
+    ]
+  },
+  getEnabledOptions(){
+    return [
+      {text: i18n.t('label.disabledType'), value: false},
+      {text: i18n.t('label.enabledType'), value: true},
+    ]
+  }
 }
 
 export const UPDATE_ONLY_NN = {
@@ -45,10 +55,12 @@ export const txViewTypes = [
 ]
 
 export const CATEGORY = {
-  TYPES: [
-    {value: 0, text: "人"},
-    {value: 1, text: "物"},
-  ],
+  getTypes(){ 
+    return [
+      {value: 0, text: i18n.t('label.personThing')},
+      {value: 1, text: i18n.t('label.objectThing')},
+    ]
+  },
 }
 
 export const SENSOR = {

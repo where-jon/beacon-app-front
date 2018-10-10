@@ -28,7 +28,8 @@ export const state = () => ({
   roles: [],
   role: {},
   features: [],
-  feature: {},
+  roleFeatures: [],
+  roleFeature: {},
 })
 
 const initState = state()

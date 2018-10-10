@@ -22,14 +22,14 @@ export default {
   mixins: [editmixinVue],
   data() {
     return {
-      name: 'roleFeatures',
+      name: 'roleFeature',
       id: 'roleId',
       backPath: '/master/role/edit',
       appServicePath: '/meta/roleFeature',
       form: {
         csvFile: undefined,
       },
-      roleFeatures:{
+      roleFeature:{
         roleId: this.$store.state.app_service.role.roleId
       },
       items: [
@@ -79,8 +79,8 @@ export default {
         }
         return dummyKey
       })
-      const role = await AppServiceHelper.fetch("/meta/role", this.role.roleId)
-      this.replaceAS({role})
+      const roleFeatures = await AppServiceHelper.fetch("/meta/roleFeature", this.role.roleId)
+      this.replaceAS({roleFeatures})
     },
   }
 }

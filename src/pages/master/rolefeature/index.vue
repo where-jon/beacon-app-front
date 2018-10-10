@@ -1,6 +1,6 @@
 <template slot="feature">
   <div>
-    <m-list :params="params" :list="features" />
+    <m-list :params="params" :list="roleFeatures" />
   </div>
 </template>
 
@@ -9,11 +9,11 @@ import mList from '../../../components/list.vue'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import { addLabelByKey } from '../../../sub/helper/ViewHelper'
+import * as Util from '../../../sub/util/Util'
 import listmixinVue from '../../../components/listmixin.vue'
 import { ROLE_FEATURE, FEATURE } from '../../../sub/constant/Constants'
 
 export default {
-  props: ['roleFeatures'],
   components: {
     mList, 
   },
@@ -21,13 +21,13 @@ export default {
   data() {
     return {
       params: {
-        name: 'feature',
-        id: 'featureId',
+        name: 'roleFeature',
+        id: 'key',
         editPath: '/master/rolefeature/edit',
         bulkEditPath: '/master/rolefeature/bulkedit',
-        appServicePath: '/meta/feature',
-        systemProp: true,
+        appServicePath: '/meta/roleFeature',
         csvOut: true,
+        hideSearchBox: !Util.hasValue(this.$store.state.app_service.role.roleId),
         fields: addLabelByKey(this.$i18n, [ 
           {key: "featureId", sortable: true },
           {key: "featureName", sortable: true },
@@ -36,7 +36,7 @@ export default {
           {key: "featureTypeName", label: "featureType", sortable: true },
           {key: "version", sortable: true },
           {key: "enabledName", label: "enabled", sortable: true },
-          {key: "updateAction", thStyle: {width:'65px !important'} }
+          {key: "actions", thStyle: {width:'130x !important'} }
         ]),
         initTotalRows: this.$store.state.app_service.features.length,
       },
@@ -44,39 +44,53 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'features', 'role',
+      'role', 'features', 'roleFeatures',
     ]),
   },
   methods: {
-    getModeText(feature, roleFeatures){
-      if(roleFeatures === undefined){
-        return ROLE_FEATURE.MODE_OPTIONS[0].text
-      }
-      const roleFeature = roleFeatures.find((val) => val.roleFeaturePK.featureId === feature.featureId)
-      if(roleFeature === undefined){
-        return ROLE_FEATURE.MODE_OPTIONS[0].text
-      }
-      const modeName = ROLE_FEATURE.MODE_OPTIONS.find((val) => val.value === roleFeature.mode)
-      return modeName !== undefined? modeName.text: ROLE_FEATURE.MODE_OPTIONS[0].text
+    getModeText(roleFeature){
+      const modeName = ROLE_FEATURE.getModeOptions().find((val) => val.value === roleFeature.mode)
+      return modeName? modeName.text: undefined
     },
     getEnableName(feature){
-      const enabled = FEATURE.ENABLED_OPTIONS.find((val) => val.value === feature.enabled)
+      const enabled = FEATURE.getEnabledOptions().find((val) => val.value === feature.enabled)
       return enabled? enabled.text: undefined
     },
     getFeatureTypeName(feature){
-      const featureType = FEATURE.TYPE_OPTIONS.find((val) => val.value === feature.featureType)
+      const featureType = FEATURE.getTypeOptions().find((val) => val.value === feature.featureType)
       return featureType? featureType.text: undefined
+    },
+    getFeatureInfo(features, roleFeature){
+      const feature = features.find((val) => val.featureId === roleFeature.roleFeaturePK.featureId)
+      return feature === undefined? {}: {
+        key: `${roleFeature.roleFeaturePK.roleId}/${roleFeature.roleFeaturePK.featureId}`,
+        featureId: roleFeature.roleFeaturePK.featureId,
+        featureName: feature.featureName,
+        path: feature.path,
+        mode: roleFeature.mode,
+        modeText: this.getModeText(roleFeature),
+        featureType: feature.featureType,
+        featureTypeName: this.getFeatureTypeName(feature),
+        version: feature.version,
+        enabled: feature.enabled,
+        enabledName: this.getEnableName(feature),
+      }
     },
     async fetchData(payload) {
       this.replace({showProgress: true})
-      let features = this.role.roleId === undefined? []: await AppServiceHelper.fetchList("/meta/feature/", 'featureId')
-      features = features.map((val) => ({
-        ...val,
-        modeText: this.getModeText(val, this.roleFeatures),
-        enabledName: this.getEnableName(val),
-        featureTypeName: this.getFeatureTypeName(val),
-      }))
+      const features = await AppServiceHelper.fetchList("/meta/feature/", 'featureId')
       this.replaceAS({features})
+      if(Util.hasValue(this.role.roleId)){
+        let roleFeatures = await AppServiceHelper.fetchList(`/meta/roleFeature/${this.role.roleId}`)
+        if(Util.hasValue(roleFeatures) && Util.isArray(roleFeatures)){
+          roleFeatures = roleFeatures.map((val) => (this.getFeatureInfo(features, val)))
+          roleFeatures = _(roleFeatures).sortBy((val) => val.featureId).compact().value()
+        }
+        else{
+          roleFeatures = []
+        }
+        this.replaceAS({roleFeatures})
+      }
       this.replace({showProgress: false})
     },
   }

@@ -118,7 +118,6 @@ export default {
       let readFin = false
       let error = null
       let entities = []
-      const that = this
       reader.addEventListener('load', (e) => {
         try {
           let csv = Util.csv2Obj(e.target.result)

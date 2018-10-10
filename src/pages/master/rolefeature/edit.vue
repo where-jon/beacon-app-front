@@ -7,13 +7,9 @@
       <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">{{ message }}</b-alert>
 
       <b-form @submit="onSubmit" v-if="show">
-        <b-form-group v-if="hasId">
-          <label v-t="'label.featureId'" />
-          <b-form-input type="text" v-model="form.featureId" readonly="readonly" />
-        </b-form-group>
         <b-form-group>
           <label v-t="'label.featureName'" />
-          <b-form-input type="text" v-model="form.featureName" maxlength="20" required readonly="readonly" />
+          <b-form-select v-model="featureId" :options="featureNames" class="mb-3 ml-3 col-3" required :disabled="systemReadOnly" />
         </b-form-group>
         <b-form-group>
           <label v-t="'label.path'" />
@@ -21,15 +17,7 @@
         </b-form-group>
         <b-form-group>
           <label v-t="'label.mode'" />
-          <b-form-select v-model="mode" :options="modes" class="mb-3 ml-3 col-3" required :readonly="!isEditable" />
-        </b-form-group>
-        <b-form-group>
-          <label v-t="'label.featureType'" />
-          <b-form-select v-model="form.featureType" :options="featureTypes" class="mb-3 ml-3 col-3" required :disabled="true" />
-        </b-form-group>
-        <b-form-group>
-          <label v-t="'label.enabled'" />
-          <b-form-select v-model="form.enabled" :options="enableds" class="mb-3 ml-3 col-2" required :disabled="true" />
+          <b-form-select v-model="form.mode" :options="modes" class="mb-3 ml-3 col-3" required :readonly="!isEditable" />
         </b-form-group>
 
         <b-button type="button" variant="outline-danger" @click="backToList" v-t="'label.back'"/>
@@ -58,13 +46,13 @@ export default {
   mixins: [editmixinVue],
   data() {
     return {
-      name: 'feature',
+      name: 'roleFeature',
       id: 'featureId',
       backPath: '/master/role/edit',
       appServicePath: '/meta/roleFeature',
-      form: ViewHelper.extract(this.$store.state.app_service.feature, ["featureId", "featureName", "path", "featureType", "enabled"]),
-      roleId: this.$store.state.app_service.role.roleId,
-      mode: undefined,
+      featureId: -1,
+      form: ViewHelper.extract(this.$store.state.app_service.roleFeature, ["feature.featureId", "feature.featureName", "feature.path", "mode"]),
+      featureNames: [],
       items: [
         {
           text: this.$i18n.t('label.master'),
@@ -85,40 +73,57 @@ export default {
       ]
     }
   },
-  created(){
-    const roleFeature = this.$store.state.app_service.role.roleFeatureList.find((val) => val.roleFeaturePK.featureId === this.form.featureId)
-    this.mode = roleFeature !== undefined? roleFeature.mode: this.modes[0].value
+  created() {
+    this.featureId = Util.hasValue(this.form.featureId)? this.form.featureId: -1
+    this.roleFeature.featureId = Util.hasValue(this.form.featureId)? this.form.featureId: undefined
+    this.resetFeatureNames()
   },
   computed: {
-    hasId(){
-      return Util.hasValue(this.form.featureId)
-    },
     theme () {
       const theme = getButtonTheme(this.$store.state.loginId)
       return 'outline-' + theme
     },
     ...mapState('app_service', [
-      'feature', 'role'
+      'role', 'features', 'roleFeatures', 'roleFeature'
     ]),
     modes(){
-      return ROLE_FEATURE.MODE_OPTIONS
+      return ROLE_FEATURE.getModeOptions()
     },
-    featureTypes(){
-      return FEATURE.TYPE_OPTIONS
+    systemReadOnly(){
+      return !this.isEditable || Util.hasValue(this.form.featureId)
     },
-    enableds(){
-      return FEATURE.ENABLED_OPTIONS
+  },
+  watch: {
+    featureId: function(newVal, oldVal) {
+      const feature = this.features.find((val) => val.featureId === newVal)
+      this.form.path = feature !== undefined? feature.path: ""
     },
   },
   methods: {
+    async resetFeatureNames(){
+      let roleFeatures = await AppServiceHelper.fetchList(`/meta/roleFeature/${this.role.roleId}`)
+      if(!Util.isArray(roleFeatures)){
+        roleFeatures = []
+      }
+      this.replaceAS({roleFeatures})
+      const featureOptions = this.features.filter((feature) => {
+        if(!Util.hasValue(this.roleFeatures)){
+          return true
+        }
+        const roleFeature = this.roleFeatures.find((roleFeature) => feature.featureId === roleFeature.feature.featureId)
+        return this.systemReadOnly? roleFeature !== undefined: roleFeature === undefined
+      })
+      this.featureNames = featureOptions.map((val) => ({text: val.featureName, value: val.featureId}))
+    },
+    beforeReload(){
+      this.resetFeatureNames()
+    },
     async save() {
       let entity = {
-        roleFeaturePK:{roleId: this.roleId, featureId: this.form.featureId},
-        mode: this.mode
+        roleFeaturePK:{roleId: this.role.roleId, featureId: this.featureId},
+        mode: this.form.mode
       }
       const saveId = await AppServiceHelper.bulkSave(this.appServicePath, [entity])
-      const role = await AppServiceHelper.fetch("/meta/role", this.roleId)
-      this.replaceAS({role})
       return saveId
     },
   }

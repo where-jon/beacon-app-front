@@ -25,7 +25,6 @@
     "list": "一覧",
     "search": "検索",
     "actions": "アクション",
-    "updateAction": "アクション",
     "download": "ダウンロード",
     "csvFile": "CSVファイル",
     "deleteThumbnail": "画像を削除",
@@ -143,7 +142,7 @@
     "role": "ロール",
     "roleId": "ロールID",
     "roleName": "ロール名",
-    "roleFeatures": "機能",
+    "roleFeature": "機能",
     
     "operationLog": "操作ログ",
     "operationLogId": "操作ログID",
@@ -231,6 +230,19 @@
     "zoneCategoryName": "ゾーンカテゴリ名",
     "analyzeMonth": "集計年月",
     "analyzeDay": "集計日",
+
+    "allRejection": "すべて拒否",
+    "systemReadOnly": "システムの読み取りのみ許可",
+    "readOnly": "読み取りのみ許可",
+    "allAuthorization": "すべて許可",
+
+    "noLimitType": "制限なし",
+    "limitType": "制限あり",
+    "disabledType": "無効",
+    "enabledType": "有効",
+
+    "personThing": "人",
+    "objectThing": "物",
 
     "dummy": ""
   },
