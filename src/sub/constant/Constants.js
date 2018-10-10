@@ -179,7 +179,7 @@ export const MENU = [
     base: 'analyze/',
     path: 'analyze/utilizationRatio',
     icon: 'fas fa-balance-scale',
-    pages: [      {
+    pages: [{
         key: 'utilizationRatio',
         path: 'utilizationRatio',
         feature: '/analyze/utilizationRatio',
@@ -189,6 +189,12 @@ export const MENU = [
         key: 'numUsers',
         path: 'numUsers',
         feature: '/analyze/numUsers',
+        icon: 'fas fa-balance-scale'
+      },
+      {
+        key: 'temperatureHistory',
+        path: 'temperatureHistory',
+        feature: '/analyze/temperatureHistory',
         icon: 'fas fa-balance-scale'
       },
     ]

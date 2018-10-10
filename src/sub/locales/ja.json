@@ -213,6 +213,12 @@
     "analyzeMonth": "集計年月",
     "analyzeDay": "集計日",
 
+    "temperatureHistory": "温湿度履歴",
+    "analyzeType": "集計タイプ",
+    "analyzeType0": "すべての温湿度",
+    "analyzeType1": "時間毎",
+
+
     "dummy": ""
   },
   "message": {
