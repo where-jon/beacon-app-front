@@ -35,15 +35,16 @@
             <b-card bg-variant="light" v-show="isChangePassword">
               <b-form-group breakpoint="lg" :label="$i18n.t('label.changePassword')" label-size="md" label-class="test">
                 <b-form-group :label="$i18n.t('label.passwordCurrent')" label-class="text-sm-right" label-for="password-current">
-                  <b-form-input type="password" id="password-current" v-model="passwordCurrent" :class="has-error"></b-form-input>
+                  <b-form-input type="password" id="password-current" v-model="passwordCurrent" maxlength="20"></b-form-input>
                 </b-form-group>
                 <b-form-group :label="$i18n.t('label.passwordUpdate')" label-class="text-sm-right" label-for="password-update">
-                  <b-form-input type="password" id="password-update" v-model="passwordUpdate" @input="onInput"></b-form-input>
+                  <b-form-input type="password" id="password-update" v-model="passwordUpdate" @input="onInput" maxlength="20"></b-form-input>
                 </b-form-group>
                 <b-form-group :label="$i18n.t('label.passwordConfirm')" label-class="text-sm-right" label-for="password-confirm">
-                  <b-form-input type="password" id="password-confirm" v-model="passwordConfirm" @input="onInput"></b-form-input>
+                  <b-form-input type="password" id="password-confirm" v-model="passwordConfirm" @input="onInput" maxlength="20"></b-form-input>
                 </b-form-group>
               </b-form-group>
+              <b-alert variant="danger" :show="!validatePassword">test</b-alert>
             </b-card>
           </b-form>
         </b-col>
@@ -64,7 +65,7 @@
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import breadcrumb from '../../../components/breadcrumb.vue'
 import pagetitle from '../../../components/pagetitle.vue'
-import { DISP, THEME } from '../../../sub/constant/config'
+import { DISP, THEME, PASSWORD_LENGTH } from '../../../sub/constant/config'
 import { getTheme, getButtonTheme } from '../../../sub/helper/ThemeHelper'
 
 export default {
@@ -92,6 +93,10 @@ export default {
         role: null
       },
       isChangePassword: false,
+      passwords: {
+        "password-update": this.$i18n.t('label.passwordUpdate'),
+        "password-confirm": this.$i18n.t('label.passwordConfirm'),
+      },
       passwordCurrent: this.$store.state.password,
       passwordUpdate: null,
       passwordConfirm: null,
@@ -105,7 +110,7 @@ export default {
       const storeTheme = this.$store.state.setting.theme
       return 'outline-' + getButtonTheme(this.loginId)
     },
-    isMatchUpdateConfirm () {
+    validatePassword () {
       if (this.passwordUpdate === null && this.passwordConfirm === null) {
         return true
       }
@@ -143,8 +148,11 @@ export default {
       this.replaceSetting({theme})
       window.localStorage.setItem(this.loginId + '-theme', theme)
     },
-    onInput(event) {
-      console.log(this.isMatchUpdateConfirm)
+    onInput() {
+      if (event.target.type !== 'password') {
+        return
+      }
+      console.log(event.target)
     },
     ...mapMutations('setting', [
       'replaceSetting', 
