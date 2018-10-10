@@ -213,10 +213,17 @@ export const MENU = [
         feature: '/analyze/numUsers',
         icon: 'fas fa-balance-scale'
       },
-      {
+    ]
+  },
+  {
+    key: 'history',
+    base: 'history/',
+    path: '/history/temperatureHistory',
+    icon: 'fas fa-balance-scale',
+    pages: [{
         key: 'temperatureHistory',
         path: 'temperatureHistory',
-        feature: '/analyze/temperatureHistory',
+        feature: '/history/temperatureHistory',
         icon: 'fas fa-balance-scale'
       },
     ]
