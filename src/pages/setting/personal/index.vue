@@ -28,9 +28,32 @@
               <b-form-select v-model="selectedTheme" :options="themes" class="mb-3" @change="themeSelected"/>
             </b-form-group>
             <b-form-group>
-              <b-button type="button" :variant="theme" class="btn-block" v-t="'label.changePassword'" />
+              <b-button type="button" :variant="theme" class="btn-block" 
+              v-t="'label.changePassword'" @click="isChangePassword = true" v-show="!isChangePassword" />
             </b-form-group>
+
+            <b-card bg-variant="light" v-show="isChangePassword">
+              <b-form-group breakpoint="lg" :label="$i18n.t('label.changePassword')" label-size="md" label-class="test">
+                <b-form-group :label="$i18n.t('label.passwordCurrent')" label-class="text-sm-right" label-for="password-current">
+                  <b-form-input type="password" id="password-current" v-model="passwordCurrent" :class="has-error"></b-form-input>
+                </b-form-group>
+                <b-form-group :label="$i18n.t('label.passwordUpdate')" label-class="text-sm-right" label-for="password-update">
+                  <b-form-input type="password" id="password-update" v-model="passwordUpdate" @input="onInput"></b-form-input>
+                </b-form-group>
+                <b-form-group :label="$i18n.t('label.passwordConfirm')" label-class="text-sm-right" label-for="password-confirm">
+                  <b-form-input type="password" id="password-confirm" v-model="passwordConfirm" @input="onInput"></b-form-input>
+                </b-form-group>
+              </b-form-group>
+            </b-card>
           </b-form>
+        </b-col>
+      </b-row>
+      <b-row :style="{ marginTop: '30px' }" v-show="isChangePassword">
+        <b-col md="2" offset-md="3">
+          <b-button type="button" v-t="'label.cancel'" :block="true" variant="outline-danger" @click="isChangePassword = false" />
+        </b-col>
+        <b-col md="2" offset-md="2">
+          <b-button type="button" v-t="'label.modify'" :block="true" :variant="theme" />
         </b-col>
       </b-row>
     </div>
@@ -67,16 +90,31 @@ export default {
         loginId: this.loginId,
         name: null,
         role: null
-      }
+      },
+      isChangePassword: false,
+      passwordCurrent: this.$store.state.password,
+      passwordUpdate: null,
+      passwordConfirm: null,
     }
   },
   computed: {
     loginId () {
       return this.$store.state.loginId
     },
-    theme() {
+    theme () {
       const storeTheme = this.$store.state.setting.theme
       return 'outline-' + getButtonTheme(this.loginId)
+    },
+    isMatchUpdateConfirm () {
+      if (this.passwordUpdate === null && this.passwordConfirm === null) {
+        return true
+      }
+      const update = this.passwordUpdate ? this.passwordUpdate : ''
+      const confirm = this.passwordConfirm ? this.passwordConfirm : ''
+      if (update.length < 1 || confirm.length < 1) {
+        return false
+      }
+      return update === confirm
     }
   },
   created () {
@@ -105,6 +143,9 @@ export default {
       this.replaceSetting({theme})
       window.localStorage.setItem(this.loginId + '-theme', theme)
     },
+    onInput(event) {
+      console.log(this.isMatchUpdateConfirm)
+    },
     ...mapMutations('setting', [
       'replaceSetting', 
     ]),
@@ -120,7 +161,9 @@ export default {
     margin-bottom: 20px;
   }
 
-  fieldset.change-password {
-    border: 1px solid black;
+  legend.col-form-label.col-form-label-md.pt-0.test {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #999;
   }
 </style>

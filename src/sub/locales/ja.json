@@ -28,6 +28,8 @@
     "download": "ダウンロード",
     "csvFile": "CSVファイル",
     "deleteThumbnail": "画像を削除",
+    "cancel": "キャンセル",
+    "modify": "変更",
 
     "---------------- App common ---------------":"",
     "login": "ログイン",
@@ -154,6 +156,8 @@
     "tel": "電話番号",
 
     "password": "パスワード",
+    "passwordCurrent": "現在のパスワード",
+    "passwordUpdate": "変更パスワード",
     "passwordConfirm": "確認パスワード",
     "name": "名前",
     "email": "email",
