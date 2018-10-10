@@ -81,15 +81,15 @@ export default {
         }
       ],
       isLoad: false,
-      label_txId: null,
-      label_powerLevel: null,
-      label_name: null,
-      label_finalPlace: null,
-      label_timestamp: null,
-      label_undetect: null,
-      label_powerLevelGood: null,
-      label_powerLevelWarn: null,
-      label_powerLevelPoor: null,
+      label_txId: this.$i18n.t('label.txId'),
+      label_powerLevel: this.$i18n.t('label.power-level'),
+      label_name: this.$i18n.t('label.name'),
+      label_finalPlace: this.$i18n.t('label.final-receive-place'),
+      label_timestamp: this.$i18n.t('label.final-receive-timestamp'),
+      label_undetect: this.$i18n.t('label.undetect'),
+      label_powerLevelGood: this.$i18n.t('label.power-good'),
+      label_powerLevelWarn: this.$i18n.t('label.power-warning'),
+      label_powerLevelPoor: this.$i18n.t('label.power-poor'),
       interval: null,
       powerLevelGood: 69,
       powerLevelWarn: 39,
@@ -118,15 +118,6 @@ export default {
     EventBus.$on('reload', (payload)=>{
        this.fetchData(payload)
     })
-    this.label_txId = this.$i18n.t('label.txId')
-    this.label_powerLevel = this.$i18n.t('label.power-level')
-    this.label_name = this.$i18n.t('label.name')
-    this.label_finalPlace = this.$i18n.t('label.final-receive-place')
-    this.label_timestamp = this.$i18n.t('label.final-receive-timestamp')
-    this.label_undetect = this.$i18n.t('label.undetect')
-    this.label_powerLevelGood = this.$i18n.t('label.power-good')
-    this.label_powerLevelWarn = this.$i18n.t('label.power-warning')
-    this.label_powerLevelPoor = this.$i18n.t('label.power-poor')
   },
   methods: {
     async fetchData(payload) {
@@ -156,19 +147,15 @@ export default {
         map[e.txId] = e.personName
       })
 
-      const txId = this.label_txId
-      const powerLevel = this.label_powerLevel
-      const personName = this.label_name
-      const finalPlace = this.label_finalPlace
-      const timestamp = this.label_timestamp
-
+      const that = this
       return positions.map((e) => {
         const name = map[e.btx_id]
-        const record = {}
-        record[txId] = e.btx_id
-        record[powerLevel] = e.power_level
-        record[personName] = (typeof name) !== 'undefined' ? name : 'ー'
-        record[timestamp] = this.getTimestamp(e.updatetime)
+        const record = {
+          [that.label_txId]: e.btx_id,
+          [that.label_powerLevel]: e.power_level,
+          [that.label_name]: (typeof name) !== 'undefined' ? name : 'ー',
+          [that.label_timestamp]: this.getTimestamp(e.updatetime)
+        }
         return record
       })
     },

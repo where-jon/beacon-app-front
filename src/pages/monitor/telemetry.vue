@@ -66,11 +66,11 @@ export default {
         }
       ],
       isLoad: false,
-      label_deviceId: null,
-      label_deviceIdX: null,
-      label_name: null,
-      label_timestamp: null,
-      label_powerLevel: null,
+      label_deviceId: this.$i18n.t('label.deviceId'),
+      label_deviceIdX: this.$i18n.t('label.deviceIdX'),
+      label_name: this.$i18n.t('label.name'),
+      label_timestamp: this.$i18n.t('label.final-receive-timestamp'),
+      label_powerLevel: this.$i18n.t('label.power-level'),
       interval: null,
     }
   },
@@ -100,11 +100,6 @@ export default {
     EventBus.$on('reload', (payload)=>{
        this.fetchData(payload)
     })
-    this.label_deviceId = this.$i18n.t('label.deviceId')
-    this.label_deviceIdX = this.$i18n.t('label.deviceIdX')
-    this.label_name = this.$i18n.t('label.name')
-    this.label_timestamp = this.$i18n.t('label.final-receive-timestamp')
-    this.label_powerLevel = this.$i18n.t('label.power-level')
   },
   beforeDestroy() {
     clearInterval(this.interval)
@@ -153,20 +148,16 @@ export default {
         map[e.deviceId.toString(16)] = e.location.locationName
       })
 
-      const deviceId = this.label_deviceId
-      const deviceIdX = this.label_deviceIdX
-      const locationName = this.label_name
-      const timestamp = this.label_timestamp
-      const powerLevel = this.label_powerLevel
-
+      const that = this
       return telemetrys.map((e) => {
         const name = map[e.deviceid]
-        const record = {}
-        record[deviceId] = parseInt(e.deviceid, 16)
-        record[deviceIdX] = e.deviceid.toUpperCase()
-        record[locationName] = (typeof name) !== 'undefined' ? name : 'ー'
-        record[timestamp] = e.timestamp
-        record[powerLevel] = e.power_level * 2
+        const record = {
+          [that.label_deviceId]: parseInt(e.deviceid, 16),
+          [that.label_deviceIdX]: e.deviceid.toUpperCase(),
+          [that.label_name]: (typeof name) !== 'undefined' ? name : 'ー',
+          [that.label_timestamp]: e.timestamp,
+          [that.label_powerLevel]:e.power_level * 2
+        }
         return record
       })
     },
