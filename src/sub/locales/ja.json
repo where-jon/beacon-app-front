@@ -58,6 +58,9 @@
     "telemetry": "テレメトリ",
     "gateway": "ゲートウェイ",
     "position": "測位",
+    "telemetry-dev": "テレメトリ(開発用)",
+    "gateway-dev": "ゲートウェイ(開発用)",
+    "position-dev": "測位(開発用)",
     "monitor": "モニタ",
     "area": "エリア",
     "exb": "EXBeacon",
@@ -67,6 +70,13 @@
     "exbName": "exb名",
     "deviceId": "デバイスID",
     "deviceIdX": "デバイスID(16進数)",
+    "final-receive-timestamp": "最終取得時間",
+    "final-receive-place": "最終受信場所",
+    "power-level": "電池残量",
+    "undetect": "未検知",
+    "power-good": "良好",
+    "power-warning": "減少",
+    "power-poor": "交換",
 
     "tx": "Tx",
     "txId": "TXID",
@@ -111,6 +121,10 @@
 
     "---------------- App setting ---------------":"",
     "login-user-profile": "ログインユーザ・プロフィール",
+    "default": "コーポレート",
+    "earthcolor": "アースカラー",
+    "autumn": "オータム",
+    "vivid": "ビビッド",
 
     "---------------- App specific ---------------":"",
     

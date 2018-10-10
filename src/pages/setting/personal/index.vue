@@ -88,8 +88,10 @@ export default {
       return item.name === theme
     })
     this.selectedTheme = (typeof selected) !== 'undefined' ? selected.id : THEME[0].id
+    const that = this
     this.theme = THEME.map((e) => {
-        return { value: e.id, text: e.label }
+      const text = that.$i18n.t('label.' + e.name)
+      return { value: e.id, text: text }
     })
   },
   methods: {

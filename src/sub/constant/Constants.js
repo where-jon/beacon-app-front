@@ -154,11 +154,12 @@ export const MENU = [
     base: 'monitor/',
     path: 'monitor/position',
     icon: 'fas fa-tachometer-alt',
-    pages: [{
+    pages: [
+      {
         key: 'gateway',
         path: 'gateway',
         feature: '/core/gateway',
-        icon: 'fas fa-road'
+        icon: 'fas fa-road',
       },
       {
         key: 'position',
@@ -171,6 +172,27 @@ export const MENU = [
         path: 'telemetry',
         feature: '/core/telemetry',
         icon: 'fa fa-battery-three-quarters',
+      },
+      {
+        key: 'gateway-dev',
+        path: 'gateway',
+        feature: '/core/gateway',
+        icon: 'fas fa-road',
+        debug: 1,
+      },
+      {
+        key: 'position-dev',
+        path: 'position',
+        feature: '/core/position',
+        icon: 'fas fa-location-arrow',
+        debug: 1,
+      },
+      {
+        key: 'telemetry-dev',
+        path: 'telemetry',
+        feature: '/core/telemetry',
+        icon: 'fa fa-battery-three-quarters',
+        debug: 1,
       },
     ]
   },
