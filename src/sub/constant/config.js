@@ -6,8 +6,8 @@ import { LOGIN_MODE } from './Constants'
 
 export const DEV = {
   DEBUG: 0, // デバッグモード (0:なし、1以上デバッグレベル)
-  USE_MOCK_POS: false, // 測位APIの代わりにモックデータを使用する
-  USE_MOCK_SENS: false, // センサーデータの代わりにモックデータを使用する
+  USE_MOCK_APS: false || location.search.includes("mockAps"), // AppService API結果の代わりにモックデータを使用する
+  USE_MOCK_EXC: false || location.search.includes("mockExc"), // Excloud API結果の代わりにモックデータを使用する
   USE_MOCK_ANALYZE: false, // 分析APIの代わりにモックデータを使用する
 }
 
@@ -27,7 +27,7 @@ export const LOCAL_LOGIN = { // local login md5 hash of id:pass // TODO: add Rol
 }
 
 export const APP_SERVICE = { // used if APP.LOGIN_MODE == APP_SERVICE
-  BASE_URL: "http://localhost:8080",
+  BASE_URL: "http://localhost:8080"
 }
 export const EXCLOUD_BASE_URL = "https://nsome8q880.execute-api.ap-northeast-1.amazonaws.com/prod" // used if APP.LOGIN_MODE != APP_SERVICE
 
@@ -125,8 +125,13 @@ export const Tx = [ // used when APP.LOGIN_MODE != APP_SERVICE with excloud old 
 ]
 
 export const THEME = [
-  {id: 1, label: 'コーポレート', name: 'default'},
-  {id: 2, label: 'アースカラー', name: 'earthcolor'},
-  {id: 3, label: 'オータム', name: 'autumn'},
-  {id: 4, label: 'ビビッド', name: 'vivid'},
+  {id: 1,  name: 'default'},
+  {id: 2,  name: 'earthcolor'},
+  {id: 3,  name: 'autumn'},
+  {id: 4,  name: 'vivid'},
 ]
+
+export const MONITOR_TX = {
+  ABSENT: 20 * 60 * 1000,
+  UNDETECT: 24 * 60 * 60 * 1000
+}

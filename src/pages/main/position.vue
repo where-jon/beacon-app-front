@@ -28,8 +28,9 @@ import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as PositionHelper from '../../sub/helper/PositionHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
+import * as mock from '../../assets/mock/mock'
 import txdetail from '../../components/txdetail.vue'
-import { Tx, EXB, DISP } from '../../sub/constant/config'
+import { Tx, EXB, DISP, DEV } from '../../sub/constant/config'
 import { Shape, Stage, Container, Bitmap, Text, Touch } from '@createjs/easeljs/dist/easeljs.module'
 import { Tween, Ticker } from '@createjs/tweenjs/dist/tweenjs.module'
 import breadcrumb from '../../components/breadcrumb.vue'
@@ -55,11 +56,11 @@ export default {
           active: true
         },
       ],
+      count: 0, // for mock test 
     }
   },
   computed: {
     ...mapState('main', [
-      'positions',
       'selectedTx',
     ]),
   },
@@ -103,18 +104,16 @@ export default {
         this.replace({showProgress: true})
         await this.fetchAreaExbs(true)
 
-        let positions = await EXCloudHelper.fetchPosition(this.exbs, this.txs)
-
+        if (DEV.USE_MOCK_EXC) {
+          var pMock = mock.position
+          // var pMock = mock.positions[this.count]
+        }
+        this.positions = await EXCloudHelper.fetchPosition(this.exbs, this.txs, pMock)
         if (payload && payload.done) {
           payload.done()
         }
         this.showMapImage()
 
-        this.positionedExb = _(this.exbs).filter((exb) => {
-          return exb.enabled && this.selectedArea && exb.location.areaId == this.selectedArea.value && exb.location.x && exb.location.y > 0
-        }).value()
-
-        this.showTxAll(positions)
       }
       catch(e) {
         console.error(e)
@@ -132,9 +131,15 @@ export default {
       this.stage.addChild(this.txCont)
 
       this.stage.update()
+
+      this.positionedExb = _(this.exbs).filter((exb) => {
+        return exb.enabled && this.selectedArea && exb.location.areaId == this.selectedArea.value && exb.location.x && exb.location.y > 0
+      }).value()
+
+      this.showTxAll(this.positions)
     },
     showTxAll(positions) {
-      // console.debug('showTxAll', {positions})
+      console.debug('showTxAll', {positions}, this.txCont)
       if (!this.txCont) {
         return
       }
@@ -144,7 +149,7 @@ export default {
       })
     },
     showTx(pos) {
-      // console.debug('showTx', {pos})
+      console.debug('showTx', {pos})
 
       let stage = this.stage
       let txBtn = new Container()

@@ -6,10 +6,12 @@ import { Tween, Ticker } from '@createjs/tweenjs/dist/tweenjs.module'
 import { EventBus } from '../sub/helper/EventHelper'
 import * as AppServiceHelper from '../sub/helper/AppServiceHelper'
 import * as PositionHelper from '../sub/helper/PositionHelper'
+import reloadmixinVue from './reloadmixin.vue'
 
 let that
 
 export default {
+  mixins: [reloadmixinVue],
   data() {
     return {
       selectedArea: null,
@@ -36,9 +38,6 @@ export default {
   },
   created() {
     that = this
-    EventBus.$on('reload', (payload)=>{
-       this.fetchData(payload)
-    })
     window.addEventListener('resize', () => {
       const positions = PositionHelper.adjustPosition(this.positions)
       that.replaceMain({positions})
