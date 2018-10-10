@@ -1,6 +1,6 @@
 <template>
   <div>
-    <breadcrumb :items="items" :reload="true" />
+    <breadcrumb :items="items" :reload="false" />
     <div class="container">
       <p></p>
       <b-row>

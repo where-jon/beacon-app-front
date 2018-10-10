@@ -11,7 +11,7 @@ import mList from '../../../components/list.vue'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import { addLabelByKey } from '../../../sub/helper/ViewHelper'
-import listmixinVue from '../../../components/listmixin.vue';
+import listmixinVue from '../../../components/listmixin.vue'
 import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/breadcrumb.vue'
 import { CATEGORY } from '../../../sub/constant/Constants'
@@ -60,7 +60,7 @@ export default {
   },
   methods: {
     getCategoryTypeName(category){
-      const categoryTypeName = CATEGORY.TYPES.find((tval) => tval.value === category.categoryType)
+      const categoryTypeName = CATEGORY.getTypes().find((tval) => tval.value === category.categoryType)
       return categoryTypeName !== undefined? categoryTypeName.text: undefined
     },
     async fetchData(payload) {

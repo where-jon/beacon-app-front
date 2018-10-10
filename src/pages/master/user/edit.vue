@@ -57,7 +57,7 @@ import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import _ from 'lodash'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
-import editmixinVue from '../../../components/editmixin.vue';
+import editmixinVue from '../../../components/editmixin.vue'
 import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/breadcrumb.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
@@ -163,8 +163,8 @@ export default {
       }
       if(this.showAlert){
         window.scrollTo(0, 0)
-        event.preventDefault();
-        return false;
+        event.preventDefault()
+        return false
       }
       this.form.userId = Util.hasValue(this.form.userId) ? String(this.form.userId) : undefined
       this.form.roleId = String(this.role)

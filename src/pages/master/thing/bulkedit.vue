@@ -54,9 +54,9 @@ export default {
       const MAIN_COL = "thingId"
       const NULLABLE_NUMBER_COL = ["exbId"]
       const THING_CATEGORY = ["categoryId"]
-      const INT_TYPE_LIST = ["thingId", "txId"]
+      const NUMBER_TYPE_LIST = ["thingId", "txId"]
 
-      await this.bulkSave(MAIN_COL, INT_TYPE_LIST, null, (entity, headerName, val, dummyKey) => {
+      await this.bulkSave(MAIN_COL, NUMBER_TYPE_LIST, null, (entity, headerName, val, dummyKey) => {
         if (Util.equalsAny(headerName, THING_CATEGORY)) {
           if (headerName === "categoryId" && Util.hasValue(val)) {
             entity.thingCategoryList = [{thingCategoryPK: {categoryId: Number(val)}}]

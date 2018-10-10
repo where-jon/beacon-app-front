@@ -18,7 +18,7 @@ export const registerInterval = (func, period) => intervals.push(setInterval(fun
 export const removeInterval = () => {
   console.log(clearInterval, {intervals})
   while (intervals.length > 0) {
-    window.clearInterval(intervals.shift());
+    window.clearInterval(intervals.shift())
   }
 }
 

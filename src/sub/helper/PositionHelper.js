@@ -1,5 +1,73 @@
-import { EXB, DISP } from '../constant/config'
+import { DISP } from '../constant/config'
 import styles from '../constant/config.scss'
+
+/**
+ * 過去の位置データの移動平均、RSSIによるフィルタリング、時間によるフィルタリングで位置を決定
+ * 
+ * @param {*} orgPositions 
+ * @param {*} now 
+ */
+export const correctPosId = (orgPositions, now) => {
+  console.table(orgPositions)
+  let positions = _.chain(orgPositions).reduce((result, positions, idx) => { // MOVING_AVERAGE回の測位データを集約し、nearestをフラットにして１階層のオブジェエクト配列にする
+    _.forEach(positions, (pos) => {
+      _.forEach(pos.nearest, (val) => {
+        result.push({btx_id:pos.btx_id, pos_id:val.place_id, label:pos.label, rssi:val.rssi, timestamp:val.timestamp})
+      })
+    })
+    return result
+  }, [])
+  .uniqWith(_.isEqual) // 重複除去
+  .filter((val) => val.rssi >= DISP.RSSI_MIN && val.timestamp >= now - DISP.HIDE_TIME) // RSSI値、指定時刻でフィルタ
+  .orderBy(['btx_id', 'pos_id', 'timestamp']) // btx_id, pos_id, timestampでソート
+  .value()
+
+  console.table(positions)
+
+  positions = _.chain(positions).reduce((result, pos, idx) => { // btx_id,pos_idグループでsum(rssi), countを集計（lodashのgroupByは複数には対応していない）
+    let prev = _.find(result, (val) => val.btx_id == pos.btx_id && val.pos_id == pos.pos_id)
+    if (prev) {
+      prev.rssiTotal += pos.rssi
+      prev.count++
+      prev.rssiAvg = prev.rssiTotal / prev.count
+      prev.timestamp = pos.timestamp
+    }
+    else {
+      result.push({...pos, count:1, rssiTotal:pos.rssi, rssiAvg:pos.rssi})
+    }
+    return result
+  }, [])
+  .map((val => ({...val, count: val.count>1? 2: 1}))) // count 2以上は2とみなす（1回のみとは区別）
+  .orderBy(['count', 'rssiAvg', 'pos_id', 'btx_id'], ['desc','desc','asc','asc']) // 記録回数（多）、RSSI（強）、pos_id、btx_idでソート 
+  .value()
+
+  console.table(positions)
+
+  // 上記の順番で取り出す
+  let usedTx = []
+  let usedPos = []  // １つの場所に１TXの場合
+  positions = _.reduce(positions, (result, val) => { // 回数とRSSI値の強い順にpos_idとbtx_idのペアを決めていく
+    if (!usedTx.includes(val.btx_id) && (!DISP.TX_POS_ONE_TO_ONE || !usedPos.includes(val.pos_id))) {
+      usedTx.push(val.btx_id)
+      if (DISP.TX_POS_ONE_TO_ONE) {
+        usedPos.push(val.pos_id)
+      }
+      console.error(now - val.timestamp)
+      result.push({...val, rssi:val.rssiAvg, transparent: val.timestamp < now - DISP.TRANSPARENT_TIME})
+    }
+    return result
+  }, [])
+
+  // EXB.forEach((exb) => { // EXBのpos_idが配列にない場合（＝空き状態）追加
+  //   if (!usedPos.includes(exb.pos_id)) {
+  //     positions.push({pos_id: exb.pos_id, btx_id: 0})
+  //   }
+  // })
+
+  console.table(positions)
+
+  return positions
+}
 
 export const adjustPosition = (positions, ratio, exbs = []) => {
   const ret = []

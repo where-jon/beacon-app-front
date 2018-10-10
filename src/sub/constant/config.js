@@ -1,14 +1,14 @@
 // configuration for app
 // Basically using const but values are not primitive but objects or arrays because it may change from outside.
 
-import styles from './config.scss'
 import { LOGIN_MODE } from './Constants'
 
 export const DEV = {
   DEBUG: 0, // デバッグモード (0:なし、1以上デバッグレベル)
   USE_MOCK_APS: false || location.search.includes("mockAps"), // AppService API結果の代わりにモックデータを使用する
-  USE_MOCK_EXC: false || location.search.includes("mockExc"), // Excloud API結果の代わりにモックデータを使用する
+  USE_MOCK_EXC: true || location.search.includes("mockExc"), // Excloud API結果の代わりにモックデータを使用する
   USE_MOCK_ANALYZE: false, // 分析APIの代わりにモックデータを使用する
+  NOT_FILTER_TX: true,
 }
 
 export const APP = {
@@ -54,6 +54,14 @@ export const DISP = {
   SHOW_SIDEBAR: true, // show sidebar  
   THEME: "default",
 
+  MAP_FIT: "both", // マップを画面表示範囲内にフィットさせるか。width or height or both 
+
+  TX_POS_ONE_TO_ONE: false, // 1つの場所に1TXのみ存在可能
+  RSSI_MIN: -67, // RSSI下限値
+  MOVING_AVERAGE: 5, // 5回分移動平均
+  TRANSPARENT_TIME: 1 * 1000, // 現在時刻から経過した段階で半透明(ms)
+  HIDE_TIME: 30 * 1000, // 現在時刻から経過した段階で表示(ms)
+  
   EXB_LOC_SIZE: {w: 60, h: 30},
   EXB_LOC_BGCOLOR: "#76ccf7",
   EXB_LOC_COLOR: "#000",

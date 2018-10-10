@@ -1,8 +1,7 @@
 <template>
   <div>
     <breadcrumb :items="items" />
-    <m-list :params="params" :list="regions" >
-    </m-list>
+    <m-list :params="params" :list="roles" />
   </div>
 </template>
 
@@ -23,20 +22,18 @@ export default {
   data() {
     return {
       params: {
-        name: 'region',
-        id: 'regionId',
-        editPath: '/master/region/edit',
-        bulkEditPath: '/master/region/bulkedit',
-        appServicePath: '/core/region',
+        name: 'role',
+        id: 'roleId',
+        editPath: '/master/role/edit',
+        bulkEditPath: '/master/role/bulkedit',
+        appServicePath: '/meta/role',
         csvOut: true,
         fields: addLabelByKey(this.$i18n, [ 
-          {key: "regionId", sortable: true },
-          {key: "regionName", sortable: true },
-          {key: "meshId", sortable: true},
-          {key: "description", sortable: true },
+          {key: "roleId", sortable: true },
+          {key: "roleName", sortable: true },
           {key: "actions", thStyle: {width:'130px !important'} }
         ]),
-        initTotalRows: this.$store.state.app_service.regions.length
+        initTotalRows: this.$store.state.app_service.roles.length
       },
       items: [
         {
@@ -44,7 +41,7 @@ export default {
           active: true
         },
         {
-          text: this.$i18n.t('label.region'),
+          text: this.$i18n.t('label.role'),
           active: true
         }
       ]
@@ -52,18 +49,18 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'regions',
+      'roles',
     ]),
   },
   methods: {
     async fetchData(payload) {
       try {
         this.replace({showProgress: true})
-        let regions = await AppServiceHelper.fetchList("/core/region/", 'regionId')
+        let roles = await AppServiceHelper.fetchList("/meta/role/", 'roleId')
         if (payload && payload.done) {
           payload.done()
         }
-        this.replaceAS({regions})
+        this.replaceAS({roles})
       }
       catch(e) {
         console.error(e)
