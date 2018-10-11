@@ -35,11 +35,11 @@ export const EXCLOUD = {
   // POSITION_URL: EXCLOUD_BASE_URL + "/beacon/position-kalman?_=",
   // GATEWAY_URL: EXCLOUD_BASE_URL + "/gateway/0?=",
   // TELEMETRY_URL: EXCLOUD_BASE_URL + "/telemetry/0?=",
-  POSITION_URL: APP_SERVICE.BASE_URL + "/core/excloud/position?_=",
-  GATEWAY_URL: APP_SERVICE.BASE_URL + "/core/excloud/gateway?_=",
-  TELEMETRY_URL: APP_SERVICE.BASE_URL + "/core/excloud/telemetry?_=",
-  SENSOR_URL: APP_SERVICE.BASE_URL + "/core/excloud/sensor/{id}?_=",
-  LED_URL: APP_SERVICE.BASE_URL + "/core/excloud/led?_=",
+  POSITION_URL: "/core/excloud/position?_=",
+  GATEWAY_URL: "/core/excloud/gateway?_=",
+  TELEMETRY_URL: "/core/excloud/telemetry?_=",
+  SENSOR_URL: "/core/excloud/sensor/{id}?_=",
+  LED_URL: "/core/excloud/led?_=",
 }
 
 
