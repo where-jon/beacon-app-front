@@ -4,11 +4,15 @@
     <div class="container">
       <p></p>
       <b-row>
-        <b-form inline class="mt-2">
-          <label class="mr-2">{{ $t('label.analyzeMonth') }}</label>
-          <v-select v-model="analyzeMonth" :options="analyzeMonthOptions" required class="ml-2"></v-select>
-          <label class="mr-2">{{ $t('label.analyzeDay') }}</label>
-          <v-select :options="analyzeDayOptions" required class="ml-2"></v-select>
+        <b-form inline>
+          <label v-t="'label.zoneType'" />
+          <v-select :options="categoryOptions" :on-change="categoryChange" class="vselectCategory"></v-select>
+          <label v-t="'label.zoneName'" />
+          <v-select v-model="zone" :options="zoneOptions" class="vselectZone"></v-select>
+          <label v-t="'label.analyzeMonth'" />
+          <v-select v-model="analyzeMonth" :options="analyzeMonthOptions" class="vselectMonth"></v-select>
+          <label v-t="'label.analyzeDay'" />
+          <v-select :options="analyzeDayOptions" class="vselectDay"></v-select>
           <b-button size="sm" variant="info" v-t="'label.search'" @click="search()"></b-button> 
         </b-form>
       </b-row>
@@ -73,10 +77,21 @@ export default {
           active: true
         }
       ],
+      categoryId: null,
+      categoryList: [{label:"", value:null}],
+      zone: null,
+      zones: null,
+      zoneList: [{label:"", value:null}],
       analyzeMonth: null
     }
   },
   computed: {
+    categoryOptions() {
+      return this.categoryList
+    },
+    zoneOptions() {
+      return this.zoneList
+    },
     analyzeMonthOptions() {
       var today = new Date()
       var yyyy = today.getFullYear()
@@ -113,21 +128,63 @@ export default {
     ])
   },
   mounted() {
-    this.fetchData()
+    this.fetchPrev()
     this.replace({title: this.$i18n.t('label.utilizationRatio')})
   },
   methods: {
-    async fetchData(payload) {
+    async fetchCategory() {
       try {
-        let utilizationRatios = await AppServiceHelper.fetchList2('utilizationRatio', '/office/utilizationRatio', 'utilizationRatio')
-        if (payload && payload.done) {
-          payload.done()
-        }
-        this.replaceMonitor({utilizationRatios})
-      }
-      catch(e) {
+        let categorys = await AppServiceHelper.fetchList2(
+          '/basic/category',
+          '/basic/category/',
+          'categoryId'
+        )
+        this.categoryList = []
+        categorys.forEach(elm => {
+          if (elm.categoryType == 2) {
+            this.categoryList.push({
+              label: elm.categoryName,
+              value: elm.categoryId/1
+            })
+          }
+        })
+      } catch(e) {
         console.error(e)
       }
+    },
+    async fetchZone() {
+      try {
+        this.zones = await AppServiceHelper.fetchList2(
+          '/core/zone',
+          '/core/zone',
+          'zoneId'
+        )
+        this.zoneList = []
+        this.zones.forEach(elm => {
+          this.zoneList.push({
+            label: elm.zoneName,
+            value: elm.zoneId
+          })          
+        })
+      } catch(e) {
+        console.error(e)
+      }
+    },
+    async fetchPrev() {
+      await this.fetchCategory()
+      await this.fetchZone()
+    },
+    categoryChange(val) {
+      if (this.zones == null) return
+      this.zoneList = []
+      this.zones.forEach(elm => {
+        this.zoneList.push({
+          label: elm.zoneName,
+          value: elm.zoneId
+        })
+      })
+      this.categoryId = null
+      this.zone = ""
     },
     isUndetect(updated) {
       return false
@@ -152,9 +209,30 @@ export default {
     },
   }
 }
+
 </script>
 
 <style scoped lang="scss">
+.vselectCategory {
+  width:200px;
+  margin-left: 5px;
+  margin-right: 20px;
+}
+.vselectZone {
+  width:120px;
+  margin-left: 5px;
+  margin-right: 20px;
+}
+.vselectMonth {
+  width:120px;
+  margin-left: 5px;
+  margin-right: 20px;
+}
+.vselectDay {
+  width: 120px;
+  margin-left: 5px;
+  margin-right: 20px;
+}
 .graph {
     position: relative;
     width: 150px;

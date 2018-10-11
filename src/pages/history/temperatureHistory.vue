@@ -92,20 +92,17 @@ export default {
     ])
   },
   mounted() {
-    this.fetchData()
+    this.fetchPrev()
     this.replace({title: this.$i18n.t('label.temperatureHistory')})
   },
   methods: {
-    async fetchData(payload) {
+    async fetchCategory() {
       try {
         let categorys = await AppServiceHelper.fetchList2(
           '/basic/category',
           '/basic/category/',
           'categoryId'
         )
-        if (payload && payload.done) {
-          payload.done()
-        }
         this.categoryList = []
         categorys.forEach(elm => {
           if (elm.categoryType == 2) {
@@ -115,15 +112,17 @@ export default {
             })
           }
         })
-        //
+      } catch(e) {
+        console.error(e)
+      }
+    },
+    async fetchZone() {
+      try {
         this.zones = await AppServiceHelper.fetchList2(
           '/core/zone',
           '/core/zone',
           'zoneId'
         )
-        if (payload && payload.done) {
-          payload.done()
-        }
         this.zoneList = []
         this.zones.forEach(elm => {
           this.zoneList.push({
@@ -135,42 +134,31 @@ export default {
         console.error(e)
       }
     },
+    async fetchPrev() {
+      await this.fetchCategory()
+      await this.fetchZone()
+    },
     categoryChange(val) {
       if (this.zones == null) return
-      if (val == undefined || val.value == undefined) {
-        this.zoneList = []
-        this.zones.forEach(elm => {
-          this.zoneList.push({
-            label: elm.zoneName,
-            value: elm.zoneId
-          })
-        })
-        this.categoryId = null
-        this.zone = ""
-        return 
-      }
-      this.$emit('input', val)
       this.zoneList = []
       this.zones.forEach(elm => {
-        if (elm.categoryId == val.value) {
-          this.zoneList.push({
-            label: elm.zoneName,
-            value: elm.zoneId
-          })
-        }
+        this.zoneList.push({
+          label: elm.zoneName,
+          value: elm.zoneId
+        })
       })
-      this.categoryId = val.value
+      this.categoryId = null
       this.zone = ""
     },
     dateFromChange(val) {
-      if (val == undefined || val == null) {
+      if (val == null) {
         this.dateFrom = 0
       } else {
         this.dateFrom = (val.substr(0, 4) + val.substr(5, 2) + val.substr(8, 2))/1
       }
     },
     dateToChange(val) {
-      if (val == undefined || val == null) {
+      if (val == null) {
         this.dateTo = 0
       } else {
         this.dateTo = (val.substr(0, 4) + val.substr(5, 2) + val.substr(8, 2))/1

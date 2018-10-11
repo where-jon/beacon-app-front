@@ -59,6 +59,7 @@ export const CATEGORY = {
     return [
       {value: 0, text: i18n.t('label.personThing')},
       {value: 1, text: i18n.t('label.objectThing')},
+      {value: 2, text: i18n.t('label.objectZone')},
     ]
   },
 }
@@ -185,25 +186,6 @@ export const MENU = [
     ]
   },
   {
-    key: 'analyze',
-    base: 'analyze/',
-    path: 'analyze/utilizationRatio',
-    icon: 'fas fa-balance-scale',
-    pages: [      {
-        key: 'utilizationRatio',
-        path: 'utilizationRatio',
-        feature: '/analyze/utilizationRatio',
-        icon: 'fas fa-balance-scale'
-      },
-      {
-        key: 'numUsers',
-        path: 'numUsers',
-        feature: '/analyze/numUsers',
-        icon: 'fas fa-balance-scale'
-      },
-    ]
-  },
-  {
     key: 'monitor',
     base: 'monitor/',
     path: 'monitor/position',
@@ -238,13 +220,13 @@ export const MENU = [
         key: 'utilizationRatio',
         path: 'utilizationRatio',
         feature: '/analyze/utilizationRatio',
-        icon: 'fas fa-balance-scale'
+        icon: 'fas fa-chart-pie'
       },
       {
         key: 'numUsers',
         path: 'numUsers',
         feature: '/analyze/numUsers',
-        icon: 'fas fa-balance-scale'
+        icon: 'fas fa-chart-area'
       },
     ]
   },
@@ -252,12 +234,12 @@ export const MENU = [
     key: 'history',
     base: 'history/',
     path: '/history/temperatureHistory',
-    icon: 'fas fa-balance-scale',
+    icon: 'far fa-clipboard',
     pages: [{
         key: 'temperatureHistory',
         path: 'temperatureHistory',
         feature: '/history/temperatureHistory',
-        icon: 'fas fa-balance-scale'
+        icon: 'fas fa-thermometer'
       },
     ]
   },
