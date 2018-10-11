@@ -133,8 +133,8 @@ export default {
     async fetchData(payload) {
       try {
         this.replace({showProgress: true})
-        let deviceIds = 
-        _.filter(await AppServiceHelper.fetchList('/core/exb/', 'exbId'),
+        let exbs = await AppServiceHelper.fetchList('/core/exb/', 'exbId')
+        let deviceIds = _.filter(exbs,
           exb => exb.enabled
         ).map(
           exb => exb.deviceId
