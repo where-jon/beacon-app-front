@@ -212,6 +212,7 @@
     "tenantName": "テナント名",
 
     "personal": "個人設定",
+    "changeProfilePassword": "プロフィール・パスワードを変更する",
     "changePassword": "パスワードを変更する",
   
     "region": "リージョン",
@@ -271,7 +272,8 @@
     "overLength": "{target}には{length}以内の文字列を入力してください",
     "selectFile": "ファイルを選択してください",
     "required": "{target}を入力してください。",
-    "validatePassword": "パスワードと確認パスワードが一致していません。",
+    "invalidCureentPassword": "現在のパスワードが一致しません",
+    "notMatchPassword": "変更パスワードと確認パスワードが一致していません。",
     "lengthRange": "{target}は{min}文字以上{max}文字以下で指定してください。",
     "emptyFile": "ファイルの中身が空です。",
     "invalidFile": "不正なファイルです。",
@@ -286,6 +288,7 @@
     "bulkNotNullFailed": "{line}行目: {col}は必須です。",
     "bulkExistFailed": "{line}行目: {col}（{value}）は存在していません。",
     "monthDayTemperature": "{month}月{day}日の温湿度",
+    "invalidLoginId": "ログインIDは英数記号を指定してください",
 
     "dummy": "" 
   }
