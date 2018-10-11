@@ -118,13 +118,13 @@ export const MENU = [
         key: 'region',
         path: 'region',
         feature: '/core/region',
-        icon: 'fas fa-industry',
+        icon: 'far fa-building',
       },
       {
         key: 'area',
         path: 'area',
         feature: '/core/area',
-        icon: 'far fa-building',
+        icon: 'fas fa-image',
       },
       {
         key: 'exb',
