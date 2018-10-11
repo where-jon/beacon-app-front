@@ -216,7 +216,6 @@
     "regionName": "リージョン名",
     "meshId": "メッシュID",
 
-<<<<<<< HEAD
     "led": "LED操作",
     "blink": "点滅",
     "blue": "青",
@@ -232,7 +231,7 @@
     "blinkFast": "点滅速く",
     "start": "開始",
     "end": "終了",
-=======
+    
     "mode": "モード",
     "analyze": "分析",
     "utilizationRatio": "利用率",
@@ -264,7 +263,6 @@
 
     "personThing": "人",
     "objectThing": "物",
->>>>>>> origin/develop/0.9
 
     "dummy": ""
   },
