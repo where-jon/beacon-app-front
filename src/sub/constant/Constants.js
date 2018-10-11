@@ -235,26 +235,26 @@ export const MENU = [
     ]
   },
   {
-    key: 'analyze',
-    base: 'analyze/',
-    path: 'analyze/utilizationRatio',
-    icon: 'fas fa-balance-scale',
+    key: 'sumTitle',
+    base: 'sum/',
+    path: 'sum/utilizationRatio',
+    icon: 'fas fa-chart-line',
     pages: [{
         key: 'utilizationRatio',
         path: 'utilizationRatio',
-        feature: '/analyze/utilizationRatio',
+        feature: '/sum/utilizationRatio',
         icon: 'fas fa-chart-pie'
       },
       {
         key: 'numUsers',
         path: 'numUsers',
-        feature: '/analyze/numUsers',
+        feature: '/sum/numUsers',
         icon: 'fas fa-chart-area'
       },
     ]
   },
   {
-    key: 'history',
+    key: 'historyTitle',
     base: 'history/',
     path: '/history/temperatureHistory',
     icon: 'far fa-clipboard',

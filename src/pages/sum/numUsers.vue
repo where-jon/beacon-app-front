@@ -4,15 +4,15 @@
     <div class="container">
       <p></p>
       <b-row>
-        <b-form inline class="mt-2">
+        <b-form inline>
           <label v-t="'label.zoneType'" />
           <v-select :options="categoryOptions" :on-change="categoryChange" class="vselectCategory"></v-select>
           <label v-t="'label.zoneName'" />
           <v-select v-model="zone" :options="zoneOptions" class="vselectZone"></v-select>
-          <label v-t="'label.analyzeMonth'" />
-          <v-select v-model="analyzeMonth" :options="analyzeMonthOptions" class="vselectMonth"></v-select>
-          <label v-t="'label.analyzeDay'" />
-          <v-select :options="analyzeDayOptions" class="vselectDay"></v-select>
+          <label v-t="'label.sumYearMonth'" />
+          <v-select v-model="sumYearMonth" :options="sumYearMonthOptions" :on-change="sumYearMonthChange" class="vselectMonth"></v-select>
+          <label v-t="'label.sumDay'" />
+          <v-select v-model="sumDay" :options="sumDayOptions" class="vselectDay"></v-select>
           <b-button size="sm" variant="info" v-t="'label.search'" @click="search()"></b-button> 
         </b-form>
       </b-row>
@@ -61,7 +61,7 @@ export default {
     return {
       items: [
         {
-          text: this.$i18n.t('label.analyze'),
+          text: this.$i18n.t('label.sumTitle'),
           active: true
         },
         {
@@ -74,7 +74,11 @@ export default {
       zone: null,
       zones: null,
       zoneList: [{label:"", value:null}],
-      analyzeMonth: null
+      sumYearMonth: null,
+      sumDays: [{label:"", value:null}],
+      sumDay: null,
+      selectedYearMonth: null,
+      dataList: null
     }
   },
   computed: {
@@ -84,7 +88,7 @@ export default {
     zoneOptions() {
       return this.zoneList
     },
-    analyzeMonthOptions() {
+    sumYearMonthOptions() {
       var today = new Date()
       var yyyy = today.getFullYear()
       var mm = today.getMonth() + 1
@@ -102,14 +106,8 @@ export default {
       }
       return pullDowns
     },
-    analyzeDayOptions() {
-      var pullDowns = []
-      for (var idx = 0; idx <= 31; idx++) {
-        pullDowns.push({
-          label: "" + idx, value: idx
-        })
-      }
-      return pullDowns
+    sumDayOptions() {
+      return this.sumDays
     },
     getTheme () {
       const theme = getTheme(this.$store.state.loginId)
@@ -178,11 +176,34 @@ export default {
       this.categoryId = null
       this.zone = ""
     },
+    sumYearMonthChange(val) {
+      if (val == null) {
+        this.sumDays = []
+        this.sumDay = null
+        return
+      }
+      var year = val.value/100
+      var month = val.value%100
+      var lastDay = new Date(year, month, 0).getDate()
+      var pullDowns = []
+      for (var idx = 1; idx <= lastDay; idx++) {
+        pullDowns.push({
+          label: "" + idx, value: idx
+        })
+      }
+      this.selectedYearMonth = val.value
+      this.sumDays = pullDowns
+    },
     isUndetect(updated) {
       return false
     },
     download() {
-      HtmlUtil.fileDL("numUsers.csv", Util.converToCsv(this.numUsers))
+      if (this.dataList == null) return
+      if (this.dataList.length == 0) return
+      HtmlUtil.fileDL(
+        "numUsers.csv",
+        Util.converToCsv(this.dataList)
+      )
     },
     ...mapMutations([
       'replace', 
@@ -191,12 +212,13 @@ export default {
       'replaceMonitor', 
     ]),
     async search() {
-      let anaMonth = this.analyzeMonth.value
+      if (this.selectedYearMonth == null) return
       let numUsers = await AppServiceHelper.fetchList2(
         'numUsers',
-        '/office/numUsers/' + anaMonth,
+        '/office/numUsers/' + this.selectedYearMonth,
         'numOfUsers'
       )
+      this.dataList = numUsers
       this.replaceMonitor({numUsers})
     },
   }

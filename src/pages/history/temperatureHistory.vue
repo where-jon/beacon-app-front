@@ -21,7 +21,7 @@
             </b-form-group>
             <b-form-group>
               <label v-t="'label.temperatureHistoryType'" />
-              <v-select :options="analyzeTypeOptions" required class="ml-2"></v-select>
+              <v-select :options="typeOptions" required class="ml-2"></v-select>
             </b-form-group>
             <b-button size="sm" variant="info" v-t="'label.download'" @click="download()"></b-button> 
           </b-form>
@@ -51,7 +51,7 @@ export default {
     return {
       items: [
         {
-          text: this.$i18n.t('label.analyze'),
+          text: this.$i18n.t('label.historyTitle'),
           active: true
         },
         {
@@ -77,7 +77,7 @@ export default {
     zoneOptions() {
       return this.zoneList
     },
-    analyzeTypeOptions() {
+    typeOptions() {
       return [
         {label:this.$i18n.t('label.temperatureHistoryType0'), value:0},
         {label:this.$i18n.t('label.temperatureHistoryType1'), value:1},
@@ -185,6 +185,9 @@ export default {
     },
     async download() {
       this.temperatureHistoryData = await this.dataDownload()
+      if (this.temperatureHistoryData == null || this.temperatureHistoryData.length == 0) {
+        return
+      }
       HtmlUtil.fileDL(
         "temperatureHistory.csv",
         Util.converToCsv(this.temperatureHistoryData)

@@ -14,8 +14,7 @@ export const fetchList = async (target, sortBy, pMock) => {
 }
 
 export const fetchList2 = async (target, url, sortBy) => {
-    let data = DEV.USE_MOCK_ANALYZE? mock[target]:
-        await HttpHelper.getAppService(url)
+    let data = await HttpHelper.getAppService(url)
         return _(data).sortBy((val) => val[sortBy])
     .compact().value()
 }
