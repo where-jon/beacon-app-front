@@ -7,29 +7,29 @@ import * as HttpHelper from './HttpHelper'
 
 const dateform = (time) => moment(time).format('YYYY/MM/DD hh:mm:ss')
 
-export const fetchPosition = async (exbs, txs) => {
-    let data = DEV.USE_MOCK_POS? mock.position:
+export const fetchPosition = async (exbs, txs, pMock) => {
+    let data = pMock? pMock: DEV.USE_MOCK_EXC? mock.position:
         await HttpHelper.getExCloud(EXCLOUD.POSITION_URL + new Date().getTime())
     return _(data)
-    // .filter((val) => txs.some((tx) => tx.btxId == val.btx_id))
+    .filter((val) => DEV.NOT_FILTER_TX || txs.some((tx) => tx.btxId == val.btx_id))
     .filter((val) => exbs.some((exb) => exb.location.posId == val.pos_id))
     .map((val) => {
       let tx = _.find(txs, (tx) => tx.btxId == val.btx_id)
       let label = tx && tx.displayName? tx.displayName: val.btx_id
-      return {id: val.btx_id, pos_id: val.pos_id, label}
+      return {btx_id: val.btx_id, pos_id: val.pos_id, label, nearest: val.nearest}
     })
     .compact().value()
 }
 
 export const fetchSensor = async (sensorId) => {
-  let data = DEV.USE_MOCK_POS? mock.position:
+  let data = DEV.USE_MOCK_EXC? mock.sensor[sensorId]:
       await HttpHelper.getExCloud(EXCLOUD.SENSOR_URL.replace("{id}", sensorId) + new Date().getTime())
   return _(data)
   .compact().value()
 }
 
 export const fetchRawPosition = async () => {
-    let data = DEV.USE_MOCK_POS? mock.position:
+    let data = DEV.USE_MOCK_EXC? mock.position:
         await HttpHelper.getExCloud(EXCLOUD.POSITION_URL + new Date().getTime())
     return _(data)
     .map((val) => {
@@ -40,7 +40,7 @@ export const fetchRawPosition = async () => {
 }
 
 export const fetchGateway = async () => {
-    let data = DEV.USE_MOCK_POS? mock.position:
+    let data = DEV.USE_MOCK_EXC? mock.position:
         await HttpHelper.getExCloud(EXCLOUD.GATEWAY_URL + new Date().getTime())
     return _(data)
     .map((val) => {
@@ -50,7 +50,7 @@ export const fetchGateway = async () => {
 }
 
 export const fetchTelemetry = async () => {
-    let data = DEV.USE_MOCK_POS? mock.position:
+    let data = DEV.USE_MOCK_EXC? mock.position:
         await HttpHelper.getExCloud(EXCLOUD.TELEMETRY_URL + new Date().getTime())
     return _(data)
     // .filter((val) => EXB.some((exb) => exb.pos_id == val.pos_id))

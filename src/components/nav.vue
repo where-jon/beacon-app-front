@@ -44,23 +44,12 @@
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import _ from 'lodash'
-import { EventBus } from '../sub/helper/EventHelper'
-import * as HtmlUtil from '../sub/util/HtmlUtil'
-import * as Util from '../sub/util/Util'
 import * as AuthHelper from '../sub/helper/AuthHelper'
 import { DISP, APP, THEME } from '../sub/constant/config'
 import { LOGIN_MODE } from '../sub/constant/Constants'
 import { getThemeClasses } from '../sub/helper/ThemeHelper'
 
 export default {
-  mounted() {
-    setInterval(()=>{
-      let reload = document.getElementsByClassName("reload")[0]
-      if (reload) {
-        reload.click()
-      }
-    }, DISP.AUTO_RELOAD)  
-  },
   data() {
     return {
       version: APP.VERSION,
@@ -69,10 +58,7 @@ export default {
   },
   computed: {
     isLoginPage() {
-      return this.$route.path == APP.LOGIN_PAGE
-    },
-    showReload() {
-      return !this.$route.path.endsWith("edit") && this.$route.path != '/master/location'
+      return this.$route.path == APP.LOGIN_PAGE || this.$route.path == (APP.LOGIN_PAGE + '/')
     },
     isNoLogin() {
       return APP.LOGIN_MODE == LOGIN_MODE.NO_LOGIN
@@ -83,7 +69,7 @@ export default {
     ...mapState('app_service', [
       'persons',
     ]),
-    navbarClasses () {
+    navbarClasses() {
       const storeTheme = this.$store.state.setting.theme
       return getThemeClasses(this.loginId)
     },
@@ -92,20 +78,8 @@ export default {
     logout() {
       AuthHelper.logout()
     },
-    profile() {
-      alert('Not implemented')
-    },
     move(page) {
       this.$router.push(page)
-    },
-    fetchData(e) {
-      HtmlUtil.addClass(e, "rotate")
-      EventBus.$emit('reload', {
-        done() {
-          HtmlUtil.removeClass(e, "rotate")
-          AuthHelper.checkSession()
-        }
-      })
     },
     ...mapMutations('app_service', [
       'replaceAS', 

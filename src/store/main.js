@@ -3,6 +3,7 @@ import axios from 'axios'
 
 export const state = () => ({
   positions: [],
+  orgPositions: [],
   selectedTx: {},
   sample: "sample" // sample
 })

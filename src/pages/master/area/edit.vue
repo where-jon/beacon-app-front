@@ -34,7 +34,7 @@
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import _ from 'lodash'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
-import editmixinVue from '../../../components/editmixin.vue';
+import editmixinVue from '../../../components/editmixin.vue'
 import breadcrumb from '../../../components/breadcrumb.vue'
 import { APP } from '../../../sub/constant/config'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'

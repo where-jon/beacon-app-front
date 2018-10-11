@@ -9,7 +9,7 @@
               <i class="fa fa-angle-down" v-if="selectedItem === i"></i>
             </span>
           </li>
-          <li :class="menuItemClasses" v-for="(page, j) in group.pages" :key="page.key" v-if="selectedItem === i">
+          <li :class="menuItemClasses" v-for="(page, j) in group.pages" :key="page.key" v-if="selectedItem === i && isDispMenuItem(page)">
             <router-link class="bd-toc-link" :to="'/' + group.base + page.path">
               <i :class="page.icon" class="ml-3"></i>&nbsp;{{ $t("label." + page.key) }}
             </router-link>
@@ -21,7 +21,7 @@
 
 <script>
 
-import { DISP, THEME } from '../sub/constant/config'
+import { DISP, THEME, DEV } from '../sub/constant/config'
 import { getThemeClasses } from '../sub/helper/ThemeHelper'
 
 export default {
@@ -29,6 +29,7 @@ export default {
     return {
       nav : this.$store.state.menu,
       selectedItem: -1,
+      userRole: this.$store.state.role
     }
   },
   computed: {
@@ -48,6 +49,9 @@ export default {
     onMenuClick (index) {
       this.selectedItem = index === this.selectedItem ? -1 : index
     },
+    isDispMenuItem(page) {
+      return true 
+    }
   },
 }
 </script>
@@ -60,13 +64,13 @@ export default {
   border-bottom: 1px solid rgba(0, 0, 0, .1);
   padding-left: 0px;
   padding-right: 0px;
+  min-height: calc(100vh - 62px);
 
   @media (min-width: 768px) {
     @supports (position: sticky) {
       position: sticky;
       z-index: 100;
     }
-    min-height: calc(100vh - 56px)
   }
 
   @media (min-width: 1200px) {

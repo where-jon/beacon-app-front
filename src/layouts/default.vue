@@ -70,7 +70,7 @@ export default {
       return this.$store.state.loginId
     },
     isLoginPage() {
-      return this.$router.app._route.path == APP.LOGIN_PAGE
+      return this.$route.path == APP.LOGIN_PAGE || this.$route.path == (APP.LOGIN_PAGE + '/')
     },
     ...mapState([
       'showProgress',

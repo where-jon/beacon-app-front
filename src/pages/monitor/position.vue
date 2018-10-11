@@ -1,14 +1,27 @@
 <template>
   <div>
-    <breadcrumb :items="items" :reload="true" />
-    <div class="container">
+    <breadcrumb :items="items" :reload="true" :isLoad="isLoad" @reload="fetchData" />
+    <div class="container" v-show="!isLoad">
       <b-row align-h="end">
         <b-col md="2" class="mb-3 mr-3">
           <b-button :variant='theme' @click="download()" v-t="'label.download'" />
         </b-col>
       </b-row>
       <div class="table-area">
-        <vue-scrolling-table>
+        <table v-if="!isDev" class="table striped">
+          <thead>
+            <th scope="col" v-for="(val, key) in positions[0]" :key="key" >{{ key }}</th>
+          </thead>
+          <tbody>
+            <tr v-for="(position, index) in positions" :key="index" :class="{undetect: isUndetect(position[label_timestamp])}">
+              <td scope="row" v-for="(val, key) in position" :key="key">
+                <span :class="powerLevel(val, true)" v-if="key === label_powerLevel">{{ powerLevel(val, false) }}</span>
+                {{ key !== label_powerLevel ? val : ''}}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <vue-scrolling-table v-if="isDev && !isLoad">
           <template slot="thead">
             <th scope="col"
             v-for="(val, key) in ['btx_id','device_id','pos_id','phase','power_level','updatetime','nearest1','nearest2','nearest3']"
@@ -40,6 +53,7 @@
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
+import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
 import { EventBus } from '../../sub/helper/EventHelper'
@@ -47,8 +61,11 @@ import { EXB, DISP, APP } from '../../sub/constant/config'
 import breadcrumb from '../../components/breadcrumb.vue'
 import VueScrollingTable from "vue-scrolling-table"
 import { getTheme } from '../../sub/helper/ThemeHelper'
+import moment from 'moment'
+import reloadmixinVue from '../../components/reloadmixin.vue'
 
 export default {
+  mixins: [reloadmixinVue],
   components: {
     breadcrumb,
     VueScrollingTable,
@@ -64,7 +81,26 @@ export default {
           text: this.$i18n.t('label.position'),
           active: true
         }
-      ]
+      ],
+      isLoad: false,
+      label_txId: this.$i18n.t('label.txId'),
+      label_powerLevel: this.$i18n.t('label.power-level'),
+      label_name: this.$i18n.t('label.name'),
+      label_finalPlace: this.$i18n.t('label.final-receive-place'),
+      label_timestamp: this.$i18n.t('label.final-receive-timestamp'),
+      label_undetect: this.$i18n.t('label.undetect'),
+      label_powerLevelGood: this.$i18n.t('label.power-good'),
+      label_powerLevelWarn: this.$i18n.t('label.power-warning'),
+      label_powerLevelPoor: this.$i18n.t('label.power-poor'),
+      interval: null,
+      powerLevelGood: 69,
+      powerLevelWarn: 39,
+    }
+  },
+  props: {
+    isDev: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {
@@ -79,17 +115,27 @@ export default {
   mounted() {
     this.fetchData()
     this.replace({title: this.$i18n.t('label.position')})
-  },
-  created(){
-    EventBus.$on('reload', (payload)=>{
-       this.fetchData(payload)
-    })
+    if (!this.isDev) {
+      return
+    }
+    this.items = [
+      {
+        text: this.$i18n.t('label.develop'),
+        active: true
+      },
+      {
+        text: this.$i18n.t('label.position'),
+        active: true
+      }
+    ]
   },
   methods: {
     async fetchData(payload) {
       this.replace({showProgress: true})
+      this.isLoad = true
       try {
         let positions = await EXCloudHelper.fetchRawPosition()
+        positions = await this.makePositionRecords(positions)
         if (payload && payload.done) {
           payload.done()
         }
@@ -99,9 +145,59 @@ export default {
         console.error(e)
       }
       this.replace({showProgress: false})
+      this.isLoad = false
+    },
+    async makePositionRecords(positions) {
+      if (this.isDev) {
+        return positions
+      }
+      let persons = await AppServiceHelper.fetchList("/basic/person/withThumbnail", 'personId')
+      const map = {}
+      persons.forEach((e) => {
+        map[e.txId] = e.personName
+      })
+
+      const that = this
+      return positions.map((e) => {
+        const name = map[e.btx_id]
+        const record = {
+          [that.label_txId]: e.btx_id,
+          [that.label_powerLevel]: e.power_level,
+          [that.label_name]: (typeof name) !== 'undefined' ? name : 'ー',
+          [that.label_timestamp]: this.getTimestamp(e.updatetime)
+        }
+        return record
+      })
+    },
+    getTimestamp(timestamp) {
+      if (!timestamp || (typeof timestamp) === 'undefined') {
+        return this.label_undetect
+      }
+      try {
+        const d = new Date(timestamp)
+        return moment(d.getTime()).format('YYYY/MM/DD hh:mm:ss')
+      } catch (e) {
+        return this.label_undetect
+      }
+    },
+    powerLevel(val, isClass) {
+      const classes = 'badge badge-pill badge-'
+      if (val > this.powerLevelGood) {
+        return isClass ? (classes + 'success') : this.label_powerLevelGood
+      }
+      if (val > this.powerLevelWarn) {
+        return isClass ? (classes + 'warning') : this.label_powerLevelWarn
+      }
+      return isClass ? (classes + 'danger') : this.label_powerLevelPoor
     },
     isUndetect(updated) {
-      return updated == "" || new Date() - new Date(updated) > APP.UNDETECT_TIME
+      if ((typeof updated) === 'undefined' ||
+      (typeof updated.length) === 'undefined') {
+        return false
+      }
+      return updated.length < 1 ||
+      updated === this.label_undetect ||
+      new Date() - new Date(updated) > APP.UNDETECT_TIME
     },
     download() {
       HtmlUtil.fileDL("position.csv", Util.converToCsv(this.positions, ["btx_id","device_id","pos_id","phase","power_level","updatetime","nearest"]))
@@ -118,4 +214,24 @@ export default {
 
 <style scoped lang="scss">
   @import "../../sub/constant/scrolltable.scss";
+
+  tbody {
+    display:block;
+    height:400px;
+    overflow:auto;
+  }
+
+  thead, tbody tr {
+    display:table;
+    width:100%;
+    table-layout:fixed;
+  }
+  
+  thead {
+    width: calc( 100% - 1em )
+  }
+
+  .badge-warning {
+    color: white;
+  }
 </style>

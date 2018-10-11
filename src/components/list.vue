@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- searchbox -->
-    <b-row>
+    <b-row v-if="!params.hideSearchBox">
       <b-col md="6" class="my-1">
         <b-form-group horizontal class="mb-0" :label="$t('label.filter') ">
           <b-input-group>
@@ -28,7 +28,7 @@
   
     <!-- table -->
     <b-table show-empty stacked="md" striped hover :items="list" :fields="fields" :current-page="currentPage" :per-page="perPage" outlined
-            :filter="filter" @filtered="onFiltered">
+            :filter="filterGrid" @filtered="onFiltered">
       <template slot="style" slot-scope="row">
         <div v-bind:style="style(row.index)">A</div>
       </template>
@@ -97,7 +97,7 @@ export default {
     theme () {
       const theme = getButtonTheme(this.loginId)
       return 'outline-' + theme
-    }
+    },
   },
   mounted() {
     this.$parent.$options.methods.fetchData.apply(this.$parent)
@@ -122,7 +122,7 @@ export default {
       return this.$parent.$options.methods.thumbnail.call(this.$parent, this.perPage * (this.currentPage - 1) + index)
     },
     exportCsv() {
-      const headers = this.params.fields.filter((val) => !["style", "thumbnail", "actions"].includes(val.key)).map((val) => val.key)
+      const headers = this.params.fields.filter((val) => !["style", "thumbnail", "actions", "updateAction"].includes(val.key)).map((val) => val.key)
       HtmlUtil.fileDL(this.params.name + ".csv", Util.converToCsv(this.list, headers))
     },
     style(index) {
@@ -146,6 +146,24 @@ export default {
       this.modalInfo.title = ''
       this.modalInfo.content = ''
       this.modalInfo.id = ''
+    },
+    filterGrid(originItem) {
+      if(!this.filter){
+        return true
+      }
+      try{
+        const regExp = new RegExp(".*" + this.filter + ".*", "i")
+        const param = this.params.fields.map((val) => {
+          let itemValue = originItem
+          const keys = val.key.split("\.")
+          keys.forEach(key => itemValue = itemValue[key])
+          return itemValue
+        })
+        return regExp.test(JSON.stringify(param))
+      }
+      catch(e){
+        return false
+      }
     },
     onFiltered(filteredItems) {
       this.totalRows = filteredItems.length

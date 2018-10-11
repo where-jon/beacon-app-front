@@ -4,12 +4,15 @@ import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import { Shape, Stage, Container, Bitmap, Text, Touch } from '@createjs/easeljs/dist/easeljs.module'
 import { Tween, Ticker } from '@createjs/tweenjs/dist/tweenjs.module'
 import { EventBus } from '../sub/helper/EventHelper'
+import { DISP } from '../sub/constant/config.js'
 import * as AppServiceHelper from '../sub/helper/AppServiceHelper'
 import * as PositionHelper from '../sub/helper/PositionHelper'
+import reloadmixinVue from './reloadmixin.vue'
 
 let that
 
 export default {
+  mixins: [reloadmixinVue],
   data() {
     return {
       selectedArea: null,
@@ -36,9 +39,6 @@ export default {
   },
   created() {
     that = this
-    EventBus.$on('reload', (payload)=>{
-       this.fetchData(payload)
-    })
     window.addEventListener('resize', () => {
       const positions = PositionHelper.adjustPosition(this.positions)
       that.replaceMain({positions})
@@ -72,7 +72,7 @@ export default {
       }
       bg.src = this.mapImage
       let that = this
-      if (bg.height == 0 || bg.width == 0) {
+      if (bg.height == 0 || bg.width == 0 || !canvas) {
         this.$nextTick(() => {
           console.debug("again")
           that.showMapImage()
@@ -82,24 +82,38 @@ export default {
       this.mapWidth = bg.width
       this.mapHeight = bg.height
       this.isShownMapImage = true
-      canvas.width = parent.clientWidth
-      canvas.height = parent.clientWidth * bg.height / bg.width
+      let parentHeight = document.documentElement.clientHeight - parent.offsetTop - 82
+      let isMapWidthLarger = parentHeight / parent.clientWidth > bg.height / bg.width
+      let fitWidth = (DISP.MAP_FIT == "both" && isMapWidthLarger) || DISP.MAP_FIT == "width"
+      if (fitWidth) {
+        canvas.width = parent.clientWidth
+        canvas.height = parent.clientWidth * bg.height / bg.width
+      }
+      else {
+        canvas.width = parentHeight * bg.width / bg.height
+        canvas.height = parentHeight
+      }
+      console.debug(fitWidth, canvas.width, canvas.height, parentHeight)
 
-      const stage = new Stage("map")
-      stage.canvas = canvas
-      stage.mouseEnabled = true
+      if (this.stage) { 
+        this.stage.removeAllChildren()
+        if (this.txCont) {
+          this.txCont.removeAllChildren()
+          this.txCont = null
+        }
+      }
+      this.stage = new Stage("map")
+      this.stage.canvas = canvas
+      this.stage.mouseEnabled = true
 
       var bitmap = new Bitmap(bg)
-      this.mapImageScale = bitmap.scaleY = bitmap.scaleX = parent.clientWidth / bg.width
-      bitmap.width = parent.clientWidth
-      bitmap.height = parent.clientWidth * bg.height / bg.width
-      stage.addChild(bitmap)
+      this.mapImageScale = bitmap.scaleY = bitmap.scaleX = canvas.width / bg.width
+      bitmap.width = canvas.width
+      bitmap.height = canvas.height
+      this.stage.addChild(bitmap)
 
-      stage.update() 
-
-      this.stage = stage
+      this.stage.update() 
       this.bitmap = bitmap
-
       this.oldSelectedArea = this.selectedArea
     },
     changeArea(val) {
@@ -107,7 +121,6 @@ export default {
       if (val && val.value) {
         this.reset()
         this.selectedArea = val
-        console.log(this.selectedArea.value)
         this.showMapImage()
       }      
     },
@@ -131,3 +144,13 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+@import "../sub/constant/config.scss";
+
+#map {
+  margin: 0 auto;
+}
+
+</style>
+

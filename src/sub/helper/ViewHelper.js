@@ -12,7 +12,12 @@ export const extract = (obj, fields) => {
 
   let ret = {}
   _.forEach(obj, (val, key) => {
-    if (val instanceof Object) {
+    if(Object.prototype.toString.call(val) === '[object Array]'){
+      if (_.includes(fields, key)) {
+        ret[key] = val
+      }
+    }
+    else if (val instanceof Object) {
       // ret[key] = {}
       _.forEach(val, (cval, ckey) => {
         if (_.includes(fields, key + "." + ckey)) {

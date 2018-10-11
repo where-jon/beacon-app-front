@@ -1,7 +1,7 @@
 
-export const addClass = (e, cls) => e && e.target.classList.add(cls)
+export const addClass = (e, cls) => e && e.target.classList && e.target.classList.add(cls)
 
-export const removeClass = (e, cls) => e && e.target.classList.remove(cls)
+export const removeClass = (e, cls) => e && e.target.classList && e.target.classList.remove(cls)
 
 export const getLangShort = () => {
   let lang = getLang()
@@ -9,6 +9,17 @@ export const getLangShort = () => {
     return lang.substr(0, 2)
   }
   return lang
+}
+
+const intervals = []
+
+export const registerInterval = (func, period) => intervals.push(setInterval(func, period))
+
+export const removeInterval = () => {
+  console.log(clearInterval, {intervals})
+  while (intervals.length > 0) {
+    window.clearInterval(intervals.shift())
+  }
 }
 
 export const getLang = () => navigator.languages? navigator.languages[0]: navigator.language

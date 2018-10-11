@@ -53,10 +53,10 @@ export default {
     async save() {
       const MAIN_COL = "exbId"
       const LOCATION = ["locationId","areaName","locationName","visible","txViewType","posId","x","y"]
-      const INT_TYPE_LIST = ["deviceId", "exbId", "areaId", "locationId", "posId", "x", "y", "z", "txViewType", "zoneName"]
+      const NUMBER_TYPE_LIST = ["deviceId", "exbId", "areaId", "locationId", "posId", "x", "y", "z", "txViewType", "zoneName"]
       const BOOL_TYPE_LIST = ["visible", "enabled"]
 
-      await this.bulkSave(MAIN_COL, INT_TYPE_LIST, BOOL_TYPE_LIST, (entity, headerName, val, dummyKey) => {
+      await this.bulkSave(MAIN_COL, NUMBER_TYPE_LIST, BOOL_TYPE_LIST, (entity, headerName, val, dummyKey) => {
         if (Util.equalsAny(headerName, LOCATION)) {
           if (headerName == "locationId" && !val) {
             val = dummyKey--          

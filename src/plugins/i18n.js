@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueI18n from 'vue-i18n'
 import { getLangShort } from '../sub/util/HtmlUtil'
+import { setI18n as setI18nConstants } from '../sub/constant/Constants'
 
 Vue.use(VueI18n)
 
@@ -16,6 +17,7 @@ export default ({ app, store }, inject) => {
     }
   })
   inject('i18n', app.i18n)
+  setI18nConstants(app.i18n)
   store.commit('setLang', getLangShort())
 }
 

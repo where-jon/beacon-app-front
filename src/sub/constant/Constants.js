@@ -1,5 +1,9 @@
 // Various constants or types come here. Basically constants does not change by environment. 
 
+let i18n
+
+export const setI18n = (pI18n) => i18n = pI18n
+
 export const LOGIN_MODE = {
   APP_SERVICE: 0,
   LOCAL: 1,
@@ -12,6 +16,29 @@ export const ROLE_FEATURE = {
     RO_SYS: 1,
     RO: 2,
     RW: 3,
+  },
+  getModeOptions(){
+    return [
+      {text: i18n.t('label.allRejection'), value: 0},
+      {text: i18n.t('label.systemReadOnly'), value: 1},
+      {text: i18n.t('label.readOnly'), value: 2},
+      {text: i18n.t('label.allAuthorization'), value: 3},
+    ]
+  }
+}
+
+export const FEATURE = {
+  getTypeOptions(){
+    return [
+      {text: i18n.t('label.noLimitType'), value: 0},
+      {text: i18n.t('label.limitType'), value: 1},
+    ]
+  },
+  getEnabledOptions(){
+    return [
+      {text: i18n.t('label.disabledType'), value: false},
+      {text: i18n.t('label.enabledType'), value: true},
+    ]
   }
 }
 
@@ -28,14 +55,16 @@ export const txViewTypes = [
 ]
 
 export const CATEGORY = {
-  TYPES: [
-    {value: 0, text: "人"},
-    {value: 1, text: "物"},
-  ],
+  getTypes(){ 
+    return [
+      {value: 0, text: i18n.t('label.personThing')},
+      {value: 1, text: i18n.t('label.objectThing')},
+    ]
+  },
 }
 
 export const SENSOR = {
-  TEMPARATURE: 1,
+  TEMPERATURE: 1,
   PIR: 2,
   THERMOPILE: 3
 }
@@ -170,6 +199,31 @@ export const MENU = [
         feature: '/core/user',
         icon: 'fas fa-user',
       },
+      {
+        key: 'role',
+        path: 'role',
+        feature: '/meta/role',
+        icon: 'fas fa-chalkboard-teacher',
+      },
+    ]
+  },
+  {
+    key: 'analyze',
+    base: 'analyze/',
+    path: 'analyze/utilizationRatio',
+    icon: 'fas fa-balance-scale',
+    pages: [      {
+        key: 'utilizationRatio',
+        path: 'utilizationRatio',
+        feature: '/analyze/utilizationRatio',
+        icon: 'fas fa-balance-scale'
+      },
+      {
+        key: 'numUsers',
+        path: 'numUsers',
+        feature: '/analyze/numUsers',
+        icon: 'fas fa-balance-scale'
+      },
     ]
   },
   {
@@ -177,11 +231,12 @@ export const MENU = [
     base: 'monitor/',
     path: 'monitor/position',
     icon: 'fas fa-tachometer-alt',
-    pages: [{
+    pages: [
+      {
         key: 'gateway',
         path: 'gateway',
         feature: '/core/gateway',
-        icon: 'fas fa-road'
+        icon: 'fas fa-road',
       },
       {
         key: 'position',
@@ -198,6 +253,38 @@ export const MENU = [
     ]
   },
   {
+    key: 'analyze',
+    base: 'analyze/',
+    path: 'analyze/utilizationRatio',
+    icon: 'fas fa-balance-scale',
+    pages: [{
+        key: 'utilizationRatio',
+        path: 'utilizationRatio',
+        feature: '/analyze/utilizationRatio',
+        icon: 'fas fa-balance-scale'
+      },
+      {
+        key: 'numUsers',
+        path: 'numUsers',
+        feature: '/analyze/numUsers',
+        icon: 'fas fa-balance-scale'
+      },
+    ]
+  },
+  {
+    key: 'history',
+    base: 'history/',
+    path: '/history/temperatureHistory',
+    icon: 'fas fa-balance-scale',
+    pages: [{
+        key: 'temperatureHistory',
+        path: 'temperatureHistory',
+        feature: '/history/temperatureHistory',
+        icon: 'fas fa-balance-scale'
+      },
+    ]
+  },
+  {
     key: 'setting',
     base: 'setting/',
     path: 'setting/personal',
@@ -209,5 +296,32 @@ export const MENU = [
         icon: 'fas fa-user-cog',
       },
     ]
+  },
+  {
+    key: 'develop',
+    base: 'develop/',
+    path: 'develop/position-dev',
+    icon: 'fas fa-wrench',
+    roles: ['SYS_ADMIN'],
+    pages: [
+      {
+        key: 'gateway',
+        path: 'gateway',
+        feature: '/develop/gateway',
+        icon: 'fas fa-road',
+      },
+      {
+        key: 'position',
+        path: 'position',
+        feature: '/develop/position',
+        icon: 'fas fa-location-arrow',
+      },
+      {
+        key: 'telemetry',
+        path: 'telemetry',
+        feature: '/develop/telemetry',
+        icon: 'fa fa-battery-three-quarters',
+      },
+    ],
   },
 ]

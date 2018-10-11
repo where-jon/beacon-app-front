@@ -3,7 +3,7 @@
     <breadcrumb :items="items" :reload="true" />
     <b-row class="mt-2">
       <b-form inline class="mt-2">
-        <label class="mr-2">{{ $t('label.area') }}</label>
+        <label class="ml-3 mr-2">{{ $t('label.area') }}</label>
         <v-select v-model="selectedArea" :options="areaOptions" :on-change="changeArea" required class="ml-2"></v-select>
       </b-form>
     </b-row>
@@ -26,7 +26,7 @@ import { SENSOR } from '../../sub/constant/Constants'
 import { Shape, Stage, Container, Bitmap, Text, Touch } from '@createjs/easeljs/dist/easeljs.module'
 import { Tween, Ticker } from '@createjs/tweenjs/dist/tweenjs.module'
 import breadcrumb from '../../components/breadcrumb.vue'
-import showmapmixin from '../../components/showmapmixin.vue';
+import showmapmixin from '../../components/showmapmixin.vue'
 
 let that
 
@@ -103,6 +103,9 @@ export default {
         return
       }
 
+      if (this.exbCon) {
+        this.exbCon.removeAllChildren()
+      }
       this.positionedExb.forEach((exb) => {
         exb.x *= this.mapImageScale
         exb.y *= this.mapImageScale
@@ -114,6 +117,9 @@ export default {
       console.log({exb})
 
       let stage = this.stage
+      if (!this.exbCon) {
+        this.exbCon = new Container()
+      }
       let exbBtn = new Container()
       let btnBg = new Shape()
       let w = DISP.PIR_R_SIZE
@@ -148,7 +154,8 @@ export default {
       exbBtn.y = exb.y
       exbBtn.cursor = ""
 
-      stage.addChild(exbBtn)
+      this.exbCon.addChild(exbBtn)
+      stage.addChild(this.exbCon)
       stage.update()
     },
   }

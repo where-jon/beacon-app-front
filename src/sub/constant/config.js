@@ -1,13 +1,14 @@
 // configuration for app
 // Basically using const but values are not primitive but objects or arrays because it may change from outside.
 
-import styles from './config.scss'
 import { LOGIN_MODE } from './Constants'
 
 export const DEV = {
   DEBUG: 0, // デバッグモード (0:なし、1以上デバッグレベル)
-  USE_MOCK_POS: false, // 測位APIの代わりにモックデータを使用する
-  USE_MOCK_SENS: false, // センサーデータの代わりにモックデータを使用する
+  USE_MOCK_APS: false || location.search.includes("mockAps"), // AppService API結果の代わりにモックデータを使用する
+  USE_MOCK_EXC: false || location.search.includes("mockExc"), // Excloud API結果の代わりにモックデータを使用する
+  USE_MOCK_ANALYZE: false, // 分析APIの代わりにモックデータを使用する
+  NOT_FILTER_TX: true,
 }
 
 export const APP = {
@@ -26,7 +27,7 @@ export const LOCAL_LOGIN = { // local login md5 hash of id:pass // TODO: add Rol
 }
 
 export const APP_SERVICE = { // used if APP.LOGIN_MODE == APP_SERVICE
-  BASE_URL: "http://localhost:8080",
+  BASE_URL: "http://localhost:8080"
 }
 export const EXCLOUD_BASE_URL = "https://nsome8q880.execute-api.ap-northeast-1.amazonaws.com/prod" // used if APP.LOGIN_MODE != APP_SERVICE
 
@@ -54,6 +55,14 @@ export const DISP = {
   SHOW_SIDEBAR: true, // show sidebar  
   THEME: "default",
 
+  MAP_FIT: "both", // マップを画面表示範囲内にフィットさせるか。width or height or both 
+
+  TX_POS_ONE_TO_ONE: false, // 1つの場所に1TXのみ存在可能
+  RSSI_MIN: -67, // RSSI下限値
+  MOVING_AVERAGE: 5, // 5回分移動平均
+  TRANSPARENT_TIME: 1 * 1000, // 現在時刻から経過した段階で半透明(ms)
+  HIDE_TIME: 30 * 1000, // 現在時刻から経過した段階で表示(ms)
+  
   EXB_LOC_SIZE: {w: 60, h: 30},
   EXB_LOC_BGCOLOR: "#76ccf7",
   EXB_LOC_COLOR: "#000",
@@ -64,6 +73,11 @@ export const DISP = {
   DISCOMFORT_HOT: "#fc5800",
   DISCOMFORT_COMFORT: "#15db75",
   DISCOMFORT_COLD: "#7da6e8",
+
+  TEMPERATURE_LINE_HOUR_START: 8,
+  TEMPERATURE_LINE_HOUR_END: 21,
+  TEMPERATURE_LINE_COLOR: "#fc5800",
+  HUMIDITY_LINE_COLOR: "#7da6e8",
 
   PIR_R_SIZE: 20,
   PIR_MIN_COUNT: 2,
@@ -120,8 +134,13 @@ export const Tx = [ // used when APP.LOGIN_MODE != APP_SERVICE with excloud old 
 ]
 
 export const THEME = [
-  {id: 1, label: 'コーポレート', name: 'default'},
-  {id: 2, label: 'アースカラー', name: 'earthcolor'},
-  {id: 3, label: 'オータム', name: 'autumn'},
-  {id: 4, label: 'ビビッド', name: 'vivid'},
+  {id: 1,  name: 'default'},
+  {id: 2,  name: 'earthcolor'},
+  {id: 3,  name: 'autumn'},
+  {id: 4,  name: 'vivid'},
 ]
+
+export const MONITOR_TX = {
+  ABSENT: 20 * 60 * 1000,
+  UNDETECT: 24 * 60 * 60 * 1000
+}

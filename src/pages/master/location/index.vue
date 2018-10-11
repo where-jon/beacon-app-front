@@ -51,9 +51,9 @@ import { UPDATE_ONLY_NN } from '../../../sub/constant/Constants'
 import { Shape, Stage, Container, Bitmap, Text, Touch } from '@createjs/easeljs/dist/easeljs.module'
 import { Tween, Ticker } from '@createjs/tweenjs/dist/tweenjs.module'
 import breadcrumb from '../../../components/breadcrumb.vue'
-import showmapmixin from '../../../components/showmapmixin.vue';
+import showmapmixin from '../../../components/showmapmixin.vue'
 
-let that;
+let that
 
 export default {
   mixins: [showmapmixin],
