@@ -15,9 +15,9 @@
             </b-form-group>
             <b-form-group>
               <label v-t="'label.historyDateFrom'" />
-              <b-form-input type="date" required />
+              <b-form-input type="date" required v-on:change="dateFromChange" />
               <label v-t="'label.historyDateTo'" />
-              <b-form-input type="date" required />
+              <b-form-input type="date" required v-on:change="dateToChange" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.temperatureHistoryType'" />
@@ -64,7 +64,9 @@ export default {
       zone: null,
       zones: null,
       zoneList: [{label:"", value:null}],
-      temperatureHistoryData: null
+      temperatureHistoryData: null,
+      dateFrom: 0,
+      dateTo: 0
     }
     
   },
@@ -135,7 +137,7 @@ export default {
     },
     categoryChange(val) {
       if (this.zones == null) return
-      if (val == undefined || val.value == undefined) { 
+      if (val == undefined || val.value == undefined) {
         this.zoneList = []
         this.zones.forEach(elm => {
           this.zoneList.push({
@@ -160,12 +162,26 @@ export default {
       this.categoryId = val.value
       this.zone = ""
     },
+    dateFromChange(val) {
+      if (val == undefined || val == null) {
+        this.dateFrom = 0
+      } else {
+        this.dateFrom = (val.substr(0, 4) + val.substr(5, 2) + val.substr(8, 2))/1
+      }
+    },
+    dateToChange(val) {
+      if (val == undefined || val == null) {
+        this.dateTo = 0
+      } else {
+        this.dateTo = (val.substr(0, 4) + val.substr(5, 2) + val.substr(8, 2))/1
+      }
+    },
     async dataDownload() {
       let paramCategoryId = (this.categoryId != null)?this.categoryId:0
       let paramZoneId = 0
       let paramExbId = 0
-      let paramDyFrom = 0
-      let paramDyTo = 0
+      let paramDyFrom = this.dateFrom
+      let paramDyTo = this.dateTo
       let paramHistoryType = 0
       var list = await AppServiceHelper.fetchList2(
         '/basic/sensorHistory',
