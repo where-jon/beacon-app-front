@@ -1,11 +1,10 @@
 <template>
   <b-container>
     <breadcrumb :items="items" />
-    <b-alert variant="info" :show="showInfo">{{ message }}</b-alert>
     <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">{{ message }}</b-alert>
     <b-form-row>
       <b-col cols="12" md="auto">
-        <b-form @submit="sendData">
+        <b-form @submit="onSubmit">
           <b-form-group :label="$t('label.deviceId')">
             <b-form-select v-model="form.deviceId" :options="deviceIds" required :readonly="!isEditable" />
           </b-form-group>
@@ -82,6 +81,17 @@ export default {
       id: 'ledId',
       appServicePath: '/core/excloud/led',
       mutex: false,
+      selectedTheme: null,
+      ledColors: LED_COLORS,
+      ledBlinkTypes: LED_BLINK_TYPES,
+      lightOnCandidate: false,
+      again: false,
+      form: {
+        deviceId: "",
+        colors: [1],
+        blink: 1,
+        lightOn: false,
+      },
       items: [
         {
           text: this.$i18n.t('label.main'),
@@ -92,16 +102,6 @@ export default {
           active: true
         }
       ],
-      selectedTheme: null,
-      ledColors: LED_COLORS,
-      ledBlinkTypes: LED_BLINK_TYPES,
-      lightOnCandidate: false,
-      form: {
-        deviceId: "",
-        colors: [1],
-        blink: 1,
-        lightOn: false,
-      },
     }
   },
   computed: {
@@ -149,8 +149,7 @@ export default {
       }
       this.replace({showProgress: false})
     },
-    async sendData(event) {
-      event.preventDefault()
+    async save() {
       var rgb = 0
       var pattern = 0
       for (var i of this.form.colors) {
@@ -163,18 +162,15 @@ export default {
         rgb2: 0,
         pattern2: 0,
       }]
-      try {
-        this.replace({showProgress: true})
-        await EXCloudHelper.postLed(entity)
-        this.form.lightOn = this.lightOnCandidate
-      } catch(e) {
-        console.error(e)
-      }
-      this.replace({showProgress: false})
+      await EXCloudHelper.postLed(entity)
+      this.form.lightOn = this.lightOnCandidate
     },
     buttonClick(bool) {
       this.lightOnCandidate = bool
     },
+    backToList() { // editMixinのメソッドを無効化
+      return 0
+    }
   }
 }
 </script>
