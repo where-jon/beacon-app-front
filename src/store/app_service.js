@@ -4,6 +4,7 @@ export const state = () => ({
   persons: [],
   person: {},
   led: {},
+  deviceIds: [],
   personImages: [],
   areas: [],
   areaImages: [],

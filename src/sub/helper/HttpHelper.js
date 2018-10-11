@@ -51,7 +51,7 @@ export const postAppService = async (path, config) => {
 
 export const postExCloud = async (url, config) => {
   try {
-    let res = await exCloudClient.poset(url, config)
+    let res = await exCloudClient.post(url, config)
     return res.data
   } catch (e) {
     handleError(e, url)

@@ -39,6 +39,7 @@ export const EXCLOUD = {
   GATEWAY_URL: APP_SERVICE.BASE_URL + "/core/excloud/gateway?_=",
   TELEMETRY_URL: APP_SERVICE.BASE_URL + "/core/excloud/telemetry?_=",
   SENSOR_URL: APP_SERVICE.BASE_URL + "/core/excloud/sensor/{id}?_=",
+  LED_URL: APP_SERVICE.BASE_URL + "/core/excloud/led?_=",
 }
 
 

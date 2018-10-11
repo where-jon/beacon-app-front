@@ -47,13 +47,13 @@ export const DISCOMFORT = {
 }
 
 export const LED_COLORS = {
-  BLUE: 1,
-  RED: 2,
-  PURPLE: 3,
-  GREEN: 4,
-  PALEBLUE: 5,
-  YELLOW: 6,
-  WHITE: 7,
+  BLUE: parseInt('1', 2),
+  RED: parseInt('10', 2),
+  PURPLE: parseInt('100', 2),
+  GREEN: parseInt('1000', 2),
+  PALEBLUE: parseInt('10000', 2),
+  YELLOW: parseInt('100000', 2),
+  WHITE: parseInt('1000000', 2),
 }
 
 export const LED_BLINK_TYPES = {
@@ -61,11 +61,6 @@ export const LED_BLINK_TYPES = {
   CHANGE_FAST: 2,
   BLINK_SLOW: 3,
   BLINK_FAST: 4,
-}
-
-export const LED_STATE = {
-  ON: 1,
-  OFF: 0,
 }
 
 export const MENU = [
