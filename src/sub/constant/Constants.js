@@ -76,6 +76,23 @@ export const DISCOMFORT = {
   COLD: "cold",
 }
 
+export const LED_COLORS = {
+  BLUE: parseInt('1', 2),
+  RED: parseInt('10', 2),
+  PURPLE: parseInt('100', 2),
+  GREEN: parseInt('1000', 2),
+  PALEBLUE: parseInt('10000', 2),
+  YELLOW: parseInt('100000', 2),
+  WHITE: parseInt('1000000', 2),
+}
+
+export const LED_BLINK_TYPES = {
+  CHANGE_SLOW: 1,
+  CHANGE_FAST: 2,
+  BLINK_SLOW: 3,
+  BLINK_FAST: 4,
+}
+
 export const MENU = [
   {
     key: 'main',
@@ -106,6 +123,12 @@ export const MENU = [
         feature: '/basic/person',
         icon: 'far fa-id-card',
       },
+      {
+        key: 'led',
+        path: 'led',
+        feature: '/basic/led',
+        icon: 'far fa-lightbulb',
+      }
     ]
   },
   {

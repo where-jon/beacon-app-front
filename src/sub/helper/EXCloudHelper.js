@@ -60,3 +60,9 @@ export const fetchTelemetry = async () => {
     .compact().value()
 }
 
+export const postLed = async (param) => {
+    let data = DEV.USE_MOCK_POS? mock.position:
+        await HttpHelper.postExCloud(EXCLOUD.LED_URL + new Date().getTime(), param)
+    return data
+}
+
