@@ -224,8 +224,8 @@
     "numUsers": "利用人数",
     "numOfUsers": "利用人数(平均)",
     "zoneCategoryName": "ゾーンカテゴリ名",
-    "analyzeMonth": "集計年月",
-    "analyzeDay": "集計日",
+    "analyzeMonth": "年月",
+    "analyzeDay": "日指定",
 
     "history": "履歴",
     "temperatureHistory": "温湿度履歴",
@@ -247,6 +247,7 @@
 
     "personThing": "人",
     "objectThing": "物",
+    "objectZone": "ゾーン",
 
     "dummy": ""
   },
