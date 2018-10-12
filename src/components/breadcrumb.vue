@@ -57,7 +57,7 @@ export default {
   },
   methods: {
     isActive (item) {
-      return (typeof item.active) !== 'undefined' && item.active
+      return item.active != null && item.active
     },
     isLink (item) {
       return (!this.isActive(item)) && item.href !== 'undefined'

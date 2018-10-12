@@ -108,7 +108,7 @@ export default {
       this.isLoad = false
     },
     isUndetect(updated) {
-      if ((typeof updated) === 'undefined') {
+      if (updated == null) {
         return false
       }
       return updated == "" || new Date() - new Date(updated) > APP.UNDETECT_TIME

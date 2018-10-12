@@ -19,6 +19,17 @@ export const APP = {
   UNDETECT_TIME: 10 * 60 * 1000, // used on telemetry 
   AREA_THUMBNAIL_MAX: 200,
   USE_THERMOPILE: true,
+  LOG_KEEP_TIME: 30,
+  MONITOR_REFESH_TIME: 10 * 60 * 1000,
+  PASSWORD_CHANGEABLE: true,
+  PASSWORD_CHECK: false,
+  UPDATE_POSITION_EFFECT: true,
+  TIME_ZONE: 0,
+  DISP_REFRESH_TIME: 10 * 60 * 1000,
+  SLACK_WEBHOOC: false,
+  MAIL_ADDRESS: "",
+  MAIL_ADDRESS: "",
+  IP_ADDRESS_FILTER: "",
 }
 
 export const LOCAL_LOGIN = { // local login md5 hash of id:pass // TODO: add Role
@@ -26,7 +37,8 @@ export const LOCAL_LOGIN = { // local login md5 hash of id:pass // TODO: add Rol
 }
 
 export const APP_SERVICE = { // used if APP.LOGIN_MODE == APP_SERVICE
-  BASE_URL: "http://localhost:8080"
+  BASE_URL: "http://localhost:8080",
+  REFRESH_TIME: 10 * 60 * 1000,
 }
 export const EXCLOUD_BASE_URL = "https://nsome8q880.execute-api.ap-northeast-1.amazonaws.com/prod" // used if APP.LOGIN_MODE != APP_SERVICE
 
@@ -142,4 +154,9 @@ export const THEME = [
 export const MONITOR_TX = {
   ABSENT: 20 * 60 * 1000,
   UNDETECT: 24 * 60 * 60 * 1000
+}
+
+export const PASSWORD_LENGTH = {
+  BOTTOM: 4,
+  LIMIT: 21
 }

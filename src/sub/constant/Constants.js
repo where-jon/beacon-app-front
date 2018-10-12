@@ -189,12 +189,6 @@ export const MENU = [
         icon: 'fas fa-users',
       },
       {
-        key: 'thing',
-        path: 'thing',
-        feature: '/basic/thing',
-        icon: 'fas fa-cube',
-      },
-      {
         key: 'user',
         path: 'user',
         feature: '/core/user',
@@ -205,6 +199,25 @@ export const MENU = [
         path: 'role',
         feature: '/meta/role',
         icon: 'fas fa-chalkboard-teacher',
+      },
+    ]
+  },
+  {
+    key: 'analyze',
+    base: 'analyze/',
+    path: 'analyze/utilizationRatio',
+    icon: 'fas fa-balance-scale',
+    pages: [      {
+        key: 'utilizationRatio',
+        path: 'utilizationRatio',
+        feature: '/analyze/utilizationRatio',
+        icon: 'fas fa-balance-scale'
+      },
+      {
+        key: 'numUsers',
+        path: 'numUsers',
+        feature: '/analyze/numUsers',
+        icon: 'fas fa-balance-scale'
       },
     ]
   },
@@ -276,6 +289,12 @@ export const MENU = [
         path: 'personal',
         feature: '/core/personal',
         icon: 'fas fa-user-cog',
+      },
+      {
+        key: 'system',
+        path: 'system',
+        feature: '/meta/system',
+        icon: 'fas fa-cogs',
       },
     ]
   },

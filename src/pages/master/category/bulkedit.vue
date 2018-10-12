@@ -26,7 +26,7 @@ export default {
       backPath: '/master/category',
       appServicePath: '/basic/category',
       form: {
-        csvFile: undefined,
+        csvFile: null,
       },
       items: [
         {
