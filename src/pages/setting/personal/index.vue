@@ -40,8 +40,9 @@
               <label v-t="'label.theme'" />
               <b-form-select v-model="selectedTheme" :options="themes" class="mb-3" @change="themeSelected"/>
             </b-form-group>
+            <!-- プロフィール・パスワードを変更するボタン -->
             <b-form-group>
-              <b-button type="button" :variant="theme" class="btn-block" 
+              <b-button type="button" class="btn-block" :variant='theme'
               v-t="'label.changeProfilePassword'" @click="isChange = true" v-show="!isChange" />
             </b-form-group>
 
@@ -146,7 +147,7 @@ export default {
   computed: {
     theme () {
       const storeTheme = this.$store.state.setting.theme
-      return 'outline-' + getButtonTheme(this.loginId)
+      return 'outline-' + getButtonTheme(this.$store.state.loginId)
     },
     hasError () {
       return Object.keys(this.errorMessages)
@@ -179,6 +180,10 @@ export default {
       // storeを参照しているため、テーマの変更を検知する
       this.replaceSetting({theme})
       window.localStorage.setItem(this.$store.state.loginId + '-theme', theme)
+    },
+    theme () {
+      const theme = getTheme(this.$store.state.loginId)
+      return 'outline-' + theme
     },
     handleUpdateConfirmPass (value) {
       const passwordUpdate = this.loginUser.passwordUpdate 
