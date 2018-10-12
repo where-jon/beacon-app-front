@@ -11,7 +11,7 @@
         <label class="card-header" v-t="getName(categoryId)" />
         <div class="card-body">
           <div v-for="row in multiList[categoryId]" :key="row.id">
-            <b-form-group :label="getName(row.key)" :description="row.description">
+            <b-form-group :label="getName(row.key)" :description="getName(row.description)">
               <span v-for="field in fields" :key="field.key">
                 <span v-if="useValueType(row, field)">
                   <span v-if="usePullDown(row, field)">
@@ -70,7 +70,7 @@ export default {
   },
   methods: {
     getName(id) {
-      return this.$i18n.t(`label.${id}`)
+      return Util.hasValue(id)? this.$i18n.t(`label.${id}`): undefined
     },
     useValueType(row, field) {
       return field.type && row[field.type]
