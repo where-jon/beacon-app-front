@@ -6,7 +6,7 @@
         <b-col md="8" offset-md="2">
           <b-form>
             <b-form-group>
-              <label v-t="'label.zoneType'" />
+              <label v-t="'label.zoneCategoryName'" />
               <v-select :options="categoryOptions" :on-change="categoryChange" required class="ml-2"></v-select>
             </b-form-group>
             <b-form-group>
@@ -41,6 +41,7 @@ import { EXB, DISP, APP } from '../../sub/constant/config'
 import breadcrumb from '../../components/breadcrumb.vue'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import reloadmixinVue from '../../components/reloadmixin.vue'
+import { getCharSet } from '../../sub/helper/CharSetHelper'
 
 export default {
   mixins: [reloadmixinVue],
@@ -181,6 +182,12 @@ export default {
           paramHistoryType,
         ''
       )
+      if (list == null || list.length == 0) {
+        return []
+      }
+      list.forEach(data => {
+        delete data['sensorHistoryId']
+      })
       return list
     },
     async download() {
@@ -190,7 +197,8 @@ export default {
       }
       HtmlUtil.fileDL(
         "temperatureHistory.csv",
-        Util.converToCsv(this.temperatureHistoryData)
+        Util.converToCsv(this.temperatureHistoryData),
+        getCharSet(this.$store.state.loginId)
       )
     },
     ...mapMutations([

@@ -1,3 +1,5 @@
+import Encoding from 'encoding-japanese'
+import { str2Array } from './Util'
 
 export const addClass = (e, cls) => e && e.target.classList && e.target.classList.add(cls)
 
@@ -32,10 +34,17 @@ export const getRect = (selector, key) => {
   return elm.getBoundingClientRect()
 }
 
-export const fileDL = (name, content) => {
+export const fileDL = (name, content, charSet = "UTF8") => {
   var e = document.createElement("a")
-  e.setAttribute("href", "data:text/plain;charset=utf-8," + encodeURIComponent(content))
-  e.setAttribute("download", name)
+  const encodeString = Encoding.convert(str2Array(content),
+    { from: "UNICODE", to: charSet }
+  )
+  var uint8_array = new Uint8Array( encodeString );
+  var blob = new Blob([ uint8_array ], { type: 'text/csv' });
+
+  window.URL = window.URL || window.webkitURL;
+  e.href = window.URL.createObjectURL(blob);
+  e.download = name;
   e.style.display = "none"
   document.body.appendChild(e)
   e.click()

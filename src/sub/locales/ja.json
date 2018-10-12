@@ -53,6 +53,7 @@
     "dt": "日時",
     "no": "No.",
     "theme": "テーマ",
+    "charSet": "文字セット",
 
     "---------------- App exbeacon ---------------":"",
 
@@ -125,6 +126,9 @@
     "earthcolor": "アースカラー",
     "autumn": "オータム",
     "vivid": "ビビッド",
+
+    "UTF8": "UTF-8",
+    "SJIS": "Shift-JIS",
     "---------------- App specific ---------------":"",
     
     "setting": "設定",
@@ -226,6 +230,7 @@
     "paleblue": "水",
     "yellow": "黄",
     "white": "白",
+    "black": "黒",
     "changeSlow": "切替遅く",
     "changeFast": "切替速く",
     "blinkSlow": "点滅遅く",

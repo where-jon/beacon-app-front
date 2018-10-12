@@ -149,9 +149,9 @@ export default {
       }
     },
     setExbPosition() {
-      this.positionedExb = _(this.exbs).filter((exb) => {
+      this.positionedExb = _.filter(this.exbs, (exb) => {
         return exb.location.areaId == this.selectedArea.value && exb.location.x && exb.location.y > 0
-      }).map((exb) => _.cloneDeep(exb)).value()
+      })
 
       this.exbOptions = _(this.exbs).filter((val) => {
         return val.enabled && (!val.location.x || !val.location.y || (val.location.x && val.location.y <= 0))
@@ -165,11 +165,21 @@ export default {
         return
       }
 
+      if (this.exbCon) {
+        this.exbCon.removeAllChildren()
+      }
+      else {
+        this.exbCon = new Container()
+      }
+
       this.positionedExb.forEach((exb) => {
-        exb.location.x *= this.mapImageScale
-        exb.location.y *= this.mapImageScale
+        exb.x = exb.location.x * this.mapImageScale
+        exb.y = exb.location.y * this.mapImageScale
         this.showExb(exb)
       })
+
+      this.stage.addChild(this.exbCon)
+      this.stage.update()
 
       this.forceUpdateRealWidth()
     },
@@ -193,8 +203,8 @@ export default {
 
       exbBtn.deviceId = exb.deviceId
       exbBtn.exbId = exb.exbId
-      exbBtn.x = exb.location.x
-      exbBtn.y = exb.location.y
+      exbBtn.x = exb.x
+      exbBtn.y = exb.y
       exbBtn.on('pressmove', (evt) => {
         evt.currentTarget.set({
             x: evt.stageX,
@@ -205,8 +215,8 @@ export default {
 
       exbBtn.on('pressup', (evt) => {
         console.log(evt.stageX, evt.stageY)
-        exb.location.x = evt.stageX
-        exb.location.y = evt.stageY
+        exb.x = evt.stageX
+        exb.y = evt.stageY
         this.isChanged = true
         exb.isChanged = true
       })
@@ -216,8 +226,8 @@ export default {
         that.$root.$emit('bv::show::modal', 'modalDeleteConfirm')
       })
 
-      stage.addChild(exbBtn)
-      stage.update()
+      this.exbCon.addChild(exbBtn)
+
     },
     ratioSettingStart() {
       this.settingStart = !this.settingStart
@@ -289,25 +299,27 @@ export default {
         this.showMapImage()
       }      
     },
-    showExbOnMap(val, x = 30, y = 20) {
+    showExbOnMap(val, x = 50, y = 30) {
       if (!val || !val.value) {
         return
       }
       let exb = _.find(this.exbs, (exb) => exb.exbId == val.value)
       if (!exb) return
 
-      let cExb = _.cloneDeep(exb)
-      let loc = cExb.location
+      let loc = exb.location
       if (loc.x <= 0) {
         loc.x = x
       }
       if (loc.y <= 0) {
         loc.y = y
       }
+      exb.x = loc.x
+      exb.y = loc.y
       this.isChanged = true
-      this.positionedExb.push(cExb)
-      this.exbOptions = this.exbOptions.filter((val) => val.value != cExb.exbId)
-      this.showExb(cExb)
+      this.positionedExb.push(exb)
+      this.exbOptions = this.exbOptions.filter((val) => val.value != exb.exbId)
+      this.showExb(exb)
+      this.stage.update()
     },
     bulkAdd() {
       let counter = 0
@@ -325,7 +337,7 @@ export default {
     deleteExbDone(evt) {
       this.positionedExb = this.positionedExb.filter((exb) => exb.deviceId != this.deleteTarget.deviceId)
       this.exbOptions.push({label: "" + this.deleteTarget.deviceId, value: this.deleteTarget.exbId})
-      this.stage.removeChild(this.deleteTarget)
+      this.exbCon.removeChild(this.deleteTarget)
       this.stage.update()
     },
     async save() {
@@ -337,14 +349,17 @@ export default {
         let param = []
         this.positionedExb.forEach((exb) => {
           if (exb.isChanged) {
-            param.push({locationId: exb.location.locationId, areaId: this.selectedArea.value, x: exb.location.x / this.mapImageScale, y: exb.location.y / this.mapImageScale})
+            exb.location = {locationId: exb.location.locationId, areaId: this.selectedArea.value, x: exb.x / this.mapImageScale, y: exb.y / this.mapImageScale}
+            param.push(exb.location)
             exb.isChanged = false
           }
         })
         this.exbs.forEach((exb) => { // deleted
           if (exb.location.areaId == this.selectedArea.value) {
             if (!this.positionedExb.find((pExb) => pExb.exbId == exb.exbId)) {
-              param.push({locationId: exb.location.locationId, areaId: null, x: null, y: null})
+              exb.location = {locationId: exb.location.locationId, areaId: null, x: null, y: null}
+              exb.isChanged = false
+              param.push(exb.location)
             }
           }
         })
@@ -357,6 +372,7 @@ export default {
         }
         this.message = this.$i18n.t('message.completed', {target: this.$i18n.t('label.save')})
         this.showInfo = true
+        this.isChanged = false
       } catch (e) {
         if (e.key) {
           this.message = this.$i18n.t('message.' + e.type, {key: this.$i18n.t('label.' + Util.snake2camel(e.key)), val: e.val})
