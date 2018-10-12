@@ -178,11 +178,6 @@
     "sensorName": "センサ名",
     "detectCount": "検知回数",
     
-    "thing": "物",
-    "thingCd": "管理コード",
-    "thingId": "物ID",
-    "thingName": "名前",
-    
     "proximity": "交流",
     "proximityId": "交流ID",
     "attendance": "出退勤:",

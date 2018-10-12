@@ -50,19 +50,19 @@ export default {
   methods: {
     getModeText(roleFeature){
       const modeName = ROLE_FEATURE.getModeOptions().find((val) => val.value === roleFeature.mode)
-      return modeName? modeName.text: undefined
+      return modeName? modeName.text: null
     },
     getEnableName(feature){
       const enabled = FEATURE.getEnabledOptions().find((val) => val.value === feature.enabled)
-      return enabled? enabled.text: undefined
+      return enabled? enabled.text: null
     },
     getFeatureTypeName(feature){
       const featureType = FEATURE.getTypeOptions().find((val) => val.value === feature.featureType)
-      return featureType? featureType.text: undefined
+      return featureType? featureType.text: null
     },
     getFeatureInfo(features, roleFeature){
       const feature = features.find((val) => val.featureId === roleFeature.roleFeaturePK.featureId)
-      return feature === undefined? {}: {
+      return feature == null? {}: {
         key: `${roleFeature.roleFeaturePK.roleId}/${roleFeature.roleFeaturePK.featureId}`,
         featureId: roleFeature.roleFeaturePK.featureId,
         featureName: feature.featureName,

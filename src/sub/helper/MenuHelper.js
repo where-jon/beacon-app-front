@@ -52,7 +52,7 @@ export const getThemeClasses = (selectedTheme) => {
 }
 
 export const isShowMenu = (page, role) => {
-  if ((typeof page.roles) === 'undefined' || page.roles.length < 1) {
+  if (page.roles == null || page.roles.length < 1) {
     return true
   }
 
@@ -60,5 +60,5 @@ export const isShowMenu = (page, role) => {
     return role === e
   })
 
-  return (typeof result) !== 'undefined'
+  return result != null
 }

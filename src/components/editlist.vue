@@ -70,7 +70,7 @@ export default {
   },
   methods: {
     getName(id) {
-      return Util.hasValue(id)? this.$i18n.t(`label.${id.replace("\.", "_")}`): undefined
+      return Util.hasValue(id)? this.$i18n.t(`label.${id.replace("\.", "_")}`): null
     },
     useValueType(row, field) {
       return field.type && row[field.type]

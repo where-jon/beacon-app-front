@@ -76,8 +76,8 @@ export default {
       form: ViewHelper.extract(this.$store.state.app_service.user, ["userId", "loginId", "name", "email", "roleId", "description"]),
       roles: [],
       role: null,
-      pass: undefined,
-      passConfirm: undefined,
+      pass: null,
+      passConfirm: null,
       passMinLength: 3,
       passMaxLength: 16,
       items: [
@@ -166,7 +166,7 @@ export default {
         event.preventDefault()
         return false
       }
-      this.form.userId = Util.hasValue(this.form.userId) ? String(this.form.userId) : undefined
+      this.form.userId = Util.hasValue(this.form.userId) ? String(this.form.userId) : null
       this.form.roleId = String(this.role)
       this.form.pass = this.pass
       this.register(again)

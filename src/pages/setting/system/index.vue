@@ -62,7 +62,7 @@ export default {
         }
         const categorySettings = {}
         _.forEach(settings, (value, key) => {
-          if(categorySettings[value.category] === undefined){
+          if(categorySettings[value.category] == null){
             categorySettings[value.category] = []
           }
           categorySettings[value.category].push({
