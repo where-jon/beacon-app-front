@@ -7,11 +7,11 @@
 
     <!-- table -->
     <b-form @submit="onSubmit" v-if="show">
-      <div v-for="tableName in tableNames" :key="tableName" class="card shadow-sm mb-3">
-        <label class="card-header" v-t="tableName" />
+      <div v-for="categoryId in categoryIds" :key="categoryId" class="card shadow-sm mb-3">
+        <label class="card-header" v-t="getName(categoryId)" />
         <div class="card-body">
-          <div v-for="row in multiList[tableName]" :key="row.id">
-            <b-form-group :label="row.key" :description="row.description">
+          <div v-for="row in multiList[categoryId]" :key="row.id">
+            <b-form-group :label="getName(row.key)" :description="row.description">
               <span v-for="field in fields" :key="field.key">
                 <span v-if="useValueType(row, field)">
                   <span v-if="usePullDown(row, field)">
@@ -59,7 +59,7 @@ export default {
       const theme = getButtonTheme(this.$store.state.loginId)
       return 'outline-' + theme
     },
-    tableNames() {
+    categoryIds() {
       return Object.keys(this.multiList)
     },
   },
@@ -69,6 +69,9 @@ export default {
     return 'outline-' + theme
   },
   methods: {
+    getName(id) {
+      return this.$i18n.t(`label.${id}`)
+    },
     useValueType(row, field) {
       return field.type && row[field.type]
     },

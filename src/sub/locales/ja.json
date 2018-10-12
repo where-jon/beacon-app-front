@@ -267,6 +267,26 @@
     "objectThing": "物",
     "objectZone": "ゾーン",
 
+    "general": "一般",
+    "security": "セキュリティ",
+    "communication": "通信",
+
+    "logKeepTime": "ログ保持期間",
+    "monitorRefreshTime": "モニタリング更新間隔",
+    "passwordChangeable": "パスワード変更機能",
+    "passwordCheck": "パスワード強度チェック",
+    "updatePositionEffect": "位置変更時エフェクト",
+    "timeZone": "タイムゾーン",
+    "displayRefreshTime": "画面更新間隔",
+    "slackWebhooc": "Slack Webhook登録",
+    "mailAddress": "通知先メールアドレス",
+    "ipAddressFilter": "IPアドレスフィルタ",
+
+    "apiBaseUrl": "API設定・エンドポイント",
+    "apiRefreshTime": "API設定・更新間隔",
+
+    "hideTime": "未受信状態判定時間",
+
     "dummy": ""
   },
   "message": {

@@ -66,8 +66,8 @@ export default {
             categorySettings[value.category] = []
           }
           categorySettings[value.category].push({
-            id: value.settingId,
             ...value,
+            id: value.settingId,
           })
         })
         this.categorySettings = categorySettings
@@ -83,10 +83,6 @@ export default {
         this.categorySettings[key].map((val) => {
           entity.push({
             settingId: val.settingId,
-            category: val.category,
-            key: val.key,
-            description: val.description,
-            valType: val.valType,
             value: val.value,
           })
         })
