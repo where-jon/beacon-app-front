@@ -48,7 +48,6 @@ export const authByAppService = async (loginId, password, success, err) => {
 
         // get role feature list
         let user = await HttpHelper.getAppService('/meta/user/currentUser')
-        console.log(user)
         let featureList = _(user.role.roleFeatureList).map((roleFeature) => {
             return {path: roleFeature.feature.path, mode: roleFeature.mode}
         }).sortBy((val) => val.path.length * -1).value()
