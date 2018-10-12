@@ -17,6 +17,7 @@ export const APP = {
   LOGIN_PAGE: "/login", // if no login then /
   LOGIN_MODE: LOGIN_MODE.APP_SERVICE,
   UNDETECT_TIME: 10 * 60 * 1000, // used on telemetry 
+  MALFUNCTION_TIME: 30 * 60 * 1000, // used on monitor gateway and exb
   AREA_THUMBNAIL_MAX: 200,
   USE_THERMOPILE: true,
   LOG_KEEP_TIME: 30,
@@ -37,7 +38,7 @@ export const LOCAL_LOGIN = { // local login md5 hash of id:pass // TODO: add Rol
 }
 
 export const APP_SERVICE = { // used if APP.LOGIN_MODE == APP_SERVICE
-  BASE_URL: "http://localhost:8080",
+  BASE_URL: "https://exbeacon-evalkit-service.herokuapp.com",
   REFRESH_TIME: 10 * 60 * 1000,
 }
 export const EXCLOUD_BASE_URL = "https://nsome8q880.execute-api.ap-northeast-1.amazonaws.com/prod" // used if APP.LOGIN_MODE != APP_SERVICE

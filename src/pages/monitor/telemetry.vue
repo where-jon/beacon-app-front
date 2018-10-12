@@ -48,6 +48,7 @@ import VueScrollingTable from "vue-scrolling-table"
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import reloadmixinVue from '../../components/reloadmixin.vue'
+import gatewayVue from './gateway.vue'
 
 export default {
   mixins: [reloadmixinVue],

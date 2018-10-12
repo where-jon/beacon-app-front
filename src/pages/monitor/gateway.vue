@@ -15,7 +15,7 @@
         </thead>
         <tbody>
           <tr v-for="(gateway, index) in gateways" :key="index" :class="{undetect: isUndetect(gateway.updated)}">
-            <td scope="row" v-for="(val, key) in gateway" :key="key" >{{ val }}</td>
+            <td scope="row" v-for="(val, key) in gateway" :key="key">{{ val }}</td>
           </tr>
         </tbody>
       </table>
@@ -33,6 +33,7 @@ import { EXB, DISP, APP } from '../../sub/constant/config'
 import breadcrumb from '../../components/breadcrumb.vue'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import reloadmixinVue from '../../components/reloadmixin.vue'
+import moment from 'moment'
 
 export default {
   mixins: [reloadmixinVue],
@@ -55,6 +56,7 @@ export default {
       labelNo: this.$i18n.t('label.no'),
       labelDeviceId: this.$i18n.t('label.deviceId'),
       labelTimestamp: this.$i18n.t('label.final-receive-timestamp'),
+      labelState: this.$i18n.t('label.state'),
     }
   },
   props: {
@@ -98,7 +100,13 @@ export default {
         if (payload && payload.done) {
           payload.done()
         }
-        console.log(gateways[0])
+        const currentTime = new Date().getTime()
+        gateways = gateways.map((e) => {
+          const timestamp = formattedDateToDatetime(e.updated)
+          const state = currentTime - timestamp < APP.MALFUNCTION_TIME ?
+          this.$i18n.t('label.normal') : this.$i18n.t('label.malfunction')
+          return { ...e, state: state}
+        })
         this.replaceMonitor({gateways})
       }
       catch(e) {
@@ -114,7 +122,8 @@ export default {
       return updated == "" || new Date() - new Date(updated) > APP.UNDETECT_TIME
     },
     getTableHeaders() {
-      return !this.isDev ? [this.labelNo,this.labelDeviceId,this.labelTimestamp] : [this.labelNo,'deviceid','updated']
+      return !this.isDev ? [this.labelNo,this.labelDeviceId,this.labelTimestamp,this.labelState]
+      : [this.labelNo,'deviceid','updated']
     },
     download() {
       HtmlUtil.fileDL("gateway.csv", Util.converToCsv(this.gateways))
@@ -126,6 +135,11 @@ export default {
       'replaceMonitor', 
     ]),
   }
+}
+
+export const formattedDateToDatetime = (formatted) => {
+  return moment(formatted.replace('/', '-').replace('/','-').replace(' ', 'T'))
+  .toDate().getTime()
 }
 </script>
 
