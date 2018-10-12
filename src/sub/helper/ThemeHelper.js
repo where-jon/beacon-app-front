@@ -10,8 +10,7 @@ export const getTheme = (loginId) => {
     return 'default'
   }
   const theme = window.localStorage.getItem(loginId + '-theme')
-  console.log('############ theme = ' + theme)
-  return theme && (typeof theme) !== 'undefined' ? theme : 'default'
+  return theme && theme !== 'undefined' ? theme : 'default'
 }
 
 export const getThemeClasses = (loginId) => {
