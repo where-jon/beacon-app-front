@@ -11,7 +11,7 @@
         $i18n.t('message.updateFailed', {
           target: $i18n.t('label.login-user-profile'),
           code: 0
-        }),
+        })
         }}</b-alert>
       <b-row>
         <b-col md="10" offset-md="1">
@@ -39,6 +39,10 @@
             <b-form-group>
               <label v-t="'label.theme'" />
               <b-form-select v-model="selectedTheme" :options="themes" class="mb-3" @change="themeSelected"/>
+            </b-form-group>
+            <b-form-group>
+              <label v-t="'label.charSet'" />
+              <b-form-select v-model="selectedCharSet" :options="charSets" class="mb-3" @change="charSetSelected"/>
             </b-form-group>
             <b-form-group>
               <b-button type="button" :variant="theme" class="btn-block" 
@@ -88,8 +92,9 @@
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import breadcrumb from '../../../components/breadcrumb.vue'
 import pagetitle from '../../../components/pagetitle.vue'
-import { DISP, THEME, PASSWORD_LENGTH } from '../../../sub/constant/config'
+import { DISP, THEME, CHAR_SET, PASSWORD_LENGTH } from '../../../sub/constant/config'
 import { getTheme, getButtonTheme } from '../../../sub/helper/ThemeHelper'
+import { getCharSet } from '../../../sub/helper/CharSetHelper'
 import * as AuthHelper from '../../../sub/helper/AuthHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as HttpHelper from '../../../sub/helper/HttpHelper'
@@ -118,6 +123,8 @@ export default {
       ],
       themes: [],
       selectedTheme: null,
+      charSets: [],
+      selectedCharSet: null,
       loginUser: {
         userId: null,
         loginId: null,
@@ -163,8 +170,17 @@ export default {
       return item.name === theme
     })
     this.selectedTheme = selected != null? selected.id : THEME[0].id
+    const charSet = getCharSet(this.$store.state.loginId)
+    const selectedCs = CHAR_SET.find((item) => {
+      return item.name === charSet
+    })
+    this.selectedCharSet = selectedCs != null ? selectedCs.id : CHAR_SET[0].id
     const that = this
     this.themes = THEME.map((e) => {
+      const text = that.$i18n.t('label.' + e.name)
+      return { value: e.id, text: text }
+    })
+    this.charSets = CHAR_SET.map((e) => {
       const text = that.$i18n.t('label.' + e.name)
       return { value: e.id, text: text }
     })
@@ -179,6 +195,14 @@ export default {
       // storeを参照しているため、テーマの変更を検知する
       this.replaceSetting({theme})
       window.localStorage.setItem(this.$store.state.loginId + '-theme', theme)
+    },
+    charSetSelected (selected) {
+      const cs = CHAR_SET.find((e) => {
+        return e.id === selected
+      })
+      const charSet = cs != null ? cs.name : CHAR_SET[0].name
+      this.replaceSetting({charSet})
+      window.localStorage.setItem(this.$store.state.loginId + '-charSet', charSet)
     },
     handleUpdateConfirmPass (value) {
       const passwordUpdate = this.loginUser.passwordUpdate 
