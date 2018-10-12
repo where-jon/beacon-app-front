@@ -26,14 +26,19 @@ export default {
         id: 'personId',
         editPath: '/master/person/edit',
         appServicePath: '/basic/person',
+        bulkEditPath: '/master/person/bulkEdit',
+        csvOut: true,
         fields: addLabelByKey(this.$i18n, [ 
           {key: "personId", sortable: true, tdClass: "thumb-rowdata"},
           {key: "thumbnail", tdClass: "thumb-rowdata" },
           {key: "personCd", sortable: true , tdClass: "thumb-rowdata"},
           {key: "personName", sortable: true , tdClass: "thumb-rowdata"},
-          {key: "ruby", sortable: true, tdClass: "thumb-rowdata"},
+          {key: "extValue.ruby", label: "ruby", sortable: true, tdClass: "thumb-rowdata"},
+          {key: "displayName", sortable: true, tdClass: "thumb-rowdata"},
+          {key: "group.groupName", label: "group", sortable: true, tdClass: "thumb-rowdata"},
+          {key: "category.categoryName", label: "category", sortable: true, tdClass: "thumb-rowdata"},
+          {key: "extValue.post", label: "post", tdClass: "thumb-rowdata"},
           {key: "txId", sortable: true, 'class': 'text-center' , tdClass: "thumb-rowdata"},
-          {key: "post" , tdClass: "thumb-rowdata"},
           {key: "actions", thStyle: {width:'130px !important'} , tdClass: "thumb-rowdata"}
         ]),
         initTotalRows: this.$store.state.app_service.persons.length,
@@ -54,6 +59,8 @@ export default {
     ...mapState('app_service', [
       'persons',
       'personImages',
+      'groups',
+      'categories',
     ]),
   },
   methods: {
