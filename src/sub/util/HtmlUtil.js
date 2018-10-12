@@ -34,7 +34,7 @@ export const getRect = (selector, key) => {
   return elm.getBoundingClientRect()
 }
 
-export const fileDL = (name, content, charSet) => {
+export const fileDL = (name, content, charSet = "UTF8") => {
   var e = document.createElement("a")
   const encodeString = Encoding.convert(str2Array(content),
     { from: "UNICODE", to: charSet }
