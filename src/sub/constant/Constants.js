@@ -277,6 +277,12 @@ export const MENU = [
         feature: '/core/personal',
         icon: 'fas fa-user-cog',
       },
+      {
+        key: 'system',
+        path: 'system',
+        feature: '/meta/system',
+        icon: 'fas fa-cogs',
+      },
     ]
   },
   {

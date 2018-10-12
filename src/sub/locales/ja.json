@@ -211,6 +211,8 @@
     "personal": "個人設定",
     "changePassword": "パスワードを変更する",
   
+    "system": "システム設定",
+
     "region": "リージョン",
     "regionId": "リージョンID",
     "regionName": "リージョン名",
