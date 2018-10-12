@@ -158,7 +158,7 @@ export default {
   },
   created () {
     this.setLoginUser()
-    const theme = getTheme(this.loginId)
+    const theme = getTheme(this.$store.state.loginId)
     const selected = THEME.find((item) => {
       return item.name === theme
     })
@@ -178,7 +178,7 @@ export default {
       // storeにテーマをセット。navbar,sidebar,menu-itemのcomputedプロパティにて
       // storeを参照しているため、テーマの変更を検知する
       this.replaceSetting({theme})
-      window.localStorage.setItem(this.loginId + '-theme', theme)
+      window.localStorage.setItem(this.$store.state.loginId + '-theme', theme)
     },
     handleUpdateConfirmPass (value) {
       const passwordUpdate = this.loginUser.passwordUpdate 
