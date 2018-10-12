@@ -143,3 +143,8 @@ export const MONITOR_TX = {
   ABSENT: 20 * 60 * 1000,
   UNDETECT: 24 * 60 * 60 * 1000
 }
+
+export const PASSWORD_LENGTH = {
+  BOTTOM: 4,
+  LIMIT: 21
+}

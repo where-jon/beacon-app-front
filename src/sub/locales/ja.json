@@ -28,6 +28,8 @@
     "download": "ダウンロード",
     "csvFile": "CSVファイル",
     "deleteThumbnail": "画像を削除",
+    "cancel": "キャンセル",
+    "modify": "変更",
 
     "---------------- App common ---------------":"",
     "login": "ログイン",
@@ -123,7 +125,6 @@
     "earthcolor": "アースカラー",
     "autumn": "オータム",
     "vivid": "ビビッド",
-
     "---------------- App specific ---------------":"",
     
     "setting": "設定",
@@ -155,6 +156,8 @@
     "tel": "電話番号",
 
     "password": "パスワード",
+    "passwordCurrent": "現在のパスワード",
+    "passwordUpdate": "変更パスワード",
     "passwordConfirm": "確認パスワード",
     "name": "名前",
     "email": "email",
@@ -209,6 +212,7 @@
     "tenantName": "テナント名",
 
     "personal": "個人設定",
+    "changeProfilePassword": "プロフィール・パスワードを変更する",
     "changePassword": "パスワードを変更する",
   
     "region": "リージョン",
@@ -285,7 +289,9 @@
     "overLength": "{target}には{length}以内の文字列を入力してください",
     "selectFile": "ファイルを選択してください",
     "required": "{target}を入力してください。",
-    "validatePassword": "パスワードと確認パスワードが一致していません。",
+    "notMatchCureentPassword": "パスワードが違います",
+    "invalidPassword": "パスワードの形式が不正です",
+    "notMatchPassword": "変更パスワードと確認パスワードが一致していません。",
     "lengthRange": "{target}は{min}文字以上{max}文字以下で指定してください。",
     "emptyFile": "ファイルの中身が空です。",
     "invalidFile": "不正なファイルです。",
@@ -300,6 +306,7 @@
     "bulkNotNullFailed": "{line}行目: {col}は必須です。",
     "bulkExistFailed": "{line}行目: {col}（{value}）は存在していません。",
     "monthDayTemperature": "{month}月{day}日の温湿度",
+    "invalidLoginId": "ログインIDは英数記号を指定してください",
 
     "dummy": "" 
   }
