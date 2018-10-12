@@ -27,16 +27,16 @@ export default {
         editPath: '/master/exb/edit',
         bulkEditPath: '/master/exb/bulkedit',
         appServicePath: '/core/exb',
+        csvOut: true,
         fields: addLabelByKey(this.$i18n, [ 
           {key: "exbId", sortable: true },
           {key: "deviceId", sortable: true },
           {key: "deviceIdX", sortable: true },
-          {key: "location.locationName", label:'locationName', sortable: true,},
-          {key: "location.displayName", label:'displayName', sortable: true,},
-          {key: "location.posId", label:'posId', sortable: true,},
-          {key: "location.areaId", label:'areaId', sortable: true,},
-          {key: "location.x", label:'locationX', sortable: true,},
-          {key: "location.y", label:'locationY', sortable: true,},
+          {key: "locationName", label:'locationName', sortable: true,},
+          {key: "posId", label:'posId', sortable: true,},
+          {key: "areaName", label:'areaName', sortable: true,},
+          {key: "x", label:'locationX', sortable: true,},
+          {key: "y", label:'locationY', sortable: true,},
           {key: "actions", thStyle: {width: '130px !important'} }
         ]),
         initTotalRows: this.$store.state.app_service.exbs.length
@@ -64,8 +64,19 @@ export default {
       try {
         this.replace({showProgress: true})
         let exbs = await AppServiceHelper.fetchList('/core/exb/withLocation', 'exbId')
+        console.log(exbs)
         exbs = exbs.map((exb) => {
-          return {...exb, deviceIdX: exb.deviceId.toString(16).toUpperCase()}
+          const location = exb.location
+          const area = location? location.area: undefined
+          return {
+            ...exb,
+            deviceIdX: exb.deviceId.toString(16).toUpperCase(),
+            locationName: location? location.locationName: undefined,
+            posId: location? location.posId: undefined,
+            areaName: area? area.areaName: undefined,
+            x: location? location.x: undefined,
+            y: location? location.y: undefined,
+          }
         })
         if (payload && payload.done) {
           payload.done()
