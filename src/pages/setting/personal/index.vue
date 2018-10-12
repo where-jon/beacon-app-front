@@ -40,6 +40,7 @@
               <label v-t="'label.theme'" />
               <b-form-select v-model="selectedTheme" :options="themes" class="mb-3" @change="themeSelected"/>
             </b-form-group>
+            <!-- プロフィール・パスワードを変更するボタン -->
             <b-form-group>
               <label v-t="'label.charSet'" />
               <b-form-select v-model="selectedCharSet" :options="charSets" class="mb-3" @change="charSetSelected"/>
@@ -153,7 +154,7 @@ export default {
   computed: {
     theme () {
       const storeTheme = this.$store.state.setting.theme
-      return 'outline-' + getButtonTheme(this.loginId)
+      return 'outline-' + getButtonTheme(this.$store.state.loginId)
     },
     hasError () {
       return Object.keys(this.errorMessages)
@@ -195,6 +196,10 @@ export default {
       // storeを参照しているため、テーマの変更を検知する
       this.replaceSetting({theme})
       window.localStorage.setItem(this.$store.state.loginId + '-theme', theme)
+    },
+    theme () {
+      const theme = getTheme(this.$store.state.loginId)
+      return 'outline-' + theme
     },
     charSetSelected (selected) {
       const cs = CHAR_SET.find((e) => {

@@ -16,7 +16,7 @@
             <tr v-for="(telemetry, index) in telemetrys" :key="index">
               <td scope="row" v-for="(val, key) in telemetry" :key="key" :class="getTdClass(index, telemetry.timestamp, key)">
                 <i :class="getPowerLevelClass(val)" v-if="key === label_powerLevel"></i>
-                {{ val + (key !== label_powerLevel ? '' : '%') }}
+                {{ val }}
               </td>
             </tr>
           </tbody>
@@ -60,7 +60,7 @@ export default {
     return {
       items: [
         {
-          text: this.$i18n.t('label.master'),
+          text: this.$i18n.t('label.monitor'),
           active: true
         },
         {
