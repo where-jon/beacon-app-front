@@ -162,7 +162,7 @@ export default {
     const selected = THEME.find((item) => {
       return item.name === theme
     })
-    this.selectedTheme = (typeof selected) !== 'undefined' ? selected.id : THEME[0].id
+    this.selectedTheme = selected != null? selected.id : THEME[0].id
     const that = this
     this.themes = THEME.map((e) => {
       const text = that.$i18n.t('label.' + e.name)
@@ -174,7 +174,7 @@ export default {
       const t = THEME.find((e) => {
         return e.id === selected
       })
-      const theme = (typeof t !== 'undefined') ? t.name : 'default'
+      const theme = t != null ? t.name : 'default'
       // storeにテーマをセット。navbar,sidebar,menu-itemのcomputedプロパティにて
       // storeを参照しているため、テーマの変更を検知する
       this.replaceSetting({theme})

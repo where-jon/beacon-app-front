@@ -61,7 +61,7 @@ export default {
   methods: {
     getCategoryTypeName(category){
       const categoryTypeName = CATEGORY.getTypes().find((tval) => tval.value === category.categoryType)
-      return categoryTypeName !== undefined? categoryTypeName.text: undefined
+      return categoryTypeName != null? categoryTypeName.text: null
     },
     async fetchData(payload) {
       try {

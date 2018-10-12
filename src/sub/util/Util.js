@@ -8,7 +8,7 @@ export const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 
 export const snake2camel = (str) => str.replace(/_./g, (s) => s.charAt(1).toUpperCase())
 
-export const addNoSelect = (option) => option.unshift({value: undefined, text: ""})
+export const addNoSelect = (option) => option.unshift({value: null, text: ""})
 
 export const getByteLength = (str) => encodeURI(str == null? "": str).replace(/%../g, "*").length
 
@@ -28,7 +28,7 @@ export const colorCd4display = (str, defaultColor) => {
 }
 
 export const isArray = (obj) => Object.prototype.toString.call(obj) === '[object Array]'
-export const hasValue = (obj) => obj !== undefined && obj !== null && obj.length !== 0
+export const hasValue = (obj) => obj != null && obj.length !== 0
 export const detectEncoding = (str) => jschardet.detect(str)
 
 export const csv2Obj = (str) => {

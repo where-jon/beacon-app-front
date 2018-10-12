@@ -26,7 +26,7 @@ export default {
       backPath: '/master/region',
       appServicePath: '/core/region',
       form: {
-        csvFile: undefined,
+        csvFile: null,
       },
       items: [
         {

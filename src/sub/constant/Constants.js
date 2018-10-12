@@ -189,12 +189,6 @@ export const MENU = [
         icon: 'fas fa-users',
       },
       {
-        key: 'thing',
-        path: 'thing',
-        feature: '/basic/thing',
-        icon: 'fas fa-cube',
-      },
-      {
         key: 'user',
         path: 'user',
         feature: '/core/user',
@@ -295,6 +289,12 @@ export const MENU = [
         path: 'personal',
         feature: '/core/personal',
         icon: 'fas fa-user-cog',
+      },
+      {
+        key: 'system',
+        path: 'system',
+        feature: '/meta/system',
+        icon: 'fas fa-cogs',
       },
     ]
   },

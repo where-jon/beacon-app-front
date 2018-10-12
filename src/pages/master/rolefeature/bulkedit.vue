@@ -27,7 +27,7 @@ export default {
       backPath: '/master/role/edit',
       appServicePath: '/meta/roleFeature',
       form: {
-        csvFile: undefined,
+        csvFile: null,
       },
       roleFeature:{
         roleId: this.$store.state.app_service.role.roleId

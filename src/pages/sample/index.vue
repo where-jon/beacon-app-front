@@ -16,7 +16,7 @@ import axios from 'axios'
 
 export default {
   asyncData(context) {
-    console.log(context.req ? context.req.headers['user-agent'] : (typeof navigator !== 'undefined' ? navigator.userAgent : 'No user agent (generated)'))
+    console.log(context.req ? context.req.headers['user-agent'] : navigator != null ? navigator.userAgent : 'No user agent (generated)')
     // We can return a Promise instead of calling the callback
     return axios.get('https://jsonplaceholder.typicode.com/posts?aadd')
       .then((res) => {

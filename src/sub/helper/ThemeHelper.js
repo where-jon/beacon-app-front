@@ -6,7 +6,7 @@ export const getButtonTheme = (loginId) => {
 }
 
 export const getTheme = (loginId) => {
-  if (!loginId || (typeof loginId) === 'undefined') {
+  if (!loginId || loginId == null) {
     return 'default'
   }
   const theme = window.localStorage.getItem(loginId + '-theme')
