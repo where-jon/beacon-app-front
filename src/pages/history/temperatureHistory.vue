@@ -7,11 +7,11 @@
           <b-form>
             <b-form-group>
               <label v-t="'label.zoneCategoryName'" />
-              <v-select :options="categoryOptions" :on-change="categoryChange" required class="ml-2"></v-select>
+              <v-select v-model="vModelCategory" :options="categoryOptions" :on-change="categoryChange" required class="ml-2"></v-select>
             </b-form-group>
             <b-form-group>
               <label v-t="'label.zoneName'" />
-              <v-select v-model="zone" :options="zoneOptions" required class="ml-2"></v-select>
+              <v-select v-model="vModelZone" :options="zoneOptions" :on-change="zoneChange" required class="ml-2"></v-select>
             </b-form-group>
             <b-form-group>
               <label v-t="'label.historyDateFrom'" />
@@ -59,23 +59,28 @@ export default {
           active: true
         }
       ],
+      vModelCategory: null,
+      vModelZone: null,
+      vModelYearMonth: null,
+      vModelDay: null,
+      categoryOptionList: [{label:"", value:null}],
+      zoneOptionList: [],
+      //
+      zoneCategorys: [],
       categoryId: null,
-      categoryList: [{label:"", value:null}],
-      zone: null,
-      zones: null,
-      zoneList: [{label:"", value:null}],
-      temperatureHistoryData: null,
+      zoneId: null,
       dateFrom: 0,
-      dateTo: 0
+      dateTo: 0,
+      temperatureHistoryData: null,
     }
     
   },
   computed: {
     categoryOptions() {
-      return this.categoryList
+      return this.categoryOptionList
     },
     zoneOptions() {
-      return this.zoneList
+      return this.zoneOptionList
     },
     typeOptions() {
       return [
@@ -96,59 +101,61 @@ export default {
     this.replace({title: this.$i18n.t('label.temperatureHistory')})
   },
   methods: {
-    async fetchCategory() {
+    async fetchZoneCategoryList() {
       try {
-        let categorys = await AppServiceHelper.fetchList2(
-          '/basic/category',
-          '/basic/category/',
+        this.zoneCategorys = await AppServiceHelper.fetchList2(
+          '/core/zone/categoryList',
+          '/core/zone/categoryList',
           'categoryId'
         )
-        this.categoryList = []
-        categorys.forEach(elm => {
-          if (elm.categoryType == 2) {
-            this.categoryList.push({
-              label: elm.categoryName,
-              value: elm.categoryId/1
-            })
+        var categorys = {}
+        this.zoneCategorys.forEach(elm => {
+          if (elm.categoryId != 0) {
+            categorys[elm.categoryId] = elm.categoryName
           }
         })
-      } catch(e) {
-        console.error(e)
-      }
-    },
-    async fetchZone() {
-      try {
-        this.zones = await AppServiceHelper.fetchList2(
-          '/core/zone',
-          '/core/zone',
-          'zoneId'
-        )
-        this.zoneList = []
-        this.zones.forEach(elm => {
-          this.zoneList.push({
-            label: elm.zoneName,
-            value: elm.zoneId
-          })          
-        })
+        this.categoryOptionList = []
+        for (var catId in categorys) {
+          this.categoryOptionList.push({
+            label: categorys[catId],
+            value: catId
+          })
+        }
       } catch(e) {
         console.error(e)
       }
     },
     async fetchPrev() {
-      await this.fetchCategory()
-      await this.fetchZone()
+      await this.fetchZoneCategoryList()
+      this.categoryChange(null)
     },
     categoryChange(val) {
-      if (this.zones == null) return
-      this.zoneList = []
-      this.zones.forEach(elm => {
-        this.zoneList.push({
-          label: elm.zoneName,
-          value: elm.zoneId
+      var zoneUniqs = {}
+      if (val == null) {
+        this.zoneCategorys.forEach(elm => {
+          zoneUniqs[elm.zoneId] = elm.zoneName
         })
-      })
-      this.categoryId = null
-      this.zone = ""
+      } else {
+        this.zoneCategorys.forEach(elm => {
+          if (elm.categoryId == val.value) {
+            zoneUniqs[elm.zoneId] = elm.zoneName
+          }
+        })
+      }
+      this.zoneOptionList = []
+      for (var zId in zoneUniqs) {
+        this.zoneOptionList.push({
+          label: zoneUniqs[zId],
+          value: zId
+        })
+      }
+      this.categoryId = val.value
+      this.vModelCategory = val
+      this.vModelZone = null
+    },
+    zoneChange(val) {
+      this.zoneId = val.value
+      this.vModelZone = val
     },
     dateFromChange(val) {
       if (val == null) {
@@ -166,18 +173,18 @@ export default {
     },
     async dataDownload() {
       let paramCategoryId = (this.categoryId != null)?this.categoryId:0
-      let paramZoneId = 0
+      let paramZoneId = (this.zoneId != null)?this.zoneId:0
       let paramExbId = 0
       let paramDyFrom = this.dateFrom
       let paramDyTo = this.dateTo
       let paramHistoryType = 0
       var list = await AppServiceHelper.fetchList2(
         '/basic/sensorHistory',
-        '/basic/sensorHistory/' + paramCategoryId + "/" + 
-          paramZoneId + "/" + 
-          paramExbId + "/" + 
-          paramDyFrom + "/" + 
-          paramDyTo + "/" + 
+        '/basic/sensorHistory/' + paramCategoryId + "/" +
+          paramZoneId + "/" +
+          paramExbId + "/" +
+          paramDyFrom + "/" +
+          paramDyTo + "/" +
           paramHistoryType,
         ''
       )
