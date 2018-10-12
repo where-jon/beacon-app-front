@@ -203,25 +203,6 @@ export const MENU = [
     ]
   },
   {
-    key: 'analyze',
-    base: 'analyze/',
-    path: 'analyze/utilizationRatio',
-    icon: 'fas fa-balance-scale',
-    pages: [      {
-        key: 'utilizationRatio',
-        path: 'utilizationRatio',
-        feature: '/analyze/utilizationRatio',
-        icon: 'fas fa-balance-scale'
-      },
-      {
-        key: 'numUsers',
-        path: 'numUsers',
-        feature: '/analyze/numUsers',
-        icon: 'fas fa-balance-scale'
-      },
-    ]
-  },
-  {
     key: 'monitor',
     base: 'monitor/',
     path: 'monitor/position',
