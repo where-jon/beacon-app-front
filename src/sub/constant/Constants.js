@@ -77,13 +77,14 @@ export const DISCOMFORT = {
 }
 
 export const LED_COLORS = {
-  BLUE: parseInt('1', 2),
-  RED: parseInt('10', 2),
-  PURPLE: parseInt('100', 2),
-  GREEN: parseInt('1000', 2),
-  PALEBLUE: parseInt('10000', 2),
-  YELLOW: parseInt('100000', 2),
-  WHITE: parseInt('1000000', 2),
+  BLACK: parseInt('1', 2),
+  BLUE: parseInt('10', 2),
+  RED: parseInt('100', 2),
+  PURPLE: parseInt('1000', 2),
+  GREEN: parseInt('10000', 2),
+  PALEBLUE: parseInt('100000', 2),
+  YELLOW: parseInt('1000000', 2),
+  WHITE: parseInt('10000000', 2),
 }
 
 export const LED_BLINK_TYPES = {

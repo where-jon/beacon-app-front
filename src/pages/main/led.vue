@@ -31,6 +31,9 @@
               <b-form-checkbox class="checkWhite" :value="ledColors.WHITE" :readonly="!isEditable">
                 {{$t('label.white')}}
               </b-form-checkbox>
+              <b-form-checkbox class="checkBlack" :value="ledColors.BLACK" :readonly="!isEditable">
+                {{$t('label.black')}}
+              </b-form-checkbox>
             </b-form-checkbox-group>
           </b-form-group>
           <b-form-group :label="$t('label.blink')">
@@ -88,7 +91,7 @@ export default {
       again: false,
       form: {
         deviceId: "",
-        colors: [1],
+        colors: [2],
         blink: 1,
         lightOn: false,
       },
@@ -208,6 +211,10 @@ div[class^="check"] {
 
 .checkYellow {
   background-color: yellow;
+}
+.checkBlack {
+  background-color: black;
+  color: white;
 }
 
 </style>
