@@ -63,6 +63,7 @@ import VueScrollingTable from "vue-scrolling-table"
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import moment from 'moment'
 import reloadmixinVue from '../../components/reloadmixin.vue'
+import { getCharSet } from '../../sub/helper/CharSetHelper'
 
 export default {
   mixins: [reloadmixinVue],
@@ -163,14 +164,14 @@ export default {
         const record = {
           [that.label_txId]: e.btx_id,
           [that.label_powerLevel]: e.power_level,
-          [that.label_name]: (typeof name) !== 'undefined' ? name : 'ー',
+          [that.label_name]: name != null ? name : 'ー',
           [that.label_timestamp]: this.getTimestamp(e.updatetime)
         }
         return record
       })
     },
     getTimestamp(timestamp) {
-      if (!timestamp || (typeof timestamp) === 'undefined') {
+      if (!timestamp || timestamp == null) {
         return this.label_undetect
       }
       try {
@@ -191,8 +192,7 @@ export default {
       return isClass ? (classes + 'danger') : this.label_powerLevelPoor
     },
     isUndetect(updated) {
-      if ((typeof updated) === 'undefined' ||
-      (typeof updated.length) === 'undefined') {
+      if (updated == null || updated.length == null) {
         return false
       }
       return updated.length < 1 ||
@@ -200,7 +200,7 @@ export default {
       new Date() - new Date(updated) > APP.UNDETECT_TIME
     },
     download() {
-      HtmlUtil.fileDL("position.csv", Util.converToCsv(this.positions, ["btx_id","device_id","pos_id","phase","power_level","updatetime","nearest"]))
+      HtmlUtil.fileDL("position.csv", Util.converToCsv(this.positions, ["btx_id","device_id","pos_id","phase","power_level","updatetime","nearest"]), getCharSet(this.$store.state.loginId))
     },
     ...mapMutations([
       'replace', 

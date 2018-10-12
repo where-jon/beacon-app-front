@@ -7,7 +7,6 @@ export const DEV = {
   DEBUG: 0, // デバッグモード (0:なし、1以上デバッグレベル)
   USE_MOCK_APS: false || location.search.includes("mockAps"), // AppService API結果の代わりにモックデータを使用する
   USE_MOCK_EXC: false || location.search.includes("mockExc"), // Excloud API結果の代わりにモックデータを使用する
-  USE_MOCK_ANALYZE: false, // 分析APIの代わりにモックデータを使用する
   NOT_FILTER_TX: true,
 }
 
@@ -20,6 +19,17 @@ export const APP = {
   UNDETECT_TIME: 10 * 60 * 1000, // used on telemetry 
   AREA_THUMBNAIL_MAX: 200,
   USE_THERMOPILE: true,
+  LOG_KEEP_TIME: 30,
+  MONITOR_REFESH_TIME: 10 * 60 * 1000,
+  PASSWORD_CHANGEABLE: true,
+  PASSWORD_CHECK: false,
+  UPDATE_POSITION_EFFECT: true,
+  TIME_ZONE: 0,
+  DISP_REFRESH_TIME: 10 * 60 * 1000,
+  SLACK_WEBHOOC: false,
+  MAIL_ADDRESS: "",
+  MAIL_ADDRESS: "",
+  IP_ADDRESS_FILTER: "",
 }
 
 export const LOCAL_LOGIN = { // local login md5 hash of id:pass // TODO: add Role
@@ -27,7 +37,8 @@ export const LOCAL_LOGIN = { // local login md5 hash of id:pass // TODO: add Rol
 }
 
 export const APP_SERVICE = { // used if APP.LOGIN_MODE == APP_SERVICE
-  BASE_URL: "http://localhost:8080"
+  BASE_URL: "http://localhost:8080",
+  REFRESH_TIME: 10 * 60 * 1000,
 }
 export const EXCLOUD_BASE_URL = "https://nsome8q880.execute-api.ap-northeast-1.amazonaws.com/prod" // used if APP.LOGIN_MODE != APP_SERVICE
 
@@ -36,11 +47,11 @@ export const EXCLOUD = {
   // POSITION_URL: EXCLOUD_BASE_URL + "/beacon/position-kalman?_=",
   // GATEWAY_URL: EXCLOUD_BASE_URL + "/gateway/0?=",
   // TELEMETRY_URL: EXCLOUD_BASE_URL + "/telemetry/0?=",
-  POSITION_URL: APP_SERVICE.BASE_URL + "/core/excloud/position?_=",
-  GATEWAY_URL: APP_SERVICE.BASE_URL + "/core/excloud/gateway?_=",
-  TELEMETRY_URL: APP_SERVICE.BASE_URL + "/core/excloud/telemetry?_=",
-  SENSOR_URL: APP_SERVICE.BASE_URL + "/core/excloud/sensor/{id}?_=",
-  LED_URL: APP_SERVICE.BASE_URL + "/core/excloud/led?_=",
+  POSITION_URL: "/core/excloud/position?_=",
+  GATEWAY_URL: "/core/excloud/gateway?_=",
+  TELEMETRY_URL: "/core/excloud/telemetry?_=",
+  SENSOR_URL: "/core/excloud/sensor/{id}?_=",
+  LED_URL: "/core/excloud/led?_=",
 }
 
 
@@ -54,6 +65,7 @@ export const DISP = {
   AUTO_RELOAD: 60000, // 自動リロード間隔(ミリ秒)
   SHOW_SIDEBAR: true, // show sidebar  
   THEME: "default",
+  CHAR_SET: "UTF8",
 
   MAP_FIT: "both", // マップを画面表示範囲内にフィットさせるか。width or height or both 
 
@@ -140,7 +152,17 @@ export const THEME = [
   {id: 4,  name: 'vivid'},
 ]
 
+export const CHAR_SET = [
+  {id: 1,  name: "UTF8"},
+  {id: 2,  name: "SJIS"},
+]
+
 export const MONITOR_TX = {
   ABSENT: 20 * 60 * 1000,
   UNDETECT: 24 * 60 * 60 * 1000
+}
+
+export const PASSWORD_LENGTH = {
+  BOTTOM: 4,
+  LIMIT: 21
 }

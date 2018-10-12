@@ -21,7 +21,7 @@
     }
   },
   "dependencies": {
-    "@createjs/easeljs": "https://github.com:CreateJS/EaselJS.git#24b96202826646f01d61da6e7d3e89dbd801c67f",
+    "@createjs/easeljs": "https://github.com/CreateJS/EaselJS.git#24b96202826646f01d61da6e7d3e89dbd801c67f",
     "@createjs/tweenjs": "^2.0.0-beta.1",
     "@fortawesome/fontawesome-free-webfonts": "^1.0.9",
     "axios": "^0.18.0",

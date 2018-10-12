@@ -6,7 +6,7 @@
         <b-col md="8" offset-md="2">
           <b-form>
             <b-form-group>
-              <label v-t="'label.zoneType'" />
+              <label v-t="'label.zoneCategoryName'" />
               <v-select :options="categoryOptions" :on-change="categoryChange" required class="ml-2"></v-select>
             </b-form-group>
             <b-form-group>
@@ -21,7 +21,7 @@
             </b-form-group>
             <b-form-group>
               <label v-t="'label.temperatureHistoryType'" />
-              <v-select :options="analyzeTypeOptions" required class="ml-2"></v-select>
+              <v-select :options="typeOptions" required class="ml-2"></v-select>
             </b-form-group>
             <b-button size="sm" variant="info" v-t="'label.download'" @click="download()"></b-button> 
           </b-form>
@@ -41,6 +41,7 @@ import { EXB, DISP, APP } from '../../sub/constant/config'
 import breadcrumb from '../../components/breadcrumb.vue'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import reloadmixinVue from '../../components/reloadmixin.vue'
+import { getCharSet } from '../../sub/helper/CharSetHelper'
 
 export default {
   mixins: [reloadmixinVue],
@@ -51,7 +52,7 @@ export default {
     return {
       items: [
         {
-          text: this.$i18n.t('label.analyze'),
+          text: this.$i18n.t('label.historyTitle'),
           active: true
         },
         {
@@ -77,7 +78,7 @@ export default {
     zoneOptions() {
       return this.zoneList
     },
-    analyzeTypeOptions() {
+    typeOptions() {
       return [
         {label:this.$i18n.t('label.temperatureHistoryType0'), value:0},
         {label:this.$i18n.t('label.temperatureHistoryType1'), value:1},
@@ -181,13 +182,23 @@ export default {
           paramHistoryType,
         ''
       )
+      if (list == null || list.length == 0) {
+        return []
+      }
+      list.forEach(data => {
+        delete data['sensorHistoryId']
+      })
       return list
     },
     async download() {
       this.temperatureHistoryData = await this.dataDownload()
+      if (this.temperatureHistoryData == null || this.temperatureHistoryData.length == 0) {
+        return
+      }
       HtmlUtil.fileDL(
         "temperatureHistory.csv",
-        Util.converToCsv(this.temperatureHistoryData)
+        Util.converToCsv(this.temperatureHistoryData),
+        getCharSet(this.$store.state.loginId)
       )
     },
     ...mapMutations([

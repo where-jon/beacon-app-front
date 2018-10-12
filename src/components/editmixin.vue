@@ -75,6 +75,7 @@ export default {
           if (customFileLabel && customFileLabel[0]) {
             customFileLabel[0].innerText =''
           }
+          window.scrollTo(0, 0)
         }
         else {
           this.backToList()

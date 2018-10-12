@@ -104,7 +104,7 @@ export default {
       this.form.displayBgColor = Util.colorCd4display(this.form.bgColor, this.defaultBgColor)
     },
     beforeSubmit(again){
-      if(this.form.categoryId !== undefined){
+      if(this.form.categoryId != null){
         this.form.categoryId = String(this.form.categoryId)
       }
       this.form.categoryType = String(this.form.categoryType)

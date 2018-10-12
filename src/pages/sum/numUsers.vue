@@ -4,15 +4,15 @@
     <div class="container">
       <p></p>
       <b-row>
-        <b-form inline class="mt-2">
-          <label v-t="'label.zoneType'" />
-          <v-select :options="categoryOptions" :on-change="categoryChange" class="vselectCategory"></v-select>
+        <b-form inline>
+          <label v-t="'label.zoneCategoryName'" />
+          <v-select v-model="vModelCategory" :options="categoryOptions" :on-change="categoryChange" class="vselectCategory"></v-select>
           <label v-t="'label.zoneName'" />
-          <v-select v-model="zone" :options="zoneOptions" class="vselectZone"></v-select>
-          <label v-t="'label.analyzeMonth'" />
-          <v-select v-model="analyzeMonth" :options="analyzeMonthOptions" class="vselectMonth"></v-select>
-          <label v-t="'label.analyzeDay'" />
-          <v-select :options="analyzeDayOptions" class="vselectDay"></v-select>
+          <v-select v-model="vModelZone" :options="zoneOptions" class="vselectZone"></v-select>
+          <label v-t="'label.sumYearMonth'" />
+          <v-select v-model="vModelYearMonth" :options="yearMonthOptions" :on-change="yearMonthChange" class="vselectMonth"></v-select>
+          <label v-t="'label.sumDay'" />
+          <v-select v-model="vModelDay" :options="dayOptions" class="vselectDay"></v-select>
           <b-button size="sm" variant="info" v-t="'label.search'" @click="search()"></b-button> 
         </b-form>
       </b-row>
@@ -51,6 +51,7 @@ import { EXB, DISP, APP } from '../../sub/constant/config'
 import breadcrumb from '../../components/breadcrumb.vue'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import reloadmixinVue from '../../components/reloadmixin.vue'
+import { getCharSet } from '../../sub/helper/CharSetHelper'
 
 export default {
   mixins: [reloadmixinVue],
@@ -61,7 +62,7 @@ export default {
     return {
       items: [
         {
-          text: this.$i18n.t('label.analyze'),
+          text: this.$i18n.t('label.sumTitle'),
           active: true
         },
         {
@@ -69,22 +70,27 @@ export default {
           active: true
         }
       ],
-      categoryId: null,
-      categoryList: [{label:"", value:null}],
-      zone: null,
-      zones: null,
-      zoneList: [{label:"", value:null}],
-      analyzeMonth: null
+      vModelCategory: null,
+      vModelZone: null,
+      vModelYearMonth: null,
+      vModelDay: null,
+      categoryOptionList: [{label:"", value:null}],
+      zoneOptionList: [],
+      dayOptionList: [{label:"", value:null}],
+      //
+      zoneCategorys: [],
+      selectedYearMonth: null,
+      dataList: null
     }
   },
   computed: {
     categoryOptions() {
-      return this.categoryList
+      return this.categoryOptionList
     },
     zoneOptions() {
-      return this.zoneList
+      return this.zoneOptionList
     },
-    analyzeMonthOptions() {
+    yearMonthOptions() {
       var today = new Date()
       var yyyy = today.getFullYear()
       var mm = today.getMonth() + 1
@@ -100,16 +106,11 @@ export default {
           yyyy--;
         }
       }
+      this.dayOptionList = []
       return pullDowns
     },
-    analyzeDayOptions() {
-      var pullDowns = []
-      for (var idx = 0; idx <= 31; idx++) {
-        pullDowns.push({
-          label: "" + idx, value: idx
-        })
-      }
-      return pullDowns
+    dayOptions() {
+      return this.dayOptionList
     },
     getTheme () {
       const theme = getTheme(this.$store.state.loginId)
@@ -124,65 +125,87 @@ export default {
     this.replace({title: this.$i18n.t('label.numUsers')})
   },
   methods: {
-    async fetchCategory() {
+    async fetchZoneCategoryList() {
       try {
-        let categorys = await AppServiceHelper.fetchList2(
-          '/basic/category',
-          '/basic/category/',
+        this.zoneCategorys = await AppServiceHelper.fetchList2(
+          '/core/zone/categoryList',
+          '/core/zone/categoryList',
           'categoryId'
         )
-        this.categoryList = []
-        categorys.forEach(elm => {
-          if (elm.categoryType == 2) {
-            this.categoryList.push({
-              label: elm.categoryName,
-              value: elm.categoryId/1
-            })
+        var categorys = {}
+        this.zoneCategorys.forEach(elm => {
+          if (elm.categoryId != 0) {
+            categorys[elm.categoryId] = elm.categoryName
           }
         })
-      } catch(e) {
-        console.error(e)
-      }
-    },
-    async fetchZone() {
-      try {
-        this.zones = await AppServiceHelper.fetchList2(
-          '/core/zone',
-          '/core/zone',
-          'zoneId'
-        )
-        this.zoneList = []
-        this.zones.forEach(elm => {
-          this.zoneList.push({
-            label: elm.zoneName,
-            value: elm.zoneId
-          })          
-        })
+        this.categoryOptionList = []
+        for (var catId in categorys) {
+          this.categoryOptionList.push({
+            label: categorys[catId],
+            value: catId
+          })
+        }
       } catch(e) {
         console.error(e)
       }
     },
     async fetchPrev() {
-      await this.fetchCategory()
-      await this.fetchZone()
+      await this.fetchZoneCategoryList()
+      this.categoryChange(null)
     },
     categoryChange(val) {
-      if (this.zones == null) return
-      this.zoneList = []
-      this.zones.forEach(elm => {
-        this.zoneList.push({
-          label: elm.zoneName,
-          value: elm.zoneId
+      var zoneUniqs = {}
+      if (val == null) {
+        this.zoneCategorys.forEach(elm => {
+          zoneUniqs[elm.zoneId] = elm.zoneName
         })
-      })
-      this.categoryId = null
-      this.zone = ""
+      } else {
+        this.zoneCategorys.forEach(elm => {
+          if (elm.categoryId == val.value) {
+            zoneUniqs[elm.zoneId] = elm.zoneName
+          }
+        })
+      }
+      this.zoneOptionList = []
+      for (var zId in zoneUniqs) {
+        this.zoneOptionList.push({
+          label: zoneUniqs[zId],
+          value: zId
+        })
+      }
+      this.vModelCategory = val
+      this.vModelZone = null
+    },
+    yearMonthChange(val) {
+      if (val == null) {
+        this.vModelDay = null
+        this.dayOptionList = []
+        return
+      }
+      var year = val.value/100
+      var month = val.value%100
+      var lastDay = new Date(year, month, 0).getDate()
+      var pullDowns = []
+      for (var idx = 1; idx <= lastDay; idx++) {
+        pullDowns.push({
+          label: "" + idx, value: idx
+        })
+      }
+      this.selectedYearMonth = val.value
+      this.vModelDay = null
+      this.dayOptionList = pullDowns
     },
     isUndetect(updated) {
       return false
     },
     download() {
-      HtmlUtil.fileDL("numUsers.csv", Util.converToCsv(this.numUsers))
+      if (this.dataList == null) return
+      if (this.dataList.length == 0) return
+      HtmlUtil.fileDL(
+        "numUsers.csv",
+        Util.converToCsv(this.dataList),
+        getCharSet(this.$store.state.loginId)
+      )
     },
     ...mapMutations([
       'replace', 
@@ -191,12 +214,13 @@ export default {
       'replaceMonitor', 
     ]),
     async search() {
-      let anaMonth = this.analyzeMonth.value
+      if (this.selectedYearMonth == null) return
       let numUsers = await AppServiceHelper.fetchList2(
         'numUsers',
-        '/office/numUsers/' + anaMonth,
+        '/office/numUsers/' + this.selectedYearMonth,
         'numOfUsers'
       )
+      this.dataList = numUsers
       this.replaceMonitor({numUsers})
     },
   }

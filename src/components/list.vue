@@ -67,6 +67,7 @@ import * as MenuHelper from '../sub/helper/MenuHelper'
 import * as HtmlUtil from '../sub/util/HtmlUtil'
 import * as Util from '../sub/util/Util'
 import { getButtonTheme, getTheme, themeColors } from '../sub/helper/ThemeHelper'
+import { getCharSet } from '../sub/helper/CharSetHelper'
 
 export default {
   props: ['params', 'list'],
@@ -123,7 +124,7 @@ export default {
     },
     exportCsv() {
       const headers = this.params.fields.filter((val) => !["style", "thumbnail", "actions", "updateAction"].includes(val.key)).map((val) => val.key)
-      HtmlUtil.fileDL(this.params.name + ".csv", Util.converToCsv(this.list, headers))
+      HtmlUtil.fileDL(this.params.name + ".csv", Util.converToCsv(this.list, headers), getCharSet(this.loginId))
     },
     style(index) {
       return this.$parent.$options.methods.style.call(this.$parent, index)
