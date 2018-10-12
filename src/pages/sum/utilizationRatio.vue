@@ -59,6 +59,7 @@ import { EXB, DISP, APP } from '../../sub/constant/config'
 import breadcrumb from '../../components/breadcrumb.vue'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import reloadmixinVue from '../../components/reloadmixin.vue'
+import { getCharSet } from '../../sub/helper/CharSetHelper'
 
 export default {
   mixins: [reloadmixinVue],
@@ -211,7 +212,8 @@ export default {
       if (this.dataList.length == 0) return
       HtmlUtil.fileDL(
         "utilizationRatio.csv",
-        Util.converToCsv(this.dataList)
+        Util.converToCsv(this.dataList),
+        getCharSet(this.$store.state.loginId)
       )
     },
     ...mapMutations([

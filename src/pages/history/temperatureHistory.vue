@@ -41,6 +41,7 @@ import { EXB, DISP, APP } from '../../sub/constant/config'
 import breadcrumb from '../../components/breadcrumb.vue'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import reloadmixinVue from '../../components/reloadmixin.vue'
+import { getCharSet } from '../../sub/helper/CharSetHelper'
 
 export default {
   mixins: [reloadmixinVue],
@@ -190,7 +191,8 @@ export default {
       }
       HtmlUtil.fileDL(
         "temperatureHistory.csv",
-        Util.converToCsv(this.temperatureHistoryData)
+        Util.converToCsv(this.temperatureHistoryData),
+        getCharSet(this.$store.state.loginId)
       )
     },
     ...mapMutations([
