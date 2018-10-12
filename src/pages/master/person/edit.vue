@@ -18,10 +18,6 @@
               <b-form-input type="text" v-model="form.personCd" maxlength="20" required :readonly="!isEditable" />
             </b-form-group>
             <b-form-group>
-              <label v-t="'label.txId'" />
-              <b-form-input type="number" v-model="form.txId" :readonly="!isEditable" />
-            </b-form-group>
-            <b-form-group>
               <label v-t="'label.personName'" />
               <b-form-input type="text" v-model="form.personName" maxlength="20" required :readonly="!isEditable" />
             </b-form-group>
@@ -30,12 +26,28 @@
               <b-form-input type="text" v-model="form.ruby" maxlength="20" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group>
+              <label v-t="'label.displayName'" />
+              <b-form-input type="text" v-model="form.displayName" maxlength="3" :readonly="!isEditable" />
+            </b-form-group>
+            <b-form-group>
+              <label v-t="'label.group'" />
+              <b-form-input type="text" v-model="form.group" maxlength="20" :readonly="!isEditable" />
+            </b-form-group>
+            <b-form-group>
+              <label v-t="'label.category'" />
+              <b-form-input type="text" v-model="form.category" maxlength="20" :readonly="!isEditable" />
+            </b-form-group>
+            <b-form-group>
               <label v-t="'label.post'" />
               <b-form-input type="text" v-model="form.post" maxlength="20" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.tel'" />
               <b-form-input type="tel" v-model="form.tel" :readonly="!isEditable" pattern="[-\d]*" />
+            </b-form-group>
+            <b-form-group>
+              <label v-t="'label.txId'" />
+              <b-form-input type="number" v-model="form.txId" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.thumbnail'" />
@@ -65,6 +77,7 @@ import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import editmixinVue from '../../../components/editmixin.vue'
 import breadcrumb from '../../../components/breadcrumb.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
+import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 
 export default {
   components: {
@@ -77,7 +90,10 @@ export default {
       id: 'personId',
       backPath: '/master/person',
       appServicePath: '/basic/person',
-      form: ViewHelper.extract(this.$store.state.app_service.person, ["personId", "personCd", "personName", "ruby", "txId", "post", "thumbnail", "description"]),
+      form: ViewHelper.extract(this.$store.state.app_service.person,
+          ["personId", "personCd", "personName", "extValue.ruby",
+          "displayName", "group", "category", "extValue.tel", "txId",
+          "extValue.post", "thumbnail", "description"]),
       items: [
         {
           text: this.$i18n.t('label.master'),
@@ -104,6 +120,29 @@ export default {
     ]),
   },
   methods: {
+    async save() {
+      const entity = {
+        personId: this.form.personId || -1,
+        personCd: this.form.personCd,
+        personName: this.form.personName,
+        extValue: {
+          ruby: this.form.ruby,
+          tel: this.form.tel,
+          post: this.form.post,
+        },
+        displayName: this.form.displayName,
+        personGroupList: this.form.group ? [{
+          personGroupPK: {groupId: this.form.group}
+        }] : [],
+        personCategoryList: this.form.category ? [{
+          personCategoryPK: {categoryId: this.form.category}
+        }] : [],
+        txId: this.form.txId,
+        thumbnail: this.form.thumbnail,
+        description: this.form.description,
+      }
+      return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
+    },
     readImage(e) {
       this.readImageView(e, 'thumbnail')
     }

@@ -151,9 +151,9 @@
     "operationLogId": "操作ログID",
     "operationType": "操作種別",
         
-    "person": "社員",
+    "person": "個人",
     "personId": "ID",
-    "personCd": "社員番号",
+    "personCd": "コード",
     "personName": "名前",
     "post": "役職",
     "ruby": "ふりがな",
