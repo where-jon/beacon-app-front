@@ -38,7 +38,8 @@ export default {
         this.$router.push(APP.TOP_PAGE)
         this.message = ""
         const theme = window.localStorage.getItem(this.userId + '-theme')
-        this.replaceSetting({theme})
+        const charSet = window.localStorage.getItem(this.userId + '-charSet')
+        this.replaceSetting({theme, charSet})
       },
       () => {
         console.error("failed")
