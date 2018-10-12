@@ -5,14 +5,14 @@
       <p></p>
       <b-row>
         <b-form inline>
-          <label v-t="'label.zoneType'" />
-          <v-select :options="categoryOptions" :on-change="categoryChange" class="vselectCategory"></v-select>
+          <label v-t="'label.zoneCategoryName'" />
+          <v-select v-model="vModelCategory" :options="categoryOptions" :on-change="categoryChange" class="vselectCategory"></v-select>
           <label v-t="'label.zoneName'" />
-          <v-select v-model="zone" :options="zoneOptions" class="vselectZone"></v-select>
+          <v-select v-model="vModelZone" :options="zoneOptions" class="vselectZone"></v-select>
           <label v-t="'label.sumYearMonth'" />
-          <v-select v-model="sumYearMonth" :options="sumYearMonthOptions" :on-change="sumYearMonthChange" class="vselectMonth"></v-select>
+          <v-select v-model="vModelYearMonth" :options="yearMonthOptions" :on-change="yearMonthChange" class="vselectMonth"></v-select>
           <label v-t="'label.sumDay'" />
-          <v-select v-model="sumDay" :options="sumDayOptions" class="vselectDay"></v-select>
+          <v-select v-model="vModelDay" :options="dayOptions" class="vselectDay"></v-select>
           <b-button size="sm" variant="info" v-t="'label.search'" @click="search()"></b-button> 
         </b-form>
       </b-row>
@@ -77,26 +77,27 @@ export default {
           active: true
         }
       ],
-      categoryId: null,
-      categoryList: [{label:"", value:null}],
-      zone: null,
-      zones: null,
-      zoneList: [{label:"", value:null}],
-      sumYearMonth: null,
-      sumDays: [{label:"", value:null}],
-      sumDay: null,
+      vModelCategory: null,
+      vModelZone: null,
+      vModelYearMonth: null,
+      vModelDay: null,
+      categoryOptionList: [{label:"", value:null}],
+      zoneOptionList: [],
+      dayOptionList: [{label:"", value:null}],
+      //
+      zoneCategorys: [],
       selectedYearMonth: null,
       dataList: null
     }
   },
   computed: {
     categoryOptions() {
-      return this.categoryList
+      return this.categoryOptionList
     },
     zoneOptions() {
-      return this.zoneList
+      return this.zoneOptionList
     },
-    sumYearMonthOptions() {
+    yearMonthOptions() {
       var today = new Date()
       var yyyy = today.getFullYear()
       var mm = today.getMonth() + 1
@@ -112,11 +113,11 @@ export default {
           yyyy--;
         }
       }
-      this.sumDays = []
+      this.dayOptionList = []
       return pullDowns
     },
-    sumDayOptions() {
-      return this.sumDays
+    dayOptions() {
+      return this.dayOptionList
     },
     getTheme () {
       const theme = getTheme(this.$store.state.loginId)
@@ -131,64 +132,61 @@ export default {
     this.replace({title: this.$i18n.t('label.utilizationRatio')})
   },
   methods: {
-    async fetchCategory() {
+    async fetchZoneCategoryList() {
       try {
-        let categorys = await AppServiceHelper.fetchList2(
-          '/basic/category',
-          '/basic/category/',
+        this.zoneCategorys = await AppServiceHelper.fetchList2(
+          '/core/zone/categoryList',
+          '/core/zone/categoryList',
           'categoryId'
         )
-        this.categoryList = []
-        categorys.forEach(elm => {
-          if (elm.categoryType == 2) {
-            this.categoryList.push({
-              label: elm.categoryName,
-              value: elm.categoryId/1
-            })
+        var categorys = {}
+        this.zoneCategorys.forEach(elm => {
+          if (elm.categoryId != 0) {
+            categorys[elm.categoryId] = elm.categoryName
           }
         })
-      } catch(e) {
-        console.error(e)
-      }
-    },
-    async fetchZone() {
-      try {
-        this.zones = await AppServiceHelper.fetchList2(
-          '/core/zone',
-          '/core/zone',
-          'zoneId'
-        )
-        this.zoneList = []
-        this.zones.forEach(elm => {
-          this.zoneList.push({
-            label: elm.zoneName,
-            value: elm.zoneId
-          })          
-        })
+        this.categoryOptionList = []
+        for (var catId in categorys) {
+          this.categoryOptionList.push({
+            label: categorys[catId],
+            value: catId
+          })
+        }
       } catch(e) {
         console.error(e)
       }
     },
     async fetchPrev() {
-      await this.fetchCategory()
-      await this.fetchZone()
+      await this.fetchZoneCategoryList()
+      this.categoryChange(null)
     },
     categoryChange(val) {
-      if (this.zones == null) return
-      this.zoneList = []
-      this.zones.forEach(elm => {
-        this.zoneList.push({
-          label: elm.zoneName,
-          value: elm.zoneId
-        })
-      })
-      this.categoryId = null
-      this.zone = ""
-    },
-    sumYearMonthChange(val) {
+      var zoneUniqs = {}
       if (val == null) {
-        this.sumDays = []
-        this.sumDay = null
+        this.zoneCategorys.forEach(elm => {
+          zoneUniqs[elm.zoneId] = elm.zoneName
+        })
+      } else {
+        this.zoneCategorys.forEach(elm => {
+          if (elm.categoryId == val.value) {
+            zoneUniqs[elm.zoneId] = elm.zoneName
+          }
+        })
+      }
+      this.zoneOptionList = []
+      for (var zId in zoneUniqs) {
+        this.zoneOptionList.push({
+          label: zoneUniqs[zId],
+          value: zId
+        })
+      }
+      this.vModelCategory = val
+      this.vModelZone = null
+    },
+    yearMonthChange(val) {
+      if (val == null) {
+        this.vModelDay = null
+        this.dayOptionList = []
         return
       }
       var year = val.value/100
@@ -201,7 +199,8 @@ export default {
         })
       }
       this.selectedYearMonth = val.value
-      this.sumDays = pullDowns
+      this.vModelDay = null
+      this.dayOptionList = pullDowns
     },
     isUndetect(updated) {
       return false
