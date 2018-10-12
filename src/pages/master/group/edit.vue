@@ -100,7 +100,7 @@ export default {
       this.form.displayBgColor = Util.colorCd4display(this.form.bgColor, this.defaultBgColor)
     },
     beforeSubmit(again){
-      if(this.form.groupId !== undefined){
+      if(this.form.groupId != null){
         this.form.groupId = String(this.form.groupId)
       }
       this.form.color = Util.colorCd4db(this.form.displayColor)

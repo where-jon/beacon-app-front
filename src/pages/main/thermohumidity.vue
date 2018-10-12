@@ -184,7 +184,8 @@ export default {
       exbBtn.on('click', async (evt) =>{
         let exbBtn = evt.currentTarget
         if (DEV.USE_MOCK_EXC) {
-          var pMock = mock['/basic/sensorHistory/1/1/today/hour']
+          let key = '/basic/sensorHistory/1/1/today/hour'
+          var pMock = mock[key]
         }
         let sensorData = await AppServiceHelper.fetchList('/basic/sensorHistory/1/' + exb.exbId + '/today/hour', null, pMock)
         this.showChart(sensorData)

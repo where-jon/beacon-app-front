@@ -75,7 +75,7 @@ export default {
   },
   created() {
     this.featureId = Util.hasValue(this.form.featureId)? this.form.featureId: -1
-    this.roleFeature.featureId = Util.hasValue(this.form.featureId)? this.form.featureId: undefined
+    this.roleFeature.featureId = Util.hasValue(this.form.featureId)? this.form.featureId: null
     this.resetFeatureNames()
   },
   computed: {
@@ -96,7 +96,7 @@ export default {
   watch: {
     featureId: function(newVal, oldVal) {
       const feature = this.features.find((val) => val.featureId === newVal)
-      this.form.path = feature !== undefined? feature.path: ""
+      this.form.path = feature != null? feature.path: ""
     },
   },
   methods: {
@@ -111,7 +111,7 @@ export default {
           return true
         }
         const roleFeature = this.roleFeatures.find((roleFeature) => feature.featureId === roleFeature.feature.featureId)
-        return this.systemReadOnly? roleFeature !== undefined: roleFeature === undefined
+        return this.systemReadOnly? roleFeature != null: roleFeature == null
       })
       this.featureNames = featureOptions.map((val) => ({text: val.featureName, value: val.featureId}))
     },

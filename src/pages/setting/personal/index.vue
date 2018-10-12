@@ -165,11 +165,11 @@ export default {
   },
   created () {
     this.setLoginUser()
-    const theme = getTheme(this.loginId)
+    const theme = getTheme(this.$store.state.loginId)
     const selected = THEME.find((item) => {
       return item.name === theme
     })
-    this.selectedTheme = (typeof selected) !== 'undefined' ? selected.id : THEME[0].id
+    this.selectedTheme = selected != null? selected.id : THEME[0].id
     const charSet = getCharSet(this.$store.state.loginId)
     const selectedCs = CHAR_SET.find((item) => {
       return item.name === charSet
@@ -190,11 +190,11 @@ export default {
       const t = THEME.find((e) => {
         return e.id === selected
       })
-      const theme = (typeof t !== 'undefined') ? t.name : 'default'
+      const theme = t != null ? t.name : 'default'
       // storeにテーマをセット。navbar,sidebar,menu-itemのcomputedプロパティにて
       // storeを参照しているため、テーマの変更を検知する
       this.replaceSetting({theme})
-      window.localStorage.setItem(this.loginId + '-theme', theme)
+      window.localStorage.setItem(this.$store.state.loginId + '-theme', theme)
     },
     charSetSelected (selected) {
       const cs = CHAR_SET.find((e) => {

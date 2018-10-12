@@ -26,7 +26,7 @@ export default {
       backPath: '/master/role',
       appServicePath: '/meta/role',
       form: {
-        csvFile: undefined,
+        csvFile: null,
       },
       items: [
         {

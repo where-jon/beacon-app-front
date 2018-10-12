@@ -159,7 +159,7 @@ export default {
         const record = {
           [that.label_deviceId]: parseInt(e.deviceid, 16),
           [that.label_deviceIdX]: e.deviceid.toUpperCase(),
-          [that.label_name]: (typeof name) !== 'undefined' ? name : 'ー',
+          [that.label_name]: name != null ? name : 'ー',
           [that.label_timestamp]: e.timestamp,
           [that.label_powerLevel]:e.power_level * 2
         }
