@@ -93,10 +93,14 @@ export default {
       txViewTypes: txViewTypes,
       mutex: false,
       form: ViewHelper.extract(this.$store.state.app_service.exb, [
-        "exbId", "deviceId", "enabled",
-        "location.locationName", "location.areaId", "location.locationId", "location.displayName", "location.posId",
-        "location.x", "location.y", "location.visible", "location.txViewType"
-      ]),
+          "exbId", "deviceId", "enabled",
+          "location.locationName", "location.areaId", "location.locationId", "location.displayName", "location.posId",
+          "location.x", "location.y", "location.visible", "location.txViewType"
+        ]
+      ),
+      defValue: {
+        "enabled": true,
+      },
       deviceId: null,
       deviceIdX: null,
       items: [
@@ -154,9 +158,7 @@ export default {
   mounted() {
     that = this
     this.deviceId = this.form.deviceId
-    if (this.form.enabled == null) {
-      this.form.enabled = true
-    }
+    ViewHelper.applyDef(this.form, this.defValue)
   },
   methods: {
     async save() {

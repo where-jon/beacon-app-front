@@ -65,9 +65,8 @@ export default {
         this.message = this.$i18n.t('message.' + this.crud + 'Completed', {target: this.$i18n.t('label.' + this.name)})
         this.showInfo = true
         if (this.again) {
-          _.forEach(this.form, (value, key) => {
-            this.form[key] = ''
-          })
+          this.form = {}
+          ViewHelper.applyDef(this.form, this.defValue)
           if(typeof this.beforeReload === "function"){
             this.beforeReload()
           }

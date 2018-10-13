@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import * as Util from '../util/Util'
 
 
 export const addLabelByKey = (i18n, objArr) => {
@@ -7,22 +8,27 @@ export const addLabelByKey = (i18n, objArr) => {
   })
 }
 
+export const applyDef = (obj, def) => {
+  if (!obj || !def) return obj
+
+  _.forEach(def, (val, key) => {
+    if (obj[key] === undefined) {
+      obj[key] = val
+    }
+  })
+}
+
 export const extract = (obj, fields) => {
   if (!obj || !fields) return obj
 
   let ret = {}
   _.forEach(obj, (val, key) => {
-    if(Object.prototype.toString.call(val) === '[object Array]'){
-      if (_.includes(fields, key)) {
-        ret[key] = val
-      }
-    }
-    else if (val instanceof Object) {
+    if (val instanceof Object && !Util.isArray(val)) {
       // ret[key] = {}
       _.forEach(val, (cval, ckey) => {
         if (_.includes(fields, key + "." + ckey)) {
           // ret[key][ckey] = cval
-          ret[ckey] = cval
+          ret[ckey] = cval 
         }
       })
     }
@@ -30,6 +36,7 @@ export const extract = (obj, fields) => {
       ret[key] = val
     }
   })
-  console.log({ret})
+
+  console.log("extract", {ret})
   return ret
 }
