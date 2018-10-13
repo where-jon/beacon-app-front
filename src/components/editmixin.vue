@@ -27,7 +27,7 @@ export default {
       return this.bulkRegister? 'bulkRegister': !this.isEditable? 'refer': this.isUpdate? 'update': 'register'
     },
     isUpdate() {
-      return this[this.name][this.id] != null
+      return this[this.name] && this[this.name][this.id] != null
     },
     isEditable() {
       return MenuHelper.isEditable(this.appServicePath)
@@ -52,7 +52,7 @@ export default {
       this.$router.push(this.backPath)
     },
     async save() {
-      return await AppServiceHelper.save(this.appServicePath, this.form)
+      return await AppServiceHelper.save(this.appServicePath, this.form, this.updateOnlyNN)
     },
     async onSubmit(evt) {
       this.replace({showProgress: true})
