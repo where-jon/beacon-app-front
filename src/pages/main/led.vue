@@ -148,6 +148,9 @@ export default {
         ).map(
           exb => exb.deviceId
         )
+        if (deviceIds && deviceIds.length == 1) {
+          this.form.deviceId = deviceIds[0]
+        }
         if (payload && payload.done) {
           payload.done()
         }

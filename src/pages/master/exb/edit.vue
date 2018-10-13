@@ -28,8 +28,8 @@
               <b-form-input type="text" v-model="form.displayName" maxlength="3" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group>
-              <label v-t="'label.areaId'" />
-              <b-form-input type="number" v-model="form.areaId" required :readonly="!isEditable" />
+              <label v-t="'label.areaName'" />
+              <b-form-select v-model="form.areaId" :options="areaOptions" class="mb-3 ml-3 col-4" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.posId'" />
@@ -76,6 +76,7 @@ import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import _ from 'lodash'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
+import * as StateHelper from '../../../sub/helper/StateHelper'
 import editmixinVue from '../../../components/editmixin.vue'
 import { txViewTypes } from '../../../sub/constant/Constants'
 import breadcrumb from '../../../components/breadcrumb.vue'
@@ -134,8 +135,18 @@ export default {
       options.unshift({value:null, text:this.$i18n.t('label.normal')})
       return options
     },
+    areaOptions() {
+      return this.areas.map((area) => {
+          return {
+            value: area.areaId,
+            text: area.areaName
+          }
+        }
+      )
+    },
     ...mapState('app_service', [
       'exb',
+      'areas',
       'sensorList',
     ]),
   },
@@ -173,6 +184,7 @@ export default {
     if (!this.sensorList || this.sensorList.length == 0) {
       this.loadSensorList()
     }
+    StateHelper.loadAreas()
   },
   methods: {
     async save() {
