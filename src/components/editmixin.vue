@@ -6,9 +6,12 @@ import * as AppServiceHelper from '../sub/helper/AppServiceHelper'
 import * as ViewHelper from '../sub/helper/ViewHelper'
 import * as MenuHelper from '../sub/helper/MenuHelper'
 import { sleep } from '../sub/util/Util'
+import { APP } from '../sub/constant/config.js'
 import * as HtmlUtil from '../sub/util/HtmlUtil'
 import * as Util from '../sub/util/Util'
+
 let that
+
 export default {
   data() {
     return {
@@ -50,6 +53,30 @@ export default {
     },
     backToList() {
       this.$router.push(this.backPath)
+    },
+    sensorOptions(entity) {
+      return _(this.sensorList)
+      .filter((sensor) => {
+        if (entity == 'exb') {
+          return APP.EXB_SENSOR.includes(sensor.sensorId)
+        }
+        else if (entity == 'tx') {
+          return APP.TX_SENSOR.includes(sensor.sensorId)
+        }
+        return true
+      })
+      .map((sensor) => {
+          return {
+            value: sensor.sensorId,
+            text: this.$i18n.t('label.' + sensor.sensorName)
+          }
+        }
+      )
+      .value()
+    },
+    async loadSensorList() {
+      let sensorList = await AppServiceHelper.fetchList("/core/sensor")
+      this.replaceAS({sensorList})
     },
     async save() {
       return await AppServiceHelper.save(this.appServicePath, this.form, this.updateOnlyNN)

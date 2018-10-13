@@ -63,7 +63,10 @@ export const CATEGORY = {
 export const SENSOR = {
   TEMPERATURE: 1,
   PIR: 2,
-  THERMOPILE: 3
+  THERMOPILE: 3,
+  LED: 4,
+  MEDITAG: 5,
+  MAGNET: 6,
 }
 
 export const DISCOMFORT = {
@@ -121,7 +124,7 @@ export const MENU = [
         icon: 'far fa-id-card',
       },
       {
-        key: 'led',
+        key: 'ledOperation',
         path: 'led',
         feature: '/basic/led',
         icon: 'far fa-lightbulb',

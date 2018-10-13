@@ -57,6 +57,10 @@
               <label v-t="'label.txViewType'" />
               <b-form-select v-model="form.txViewType" :options="txViewTypes" class="mb-3 ml-3 col-3" :readonly="!isEditable" />
             </b-form-group>
+            <b-form-group>
+              <label v-t="'label.type'" />
+              <b-form-select v-model="form.sensorId" :options="sensorOptionsExb" class="mb-3 ml-3 col-4" :readonly="!isEditable" />
+            </b-form-group>
             <b-button type="button" variant="outline-danger" @click="backToList" v-t="'label.back'"/>
             <b-button v-if="isEditable" type="submit" :variant="theme" @click="register(false)" class="ml-2" >{{ label }}</b-button>
             <b-button v-if="isEditable && !isUpdate" type="submit" :variant="theme" @click="register(true)" class="ml-2" v-t="'label.registerAgain'"/>
@@ -95,7 +99,8 @@ export default {
       form: ViewHelper.extract(this.$store.state.app_service.exb, [
           "exbId", "deviceId", "enabled",
           "location.locationName", "location.areaId", "location.locationId", "location.displayName", "location.posId",
-          "location.x", "location.y", "location.visible", "location.txViewType"
+          "location.x", "location.y", "location.visible", "location.txViewType",
+          "exbSensorList.0.sensor.sensorId"
         ]
       ),
       defValue: {
@@ -124,8 +129,14 @@ export default {
       const theme = getButtonTheme(this.$store.state.loginId)
       return 'outline-' + theme
     },
+    sensorOptionsExb() {
+      let options = this.sensorOptions('exb')
+      options.unshift({value:null, text:this.$i18n.t('label.normal')})
+      return options
+    },
     ...mapState('app_service', [
       'exb',
+      'sensorList',
     ]),
   },
   watch: {
@@ -159,6 +170,9 @@ export default {
     that = this
     this.deviceId = this.form.deviceId
     ViewHelper.applyDef(this.form, this.defValue)
+    if (!this.sensorList || this.sensorList.length == 0) {
+      this.loadSensorList()
+    }
   },
   methods: {
     async save() {
@@ -177,11 +191,15 @@ export default {
           posId: this.form.posId,
           x: this.form.x,
           y: this.form.y,
-        }
+        },
+        exbSensorList: this.form.sensorId? [
+          {exbSensorPK: {sensorId: this.form.sensorId}}
+        ]: null
       }
+      let ret = await AppServiceHelper.bulkSave(this.appServicePath, [entity])
       this.deviceId = null
       this.deviceIdX = null
-      return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
+      return ret
    },
   }
 }

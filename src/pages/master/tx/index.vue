@@ -12,6 +12,9 @@ import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import { addLabelByKey } from '../../../sub/helper/ViewHelper'
 import listmixinVue from '../../../components/listmixin.vue'
 import breadcrumb from '../../../components/breadcrumb.vue'
+import * as Util from '../../../sub/util/Util'
+
+let that
 
 export default {
   components: {
@@ -31,7 +34,9 @@ export default {
           {key: "btxId", sortable: true, tdClass: "action-rowdata" },
           {key: "txName", sortable: true, tdClass: "action-rowdata" },
           {key: "displayName", sortable: true, tdClass: "action-rowdata" },
+          {key: "major", sortable: true, tdClass: "action-rowdata" },
           {key: "minor", sortable: true, tdClass: "action-rowdata" },
+          {key: "sensor", label:'type', sortable: true,},
           {key: "actions", thStyle: {width: '130px !important'}, tdClass: "action-rowdata" }
         ]),
         initTotalRows: this.$store.state.app_service.txs.length
@@ -54,11 +59,20 @@ export default {
       'txImages',
     ]),
   },
+  mounted() {
+    that = this
+  },
   methods: {
     async fetchData(payload) {
       try {
         this.replace({showProgress: true})
         let txs = await AppServiceHelper.fetchList('/core/tx', 'txId')
+        txs = txs.map((tx) => {
+          return {
+            ...tx,
+            sensor: that.$i18n.t('label.' + Util.getValue(tx, 'txSensorList.0.sensor.sensorName', 'normal'))
+          }
+        })
         if (payload && payload.done) {
           payload.done()
         }

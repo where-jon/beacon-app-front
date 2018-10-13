@@ -176,6 +176,9 @@ html {
 
 .v-select {
   min-width: 130px;
+  width: 200px;
+  margin-left: 5px;
+  margin-right: 20px;
   .dropdown-menu {
     color: #000;
   }

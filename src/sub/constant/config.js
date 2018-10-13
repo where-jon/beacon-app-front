@@ -30,6 +30,8 @@ export const APP = {
   MAIL_ADDRESS: "",
   MAIL_ADDRESS: "",
   IP_ADDRESS_FILTER: "",
+  EXB_SENSOR: [1,2,3,4],
+  TX_SENSOR: [5,6],
 }
 
 export const LOCAL_LOGIN = { // local login md5 hash of id:pass // TODO: add Role

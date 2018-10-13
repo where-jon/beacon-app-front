@@ -37,6 +37,7 @@
     "user": "ユーザ",
     "userId": "ユーザID",
     "id": "ID",
+    "type": "タイプ",
     "thumbnail": "サムネイル",
     "description": "備考",
     "main": "メイン",
@@ -54,9 +55,11 @@
     "no": "No.",
     "theme": "テーマ",
     "charSet": "文字セット",
+    "normal": "通常",
 
     "---------------- App exbeacon ---------------":"",
 
+    "locate": "測位",
     "showPosition": "在席表示",
     "telemetry": "EXB状態監視",
     "gateway": "ゲートウェイ",
@@ -83,6 +86,7 @@
     "txId": "TXID",
     "txName": "Tx名",
     "btxId": "btxId",
+    "major": "major",
     "minor": "minor",
     
     "locationId": "位置ID",
@@ -111,10 +115,15 @@
     "positionHistory": "位置情報",
     "positionHistoryId": "tx位置ID",
 
+    "exbeacon": "EXBeacon",
     "pir": "人感センサ",
     "thermohumidity":"温湿度",
+    "thermopile":"サーモパイル",
     "temperature":"温度",
     "humidity":"湿度",
+    "led": "LED",
+    "meditag": "MEDiTAG",
+    "magnet": "マグネット",
 
     "zoneId": "ゾーンID",
     "zoneName": "ゾーン名",
@@ -221,7 +230,7 @@
     "regionName": "リージョン名",
     "meshId": "メッシュID",
 
-    "led": "LED操作",
+    "ledOperation": "LED操作",
     "blink": "点滅",
     "blue": "青",
     "red": "赤",

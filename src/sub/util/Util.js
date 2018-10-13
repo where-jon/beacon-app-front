@@ -31,6 +31,27 @@ export const isArray = (obj) => Object.prototype.toString.call(obj) === '[object
 export const hasValue = (obj) => obj != null && obj.length !== 0
 export const detectEncoding = (str) => jschardet.detect(str)
 
+/**
+ * オプジェクトから階層を辿って値を取得する。
+ * 
+ * @param {*} obj 
+ * @param {*} path オブジェクトのメンバー以下を.でつなげる。配列は添字を使う。
+ * @param {*} def 省略すると、値と最後のキー値のペアを返す。省略しないとnullのときdefを返す
+ */
+export const getValue = (obj, path, def) => {
+  let pathSpl = path.split(".")
+  let val = obj
+  let lastKey
+  for (let i=0; i<pathSpl.length; i++) {
+    lastKey = pathSpl[i]
+    val = val instanceof Object? val[lastKey]: null
+  }
+  if (def !== undefined) {
+    return val != null? val: def
+  }
+  return {val, lastKey}
+}
+
 export const csv2Obj = (str) => {
   str = str.replace("\xEF\xBB\xBF", "") // remove bom
   str = convert2Unicode(str)
