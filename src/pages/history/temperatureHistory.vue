@@ -149,13 +149,23 @@ export default {
           value: zId
         })
       }
-      this.categoryId = val.value
-      this.vModelCategory = val
+      if (val == null) {
+        this.categoryId = null
+        this.vModelCategory = null
+      } else {
+        this.categoryId = val.value
+        this.vModelCategory = val
+      }
       this.vModelZone = null
     },
     zoneChange(val) {
-      this.zoneId = val.value
-      this.vModelZone = val
+      if (val == null) {
+        this.zoneId = null
+        this.vModelZone = null
+      } else {
+        this.zoneId = val.value
+        this.vModelZone = val
+      }
     },
     dateFromChange(val) {
       if (val == null) {
@@ -172,9 +182,9 @@ export default {
       }
     },
     async dataDownload() {
-      let paramCategoryId = (this.categoryId != null)?this.categoryId:0
-      let paramZoneId = (this.zoneId != null)?this.zoneId:0
-      let paramExbId = 0
+      let paramCategoryId = (this.categoryId != null)?this.categoryId:-1
+      let paramZoneId = (this.zoneId != null)?this.zoneId:-1
+      let paramExbId = -1
       let paramDyFrom = this.dateFrom
       let paramDyTo = this.dateTo
       let paramHistoryType = 0
