@@ -120,12 +120,6 @@ export default {
     download() {
       HtmlUtil.fileDL("gateway.csv", Util.converToCsv(this.gateways), getCharSet(this.$store.state.loginId))
     },
-    ...mapMutations([
-      'replace', 
-    ]),
-    ...mapMutations('monitor', [
-      'replaceMonitor', 
-    ]),
   }
 }
 </script>

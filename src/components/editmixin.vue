@@ -9,10 +9,12 @@ import { sleep } from '../sub/util/Util'
 import { APP } from '../sub/constant/config.js'
 import * as HtmlUtil from '../sub/util/HtmlUtil'
 import * as Util from '../sub/util/Util'
+import commonmixinVue from './commonmixin.vue';
 
 let that
 
 export default {
+  mixins: [commonmixinVue],  
   data() {
     return {
       show: true,
@@ -41,13 +43,6 @@ export default {
     this.replace({title: this.$i18n.t('label.' + this.name) + this.label})
   },
   methods: {
-    ...mapMutations('app_service', [
-      'replaceAS', 
-      'clear', 
-    ]),
-    ...mapMutations([
-      'replace', 
-    ]),
     register(again) {
       this.again = again
     },
@@ -55,7 +50,7 @@ export default {
       this.$router.push(this.backPath)
     },
     sensorOptions(entity) {
-      return _(this.sensorList)
+      return _(this.sensors)
       .filter((sensor) => {
         if (entity == 'exb') {
           return APP.EXB_SENSOR.includes(sensor.sensorId)
@@ -73,10 +68,6 @@ export default {
         }
       )
       .value()
-    },
-    async loadSensorList() {
-      let sensorList = await AppServiceHelper.fetchList("/core/sensor")
-      this.replaceAS({sensorList})
     },
     async save() {
       return await AppServiceHelper.save(this.appServicePath, this.form, this.updateOnlyNN)

@@ -136,9 +136,6 @@ export default {
     },
   },
   methods: {
-    ...mapMutations('app_service', [
-      'replaceAS', 
-    ]),
     async fetchData(payload) {
       try {
         this.replace({showProgress: true})

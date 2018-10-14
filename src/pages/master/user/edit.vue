@@ -11,22 +11,18 @@
           <label v-t="'label.userId'" />
           <b-form-input type="text" v-model="form.userId" readonly="readonly" />
         </b-form-group>
-        <!--
-        <b-form-group>
+        <b-form-group v-show="showName">
           <label v-t="'label.name'" />
           <b-form-input type="text" v-model="form.name" maxlength="20" :readonly="!isEditable" />
         </b-form-group>
-        -->
         <b-form-group>
           <label v-t="'label.loginId'" />
           <b-form-input type="text" v-model="form.loginId" maxlength="16" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" required :readonly="!isEditable" />
         </b-form-group>
-        <!--
-        <b-form-group>
+        <b-form-group v-show="showEmail">
           <label v-t="'label.email'" />
           <b-form-input type="email" v-model="form.email" maxlength="255" :readonly="!isEditable" />
         </b-form-group>
-        -->
         <b-form-group>
           <label v-t="'label.role'" />
           <b-form-select v-model="role" :options="roles" required ></b-form-select>
@@ -57,6 +53,7 @@ import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import _ from 'lodash'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import { APP } from '../../../sub/constant/config.js'
 import editmixinVue from '../../../components/editmixin.vue'
 import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/breadcrumb.vue'
@@ -108,6 +105,12 @@ export default {
     theme () {
       const theme = getButtonTheme(this.$store.state.loginId)
       return 'outline-' + theme
+    },
+    showEmail() {
+      return APP.USER_WITH_EMAIL
+    },
+    showName() {
+      return APP.USER_WITH_NAME
     },
     ...mapState('app_service', [
       'user',

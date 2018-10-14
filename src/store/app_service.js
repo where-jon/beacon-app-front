@@ -4,7 +4,7 @@ export const state = () => ({
   pots: [],
   pot: {},
   led: {},
-  sensorList: [],
+  sensors: [],
   deviceIds: [],
   potImages: [],
   areas: [],

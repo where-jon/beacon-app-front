@@ -10,6 +10,7 @@
 import mList from '../../../components/list.vue'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
+import { APP } from '../../../sub/constant/config.js'
 import { addLabelByKey } from '../../../sub/helper/ViewHelper'
 import listmixinVue from '../../../components/listmixin.vue'
 import breadcrumb from '../../../components/breadcrumb.vue'
@@ -31,9 +32,9 @@ export default {
         csvOut: true,
         fields: addLabelByKey(this.$i18n, [ 
           {key: "userId", sortable: true },
-          // {key: "name", sortable: true  },
+          APP.USER_WITH_NAME? {key: "name", sortable: true  }: null,
           {key: "loginId", sortable: true  },
-          // {key: "email", sortable: true },
+          APP.USER_WITH_EMAIL? {key: "email", sortable: true }: null,
           {key: "roleName", label: "role", sortable: true },
           {key: "description", sortable: true },
           {key: "actions", thStyle: {width:'130px !important'} }

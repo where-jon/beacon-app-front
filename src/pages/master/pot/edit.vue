@@ -14,6 +14,14 @@
               <b-form-input type="text" v-model="form.potId" readonly="readonly" />
             </b-form-group>
             <b-form-group>
+              <label v-t="'label.tx'" />
+              <b-form-select v-model="form.txId" :options="txOptions" class="mb-3 ml-3 col-4" :readonly="!isEditable" />
+            </b-form-group>
+            <b-form-group>
+              <label v-t="'label.txId'" />
+              <b-form-input type="number" v-model="form.txId" :readonly="!isEditable" />
+            </b-form-group>
+            <b-form-group>
               <label v-t="'label.potCd'" />
               <b-form-input type="text" v-model="form.potCd" maxlength="20" required :readonly="!isEditable" />
             </b-form-group>
@@ -31,11 +39,11 @@
             </b-form-group>
             <b-form-group>
               <label v-t="'label.group'" />
-              <b-form-input type="text" v-model="form.group" maxlength="20" :readonly="!isEditable" />
+              <b-form-select v-model="form.groupId" :options="groupOptions" class="mb-3 ml-3 col-4" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.category'" />
-              <b-form-input type="text" v-model="form.category" maxlength="20" :readonly="!isEditable" />
+              <b-form-select v-model="form.categoryId" :options="categoryOptions" class="mb-3 ml-3 col-4" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.post'" />
@@ -44,10 +52,6 @@
             <b-form-group>
               <label v-t="'label.tel'" />
               <b-form-input type="tel" v-model="form.tel" :readonly="!isEditable" pattern="[-\d]*" />
-            </b-form-group>
-            <b-form-group>
-              <label v-t="'label.txId'" />
-              <b-form-input type="number" v-model="form.txId" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.thumbnail'" />
@@ -74,10 +78,13 @@
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import _ from 'lodash'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import * as StateHelper from '../../../sub/helper/StateHelper'
 import editmixinVue from '../../../components/editmixin.vue'
 import breadcrumb from '../../../components/breadcrumb.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
+
+let that
 
 export default {
   components: {
@@ -92,7 +99,7 @@ export default {
       appServicePath: '/basic/pot',
       form: ViewHelper.extract(this.$store.state.app_service.pot,
           ["potId", "potCd", "potName", "extValue.ruby",
-          "displayName", "group", "category", "extValue.tel", "txId",
+          "displayName", "potGroupList.0.group.groupId", "potCategoryList.0.category.categoryId", "extValue.tel", "txId",
           "extValue.post", "thumbnail", "description"]),
       items: [
         {
@@ -115,9 +122,51 @@ export default {
       const theme = getButtonTheme(this.$store.state.loginId)
       return 'outline-' + theme
     },
+    categoryOptions() {
+      let options = this.categories.map((category) => {
+          return {
+            value: category.categoryId,
+            text: category.categoryName
+          }
+        }
+      )
+      options.unshift({value:null, text:''})
+      return options
+    },
+    groupOptions() {
+      let options = this.groups.map((group) => {
+          return {
+            value: group.groupId,
+            text: group.groupName
+          }
+        }
+      )
+      options.unshift({value:null, text:''})
+      return options
+    },
+    txOptions() {
+      let options = this.txs.map((tx) => {
+          return {
+            value: tx.txId,
+            text: tx.txName
+          }
+        }
+      )
+      options.unshift({value:null, text:''})
+      return options
+    },
     ...mapState('app_service', [
       'pot',
+      'groups',
+      'categories',
+      'txs',
     ]),
+  },
+  mounted() {
+    that = this
+    StateHelper.loadGroups()
+    StateHelper.loadCategorys()
+    StateHelper.loadTxs()
   },
   methods: {
     async save() {
@@ -131,11 +180,11 @@ export default {
           post: this.form.post,
         },
         displayName: this.form.displayName,
-        potGroupList: this.form.group ? [{
-          potGroupPK: {groupId: this.form.group}
+        potGroupList: this.form.groupId ? [{
+          potGroupPK: {groupId: this.form.groupId}
         }] : [],
-        potCategoryList: this.form.category ? [{
-          potCategoryPK: {categoryId: this.form.category}
+        potCategoryList: this.form.categoryId ? [{
+          potCategoryPK: {categoryId: this.form.categoryId}
         }] : [],
         txId: this.form.txId,
         thumbnail: this.form.thumbnail,

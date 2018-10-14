@@ -143,16 +143,16 @@ export default {
           '/core/zone/categoryList',
           'categoryId'
         )
-        var categorys = {}
+        var categories = {}
         this.zoneCategorys.forEach(elm => {
           if (elm.categoryId >= 0) {
-            categorys[elm.categoryId] = elm.categoryName
+            categories[elm.categoryId] = elm.categoryName
           }
         })
         this.categoryOptionList = []
-        for (var catId in categorys) {
+        for (var catId in categories) {
           this.categoryOptionList.push({
-            label: categorys[catId],
+            label: categories[catId],
             value: catId
           })
         }
@@ -242,12 +242,6 @@ export default {
         getCharSet(this.$store.state.loginId)
       )
     },
-    ...mapMutations([
-      'replace', 
-    ]),
-    ...mapMutations('monitor', [
-      'replaceMonitor', 
-    ]),
     async search() {
       if (this.selectedYearMonth == null) return
       var paramCategoryId = (this.categoryId != null)?this.categoryId:-1

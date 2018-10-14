@@ -67,9 +67,9 @@ export default {
         }
 
         let newVal
-        if (MAIN_COL === headerName && val.length != 0) {
+        if (MAIN_COL === headerName && !val) {
           newVal = dummyKey--
-        } else if (NULLABLE_NUMBER_COL.includes(headerName) && Util.hasValue(val)) {
+        } else if (NULLABLE_NUMBER_COL.includes(headerName) && !Util.hasValue(val)) {
           newVal = Number(val)
         } else {
           newVal = val

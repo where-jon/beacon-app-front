@@ -227,12 +227,6 @@ export default {
         getCharSet(this.$store.state.loginId)
       )
     },
-    ...mapMutations([
-      'replace', 
-    ]),
-    ...mapMutations('monitor', [
-      'replaceMonitor', 
-    ]),
   }
 }
 </script>
