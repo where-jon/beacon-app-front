@@ -1,7 +1,7 @@
 <template>
   <div>
     <breadcrumb :items="items" />
-    <m-list :params="params" :list="persons" />
+    <m-list :params="params" :list="pots" />
   </div>
 </template>
 
@@ -22,17 +22,17 @@ export default {
   data() {
     return {
       params: {
-        name: 'person',
-        id: 'personId',
-        editPath: '/master/person/edit',
-        appServicePath: '/basic/person',
-        bulkEditPath: '/master/person/bulkEdit',
+        name: 'pot',
+        id: 'potId',
+        editPath: '/master/pot/edit',
+        appServicePath: '/basic/pot',
+        bulkEditPath: '/master/pot/bulkEdit',
         csvOut: true,
         fields: addLabelByKey(this.$i18n, [ 
-          {key: "personId", sortable: true, tdClass: "thumb-rowdata"},
+          {key: "potId", sortable: true, tdClass: "thumb-rowdata"},
           {key: "thumbnail", tdClass: "thumb-rowdata" },
-          {key: "personCd", sortable: true , tdClass: "thumb-rowdata"},
-          {key: "personName", sortable: true , tdClass: "thumb-rowdata"},
+          {key: "potCd", sortable: true , tdClass: "thumb-rowdata"},
+          {key: "potName", sortable: true , tdClass: "thumb-rowdata"},
           {key: "extValue.ruby", label: "ruby", sortable: true, tdClass: "thumb-rowdata"},
           {key: "displayName", sortable: true, tdClass: "thumb-rowdata"},
           {key: "group.groupName", label: "group", sortable: true, tdClass: "thumb-rowdata"},
@@ -41,7 +41,7 @@ export default {
           {key: "txId", sortable: true, 'class': 'text-center' , tdClass: "thumb-rowdata"},
           {key: "actions", thStyle: {width:'130px !important'} , tdClass: "thumb-rowdata"}
         ]),
-        initTotalRows: this.$store.state.app_service.persons.length,
+        initTotalRows: this.$store.state.app_service.pots.length,
       },
       items: [
         {
@@ -49,7 +49,7 @@ export default {
           active: true
         },
         {
-          text: this.$i18n.t('label.person'),
+          text: this.$i18n.t('label.pot'),
           active: true
         }
       ]
@@ -57,8 +57,8 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'persons',
-      'personImages',
+      'pots',
+      'potImages',
       'groups',
       'categories',
     ]),
@@ -67,13 +67,13 @@ export default {
     async fetchData(payload) {
       try {
         this.replace({showProgress: true})
-        let persons = await AppServiceHelper.fetchList("/basic/person/withThumbnail", 'personId')
-        let personImages = persons.map((val) => val.thumbnail)
-        persons = persons.map((val) => ({...val, thumbnail: ""})) // omit images to avoid being filtering target
+        let pots = await AppServiceHelper.fetchList("/basic/pot/withThumbnail", 'potId')
+        let potImages = pots.map((val) => val.thumbnail)
+        pots = pots.map((val) => ({...val, thumbnail: ""})) // omit images to avoid being filtering target
         if (payload && payload.done) {
           payload.done()
         }
-        this.replaceAS({persons, personImages})
+        this.replaceAS({pots, potImages})
       }
       catch(e) {
         console.error(e)
@@ -81,7 +81,7 @@ export default {
       this.replace({showProgress: false})
     },
     thumbnail(index) {
-      return this.personImages[index]
+      return this.potImages[index]
     },
   }
 }

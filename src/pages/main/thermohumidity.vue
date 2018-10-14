@@ -94,7 +94,7 @@ export default {
           return exb.location.areaId == this.selectedArea.value && exb.location.x && exb.location.y > 0 && that.getSensorId(exb) == SENSOR.TEMPERATURE
         })
         .map((exb) => {
-          let sensor = sensors.find((val) => val.deviceid == exb.deviceId && val.timestamp)
+          let sensor = sensors.find((val) => val.deviceid == exb.deviceId && (val.timestamp||val.updatetime))
           return {
             exbId: exb.exbId, deviceId: exb.deviceId, x: exb.location.x, y: exb.location.y,
             humidity: sensor? sensor.humidity: null,

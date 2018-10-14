@@ -1,12 +1,12 @@
 import Vue from 'vue'
 
 export const state = () => ({
-  persons: [],
-  person: {},
+  pots: [],
+  pot: {},
   led: {},
   sensorList: [],
   deviceIds: [],
-  personImages: [],
+  potImages: [],
   areas: [],
   areaImages: [],
   area: {},

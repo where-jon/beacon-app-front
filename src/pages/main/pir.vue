@@ -75,11 +75,12 @@ export default {
         let thermopileSensors = APP.USE_THERMOPILE? await EXCloudHelper.fetchSensor(SENSOR.THERMOPILE): []
 
         this.positionedExb = _(this.exbs).filter((exb) => {
-          return exb.location.areaId == this.selectedArea.value && exb.location.x && exb.location.y > 0 && Util.equalsAny(that.getSensorId(exb), [SENSOR.PIR, SENSOR.THERMOPILE])
+          return exb.location.areaId == this.selectedArea.value && exb.location.x && exb.location.y > 0 // && Util.equalsAny(that.getSensorId(exb), [SENSOR.PIR, SENSOR.THERMOPILE])
         })
         .map((exb) => {
           let pir = pirSensors.find((val) => val.deviceid == exb.deviceId && val.count >= DISP.PIR_MIN_COUNT)
           let thermopile = thermopileSensors.find((val) => val.deviceid == exb.deviceId && val.count > 0)
+          console.log({exb, pir, thermopile, pirSensors, thermopileSensors})
           return {
             exbId: exb.exbId, deviceId: exb.deviceId, x: exb.location.x, y: exb.location.y,
             count: pir? pir.count: thermopile? thermopile.count: 0,

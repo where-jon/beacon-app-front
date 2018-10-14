@@ -67,7 +67,7 @@ export default {
       return this.$store.state.loginId
     },
     ...mapState('app_service', [
-      'persons',
+      'pots',
     ]),
     navbarClasses() {
       const storeTheme = this.$store.state.setting.theme

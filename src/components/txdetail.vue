@@ -1,6 +1,6 @@
 <template>
   <div :class="selectedTx.class" :style="{left: selectedTx.left+'px', top: selectedTx.top+'px'}">
-    <div class="personBox" @click="$emit('resetDetail')">
+    <div class="potBox" @click="$emit('resetDetail')">
       <div>詳細情報＝これから実装 {{ selectedTx }} 
       </div>
     </div>
@@ -22,7 +22,7 @@ export default {
 <style scoped lang="scss">
 @import "../sub/constant/config.scss";
 
-.personBox {
+.potBox {
   padding: 3px 3px 3px 15px;
   overflow: hidden;
   border: 3px solid $txdetail-bg;
@@ -70,7 +70,7 @@ export default {
 }
 
 @media screen\0 {	
-  .personBox {
+  .potBox {
     padding: 3px;
 	}	
 }
