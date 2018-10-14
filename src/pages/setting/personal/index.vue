@@ -23,7 +23,7 @@
               <p class="error" v-for="(val, key) in errorMessages.loginId" :key="key" v-if="errorMessages.loginId.length > 0" v-t="val"></p>
             </b-form-group>
             <b-form-group>
-              <label v-t="'label.personName'" />
+              <label v-t="'label.name'" />
               <b-form-input type="text" v-model="loginUser.name" :readonly="!isChange" :state="errorMessages.name.length > 0 ? false : null" />
               <p class="error" v-for="(val, key) in errorMessages.name" :key="key" v-if="errorMessages.name.length > 0" v-t="val"></p>
             </b-form-group>
@@ -254,7 +254,7 @@ export default {
         this.$i18n.t('label.loginId'),
         this.$i18n.t('message.invalidLoginId')
       )
-      errorMessages.name = this.validateRequire(this.loginUser.name, this.$i18n.t('label.personName'))
+      errorMessages.name = this.validateRequire(this.loginUser.name, this.$i18n.t('label.name'))
       errorMessages.email = this.validateRequire(this.loginUser.email, this.$i18n.t('label.email'))
       errorMessages.password = this.validateLoginIdPassword(
         this.loginUser.password,

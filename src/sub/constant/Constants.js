@@ -53,9 +53,9 @@ export const txViewTypes = [
 export const CATEGORY = {
   getTypes(){ 
     return [
-      {value: 0, text: i18n.t('label.personThing')},
-      {value: 1, text: i18n.t('label.objectThing')},
-      {value: 2, text: i18n.t('label.objectZone')},
+      {value: 0, text: i18n.t('label.person')},
+      {value: 1, text: i18n.t('label.thing')},
+      {value: 2, text: i18n.t('label.zone')},
     ]
   },
 }
@@ -118,9 +118,9 @@ export const MENU = [
         icon: 'fas fa-thermometer-half',
       },
       {
-        key: 'person',
-        path: 'person',
-        feature: '/basic/person',
+        key: 'pot',
+        path: 'pot',
+        feature: '/basic/pot',
         icon: 'far fa-id-card',
       },
       {
@@ -171,9 +171,9 @@ export const MENU = [
         // icon: 'fas fa-map-pin',
       },
       {
-        key: 'person',
-        path: 'person',
-        feature: '/basic/person',
+        key: 'pot',
+        path: 'pot',
+        feature: '/basic/pot',
         icon: 'far fa-id-card',
       },
       {

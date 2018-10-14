@@ -152,10 +152,10 @@ export default {
       if (this.isDev) {
         return positions
       }
-      let persons = await AppServiceHelper.fetchList("/basic/person/withThumbnail", 'personId')
+      let pots = await AppServiceHelper.fetchList("/basic/pot/withThumbnail", 'potId')
       const map = {}
-      persons.forEach((e) => {
-        map[e.txId] = e.personName
+      pots.forEach((e) => {
+        map[e.txId] = e.potName
       })
 
       const that = this

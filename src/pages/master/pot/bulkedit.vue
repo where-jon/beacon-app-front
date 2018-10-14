@@ -21,10 +21,10 @@ export default {
   mixins: [editmixinVue],
   data() {
     return {
-      name: 'person',
-      id: 'personId',
-      backPath: '/master/person',
-      appServicePath: '/basic/person',
+      name: 'pot',
+      id: 'potId',
+      backPath: '/master/pot',
+      appServicePath: '/basic/pot',
       form: {
         csvFile: null,
       },
@@ -34,11 +34,11 @@ export default {
           active: true
         },
         {
-          text: this.$i18n.t('label.person'),
-          href: '/master/person',
+          text: this.$i18n.t('label.pot'),
+          href: '/master/pot',
         },
         {
-          text: this.$i18n.t('label.person') + this.$i18n.t('label.bulkRegister'),
+          text: this.$i18n.t('label.pot') + this.$i18n.t('label.bulkRegister'),
           active: true
         }
       ]
@@ -46,22 +46,22 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'person',
+      'pot',
     ]),
   },
   methods: {
     async save() {
-      const MAIN_COL = "personId"
+      const MAIN_COL = "potId"
       const NULLABLE_NUMBER_COL = ["txId", "exbId", "zoneId", "areaId"]
       const MANY_TO_MANY = ["groupId", "categoryId"]
 
       await this.bulkSave(MAIN_COL, null, null, (entity, headerName, val, dummyKey) => {
         if (MANY_TO_MANY.includes(headerName) && Util.hasValue(val)) {
           if("groupId" === headerName) {
-            entity.personGroupList = [{personGroupPK: {groupId: Number(val)}}]
+            entity.potGroupList = [{potGroupPK: {groupId: Number(val)}}]
           }
           if("categoryId" === headerName) {
-            entity.personCategoryList = [{personCategoryPK: {categoryId: Number(val)}}]
+            entity.potCategoryList = [{potCategoryPK: {categoryId: Number(val)}}]
           }
           return dummyKey
         }

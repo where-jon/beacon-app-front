@@ -9,17 +9,17 @@
       <b-row>
         <b-col md="8" offset-md="2">
           <b-form @submit="onSubmit" v-if="show">
-            <b-form-group v-if="form.personId">
-              <label v-t="'label.personId'" />
-              <b-form-input type="text" v-model="form.personId" readonly="readonly" />
+            <b-form-group v-if="form.potId">
+              <label v-t="'label.potId'" />
+              <b-form-input type="text" v-model="form.potId" readonly="readonly" />
             </b-form-group>
             <b-form-group>
-              <label v-t="'label.personCd'" />
-              <b-form-input type="text" v-model="form.personCd" maxlength="20" required :readonly="!isEditable" />
+              <label v-t="'label.potCd'" />
+              <b-form-input type="text" v-model="form.potCd" maxlength="20" required :readonly="!isEditable" />
             </b-form-group>
             <b-form-group>
-              <label v-t="'label.personName'" />
-              <b-form-input type="text" v-model="form.personName" maxlength="20" required :readonly="!isEditable" />
+              <label v-t="'label.potName'" />
+              <b-form-input type="text" v-model="form.potName" maxlength="20" required :readonly="!isEditable" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.ruby'" />
@@ -86,12 +86,12 @@ export default {
   mixins: [editmixinVue],
   data() {
     return {
-      name: 'person',
-      id: 'personId',
-      backPath: '/master/person',
-      appServicePath: '/basic/person',
-      form: ViewHelper.extract(this.$store.state.app_service.person,
-          ["personId", "personCd", "personName", "extValue.ruby",
+      name: 'pot',
+      id: 'potId',
+      backPath: '/master/pot',
+      appServicePath: '/basic/pot',
+      form: ViewHelper.extract(this.$store.state.app_service.pot,
+          ["potId", "potCd", "potName", "extValue.ruby",
           "displayName", "group", "category", "extValue.tel", "txId",
           "extValue.post", "thumbnail", "description"]),
       items: [
@@ -100,11 +100,11 @@ export default {
           active: true
         },
         {
-          text: this.$i18n.t('label.person'),
-          href: '/master/person',
+          text: this.$i18n.t('label.pot'),
+          href: '/master/pot',
         },
         {
-          text: this.$i18n.t('label.person') + this.$i18n.t('label.detail'),
+          text: this.$i18n.t('label.pot') + this.$i18n.t('label.detail'),
           active: true
         }
       ]
@@ -116,26 +116,26 @@ export default {
       return 'outline-' + theme
     },
     ...mapState('app_service', [
-      'person',
+      'pot',
     ]),
   },
   methods: {
     async save() {
       const entity = {
-        personId: this.form.personId || -1,
-        personCd: this.form.personCd,
-        personName: this.form.personName,
+        potId: this.form.potId || -1,
+        potCd: this.form.potCd,
+        potName: this.form.potName,
         extValue: {
           ruby: this.form.ruby,
           tel: this.form.tel,
           post: this.form.post,
         },
         displayName: this.form.displayName,
-        personGroupList: this.form.group ? [{
-          personGroupPK: {groupId: this.form.group}
+        potGroupList: this.form.group ? [{
+          potGroupPK: {groupId: this.form.group}
         }] : [],
-        personCategoryList: this.form.category ? [{
-          personCategoryPK: {categoryId: this.form.category}
+        potCategoryList: this.form.category ? [{
+          potCategoryPK: {categoryId: this.form.category}
         }] : [],
         txId: this.form.txId,
         thumbnail: this.form.thumbnail,

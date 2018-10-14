@@ -160,10 +160,10 @@
     "operationLogId": "操作ログID",
     "operationType": "操作種別",
         
-    "person": "個人",
-    "personId": "ID",
-    "personCd": "コード",
-    "personName": "名前",
+    "pot": "個人",
+    "potId": "ID",
+    "potCd": "コード",
+    "potName": "名前",
     "post": "役職",
     "ruby": "ふりがな",
     "tel": "電話番号",
@@ -276,9 +276,9 @@
     "disabledType": "無効",
     "enabledType": "有効",
 
-    "personThing": "人",
-    "objectThing": "物",
-    "objectZone": "ゾーン",
+    "person": "人",
+    "thing": "物",
+    "zone": "ゾーン",
 
     "general": "一般",
     "security": "セキュリティ",
