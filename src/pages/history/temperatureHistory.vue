@@ -21,7 +21,7 @@
             </b-form-group>
             <b-form-group>
               <label v-t="'label.temperatureHistoryType'" />
-              <v-select :options="typeOptions" required class="ml-2"></v-select>
+              <v-select :options="typeOptions" required class="ml-2" :on-change="typeChange"></v-select>
             </b-form-group>
             <b-button size="sm" variant="info" v-t="'label.download'" @click="download()"></b-button> 
           </b-form>
@@ -72,6 +72,7 @@ export default {
       zoneId: null,
       dateFrom: 0,
       dateTo: 0,
+      historyType: 0,
       temperatureHistoryData: null,
     }
     
@@ -182,13 +183,20 @@ export default {
         this.dateTo = (val.substr(0, 4) + val.substr(5, 2) + val.substr(8, 2))/1
       }
     },
+    typeChange(val) {
+      if (val == null) {
+        this.historyType = 0
+      } else {
+        this.historyType = val.value
+      }
+    },
     async dataDownload() {
       let paramCategoryId = (this.categoryId != null)?this.categoryId:-1
       let paramZoneId = (this.zoneId != null)?this.zoneId:-1
       let paramExbId = -1
       let paramDyFrom = this.dateFrom
       let paramDyTo = this.dateTo
-      let paramHistoryType = 0
+      let paramHistoryType = this.historyType
       var list = await AppServiceHelper.fetchList2(
         '/basic/sensorHistory',
         '/basic/sensorHistory/' + paramCategoryId + "/" +
