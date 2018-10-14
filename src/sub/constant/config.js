@@ -30,6 +30,8 @@ export const APP = {
   MAIL_ADDRESS: "",
   MAIL_ADDRESS: "",
   IP_ADDRESS_FILTER: "",
+  EXB_SENSOR: [1,2,3,4],
+  TX_SENSOR: [5,6],
 }
 
 export const LOCAL_LOGIN = { // local login md5 hash of id:pass // TODO: add Role
@@ -65,6 +67,7 @@ export const DISP = {
   AUTO_RELOAD: 60000, // 自動リロード間隔(ミリ秒)
   SHOW_SIDEBAR: true, // show sidebar  
   THEME: "default",
+  CHAR_SET: "UTF8",
 
   MAP_FIT: "both", // マップを画面表示範囲内にフィットさせるか。width or height or both 
 
@@ -149,6 +152,11 @@ export const THEME = [
   {id: 2,  name: 'earthcolor'},
   {id: 3,  name: 'autumn'},
   {id: 4,  name: 'vivid'},
+]
+
+export const CHAR_SET = [
+  {id: 1,  name: "UTF8"},
+  {id: 2,  name: "SJIS"},
 ]
 
 export const MONITOR_TX = {

@@ -12,6 +12,9 @@ import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import { addLabelByKey } from '../../../sub/helper/ViewHelper'
 import listmixinVue from '../../../components/listmixin.vue'
 import breadcrumb from '../../../components/breadcrumb.vue'
+import * as Util from '../../../sub/util/Util'
+
+let that
 
 export default {
   components: {
@@ -37,6 +40,7 @@ export default {
           {key: "areaName", label:'areaName', sortable: true,},
           {key: "x", label:'locationX', sortable: true,},
           {key: "y", label:'locationY', sortable: true,},
+          {key: "sensor", label:'type', sortable: true,},
           {key: "actions", thStyle: {width: '130px !important'} }
         ]),
         initTotalRows: this.$store.state.app_service.exbs.length
@@ -59,6 +63,9 @@ export default {
       'exbImages',
     ]),
   },
+  mounted() {
+    that = this
+  },
   methods: {
     async fetchData(payload) {
       try {
@@ -67,15 +74,16 @@ export default {
         console.log(exbs)
         exbs = exbs.map((exb) => {
           const location = exb.location
-          const area = location? location.area: undefined
+          const area = location? location.area: null
           return {
             ...exb,
             deviceIdX: exb.deviceId.toString(16).toUpperCase(),
-            locationName: location? location.locationName: undefined,
-            posId: location? location.posId: undefined,
-            areaName: area? area.areaName: undefined,
-            x: location? location.x: undefined,
-            y: location? location.y: undefined,
+            locationName: location? location.locationName: null,
+            posId: location? location.posId: null,
+            areaName: area? area.areaName: null,
+            x: location? location.x: null,
+            y: location? location.y: null,
+            sensor: that.$i18n.t('label.' + Util.getValue(exb, 'exbSensorList.0.sensor.sensorName', 'normal'))
           }
         })
         if (payload && payload.done) {

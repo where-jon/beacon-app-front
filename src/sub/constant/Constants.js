@@ -42,11 +42,7 @@ export const FEATURE = {
   }
 }
 
-export const UPDATE_ONLY_NN = {
-  NONE: 0,
-  NULL: 1,
-  EMPTY_ZERO: 2,
-}
+export const UPDATE_ONLY_NN = { NONE: 0, NULL: 1, EMPTY_ZERO: 2 };
 
 export const txViewTypes = [
   {value: 1, text: "pattern1"},
@@ -67,7 +63,10 @@ export const CATEGORY = {
 export const SENSOR = {
   TEMPERATURE: 1,
   PIR: 2,
-  THERMOPILE: 3
+  THERMOPILE: 3,
+  LED: 4,
+  MEDITAG: 5,
+  MAGNET: 6,
 }
 
 export const DISCOMFORT = {
@@ -77,13 +76,14 @@ export const DISCOMFORT = {
 }
 
 export const LED_COLORS = {
-  BLUE: parseInt('1', 2),
-  RED: parseInt('10', 2),
-  PURPLE: parseInt('100', 2),
-  GREEN: parseInt('1000', 2),
-  PALEBLUE: parseInt('10000', 2),
-  YELLOW: parseInt('100000', 2),
-  WHITE: parseInt('1000000', 2),
+  BLACK: parseInt('1', 2),
+  BLUE: parseInt('10', 2),
+  RED: parseInt('100', 2),
+  PURPLE: parseInt('1000', 2),
+  GREEN: parseInt('10000', 2),
+  PALEBLUE: parseInt('100000', 2),
+  YELLOW: parseInt('1000000', 2),
+  WHITE: parseInt('10000000', 2),
 }
 
 export const LED_BLINK_TYPES = {
@@ -124,7 +124,7 @@ export const MENU = [
         icon: 'far fa-id-card',
       },
       {
-        key: 'led',
+        key: 'ledOperation',
         path: 'led',
         feature: '/basic/led',
         icon: 'far fa-lightbulb',

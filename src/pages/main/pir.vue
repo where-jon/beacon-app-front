@@ -23,6 +23,7 @@ import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import txdetail from '../../components/txdetail.vue'
 import { DEV, DISP, APP } from '../../sub/constant/config'
 import { SENSOR } from '../../sub/constant/Constants'
+import * as Util from '../../sub/util/Util'
 import { Shape, Stage, Container, Bitmap, Text, Touch } from '@createjs/easeljs/dist/easeljs.module'
 import { Tween, Ticker } from '@createjs/tweenjs/dist/tweenjs.module'
 import breadcrumb from '../../components/breadcrumb.vue'
@@ -74,7 +75,7 @@ export default {
         let thermopileSensors = APP.USE_THERMOPILE? await EXCloudHelper.fetchSensor(SENSOR.THERMOPILE): []
 
         this.positionedExb = _(this.exbs).filter((exb) => {
-          return exb.location.areaId == this.selectedArea.value && exb.location.x && exb.location.y > 0
+          return exb.location.areaId == this.selectedArea.value && exb.location.x && exb.location.y > 0 && Util.equalsAny(that.getSensorId(exb), [SENSOR.PIR, SENSOR.THERMOPILE])
         })
         .map((exb) => {
           let pir = pirSensors.find((val) => val.deviceid == exb.deviceId && val.count >= DISP.PIR_MIN_COUNT)

@@ -2,6 +2,7 @@ import Vue from 'vue'
 
 export const state = () => ({
   theme: 'default',
+  charSet: 'UTF8',
 })
 
 const initState = state()

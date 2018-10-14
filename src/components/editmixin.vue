@@ -6,9 +6,12 @@ import * as AppServiceHelper from '../sub/helper/AppServiceHelper'
 import * as ViewHelper from '../sub/helper/ViewHelper'
 import * as MenuHelper from '../sub/helper/MenuHelper'
 import { sleep } from '../sub/util/Util'
+import { APP } from '../sub/constant/config.js'
 import * as HtmlUtil from '../sub/util/HtmlUtil'
 import * as Util from '../sub/util/Util'
+
 let that
+
 export default {
   data() {
     return {
@@ -27,7 +30,7 @@ export default {
       return this.bulkRegister? 'bulkRegister': !this.isEditable? 'refer': this.isUpdate? 'update': 'register'
     },
     isUpdate() {
-      return this[this.name][this.id] != null
+      return this[this.name] && this[this.name][this.id] != null
     },
     isEditable() {
       return MenuHelper.isEditable(this.appServicePath)
@@ -51,8 +54,32 @@ export default {
     backToList() {
       this.$router.push(this.backPath)
     },
+    sensorOptions(entity) {
+      return _(this.sensorList)
+      .filter((sensor) => {
+        if (entity == 'exb') {
+          return APP.EXB_SENSOR.includes(sensor.sensorId)
+        }
+        else if (entity == 'tx') {
+          return APP.TX_SENSOR.includes(sensor.sensorId)
+        }
+        return true
+      })
+      .map((sensor) => {
+          return {
+            value: sensor.sensorId,
+            text: this.$i18n.t('label.' + sensor.sensorName)
+          }
+        }
+      )
+      .value()
+    },
+    async loadSensorList() {
+      let sensorList = await AppServiceHelper.fetchList("/core/sensor")
+      this.replaceAS({sensorList})
+    },
     async save() {
-      return await AppServiceHelper.save(this.appServicePath, this.form)
+      return await AppServiceHelper.save(this.appServicePath, this.form, this.updateOnlyNN)
     },
     async onSubmit(evt) {
       this.replace({showProgress: true})
@@ -65,9 +92,8 @@ export default {
         this.message = this.$i18n.t('message.' + this.crud + 'Completed', {target: this.$i18n.t('label.' + this.name)})
         this.showInfo = true
         if (this.again) {
-          _.forEach(this.form, (value, key) => {
-            this.form[key] = ''
-          })
+          this.form = {}
+          ViewHelper.applyDef(this.form, this.defValue)
           if(typeof this.beforeReload === "function"){
             this.beforeReload()
           }

@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import { DEV, APP_SERVICE } from '../constant/config'
+import { UPDATE_ONLY_NN } from '../constant/Constants'
 import * as mock from '../../assets/mock/mock'
 import { sleep } from '../util/Util'
 import * as HttpHelper from './HttpHelper'
@@ -26,7 +27,7 @@ export const fetch = async (target, id) => {
     return data
 }
 
-export const save = async (target, entity) => {
+export const save = async (target, entity, updateOnlyNN = UPDATE_ONLY_NN.NONE) => {
     const path = target
     var params = new URLSearchParams()
     _.forEach(entity, (value, key) => {
@@ -34,12 +35,12 @@ export const save = async (target, entity) => {
     })
 
     let data = DEV.USE_MOCK_APS? mock[target]:
-        await HttpHelper.postAppService(path + "?_=" + new Date().getTime(), params)
+        await HttpHelper.postAppService(path + "?updateOnlyNN=" + updateOnlyNN + "&_=" + new Date().getTime(), params)
 
     return data
 }
 
-export const bulkSave = async (target, entities, updateOnlyNN = 0) => {
+export const bulkSave = async (target, entities, updateOnlyNN = UPDATE_ONLY_NN.NONE) => {
     const path = target + "/bulk/?updateOnlyNN=" + updateOnlyNN + "&_=" + new Date().getTime()
     let data = DEV.USE_MOCK_APS? mock[target]:
         await HttpHelper.postAppService(path, entities)

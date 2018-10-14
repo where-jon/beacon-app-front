@@ -19,12 +19,20 @@
               <b-form-input type="number" v-model="form.btxId" required :readonly="!isEditable" />
             </b-form-group>
             <b-form-group>
+              <label v-t="'label.major'" />
+              <b-form-input type="number" v-model="form.major" :readonly="!isEditable" />
+            </b-form-group>
+            <b-form-group>
               <label v-t="'label.minor'" />
-              <b-form-input type="number" v-model="form.minor" required :readonly="!isEditable" />
+              <b-form-input type="number" v-model="form.minor" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.txName'" />
               <b-form-input type="text" v-model="form.txName" maxlength="20" :readonly="!isEditable" />
+            </b-form-group>
+            <b-form-group>
+              <label v-t="'label.type'" />
+              <b-form-select v-model="form.sensorId" :options="sensorOptionsTx" class="mb-3 ml-3 col-4" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.displayName'" />
@@ -48,6 +56,9 @@ import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import editmixinVue from '../../../components/editmixin.vue'
 import breadcrumb from '../../../components/breadcrumb.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
+import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
+
+let that
 
 export default {
   components: {
@@ -61,7 +72,10 @@ export default {
       id: 'txId',
       backPath: '/master/tx',
       appServicePath: '/core/tx',
-      form: ViewHelper.extract(this.$store.state.app_service.tx, ["txId", "btxId", "minor", "txName", "displayName",  "mapImage"]),
+      form: ViewHelper.extract(this.$store.state.app_service.tx, [
+        "txId", "btxId", "major", "minor", "txName", "displayName",  "mapImage",
+        "txSensorList.0.sensor.sensorId"
+      ]),
       items: [
         {
           text: this.$i18n.t('label.master'),
@@ -83,11 +97,33 @@ export default {
       const theme = getButtonTheme(this.$store.state.loginId)
       return 'outline-' + theme
     },
+    sensorOptionsTx() {
+      let options = this.sensorOptions('tx')
+      options.unshift({value:null, text:this.$i18n.t('label.normal')})
+      return options
+    },
     ...mapState('app_service', [
       'tx',
+      'sensorList',
     ]),
   },
+  mounted() {
+    that = this
+    if (!this.sensorList || this.sensorList.length == 0) {
+      this.loadSensorList()
+    }
+  },
   methods: {
+    async save() {
+      let entity = {
+        ...this.form,
+        txId: this.form.txId? this.form.txId: -1,
+        txSensorList: this.form.sensorId? [
+          {txSensorPK: {sensorId: this.form.sensorId}}
+        ]: null
+      }
+      return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
+   },
   }
 }
 </script>

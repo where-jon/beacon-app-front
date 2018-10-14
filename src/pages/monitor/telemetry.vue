@@ -16,7 +16,7 @@
             <tr v-for="(telemetry, index) in telemetrys" :key="index">
               <td scope="row" v-for="(val, key) in telemetry" :key="key" :class="getTdClass(index, telemetry.timestamp, key)">
                 <i :class="getPowerLevelClass(val)" v-if="key === label_powerLevel"></i>
-                {{ val + (key !== label_powerLevel ? '' : '%') }}
+                {{ val }}
               </td>
             </tr>
           </tbody>
@@ -48,6 +48,7 @@ import VueScrollingTable from "vue-scrolling-table"
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import reloadmixinVue from '../../components/reloadmixin.vue'
+import { getCharSet } from '../../sub/helper/CharSetHelper'
 
 export default {
   mixins: [reloadmixinVue],
@@ -59,7 +60,7 @@ export default {
     return {
       items: [
         {
-          text: this.$i18n.t('label.master'),
+          text: this.$i18n.t('label.monitor'),
           active: true
         },
         {
@@ -134,7 +135,7 @@ export default {
       return color + ' ' + (!this.isDev && key === this.label_powerLevel ? 'powerlevel' : '')
     },
     download() {
-      HtmlUtil.fileDL("telemetry.csv", Util.converToCsv(this.telemetrys))
+      HtmlUtil.fileDL("telemetry.csv", Util.converToCsv(this.telemetrys), getCharSet(this.$store.state.loginId))
     },
     ...mapMutations([
       'replace', 

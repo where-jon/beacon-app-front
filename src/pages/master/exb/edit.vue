@@ -28,8 +28,8 @@
               <b-form-input type="text" v-model="form.displayName" maxlength="3" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group>
-              <label v-t="'label.areaId'" />
-              <b-form-input type="number" v-model="form.areaId" required :readonly="!isEditable" />
+              <label v-t="'label.areaName'" />
+              <b-form-select v-model="form.areaId" :options="areaOptions" class="mb-3 ml-3 col-4" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.posId'" />
@@ -57,6 +57,10 @@
               <label v-t="'label.txViewType'" />
               <b-form-select v-model="form.txViewType" :options="txViewTypes" class="mb-3 ml-3 col-3" :readonly="!isEditable" />
             </b-form-group>
+            <b-form-group>
+              <label v-t="'label.type'" />
+              <b-form-select v-model="form.sensorId" :options="sensorOptionsExb" class="mb-3 ml-3 col-4" :readonly="!isEditable" />
+            </b-form-group>
             <b-button type="button" variant="outline-danger" @click="backToList" v-t="'label.back'"/>
             <b-button v-if="isEditable" type="submit" :variant="theme" @click="register(false)" class="ml-2" >{{ label }}</b-button>
             <b-button v-if="isEditable && !isUpdate" type="submit" :variant="theme" @click="register(true)" class="ml-2" v-t="'label.registerAgain'"/>
@@ -72,6 +76,7 @@ import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import _ from 'lodash'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
+import * as StateHelper from '../../../sub/helper/StateHelper'
 import editmixinVue from '../../../components/editmixin.vue'
 import { txViewTypes } from '../../../sub/constant/Constants'
 import breadcrumb from '../../../components/breadcrumb.vue'
@@ -93,10 +98,15 @@ export default {
       txViewTypes: txViewTypes,
       mutex: false,
       form: ViewHelper.extract(this.$store.state.app_service.exb, [
-        "exbId", "deviceId", "enabled",
-        "location.locationName", "location.areaId", "location.locationId", "location.displayName", "location.posId",
-        "location.x", "location.y", "location.visible", "location.txViewType"
-      ]),
+          "exbId", "deviceId", "enabled",
+          "location.locationName", "location.areaId", "location.locationId", "location.displayName", "location.posId",
+          "location.x", "location.y", "location.visible", "location.txViewType",
+          "exbSensorList.0.sensor.sensorId"
+        ]
+      ),
+      defValue: {
+        "enabled": true,
+      },
       deviceId: null,
       deviceIdX: null,
       items: [
@@ -120,8 +130,24 @@ export default {
       const theme = getButtonTheme(this.$store.state.loginId)
       return 'outline-' + theme
     },
+    sensorOptionsExb() {
+      let options = this.sensorOptions('exb')
+      options.unshift({value:null, text:this.$i18n.t('label.normal')})
+      return options
+    },
+    areaOptions() {
+      return this.areas.map((area) => {
+          return {
+            value: area.areaId,
+            text: area.areaName
+          }
+        }
+      )
+    },
     ...mapState('app_service', [
       'exb',
+      'areas',
+      'sensorList',
     ]),
   },
   watch: {
@@ -154,9 +180,11 @@ export default {
   mounted() {
     that = this
     this.deviceId = this.form.deviceId
-    if (this.form.enabled == null) {
-      this.form.enabled = true
+    ViewHelper.applyDef(this.form, this.defValue)
+    if (!this.sensorList || this.sensorList.length == 0) {
+      this.loadSensorList()
     }
+    StateHelper.loadAreas()
   },
   methods: {
     async save() {
@@ -175,11 +203,15 @@ export default {
           posId: this.form.posId,
           x: this.form.x,
           y: this.form.y,
-        }
+        },
+        exbSensorList: this.form.sensorId? [
+          {exbSensorPK: {sensorId: this.form.sensorId}}
+        ]: null
       }
+      let ret = await AppServiceHelper.bulkSave(this.appServicePath, [entity])
       this.deviceId = null
       this.deviceIdX = null
-      return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
+      return ret
    },
   }
 }
