@@ -110,9 +110,10 @@ export default {
           '/core/zone/categoryList',
           'categoryId'
         )
+        console.log(this.zoneCategorys)
         var categorys = {}
         this.zoneCategorys.forEach(elm => {
-          if (elm.categoryId != 0) {
+          if (elm.categoryId >= 0) {
             categorys[elm.categoryId] = elm.categoryName
           }
         })
