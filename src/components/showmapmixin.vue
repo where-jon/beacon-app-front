@@ -136,15 +136,6 @@ export default {
     getSensorId(exb) {
       return Util.getValue(exb, 'exbSensorList.0.sensor.sensorId').val
     },
-    ...mapMutations([
-      'replace', 
-    ]),
-    ...mapMutations('main', [
-      'replaceMain', 
-    ]),
-    ...mapMutations('app_service', [
-      'replaceAS', 
-    ]),
   }
 }
 </script>

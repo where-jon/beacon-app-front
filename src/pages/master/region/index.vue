@@ -15,11 +15,11 @@ import listmixinVue from '../../../components/listmixin.vue'
 import breadcrumb from '../../../components/breadcrumb.vue'
 
 export default {
+  mixins: [listmixinVue],
   components: {
     mList, 
     breadcrumb,
   },
-  mixins: [listmixinVue],
   data() {
     return {
       params: {

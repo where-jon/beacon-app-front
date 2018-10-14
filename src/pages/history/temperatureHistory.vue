@@ -99,13 +99,13 @@ export default {
   methods: {
     async fetchCategory() {
       try {
-        let categorys = await AppServiceHelper.fetchList2(
+        let categories = await AppServiceHelper.fetchList2(
           '/basic/category',
           '/basic/category/',
           'categoryId'
         )
         this.categoryList = []
-        categorys.forEach(elm => {
+        categories.forEach(elm => {
           if (elm.categoryType == 2) {
             this.categoryList.push({
               label: elm.categoryName,
@@ -201,12 +201,6 @@ export default {
         getCharSet(this.$store.state.loginId)
       )
     },
-    ...mapMutations([
-      'replace', 
-    ]),
-    ...mapMutations('monitor', [
-      'replaceMonitor', 
-    ]),
   }
 }
 </script>

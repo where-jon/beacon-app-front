@@ -137,12 +137,6 @@ export default {
     download() {
       HtmlUtil.fileDL("telemetry.csv", Util.converToCsv(this.telemetrys), getCharSet(this.$store.state.loginId))
     },
-    ...mapMutations([
-      'replace', 
-    ]),
-    ...mapMutations('monitor', [
-      'replaceMonitor', 
-    ]),
     async makeTelemetryRecords(telemetrys) {
       if (this.isDev) {
         return telemetrys

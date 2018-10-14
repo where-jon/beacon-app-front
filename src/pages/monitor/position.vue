@@ -202,12 +202,6 @@ export default {
     download() {
       HtmlUtil.fileDL("position.csv", Util.converToCsv(this.positions, ["btx_id","device_id","pos_id","phase","power_level","updatetime","nearest"]), getCharSet(this.$store.state.loginId))
     },
-    ...mapMutations([
-      'replace', 
-    ]),
-    ...mapMutations('monitor', [
-      'replaceMonitor', 
-    ]),
   }
 }
 </script>

@@ -13,8 +13,10 @@ import * as AuthHelper from '../sub/helper/AuthHelper'
 import { APP,DISP } from '../sub/constant/config'
 import * as Util from '../sub/util/Util'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import commonmixinVue from '../components/commonmixin.vue';
 
 export default {
+  mixin: [commonmixinVue],
   data() {
     return {
       userId: "",
@@ -46,12 +48,6 @@ export default {
         this.message = this.$i18n.t("message.loginFailed")
       })
     },
-    ...mapMutations('app_service', [
-      'replaceAS', 
-    ]),
-    ...mapMutations('setting', [
-      'replaceSetting', 
-    ]),
   },
 }
 

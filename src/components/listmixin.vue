@@ -10,12 +10,6 @@ import reloadmixinVue from './reloadmixin.vue'
 export default {
   mixins: [reloadmixinVue],
   methods: {
-    ...mapMutations([
-      'replace', 
-    ]),
-    ...mapMutations('app_service', [
-      'replaceAS', 
-    ]),
   }
 }
 </script>

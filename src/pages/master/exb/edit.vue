@@ -24,10 +24,6 @@
               <b-form-input type="text" v-model="form.locationName" maxlength="20" required :readonly="!isEditable" />
             </b-form-group>
             <b-form-group>
-              <label v-t="'label.displayName'" />
-              <b-form-input type="text" v-model="form.displayName" maxlength="3" :readonly="!isEditable" />
-            </b-form-group>
-            <b-form-group>
               <label v-t="'label.areaName'" />
               <b-form-select v-model="form.areaId" :options="areaOptions" class="mb-3 ml-3 col-4" :readonly="!isEditable" />
             </b-form-group>
@@ -99,7 +95,7 @@ export default {
       mutex: false,
       form: ViewHelper.extract(this.$store.state.app_service.exb, [
           "exbId", "deviceId", "enabled",
-          "location.locationName", "location.areaId", "location.locationId", "location.displayName", "location.posId",
+          "location.locationName", "location.areaId", "location.locationId", "location.posId",
           "location.x", "location.y", "location.visible", "location.txViewType",
           "exbSensorList.0.sensor.sensorId"
         ]
@@ -147,7 +143,7 @@ export default {
     ...mapState('app_service', [
       'exb',
       'areas',
-      'sensorList',
+      'sensors',
     ]),
   },
   watch: {
@@ -181,9 +177,7 @@ export default {
     that = this
     this.deviceId = this.form.deviceId
     ViewHelper.applyDef(this.form, this.defValue)
-    if (!this.sensorList || this.sensorList.length == 0) {
-      this.loadSensorList()
-    }
+    StateHelper.loadSensors()
     StateHelper.loadAreas()
   },
   methods: {
@@ -197,7 +191,6 @@ export default {
           locationId: this.form.locationId? this.form.locationId: -2,
           areaId: this.form.areaId,
           locationName: this.form.locationName,
-          displayName: this.form.displayName,
           visible: this.form.visible,
           txViewType: this.form.txViewType,
           posId: this.form.posId,

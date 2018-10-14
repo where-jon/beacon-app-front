@@ -48,8 +48,10 @@ import * as AuthHelper from '../sub/helper/AuthHelper'
 import { DISP, APP, THEME } from '../sub/constant/config'
 import { LOGIN_MODE } from '../sub/constant/Constants'
 import { getThemeClasses } from '../sub/helper/ThemeHelper'
+import commonmixinVue from './commonmixin.vue';
 
 export default {
+  mixin: [commonmixinVue],
   data() {
     return {
       version: APP.VERSION,
@@ -81,9 +83,6 @@ export default {
     move(page) {
       this.$router.push(page)
     },
-    ...mapMutations('app_service', [
-      'replaceAS', 
-    ])
   }
 }
 </script>

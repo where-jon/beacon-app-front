@@ -68,8 +68,10 @@ import * as HtmlUtil from '../sub/util/HtmlUtil'
 import * as Util from '../sub/util/Util'
 import { getButtonTheme, getTheme, themeColors } from '../sub/helper/ThemeHelper'
 import { getCharSet } from '../sub/helper/CharSetHelper'
+import commonmixinVue from './commonmixin.vue';
 
 export default {
+  mixin: [commonmixinVue], // not work
   props: ['params', 'list'],
   data() {
     return {
@@ -113,9 +115,6 @@ export default {
     // pageActive.style.color = '#ffffff'
   },
   methods: {
-    ...mapMutations([
-      'replace', 
-    ]),
     ...mapMutations('app_service', [
       'replaceAS', 
     ]),

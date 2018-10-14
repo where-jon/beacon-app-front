@@ -9,6 +9,7 @@
 import mList from '../../../components/list.vue'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
+import * as Util from '../../../sub/util/Util'
 import { addLabelByKey } from '../../../sub/helper/ViewHelper'
 import listmixinVue from '../../../components/listmixin.vue'
 import breadcrumb from '../../../components/breadcrumb.vue'
@@ -31,14 +32,14 @@ export default {
         fields: addLabelByKey(this.$i18n, [ 
           {key: "potId", sortable: true, tdClass: "thumb-rowdata"},
           {key: "thumbnail", tdClass: "thumb-rowdata" },
+          {key: "txIdName", label:'tx', sortable: true, 'class': 'text-center' , tdClass: "thumb-rowdata"},
           {key: "potCd", sortable: true , tdClass: "thumb-rowdata"},
           {key: "potName", sortable: true , tdClass: "thumb-rowdata"},
           {key: "extValue.ruby", label: "ruby", sortable: true, tdClass: "thumb-rowdata"},
           {key: "displayName", sortable: true, tdClass: "thumb-rowdata"},
-          {key: "group.groupName", label: "group", sortable: true, tdClass: "thumb-rowdata"},
-          {key: "category.categoryName", label: "category", sortable: true, tdClass: "thumb-rowdata"},
+          {key: "groupName", label: "group", sortable: true, tdClass: "thumb-rowdata"},
+          {key: "categoryName", label: "category", sortable: true, tdClass: "thumb-rowdata"},
           {key: "extValue.post", label: "post", tdClass: "thumb-rowdata"},
-          {key: "txId", sortable: true, 'class': 'text-center' , tdClass: "thumb-rowdata"},
           {key: "actions", thStyle: {width:'130px !important'} , tdClass: "thumb-rowdata"}
         ]),
         initTotalRows: this.$store.state.app_service.pots.length,
@@ -69,7 +70,13 @@ export default {
         this.replace({showProgress: true})
         let pots = await AppServiceHelper.fetchList("/basic/pot/withThumbnail", 'potId')
         let potImages = pots.map((val) => val.thumbnail)
-        pots = pots.map((val) => ({...val, thumbnail: ""})) // omit images to avoid being filtering target
+        pots = pots.map((val) => ({
+          ...val,
+          txIdName: val.txId? Util.getValue(val, 'tx.txName', '') + '(' + val.txId + ')': null,
+          groupName: Util.getValue(val, 'potGroupList.0.group.groupName', ''),
+          categoryName: Util.getValue(val, 'potCategoryList.0.category.categoryName', ''),
+          thumbnail: ""
+        })) // omit images to avoid being filtering target
         if (payload && payload.done) {
           payload.done()
         }

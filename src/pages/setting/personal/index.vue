@@ -22,12 +22,12 @@
               <b-form-input type="text" v-model="loginUser.loginId" maxlength="16" :readonly="!isChange" :state="errorMessages.loginId.length > 0 ? false : null"/>
               <p class="error" v-for="(val, key) in errorMessages.loginId" :key="key" v-if="errorMessages.loginId.length > 0" v-t="val"></p>
             </b-form-group>
-            <b-form-group>
+            <b-form-group v-show="showName">
               <label v-t="'label.name'" />
               <b-form-input type="text" v-model="loginUser.name" :readonly="!isChange" :state="errorMessages.name.length > 0 ? false : null" />
               <p class="error" v-for="(val, key) in errorMessages.name" :key="key" v-if="errorMessages.name.length > 0" v-t="val"></p>
             </b-form-group>
-            <b-form-group>
+            <b-form-group v-show="showEmail">
               <label v-t="'label.email'" />
               <b-form-input type="email" v-model="loginUser.email" :readonly="!isChange"  :state="errorMessages.email.length > 0 ? false : null" />
               <p class="error" v-for="(val, key) in errorMessages.email" :key="key" v-if="errorMessages.email.length > 0" v-t="val"></p>
@@ -93,7 +93,7 @@
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import breadcrumb from '../../../components/breadcrumb.vue'
 import pagetitle from '../../../components/pagetitle.vue'
-import { DISP, THEME, CHAR_SET, PASSWORD_LENGTH } from '../../../sub/constant/config'
+import { APP, DISP, THEME, CHAR_SET, PASSWORD_LENGTH } from '../../../sub/constant/config'
 import { getTheme, getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import { getCharSet } from '../../../sub/helper/CharSetHelper'
 import * as AuthHelper from '../../../sub/helper/AuthHelper'
@@ -101,8 +101,10 @@ import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as HttpHelper from '../../../sub/helper/HttpHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as ValidateUtil from '../../../sub/util/ValidateUtil'
+import commonmixinVue from '../../../components/commonmixin.vue';
 
 export default {
+  mixin: [commonmixinVue],
   components: {
     breadcrumb,
     pagetitle,
@@ -162,6 +164,12 @@ export default {
         return this.errorMessages[key].length
       })
       .reduce((prev, cur, i, a) => { return prev + cur }) > 0
+    },
+    showEmail() {
+      return APP.USER_WITH_EMAIL
+    },
+    showName() {
+      return APP.USER_WITH_NAME
     }
   },
   created () {
@@ -309,7 +317,6 @@ export default {
       this.loginUser.roleId = user.role.roleId
       this.loginUser.description = user.description
     },
-    ...mapMutations('setting', ['replaceSetting']),
   },
 }
 </script>
