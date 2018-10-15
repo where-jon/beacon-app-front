@@ -230,6 +230,8 @@
     "regionName": "リージョン名",
     "meshId": "メッシュID",
 
+    "locationZone": "ゾーン(場所分類)",
+
     "ledOperation": "LED操作",
     "blink": "点滅",
     "blue": "青",

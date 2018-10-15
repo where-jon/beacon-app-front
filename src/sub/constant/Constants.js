@@ -200,6 +200,12 @@ export const MENU = [
         feature: '/meta/role',
         icon: 'fas fa-chalkboard-teacher',
       },
+      {
+        key: 'locationZone',
+        path: 'locationZone',
+        feature: '/meta/locationzone',
+        icon: 'far fa-compass',
+      },
     ]
   },
   {
