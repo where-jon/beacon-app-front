@@ -13,10 +13,11 @@
             <th scope="col" v-for="(val, key) in positions[0]" :key="key" >{{ key }}</th>
           </thead>
           <tbody>
-            <tr v-for="(position, index) in positions" :key="index" :class="{undetect: isUndetect(position[label_timestamp])}">
+            <tr v-for="(position, index) in positions" :key="index">
               <td scope="row" v-for="(val, key) in position" :key="key">
                 <span :class="powerLevel(val, true)" v-if="key === label_powerLevel">{{ powerLevel(val, false) }}</span>
-                {{ key !== label_powerLevel ? val : ''}}
+                <span :class="txStateClass(val)" v-else-if="key === label_state">{{ val }}</span>
+                {{ key !== label_powerLevel && key !== label_state ? val : ''}}
               </td>
             </tr>
           </tbody>
@@ -28,7 +29,7 @@
             :key="key" >{{ val }}</th>
           </template>
           <template slot="tbody">
-            <tr v-for="(pos, index) in positions" :key="index" :class="{undetect: isUndetect(pos.updatetime)}">
+            <tr v-for="(pos, index) in positions" :key="index">
               <td scope="row">{{ pos.btx_id }}</td>
               <td>{{ pos.device_id }}</td>
               <td>{{ pos.pos_id }}</td>
@@ -57,13 +58,14 @@ import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
 import { EventBus } from '../../sub/helper/EventHelper'
-import { EXB, DISP, APP } from '../../sub/constant/config'
+import { EXB, DISP, APP, MONITOR_TX } from '../../sub/constant/config'
 import breadcrumb from '../../components/breadcrumb.vue'
 import VueScrollingTable from "vue-scrolling-table"
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import moment from 'moment'
 import reloadmixinVue from '../../components/reloadmixin.vue'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
+import _ from 'lodash'
 
 export default {
   mixins: [reloadmixinVue],
@@ -84,18 +86,24 @@ export default {
         }
       ],
       isLoad: false,
-      label_txId: this.$i18n.t('label.txId'),
+      label_minor: this.$i18n.t('label.minor'),
       label_powerLevel: this.$i18n.t('label.power-level'),
       label_name: this.$i18n.t('label.name'),
-      label_finalPlace: this.$i18n.t('label.final-receive-place'),
+      label_receivePlace: this.$i18n.t('label.receive-place'),
       label_timestamp: this.$i18n.t('label.final-receive-timestamp'),
       label_undetect: this.$i18n.t('label.undetect'),
       label_powerLevelGood: this.$i18n.t('label.power-good'),
       label_powerLevelWarn: this.$i18n.t('label.power-warning'),
       label_powerLevelPoor: this.$i18n.t('label.power-poor'),
+      label_state: this.$i18n.t('label.state'),
+      label_receiveNormal: this.$i18n.t('label.receiveNormal'),
+      label_absent: this.$i18n.t('label.absent'),
+      label_undetect: this.$i18n.t('label.undetect'),
       interval: null,
       powerLevelGood: 69,
       powerLevelWarn: 39,
+      locationMap: {},
+      badgeClassPrefix: 'badge badge-pill badge-'
     }
   },
   props: {
@@ -116,6 +124,7 @@ export default {
   mounted() {
     this.fetchData()
     this.replace({title: this.$i18n.t('label.position')})
+    this.locationMap = this.getExbRecords()
     if (!this.isDev) {
       return
     }
@@ -155,17 +164,19 @@ export default {
       let pots = await AppServiceHelper.fetchList("/basic/pot/withThumbnail", 'potId')
       const map = {}
       pots.forEach((e) => {
-        map[e.txId] = e.potName
+        map[e.tx.btxId] = e.tx.txName
       })
 
       const that = this
       return positions.map((e) => {
         const name = map[e.btx_id]
         const record = {
-          [that.label_txId]: e.btx_id,
+          [that.label_minor]: e.minor,
+          [that.label_name]: name != null ? name : '—',
           [that.label_powerLevel]: e.power_level,
-          [that.label_name]: name != null ? name : 'ー',
-          [that.label_timestamp]: this.getTimestamp(e.updatetime)
+          [that.label_receivePlace]: this.locationMap[e.device_id],
+          [that.label_state]: this.txState(e.updatetime),
+          [that.label_timestamp]: this.getTimestamp(e.updatetime),
         }
         return record
       })
@@ -176,32 +187,46 @@ export default {
       }
       try {
         const d = new Date(timestamp)
-        return moment(d.getTime()).format('YYYY/MM/DD hh:mm:ss')
+        return moment(d.getTime()).format('YYYY/MM/DD HH:mm:ss')
       } catch (e) {
         return this.label_undetect
       }
     },
     powerLevel(val, isClass) {
-      const classes = 'badge badge-pill badge-'
       if (val > this.powerLevelGood) {
-        return isClass ? (classes + 'success') : this.label_powerLevelGood
+        return isClass ? (this.badgeClassPrefix + 'success') : this.label_powerLevelGood
       }
       if (val > this.powerLevelWarn) {
-        return isClass ? (classes + 'warning') : this.label_powerLevelWarn
+        return isClass ? (this.badgeClassPrefix + 'warning') : this.label_powerLevelWarn
       }
-      return isClass ? (classes + 'danger') : this.label_powerLevelPoor
+      return isClass ? (this.badgeClassPrefix + 'danger') : this.label_powerLevelPoor
     },
-    isUndetect(updated) {
-      if (updated == null || updated.length == null) {
-        return false
+    txState(updatetime) {
+      const time = new Date().getTime() - moment(updatetime).local().toDate().getTime()
+      if (time < MONITOR_TX.ABSENT) {
+        return this.label_receiveNormal
       }
-      return updated.length < 1 ||
-      updated === this.label_undetect ||
-      new Date() - new Date(updated) > APP.UNDETECT_TIME
+
+      if (time < MONITOR_TX.UNDETECT) {
+        return this.label_absent
+      }
+
+      return this.label_undetect
+    },
+    txStateClass(txState) {
+      return this.badgeClassPrefix + (txState === this.label_receiveNormal ?
+      'success' : (txState === this.label_absent ? 'warning' : 'danger'))
     },
     download() {
-      HtmlUtil.fileDL("position.csv", Util.converToCsv(this.positions, ["btx_id","device_id","pos_id","phase","power_level","updatetime","nearest"]), getCharSet(this.$store.state.loginId))
+      HtmlUtil.fileDL("position.csv", Util.converToCsv(this.positions), getCharSet(this.$store.state.loginId))
     },
+    async getExbRecords() {
+      const records = await AppServiceHelper.fetchList("/core/exb/withLocation")
+      this.locationMap = records.reduce((obj, record) => {
+        obj[parseInt(record.deviceId, 16)] = record.location.locationName
+        return obj
+      }, {})
+    }
   }
 }
 </script>
@@ -222,7 +247,7 @@ export default {
   }
   
   thead {
-    width: calc( 100% - 1em )
+    /* width: calc( 100% - 1em ) */
   }
 
   .badge-warning {
