@@ -54,14 +54,11 @@
     "dt": "日時",
     "no": "No.",
     "theme": "テーマ",
-<<<<<<< HEAD
     "state": "状態",
     "normal": "正常",
     "malfunction": "動作不良",
-=======
     "charSet": "CSV文字コード",
     "normal": "通常",
->>>>>>> develop/0.9
 
     "---------------- App exbeacon ---------------":"",
 
