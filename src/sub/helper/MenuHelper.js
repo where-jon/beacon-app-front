@@ -1,4 +1,5 @@
 import { ROLE_FEATURE, MENU } from "../constant/Constants"
+import * as Util from "../util/Util"
 import { THEME } from "../constant/config"
 
 let store
@@ -7,10 +8,10 @@ export const setStore = (pStore) => {
   store = pStore
 }
 
-export const fetchNav = (featureList) => {
+export const fetchNav = (featureList, tenantFeatureList) => {
   let retNav = _.map(MENU, (group) => {
     let pages = _.filter(group.pages, (page) => {
-      return getMode(page.feature, featureList) > ROLE_FEATURE.MODE.RO_SYS
+      return tenantOk(tenantFeatureList, "/" + group.base + page.path) && getMode(page.feature, featureList) > ROLE_FEATURE.MODE.RO_SYS
     })
     return {...group, pages}
   })
@@ -21,16 +22,20 @@ export const fetchNav = (featureList) => {
   return retNav
 }
 
+export const tenantOk = (tenantFeatureList, target) => {
+  return tenantFeatureList.find((path) => Util.pathMatch(target, path)) != null
+}
+
 export const getMode = (path, featureList = store.state.featureList) => {
   let feature = _.find(featureList, (feature) => {
-    if (feature.path.endsWith("*") && path.startsWith(feature.path.slice(0, -1))
-      || feature.path == path) {
+    if (Util.pathMatch(path, feature.path)) {
         return true
     }
   })
-  console.debug("feature.mode", path, feature && feature.mode || ROLE_FEATURE.MODE.RW)
+  console.debug("feature.mode", path, feature && feature.mode)
 
-  return feature && feature.mode || ROLE_FEATURE.MODE.RW
+  let ret = feature && feature.mode
+  return ret != null? ret: ROLE_FEATURE.MODE.RW
 }
 
 export const isEditable = (path) => {
