@@ -29,7 +29,9 @@ export default {
         name: 'tx',
         id: 'txId',
         editPath: '/master/tx/edit',
+        bulkEditPath: '/master/tx/bulkedit',
         appServicePath: '/core/tx',
+        csvOut: true,
         fields: addLabelByKey(this.$i18n, [ 
           {key: "txId", sortable: true, tdClass: "action-rowdata" },
           APP.TX_BTX_MINOR != 'minor'? {key: "btxId", sortable: true, tdClass: "action-rowdata" }: null,
