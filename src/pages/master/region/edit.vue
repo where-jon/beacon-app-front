@@ -42,10 +42,10 @@ import breadcrumb from '../../../components/breadcrumb.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 
 export default {
+  mixins: [editmixinVue],
   components: {
     breadcrumb,
   },
-  mixins: [editmixinVue],
   data() {
     return {
       name: 'region',

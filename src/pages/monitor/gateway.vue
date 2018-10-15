@@ -33,7 +33,11 @@ import { EXB, DISP, APP } from '../../sub/constant/config'
 import breadcrumb from '../../components/breadcrumb.vue'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import reloadmixinVue from '../../components/reloadmixin.vue'
+<<<<<<< HEAD
 import moment from 'moment'
+=======
+import { getCharSet } from '../../sub/helper/CharSetHelper'
+>>>>>>> develop/0.9
 
 export default {
   mixins: [reloadmixinVue],
@@ -126,14 +130,8 @@ export default {
       : [this.labelNo,'deviceid','updated']
     },
     download() {
-      HtmlUtil.fileDL("gateway.csv", Util.converToCsv(this.gateways))
+      HtmlUtil.fileDL("gateway.csv", Util.converToCsv(this.gateways), getCharSet(this.$store.state.loginId))
     },
-    ...mapMutations([
-      'replace', 
-    ]),
-    ...mapMutations('monitor', [
-      'replaceMonitor', 
-    ]),
   }
 }
 

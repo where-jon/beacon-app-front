@@ -198,9 +198,6 @@ export default {
       this.txCont.addChild(txBtn)
       stage.update()
     },
-    ...mapMutations('main', [
-      'replaceMain', 
-    ]),
   }
 }
 </script>

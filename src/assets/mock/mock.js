@@ -83,11 +83,11 @@ export const sensor = []
 
 let now = new Date().getTime()
 sensor[1] = [
-  {"deviceid":1,"timestamp":now,"temperature":15.69,"humidity":52},
-  {"deviceid":2,"timestamp":now,"temperature":26.03,"humidity":90},
-  {"deviceid":3,"timestamp":now,"temperature":25.72,"humidity":51},
-  {"deviceid":4,"timestamp":now,"temperature":35.5,"humidity":51},
-  {"deviceid":5,"timestamp":now,"temperature":26.28,"humidity":11},
+  {"deviceid":22017,"timestamp":now,"temperature":15.69,"humidity":52},
+  {"deviceid":22018,"timestamp":now,"temperature":26.03,"humidity":90},
+  {"deviceid":22019,"timestamp":now,"temperature":25.72,"humidity":51},
+  {"deviceid":22020,"timestamp":now,"temperature":35.5,"humidity":51},
+  {"deviceid":22021,"timestamp":now,"temperature":26.28,"humidity":11},
   {"deviceid":11,"timestamp":now,"temperature":25.13,"humidity":60},
   {"deviceid":12,"timestamp":now,"temperature":25.08,"humidity":61},
   {"deviceid":13,"timestamp":now,"temperature":24.94,"humidity":61},
@@ -95,11 +95,11 @@ sensor[1] = [
 ]
 
 sensor[2] = [
-  {"deviceid":1,"count":3,"timestamp":now},
-  {"deviceid":2,"count":0,"timestamp":now},
-  {"deviceid":3,"count":2,"timestamp":now},
-  {"deviceid":4,"count":1,"timestamp":now},
-  {"deviceid":5,"count":5,"timestamp":now},
+  {"deviceid":22017,"count":3,"timestamp":now},
+  {"deviceid":22018,"count":0,"timestamp":now},
+  {"deviceid":22019,"count":2,"timestamp":now},
+  {"deviceid":22020,"count":1,"timestamp":now},
+  {"deviceid":22021,"count":5,"timestamp":now},
 ]
 
 sensor[3] = [

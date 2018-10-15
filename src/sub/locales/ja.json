@@ -37,6 +37,7 @@
     "user": "ユーザ",
     "userId": "ユーザID",
     "id": "ID",
+    "type": "タイプ",
     "thumbnail": "サムネイル",
     "description": "備考",
     "main": "メイン",
@@ -53,12 +54,18 @@
     "dt": "日時",
     "no": "No.",
     "theme": "テーマ",
+<<<<<<< HEAD
     "state": "状態",
     "normal": "正常",
     "malfunction": "動作不良",
+=======
+    "charSet": "CSV文字コード",
+    "normal": "通常",
+>>>>>>> develop/0.9
 
     "---------------- App exbeacon ---------------":"",
 
+    "locate": "測位",
     "showPosition": "在席表示",
     "telemetry": "EXB状態監視",
     "gateway": "ゲートウェイ",
@@ -85,6 +92,7 @@
     "txId": "TXID",
     "txName": "Tx名",
     "btxId": "btxId",
+    "major": "major",
     "minor": "minor",
     
     "locationId": "位置ID",
@@ -113,10 +121,15 @@
     "positionHistory": "位置情報",
     "positionHistoryId": "tx位置ID",
 
+    "exbeacon": "EXBeacon",
     "pir": "人感センサ",
     "thermohumidity":"温湿度",
+    "thermopile":"サーモパイル",
     "temperature":"温度",
     "humidity":"湿度",
+    "led": "LED",
+    "meditag": "MEDiTAG",
+    "magnet": "マグネット",
 
     "zoneId": "ゾーンID",
     "zoneName": "ゾーン名",
@@ -128,6 +141,9 @@
     "earthcolor": "アースカラー",
     "autumn": "オータム",
     "vivid": "ビビッド",
+
+    "UTF8": "UTF-8",
+    "SJIS": "Shift-JIS",
     "---------------- App specific ---------------":"",
     
     "setting": "設定",
@@ -150,10 +166,10 @@
     "operationLogId": "操作ログID",
     "operationType": "操作種別",
         
-    "person": "社員",
-    "personId": "ID",
-    "personCd": "社員番号",
-    "personName": "名前",
+    "pot": "人＆物",
+    "potId": "ID",
+    "potCd": "コード",
+    "potName": "名前",
     "post": "役職",
     "ruby": "ふりがな",
     "tel": "電話番号",
@@ -220,7 +236,7 @@
     "regionName": "リージョン名",
     "meshId": "メッシュID",
 
-    "led": "LED操作",
+    "ledOperation": "LED操作",
     "blink": "点滅",
     "blue": "青",
     "red": "赤",
@@ -229,6 +245,7 @@
     "paleblue": "水",
     "yellow": "黄",
     "white": "白",
+    "black": "黒",
     "changeSlow": "切替遅く",
     "changeFast": "切替速く",
     "blinkSlow": "点滅遅く",
@@ -265,9 +282,9 @@
     "disabledType": "無効",
     "enabledType": "有効",
 
-    "personThing": "人",
-    "objectThing": "物",
-    "objectZone": "ゾーン",
+    "person": "人",
+    "thing": "物",
+    "zone": "ゾーン",
 
     "general": "一般",
     "security": "セキュリティ",

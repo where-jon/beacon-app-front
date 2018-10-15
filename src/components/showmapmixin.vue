@@ -5,6 +5,7 @@ import { Shape, Stage, Container, Bitmap, Text, Touch } from '@createjs/easeljs/
 import { Tween, Ticker } from '@createjs/tweenjs/dist/tweenjs.module'
 import { EventBus } from '../sub/helper/EventHelper'
 import { DISP } from '../sub/constant/config.js'
+import * as Util from '../sub/util/Util'
 import * as AppServiceHelper from '../sub/helper/AppServiceHelper'
 import * as PositionHelper from '../sub/helper/PositionHelper'
 import reloadmixinVue from './reloadmixin.vue'
@@ -132,15 +133,9 @@ export default {
         })
       }
     },
-    ...mapMutations([
-      'replace', 
-    ]),
-    ...mapMutations('main', [
-      'replaceMain', 
-    ]),
-    ...mapMutations('app_service', [
-      'replaceAS', 
-    ]),
+    getSensorId(exb) {
+      return Util.getValue(exb, 'exbSensorList.0.sensor.sensorId').val
+    },
   }
 }
 </script>

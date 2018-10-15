@@ -27,7 +27,7 @@ export default {
       backPath: '/master/exb',
       appServicePath: '/core/exb',
       form: {
-        csvFile: undefined,
+        csvFile: null,
       },
       items: [
         {

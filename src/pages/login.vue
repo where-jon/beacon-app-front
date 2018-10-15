@@ -13,8 +13,10 @@ import * as AuthHelper from '../sub/helper/AuthHelper'
 import { APP,DISP } from '../sub/constant/config'
 import * as Util from '../sub/util/Util'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import commonmixinVue from '../components/commonmixin.vue';
 
 export default {
+  mixin: [commonmixinVue],
   data() {
     return {
       userId: "",
@@ -38,19 +40,14 @@ export default {
         this.$router.push(APP.TOP_PAGE)
         this.message = ""
         const theme = window.localStorage.getItem(this.userId + '-theme')
-        this.replaceSetting({theme})
+        const charSet = window.localStorage.getItem(this.userId + '-charSet')
+        this.replaceSetting({theme, charSet})
       },
       () => {
         console.error("failed")
         this.message = this.$i18n.t("message.loginFailed")
       })
     },
-    ...mapMutations('app_service', [
-      'replaceAS', 
-    ]),
-    ...mapMutations('setting', [
-      'replaceSetting', 
-    ]),
   },
 }
 

@@ -34,6 +34,7 @@ import * as SensorHelper from '../../sub/helper/SensorHelper'
 import txdetail from '../../components/txdetail.vue'
 import { DEV, DISP, APP } from '../../sub/constant/config'
 import * as mock from '../../assets/mock/mock'
+import * as Util from '../../sub/util/Util'
 import { SENSOR, DISCOMFORT } from '../../sub/constant/Constants'
 import { Shape, Stage, Container, Bitmap, Text, Touch } from '@createjs/easeljs/dist/easeljs.module'
 import { Tween, Ticker } from '@createjs/tweenjs/dist/tweenjs.module'
@@ -90,10 +91,10 @@ export default {
         let sensors = await EXCloudHelper.fetchSensor(SENSOR.TEMPERATURE)
 
         this.positionedExb = _(this.exbs).filter((exb) => {
-          return exb.location.areaId == this.selectedArea.value && exb.location.x && exb.location.y > 0
+          return exb.location.areaId == this.selectedArea.value && exb.location.x && exb.location.y > 0 && that.getSensorId(exb) == SENSOR.TEMPERATURE
         })
         .map((exb) => {
-          let sensor = sensors.find((val) => val.deviceid == exb.deviceId && val.timestamp)
+          let sensor = sensors.find((val) => val.deviceid == exb.deviceId && (val.timestamp||val.updatetime))
           return {
             exbId: exb.exbId, deviceId: exb.deviceId, x: exb.location.x, y: exb.location.y,
             humidity: sensor? sensor.humidity: null,

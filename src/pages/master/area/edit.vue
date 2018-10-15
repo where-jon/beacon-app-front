@@ -38,6 +38,7 @@ import editmixinVue from '../../../components/editmixin.vue'
 import breadcrumb from '../../../components/breadcrumb.vue'
 import { APP } from '../../../sub/constant/config'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
+import { UPDATE_ONLY_NN } from '../../../sub/constant/Constants'
 
 export default {
   components: {
@@ -50,6 +51,7 @@ export default {
       id: 'areaId',
       backPath: '/master/area',
       appServicePath: '/core/area',
+      updateOnlyNN: UPDATE_ONLY_NN.NULL,
       form: ViewHelper.extract(this.$store.state.app_service.area, ["areaId", "areaName", "mapImage"]),
       items: [
         {

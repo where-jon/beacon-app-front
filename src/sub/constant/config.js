@@ -11,9 +11,9 @@ export const DEV = {
 }
 
 export const APP = {
-  VERSION: "Version 0.1.2", // this application version
+  VERSION: "Version 0.9.0", // this application version
   TIMEOUT: 60 * 60 * 1000, // session timeout(using local storage)
-  TOP_PAGE: "/master/person", // must not be / otherwise recursive infinitely
+  TOP_PAGE: "/main/position", // must not be / otherwise recursive infinitely
   LOGIN_PAGE: "/login", // if no login then /
   LOGIN_MODE: LOGIN_MODE.APP_SERVICE,
   UNDETECT_TIME: 10 * 60 * 1000, // used on telemetry 
@@ -29,8 +29,16 @@ export const APP = {
   DISP_REFRESH_TIME: 10 * 60 * 1000,
   SLACK_WEBHOOC: false,
   MAIL_ADDRESS: "",
-  MAIL_ADDRESS: "",
   IP_ADDRESS_FILTER: "",
+  EXB_SENSOR: [1,2,3,4], // EXBのタイプに設定可能なセンサーID
+  TX_SENSOR: [5,6], // TXのタイプに設定可能なセンサーID
+  TX_WITH_CATEGORY: true, // TX管理で個体.カテゴリを表示
+  TX_WITH_DISPLAY_NAME: true, // TX管理で個体.表示名を表示
+  TX_WITH_DESCRIPTION: true, // TX管理で個体.備考を表示
+  TX_WITH_MAJOR: true, // TX管理でmajorを表示
+  TX_BTX_MINOR: 'both', // both:両方表示し、別々に設定、minor/btxId:片方のみ表示し、保存の際同一の値を設定
+  USER_WITH_EMAIL: false, // ユーザ設定でメールアドレスを使用する
+  USER_WITH_NAME: false, // ユーザ設定で名前を使用する
 }
 
 export const LOCAL_LOGIN = { // local login md5 hash of id:pass // TODO: add Role
@@ -66,6 +74,7 @@ export const DISP = {
   AUTO_RELOAD: 60000, // 自動リロード間隔(ミリ秒)
   SHOW_SIDEBAR: true, // show sidebar  
   THEME: "default",
+  CHAR_SET: "UTF8",
 
   MAP_FIT: "both", // マップを画面表示範囲内にフィットさせるか。width or height or both 
 
@@ -150,6 +159,11 @@ export const THEME = [
   {id: 2,  name: 'earthcolor'},
   {id: 3,  name: 'autumn'},
   {id: 4,  name: 'vivid'},
+]
+
+export const CHAR_SET = [
+  {id: 1,  name: "UTF8"},
+  {id: 2,  name: "SJIS"},
 ]
 
 export const MONITOR_TX = {

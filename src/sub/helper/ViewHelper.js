@@ -1,9 +1,21 @@
 import _ from 'lodash'
+import * as Util from '../util/Util'
 
 
 export const addLabelByKey = (i18n, objArr) => {
-  return _.map(objArr, (val) => {
-    return {...val, label: i18n.t("label." + (val.label || val.key))}
+  return _(objArr).map((val) => {
+    return val? {...val, label: i18n.t("label." + (val.label || val.key))}: null
+  })
+  .filter((val) => val != null).value()
+}
+
+export const applyDef = (obj, def) => {
+  if (!obj || !def) return obj
+
+  _.forEach(def, (val, key) => {
+    if (obj[key] === undefined) {
+      obj[key] = val
+    }
   })
 }
 
@@ -11,25 +23,11 @@ export const extract = (obj, fields) => {
   if (!obj || !fields) return obj
 
   let ret = {}
-  _.forEach(obj, (val, key) => {
-    if(Object.prototype.toString.call(val) === '[object Array]'){
-      if (_.includes(fields, key)) {
-        ret[key] = val
-      }
-    }
-    else if (val instanceof Object) {
-      // ret[key] = {}
-      _.forEach(val, (cval, ckey) => {
-        if (_.includes(fields, key + "." + ckey)) {
-          // ret[key][ckey] = cval
-          ret[ckey] = cval
-        }
-      })
-    }
-    else if (_.includes(fields, key)) {
-      ret[key] = val
-    }
+  _.forEach(fields, (field) => {
+    let {val, lastKey} = Util.getValue(obj, field)
+    ret[lastKey] = val
   })
-  console.log({ret})
+
+  console.log("extract", {ret})
   return ret
 }

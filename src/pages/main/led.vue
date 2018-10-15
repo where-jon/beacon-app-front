@@ -31,6 +31,9 @@
               <b-form-checkbox class="checkWhite" :value="ledColors.WHITE" :readonly="!isEditable">
                 {{$t('label.white')}}
               </b-form-checkbox>
+              <b-form-checkbox class="checkBlack" :value="ledColors.BLACK" :readonly="!isEditable">
+                {{$t('label.black')}}
+              </b-form-checkbox>
             </b-form-checkbox-group>
           </b-form-group>
           <b-form-group :label="$t('label.blink')">
@@ -62,16 +65,21 @@ import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import breadcrumb from '../../components/breadcrumb.vue'
 import { DISP, THEME, EXCLOUD } from '../../sub/constant/config'
 import { getButtonTheme } from '../../sub/helper/ThemeHelper'
-import { LED_COLORS, LED_BLINK_TYPES } from '../../sub/constant/Constants'
+import { LED_COLORS, LED_BLINK_TYPES, SENSOR } from '../../sub/constant/Constants'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
-import * as EXCloudHelper from '../../sub/helper/EXCloudHelper.js'
+import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
+import * as Util from '../../sub/util/Util'
 import editmixinVue from '../../components/editmixin.vue'
+import showmapmixinVue from '../../components/showmapmixin.vue'
+
+let that
 
 export default {
   mixins: [
     editmixinVue,
-    ],
+    showmapmixinVue
+  ],
   components: {
     breadcrumb,
   },
@@ -88,7 +96,7 @@ export default {
       again: false,
       form: {
         deviceId: "",
-        colors: [1],
+        colors: [2],
         blink: 1,
         lightOn: false,
       },
@@ -115,6 +123,7 @@ export default {
     ]),
   },
   mounted(){
+    that = this
     this.fetchData()
   },
   watch: {
@@ -127,18 +136,18 @@ export default {
     },
   },
   methods: {
-    ...mapMutations('app_service', [
-      'replaceAS', 
-    ]),
     async fetchData(payload) {
       try {
         this.replace({showProgress: true})
-        let exbs = await AppServiceHelper.fetchList('/core/exb/', 'exbId')
+        let exbs = await AppServiceHelper.fetchList('/core/exb/withLocation', 'exbId')
         let deviceIds = _.filter(exbs,
-          exb => exb.enabled
+          exb => exb.enabled && that.getSensorId(exb) == SENSOR.LED
         ).map(
           exb => exb.deviceId
         )
+        if (deviceIds && deviceIds.length == 1) {
+          this.form.deviceId = deviceIds[0]
+        }
         if (payload && payload.done) {
           payload.done()
         }
@@ -208,6 +217,10 @@ div[class^="check"] {
 
 .checkYellow {
   background-color: yellow;
+}
+.checkBlack {
+  background-color: black;
+  color: white;
 }
 
 </style>

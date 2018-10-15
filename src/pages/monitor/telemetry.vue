@@ -48,7 +48,11 @@ import VueScrollingTable from "vue-scrolling-table"
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import reloadmixinVue from '../../components/reloadmixin.vue'
+<<<<<<< HEAD
 import gatewayVue from './gateway.vue'
+=======
+import { getCharSet } from '../../sub/helper/CharSetHelper'
+>>>>>>> develop/0.9
 
 export default {
   mixins: [reloadmixinVue],
@@ -135,14 +139,8 @@ export default {
       return color + ' ' + (!this.isDev && key === this.label_powerLevel ? 'powerlevel' : '')
     },
     download() {
-      HtmlUtil.fileDL("telemetry.csv", Util.converToCsv(this.telemetrys))
+      HtmlUtil.fileDL("telemetry.csv", Util.converToCsv(this.telemetrys), getCharSet(this.$store.state.loginId))
     },
-    ...mapMutations([
-      'replace', 
-    ]),
-    ...mapMutations('monitor', [
-      'replaceMonitor', 
-    ]),
     async makeTelemetryRecords(telemetrys) {
       if (this.isDev) {
         return telemetrys
