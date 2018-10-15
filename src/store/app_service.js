@@ -30,6 +30,8 @@ export const state = () => ({
   features: [],
   roleFeatures: [],
   roleFeature: {},
+  locationZones: [],
+  locationZone: {},
 })
 
 const initState = state()
