@@ -8,11 +8,11 @@
           <label v-t="'label.zoneCategoryName'" />
           <v-select v-model="vModelCategory" :options="categoryOptions" :on-change="categoryChange" class="vselectCategory"></v-select>
           <label v-t="'label.zoneName'" />
-          <v-select v-model="vModelZone" :options="zoneOptions" class="vselectZone"></v-select>
+          <v-select v-model="vModelZone" :options="zoneOptions" :on-change="zoneChange" class="vselectZone"></v-select>
           <label v-t="'label.sumYearMonth'" />
           <v-select v-model="vModelYearMonth" :options="yearMonthOptions" :on-change="yearMonthChange" class="vselectMonth"></v-select>
           <label v-t="'label.sumDay'" />
-          <v-select v-model="vModelDay" :options="dayOptions" class="vselectDay"></v-select>
+          <v-select v-model="vModelDay" :options="dayOptions" :on-change="dayChange" class="vselectDay"></v-select>
           <b-button size="sm" variant="info" v-t="'label.search'" @click="search()"></b-button> 
         </b-form>
       </b-row>
@@ -78,10 +78,13 @@ export default {
       zoneOptionList: [],
       dayOptionList: [{label:"", value:null}],
       //
+      categoryId: -1,
+      zoneId: -1,
       zoneCategorys: [],
       selectedYearMonth: null,
+      selectedDay: 0,
       dataList: null
-    }
+}
   },
   computed: {
     categoryOptions() {
@@ -134,7 +137,7 @@ export default {
         )
         var categories = {}
         this.zoneCategorys.forEach(elm => {
-          if (elm.categoryId != 0) {
+          if (elm.categoryId >= 0) {
             categories[elm.categoryId] = elm.categoryName
           }
         })
@@ -173,8 +176,22 @@ export default {
           value: zId
         })
       }
-      this.vModelCategory = val
-      this.vModelZone = null
+      if (val == null) {
+        this.categoryId = -1
+        this.vModelCategory = null
+      } else {
+        this.categoryId = val.value
+        this.vModelCategory = val
+      }
+    },
+    zoneChange(val) {
+      if (val == null) {
+        this.zoneId = null
+        this.vModelZone = null
+      } else {
+        this.zoneId = val.value
+        this.vModelZone = val
+      }
     },
     yearMonthChange(val) {
       if (val == null) {
@@ -195,6 +212,15 @@ export default {
       this.vModelDay = null
       this.dayOptionList = pullDowns
     },
+    dayChange(val) {
+      if (val == null) {
+        this.selectedDay = 0
+        this.vModelDay = null
+      } else {
+        this.selectedDay = val.value
+        this.vModelDay = val
+      }
+    },
     isUndetect(updated) {
       return false
     },
@@ -209,9 +235,12 @@ export default {
     },
     async search() {
       if (this.selectedYearMonth == null) return
+      let paramCategoryId = (this.categoryId != null)?this.categoryId:-1
+      let paramZoneId = (this.zoneId != null)?this.zoneId:-1
+      let paramDate = this.selectedYearMonth
       let numUsers = await AppServiceHelper.fetchList2(
         'numUsers',
-        '/office/numUsers/' + this.selectedYearMonth,
+        '/office/numUsers/' + paramCategoryId + '/' + paramZoneId + '/' + paramDate,
         'numOfUsers'
       )
       this.dataList = numUsers
