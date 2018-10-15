@@ -164,7 +164,7 @@ export const MENU = [
         icon: 'fa fa-tags',
       },
       {
-        key: 'location',
+        key: 'locationSetting',
         path: 'location',
         feature: '/core/location',
         icon: 'fas fa-map',
@@ -180,13 +180,13 @@ export const MENU = [
         key: 'category',
         path: 'category',
         feature: '/basic/category',
-        icon: 'fas fa-sitemap',
+        icon: 'fa fa-object-group',
       },
       {
         key: 'group',
         path: 'group',
         feature: '/basic/group',
-        icon: 'fas fa-users',
+        icon: 'fas fa-sitemap',
       },
       {
         key: 'user',

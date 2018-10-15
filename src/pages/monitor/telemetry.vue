@@ -71,7 +71,7 @@ export default {
       isLoad: false,
       label_deviceId: this.$i18n.t('label.deviceId'),
       label_deviceIdX: this.$i18n.t('label.deviceIdX'),
-      label_name: this.$i18n.t('label.name'),
+      label_name: this.$i18n.t('label.location'),
       label_timestamp: this.$i18n.t('label.final-receive-timestamp'),
       label_powerLevel: this.$i18n.t('label.power-level'),
       interval: null,

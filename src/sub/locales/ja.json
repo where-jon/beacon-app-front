@@ -67,7 +67,8 @@
     "monitor": "モニタ",
     "area": "エリア",
     "exb": "EXBeacon",
-    "location": "EXB配置設定",
+    "location": "配置場所",
+    "locationSetting": "EXB配置設定",
     "develop": "開発用",
 
     "exbId": "exb ID",
