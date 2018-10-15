@@ -52,8 +52,10 @@
               </b-form-radio>
             </b-form-radio-group>
           </b-form-group>
-          <b-button v-show="isEditable" type="submit" @click="buttonClick(true)" v-t="'label.start'" :variant="theme" />
-          <b-button v-show="isEditable" type="submit" @click="buttonClick(false)" v-t="'label.end'" :variant="theme" :disabled="!form.lightOn"/>
+          <b-button v-show="isEditable" type="submit" 
+              @click="buttonClick(true)" v-t="'label.start'" :variant="theme" />
+          <b-button v-show="isEditable" type="submit" class="ml-2" 
+              @click="buttonClick(false)" v-t="'label.end'" :variant="theme" :disabled="!form.lightOn"/>
         </b-form>
       </b-col>
     </b-form-row>
@@ -191,20 +193,26 @@ export default {
 }
 
 div[class^="check"] {
-  padding-right: 8px;
-  padding-left: 30px;
+  padding-right: 16px;
+  padding-left: 40px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
 }
 
 .checkBlue {
   background-color: royalblue;
+  color: white;
 }
 
 .checkRed {
   background-color: red;
+  color: white;
 }
 
 .checkPurple {
   background-color: magenta;
+  color: white;
 }
 
 .checkGreen {
