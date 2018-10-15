@@ -6,7 +6,7 @@
 
     <b-form inline class="mt-2">
       <label class="mr-2">{{ $t('label.area') }}</label>
-      <v-select v-model="selectedArea" :options="areaOptions" class="mr-2 areaOptions" :disabled="settingStart"></v-select>
+      <b-form-select v-model="selectedArea" :options="areaOptions" class="mr-2 areaOptions" :disabled="settingStart"></b-form-select>
       <b-button size="sm" class="mr-4" variant="outline-info" v-t="'label.load'" @click="changeArea" :disabled="settingStart"></b-button>
       <label class="mt-mobile">{{ $t('label.exb') }}</label>
       <v-select size="sm" v-model="selectedExb_" :options="exbOptions" :on-change="showExbOnMap" class="mx-2 mt-mobile exbOptions" :disabled="settingStart"></v-select>
@@ -78,7 +78,7 @@ export default {
           active: true
         },
         {
-          text: this.$i18n.t('label.location'),
+          text: this.$i18n.t('label.locationSetting'),
           active: true
         }
       ]
@@ -150,7 +150,7 @@ export default {
     },
     setExbPosition() {
       this.positionedExb = _.filter(this.exbs, (exb) => {
-        return exb.location.areaId == this.selectedArea.value && exb.location.x && exb.location.y > 0
+        return exb.location.areaId == this.selectedArea && exb.location.x && exb.location.y > 0
       })
 
       this.exbOptions = _(this.exbs).filter((val) => {
@@ -349,13 +349,13 @@ export default {
         let param = []
         this.positionedExb.forEach((exb) => {
           if (exb.isChanged) {
-            exb.location = {locationId: exb.location.locationId, areaId: this.selectedArea.value, x: exb.x / this.mapImageScale, y: exb.y / this.mapImageScale}
+            exb.location = {locationId: exb.location.locationId, areaId: this.selectedArea, x: exb.x / this.mapImageScale, y: exb.y / this.mapImageScale}
             param.push(exb.location)
             exb.isChanged = false
           }
         })
         this.exbs.forEach((exb) => { // deleted
-          if (exb.location.areaId == this.selectedArea.value) {
+          if (exb.location.areaId == this.selectedArea) {
             if (!this.positionedExb.find((pExb) => pExb.exbId == exb.exbId)) {
               exb.location = {locationId: exb.location.locationId, areaId: null, x: null, y: null}
               exb.isChanged = false
@@ -368,7 +368,7 @@ export default {
           await await HttpHelper.postAppService('/core/location/updateLocation', param)
         }
         if (this.mapRatioChanged) {
-          await AppServiceHelper.bulkSave('/core/area', [{areaId: this.selectedArea.value, mapRatio: this.mapRatio * this.mapImageScale}], UPDATE_ONLY_NN.EMPTY_ZERO)
+          await AppServiceHelper.bulkSave('/core/area', [{areaId: this.selectedArea, mapRatio: this.mapRatio * this.mapImageScale}], UPDATE_ONLY_NN.EMPTY_ZERO)
         }
         this.message = this.$i18n.t('message.completed', {target: this.$i18n.t('label.save')})
         this.showInfo = true

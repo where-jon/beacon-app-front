@@ -317,6 +317,9 @@ export default {
       this.loginUser.roleId = user.role.roleId
       this.loginUser.description = user.description
     },
+    ...mapMutations('setting', [
+      'replaceSetting', 
+    ]),
   },
 }
 </script>

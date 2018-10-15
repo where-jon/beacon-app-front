@@ -54,8 +54,13 @@
     "dt": "日時",
     "no": "No.",
     "theme": "テーマ",
+    "state": "状態",
+    "normal": "正常",
+    "malfunction": "動作不良",
+    "notReceive": "受信不良",
+    "receiveNormal": "通常",
+    "absent": "不在",
     "charSet": "CSV文字コード",
-    "normal": "通常",
 
     "---------------- App exbeacon ---------------":"",
 
@@ -67,7 +72,8 @@
     "monitor": "モニタ",
     "area": "エリア",
     "exb": "EXBeacon",
-    "location": "EXB配置設定",
+    "location": "配置場所",
+    "locationSetting": "EXB配置設定",
     "develop": "開発用",
 
     "exbId": "exb ID",
@@ -75,7 +81,7 @@
     "deviceId": "デバイスID",
     "deviceIdX": "デバイスID(16進数)",
     "final-receive-timestamp": "最終取得時間",
-    "final-receive-place": "最終受信場所",
+    "receive-place": "検知場所",
     "power-level": "電池レベル",
     "undetect": "未検知",
     "power-good": "良好",
@@ -229,6 +235,8 @@
     "regionId": "リージョンID",
     "regionName": "リージョン名",
     "meshId": "メッシュID",
+
+    "locationZone": "ゾーン(場所分類)",
 
     "ledOperation": "LED操作",
     "blink": "点滅",

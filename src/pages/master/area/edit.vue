@@ -7,7 +7,7 @@
       <b-row>
         <b-col md="8" offset-md="2">
           <b-form @submit="onSubmit" v-if="show">
-            <b-form-group v-if="form.areaId">
+            <b-form-group v-if="hasId">
               <label v-t="'label.areaId'" />
               <b-form-input type="text" v-model="form.areaId" readonly="readonly" />
             </b-form-group>
@@ -21,8 +21,8 @@
               <img v-if="form.mapImage" ref="mapImage" :src="form.mapImage" width="100" class="mt-1 ml-3" />
             </b-form-group>
             <b-button type="button" variant="outline-danger" @click="backToList" v-t="'label.back'" />
-            <b-button v-if="isEditable" type="submit" :variant="theme" @click="register(false)" class="ml-2">{{ label }}</b-button>
-            <b-button v-if="isEditable && !isUpdate" type="submit" variant="outline-primary" @click="register(true)" class="ml-2" v-t="'label.registerAgain'"/>
+            <b-button v-if="isEditable" type="submit" :variant="theme" @click="beforeSubmit(false)" class="ml-2">{{ label }}</b-button>
+            <b-button v-if="isEditable && !isUpdate" type="submit" variant="outline-primary" @click="beforeSubmit(true)" class="ml-2" v-t="'label.registerAgain'"/>
           </b-form>
         </b-col>
       </b-row>
@@ -34,6 +34,7 @@
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import _ from 'lodash'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import * as Util from '../../../sub/util/Util'
 import editmixinVue from '../../../components/editmixin.vue'
 import breadcrumb from '../../../components/breadcrumb.vue'
 import { APP } from '../../../sub/constant/config'
@@ -70,6 +71,9 @@ export default {
     }
   },
   computed: {
+    hasId(){
+      return Util.hasValue(this.form.areaId)
+    },
     theme () {
       const theme = getButtonTheme(this.$store.state.loginId)
       return 'outline-' + theme
@@ -81,7 +85,13 @@ export default {
   methods: {
     readImage(e) {
       this.readImageView(e, 'mapImage', 'mapWidth', 'mapHeight', 'thumbnail', APP.AREA_THUMBNAIL_MAX)
-    }
+    },
+    beforeSubmit(again){
+      if(this.form.areaId != null){
+        this.form.areaId = String(this.form.areaId)
+      }
+      this.register(again)
+    },
   }
 }
 </script>
