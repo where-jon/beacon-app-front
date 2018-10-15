@@ -15,7 +15,21 @@
         </thead>
         <tbody>
           <tr v-for="(gateway, index) in gateways" :key="index" :class="{undetect: isUndetect(gateway.updated)}">
-            <td scope="row" v-for="(val, key) in gateway" :key="key">{{ val }}</td>
+            <td>{{ gateway.num }}</td>
+            <td>{{ gateway.deviceid }}</td>
+            <td>{{ gateway.updated }}</td>
+            <td v-if="getGatewayState(gateway.timestamp) === gatewayState.NORMAL">
+              <span class="badge badge-pill" :style="{backgroundColor: gatewayState.NORMAL}">{{ $i18n.t('label.normal') }}</span>
+            </td>
+            <td v-else-if="getGatewayState(gateway.timestamp) === gatewayState.MALFUNCTION">
+              <span class="badge badge-pill" :style="{backgroundColor: gatewayState.MALFUNCTION}">{{ $i18n.t('label.malfunction') }}</span>
+            </td>
+            <td v-else-if="getGatewayState(gateway.timestamp) === gatewayState.NOTRECEIVE">
+              <span class="badge badge-pill" :style="{backgroundColor: gatewayState.NOTRECEIVE}">{{ $i18n.t('label.notReceive') }}</span>
+            </td>
+            <td v-else>
+              <span class="badge badge-pill" :style="{backgroundColor: gatewayState.UNDETECT}">{{ $i18n.t('label.undetect') }}</span>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -29,7 +43,7 @@ import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
 import { EventBus } from '../../sub/helper/EventHelper'
-import { EXB, DISP, APP } from '../../sub/constant/config'
+import { EXB, DISP, APP, GATEWAY } from '../../sub/constant/config'
 import breadcrumb from '../../components/breadcrumb.vue'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import reloadmixinVue from '../../components/reloadmixin.vue'
@@ -58,6 +72,7 @@ export default {
       labelDeviceId: this.$i18n.t('label.deviceId'),
       labelTimestamp: this.$i18n.t('label.final-receive-timestamp'),
       labelState: this.$i18n.t('label.state'),
+      gatewayState: GATEWAY.STATE_COLOR
     }
   },
   props: {
@@ -105,7 +120,7 @@ export default {
         gateways = gateways.map((e) => {
           const timestamp = formattedDateToDatetime(e.updated)
           const state = currentTime - timestamp < APP.MALFUNCTION_TIME ?
-          this.$i18n.t('label.normal') : this.$i18n.t('label.malfunction')
+          this.$i18n.t('label.receiveNormal') : this.$i18n.t('label.malfunction')
           return { ...e, state: state}
         })
         this.replaceMonitor({gateways})
@@ -120,11 +135,27 @@ export default {
       if (updated == null) {
         return false
       }
-      return updated == "" || new Date() - new Date(updated) > APP.UNDETECT_TIME
+      return updated == "" || new Date().getTime() - updated > APP.UNDETECT_TIME
     },
     getTableHeaders() {
       return !this.isDev ? [this.labelNo,this.labelDeviceId,this.labelTimestamp,this.labelState]
       : [this.labelNo,'deviceid','updated']
+    },
+    getGatewayState(updated) {
+      // 未検知
+      if (this.isUndetect(updated)) {
+        return this.gatewayState.UNDETECT
+      }
+      const time = new Date().getTime() - new Date(updated).getTime()
+      if (time < GATEWAY.MALFUNCTION) {
+        return this.gatewayState.NORMAL
+      }
+      if (time < GATEWAY.NOTRECEIVE) {
+        return this.gatewayState.MALFUNCTION
+      }
+      if (time < GATEWAY.NOTRECEIVE) {
+        return this.gatewayState.NOTRECEIVE
+      }
     },
     download() {
       HtmlUtil.fileDL("gateway.csv", Util.converToCsv(this.gateways), getCharSet(this.$store.state.loginId))
@@ -139,5 +170,8 @@ export const formattedDateToDatetime = (formatted) => {
 </script>
 
 <style scoped lang="scss">
-
+span.badge.badge-pill {
+  color: white;
+  font-size: 0.9rem;
+}
 </style>

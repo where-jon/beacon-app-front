@@ -57,8 +57,9 @@
     "state": "状態",
     "normal": "正常",
     "malfunction": "動作不良",
+    "notReceive": "受信不良",
+    "receiveNormal": "通常",
     "charSet": "CSV文字コード",
-    "normal": "通常",
 
     "---------------- App exbeacon ---------------":"",
 
