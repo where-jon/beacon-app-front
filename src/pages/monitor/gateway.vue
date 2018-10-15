@@ -153,7 +153,7 @@ export default {
       if (time < GATEWAY.NOTRECEIVE) {
         return this.gatewayState.MALFUNCTION
       }
-      if (time < GATEWAY.NOTRECEIVE) {
+      if (time < GATEWAY.UNDETECT) {
         return this.gatewayState.NOTRECEIVE
       }
     },
