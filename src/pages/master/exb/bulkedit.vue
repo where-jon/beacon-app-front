@@ -1,7 +1,7 @@
 <template>
   <div>
     <breadcrumb :items="items" />
-    <bulkedit :name="name" :id="id" :backPath="backPath" :app-service-path="appServicePath" :form="form" />
+    <bulkedit :name="name" :id="id" :backPath="backPath" :app-service-path="appServicePath" />
   </div>
 </template>
 
@@ -9,7 +9,6 @@
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import _ from 'lodash'
 import * as Util from '../../../sub/util/Util'
-import editmixinVue from '../../../components/editmixin.vue'
 import { txViewTypes } from '../../../sub/constant/Constants'
 import breadcrumb from '../../../components/breadcrumb.vue'
 import bulkedit from '../../../components/bulkedit.vue'
@@ -19,16 +18,12 @@ export default {
     breadcrumb,
     bulkedit,
   },
-  mixins: [editmixinVue],
   data() {
     return {
       name: 'exb',
       id: 'exbId',
       backPath: '/master/exb',
       appServicePath: '/core/exb',
-      form: {
-        csvFile: null,
-      },
       items: [
         {
           text: this.$i18n.t('label.master'),
@@ -51,13 +46,13 @@ export default {
     ]),
   },
   methods: {
-    async save() {
+    async save(bulkSaveFunc) {
       const MAIN_COL = "exbId"
       const LOCATION = ["locationId","areaName","locationName","visible","txViewType","posId","x","y"]
       const NUMBER_TYPE_LIST = ["deviceId", "exbId", "areaId", "locationId", "posId", "x", "y", "z", "txViewType", "zoneName"]
       const BOOL_TYPE_LIST = ["visible", "enabled"]
 
-      await this.bulkSave(MAIN_COL, NUMBER_TYPE_LIST, BOOL_TYPE_LIST, (entity, headerName, val, dummyKey) => {
+      await bulkSaveFunc(MAIN_COL, NUMBER_TYPE_LIST, BOOL_TYPE_LIST, (entity, headerName, val, dummyKey) => {
         if (Util.equalsAny(headerName, LOCATION)) {
           if (headerName == "locationId" && !val) {
             val = dummyKey--          

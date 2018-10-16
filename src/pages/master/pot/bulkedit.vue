@@ -1,7 +1,7 @@
 <template>
   <div>
     <breadcrumb :items="items" />
-    <bulkedit :name="name" :id="id" :backPath="backPath" :app-service-path="appServicePath" :form="form" />
+    <bulkedit :name="name" :id="id" :backPath="backPath" :app-service-path="appServicePath" />
   </div>
 </template>
 
@@ -9,7 +9,6 @@
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import _ from 'lodash'
 import * as Util from '../../../sub/util/Util'
-import editmixinVue from '../../../components/editmixin.vue'
 import breadcrumb from '../../../components/breadcrumb.vue'
 import bulkedit from '../../../components/bulkedit.vue'
 
@@ -18,16 +17,12 @@ export default {
     breadcrumb,
     bulkedit,
   },
-  mixins: [editmixinVue],
   data() {
     return {
       name: 'pot',
       id: 'potId',
       backPath: '/master/pot',
       appServicePath: '/basic/pot',
-      form: {
-        csvFile: null,
-      },
       items: [
         {
           text: this.$i18n.t('label.master'),
@@ -50,12 +45,12 @@ export default {
     ]),
   },
   methods: {
-    async save() {
+    async save(bulkSaveFunc) {
       const MAIN_COL = "potId"
       const NULLABLE_NUMBER_COL = ["txId", "exbId", "zoneId", "areaId"]
       const MANY_TO_MANY = ["groupId", "categoryId"]
 
-      await this.bulkSave(MAIN_COL, null, null, (entity, headerName, val, dummyKey) => {
+      await bulkSaveFunc(MAIN_COL, null, null, (entity, headerName, val, dummyKey) => {
         if (MANY_TO_MANY.includes(headerName) && Util.hasValue(val)) {
           if("groupId" === headerName) {
             entity.potGroupList = [{potGroupPK: {groupId: Number(val)}}]
