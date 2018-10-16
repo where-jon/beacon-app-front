@@ -28,6 +28,12 @@
         </b-col>
       </b-row>
     </div>
+    <b-modal id="modalInfo" :title="$t('label.info')" ok-only>
+      {{ $t('message.notFound') }}
+    </b-modal>
+    <b-modal id="modalError" :title="$t('label.error')" ok-only>
+      {{ $t('message.pleaseEnterSearchCriteria') }}
+    </b-modal>
   </div>
 </template>
 
@@ -217,8 +223,13 @@ export default {
       return list
     },
     async download() {
+      if (this.dateFrom == 0 || this.dateTo == 0) {
+        this.$root.$emit('bv::show::modal', 'modalError')
+        return
+      }
       this.temperatureHistoryData = await this.dataDownload()
       if (this.temperatureHistoryData == null || this.temperatureHistoryData.length == 0) {
+        this.$root.$emit('bv::show::modal', 'modalInfo')
         return
       }
       HtmlUtil.fileDL(

@@ -30,6 +30,7 @@
     "deleteThumbnail": "画像を削除",
     "cancel": "キャンセル",
     "modify": "変更",
+    "info": "INFO",
 
     "---------------- App common ---------------":"",
     "login": "ログイン",
@@ -346,6 +347,8 @@
     "bulkExistFailed": "{line}行目: {col}（{value}）は存在していません。",
     "monthDayTemperature": "{month}月{day}日の温湿度",
     "invalidLoginId": "ログインIDは英数記号を指定してください",
+    "notFound": "検索結果0件",
+    "pleaseEnterSearchCriteria": "検索条件を入力してください",
 
     "dummy": "" 
   }

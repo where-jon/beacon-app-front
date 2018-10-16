@@ -38,6 +38,12 @@
         </tbody>
       </table>
     </div>
+    <b-modal id="modalInfo" :title="$t('label.info')" ok-only>
+      {{ $t('message.notFound') }}
+    </b-modal>
+    <b-modal id="modalError" :title="$t('label.error')" ok-only>
+      {{ $t('message.pleaseEnterSearchCriteria') }}
+    </b-modal>
   </div>
 </template>
 
@@ -196,6 +202,7 @@ export default {
     },
     yearMonthChange(val) {
       if (val == null) {
+        this.selectedYearMonth = 0
         this.vModelDay = null
         this.dayOptionList = []
         return
@@ -226,8 +233,10 @@ export default {
       return false
     },
     download() {
-      if (this.dataList == null) return
-      if (this.dataList.length == 0) return
+      if (this.dataList == null || this.dataList.length == 0) {
+        this.$root.$emit('bv::show::modal', 'modalInfo')
+        return
+      }
       HtmlUtil.fileDL(
         "numUsers.csv",
         Util.converToCsv(this.dataList),
@@ -235,7 +244,10 @@ export default {
       )
     },
     async search() {
-      if (this.selectedYearMonth == null) return
+      if (this.selectedYearMonth == null || this.selectedYearMonth == 0) {
+        this.$root.$emit('bv::show::modal', 'modalError')
+        return
+      }
       let paramCategoryId = (this.categoryId != null)?this.categoryId:-1
       let paramZoneId = (this.zoneId != null)?this.zoneId:-1
       let paramDate = this.selectedYearMonth
@@ -249,6 +261,9 @@ export default {
       )
       this.dataList = numUsers
       this.replaceMonitor({numUsers})
+      if (numUsers.length == 0) {
+        this.$root.$emit('bv::show::modal', 'modalInfo')
+      }
     },
   }
 }
