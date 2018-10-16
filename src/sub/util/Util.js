@@ -128,3 +128,20 @@ export const equalsAny = (target, arr) => {
   }
   return arr.includes(target)
 }
+
+/**
+ * 文字列リストのうち、最も長い文字列のバイト数を返す。
+ * 
+ * @param {*} list 文字列のリスト
+ * @param {*} minMax 最低限の文字数
+ */
+export const getMaxTextLength = (list, minMax) => {
+  if (!minMax) {
+    minMax = Infinity
+  }
+  if (!list) {
+    return minMax
+  }
+  let max = _.max(list.map(item => getByteLength(item)))
+  return max > minMax ? minMax : max
+}
