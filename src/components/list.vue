@@ -34,25 +34,26 @@
                 </b-input-group>
               </b-form-group>
           </b-col>
-          <b-col v-for="item of extraFilter" :key="item">
+          <b-col v-for="item of extraFilter" :key="item" class="customFilter">
             <b-form-group v-if="item === 'category'" :label="$t('label.category')" label-class="text-sm-right" horizontal>
-              <b-form-select :options="categoryOptions" v-model="filter.extra.category" />
+              <b-form-select :options="categoryOptions" v-model="filter.extra.category" :style="{width: categorySelectWidth}"/>
             </b-form-group>
             <b-form-group v-if="item === 'group'" :label="$t('label.group')" label-class="text-sm-right" horizontal>
-              <b-form-select :options="groupOptions" v-model="filter.extra.group" />
+              <b-form-select :options="groupOptions" v-model="filter.extra.group" :style="{width: groupSelectWidth}"/>
             </b-form-group>
           </b-col>
         </b-form-row>
-        <b-form-row class="mb-1">
-          <b-col class="mb-6 justify-content-end">
-          <!-- 新規作成ボタン -->
-          <b-button :variant='theme' @click="edit()" v-t="'label.createNew'"  class="float-right"/>
-          <b-button v-if="params.bulkEditPath" :variant='theme'
-            @click="bulkEdit()" v-t="'label.bulkRegister'"  class="float-right" :style="{ marginRight: '10px'}"/>
-          <b-button v-if="params.csvOut" :variant='theme' @click="exportCsv" v-t="'label.download'"  class="float-right" :style="{ marginRight: '10px'}"/>
-        </b-col>
-        </b-form-row>
       </b-form>
+      <b-form-row class="mb-1">
+        <b-col class="mb-6 justify-content-end">
+        <!-- 新規作成ボタン -->
+        <b-button :variant='theme' @click="edit()" v-t="'label.createNew'"  class="float-right"/>
+        <b-button v-if="params.bulkEditPath" :variant='theme'
+          @click="bulkEdit()" v-t="'label.bulkRegister'"  class="float-right" :style="{ marginRight: '10px'}"/>
+        <b-button v-if="params.csvOut" :variant='theme' @click="exportCsv" v-t="'label.download'"  class="float-right" :style="{ marginRight: '10px'}"/>
+      </b-col>
+      </b-form-row>
+      
     </template>
 
     <slot></slot>
@@ -119,6 +120,8 @@ export default {
           group: null
         },
       },
+      extraFilterMaxWidth: 9, // em
+      extraFilterFactor: 1.3,
       modalInfo: { title: '', content: '', id:'' },
       totalRows: this.initTotalRows,
       file: null,
@@ -160,6 +163,18 @@ export default {
       )
       options.unshift({value:null, text:''})
       return options
+    },
+    categorySelectWidth() {
+      const list = this.categoryOptions.map((obj) => obj.text)
+      let width = Util.getMaxTextLength(list, this.extraFilterMaxWidth)
+      width *= this.extraFilterFactor
+      return width + 'em'
+    },
+    groupSelectWidth() {
+      const list = this.groupOptions.map((obj) => obj.text)
+      let width = Util.getMaxTextLength(list, this.extraFilterMaxWidth)
+      width *= this.extraFilterFactor
+      return width + 'em'
     },
     loginId() {
       return this.$store.state.loginId
@@ -283,4 +298,5 @@ export default {
     padding: 5px;
     line-height: 35px;
   }
+  
 </style>
