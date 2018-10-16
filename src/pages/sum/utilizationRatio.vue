@@ -41,7 +41,7 @@
                 </span>
               </div>
             </td>
-            <td>{{ utilizationRatio.cnt }}</td>
+            <td>{{ (utilizationRatio.cnt/60).toFixed(2) }}</td>
           </tr>
         </tbody>
       </table>

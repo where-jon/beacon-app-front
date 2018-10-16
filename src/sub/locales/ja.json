@@ -236,7 +236,10 @@
     "regionName": "リージョン名",
     "meshId": "メッシュID",
 
-    "locationZone": "ゾーン(場所分類)",
+    "zoneClass": "ゾーン(分類)",
+    "locationZoneName": "場所名",
+    "coordinate": "座標指定あり",
+    "nonCoordinate": "座標指定なし",
 
     "ledOperation": "LED操作",
     "blink": "点滅",
