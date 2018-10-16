@@ -60,7 +60,7 @@ export default {
   },
   updated(){
     if (this.isFirstTime) return
-    this.fetchData()
+    // this.fetchData()
   },
   methods: {
     reset() {

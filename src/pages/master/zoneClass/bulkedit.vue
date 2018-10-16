@@ -1,7 +1,7 @@
 <template>
   <div>
     <breadcrumb :items="items" />
-    <bulkedit :name="name" :id="id" :backPath="backPath" :app-service-path="appServicePath" :form="form" />
+    <bulkedit :name="name" :id="id" :backPath="backPath" :app-service-path="appServicePath" />
   </div>
 </template>
 
@@ -9,7 +9,6 @@
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import _ from 'lodash'
 import * as Util from '../../../sub/util/Util'
-import editmixinVue from '../../../components/editmixin.vue'
 import breadcrumb from '../../../components/breadcrumb.vue'
 import bulkedit from '../../../components/bulkedit.vue'
 import { ZONE } from '../../../sub/constant/Constants'
@@ -19,16 +18,12 @@ export default {
     breadcrumb,
     bulkedit,
   },
-  mixins: [editmixinVue],
   data() {
     return {
       name: 'zone',
       id: 'zoneId',
       backPath: '/master/zoneClass',
       appServicePath: '/core/zone',
-      form: {
-        csvFile: null,
-      },
       items: [
         {
           text: this.$i18n.t('label.master'),
@@ -51,7 +46,7 @@ export default {
     ]),
   },
   methods: {
-    async save() {
+    async save(bulkSaveFunc) {
       const MAIN_COL = ["zoneId"]
       const LOCATION_ZONE_COL = ["zoneId", "locationId"]
       const ZONE_CATEGORY_COL = ["zoneId", "categoryId"]
@@ -59,7 +54,7 @@ export default {
       const NUMBER_TYPE_LIST = ["locationId", "categoryId", "areaId"]
       let locationId = null
       let categoryId = null
-      await this.bulkSave(MAIN_COL, NUMBER_TYPE_LIST, null, (entity, headerName, val, dummyKey) => {
+      await bulkSaveFunc(MAIN_COL, NUMBER_TYPE_LIST, null, (entity, headerName, val, dummyKey) => {
         if(headerName === "zoneId"){
           entity.zoneId = Util.hasValue(val)? Number(val): --dummyKey  
           entity.zoneType = ZONE.getTypes()[1].value

@@ -77,7 +77,10 @@ export const removeCrLfDup = (str) => {
   return strArr.join("\n")
 }
 
-export const str2Array = (str,) => {
+export const str2Array = (str) => {
+  if (!str) {
+    return str
+  }
   let arr = []
   for (let i=0; i < str.length; i++) {
     arr.push(str.charCodeAt(i))

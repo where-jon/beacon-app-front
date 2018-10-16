@@ -8,6 +8,7 @@ import { DISP } from '../sub/constant/config.js'
 import * as Util from '../sub/util/Util'
 import * as AppServiceHelper from '../sub/helper/AppServiceHelper'
 import * as PositionHelper from '../sub/helper/PositionHelper'
+import * as StateHelper from '../sub/helper/StateHelper'
 import reloadmixinVue from './reloadmixin.vue'
 
 let that
@@ -26,7 +27,12 @@ export default {
   },
   computed: {
     mapImage() {
-      let area = _.find(this.$store.state.app_service.areas, (area) => area.areaId == this.selectedArea)
+      let area = _.find(this.$store.state.app_service.areas, (area) => {
+        if (this.selectedArea == null) {
+          this.selectedArea = area.areaId // nullの場合、最初のものにする
+        }
+        return area.areaId == this.selectedArea
+      })
       return area && area.mapImage
     },
     areaOptions() {
@@ -49,35 +55,41 @@ export default {
   methods: {
     async fetchAreaExbs(tx) {
       if (this.isFirstTime) {
-        let areas = await AppServiceHelper.fetchList('/core/area/withImage', 'areaId')
-        this.selectedArea = areas && areas[0].areaId
-        this.replaceAS({areas})
-
-        this.exbs = await AppServiceHelper.fetchList('/core/exb/withLocation', 'exbId')
+        await StateHelper.loadAreas()
+        this.selectedArea = Util.getValue(this, 'areas.0.areaId', null)
+        console.log("after loadAreas. selectedArea=" + this.selectedArea)
+        await StateHelper.loadExbs()
         if (tx) {
-          this.txs = await AppServiceHelper.fetchList('/core/tx', 'txId')
+          await StateHelper.loadTxs()
         }
         this.isFirstTime = false
       }
     },
     showMapImageDef() {
       this.showTryCount++
-      console.log('showMapImageDef', this.isShownMapImage)
+      console.log('showMapImageDef', this.selectedArea, this.isShownMapImage)
       if (this.isShownMapImage) return false
-      console.debug("showMapImage")
       let parent = document.getElementById("map").parentElement
       let canvas = this.$refs.map
       var bg = new Image()
+
       if (!this.mapImage) {
-        console.warn("no mapImage")
-        this.$root.$emit('bv::show::modal', 'modalError')
+        if (this.showTryCount < 10) {
+          this.$nextTick(() => {
+            console.warn("again because no image")
+            that.showMapImage()
+          })
+        }
+        else {
+          this.$root.$emit('bv::show::modal', 'modalError')
+        }
         return true
       }
+
       bg.src = this.mapImage
-      let that = this
       if (bg.height == 0 || bg.width == 0 || !canvas) {
         this.$nextTick(() => {
-          console.debug("again")
+          console.warn("again because image is 0")
           if (this.showTryCount > 20) {
             this.isFirstTime = true
             this.showTryCount = 0
@@ -126,7 +138,6 @@ export default {
       this.oldSelectedArea = this.selectedArea
     },
     changeArea(val) {
-      if (this.isFirstTime) return
       if (val) {
         this.reset()
         this.selectedArea = val
