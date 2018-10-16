@@ -166,7 +166,7 @@ export default {
         rgb += i
       }
       let entity = [{
-        deviceId: this.form.deviceId,
+        deviceid: this.form.deviceId,
         rgb1: rgb,
         pattern1: this.lightOnCandidate ? this.form.blink : 0,
         rgb2: 0,
