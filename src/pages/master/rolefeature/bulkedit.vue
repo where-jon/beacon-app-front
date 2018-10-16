@@ -1,7 +1,7 @@
 <template>
   <div>
     <breadcrumb :items="items" />
-    <bulkedit :name="name" :id="id" :backPath="backPath" :app-service-path="appServicePath" :form="form" />
+    <bulkedit :name="name" :id="id" :backPath="backPath" :app-service-path="appServicePath" />
   </div>
 </template>
 
@@ -10,7 +10,6 @@ import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import _ from 'lodash'
 import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
-import editmixinVue from '../../../components/editmixin.vue'
 import breadcrumb from '../../../components/breadcrumb.vue'
 import bulkedit from '../../../components/bulkedit.vue'
 
@@ -19,16 +18,12 @@ export default {
     breadcrumb,
     bulkedit,
   },
-  mixins: [editmixinVue],
   data() {
     return {
       name: 'roleFeature',
       id: 'roleId',
       backPath: '/master/role/edit',
       appServicePath: '/meta/roleFeature',
-      form: {
-        csvFile: null,
-      },
       roleFeature:{
         roleId: this.$store.state.app_service.role.roleId
       },
@@ -58,10 +53,10 @@ export default {
     ]),
   },
   methods: {
-    async save() {
+    async save(bulkSaveFunc) {
       const MAIN_COL = ["roleId", "featureId"]
       const PRIMARY_KEYS = ["roleId", "featureId"]
-      await this.bulkSave(MAIN_COL, null, null, (entity, headerName, val, dummyKey) => {
+      await bulkSaveFunc(MAIN_COL, null, null, (entity, headerName, val, dummyKey) => {
         if (Util.equalsAny(headerName, PRIMARY_KEYS)) {
           if(!entity.roleFeaturePK){
             entity.roleFeaturePK = Object()

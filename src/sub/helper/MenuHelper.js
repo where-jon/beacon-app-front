@@ -11,7 +11,7 @@ export const setStore = (pStore) => {
 export const fetchNav = (featureList, tenantFeatureList) => {
   let retNav = _.map(MENU, (group) => {
     let pages = _.filter(group.pages, (page) => {
-      return tenantOk(tenantFeatureList, "/" + group.base + page.path) && getMode(page.feature, featureList) > ROLE_FEATURE.MODE.RO_SYS
+      return tenantOk("/" + group.base + page.path, tenantFeatureList) && getMode(page.feature, featureList) > ROLE_FEATURE.MODE.RO_SYS
     })
     return {...group, pages}
   })
@@ -22,7 +22,7 @@ export const fetchNav = (featureList, tenantFeatureList) => {
   return retNav
 }
 
-export const tenantOk = (tenantFeatureList, target) => {
+export const tenantOk = (target, tenantFeatureList) => {
   return tenantFeatureList.find((path) => Util.pathMatch(target, path)) != null
 }
 

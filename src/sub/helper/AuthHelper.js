@@ -62,7 +62,7 @@ export const authByAppService = async (loginId, password, success, err) => {
         // get setting
         let setting = await HttpHelper.getAppService('/meta/setting')
         ConfigHelper.applyAppServiceSetting(setting)
-        await login({loginId, username:user.name, role:data.role, featureList, menu}, setting)
+        await login({loginId, username:user.name, role:data.role, featureList, tenantFeatureList, menu}, setting)
         success()
     } catch (e) {
         console.error(e)
@@ -83,9 +83,10 @@ export const logout = () => {
     store.commit('app_service/clearAll')
     store.commit('main/clearAll')
     store.commit('monitor/clearAll')
+    store.commit('setting/clearAll')
     router.push(APP.LOGIN_PAGE)
     if (APP.LOGIN_MODE == LOGIN_MODE.APP_SERVICE) {
-        HttpHelper.getAppService('/logout')
+      HttpHelper.getAppService('/logout', null, true)        
     }
 }
 

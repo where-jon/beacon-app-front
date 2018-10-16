@@ -18,43 +18,43 @@ const loadAppState = async (target, path, sort, force) => {
   }
 }
 
-export const loadSensors = (force) => {
-  loadAppState('sensors', '/core/sensor', 'sensorId', force)
+export const loadSensors = async (force) => {
+  await loadAppState('sensors', '/core/sensor', 'sensorId', force)
 }
 
-export const loadRegions = (force) => {
-  loadAppState('regions', '/meta/region', 'regionId', force)
+export const loadRegions = async (force) => {
+  await loadAppState('regions', '/meta/region', 'regionId', force)
 }
 
 export const loadAreas = async (force) => {
-  loadAppState('areas', '/core/area/withImage', 'areaId', force)
+  await loadAppState('areas', '/core/area/withImage', 'areaId', force)
 }
 
 export const loadExbs = async (force) => {
-  loadAppState('exbs', '/core/exb', 'exbId', force)
+  await loadAppState('exbs', '/core/exb', 'exbId', force)
 }
 
 export const loadTxs = async (force) => {
-  loadAppState('txs', '/core/tx', 'txId', force)
+  await loadAppState('txs', '/core/tx', 'txId', force)
 }
 
 export const loadPots = async (force) => {
-  loadAppState('pots', '/basic/pot', 'potId', force)
+  await loadAppState('pots', '/basic/pot', 'potId', force)
 }
 
 export const loadCategorys = async (force) => {
-  loadAppState('categories', '/basic/category', 'categoryId', force)
+  await loadAppState('categories', '/basic/category', 'categoryId', force)
 }
 
 export const loadGroups = async (force) => {
-  loadAppState('groups', '/basic/group', 'groupId', force)
+  await loadAppState('groups', '/basic/group', 'groupId', force)
 }
 
 export const loadUsers = async (force) => {
-  loadAppState('users', '/basic/user', 'userId', force)
+  await loadAppState('users', '/basic/user', 'userId', force)
 }
 
 export const loadRoles = async (force) => {
-  loadAppState('roles', '/basic/role', 'roleId', force)
+  await loadAppState('roles', '/basic/role', 'roleId', force)
 }
 

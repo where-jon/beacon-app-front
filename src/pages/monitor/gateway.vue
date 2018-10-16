@@ -19,7 +19,7 @@
             <td>{{ gateway.deviceid }}</td>
             <td>{{ gateway.updated }}</td>
             <td v-if="getGatewayState(gateway.timestamp) === gatewayState.NORMAL">
-              <span class="badge badge-pill" :style="{backgroundColor: gatewayState.NORMAL}">{{ $i18n.t('label.normal') }}</span>
+              <span class="badge badge-pill" :style="{backgroundColor: gatewayState.NORMAL}">{{ $i18n.t('label.receiveNormal') }}</span>
             </td>
             <td v-else-if="getGatewayState(gateway.timestamp) === gatewayState.MALFUNCTION">
               <span class="badge badge-pill" :style="{backgroundColor: gatewayState.MALFUNCTION}">{{ $i18n.t('label.malfunction') }}</span>
