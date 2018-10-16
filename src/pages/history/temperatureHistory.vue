@@ -2,6 +2,8 @@
   <div>
     <breadcrumb :items="items" :reload="false" />
     <div class="container">
+      <b-alert variant="info" :show="showInfo">{{ message }}</b-alert>
+      <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">{{ message }}</b-alert>
       <b-row>
         <b-col md="8" offset-md="2">
           <b-form>
@@ -28,12 +30,6 @@
         </b-col>
       </b-row>
     </div>
-    <b-modal id="modalInfo" :title="$t('label.info')" ok-only>
-      {{ $t('message.notFound') }}
-    </b-modal>
-    <b-modal id="modalError" :title="$t('label.error')" ok-only>
-      {{ $t('message.pleaseEnterSearchCriteria') }}
-    </b-modal>
   </div>
 </template>
 
@@ -80,8 +76,11 @@ export default {
       dateTo: 0,
       historyType: 0,
       temperatureHistoryData: null,
+      //
+      showInfo: false,
+      showAlert: false,
+      message: ""
     }
-    
   },
   computed: {
     categoryOptions() {
@@ -224,12 +223,14 @@ export default {
     },
     async download() {
       if (this.dateFrom == 0 || this.dateTo == 0) {
-        this.$root.$emit('bv::show::modal', 'modalError')
+        this.message = this.$i18n.t('message.pleaseEnterSearchCriteria')
+        this.showAlert = true;
         return
       }
       this.temperatureHistoryData = await this.dataDownload()
       if (this.temperatureHistoryData == null || this.temperatureHistoryData.length == 0) {
-        this.$root.$emit('bv::show::modal', 'modalInfo')
+        this.message = this.$i18n.t('message.notFound')
+        this.showAlert = true;
         return
       }
       HtmlUtil.fileDL(

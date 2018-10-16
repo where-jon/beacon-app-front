@@ -2,7 +2,8 @@
   <div>
     <breadcrumb :items="items" :reload="false" />
     <div class="container">
-      <p></p>
+      <b-alert variant="info" :show="showInfo">{{ message }}</b-alert>
+      <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">{{ message }}</b-alert>
       <b-row>
         <b-form inline>
           <label v-t="'label.zoneCategoryName'" />
@@ -46,12 +47,6 @@
         </tbody>
       </table>
     </div>
-    <b-modal id="modalInfo" :title="$t('label.info')" ok-only>
-      {{ $t('message.notFound') }}
-    </b-modal>
-    <b-modal id="modalError" :title="$t('label.error')" ok-only>
-      {{ $t('message.pleaseEnterSearchCriteria') }}
-    </b-modal>
   </div>
 </template>
 
@@ -97,7 +92,11 @@ export default {
       zoneId: -1,
       selectedYearMonth: 0,
       selectedDay: 0,
-      dataList: null
+      dataList: null,
+      //
+      showInfo: false,
+      showAlert: false,
+      message: ""
     }
   },
   computed: {
@@ -210,6 +209,7 @@ export default {
     },
     yearMonthChange(val) {
       if (val == null) {
+        this.selectedYearMonth = 0
         this.vModelDay = null
         this.dayOptionList = []
         return
@@ -241,7 +241,8 @@ export default {
     },
     download() {
       if (this.dataList == null || this.dataList.length == 0) {
-        this.$root.$emit('bv::show::modal', 'modalInfo')
+        this.message = this.$i18n.t('message.notFound')
+        this.showAlert = true;
         return
       }
       HtmlUtil.fileDL(
@@ -251,8 +252,10 @@ export default {
       )
     },
     async search() {
+      this.showAlert = false;
       if (this.selectedYearMonth == null || this.selectedYearMonth == 0) {
-        this.$root.$emit('bv::show::modal', 'modalError')
+        this.message = this.$i18n.t('message.pleaseEnterSearchCriteria')
+        this.showAlert = true;
         return
       }
       var paramCategoryId = (this.categoryId != null)?this.categoryId:-1
@@ -261,7 +264,7 @@ export default {
       if (this.selectedDay > 0) {
         paramDate = paramDate*100 + this.selectedDay
       }
-      let utilizationRatios = await AppServiceHelper.fetchList2(
+      var utilizationRatios = await AppServiceHelper.fetchList2(
         'utilizationRatio',
         '/office/utilizationRatio/' + paramCategoryId + '/' + paramZoneId + '/' + paramDate,
         'utilizationRatio'
@@ -269,7 +272,8 @@ export default {
       this.dataList = utilizationRatios
       this.replaceMonitor({utilizationRatios})
       if (utilizationRatios.length == 0) {
-        this.$root.$emit('bv::show::modal', 'modalInfo')
+        this.message = this.$i18n.t('message.notFound')
+        this.showAlert = true;
       }
     },
   }

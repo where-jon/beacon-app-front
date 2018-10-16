@@ -2,7 +2,8 @@
   <div>
     <breadcrumb :items="items" :reload="false" />
     <div class="container">
-      <p></p>
+      <b-alert variant="info" :show="showInfo">{{ message }}</b-alert>
+      <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">{{ message }}</b-alert>
       <b-row>
         <b-form inline>
           <label v-t="'label.zoneCategoryName'" />
@@ -38,12 +39,6 @@
         </tbody>
       </table>
     </div>
-    <b-modal id="modalInfo" :title="$t('label.info')" ok-only>
-      {{ $t('message.notFound') }}
-    </b-modal>
-    <b-modal id="modalError" :title="$t('label.error')" ok-only>
-      {{ $t('message.pleaseEnterSearchCriteria') }}
-    </b-modal>
   </div>
 </template>
 
@@ -89,7 +84,11 @@ export default {
       zoneCategorys: [],
       selectedYearMonth: null,
       selectedDay: 0,
-      dataList: null
+      dataList: null,
+      //
+      showInfo: false,
+      showAlert: false,
+      message: ""
 }
   },
   computed: {
@@ -234,7 +233,8 @@ export default {
     },
     download() {
       if (this.dataList == null || this.dataList.length == 0) {
-        this.$root.$emit('bv::show::modal', 'modalInfo')
+        this.message = this.$i18n.t('message.notFound')
+        this.showAlert = true;
         return
       }
       HtmlUtil.fileDL(
@@ -244,17 +244,19 @@ export default {
       )
     },
     async search() {
+      this.showAlert = false;
       if (this.selectedYearMonth == null || this.selectedYearMonth == 0) {
-        this.$root.$emit('bv::show::modal', 'modalError')
+        this.message = this.$i18n.t('message.pleaseEnterSearchCriteria')
+        this.showAlert = true;
         return
       }
-      let paramCategoryId = (this.categoryId != null)?this.categoryId:-1
-      let paramZoneId = (this.zoneId != null)?this.zoneId:-1
-      let paramDate = this.selectedYearMonth
+      var paramCategoryId = (this.categoryId != null)?this.categoryId:-1
+      var paramZoneId = (this.zoneId != null)?this.zoneId:-1
+      var paramDate = this.selectedYearMonth
       if (this.selectedDay > 0) {
         paramDate = paramDate*100 + this.selectedDay
       }
-      let numUsers = await AppServiceHelper.fetchList2(
+      var numUsers = await AppServiceHelper.fetchList2(
         'numUsers',
         '/office/numUsers/' + paramCategoryId + '/' + paramZoneId + '/' + paramDate,
         'numOfUsers'
@@ -262,7 +264,8 @@ export default {
       this.dataList = numUsers
       this.replaceMonitor({numUsers})
       if (numUsers.length == 0) {
-        this.$root.$emit('bv::show::modal', 'modalInfo')
+        this.message = this.$i18n.t('message.notFound')
+        this.showAlert = true;
       }
     },
   }
