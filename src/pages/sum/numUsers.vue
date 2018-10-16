@@ -239,6 +239,9 @@ export default {
       let paramCategoryId = (this.categoryId != null)?this.categoryId:-1
       let paramZoneId = (this.zoneId != null)?this.zoneId:-1
       let paramDate = this.selectedYearMonth
+      if (this.selectedDay > 0) {
+        paramDate = paramDate*100 + this.selectedDay
+      }
       let numUsers = await AppServiceHelper.fetchList2(
         'numUsers',
         '/office/numUsers/' + paramCategoryId + '/' + paramZoneId + '/' + paramDate,
