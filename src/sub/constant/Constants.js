@@ -60,6 +60,15 @@ export const CATEGORY = {
   },
 }
 
+export const ZONE = {
+  getTypes(){ 
+    return [
+      {value: 0, text: i18n.t('label.coordinate')},
+      {value: 1, text: i18n.t('label.nonCoodinate')},
+    ]
+  },
+}
+
 export const SENSOR = {
   TEMPERATURE: 1,
   PIR: 2,
@@ -201,9 +210,9 @@ export const MENU = [
         icon: 'fas fa-chalkboard-teacher',
       },
       {
-        key: 'locationZone',
-        path: 'locationZone',
-        feature: '/meta/locationzone',
+        key: 'zoneClass',
+        path: 'zoneClass',
+        feature: '/core/zone',
         icon: 'far fa-compass',
       },
     ]

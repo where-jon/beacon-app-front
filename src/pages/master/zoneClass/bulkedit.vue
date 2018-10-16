@@ -1,0 +1,101 @@
+<template>
+  <div>
+    <breadcrumb :items="items" />
+    <bulkedit :name="name" :id="id" :backPath="backPath" :app-service-path="appServicePath" :form="form" />
+  </div>
+</template>
+
+<script>
+import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import _ from 'lodash'
+import * as Util from '../../../sub/util/Util'
+import editmixinVue from '../../../components/editmixin.vue'
+import breadcrumb from '../../../components/breadcrumb.vue'
+import bulkedit from '../../../components/bulkedit.vue'
+import { ZONE } from '../../../sub/constant/Constants'
+
+export default {
+  components: {
+    breadcrumb,
+    bulkedit,
+  },
+  mixins: [editmixinVue],
+  data() {
+    return {
+      name: 'zone',
+      id: 'zoneId',
+      backPath: '/master/zoneClass',
+      appServicePath: '/core/zone',
+      form: {
+        csvFile: null,
+      },
+      items: [
+        {
+          text: this.$i18n.t('label.master'),
+          active: true
+        },
+        {
+          text: this.$i18n.t('label.zoneClass'),
+          href: '/master/zoneClass',
+        },
+        {
+          text: this.$i18n.t('label.zoneClass') + this.$i18n.t('label.bulkRegister'),
+          active: true
+        }
+      ]
+    }
+  },
+  computed: {
+    ...mapState('app_service', [
+      'zone',
+    ]),
+  },
+  methods: {
+    async save() {
+      const MAIN_COL = ["zoneId"]
+      const LOCATION_ZONE_COL = ["zoneId", "locationId"]
+      const ZONE_CATEGORY_COL = ["zoneId", "categoryId"]
+      const ZONE_COL = ["zoneName", "areaId"]
+      const NUMBER_TYPE_LIST = ["locationId", "categoryId", "areaId"]
+      let locationId = null
+      let categoryId = null
+      await this.bulkSave(MAIN_COL, NUMBER_TYPE_LIST, null, (entity, headerName, val, dummyKey) => {
+        if(headerName === "zoneId"){
+          entity.zoneId = Util.hasValue(val)? Number(val): --dummyKey  
+          entity.zoneType = ZONE.getTypes()[1].value
+        }
+        else if(headerName === "locationId"){
+          locationId = val
+        }
+        else if(headerName === "categoryId"){
+          categoryId = val
+        }
+        if(ZONE_COL.includes(headerName)) {
+          entity[headerName] = val
+        }
+        if(LOCATION_ZONE_COL.includes(headerName) && entity.zoneId != null && locationId != null){
+          entity.locationZoneList = [{
+            locationZonePK: {
+              zoneId: entity.zoneId < 0? --dummyKey: entity.zoneId,
+              locationId: locationId
+            }
+          }]
+        }
+        if(ZONE_CATEGORY_COL.includes(headerName) && entity.zoneId != null && categoryId != null){
+          entity.zoneCategoryList = [{
+            zoneCategoryPK: {
+              zoneId: entity.zoneId < 0? --dummyKey: entity.zoneId,
+              categoryId: categoryId
+            }
+          }]
+        }
+        return dummyKey
+      })
+    },
+  }
+}
+</script>
+
+<style scoped lang="scss">
+
+</style>

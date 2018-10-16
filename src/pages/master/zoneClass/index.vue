@@ -1,7 +1,7 @@
 <template>
   <div>
     <breadcrumb :items="items" />
-    <m-list :params="params" :list="locationZones" >
+    <m-list :params="params" :list="zones" >
     </m-list>
   </div>
 </template>
@@ -24,20 +24,21 @@ export default {
   data() {
     return {
       params: {
-        name: 'locationZone',
-        id: 'key',
-        editPath: '/master/locationzone/edit',
-        bulkEditPath: '/master/locationzone/bulkedit',
-        appServicePath: '/core/location/zone',
+        name: 'zone',
+        id: 'zoneId',
+        editPath: '/master/zoneClass/edit',
+        bulkEditPath: '/master/zoneClass/bulkedit',
+        appServicePath: '/core/zone',
         csvOut: true,
         fields: addLabelByKey(this.$i18n, [ 
           {key: "zoneId", sortable: true },
           {key: "zoneName", sortable: true },
-          {key: "locationName", sortable: true},
+          {key: "areaName", sortable: true},
+          {key: "locationName", label: "locationZoneName", sortable: true},
           {key: "categoryName", sortable: true},
           {key: "actions", thStyle: {width:'130px !important'} }
         ]),
-        initTotalRows: this.$store.state.app_service.locationZone.length
+        initTotalRows: this.$store.state.app_service.zones.length
       },
       items: [
         {
@@ -45,7 +46,7 @@ export default {
           active: true
         },
         {
-          text: this.$i18n.t('label.locationZone'),
+          text: this.$i18n.t('label.zoneClass'),
           active: true
         }
       ]
@@ -53,30 +54,28 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'locationZones',
+      'zones',
     ]),
   },
   methods: {
     async fetchData(payload) {
       try {
         this.replace({showProgress: true})
-        let locationZones = await AppServiceHelper.fetchList("/core/location/zone", 'zoneId')
-        if(Util.hasValue(locationZones) && Util.isArray(locationZones)){
-          locationZones = _(locationZones).sortBy((val) => [val.locationZonePK.zoneId, val.locationZonePK.locationId]).compact().value()
-        }
-        locationZones = locationZones.map((val) => ({
-          key: `${val.locationZonePK.zoneId}/${val.locationZonePK.locationId}`,
-          zoneId: val.locationZonePK.zoneId,
-          locationId: val.locationZonePK.locationId,
-          zoneName: Util.hasValue(val.zone)? val.zone.zoneName: null,
-          locationName: Util.hasValue(val.location)? val.location.locationName: null,
-          categoryId: Util.hasValue(val.zone.zoneCategoryList)? val.zone.zoneCategoryList[0].zoneCategoryPK.categoryId: null,
-          categoryName: Util.hasValue(val.zone.zoneCategoryList)? val.zone.zoneCategoryList[0].category.categoryName: null,
+        let zones = await AppServiceHelper.fetchList("/core/zone/coordinates", 'zoneId')
+        zones = zones.map((val) => ({
+          zoneId: val.zoneId,
+          zoneName: val.zoneName,
+          areaId: Util.hasValue(val.area)? val.area.areaId: null,
+          areaName: Util.hasValue(val.area)? val.area.areaName: null,
+          locationId: Util.hasValue(val.locationZoneList)? val.locationZoneList[0].locationZonePK.locationId: null,
+          locationName: Util.hasValue(val.locationZoneList)? val.locationZoneList[0].location.locationName: null,
+          categoryId: Util.hasValue(val.zoneCategoryList)? val.zoneCategoryList[0].zoneCategoryPK.categoryId: null,
+          categoryName: Util.hasValue(val.zoneCategoryList)? val.zoneCategoryList[0].category.categoryName: null,
         }))
         if (payload && payload.done) {
           payload.done()
         }
-        this.replaceAS({locationZones})
+        this.replaceAS({zones})
       }
       catch(e) {
         console.error(e)
