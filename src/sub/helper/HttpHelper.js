@@ -12,12 +12,14 @@ const exCloudClient = axios.create({ // when you access to excloud, withCredenti
     withCredentials: EXCLOUD.withCredentials
 })
 
-export const getAppService = async (path, config) => {
+export const getAppService = async (path, config, ignoreError) => {
   try {
-    let res = await apServiceClient.get(APP_SERVICE.BASE_URL + path)
+    let res = await apServiceClient.get(APP_SERVICE.BASE_URL + path, config)
     return res.data
   } catch (e) {
-    handleError(e, path)
+    if (!ignoreError) {
+      handleError(e, path)
+    }
   }
 }
 

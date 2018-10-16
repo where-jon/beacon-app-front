@@ -55,10 +55,10 @@
     "no": "No.",
     "theme": "テーマ",
     "state": "状態",
-    "normal": "正常",
+    "normal": "通常",
     "malfunction": "動作不良",
     "notReceive": "受信不良",
-    "receiveNormal": "通常",
+    "receiveNormal": "正常",
     "absent": "不在",
     "charSet": "CSV文字コード",
 

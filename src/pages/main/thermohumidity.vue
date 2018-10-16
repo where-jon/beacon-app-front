@@ -91,7 +91,7 @@ export default {
         let sensors = await EXCloudHelper.fetchSensor(SENSOR.TEMPERATURE)
 
         this.positionedExb = _(this.exbs).filter((exb) => {
-          return exb.location.areaId == this.selectedArea && exb.location.x && exb.location.y > 0 && that.getSensorId(exb) == SENSOR.TEMPERATURE
+          return exb.location && exb.location.areaId == this.selectedArea && exb.location.x && exb.location.y > 0 && that.getSensorId(exb) == SENSOR.TEMPERATURE
         })
         .map((exb) => {
           let sensor = sensors.find((val) => val.deviceid == exb.deviceId && (val.timestamp||val.updatetime))
