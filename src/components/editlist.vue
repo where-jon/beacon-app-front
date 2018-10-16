@@ -96,7 +96,7 @@ export default {
     },
     async save() {
       return this.$parent.$options.methods.save.apply(this.$parent)
-   },
+    },
   }
 }
 

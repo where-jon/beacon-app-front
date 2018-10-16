@@ -21,16 +21,17 @@ export default {
       positionedExb: [],
       realWidth: null,
       isFirstTime: true,
+      showTryCount: 0,
     }
   },
   computed: {
     mapImage() {
-      let area = _.find(this.$store.state.app_service.areas, (area) => this.selectedArea && area.areaId == this.selectedArea.value)
+      let area = _.find(this.$store.state.app_service.areas, (area) => area.areaId == this.selectedArea)
       return area && area.mapImage
     },
     areaOptions() {
       let ret = _(this.$store.state.app_service.areas).map((val) => {
-        return {label: val.areaName, value: val.areaId}
+        return {text: val.areaName, value: val.areaId}
       }).value()
       return ret
     },
@@ -49,7 +50,7 @@ export default {
     async fetchAreaExbs(tx) {
       if (this.isFirstTime) {
         let areas = await AppServiceHelper.fetchList('/core/area/withImage', 'areaId')
-        this.selectedArea = areas && {label:areas[0].areaName, value:areas[0].areaId}
+        this.selectedArea = areas && areas[0].areaId
         this.replaceAS({areas})
 
         this.exbs = await AppServiceHelper.fetchList('/core/exb/withLocation', 'exbId')
@@ -60,8 +61,9 @@ export default {
       }
     },
     showMapImageDef() {
+      this.showTryCount++
       console.log('showMapImageDef', this.isShownMapImage)
-      if (this.isShownMapImage) return
+      if (this.isShownMapImage) return false
       console.debug("showMapImage")
       let parent = document.getElementById("map").parentElement
       let canvas = this.$refs.map
@@ -76,6 +78,12 @@ export default {
       if (bg.height == 0 || bg.width == 0 || !canvas) {
         this.$nextTick(() => {
           console.debug("again")
+          if (this.showTryCount > 20) {
+            this.isFirstTime = true
+            this.showTryCount = 0
+            this.fetchData()
+            return
+          }
           that.showMapImage()
         })
         return true
@@ -119,7 +127,7 @@ export default {
     },
     changeArea(val) {
       if (this.isFirstTime) return
-      if (val && val.value) {
+      if (val) {
         this.reset()
         this.selectedArea = val
         this.showMapImage()

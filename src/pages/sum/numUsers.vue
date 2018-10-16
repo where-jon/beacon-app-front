@@ -183,6 +183,7 @@ export default {
         this.categoryId = val.value
         this.vModelCategory = val
       }
+      this.vModelZone = null
     },
     zoneChange(val) {
       if (val == null) {

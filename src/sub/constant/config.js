@@ -174,3 +174,15 @@ export const PASSWORD_LENGTH = {
   BOTTOM: 4,
   LIMIT: 21
 }
+
+export const GATEWAY = {
+  MALFUNCTION: 30 * 60 * 1000,
+  NOTRECEIVE: 60 * 60 * 1000,
+  UNDETECT: 24 * 60 * 60 * 1000,
+  STATE_COLOR: {
+    NORMAL: '#28a745',
+    MALFUNCTION: '#dc3545',
+    NOTRECEIVE: '#ffc107',
+    UNDETECT: '#dc3545'
+  }
+}

@@ -25,7 +25,9 @@ export default {
         name: 'area',
         id: 'areaId',
         editPath: '/master/area/edit',
+        bulkEditPath: '/master/area/bulkedit',
         appServicePath: '/core/area',
+        csvOut: true,
         fields: addLabelByKey(this.$i18n, [ 
           {key: "areaId", sortable: true, tdClass: "action-rowdata" },
           {key: "areaName", sortable: true, tdClass: "action-rowdata"},

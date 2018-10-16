@@ -4,7 +4,7 @@
     <b-row class="mt-2">
       <b-form inline class="mt-2">
         <label class="ml-3 mr-2">{{ $t('label.area') }}</label>
-        <v-select v-model="selectedArea" :options="areaOptions" :on-change="changeArea" required class="ml-2"></v-select>
+        <b-form-select v-model="selectedArea" :options="areaOptions" @change="changeArea" required class="ml-2"></b-form-select>
       </b-form>
     </b-row>
     <b-row class="mt-3">
@@ -75,7 +75,7 @@ export default {
         let thermopileSensors = APP.USE_THERMOPILE? await EXCloudHelper.fetchSensor(SENSOR.THERMOPILE): []
 
         this.positionedExb = _(this.exbs).filter((exb) => {
-          return exb.location.areaId == this.selectedArea.value && exb.location.x && exb.location.y > 0 // && Util.equalsAny(that.getSensorId(exb), [SENSOR.PIR, SENSOR.THERMOPILE])
+          return exb.location.areaId == this.selectedArea && exb.location.x && exb.location.y > 0 // && Util.equalsAny(that.getSensorId(exb), [SENSOR.PIR, SENSOR.THERMOPILE])
         })
         .map((exb) => {
           let pir = pirSensors.find((val) => val.deviceid == exb.deviceId && val.count >= DISP.PIR_MIN_COUNT)

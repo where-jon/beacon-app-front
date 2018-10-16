@@ -2,6 +2,7 @@ import _ from 'lodash'
 import jschardet from 'jschardet'
 import Encoding from 'encoding-japanese'
 import Papa from 'papaparse'
+import moment from 'moment'
 
 // sleep (for test)
 export const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))
@@ -31,6 +32,7 @@ export const isArray = (obj) => Object.prototype.toString.call(obj) === '[object
 export const hasValue = (obj) => obj != null && obj.length !== 0
 export const detectEncoding = (str) => jschardet.detect(str)
 
+export const pathMatch = (target, path) => path.endsWith("*") && target.startsWith(path.slice(0, -1)) || path == target
 /**
  * オプジェクトから階層を辿って値を取得する。
  * 

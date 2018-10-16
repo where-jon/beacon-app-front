@@ -34,6 +34,9 @@ export default {
     }
   },
   methods: {
+    ...mapMutations('setting', [
+      'replaceSetting', 
+    ]),
     onSubmit() {
       AuthHelper.setApp(this.$router, this.$store)
       AuthHelper.auth(this.userId, this.password, ()=>{
