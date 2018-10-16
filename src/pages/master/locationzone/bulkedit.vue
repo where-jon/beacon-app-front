@@ -24,7 +24,7 @@ export default {
       name: 'locationZone',
       id: 'key',
       backPath: '/master/locationzone',
-      appServicePath: '/core/locationZone',
+      appServicePath: '/core/location/zone',
       form: {
         csvFile: null,
       },

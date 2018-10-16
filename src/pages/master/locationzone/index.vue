@@ -28,7 +28,7 @@ export default {
         id: 'key',
         editPath: '/master/locationzone/edit',
         bulkEditPath: '/master/locationzone/bulkedit',
-        appServicePath: '/core/locationZone',
+        appServicePath: '/core/location/zone',
         csvOut: true,
         fields: addLabelByKey(this.$i18n, [ 
           {key: "zoneId", sortable: true },
@@ -60,7 +60,7 @@ export default {
     async fetchData(payload) {
       try {
         this.replace({showProgress: true})
-        let locationZones = await AppServiceHelper.fetchList("/core/locationZone", 'zoneId')
+        let locationZones = await AppServiceHelper.fetchList("/core/location/zone", 'zoneId')
         if(Util.hasValue(locationZones) && Util.isArray(locationZones)){
           locationZones = _(locationZones).sortBy((val) => [val.locationZonePK.zoneId, val.locationZonePK.locationId]).compact().value()
         }

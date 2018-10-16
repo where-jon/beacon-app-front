@@ -49,7 +49,7 @@ export default {
       name: 'locationZone',
       id: 'zoneId',
       backPath: '/master/locationzone',
-      appServicePath: '/core/locationZone',
+      appServicePath: '/core/location/zone',
       form: ViewHelper.extract(this.$store.state.app_service.locationZone, ["locationZonePK.zoneId", "locationZonePK.locationId", "zone.zoneCategoryList.0.zoneCategoryPK.categoryId"]),
       zoneId: null,
       zoneNames: [],
@@ -120,7 +120,7 @@ export default {
     },
     async beforeReload(){
       this.zoneId = null
-      let locationZones = await AppServiceHelper.fetchList("/core/locationZone", 'zoneId')
+      let locationZones = await AppServiceHelper.fetchList("/core/location/zone", 'zoneId')
       locationZones = locationZones.map((val) => ({
         zoneId: val.locationZonePK.zoneId,
         locationId: val.locationZonePK.locationId,
