@@ -200,7 +200,7 @@ export const MENU = [
       {
         key: 'user',
         path: 'user',
-        feature: '/core/user',
+        feature: '/meta/user',
         icon: 'fas fa-user',
       },
       {
@@ -283,13 +283,13 @@ export const MENU = [
     pages: [{
         key: 'personal',
         path: 'personal',
-        feature: '/core/personal',
+        feature: '/setting/personal',
         icon: 'fas fa-user-cog',
       },
       {
         key: 'system',
         path: 'system',
-        feature: '/meta/system',
+        feature: '/setting/system',
         icon: 'fas fa-cogs',
       },
     ]
