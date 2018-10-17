@@ -303,8 +303,9 @@ export default {
       if (!val || !val.value) {
         return
       }
-      let exb = _(this.exbs).find((exb) => exb.exbId == val.value).cloneDeep()
+      let exb = _(this.exbs).find((exb) => exb.exbId == val.value)
       if (!exb) return
+      exb = _.cloneDeep(exb)
 
       let loc = exb.location
       if (loc.x <= 0) {
