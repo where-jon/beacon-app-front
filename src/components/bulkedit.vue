@@ -8,7 +8,7 @@
       <b-form @submit="onSubmit" v-if="show">
         <b-form-group>
           <label v-t="'label.csvFile'" />
-          <b-form-file v-model="form.csvFile" accept=".csv" :placeholder="$t('message.selectFile') "></b-form-file>
+          <b-form-file :key="formKey" v-model="form.csvFile" accept=".csv" :placeholder="$t('message.selectFile') "></b-form-file>
         </b-form-group>
         <b-button type="submit" :variant="theme" @click="register(true)" >{{ label }}</b-button>
         <b-button type="button" variant="outline-danger" @click="backToList" class="ml-2" v-t="'label.back'"/>
@@ -27,12 +27,16 @@ import { getTheme } from '../sub/helper/ThemeHelper'
 let that
 
 export default {
-  props: ["name", "id", "backPath", "appServicePath", "form"],
+  props: ["name", "id", "backPath", "appServicePath"],
   mixins: [editmixinVue],
   data() {
     return {
       mutex: false,
       bulkRegister: true,
+      formKey: 0,
+      form: {
+        csvFile: null,
+      },
     }
   },
   mounted() {
@@ -45,8 +49,12 @@ export default {
     },
   },
   methods: {
+    beforeReload(){
+      this.formKey++
+      this.form.csvFile = null
+    },
     async save() {
-      return this.$parent.$options.methods.save.call(this.$parent)
+      return this.$parent.$options.methods.save.call(this.$parent, this.bulkSave)
     },
   }
 }

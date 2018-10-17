@@ -9,7 +9,7 @@
 <script>
 import mList from '../../../components/list.vue'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
+import * as StateHelper from '../../../sub/helper/StateHelper'
 import { APP } from '../../../sub/constant/config.js'
 import { addLabelByKey } from '../../../sub/helper/ViewHelper'
 import listmixinVue from '../../../components/listmixin.vue'
@@ -62,12 +62,10 @@ export default {
     async fetchData(payload) {
       try {
         this.replace({showProgress: true})
-        let users = await AppServiceHelper.fetchList("/meta/user/", 'userId')
-        users = users.map((val) => ({...val, roleName: val.role.roleName}))
+        await StateHelper.load('user')
         if (payload && payload.done) {
           payload.done()
         }
-        this.replaceAS({users})
       }
       catch(e) {
         console.error(e)

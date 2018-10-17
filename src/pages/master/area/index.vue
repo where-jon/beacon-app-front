@@ -1,14 +1,14 @@
 <template>
   <div>
     <breadcrumb :items="items" />
-    <m-list :params="params" :list="areas"></m-list>
+    <m-list :params="params" :list="areaList"></m-list>
   </div>
 </template>
 
 <script>
 import mList from '../../../components/list.vue'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
+import * as StateHelper from '../../../sub/helper/StateHelper'
 import { addLabelByKey } from '../../../sub/helper/ViewHelper'
 import listmixinVue from '../../../components/listmixin.vue'
 import breadcrumb from '../../../components/breadcrumb.vue'
@@ -21,11 +21,15 @@ export default {
   mixins: [listmixinVue],
   data() {
     return {
+      areaList: [],
+      areaImages: [],
       params: {
         name: 'area',
         id: 'areaId',
         editPath: '/master/area/edit',
+        bulkEditPath: '/master/area/bulkedit',
         appServicePath: '/core/area',
+        csvOut: true,
         fields: addLabelByKey(this.$i18n, [ 
           {key: "areaId", sortable: true, tdClass: "action-rowdata" },
           {key: "areaName", sortable: true, tdClass: "action-rowdata"},
@@ -49,20 +53,18 @@ export default {
   computed: {
     ...mapState('app_service', [
       'areas',
-      'areaImages',
     ]),
   },
   methods: {
     async fetchData(payload) {
       try {
         this.replace({showProgress: true})
-        let areas = await AppServiceHelper.fetchList('/core/area', 'areaId')
-        let areaImages = areas.map((val) => val.thumbnail)
-        areas = areas.map((val) => ({...val, mapImage: "", thumbnail: ""})) // omit images to avoid being filtering target
+        await StateHelper.load('area')
+        this.areaImages = this.areas.map((val) => val.thumbnail)
+        this.areaList = this.areas.map((val) => ({...val, mapImage: "", thumbnail: ""})) // omit images to avoid being filtering target
         if (payload && payload.done) {
           payload.done()
         }
-        this.replaceAS({areas, areaImages})
       }
       catch(e) {
         console.error(e)

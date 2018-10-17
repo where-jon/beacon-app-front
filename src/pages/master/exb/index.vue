@@ -8,7 +8,7 @@
 <script>
 import mList from '../../../components/list.vue'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
+import * as StateHelper from '../../../sub/helper/StateHelper'
 import { addLabelByKey } from '../../../sub/helper/ViewHelper'
 import listmixinVue from '../../../components/listmixin.vue'
 import breadcrumb from '../../../components/breadcrumb.vue'
@@ -70,26 +70,10 @@ export default {
     async fetchData(payload) {
       try {
         this.replace({showProgress: true})
-        let exbs = await AppServiceHelper.fetchList('/core/exb/withLocation', 'exbId')
-        console.log(exbs)
-        exbs = exbs.map((exb) => {
-          const location = exb.location
-          const area = location? location.area: null
-          return {
-            ...exb,
-            deviceIdX: exb.deviceId.toString(16).toUpperCase(),
-            locationName: location? location.locationName: null,
-            posId: location? location.posId: null,
-            areaName: area? area.areaName: null,
-            x: location? location.x: null,
-            y: location? location.y: null,
-            sensor: that.$i18n.t('label.' + Util.getValue(exb, 'exbSensorList.0.sensor.sensorName', 'normal'))
-          }
-        })
+        await StateHelper.load('exb')
         if (payload && payload.done) {
           payload.done()
         }
-        this.replaceAS({exbs})
       }
       catch(e) {
         console.error(e)

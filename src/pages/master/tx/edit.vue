@@ -10,7 +10,7 @@
       <b-row>
         <b-col md="8" offset-md="2">
           <b-form @submit="onSubmit" v-if="show">
-            <b-form-group v-if="form.txId">
+            <b-form-group v-if="hasId">
               <label v-t="'label.txId'" />
               <b-form-input type="text" v-model="form.txId" readonly="readonly" />
             </b-form-group>
@@ -106,6 +106,9 @@ export default {
     }
   },
   computed: {
+    hasId(){
+      return Util.hasValue(this.form.txId)
+    },
     theme () {
       const theme = getButtonTheme(this.$store.state.loginId)
       return 'outline-' + theme
@@ -134,8 +137,8 @@ export default {
   },
   mounted() {
     that = this
-    StateHelper.loadSensors()
-    StateHelper.loadCategorys()
+    StateHelper.load('sensor')
+    StateHelper.load('category')
   },
   methods: {
     isShown(conf) {
@@ -153,13 +156,13 @@ export default {
       return true
     },
     async save() {
-      let txId = this.form.txId? this.form.txId: -1
+      let txId = Util.hasValue(this.form.txId)? this.form.txId: -1
       let entity = {
         ...this.form,
         txId,
         pot: (this.form.categoryId || this.form.displayName || this.form.description)? {
           displayName: Util.getValue(this.form, 'displayName', null),
-          description: Util.getValue(this.form, 'displayName', null),
+          description: Util.getValue(this.form, 'description', null),
           potId: Util.getValue(this.form, 'potId', -2),
           potCd: Util.getValue(this.form, 'potCd', txId + "_" + (new Date().getTime() % 10000)),
           potName: Util.getValue(this.form, 'potName', txId + "_" + (new Date().getTime() % 10000)),

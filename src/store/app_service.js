@@ -8,7 +8,6 @@ export const state = () => ({
   deviceIds: [],
   potImages: [],
   areas: [],
-  areaImages: [],
   area: {},
   exbs: [],
   exb: {},
@@ -30,6 +29,8 @@ export const state = () => ({
   features: [],
   roleFeatures: [],
   roleFeature: {},
+  zones: [],
+  zone: {},
 })
 
 const initState = state()

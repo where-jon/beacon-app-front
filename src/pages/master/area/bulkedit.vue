@@ -19,21 +19,21 @@ export default {
   },
   data() {
     return {
-      name: 'user',
-      id: 'userId',
-      backPath: '/master/user',
-      appServicePath: '/meta/user',
+      name: 'area',
+      id: 'areaId',
+      backPath: '/master/area',
+      appServicePath: '/core/area',
       items: [
         {
           text: this.$i18n.t('label.master'),
           active: true
         },
         {
-          text: this.$i18n.t('label.user'),
-          href: '/master/user',
+          text: this.$i18n.t('label.area'),
+          href: '/master/area',
         },
         {
-          text: this.$i18n.t('label.user') + this.$i18n.t('label.bulkRegister'),
+          text: this.$i18n.t('label.area') + this.$i18n.t('label.bulkRegister'),
           active: true
         }
       ]
@@ -41,13 +41,13 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'user',
+      'area',
     ]),
   },
   methods: {
     async save(bulkSaveFunc) {
-      const MAIN_COL = "userId"
-      const NUMBER_TYPE_LIST = ["userId", "roleId"]
+      const MAIN_COL = "areaId"
+      const NUMBER_TYPE_LIST = ["areaId"]
       await bulkSaveFunc(MAIN_COL, NUMBER_TYPE_LIST)
     },
   }

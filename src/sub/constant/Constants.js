@@ -60,6 +60,15 @@ export const CATEGORY = {
   },
 }
 
+export const ZONE = {
+  getTypes(){ 
+    return [
+      {value: 0, text: i18n.t('label.coordinate')},
+      {value: 1, text: i18n.t('label.nonCoodinate')},
+    ]
+  },
+}
+
 export const SENSOR = {
   TEMPERATURE: 1,
   PIR: 2,
@@ -164,7 +173,7 @@ export const MENU = [
         icon: 'fa fa-tags',
       },
       {
-        key: 'location',
+        key: 'locationSetting',
         path: 'location',
         feature: '/core/location',
         icon: 'fas fa-map',
@@ -180,18 +189,18 @@ export const MENU = [
         key: 'category',
         path: 'category',
         feature: '/basic/category',
-        icon: 'fas fa-sitemap',
+        icon: 'fa fa-object-group',
       },
       {
         key: 'group',
         path: 'group',
         feature: '/basic/group',
-        icon: 'fas fa-users',
+        icon: 'fas fa-sitemap',
       },
       {
         key: 'user',
         path: 'user',
-        feature: '/core/user',
+        feature: '/meta/user',
         icon: 'fas fa-user',
       },
       {
@@ -199,6 +208,12 @@ export const MENU = [
         path: 'role',
         feature: '/meta/role',
         icon: 'fas fa-chalkboard-teacher',
+      },
+      {
+        key: 'zoneClass',
+        path: 'zoneClass',
+        feature: '/core/zone',
+        icon: 'far fa-compass',
       },
     ]
   },
@@ -268,13 +283,13 @@ export const MENU = [
     pages: [{
         key: 'personal',
         path: 'personal',
-        feature: '/core/personal',
+        feature: '/setting/personal',
         icon: 'fas fa-user-cog',
       },
       {
         key: 'system',
         path: 'system',
-        feature: '/meta/system',
+        feature: '/setting/system',
         icon: 'fas fa-cogs',
       },
     ]

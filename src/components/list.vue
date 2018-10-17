@@ -1,13 +1,13 @@
 <template>
   <div>
     <!-- searchbox -->
-    <b-row v-if="!params.hideSearchBox">
+    <b-row v-if="!params.hideSearchBox && !params.extraFilter">
       <b-col md="6" class="my-1">
         <b-form-group horizontal class="mb-0" :label="$t('label.filter') ">
           <b-input-group>
-            <b-form-input v-model="filter" />
+            <b-form-input v-model="filter.reg" />
             <b-input-group-append>
-              <b-btn :disabled="!filter" @click="filter=''" variant="secondary" v-t="'label.clear'"></b-btn>
+              <b-btn :disabled="!filter" @click="filter.reg = ''" variant="secondary" v-t="'label.clear'"></b-btn>
             </b-input-group-append>
           </b-input-group>
         </b-form-group>
@@ -20,6 +20,41 @@
         <b-button v-if="params.csvOut" :variant='theme' @click="exportCsv" v-t="'label.download'"  class="float-right" :style="{ marginRight: '10px'}"/>
       </b-col>
     </b-row>
+    <template v-if="!params.hideSearchBox && params.extraFilter">
+      <!-- 追加フィルタがある場合 -->
+      <b-form>
+        <b-form-row class="mb-1">
+            <b-col>
+              <b-form-group :label="$t('label.filter')" horizontal>
+                <b-input-group>
+                  <b-form-input v-model="filter.reg" />
+                  <b-input-group-append>
+                    <b-btn :disabled="!filter" @click="filter. reg = ''" variant="secondary" v-t="'label.clear'" />
+                  </b-input-group-append>
+                </b-input-group>
+              </b-form-group>
+          </b-col>
+          <b-col v-for="item of params.extraFilter" :key="item" class="customFilter">
+            <b-form-group v-if="item === 'category'" :label="$t('label.category')" label-class="text-sm-right" horizontal>
+              <b-form-select :options="categoryOptions" v-model="filter.extra.category" :style="{width: categorySelectWidth}"/>
+            </b-form-group>
+            <b-form-group v-if="item === 'group'" :label="$t('label.group')" label-class="text-sm-right" horizontal>
+              <b-form-select :options="groupOptions" v-model="filter.extra.group" :style="{width: groupSelectWidth}"/>
+            </b-form-group>
+          </b-col>
+        </b-form-row>
+      </b-form>
+      <b-form-row class="mb-1">
+        <b-col class="mb-6 justify-content-end">
+        <!-- 新規作成ボタン -->
+        <b-button :variant='theme' @click="edit()" v-t="'label.createNew'"  class="float-right"/>
+        <b-button v-if="params.bulkEditPath" :variant='theme'
+          @click="bulkEdit()" v-t="'label.bulkRegister'"  class="float-right" :style="{ marginRight: '10px'}"/>
+        <b-button v-if="params.csvOut" :variant='theme' @click="exportCsv" v-t="'label.download'"  class="float-right" :style="{ marginRight: '10px'}"/>
+      </b-col>
+      </b-form-row>
+      
+    </template>
 
     <slot></slot>
 
@@ -61,6 +96,7 @@
 
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import * as AppServiceHelper from '../sub/helper/AppServiceHelper'
+import * as StateHelper from '../sub/helper/StateHelper'
 import { addLabelByKey } from '../sub/helper/ViewHelper'
 import { EventBus } from '../sub/helper/EventHelper'
 import * as MenuHelper from '../sub/helper/MenuHelper'
@@ -77,7 +113,15 @@ export default {
     return {
       currentPage: 1,
       perPage: 10,
-      filter: null,
+      filter: {
+        reg: null,
+        extra: {
+          category: null,
+          group: null
+        },
+      },
+      extraFilterMaxWidth: 9, // em
+      extraFilterFactor: 1.3,
       modalInfo: { title: '', content: '', id:'' },
       totalRows: this.initTotalRows,
       file: null,
@@ -94,6 +138,44 @@ export default {
     ...mapState([
       'featureList',
     ]),
+    ...mapState('app_service', [
+      'categories',
+      'groups',
+    ]),
+    categoryOptions() {
+      let options = this.categories.map((category) => {
+          return {
+            value: category.categoryId,
+            text: category.categoryName
+          }
+        }
+      )
+      options.unshift({value:null, text:''})
+      return options
+    },
+    groupOptions() {
+      let options = this.groups.map((group) => {
+          return {
+            value: group.groupId,
+            text: group.groupName
+          }
+        }
+      )
+      options.unshift({value:null, text:''})
+      return options
+    },
+    categorySelectWidth() {
+      const list = this.categoryOptions.map((obj) => obj.text)
+      let width = Util.getMaxTextLength(list, this.extraFilterMaxWidth)
+      width *= this.extraFilterFactor
+      return width + 'em'
+    },
+    groupSelectWidth() {
+      const list = this.groupOptions.map((obj) => obj.text)
+      let width = Util.getMaxTextLength(list, this.extraFilterMaxWidth)
+      width *= this.extraFilterFactor
+      return width + 'em'
+    },
     loginId() {
       return this.$store.state.loginId
     },
@@ -104,6 +186,8 @@ export default {
   },
   mounted() {
     this.$parent.$options.methods.fetchData.apply(this.$parent)
+    StateHelper.load('group')
+    StateHelper.load('category')
     const theme = getTheme(this.loginId)
     // const color = themeColors[theme]
     // const pageLinks = document.getElementsByClassName('.page-link')
@@ -148,22 +232,48 @@ export default {
       this.modalInfo.id = ''
     },
     filterGrid(originItem) {
-      if(!this.filter){
-        return true
+      let regBool
+      if(!this.filter.reg){
+        regBool = true
+      } else {
+        try{
+          const regExp = new RegExp(".*" + this.filter.reg + ".*", "i")
+          const param = this.params.fields.map((val) => {
+            let itemValue = originItem
+            const keys = val.key.split("\.")
+            keys.forEach(key => itemValue = itemValue[key])
+            return itemValue
+          })
+          regBool = regExp.test(JSON.stringify(param))
+        }
+        catch(e){
+          regBool = false
+        }
       }
-      try{
-        const regExp = new RegExp(".*" + this.filter + ".*", "i")
-        const param = this.params.fields.map((val) => {
-          let itemValue = originItem
-          const keys = val.key.split("\.")
-          keys.forEach(key => itemValue = itemValue[key])
-          return itemValue
-        })
-        return regExp.test(JSON.stringify(param))
+      // 追加フィルタ
+      let extBool = true
+      if (!this.params.extraFilter) {
+        extBool = true
+      } else {
+        const extra = this.filter.extra
+        for (let item of this.params.extraFilter) {
+          switch (item) {
+            case 'category':
+            if (extra.category && 
+                  !(extra.category === originItem.categoryId)) {
+              extBool = false
+            }
+            break
+            case 'group':
+            if  (extra.group && 
+                  !(extra.group === originItem.groupId)) {
+              extBool = false
+            }
+            break
+          }
+        }
       }
-      catch(e){
-        return false
-      }
+      return regBool && extBool
     },
     onFiltered(filteredItems) {
       this.totalRows = filteredItems.length
@@ -171,6 +281,7 @@ export default {
     },
     async execDelete(id) {
       await AppServiceHelper.deleteEntity(this.appServicePath, id)
+      await StateHelper.load(this.params.name, true)
       this.$parent.$options.methods.fetchData.apply(this.$parent)
     }
   }
@@ -188,4 +299,5 @@ export default {
     padding: 5px;
     line-height: 35px;
   }
+  
 </style>

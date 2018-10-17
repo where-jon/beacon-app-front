@@ -46,18 +46,23 @@ export const authByAppService = async (loginId, password, success, err) => {
         params.append('password', password)
         let data = await HttpHelper.postAppService('/login', params)
 
+        // get tenant feature list
+        let tenant = await HttpHelper.getAppService('/meta/tenant/currentTenant')
+        let tenantFeatureList = tenant.tenantFeatureList.map((tenantFeature) => tenantFeature.feature.path)
+        console.log({tenantFeatureList})
+
         // get role feature list
         let user = await HttpHelper.getAppService('/meta/user/currentUser')
         console.log(user)
         let featureList = _(user.role.roleFeatureList).map((roleFeature) => {
             return {path: roleFeature.feature.path, mode: roleFeature.mode}
         }).sortBy((val) => val.path.length * -1).value()
-        let menu = MenuHelper.fetchNav(featureList)
+        let menu = MenuHelper.fetchNav(featureList, tenantFeatureList)
 
         // get setting
         let setting = await HttpHelper.getAppService('/meta/setting')
         ConfigHelper.applyAppServiceSetting(setting)
-        await login({loginId, username:user.name, role:data.role, featureList, menu}, setting)
+        await login({loginId, username:user.name, role:data.role, featureList, tenantFeatureList, menu}, setting)
         success()
     } catch (e) {
         console.error(e)
@@ -78,9 +83,10 @@ export const logout = () => {
     store.commit('app_service/clearAll')
     store.commit('main/clearAll')
     store.commit('monitor/clearAll')
+    store.commit('setting/clearAll')
     router.push(APP.LOGIN_PAGE)
     if (APP.LOGIN_MODE == LOGIN_MODE.APP_SERVICE) {
-        HttpHelper.getAppService('/logout')
+      HttpHelper.getAppService('/logout', null, true)        
     }
 }
 

@@ -4,7 +4,7 @@
     <b-row class="mt-2">
       <b-form inline class="mt-2">
         <label class="ml-3 mr-2">{{ $t('label.area') }}</label>
-        <v-select v-model="selectedArea" :options="areaOptions" :on-change="changeArea" required class="ml-2"></v-select>
+        <b-form-select v-model="selectedArea" :options="areaOptions" @change="changeArea" required class="ml-2"></b-form-select>
       </b-form>
     </b-row>
     <b-row class="mt-3">
@@ -75,14 +75,16 @@ export default {
     this.fetchData()
     window.addEventListener('resize', () => {
       that.reset()
-      that.stage.removeAllChildren()
-      that.stage.update()
-      that.fetchData()
+      if (that.stage) {
+        that.stage.removeAllChildren()
+        that.stage.update()
+        that.fetchData()
+      }
     })
   },
   updated(){
     if (this.isFirstTime) return
-    // this.fetchData()
+    this.fetchData()
   },
   methods: {
     reset() {
@@ -171,7 +173,7 @@ export default {
       this.positions = PositionHelper.correctPosId(this.orgPositions, now)
 
       this.positionedExb = _(this.exbs).filter((exb) => {
-        return exb.enabled && this.selectedArea && exb.location.areaId == this.selectedArea.value && exb.location.x && exb.location.y > 0
+        return exb.enabled && exb.location.areaId == this.selectedArea && exb.location.x && exb.location.y > 0
       }).value()
 
       this.showTxAll()

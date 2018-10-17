@@ -30,6 +30,7 @@
     "deleteThumbnail": "画像を削除",
     "cancel": "キャンセル",
     "modify": "変更",
+    "info": "INFO",
 
     "---------------- App common ---------------":"",
     "login": "ログイン",
@@ -55,10 +56,10 @@
     "no": "No.",
     "theme": "テーマ",
     "state": "状態",
-    "normal": "正常",
+    "normal": "通常",
     "malfunction": "動作不良",
     "notReceive": "受信不良",
-    "receiveNormal": "通常",
+    "receiveNormal": "正常",
     "absent": "不在",
     "charSet": "CSV文字コード",
 
@@ -72,7 +73,8 @@
     "monitor": "モニタ",
     "area": "エリア",
     "exb": "EXBeacon",
-    "location": "EXB配置設定",
+    "location": "配置場所",
+    "locationSetting": "EXB配置設定",
     "develop": "開発用",
 
     "exbId": "exb ID",
@@ -235,6 +237,11 @@
     "regionName": "リージョン名",
     "meshId": "メッシュID",
 
+    "zoneClass": "ゾーン(分類)",
+    "locationZoneName": "場所名",
+    "coordinate": "座標指定あり",
+    "nonCoordinate": "座標指定なし",
+
     "ledOperation": "LED操作",
     "blink": "点滅",
     "blue": "青",
@@ -267,9 +274,9 @@
     "temperatureHistory": "温湿度履歴",
     "historyDateFrom": "期間",
     "historyDateTo": "～",
-    "temperatureHistoryType": "タイプ",
+    "temperatureHistoryType": "",
     "temperatureHistoryType0": "すべての温湿度",
-    "temperatureHistoryType1": "時間毎",
+    "temperatureHistoryType1": "時間毎の温湿度",
 
     "allRejection": "すべて拒否",
     "systemReadOnly": "システムの読み取りのみ許可",
@@ -343,6 +350,8 @@
     "bulkExistFailed": "{line}行目: {col}（{value}）は存在していません。",
     "monthDayTemperature": "{month}月{day}日の温湿度",
     "invalidLoginId": "ログインIDは英数記号を指定してください",
+    "notFound": "検索結果0件",
+    "pleaseEnterSearchCriteria": "検索条件を入力してください",
 
     "dummy": "" 
   }

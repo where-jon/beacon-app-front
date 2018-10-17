@@ -1,60 +1,98 @@
 import _ from 'lodash'
 import * as AppServiceHelper from './AppServiceHelper'
+import * as Util from '../util/Util'
 
 
 // TODO: 全体的にState管理を共通化する
 
 let store
+let i18n
 
-export const setApp = (pStore) => {
+export const setApp = (pStore, pi18n) => {
     store = pStore
+    i18n = pi18n
 }
 
-const loadAppState = async (target, path, sort, force) => {
+const appStateConf = {
+  sensors: {
+    path: '/core/sensor',
+    sort: 'sensorId',
+    beforeCommit: (arr) => {
+      return arr
+    }
+  },
+  regions: {
+    path: '/meta/region',
+    sort: 'regionId',
+  },
+  areas: {
+    path: '/core/area/withImage',
+    sort: 'areaId',
+  },
+  exbs: {
+    path: '/core/exb/withLocation',
+    sort: 'exbId',
+    beforeCommit: (arr) => {
+      return arr.map((exb) => {
+        const location = exb.location
+        const area = location? location.area: null
+        return {
+          ...exb,
+          deviceIdX: exb.deviceId.toString(16).toUpperCase(),
+          locationName: location? location.locationName: null,
+          posId: location? location.posId: null,
+          areaName: area? area.areaName: null,
+          x: location? location.x: null,
+          y: location? location.y: null,
+          sensor: i18n.t('label.' + Util.getValue(exb, 'exbSensorList.0.sensor.sensorName', 'normal'))
+        }
+      })
+    }
+  },
+  txs: {
+    path: '/core/tx',
+    sort: 'txId',
+  },
+  pots: {
+    path: '/basic/pot',
+    sort: 'potId',
+  },
+  categories: {
+    path: '/basic/category',
+    sort: 'categoryId',
+  },
+  groups: {
+    path: '/basic/group',
+    sort: 'groupId',
+  },
+  users: {
+    path: '/meta/user',
+    sort: 'userId',
+    beforeCommit: (arr) => {
+      return arr.map((val) => ({...val, roleName: val.role.roleName}))
+    }
+  },
+  roles: {
+    path: '/meta/role',
+    sort: 'roleId',
+  },
+}
+
+export const load = async (target, force) => {
+  if (!target.endsWith("s")) {
+    target = target.endsWith("y")? target.slice(0, -1) + "ies" : target + "s"
+  }
+  console.debug(target, appStateConf[target])
+  if (!appStateConf[target]) {
+    return
+  } 
+  let {path, sort, beforeCommit} = appStateConf[target]
   let arr = store.state.app_service[target]
-  if (arr.length == 0 || force) {
+  if (!arr || arr.length == 0 || force) {
     arr = await AppServiceHelper.fetchList(path, sort)
+    if (beforeCommit) {
+      arr = beforeCommit(arr)
+    }
     store.commit('app_service/replaceAS', {[target]:arr})
   }
 }
-
-export const loadSensors = (force) => {
-  loadAppState('sensors', '/core/sensor', 'sensorId', force)
-}
-
-export const loadRegions = (force) => {
-  loadAppState('regions', '/meta/region', 'regionId', force)
-}
-
-export const loadAreas = async (force) => {
-  loadAppState('areas', '/core/area/withImage', 'areaId', force)
-}
-
-export const loadExbs = async (force) => {
-  loadAppState('exbs', '/core/exb', 'exbId', force)
-}
-
-export const loadTxs = async (force) => {
-  loadAppState('txs', '/core/tx', 'txId', force)
-}
-
-export const loadPots = async (force) => {
-  loadAppState('pots', '/basic/pot', 'potId', force)
-}
-
-export const loadCategorys = async (force) => {
-  loadAppState('categories', '/basic/category', 'categoryId', force)
-}
-
-export const loadGroups = async (force) => {
-  loadAppState('groups', '/basic/group', 'groupId', force)
-}
-
-export const loadUsers = async (force) => {
-  loadAppState('users', '/basic/user', 'userId', force)
-}
-
-export const loadRoles = async (force) => {
-  loadAppState('roles', '/basic/role', 'roleId', force)
-}
-

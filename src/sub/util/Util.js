@@ -32,6 +32,7 @@ export const isArray = (obj) => Object.prototype.toString.call(obj) === '[object
 export const hasValue = (obj) => obj != null && obj.length !== 0
 export const detectEncoding = (str) => jschardet.detect(str)
 
+export const pathMatch = (target, path) => path.endsWith("*") && target.startsWith(path.slice(0, -1)) || path == target
 /**
  * オプジェクトから階層を辿って値を取得する。
  * 
@@ -76,7 +77,10 @@ export const removeCrLfDup = (str) => {
   return strArr.join("\n")
 }
 
-export const str2Array = (str,) => {
+export const str2Array = (str) => {
+  if (!str) {
+    return str
+  }
   let arr = []
   for (let i=0; i < str.length; i++) {
     arr.push(str.charCodeAt(i))
@@ -123,4 +127,21 @@ export const equalsAny = (target, arr) => {
     return false
   }
   return arr.includes(target)
+}
+
+/**
+ * 文字列リストのうち、最も長い文字列のバイト数を返す。
+ * 
+ * @param {*} list 文字列のリスト
+ * @param {*} minMax 最低限の文字数
+ */
+export const getMaxTextLength = (list, minMax) => {
+  if (!minMax) {
+    minMax = Infinity
+  }
+  if (!list) {
+    return minMax
+  }
+  let max = _.max(list.map(item => getByteLength(item)))
+  return max > minMax ? minMax : max
 }

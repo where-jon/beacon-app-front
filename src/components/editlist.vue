@@ -36,7 +36,6 @@
 
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import _ from 'lodash'
-import * as AppServiceHelper from '../sub/helper/AppServiceHelper'
 import editmixinVue from './editmixin.vue'
 import * as MenuHelper from '../sub/helper/MenuHelper'
 import * as HtmlUtil from '../sub/util/HtmlUtil'
@@ -96,7 +95,7 @@ export default {
     },
     async save() {
       return this.$parent.$options.methods.save.apply(this.$parent)
-   },
+    },
   }
 }
 
