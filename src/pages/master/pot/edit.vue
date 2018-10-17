@@ -164,9 +164,9 @@ export default {
   },
   mounted() {
     that = this
-    StateHelper.loadGroups()
-    StateHelper.loadCategorys()
-    StateHelper.loadTxs()
+    StateHelper.load('group')
+    StateHelper.load('category')
+    StateHelper.load('tx')
   },
   methods: {
     async save() {

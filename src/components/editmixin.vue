@@ -5,6 +5,7 @@ import _ from 'lodash'
 import * as AppServiceHelper from '../sub/helper/AppServiceHelper'
 import * as ViewHelper from '../sub/helper/ViewHelper'
 import * as MenuHelper from '../sub/helper/MenuHelper'
+import * as StateHelper from '../sub/helper/StateHelper'
 import { sleep } from '../sub/util/Util'
 import { APP } from '../sub/constant/config.js'
 import * as HtmlUtil from '../sub/util/HtmlUtil'
@@ -80,12 +81,13 @@ export default {
       evt.preventDefault()
       try {
         let res = await this.save()
+        await StateHelper.load(this.name, true)
         this.message = this.$i18n.t('message.' + this.crud + 'Completed', {target: this.$i18n.t('label.' + this.name)})
         this.showInfo = true
         if (this.again) {
           this.form = {}
           ViewHelper.applyDef(this.form, this.defValue)
-          if(typeof this.beforeReload === "function"){
+          if(this.beforeReload) {
             this.beforeReload()
           }
           let customFileLabel = document.getElementsByClassName("custom-file-label")
@@ -211,7 +213,8 @@ export default {
         throw new Error(error)
       }
 
-      await AppServiceHelper.bulkSave(this.appServicePath, entities)          
+      await AppServiceHelper.bulkSave(this.appServicePath, entities)
+      await StateHelper.load(mainCol.slice(0, -2), true)
    },
   }
 }

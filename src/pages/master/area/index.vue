@@ -8,7 +8,6 @@
 <script>
 import mList from '../../../components/list.vue'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import { addLabelByKey } from '../../../sub/helper/ViewHelper'
 import listmixinVue from '../../../components/listmixin.vue'
@@ -60,7 +59,7 @@ export default {
     async fetchData(payload) {
       try {
         this.replace({showProgress: true})
-        await StateHelper.loadAreas()
+        await StateHelper.load('area')
         this.areaImages = this.areas.map((val) => val.thumbnail)
         this.areaList = this.areas.map((val) => ({...val, mapImage: "", thumbnail: ""})) // omit images to avoid being filtering target
         if (payload && payload.done) {

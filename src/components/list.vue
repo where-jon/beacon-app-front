@@ -186,8 +186,8 @@ export default {
   },
   mounted() {
     this.$parent.$options.methods.fetchData.apply(this.$parent)
-    StateHelper.loadCategorys()
-    StateHelper.loadGroups()
+    StateHelper.load('group')
+    StateHelper.load('category')
     const theme = getTheme(this.loginId)
     // const color = themeColors[theme]
     // const pageLinks = document.getElementsByClassName('.page-link')
@@ -281,6 +281,7 @@ export default {
     },
     async execDelete(id) {
       await AppServiceHelper.deleteEntity(this.appServicePath, id)
+      await StateHelper.load(this.params.name, true)
       this.$parent.$options.methods.fetchData.apply(this.$parent)
     }
   }
