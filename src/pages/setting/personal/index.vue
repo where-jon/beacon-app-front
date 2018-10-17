@@ -262,15 +262,20 @@ export default {
         this.$i18n.t('label.loginId'),
         this.$i18n.t('message.invalidLoginId')
       )
-      errorMessages.name = this.validateRequire(this.loginUser.name, this.$i18n.t('label.name'))
-      errorMessages.email = this.validateRequire(this.loginUser.email, this.$i18n.t('label.email'))
+      if (this.showName) {
+        errorMessages.name = this.validateRequire(this.loginUser.name, this.$i18n.t('label.name'))
+      }
+      if (this.showEmail) {
+        errorMessages.email = this.validateRequire(this.loginUser.email, this.$i18n.t('label.email'))
+      }
       errorMessages.password = this.validateLoginIdPassword(
         this.loginUser.password,
         this.$i18n.t('label.password'),
         this.$i18n.t('message.invalidPassword')
       )
 
-      if (errorMessages.password.length > 0) {
+      if (this.hasError) {
+        this.isSuccess = false
         return
       }
 
