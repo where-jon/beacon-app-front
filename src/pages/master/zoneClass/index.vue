@@ -9,6 +9,7 @@
 <script>
 import mList from '../../../components/list.vue'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as Util from '../../../sub/util/Util'
 import { addLabelByKey } from '../../../sub/helper/ViewHelper'
@@ -61,21 +62,10 @@ export default {
     async fetchData(payload) {
       try {
         this.replace({showProgress: true})
-        let zones = await AppServiceHelper.fetchList("/core/zone/coordinates", 'zoneId')
-        zones = zones.map((val) => ({
-          zoneId: val.zoneId,
-          zoneName: val.zoneName,
-          areaId: Util.hasValue(val.area)? val.area.areaId: null,
-          areaName: Util.hasValue(val.area)? val.area.areaName: null,
-          locationId: Util.hasValue(val.locationZoneList)? val.locationZoneList[0].locationZonePK.locationId: null,
-          locationName: Util.hasValue(val.locationZoneList)? val.locationZoneList[0].location.locationName: null,
-          categoryId: Util.hasValue(val.zoneCategoryList)? val.zoneCategoryList[0].zoneCategoryPK.categoryId: null,
-          categoryName: Util.hasValue(val.zoneCategoryList)? val.zoneCategoryList[0].category.categoryName: null,
-        }))
+        await StateHelper.load('zone')
         if (payload && payload.done) {
           payload.done()
         }
-        this.replaceAS({zones})
       }
       catch(e) {
         console.error(e)

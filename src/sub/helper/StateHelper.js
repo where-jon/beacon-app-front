@@ -22,7 +22,7 @@ const appStateConf = {
     }
   },
   regions: {
-    path: '/meta/region',
+    path: '/core/region',
     sort: 'regionId',
   },
   areas: {
@@ -50,11 +50,22 @@ const appStateConf = {
     }
   },
   txs: {
-    path: '/core/tx',
+    path: '/core/tx/withPot',
     sort: 'txId',
+    beforeCommit: (arr) => {
+      return arr.map((tx) => {
+        return {
+          ...tx,
+          displayName: Util.getValue(tx, 'pot.displayName', null),
+          description: Util.getValue(tx, 'pot.description', null),
+          category: Util.getValue(tx, 'pot.potCategoryList.0.category.categoryName', null),
+          sensor: i18n.t('label.' + Util.getValue(tx, 'txSensorList.0.sensor.sensorName', 'normal'))
+        }
+      })
+  }
   },
   pots: {
-    path: '/basic/pot',
+    path: '/basic/pot/withThumbnail',
     sort: 'potId',
   },
   categories: {
@@ -75,6 +86,34 @@ const appStateConf = {
   roles: {
     path: '/meta/role',
     sort: 'roleId',
+  },
+  features: {
+    path: '/meta/feature',
+    sort: 'featureId',
+  },
+  locations: {
+    path: '/core/location',
+    sort: 'locationId',
+  },
+  zones: {
+    path: '/core/zone/coordinates',
+    sort: 'zoneId',
+    beforeCommit: (arr) => {
+      return  arr.map((val) => ({
+        zoneId: val.zoneId,
+        zoneName: val.zoneName,
+        areaId: Util.hasValue(val.area)? val.area.areaId: null,
+        areaName: Util.hasValue(val.area)? val.area.areaName: null,
+        locationId: Util.hasValue(val.locationZoneList)? val.locationZoneList[0].locationZonePK.locationId: null,
+        locationName: Util.hasValue(val.locationZoneList)? val.locationZoneList[0].location.locationName: null,
+        categoryId: Util.hasValue(val.zoneCategoryList)? val.zoneCategoryList[0].zoneCategoryPK.categoryId: null,
+        categoryName: Util.hasValue(val.zoneCategoryList)? val.zoneCategoryList[0].category.categoryName: null,
+      }))
+    }
+  },
+  settings: {
+    path: '/meta/setting',
+    sort: 'settingId',
   },
 }
 

@@ -36,7 +36,7 @@ export default {
       return this[this.name] && this[this.name][this.id] != null
     },
     isEditable() {
-      return MenuHelper.isEditable(this.appServicePath)
+      return MenuHelper.isEditable(this.featurePath? this.featurePath: this.appServicePath)
     }
   },
   mounted() {

@@ -53,6 +53,7 @@
 
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import * as StateHelper from '../../sub/helper/StateHelper'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
@@ -119,7 +120,10 @@ export default {
     },
     ...mapState('monitor', [
       'positions',
-    ])
+    ]),
+    ...mapState('app_service', [
+      'pots', 'exbs'
+    ]),
   },
   mounted() {
     this.fetchData()
@@ -161,9 +165,9 @@ export default {
       if (this.isDev) {
         return positions
       }
-      let pots = await AppServiceHelper.fetchList("/basic/pot/withThumbnail", 'potId')
+      await StateHelper.load('pot')
       const map = {}
-      pots.forEach((e) => {
+      this.pots.forEach((e) => {
         map[e.tx.btxId] = e.tx.txName
       })
 
@@ -221,8 +225,8 @@ export default {
       HtmlUtil.fileDL("position.csv", Util.converToCsv(this.positions), getCharSet(this.$store.state.loginId))
     },
     async getExbRecords() {
-      const records = await AppServiceHelper.fetchList("/core/exb/withLocation")
-      this.locationMap = records.reduce((obj, record) => {
+      await StateHelper.load('exb')
+      this.locationMap = this.exbs.reduce((obj, record) => {
         obj[parseInt(record.deviceId, 16)] = record.location.locationName
         return obj
       }, {})

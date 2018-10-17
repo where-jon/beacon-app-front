@@ -38,6 +38,7 @@
 
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import * as StateHelper from '../../sub/helper/StateHelper'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
@@ -91,7 +92,10 @@ export default {
     },
     ...mapState('monitor', [
       'telemetrys',
-    ])
+    ]),
+    ...mapState('app_service', [
+      'exbs',
+    ]),
   },
   mounted() {
     this.replace({title: this.$i18n.t('label.telemetry')})
@@ -142,9 +146,9 @@ export default {
       if (this.isDev) {
         return telemetrys
       }
-      const exbs = await AppServiceHelper.fetchList('/core/exb/withLocation', 'exbId')
+      await StateHelper.load('exb')
       const map = {}
-      exbs.forEach((e) => {
+      this.exbs.forEach((e) => {
         map[e.deviceId.toString(16)] = e.location.locationName
       })
 

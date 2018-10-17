@@ -8,6 +8,7 @@
 <script>
 import mList from '../../../components/list.vue'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import { addLabelByKey } from '../../../sub/helper/ViewHelper'
 import listmixinVue from '../../../components/listmixin.vue'
@@ -71,20 +72,10 @@ export default {
     async fetchData(payload) {
       try {
         this.replace({showProgress: true})
-        let txs = await AppServiceHelper.fetchList('/core/tx/withPot', 'txId')
-        txs = txs.map((tx) => {
-          return {
-            ...tx,
-            displayName: Util.getValue(tx, 'pot.displayName', null),
-            description: Util.getValue(tx, 'pot.description', null),
-            category: Util.getValue(tx, 'pot.potCategoryList.0.category.categoryName', null),
-            sensor: that.$i18n.t('label.' + Util.getValue(tx, 'txSensorList.0.sensor.sensorName', 'normal'))
-          }
-        })
+        await StateHelper.load('tx')
         if (payload && payload.done) {
           payload.done()
         }
-        this.replaceAS({txs})
       }
       catch(e) {
         console.error(e)

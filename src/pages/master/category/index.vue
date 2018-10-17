@@ -9,6 +9,7 @@
 <script>
 import mList from '../../../components/list.vue'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import { addLabelByKey } from '../../../sub/helper/ViewHelper'
 import listmixinVue from '../../../components/listmixin.vue'
@@ -66,7 +67,8 @@ export default {
     async fetchData(payload) {
       try {
         this.replace({showProgress: true})
-        let categories = await AppServiceHelper.fetchList("/basic/category/", 'categoryId')
+        await StateHelper.load('category')
+        let categories = this.categories
         let categoryStyles = categories.map((val) => ({
           "color": Util.colorCd4display(val.color),
           "background-color": Util.colorCd4display(val.bgColor),

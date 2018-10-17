@@ -31,6 +31,8 @@ export const state = () => ({
   roleFeature: {},
   zones: [],
   zone: {},
+  settings: [],
+  sensorHistories: [],
 })
 
 const initState = state()
