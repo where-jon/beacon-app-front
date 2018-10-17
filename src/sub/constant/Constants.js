@@ -283,13 +283,13 @@ export const MENU = [
     pages: [{
         key: 'personal',
         path: 'personal',
-        feature: '/setting/personal',
+        feature: '/core/personal',
         icon: 'fas fa-user-cog',
       },
       {
         key: 'system',
         path: 'system',
-        feature: '/setting/system',
+        feature: '/meta/system',
         icon: 'fas fa-cogs',
       },
     ]
