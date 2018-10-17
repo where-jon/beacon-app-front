@@ -5,28 +5,45 @@
       <b-alert variant="info" :show="showInfo">{{ message }}</b-alert>
       <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">{{ message }}</b-alert>
       <b-row>
-        <b-col md="8" offset-md="2">
-          <b-form>
-            <b-form-group>
-              <label v-t="'label.zoneCategoryName'" />
-              <v-select v-model="vModelCategory" :options="categoryOptions" :on-change="categoryChange" required class="ml-2"></v-select>
-            </b-form-group>
-            <b-form-group>
-              <label v-t="'label.zoneName'" />
-              <v-select v-model="vModelZone" :options="zoneOptions" :on-change="zoneChange" required class="ml-2"></v-select>
-            </b-form-group>
-            <b-form-group>
-              <label v-t="'label.historyDateFrom'" />
-              <b-form-input type="date" required v-on:change="dateFromChange" />
-              <label v-t="'label.historyDateTo'" />
-              <b-form-input type="date" required v-on:change="dateToChange" />
-            </b-form-group>
-            <b-form-group>
-              <label v-t="'label.temperatureHistoryType'" />
-              <v-select :options="typeOptions" required class="ml-2" :on-change="typeChange"></v-select>
-            </b-form-group>
-            <b-button size="sm" variant="info" v-t="'label.download'" @click="download()"></b-button> 
+        <b-col md="10" offset-md="2">
+          <b-form inline>
+            <label v-t="'label.historyDateFrom'" class="leftsidelabel"/>
+            <b-form-input type="date" required v-on:change="dateFromChange" class="inputdatefrom" />
+            <label v-t="'label.historyDateTo'" />
+            <b-form-input type="date" required v-on:change="dateToChange" class="inputdateto" />
           </b-form>
+        </b-col>
+      </b-row>
+      <p></p>
+      <b-row>
+        <b-col md="10" offset-md="2">
+          <b-form inline>
+            <label v-t="'label.zoneCategoryName'" class="leftsidelabel"/>
+            <v-select v-model="vModelCategory" :options="categoryOptions" :on-change="categoryChange" required class="ml-2"></v-select>
+            <label v-t="'label.zoneName'" />
+            <v-select v-model="vModelZone" :options="zoneOptions" :on-change="zoneChange" required class="ml-2"></v-select>
+          </b-form>
+        </b-col>
+      </b-row>
+      <p></p>
+      <b-row>
+        <b-col md="10" offset-md="2">
+          <b-form inline>
+            <b-form-radio-group v-model="historyType">
+              <b-form-radio :value="0">
+                {{$t('label.temperatureHistoryType0')}}
+              </b-form-radio>
+              <b-form-radio :value="1">
+                {{$t('label.temperatureHistoryType1')}}
+              </b-form-radio>
+            </b-form-radio-group>
+          </b-form>
+        </b-col>
+      </b-row>
+      <p></p>
+      <b-row>
+        <b-col md="10" offset-md="2">
+          <b-button size="sm" variant="info" v-t="'label.download'" @click="download()"></b-button> 
         </b-col>
       </b-row>
     </div>
@@ -88,12 +105,6 @@ export default {
     },
     zoneOptions() {
       return this.zoneOptionList
-    },
-    typeOptions() {
-      return [
-        {label:this.$i18n.t('label.temperatureHistoryType0'), value:0},
-        {label:this.$i18n.t('label.temperatureHistoryType1'), value:1},
-      ]
     },
     getTheme () {
       const theme = getTheme(this.$store.state.loginId)
@@ -222,15 +233,17 @@ export default {
       return list
     },
     async download() {
+      this.showInfo = false
+      this.showAlert = false
       if (this.dateFrom == 0 || this.dateTo == 0) {
-        this.message = this.$i18n.t('message.pleaseEnterSearchCriteria')
-        this.showAlert = true;
+        this.message = this.$i18n.t('message.required', {target: this.$i18n.t('label.historyDateFrom')})
+        this.showAlert = true
         return
       }
       this.temperatureHistoryData = await this.dataDownload()
       if (this.temperatureHistoryData == null || this.temperatureHistoryData.length == 0) {
         this.message = this.$i18n.t('message.notFound')
-        this.showAlert = true;
+        this.showAlert = true
         return
       }
       HtmlUtil.fileDL(
@@ -244,4 +257,19 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.leftsidelabel {
+  width:130px;
+  text-align: left;
+  justify-content: left;
+}
+.inputdatefrom {
+  margin-left: 8px;
+  margin-right: 20px;
+  width: 200px;
+}
+.inputdateto {
+  margin-left: 20px;
+  margin-right: 0px;
+  width: 200px;
+}
 </style>

@@ -274,9 +274,9 @@
     "temperatureHistory": "温湿度履歴",
     "historyDateFrom": "期間",
     "historyDateTo": "～",
-    "temperatureHistoryType": "タイプ",
+    "temperatureHistoryType": "",
     "temperatureHistoryType0": "すべての温湿度",
-    "temperatureHistoryType1": "時間毎",
+    "temperatureHistoryType1": "時間毎の温湿度",
 
     "allRejection": "すべて拒否",
     "systemReadOnly": "システムの読み取りのみ許可",
