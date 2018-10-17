@@ -42,6 +42,8 @@ export default {
     },
     ...mapState('app_service', [
       'areas',
+      'exbs',
+      'txs',
     ]),
   },
   created() {
