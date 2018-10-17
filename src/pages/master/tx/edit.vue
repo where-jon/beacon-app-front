@@ -137,8 +137,8 @@ export default {
   },
   mounted() {
     that = this
-    StateHelper.loadSensors()
-    StateHelper.loadCategorys()
+    StateHelper.load('sensor')
+    StateHelper.load('category')
   },
   methods: {
     isShown(conf) {

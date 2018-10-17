@@ -34,6 +34,7 @@
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import _ from 'lodash'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as Util from '../../../sub/util/Util'
 import editmixinVue from '../../../components/editmixin.vue'
 import breadcrumb from '../../../components/breadcrumb.vue'

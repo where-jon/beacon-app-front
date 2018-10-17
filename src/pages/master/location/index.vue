@@ -149,9 +149,9 @@ export default {
       }
     },
     setExbPosition() {
-      this.positionedExb = _.filter(this.exbs, (exb) => {
+      this.positionedExb = _(this.exbs).filter((exb) => {
         return exb.location.areaId == this.selectedArea && exb.location.x && exb.location.y > 0
-      })
+      }).cloneDeep()
 
       this.exbOptions = _(this.exbs).filter((val) => {
         return val.enabled && (!val.location.x || !val.location.y || (val.location.x && val.location.y <= 0))
@@ -303,8 +303,9 @@ export default {
       if (!val || !val.value) {
         return
       }
-      let exb = _.find(this.exbs, (exb) => exb.exbId == val.value)
+      let exb = _(this.exbs).find((exb) => exb.exbId == val.value)
       if (!exb) return
+      exb = _.cloneDeep(exb)
 
       let loc = exb.location
       if (loc.x <= 0) {

@@ -6,7 +6,6 @@ import { Tween, Ticker } from '@createjs/tweenjs/dist/tweenjs.module'
 import { EventBus } from '../sub/helper/EventHelper'
 import { DISP } from '../sub/constant/config.js'
 import * as Util from '../sub/util/Util'
-import * as AppServiceHelper from '../sub/helper/AppServiceHelper'
 import * as PositionHelper from '../sub/helper/PositionHelper'
 import * as StateHelper from '../sub/helper/StateHelper'
 import reloadmixinVue from './reloadmixin.vue'
@@ -43,6 +42,8 @@ export default {
     },
     ...mapState('app_service', [
       'areas',
+      'exbs',
+      'txs',
     ]),
   },
   created() {
@@ -55,12 +56,12 @@ export default {
   methods: {
     async fetchAreaExbs(tx) {
       if (this.isFirstTime) {
-        await StateHelper.loadAreas()
+        await StateHelper.load('area')
         this.selectedArea = Util.getValue(this, 'areas.0.areaId', null)
         console.log("after loadAreas. selectedArea=" + this.selectedArea)
-        await StateHelper.loadExbs()
+        await StateHelper.load('exb')
         if (tx) {
-          await StateHelper.loadTxs()
+          await StateHelper.load('tx')
         }
         this.isFirstTime = false
       }

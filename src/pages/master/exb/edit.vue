@@ -177,8 +177,8 @@ export default {
     that = this
     this.deviceId = this.form.deviceId
     ViewHelper.applyDef(this.form, this.defValue)
-    StateHelper.loadSensors()
-    StateHelper.loadAreas()
+    StateHelper.load('sensor')
+    StateHelper.load('area')
   },
   methods: {
     async save() {

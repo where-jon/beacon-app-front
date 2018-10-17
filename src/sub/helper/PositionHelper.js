@@ -8,7 +8,7 @@ import styles from '../constant/config.scss'
  * @param {*} now 
  */
 export const correctPosId = (orgPositions, now) => {
-  console.table(orgPositions)
+  console.log(now, orgPositions)
   let positions = _.chain(orgPositions).reduce((result, positions, idx) => { // MOVING_AVERAGE回の測位データを集約し、nearestをフラットにして１階層のオブジェエクト配列にする
     _.forEach(positions, (pos) => {
       _.forEach(pos.nearest, (val) => {

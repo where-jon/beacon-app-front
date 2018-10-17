@@ -7,7 +7,7 @@ import { LOGIN_MODE } from '../sub/constant/Constants'
 export default function (context) {
   console.debug("checkAuth")
   AuthHelper.setApp(context.app.router, context.app.store)
-  StateHelper.setApp(context.app.store)
+  StateHelper.setApp(context.app.store, context.app.i18n)
   if (!process.browser) {
     return
   }
