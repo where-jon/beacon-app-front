@@ -19,7 +19,7 @@
           <b-form>
             <b-form-group>
               <label v-t="'label.loginId'" />
-              <b-form-input type="text" v-model="loginUser.loginId" maxlength="16" :readonly="!isChange" :state="errorMessages.loginId.length > 0 ? false : null"/>
+              <b-form-input type="text" v-model="loginUser.loginId" maxlength="16" readonly :state="errorMessages.loginId.length > 0 ? false : null"/>
               <p class="error" v-for="(val, key) in errorMessages.loginId" :key="key" v-if="errorMessages.loginId.length > 0" v-t="val"></p>
             </b-form-group>
             <b-form-group v-show="showName">
@@ -113,7 +113,7 @@ export default {
     return {
       name: 'setting',
       id: 'settingId',
-      appServicePath: '/meta/user',
+      appServicePath: '/meta/user/currentUser',
       items: [
         {
           text: this.$i18n.t('label.setting'),
@@ -306,7 +306,7 @@ export default {
       if (this.loginUser.passwordConfirm !== null) {
         param['pass'] = this.loginUser.passwordConfirm
       }
-      const result = await AppServiceHelper.save(this.appServicePath, param)
+      const result = await AppServiceHelper.update(this.appServicePath, param)
       this.handleCancelButton()
       return result
     },
