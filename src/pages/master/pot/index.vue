@@ -1,6 +1,7 @@
 <template>
   <div>
     <breadcrumb :items="items" />
+    <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">{{ message }}</b-alert>
     <m-list :params="params" :list="pots" />
   </div>
 </template>
@@ -29,6 +30,7 @@ export default {
         appServicePath: '/basic/pot',
         bulkEditPath: '/master/pot/bulkEdit',
         csvOut: true,
+        extraFilter: ['group', 'category'],
         fields: addLabelByKey(this.$i18n, [ 
           {key: "potId", sortable: true, tdClass: "thumb-rowdata"},
           {key: "thumbnail", tdClass: "thumb-rowdata" },
@@ -40,10 +42,12 @@ export default {
           {key: "groupName", label: "group", sortable: true, tdClass: "thumb-rowdata"},
           {key: "categoryName", label: "category", sortable: true, tdClass: "thumb-rowdata"},
           {key: "extValue.post", label: "post", tdClass: "thumb-rowdata"},
-          {key: "actions", thStyle: {width:'130px !important'} , tdClass: "thumb-rowdata"}
+          {key: "actions", thStyle: {width:'130px !important'} , tdClass: "thumb-rowdata"},
         ]),
         initTotalRows: this.$store.state.app_service.pots.length,
       },
+      name: 'pot',
+      extValueDefault: {},
       items: [
         {
           text: this.$i18n.t('label.master'),
@@ -60,8 +64,6 @@ export default {
     ...mapState('app_service', [
       'pots',
       'potImages',
-      'groups',
-      'categories',
     ]),
   },
   methods: {
@@ -74,7 +76,10 @@ export default {
           ...val,
           txIdName: val.txId? Util.getValue(val, 'tx.txName', '') + '(' + val.txId + ')': null,
           groupName: Util.getValue(val, 'potGroupList.0.group.groupName', ''),
+          groupId: Util.getValue(val, 'potGroupList.0.group.groupId', ''),
           categoryName: Util.getValue(val, 'potCategoryList.0.category.categoryName', ''),
+          categoryId: Util.getValue(val, 'potCategoryList.0.category.categoryId', ''),
+          extValue: val.extValue ? val.extValue : this.extValueDefault,
           thumbnail: ""
         })) // omit images to avoid being filtering target
         if (payload && payload.done) {
