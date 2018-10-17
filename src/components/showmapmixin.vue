@@ -69,7 +69,6 @@ export default {
       this.showTryCount++
       console.log('showMapImageDef', this.selectedArea, this.isShownMapImage)
       if (this.isShownMapImage) return false
-      let parent = document.getElementById("map").parentElement
       let canvas = this.$refs.map
       var bg = new Image()
 
@@ -103,6 +102,7 @@ export default {
       this.mapWidth = bg.width
       this.mapHeight = bg.height
       this.isShownMapImage = true
+      let parent = document.getElementById("map").parentElement
       let parentHeight = document.documentElement.clientHeight - parent.offsetTop - 82
       let isMapWidthLarger = parentHeight / parent.clientWidth > bg.height / bg.width
       let fitWidth = (DISP.MAP_FIT == "both" && isMapWidthLarger) || DISP.MAP_FIT == "width"
