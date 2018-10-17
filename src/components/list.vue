@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- searchbox -->
-    <b-row v-if="!params.hideSearchBox && !extraFilter">
+    <b-row v-if="!params.hideSearchBox && !params.extraFilter">
       <b-col md="6" class="my-1">
         <b-form-group horizontal class="mb-0" :label="$t('label.filter') ">
           <b-input-group>
@@ -20,7 +20,7 @@
         <b-button v-if="params.csvOut" :variant='theme' @click="exportCsv" v-t="'label.download'"  class="float-right" :style="{ marginRight: '10px'}"/>
       </b-col>
     </b-row>
-    <template v-if="!params.hideSearchBox && extraFilter">
+    <template v-if="!params.hideSearchBox && params.extraFilter">
       <!-- 追加フィルタがある場合 -->
       <b-form>
         <b-form-row class="mb-1">
@@ -34,7 +34,7 @@
                 </b-input-group>
               </b-form-group>
           </b-col>
-          <b-col v-for="item of extraFilter" :key="item" class="customFilter">
+          <b-col v-for="item of params.extraFilter" :key="item" class="customFilter">
             <b-form-group v-if="item === 'category'" :label="$t('label.category')" label-class="text-sm-right" horizontal>
               <b-form-select :options="categoryOptions" v-model="filter.extra.category" :style="{width: categorySelectWidth}"/>
             </b-form-group>
@@ -252,11 +252,11 @@ export default {
       }
       // 追加フィルタ
       let extBool = true
-      if (!this.extraFilter) {
+      if (!this.params.extraFilter) {
         extBool = true
       } else {
         const extra = this.filter.extra
-        for (let item of this.extraFilter) {
+        for (let item of this.params.extraFilter) {
           switch (item) {
             case 'category':
             if (extra.category && 

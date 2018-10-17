@@ -1,7 +1,6 @@
 <template>
   <div>
     <breadcrumb :items="items" />
-    <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">{{ message }}</b-alert>
     <m-list :params="params" :list="pots" />
   </div>
 </template>
