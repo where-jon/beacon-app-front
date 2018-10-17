@@ -1,19 +1,26 @@
 <template>
   <div :class="selectedTx.class" :style="{left: selectedTx.left+'px', top: selectedTx.top+'px'}">
     <div class="potBox" @click="$emit('resetDetail')">
-      <div>詳細情報＝これから実装 {{ selectedTx }} 
-      </div>
+      <div>{{ $i18n.t('label.name') + '：' + selectedTx.name }}</div>
+      <div>{{ $i18n.t('label.final-receive-timestamp') + '：' + getFinalReceiveTime(selectedTx.timestamp) }}</div>
     </div>
   </div>
 </template>
 
 <script>
 import { DISP } from '../sub/constant/config'
+import moment from 'moment'
 
 export default {
   props: ['selectedTx'],
   data() {
     return {
+    }
+  },
+  methods: {
+    getFinalReceiveTime (time) {
+      console.log('time = ' + time)
+      return time ? moment(time).format('YYYY/MM/DD HH:mm:ss') : ''
     }
   }
 }
@@ -29,8 +36,8 @@ export default {
   background-color: $txdetail-bg;
   border-radius: 3px;
   font-size: 0.9em;
-  width: 150px;
-  height: 160px;
+  width: 300px;
+  height: 200px;
   display: flex;
   flex-direction: column;
 }

@@ -27,6 +27,7 @@
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as PositionHelper from '../../sub/helper/PositionHelper'
+import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as mock from '../../assets/mock/mock'
 import txdetail from '../../components/txdetail.vue'
@@ -58,6 +59,8 @@ export default {
       ],
       positions: [],
       count: 0, // for mock test 
+      txsMap: {},
+      pot: {}
     }
   },
   computed: {
@@ -85,7 +88,7 @@ export default {
     reset() {
       this.isShownMapImage = false
     },
-    showDetail(txId, x, y) {
+    async showDetail(txId, x, y) {
       let rev = y > 400
 
       let map = HtmlUtil.getRect("#map")
@@ -94,12 +97,19 @@ export default {
       let offsetY = map.top - containerParent.top
       const tipOffsetX = -34.5
       const tipOffsetY = 15
-
+      const targetId = this.txsMap[txId]
+      const p = await this.getDetail(targetId)
+      const position = this.positions.find((e) => {
+        return e.btx_id === txId
+      })
+      console.log(p)
       let selectedTx = {
         txId,
         class: !txId? "": "balloon" + (rev? "-u": ""),
         left: x + offsetX + tipOffsetX + (rev? - 7: 0),
         top: y + offsetY + tipOffsetY + DISP.TX_R + (rev? - 232: 0),
+        name: p.potName,
+        timestamp: position ? position.timestamp : null
       }
       this.replaceMain({selectedTx})
     },
@@ -129,11 +139,20 @@ export default {
         if (payload && payload.done) {
           payload.done()
         }
+
+        this.txsMap = this.txs.reduce((obj, record) => {
+          obj[record.btxId] = record.txId
+          return obj
+        }, {})
       }
       catch(e) {
         console.error(e)
       }
       this.replace({showProgress: false})
+    },
+    async getDetail(txId) {
+      let pot = await AppServiceHelper.fetch('/basic/person', txId)
+      return pot
     },
     showMapImage() {
       if (this.showMapImageDef()) {
