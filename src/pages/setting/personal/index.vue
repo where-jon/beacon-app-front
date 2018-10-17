@@ -145,6 +145,7 @@ export default {
         name: [],
         email: [],
         password: [],
+        general: [],
       },
       isChange: false,
       passMinLength: 3,
@@ -170,6 +171,13 @@ export default {
     },
     showName() {
       return APP.USER_WITH_NAME
+    }
+  },
+  watch: {
+    hasError(value){
+      if (value) {
+        this.isSuccess = false
+      }
     }
   },
   created () {
@@ -275,7 +283,6 @@ export default {
       )
 
       if (this.hasError) {
-        this.isSuccess = false
         return
       }
 
@@ -283,9 +290,13 @@ export default {
       AuthHelper.authByAppService(
         this.$store.state.loginId,
         this.loginUser.password,
-        () => { 
-          this.save()
-          this.isSuccess = true
+        async () => {
+          try {
+            await this.save()
+            this.isSuccess = true
+          } catch(e) {
+            errorMessages.general.push(this.$i18n.t('message.error'))
+          }
         },
         () => { errorMessages.password.push(this.$i18n.t('message.notMatchCureentPassword')) }
       )
