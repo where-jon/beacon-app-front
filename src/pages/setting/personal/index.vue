@@ -19,7 +19,7 @@
           <b-form>
             <b-form-group>
               <label v-t="'label.loginId'" />
-              <b-form-input type="text" v-model="loginUser.loginId" maxlength="16" :readonly="!isChange" :state="errorMessages.loginId.length > 0 ? false : null"/>
+              <b-form-input type="text" v-model="loginUser.loginId" maxlength="16" readonly :state="errorMessages.loginId.length > 0 ? false : null"/>
               <p class="error" v-for="(val, key) in errorMessages.loginId" :key="key" v-if="errorMessages.loginId.length > 0" v-t="val"></p>
             </b-form-group>
             <b-form-group v-show="showName">
@@ -113,7 +113,7 @@ export default {
     return {
       name: 'setting',
       id: 'settingId',
-      appServicePath: '/meta/user',
+      appServicePath: '/meta/user/currentUser',
       items: [
         {
           text: this.$i18n.t('label.setting'),
@@ -145,6 +145,7 @@ export default {
         name: [],
         email: [],
         password: [],
+        general: [],
       },
       isChange: false,
       passMinLength: 3,
@@ -170,6 +171,13 @@ export default {
     },
     showName() {
       return APP.USER_WITH_NAME
+    }
+  },
+  watch: {
+    hasError(value){
+      if (value) {
+        this.isSuccess = false
+      }
     }
   },
   created () {
@@ -262,15 +270,19 @@ export default {
         this.$i18n.t('label.loginId'),
         this.$i18n.t('message.invalidLoginId')
       )
-      errorMessages.name = this.validateRequire(this.loginUser.name, this.$i18n.t('label.name'))
-      errorMessages.email = this.validateRequire(this.loginUser.email, this.$i18n.t('label.email'))
+      if (this.showName) {
+        errorMessages.name = this.validateRequire(this.loginUser.name, this.$i18n.t('label.name'))
+      }
+      if (this.showEmail) {
+        errorMessages.email = this.validateRequire(this.loginUser.email, this.$i18n.t('label.email'))
+      }
       errorMessages.password = this.validateLoginIdPassword(
         this.loginUser.password,
         this.$i18n.t('label.password'),
         this.$i18n.t('message.invalidPassword')
       )
 
-      if (errorMessages.password.length > 0) {
+      if (this.hasError) {
         return
       }
 
@@ -278,9 +290,13 @@ export default {
       AuthHelper.authByAppService(
         this.$store.state.loginId,
         this.loginUser.password,
-        () => { 
-          this.save()
-          this.isSuccess = true
+        async () => {
+          try {
+            await this.save()
+            this.isSuccess = true
+          } catch(e) {
+            errorMessages.general.push(this.$i18n.t('message.error'))
+          }
         },
         () => { errorMessages.password.push(this.$i18n.t('message.notMatchCureentPassword')) }
       )
@@ -290,7 +306,7 @@ export default {
       if (this.loginUser.passwordConfirm !== null) {
         param['pass'] = this.loginUser.passwordConfirm
       }
-      const result = await AppServiceHelper.save(this.appServicePath, param)
+      const result = await AppServiceHelper.update(this.appServicePath, param)
       this.handleCancelButton()
       return result
     },

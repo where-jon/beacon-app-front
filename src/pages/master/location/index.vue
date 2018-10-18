@@ -46,6 +46,7 @@
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as HttpHelper from '../../../sub/helper/HttpHelper'
+import * as StateHelper from '../../../sub/helper/StateHelper'
 import { APP, DISP } from '../../../sub/constant/config'
 import { UPDATE_ONLY_NN } from '../../../sub/constant/Constants'
 import { Shape, Stage, Container, Bitmap, Text, Touch } from '@createjs/easeljs/dist/easeljs.module'
@@ -366,10 +367,12 @@ export default {
         })
 
         if (param.length > 0) {
-          await await HttpHelper.postAppService('/core/location/updateLocation', param)
+          await HttpHelper.postAppService('/core/location/updateLocation', param)
+          await StateHelper.load('exb')
         }
         if (this.mapRatioChanged) {
           await AppServiceHelper.bulkSave('/core/area', [{areaId: this.selectedArea, mapRatio: this.mapRatio * this.mapImageScale}], UPDATE_ONLY_NN.EMPTY_ZERO)
+          await StateHelper.load('area')
         }
         this.message = this.$i18n.t('message.completed', {target: this.$i18n.t('label.save')})
         this.showInfo = true

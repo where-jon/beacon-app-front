@@ -131,6 +131,8 @@
     "led": "LED",
     "meditag": "MEDiTAG",
     "magnet": "マグネット",
+    "InUse": "使用",
+    "Empty": "空",
 
     "zoneId": "ゾーンID",
     "zoneName": "ゾーン名",
