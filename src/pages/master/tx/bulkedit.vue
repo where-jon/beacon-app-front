@@ -47,7 +47,7 @@ export default {
   methods: {
     async save(bulkSaveFunc) {
       const MAIN_COL = "txId"
-      const POT = ["displayName","description","potId","potCd","potName","potCategoryList"]
+      const POT = ["displayName","description","potCategoryList"]
       const POT_CATEGORY = ["categoryId"]
       const TX_SENSOR = ["sensorId"]
 
