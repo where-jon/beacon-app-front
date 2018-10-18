@@ -60,31 +60,13 @@ export default {
     ]),
   },
   methods: {
-    getCategoryTypeName(category){
-      const categoryTypeName = CATEGORY.getTypes().find((tval) => tval.value === category.categoryType)
-      return categoryTypeName != null? categoryTypeName.text: null
-    },
     async fetchData(payload) {
       try {
         this.replace({showProgress: true})
         await StateHelper.load('category')
-        let categories = this.categories
-        let categoryStyles = categories.map((val) => ({
-          "color": Util.colorCd4display(val.color),
-          "background-color": Util.colorCd4display(val.bgColor),
-          "text-align": "center",
-        }))
-        categories = categories.map((val) => ({
-          ...val,
-          categoryTypeName: this.getCategoryTypeName(val),
-          color: "",
-          bgColor: "",
-          categoryType: "",
-        }))
         if (payload && payload.done) {
           payload.done()
         }
-        this.replaceAS({categories, categoryStyles})
       }
       catch(e) {
         console.error(e)

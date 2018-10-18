@@ -12,12 +12,14 @@ import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import breadcrumb from '../../../components/breadcrumb.vue'
 import bulkedit from '../../../components/bulkedit.vue'
+import commonmixinVue from '../../../components/commonmixin.vue'
 
 export default {
   components: {
     breadcrumb,
     bulkedit,
   },
+  mixins: [commonmixinVue],  
   data() {
     return {
       name: 'roleFeature',

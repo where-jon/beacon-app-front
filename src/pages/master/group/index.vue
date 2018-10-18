@@ -62,21 +62,9 @@ export default {
       try {
         this.replace({showProgress: true})
         await StateHelper.load('group')
-        let groups = this.groups
-        let groupStyles = groups.map((val) => ({
-          "color": Util.colorCd4display(val.color),
-          "background-color": Util.colorCd4display(val.bgColor),
-          "text-align": "center",
-        }))
-        groups = groups.map((val) => ({
-          ...val,
-          color: "",
-          bgColor: "",
-        }))
         if (payload && payload.done) {
           payload.done()
         }
-        this.replaceAS({groups, groupStyles})
       }
       catch(e) {
         console.error(e)

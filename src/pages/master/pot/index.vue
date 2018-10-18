@@ -71,21 +71,9 @@ export default {
       try {
         this.replace({showProgress: true})
         await StateHelper.load('pot')
-        let potImages = pots.map((val) => val.thumbnail)
-        pots = pots.map((val) => ({
-          ...val,
-          txIdName: val.txId? Util.getValue(val, 'tx.txName', '') + '(' + val.txId + ')': null,
-          groupName: Util.getValue(val, 'potGroupList.0.group.groupName', ''),
-          groupId: Util.getValue(val, 'potGroupList.0.group.groupId', ''),
-          categoryName: Util.getValue(val, 'potCategoryList.0.category.categoryName', ''),
-          categoryId: Util.getValue(val, 'potCategoryList.0.category.categoryId', ''),
-          extValue: val.extValue ? val.extValue : this.extValueDefault,
-          thumbnail: ""
-        })) // omit images to avoid being filtering target
         if (payload && payload.done) {
           payload.done()
         }
-        this.replaceAS({pots, potImages})
       }
       catch(e) {
         console.error(e)

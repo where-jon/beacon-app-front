@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import * as AppServiceHelper from './AppServiceHelper'
 import * as Util from '../util/Util'
+import { CATEGORY } from '../constant/Constants'
 
 
 // TODO: 全体的にState管理を共通化する
@@ -11,6 +12,11 @@ let i18n
 export const setApp = (pStore, pi18n) => {
     store = pStore
     i18n = pi18n
+}
+
+export const getCategoryTypeName = (category) => {
+  const categoryTypeName = CATEGORY.getTypes().find((tval) => tval.value === category.categoryType)
+  return categoryTypeName != null? categoryTypeName.text: null
 }
 
 const appStateConf = {
@@ -67,14 +73,56 @@ const appStateConf = {
   pots: {
     path: '/basic/pot/withThumbnail',
     sort: 'potId',
+    beforeCommit: (arr) => {
+      let potImages = arr.map((val) => val.thumbnail)
+      store.commit('app_service/replaceAS', {['potImages']:potImages})
+      return arr.map((val) => ({
+        ...val,
+        txIdName: val.txId? Util.getValue(val, 'tx.txName', '') + '(' + val.txId + ')': null,
+        groupName: Util.getValue(val, 'potGroupList.0.group.groupName', ''),
+        groupId: Util.getValue(val, 'potGroupList.0.group.groupId', ''),
+        categoryName: Util.getValue(val, 'potCategoryList.0.category.categoryName', ''),
+        categoryId: Util.getValue(val, 'potCategoryList.0.category.categoryId', ''),
+        extValue: val.extValue ? val.extValue : this.extValueDefault,
+        thumbnail: ""
+      })) // omit images to avoid being filtering target
+    }
   },
   categories: {
     path: '/basic/category',
     sort: 'categoryId',
+    beforeCommit: (arr) => {
+      let categoryStyles = arr.map((val) => ({
+        "color": Util.colorCd4display(val.color),
+        "background-color": Util.colorCd4display(val.bgColor),
+        "text-align": "center",
+      }))
+      store.commit('app_service/replaceAS', {['categoryStyles']:categoryStyles})
+      return arr.map((val) => ({
+        ...val,
+        categoryTypeName: getCategoryTypeName(val),
+        color: "",
+        bgColor: "",
+        categoryType: "",
+      }))
+    }
   },
   groups: {
     path: '/basic/group',
     sort: 'groupId',
+    beforeCommit: (arr) => {
+      let groupStyles = arr.map((val) => ({
+        "color": Util.colorCd4display(val.color),
+        "background-color": Util.colorCd4display(val.bgColor),
+        "text-align": "center",
+      }))
+      store.commit('app_service/replaceAS', {['groupStyles']:groupStyles})
+      return arr.map((val) => ({
+        ...val,
+        color: "",
+        bgColor: "",
+      }))
+    }
   },
   users: {
     path: '/meta/user',

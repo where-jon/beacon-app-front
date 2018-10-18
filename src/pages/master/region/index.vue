@@ -64,7 +64,6 @@ export default {
         if (payload && payload.done) {
           payload.done()
         }
-        this.replaceAS({regions})
       }
       catch(e) {
         console.error(e)

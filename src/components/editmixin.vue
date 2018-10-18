@@ -214,6 +214,13 @@ export default {
       }
 
       await AppServiceHelper.bulkSave(this.appServicePath, entities)
+      if(Util.isArray(mainCol)){
+        let col = null
+        mainCol.forEach((val, idx) => {
+          col = idx == 0? val.slice(0, -2): `${col}${val.charAt(0).toUpperCase()}${val.slice(1, -2)}`
+        })
+        mainCol = `${col}Id`
+      }
       await StateHelper.load(mainCol.slice(0, -2), true)
    },
   }

@@ -47,7 +47,7 @@ export default {
   },
   methods: {
     async save(bulkSaveFunc) {
-      const MAIN_COL = ["zoneId"]
+      const MAIN_COL = "zoneId"
       const LOCATION_ZONE_COL = ["zoneId", "locationId"]
       const ZONE_CATEGORY_COL = ["zoneId", "categoryId"]
       const ZONE_COL = ["zoneName", "areaId"]

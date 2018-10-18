@@ -61,7 +61,6 @@ export default {
         if (payload && payload.done) {
           payload.done()
         }
-        this.replaceAS({roles})
       }
       catch(e) {
         console.error(e)
