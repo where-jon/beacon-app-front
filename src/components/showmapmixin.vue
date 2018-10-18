@@ -71,7 +71,6 @@ export default {
       console.log('showMapImageDef', this.selectedArea, this.isShownMapImage)
       if (this.isShownMapImage) return false
       let canvas = this.$refs.map
-      var bg = new Image()
 
       if (!this.mapImage) {
         if (this.showTryCount < 10) {
@@ -86,13 +85,17 @@ export default {
         return true
       }
 
+      var bg = new Image()
       bg.src = this.mapImage
       if (bg.height == 0 || bg.width == 0 || !canvas) {
         this.$nextTick(() => {
           console.warn("again because image is 0")
-          if (this.showTryCount > 20) {
+          if (this.showTryCount > 30) {
+            window.location.reload()
+            return
+          }
+          else if (this.showTryCount > 20) {
             this.isFirstTime = true
-            this.showTryCount = 0
             this.fetchData()
             return
           }
