@@ -288,12 +288,12 @@ export default {
   margin-right: 20px;
 }
 .vselectZone {
-  width:120px;
+  width:150px;
   margin-left: 5px;
   margin-right: 20px;
 }
 .vselectMonth {
-  width:120px;
+  width:150px;
   margin-left: 5px;
   margin-right: 20px;
 }
