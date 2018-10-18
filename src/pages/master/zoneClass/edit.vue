@@ -9,23 +9,29 @@
       <b-form @submit="onSubmit" v-if="show">
         <b-form-group v-if="hasId">
           <label v-t="'label.zoneId'" />
-          <b-form-input type="text" v-model="form.zoneId" readonly="readonly" />
+          <b-col sm="5">
+            <b-form-input type="text" v-model="form.zoneId" readonly="readonly" />
+          </b-col>
         </b-form-group>
         <b-form-group>
           <label v-t="'label.zoneName'" />
-          <b-form-input type="text" v-model="form.zoneName" maxlength="20" required :readonly="!isEditable" />
+          <b-col sm="5">
+              <b-form-input type="text" v-model="form.zoneName" maxlength="20" required :readonly="!isEditable" />
+          </b-col>
         </b-form-group>
         <b-form-group>
           <label v-t="'label.areaName'" />
           <b-form-select v-model="form.areaId" :options="areaNames" required class="mb-3 ml-3 col-3" />
         </b-form-group>
+        <!--
         <b-form-group>
           <label v-t="'label.locationZoneName'" />
           <b-form-select v-model="form.locationId" :options="locationNames" required class="mb-3 ml-3 col-3" />
         </b-form-group>
+        -->
         <b-form-group>
           <label v-t="'label.categoryName'" />
-          <b-form-select v-model="form.categoryId" :options="categoryNames" required class="mb-3 ml-3 col-3" />
+          <b-form-select v-model="form.categoryId" :options="categoryNames" class="mb-3 ml-3 col-3" />
         </b-form-group>
 
         <b-button type="button" variant="outline-danger" @click="backToList" v-t="'label.back'"/>
@@ -107,6 +113,7 @@ export default {
     async initCategoryNames() {
       let categories = await AppServiceHelper.fetchList(`/basic/category/type/${CATEGORY.getTypes()[2].value}`, 'categoryId')
       this.categoryNames = categories.map((val) => ({text: val.categoryName, value: val.categoryId}))
+      this.categoryNames.unshift({value:null, text:''})
     },
     async save() {
       const zoneId = Util.hasValue(this.form.zoneId)? this.form.zoneId: -1
@@ -115,8 +122,8 @@ export default {
         zoneName: this.form.zoneName,
         zoneType: ZONE.getTypes()[1].value,
         areaId: this.form.areaId,
-        locationZoneList: [{locationZonePK: {zoneId: zoneId, locationId: this.form.locationId}}],
-        zoneCategoryList: [{zoneCategoryPK: {zoneId: zoneId, categoryId: this.form.categoryId}}]
+        locationZoneList: this.form.locationId? [{locationZonePK: {zoneId: zoneId, locationId: this.form.locationId}}]: null,
+        zoneCategoryList: this.form.categoryId? [{zoneCategoryPK: {zoneId: zoneId, categoryId: this.form.categoryId}}]: null
       }
       const saveId = await AppServiceHelper.bulkSave(this.appServicePath, [entity])
       return saveId

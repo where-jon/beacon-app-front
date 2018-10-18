@@ -50,6 +50,15 @@ export const postAppService = async (path, config) => {
   }
 }
 
+export const putAppService = async (path, config) => {
+  try {
+    let res = await apServiceClient.put(APP_SERVICE.BASE_URL + path, config)
+    return res.data
+  } catch (e) {
+    handleError(e, path)
+  }
+}
+
 export const postExCloud = async (url, config) => {
   try {
     let res = await exCloudClient.post(url, config)
