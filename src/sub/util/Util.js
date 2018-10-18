@@ -23,8 +23,8 @@ export const colorCd4db = (str) => {
   return color.slice(0, 8)
 }
 
-export const colorCd4display = (str, defaultColor) => {
-  let color = str? str: (defaultColor? defaultColor: "#000000")
+export const colorCd4display = (str, defaultColor = "#000000") => {
+  let color = str? str: defaultColor
   return "#" + color.replace("#", "").slice(0, 8)
 }
 
@@ -135,10 +135,7 @@ export const equalsAny = (target, arr) => {
  * @param {*} list 文字列のリスト
  * @param {*} minMax 最低限の文字数
  */
-export const getMaxTextLength = (list, minMax) => {
-  if (!minMax) {
-    minMax = Infinity
-  }
+export const getMaxTextLength = (list, minMax = Infinity) => {
   if (!list) {
     return minMax
   }

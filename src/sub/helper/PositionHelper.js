@@ -8,7 +8,7 @@ import styles from '../constant/config.scss'
  * @param {*} now 
  */
 export const correctPosId = (orgPositions, now) => {
-  console.table(orgPositions)
+  console.log(now, orgPositions)
   let positions = _.chain(orgPositions).reduce((result, positions, idx) => { // MOVING_AVERAGE回の測位データを集約し、nearestをフラットにして１階層のオブジェエクト配列にする
     _.forEach(positions, (pos) => {
       _.forEach(pos.nearest, (val) => {
@@ -18,6 +18,7 @@ export const correctPosId = (orgPositions, now) => {
     return result
   }, [])
   .uniqWith(_.isEqual) // 重複除去
+//  .map((val) => {console.log(new Date(val.timestamp), new Date(now), val.timestamp-now);return val})
   .filter((val) => val.rssi >= DISP.RSSI_MIN && val.timestamp >= now - DISP.HIDE_TIME) // RSSI値、指定時刻でフィルタ
   .orderBy(['btx_id', 'pos_id', 'timestamp']) // btx_id, pos_id, timestampでソート
   .value()

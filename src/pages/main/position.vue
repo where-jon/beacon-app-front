@@ -70,13 +70,19 @@ export default {
     that = this
     this.replace({title: this.$i18n.t('label.showPosition')})
     this.fetchData()
+    let timer = 0
     window.addEventListener('resize', () => {
-      that.reset()
-      if (that.stage) {
-        that.stage.removeAllChildren()
-        that.stage.update()
-        that.fetchData()
-      }
+      if (timer > 0) {
+        clearTimeout(timer);
+      } 
+      timer = setTimeout(() => {
+        that.reset()
+        if (that.stage) {
+          that.stage.removeAllChildren()
+          that.stage.update()
+          that.fetchData()
+        }
+      }, 200);
     })
   },
   updated(){

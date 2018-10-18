@@ -87,7 +87,7 @@ export default {
             sensorId: pir? SENSOR.PIR: thermopile? SENSOR.THERMOPILE: null
           }
         })
-        .filter((exb) => exb.count > 0)
+        .filter((exb) => exb.count > 0 || DISP.PIR_EMPTY_SHOW)
         .value()
 
         if (payload && payload.done) {
@@ -135,16 +135,30 @@ export default {
         else {
           w = DISP.THERMOPILE_S_SIZE
         }
+
+        // only for Exhibition（delete immediately）
+        let label = new Text(exb.count + "名","bold 32px Arial","#FF3222")
+        label.textAlign = "center"
+        label.textBaseline = "middle"
+        exbBtn.addChild(label)
+        exbBtn.x = exb.x
+        exbBtn.y = exb.y
+        exbBtn.cursor = ""
+        this.exbCon.addChild(exbBtn)
+        stage.addChild(this.exbCon)
+        stage.update()
+        return 
       }
-      btnBg.graphics.beginFill(DISP.PIR_BGCOLOR).drawCircle(0, 0, w, w)
-      btnBg.alpha = 0.9;
+
+      let bgColor = (exb.count > 0)? DISP.PIR_BGCOLOR: DISP.PIR_EMPTY_BGCOLOR
+      btnBg.graphics.beginFill(bgColor).drawCircle(0, 0, w, w)
+      // btnBg.alpha = 0.9;
       exbBtn.addChild(btnBg)
 
-      // for debug
-      if (DEV.DEBUG) {
-        let label = new Text(exb.deviceId.toString(16).toUpperCase())
-        label.font = DISP.EXB_LOC_FONT
-        label.color = DISP.EXB_LOC_COLOR
+      if (DISP.PIR_INUSE_LABEL || DISP.PIR_EMPTY_LABEL) {
+        let label = new Text(this.$i18n.t("label." + (exb.count > 0? DISP.PIR_INUSE_LABEL: DISP.PIR_EMPTY_LABEL)))
+        label.font = exb.count > 0? DISP.PIR_INUSE_FONT: DISP.PIR_EMPTY_FONT
+        label.color = DISP.PIR_FGCOLOR
         label.textAlign = "center"
         label.textBaseline = "middle"
         exbBtn.addChild(label)
