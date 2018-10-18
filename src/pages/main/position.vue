@@ -153,7 +153,8 @@ export default {
       this.replace({showProgress: false})
     },
     async getDetail(txId) {
-      let pot = await AppServiceHelper.fetch('/basic/person', txId)
+      let pot = await AppServiceHelper.fetch('/basic/pot', txId)
+      console.log(pot)
       return pot
     },
     showMapImage() {

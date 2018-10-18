@@ -113,6 +113,7 @@ export default {
       this.isLoad = true
       try {
         let gateways = await EXCloudHelper.fetchGateway()
+        console.log(gateways)
         if (payload && payload.done) {
           payload.done()
         }

@@ -45,7 +45,7 @@ export const LOCAL_LOGIN = { // local login md5 hash of id:pass // TODO: add Rol
 }
 
 export const APP_SERVICE = { // used if APP.LOGIN_MODE == APP_SERVICE
-  BASE_URL: "https://exbeacon-evalkit-service.herokuapp.com",
+  BASE_URL: "http://localhost:8080",
   REFRESH_TIME: 10 * 60 * 1000,
 }
 export const EXCLOUD_BASE_URL = "https://nsome8q880.execute-api.ap-northeast-1.amazonaws.com/prod" // used if APP.LOGIN_MODE != APP_SERVICE
@@ -81,7 +81,7 @@ export const DISP = {
   RSSI_MIN: -67, // RSSI下限値
   MOVING_AVERAGE: 5, // 5回分移動平均
   TRANSPARENT_TIME: 1 * 1000, // 現在時刻から経過した段階で半透明(ms)
-  HIDE_TIME: 30 * 1000, // 現在時刻から経過した段階で表示(ms)
+  HIDE_TIME: 3000 * 1000, // 現在時刻から経過した段階で表示(ms)
   
   EXB_LOC_SIZE: {w: 60, h: 30},
   EXB_LOC_BGCOLOR: "#76ccf7",
