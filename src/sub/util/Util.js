@@ -106,7 +106,7 @@ export const converToCsv = (array, headers) => {
   let header = '"' + headers.join('","') + '"\n'
   let body = _.map(array, (row) => {
     return '"' + headers.map((key) => {
-      let val = row[key]
+      let val = getValue(row, key).val
       if (typeof val === 'object' || typeof val === 'array') {
         if(val === null){
           return val
