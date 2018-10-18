@@ -8,6 +8,7 @@
 <script>
 import mList from '../../../components/list.vue'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as Util from '../../../sub/util/Util'
 import { addLabelByKey } from '../../../sub/helper/ViewHelper'
@@ -69,22 +70,10 @@ export default {
     async fetchData(payload) {
       try {
         this.replace({showProgress: true})
-        let pots = await AppServiceHelper.fetchList("/basic/pot/withThumbnail", 'potId')
-        let potImages = pots.map((val) => val.thumbnail)
-        pots = pots.map((val) => ({
-          ...val,
-          txIdName: val.txId? Util.getValue(val, 'tx.txName', '') + '(' + val.txId + ')': null,
-          groupName: Util.getValue(val, 'potGroupList.0.group.groupName', ''),
-          groupId: Util.getValue(val, 'potGroupList.0.group.groupId', ''),
-          categoryName: Util.getValue(val, 'potCategoryList.0.category.categoryName', ''),
-          categoryId: Util.getValue(val, 'potCategoryList.0.category.categoryId', ''),
-          extValue: val.extValue ? val.extValue : this.extValueDefault,
-          thumbnail: ""
-        })) // omit images to avoid being filtering target
+        await StateHelper.load('pot')
         if (payload && payload.done) {
           payload.done()
         }
-        this.replaceAS({pots, potImages})
       }
       catch(e) {
         console.error(e)

@@ -15,13 +15,14 @@
 
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import * as StateHelper from '../../../sub/helper/StateHelper'
 import _ from 'lodash'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import breadcrumb from '../../../components/breadcrumb.vue'
 import pagetitle from '../../../components/pagetitle.vue'
 import editList from '../../../components/editlist.vue'
 import * as Util from '../../../sub/util/Util'
-import listmixinVue from '../../../components/listmixin.vue'
+import editmixinVue from '../../../components/editmixin.vue'
 
 export default {
   components: {
@@ -29,10 +30,11 @@ export default {
     pagetitle,
     editList,
   },
-  mixins: [listmixinVue],
+  mixins: [editmixinVue],
   data () {
     return {
       appServicePath: '/meta/setting',
+      featurePath: '/setting/system',
       categorySettings: [],
       params: {
         name: 'setting',
@@ -52,16 +54,21 @@ export default {
       ],
     }
   },
+  computed: {
+    ...mapState('app_service', [
+      'settings',
+    ]),
+  },
   methods: {
     async fetchData() {
       try {
         this.replace({showProgress: true})
-        let settings = await AppServiceHelper.fetchList("/meta/setting/", 'settingId')
-        if(!Util.isArray(settings)){
-          settings = []
+        await StateHelper.load('settings')
+        if(!Util.isArray(this.settings)){
+          this.settings = []
         }
         const categorySettings = {}
-        _.forEach(settings, (value, key) => {
+        _.forEach(this.settings, (value, key) => {
           if(categorySettings[value.category] == null){
             categorySettings[value.category] = []
           }

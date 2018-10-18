@@ -25,7 +25,7 @@
         </b-form-group>
         <b-form-group>
           <label v-t="'label.role'" />
-          <b-form-select v-model="role" :options="roles" required ></b-form-select>
+          <b-form-select v-model="role" :options="roleOptions" required ></b-form-select>
         </b-form-group>
         <b-form-group>
           <label v-t="'label.description'" />
@@ -50,6 +50,7 @@
 
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import * as StateHelper from '../../../sub/helper/StateHelper'
 import _ from 'lodash'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
@@ -71,7 +72,7 @@ export default {
       backPath: '/master/user',
       appServicePath: '/meta/user',
       form: ViewHelper.extract(this.$store.state.app_service.user, ["userId", "loginId", "name", "email", "roleId", "description"]),
-      roles: [],
+      roleOptions: [],
       role: null,
       pass: null,
       passConfirm: null,
@@ -94,8 +95,8 @@ export default {
     }
   },
   async created(){
-    this.roles = await AppServiceHelper.fetchList("/meta/role/", 'roleId')
-    this.roles = this.roles.map((val) => ({text: val.roleName, value: val.roleId}))
+    await StateHelper.load('role')
+    this.roleOptions = this.roles.map((val) => ({text: val.roleName, value: val.roleId}))
     this.role = this.form.roleId
   },
   computed: {
@@ -113,7 +114,7 @@ export default {
       return APP.USER_WITH_NAME
     },
     ...mapState('app_service', [
-      'user',
+      'user', 'roles'
     ]),
   },
   methods: {

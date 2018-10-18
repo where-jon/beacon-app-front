@@ -15,10 +15,8 @@ export const state = () => ({
   tx: {},
   categories: [],
   category: {},
-  categoryStyles: [],
   groups: [],
   group: {},
-  groupStyles: [],
   regions: [],
   region: {},
   user: {},
@@ -31,6 +29,8 @@ export const state = () => ({
   roleFeature: {},
   zones: [],
   zone: {},
+  settings: [],
+  sensorHistories: [],
 })
 
 const initState = state()

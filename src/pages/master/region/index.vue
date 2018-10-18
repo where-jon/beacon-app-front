@@ -9,6 +9,7 @@
 <script>
 import mList from '../../../components/list.vue'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import { addLabelByKey } from '../../../sub/helper/ViewHelper'
 import listmixinVue from '../../../components/listmixin.vue'
@@ -59,11 +60,10 @@ export default {
     async fetchData(payload) {
       try {
         this.replace({showProgress: true})
-        let regions = await AppServiceHelper.fetchList("/core/region/", 'regionId')
+        await StateHelper.load('region')
         if (payload && payload.done) {
           payload.done()
         }
-        this.replaceAS({regions})
       }
       catch(e) {
         console.error(e)

@@ -7,6 +7,7 @@
 <script>
 import mList from '../../../components/list.vue'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import { addLabelByKey } from '../../../sub/helper/ViewHelper'
 import * as Util from '../../../sub/util/Util'
@@ -78,12 +79,11 @@ export default {
     },
     async fetchData(payload) {
       this.replace({showProgress: true})
-      const features = await AppServiceHelper.fetchList("/meta/feature/", 'featureId')
-      this.replaceAS({features})
+      await StateHelper.load('feature')
       if(Util.hasValue(this.role.roleId)){
         let roleFeatures = await AppServiceHelper.fetchList(`/meta/roleFeature/${this.role.roleId}`)
         if(Util.hasValue(roleFeatures) && Util.isArray(roleFeatures)){
-          roleFeatures = roleFeatures.map((val) => (this.getFeatureInfo(features, val)))
+          roleFeatures = roleFeatures.map((val) => (this.getFeatureInfo(this.features, val)))
           roleFeatures = _(roleFeatures).sortBy((val) => val.featureId).compact().value()
         }
         else{

@@ -44,6 +44,7 @@
 
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import * as StateHelper from '../../../sub/helper/StateHelper'
 import _ from 'lodash'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
@@ -98,17 +99,17 @@ export default {
       return 'outline-' + theme
     },
     ...mapState('app_service', [
-      'zone',
+      'zone', 'locations', 'areas'
     ]),
   },
   methods: {
     async initAreaNames() {
-      const areas = await AppServiceHelper.fetchList('/core/area', 'areaId')
-      this.areaNames = areas.map((val) => ({text: val.areaName, value: val.areaId}))
+      await StateHelper.load('area')
+      this.areaNames = this.areas.map((val) => ({text: val.areaName, value: val.areaId}))
     },
     async initLocationNames() {
-      const locations = await AppServiceHelper.fetchList('/core/location/', 'locationId')
-      this.locationNames = locations.map((val) => ({text: val.locationName, value: val.locationId}))
+      await StateHelper.load('location')
+      this.locationNames = this.locations.map((val) => ({text: val.locationName, value: val.locationId}))
     },
     async initCategoryNames() {
       let categories = await AppServiceHelper.fetchList(`/basic/category/type/${CATEGORY.getTypes()[2].value}`, 'categoryId')

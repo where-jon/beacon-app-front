@@ -64,6 +64,7 @@
 
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import * as StateHelper from '../../sub/helper/StateHelper'
 import breadcrumb from '../../components/breadcrumb.vue'
 import { DISP, THEME, EXCLOUD } from '../../sub/constant/config'
 import { getButtonTheme } from '../../sub/helper/ThemeHelper'
@@ -122,6 +123,7 @@ export default {
     ...mapState('app_service', [
       'led',
       'deviceIds',
+      'exbs',
     ]),
   },
   mounted(){
@@ -141,8 +143,8 @@ export default {
     async fetchData(payload) {
       try {
         this.replace({showProgress: true})
-        let exbs = await AppServiceHelper.fetchList('/core/exb/withLocation', 'exbId')
-        let deviceIds = _.filter(exbs,
+        await StateHelper.load('exb')
+        let deviceIds = _.filter(this.exbs,
           exb => exb.enabled && that.getSensorId(exb) == SENSOR.LED
         ).map(
           exb => exb.deviceId

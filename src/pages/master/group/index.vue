@@ -8,6 +8,7 @@
 <script>
 import mList from '../../../components/list.vue'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import { addLabelByKey } from '../../../sub/helper/ViewHelper'
 import listmixinVue from '../../../components/listmixin.vue'
@@ -39,6 +40,7 @@ export default {
         ]),
         initTotalRows: this.$store.state.app_service.groups.length
       },
+      groupStyles: [],
       items: [
         {
           text: this.$i18n.t('label.master'),
@@ -60,21 +62,15 @@ export default {
     async fetchData(payload) {
       try {
         this.replace({showProgress: true})
-        let groups = await AppServiceHelper.fetchList("/basic/group/", 'groupId')
-        let groupStyles = groups.map((val) => ({
+        await StateHelper.load('group')
+        this.groupStyles = this.groups.map((val) => ({
           "color": Util.colorCd4display(val.color),
           "background-color": Util.colorCd4display(val.bgColor),
           "text-align": "center",
         }))
-        groups = groups.map((val) => ({
-          ...val,
-          color: "",
-          bgColor: "",
-        }))
         if (payload && payload.done) {
           payload.done()
         }
-        this.replaceAS({groups, groupStyles})
       }
       catch(e) {
         console.error(e)

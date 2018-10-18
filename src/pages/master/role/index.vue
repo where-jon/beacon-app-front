@@ -8,6 +8,7 @@
 <script>
 import mList from '../../../components/list.vue'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import { addLabelByKey } from '../../../sub/helper/ViewHelper'
 import listmixinVue from '../../../components/listmixin.vue'
@@ -56,11 +57,10 @@ export default {
     async fetchData(payload) {
       try {
         this.replace({showProgress: true})
-        let roles = await AppServiceHelper.fetchList("/meta/role/", 'roleId')
+        await StateHelper.load('role')
         if (payload && payload.done) {
           payload.done()
         }
-        this.replaceAS({roles})
       }
       catch(e) {
         console.error(e)
