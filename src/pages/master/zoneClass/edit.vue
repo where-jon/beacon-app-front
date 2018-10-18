@@ -9,15 +9,19 @@
       <b-form @submit="onSubmit" v-if="show">
         <b-form-group v-if="hasId">
           <label v-t="'label.zoneId'" />
-          <b-col sm="5">
-            <b-form-input type="text" v-model="form.zoneId" readonly="readonly" />
-          </b-col>
+          <b-form-row>
+            <b-col sm="5">
+              <b-form-input type="text" v-model="form.zoneId" readonly="readonly" />
+            </b-col>
+          </b-form-row>
         </b-form-group>
         <b-form-group>
           <label v-t="'label.zoneName'" />
-          <b-col sm="5">
-              <b-form-input type="text" v-model="form.zoneName" maxlength="20" required :readonly="!isEditable" />
-          </b-col>
+          <b-form-row>
+            <b-col sm="5">
+                <b-form-input type="text" v-model="form.zoneName" maxlength="20" required :readonly="!isEditable" />
+            </b-col>
+          </b-form-row>
         </b-form-group>
         <b-form-group>
           <label v-t="'label.areaName'" />
