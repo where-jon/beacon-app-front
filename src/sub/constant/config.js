@@ -81,7 +81,7 @@ export const DISP = {
   RSSI_MIN: -67, // RSSI下限値
   MOVING_AVERAGE: 5, // 5回分移動平均
   TRANSPARENT_TIME: 1 * 1000, // 現在時刻から経過した段階で半透明(ms)
-  HIDE_TIME: 3000 * 1000, // 現在時刻から経過した段階で表示(ms)
+  HIDE_TIME: 90000 * 1000, // 現在時刻から経過した段階で表示(ms)
   
   EXB_LOC_SIZE: {w: 60, h: 30},
   EXB_LOC_BGCOLOR: "#76ccf7",

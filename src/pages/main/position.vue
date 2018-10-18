@@ -8,7 +8,7 @@
       </b-form>
     </b-row>
     <b-row class="mt-3">
-      <canvas id="map" ref="map"></canvas>
+      <canvas id="map" ref="map" @click="resetDetail"></canvas>
     </b-row>
     <div v-if="selectedTx.txId" >
       <txdetail :selectedTx="selectedTx" @resetDetail="resetDetail"></txdetail>
@@ -82,6 +82,7 @@ export default {
         that.reset()
         if (that.stage) {
           that.stage.removeAllChildren()
+          that.resetDetail()
           that.stage.update()
           that.fetchData()
         }
@@ -98,7 +99,6 @@ export default {
     },
     async showDetail(txId, x, y) {
       let rev = y > 400
-
       let map = HtmlUtil.getRect("#map")
       let containerParent = HtmlUtil.getRect("#mapContainer", "parentNode")
       let offsetX = map.left - containerParent.left
@@ -117,7 +117,11 @@ export default {
         left: x + offsetX + tipOffsetX + (rev? - 7: 0),
         top: y + offsetY + tipOffsetY + DISP.TX_R + (rev? - 232: 0),
         name: p.potName,
-        timestamp: position ? position.timestamp : null
+        timestamp: position ? position.timestamp : null,
+        thumbnail: p.thumbnail ? p.thumbnail : '',
+        no: p.potId,
+        category: p.potCategoryList.length > 0 ? p.potCategoryList[0].category.categoryName : '',
+        group: p.potGroupList.length > 0 ? p.potGroupList[0].group.groupName : ''
       }
       this.replaceMain({selectedTx})
     },
@@ -159,8 +163,7 @@ export default {
       this.replace({showProgress: false})
     },
     async getDetail(txId) {
-      let pot = await AppServiceHelper.fetch('/basic/pot', txId)
-      console.log(pot)
+      let pot = await AppServiceHelper.fetch('/basic/pot/withThumbnail', txId)
       return pot
     },
     showMapImage() {

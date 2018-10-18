@@ -1,8 +1,19 @@
 <template>
   <div :class="selectedTx.class" :style="{left: selectedTx.left+'px', top: selectedTx.top+'px'}">
     <div class="potBox" @click="$emit('resetDetail')">
-      <div>{{ $i18n.t('label.name') + '：' + selectedTx.name }}</div>
-      <div>{{ $i18n.t('label.final-receive-timestamp') + '：' + getFinalReceiveTime(selectedTx.timestamp) }}</div>
+      <div class="clearfix">
+        <div class="thumbnail">
+          <img :src="selectedTx.thumbnail" width="auto" height="112" v-if="selectedTx.thumbnail.length > 0" />
+          <img src="/default.png" width="auto" height="112" v-else />
+        </div>
+        <div class="description">
+          No.{{ selectedTx.no }} <br />
+          {{ selectedTx.name }}<br />
+          {{ selectedTx.category }}<br />
+          {{ selectedTx.group }}<br />
+          {{ getFinalReceiveTime(selectedTx.timestamp) }}<br />
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -19,7 +30,6 @@ export default {
   },
   methods: {
     getFinalReceiveTime (time) {
-      console.log('time = ' + time)
       return time ? moment(time).format('YYYY/MM/DD HH:mm:ss') : ''
     }
   }
@@ -30,14 +40,12 @@ export default {
 @import "../sub/constant/config.scss";
 
 .potBox {
-  padding: 3px 3px 3px 15px;
+  padding: 5px;
   overflow: hidden;
   border: 3px solid $txdetail-bg;
   background-color: $txdetail-bg;
   border-radius: 3px;
   font-size: 0.9em;
-  width: 300px;
-  height: 200px;
   display: flex;
   flex-direction: column;
 }
@@ -80,6 +88,24 @@ export default {
   .potBox {
     padding: 3px;
 	}	
+}
+
+.clearfix:after {
+  content: "";
+  display: block;
+  clear: both;
+}
+
+.description {
+  float: left;
+  color: #444;
+  font-weight: bold;
+  padding-left: 10px;
+}
+
+.thumbnail {
+  float: left;
+  vertical-align: middle;
 }
 
 
