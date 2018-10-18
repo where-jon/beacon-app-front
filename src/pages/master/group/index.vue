@@ -40,6 +40,7 @@ export default {
         ]),
         initTotalRows: this.$store.state.app_service.groups.length
       },
+      groupStyles: [],
       items: [
         {
           text: this.$i18n.t('label.master'),
@@ -62,6 +63,11 @@ export default {
       try {
         this.replace({showProgress: true})
         await StateHelper.load('group')
+        this.groupStyles = this.groups.map((val) => ({
+          "color": Util.colorCd4display(val.color),
+          "background-color": Util.colorCd4display(val.bgColor),
+          "text-align": "center",
+        }))
         if (payload && payload.done) {
           payload.done()
         }

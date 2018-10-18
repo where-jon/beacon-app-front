@@ -42,6 +42,7 @@ export default {
         ]),
         initTotalRows: this.$store.state.app_service.categories.length
       },
+      categoryStyles: [],
       items: [
         {
           text: this.$i18n.t('label.master'),
@@ -64,6 +65,11 @@ export default {
       try {
         this.replace({showProgress: true})
         await StateHelper.load('category')
+        this.categoryStyles = this.categories.map((val) => ({
+          "color": Util.colorCd4display(val.color),
+          "background-color": Util.colorCd4display(val.bgColor),
+          "text-align": "center",
+        }))
         if (payload && payload.done) {
           payload.done()
         }

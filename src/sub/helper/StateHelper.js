@@ -92,37 +92,15 @@ const appStateConf = {
     path: '/basic/category',
     sort: 'categoryId',
     beforeCommit: (arr) => {
-      let categoryStyles = arr.map((val) => ({
-        "color": Util.colorCd4display(val.color),
-        "background-color": Util.colorCd4display(val.bgColor),
-        "text-align": "center",
-      }))
-      store.commit('app_service/replaceAS', {['categoryStyles']:categoryStyles})
       return arr.map((val) => ({
         ...val,
         categoryTypeName: getCategoryTypeName(val),
-        color: "",
-        bgColor: "",
-        categoryType: "",
       }))
     }
   },
   groups: {
     path: '/basic/group',
     sort: 'groupId',
-    beforeCommit: (arr) => {
-      let groupStyles = arr.map((val) => ({
-        "color": Util.colorCd4display(val.color),
-        "background-color": Util.colorCd4display(val.bgColor),
-        "text-align": "center",
-      }))
-      store.commit('app_service/replaceAS', {['groupStyles']:groupStyles})
-      return arr.map((val) => ({
-        ...val,
-        color: "",
-        bgColor: "",
-      }))
-    }
   },
   users: {
     path: '/meta/user',
