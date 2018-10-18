@@ -133,6 +133,12 @@ export const MENU = [
         icon: 'far fa-id-card',
       },
       {
+        key: 'positionList',
+        path: 'positionList',
+        feature: '/basic/txlist',
+        icon: 'far fa-list-alt',
+      },
+      {
         key: 'ledOperation',
         path: 'led',
         feature: '/basic/led',

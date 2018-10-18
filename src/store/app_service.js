@@ -13,6 +13,7 @@ export const state = () => ({
   exb: {},
   txs: [],
   tx: {},
+  txComposites: [],
   categories: [],
   category: {},
   groups: [],
