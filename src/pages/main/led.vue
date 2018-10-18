@@ -108,7 +108,7 @@ export default {
           active: true
         },
         {
-          text: this.$i18n.t('label.led'),
+          text: this.$i18n.t('label.ledOperation'),
           active: true
         }
       ],
@@ -178,9 +178,8 @@ export default {
     buttonClick(bool) {
       this.lightOnCandidate = bool
     },
-    backToList() { // editMixinのメソッドを無効化
-      return 0
-    }
+    backToList() {}, // editMixinのメソッドを無効化
+    showMapImage() {}, // showMapMixin用ダミー
   }
 }
 </script>
