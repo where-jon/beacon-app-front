@@ -138,7 +138,9 @@ html {
   background-color: $menu-bg;
 }
 
-.dropdown-item:hover {
+.dropdown-item:hover,
+.dropdown-item:focus, 
+{
   color:aliceblue;
   background-color: $menu-bg-hover;
 }
