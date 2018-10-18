@@ -5,7 +5,7 @@ import * as mock from '../../assets/mock/mock'
 import moment from 'moment'
 import * as HttpHelper from './HttpHelper'
 
-const dateform = (time) => moment(time).format('YYYY/MM/DD hh:mm:ss')
+const dateform = (time) => moment(time).format('YYYY/MM/DD HH:mm:ss')
 
 export const fetchPosition = async (exbs, txs, pMock) => {
     let data = pMock? pMock: DEV.USE_MOCK_EXC? mock.position:
