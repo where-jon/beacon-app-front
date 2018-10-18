@@ -159,6 +159,10 @@ export default {
     getSensorId(exb) {
       return Util.getValue(exb, 'exbSensorList.0.sensor.sensorId').val
     },
+    async getPotByTxId(txId) {
+      let pot = await AppServiceHelper.fetch('/basic/pot', txId)
+      this.replaceMain({pot})
+    },
   }
 }
 </script>
