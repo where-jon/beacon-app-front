@@ -111,18 +111,19 @@ export default {
       const position = this.positions.find((e) => {
         return e.btx_id === txId
       })
+      console.log(p)
       let selectedTx = {
         txId,
         minor: 'minor:' + txId,
-        major: 'major:' + p.tx.major,
+        major: p.tx ? 'major:' + p.tx.major : '',
         class: !txId? "": "balloon" + (rev? "-u": ""),
         left: x + offsetX + tipOffsetX + (rev? - 7: 0),
         top: y + offsetY + tipOffsetY + DISP.TX_R + (rev? - 232: 0),
-        name: p.potName,
+        name: p.potName ? p.potName : '',
         timestamp: position ? this.getFinalReceiveTime(position.timestamp) : '',
         thumbnail: p.thumbnail ? p.thumbnail : '',
-        category: p.potCategoryList.length > 0 ? p.potCategoryList[0].category.categoryName : '',
-        group: p.potGroupList.length > 0 ? p.potGroupList[0].group.groupName : ''
+        category: p.potCategoryList && p.potCategoryList.length > 0 ? p.potCategoryList[0].category.categoryName : '',
+        group: p.potGroupList && p.potGroupList.length > 0 ? p.potGroupList[0].group.groupName : ''
       }
       this.replaceMain({selectedTx})
     },

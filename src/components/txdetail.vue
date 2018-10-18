@@ -33,14 +33,11 @@ export default {
   methods: {
     getDispItems () {
       const that = this
-      const a = TXDETAIL_ITEMS
+      return TXDETAIL_ITEMS
       .filter((e) => {
-        console.log(e)
         return e.disp
       })
       .map((e) => {return that.selectedTx[e.name]})
-      console.log(a)
-      return a
     }
   }
 }
