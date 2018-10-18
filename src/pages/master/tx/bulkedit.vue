@@ -47,7 +47,7 @@ export default {
   methods: {
     async save(bulkSaveFunc) {
       const MAIN_COL = "txId"
-      const POT = ["displayName","description","potId","potCd","potName","potCategoryList"]
+      const POT = ["displayName","description","potCategoryList"]
       const POT_CATEGORY = ["categoryId"]
       const TX_SENSOR = ["sensorId"]
 
@@ -58,12 +58,6 @@ export default {
         if (Util.equalsAny(headerName, POT)) {
           if (!entity.pot) {
             entity.pot = {}
-          }
-          if (headerName == "potId" && Util.hasValue(val)) {
-            val = dummyKey--
-          }
-          else if(["potCd", "potName"].includes(headerName) && !val) {
-            val = dummyKey-- + "_" + (new Date().getTime() % 10000)
           }
           entity.pot[headerName] = val
         }
@@ -79,6 +73,12 @@ export default {
         else {
           if (headerName == MAIN_COL && !val) {
             val = dummyKey--
+            if (!entity.pot) {
+              entity.pot = {}
+              entity.pot.potId = dummyKey--,
+              entity.pot.potCd = entity.pot.potId + "_" + (new Date().getTime() % 10000)
+              entity.pot.potName = entity.pot.potId + "_" + (new Date().getTime() % 10000)
+            }
           }
           entity[headerName] = val
         }
