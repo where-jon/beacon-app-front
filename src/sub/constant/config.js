@@ -193,3 +193,12 @@ export const GATEWAY = {
     UNDETECT: '#dc3545'
   }
 }
+
+export const TXDETAIL_ITEMS = [
+  {name: 'minor', disp: true},
+  {name: 'major', disp: true},
+  {name: 'name', disp: true},
+  {name: 'timestamp', disp: true},
+  {name: 'group', disp: true},
+  {name: 'category', disp: true},
+]

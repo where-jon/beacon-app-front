@@ -3,15 +3,18 @@
     <div class="potBox" @click="$emit('resetDetail')">
       <div class="clearfix">
         <div class="thumbnail">
-          <img :src="selectedTx.thumbnail" width="auto" height="112" v-if="selectedTx.thumbnail.length > 0" />
-          <img src="/default.png" width="auto" height="112" v-else />
+          <img :src="selectedTx.thumbnail" width="auto" height="125" v-if="selectedTx.thumbnail.length > 0" />
+          <img src="/default.png" width="auto" height="116" v-else />
         </div>
         <div class="description">
+          <div v-for="(item, index) in getDispItems()" :key="index">{{ item }}</div>
+          <!--
           No.{{ selectedTx.no }} <br />
           {{ selectedTx.name }}<br />
           {{ selectedTx.category }}<br />
           {{ selectedTx.group }}<br />
           {{ getFinalReceiveTime(selectedTx.timestamp) }}<br />
+          -->
         </div>
       </div>
     </div>
@@ -19,8 +22,7 @@
 </template>
 
 <script>
-import { DISP } from '../sub/constant/config'
-import moment from 'moment'
+import { DISP, TXDETAIL_ITEMS } from '../sub/constant/config'
 
 export default {
   props: ['selectedTx'],
@@ -29,8 +31,16 @@ export default {
     }
   },
   methods: {
-    getFinalReceiveTime (time) {
-      return time ? moment(time).format('YYYY/MM/DD HH:mm:ss') : ''
+    getDispItems () {
+      const that = this
+      const a = TXDETAIL_ITEMS
+      .filter((e) => {
+        console.log(e)
+        return e.disp
+      })
+      .map((e) => {return that.selectedTx[e.name]})
+      console.log(a)
+      return a
     }
   }
 }

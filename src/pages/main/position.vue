@@ -36,6 +36,7 @@ import { Shape, Stage, Container, Bitmap, Text, Touch } from '@createjs/easeljs/
 import { Tween, Ticker } from '@createjs/tweenjs/dist/tweenjs.module'
 import breadcrumb from '../../components/breadcrumb.vue'
 import showmapmixin from '../../components/showmapmixin.vue'
+import moment from 'moment'
 
 let that
 
@@ -110,16 +111,16 @@ export default {
       const position = this.positions.find((e) => {
         return e.btx_id === txId
       })
-      console.log(p)
       let selectedTx = {
         txId,
+        minor: 'minor:' + txId,
+        major: 'major:' + p.tx.major,
         class: !txId? "": "balloon" + (rev? "-u": ""),
         left: x + offsetX + tipOffsetX + (rev? - 7: 0),
         top: y + offsetY + tipOffsetY + DISP.TX_R + (rev? - 232: 0),
         name: p.potName,
-        timestamp: position ? position.timestamp : null,
+        timestamp: position ? this.getFinalReceiveTime(position.timestamp) : '',
         thumbnail: p.thumbnail ? p.thumbnail : '',
-        no: p.potId,
         category: p.potCategoryList.length > 0 ? p.potCategoryList[0].category.categoryName : '',
         group: p.potGroupList.length > 0 ? p.potGroupList[0].group.groupName : ''
       }
@@ -128,6 +129,9 @@ export default {
     resetDetail() {
       let selectedTx = {}
       this.replaceMain({selectedTx})
+    },
+    getFinalReceiveTime (time) {
+      return time ? moment(time).format('YYYY/MM/DD HH:mm:ss') : ''
     },
     async fetchData(payload) {
       try {
@@ -192,7 +196,6 @@ export default {
       if (!this.txCont) {
         return
       }
-      console.debug('showTxAll', this.positions, this.txCont)
       this.txCont.removeAllChildren()
       this.stage.update()
       PositionHelper.adjustPosition(this.positions, this.mapImageScale, this.positionedExb).forEach((pos) => { // TODO: Txのチェックも追加
@@ -200,8 +203,6 @@ export default {
       })
     },
     showTx(pos) {
-      console.debug('showTx', {pos})
-
       let stage = this.stage
       let txBtn = new Container()
       let btnBg = new Shape()

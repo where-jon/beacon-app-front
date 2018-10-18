@@ -8,7 +8,7 @@ import styles from '../constant/config.scss'
  * @param {*} now 
  */
 export const correctPosId = (orgPositions, now) => {
-  console.log(now, orgPositions)
+  // console.log(now, orgPositions)
   let positions = _.chain(orgPositions).reduce((result, positions, idx) => { // MOVING_AVERAGE回の測位データを集約し、nearestをフラットにして１階層のオブジェエクト配列にする
     _.forEach(positions, (pos) => {
       _.forEach(pos.nearest, (val) => {
@@ -23,7 +23,7 @@ export const correctPosId = (orgPositions, now) => {
   .orderBy(['btx_id', 'pos_id', 'timestamp']) // btx_id, pos_id, timestampでソート
   .value()
 
-  console.table(positions)
+  // console.table(positions)
 
   positions = _.chain(positions).reduce((result, pos, idx) => { // btx_id,pos_idグループでsum(rssi), countを集計（lodashのgroupByは複数には対応していない）
     let prev = _.find(result, (val) => val.btx_id == pos.btx_id && val.pos_id == pos.pos_id)
@@ -42,7 +42,7 @@ export const correctPosId = (orgPositions, now) => {
   .orderBy(['count', 'rssiAvg', 'pos_id', 'btx_id'], ['desc','desc','asc','asc']) // 記録回数（多）、RSSI（強）、pos_id、btx_idでソート 
   .value()
 
-  console.table(positions)
+  // console.table(positions)
 
   // 上記の順番で取り出す
   let usedTx = []
@@ -64,7 +64,7 @@ export const correctPosId = (orgPositions, now) => {
   //   }
   // })
 
-  console.table(positions)
+  // console.table(positions)
 
   return positions
 }
