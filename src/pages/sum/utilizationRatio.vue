@@ -6,17 +6,26 @@
       <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">{{ message }}</b-alert>
       <b-row>
         <b-form inline>
-          <label v-t="'label.zoneCategoryName'" />
-          <v-select v-model="vModelCategory" :options="categoryOptions" :on-change="categoryChange" class="vselectCategory"></v-select>
-          <label v-t="'label.zoneName'" />
-          <v-select v-model="vModelZone" :options="zoneOptions" :on-change="zoneChange" class="vselectZone"></v-select>
           <label v-t="'label.sumYearMonth'" />
-          <v-select v-model="vModelYearMonth" :options="yearMonthOptions" :on-change="yearMonthChange" class="vselectMonth"></v-select>
+          <v-select v-model="vModelYearMonth" :options="yearMonthOptions" :on-change="yearMonthChange" class="vselectMonth">
+            <div slot="no-options">{{$i18n.t('label.vSelectNoOptions')}}</div>
+          </v-select>
           <label v-t="'label.sumDay'" />
-          <v-select v-model="vModelDay" :options="dayOptions" :on-change="dayChange" class="vselectDay"></v-select>
+          <v-select v-model="vModelDay" :options="dayOptions" :on-change="dayChange" class="vselectDay">
+            <div slot="no-options">{{$i18n.t('label.vSelectNoOptions')}}</div>
+          </v-select>
+          <label v-t="'label.zoneCategoryName'" />
+          <v-select v-model="vModelCategory" :options="categoryOptions" :on-change="categoryChange" class="vselectCategory">
+            <div slot="no-options">{{$i18n.t('label.vSelectNoOptions')}}</div>
+          </v-select>
+          <label v-t="'label.zoneName'" />
+          <v-select v-model="vModelZone" :options="zoneOptions" :on-change="zoneChange" class="vselectZone">
+            <div slot="no-options">{{$i18n.t('label.vSelectNoOptions')}}</div>
+          </v-select>
           <b-button size="sm" variant="info" v-t="'label.search'" @click="search()"></b-button> 
         </b-form>
       </b-row>
+      <p></p>
       <b-row align-h="end">
         <b-col md="2" class="mb-3 mr-3">
           <b-button variant='outline-primary' @click="download()" v-t="'label.download'" />
@@ -143,10 +152,9 @@ export default {
   methods: {
     async fetchZoneCategoryList() {
       try {
-        this.zoneCategorys = await AppServiceHelper.fetchList2(
+        this.zoneCategorys = await AppServiceHelper.fetch(
           '/core/zone/categoryList',
-          '/core/zone/categoryList',
-          'categoryId'
+          ''
         )
         var categories = {}
         this.zoneCategorys.forEach(elm => {
@@ -240,7 +248,7 @@ export default {
       return false
     },
     download() {
-      if (this.dataList == null || this.dataList.length == 0) {
+      if (this.dataList == null || this.dataList.length == null) {
         this.message = this.$i18n.t('message.notFound')
         this.showAlert = true;
         return
@@ -264,14 +272,13 @@ export default {
       if (this.selectedDay > 0) {
         paramDate = paramDate*100 + this.selectedDay
       }
-      var utilizationRatios = await AppServiceHelper.fetchList2(
-        'utilizationRatio',
+      var utilizationRatios = await AppServiceHelper.fetch(
         '/office/utilizationRatio/' + paramCategoryId + '/' + paramZoneId + '/' + paramDate,
-        'utilizationRatio'
+        ''
       )
       this.dataList = utilizationRatios
       this.replaceMonitor({utilizationRatios})
-      if (utilizationRatios.length == 0) {
+      if (utilizationRatios.length == null) {
         this.message = this.$i18n.t('message.notFound')
         this.showAlert = true;
       }

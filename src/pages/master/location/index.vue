@@ -9,7 +9,9 @@
       <b-form-select v-model="selectedArea" :options="areaOptions" class="mr-2 areaOptions" :disabled="settingStart"></b-form-select>
       <b-button size="sm" class="mr-4" variant="outline-info" v-t="'label.load'" @click="changeArea" :disabled="settingStart"></b-button>
       <label class="mt-mobile">{{ $t('label.exb') }}</label>
-      <v-select size="sm" v-model="selectedExb_" :options="exbOptions" :on-change="showExbOnMap" class="mx-2 mt-mobile exbOptions" :disabled="settingStart"></v-select>
+      <v-select size="sm" v-model="selectedExb_" :options="exbOptions" :on-change="showExbOnMap" class="mx-2 mt-mobile exbOptions" :disabled="settingStart">
+        <div slot="no-options">{{$i18n.t('label.vSelectNoOptions')}}</div>
+      </v-select>
       <b-button size="sm" variant="outline-info" v-t="'label.bulkAdd'" @click="bulkAdd" class="mt-mobile" :disabled="settingStart"></b-button> 
     </b-form>
     <b-form inline class="mt-2">
