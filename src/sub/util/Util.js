@@ -103,7 +103,9 @@ export const converToCsv = (array, headers) => {
   if (!headers) {
     headers = Object.keys(array[0])
   }
-  let header = '"' + headers.join('","') + '"\n'
+  // ヘッダ出力から"extValue."のような部分を取り除く
+  const outputHeaders = headers.map((header) => _.last(header.split('.')))
+  let header = '"' + outputHeaders.join('","') + '"\n'
   let body = _.map(array, (row) => {
     return '"' + headers.map((key) => {
       let val = getValue(row, key).val
