@@ -103,8 +103,12 @@ export const converToCsv = (array, headers) => {
   if (!headers) {
     headers = Object.keys(array[0])
   }
-  // ヘッダ出力から"extValue."のような部分を取り除く
-  const outputHeaders = headers.map((header) => _.last(header.split('.')))
+  // ヘッダ出力から"extValue."の部分を取り除く
+  const extValueRegExp = /extValue\.(.*)/
+  const outputHeaders = headers.map((header) => {
+    let result = header.match(extValueRegExp)
+    return result ? result[1] : header
+  })
   let header = '"' + outputHeaders.join('","') + '"\n'
   let body = _.map(array, (row) => {
     return '"' + headers.map((key) => {
