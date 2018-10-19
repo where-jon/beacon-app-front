@@ -49,7 +49,8 @@ export default {
       const MAIN_COL = "potId"
       const NULLABLE_NUMBER_COL = ["txId", "exbId", "zoneId", "areaId"]
       const MANY_TO_MANY = ["groupId", "categoryId"]
-      const EXT_VAL_REGEXP = /extValue\.(ruby|post)/
+      const EXT_VAL_REGEXP = /extValue\.(ruby|post|tel)/
+      const extValueHeaders = ["ruby", "post", "tel"]
 
       await bulkSaveFunc(MAIN_COL, null, null, (entity, headerName, val, dummyKey) => {
         // relation
@@ -67,9 +68,8 @@ export default {
         if (!entity.extValue) {
           entity.extValue = {}
         }
-        const match = EXT_VAL_REGEXP.exec(headerName) // ->["extValue.ruby", "ruby"]
-        if (match) {
-          entity.extValue[match[1]] = val
+        if (_.includes(extValueHeaders, headerName)) {
+          entity.extValue[headerName] = val
           return dummyKey
         }
 

@@ -1,19 +1,43 @@
 <template>
   <div :class="selectedTx.class" :style="{left: selectedTx.left+'px', top: selectedTx.top+'px'}">
     <div class="potBox" @click="$emit('resetDetail')">
-      <div>詳細情報＝これから実装 {{ selectedTx }} 
+      <div class="clearfix">
+        <div class="thumbnail">
+          <img :src="selectedTx.thumbnail" width="auto" height="125" v-if="selectedTx.thumbnail.length > 0" />
+          <img src="/default.png" width="auto" height="116" v-else />
+        </div>
+        <div class="description">
+          <div v-for="(item, index) in getDispItems()" :key="index">{{ item }}</div>
+          <!--
+          No.{{ selectedTx.no }} <br />
+          {{ selectedTx.name }}<br />
+          {{ selectedTx.category }}<br />
+          {{ selectedTx.group }}<br />
+          {{ getFinalReceiveTime(selectedTx.timestamp) }}<br />
+          -->
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { DISP } from '../sub/constant/config'
+import { DISP, TXDETAIL_ITEMS } from '../sub/constant/config'
 
 export default {
   props: ['selectedTx'],
   data() {
     return {
+    }
+  },
+  methods: {
+    getDispItems () {
+      const that = this
+      return TXDETAIL_ITEMS
+      .filter((e) => {
+        return e.disp
+      })
+      .map((e) => {return that.selectedTx[e.name]})
     }
   }
 }
@@ -23,14 +47,12 @@ export default {
 @import "../sub/constant/config.scss";
 
 .potBox {
-  padding: 3px 3px 3px 15px;
+  padding: 5px;
   overflow: hidden;
   border: 3px solid $txdetail-bg;
   background-color: $txdetail-bg;
   border-radius: 3px;
   font-size: 0.9em;
-  width: 150px;
-  height: 160px;
   display: flex;
   flex-direction: column;
 }
@@ -73,6 +95,24 @@ export default {
   .potBox {
     padding: 3px;
 	}	
+}
+
+.clearfix:after {
+  content: "";
+  display: block;
+  clear: both;
+}
+
+.description {
+  float: left;
+  color: #444;
+  font-weight: bold;
+  padding-left: 10px;
+}
+
+.thumbnail {
+  float: left;
+  vertical-align: middle;
 }
 
 

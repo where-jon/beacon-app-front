@@ -79,7 +79,7 @@ export default {
         })
         .map((exb) => {
           let pir = pirSensors.find((val) => val.deviceid == exb.deviceId && val.count >= DISP.PIR_MIN_COUNT)
-          let thermopile = thermopileSensors.find((val) => val.deviceid == exb.deviceId && val.count > 0)
+          let thermopile = thermopileSensors.find((val) => val.deviceid == exb.deviceId)
           console.log({exb, pir, thermopile, pirSensors, thermopileSensors})
           return {
             exbId: exb.exbId, deviceId: exb.deviceId, x: exb.location.x, y: exb.location.y,

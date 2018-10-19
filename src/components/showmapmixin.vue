@@ -48,10 +48,28 @@ export default {
   },
   created() {
     that = this
-    window.addEventListener('resize', () => {
-      const positions = PositionHelper.adjustPosition(this.positions)
-      that.replaceMain({positions})
-    })
+
+    if (this.$route.path.startsWith("/main")) {      
+      let timer = 0
+      window.addEventListener('resize', () => {
+        // const positions = PositionHelper.adjustPosition(this.positions)
+        // that.replaceMain({positions})
+        if (timer > 0) {
+          clearTimeout(timer);
+        } 
+        timer = setTimeout(() => {
+          that.reset()
+          if (that.stage) {
+            that.stage.removeAllChildren()
+            if (that.resetDetail) {
+              that.resetDetail()
+            }
+            that.stage.update()
+            that.fetchData()
+          }
+        }, 200);
+      })
+    }
   },
   methods: {
     async fetchAreaExbs(tx) {
@@ -71,7 +89,6 @@ export default {
       console.log('showMapImageDef', this.selectedArea, this.isShownMapImage)
       if (this.isShownMapImage) return false
       let canvas = this.$refs.map
-      var bg = new Image()
 
       if (!this.mapImage) {
         if (this.showTryCount < 10) {
@@ -86,13 +103,17 @@ export default {
         return true
       }
 
+      var bg = new Image()
       bg.src = this.mapImage
       if (bg.height == 0 || bg.width == 0 || !canvas) {
         this.$nextTick(() => {
           console.warn("again because image is 0")
-          if (this.showTryCount > 20) {
+          if (this.showTryCount > 30) {
+            window.location.reload()
+            return
+          }
+          else if (this.showTryCount > 20) {
             this.isFirstTime = true
-            this.showTryCount = 0
             this.fetchData()
             return
           }
@@ -155,6 +176,10 @@ export default {
     },
     getSensorId(exb) {
       return Util.getValue(exb, 'exbSensorList.0.sensor.sensorId').val
+    },
+    async getPotByTxId(txId) {
+      let pot = await AppServiceHelper.fetch('/basic/pot', txId)
+      this.replaceMain({pot})
     },
   }
 }

@@ -162,16 +162,13 @@ export default {
         btnicon.graphics.beginFill(iconcolor).drawCircle(0, 0, w, w)
         btnicon.alpha = 0.5;
         exbBtn.addChild(btnicon)
-      }
 
-      if (DEV.DEBUG) {
-        let label = new Text(exb.deviceId.toString(16) + "\n" + exb.temperature + "\n" + exb.humidity)
+        let label = new Text(exb.temperature + "℃\n" + exb.humidity + "%")
         label.font = DISP.THERMOH_FONT
-        label.color = "red"
-        // label.textAlign = "center"
-        // label.textBaseline = "middle"
-        label.y = -20
-        label.regX = 10
+        label.color = "black"
+        label.textAlign = "center"
+        label.textBaseline = "middle"
+        label.y = -5
         exbBtn.addChild(label)
       }
 

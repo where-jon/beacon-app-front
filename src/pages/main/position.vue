@@ -8,7 +8,7 @@
       </b-form>
     </b-row>
     <b-row class="mt-3">
-      <canvas id="map" ref="map"></canvas>
+      <canvas id="map" ref="map" @click="resetDetail"></canvas>
     </b-row>
     <div v-if="selectedTx.txId" >
       <txdetail :selectedTx="selectedTx" @resetDetail="resetDetail"></txdetail>
@@ -27,6 +27,7 @@
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as PositionHelper from '../../sub/helper/PositionHelper'
+import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as mock from '../../assets/mock/mock'
 import txdetail from '../../components/txdetail.vue'
@@ -35,6 +36,7 @@ import { Shape, Stage, Container, Bitmap, Text, Touch } from '@createjs/easeljs/
 import { Tween, Ticker } from '@createjs/tweenjs/dist/tweenjs.module'
 import breadcrumb from '../../components/breadcrumb.vue'
 import showmapmixin from '../../components/showmapmixin.vue'
+import moment from 'moment'
 
 let that
 
@@ -58,6 +60,8 @@ export default {
       ],
       positions: [],
       count: 0, // for mock test 
+      txsMap: {},
+      pot: {}
     }
   },
   computed: {
@@ -70,20 +74,6 @@ export default {
     that = this
     this.replace({title: this.$i18n.t('label.showPosition')})
     this.fetchData()
-    let timer = 0
-    window.addEventListener('resize', () => {
-      if (timer > 0) {
-        clearTimeout(timer);
-      } 
-      timer = setTimeout(() => {
-        that.reset()
-        if (that.stage) {
-          that.stage.removeAllChildren()
-          that.stage.update()
-          that.fetchData()
-        }
-      }, 200);
-    })
   },
   updated(){
     if (this.isFirstTime) return
@@ -93,27 +83,41 @@ export default {
     reset() {
       this.isShownMapImage = false
     },
-    showDetail(txId, x, y) {
+    async showDetail(txId, x, y) {
       let rev = y > 400
-
       let map = HtmlUtil.getRect("#map")
       let containerParent = HtmlUtil.getRect("#mapContainer", "parentNode")
       let offsetX = map.left - containerParent.left
       let offsetY = map.top - containerParent.top
       const tipOffsetX = -34.5
       const tipOffsetY = 15
-
+      const targetId = this.txsMap[txId]
+      const p = await this.getDetail(targetId)
+      const position = this.positions.find((e) => {
+        return e.btx_id === txId
+      })
+      console.log(p)
       let selectedTx = {
         txId,
+        minor: 'minor:' + txId,
+        major: p.tx && p.tx.major? 'major:' + p.tx.major : '',
         class: !txId? "": "balloon" + (rev? "-u": ""),
         left: x + offsetX + tipOffsetX + (rev? - 7: 0),
         top: y + offsetY + tipOffsetY + DISP.TX_R + (rev? - 232: 0),
+        name: p.potName ? p.potName : '',
+        timestamp: position ? this.getFinalReceiveTime(position.timestamp) : '',
+        thumbnail: p.thumbnail ? p.thumbnail : '',
+        category: p.potCategoryList && p.potCategoryList.length > 0 ? p.potCategoryList[0].category.categoryName : '',
+        group: p.potGroupList && p.potGroupList.length > 0 ? p.potGroupList[0].group.groupName : ''
       }
       this.replaceMain({selectedTx})
     },
     resetDetail() {
       let selectedTx = {}
       this.replaceMain({selectedTx})
+    },
+    getFinalReceiveTime (time) {
+      return time ? moment(time).format('YYYY/MM/DD HH:mm:ss') : ''
     },
     async fetchData(payload) {
       try {
@@ -137,11 +141,20 @@ export default {
         if (payload && payload.done) {
           payload.done()
         }
+
+        this.txsMap = this.txs.reduce((obj, record) => {
+          obj[record.btxId] = record.txId
+          return obj
+        }, {})
       }
       catch(e) {
         console.error(e)
       }
       this.replace({showProgress: false})
+    },
+    async getDetail(txId) {
+      let pot = await AppServiceHelper.fetch('/basic/pot/withThumbnail', txId)
+      return pot
     },
     showMapImage() {
       if (this.showMapImageDef()) {
@@ -169,7 +182,6 @@ export default {
       if (!this.txCont) {
         return
       }
-      console.debug('showTxAll', this.positions, this.txCont)
       this.txCont.removeAllChildren()
       this.stage.update()
       PositionHelper.adjustPosition(this.positions, this.mapImageScale, this.positionedExb).forEach((pos) => { // TODO: Txのチェックも追加
@@ -177,8 +189,6 @@ export default {
       })
     },
     showTx(pos) {
-      console.debug('showTx', {pos})
-
       let stage = this.stage
       let txBtn = new Container()
       let btnBg = new Shape()

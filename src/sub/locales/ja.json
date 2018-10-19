@@ -62,6 +62,8 @@
     "receiveNormal": "正常",
     "absent": "不在",
     "charSet": "CSV文字コード",
+    "null": "未指定",
+    "undefined": "未定義",
 
     "---------------- App exbeacon ---------------":"",
 
@@ -315,6 +317,8 @@
     "APP_SERVICE_UP_TM": "API設定・更新間隔",
 
     "DISP_HIDE_TIME": "未受信状態判定時間",
+
+    "vSelectNoOptions": "",
 
     "dummy": ""
   },
