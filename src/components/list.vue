@@ -1,29 +1,30 @@
 <template>
   <div>
     <!-- searchbox -->
-    <b-row v-if="!params.hideSearchBox && !params.extraFilter">
-      <b-col md="6" class="my-1">
-        <b-form-group horizontal class="mb-0" :label="$t('label.filter') ">
-          <b-input-group>
-            <b-form-input v-model="filter.reg" />
-            <b-input-group-append>
-              <b-btn :disabled="!filter" @click="filter.reg = ''" variant="secondary" v-t="'label.clear'"></b-btn>
-            </b-input-group-append>
-          </b-input-group>
-        </b-form-group>
-      </b-col>
-      <b-col class="mb-2 justify-content-end">
-        <!-- 新規作成ボタン -->
-        <b-button :variant='theme' @click="edit()" v-t="'label.createNew'"  class="float-right"/>
-        <b-button v-if="params.bulkEditPath" :variant='theme'
-          @click="bulkEdit()" v-t="'label.bulkRegister'"  class="float-right" :style="{ marginRight: '10px'}"/>
-        <b-button v-if="params.csvOut" :variant='theme' @click="exportCsv" v-t="'label.download'"  class="float-right" :style="{ marginRight: '10px'}"/>
-      </b-col>
-    </b-row>
     <template v-if="!params.hideSearchBox && params.extraFilter">
-      <!-- 追加フィルタがある場合 -->
-      <b-form>
-        <b-form-row class="mb-1">
+      <b-form v-model="form">
+        <b-row>
+          <b-col md="可変長"><!-- フィルタ部の外側col -->
+            <b-row>
+              <b-col><!-- 標準絞り込みフィルタ -->
+
+              </b-col>
+              <b-col v-for="a of b" v-bind:key="hoge"><!-- カスタムフィルタ -->
+
+              </b-col>
+            </b-row>
+          </b-col>
+          <b-col><!-- ボタン部の外側col -->
+            <b-row>
+              <b-button :variant='theme' @click="edit()" v-t="'label.createNew'"  class="float-right"/>
+              <b-button :variant='theme' v-if="params.bulkEditPath" @click="bulkEdit()" 
+                  v-t="'label.bulkRegister'"  class="float-right" :style="{ marginRight: '10px'}"/>
+              <b-button :variant='theme' v-if="params.csvOut" @click="exportCsv"
+                   v-t="'label.download'"  class="float-right" :style="{ marginRight: '10px'}"/>
+            </b-row>
+          </b-col>
+        </b-row>
+        <!-- <b-form-row class="mb-1">
             <b-col>
               <b-form-group :label="$t('label.filter')" horizontal>
                 <b-input-group>
@@ -42,17 +43,16 @@
               <b-form-select :options="groupOptions" v-model="filter.extra.group" :style="{width: groupSelectWidth}"/>
             </b-form-group>
           </b-col>
-        </b-form-row>
+        </b-form-row> -->
       </b-form>
-      <b-form-row class="mb-1">
+      <!--<b-form-row class="mb-1">
         <b-col class="mb-6 justify-content-end">
-        <!-- 新規作成ボタン -->
         <b-button :variant='theme' @click="edit()" v-t="'label.createNew'"  class="float-right"/>
         <b-button v-if="params.bulkEditPath" :variant='theme'
           @click="bulkEdit()" v-t="'label.bulkRegister'"  class="float-right" :style="{ marginRight: '10px'}"/>
         <b-button v-if="params.csvOut" :variant='theme' @click="exportCsv" v-t="'label.download'"  class="float-right" :style="{ marginRight: '10px'}"/>
       </b-col>
-      </b-form-row>
+      </b-form-row>-->
       
     </template>
 
