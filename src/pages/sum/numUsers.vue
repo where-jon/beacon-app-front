@@ -144,10 +144,9 @@ export default {
   methods: {
     async fetchZoneCategoryList() {
       try {
-        this.zoneCategorys = await AppServiceHelper.fetchList2(
+        this.zoneCategorys = await AppServiceHelper.fetch(
           '/core/zone/categoryList',
-          '/core/zone/categoryList',
-          'categoryId'
+          ''
         )
         var categories = {}
         this.zoneCategorys.forEach(elm => {
@@ -241,7 +240,7 @@ export default {
       return false
     },
     download() {
-      if (this.dataList == null || this.dataList.length == 0) {
+      if (this.dataList == null || this.dataList.length == null) {
         this.message = this.$i18n.t('message.notFound')
         this.showAlert = true;
         return
@@ -265,14 +264,13 @@ export default {
       if (this.selectedDay > 0) {
         paramDate = paramDate*100 + this.selectedDay
       }
-      var numUsers = await AppServiceHelper.fetchList2(
-        'numUsers',
+      var numUsers = await AppServiceHelper.fetch(
         '/office/numUsers/' + paramCategoryId + '/' + paramZoneId + '/' + paramDate,
-        'numOfUsers'
+        ''
       )
       this.dataList = numUsers
       this.replaceMonitor({numUsers})
-      if (numUsers.length == 0) {
+      if (numUsers.length == null) {
         this.message = this.$i18n.t('message.notFound')
         this.showAlert = true;
       }

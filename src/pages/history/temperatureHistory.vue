@@ -125,10 +125,9 @@ export default {
   methods: {
     async fetchZoneCategoryList() {
       try {
-        this.zoneCategorys = await AppServiceHelper.fetchList2(
+        this.zoneCategorys = await AppServiceHelper.fetch(
           '/core/zone/categoryList',
-          '/core/zone/categoryList',
-          'categoryId'
+          ''
         )
         console.log(this.zoneCategorys)
         var categorys = {}
@@ -218,22 +217,27 @@ export default {
       let paramDyFrom = this.dateFrom
       let paramDyTo = this.dateTo
       let paramHistoryType = this.historyType
-      var list = await AppServiceHelper.fetchList2(
-        '/basic/sensorHistory',
-        '/basic/sensorHistory/' + paramCategoryId + "/" +
-          paramZoneId + "/" +
-          paramExbId + "/" +
-          paramDyFrom + "/" +
-          paramDyTo + "/" +
-          paramHistoryType,
-        ''
-      )
-      if (list == null || list.length == 0) {
-        return []
+      var list = []
+      try {
+        list = await AppServiceHelper.fetch(
+          '/basic/sensorHistory/' + paramCategoryId + "/" +
+            paramZoneId + "/" +
+            paramExbId + "/" +
+            paramDyFrom + "/" +
+            paramDyTo + "/" +
+            paramHistoryType,
+          ''
+        )
+        if (list.length == null) {
+          return []
+        }
+        list.forEach(data => {
+          delete data['sensorHistoryId']
+       })
+      } catch (e) {
+        console.log(e)
+        list = []
       }
-      list.forEach(data => {
-        delete data['sensorHistoryId']
-      })
       return list
     },
     async download() {
