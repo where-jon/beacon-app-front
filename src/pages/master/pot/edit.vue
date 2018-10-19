@@ -22,6 +22,17 @@
               <b-form-input type="number" v-model="form.txId" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group>
+              <label v-t="'label.categoryType'" />
+              <b-form-radio-group v-model="form.personOrThing" :options="category">
+                <!--<b-form-radio :value=".PERSON" :readonly="!isEditable">
+                  {{$t('label.person')}}
+                </b-form-radio>
+                <b-form-radio :value="personOrThing.THING" :readonly="!isEditable">
+                  {{$t('label.thing')}}
+                </b-form-radio>-->
+              </b-form-radio-group>
+            </b-form-group>
+            <b-form-group>
               <label v-t="'label.potCd'" />
               <b-form-input type="text" v-model="form.potCd" maxlength="20" required :readonly="!isEditable" />
             </b-form-group>
@@ -83,6 +94,7 @@ import editmixinVue from '../../../components/editmixin.vue'
 import breadcrumb from '../../../components/breadcrumb.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
+import { CATEGORY } from '../../../sub/constant/Constants'
 
 let that
 
@@ -97,10 +109,12 @@ export default {
       id: 'potId',
       backPath: '/master/pot',
       appServicePath: '/basic/pot',
-      form: ViewHelper.extract(this.$store.state.app_service.pot,
+      category: _.slice(CATEGORY.getTypes(), 0, 2),
+      form: {personOrThing: CATEGORY.getTypes()[0].value,
+          ...ViewHelper.extract(this.$store.state.app_service.pot,
           ["potId", "potCd", "potName", "extValue.ruby",
           "displayName", "potGroupList.0.group.groupId", "potCategoryList.0.category.categoryId", "extValue.tel", "txId",
-          "extValue.post", "thumbnail", "description"]),
+          "extValue.post", "thumbnail", "description"])},
       items: [
         {
           text: this.$i18n.t('label.master'),
@@ -123,7 +137,9 @@ export default {
       return 'outline-' + theme
     },
     categoryOptions() {
-      let options = this.categories.map((category) => {
+      let options = this.categories.filter((category) => 
+        category.categoryType === this.form.personOrThing
+      ).map((category) => {
           return {
             value: category.categoryId,
             text: category.categoryName
@@ -168,6 +184,14 @@ export default {
     StateHelper.load('category')
     StateHelper.load('tx')
   },
+  // watch: {
+  //   'form.personOrThing': {
+  //     handler: function(val) {
+  //       that.replaceAs()
+  //     },
+  //     immediate: true,
+  //   }
+  // },
   methods: {
     async save() {
       const entity = {
