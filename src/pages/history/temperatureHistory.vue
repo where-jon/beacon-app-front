@@ -19,9 +19,13 @@
         <b-col md="10" offset-md="2">
           <b-form inline>
             <label v-t="'label.zoneCategoryName'" class="leftsidelabel"/>
-            <v-select v-model="vModelCategory" :options="categoryOptions" :on-change="categoryChange" required class="ml-2"></v-select>
+            <v-select v-model="vModelCategory" :options="categoryOptions" :on-change="categoryChange" required class="ml-2">
+              <div slot="no-options">{{$i18n.t('label.vSelectNoOptions')}}</div>
+            </v-select>
             <label v-t="'label.zoneName'" />
-            <v-select v-model="vModelZone" :options="zoneOptions" :on-change="zoneChange" required class="ml-2"></v-select>
+            <v-select v-model="vModelZone" :options="zoneOptions" :on-change="zoneChange" required class="ml-2">
+              <div slot="no-options">{{$i18n.t('label.vSelectNoOptions')}}</div>
+            </v-select>
           </b-form>
         </b-col>
       </b-row>
