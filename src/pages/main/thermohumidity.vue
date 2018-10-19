@@ -165,7 +165,7 @@ export default {
 
         let label = new Text(exb.temperature + "℃\n" + exb.humidity + "%")
         label.font = DISP.THERMOH_FONT
-        label.color = "red"
+        label.color = "black"
         label.textAlign = "center"
         label.textBaseline = "middle"
         label.y = -5
