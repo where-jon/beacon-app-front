@@ -23,14 +23,7 @@
             </b-form-group>
             <b-form-group>
               <label v-t="'label.categoryType'" />
-              <b-form-radio-group v-model="form.personOrThing" :options="category">
-                <!--<b-form-radio :value=".PERSON" :readonly="!isEditable">
-                  {{$t('label.person')}}
-                </b-form-radio>
-                <b-form-radio :value="personOrThing.THING" :readonly="!isEditable">
-                  {{$t('label.thing')}}
-                </b-form-radio>-->
-              </b-form-radio-group>
+              <b-form-radio-group v-model="form.personOrThing" :options="category" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.potCd'" />
