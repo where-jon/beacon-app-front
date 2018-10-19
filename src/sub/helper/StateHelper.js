@@ -79,6 +79,7 @@ const appStateConf = {
       return arr.map((val) => ({
         ...val,
         txIdName: val.txId? Util.getValue(val, 'tx.txName', '') + '(' + val.txId + ')': null,
+        txName: val.txId? Util.getValue(val, 'tx.txName', '') : null,
         groupName: Util.getValue(val, 'potGroupList.0.group.groupName', ''),
         groupId: Util.getValue(val, 'potGroupList.0.group.groupId', ''),
         categoryName: Util.getValue(val, 'potCategoryList.0.category.categoryName', ''),

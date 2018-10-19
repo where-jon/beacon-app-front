@@ -206,7 +206,13 @@ export default {
       return this.$parent.$options.methods.thumbnail.call(this.$parent, this.perPage * (this.currentPage - 1) + index)
     },
     exportCsv() {
-      const headers = this.params.fields.filter((val) => !["style", "thumbnail", "actions", "updateAction"].includes(val.key)).map((val) => val.key)
+      let headers
+      if (this.params.custumCsvColumns) {
+        headers = this.params.custumCsvColumns
+      } else {
+        headers = this.params.fields.map((val) => val.key)
+      }
+      headers = headers.filter((val) => !["style", "thumbnail", "actions", "updateAction"].includes(val))
       HtmlUtil.fileDL(this.params.name + ".csv", Util.converToCsv(this.list, headers), getCharSet(this.loginId))
     },
     style(index) {

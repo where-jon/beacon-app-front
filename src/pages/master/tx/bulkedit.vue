@@ -71,14 +71,16 @@ export default {
           entity.txSensorlist = [{sensorId: val}]
         }
         else {
-          if (headerName == MAIN_COL && !val) {
-            val = dummyKey--
+          if (headerName == MAIN_COL){
+            if(!val) {
+              val = dummyKey--
+            }
             if (!entity.pot) {
               entity.pot = {}
-              entity.pot.potId = dummyKey--,
-              entity.pot.potCd = entity.pot.potId + "_" + (new Date().getTime() % 10000)
-              entity.pot.potName = entity.pot.potId + "_" + (new Date().getTime() % 10000)
             }
+            entity.pot.potId = dummyKey--,
+            entity.pot.potCd = entity.pot.potId + "_" + (new Date().getTime() % 10000)
+            entity.pot.potName = entity.pot.potId + "_" + (new Date().getTime() % 10000)
           }
           entity[headerName] = val
         }
