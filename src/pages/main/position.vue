@@ -74,21 +74,6 @@ export default {
     that = this
     this.replace({title: this.$i18n.t('label.showPosition')})
     this.fetchData()
-    let timer = 0
-    window.addEventListener('resize', () => {
-      if (timer > 0) {
-        clearTimeout(timer);
-      } 
-      timer = setTimeout(() => {
-        that.reset()
-        if (that.stage) {
-          that.stage.removeAllChildren()
-          that.resetDetail()
-          that.stage.update()
-          that.fetchData()
-        }
-      }, 200);
-    })
   },
   updated(){
     if (this.isFirstTime) return
@@ -115,7 +100,7 @@ export default {
       let selectedTx = {
         txId,
         minor: 'minor:' + txId,
-        major: p.tx ? 'major:' + p.tx.major : '',
+        major: p.tx && p.tx.major? 'major:' + p.tx.major : '',
         class: !txId? "": "balloon" + (rev? "-u": ""),
         left: x + offsetX + tipOffsetX + (rev? - 7: 0),
         top: y + offsetY + tipOffsetY + DISP.TX_R + (rev? - 232: 0),

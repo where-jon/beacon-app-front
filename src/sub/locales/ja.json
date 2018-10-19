@@ -62,6 +62,8 @@
     "receiveNormal": "正常",
     "absent": "不在",
     "charSet": "CSV文字コード",
+    "null": "未指定",
+    "undefined": "未定義",
 
     "---------------- App exbeacon ---------------":"",
 

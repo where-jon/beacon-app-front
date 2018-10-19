@@ -48,10 +48,28 @@ export default {
   },
   created() {
     that = this
-    window.addEventListener('resize', () => {
-      const positions = PositionHelper.adjustPosition(this.positions)
-      that.replaceMain({positions})
-    })
+
+    if (this.$route.path.startsWith("/main")) {      
+      let timer = 0
+      window.addEventListener('resize', () => {
+        // const positions = PositionHelper.adjustPosition(this.positions)
+        // that.replaceMain({positions})
+        if (timer > 0) {
+          clearTimeout(timer);
+        } 
+        timer = setTimeout(() => {
+          that.reset()
+          if (that.stage) {
+            that.stage.removeAllChildren()
+            if (that.resetDetail) {
+              that.resetDetail()
+            }
+            that.stage.update()
+            that.fetchData()
+          }
+        }, 200);
+      })
+    }
   },
   methods: {
     async fetchAreaExbs(tx) {
