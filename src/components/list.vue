@@ -83,6 +83,11 @@
       <b-col md="6" class="my-1">
         <b-pagination :total-rows="totalRows" :per-page="perPage" v-model="currentPage" class="my-0" />
       </b-col>
+      <!-- bulk upload button -->
+      <b-col md="6" class="my-1">
+        <b-button v-if="params.bulkUploadPath" :variant='theme'
+          @click="bulkUpload()" v-t="'label.bulkUpload'"  class="float-right" />
+      </b-col>
     </b-row>
 
     <!-- modal -->
@@ -225,6 +230,9 @@ export default {
     },
     async bulkEdit(item, index, target) {
       this.$router.push(this.params.bulkEditPath)
+    },
+    async bulkUpload(item, index, target) {
+      this.$router.push(this.params.bulkUploadPath)
     },
     deleteConfirm(item, index, button) {
       this.modalInfo.title = this.$i18n.t('label.confirm')

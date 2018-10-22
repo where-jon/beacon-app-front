@@ -29,6 +29,7 @@ export default {
         editPath: '/master/pot/edit',
         appServicePath: '/basic/pot',
         bulkEditPath: '/master/pot/bulkEdit',
+        bulkUploadPath: '/master/pot/bulkUpload',
         csvOut: true,
         extraFilter: ['group', 'category'],
         custumCsvColumns: ["potId", "thumbnail", "txId", "txName", "potCd", "potName", "extValue.ruby",
