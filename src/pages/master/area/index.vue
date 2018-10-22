@@ -28,6 +28,7 @@ export default {
         id: 'areaId',
         editPath: '/master/area/edit',
         bulkEditPath: '/master/area/bulkedit',
+        bulkUploadPath: '/master/area/bulkUpload',
         appServicePath: '/core/area',
         csvOut: true,
         fields: addLabelByKey(this.$i18n, [ 
