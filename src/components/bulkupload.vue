@@ -4,9 +4,13 @@
 
       <b-alert variant="info" :show="showInfo">
         {{ message }}
-        <div v-for="thumbnail in form.thumbnails" :key="thumbnail.id">{{thumbnail.name}}</div>
+        <div v-for="thumbnail in form.thumbnails" :key="thumbnail.id">ID:{{thumbnail.id}}({{thumbnail.name}})</div>
       </b-alert>
-      <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false" v-html="message"></b-alert>
+      <b-alert variant="warning" :show="showWarn">
+        {{ warnMessage }}
+        <div v-for="warnThumbnail in form.warnThumbnails" :key="warnThumbnail.id">ID:{{warnThumbnail.id}}</div>
+      </b-alert>
+      <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false" v-html="message" />
 
       <b-form @submit="onSubmit" v-if="show">
         <b-form-group>
@@ -45,6 +49,7 @@ export default {
       form: {
         zipFile: null,
         thumbnails: [],
+        warnThumbnails: [],
       },
     }
   },
@@ -68,6 +73,9 @@ export default {
                 that.afterLoadFile()
               })
             }else{
+              that.form.warnThumbnails.push({
+                id: id,
+              })
               that.afterLoadFile()
             }
           }
@@ -91,18 +99,23 @@ export default {
     uploadMessage(){
       const hasUploadThumbnails = this.form && Util.hasValue(this.form.thumbnails)
       this.showInfo = hasUploadThumbnails
-      this.showAlert = !hasUploadThumbnails
+      this.showAlert = !hasUploadThumbnails || Util.hasValue(this.errorThumbnails)
       this.message = hasUploadThumbnails?
         `${this.$i18n.t("message.uploadData", {val: this.form.thumbnails.length})}`:
         `${this.$i18n.t("message.uploadNoData")}`
+      const hasUploadWarnThumbnails = this.form && Util.hasValue(this.form.warnThumbnails)
+      this.showWarn = hasUploadWarnThumbnails
+      this.warnMessage = hasUploadWarnThumbnails? `${this.$i18n.t("message.uploadWarnData", {val: this.form.warnThumbnails.length})}`: ""
     },
     beforeReload(){
       this.formKey++
       this.form.zipFile = null
       this.form.thumbnails = []
+      this.form.warnThumbnails = []
     },
     async loadThumbnail(e) {
       this.form.thumbnails = []
+      this.form.warnThumbnails = []
       if(Util.hasValue(e.target.files)){
         fileReader.readAsArrayBuffer(e.target.files[0])
       }
