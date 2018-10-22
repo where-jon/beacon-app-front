@@ -8,6 +8,7 @@ export const state = () => ({
   role: '',
   featureList: [],
   menu: [],
+  currentRegion: {},
   showProgress: false,
 })
 

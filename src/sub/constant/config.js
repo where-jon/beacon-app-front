@@ -31,11 +31,19 @@ export const APP = {
   IP_ADDRESS_FILTER: "",
   EXB_SENSOR: [1,2,3,4], // EXBのタイプに設定可能なセンサーID
   TX_SENSOR: [5,6], // TXのタイプに設定可能なセンサーID
+  TX_WITH_TXID: true, // 画面上TXIDを使用するか否か
   TX_WITH_CATEGORY: true, // TX管理で個体.カテゴリを表示
   TX_WITH_DISPLAY_NAME: true, // TX管理で個体.表示名を表示
   TX_WITH_DESCRIPTION: true, // TX管理で個体.備考を表示
   TX_WITH_MAJOR: true, // TX管理でmajorを表示
   TX_BTX_MINOR: 'both', // both:両方表示し、別々に設定、minor/btxId:片方のみ表示し、保存の際同一の値を設定
+
+  EXB_WITH_EXBID: true,       // 画面上EXBIDを使用するか否か 
+  EXB_WITH_DEVICE_NUM: true,  // 画面上端末IDを使用するか否か
+  EXB_WITH_DEVICE_ID: true,   // 画面上デバイスIDを使用するか否か
+  EXB_WITH_DEVICE_IDX: true,  // 画面上デバイスID（16進数）を使用するか否か
+  EXB_WITH_POSID: true,      // 画面上POSIDを使用するか否か
+
   USER_WITH_EMAIL: false, // ユーザ設定でメールアドレスを使用する
   USER_WITH_NAME: false, // ユーザ設定で名前を使用する
 }
@@ -88,7 +96,7 @@ export const DISP = {
   EXB_LOC_COLOR: "#000",
   EXB_LOC_FONT: "16px Arial",
 
-  THERMOH_DISP: "icon", // icon / color
+  THERMOH_DISP: "color", // icon / color
   THERMOH_FONT: "12px Arial",
   DISCOMFORT_HOT: "#fc5800",
   DISCOMFORT_COMFORT: "#15db75",

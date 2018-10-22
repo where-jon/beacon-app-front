@@ -83,6 +83,7 @@
     "exbName": "exb名",
     "deviceId": "デバイスID",
     "deviceIdX": "デバイスID(16進数)",
+    "deviceNum": "端末ID",
     "final-receive-timestamp": "最終取得時間",
     "receive-place": "検知場所",
     "power-level": "電池レベル",

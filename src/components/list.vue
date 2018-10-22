@@ -219,8 +219,11 @@ export default {
       return this.$parent.$options.methods.style.call(this.$parent, index)
     },
     async edit(item, index, target) {
-      let list = item != null? await AppServiceHelper.fetch(this.appServicePath, item[this.id]): {}
-      this.replaceAS({[this.name]: list})
+      let entity = item != null? await AppServiceHelper.fetch(this.appServicePath, item[this.id]): {}
+      if (this.$parent.$options.methods.convBeforeEdit) {
+        entity = this.$parent.$options.methods.convBeforeEdit.call(this.$parent, entity)
+      }
+      this.replaceAS({[this.name]: entity})
       this.$router.push(this.editPath)
     },
     async bulkEdit(item, index, target) {

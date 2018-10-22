@@ -9,6 +9,7 @@
       <b-form-select v-model="selectedArea" :options="areaOptions" class="mr-2 areaOptions" :disabled="settingStart"></b-form-select>
       <b-button size="sm" class="mr-4" variant="outline-info" v-t="'label.load'" @click="changeArea" :disabled="settingStart"></b-button>
       <label class="mt-mobile">{{ $t('label.exb') }}</label>
+      <b-form-select v-model="exbDisp" :options="exbDispOptions" class="ml-2 mr-1" :disabled="settingStart" @change="changeExbDisp"></b-form-select>
       <v-select size="sm" v-model="selectedExb_" :options="exbOptions" :on-change="showExbOnMap" class="mx-2 mt-mobile exbOptions" :disabled="settingStart">
         <div slot="no-options">{{$i18n.t('label.vSelectNoOptions')}}</div>
       </v-select>
@@ -39,7 +40,7 @@
       {{ $t('message.unsavedData') }}
     </b-modal>
     <b-modal id="modalDeleteConfirm" :title="$t('label.confirm')" @ok="deleteExbDone" >
-      {{ $t('message.deleteConfirm', {target: deleteTarget? deleteTarget.deviceId: null}) }}
+      {{ $t('message.deleteConfirm', {target: deleteTarget? this.getExbDisp(deleteTarget.deviceId): null}) }}
     </b-modal>
   </div>
 </template>
@@ -73,8 +74,15 @@ export default {
       mapRatioChanged: false,
       settingStart: false,
       isChanged: false,
+      workExbs: [],
       exbOptions: [],
+      exbDisp: 'deviceIdX',
       deleteTarget: null,
+      exbDispOptions: [
+        {value:'deviceId', text: this.$i18n.t('label.deviceId')},
+        {value:'deviceIdX', text: this.$i18n.t('label.deviceIdX')},
+        {value:'deviceNum', text: this.$i18n.t('label.deviceNum')}
+      ],
       items: [
         {
           text: this.$i18n.t('label.master'),
@@ -143,6 +151,7 @@ export default {
         if (payload && payload.done) {
           payload.done()
         }
+        this.workExbs = _.cloneDeep(this.exbs)
 
         this.setExbPosition()
         this.showMapImage()
@@ -152,16 +161,42 @@ export default {
       }
     },
     setExbPosition() {
-      this.positionedExb = _(this.exbs).filter((exb) => {
+      this.positionedExb = _.filter(this.workExbs, (exb) => {
         return exb.location.areaId == this.selectedArea && exb.location.x && exb.location.y > 0
-      }).cloneDeep()
-
-      this.exbOptions = _(this.exbs).filter((val) => {
+      })
+      this.exbOptions = _(this.workExbs).filter((val) => {
         return val.enabled && (!val.location.x || !val.location.y || (val.location.x && val.location.y <= 0))
       })
       .map((val) => {
-        return {label: '' + val.deviceId.toString(16).toUpperCase(), value: val.exbId}
+        return {
+          label: '' + this.getExbDisp(val.deviceId), 
+          value: val.exbId
+        }
       }).value()
+    },
+    getExbDisp(deviceId) {
+      switch(this.exbDisp) {
+      case 'deviceIdX':
+        return deviceId.toString(16).toUpperCase()
+      case 'deviceId':
+        return deviceId
+      case 'deviceNum':
+        return deviceId - this.$store.state.currentRegion.deviceOffset
+      }
+    },
+    changeExbDisp(newVal) {
+      this.exbDisp = newVal
+      this.setExbPosition()
+      for (let i=0; this.exbCon && i<this.exbCon.numChildren; i++) {
+        let exbBtn = this.exbCon.getChildAt(i)
+        if (exbBtn) {
+          let text = exbBtn.getChildAt(1)
+          if (text) {
+            text.text = this.getExbDisp(exbBtn.deviceId)
+          }
+        }
+      }
+      this.stage.update()
     },
     showMapImage() {
       if (this.showMapImageDef()) {
@@ -197,7 +232,7 @@ export default {
       // btnBg.graphics.beginFill(DISP.EXB_LOC_BGCOLOR).drawRoundRect(-w/2, -h/2, w, h, 20, 20)
       exbBtn.addChild(btnBg)
 
-      let label = new Text(exb.deviceId.toString(16).toUpperCase())
+      let label = new Text(this.getExbDisp(exb.deviceId))
       label.font = DISP.EXB_LOC_FONT
       label.color = DISP.EXB_LOC_COLOR
       label.textAlign = "center"
@@ -306,9 +341,8 @@ export default {
       if (!val || !val.value) {
         return
       }
-      let exb = _(this.exbs).find((exb) => exb.exbId == val.value)
+      let exb = _(this.workExbs).find((exb) => exb.exbId == val.value)
       if (!exb) return
-      exb = _.cloneDeep(exb)
 
       let loc = exb.location
       if (loc.x <= 0) {
@@ -319,6 +353,7 @@ export default {
       }
       exb.x = loc.x
       exb.y = loc.y
+      exb.isChanged = true
       this.isChanged = true
       this.positionedExb.push(exb)
       this.exbOptions = this.exbOptions.filter((val) => val.value != exb.exbId)
@@ -339,8 +374,13 @@ export default {
       })
     },
     deleteExbDone(evt) {
+      let exb = this.positionedExb.find((exb) => exb.deviceId == this.deleteTarget.deviceId)
+      if (exb && exb.location) {
+        exb.location.x = exb.location.y = null
+        exb.x = exb.y = null
+      }
       this.positionedExb = this.positionedExb.filter((exb) => exb.deviceId != this.deleteTarget.deviceId)
-      this.exbOptions.push({label: "" + this.deleteTarget.deviceId, value: this.deleteTarget.exbId})
+      this.exbOptions.push({label: "" + this.getExbDisp(this.deleteTarget.deviceId), value: this.deleteTarget.exbId})
       this.exbCon.removeChild(this.deleteTarget)
       this.stage.update()
     },
@@ -351,6 +391,7 @@ export default {
       this.showAlert = false
       try {
         let param = []
+
         this.positionedExb.forEach((exb) => {
           if (exb.isChanged) {
             exb.location = {locationId: exb.location.locationId, areaId: this.selectedArea, x: exb.x / this.mapImageScale, y: exb.y / this.mapImageScale}
@@ -358,7 +399,7 @@ export default {
             exb.isChanged = false
           }
         })
-        this.exbs.forEach((exb) => { // deleted
+        this.workExbs.forEach((exb) => { // deleted
           if (exb.location.areaId == this.selectedArea) {
             if (!this.positionedExb.find((pExb) => pExb.exbId == exb.exbId)) {
               exb.location = {locationId: exb.location.locationId, areaId: null, x: null, y: null}

@@ -70,6 +70,9 @@ export default {
       )
       .value()
     },
+    isShown(conf) {
+      return APP[conf]
+    },
     async save() {
       return await AppServiceHelper.save(this.appServicePath, this.form, this.updateOnlyNN)
     },
