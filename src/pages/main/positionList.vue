@@ -37,7 +37,7 @@ export default {
         fields: addLabelByKey(this.$i18n, [ 
           {key: "txId", label: 'tx', sortable: true},
           {key: "potCd", sortable: true},
-          {key: "potName", label: 'tx', sortable: true},
+          {key: "potName", label: 'name', sortable: true},
           {key: "detectState", label: 'state', sortable: true},
           {key: "groupName", label: 'group', sortable: true},
           {key: "areaName", label: 'area', sortable: true},

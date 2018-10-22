@@ -180,6 +180,8 @@
     "tel": "電話番号",
 
     "positionList": "位置把握（一覧）",
+    "detectState": "状態",
+    "detected": "検知中",
 
     "password": "パスワード",
     "passwordCurrent": "現在のパスワード",

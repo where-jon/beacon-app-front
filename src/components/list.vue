@@ -1,27 +1,44 @@
 <template>
-  <div>
+  <b-container>
+    <template slot="gridButtons">
+      <b-button :variant='theme' @click="edit()" v-t="'label.createNew'" />
+      <b-button :variant='theme' v-if="params.bulkEditPath" @click="bulkEdit()" 
+          v-t="'label.bulkRegister'" />
+      <b-button :variant='theme' v-if="params.csvOut" @click="exportCsv"
+            v-t="'label.download'" />
+    </template>
     <!-- searchbox -->
-    <template v-if="!params.hideSearchBox && params.extraFilter">
-      <b-form v-model="form">
+    <template v-if="!params.hideSearchBox">
+      <b-form inline>
         <b-row>
-          <b-col md="可変長"><!-- フィルタ部の外側col -->
+          <b-col><!-- フィルタ部の外側col -->
             <b-row>
               <b-col><!-- 標準絞り込みフィルタ -->
-
+                <b-form-group :label="$t('label.filter')" horizontal>
+                  <b-input-group>
+                    <b-form-input v-model="filter.reg" />
+                    <b-input-group-append>
+                      <b-btn :disabled="!filter.reg" @click="filter.reg = ''" variant="secondary" v-t="'label.clear'" />
+                    </b-input-group-append>
+                  </b-input-group>
+                </b-form-group>
               </b-col>
-              <b-col v-for="a of b" v-bind:key="hoge"><!-- カスタムフィルタ -->
-
+              <!-- カスタムフィルタ -->
+              <b-col v-if="params.extraFilter" v-for="item of extraFilterSpec" v-bind:key="item.key" class="row">
+                <label v-t="'label.' +item.key" class="text-sm-right"></label>
+                <b-form-group  horizontal class="col-auto">
+                  <b-form-select :options="item.options" v-model="filter.extra[item.key]" class="col-auto"/>
+                </b-form-group>
               </b-col>
             </b-row>
           </b-col>
+          <div class="w-100" />
           <b-col><!-- ボタン部の外側col -->
-            <b-row>
-              <b-button :variant='theme' @click="edit()" v-t="'label.createNew'"  class="float-right"/>
-              <b-button :variant='theme' v-if="params.bulkEditPath" @click="bulkEdit()" 
-                  v-t="'label.bulkRegister'"  class="float-right" :style="{ marginRight: '10px'}"/>
-              <b-button :variant='theme' v-if="params.csvOut" @click="exportCsv"
-                   v-t="'label.download'"  class="float-right" :style="{ marginRight: '10px'}"/>
-            </b-row>
+            <b-button :variant='theme' @click="edit()" v-t="'label.createNew'" />
+            <b-button :variant='theme' v-if="params.bulkEditPath" @click="bulkEdit()" 
+                v-t="'label.bulkRegister'" />
+            <b-button :variant='theme' v-if="params.csvOut" @click="exportCsv"
+                  v-t="'label.download'" />
           </b-col>
         </b-row>
         <!-- <b-form-row class="mb-1">
@@ -89,7 +106,7 @@
     <b-modal id="modalInfo" @hide="resetModal" :title="modalInfo.title" @ok="execDelete(modalInfo.id)">
       <pre>{{ modalInfo.content }}</pre>
     </b-modal>
-  </div>
+  </b-container>
 </template>
 
 <script>
@@ -105,6 +122,9 @@ import * as Util from '../sub/util/Util'
 import { getButtonTheme, getTheme, themeColors } from '../sub/helper/ThemeHelper'
 import { getCharSet } from '../sub/helper/CharSetHelper'
 import commonmixinVue from './commonmixin.vue';
+import { DETECT_STATE } from '../sub/constant/Constants'
+
+let that
 
 export default {
   mixin: [commonmixinVue], // not work
@@ -114,10 +134,12 @@ export default {
       currentPage: 1,
       perPage: 10,
       filter: {
-        reg: null,
+        reg: '',
         extra: {
-          category: null,
-          group: null
+          category: '',
+          group: '',
+          area: '',
+          detectState: '',
         },
       },
       extraFilterMaxWidth: 9, // em
@@ -125,6 +147,7 @@ export default {
       modalInfo: { title: '', content: '', id:'' },
       totalRows: this.initTotalRows,
       file: null,
+      detectState: DETECT_STATE,
       ...this.params
     }
   },
@@ -135,12 +158,28 @@ export default {
     isEditable() {
       return MenuHelper.isEditable(this.appServicePath)
     },
+    extraFilterSpec() {
+      if (!this.params.extraFilter) {
+        return {}
+      }
+      return this.params.extraFilter.map((key) => {
+        return {
+          key: key,
+          //model: this.filter.extra[key],
+          options: this[key + 'Options'],
+          style: {
+            width: this.groupSelectWidth,
+          },
+        }
+      })
+    },
     ...mapState([
       'featureList',
     ]),
     ...mapState('app_service', [
       'categories',
       'groups',
+      'areas'
     ]),
     categoryOptions() {
       let options = this.categories.map((category) => {
@@ -161,6 +200,22 @@ export default {
           }
         }
       )
+      options.unshift({value:null, text:''})
+      return options
+    },
+    areaOptions() {
+      let options = this.areas.map((area) => {
+          return {
+            value: area.areaId,
+            text: area.areaName
+          }
+        }
+      )
+      options.unshift({value:null, text:''})
+      return options
+    },
+    detectStateOptions() {
+      let options = this.detectState.getTypes()
       options.unshift({value:null, text:''})
       return options
     },
@@ -185,9 +240,11 @@ export default {
     },
   },
   mounted() {
+    that = this
     this.$parent.$options.methods.fetchData.apply(this.$parent)
     StateHelper.load('group')
     StateHelper.load('category')
+    StateHelper.load('area')
     const theme = getTheme(this.loginId)
     // const color = themeColors[theme]
     // const pageLinks = document.getElementsByClassName('.page-link')
@@ -197,6 +254,12 @@ export default {
     // const pageActive = document.querySelector('a.page-link.btn-primary')
     // pageActive.style.backgroundColor = color
     // pageActive.style.color = '#ffffff'
+  },
+  watch: {
+    filter() {
+      console.log("filter is")
+      console.log(this.filter)
+    }
   },
   methods: {
     ...mapMutations('app_service', [
@@ -279,6 +342,7 @@ export default {
           }
         }
       }
+      //console.log("filtering table...")
       return regBool && extBool
     },
     onFiltered(filteredItems) {

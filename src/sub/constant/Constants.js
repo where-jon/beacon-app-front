@@ -102,6 +102,15 @@ export const LED_BLINK_TYPES = {
   BLINK_FAST: 4,
 }
 
+export const DETECT_STATE = {
+  getTypes(){ 
+    return [
+      {value: 0, text: i18n.t('label.detected')},
+      {value: 1, text: i18n.t('label.undetect')},
+    ]
+  },
+}
+
 export const MENU = [
   {
     key: 'main',
