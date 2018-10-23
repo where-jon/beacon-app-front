@@ -1,112 +1,73 @@
 <template>
-  <b-container>
-    <template slot="gridButtons">
-      <b-button :variant='theme' @click="edit()" v-t="'label.createNew'" />
-      <b-button :variant='theme' v-if="params.bulkEditPath" @click="bulkEdit()" 
-          v-t="'label.bulkRegister'" />
-      <b-button :variant='theme' v-if="params.csvOut" @click="exportCsv"
-            v-t="'label.download'" />
-    </template>
-    <!-- searchbox -->
-    <template v-if="!params.hideSearchBox">
-      <b-form inline>
-        <b-row>
-          <b-col><!-- フィルタ部の外側col -->
-            <b-row>
-              <b-col><!-- 標準絞り込みフィルタ -->
-                <b-form-group :label="$t('label.filter')" horizontal>
-                  <b-input-group>
-                    <b-form-input v-model="filter.reg" />
-                    <b-input-group-append>
-                      <b-btn :disabled="!filter.reg" @click="filter.reg = ''" variant="secondary" v-t="'label.clear'" />
-                    </b-input-group-append>
-                  </b-input-group>
-                </b-form-group>
-              </b-col>
-              <!-- カスタムフィルタ -->
-              <b-col v-if="params.extraFilter" v-for="item of extraFilterSpec" v-bind:key="item.key" class="row">
-                <label v-t="'label.' +item.key" class="text-sm-right"></label>
-                <b-form-group  horizontal class="col-auto">
-                  <b-form-select :options="item.options" v-model="filter.extra[item.key]" class="col-auto"/>
-                </b-form-group>
-              </b-col>
-            </b-row>
+  <b-form inline>
+    <b-container>
+      <!-- searchbox -->
+      <template v-if="!params.hideSearchBox">
+        <b-row class="mb-1">
+          <b-col class="col-auto row mb-1"><!-- 標準絞り込みフィルタ -->
+              <label v-t="'label.filter'" class="col-auto text-left"></label>
+              <b-input-group class="col-auto">
+                <b-form-input v-model="filter.reg"  class="align-self-center"/>
+                <b-input-group-append>
+                  <b-btn :disabled="!filter.reg" @click="filter.reg = ''" variant="secondary" v-t="'label.clear'"  class="align-self-center"/>
+                </b-input-group-append>
+              </b-input-group>
           </b-col>
-          <div class="w-100" />
-          <b-col><!-- ボタン部の外側col -->
-            <b-button :variant='theme' @click="edit()" v-t="'label.createNew'" />
-            <b-button :variant='theme' v-if="params.bulkEditPath" @click="bulkEdit()" 
+          <!-- カスタムフィルタ -->
+          <b-col v-if="params.extraFilter" cols="auto" class="row">
+              <b-col v-for="item of extraFilterSpec" v-bind:key="item.key" class="row col-auto">
+                <label for="item.key" v-t="'label.' + item.key" class="col-auto text-sm-right mx-2 align-self-center" />
+                <b-form-select :id="item.key" :options="item.options" v-model="filter.extra[item.key]"
+                    class="col-auto align-self-center"/>
+              </b-col>
+          </b-col>
+          <div v-if="params.extraFilter" class="w-100 mb-2 " />
+          <b-col cols="auto" class="ml-auto"><!-- ボタン部の外側col -->
+            <b-button :variant='theme' class="mx-1" @click="edit()"
+                v-t="'label.createNew'" />
+            <b-button :variant='theme' class="mx-1" v-if="params.bulkEditPath" @click="bulkEdit()" 
                 v-t="'label.bulkRegister'" />
-            <b-button :variant='theme' v-if="params.csvOut" @click="exportCsv"
-                  v-t="'label.download'" />
+            <b-button :variant='theme' class="mx-1" v-if="params.csvOut" @click="exportCsv"
+                v-t="'label.download'" />
           </b-col>
         </b-row>
-        <!-- <b-form-row class="mb-1">
-            <b-col>
-              <b-form-group :label="$t('label.filter')" horizontal>
-                <b-input-group>
-                  <b-form-input v-model="filter.reg" />
-                  <b-input-group-append>
-                    <b-btn :disabled="!filter" @click="filter. reg = ''" variant="secondary" v-t="'label.clear'" />
-                  </b-input-group-append>
-                </b-input-group>
-              </b-form-group>
-          </b-col>
-          <b-col v-for="item of params.extraFilter" :key="item" class="customFilter">
-            <b-form-group v-if="item === 'category'" :label="$t('label.category')" label-class="text-sm-right" horizontal>
-              <b-form-select :options="categoryOptions" v-model="filter.extra.category" :style="{width: categorySelectWidth}"/>
-            </b-form-group>
-            <b-form-group v-if="item === 'group'" :label="$t('label.group')" label-class="text-sm-right" horizontal>
-              <b-form-select :options="groupOptions" v-model="filter.extra.group" :style="{width: groupSelectWidth}"/>
-            </b-form-group>
-          </b-col>
-        </b-form-row> -->
-      </b-form>
-      <!--<b-form-row class="mb-1">
-        <b-col class="mb-6 justify-content-end">
-        <b-button :variant='theme' @click="edit()" v-t="'label.createNew'"  class="float-right"/>
-        <b-button v-if="params.bulkEditPath" :variant='theme'
-          @click="bulkEdit()" v-t="'label.bulkRegister'"  class="float-right" :style="{ marginRight: '10px'}"/>
-        <b-button v-if="params.csvOut" :variant='theme' @click="exportCsv" v-t="'label.download'"  class="float-right" :style="{ marginRight: '10px'}"/>
-      </b-col>
-      </b-form-row>-->
-      
-    </template>
-
-    <slot></slot>
-
-    <b-row class="mt-3">
-    </b-row>
-  
-    <!-- table -->
-    <b-table show-empty stacked="md" striped hover :items="list" :fields="fields" :current-page="currentPage" :per-page="perPage" outlined
-            :filter="filterGrid" @filtered="onFiltered">
-      <template slot="style" slot-scope="row">
-        <div v-bind:style="style(row.index)">A</div>
       </template>
-      <template slot="actions" slot-scope="row">
-        <!-- 更新ボタン -->
-        <b-button size="sm" @click.stop="edit(row.item, row.index, $event.target)" :variant="theme" class="mr-2 my-1" v-t="'label.' + crud" />
-        <!-- 削除ボタン -->
-        <b-button v-if="isEditable" size="sm" @click.stop="deleteConfirm(row.item, row.index, $event.target)" variant="outline-danger" class="mr-1" v-t="'label.delete'" />
-      </template>
-      <template slot="thumbnail" slot-scope="row">
-        <img v-if="thumbnail(row.index)" :src="thumbnail(row.index)" height="70" />
-      </template>
-    </b-table>
 
-    <!-- pager -->
-    <b-row>
-      <b-col md="6" class="my-1">
-        <b-pagination :total-rows="totalRows" :per-page="perPage" v-model="currentPage" class="my-0" />
-      </b-col>
-    </b-row>
+      <slot></slot>
 
-    <!-- modal -->
-    <b-modal id="modalInfo" @hide="resetModal" :title="modalInfo.title" @ok="execDelete(modalInfo.id)">
-      <pre>{{ modalInfo.content }}</pre>
-    </b-modal>
-  </b-container>
+      <b-row class="mt-3">
+      </b-row>
+    
+      <!-- table -->
+      <b-table show-empty stacked="md" striped hover :items="list" :fields="fields" :current-page="currentPage" :per-page="perPage" outlined
+              :filter="filterGrid" @filtered="onFiltered">
+        <template slot="style" slot-scope="row">
+          <div v-bind:style="style(row.index)">A</div>
+        </template>
+        <template slot="actions" slot-scope="row">
+          <!-- 更新ボタン -->
+          <b-button size="sm" @click.stop="edit(row.item, row.index, $event.target)" :variant="theme" class="mr-2 my-1" v-t="'label.' + crud" />
+          <!-- 削除ボタン -->
+          <b-button v-if="isEditable" size="sm" @click.stop="deleteConfirm(row.item, row.index, $event.target)" variant="outline-danger" class="mr-1" v-t="'label.delete'" />
+        </template>
+        <template slot="thumbnail" slot-scope="row">
+          <img v-if="thumbnail(row.index)" :src="thumbnail(row.index)" height="70" />
+        </template>
+      </b-table>
+
+      <!-- pager -->
+      <b-row>
+        <b-col md="6" class="my-1">
+          <b-pagination :total-rows="totalRows" :per-page="perPage" v-model="currentPage" class="my-0" />
+        </b-col>
+      </b-row>
+
+      <!-- modal -->
+      <b-modal id="modalInfo" @hide="resetModal" :title="modalInfo.title" @ok="execDelete(modalInfo.id)">
+        <pre>{{ modalInfo.content }}</pre>
+      </b-modal>
+    </b-container>
+  </b-form>
 </template>
 
 <script>
@@ -165,11 +126,7 @@ export default {
       return this.params.extraFilter.map((key) => {
         return {
           key: key,
-          //model: this.filter.extra[key],
           options: this[key + 'Options'],
-          style: {
-            width: this.groupSelectWidth,
-          },
         }
       })
     },
@@ -218,18 +175,6 @@ export default {
       let options = this.detectState.getTypes()
       options.unshift({value:null, text:''})
       return options
-    },
-    categorySelectWidth() {
-      const list = this.categoryOptions.map((obj) => obj.text)
-      let width = Util.getMaxTextLength(list, this.extraFilterMaxWidth)
-      width *= this.extraFilterFactor
-      return width + 'em'
-    },
-    groupSelectWidth() {
-      const list = this.groupOptions.map((obj) => obj.text)
-      let width = Util.getMaxTextLength(list, this.extraFilterMaxWidth)
-      width *= this.extraFilterFactor
-      return width + 'em'
     },
     loginId() {
       return this.$store.state.loginId
