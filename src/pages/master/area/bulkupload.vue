@@ -12,6 +12,8 @@ import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/breadcrumb.vue'
 import bulkupload from '../../../components/bulkupload.vue'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
+import * as HtmlUtil from '../../../sub/util/HtmlUtil'
+import { APP } from '../../../sub/constant/config.js'
 
 export default {
   components: {
@@ -49,6 +51,15 @@ export default {
     search(key) {
       const target = this.areas.find((val) => val.areaId == key)
       return target? {id: target.areaId, name: target.areaName, ...target}: null
+    },
+    addLoadImage(imgInfo) {
+      const blob = Util.base64ToBlob(imgInfo.thumbnail)
+      HtmlUtil.readImage({target: {files: [blob]}}, (evt, width, height, thumbnail) => {
+          imgInfo.mapImage = imgInfo.thumbnail
+          imgInfo.mapWidth = width
+          imgInfo.mapHeight = height
+          imgInfo.thumbnail = thumbnail
+      }, APP.AREA_THUMBNAIL_MAX)
     },
     async save(thumbnails) {
       return await AppServiceHelper.bulkSave(this.appServicePath, thumbnails)

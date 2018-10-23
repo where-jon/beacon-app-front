@@ -148,3 +148,14 @@ export const getMaxTextLength = (list, minMax = Infinity) => {
   let max = _.max(list.map(item => getByteLength(item)))
   return max > minMax ? minMax : max
 }
+
+export const base64ToBlob = (base64) => {
+  const byteString = atob( base64.split( "," )[1] )
+  const mimeType = base64.match( /(:)([a-z\/]+)(;)/ )[2]
+  const byteLength = byteString.length
+  const content = new Uint8Array(byteLength)
+  for( let i = 0; i < byteLength; i++ ) {
+    content[i] = byteString.charCodeAt(i)
+  }
+  return new Blob([content], {type: mimeType})
+}
