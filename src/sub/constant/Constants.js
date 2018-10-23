@@ -53,12 +53,18 @@ export const txViewTypes = [
 export const CATEGORY = {
   getTypes(){ 
     return [
-      {value: 0, text: i18n.t('label.person')},
-      {value: 1, text: i18n.t('label.thing')},
-      {value: 2, text: i18n.t('label.zone')},
+      {value: 1, text: i18n.t('label.person')},
+      {value: 2, text: i18n.t('label.thing')},
+      {value: 3, text: i18n.t('label.zone')},
     ]
   },
 }
+
+export const getShapes = () => [
+  {value: 1, text: i18n.t('label.circle')},
+  {value: 2, text: i18n.t('label.square')},
+  {value: 3, text: i18n.t('label.roundedSquare')},
+]
 
 export const ZONE = {
   getTypes(){ 
