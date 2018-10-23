@@ -1,3 +1,3 @@
-"groupId","groupName","ruby","color","bgColor","description"
-"","test001","てすと","000000","ffffff","備考"
-"","test002","てすと","ffffff","000000","備考"
+"groupId","groupName","ruby","shape","color","bgColor","description"
+"","test001","てすと","1","000000","ffffff","備考"
+"","test002","てすと","2","ffffff","000000","備考"

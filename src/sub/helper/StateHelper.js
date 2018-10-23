@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import * as AppServiceHelper from './AppServiceHelper'
 import * as Util from '../util/Util'
-import { CATEGORY } from '../constant/Constants'
+import { CATEGORY, getShapes} from '../constant/Constants'
 
 
 // TODO: 全体的にState管理を共通化する
@@ -17,6 +17,11 @@ export const setApp = (pStore, pi18n) => {
 export const getCategoryTypeName = (category) => {
   const categoryTypeName = CATEGORY.getTypes().find((tval) => tval.value === category.categoryType)
   return categoryTypeName != null? categoryTypeName.text: null
+}
+
+export const getShapeName = (shape) => {
+  const shapeName = getShapes().find((tval) => tval.value === shape)
+  return shapeName != null? shapeName.text: null
 }
 
 const appStateConf = {
@@ -96,6 +101,10 @@ const appStateConf = {
     beforeCommit: (arr) => {
       return arr.map((val) => ({
         ...val,
+        shape: val.display? val.display.shape: null,
+        color: val.display? val.display.color: null,
+        bgColor: val.display? val.display.bgColor: null,
+        shapeName: val.display? getShapeName(val.display.shape): null,
         categoryTypeName: getCategoryTypeName(val),
       }))
     }
@@ -103,6 +112,15 @@ const appStateConf = {
   groups: {
     path: '/basic/group',
     sort: 'groupId',
+    beforeCommit: (arr) => {
+      return arr.map((val) => ({
+        ...val,
+        shape: val.display? val.display.shape: null,
+        color: val.display? val.display.color: null,
+        bgColor: val.display? val.display.bgColor: null,
+        shapeName: val.display? getShapeName(val.display.shape): null,
+      }))
+    }
   },
   users: {
     path: '/meta/user',

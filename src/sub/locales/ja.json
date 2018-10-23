@@ -194,6 +194,8 @@
     "categoryName": "カテゴリ名",
     "categoryType": "種別",
     "parentCategoryId": "親カテゴリID",
+    "shape": "形",
+    "shapeName": "形",
 
     "group": "グループ",
     "groupId": "グループID",
@@ -298,6 +300,10 @@
     "person": "人",
     "thing": "物",
     "zone": "ゾーン",
+
+    "circle": "丸",
+    "square": "四角",
+    "roundedSquare": "角丸四角",
 
     "general": "一般",
     "security": "セキュリティ",

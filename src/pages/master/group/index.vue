@@ -12,8 +12,8 @@ import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import { addLabelByKey } from '../../../sub/helper/ViewHelper'
 import listmixinVue from '../../../components/listmixin.vue'
-import breadcrumb from '../../../components/breadcrumb.vue'
 import * as Util from '../../../sub/util/Util'
+import breadcrumb from '../../../components/breadcrumb.vue'
 
 export default {
   components: {
@@ -34,6 +34,7 @@ export default {
           {key: "groupId", sortable: true },
           {key: "groupName", sortable: true },
           {key: "ruby", sortable: true },
+          {key: "shapeName", sortable: true },
           {key: "style", label: "displayColor" } ,
           {key: "description" },
           {key: "actions", thStyle: {width:'130px !important'} }
@@ -55,7 +56,7 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'groups', 'groupStyles',
+      'groups',
     ]),
   },
   methods: {

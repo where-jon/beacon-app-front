@@ -47,8 +47,23 @@ export default {
   methods: {
     async save(bulkSaveFunc) {
       const MAIN_COL = "categoryId"
-      const NUMBER_TYPE_LIST = ["categoryId", "categoryType"]
-      await bulkSaveFunc(MAIN_COL, NUMBER_TYPE_LIST)
+      const NUMBER_TYPE_LIST = ["categoryType", "shape"]
+      const DISPLAY_COL = ["shape", "color", "bgColor"]
+      await bulkSaveFunc(MAIN_COL, NUMBER_TYPE_LIST, null, (entity, headerName, val, dummyKey) => {
+        if(headerName == MAIN_COL){
+          entity.categoryId = Util.hasValue(val)? Number(val): --dummyKey  
+        }
+        else if (_.includes(DISPLAY_COL, headerName)) {
+          if (!entity.display) {
+            entity.display = {}
+          }
+          entity.display[headerName] = val
+        }
+        else{
+          entity[headerName] = val
+        }
+        return dummyKey
+      })
     },
   }
 }
