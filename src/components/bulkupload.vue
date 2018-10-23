@@ -32,7 +32,7 @@ import { getButtonTheme } from '../sub/helper/ThemeHelper'
 import { getTheme } from '../sub/helper/ThemeHelper'
 import Encoding from 'encoding-japanese'
 import * as Util from '../sub/util/Util'
-import JsZip from 'JSZip'
+import JsZip from 'jszip'
 
 let that
 let fileReader
