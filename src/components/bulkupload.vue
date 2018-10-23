@@ -65,11 +65,15 @@ export default {
             const target = that.$parent.$options.methods.search.call(that.$parent, id)
             if(target){
               zip.file(key).async("base64").then((val) =>{
-                that.form.thumbnails.push({
+                let imgInfo = {
                   ...target,
                   type: key.slice(key.lastIndexOf(".") + 1),
                   thumbnail: `data:image/${key.slice(key.lastIndexOf(".") + 1)};base64,${val}`
-                })
+                }
+                if(that.$parent.$options.methods.addLoadImage){
+                  that.$parent.$options.methods.addLoadImage.call(that.$parent, imgInfo)
+                }
+                that.form.thumbnails.push(imgInfo)
                 that.afterLoadFile()
               })
             }else{
