@@ -4,7 +4,8 @@
       <!-- searchbox -->
       <template v-if="!params.hideSearchBox">
         <b-row class="mb-1">
-          <b-col class="col-auto row mb-1"><!-- 標準絞り込みフィルタ -->
+          <!-- 標準絞り込みフィルタ -->
+          <b-col class="col-auto row mb-1">
               <label v-t="'label.filter'" class="col-auto text-left"></label>
               <b-input-group class="col-auto">
                 <b-form-input v-model="filter.reg"  class="align-self-center"/>
@@ -14,15 +15,16 @@
               </b-input-group>
           </b-col>
           <!-- カスタムフィルタ -->
-          <b-col v-if="params.extraFilter" cols="auto" class="row">
-              <b-col v-for="item of extraFilterSpec" v-bind:key="item.key" class="row col-auto">
-                <label for="item.key" v-t="'label.' + item.key" class="col-auto text-sm-right mx-2 align-self-center" />
-                <b-form-select :id="item.key" :options="item.options" v-model="filter.extra[item.key]"
-                    class="col-auto align-self-center"/>
-              </b-col>
-          </b-col>
+          <template v-if="params.extraFilter" >
+            <b-col v-for="item of extraFilterSpec" v-bind:key="item.key" class="row col-auto">
+              <label for="item.key" v-t="'label.' + item.key" class="col-auto text-sm-right mx-2 align-self-center" />
+              <b-form-select :id="item.key" :options="item.options" v-model="filter.extra[item.key]"
+                  class="col-auto align-self-center extra-filter"/>
+            </b-col>
+          </template>
           <div v-if="params.extraFilter" class="w-100 mb-2 " />
-          <b-col cols="auto" class="ml-auto"><!-- ボタン部の外側col -->
+          <!-- ボタン部 -->
+          <b-col v-if="!params.disableTableButtons" cols="auto" class="ml-auto">
             <b-button :variant='theme' class="mx-1" @click="edit()"
                 v-t="'label.createNew'" />
             <b-button :variant='theme' class="mx-1" v-if="params.bulkEditPath" @click="bulkEdit()" 
@@ -326,4 +328,7 @@ export default {
     line-height: 35px;
   }
   
+  select.extra-filter {
+    max-width: 10em;
+  }
 </style>

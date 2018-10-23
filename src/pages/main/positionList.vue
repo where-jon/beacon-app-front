@@ -27,12 +27,8 @@ export default {
       params: {
         name: 'positionList',
         id: 'positionListId',
-        //editPath: '/master/pot/edit',
         appServicePath: '/core/tx',
-        //bulkEditPath: '/master/pot/bulkEdit',
-        //csvOut: true,
         extraFilter: ['detectState', 'group', 'area'],
-        // TODO オプション準備
         disableTableButtons: true,
         fields: addLabelByKey(this.$i18n, [ 
           {key: "txId", label: 'tx', sortable: true},
@@ -46,8 +42,6 @@ export default {
         ]),
         initTotalRows: this.$store.state.app_service.txComposites.length,
       },
-      // name: 'pot',
-      // extValueDefault: {},
       items: [
         {
           text: this.$i18n.t('label.main'),
