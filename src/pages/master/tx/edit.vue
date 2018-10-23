@@ -10,9 +10,13 @@
       <b-row>
         <b-col md="8" offset-md="2">
           <b-form @submit="onSubmit" v-if="show">
-            <b-form-group v-if="hasId">
+            <b-form-group v-if="hasId" v-show="isShown('TX_WITH_TXID')">
               <label v-t="'label.txId'" />
               <b-form-input type="text" v-model="form.txId" readonly="readonly" />
+            </b-form-group>
+            <b-form-group v-if="showMinorHead" v-show="showTx('minor')">
+              <label v-t="'label.minor'" />
+              <b-form-input type="number" v-model="form.minor" :readonly="!isEditable" :required="showTx('minor')"/>
             </b-form-group>
             <b-form-group>
               <label v-t="'label.type'" />
@@ -24,15 +28,15 @@
             </b-form-group>
             <b-form-group v-show="showTx('btxId')">
               <label v-t="'label.btxId'" />
-              <b-form-input type="number" v-model="form.btxId" required :readonly="!isEditable" />
+              <b-form-input type="number" v-model="form.btxId"  :required="showTx('btxId')" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group v-show="isShown('TX_WITH_MAJOR')">
               <label v-t="'label.major'" />
               <b-form-input type="number" v-model="form.major" :readonly="!isEditable" />
             </b-form-group>
-            <b-form-group v-show="showTx('minor')">
+            <b-form-group v-if="showMinorMid" v-show="showTx('minor')">
               <label v-t="'label.minor'" />
-              <b-form-input type="number" v-model="form.minor" :readonly="!isEditable" />
+              <b-form-input type="number" v-model="form.minor" :readonly="!isEditable" :required="showTx('minor')"/>
             </b-form-group>
             <b-form-group>
               <label v-t="'label.txName'" />
@@ -129,6 +133,12 @@ export default {
       options.unshift({value:null, text:''})
       return options
     },
+    showMinorMid() {
+      !this.showMinorHead
+    },
+    showMinorHead() {
+      return !APP.TX_WITH_TXID && APP.TX_BTX_MINOR == 'minor'
+    },
     ...mapState('app_service', [
       'tx',
       'categories',
@@ -141,9 +151,6 @@ export default {
     StateHelper.load('category')
   },
   methods: {
-    isShown(conf) {
-      return APP[conf]
-    },
     showTx(col) {
       switch(APP.TX_BTX_MINOR) {
         case 'both':
@@ -157,6 +164,12 @@ export default {
     },
     async save() {
       let txId = Util.hasValue(this.form.txId)? this.form.txId: -1
+      switch(APP.TX_BTX_MINOR) {
+        case 'minor':
+          this.form.btxId = this.form.minor
+        case 'btxId':
+          this.form.minor = this.form.btxId
+      }
       let entity = {
         ...this.form,
         txId,

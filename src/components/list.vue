@@ -60,6 +60,11 @@
         <b-col md="6" class="my-1">
           <b-pagination :total-rows="totalRows" :per-page="perPage" v-model="currentPage" class="my-0" />
         </b-col>
+        <!-- bulk upload button -->
+        <b-col md="6" class="my-1">
+          <b-button v-if="params.bulkUploadPath" :variant='theme'
+            @click="bulkUpload()" v-t="'label.bulkUpload'"  class="float-right" />
+        </b-col>
       </b-row>
 
       <!-- modal -->
@@ -227,12 +232,18 @@ export default {
       return this.$parent.$options.methods.style.call(this.$parent, index)
     },
     async edit(item, index, target) {
-      let list = item != null? await AppServiceHelper.fetch(this.appServicePath, item[this.id]): {}
-      this.replaceAS({[this.name]: list})
+      let entity = item != null? await AppServiceHelper.fetch(this.appServicePath, item[this.id]): {}
+      if (this.$parent.$options.methods.convBeforeEdit) {
+        entity = this.$parent.$options.methods.convBeforeEdit.call(this.$parent, entity)
+      }
+      this.replaceAS({[this.name]: entity})
       this.$router.push(this.editPath)
     },
     async bulkEdit(item, index, target) {
       this.$router.push(this.params.bulkEditPath)
+    },
+    async bulkUpload(item, index, target) {
+      this.$router.push(this.params.bulkUploadPath)
     },
     deleteConfirm(item, index, button) {
       this.modalInfo.title = this.$i18n.t('label.confirm')

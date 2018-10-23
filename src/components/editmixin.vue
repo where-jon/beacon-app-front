@@ -20,8 +20,10 @@ export default {
     return {
       show: true,
       showInfo: false,
+      showWarn: false,
       showAlert: false,
       message: '',
+      warnMessage: '',
       again: true,
     }
   },
@@ -70,13 +72,18 @@ export default {
       )
       .value()
     },
+    isShown(conf) {
+      return APP[conf]
+    },
     async save() {
       return await AppServiceHelper.save(this.appServicePath, this.form, this.updateOnlyNN)
     },
     async onSubmit(evt) {
       this.replace({showProgress: true})
       this.message = ''
+      this.warnMessage = ''
       this.showInfo = false
+      this.showWarn = false
       this.showAlert = false
       evt.preventDefault()
       try {

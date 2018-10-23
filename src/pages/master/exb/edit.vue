@@ -7,15 +7,19 @@
       <b-row>
         <b-col md="8" offset-md="2">
           <b-form @submit="onSubmit" v-if="show">
-            <b-form-group v-if="form.exbId">
+            <b-form-group v-if="form.exbId" v-show="isShown('EXB_WITH_EXBID')">
               <label v-t="'label.exbId'" />
               <b-form-input type="text" v-model="form.exbId" readonly="readonly" />
             </b-form-group>
-            <b-form-group>
+            <b-form-group v-show="isShown('EXB_WITH_DEVICE_NUM')">
+              <label v-t="'label.deviceNum'" />
+              <b-form-input type="number" v-model.lazy="deviceNum" required :readonly="!isEditable" />
+            </b-form-group>
+            <b-form-group v-show="isShown('EXB_WITH_DEVICE_ID')">
               <label v-t="'label.deviceId'" />
               <b-form-input type="number" v-model.lazy="deviceId" required :readonly="!isEditable" />
             </b-form-group>
-            <b-form-group>
+            <b-form-group v-show="isShown('EXB_WITH_DEVICE_IDX')">
               <label v-t="'label.deviceIdX'" />
               <b-form-input type="text" v-model.lazy="deviceIdX" required :readonly="!isEditable" />
             </b-form-group>
@@ -27,7 +31,7 @@
               <label v-t="'label.areaName'" />
               <b-form-select v-model="form.areaId" :options="areaOptions" class="mb-3 ml-3 col-4" :readonly="!isEditable" />
             </b-form-group>
-            <b-form-group>
+            <b-form-group v-show="isShown('EXB_WITH_POSID')">
               <label v-t="'label.posId'" />
               <b-form-input type="number" v-model="form.posId" required :readonly="!isEditable" />
             </b-form-group>
@@ -74,6 +78,7 @@ import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import editmixinVue from '../../../components/editmixin.vue'
+import { APP } from '../../../sub/constant/config.js'
 import { txViewTypes } from '../../../sub/constant/Constants'
 import breadcrumb from '../../../components/breadcrumb.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
@@ -105,6 +110,7 @@ export default {
       },
       deviceId: null,
       deviceIdX: null,
+      deviceNum: null,
       items: [
         {
           text: this.$i18n.t('label.master'),
@@ -152,6 +158,7 @@ export default {
         this.mutex = true
         this.deviceId = newVal 
         this.deviceIdX = newVal? Number(newVal).toString(16).toUpperCase(): null
+        this.deviceNum = newVal? Number(newVal) - this.$store.state.currentRegion.deviceOffset: null
         this.mutex = false
       }
     },
@@ -168,6 +175,16 @@ export default {
           }
           this.deviceIdX = newVal
           this.deviceId = parseInt(newVal, 16) 
+        }
+        this.mutex = false
+      }
+    },
+    deviceNum: function(newVal, oldVal) {
+      if (!this.mutex) {
+        this.mutex = true
+        if (newVal) {
+          this.deviceNum = newVal 
+          this.deviceId = Number(newVal) + this.$store.state.currentRegion.deviceOffset
         }
         this.mutex = false
       }
@@ -204,6 +221,7 @@ export default {
       let ret = await AppServiceHelper.bulkSave(this.appServicePath, [entity])
       this.deviceId = null
       this.deviceIdX = null
+      this.deviceNum = null
       return ret
    },
   }

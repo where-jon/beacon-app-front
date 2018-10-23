@@ -10,6 +10,7 @@ import mList from '../../../components/list.vue'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import { addLabelByKey } from '../../../sub/helper/ViewHelper'
+import { APP } from '../../../sub/constant/config.js'
 import listmixinVue from '../../../components/listmixin.vue'
 import breadcrumb from '../../../components/breadcrumb.vue'
 import * as Util from '../../../sub/util/Util'
@@ -32,11 +33,12 @@ export default {
         appServicePath: '/core/exb',
         csvOut: true,
         fields: addLabelByKey(this.$i18n, [ 
-          {key: "exbId", sortable: true },
-          {key: "deviceId", sortable: true },
-          {key: "deviceIdX", sortable: true },
+          APP.EXB_WITH_EXBID? {key: "exbId", sortable: true }: null,
+          APP.EXB_WITH_DEVICE_NUM? {key: "deviceNum", sortable: true }: null,
+          APP.EXB_WITH_DEVICE_ID? {key: "deviceId", sortable: true }: null,
+          APP.EXB_WITH_DEVICE_IDX? {key: "deviceIdX", sortable: true }: null,
           {key: "locationName", label:'locationName', sortable: true,},
-          {key: "posId", label:'posId', sortable: true,},
+          APP.EXB_WITH_POSID? {key: "posId", label:'posId', sortable: true,}: null,
           {key: "areaName", label:'areaName', sortable: true,},
           {key: "x", label:'locationX', sortable: true,},
           {key: "y", label:'locationY', sortable: true,},
@@ -79,7 +81,10 @@ export default {
         console.error(e)
       }
       this.replace({showProgress: false})
-    }
+    },
+    // convBeforeEdit(exb) {
+    //   return {...exb, deviceNum: exb.deviceId - that.$store.state.currentRegion.deviceOffset}
+    // }
   }
 }
 </script>

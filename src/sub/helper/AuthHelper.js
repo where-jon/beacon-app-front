@@ -59,10 +59,15 @@ export const authByAppService = async (loginId, password, success, err) => {
         }).sortBy((val) => val.path.length * -1).value()
         let menu = MenuHelper.fetchNav(featureList, tenantFeatureList)
 
+        // get region
+        let currentRegion = await HttpHelper.getAppService('/core/region/current')
+
         // get setting
         let setting = await HttpHelper.getAppService('/meta/setting')
         ConfigHelper.applyAppServiceSetting(setting)
-        await login({loginId, username:user.name, role:data.role, featureList, tenantFeatureList, menu}, setting)
+
+        // Login process
+        await login({loginId, username:user.name, role:data.role, featureList, tenantFeatureList, menu, currentRegion}, setting)
         success()
     } catch (e) {
         console.error(e)

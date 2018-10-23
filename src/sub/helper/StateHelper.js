@@ -44,12 +44,13 @@ const appStateConf = {
         const area = location? location.area: null
         return {
           ...exb,
+          deviceNum: exb.deviceId - store.state.currentRegion.deviceOffset,
           deviceIdX: exb.deviceId.toString(16).toUpperCase(),
           locationName: location? location.locationName: null,
           posId: location? location.posId: null,
           areaName: area? area.areaName: null,
-          x: location? location.x: null,
-          y: location? location.y: null,
+          x: location? Math.round(location.x * 10)/10: null,
+          y: location? Math.round(location.y * 10)/10: null,
           sensor: i18n.t('label.' + Util.getValue(exb, 'exbSensorList.0.sensor.sensorName', 'normal'))
         }
       })
