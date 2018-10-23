@@ -1,6 +1,6 @@
 <template>
-  <div class="breadcrumb navigation">
-    <div class="col-md-11 list-container">
+  <div class="breadcrumb navigation row">
+    <div class="col-auto mr-auto list-container">
       <ol class="breadcrumb-items">
         <li v-for="(item, index) in items" :key="index">
           <span v-if="isActive(item)" v-text="item.text"></span>
@@ -8,16 +8,28 @@
         </li>
       </ol>
     </div>
-    <div class="col-md-1 reload-button-container">
+    <div class="col-auto reload-button-container ">
       <a href="#" id="reload" v-if="reload" @click="onClickReload"><i title="リロード" :class="classes"></i></a>
+    </div>
+    <div class="col-auto px-0" >
+      <b-nav-item-dropdown v-if="extraNavSpec.length > 0" class="extra-nav"
+        :extra-menu-classes="extNavClasses" right>
+        <template slot="button-content">
+          <em>{{items.slice(-1)[0].text}}</em>
+        </template>
+        <b-dropdown-item v-for="extraNav in extraNavSpec" :key="extraNav.key"
+            @click="move(extraNav.path)" :class="extNavClasses">
+          <i :class="extraNav.icon" class="ml-3" />&nbsp;{{$t('label.' + extraNav.key)}}
+        </b-dropdown-item>
+      </b-nav-item-dropdown>
     </div>
   </div>
 </template>
 
 <script>
 
-import bBreadcrumb from 'bootstrap-vue/es/components/breadcrumb/breadcrumb'
-import { getTheme } from '../sub/helper/ThemeHelper'
+import Breadcrumb from 'bootstrap-vue/es/components/breadcrumb/breadcrumb'
+import { getTheme, themeColors, getThemeClasses } from '../sub/helper/ThemeHelper'
 import * as HtmlUtil from '../sub/util/HtmlUtil'
 import * as AuthHelper from '../sub/helper/AuthHelper'
 import { EventBus } from '../sub/helper/EventHelper'
@@ -37,6 +49,10 @@ export default {
     isLoad: {
       type: Boolean,
       default: false
+    },
+    extraNavSpec: {
+      type: Array,
+      default() {return []},
     }
   },
   mounted() {
@@ -46,6 +62,8 @@ export default {
         reload.click()
       }, DISP.AUTO_RELOAD)  
     }
+
+    this.setDropdownMenuColor()
   },
   computed: {
     loginId() {
@@ -53,7 +71,12 @@ export default {
     },
     classes() {
       return 'fas fa-sync-alt' + (!this.isLoad ? '' : ' fa-spin')
-    }
+    },
+    extNavClasses() {
+      const storeTheme = this.$store.state.setting.theme
+      const theme = getThemeClasses(this.loginId)
+      return _.findKey(theme, (val) => {return val})
+    },
   },
   methods: {
     isActive (item) {
@@ -74,6 +97,17 @@ export default {
         }
       })
     },
+    setColor(className, color) {
+      [].forEach.call(document.getElementsByClassName(className), (e) => {
+        e.style.backgroundColor = color
+      })
+    },
+    setDropdownMenuColor() {
+      const theme = getTheme(this.loginId)
+      const color = themeColors[theme]
+      this.setColor('dropdown-menu', color)
+      this.setColor('dropdown-item', color)
+    }
   }
 }
 
@@ -119,6 +153,13 @@ export default {
   div.reload-button-container a {
     color: #333;
     text-decoration: none;
+  }
+
+  li.extra-nav a.nav-link {
+    padding-top: 0rem;
+    padding-bottom: 0rem;
+    color: #333;
+    background-color: #e9ecef;
   }
 
 </style>

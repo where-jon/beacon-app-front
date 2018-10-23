@@ -186,6 +186,8 @@
     "detectState": "状態",
     "detected": "検知中",
 
+    "positionStack": "位置把握（階層図）",
+
     "password": "パスワード",
     "passwordCurrent": "現在のパスワード",
     "passwordUpdate": "変更パスワード",

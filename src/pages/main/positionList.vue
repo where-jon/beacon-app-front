@@ -1,6 +1,7 @@
 <template>
   <div>
-    <breadcrumb :items="items" />
+    <breadcrumb :items="items" :extraNavSpec="extraNavSpec"
+        :reload="reload" :isLoad="isLoad"/>
     <m-list :params="params" :list="txComposites" />
   </div>
 </template>
@@ -51,7 +52,26 @@ export default {
           text: this.$i18n.t('label.positionList'),
           active: true
         }
-      ]
+      ],
+      reload: false,
+      isLoad: false,
+      extraNavSpec: [
+        {
+          key: 'showPosition',
+          path: '/main/position',
+          icon: 'fas fa-map-marker-alt',
+        },
+        {
+          key: 'positionList',
+          path: '/main/positionList',
+          icon: 'fas fa-list',
+        },
+        {
+          key: 'positionStack',
+          path: '/main/positionStack',
+          icon: 'far fa-building',
+        },
+      ],
     }
   },
   computed: {
