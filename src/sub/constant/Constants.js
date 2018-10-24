@@ -60,6 +60,12 @@ export const CATEGORY = {
   },
 }
 
+export const SHAPE = {
+  CIRCLE: 1,
+  SQUARE: 2,
+  ROUND_SQUARE: 3,
+}
+
 export const getShapes = () => [
   {value: 1, text: i18n.t('label.circle')},
   {value: 2, text: i18n.t('label.square')},
