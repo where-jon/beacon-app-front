@@ -47,7 +47,7 @@
       <p></p>
       <b-row>
         <b-col md="10" offset-md="2">
-          <b-button size="sm" variant="info" v-t="'label.download'" @click="download()"></b-button> 
+          <b-button :variant="theme" @click="download()" v-t="'label.download'" />
         </b-col>
       </b-row>
     </div>
@@ -110,7 +110,7 @@ export default {
     zoneOptions() {
       return this.zoneOptionList
     },
-    getTheme () {
+    theme () {
       const theme = getTheme(this.$store.state.loginId)
       return 'outline-' + theme
     },
