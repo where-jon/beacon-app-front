@@ -154,7 +154,9 @@ export default {
       return options
     },
     txOptions() {
-      let options = this.txs.map((tx) => {
+      const useTxIds = this.pots.map((val) => val.txId)
+      let options = this.txs.filter((tx) => !_.includes(useTxIds, tx.txId) || tx.txId == this.pot.txId )
+      options = options.map((tx) => {
           return {
             value: tx.txId,
             text: tx.txName
@@ -166,6 +168,7 @@ export default {
     },
     ...mapState('app_service', [
       'pot',
+      'pots',
       'groups',
       'categories',
       'txs',
