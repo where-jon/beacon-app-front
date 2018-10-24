@@ -80,6 +80,7 @@ export default {
   methods: {
     reset() {
       this.isShownMapImage = false
+      this.resetDetail()
     },
     async showDetail(txId, x, y) {
       let rev = y > 400
