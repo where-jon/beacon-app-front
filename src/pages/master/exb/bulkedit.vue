@@ -27,15 +27,15 @@ export default {
       appServicePath: '/core/exb',
       items: [
         {
-          text: this.$i18n.t('label.master'),
+          text: this.$i18n.tnl('label.master'),
           active: true
         },
         {
-          text: this.$i18n.t('label.exb'),
+          text: this.$i18n.tnl('label.exb'),
           href: '/master/exb',
         },
         {
-          text: this.$i18n.t('label.exb') + this.$i18n.t('label.bulkRegister'),
+          text: this.$i18n.tnl('label.exb') + this.$i18n.tnl('label.bulkRegister'),
           active: true
         }
       ]

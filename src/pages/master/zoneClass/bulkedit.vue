@@ -26,15 +26,15 @@ export default {
       appServicePath: '/core/zone',
       items: [
         {
-          text: this.$i18n.t('label.master'),
+          text: this.$i18n.tnl('label.master'),
           active: true
         },
         {
-          text: this.$i18n.t('label.zoneClass'),
+          text: this.$i18n.tnl('label.zoneClass'),
           href: '/master/zoneClass',
         },
         {
-          text: this.$i18n.t('label.zoneClass') + this.$i18n.t('label.bulkRegister'),
+          text: this.$i18n.tnl('label.zoneClass') + this.$i18n.tnl('label.bulkRegister'),
           active: true
         }
       ]

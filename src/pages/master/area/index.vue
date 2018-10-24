@@ -41,11 +41,11 @@ export default {
       },
       items: [
         {
-          text: this.$i18n.t('label.master'),
+          text: this.$i18n.tnl('label.master'),
           active: true
         },
         {
-          text: this.$i18n.t('label.area'),
+          text: this.$i18n.tnl('label.area'),
           active: true
         }
       ]

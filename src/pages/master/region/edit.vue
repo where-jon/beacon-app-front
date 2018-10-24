@@ -55,15 +55,15 @@ export default {
       form: ViewHelper.extract(this.$store.state.app_service.region, ["regionId", "regionName", "meshId", "description"]),
       items: [
         {
-          text: this.$i18n.t('label.master'),
+          text: this.$i18n.tnl('label.master'),
           active: true
         },
         {
-          text: this.$i18n.t('label.region'),
+          text: this.$i18n.tnl('label.region'),
           href: '/master/region',
         },
         {
-          text: this.$i18n.t('label.region') + this.$i18n.t('label.detail'),
+          text: this.$i18n.tnl('label.region') + this.$i18n.tnl('label.detail'),
           active: true
         }
       ]

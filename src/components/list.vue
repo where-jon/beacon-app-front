@@ -238,8 +238,8 @@ export default {
       this.$router.push(this.params.bulkUploadPath)
     },
     deleteConfirm(item, index, button) {
-      this.modalInfo.title = this.$i18n.t('label.confirm')
-      this.modalInfo.content = this.$i18n.t('message.deleteConfirm', {target: "ID:" + item[this.id]})
+      this.modalInfo.title = this.$i18n.tnl('label.confirm')
+      this.modalInfo.content = this.$i18n.tnl('message.deleteConfirm', {target: "ID:" + item[this.id]})
       this.modalInfo.id = item[this.id]
       this.$root.$emit('bv::show::modal', 'modalInfo', button)
     },

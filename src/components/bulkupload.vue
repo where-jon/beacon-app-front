@@ -105,11 +105,11 @@ export default {
       this.showInfo = hasUploadThumbnails
       this.showAlert = !hasUploadThumbnails || Util.hasValue(this.errorThumbnails)
       this.message = hasUploadThumbnails?
-        `${this.$i18n.t("message.uploadData", {val: this.form.thumbnails.length})}`:
-        `${this.$i18n.t("message.uploadNoData")}`
+        `${this.$i18n.tnl("message.uploadData", {val: this.form.thumbnails.length})}`:
+        `${this.$i18n.tnl("message.uploadNoData")}`
       const hasUploadWarnThumbnails = this.form && Util.hasValue(this.form.warnThumbnails)
       this.showWarn = hasUploadWarnThumbnails
-      this.warnMessage = hasUploadWarnThumbnails? `${this.$i18n.t("message.uploadWarnData", {val: this.form.warnThumbnails.length})}`: ""
+      this.warnMessage = hasUploadWarnThumbnails? `${this.$i18n.tnl("message.uploadWarnData", {val: this.form.warnThumbnails.length})}`: ""
     },
     beforeReload(){
       this.formKey++

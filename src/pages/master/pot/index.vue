@@ -53,11 +53,11 @@ export default {
       extValueDefault: {},
       items: [
         {
-          text: this.$i18n.t('label.master'),
+          text: this.$i18n.tnl('label.master'),
           active: true
         },
         {
-          text: this.$i18n.t('label.pot'),
+          text: this.$i18n.tnl('label.pot'),
           active: true
         }
       ]

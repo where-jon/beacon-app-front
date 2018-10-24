@@ -25,15 +25,15 @@ export default {
       appServicePath: '/basic/category',
       items: [
         {
-          text: this.$i18n.t('label.master'),
+          text: this.$i18n.tnl('label.master'),
           active: true
         },
         {
-          text: this.$i18n.t('label.category'),
+          text: this.$i18n.tnl('label.category'),
           href: '/master/category',
         },
         {
-          text: this.$i18n.t('label.category') + this.$i18n.t('label.bulkRegister'),
+          text: this.$i18n.tnl('label.category') + this.$i18n.tnl('label.bulkRegister'),
           active: true
         }
       ]

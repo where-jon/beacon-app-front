@@ -75,15 +75,15 @@ export default {
       categoryNames: [],
       items: [
         {
-          text: this.$i18n.t('label.master'),
+          text: this.$i18n.tnl('label.master'),
           active: true
         },
         {
-          text: this.$i18n.t('label.zoneClass'),
+          text: this.$i18n.tnl('label.zoneClass'),
           href: '/master/zoneClass',
         },
         {
-          text: this.$i18n.t('label.zoneClass') + this.$i18n.t('label.detail'),
+          text: this.$i18n.tnl('label.zoneClass') + this.$i18n.tnl('label.detail'),
           active: true
         }
       ]

@@ -44,11 +44,11 @@ export default {
       },
       items: [
         {
-          text: this.$i18n.t('label.setting'),
+          text: this.$i18n.tnl('label.setting'),
           active: true
         },
         {
-          text: this.$i18n.t('label.system'),
+          text: this.$i18n.tnl('label.system'),
           active: true
         },
       ],

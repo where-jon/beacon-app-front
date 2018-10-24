@@ -20,11 +20,11 @@
           <b-form inline>
             <label v-t="'label.zoneCategoryName'" class="leftsidelabel"/>
             <v-select v-model="vModelCategory" :options="categoryOptions" :on-change="categoryChange" required class="ml-2">
-              <div slot="no-options">{{$i18n.t('label.vSelectNoOptions')}}</div>
+              <div slot="no-options">{{$i18n.tnl('label.vSelectNoOptions')}}</div>
             </v-select>
             <label v-t="'label.zoneName'" />
             <v-select v-model="vModelZone" :options="zoneOptions" :on-change="zoneChange" required class="ml-2">
-              <div slot="no-options">{{$i18n.t('label.vSelectNoOptions')}}</div>
+              <div slot="no-options">{{$i18n.tnl('label.vSelectNoOptions')}}</div>
             </v-select>
           </b-form>
         </b-col>
@@ -75,11 +75,11 @@ export default {
     return {
       items: [
         {
-          text: this.$i18n.t('label.historyTitle'),
+          text: this.$i18n.tnl('label.historyTitle'),
           active: true
         },
         {
-          text: this.$i18n.t('label.temperatureHistory'),
+          text: this.$i18n.tnl('label.temperatureHistory'),
           active: true
         }
       ],
@@ -120,7 +120,7 @@ export default {
   },
   mounted() {
     this.fetchPrev()
-    this.replace({title: this.$i18n.t('label.temperatureHistory')})
+    this.replace({title: this.$i18n.tnl('label.temperatureHistory')})
   },
   methods: {
     async fetchZoneCategoryList() {
@@ -244,13 +244,13 @@ export default {
       this.showInfo = false
       this.showAlert = false
       if (this.dateFrom == 0 || this.dateTo == 0) {
-        this.message = this.$i18n.t('message.required', {target: this.$i18n.t('label.historyDateFrom')})
+        this.message = this.$i18n.tnl('message.required', {target: this.$i18n.tnl('label.historyDateFrom')})
         this.showAlert = true
         return
       }
       this.temperatureHistoryData = await this.dataDownload()
       if (this.temperatureHistoryData == null || this.temperatureHistoryData.length == 0) {
-        this.message = this.$i18n.t('message.notFound')
+        this.message = this.$i18n.tnl('message.notFound')
         this.showAlert = true
         return
       }

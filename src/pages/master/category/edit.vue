@@ -71,15 +71,15 @@ export default {
       form: ViewHelper.extract(this.$store.state.app_service.category, ["categoryId", "categoryName", "categoryType", "display", "description"]),
       items: [
         {
-          text: this.$i18n.t('label.master'),
+          text: this.$i18n.tnl('label.master'),
           active: true
         },
         {
-          text: this.$i18n.t('label.category'),
+          text: this.$i18n.tnl('label.category'),
           href: '/master/category',
         },
         {
-          text: this.$i18n.t('label.category') + this.$i18n.t('label.detail'),
+          text: this.$i18n.tnl('label.category') + this.$i18n.tnl('label.detail'),
           active: true
         }
       ]

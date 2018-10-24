@@ -25,15 +25,15 @@ export default {
       appServicePath: '/core/region',
       items: [
         {
-          text: this.$i18n.t('label.master'),
+          text: this.$i18n.tnl('label.master'),
           active: true
         },
         {
-          text: this.$i18n.t('label.region'),
+          text: this.$i18n.tnl('label.region'),
           href: '/master/region',
         },
         {
-          text: this.$i18n.t('label.region') + this.$i18n.t('label.bulkRegister'),
+          text: this.$i18n.tnl('label.region') + this.$i18n.tnl('label.bulkRegister'),
           active: true
         }
       ]

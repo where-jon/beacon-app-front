@@ -48,11 +48,11 @@ export default {
      return {
       items: [
         {
-          text: this.$i18n.t('label.main'),
+          text: this.$i18n.tnl('label.main'),
           active: true
         },
         {
-          text: this.$i18n.t('label.showPosition'),
+          text: this.$i18n.tnl('label.showPosition'),
           active: true
         },
       ],
@@ -70,7 +70,7 @@ export default {
   },
   mounted() {
     that = this
-    this.replace({title: this.$i18n.t('label.showPosition')})
+    this.replace({title: this.$i18n.tnl('label.showPosition')})
     this.fetchData()
   },
   updated(){

@@ -105,11 +105,11 @@ export default {
       },
       items: [
         {
-          text: this.$i18n.t('label.main'),
+          text: this.$i18n.tnl('label.main'),
           active: true
         },
         {
-          text: this.$i18n.t('label.ledOperation'),
+          text: this.$i18n.tnl('label.ledOperation'),
           active: true
         }
       ],
