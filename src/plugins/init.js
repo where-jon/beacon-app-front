@@ -8,7 +8,8 @@ export default (context, inject) => {
     ConfigHelper.loadSetting()
 }
   
-if (!String.prototype.includes) {
+if (String.prototype.includes) {
+  console.info("Adding methods. Don't use methods in IE before this is called.")
   String.prototype.includes = function(search, start) {
     'use strict'
     if (typeof start !== 'number') {

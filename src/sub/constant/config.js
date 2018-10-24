@@ -5,8 +5,8 @@ import { LOGIN_MODE } from './Constants';
 
 export const DEV = {
   DEBUG: 0, // デバッグモード (0:なし、1以上デバッグレベル)
-  USE_MOCK_APS: false || location.search.includes("mockAps"), // AppService API結果の代わりにモックデータを使用する
-  USE_MOCK_EXC: false || location.search.includes("mockExc"), // Excloud API結果の代わりにモックデータを使用する
+  USE_MOCK_APS: false || location.search.indexOf("mockAps") != -1, // AppService API結果の代わりにモックデータを使用する
+  USE_MOCK_EXC: false || location.search.indexOf("mockExc") != -1, // Excloud API結果の代わりにモックデータを使用する
   NOT_FILTER_TX: true,
 }
 
