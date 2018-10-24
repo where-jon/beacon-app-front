@@ -136,7 +136,7 @@ export default {
           if (thumbnailName) that.form[thumbnailName] = thumbnail
       }, resize)
     },
-    async bulkSave(mainCol, intTypeList, boolTypeList, callback) {
+    async bulkSave(mainCol, intTypeList, boolTypeList, callback, idSetCallback) {
       if (!this.form.csvFile) {
         throw new Error(this.$t('message.emptyFile'))
       }
@@ -198,6 +198,9 @@ export default {
                   entity[headerName] = val
                 }
               })
+              if(idSetCallback){
+                dummyKey = idSetCallback(entity, dummyKey)
+              }
               entities.push(entity)
             }
           })
