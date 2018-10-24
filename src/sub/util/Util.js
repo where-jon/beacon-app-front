@@ -159,3 +159,16 @@ export const base64ToBlob = (base64) => {
   }
   return new Blob([content], {type: mimeType})
 }
+
+export const getEntityFromIds = (list, entity, ids) => {
+  for(let index = 0; index < ids.length; index++){
+    const id = ids[index]
+    if(entity[id]){
+      const matchEntity = list.find((val) => val[id] == entity[id])
+      if(matchEntity){
+        return matchEntity
+      }
+    }
+  }
+  return null
+}

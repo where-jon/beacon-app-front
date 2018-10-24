@@ -12,6 +12,7 @@ import * as Util from '../../../sub/util/Util'
 import { txViewTypes } from '../../../sub/constant/Constants'
 import breadcrumb from '../../../components/breadcrumb.vue'
 import bulkedit from '../../../components/bulkedit.vue'
+import { APP } from '../../../sub/constant/config.js'
 
 export default {
   components: {
@@ -42,10 +43,26 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'exb',
+      'exb', 'exbs',
     ]),
   },
   methods: {
+    resetId(entity, dummyKey){
+      const targetEntity = Util.getEntityFromIds(this.exbs, entity, ["exbId", "deviceNum", "deviceId", "deviceIdX"])
+      entity.exbId = targetEntity && targetEntity.exbId? targetEntity.exbId: dummyKey--
+      if(entity.location){
+        entity.location.locationId = targetEntity && targetEntity.location && targetEntity.location.locationId? targetEntity.location.locationId: dummyKey--
+      }
+      if(!entity.deviceId){
+        if(entity.deviceNum){
+          entity.deviceId = Number(entity.deviceNum) + this.$store.state.currentRegion.deviceOffset
+        }
+        else if(entity.deviceIdX){
+          entity.deviceId = parseInt(entity.deviceIdX, 16)
+        }
+      }
+      return dummyKey
+    },
     async save(bulkSaveFunc) {
       const MAIN_COL = "exbId"
       const LOCATION = ["locationId","areaName","locationName","visible","txViewType","posId","x","y"]
@@ -69,8 +86,9 @@ export default {
           entity[headerName] = val
         }
         return dummyKey
-      })
-    },
+      },
+      (entity, dummyKey) => this.resetId(entity, dummyKey)
+    )},
   }
 }
 </script>
