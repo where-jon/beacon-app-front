@@ -25,15 +25,15 @@ export default {
       appServicePath: '/meta/user',
       items: [
         {
-          text: this.$i18n.t('label.master'),
+          text: this.$i18n.tnl('label.master'),
           active: true
         },
         {
-          text: this.$i18n.t('label.user'),
+          text: this.$i18n.tnl('label.user'),
           href: '/master/user',
         },
         {
-          text: this.$i18n.t('label.user') + this.$i18n.t('label.bulkRegister'),
+          text: this.$i18n.tnl('label.user') + this.$i18n.tnl('label.bulkRegister'),
           active: true
         }
       ]

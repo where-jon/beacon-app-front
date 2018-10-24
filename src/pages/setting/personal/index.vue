@@ -4,12 +4,12 @@
     <breadcrumb :items="items" />
     <div class="container">
       <b-alert variant="success" :show="isSuccess">{{ 
-        $i18n.t('message.updateCompleted', {
-          target: $i18n.t('label.login-user-profile')})
+        $i18n.tnl('message.updateCompleted', {
+          target: $i18n.tnl('label.login-user-profile')})
         }}</b-alert>
       <b-alert variant="danger" dismissible :show="hasError">{{ 
-        $i18n.t('message.updateFailed', {
-          target: $i18n.t('label.login-user-profile'),
+        $i18n.tnl('message.updateFailed', {
+          target: $i18n.tnl('label.login-user-profile'),
           code: 0
         })
         }}</b-alert>
@@ -51,10 +51,10 @@
             </b-form-group>
 
             <b-card bg-variant="light" v-show="isChange">
-              <b-form-group breakpoint="lg" :label="$i18n.t('label.changePassword')" label-size="md">
+              <b-form-group breakpoint="lg" :label="$i18n.tnl('label.changePassword')" label-size="md">
 
                 <!-- 現在のパスワード -->
-                <b-form-group :label="$i18n.t('label.passwordCurrent')" label-class="text-sm-right" label-for="password-current">
+                <b-form-group :label="$i18n.tnl('label.passwordCurrent')" label-class="text-sm-right" label-for="password-current">
                   <b-form-input type="password" id="password-current"
                    v-model="loginUser.password" maxlength="16"
                    :state="errorMessages.password.length > 0 ? false : null" />
@@ -62,12 +62,12 @@
                 </b-form-group>
 
                 <!-- 変更パスワード -->
-                <b-form-group :label="$i18n.t('label.passwordUpdate')" label-class="text-sm-right" label-for="password-update">
+                <b-form-group :label="$i18n.tnl('label.passwordUpdate')" label-class="text-sm-right" label-for="password-update">
                   <b-form-input type="password" id="password-update" v-model="loginUser.passwordUpdate" v-on:input="handleUpdateConfirmPass" maxlength="16"></b-form-input>
                 </b-form-group>
 
                 <!-- 確認パスワード -->
-                <b-form-group :label="$i18n.t('label.passwordConfirm')" label-class="text-sm-right" label-for="password-confirm">
+                <b-form-group :label="$i18n.tnl('label.passwordConfirm')" label-class="text-sm-right" label-for="password-confirm">
                   <b-form-input type="password" id="password-confirm" v-model="loginUser.passwordConfirm" v-on:input="handleUpdateConfirmPass" maxlength="16"></b-form-input>
                 </b-form-group>
 
@@ -116,11 +116,11 @@ export default {
       appServicePath: '/meta/user/currentUser',
       items: [
         {
-          text: this.$i18n.t('label.setting'),
+          text: this.$i18n.tnl('label.setting'),
           active: true
         },
         {
-          text: this.$i18n.t('label.personal'),
+          text: this.$i18n.tnl('label.personal'),
           active: true
         },
       ],
@@ -194,11 +194,11 @@ export default {
     this.selectedCharSet = selectedCs != null ? selectedCs.id : CHAR_SET[0].id
     const that = this
     this.themes = THEME.map((e) => {
-      const text = that.$i18n.t('label.' + e.name)
+      const text = that.$i18n.tnl('label.' + e.name)
       return { value: e.id, text: text }
     })
     this.charSets = CHAR_SET.map((e) => {
-      const text = that.$i18n.t('label.' + e.name)
+      const text = that.$i18n.tnl('label.' + e.name)
       return { value: e.id, text: text }
     })
   },
@@ -233,15 +233,15 @@ export default {
       }
 
       if (value.length < this.passMinLength || value.length > this.passMaxLength) {
-        this.passErrorMessage = this.$i18n.t('message.lengthRange', {
-          target: this.$i18n.t('label.password'),
+        this.passErrorMessage = this.$i18n.tnl('message.lengthRange', {
+          target: this.$i18n.tnl('label.password'),
           min: this.passMinLength,
           max: this.passMaxLength,
         })
         return
       }
 
-      const result = ValidateUtil.validatePattern(value, /^[a-zA-Z0-9_\-\/!#\$%&]*$/, this.$i18n.t('message.invalidPassword'))
+      const result = ValidateUtil.validatePattern(value, /^[a-zA-Z0-9_\-\/!#\$%&]*$/, this.$i18n.tnl('message.invalidPassword'))
       if (result !== null) {
         this.passErrorMessage = result
         return
@@ -250,7 +250,7 @@ export default {
       const update = passwordUpdate ? passwordUpdate : ''
       const confirm = passwordConfirm ? passwordConfirm : ''
       if (update !== confirm) {
-        this.passErrorMessage = this.$i18n.t('message.notMatchPassword')
+        this.passErrorMessage = this.$i18n.tnl('message.notMatchPassword')
         return
       }
       this.passErrorMessage = null
@@ -267,19 +267,19 @@ export default {
       const errorMessages = this.errorMessages
       errorMessages.loginId = this.validateLoginIdPassword(
         this.loginUser.loginId,
-        this.$i18n.t('label.loginId'),
-        this.$i18n.t('message.invalidLoginId')
+        this.$i18n.tnl('label.loginId'),
+        this.$i18n.tnl('message.invalidLoginId')
       )
       if (this.showName) {
-        errorMessages.name = this.validateRequire(this.loginUser.name, this.$i18n.t('label.name'))
+        errorMessages.name = this.validateRequire(this.loginUser.name, this.$i18n.tnl('label.name'))
       }
       if (this.showEmail) {
-        errorMessages.email = this.validateRequire(this.loginUser.email, this.$i18n.t('label.email'))
+        errorMessages.email = this.validateRequire(this.loginUser.email, this.$i18n.tnl('label.email'))
       }
       errorMessages.password = this.validateLoginIdPassword(
         this.loginUser.password,
-        this.$i18n.t('label.password'),
-        this.$i18n.t('message.invalidPassword')
+        this.$i18n.tnl('label.password'),
+        this.$i18n.tnl('message.invalidPassword')
       )
 
       if (this.hasError) {
@@ -295,10 +295,10 @@ export default {
             await this.save()
             this.isSuccess = true
           } catch(e) {
-            errorMessages.general.push(this.$i18n.t('message.error'))
+            errorMessages.general.push(this.$i18n.tnl('message.error'))
           }
         },
-        () => { errorMessages.password.push(this.$i18n.t('message.notMatchCureentPassword')) }
+        () => { errorMessages.password.push(this.$i18n.tnl('message.notMatchCureentPassword')) }
       )
     },
     async save() {
@@ -320,7 +320,7 @@ export default {
     },
     validateRequire (val, label) {
       const target = label
-      const result = ValidateUtil.validateRequire(val, this.$i18n.t('message.required', { target }))
+      const result = ValidateUtil.validateRequire(val, this.$i18n.tnl('message.required', { target }))
       return result ? [result] : []
     },
     async setLoginUser () {

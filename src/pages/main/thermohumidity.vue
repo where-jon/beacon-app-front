@@ -56,11 +56,11 @@ export default {
      return {
       items: [
         {
-          text: this.$i18n.t('label.main'),
+          text: this.$i18n.tnl('label.main'),
           active: true
         },
         {
-          text: this.$i18n.t('label.thermohumidity'),
+          text: this.$i18n.tnl('label.thermohumidity'),
           active: true
         },
       ],
@@ -72,7 +72,7 @@ export default {
   },
   mounted() {
     that = this
-    this.replace({title: this.$i18n.t('label.pir')})
+    this.replace({title: this.$i18n.tnl('label.pir')})
     this.fetchData()
   },
   updated(){
@@ -196,7 +196,7 @@ export default {
     showChart(sensorData) {
       const dayChart = SensorHelper.showThermoHumidityChart("dayChart", sensorData.data, this.$i18n)
       this.isShownChart = true
-      this.chartTitle = this.$i18n.t('message.monthDayTemperature', {month: sensorData.month, day: sensorData.day})
+      this.chartTitle = this.$i18n.tnl('message.monthDayTemperature', {month: sensorData.month, day: sensorData.day})
     }
   }
 }

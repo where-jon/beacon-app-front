@@ -78,28 +78,28 @@ export default {
     return {
       items: [
         {
-          text: this.$i18n.t('label.monitor'),
+          text: this.$i18n.tnl('label.monitor'),
           active: true
         },
         {
-          text: this.$i18n.t('label.position'),
+          text: this.$i18n.tnl('label.position'),
           active: true
         }
       ],
       isLoad: false,
-      label_minor: this.$i18n.t('label.minor'),
-      label_powerLevel: this.$i18n.t('label.power-level'),
-      label_name: this.$i18n.t('label.name'),
-      label_receivePlace: this.$i18n.t('label.receive-place'),
-      label_timestamp: this.$i18n.t('label.final-receive-timestamp'),
-      label_undetect: this.$i18n.t('label.undetect'),
-      label_powerLevelGood: this.$i18n.t('label.power-good'),
-      label_powerLevelWarn: this.$i18n.t('label.power-warning'),
-      label_powerLevelPoor: this.$i18n.t('label.power-poor'),
-      label_state: this.$i18n.t('label.state'),
-      label_receiveNormal: this.$i18n.t('label.receiveNormal'),
-      label_absent: this.$i18n.t('label.absent'),
-      label_undetect: this.$i18n.t('label.undetect'),
+      label_minor: this.$i18n.tnl('label.minor'),
+      label_powerLevel: this.$i18n.tnl('label.power-level'),
+      label_name: this.$i18n.tnl('label.name'),
+      label_receivePlace: this.$i18n.tnl('label.receive-place'),
+      label_timestamp: this.$i18n.tnl('label.final-receive-timestamp'),
+      label_undetect: this.$i18n.tnl('label.undetect'),
+      label_powerLevelGood: this.$i18n.tnl('label.power-good'),
+      label_powerLevelWarn: this.$i18n.tnl('label.power-warning'),
+      label_powerLevelPoor: this.$i18n.tnl('label.power-poor'),
+      label_state: this.$i18n.tnl('label.state'),
+      label_receiveNormal: this.$i18n.tnl('label.receiveNormal'),
+      label_absent: this.$i18n.tnl('label.absent'),
+      label_undetect: this.$i18n.tnl('label.undetect'),
       interval: null,
       powerLevelGood: 69,
       powerLevelWarn: 39,
@@ -127,18 +127,18 @@ export default {
   },
   mounted() {
     this.fetchData()
-    this.replace({title: this.$i18n.t('label.position')})
+    this.replace({title: this.$i18n.tnl('label.position')})
     this.locationMap = this.getExbRecords()
     if (!this.isDev) {
       return
     }
     this.items = [
       {
-        text: this.$i18n.t('label.develop'),
+        text: this.$i18n.tnl('label.develop'),
         active: true
       },
       {
-        text: this.$i18n.t('label.position'),
+        text: this.$i18n.tnl('label.position'),
         active: true
       }
     ]

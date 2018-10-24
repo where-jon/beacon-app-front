@@ -113,15 +113,15 @@ export default {
       deviceNum: null,
       items: [
         {
-          text: this.$i18n.t('label.master'),
+          text: this.$i18n.tnl('label.master'),
           active: true
         },
         {
-          text: this.$i18n.t('label.exb'),
+          text: this.$i18n.tnl('label.exb'),
           href: '/master/exb',
         },
         {
-          text: this.$i18n.t('label.exb') + this.$i18n.t('label.detail'),
+          text: this.$i18n.tnl('label.exb') + this.$i18n.tnl('label.detail'),
           active: true
         }
       ]
@@ -134,7 +134,7 @@ export default {
     },
     sensorOptionsExb() {
       let options = this.sensorOptions('exb')
-      options.unshift({value:null, text:this.$i18n.t('label.normal')})
+      options.unshift({value:null, text:this.$i18n.tnl('label.normal')})
       return options
     },
     areaOptions() {

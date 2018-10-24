@@ -56,7 +56,7 @@ const appStateConf = {
           areaName: area? area.areaName: null,
           x: location? Math.round(location.x * 10)/10: null,
           y: location? Math.round(location.y * 10)/10: null,
-          sensor: i18n.t('label.' + Util.getValue(exb, 'exbSensorList.0.sensor.sensorName', 'normal'))
+          sensor: i18n.tnl('label.' + Util.getValue(exb, 'exbSensorList.0.sensor.sensorName', 'normal'))
         }
       })
     }
@@ -72,7 +72,7 @@ const appStateConf = {
           description: Util.getValue(tx, 'pot.description', null),
           category: Util.getValue(tx, 'pot.potCategoryList.0.category', null),
           group: Util.getValue(tx, 'pot.potGroupList.0.group', null),
-          sensor: i18n.t('label.' + Util.getValue(tx, 'txSensorList.0.sensor.sensorName', 'normal'))
+          sensor: i18n.tnl('label.' + Util.getValue(tx, 'txSensorList.0.sensor.sensorName', 'normal'))
         }
       })
   }

@@ -55,19 +55,19 @@ export default {
       featureNames: [],
       items: [
         {
-          text: this.$i18n.t('label.master'),
+          text: this.$i18n.tnl('label.master'),
           active: true
         },
         {
-          text: this.$i18n.t('label.role'),
+          text: this.$i18n.tnl('label.role'),
           href: '/master/role',
         },
         {
-          text: this.$i18n.t('label.role') + this.$i18n.t('label.detail'),
+          text: this.$i18n.tnl('label.role') + this.$i18n.tnl('label.detail'),
           href: '/master/role/edit',
         },
         {
-          text: this.$i18n.t('label.feature') + this.$i18n.t('label.detail'),
+          text: this.$i18n.tnl('label.feature') + this.$i18n.tnl('label.detail'),
           active: true
         }
       ]

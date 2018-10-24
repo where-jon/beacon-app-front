@@ -16,6 +16,10 @@ export default ({ app, store }, inject) => {
       'ja': require('~/sub/locales/ja.json')
     }
   })
+  app.i18n.tnl = (path) => {
+    const message = app.i18n.t(path)
+    return /^label\..*$/.test(message)? message.replace(/^label\./, ""): message
+  }
   inject('i18n', app.i18n)
   setI18nConstants(app.i18n)
   store.commit('setLang', getLangShort())

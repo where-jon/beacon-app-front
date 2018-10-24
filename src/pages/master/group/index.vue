@@ -44,11 +44,11 @@ export default {
       groupStyles: [],
       items: [
         {
-          text: this.$i18n.t('label.master'),
+          text: this.$i18n.tnl('label.master'),
           active: true
         },
         {
-          text: this.$i18n.t('label.group'),
+          text: this.$i18n.tnl('label.group'),
           active: true
         }
       ]

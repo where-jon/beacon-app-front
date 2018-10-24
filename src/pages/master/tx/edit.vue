@@ -81,7 +81,7 @@ export default {
   },
   mixins: [editmixinVue],
   data() {
-    const labelTx = this.$i18n.t('label.tx')
+    const labelTx = this.$i18n.tnl('label.tx')
     return {
       name: 'tx',
       id: 'txId',
@@ -95,7 +95,7 @@ export default {
       ]),
       items: [
         {
-          text: this.$i18n.t('label.master'),
+          text: this.$i18n.tnl('label.master'),
           active: true
         },
         {
@@ -103,7 +103,7 @@ export default {
           href: '/master/tx'
         },
         {
-          text: labelTx + this.$i18n.t('label.detail'),
+          text: labelTx + this.$i18n.tnl('label.detail'),
           active: true
         },
       ]
@@ -119,7 +119,7 @@ export default {
     },
     sensorOptionsTx() {
       let options = this.sensorOptions('tx')
-      options.unshift({value:null, text:this.$i18n.t('label.normal')})
+      options.unshift({value:null, text:this.$i18n.tnl('label.normal')})
       return options
     },
     categoryOptions() {

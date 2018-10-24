@@ -38,11 +38,11 @@ export default {
       },
       items: [
         {
-          text: this.$i18n.t('label.master'),
+          text: this.$i18n.tnl('label.master'),
           active: true
         },
         {
-          text: this.$i18n.t('label.role'),
+          text: this.$i18n.tnl('label.role'),
           active: true
         }
       ]
