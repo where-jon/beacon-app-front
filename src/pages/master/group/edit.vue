@@ -21,15 +21,15 @@
         </b-form-group>
         <b-form-group>
           <label v-t="'label.shape'" />
-          <b-form-select v-model="form.displayShape" :options="shapes"  required :readonly="!isEditable" />
+          <b-form-select v-model="form.displayShape" :options="shapes" required :disabled="!isEditable" :readonly="!isEditable" />
         </b-form-group>
         <b-form-group>
           <label v-t="'label.color'" />
-          <b-form-input type="color" v-model="form.displayColor" required :readonly="!isEditable" />
+          <b-form-input type="color" v-model="form.displayColor" required :disabled="!isEditable" :readonly="!isEditable" />
         </b-form-group>
         <b-form-group>
           <label v-t="'label.bgColor'" />
-          <b-form-input type="color" v-model="form.displayBgColor" required :readonly="!isEditable" />
+          <b-form-input type="color" v-model="form.displayBgColor" required :disabled="!isEditable" :readonly="!isEditable" />
         </b-form-group>
         <b-form-group>
           <label v-t="'label.description'" />

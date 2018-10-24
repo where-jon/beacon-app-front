@@ -15,7 +15,7 @@
             </b-form-group>
             <b-form-group>
               <label v-t="'label.tx'" />
-              <b-form-select v-model="form.txId" :options="txOptions" class="mb-3 ml-3 col-4" :readonly="!isEditable" />
+              <b-form-select v-model="form.txId" :options="txOptions" class="mb-3 ml-3 col-4" :disabled="!isEditable" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.txId'" />
@@ -23,7 +23,7 @@
             </b-form-group>
             <b-form-group>
               <label v-t="'label.categoryType'" />
-              <b-form-radio-group v-model="form.personOrThing" :options="category" />
+              <b-form-radio-group v-model="form.personOrThing" :options="category" :disabled="!isEditable" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.potCd'" />
@@ -43,11 +43,11 @@
             </b-form-group>
             <b-form-group>
               <label v-t="'label.group'" />
-              <b-form-select v-model="form.groupId" :options="groupOptions" class="mb-3 ml-3 col-4" :readonly="!isEditable" />
+              <b-form-select v-model="form.groupId" :options="groupOptions" class="mb-3 ml-3 col-4" :disabled="!isEditable" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.category'" />
-              <b-form-select v-model="form.categoryId" :options="categoryOptions" class="mb-3 ml-3 col-4" :readonly="!isEditable" />
+              <b-form-select v-model="form.categoryId" :options="categoryOptions" class="mb-3 ml-3 col-4" :disabled="!isEditable" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.post'" />
