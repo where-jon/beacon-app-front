@@ -7,61 +7,71 @@
       <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">{{ message }}</b-alert>
 
       <b-form @submit="onSubmit" v-if="show">
-        <b-form-group v-if="hasId">
-          <label v-t="'label.zoneId'" />
+        <b-form-group>
           <b-form-row>
-            <b-col sm="5">
+            <b-col sm="1" v-if="hasId">
+              <label v-t="'label.zoneId'" class="control-label" />
+            </b-col>
+            <b-col sm="1" v-if="hasId">
               <b-form-input type="text" v-model="form.zoneId" readonly="readonly" />
             </b-col>
-          </b-form-row>
-        </b-form-group>
-        <b-form-group>
-          <label v-t="'label.zoneName'" />
-          <b-form-row>
+            <b-col sm="1">
+              <label v-t="'label.zoneName'" class="control-label" />
+            </b-col>
             <b-col sm="5">
-                <b-form-input type="text" v-model="form.zoneName" maxlength="20" required :readonly="!isEditable" />
+              <b-form-input type="text" v-model="form.zoneName" maxlength="20" required :readonly="!isEditable" />
             </b-col>
           </b-form-row>
         </b-form-group>
-        <b-form-group>
-          <label v-t="'label.areaName'" />
-          <b-form-select v-model="form.areaId" :options="areaNames" required class="mb-3 ml-3 col-3" />
-        </b-form-group>
-        <!--
-        <b-form-group>
-          <label v-t="'label.locationZoneName'" />
-          <b-form-select v-model="form.locationId" :options="locationNames" required class="mb-3 ml-3 col-3" />
-        </b-form-group>
-        -->
-        <b-form-group>
-          <label v-t="'label.categoryName'" />
-          <b-form-select v-model="form.categoryId" :options="categoryNames" class="mb-3 ml-3 col-3" />
-        </b-form-group>
 
-        <b-button type="button" variant="outline-danger" @click="backToList" v-t="'label.back'"/>
-        <b-button v-if="isEditable" type="submit" :variant="theme" @click="register(false)" class="ml-2" >{{ label }}</b-button>
-        <b-button v-if="isEditable && !isUpdate" type="submit" :variant="theme" @click="register(true)" class="ml-2" v-t="'label.registerAgain'"/>
+        <b-form-group>
+          <b-form-row>
+            <b-col sm="1">
+              <label v-t="'label.areaName'" class="control-label" />
+            </b-col>
+            <b-col sm="3">
+              <b-form-select v-model="form.areaId" :options="areaNames" required @change="onSelectArea" />
+            </b-col>
+            <b-col sm="1">
+              <label v-t="'label.categoryName'" class="control-label" />
+            </b-col>
+            <b-col sm="3">
+              <b-form-select v-model="form.categoryId" :options="categoryNames" />
+            </b-col>
+            <b-col sm="4">
+              <b-button type="button" variant="outline-danger" @click="backToList" v-t="'label.back'"/>
+              <b-button v-if="isEditable" type="submit" :variant="theme" @click="register(false)" class="ml-2" >{{ label }}</b-button>
+              <b-button v-if="isEditable && !isUpdate" type="submit" :variant="theme" @click="register(true)" class="ml-2" v-t="'label.registerAgain'"/>
+            </b-col>
+          </b-form-row>
+        </b-form-group>
       </b-form>
+      <AreaCanvas :base64="base64" />
     </div>
   </div>
 </template>
 
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import { Shape, Stage, Container, Bitmap, Text, Touch } from '@createjs/easeljs/dist/easeljs.module'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import _ from 'lodash'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import editmixinVue from '../../../components/editmixin.vue'
+import AreaCanvas from '../../../components/areacanvas.vue'
 import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/breadcrumb.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import { CATEGORY, ZONE } from '../../../sub/constant/Constants'
+import showmapmixin from '../../../components/showmapmixin.vue'
+import { fabric } from 'fabric'
 
 export default {
-  mixins: [editmixinVue],
+  mixins: [editmixinVue, showmapmixin],
   components: {
     breadcrumb,
+    AreaCanvas,
   },
   data() {
     return {
@@ -73,6 +83,7 @@ export default {
       areaNames: [],
       locationNames: [],
       categoryNames: [],
+      canvas: null,
       items: [
         {
           text: this.$i18n.t('label.master'),
@@ -94,8 +105,14 @@ export default {
     this.initLocationNames()
     this.initCategoryNames()
   },
+  mounted() {
+  },
   computed: {
-    hasId(){
+    base64 () {
+      const area = this.$store.state.app_service.areas.find((a) => { return a.areaId === this.form.areaId })
+      return area ? area.mapImage : ''
+    },
+    hasId (){
       return Util.hasValue(this.form.zoneId)
     },
     theme () {
@@ -107,6 +124,10 @@ export default {
     ]),
   },
   methods: {
+    reset() {
+    },
+    onSelectArea (areaId) {
+    },
     async initAreaNames() {
       await StateHelper.load('area')
       this.areaNames = this.areas.map((val) => ({text: val.areaName, value: val.areaId}))
@@ -133,10 +154,18 @@ export default {
       const saveId = await AppServiceHelper.bulkSave(this.appServicePath, [entity])
       return saveId
     },
+    showMapImage() {
+      if (this.showMapImageDef()) {
+        return
+      }
+      this.stage.update()
+    },
   }
 }
 </script>
 
 <style scoped lang="scss">
-
+  label.control-label {
+    padding-top: 7px;
+  }
 </style>
