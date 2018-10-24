@@ -17,7 +17,7 @@
         </b-form-group>
         <b-form-group>
           <label v-t="'label.mode'" />
-          <b-form-select v-model="form.mode" :options="modes" class="mb-3 ml-3 col-3" required :readonly="!isEditable" />
+          <b-form-select v-model="form.mode" :options="modes" class="mb-3 ml-3 col-3" required :disabled="!isEditable" :readonly="!isEditable" />
         </b-form-group>
 
         <b-button type="button" variant="outline-danger" @click="backToList" v-t="'label.back'"/>

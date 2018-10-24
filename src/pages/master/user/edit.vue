@@ -25,7 +25,7 @@
         </b-form-group>
         <b-form-group>
           <label v-t="'label.role'" />
-          <b-form-select v-model="role" :options="roleOptions" required ></b-form-select>
+          <b-form-select v-model="role" :options="roleOptions" required :disabled="!isEditable" ></b-form-select>
         </b-form-group>
         <b-form-group>
           <label v-t="'label.description'" />

@@ -12,7 +12,7 @@
           </b-input-group>
         </b-form-group>
       </b-col>
-      <b-col class="mb-2 justify-content-end">
+      <b-col v-if="isEditable" class="mb-2 justify-content-end">
         <!-- 新規作成ボタン -->
         <b-button :variant='theme' @click="edit()" v-t="'label.createNew'"  class="float-right"/>
         <b-button v-if="params.bulkEditPath" :variant='theme'
@@ -44,7 +44,7 @@
           </b-col>
         </b-form-row>
       </b-form>
-      <b-form-row class="mb-1">
+      <b-form-row v-if="isEditable" class="mb-1">
         <b-col class="mb-6 justify-content-end">
         <!-- 新規作成ボタン -->
         <b-button :variant='theme' @click="edit()" v-t="'label.createNew'"  class="float-right"/>
@@ -84,7 +84,7 @@
         <b-pagination :total-rows="totalRows" :per-page="perPage" v-model="currentPage" class="my-0" />
       </b-col>
       <!-- bulk upload button -->
-      <b-col md="6" class="my-1">
+      <b-col v-if="isEditable" md="6" class="my-1">
         <b-button v-if="params.bulkUploadPath" :variant='theme'
           @click="bulkUpload()" v-t="'label.bulkUpload'"  class="float-right" />
       </b-col>
