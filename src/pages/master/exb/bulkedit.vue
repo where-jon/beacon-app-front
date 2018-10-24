@@ -50,9 +50,6 @@ export default {
     resetId(entity, dummyKey){
       const targetEntity = Util.getEntityFromIds(this.exbs, entity, ["exbId", "deviceNum", "deviceId", "deviceIdX"])
       entity.exbId = targetEntity && targetEntity.exbId? targetEntity.exbId: dummyKey--
-      if(entity.location){
-        entity.location.locationId = targetEntity && targetEntity.location && targetEntity.location.locationId? targetEntity.location.locationId: dummyKey--
-      }
       if(!entity.deviceId){
         if(entity.deviceNum){
           entity.deviceId = Number(entity.deviceNum) + this.$store.state.currentRegion.deviceOffset
