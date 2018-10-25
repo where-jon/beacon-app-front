@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import * as AppServiceHelper from './AppServiceHelper'
 import * as Util from '../util/Util'
-import { CATEGORY } from '../constant/Constants'
+import { CATEGORY, getShapes} from '../constant/Constants'
 
 
 // TODO: 全体的にState管理を共通化する
@@ -17,6 +17,11 @@ export const setApp = (pStore, pi18n) => {
 export const getCategoryTypeName = (category) => {
   const categoryTypeName = CATEGORY.getTypes().find((tval) => tval.value === category.categoryType)
   return categoryTypeName != null? categoryTypeName.text: null
+}
+
+export const getShapeName = (shape) => {
+  const shapeName = getShapes().find((tval) => tval.value === shape)
+  return shapeName != null? shapeName.text: null
 }
 
 const appStateConf = {
@@ -51,7 +56,7 @@ const appStateConf = {
           areaName: area? area.areaName: null,
           x: location? Math.round(location.x * 10)/10: null,
           y: location? Math.round(location.y * 10)/10: null,
-          sensor: i18n.t('label.' + Util.getValue(exb, 'exbSensorList.0.sensor.sensorName', 'normal'))
+          sensor: i18n.tnl('label.' + Util.getValue(exb, 'exbSensorList.0.sensor.sensorName', 'normal'))
         }
       })
     }
@@ -65,8 +70,9 @@ const appStateConf = {
           ...tx,
           displayName: Util.getValue(tx, 'pot.displayName', null),
           description: Util.getValue(tx, 'pot.description', null),
-          category: Util.getValue(tx, 'pot.potCategoryList.0.category.categoryName', null),
-          sensor: i18n.t('label.' + Util.getValue(tx, 'txSensorList.0.sensor.sensorName', 'normal'))
+          category: Util.getValue(tx, 'pot.potCategoryList.0.category', null),
+          group: Util.getValue(tx, 'pot.potGroupList.0.group', null),
+          sensor: i18n.tnl('label.' + Util.getValue(tx, 'txSensorList.0.sensor.sensorName', 'normal'))
         }
       })
   }
@@ -96,6 +102,10 @@ const appStateConf = {
     beforeCommit: (arr) => {
       return arr.map((val) => ({
         ...val,
+        shape: val.display? val.display.shape: null,
+        color: val.display? val.display.color: null,
+        bgColor: val.display? val.display.bgColor: null,
+        shapeName: val.display? getShapeName(val.display.shape): null,
         categoryTypeName: getCategoryTypeName(val),
       }))
     }
@@ -103,6 +113,15 @@ const appStateConf = {
   groups: {
     path: '/basic/group',
     sort: 'groupId',
+    beforeCommit: (arr) => {
+      return arr.map((val) => ({
+        ...val,
+        shape: val.display? val.display.shape: null,
+        color: val.display? val.display.color: null,
+        bgColor: val.display? val.display.bgColor: null,
+        shapeName: val.display? getShapeName(val.display.shape): null,
+      }))
+    }
   },
   users: {
     path: '/meta/user',

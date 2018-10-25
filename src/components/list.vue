@@ -1,4 +1,5 @@
 <template>
+<<<<<<< HEAD
   <b-form inline>
     <b-container>
       <!-- searchbox -->
@@ -13,6 +14,42 @@
                   <b-btn :disabled="!filter.reg" @click="filter.reg = ''" variant="secondary" v-t="'label.clear'"  class="align-self-center"/>
                 </b-input-group-append>
               </b-input-group>
+=======
+  <div>
+    <!-- searchbox -->
+    <b-row v-if="!params.hideSearchBox && !params.extraFilter">
+      <b-col md="6" class="my-1">
+        <b-form-group horizontal class="mb-0" :label="$t('label.filter') ">
+          <b-input-group>
+            <b-form-input v-model="filter.reg" />
+            <b-input-group-append>
+              <b-btn :disabled="!filter" @click="filter.reg = ''" variant="secondary" v-t="'label.clear'"></b-btn>
+            </b-input-group-append>
+          </b-input-group>
+        </b-form-group>
+      </b-col>
+      <b-col v-if="isEditable" class="mb-2 justify-content-end">
+        <!-- 新規作成ボタン -->
+        <b-button :variant='theme' @click="edit()" v-t="'label.createNew'"  class="float-right"/>
+        <b-button v-if="params.bulkEditPath" :variant='theme'
+          @click="bulkEdit()" v-t="'label.bulkRegister'"  class="float-right" :style="{ marginRight: '10px'}"/>
+        <b-button v-if="params.csvOut" :variant='theme' @click="exportCsv" v-t="'label.download'"  class="float-right" :style="{ marginRight: '10px'}"/>
+      </b-col>
+    </b-row>
+    <template v-if="!params.hideSearchBox && params.extraFilter">
+      <!-- 追加フィルタがある場合 -->
+      <b-form>
+        <b-form-row class="mb-1">
+            <b-col>
+              <b-form-group :label="$t('label.filter')" horizontal>
+                <b-input-group>
+                  <b-form-input v-model="filter.reg" />
+                  <b-input-group-append>
+                    <b-btn :disabled="!filter" @click="filter. reg = ''" variant="secondary" v-t="'label.clear'" />
+                  </b-input-group-append>
+                </b-input-group>
+              </b-form-group>
+>>>>>>> develop/0.9
           </b-col>
           <!-- カスタムフィルタ -->
           <template v-if="params.extraFilter" >
@@ -32,8 +69,24 @@
             <b-button :variant='theme' class="mx-1" v-if="params.csvOut" @click="exportCsv"
                 v-t="'label.download'" />
           </b-col>
+<<<<<<< HEAD
         </b-row>
       </template>
+=======
+        </b-form-row>
+      </b-form>
+      <b-form-row v-if="isEditable" class="mb-1">
+        <b-col class="mb-6 justify-content-end">
+        <!-- 新規作成ボタン -->
+        <b-button :variant='theme' @click="edit()" v-t="'label.createNew'"  class="float-right"/>
+        <b-button v-if="params.bulkEditPath" :variant='theme'
+          @click="bulkEdit()" v-t="'label.bulkRegister'"  class="float-right" :style="{ marginRight: '10px'}"/>
+        <b-button v-if="params.csvOut" :variant='theme' @click="exportCsv" v-t="'label.download'"  class="float-right" :style="{ marginRight: '10px'}"/>
+      </b-col>
+      </b-form-row>
+      
+    </template>
+>>>>>>> develop/0.9
 
       <slot></slot>
 
@@ -57,6 +110,7 @@
         </template>
       </b-table>
 
+<<<<<<< HEAD
       <!-- pager -->
       <b-row>
         <b-col md="6" class="my-1">
@@ -68,6 +122,19 @@
             @click="bulkUpload()" v-t="'label.bulkUpload'"  class="float-right" />
         </b-col>
       </b-row>
+=======
+    <!-- pager -->
+    <b-row>
+      <b-col md="6" class="my-1">
+        <b-pagination :total-rows="totalRows" :per-page="perPage" v-model="currentPage" class="my-0" />
+      </b-col>
+      <!-- bulk upload button -->
+      <b-col v-if="isEditable" md="6" class="my-1">
+        <b-button v-if="params.bulkUploadPath" :variant='theme'
+          @click="bulkUpload()" v-t="'label.bulkUpload'"  class="float-right" />
+      </b-col>
+    </b-row>
+>>>>>>> develop/0.9
 
       <!-- modal -->
       <b-modal id="modalInfo" @hide="resetModal" :title="modalInfo.title" @ok="execDelete(modalInfo.id)">
@@ -248,8 +315,8 @@ export default {
       this.$router.push(this.params.bulkUploadPath)
     },
     deleteConfirm(item, index, button) {
-      this.modalInfo.title = this.$i18n.t('label.confirm')
-      this.modalInfo.content = this.$i18n.t('message.deleteConfirm', {target: "ID:" + item[this.id]})
+      this.modalInfo.title = this.$i18n.tnl('label.confirm')
+      this.modalInfo.content = this.$i18n.tnl('message.deleteConfirm', {target: "ID:" + item[this.id]})
       this.modalInfo.id = item[this.id]
       this.$root.$emit('bv::show::modal', 'modalInfo', button)
     },

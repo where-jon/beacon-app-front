@@ -55,7 +55,7 @@ export const showThermoHumidityChart = (id, data, i18n) => {
     data:{
       labels: data.map((val) => val.key),
       datasets: [{
-        label: i18n.t('label.temperature'), 
+        label: i18n.tnl('label.temperature'), 
         yAxisID: 'temperature',
         spanGaps: true,
         data: data.map((val) => val.temperature),
@@ -63,7 +63,7 @@ export const showThermoHumidityChart = (id, data, i18n) => {
         borderColor: DISP.TEMPERATURE_LINE_COLOR
       },
       {
-        label: i18n.t('label.humidity'), 
+        label: i18n.tnl('label.humidity'), 
         yAxisID: 'humidity',
         spanGaps: true,
         data: data.map((val) => val.humidity),
@@ -79,7 +79,7 @@ export const showThermoHumidityChart = (id, data, i18n) => {
           position: 'left',
           scaleLabel: {
             display: true,
-            labelString: i18n.t('label.temperature') + " (℃)"
+            labelString: i18n.tnl('label.temperature') + " (℃)"
           },
           ticks:{ min: 0, max: 40 }
         }, {
@@ -88,7 +88,7 @@ export const showThermoHumidityChart = (id, data, i18n) => {
           position: 'right',
           scaleLabel: {
             display: true,
-            labelString: i18n.t('label.humidity') + " (%)",
+            labelString: i18n.tnl('label.humidity') + " (%)",
           },
           ticks: { max: 100, min: 0, stepSize: 25},
         }]

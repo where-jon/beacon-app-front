@@ -17,9 +17,6 @@
     <b-modal id="modalError" :title="$t('label.error')" ok-only>
       {{ $t('message.noMapImage') }}
     </b-modal>
-    <b-modal id="modalInfo" :title="$t('label.error')" ok-only>
-      {{ $t('message.noMapImage') }}
-    </b-modal>
   </div>
 </template>
 
@@ -31,7 +28,8 @@ import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as mock from '../../assets/mock/mock'
 import txdetail from '../../components/txdetail.vue'
-import { Tx, EXB, DISP, DEV } from '../../sub/constant/config'
+import { Tx, EXB, APP, DISP, DEV } from '../../sub/constant/config'
+import { SHAPE } from '../../sub/constant/Constants'
 import { Shape, Stage, Container, Bitmap, Text, Touch } from '@createjs/easeljs/dist/easeljs.module'
 import { Tween, Ticker } from '@createjs/tweenjs/dist/tweenjs.module'
 import breadcrumb from '../../components/breadcrumb.vue'
@@ -50,11 +48,11 @@ export default {
      return {
       items: [
         {
-          text: this.$i18n.t('label.main'),
+          text: this.$i18n.tnl('label.main'),
           active: true
         },
         {
-          text: this.$i18n.t('label.showPosition'),
+          text: this.$i18n.tnl('label.showPosition'),
           active: true
         },
       ],
@@ -72,16 +70,17 @@ export default {
   },
   mounted() {
     that = this
-    this.replace({title: this.$i18n.t('label.showPosition')})
+    this.replace({title: this.$i18n.tnl('label.showPosition')})
     this.fetchData()
   },
   updated(){
     if (this.isFirstTime) return
-    this.fetchData()
+    // this.fetchData()
   },
   methods: {
     reset() {
       this.isShownMapImage = false
+      this.resetDetail()
     },
     async showDetail(txId, x, y) {
       let rev = y > 400
@@ -188,11 +187,34 @@ export default {
         this.showTx(pos)
       })
     },
+    getDisplay(tx) {
+      let catOrGr = tx[DISP.DISPLAY_PRIORITY[0]] || tx[DISP.DISPLAY_PRIORITY[1]]
+      let display = catOrGr && catOrGr.display || {}
+      return {
+        color: display.color || DISP.TX_COLOR,
+        bgColor: display.bgColor || DISP.TX_BGCOLOR,
+        shape: display.shape || SHAPE.CIRCLE
+      }
+    },
     showTx(pos) {
+      let tx = this.txs.find((tx) => tx.btxId == pos.btx_id)
+      let display = this.getDisplay(tx)
+
       let stage = this.stage
       let txBtn = new Container()
       let btnBg = new Shape()
-      btnBg.graphics.beginStroke("#ccc").beginFill(DISP.TX_BGCOLOR).drawCircle(0, 0, DISP.TX_R)
+      btnBg.graphics.beginStroke("#ccc").beginFill('#' + display.bgColor)
+      switch(display.shape) {
+      case SHAPE.CIRCLE:
+        btnBg.graphics.drawCircle(0, 0, DISP.TX_R)
+        break
+      case SHAPE.SQUARE:
+        btnBg.graphics.drawRect(-DISP.TX_R, -DISP.TX_R, DISP.TX_R * 2, DISP.TX_R * 2)
+        break
+      case SHAPE.ROUND_SQUARE:
+        btnBg.graphics.drawRoundRect(-DISP.TX_R, -DISP.TX_R, DISP.TX_R * 2, DISP.TX_R * 2, DISP.ROUNDRECT_RADIUS)
+        break
+      }
       if (pos.transparent) {
         btnBg.alpha = 0.6
       }
@@ -200,7 +222,7 @@ export default {
 
       let label = new Text(pos.label)
       label.font = DISP.TX_FONT
-      label.color = DISP.TX_COLOR
+      label.color = '#' + display.color
       label.textAlign = "center"
       label.textBaseline = "middle"
       txBtn.addChild(label)

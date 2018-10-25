@@ -25,7 +25,7 @@
         </b-form-group>
         <b-form-group>
           <label v-t="'label.role'" />
-          <b-form-select v-model="role" :options="roleOptions" required ></b-form-select>
+          <b-form-select v-model="role" :options="roleOptions" required :disabled="!isEditable" ></b-form-select>
         </b-form-group>
         <b-form-group>
           <label v-t="'label.description'" />
@@ -80,15 +80,15 @@ export default {
       passMaxLength: 16,
       items: [
         {
-          text: this.$i18n.t('label.master'),
+          text: this.$i18n.tnl('label.master'),
           active: true
         },
         {
-          text: this.$i18n.t('label.user'),
+          text: this.$i18n.tnl('label.user'),
           href: '/master/user',
         },
         {
-          text: this.$i18n.t('label.user') + this.$i18n.t('label.detail'),
+          text: this.$i18n.tnl('label.user') + this.$i18n.tnl('label.detail'),
           active: true
         }
       ],
@@ -150,19 +150,19 @@ export default {
     beforeSubmit(event, again){
       this.showAlert = false
       if(this.isErrorPasswordRequired()){
-        this.message = this.$i18n.t('message.required', {target: this.$i18n.t('label.password')})
+        this.message = this.$i18n.tnl('message.required', {target: this.$i18n.tnl('label.password')})
         this.showAlert = true
       }
       else if(this.isErrorPasswordLength()){
-        this.message = this.$i18n.t('message.lengthRange', {
-          target: this.$i18n.t('label.password'),
+        this.message = this.$i18n.tnl('message.lengthRange', {
+          target: this.$i18n.tnl('label.password'),
           min: this.passMinLength,
           max: this.passMaxLength,
         })
         this.showAlert = true
       }
       else if(this.isErrorPasswordValue()){
-        this.message = this.$i18n.t('message.validatePassword')
+        this.message = this.$i18n.tnl('message.validatePassword')
         this.showAlert = true
       }
       if(this.showAlert){

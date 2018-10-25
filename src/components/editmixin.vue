@@ -29,7 +29,7 @@ export default {
   },
   computed: {
     label() {
-      return this.$i18n.t('label.' + this.crud)
+      return this.$i18n.tnl('label.' + this.crud)
     },
     crud() {
       return this.bulkRegister? 'bulkRegister': !this.isEditable? 'refer': this.isUpdate? 'update': 'register'
@@ -43,7 +43,7 @@ export default {
   },
   mounted() {
     that = this
-    this.replace({title: this.$i18n.t('label.' + this.name) + this.label})
+    this.replace({title: this.$i18n.tnl('label.' + this.name) + this.label})
   },
   methods: {
     register(again) {
@@ -66,7 +66,7 @@ export default {
       .map((sensor) => {
           return {
             value: sensor.sensorId,
-            text: this.$i18n.t('label.' + sensor.sensorName)
+            text: this.$i18n.tnl('label.' + sensor.sensorName)
           }
         }
       )
@@ -89,7 +89,7 @@ export default {
       try {
         let res = await this.save()
         await StateHelper.load(this.name, true)
-        this.message = this.$i18n.t('message.' + this.crud + 'Completed', {target: this.$i18n.t('label.' + this.name)})
+        this.message = this.$i18n.tnl('message.' + this.crud + 'Completed', {target: this.$i18n.tnl('label.' + this.name)})
         this.showInfo = true
         if (this.again) {
           this.form = {}
@@ -110,16 +110,16 @@ export default {
       catch(e) {
         console.error(e)
         if (e.key) {
-          this.message = this.$i18n.t('message.' + e.type, {key: this.$i18n.t('label.' + Util.snake2camel(e.key)), val: e.val})
+          this.message = this.$i18n.tnl('message.' + e.type, {key: this.$i18n.tnl('label.' + Util.snake2camel(e.key)), val: e.val})
         }
         else if (e.bulkError) {
           this.message = _.map(e.bulkError, (err) => {
-            return this.$i18n.t('message.bulk' + err.type + 'Failed', 
+            return this.$i18n.tnl('message.bulk' + err.type + 'Failed', 
               {line: err.line, col: err.col, value: err.value, min: err.min, max: err.max, candidates: err.candidates})
           }).join("<br>")
         }
         else {
-          this.message = this.$i18n.t('message.' + this.crud + 'Failed', {target: this.$i18n.t('label.' + this.name), code: e.message})
+          this.message = this.$i18n.tnl('message.' + this.crud + 'Failed', {target: this.$i18n.tnl('label.' + this.name), code: e.message})
         }
         this.showAlert = true
         window.scrollTo(0, 0)
@@ -136,7 +136,7 @@ export default {
           if (thumbnailName) that.form[thumbnailName] = thumbnail
       }, resize)
     },
-    async bulkSave(mainCol, intTypeList, boolTypeList, callback) {
+    async bulkSave(mainCol, intTypeList, boolTypeList, callback, idSetCallback) {
       if (!this.form.csvFile) {
         throw new Error(this.$t('message.emptyFile'))
       }
@@ -167,11 +167,11 @@ export default {
                 let hasHeader = true
                 mainCol.forEach((val) => hasHeader = header.includes(val)? hasHeader: false)
                 if (!hasHeader) {
-                  throw Error(that.$i18n.t('message.csvHeaderRequired'))
+                  throw Error(that.$i18n.tnl('message.csvHeaderRequired'))
                 }
               }
               else if (!header.includes(mainCol)) {
-                throw Error(that.$i18n.t('message.csvHeaderRequired'))
+                throw Error(that.$i18n.tnl('message.csvHeaderRequired'))
               }
             }
             else {
@@ -198,6 +198,9 @@ export default {
                   entity[headerName] = val
                 }
               })
+              if(idSetCallback){
+                dummyKey = idSetCallback(entity, dummyKey)
+              }
               entities.push(entity)
             }
           })

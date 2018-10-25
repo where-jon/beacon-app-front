@@ -6,6 +6,7 @@
   "private": true,
   "scripts": {
     "test": "ava",
+    "easel": "cp -pf patch/easeljs.module.js node_modules//@createjs/easeljs/dist/easeljs.module.js",
     "dev": "nuxt",
     "build": "nuxt build",
     "start": "nuxt start",
@@ -21,7 +22,7 @@
     }
   },
   "dependencies": {
-    "@createjs/easeljs": "https://github.com/CreateJS/EaselJS.git#24b96202826646f01d61da6e7d3e89dbd801c67f",
+    "@createjs/easeljs": "2.0.0-beta.2",
     "@createjs/tweenjs": "^2.0.0-beta.1",
     "@fortawesome/fontawesome-free-webfonts": "^1.0.9",
     "axios": "^0.18.0",

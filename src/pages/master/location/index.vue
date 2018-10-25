@@ -11,7 +11,7 @@
       <label class="mt-mobile">{{ $t('label.exb') }}</label>
       <b-form-select v-model="exbDisp" :options="exbDispOptions" class="ml-2 mr-1" :disabled="settingStart" @change="changeExbDisp"></b-form-select>
       <v-select size="sm" v-model="selectedExb_" :options="exbOptions" :on-change="showExbOnMap" class="mx-2 mt-mobile exbOptions" :disabled="settingStart">
-        <div slot="no-options">{{$i18n.t('label.vSelectNoOptions')}}</div>
+        <div slot="no-options">{{$i18n.tnl('label.vSelectNoOptions')}}</div>
       </v-select>
       <b-button size="sm" variant="outline-info" v-t="'label.bulkAdd'" @click="bulkAdd" class="mt-mobile" :disabled="settingStart"></b-button> 
     </b-form>
@@ -79,17 +79,17 @@ export default {
       exbDisp: 'deviceIdX',
       deleteTarget: null,
       exbDispOptions: [
-        {value:'deviceId', text: this.$i18n.t('label.deviceId')},
-        {value:'deviceIdX', text: this.$i18n.t('label.deviceIdX')},
-        {value:'deviceNum', text: this.$i18n.t('label.deviceNum')}
+        {value:'deviceId', text: this.$i18n.tnl('label.deviceId')},
+        {value:'deviceIdX', text: this.$i18n.tnl('label.deviceIdX')},
+        {value:'deviceNum', text: this.$i18n.tnl('label.deviceNum')}
       ],
       items: [
         {
-          text: this.$i18n.t('label.master'),
+          text: this.$i18n.tnl('label.master'),
           active: true
         },
         {
-          text: this.$i18n.t('label.locationSetting'),
+          text: this.$i18n.tnl('label.locationSetting'),
           active: true
         }
       ]
@@ -120,7 +120,7 @@ export default {
   },
   mounted() {
     that = this
-    this.replace({title: this.$i18n.t('label.location')})
+    this.replace({title: this.$i18n.tnl('label.location')})
     this.fetchData()
   },
   created() {
@@ -417,15 +417,15 @@ export default {
           await AppServiceHelper.bulkSave('/core/area', [{areaId: this.selectedArea, mapRatio: this.mapRatio * this.mapImageScale}], UPDATE_ONLY_NN.EMPTY_ZERO)
           await StateHelper.load('area')
         }
-        this.message = this.$i18n.t('message.completed', {target: this.$i18n.t('label.save')})
+        this.message = this.$i18n.tnl('message.completed', {target: this.$i18n.tnl('label.save')})
         this.showInfo = true
         this.isChanged = false
       } catch (e) {
         if (e.key) {
-          this.message = this.$i18n.t('message.' + e.type, {key: this.$i18n.t('label.' + Util.snake2camel(e.key)), val: e.val})
+          this.message = this.$i18n.tnl('message.' + e.type, {key: this.$i18n.tnl('label.' + Util.snake2camel(e.key)), val: e.val})
         }
         else {
-          this.message = this.$i18n.t('message.failed', {target: this.$i18n.t('label.save'), code: e.message})
+          this.message = this.$i18n.tnl('message.failed', {target: this.$i18n.tnl('label.save'), code: e.message})
         }
         this.showAlert = true
         window.scrollTo(0, 0)

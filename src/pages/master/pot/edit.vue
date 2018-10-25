@@ -15,7 +15,7 @@
             </b-form-group>
             <b-form-group>
               <label v-t="'label.tx'" />
-              <b-form-select v-model="form.txId" :options="txOptions" class="mb-3 ml-3 col-4" :readonly="!isEditable" />
+              <b-form-select v-model="form.txId" :options="txOptions" class="mb-3 ml-3 col-4" :disabled="!isEditable" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.txId'" />
@@ -23,7 +23,7 @@
             </b-form-group>
             <b-form-group>
               <label v-t="'label.categoryType'" />
-              <b-form-radio-group v-model="form.personOrThing" :options="category" />
+              <b-form-radio-group v-model="form.personOrThing" :options="category" :disabled="!isEditable" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.potCd'" />
@@ -43,11 +43,11 @@
             </b-form-group>
             <b-form-group>
               <label v-t="'label.group'" />
-              <b-form-select v-model="form.groupId" :options="groupOptions" class="mb-3 ml-3 col-4" :readonly="!isEditable" />
+              <b-form-select v-model="form.groupId" :options="groupOptions" class="mb-3 ml-3 col-4" :disabled="!isEditable" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.category'" />
-              <b-form-select v-model="form.categoryId" :options="categoryOptions" class="mb-3 ml-3 col-4" :readonly="!isEditable" />
+              <b-form-select v-model="form.categoryId" :options="categoryOptions" class="mb-3 ml-3 col-4" :disabled="!isEditable" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.post'" />
@@ -110,15 +110,15 @@ export default {
           "extValue.post", "thumbnail", "description"])},
       items: [
         {
-          text: this.$i18n.t('label.master'),
+          text: this.$i18n.tnl('label.master'),
           active: true
         },
         {
-          text: this.$i18n.t('label.pot'),
+          text: this.$i18n.tnl('label.pot'),
           href: '/master/pot',
         },
         {
-          text: this.$i18n.t('label.pot') + this.$i18n.t('label.detail'),
+          text: this.$i18n.tnl('label.pot') + this.$i18n.tnl('label.detail'),
           active: true
         }
       ]
@@ -154,7 +154,9 @@ export default {
       return options
     },
     txOptions() {
-      let options = this.txs.map((tx) => {
+      const useTxIds = this.pots.map((val) => val.txId)
+      let options = this.txs.filter((tx) => !_.includes(useTxIds, tx.txId) || tx.txId == this.pot.txId )
+      options = options.map((tx) => {
           return {
             value: tx.txId,
             text: tx.txName
@@ -166,6 +168,7 @@ export default {
     },
     ...mapState('app_service', [
       'pot',
+      'pots',
       'groups',
       'categories',
       'txs',

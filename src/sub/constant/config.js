@@ -1,12 +1,12 @@
 // configuration for app
 // Basically using const but values are not primitive but objects or arrays because it may change from outside.
 
-import { LOGIN_MODE } from './Constants'
+import { LOGIN_MODE } from './Constants';
 
 export const DEV = {
   DEBUG: 0, // デバッグモード (0:なし、1以上デバッグレベル)
-  USE_MOCK_APS: false || location.search.includes("mockAps"), // AppService API結果の代わりにモックデータを使用する
-  USE_MOCK_EXC: false || location.search.includes("mockExc"), // Excloud API結果の代わりにモックデータを使用する
+  USE_MOCK_APS: false || location.search.indexOf("mockAps") != -1, // AppService API結果の代わりにモックデータを使用する
+  USE_MOCK_EXC: false || location.search.indexOf("mockExc") != -1, // Excloud API結果の代わりにモックデータを使用する
   NOT_FILTER_TX: true,
 }
 
@@ -73,15 +73,17 @@ export const EXCLOUD = {
 
 export const DISP = {
   TX_R: 26, // Txの半径
-  TX_BGCOLOR: "#3bcddc",
-  TX_COLOR: "#000",
-  TX_FONT: "20px Arial",
+  ROUNDRECT_RADIUS: 15, // Tx角丸表示時のRADIUS
+  TX_BGCOLOR: "3bcddc", // Tx表示時のデフォルト背景色
+  TX_COLOR: "000", // Tx表示時のデフォルト文字色
+  TX_FONT: "20px Arial", // Tx表示時のフォント
   TX_DIV_2: 1, // Txが重なった際に２つ上下左右に並べる場合にずらす倍率
   TX_DIV_3: 0.5, // Txが重なった際に３つ左右に並べる場合にずらす倍率
   AUTO_RELOAD: 60000, // 自動リロード間隔(ミリ秒)
   SHOW_SIDEBAR: true, // show sidebar  
   THEME: "default",
   CHAR_SET: "UTF8",
+  DISPLAY_PRIORITY: ['category','group'], // TX表示の際に参照するdisplay方法の優先順位
 
   MAP_FIT: "both", // マップを画面表示範囲内にフィットさせるか。width or height or both 
 
@@ -91,36 +93,36 @@ export const DISP = {
   TRANSPARENT_TIME: 1 * 1000, // 現在時刻から経過した段階で半透明(ms)
   HIDE_TIME: 90000 * 1000, // 現在時刻から経過した段階で表示(ms)
   
-  EXB_LOC_SIZE: {w: 60, h: 30},
-  EXB_LOC_BGCOLOR: "#76ccf7",
-  EXB_LOC_COLOR: "#000",
-  EXB_LOC_FONT: "16px Arial",
+  EXB_LOC_SIZE: {w: 60, h: 30}, // EXB配置設定のEXB表示サイズ
+  EXB_LOC_BGCOLOR: "#76ccf7", // EXB配置設定のEXB表示背景色
+  EXB_LOC_COLOR: "#000", // EXB配置設定のEXB表示文字色
+  EXB_LOC_FONT: "16px Arial", // EXB配置設定のEXB表示フォント
 
   THERMOH_DISP: "color", // icon / color
-  THERMOH_FONT: "12px Arial",
-  DISCOMFORT_HOT: "#fc5800",
-  DISCOMFORT_COMFORT: "#15db75",
-  DISCOMFORT_COLD: "#7da6e8",
+  THERMOH_FONT: "12px Arial", // 温湿度表示時のフォント
+  DISCOMFORT_HOT: "#fc5800", // 温湿度表示時の不快指数Hot時の背景色
+  DISCOMFORT_COMFORT: "#15db75", // 温湿度表示時の不快指数Comfort時の背景色
+  DISCOMFORT_COLD: "#7da6e8", // 温湿度表示時の不快指数Cold時の背景色
 
-  TEMPERATURE_LINE_HOUR_START: 8,
-  TEMPERATURE_LINE_HOUR_END: 21,
-  TEMPERATURE_LINE_COLOR: "#fc5800",
-  HUMIDITY_LINE_COLOR: "#7da6e8",
+  TEMPERATURE_LINE_HOUR_START: 8,  // 温湿度グラフの開始時間
+  TEMPERATURE_LINE_HOUR_END: 21,  // 温湿度グラフの終了時間
+  TEMPERATURE_LINE_COLOR: "#fc5800",// 温度グラフの線色
+  HUMIDITY_LINE_COLOR: "#7da6e8",// 湿度グラフの線色
 
-  PIR_R_SIZE: 26,
-  PIR_MIN_COUNT: 2,
-  PIR_BGCOLOR: "#FC7E82", // "#E2A6A5"
-  PIR_FGCOLOR: "#FFFFFF",
-  PIR_INUSE_LABEL: "InUse",
-  PIR_INUSE_FONT: "bold 24px Arial",
-  PIR_EMPTY_SHOW: true,
-  PIR_EMPTY_BGCOLOR: "#595959",
-  PIR_EMPTY_LABEL: "Empty",
-  PIR_EMPTY_FONT: "bold 32px Arial",
+  PIR_R_SIZE: 26,  // PIR表示時の円の半径
+  PIR_MIN_COUNT: 2, // PIRでの存在条件の最小カウント値
+  PIR_BGCOLOR: "#FC7E82", // "#E2A6A5" // PIR表示の円の背景色
+  PIR_FGCOLOR: "#FFFFFF", // PIR表示時の文字色
+  PIR_INUSE_LABEL: "InUse", // PIRで存在時のラベルキー
+  PIR_INUSE_FONT: "bold 24px Arial", // PIRで存在時のフォント
+  PIR_EMPTY_SHOW: true, // PIRで不在時に表示するか否か
+  PIR_EMPTY_BGCOLOR: "#595959", // PIRで不存時の背景色
+  PIR_EMPTY_LABEL: "Empty", // PIRで不在時のラベルキー
+  PIR_EMPTY_FONT: "bold 32px Arial", // PIRで不在時のフォント
 
-  THERMOPILE_S_SIZE: 20,
-  THERMOPILE_M_SIZE: 40,
-  THERMOPILE_L_SIZE: 60,
+  THERMOPILE_S_SIZE: 20, // サーモパイル円Sサイズ
+  THERMOPILE_M_SIZE: 40, // サーモパイル円Mサイズ
+  THERMOPILE_L_SIZE: 60, // サーモパイル円Lサイズ
 }
 
 export const EXB = [ // used when APP.LOGIN_MODE != APP_SERVICE with excloud old api

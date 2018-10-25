@@ -1,8 +1,7 @@
 <template>
   <div>
     <breadcrumb :items="items" />
-    <m-list :params="params" :list="categories" >
-    </m-list>
+    <m-list :params="params" :list="categories" />
   </div>
 </template>
 
@@ -36,6 +35,7 @@ export default {
           {key: "categoryId", sortable: true },
           {key: "categoryName", sortable: true },
           {key: "categoryTypeName", label: "categoryType", sortable: true },
+          {key: "shapeName", sortable: true },
           {key: "style", label: "displayColor" },
           {key: "description" },
           {key: "actions", thStyle: {width:'130px !important'} }
@@ -45,11 +45,11 @@ export default {
       categoryStyles: [],
       items: [
         {
-          text: this.$i18n.t('label.master'),
+          text: this.$i18n.tnl('label.master'),
           active: true
         },
         {
-          text: this.$i18n.t('label.category'),
+          text: this.$i18n.tnl('label.category'),
           active: true
         }
       ]
@@ -57,7 +57,7 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'categories', 'categoryStyles',
+      'categories',
     ]),
   },
   methods: {

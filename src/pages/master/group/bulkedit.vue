@@ -25,15 +25,15 @@ export default {
       appServicePath: '/basic/group',
       items: [
         {
-          text: this.$i18n.t('label.master'),
+          text: this.$i18n.tnl('label.master'),
           active: true
         },
         {
-          text: this.$i18n.t('label.group'),
+          text: this.$i18n.tnl('label.group'),
           href: '/master/group',
         },
         {
-          text: this.$i18n.t('label.group') + this.$i18n.t('label.bulkRegister'),
+          text: this.$i18n.tnl('label.group') + this.$i18n.tnl('label.bulkRegister'),
           active: true
         }
       ]
@@ -47,8 +47,23 @@ export default {
   methods: {
     async save(bulkSaveFunc) {
       const MAIN_COL = "groupId"
-      const NUMBER_TYPE_LIST = ["groupId"]
-      await bulkSaveFunc(MAIN_COL, NUMBER_TYPE_LIST)
+      const NUMBER_TYPE_LIST = ["shape"]
+      const DISPLAY_COL = ["shape", "color", "bgColor"]
+      await bulkSaveFunc(MAIN_COL, NUMBER_TYPE_LIST, null, (entity, headerName, val, dummyKey) => {
+        if(headerName == MAIN_COL){
+          entity.groupId = Util.hasValue(val)? Number(val): --dummyKey  
+        }
+        else if (_.includes(DISPLAY_COL, headerName)) {
+          if (!entity.display) {
+            entity.display = {}
+          }
+          entity.display[headerName] = val
+        }
+        else{
+          entity[headerName] = val
+        }
+        return dummyKey
+      })
     },
   }
 }

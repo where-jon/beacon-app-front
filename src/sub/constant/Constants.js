@@ -19,10 +19,10 @@ export const ROLE_FEATURE = {
   },
   getModeOptions(){
     return [
-      {text: i18n.t('label.allRejection'), value: 0},
-      {text: i18n.t('label.systemReadOnly'), value: 1},
-      {text: i18n.t('label.readOnly'), value: 2},
-      {text: i18n.t('label.allAuthorization'), value: 3},
+      {text: i18n.tnl('label.allRejection'), value: 0},
+      {text: i18n.tnl('label.systemReadOnly'), value: 1},
+      {text: i18n.tnl('label.readOnly'), value: 2},
+      {text: i18n.tnl('label.allAuthorization'), value: 3},
     ]
   }
 }
@@ -30,14 +30,14 @@ export const ROLE_FEATURE = {
 export const FEATURE = {
   getTypeOptions(){
     return [
-      {text: i18n.t('label.noLimitType'), value: 0},
-      {text: i18n.t('label.limitType'), value: 1},
+      {text: i18n.tnl('label.noLimitType'), value: 0},
+      {text: i18n.tnl('label.limitType'), value: 1},
     ]
   },
   getEnabledOptions(){
     return [
-      {text: i18n.t('label.disabledType'), value: false},
-      {text: i18n.t('label.enabledType'), value: true},
+      {text: i18n.tnl('label.disabledType'), value: false},
+      {text: i18n.tnl('label.enabledType'), value: true},
     ]
   }
 }
@@ -53,18 +53,30 @@ export const txViewTypes = [
 export const CATEGORY = {
   getTypes(){ 
     return [
-      {value: 0, text: i18n.t('label.person')},
-      {value: 1, text: i18n.t('label.thing')},
-      {value: 2, text: i18n.t('label.zone')},
+      {value: 1, text: i18n.tnl('label.person')},
+      {value: 2, text: i18n.tnl('label.thing')},
+      {value: 3, text: i18n.tnl('label.zone')},
     ]
   },
 }
 
+export const SHAPE = {
+  CIRCLE: 1,
+  SQUARE: 2,
+  ROUND_SQUARE: 3,
+}
+
+export const getShapes = () => [
+  {value: 1, text: i18n.tnl('label.circle')},
+  {value: 2, text: i18n.tnl('label.square')},
+  {value: 3, text: i18n.tnl('label.roundedSquare')},
+]
+
 export const ZONE = {
   getTypes(){ 
     return [
-      {value: 0, text: i18n.t('label.coordinate')},
-      {value: 1, text: i18n.t('label.nonCoodinate')},
+      {value: 0, text: i18n.tnl('label.coordinate')},
+      {value: 1, text: i18n.tnl('label.nonCoodinate')},
     ]
   },
 }
