@@ -8,7 +8,13 @@
       </b-form>
     </b-row>
     <b-row class="mt-3">
-      <canvas id="map" ref="map" @click="resetDetail"></canvas>
+      <canvas id="map" ref="map" @click="resetDetail" v-if="!showMeditag"></canvas>
+      <b-col  v-if="showMeditag">
+        <canvas id="map" ref="map" @click="resetDetail"></canvas>
+      </b-col>
+      <b-col class="rightPane" v-if="showMeditag">
+        <sensor :sensors="meditagSensors" class="rightPane"></sensor>
+      </b-col>
     </b-row>
     <div v-if="selectedTx.txId" >
       <txdetail :selectedTx="selectedTx" @resetDetail="resetDetail"></txdetail>
@@ -24,23 +30,27 @@
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as PositionHelper from '../../sub/helper/PositionHelper'
+import * as SensorHelper from '../../sub/helper/SensorHelper'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as mock from '../../assets/mock/mock'
 import txdetail from '../../components/txdetail.vue'
 import { Tx, EXB, APP, DISP, DEV } from '../../sub/constant/config'
-import { SHAPE } from '../../sub/constant/Constants'
+import { SHAPE, SENSOR } from '../../sub/constant/Constants'
 import { Shape, Stage, Container, Bitmap, Text, Touch } from '@createjs/easeljs/dist/easeljs.module'
 import { Tween, Ticker } from '@createjs/tweenjs/dist/tweenjs.module'
 import breadcrumb from '../../components/breadcrumb.vue'
 import showmapmixin from '../../components/showmapmixin.vue'
+import sensor from '../../components/sensor.vue'
 import moment from 'moment'
+import { rightpanewidth, rightpaneleft } from '../../sub/constant/config.scss'
 
 let that
 
 export default {
   mixins: [showmapmixin],
   components: {
+    'sensor': sensor,
     'txdetail': txdetail,
     breadcrumb,
   },
@@ -59,7 +69,9 @@ export default {
       positions: [],
       count: 0, // for mock test 
       txsMap: {},
-      pot: {}
+      pot: {},
+      showMeditag: APP.USE_MEDITAG,
+      meditagSensors: [],
     }
   },
   computed: {
@@ -137,6 +149,21 @@ export default {
 
         this.showMapImage()
 
+        if (APP.USE_MEDITAG) {
+          let meditagSensors = await EXCloudHelper.fetchSensor(SENSOR.MEDITAG)
+          this.meditagSensors = _(meditagSensors)
+          .map((val) => {
+              return {...val, bg: SensorHelper.getStressBg(val.stress), down: val.down?val.down:0}
+          })
+          .filter((val) => this.txs.some((tx) => tx.btxId == val.id))
+          .sortBy((val) => (new Date().getTime() - val.downLatest < DISP.DOWN_RED_TIME)? val.downLatest * -1: val.id)
+          .value()
+        }
+
+        if (APP.USE_MAGNET) {
+          let magnetSensors = await EXCloudHelper.fetchSensor(SENSOR.MAGNET)
+        }
+
         if (payload && payload.done) {
           payload.done()
         }
@@ -170,6 +197,9 @@ export default {
 
       let now = !DEV.USE_MOCK_EXC? new Date().getTime(): mock.positions_conf.start + this.count++ * mock.positions_conf.interval  // for mock
       this.positions = PositionHelper.correctPosId(this.orgPositions, now)
+      if (APP.USE_MEDITAG && this.meditagSensors) {
+        this.positions = SensorHelper.setStress(this.positions, this.meditagSensors)
+      }
 
       this.positionedExb = _(this.exbs).filter((exb) => {
         return exb.enabled && exb.location.areaId == this.selectedArea && exb.location.x && exb.location.y > 0
@@ -245,9 +275,21 @@ export default {
 <style scoped lang="scss">
 @import "../../sub/constant/config.scss";
 
+$right-pane-width-px: $right-pane-width * 1px;
+$right-pane-maxwidth-px: ($right-pane-width + 100) * 1px;
+$right-pane-left-px: $right-pane-left * 1px;
+
 ::-webkit-scrollbar { 
   display: none; 
 }
 
+.rightPane {
+  max-width: $right-pane-maxwidth-px;
+  margin: 10px;
+  padding: 3px;
+  width: $right-pane-width-px;
+  overflow: scroll;
+  height: calc(100vh - 100px);
+}
 
 </style>

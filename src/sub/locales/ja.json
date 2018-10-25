@@ -309,6 +309,12 @@
     "security": "セキュリティ",
     "communication": "通信",
 
+    "h_blood_pressure": "最高血圧",
+    "l_blood_pressure": "最低血圧",
+    "heart_rate": "心拍数",
+    "step": "歩",
+    "down_count": "転倒数",
+
     "APP_LOG_KEEP_TM": "ログ保持期間",
     "APP_MONITORING_TM": "モニタリング更新間隔",
     "APP_PASSWORD_CHANGE": "パスワード変更機能",

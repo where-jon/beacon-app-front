@@ -6,6 +6,9 @@ $menu-bg-hover: #559cd9;
 $menu-bg-border: #2269a6;
 $undetect: #eebbcb;
 
+$right-pane-width: 300;
+$right-pane-left: 350;
+
 $default: #588BC1;
 $earth-color: #5C7886;
 $autumn: #927760;
@@ -35,6 +38,8 @@ $vivid-menu-item: #FF4784;
 // To use css value in js, export as the follwing
 :export {
     txdetailbg: $txdetail-bg;
+    rightpanewidth: $right-pane-width;
+    rightpaneleft: $right-pane-left;
 }
 
 $blue:    #007bff !default;
