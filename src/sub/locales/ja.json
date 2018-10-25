@@ -365,7 +365,7 @@
     "bulkExistFailed": "{line}行目: {col}（{value}）は存在していません。",
     "monthDayTemperature": "{month}月{day}日の温湿度",
     "invalidLoginId": "ログインIDは英数記号を指定してください",
-    "notFound": "検索結果0件",
+    "notFound": "検索結果が存在しませんでした",
     "pleaseEnterSearchCriteria": "検索条件を入力してください",
     "uploadData": "{val}件のデータが登録可能です",
     "uploadNoData": "登録可能なデータがありません",
