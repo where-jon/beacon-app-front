@@ -149,7 +149,7 @@ export default {
       this.stage.canvas = canvas
       this.stage.mouseEnabled = true
       if (Touch.isSupported()) {
-        Touch.enable(stage)
+        Touch.enable(this.stage)
       }
 
       var bitmap = new Bitmap(bg)
