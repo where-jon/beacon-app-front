@@ -80,12 +80,14 @@ export const DISP = {
   TX_DIV_2: 1, // Txが重なった際に２つ上下左右に並べる場合にずらす倍率
   TX_DIV_3: 0.5, // Txが重なった際に３つ左右に並べる場合にずらす倍率
   AUTO_RELOAD: 60000, // 自動リロード間隔(ミリ秒)
+  SHOW_NAV: true, // show nav  
   SHOW_SIDEBAR: true, // show sidebar  
-  THEME: "default",
-  CHAR_SET: "UTF8",
+  THEME: "default", // デフォルトのテーマ
+  CHAR_SET: "UTF8", // デフォルトのCSVダウンロードエンコード
   DISPLAY_PRIORITY: ['category','group'], // TX表示の際に参照するdisplay方法の優先順位
 
-  MAP_FIT: "both", // マップを画面表示範囲内にフィットさせるか。width or height or both 
+  MAP_FIT: "both", // マップを画面表示範囲内にフィットさせるか。width or height or both
+  MAP_FIT_MOBILE: "width", // (モバイル)マップを画面表示範囲内にフィットさせるか。width or height or both
 
   TX_POS_ONE_TO_ONE: false, // 1つの場所に1TXのみ存在可能
   RSSI_MIN: -67, // RSSI下限値

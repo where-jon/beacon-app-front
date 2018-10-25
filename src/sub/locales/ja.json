@@ -53,6 +53,7 @@
     "visible": "表示フラグ",
     "bgColor": "背景色",
     "color": "色",
+    "textColor": "文字色",
     "displayColor": "表示色",
     "dt": "日時",
     "no": "No.",
@@ -370,6 +371,7 @@
     "uploadData": "{val}件のデータが登録可能です",
     "uploadNoData": "登録可能なデータがありません",
     "uploadWarnData": "{val}件のデータは存在しないため登録できません",
+    "loadingFile": "ファイルを読み込んでいます({now} / {all} 件)",
 
     "dummy": "" 
   }
