@@ -148,6 +148,9 @@ export default {
       this.stage = new Stage("map")
       this.stage.canvas = canvas
       this.stage.mouseEnabled = true
+      if (Touch.isSupported()) {
+        Touch.enable(stage)
+      }
 
       var bitmap = new Bitmap(bg)
       this.mapImageScale = bitmap.scaleY = bitmap.scaleX = canvas.width / bg.width
