@@ -62,6 +62,7 @@ export default {
       }, APP.AREA_THUMBNAIL_MAX)
     },
     async save(thumbnails) {
+      await Util.sleep(100)
       return await AppServiceHelper.bulkSave(this.appServicePath, thumbnails)
     },
   }
