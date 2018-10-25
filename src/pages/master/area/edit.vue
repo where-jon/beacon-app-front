@@ -13,7 +13,7 @@
             </b-form-group>
             <b-form-group>
               <label v-t="'label.areaName'" />
-              <b-form-input type="text" v-model="form.areaName" required :readonly="!isEditable" />
+              <b-form-input type="text" v-model="form.areaName" maxlength="20" required :readonly="!isEditable" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.map'" />
