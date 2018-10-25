@@ -83,13 +83,12 @@ export default {
       }
 
       const dimension = {
-        id: null,
+        id: that.index++,
         top: Math.floor(Math.min(that.fromY, that.toY)),
         left: Math.floor(Math.min(that.fromX, that.toX)),
         bottom: Math.floor(Math.max(that.toY, that.fromY)),
         right: Math.floor(Math.max(that.toX, that.fromX)),
-        index: that.index++,
-        name: ''
+        name: 'zone'
       }
 
       const rect = new fabric.Rect({
@@ -100,11 +99,11 @@ export default {
         stroke: 'blue',
         strokeWidth: 1,
         originX: 'center',
-        originY: 'center'
+        originY: 'center',
       })
 
       const text = new fabric.Text(
-      dimension.index.toString(),
+      dimension.id.toString(),
       {
         fontSize: 20,
         fill: '#fff',
@@ -113,15 +112,20 @@ export default {
       })
 
       const group = new fabric.Group([ rect, text ], {
-        index: dimension.index,
+        id: dimension.id,
         left: dimension.left,
         top: dimension.top,
         hasRotatingPoint: false,
         lockRotation: true,
+        name: dimension.name + dimension.id
       });
       that.canvas.add(group);
       that.canvas.setActiveObject(group);
       that.zones.push(dimension)
+      that.$emit('created', {
+        id: dimension.id,
+        name: dimension.name + dimension.id,
+      })
     })
 
     // DELボタン押下時に選択エリアを削除する
@@ -136,8 +140,21 @@ export default {
           return
       }
       that.canvas.remove(active)
-      that.zones = that.zones.filter((e) => {return e.index !== active.index})
+      that.zones = that.zones.filter((e) => {return e.id !== active.id})
+      console.log(active)
+      that.$emit('deleted', active.id)
     }, false);
+
+    this.canvas.on('object:selected', function(event) {
+      if (!event.e) {
+        return
+      }
+      that.$emit('selected', {
+        id: event.target.id,
+        name: event.target.name,
+      })
+    })
+
     this.setupCanvas(this.base64)
   }
 }

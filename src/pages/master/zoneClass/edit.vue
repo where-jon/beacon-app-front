@@ -19,7 +19,7 @@
               <label v-t="'label.zoneName'" class="control-label" />
             </b-col>
             <b-col sm="5">
-              <b-form-input type="text" v-model="form.zoneName" maxlength="20" required :readonly="!isEditable" />
+              <b-form-input type="text" v-model="form.zoneName" maxlength="20" required :readonly="!isEditable" :disabled="!isEnableNameText" />
             </b-col>
           </b-form-row>
         </b-form-group>
@@ -30,7 +30,7 @@
               <label v-t="'label.areaName'" class="control-label" />
             </b-col>
             <b-col sm="3">
-              <b-form-select v-model="form.areaId" :options="areaNames" required @change="onSelectArea" />
+              <b-form-select v-model="form.areaId" :options="areaNames" required />
             </b-col>
             <b-col sm="1">
               <label v-t="'label.categoryName'" class="control-label" />
@@ -46,7 +46,7 @@
           </b-form-row>
         </b-form-group>
       </b-form>
-      <AreaCanvas :base64="base64" />
+      <AreaCanvas :base64="base64" @selected="onSelected" @created="onCreated" @deleted="onDeleted" />
     </div>
   </div>
 </template>
@@ -84,6 +84,8 @@ export default {
       locationNames: [],
       categoryNames: [],
       canvas: null,
+      isEnableNameText: false,
+      zones: [],
       items: [
         {
           text: this.$i18n.t('label.master'),
@@ -124,13 +126,10 @@ export default {
     ]),
   },
   methods: {
-    reset() {
-    },
-    onSelectArea (areaId) {
-    },
     async initAreaNames() {
       await StateHelper.load('area')
       this.areaNames = this.areas.map((val) => ({text: val.areaName, value: val.areaId}))
+      console.log(this.areaNames )
     },
     async initLocationNames() {
       await StateHelper.load('location')
@@ -154,12 +153,22 @@ export default {
       const saveId = await AppServiceHelper.bulkSave(this.appServicePath, [entity])
       return saveId
     },
-    showMapImage() {
-      if (this.showMapImageDef()) {
-        return
-      }
-      this.stage.update()
+    onCreated(zoneData) {
+      this.onSelected(zoneData)
+      this.zones.push(zoneData)
     },
+    onSelected (zoneData) {
+      this.isEnableNameText = true
+      this.form.zoneName = zoneData.name
+    },
+    onDeleted (id) {
+      this.zones = this.zones.filter((e) => {
+        return e.id !== id
+      })
+      console.log(this.zones)
+      this.isEnableNameText = false
+      this.form.zoneName = ''
+    }
   }
 }
 </script>
