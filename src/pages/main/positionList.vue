@@ -17,6 +17,7 @@ import { addLabelByKey } from '../../sub/helper/ViewHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import { DETECT_STATE, BATTERY_STATE, BATTERY_BOUNDARY } from '../../sub/constant/Constants'
 import * as Util from '../../sub/util/Util'
+import { APP } from '../../sub/constant/config.js'
 
 let that
 
@@ -32,15 +33,17 @@ export default {
         name: 'positionList',
         id: 'positionListId',
         appServicePath: '/core/tx',
-        extraFilter: ['detectState', 'group', 'area'],
+        extraFilter: _(['detectState',
+          APP.POSITION_WITH_GROUP ? 'group' : null,
+          APP.POSITION_WITH_AREA ? 'area' : null]).compact().value(),
         disableTableButtons: true,
         fields: addLabelByKey(this.$i18n, [ 
           {key: "tx.txId", label: 'tx', sortable: true},
-          {key: "tx.pot.potCd", label: 'potCd', sortable: true},
+          APP.POSITION_WITH_CODE ? {key: "tx.pot.potCd", label: 'potCd', sortable: true} : null,
           {key: "tx.pot.potName", label: 'name', sortable: true},
           {key: "state", sortable: true},
-          {key: "tx.group.groupName", label: 'group', sortable: true},
-          {key: "exb.areaName", label: 'area', sortable: true},
+          APP.POSITION_WITH_GROUP ? {key: "tx.group.groupName", label: 'group', sortable: true} : null,
+          APP.POSITION_WITH_AREA ? {key: "exb.areaName", label: 'area', sortable: true} : null,
           {key: "exb.locationName", label: 'final-receive-location', sortable: true},
           {key: "updatetime", label: 'final-receive-timestamp', sortable: true},
           {key: "powerLevelText", label: 'power-level'},
