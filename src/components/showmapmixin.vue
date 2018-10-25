@@ -6,6 +6,7 @@ import { Tween, Ticker } from '@createjs/tweenjs/dist/tweenjs.module'
 import { EventBus } from '../sub/helper/EventHelper'
 import { DISP } from '../sub/constant/config.js'
 import * as Util from '../sub/util/Util'
+import * as HtmlUtil from '../sub/util/HtmlUtil'
 import * as PositionHelper from '../sub/helper/PositionHelper'
 import * as StateHelper from '../sub/helper/StateHelper'
 import reloadmixinVue from './reloadmixin.vue'
@@ -127,7 +128,7 @@ export default {
       let parent = document.getElementById("map").parentElement
       let parentHeight = document.documentElement.clientHeight - parent.offsetTop - 82
       let isMapWidthLarger = parentHeight / parent.clientWidth > bg.height / bg.width
-      let fitWidth = (DISP.MAP_FIT == "both" && isMapWidthLarger) || DISP.MAP_FIT == "width"
+      let fitWidth = HtmlUtil.isMobile()? ((DISP.MAP_FIT_MOBILE == "both" && isMapWidthLarger) || DISP.MAP_FIT_MOBILE == "width"): (DISP.MAP_FIT == "both" && isMapWidthLarger) || DISP.MAP_FIT == "width"
       if (fitWidth) {
         canvas.width = parent.clientWidth
         canvas.height = parent.clientWidth * bg.height / bg.width
@@ -148,6 +149,9 @@ export default {
       this.stage = new Stage("map")
       this.stage.canvas = canvas
       this.stage.mouseEnabled = true
+      if (Touch.isSupported()) {
+        Touch.enable(this.stage)
+      }
 
       var bitmap = new Bitmap(bg)
       this.mapImageScale = bitmap.scaleY = bitmap.scaleX = canvas.width / bg.width

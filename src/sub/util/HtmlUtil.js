@@ -13,6 +13,11 @@ export const getLangShort = () => {
   return lang
 }
 
+export const isMobile = () => {
+  let isMobile = window.matchMedia("only screen and (max-width: 760px)")
+  return isMobile && isMobile.matches
+}
+
 const intervals = []
 
 export const registerInterval = (func, period) => intervals.push(setInterval(func, period))

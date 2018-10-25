@@ -11,7 +11,7 @@
       <img src="/toplogo.png" width=220 height=36 />
     </b-navbar-brand>
 
-    <b-collapse is-nav id="nav_collapse" v-if="!isLoginPage">
+    <b-collapse is-nav id="nav_collapse" v-if="!isLoginPage && showNav">
 
       <!-- left (navi dropdown menu) -->
       <b-navbar-nav>
@@ -48,6 +48,7 @@ import * as AuthHelper from '../sub/helper/AuthHelper'
 import { DISP, APP, THEME } from '../sub/constant/config'
 import { LOGIN_MODE } from '../sub/constant/Constants'
 import { getThemeClasses } from '../sub/helper/ThemeHelper'
+import * as HtmlUtil from '../sub/util/HtmlUtil'
 import commonmixinVue from './commonmixin.vue';
 
 export default {
@@ -56,7 +57,13 @@ export default {
     return {
       version: APP.VERSION,
       nav : this.$store.state.menu,
+      showNav: HtmlUtil.isMobile() || DISP.SHOW_NAV
     }
+  },
+  mounted() {
+      window.addEventListener('resize', () => {
+        this.showNav = HtmlUtil.isMobile() || DISP.SHOW_NAV
+      })
   },
   computed: {
     isLoginPage() {

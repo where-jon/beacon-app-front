@@ -24,7 +24,7 @@
           <b-form-select v-model="form.displayShape" :options="shapes" required :disabled="!isEditable" :readonly="!isEditable" />
         </b-form-group>
         <b-form-group>
-          <label v-t="'label.color'" />
+          <label v-t="'label.textColor'" />
           <b-form-input type="color" v-model="form.displayColor" required :disabled="!isEditable" :readonly="!isEditable" />
         </b-form-group>
         <b-form-group>
