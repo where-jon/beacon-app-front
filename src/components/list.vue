@@ -265,12 +265,7 @@ export default {
       } else {
         try{
           const regExp = new RegExp(".*" + this.filter.reg + ".*", "i")
-          const param = this.params.fields.map((val) => {
-            let itemValue = originItem
-            const keys = val.key.split("\.")
-            keys.forEach(key => itemValue = itemValue[key])
-            return itemValue
-          })
+          const param = this.params.fields.map((val) => Util.getValue(originItem, val.key, ''))
           regBool = regExp.test(JSON.stringify(param))
         }
         catch(e){
@@ -294,6 +289,18 @@ export default {
             case 'group':
             if  (extra.group && 
                   !(extra.group === originItem.groupId)) {
+              extBool = false
+            }
+            break
+            case 'area':
+            if (extra.area &&
+                !(extra.area === originItem.areaId)) {
+              extBool = false
+            }
+            break
+            case 'detectState':
+            if (extra.detectState &&
+                !(extra.detectState === originItem.detectState)) {
               extBool = false
             }
             break

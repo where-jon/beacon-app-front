@@ -3,6 +3,7 @@ import Vue from 'vue'
 export const state = () => ({
   pots: [],
   pot: {},
+  positions: [],
   led: {},
   sensors: [],
   deviceIds: [],
@@ -13,7 +14,6 @@ export const state = () => ({
   exb: {},
   txs: [],
   tx: {},
-  txComposites: [],
   categories: [],
   category: {},
   groups: [],

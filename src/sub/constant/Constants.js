@@ -117,10 +117,28 @@ export const LED_BLINK_TYPES = {
 export const DETECT_STATE = {
   getTypes(){ 
     return [
-      {value: 0, text: i18n.t('label.detected')},
-      {value: 1, text: i18n.t('label.undetect')},
+      {value: 1, text: i18n.t('label.detected')},
+      {value: 2, text: i18n.t('label.detectAfterUndetect')},
+      {value: 3, text: i18n.t('label.undetect')},
     ]
   },
+}
+
+export const BATTERY_STATE = {
+  getTypes(){
+    return [
+      {value:1, text: i18n.t('label.power-good')},
+      {value:2, text: i18n.t('label.power-warning')},
+      {value:3, text: i18n.t('label.power-poor')},
+      {value:4, text: i18n.t('label.power-null')},
+    ]
+  }
+}
+
+export const BATTERY_BOUNDARY = {
+  GOOD: 31,
+  WARNING: 21,
+  POOR: 0,
 }
 
 export const MENU = [

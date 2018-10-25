@@ -185,6 +185,9 @@
     "positionList": "位置把握（一覧）",
     "detectState": "状態",
     "detected": "検知中",
+    "detectAfterUndetect": "検知後未検知",
+    "power-null": "‐",
+    "final-receive-location": "最終取得場所",
 
     "positionStack": "位置把握（階層図）",
 

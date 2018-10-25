@@ -2,7 +2,7 @@
   <div>
     <breadcrumb :items="items" :extraNavSpec="extraNavSpec"
         :reload="reload" :isLoad="isLoad"/>
-    <m-list :params="params" :list="txComposites" />
+    <m-list :params="params" :list="positions" />
   </div>
 </template>
 
@@ -12,7 +12,10 @@ import breadcrumb from '../../components/breadcrumb.vue'
 import mList from '../../components/list.vue'
 import listmixinVue from '../../components/listmixin.vue'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
+import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import { addLabelByKey } from '../../sub/helper/ViewHelper'
+import * as StateHelper from '../../sub/helper/StateHelper'
+import { DETECT_STATE, BATTERY_STATE, BATTERY_BOUNDARY } from '../../sub/constant/Constants'
 import * as Util from '../../sub/util/Util'
 
 let that
@@ -32,16 +35,17 @@ export default {
         extraFilter: ['detectState', 'group', 'area'],
         disableTableButtons: true,
         fields: addLabelByKey(this.$i18n, [ 
-          {key: "txId", label: 'tx', sortable: true},
-          {key: "potCd", sortable: true},
-          {key: "potName", label: 'name', sortable: true},
-          {key: "detectState", label: 'state', sortable: true},
-          {key: "groupName", label: 'group', sortable: true},
-          {key: "areaName", label: 'area', sortable: true},
-          {key: "timestamp", label: 'final-receive-timestamp', sortable: true},
-          {key: "powerLevel", label: 'power-level'},
+          {key: "tx.txId", label: 'tx', sortable: true},
+          {key: "tx.pot.potCd", label: 'potCd', sortable: true},
+          {key: "tx.pot.potName", label: 'name', sortable: true},
+          {key: "state", sortable: true},
+          {key: "tx.group.groupName", label: 'group', sortable: true},
+          {key: "exb.areaName", label: 'area', sortable: true},
+          {key: "exb.locationName", label: 'final-receive-location', sortable: true},
+          {key: "updatetime", label: 'final-receive-timestamp', sortable: true},
+          {key: "powerLevelText", label: 'power-level'},
         ]),
-        initTotalRows: this.$store.state.app_service.txComposites.length,
+        initTotalRows: this.$store.state.app_service.positions.length,
       },
       items: [
         {
@@ -76,39 +80,57 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'txComposites',
+      'replaceAs',
+      'txs',
+      'areas',
+      'exbs',
+      'positions',
     ]),
   },
   methods: {
     async fetchData(payload) {
-      // try {
-      //   this.replace({showProgress: true})
-      //   let pots = await AppServiceHelper.fetchList("/basic/pot/withThumbnail", 'potId')
-      //   let potImages = pots.map((val) => val.thumbnail)
-      //   pots = pots.map((val) => ({
-      //     ...val,
-      //     txIdName: val.txId? Util.getValue(val, 'tx.txName', '') + '(' + val.txId + ')': null,
-      //     groupName: Util.getValue(val, 'potGroupList.0.group.groupName', ''),
-      //     groupId: Util.getValue(val, 'potGroupList.0.group.groupId', ''),
-      //     categoryName: Util.getValue(val, 'potCategoryList.0.category.categoryName', ''),
-      //     categoryId: Util.getValue(val, 'potCategoryList.0.category.categoryId', ''),
-      //     extValue: val.extValue ? val.extValue : this.extValueDefault,
-      //     thumbnail: ""
-      //   })) // omit images to avoid being filtering target
-      //   if (payload && payload.done) {
-      //     payload.done()
-      //   }
-      //   this.replaceAS({pots, potImages})
-      // }
-      // catch(e) {
-      //   console.error(e)
-      // }
-      // this.replace({showProgress: false})
-      return [{}]
+      try {
+        this.replace({showProgress: true})
+        await StateHelper.load('area')
+        await StateHelper.load('tx')
+        await StateHelper.load('exb')
+        let positions = await EXCloudHelper.fetchPositionList(this.exbs, this.txs)
+        positions = positions.map((pos) => {
+          const stateOpt = DETECT_STATE.getTypes().find((val) => pos.phase === val.value)
+          return {
+            ...pos,
+            state: stateOpt ? stateOpt.text : null,
+            powerLevelText: this.getPowerLevel(pos),
+            // 追加フィルタ用
+            detectState: pos.phase,
+            groupId: Util.getValue(pos, 'tx.group.groupId').val,
+            areaId: Util.getValue(pos, 'exb.location.areaId').val,
+          }
+        })
+        console.log(positions)
+        this.replaceAS({positions})
+        if (payload && payload.done) {
+          payload.done()
+        }
+      }
+      catch(e) {
+        console.error(e)
+      }
+      this.replace({showProgress: false})
     },
-    thumbnail(index) {
-      return this.potImages[index]
-    },
+    getPowerLevel(position){
+      const batteryOpts = BATTERY_STATE.getTypes()
+      const powerLevel = position.power_level
+      if (!powerLevel) {
+        return batteryOpts.find((val) => val.value === 4).text
+      } else if (powerLevel >= BATTERY_BOUNDARY.GOOD) {
+        return batteryOpts.find((val) => val.value === 1).text
+      } else if (powerLevel >= BATTERY_BOUNDARY.WARNING) {
+        return batteryOpts.find((val) => val.value === 2).text
+      } else {
+        return batteryOpts.find((val) => val.value === 3).text
+      }
+    }
   }
 }
 </script>

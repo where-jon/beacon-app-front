@@ -21,6 +21,17 @@ export const fetchPosition = async (exbs, txs, pMock) => {
     .compact().value()
 }
 
+export const fetchPositionList = async (exbs, txs) => {
+    let data = DEV.USE_MOCK_EXC? mock.position:
+        await HttpHelper.getExCloud(APP_SERVICE.BASE_URL + EXCLOUD.POSITION_URL + new Date().getTime())
+    return _(data)
+    .map((val) => {
+        let tx = _.find(txs, (tx) => tx.btxId == val.btx_id)
+        let exb = _.find(exbs, (exb) => exb.location.posId == val.pos_id)
+        return {...val, tx: tx, exb: exb}
+    }).compact().value()
+}
+
 export const fetchSensor = async (sensorId) => {
   let data = DEV.USE_MOCK_EXC? mock.sensor[sensorId]:
       await HttpHelper.getExCloud(APP_SERVICE.BASE_URL + EXCLOUD.SENSOR_URL.replace("{id}", sensorId) + new Date().getTime())
