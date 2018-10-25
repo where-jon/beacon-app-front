@@ -1,6 +1,6 @@
 <template>
   <div class="breadcrumb navigation">
-    <div class="col-md-11 list-container">
+    <div class="col-11 list-container">
       <ol class="breadcrumb-items">
         <li v-for="(item, index) in items" :key="index">
           <span v-if="isActive(item)" v-text="item.text"></span>
@@ -8,7 +8,7 @@
         </li>
       </ol>
     </div>
-    <div class="col-md-1 reload-button-container">
+    <div class="col-1 reload-button-container">
       <a href="#" id="reload" v-if="reload" @click="onClickReload"><i title="リロード" :class="classes"></i></a>
     </div>
   </div>
