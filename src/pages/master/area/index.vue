@@ -61,7 +61,7 @@ export default {
       try {
         this.replace({showProgress: true})
         await StateHelper.load('area')
-        this.areaImages = this.areas.map((val) => ({ id: val.areaId, thumbnail: val.thumbnail}))
+        this.areaImages = this.areas.map((val) => ({ id: val.areaId, mapImage: val.mapImage, thumbnail: val.thumbnail}))
         this.areaList = this.areas.map((val) => ({...val, mapImage: "", thumbnail: ""})) // omit images to avoid being filtering target
         if (payload && payload.done) {
           payload.done()

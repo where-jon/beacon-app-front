@@ -41,10 +41,27 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'category',
+      'category', 'categories'
     ]),
   },
   methods: {
+    resetStyle(entity){
+        const updateData = this.categories.find((val) => val.categoryId == entity.categoryId)
+        if(updateData && updateData.display){
+          if (!entity.display) {
+            entity.display = {}
+          }
+          if(!entity.display.color){
+            entity.display.color = updateData.display.color
+          }
+          if(!entity.display.bgColor){
+            entity.display.bgColor = updateData.display.bgColor
+          }
+          if(!entity.display.shape){
+            entity.display.shape = updateData.display.shape
+          }
+        }
+    },
     async save(bulkSaveFunc) {
       const MAIN_COL = "categoryId"
       const NUMBER_TYPE_LIST = ["categoryType", "shape"]
@@ -63,7 +80,7 @@ export default {
           entity[headerName] = val
         }
         return dummyKey
-      })
+      }, (entity, dummyKey) => this.resetStyle(entity))
     },
   }
 }
