@@ -30,6 +30,7 @@ export default {
         bulkEditPath: '/master/group/bulkedit',
         appServicePath: '/basic/group',
         csvOut: true,
+        custumCsvColumns: ["groupId", "groupName", "ruby", "display.color", "display.bgColor", "display.shape", "description"],
         fields: addLabelByKey(this.$i18n, [ 
           {key: "groupId", sortable: true },
           {key: "groupName", sortable: true },

@@ -31,6 +31,7 @@ export default {
         bulkEditPath: '/master/category/bulkedit',
         appServicePath: '/basic/category',
         csvOut: true,
+        custumCsvColumns: ["categoryId", "categoryName", "categoryTypeName", "display.color", "display.bgColor", "display.shape", "description"],
         fields: addLabelByKey(this.$i18n, [ 
           {key: "categoryId", sortable: true },
           {key: "categoryName", sortable: true },
