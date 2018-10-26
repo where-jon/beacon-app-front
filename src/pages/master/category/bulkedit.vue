@@ -51,9 +51,15 @@ export default {
           if (!entity.display) {
             entity.display = {}
           }
-          entity.display.color = updateData.display.color
-          entity.display.bgColor = updateData.display.bgColor
-          entity.display.shape = updateData.display.shape
+          if(!entity.display.color){
+            entity.display.color = updateData.display.color
+          }
+          if(!entity.display.bgColor){
+            entity.display.bgColor = updateData.display.bgColor
+          }
+          if(!entity.display.shape){
+            entity.display.shape = updateData.display.shape
+          }
         }
     },
     async save(bulkSaveFunc) {
