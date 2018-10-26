@@ -50,6 +50,14 @@ export const APP = {
 
   USER_WITH_EMAIL: false, // ユーザ設定でメールアドレスを使用する
   USER_WITH_NAME: false, // ユーザ設定で名前を使用する
+
+  POT_WITH_RUBY: true,       // use ruby on pot master
+  POT_WITH_POST: true,       // use post on pot master
+  POT_WITH_TEL: true,        // use tel on pot master
+  POT_WITH_POTCD: true,      // use potCd on pot master
+  POT_WITH_GROUP: true,      // use group on pot master
+  POT_WITH_CATEGORY: true,   // use category on pot master
+
 }
 
 export const LOCAL_LOGIN = { // local login md5 hash of id:pass // TODO: add Role

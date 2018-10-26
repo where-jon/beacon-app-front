@@ -6,7 +6,7 @@
     </b-row>
 
     <!-- table -->
-    <b-form @submit="onSubmit" v-if="show">
+    <div v-if="show">
       <div v-for="categoryId in categoryIds" :key="categoryId" class="card shadow-sm mb-3">
         <label class="card-header" v-t="getName(categoryId)" />
         <div class="card-body">
@@ -15,10 +15,10 @@
               <span v-for="field in fields" :key="field.key">
                 <span v-if="useValueType(row, field)">
                   <span v-if="usePullDown(row, field)">
-                    <b-form-select v-model="row[field.key]" :options="getBooleanOptions()" />
+                    <b-form-select v-model="row[field.key]" :options="getBooleanOptions()" form="updateForm"/>
                   </span>
                   <span v-else>
-                    <b-form-input v-model="row[field.key]" :type="getInputType(row, field)" />
+                    <b-form-input v-model="row[field.key]" :type="getInputType(row, field)" maxlength="1000" form="updateForm"/>
                   </span>
                 </span>
               </span>
@@ -27,8 +27,45 @@
         </div>
       </div>
 
-      <b-button v-if="isEditable" type="submit" :variant="theme" @click="register(true)" class="ml-2" v-t="'label.update'" />
-    </b-form>
+      <b-form @submit="onRegistSubmit" v-if="isSuperEditable">
+        <div v-if="useRegistForm" class="card shadow-sm mt-5 mb-3">
+          <label class="card-header" v-t="'label.addSetting'" />
+          <div class="card-body">
+            <b-form-group>
+              <b-form-row>
+                <b-col sm="2">
+                  <label v-t="'label.key'" />
+                </b-col>
+                <b-col sm="5">
+                  <b-form-input v-model="newForm.key" :type="'text'" class="form-control-sm" maxlength="20" required />
+                </b-col>
+              </b-form-row>
+            </b-form-group>
+            <b-form-group>
+              <b-form-row>
+                <b-col sm="2">
+                  <label v-t="'label.valType'" />
+                </b-col>
+                <b-col sm="5">
+                  <b-form-select v-model="newForm.type" :options="getTypeOptions()" class="form-control-sm" required />
+                </b-col>
+                <b-col>
+                  <div class="float-right">
+                    <b-button v-if="isEditable" type="submit" :variant="theme" @click="register(true)" v-t="'label.add'" />
+                    <b-button type="button" variant="outline-danger" @click="showForm(false)" v-t="'label.cancel'" class="ml-2" />
+                  </div>
+                </b-col>
+              </b-form-row>
+            </b-form-group>
+          </div>
+        </div>
+        <b-button v-if="!useRegistForm" type="button" :variant="theme" @click="showForm(true)" v-t="'label.addForm'" class="float-right"/>
+      </b-form>
+
+      <b-form @submit="onSubmit" v-if="show" :id="'updateForm'">
+        <b-button v-if="isEditable && !useRegistForm" type="submit" :variant="theme" @click="register(true)" class="ml-2" v-t="'label.update'" />
+      </b-form>
+    </div>
   </div>
 </template>
 
@@ -44,10 +81,11 @@ import { getButtonTheme, getTheme, themeColors } from '../sub/helper/ThemeHelper
 
 export default {
   mixins: [editmixinVue],
-  props: ['params', 'multiList'],
+  props: ['params', 'multiList', 'newForm'],
   data() {
     return {
-      ...this.params
+      ...this.params,
+      useRegistForm: false,
     }
   },
   computed: {
@@ -92,6 +130,31 @@ export default {
         return "url"
       }
       return "text"
+    },
+    getTypeOptions() {
+      return [
+        {text: "文字列", value: "string"},
+        {text: "数値", value: "number"},
+        {text: "真偽値", value: "boolean"},
+      ]
+    },
+    beforeReload(){
+      this.useRegistForm = false
+      this.$parent.$options.methods.beforeReload.apply(this.$parent)
+    },
+    showForm(isShow){
+      this.useRegistForm = isShow
+    },
+    onRegistSubmit(evt){
+      const entity = this.$parent.$options.methods.addNewEntity.apply(this.$parent)
+      if(!this.multiList){
+        this.multiList = []
+      }
+      if(!_.includes(this.categoryIds, "")){
+        this.multiList[""] = []
+      }
+      this.multiList[""].push(entity)
+      this.onSubmit(evt)
     },
     async save() {
       return this.$parent.$options.methods.save.apply(this.$parent)
