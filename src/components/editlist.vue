@@ -118,7 +118,14 @@ export default {
   },
   methods: {
     getName(id) {
-      return Util.hasValue(id)? this.$i18n.tnl(`label.${id.replace("\.", "_")}`): null
+      if (!Util.hasValue(id)) {
+        return null
+      }
+      let name = this.$i18n.tnl(`label["${id}"]`)
+      if (name.startsWith("label[")) {
+        return id
+      }
+      return name
     },
     useValueTypeRow(row, field) {
       return field.type && row[field.type]
