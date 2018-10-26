@@ -34,8 +34,7 @@ export default {
           {key: "groupId", sortable: true },
           {key: "groupName", sortable: true },
           {key: "ruby", sortable: true },
-          {key: "shapeName", sortable: true },
-          {key: "style", label: "displayColor" } ,
+          {key: "style", label: "display" } ,
           {key: "description" },
           {key: "actions", thStyle: {width:'130px !important'} }
         ]),
@@ -64,11 +63,7 @@ export default {
       try {
         this.replace({showProgress: true})
         await StateHelper.load('group')
-        this.groupStyles = this.groups.map((val) => ({
-          "color": Util.colorCd4display(val.color),
-          "background-color": Util.colorCd4display(val.bgColor),
-          "text-align": "center",
-        }))
+        this.groupStyles = this.getStyleDisplay(this.groups)
         if (payload && payload.done) {
           payload.done()
         }

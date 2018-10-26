@@ -35,8 +35,7 @@ export default {
           {key: "categoryId", sortable: true },
           {key: "categoryName", sortable: true },
           {key: "categoryTypeName", label: "categoryType", sortable: true },
-          {key: "shapeName", sortable: true },
-          {key: "style", label: "displayColor" },
+          {key: "style", label: "display" },
           {key: "description" },
           {key: "actions", thStyle: {width:'130px !important'} }
         ]),
@@ -65,11 +64,7 @@ export default {
       try {
         this.replace({showProgress: true})
         await StateHelper.load('category')
-        this.categoryStyles = this.categories.map((val) => ({
-          "color": Util.colorCd4display(val.color),
-          "background-color": Util.colorCd4display(val.bgColor),
-          "text-align": "center",
-        }))
+        this.categoryStyles = this.getStyleDisplay(this.categories)
         if (payload && payload.done) {
           payload.done()
         }
