@@ -1,6 +1,4 @@
 import _ from 'lodash'
-import 'babel-polyfill'
-import 'es6-promise'
 import { DEV, APP_SERVICE } from '../constant/config'
 import { UPDATE_ONLY_NN } from '../constant/Constants'
 import * as mock from '../../assets/mock/mock'
