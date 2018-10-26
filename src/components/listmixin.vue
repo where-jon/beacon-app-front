@@ -12,7 +12,7 @@ export default {
     getStyleDisplay(entity){
       return entity.map((val) => ({
         "color": Util.colorCd4display(val.color),
-        "background-color": Util.colorCd4display(val.bgColor),
+        "background-color": Util.colorCd4display(val.bgColor, "#FFFFFF"),
         "text-align": "center",
         border: `solid 3px ${Util.colorCd4display(val.bgColor)}`,
         "border-radius": val.shape == SHAPE.CIRCLE? "50%": val.shape == SHAPE.ROUND_SQUARE? DISP.ROUNDRECT_RADIUS + "px": null,
