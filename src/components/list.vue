@@ -55,6 +55,17 @@
         <template slot="thumbnail" slot-scope="row">
           <img v-if="thumbnail(row.index)" :src="thumbnail(row.index)" height="70" />
         </template>
+        <!-- 電池レベル -->
+        <template slot="powerLevel" slot-scope="row">
+          <span :class="'badge badge-pill badge-' + row.item.powerLevel.class">
+            {{row.item.powerLevel.text}}
+          </span>
+        </template>
+        <!-- マップ表示 -->
+        <template slot="mapDisplay" slot-scope="row">
+          <b-button size="sm" @click.stop="mapDisplay(row.item)" :variant="theme"
+              v-t="'label.mapDisplay'" class="mx-1" />
+        </template>
       </b-table>
 
       <!-- pager -->
@@ -110,8 +121,6 @@ export default {
           detectState: '',
         },
       },
-      extraFilterMaxWidth: 9, // em
-      extraFilterFactor: 1.3,
       modalInfo: { title: '', content: '', id:'' },
       totalRows: this.initTotalRows,
       file: null,
@@ -144,6 +153,10 @@ export default {
       'categories',
       'groups',
       'areas'
+    ]),
+    ...mapState('main', [
+      'selectedTx',
+      'selectedarea',
     ]),
     categoryOptions() {
       let options = this.categories.map((category) => {
@@ -194,9 +207,12 @@ export default {
   mounted() {
     that = this
     this.$parent.$options.methods.fetchData.apply(this.$parent)
-    StateHelper.load('group')
-    StateHelper.load('category')
-    StateHelper.load('area')
+    if (this.params.extraFilter) {
+      this.params.extraFilter.filter((str) => !(str === 'detectState'))
+        .forEach(str => {
+          StateHelper.load(str)
+        });
+    }
     const theme = getTheme(this.loginId)
     // const color = themeColors[theme]
     // const pageLinks = document.getElementsByClassName('.page-link')
@@ -216,6 +232,9 @@ export default {
   methods: {
     ...mapMutations('app_service', [
       'replaceAS', 
+    ]),
+    ...mapMutations('main', [
+      'replaceMain', 
     ]),
     thumbnail(index) {
       return this.$parent.$options.methods.thumbnail.call(this.$parent, this.perPage * (this.currentPage - 1) + index)
@@ -318,6 +337,21 @@ export default {
       await AppServiceHelper.deleteEntity(this.appServicePath, id)
       await StateHelper.load(this.params.name, true)
       this.$parent.$options.methods.fetchData.apply(this.$parent)
+    },
+    mapDisplay(item) {
+      console.log('mapDisplay called with:')
+      console.log(item)
+      const tx = item.tx
+      const selectedTx = {
+        txId: tx.btxId,
+        btxId: tx.btxId,
+        thumbnail: tx.pot.thumbnail ? tx.pot.thumbnail : '',
+      }
+
+      this.replaceMain({selectedTx})
+      this.replaceMain({selectedArea: tx.areaId})
+      console.log(this.$store.state.main.selectedTx)
+      this.$router.push("/main/position")
     }
   }
 }

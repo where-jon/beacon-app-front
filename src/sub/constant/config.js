@@ -52,10 +52,8 @@ export const APP = {
   USER_WITH_NAME: false, // ユーザ設定で名前を使用する
 
   // 位置把握(一覧)画面
-  POSITION_WITH_CODE: true, // コードを表示
-  POSITION_WITH_GROUP: true, // グループを表示
   POSITION_WITH_AREA: true, // エリアを表示
-  
+
   POT_WITH_RUBY: true,       // use ruby on pot master
   POT_WITH_POST: true,       // use post on pot master
   POT_WITH_TEL: true,        // use tel on pot master

@@ -28,7 +28,7 @@ export const fetchPositionList = async (exbs, txs) => {
     .map((val) => {
         let tx = _.find(txs, (tx) => tx.btxId == val.btx_id)
         let exb = _.find(exbs, (exb) => exb.location.posId == val.pos_id)
-        return {...val, tx: tx, exb: exb}
+        return {...val, tx: tx, exb: exb, updatetime: dateform(val.updatetime)}
     }).compact().value()
 }
 

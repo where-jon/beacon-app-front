@@ -127,10 +127,10 @@ export const DETECT_STATE = {
 export const BATTERY_STATE = {
   getTypes(){
     return [
-      {value:1, text: i18n.t('label.power-good')},
-      {value:2, text: i18n.t('label.power-warning')},
-      {value:3, text: i18n.t('label.power-poor')},
-      {value:4, text: i18n.t('label.power-null')},
+      {value:1, text: i18n.t('label.power-good'), class: 'success'},
+      {value:2, text: i18n.t('label.power-warning'), class: 'warning'},
+      {value:3, text: i18n.t('label.power-poor'), class: 'danger'},
+      {value:4, text: i18n.t('label.power-null'), class: 'secondary'},
     ]
   }
 }
@@ -166,16 +166,10 @@ export const MENU = [
         icon: 'fas fa-thermometer-half',
       },
       {
-        key: 'pot',
-        path: 'pot',
-        feature: '/basic/pot',
-        icon: 'far fa-id-card',
-      },
-      {
-        key: 'positionList',
-        path: 'positionList',
-        feature: '/basic/txlist',
-        icon: 'far fa-list-alt',
+        key: 'position-list',
+        path: 'position-list',
+        feature: '/basic/position-list',
+        icon: 'fas fa-list',
       },
       {
         key: 'ledOperation',

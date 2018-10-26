@@ -4,6 +4,7 @@ import axios from 'axios'
 export const state = () => ({
   positions: [],
   orgPositions: [],
+  selectedArea: null,
   selectedTx: {},
   sample: "sample" // sample
 })

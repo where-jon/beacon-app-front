@@ -80,10 +80,13 @@ export default {
       'orgPositions',
     ]),
   },
-  mounted() {
+  async mounted() {
     that = this
     this.replace({title: this.$i18n.tnl('label.showPosition')})
-    this.fetchData()
+    await this.fetchData()
+    if (this.selectedTx.txId) {
+      this.showInitDetail(this.selectedTx)
+    }
   },
   updated(){
     if (this.isFirstTime) return
@@ -122,6 +125,13 @@ export default {
         group: p.potGroupList && p.potGroupList.length > 0 ? p.potGroupList[0].group.groupName : ''
       }
       this.replaceMain({selectedTx})
+    },
+    showInitDetail(tx) {
+      const position = PositionHelper.adjustPosition(this.positions, this.mapImageScale, this.positionedExb)
+          .filter((pos) => pos.btx_id == tx.btxId)
+      if (position.length == 1) {
+        this.showDetail(tx.txId, position[0].x, position[0].y)
+      }
     },
     resetDetail() {
       let selectedTx = {}
