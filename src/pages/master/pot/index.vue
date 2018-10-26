@@ -85,8 +85,9 @@ export default {
       }
       this.replace({showProgress: false})
     },
-    thumbnail(index) {
-      return this.potImages[index]
+    thumbnail(row) {
+      const img = this.potImages.find((val) => val.id == row.potId)
+      return img? img.thumbnail: null
     },
   }
 }

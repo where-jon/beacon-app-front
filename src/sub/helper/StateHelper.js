@@ -81,7 +81,7 @@ const appStateConf = {
     path: '/basic/pot/withThumbnail',
     sort: 'potId',
     beforeCommit: (arr) => {
-      let potImages = arr.map((val) => val.thumbnail)
+      let potImages = arr.map((val) => ({ id: val.potId, thumbnail: val.thumbnail}))
       store.commit('app_service/replaceAS', {['potImages']:potImages})
       return arr.map((val) => ({
         ...val,
