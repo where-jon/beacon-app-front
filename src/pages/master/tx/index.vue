@@ -64,16 +64,21 @@ export default {
     ...mapState('app_service', [
       'txs',
       'txImages',
+      'forceFetchTx',
     ]),
   },
   mounted() {
     that = this
   },
   methods: {
+    afterCrud(){
+      StateHelper.setForceFetch('pot', true)
+    },
     async fetchData(payload) {
       try {
         this.replace({showProgress: true})
-        await StateHelper.load('tx')
+        await StateHelper.load('tx', this.forceFetchTx)
+        StateHelper.setForceFetch('tx', false)
         if (payload && payload.done) {
           payload.done()
         }

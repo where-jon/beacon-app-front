@@ -299,6 +299,9 @@ export default {
     async execDelete(id) {
       await AppServiceHelper.deleteEntity(this.appServicePath, id)
       await StateHelper.load(this.params.name, true)
+      if(this.$parent.$options.methods.afterCrud){
+        this.$parent.$options.methods.afterCrud.apply(this.$parent)
+      }
       this.$parent.$options.methods.fetchData.apply(this.$parent)
     }
   }

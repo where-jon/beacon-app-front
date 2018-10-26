@@ -162,6 +162,9 @@ export default {
       }
       return true
     },
+    afterCrud(){
+      StateHelper.setForceFetch('pot', true)
+    },
     async save() {
       let txId = Util.hasValue(this.form.txId)? this.form.txId: -1
       switch(APP.TX_BTX_MINOR) {

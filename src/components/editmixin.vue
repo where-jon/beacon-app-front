@@ -91,6 +91,9 @@ export default {
       evt.preventDefault()
       try {
         let res = await this.save()
+        if(this.afterCrud) {
+          this.afterCrud()
+        }
         await StateHelper.load(this.name, true)
         this.message = this.$i18n.tnl('message.' + this.crud + 'Completed', {target: this.$i18n.tnl('label.' + this.name)})
         this.showInfo = true
