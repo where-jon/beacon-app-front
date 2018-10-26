@@ -3,6 +3,7 @@ import jschardet from 'jschardet'
 import Encoding from 'encoding-japanese'
 import Papa from 'papaparse'
 import moment from 'moment'
+import { DEV } from '../constant/config';
 
 // sleep (for test)
 export const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))
@@ -14,6 +15,18 @@ export const addNoSelect = (option) => option.unshift({value: null, text: ""})
 export const getByteLength = (str) => encodeURI(str == null? "": str).replace(/%../g, "*").length
 
 export const numberRange = (start, end) => new Array(end - start + 1).fill().map((d, i) => i + start)
+
+export const table = (log) => {
+  if (DEV.DEBUG) {
+    console.table(log)
+  }
+}
+
+export const debug = (log) => {
+  if (DEV.DEBUG) {
+    console.debug(log)
+  }
+}
 
 export const colorCd4db = (str) => {
   if(!str){
