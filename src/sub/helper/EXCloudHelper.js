@@ -1,4 +1,3 @@
-import axios from 'axios'
 import _ from 'lodash'
 import { EXCLOUD, APP_SERVICE, DEV } from '../constant/config'
 import * as mock from '../../assets/mock/mock'

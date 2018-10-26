@@ -168,7 +168,9 @@ export default {
       await StateHelper.load('pot')
       const map = {}
       this.pots.forEach((e) => {
-        map[e.tx.btxId] = e.tx.txName
+        if (e.tx) {
+          map[e.tx.btxId] = e.tx.txName
+        }
       })
 
       const that = this
