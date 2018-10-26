@@ -74,7 +74,7 @@
         <b-button v-if="isEditable" size="sm" @click.stop="deleteConfirm(row.item, row.index, $event.target)" variant="outline-danger" class="mr-1" v-t="'label.delete'" />
       </template>
       <template slot="thumbnail" slot-scope="row">
-        <img v-if="thumbnail(row.index)" :src="thumbnail(row.index)" height="70" />
+        <img v-if="thumbnail(row.item)" :src="thumbnail(row.item)" height="70" />
       </template>
     </b-table>
 
@@ -207,8 +207,8 @@ export default {
     ...mapMutations('app_service', [
       'replaceAS', 
     ]),
-    thumbnail(index) {
-      return this.$parent.$options.methods.thumbnail.call(this.$parent, this.perPage * (this.currentPage - 1) + index)
+    thumbnail(row) {
+      return this.$parent.$options.methods.thumbnail.call(this.$parent, row)
     },
     exportCsv() {
       let headers
