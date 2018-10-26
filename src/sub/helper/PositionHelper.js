@@ -1,4 +1,5 @@
-import { DISP } from '../constant/config'
+import { DISP, DEV } from '../constant/config'
+import * as Util from '../util/Util'
 import styles from '../constant/config.scss'
 
 /**
@@ -8,7 +9,7 @@ import styles from '../constant/config.scss'
  * @param {*} now 
  */
 export const correctPosId = (orgPositions, now) => {
-  // console.log(now, orgPositions)
+  Util.debug(now, orgPositions)
   let positions = _.chain(orgPositions).reduce((result, positions, idx) => { // MOVING_AVERAGE回の測位データを集約し、nearestをフラットにして１階層のオブジェエクト配列にする
     _.forEach(positions, (pos) => {
       _.forEach(pos.nearest, (val) => {
@@ -18,12 +19,12 @@ export const correctPosId = (orgPositions, now) => {
     return result
   }, [])
   .uniqWith(_.isEqual) // 重複除去
-//  .map((val) => {console.log(new Date(val.timestamp), new Date(now), val.timestamp-now);return val})
+  .map((val) => { if (DEV.DEBUG) console.log(new Date(val.timestamp), new Date(now), val.timestamp-now, val.rssi); return val})
   .filter((val) => val.rssi >= DISP.RSSI_MIN && val.timestamp >= now - DISP.HIDE_TIME) // RSSI値、指定時刻でフィルタ
   .orderBy(['btx_id', 'pos_id', 'timestamp']) // btx_id, pos_id, timestampでソート
   .value()
 
-  // console.table(positions)
+  Util.table(positions)
 
   positions = _.chain(positions).reduce((result, pos, idx) => { // btx_id,pos_idグループでsum(rssi), countを集計（lodashのgroupByは複数には対応していない）
     let prev = _.find(result, (val) => val.btx_id == pos.btx_id && val.pos_id == pos.pos_id)
@@ -42,7 +43,7 @@ export const correctPosId = (orgPositions, now) => {
   .orderBy(['count', 'rssiAvg', 'pos_id', 'btx_id'], ['desc','desc','asc','asc']) // 記録回数（多）、RSSI（強）、pos_id、btx_idでソート 
   .value()
 
-  // console.table(positions)
+  Util.table(positions)
 
   // 上記の順番で取り出す
   let usedTx = []
@@ -64,7 +65,7 @@ export const correctPosId = (orgPositions, now) => {
   //   }
   // })
 
-  // console.table(positions)
+  Util.table(positions)
 
   return positions
 }
