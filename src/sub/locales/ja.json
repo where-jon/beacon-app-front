@@ -159,7 +159,10 @@
     "settingId": "設定ID",
     "valType": "値タイプ",
     "key": "項目名",
-    
+    "add": "追加",
+    "addForm": "項目を追加",
+    "addSetting": "新規登録",
+
     "feature": "機能",
     "featureId": "機能ID",
     "featureName": "機能名",

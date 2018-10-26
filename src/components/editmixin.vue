@@ -39,6 +39,9 @@ export default {
     },
     isEditable() {
       return MenuHelper.isEditable(this.featurePath? this.featurePath: this.appServicePath)
+    },
+    isSuperEditable() {
+      return this.$store.state.role == "SUPER_ADMIN"
     }
   },
   mounted() {
