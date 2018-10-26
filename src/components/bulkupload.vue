@@ -66,7 +66,7 @@ export default {
         that.uploadMessage()
         for(let key in zip.files){
           if(that.isImageFile(key)){
-            const id = key.slice(key.lastIndexOf("/") + 1, key.lastIndexOf("."))
+            const id = this.getFileName(key)
             const target = that.$parent.$options.methods.search.call(that.$parent, id)
             if(target){
               zip.file(key).async("base64").then((val) =>{
@@ -105,8 +105,12 @@ export default {
         }
       }
     },
+    getFileName(key){
+      return key.slice(key.lastIndexOf("/") + 1, key.lastIndexOf("."))
+    },
     isImageFile(key){
-      return Util.hasValue(key) && key.match(/.*\.(png)|(jpg)|(jpeg)|(gif)$/)
+      return Util.hasValue(key) && /^.*\.(png)|(jpg)|(jpeg)|(gif)$/.test(key) &&
+        !/^.*(__MACOSX\/).*$/.test(key) && !/^\..*/.test(this.getFileName(key))
     },
     afterLoadFile(){
       if(this.fileCount <= this.form.thumbnails.length + this.form.warnThumbnails.length){
