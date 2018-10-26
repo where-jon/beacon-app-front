@@ -41,10 +41,21 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'group',
+      'group', 'groups'
     ]),
   },
   methods: {
+    resetStyle(entity){
+        const updateData = this.groups.find((val) => val.groupId == entity.groupId)
+        if(updateData && updateData.display){
+          if (!entity.display) {
+            entity.display = {}
+          }
+          entity.display.color = updateData.display.color
+          entity.display.bgColor = updateData.display.bgColor
+          entity.display.shape = updateData.display.shape
+        }
+    },
     async save(bulkSaveFunc) {
       const MAIN_COL = "groupId"
       const NUMBER_TYPE_LIST = ["shape"]
@@ -63,7 +74,7 @@ export default {
           entity[headerName] = val
         }
         return dummyKey
-      })
+      }, (entity, dummyKey) => this.resetStyle(entity))
     },
   }
 }

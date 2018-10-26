@@ -41,10 +41,16 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'pot',
+      'pot', 'potImages'
     ]),
   },
   methods: {
+    resetThumbnail(entity){
+        const updateData = this.potImages.find((val) => val.id == entity.potId)
+        if(updateData){
+          entity.thumbnail = updateData.thumbnail
+        }
+    },
     async save(bulkSaveFunc) {
       const MAIN_COL = "potId"
       const NULLABLE_NUMBER_COL = ["txId", "exbId", "zoneId", "areaId"]
@@ -84,7 +90,7 @@ export default {
         }
         entity[headerName] = newVal
         return dummyKey
-      })
+      }, (entity, dummyKey) => this.resetThumbnail(entity))
     },
   }
 }
