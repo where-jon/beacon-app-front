@@ -130,7 +130,7 @@ export default {
       return new RegExp(`^${type}$`, "i").test("boolean")
     },
     getBooleanOptions() {
-      return [{text: "True", value: 1}, {text: "False", value: 0}]
+      return [{text: "true", value: "true"}, {text: "false", value: "false"}]
     },
     getInputTypeRow(row, field) {
       return this.getInputType(row[field.type])
