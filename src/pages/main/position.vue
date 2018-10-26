@@ -33,6 +33,7 @@ import * as PositionHelper from '../../sub/helper/PositionHelper'
 import * as SensorHelper from '../../sub/helper/SensorHelper'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
+import * as Util from '../../sub/util/Util'
 import * as mock from '../../assets/mock/mock'
 import txdetail from '../../components/txdetail.vue'
 import { Tx, EXB, APP, DISP, DEV } from '../../sub/constant/config'
@@ -202,8 +203,10 @@ export default {
       }
 
       this.positionedExb = _(this.exbs).filter((exb) => {
+        Util.debug(exb, this.selectedArea)
         return exb.enabled && exb.location.areaId == this.selectedArea && exb.location.x && exb.location.y > 0
       }).value()
+      Util.debug(this.positionedExb)
 
       this.showTxAll()
     },
@@ -214,6 +217,7 @@ export default {
       this.txCont.removeAllChildren()
       this.stage.update()
       PositionHelper.adjustPosition(this.positions, this.mapImageScale, this.positionedExb).forEach((pos) => { // TODO: Txのチェックも追加
+        Util.debug(pos)
         this.showTx(pos)
       })
     },

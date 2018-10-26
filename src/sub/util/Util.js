@@ -22,9 +22,9 @@ export const table = (log) => {
   }
 }
 
-export const debug = (log) => {
+export const debug = function(log) {
   if (DEV.DEBUG) {
-    console.debug(log)
+    console.debug(...arguments)
   }
 }
 
