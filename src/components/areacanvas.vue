@@ -5,6 +5,7 @@
 <script>
 import { fabric } from 'fabric'
 import { ZONE } from '../sub/constant/config'
+import * as AppServiceHelper from '../sub/helper/AppServiceHelper'
 
 export default {
   data () {
@@ -14,27 +15,72 @@ export default {
       fromY: 0,
       toX: 0,
       toY: 0,
-      index: 1,
-      zones: []
+      deleted: [],
     }
   },
-  props: ['base64'],
+  props: {
+    areaId: {
+      default: -1,
+      type: Number 
+    },
+    isRegist: {
+      default: false,
+      type: Boolean
+    },
+    nameAndCategory: {
+      default : () => { return {
+        id: null,
+        name: null,
+        categoryId: null,
+      }},
+      type: Object
+    }
+  },
   watch: {
-    base64: function(newVal, oldVal) {
-        this.setupCanvas(newVal)
+    areaId: function(newVal, oldVal) {
+      const area = this.$store.state.app_service.areas.find((a) => { return a.areaId === newVal })
+      const base64 = area ? area.mapImage : ''
+      this.setupCanvas(base64)
+    },
+    isRegist: function(newVal, oldVal) {
+      if (!newVal) {
+        return
+      }
+      this.$emit('regist', this.canvas.getObjects(), this.deleted)
+    },
+    nameAndCategory: function(newVal, oldVal) {
+      console.log(newVal)
     }
   },
   methods: {
     setupCanvas (base64) {
       this.canvas.clear()
       const that = this
-      fabric.Image.fromURL(base64, function(img) {
+      fabric.Image.fromURL(base64, async function(img) {
           that.canvas.setWidth(parseInt(img.width, 10));
           that.canvas.setHeight(parseInt(img.height, 10));
           that.canvas.setBackgroundImage(img, that.canvas.renderAll.bind(that.canvas), {
             scaleX: 1,
             scaleY: 1,
           });
+          that.addZones()
+      })
+    },
+    async addZones() {
+      if (!this.areaId) {
+        return
+      }
+      const zones = await AppServiceHelper.fetchList(`/core/zone/area/${this.areaId}`, 'id')
+      const that = this
+      zones.forEach((e) => {
+        that.addZone({
+          id: e.zoneId,
+          top: e.y,
+          left: e.x,
+          width: e.w,
+          height: e.h,
+          name: e.zoneName
+        })
       })
     },
     getTopLeft (bounds) {
@@ -44,6 +90,41 @@ export default {
         top : bounds.y > -1 ? (limitY > bounds.y ? bounds.y : limitY) : 0,
         left: bounds.x > -1 ? (limitX > bounds.x ? bounds.x : limitX) : 0
       }
+    },
+    addZone (dimension) {
+      const rect = new fabric.Rect({
+        width: dimension.width,
+        height: dimension.height,
+        fill: 'blue',
+        opacity: 0.3,
+        stroke: 'blue',
+        strokeWidth: 1,
+        originX: 'center',
+        originY: 'center',
+      })
+
+      const text = new fabric.Text(
+      dimension.name.toString(),
+      {
+        fontSize: 20,
+        fill: '#fff',
+        originX: 'center',
+        originY: 'center'
+      })
+
+      const group = new fabric.Group([ rect, text ], {
+        id: dimension.id,
+        left: dimension.left,
+        top: dimension.top,
+        hasRotatingPoint: false,
+        lockRotation: true,
+        name: dimension.name
+      });
+      this.canvas.add(group);
+      return group
+    },
+    assignId () {
+      return Math.max(...this.canvas.getObjects().map((e) => Math.abs(e.id))) + 1
     }
   },
   mounted () {
@@ -82,50 +163,20 @@ export default {
         return;
       }
 
+      const top = Math.floor(Math.min(that.fromY, that.toY))
+      const left = Math.floor(Math.min(that.fromX, that.toX))
+      const id = that.assignId()
       const dimension = {
-        id: that.index++,
-        top: Math.floor(Math.min(that.fromY, that.toY)),
-        left: Math.floor(Math.min(that.fromX, that.toX)),
-        bottom: Math.floor(Math.max(that.toY, that.fromY)),
-        right: Math.floor(Math.max(that.toX, that.fromX)),
-        name: 'zone'
+        id: id * -1,
+        top: top,
+        left: left,
+        width: Math.floor(Math.max(that.toX, that.fromX)) - left,
+        height: Math.floor(Math.max(that.toY, that.fromY)) - top,
+        name: 'zone' + id
       }
-
-      const rect = new fabric.Rect({
-        width: dimension.right - dimension.left,
-        height: dimension.bottom - dimension.top,
-        fill: 'blue',
-        opacity: 0.3,
-        stroke: 'blue',
-        strokeWidth: 1,
-        originX: 'center',
-        originY: 'center',
-      })
-
-      const text = new fabric.Text(
-      dimension.id.toString(),
-      {
-        fontSize: 20,
-        fill: '#fff',
-        originX: 'center',
-        originY: 'center'
-      })
-
-      const group = new fabric.Group([ rect, text ], {
-        id: dimension.id,
-        left: dimension.left,
-        top: dimension.top,
-        hasRotatingPoint: false,
-        lockRotation: true,
-        name: dimension.name + dimension.id
-      });
-      that.canvas.add(group);
+      const group = that.addZone(dimension)
       that.canvas.setActiveObject(group);
-      that.zones.push(dimension)
-      that.$emit('created', {
-        id: dimension.id,
-        name: dimension.name + dimension.id,
-      })
+      that.$emit('created', dimension)
     })
 
     // DELボタン押下時に選択エリアを削除する
@@ -140,8 +191,9 @@ export default {
           return
       }
       that.canvas.remove(active)
-      that.zones = that.zones.filter((e) => {return e.id !== active.id})
-      console.log(active)
+      if (active.id > 0) {
+        th.deleted.push(active.id)
+      }
       that.$emit('deleted', active.id)
     }, false);
 
@@ -152,8 +204,16 @@ export default {
       that.$emit('selected', {
         id: event.target.id,
         name: event.target.name,
+        top: event.target.top,
+        left: event.target.left,
+        width: event.target.width,
+        height: event.target.height,
       })
     })
+
+    this.canvas.on('selection:cleared', function(e) {
+      that.$emit('unselected')
+    });
 
     this.setupCanvas(this.base64)
   }
