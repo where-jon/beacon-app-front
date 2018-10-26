@@ -53,7 +53,7 @@ import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import breadcrumb from '../../../components/breadcrumb.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
-import { CATEGORY, getShapes } from '../../../sub/constant/Constants'
+import { CATEGORY, SHAPE } from '../../../sub/constant/Constants'
 
 export default {
   components: {
@@ -103,7 +103,7 @@ export default {
       return CATEGORY.getTypes()
     },
     shapes(){
-      return getShapes()
+      return SHAPE.getShapes()
     },
   },
   methods: {

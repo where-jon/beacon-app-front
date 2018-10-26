@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import * as AppServiceHelper from './AppServiceHelper'
 import * as Util from '../util/Util'
-import { CATEGORY, getShapes} from '../constant/Constants'
+import { CATEGORY, SHAPE } from '../constant/Constants'
 
 
 // TODO: 全体的にState管理を共通化する
@@ -20,7 +20,7 @@ export const getCategoryTypeName = (category) => {
 }
 
 export const getShapeName = (shape) => {
-  const shapeName = getShapes().find((tval) => tval.value === shape)
+  const shapeName = SHAPE.getShapes().find((tval) => tval.value === shape)
   return shapeName != null? shapeName.text: null
 }
 

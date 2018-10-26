@@ -64,13 +64,13 @@ export const SHAPE = {
   CIRCLE: 1,
   SQUARE: 2,
   ROUND_SQUARE: 3,
+  getShapes() {
+    return [
+    {value: 1, text: i18n.tnl('label.circle')},
+    {value: 2, text: i18n.tnl('label.square')},
+    {value: 3, text: i18n.tnl('label.roundedSquare')},
+  ]}
 }
-
-export const getShapes = () => [
-  {value: 1, text: i18n.tnl('label.circle')},
-  {value: 2, text: i18n.tnl('label.square')},
-  {value: 3, text: i18n.tnl('label.roundedSquare')},
-]
 
 export const ZONE = {
   getTypes(){ 
