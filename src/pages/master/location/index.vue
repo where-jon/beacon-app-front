@@ -122,6 +122,7 @@ export default {
     that = this
     this.replace({title: this.$i18n.tnl('label.location')})
     this.fetchData()
+    this.selectedArea = null
   },
   created() {
   },
@@ -130,6 +131,9 @@ export default {
       return
     }
     this.showMapImage()
+  },
+  beforeDestroy() {
+    this.selectedArea = null
   },
   methods: {
     reset() {
