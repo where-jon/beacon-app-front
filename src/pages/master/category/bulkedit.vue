@@ -11,6 +11,7 @@ import _ from 'lodash'
 import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/breadcrumb.vue'
 import bulkedit from '../../../components/bulkedit.vue'
+import { CATEGORY } from '../../../sub/constant/Constants'
 
 export default {
   components: {
@@ -43,6 +44,9 @@ export default {
     ...mapState('app_service', [
       'category', 'categories'
     ]),
+    categoryTypes(){
+      return CATEGORY.getTypes()
+    },
   },
   methods: {
     resetStyle(entity){
@@ -75,6 +79,10 @@ export default {
             entity.display = {}
           }
           entity.display[headerName] = val
+        }
+        else if(headerName == "categoryTypeName"){
+          const categoryType = this.categoryTypes.find((type) => type.text == val)
+          entity.categoryType = categoryType? categoryType.value: val
         }
         else{
           entity[headerName] = val
