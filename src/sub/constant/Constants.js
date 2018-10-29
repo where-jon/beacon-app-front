@@ -114,6 +114,33 @@ export const LED_BLINK_TYPES = {
   BLINK_FAST: 4,
 }
 
+export const DETECT_STATE = {
+  getTypes(){ 
+    return [
+      {value: 1, text: i18n.t('label.detected')},
+      {value: 2, text: i18n.t('label.detectAfterUndetect')},
+      {value: 3, text: i18n.t('label.undetect')},
+    ]
+  },
+}
+
+export const BATTERY_STATE = {
+  getTypes(){
+    return [
+      {value:1, text: i18n.t('label.power-good'), class: 'success'},
+      {value:2, text: i18n.t('label.power-warning'), class: 'warning'},
+      {value:3, text: i18n.t('label.power-poor'), class: 'danger'},
+      {value:4, text: i18n.t('label.power-null'), class: 'secondary'},
+    ]
+  }
+}
+
+export const BATTERY_BOUNDARY = {
+  GOOD: 31,
+  WARNING: 21,
+  POOR: 0,
+}
+
 export const MENU = [
   {
     key: 'main',
@@ -139,10 +166,10 @@ export const MENU = [
         icon: 'fas fa-thermometer-half',
       },
       {
-        key: 'pot',
-        path: 'pot',
-        feature: '/basic/pot',
-        icon: 'far fa-id-card',
+        key: 'position-list',
+        path: 'position-list',
+        feature: '/basic/position-list',
+        icon: 'fas fa-list',
       },
       {
         key: 'ledOperation',

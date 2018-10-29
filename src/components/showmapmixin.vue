@@ -17,7 +17,6 @@ export default {
   mixins: [reloadmixinVue],
   data() {
     return {
-      selectedArea: null,
       isShownMapImage: false,
       positionedExb: [],
       realWidth: null,
@@ -46,6 +45,10 @@ export default {
       'exbs',
       'txs',
     ]),
+    selectedArea: {
+      get() { return this.$store.state.main.selectedArea},
+      set(val) { this.replaceMain({'selectedArea': val})},
+    },
   },
   created() {
     that = this
@@ -73,10 +76,13 @@ export default {
     }
   },
   methods: {
+    ...mapMutations('main', [
+      'replaceMain', 
+    ]),
     async fetchAreaExbs(tx) {
       if (this.isFirstTime) {
         await StateHelper.load('area')
-        this.selectedArea = Util.getValue(this, 'areas.0.areaId', null)
+        this.selectedArea = this.selectedArea ? this.selectedArea : Util.getValue(this, 'areas.0.areaId', null)
         console.log("after loadAreas. selectedArea=" + this.selectedArea)
         await StateHelper.load('exb')
         if (tx) {

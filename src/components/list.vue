@@ -1,100 +1,91 @@
 <template>
-  <div>
-    <!-- searchbox -->
-    <b-row v-if="!params.hideSearchBox && !params.extraFilter">
-      <b-col md="6" class="my-1">
-        <b-form-group horizontal class="mb-0" :label="$t('label.filter') ">
-          <b-input-group>
-            <b-form-input v-model="filter.reg" />
-            <b-input-group-append>
-              <b-btn :disabled="!filter" @click="filter.reg = ''" variant="secondary" v-t="'label.clear'"></b-btn>
-            </b-input-group-append>
-          </b-input-group>
-        </b-form-group>
-      </b-col>
-      <b-col v-if="isEditable" class="mb-2 justify-content-end">
-        <!-- 新規作成ボタン -->
-        <b-button :variant='theme' @click="edit()" v-t="'label.createNew'"  class="float-right"/>
-        <b-button v-if="params.bulkEditPath" :variant='theme'
-          @click="bulkEdit()" v-t="'label.bulkRegister'"  class="float-right" :style="{ marginRight: '10px'}"/>
-        <b-button v-if="params.csvOut" :variant='theme' @click="exportCsv" v-t="'label.download'"  class="float-right" :style="{ marginRight: '10px'}"/>
-      </b-col>
-    </b-row>
-    <template v-if="!params.hideSearchBox && params.extraFilter">
-      <!-- 追加フィルタがある場合 -->
-      <b-form>
-        <b-form-row class="mb-1">
-            <b-col>
-              <b-form-group :label="$t('label.filter')" horizontal>
-                <b-input-group>
-                  <b-form-input v-model="filter.reg" />
-                  <b-input-group-append>
-                    <b-btn :disabled="!filter" @click="filter. reg = ''" variant="secondary" v-t="'label.clear'" />
-                  </b-input-group-append>
-                </b-input-group>
-              </b-form-group>
+  <b-form inline>
+    <b-container>
+      <!-- searchbox -->
+      <template v-if="!params.hideSearchBox">
+        <b-row class="mb-1">
+          <!-- 標準絞り込みフィルタ -->
+          <b-col class="col-auto row mb-1">
+            <label v-t="'label.filter'" class="col-auto text-left"></label>
+            <b-input-group class="col-auto">
+              <b-form-input v-model="filter.reg"  class="align-self-center"/>
+              <b-input-group-append>
+                <b-btn :disabled="!filter.reg" @click="filter.reg = ''" variant="secondary" v-t="'label.clear'"  class="align-self-center"/>
+              </b-input-group-append>
+            </b-input-group>
           </b-col>
-          <b-col v-for="item of params.extraFilter" :key="item" class="customFilter">
-            <b-form-group v-if="item === 'category'" :label="$t('label.category')" label-class="text-sm-right" horizontal>
-              <b-form-select :options="categoryOptions" v-model="filter.extra.category" :style="{width: categorySelectWidth}"/>
-            </b-form-group>
-            <b-form-group v-if="item === 'group'" :label="$t('label.group')" label-class="text-sm-right" horizontal>
-              <b-form-select :options="groupOptions" v-model="filter.extra.group" :style="{width: groupSelectWidth}"/>
-            </b-form-group>
+          <!-- カスタムフィルタ -->
+          <template v-if="params.extraFilter" >
+            <b-col v-for="item of extraFilterSpec" v-bind:key="item.key" class="row col-auto">
+              <label for="item.key" v-t="'label.' + item.key" class="col-auto text-sm-right mx-2 align-self-center" />
+              <b-form-select :id="item.key" :options="item.options" v-model="filter.extra[item.key]"
+                  class="col-auto align-self-center extra-filter"/>
+            </b-col>
+          </template>
+          <div v-if="params.extraFilter" class="w-100 mb-2 " />
+          <!-- ボタン部 -->
+          <b-col v-if="!params.disableTableButtons" cols="auto" class="ml-auto">
+            <b-button :variant='theme' class="mx-1" @click="edit()"
+                v-t="'label.createNew'" />
+            <b-button :variant='theme' class="mx-1" v-if="params.bulkEditPath" @click="bulkEdit()" 
+                v-t="'label.bulkRegister'" />
+            <b-button :variant='theme' class="mx-1" v-if="params.csvOut" @click="exportCsv"
+                v-t="'label.download'" />
           </b-col>
-        </b-form-row>
-      </b-form>
-      <b-form-row v-if="isEditable" class="mb-1">
-        <b-col class="mb-6 justify-content-end">
-        <!-- 新規作成ボタン -->
-        <b-button :variant='theme' @click="edit()" v-t="'label.createNew'"  class="float-right"/>
-        <b-button v-if="params.bulkEditPath" :variant='theme'
-          @click="bulkEdit()" v-t="'label.bulkRegister'"  class="float-right" :style="{ marginRight: '10px'}"/>
-        <b-button v-if="params.csvOut" :variant='theme' @click="exportCsv" v-t="'label.download'"  class="float-right" :style="{ marginRight: '10px'}"/>
-      </b-col>
-      </b-form-row>
-      
-    </template>
-
-    <slot></slot>
-
-    <b-row class="mt-3">
-    </b-row>
-  
-    <!-- table -->
-    <b-table show-empty stacked="md" striped hover :items="list" :fields="fields" :current-page="currentPage" :per-page="perPage" outlined
-            :filter="filterGrid" @filtered="onFiltered">
-      <template slot="style" slot-scope="row">
-        <div v-bind:style="style(row.index)">A</div>
+        </b-row>
       </template>
-      <template slot="actions" slot-scope="row">
-        <!-- 更新ボタン -->
-        <b-button size="sm" @click.stop="edit(row.item, row.index, $event.target)" :variant="theme" class="mr-2 my-1" v-t="'label.' + crud" />
-        <!-- 削除ボタン -->
-        <b-button v-if="isEditable" size="sm" @click.stop="deleteConfirm(row.item, row.index, $event.target)" variant="outline-danger" class="mr-1" v-t="'label.delete'" />
-      </template>
-      <template slot="thumbnail" slot-scope="row">
-        <img v-if="thumbnail(row.item)" :src="thumbnail(row.item)" height="70" />
-      </template>
-    </b-table>
 
-    <!-- pager -->
-    <b-row>
-      <b-col md="6" class="my-1">
-        <b-pagination :total-rows="totalRows" :per-page="perPage" v-model="currentPage" class="my-0" />
-      </b-col>
-      <!-- bulk upload button -->
-      <b-col v-if="isEditable" md="6" class="my-1">
-        <b-button v-if="params.bulkUploadPath" :variant='theme'
-          @click="bulkUpload()" v-t="'label.bulkUpload'"  class="float-right" />
-      </b-col>
-    </b-row>
+      <slot></slot>
 
-    <!-- modal -->
-    <b-modal id="modalInfo" @hide="resetModal" :title="modalInfo.title" @ok="execDelete(modalInfo.id)">
-      <pre>{{ modalInfo.content }}</pre>
-    </b-modal>
-  </div>
+      <b-row class="mt-3">
+      </b-row>
+    
+      <!-- table -->
+      <b-table show-empty stacked="md" striped hover :items="list" :fields="fields" :current-page="currentPage" :per-page="perPage" outlined
+              :filter="filterGrid" @filtered="onFiltered">
+        <template slot="style" slot-scope="row">
+          <div v-bind:style="style(row.index)">A</div>
+        </template>
+        <template slot="actions" slot-scope="row">
+          <!-- 更新ボタン -->
+          <b-button size="sm" @click.stop="edit(row.item, row.index, $event.target)" :variant="theme" class="mr-2 my-1" v-t="'label.' + crud" />
+          <!-- 削除ボタン -->
+          <b-button v-if="isEditable" size="sm" @click.stop="deleteConfirm(row.item, row.index, $event.target)" variant="outline-danger" class="mr-1" v-t="'label.delete'" />
+        </template>
+        <template slot="thumbnail" slot-scope="row">
+          <img v-if="thumbnail(row.item)" :src="thumbnail(row.item)" height="70" />
+        </template>
+        <!-- 電池レベル -->
+        <template slot="powerLevel" slot-scope="row">
+          <span :class="'badge badge-pill badge-' + row.item.powerLevel.class">
+            {{row.item.powerLevel.text}}
+          </span>
+        </template>
+        <!-- マップ表示 -->
+        <template slot="mapDisplay" slot-scope="row">
+          <b-button size="sm" @click.stop="mapDisplay(row.item)" :variant="theme"
+              v-t="'label.mapDisplay'" class="mx-1" />
+        </template>
+      </b-table>
+
+      <!-- pager -->
+      <b-row>
+        <b-col md="6" class="my-1">
+          <b-pagination :total-rows="totalRows" :per-page="perPage" v-model="currentPage" class="my-0" />
+        </b-col>
+        <!-- bulk upload button -->
+        <b-col v-if="isEditable" md="6" class="my-1">
+          <b-button v-if="params.bulkUploadPath" :variant='theme'
+            @click="bulkUpload()" v-t="'label.bulkUpload'"  class="float-right" />
+        </b-col>
+      </b-row>
+
+      <!-- modal -->
+      <b-modal id="modalInfo" @hide="resetModal" :title="modalInfo.title" @ok="execDelete(modalInfo.id)">
+        <pre>{{ modalInfo.content }}</pre>
+      </b-modal>
+    </b-container>
+  </b-form>
 </template>
 
 <script>
@@ -110,6 +101,9 @@ import * as Util from '../sub/util/Util'
 import { getButtonTheme, getTheme, themeColors } from '../sub/helper/ThemeHelper'
 import { getCharSet } from '../sub/helper/CharSetHelper'
 import commonmixinVue from './commonmixin.vue';
+import { DETECT_STATE } from '../sub/constant/Constants'
+
+let that
 
 export default {
   mixin: [commonmixinVue], // not work
@@ -119,17 +113,18 @@ export default {
       currentPage: 1,
       perPage: 10,
       filter: {
-        reg: null,
+        reg: '',
         extra: {
-          category: null,
-          group: null
+          category: '',
+          group: '',
+          area: '',
+          detectState: '',
         },
       },
-      extraFilterMaxWidth: 9, // em
-      extraFilterFactor: 1.3,
       modalInfo: { title: '', content: '', id:'' },
       totalRows: this.initTotalRows,
       file: null,
+      detectState: DETECT_STATE,
       ...this.params
     }
   },
@@ -140,12 +135,28 @@ export default {
     isEditable() {
       return MenuHelper.isEditable(this.appServicePath)
     },
+    extraFilterSpec() {
+      if (!this.params.extraFilter) {
+        return {}
+      }
+      return this.params.extraFilter.map((key) => {
+        return {
+          key: key,
+          options: this[key + 'Options'],
+        }
+      })
+    },
     ...mapState([
       'featureList',
     ]),
     ...mapState('app_service', [
       'categories',
       'groups',
+      'areas'
+    ]),
+    ...mapState('main', [
+      'selectedTx',
+      'selectedarea',
     ]),
     categoryOptions() {
       let options = this.categories.map((category) => {
@@ -169,17 +180,21 @@ export default {
       options.unshift({value:null, text:''})
       return options
     },
-    categorySelectWidth() {
-      const list = this.categoryOptions.map((obj) => obj.text)
-      let width = Util.getMaxTextLength(list, this.extraFilterMaxWidth)
-      width *= this.extraFilterFactor
-      return width + 'em'
+    areaOptions() {
+      let options = this.areas.map((area) => {
+          return {
+            value: area.areaId,
+            text: area.areaName
+          }
+        }
+      )
+      options.unshift({value:null, text:''})
+      return options
     },
-    groupSelectWidth() {
-      const list = this.groupOptions.map((obj) => obj.text)
-      let width = Util.getMaxTextLength(list, this.extraFilterMaxWidth)
-      width *= this.extraFilterFactor
-      return width + 'em'
+    detectStateOptions() {
+      let options = this.detectState.getTypes()
+      options.unshift({value:null, text:''})
+      return options
     },
     loginId() {
       return this.$store.state.loginId
@@ -190,9 +205,14 @@ export default {
     },
   },
   mounted() {
+    that = this
     this.$parent.$options.methods.fetchData.apply(this.$parent)
-    StateHelper.load('group')
-    StateHelper.load('category')
+    if (this.params.extraFilter) {
+      this.params.extraFilter.filter((str) => !(str === 'detectState'))
+        .forEach(str => {
+          StateHelper.load(str)
+        });
+    }
     const theme = getTheme(this.loginId)
     // const color = themeColors[theme]
     // const pageLinks = document.getElementsByClassName('.page-link')
@@ -203,9 +223,18 @@ export default {
     // pageActive.style.backgroundColor = color
     // pageActive.style.color = '#ffffff'
   },
+  watch: {
+    filter() {
+      console.log("filter is")
+      console.log(this.filter)
+    }
+  },
   methods: {
     ...mapMutations('app_service', [
       'replaceAS', 
+    ]),
+    ...mapMutations('main', [
+      'replaceMain', 
     ]),
     thumbnail(row) {
       return this.$parent.$options.methods.thumbnail.call(this.$parent, row)
@@ -255,12 +284,7 @@ export default {
       } else {
         try{
           const regExp = new RegExp(".*" + this.filter.reg + ".*", "i")
-          const param = this.params.fields.map((val) => {
-            let itemValue = originItem
-            const keys = val.key.split("\.")
-            keys.forEach(key => itemValue = itemValue[key])
-            return itemValue
-          })
+          const param = this.params.fields.map((val) => Util.getValue(originItem, val.key, ''))
           regBool = regExp.test(JSON.stringify(param))
         }
         catch(e){
@@ -287,9 +311,22 @@ export default {
               extBool = false
             }
             break
+            case 'area':
+            if (extra.area &&
+                !(extra.area === originItem.areaId)) {
+              extBool = false
+            }
+            break
+            case 'detectState':
+            if (extra.detectState &&
+                !(extra.detectState === originItem.detectState)) {
+              extBool = false
+            }
+            break
           }
         }
       }
+      //console.log("filtering table...")
       return regBool && extBool
     },
     onFiltered(filteredItems) {
@@ -303,6 +340,21 @@ export default {
         this.$parent.$options.methods.afterCrud.apply(this.$parent)
       }
       this.$parent.$options.methods.fetchData.apply(this.$parent)
+    },
+    mapDisplay(item) {
+      console.log('mapDisplay called with:')
+      console.log(item)
+      const tx = item.tx
+      const selectedTx = {
+        txId: tx.btxId,
+        btxId: tx.btxId,
+        thumbnail: Util.getValue(tx, 'pot.thumbnail', null) ? tx.pot.thumbnail : '',
+      }
+      const selectedArea = Util.getValue(item, 'exb.location.areaId', null)
+
+      this.replaceMain({selectedTx})
+      this.replaceMain({selectedArea})
+      this.$router.push("/main/position")
     }
   }
 }
@@ -320,4 +372,7 @@ export default {
     line-height: 35px;
   }
   
+  select.extra-filter {
+    max-width: 10em;
+  }
 </style>
