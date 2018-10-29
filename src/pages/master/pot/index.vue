@@ -69,13 +69,18 @@ export default {
     ...mapState('app_service', [
       'pots',
       'potImages',
+      'forceFetchPot',
     ]),
   },
   methods: {
+    afterCrud(){
+      StateHelper.setForceFetch('tx', true)
+    },
     async fetchData(payload) {
       try {
         this.replace({showProgress: true})
-        await StateHelper.load('pot')
+        await StateHelper.load('pot', this.forceFetchPot)
+        StateHelper.setForceFetch('pot', false)
         if (payload && payload.done) {
           payload.done()
         }

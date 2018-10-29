@@ -195,6 +195,9 @@ export default {
       }
       this.register(again)
     },
+    afterCrud(){
+      StateHelper.setForceFetch('tx', true)
+    },
     async save() {
       const entity = {
         potId: this.form.potId || -1,

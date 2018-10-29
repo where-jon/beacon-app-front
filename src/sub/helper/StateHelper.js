@@ -24,6 +24,11 @@ export const getShapeName = (shape) => {
   return shapeName != null? shapeName.text: null
 }
 
+export const setForceFetch = (name, force) => {
+  const storeName = `forceFetch${name.charAt(0).toUpperCase()}${name.slice(1)}`
+  store.commit('app_service/replaceAS', {[storeName]:force})
+}
+
 const appStateConf = {
   sensors: {
     path: '/core/sensor',

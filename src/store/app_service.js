@@ -31,6 +31,8 @@ export const state = () => ({
   zone: {},
   settings: [],
   sensorHistories: [],
+  forceFetchPot: true,
+  forceFetchTx: true,
 })
 
 const initState = state()
