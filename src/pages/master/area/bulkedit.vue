@@ -45,17 +45,18 @@ export default {
     ]),
   },
   methods: {
-    resetThumbnail(entity){
+    resetThumbnail(entity, dummyKey){
         const updateData = this.areas.find((val) => val.areaId == entity.areaId)
         if(updateData){
           entity.mapImage = updateData.mapImage
           entity.thumbnail = updateData.thumbnail
         }
+        return dummyKey
     },
     async save(bulkSaveFunc) {
       const MAIN_COL = "areaId"
       const NUMBER_TYPE_LIST = ["areaId"]
-      await bulkSaveFunc(MAIN_COL, NUMBER_TYPE_LIST, null, null, (entity, dummyKey) => this.resetThumbnail(entity))
+      await bulkSaveFunc(MAIN_COL, NUMBER_TYPE_LIST, null, null, (entity, dummyKey) => this.resetThumbnail(entity, dummyKey))
     },
   }
 }
