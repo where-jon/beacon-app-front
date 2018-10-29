@@ -258,6 +258,7 @@
     "regionId": "リージョンID",
     "regionName": "リージョン名",
     "meshId": "メッシュID",
+    "deviceOffset": "デバイスオフセット",
 
     "zoneClass": "ゾーン(分類)",
     "locationZoneName": "場所名",
