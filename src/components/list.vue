@@ -347,10 +347,10 @@ export default {
         btxId: tx.btxId,
         thumbnail: Util.getValue(tx, 'pot.thumbnail', null) ? tx.pot.thumbnail : '',
       }
+      const selectedArea = Util.getValue(item, 'exb.location.areaId', null)
 
       this.replaceMain({selectedTx})
-      this.replaceMain({selectedArea: tx.areaId})
-      console.log(this.$store.state.main.selectedTx)
+      this.replaceMain({selectedArea})
       this.$router.push("/main/position")
     }
   }

@@ -82,7 +82,7 @@ export default {
     async fetchAreaExbs(tx) {
       if (this.isFirstTime) {
         await StateHelper.load('area')
-        this.selectedArea = Util.getValue(this, 'areas.0.areaId', null)
+        this.selectedArea = this.selectedArea ? this.selectedArea : Util.getValue(this, 'areas.0.areaId', null)
         console.log("after loadAreas. selectedArea=" + this.selectedArea)
         await StateHelper.load('exb')
         if (tx) {
