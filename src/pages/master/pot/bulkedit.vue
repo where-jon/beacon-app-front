@@ -45,11 +45,12 @@ export default {
     ]),
   },
   methods: {
-    resetThumbnail(entity){
+    resetThumbnail(entity, dummyKey){
         const updateData = this.potImages.find((val) => val.id == entity.potId)
         if(updateData){
           entity.thumbnail = updateData.thumbnail
         }
+        return dummyKey
     },
     async save(bulkSaveFunc) {
       const MAIN_COL = "potId"
@@ -83,14 +84,14 @@ export default {
         let newVal
         if (MAIN_COL === headerName && !val) {
           newVal = dummyKey--
-        } else if (NULLABLE_NUMBER_COL.includes(headerName) && !Util.hasValue(val)) {
-          newVal = Number(val)
+        } else if (NULLABLE_NUMBER_COL.includes(headerName)) {
+          newVal = Util.hasValue(val)? Number(val): null
         } else {
           newVal = val
         }
         entity[headerName] = newVal
         return dummyKey
-      }, (entity, dummyKey) => this.resetThumbnail(entity))
+      }, (entity, dummyKey) => this.resetThumbnail(entity, dummyKey))
     },
   }
 }
