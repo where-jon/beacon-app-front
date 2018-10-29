@@ -34,6 +34,7 @@ export default {
           {key: "regionId", sortable: true },
           {key: "regionName", sortable: true },
           {key: "meshId", sortable: true},
+          {key: "deviceOffset", sortable: true},
           {key: "description", sortable: true },
           {key: "actions", thStyle: {width:'130px !important'} }
         ]),

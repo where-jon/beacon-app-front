@@ -20,6 +20,10 @@
           <b-form-input type="number" v-model="form.meshId" maxlength="20" :readonly="!isEditable" />
         </b-form-group>
         <b-form-group>
+          <label v-t="'label.deviceOffset'" />
+          <b-form-input type="number" v-model="form.deviceOffset" min="0" max="65535" required :readonly="!isEditable" />
+        </b-form-group>
+        <b-form-group>
           <label v-t="'label.description'" />
           <b-form-textarea v-model="form.description" :rows="3" :max-rows="6" :readonly="!isEditable" ></b-form-textarea>
         </b-form-group>
@@ -52,7 +56,8 @@ export default {
       id: 'regionId',
       backPath: '/master/region',
       appServicePath: '/core/region',
-      form: ViewHelper.extract(this.$store.state.app_service.region, ["regionId", "regionName", "meshId", "description"]),
+      form: ViewHelper.extract(this.$store.state.app_service.region,
+          ["regionId", "regionName", "meshId", "deviceOffset", "description"]),
       items: [
         {
           text: this.$i18n.tnl('label.master'),
