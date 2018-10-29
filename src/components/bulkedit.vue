@@ -23,6 +23,7 @@ import _ from 'lodash'
 import editmixinVue from './editmixin.vue'
 import { getButtonTheme } from '../sub/helper/ThemeHelper'
 import { getTheme } from '../sub/helper/ThemeHelper'
+import * as StateHelper from '../sub/helper/StateHelper'
 
 let that
 
@@ -41,12 +42,16 @@ export default {
   },
   mounted() {
     that = this
+    StateHelper.load('sensor')
   },
   computed: {
     theme () {
       const theme = getTheme(this.$store.state.loginId)
       return 'outline-' + theme
     },
+    ...mapState('app_service', [
+      'sensors',
+    ]),
   },
   methods: {
     beforeReload(){

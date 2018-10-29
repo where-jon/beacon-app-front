@@ -1,7 +1,7 @@
 <template>
   <div>
     <breadcrumb :items="items" />
-    <bulkedit :name="name" :id="id" :backPath="backPath" :app-service-path="appServicePath" />
+    <bulkedit ref="bulkEdit" :name="name" :id="id" :backPath="backPath" :app-service-path="appServicePath" />
   </div>
 </template>
 
@@ -45,6 +45,9 @@ export default {
     ...mapState('app_service', [
       'exb', 'exbs',
     ]),
+    sensorOptionsExb() {
+      return this.$refs.bulkEdit.sensorOptions('exb')
+    },
   },
   methods: {
     resetId(entity, dummyKey){
@@ -58,11 +61,25 @@ export default {
           entity.deviceId = parseInt(entity.deviceIdX, 16)
         }
       }
+      if(targetEntity){
+        if(!entity.enabled){
+          entity.enabled = targetEntity.enabled
+        }
+        if(entity.location && targetEntity.location){
+          if(!entity.location.txViewType){
+            entity.location.txViewType = targetEntity.location.txViewType
+          }
+          if(!entity.location.visible){
+            entity.location.visible = targetEntity.location.visible
+          }
+        }
+      }
       return dummyKey
     },
     async save(bulkSaveFunc) {
       const MAIN_COL = "exbId"
       const LOCATION = ["locationId","areaName","locationName","visible","txViewType","posId","x","y"]
+      const SENSOR = ["sensor"]
       const NUMBER_TYPE_LIST = ["deviceId", "exbId", "areaId", "locationId", "posId", "x", "y", "z", "txViewType", "zoneName"]
       const BOOL_TYPE_LIST = ["visible", "enabled"]
 
@@ -75,6 +92,15 @@ export default {
             entity.location = {locationId: dummyKey--}
           }
           entity.location[headerName] = val
+        }
+        else if (Util.equalsAny(headerName, SENSOR)) {
+          const sensor = this.sensorOptionsExb.find((option) => option.text == val)
+          if(sensor){
+            if (!entity.exbSensorList) {
+              entity.exbSensorList = []
+            }
+            entity.exbSensorList.push({exbSensorPK: {sensorId: sensor.value}})
+          }
         }
         else {
           if (headerName == MAIN_COL && !val) {
