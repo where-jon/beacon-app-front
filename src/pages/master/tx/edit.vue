@@ -134,7 +134,7 @@ export default {
       return options
     },
     showMinorMid() {
-      !this.showMinorHead
+      return !this.showMinorHead
     },
     showMinorHead() {
       return !APP.TX_WITH_TXID && APP.TX_BTX_MINOR == 'minor'

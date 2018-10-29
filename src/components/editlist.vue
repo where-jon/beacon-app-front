@@ -13,12 +13,12 @@
           <div v-for="row in multiList[categoryId]" :key="row.id">
             <b-form-group :label="getName(row.key)" :description="getName(row.description)">
               <span v-for="field in fields" :key="field.key">
-                <span v-if="useValueType(row, field)">
-                  <span v-if="usePullDown(row, field)">
+                <span v-if="useValueTypeRow(row, field)">
+                  <span v-if="usePullDownRow(row, field)">
                     <b-form-select v-model="row[field.key]" :options="getBooleanOptions()" form="updateForm"/>
                   </span>
                   <span v-else>
-                    <b-form-input v-model="row[field.key]" :type="getInputType(row, field)" maxlength="1000" form="updateForm"/>
+                    <b-form-input v-model="row[field.key]" :type="getInputTypeRow(row, field)" maxlength="1000" form="updateForm"/>
                   </span>
                 </span>
               </span>
@@ -47,7 +47,18 @@
                   <label v-t="'label.valType'" />
                 </b-col>
                 <b-col sm="5">
-                  <b-form-select v-model="newForm.type" :options="getTypeOptions()" class="form-control-sm" required />
+                  <b-form-select v-model="newForm.type" :options="getTypeOptions()" @change="clearValue()" class="form-control-sm" required />
+                </b-col>
+              </b-form-row>
+            </b-form-group>
+            <b-form-group>
+              <b-form-row>
+                <b-col sm="2">
+                  <label v-t="'label.value'" />
+                </b-col>
+                <b-col sm="5">
+                  <b-form-select v-if="usePullDown(newForm.type)" v-model="newForm.value" :options="getBooleanOptions()" required/>
+                  <b-form-input v-if="!usePullDown(newForm.type)" v-model="newForm.value" :type="getInputType(newForm.type)" class="form-control-sm" maxlength="1000" required/>
                 </b-col>
                 <b-col>
                   <div class="float-right">
@@ -107,19 +118,32 @@ export default {
   },
   methods: {
     getName(id) {
-      return Util.hasValue(id)? this.$i18n.tnl(`label.${id.replace("\.", "_")}`): null
+      if (!Util.hasValue(id)) {
+        return null
+      }
+      let name = this.$i18n.tnl(`label["${id}"]`)
+      if (name.startsWith("label[")) {
+        return id
+      }
+      return name
     },
-    useValueType(row, field) {
+    useValueTypeRow(row, field) {
       return field.type && row[field.type]
     },
-    usePullDown(row, field) {
-      return new RegExp(`^${row[field.type]}$`, "i").test("boolean")
+    usePullDownRow(row, field) {
+      return this.usePullDown(row[field.type])
+    },
+    usePullDown(type) {
+      return new RegExp(`^${type}$`, "i").test("boolean")
     },
     getBooleanOptions() {
-      return [{text: "True", value: 1}, {text: "False", value: 0}]
+      return [{text: "true", value: "true"}, {text: "false", value: "false"}]
     },
-    getInputType(row, field) {
-      const regExp = new RegExp(`^${row[field.type]}$`, "i")
+    getInputTypeRow(row, field) {
+      return this.getInputType(row[field.type])
+    },
+    getInputType(type) {
+      const regExp = new RegExp(`^${type}$`, "i")
       if(regExp.test("int") || regExp.test("number")){
         return "number"
       }
@@ -137,6 +161,9 @@ export default {
         {text: "数値", value: "number"},
         {text: "真偽値", value: "boolean"},
       ]
+    },
+    clearValue(){
+      this.newForm.value = null
     },
     beforeReload(){
       this.useRegistForm = false

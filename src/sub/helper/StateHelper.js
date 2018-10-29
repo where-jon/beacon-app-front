@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import * as AppServiceHelper from './AppServiceHelper'
 import * as Util from '../util/Util'
-import { CATEGORY, getShapes} from '../constant/Constants'
+import { CATEGORY, SHAPE } from '../constant/Constants'
 
 
 // TODO: 全体的にState管理を共通化する
@@ -20,7 +20,7 @@ export const getCategoryTypeName = (category) => {
 }
 
 export const getShapeName = (shape) => {
-  const shapeName = getShapes().find((tval) => tval.value === shape)
+  const shapeName = SHAPE.getShapes().find((tval) => tval.value === shape)
   return shapeName != null? shapeName.text: null
 }
 
@@ -81,7 +81,7 @@ const appStateConf = {
     path: '/basic/pot/withThumbnail',
     sort: 'potId',
     beforeCommit: (arr) => {
-      let potImages = arr.map((val) => val.thumbnail)
+      let potImages = arr.map((val) => ({ id: val.potId, thumbnail: val.thumbnail}))
       store.commit('app_service/replaceAS', {['potImages']:potImages})
       return arr.map((val) => ({
         ...val,

@@ -61,7 +61,7 @@ export default {
       try {
         this.replace({showProgress: true})
         await StateHelper.load('area')
-        this.areaImages = this.areas.map((val) => val.thumbnail)
+        this.areaImages = this.areas.map((val) => ({ id: val.areaId, mapImage: val.mapImage, thumbnail: val.thumbnail}))
         this.areaList = this.areas.map((val) => ({...val, mapImage: "", thumbnail: ""})) // omit images to avoid being filtering target
         if (payload && payload.done) {
           payload.done()
@@ -72,8 +72,9 @@ export default {
       }
       this.replace({showProgress: false})
     },
-    thumbnail(index) {
-      return this.areaImages[index]
+    thumbnail(row) {
+      const img = this.areaImages.find((val) => val.id == row.areaId)
+      return img? img.thumbnail: null
     },
   },
 }

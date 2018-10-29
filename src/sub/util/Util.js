@@ -3,6 +3,7 @@ import jschardet from 'jschardet'
 import Encoding from 'encoding-japanese'
 import Papa from 'papaparse'
 import moment from 'moment'
+import { DEV } from '../constant/config';
 
 // sleep (for test)
 export const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))
@@ -14,6 +15,18 @@ export const addNoSelect = (option) => option.unshift({value: null, text: ""})
 export const getByteLength = (str) => encodeURI(str == null? "": str).replace(/%../g, "*").length
 
 export const numberRange = (start, end) => new Array(end - start + 1).fill().map((d, i) => i + start)
+
+export const table = (log) => {
+  if (DEV.DEBUG) {
+    console.table(log)
+  }
+}
+
+export const debug = function(log) {
+  if (DEV.DEBUG) {
+    console.debug(...arguments)
+  }
+}
 
 export const colorCd4db = (str) => {
   if(!str){
@@ -103,11 +116,10 @@ export const converToCsv = (array, headers) => {
   if (!headers) {
     headers = Object.keys(array[0])
   }
-  // ヘッダ出力から"extValue."の部分を取り除く
-  const extValueRegExp = /extValue\.(.*)/
+  // ヘッダ出力から"."以降の部分のみ抽出
   const outputHeaders = headers.map((header) => {
-    let result = header.match(extValueRegExp)
-    return result ? result[1] : header
+    let result = header.split(".")
+    return result ? result[result.length - 1] : header
   })
   let header = '"' + outputHeaders.join('","') + '"\n'
   let body = _.map(array, (row) => {

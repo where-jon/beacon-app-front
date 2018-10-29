@@ -53,7 +53,7 @@
           <b-button v-if="isEditable" size="sm" @click.stop="deleteConfirm(row.item, row.index, $event.target)" variant="outline-danger" class="mr-1" v-t="'label.delete'" />
         </template>
         <template slot="thumbnail" slot-scope="row">
-          <img v-if="thumbnail(row.index)" :src="thumbnail(row.index)" height="70" />
+          <img v-if="thumbnail(row.item)" :src="thumbnail(row.item)" height="70" />
         </template>
         <!-- 電池レベル -->
         <template slot="powerLevel" slot-scope="row">
@@ -236,8 +236,8 @@ export default {
     ...mapMutations('main', [
       'replaceMain', 
     ]),
-    thumbnail(index) {
-      return this.$parent.$options.methods.thumbnail.call(this.$parent, this.perPage * (this.currentPage - 1) + index)
+    thumbnail(row) {
+      return this.$parent.$options.methods.thumbnail.call(this.$parent, row)
     },
     exportCsv() {
       let headers
@@ -345,7 +345,7 @@ export default {
       const selectedTx = {
         txId: tx.btxId,
         btxId: tx.btxId,
-        thumbnail: tx.pot.thumbnail ? tx.pot.thumbnail : '',
+        thumbnail: Util.getValue(tx, 'pot.thumbnail', null) ? tx.pot.thumbnail : '',
       }
 
       this.replaceMain({selectedTx})

@@ -39,7 +39,7 @@ export const applyAppServiceSetting = (settingArr) => {
         val = Number(val)
         break
       case "boolean":
-        val = Boolean(val)
+        val = val == "true"
         break
       case "list":
       case "array":

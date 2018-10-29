@@ -94,6 +94,7 @@ export default {
         settingId: -1,
         key: this.newForm.key,
         valType: this.newForm.type,
+        value: this.newForm.value,
       }
     },
     async save() {

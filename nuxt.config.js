@@ -30,6 +30,19 @@ module.exports = {
   ** Build configuration
   */
   build: {
+    babel: {
+      presets: [
+        [
+          'vue-app',
+          {
+            targets:  { ie: 11 },
+            useBuiltIns: true
+          }
+        ]
+      ]
+    },
+    vendor: [ 'babel-polyfill', 'url-search-params-polyfill' ],
+
     /*
     ** Run ESLint on save
     */

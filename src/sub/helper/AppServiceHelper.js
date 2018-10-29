@@ -1,12 +1,9 @@
 import _ from 'lodash'
-import 'babel-polyfill'
-import 'es6-promise'
 import { DEV, APP_SERVICE } from '../constant/config'
 import { UPDATE_ONLY_NN } from '../constant/Constants'
 import * as mock from '../../assets/mock/mock'
 import { sleep } from '../util/Util'
 import * as HttpHelper from './HttpHelper'
-import URLSearchParams from 'url-search-params-polyfill'
 
 export const fetchList = async (target, sortBy, pMock) => {
     let data = pMock? pMock: DEV.USE_MOCK_APS? mock[target]:
