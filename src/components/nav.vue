@@ -11,7 +11,7 @@
       <img src="/toplogo.png" width=220 height=36 />
     </b-navbar-brand>
 
-    <b-collapse is-nav id="nav_collapse" v-if="!isLoginPage && showNav">
+    <b-collapse is-nav id="nav_collapse" v-show="!isLoginPage && showNav">
 
       <!-- left (navi dropdown menu) -->
       <b-navbar-nav>
@@ -19,7 +19,7 @@
           <template slot="button-content">
             <em v-t="'label.' + group.key" />
           </template>
-          <b-dropdown-item v-for="page in group.pages" :key="page.key" href="#" @click="move('/' + group.base + page.path)" v-t="'label.' + page.key" />
+          <b-dropdown-item v-for="page in group.pages" :key="page.key" href="#" @click="move('/' + group.base + page.path)" v-t="'label.' + page.key" :class="navbarClasses"/>
         </b-nav-item-dropdown>
       </b-navbar-nav>
 
@@ -109,40 +109,20 @@ ul.navbar-nav {
   margin-left: 5%;
 }
 
-.dropdown-menu.default {
-  background-color: $menu-bg;
+a.dropdown-item.default:hover {
+  background-color: #7EA0C4 !important;
 }
 
-.dropdown-menu.primary {
-  background-color: $blue;
+a.dropdown-item.earthcolor:hover {
+  background-color: #819E6E !important;
 }
 
-.dropdown-menu.secondary {
-  background-color: $gray-600;
+a.dropdown-item.autumn:hover {
+  background: #C5AA78 !important;
 }
 
-.dropdown-menu.success {
-  background-color: $green;
-}
-
-.dropdown-menu.info {
-  background-color: $cyan;
-}
-
-.dropdown-menu.warning {
-  background-color: $yellow;
-}
-
-.dropdown-menu.danger {
-  background-color: $red;
-}
-
-.dropdown-menu.light {
-  background-color: $gray-100;
-}
-
-.dropdown-menu.dark {
-  background-color: $gray-800;
+a.dropdown-item.vivid:hover {
+  background: #EE5588 !important;
 }
 
 </style>
