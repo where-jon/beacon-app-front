@@ -72,6 +72,8 @@ export default {
       labelDeviceId: this.$i18n.t('label.deviceId'),
       labelTimestamp: this.$i18n.t('label.final-receive-timestamp'),
       labelState: this.$i18n.t('label.state'),
+      labelReceiveNormal: this.$i18n.t('label.receiveNormal'),
+      labelMalfunction: this.$i18n.t('label.malfunction'),
       gatewayState: GATEWAY.STATE_COLOR
     }
   },
@@ -120,9 +122,8 @@ export default {
         const currentTime = new Date().getTime()
         gateways = gateways.map((e) => {
           const timestamp = formattedDateToDatetime(e.updated)
-          const state = currentTime - timestamp < APP.MALFUNCTION_TIME ?
-          this.$i18n.t('label.receiveNormal') : this.$i18n.t('label.malfunction')
-          return { ...e, state: state}
+          const state = currentTime - timestamp < GATEWAY.MALFUNCTION ? this.labelReceiveNormal: this.labelMalfunction
+          return { ...e, state: state }
         })
         this.replaceMonitor({gateways})
       }
@@ -159,6 +160,7 @@ export default {
       }
     },
     download() {
+      console.log(Util.converToCsv(this.gateways))
       HtmlUtil.fileDL("gateway.csv", Util.converToCsv(this.gateways), getCharSet(this.$store.state.loginId))
     },
   }
