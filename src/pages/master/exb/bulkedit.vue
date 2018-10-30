@@ -62,14 +62,14 @@ export default {
         }
       }
       if(targetEntity){
-        if(!entity.enabled){
+        if(entity.enabled == null){
           entity.enabled = targetEntity.enabled
         }
         if(entity.location && targetEntity.location){
           if(!entity.location.txViewType){
             entity.location.txViewType = targetEntity.location.txViewType
           }
-          if(!entity.location.visible){
+          if(entity.location.visible == null){
             entity.location.visible = targetEntity.location.visible
           }
         }

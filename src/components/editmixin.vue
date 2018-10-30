@@ -188,7 +188,7 @@ export default {
                   return
                 }
                 if (Util.equalsAny(headerName, boolTypeList)) { // Boolean type
-                  val = Boolean(val)
+                  val = Util.str2boolean(val)
                 }
                 else if (Util.equalsAny(headerName, intTypeList)) { // Number type
                   val = Number(val)

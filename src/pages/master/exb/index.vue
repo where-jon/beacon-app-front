@@ -32,6 +32,10 @@ export default {
         bulkEditPath: '/master/exb/bulkedit',
         appServicePath: '/core/exb',
         csvOut: true,
+        custumCsvColumns: [
+          "exbId", "deviceNum", "deviceId", "deviceIdX", "locationName",
+          "posId", "areaName", "x", "y", "enabled", "sensor",
+        ],
         fields: addLabelByKey(this.$i18n, [ 
           APP.EXB_WITH_EXBID? {key: "exbId", sortable: true }: null,
           APP.EXB_WITH_DEVICE_NUM? {key: "deviceNum", sortable: true }: null,
