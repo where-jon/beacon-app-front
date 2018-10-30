@@ -1,6 +1,6 @@
 <template>
   <b-form inline>
-    <b-container>
+    <b-container :fluid="isFluid">
       <!-- searchbox -->
       <template v-if="!params.hideSearchBox">
         <b-row class="mb-1">
@@ -107,7 +107,7 @@ let that
 
 export default {
   mixin: [commonmixinVue], // not work
-  props: ['params', 'list'],
+  props: ['params', 'list', 'isFluid'],
   data() {
     return {
       currentPage: 1,

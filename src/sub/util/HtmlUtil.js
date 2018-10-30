@@ -1,5 +1,8 @@
 import Encoding from 'encoding-japanese'
 import { str2Array } from './Util'
+import * as HttpHelper from '../../sub/helper/HttpHelper'
+
+
 
 export const addClass = (e, cls) => e && e.target.classList && e.target.classList.add(cls)
 
@@ -80,4 +83,8 @@ export const readImage = (e, onload, resize) => {
     }       
     fr.readAsDataURL(files[0])
   }
+}
+
+export const getMessageData = async (lang) => {
+  return await HttpHelper.getFronServerFile('/' + lang + '.json')
 }

@@ -141,7 +141,7 @@ export default {
     },
     getTableHeaders() {
       return !this.isDev ? [this.labelNo,this.labelDeviceId,this.labelTimestamp,this.labelState]
-      : [this.labelNo,'deviceid','updated']
+      : [this.labelNo,'deviceid','updated','state']
     },
     getGatewayState(updated) {
       // 未検知
