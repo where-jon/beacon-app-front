@@ -30,10 +30,11 @@ export const debug = function(log) {
   }
 }
 
-export const colorCd4db = (str) => {
-  if(!str){
+export const colorCd4db = (obj) => {
+  if(!obj){
     return "000000"
   }
+  const str = obj.hex? obj.hex: obj
   const color = str.replace("#", "")
   return color.slice(0, 8)
 }
