@@ -1,8 +1,8 @@
 <template>
   <div>
     <breadcrumb :items="items" :extraNavSpec="extraNavSpec"
-        :reload="reload" :isLoad="isLoad"/>
-    <m-list :params="params" :list="positions" :isFluid="true"/>
+        :reload="reload" />
+    <m-list :params="params" :list="positions" :isFluid="true" />
   </div>
 </template>
 
@@ -65,8 +65,7 @@ export default {
           active: true
         }
       ],
-      reload: false,
-      isLoad: false,
+      reload: true,
       extraNavSpec: [
         {
           key: 'showPosition',
