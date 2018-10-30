@@ -174,15 +174,16 @@ export default {
       })
 
       const that = this
+      console.log(this.locationMap)
       return positions.map((e) => {
         const name = map[e.btx_id]
         const record = {
           [that.label_minor]: e.minor,
           [that.label_name]: name != null ? name : '—',
           [that.label_powerLevel]: e.power_level,
-          [that.label_receivePlace]: this.locationMap[e.device_id],
-          [that.label_state]: this.txState(e.updatetime),
-          [that.label_timestamp]: this.getTimestamp(e.updatetime),
+          [that.label_receivePlace]: that.locationMap[e.device_id],
+          [that.label_state]: that.txState(e.updatetime),
+          [that.label_timestamp]: that.getTimestamp(e.updatetime),
         }
         return record
       })
@@ -229,7 +230,7 @@ export default {
     async getExbRecords() {
       await StateHelper.load('exb')
       this.locationMap = this.exbs.reduce((obj, record) => {
-        obj[parseInt(record.deviceId, 16)] = record.location.locationName
+        obj[record.deviceId] = record.location.locationName
         return obj
       }, {})
     }
