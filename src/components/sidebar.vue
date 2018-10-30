@@ -11,7 +11,7 @@
           </li>
           <li :class="menuItemClasses" v-for="(page, j) in group.pages" :key="page.key" v-if="selectedItem === i && isDispMenuItem(page)">
             <router-link class="bd-toc-link" :to="'/' + group.base + page.path">
-              <i :class="page.icon" class="ml-3"></i>&nbsp;{{ $t("label." + page.key) }}
+              <i :class="page.icon" class="ml-3 menu-item-icon"></i>&nbsp;{{ $t("label." + page.key) }}
             </router-link>
           </li>
         </ul>
@@ -203,6 +203,10 @@ span.direction {
   line-height: 55px;
   float: left;
   text-align: right;
+}
+
+i.ml-3.menu-item-icon {
+  width: 20px;
 }
 
 </style>
