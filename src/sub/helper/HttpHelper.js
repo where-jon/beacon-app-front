@@ -97,13 +97,11 @@ const handleError = (e, url) => {
   }
 } 
 
-export const getFronServerFile  = async (uri, config, ignoreError) => {
+export const getFronServerFile  = async (uri) => {
   try {
     let res = await apFrontClient.get(uri)
     return res.data
   } catch (e) {
-    if (!ignoreError) {
-      handleError(e, path)
-    }
+    /* NOP */
   }
 }
