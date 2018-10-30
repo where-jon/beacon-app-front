@@ -27,13 +27,17 @@ export default {
       default: false,
       type: Boolean
     },
-    nameAndCategory: {
-      default : () => { return {
-        id: null,
-        name: null,
-        categoryId: null,
-      }},
-      type: Object
+    isSetNameCategory: {
+      default: false,
+      type: Boolean
+    },
+    name: {
+      default: '',
+      type: String,
+    },
+    categoryId: {
+      default: -1,
+      type: Number,
     }
   },
   watch: {
@@ -48,8 +52,16 @@ export default {
       }
       this.$emit('regist', this.canvas.getObjects(), this.deleted)
     },
-    nameAndCategory: function(newVal, oldVal) {
-      console.log(newVal)
+    isSetNameCategory: function(newVal, oldVal) {
+      if (!newVal) {
+        return
+      }
+      const group = this.canvas.getActiveObject()
+      group.name = this.name
+      group.categoryId = this.categoryId
+      const text = group.getObjects('text')[0]
+      text.setText(this.name)
+      this.canvas.renderAll()
     }
   },
   methods: {
@@ -118,19 +130,20 @@ export default {
         top: dimension.top,
         hasRotatingPoint: false,
         lockRotation: true,
-        name: dimension.name
+        name: dimension.name,
+        categoryId: this.categoryId
       });
       this.canvas.add(group);
       return group
     },
     assignId () {
-      return Math.max(...this.canvas.getObjects().map((e) => Math.abs(e.id))) + 1
+      const ids = this.canvas.getObjects().map((e) => Math.abs(e.id))
+      return ids.length > 0 ? Math.max(...ids) + 1 : 1
     }
   },
   mounted () {
     this.canvas = new fabric.Canvas('map')
     const that = this
-
     // Canvas内でのみドラッグ可とする
     this.canvas.on('object:moving', function(e){
       const obj = e.target;
@@ -168,6 +181,7 @@ export default {
       const id = that.assignId()
       const dimension = {
         id: id * -1,
+        categoryId: that.categoryId,
         top: top,
         left: left,
         width: Math.floor(Math.max(that.toX, that.fromX)) - left,
@@ -192,7 +206,7 @@ export default {
       }
       that.canvas.remove(active)
       if (active.id > 0) {
-        th.deleted.push(active.id)
+        that.deleted.push(active.id)
       }
       that.$emit('deleted', active.id)
     }, false);
@@ -208,6 +222,7 @@ export default {
         left: event.target.left,
         width: event.target.width,
         height: event.target.height,
+        categoryId: event.target.categoryId,
       })
     })
 

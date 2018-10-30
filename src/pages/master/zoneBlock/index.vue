@@ -57,7 +57,7 @@
         </b-form-group>
 
       </b-form>
-      <AreaCanvas :areaId="areaId" :isRegist="isRegist" :nameAndCatetory="nameAndCategory"
+      <AreaCanvas :areaId="areaId" :isRegist="isRegist" :name="zoneName" :categoryId="categoryId" :isSetNameCategory="isSetNameCategory"
       @regist="doRegist"
       @selected="onSelected"
       @unselected="unSelected"
@@ -92,8 +92,7 @@ export default {
   },
   data() {
     return {
-      name: 'zone',
-      id: 'zoneId',
+      id: -1,
       backPath: '/master/zoneClass',
       appServicePath: '/core/zone',
       form: ViewHelper.extract(this.$store.state.app_service.zone, ["zoneId", "zoneName", "areaId", "locationZoneList.0.locationZonePK.locationId", "zoneCategoryList.0.zoneCategoryPK.categoryId"]),
@@ -107,11 +106,7 @@ export default {
       zoneName: null,
       zones: [],
       isRegist: false,
-      nameAndCategory: {
-        id: null,
-        name: null,
-        categoryId: null
-      },
+      isSetNameCategory: false,
       items: [
         {
           text: this.$i18n.t('label.master'),
@@ -161,6 +156,7 @@ export default {
     },
     async initCategoryNames() {
       let categories = await AppServiceHelper.fetchList(`/basic/category/type/${CATEGORY.getTypes()[2].value}`, 'categoryId')
+      console.log(categories)
       this.categoryNames = categories.map((val) => ({text: val.categoryName, value: val.categoryId}))
       if (this.categoryNames.length < 1) {
         return
@@ -171,12 +167,15 @@ export default {
       this.onSelected(zoneData)
     },
     onSelected (zoneData) {
+      this.id = zoneData.id
       this.isEnableNameText = true
       this.zoneName = zoneData.name
+      this.isSetNameCategory = false
     },
     unSelected() {
       this.isEnableNameText = false
       this.form.zoneName = ''
+      this.isSetNameCategory = false
     },
     onDeleted (id) {
       this.zones = this.zones.filter((e) => {
@@ -188,28 +187,37 @@ export default {
       this.isRegist = true
     },
     onSetting () {
+      this.isSetNameCategory = true
     },
     async doRegist (zones, deleted) {
+      const path = this.appServicePath
       this.showInfo = false
       this.message = ''
       deleted.forEach((e) => {
-        AppServiceHelper.deleteEntity(this.appServicePath, e)
+        AppServiceHelper.deleteEntity(path, e)
       })
       const areaId = this.areaId
       const entities = zones.map((e) => {
         return {
           zoneId: e.id,
           zoneName: e.name,
-          zoneType: ZONE.getTypes()[1].value,
+          zoneType: ZONE.getTypes()[0].value,
           areaId: areaId,
           x: Math.floor(e.aCoords.tl.x),
           y: Math.floor(e.aCoords.tl.y),
           w: Math.floor(e.aCoords.br.x - e.aCoords.tl.x),
           h: Math.floor(e.aCoords.br.y - e.aCoords.tl.y),
+          zoneCategoryList: [{
+            zoneCategoryPK: {
+              zoneId: e.id,
+              categoryId: e.categoryId
+            }
+          }]
         }
       })
       const saveId = await AppServiceHelper.bulkSave(this.appServicePath, entities, 0)
       this.isRegist = false
+      this.isSetNameCategory = false
       this.message = this.$i18n.t('message.updateCompleted', { target: this.$i18n.t('label.zone') })
       this.showInfo = true
       return saveId

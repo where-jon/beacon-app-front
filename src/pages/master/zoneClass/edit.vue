@@ -159,9 +159,6 @@ export default {
         locationZoneList: this.form.locationId? [{locationZonePK: {zoneId: zoneId, locationId: this.form.locationId}}]: null,
         zoneCategoryList: this.form.categoryId? [{zoneCategoryPK: {zoneId: zoneId, categoryId: this.form.categoryId}}]: null
       }
-      console.log(entity)
-      // const saveId = await AppServiceHelper.bulkSave(this.appServicePath, [entity])
-      // return saveId
     },
     onCreated(zoneData) {
       this.onSelected(zoneData)
@@ -184,7 +181,8 @@ export default {
     regist () {
       this.isRegist = true
     },
-    async doRegist (zones) {
+    async doRegist (zones, deleted) {
+      const path = this.appServicePath
       const areaId = this.form.areaId
       const entities = zones.map((e) => {
         return {
@@ -198,8 +196,10 @@ export default {
           h: e.height,
         }
       })
-      const saveId = await AppServiceHelper.bulkSave(this.appServicePath, entities, 0)
-      console.log(saveId)
+      const saveId = await AppServiceHelper.bulkSave(path, entities, 0)
+      await deleted.forEach(zoneId => {
+        AppServiceHelper.deleteEntity(path, zoneId)
+      });
       this.isRegist = false
       return saveId
     }
