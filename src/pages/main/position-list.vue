@@ -2,7 +2,7 @@
   <div>
     <breadcrumb :items="items" :extraNavSpec="extraNavSpec"
         :reload="reload" :isLoad="isLoad"/>
-    <m-list :params="params" :list="positions" />
+    <m-list :params="params" :list="positions" :isFluid="true"/>
   </div>
 </template>
 
