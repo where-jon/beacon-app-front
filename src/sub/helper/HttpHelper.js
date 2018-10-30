@@ -12,6 +12,11 @@ const exCloudClient = axios.create({ // when you access to excloud, withCredenti
     withCredentials: EXCLOUD.withCredentials
 })
 
+const apFrontClient = axios.create({
+  xsrfHeaderName: 'X-CSRF-Token',
+  withCredentials: true
+})
+
 export const getAppService = async (path, config, ignoreError) => {
   try {
     let res = await apServiceClient.get(APP_SERVICE.BASE_URL + path, config)
@@ -92,3 +97,13 @@ const handleError = (e, url) => {
   }
 } 
 
+export const getFronServerFile  = async (uri, config, ignoreError) => {
+  try {
+    let res = await apFrontClient.get(uri)
+    return res.data
+  } catch (e) {
+    if (!ignoreError) {
+      handleError(e, path)
+    }
+  }
+}
