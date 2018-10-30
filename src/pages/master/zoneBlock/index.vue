@@ -7,6 +7,18 @@
       <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">{{ message }}</b-alert>
 
       <b-form @submit="onSubmit" v-if="show">
+
+        <b-form-group>
+          <b-form-row>
+            <b-col sm="1">
+              <label v-t="'label.areaName'" class="control-label" />
+            </b-col>
+            <b-col sm="3">
+              <b-form-select v-model="areaId" :options="areaNames" required />
+            </b-col>
+          </b-form-row>
+        </b-form-group>
+
         <b-form-group>
           <b-form-row>
             <b-col sm="1" v-if="hasId">
@@ -18,8 +30,17 @@
             <b-col sm="1">
               <label v-t="'label.zoneName'" class="control-label" />
             </b-col>
-            <b-col sm="5">
-              <b-form-input type="text" v-model="form.zoneName" maxlength="20" required :readonly="!isEditable" :disabled="!isEnableNameText" />
+            <b-col sm="4">
+              <b-form-input type="text" v-model="zoneName" maxlength="20" required :readonly="!isEditable" :disabled="!isEnableNameText" />
+            </b-col>
+            <b-col sm="1">
+              <label v-t="'label.categoryName'" class="control-label" />
+            </b-col>
+            <b-col sm="3">
+              <b-form-select v-model="categoryId" :options="categoryNames" :disabled="!isEnableNameText" />
+            </b-col>
+            <b-col sm="2">
+              <b-button type="button" :variant="theme" v-t="'label.setting'" :disabled="!isEnableNameText" @click="onSetting" />
             </b-col>
           </b-form-row>
         </b-form-group>
@@ -27,44 +48,16 @@
         <b-form-group>
           <b-form-row>
             <b-col sm="1">
-              <label v-t="'label.areaName'" class="control-label" />
-            </b-col>
-            <b-col sm="3">
-              <b-form-select v-model="form.areaId" :options="areaNames" required />
+              <b-button type="button" variant="outline-danger" @click="backToList" v-t="'label.back'" :block="true" />
             </b-col>
             <b-col sm="1">
-              <label v-t="'label.categoryName'" class="control-label" />
-            </b-col>
-            <b-col sm="3">
-              <b-form-select v-model="form.categoryId" :options="categoryNames" />
-            </b-col>
-            <b-col sm="4">
-              <b-button type="button" variant="outline-danger" @click="backToList" v-t="'label.back'"/>
-              <b-button v-if="isEditable" type="button" :variant="theme" @click="regist()" class="ml-2" >{{ label }}</b-button>
-              <b-button v-if="isEditable && !isUpdate" type="submit" :variant="theme" @click="register(true)" class="ml-2" v-t="'label.registerAgain'"/>
+              <b-button v-if="isEditable" type="button" :variant="theme" @click="regist()" :block="true" >{{ label }}</b-button>
             </b-col>
           </b-form-row>
         </b-form-group>
-        <b-form-group>
-          <label v-t="'label.areaName'" />
-          <b-form-select v-model="form.areaId" :options="areaNames" required class="mb-3 ml-3 col-3" :disabled="!isEditable" />
-        </b-form-group>
-        <!--
-        <b-form-group>
-          <label v-t="'label.locationZoneName'" />
-          <b-form-select v-model="form.locationId" :options="locationNames" required class="mb-3 ml-3 col-3" :disabled="!isEditable" />
-        </b-form-group>
-        -->
-        <b-form-group>
-          <label v-t="'label.categoryName'" />
-          <b-form-select v-model="form.categoryId" :options="categoryNames" class="mb-3 ml-3 col-3" :disabled="!isEditable" />
-        </b-form-group>
 
-        <b-button type="button" variant="outline-danger" @click="backToList" v-t="'label.back'"/>
-        <b-button v-if="isEditable" type="submit" :variant="theme" @click="register(false)" class="ml-2" >{{ label }}</b-button>
-        <b-button v-if="isEditable && !isUpdate" type="submit" :variant="theme" @click="register(true)" class="ml-2" v-t="'label.registerAgain'"/>
       </b-form>
-      <AreaCanvas :base64="base64" :isRegist="isRegist" 
+      <AreaCanvas :areaId="areaId" :isRegist="isRegist" :name="zoneName" :categoryId="categoryId" :isSetNameCategory="isSetNameCategory"
       @regist="doRegist"
       @selected="onSelected"
       @unselected="unSelected"
@@ -99,29 +92,28 @@ export default {
   },
   data() {
     return {
-      name: 'zone',
-      id: 'zoneId',
+      id: -1,
       backPath: '/master/zoneClass',
       appServicePath: '/core/zone',
       form: ViewHelper.extract(this.$store.state.app_service.zone, ["zoneId", "zoneName", "areaId", "locationZoneList.0.locationZonePK.locationId", "zoneCategoryList.0.zoneCategoryPK.categoryId"]),
       areaNames: [],
+      areaId: null,
       locationNames: [],
       categoryNames: [],
+      categoryId: null,
       canvas: null,
       isEnableNameText: false,
+      zoneName: null,
       zones: [],
       isRegist: false,
+      isSetNameCategory: false,
       items: [
         {
-          text: this.$i18n.tnl('label.master'),
+          text: this.$i18n.t('label.master'),
           active: true
         },
         {
-          text: this.$i18n.tnl('label.zoneClass'),
-          href: '/master/zoneClass',
-        },
-        {
-          text: this.$i18n.tnl('label.zoneClass') + this.$i18n.tnl('label.detail'),
+          text: this.$i18n.t('label.zoneBlock'),
           active: true
         }
       ]
@@ -136,7 +128,7 @@ export default {
   },
   computed: {
     base64 () {
-      const area = this.$store.state.app_service.areas.find((a) => { return a.areaId === this.form.areaId })
+      const area = this.$store.state.app_service.areas.find((a) => { return a.areaId === this.areaId })
       return area ? area.mapImage : ''
     },
     hasId (){
@@ -156,7 +148,7 @@ export default {
     async initAreaNames() {
       await StateHelper.load('area')
       this.areaNames = this.areas.map((val) => ({text: val.areaName, value: val.areaId}))
-      console.log(this.areaNames )
+      this.areaId = this.areaNames[0].value
     },
     async initLocationNames() {
       await StateHelper.load('location')
@@ -164,31 +156,26 @@ export default {
     },
     async initCategoryNames() {
       let categories = await AppServiceHelper.fetchList(`/basic/category/type/${CATEGORY.getTypes()[2].value}`, 'categoryId')
+      console.log(categories)
       this.categoryNames = categories.map((val) => ({text: val.categoryName, value: val.categoryId}))
-      this.categoryNames.unshift({value:null, text:''})
-    },
-    async save() {
-      const zoneId = Util.hasValue(this.form.zoneId)? this.form.zoneId: -1
-      let entity = {
-        zoneId: zoneId,
-        zoneName: this.form.zoneName,
-        zoneType: ZONE.getTypes()[1].value,
-        areaId: this.form.areaId,
-        locationZoneList: this.form.locationId? [{locationZonePK: {zoneId: zoneId, locationId: this.form.locationId}}]: null,
-        zoneCategoryList: this.form.categoryId? [{zoneCategoryPK: {zoneId: zoneId, categoryId: this.form.categoryId}}]: null
+      if (this.categoryNames.length < 1) {
+        return
       }
+      this.categoryId = this.categoryNames[0].value
     },
     onCreated(zoneData) {
       this.onSelected(zoneData)
-      this.zones.push(zoneData)
     },
     onSelected (zoneData) {
+      this.id = zoneData.id
       this.isEnableNameText = true
-      this.form.zoneName = zoneData.name
+      this.zoneName = zoneData.name
+      this.isSetNameCategory = false
     },
     unSelected() {
       this.isEnableNameText = false
       this.form.zoneName = ''
+      this.isSetNameCategory = false
     },
     onDeleted (id) {
       this.zones = this.zones.filter((e) => {
@@ -199,26 +186,40 @@ export default {
     regist () {
       this.isRegist = true
     },
+    onSetting () {
+      this.isSetNameCategory = true
+    },
     async doRegist (zones, deleted) {
       const path = this.appServicePath
-      const areaId = this.form.areaId
+      this.showInfo = false
+      this.message = ''
+      deleted.forEach((e) => {
+        AppServiceHelper.deleteEntity(path, e)
+      })
+      const areaId = this.areaId
       const entities = zones.map((e) => {
         return {
-          zoneId: -1 * e.id,
+          zoneId: e.id,
           zoneName: e.name,
-          zoneType: ZONE.getTypes()[1].value,
+          zoneType: ZONE.getTypes()[0].value,
           areaId: areaId,
-          x: e.left,
-          y: e.top,
-          w: e.width,
-          h: e.height,
+          x: Math.floor(e.aCoords.tl.x),
+          y: Math.floor(e.aCoords.tl.y),
+          w: Math.floor(e.aCoords.br.x - e.aCoords.tl.x),
+          h: Math.floor(e.aCoords.br.y - e.aCoords.tl.y),
+          zoneCategoryList: [{
+            zoneCategoryPK: {
+              zoneId: e.id,
+              categoryId: e.categoryId
+            }
+          }]
         }
       })
-      const saveId = await AppServiceHelper.bulkSave(path, entities, 0)
-      await deleted.forEach(zoneId => {
-        AppServiceHelper.deleteEntity(path, zoneId)
-      });
+      const saveId = await AppServiceHelper.bulkSave(this.appServicePath, entities, 0)
       this.isRegist = false
+      this.isSetNameCategory = false
+      this.message = this.$i18n.t('message.updateCompleted', { target: this.$i18n.t('label.zone') })
+      this.showInfo = true
       return saveId
     }
   }

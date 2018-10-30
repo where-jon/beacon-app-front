@@ -151,6 +151,11 @@ export default {
           this.txCont.removeAllChildren()
           this.txCont = null
         }
+        if (this.exbCon) {
+          this.exbCon.removeAllChildren()
+          this.stage.update()
+          this.exbCon = null
+        }
       }
       this.stage = new Stage("map")
       this.stage.canvas = canvas
@@ -173,7 +178,7 @@ export default {
       if (val) {
         this.reset()
         this.selectedArea = val
-        this.showMapImage()
+        this.fetchData()
       }      
     },
     forceUpdateRealWidth() {

@@ -29,7 +29,6 @@
     "download": "ダウンロード",
     "csvFile": "CSVファイル",
     "zipFile": "zipファイル",
-    "deleteThumbnail": "画像を削除",
     "cancel": "キャンセル",
     "modify": "変更",
     "info": "INFO",
@@ -261,6 +260,7 @@
     "deviceOffset": "デバイスオフセット",
 
     "zoneClass": "ゾーン(分類)",
+    "zoneBlock": "ゾーン(区画)",
     "locationZoneName": "場所名",
     "coordinate": "座標指定あり",
     "nonCoordinate": "座標指定なし",

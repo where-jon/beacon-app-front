@@ -25,11 +25,25 @@
         </b-form-group>
         <b-form-group>
           <label v-t="'label.textColor'" />
-          <b-form-input type="color" v-model="form.displayColor" required :disabled="!isEditable" :readonly="!isEditable" />
+          <div v-if="!isEditable">
+            <b-form-row>
+              <b-col sm="1" :style="{'height': '32px', 'background-color': `#${colorCd4db(this.form.displayColor)}`}" />
+            </b-form-row>
+          </div>
+          <div v-else>
+            <compact-picker v-model="form.displayColor" :style="{'width': '256px'}"/>
+          </div>
         </b-form-group>
         <b-form-group>
           <label v-t="'label.bgColor'" />
-          <b-form-input type="color" v-model="form.displayBgColor" required :disabled="!isEditable" :readonly="!isEditable" />
+          <div v-if="!isEditable">
+            <b-form-row>
+              <b-col sm="1" :style="{'height': '32px', 'background-color': `#${colorCd4db(this.form.displayBgColor)}`}" />
+            </b-form-row>
+          </div>
+          <div v-else>
+            <compact-picker v-model="form.displayBgColor" :style="{'width': '256px'}" />
+          </div>
         </b-form-group>
         <b-form-group>
           <label v-t="'label.description'" />
@@ -47,6 +61,7 @@
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import _ from 'lodash'
+import { Compact } from 'vue-color'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import editmixinVue from '../../../components/editmixin.vue'
 import * as Util from '../../../sub/util/Util'
@@ -58,6 +73,7 @@ import { SHAPE } from '../../../sub/constant/Constants'
 export default {
   components: {
     breadcrumb,
+    'compact-picker': Compact,
   },
   mixins: [editmixinVue],
   data() {
