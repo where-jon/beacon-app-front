@@ -261,6 +261,7 @@
     "deviceOffset": "デバイスオフセット",
 
     "zoneClass": "ゾーン(分類)",
+    "zoneBlock": "ゾーン(区画)",
     "locationZoneName": "場所名",
     "coordinate": "座標指定あり",
     "nonCoordinate": "座標指定なし",
