@@ -93,6 +93,9 @@ export default {
     if (this.isFirstTime) return
     // this.fetchData()
   },
+  beforeDestroy() {
+    this.resetDetail()
+  },
   methods: {
     reset() {
       this.isShownMapImage = false
