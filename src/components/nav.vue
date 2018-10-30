@@ -24,7 +24,7 @@
       </b-navbar-nav>
 
       <!-- right -->
-      <b-navbar-nav class="ml-auto">
+      <b-navbar-nav class="ml-auto" v-show="!isLoginPage && showNav">
         <!-- user & logout -->
         <b-nav-item-dropdown right>
           <template slot="button-content">
