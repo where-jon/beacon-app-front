@@ -31,7 +31,7 @@
             </b-form-row>
           </div>
           <div v-else>
-            <compact-picker v-model="form.displayColor" :style="{'width': '256px'}"/>
+            <chrome-picker v-model="form.displayColor" :disableAlpha="true" :style="{'width': '256px'}"/>
           </div>
         </b-form-group>
         <b-form-group>
@@ -42,7 +42,7 @@
             </b-form-row>
           </div>
           <div v-else>
-            <compact-picker v-model="form.displayBgColor" :style="{'width': '256px'}" />
+            <chrome-picker v-model="form.displayBgColor" :disableAlpha="true" :style="{'width': '256px'}" />
           </div>
         </b-form-group>
         <b-form-group>
@@ -61,7 +61,7 @@
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import _ from 'lodash'
-import { Compact } from 'vue-color'
+import { Chrome } from 'vue-color'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import editmixinVue from '../../../components/editmixin.vue'
 import * as Util from '../../../sub/util/Util'
@@ -73,7 +73,7 @@ import { SHAPE } from '../../../sub/constant/Constants'
 export default {
   components: {
     breadcrumb,
-    'compact-picker': Compact,
+    'chrome-picker': Chrome,
   },
   mixins: [editmixinVue],
   data() {
