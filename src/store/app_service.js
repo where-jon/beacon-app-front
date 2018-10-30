@@ -3,6 +3,7 @@ import Vue from 'vue'
 export const state = () => ({
   pots: [],
   pot: {},
+  positions: [],
   led: {},
   sensors: [],
   deviceIds: [],
@@ -31,6 +32,8 @@ export const state = () => ({
   zone: {},
   settings: [],
   sensorHistories: [],
+  forceFetchPot: true,
+  forceFetchTx: true,
 })
 
 const initState = state()

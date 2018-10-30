@@ -5,38 +5,46 @@
       <b-alert variant="info" :show="showInfo">{{ message }}</b-alert>
       <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">{{ message }}</b-alert>
       <b-row>
-        <b-form inline>
+        <b-form inline class="mb-2">
           <label v-t="'label.sumYearMonth'" />
           <v-select v-model="vModelYearMonth" :options="yearMonthOptions" :on-change="yearMonthChange" class="vselectMonth">
-            <div slot="no-options">{{$i18n.t('label.vSelectNoOptions')}}</div>
+            <div slot="no-options">{{$i18n.tnl('label.vSelectNoOptions')}}</div>
           </v-select>
+        </b-form>
+        <b-form inline class="mb-2">
           <label v-t="'label.sumDay'" />
           <v-select v-model="vModelDay" :options="dayOptions" :on-change="dayChange" class="vselectDay">
-            <div slot="no-options">{{$i18n.t('label.vSelectNoOptions')}}</div>
+            <div slot="no-options">{{$i18n.tnl('label.vSelectNoOptions')}}</div>
           </v-select>
+        </b-form>
+        <b-form inline class="mb-2">
           <label v-t="'label.zoneCategoryName'" />
           <v-select v-model="vModelCategory" :options="categoryOptions" :on-change="categoryChange" class="vselectCategory">
-            <div slot="no-options">{{$i18n.t('label.vSelectNoOptions')}}</div>
+            <div slot="no-options">{{$i18n.tnl('label.vSelectNoOptions')}}</div>
           </v-select>
+        </b-form>
+        <b-form inline class="mb-2">
           <label v-t="'label.zoneName'" />
           <v-select v-model="vModelZone" :options="zoneOptions" :on-change="zoneChange" class="vselectZone">
-            <div slot="no-options">{{$i18n.t('label.vSelectNoOptions')}}</div>
+            <div slot="no-options">{{$i18n.tnl('label.vSelectNoOptions')}}</div>
           </v-select>
+        </b-form>
+        <b-form inline class="mb-2">
           <b-button size="sm" variant="info" v-t="'label.search'" @click="search()"></b-button> 
         </b-form>
       </b-row>
       <p></p>
       <b-row align-h="end">
-        <b-col md="2" class="mb-3 mr-3">
-          <b-button variant='outline-primary' @click="download()" v-t="'label.download'" />
+        <b-col md="2" class="mb-2">
+          <b-button :variant="theme" @click="download()" v-t="'label.download'"/>
         </b-col>
       </b-row>
       <table class="table table-hover table-bordered">
         <thead>
           <tr>
-            <th scope="col">{{ $i18n.t('label.zoneCategoryName') }}</th>
-            <th scope="col">{{ $i18n.t('label.zoneName') }}</th>
-            <th scope="col">{{ $i18n.t('label.numOfUsers') }}</th>
+            <th scope="col">{{ $i18n.tnl('label.zoneCategoryName') }}</th>
+            <th scope="col">{{ $i18n.tnl('label.zoneName') }}</th>
+            <th scope="col">{{ $i18n.tnl('label.numOfUsers') }}</th>
           </tr>
         </thead>
         <tbody>
@@ -72,11 +80,11 @@ export default {
     return {
       items: [
         {
-          text: this.$i18n.t('label.sumTitle'),
+          text: this.$i18n.tnl('label.sumTitle'),
           active: true
         },
         {
-          text: this.$i18n.t('label.numUsers'),
+          text: this.$i18n.tnl('label.numUsers'),
           active: true
         }
       ],
@@ -129,7 +137,7 @@ export default {
     dayOptions() {
       return this.dayOptionList
     },
-    getTheme () {
+    theme () {
       const theme = getTheme(this.$store.state.loginId)
       return 'outline-' + theme
     },
@@ -139,7 +147,7 @@ export default {
   },
   mounted() {
     this.fetchPrev()
-    this.replace({title: this.$i18n.t('label.numUsers')})
+    this.replace({title: this.$i18n.tnl('label.numUsers')})
   },
   methods: {
     async fetchZoneCategoryList() {
@@ -241,7 +249,7 @@ export default {
     },
     download() {
       if (this.dataList == null || this.dataList.length == null) {
-        this.message = this.$i18n.t('message.notFound')
+        this.message = this.$i18n.tnl('message.notFound')
         this.showAlert = true;
         return
       }
@@ -254,7 +262,7 @@ export default {
     async search() {
       this.showAlert = false;
       if (this.selectedYearMonth == null || this.selectedYearMonth == 0) {
-        this.message = this.$i18n.t('message.pleaseEnterSearchCriteria')
+        this.message = this.$i18n.tnl('message.pleaseEnterSearchCriteria')
         this.showAlert = true;
         return
       }
@@ -271,7 +279,7 @@ export default {
       this.dataList = numUsers
       this.replaceMonitor({numUsers})
       if (numUsers.length == null) {
-        this.message = this.$i18n.t('message.notFound')
+        this.message = this.$i18n.tnl('message.notFound')
         this.showAlert = true;
       }
     },

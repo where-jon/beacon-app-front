@@ -15,7 +15,7 @@
             </b-form-group>
             <b-form-group>
               <label v-t="'label.tx'" />
-              <b-form-select v-model="form.txId" :options="txOptions" class="mb-3 ml-3 col-4" :readonly="!isEditable" />
+              <b-form-select v-model="form.txId" :options="txOptions" class="mb-3 ml-3 col-4" :disabled="!isEditable" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.txId'" />
@@ -23,9 +23,9 @@
             </b-form-group>
             <b-form-group>
               <label v-t="'label.categoryType'" />
-              <b-form-radio-group v-model="form.personOrThing" :options="category" />
+              <b-form-radio-group v-model="form.personOrThing" :options="category" :disabled="!isEditable" />
             </b-form-group>
-            <b-form-group>
+            <b-form-group v-if="isShown('POT_WITH_POTCD')">
               <label v-t="'label.potCd'" />
               <b-form-input type="text" v-model="form.potCd" maxlength="20" required :readonly="!isEditable" />
             </b-form-group>
@@ -33,7 +33,7 @@
               <label v-t="'label.potName'" />
               <b-form-input type="text" v-model="form.potName" maxlength="20" required :readonly="!isEditable" />
             </b-form-group>
-            <b-form-group>
+            <b-form-group v-show="isShown('POT_WITH_RUBY')">
               <label v-t="'label.ruby'" />
               <b-form-input type="text" v-model="form.ruby" maxlength="20" :readonly="!isEditable" />
             </b-form-group>
@@ -41,19 +41,19 @@
               <label v-t="'label.displayName'" />
               <b-form-input type="text" v-model="form.displayName" maxlength="3" :readonly="!isEditable" />
             </b-form-group>
-            <b-form-group>
+            <b-form-group v-show="isShown('POT_WITH_GROUP')">
               <label v-t="'label.group'" />
-              <b-form-select v-model="form.groupId" :options="groupOptions" class="mb-3 ml-3 col-4" :readonly="!isEditable" />
+              <b-form-select v-model="form.groupId" :options="groupOptions" class="mb-3 ml-3 col-4" :disabled="!isEditable" :readonly="!isEditable" />
             </b-form-group>
-            <b-form-group>
+            <b-form-group v-show="isShown('POT_WITH_CATEGORY')">
               <label v-t="'label.category'" />
-              <b-form-select v-model="form.categoryId" :options="categoryOptions" class="mb-3 ml-3 col-4" :readonly="!isEditable" />
+              <b-form-select v-model="form.categoryId" :options="categoryOptions" class="mb-3 ml-3 col-4" :disabled="!isEditable" :readonly="!isEditable" />
             </b-form-group>
-            <b-form-group>
+            <b-form-group v-show="isShown('POT_WITH_POST')">
               <label v-t="'label.post'" />
               <b-form-input type="text" v-model="form.post" maxlength="20" :readonly="!isEditable" />
             </b-form-group>
-            <b-form-group>
+            <b-form-group v-show="isShown('POT_WITH_TEL')">
               <label v-t="'label.tel'" />
               <b-form-input type="tel" v-model="form.tel" :readonly="!isEditable" pattern="[-\d]*" />
             </b-form-group>
@@ -68,8 +68,8 @@
             </b-form-group>
 
             <b-button type="button" variant="outline-danger" @click="backToList" v-t="'label.back'"/>
-            <b-button v-if="isEditable" type="submit" :variant="theme" @click="register(false)" class="ml-2"  >{{ label }}</b-button>
-            <b-button v-if="isEditable && !isUpdate" type="submit" :variant="theme" @click="register(true)" class="ml-2" v-t="'label.registerAgain'"/>
+            <b-button v-if="isEditable" type="submit" :variant="theme" @click="beforeSubmit(false)" class="ml-2"  >{{ label }}</b-button>
+            <b-button v-if="isEditable && !isUpdate" type="submit" :variant="theme" @click="beforeSubmit(true)" class="ml-2" v-t="'label.registerAgain'"/>
           </b-form>
         </b-col>
       </b-row>
@@ -110,15 +110,15 @@ export default {
           "extValue.post", "thumbnail", "description"])},
       items: [
         {
-          text: this.$i18n.t('label.master'),
+          text: this.$i18n.tnl('label.master'),
           active: true
         },
         {
-          text: this.$i18n.t('label.pot'),
+          text: this.$i18n.tnl('label.pot'),
           href: '/master/pot',
         },
         {
-          text: this.$i18n.t('label.pot') + this.$i18n.t('label.detail'),
+          text: this.$i18n.tnl('label.pot') + this.$i18n.tnl('label.detail'),
           active: true
         }
       ]
@@ -154,7 +154,9 @@ export default {
       return options
     },
     txOptions() {
-      let options = this.txs.map((tx) => {
+      const useTxIds = this.pots.map((val) => val.txId)
+      let options = this.txs.filter((tx) => !_.includes(useTxIds, tx.txId) || tx.txId == this.pot.txId )
+      options = options.map((tx) => {
           return {
             value: tx.txId,
             text: tx.txName
@@ -166,6 +168,7 @@ export default {
     },
     ...mapState('app_service', [
       'pot',
+      'pots',
       'groups',
       'categories',
       'txs',
@@ -186,6 +189,15 @@ export default {
   //   }
   // },
   methods: {
+    beforeSubmit(again){
+      if(!this.isShown('POT_WITH_POTCD')){
+        this.form.potCd = this.form.potName
+      }
+      this.register(again)
+    },
+    afterCrud(){
+      StateHelper.setForceFetch('tx', true)
+    },
     async save() {
       const entity = {
         potId: this.form.potId || -1,

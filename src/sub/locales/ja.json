@@ -53,7 +53,7 @@
     "visible": "表示フラグ",
     "bgColor": "背景色",
     "color": "色",
-    "displayColor": "表示色",
+    "textColor": "文字色",
     "dt": "日時",
     "no": "No.",
     "theme": "テーマ",
@@ -158,7 +158,10 @@
     "settingId": "設定ID",
     "valType": "値タイプ",
     "key": "項目名",
-    
+    "add": "追加",
+    "addForm": "項目を追加",
+    "addSetting": "新規登録",
+
     "feature": "機能",
     "featureId": "機能ID",
     "featureName": "機能名",
@@ -182,6 +185,16 @@
     "ruby": "ふりがな",
     "tel": "電話番号",
 
+    "position-list": "位置把握（一覧）",
+    "detectState": "状態",
+    "detected": "検知中",
+    "detectAfterUndetect": "検知後未検知",
+    "power-null": "‐",
+    "final-receive-location": "最終取得場所",
+    "mapDisplay": "マップ表示",
+
+    "positionStack": "位置把握（階層図）",
+
     "password": "パスワード",
     "passwordCurrent": "現在のパスワード",
     "passwordUpdate": "変更パスワード",
@@ -194,6 +207,8 @@
     "categoryName": "カテゴリ名",
     "categoryType": "種別",
     "parentCategoryId": "親カテゴリID",
+    "shape": "形",
+    "shapeName": "形",
 
     "group": "グループ",
     "groupId": "グループID",
@@ -243,6 +258,7 @@
     "regionId": "リージョンID",
     "regionName": "リージョン名",
     "meshId": "メッシュID",
+    "deviceOffset": "デバイスオフセット",
 
     "zoneClass": "ゾーン(分類)",
     "zoneBlock": "ゾーン(区画)",
@@ -300,27 +316,39 @@
     "thing": "物",
     "zone": "ゾーン",
 
+    "circle": "丸",
+    "square": "四角",
+    "roundedSquare": "角丸四角",
+
     "general": "一般",
     "security": "セキュリティ",
     "communication": "通信",
 
-    "APP_LOG_KEEP_TM": "ログ保持期間",
-    "APP_MONITORING_TM": "モニタリング更新間隔",
-    "APP_PASSWORD_CHANGE": "パスワード変更機能",
-    "APP_PASSWORD_CHECK": "パスワード強度チェック",
-    "APP_UP_POS_EFFECT": "位置変更時エフェクト",
-    "APP_TIMEZONE": "タイムゾーン",
-    "APP_DISP_REFRESH_TM": "画面更新間隔",
-    "APP_SLACK_WEBHOOC": "Slack Webhook登録",
-    "APP_MAIL_ADDRESS": "通知先メールアドレス",
-    "APP_IP_FILTER": "IPアドレスフィルタ",
-
-    "APP_SERVICE_BASE_URL": "API設定・エンドポイント",
-    "APP_SERVICE_UP_TM": "API設定・更新間隔",
-
-    "DISP_HIDE_TIME": "未受信状態判定時間",
+    "h_blood_pressure": "最高血圧",
+    "l_blood_pressure": "最低血圧",
+    "heart_rate": "心拍数",
+    "step": "歩",
+    "down_count": "転倒数",
 
     "vSelectNoOptions": "",
+
+    "---------------- Config key name ---------------":"",
+
+    "APP.LOG_KEEP_TM": "ログ保持期間",
+    "APP.MONITORING_TM": "モニタリング更新間隔",
+    "APP.PASSWORD_CHANGE": "パスワード変更機能",
+    "APP.PASSWORD_CHECK": "パスワード強度チェック",
+    "APP.UP_POS_EFFECT": "位置変更時エフェクト",
+    "APP.TIMEZONE": "タイムゾーン",
+    "APP.DISP_REFRESH_TM": "画面更新間隔",
+    "APP.SLACK_WEBHOOC": "Slack Webhook登録",
+    "APP.MAIL_ADDRESS": "通知先メールアドレス",
+    "APP.IP_FILTER": "IPアドレスフィルタ",
+
+    "APP.SERVICE_BASE_URL": "API設定・エンドポイント",
+    "APP.SERVICE_UP_TM": "API設定・更新間隔",
+
+    "DISP.HIDE_TIME": "未受信状態判定時間",
 
     "dummy": ""
   },
@@ -360,11 +388,12 @@
     "bulkExistFailed": "{line}行目: {col}（{value}）は存在していません。",
     "monthDayTemperature": "{month}月{day}日の温湿度",
     "invalidLoginId": "ログインIDは英数記号を指定してください",
-    "notFound": "検索結果0件",
+    "notFound": "検索結果が存在しませんでした",
     "pleaseEnterSearchCriteria": "検索条件を入力してください",
     "uploadData": "{val}件のデータが登録可能です",
     "uploadNoData": "登録可能なデータがありません",
     "uploadWarnData": "{val}件のデータは存在しないため登録できません",
+    "loadingFile": "ファイルを読み込んでいます({now} / {all} 件)",
 
     "dummy": "" 
   }

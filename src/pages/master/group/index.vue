@@ -12,8 +12,8 @@ import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import { addLabelByKey } from '../../../sub/helper/ViewHelper'
 import listmixinVue from '../../../components/listmixin.vue'
-import breadcrumb from '../../../components/breadcrumb.vue'
 import * as Util from '../../../sub/util/Util'
+import breadcrumb from '../../../components/breadcrumb.vue'
 
 export default {
   components: {
@@ -30,11 +30,12 @@ export default {
         bulkEditPath: '/master/group/bulkedit',
         appServicePath: '/basic/group',
         csvOut: true,
+        custumCsvColumns: ["groupId", "groupName", "ruby", "display.color", "display.bgColor", "display.shape", "description"],
         fields: addLabelByKey(this.$i18n, [ 
           {key: "groupId", sortable: true },
           {key: "groupName", sortable: true },
           {key: "ruby", sortable: true },
-          {key: "style", label: "displayColor" } ,
+          {key: "style", label: "display" } ,
           {key: "description" },
           {key: "actions", thStyle: {width:'130px !important'} }
         ]),
@@ -43,11 +44,11 @@ export default {
       groupStyles: [],
       items: [
         {
-          text: this.$i18n.t('label.master'),
+          text: this.$i18n.tnl('label.master'),
           active: true
         },
         {
-          text: this.$i18n.t('label.group'),
+          text: this.$i18n.tnl('label.group'),
           active: true
         }
       ]
@@ -55,7 +56,7 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'groups', 'groupStyles',
+      'groups',
     ]),
   },
   methods: {
@@ -63,11 +64,7 @@ export default {
       try {
         this.replace({showProgress: true})
         await StateHelper.load('group')
-        this.groupStyles = this.groups.map((val) => ({
-          "color": Util.colorCd4display(val.color),
-          "background-color": Util.colorCd4display(val.bgColor),
-          "text-align": "center",
-        }))
+        this.groupStyles = this.getStyleDisplay(this.groups)
         if (payload && payload.done) {
           payload.done()
         }

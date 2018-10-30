@@ -20,11 +20,11 @@
             </b-form-group>
             <b-form-group>
               <label v-t="'label.type'" />
-              <b-form-select v-model="form.sensorId" :options="sensorOptionsTx" class="mb-3 ml-3 col-4" :readonly="!isEditable" />
+              <b-form-select v-model="form.sensorId" :options="sensorOptionsTx" class="mb-3 ml-3 col-4" :disabled="!isEditable" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group v-show="isShown('TX_WITH_CATEGORY')">
               <label v-t="'label.category'" />
-              <b-form-select v-model="form.categoryId" :options="categoryOptions" class="mb-3 ml-3 col-4" :readonly="!isEditable" />
+              <b-form-select v-model="form.categoryId" :options="categoryOptions" class="mb-3 ml-3 col-4" :disabled="!isEditable" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group v-show="showTx('btxId')">
               <label v-t="'label.btxId'" />
@@ -81,7 +81,7 @@ export default {
   },
   mixins: [editmixinVue],
   data() {
-    const labelTx = this.$i18n.t('label.tx')
+    const labelTx = this.$i18n.tnl('label.tx')
     return {
       name: 'tx',
       id: 'txId',
@@ -95,7 +95,7 @@ export default {
       ]),
       items: [
         {
-          text: this.$i18n.t('label.master'),
+          text: this.$i18n.tnl('label.master'),
           active: true
         },
         {
@@ -103,7 +103,7 @@ export default {
           href: '/master/tx'
         },
         {
-          text: labelTx + this.$i18n.t('label.detail'),
+          text: labelTx + this.$i18n.tnl('label.detail'),
           active: true
         },
       ]
@@ -119,7 +119,7 @@ export default {
     },
     sensorOptionsTx() {
       let options = this.sensorOptions('tx')
-      options.unshift({value:null, text:this.$i18n.t('label.normal')})
+      options.unshift({value:null, text:this.$i18n.tnl('label.normal')})
       return options
     },
     categoryOptions() {
@@ -134,7 +134,7 @@ export default {
       return options
     },
     showMinorMid() {
-      !this.showMinorHead
+      return !this.showMinorHead
     },
     showMinorHead() {
       return !APP.TX_WITH_TXID && APP.TX_BTX_MINOR == 'minor'
@@ -161,6 +161,9 @@ export default {
           return col == 'btxId'
       }
       return true
+    },
+    afterCrud(){
+      StateHelper.setForceFetch('pot', true)
     },
     async save() {
       let txId = Util.hasValue(this.form.txId)? this.form.txId: -1

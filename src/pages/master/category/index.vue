@@ -1,8 +1,7 @@
 <template>
   <div>
     <breadcrumb :items="items" />
-    <m-list :params="params" :list="categories" >
-    </m-list>
+    <m-list :params="params" :list="categories" />
   </div>
 </template>
 
@@ -32,11 +31,12 @@ export default {
         bulkEditPath: '/master/category/bulkedit',
         appServicePath: '/basic/category',
         csvOut: true,
+        custumCsvColumns: ["categoryId", "categoryName", "categoryTypeName", "display.color", "display.bgColor", "display.shape", "description"],
         fields: addLabelByKey(this.$i18n, [ 
           {key: "categoryId", sortable: true },
           {key: "categoryName", sortable: true },
           {key: "categoryTypeName", label: "categoryType", sortable: true },
-          {key: "style", label: "displayColor" },
+          {key: "style", label: "display" },
           {key: "description" },
           {key: "actions", thStyle: {width:'130px !important'} }
         ]),
@@ -45,11 +45,11 @@ export default {
       categoryStyles: [],
       items: [
         {
-          text: this.$i18n.t('label.master'),
+          text: this.$i18n.tnl('label.master'),
           active: true
         },
         {
-          text: this.$i18n.t('label.category'),
+          text: this.$i18n.tnl('label.category'),
           active: true
         }
       ]
@@ -57,7 +57,7 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'categories', 'categoryStyles',
+      'categories',
     ]),
   },
   methods: {
@@ -65,11 +65,7 @@ export default {
       try {
         this.replace({showProgress: true})
         await StateHelper.load('category')
-        this.categoryStyles = this.categories.map((val) => ({
-          "color": Util.colorCd4display(val.color),
-          "background-color": Util.colorCd4display(val.bgColor),
-          "text-align": "center",
-        }))
+        this.categoryStyles = this.getStyleDisplay(this.categories)
         if (payload && payload.done) {
           payload.done()
         }

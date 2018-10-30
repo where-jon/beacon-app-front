@@ -41,7 +41,7 @@ export default {
           APP.TX_WITH_DISPLAY_NAME? {key: "displayName", sortable: true, tdClass: "action-rowdata" }: null,
           APP.TX_WITH_MAJOR? {key: "major", sortable: true, tdClass: "action-rowdata" }: null,
           APP.TX_WITH_TXID || APP.TX_BTX_MINOR != 'btxId'? {key: "minor", sortable: true, tdClass: "action-rowdata" }: null,
-          APP.TX_WITH_CATEGORY? {key: "category", sortable: true, tdClass: "action-rowdata" }: null,,
+          APP.TX_WITH_CATEGORY? {key: "category.categoryName", label: 'category', sortable: true, tdClass: "action-rowdata" }: null,,
           APP.TX_WITH_DESCRIPTION? {key: "description", sortable: true, tdClass: "action-rowdata" }: null,
           {key: "sensor", label:'type', sortable: true,},
           {key: "actions", thStyle: {width: '130px !important'}, tdClass: "action-rowdata" }
@@ -50,11 +50,11 @@ export default {
       },
       items: [
         {
-          text: this.$i18n.t('label.master'),
+          text: this.$i18n.tnl('label.master'),
           active: true
         },
         {
-          text: this.$i18n.t('label.tx'),
+          text: this.$i18n.tnl('label.tx'),
           active: true
         }
       ]
@@ -64,16 +64,21 @@ export default {
     ...mapState('app_service', [
       'txs',
       'txImages',
+      'forceFetchTx',
     ]),
   },
   mounted() {
     that = this
   },
   methods: {
+    afterCrud(){
+      StateHelper.setForceFetch('pot', true)
+    },
     async fetchData(payload) {
       try {
         this.replace({showProgress: true})
-        await StateHelper.load('tx')
+        await StateHelper.load('tx', this.forceFetchTx)
+        StateHelper.setForceFetch('tx', false)
         if (payload && payload.done) {
           payload.done()
         }

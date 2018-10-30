@@ -19,16 +19,16 @@
             <td>{{ gateway.deviceid }}</td>
             <td>{{ gateway.updated }}</td>
             <td v-if="getGatewayState(gateway.timestamp) === gatewayState.NORMAL">
-              <span class="badge badge-pill" :style="{backgroundColor: gatewayState.NORMAL}">{{ $i18n.t('label.receiveNormal') }}</span>
+              <span class="badge badge-pill" :style="{backgroundColor: gatewayState.NORMAL}">{{ $i18n.tnl('label.receiveNormal') }}</span>
             </td>
             <td v-else-if="getGatewayState(gateway.timestamp) === gatewayState.MALFUNCTION">
-              <span class="badge badge-pill" :style="{backgroundColor: gatewayState.MALFUNCTION}">{{ $i18n.t('label.malfunction') }}</span>
+              <span class="badge badge-pill" :style="{backgroundColor: gatewayState.MALFUNCTION}">{{ $i18n.tnl('label.malfunction') }}</span>
             </td>
             <td v-else-if="getGatewayState(gateway.timestamp) === gatewayState.NOTRECEIVE">
-              <span class="badge badge-pill" :style="{backgroundColor: gatewayState.NOTRECEIVE}">{{ $i18n.t('label.notReceive') }}</span>
+              <span class="badge badge-pill" :style="{backgroundColor: gatewayState.NOTRECEIVE}">{{ $i18n.tnl('label.notReceive') }}</span>
             </td>
             <td v-else>
-              <span class="badge badge-pill" :style="{backgroundColor: gatewayState.UNDETECT}">{{ $i18n.t('label.undetect') }}</span>
+              <span class="badge badge-pill" :style="{backgroundColor: gatewayState.UNDETECT}">{{ $i18n.tnl('label.undetect') }}</span>
             </td>
           </tr>
         </tbody>
@@ -59,11 +59,11 @@ export default {
     return {
       items: [
         {
-          text: this.$i18n.t('label.monitor'),
+          text: this.$i18n.tnl('label.monitor'),
           active: true
         },
         {
-          text: this.$i18n.t('label.gateway'),
+          text: this.$i18n.tnl('label.gateway'),
           active: true
         }
       ],
@@ -94,17 +94,17 @@ export default {
   },
   mounted() {
     this.fetchData()
-    this.replace({title: this.$i18n.t('label.gateway')})
+    this.replace({title: this.$i18n.tnl('label.gateway')})
     if (!this.isDev) {
       return
     }
     this.items = [
       {
-        text: this.$i18n.t('label.develop'),
+        text: this.$i18n.tnl('label.develop'),
         active: true
       },
       {
-        text: this.$i18n.t('label.gateway'),
+        text: this.$i18n.tnl('label.gateway'),
         active: true
       }
     ]

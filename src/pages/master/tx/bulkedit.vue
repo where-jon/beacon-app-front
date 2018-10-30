@@ -11,6 +11,7 @@ import _ from 'lodash'
 import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/breadcrumb.vue'
 import bulkedit from '../../../components/bulkedit.vue'
+import { APP } from '../../../sub/constant/config.js'
 
 export default {
   components: {
@@ -25,15 +26,15 @@ export default {
       appServicePath: '/core/tx',
       items: [
         {
-          text: this.$i18n.t('label.master'),
+          text: this.$i18n.tnl('label.master'),
           active: true
         },
         {
-          text: this.$i18n.t('label.tx'),
+          text: this.$i18n.tnl('label.tx'),
           href: '/master/tx',
         },
         {
-          text: this.$i18n.t('label.tx') + this.$i18n.t('label.bulkRegister'),
+          text: this.$i18n.tnl('label.tx') + this.$i18n.tnl('label.bulkRegister'),
           active: true
         }
       ]
@@ -41,10 +42,21 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'tx',
+      'tx', 'txs'
     ]),
   },
   methods: {
+    resetId(entity, dummyKey){
+      const targetEntity = Util.getEntityFromIds(this.txs, entity, ["txId", "btxId", "minor"])
+      entity.txId = targetEntity? targetEntity.txId: dummyKey--
+      if(APP.TX_BTX_MINOR == "minor"){
+        entity.btxId = entity.minor
+      }
+      else if(APP.TX_BTX_MINOR == "btxId"){
+        entity.minor = entity.btxId
+      }
+      return dummyKey
+    },
     async save(bulkSaveFunc) {
       const MAIN_COL = "txId"
       const POT = ["displayName","description","potCategoryList"]
@@ -85,8 +97,9 @@ export default {
           entity[headerName] = val
         }
         return dummyKey
-      })
-    },
+      },
+      (entity, dummyKey) => this.resetId(entity, dummyKey)
+    )},
   }
 }
 </script>

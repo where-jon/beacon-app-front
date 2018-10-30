@@ -12,6 +12,7 @@ import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as Util from '../../../sub/util/Util'
 import { addLabelByKey } from '../../../sub/helper/ViewHelper'
+import { APP } from '../../../sub/constant/config.js'
 import listmixinVue from '../../../components/listmixin.vue'
 import breadcrumb from '../../../components/breadcrumb.vue'
 
@@ -38,13 +39,14 @@ export default {
           {key: "potId", sortable: true, tdClass: "thumb-rowdata"},
           {key: "thumbnail", tdClass: "thumb-rowdata" },
           {key: "txIdName", label:'tx', sortable: true, 'class': 'text-center' , tdClass: "thumb-rowdata"},
-          {key: "potCd", sortable: true , tdClass: "thumb-rowdata"},
+          APP.POT_WITH_POTCD? {key: "potCd", sortable: true , tdClass: "thumb-rowdata"}: null,
           {key: "potName", sortable: true , tdClass: "thumb-rowdata"},
-          {key: "extValue.ruby", label: "ruby", sortable: true, tdClass: "thumb-rowdata"},
+          APP.POT_WITH_RUBY? {key: "extValue.ruby", label: "ruby", sortable: true, tdClass: "thumb-rowdata"}: null,
           {key: "displayName", sortable: true, tdClass: "thumb-rowdata"},
-          {key: "groupName", label: "group", sortable: true, tdClass: "thumb-rowdata"},
-          {key: "categoryName", label: "category", sortable: true, tdClass: "thumb-rowdata"},
-          {key: "extValue.post", label: "post", tdClass: "thumb-rowdata"},
+          APP.POT_WITH_GROUP? {key: "groupName", label: "group", sortable: true, tdClass: "thumb-rowdata"}: null,
+          APP.POT_WITH_CATEGORY? {key: "categoryName", label: "category", sortable: true, tdClass: "thumb-rowdata"}: null,
+          APP.POT_WITH_POST? {key: "extValue.post", label: "post", tdClass: "thumb-rowdata"}: null,
+          APP.POT_WITH_TEL? {key: "extValue.tel", label: "tel", tdClass: "thumb-rowdata"}: null,
           {key: "actions", thStyle: {width:'130px !important'} , tdClass: "thumb-rowdata"},
         ]),
         initTotalRows: this.$store.state.app_service.pots.length,
@@ -53,11 +55,11 @@ export default {
       extValueDefault: {},
       items: [
         {
-          text: this.$i18n.t('label.master'),
+          text: this.$i18n.tnl('label.master'),
           active: true
         },
         {
-          text: this.$i18n.t('label.pot'),
+          text: this.$i18n.tnl('label.pot'),
           active: true
         }
       ]
@@ -67,13 +69,18 @@ export default {
     ...mapState('app_service', [
       'pots',
       'potImages',
+      'forceFetchPot',
     ]),
   },
   methods: {
+    afterCrud(){
+      StateHelper.setForceFetch('tx', true)
+    },
     async fetchData(payload) {
       try {
         this.replace({showProgress: true})
-        await StateHelper.load('pot')
+        await StateHelper.load('pot', this.forceFetchPot)
+        StateHelper.setForceFetch('pot', false)
         if (payload && payload.done) {
           payload.done()
         }
@@ -83,8 +90,9 @@ export default {
       }
       this.replace({showProgress: false})
     },
-    thumbnail(index) {
-      return this.potImages[index]
+    thumbnail(row) {
+      const img = this.potImages.find((val) => val.id == row.potId)
+      return img? img.thumbnail: null
     },
   }
 }

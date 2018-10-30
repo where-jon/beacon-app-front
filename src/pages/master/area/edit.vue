@@ -13,7 +13,7 @@
             </b-form-group>
             <b-form-group>
               <label v-t="'label.areaName'" />
-              <b-form-input type="text" v-model="form.areaName" required :readonly="!isEditable" />
+              <b-form-input type="text" v-model="form.areaName" maxlength="20" required :readonly="!isEditable" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.map'" />
@@ -57,15 +57,15 @@ export default {
       form: ViewHelper.extract(this.$store.state.app_service.area, ["areaId", "areaName", "mapImage"]),
       items: [
         {
-          text: this.$i18n.t('label.master'),
+          text: this.$i18n.tnl('label.master'),
           active: true
         },
         {
-          text: this.$i18n.t('label.area'),
+          text: this.$i18n.tnl('label.area'),
           href: '/master/area',
         },
         {
-          text: this.$i18n.t('label.area') + this.$i18n.t('label.detail'),
+          text: this.$i18n.tnl('label.area') + this.$i18n.tnl('label.detail'),
           active: true
         }
       ]

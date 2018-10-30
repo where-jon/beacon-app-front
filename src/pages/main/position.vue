@@ -8,16 +8,19 @@
       </b-form>
     </b-row>
     <b-row class="mt-3">
-      <canvas id="map" ref="map" @click="resetDetail"></canvas>
+      <canvas id="map" ref="map" @click="resetDetail" v-if="!showMeditag"></canvas>
+      <b-col  v-if="showMeditag">
+        <canvas id="map" ref="map" @click="resetDetail"></canvas>
+      </b-col>
+      <b-col class="rightPane" v-if="showMeditag">
+        <sensor :sensors="meditagSensors" class="rightPane"></sensor>
+      </b-col>
     </b-row>
     <div v-if="selectedTx.txId" >
       <txdetail :selectedTx="selectedTx" @resetDetail="resetDetail"></txdetail>
     </div>
     <!-- modal -->
     <b-modal id="modalError" :title="$t('label.error')" ok-only>
-      {{ $t('message.noMapImage') }}
-    </b-modal>
-    <b-modal id="modalInfo" :title="$t('label.error')" ok-only>
       {{ $t('message.noMapImage') }}
     </b-modal>
   </div>
@@ -27,22 +30,28 @@
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as PositionHelper from '../../sub/helper/PositionHelper'
+import * as SensorHelper from '../../sub/helper/SensorHelper'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
+import * as Util from '../../sub/util/Util'
 import * as mock from '../../assets/mock/mock'
 import txdetail from '../../components/txdetail.vue'
-import { Tx, EXB, DISP, DEV } from '../../sub/constant/config'
+import { Tx, EXB, APP, DISP, DEV } from '../../sub/constant/config'
+import { SHAPE, SENSOR } from '../../sub/constant/Constants'
 import { Shape, Stage, Container, Bitmap, Text, Touch } from '@createjs/easeljs/dist/easeljs.module'
 import { Tween, Ticker } from '@createjs/tweenjs/dist/tweenjs.module'
 import breadcrumb from '../../components/breadcrumb.vue'
 import showmapmixin from '../../components/showmapmixin.vue'
+import sensor from '../../components/sensor.vue'
 import moment from 'moment'
+import { rightpanewidth, rightpaneleft } from '../../sub/constant/config.scss'
 
 let that
 
 export default {
   mixins: [showmapmixin],
   components: {
+    'sensor': sensor,
     'txdetail': txdetail,
     breadcrumb,
   },
@@ -50,18 +59,20 @@ export default {
      return {
       items: [
         {
-          text: this.$i18n.t('label.main'),
+          text: this.$i18n.tnl('label.main'),
           active: true
         },
         {
-          text: this.$i18n.t('label.showPosition'),
+          text: this.$i18n.tnl('label.showPosition'),
           active: true
         },
       ],
       positions: [],
       count: 0, // for mock test 
       txsMap: {},
-      pot: {}
+      pot: {},
+      showMeditag: APP.USE_MEDITAG,
+      meditagSensors: [],
     }
   },
   computed: {
@@ -70,18 +81,22 @@ export default {
       'orgPositions',
     ]),
   },
-  mounted() {
+  async mounted() {
     that = this
-    this.replace({title: this.$i18n.t('label.showPosition')})
-    this.fetchData()
+    this.replace({title: this.$i18n.tnl('label.showPosition')})
+    await this.fetchData()
+    if (this.selectedTx.txId) {
+      this.showInitDetail(this.selectedTx)
+    }
   },
   updated(){
     if (this.isFirstTime) return
-    this.fetchData()
+    // this.fetchData()
   },
   methods: {
     reset() {
       this.isShownMapImage = false
+      this.resetDetail()
     },
     async showDetail(txId, x, y) {
       let rev = y > 400
@@ -112,6 +127,13 @@ export default {
       }
       this.replaceMain({selectedTx})
     },
+    showInitDetail(tx) {
+      const position = PositionHelper.adjustPosition(this.positions, this.mapImageScale, this.positionedExb)
+          .filter((pos) => pos.btx_id == tx.btxId)
+      if (position.length == 1) {
+        this.showDetail(tx.txId, position[0].x, position[0].y)
+      }
+    },
     resetDetail() {
       let selectedTx = {}
       this.replaceMain({selectedTx})
@@ -138,6 +160,21 @@ export default {
 
         this.showMapImage()
 
+        if (APP.USE_MEDITAG) {
+          let meditagSensors = await EXCloudHelper.fetchSensor(SENSOR.MEDITAG)
+          this.meditagSensors = _(meditagSensors)
+          .map((val) => {
+              return {...val, bg: SensorHelper.getStressBg(val.stress), down: val.down?val.down:0}
+          })
+          .filter((val) => this.txs.some((tx) => tx.btxId == val.id))
+          .sortBy((val) => (new Date().getTime() - val.downLatest < DISP.DOWN_RED_TIME)? val.downLatest * -1: val.id)
+          .value()
+        }
+
+        if (APP.USE_MAGNET) {
+          let magnetSensors = await EXCloudHelper.fetchSensor(SENSOR.MAGNET)
+        }
+
         if (payload && payload.done) {
           payload.done()
         }
@@ -153,7 +190,7 @@ export default {
       this.replace({showProgress: false})
     },
     async getDetail(txId) {
-      let pot = await AppServiceHelper.fetch('/basic/pot/withThumbnail', txId)
+      let pot = await AppServiceHelper.fetch('/basic/pot', txId)
       return pot
     },
     showMapImage() {
@@ -171,10 +208,18 @@ export default {
 
       let now = !DEV.USE_MOCK_EXC? new Date().getTime(): mock.positions_conf.start + this.count++ * mock.positions_conf.interval  // for mock
       this.positions = PositionHelper.correctPosId(this.orgPositions, now)
+      if (APP.USE_MEDITAG && this.meditagSensors) {
+        this.positions = SensorHelper.setStress(this.positions, this.meditagSensors)
+      }
 
       this.positionedExb = _(this.exbs).filter((exb) => {
+        Util.debug(exb, this.selectedArea)
         return exb.enabled && exb.location.areaId == this.selectedArea && exb.location.x && exb.location.y > 0
       }).value()
+      Util.debug(this.positionedExb)
+      if (this.positionedExb.length == 0) {
+        console.warn("positionedExb is empty. check if exbs are enabled")
+      }
 
       this.showTxAll()
     },
@@ -185,14 +230,38 @@ export default {
       this.txCont.removeAllChildren()
       this.stage.update()
       PositionHelper.adjustPosition(this.positions, this.mapImageScale, this.positionedExb).forEach((pos) => { // TODO: Txのチェックも追加
+        Util.debug(pos)
         this.showTx(pos)
       })
     },
+    getDisplay(tx) {
+      let catOrGr = tx[DISP.DISPLAY_PRIORITY[0]] || tx[DISP.DISPLAY_PRIORITY[1]]
+      let display = catOrGr && catOrGr.display || {}
+      return {
+        color: display.color || DISP.TX_COLOR,
+        bgColor: display.bgColor || DISP.TX_BGCOLOR,
+        shape: display.shape || SHAPE.CIRCLE
+      }
+    },
     showTx(pos) {
+      let tx = this.txs.find((tx) => tx.btxId == pos.btx_id)
+      let display = this.getDisplay(tx)
+
       let stage = this.stage
       let txBtn = new Container()
       let btnBg = new Shape()
-      btnBg.graphics.beginStroke("#ccc").beginFill(DISP.TX_BGCOLOR).drawCircle(0, 0, DISP.TX_R)
+      btnBg.graphics.beginStroke("#ccc").beginFill('#' + display.bgColor)
+      switch(display.shape) {
+      case SHAPE.CIRCLE:
+        btnBg.graphics.drawCircle(0, 0, DISP.TX_R)
+        break
+      case SHAPE.SQUARE:
+        btnBg.graphics.drawRect(-DISP.TX_R, -DISP.TX_R, DISP.TX_R * 2, DISP.TX_R * 2)
+        break
+      case SHAPE.ROUND_SQUARE:
+        btnBg.graphics.drawRoundRect(-DISP.TX_R, -DISP.TX_R, DISP.TX_R * 2, DISP.TX_R * 2, DISP.ROUNDRECT_RADIUS)
+        break
+      }
       if (pos.transparent) {
         btnBg.alpha = 0.6
       }
@@ -200,7 +269,7 @@ export default {
 
       let label = new Text(pos.label)
       label.font = DISP.TX_FONT
-      label.color = DISP.TX_COLOR
+      label.color = '#' + display.color
       label.textAlign = "center"
       label.textBaseline = "middle"
       txBtn.addChild(label)
@@ -223,9 +292,21 @@ export default {
 <style scoped lang="scss">
 @import "../../sub/constant/config.scss";
 
+$right-pane-width-px: $right-pane-width * 1px;
+$right-pane-maxwidth-px: ($right-pane-width + 100) * 1px;
+$right-pane-left-px: $right-pane-left * 1px;
+
 ::-webkit-scrollbar { 
   display: none; 
 }
 
+.rightPane {
+  max-width: $right-pane-maxwidth-px;
+  margin: 10px;
+  padding: 3px;
+  width: $right-pane-width-px;
+  overflow: scroll;
+  height: calc(100vh - 100px);
+}
 
 </style>

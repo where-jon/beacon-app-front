@@ -34,6 +34,7 @@ export default {
           {key: "regionId", sortable: true },
           {key: "regionName", sortable: true },
           {key: "meshId", sortable: true},
+          {key: "deviceOffset", sortable: true},
           {key: "description", sortable: true },
           {key: "actions", thStyle: {width:'130px !important'} }
         ]),
@@ -41,11 +42,11 @@ export default {
       },
       items: [
         {
-          text: this.$i18n.t('label.master'),
+          text: this.$i18n.tnl('label.master'),
           active: true
         },
         {
-          text: this.$i18n.t('label.region'),
+          text: this.$i18n.tnl('label.region'),
           active: true
         }
       ]

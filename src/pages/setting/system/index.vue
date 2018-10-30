@@ -6,7 +6,7 @@
       <b-row>
         <b-col md="10" offset-md="1">
           <pagetitle title="label.system" />
-          <edit-list :params="params" :multiList="categorySettings" />
+          <edit-list :params="params" :multiList="categorySettings" :newForm="newForm" />
         </b-col>
       </b-row>
     </div>
@@ -36,6 +36,7 @@ export default {
       appServicePath: '/meta/setting',
       featurePath: '/setting/system',
       categorySettings: [],
+      newForm: {},
       params: {
         name: 'setting',
         fields: [ 
@@ -44,11 +45,11 @@ export default {
       },
       items: [
         {
-          text: this.$i18n.t('label.setting'),
+          text: this.$i18n.tnl('label.setting'),
           active: true
         },
         {
-          text: this.$i18n.t('label.system'),
+          text: this.$i18n.tnl('label.system'),
           active: true
         },
       ],
@@ -60,10 +61,10 @@ export default {
     ]),
   },
   methods: {
-    async fetchData() {
+    async fetchData(force = false) {
       try {
         this.replace({showProgress: true})
-        await StateHelper.load('settings')
+        await StateHelper.load('settings', force)
         if(!Util.isArray(this.settings)){
           this.settings = []
         }
@@ -84,6 +85,18 @@ export default {
       }
       this.replace({showProgress: false})
     },
+    async beforeReload(){
+      this.newForm = {}
+      await this.fetchData(true)
+    },
+    addNewEntity() {
+      return {
+        settingId: -1,
+        key: this.newForm.key,
+        valType: this.newForm.type,
+        value: this.newForm.value,
+      }
+    },
     async save() {
       const entity = []
       for(let key in this.categorySettings){
@@ -91,6 +104,8 @@ export default {
           entity.push({
             settingId: val.settingId,
             value: val.value,
+            key: val.key,
+            valType: val.valType,
           })
         })
       }

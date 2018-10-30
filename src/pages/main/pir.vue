@@ -41,11 +41,11 @@ export default {
      return {
       items: [
         {
-          text: this.$i18n.t('label.main'),
+          text: this.$i18n.tnl('label.main'),
           active: true
         },
         {
-          text: this.$i18n.t('label.pir'),
+          text: this.$i18n.tnl('label.pir'),
           active: true
         },
       ],
@@ -55,7 +55,7 @@ export default {
   },
   mounted() {
     that = this
-    this.replace({title: this.$i18n.t('label.pir')})
+    this.replace({title: this.$i18n.tnl('label.pir')})
     this.fetchData()
   },
   updated(){
@@ -156,7 +156,7 @@ export default {
       exbBtn.addChild(btnBg)
 
       if (DISP.PIR_INUSE_LABEL || DISP.PIR_EMPTY_LABEL) {
-        let label = new Text(this.$i18n.t("label." + (exb.count > 0? DISP.PIR_INUSE_LABEL: DISP.PIR_EMPTY_LABEL)))
+        let label = new Text(this.$i18n.tnl("label." + (exb.count > 0? DISP.PIR_INUSE_LABEL: DISP.PIR_EMPTY_LABEL)))
         label.font = exb.count > 0? DISP.PIR_INUSE_FONT: DISP.PIR_EMPTY_FONT
         label.color = DISP.PIR_FGCOLOR
         label.textAlign = "center"

@@ -15,9 +15,9 @@
       <b-form @submit="onSubmit" v-if="show">
         <b-form-group>
           <label v-t="'label.zipFile'" />
-          <b-form-file :key="formKey" v-model="form.zipFile" @change="loadThumbnail" accept=".zip" :placeholder="$t('message.selectFile') "></b-form-file>
+          <b-form-file :key="formKey" v-model="form.zipFile" @change="loadThumbnail" accept=".zip" :placeholder="$t('message.selectFile') " :disabled="loading" ></b-form-file>
         </b-form-group>
-        <b-button type="submit" :variant="theme" @click="register(true)" >{{ label }}</b-button>
+        <b-button type="submit" :variant="theme" @click="register(true)" :disabled="!submittable" >{{ label }}</b-button>
         <b-button type="button" variant="outline-danger" @click="backToList" class="ml-2" v-t="'label.back'"/>
       </b-form>
     </div>
@@ -32,7 +32,7 @@ import { getButtonTheme } from '../sub/helper/ThemeHelper'
 import { getTheme } from '../sub/helper/ThemeHelper'
 import Encoding from 'encoding-japanese'
 import * as Util from '../sub/util/Util'
-import JsZip from 'JSZip'
+import JsZip from 'jszip'
 
 let that
 let fileReader
@@ -46,6 +46,8 @@ export default {
       bulkUpload: true,
       formKey: 0,
       fileCount: 0,
+      loading: false,
+      submittable: false,
       form: {
         zipFile: null,
         thumbnails: [],
@@ -55,27 +57,32 @@ export default {
   },
   mounted() {
     that = this
+    this.loading = false
+    this.submittable = false
     fileReader = new FileReader()
     fileReader.onload = () =>{
       const contents = JsZip.loadAsync(fileReader.result, {base64: true}).then((zip) => {
-        this.fileCount = Object.keys(zip.files).length
+        that.countFile(zip)
+        that.uploadMessage()
         for(let key in zip.files){
-          if(Util.hasValue(key) && key.match(/.*\.(png)|(jpg)|(jpeg)|(gif)$/)){
-            const id = key.slice(key.lastIndexOf("/") + 1, key.lastIndexOf("."))
+          if(that.isImageFile(key)){
+            const id = this.getFileName(key)
             const target = that.$parent.$options.methods.search.call(that.$parent, id)
             if(target){
               zip.file(key).async("base64").then((val) =>{
-                that.form.thumbnails.push({
+                let imgInfo = {
                   ...target,
                   type: key.slice(key.lastIndexOf(".") + 1),
                   thumbnail: `data:image/${key.slice(key.lastIndexOf(".") + 1)};base64,${val}`
-                })
+                }
+                if(that.$parent.$options.methods.addLoadImage){
+                  that.$parent.$options.methods.addLoadImage.call(that.$parent, imgInfo)
+                }
+                that.form.thumbnails.push(imgInfo)
                 that.afterLoadFile()
               })
             }else{
-              that.form.warnThumbnails.push({
-                id: id,
-              })
+              that.form.warnThumbnails.push({ id: id })
               that.afterLoadFile()
             }
           }
@@ -90,36 +97,67 @@ export default {
     },
   },
   methods: {
-    afterLoadFile(){
-      this.fileCount--
-      if(this.fileCount <= 0){
-        that.uploadMessage()
+    countFile(zipObject){
+      this.fileCount = 0
+      for(let key in zipObject.files){
+        if(this.isImageFile(key)){
+          this.fileCount++
+        }
       }
     },
+    getFileName(key){
+      return key.slice(key.lastIndexOf("/") + 1, key.lastIndexOf("."))
+    },
+    isImageFile(key){
+      return Util.hasValue(key) && /^.*\.(png)|(jpg)|(jpeg)|(gif)$/.test(key) &&
+        !/^.*(__MACOSX\/).*$/.test(key) && !/^\..*/.test(this.getFileName(key))
+    },
+    afterLoadFile(){
+      if(this.fileCount <= this.form.thumbnails.length + this.form.warnThumbnails.length){
+        this.loading = false
+        if(0 < this.form.thumbnails.length){
+          this.submittable = true
+        }
+      }
+      this.uploadMessage()
+    },
     uploadMessage(){
+      if(this.loading){
+        this.message = `${this.$i18n.tnl("message.loadingFile", {now: this.form.thumbnails.length, all: this.fileCount})}`
+        this.showInfo = true
+        this.showWarn = false
+        this.showAlert = false
+        return
+      }
       const hasUploadThumbnails = this.form && Util.hasValue(this.form.thumbnails)
+      this.message = hasUploadThumbnails?
+        `${this.$i18n.tnl("message.uploadData", {val: this.form.thumbnails.length})}`:
+        `${this.$i18n.tnl("message.uploadNoData")}`
+      const hasUploadWarnThumbnails = this.form && Util.hasValue(this.form.warnThumbnails)
+      this.warnMessage = hasUploadWarnThumbnails? `${this.$i18n.tnl("message.uploadWarnData", {val: this.form.warnThumbnails.length})}`: ""
       this.showInfo = hasUploadThumbnails
       this.showAlert = !hasUploadThumbnails || Util.hasValue(this.errorThumbnails)
-      this.message = hasUploadThumbnails?
-        `${this.$i18n.t("message.uploadData", {val: this.form.thumbnails.length})}`:
-        `${this.$i18n.t("message.uploadNoData")}`
-      const hasUploadWarnThumbnails = this.form && Util.hasValue(this.form.warnThumbnails)
       this.showWarn = hasUploadWarnThumbnails
-      this.warnMessage = hasUploadWarnThumbnails? `${this.$i18n.t("message.uploadWarnData", {val: this.form.warnThumbnails.length})}`: ""
     },
     beforeReload(){
       this.formKey++
       this.form.zipFile = null
       this.form.thumbnails = []
       this.form.warnThumbnails = []
+      this.loading = false
+      this.submittable = false
     },
     async loadThumbnail(e) {
       this.form.thumbnails = []
       this.form.warnThumbnails = []
+      this.submittable = false
       if(Util.hasValue(e.target.files)){
+        this.loading = true
+        this.uploadMessage()
         fileReader.readAsArrayBuffer(e.target.files[0])
       }
       else{
+        this.loading = false
         this.uploadMessage()
       }
     },

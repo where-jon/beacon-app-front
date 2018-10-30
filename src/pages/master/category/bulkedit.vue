@@ -11,6 +11,7 @@ import _ from 'lodash'
 import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/breadcrumb.vue'
 import bulkedit from '../../../components/bulkedit.vue'
+import { CATEGORY } from '../../../sub/constant/Constants'
 
 export default {
   components: {
@@ -25,15 +26,15 @@ export default {
       appServicePath: '/basic/category',
       items: [
         {
-          text: this.$i18n.t('label.master'),
+          text: this.$i18n.tnl('label.master'),
           active: true
         },
         {
-          text: this.$i18n.t('label.category'),
+          text: this.$i18n.tnl('label.category'),
           href: '/master/category',
         },
         {
-          text: this.$i18n.t('label.category') + this.$i18n.t('label.bulkRegister'),
+          text: this.$i18n.tnl('label.category') + this.$i18n.tnl('label.bulkRegister'),
           active: true
         }
       ]
@@ -41,14 +42,53 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'category',
+      'category', 'categories'
     ]),
+    categoryTypes(){
+      return CATEGORY.getTypes()
+    },
   },
   methods: {
+    resetStyle(entity){
+        const updateData = this.categories.find((val) => val.categoryId == entity.categoryId)
+        if(updateData && updateData.display){
+          if (!entity.display) {
+            entity.display = {}
+          }
+          if(!entity.display.color){
+            entity.display.color = updateData.display.color
+          }
+          if(!entity.display.bgColor){
+            entity.display.bgColor = updateData.display.bgColor
+          }
+          if(!entity.display.shape){
+            entity.display.shape = updateData.display.shape
+          }
+        }
+    },
     async save(bulkSaveFunc) {
       const MAIN_COL = "categoryId"
-      const NUMBER_TYPE_LIST = ["categoryId", "categoryType"]
-      await bulkSaveFunc(MAIN_COL, NUMBER_TYPE_LIST)
+      const NUMBER_TYPE_LIST = ["categoryType", "shape"]
+      const DISPLAY_COL = ["shape", "color", "bgColor"]
+      await bulkSaveFunc(MAIN_COL, NUMBER_TYPE_LIST, null, (entity, headerName, val, dummyKey) => {
+        if(headerName == MAIN_COL){
+          entity.categoryId = Util.hasValue(val)? Number(val): --dummyKey  
+        }
+        else if (_.includes(DISPLAY_COL, headerName)) {
+          if (!entity.display) {
+            entity.display = {}
+          }
+          entity.display[headerName] = val
+        }
+        else if(headerName == "categoryTypeName"){
+          const categoryType = this.categoryTypes.find((type) => type.text == val)
+          entity.categoryType = categoryType? categoryType.value: val
+        }
+        else{
+          entity[headerName] = val
+        }
+        return dummyKey
+      }, (entity, dummyKey) => this.resetStyle(entity))
     },
   }
 }

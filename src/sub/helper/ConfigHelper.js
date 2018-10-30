@@ -32,9 +32,16 @@ export const applyAppServiceSetting = (settingArr) => {
     let valType = setting.valType? setting.valType.toLowerCase(): null
     if (val && valType) {
       switch(valType) {
+      case "number":
+      case "float":
+      case "double":
       case "int":
         val = Number(val)
         break
+      case "boolean":
+        val = val == "true"
+        break
+      case "list":
       case "array":
         val = val.split(",")
         break

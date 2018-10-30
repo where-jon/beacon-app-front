@@ -48,7 +48,7 @@ export default {
       },
       () => {
         console.error("failed")
-        this.message = this.$i18n.t("message.loginFailed")
+        this.message = this.$i18n.tnl("message.loginFailed")
       })
     },
   },

@@ -29,7 +29,7 @@
             </b-form-group>
             <b-form-group>
               <label v-t="'label.areaName'" />
-              <b-form-select v-model="form.areaId" :options="areaOptions" class="mb-3 ml-3 col-4" :readonly="!isEditable" />
+              <b-form-select v-model="form.areaId" :options="areaOptions" class="mb-3 ml-3 col-4" :disabled="!isEditable" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group v-show="isShown('EXB_WITH_POSID')">
               <label v-t="'label.posId'" />
@@ -44,22 +44,22 @@
               <b-form-input type="number" v-model="form.y" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group>
-              <b-form-checkbox v-model="form.enabled" value="true" unchecked-value="false" :readonly="!isEditable">
+              <b-form-checkbox v-model="form.enabled" value="true" unchecked-value="false" :disabled="!isEditable" :readonly="!isEditable">
                 {{ $t('label.enabled') }}
               </b-form-checkbox>
             </b-form-group>
             <b-form-group>
-              <b-form-checkbox v-model="form.visible" value="true" unchecked-value="false" :readonly="!isEditable">
+              <b-form-checkbox v-model="form.visible" value="true" unchecked-value="false" :disabled="!isEditable" :readonly="!isEditable">
                 {{ $t('label.visible') }}
               </b-form-checkbox>
             </b-form-group>
             <b-form-group>
               <label v-t="'label.txViewType'" />
-              <b-form-select v-model="form.txViewType" :options="txViewTypes" class="mb-3 ml-3 col-3" :readonly="!isEditable" />
+              <b-form-select v-model="form.txViewType" :options="txViewTypes" class="mb-3 ml-3 col-3" :disabled="!isEditable" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.type'" />
-              <b-form-select v-model="form.sensorId" :options="sensorOptionsExb" class="mb-3 ml-3 col-4" :readonly="!isEditable" />
+              <b-form-select v-model="form.sensorId" :options="sensorOptionsExb" class="mb-3 ml-3 col-4" :disabled="!isEditable" :readonly="!isEditable" />
             </b-form-group>
             <b-button type="button" variant="outline-danger" @click="backToList" v-t="'label.back'"/>
             <b-button v-if="isEditable" type="submit" :variant="theme" @click="register(false)" class="ml-2" >{{ label }}</b-button>
@@ -113,15 +113,15 @@ export default {
       deviceNum: null,
       items: [
         {
-          text: this.$i18n.t('label.master'),
+          text: this.$i18n.tnl('label.master'),
           active: true
         },
         {
-          text: this.$i18n.t('label.exb'),
+          text: this.$i18n.tnl('label.exb'),
           href: '/master/exb',
         },
         {
-          text: this.$i18n.t('label.exb') + this.$i18n.t('label.detail'),
+          text: this.$i18n.tnl('label.exb') + this.$i18n.tnl('label.detail'),
           active: true
         }
       ]
@@ -134,7 +134,7 @@ export default {
     },
     sensorOptionsExb() {
       let options = this.sensorOptions('exb')
-      options.unshift({value:null, text:this.$i18n.t('label.normal')})
+      options.unshift({value:null, text:this.$i18n.tnl('label.normal')})
       return options
     },
     areaOptions() {

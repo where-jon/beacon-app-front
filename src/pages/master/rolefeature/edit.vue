@@ -17,7 +17,7 @@
         </b-form-group>
         <b-form-group>
           <label v-t="'label.mode'" />
-          <b-form-select v-model="form.mode" :options="modes" class="mb-3 ml-3 col-3" required :readonly="!isEditable" />
+          <b-form-select v-model="form.mode" :options="modes" class="mb-3 ml-3 col-3" required :disabled="!isEditable" :readonly="!isEditable" />
         </b-form-group>
 
         <b-button type="button" variant="outline-danger" @click="backToList" v-t="'label.back'"/>
@@ -55,19 +55,19 @@ export default {
       featureNames: [],
       items: [
         {
-          text: this.$i18n.t('label.master'),
+          text: this.$i18n.tnl('label.master'),
           active: true
         },
         {
-          text: this.$i18n.t('label.role'),
+          text: this.$i18n.tnl('label.role'),
           href: '/master/role',
         },
         {
-          text: this.$i18n.t('label.role') + this.$i18n.t('label.detail'),
+          text: this.$i18n.tnl('label.role') + this.$i18n.tnl('label.detail'),
           href: '/master/role/edit',
         },
         {
-          text: this.$i18n.t('label.feature') + this.$i18n.t('label.detail'),
+          text: this.$i18n.tnl('label.feature') + this.$i18n.tnl('label.detail'),
           active: true
         }
       ]

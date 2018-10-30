@@ -25,15 +25,15 @@ export default {
       appServicePath: '/basic/pot',
       items: [
         {
-          text: this.$i18n.t('label.master'),
+          text: this.$i18n.tnl('label.master'),
           active: true
         },
         {
-          text: this.$i18n.t('label.pot'),
+          text: this.$i18n.tnl('label.pot'),
           href: '/master/pot',
         },
         {
-          text: this.$i18n.t('label.pot') + this.$i18n.t('label.bulkRegister'),
+          text: this.$i18n.tnl('label.pot') + this.$i18n.tnl('label.bulkRegister'),
           active: true
         }
       ]
@@ -41,10 +41,17 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'pot',
+      'pot', 'potImages'
     ]),
   },
   methods: {
+    resetThumbnail(entity, dummyKey){
+        const updateData = this.potImages.find((val) => val.id == entity.potId)
+        if(updateData){
+          entity.thumbnail = updateData.thumbnail
+        }
+        return dummyKey
+    },
     async save(bulkSaveFunc) {
       const MAIN_COL = "potId"
       const NULLABLE_NUMBER_COL = ["txId", "exbId", "zoneId", "areaId"]
@@ -77,14 +84,14 @@ export default {
         let newVal
         if (MAIN_COL === headerName && !val) {
           newVal = dummyKey--
-        } else if (NULLABLE_NUMBER_COL.includes(headerName) && !Util.hasValue(val)) {
-          newVal = Number(val)
+        } else if (NULLABLE_NUMBER_COL.includes(headerName)) {
+          newVal = Util.hasValue(val)? Number(val): null
         } else {
           newVal = val
         }
         entity[headerName] = newVal
         return dummyKey
-      })
+      }, (entity, dummyKey) => this.resetThumbnail(entity, dummyKey))
     },
   }
 }

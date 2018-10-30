@@ -3,7 +3,7 @@
     <m-nav></m-nav>
     <b-container fluid>
       <b-row class="flex-xl-nowrap2" v-if="!isLoginPage">
-        <b-col md="2" xl="2" id="bd-sidebar" :class="sidebarClasses" v-if="showSidebar">
+        <b-col md="2" xl="2" id="bd-sidebar" class="d-none d-sm-none d-md-block" :class="sidebarClasses" v-if="showSidebar">
           <m-sidebar></m-sidebar>
         </b-col>
         <b-col :md="showSidebar? 10: 12" class="pl-0 pr-0">

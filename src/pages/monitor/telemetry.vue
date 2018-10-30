@@ -62,20 +62,20 @@ export default {
     return {
       items: [
         {
-          text: this.$i18n.t('label.monitor'),
+          text: this.$i18n.tnl('label.monitor'),
           active: true
         },
         {
-          text: this.$i18n.t('label.telemetry'),
+          text: this.$i18n.tnl('label.telemetry'),
           active: true
         }
       ],
       isLoad: false,
-      label_deviceId: this.$i18n.t('label.deviceId'),
-      label_deviceIdX: this.$i18n.t('label.deviceIdX'),
-      label_name: this.$i18n.t('label.location'),
-      label_timestamp: this.$i18n.t('label.final-receive-timestamp'),
-      label_powerLevel: this.$i18n.t('label.power-level'),
+      label_deviceId: this.$i18n.tnl('label.deviceId'),
+      label_deviceIdX: this.$i18n.tnl('label.deviceIdX'),
+      label_name: this.$i18n.tnl('label.location'),
+      label_timestamp: this.$i18n.tnl('label.final-receive-timestamp'),
+      label_powerLevel: this.$i18n.tnl('label.power-level'),
       interval: null,
     }
   },
@@ -98,18 +98,18 @@ export default {
     ]),
   },
   mounted() {
-    this.replace({title: this.$i18n.t('label.telemetry')})
+    this.replace({title: this.$i18n.tnl('label.telemetry')})
     this.fetchData()
     if (!this.isDev) {
       return
     }
     this.items = [
       {
-        text: this.$i18n.t('label.develop'),
+        text: this.$i18n.tnl('label.develop'),
         active: true
       },
       {
-        text: this.$i18n.t('label.telemetry'),
+        text: this.$i18n.tnl('label.telemetry'),
         active: true
       }
     ]

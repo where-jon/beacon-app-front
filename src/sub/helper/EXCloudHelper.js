@@ -1,4 +1,3 @@
-import axios from 'axios'
 import _ from 'lodash'
 import { EXCLOUD, APP_SERVICE, DEV } from '../constant/config'
 import * as mock from '../../assets/mock/mock'
@@ -19,6 +18,19 @@ export const fetchPosition = async (exbs, txs, pMock) => {
       return {btx_id: val.btx_id, pos_id: val.pos_id, label, nearest: val.nearest}
     })
     .compact().value()
+}
+
+export const fetchPositionList = async (exbs, txs) => {
+    let data = DEV.USE_MOCK_EXC? mock.position:
+        await HttpHelper.getExCloud(APP_SERVICE.BASE_URL + EXCLOUD.POSITION_URL + new Date().getTime())
+    return _(data)
+    .map((val) => {
+        let tx = _.find(txs, (tx) => tx.btxId == val.btx_id)
+        if (!DEV.NOT_FILTER_TX || !tx) { return null}
+        let exb = _.find(exbs, (exb) => exb.location.posId == val.pos_id)
+        if (!exb || !exb.enabled) { return null}
+        return {...val, tx: tx, exb: exb, updatetime: dateform(val.updatetime)}
+    }).compact().value()
 }
 
 export const fetchSensor = async (sensorId) => {

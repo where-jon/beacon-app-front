@@ -20,12 +20,16 @@
           <b-form-input type="text" v-model="form.ruby" pattern="^[ぁ-んー]+$" maxlength="20" :readonly="!isEditable" />
         </b-form-group>
         <b-form-group>
-          <label v-t="'label.color'" />
-          <b-form-input type="color" v-model="form.displayColor" required :readonly="!isEditable" />
+          <label v-t="'label.shape'" />
+          <b-form-select v-model="form.displayShape" :options="shapes" required :disabled="!isEditable" :readonly="!isEditable" />
+        </b-form-group>
+        <b-form-group>
+          <label v-t="'label.textColor'" />
+          <b-form-input type="color" v-model="form.displayColor" required :disabled="!isEditable" :readonly="!isEditable" />
         </b-form-group>
         <b-form-group>
           <label v-t="'label.bgColor'" />
-          <b-form-input type="color" v-model="form.displayBgColor" required :readonly="!isEditable" />
+          <b-form-input type="color" v-model="form.displayBgColor" required :disabled="!isEditable" :readonly="!isEditable" />
         </b-form-group>
         <b-form-group>
           <label v-t="'label.description'" />
@@ -33,8 +37,8 @@
         </b-form-group>
 
         <b-button type="button" variant="outline-danger" @click="backToList" v-t="'label.back'"/>
-        <b-button v-if="isEditable" type="submit" :variant="theme" @click="beforeSubmit(false)" class="ml-2" >{{ label }}</b-button>
-        <b-button v-if="isEditable && !isUpdate" type="submit" :variant="theme" @click="beforeSubmit(true)" class="ml-2" v-t="'label.registerAgain'"/>
+        <b-button v-if="isEditable" type="submit" :variant="theme" @click="register(false)" class="ml-2" >{{ label }}</b-button>
+        <b-button v-if="isEditable && !isUpdate" type="submit" :variant="theme" @click="register(true)" class="ml-2" v-t="'label.registerAgain'"/>
       </b-form>
     </div>
   </div>
@@ -46,8 +50,10 @@ import _ from 'lodash'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import editmixinVue from '../../../components/editmixin.vue'
 import * as Util from '../../../sub/util/Util'
+import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import breadcrumb from '../../../components/breadcrumb.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
+import { SHAPE } from '../../../sub/constant/Constants'
 
 export default {
   components: {
@@ -62,18 +68,18 @@ export default {
       appServicePath: '/basic/group',
       defaultColor: "#000000",
       defaultBgColor: "#ffffff",
-      form: ViewHelper.extract(this.$store.state.app_service.group, ["groupId", "groupName", "ruby", "color", "bgColor", "description"]),
+      form: ViewHelper.extract(this.$store.state.app_service.group, ["groupId", "groupName", "ruby", "display", "description"]),
       items: [
         {
-          text: this.$i18n.t('label.master'),
+          text: this.$i18n.tnl('label.master'),
           active: true
         },
         {
-          text: this.$i18n.t('label.group'),
+          text: this.$i18n.tnl('label.group'),
           href: '/master/group',
         },
         {
-          text: this.$i18n.t('label.group') + this.$i18n.t('label.detail'),
+          text: this.$i18n.tnl('label.group') + this.$i18n.tnl('label.detail'),
           active: true
         }
       ]
@@ -93,20 +99,30 @@ export default {
     ...mapState('app_service', [
       'group',
     ]),
+    shapes(){
+      return SHAPE.getShapes()
+    },
   },
   methods: {
     beforeReload(){
-      this.form.displayColor = Util.colorCd4display(this.form.color, this.defaultColor)
-      this.form.displayBgColor = Util.colorCd4display(this.form.bgColor, this.defaultBgColor)
+      this.form.displayShape = this.form.display? this.form.display.shape: null
+      this.form.displayColor = Util.colorCd4display(this.form.display? this.form.display.color: null, this.defaultColor)
+      this.form.displayBgColor = Util.colorCd4display(this.form.display? this.form.display.bgColor: null, this.defaultBgColor)
     },
-    beforeSubmit(again){
-      if(this.form.groupId != null){
-        this.form.groupId = String(this.form.groupId)
+    async save() {
+      const entity = {
+        groupId: this.form.groupId || -1,
+        groupName: this.form.groupName,
+        ruby: this.form.ruby,
+        description: this.form.description,
+        display: {
+          shape: this.form.displayShape,
+          color: Util.colorCd4db(this.form.displayColor),
+          bgColor: Util.colorCd4db(this.form.displayBgColor),
+        },
       }
-      this.form.color = Util.colorCd4db(this.form.displayColor)
-      this.form.bgColor = Util.colorCd4db(this.form.displayBgColor)
-      this.register(again)
-    }
+      return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
+    },
   },
 }
 </script>

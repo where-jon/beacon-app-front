@@ -45,6 +45,24 @@
             </b-col>
           </b-form-row>
         </b-form-group>
+        <b-form-group>
+          <label v-t="'label.areaName'" />
+          <b-form-select v-model="form.areaId" :options="areaNames" required class="mb-3 ml-3 col-3" :disabled="!isEditable" />
+        </b-form-group>
+        <!--
+        <b-form-group>
+          <label v-t="'label.locationZoneName'" />
+          <b-form-select v-model="form.locationId" :options="locationNames" required class="mb-3 ml-3 col-3" :disabled="!isEditable" />
+        </b-form-group>
+        -->
+        <b-form-group>
+          <label v-t="'label.categoryName'" />
+          <b-form-select v-model="form.categoryId" :options="categoryNames" class="mb-3 ml-3 col-3" :disabled="!isEditable" />
+        </b-form-group>
+
+        <b-button type="button" variant="outline-danger" @click="backToList" v-t="'label.back'"/>
+        <b-button v-if="isEditable" type="submit" :variant="theme" @click="register(false)" class="ml-2" >{{ label }}</b-button>
+        <b-button v-if="isEditable && !isUpdate" type="submit" :variant="theme" @click="register(true)" class="ml-2" v-t="'label.registerAgain'"/>
       </b-form>
       <AreaCanvas :base64="base64" :isRegist="isRegist" 
       @regist="doRegist"
@@ -95,15 +113,15 @@ export default {
       isRegist: false,
       items: [
         {
-          text: this.$i18n.t('label.master'),
+          text: this.$i18n.tnl('label.master'),
           active: true
         },
         {
-          text: this.$i18n.t('label.zoneClass'),
+          text: this.$i18n.tnl('label.zoneClass'),
           href: '/master/zoneClass',
         },
         {
-          text: this.$i18n.t('label.zoneClass') + this.$i18n.t('label.detail'),
+          text: this.$i18n.tnl('label.zoneClass') + this.$i18n.tnl('label.detail'),
           active: true
         }
       ]

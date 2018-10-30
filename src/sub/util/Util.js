@@ -3,6 +3,7 @@ import jschardet from 'jschardet'
 import Encoding from 'encoding-japanese'
 import Papa from 'papaparse'
 import moment from 'moment'
+import { DEV } from '../constant/config';
 
 // sleep (for test)
 export const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))
@@ -14,6 +15,18 @@ export const addNoSelect = (option) => option.unshift({value: null, text: ""})
 export const getByteLength = (str) => encodeURI(str == null? "": str).replace(/%../g, "*").length
 
 export const numberRange = (start, end) => new Array(end - start + 1).fill().map((d, i) => i + start)
+
+export const table = (log) => {
+  if (DEV.DEBUG) {
+    console.table(log)
+  }
+}
+
+export const debug = function(log) {
+  if (DEV.DEBUG) {
+    console.debug(...arguments)
+  }
+}
 
 export const colorCd4db = (str) => {
   if(!str){
@@ -103,11 +116,10 @@ export const converToCsv = (array, headers) => {
   if (!headers) {
     headers = Object.keys(array[0])
   }
-  // ヘッダ出力から"extValue."の部分を取り除く
-  const extValueRegExp = /extValue\.(.*)/
+  // ヘッダ出力から"."以降の部分のみ抽出
   const outputHeaders = headers.map((header) => {
-    let result = header.match(extValueRegExp)
-    return result ? result[1] : header
+    let result = header.split(".")
+    return result ? result[result.length - 1] : header
   })
   let header = '"' + outputHeaders.join('","') + '"\n'
   let body = _.map(array, (row) => {
@@ -147,4 +159,28 @@ export const getMaxTextLength = (list, minMax = Infinity) => {
   }
   let max = _.max(list.map(item => getByteLength(item)))
   return max > minMax ? minMax : max
+}
+
+export const base64ToBlob = (base64) => {
+  const byteString = atob( base64.split( "," )[1] )
+  const mimeType = base64.match( /(:)([a-z\/]+)(;)/ )[2]
+  const byteLength = byteString.length
+  const content = new Uint8Array(byteLength)
+  for( let i = 0; i < byteLength; i++ ) {
+    content[i] = byteString.charCodeAt(i)
+  }
+  return new Blob([content], {type: mimeType})
+}
+
+export const getEntityFromIds = (list, entity, ids) => {
+  for(let index = 0; index < ids.length; index++){
+    const id = ids[index]
+    if(entity[id]){
+      const matchEntity = list.find((val) => val[id] == entity[id])
+      if(matchEntity){
+        return matchEntity
+      }
+    }
+  }
+  return null
 }
