@@ -8,9 +8,6 @@
         </li>
       </ol>
     </div>
-    <div class="col-auto reload-button-container ">
-      <a href="#" id="reload" v-if="reload" @click="onClickReload"><i title="リロード" :class="classes"></i></a>
-    </div>
     <div class="col-auto px-0" >
       <b-nav-item-dropdown v-if="extraNavSpec.length > 0" class="extra-nav"
         :extra-menu-classes="extNavClasses" right>
@@ -22,6 +19,9 @@
           <i :class="extraNav.icon" class="ml-3" />&nbsp;{{$t('label.' + extraNav.key)}}
         </b-dropdown-item>
       </b-nav-item-dropdown>
+    </div>
+    <div class="col-auto reload-button-container ">
+      <a href="#" id="reload" v-if="reload" @click="onClickReload"><i title="リロード" :class="classes"></i></a>
     </div>
   </div>
 </template>
