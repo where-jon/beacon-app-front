@@ -59,7 +59,8 @@
             </b-form-group>
             <b-form-group>
               <label v-t="'label.thumbnail'" />
-              <b-form-file v-if="isEditable" @change="readImage" v-model="form.thumbnail" accept="image/jpeg, image/png, image/gif" :placeholder="$t('message.selectFile') "></b-form-file>
+              <b-form-file v-if="isEditable" @change="readImage" v-model="form.thumbnail" ref="inputThumbnail" accept="image/jpeg, image/png, image/gif" :placeholder="$t('message.selectFile') "></b-form-file>
+              <b-button v-if="isEditable && form.thumbnail" type="button" :variant="theme" @click="clearImage" class="float-right mt-3">{{ $i18n.tnl('label.clear') }}</b-button>
               <img v-if="form.thumbnail" ref="thumbnail" :src="form.thumbnail" width="100" class="mt-1 ml-3" />
             </b-form-group>
             <b-form-group>
@@ -223,7 +224,11 @@ export default {
     },
     readImage(e) {
       this.readImageView(e, 'thumbnail')
-    }
+    },
+    clearImage(e) {
+      this.form.thumbnail = undefined
+      this.$refs.inputThumbnail.reset()
+    },
   },
 }
 </script>
