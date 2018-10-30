@@ -154,6 +154,7 @@ export default {
       let readFin = false
       let error = null
       let entities = []
+      const sameLine = []
       reader.addEventListener('load', (e) => {
         try {
           let csv = Util.csv2Obj(e.target.result)
@@ -162,13 +163,20 @@ export default {
             if (csv.errors && typeof csv.errors[0] == 'string' && csv.errors[0].startsWith("message.")) {
               error = this.$t(csv.errors[0])
             }
+            if (csv.errors && typeof csv.errors[0] == 'object' ) {
+              error = this.$i18n.tnl("message.csvInvalidLine")
+              csv.errors.forEach((val) => {
+                if(val.row){
+                  error = error.concat(`<br>${this.$i18n.tnl("message.csvLine", {line: val.row})}`)
+                }
+              })
+            }
             readFin = true
             return
           }
           console.debug(csv)
           let header
           let dummyKey = -1
-          
           csv.data.forEach((line, lineIdx) => {
             if (lineIdx == 0) {
               header = line
@@ -210,6 +218,10 @@ export default {
               if(idSetCallback){
                 dummyKey = idSetCallback(entity, dummyKey)
               }
+              const sameEntity = entities.find((val) => val[mainCol] == entity[mainCol])
+              if(sameEntity){
+                sameLine.push(lineIdx)
+              }
               entities.push(entity)
             }
           })
@@ -230,6 +242,13 @@ export default {
       
       if (error || !entities || entities.length == 0) {
         throw new Error(error)
+      }
+      if(Util.hasValue(sameLine)){
+        let errorMessage = this.$i18n.tnl('message.csvSameKey')
+        sameLine.forEach((val) => {
+          errorMessage = errorMessage.concat(`<br>${this.$i18n.tnl("message.csvLine", {line: val})}`)
+        })
+        throw new Error(errorMessage)
       }
 
       await AppServiceHelper.bulkSave(this.appServicePath, entities)
