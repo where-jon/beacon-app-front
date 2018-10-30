@@ -76,6 +76,13 @@ export default {
       label_name: this.$i18n.tnl('label.location'),
       label_timestamp: this.$i18n.tnl('label.final-receive-timestamp'),
       label_powerLevel: this.$i18n.tnl('label.power-level'),
+      csvHeaders: {
+        [this.$i18n.tnl('label.deviceId')]: 'deviceId',
+        [this.$i18n.tnl('label.deviceIdX')]: 'deviceId(HEX)',
+        [this.$i18n.tnl('label.location')]: 'finalReceivePlace',
+        [this.$i18n.tnl('label.final-receive-timestamp')]: 'timestamp',
+        [this.$i18n.tnl('label.power-level')]: 'powerLevel'
+      },
       interval: null,
     }
   },
@@ -140,7 +147,14 @@ export default {
       return color + ' ' + (!this.isDev && key === this.label_powerLevel ? 'powerlevel' : '')
     },
     download() {
-      HtmlUtil.fileDL("telemetry.csv", Util.converToCsv(this.telemetrys), getCharSet(this.$store.state.loginId))
+      const records = this.telemetrys.map(e => {
+        const obj = {}
+        Object.keys(e).forEach(k => {
+          obj[this.csvHeaders[k]] = e[k]
+        })
+        return obj
+      })
+      HtmlUtil.fileDL("telemetry.csv", Util.converToCsv(records), getCharSet(this.$store.state.loginId))
     },
     async makeTelemetryRecords(telemetrys) {
       if (this.isDev) {
