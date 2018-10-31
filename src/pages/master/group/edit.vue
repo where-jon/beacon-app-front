@@ -23,28 +23,8 @@
           <label v-t="'label.shape'" />
           <b-form-select v-model="form.displayShape" :options="shapes" required :disabled="!isEditable" :readonly="!isEditable" />
         </b-form-group>
-        <b-form-group>
-          <label v-t="'label.textColor'" />
-          <div v-if="!isEditable">
-            <b-form-row>
-              <b-col sm="1" :style="{'height': '32px', 'background-color': `#${colorCd4db(this.form.displayColor)}`}" />
-            </b-form-row>
-          </div>
-          <div v-else>
-            <chrome-picker v-model="form.displayColor" :disableAlpha="true" :style="{'width': '256px'}"/>
-          </div>
-        </b-form-group>
-        <b-form-group>
-          <label v-t="'label.bgColor'" />
-          <div v-if="!isEditable">
-            <b-form-row>
-              <b-col sm="1" :style="{'height': '32px', 'background-color': `#${colorCd4db(this.form.displayBgColor)}`}" />
-            </b-form-row>
-          </div>
-          <div v-else>
-            <chrome-picker v-model="form.displayBgColor" :disableAlpha="true" :style="{'width': '256px'}" />
-          </div>
-        </b-form-group>
+        <color-picker :caption="'label.textColor'" :name="'displayColor'"></color-picker>
+        <color-picker :caption="'label.bgColor'" :name="'displayBgColor'"></color-picker>
         <b-form-group>
           <label v-t="'label.description'" />
           <b-form-textarea v-model="form.description" :rows="3" :max-rows="6" :readonly="!isEditable" ></b-form-textarea>
@@ -61,7 +41,6 @@
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import _ from 'lodash'
-import { Chrome } from 'vue-color'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import editmixinVue from '../../../components/editmixin.vue'
 import * as Util from '../../../sub/util/Util'
@@ -69,11 +48,12 @@ import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import breadcrumb from '../../../components/breadcrumb.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import { SHAPE } from '../../../sub/constant/Constants'
+import colorPicker from '../../../components/colorpicker'
 
 export default {
   components: {
     breadcrumb,
-    'chrome-picker': Chrome,
+    colorPicker,
   },
   mixins: [editmixinVue],
   data() {
