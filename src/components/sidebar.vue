@@ -144,7 +144,6 @@ ul.menu-group-items {
 
 li.menu-item {
   display: block;
-  height: 55px;
   color: white;
 }
 

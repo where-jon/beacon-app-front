@@ -75,9 +75,6 @@ export default {
       )
       .value()
     },
-    colorCd4db(color){
-      return Util.colorCd4db(color)
-    },
     isShown(conf) {
       return APP[conf]
     },
@@ -165,9 +162,17 @@ export default {
             }
             if (csv.errors && typeof csv.errors[0] == 'object' ) {
               error = this.$i18n.tnl("message.csvInvalidLine")
+              let firstLine = true
               csv.errors.forEach((val) => {
                 if(val.row){
-                  error = error.concat(`<br>${this.$i18n.tnl("message.csvLine", {line: val.row})}`)
+                  if(!firstLine){
+                    error = error.concat(",")
+                  }
+                  else{
+                    error = error.concat("<br>")
+                    firstLine = false
+                  }
+                  error = error.concat(`${this.$i18n.tnl("message.csvLine", {line: val.row})}`)
                 }
               })
             }
@@ -241,12 +246,13 @@ export default {
       }
       
       if (error || !entities || entities.length == 0) {
-        throw new Error(error)
+        throw new Error(error? error: this.$i18n.tnl('message.csvNotFound'))
       }
       if(Util.hasValue(sameLine)){
         let errorMessage = this.$i18n.tnl('message.csvSameKey')
-        sameLine.forEach((val) => {
-          errorMessage = errorMessage.concat(`<br>${this.$i18n.tnl("message.csvLine", {line: val})}`)
+        sameLine.forEach((val, idx) => {
+          errorMessage = errorMessage.concat(idx != 0? ",": "<br>")
+          errorMessage = errorMessage.concat(`${this.$i18n.tnl("message.csvLine", {line: val})}`)
         })
         throw new Error(errorMessage)
       }

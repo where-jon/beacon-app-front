@@ -5,9 +5,6 @@
 
     <!-- Title -->
     <b-navbar-brand>
-      <!--
-      <span v-t="'label.title'" />
-      -->
       <img src="/toplogo.png" width=220 height=36 />
     </b-navbar-brand>
 
@@ -123,6 +120,18 @@ a.dropdown-item.autumn:hover {
 
 a.dropdown-item.vivid:hover {
   background: #EE5588 !important;
+}
+
+div.navbar-brand {
+  @media (max-width: 768px) {
+    margin-right: 32%;
+  }
+  @media (max-width: 620px) {
+    margin-right: 28%;
+  }
+  @media (max-width: 500px) {
+    margin-right: 18%;
+  }
 }
 
 </style>
