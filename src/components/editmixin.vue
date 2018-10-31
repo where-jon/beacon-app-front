@@ -172,6 +172,7 @@ export default {
                     error = error.concat(",")
                   }
                   else{
+                    error = error.concat("<br>")
                     firstLine = false
                   }
                   error = error.concat(`${this.$i18n.tnl("message.csvLine", {line: val.row})}`)
@@ -253,9 +254,7 @@ export default {
       if(Util.hasValue(sameLine)){
         let errorMessage = this.$i18n.tnl('message.csvSameKey')
         sameLine.forEach((val, idx) => {
-          if(idx != 0){
-            errorMessage = errorMessage.concat(",")
-          }
+          errorMessage = errorMessage.concat(idx != 0? ",": "<br>")
           errorMessage = errorMessage.concat(`${this.$i18n.tnl("message.csvLine", {line: val})}`)
         })
         throw new Error(errorMessage)
