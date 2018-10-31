@@ -357,6 +357,7 @@
     "updateCompleted": "{target}の更新が完了しました。",
     "registerCompleted": "{target}の登録が完了しました。",
     "bulkRegisterCompleted": "{target}の一括登録が完了しました。",
+    "deleteCompleted": "{target}の削除が完了しました。",
     "updateFailed": "{target}の更新に失敗しました。（{code}）",
     "registerFailed": "{target}の登録に失敗しました。（{code}）",
     "bulkRegisterFailed": "{target}の一括登録に失敗しました。（{code}）",
