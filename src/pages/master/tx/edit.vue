@@ -176,7 +176,7 @@ export default {
       let entity = {
         ...this.form,
         txId,
-        pot: (this.form.categoryId || this.form.displayName || this.form.description)? {
+        pot: (this.form.potId || this.form.categoryId || this.form.displayName || this.form.description)? {
           displayName: Util.getValue(this.form, 'displayName', null),
           description: Util.getValue(this.form, 'description', null),
           potId: Util.getValue(this.form, 'potId', -2),
