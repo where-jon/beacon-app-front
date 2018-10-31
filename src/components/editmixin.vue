@@ -75,9 +75,6 @@ export default {
       )
       .value()
     },
-    colorCd4db(color){
-      return Util.colorCd4db(color)
-    },
     isShown(conf) {
       return APP[conf]
     },
