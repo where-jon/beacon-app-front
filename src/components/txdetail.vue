@@ -1,5 +1,6 @@
 <template>
-  <div :class="selectedTx.class" :style="{left: selectedTx.left+'px', top: selectedTx.top+'px'}">
+  <!-- <div :class="selectedTx.class" :style="{left: selectedTx.left+'px', top: selectedTx.top+'px'}"> -->
+  <div :class="selectedTx.class" :style="styles">
     <div class="potBox" @click="$emit('resetDetail')">
       <div class="clearfix">
         <div class="thumbnail">
@@ -30,6 +31,19 @@ export default {
     return {
     }
   },
+  computed: {
+    styles () {
+      return {
+        left: this.selectedTx.left + 'px',
+        top: this.selectedTx.top +'px',
+        '--border': '3px solid ' + this.selectedTx.bgColor,
+        '--borderBottom': '15px solid ' + this.selectedTx.bgColor,
+        '--bgColor': this.selectedTx.bgColor,
+        '--boxShadow': '0px 0px 10px 0px ' + this.selectedTx.bgColor,
+        '--color': this.selectedTx.color,
+      }
+    }
+  },
   methods: {
     getDispItems () {
       const that = this
@@ -49,8 +63,8 @@ export default {
 .potBox {
   padding: 5px;
   overflow: hidden;
-  border: 3px solid $txdetail-bg;
-  background-color: $txdetail-bg;
+  border: var(--border);
+  background-color: var(--bgColor);
   border-radius: 3px;
   font-size: 0.9em;
   display: flex;
@@ -62,7 +76,7 @@ export default {
   position: absolute;
   top: 100px;
   left: 100px;
-  box-shadow: 0px 0px 10px 0px $txdetail-bg; 
+  box-shadow: var(--boxShadow);
 }
 
 .balloon-before {
@@ -78,7 +92,7 @@ export default {
   left: 20px;
   top: -15px;
   border-right: 15px solid transparent;
-  border-bottom: 15px solid $txdetail-bg;
+  border-bottom: var(--borderBottom);
   border-left: 15px solid transparent;
 }
 
@@ -86,7 +100,7 @@ export default {
   @extend .balloon-before;
   left: 27px;
   bottom: -15px;
-  border-top: 15px solid $txdetail-bg;
+  border-top: var(--borderBottom);
   border-right: 15px solid transparent;
   border-left: 15px solid transparent;
 }
@@ -105,7 +119,7 @@ export default {
 
 .description {
   float: left;
-  color: #444;
+  color: var(--color);
   font-weight: bold;
   padding-left: 10px;
 }
