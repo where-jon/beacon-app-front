@@ -42,11 +42,15 @@ export default {
     },
     isSuperEditable() {
       return this.$store.state.role == "SUPER_ADMIN"
-    }
+    },
+    ...mapState('app_service', [
+      'listMessage',
+    ]),
   },
   mounted() {
     that = this
     this.replace({title: this.$i18n.tnl('label.' + this.name) + this.label})
+    this.replaceAS({listMessage: null})
   },
   methods: {
     register(again) {
@@ -113,6 +117,7 @@ export default {
           window.scrollTo(0, 0)
         }
         else {
+          this.replaceAS({listMessage: this.message})
           this.backToList()
         }
       }
