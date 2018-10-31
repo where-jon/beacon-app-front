@@ -1,5 +1,4 @@
 <template>
-  <!-- <div :class="selectedTx.class" :style="{left: selectedTx.left+'px', top: selectedTx.top+'px'}"> -->
   <div :class="selectedTx.class" :style="styles">
     <div class="potBox" @click="$emit('resetDetail')">
       <div class="clearfix">
@@ -9,13 +8,6 @@
         </div>
         <div class="description">
           <div v-for="(item, index) in getDispItems()" :key="index">{{ item }}</div>
-          <!--
-          No.{{ selectedTx.no }} <br />
-          {{ selectedTx.name }}<br />
-          {{ selectedTx.category }}<br />
-          {{ selectedTx.group }}<br />
-          {{ getFinalReceiveTime(selectedTx.timestamp) }}<br />
-          -->
         </div>
       </div>
     </div>
