@@ -351,8 +351,9 @@ export default {
         thumbnail: Util.getValue(tx, 'pot.thumbnail', null) ? tx.pot.thumbnail : '',
       }
       const selectedArea = Util.getValue(item, 'exb.location.areaId', null)
-
-      this.replaceMain({selectedTx})
+      if (!item.noSelectedTx) {
+        this.replaceMain({selectedTx})
+      }
       this.replaceMain({selectedArea})
       this.$router.push("/main/position")
     }
