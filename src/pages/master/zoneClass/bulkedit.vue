@@ -65,6 +65,9 @@ export default {
         else if(headerName === "categoryId"){
           categoryId = val
         }
+        if(headerName == "areaName") {
+          entity.area = {areaId: dummyKey--, areaName: val}
+        }
         if(ZONE_COL.includes(headerName)) {
           entity[headerName] = val
         }
