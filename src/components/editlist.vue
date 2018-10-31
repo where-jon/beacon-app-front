@@ -38,7 +38,7 @@
                   <label v-t="'label.key'" />
                 </b-col>
                 <b-col sm="5">
-                  <b-form-input v-model="newForm.key" :type="'text'" class="form-control-sm" maxlength="20" required />
+                  <b-form-input v-model="newForm.key" :type="'text'" class="form-control-sm" maxlength="200" required />
                 </b-col>
               </b-form-row>
             </b-form-group>
