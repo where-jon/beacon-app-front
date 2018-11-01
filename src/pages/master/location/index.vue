@@ -78,6 +78,8 @@ export default {
       exbOptions: [],
       exbDisp: 'deviceIdX',
       deleteTarget: null,
+      ICON_ARROW_WIDTH: 20,
+      ICON_ARROW_HEIGHT: 10,
       exbDispOptions: [
         {value:'deviceId', text: this.$i18n.tnl('label.deviceId')},
         {value:'deviceIdX', text: this.$i18n.tnl('label.deviceIdX')},
@@ -156,7 +158,6 @@ export default {
           payload.done()
         }
         this.workExbs = _.cloneDeep(this.exbs)
-
         this.setExbPosition()
         this.showMapImage()
       }
@@ -225,28 +226,40 @@ export default {
 
       this.forceUpdateRealWidth()
     },
-    showExb(exb) {
-      console.log({exb})
-
-      let stage = this.stage
-      let exbBtn = new Container()
-      let btnBg = new Shape()
-      let {w, h} = DISP.EXB_LOC_SIZE
-      btnBg.graphics.beginFill(DISP.EXB_LOC_BGCOLOR).drawRect(-w/2, -h/2, w, h)
-      // btnBg.graphics.beginFill(DISP.EXB_LOC_BGCOLOR).drawRoundRect(-w/2, -h/2, w, h, 20, 20)
-      exbBtn.addChild(btnBg)
-
-      let label = new Text(this.getExbDisp(exb.deviceId))
+    createExbIcon(exb) {
+      const {w, h} = DISP.EXB_LOC_SIZE
+      const fromX = -w / 2
+      const fromY = -h / 2
+      const x = w + fromX
+      const y = h + fromY
+      const exbBtn = new Container()
+      const s = new Shape()
+      s.graphics.beginFill(DISP.EXB_LOC_BGCOLOR)
+      s.graphics.moveTo(fromX, fromY)
+      s.graphics.lineTo(x, fromY)
+      s.graphics.lineTo(x, y)
+      s.graphics.lineTo(x - this.ICON_ARROW_WIDTH, y)
+      s.graphics.lineTo(x - this.ICON_ARROW_WIDTH - this.ICON_ARROW_WIDTH / 2, y + this.ICON_ARROW_HEIGHT)
+      s.graphics.lineTo(x - this.ICON_ARROW_WIDTH - this.ICON_ARROW_WIDTH, y)
+      s.graphics.lineTo(fromX, y)
+      s.graphics.lineTo(fromX, fromY)
+      exbBtn.addChild(s)
+      const label = new Text(this.getExbDisp(exb.deviceId))
       label.font = DISP.EXB_LOC_FONT
       label.color = DISP.EXB_LOC_COLOR
       label.textAlign = "center"
       label.textBaseline = "middle"
       exbBtn.addChild(label)
-
       exbBtn.deviceId = exb.deviceId
       exbBtn.exbId = exb.exbId
       exbBtn.x = exb.x
-      exbBtn.y = exb.y
+      exbBtn.y = exb.y - (h / 2 + this.ICON_ARROW_HEIGHT)
+      return exbBtn
+    },
+    showExb(exb) {
+      let stage = this.stage
+      const offsetY = (DISP.EXB_LOC_SIZE.h / 2) + this.ICON_ARROW_HEIGHT
+      const exbBtn = this.createExbIcon(exb)
       exbBtn.on('pressmove', (evt) => {
         evt.currentTarget.set({
             x: evt.stageX,
@@ -258,7 +271,7 @@ export default {
       exbBtn.on('pressup', (evt) => {
         console.log(evt.stageX, evt.stageY)
         exb.x = evt.stageX
-        exb.y = evt.stageY
+        exb.y = evt.stageY + offsetY
         this.isChanged = true
         exb.isChanged = true
       })
@@ -267,9 +280,7 @@ export default {
         that.deleteTarget = exbBtn
         that.$root.$emit('bv::show::modal', 'modalDeleteConfirm')
       })
-
       this.exbCon.addChild(exbBtn)
-
     },
     ratioSettingStart() {
       this.settingStart = !this.settingStart
@@ -403,9 +414,13 @@ export default {
             exb.isChanged = false
           }
         })
+
         this.workExbs.forEach((exb) => { // deleted
           if (exb.location.areaId == this.selectedArea) {
-            if (!this.positionedExb.find((pExb) => pExb.exbId == exb.exbId)) {
+            if (!this.positionedExb.find((pExb) => {
+              console.log(exb)
+              return pExb.exbId == exb.exbId
+              })) {
               exb.location = {locationId: exb.location.locationId, areaId: null, x: null, y: null}
               exb.isChanged = false
               param.push(exb.location)
@@ -415,8 +430,9 @@ export default {
 
         if (param.length > 0) {
           await HttpHelper.postAppService('/core/location/updateLocation', param)
-          await StateHelper.load('exb')
+          await StateHelper.load('exb', true)
         }
+
         if (this.mapRatioChanged) {
           await AppServiceHelper.bulkSave('/core/area', [{areaId: this.selectedArea, mapRatio: this.mapRatio * this.mapImageScale}], UPDATE_ONLY_NN.EMPTY_ZERO)
           await StateHelper.load('area')
@@ -424,7 +440,9 @@ export default {
         this.message = this.$i18n.tnl('message.completed', {target: this.$i18n.tnl('label.save')})
         this.showInfo = true
         this.isChanged = false
+        this.exbs = this.positionedExb
       } catch (e) {
+        console.log(e)
         if (e.key) {
           this.message = this.$i18n.tnl('message.' + e.type, {key: this.$i18n.tnl('label.' + Util.snake2camel(e.key)), val: e.val})
         }
