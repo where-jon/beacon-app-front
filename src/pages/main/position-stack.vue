@@ -10,10 +10,13 @@
 
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import * as mock from '../../assets/mock/mock'
 import breadcrumb from '../../components/breadcrumb.vue'
 import commonmixinVue from '../../components/commonmixin.vue'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
+import * as PositionHelper from '../../sub/helper/PositionHelper'
+import { DISP, DEV } from '../../sub/constant/config'
 import * as Util from '../../sub/util/Util'
 
 let that
@@ -30,7 +33,7 @@ export default {
       name: 'position-stack',
       id: 'positionStackId',
       fields: [
-        {key: 'area'},
+        {key: 'label'},
         {key: 'icons'},
       ],
       eachAreas: [],
@@ -70,6 +73,9 @@ export default {
       'areas',
       'exbs',
     ]),
+    ...mapState('main', [
+      'orgPositions',
+    ])
   },
   mounted() {
     that = this
@@ -84,55 +90,43 @@ export default {
         await StateHelper.load('tx')
         await StateHelper.load('exb')
 
-        let positions = await EXCloudHelper.fetchPositionList(this.exbs, this.txs)
+        // positionデータ取得
+        let positions = await EXCloudHelper.fetchPosition(this.exbs, this.txs)
 
-        this.eachAreas = this.areas.map((val) => {
-          return {
-            area: val.areaName,
-          }
+        let orgPositions = _.clone(this.orgPositions)
+        if (orgPositions.length >= DISP.MOVING_AVERAGE) { // 移動平均数分のポジションデータを保持する
+          orgPositions.shift()
+        }
+        orgPositions.push(positions)
+        this.replaceMain({orgPositions})
+
+        let now = !DEV.USE_MOCK_EXC ? new Date().getTime()
+            : mock.positions_conf.start + this.count++ * mock.positions_conf.interval
+        const correctPositions = PositionHelper.correctPosId(this.orgPositions, now)
+
+        positions = _.filter(positions, (pos) => 
+          _.some(correctPositions, (cPos) => pos.btx_id == cPos.btx_id)
+        )
+
+        let tempArea = _.map(this.areas, (area) => ({
+          areaId: area.areaId,
+          label: area.areaName,
+          positions: []}))
+        _.forEach(positions, (pos) => {
+          const posAreaId = Util.getValue(pos, 'exb.location.areaId', null)
+          _.forEach(tempArea, (area) => {
+            if (posAreaId == area.areaId) {
+              area.positions.push(pos)
+            }
+          })
         })
+        this.eachAreas = tempArea
       } catch(e) {
         console.error(e)
       }
       this.replace({showProgress: false})
       console.log('fetchData End.')
-      // try {
-        // positions = positions.map((pos) => {
-      //     const stateOpt = DETECT_STATE.getTypes().find((val) => pos.phase === val.value)
-      //     return {
-      //       ...pos,
-      //       state: stateOpt ? stateOpt.text : null,
-      //       powerLevel: this.getPowerLevel(pos),
-      //       // 追加フィルタ用
-      //       detectState: pos.phase,
-      //       groupId: Util.getValue(pos, 'tx.group.groupId').val,
-      //       areaId: Util.getValue(pos, 'exb.location.areaId').val,
-      //     }
-      //   })
-      //   console.log(positions)
-      //   this.replaceAS({positions})
-      //   if (payload && payload.done) {
-      //     payload.done()
-      //   }
-      // }
-      // catch(e) {
-      //   console.error(e)
-      // }
-      // this.replace({showProgress: false})
     },
-    // getPowerLevel(position){
-    //   const batteryOpts = BATTERY_STATE.getTypes()
-    //   const powerLevel = position.power_level
-    //   if (!powerLevel) {
-    //     return batteryOpts.find((val) => val.value === 4)
-    //   } else if (powerLevel >= BATTERY_BOUNDARY.GOOD) {
-    //     return batteryOpts.find((val) => val.value === 1)
-    //   } else if (powerLevel >= BATTERY_BOUNDARY.WARNING) {
-    //     return batteryOpts.find((val) => val.value === 2)
-    //   } else {
-    //     return batteryOpts.find((val) => val.value === 3)
-    //   }
-    // },
   }
 }
 </script>

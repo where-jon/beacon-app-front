@@ -14,8 +14,9 @@ export const fetchPosition = async (exbs, txs, pMock) => {
     .filter((val) => exbs && exbs.some((exb) => exb.location.posId == val.pos_id))
     .map((val) => {
       let tx = _.find(txs, (tx) => tx.btxId == val.btx_id)
+      let exb = _.find(exbs, (exb) => exb.location.posId == val.pos_id)
       let label = tx && tx.displayName? tx.displayName: val.btx_id
-      return {btx_id: val.btx_id, pos_id: val.pos_id, label, nearest: val.nearest}
+      return {btx_id: val.btx_id, pos_id: val.pos_id, label, exb, nearest: val.nearest}
     })
     .compact().value()
 }
@@ -29,7 +30,8 @@ export const fetchPositionList = async (exbs, txs) => {
         if (!DEV.NOT_FILTER_TX || !tx) { return null}
         let exb = _.find(exbs, (exb) => exb.location.posId == val.pos_id)
         if (!exb || !exb.enabled) { return null}
-        return {...val, tx: tx, exb: exb, updatetime: dateform(val.updatetime)}
+        let label = tx && tx.displayName? tx.displayName: val.btx_id
+        return {...val, tx: tx, exb: exb, label, updatetime: dateform(val.updatetime)}
     }).compact().value()
 }
 
