@@ -120,6 +120,8 @@ export default {
       this.resetDetail()
     },
     async showDetail(txId, x, y) {
+      let tx = this.txs.find((tx) => tx.btxId == txId)
+      let display = this.getDisplay(tx)
       let rev = y > 400
       let map = HtmlUtil.getRect("#map")
       let containerParent = HtmlUtil.getRect("#mapContainer", "parentNode")
@@ -132,7 +134,6 @@ export default {
       const position = this.positions.find((e) => {
         return e.btx_id === txId
       })
-      console.log(p)
       let selectedTx = {
         txId,
         minor: 'minor:' + txId,
@@ -144,7 +145,9 @@ export default {
         timestamp: position ? this.getFinalReceiveTime(position.timestamp) : '',
         thumbnail: p.thumbnail ? p.thumbnail : '',
         category: p.potCategoryList && p.potCategoryList.length > 0 ? p.potCategoryList[0].category.categoryName : '',
-        group: p.potGroupList && p.potGroupList.length > 0 ? p.potGroupList[0].group.groupName : ''
+        group: p.potGroupList && p.potGroupList.length > 0 ? p.potGroupList[0].group.groupName : '',
+        bgColor: '#' + display.bgColor,
+        color: '#' + display.color,
       }
       this.replaceMain({selectedTx})
     },
