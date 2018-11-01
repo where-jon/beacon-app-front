@@ -126,7 +126,7 @@ export default {
         else if (e.bulkError) {
           this.message = _.map(e.bulkError, (err) => {
             return this.$i18n.tnl('message.bulk' + err.type + 'Failed', 
-              {line: err.line, col: err.col, value: err.value, min: err.min, max: err.max, candidates: err.candidates})
+              {col: this.$i18n.tnl(`label.${err.col.trim()}`), value: err.value, min: err.min, max: err.max, candidates: err.candidates})
           }).join("<br>")
         }
         else {
