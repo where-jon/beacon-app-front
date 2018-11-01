@@ -18,6 +18,14 @@ export const numberRange = (start, end) => new Array(end - start + 1).fill().map
 
 export const str2boolean = (str) => hasValue(str) && str.toLowerCase() != "false"
 
+export const luminance = (hex) => {
+  const num = parseInt(hex, 16)
+  const r = num >> 16
+  const g = num >> 8 & 0xff
+  const b = num & 0xff
+  return 0.298912 * r + 0.586611 * g + 0.114478 * b
+}
+
 export const table = (log) => {
   if (DEV.DEBUG) {
     console.table(log)
@@ -39,8 +47,11 @@ export const colorCd4db = (obj) => {
   return color.slice(0, 8)
 }
 
-export const colorCd4display = (str, defaultColor = "#000000") => {
-  let color = str? str: defaultColor
+export const colorCd4display = (obj, defaultColor = "#000000") => {
+  if(!obj){
+    return defaultColor
+  }
+  let color = obj.hex? obj.hex: obj
   return "#" + color.replace("#", "").slice(0, 8)
 }
 
