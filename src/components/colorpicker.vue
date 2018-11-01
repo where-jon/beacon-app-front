@@ -62,9 +62,11 @@ export default {
       }
       if(this.editMode){
         document.addEventListener('click', this.documentClick);
+        document.addEventListener('touchend', this.documentClick);
       }
       else{
         document.removeEventListener('click', this.documentClick);
+        document.removeEventListener('touchend', this.documentClick);
       }
     },
     documentClick(e) {
