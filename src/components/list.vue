@@ -1,7 +1,7 @@
 <template>
   <b-form inline>
     <b-container :fluid="isFluid">
-      <b-alert variant="info" :show="showMessage()">{{ message }}</b-alert>
+      <b-alert variant="info" dismissible :show="showMessage()">{{ message }}</b-alert>
       <!-- searchbox -->
       <template v-if="!params.hideSearchBox">
         <b-row class="mb-1">
