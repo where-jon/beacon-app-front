@@ -55,13 +55,20 @@ export default {
 
     if (this.$route.path.startsWith("/main")) {      
       let timer = 0
-      window.addEventListener('resize', () => {
+      let path = this.$route.path
+      let onResize = () => {
         // const positions = PositionHelper.adjustPosition(this.positions)
         // that.replaceMain({positions})
+        if (path != this.$route.path) {
+          window.removeEventListener('resize', onResize)
+          clearTimeout(timer);
+          return
+        }
         if (timer > 0) {
           clearTimeout(timer);
         } 
         timer = setTimeout(() => {
+          console.log(path + " : " + this.$route.path)
           that.reset()
           if (that.stage) {
             that.stage.removeAllChildren()
@@ -72,7 +79,8 @@ export default {
             that.fetchData()
           }
         }, 200);
-      })
+      }
+      window.addEventListener('resize', onResize)
     }
   },
   methods: {
@@ -188,9 +196,6 @@ export default {
           that.realWidth = ""
         })
       }
-    },
-    getSensorId(exb) {
-      return Util.getValue(exb, 'exbSensorList.0.sensor.sensorId').val
     },
     async getPotByTxId(txId) {
       let pot = await AppServiceHelper.fetch('/basic/pot', txId)

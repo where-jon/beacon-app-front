@@ -1,6 +1,7 @@
 
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import * as Util from '../sub/util/Util'
 
 export default {
   methods: {
@@ -20,6 +21,9 @@ export default {
     ...mapMutations('setting', [
       'replaceSetting', 
     ]),
+    getSensorId(exb) {
+      return Util.getValue(exb, 'exbSensorList.0.sensor.sensorId').val
+    },
   }
 }
 </script>
