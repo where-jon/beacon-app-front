@@ -70,3 +70,24 @@ export const updateConfig = (updateData) => {
   })
   console.debug({config})
 }
+
+export const deleteConfig = (key, defaultConfig) => {
+  const propHierarchies = key.split(".")
+  let curDefaultKey = defaultConfig
+  let curKey = config
+  for(let idx = 0; idx < propHierarchies.length - 1; idx++){
+    const propHierarchy = propHierarchies[idx]
+    if (!curKey[propHierarchy]) {
+      return
+    }
+    curKey = curKey[propHierarchy]
+    curDefaultKey = curDefaultKey && curDefaultKey[propHierarchy]? curDefaultKey[propHierarchy]: null
+  }
+  const lastPropHierarchy = propHierarchies[propHierarchies.length - 1]
+  if(curDefaultKey && curDefaultKey[lastPropHierarchy]){
+    curKey[lastPropHierarchy] = curDefaultKey[lastPropHierarchy]
+  }
+  else{
+    delete curKey[lastPropHierarchy]
+  }
+}

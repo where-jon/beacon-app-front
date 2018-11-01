@@ -80,7 +80,7 @@
     </div>
 
     <!-- modal -->
-    <b-modal id="modalInfo" :title="modalInfo.title" @ok="execDelete(modalInfo.id)">
+    <b-modal id="modalInfo" :title="modalInfo.title" @ok="execDelete(modalInfo)">
       {{ modalInfo.content }}
     </b-modal>
   </div>
@@ -180,10 +180,11 @@ export default {
       this.modalInfo.title = this.$i18n.tnl('label.confirm')
       this.modalInfo.content = this.$i18n.tnl('message.deleteConfirm', {target: this.getName(item.key)})
       this.modalInfo.id = item.id
+      this.modalInfo.key = item.key
       this.$root.$emit('bv::show::modal', 'modalInfo', button)
     },
-    async execDelete(id) {
-      await this.$parent.$options.methods.deleteEntity.call(this.$parent, id)
+    async execDelete(entity) {
+      await this.$parent.$options.methods.deleteEntity.call(this.$parent, entity)
       await this.$parent.$options.methods.fetchData.call(this.$parent, true)
     },
     showForm(isShow){
