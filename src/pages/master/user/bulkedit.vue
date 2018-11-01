@@ -47,8 +47,20 @@ export default {
   methods: {
     async save(bulkSaveFunc) {
       const MAIN_COL = "userId"
-      const NUMBER_TYPE_LIST = ["userId", "roleId"]
-      await bulkSaveFunc(MAIN_COL, NUMBER_TYPE_LIST)
+      const ROLE_COL = ["roleName"]
+      const NUMBER_TYPE_LIST = ["roleId"]
+      await bulkSaveFunc(MAIN_COL, NUMBER_TYPE_LIST, null, (entity, headerName, val, dummyKey) => {
+        if (headerName == MAIN_COL && !Util.hasValue(val)) {
+          val = dummyKey--
+        }
+        if (_.includes(ROLE_COL, headerName)) {
+          entity.role = {roleId: dummyKey--, roleName: val}
+        }
+        else{
+          entity[headerName] = val
+        }
+        return dummyKey
+      })
     },
   }
 }

@@ -1,7 +1,7 @@
 <template>
   <b-form inline>
     <b-container :fluid="isFluid">
-      <b-alert variant="info" :show="message">{{ message }}</b-alert>
+      <b-alert variant="info" :show="showMessage()">{{ message }}</b-alert>
       <!-- searchbox -->
       <template v-if="!params.hideSearchBox">
         <b-row class="mb-1">
@@ -246,6 +246,9 @@ export default {
     },
     setEmptyMessage(){
       this.message = null
+    },
+    showMessage(){
+      return Util.hasValue(this.message)
     },
     exportCsv() {
       this.setEmptyMessage()

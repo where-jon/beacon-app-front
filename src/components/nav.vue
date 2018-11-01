@@ -134,4 +134,7 @@ div.navbar-brand {
   }
 }
 
+em:not(:hover) {
+  color: white;
+}
 </style>
