@@ -104,7 +104,7 @@ export default {
     },
     async deleteEntity(entity) {
       await AppServiceHelper.deleteEntity(this.appServicePath, entity.id)
-      ConfigHelper.deleteConfig(entity.key, this.defaultConfig)
+      ConfigHelper.applyAppServiceSetting([entity], this.defaultConfig)
     },
     async save() {
       const entity = []
