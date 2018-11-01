@@ -3,7 +3,7 @@
   <div>
     <breadcrumb :items="items" />
     <div class="container">
-      <b-alert variant="success" :show="isSuccess">{{ 
+      <b-alert variant="success" dismissible :show="isSuccess">{{ 
         $i18n.tnl('message.updateCompleted', {
           target: $i18n.tnl('label.login-user-profile')})
         }}</b-alert>
@@ -72,7 +72,7 @@
                 </b-form-group>
 
               </b-form-group>
-              <b-alert variant="danger" :show="passErrorMessage !== null">{{ passErrorMessage }}</b-alert>
+              <b-alert variant="danger" dismissible :show="passErrorMessage !== null">{{ passErrorMessage }}</b-alert>
             </b-card>
           </b-form>
         </b-col>
