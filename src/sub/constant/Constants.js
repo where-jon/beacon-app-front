@@ -172,6 +172,12 @@ export const MENU = [
         icon: 'fas fa-list',
       },
       {
+        key: 'positionStack',
+        path: 'position-stack',
+        feature: '/basic/position-stack',
+        icon: 'far fa-building',
+      },
+      {
         key: 'ledOperation',
         path: 'led',
         feature: '/basic/led',
