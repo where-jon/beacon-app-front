@@ -260,6 +260,12 @@ export const MENU = [
         feature: '/core/zone',
         icon: 'far fa-compass',
       },
+      {
+        key: 'zoneBlock',
+        path: 'zoneBlock',
+        feature: '/core/zone/blcok',
+        icon: 'fas fa-th',
+      },
     ]
   },
   {

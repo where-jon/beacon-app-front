@@ -19,16 +19,16 @@
             <td>{{ gateway.deviceid }}</td>
             <td>{{ gateway.updated }}</td>
             <td v-if="getGatewayState(gateway.timestamp) === gatewayState.NORMAL">
-              <span class="badge badge-pill" :style="{backgroundColor: gatewayState.NORMAL}">{{ $i18n.tnl('label.receiveNormal') }}</span>
+              <span class="badge badge-pill" :style="{backgroundColor: gatewayState.NORMAL}">{{ $i18n.t('label.receiveNormal') }}</span>
             </td>
             <td v-else-if="getGatewayState(gateway.timestamp) === gatewayState.MALFUNCTION">
-              <span class="badge badge-pill" :style="{backgroundColor: gatewayState.MALFUNCTION}">{{ $i18n.tnl('label.malfunction') }}</span>
+              <span class="badge badge-pill" :style="{backgroundColor: gatewayState.MALFUNCTION}">{{ $i18n.t('label.malfunction') }}</span>
             </td>
             <td v-else-if="getGatewayState(gateway.timestamp) === gatewayState.NOTRECEIVE">
-              <span class="badge badge-pill" :style="{backgroundColor: gatewayState.NOTRECEIVE}">{{ $i18n.tnl('label.notReceive') }}</span>
+              <span class="badge badge-pill" :style="{backgroundColor: gatewayState.NOTRECEIVE}">{{ $i18n.t('label.notReceive') }}</span>
             </td>
             <td v-else>
-              <span class="badge badge-pill" :style="{backgroundColor: gatewayState.UNDETECT}">{{ $i18n.tnl('label.undetect') }}</span>
+              <span class="badge badge-pill" :style="{backgroundColor: gatewayState.UNDETECT}">{{ $i18n.t('label.undetect') }}</span>
             </td>
           </tr>
         </tbody>
@@ -59,19 +59,21 @@ export default {
     return {
       items: [
         {
-          text: this.$i18n.tnl('label.monitor'),
+          text: this.$i18n.t('label.monitor'),
           active: true
         },
         {
-          text: this.$i18n.tnl('label.gateway'),
+          text: this.$i18n.t('label.gateway'),
           active: true
         }
       ],
       isLoad: false,
-      labelNo: this.$i18n.tnl('label.no'),
-      labelDeviceId: this.$i18n.tnl('label.deviceId'),
-      labelTimestamp: this.$i18n.tnl('label.final-receive-timestamp'),
-      labelState: this.$i18n.tnl('label.state'),
+      labelNo: this.$i18n.t('label.no'),
+      labelDeviceId: this.$i18n.t('label.deviceId'),
+      labelTimestamp: this.$i18n.t('label.final-receive-timestamp'),
+      labelState: this.$i18n.t('label.state'),
+      labelReceiveNormal: this.$i18n.t('label.receiveNormal'),
+      labelMalfunction: this.$i18n.t('label.malfunction'),
       gatewayState: GATEWAY.STATE_COLOR
     }
   },
@@ -92,17 +94,17 @@ export default {
   },
   mounted() {
     this.fetchData()
-    this.replace({title: this.$i18n.tnl('label.gateway')})
+    this.replace({title: this.$i18n.t('label.gateway')})
     if (!this.isDev) {
       return
     }
     this.items = [
       {
-        text: this.$i18n.tnl('label.develop'),
+        text: this.$i18n.t('label.develop'),
         active: true
       },
       {
-        text: this.$i18n.tnl('label.gateway'),
+        text: this.$i18n.t('label.gateway'),
         active: true
       }
     ]
@@ -120,9 +122,8 @@ export default {
         const currentTime = new Date().getTime()
         gateways = gateways.map((e) => {
           const timestamp = formattedDateToDatetime(e.updated)
-          const state = currentTime - timestamp < APP.MALFUNCTION_TIME ?
-          this.$i18n.tnl('label.receiveNormal') : this.$i18n.tnl('label.malfunction')
-          return { ...e, state: state}
+          const state = currentTime - timestamp < GATEWAY.MALFUNCTION ? this.labelReceiveNormal: this.labelMalfunction
+          return { ...e, state: state }
         })
         this.replaceMonitor({gateways})
       }
@@ -140,7 +141,7 @@ export default {
     },
     getTableHeaders() {
       return !this.isDev ? [this.labelNo,this.labelDeviceId,this.labelTimestamp,this.labelState]
-      : [this.labelNo,'deviceid','updated']
+      : [this.labelNo,'deviceid','updated','state']
     },
     getGatewayState(updated) {
       // 未検知
@@ -159,6 +160,7 @@ export default {
       }
     },
     download() {
+      console.log(Util.converToCsv(this.gateways))
       HtmlUtil.fileDL("gateway.csv", Util.converToCsv(this.gateways), getCharSet(this.$store.state.loginId))
     },
   }

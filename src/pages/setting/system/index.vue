@@ -97,6 +97,9 @@ export default {
         value: this.newForm.value,
       }
     },
+    async deleteEntity(id) {
+      await AppServiceHelper.deleteEntity(this.appServicePath, id)
+    },
     async save() {
       const entity = []
       for(let key in this.categorySettings){

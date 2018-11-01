@@ -17,7 +17,8 @@
             </b-form-group>
             <b-form-group>
               <label v-t="'label.map'" />
-              <b-form-file v-if="isEditable" @change="readImage" v-model="form.mapImage" accept="image/jpeg, image/png, image/gif" :placeholder="$t('message.selectFile') "></b-form-file>
+              <b-form-file v-if="isEditable" @change="readImage" v-model="form.mapImage" ref="inputThumbnail" accept="image/jpeg, image/png, image/gif" :placeholder="$t('message.selectFile') "></b-form-file>
+              <b-button v-if="isEditable && form.mapImage" type="button" :variant="theme" @click="clearImage" class="float-right mt-3">{{ $i18n.tnl('label.clear') }}</b-button>
               <img v-if="form.mapImage" ref="mapImage" :src="form.mapImage" width="100" class="mt-1 ml-3" />
             </b-form-group>
             <b-button type="button" variant="outline-danger" @click="backToList" v-t="'label.back'" />
@@ -86,6 +87,11 @@ export default {
   methods: {
     readImage(e) {
       this.readImageView(e, 'mapImage', 'mapWidth', 'mapHeight', 'thumbnail', APP.AREA_THUMBNAIL_MAX)
+    },
+    clearImage(e) {
+      this.form.mapImage = undefined
+      this.form.thumbnail = undefined
+      this.$refs.inputThumbnail.reset()
     },
     beforeSubmit(again){
       if(this.form.areaId != null){

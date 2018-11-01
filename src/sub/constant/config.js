@@ -232,3 +232,8 @@ export const TXDETAIL_ITEMS = [
   {name: 'group', disp: true},
   {name: 'category', disp: true},
 ]
+
+export const ZONE = {
+  MIN_WIDTH: 30,
+  MIN_HEIGHT: 30,
+}

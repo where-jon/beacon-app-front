@@ -1,6 +1,7 @@
 <template>
   <div id="mapContainer" class="container-fluid">
-    <breadcrumb :items="items" :reload="true" />
+    <breadcrumb :items="items" :extraNavSpec="extraNavSpec"
+        :reload="true" />
     <b-row class="mt-2">
       <b-form inline class="mt-2">
         <label class="ml-3 mr-2">{{ $t('label.area') }}</label>
@@ -73,6 +74,23 @@ export default {
       pot: {},
       showMeditag: APP.USE_MEDITAG,
       meditagSensors: [],
+      extraNavSpec: [
+        {
+          key: 'showPosition',
+          path: '/main/position',
+          icon: 'fas fa-map-marker-alt',
+        },
+        {
+          key: 'position-list',
+          path: '/main/position-list',
+          icon: 'fas fa-list',
+        },
+        {
+          key: 'positionStack',
+          path: '/main/position-stack',
+          icon: 'far fa-building',
+        },
+      ],
     }
   },
   computed: {
@@ -92,6 +110,9 @@ export default {
   updated(){
     if (this.isFirstTime) return
     // this.fetchData()
+  },
+  beforeDestroy() {
+    this.resetDetail()
   },
   methods: {
     reset() {

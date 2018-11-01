@@ -22,6 +22,7 @@
                   </span>
                 </span>
               </span>
+              <b-button v-if="isSuperEditable" size="sm" @click.stop="deleteConfirm(row, $event.target)" variant="outline-danger" v-t="'label.delete'" class="mt-1 float-right" />
             </b-form-group>
           </div>
         </div>
@@ -37,7 +38,7 @@
                   <label v-t="'label.key'" />
                 </b-col>
                 <b-col sm="5">
-                  <b-form-input v-model="newForm.key" :type="'text'" class="form-control-sm" maxlength="20" required />
+                  <b-form-input v-model="newForm.key" :type="'text'" class="form-control-sm" maxlength="200" required />
                 </b-col>
               </b-form-row>
             </b-form-group>
@@ -77,6 +78,11 @@
         <b-button v-if="isEditable && !useRegistForm" type="submit" :variant="theme" @click="register(true)" class="ml-2" v-t="'label.update'" />
       </b-form>
     </div>
+
+    <!-- modal -->
+    <b-modal id="modalInfo" :title="modalInfo.title" @ok="execDelete(modalInfo.id)">
+      {{ modalInfo.content }}
+    </b-modal>
   </div>
 </template>
 
@@ -97,6 +103,7 @@ export default {
     return {
       ...this.params,
       useRegistForm: false,
+      modalInfo: { title: '', content: '', id:'' },
     }
   },
   computed: {
@@ -168,6 +175,16 @@ export default {
     beforeReload(){
       this.useRegistForm = false
       this.$parent.$options.methods.beforeReload.apply(this.$parent)
+    },
+    deleteConfirm(item, button) {
+      this.modalInfo.title = this.$i18n.tnl('label.confirm')
+      this.modalInfo.content = this.$i18n.tnl('message.deleteConfirm', {target: this.getName(item.key)})
+      this.modalInfo.id = item.id
+      this.$root.$emit('bv::show::modal', 'modalInfo', button)
+    },
+    async execDelete(id) {
+      await this.$parent.$options.methods.deleteEntity.call(this.$parent, id)
+      await this.$parent.$options.methods.fetchData.call(this.$parent, true)
     },
     showForm(isShow){
       this.useRegistForm = isShow

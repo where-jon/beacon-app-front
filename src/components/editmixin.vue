@@ -42,11 +42,15 @@ export default {
     },
     isSuperEditable() {
       return this.$store.state.role == "SUPER_ADMIN"
-    }
+    },
+    ...mapState('app_service', [
+      'listMessage',
+    ]),
   },
   mounted() {
     that = this
     this.replace({title: this.$i18n.tnl('label.' + this.name) + this.label})
+    this.replaceAS({listMessage: null})
   },
   methods: {
     register(again) {
@@ -110,6 +114,7 @@ export default {
           window.scrollTo(0, 0)
         }
         else {
+          this.replaceAS({listMessage: this.message})
           this.backToList()
         }
       }
@@ -142,6 +147,17 @@ export default {
           if (thumbnailName) that.form[thumbnailName] = thumbnail
       }, resize)
     },
+    formatErrorLine(lines){
+      let errorMessage = this.$i18n.tnl("message.csvLineStart")
+      lines.forEach((val, idx) => {
+        if(idx != 0){
+          errorMessage = errorMessage.concat(",")
+        }
+        errorMessage = errorMessage.concat(`${this.$i18n.tnl("message.csvLine", {line: val})}`)
+      })
+      errorMessage = errorMessage.concat(this.$i18n.tnl("message.csvLineEnd"))
+      return errorMessage
+    },
     async bulkSave(mainCol, intTypeList, boolTypeList, callback, idSetCallback) {
       if (!this.form.csvFile) {
         throw new Error(this.$t('message.emptyFile'))
@@ -151,6 +167,7 @@ export default {
       let readFin = false
       let error = null
       let entities = []
+      const sameLine = []
       reader.addEventListener('load', (e) => {
         try {
           let csv = Util.csv2Obj(e.target.result)
@@ -159,13 +176,16 @@ export default {
             if (csv.errors && typeof csv.errors[0] == 'string' && csv.errors[0].startsWith("message.")) {
               error = this.$t(csv.errors[0])
             }
+            if (csv.errors && typeof csv.errors[0] == 'object' ) {
+              const errorLine = csv.errors.filter((val) => val.row).map((val) => val.row)
+              error = `${this.$i18n.tnl("message.csvInvalidLine")}${this.formatErrorLine(errorLine)}`
+            }
             readFin = true
             return
           }
           console.debug(csv)
           let header
           let dummyKey = -1
-          
           csv.data.forEach((line, lineIdx) => {
             if (lineIdx == 0) {
               header = line
@@ -188,7 +208,7 @@ export default {
                   return
                 }
                 if (Util.equalsAny(headerName, boolTypeList)) { // Boolean type
-                  val = Boolean(val)
+                  val = Util.str2boolean(val)
                 }
                 else if (Util.equalsAny(headerName, intTypeList)) { // Number type
                   val = Number(val)
@@ -206,6 +226,10 @@ export default {
               })
               if(idSetCallback){
                 dummyKey = idSetCallback(entity, dummyKey)
+              }
+              const sameEntity = entities.find((val) => val[mainCol] == entity[mainCol])
+              if(sameEntity){
+                sameLine.push(lineIdx)
               }
               entities.push(entity)
             }
@@ -226,7 +250,10 @@ export default {
       }
       
       if (error || !entities || entities.length == 0) {
-        throw new Error(error)
+        throw new Error(error? error: this.$i18n.tnl('message.csvNotFound'))
+      }
+      if(Util.hasValue(sameLine)){
+        throw new Error(`${this.$i18n.tnl('message.csvSameKey')}${this.formatErrorLine(sameLine)}`)
       }
 
       await AppServiceHelper.bulkSave(this.appServicePath, entities)

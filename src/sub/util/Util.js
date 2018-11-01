@@ -16,6 +16,8 @@ export const getByteLength = (str) => encodeURI(str == null? "": str).replace(/%
 
 export const numberRange = (start, end) => new Array(end - start + 1).fill().map((d, i) => i + start)
 
+export const str2boolean = (str) => hasValue(str) && str.toLowerCase() != "false"
+
 export const table = (log) => {
   if (DEV.DEBUG) {
     console.table(log)
@@ -28,10 +30,11 @@ export const debug = function(log) {
   }
 }
 
-export const colorCd4db = (str) => {
-  if(!str){
+export const colorCd4db = (obj) => {
+  if(!obj){
     return "000000"
   }
+  const str = obj.hex? obj.hex: obj
   const color = str.replace("#", "")
   return color.slice(0, 8)
 }

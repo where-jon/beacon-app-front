@@ -77,7 +77,7 @@ export default {
   },
   updated(){
     if (this.isFirstTime) return
-    this.fetchData()
+    // this.fetchData()
   },
   methods: {
     reset() {
@@ -118,10 +118,6 @@ export default {
     showMapImage() {
       if (this.showMapImageDef()) {
         return
-      }
-
-      if (this.exbCon) {
-        this.exbCon.removeAllChildren()
       }
 
       this.positionedExb.forEach((exb) => {

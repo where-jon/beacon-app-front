@@ -104,7 +104,15 @@ export default {
       powerLevelGood: 69,
       powerLevelWarn: 39,
       locationMap: {},
-      badgeClassPrefix: 'badge badge-pill badge-'
+      badgeClassPrefix: 'badge badge-pill badge-',
+      csvHeaders: {
+        ['minor']: 'minor',
+        [this.$i18n.tnl('label.name')]: 'name',
+        [this.$i18n.tnl('label.final-receive-timestamp')]: 'timestamp',
+        [this.$i18n.tnl('label.receive-place')]: 'finalReceivePlace',
+        [this.$i18n.tnl('label.state')]: 'state',
+        [this.$i18n.tnl('label.power-level')]: 'powerLevel'
+      }
     }
   },
   props: {
@@ -180,9 +188,9 @@ export default {
           [that.label_minor]: e.minor,
           [that.label_name]: name != null ? name : '—',
           [that.label_powerLevel]: e.power_level,
-          [that.label_receivePlace]: this.locationMap[e.device_id],
-          [that.label_state]: this.txState(e.updatetime),
-          [that.label_timestamp]: this.getTimestamp(e.updatetime),
+          [that.label_receivePlace]: that.locationMap[e.device_id],
+          [that.label_state]: that.txState(e.updatetime),
+          [that.label_timestamp]: that.getTimestamp(e.updatetime),
         }
         return record
       })
@@ -224,12 +232,19 @@ export default {
       'success' : (txState === this.label_absent ? 'warning' : 'danger'))
     },
     download() {
-      HtmlUtil.fileDL("position.csv", Util.converToCsv(this.positions), getCharSet(this.$store.state.loginId))
+      const records = this.positions.map(e => {
+        const obj = {}
+        Object.keys(e).forEach(k => {
+          obj[this.csvHeaders[k]] = e[k]
+        })
+        return obj
+      })
+      HtmlUtil.fileDL("position.csv", Util.converToCsv(records), getCharSet(this.$store.state.loginId))
     },
     async getExbRecords() {
       await StateHelper.load('exb')
       this.locationMap = this.exbs.reduce((obj, record) => {
-        obj[parseInt(record.deviceId, 16)] = record.location.locationName
+        obj[record.deviceId] = record.location.locationName
         return obj
       }, {})
     }

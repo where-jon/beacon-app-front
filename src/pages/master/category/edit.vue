@@ -23,14 +23,8 @@
           <label v-t="'label.shape'" />
           <b-form-select v-model="form.displayShape" :options="shapes" required :disabled="!isEditable" :readonly="!isEditable" />
         </b-form-group>
-        <b-form-group>
-          <label v-t="'label.textColor'" />
-          <b-form-input type="color" v-model="form.displayColor" required :disabled="!isEditable" :readonly="!isEditable" />
-        </b-form-group>
-        <b-form-group>
-          <label v-t="'label.bgColor'" />
-          <b-form-input type="color" v-model="form.displayBgColor" required :disabled="!isEditable" :readonly="!isEditable" />
-        </b-form-group>
+        <color-picker :caption="'label.textColor'" :name="'displayColor'"></color-picker>
+        <color-picker :caption="'label.bgColor'" :name="'displayBgColor'"></color-picker>
         <b-form-group>
           <label v-t="'label.description'" />
           <b-form-textarea v-model="form.description" :rows="3" :max-rows="6" :readonly="!isEditable" ></b-form-textarea>
@@ -54,10 +48,12 @@ import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import breadcrumb from '../../../components/breadcrumb.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import { CATEGORY, SHAPE } from '../../../sub/constant/Constants'
+import colorPicker from '../../../components/colorpicker'
 
 export default {
   components: {
     breadcrumb,
+    colorPicker,
   },
   mixins: [editmixinVue],
   data() {
