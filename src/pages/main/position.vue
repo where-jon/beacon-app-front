@@ -122,6 +122,7 @@ export default {
     async showDetail(txId, x, y) {
       let tx = this.txs.find((tx) => tx.btxId == txId)
       let display = this.getDisplay(tx)
+      // rev === trueの場合、ポップアップを上に表示
       let rev = y > 400
       let map = HtmlUtil.getRect("#map")
       let containerParent = HtmlUtil.getRect("#mapContainer", "parentNode")
@@ -140,7 +141,7 @@ export default {
         major: p.tx && p.tx.major? 'major:' + p.tx.major : '',
         class: !txId? "": "balloon" + (rev? "-u": ""),
         left: x + offsetX + tipOffsetX + (rev? - 7: 0),
-        top: y + offsetY + tipOffsetY + DISP.TX_R + (rev? - 232: 0),
+        top: y + offsetY + tipOffsetY + DISP.TX_R + (rev? - 214: 0),
         name: p.potName ? p.potName : '',
         timestamp: position ? this.getFinalReceiveTime(position.timestamp) : '',
         thumbnail: p.thumbnail ? p.thumbnail : '',
