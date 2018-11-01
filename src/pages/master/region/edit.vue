@@ -3,7 +3,7 @@
     <breadcrumb :items="items" />
     <div class="container">
 
-      <b-alert variant="info" :show="showInfo">{{ message }}</b-alert>
+      <b-alert variant="info" dismissible :show="showInfo">{{ message }}</b-alert>
       <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">{{ message }}</b-alert>
 
       <b-form @submit="onSubmit" v-if="show">
@@ -17,7 +17,7 @@
         </b-form-group>
         <b-form-group>
           <label v-t="'label.meshId'" />
-          <b-form-input type="number" v-model="form.meshId" maxlength="20" :readonly="!isEditable" />
+          <b-form-input type="number" v-model="form.meshId" min="0" max="65535" :readonly="!isEditable" />
         </b-form-group>
         <b-form-group>
           <label v-t="'label.deviceOffset'" />

@@ -18,6 +18,7 @@ import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import _ from 'lodash'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
+import * as ConfigHelper from '../../../sub/helper/ConfigHelper'
 import breadcrumb from '../../../components/breadcrumb.vue'
 import pagetitle from '../../../components/pagetitle.vue'
 import editList from '../../../components/editlist.vue'
@@ -58,6 +59,7 @@ export default {
   computed: {
     ...mapState('app_service', [
       'settings',
+      'defaultConfig',
     ]),
   },
   methods: {
@@ -65,6 +67,9 @@ export default {
       try {
         this.replace({showProgress: true})
         await StateHelper.load('settings', force)
+        if(force){
+          ConfigHelper.applyAppServiceSetting(this.settings)
+        }
         if(!Util.isArray(this.settings)){
           this.settings = []
         }
@@ -97,8 +102,9 @@ export default {
         value: this.newForm.value,
       }
     },
-    async deleteEntity(id) {
-      await AppServiceHelper.deleteEntity(this.appServicePath, id)
+    async deleteEntity(entity) {
+      await AppServiceHelper.deleteEntity(this.appServicePath, entity.id)
+      ConfigHelper.applyAppServiceSetting([entity], this.defaultConfig)
     },
     async save() {
       const entity = []

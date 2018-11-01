@@ -1,6 +1,7 @@
 <template>
   <b-form inline>
     <b-container :fluid="isFluid">
+      <b-alert variant="info" dismissible :show="showMessage()">{{ message }}</b-alert>
       <!-- searchbox -->
       <template v-if="!params.hideSearchBox">
         <b-row class="mb-1">
@@ -125,6 +126,7 @@ export default {
       totalRows: this.initTotalRows,
       file: null,
       detectState: DETECT_STATE,
+      message: null,
       ...this.params
     }
   },
@@ -152,7 +154,8 @@ export default {
     ...mapState('app_service', [
       'categories',
       'groups',
-      'areas'
+      'areas',
+      'listMessage',
     ]),
     ...mapState('main', [
       'selectedTx',
@@ -206,6 +209,8 @@ export default {
   },
   mounted() {
     that = this
+    this.message = this.listMessage
+    this.replaceAS({listMessage: null})
     this.$parent.$options.methods.fetchData.apply(this.$parent)
     if (this.params.extraFilter) {
       this.params.extraFilter.filter((str) => !(str === 'detectState'))
@@ -239,7 +244,14 @@ export default {
     thumbnail(row) {
       return this.$parent.$options.methods.thumbnail.call(this.$parent, row)
     },
+    setEmptyMessage(){
+      this.message = null
+    },
+    showMessage(){
+      return Util.hasValue(this.message)
+    },
     exportCsv() {
+      this.setEmptyMessage()
       let headers
       if (this.params.custumCsvColumns) {
         headers = this.params.custumCsvColumns
@@ -253,6 +265,7 @@ export default {
       return this.$parent.$options.methods.style.call(this.$parent, index)
     },
     async edit(item, index, target) {
+      this.setEmptyMessage()
       let entity = item != null? await AppServiceHelper.fetch(this.appServicePath, item[this.id]): {}
       if (this.$parent.$options.methods.convBeforeEdit) {
         entity = this.$parent.$options.methods.convBeforeEdit.call(this.$parent, entity)
@@ -261,12 +274,15 @@ export default {
       this.$router.push(this.editPath)
     },
     async bulkEdit(item, index, target) {
+      this.setEmptyMessage()
       this.$router.push(this.params.bulkEditPath)
     },
     async bulkUpload(item, index, target) {
+      this.setEmptyMessage()
       this.$router.push(this.params.bulkUploadPath)
     },
     deleteConfirm(item, index, button) {
+      this.setEmptyMessage()
       this.modalInfo.title = this.$i18n.tnl('label.confirm')
       this.modalInfo.content = this.$i18n.tnl('message.deleteConfirm', {target: "ID:" + item[this.id]})
       this.modalInfo.id = item[this.id]
@@ -339,6 +355,7 @@ export default {
       if(this.$parent.$options.methods.afterCrud){
         this.$parent.$options.methods.afterCrud.apply(this.$parent)
       }
+      this.message = this.$i18n.tnl('message.deleteCompleted', {target: this.$i18n.tnl('label.' + this.params.name)})
       this.$parent.$options.methods.fetchData.apply(this.$parent)
     },
     mapDisplay(item) {

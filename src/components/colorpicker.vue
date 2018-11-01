@@ -1,15 +1,14 @@
 <template>
   <div>
-    <b-form-group>
-      <label v-t="caption" />
-      <div :style="detailButtonStyle()" @click="switchEditMode()" >
-        <label :style="detailButtonStyle()">{{ colorValue }}</label>
-        <label :style="detailButtonStyle(true)" class="float-left"/>
-      </div>
-      <div v-if="editMode">
+    <label v-t="caption" />
+    <div ref="colorpickerButton" style="width: 1px">
+      <label :style="detailButtonStyle()" @click="switchEditMode()" class="align-middle text-center">{{ colorValue }}</label>
+    </div>
+    <div ref="colorpicker" style="width: 1px">
+      <span v-if="editMode" >
         <chrome-picker v-model="$parent.form[name]" :disableAlpha="true" :style="{'width': '256px'}" class="mt-1" @input="changeColor" />
-      </div>
-    </b-form-group>
+      </span>
+    </div>
   </div>
 </template>
 
@@ -30,6 +29,7 @@ export default {
       ...this.model,
       editMode: false,
       colorValue: null,
+      colorText: null,
     }
   },
   created(){
@@ -45,25 +45,37 @@ export default {
     detailButtonStyle(colorArea = false){
       const style = {
         'cursor': this.$parent.isEditable? 'pointer': 'default',
-      }
-      if(colorArea){
-        style.width = '64px'
-        style.height = '32px'
-        style['background-color'] = this.colorValue
+        'width': '72px',
+        'height': '32px',
+        'background-color': this.colorValue,
+        'color': this.colorText,
       }
       return style
     },
-    colorCd4db(color){
-      return `#${Util.colorCd4db(color)}`
-    },
     changeColor(color){
-      this.colorValue = this.colorCd4db(color)
+      this.colorValue = Util.colorCd4display(color)
+      this.colorText = Util.luminance(Util.colorCd4db(color)) <= 128? "#FFFFFF": "#000000"
     },
     switchEditMode(){
       if(this.$parent.isEditable){
         this.editMode = !this.editMode
       }
+      if(this.editMode){
+        document.addEventListener('click', this.documentClick);
+        document.addEventListener('touchend', this.documentClick);
+      }
+      else{
+        document.removeEventListener('click', this.documentClick);
+        document.removeEventListener('touchend', this.documentClick);
+      }
     },
+    documentClick(e) {
+      const target = e.target
+      if(this.$refs.colorpicker !== target && !this.$refs.colorpicker.contains(target) &&
+          this.$refs.colorpickerButton !== target && !this.$refs.colorpickerButton.contains(target)) {
+        this.switchEditMode()
+      }
+    }
   },
 }
 </script>
