@@ -30,6 +30,7 @@ export default {
         bulkEditPath: '/master/user/bulkedit',
         appServicePath: '/meta/user',
         csvOut: true,
+        custumCsvColumns: ["userId", "name", "loginId", "pass", "email", "roleName", "description"],
         fields: addLabelByKey(this.$i18n, [ 
           {key: "userId", sortable: true },
           APP.USER_WITH_NAME? {key: "name", sortable: true  }: null,

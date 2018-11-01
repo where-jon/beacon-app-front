@@ -43,6 +43,7 @@ export const FEATURE = {
 }
 
 export const UPDATE_ONLY_NN = { NONE: 0, NULL: 1, EMPTY_ZERO: 2 };
+export const ENCODE_PASS = { FALSE: 0, TRUE : 1 };
 
 export const txViewTypes = [
   {value: 1, text: "pattern1"},

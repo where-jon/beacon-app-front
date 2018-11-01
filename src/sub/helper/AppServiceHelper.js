@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import { DEV, APP_SERVICE } from '../constant/config'
-import { UPDATE_ONLY_NN } from '../constant/Constants'
+import { UPDATE_ONLY_NN, ENCODE_PASS } from '../constant/Constants'
 import * as mock from '../../assets/mock/mock'
 import { sleep } from '../util/Util'
 import * as HttpHelper from './HttpHelper'
@@ -47,8 +47,8 @@ export const update = async (target, entity, updateOnlyNN = UPDATE_ONLY_NN.NONE)
     return data
 }
 
-export const bulkSave = async (target, entities, updateOnlyNN = UPDATE_ONLY_NN.NONE) => {
-    const path = target + "/bulk/?updateOnlyNN=" + updateOnlyNN + "&_=" + new Date().getTime()
+export const bulkSave = async (target, entities, updateOnlyNN = UPDATE_ONLY_NN.NONE, encodePass = ENCODE_PASS.TRUE) => {
+    const path = target + "/bulk/?updateOnlyNN=" + updateOnlyNN + "&encodePass=" + encodePass + "&_=" + new Date().getTime()
     let data = DEV.USE_MOCK_APS? mock[target]:
         await HttpHelper.postAppService(path, entities)
 
