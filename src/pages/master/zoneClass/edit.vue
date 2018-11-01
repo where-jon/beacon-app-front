@@ -8,16 +8,18 @@
 
       <b-form @submit="onSubmit" v-if="show">
         <b-form-group>
-          <b-form-row>
-            <b-col sm="1" v-if="hasId">
-              <label v-t="'label.zoneId'" class="control-label" />
-            </b-col>
-            <b-col sm="1" v-if="hasId">
+          <b-form-row v-if="hasId">
+            <label v-t="'label.zoneId'" class="control-label" />
+          </b-form-row>
+          <b-form-row v-if="hasId">
+            <b-col sm="2">
               <b-form-input type="text" v-model="form.zoneId" readonly="readonly" />
             </b-col>
-            <b-col sm="1">
-              <label v-t="'label.zoneName'" class="control-label" />
-            </b-col>
+          </b-form-row>
+          <b-form-row>
+            <label v-t="'label.zoneName'" class="control-label" />
+          </b-form-row>
+          <b-form-row>
             <b-col sm="5">
               <b-form-input type="text" v-model="form.zoneName" maxlength="20" required :readonly="!isEditable" :disabled="!isEnableNameText" />
             </b-col>
@@ -26,38 +28,21 @@
 
         <b-form-group>
           <b-form-row>
-            <b-col sm="1">
-              <label v-t="'label.areaName'" class="control-label" />
-            </b-col>
-            <b-col sm="3">
+            <label v-t="'label.areaName'" class="control-label" />
+          </b-form-row>
+          <b-form-row>
+            <b-col sm="5">
               <b-form-select v-model="form.areaId" :options="areaNames" required />
             </b-col>
-            <b-col sm="1">
-              <label v-t="'label.categoryName'" class="control-label" />
-            </b-col>
-            <b-col sm="3">
+          </b-form-row>
+          <b-form-row>
+            <label v-t="'label.categoryName'" class="control-label" />
+          </b-form-row>
+          <b-form-row>
+            <b-col sm="5">
               <b-form-select v-model="form.categoryId" :options="categoryNames" />
             </b-col>
-            <b-col sm="4">
-              <b-button type="button" variant="outline-danger" @click="backToList" v-t="'label.back'"/>
-              <b-button v-if="isEditable" type="button" :variant="theme" @click="regist()" class="ml-2" >{{ label }}</b-button>
-              <b-button v-if="isEditable && !isUpdate" type="submit" :variant="theme" @click="register(true)" class="ml-2" v-t="'label.registerAgain'"/>
-            </b-col>
           </b-form-row>
-        </b-form-group>
-        <b-form-group>
-          <label v-t="'label.areaName'" />
-          <b-form-select v-model="form.areaId" :options="areaNames" required class="mb-3 ml-3 col-3" :disabled="!isEditable" />
-        </b-form-group>
-        <!--
-        <b-form-group>
-          <label v-t="'label.locationZoneName'" />
-          <b-form-select v-model="form.locationId" :options="locationNames" required class="mb-3 ml-3 col-3" :disabled="!isEditable" />
-        </b-form-group>
-        -->
-        <b-form-group>
-          <label v-t="'label.categoryName'" />
-          <b-form-select v-model="form.categoryId" :options="categoryNames" class="mb-3 ml-3 col-3" :disabled="!isEditable" />
         </b-form-group>
 
         <b-button type="button" variant="outline-danger" @click="backToList" v-t="'label.back'"/>
@@ -177,6 +162,7 @@ export default {
         locationZoneList: this.form.locationId? [{locationZonePK: {zoneId: zoneId, locationId: this.form.locationId}}]: null,
         zoneCategoryList: this.form.categoryId? [{zoneCategoryPK: {zoneId: zoneId, categoryId: this.form.categoryId}}]: null
       }
+      return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
     },
     onCreated(zoneData) {
       this.onSelected(zoneData)
