@@ -11,7 +11,6 @@ import { APP } from '../sub/constant/config.js'
 import * as HtmlUtil from '../sub/util/HtmlUtil'
 import * as Util from '../sub/util/Util'
 import commonmixinVue from './commonmixin.vue';
-import { UPDATE_ONLY_NN, ENCODE_PASS } from '../sub/constant/Constants'
 
 let that
 
@@ -257,7 +256,7 @@ export default {
         throw new Error(`${this.$i18n.tnl('message.csvSameKey')}${this.formatErrorLine(sameLine)}`)
       }
 
-      await AppServiceHelper.bulkSave(this.appServicePath, entities, UPDATE_ONLY_NN.NONE, ENCODE_PASS.FALSE)
+      await AppServiceHelper.bulkSave(this.appServicePath, entities)
       if(Util.isArray(mainCol)){
         let col = null
         mainCol.forEach((val, idx) => {
