@@ -36,6 +36,7 @@ export const state = () => ({
   forceFetchTx: true,
   listMessage: null,
   defaultConfig: {},
+  showLine: false,
 })
 
 const initState = state()

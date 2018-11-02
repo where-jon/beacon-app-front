@@ -11,13 +11,15 @@ import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import breadcrumb from '../../components/breadcrumb.vue'
 import mList from '../../components/list.vue'
 import listmixinVue from '../../components/listmixin.vue'
+import * as mock from '../../assets/mock/mock'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
+import * as PositionHelper from '../../sub/helper/PositionHelper'
 import { addLabelByKey } from '../../sub/helper/ViewHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import { DETECT_STATE, BATTERY_STATE, BATTERY_BOUNDARY } from '../../sub/constant/Constants'
 import * as Util from '../../sub/util/Util'
-import { APP } from '../../sub/constant/config.js'
+import { APP, DISP, DEV } from '../../sub/constant/config.js'
 
 let that
 
@@ -55,6 +57,7 @@ export default {
         ]),
         initTotalRows: this.$store.state.app_service.positions.length,
       },
+      count: 0, // mockテスト用
       items: [
         {
           text: this.$i18n.t('label.main'),
@@ -87,14 +90,19 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'replaceAs',
       'txs',
       'areas',
       'exbs',
       'positions',
     ]),
+    ...mapState('main', [
+      'orgPositions',
+    ]),
   },
   methods: {
+    ...mapMutations('main', [
+      'replaceMain',
+    ]),
     async fetchData(payload) {
       try {
         this.replace({showProgress: true})
@@ -102,6 +110,31 @@ export default {
         await StateHelper.load('tx')
         await StateHelper.load('exb')
         let positions = await EXCloudHelper.fetchPositionList(this.exbs, this.txs)
+
+        // 移動平均数分のポジションデータを保持する
+        let orgPositions = _.clone(this.orgPositions)
+        if (orgPositions.length >= DISP.MOVING_AVERAGE) {
+          orgPositions.shift()
+        }
+        orgPositions.push(positions)
+        this.replaceMain({orgPositions})
+
+        // 在席表示画面と同じ検知状態の取得
+        let now = !DEV.USE_MOCK_EXC? new Date().getTime(): mock.positions_conf.start + this.count++ * mock.positions_conf.interval  // for mock
+        let correctPositions = PositionHelper.correctPosId(this.orgPositions, now)
+        positions = positions.map((pos) => {
+          const correctPos = _.find(correctPositions, (val) => {
+            return pos.btx_id == val.btx_id && pos.pos_id == val.pos_id
+          })
+          if (!correctPos) { // 未検知
+            return {...pos, phase: 3, noSelectedTx: true}
+          } else if (correctPos.transparent) { // 検知後未検知
+            return {...pos, phase: 2}
+          } else { // 検知中
+            return {...pos, phase: 1}
+          }
+        }),
+
         positions = positions.map((pos) => {
           const stateOpt = DETECT_STATE.getTypes().find((val) => pos.phase === val.value)
           return {
@@ -138,6 +171,13 @@ export default {
         return batteryOpts.find((val) => val.value === 3)
       }
     },
+    async checkDetectedTx(tx) {
+      await this.fetchData()
+      return _.some(this.positions, (pos) => {
+        return pos.tx.txId == tx.txId
+            && !pos.noSelectedTx
+      })
+    }
   }
 }
 </script>

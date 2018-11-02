@@ -55,6 +55,12 @@ module.exports = {
         //   exclude: /(node_modules)/
         // })
       }
+      config.module.rules.forEach((val) => {
+        if (val.loader == "babel-loader") {
+          val.exclude = /node_modules\/(?!@createjs\/).*/
+          console.log(JSON.stringify(val));
+        }
+      })
     }
   },
   generate: {

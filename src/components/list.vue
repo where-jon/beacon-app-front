@@ -65,7 +65,7 @@
         <!-- マップ表示 -->
         <template slot="mapDisplay" slot-scope="row">
           <b-button size="sm" @click.stop="mapDisplay(row.item)" :variant="theme"
-              v-t="'label.mapDisplay'" class="mx-1" />
+              v-t="'label.mapDisplay'" :disabled="row.item.noSelectedTx" class="mx-1" />
         </template>
       </b-table>
 
@@ -358,7 +358,8 @@ export default {
       this.message = this.$i18n.tnl('message.deleteCompleted', {target: this.$i18n.tnl('label.' + this.params.name)})
       this.$parent.$options.methods.fetchData.apply(this.$parent)
     },
-    mapDisplay(item) {
+    // 位置把握(一覧)から在席表示に遷移する
+    async mapDisplay(item) {
       console.log('mapDisplay called with:')
       console.log(item)
       const tx = item.tx
@@ -368,8 +369,10 @@ export default {
         thumbnail: Util.getValue(tx, 'pot.thumbnail', null) ? tx.pot.thumbnail : '',
       }
       const selectedArea = Util.getValue(item, 'exb.location.areaId', null)
-
-      this.replaceMain({selectedTx})
+      const txOk = await this.$parent.$options.methods.checkDetectedTx.call(this.$parent, tx)
+      if (txOk) {
+        this.replaceMain({selectedTx})
+      }
       this.replaceMain({selectedArea})
       this.$router.push("/main/position")
     }

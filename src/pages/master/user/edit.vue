@@ -162,7 +162,7 @@ export default {
         this.showAlert = true
       }
       else if(this.isErrorPasswordValue()){
-        this.message = this.$i18n.tnl('message.validatePassword')
+        this.message = this.$i18n.tnl('message.invalidPassword')
         this.showAlert = true
       }
       if(this.showAlert){
