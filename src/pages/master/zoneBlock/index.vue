@@ -139,7 +139,7 @@ export default {
       return 'outline-' + theme
     },
     ...mapState('app_service', [
-      'zone', 'locations', 'areas'
+      'zone', 'locations', 'areas', 'pageSendParam'
     ]),
   },
   methods: {
@@ -148,7 +148,13 @@ export default {
     async initAreaNames() {
       await StateHelper.load('area')
       this.areaNames = this.areas.map((val) => ({text: val.areaName, value: val.areaId}))
-      this.areaId = this.areaNames[0].value
+      if(this.pageSendParam){
+        this.areaId = this.pageSendParam.areaId
+        this.replaceAS({pageSendParam: null})
+      }
+      else{
+        this.areaId = this.areaNames[0].value
+      }
     },
     async initLocationNames() {
       await StateHelper.load('location')

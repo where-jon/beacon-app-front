@@ -37,6 +37,7 @@ export const state = () => ({
   listMessage: null,
   defaultConfig: {},
   showLine: false,
+  pageSendParam: null,
 })
 
 const initState = state()

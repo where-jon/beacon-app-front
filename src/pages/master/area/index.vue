@@ -1,7 +1,7 @@
 <template>
   <div>
     <breadcrumb :items="items" />
-    <m-list :params="params" :list="areaList"></m-list>
+    <m-list :params="params" :list="areaList" :another-page-params="anotherPageParams" ></m-list>
   </div>
 </template>
 
@@ -12,6 +12,7 @@ import * as StateHelper from '../../../sub/helper/StateHelper'
 import { addLabelByKey } from '../../../sub/helper/ViewHelper'
 import listmixinVue from '../../../components/listmixin.vue'
 import breadcrumb from '../../../components/breadcrumb.vue'
+import * as Util from '../../../sub/util/Util'
 
 export default {
   components: {
@@ -39,6 +40,10 @@ export default {
         ]),
         initTotalRows: this.$store.state.app_service.areas.length
       },
+      anotherPageParams: [
+        { name: "zone", id: "zoneList", jumpPath: "/master/zoneBlock/", sendParamNames: ["areaId"]},
+        { name: "location", id: "locationList", jumpPath: "/master/location/", sendParamNames: ["areaId"]}, 
+      ],
       items: [
         {
           text: this.$i18n.tnl('label.master'),
@@ -62,7 +67,13 @@ export default {
         this.replace({showProgress: true})
         await StateHelper.load('area')
         this.areaImages = this.areas.map((val) => ({ id: val.areaId, mapImage: val.mapImage, thumbnail: val.thumbnail}))
-        this.areaList = this.areas.map((val) => ({...val, mapImage: "", thumbnail: ""})) // omit images to avoid being filtering target
+        this.areaList = this.areas.map((val) => ({
+          ...val,
+          zoneList: Util.hasValue(val.zoneList)? val.zoneList: null,
+          locationList: Util.hasValue(val.locationList)? val.locationList: null,
+          mapImage: "",
+          thumbnail: ""
+        })) // omit images to avoid being filtering target
         if (payload && payload.done) {
           payload.done()
         }
