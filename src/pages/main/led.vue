@@ -74,14 +74,12 @@ import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as Util from '../../sub/util/Util'
 import editmixinVue from '../../components/editmixin.vue'
-import showmapmixinVue from '../../components/showmapmixin.vue'
 
 let that
 
 export default {
   mixins: [
     editmixinVue,
-    showmapmixinVue
   ],
   components: {
     breadcrumb,
@@ -116,7 +114,7 @@ export default {
     }
   },
   computed: {
-    theme () {
+    theme() {
       const theme = getButtonTheme(this.$store.state.loginId)
       return 'outline-' + theme
     },
@@ -146,12 +144,18 @@ export default {
         await StateHelper.load('exb')
         let deviceIds = _.filter(this.exbs,
           exb => exb.enabled && that.getSensorId(exb) == SENSOR.LED
-        ).map(
-          exb => exb.deviceId
         )
+        .map(
+          exb => {
+            let deviceOffset = this.$store.state.currentRegion.deviceOffset
+            return {text:(exb.deviceId - deviceOffset) + " (0x" + exb.deviceId.toString(16) + ", " + exb.deviceId + ")", value: exb.deviceId}
+          }
+        )
+
         if (deviceIds && deviceIds.length == 1) {
-          this.form.deviceId = deviceIds[0]
+          this.form.deviceId = deviceIds[0].value
         }
+
         if (payload && payload.done) {
           payload.done()
         }
