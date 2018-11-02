@@ -52,6 +52,17 @@
           <b-button size="sm" @click.stop="edit(row.item, row.index, $event.target)" :variant="theme" class="mr-2 my-1" v-t="'label.' + crud" />
           <!-- 削除ボタン -->
           <b-button v-if="isEditable" size="sm" @click.stop="deleteConfirm(row.item, row.index, $event.target)" variant="outline-danger" class="mr-1" v-t="'label.delete'" />
+          <!-- jump another master page -->
+          <div v-if="isEditable && anotherPageParams" :style="{'width': '100px'}">
+            <!-- zone button -->
+            <div v-if="getAnotherPageParam('zone', row.item)">
+              <b-button size="sm" @click.stop="jumpAnotherPage('zone', row.item)" :variant="theme" class="btn-block mt-1 mb-1" v-t="'label.zone'" />
+            </div>
+            <!-- location button -->
+            <div v-if="getAnotherPageParam('location', row.item)">
+              <b-button size="sm" @click.stop="jumpAnotherPage('location', row.item)" :variant="theme" class="btn-block" v-t="'label.location'" />
+            </div>
+          </div>
         </template>
         <template slot="thumbnail" slot-scope="row">
           <img v-if="thumbnail(row.item)" :src="thumbnail(row.item)" height="70" />
@@ -108,7 +119,7 @@ let that
 
 export default {
   mixin: [commonmixinVue], // not work
-  props: ['params', 'list', 'isFluid'],
+  props: ['params', 'list', 'isFluid', 'anotherPageParams'],
   data() {
     return {
       currentPage: 1,
@@ -272,6 +283,17 @@ export default {
       }
       this.replaceAS({[this.name]: entity})
       this.$router.push(this.editPath)
+    },
+    getAnotherPageParam(name, item) {
+      const pageParam = this.anotherPageParams.find((val) => val.name == name)
+      return pageParam && item[pageParam.id]? pageParam: null
+    },
+    async jumpAnotherPage(name, item) {
+      const pageParam = this.getAnotherPageParam(name, item)
+      const pageSendParam = {}
+      pageParam.sendParamNames.forEach((val) => pageSendParam[val] = item[val])
+      this.replaceAS({pageSendParam: pageSendParam})
+      this.$router.push(pageParam.jumpPath)
     },
     async bulkEdit(item, index, target) {
       this.setEmptyMessage()
