@@ -61,7 +61,8 @@ const appStateConf = {
           areaName: area? area.areaName: null,
           x: location? Math.round(location.x * 10)/10: null,
           y: location? Math.round(location.y * 10)/10: null,
-          sensor: i18n.tnl('label.' + Util.getValue(exb, 'exbSensorList.0.sensor.sensorName', 'normal'))
+          sensor: i18n.tnl('label.' + Util.getValue(exb, 'exbSensorList.0.sensor.sensorName', 'normal')),
+          zoneName: location? Util.getValue(location, 'locationZoneList.0.zone.zoneName', null): null,
         }
       })
     }
@@ -76,6 +77,7 @@ const appStateConf = {
           displayName: Util.getValue(tx, 'pot.displayName', null),
           description: Util.getValue(tx, 'pot.description', null),
           category: Util.getValue(tx, 'pot.potCategoryList.0.category', null),
+          categoryName: Util.getValue(tx, 'pot.potCategoryList.0.category.categoryName', null),
           group: Util.getValue(tx, 'pot.potGroupList.0.group', null),
           sensor: i18n.tnl('label.' + Util.getValue(tx, 'txSensorList.0.sensor.sensorName', 'normal'))
         }
@@ -96,6 +98,7 @@ const appStateConf = {
         groupId: Util.getValue(val, 'potGroupList.0.group.groupId', ''),
         categoryName: Util.getValue(val, 'potCategoryList.0.category.categoryName', ''),
         categoryId: Util.getValue(val, 'potCategoryList.0.category.categoryId', ''),
+        ruby: Util.getValue(val, 'extValue.ruby' ,null),
         extValue: val.extValue ? val.extValue : this.extValueDefault,
         thumbnail: ""
       })) // omit images to avoid being filtering target

@@ -8,6 +8,7 @@ import * as MenuHelper from '../sub/helper/MenuHelper'
 import * as StateHelper from '../sub/helper/StateHelper'
 import { sleep } from '../sub/util/Util'
 import { APP } from '../sub/constant/config.js'
+import { ROLE } from '../sub/constant/Constants'
 import * as HtmlUtil from '../sub/util/HtmlUtil'
 import * as Util from '../sub/util/Util'
 import commonmixinVue from './commonmixin.vue';
@@ -41,10 +42,11 @@ export default {
       return MenuHelper.isEditable(this.featurePath? this.featurePath: this.appServicePath)
     },
     isSuperEditable() {
-      return this.$store.state.role == "SUPER_ADMIN"
+      return this.$store.state.role == ROLE.SUPER_ADMIN
     },
     ...mapState('app_service', [
       'listMessage',
+      'showLine',
     ]),
   },
   mounted() {
@@ -125,8 +127,9 @@ export default {
         }
         else if (e.bulkError) {
           this.message = _.map(e.bulkError, (err) => {
-            return this.$i18n.tnl('message.bulk' + err.type + 'Failed', 
-              {line: err.line, col: err.col, value: err.value, min: err.min, max: err.max, candidates: err.candidates})
+            return this.$i18n.tline('message.bulk' + err.type + 'Failed', 
+              {line: err.line, col: this.$i18n.tnl(`label.${err.col.trim()}`), value: err.value, min: err.min, max: err.max, candidates: err.candidates},
+              this.showLine)
           }).join("<br>")
         }
         else {
@@ -134,6 +137,9 @@ export default {
         }
         this.showAlert = true
         window.scrollTo(0, 0)
+      }
+      finally{
+        this.replaceAS({showLine: false})
       }
       this.replace({showProgress: false})
     },
@@ -256,6 +262,7 @@ export default {
         throw new Error(`${this.$i18n.tnl('message.csvSameKey')}${this.formatErrorLine(sameLine)}`)
       }
 
+      this.replaceAS({showLine: true})
       await AppServiceHelper.bulkSave(this.appServicePath, entities)
       if(Util.isArray(mainCol)){
         let col = null

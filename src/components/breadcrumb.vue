@@ -158,8 +158,11 @@ export default {
   li.extra-nav a.nav-link {
     padding-top: 0rem;
     padding-bottom: 0rem;
-    color: #333;
     background-color: #e9ecef;
+  }
+
+  li.extra-nav em:not(:hover) {
+    color: #333;
   }
 
 </style>

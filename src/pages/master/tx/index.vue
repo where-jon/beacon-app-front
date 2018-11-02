@@ -41,7 +41,7 @@ export default {
           APP.TX_WITH_DISPLAY_NAME? {key: "displayName", sortable: true, tdClass: "action-rowdata" }: null,
           APP.TX_WITH_MAJOR? {key: "major", sortable: true, tdClass: "action-rowdata" }: null,
           APP.TX_WITH_TXID || APP.TX_BTX_MINOR != 'btxId'? {key: "minor", sortable: true, tdClass: "action-rowdata" }: null,
-          APP.TX_WITH_CATEGORY? {key: "category.categoryName", label: 'category', sortable: true, tdClass: "action-rowdata" }: null,,
+          APP.TX_WITH_CATEGORY? {key: "categoryName", label: 'category', sortable: true, tdClass: "action-rowdata" }: null,,
           APP.TX_WITH_DESCRIPTION? {key: "description", sortable: true, tdClass: "action-rowdata" }: null,
           {key: "sensor", label:'type', sortable: true,},
           {key: "actions", thStyle: {width: '130px !important'}, tdClass: "action-rowdata" }

@@ -34,7 +34,7 @@ export default {
         csvOut: true,
         custumCsvColumns: [
           "exbId", "deviceNum", "deviceId", "deviceIdX", "locationName",
-          "posId", "areaName", "x", "y", "enabled", "sensor",
+          "posId", "areaName", "x", "y", "enabled", "sensor", "zoneName"
         ],
         fields: addLabelByKey(this.$i18n, [ 
           APP.EXB_WITH_EXBID? {key: "exbId", sortable: true }: null,
@@ -47,6 +47,7 @@ export default {
           {key: "x", label:'locationX', sortable: true,},
           {key: "y", label:'locationY', sortable: true,},
           {key: "sensor", label:'type', sortable: true,},
+          {key: "zoneName", sortable: true,},
           {key: "actions", thStyle: {width: '130px !important'} }
         ]),
         initTotalRows: this.$store.state.app_service.exbs.length
