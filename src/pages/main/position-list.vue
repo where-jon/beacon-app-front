@@ -21,8 +21,6 @@ import { DETECT_STATE, BATTERY_STATE, BATTERY_BOUNDARY } from '../../sub/constan
 import * as Util from '../../sub/util/Util'
 import { APP, DISP, DEV } from '../../sub/constant/config.js'
 
-let that
-
 export default {
   components: {
     mList,

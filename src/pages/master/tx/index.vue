@@ -16,8 +16,6 @@ import breadcrumb from '../../../components/breadcrumb.vue'
 import * as Util from '../../../sub/util/Util'
 import { APP } from '../../../sub/constant/config.js'
 
-let that
-
 export default {
   mixins: [listmixinVue],
   components: {
@@ -68,7 +66,6 @@ export default {
     ]),
   },
   mounted() {
-    that = this
   },
   methods: {
     afterCrud(){

@@ -115,8 +115,6 @@ import { getCharSet } from '../sub/helper/CharSetHelper'
 import commonmixinVue from './commonmixin.vue';
 import { DETECT_STATE } from '../sub/constant/Constants'
 
-let that
-
 export default {
   mixin: [commonmixinVue], // not work
   props: ['params', 'list', 'isFluid', 'anotherPageParams'],
@@ -219,7 +217,6 @@ export default {
     },
   },
   mounted() {
-    that = this
     this.message = this.listMessage
     this.replaceAS({listMessage: null})
     this.$parent.$options.methods.fetchData.apply(this.$parent)

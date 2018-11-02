@@ -192,13 +192,12 @@ export default {
       return item.name === charSet
     })
     this.selectedCharSet = selectedCs != null ? selectedCs.id : CHAR_SET[0].id
-    const that = this
     this.themes = THEME.map((e) => {
-      const text = that.$i18n.tnl('label.' + e.name)
+      const text = this.$i18n.tnl('label.' + e.name)
       return { value: e.id, text: text }
     })
     this.charSets = CHAR_SET.map((e) => {
-      const text = that.$i18n.tnl('label.' + e.name)
+      const text = this.$i18n.tnl('label.' + e.name)
       return { value: e.id, text: text }
     })
   },

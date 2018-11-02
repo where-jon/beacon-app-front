@@ -27,8 +27,6 @@ import { getButtonTheme } from '../sub/helper/ThemeHelper'
 import { getTheme } from '../sub/helper/ThemeHelper'
 import * as StateHelper from '../sub/helper/StateHelper'
 
-let that
-
 export default {
   props: ["name", "id", "backPath", "appServicePath"],
   mixins: [editmixinVue],
@@ -43,7 +41,6 @@ export default {
     }
   },
   mounted() {
-    that = this
     StateHelper.load('sensor')
   },
   computed: {

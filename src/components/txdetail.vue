@@ -38,12 +38,11 @@ export default {
   },
   methods: {
     getDispItems () {
-      const that = this
       return TXDETAIL_ITEMS
       .filter((e) => {
         return e.disp
       })
-      .map((e) => {return that.selectedTx[e.name]})
+      .map((e) => {return this.selectedTx[e.name]})
     }
   }
 }

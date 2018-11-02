@@ -88,8 +88,6 @@ import { txViewTypes } from '../../../sub/constant/Constants'
 import breadcrumb from '../../../components/breadcrumb.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 
-let that
-
 export default {
   mixins: [editmixinVue],
   components: {
@@ -184,7 +182,7 @@ export default {
         this.mutex = true
         if (newVal) {
           if (!newVal.match(/^[a-fA-F\d]{0,4}$/)) {
-            that.$nextTick(() => {
+            this.$nextTick(() => {
               this.deviceIdX = oldVal        
             })
             this.mutex = false
@@ -208,7 +206,6 @@ export default {
     },
   },
   mounted() {
-    that = this
     this.deviceId = this.form.deviceId
     ViewHelper.applyDef(this.form, this.defValue)
     StateHelper.load('sensor')

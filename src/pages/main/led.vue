@@ -75,8 +75,6 @@ import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as Util from '../../sub/util/Util'
 import editmixinVue from '../../components/editmixin.vue'
 
-let that
-
 export default {
   mixins: [
     editmixinVue,
@@ -125,7 +123,6 @@ export default {
     ]),
   },
   mounted(){
-    that = this
     this.fetchData()
   },
   watch: {
@@ -143,7 +140,7 @@ export default {
         this.replace({showProgress: true})
         await StateHelper.load('exb')
         let deviceIds = _.filter(this.exbs,
-          exb => exb.enabled && that.getSensorId(exb) == SENSOR.LED
+          exb => exb.enabled && this.getSensorId(exb) == SENSOR.LED
         )
         .map(
           exb => {

@@ -73,8 +73,6 @@ import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import { APP } from '../../../sub/constant/config.js'
 
-let that
-
 export default {
   components: {
     breadcrumb,
@@ -146,7 +144,6 @@ export default {
     ]),
   },
   mounted() {
-    that = this
     StateHelper.load('sensor')
     StateHelper.load('category')
   },
