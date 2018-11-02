@@ -66,7 +66,6 @@ export default {
         document.addEventListener('mousedown', this.touchStart);
         document.addEventListener('mouseup', this.touchEnd);
         document.addEventListener('touchstart', this.touchStart);
-        document.addEventListener('touchmove', this.touchMove);
         document.addEventListener('touchend', this.touchEnd);
       }
       else{
