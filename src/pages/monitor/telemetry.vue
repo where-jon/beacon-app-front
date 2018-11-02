@@ -13,8 +13,8 @@
             <th scope="col" v-for="(val, key) in telemetrys[0]" :key="key">{{ key }}</th>
           </thead>
           <tbody>
-            <tr v-for="(telemetry, index) in telemetrys" :key="index">
-              <td scope="row" v-for="(val, key) in telemetry" :key="key" :class="getTdClass(index, telemetry.timestamp, key)">
+            <tr v-for="(telemetry, index) in telemetrys" :key="index" :class="getTrClass(index, telemetry[label_timestamp])">
+              <td scope="row" v-for="(val, key) in telemetry" :key="key" :class="getTdClass(index, val, key)">
                 <span v-if="key === label_powerLevel"><i :class="getPowerLevelClass(val)"></i>{{ val }}</span>
                 <span :class="exbStateClass(val)" v-else-if="key === label_state">{{ val }}</span>
                 {{ key !== label_powerLevel && key !== label_state ? val : '' }}
@@ -27,8 +27,8 @@
             <th scope="col" v-for="(val, key) in telemetrys[0]" :key="key" >{{ key }}</th>
           </template>
           <template slot="tbody">
-            <tr v-for="(telemetry, index) in telemetrys" :key="index">
-              <td scope="row" v-for="(val, key) in telemetry" :key="key" :class="getTdClass(index, telemetry.timestamp, key)">{{ val }}</td>
+            <tr v-for="(telemetry, index) in telemetrys" :key="index" :class="getTrClass(index, telemetry.timestamp)">
+              <td scope="row" v-for="(val, key) in telemetry" :key="key">{{ val }}</td>
             </tr>
           </template>
         </vue-scrolling-table>
@@ -81,7 +81,7 @@ export default {
       label_receiveNormal: this.$i18n.tnl('label.receiveNormal'),
       label_state: this.$i18n.tnl('label.state'),
       label_undetect: this.$i18n.tnl('label.undetect'),
-      label_nosignal: this.$i18n.tnl('label.no-signal', TELEMETRY.NOSIGNAL),
+      label_nosignal: this.$i18n.tnl('label.no-signal', {min: TELEMETRY.NOSIGNAL / (60 * 1000)}),
       badgeClassPrefix: 'badge badge-pill badge-',
       csvHeaders: {
         [this.$i18n.tnl('label.deviceId')]: 'deviceId',
@@ -147,12 +147,15 @@ export default {
       this.replace({showProgress: false})
       this.isLoad = false
     },
-    isUndetect(updated) {
-      return updated == "" || new Date() - new Date(updated) > APP.UNDETECT_TIME
+    isUndetect(yyymmddHHmiss) {
+      const time = moment(yyymmddHHmiss).local().toDate().getTime()
+      return new Date().getTime() - time > APP.UNDETECT_TIME
     },
-    getTdClass (index, timestamp, key) {
-      const color = this.isUndetect(timestamp) ? 'undetect' : (index % 2 === 1 ? 'odd' : '')
-      const tdClass = color + ' ' + (!this.isDev && key === this.label_powerLevel ? 'powerlevel' : '')
+    getTrClass (index, timestamp) {
+      return this.isUndetect(timestamp) ? 'undetect' : (index % 2 === 1 ? 'odd' : '')
+    },
+    getTdClass (index, val, key) {
+      const tdClass = !this.isDev && key === this.label_powerLevel ? 'powerlevel' : ''
       return tdClass + ' ' + (!this.isDev && (key === this.label_state || key === this.label_timestamp) ? 'exb-state' : '')
     },
     download() {
@@ -207,7 +210,7 @@ export default {
     exbState(updatetime) {
       const time = new Date().getTime() - moment(updatetime).local().toDate().getTime()
       return time < TELEMETRY.NOSIGNAL ? this.label_receiveNormal :
-      (isUndetect(time) ? this.label_undetect : label_nosignal)
+      (this.isUndetect(updatetime) ? this.label_undetect : this.label_nosignal)
     },
     exbStateClass(exbState) {
       return this.badgeClassPrefix + (exbState === this.label_receiveNormal ?
