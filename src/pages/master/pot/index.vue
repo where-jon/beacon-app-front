@@ -41,7 +41,7 @@ export default {
           {key: "txIdName", label:'tx', sortable: true, 'class': 'text-center' , tdClass: "thumb-rowdata"},
           APP.POT_WITH_POTCD? {key: "potCd", sortable: true , tdClass: "thumb-rowdata"}: null,
           {key: "potName", sortable: true , tdClass: "thumb-rowdata"},
-          APP.POT_WITH_RUBY? {key: "extValue.ruby", label: "ruby", sortable: true, tdClass: "thumb-rowdata"}: null,
+          APP.POT_WITH_RUBY? {key: "ruby", label: "ruby", sortable: true, tdClass: "thumb-rowdata"}: null,
           {key: "displayName", sortable: true, tdClass: "thumb-rowdata"},
           APP.POT_WITH_GROUP? {key: "groupName", label: "group", sortable: true, tdClass: "thumb-rowdata"}: null,
           APP.POT_WITH_CATEGORY? {key: "categoryName", label: "category", sortable: true, tdClass: "thumb-rowdata"}: null,
