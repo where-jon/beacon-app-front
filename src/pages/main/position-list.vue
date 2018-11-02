@@ -171,6 +171,13 @@ export default {
         return batteryOpts.find((val) => val.value === 3)
       }
     },
+    async checkDetectedTx(tx) {
+      await this.fetchData()
+      return _.some(this.positions, (pos) => {
+        return pos.tx.txId == tx.txId
+            && !pos.noSelectedTx
+      })
+    }
   }
 }
 </script>

@@ -359,7 +359,7 @@ export default {
       this.$parent.$options.methods.fetchData.apply(this.$parent)
     },
     // 位置把握(一覧)から在席表示に遷移する
-    mapDisplay(item) {
+    async mapDisplay(item) {
       console.log('mapDisplay called with:')
       console.log(item)
       const tx = item.tx
@@ -369,7 +369,10 @@ export default {
         thumbnail: Util.getValue(tx, 'pot.thumbnail', null) ? tx.pot.thumbnail : '',
       }
       const selectedArea = Util.getValue(item, 'exb.location.areaId', null)
-      this.replaceMain({selectedTx})
+      const txOk = await this.$parent.$options.methods.checkDetectedTx.call(this.$parent, tx)
+      if (txOk) {
+        this.replaceMain({selectedTx})
+      }
       this.replaceMain({selectedArea})
       this.$router.push("/main/position")
     }
