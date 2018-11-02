@@ -89,6 +89,7 @@
     "receive-place": "検知場所",
     "power-level": "電池レベル",
     "undetect": "未検知",
+    "no-signal": "{min}分間信号無し",
     "power-good": "良好",
     "power-warning": "減少",
     "power-poor": "交換",

@@ -120,28 +120,32 @@ export default {
       this.resetDetail()
     },
     async showDetail(txId, x, y) {
+      const tipOffsetX = 5
+      const tipOffsetY = 15
+      const popupHeight = 156
       let tx = this.txs.find((tx) => tx.btxId == txId)
       let display = this.getDisplay(tx)
-      // rev === trueの場合、ポップアップを上に表示
-      let rev = y > 400
       let map = HtmlUtil.getRect("#map")
       let containerParent = HtmlUtil.getRect("#mapContainer", "parentNode")
       let offsetX = map.left - containerParent.left
       let offsetY = map.top - containerParent.top
-      const tipOffsetX = -34.5
-      const tipOffsetY = 15
+      const isDispRight = x + offsetX + 100 < window.innerWidth
+      // rev === trueの場合、ポップアップを上に表示
+      const rev = y + map.top + DISP.TX_R + tipOffsetY + popupHeight > window.innerHeight
       const targetId = this.txsMap[txId]
       const p = await this.getDetail(targetId)
       const position = this.positions.find((e) => {
         return e.btx_id === txId
       })
+      const balloonClass = !txId ? "": "balloon" + (rev ? "-u": "")
+
       let selectedTx = {
         txId,
         minor: 'minor:' + txId,
         major: p.tx && p.tx.major? 'major:' + p.tx.major : '',
-        class: !txId? "": "balloon" + (rev? "-u": ""),
-        left: x + offsetX + tipOffsetX + (rev? - 7: 0),
-        top: y + offsetY + tipOffsetY + DISP.TX_R + (rev? - 214: 0),
+        class: balloonClass,
+        left: x + offsetX - DISP.TX_R - (rev ? tipOffsetX : 0),
+        top: rev ? y + offsetY - DISP.TX_R - popupHeight : y + offsetY + DISP.TX_R + tipOffsetY,
         name: p.potName ? p.potName : '',
         timestamp: position ? this.getFinalReceiveTime(position.timestamp) : '',
         thumbnail: p.thumbnail ? p.thumbnail : '',
@@ -149,6 +153,7 @@ export default {
         group: p.potGroupList && p.potGroupList.length > 0 ? p.potGroupList[0].group.groupName : '',
         bgColor: '#' + display.bgColor,
         color: '#' + display.color,
+        isDispRight: isDispRight,
       }
       this.replaceMain({selectedTx})
     },
