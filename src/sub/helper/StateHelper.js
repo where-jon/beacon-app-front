@@ -61,7 +61,8 @@ const appStateConf = {
           areaName: area? area.areaName: null,
           x: location? Math.round(location.x * 10)/10: null,
           y: location? Math.round(location.y * 10)/10: null,
-          sensor: i18n.tnl('label.' + Util.getValue(exb, 'exbSensorList.0.sensor.sensorName', 'normal'))
+          sensor: i18n.tnl('label.' + Util.getValue(exb, 'exbSensorList.0.sensor.sensorName', 'normal')),
+          zoneName: location? Util.getValue(location, 'locationZoneList.0.zone.zoneName', null): null,
         }
       })
     }

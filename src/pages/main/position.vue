@@ -17,7 +17,7 @@
         <sensor :sensors="meditagSensors" class="rightPane"></sensor>
       </b-col>
     </b-row>
-    <div v-if="selectedTx.txId" >
+    <div v-if="selectedTx.txId && showReady" >
       <txdetail :selectedTx="selectedTx" @resetDetail="resetDetail"></txdetail>
     </div>
     <!-- modal -->
@@ -74,6 +74,7 @@ export default {
       pot: {},
       showMeditag: APP.USE_MEDITAG,
       meditagSensors: [],
+      showReady: false,
       extraNavSpec: [
         {
           key: 'showPosition',
@@ -151,6 +152,7 @@ export default {
         color: '#' + display.color,
       }
       this.replaceMain({selectedTx})
+      this.showReady = true
     },
     showInitDetail(tx) {
       const position = PositionHelper.adjustPosition(this.positions, this.mapImageScale, this.positionedExb)

@@ -160,7 +160,7 @@ export default {
       options = options.map((tx) => {
           return {
             value: tx.txId,
-            text: tx.txName? tx.txName: ""
+            text: `${tx.txId}(${tx.txName? tx.txName: ""})`
           }
         }
       )

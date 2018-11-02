@@ -61,6 +61,10 @@
               <label v-t="'label.type'" />
               <b-form-select v-model="form.sensorId" :options="sensorOptionsExb" class="mb-3 ml-3 col-4" :disabled="!isEditable" :readonly="!isEditable" />
             </b-form-group>
+            <b-form-group>
+              <label v-t="'label.zoneName'" />
+              <b-form-select v-model="form.zoneId" :options="zoneNames" class="mb-3 ml-3 col-4" :disabled="!isEditable" :readonly="!isEditable" />
+            </b-form-group>
             <b-button type="button" variant="outline-danger" @click="backToList" v-t="'label.back'"/>
             <b-button v-if="isEditable" type="submit" :variant="theme" @click="register(false)" class="ml-2" >{{ label }}</b-button>
             <b-button v-if="isEditable && !isUpdate" type="submit" :variant="theme" @click="register(true)" class="ml-2" v-t="'label.registerAgain'"/>
@@ -77,6 +81,7 @@ import _ from 'lodash'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
+import * as Util from '../../../sub/util/Util'
 import editmixinVue from '../../../components/editmixin.vue'
 import { APP } from '../../../sub/constant/config.js'
 import { txViewTypes } from '../../../sub/constant/Constants'
@@ -102,7 +107,7 @@ export default {
           "exbId", "deviceId", "enabled",
           "location.locationName", "location.areaId", "location.locationId", "location.posId",
           "location.x", "location.y", "location.visible", "location.txViewType",
-          "exbSensorList.0.sensor.sensorId"
+          "exbSensorList.0.sensor.sensorId", "location.locationZoneList.0.locationZonePK.zoneId"
         ]
       ),
       defValue: {
@@ -146,10 +151,22 @@ export default {
         }
       )
     },
+    zoneNames() {
+      let options = this.zones.map((zone) => {
+          return {
+            value: zone.zoneId,
+            text: zone.zoneName
+          }
+        }
+      )
+      Util.addNoSelect(options)
+      return options
+    },
     ...mapState('app_service', [
       'exb',
       'areas',
       'sensors',
+      'zones',
     ]),
   },
   watch: {
@@ -196,6 +213,7 @@ export default {
     ViewHelper.applyDef(this.form, this.defValue)
     StateHelper.load('sensor')
     StateHelper.load('area')
+    StateHelper.load('zone')
   },
   methods: {
     async save() {
@@ -213,6 +231,12 @@ export default {
           posId: this.form.posId,
           x: this.form.x,
           y: this.form.y,
+          locationZoneList: this.form.zoneId? [{
+            locationZonePK: {
+              locationId: this.form.locationId? this.form.locationId: -2,
+              zoneId: this.form.zoneId
+            }
+          }]: null
         },
         exbSensorList: this.form.sensorId? [
           {exbSensorPK: {sensorId: this.form.sensorId}}
