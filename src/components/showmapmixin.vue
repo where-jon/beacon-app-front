@@ -11,8 +11,6 @@ import * as PositionHelper from '../sub/helper/PositionHelper'
 import * as StateHelper from '../sub/helper/StateHelper'
 import reloadmixinVue from './reloadmixin.vue'
 
-let that
-
 export default {
   mixins: [reloadmixinVue],
   data() {
@@ -51,14 +49,10 @@ export default {
     },
   },
   created() {
-    that = this
-
     if (this.$route.path.startsWith("/main")) {      
       let timer = 0
       let path = this.$route.path
       let onResize = () => {
-        // const positions = PositionHelper.adjustPosition(this.positions)
-        // that.replaceMain({positions})
         if (path != this.$route.path) {
           window.removeEventListener('resize', onResize)
           clearTimeout(timer);
@@ -68,15 +62,15 @@ export default {
           clearTimeout(timer);
         } 
         timer = setTimeout(() => {
-          console.log(path + " : " + this.$route.path)
-          that.reset()
-          if (that.stage) {
-            that.stage.removeAllChildren()
-            if (that.resetDetail) {
-              that.resetDetail()
+          console.log(path + " : " + this.$route.path, this)
+          this.reset()
+          if (this.stage) {
+            this.stage.removeAllChildren()
+            if (this.resetDetail) {
+              this.resetDetail()
             }
-            that.stage.update()
-            that.fetchData()
+            this.stage.update()
+            this.fetchData()
           }
         }, 200);
       }
@@ -99,17 +93,16 @@ export default {
         this.isFirstTime = false
       }
     },
-    showMapImageDef() {
+    showMapImageDef(callback) {
       this.showTryCount++
       console.log('showMapImageDef', this.selectedArea, this.isShownMapImage)
       if (this.isShownMapImage) return false
-      let canvas = this.$refs.map
 
       if (!this.mapImage) {
         if (this.showTryCount < 10) {
           this.$nextTick(() => {
             console.warn("again because no image")
-            that.showMapImage()
+            this.showMapImage()
           })
         }
         else {
@@ -120,22 +113,15 @@ export default {
 
       var bg = new Image()
       bg.src = this.mapImage
-      if (bg.height == 0 || bg.width == 0 || !canvas) {
-        this.$nextTick(() => {
-          console.warn("again because image is 0")
-          if (this.showTryCount > 30) {
-            window.location.reload()
-            return
-          }
-          else if (this.showTryCount > 20) {
-            this.isFirstTime = true
-            this.fetchData()
-            return
-          }
-          that.showMapImage()
-        })
-        return true
+      bg.onload = (evt) => {
+        this.drawMapImage(bg)
+        if (callback) {
+          callback()
+        }
       }
+    },
+    drawMapImage(bg) {
+      let canvas = this.$refs.map
       this.mapWidth = bg.width
       this.mapHeight = bg.height
       this.isShownMapImage = true
@@ -184,16 +170,27 @@ export default {
     },
     changeArea(val) {
       if (val) {
-        this.reset()
-        this.selectedArea = val
-        this.fetchData()
+        let area = _.find(this.areas, (area) => {
+          return area.areaId == val
+        })
+        if (area.mapImage) {
+          this.reset()
+          this.selectedArea = val
+          this.fetchData()
+        }
+        else {
+          this.$root.$emit('bv::show::modal', 'modalError')
+          this.$nextTick(() => {
+            this.selectedArea = this.oldSelectedArea
+          })
+        }
       }      
     },
     forceUpdateRealWidth() {
       if (!this.realWidth) { // Due to force update computed property mapRatio
         this.realWidth = 1
         this.$nextTick(() => {
-          that.realWidth = ""
+          this.realWidth = ""
         })
       }
     },

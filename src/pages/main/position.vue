@@ -47,8 +47,6 @@ import sensor from '../../components/sensor.vue'
 import moment from 'moment'
 import { rightpanewidth, rightpaneleft } from '../../sub/constant/config.scss'
 
-let that
-
 export default {
   mixins: [showmapmixin],
   components: {
@@ -101,16 +99,11 @@ export default {
     ]),
   },
   async mounted() {
-    that = this
     this.replace({title: this.$i18n.tnl('label.showPosition')})
     await this.fetchData()
     if (this.selectedTx.txId) {
       this.showInitDetail(this.selectedTx)
     }
-  },
-  updated(){
-    if (this.isFirstTime) return
-    // this.fetchData()
   },
   beforeDestroy() {
     this.resetDetail()
@@ -221,34 +214,33 @@ export default {
       return pot
     },
     showMapImage() {
-      if (this.showMapImageDef()) {
-        return
-      }
+      this.showMapImageDef(() => {
 
-      if (!this.txCont) {
-        this.txCont = new Container()
-        this.txCont.width = this.bitmap.width
-        this.txCont.height = this.bitmap.height
-        this.stage.addChild(this.txCont)
-        this.stage.update()
-      }
-
-      let now = !DEV.USE_MOCK_EXC? new Date().getTime(): mock.positions_conf.start + this.count++ * mock.positions_conf.interval  // for mock
-      this.positions = PositionHelper.correctPosId(this.orgPositions, now)
-      if (APP.USE_MEDITAG && this.meditagSensors) {
-        this.positions = SensorHelper.setStress(this.positions, this.meditagSensors)
-      }
-
-      this.positionedExb = _(this.exbs).filter((exb) => {
-        Util.debug(exb, this.selectedArea)
-        return exb.enabled && exb.location.areaId == this.selectedArea && exb.location.x && exb.location.y > 0
-      }).value()
-      Util.debug(this.positionedExb)
-      if (this.positionedExb.length == 0) {
-        console.warn("positionedExb is empty. check if exbs are enabled")
-      }
-
-      this.showTxAll()
+        if (!this.txCont) {
+          this.txCont = new Container()
+          this.txCont.width = this.bitmap.width
+          this.txCont.height = this.bitmap.height
+          this.stage.addChild(this.txCont)
+          this.stage.update()
+        }
+  
+        let now = !DEV.USE_MOCK_EXC? new Date().getTime(): mock.positions_conf.start + this.count++ * mock.positions_conf.interval  // for mock
+        this.positions = PositionHelper.correctPosId(this.orgPositions, now)
+        if (APP.USE_MEDITAG && this.meditagSensors) {
+          this.positions = SensorHelper.setStress(this.positions, this.meditagSensors)
+        }
+  
+        this.positionedExb = _(this.exbs).filter((exb) => {
+          Util.debug(exb, this.selectedArea)
+          return exb.enabled && exb.location.areaId == this.selectedArea && exb.location.x && exb.location.y > 0
+        }).value()
+        Util.debug(this.positionedExb)
+        if (this.positionedExb.length == 0) {
+          console.warn("positionedExb is empty. check if exbs are enabled")
+        }
+  
+        this.showTxAll()
+      })
     },
     showTxAll() {
       if (!this.txCont) {
@@ -306,7 +298,7 @@ export default {
       txBtn.y = pos.y
       txBtn.on('click', (evt) =>{
         let txBtn = evt.currentTarget
-        that.showDetail(txBtn.txId, txBtn.x, txBtn.y)
+        this.showDetail(txBtn.txId, txBtn.x, txBtn.y)
       })
 
       this.txCont.addChild(txBtn)
