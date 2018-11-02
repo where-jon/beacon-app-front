@@ -3,7 +3,7 @@ import * as MenuHelper from '../sub/helper/MenuHelper'
 import * as StateHelper from '../sub/helper/StateHelper'
 import * as HttpHelper from '../sub/helper/HttpHelper'
 import { APP } from '../sub/constant/config'
-import { LOGIN_MODE } from '../sub/constant/Constants'
+import { LOGIN_MODE, ROLE } from '../sub/constant/Constants'
 
 export default function (context) {
   console.debug("checkAuth")
@@ -22,7 +22,8 @@ export default function (context) {
   }
   else { // check tenant feature
     let tenantFeatureList = context.store.state.tenantFeatureList
-    if (tenantFeatureList && !MenuHelper.tenantOk(context.route.path, tenantFeatureList)) {
+    let isSuperAdmin = context.store.state.role.roleName == ROLE.SUPER_ADMIN // TO BE REMOVED in the future
+    if (!isSuperAdmin && tenantFeatureList && !MenuHelper.tenantOk(context.route.path, tenantFeatureList)) {
       context.app.router.push(APP.TOP_PAGE)
     }
   }
