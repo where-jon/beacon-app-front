@@ -10,13 +10,14 @@
       <div class="table-area">
         <table v-if="!isDev" class="table striped">
           <thead>
-            <th scope="col" v-for="(val, key) in telemetrys[0]" :key="key" >{{ key }}</th>
+            <th scope="col" v-for="(val, key) in telemetrys[0]" :key="key">{{ key }}</th>
           </thead>
           <tbody>
             <tr v-for="(telemetry, index) in telemetrys" :key="index">
               <td scope="row" v-for="(val, key) in telemetry" :key="key" :class="getTdClass(index, telemetry.timestamp, key)">
-                <i :class="getPowerLevelClass(val)" v-if="key === label_powerLevel"></i>
-                {{ val }}
+                <span v-if="key === label_powerLevel"><i :class="getPowerLevelClass(val)"></i>{{ val }}</span>
+                <span :class="exbStateClass(val)" v-else-if="key === label_state">{{ val }}</span>
+                {{ key !== label_powerLevel && key !== label_state ? val : '' }}
               </td>
             </tr>
           </tbody>
@@ -43,7 +44,7 @@ import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
 import { EventBus } from '../../sub/helper/EventHelper'
-import { EXB, DISP, APP, DEV } from '../../sub/constant/config'
+import { EXB, DISP, APP, DEV, TELEMETRY } from '../../sub/constant/config'
 import breadcrumb from '../../components/breadcrumb.vue'
 import VueScrollingTable from "vue-scrolling-table"
 import { getTheme } from '../../sub/helper/ThemeHelper'
@@ -51,6 +52,7 @@ import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import reloadmixinVue from '../../components/reloadmixin.vue'
 import gatewayVue from './gateway.vue'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
+import moment from 'moment'
 
 export default {
   mixins: [reloadmixinVue],
@@ -76,12 +78,18 @@ export default {
       label_name: this.$i18n.tnl('label.location'),
       label_timestamp: this.$i18n.tnl('label.final-receive-timestamp'),
       label_powerLevel: this.$i18n.tnl('label.power-level'),
+      label_receiveNormal: this.$i18n.tnl('label.receiveNormal'),
+      label_state: this.$i18n.tnl('label.state'),
+      label_undetect: this.$i18n.tnl('label.undetect'),
+      label_nosignal: this.$i18n.tnl('label.no-signal', TELEMETRY.NOSIGNAL),
+      badgeClassPrefix: 'badge badge-pill badge-',
       csvHeaders: {
         [this.$i18n.tnl('label.deviceId')]: 'deviceId',
         [this.$i18n.tnl('label.deviceIdX')]: 'deviceId(HEX)',
         [this.$i18n.tnl('label.location')]: 'finalReceivePlace',
         [this.$i18n.tnl('label.final-receive-timestamp')]: 'timestamp',
-        [this.$i18n.tnl('label.power-level')]: 'powerLevel'
+        [this.$i18n.tnl('label.power-level')]: 'powerLevel',
+        [this.$i18n.tnl('label.state')]: 'state'
       },
       interval: null,
     }
@@ -144,7 +152,8 @@ export default {
     },
     getTdClass (index, timestamp, key) {
       const color = this.isUndetect(timestamp) ? 'undetect' : (index % 2 === 1 ? 'odd' : '')
-      return color + ' ' + (!this.isDev && key === this.label_powerLevel ? 'powerlevel' : '')
+      const tdClass = color + ' ' + (!this.isDev && key === this.label_powerLevel ? 'powerlevel' : '')
+      return tdClass + ' ' + (!this.isDev && (key === this.label_state || key === this.label_timestamp) ? 'exb-state' : '')
     },
     download() {
       const records = this.telemetrys.map(e => {
@@ -173,8 +182,9 @@ export default {
           [that.label_deviceId]: parseInt(e.deviceid, 16),
           [that.label_deviceIdX]: e.deviceid.toUpperCase(),
           [that.label_name]: name != null ? name : 'ー',
+          [that.label_powerLevel]:e.power_level * 2,
           [that.label_timestamp]: e.timestamp,
-          [that.label_powerLevel]:e.power_level * 2
+          [that.label_state]: that.exbState(e.timestamp)
         }
         return record
       })
@@ -194,7 +204,16 @@ export default {
         return "fas fa-battery-quarter power-empty"
       }
       return "fas fa-battery-empty power-empty"
-    }
+    },
+    exbState(updatetime) {
+      const time = new Date().getTime() - moment(updatetime).local().toDate().getTime()
+      return time < TELEMETRY.NOSIGNAL ? this.label_receiveNormal :
+      (isUndetect(time) ? this.label_undetect : label_nosignal)
+    },
+    exbStateClass(exbState) {
+      return this.badgeClassPrefix + (exbState === this.label_receiveNormal ?
+      'success' : (exbState === this.label_nosignal ? 'warning' : 'danger'))
+    },
   }
 }
 </script>
@@ -213,7 +232,15 @@ export default {
     width:100%;
     table-layout:fixed;
   }
-  
+
+  span.badge {
+    margin-right: 0px;
+  }
+
+  td.exb-state {
+    padding: 0.75rem 0rem 0.75rem 0rem;
+  }
+
   thead {
     width: calc( 100% - 1em )
   }

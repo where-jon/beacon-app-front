@@ -187,10 +187,10 @@ export default {
         const record = {
           [that.label_minor]: e.minor,
           [that.label_name]: name != null ? name : '—',
-          [that.label_powerLevel]: e.power_level,
           [that.label_receivePlace]: that.locationMap[e.device_id],
-          [that.label_state]: that.txState(e.updatetime),
+          [that.label_powerLevel]: e.power_level,
           [that.label_timestamp]: that.getTimestamp(e.updatetime),
+          [that.label_state]: that.txState(e.updatetime),
         }
         return record
       })
