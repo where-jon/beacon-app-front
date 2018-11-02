@@ -30,6 +30,7 @@ export default {
       editMode: false,
       colorValue: null,
       colorText: null,
+      touchColorPicker: false,
     }
   },
   created(){
@@ -49,6 +50,7 @@ export default {
         'height': '32px',
         'background-color': this.colorValue,
         'color': this.colorText,
+        'border': '1px solid #000000'
       }
       return style
     },
@@ -61,16 +63,36 @@ export default {
         this.editMode = !this.editMode
       }
       if(this.editMode){
-        document.addEventListener('click', this.documentClick);
+        document.addEventListener('mousedown', this.touchStart);
+        document.addEventListener('mouseup', this.touchEnd);
+        document.addEventListener('touchstart', this.touchStart);
+        document.addEventListener('touchend', this.touchEnd);
       }
       else{
-        document.removeEventListener('click', this.documentClick);
+        document.removeEventListener('mousedown', this.touchStart);
+        document.removeEventListener('mouseup', this.touchEnd);
+        document.removeEventListener('touchstart', this.touchStart);
+        document.removeEventListener('touchend', this.touchEnd);
       }
     },
-    documentClick(e) {
+    outColorPicker(e){
       const target = e.target
-      if(this.$refs.colorpicker !== target && !this.$refs.colorpicker.contains(target) &&
-          this.$refs.colorpickerButton !== target && !this.$refs.colorpickerButton.contains(target)) {
+      return this.$refs.colorpicker !== target && !this.$refs.colorpicker.contains(target) &&
+          this.$refs.colorpickerButton !== target && !this.$refs.colorpickerButton.contains(target)
+    },
+    touchStart(e) {
+      if(!this.outColorPicker(e)) {
+        this.touchColorPicker = true
+      }
+    },
+    touchEnd(e) {
+      if(!this.touchColorPicker) {
+        this.documentClick(e)
+      }
+      this.touchColorPicker = false
+    },
+    documentClick(e) {
+      if(this.outColorPicker(e)) {
         this.switchEditMode()
       }
     }

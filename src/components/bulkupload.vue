@@ -2,15 +2,17 @@
   <div>
     <div class="container">
 
-      <b-alert variant="info" :show="showInfo">
+      <b-alert variant="info" dismissible :show="showInfo">
         {{ message }}
         <div v-for="thumbnail in form.thumbnails" :key="thumbnail.id">ID:{{thumbnail.id}}({{thumbnail.name}})</div>
       </b-alert>
-      <b-alert variant="warning" :show="showWarn">
+      <b-alert variant="warning" dismissible :show="showWarn">
         {{ warnMessage }}
         <div v-for="warnThumbnail in form.warnThumbnails" :key="warnThumbnail.id">ID:{{warnThumbnail.id}}</div>
       </b-alert>
-      <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false" v-html="message" />
+      <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false" >
+        <div v-html="message" />
+      </b-alert>
 
       <b-form @submit="onSubmit" v-if="show">
         <b-form-group>

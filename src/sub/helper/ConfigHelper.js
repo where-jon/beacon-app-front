@@ -23,7 +23,7 @@ export const loadSetting = async () => {
  * 
  * @param {*} settingArr 
  */
-export const applyAppServiceSetting = (settingArr) => {
+export const applyAppServiceSetting = (settingArr, defaultConfig = null) => {
   if (!settingArr) return
 
   let updateData = _.reduce(settingArr, (result, setting) => {
@@ -50,21 +50,31 @@ export const applyAppServiceSetting = (settingArr) => {
     result[key] = val
     return result
   }, {})
-  updateConfig(updateData)
+  updateConfig(updateData, defaultConfig)
 }
 
-export const updateConfig = (updateData) => {
+export const updateConfig = (updateData, defaultConfig = null) => {
   _(updateData).forEach((val, propKey) => {
     let curKey = config
+    let curDefaultConfig = defaultConfig
     propKey.split(".").forEach((key, idx, arr) => {
       if (idx == arr.length - 1) {
-        curKey[key] = val
+        if(val != null){
+          curKey[key] = val
+        }
+        else if(curDefaultConfig && curDefaultConfig[key]){
+          curKey[key] = curDefaultConfig[key]
+        }
+        else{
+          delete curKey[key]
+        }
       }
       else {
         if (!curKey[key]) {
           curKey[key] = {}
         }
         curKey = curKey[key]
+        curDefaultConfig = curDefaultConfig? curDefaultConfig[key]: null
       }
     })
   })
