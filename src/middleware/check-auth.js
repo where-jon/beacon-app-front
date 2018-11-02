@@ -9,7 +9,7 @@ export default function (context) {
   console.debug("checkAuth")
   AuthHelper.setApp(context.app.router, context.app.store)
   StateHelper.setApp(context.app.store, context.app.i18n)
-  HttpHelper.setApp(context.app.i18n)
+  HttpHelper.setApp(context.app)
   if (!process.browser) {
     return
   }

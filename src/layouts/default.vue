@@ -20,6 +20,10 @@
         </b-col>
       </b-row>
       <nuxt v-else />
+      <!-- modal -->
+      <b-modal id="modalRootError" :title="$t('label.error')" ok-only>
+        {{ errorMessage }}
+      </b-modal>
     </b-container>
   </div>
 </template>
@@ -66,6 +70,12 @@ export default {
     }
   },
   computed: {
+    errorMessage() {
+      if (this.$store.state.error) {
+        return this.$i18n.t("message." + this.$store.state.error.key)
+      }
+      return ''
+    },
     loginId() {
       return this.$store.state.loginId
     },
@@ -75,6 +85,7 @@ export default {
     ...mapState([
       'showProgress',
       'title',
+      'error',
     ]),
     sidebarClasses () {
       const storeTheme = this.$store.state.setting.theme

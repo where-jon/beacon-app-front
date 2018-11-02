@@ -401,6 +401,7 @@
     "uploadNoData": "登録可能なデータがありません",
     "uploadWarnData": "{val}件のデータは存在しないため登録できません",
     "loadingFile": "ファイルを読み込んでいます({now} / {all} 件)",
+    "networkError": "サーバに接続できません。",
 
     "dummy": "" 
   }

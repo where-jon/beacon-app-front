@@ -4,9 +4,11 @@ import * as AuthHelper from './AuthHelper'
 import * as Util from '../util/Util'
 
 let i18n
+let app
 
-export const setApp = (pi18n) => {
-  i18n = pi18n
+export const setApp = (pApp) => {
+  i18n = pApp.i18n
+  app = pApp
 }
 
 const apServiceClient = axios.create({
@@ -127,7 +129,12 @@ const handleError = (e, url) => {
         e.bulkError = e.response.data
       }
     }
-    throw e
+    if (e.message && e.message == "Network Error") {
+        e.key = "networkError"
+        app.store.commit('replace', {error: e})
+        app.router.app.$root.$emit('bv::show::modal', 'modalRootError')
+    }
+  throw e
   }
 } 
 
