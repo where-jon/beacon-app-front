@@ -45,6 +45,7 @@ export default {
     },
     ...mapState('app_service', [
       'listMessage',
+      'showLine',
     ]),
   },
   mounted() {
@@ -125,8 +126,9 @@ export default {
         }
         else if (e.bulkError) {
           this.message = _.map(e.bulkError, (err) => {
-            return this.$i18n.tnl('message.bulk' + err.type + 'Failed', 
-              {line: err.line, col: err.col, value: err.value, min: err.min, max: err.max, candidates: err.candidates})
+            return this.$i18n.tline('message.bulk' + err.type + 'Failed', 
+              {line: err.line, col: this.$i18n.tnl(`label.${err.col.trim()}`), value: err.value, min: err.min, max: err.max, candidates: err.candidates},
+              this.showLine)
           }).join("<br>")
         }
         else {
@@ -134,6 +136,9 @@ export default {
         }
         this.showAlert = true
         window.scrollTo(0, 0)
+      }
+      finally{
+        this.replaceAS({showLine: false})
       }
       this.replace({showProgress: false})
     },
@@ -256,6 +261,7 @@ export default {
         throw new Error(`${this.$i18n.tnl('message.csvSameKey')}${this.formatErrorLine(sameLine)}`)
       }
 
+      this.replaceAS({showLine: true})
       await AppServiceHelper.bulkSave(this.appServicePath, entities)
       if(Util.isArray(mainCol)){
         let col = null
