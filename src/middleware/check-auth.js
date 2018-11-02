@@ -22,7 +22,7 @@ export default function (context) {
   }
   else { // check tenant feature
     let tenantFeatureList = context.store.state.tenantFeatureList
-    let isSuperAdmin = context.store.state.role.roleName == ROLE.SUPER_ADMIN // TO BE REMOVED in the future
+    let isSuperAdmin = context.store.state.role == ROLE.SUPER_ADMIN // TO BE REMOVED in the future
     if (!isSuperAdmin && tenantFeatureList && !MenuHelper.tenantOk(context.route.path, tenantFeatureList)) {
       context.app.router.push(APP.TOP_PAGE)
     }
