@@ -16,7 +16,7 @@ export const APP = {
   TOP_PAGE: "/main/position", // must not be / otherwise recursive infinitely
   LOGIN_PAGE: "/login", // if no login then /
   LOGIN_MODE: LOGIN_MODE.APP_SERVICE,
-  UNDETECT_TIME: 10 * 60 * 1000, // used on telemetry 
+  UNDETECT_TIME: 60 * 60 * 1000, // used on telemetry 
   AREA_THUMBNAIL_MAX: 200,
   USE_THERMOPILE: true,
   USE_MEDITAG: false,
