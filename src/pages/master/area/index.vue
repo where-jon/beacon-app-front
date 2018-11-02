@@ -69,8 +69,8 @@ export default {
         this.areaImages = this.areas.map((val) => ({ id: val.areaId, mapImage: val.mapImage, thumbnail: val.thumbnail}))
         this.areaList = this.areas.map((val) => ({
           ...val,
-          zoneList: Util.hasValue(val.zoneList)? val.zoneList: null,
-          locationList: Util.hasValue(val.locationList)? val.locationList: null,
+          zoneList: Util.hasValue(val.zoneList)? val.zoneList: [],
+          locationList: Util.hasValue(val.locationList)? val.locationList: [],
           mapImage: "",
           thumbnail: ""
         })) // omit images to avoid being filtering target
