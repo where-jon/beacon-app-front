@@ -93,7 +93,7 @@ export default {
       locationNames: [],
       categoryNames: [],
       canvas: null,
-      isEnableNameText: false,
+      isEnableNameText: true,
       zones: [],
       isRegist: false,
       items: [
