@@ -106,6 +106,9 @@ export default {
     }
   },
   computed: {
+    ...mapState('app_service', [
+      'pageSendParam',
+    ]),
     mapRatio() {
       if (this.pixelWidth || this.realWidth) {
         if (this.pixelWidth && this.realWidth) {
@@ -124,9 +127,14 @@ export default {
     that = this
     this.replace({title: this.$i18n.tnl('label.location')})
     this.fetchData()
-    this.selectedArea = null
-  },
-  created() {
+    if(this.pageSendParam){
+      this.selectedArea = this.pageSendParam.areaId
+      this.changeArea()
+      this.replaceAS({pageSendParam: null})
+    }
+    else{
+      this.selectedArea = null
+    }
   },
   updated(){
     if (this.isShownMapImage || !this.mapImage) {
