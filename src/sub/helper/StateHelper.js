@@ -97,6 +97,7 @@ const appStateConf = {
         groupId: Util.getValue(val, 'potGroupList.0.group.groupId', ''),
         categoryName: Util.getValue(val, 'potCategoryList.0.category.categoryName', ''),
         categoryId: Util.getValue(val, 'potCategoryList.0.category.categoryId', ''),
+        ruby: Util.getValue(val, 'extValue.ruby' ,null),
         extValue: val.extValue ? val.extValue : this.extValueDefault,
         thumbnail: ""
       })) // omit images to avoid being filtering target
