@@ -55,9 +55,9 @@
           <!-- jump another master page -->
           <div v-if="isEditable && anotherPageParams" :style="{'width': '100px'}">
             <!-- zone button -->
-            <div v-if="getAnotherPageParam('zone', row.item)">
+            <!-- <div v-if="getAnotherPageParam('zone', row.item)">
               <b-button size="sm" @click.stop="jumpAnotherPage('zone', row.item)" :variant="theme" class="btn-block mt-1 mb-1" v-t="'label.zone'" />
-            </div>
+            </div> -->
             <!-- location button -->
             <div v-if="getAnotherPageParam('location', row.item)">
               <b-button size="sm" @click.stop="jumpAnotherPage('location', row.item)" :variant="theme" class="btn-block" v-t="'label.location'" />
