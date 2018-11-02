@@ -63,18 +63,18 @@ export default {
         this.editMode = !this.editMode
       }
       if(this.editMode){
-        document.addEventListener('mousedown', this.touchStart);
-        document.addEventListener('mouseup', this.touchEnd);
-        document.addEventListener('touchstart', this.touchStart);
-        document.addEventListener('touchmove', this.touchMove);
-        document.addEventListener('touchend', this.touchEnd);
+        document.addEventListener('mousedown', this.touchStart)
+        document.addEventListener('mouseup', this.touchEnd)
+        document.addEventListener('touchstart', this.touchStart)
+        document.addEventListener('touchmove', this.touchMove)
+        document.addEventListener('touchend', this.touchEnd)
       }
       else{
-        document.removeEventListener('mousedown', this.touchStart);
-        document.removeEventListener('mouseup', this.touchEnd);
-        document.removeEventListener('touchstart', this.touchStart);
-        document.removeEventListener('touchmove', this.touchMove);
-        document.removeEventListener('touchend', this.touchEnd);
+        document.removeEventListener('mousedown', this.touchStart)
+        document.removeEventListener('mouseup', this.touchEnd)
+        document.removeEventListener('touchstart', this.touchStart)
+        document.removeEventListener('touchmove', this.touchMove)
+        document.removeEventListener('touchend', this.touchEnd)
       }
     },
     outColorPicker(e){
@@ -91,7 +91,7 @@ export default {
       this.touchColorPicker = true
     },
     touchEnd(e) {
-      if(e.touches.length == 0){
+      if(!e.touches || e.touches.length == 0){
         if(!this.touchColorPicker) {
           this.documentClick(e)
         }
