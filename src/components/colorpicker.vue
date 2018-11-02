@@ -72,6 +72,7 @@ export default {
         document.removeEventListener('mousedown', this.touchStart);
         document.removeEventListener('mouseup', this.touchEnd);
         document.removeEventListener('touchstart', this.touchStart);
+        document.removeEventListener('touchmove', this.touchMove);
         document.removeEventListener('touchend', this.touchEnd);
       }
     },
@@ -85,11 +86,16 @@ export default {
         this.touchColorPicker = true
       }
     },
+    touchMove(e) {
+      this.touchColorPicker = true
+    },
     touchEnd(e) {
-      if(!this.touchColorPicker) {
-        this.documentClick(e)
+      if(e.touches.length == 0){
+        if(!this.touchColorPicker) {
+          this.documentClick(e)
+        }
+        this.touchColorPicker = false
       }
-      this.touchColorPicker = false
     },
     documentClick(e) {
       if(this.outColorPicker(e)) {
