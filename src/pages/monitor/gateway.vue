@@ -7,7 +7,7 @@
           <b-button :variant="theme" @click="download()" v-t="'label.download'" />
         </b-col>
       </b-row>
-      <table class="table table-hover table-bordered">
+      <table class="table table-hover">
         <thead>
           <tr>
             <th scope="col" v-for="(val, key) in getTableHeaders()" :key="key" >{{ val }}</th>

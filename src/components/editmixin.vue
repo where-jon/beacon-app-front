@@ -8,6 +8,7 @@ import * as MenuHelper from '../sub/helper/MenuHelper'
 import * as StateHelper from '../sub/helper/StateHelper'
 import { sleep } from '../sub/util/Util'
 import { APP } from '../sub/constant/config.js'
+import { ROLE } from '../sub/constant/Constants'
 import * as HtmlUtil from '../sub/util/HtmlUtil'
 import * as Util from '../sub/util/Util'
 import commonmixinVue from './commonmixin.vue';
@@ -41,7 +42,7 @@ export default {
       return MenuHelper.isEditable(this.featurePath? this.featurePath: this.appServicePath)
     },
     isSuperEditable() {
-      return this.$store.state.role == "SUPER_ADMIN"
+      return this.$store.state.role == ROLE.SUPER_ADMIN
     },
     ...mapState('app_service', [
       'listMessage',

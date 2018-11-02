@@ -98,7 +98,7 @@ const convertDuplicateErrorInfo = (e) => {
     if(newVals.length != 0){
       newVals = newVals.concat(", ")
     }
-    newVals = newVals.concat(Util.snake2camel(vals[idx].trim()))
+    newVals = newVals.concat(vals[idx].trim())
   }
   e.key = newKeys
   e.val = newVals

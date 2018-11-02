@@ -57,7 +57,7 @@ export const authByAppService = async (loginId, password, success, err) => {
         let featureList = _(user.role.roleFeatureList).map((roleFeature) => {
             return {path: roleFeature.feature.path, mode: roleFeature.mode}
         }).sortBy((val) => val.path.length * -1).value()
-        let menu = MenuHelper.fetchNav(featureList, tenantFeatureList)
+        let menu = MenuHelper.fetchNav(featureList, tenantFeatureList, user.role)
 
         // get region
         let currentRegion = await HttpHelper.getAppService('/core/region/current')
