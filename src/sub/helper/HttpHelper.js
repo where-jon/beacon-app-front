@@ -1,6 +1,13 @@
 import axios from 'axios'
 import { EXCLOUD, APP_SERVICE } from '../constant/config'
 import * as AuthHelper from './AuthHelper'
+import * as Util from '../util/Util'
+
+let i18n
+
+export const setApp = (pi18n) => {
+  i18n = pi18n
+}
 
 const apServiceClient = axios.create({
     xsrfHeaderName: 'X-CSRF-Token',
@@ -73,6 +80,30 @@ export const postExCloud = async (url, config) => {
   }
 }
 
+const convertDuplicateErrorInfo = (e) => {
+  const keys = e.key.split(",")
+  const vals = e.val.split(",")
+  let newKeys = ""
+  let newVals = ""
+
+  for(let idx = 0; idx < keys.length; idx++){
+    const key = Util.snake2camel(keys[idx].trim())
+    if(key == "tenantId"){
+      continue
+    }
+    if(newKeys.length != 0){
+      newKeys = newKeys.concat(", ")
+    }
+    newKeys = newKeys.concat(i18n.tnl(`label.${key}`))
+    if(newVals.length != 0){
+      newVals = newVals.concat(", ")
+    }
+    newVals = newVals.concat(Util.snake2camel(vals[idx].trim()))
+  }
+  e.key = newKeys
+  e.val = newVals
+}
+
 const handleError = (e, url) => {
   console.error({e, url})
   if (e.response && e.response.status == 401) {
@@ -87,6 +118,9 @@ const handleError = (e, url) => {
           e.key = key[1]
           e.val = key[2]
           e.type = message.includes("duplicate key")? "duplicate": message.includes("violates foreign key")? "foreignKey": ""
+          if(e.type == "duplicate"){
+            convertDuplicateErrorInfo(e)
+          }
         }  
       }
       else if (e.response.data instanceof Array) { // bulk save failed
