@@ -78,9 +78,10 @@ export default {
     },
     async save(bulkSaveFunc) {
       const MAIN_COL = "exbId"
-      const LOCATION = ["locationId","areaName","locationName","visible","txViewType","posId","x","y"]
+      const LOCATION = ["locationId","areaName","locationName","visible","txViewType","posId","x","y", "zoneName"]
+      const ZONE = ["zoneName"]
       const SENSOR = ["sensor"]
-      const NUMBER_TYPE_LIST = ["deviceId", "exbId", "areaId", "locationId", "posId", "x", "y", "z", "txViewType", "zoneName"]
+      const NUMBER_TYPE_LIST = ["deviceId", "exbId", "areaId", "locationId", "posId", "x", "y", "z", "txViewType"]
       const BOOL_TYPE_LIST = ["visible", "enabled"]
 
       await bulkSaveFunc(MAIN_COL, NUMBER_TYPE_LIST, BOOL_TYPE_LIST, (entity, headerName, val, dummyKey) => {
@@ -91,7 +92,22 @@ export default {
           if (!entity.location) {
             entity.location = {locationId: dummyKey--}
           }
-          entity.location[headerName] = val
+          if (Util.equalsAny(headerName, ZONE)) {
+            entity.location.locationZoneList = [{
+              locationZonePK: {
+                locationId: dummyKey--,
+                zoneId: dummyKey--
+              },
+              zone: {
+                zoneId: dummyKey--,
+                zoneName: val,
+                areaId: dummyKey--,
+              }
+            }]
+          }
+          else{
+            entity.location[headerName] = val
+          }
         }
         else if (Util.equalsAny(headerName, SENSOR)) {
           const sensor = this.sensorOptionsExb.find((option) => option.text == val)
