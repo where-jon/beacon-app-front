@@ -1,4 +1,4 @@
-import { ROLE_FEATURE, MENU } from "../constant/Constants"
+import { ROLE_FEATURE, MENU, ROLE } from "../constant/Constants"
 import * as Util from "../util/Util"
 import { THEME } from "../constant/config"
 
@@ -8,10 +8,11 @@ export const setStore = (pStore) => {
   store = pStore
 }
 
-export const fetchNav = (featureList, tenantFeatureList) => {
+export const fetchNav = (featureList, tenantFeatureList, role) => {
+  let isSuperAdmin = role.roleName == ROLE.SUPER_ADMIN // TO BE REMOVED in the future
   let retNav = _.map(MENU, (group) => {
     let pages = _.filter(group.pages, (page) => {
-      return tenantOk("/" + group.base + page.path, tenantFeatureList) && getMode(page.feature, featureList) > ROLE_FEATURE.MODE.RO_SYS
+      return isSuperAdmin || tenantOk("/" + group.base + page.path, tenantFeatureList) && getMode(page.feature, featureList) > ROLE_FEATURE.MODE.RO_SYS
     })
     return {...group, pages}
   })
