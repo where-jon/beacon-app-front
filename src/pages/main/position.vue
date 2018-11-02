@@ -1,7 +1,6 @@
 <template>
-  <div id="mapContainer" class="container-fluid">
-    <breadcrumb :items="items" :extraNavSpec="extraNavSpec"
-        :reload="true" />
+  <div id="mapContainer" class="container-fluid" @click="resetDetail" >
+    <breadcrumb :items="items" :extraNavSpec="extraNavSpec" :reload="true" />
     <b-row class="mt-2">
       <b-form inline class="mt-2">
         <label class="ml-3 mr-2">{{ $t('label.area') }}</label>
@@ -9,9 +8,9 @@
       </b-form>
     </b-row>
     <b-row class="mt-3">
-      <canvas id="map" ref="map" @click="resetDetail" v-if="!showMeditag"></canvas>
+      <canvas id="map" ref="map" v-if="!showMeditag"></canvas>
       <b-col  v-if="showMeditag">
-        <canvas id="map" ref="map" @click="resetDetail"></canvas>
+        <canvas id="map" ref="map"></canvas>
       </b-col>
       <b-col class="rightPane" v-if="showMeditag">
         <sensor :sensors="meditagSensors" class="rightPane"></sensor>
@@ -46,8 +45,6 @@ import showmapmixin from '../../components/showmapmixin.vue'
 import sensor from '../../components/sensor.vue'
 import moment from 'moment'
 import { rightpanewidth, rightpaneleft } from '../../sub/constant/config.scss'
-
-let that
 
 export default {
   mixins: [showmapmixin],
@@ -100,17 +97,9 @@ export default {
       'orgPositions',
     ]),
   },
-  async mounted() {
-    that = this
+  mounted() {
     this.replace({title: this.$i18n.tnl('label.showPosition')})
-    await this.fetchData()
-    if (this.selectedTx.txId) {
-      this.showInitDetail(this.selectedTx)
-    }
-  },
-  updated(){
-    if (this.isFirstTime) return
-    // this.fetchData()
+    this.fetchData()
   },
   beforeDestroy() {
     this.resetDetail()
@@ -121,28 +110,32 @@ export default {
       this.resetDetail()
     },
     async showDetail(txId, x, y) {
+      const tipOffsetX = 5
+      const tipOffsetY = 15
+      const popupHeight = 156
       let tx = this.txs.find((tx) => tx.btxId == txId)
       let display = this.getDisplay(tx)
-      // rev === trueの場合、ポップアップを上に表示
-      let rev = y > 400
       let map = HtmlUtil.getRect("#map")
       let containerParent = HtmlUtil.getRect("#mapContainer", "parentNode")
       let offsetX = map.left - containerParent.left
       let offsetY = map.top - containerParent.top
-      const tipOffsetX = -34.5
-      const tipOffsetY = 15
+      const isDispRight = x + offsetX + 100 < window.innerWidth
+      // rev === trueの場合、ポップアップを上に表示
+      const rev = y + map.top + DISP.TX_R + tipOffsetY + popupHeight > window.innerHeight
       const targetId = this.txsMap[txId]
       const p = await this.getDetail(targetId)
       const position = this.positions.find((e) => {
         return e.btx_id === txId
       })
+      const balloonClass = !txId ? "": "balloon" + (rev ? "-u": "")
+
       let selectedTx = {
         txId,
         minor: 'minor:' + txId,
         major: p.tx && p.tx.major? 'major:' + p.tx.major : '',
-        class: !txId? "": "balloon" + (rev? "-u": ""),
-        left: x + offsetX + tipOffsetX + (rev? - 7: 0),
-        top: y + offsetY + tipOffsetY + DISP.TX_R + (rev? - 214: 0),
+        class: balloonClass,
+        left: x + offsetX - DISP.TX_R - (rev ? tipOffsetX : 0),
+        top: rev ? y + offsetY - DISP.TX_R - popupHeight : y + offsetY + DISP.TX_R + tipOffsetY,
         name: p.potName ? p.potName : '',
         timestamp: position ? this.getFinalReceiveTime(position.timestamp) : '',
         thumbnail: p.thumbnail ? p.thumbnail : '',
@@ -150,16 +143,13 @@ export default {
         group: p.potGroupList && p.potGroupList.length > 0 ? p.potGroupList[0].group.groupName : '',
         bgColor: '#' + display.bgColor,
         color: '#' + display.color,
+        isDispRight: isDispRight,
       }
       this.replaceMain({selectedTx})
       this.showReady = true
     },
     showInitDetail(tx) {
-      const position = PositionHelper.adjustPosition(this.positions, this.mapImageScale, this.positionedExb)
-          .filter((pos) => pos.btx_id == tx.btxId)
-      if (position.length == 1) {
-        this.showDetail(tx.txId, position[0].x, position[0].y)
-      }
+      
     },
     resetDetail() {
       let selectedTx = {}
@@ -221,34 +211,33 @@ export default {
       return pot
     },
     showMapImage() {
-      if (this.showMapImageDef()) {
-        return
-      }
+      this.showMapImageDef(() => {
 
-      if (!this.txCont) {
-        this.txCont = new Container()
-        this.txCont.width = this.bitmap.width
-        this.txCont.height = this.bitmap.height
-        this.stage.addChild(this.txCont)
-        this.stage.update()
-      }
-
-      let now = !DEV.USE_MOCK_EXC? new Date().getTime(): mock.positions_conf.start + this.count++ * mock.positions_conf.interval  // for mock
-      this.positions = PositionHelper.correctPosId(this.orgPositions, now)
-      if (APP.USE_MEDITAG && this.meditagSensors) {
-        this.positions = SensorHelper.setStress(this.positions, this.meditagSensors)
-      }
-
-      this.positionedExb = _(this.exbs).filter((exb) => {
-        Util.debug(exb, this.selectedArea)
-        return exb.enabled && exb.location.areaId == this.selectedArea && exb.location.x && exb.location.y > 0
-      }).value()
-      Util.debug(this.positionedExb)
-      if (this.positionedExb.length == 0) {
-        console.warn("positionedExb is empty. check if exbs are enabled")
-      }
-
-      this.showTxAll()
+        if (!this.txCont) {
+          this.txCont = new Container()
+          this.txCont.width = this.bitmap.width
+          this.txCont.height = this.bitmap.height
+          this.stage.addChild(this.txCont)
+          this.stage.update()
+        }
+  
+        let now = !DEV.USE_MOCK_EXC? new Date().getTime(): mock.positions_conf.start + this.count++ * mock.positions_conf.interval  // for mock
+        this.positions = PositionHelper.correctPosId(this.orgPositions, now)
+        if (APP.USE_MEDITAG && this.meditagSensors) {
+          this.positions = SensorHelper.setStress(this.positions, this.meditagSensors)
+        }
+  
+        this.positionedExb = _(this.exbs).filter((exb) => {
+          Util.debug(exb, this.selectedArea)
+          return exb.enabled && exb.location.areaId == this.selectedArea && exb.location.x && exb.location.y > 0
+        }).value()
+        Util.debug(this.positionedExb)
+        if (this.positionedExb.length == 0) {
+          console.warn("positionedExb is empty. check if exbs are enabled")
+        }
+  
+        this.showTxAll()
+      })
     },
     showTxAll() {
       if (!this.txCont) {
@@ -260,6 +249,15 @@ export default {
         Util.debug(pos)
         this.showTx(pos)
       })
+
+      if (this.selectedTx.txId) {
+        const tx = this.selectedTx
+        const position = PositionHelper.adjustPosition(this.positions, this.mapImageScale, this.positionedExb)
+            .filter((pos) => pos.btx_id == tx.btxId)
+        if (position.length == 1) {
+          this.showDetail(tx.txId, position[0].x, position[0].y)
+        }
+      }
     },
     getDisplay(tx) {
       let catOrGr = tx[DISP.DISPLAY_PRIORITY[0]] || tx[DISP.DISPLAY_PRIORITY[1]]
@@ -306,7 +304,7 @@ export default {
       txBtn.y = pos.y
       txBtn.on('click', (evt) =>{
         let txBtn = evt.currentTarget
-        that.showDetail(txBtn.txId, txBtn.x, txBtn.y)
+        this.showDetail(txBtn.txId, txBtn.x, txBtn.y)
       })
 
       this.txCont.addChild(txBtn)

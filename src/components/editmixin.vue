@@ -13,8 +13,6 @@ import * as HtmlUtil from '../sub/util/HtmlUtil'
 import * as Util from '../sub/util/Util'
 import commonmixinVue from './commonmixin.vue';
 
-let that
-
 export default {
   mixins: [commonmixinVue],  
   data() {
@@ -50,7 +48,6 @@ export default {
     ]),
   },
   mounted() {
-    that = this
     this.replace({title: this.$i18n.tnl('label.' + this.name) + this.label})
     this.replaceAS({listMessage: null})
   },
@@ -144,13 +141,12 @@ export default {
       this.replace({showProgress: false})
     },
     readImageView(e, imgViewName, imgWidthName, imgHeightName, thumbnailName, resize) {
-      let that = this
       HtmlUtil.readImage(e, (evt, width, height, thumbnail) => {
-          that.$refs[imgViewName].src = evt.target.result
-          that.form[imgViewName] = evt.target.result
-          if (imgWidthName) that.form[imgWidthName] = width
-          if (imgHeightName) that.form[imgHeightName] = height
-          if (thumbnailName) that.form[thumbnailName] = thumbnail
+          this.$refs[imgViewName].src = evt.target.result
+          this.form[imgViewName] = evt.target.result
+          if (imgWidthName) this.form[imgWidthName] = width
+          if (imgHeightName) this.form[imgHeightName] = height
+          if (thumbnailName) this.form[thumbnailName] = thumbnail
       }, resize)
     },
     formatErrorLine(lines){
@@ -199,11 +195,11 @@ export default {
                 let hasHeader = true
                 mainCol.forEach((val) => hasHeader = header.includes(val)? hasHeader: false)
                 if (!hasHeader) {
-                  throw Error(that.$i18n.tnl('message.csvHeaderRequired'))
+                  throw Error(this.$i18n.tnl('message.csvHeaderRequired'))
                 }
               }
               else if (!header.includes(mainCol)) {
-                throw Error(that.$i18n.tnl('message.csvHeaderRequired'))
+                throw Error(this.$i18n.tnl('message.csvHeaderRequired'))
               }
             }
             else {

@@ -37,11 +37,11 @@
             </b-form-group>
             <b-form-group>
               <label v-t="'label.locationX'" />
-              <b-form-input type="number" v-model="form.x" :readonly="!isEditable" />
+              <b-form-input type="number" v-model="form.x" min="0" max="99999" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.locationY'" />
-              <b-form-input type="number" v-model="form.y" :readonly="!isEditable" />
+              <b-form-input type="number" v-model="form.y" min="0" max="99999" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group>
               <b-form-checkbox v-model="form.enabled" value="true" unchecked-value="false" :disabled="!isEditable" :readonly="!isEditable">
@@ -87,8 +87,6 @@ import { APP } from '../../../sub/constant/config.js'
 import { txViewTypes } from '../../../sub/constant/Constants'
 import breadcrumb from '../../../components/breadcrumb.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
-
-let that
 
 export default {
   mixins: [editmixinVue],
@@ -184,7 +182,7 @@ export default {
         this.mutex = true
         if (newVal) {
           if (!newVal.match(/^[a-fA-F\d]{0,4}$/)) {
-            that.$nextTick(() => {
+            this.$nextTick(() => {
               this.deviceIdX = oldVal        
             })
             this.mutex = false
@@ -208,7 +206,6 @@ export default {
     },
   },
   mounted() {
-    that = this
     this.deviceId = this.form.deviceId
     ViewHelper.applyDef(this.form, this.defValue)
     StateHelper.load('sensor')

@@ -175,16 +175,15 @@ export default {
         map[e.deviceId.toString(16)] = e.location.locationName
       })
 
-      const that = this
       return telemetrys.map((e) => {
         const name = map[e.deviceid]
         const record = {
-          [that.label_deviceId]: parseInt(e.deviceid, 16),
-          [that.label_deviceIdX]: e.deviceid.toUpperCase(),
-          [that.label_name]: name != null ? name : 'ー',
-          [that.label_powerLevel]:e.power_level * 2,
-          [that.label_timestamp]: e.timestamp,
-          [that.label_state]: that.exbState(e.timestamp)
+          [this.label_deviceId]: parseInt(e.deviceid, 16),
+          [this.label_deviceIdX]: e.deviceid.toUpperCase(),
+          [this.label_name]: name != null ? name : 'ー',
+          [this.label_powerLevel]:e.power_level * 2,
+          [this.label_timestamp]: e.timestamp,
+          [this.label_state]: this.exbState(e.timestamp)
         }
         return record
       })

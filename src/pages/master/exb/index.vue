@@ -15,8 +15,6 @@ import listmixinVue from '../../../components/listmixin.vue'
 import breadcrumb from '../../../components/breadcrumb.vue'
 import * as Util from '../../../sub/util/Util'
 
-let that
-
 export default {
   components: {
     mList, 
@@ -71,7 +69,6 @@ export default {
     ]),
   },
   mounted() {
-    that = this
   },
   methods: {
     async fetchData(payload) {
@@ -87,9 +84,6 @@ export default {
       }
       this.replace({showProgress: false})
     },
-    // convBeforeEdit(exb) {
-    //   return {...exb, deviceNum: exb.deviceId - that.$store.state.currentRegion.deviceOffset}
-    // }
   }
 }
 </script>

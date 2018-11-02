@@ -36,7 +36,6 @@ import Encoding from 'encoding-japanese'
 import * as Util from '../sub/util/Util'
 import JsZip from 'jszip'
 
-let that
 let fileReader
 
 export default {
@@ -58,18 +57,17 @@ export default {
     }
   },
   mounted() {
-    that = this
     this.loading = false
     this.submittable = false
     fileReader = new FileReader()
     fileReader.onload = () =>{
       const contents = JsZip.loadAsync(fileReader.result, {base64: true}).then((zip) => {
-        that.countFile(zip)
-        that.uploadMessage()
+        this.countFile(zip)
+        this.uploadMessage()
         for(let key in zip.files){
-          if(that.isImageFile(key)){
+          if(this.isImageFile(key)){
             const id = this.getFileName(key)
-            const target = that.$parent.$options.methods.search.call(that.$parent, id)
+            const target = this.$parent.$options.methods.search.call(this.$parent, id)
             if(target){
               zip.file(key).async("base64").then((val) =>{
                 let imgInfo = {
@@ -77,15 +75,15 @@ export default {
                   type: key.slice(key.lastIndexOf(".") + 1),
                   thumbnail: `data:image/${key.slice(key.lastIndexOf(".") + 1)};base64,${val}`
                 }
-                if(that.$parent.$options.methods.addLoadImage){
-                  that.$parent.$options.methods.addLoadImage.call(that.$parent, imgInfo)
+                if(this.$parent.$options.methods.addLoadImage){
+                  this.$parent.$options.methods.addLoadImage.call(this.$parent, imgInfo)
                 }
-                that.form.thumbnails.push(imgInfo)
-                that.afterLoadFile()
+                this.form.thumbnails.push(imgInfo)
+                this.afterLoadFile()
               })
             }else{
-              that.form.warnThumbnails.push({ id: id })
-              that.afterLoadFile()
+              this.form.warnThumbnails.push({ id: id })
+              this.afterLoadFile()
             }
           }
         }

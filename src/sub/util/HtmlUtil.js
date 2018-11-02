@@ -61,7 +61,6 @@ export const fileDL = (name, content, charSet = "UTF8") => {
 
 export const readImage = (e, onload, resize) => {
   let files = e.target.files
-  let that = this
   if ( files && files[0] ) {
     let fr = new FileReader()
     fr.onload = (evt) => {

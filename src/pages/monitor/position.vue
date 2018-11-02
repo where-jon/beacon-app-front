@@ -181,16 +181,15 @@ export default {
         }
       })
 
-      const that = this
       return positions.map((e) => {
         const name = map[e.btx_id]
         const record = {
-          [that.label_minor]: e.minor,
-          [that.label_name]: name != null ? name : '—',
-          [that.label_receivePlace]: that.locationMap[e.device_id],
-          [that.label_powerLevel]: e.power_level,
-          [that.label_timestamp]: that.getTimestamp(e.updatetime),
-          [that.label_state]: that.txState(e.updatetime),
+          [this.label_minor]: e.minor,
+          [this.label_name]: name != null ? name : '—',
+          [this.label_receivePlace]: this.locationMap[e.device_id],
+          [this.label_powerLevel]: e.power_level,
+          [this.label_timestamp]: this.getTimestamp(e.updatetime),
+          [this.label_state]: this.txState(e.updatetime),
         }
         return record
       })

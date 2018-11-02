@@ -29,8 +29,6 @@ import { Tween, Ticker } from '@createjs/tweenjs/dist/tweenjs.module'
 import breadcrumb from '../../components/breadcrumb.vue'
 import showmapmixin from '../../components/showmapmixin.vue'
 
-let that
-
 export default {
   mixins: [showmapmixin],
   components: {
@@ -54,13 +52,8 @@ export default {
   computed: {
   },
   mounted() {
-    that = this
     this.replace({title: this.$i18n.tnl('label.pir')})
     this.fetchData()
-  },
-  updated(){
-    if (this.isFirstTime) return
-    // this.fetchData()
   },
   methods: {
     reset() {
@@ -75,7 +68,7 @@ export default {
         let thermopileSensors = APP.USE_THERMOPILE? await EXCloudHelper.fetchSensor(SENSOR.THERMOPILE): []
 
         this.positionedExb = _(this.exbs).filter((exb) => {
-          return exb.location.areaId == this.selectedArea && exb.location.x && exb.location.y > 0 // && Util.equalsAny(that.getSensorId(exb), [SENSOR.PIR, SENSOR.THERMOPILE])
+          return exb.location.areaId == this.selectedArea && exb.location.x && exb.location.y > 0 // && Util.equalsAny(this.getSensorId(exb), [SENSOR.PIR, SENSOR.THERMOPILE])
         })
         .map((exb) => {
           let pir = pirSensors.find((val) => val.deviceid == exb.deviceId && val.count >= DISP.PIR_MIN_COUNT)
@@ -101,19 +94,16 @@ export default {
       this.replace({showProgress: false})
     },
     showMapImage() {
-      if (this.showMapImageDef()) {
-        return
-      }
-
-      if (this.exbCon) {
-        this.exbCon.removeAllChildren()
-      }
-      this.positionedExb.forEach((exb) => {
-        exb.x *= this.mapImageScale
-        exb.y *= this.mapImageScale
-        this.showExb(exb)
+      this.showMapImageDef(() => {
+        if (this.exbCon) {
+          this.exbCon.removeAllChildren()
+        }
+        this.positionedExb.forEach((exb) => {
+          exb.x *= this.mapImageScale
+          exb.y *= this.mapImageScale
+          this.showExb(exb)
+        })
       })
-
     },
     showExb(exb) {
       console.log({exb})

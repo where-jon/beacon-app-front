@@ -36,7 +36,7 @@
     <b-modal id="modalInfo" :title="$t('label.mapRatioSetting')" ok-only>
       {{ $t('message.mapRatioSetting') }}
     </b-modal>
-    <b-modal id="modalWarn" :title="$t('label.confirm')" @ok="changeAreaDone" @hide="unChangeArea" >
+    <b-modal id="modalWarn" :title="$t('label.confirm')" @ok="setChangeArea" @hide="changeAreaDone" >
       {{ $t('message.unsavedData') }}
     </b-modal>
     <b-modal id="modalDeleteConfirm" :title="$t('label.confirm')" @ok="deleteExbDone" >
@@ -57,8 +57,6 @@ import { Tween, Ticker } from '@createjs/tweenjs/dist/tweenjs.module'
 import breadcrumb from '../../../components/breadcrumb.vue'
 import showmapmixin from '../../../components/showmapmixin.vue'
 
-let that
-
 export default {
   mixins: [showmapmixin],
   components: {
@@ -72,6 +70,7 @@ export default {
       selectedExb_: null,
       pixelWidth: null,
       mapRatioChanged: false,
+      isChangeArea: false,
       settingStart: false,
       isChanged: false,
       workExbs: [],
@@ -124,7 +123,6 @@ export default {
     },
   },
   mounted() {
-    that = this
     this.replace({title: this.$i18n.tnl('label.location')})
     this.fetchData()
     if(this.pageSendParam){
@@ -135,12 +133,6 @@ export default {
     else{
       this.selectedArea = null
     }
-  },
-  updated(){
-    if (this.isShownMapImage || !this.mapImage) {
-      return
-    }
-    this.showMapImage()
   },
   beforeDestroy() {
     this.selectedArea = null
@@ -156,6 +148,7 @@ export default {
       this.settingStart = false
       this.isChanged = false
       this.isShownMapImage = false
+      this.isChangeArea = false
       this.positionedExb = []
       this.exbOptions = []
     },
@@ -212,27 +205,24 @@ export default {
       this.stage.update()
     },
     showMapImage() {
-      if (this.showMapImageDef()) {
-        return
-      }
+      this.showMapImageDef(() => {
+        if (this.exbCon) {
+          this.exbCon.removeAllChildren()
+        }
+        else {
+          this.exbCon = new Container()
+        }
 
-      if (this.exbCon) {
-        this.exbCon.removeAllChildren()
-      }
-      else {
-        this.exbCon = new Container()
-      }
+        this.positionedExb.forEach((exb) => {
+          exb.x = exb.location.x * this.mapImageScale
+          exb.y = exb.location.y * this.mapImageScale
+          this.showExb(exb)
+        })
 
-      this.positionedExb.forEach((exb) => {
-        exb.x = exb.location.x * this.mapImageScale
-        exb.y = exb.location.y * this.mapImageScale
-        this.showExb(exb)
+        this.stage.addChild(this.exbCon)
+        this.stage.update()
+        this.forceUpdateRealWidth()
       })
-
-      this.stage.addChild(this.exbCon)
-      this.stage.update()
-
-      this.forceUpdateRealWidth()
     },
     createExbIcon(exb) {
       const {w, h} = DISP.EXB_LOC_SIZE
@@ -285,8 +275,8 @@ export default {
       })
 
       exbBtn.on('dblclick', (evt) => {
-        that.deleteTarget = exbBtn
-        that.$root.$emit('bv::show::modal', 'modalDeleteConfirm')
+        this.deleteTarget = exbBtn
+        this.$root.$emit('bv::show::modal', 'modalDeleteConfirm')
       })
       this.exbCon.addChild(exbBtn)
     },
@@ -300,7 +290,8 @@ export default {
       let messureCount = 0
       let start
       let stage = this.stage
-      this.stage.on('click', (evt) => {
+      this.stage.addEventListener('stagemousedown', (evt) => {
+        console.log("stage on click " + messureCount, evt.stageX, evt.stageY)
         if (messureCount == 2) {
           return
         }
@@ -333,9 +324,9 @@ export default {
           line.graphics.moveTo(start.x, start.y)
           line.graphics.lineTo(current.x, current.y)
           stage.addChild(line)
-          that.pixelWidth = Math.floor(Math.sqrt(Math.pow(current.x-start.x, 2) + Math.pow(current.y-start.y, 2)))
-          that.mapRatioChanged = true
-          that.isChanged = true
+          this.pixelWidth = Math.floor(Math.sqrt(Math.pow(current.x-start.x, 2) + Math.pow(current.y-start.y, 2)))
+          this.mapRatioChanged = true
+          this.isChanged = true
         }
         messureCount++
 
@@ -347,18 +338,25 @@ export default {
         this.$root.$emit('bv::show::modal', 'modalWarn')
       }
       else {
+        this.isChangeArea = true
         this.changeAreaDone()
       }
     },
-    unChangeArea() {
-      this.selectedArea = this.oldSelectedArea
-    },
     changeAreaDone() {
-      if (this.selectedArea) {
-        this.reset()
-        this.setExbPosition()
-        this.showMapImage()
-      }      
+      if (this.isChangeArea) {
+        this.isChangeArea = false
+        if (this.selectedArea) {
+          this.reset()
+          this.setExbPosition()
+          this.showMapImage()
+        }
+      }
+      else {
+        this.selectedArea = this.oldSelectedArea
+      }
+    },
+    setChangeArea() {
+      this.isChangeArea = true
     },
     showExbOnMap(val, x = 50, y = 30) {
       if (!val || !val.value) {
@@ -393,7 +391,7 @@ export default {
           counter = 0
           y += 20
         }
-        that.showExbOnMap(val, x, y)
+        this.showExbOnMap(val, x, y)
       })
     },
     deleteExbDone(evt) {

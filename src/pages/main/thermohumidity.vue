@@ -44,8 +44,6 @@ import cold from '../../assets/icon/cold.png'
 import hot from '../../assets/icon/hot.png'
 import comfort from '../../assets/icon/comfort.png'
 
-let that
-
 export default {
   mixins: [showmapmixin],
   components: {
@@ -71,13 +69,8 @@ export default {
   computed: {
   },
   mounted() {
-    that = this
     this.replace({title: this.$i18n.tnl('label.pir')})
     this.fetchData()
-  },
-  updated(){
-    if (this.isFirstTime) return
-    // this.fetchData()
   },
   methods: {
     reset() {
@@ -91,7 +84,7 @@ export default {
         let sensors = await EXCloudHelper.fetchSensor(SENSOR.TEMPERATURE)
 
         this.positionedExb = _(this.exbs).filter((exb) => {
-          return exb.location && exb.location.areaId == this.selectedArea && exb.location.x && exb.location.y > 0 && that.getSensorId(exb) == SENSOR.TEMPERATURE
+          return exb.location && exb.location.areaId == this.selectedArea && exb.location.x && exb.location.y > 0 && this.getSensorId(exb) == SENSOR.TEMPERATURE
         })
         .map((exb) => {
           let sensor = sensors.find((val) => val.deviceid == exb.deviceId && (val.timestamp||val.updatetime))
@@ -116,16 +109,13 @@ export default {
       this.replace({showProgress: false})
     },
     showMapImage() {
-      if (this.showMapImageDef()) {
-        return
-      }
-
-      this.positionedExb.forEach((exb) => {
-        exb.x *= this.mapImageScale
-        exb.y *= this.mapImageScale
-        this.showExb(exb)
+      this.showMapImageDef(() => {
+        this.positionedExb.forEach((exb) => {
+          exb.x *= this.mapImageScale
+          exb.y *= this.mapImageScale
+          this.showExb(exb)
+        })
       })
-
     },
     showExb(exb) {
       console.log({exb})

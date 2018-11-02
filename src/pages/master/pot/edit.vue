@@ -90,8 +90,6 @@ import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import { CATEGORY } from '../../../sub/constant/Constants'
 
-let that
-
 export default {
   components: {
     breadcrumb,
@@ -176,19 +174,10 @@ export default {
     ]),
   },
   mounted() {
-    that = this
     StateHelper.load('group')
     StateHelper.load('category')
     StateHelper.load('tx')
   },
-  // watch: {
-  //   'form.personOrThing': {
-  //     handler: function(val) {
-  //       that.replaceAs()
-  //     },
-  //     immediate: true,
-  //   }
-  // },
   methods: {
     beforeSubmit(again){
       if(!this.isShown('POT_WITH_POTCD')){
