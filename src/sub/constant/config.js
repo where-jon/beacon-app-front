@@ -224,6 +224,10 @@ export const GATEWAY = {
   }
 }
 
+export const TELEMETRY = {
+  NOSIGNAL: 30 * 60 * 1000,
+}
+
 export const TXDETAIL_ITEMS = [
   {name: 'minor', disp: true},
   {name: 'major', disp: true},
