@@ -1,10 +1,10 @@
 <template>
-  <div :class="selectedTx.class" :style="styles">
+  <div :class="selectedTx.class" :style="styles" id="popup">
     <div class="potBox" @click="$emit('resetDetail')">
       <div class="clearfix">
         <div class="thumbnail">
           <img :src="selectedTx.thumbnail" width="auto" height="125" v-if="selectedTx.thumbnail.length > 0" />
-          <img src="/default.png" width="auto" height="116" v-else />
+          <img src="/default.png" width="auto" height="125" v-else />
         </div>
         <div class="description">
           <div v-for="(item, index) in getDispItems()" :key="index">{{ item }}</div>
@@ -80,7 +80,7 @@ export default {
 
 .balloon::before {
   @extend .balloon-before;
-  left: 20px;
+  left: 12px;
   top: -15px;
   border-right: 15px solid transparent;
   border-bottom: var(--borderBottom);
@@ -89,7 +89,7 @@ export default {
 
 .balloon-u::before {
   @extend .balloon-before;
-  left: 27px;
+  left: 15px;
   bottom: -15px;
   border-top: var(--borderBottom);
   border-right: 15px solid transparent;
