@@ -1,7 +1,6 @@
 <template>
-  <div id="mapContainer" class="container-fluid">
-    <breadcrumb :items="items" :extraNavSpec="extraNavSpec"
-        :reload="true" />
+  <div id="mapContainer" class="container-fluid" @click="resetDetail" >
+    <breadcrumb :items="items" :extraNavSpec="extraNavSpec" :reload="true" />
     <b-row class="mt-2">
       <b-form inline class="mt-2">
         <label class="ml-3 mr-2">{{ $t('label.area') }}</label>
@@ -9,9 +8,9 @@
       </b-form>
     </b-row>
     <b-row class="mt-3">
-      <canvas id="map" ref="map" @click="resetDetail" v-if="!showMeditag"></canvas>
+      <canvas id="map" ref="map" v-if="!showMeditag"></canvas>
       <b-col  v-if="showMeditag">
-        <canvas id="map" ref="map" @click="resetDetail"></canvas>
+        <canvas id="map" ref="map"></canvas>
       </b-col>
       <b-col class="rightPane" v-if="showMeditag">
         <sensor :sensors="meditagSensors" class="rightPane"></sensor>
