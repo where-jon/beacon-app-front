@@ -30,15 +30,15 @@
             </b-form-group>
             <b-form-group v-show="showTx('btxId')">
               <label v-t="'label.btxId'" />
-              <b-form-input type="number" v-model="form.btxId"  :required="showTx('btxId')" :readonly="!isEditable" />
+              <b-form-input type="number" v-model="form.btxId" max="65535" :required="showTx('btxId')" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group v-show="isShown('TX_WITH_MAJOR')">
               <label v-t="'label.major'" />
-              <b-form-input type="number" v-model="form.major" :readonly="!isEditable" />
+              <b-form-input type="number" v-model="form.major" max="65535" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group v-if="showMinorMid" v-show="showTx('minor')">
               <label v-t="'label.minor'" />
-              <b-form-input type="number" v-model="form.minor" :readonly="!isEditable" :required="showTx('minor')"/>
+              <b-form-input type="number" v-model="form.minor" max="65535" :readonly="!isEditable" :required="showTx('minor')"/>
             </b-form-group>
             <b-form-group>
               <label v-t="'label.txName'" />
