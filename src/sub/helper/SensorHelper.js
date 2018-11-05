@@ -48,7 +48,7 @@ export const showThermoHumidityChart = (id, data, i18n) => {
     return result
   }, [])
 
-  console.table(data)
+  console.log(data)
 
   return new Chart(id, {
     type:'line', 
