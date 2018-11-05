@@ -123,6 +123,7 @@ export default {
     ]),
   },
   mounted(){
+    this.createMessage = false
     this.fetchData()
   },
   watch: {
