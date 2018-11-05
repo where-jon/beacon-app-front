@@ -59,6 +59,14 @@ export const isArray = (obj) => Object.prototype.toString.call(obj) === '[object
 export const hasValue = (obj) => obj != null && obj.length !== 0
 export const detectEncoding = (str) => jschardet.detect(str)
 
+export const supportInputType = (type) => {
+  let input = document.createElement('input')
+  input.setAttribute('type', type)
+  const support = input.type === type
+  input = null
+  return support
+}
+
 export const arrayBuffer2str = (buffer) => {
   const view = new Uint8Array(buffer)
   const str = []
