@@ -427,7 +427,7 @@ export default {
 
   div.empty-icon {
     width: 0px;
-    height: 120px;
+    height: 60px;
     vertical-align: top;
   }
 </style>

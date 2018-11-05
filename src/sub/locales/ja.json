@@ -69,7 +69,7 @@
     "---------------- App exbeacon ---------------":"",
 
     "locate": "測位",
-    "showPosition": "在席表示",
+    "showPosition": "位置表示(地図)",
     "telemetry": "EXB状態監視",
     "gateway": "ゲートウェイ",
     "position": "TX状態監視",
@@ -185,7 +185,7 @@
     "ruby": "ふりがな",
     "tel": "電話番号",
 
-    "position-list": "位置把握（一覧）",
+    "position-list": "位置表示（一覧）",
     "detectState": "状態",
     "detected": "検知中",
     "detectAfterUndetect": "検知後未検知",
@@ -193,7 +193,7 @@
     "final-receive-location": "最終取得場所",
     "mapDisplay": "マップ表示",
 
-    "positionStack": "位置把握（階層図）",
+    "positionStack": "位置表示（集約）",
 
     "password": "パスワード",
     "passwordCurrent": "現在のパスワード",
