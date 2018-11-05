@@ -160,7 +160,6 @@ export default {
       }
     },
     download() {
-      console.log(Util.converToCsv(this.gateways))
       HtmlUtil.fileDL("gateway.csv", Util.converToCsv(this.gateways), getCharSet(this.$store.state.loginId))
     },
   }

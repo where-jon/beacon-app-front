@@ -52,6 +52,11 @@ export const fileDL = (name, content, charSet = "UTF8") => {
 
   window.URL = window.URL || window.webkitURL;
   e.href = window.URL.createObjectURL(blob);
+  // IE対応
+  if (window.navigator.msSaveBlob) {
+    window.navigator.msSaveOrOpenBlob(blob, name);
+    return
+  }
   e.download = name;
   e.style.display = "none"
   document.body.appendChild(e)
