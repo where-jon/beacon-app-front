@@ -170,9 +170,9 @@ export default {
       let error = null
       let entities = []
       const sameLine = []
-      reader.addEventListener('load', (e) => {
+      reader.onload = () => {
         try {
-          let csv = Util.csv2Obj(e.target.result)
+          let csv = Util.csv2Obj(Util.arrayBuffer2str(reader.result))
           if (!csv || !csv.data || csv.errors && csv.errors.length > 0) {
             console.error(csv.errors)
             if (csv.errors && typeof csv.errors[0] == 'string' && csv.errors[0].startsWith("message.")) {
@@ -243,9 +243,9 @@ export default {
         }
 
         readFin = true
-      })
+      }
       
-      reader.readAsBinaryString(this.form.csvFile)
+      reader.readAsArrayBuffer(this.form.csvFile)
 
       if (!readFin) {
         await Util.sleep(100)

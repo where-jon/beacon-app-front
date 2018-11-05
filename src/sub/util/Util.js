@@ -59,6 +59,15 @@ export const isArray = (obj) => Object.prototype.toString.call(obj) === '[object
 export const hasValue = (obj) => obj != null && obj.length !== 0
 export const detectEncoding = (str) => jschardet.detect(str)
 
+export const arrayBuffer2str = (buffer) => {
+  const view = new Uint8Array(buffer)
+  const str = []
+  for (let i = 0; i < view.length; i++) {
+    str.push(view[i])
+  }
+  return String.fromCharCode.apply(null, str)
+}
+
 export const pathMatch = (target, path) => path && path.endsWith("*") && target && target.startsWith(path.slice(0, -1)) || path == target
 /**
  * オプジェクトから階層を辿って値を取得する。
