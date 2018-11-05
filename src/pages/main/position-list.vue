@@ -80,7 +80,7 @@ export default {
         },
         {
           key: 'positionStack',
-          path: '/main/positionStack',
+          path: '/main/position-stack',
           icon: 'far fa-building',
         },
       ],

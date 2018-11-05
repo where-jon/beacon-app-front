@@ -10,7 +10,10 @@ export default {
   mixins: [reloadmixinVue],
   methods: {
     getStyleDisplay(entity){
-      return entity.map((val) => ({
+      return entity.map((val) => this.getStyleDisplay1(val))
+    },
+    getStyleDisplay1(val) {
+      return {
         "color": Util.colorCd4display(val.color),
         "background-color": Util.colorCd4display(val.bgColor, "#FFFFFF"),
         "text-align": "center",
@@ -27,7 +30,7 @@ export default {
         "-webkit-box-align": "center",
         "align-items": "center",
         "justify-content": "center",
-      }))
+      }
     }
   }
 }

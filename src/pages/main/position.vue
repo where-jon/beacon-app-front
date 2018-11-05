@@ -97,12 +97,9 @@ export default {
       'orgPositions',
     ]),
   },
-  async mounted() {
+  mounted() {
     this.replace({title: this.$i18n.tnl('label.showPosition')})
-    await this.fetchData()
-    if (this.selectedTx.txId) {
-      this.showInitDetail(this.selectedTx)
-    }
+    this.fetchData()
   },
   beforeDestroy() {
     this.resetDetail()
@@ -152,11 +149,7 @@ export default {
       this.showReady = true
     },
     showInitDetail(tx) {
-      const position = PositionHelper.adjustPosition(this.positions, this.mapImageScale, this.positionedExb)
-          .filter((pos) => pos.btx_id == tx.btxId)
-      if (position.length == 1) {
-        this.showDetail(tx.txId, position[0].x, position[0].y)
-      }
+      
     },
     resetDetail() {
       let selectedTx = {}
@@ -256,6 +249,15 @@ export default {
         Util.debug(pos)
         this.showTx(pos)
       })
+
+      if (this.selectedTx.txId) {
+        const tx = this.selectedTx
+        const position = PositionHelper.adjustPosition(this.positions, this.mapImageScale, this.positionedExb)
+            .filter((pos) => pos.btx_id == tx.btxId)
+        if (position.length == 1) {
+          this.showDetail(tx.txId, position[0].x, position[0].y)
+        }
+      }
     },
     getDisplay(tx) {
       let catOrGr = tx[DISP.DISPLAY_PRIORITY[0]] || tx[DISP.DISPLAY_PRIORITY[1]]

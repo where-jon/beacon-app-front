@@ -6,6 +6,7 @@ export const state = () => ({
   orgPositions: [],
   selectedArea: null,
   selectedTx: {},
+  eachAreas: [],
   sample: "sample" // sample
 })
 

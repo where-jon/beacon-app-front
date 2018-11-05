@@ -43,7 +43,7 @@
     
       <!-- table -->
       <b-table show-empty stacked="md" striped hover :items="list" :fields="fields" :current-page="currentPage" :per-page="perPage" outlined
-              :filter="filterGrid" @filtered="onFiltered">
+              :filter="filterGrid" @filtered="onFiltered" :bordered="params.bordered">
         <template slot="style" slot-scope="row">
           <div v-bind:style="style(row.index)">A</div>
         </template>
@@ -77,6 +77,16 @@
         <template slot="mapDisplay" slot-scope="row">
           <b-button size="sm" @click.stop="mapDisplay(row.item)" :variant="theme"
               v-t="'label.mapDisplay'" :disabled="row.item.noSelectedTx" class="mx-1" />
+        </template>
+        <!-- カテゴリ等アイコン横並び表示 -->
+        <template slot="icons" slot-scope="row">
+          <div class="empty-icon d-inline-flex"></div><!-- 横幅0の「支柱」 -->
+          <div class="d-inline-flex flex-wrap">
+          <div v-for="position in row.item.positions" :key="position.areaId"
+              class="d-inline-flex m-1" v-bind:style="position.display" @click.stop="mapDisplay(position)">
+              {{position.label}}
+          </div>
+          </div>
         </template>
       </b-table>
 
@@ -413,5 +423,11 @@ export default {
   
   select.extra-filter {
     max-width: 10em;
+  }
+
+  div.empty-icon {
+    width: 0px;
+    height: 120px;
+    vertical-align: top;
   }
 </style>
