@@ -1,5 +1,5 @@
 <template>
-  <div :class="selectedTx.class" :style="styles" id="popup">
+  <div :class="selectedTx.class" :style="styles" id="popup" v-if="!isIE">
     <div class="potBox" @click="$emit('resetDetail')">
       <div class="clearfix">
         <div class="thumbnail">
@@ -12,6 +12,40 @@
       </div>
     </div>
   </div>
+
+  <div v-else>
+    <div :class="selectedTx.class" :style="{
+      padding: '5px',
+      top: selectedTx.top +'px',
+      left: selectedTx.left + 'px',
+      color: selectedTx.color,
+      backgroundColor: selectedTx.bgColor,
+      boxShadow: '0px 0px 10px 0px ' + selectedTx.bgColor,
+    }" id="popup">
+      <div class="potBox" @click="$emit('resetDetail')">
+        <div class="clearfix">
+          <div class="thumbnail">
+            <img :src="selectedTx.thumbnail" width="auto" height="125" v-if="selectedTx.thumbnail.length > 0" />
+            <img src="/default.png" width="auto" height="125" v-else />
+          </div>
+          <div class="description">
+            <div v-for="(item, index) in getDispItems()" :key="index">{{ item }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div :style="{
+      position: 'absolute',
+      top: (selectedTx.top + 141) +'px',
+      left: selectedTx.left + 'px',
+      width: '15px',
+      height: '15px',
+      borderTop: '15px solid #F0897F',
+      borderRight: '15px solid transparent',
+      borderBottom: '15px solid transparent',
+      borderLeft: '15px solid transparent'
+    }"></div>
+  </div>
 </template>
 
 <script>
@@ -21,20 +55,26 @@ export default {
   props: ['selectedTx'],
   data() {
     return {
+      isIE: false,
     }
   },
   computed: {
     styles () {
+      const bgColor = this.selectedTx.bgColor
       return {
         left: this.selectedTx.left + 'px',
         top: this.selectedTx.top +'px',
-        '--border': '3px solid ' + this.selectedTx.bgColor,
-        '--borderBottom': '15px solid ' + this.selectedTx.bgColor,
-        '--bgColor': this.selectedTx.bgColor,
-        '--boxShadow': '0px 0px 10px 0px ' + this.selectedTx.bgColor,
+        '--border': '3px solid ' + bgColor,
+        '--borderBottom': '15px solid ' + bgColor,
+        '--bgColor': bgColor,
+        '--boxShadow': '0px 0px 10px 0px ' + bgColor,
         '--color': this.selectedTx.color,
       }
     }
+  },
+  created () {
+    const userAgent = window.navigator.userAgent
+    this.isIE = userAgent.indexOf('Trident') > -1 || userAgent.indexOf('MSIE') > -1
   },
   methods: {
     getDispItems () {
