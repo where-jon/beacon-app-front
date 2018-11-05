@@ -24,6 +24,7 @@ export default {
       message: '',
       warnMessage: '',
       again: true,
+      createMessage: true,
     }
   },
   computed: {
@@ -113,7 +114,9 @@ export default {
           window.scrollTo(0, 0)
         }
         else {
-          this.replaceAS({listMessage: this.message})
+          if(this.createMessage){
+            this.replaceAS({listMessage: this.message})
+          }
           this.backToList()
         }
       }
