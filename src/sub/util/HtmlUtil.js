@@ -26,7 +26,6 @@ const intervals = []
 export const registerInterval = (func, period) => intervals.push(setInterval(func, period))
 
 export const removeInterval = () => {
-  console.log(clearInterval, {intervals})
   while (intervals.length > 0) {
     window.clearInterval(intervals.shift())
   }
@@ -49,6 +48,11 @@ export const fileDL = (name, content, charSet = "UTF8") => {
   )
   var uint8_array = new Uint8Array( encodeString );
   var blob = new Blob([ uint8_array ], { type: 'text/csv' });
+
+  if(window.navigator.msSaveBlob){
+    window.navigator.msSaveBlob(blob, name)
+    return
+  }
 
   window.URL = window.URL || window.webkitURL;
   e.href = window.URL.createObjectURL(blob);

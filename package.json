@@ -28,6 +28,7 @@
     "axios": "^0.18.0",
     "bootstrap-vue": "^2.0.0-rc.11",
     "chart.js": "^2.7.2",
+    "element-ui": "^2.4.9",
     "encoding-japanese": "^1.0.29",
     "fabric": "^1.7.22",
     "jschardet": "^1.6.0",
@@ -43,7 +44,8 @@
     "vue-i18n": "^8.0.0",
     "vue-scrolling-table": "^0.2.2",
     "vue-select": "2.4.0",
-    "vue-simple-spinner": "^1.2.8"
+    "vue-simple-spinner": "^1.2.8",
+    "vue-slide-up-down": "^1.4.1"
   },
   "devDependencies": {
     "ava": "^0.25.0",

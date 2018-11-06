@@ -1,16 +1,54 @@
 <template>
-  <div :class="selectedTx.class" :style="styles" id="popup">
-    <div class="potBox" @click="$emit('resetDetail')">
-      <div class="clearfix">
-        <div class="thumbnail">
-          <img :src="selectedTx.thumbnail" width="auto" height="125" v-if="selectedTx.thumbnail.length > 0" />
-          <img src="/default.png" width="auto" height="125" v-else />
-        </div>
-        <div class="description">
-          <div v-for="(item, index) in getDispItems()" :key="index">{{ item }}</div>
+  <!-- 吹き出し部分 -->
+  <div>
+    <div :class="selectedTx.class" :style="{
+      padding: '5px',
+      top: selectedTx.top +'px',
+      left: (selectedTx.left + (selectedTx.class === 'balloon' ? 0 : radiusIcon)) + 'px',
+      color: selectedTx.color,
+      backgroundColor: selectedTx.bgColor,
+      boxShadow: '0px 0px 10px 0px ' + selectedTx.bgColor,
+    }" id="popup">
+      <div class="potBox" @click="$emit('resetDetail')">
+        <div class="clearfix">
+          <div class="thumbnail">
+            <img :src="selectedTx.thumbnail" width="auto" height="125" v-if="selectedTx.thumbnail.length > 0" />
+            <img src="/default.png" width="auto" height="125" v-else />
+          </div>
+          <div class="description">
+            <div v-for="(item, index) in getDispItems()" :key="index">{{ item }}</div>
+          </div>
         </div>
       </div>
     </div>
+    <!-- アイコン上側に吹き出し表示時の三角(▼) -->
+    <div
+    v-if="selectedTx.class === 'balloon'"
+    :style="{
+      position: 'absolute',
+      top: (selectedTx.top - 30) +'px',
+      left: (selectedTx.left + 10) + 'px',
+      width: '15px',
+      height: '15px',
+      borderTop: '15px solid transparent',
+      borderRight: '15px solid transparent',
+      borderBottom: '15px solid ' + selectedTx.bgColor,
+      borderLeft: '15px solid transparent'
+    }"></div>
+    <!-- アイコン下側に吹き出し表示時の三角(▲) -->
+    <div
+    v-else
+    :style="{
+      position: 'absolute',
+      top: (selectedTx.top + 141) +'px',
+      left: (selectedTx.left + radiusIcon * 2) + 'px',
+      width: '15px',
+      height: '15px',
+      borderTop: '15px solid ' + selectedTx.bgColor,
+      borderRight: '15px solid transparent',
+      borderBottom: '15px solid transparent',
+      borderLeft: '15px solid transparent'
+    }"></div>
   </div>
 </template>
 
@@ -21,28 +59,14 @@ export default {
   props: ['selectedTx'],
   data() {
     return {
-    }
-  },
-  computed: {
-    styles () {
-      return {
-        left: this.selectedTx.left + 'px',
-        top: this.selectedTx.top +'px',
-        '--border': '3px solid ' + this.selectedTx.bgColor,
-        '--borderBottom': '15px solid ' + this.selectedTx.bgColor,
-        '--bgColor': this.selectedTx.bgColor,
-        '--boxShadow': '0px 0px 10px 0px ' + this.selectedTx.bgColor,
-        '--color': this.selectedTx.color,
-      }
+      radiusIcon: DISP.TX_R / 2,
     }
   },
   methods: {
     getDispItems () {
       return TXDETAIL_ITEMS
-      .filter((e) => {
-        return e.disp
-      })
-      .map((e) => {return this.selectedTx[e.name]})
+      .filter((e) => e.disp)
+      .map((e) => this.selectedTx[e.name])
     }
   }
 }
@@ -54,8 +78,6 @@ export default {
 .potBox {
   padding: 5px;
   overflow: hidden;
-  border: var(--border);
-  background-color: var(--bgColor);
   border-radius: 3px;
   font-size: 0.9em;
   display: flex;
@@ -67,7 +89,6 @@ export default {
   position: absolute;
   top: 100px;
   left: 100px;
-  box-shadow: var(--boxShadow);
 }
 
 .balloon-before {
@@ -76,24 +97,6 @@ export default {
   display: block;
   width: 0;
   height: 0;
-}
-
-.balloon::before {
-  @extend .balloon-before;
-  left: 12px;
-  top: -15px;
-  border-right: 15px solid transparent;
-  border-bottom: var(--borderBottom);
-  border-left: 15px solid transparent;
-}
-
-.balloon-u::before {
-  @extend .balloon-before;
-  left: 15px;
-  bottom: -15px;
-  border-top: var(--borderBottom);
-  border-right: 15px solid transparent;
-  border-left: 15px solid transparent;
 }
 
 @media screen\0 {	
@@ -110,7 +113,6 @@ export default {
 
 .description {
   float: left;
-  color: var(--color);
   font-weight: bold;
   padding-left: 10px;
 }

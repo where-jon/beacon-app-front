@@ -417,7 +417,7 @@ export default {
 
         this.positionedExb.forEach((exb) => {
           if (exb.isChanged) {
-            exb.location = {locationId: exb.location.locationId, areaId: this.selectedArea, x: exb.x / this.mapImageScale, y: exb.y / this.mapImageScale}
+            exb.location = {locationId: exb.location.locationId, areaId: this.selectedArea, x: Math.round(exb.x / this.mapImageScale), y: Math.round(exb.y / this.mapImageScale)}
             param.push(exb.location)
             exb.isChanged = false
           }
