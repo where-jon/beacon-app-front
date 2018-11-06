@@ -28,7 +28,7 @@ export const luminance = (hex) => {
 
 export const table = (log) => {
   if (DEV.DEBUG) {
-    console.table(log)
+    console.table? console.table(log): console.log(log)
   }
 }
 
