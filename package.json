@@ -43,7 +43,8 @@
     "vue-i18n": "^8.0.0",
     "vue-scrolling-table": "^0.2.2",
     "vue-select": "2.4.0",
-    "vue-simple-spinner": "^1.2.8"
+    "vue-simple-spinner": "^1.2.8",
+    "vue-slide-up-down": "^1.4.1"
   },
   "devDependencies": {
     "ava": "^0.25.0",

@@ -9,11 +9,13 @@
               <i class="fa fa-angle-down" v-if="selectedItem === i"></i>
             </span>
           </li>
-          <li :class="menuItemClasses" v-for="(page, j) in group.pages" :key="page.key" v-if="selectedItem === i && isDispMenuItem(page)">
-            <router-link class="bd-toc-link" :to="'/' + group.base + page.path">
-              <i :class="page.icon" class="ml-3 menu-item-icon"></i>&nbsp;{{ $t("label." + page.key) }}
-            </router-link>
-          </li>
+          <vue-slide-up-down :active="selectedItem === i">
+            <li :class="menuItemClasses" v-for="(page, j) in group.pages" :key="page.key">
+              <router-link class="bd-toc-link" :to="'/' + group.base + page.path">
+                <i :class="page.icon" class="ml-3 menu-item-icon"></i>&nbsp;{{ $t("label." + page.key) }}
+              </router-link>
+            </li>
+          </vue-slide-up-down>
         </ul>
       </li>
     </ul>
@@ -23,13 +25,18 @@
 
 import { DISP, THEME, DEV } from '../sub/constant/config'
 import { getThemeClasses } from '../sub/helper/ThemeHelper'
+import VueSlideUpDown from 'vue-slide-up-down'
 
 export default {
+  components: {
+    'vue-slide-up-down': VueSlideUpDown,
+  },
   data() {
     return {
       nav : this.$store.state.menu,
       selectedItem: -1,
-      userRole: this.$store.state.role
+      userRole: this.$store.state.role,
+      active: true,
     }
   },
   computed: {
@@ -48,11 +55,12 @@ export default {
   methods: {
     onMenuClick (index) {
       this.selectedItem = index === this.selectedItem ? -1 : index
+      this.active = !this.active
     },
-    isDispMenuItem(page) {
-      return true 
-    }
   },
+  templates: {
+    'vue-slide-up-down':VueSlideUpDown
+  }
 }
 </script>
 
