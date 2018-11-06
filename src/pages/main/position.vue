@@ -175,8 +175,6 @@ export default {
         orgPositions.push(positions)
         this.replaceMain({orgPositions})
 
-        this.showMapImage()
-
         if (APP.USE_MEDITAG) {
           let meditagSensors = await EXCloudHelper.fetchSensor(SENSOR.MEDITAG)
           this.meditagSensors = _(meditagSensors)
@@ -189,8 +187,10 @@ export default {
         }
 
         if (APP.USE_MAGNET) {
-          let magnetSensors = await EXCloudHelper.fetchSensor(SENSOR.MAGNET)
+          this.magnetSensors = await EXCloudHelper.fetchSensor(SENSOR.MAGNET)
         }
+
+        this.showMapImage()
 
         if (payload && payload.done) {
           payload.done()
@@ -270,12 +270,17 @@ export default {
     },
     showTx(pos) {
       let tx = this.txs.find((tx) => tx.btxId == pos.btx_id)
+      if (tx.sensorId === SENSOR.MAGNET) {
+        var magnet = this.magnetSensors && this.magnetSensors.find((sensor) => sensor.btx_id == tx.btxId)
+      }
       let display = this.getDisplay(tx)
 
       let stage = this.stage
       let txBtn = new Container()
       let btnBg = new Shape()
-      btnBg.graphics.beginStroke("#ccc").beginFill('#' + display.bgColor)
+      let bgColor = (magnet && magnet.magnet == SENSOR.MAGNET_STATUS.ON)? display.color: display.bgColor
+      let color = (magnet && magnet.magnet == SENSOR.MAGNET_STATUS.ON)? display.bgColor : display.color
+      btnBg.graphics.beginStroke("#ccc").beginFill('#' + bgColor)
       switch(display.shape) {
       case SHAPE.CIRCLE:
         btnBg.graphics.drawCircle(0, 0, DISP.TX_R)
@@ -294,7 +299,7 @@ export default {
 
       let label = new Text(pos.label)
       label.font = DISP.TX_FONT
-      label.color = '#' + display.color
+      label.color = '#' + color
       label.textAlign = "center"
       label.textBaseline = "middle"
       txBtn.addChild(label)

@@ -185,7 +185,7 @@
     "ruby": "ふりがな",
     "tel": "電話番号",
 
-    "position-list": "位置表示（一覧）",
+    "position-list": "位置表示(一覧)",
     "detectState": "状態",
     "detected": "検知中",
     "detectAfterUndetect": "検知後未検知",
@@ -193,7 +193,7 @@
     "final-receive-location": "最終取得場所",
     "mapDisplay": "マップ表示",
 
-    "positionStack": "位置表示（集約）",
+    "positionStack": "位置表示(全体)",
 
     "password": "パスワード",
     "passwordCurrent": "現在のパスワード",
