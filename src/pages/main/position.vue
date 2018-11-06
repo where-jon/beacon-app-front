@@ -110,7 +110,7 @@ export default {
       this.resetDetail()
     },
     async showDetail(txId, x, y) {
-      const tipOffsetX = 5
+      const tipOffsetX = 15
       const tipOffsetY = 15
       const popupHeight = 156
       let tx = this.txs.find((tx) => tx.btxId == txId)

@@ -26,7 +26,6 @@ const intervals = []
 export const registerInterval = (func, period) => intervals.push(setInterval(func, period))
 
 export const removeInterval = () => {
-  console.log(clearInterval, {intervals})
   while (intervals.length > 0) {
     window.clearInterval(intervals.shift())
   }
