@@ -18,6 +18,8 @@ export const numberRange = (start, end) => new Array(end - start + 1).fill().map
 
 export const str2boolean = (str) => hasValue(str) && str.toLowerCase() != "false"
 
+export const isIos = () => /(iPhone|iPod|iPad)/.test(navigator.userAgent)
+
 export const luminance = (hex) => {
   const num = parseInt(hex, 16)
   const r = num >> 16

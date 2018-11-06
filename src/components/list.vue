@@ -28,9 +28,9 @@
           <b-col v-if="!params.disableTableButtons" cols="auto" class="ml-auto">
             <b-button :variant='theme' class="mx-1" @click="edit()"
                 v-t="'label.createNew'" />
-            <b-button :variant='theme' class="mx-1" v-if="params.bulkEditPath" @click="bulkEdit()" 
+            <b-button :variant='theme' class="mx-1" v-if="params.bulkEditPath && !ios" @click="bulkEdit()" 
                 v-t="'label.bulkRegister'" />
-            <b-button :variant='theme' class="mx-1" v-if="params.csvOut" @click="exportCsv"
+            <b-button :variant='theme' class="mx-1" v-if="params.csvOut && !ios" @click="exportCsv"
                 v-t="'label.download'" />
           </b-col>
         </b-row>
@@ -155,6 +155,9 @@ export default {
     },
     isEditable() {
       return MenuHelper.isEditable(this.appServicePath)
+    },
+    ios() {
+      return Util.isIos()
     },
     extraFilterSpec() {
       if (!this.params.extraFilter) {

@@ -4,7 +4,7 @@
     <div class="container" v-show="!isLoad">
       <b-row align-h="end">
         <b-col md="2" class="mb-3 mr-3">
-          <b-button :variant="theme" @click="download()" v-t="'label.download'" />
+          <b-button v-if="!ios" :variant="theme" @click="download()" v-t="'label.download'" />
         </b-col>
       </b-row>
       <table class="table table-hover">
