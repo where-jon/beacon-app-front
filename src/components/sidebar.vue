@@ -36,7 +36,6 @@ export default {
       nav : this.$store.state.menu,
       selectedItem: -1,
       userRole: this.$store.state.role,
-      active: true,
     }
   },
   computed: {
@@ -55,7 +54,6 @@ export default {
   methods: {
     onMenuClick (index) {
       this.selectedItem = index === this.selectedItem ? -1 : index
-      this.active = !this.active
     },
   },
   templates: {
