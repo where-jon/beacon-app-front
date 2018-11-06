@@ -42,6 +42,7 @@
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import _ from 'lodash'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import editmixinVue from '../../../components/editmixin.vue'
 import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/breadcrumb.vue'
@@ -88,6 +89,18 @@ export default {
       'region',
     ]),
   },
+  methods: {
+    async save() {
+      let entity = {
+        regionId: Util.hasValue(this.form.regionId)? this.form.regionId: -1,
+        regionName: this.form.regionName,
+        meshId: this.form.meshId,
+        deviceOffset: this.form.deviceOffset? this.form.deviceOffset: 0,
+        description: this.form.description,
+      }
+      return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
+   },
+  }
 }
 </script>
 
