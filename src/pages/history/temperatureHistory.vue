@@ -8,9 +8,11 @@
         <b-col md="10" offset-md="2">
           <b-form inline>
             <label v-t="'label.historyDateFrom'" class="leftsidelabel"/>
-            <b-form-input type="date" required v-on:change="dateFromChange" class="inputdatefrom" />
+            <b-form-input v-if="useInputDate" type="date" required v-on:change="dateFromChange" class="inputdatefrom" />
+            <date-picker v-else v-model="dateFrom" type="date" value-format="yyyyMMdd" class="inputdatefrom" />
             <label v-t="'label.historyDateTo'" />
-            <b-form-input type="date" required v-on:change="dateToChange" class="inputdateto" />
+            <b-form-input v-if="useInputDate" type="date" required v-on:change="dateToChange" class="inputdateto" />
+            <date-picker v-else v-model="dateTo" type="date" value-format="yyyyMMdd" class="inputdateto" />
           </b-form>
         </b-col>
       </b-row>
@@ -56,6 +58,9 @@
 
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import { DatePicker } from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
+import locale from 'element-ui/lib/locale'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
@@ -70,6 +75,7 @@ export default {
   mixins: [reloadmixinVue],
   components: {
     breadcrumb,
+    DatePicker,
   },
   data () {
     return {
@@ -93,14 +99,16 @@ export default {
       zoneCategorys: [],
       categoryId: null,
       zoneId: null,
-      dateFrom: 0,
-      dateTo: 0,
+      dateFrom: Util.supportInputType("date")? 0: null,
+      dateTo: Util.supportInputType("date")? 0: null,
       historyType: 0,
       temperatureHistoryData: null,
       //
       showInfo: false,
       showAlert: false,
-      message: ""
+      message: "",
+      //
+      useInputDate: Util.supportInputType("date"),
     }
   },
   computed: {
@@ -119,6 +127,9 @@ export default {
     ])
   },
   mounted() {
+    import(`element-ui/lib/locale/lang/${this.$i18n.locale}`).then( (mojule) =>{
+      locale.use(mojule.default)
+    })
     this.fetchPrev()
     this.replace({title: this.$i18n.tnl('label.temperatureHistory')})
   },
@@ -243,7 +254,7 @@ export default {
     async download() {
       this.showInfo = false
       this.showAlert = false
-      if (this.dateFrom == 0 || this.dateTo == 0) {
+      if (this.dateFrom == 0 || this.dateTo == 0 || !Util.hasValue(this.dateFrom) || !Util.hasValue(this.dateTo)) {
         this.message = this.$i18n.tnl('message.required', {target: this.$i18n.tnl('label.historyDateFrom')})
         this.showAlert = true
         return
