@@ -92,6 +92,10 @@ export const SENSOR = {
   LED: 4,
   MEDITAG: 5,
   MAGNET: 6,
+  MAGNET_STATUS: {
+    OFF: 0,
+    ON: 4,
+  }
 }
 
 export const DISCOMFORT = {
