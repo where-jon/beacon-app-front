@@ -1,4 +1,4 @@
-import { DISP, DEV } from '../constant/config'
+import { DISP, DEV, APP } from '../constant/config'
 import * as Util from '../util/Util'
 import styles from '../constant/config.scss'
 
@@ -119,5 +119,42 @@ export const adjustPosition = (positions, ratio, exbs = []) => {
     })
 
     return ret
+}
+
+export const setDetectState = (positions) => {
+  const now = !DEV.USE_MOCK_EXC? new Date().getTime(): mock.positions_conf.start
+  const undetect = now - APP.POSITION_UNDETECT_TIME // 検知後未検知となる時刻
+  const boundary = Util.getMidnightMs() // 当日0:00
+
+  _.forEach(positions, (position) => {
+    let lastDetect
+    const nearest = _.filter(position.nearest, (val) =>
+      val.rssi >= DISP.RSSI_MIN // rssi最低値でフィルタ
+    )
+    if (!Util.hasValue(nearest)) {
+      lastDetect = -1
+    } else {
+      lastDetect = _(nearest)
+          .map((val) => val.timestamp)
+          .sort().last()
+    }
+
+    if (lastDetect > undetect) {
+      position.detectState = 1
+    } else if (lastDetect > boundary) {
+      position.detectState = 2
+    } else if (!(lastDetect === -1)) {
+      position.detectState = 3
+      position.noSelectedTx = true
+    } else {
+      position.detectState = 4
+      position.noSelectedTx = true
+    }
+
+    Util.debug("detect conditions...", now, undetect, boundary)
+    Util.debug("nearest is ", nearest)
+    Util.debug(lastDetect, position.detectState)
+  })
+
 }
 

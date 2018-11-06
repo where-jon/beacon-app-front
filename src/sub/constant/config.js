@@ -53,6 +53,8 @@ export const APP = {
 
   // 位置把握(一覧)画面
   POSITION_WITH_AREA: true, // エリアを表示
+  POSITION_UNDETECT_TIME: 10 * 60 * 1000, //TXを検知後未検知とみなす時間(ms)
+  POSITION_TIMEZONE: -9, // 午前0時を決定するためのタイムゾーン(時)
 
   POT_WITH_RUBY: true,       // use ruby on pot master
   POT_WITH_POST: true,       // use post on pot master
