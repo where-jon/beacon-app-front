@@ -270,6 +270,10 @@ export default {
     },
     showTx(pos) {
       let tx = this.txs.find((tx) => tx.btxId == pos.btx_id)
+      if (!tx) {
+        console.warn("tx not found. btx_id=" + pos.btx_id)
+        return
+      }
       if (tx.sensorId === SENSOR.MAGNET) {
         var magnet = this.magnetSensors && this.magnetSensors.find((sensor) => sensor.btx_id == tx.btxId)
       }
