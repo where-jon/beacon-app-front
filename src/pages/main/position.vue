@@ -118,14 +118,14 @@ export default {
       const position = this.positions.find((e) => {
         return e.btx_id === txId
       })
-      const balloonClass = !txId ? "": "balloon" + (rev ? "-u": "")
+      const balloonClass = !txId ? "": "balloon" + (rev ? "-u": "-b")
 
       let selectedTx = {
         txId,
         minor: 'minor:' + txId,
         major: p.tx && p.tx.major? 'major:' + p.tx.major : '',
         class: balloonClass,
-        left: x + offsetX - DISP.TX_R - (rev ? tipOffsetX : 0),
+        left: x + offsetX - DISP.TX_R,
         top: rev ? y + offsetY - DISP.TX_R - popupHeight : y + offsetY + DISP.TX_R + tipOffsetY,
         name: p.potName ? p.potName : '',
         timestamp: position ? this.getFinalReceiveTime(position.timestamp) : '',
