@@ -28,6 +28,7 @@ export default {
         bulkEditPath: '/master/rolefeature/bulkedit',
         appServicePath: '/meta/roleFeature',
         csvOut: true,
+        custumCsvColumns: ["roleId", "featureId", "featureName", "path", "modeText", "featureTypeName", "version", "enabledName"],
         hideSearchBox: !Util.hasValue(this.$store.state.app_service.role.roleId),
         fields: addLabelByKey(this.$i18n, [ 
           {key: "featureId", sortable: true },
@@ -65,6 +66,7 @@ export default {
       const feature = features.find((val) => val.featureId === roleFeature.roleFeaturePK.featureId)
       return feature == null? {}: {
         key: `${roleFeature.roleFeaturePK.roleId}/${roleFeature.roleFeaturePK.featureId}`,
+        roleId: roleFeature.roleFeaturePK.roleId,
         featureId: roleFeature.roleFeaturePK.featureId,
         featureName: feature.featureName,
         path: feature.path,

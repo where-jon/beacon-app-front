@@ -13,6 +13,7 @@ import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import breadcrumb from '../../../components/breadcrumb.vue'
 import bulkedit from '../../../components/bulkedit.vue'
 import commonmixinVue from '../../../components/commonmixin.vue'
+import { ROLE_FEATURE } from '../../../sub/constant/Constants'
 
 export default {
   components: {
@@ -53,6 +54,9 @@ export default {
     ...mapState('app_service', [
       'role',
     ]),
+    modeOptions(){
+      return ROLE_FEATURE.getModeOptions()
+    },
   },
   methods: {
     async save(bulkSaveFunc) {
@@ -65,13 +69,18 @@ export default {
           }
           if (headerName === "roleId" && Util.hasValue(val)) {
             entity.roleFeaturePK.roleId = Number(val)
+            entity.roleId = Number(val)
           }
           else if (headerName === "featureId" && Util.hasValue(val)) {
             entity.roleFeaturePK.featureId = Number(val)
+            entity.featureId = Number(val)
           }
         }
+        else if(headerName == "modeText") {
+          const modeOption = this.modeOptions.find((type) => type.text == val)
+          entity.mode = modeOption? modeOption.value: val
+        }
         else {
-          val = Number(val)
           entity[headerName] = val
         }
         return dummyKey

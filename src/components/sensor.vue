@@ -1,8 +1,8 @@
 <template>
   <transition-group tag="div">
-    <div v-for="val in sensors" :key="val.id" class="personBox" :style="{'background-color': val.bg, 'border-color': (new Date().getTime() - val.downLatest < DOWN_RED_TIME)?'red':'white'}">
+    <div v-for="val in sensors" :key="val.btx_id" class="personBox" :style="{'background-color': val.bg, 'border': border, 'border-color': (new Date().getTime() - val.downLatest < DOWN_RED_TIME)?'red':'white'}">
       <div class="personBoxRow">
-        <div class="numberBox">{{ val.id }}</div>
+        <div class="numberBox">{{ val.label }}</div>
         <div class="presBox personBoxRow">
           <div class="pres"><div v-t="'label.h_blood_pressure'"></div><div class="numval">{{val.high}}</div></div>
           <div class="pres"><div v-t="'label.l_blood_pressure'"></div><div class="numval">{{val.low}}</div></div>
@@ -21,10 +21,15 @@
 import { DISP } from '../sub/constant/config'
 
 export default {
-  props: ['sensors'],
+  props: ['sensors', 'isPopup'],
   data() {
     return {
       DOWN_RED_TIME: DISP.DOWN_RED_TIME,
+    }
+  },
+  computed: {
+    border() {
+      return this.isPopup? '0px': '3px solid #ffffff'
     }
   }
 }
@@ -38,6 +43,7 @@ export default {
   border: 3px solid #ffffff;
   border-radius: 3px;
   font-size: 0.9em;
+  color: #000;
   display: flex;
   flex-direction: column;
   .personBoxRow {
@@ -60,7 +66,7 @@ export default {
   border-radius: 5.0vmin;
   text-align: center;
   line-height: 30px;
-  font-size: 3.5vmin;
+  font-size: 2.8vmin;
   font-weight: bolder;
   padding: 3px;
   width: 40px;

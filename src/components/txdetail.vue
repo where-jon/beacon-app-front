@@ -1,5 +1,4 @@
 <template>
-  <!-- <div :class="selectedTx.class" :style="{left: selectedTx.left+'px', top: selectedTx.top+'px'}"> -->
   <div
   :class="'balloon ' + selectedTx.class"
   :style="{
@@ -18,30 +17,22 @@
           <div v-for="(item, index) in getDispItems()" :key="index">{{ item }}</div>
         </div>
       </div>
+      <sensor :sensors="selectedSensor" isPopup="true"></sensor>
     </div>
   </div>
 </template>
 
 <script>
 import { DISP, TXDETAIL_ITEMS } from '../sub/constant/config'
+import sensor from './sensor.vue'
 
 export default {
-  props: ['selectedTx'],
+  props: ['selectedTx', 'selectedSensor'],
+  components: {
+    'sensor': sensor,
+  },
   data() {
     return {
-    }
-  },
-  computed: {
-    styles () {
-      return {
-        left: this.selectedTx.left + 'px',
-        top: this.selectedTx.top +'px',
-        '--border': '3px solid ' + this.selectedTx.bgColor,
-        '--borderBottom': '15px solid ' + this.selectedTx.bgColor,
-        '--bgColor': this.selectedTx.bgColor,
-        '--boxShadow': '0px 0px 10px 0px black',
-        '--color': this.selectedTx.color,
-      }
     }
   },
   methods: {
@@ -51,12 +42,9 @@ export default {
       .filter((e) => {
         return e.disp
       })
-      .map((e) => {return that.selectedTx[e.name]})
+      .map((e) => that.selectedTx[e.name])
     }
   },
-  mounted () {
-    console.log('@@@@ ' + this.selectedTx.class)
-  }
 }
 </script>
 
