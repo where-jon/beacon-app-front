@@ -1,7 +1,7 @@
 <template>
   <div>
     <breadcrumb :items="items" :extraNavSpec="extraNavSpec"
-        :reload="reload" />
+        :reload="reload" :shortName="shortName" />
     <m-list :params="params" :list="positions" :isFluid="true" />
   </div>
 </template>
@@ -62,11 +62,12 @@ export default {
           active: true
         },
         {
-          text: this.$i18n.t('label.position-list'),
+          text: this.$i18n.t('label.positionList'),
           active: true
         }
       ],
       reload: true,
+      shortName: this.$i18n.t('label.positionListShort'),
       extraNavSpec: EXTRA_NAV,
     }
   },

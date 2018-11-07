@@ -1,6 +1,6 @@
 <template>
   <div id="mapContainer" class="container-fluid" @click="resetDetail" >
-    <breadcrumb :items="items" :extraNavSpec="extraNavSpec" :reload="true" />
+    <breadcrumb :items="items" :extraNavSpec="extraNavSpec" :reload="true" :shortName="shortName" />
     <b-row class="mt-2">
       <b-form inline class="mt-2">
         <label class="ml-3 mr-2">{{ $t('label.area') }}</label>
@@ -72,6 +72,7 @@ export default {
       showMeditag: APP.USE_MEDITAG,
       meditagSensors: [],
       showReady: false,
+      shortName: this.$i18n.tnl('label.showPositionShort'),
       extraNavSpec: EXTRA_NAV,
     }
   },
@@ -254,6 +255,10 @@ export default {
     },
     showTx(pos) {
       let tx = this.txs.find((tx) => tx.btxId == pos.btx_id)
+      if (!tx) {
+        console.warn("tx not found. btx_id=" + pos.btx_id)
+        return
+      }
       if (tx.sensorId === SENSOR.MAGNET) {
         var magnet = this.magnetSensors && this.magnetSensors.find((sensor) => sensor.btx_id == tx.btxId)
       }

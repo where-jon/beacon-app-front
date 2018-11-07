@@ -11,6 +11,7 @@ import _ from 'lodash'
 import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/breadcrumb.vue'
 import bulkedit from '../../../components/bulkedit.vue'
+import * as StateHelper from '../../../sub/helper/StateHelper'
 import { APP } from '../../../sub/constant/config.js'
 
 export default {
@@ -42,7 +43,7 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'tx', 'txs'
+      'tx', 'txs', 'categories'
     ]),
   },
   methods: {
@@ -60,11 +61,12 @@ export default {
     async save(bulkSaveFunc) {
       const MAIN_COL = "txId"
       const POT = ["displayName","description","potCategoryList"]
-      const POT_CATEGORY = ["categoryId"]
+      const POT_CATEGORY = ["categoryId", "categoryName"]
       const TX_SENSOR = ["sensorId"]
 
       const NUMBER_TYPE_LIST = ["deviceId", "exbId", "areaId", "locationId", "posId", "x", "y", "z", "txViewType", "zoneName"]
       const BOOL_TYPE_LIST = ["visible", "enabled"]
+      await StateHelper.load('category')
 
       await bulkSaveFunc(MAIN_COL, NUMBER_TYPE_LIST, BOOL_TYPE_LIST, (entity, headerName, val, dummyKey) => {
         if (Util.equalsAny(headerName, POT)) {
@@ -73,11 +75,19 @@ export default {
           }
           entity.pot[headerName] = val
         }
-        else if (Util.equalsAny(headerName, POT_CATEGORY) && !val) {
+        else if (Util.equalsAny(headerName, POT_CATEGORY) && Util.hasValue(val)) {
           if (!entity.pot) {
             entity.pot = {}
           }
-          entity.pot.categoryList = [{potCategoryPK: {categoryId: val}}]
+          if(headerName == "categoryName"){
+            const category = this.categories.find((category) => category.categoryName == val)
+            if(category){
+              entity.pot.potCategoryList = [{potCategoryPK: {potId: dummyKey--, categoryId: category.categoryId}}]
+            }
+          }
+          else{
+            entity.pot.potCategoryList = [{potCategoryPK: {potId: dummyKey--, categoryId: val}}]
+          }
         }
         else if (Util.equalsAny(headerName, TX_SENSOR) && !val) {
           entity.txSensorlist = [{sensorId: val}]

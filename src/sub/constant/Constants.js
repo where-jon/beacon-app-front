@@ -152,17 +152,17 @@ export const BATTERY_BOUNDARY = {
 
 export const EXTRA_NAV = [
   {
-    key: 'showPosition',
+    key: 'showPositionShort',
     path: '/main/position',
     icon: 'fas fa-map-marker-alt',
   },
   {
-    key: 'position-list',
+    key: 'positionListShort',
     path: '/main/position-list',
     icon: 'fas fa-list',
   },
   {
-    key: 'positionStack',
+    key: 'positionStackShort',
     path: '/main/position-stack',
     icon: 'far fa-building',
   },
@@ -193,7 +193,7 @@ export const MENU = [
         icon: 'fas fa-thermometer-half',
       },
       {
-        key: 'position-list',
+        key: 'positionList',
         path: 'position-list',
         feature: '/basic/position-list',
         icon: 'fas fa-list',

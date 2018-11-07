@@ -11,6 +11,7 @@ import _ from 'lodash'
 import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/breadcrumb.vue'
 import bulkedit from '../../../components/bulkedit.vue'
+import * as StateHelper from '../../../sub/helper/StateHelper'
 
 export default {
   components: {
@@ -41,7 +42,7 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'pot', 'potImages'
+      'pot', 'potImages', 'categories', 'groups'
     ]),
   },
   methods: {
@@ -55,9 +56,11 @@ export default {
     async save(bulkSaveFunc) {
       const MAIN_COL = "potId"
       const NULLABLE_NUMBER_COL = ["txId", "exbId", "zoneId", "areaId"]
-      const MANY_TO_MANY = ["groupId", "categoryId"]
+      const MANY_TO_MANY = ["groupId", "categoryId", "groupName", "categoryName"]
       const EXT_VAL_REGEXP = /extValue\.(ruby|post|tel)/
       const extValueHeaders = ["ruby", "post", "tel"]
+      await StateHelper.load('category')
+      await StateHelper.load('group')
 
       await bulkSaveFunc(MAIN_COL, null, null, (entity, headerName, val, dummyKey) => {
         // relation
@@ -65,8 +68,20 @@ export default {
           if("groupId" === headerName) {
             entity.potGroupList = [{potGroupPK: {groupId: Number(val)}}]
           }
-          if("categoryId" === headerName) {
+          else if("categoryId" === headerName) {
             entity.potCategoryList = [{potCategoryPK: {categoryId: Number(val)}}]
+          }
+          else if("groupName" === headerName) {
+            const group = this.groups.find((group) => group.groupName == val)
+            if(group){
+              entity.potGroupList = [{potGroupPK: {groupId: group.groupId}}]
+            }
+          }
+          else if("categoryName" === headerName) {
+            const category = this.categories.find((category) => category.categoryName == val)
+            if(category){
+              entity.potCategoryList = [{potCategoryPK: {categoryId: category.categoryId}}]
+            }
           }
           return dummyKey
         }

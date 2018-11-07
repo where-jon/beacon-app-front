@@ -1,7 +1,7 @@
 <template>
   <div>
     <breadcrumb :items="items" :extraNavSpec="extraNavSpec"
-        :reload="reload" />
+        :reload="reload" :shortName="shortName" />
     <m-list :params="params" :list="eachAreas" />
   </div>
 </template>
@@ -63,6 +63,7 @@ export default {
           active: true
         }
       ],
+      shortName: this.$i18n.t('label.positionStackShort'),
       extraNavSpec: EXTRA_NAV,
     }
   },

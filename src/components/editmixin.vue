@@ -182,7 +182,10 @@ export default {
               error = this.$t(csv.errors[0])
             }
             if (csv.errors && typeof csv.errors[0] == 'object' ) {
-              const errorLine = csv.errors.filter((val) => val.row).map((val) => val.row)
+              const errorLine = csv.errors.filter((val) => val.row)
+                .map((val) => val.row)
+                .filter((val, idx, arr) => arr.indexOf(val) === idx)
+                .sort((a, b) => a < b? -1: a > b? 1: 0)
               error = `${this.$i18n.tnl("message.csvInvalidLine")}${this.formatErrorLine(errorLine)}`
             }
             readFin = true
@@ -232,7 +235,17 @@ export default {
               if(idSetCallback){
                 dummyKey = idSetCallback(entity, dummyKey)
               }
-              const sameEntity = entities.find((val) => val[mainCol] == entity[mainCol])
+              const sameEntity = Util.isArray(mainCol)?
+                entities.find((val) => {
+                  for(let idx = 0; idx < mainCol.length; idx++){
+                    const col = mainCol[idx]
+                    if(val[col] != entity[col]){
+                      return false
+                    }
+                  }
+                  return true
+                }):
+                entities.find((val) => val[mainCol] == entity[mainCol])
               if(sameEntity){
                 sameLine.push(lineIdx)
               }

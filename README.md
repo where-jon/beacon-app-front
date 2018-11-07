@@ -2,6 +2,9 @@
 
 > Nuxt.js project
 
+## Related Project
+https://github.com/whereinc/exbeacon-app-service
+
 ## Build Setup
 
 ``` bash
