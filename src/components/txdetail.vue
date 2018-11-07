@@ -7,7 +7,7 @@
     backgroundColor: this.selectedTx.bgColor,
     color: this.selectedTx.color,
   }">
-    <div class="potBox" @click="$emit('resetDetail')">
+    <div class="potBox" @click="$emit('resetDetail')" v-if="selectedSensor.length == 0">
       <div class="clearfix">
         <div class="thumbnail">
           <img :src="selectedTx.thumbnail" width="auto" height="125" v-if="selectedTx.thumbnail.length > 0" />
@@ -17,8 +17,8 @@
           <div v-for="(item, index) in getDispItems()" :key="index">{{ item }}</div>
         </div>
       </div>
-      <sensor :sensors="selectedSensor" isPopup="true"></sensor>
     </div>
+    <sensor :sensors="selectedSensor" isPopup="true"></sensor>
   </div>
 </template>
 

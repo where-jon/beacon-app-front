@@ -396,7 +396,6 @@ export default {
       console.log(item)
       const tx = item.tx
       const selectedTx = {
-        txId: tx.btxId,
         btxId: tx.btxId,
         thumbnail: Util.getValue(tx, 'pot.thumbnail', null) ? tx.pot.thumbnail : '',
       }
