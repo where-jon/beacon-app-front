@@ -16,7 +16,7 @@
         </template>
         <b-dropdown-item v-for="extraNav in extraNavSpec" :key="extraNav.key"
             @click="move(extraNav.path)" :class="extNavClasses">
-          <i :class="extraNav.icon" class="ml-3" />&nbsp;{{$t('label.' + extraNav.key)}}
+          <i :class="extraNav.icon" class="ml-3 menu-item-icon" />&nbsp;{{$t('label.' + extraNav.key)}}
         </b-dropdown-item>
       </b-nav-item-dropdown>
     </div>
@@ -163,6 +163,10 @@ export default {
 
   li.extra-nav em:not(:hover) {
     color: #333;
+  }
+
+  i.ml-3.menu-item-icon {
+    width: 20px;
   }
 
 </style>

@@ -37,7 +37,7 @@ import * as Util from '../../sub/util/Util'
 import * as mock from '../../assets/mock/mock'
 import txdetail from '../../components/txdetail.vue'
 import { Tx, EXB, APP, DISP, DEV } from '../../sub/constant/config'
-import { SHAPE, SENSOR } from '../../sub/constant/Constants'
+import { SHAPE, SENSOR, EXTRA_NAV } from '../../sub/constant/Constants'
 import { Shape, Stage, Container, Bitmap, Text, Touch } from '@createjs/easeljs/dist/easeljs.module'
 import { Tween, Ticker } from '@createjs/tweenjs/dist/tweenjs.module'
 import breadcrumb from '../../components/breadcrumb.vue'
@@ -72,23 +72,7 @@ export default {
       showMeditag: APP.USE_MEDITAG,
       meditagSensors: [],
       showReady: false,
-      extraNavSpec: [
-        {
-          key: 'showPosition',
-          path: '/main/position',
-          icon: 'fas fa-map-marker-alt',
-        },
-        {
-          key: 'position-list',
-          path: '/main/position-list',
-          icon: 'fas fa-list',
-        },
-        {
-          key: 'positionStack',
-          path: '/main/position-stack',
-          icon: 'far fa-building',
-        },
-      ],
+      extraNavSpec: EXTRA_NAV,
     }
   },
   computed: {
@@ -105,6 +89,9 @@ export default {
     this.resetDetail()
   },
   methods: {
+    ...mapActions('main', [
+      'pushOrgPositions',
+    ]),
     reset() {
       this.isShownMapImage = false
       this.resetDetail()
@@ -168,12 +155,9 @@ export default {
           var pMock = mock.positions[this.count]
         }
         let positions = await EXCloudHelper.fetchPosition(this.exbs, this.txs, pMock)
-        let orgPositions = _.clone(this.orgPositions)
-        if (orgPositions.length >= DISP.MOVING_AVERAGE) { // 移動平均数分のポジションデータを保持する
-          orgPositions.shift()
-        }
-        orgPositions.push(positions)
-        this.replaceMain({orgPositions})
+
+        // 移動平均数分のポジションデータを保持する
+        this.pushOrgPositions(positions)
 
         if (APP.USE_MEDITAG) {
           let meditagSensors = await EXCloudHelper.fetchSensor(SENSOR.MEDITAG)

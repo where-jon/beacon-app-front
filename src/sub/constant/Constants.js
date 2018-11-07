@@ -150,6 +150,24 @@ export const BATTERY_BOUNDARY = {
   POOR: 0,
 }
 
+export const EXTRA_NAV = [
+  {
+    key: 'showPosition',
+    path: '/main/position',
+    icon: 'fas fa-map-marker-alt',
+  },
+  {
+    key: 'position-list',
+    path: '/main/position-list',
+    icon: 'fas fa-list',
+  },
+  {
+    key: 'positionStack',
+    path: '/main/position-stack',
+    icon: 'far fa-building',
+  },
+]
+
 export const MENU = [
   {
     key: 'main',

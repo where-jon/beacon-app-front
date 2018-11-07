@@ -18,7 +18,7 @@ import * as StateHelper from '../../sub/helper/StateHelper'
 import * as PositionHelper from '../../sub/helper/PositionHelper'
 import { addLabelByKey } from '../../sub/helper/ViewHelper'
 import { DISP, DEV } from '../../sub/constant/config'
-import { SHAPE } from '../../sub/constant/Constants'
+import { SHAPE, EXTRA_NAV } from '../../sub/constant/Constants'
 import * as Util from '../../sub/util/Util'
 
 let that
@@ -63,23 +63,7 @@ export default {
           active: true
         }
       ],
-      extraNavSpec: [
-        {
-          key: 'showPosition',
-          path: '/main/position',
-          icon: 'fas fa-map-marker-alt',
-        },
-        {
-          key: 'position-list',
-          path: '/main/position-list',
-          icon: 'fas fa-list',
-        },
-        {
-          key: 'positionStack',
-          path: '/main/position-stack',
-          icon: 'far fa-building',
-        },
-      ],
+      extraNavSpec: EXTRA_NAV,
     }
   },
   computed: {
@@ -102,6 +86,9 @@ export default {
     this.replaceAS({positions: []})
   },
   methods: {
+    ...mapActions('main', [
+      'pushOrgPositions',
+    ]),
     async fetchData(payload) {
       try {
         this.replace({showProgress: true})
@@ -114,12 +101,7 @@ export default {
         let positions = await EXCloudHelper.fetchPosition(this.exbs, this.txs)
 
         // 移動平均数分のポジションデータを保持する
-        let orgPositions = _.clone(this.orgPositions)
-        if (orgPositions.length >= DISP.MOVING_AVERAGE) {
-          orgPositions.shift()
-        }
-        orgPositions.push(positions)
-        this.replaceMain({orgPositions})
+        this.pushOrgPositions(positions)
 
         // 在席表示と同じ、表示txを取得する。
         let now = !DEV.USE_MOCK_EXC ? new Date().getTime()

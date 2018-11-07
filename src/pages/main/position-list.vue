@@ -17,7 +17,7 @@ import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as PositionHelper from '../../sub/helper/PositionHelper'
 import { addLabelByKey } from '../../sub/helper/ViewHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
-import { DETECT_STATE, BATTERY_STATE, BATTERY_BOUNDARY } from '../../sub/constant/Constants'
+import { DETECT_STATE, BATTERY_STATE, BATTERY_BOUNDARY, EXTRA_NAV } from '../../sub/constant/Constants'
 import * as Util from '../../sub/util/Util'
 import { APP, DISP, DEV } from '../../sub/constant/config.js'
 
@@ -67,23 +67,7 @@ export default {
         }
       ],
       reload: true,
-      extraNavSpec: [
-        {
-          key: 'showPosition',
-          path: '/main/position',
-          icon: 'fas fa-map-marker-alt',
-        },
-        {
-          key: 'position-list',
-          path: '/main/position-list',
-          icon: 'fas fa-list',
-        },
-        {
-          key: 'positionStack',
-          path: '/main/position-stack',
-          icon: 'far fa-building',
-        },
-      ],
+      extraNavSpec: EXTRA_NAV,
     }
   },
   computed: {
@@ -93,13 +77,10 @@ export default {
       'exbs',
       'positions',
     ]),
-    ...mapState('main', [
-      'orgPositions',
-    ]),
   },
   methods: {
-    ...mapMutations('main', [
-      'replaceMain',
+    ...mapActions('main', [
+      'pushOrgPositions',
     ]),
     async fetchData(payload) {
       try {
@@ -110,12 +91,7 @@ export default {
         let positions = await EXCloudHelper.fetchPositionList(this.exbs, this.txs)
 
         // 移動平均数分のポジションデータを保持する
-        let orgPositions = _.clone(this.orgPositions)
-        if (orgPositions.length >= DISP.MOVING_AVERAGE) {
-          orgPositions.shift()
-        }
-        orgPositions.push(positions)
-        this.replaceMain({orgPositions})
+        this.pushOrgPositions(positions)
 
         // 検知状態の取得
         PositionHelper.setDetectState(positions)
