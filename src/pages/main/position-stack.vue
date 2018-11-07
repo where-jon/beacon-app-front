@@ -1,7 +1,7 @@
 <template>
   <div>
     <breadcrumb :items="items" :extraNavSpec="extraNavSpec"
-        :reload="reload" />
+        :reload="reload" :shortName="shortName" />
     <m-list :params="params" :list="eachAreas" />
   </div>
 </template>
@@ -18,7 +18,7 @@ import * as StateHelper from '../../sub/helper/StateHelper'
 import * as PositionHelper from '../../sub/helper/PositionHelper'
 import { addLabelByKey } from '../../sub/helper/ViewHelper'
 import { DISP, DEV } from '../../sub/constant/config'
-import { SHAPE } from '../../sub/constant/Constants'
+import { SHAPE, EXTRA_NAV } from '../../sub/constant/Constants'
 import * as Util from '../../sub/util/Util'
 
 let that
@@ -63,23 +63,8 @@ export default {
           active: true
         }
       ],
-      extraNavSpec: [
-        {
-          key: 'showPosition',
-          path: '/main/position',
-          icon: 'fas fa-map-marker-alt',
-        },
-        {
-          key: 'position-list',
-          path: '/main/position-list',
-          icon: 'fas fa-list',
-        },
-        {
-          key: 'positionStack',
-          path: '/main/position-stack',
-          icon: 'far fa-building',
-        },
-      ],
+      shortName: this.$i18n.t('label.positionStackShort'),
+      extraNavSpec: EXTRA_NAV,
     }
   },
   computed: {
