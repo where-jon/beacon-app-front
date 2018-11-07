@@ -70,6 +70,7 @@
 
     "locate": "測位",
     "showPosition": "位置表示(地図)",
+    "showPositionShort": "地図",
     "telemetry": "EXB状態監視",
     "gateway": "ゲートウェイ",
     "position": "TX状態監視",
@@ -185,7 +186,8 @@
     "ruby": "ふりがな",
     "tel": "電話番号",
 
-    "position-list": "位置表示(一覧)",
+    "positionList": "位置表示(一覧)",
+    "positionListShort": "一覧",
     "detectState": "状態",
     "detected": "検知中",
     "detectAfterUndetect": "検知後未検知",
@@ -194,6 +196,7 @@
     "mapDisplay": "マップ表示",
 
     "positionStack": "位置表示(全体)",
+    "positionStackShort": "全体",
 
     "password": "パスワード",
     "passwordCurrent": "現在のパスワード",

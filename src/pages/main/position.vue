@@ -1,6 +1,6 @@
 <template>
   <div id="mapContainer" class="container-fluid" @click="resetDetail" >
-    <breadcrumb :items="items" :extraNavSpec="extraNavSpec" :reload="true" />
+    <breadcrumb :items="items" :extraNavSpec="extraNavSpec" :reload="true" :shortName="shortName" />
     <b-row class="mt-2">
       <b-form inline class="mt-2">
         <label class="ml-3 mr-2">{{ $t('label.area') }}</label>
@@ -37,7 +37,7 @@ import * as Util from '../../sub/util/Util'
 import * as mock from '../../assets/mock/mock'
 import txdetail from '../../components/txdetail.vue'
 import { Tx, EXB, APP, DISP, DEV } from '../../sub/constant/config'
-import { SHAPE, SENSOR } from '../../sub/constant/Constants'
+import { SHAPE, SENSOR, EXTRA_NAV } from '../../sub/constant/Constants'
 import { Shape, Stage, Container, Bitmap, Text, Touch } from '@createjs/easeljs/dist/easeljs.module'
 import { Tween, Ticker } from '@createjs/tweenjs/dist/tweenjs.module'
 import breadcrumb from '../../components/breadcrumb.vue'
@@ -72,23 +72,8 @@ export default {
       showMeditag: APP.USE_MEDITAG,
       meditagSensors: [],
       showReady: false,
-      extraNavSpec: [
-        {
-          key: 'showPosition',
-          path: '/main/position',
-          icon: 'fas fa-map-marker-alt',
-        },
-        {
-          key: 'position-list',
-          path: '/main/position-list',
-          icon: 'fas fa-list',
-        },
-        {
-          key: 'positionStack',
-          path: '/main/position-stack',
-          icon: 'far fa-building',
-        },
-      ],
+      shortName: this.$i18n.tnl('label.showPositionShort'),
+      extraNavSpec: EXTRA_NAV,
     }
   },
   computed: {

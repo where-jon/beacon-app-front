@@ -12,11 +12,11 @@
       <b-nav-item-dropdown v-if="extraNavSpec.length > 0" class="extra-nav"
         :extra-menu-classes="extNavClasses" right>
         <template slot="button-content">
-          <em>{{items.slice(-1)[0].text}}</em>
+          <em>{{shortName}}</em>
         </template>
         <b-dropdown-item v-for="extraNav in extraNavSpec" :key="extraNav.key"
             @click="move(extraNav.path)" :class="extNavClasses">
-          <i :class="extraNav.icon" class="ml-3" />&nbsp;{{$t('label.' + extraNav.key)}}
+          <i :class="extraNav.icon" class="mx-1" />&nbsp;{{$t('label.' + extraNav.key)}}
         </b-dropdown-item>
       </b-nav-item-dropdown>
     </div>
@@ -53,7 +53,11 @@ export default {
     extraNavSpec: {
       type: Array,
       default() {return []},
-    }
+    },
+    shortName: {
+      type: String,
+      default: ""
+    },
   },
   mounted() {
     let reload = document.getElementById("reload")
@@ -163,6 +167,15 @@ export default {
 
   li.extra-nav em:not(:hover) {
     color: #333;
+  }
+
+  li.extra-nav .dropdown-item i {
+    width: 20px;
+    text-align: center;
+  }
+
+  li.extra-nav .dropdown-menu {
+    min-width: 0px;
   }
 
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div>
     <breadcrumb :items="items" :extraNavSpec="extraNavSpec"
-        :reload="reload" />
+        :reload="reload" :shortName="shortName" />
     <m-list :params="params" :list="positions" :isFluid="true" />
   </div>
 </template>
@@ -17,7 +17,7 @@ import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as PositionHelper from '../../sub/helper/PositionHelper'
 import { addLabelByKey } from '../../sub/helper/ViewHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
-import { DETECT_STATE, BATTERY_STATE, BATTERY_BOUNDARY } from '../../sub/constant/Constants'
+import { DETECT_STATE, BATTERY_STATE, BATTERY_BOUNDARY, EXTRA_NAV } from '../../sub/constant/Constants'
 import * as Util from '../../sub/util/Util'
 import { APP, DISP, DEV } from '../../sub/constant/config.js'
 
@@ -62,28 +62,13 @@ export default {
           active: true
         },
         {
-          text: this.$i18n.t('label.position-list'),
+          text: this.$i18n.t('label.positionList'),
           active: true
         }
       ],
       reload: true,
-      extraNavSpec: [
-        {
-          key: 'showPosition',
-          path: '/main/position',
-          icon: 'fas fa-map-marker-alt',
-        },
-        {
-          key: 'position-list',
-          path: '/main/position-list',
-          icon: 'fas fa-list',
-        },
-        {
-          key: 'positionStack',
-          path: '/main/position-stack',
-          icon: 'far fa-building',
-        },
-      ],
+      shortName: this.$i18n.t('label.positionListShort'),
+      extraNavSpec: EXTRA_NAV,
     }
   },
   computed: {
