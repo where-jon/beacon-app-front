@@ -9,7 +9,7 @@
       backgroundColor: selectedTx.bgColor,
       boxShadow: '0px 0px 10px 0px ' + selectedTx.bgColor,
     }" id="popup">
-      <div class="potBox" @click="$emit('resetDetail')">
+      <div class="potBox" @click="$emit('resetDetail')" v-if="selectedSensor.length == 0">
         <div class="clearfix">
           <div class="thumbnail">
             <img :src="selectedTx.thumbnail" width="auto" height="125" v-if="selectedTx.thumbnail.length > 0" />
@@ -20,6 +20,7 @@
           </div>
         </div>
       </div>
+      <sensor :sensors="selectedSensor" isPopup="true"></sensor>
     </div>
     <!-- アイコン上側に吹き出し表示時の三角(▼) -->
     <div
@@ -54,9 +55,13 @@
 
 <script>
 import { DISP, TXDETAIL_ITEMS } from '../sub/constant/config'
+import sensor from './sensor.vue'
 
 export default {
-  props: ['selectedTx'],
+  props: ['selectedTx', 'selectedSensor'],
+  components: {
+    'sensor': sensor,
+  },
   data() {
     return {
       radiusIcon: DISP.TX_R / 2,

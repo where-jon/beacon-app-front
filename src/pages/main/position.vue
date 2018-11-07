@@ -17,7 +17,7 @@
       </b-col>
     </b-row>
     <div v-if="selectedTx.txId && showReady" >
-      <txdetail :selectedTx="selectedTx" @resetDetail="resetDetail"></txdetail>
+      <txdetail :selectedTx="selectedTx" @resetDetail="resetDetail" :selectedSensor="selectedSensor"></txdetail>
     </div>
     <!-- modal -->
     <b-modal id="modalError" :title="$t('label.error')" ok-only>
@@ -81,6 +81,12 @@ export default {
       'selectedTx',
       'orgPositions',
     ]),
+    selectedSensor() {
+      if (this.selectedTx && this.selectedTx.txId && this.meditagSensors) {
+        var ret = this.meditagSensors.find((val) => this.selectedTx.txId == val.btx_id)
+      }
+      return ret? [ret]: []
+    }
   },
   mounted() {
     this.replace({title: this.$i18n.tnl('label.showPosition')})
@@ -163,11 +169,13 @@ export default {
         if (APP.USE_MEDITAG) {
           let meditagSensors = await EXCloudHelper.fetchSensor(SENSOR.MEDITAG)
           this.meditagSensors = _(meditagSensors)
+          .filter((val) => this.txs.some((tx) => tx.btxId == val.btx_id))
           .map((val) => {
-              return {...val, bg: SensorHelper.getStressBg(val.stress), down: val.down?val.down:0}
+              let tx = this.txs.find((tx) => tx.btxId == val.btx_id)
+              let label = tx && tx.displayName? tx.displayName: val.btx_id
+              return {...val, label, bg: SensorHelper.getStressBg(val.stress), down: val.down?val.down:0}
           })
-          .filter((val) => this.txs.some((tx) => tx.btxId == val.id))
-          .sortBy((val) => (new Date().getTime() - val.downLatest < DISP.DOWN_RED_TIME)? val.downLatest * -1: val.id)
+          .sortBy((val) => (new Date().getTime() - val.downLatest < DISP.DOWN_RED_TIME)? val.downLatest * -1: val.btx_id)
           .value()
         }
 
