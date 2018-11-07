@@ -78,7 +78,25 @@ export const arrayBuffer2str = (buffer) => {
   return String.fromCharCode.apply(null, str)
 }
 
-export const pathMatch = (target, path) => path && path.endsWith("*") && target && target.startsWith(path.slice(0, -1)) || path == target
+export const pathMatch = (target, path) => {
+  if (path == target) {
+    return true
+  }
+  if (!path || !target) {
+    return false
+  }
+  if (path.endsWith("*")) {
+    path = path.slice(0, -1)
+    if (path.endsWith("/")) {
+      if (path.slice(0, -1) == target) {
+        return true
+      }
+    }
+    return target.startsWith(path)
+  }
+  return false
+}
+
 /**
  * オプジェクトから階層を辿って値を取得する。
  * 
