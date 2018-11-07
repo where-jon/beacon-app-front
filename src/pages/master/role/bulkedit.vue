@@ -47,7 +47,7 @@ export default {
   methods: {
     async save(bulkSaveFunc) {
       const MAIN_COL = "roleId"
-      await bulkSaveFunc(MAIN_COL, null)
+      await bulkSaveFunc(MAIN_COL)
     },
   }
 }
