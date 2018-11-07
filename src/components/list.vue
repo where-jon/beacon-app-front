@@ -25,7 +25,7 @@
           </template>
           <div v-if="params.extraFilter" class="w-100 mb-2 " />
           <!-- ボタン部 -->
-          <b-col v-if="!params.disableTableButtons" cols="auto" class="ml-auto">
+          <b-col v-if="!params.disableTableButtons && isEditable" cols="auto" class="ml-auto">
             <b-button :variant='theme' class="mx-1" @click="edit()"
                 v-t="'label.createNew'" />
             <b-button :variant='theme' class="mx-1" v-if="params.bulkEditPath && !ios" @click="bulkEdit()" 
