@@ -57,6 +57,7 @@ import _ from 'lodash'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import { APP } from '../../../sub/constant/config.js'
+import { ROLE } from '../../../sub/constant/Constants'
 import editmixinVue from '../../../components/editmixin.vue'
 import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/breadcrumb.vue'
@@ -99,6 +100,10 @@ export default {
   async created(){
     await StateHelper.load('role')
     this.roleOptions = this.roles.map((val) => ({text: val.roleName, value: val.roleId}))
+    if(!this.isSuperEditable){
+      const superAdmin = this.roles.find((val) => val.roleName == ROLE.SUPER_ADMIN)
+      this.roleOptions = this.roleOptions.filter((val) => superAdmin? val.value != superAdmin.roleId || this.form.roleId == superAdmin.roleId: true)
+    }
     this.role = this.form.roleId
   },
   computed: {
