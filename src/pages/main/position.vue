@@ -16,8 +16,8 @@
         <sensor :sensors="meditagSensors" class="rightPane"></sensor>
       </b-col>
     </b-row>
-    <div v-if="selectedTx.txId && showReady" >
-      <txdetail :selectedTx="selectedTx" @resetDetail="resetDetail"></txdetail>
+    <div v-if="selectedTx.btxId && showReady" >
+      <txdetail :selectedTx="selectedTx" @resetDetail="resetDetail" :selectedSensor="selectedSensor"></txdetail>
     </div>
     <!-- modal -->
     <b-modal id="modalError" :title="$t('label.error')" ok-only>
@@ -81,6 +81,12 @@ export default {
       'selectedTx',
       'orgPositions',
     ]),
+    selectedSensor() {
+      if (this.selectedTx && this.selectedTx.btxId) {
+        var ret = this.getMeditagSensor(this.selectedTx.btxId)
+      }
+      return ret? [ret]: []
+    }
   },
   mounted() {
     this.replace({title: this.$i18n.tnl('label.showPosition')})
@@ -94,11 +100,11 @@ export default {
       this.isShownMapImage = false
       this.resetDetail()
     },
-    async showDetail(txId, x, y) {
+    async showDetail(btxId, x, y) {
       const tipOffsetX = 15
       const tipOffsetY = 15
-      const popupHeight = 156
-      let tx = this.txs.find((tx) => tx.btxId == txId)
+      const popupHeight = this.getMeditagSensor(btxId)? 236: 156
+      let tx = this.txs.find((tx) => tx.btxId == btxId)
       let display = this.getDisplay(tx)
       let map = HtmlUtil.getRect("#map")
       let containerParent = HtmlUtil.getRect("#mapContainer", "parentNode")
@@ -107,19 +113,19 @@ export default {
       const isDispRight = x + offsetX + 100 < window.innerWidth
       // rev === trueの場合、ポップアップを上に表示
       const rev = y + map.top + DISP.TX_R + tipOffsetY + popupHeight > window.innerHeight
-      const targetId = this.txsMap[txId]
+      const targetId = this.txsMap[btxId]
       const p = await this.getDetail(targetId)
       const position = this.positions.find((e) => {
-        return e.btx_id === txId
+        return e.btx_id === btxId
       })
-      const balloonClass = !txId ? "": "balloon" + (rev ? "-u": "")
+      const balloonClass = !btxId ? "": "balloon" + (rev ? "-u": "-b")
 
       let selectedTx = {
-        txId,
-        minor: 'minor:' + txId,
+        btxId,
+        minor: 'minor:' + btxId,
         major: p.tx && p.tx.major? 'major:' + p.tx.major : '',
         class: balloonClass,
-        left: x + offsetX - DISP.TX_R - (rev ? tipOffsetX : 0),
+        left: x + offsetX - DISP.TX_R,
         top: rev ? y + offsetY - DISP.TX_R - popupHeight : y + offsetY + DISP.TX_R + tipOffsetY,
         name: p.potName ? p.potName : '',
         timestamp: position ? this.getFinalReceiveTime(position.timestamp) : '',
@@ -135,6 +141,12 @@ export default {
     },
     showInitDetail(tx) {
       
+    },
+    getMeditagSensor(btxId) {
+      if (this.meditagSensors) {
+        return this.meditagSensors.find((val) => btxId == val.btx_id)
+      }
+      return null
     },
     resetDetail() {
       let selectedTx = {}
@@ -163,11 +175,13 @@ export default {
         if (APP.USE_MEDITAG) {
           let meditagSensors = await EXCloudHelper.fetchSensor(SENSOR.MEDITAG)
           this.meditagSensors = _(meditagSensors)
+          .filter((val) => this.txs.some((tx) => tx.btxId == val.btx_id))
           .map((val) => {
-              return {...val, bg: SensorHelper.getStressBg(val.stress), down: val.down?val.down:0}
+              let tx = this.txs.find((tx) => tx.btxId == val.btx_id)
+              let label = tx && tx.displayName? tx.displayName: val.btx_id
+              return {...val, label, bg: SensorHelper.getStressBg(val.stress), down: val.down?val.down:0}
           })
-          .filter((val) => this.txs.some((tx) => tx.btxId == val.id))
-          .sortBy((val) => (new Date().getTime() - val.downLatest < DISP.DOWN_RED_TIME)? val.downLatest * -1: val.id)
+          .sortBy((val) => (new Date().getTime() - val.downLatest < DISP.DOWN_RED_TIME)? val.downLatest * -1: val.btx_id)
           .value()
         }
 
@@ -235,12 +249,12 @@ export default {
         this.showTx(pos)
       })
 
-      if (this.selectedTx.txId) {
+      if (this.selectedTx.btxId) {
         const tx = this.selectedTx
         const position = PositionHelper.adjustPosition(this.positions, this.mapImageScale, this.positionedExb)
             .filter((pos) => pos.btx_id == tx.btxId)
         if (position.length == 1) {
-          this.showDetail(tx.txId, position[0].x, position[0].y)
+          this.showDetail(tx.btxId, position[0].x, position[0].y)
         }
       }
     },
