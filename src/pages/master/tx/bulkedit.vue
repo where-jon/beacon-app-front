@@ -1,7 +1,7 @@
 <template>
   <div>
     <breadcrumb :items="items" />
-    <bulkedit :name="name" :id="id" :backPath="backPath" :app-service-path="appServicePath" />
+    <bulkedit ref="bulkEdit" :name="name" :id="id" :backPath="backPath" :app-service-path="appServicePath" />
   </div>
 </template>
 
@@ -45,6 +45,9 @@ export default {
     ...mapState('app_service', [
       'tx', 'txs', 'categories', 'pots', 'potImages'
     ]),
+    sensorOptionsTx() {
+      return this.$refs.bulkEdit.sensorOptions('tx')
+    },
   },
   methods: {
     afterCrud(){
@@ -77,7 +80,7 @@ export default {
       const MAIN_COL = "txId"
       const POT = ["displayName","description","potCategoryList"]
       const POT_CATEGORY = ["categoryId", "categoryName"]
-      const TX_SENSOR = ["sensorId"]
+      const TX_SENSOR = ["sensorId", "sensor"]
 
       const NUMBER_TYPE_LIST = ["deviceId", "exbId", "areaId", "locationId", "posId", "x", "y", "z", "txViewType", "zoneName"]
       const BOOL_TYPE_LIST = ["visible", "enabled"]
@@ -107,8 +110,16 @@ export default {
             entity.pot.potCategoryList = [{potCategoryPK: {potId: dummyKey--, categoryId: val}}]
           }
         }
-        else if (Util.equalsAny(headerName, TX_SENSOR) && !val) {
-          entity.txSensorlist = [{sensorId: val}]
+        else if (Util.equalsAny(headerName, TX_SENSOR) && val) {
+          if(headerName == "sensor"){
+            const sensor = this.sensorOptionsTx.find((sensor) => sensor.text == val)
+            if(sensor){
+              entity.txSensorList = [{txSensorPK: {txId: dummyKey--, sensorId: sensor.value}}]
+            }
+          }
+          else{
+            entity.txSensorList = [{txSensorPK: {txId: dummyKey--, sensorId: val}}]
+          }
         }
         else {
           if (headerName == MAIN_COL){
