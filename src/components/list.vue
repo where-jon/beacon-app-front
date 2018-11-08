@@ -1,7 +1,8 @@
 <template>
   <b-form inline>
     <b-container :fluid="isFluid">
-      <b-alert variant="info" dismissible :show="showMessage()">{{ message }}</b-alert>
+      <b-alert variant="info" dismissible :show="showMessage">{{ message }}</b-alert>
+      <b-alert variant="danger" dismissible :show="showError">{{ error }}</b-alert>
       <!-- searchbox -->
       <template v-if="!params.hideSearchBox">
         <b-row class="mb-1">
@@ -146,6 +147,7 @@ export default {
       file: null,
       detectState: DETECT_STATE,
       message: null,
+      error: null,
       ...this.params
     }
   },
@@ -228,6 +230,12 @@ export default {
       const theme = getButtonTheme(this.loginId)
       return 'outline-' + theme
     },
+    showMessage(){
+      return Util.hasValue(this.message)
+    },
+    showError(){
+      return Util.hasValue(this.error)
+    },
   },
   mounted() {
     this.message = this.listMessage
@@ -267,9 +275,7 @@ export default {
     },
     setEmptyMessage(){
       this.message = null
-    },
-    showMessage(){
-      return Util.hasValue(this.message)
+      this.error = null
     },
     exportCsv() {
       this.setEmptyMessage()
@@ -382,13 +388,17 @@ export default {
       this.currentPage = 1
     },
     async execDelete(id) {
-      await AppServiceHelper.deleteEntity(this.appServicePath, id)
-      await StateHelper.load(this.params.name, true)
-      if(this.$parent.$options.methods.afterCrud){
-        this.$parent.$options.methods.afterCrud.apply(this.$parent)
+      try {
+        await AppServiceHelper.deleteEntity(this.appServicePath, id)
+        await StateHelper.load(this.params.name, true)
+        if(this.$parent.$options.methods.afterCrud){
+          this.$parent.$options.methods.afterCrud.apply(this.$parent)
+        }
+        this.message = this.$i18n.tnl('message.deleteCompleted', {target: this.$i18n.tnl('label.' + this.params.name)})
+        this.$parent.$options.methods.fetchData.apply(this.$parent)        
+      } catch (e) {
+        this.error = this.$i18n.tnl('message.deleteFailed', {target: this.$i18n.tnl('label.' + this.params.name), code: e.response.status})
       }
-      this.message = this.$i18n.tnl('message.deleteCompleted', {target: this.$i18n.tnl('label.' + this.params.name)})
-      this.$parent.$options.methods.fetchData.apply(this.$parent)
     },
     // 位置把握(一覧)から在席表示に遷移する
     async mapDisplay(item) {
