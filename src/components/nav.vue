@@ -1,7 +1,7 @@
 <template>
   <b-navbar toggleable="md" type="dark" :class="navbarClasses">
     <!-- Responsive menu -->
-    <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>  
+    <b-navbar-toggle target="nav_collapse" v-show="!isLoginPage && showNav"></b-navbar-toggle>  
 
     <!-- Title -->
     <b-navbar-brand>
