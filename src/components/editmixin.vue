@@ -276,6 +276,9 @@ export default {
 
       this.replaceAS({showLine: true})
       await AppServiceHelper.bulkSave(this.appServicePath, entities)
+      if(this.afterCrud) {
+        this.afterCrud()
+      }
       if(Util.isArray(mainCol)){
         let col = null
         mainCol.forEach((val, idx) => {
