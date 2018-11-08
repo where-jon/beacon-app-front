@@ -283,7 +283,7 @@ export default {
       if (this.params.custumCsvColumns) {
         headers = this.params.custumCsvColumns
       } else {
-        headers = this.params.fields.map((val) => val.key)
+        headers = _(this.params.fields).map((val) => val.key).uniqWith(_.isEqual).value()
       }
       headers = headers.filter((val) => !["style", "thumbnail", "actions", "updateAction"].includes(val))
       HtmlUtil.fileDL(this.params.name + ".csv", Util.converToCsv(this.list, headers), getCharSet(this.loginId))

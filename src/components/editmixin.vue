@@ -123,12 +123,13 @@ export default {
       catch(e) {
         console.error(e)
         if (e.key) {
-          this.message = this.$i18n.tnl('message.' + e.type, {key: this.$i18n.tnl('label.' + Util.snake2camel(e.key)), val: e.val})
+          this.message = this.$i18n.tnl('message.' + e.type, {key: this.$i18n.tnl('label.' + this.modifyColName(Util.snake2camel(e.key))), val: e.val})
         }
         else if (e.bulkError) {
           this.message = _.map(e.bulkError, (err) => {
+            let col = this.modifyColName(err.col.trim())
             return this.$i18n.tline('message.bulk' + err.type + 'Failed', 
-              {line: err.line, col: this.$i18n.tnl(`label.${err.col.trim()}`), value: err.value, min: err.min, max: err.max, candidates: err.candidates},
+              {line: err.line, col: this.$i18n.tnl(`label.${col}`), value: err.value, min: err.min, max: err.max, candidates: err.candidates},
               this.showLine)
           }).join("<br>")
         }
@@ -142,6 +143,12 @@ export default {
         this.replaceAS({showLine: false})
       }
       this.replace({showProgress: false})
+    },
+    modifyColName(col) {
+      if (col == 'btxId' && APP.TX_BTX_MINOR == 'minor') {
+        return 'minor'
+      }
+      return col
     },
     readImageView(e, imgViewName, imgWidthName, imgHeightName, thumbnailName, resize) {
       HtmlUtil.readImage(e, (evt, width, height, thumbnail) => {

@@ -183,10 +183,12 @@ export default {
           })
           .sortBy((val) => (new Date().getTime() - val.downLatest < DISP.DOWN_RED_TIME)? val.downLatest * -1: val.btx_id)
           .value()
+          console.log('Meditag:', this.meditagSensors, meditagSensors)
         }
 
         if (APP.USE_MAGNET) {
           this.magnetSensors = await EXCloudHelper.fetchSensor(SENSOR.MAGNET)
+          console.log('Magnet:', this.magnetSensors)
         }
 
         this.showMapImage()

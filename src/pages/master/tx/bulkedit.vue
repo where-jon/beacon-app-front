@@ -77,7 +77,7 @@ export default {
       return dummyKey
     },
     async save(bulkSaveFunc) {
-      const MAIN_COL = "txId"
+      const MAIN_COL = APP.TX_WITH_TXID? "txId": APP.TX_BTX_MINOR == "minor"? "minor": "btxId"
       const POT = ["displayName","description","potCategoryList"]
       const POT_CATEGORY = ["categoryId", "categoryName"]
       const TX_SENSOR = ["sensorId", "sensor"]
