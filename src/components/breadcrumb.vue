@@ -9,12 +9,12 @@
       </ol>
     </div>
     <div class="col-auto px-0" >
-      <b-nav-item-dropdown v-if="extraNavSpec.length > 0" class="extra-nav"
+      <b-nav-item-dropdown v-if="availableNavSpec.length > 1" class="extra-nav"
         :extra-menu-classes="extNavClasses" right>
         <template slot="button-content">
           <em>{{shortName}}</em>
         </template>
-        <b-dropdown-item v-for="extraNav in extraNavSpec" :key="extraNav.key"
+        <b-dropdown-item v-for="extraNav in availableNavSpec" :key="extraNav.key"
             @click="move(extraNav.path)" :class="extNavClasses">
           <i :class="extraNav.icon" class="mx-1" />&nbsp;{{$t('label.' + extraNav.key)}}
         </b-dropdown-item>
@@ -81,6 +81,19 @@ export default {
       const theme = getThemeClasses(this.loginId)
       return _.findKey(theme, (val) => {return val})
     },
+    availableNavSpec() {
+      return _.filter(this.extraNavSpec, (spec) => {
+        for (let menu of this.$store.state.menu) {
+          const base = menu.base
+          for (let page of menu.pages) {
+            if (spec.path === '/' + base + page.path) {
+              return true
+            }
+          }
+        }
+        return false
+      })
+    }
   },
   methods: {
     isActive (item) {
