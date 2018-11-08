@@ -34,7 +34,7 @@
             </b-form-group>
             <b-form-group v-show="isShown('TX_WITH_MAJOR')">
               <label v-t="'label.major'" />
-              <b-form-input type="number" v-model="form.major" max="65535" :readonly="!isEditable" />
+              <b-form-input type="number" v-model="form.major" max="65535" :required="isMajorRequired" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group v-if="showMinorMid" v-show="showTx('minor')">
               <label v-t="'label.minor'" />
@@ -116,6 +116,9 @@ export default {
     theme () {
       const theme = getButtonTheme(this.$store.state.loginId)
       return 'outline-' + theme
+    },
+    isMajorRequired() {
+      return APP.TX_MAJOR_REQUIRED
     },
     sensorOptionsTx() {
       let options = this.sensorOptions('tx')
