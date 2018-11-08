@@ -99,6 +99,7 @@ export default {
           if(headerName == "categoryName"){
             const category = this.categories.find((category) => category.categoryName == val)
             if(category){
+              entity.pot.potType = category.categoryType
               entity.pot.potCategoryList = [{potCategoryPK: {potId: dummyKey--, categoryId: category.categoryId}}]
             }
           }
