@@ -146,6 +146,7 @@ export default {
       'tx',
       'categories',
       'sensors',
+      'pots',
     ]),
   },
   mounted() {
@@ -178,22 +179,43 @@ export default {
       let entity = {
         ...this.form,
         txId,
-        pot: (this.form.potId || this.form.categoryId || this.form.displayName || this.form.description)? {
-          displayName: Util.getValue(this.form, 'displayName', null),
-          description: Util.getValue(this.form, 'description', null),
-          potId: Util.getValue(this.form, 'potId', -2),
-          potCd: Util.getValue(this.form, 'potCd', txId + "_" + (new Date().getTime() % 10000)),
-          potName: Util.getValue(this.form, 'potName', txId + "_" + (new Date().getTime() % 10000)),
-          potCategoryList: this.form.categoryId? [
-            {potCategoryPK: {categoryId: this.form.categoryId}}
-          ]: null
-        }: null,
+        pot: await this.getRelatedPot(txId),
         txSensorList: this.form.sensorId? [
           {txSensorPK: {sensorId: this.form.sensorId}}
         ]: null
       }
       return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
-   },
+    },
+    async getRelatedPot(txId) {
+      StateHelper.setForceFetch('pot', true)
+      await StateHelper.load('pot')
+      const randName = () =>  txId + "_" + (new Date().getTime() % 10000)
+      const relatedPot = _.find(this.pots, (pot) => pot.potId == this.form.potId)
+      const isPotForm = this.form.potId || this.form.categoryId
+          || this.form.displayName || this.form.description
+
+      let newPot = {}
+      if (!relatedPot) {
+        if (!isPotForm) {
+          return null
+        } else {
+          newPot.potId = -2
+          newPot.potCd = randName()
+          newPot.potName = randName()
+        }
+      } else {
+        newPot = _.cloneDeep(relatedPot)
+      }
+      newPot.potCd = this.form.potCd || newPot.potCd
+      newPot.displayName = this.form.displayName || newPot.displayName
+      newPot.description = this.form.description || newPot.description
+      if (this.form.categoryId) {
+        const potCategoryPK = {categoryId: this.form.categoryId}
+        newPot.potCategoryList = [{potCategoryPK}]
+      }
+      newPot.tx = null
+      return newPot
+    },
   }
 }
 </script>
