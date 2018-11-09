@@ -10,7 +10,7 @@ export default {
   mixins: [reloadmixinVue],
   methods: {
     getStyleDisplay(entity){
-      return entity.map((val) => this.getStyleDisplay1(val))
+      return entity.map((val) => ({entity: val, style: this.getStyleDisplay1(val)}))
     },
     getStyleDisplay1(val) {
       return {

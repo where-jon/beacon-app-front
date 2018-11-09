@@ -48,7 +48,7 @@
       <b-table show-empty stacked="md" striped hover :items="list" :fields="fields" :current-page="currentPage" :per-page="perPage" outlined
               :filter="filterGrid" @filtered="onFiltered" :bordered="params.bordered">
         <template slot="style" slot-scope="row">
-          <div v-bind:style="style(row.index)">A</div>
+          <div v-bind:style="style(row.item)">A</div>
         </template>
         <template slot="actions" slot-scope="row">
           <!-- 更新ボタン -->
