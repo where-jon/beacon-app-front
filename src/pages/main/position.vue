@@ -19,6 +19,10 @@
       <div v-if="selectedTx.btxId && showReady" >
         <txdetail :selectedTx="selectedTx" @resetDetail="resetDetail" :selectedSensor="selectedSensor" :isShowModal="isShowModal" />
       </div>
+      <!-- modal -->
+      <b-modal id="modalError" :title="$t('label.error')" ok-only>
+        {{ $t('message.noMapImage') }}
+      </b-modal>
     </div>
 </template>
 
