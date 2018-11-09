@@ -100,7 +100,7 @@
         </b-col>
         <!-- bulk upload button -->
         <b-col v-if="isEditable" md="6" class="my-1">
-          <b-button v-if="params.bulkUploadPath" :variant='theme'
+          <b-button v-if="params.bulkUploadPath && !ios" :variant='theme'
             @click="bulkUpload()" v-t="'label.bulkUpload'"  class="float-right" />
         </b-col>
       </b-row>
