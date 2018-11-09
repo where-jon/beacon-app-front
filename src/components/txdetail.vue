@@ -1,33 +1,62 @@
 <template>
-  <div
-  :class="'balloon ' + selectedTx.class"
-  :style="{
-    left: this.selectedTx.left + 'px',
-    top: this.selectedTx.top +'px',
-    backgroundColor: this.selectedTx.bgColor,
-    color: this.selectedTx.color,
-  }">
-    <div class="potBox" @click="$emit('resetDetail')" v-if="selectedSensor.length == 0">
-      <div class="clearfix">
-        <div class="thumbnail">
-          <img :src="selectedTx.thumbnail" width="auto" height="125" v-if="selectedTx.thumbnail.length > 0" />
-          <img src="/default.png" width="auto" height="116" v-else />
-        </div>
-        <div class="description">
-          <div v-for="(item, index) in getDispItems()" :key="index">{{ item }}</div>
+  <div>
+    <div
+    :class="'balloon ' + selectedTx.class"
+    :style="{
+        left: this.selectedTx.left + 'px',
+        top: this.selectedTx.top +'px',
+        backgroundColor: this.selectedTx.bgColor,
+        color: this.selectedTx.color,
+      }"
+    v-if="!isShowModal"
+    >
+      <div class="potBox" @click="$emit('resetDetail')" v-if="selectedSensor.length == 0">
+        <div class="clearfix">
+          <div class="thumbnail">
+            <img :src="selectedTx.thumbnail" width="auto" height="125" v-if="selectedTx.thumbnail.length > 0" />
+            <img src="/default.png" width="auto" height="116" v-else />
+          </div>
+          <div class="description">
+            <div v-for="(item, index) in getDispItems()" :key="index">{{ item }}</div>
+          </div>
         </div>
       </div>
+      <sensor :sensors="selectedSensor" isPopup="true" />
     </div>
-    <sensor :sensors="selectedSensor" isPopup="true"></sensor>
+    <b-modal size="md" :visible="true" ok-only centered lazy hide-header v-else>
+      <b-container>
+        <div class="clearfix">
+          <div class="thumbnail">
+            <img :src="selectedTx.thumbnail" width="auto" height="125" v-if="selectedTx.thumbnail.length > 0" />
+            <img src="/default.png" width="auto" height="116" v-else />
+          </div>
+          <div class="description">
+            <div v-for="(item, index) in getDispItems()" :key="index">{{ item }}</div>
+          </div>
+        </div>
+      </b-container>
+    </b-modal>
   </div>
 </template>
 
 <script>
 import { DISP, TXDETAIL_ITEMS } from '../sub/constant/config'
+import { getTxDetailItems } from '../sub/helper/PositionHelper'
 import sensor from './sensor.vue'
 
 export default {
-  props: ['selectedTx', 'selectedSensor'],
+  props: {
+    selectedTx: {
+      type: Object,
+    },
+    selectedSensor: {
+      type: Array,
+    },
+    isShowModal: {
+      type: Boolean,
+      default: false
+    }
+  },
   components: {
     'sensor': sensor,
   },
@@ -37,12 +66,7 @@ export default {
   },
   methods: {
     getDispItems () {
-      const that = this
-      return TXDETAIL_ITEMS
-      .filter((e) => {
-        return e.disp
-      })
-      .map((e) => that.selectedTx[e.name])
+      return TXDETAIL_ITEMS.filter((e) => e.disp).map((e) => this.selectedTx[e.name])
     }
   },
 }
@@ -51,7 +75,6 @@ export default {
 <style scoped lang="scss">
 @import "../sub/constant/config.scss";
 
-/* 吹き出し・全共通 */
 .balloon {
   position: absolute;
   padding: 5px;
@@ -61,7 +84,7 @@ export default {
   position: absolute;
   z-index: 1;
   width: 20px;
-  height: 20px; /* 吹き出しサイズ */
+  height: 20px;
 }
 .balloon::after {
   content: '';
@@ -77,7 +100,7 @@ export default {
 }
 .balloon,
 .balloon::after {
-  border-radius: 5px; /* 角の丸め方 */
+  border-radius: 5px;
 }
 .balloon,
 .balloon::before {
@@ -92,15 +115,19 @@ export default {
 /* 吹き出し・上辺左側 */
 .balloon-b::before {
   top: -8px;
-  left: 15px; /* 位置 */
-  transform: rotate(45deg) skew(10deg,10deg); /* 傾斜角(skew) */
+  /* 位置 */
+  left: 15px;
+  /* 傾斜角(skew) */
+  transform: rotate(45deg) skew(10deg,10deg);
 }
 
 /* 吹き出し・下辺左側 */
 .balloon-u::before {
   bottom: -8px;
-  left: 15px; /* 位置 */
-  transform: rotate(45deg) skew(10deg,10deg); /* 傾斜角(skew) */
+  /* 位置 */
+  left: 15px;
+  /* 傾斜角(skew) */
+  transform: rotate(45deg) skew(10deg,10deg);
 }
 
 .potBox {

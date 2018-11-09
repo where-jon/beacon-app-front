@@ -1,29 +1,25 @@
 <template>
-  <div id="mapContainer" class="container-fluid" @click="resetDetail" >
-    <breadcrumb :items="items" :extraNavSpec="extraNavSpec" :reload="true" :shortName="shortName" />
-    <b-row class="mt-2">
-      <b-form inline class="mt-2">
-        <label class="ml-3 mr-2">{{ $t('label.area') }}</label>
-        <b-form-select v-model="selectedArea" :options="areaOptions" @change="changeArea" required class="ml-2"></b-form-select>
-      </b-form>
-    </b-row>
-    <b-row class="mt-3">
-      <canvas id="map" ref="map" v-if="!showMeditag"></canvas>
-      <b-col  v-if="showMeditag">
-        <canvas id="map" ref="map"></canvas>
-      </b-col>
-      <b-col class="rightPane" v-if="showMeditag">
-        <sensor :sensors="meditagSensors" class="rightPane"></sensor>
-      </b-col>
-    </b-row>
-    <div v-if="selectedTx.btxId && showReady" >
-      <txdetail :selectedTx="selectedTx" @resetDetail="resetDetail" :selectedSensor="selectedSensor"></txdetail>
+    <div id="mapContainer" class="container-fluid" @click="resetDetail" >
+      <breadcrumb :items="items" :extraNavSpec="extraNavSpec" :reload="true" :shortName="shortName" />
+      <b-row class="mt-2">
+        <b-form inline class="mt-2">
+          <label class="ml-3 mr-2">{{ $t('label.area') }}</label>
+          <b-form-select v-model="selectedArea" :options="areaOptions" @change="changeArea" required class="ml-2"></b-form-select>
+        </b-form>
+      </b-row>
+      <b-row class="mt-3">
+        <canvas id="map" ref="map" v-if="!showMeditag"></canvas>
+        <b-col  v-if="showMeditag">
+          <canvas id="map" ref="map"></canvas>
+        </b-col>
+        <b-col class="rightPane" v-if="showMeditag">
+          <sensor :sensors="meditagSensors" class="rightPane"></sensor>
+        </b-col>
+      </b-row>
+      <div v-if="selectedTx.btxId && showReady" >
+        <txdetail :selectedTx="selectedTx" @resetDetail="resetDetail" :selectedSensor="selectedSensor" :isShowModal="isShowModal" />
+      </div>
     </div>
-    <!-- modal -->
-    <b-modal id="modalError" :title="$t('label.error')" ok-only>
-      {{ $t('message.noMapImage') }}
-    </b-modal>
-  </div>
 </template>
 
 <script>
@@ -37,7 +33,7 @@ import * as Util from '../../sub/util/Util'
 import * as mock from '../../assets/mock/mock'
 import txdetail from '../../components/txdetail.vue'
 import { Tx, EXB, APP, DISP, DEV } from '../../sub/constant/config'
-import { SHAPE, SENSOR, EXTRA_NAV } from '../../sub/constant/Constants'
+import { SHAPE, SENSOR, EXTRA_NAV, POSITION } from '../../sub/constant/Constants'
 import { Shape, Stage, Container, Bitmap, Text, Touch } from '@createjs/easeljs/dist/easeljs.module'
 import { Tween, Ticker } from '@createjs/tweenjs/dist/tweenjs.module'
 import breadcrumb from '../../components/breadcrumb.vue'
@@ -74,6 +70,8 @@ export default {
       showReady: false,
       shortName: this.$i18n.tnl('label.showPositionShort'),
       extraNavSpec: EXTRA_NAV,
+      shwoIconMinWidth: POSITION.SHOW_ICON_MIN_WIDTH,
+      isShowModal: false
     }
   },
   computed: {
@@ -119,7 +117,6 @@ export default {
         return e.btx_id === btxId
       })
       const balloonClass = !btxId ? "": "balloon" + (rev ? "-u": "-b")
-
       let selectedTx = {
         btxId,
         minor: 'minor:' + btxId,
@@ -138,9 +135,6 @@ export default {
       }
       this.replaceMain({selectedTx})
       this.showReady = true
-    },
-    showInitDetail(tx) {
-      
     },
     getMeditagSensor(btxId) {
       if (this.meditagSensors) {
@@ -310,11 +304,11 @@ export default {
       txBtn.txId = pos.btx_id
       txBtn.x = pos.x
       txBtn.y = pos.y
-      txBtn.on('click', (evt) =>{
+      txBtn.on('click', (evt) => {
         let txBtn = evt.currentTarget
+        this.isShowModal = window.innerWidth < this.shwoIconMinWidth
         this.showDetail(txBtn.txId, txBtn.x, txBtn.y)
       })
-
       this.txCont.addChild(txBtn)
       stage.update()
     },
@@ -340,6 +334,23 @@ $right-pane-left-px: $right-pane-left * 1px;
   width: $right-pane-width-px;
   overflow: scroll;
   height: calc(100vh - 100px);
+}
+
+.clearfix:after {
+  content: "";
+  display: block;
+  clear: both;
+}
+
+.description {
+  float: left;
+  font-weight: bold;
+  padding-left: 10px;
+}
+
+.thumbnail {
+  float: left;
+  vertical-align: middle;
 }
 
 </style>
