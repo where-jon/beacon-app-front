@@ -147,6 +147,7 @@ export default {
       'categories',
       'sensors',
       'pots',
+      'potImages',
     ]),
   },
   mounted() {
@@ -205,6 +206,7 @@ export default {
         }
       } else {
         newPot = _.cloneDeep(relatedPot)
+        newPot.thumbnail = _.find(this.potImages, (pi) => pi.id == newPot.potId).thumbnail
       }
       newPot.potCd = this.form.potCd || newPot.potCd
       newPot.displayName = this.form.displayName || newPot.displayName
@@ -212,6 +214,8 @@ export default {
       if (this.form.categoryId) {
         const potCategoryPK = {categoryId: this.form.categoryId}
         newPot.potCategoryList = [{potCategoryPK}]
+        const category = _.find(this.categories, (cat) => cat.categoryId == this.form.categoryId)
+        newPot.potType = category ? category.categoryType : null
       }
       newPot.tx = null
       return newPot
