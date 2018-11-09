@@ -335,6 +335,12 @@
 
     "vSelectNoOptions": "",
 
+    "legend": "凡例",
+    "magnetSensor": "マグネットセンサー",
+    "beaconTag": "ビーコンタグ",
+    "using": "使用中",
+    "notUse": "未使用",
+
     "---------------- Config key name ---------------":"",
 
     "APP.LOG_KEEP_TM": "ログ保持期間",

@@ -149,6 +149,16 @@ export const BATTERY_BOUNDARY = {
   POOR: 0,
 }
 
+export const LEGEND_POSITION = {
+  getLegends(){
+    return [
+      {name: i18n.t('label.magnetSensor'), text: i18n.t('label.using'), iconName: "magnet_using.png"},
+      {name: i18n.t('label.magnetSensor'), text: i18n.t('label.notUse'), iconName: "magnet_notuse.png"},
+      {name: i18n.t('label.beaconTag'), text: null, iconName: "beacon.png"},
+    ]
+  }
+}
+
 export const EXTRA_NAV = [
   {
     key: 'showPositionShort',

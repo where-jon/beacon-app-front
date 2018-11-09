@@ -14,6 +14,7 @@
       </b-col>
       <b-col class="rightPane" v-if="showMeditag">
         <sensor :sensors="meditagSensors" class="rightPane"></sensor>
+        <sensor-legend :legend-items="legendItems" />
       </b-col>
     </b-row>
     <div v-if="selectedTx.btxId && showReady" >
@@ -43,13 +44,16 @@ import { Tween, Ticker } from '@createjs/tweenjs/dist/tweenjs.module'
 import breadcrumb from '../../components/breadcrumb.vue'
 import showmapmixin from '../../components/showmapmixin.vue'
 import sensor from '../../components/sensor.vue'
+import sensorLegend from '../../components/legend.vue'
 import moment from 'moment'
 import { rightpanewidth, rightpaneleft } from '../../sub/constant/config.scss'
+import { LEGEND_POSITION } from '../../sub/constant/Constants'
 
 export default {
   mixins: [showmapmixin],
   components: {
     'sensor': sensor,
+    'sensorLegend': sensorLegend,
     'txdetail': txdetail,
     breadcrumb,
   },
@@ -74,6 +78,7 @@ export default {
       showReady: false,
       shortName: this.$i18n.tnl('label.showPositionShort'),
       extraNavSpec: EXTRA_NAV,
+      legendItems: LEGEND_POSITION.getLegends(),
     }
   },
   computed: {
@@ -340,6 +345,7 @@ $right-pane-left-px: $right-pane-left * 1px;
   margin: 10px;
   padding: 3px;
   width: $right-pane-width-px;
+  min-width: $right-pane-width-px;
   overflow: scroll;
   height: calc(100vh - 100px);
 }
