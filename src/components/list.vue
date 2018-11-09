@@ -5,26 +5,28 @@
       <b-alert variant="danger" dismissible :show="showError">{{ error }}</b-alert>
       <!-- searchbox -->
       <template v-if="!params.hideSearchBox">
-        <b-row class="mb-1">
-          <!-- 標準絞り込みフィルタ -->
-          <b-col class="col-auto row mb-1">
-            <label v-t="'label.filter'" class="col-auto text-left"></label>
-            <b-input-group class="col-auto">
+        <b-form-row class="mb-2">
+          <b-form-row class="mr-4 mb-2">
+            <!-- 標準絞り込みフィルタ -->
+            <label v-t="'label.filter'" class="mr-2"></label>
+            <b-input-group>
               <b-form-input v-model="filter.reg"  class="align-self-center"/>
               <b-input-group-append>
                 <b-btn :disabled="!filter.reg" @click="filter.reg = ''" variant="secondary" v-t="'label.clear'"  class="align-self-center"/>
               </b-input-group-append>
             </b-input-group>
-          </b-col>
+          </b-form-row>
           <!-- カスタムフィルタ -->
           <template v-if="params.extraFilter" >
-            <b-col v-for="item of extraFilterSpec" v-bind:key="item.key" class="row col-auto">
-              <label for="item.key" v-t="'label.' + item.key" class="col-auto text-sm-right mx-2 align-self-center" />
+            <b-form-row v-for="item of extraFilterSpec" v-bind:key="item.key" class="mr-4 mb-2">
+              <label for="item.key" v-t="'label.' + item.key" class="mr-2"/>
               <b-form-select :id="item.key" :options="item.options" v-model="filter.extra[item.key]"
-                  class="col-auto align-self-center extra-filter"/>
-            </b-col>
+                  class="extra-filter"/>
+            </b-form-row>
           </template>
           <div v-if="params.extraFilter" class="w-100 mb-2 " />
+        </b-form-row>
+        <b-form-row class="mb-1">
           <!-- ボタン部 -->
           <b-col v-if="!params.disableTableButtons && isEditable" cols="auto" class="ml-auto">
             <b-button :variant='theme' class="mx-1" @click="edit()"
@@ -34,7 +36,7 @@
             <b-button :variant='theme' class="mx-1" v-if="params.csvOut && !ios" @click="exportCsv"
                 v-t="'label.download'" />
           </b-col>
-        </b-row>
+        </b-form-row>
       </template>
 
       <slot></slot>

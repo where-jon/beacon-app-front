@@ -4,48 +4,48 @@
     <div class="container">
       <b-alert variant="info" dismissible :show="showInfo">{{ message }}</b-alert>
       <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">{{ message }}</b-alert>
-      <b-row>
-        <b-col md="10" offset-md="2">
-          <b-form inline>
-            <label v-t="'label.historyDateFrom'" class="leftsidelabel"/>
-            <b-form-input v-if="useInputDate" type="date" required v-on:change="dateFromChange" class="inputdatefrom" />
-            <date-picker v-else v-model="dateFrom" type="date" value-format="yyyyMMdd" class="inputdatefrom" />
-            <label v-t="'label.historyDateTo'" />
-            <b-form-input v-if="useInputDate" type="date" required v-on:change="dateToChange" class="inputdateto" />
-            <date-picker v-else v-model="dateTo" type="date" value-format="yyyyMMdd" class="inputdateto" />
-          </b-form>
-        </b-col>
-      </b-row>
-      <p></p>
-      <b-row>
-        <b-col md="10" offset-md="2">
-          <b-form inline>
-            <label v-t="'label.zoneCategoryName'" class="leftsidelabel"/>
-            <v-select v-model="vModelCategory" :options="categoryOptions" :on-change="categoryChange" required class="ml-2">
-              <div slot="no-options">{{$i18n.tnl('label.vSelectNoOptions')}}</div>
-            </v-select>
-            <label v-t="'label.zoneName'" />
-            <v-select v-model="vModelZone" :options="zoneOptions" :on-change="zoneChange" required class="ml-2">
-              <div slot="no-options">{{$i18n.tnl('label.vSelectNoOptions')}}</div>
-            </v-select>
-          </b-form>
-        </b-col>
-      </b-row>
-      <p></p>
-      <b-row>
-        <b-col md="10" offset-md="2">
-          <b-form inline>
-            <b-form-radio-group v-model="historyType">
-              <b-form-radio :value="0">
-                {{$t('label.temperatureHistoryType0')}}
-              </b-form-radio>
-              <b-form-radio :value="1">
-                {{$t('label.temperatureHistoryType1')}}
-              </b-form-radio>
-            </b-form-radio-group>
-          </b-form>
-        </b-col>
-      </b-row>
+      <b-form>
+        <b-form-group>
+          <b-form-row>
+            <b-form-row class="mr-2">
+              <label v-t="'label.historyDateFrom'" class="mr-2 mb-2 d-flex align-items-center"/>
+              <b-form-input v-if="useInputDate" type="date" required v-on:change="dateFromChange" class="mb-2 inputdatefrom" />
+              <date-picker v-else v-model="dateFrom" type="date" value-format="yyyyMMdd" class="mr-2 mb-2 inputdatefrom" />
+            </b-form-row>
+            <b-form-row class="mr-2">
+              <label v-t="'label.historyDateTo'" class="mr-2 mb-2 d-flex align-items-center" />
+              <b-form-input v-if="useInputDate" type="date" required v-on:change="dateToChange" class="mb-2 inputdateto" />
+              <date-picker v-else v-model="dateTo" type="date" value-format="yyyyMMdd" class="mb-2 inputdateto" />
+            </b-form-row>
+          </b-form-row>
+        </b-form-group>
+        <b-form-group>
+          <b-form-row>
+            <b-form-row class="mr-2 mb-3">
+              <label v-t="'label.zoneCategoryName'" class="mr-2 mb-2 d-flex align-items-center"/>
+              <v-select v-model="vModelCategory" :options="categoryOptions" :on-change="categoryChange" required class="ml-2 mb-2">
+                <div slot="no-options">{{$i18n.tnl('label.vSelectNoOptions')}}</div>
+              </v-select>
+            </b-form-row>
+            <b-form-row class="mb-2">
+              <label v-t="'label.zoneName'" class="mr-2 mb-2 d-flex align-items-center" />
+              <v-select v-model="vModelZone" :options="zoneOptions" :on-change="zoneChange" required class="ml-2 mb-2">
+                <div slot="no-options">{{$i18n.tnl('label.vSelectNoOptions')}}</div>
+              </v-select>
+            </b-form-row>
+          </b-form-row>
+        </b-form-group>
+        <b-form-group>
+          <b-form-radio-group v-model="historyType">
+            <b-form-radio :value="0">
+              {{$t('label.temperatureHistoryType0')}}
+            </b-form-radio>
+            <b-form-radio :value="1">
+              {{$t('label.temperatureHistoryType1')}}
+            </b-form-radio>
+          </b-form-radio-group>
+        </b-form-group>
+      </b-form>
       <p></p>
       <b-row>
         <b-col md="10" offset-md="2">
@@ -276,19 +276,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.leftsidelabel {
-  width:130px;
-  text-align: left;
-  justify-content: left;
-}
 .inputdatefrom {
-  margin-left: 8px;
-  margin-right: 20px;
-  width: 200px;
+  width: 180px;
 }
 .inputdateto {
-  margin-left: 20px;
-  margin-right: 0px;
-  width: 200px;
+  width: 180px;
 }
 </style>

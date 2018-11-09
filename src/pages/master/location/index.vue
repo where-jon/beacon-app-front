@@ -7,25 +7,41 @@
     </b-alert>
 
     <b-form inline class="mt-2">
-      <label class="mr-2">{{ $t('label.area') }}</label>
-      <b-form-select v-model="selectedArea" :options="areaOptions" class="mr-2 areaOptions" :disabled="settingStart"></b-form-select>
-      <b-button size="sm" class="mr-4" variant="outline-info" v-t="'label.load'" @click="changeArea" :disabled="settingStart"></b-button>
-      <label class="mt-mobile">{{ $t('label.exb') }}</label>
-      <b-form-select v-model="exbDisp" :options="exbDispOptions" class="ml-2 mr-1" :disabled="settingStart" @change="changeExbDisp"></b-form-select>
-      <v-select size="sm" v-model="selectedExb_" :options="exbOptions" :on-change="showExbOnMap" class="mx-2 mt-mobile exbOptions" :disabled="settingStart">
-        <div slot="no-options">{{$i18n.tnl('label.vSelectNoOptions')}}</div>
-      </v-select>
-      <b-button size="sm" variant="outline-info" v-t="'label.bulkAdd'" @click="bulkAdd" class="mt-mobile" :disabled="settingStart"></b-button> 
+      <b-form-row class="ml-1">
+        <label class="mr-2 mb-2">{{ $t('label.area') }}</label>
+        <b-form-select v-model="selectedArea" :options="areaOptions" class="mr-2 mb-2 areaOptions" :disabled="settingStart"></b-form-select>
+        <b-button size="sm" class="mb-2" variant="outline-info" v-t="'label.load'" @click="changeArea" :disabled="settingStart"></b-button>
+      </b-form-row>
     </b-form>
     <b-form inline class="mt-2">
-      <label class="mr-2">{{ $t('label.mapRatio') }}</label>
-      <b-form-input size="sm" type="number" :value="mapRatio" :readonly="true" class="mr-2 ratioInput"/>
-      <label class="mr-2 mt-mobile">{{ "= "+ $t('label.realWidth') }}</label>
-      <b-form-input size="sm" type="number" v-model="realWidth" class="mr-2 mt-mobile ratioInput"/>
-      <label class="mr-2">{{ "/ "+ $t('label.pixelWidth') }}</label>
-      <b-form-input size="sm" type="number" v-model="pixelWidth" :readonly="true" class="mr-2 ratioInput"/>
-      <b-button size="sm" variant="outline-info" v-t="settingStart?'label.settingNow':'label.settingStart'" @click="ratioSettingStart" :class="{'mt-mobile':true, 'mr-2':true, blink:settingStart}"></b-button> 
-      <b-button size="sm" variant="info" v-t="'label.save'" @click="save" :disabled="!isChanged"></b-button> 
+      <b-form-row class="ml-1">
+        <label class="mt-mobile mr-2 mb-2">{{ $t('label.exb') }}</label>
+        <b-form-select v-model="exbDisp" :options="exbDispOptions" class="mr-2 mb-2" :disabled="settingStart" @change="changeExbDisp"></b-form-select>
+        <b-form-row>
+          <v-select size="sm" v-model="selectedExb_" :options="exbOptions" :on-change="showExbOnMap" class="mb-2 mt-mobile exbOptions" :disabled="settingStart">
+            <div slot="no-options">{{$i18n.tnl('label.vSelectNoOptions')}}</div>
+          </v-select>
+          <b-button size="sm" variant="outline-info" v-t="'label.bulkAdd'" @click="bulkAdd" class="mt-mobile mb-2" :disabled="settingStart"></b-button> 
+        </b-form-row>
+      </b-form-row>
+    </b-form>
+    <b-form inline class="mt-2">
+      <b-form-row class="mr-3 mb-3 ml-1">
+        <label class="mr-2">{{ $t('label.mapRatio') }}</label>
+        <b-form-input size="sm" type="number" :value="mapRatio" :readonly="true" class="ratioInput"/>
+      </b-form-row>
+      <b-form-row class="mr-3 mb-3 ml-1">
+        <label class="mr-2 mt-mobile">{{ "= "+ $t('label.realWidth') }}</label>
+        <b-form-input size="sm" type="number" v-model="realWidth" class="mt-mobile ratioInput"/>
+      </b-form-row>
+      <b-form-row class="mr-3 mb-3 ml-1">
+        <label class="mr-2">{{ "/ "+ $t('label.pixelWidth') }}</label>
+        <b-form-input size="sm" type="number" v-model="pixelWidth" :readonly="true" class="ratioInput"/>
+      </b-form-row>
+      <b-form-row class="mb-3 ml-1">
+        <b-button size="sm" variant="outline-info" v-t="settingStart?'label.settingNow':'label.settingStart'" @click="ratioSettingStart" :class="{'mt-mobile':true, 'mr-2':true, blink:settingStart}"></b-button> 
+        <b-button size="sm" variant="info" v-t="'label.save'" @click="save" :disabled="!isChanged"></b-button> 
+      </b-form-row>
     </b-form>
     <p></p>
     <div class="mt-3">
