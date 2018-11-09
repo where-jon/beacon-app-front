@@ -204,7 +204,7 @@ export const converToCsv = (array, headers) => {
         return JSON.stringify(val).split('"').join("'")
       }
       else {
-        return val
+        return val.replace? val.replace(/"/g, '""'): val
       }
     }).join('","') + '"'
   }).join('\n')
