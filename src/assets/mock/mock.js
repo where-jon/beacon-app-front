@@ -40,6 +40,10 @@ export const position = [
   }
 ]
 
+export const insertPosition =[
+  {btx_id:121, pos_id:4, label:'MAG', rssi:-60, timestamp:now, count:2},
+]
+
 export const positions_conf = {start: 1536318071987, interval: 6000}
 export const positions = []
 positions[0] = [{"btx_id":1,"minor":1,"pos_id":3,"device_id":3,"updatetime":"2018-09-07T11:01:02.114Z","nearest":[{"device_id":3,"timestamp":1536318062114,"rssi":-61.95289495278382,"place_id":3},{"device_id":1,"timestamp":1536318063248,"rssi":-68.4930477665437,"place_id":1},{"device_id":2,"timestamp":1536318063248,"rssi":-70.28672955448882,"place_id":2}],"power_level":100},{"btx_id":2,"minor":2,"pos_id":1,"device_id":1,"updatetime":"2018-09-07T11:01:04.399Z","nearest":[{"device_id":1,"timestamp":1536318064399,"rssi":-72.6579287696201,"place_id":1},{"device_id":2,"timestamp":1536318058685,"rssi":-74.77349655378839,"place_id":2},{"device_id":3,"timestamp":1536318060058,"rssi":-79.28689716924704,"place_id":3}],"power_level":100},{"btx_id":3,"minor":3,"pos_id":2,"device_id":2,"updatetime":"2018-09-07T11:01:03.248Z","nearest":[{"device_id":2,"timestamp":1536318063248,"rssi":-39.28495023861946,"place_id":2},{"device_id":1,"timestamp":1536318061365,"rssi":-67.26560049842656,"place_id":1},{"device_id":3,"timestamp":1536318064399,"rssi":-72.74744968597842,"place_id":3}],"power_level":100},{"btx_id":4,"minor":4,"pos_id":3,"device_id":3,"updatetime":"2018-09-07T11:01:04.399Z","nearest":[{"device_id":3,"timestamp":1536318064399,"rssi":-45.54802228176176,"place_id":3},{"device_id":1,"timestamp":1536318064399,"rssi":-73.28311215642759,"place_id":1},{"device_id":2,"timestamp":1536318063248,"rssi":-74.97000520215018,"place_id":2}],"power_level":100},{"btx_id":5,"minor":5,"pos_id":1,"device_id":1,"updatetime":"2018-09-07T11:01:04.399Z","nearest":[{"device_id":1,"timestamp":1536318064399,"rssi":-71.92023572660051,"place_id":1},{"device_id":2,"timestamp":1536318063248,"rssi":-75.86665495653499,"place_id":2},{"device_id":3,"timestamp":1536318064399,"rssi":-80.04061839683315,"place_id":3}],"power_level":100}]

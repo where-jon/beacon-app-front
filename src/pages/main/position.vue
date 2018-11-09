@@ -233,11 +233,11 @@ export default {
           this.positions = SensorHelper.setStress(this.positions, this.meditagSensors)
         }
   
+        Util.debug('Raw exb', this.exbs, this.selectedArea)
         this.positionedExb = _(this.exbs).filter((exb) => {
-          Util.debug(exb, this.selectedArea)
           return exb.enabled && exb.location.areaId == this.selectedArea && exb.location.x && exb.location.y > 0
         }).value()
-        Util.debug(this.positionedExb)
+        Util.debug('positionedExb', this.positionedExb)
         if (this.positionedExb.length == 0) {
           console.warn("positionedExb is empty. check if exbs are enabled")
         }
@@ -252,7 +252,6 @@ export default {
       this.txCont.removeAllChildren()
       this.stage.update()
       PositionHelper.adjustPosition(this.positions, this.mapImageScale, this.positionedExb).forEach((pos) => { // TODO: Txのチェックも追加
-        Util.debug(pos)
         this.showTx(pos)
       })
 
@@ -276,12 +275,14 @@ export default {
     },
     showTx(pos) {
       let tx = this.txs.find((tx) => tx.btxId == pos.btx_id)
+      Util.debug('showTx', pos, tx && tx.sensor)
       if (!tx) {
         console.warn("tx not found. btx_id=" + pos.btx_id)
         return
       }
       if (tx.sensorId === SENSOR.MAGNET) {
         var magnet = this.magnetSensors && this.magnetSensors.find((sensor) => sensor.btx_id == tx.btxId)
+        Util.debug('magnet', magnet)
       }
       let display = this.getDisplay(tx)
 

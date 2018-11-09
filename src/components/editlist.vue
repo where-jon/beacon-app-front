@@ -22,7 +22,7 @@
                   </span>
                 </span>
               </span>
-              <b-button v-if="isSuperEditable" size="sm" @click.stop="deleteConfirm(row, $event.target)" variant="outline-danger" v-t="'label.delete'" class="mt-1 float-right" />
+              <b-button v-if="isSuperEditable" size="sm" @click.stop="deleteConfirm(row, $event.target)" variant="outline-danger" v-t="'label.delete'" class="mt-2 float-right" />
             </b-form-group>
           </div>
         </div>
@@ -32,43 +32,23 @@
         <div v-if="useRegistForm" class="card shadow-sm mt-5 mb-3">
           <label class="card-header" v-t="'label.addSetting'" />
           <div class="card-body">
-            <b-form-group>
-              <b-form-row>
-                <b-col sm="2">
-                  <label v-t="'label.key'" />
-                </b-col>
-                <b-col sm="5">
-                  <b-form-input v-model="newForm.key" :type="'text'" class="form-control-sm" maxlength="200" required />
-                </b-col>
-              </b-form-row>
-            </b-form-group>
-            <b-form-group>
-              <b-form-row>
-                <b-col sm="2">
-                  <label v-t="'label.valType'" />
-                </b-col>
-                <b-col sm="5">
-                  <b-form-select v-model="newForm.type" :options="getTypeOptions()" @change="clearValue()" class="form-control-sm" required />
-                </b-col>
-              </b-form-row>
-            </b-form-group>
-            <b-form-group>
-              <b-form-row>
-                <b-col sm="2">
-                  <label v-t="'label.value'" />
-                </b-col>
-                <b-col sm="5">
-                  <b-form-select v-if="usePullDown(newForm.type)" v-model="newForm.value" :options="getBooleanOptions()" required/>
-                  <b-form-input v-if="!usePullDown(newForm.type)" v-model="newForm.value" :type="getInputType(newForm.type)" class="form-control-sm" maxlength="1000" required/>
-                </b-col>
-                <b-col>
-                  <div class="float-right">
-                    <b-button v-if="isEditable" type="submit" :variant="theme" @click="register(true)" v-t="'label.add'" />
-                    <b-button type="button" variant="outline-danger" @click="showForm(false)" v-t="'label.cancel'" class="ml-2" />
-                  </div>
-                </b-col>
-              </b-form-row>
-            </b-form-group>
+            <b-form-row class="mb-2">
+              <label v-t="'label.key'" class="mr-2" />
+              <b-form-input v-model="newForm.key" :type="'text'" class="form-control-sm" maxlength="200" required />
+            </b-form-row>
+            <b-form-row class="mb-2">
+              <label v-t="'label.valType'" class="mr-2" />
+              <b-form-select v-model="newForm.type" :options="getTypeOptions()" @change="clearValue()" class="form-control-sm" required />
+            </b-form-row>
+            <b-form-row class="mb-2">
+              <label v-t="'label.value'" class="mr-2" />
+              <b-form-select v-if="usePullDown(newForm.type)" v-model="newForm.value" :options="getBooleanOptions()" required/>
+              <b-form-input v-if="!usePullDown(newForm.type)" v-model="newForm.value" :type="getInputType(newForm.type)" class="form-control-sm" maxlength="1000" required/>
+            </b-form-row>
+            <b-form-row class="float-right mt-3">
+              <b-button v-if="isEditable" type="submit" :variant="theme" @click="register(true)" v-t="'label.add'" />
+              <b-button type="button" variant="outline-danger" @click="showForm(false)" v-t="'label.cancel'" class="ml-2" />
+            </b-form-row>
           </div>
         </div>
         <b-button v-if="!useRegistForm" type="button" :variant="theme" @click="showForm(true)" v-t="'label.addForm'" class="float-right"/>

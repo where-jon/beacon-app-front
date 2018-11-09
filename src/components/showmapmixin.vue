@@ -96,7 +96,12 @@ export default {
     showMapImageDef(callback) {
       this.showTryCount++
       console.log('showMapImageDef', this.selectedArea, this.isShownMapImage)
-      if (this.isShownMapImage) return false
+      if (this.isShownMapImage) {
+        if (callback) {
+          callback()
+        }
+        return
+      }
 
       if (!this.mapImage) {
         if (this.showTryCount < 10) {
@@ -108,7 +113,7 @@ export default {
         else {
           this.$root.$emit('bv::show::modal', 'modalError')
         }
-        return true
+        return
       }
 
       var bg = new Image()

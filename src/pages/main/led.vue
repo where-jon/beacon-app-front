@@ -4,61 +4,59 @@
     <b-container>
       <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">{{ message }}</b-alert>
       <b-form-row>
-        <b-col cols="12" md="auto">
-          <b-form @submit="onSubmit">
-            <b-form-group :label="$t('label.deviceId')">
-              <b-form-select v-model="form.deviceId" :options="deviceIds" required :readonly="!isEditable" />
-            </b-form-group>
-            <b-form-group :label="$t('label.color')">
-              <b-form-checkbox-group v-model="form.colors">
-                <b-form-checkbox class="checkBlue" :value="ledColors.BLUE" :readonly="!isEditable">
-                  {{$t('label.blue')}}
-                </b-form-checkbox>
-                <b-form-checkbox class="checkRed" :value="ledColors.RED" :readonly="!isEditable">
-                  {{$t('label.red')}}
-                </b-form-checkbox>
-                <b-form-checkbox class="checkPurple" :value="ledColors.PURPLE" :readonly="!isEditable">
-                  {{$t('label.purple')}}
-                </b-form-checkbox>
-                <b-form-checkbox class="checkGreen" :value="ledColors.GREEN" :readonly="!isEditable">
-                  {{$t('label.green')}}
-                </b-form-checkbox>
-                <b-form-checkbox class="checkPaleblue" :value="ledColors.PALEBLUE" :readonly="!isEditable">
-                  {{$t('label.paleblue')}}
-                </b-form-checkbox>
-                <b-form-checkbox class="checkYellow" :value="ledColors.YELLOW" :readonly="!isEditable">
-                  {{$t('label.yellow')}}
-                </b-form-checkbox>
-                <b-form-checkbox class="checkWhite" :value="ledColors.WHITE" :readonly="!isEditable">
-                  {{$t('label.white')}}
-                </b-form-checkbox>
-                <b-form-checkbox class="checkBlack" :value="ledColors.BLACK" :readonly="!isEditable">
-                  {{$t('label.black')}}
-                </b-form-checkbox>
-              </b-form-checkbox-group>
-            </b-form-group>
-            <b-form-group :label="$t('label.blink')">
-              <b-form-radio-group v-model="form.blink">
-                <b-form-radio :value="ledBlinkTypes.CHANGE_SLOW" :readonly="!isEditable">
-                  {{$t('label.changeSlow')}}
-                </b-form-radio>
-                <b-form-radio :value="ledBlinkTypes.CHANGE_FAST" :readonly="!isEditable">
-                  {{$t('label.changeFast')}}
-                </b-form-radio>
-                <b-form-radio :value="ledBlinkTypes.BLINK_SLOW" :readonly="!isEditable">
-                  {{$t('label.blinkSlow')}}
-                </b-form-radio>
-                <b-form-radio :value="ledBlinkTypes.BLINK_FAST" :readonly="!isEditable">
-                  {{$t('label.blinkFast')}}
-                </b-form-radio>
-              </b-form-radio-group>
-            </b-form-group>
-            <b-button v-show="isEditable" type="submit" 
-                @click="buttonClick(true)" v-t="'label.start'" :variant="theme" />
-            <b-button v-show="isEditable" type="submit" class="ml-2" 
-                @click="buttonClick(false)" v-t="'label.end'" :variant="theme" :disabled="!form.lightOn"/>
-          </b-form>
-        </b-col>
+        <b-form @submit="onSubmit">
+          <b-form-group :label="$t('label.deviceId')">
+            <b-form-select v-model="form.deviceId" :options="deviceIds" required :readonly="!isEditable" />
+          </b-form-group>
+          <b-form-group :label="$t('label.color')">
+            <b-form-checkbox-group v-model="form.colors">
+              <b-form-checkbox class="checkBlue" :value="ledColors.BLUE" :readonly="!isEditable">
+                {{$t('label.blue')}}
+              </b-form-checkbox>
+              <b-form-checkbox class="checkRed" :value="ledColors.RED" :readonly="!isEditable">
+                {{$t('label.red')}}
+              </b-form-checkbox>
+              <b-form-checkbox class="checkPurple" :value="ledColors.PURPLE" :readonly="!isEditable">
+                {{$t('label.purple')}}
+              </b-form-checkbox>
+              <b-form-checkbox class="checkGreen" :value="ledColors.GREEN" :readonly="!isEditable">
+                {{$t('label.green')}}
+              </b-form-checkbox>
+              <b-form-checkbox class="checkPaleblue" :value="ledColors.PALEBLUE" :readonly="!isEditable">
+                {{$t('label.paleblue')}}
+              </b-form-checkbox>
+              <b-form-checkbox class="checkYellow" :value="ledColors.YELLOW" :readonly="!isEditable">
+                {{$t('label.yellow')}}
+              </b-form-checkbox>
+              <b-form-checkbox class="checkWhite" :value="ledColors.WHITE" :readonly="!isEditable">
+                {{$t('label.white')}}
+              </b-form-checkbox>
+              <b-form-checkbox class="checkBlack" :value="ledColors.BLACK" :readonly="!isEditable">
+                {{$t('label.black')}}
+              </b-form-checkbox>
+            </b-form-checkbox-group>
+          </b-form-group>
+          <b-form-group :label="$t('label.blink')">
+            <b-form-radio-group v-model="form.blink">
+              <b-form-radio :value="ledBlinkTypes.CHANGE_SLOW" :readonly="!isEditable">
+                {{$t('label.changeSlow')}}
+              </b-form-radio>
+              <b-form-radio :value="ledBlinkTypes.CHANGE_FAST" :readonly="!isEditable">
+                {{$t('label.changeFast')}}
+              </b-form-radio>
+              <b-form-radio :value="ledBlinkTypes.BLINK_SLOW" :readonly="!isEditable">
+                {{$t('label.blinkSlow')}}
+              </b-form-radio>
+              <b-form-radio :value="ledBlinkTypes.BLINK_FAST" :readonly="!isEditable">
+                {{$t('label.blinkFast')}}
+              </b-form-radio>
+            </b-form-radio-group>
+          </b-form-group>
+          <b-button v-show="isEditable" type="submit" 
+              @click="buttonClick(true)" v-t="'label.start'" :variant="theme" />
+          <b-button v-show="isEditable" type="submit" class="ml-2" 
+              @click="buttonClick(false)" v-t="'label.end'" :variant="theme" :disabled="!form.lightOn"/>
+        </b-form>
       </b-form-row>
     </b-container>
   </div>

@@ -78,12 +78,10 @@
         </b-col>
       </b-row>
       <b-row :style="{ marginTop: '30px' }" v-show="isChange">
-        <b-col md="2" offset-md="3">
-          <b-button type="button" v-t="'label.cancel'" :block="true" variant="outline-danger" @click="handleCancelButton" />
-        </b-col>
-        <b-col md="2" offset-md="2">
-          <b-button type="button" v-t="'label.modify'" :block="true" :variant="theme" @click="onSubmit" :disabled="passErrorMessage !== null"/>
-        </b-col>
+        <b-form-group class="col text-center">
+          <b-button type="button" v-t="'label.cancel'" class="mr-4 mb-2 input-btn" variant="outline-danger" @click="handleCancelButton" />
+          <b-button type="button" v-t="'label.modify'" class="ml-4 mb-2 input-btn" :variant="theme" @click="onSubmit" :disabled="passErrorMessage !== null"/>
+        </b-form-group>
       </b-row>
     </div>
   </div>
@@ -345,6 +343,11 @@ export default {
     font-weight: bold;
     color: #999;
     margin-bottom: 20px;
+  }
+
+  .input-btn {
+    text-align: center;
+    width: 104px;
   }
 
   p.error {
