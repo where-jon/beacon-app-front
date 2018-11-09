@@ -1,5 +1,6 @@
 import { DISP, DEV } from '../constant/config'
 import * as Util from '../util/Util'
+import * as mock from '../../assets/mock/mock.js'
 import styles from '../constant/config.scss'
 
 /**
@@ -58,6 +59,11 @@ export const correctPosId = (orgPositions, now) => {
     }
     return result
   }, [])
+
+  if (DEV.DEBUG > 1 && mock.insertPosition) {
+    console.warn("insert mock position")
+    positions = positions.concat(mock.insertPosition)
+  }
 
   // EXB.forEach((exb) => { // EXBのpos_idが配列にない場合（＝空き状態）追加
   //   if (!usedPos.includes(exb.pos_id)) {

@@ -97,11 +97,6 @@ export default {
       deleteTarget: null,
       ICON_ARROW_WIDTH: 20,
       ICON_ARROW_HEIGHT: 10,
-      exbDispOptions: [
-        {value:'deviceId', text: this.$i18n.tnl('label.deviceId')},
-        {value:'deviceIdX', text: this.$i18n.tnl('label.deviceIdX')},
-        {value:'deviceNum', text: this.$i18n.tnl('label.deviceNum')}
-      ],
       items: [
         {
           text: this.$i18n.tnl('label.master'),
@@ -126,6 +121,14 @@ export default {
     ...mapState('app_service', [
       'pageSendParam',
     ]),
+    exbDispOptions() {
+      let options = []
+      if (APP.EXB_WITH_DEVICE_NUM) options.push({value:'deviceNum', text: this.$i18n.tnl('label.deviceNum')})
+      if (APP.EXB_WITH_DEVICE_IDX) options.push({value:'deviceIdX', text: this.$i18n.tnl('label.deviceIdX')})
+      if (APP.EXB_WITH_DEVICE_ID) options.push({value:'deviceId', text: this.$i18n.tnl('label.deviceId')})
+      this.exbDisp = options[0].value
+      return options
+    },
     mapRatio() {
       if (this.pixelWidth || this.realWidth) {
         if (this.pixelWidth && this.realWidth) {
