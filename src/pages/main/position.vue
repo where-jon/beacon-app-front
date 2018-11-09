@@ -338,21 +338,4 @@ $right-pane-left-px: $right-pane-left * 1px;
   height: calc(100vh - 100px);
 }
 
-.clearfix:after {
-  content: "";
-  display: block;
-  clear: both;
-}
-
-.description {
-  float: left;
-  font-weight: bold;
-  padding-left: 10px;
-}
-
-.thumbnail {
-  float: left;
-  vertical-align: middle;
-}
-
 </style>
