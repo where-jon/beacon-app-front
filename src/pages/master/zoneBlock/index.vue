@@ -8,53 +8,40 @@
         <div v-html="message" />
       </b-alert>
 
+      <b-form-group>
+        <b-form-row>
+          <b-form-row>
+            <label v-t="'label.areaName'" class="control-label mr-2" />
+            <b-form-select v-model="areaId" :options="areaNames" required />
+          </b-form-row>
+        </b-form-row>
+      </b-form-group>
+
+      <b-form inline v-if="show">
+        <b-form-row>
+          <b-form-row v-if="hasId" class="mr-4 mb-2">
+            <label v-t="'label.zoneId'" class="control-label mr-2" />
+            <b-form-input type="text" v-model="form.zoneId" readonly="readonly" />
+          </b-form-row>
+          <b-form-row class="mr-4 mb-2">
+            <label v-t="'label.zoneName'" class="control-label mr-2" />
+            <b-form-input type="text" v-model="zoneName" maxlength="20" required :readonly="!isEditable" :disabled="!isEnableNameText" />
+          </b-form-row>
+          <b-form-row class="mr-4 mb-2">
+            <label v-t="'label.categoryName'" class="control-label mr-2 mb-2" />
+            <b-form-select v-model="categoryId" :options="categoryNames" class="mr-3 mb-2" :disabled="!isEnableNameText" />
+            <b-button type="button" :variant="theme" v-t="'label.setting'" class="mb-2" :disabled="!isEnableNameText" @click="onSetting" />
+          </b-form-row>
+        </b-form-row>
+      </b-form>
+
       <b-form @submit="onSubmit" v-if="show">
-
         <b-form-group>
           <b-form-row>
-            <b-col sm="1">
-              <label v-t="'label.areaName'" class="control-label" />
-            </b-col>
-            <b-col sm="3">
-              <b-form-select v-model="areaId" :options="areaNames" required />
-            </b-col>
-          </b-form-row>
-        </b-form-group>
-
-        <b-form-group>
-          <b-form-row>
-            <b-col sm="1" v-if="hasId">
-              <label v-t="'label.zoneId'" class="control-label" />
-            </b-col>
-            <b-col sm="1" v-if="hasId">
-              <b-form-input type="text" v-model="form.zoneId" readonly="readonly" />
-            </b-col>
-            <b-col sm="1">
-              <label v-t="'label.zoneName'" class="control-label" />
-            </b-col>
-            <b-col sm="4">
-              <b-form-input type="text" v-model="zoneName" maxlength="20" required :readonly="!isEditable" :disabled="!isEnableNameText" />
-            </b-col>
-            <b-col sm="1">
-              <label v-t="'label.categoryName'" class="control-label" />
-            </b-col>
-            <b-col sm="3">
-              <b-form-select v-model="categoryId" :options="categoryNames" :disabled="!isEnableNameText" />
-            </b-col>
-            <b-col sm="2">
-              <b-button type="button" :variant="theme" v-t="'label.setting'" :disabled="!isEnableNameText" @click="onSetting" />
-            </b-col>
-          </b-form-row>
-        </b-form-group>
-
-        <b-form-group>
-          <b-form-row>
-            <b-col sm="1">
-              <b-button type="button" variant="outline-danger" @click="backToList" v-t="'label.back'" :block="true" />
-            </b-col>
-            <b-col sm="1">
-              <b-button v-if="isEditable" type="button" :variant="theme" @click="regist()" :block="true" >{{ label }}</b-button>
-            </b-col>
+            <b-form-row>
+              <b-button type="button" variant="outline-danger" @click="backToList" v-t="'label.back'" />
+              <b-button v-if="isEditable" type="button" :variant="theme" @click="regist()" class="ml-2" >{{ label }}</b-button>
+            </b-form-row>
           </b-form-row>
         </b-form-group>
 
