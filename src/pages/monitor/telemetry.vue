@@ -74,9 +74,9 @@ export default {
         }
       ],
       fields: addLabelByKey(this.$i18n, [ 
-        APP.EXB_WITH_DEVICE_NUM? {key: "deviceNum", sortable: true }: null,
-        APP.EXB_WITH_DEVICE_ID? {key: "deviceId", sortable: true }: null,
-        APP.EXB_WITH_DEVICE_IDX? {key: "deviceIdX", sortable: true }: null,
+        APP.EXB_WITH_DEVICE_NUM ? {key: "deviceNum", sortable: true }: null,
+        APP.EXB_WITH_DEVICE_ID ? {key: "deviceId", sortable: true }: null,
+        APP.EXB_WITH_DEVICE_IDX ? {key: "deviceIdX", sortable: true }: null,
         {key: "locationName", label:'locationName', sortable: true,},
         {key: "power-level", label:'power-level', sortable: true,},
         {key: "final-receive-timestamp", label:'final-receive-timestamp', sortable: true,},
@@ -95,8 +95,9 @@ export default {
       label_nosignal: this.$i18n.tnl('label.no-signal', {min: TELEMETRY.NOSIGNAL / (60 * 1000)}),
       badgeClassPrefix: 'badge badge-pill badge-',
       csvHeaders: {
-        [this.$i18n.tnl('label.deviceId')]: 'deviceId',
-        [this.$i18n.tnl('label.deviceIdX')]: 'deviceId(HEX)',
+        [this.$i18n.tnl('label.deviceNum')]: APP.EXB_WITH_DEVICE_NUM ? 'deviceNum' : null,
+        [this.$i18n.tnl('label.deviceId')]: APP.EXB_WITH_DEVICE_ID ? 'deviceId' : null,
+        [this.$i18n.tnl('label.deviceIdX')]: APP.EXB_WITH_DEVICE_IDX ? 'deviceId(HEX)' : null,
         [this.$i18n.tnl('label.location')]: 'finalReceivePlace',
         [this.$i18n.tnl('label.final-receive-timestamp')]: 'timestamp',
         [this.$i18n.tnl('label.power-level')]: 'powerLevel',
@@ -172,9 +173,7 @@ export default {
     download() {
       const records = this.telemetrys.map(e => {
         const obj = {}
-        Object.keys(e).forEach(k => {
-          obj[this.csvHeaders[k]] = e[k]
-        })
+        Object.keys(e).filter(k => this.csvHeaders[k]).forEach(k => obj[this.csvHeaders[k]] = e[k])
         return obj
       })
       HtmlUtil.fileDL("telemetry.csv", Util.converToCsv(records), getCharSet(this.$store.state.loginId))
