@@ -74,6 +74,7 @@ import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import { APP } from '../../../sub/constant/config.js'
+import { CATEGORY } from '../../../sub/constant/Constants';
 
 export default {
   components: {
@@ -126,7 +127,12 @@ export default {
       return options
     },
     categoryOptions() {
-      let options = this.categories.map((category) => {
+      let options = this.categories.filter((category) => {
+        if(!this.form.potId){
+          return true
+        }
+        return category.categoryType != CATEGORY.getTypes()[2].value
+      }).map((category) => {
           return {
             value: category.categoryId,
             text: category.categoryName
