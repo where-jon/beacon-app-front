@@ -336,9 +336,8 @@
     "vSelectNoOptions": "",
 
     "legend": "凡例",
-    "magnetSensorUse": "マグネットセンサー / 使用中",
-    "magnetSensorNotUse": "マグネットセンサー / 未使用",
-    "beaconTag": "ビーコンタグ",
+    "using": "：使用中",
+    "notUse": "未使用",
 
     "---------------- Config key name ---------------":"",
 

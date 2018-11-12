@@ -1,6 +1,6 @@
 <template>
   <div id="mapContainer" class="container-fluid" @click="resetDetail" >
-    <breadcrumb :items="items" :extraNavSpec="extraNavSpec" :reload="true" :shortName="shortName" />
+    <breadcrumb :items="items" :extraNavSpec="extraNavSpec" :reload="true" :shortName="shortName" :legendItems="legendItems" />
     <b-row class="mt-2">
       <b-form inline class="mt-2">
         <label class="ml-3 mr-2">{{ $t('label.area') }}</label>
@@ -14,7 +14,6 @@
       </b-col>
       <b-col class="rightPane" v-if="showMeditag">
         <sensor :sensors="meditagSensors" class="rightPane"></sensor>
-      <sensor-legend :legend-items="legendItems" />
       </b-col>
     </b-row>
     <div v-if="selectedTx.btxId && showReady" >
@@ -33,6 +32,7 @@ import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as PositionHelper from '../../sub/helper/PositionHelper'
 import * as SensorHelper from '../../sub/helper/SensorHelper'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
+import * as StateHelper from '../../sub/helper/StateHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
 import * as mock from '../../assets/mock/mock'
@@ -43,17 +43,15 @@ import { Shape, Stage, Container, Bitmap, Text, Touch } from '@createjs/easeljs/
 import { Tween, Ticker } from '@createjs/tweenjs/dist/tweenjs.module'
 import breadcrumb from '../../components/breadcrumb.vue'
 import showmapmixin from '../../components/showmapmixin.vue'
+import listmixin from '../../components/listmixin.vue'
 import sensor from '../../components/sensor.vue'
-import sensorLegend from '../../components/legend.vue'
 import moment from 'moment'
 import { rightpanewidth, rightpaneleft } from '../../sub/constant/config.scss'
-import { LEGEND_POSITION } from '../../sub/constant/Constants'
 
 export default {
-  mixins: [showmapmixin],
+  mixins: [showmapmixin, listmixin],
   components: {
     'sensor': sensor,
-    'sensorLegend': sensorLegend,
     'txdetail': txdetail,
     breadcrumb,
   },
@@ -78,15 +76,19 @@ export default {
       showReady: false,
       shortName: this.$i18n.tnl('label.showPositionShort'),
       extraNavSpec: EXTRA_NAV,
-      legendItems: LEGEND_POSITION.getLegends(),
       shwoIconMinWidth: POSITION.SHOW_ICON_MIN_WIDTH,
-      isShowModal: false
+      isShowModal: false,
+      legendItems: [],
     }
   },
   computed: {
     ...mapState('main', [
       'selectedTx',
       'orgPositions',
+    ]),
+    ...mapState('app_service', [
+      'categories',
+      'txs',
     ]),
     selectedSensor() {
       if (this.selectedTx && this.selectedTx.btxId) {
@@ -158,9 +160,28 @@ export default {
     getFinalReceiveTime (time) {
       return time ? moment(time).format('YYYY/MM/DD HH:mm:ss') : ''
     },
+    async loadLegends () {
+      const magnetCategoryTypes = this.txs.filter((val) => val.category && val.sensorId == SENSOR.MAGNET)
+        .map((val) => val.category.categoryId)
+      this.legendItems = this.categories.map((val) => ({
+        id: val.categoryId,
+        items: magnetCategoryTypes.includes(val.categoryId)? [
+          { id: 1, text: "A", style: this.getStyleDisplay1(val) },
+          { id: 2, text: `${val.categoryName}${this.$i18n.tnl("label.using")}`, style: null },
+          { id: 3, text: "A", style: this.getStyleDisplay1(val, true) },
+          { id: 4, text: `${this.$i18n.tnl("label.notUse")}`, style: {} },
+        ]: [
+          { id: 1, text: "A", style: this.getStyleDisplay1(val) },
+          { id: 2, text: val.categoryName, style: {} },
+        ]
+      }))
+    },
     async fetchData(payload) {
       try {
         this.replace({showProgress: true})
+        await StateHelper.load('category')
+        await StateHelper.load('tx')
+        this.loadLegends()
         await this.fetchAreaExbs(true)
 
         if (DEV.USE_MOCK_EXC) {
