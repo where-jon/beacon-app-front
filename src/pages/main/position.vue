@@ -14,11 +14,11 @@
       </b-col>
       <b-col class="rightPane" v-if="showMeditag">
         <sensor :sensors="meditagSensors" class="rightPane"></sensor>
-        <sensor-legend :legend-items="legendItems" />
+      <sensor-legend :legend-items="legendItems" />
       </b-col>
     </b-row>
     <div v-if="selectedTx.btxId && showReady" >
-      <txdetail :selectedTx="selectedTx" @resetDetail="resetDetail" :selectedSensor="selectedSensor"></txdetail>
+      <txdetail :selectedTx="selectedTx" @resetDetail="resetDetail" :selectedSensor="selectedSensor" :isShowModal="isShowModal" />
     </div>
     <!-- modal -->
     <b-modal id="modalError" :title="$t('label.error')" ok-only>
@@ -38,7 +38,7 @@ import * as Util from '../../sub/util/Util'
 import * as mock from '../../assets/mock/mock'
 import txdetail from '../../components/txdetail.vue'
 import { Tx, EXB, APP, DISP, DEV } from '../../sub/constant/config'
-import { SHAPE, SENSOR, EXTRA_NAV } from '../../sub/constant/Constants'
+import { SHAPE, SENSOR, EXTRA_NAV, POSITION } from '../../sub/constant/Constants'
 import { Shape, Stage, Container, Bitmap, Text, Touch } from '@createjs/easeljs/dist/easeljs.module'
 import { Tween, Ticker } from '@createjs/tweenjs/dist/tweenjs.module'
 import breadcrumb from '../../components/breadcrumb.vue'
@@ -79,6 +79,8 @@ export default {
       shortName: this.$i18n.tnl('label.showPositionShort'),
       extraNavSpec: EXTRA_NAV,
       legendItems: LEGEND_POSITION.getLegends(),
+      shwoIconMinWidth: POSITION.SHOW_ICON_MIN_WIDTH,
+      isShowModal: false
     }
   },
   computed: {
@@ -124,7 +126,6 @@ export default {
         return e.btx_id === btxId
       })
       const balloonClass = !btxId ? "": "balloon" + (rev ? "-u": "-b")
-
       let selectedTx = {
         btxId,
         minor: 'minor:' + btxId,
@@ -143,9 +144,6 @@ export default {
       }
       this.replaceMain({selectedTx})
       this.showReady = true
-    },
-    showInitDetail(tx) {
-      
     },
     getMeditagSensor(btxId) {
       if (this.meditagSensors) {
@@ -318,11 +316,11 @@ export default {
       txBtn.txId = pos.btx_id
       txBtn.x = pos.x
       txBtn.y = pos.y
-      txBtn.on('click', (evt) =>{
+      txBtn.on('click', (evt) => {
         let txBtn = evt.currentTarget
+        this.isShowModal = window.innerWidth < this.shwoIconMinWidth
         this.showDetail(txBtn.txId, txBtn.x, txBtn.y)
       })
-
       this.txCont.addChild(txBtn)
       stage.update()
     },

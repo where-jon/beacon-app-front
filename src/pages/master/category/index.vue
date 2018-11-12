@@ -75,8 +75,9 @@ export default {
       }
       this.replace({showProgress: false})
     },
-    style(index) {
-      return this.categoryStyles[index]
+    style(row) {
+      const categoryStyle = this.categoryStyles.find((val) => val.entity.categoryId == row.categoryId)
+      return categoryStyle? categoryStyle.style: null
     },
   }
 }
