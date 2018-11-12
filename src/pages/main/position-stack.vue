@@ -87,6 +87,9 @@ export default {
     this.replaceAS({positions: []})
   },
   methods: {
+    ...mapActions('main', [
+      'pushOrgPositions',
+    ]),
     async fetchData(payload) {
       try {
         this.replace({showProgress: true})
@@ -99,12 +102,7 @@ export default {
         let positions = await EXCloudHelper.fetchPosition(this.exbs, this.txs)
 
         // 移動平均数分のポジションデータを保持する
-        let orgPositions = _.clone(this.orgPositions)
-        if (orgPositions.length >= DISP.MOVING_AVERAGE) {
-          orgPositions.shift()
-        }
-        orgPositions.push(positions)
-        this.replaceMain({orgPositions})
+        this.pushOrgPositions(positions)
 
         // 在席表示と同じ、表示txを取得する。
         let now = !DEV.USE_MOCK_EXC ? new Date().getTime()
