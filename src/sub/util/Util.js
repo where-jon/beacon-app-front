@@ -263,11 +263,12 @@ export const getEntityFromIds = (list, entity, ids) => {
 export const getMidnightMs = () => {
   const now = new Date()
   const dayMs = 24 * 60 * 60 * 1000
-  const offset = APP.POSITION_TIMEZONE　* 60 * 60 * 1000
+  const offset = APP.POSITION_TIMEZONE * 60 * 60 * 1000
   const nowToday = Math.floor(now.getTime() / dayMs)
   const midnight = (nowToday * dayMs) + offset
   debug("calcurating midnight. now is ", now)
   debug(now.getTime())
   debug("midnight is ", midnight)
+  debug(new Date(midnight))
   return midnight
 }
