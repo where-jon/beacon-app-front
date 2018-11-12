@@ -206,8 +206,8 @@ export default {
       this.replace({showProgress: false})
     },
     async getDetail(txId) {
-      let pot = await AppServiceHelper.fetch('/basic/pot', txId)
-      return pot
+      let tx = await AppServiceHelper.fetch('/core/tx', txId)
+      return tx && tx.pot
     },
     showMapImage() {
       this.showMapImageDef(() => {
