@@ -10,11 +10,11 @@
       <div class="table-area">
         <table v-if="!isDev" class="table striped">
           <thead>
-            <th scope="col" v-for="(val, key) in telemetrys[0]" :key="key">{{ key }}</th>
+            <th scope="col" v-for="(val, key) in fields.filter(e => e)" :key="key" :class="val.key !== 'state' ? '' : 'exb-state'">{{ val.label }}</th>
           </thead>
           <tbody>
             <tr v-for="(telemetry, index) in telemetrys" :key="index" :class="getTrClass(index, telemetry[label_timestamp])">
-              <td scope="row" v-for="(val, key) in telemetry" :key="key" :class="getTdClass(index, val, key)">
+              <td scope="row" v-for="(val, key) in telemetry" :key="key" :class="getTdClass(index, val, key)" v-if="val !== null">
                 <span v-if="key === label_powerLevel"><i :class="getPowerLevelClass(val)"></i>{{ val }}</span>
                 <span :class="exbStateClass(val)" v-else-if="key === label_state">{{ val }}</span>
                 {{ key !== label_powerLevel && key !== label_state ? val : '' }}
@@ -53,6 +53,7 @@ import reloadmixinVue from '../../components/reloadmixin.vue'
 import gatewayVue from './gateway.vue'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import moment from 'moment'
+import { addLabelByKey } from '../../sub/helper/ViewHelper'
 
 export default {
   mixins: [reloadmixinVue],
@@ -72,8 +73,18 @@ export default {
           active: true
         }
       ],
+      fields: addLabelByKey(this.$i18n, [ 
+        APP.EXB_WITH_DEVICE_NUM? {key: "deviceNum", sortable: true }: null,
+        APP.EXB_WITH_DEVICE_ID? {key: "deviceId", sortable: true }: null,
+        APP.EXB_WITH_DEVICE_IDX? {key: "deviceIdX", sortable: true }: null,
+        {key: "locationName", label:'locationName', sortable: true,},
+        {key: "power-level", label:'power-level', sortable: true,},
+        {key: "final-receive-timestamp", label:'final-receive-timestamp', sortable: true,},
+        {key: "state", label:'state', sortable: true,},
+      ]),
       isLoad: false,
       label_deviceId: this.$i18n.tnl('label.deviceId'),
+      label_deviceNum: this.$i18n.tnl('label.deviceNum'),
       label_deviceIdX: this.$i18n.tnl('label.deviceIdX'),
       label_name: this.$i18n.tnl('label.location'),
       label_timestamp: this.$i18n.tnl('label.final-receive-timestamp'),
@@ -180,15 +191,17 @@ export default {
 
       return telemetrys.map((e) => {
         const name = map[e.deviceid]
-        const record = {
-          [this.label_deviceId]: parseInt(e.deviceid, 16),
-          [this.label_deviceIdX]: e.deviceid.toUpperCase(),
+        const offset = this.$store.state.currentRegion.deviceOffset
+        const deviceId = parseInt(e.deviceid, 16)
+        return {
+          [this.label_deviceNum]: APP.EXB_WITH_DEVICE_NUM ? deviceId - offset : null,
+          [this.label_deviceId]: APP.EXB_WITH_DEVICE_ID ? deviceId : null,
+          [this.label_deviceIdX]: APP.EXB_WITH_DEVICE_IDX ? e.deviceid.toUpperCase() : null,
           [this.label_name]: name != null ? name : 'ー',
           [this.label_powerLevel]:e.power_level * 2,
           [this.label_timestamp]: e.timestamp,
           [this.label_state]: this.exbState(e.timestamp)
         }
-        return record
       })
     },
     getPowerLevelClass(val) {
