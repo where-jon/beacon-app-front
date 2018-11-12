@@ -14,7 +14,8 @@ export default function (context) {
     return
   }
 
-  if (context.route.path == APP.LOGIN_PAGE) { // Login Page is always OK
+  if (context.route.path == APP.LOGIN_PAGE
+    ||context.route.path == APP.ERROR_PAGE) { // Login Page is always OK
   }
   else if (APP.LOGIN_MODE != LOGIN_MODE.NO_LOGIN && !AuthHelper.checkSession()) { // check Session
     console.warn("checkauth ng")
@@ -22,9 +23,20 @@ export default function (context) {
   }
   else { // check tenant feature
     let tenantFeatureList = context.store.state.tenantFeatureList
+    if (!tenantFeatureList || tenantFeatureList.length == 0) {
+      console.error("No tenant feature List", context.route.path)
+      context.app.router.push(APP.ERROR_PAGE)
+      return
+    }
     let isSuperAdmin = context.store.state.role == ROLE.SUPER_ADMIN // TO BE REMOVED in the future
     if (!isSuperAdmin && tenantFeatureList && !MenuHelper.tenantOk(context.route.path, tenantFeatureList)) {
-      context.app.router.push(APP.TOP_PAGE)
+      if (MenuHelper.tenantOk(APP.TOP_PAGE, tenantFeatureList)) {
+        context.app.router.push(APP.TOP_PAGE)
+      }
+      else {
+        context.app.router.push(APP.LOGIN_PAGE)
+      }
     }
   }
+  console.error(context.route.path)
 }

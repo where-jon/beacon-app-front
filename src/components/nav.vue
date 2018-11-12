@@ -64,7 +64,7 @@ export default {
   },
   computed: {
     isLoginPage() {
-      return this.$route.path == APP.LOGIN_PAGE || this.$route.path == (APP.LOGIN_PAGE + '/')
+      return this.$route.path == APP.LOGIN_PAGE || this.$route.path == APP.LOGIN_PAGE + '/' || this.$route.path == APP.ERROR_PAGE
     },
     isNoLogin() {
       return APP.LOGIN_MODE == LOGIN_MODE.NO_LOGIN
