@@ -379,7 +379,7 @@ export default {
     setChangeArea() {
       this.isChangeArea = true
     },
-    showExbOnMap(val, x = 50, y = 30) {
+    showExbOnMap(val, x = 50, y = 40) {
       if (!val || !val.value) {
         return
       }
