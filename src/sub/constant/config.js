@@ -40,6 +40,7 @@ export const APP = {
   TX_WITH_DISPLAY_NAME: true, // TX管理で個体.表示名を表示
   TX_WITH_DESCRIPTION: true, // TX管理で個体.備考を表示
   TX_WITH_MAJOR: true, // TX管理でmajorを表示
+  TX_MAJOR_REQUIRED: false, // majorを必須にする ※サーバでも要設定
   TX_BTX_MINOR: 'both', // both:両方表示し、別々に設定、minor/btxId:片方のみ表示し、保存の際同一の値を設定
 
   EXB_WITH_EXBID: true,       // 画面上EXBIDを使用するか否か 

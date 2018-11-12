@@ -1,29 +1,29 @@
 <template>
-  <div id="mapContainer" class="container-fluid" @click="resetDetail" >
-    <breadcrumb :items="items" :extraNavSpec="extraNavSpec" :reload="true" :shortName="shortName" />
-    <b-row class="mt-2">
-      <b-form inline class="mt-2">
-        <label class="ml-3 mr-2">{{ $t('label.area') }}</label>
-        <b-form-select v-model="selectedArea" :options="areaOptions" @change="changeArea" required class="ml-2"></b-form-select>
-      </b-form>
-    </b-row>
-    <b-row class="mt-3">
-      <canvas id="map" ref="map" v-if="!showMeditag"></canvas>
-      <b-col  v-if="showMeditag">
-        <canvas id="map" ref="map"></canvas>
-      </b-col>
-      <b-col class="rightPane" v-if="showMeditag">
-        <sensor :sensors="meditagSensors" class="rightPane"></sensor>
-      </b-col>
-    </b-row>
-    <div v-if="selectedTx.txId && showReady" >
-      <txdetail :selectedTx="selectedTx" @resetDetail="resetDetail"></txdetail>
+    <div id="mapContainer" class="container-fluid" @click="resetDetail" >
+      <breadcrumb :items="items" :extraNavSpec="extraNavSpec" :reload="true" :shortName="shortName" />
+      <b-row class="mt-2">
+        <b-form inline class="mt-2">
+          <label class="ml-3 mr-2">{{ $t('label.area') }}</label>
+          <b-form-select v-model="selectedArea" :options="areaOptions" @change="changeArea" required class="ml-2"></b-form-select>
+        </b-form>
+      </b-row>
+      <b-row class="mt-3">
+        <canvas id="map" ref="map" v-if="!showMeditag"></canvas>
+        <b-col  v-if="showMeditag">
+          <canvas id="map" ref="map"></canvas>
+        </b-col>
+        <b-col class="rightPane" v-if="showMeditag">
+          <sensor :sensors="meditagSensors" class="rightPane"></sensor>
+        </b-col>
+      </b-row>
+      <div v-if="selectedTx.btxId && showReady" >
+        <txdetail :selectedTx="selectedTx" @resetDetail="resetDetail" :selectedSensor="selectedSensor" :isShowModal="isShowModal" />
+      </div>
+      <!-- modal -->
+      <b-modal id="modalError" :title="$t('label.error')" ok-only>
+        {{ $t('message.noMapImage') }}
+      </b-modal>
     </div>
-    <!-- modal -->
-    <b-modal id="modalError" :title="$t('label.error')" ok-only>
-      {{ $t('message.noMapImage') }}
-    </b-modal>
-  </div>
 </template>
 
 <script>
@@ -37,7 +37,7 @@ import * as Util from '../../sub/util/Util'
 import * as mock from '../../assets/mock/mock'
 import txdetail from '../../components/txdetail.vue'
 import { Tx, EXB, APP, DISP, DEV } from '../../sub/constant/config'
-import { SHAPE, SENSOR, EXTRA_NAV } from '../../sub/constant/Constants'
+import { SHAPE, SENSOR, EXTRA_NAV, POSITION } from '../../sub/constant/Constants'
 import { Shape, Stage, Container, Bitmap, Text, Touch } from '@createjs/easeljs/dist/easeljs.module'
 import { Tween, Ticker } from '@createjs/tweenjs/dist/tweenjs.module'
 import breadcrumb from '../../components/breadcrumb.vue'
@@ -74,6 +74,8 @@ export default {
       showReady: false,
       shortName: this.$i18n.tnl('label.showPositionShort'),
       extraNavSpec: EXTRA_NAV,
+      shwoIconMinWidth: POSITION.SHOW_ICON_MIN_WIDTH,
+      isShowModal: false
     }
   },
   computed: {
@@ -81,6 +83,12 @@ export default {
       'selectedTx',
       'orgPositions',
     ]),
+    selectedSensor() {
+      if (this.selectedTx && this.selectedTx.btxId) {
+        var ret = this.getMeditagSensor(this.selectedTx.btxId)
+      }
+      return ret? [ret]: []
+    }
   },
   mounted() {
     this.replace({title: this.$i18n.tnl('label.showPosition')})
@@ -97,11 +105,11 @@ export default {
       this.isShownMapImage = false
       this.resetDetail()
     },
-    async showDetail(txId, x, y) {
+    async showDetail(btxId, x, y) {
       const tipOffsetX = 15
       const tipOffsetY = 15
-      const popupHeight = 156
-      let tx = this.txs.find((tx) => tx.btxId == txId)
+      const popupHeight = this.getMeditagSensor(btxId)? 236: 156
+      let tx = this.txs.find((tx) => tx.btxId == btxId)
       let display = this.getDisplay(tx)
       let map = HtmlUtil.getRect("#map")
       let containerParent = HtmlUtil.getRect("#mapContainer", "parentNode")
@@ -110,19 +118,18 @@ export default {
       const isDispRight = x + offsetX + 100 < window.innerWidth
       // rev === trueの場合、ポップアップを上に表示
       const rev = y + map.top + DISP.TX_R + tipOffsetY + popupHeight > window.innerHeight
-      const targetId = this.txsMap[txId]
+      const targetId = this.txsMap[btxId]
       const p = await this.getDetail(targetId)
       const position = this.positions.find((e) => {
-        return e.btx_id === txId
+        return e.btx_id === btxId
       })
-      const balloonClass = !txId ? "": "balloon" + (rev ? "-u": "")
-
+      const balloonClass = !btxId ? "": "balloon" + (rev ? "-u": "-b")
       let selectedTx = {
-        txId,
-        minor: 'minor:' + txId,
+        btxId,
+        minor: 'minor:' + btxId,
         major: p.tx && p.tx.major? 'major:' + p.tx.major : '',
         class: balloonClass,
-        left: x + offsetX - DISP.TX_R - (rev ? tipOffsetX : 0),
+        left: x + offsetX - DISP.TX_R,
         top: rev ? y + offsetY - DISP.TX_R - popupHeight : y + offsetY + DISP.TX_R + tipOffsetY,
         name: p.potName ? p.potName : '',
         timestamp: position ? this.getFinalReceiveTime(position.timestamp) : '',
@@ -136,8 +143,11 @@ export default {
       this.replaceMain({selectedTx})
       this.showReady = true
     },
-    showInitDetail(tx) {
-      
+    getMeditagSensor(btxId) {
+      if (this.meditagSensors) {
+        return this.meditagSensors.find((val) => btxId == val.btx_id)
+      }
+      return null
     },
     resetDetail() {
       let selectedTx = {}
@@ -163,16 +173,20 @@ export default {
         if (APP.USE_MEDITAG) {
           let meditagSensors = await EXCloudHelper.fetchSensor(SENSOR.MEDITAG)
           this.meditagSensors = _(meditagSensors)
+          .filter((val) => this.txs.some((tx) => tx.btxId == val.btx_id))
           .map((val) => {
-              return {...val, bg: SensorHelper.getStressBg(val.stress), down: val.down?val.down:0}
+              let tx = this.txs.find((tx) => tx.btxId == val.btx_id)
+              let label = tx && tx.displayName? tx.displayName: val.btx_id
+              return {...val, label, bg: SensorHelper.getStressBg(val.stress), down: val.down?val.down:0}
           })
-          .filter((val) => this.txs.some((tx) => tx.btxId == val.id))
-          .sortBy((val) => (new Date().getTime() - val.downLatest < DISP.DOWN_RED_TIME)? val.downLatest * -1: val.id)
+          .sortBy((val) => (new Date().getTime() - val.downLatest < DISP.DOWN_RED_TIME)? val.downLatest * -1: val.btx_id)
           .value()
+          console.log('Meditag:', this.meditagSensors, meditagSensors)
         }
 
         if (APP.USE_MAGNET) {
           this.magnetSensors = await EXCloudHelper.fetchSensor(SENSOR.MAGNET)
+          console.log('Magnet:', this.magnetSensors)
         }
 
         this.showMapImage()
@@ -212,11 +226,11 @@ export default {
           this.positions = SensorHelper.setStress(this.positions, this.meditagSensors)
         }
   
+        Util.debug('Raw exb', this.exbs, this.selectedArea)
         this.positionedExb = _(this.exbs).filter((exb) => {
-          Util.debug(exb, this.selectedArea)
           return exb.enabled && exb.location.areaId == this.selectedArea && exb.location.x && exb.location.y > 0
         }).value()
-        Util.debug(this.positionedExb)
+        Util.debug('positionedExb', this.positionedExb)
         if (this.positionedExb.length == 0) {
           console.warn("positionedExb is empty. check if exbs are enabled")
         }
@@ -231,16 +245,15 @@ export default {
       this.txCont.removeAllChildren()
       this.stage.update()
       PositionHelper.adjustPosition(this.positions, this.mapImageScale, this.positionedExb).forEach((pos) => { // TODO: Txのチェックも追加
-        Util.debug(pos)
         this.showTx(pos)
       })
 
-      if (this.selectedTx.txId) {
+      if (this.selectedTx.btxId) {
         const tx = this.selectedTx
         const position = PositionHelper.adjustPosition(this.positions, this.mapImageScale, this.positionedExb)
             .filter((pos) => pos.btx_id == tx.btxId)
         if (position.length == 1) {
-          this.showDetail(tx.txId, position[0].x, position[0].y)
+          this.showDetail(tx.btxId, position[0].x, position[0].y)
         }
       }
     },
@@ -255,12 +268,14 @@ export default {
     },
     showTx(pos) {
       let tx = this.txs.find((tx) => tx.btxId == pos.btx_id)
+      Util.debug('showTx', pos, tx && tx.sensor)
       if (!tx) {
         console.warn("tx not found. btx_id=" + pos.btx_id)
         return
       }
       if (tx.sensorId === SENSOR.MAGNET) {
         var magnet = this.magnetSensors && this.magnetSensors.find((sensor) => sensor.btx_id == tx.btxId)
+        Util.debug('magnet', magnet)
       }
       let display = this.getDisplay(tx)
 
@@ -296,11 +311,11 @@ export default {
       txBtn.txId = pos.btx_id
       txBtn.x = pos.x
       txBtn.y = pos.y
-      txBtn.on('click', (evt) =>{
+      txBtn.on('click', (evt) => {
         let txBtn = evt.currentTarget
+        this.isShowModal = window.innerWidth < this.shwoIconMinWidth
         this.showDetail(txBtn.txId, txBtn.x, txBtn.y)
       })
-
       this.txCont.addChild(txBtn)
       stage.update()
     },

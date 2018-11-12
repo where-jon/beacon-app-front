@@ -1,5 +1,6 @@
 import { DISP, DEV, APP } from '../constant/config'
 import * as Util from '../util/Util'
+import * as mock from '../../assets/mock/mock.js'
 import styles from '../constant/config.scss'
 
 /**
@@ -19,12 +20,12 @@ export const correctPosId = (orgPositions, now) => {
     return result
   }, [])
   .uniqWith(_.isEqual) // 重複除去
-  .map((val) => { if (DEV.DEBUG) console.log(new Date(val.timestamp), new Date(now), val.timestamp-now, val.rssi); return val})
+  .map((val) => { if (DEV.DEBUG) console.log('受信日時: ' + new Date(val.timestamp), '現在日時: ' + new Date(now), (now - val.timestamp) / 1000 + '秒前', 'RSSI: ' + val.rssi); return val})
   .filter((val) => val.rssi >= DISP.RSSI_MIN && val.timestamp >= now - DISP.HIDE_TIME) // RSSI値、指定時刻でフィルタ
   .orderBy(['btx_id', 'pos_id', 'timestamp']) // btx_id, pos_id, timestampでソート
   .value()
 
-  Util.table(positions)
+  Util.table('単純ソート後', positions)
 
   positions = _.chain(positions).reduce((result, pos, idx) => { // btx_id,pos_idグループでsum(rssi), countを集計（lodashのgroupByは複数には対応していない）
     let prev = _.find(result, (val) => val.btx_id == pos.btx_id && val.pos_id == pos.pos_id)
@@ -43,7 +44,7 @@ export const correctPosId = (orgPositions, now) => {
   .orderBy(['count', 'rssiAvg', 'pos_id', 'btx_id'], ['desc','desc','asc','asc']) // 記録回数（多）、RSSI（強）、pos_id、btx_idでソート 
   .value()
 
-  Util.table(positions)
+  Util.table('グルーピング後', positions)
 
   // 上記の順番で取り出す
   let usedTx = []
@@ -59,13 +60,18 @@ export const correctPosId = (orgPositions, now) => {
     return result
   }, [])
 
+  if (DEV.DEBUG > 1 && mock.insertPosition) {
+    console.warn("insert mock position")
+    positions = positions.concat(mock.insertPosition)
+  }
+
   // EXB.forEach((exb) => { // EXBのpos_idが配列にない場合（＝空き状態）追加
   //   if (!usedPos.includes(exb.pos_id)) {
   //     positions.push({pos_id: exb.pos_id, btx_id: 0})
   //   }
   // })
 
-  Util.table(positions)
+  Util.table('各TX単位', positions)
 
   return positions
 }

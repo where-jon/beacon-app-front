@@ -150,6 +150,10 @@ export const BATTERY_BOUNDARY = {
   POOR: 0,
 }
 
+export const POSITION = {
+  SHOW_ICON_MIN_WIDTH: 768
+}
+
 export const EXTRA_NAV = [
   {
     key: 'showPositionShort',

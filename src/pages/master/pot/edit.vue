@@ -25,7 +25,7 @@
             </b-form-group>
             <b-form-group>
               <label v-t="'label.categoryType'" />
-              <b-form-radio-group v-model="form.personOrThing" :options="category" :disabled="!isEditable" />
+              <b-form-radio-group v-model="form.potType" :options="category" :disabled="!isEditable" />
             </b-form-group>
             <b-form-group v-if="isShown('POT_WITH_POTCD')">
               <label v-t="'label.potCd'" />
@@ -106,7 +106,7 @@ export default {
       category: _.slice(CATEGORY.getTypes(), 0, 2),
       form: {personOrThing: CATEGORY.getTypes()[0].value,
           ...ViewHelper.extract(this.$store.state.app_service.pot,
-          ["potId", "potCd", "potName", "extValue.ruby",
+          ["potId", "potCd", "potName", "potType", "extValue.ruby",
           "displayName", "potGroupList.0.group.groupId", "potCategoryList.0.category.categoryId", "extValue.tel", "txId",
           "extValue.post", "thumbnail", "description"])},
       items: [
@@ -132,7 +132,7 @@ export default {
     },
     categoryOptions() {
       let options = this.categories.filter((category) => 
-        category.categoryType === this.form.personOrThing
+        category.categoryType === this.form.potType
       ).map((category) => {
           return {
             value: category.categoryId,
@@ -179,10 +179,6 @@ export default {
     StateHelper.load('group')
     StateHelper.load('category')
     StateHelper.load('tx')
-    const category = this.categories.find((category) => category.categoryId === this.form.categoryId)
-    if(category){
-      this.form.personOrThing = category.categoryType
-    }
   },
   methods: {
     beforeSubmit(again){
@@ -199,6 +195,7 @@ export default {
         potId: this.form.potId || -1,
         potCd: this.form.potCd,
         potName: this.form.potName,
+        potType: this.form.potType,
         extValue: {
           ruby: this.form.ruby,
           tel: this.form.tel,

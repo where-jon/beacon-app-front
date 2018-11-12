@@ -38,7 +38,7 @@ export default {
         fields: addLabelByKey(this.$i18n, [ 
           {key: "potId", sortable: true, tdClass: "thumb-rowdata"},
           {key: "thumbnail", tdClass: "thumb-rowdata" },
-          {key: "txIdName", label:'tx', sortable: true, 'class': 'text-center' , tdClass: "thumb-rowdata"},
+          {key: "txIdName", label:'tx', sortable: true, tdClass: "thumb-rowdata"},
           APP.POT_WITH_POTCD? {key: "potCd", sortable: true , tdClass: "thumb-rowdata"}: null,
           {key: "potName", sortable: true , tdClass: "thumb-rowdata"},
           APP.POT_WITH_RUBY? {key: "ruby", label: "ruby", sortable: true, tdClass: "thumb-rowdata"}: null,

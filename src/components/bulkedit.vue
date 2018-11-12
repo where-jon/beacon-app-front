@@ -57,6 +57,11 @@ export default {
       this.formKey++
       this.form.csvFile = null
     },
+    async afterCrud() {
+      if(this.$parent.$options.methods.afterCrud){
+        this.$parent.$options.methods.afterCrud.call(this.$parent, this.bulkSave)
+      }
+    },
     async save() {
       return this.$parent.$options.methods.save.call(this.$parent, this.bulkSave)
     },

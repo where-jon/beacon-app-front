@@ -365,6 +365,7 @@
     "deleteCompleted": "{target}の削除が完了しました。",
     "updateFailed": "{target}の更新に失敗しました。（{code}）",
     "registerFailed": "{target}の登録に失敗しました。（{code}）",
+    "deleteFailed": "{target}の削除に失敗しました。（{code}）",
     "bulkRegisterFailed": "{target}の一括登録に失敗しました。（{code}）",
     "duplicate": "{key}（{val}）はすでに使用されています。",
     "foreignKey": "{key}（{val}）は存在しません。",

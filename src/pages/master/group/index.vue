@@ -74,8 +74,9 @@ export default {
       }
       this.replace({showProgress: false})
     },
-    style(index) {
-      return this.groupStyles[index]
+    style(row) {
+      const groupStyle = this.groupStyles.find((val) => val.entity.groupId == row.groupId)
+      return groupStyle? groupStyle.style: null
     },
   }
 }

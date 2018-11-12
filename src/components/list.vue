@@ -1,29 +1,32 @@
 <template>
   <b-form inline>
     <b-container :fluid="isFluid">
-      <b-alert variant="info" dismissible :show="showMessage()">{{ message }}</b-alert>
+      <b-alert variant="info" dismissible :show="showMessage">{{ message }}</b-alert>
+      <b-alert variant="danger" dismissible :show="showError">{{ error }}</b-alert>
       <!-- searchbox -->
       <template v-if="!params.hideSearchBox">
-        <b-row class="mb-1">
-          <!-- 標準絞り込みフィルタ -->
-          <b-col class="col-auto row mb-1">
-            <label v-t="'label.filter'" class="col-auto text-left"></label>
-            <b-input-group class="col-auto">
+        <b-form-row class="mb-2">
+          <b-form-row class="mr-4 mb-2">
+            <!-- 標準絞り込みフィルタ -->
+            <label v-t="'label.filter'" class="mr-2"></label>
+            <b-input-group>
               <b-form-input v-model="filter.reg"  class="align-self-center"/>
               <b-input-group-append>
                 <b-btn :disabled="!filter.reg" @click="filter.reg = ''" variant="secondary" v-t="'label.clear'"  class="align-self-center"/>
               </b-input-group-append>
             </b-input-group>
-          </b-col>
+          </b-form-row>
           <!-- カスタムフィルタ -->
           <template v-if="params.extraFilter" >
-            <b-col v-for="item of extraFilterSpec" v-bind:key="item.key" class="row col-auto">
-              <label for="item.key" v-t="'label.' + item.key" class="col-auto text-sm-right mx-2 align-self-center" />
+            <b-form-row v-for="item of extraFilterSpec" v-bind:key="item.key" class="mr-4 mb-2">
+              <label for="item.key" v-t="'label.' + item.key" class="mr-2"/>
               <b-form-select :id="item.key" :options="item.options" v-model="filter.extra[item.key]"
-                  class="col-auto align-self-center extra-filter"/>
-            </b-col>
+                  class="extra-filter"/>
+            </b-form-row>
           </template>
           <div v-if="params.extraFilter" class="w-100 mb-2 " />
+        </b-form-row>
+        <b-form-row class="mb-1">
           <!-- ボタン部 -->
           <b-col v-if="!params.disableTableButtons && isEditable" cols="auto" class="ml-auto">
             <b-button :variant='theme' class="mx-1" @click="edit()"
@@ -33,7 +36,7 @@
             <b-button :variant='theme' class="mx-1" v-if="params.csvOut && !ios" @click="exportCsv"
                 v-t="'label.download'" />
           </b-col>
-        </b-row>
+        </b-form-row>
       </template>
 
       <slot></slot>
@@ -45,7 +48,7 @@
       <b-table show-empty stacked="md" striped hover :items="list" :fields="fields" :current-page="currentPage" :per-page="perPage" outlined
               :filter="filterGrid" @filtered="onFiltered" :bordered="params.bordered">
         <template slot="style" slot-scope="row">
-          <div v-bind:style="style(row.index)">A</div>
+          <div v-bind:style="style(row.item)">A</div>
         </template>
         <template slot="actions" slot-scope="row">
           <!-- 更新ボタン -->
@@ -97,7 +100,7 @@
         </b-col>
         <!-- bulk upload button -->
         <b-col v-if="isEditable" md="6" class="my-1">
-          <b-button v-if="params.bulkUploadPath" :variant='theme'
+          <b-button v-if="params.bulkUploadPath && !ios" :variant='theme'
             @click="bulkUpload()" v-t="'label.bulkUpload'"  class="float-right" />
         </b-col>
       </b-row>
@@ -146,6 +149,7 @@ export default {
       file: null,
       detectState: DETECT_STATE,
       message: null,
+      error: null,
       ...this.params
     }
   },
@@ -228,6 +232,12 @@ export default {
       const theme = getButtonTheme(this.loginId)
       return 'outline-' + theme
     },
+    showMessage(){
+      return Util.hasValue(this.message)
+    },
+    showError(){
+      return Util.hasValue(this.error)
+    },
   },
   mounted() {
     this.message = this.listMessage
@@ -267,9 +277,7 @@ export default {
     },
     setEmptyMessage(){
       this.message = null
-    },
-    showMessage(){
-      return Util.hasValue(this.message)
+      this.error = null
     },
     exportCsv() {
       this.setEmptyMessage()
@@ -277,7 +285,7 @@ export default {
       if (this.params.custumCsvColumns) {
         headers = this.params.custumCsvColumns
       } else {
-        headers = this.params.fields.map((val) => val.key)
+        headers = _(this.params.fields).map((val) => val.key).uniqWith(_.isEqual).value()
       }
       headers = headers.filter((val) => !["style", "thumbnail", "actions", "updateAction"].includes(val))
       HtmlUtil.fileDL(this.params.name + ".csv", Util.converToCsv(this.list, headers), getCharSet(this.loginId))
@@ -382,13 +390,17 @@ export default {
       this.currentPage = 1
     },
     async execDelete(id) {
-      await AppServiceHelper.deleteEntity(this.appServicePath, id)
-      await StateHelper.load(this.params.name, true)
-      if(this.$parent.$options.methods.afterCrud){
-        this.$parent.$options.methods.afterCrud.apply(this.$parent)
+      try {
+        await AppServiceHelper.deleteEntity(this.appServicePath, id)
+        await StateHelper.load(this.params.name, true)
+        if(this.$parent.$options.methods.afterCrud){
+          this.$parent.$options.methods.afterCrud.apply(this.$parent)
+        }
+        this.message = this.$i18n.tnl('message.deleteCompleted', {target: this.$i18n.tnl('label.' + this.params.name)})
+        this.$parent.$options.methods.fetchData.apply(this.$parent)        
+      } catch (e) {
+        this.error = this.$i18n.tnl('message.deleteFailed', {target: this.$i18n.tnl('label.' + this.params.name), code: e.response.status})
       }
-      this.message = this.$i18n.tnl('message.deleteCompleted', {target: this.$i18n.tnl('label.' + this.params.name)})
-      this.$parent.$options.methods.fetchData.apply(this.$parent)
     },
     // 位置把握(一覧)から在席表示に遷移する
     async mapDisplay(item) {
@@ -396,7 +408,6 @@ export default {
       console.log(item)
       const tx = item.tx
       const selectedTx = {
-        txId: tx.btxId,
         btxId: tx.btxId,
         thumbnail: Util.getValue(tx, 'pot.thumbnail', null) ? tx.pot.thumbnail : '',
       }
