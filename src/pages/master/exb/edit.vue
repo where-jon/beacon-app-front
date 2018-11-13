@@ -10,7 +10,7 @@
       <b-row>
         <b-col md="8" offset-md="2">
           <b-form @submit="onSubmit" v-if="show">
-            <b-form-group v-if="form.exbId" v-show="isShown('EXB_WITH_EXBID')">
+            <b-form-group v-if="hasId" v-show="isShown('EXB_WITH_EXBID')">
               <label v-t="'label.exbId'" />
               <b-form-input type="text" v-model="form.exbId" readonly="readonly" />
             </b-form-group>
@@ -134,6 +134,9 @@ export default {
     }
   },
   computed: {
+    hasId(){
+      return Util.hasValue(this.form.exbId)
+    },
     theme () {
       const theme = getButtonTheme(this.$store.state.loginId)
       return 'outline-' + theme
@@ -218,7 +221,7 @@ export default {
   methods: {
     async save() {
       let entity = {
-        exbId: this.form.exbId? this.form.exbId: -1,
+        exbId: this.form.exbId != null? this.form.exbId: -1,
         deviceId: this.deviceId,
         locationId: this.form.locationId,
         enabled: this.form.enabled,
