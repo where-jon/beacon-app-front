@@ -79,6 +79,7 @@ const appStateConf = {
           category: Util.getValue(tx, 'pot.potCategoryList.0.category', null),
           categoryName: Util.getValue(tx, 'pot.potCategoryList.0.category.categoryName', null),
           group: Util.getValue(tx, 'pot.potGroupList.0.group', null),
+          groupName: Util.getValue(tx, 'pot.potGroupList.0.group.groupName', null),
           sensorId: Util.getValue(tx, 'txSensorList.0.sensor.sensorId', null),
           sensor: i18n.tnl('label.' + Util.getValue(tx, 'txSensorList.0.sensor.sensorName', 'normal'))
         }

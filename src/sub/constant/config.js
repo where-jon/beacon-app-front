@@ -39,6 +39,7 @@ export const APP = {
   TX_SENSOR: [5,6], // TXのタイプに設定可能なセンサーID
   TX_WITH_TXID: true, // 画面上TXIDを使用するか否か
   TX_WITH_CATEGORY: true, // TX管理で個体.カテゴリを表示
+  TX_WITH_GROUP: true, // TX管理で個体.グループを表示
   TX_WITH_DISPLAY_NAME: true, // TX管理で個体.表示名を表示
   TX_WITH_DESCRIPTION: true, // TX管理で個体.備考を表示
   TX_WITH_MAJOR: true, // TX管理でmajorを表示
