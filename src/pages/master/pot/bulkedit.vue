@@ -55,9 +55,8 @@ export default {
     },
     async save(bulkSaveFunc) {
       const MAIN_COL = "potId"
-      const NULLABLE_NUMBER_COL = ["txId", "exbId", "zoneId", "areaId"]
+      const NULLABLE_NUMBER_COL = ["txId", "exbId", "zoneId", "areaId", "potType"]
       const MANY_TO_MANY = ["groupId", "categoryId", "groupName", "categoryName"]
-      const EXT_VAL_REGEXP = /extValue\.(ruby|post|tel)/
       const extValueHeaders = ["ruby", "post", "tel"]
       await StateHelper.load('category')
       await StateHelper.load('group')
