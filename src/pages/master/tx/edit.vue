@@ -28,6 +28,10 @@
               <label v-t="'label.category'" />
               <b-form-select v-model="form.categoryId" :options="categoryOptions" class="mb-3 ml-3 col-4" :disabled="!isEditable" :readonly="!isEditable" />
             </b-form-group>
+            <b-form-group v-show="isShown('TX_WITH_GROUP')">
+              <label v-t="'label.group'" />
+              <b-form-select v-model="form.groupId" :options="groupOptions" class="mb-3 ml-3 col-4" :disabled="!isEditable" :readonly="!isEditable" />
+            </b-form-group>
             <b-form-group v-show="showTx('btxId')">
               <label v-t="'label.btxId'" />
               <b-form-input type="number" v-model="form.btxId" max="65535" :required="showTx('btxId')" :readonly="!isEditable" />
@@ -93,6 +97,7 @@ export default {
         "txSensorList.0.sensor.sensorId",
         "pot.potId", "pot.potCd", "pot.displayName", "pot.description",
         "pot.potCategoryList.0.category.categoryId",
+        "pot.potGroupList.0.group.groupId",
       ]),
       items: [
         {
@@ -142,6 +147,17 @@ export default {
       options.unshift({value:null, text:''})
       return options
     },
+    groupOptions() {
+      let options = this.groups.map((group) => {
+          return {
+            value: group.groupId,
+            text: group.groupName
+          }
+        }
+      )
+      options.unshift({value:null, text:''})
+      return options
+    },
     showMinorMid() {
       return !this.showMinorHead
     },
@@ -151,6 +167,7 @@ export default {
     ...mapState('app_service', [
       'tx',
       'categories',
+      'groups',
       'sensors',
       'pots',
       'potImages',
@@ -159,6 +176,7 @@ export default {
   mounted() {
     StateHelper.load('sensor')
     StateHelper.load('category')
+    StateHelper.load('group')
   },
   methods: {
     showTx(col) {
@@ -198,7 +216,7 @@ export default {
       await StateHelper.load('pot')
       const randName = () =>  txId + "_" + (new Date().getTime() % 10000)
       const relatedPot = _.find(this.pots, (pot) => pot.potId == this.form.potId)
-      const isPotForm = this.form.potId || this.form.categoryId
+      const isPotForm = this.form.potId || this.form.categoryId || this.form.groupId
           || this.form.displayName || this.form.description
 
       let newPot = {}
@@ -217,12 +235,12 @@ export default {
       newPot.potCd = this.form.potCd || newPot.potCd
       newPot.displayName = this.form.displayName || newPot.displayName
       newPot.description = this.form.description || newPot.description
-      if (this.form.categoryId) {
-        const potCategoryPK = {categoryId: this.form.categoryId}
-        newPot.potCategoryList = [{potCategoryPK}]
-        const category = _.find(this.categories, (cat) => cat.categoryId == this.form.categoryId)
-        newPot.potType = category ? category.categoryType : null
-      }
+
+      newPot.potCategoryList = this.form.categoryId? [ {potCategoryPK: {categoryId: this.form.categoryId}} ]: null
+      const category = _.find(this.categories, (cat) => cat.categoryId == this.form.categoryId)
+      newPot.potType = category ? category.categoryType : null
+
+      newPot.potGroupList = this.form.groupId? [ {potGroupPK: {groupId: this.form.groupId}} ]: null
       newPot.tx = null
       return newPot
     },
