@@ -123,7 +123,7 @@ a.dropdown-item.vivid:hover {
 }
 
 div.navbar-brand {
-  @media (max-width: 768px) {
+  @media (max-width: 767px) {
     margin-right: 32%;
   }
   @media (max-width: 620px) {
