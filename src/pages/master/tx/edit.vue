@@ -128,9 +128,6 @@ export default {
     },
     categoryOptions() {
       let options = this.categories.filter((category) => {
-        if(!this.form.potId){
-          return true
-        }
         return category.categoryType != CATEGORY.getTypes()[2].value
       }).map((category) => {
           return {
