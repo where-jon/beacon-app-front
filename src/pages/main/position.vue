@@ -105,6 +105,9 @@ export default {
     this.resetDetail()
   },
   methods: {
+    ...mapActions('main', [
+      'pushOrgPositions',
+    ]),
     reset() {
       this.isShownMapImage = false
       this.resetDetail()
@@ -189,12 +192,8 @@ export default {
           var pMock = mock.positions[this.count]
         }
         let positions = await EXCloudHelper.fetchPosition(this.exbs, this.txs, pMock)
-        let orgPositions = _.clone(this.orgPositions)
-        if (orgPositions.length >= DISP.MOVING_AVERAGE) { // 移動平均数分のポジションデータを保持する
-          orgPositions.shift()
-        }
-        orgPositions.push(positions)
-        this.replaceMain({orgPositions})
+        // 移動平均数分のポジションデータを保持する
+        this.pushOrgPositions(positions)
 
         if (APP.USE_MEDITAG) {
           let meditagSensors = await EXCloudHelper.fetchSensor(SENSOR.MEDITAG)

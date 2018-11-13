@@ -83,8 +83,8 @@ export default {
     ]),
   },
   methods: {
-    ...mapMutations('main', [
-      'replaceMain',
+    ...mapActions('main', [
+      'pushOrgPositions',
     ]),
     async fetchData(payload) {
       try {
@@ -95,12 +95,7 @@ export default {
         let positions = await EXCloudHelper.fetchPositionList(this.exbs, this.txs)
 
         // 移動平均数分のポジションデータを保持する
-        let orgPositions = _.clone(this.orgPositions)
-        if (orgPositions.length >= DISP.MOVING_AVERAGE) {
-          orgPositions.shift()
-        }
-        orgPositions.push(positions)
-        this.replaceMain({orgPositions})
+        this.pushOrgPositions(positions)
 
         // 在席表示画面と同じ検知状態の取得
         let now = !DEV.USE_MOCK_EXC? new Date().getTime(): mock.positions_conf.start + this.count++ * mock.positions_conf.interval  // for mock

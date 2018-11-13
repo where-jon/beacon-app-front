@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import axios from 'axios'
+import { DISP } from '../sub/constant/config'
 
 export const state = () => ({
   positions: [],
@@ -39,5 +40,13 @@ export const actions = { // Sample
     const ip = await axios.get('http://icanhazip.com')
     console.log({ip})
     commit('sample', ip)
-  }
+  },
+  pushOrgPositions({ commit, state }, payload) {
+    let orgPositions = _.clone(state.orgPositions)
+    if (orgPositions.length >= DISP.MOVING_AVERAGE) {
+      orgPositions.shift()
+    }
+    orgPositions.push(payload)
+    commit('replaceMain', {orgPositions})
+  },
 }
