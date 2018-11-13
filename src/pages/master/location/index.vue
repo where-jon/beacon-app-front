@@ -39,7 +39,7 @@
         <b-form-input size="sm" type="number" v-model="pixelWidth" :readonly="true" class="ratioInput"/>
       </b-form-row>
       <b-form-row class="mb-3 ml-1">
-        <b-button size="sm" variant="outline-info" v-t="settingStart?'label.settingNow':'label.settingStart'" @click="ratioSettingStart" :class="{'mt-mobile':true, 'mr-2':true, blink:settingStart}"></b-button> 
+        <b-button size="sm" variant="outline-info" v-t="settingStart?'label.settingNow':'label.settingStart'" @click="ratioSettingStart" :class="{'mt-mobile':true, 'mt-mobile-button': true, 'mr-2':true, blink:settingStart}"></b-button> 
         <b-button size="sm" variant="info" v-t="'label.save'" @click="save" :disabled="!isChanged"></b-button> 
       </b-form-row>
     </b-form>
@@ -511,8 +511,9 @@ export default {
   content: none;
 }
 
-@media screen and (max-width: 767px) {
+@media screen and (max-width: 575px) {
   .mt-mobile {margin-top:5px;}
+  .mt-mobile-button {margin-bottom:4px;}
 }
 
 .ratioInput {
