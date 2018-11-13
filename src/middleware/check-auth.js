@@ -38,5 +38,4 @@ export default function (context) {
       }
     }
   }
-  console.error(context.route.path)
 }

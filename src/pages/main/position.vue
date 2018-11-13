@@ -137,7 +137,7 @@ export default {
         class: balloonClass,
         left: x + offsetX - DISP.TX_R,
         top: rev ? y + offsetY - DISP.TX_R - popupHeight : y + offsetY + DISP.TX_R + tipOffsetY,
-        name: p.potName ? p.potName : '',
+        name: tx.txName? tx.txName: p.potName ? p.potName : '',
         timestamp: position ? this.getFinalReceiveTime(position.timestamp) : '',
         thumbnail: p.thumbnail ? p.thumbnail : '',
         category: p.potCategoryList && p.potCategoryList.length > 0 ? p.potCategoryList[0].category.categoryName : '',
