@@ -380,7 +380,7 @@ export default {
       this.isChangeArea = true
     },
     showExbOnMap(val, x = 50, y = 40) {
-      if (!val || !val.value) {
+      if (!val || val.value == null) {
         return
       }
       let exb = _(this.workExbs).find((exb) => exb.exbId == val.value)
