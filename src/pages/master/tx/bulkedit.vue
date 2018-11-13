@@ -43,7 +43,7 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'tx', 'txs', 'categories', 'pots', 'potImages'
+      'tx', 'txs', 'categories', 'groups', 'pots', 'potImages'
     ]),
     sensorOptionsTx() {
       return this.$refs.bulkEdit.sensorOptions('tx')
@@ -80,11 +80,13 @@ export default {
       const MAIN_COL = APP.TX_WITH_TXID? "txId": APP.TX_BTX_MINOR == "minor"? "minor": "btxId"
       const POT = ["displayName","description","potCategoryList"]
       const POT_CATEGORY = ["categoryId", "categoryName"]
+      const POT_GROUP = ["groupId", "groupName"]
       const TX_SENSOR = ["sensorId", "sensor"]
 
       const NUMBER_TYPE_LIST = ["deviceId", "exbId", "areaId", "locationId", "posId", "x", "y", "z", "txViewType", "zoneName"]
       const BOOL_TYPE_LIST = ["visible", "enabled"]
       await StateHelper.load('category')
+      await StateHelper.load('group')
 
       await bulkSaveFunc(MAIN_COL, NUMBER_TYPE_LIST, BOOL_TYPE_LIST, (entity, headerName, val, dummyKey) => {
         if (Util.equalsAny(headerName, POT)) {
@@ -108,6 +110,20 @@ export default {
           }
           else{
             entity.pot.potCategoryList = [{potCategoryPK: {potId: dummyKey--, categoryId: val}}]
+          }
+        }
+        else if (Util.equalsAny(headerName, POT_GROUP) && Util.hasValue(val)) {
+          if (!entity.pot) {
+            entity.pot = {}
+          }
+          if(headerName == "groupName"){
+            const group = this.groups.find((group) => group.groupName == val)
+            if(group){
+              entity.pot.potGroupList = [{potGroupPK: {potId: dummyKey--, groupId: group.groupId}}]
+            }
+          }
+          else{
+            entity.pot.potGroupList = [{potGroupPK: {potId: dummyKey--, groupId: val}}]
           }
         }
         else if (Util.equalsAny(headerName, TX_SENSOR) && val) {
