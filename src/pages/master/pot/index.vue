@@ -33,7 +33,7 @@ export default {
         bulkUploadPath: '/master/pot/bulkUpload',
         csvOut: true,
         extraFilter: ['group', 'category'],
-        custumCsvColumns: ["potId", "thumbnail", "txId", "txName", "potCd", "potName", "extValue.ruby",
+        custumCsvColumns: ["potId", "thumbnail", "txId", "txName", "potCd", "potName", "potType", "extValue.ruby",
             "displayName", "groupName", "categoryName", "extValue.post", "extValue.tel", "description", "actions"],
         fields: addLabelByKey(this.$i18n, [ 
           {key: "potId", sortable: true, tdClass: "thumb-rowdata"},

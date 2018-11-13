@@ -17,7 +17,7 @@ export default {
         "color": Util.colorCd4display(reverceColor? val.bgColor: val.color),
         "background-color": Util.colorCd4display(reverceColor? val.color: val.bgColor, "#FFFFFF"),
         "text-align": "center",
-        border: `solid 3px ${Util.colorCd4display(reverceColor? val.color: val.bgColor)}`,
+        border: "solid 1px #ccc",
         "border-radius": val.shape == SHAPE.CIRCLE? "50%": val.shape == SHAPE.ROUND_SQUARE? DISP.ROUNDRECT_RADIUS + "px": null,
         "font-size": DISP.TX_FONT.split(" ")[0],
         "width": (DISP.TX_R * 2) + "px",
