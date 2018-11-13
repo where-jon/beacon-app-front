@@ -3,8 +3,18 @@
     <breadcrumb :items="items" :extraNavSpec="extraNavSpec" :reload="true" :shortName="shortName" :legendItems="legendItems" />
     <b-row class="mt-2">
       <b-form inline class="mt-2">
-        <label class="ml-3 mr-2">{{ $t('label.area') }}</label>
-        <b-form-select v-model="selectedArea" :options="areaOptions" @change="changeArea" required class="ml-2"></b-form-select>
+        <b-form-row class="my-1 ml-2 ml-sm-0">
+          <label class="ml-sm-4 ml-2 mr-1">{{ $t('label.area') }}</label>
+          <b-form-select v-model="selectedArea" :options="areaOptions" @change="changeArea" required class="ml-1 mr-2"></b-form-select>
+        </b-form-row>
+        <b-form-row v-if="useGroup" class="my-1 ml-2 ml-sm-0">
+          <label class="ml-sm-4 ml-2 mr-1">{{ $t('label.group') }}</label>
+          <b-form-select v-model="selectedGroup" :options="groupOptions" class="ml-1 mr-2"></b-form-select>
+        </b-form-row>
+        <b-form-row v-if="useCategory" class="my-1 ml-2 ml-sm-0">
+          <label class="ml-sm-4 ml-2 mr-1">{{ $t('label.category') }}</label>
+          <b-form-select v-model="selectedCategory" :options="categoryOptionsForPot" class="ml-1 mr-2"></b-form-select>
+        </b-form-row>
       </b-form>
     </b-row>
     <b-row class="mt-3">
@@ -33,6 +43,7 @@ import * as PositionHelper from '../../sub/helper/PositionHelper'
 import * as SensorHelper from '../../sub/helper/SensorHelper'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
+import * as MenuHelper from '../../sub/helper/MenuHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
 import * as mock from '../../assets/mock/mock'
@@ -67,7 +78,6 @@ export default {
           active: true
         },
       ],
-      positions: [],
       count: 0, // for mock test 
       pot: {},
       showMeditag: APP.USE_MEDITAG,
@@ -78,6 +88,10 @@ export default {
       shwoIconMinWidth: POSITION.SHOW_ICON_MIN_WIDTH,
       isShowModal: false,
       legendItems: [],
+      useGroup: MenuHelper.useMaster('group'),
+      useCategory: MenuHelper.useMaster('category'),
+      selectedGroup: null,
+      selectedCategory: null,
     }
   },
   computed: {
@@ -87,17 +101,41 @@ export default {
     ]),
     ...mapState('app_service', [
       'categories',
+      'groups',
       'txs',
+    ]),
+    ...mapGetters('app_service' ,[
+      'categoryOptionsForPot',
+      'groupOptions',
     ]),
     selectedSensor() {
       if (this.selectedTx && this.selectedTx.btxId) {
         var ret = this.getMeditagSensor(this.selectedTx.btxId)
       }
       return ret? [ret]: []
-    }
+    },
+    positions() {
+      let now = !DEV.USE_MOCK_EXC? new Date().getTime(): mock.positions_conf.start + this.count++ * mock.positions_conf.interval  // for mock
+      let positions = PositionHelper.correctPosId(this.orgPositions, now)
+      if (APP.USE_MEDITAG && this.meditagSensors) {
+        positions = SensorHelper.setStress(positions, this.meditagSensors)
+      }
+      positions = this.positionFilter(positions, this.selectedGroup, this.selectedCategory)
+      return positions
+    },
+    filter() {
+      return [this.selectedGroup, this.selectedCategory]
+    },
   },
-  mounted() {
+  watch: {
+    filter() {
+      this.showTxAll()
+    },
+  },
+  async mounted() {
     this.replace({title: this.$i18n.tnl('label.showPosition')})
+    await StateHelper.load('category')
+    await StateHelper.load('group')
     this.fetchData()
   },
   beforeDestroy() {
@@ -183,7 +221,6 @@ export default {
     async fetchData(payload) {
       try {
         this.replace({showProgress: true})
-        await StateHelper.load('category')
         await StateHelper.load('tx')
         this.loadLegends()
         await this.fetchAreaExbs(true)
@@ -239,12 +276,6 @@ export default {
           this.txCont.height = this.bitmap.height
           this.stage.addChild(this.txCont)
           this.stage.update()
-        }
-  
-        let now = !DEV.USE_MOCK_EXC? new Date().getTime(): mock.positions_conf.start + this.count++ * mock.positions_conf.interval  // for mock
-        this.positions = PositionHelper.correctPosId(this.orgPositions, now)
-        if (APP.USE_MEDITAG && this.meditagSensors) {
-          this.positions = SensorHelper.setStress(this.positions, this.meditagSensors)
         }
   
         Util.debug('Raw exb', this.exbs, this.selectedArea)
@@ -341,6 +372,26 @@ export default {
       this.txCont.addChild(txBtn)
       stage.update()
     },
+    positionFilter(positions, groupId, categoryId) {
+      return _(positions).filter((pos) => {
+        const tx = _.find(this.txs, tx => tx.btxId == pos.btx_id)
+        let grpHit
+        let catHit
+        if (groupId) {
+          const posGroupId = Util.getValue(tx, 'group.groupId', null)
+          grpHit = groupId == posGroupId
+        } else {
+          grpHit = true
+        }
+        if (categoryId) {
+          const posCategoryId = Util.getValue(tx, 'category.categoryId', null)
+          catHit = categoryId == posCategoryId
+        } else {
+          catHit = true
+        }
+        return grpHit && catHit
+      }).value()
+    }
   }
 }
 </script>
