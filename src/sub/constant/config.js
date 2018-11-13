@@ -21,6 +21,7 @@ export const APP = {
   USE_THERMOPILE: true,
   USE_MEDITAG: false,
   USE_MAGNET: false,
+  USE_LEGEND: false,
 
   LOG_KEEP_TIME: 30,
   MONITOR_REFESH_TIME: 10 * 60 * 1000,

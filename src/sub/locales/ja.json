@@ -335,6 +335,10 @@
 
     "vSelectNoOptions": "",
 
+    "legend": "凡例",
+    "using": "：使用中",
+    "notUse": "未使用",
+
     "---------------- Config key name ---------------":"",
 
     "APP.LOG_KEEP_TM": "ログ保持期間",
