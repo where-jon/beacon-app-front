@@ -15,6 +15,7 @@ export const APP = {
   TIMEOUT: 60 * 60 * 1000, // session timeout(using local storage)
   TOP_PAGE: "/main/position", // must not be / otherwise recursive infinitely
   LOGIN_PAGE: "/login", // if no login then /
+  ERROR_PAGE: "/error", // if no login then /
   LOGIN_MODE: LOGIN_MODE.APP_SERVICE,
   UNDETECT_TIME: 60 * 60 * 1000, // used on telemetry 
   AREA_THUMBNAIL_MAX: 200,

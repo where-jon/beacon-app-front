@@ -69,7 +69,6 @@ export default {
       ],
       positions: [],
       count: 0, // for mock test 
-      txsMap: {},
       pot: {},
       showMeditag: APP.USE_MEDITAG,
       meditagSensors: [],
@@ -112,7 +111,7 @@ export default {
       this.isShownMapImage = false
       this.resetDetail()
     },
-    async showDetail(btxId, x, y) {
+    showDetail(btxId, x, y) {
       const tipOffsetX = 15
       const tipOffsetY = 15
       const popupHeight = this.getMeditagSensor(btxId)? 236: 156
@@ -125,8 +124,8 @@ export default {
       const isDispRight = x + offsetX + 100 < window.innerWidth
       // rev === trueの場合、ポップアップを上に表示
       const rev = y + map.top + DISP.TX_R + tipOffsetY + popupHeight > window.innerHeight
-      const targetId = this.txsMap[btxId]
-      const p = await this.getDetail(targetId)
+      const p = tx.pot
+
       const position = this.positions.find((e) => {
         return e.btx_id === btxId
       })
@@ -134,7 +133,7 @@ export default {
       let selectedTx = {
         btxId,
         minor: 'minor:' + btxId,
-        major: p.tx && p.tx.major? 'major:' + p.tx.major : '',
+        major: tx.major? 'major:' + tx.major : '',
         class: balloonClass,
         left: x + offsetX - DISP.TX_R,
         top: rev ? y + offsetY - DISP.TX_R - popupHeight : y + offsetY + DISP.TX_R + tipOffsetY,
@@ -157,8 +156,10 @@ export default {
       return null
     },
     resetDetail() {
-      let selectedTx = {}
-      this.replaceMain({selectedTx})
+      if (!this.showingDetailTime || new Date().getTime() - this.showingDetailTime > 100) {
+        let selectedTx = {}
+        this.replaceMain({selectedTx})
+      }
     },
     getFinalReceiveTime (time) {
       return time ? moment(time).format('YYYY/MM/DD HH:mm:ss') : ''
@@ -219,11 +220,6 @@ export default {
         if (payload && payload.done) {
           payload.done()
         }
-
-        this.txsMap = this.txs.reduce((obj, record) => {
-          obj[record.btxId] = record.txId
-          return obj
-        }, {})
       }
       catch(e) {
         console.error(e)
@@ -337,6 +333,7 @@ export default {
       txBtn.x = pos.x
       txBtn.y = pos.y
       txBtn.on('click', (evt) => {
+        this.showingDetailTime = new Date().getTime()
         let txBtn = evt.currentTarget
         this.isShowModal = window.innerWidth < this.shwoIconMinWidth
         this.showDetail(txBtn.txId, txBtn.x, txBtn.y)
