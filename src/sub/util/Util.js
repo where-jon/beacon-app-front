@@ -256,3 +256,14 @@ export const getEntityFromIds = (list, entity, ids) => {
   }
   return null
 }
+
+export const getOptions = (key, list, valField, txtField) => {
+  let options = list.map((entity) => {
+    return {
+      value: valField ? entity[valField] : entity[key + 'Id'],
+      text: txtField ? entity[txtField] : entity[key + 'Name'],
+    }
+  })
+  options.unshift({value: null, text: ""})
+  return options
+}

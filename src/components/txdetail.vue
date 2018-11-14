@@ -23,7 +23,7 @@
       </div>
       <sensor :sensors="selectedSensor" isPopup="true" />
     </div>
-    <b-modal size="md" :visible="true" ok-only centered lazy hide-header v-else>
+    <b-modal size="md" :visible="true" id="detailModal" ok-only centered lazy hide-header v-else>
       <b-container>
         <div class="clearfix">
           <div class="thumbnail">
