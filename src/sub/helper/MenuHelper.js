@@ -68,3 +68,13 @@ export const isShowMenu = (page, role) => {
 
   return result != null
 }
+
+export const useMaster = (feature) => {
+  const role = store.state.role
+  if (role == ROLE.SUPER_ADMIN) {
+    return true
+  }
+  const featureList = store.state.tenantFeatureList
+  const path = '/master/' + feature
+  return tenantOk(path, featureList)
+}

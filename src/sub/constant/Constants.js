@@ -62,6 +62,7 @@ export const CATEGORY = {
       {value: 3, text: i18n.tnl('label.zone')},
     ]
   },
+  POT_AVAILABLE: [1, 2],
 }
 
 export const SHAPE = {
