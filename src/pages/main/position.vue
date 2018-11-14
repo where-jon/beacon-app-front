@@ -27,7 +27,7 @@
       </b-col>
     </b-row>
     <div v-if="selectedTx.btxId && showReady" >
-      <txdetail :selectedTx="selectedTx" @resetDetail="resetDetail" :selectedSensor="selectedSensor" :isShowModal="isShowModal" />
+      <txdetail :selectedTx="selectedTx" @resetDetail="resetDetail" :selectedSensor="selectedSensor" :isShowModal="isShowModal()" />
     </div>
     <!-- modal -->
     <b-modal id="modalError" :title="$t('label.error')" ok-only>
@@ -86,7 +86,6 @@ export default {
       shortName: this.$i18n.tnl('label.showPositionShort'),
       extraNavSpec: EXTRA_NAV,
       shwoIconMinWidth: POSITION.SHOW_ICON_MIN_WIDTH,
-      isShowModal: false,
       legendItems: [],
       useGroup: MenuHelper.useMaster('group'),
       useCategory: MenuHelper.useMaster('category'),
@@ -186,6 +185,9 @@ export default {
       }
       this.replaceMain({selectedTx})
       this.showReady = true
+      if (this.isShowModal()) {
+        this.$root.$emit('bv::show::modal', 'detailModal')
+      }
     },
     getMeditagSensor(btxId) {
       if (this.meditagSensors) {
@@ -366,11 +368,14 @@ export default {
       txBtn.on('click', (evt) => {
         this.showingDetailTime = new Date().getTime()
         let txBtn = evt.currentTarget
-        this.isShowModal = window.innerWidth < this.shwoIconMinWidth
         this.showDetail(txBtn.txId, txBtn.x, txBtn.y)
       })
       this.txCont.addChild(txBtn)
       stage.update()
+    },
+    isShowModal() {
+      Util.debug('senced window resize...', window.innerWidth)
+      return window.innerWidth < this.shwoIconMinWidth
     },
     positionFilter(positions, groupId, categoryId) {
       return _(positions).filter((pos) => {
@@ -391,7 +396,7 @@ export default {
         }
         return grpHit && catHit
       }).value()
-    }
+    },
   }
 }
 </script>
