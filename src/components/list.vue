@@ -126,7 +126,7 @@ import * as Util from '../sub/util/Util'
 import { getButtonTheme, getTheme, themeColors } from '../sub/helper/ThemeHelper'
 import { getCharSet } from '../sub/helper/CharSetHelper'
 import commonmixinVue from './commonmixin.vue';
-import { DETECT_STATE } from '../sub/constant/Constants'
+import { DETECT_STATE, CATEGORY } from '../sub/constant/Constants'
 
 export default {
   mixin: [commonmixinVue], // not work
@@ -188,7 +188,9 @@ export default {
       'selectedarea',
     ]),
     categoryOptions() {
-      let options = this.categories.map((category) => {
+      let options = this.categories.filter((category) => 
+        category.categoryType != CATEGORY.getTypes()[2].value
+      ).map((category) => {
           return {
             value: category.categoryId,
             text: category.categoryName
