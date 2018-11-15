@@ -238,7 +238,7 @@ export default {
         return
       }
 
-      const result = ValidateUtil.validatePattern(value, /^[a-zA-Z0-9_\-\/!#\$%&]*$/, this.$i18n.tnl('message.invalidPassword'))
+      const result = ValidateUtil.validatePattern(value, /^[a-zA-Z0-9_\-\/!#\$%&@]*$/, this.$i18n.tnl('message.invalidPassword'))
       if (result !== null) {
         this.passErrorMessage = result
         return
