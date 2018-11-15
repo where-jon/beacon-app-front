@@ -135,6 +135,7 @@ export default {
     this.replace({title: this.$i18n.tnl('label.showPosition')})
     await StateHelper.load('category')
     await StateHelper.load('group')
+    document.addEventListener('touchstart', this.touchEnd)
     this.fetchData()
   },
   beforeDestroy() {
@@ -272,6 +273,14 @@ export default {
     showMapImage() {
       this.showMapImageDef(() => {
 
+        if (Touch.isSupported()) {
+          Touch.enable(this.stage)
+        }
+
+        this.stage.on('click', (evt) => {
+          this.resetDetail()
+        })
+
         if (!this.txCont) {
           this.txCont = new Container()
           this.txCont.width = this.bitmap.width
@@ -291,9 +300,6 @@ export default {
   
         this.showTxAll()
       })
-      if (Touch.isSupported()) {
-        Touch.enable(this.stage)
-      }
     },
     showTxAll() {
       if (!this.txCont) {
@@ -369,6 +375,7 @@ export default {
       txBtn.x = pos.x
       txBtn.y = pos.y
       txBtn.on('click', (evt) => {
+        evt.stopPropagation()
         this.showingDetailTime = new Date().getTime()
         let txBtn = evt.currentTarget
         this.showDetail(txBtn.txId, txBtn.x, txBtn.y)
@@ -377,7 +384,6 @@ export default {
       stage.update()
     },
     isShowModal() {
-      Util.debug('senced window resize...', window.innerWidth)
       return window.innerWidth < this.shwoIconMinWidth
     },
     positionFilter(positions, groupId, categoryId) {
@@ -400,6 +406,12 @@ export default {
         return grpHit && catHit
       }).value()
     },
+    touchEnd (evt) {
+      if (evt.target.id === 'map') {
+        return
+      }
+      this.resetDetail()
+    }
   }
 }
 </script>
