@@ -291,6 +291,9 @@ export default {
   
         this.showTxAll()
       })
+      if (Touch.isSupported()) {
+        Touch.enable(this.stage)
+      }
     },
     showTxAll() {
       if (!this.txCont) {
