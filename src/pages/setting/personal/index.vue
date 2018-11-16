@@ -312,7 +312,7 @@ export default {
       if (required.length > 0) {
         return required
       }
-      const pattern = ValidateUtil.validatePattern(value, /^[a-zA-Z0-9_\-\/!#\$%&]*$/, invalidPatternMessage)
+      const pattern = ValidateUtil.validatePattern(value, /^[a-zA-Z0-9_\-\/!#\$%&@]*$/, invalidPatternMessage)
       return pattern ? [pattern] : []
     },
     validateRequire (val, label) {
