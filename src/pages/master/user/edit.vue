@@ -35,11 +35,11 @@
         </b-form-group>
         <b-form-group>
           <label v-t="'label.password'" />
-          <b-form-input type="password" v-model="pass" pattern="^[a-zA-Z0-9_\-\/!#\$%&]*$" :readonly="!isEditable" />
+          <b-form-input type="password" v-model="pass" pattern="^[a-zA-Z0-9_\-\/!#\$%&@]*$" :readonly="!isEditable" />
         </b-form-group>
         <b-form-group>
           <label v-t="'label.passwordConfirm'" />
-          <b-form-input type="password" v-model="passConfirm" pattern="^[a-zA-Z0-9_\-\/!#\$%&]*$" :readonly="!isEditable" />
+          <b-form-input type="password" v-model="passConfirm" pattern="^[a-zA-Z0-9_\-\/!#\$%&@]*$" :readonly="!isEditable" />
         </b-form-group>
 
         <b-button type="button" variant="outline-danger" @click="backToList" v-t="'label.back'"/>

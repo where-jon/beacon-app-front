@@ -235,10 +235,16 @@ export default {
 <style scoped lang="scss">
   @import "../../sub/constant/scrolltable.scss";
 
+  div.table-area {
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
   tbody {
     display:block;
     height:400px;
     overflow:auto;
+    min-width: 630px;
   }
 
   thead, tbody tr {
