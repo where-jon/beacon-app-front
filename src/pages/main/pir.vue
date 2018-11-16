@@ -37,6 +37,10 @@ export default {
   },
   data() {
      return {
+       keepExbPosition: false,
+       toggleCallBack: () => {
+        this.keepExbPosition = true
+      },
       items: [
         {
           text: this.$i18n.tnl('label.main'),
@@ -99,10 +103,13 @@ export default {
           this.exbCon.removeAllChildren()
         }
         this.positionedExb.forEach((exb) => {
-          exb.x *= this.mapImageScale
-          exb.y *= this.mapImageScale
+          this.replaceExb(exb, (exb) => {
+            exb.x *= this.mapImageScale
+            exb.y *= this.mapImageScale
+          })
           this.showExb(exb)
         })
+        this.keepExbPosition = false
       })
     },
     showExb(exb) {

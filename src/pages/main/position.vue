@@ -91,6 +91,7 @@ export default {
       useCategory: MenuHelper.useMaster('category'),
       selectedGroup: null,
       selectedCategory: null,
+      toggleCallBack: () => this.reset(),
     }
   },
   computed: {
