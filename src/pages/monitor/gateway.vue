@@ -3,6 +3,7 @@
     <breadcrumb :items="items" :reload="true" :isLoad="isLoad" @reload="fetchData" />
     <div class="container" v-show="!isLoad">
       <b-row align-h="end">
+        <all-count :count="allCount" />
         <b-col md="2" class="mb-3 mr-3">
           <b-button v-if="!ios" :variant="theme" @click="download()" v-t="'label.download'" />
         </b-col>
@@ -49,11 +50,13 @@ import { getTheme } from '../../sub/helper/ThemeHelper'
 import reloadmixinVue from '../../components/reloadmixin.vue'
 import moment from 'moment'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
+import allCount from '../../components/allcount.vue'
 
 export default {
   mixins: [reloadmixinVue],
   components: {
     breadcrumb,
+    allCount,
   },
   data () {
     return {
@@ -90,7 +93,10 @@ export default {
     },
     ...mapState('monitor', [
       'gateways',
-    ])
+    ]),
+    allCount() {
+      return this.gateways.length
+    },
   },
   mounted() {
     this.fetchData()
