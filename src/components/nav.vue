@@ -30,7 +30,7 @@
           <b-dropdown-item href="#" @click="move('/setting/personal')">Profile</b-dropdown-item>
           <b-dropdown-item href="#" @click="logout"><i class="fas fa-sign-out-alt"></i>&nbsp;Logout</b-dropdown-item>
           <b-dropdown-divider/>
-          <b-dropdown-item>{{ version }}</b-dropdown-item>
+          <b-dropdown-item @click="versionClick">{{ version }}</b-dropdown-item>
         </b-nav-item-dropdown>
       </b-navbar-nav>
 
@@ -87,6 +87,10 @@ export default {
     move(page) {
       this.$router.push(page)
     },
+    versionClick() {
+      console.log("app service revision:", this.$store.state.serviceRev)
+      console.log("app front revision:", this.$store.state.frontRev)
+    }
   }
 }
 </script>
