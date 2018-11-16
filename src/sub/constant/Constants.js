@@ -185,6 +185,12 @@ export const MENU = [
         icon: 'fas fa-map-marker-alt',
       },
       {
+        key: 'heatmap',
+        path: 'heatmap',
+        feature: '',
+        icon: 'fas fa-map-marker-alt',
+      },
+      {
         key: 'pir',
         path: 'pir',
         feature: '',
