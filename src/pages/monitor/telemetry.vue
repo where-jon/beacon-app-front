@@ -238,6 +238,7 @@ export default {
   div.table-area {
     overflow-x: auto;
     overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
   }
 
   tbody {
