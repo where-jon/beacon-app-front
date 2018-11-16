@@ -20,6 +20,8 @@ export default {
       realWidth: null,
       isFirstTime: true,
       showTryCount: 0,
+      tempMapFitMobile: DISP.MAP_FIT_MOBILE,
+      oldMapImageScale: 0,
     }
   },
   computed: {
@@ -77,6 +79,19 @@ export default {
       window.addEventListener('resize', onResize)
     }
   },
+  mounted() {
+    Util.debug('In showmapmixin mounted.')
+    this.addDblTapListener(() => {
+      Util.debug('in Listener')
+      this.toggleCallBack && this.toggleCallBack()
+      this.isShownMapImage = false
+      this.toggleMapFitMobile()
+      this.showMapImage()
+    })
+  },
+  beforeDestroy() {
+    this.tempMapFitMobile = DISP.MAP_FIT_MOBILE
+  },
   methods: {
     ...mapMutations('main', [
       'replaceMain', 
@@ -133,7 +148,7 @@ export default {
       let parent = document.getElementById("map").parentElement
       let parentHeight = document.documentElement.clientHeight - parent.offsetTop - 82
       let isMapWidthLarger = parentHeight / parent.clientWidth > bg.height / bg.width
-      let fitWidth = HtmlUtil.isMobile()? ((DISP.MAP_FIT_MOBILE == "both" && isMapWidthLarger) || DISP.MAP_FIT_MOBILE == "width"): (DISP.MAP_FIT == "both" && isMapWidthLarger) || DISP.MAP_FIT == "width"
+      let fitWidth = HtmlUtil.isMobile()? ((this.tempMapFitMobile == "both" && isMapWidthLarger) || this.tempMapFitMobile == "width"): (DISP.MAP_FIT == "both" && isMapWidthLarger) || DISP.MAP_FIT == "width"
       if (fitWidth) {
         canvas.width = parent.clientWidth
         canvas.height = parent.clientWidth * bg.height / bg.width
@@ -164,6 +179,7 @@ export default {
       }
 
       var bitmap = new Bitmap(bg)
+      this.oldMapImageScale = this.mapImageScale
       this.mapImageScale = bitmap.scaleY = bitmap.scaleX = canvas.width / bg.width
       bitmap.width = canvas.width
       bitmap.height = canvas.height
@@ -203,6 +219,42 @@ export default {
       let pot = await AppServiceHelper.fetch('/basic/pot', txId)
       this.replaceMain({pot})
     },
+    replaceExb(exb, nokeep) {
+      if (this.keepExbPosition) {
+        exb.x = exb.x / this.oldMapImageScale * this.mapImageScale
+        exb.y = exb.y / this.oldMapImageScale * this.mapImageScale
+      } else {
+        nokeep(exb)
+      }
+    },
+    toggleMapFitMobile() {
+      if (this.tempMapFitMobile === 'both') {
+        this.tempMapFitMobile = 'width'
+      } else {
+        this.tempMapFitMobile = 'both'
+      }
+      Util.debug('tempMapFitMobile: ' + this.tempMapFitMobile)
+    },
+    getDblTapListener(callback) {
+      let dblTap = false
+      return (evt) => {
+        if (dblTap) {
+          Util.debug('second tap!')
+          Util.debug(evt)
+          callback && callback()
+        } else {
+          Util.debug('first tap!')
+          dblTap = true
+          setTimeout(() => {dblTap = false}, 500)
+        }
+      }
+    },
+    addDblTapListener(callback) {
+      Util.debug('add listener')
+      const listener = this.getDblTapListener(callback)
+      const map = this.$refs.map
+      map && map.addEventListener('touchstart', (evt) => listener(evt))
+    }
   }
 }
 </script>

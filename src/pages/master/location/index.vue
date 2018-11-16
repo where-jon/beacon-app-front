@@ -95,6 +95,10 @@ export default {
       exbOptions: [],
       exbDisp: 'deviceIdX',
       deleteTarget: null,
+      keepExbPosition: false,
+      toggleCallBack: () => {
+        this.keepExbPosition = true
+      },
       ICON_ARROW_WIDTH: 20,
       ICON_ARROW_HEIGHT: 10,
       items: [
@@ -235,10 +239,13 @@ export default {
         }
 
         this.positionedExb.forEach((exb) => {
-          exb.x = exb.location.x * this.mapImageScale
-          exb.y = exb.location.y * this.mapImageScale
+          this.replaceExb(exb, (exb) => {
+            exb.x = exb.location.x * this.mapImageScale
+            exb.y = exb.location.y * this.mapImageScale
+          })
           this.showExb(exb)
         })
+        this.keepExbPosition = false
 
         this.stage.addChild(this.exbCon)
         this.stage.update()
@@ -355,6 +362,7 @@ export default {
       })
     },
     changeArea() {
+      this.tempMapFitMobile = DISP.MAP_FIT_MOBILE
       if (this.isChanged) {
         this.$root.$emit('bv::show::modal', 'modalWarn')
       }

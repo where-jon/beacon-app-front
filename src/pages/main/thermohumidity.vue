@@ -63,7 +63,11 @@ export default {
         },
       ],
       isShownChart: false,
-      chartTitle: ""
+      chartTitle: "",
+      keepExbPosition: false,
+      toggleCallBack: () => {
+        this.keepExbPosition = true
+      },
     }
   },
   computed: {
@@ -111,10 +115,13 @@ export default {
     showMapImage() {
       this.showMapImageDef(() => {
         this.positionedExb.forEach((exb) => {
-          exb.x *= this.mapImageScale
-          exb.y *= this.mapImageScale
+          this.replaceExb(exb, (exb) => {
+            exb.x *= this.mapImageScale
+            exb.y *= this.mapImageScale
+          })
           this.showExb(exb)
         })
+        this.keepExbPosition = false
       })
     },
     showExb(exb) {
