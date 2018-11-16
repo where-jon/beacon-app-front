@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import { DISP, TXDETAIL_ITEMS } from '../sub/constant/config'
+import { DISP } from '../sub/constant/config'
 import { getTxDetailItems } from '../sub/helper/PositionHelper'
 import sensor from './sensor.vue'
 
@@ -66,7 +66,7 @@ export default {
   },
   methods: {
     getDispItems () {
-      return TXDETAIL_ITEMS.filter((e) => e.disp).map((e) => this.selectedTx[e.name])
+      return DISP.TXDETAIL_ITEMS.filter((e) => e.disp).map((e) => this.selectedTx[e.name])
     }
   },
 }

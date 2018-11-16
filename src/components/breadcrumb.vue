@@ -38,11 +38,11 @@
 <script>
 
 import Breadcrumb from 'bootstrap-vue/es/components/breadcrumb/breadcrumb'
-import { getTheme, themeColors, getThemeClasses } from '../sub/helper/ThemeHelper'
+import { getThemeColor, getThemeClasses } from '../sub/helper/ThemeHelper'
 import * as HtmlUtil from '../sub/util/HtmlUtil'
 import * as AuthHelper from '../sub/helper/AuthHelper'
 import { EventBus } from '../sub/helper/EventHelper'
-import { DISP, APP, THEME } from '../sub/constant/config'
+import { DISP, APP } from '../sub/constant/config'
 import LegendItem from './legend.vue'
 
 export default {
@@ -84,7 +84,7 @@ export default {
     if (reload) {
       HtmlUtil.registerInterval(()=>{
         reload.click()
-      }, DISP.AUTO_RELOAD)  
+      }, APP.AUTO_RELOAD)  
     }
 
     this.setDropdownMenuColor()
@@ -140,8 +140,7 @@ export default {
       })
     },
     setDropdownMenuColor() {
-      const theme = getTheme(this.loginId)
-      const color = themeColors[theme]
+      const color = getThemeColor(this.loginId)
       this.setColor('dropdown-menu', color)
       this.setColor('dropdown-item', color)
     },

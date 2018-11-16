@@ -74,7 +74,7 @@ import editmixinVue from './editmixin.vue'
 import * as MenuHelper from '../sub/helper/MenuHelper'
 import * as HtmlUtil from '../sub/util/HtmlUtil'
 import * as Util from '../sub/util/Util'
-import { getButtonTheme, getTheme, themeColors } from '../sub/helper/ThemeHelper'
+import { getButtonTheme, getTheme } from '../sub/helper/ThemeHelper'
 
 export default {
   mixins: [editmixinVue],

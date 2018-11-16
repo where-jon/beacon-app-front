@@ -4,7 +4,7 @@
 
 <script>
 import { fabric } from 'fabric'
-import { ZONE } from '../sub/constant/config'
+import { DISP } from '../sub/constant/config'
 import * as AppServiceHelper from '../sub/helper/AppServiceHelper'
 
 export default {
@@ -171,8 +171,8 @@ export default {
       that.toX = e.e.offsetX
       that.toY = e.e.offsetY
 
-      if (Math.abs(that.fromX - that.toX) < ZONE.MIN_WIDTH ||
-          Math.abs(that.fromY - that.toY) < ZONE.MIN_HEIGHT) {
+      if (Math.abs(that.fromX - that.toX) < DISP.ZONE.MIN_WIDTH ||
+          Math.abs(that.fromY - that.toY) < DISP.ZONE.MIN_HEIGHT) {
         return;
       }
 

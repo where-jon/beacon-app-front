@@ -34,7 +34,7 @@ import Vue from 'vue'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import _ from 'lodash'
 import { EventBus } from '../sub/helper/EventHelper'
-import { getTheme, themeColors, getThemeClasses } from '../sub/helper/ThemeHelper'
+import { getThemeColor, getThemeClasses } from '../sub/helper/ThemeHelper'
 import { APP, DISP } from '../sub/constant/config'
 import styles from '../sub/constant/config.scss'
 
@@ -108,8 +108,7 @@ export default {
       })
     },
     setDropdownMenuColor() {
-      const theme = getTheme(this.loginId)
-      const color = themeColors[theme]
+      const color = getThemeColor(this.loginId)
       this.setColor('dropdown-menu', color)
       this.setColor('dropdown-item', color)
     }

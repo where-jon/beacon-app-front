@@ -91,7 +91,8 @@
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import breadcrumb from '../../../components/breadcrumb.vue'
 import pagetitle from '../../../components/pagetitle.vue'
-import { APP, DISP, THEME, CHAR_SET, PASSWORD_LENGTH } from '../../../sub/constant/config'
+import { APP, DISP } from '../../../sub/constant/config'
+import { THEME, CHAR_SET } from '../../../sub/constant/Constants'
 import { getTheme, getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import { getCharSet } from '../../../sub/helper/CharSetHelper'
 import * as AuthHelper from '../../../sub/helper/AuthHelper'
@@ -157,7 +158,7 @@ export default {
       const storeTheme = this.$store.state.setting.theme
       return 'outline-' + getButtonTheme(this.$store.state.loginId)
     },
-    hasError () {
+    hasError() {
       return Object.keys(this.errorMessages)
       .map((key) => {
         return this.errorMessages[key].length
@@ -209,10 +210,6 @@ export default {
       // storeを参照しているため、テーマの変更を検知する
       this.replaceSetting({theme})
       window.localStorage.setItem(this.$store.state.loginId + '-theme', theme)
-    },
-    theme () {
-      const theme = getTheme(this.$store.state.loginId)
-      return 'outline-' + theme
     },
     charSetSelected (selected) {
       const cs = CHAR_SET.find((e) => {

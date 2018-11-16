@@ -23,7 +23,7 @@
 
 <script>
 
-import { DISP, THEME, DEV } from '../sub/constant/config'
+import { DISP, DEV } from '../sub/constant/config'
 import { getThemeClasses } from '../sub/helper/ThemeHelper'
 import VueSlideUpDown from 'vue-slide-up-down'
 

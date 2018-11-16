@@ -66,7 +66,7 @@
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import breadcrumb from '../../components/breadcrumb.vue'
-import { DISP, THEME, EXCLOUD } from '../../sub/constant/config'
+import { DISP, EXCLOUD } from '../../sub/constant/config'
 import { getButtonTheme } from '../../sub/helper/ThemeHelper'
 import { LED_COLORS, LED_BLINK_TYPES, SENSOR } from '../../sub/constant/Constants'
 import * as ViewHelper from '../../sub/helper/ViewHelper'

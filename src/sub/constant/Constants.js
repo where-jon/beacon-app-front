@@ -10,6 +10,18 @@ export const LOGIN_MODE = {
   NO_LOGIN: 2
 }
 
+export const THEME = [
+  {id: 1,  name: 'default', color: '#588BC1'},
+  {id: 2,  name: 'earthcolor', color: '#5C7886'},
+  {id: 3,  name: 'autumn', color: '#927760'},
+  {id: 4,  name: 'vivid', color: '#D50057'},
+]
+
+export const CHAR_SET = [
+  {id: 1,  name: "UTF8"},
+  {id: 2,  name: "SJIS"},
+]
+
 export const ROLE = {
   SUPER_ADMIN: "SUPER_ADMIN", // TO BE REMOVED in the future
 }

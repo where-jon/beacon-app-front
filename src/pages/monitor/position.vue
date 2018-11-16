@@ -59,7 +59,7 @@ import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
 import { EventBus } from '../../sub/helper/EventHelper'
-import { EXB, DISP, APP, MONITOR_TX } from '../../sub/constant/config'
+import { EXB, DISP, APP } from '../../sub/constant/config'
 import breadcrumb from '../../components/breadcrumb.vue'
 import VueScrollingTable from "vue-scrolling-table"
 import { getTheme } from '../../sub/helper/ThemeHelper'
@@ -216,11 +216,11 @@ export default {
     },
     txState(updatetime) {
       const time = new Date().getTime() - moment(updatetime).local().toDate().getTime()
-      if (time < MONITOR_TX.ABSENT) {
+      if (time < APP.MONITOR_TX.ABSENT) {
         return this.label_receiveNormal
       }
 
-      if (time < MONITOR_TX.UNDETECT) {
+      if (time < APP.MONITOR_TX.UNDETECT) {
         return this.label_absent
       }
 

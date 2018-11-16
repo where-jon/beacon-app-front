@@ -43,7 +43,7 @@ import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
 import { EventBus } from '../../sub/helper/EventHelper'
-import { EXB, DISP, APP, GATEWAY } from '../../sub/constant/config'
+import { EXB, DISP, APP } from '../../sub/constant/config'
 import breadcrumb from '../../components/breadcrumb.vue'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import reloadmixinVue from '../../components/reloadmixin.vue'
@@ -74,7 +74,7 @@ export default {
       labelState: this.$i18n.t('label.state'),
       labelReceiveNormal: this.$i18n.t('label.receiveNormal'),
       labelMalfunction: this.$i18n.t('label.malfunction'),
-      gatewayState: GATEWAY.STATE_COLOR
+      gatewayState: DISP.GATEWAY.STATE_COLOR
     }
   },
   props: {
@@ -122,7 +122,7 @@ export default {
         const currentTime = new Date().getTime()
         gateways = gateways.map((e) => {
           const timestamp = formattedDateToDatetime(e.updated)
-          const state = currentTime - timestamp < GATEWAY.MALFUNCTION ? this.labelReceiveNormal: this.labelMalfunction
+          const state = currentTime - timestamp < DISP.GATEWAY.MALFUNCTION ? this.labelReceiveNormal: this.labelMalfunction
           return { ...e, state: state }
         })
         this.replaceMonitor({gateways})
@@ -149,13 +149,13 @@ export default {
         return this.gatewayState.UNDETECT
       }
       const time = new Date().getTime() - new Date(updated).getTime()
-      if (time < GATEWAY.MALFUNCTION) {
+      if (time < DISP.GATEWAY.MALFUNCTION) {
         return this.gatewayState.NORMAL
       }
-      if (time < GATEWAY.NOTRECEIVE) {
+      if (time < DISP.GATEWAY.NOTRECEIVE) {
         return this.gatewayState.MALFUNCTION
       }
-      if (time < GATEWAY.UNDETECT) {
+      if (time < DISP.GATEWAY.UNDETECT) {
         return this.gatewayState.NOTRECEIVE
       }
     },

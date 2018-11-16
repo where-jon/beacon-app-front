@@ -1,5 +1,5 @@
 import { DISCOMFORT } from '../constant/Constants'
-import { DISP } from '../constant/config'
+import { APP, DISP } from '../constant/config'
 import * as Util from '../util/Util'
 import Chart from 'chart.js'
 import _ from 'lodash'
@@ -35,7 +35,7 @@ export const calcDiscomfortIndex = (temperature, humidity) => 0.81 * temperature
 export const showThermoHumidityChart = (id, data, i18n) => {
 
   // This logic is for hour only(TODO: for min or day)
-  let range = Util.numberRange(DISP.TEMPERATURE_LINE_HOUR_START, DISP.TEMPERATURE_LINE_HOUR_END)
+  let range = Util.numberRange(APP.TEMPERATURE_LINE_HOUR_START, APP.TEMPERATURE_LINE_HOUR_END)
   let suffix = ":00"
   data = _.reduce(range, (result, key) => {
     const datum = data.find((val) => val.key == key)

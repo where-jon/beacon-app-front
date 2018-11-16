@@ -246,7 +246,7 @@ export default {
               let label = tx && tx.displayName? tx.displayName: val.btx_id
               return {...val, label, bg: SensorHelper.getStressBg(val.stress), down: val.down?val.down:0}
           })
-          .sortBy((val) => (new Date().getTime() - val.downLatest < DISP.DOWN_RED_TIME)? val.downLatest * -1: val.btx_id)
+          .sortBy((val) => (new Date().getTime() - val.downLatest < APP.DOWN_RED_TIME)? val.downLatest * -1: val.btx_id)
           .value()
           console.log('Meditag:', this.meditagSensors, meditagSensors)
         }

@@ -44,7 +44,7 @@ import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
 import { EventBus } from '../../sub/helper/EventHelper'
-import { EXB, DISP, APP, DEV, TELEMETRY } from '../../sub/constant/config'
+import { EXB, DISP, APP, DEV } from '../../sub/constant/config'
 import breadcrumb from '../../components/breadcrumb.vue'
 import VueScrollingTable from "vue-scrolling-table"
 import { getTheme } from '../../sub/helper/ThemeHelper'
@@ -92,7 +92,7 @@ export default {
       label_receiveNormal: this.$i18n.tnl('label.receiveNormal'),
       label_state: this.$i18n.tnl('label.state'),
       label_undetect: this.$i18n.tnl('label.undetect'),
-      label_nosignal: this.$i18n.tnl('label.no-signal', {min: TELEMETRY.NOSIGNAL / (60 * 1000)}),
+      label_nosignal: this.$i18n.tnl('label.no-signal', {min: APP.TELEMETRY.NOSIGNAL / (60 * 1000)}),
       badgeClassPrefix: 'badge badge-pill badge-',
       csvHeaders: {
         [this.$i18n.tnl('label.deviceNum')]: APP.EXB_WITH_DEVICE_NUM ? 'deviceNum' : null,
@@ -221,7 +221,7 @@ export default {
     },
     exbState(updatetime) {
       const time = new Date().getTime() - moment(updatetime).local().toDate().getTime()
-      return time < TELEMETRY.NOSIGNAL ? this.label_receiveNormal :
+      return time < APP.TELEMETRY.NOSIGNAL ? this.label_receiveNormal :
       (this.isUndetect(updatetime) ? this.label_undetect : this.label_nosignal)
     },
     exbStateClass(exbState) {
