@@ -3,6 +3,7 @@
     <breadcrumb :items="items" :reload="true" :isLoad="isLoad" @reload="fetchData" />
     <div class="container" v-show="!isLoad">
       <b-row align-h="end">
+        <all-count :count="allCount" />
         <b-col md="2" class="mb-3 mr-3">
           <b-button v-if="!ios" :variant='theme' @click="download()" v-t="'label.download'" />
         </b-col>
@@ -67,12 +68,14 @@ import moment from 'moment'
 import reloadmixinVue from '../../components/reloadmixin.vue'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import _ from 'lodash'
+import allCount from '../../components/allcount.vue'
 
 export default {
   mixins: [reloadmixinVue],
   components: {
     breadcrumb,
     VueScrollingTable,
+    allCount,
   },
   data () {
     return {
@@ -132,6 +135,9 @@ export default {
     ...mapState('app_service', [
       'pots', 'exbs'
     ]),
+    allCount() {
+      return this.positions.length
+    },
   },
   mounted() {
     this.fetchData()

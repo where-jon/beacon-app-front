@@ -3,6 +3,7 @@
     <breadcrumb :items="items" :reload="true" :isLoad="isLoad"  @reload="fetchData" />
     <div class="container" v-show="!isLoad">
       <b-row align-h="end">
+        <all-count :count="allCount" />
         <b-col md="2" class="mb-3 mr-3">
           <b-button v-if="!ios" :variant='theme' @click="download()" v-t="'label.download'" />
         </b-col>
@@ -54,12 +55,14 @@ import gatewayVue from './gateway.vue'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import moment from 'moment'
 import { addLabelByKey } from '../../sub/helper/ViewHelper'
+import allCount from '../../components/allcount.vue'
 
 export default {
   mixins: [reloadmixinVue],
   components: {
     breadcrumb,
     VueScrollingTable,
+    allCount,
   },
   data () {
     return {
@@ -123,6 +126,9 @@ export default {
     ...mapState('app_service', [
       'exbs',
     ]),
+    allCount() {
+      return this.telemetrys.length
+    },
   },
   mounted() {
     this.replace({title: this.$i18n.tnl('label.telemetry')})
@@ -277,4 +283,5 @@ export default {
   .power-empty {
     color: #b22222;
   }
+
 </style>
