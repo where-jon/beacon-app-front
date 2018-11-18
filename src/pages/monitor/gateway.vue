@@ -45,12 +45,12 @@ import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
 import { EventBus } from '../../sub/helper/EventHelper'
 import { EXB, DISP, APP } from '../../sub/constant/config'
-import breadcrumb from '../../components/breadcrumb.vue'
+import breadcrumb from '../../components/layout/breadcrumb.vue'
 import { getTheme } from '../../sub/helper/ThemeHelper'
-import reloadmixinVue from '../../components/reloadmixin.vue'
+import reloadmixinVue from '../../components/mixin/reloadmixin.vue'
 import moment from 'moment'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
-import allCount from '../../components/allcount.vue'
+import allCount from '../../components/parts/allcount.vue'
 
 export default {
   mixins: [reloadmixinVue],

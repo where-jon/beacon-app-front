@@ -41,12 +41,12 @@
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import _ from 'lodash'
-import * as AuthHelper from '../sub/helper/AuthHelper'
-import { DISP, APP } from '../sub/constant/config'
-import { LOGIN_MODE } from '../sub/constant/Constants'
-import { getThemeClasses } from '../sub/helper/ThemeHelper'
-import * as HtmlUtil from '../sub/util/HtmlUtil'
-import commonmixinVue from './commonmixin.vue';
+import * as AuthHelper from '../../sub/helper/AuthHelper'
+import { DISP, APP } from '../../sub/constant/config'
+import { LOGIN_MODE } from '../../sub/constant/Constants'
+import { getThemeClasses } from '../../sub/helper/ThemeHelper'
+import * as HtmlUtil from '../../sub/util/HtmlUtil'
+import commonmixinVue from '../mixin/commonmixin.vue';
 
 export default {
   mixin: [commonmixinVue],
@@ -96,7 +96,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import "../sub/constant/config.scss";
+@import "../../sub/constant/config.scss";
 
 .rotate {
   animation: fa-spin 2s infinite linear;

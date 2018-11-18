@@ -1,7 +1,7 @@
 
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-import * as Util from '../sub/util/Util'
+import * as Util from '../../sub/util/Util'
 
 export default {
   methods: {

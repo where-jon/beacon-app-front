@@ -19,11 +19,11 @@ import * as StateHelper from '../../../sub/helper/StateHelper'
 import _ from 'lodash'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as ConfigHelper from '../../../sub/helper/ConfigHelper'
-import breadcrumb from '../../../components/breadcrumb.vue'
-import pagetitle from '../../../components/pagetitle.vue'
-import editList from '../../../components/editlist.vue'
+import breadcrumb from '../../../components/layout/breadcrumb.vue'
+import pagetitle from '../../../components/layout/pagetitle.vue'
+import editList from '../../../components/page/editlist.vue'
 import * as Util from '../../../sub/util/Util'
-import editmixinVue from '../../../components/editmixin.vue'
+import editmixinVue from '../../../components/mixin/editmixin.vue'
 
 export default {
   components: {

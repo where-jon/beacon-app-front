@@ -5,13 +5,13 @@
 </template>
 
 <script>
-import mList from '../../../components/list.vue'
+import mList from '../../../components/page/list.vue'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import { addLabelByKey } from '../../../sub/helper/ViewHelper'
 import * as Util from '../../../sub/util/Util'
-import listmixinVue from '../../../components/listmixin.vue'
+import listmixinVue from '../../../components/mixin/listmixin.vue'
 import { ROLE_FEATURE, FEATURE } from '../../../sub/constant/Constants'
 
 export default {

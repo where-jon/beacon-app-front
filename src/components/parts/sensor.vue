@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { APP } from '../sub/constant/config'
+import { APP } from '../../sub/constant/config'
 
 export default {
   props: ['sensors', 'isPopup'],

@@ -4,8 +4,8 @@
 
 <script>
 import { fabric } from 'fabric'
-import { DISP } from '../sub/constant/config'
-import * as AppServiceHelper from '../sub/helper/AppServiceHelper'
+import { DISP } from '../../sub/constant/config'
+import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 
 export default {
   data () {

@@ -72,8 +72,8 @@ import { APP, DISP } from '../../../sub/constant/config'
 import { UPDATE_ONLY_NN } from '../../../sub/constant/Constants'
 import { Shape, Stage, Container, Bitmap, Text, Touch } from '@createjs/easeljs/dist/easeljs.module'
 import { Tween, Ticker } from '@createjs/tweenjs/dist/tweenjs.module'
-import breadcrumb from '../../../components/breadcrumb.vue'
-import showmapmixin from '../../../components/showmapmixin.vue'
+import breadcrumb from '../../../components/layout/breadcrumb.vue'
+import showmapmixin from '../../../components/mixin/showmapmixin.vue'
 
 export default {
   mixins: [showmapmixin],

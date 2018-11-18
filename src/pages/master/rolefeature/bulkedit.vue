@@ -10,9 +10,9 @@ import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import _ from 'lodash'
 import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
-import breadcrumb from '../../../components/breadcrumb.vue'
-import bulkedit from '../../../components/bulkedit.vue'
-import commonmixinVue from '../../../components/commonmixin.vue'
+import breadcrumb from '../../../components/layout/breadcrumb.vue'
+import bulkedit from '../../../components/page/bulkedit.vue'
+import commonmixinVue from '../../../components/mixin/commonmixin.vue'
 import { ROLE_FEATURE } from '../../../sub/constant/Constants'
 
 export default {

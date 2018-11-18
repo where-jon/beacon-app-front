@@ -3,12 +3,12 @@
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import { Shape, Stage, Container, Bitmap, Text, Touch } from '@createjs/easeljs/dist/easeljs.module'
 import { Tween, Ticker } from '@createjs/tweenjs/dist/tweenjs.module'
-import { EventBus } from '../sub/helper/EventHelper'
-import { DISP } from '../sub/constant/config.js'
-import * as Util from '../sub/util/Util'
-import * as HtmlUtil from '../sub/util/HtmlUtil'
-import * as PositionHelper from '../sub/helper/PositionHelper'
-import * as StateHelper from '../sub/helper/StateHelper'
+import { EventBus } from '../../sub/helper/EventHelper'
+import { DISP } from '../../sub/constant/config.js'
+import * as Util from '../../sub/util/Util'
+import * as HtmlUtil from '../../sub/util/HtmlUtil'
+import * as PositionHelper from '../../sub/helper/PositionHelper'
+import * as StateHelper from '../../sub/helper/StateHelper'
 import reloadmixinVue from './reloadmixin.vue'
 
 export default {
@@ -260,7 +260,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import "../sub/constant/config.scss";
+@import "../../sub/constant/config.scss";
 
 #map {
   margin: 0 auto;

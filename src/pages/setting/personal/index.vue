@@ -89,8 +89,8 @@
 
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-import breadcrumb from '../../../components/breadcrumb.vue'
-import pagetitle from '../../../components/pagetitle.vue'
+import breadcrumb from '../../../components/layout/breadcrumb.vue'
+import pagetitle from '../../../components/layout/pagetitle.vue'
 import { APP, DISP } from '../../../sub/constant/config'
 import { THEME, CHAR_SET } from '../../../sub/constant/Constants'
 import { getTheme, getButtonTheme } from '../../../sub/helper/ThemeHelper'
@@ -100,7 +100,7 @@ import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as HttpHelper from '../../../sub/helper/HttpHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as ValidateUtil from '../../../sub/util/ValidateUtil'
-import commonmixinVue from '../../../components/commonmixin.vue';
+import commonmixinVue from '../../../components/mixin/commonmixin.vue';
 
 export default {
   mixin: [commonmixinVue],

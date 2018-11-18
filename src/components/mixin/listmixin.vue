@@ -2,9 +2,9 @@
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import reloadmixinVue from './reloadmixin.vue'
-import { SHAPE } from '../sub/constant/Constants'
-import { DISP } from '../sub/constant/config.js'
-import * as Util from '../sub/util/Util'
+import { SHAPE } from '../../sub/constant/Constants'
+import { DISP } from '../../sub/constant/config.js'
+import * as Util from '../../sub/util/Util'
 
 export default {
   mixins: [reloadmixinVue],

@@ -44,13 +44,13 @@
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import _ from 'lodash'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
-import editmixinVue from '../../../components/editmixin.vue'
+import editmixinVue from '../../../components/mixin/editmixin.vue'
 import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
-import breadcrumb from '../../../components/breadcrumb.vue'
+import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import { SHAPE } from '../../../sub/constant/Constants'
-import colorPicker from '../../../components/colorpicker'
+import colorPicker from '../../../components/parts/colorpicker.vue'
 
 export default {
   components: {

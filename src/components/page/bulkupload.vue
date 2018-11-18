@@ -29,11 +29,11 @@
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import _ from 'lodash'
-import editmixinVue from './editmixin.vue'
-import { getButtonTheme } from '../sub/helper/ThemeHelper'
-import { getTheme } from '../sub/helper/ThemeHelper'
+import editmixinVue from '../mixin/editmixin.vue'
+import { getButtonTheme } from '../../sub/helper/ThemeHelper'
+import { getTheme } from '../../sub/helper/ThemeHelper'
 import Encoding from 'encoding-japanese'
-import * as Util from '../sub/util/Util'
+import * as Util from '../../sub/util/Util'
 import JsZip from 'jszip'
 
 let fileReader

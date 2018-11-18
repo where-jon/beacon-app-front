@@ -46,16 +46,16 @@ import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
 import { EventBus } from '../../sub/helper/EventHelper'
 import { EXB, DISP, APP, DEV } from '../../sub/constant/config'
-import breadcrumb from '../../components/breadcrumb.vue'
+import breadcrumb from '../../components/layout/breadcrumb.vue'
 import VueScrollingTable from "vue-scrolling-table"
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
-import reloadmixinVue from '../../components/reloadmixin.vue'
+import reloadmixinVue from '../../components/mixin/reloadmixin.vue'
 import gatewayVue from './gateway.vue'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import moment from 'moment'
 import { addLabelByKey } from '../../sub/helper/ViewHelper'
-import allCount from '../../components/allcount.vue'
+import allCount from '../../components/parts/allcount.vue'
 
 export default {
   mixins: [reloadmixinVue],

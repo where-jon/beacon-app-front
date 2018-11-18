@@ -37,13 +37,13 @@
 
 <script>
 
-import Breadcrumb from 'bootstrap-vue/es/components/breadcrumb/breadcrumb'
-import { getThemeColor, getThemeClasses } from '../sub/helper/ThemeHelper'
-import * as HtmlUtil from '../sub/util/HtmlUtil'
-import * as AuthHelper from '../sub/helper/AuthHelper'
-import { EventBus } from '../sub/helper/EventHelper'
-import { DISP, APP } from '../sub/constant/config'
-import LegendItem from './legend.vue'
+import Breadcrumb from 'bootstrap-vue/es/components/breadcrumb'
+import { getThemeColor, getThemeClasses } from '../../sub/helper/ThemeHelper'
+import * as HtmlUtil from '../../sub/util/HtmlUtil'
+import * as AuthHelper from '../../sub/helper/AuthHelper'
+import { EventBus } from '../../sub/helper/EventHelper'
+import { DISP, APP } from '../../sub/constant/config'
+import LegendItem from '../parts/legend.vue'
 
 export default {
   components: {
@@ -192,7 +192,7 @@ export default {
 </script>
 
 <style lang="scss">
-  @import "../sub/constant/config.scss";
+  @import "../../sub/constant/config.scss";
 
   div.breadcrumb.navigation {
     margin-top: 20px;

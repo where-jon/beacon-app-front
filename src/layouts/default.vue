@@ -38,8 +38,8 @@ import { getThemeColor, getThemeClasses } from '../sub/helper/ThemeHelper'
 import { APP, DISP } from '../sub/constant/config'
 import styles from '../sub/constant/config.scss'
 
-import mSidebar from '~/components/sidebar.vue'
-import mNav from '~/components/nav.vue'
+import mSidebar from '../components/layout/sidebar.vue'
+import mNav from '../components/layout/nav.vue'
 
 import vSelect from 'vue-select'
 import BootstrapVue from 'bootstrap-vue'

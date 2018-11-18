@@ -70,11 +70,11 @@
 
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import _ from 'lodash'
-import editmixinVue from './editmixin.vue'
-import * as MenuHelper from '../sub/helper/MenuHelper'
-import * as HtmlUtil from '../sub/util/HtmlUtil'
-import * as Util from '../sub/util/Util'
-import { getButtonTheme, getTheme } from '../sub/helper/ThemeHelper'
+import editmixinVue from '../mixin/editmixin.vue'
+import * as MenuHelper from '../../sub/helper/MenuHelper'
+import * as HtmlUtil from '../../sub/util/HtmlUtil'
+import * as Util from '../../sub/util/Util'
+import { getButtonTheme, getTheme } from '../../sub/helper/ThemeHelper'
 
 export default {
   mixins: [editmixinVue],

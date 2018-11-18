@@ -65,7 +65,7 @@
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import * as StateHelper from '../../sub/helper/StateHelper'
-import breadcrumb from '../../components/breadcrumb.vue'
+import breadcrumb from '../../components/layout/breadcrumb.vue'
 import { DISP, EXCLOUD } from '../../sub/constant/config'
 import { getButtonTheme } from '../../sub/helper/ThemeHelper'
 import { LED_COLORS, LED_BLINK_TYPES, SENSOR } from '../../sub/constant/Constants'
@@ -73,7 +73,7 @@ import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as Util from '../../sub/util/Util'
-import editmixinVue from '../../components/editmixin.vue'
+import editmixinVue from '../../components/mixin/editmixin.vue'
 
 export default {
   mixins: [

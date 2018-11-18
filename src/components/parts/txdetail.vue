@@ -40,8 +40,8 @@
 </template>
 
 <script>
-import { DISP } from '../sub/constant/config'
-import { getTxDetailItems } from '../sub/helper/PositionHelper'
+import { DISP } from '../../sub/constant/config'
+import { getTxDetailItems } from '../../sub/helper/PositionHelper'
 import sensor from './sensor.vue'
 
 export default {
@@ -73,7 +73,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import "../sub/constant/config.scss";
+@import "../../sub/constant/config.scss";
 
 .balloon {
   position: absolute;
