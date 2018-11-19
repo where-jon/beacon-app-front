@@ -5,7 +5,7 @@
       <b-row align-h="end">
         <all-count :count="allCount" />
         <b-col md="2" class="mb-3 mr-3">
-          <b-button v-if="!ios" :variant='theme' @click="download()" v-t="'label.download'" />
+          <b-button v-if="!ios" :variant='getButtonTheme()' @click="download()" v-t="'label.download'" />
         </b-col>
       </b-row>
       <div class="table-area">
@@ -48,8 +48,8 @@ import { EventBus } from '../../sub/helper/EventHelper'
 import { EXB, DISP, APP, DEV } from '../../sub/constant/config'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import VueScrollingTable from "vue-scrolling-table"
-import { getTheme } from '../../sub/helper/ThemeHelper'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
+import commonmixinVue from '../../components/mixin/commonmixin.vue'
 import reloadmixinVue from '../../components/mixin/reloadmixin.vue'
 import gatewayVue from './gateway.vue'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
@@ -58,7 +58,7 @@ import { addLabelByKey } from '../../sub/helper/ViewHelper'
 import allCount from '../../components/parts/allcount.vue'
 
 export default {
-  mixins: [reloadmixinVue],
+  mixins: [reloadmixinVue, commonmixinVue ],
   components: {
     breadcrumb,
     VueScrollingTable,
@@ -116,10 +116,6 @@ export default {
     }
   },
   computed: {
-    theme () {
-      const theme = getTheme(this.$store.state.loginId)
-      return 'outline-' + theme
-    },
     ...mapState('monitor', [
       'telemetrys',
     ]),
@@ -273,7 +269,7 @@ export default {
   }
 
   .power-safe {
-    color: #00ff00;
+    color: #28a745;
   }
   
   .power-warning {
@@ -281,7 +277,7 @@ export default {
   }
 
   .power-empty {
-    color: #b22222;
+    color: #f17777;
   }
 
 </style>

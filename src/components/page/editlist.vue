@@ -46,7 +46,7 @@
               <b-form-input v-if="!usePullDown(newForm.type)" v-model="newForm.value" :type="getInputType(newForm.type)" class="form-control-sm" maxlength="1000" required/>
             </b-form-row>
             <b-form-row class="float-right mt-3">
-              <b-button v-if="isEditable" type="submit" :variant="theme" @click="register(true)" v-t="'label.add'" />
+              <b-button v-if="isEditable" type="submit" :variant="getButtonTheme()" @click="register(true)" v-t="'label.add'" />
               <b-button type="button" variant="outline-danger" @click="showForm(false)" v-t="'label.cancel'" class="ml-2" />
             </b-form-row>
           </div>
@@ -70,14 +70,14 @@
 
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import _ from 'lodash'
+import commonmixinVue from '../mixin/commonmixin.vue';
 import editmixinVue from '../mixin/editmixin.vue'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
-import { getButtonTheme, getTheme } from '../../sub/helper/ThemeHelper'
 
 export default {
-  mixins: [editmixinVue],
+  mixins: [ editmixinVue, commonmixinVue ],
   props: ['params', 'multiList', 'newForm'],
   data() {
     return {
@@ -89,10 +89,6 @@ export default {
   computed: {
     crud() {
       return 'update'
-    },
-    theme () {
-      const theme = getButtonTheme(this.$store.state.loginId)
-      return 'outline-' + theme
     },
     categoryIds() {
       return Object.keys(this.multiList)

@@ -2,7 +2,7 @@ import { THEME } from "../constant/Constants"
 
 export const getButtonTheme = (loginId) => {
   const theme = getTheme(loginId)
-  return theme !== 'default' ? theme : 'primary'
+  return theme !== 'default' ? theme : 'buttonDefault'
 }
 
 export const getThemeColor = (loginId) => {
