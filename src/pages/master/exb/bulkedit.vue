@@ -77,7 +77,7 @@ export default {
       return dummyKey
     },
     async save(bulkSaveFunc) {
-      const MAIN_COL = "exbId"
+      const MAIN_COL = APP.EXB_WITH_EXBID? "exbId": APP.EXB_WITH_DEVICE_ID? "deviceId": APP.EXB_WITH_DEVICE_NUM? "deviceNum": "deviceIdX"
       const LOCATION = ["locationId","areaName","locationName","visible","txViewType","posId","x","y", "zoneName"]
       const ZONE = ["zoneName"]
       const SENSOR = ["sensor"]
