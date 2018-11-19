@@ -438,4 +438,13 @@ export default {
     height: 60px;
     vertical-align: top;
   }
+
+  .page-link {
+    color: #376495;
+  }
+  .page-item.active .page-link {
+    background-color: #376495;
+    border-color: #265384;
+  }
+
 </style>

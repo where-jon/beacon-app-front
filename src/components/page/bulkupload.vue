@@ -19,7 +19,7 @@
           <label v-t="'label.zipFile'" />
           <b-form-file :key="formKey" v-model="form.zipFile" @change="loadThumbnail" accept=".zip" :placeholder="$t('message.selectFile') " :disabled="loading" ></b-form-file>
         </b-form-group>
-        <b-button type="submit" :variant="theme" @click="register(true)" :disabled="!submittable" >{{ label }}</b-button>
+        <b-button type="submit" :variant="getButtonTheme()" @click="register(true)" :disabled="!submittable" >{{ label }}</b-button>
         <b-button type="button" variant="outline-danger" @click="backToList" class="ml-2" v-t="'label.back'"/>
       </b-form>
     </div>
@@ -29,6 +29,7 @@
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import _ from 'lodash'
+import commonmixinVue from '../mixin/commonmixin.vue';
 import editmixinVue from '../mixin/editmixin.vue'
 import { getButtonTheme } from '../../sub/helper/ThemeHelper'
 import { getTheme } from '../../sub/helper/ThemeHelper'
@@ -40,7 +41,7 @@ let fileReader
 
 export default {
   props: ["name", "id", "backPath", "appServicePath"],
-  mixins: [editmixinVue],
+  mixins: [ editmixinVue, commonmixinVue ],
   data() {
     return {
       mutex: false,
@@ -89,12 +90,6 @@ export default {
         }
       })
     }
-  },
-  computed: {
-    theme () {
-      const theme = getTheme(this.$store.state.loginId)
-      return 'outline-' + theme
-    },
   },
   methods: {
     countFile(zipObject){
