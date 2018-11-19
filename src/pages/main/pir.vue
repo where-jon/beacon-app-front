@@ -20,14 +20,14 @@
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
-import txdetail from '../../components/txdetail.vue'
+import txdetail from '../../components/parts/txdetail.vue'
 import { DEV, DISP, APP } from '../../sub/constant/config'
 import { SENSOR } from '../../sub/constant/Constants'
 import * as Util from '../../sub/util/Util'
 import { Shape, Stage, Container, Bitmap, Text, Touch } from '@createjs/easeljs/dist/easeljs.module'
 import { Tween, Ticker } from '@createjs/tweenjs/dist/tweenjs.module'
-import breadcrumb from '../../components/breadcrumb.vue'
-import showmapmixin from '../../components/showmapmixin.vue'
+import breadcrumb from '../../components/layout/breadcrumb.vue'
+import showmapmixin from '../../components/mixin/showmapmixin.vue'
 
 export default {
   mixins: [showmapmixin],

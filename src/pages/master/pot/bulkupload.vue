@@ -9,8 +9,8 @@
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import _ from 'lodash'
 import * as Util from '../../../sub/util/Util'
-import breadcrumb from '../../../components/breadcrumb.vue'
-import bulkupload from '../../../components/bulkupload.vue'
+import breadcrumb from '../../../components/layout/breadcrumb.vue'
+import bulkupload from '../../../components/page/bulkupload.vue'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 
 export default {

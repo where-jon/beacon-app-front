@@ -116,17 +116,17 @@
 <script>
 
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-import * as AppServiceHelper from '../sub/helper/AppServiceHelper'
-import * as StateHelper from '../sub/helper/StateHelper'
-import { addLabelByKey } from '../sub/helper/ViewHelper'
-import { EventBus } from '../sub/helper/EventHelper'
-import * as MenuHelper from '../sub/helper/MenuHelper'
-import * as HtmlUtil from '../sub/util/HtmlUtil'
-import * as Util from '../sub/util/Util'
-import { getButtonTheme, getTheme, themeColors } from '../sub/helper/ThemeHelper'
-import { getCharSet } from '../sub/helper/CharSetHelper'
-import commonmixinVue from './commonmixin.vue';
-import { DETECT_STATE, CATEGORY } from '../sub/constant/Constants'
+import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
+import * as StateHelper from '../../sub/helper/StateHelper'
+import { addLabelByKey } from '../../sub/helper/ViewHelper'
+import { EventBus } from '../../sub/helper/EventHelper'
+import * as MenuHelper from '../../sub/helper/MenuHelper'
+import * as HtmlUtil from '../../sub/util/HtmlUtil'
+import * as Util from '../../sub/util/Util'
+import { getButtonTheme, getTheme } from '../../sub/helper/ThemeHelper'
+import { getCharSet } from '../../sub/helper/CharSetHelper'
+import commonmixinVue from '../mixin/commonmixin.vue';
+import { DETECT_STATE, CATEGORY } from '../../sub/constant/Constants'
 
 export default {
   mixin: [commonmixinVue], // not work
@@ -252,14 +252,6 @@ export default {
         });
     }
     const theme = getTheme(this.loginId)
-    // const color = themeColors[theme]
-    // const pageLinks = document.getElementsByClassName('.page-link')
-    // for (let i = pageLinks.length ; i--;) {
-    //   pageLinks[0].style.color = color
-    // }
-    // const pageActive = document.querySelector('a.page-link.btn-primary')
-    // pageActive.style.backgroundColor = color
-    // pageActive.style.color = '#ffffff'
   },
   watch: {
     filter() {

@@ -178,7 +178,6 @@ export const load = async (target, force) => {
   if (!target.endsWith("s")) {
     target = target.endsWith("y")? target.slice(0, -1) + "ies" : target + "s"
   }
-  console.debug(target, appStateConf[target])
   if (!appStateConf[target]) {
     return
   } 

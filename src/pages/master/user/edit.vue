@@ -58,9 +58,9 @@ import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import { APP } from '../../../sub/constant/config.js'
 import { ROLE } from '../../../sub/constant/Constants'
-import editmixinVue from '../../../components/editmixin.vue'
+import editmixinVue from '../../../components/mixin/editmixin.vue'
 import * as Util from '../../../sub/util/Util'
-import breadcrumb from '../../../components/breadcrumb.vue'
+import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 
 export default {

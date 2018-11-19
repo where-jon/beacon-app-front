@@ -4,6 +4,8 @@ import Vue from 'vue'
 export const state = () => ({
   locales: ['en', 'ja'],
   locale: 'ja',
+  serviceRev: null,
+  frontRev: null,
   loginId: '',
   role: '',
   featureList: [],

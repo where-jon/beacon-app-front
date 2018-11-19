@@ -23,8 +23,8 @@
 
 <script>
 
-import { DISP, THEME, DEV } from '../sub/constant/config'
-import { getThemeClasses } from '../sub/helper/ThemeHelper'
+import { DISP, DEV } from '../../sub/constant/config'
+import { getThemeClasses } from '../../sub/helper/ThemeHelper'
 import VueSlideUpDown from 'vue-slide-up-down'
 
 export default {
@@ -63,7 +63,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import "../sub/constant/config.scss";
+@import "../../sub/constant/config.scss";
 
 .bd-sidebar {
   order: 0;

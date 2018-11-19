@@ -47,15 +47,15 @@ import * as MenuHelper from '../../sub/helper/MenuHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
 import * as mock from '../../assets/mock/mock'
-import txdetail from '../../components/txdetail.vue'
+import txdetail from '../../components/parts/txdetail.vue'
 import { Tx, EXB, APP, DISP, DEV } from '../../sub/constant/config'
 import { SHAPE, SENSOR, EXTRA_NAV, POSITION } from '../../sub/constant/Constants'
 import { Shape, Stage, Container, Bitmap, Text, Touch } from '@createjs/easeljs/dist/easeljs.module'
 import { Tween, Ticker } from '@createjs/tweenjs/dist/tweenjs.module'
-import breadcrumb from '../../components/breadcrumb.vue'
-import showmapmixin from '../../components/showmapmixin.vue'
-import listmixin from '../../components/listmixin.vue'
-import sensor from '../../components/sensor.vue'
+import breadcrumb from '../../components/layout/breadcrumb.vue'
+import showmapmixin from '../../components/mixin/showmapmixin.vue'
+import listmixin from '../../components/mixin/listmixin.vue'
+import sensor from '../../components/parts/sensor.vue'
 import moment from 'moment'
 import { rightpanewidth, rightpaneleft } from '../../sub/constant/config.scss'
 
@@ -246,7 +246,7 @@ export default {
               let label = tx && tx.displayName? tx.displayName: val.btx_id
               return {...val, label, bg: SensorHelper.getStressBg(val.stress), down: val.down?val.down:0}
           })
-          .sortBy((val) => (new Date().getTime() - val.downLatest < DISP.DOWN_RED_TIME)? val.downLatest * -1: val.btx_id)
+          .sortBy((val) => (new Date().getTime() - val.downLatest < APP.DOWN_RED_TIME)? val.downLatest * -1: val.btx_id)
           .value()
           console.log('Meditag:', this.meditagSensors, meditagSensors)
         }

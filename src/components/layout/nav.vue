@@ -30,7 +30,7 @@
           <b-dropdown-item href="#" @click="move('/setting/personal')">Profile</b-dropdown-item>
           <b-dropdown-item href="#" @click="logout"><i class="fas fa-sign-out-alt"></i>&nbsp;Logout</b-dropdown-item>
           <b-dropdown-divider/>
-          <b-dropdown-item>{{ version }}</b-dropdown-item>
+          <b-dropdown-item @click="versionClick">{{ version }}</b-dropdown-item>
         </b-nav-item-dropdown>
       </b-navbar-nav>
 
@@ -41,12 +41,12 @@
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import _ from 'lodash'
-import * as AuthHelper from '../sub/helper/AuthHelper'
-import { DISP, APP, THEME } from '../sub/constant/config'
-import { LOGIN_MODE } from '../sub/constant/Constants'
-import { getThemeClasses } from '../sub/helper/ThemeHelper'
-import * as HtmlUtil from '../sub/util/HtmlUtil'
-import commonmixinVue from './commonmixin.vue';
+import * as AuthHelper from '../../sub/helper/AuthHelper'
+import { DISP, APP } from '../../sub/constant/config'
+import { LOGIN_MODE } from '../../sub/constant/Constants'
+import { getThemeClasses } from '../../sub/helper/ThemeHelper'
+import * as HtmlUtil from '../../sub/util/HtmlUtil'
+import commonmixinVue from '../mixin/commonmixin.vue';
 
 export default {
   mixin: [commonmixinVue],
@@ -87,12 +87,16 @@ export default {
     move(page) {
       this.$router.push(page)
     },
+    versionClick() {
+      console.log("app service revision:", this.$store.state.serviceRev)
+      console.log("app front revision:", this.$store.state.frontRev)
+    }
   }
 }
 </script>
 
 <style lang="scss">
-@import "../sub/constant/config.scss";
+@import "../../sub/constant/config.scss";
 
 .rotate {
   animation: fa-spin 2s infinite linear;

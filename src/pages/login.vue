@@ -13,7 +13,7 @@ import * as AuthHelper from '../sub/helper/AuthHelper'
 import { APP,DISP } from '../sub/constant/config'
 import * as Util from '../sub/util/Util'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-import commonmixinVue from '../components/commonmixin.vue';
+import commonmixinVue from '../components/mixin/commonmixin.vue';
 
 export default {
   mixin: [commonmixinVue],

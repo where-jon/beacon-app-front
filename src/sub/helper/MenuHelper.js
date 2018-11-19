@@ -1,6 +1,5 @@
 import { ROLE_FEATURE, MENU, ROLE } from "../constant/Constants"
 import * as Util from "../util/Util"
-import { THEME } from "../constant/config"
 
 let store
 

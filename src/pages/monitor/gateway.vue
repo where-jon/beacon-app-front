@@ -3,6 +3,7 @@
     <breadcrumb :items="items" :reload="true" :isLoad="isLoad" @reload="fetchData" />
     <div class="container" v-show="!isLoad">
       <b-row align-h="end">
+        <all-count :count="allCount" />
         <b-col md="2" class="mb-3 mr-3">
           <b-button v-if="!ios" :variant="theme" @click="download()" v-t="'label.download'" />
         </b-col>
@@ -43,17 +44,19 @@ import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
 import { EventBus } from '../../sub/helper/EventHelper'
-import { EXB, DISP, APP, GATEWAY } from '../../sub/constant/config'
-import breadcrumb from '../../components/breadcrumb.vue'
+import { EXB, DISP, APP } from '../../sub/constant/config'
+import breadcrumb from '../../components/layout/breadcrumb.vue'
 import { getTheme } from '../../sub/helper/ThemeHelper'
-import reloadmixinVue from '../../components/reloadmixin.vue'
+import reloadmixinVue from '../../components/mixin/reloadmixin.vue'
 import moment from 'moment'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
+import allCount from '../../components/parts/allcount.vue'
 
 export default {
   mixins: [reloadmixinVue],
   components: {
     breadcrumb,
+    allCount,
   },
   data () {
     return {
@@ -74,7 +77,7 @@ export default {
       labelState: this.$i18n.t('label.state'),
       labelReceiveNormal: this.$i18n.t('label.receiveNormal'),
       labelMalfunction: this.$i18n.t('label.malfunction'),
-      gatewayState: GATEWAY.STATE_COLOR
+      gatewayState: DISP.GATEWAY.STATE_COLOR
     }
   },
   props: {
@@ -90,7 +93,10 @@ export default {
     },
     ...mapState('monitor', [
       'gateways',
-    ])
+    ]),
+    allCount() {
+      return this.gateways.length
+    },
   },
   mounted() {
     this.fetchData()
@@ -122,7 +128,7 @@ export default {
         const currentTime = new Date().getTime()
         gateways = gateways.map((e) => {
           const timestamp = formattedDateToDatetime(e.updated)
-          const state = currentTime - timestamp < GATEWAY.MALFUNCTION ? this.labelReceiveNormal: this.labelMalfunction
+          const state = currentTime - timestamp < DISP.GATEWAY.MALFUNCTION ? this.labelReceiveNormal: this.labelMalfunction
           return { ...e, state: state }
         })
         this.replaceMonitor({gateways})
@@ -149,13 +155,13 @@ export default {
         return this.gatewayState.UNDETECT
       }
       const time = new Date().getTime() - new Date(updated).getTime()
-      if (time < GATEWAY.MALFUNCTION) {
+      if (time < DISP.GATEWAY.MALFUNCTION) {
         return this.gatewayState.NORMAL
       }
-      if (time < GATEWAY.NOTRECEIVE) {
+      if (time < DISP.GATEWAY.NOTRECEIVE) {
         return this.gatewayState.MALFUNCTION
       }
-      if (time < GATEWAY.UNDETECT) {
+      if (time < DISP.GATEWAY.UNDETECT) {
         return this.gatewayState.NOTRECEIVE
       }
     },

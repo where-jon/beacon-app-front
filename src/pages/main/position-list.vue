@@ -8,9 +8,9 @@
 
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-import breadcrumb from '../../components/breadcrumb.vue'
-import mList from '../../components/list.vue'
-import listmixinVue from '../../components/listmixin.vue'
+import breadcrumb from '../../components/layout/breadcrumb.vue'
+import mList from '../../components/page/list.vue'
+import listmixinVue from '../../components/mixin/listmixin.vue'
 import * as mock from '../../assets/mock/mock'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'

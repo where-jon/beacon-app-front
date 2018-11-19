@@ -4,27 +4,43 @@ import * as AuthHelper from './AuthHelper'
 import * as Util from '../util/Util'
 
 let i18n
-let app
+let context
 
-export const setApp = (pApp) => {
-  i18n = pApp.i18n
-  app = pApp
+export const setApp = (pContext) => {
+  i18n = pContext.app.i18n
+  context = pContext
 }
 
 const apServiceClient = axios.create({
-    xsrfHeaderName: 'X-CSRF-Token',
-    withCredentials: true
+  xsrfHeaderName: 'X-CSRF-Token',
+  withCredentials: true
+})
+
+const axiosNoCrd = axios.create({
+  xsrfHeaderName: 'X-CSRF-Token',
+  withCredentials: false
 })
 
 const exCloudClient = axios.create({ // when you access to excloud, withCredentials must be false
-    xsrfHeaderName: 'X-CSRF-Token',
-    withCredentials: EXCLOUD.withCredentials
+  xsrfHeaderName: 'X-CSRF-Token',
+  withCredentials: EXCLOUD.withCredentials
 })
 
 const apFrontClient = axios.create({
   xsrfHeaderName: 'X-CSRF-Token',
   withCredentials: true
 })
+
+export const getAppServiceNoCrd = async (path, config, ignoreError) => {
+  try {
+    let res = await axiosNoCrd.get(APP_SERVICE.BASE_URL + path, config)
+    return res.data
+  } catch (e) {
+    if (!ignoreError) {
+      handleError(e, path)
+    }
+  }
+}
 
 export const getAppService = async (path, config, ignoreError) => {
   try {
@@ -129,12 +145,14 @@ const handleError = (e, url) => {
         e.bulkError = e.response.data
       }
     }
-    if (e.message && e.message == "Network Error") {
-        e.key = "networkError"
-        app.store.commit('replace', {error: e})
-        app.router.app.$root.$emit('bv::show::modal', 'modalRootError')
+
+    let ignore = !url.endsWith("/") && context.route.path == "/login" // Loginエラーでポップアップが表示されるのを防ぐ
+    if (e.message && e.message == "Network Error" && !ignore) {
+      e.key = "networkError"
+      context.app.store.commit('replace', {error: e})
+      context.app.router.app.$root.$emit('bv::show::modal', 'modalRootError')
     }
-  throw e
+    throw e
   }
 } 
 

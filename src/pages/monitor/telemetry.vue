@@ -3,6 +3,7 @@
     <breadcrumb :items="items" :reload="true" :isLoad="isLoad"  @reload="fetchData" />
     <div class="container" v-show="!isLoad">
       <b-row align-h="end">
+        <all-count :count="allCount" />
         <b-col md="2" class="mb-3 mr-3">
           <b-button v-if="!ios" :variant='theme' @click="download()" v-t="'label.download'" />
         </b-col>
@@ -44,22 +45,24 @@ import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
 import { EventBus } from '../../sub/helper/EventHelper'
-import { EXB, DISP, APP, DEV, TELEMETRY } from '../../sub/constant/config'
-import breadcrumb from '../../components/breadcrumb.vue'
+import { EXB, DISP, APP, DEV } from '../../sub/constant/config'
+import breadcrumb from '../../components/layout/breadcrumb.vue'
 import VueScrollingTable from "vue-scrolling-table"
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
-import reloadmixinVue from '../../components/reloadmixin.vue'
+import reloadmixinVue from '../../components/mixin/reloadmixin.vue'
 import gatewayVue from './gateway.vue'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import moment from 'moment'
 import { addLabelByKey } from '../../sub/helper/ViewHelper'
+import allCount from '../../components/parts/allcount.vue'
 
 export default {
   mixins: [reloadmixinVue],
   components: {
     breadcrumb,
     VueScrollingTable,
+    allCount,
   },
   data () {
     return {
@@ -92,7 +95,7 @@ export default {
       label_receiveNormal: this.$i18n.tnl('label.receiveNormal'),
       label_state: this.$i18n.tnl('label.state'),
       label_undetect: this.$i18n.tnl('label.undetect'),
-      label_nosignal: this.$i18n.tnl('label.no-signal', {min: TELEMETRY.NOSIGNAL / (60 * 1000)}),
+      label_nosignal: this.$i18n.tnl('label.no-signal', {min: APP.TELEMETRY.NOSIGNAL / (60 * 1000)}),
       badgeClassPrefix: 'badge badge-pill badge-',
       csvHeaders: {
         [this.$i18n.tnl('label.deviceNum')]: APP.EXB_WITH_DEVICE_NUM ? 'deviceNum' : null,
@@ -123,6 +126,9 @@ export default {
     ...mapState('app_service', [
       'exbs',
     ]),
+    allCount() {
+      return this.telemetrys.length
+    },
   },
   mounted() {
     this.replace({title: this.$i18n.tnl('label.telemetry')})
@@ -221,7 +227,7 @@ export default {
     },
     exbState(updatetime) {
       const time = new Date().getTime() - moment(updatetime).local().toDate().getTime()
-      return time < TELEMETRY.NOSIGNAL ? this.label_receiveNormal :
+      return time < APP.TELEMETRY.NOSIGNAL ? this.label_receiveNormal :
       (this.isUndetect(updatetime) ? this.label_undetect : this.label_nosignal)
     },
     exbStateClass(exbState) {
@@ -277,4 +283,5 @@ export default {
   .power-empty {
     color: #b22222;
   }
+
 </style>

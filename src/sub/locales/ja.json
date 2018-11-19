@@ -338,6 +338,7 @@
     "legend": "凡例",
     "using": "：使用中",
     "notUse": "未使用",
+    "totalRecordsCount": "総件数",
 
     "---------------- Config key name ---------------":"",
 
@@ -355,7 +356,7 @@
     "APP.SERVICE_BASE_URL": "API設定・エンドポイント",
     "APP.SERVICE_UP_TM": "API設定・更新間隔",
 
-    "DISP.HIDE_TIME": "未受信状態判定時間",
+    "APP.HIDE_TIME": "未受信状態判定時間",
 
     "dummy": ""
   },

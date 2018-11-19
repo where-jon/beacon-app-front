@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import axios from 'axios'
-import { DISP } from '../sub/constant/config'
+import { APP } from '../sub/constant/config'
 
 export const state = () => ({
   positions: [],
@@ -43,7 +43,7 @@ export const actions = { // Sample
   },
   pushOrgPositions({ commit, state }, payload) {
     let orgPositions = _.clone(state.orgPositions)
-    if (orgPositions.length >= DISP.MOVING_AVERAGE) {
+    if (orgPositions.length >= APP.MOVING_AVERAGE) {
       orgPositions.shift()
     }
     orgPositions.push(payload)

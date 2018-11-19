@@ -22,10 +22,10 @@
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import _ from 'lodash'
-import editmixinVue from './editmixin.vue'
-import { getButtonTheme } from '../sub/helper/ThemeHelper'
-import { getTheme } from '../sub/helper/ThemeHelper'
-import * as StateHelper from '../sub/helper/StateHelper'
+import editmixinVue from '../mixin/editmixin.vue'
+import { getButtonTheme } from '../../sub/helper/ThemeHelper'
+import { getTheme } from '../../sub/helper/ThemeHelper'
+import * as StateHelper from '../../sub/helper/StateHelper'
 
 export default {
   props: ["name", "id", "backPath", "appServicePath"],

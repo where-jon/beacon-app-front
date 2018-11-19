@@ -3,6 +3,7 @@
     <breadcrumb :items="items" :reload="true" :isLoad="isLoad" @reload="fetchData" />
     <div class="container" v-show="!isLoad">
       <b-row align-h="end">
+        <all-count :count="allCount" />
         <b-col md="2" class="mb-3 mr-3">
           <b-button v-if="!ios" :variant='theme' @click="download()" v-t="'label.download'" />
         </b-col>
@@ -59,20 +60,22 @@ import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
 import { EventBus } from '../../sub/helper/EventHelper'
-import { EXB, DISP, APP, MONITOR_TX } from '../../sub/constant/config'
-import breadcrumb from '../../components/breadcrumb.vue'
+import { EXB, DISP, APP } from '../../sub/constant/config'
+import breadcrumb from '../../components/layout/breadcrumb.vue'
 import VueScrollingTable from "vue-scrolling-table"
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import moment from 'moment'
-import reloadmixinVue from '../../components/reloadmixin.vue'
+import reloadmixinVue from '../../components/mixin/reloadmixin.vue'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import _ from 'lodash'
+import allCount from '../../components/parts/allcount.vue'
 
 export default {
   mixins: [reloadmixinVue],
   components: {
     breadcrumb,
     VueScrollingTable,
+    allCount,
   },
   data () {
     return {
@@ -132,6 +135,9 @@ export default {
     ...mapState('app_service', [
       'pots', 'exbs'
     ]),
+    allCount() {
+      return this.positions.length
+    },
   },
   mounted() {
     this.fetchData()
@@ -216,11 +222,11 @@ export default {
     },
     txState(updatetime) {
       const time = new Date().getTime() - moment(updatetime).local().toDate().getTime()
-      if (time < MONITOR_TX.ABSENT) {
+      if (time < APP.MONITOR_TX.ABSENT) {
         return this.label_receiveNormal
       }
 
-      if (time < MONITOR_TX.UNDETECT) {
+      if (time < APP.MONITOR_TX.UNDETECT) {
         return this.label_absent
       }
 

@@ -2,15 +2,15 @@
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import _ from 'lodash'
-import * as AppServiceHelper from '../sub/helper/AppServiceHelper'
-import * as ViewHelper from '../sub/helper/ViewHelper'
-import * as MenuHelper from '../sub/helper/MenuHelper'
-import * as StateHelper from '../sub/helper/StateHelper'
-import { sleep } from '../sub/util/Util'
-import { APP } from '../sub/constant/config.js'
-import { ROLE } from '../sub/constant/Constants'
-import * as HtmlUtil from '../sub/util/HtmlUtil'
-import * as Util from '../sub/util/Util'
+import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
+import * as MenuHelper from '../../sub/helper/MenuHelper'
+import * as StateHelper from '../../sub/helper/StateHelper'
+import { sleep } from '../../sub/util/Util'
+import { APP } from '../../sub/constant/config.js'
+import { ROLE } from '../../sub/constant/Constants'
+import * as HtmlUtil from '../../sub/util/HtmlUtil'
+import * as Util from '../../sub/util/Util'
 import commonmixinVue from './commonmixin.vue';
 
 export default {
