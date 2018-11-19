@@ -188,10 +188,10 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
 
   GATEWAY: { // ゲートウエイ
     STATE_COLOR: { // 状態別色
-      NORMAL: '#28a745',
-      MALFUNCTION: '#dc3545',
-      NOTRECEIVE: '#ffc107',
-      UNDETECT: '#dc3545'
+      receiveNormal: '#28a745',
+      malfunction: '#dc3545',
+      notReceive: '#ffc107',
+      undetect: '#dc3545'
     }
   }
     

@@ -19,17 +19,8 @@
             <td>{{ gateway.num }}</td>
             <td>{{ gateway.deviceid }}</td>
             <td>{{ gateway.updated }}</td>
-            <td v-if="getGatewayState(gateway.timestamp) === gatewayState.NORMAL">
-              <span class="badge badge-pill" :style="{backgroundColor: gatewayState.NORMAL}">{{ $i18n.t('label.receiveNormal') }}</span>
-            </td>
-            <td v-else-if="getGatewayState(gateway.timestamp) === gatewayState.MALFUNCTION">
-              <span class="badge badge-pill" :style="{backgroundColor: gatewayState.MALFUNCTION}">{{ $i18n.t('label.malfunction') }}</span>
-            </td>
-            <td v-else-if="getGatewayState(gateway.timestamp) === gatewayState.NOTRECEIVE">
-              <span class="badge badge-pill" :style="{backgroundColor: gatewayState.NOTRECEIVE}">{{ $i18n.t('label.notReceive') }}</span>
-            </td>
-            <td v-else>
-              <span class="badge badge-pill" :style="{backgroundColor: gatewayState.UNDETECT}">{{ $i18n.t('label.undetect') }}</span>
+            <td>
+              <span class="badge badge-pill" :style="{backgroundColor: getGatewayStateColor(gateway.timestamp)}">{{ $i18n.t('label.' + getGatewayState(gateway.timestamp)) }}</span>
             </td>
           </tr>
         </tbody>
@@ -140,26 +131,29 @@ export default {
       if (updated == null) {
         return false
       }
-      return updated == "" || new Date().getTime() - updated > APP.UNDETECT_TIME
+      return updated == "" || new Date().getTime() - updated > APP.GATEWAY.UNDETECT
     },
     getTableHeaders() {
       return !this.isDev ? [this.labelNo,this.labelDeviceId,this.labelTimestamp,this.labelState]
       : [this.labelNo,'deviceid','updated','state']
     },
+    getGatewayStateColor(updated) {
+      return DISP.GATEWAY.STATE_COLOR[this.getGatewayState(updated)]
+    },
     getGatewayState(updated) {
       // 未検知
       if (this.isUndetect(updated)) {
-        return this.gatewayState.UNDETECT
+        return 'undetect'
       }
       const time = new Date().getTime() - new Date(updated).getTime()
-      if (time < DISP.GATEWAY.MALFUNCTION) {
-        return this.gatewayState.NORMAL
+      if (time > APP.GATEWAY.NOTRECEIVE) {
+        return 'notReceive'
       }
-      if (time < DISP.GATEWAY.NOTRECEIVE) {
-        return this.gatewayState.MALFUNCTION
+      if (time > APP.GATEWAY.MALFUNCTION) {
+        return 'malfunction'
       }
-      if (time < DISP.GATEWAY.UNDETECT) {
-        return this.gatewayState.NOTRECEIVE
+      else {
+        return 'receiveNormal'
       }
     },
     download() {
