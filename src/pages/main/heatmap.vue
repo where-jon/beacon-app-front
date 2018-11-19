@@ -1,35 +1,14 @@
 <template>
-  <div id="mapContainer" class="container-fluid" >
-    <breadcrumb :items="items" />
+  <div id="mapContainer" class="container-fluid">
+    <breadcrumb :items="items" :reload="true" />
+    <b-row class="mt-2">
+      <b-form inline class="mt-2">
+        <label class="ml-3 mr-2">{{ $t('label.area') }}</label>
+        <b-form-select v-model="selectedArea" :options="areaOptions" @change="changeArea" required class="ml-2"></b-form-select>
+      </b-form>
+    </b-row>
     <b-row class="mt-3">
-
-
-
-
-
-
-
-
-
-
-
-
-
       <div id="heatmap" ref="heatmap"></div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     </b-row>
     <!-- modal -->
     <b-modal id="modalError" :title="$t('label.error')" ok-only>
@@ -42,95 +21,91 @@
 import h337 from 'heatmap.js'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
-import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
-import * as MenuHelper from '../../sub/helper/MenuHelper'
-import * as HtmlUtil from '../../sub/util/HtmlUtil'
+import { DEV, DISP, APP } from '../../sub/constant/config'
+import { SENSOR } from '../../sub/constant/Constants'
 import * as Util from '../../sub/util/Util'
-import * as mock from '../../assets/mock/mock'
-import txdetail from '../../components/txdetail.vue'
-import { Tx, EXB, APP, DISP, DEV } from '../../sub/constant/config'
-import { SHAPE, SENSOR, EXTRA_NAV, POSITION } from '../../sub/constant/Constants'
 import { Shape, Stage, Container, Bitmap, Text, Touch } from '@createjs/easeljs/dist/easeljs.module'
 import { Tween, Ticker } from '@createjs/tweenjs/dist/tweenjs.module'
 import breadcrumb from '../../components/breadcrumb.vue'
-import listmixin from '../../components/listmixin.vue'
-import sensor from '../../components/sensor.vue'
-import moment from 'moment'
-import { rightpanewidth, rightpaneleft } from '../../sub/constant/config.scss'
+import showmapmixin from '../../components/showmapmixin.vue'
 
 export default {
-  mixins: [listmixin],
+  mixins: [showmapmixin],
   components: {
-    'sensor': sensor,
-    'txdetail': txdetail,
     breadcrumb,
   },
   data() {
      return {
+       keepExbPosition: false,
+       toggleCallBack: () => {
+        this.keepExbPosition = true
+      },
       items: [
         {
           text: this.$i18n.tnl('label.main'),
           active: true
         },
         {
-          text: this.$i18n.tnl('label.showPosition'),
+          text: this.$i18n.tnl('label.pir'),
           active: true
         },
       ],
-      count: 0, // for mock test 
-      pot: {},
     }
   },
   computed: {
-    positions() {
-      let now = !DEV.USE_MOCK_EXC? new Date().getTime(): mock.positions_conf.start + this.count++ * mock.positions_conf.interval  // for mock
-      let positions = PositionHelper.correctPosId(this.orgPositions, now)
-      if (APP.USE_MEDITAG && this.meditagSensors) {
-        positions = SensorHelper.setStress(positions, this.meditagSensors)
-      }
-      positions = this.positionFilter(positions, this.selectedGroup, this.selectedCategory)
-      return positions
-    },
-    filter() {
-      return [this.selectedGroup, this.selectedCategory]
-    },
   },
-  watch: {
-    filter() {
-      this.showTxAll()
-    },
-  },
-  async mounted() {
-    this.replace({title: this.$i18n.tnl('label.showPosition')})
+  mounted() {
+    this.replace({title: this.$i18n.tnl('label.pir')})
     this.fetchData()
   },
   methods: {
-    ...mapActions('main', [
-      'pushOrgPositions',
-    ]),
+    reset() {
+      this.fetchData()
+    },
     async fetchData(payload) {
-      const heatmap = h337.create({
-			  container: document.getElementById('heatmap')
-      })
-      heatmap.width = 1000
-      heatmap.height= 700
-      heatmap.setData({
-        max: 5,
-        data: [{ x: 10, y: 15, value: 5},]
-      })
-
       try {
         this.replace({showProgress: true})
-        await StateHelper.load('tx')
+        console.log('fetchData start.')
+        await StateHelper.load('area')
 
-        if (DEV.USE_MOCK_EXC) {
-          // var pMock = mock.position
-          var pMock = mock.positions[this.count]
+        const map = new Image()
+        map.src = this.mapImage
+
+        let heatmap = document.getElementById('heatmap')
+        while (heatmap.firstChild) {
+          heatmap.removeChild(heatmap.firstChild)
         }
-        let positions = await EXCloudHelper.fetchPosition(this.exbs, this.txs, pMock)
-        // 移動平均数分のポジションデータを保持する
-        this.pushOrgPositions(positions)
+        heatmap.appendChild(map)
+
+        map.onload = (evt) => {
+          console.log('in onload...')
+          const size = this.calcFitSize(map, heatmap.parentElement)
+          map.width = size.width
+          map.height = size.height
+          console.log(size)
+          
+          heatmap = h337.create({
+            container: heatmap
+          })
+          heatmap.setData({
+            max: 20,
+            data: [
+              { x: 10, y: 15, value: 5},
+              { x: 20, y: 25, value: 7},
+              { x: 30, y: 35, value: 10},
+              { x: 40, y: 45, value: 15},
+              { x: 50, y: 55, value: 18},
+              { x: 50, y: 65, value: 20},
+              { x: 500, y: 370, value: 5},
+              { x: 500, y: 380, value: 7},
+              { x: 500, y: 390, value: 10},
+              { x: 500, y: 400, value: 15},
+              { x: 500, y: 430, value: 18},
+              { x: 500, y: 450, value: 20},
+            ]
+          })
+        }
 
         if (payload && payload.done) {
           payload.done()
@@ -141,9 +116,6 @@ export default {
       }
       this.replace({showProgress: false})
     },
-    isShowModal() {
-      return window.innerWidth < this.shwoIconMinWidth
-    },
   }
 }
 </script>
@@ -151,27 +123,9 @@ export default {
 <style scoped lang="scss">
 @import "../../sub/constant/config.scss";
 
-$right-pane-width-px: $right-pane-width * 1px;
-$right-pane-maxwidth-px: ($right-pane-width + 100) * 1px;
-$right-pane-left-px: $right-pane-left * 1px;
-
 ::-webkit-scrollbar { 
   display: none; 
 }
 
-.rightPane {
-  max-width: $right-pane-maxwidth-px;
-  margin: 10px;
-  padding: 3px;
-  width: $right-pane-width-px;
-  min-width: $right-pane-width-px;
-  overflow: scroll;
-  height: calc(100vh - 100px);
-}
-
-#heatmap {
-  width: 100px;
-  height: 700px;
-}
 
 </style>
