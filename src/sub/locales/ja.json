@@ -305,6 +305,10 @@
     "temperatureHistoryType0": "すべての温湿度",
     "temperatureHistoryType1": "時間毎の温湿度",
 
+    "analysis": "分析",
+    "flowlineAnalysis": "動線分析",
+    "individual": "個人",
+
     "allRejection": "すべて拒否",
     "systemReadOnly": "システムの読み取りのみ許可",
     "readOnly": "読み取りのみ許可",
@@ -380,6 +384,10 @@
     "overLength": "{target}には{length}以内の文字列を入力してください",
     "selectFile": "ファイルを選択してください",
     "required": "{target}を入力してください。",
+    "requiredMore": "{target}のいずれかを入力してください。",
+    "invalid": "{target}が不正です。",
+    "invalidLessHours": "{target}は{max}時間以内になるように入力してください。",
+    "notFoundData": "{target}のデータがありません。",
     "notMatchCureentPassword": "パスワードが違います",
     "invalidPassword": "パスワードの形式が不正です",
     "notMatchPassword": "変更パスワードと確認パスワードが一致していません。",
