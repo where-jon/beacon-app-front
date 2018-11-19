@@ -197,12 +197,6 @@ export const MENU = [
         icon: 'fas fa-map-marker-alt',
       },
       {
-        key: 'heatmap',
-        path: 'heatmap',
-        feature: '',
-        icon: 'fas fa-map-marker-alt',
-      },
-      {
         key: 'pir',
         path: 'pir',
         feature: '',
@@ -359,6 +353,12 @@ export const MENU = [
         path: 'numUsers',
         feature: '/sum/numUsers',
         icon: 'fas fa-chart-area'
+      },
+      {
+        key: 'heatmapPosition',
+        path: 'heatmap-position',
+        feature: '',
+        icon: 'fas fas fa-fire',
       },
     ]
   },
