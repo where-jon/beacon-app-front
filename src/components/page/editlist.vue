@@ -43,7 +43,8 @@
             <b-form-row class="mb-2">
               <label v-t="'label.value'" class="mr-2" />
               <b-form-select v-if="usePullDown(newForm.type)" v-model="newForm.value" :options="getBooleanOptions()" required/>
-              <b-form-input v-if="!usePullDown(newForm.type)" v-model="newForm.value" :type="getInputType(newForm.type)" class="form-control-sm" maxlength="1000" required/>
+              <b-form-input v-else-if="useNumberType(newForm.type)" v-model="newForm.value" type="number" class="form-control-sm" step="0.1" required/>
+              <b-form-input v-else v-model="newForm.value" :type="getInputType(newForm.type)" class="form-control-sm" maxlength="1000" required/>
             </b-form-row>
             <b-form-row class="float-right mt-3">
               <b-button v-if="isEditable" type="submit" :variant="getButtonTheme()" @click="register(true)" v-t="'label.add'" />
@@ -116,6 +117,9 @@ export default {
     },
     usePullDown(type) {
       return new RegExp(`^${type}$`, "i").test("boolean")
+    },
+    useNumberType(type) {
+      return this.getInputType(type) == "number"
     },
     getBooleanOptions() {
       return [{text: "true", value: "true"}, {text: "false", value: "false"}]
