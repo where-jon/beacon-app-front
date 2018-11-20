@@ -17,6 +17,7 @@ import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as PositionHelper from '../../sub/helper/PositionHelper'
 import { addLabelByKey } from '../../sub/helper/ViewHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
+import * as MenuHelper from '../../sub/helper/MenuHelper'
 import { DETECT_STATE, BATTERY_STATE, BATTERY_BOUNDARY, EXTRA_NAV } from '../../sub/constant/Constants'
 import * as Util from '../../sub/util/Util'
 import { APP, DISP, DEV } from '../../sub/constant/config.js'
@@ -33,7 +34,7 @@ export default {
         name: 'position-list',
         id: 'positionListId',
         extraFilter: _(['detectState',
-          APP.POT_WITH_GROUP ? 'group' : null,
+          MenuHelper.useMaster('group') && APP.POT_WITH_GROUP ? 'group' : null,
           APP.POSITION_WITH_AREA ? 'area' : null]).compact().value(),
         disableTableButtons: true,
         fields: addLabelByKey(this.$i18n, [ 
@@ -45,7 +46,7 @@ export default {
               {key: "minor", label:'minor', sortable: true, tdClass: "action-rowdata" }: null,
           APP.POT_WITH_POTCD ? {key: "potCd", label: 'potCd', sortable: true, tdClass: "action-rowdata"} : null,
           {key: "potName", label: 'name', sortable: true, tdClass: "action-rowdata"},
-          APP.POT_WITH_GROUP ? {key: "groupName", label: 'group', sortable: true, tdClass: "action-rowdata"} : null,
+          MenuHelper.useMaster('group') && APP.POT_WITH_GROUP ? {key: "groupName", label: 'group', sortable: true, tdClass: "action-rowdata"} : null,
           {key: "state", sortable: true, tdClass: "action-rowdata"},
           APP.POSITION_WITH_AREA ? {key: "areaName", label: 'area', sortable: true, tdClass: "action-rowdata"} : null,
           {key: "locationName", label: 'final-receive-location', sortable: true, tdClass: "action-rowdata"},

@@ -146,7 +146,7 @@ const handleError = (e, url) => {
       }
     }
 
-    let ignore = !url.endsWith("/") && context.route.path == "/login" // Loginエラーでポップアップが表示されるのを防ぐ
+    let ignore = !url.endsWith("/") && context.route.path.indexOf("/login") != -1 // Loginエラーでポップアップが表示されるのを防ぐ
     if (e.message && e.message == "Network Error" && !ignore) {
       e.key = "networkError"
       context.app.store.commit('replace', {error: e})
