@@ -354,12 +354,6 @@ export const MENU = [
         feature: '/sum/numUsers',
         icon: 'fas fa-chart-area'
       },
-      {
-        key: 'heatmapPosition',
-        path: 'heatmap-position',
-        feature: '',
-        icon: 'fas fas fa-fire',
-      },
     ]
   },
   {
@@ -372,6 +366,19 @@ export const MENU = [
         path: 'temperatureHistory',
         feature: '/history/temperatureHistory',
         icon: 'fas fa-thermometer'
+      },
+    ]
+  },
+  {
+    key: 'analysis',
+    base: 'analysis/',
+    path: '/analysis/flowlineAnalysis',
+    icon: 'far fa-copy',
+    pages: [{
+        key: 'flowlineAnalysis',
+        path: 'flowlineAnalysis',
+        feature: '/analysis/flowlineAnalysis',
+        icon: 'fas fa-shoe-prints'
       },
     ]
   },
