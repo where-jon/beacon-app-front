@@ -46,16 +46,16 @@
               <b-form-input v-if="!usePullDown(newForm.type)" v-model="newForm.value" :type="getInputType(newForm.type)" class="form-control-sm" maxlength="1000" required/>
             </b-form-row>
             <b-form-row class="float-right mt-3">
-              <b-button v-if="isEditable" type="submit" :variant="theme" @click="register(true)" v-t="'label.add'" />
+              <b-button v-if="isEditable" type="submit" :variant="getButtonTheme()" @click="register(true)" v-t="'label.add'" />
               <b-button type="button" variant="outline-danger" @click="showForm(false)" v-t="'label.cancel'" class="ml-2" />
             </b-form-row>
           </div>
         </div>
-        <b-button v-if="!useRegistForm" type="button" :variant="theme" @click="showForm(true)" v-t="'label.addForm'" class="float-right"/>
+        <b-button v-if="!useRegistForm" type="button" :variant="getButtonTheme()" @click="showForm(true)" v-t="'label.addForm'" class="float-right"/>
       </b-form>
 
       <b-form @submit="onSubmit" v-if="show" :id="'updateForm'">
-        <b-button v-if="isEditable && !useRegistForm" type="submit" :variant="theme" @click="register(true)" class="ml-2" v-t="'label.update'" />
+        <b-button v-if="isEditable && !useRegistForm" type="submit" :variant="getButtonTheme()" @click="register(true)" class="ml-2" v-t="'label.update'" />
       </b-form>
     </div>
 
@@ -70,14 +70,14 @@
 
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import _ from 'lodash'
+import commonmixinVue from '../mixin/commonmixin.vue';
 import editmixinVue from '../mixin/editmixin.vue'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
-import { getButtonTheme, getTheme } from '../../sub/helper/ThemeHelper'
 
 export default {
-  mixins: [editmixinVue],
+  mixins: [ editmixinVue, commonmixinVue ],
   props: ['params', 'multiList', 'newForm'],
   data() {
     return {
@@ -90,18 +90,12 @@ export default {
     crud() {
       return 'update'
     },
-    theme () {
-      const theme = getButtonTheme(this.$store.state.loginId)
-      return 'outline-' + theme
-    },
     categoryIds() {
       return Object.keys(this.multiList)
     },
   },
   mounted() {
     this.$parent.$options.methods.fetchData.apply(this.$parent)
-    const theme = getTheme(this.loginId)
-    return 'outline-' + theme
   },
   methods: {
     getName(id) {

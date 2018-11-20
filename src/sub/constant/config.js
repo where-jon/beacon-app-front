@@ -173,7 +173,7 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   THERMOPILE_M_SIZE: 40, // サーモパイル円Mサイズ
   THERMOPILE_L_SIZE: 60, // サーモパイル円Lサイズ
 
-  STRESS_BG: ['#8bf087', '#77c8e0', '#f795d6'], // ストレスレベルに応じた背景色
+  STRESS_BG: ['#85A9D1', '#F0C864', '#F49696'], // ストレスレベルに応じた背景色
 
   ZONE: {
     MIN_WIDTH: 30,
@@ -191,10 +191,10 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
 
   GATEWAY: { // ゲートウエイ
     STATE_COLOR: { // 状態別色
-      NORMAL: '#28a745',
-      MALFUNCTION: '#dc3545',
-      NOTRECEIVE: '#ffc107',
-      UNDETECT: '#dc3545'
+      receiveNormal: '#28a745',
+      malfunction: '#dc3545',
+      notReceive: '#ffc107',
+      undetect: '#dc3545'
     }
   },
 

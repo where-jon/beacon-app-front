@@ -14,6 +14,8 @@ $earth-color: #5C7886;
 $autumn: #927760;
 $vivid: #D50057;
 
+$button-default: #376495;
+
 $default-menu-item: #85A9D1;
 $earth-color-menu-item: #89A874;
 $autumn-menu-item: #C59E57;
@@ -21,6 +23,10 @@ $vivid-menu-item: #FF4784;
 
 .default {
   background-color: $default;
+}
+
+.button-default {
+  background-color: $button-default;
 }
 
 .earthcolor {
@@ -70,7 +76,8 @@ $colors: (
   cyan: $cyan,
   white: $white,
   gray: $gray-600,
-  gray-dark: $gray-800
+  gray-dark: $gray-800,
+  button-default: $button-default,
 ) !default;
 
 $theme-colors: () !default;
@@ -78,6 +85,7 @@ $theme-colors: map-merge((
   default : $default,
   earthcolor : $earth-color,
   autumn : $autumn,
-  vivid : $vivid
+  vivid : $vivid,
+  buttonDefault: $button-default,
 ), $theme-colors);
 
