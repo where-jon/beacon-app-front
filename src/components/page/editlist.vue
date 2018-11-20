@@ -51,11 +51,11 @@
             </b-form-row>
           </div>
         </div>
-        <b-button v-if="!useRegistForm" type="button" :variant="theme" @click="showForm(true)" v-t="'label.addForm'" class="float-right"/>
+        <b-button v-if="!useRegistForm" type="button" :variant="getButtonTheme()" @click="showForm(true)" v-t="'label.addForm'" class="float-right"/>
       </b-form>
 
       <b-form @submit="onSubmit" v-if="show" :id="'updateForm'">
-        <b-button v-if="isEditable && !useRegistForm" type="submit" :variant="theme" @click="register(true)" class="ml-2" v-t="'label.update'" />
+        <b-button v-if="isEditable && !useRegistForm" type="submit" :variant="getButtonTheme()" @click="register(true)" class="ml-2" v-t="'label.update'" />
       </b-form>
     </div>
 
@@ -96,8 +96,6 @@ export default {
   },
   mounted() {
     this.$parent.$options.methods.fetchData.apply(this.$parent)
-    const theme = getTheme(this.loginId)
-    return 'outline-' + theme
   },
   methods: {
     getName(id) {

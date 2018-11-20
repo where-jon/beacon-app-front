@@ -21,12 +21,12 @@
             <b-form-group>
               <label v-t="'label.map'" />
               <b-form-file v-if="isEditable" @change="readImage" v-model="form.mapImage" ref="inputThumbnail" accept="image/jpeg, image/png, image/gif" :placeholder="$t('message.selectFile') "></b-form-file>
-              <b-button v-if="isEditable && form.mapImage" type="button" :variant="theme" @click="clearImage" class="float-right mt-3">{{ $i18n.tnl('label.clear') }}</b-button>
+              <b-button v-if="isEditable && form.mapImage" type="button" :variant="getButtonTheme()" @click="clearImage" class="float-right mt-3">{{ $i18n.tnl('label.clear') }}</b-button>
               <img v-if="form.mapImage" ref="mapImage" :src="form.mapImage" width="100" class="mt-1 ml-3" />
             </b-form-group>
             <b-button type="button" variant="outline-danger" @click="backToList" v-t="'label.back'" />
-            <b-button v-if="isEditable" type="submit" :variant="theme" @click="beforeSubmit(false)" class="ml-2">{{ label }}</b-button>
-            <b-button v-if="isEditable && !isUpdate" type="submit" variant="outline-primary" @click="beforeSubmit(true)" class="ml-2" v-t="'label.registerAgain'"/>
+            <b-button v-if="isEditable" type="submit" :variant="getButtonTheme()" @click="beforeSubmit(false)" class="ml-2">{{ label }}</b-button>
+            <b-button v-if="isEditable && !isUpdate" type="submit" :variant="getButtonTheme()" @click="beforeSubmit(true)" class="ml-2" v-t="'label.registerAgain'"/>
           </b-form>
         </b-col>
       </b-row>
@@ -40,6 +40,7 @@ import _ from 'lodash'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as Util from '../../../sub/util/Util'
+import commonmixinVue from '../../../components/mixin/commonmixin.vue'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import { APP } from '../../../sub/constant/config'
@@ -51,6 +52,7 @@ export default {
     breadcrumb,
   },
   mixins: [editmixinVue],
+  mixins: [editmixinVue, commonmixinVue ],
   data() {
     return {
       name: 'area',
@@ -78,10 +80,6 @@ export default {
   computed: {
     hasId(){
       return Util.hasValue(this.form.areaId)
-    },
-    theme () {
-      const theme = getButtonTheme(this.$store.state.loginId)
-      return 'outline-' + theme
     },
     ...mapState('app_service', [
       'area',

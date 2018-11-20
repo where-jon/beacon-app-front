@@ -30,13 +30,13 @@
           </v-select>
         </b-form>
         <b-form inline class="mb-2">
-          <b-button size="sm" variant="info" v-t="'label.search'" @click="search()"></b-button> 
+          <b-button size="sm" :variant="getButtonTheme()" v-t="'label.search'" @click="search()"></b-button> 
         </b-form>
       </b-row>
       <p></p>
       <b-row align-h="end">
         <b-col md="2" class="mb-2">
-          <b-button v-if="!ios" :variant="theme" @click="download()" v-t="'label.download'"/>
+          <b-button v-if="!ios" :variant="getButtonTheme()" @click="download()" v-t="'label.download'"/>
         </b-col>
       </b-row>
       <table class="table table-hover table-bordered">
@@ -68,11 +68,12 @@ import { EventBus } from '../../sub/helper/EventHelper'
 import { EXB, DISP, APP } from '../../sub/constant/config'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import { getTheme } from '../../sub/helper/ThemeHelper'
+import commonmixinVue from '../../components/mixin/commonmixin.vue'
 import reloadmixinVue from '../../components/mixin/reloadmixin.vue'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 
 export default {
-  mixins: [reloadmixinVue],
+  mixins: [reloadmixinVue, commonmixinVue ],
   components: {
     breadcrumb,
   },
@@ -136,10 +137,6 @@ export default {
     },
     dayOptions() {
       return this.dayOptionList
-    },
-    theme () {
-      const theme = getTheme(this.$store.state.loginId)
-      return 'outline-' + theme
     },
     ...mapState('monitor', [
       'numUsers',
