@@ -31,9 +31,9 @@ export default {
         appServicePath: '/core/exb',
         csvOut: true,
         custumCsvColumns: [
-          "exbId",
+          APP.EXB_WITH_EXBID? "exbId": null,
           APP.EXB_WITH_DEVICE_NUM? "deviceNum": null,
-          APP.EXB_WITH_DEVICE_ID || (!APP.EXB_WITH_DEVICE_NUM && !APP.EXB_WITH_DEVICE_ID && !APP.EXB_WITH_DEVICE_IDX)? "deviceId": null,
+          APP.EXB_WITH_DEVICE_ID? "deviceId": null,
           APP.EXB_WITH_DEVICE_IDX? "deviceIdX": null,
           "locationName", "posId", "areaName", "x", "y", "enabled", "sensor", "zoneName"
         ].filter((val) => val),
