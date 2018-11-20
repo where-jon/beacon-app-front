@@ -8,7 +8,7 @@ export default {
       let allNames = ""
       for(let idx = 0; idx < names.length; idx++) {
         if(idx != 0){
-          allNames = `${allNames},`
+          allNames = `${allNames}, `
         }
         allNames = `${allNames}${this.$i18n.tnl(`label.${names[idx]}`)}`
       }
@@ -62,7 +62,8 @@ export default {
       return errors
     },
     formatValidateMessage(errors){
-      return errors.map((error) => error.message).join("<br>")
+      const errorMessages = errors.map((error) => error.message)
+      return errorMessages.filter((errorMessage, index) => errorMessages.indexOf(errorMessage) == index).map((errorMessage) => errorMessage).join("<br>")
     },
   }
 }

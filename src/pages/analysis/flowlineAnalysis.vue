@@ -39,7 +39,7 @@ export default {
           active: true
         }
       ],
-      dotRadius: 2,
+      dotRadius: 3,
       startInfo: {caption: "start", color: "#2299cc"},
       endInfo: {caption: "end", color: "#ee0033"},
       //
@@ -66,10 +66,29 @@ export default {
       })
       return potInfos
     },
+    analyseWeightInfos(positionInfos){
+      const weightInfos = []
+      Object.values(positionInfos).forEach((positionInfo) => {
+        if(!weightInfos.includes(positionInfo.count)){
+          weightInfos.push(positionInfo.count)
+        }
+      })
+      weightInfos.sort((a, b) => a - b)
+      const max = weightInfos.length < DISP.ANALYSIS.LINE.MAX_WEIGHT? weightInfos.length: DISP.ANALYSIS.LINE.MAX_WEIGHT
+      Object.values(positionInfos).forEach((positionInfo) => {
+        const stageIndex = weightInfos.indexOf(positionInfo.count)
+        const per = max <= 1? 0: weightInfos.length <= 1? 1: (max - 1) / (weightInfos.length - 1)
+        positionInfo.weight = 1 + stageIndex * per
+      })
+      return positionInfos
+    },
     analysePositionInfos(potInfos){
       const positionInfos = {}
       Object.values(potInfos).forEach((potInfo) => {
         for(let idx = 1; idx < potInfo.length; idx++){
+          if(potInfo[idx - 1].posId == potInfo[idx].posId){
+            continue
+          }
           const positionInfoKey = potInfo[idx - 1].posId < potInfo[idx].posId? `${potInfo[idx - 1].posId}-${potInfo[idx].posId}`: `${potInfo[idx].posId}-${potInfo[idx - 1].posId}`
           if(!positionInfos[positionInfoKey]){
             positionInfos[positionInfoKey] = {
@@ -81,43 +100,39 @@ export default {
           positionInfos[positionInfoKey].count++
         }
       })
-      return positionInfos
+      return this.analyseWeightInfos(positionInfos)
     },
     analyseFlowline(results){
       const potInfos = this.analysePotInfos(results)
       const positionInfos = this.analysePositionInfos(potInfos)
       return {potInfos: potInfos, positionInfos: positionInfos}
     },
+    drawFlowline(param, positionInfos){
+      const line = new Shape()
+      line.graphics.beginStroke(this.getRGBA(DISP.ANALYSIS.LINE.COLOR, DISP.ANALYSIS.LINE.OPACITY))
+      Object.entries(positionInfos).forEach(([key, positionInfo]) => {
+        line.graphics.setStrokeStyle(positionInfo.weight)
+        line.graphics.moveTo(positionInfo.start.x * param.mapScale, positionInfo.start.y * param.mapScale)
+        line.graphics.lineTo(positionInfo.end.x * param.mapScale, positionInfo.end.y * param.mapScale)
+      })
+      param.view.addChild(line)
+    },
     drawStartEnd(param, potInfos, potId){
       if(param.form.potId){
         const potInfo = potInfos[potId]
         this.drawArrowPoint(param.view, {...potInfo[0], mapScale: param.mapScale}, this.startInfo.color, this.startInfo.caption)
         this.drawArrowPoint(param.view, {...potInfo[potInfo.length - 1], mapScale: param.mapScale}, this.endInfo.color, this.endInfo.caption)
-      }else{
+      }
+      else{
         Object.values(potInfos).forEach((potInfo) => {
           this.drawDotPoint(param.view, {...potInfo[0], mapScale: param.mapScale}, this.startInfo.color, this.dotRadius)
           this.drawDotPoint(param.view, {...potInfo[potInfo.length - 1], mapScale: param.mapScale}, this.endInfo.color, this.dotRadius)
         })
       }
     },
-    getWeight(positionInfos, positionKey){
-      const maxPosCount = Math.max.apply(null, Object.values(positionInfos).map((val) => val.count))
-      const max = maxPosCount < DISP.ANALYSIS.LINE.MAX_WEIGHT? maxPosCount: DISP.ANALYSIS.LINE.MAX_WEIGHT
-      return max * positionInfos[positionKey].count / maxPosCount
-    },
-    drawFlowline(param, positionInfos){
-      const line = new Shape()
-      line.graphics.beginStroke(this.getRGBA(DISP.ANALYSIS.LINE.COLOR, DISP.ANALYSIS.LINE.OPACITY))
-      Object.entries(positionInfos).forEach(([key, positionInfo]) => {
-        line.graphics.setStrokeStyle(this.getWeight(positionInfos, key))
-        line.graphics.moveTo(positionInfo.start.x * param.mapScale, positionInfo.start.y * param.mapScale)
-        line.graphics.lineTo(positionInfo.end.x * param.mapScale, positionInfo.end.y * param.mapScale)
-      })
-      param.view.addChild(line)
-    },
     draw(param, analyseResults){
-      this.drawStartEnd(param, analyseResults.potInfos, param.form.potId)
       this.drawFlowline(param, analyseResults.positionInfos)
+      this.drawStartEnd(param, analyseResults.potInfos, param.form.potId)
     },
     async display(param){
       this.showAlert = false

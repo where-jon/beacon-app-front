@@ -14,7 +14,7 @@
       <b-form inline>
         <b-form-group>
           <b-form-row>
-            <b-form-row class="mb-3 mr-5">
+            <b-form-row v-if="enableGroup" class="mb-3 mr-5">
               <label v-t="'label.group'" class="mr-2" />
               <b-form-select v-model="form.groupId" :options="groupOptions" @change="changeGroup" class="mr-2 inputSelect" />
             </b-form-row>
@@ -30,11 +30,11 @@
           <b-form-row>
             <b-form-row class="mb-3 mr-2">
               <label v-t="'label.historyDateFrom'" class="mr-2"/>
-              <date-picker v-model="form.datetimeFrom" type="datetime" @change="changeDatetimeFrom" class="mr-2 inputdatefrom" required/>
+              <date-picker v-model="form.datetimeFrom" type="datetime" :clearable="false" @change="changeDatetimeFrom" class="mr-2 inputdatefrom" required/>
             </b-form-row>
             <b-form-row class="mb-3 mr-2">
               <label v-t="'label.historyDateTo'" class="mr-2" />
-              <date-picker v-model="form.datetimeTo" type="datetime" class="mr-2 inputdateto" required/>
+              <date-picker v-model="form.datetimeTo" type="datetime" :clearable="false" class="mr-2 inputdateto" required/>
             </b-form-row>
           </b-form-row>
         </b-form-group>
@@ -94,6 +94,16 @@ export default {
       'groups',
       'pots',
     ]),
+    enableGroup () {
+      for(let group of this.$store.state.menu){
+        for(let page of group.pages){
+          if(page.key == "group"){
+            return true
+          }
+        }
+      }
+      return false
+    },
   },
   async created() {
     await StateHelper.load('area')
@@ -136,15 +146,22 @@ export default {
       }
     },
     changeDatetimeFrom(newVal = this.form.datetimeFrom) {
-      this.form.datetimeTo = this.getDatetime(newVal, {minutes: APP.ANALYSIS_DATETIME_INTERVAL})
+      if(newVal){
+        this.form.datetimeTo = this.getDatetime(newVal, {minutes: APP.ANALYSIS_DATETIME_INTERVAL})
+      }
+      else{
+        this.form.datetimeTo = null
+      }
     },
     validate() {
       const errors = this.validateCheck([
         {type: "require", names: ["area"], values: [this.form.areaId]},
-        {type: "require", names: ["group", "individual"], values: [this.form.groupId, this.form.potId]},
-        {type: "asc", names: ["historyDateFrom"], values: [this.form.datetimeFrom.getTime(), this.form.datetimeTo.getTime()], equal: false},
-        {type: "less", names: ["historyDateFrom"], values: [this.form.datetimeFrom.getTime() * -1, this.form.datetimeTo.getTime()], base: this.interval, displayBase: this.intervalHours, equal: true},
-      ])
+        {type: "require", names: [this.enableGroup? "group": null, "individual"].filter((val) => val), values: [this.enableGroup? this.form.groupId: null, this.form.potId].filter((val) => val)},
+        {type: "require", names: ["historyDateFrom"], values: [this.form.datetimeFrom]},
+        {type: "require", names: ["historyDateFrom"], values: [this.form.datetimeTo]},
+        this.form.datetimeFrom && this.form.datetimeTo? {type: "asc", names: ["historyDateFrom"], values: [this.form.datetimeFrom.getTime(), this.form.datetimeTo.getTime()], equal: false}: null,
+        this.form.datetimeFrom && this.form.datetimeTo? {type: "less", names: ["historyDateFrom"], values: [this.form.datetimeFrom.getTime() * -1, this.form.datetimeTo.getTime()], base: this.interval, displayBase: this.intervalHours, equal: true}: null,
+      ].filter((val) => val))
       return this.formatValidateMessage(errors)
     },
     async display() {
