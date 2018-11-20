@@ -116,7 +116,7 @@ export default {
         const currentTime = new Date().getTime()
         gateways = gateways.map((e) => {
           const timestamp = formattedDateToDatetime(e.updated)
-          const state = currentTime - timestamp < DISP.GATEWAY.MALFUNCTION ? this.labelReceiveNormal: this.labelMalfunction
+          const state = this.$i18n.t('label.' + this.getGatewayState(e.updated))
           return { ...e, state: state }
         })
         this.replaceMonitor({gateways})
@@ -157,6 +157,7 @@ export default {
       }
     },
     download() {
+      console.log(this.gateways)
       HtmlUtil.fileDL("gateway.csv", Util.converToCsv(this.gateways), getCharSet(this.$store.state.loginId))
     },
   }
