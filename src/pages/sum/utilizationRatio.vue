@@ -24,7 +24,7 @@
           </v-select>
         </b-form>
         <b-form inline class="mb-2">
-          <label v-t="'label.zoneName'" />
+          <label v-t="'label.zone'" />
           <v-select v-model="vModelZone" :options="zoneOptions" :on-change="zoneChange" class="vselectZone">
             <div slot="no-options">{{$i18n.tnl('label.vSelectNoOptions')}}</div>
           </v-select>
