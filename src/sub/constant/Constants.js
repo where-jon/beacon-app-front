@@ -370,6 +370,19 @@ export const MENU = [
     ]
   },
   {
+    key: 'analysis',
+    base: 'analysis/',
+    path: '/analysis/flowlineAnalysis',
+    icon: 'far fa-copy',
+    pages: [{
+        key: 'flowlineAnalysis',
+        path: 'flowlineAnalysis',
+        feature: '/analysis/flowlineAnalysis',
+        icon: 'fas fa-shoe-prints'
+      },
+    ]
+  },
+  {
     key: 'setting',
     base: 'setting/',
     path: 'setting/personal',
