@@ -166,7 +166,7 @@ export const POSITION = {
   SHOW_ICON_MIN_WIDTH: 768
 }
 
-export const ICON_VIEW_TYPE = {
+export const TX_VIEW_TYPES = {
   DEFAULT: 1,
   SQUARE: 2,
   DIAMOND: 3,

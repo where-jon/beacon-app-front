@@ -1,5 +1,5 @@
 import { APP, DISP, DEV } from '../constant/config'
-import { ICON_VIEW_TYPE } from '../constant/Constants'
+import { TX_VIEW_TYPES } from '../constant/Constants'
 import * as Util from '../util/Util'
 import * as mock from '../../assets/mock/mock.js'
 import styles from '../constant/config.scss'
@@ -135,17 +135,17 @@ const getCoordinateSpiral = (index, x, y, theta, radius) => {
  * @param {*} viewType アイコン配置タイプ
  */
 const getCoordinate = (orgX, orgY, positions, viewType) => {
-  if (viewType === ICON_VIEW_TYPE.TILE) {
+  if (viewType === TX_VIEW_TYPES.TILE) {
     return getCoordinateTile(orgX, orgY, positions)
   }
   return positions.length > 1 ? positions.map((e, i, a) => {
     const xy = (() => {
       switch (viewType) {
-        case ICON_VIEW_TYPE.SQUARE :
+        case TX_VIEW_TYPES.SQUARE :
           return getCoordinateSquare(i, orgX, orgY)
-        case ICON_VIEW_TYPE.DIAMOND :
+        case TX_VIEW_TYPES.DIAMOND :
           return getCoordinateSquare(i, orgX, orgY, true)
-        case ICON_VIEW_TYPE.SPIRAL :
+        case TX_VIEW_TYPES.SPIRAL :
           return getCoordinateSpiral(i, orgX, orgY, 360 / positions.length * i, diameter)
       }
     })()
@@ -162,12 +162,13 @@ const getCoordinate = (orgX, orgY, positions, viewType) => {
  */
 const getPositionsToOverlap = (exb, ratio, samePos) => {
   const viewType = exb.location.txViewType
-  if (!Object.keys(ICON_VIEW_TYPE).find(key => viewType === ICON_VIEW_TYPE[key])) {
+  if (viewType === TX_VIEW_TYPES.DEFAULT ||
+    !Object.keys(TX_VIEW_TYPES).find(key => viewType === TX_VIEW_TYPES[key])) {
     return getCoordinateDefault(exb, ratio, samePos)
   }
   let baseX = exb.location.x * ratio
   let baseY = exb.location.y * ratio
-  const c = partitioningArray(samePos, viewType !== ICON_VIEW_TYPE.TILE ? iconsUnitNum : TILE_LAYOUT_MAXICONS)
+  const c = partitioningArray(samePos, viewType !== TX_VIEW_TYPES.TILE ? iconsUnitNum : TILE_LAYOUT_MAXICONS)
   return c.flatMap((e, i, a) => {
     const coordinate = getCoordinate(baseX, baseY, e, viewType)
     baseX += DISP.TX_R
