@@ -47,7 +47,8 @@ export const fileDL = (name, content, charSet = "UTF8") => {
     { from: "UNICODE", to: charSet }
   )
   var uint8_array = new Uint8Array( encodeString );
-  var blob = new Blob([ uint8_array ], { type: 'text/csv' });
+  var bom = new Uint8Array([0xEF, 0xBB, 0xBF])
+  var blob = new Blob([ charSet == "UTF8"? bom: null, uint8_array ].filter((val) => val), { type: 'text/csv' });
 
   if(window.navigator.msSaveBlob){
     window.navigator.msSaveBlob(blob, name)
