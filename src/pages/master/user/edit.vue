@@ -35,16 +35,16 @@
         </b-form-group>
         <b-form-group>
           <label v-t="'label.password'" />
-          <b-form-input type="password" v-model="pass" pattern="^[a-zA-Z0-9_\-\/!#\$%&]*$" :readonly="!isEditable" />
+          <b-form-input type="password" v-model="pass" pattern="^[a-zA-Z0-9_\-\/!#\$%&@]*$" :readonly="!isEditable" />
         </b-form-group>
         <b-form-group>
           <label v-t="'label.passwordConfirm'" />
-          <b-form-input type="password" v-model="passConfirm" pattern="^[a-zA-Z0-9_\-\/!#\$%&]*$" :readonly="!isEditable" />
+          <b-form-input type="password" v-model="passConfirm" pattern="^[a-zA-Z0-9_\-\/!#\$%&@]*$" :readonly="!isEditable" />
         </b-form-group>
 
-        <b-button type="button" variant="outline-danger" @click="backToList" v-t="'label.back'"/>
-        <b-button v-if="isEditable" type="submit" :variant="theme" @click="beforeSubmit($event, false)" class="ml-2">{{ label }}</b-button>
-        <b-button v-if="isEditable && !isUpdate" type="submit" :variant="theme" @click="beforeSubmit($event, true)" class="ml-2" v-t="'label.registerAgain'"/>
+        <b-button type="button" variant="outline-danger" @click="backToList" class="mr-2 my-1" v-t="'label.back'"/>
+        <b-button v-if="isEditable" type="submit" :variant="theme" @click="beforeSubmit($event, false)" class="mr-2 my-1">{{ label }}</b-button>
+        <b-button v-if="isEditable && !isUpdate" type="submit" :variant="theme" @click="beforeSubmit($event, true)" class="my-1" v-t="'label.registerAgain'"/>
       </b-form>
     </div>
   </div>
@@ -58,9 +58,9 @@ import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import { APP } from '../../../sub/constant/config.js'
 import { ROLE } from '../../../sub/constant/Constants'
-import editmixinVue from '../../../components/editmixin.vue'
+import editmixinVue from '../../../components/mixin/editmixin.vue'
 import * as Util from '../../../sub/util/Util'
-import breadcrumb from '../../../components/breadcrumb.vue'
+import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 
 export default {

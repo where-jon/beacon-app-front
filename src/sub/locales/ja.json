@@ -1,6 +1,6 @@
 {
   "label": {
-    "title": "EXBeacon見える化",
+    "title": "EXBeacon Platform",
 
     "---------------- App action ---------------":"",
     "submit": "送信",
@@ -288,7 +288,7 @@
     "end": "終了",
     
     "mode": "モード",
-    "sumTitle": "集計",
+    "sumTitle": "集計・分析",
     "utilizationRatio": "利用率",
     "utilizationRatioP": "利用率[%]",
     "utilizationTime": "利用時間[H]",
@@ -305,6 +305,10 @@
     "temperatureHistoryType": "",
     "temperatureHistoryType0": "すべての温湿度",
     "temperatureHistoryType1": "時間毎の温湿度",
+
+    "analysis": "分析",
+    "flowlineAnalysis": "動線分析",
+    "individual": "個人",
 
     "allRejection": "すべて拒否",
     "systemReadOnly": "システムの読み取りのみ許可",
@@ -336,23 +340,33 @@
 
     "vSelectNoOptions": "",
 
+    "legend": "凡例",
+    "using": "：使用中",
+    "notUse": "未使用",
+    "totalRecordsCount": "総件数",
+
+    "string": "文字列",
+    "stringList": "文字列リスト",
+    "number": "数値",
+    "numberList": "数値リスト",
+    "boolean": "真偽値",
+
     "---------------- Config key name ---------------":"",
 
-    "APP.LOG_KEEP_TM": "ログ保持期間",
-    "APP.MONITORING_TM": "モニタリング更新間隔",
-    "APP.PASSWORD_CHANGE": "パスワード変更機能",
+    "APP.LOG_KEEP_TIME": "ログ保持期間",
+    "APP.MONITOR_REFESH_TIME": "モニタリング更新間隔",
+    "APP.PASSWORD_CHANGEABLE": "パスワード変更機能",
     "APP.PASSWORD_CHECK": "パスワード強度チェック",
-    "APP.UP_POS_EFFECT": "位置変更時エフェクト",
-    "APP.TIMEZONE": "タイムゾーン",
-    "APP.DISP_REFRESH_TM": "画面更新間隔",
+    "APP.UPDATE_POSITION_EFFECT": "位置変更時エフェクト",
+    "APP.TIME_ZONE": "タイムゾーン",
     "APP.SLACK_WEBHOOC": "Slack Webhook登録",
     "APP.MAIL_ADDRESS": "通知先メールアドレス",
-    "APP.IP_FILTER": "IPアドレスフィルタ",
+    "APP.IP_ADDRESS_FILTER": "IPアドレスフィルタ",
 
     "APP.SERVICE_BASE_URL": "API設定・エンドポイント",
     "APP.SERVICE_UP_TM": "API設定・更新間隔",
 
-    "DISP.HIDE_TIME": "未受信状態判定時間",
+    "APP.HIDE_TIME": "未受信状態判定時間",
 
     "dummy": ""
   },
@@ -376,6 +390,10 @@
     "overLength": "{target}には{length}以内の文字列を入力してください",
     "selectFile": "ファイルを選択してください",
     "required": "{target}を入力してください。",
+    "requiredMore": "{target}のいずれかを入力してください。",
+    "invalid": "{target}が不正です。",
+    "invalidLessHours": "{target}は{max}時間以内になるように入力してください。",
+    "notFoundData": "{target}のデータがありません。",
     "notMatchCureentPassword": "パスワードが違います",
     "invalidPassword": "パスワードの形式が不正です",
     "notMatchPassword": "変更パスワードと確認パスワードが一致していません。",

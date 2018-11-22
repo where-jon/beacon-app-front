@@ -28,7 +28,7 @@
               </v-select>
             </b-form-row>
             <b-form-row class="mb-2">
-              <label v-t="'label.zoneName'" class="mr-2 mb-2 d-flex align-items-center" />
+              <label v-t="'label.zone'" class="mr-2 mb-2 d-flex align-items-center" />
               <v-select v-model="vModelZone" :options="zoneOptions" :on-change="zoneChange" required class="ml-2 mb-2">
                 <div slot="no-options">{{$i18n.tnl('label.vSelectNoOptions')}}</div>
               </v-select>
@@ -49,7 +49,7 @@
       <p></p>
       <b-row>
         <b-col md="10" offset-md="2">
-          <b-button v-if="!ios" :variant="theme" @click="download()" v-t="'label.download'" />
+          <b-button v-if="!ios" :variant="getButtonTheme()" @click="download()" v-t="'label.download'" />
         </b-col>
       </b-row>
     </div>
@@ -66,13 +66,13 @@ import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
 import { EventBus } from '../../sub/helper/EventHelper'
 import { EXB, DISP, APP } from '../../sub/constant/config'
-import breadcrumb from '../../components/breadcrumb.vue'
-import { getTheme } from '../../sub/helper/ThemeHelper'
-import reloadmixinVue from '../../components/reloadmixin.vue'
+import breadcrumb from '../../components/layout/breadcrumb.vue'
+import commonmixinVue from '../../components/mixin/commonmixin.vue'
+import reloadmixinVue from '../../components/mixin/reloadmixin.vue'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 
 export default {
-  mixins: [reloadmixinVue],
+  mixins: [reloadmixinVue, commonmixinVue ],
   components: {
     breadcrumb,
     DatePicker,
@@ -117,10 +117,6 @@ export default {
     },
     zoneOptions() {
       return this.zoneOptionList
-    },
-    theme () {
-      const theme = getTheme(this.$store.state.loginId)
-      return 'outline-' + theme
     },
     ...mapState('monitor', [
       'temperatureHistory',

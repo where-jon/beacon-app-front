@@ -3,7 +3,7 @@
         <div class="error-message">{{ message }}</div>
         <input type="text" v-model="userId" class="form-control" maxlength="20" placeholder="ID" />
         <input type="password" v-model="password" class="form-control" maxlength="20" placeholder="PASSWORD" />
-        <button class="btn-lg btn-block" :class="btnClasses" type="submit"><i class="fa fa-sign-in" v-t="'label.login'"></i></button>
+        <button class="btn-lg btn-block login-button" type="submit"><i class="fas fa-sign-in-alt"></i>&nbsp;&nbsp;{{$i18n.tnl('label.login')}}</button>
     </form>
 </template>
 
@@ -13,7 +13,7 @@ import * as AuthHelper from '../sub/helper/AuthHelper'
 import { APP,DISP } from '../sub/constant/config'
 import * as Util from '../sub/util/Util'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-import commonmixinVue from '../components/commonmixin.vue';
+import commonmixinVue from '../components/mixin/commonmixin.vue';
 
 export default {
   mixin: [commonmixinVue],
@@ -87,6 +87,11 @@ body {
     border-bottom-right-radius: 0;
     border-bottom-left-radius: 0;
   }
+}
+
+.login-button {
+  background-color: #376495;
+  color: white;
 }
 
 </style>

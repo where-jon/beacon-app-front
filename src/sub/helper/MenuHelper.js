@@ -1,6 +1,5 @@
 import { ROLE_FEATURE, MENU, ROLE } from "../constant/Constants"
 import * as Util from "../util/Util"
-import { THEME } from "../constant/config"
 
 let store
 
@@ -67,4 +66,14 @@ export const isShowMenu = (page, role) => {
   })
 
   return result != null
+}
+
+export const useMaster = (feature) => {
+  const role = store.state.role
+  if (role == ROLE.SUPER_ADMIN) {
+    return true
+  }
+  const featureList = store.state.tenantFeatureList
+  const path = '/master/' + feature
+  return tenantOk(path, featureList)
 }

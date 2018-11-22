@@ -47,9 +47,9 @@
           </b-form-row>
         </b-form-group>
 
-        <b-button type="button" variant="outline-danger" @click="backToList" v-t="'label.back'"/>
-        <b-button v-if="isEditable" type="submit" :variant="theme" @click="register(false)" class="ml-2" >{{ label }}</b-button>
-        <b-button v-if="isEditable && !isUpdate" type="submit" :variant="theme" @click="register(true)" class="ml-2" v-t="'label.registerAgain'"/>
+        <b-button type="button" variant="outline-danger" @click="backToList" class="mr-2 my-1" v-t="'label.back'"/>
+        <b-button v-if="isEditable" type="submit" :variant="theme" @click="register(false)" class="mr-2 my-1" >{{ label }}</b-button>
+        <b-button v-if="isEditable && !isUpdate" type="submit" :variant="theme" @click="register(true)" class="my-1" v-t="'label.registerAgain'"/>
       </b-form>
       <AreaCanvas :base64="base64" :isRegist="isRegist" 
       @regist="doRegist"
@@ -69,13 +69,13 @@ import * as StateHelper from '../../../sub/helper/StateHelper'
 import _ from 'lodash'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
-import editmixinVue from '../../../components/editmixin.vue'
-import AreaCanvas from '../../../components/areacanvas.vue'
+import editmixinVue from '../../../components/mixin/editmixin.vue'
+import AreaCanvas from '../../../components/parts/areacanvas.vue'
 import * as Util from '../../../sub/util/Util'
-import breadcrumb from '../../../components/breadcrumb.vue'
+import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import { CATEGORY, ZONE } from '../../../sub/constant/Constants'
-import showmapmixin from '../../../components/showmapmixin.vue'
+import showmapmixin from '../../../components/mixin/showmapmixin.vue'
 import { fabric } from 'fabric'
 
 export default {

@@ -1,8 +1,8 @@
 
 <script>
-import { EventBus } from '../sub/helper/EventHelper'
+import { EventBus } from '../../sub/helper/EventHelper'
 import commonmixinVue from './commonmixin.vue'
-import * as Util from '../sub/util/Util'
+import * as Util from '../../sub/util/Util'
 
 export default {
   mixins: [commonmixinVue],  

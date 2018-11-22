@@ -31,15 +31,15 @@ import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as SensorHelper from '../../sub/helper/SensorHelper'
-import txdetail from '../../components/txdetail.vue'
+import txdetail from '../../components/parts/txdetail.vue'
 import { DEV, DISP, APP } from '../../sub/constant/config'
 import * as mock from '../../assets/mock/mock'
 import * as Util from '../../sub/util/Util'
 import { SENSOR, DISCOMFORT } from '../../sub/constant/Constants'
 import { Shape, Stage, Container, Bitmap, Text, Touch } from '@createjs/easeljs/dist/easeljs.module'
 import { Tween, Ticker } from '@createjs/tweenjs/dist/tweenjs.module'
-import breadcrumb from '../../components/breadcrumb.vue'
-import showmapmixin from '../../components/showmapmixin.vue'
+import breadcrumb from '../../components/layout/breadcrumb.vue'
+import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import cold from '../../assets/icon/cold.png'
 import hot from '../../assets/icon/hot.png'
 import comfort from '../../assets/icon/comfort.png'
@@ -63,7 +63,11 @@ export default {
         },
       ],
       isShownChart: false,
-      chartTitle: ""
+      chartTitle: "",
+      keepExbPosition: false,
+      toggleCallBack: () => {
+        this.keepExbPosition = true
+      },
     }
   },
   computed: {
@@ -111,10 +115,13 @@ export default {
     showMapImage() {
       this.showMapImageDef(() => {
         this.positionedExb.forEach((exb) => {
-          exb.x *= this.mapImageScale
-          exb.y *= this.mapImageScale
+          this.replaceExb(exb, (exb) => {
+            exb.x *= this.mapImageScale
+            exb.y *= this.mapImageScale
+          })
           this.showExb(exb)
         })
+        this.keepExbPosition = false
       })
     },
     showExb(exb) {

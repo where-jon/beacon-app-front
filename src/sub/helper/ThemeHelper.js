@@ -1,8 +1,13 @@
-import { THEME } from "../constant/config"
+import { THEME } from "../constant/Constants"
 
 export const getButtonTheme = (loginId) => {
   const theme = getTheme(loginId)
-  return theme !== 'default' ? theme : 'primary'
+  return theme !== 'default' ? theme : 'buttonDefault'
+}
+
+export const getThemeColor = (loginId) => {
+  const themeName = getTheme(loginId)
+  return THEME.find((theme) => theme.name == themeName).color
 }
 
 export const getTheme = (loginId) => {
@@ -20,11 +25,4 @@ export const getThemeClasses = (loginId) => {
     obj[e.name] = e.name === theme
   })
   return obj
-}
-
-export const themeColors = {
-  default: '#588BC1',
-  earthcolor : '#5C7886',
-  autumn : '#927760',
-  vivid : '#D50057',
 }

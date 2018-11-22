@@ -70,9 +70,9 @@
               <b-form-textarea v-model="form.description" :rows="3" :max-rows="6" :readonly="!isEditable" ></b-form-textarea>
             </b-form-group>
 
-            <b-button type="button" variant="outline-danger" @click="backToList" v-t="'label.back'"/>
-            <b-button v-if="isEditable" type="submit" :variant="theme" @click="beforeSubmit(false)" class="ml-2"  >{{ label }}</b-button>
-            <b-button v-if="isEditable && !isUpdate" type="submit" :variant="theme" @click="beforeSubmit(true)" class="ml-2" v-t="'label.registerAgain'"/>
+            <b-button type="button" variant="outline-danger" @click="backToList" class="mr-2 my-1" v-t="'label.back'"/>
+            <b-button v-if="isEditable" type="submit" :variant="theme" @click="beforeSubmit(false)" class="mr-2 my-1"  >{{ label }}</b-button>
+            <b-button v-if="isEditable && !isUpdate" type="submit" :variant="theme" @click="beforeSubmit(true)" class="my-1" v-t="'label.registerAgain'"/>
           </b-form>
         </b-col>
       </b-row>
@@ -86,8 +86,8 @@ import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import _ from 'lodash'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
-import editmixinVue from '../../../components/editmixin.vue'
-import breadcrumb from '../../../components/breadcrumb.vue'
+import editmixinVue from '../../../components/mixin/editmixin.vue'
+import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import { CATEGORY } from '../../../sub/constant/Constants'

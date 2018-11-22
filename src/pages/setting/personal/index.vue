@@ -89,9 +89,10 @@
 
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-import breadcrumb from '../../../components/breadcrumb.vue'
-import pagetitle from '../../../components/pagetitle.vue'
-import { APP, DISP, THEME, CHAR_SET, PASSWORD_LENGTH } from '../../../sub/constant/config'
+import breadcrumb from '../../../components/layout/breadcrumb.vue'
+import pagetitle from '../../../components/layout/pagetitle.vue'
+import { APP, DISP } from '../../../sub/constant/config'
+import { THEME, CHAR_SET } from '../../../sub/constant/Constants'
 import { getTheme, getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import { getCharSet } from '../../../sub/helper/CharSetHelper'
 import * as AuthHelper from '../../../sub/helper/AuthHelper'
@@ -99,7 +100,7 @@ import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as HttpHelper from '../../../sub/helper/HttpHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as ValidateUtil from '../../../sub/util/ValidateUtil'
-import commonmixinVue from '../../../components/commonmixin.vue';
+import commonmixinVue from '../../../components/mixin/commonmixin.vue';
 
 export default {
   mixin: [commonmixinVue],
@@ -157,7 +158,7 @@ export default {
       const storeTheme = this.$store.state.setting.theme
       return 'outline-' + getButtonTheme(this.$store.state.loginId)
     },
-    hasError () {
+    hasError() {
       return Object.keys(this.errorMessages)
       .map((key) => {
         return this.errorMessages[key].length
@@ -210,10 +211,6 @@ export default {
       this.replaceSetting({theme})
       window.localStorage.setItem(this.$store.state.loginId + '-theme', theme)
     },
-    theme () {
-      const theme = getTheme(this.$store.state.loginId)
-      return 'outline-' + theme
-    },
     charSetSelected (selected) {
       const cs = CHAR_SET.find((e) => {
         return e.id === selected
@@ -238,7 +235,7 @@ export default {
         return
       }
 
-      const result = ValidateUtil.validatePattern(value, /^[a-zA-Z0-9_\-\/!#\$%&]*$/, this.$i18n.tnl('message.invalidPassword'))
+      const result = ValidateUtil.validatePattern(value, /^[a-zA-Z0-9_\-\/!#\$%&@]*$/, this.$i18n.tnl('message.invalidPassword'))
       if (result !== null) {
         this.passErrorMessage = result
         return
@@ -312,7 +309,7 @@ export default {
       if (required.length > 0) {
         return required
       }
-      const pattern = ValidateUtil.validatePattern(value, /^[a-zA-Z0-9_\-\/!#\$%&]*$/, invalidPatternMessage)
+      const pattern = ValidateUtil.validatePattern(value, /^[a-zA-Z0-9_\-\/!#\$%&@]*$/, invalidPatternMessage)
       return pattern ? [pattern] : []
     },
     validateRequire (val, label) {

@@ -2,9 +2,9 @@
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import reloadmixinVue from './reloadmixin.vue'
-import { SHAPE } from '../sub/constant/Constants'
-import { DISP } from '../sub/constant/config.js'
-import * as Util from '../sub/util/Util'
+import { SHAPE } from '../../sub/constant/Constants'
+import { DISP } from '../../sub/constant/config.js'
+import * as Util from '../../sub/util/Util'
 
 export default {
   mixins: [reloadmixinVue],
@@ -12,12 +12,12 @@ export default {
     getStyleDisplay(entity){
       return entity.map((val) => ({entity: val, style: this.getStyleDisplay1(val)}))
     },
-    getStyleDisplay1(val) {
+    getStyleDisplay1(val, reverceColor = false) {
       return {
-        "color": Util.colorCd4display(val.color),
-        "background-color": Util.colorCd4display(val.bgColor, "#FFFFFF"),
+        "color": Util.colorCd4display(reverceColor? val.bgColor: val.color),
+        "background-color": Util.colorCd4display(reverceColor? val.color: val.bgColor, "#FFFFFF"),
         "text-align": "center",
-        border: `solid 3px ${Util.colorCd4display(val.bgColor)}`,
+        border: "solid 1px #ccc",
         "border-radius": val.shape == SHAPE.CIRCLE? "50%": val.shape == SHAPE.ROUND_SQUARE? DISP.ROUNDRECT_RADIUS + "px": null,
         "font-size": DISP.TX_FONT.split(" ")[0],
         "width": (DISP.TX_R * 2) + "px",

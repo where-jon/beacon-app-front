@@ -1,29 +1,39 @@
 <template>
-    <div id="mapContainer" class="container-fluid" @click="resetDetail" >
-      <breadcrumb :items="items" :extraNavSpec="extraNavSpec" :reload="true" :shortName="shortName" />
-      <b-row class="mt-2">
-        <b-form inline class="mt-2">
-          <label class="ml-3 mr-2">{{ $t('label.area') }}</label>
-          <b-form-select v-model="selectedArea" :options="areaOptions" @change="changeArea" required class="ml-2"></b-form-select>
-        </b-form>
-      </b-row>
-      <b-row class="mt-3">
-        <canvas id="map" ref="map" v-if="!showMeditag"></canvas>
-        <b-col  v-if="showMeditag">
-          <canvas id="map" ref="map"></canvas>
-        </b-col>
-        <b-col class="rightPane" v-if="showMeditag">
-          <sensor :sensors="meditagSensors" class="rightPane"></sensor>
-        </b-col>
-      </b-row>
-      <div v-if="selectedTx.btxId && showReady" >
-        <txdetail :selectedTx="selectedTx" @resetDetail="resetDetail" :selectedSensor="selectedSensor" :isShowModal="isShowModal" />
-      </div>
-      <!-- modal -->
-      <b-modal id="modalError" :title="$t('label.error')" ok-only>
-        {{ $t('message.noMapImage') }}
-      </b-modal>
+  <div id="mapContainer" class="container-fluid" @click="resetDetail" >
+    <breadcrumb :items="items" :extraNavSpec="extraNavSpec" :reload="true" :shortName="shortName" :legendItems="legendItems" />
+    <b-row class="mt-2">
+      <b-form inline class="mt-2">
+        <b-form-row class="my-1 ml-2 ml-sm-0">
+          <label class="ml-sm-4 ml-2 mr-1">{{ $t('label.area') }}</label>
+          <b-form-select v-model="selectedArea" :options="areaOptions" @change="changeArea" required class="ml-1 mr-2"></b-form-select>
+        </b-form-row>
+        <b-form-row v-if="useGroup" class="my-1 ml-2 ml-sm-0">
+          <label class="ml-sm-4 ml-2 mr-1">{{ $t('label.group') }}</label>
+          <b-form-select v-model="selectedGroup" :options="groupOptions" class="ml-1 mr-2"></b-form-select>
+        </b-form-row>
+        <b-form-row v-if="useCategory" class="my-1 ml-2 ml-sm-0">
+          <label class="ml-sm-4 ml-2 mr-1">{{ $t('label.category') }}</label>
+          <b-form-select v-model="selectedCategory" :options="categoryOptionsForPot" class="ml-1 mr-2"></b-form-select>
+        </b-form-row>
+      </b-form>
+    </b-row>
+    <b-row class="mt-3">
+      <canvas id="map" ref="map" v-if="!showMeditag"></canvas>
+      <b-col  v-if="showMeditag">
+        <canvas id="map" ref="map"></canvas>
+      </b-col>
+      <b-col class="rightPane" v-if="showMeditag">
+        <sensor :sensors="meditagSensors" class="rightPane"></sensor>
+      </b-col>
+    </b-row>
+    <div v-if="selectedTx.btxId && showReady" >
+      <txdetail :selectedTx="selectedTx" @resetDetail="resetDetail" :selectedSensor="selectedSensor" :isShowModal="isShowModal()" />
     </div>
+    <!-- modal -->
+    <b-modal id="modalError" :title="$t('label.error')" ok-only>
+      {{ $t('message.noMapImage') }}
+    </b-modal>
+  </div>
 </template>
 
 <script>
@@ -32,22 +42,25 @@ import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as PositionHelper from '../../sub/helper/PositionHelper'
 import * as SensorHelper from '../../sub/helper/SensorHelper'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
+import * as StateHelper from '../../sub/helper/StateHelper'
+import * as MenuHelper from '../../sub/helper/MenuHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
 import * as mock from '../../assets/mock/mock'
-import txdetail from '../../components/txdetail.vue'
+import txdetail from '../../components/parts/txdetail.vue'
 import { Tx, EXB, APP, DISP, DEV } from '../../sub/constant/config'
 import { SHAPE, SENSOR, EXTRA_NAV, POSITION } from '../../sub/constant/Constants'
 import { Shape, Stage, Container, Bitmap, Text, Touch } from '@createjs/easeljs/dist/easeljs.module'
 import { Tween, Ticker } from '@createjs/tweenjs/dist/tweenjs.module'
-import breadcrumb from '../../components/breadcrumb.vue'
-import showmapmixin from '../../components/showmapmixin.vue'
-import sensor from '../../components/sensor.vue'
+import breadcrumb from '../../components/layout/breadcrumb.vue'
+import showmapmixin from '../../components/mixin/showmapmixin.vue'
+import listmixin from '../../components/mixin/listmixin.vue'
+import sensor from '../../components/parts/sensor.vue'
 import moment from 'moment'
 import { rightpanewidth, rightpaneleft } from '../../sub/constant/config.scss'
 
 export default {
-  mixins: [showmapmixin],
+  mixins: [showmapmixin, listmixin],
   components: {
     'sensor': sensor,
     'txdetail': txdetail,
@@ -65,9 +78,7 @@ export default {
           active: true
         },
       ],
-      positions: [],
       count: 0, // for mock test 
-      txsMap: {},
       pot: {},
       showMeditag: APP.USE_MEDITAG,
       meditagSensors: [],
@@ -75,7 +86,12 @@ export default {
       shortName: this.$i18n.tnl('label.showPositionShort'),
       extraNavSpec: EXTRA_NAV,
       shwoIconMinWidth: POSITION.SHOW_ICON_MIN_WIDTH,
-      isShowModal: false
+      legendItems: [],
+      useGroup: MenuHelper.useMaster('group'),
+      useCategory: MenuHelper.useMaster('category'),
+      selectedGroup: null,
+      selectedCategory: null,
+      toggleCallBack: () => this.reset(),
     }
   },
   computed: {
@@ -83,15 +99,44 @@ export default {
       'selectedTx',
       'orgPositions',
     ]),
+    ...mapState('app_service', [
+      'categories',
+      'groups',
+      'txs',
+    ]),
+    ...mapGetters('app_service' ,[
+      'categoryOptionsForPot',
+      'groupOptions',
+    ]),
     selectedSensor() {
       if (this.selectedTx && this.selectedTx.btxId) {
         var ret = this.getMeditagSensor(this.selectedTx.btxId)
       }
       return ret? [ret]: []
-    }
+    },
+    positions() {
+      let now = !DEV.USE_MOCK_EXC? new Date().getTime(): mock.positions_conf.start + this.count++ * mock.positions_conf.interval  // for mock
+      let positions = PositionHelper.correctPosId(this.orgPositions, now)
+      if (APP.USE_MEDITAG && this.meditagSensors) {
+        positions = SensorHelper.setStress(positions, this.meditagSensors)
+      }
+      positions = this.positionFilter(positions, this.selectedGroup, this.selectedCategory)
+      return positions
+    },
+    filter() {
+      return [this.selectedGroup, this.selectedCategory]
+    },
   },
-  mounted() {
+  watch: {
+    filter() {
+      this.showTxAll()
+    },
+  },
+  async mounted() {
     this.replace({title: this.$i18n.tnl('label.showPosition')})
+    await StateHelper.load('category')
+    await StateHelper.load('group')
+    document.addEventListener('touchstart', this.touchEnd)
     this.fetchData()
   },
   beforeDestroy() {
@@ -105,7 +150,7 @@ export default {
       this.isShownMapImage = false
       this.resetDetail()
     },
-    async showDetail(btxId, x, y) {
+    showDetail(btxId, x, y) {
       const tipOffsetX = 15
       const tipOffsetY = 15
       const popupHeight = this.getMeditagSensor(btxId)? 236: 156
@@ -118,8 +163,8 @@ export default {
       const isDispRight = x + offsetX + 100 < window.innerWidth
       // rev === trueの場合、ポップアップを上に表示
       const rev = y + map.top + DISP.TX_R + tipOffsetY + popupHeight > window.innerHeight
-      const targetId = this.txsMap[btxId]
-      const p = await this.getDetail(targetId)
+      const p = tx.pot
+
       const position = this.positions.find((e) => {
         return e.btx_id === btxId
       })
@@ -127,11 +172,11 @@ export default {
       let selectedTx = {
         btxId,
         minor: 'minor:' + btxId,
-        major: p.tx && p.tx.major? 'major:' + p.tx.major : '',
+        major: tx.major? 'major:' + tx.major : '',
         class: balloonClass,
         left: x + offsetX - DISP.TX_R,
         top: rev ? y + offsetY - DISP.TX_R - popupHeight : y + offsetY + DISP.TX_R + tipOffsetY,
-        name: p.potName ? p.potName : '',
+        name: tx.txName? tx.txName: p.potName ? p.potName : '',
         timestamp: position ? this.getFinalReceiveTime(position.timestamp) : '',
         thumbnail: p.thumbnail ? p.thumbnail : '',
         category: p.potCategoryList && p.potCategoryList.length > 0 ? p.potCategoryList[0].category.categoryName : '',
@@ -142,6 +187,9 @@ export default {
       }
       this.replaceMain({selectedTx})
       this.showReady = true
+      if (this.isShowModal()) {
+        this.$root.$emit('bv::show::modal', 'detailModal')
+      }
     },
     getMeditagSensor(btxId) {
       if (this.meditagSensors) {
@@ -150,15 +198,35 @@ export default {
       return null
     },
     resetDetail() {
-      let selectedTx = {}
-      this.replaceMain({selectedTx})
+      if (!this.showingDetailTime || new Date().getTime() - this.showingDetailTime > 100) {
+        let selectedTx = {}
+        this.replaceMain({selectedTx})
+      }
     },
     getFinalReceiveTime (time) {
       return time ? moment(time).format('YYYY/MM/DD HH:mm:ss') : ''
     },
+    async loadLegends () {
+      const magnetCategoryTypes = this.txs.filter((val) => val.category && val.sensorId == SENSOR.MAGNET)
+        .map((val) => val.category.categoryId)
+      this.legendItems = this.categories.map((val) => ({
+        id: val.categoryId,
+        items: magnetCategoryTypes.includes(val.categoryId)? [
+          { id: 1, text: "A", style: this.getStyleDisplay1(val) },
+          { id: 2, text: `${val.categoryName}${this.$i18n.tnl("label.using")}`, style: null },
+          { id: 3, text: "A", style: this.getStyleDisplay1(val, true) },
+          { id: 4, text: `${this.$i18n.tnl("label.notUse")}`, style: {} },
+        ]: [
+          { id: 1, text: "A", style: this.getStyleDisplay1(val) },
+          { id: 2, text: val.categoryName, style: {} },
+        ]
+      }))
+    },
     async fetchData(payload) {
       try {
         this.replace({showProgress: true})
+        await StateHelper.load('tx')
+        this.loadLegends()
         await this.fetchAreaExbs(true)
 
         if (DEV.USE_MOCK_EXC) {
@@ -166,7 +234,6 @@ export default {
           var pMock = mock.positions[this.count]
         }
         let positions = await EXCloudHelper.fetchPosition(this.exbs, this.txs, pMock)
-
         // 移動平均数分のポジションデータを保持する
         this.pushOrgPositions(positions)
 
@@ -179,7 +246,7 @@ export default {
               let label = tx && tx.displayName? tx.displayName: val.btx_id
               return {...val, label, bg: SensorHelper.getStressBg(val.stress), down: val.down?val.down:0}
           })
-          .sortBy((val) => (new Date().getTime() - val.downLatest < DISP.DOWN_RED_TIME)? val.downLatest * -1: val.btx_id)
+          .sortBy((val) => (new Date().getTime() - val.downLatest < APP.DOWN_RED_TIME)? val.downLatest * -1: val.btx_id)
           .value()
           console.log('Meditag:', this.meditagSensors, meditagSensors)
         }
@@ -194,11 +261,6 @@ export default {
         if (payload && payload.done) {
           payload.done()
         }
-
-        this.txsMap = this.txs.reduce((obj, record) => {
-          obj[record.btxId] = record.txId
-          return obj
-        }, {})
       }
       catch(e) {
         console.error(e)
@@ -206,11 +268,19 @@ export default {
       this.replace({showProgress: false})
     },
     async getDetail(txId) {
-      let pot = await AppServiceHelper.fetch('/basic/pot', txId)
-      return pot
+      let tx = await AppServiceHelper.fetch('/core/tx', txId)
+      return tx && tx.pot
     },
     showMapImage() {
       this.showMapImageDef(() => {
+
+        if (Touch.isSupported()) {
+          Touch.enable(this.stage)
+        }
+
+        this.stage.on('click', (evt) => {
+          this.resetDetail()
+        })
 
         if (!this.txCont) {
           this.txCont = new Container()
@@ -218,12 +288,6 @@ export default {
           this.txCont.height = this.bitmap.height
           this.stage.addChild(this.txCont)
           this.stage.update()
-        }
-  
-        let now = !DEV.USE_MOCK_EXC? new Date().getTime(): mock.positions_conf.start + this.count++ * mock.positions_conf.interval  // for mock
-        this.positions = PositionHelper.correctPosId(this.orgPositions, now)
-        if (APP.USE_MEDITAG && this.meditagSensors) {
-          this.positions = SensorHelper.setStress(this.positions, this.meditagSensors)
         }
   
         Util.debug('Raw exb', this.exbs, this.selectedArea)
@@ -282,8 +346,8 @@ export default {
       let stage = this.stage
       let txBtn = new Container()
       let btnBg = new Shape()
-      let bgColor = (magnet && magnet.magnet == SENSOR.MAGNET_STATUS.ON)? display.color: display.bgColor
-      let color = (magnet && magnet.magnet == SENSOR.MAGNET_STATUS.ON)? display.bgColor : display.color
+      let bgColor = (magnet && magnet.magnet === SENSOR.MAGNET_STATUS.ON)? display.color: display.bgColor
+      let color = (magnet && magnet.magnet === SENSOR.MAGNET_STATUS.ON)? display.bgColor : display.color
       btnBg.graphics.beginStroke("#ccc").beginFill('#' + bgColor)
       switch(display.shape) {
       case SHAPE.CIRCLE:
@@ -312,13 +376,43 @@ export default {
       txBtn.x = pos.x
       txBtn.y = pos.y
       txBtn.on('click', (evt) => {
+        evt.stopPropagation()
+        this.showingDetailTime = new Date().getTime()
         let txBtn = evt.currentTarget
-        this.isShowModal = window.innerWidth < this.shwoIconMinWidth
         this.showDetail(txBtn.txId, txBtn.x, txBtn.y)
       })
       this.txCont.addChild(txBtn)
       stage.update()
     },
+    isShowModal() {
+      return window.innerWidth < this.shwoIconMinWidth
+    },
+    positionFilter(positions, groupId, categoryId) {
+      return _(positions).filter((pos) => {
+        const tx = _.find(this.txs, tx => tx.btxId == pos.btx_id)
+        let grpHit
+        let catHit
+        if (groupId) {
+          const posGroupId = Util.getValue(tx, 'group.groupId', null)
+          grpHit = groupId == posGroupId
+        } else {
+          grpHit = true
+        }
+        if (categoryId) {
+          const posCategoryId = Util.getValue(tx, 'category.categoryId', null)
+          catHit = categoryId == posCategoryId
+        } else {
+          catHit = true
+        }
+        return grpHit && catHit
+      }).value()
+    },
+    touchEnd (evt) {
+      if (evt.target.id === 'map') {
+        return
+      }
+      this.resetDetail()
+    }
   }
 }
 </script>
@@ -339,6 +433,7 @@ $right-pane-left-px: $right-pane-left * 1px;
   margin: 10px;
   padding: 3px;
   width: $right-pane-width-px;
+  min-width: $right-pane-width-px;
   overflow: scroll;
   height: calc(100vh - 100px);
 }

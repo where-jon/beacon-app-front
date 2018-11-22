@@ -1,4 +1,4 @@
-import { CHAR_SET } from "../constant/config"
+import { CHAR_SET } from "../constant/Constants"
 
 export const getCharSet = (loginId) => {
   if (loginId == null) {

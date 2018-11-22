@@ -10,7 +10,7 @@
       <b-form-row class="ml-1">
         <label class="mr-2 mb-2">{{ $t('label.area') }}</label>
         <b-form-select v-model="selectedArea" :options="areaOptions" class="mr-2 mb-2 areaOptions" :disabled="settingStart"></b-form-select>
-        <b-button size="sm" class="mb-2" variant="outline-info" v-t="'label.load'" @click="changeArea" :disabled="settingStart"></b-button>
+        <b-button size="sm" class="mb-2" :variant="getButtonTheme()" v-t="'label.load'" @click="changeArea" :disabled="settingStart"></b-button>
       </b-form-row>
     </b-form>
     <b-form inline class="mt-2">
@@ -21,7 +21,7 @@
           <v-select size="sm" v-model="selectedExb_" :options="exbOptions" :on-change="showExbOnMap" class="mb-2 mt-mobile exbOptions" :disabled="settingStart">
             <div slot="no-options">{{$i18n.tnl('label.vSelectNoOptions')}}</div>
           </v-select>
-          <b-button size="sm" variant="outline-info" v-t="'label.bulkAdd'" @click="bulkAdd" class="mt-mobile mb-2" :disabled="settingStart"></b-button> 
+          <b-button size="sm" :variant="getButtonTheme()" v-t="'label.bulkAdd'" @click="bulkAdd" class="mt-mobile mb-2" :disabled="settingStart"></b-button> 
         </b-form-row>
       </b-form-row>
     </b-form>
@@ -39,8 +39,8 @@
         <b-form-input size="sm" type="number" v-model="pixelWidth" :readonly="true" class="ratioInput"/>
       </b-form-row>
       <b-form-row class="mb-3 ml-1">
-        <b-button size="sm" variant="outline-info" v-t="settingStart?'label.settingNow':'label.settingStart'" @click="ratioSettingStart" :class="{'mt-mobile':true, 'mr-2':true, blink:settingStart}"></b-button> 
-        <b-button size="sm" variant="info" v-t="'label.save'" @click="save" :disabled="!isChanged"></b-button> 
+        <b-button size="sm" :variant="getButtonTheme()" v-t="settingStart?'label.settingNow':'label.settingStart'" @click="ratioSettingStart" :class="{'mt-mobile':true, 'mt-mobile-button': true, 'mr-2':true, blink:settingStart}"></b-button> 
+        <b-button size="sm" :variant="getButtonTheme()" v-t="'label.save'" @click="save" :disabled="!isChanged"></b-button> 
       </b-form-row>
     </b-form>
     <p></p>
@@ -72,11 +72,12 @@ import { APP, DISP } from '../../../sub/constant/config'
 import { UPDATE_ONLY_NN } from '../../../sub/constant/Constants'
 import { Shape, Stage, Container, Bitmap, Text, Touch } from '@createjs/easeljs/dist/easeljs.module'
 import { Tween, Ticker } from '@createjs/tweenjs/dist/tweenjs.module'
-import breadcrumb from '../../../components/breadcrumb.vue'
-import showmapmixin from '../../../components/showmapmixin.vue'
+import breadcrumb from '../../../components/layout/breadcrumb.vue'
+import commonmixinVue from '../../../components/mixin/commonmixin.vue'
+import showmapmixin from '../../../components/mixin/showmapmixin.vue'
 
 export default {
-  mixins: [showmapmixin],
+  mixins: [showmapmixin, commonmixinVue ],
   components: {
     breadcrumb,
   },
@@ -95,6 +96,10 @@ export default {
       exbOptions: [],
       exbDisp: 'deviceIdX',
       deleteTarget: null,
+      keepExbPosition: false,
+      toggleCallBack: () => {
+        this.keepExbPosition = true
+      },
       ICON_ARROW_WIDTH: 20,
       ICON_ARROW_HEIGHT: 10,
       items: [
@@ -235,10 +240,13 @@ export default {
         }
 
         this.positionedExb.forEach((exb) => {
-          exb.x = exb.location.x * this.mapImageScale
-          exb.y = exb.location.y * this.mapImageScale
+          this.replaceExb(exb, (exb) => {
+            exb.x = exb.location.x * this.mapImageScale
+            exb.y = exb.location.y * this.mapImageScale
+          })
           this.showExb(exb)
         })
+        this.keepExbPosition = false
 
         this.stage.addChild(this.exbCon)
         this.stage.update()
@@ -355,6 +363,7 @@ export default {
       })
     },
     changeArea() {
+      this.tempMapFitMobile = DISP.MAP_FIT_MOBILE
       if (this.isChanged) {
         this.$root.$emit('bv::show::modal', 'modalWarn')
       }
@@ -379,8 +388,8 @@ export default {
     setChangeArea() {
       this.isChangeArea = true
     },
-    showExbOnMap(val, x = 50, y = 30) {
-      if (!val || !val.value) {
+    showExbOnMap(val, x = 50, y = 40) {
+      if (!val || val.value == null) {
         return
       }
       let exb = _(this.workExbs).find((exb) => exb.exbId == val.value)
@@ -511,8 +520,9 @@ export default {
   content: none;
 }
 
-@media screen and (max-width: 767px) {
+@media screen and (max-width: 575px) {
   .mt-mobile {margin-top:5px;}
+  .mt-mobile-button {margin-bottom:4px;}
 }
 
 .ratioInput {

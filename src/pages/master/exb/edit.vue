@@ -10,7 +10,7 @@
       <b-row>
         <b-col md="8" offset-md="2">
           <b-form @submit="onSubmit" v-if="show">
-            <b-form-group v-if="form.exbId" v-show="isShown('EXB_WITH_EXBID')">
+            <b-form-group v-if="hasId" v-show="isShown('EXB_WITH_EXBID')">
               <label v-t="'label.exbId'" />
               <b-form-input type="text" v-model="form.exbId" readonly="readonly" />
             </b-form-group>
@@ -31,7 +31,7 @@
               <b-form-input type="text" v-model="form.locationName" maxlength="20" required :readonly="!isEditable" />
             </b-form-group>
             <b-form-group>
-              <label v-t="'label.areaName'" />
+              <label v-t="'label.area'" />
               <b-form-select v-model="form.areaId" :options="areaOptions" class="mb-3 ml-3 col-4" :disabled="!isEditable" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group v-show="isShown('EXB_WITH_POSID')">
@@ -65,12 +65,12 @@
               <b-form-select v-model="form.sensorId" :options="sensorOptionsExb" class="mb-3 ml-3 col-4" :disabled="!isEditable" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group>
-              <label v-t="'label.zoneName'" />
+              <label v-t="'label.zone'" />
               <b-form-select v-model="form.zoneId" :options="zoneNames" class="mb-3 ml-3 col-4" :disabled="!isEditable" :readonly="!isEditable" />
             </b-form-group>
-            <b-button type="button" variant="outline-danger" @click="backToList" v-t="'label.back'"/>
-            <b-button v-if="isEditable" type="submit" :variant="theme" @click="register(false)" class="ml-2" >{{ label }}</b-button>
-            <b-button v-if="isEditable && !isUpdate" type="submit" :variant="theme" @click="register(true)" class="ml-2" v-t="'label.registerAgain'"/>
+            <b-button type="button" variant="outline-danger" @click="backToList" class="mr-2 my-1" v-t="'label.back'"/>
+            <b-button v-if="isEditable" type="submit" :variant="theme" @click="register(false)" class="mr-2 my-1" >{{ label }}</b-button>
+            <b-button v-if="isEditable && !isUpdate" type="submit" :variant="theme" @click="register(true)" class="my-1" v-t="'label.registerAgain'"/>
           </b-form>
         </b-col>
       </b-row>
@@ -85,10 +85,10 @@ import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as Util from '../../../sub/util/Util'
-import editmixinVue from '../../../components/editmixin.vue'
+import editmixinVue from '../../../components/mixin/editmixin.vue'
 import { APP } from '../../../sub/constant/config.js'
 import { txViewTypes } from '../../../sub/constant/Constants'
-import breadcrumb from '../../../components/breadcrumb.vue'
+import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 
 export default {
@@ -134,6 +134,9 @@ export default {
     }
   },
   computed: {
+    hasId(){
+      return Util.hasValue(this.form.exbId)
+    },
     theme () {
       const theme = getButtonTheme(this.$store.state.loginId)
       return 'outline-' + theme
@@ -218,7 +221,7 @@ export default {
   methods: {
     async save() {
       let entity = {
-        exbId: this.form.exbId? this.form.exbId: -1,
+        exbId: this.form.exbId != null? this.form.exbId: -1,
         deviceId: this.deviceId,
         locationId: this.form.locationId,
         enabled: this.form.enabled,

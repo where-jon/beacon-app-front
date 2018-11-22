@@ -2,7 +2,7 @@ module.exports = {
   mode: 'spa',
   router: {
     base: '/',
-    middleware: ['check-auth', 'reset']
+    middleware: ['reset', 'check-auth']
   },
   plugins: [
     '~/plugins/init',

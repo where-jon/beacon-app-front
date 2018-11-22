@@ -42,12 +42,13 @@ export const getRect = (selector, key) => {
 }
 
 export const fileDL = (name, content, charSet = "UTF8") => {
-  var e = document.createElement("a")
+  let e = document.createElement("a")
   const encodeString = Encoding.convert(str2Array(content),
     { from: "UNICODE", to: charSet }
   )
-  var uint8_array = new Uint8Array( encodeString );
-  var blob = new Blob([ uint8_array ], { type: 'text/csv' });
+  const uint8_array = new Uint8Array( encodeString );
+  const bom = new Uint8Array([0xEF, 0xBB, 0xBF])
+  const blob = new Blob([ charSet == "UTF8"? bom: null, uint8_array ].filter((val) => val), { type: 'text/csv' });
 
   if(window.navigator.msSaveBlob){
     window.navigator.msSaveBlob(blob, name)

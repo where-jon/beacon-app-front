@@ -52,18 +52,18 @@
         </template>
         <template slot="actions" slot-scope="row">
           <!-- 更新ボタン -->
-          <b-button size="sm" @click.stop="edit(row.item, row.index, $event.target)" :variant="theme" class="mr-2 my-1" v-t="'label.' + crud" />
+          <b-button size="sm" @click.stop="edit(row.item, row.index, $event.target)" :variant="theme" class="mr-2 my-1" v-t="'label.' + crud" :style="actionButtonStyle" />
           <!-- 削除ボタン -->
-          <b-button v-if="isEditable" size="sm" @click.stop="deleteConfirm(row.item, row.index, $event.target)" variant="outline-danger" class="mr-1" v-t="'label.delete'" />
+          <b-button v-if="isEditable" size="sm" @click.stop="deleteConfirm(row.item, row.index, $event.target)" variant="outline-danger" class="mr-1 my-1" v-t="'label.delete'" :style="actionButtonStyle" />
           <!-- jump another master page -->
           <div v-if="isEditable && anotherPageParams" :style="{'width': '100px'}">
             <!-- zone button -->
             <!-- <div v-if="getAnotherPageParam('zone', row.item)">
-              <b-button size="sm" @click.stop="jumpAnotherPage('zone', row.item)" :variant="theme" class="btn-block mt-1 mb-1" v-t="'label.zone'" />
+              <b-button size="sm" @click.stop="jumpAnotherPage('zone', row.item)" :variant="theme" class="btn-block mt-1 mb-1" v-t="'label.zone'" :style="anotherActionButtonStyle" />
             </div> -->
             <!-- location button -->
             <div v-if="getAnotherPageParam('location', row.item)">
-              <b-button size="sm" @click.stop="jumpAnotherPage('location', row.item)" :variant="theme" class="btn-block" v-t="'label.location'" />
+              <b-button size="sm" @click.stop="jumpAnotherPage('location', row.item)" :variant="theme" class="btn-block my-1" v-t="'label.location'" :style="anotherActionButtonStyle" />
             </div>
           </div>
         </template>
@@ -116,17 +116,17 @@
 <script>
 
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-import * as AppServiceHelper from '../sub/helper/AppServiceHelper'
-import * as StateHelper from '../sub/helper/StateHelper'
-import { addLabelByKey } from '../sub/helper/ViewHelper'
-import { EventBus } from '../sub/helper/EventHelper'
-import * as MenuHelper from '../sub/helper/MenuHelper'
-import * as HtmlUtil from '../sub/util/HtmlUtil'
-import * as Util from '../sub/util/Util'
-import { getButtonTheme, getTheme, themeColors } from '../sub/helper/ThemeHelper'
-import { getCharSet } from '../sub/helper/CharSetHelper'
-import commonmixinVue from './commonmixin.vue';
-import { DETECT_STATE } from '../sub/constant/Constants'
+import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
+import * as StateHelper from '../../sub/helper/StateHelper'
+import { addLabelByKey } from '../../sub/helper/ViewHelper'
+import { EventBus } from '../../sub/helper/EventHelper'
+import * as MenuHelper from '../../sub/helper/MenuHelper'
+import * as HtmlUtil from '../../sub/util/HtmlUtil'
+import * as Util from '../../sub/util/Util'
+import { getButtonTheme, getTheme } from '../../sub/helper/ThemeHelper'
+import { getCharSet } from '../../sub/helper/CharSetHelper'
+import commonmixinVue from '../mixin/commonmixin.vue';
+import { DETECT_STATE, CATEGORY } from '../../sub/constant/Constants'
 
 export default {
   mixin: [commonmixinVue], // not work
@@ -188,7 +188,9 @@ export default {
       'selectedarea',
     ]),
     categoryOptions() {
-      let options = this.categories.map((category) => {
+      let options = this.categories.filter((category) => 
+        category.categoryType != CATEGORY.getTypes()[2].value
+      ).map((category) => {
           return {
             value: category.categoryId,
             text: category.categoryName
@@ -238,6 +240,12 @@ export default {
     showError(){
       return Util.hasValue(this.error)
     },
+    actionButtonStyle(){
+      return HtmlUtil.getLangShort() == "ja"? {}: {width: '110px !important'}
+    },
+    anotherActionButtonStyle(){
+      return HtmlUtil.getLangShort() == "ja"? {width: '100px !important'}: {width: '110px !important'}
+    },
   },
   mounted() {
     this.message = this.listMessage
@@ -250,14 +258,6 @@ export default {
         });
     }
     const theme = getTheme(this.loginId)
-    // const color = themeColors[theme]
-    // const pageLinks = document.getElementsByClassName('.page-link')
-    // for (let i = pageLinks.length ; i--;) {
-    //   pageLinks[0].style.color = color
-    // }
-    // const pageActive = document.querySelector('a.page-link.btn-primary')
-    // pageActive.style.backgroundColor = color
-    // pageActive.style.color = '#ffffff'
   },
   watch: {
     filter() {
@@ -444,4 +444,13 @@ export default {
     height: 60px;
     vertical-align: top;
   }
+
+  .page-link {
+    color: #376495;
+  }
+  .page-item.active .page-link {
+    background-color: #376495;
+    border-color: #265384;
+  }
+
 </style>

@@ -10,8 +10,8 @@ import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import _ from 'lodash'
 import * as Util from '../../../sub/util/Util'
 import { txViewTypes } from '../../../sub/constant/Constants'
-import breadcrumb from '../../../components/breadcrumb.vue'
-import bulkedit from '../../../components/bulkedit.vue'
+import breadcrumb from '../../../components/layout/breadcrumb.vue'
+import bulkedit from '../../../components/page/bulkedit.vue'
 import { APP } from '../../../sub/constant/config.js'
 
 export default {
@@ -77,7 +77,7 @@ export default {
       return dummyKey
     },
     async save(bulkSaveFunc) {
-      const MAIN_COL = "exbId"
+      const MAIN_COL = APP.EXB_WITH_EXBID? "exbId": APP.EXB_WITH_DEVICE_ID? "deviceId": APP.EXB_WITH_DEVICE_NUM? "deviceNum": "deviceIdX"
       const LOCATION = ["locationId","areaName","locationName","visible","txViewType","posId","x","y", "zoneName"]
       const ZONE = ["zoneName"]
       const SENSOR = ["sensor"]

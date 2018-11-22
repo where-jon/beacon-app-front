@@ -6,13 +6,13 @@
 </template>
 
 <script>
-import mList from '../../../components/list.vue'
+import mList from '../../../components/page/list.vue'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import { addLabelByKey } from '../../../sub/helper/ViewHelper'
-import listmixinVue from '../../../components/listmixin.vue'
-import breadcrumb from '../../../components/breadcrumb.vue'
+import listmixinVue from '../../../components/mixin/listmixin.vue'
+import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import * as Util from '../../../sub/util/Util'
 import { APP } from '../../../sub/constant/config.js'
 
@@ -39,7 +39,8 @@ export default {
           APP.TX_WITH_DISPLAY_NAME? {key: "displayName", sortable: true, tdClass: "action-rowdata" }: null,
           APP.TX_WITH_MAJOR? {key: "major", sortable: true, tdClass: "action-rowdata" }: null,
           APP.TX_WITH_TXID || APP.TX_BTX_MINOR != 'btxId'? {key: "minor", sortable: true, tdClass: "action-rowdata" }: null,
-          APP.TX_WITH_CATEGORY? {key: "categoryName", label: 'category', sortable: true, tdClass: "action-rowdata" }: null,,
+          APP.TX_WITH_CATEGORY? {key: "categoryName", label: 'category', sortable: true, tdClass: "action-rowdata" }: null,
+          APP.TX_WITH_GROUP? {key: "groupName", label: 'group', sortable: true, tdClass: "action-rowdata" }: null,
           APP.TX_WITH_DESCRIPTION? {key: "description", sortable: true, tdClass: "action-rowdata" }: null,
           {key: "sensor", label:'type', sortable: true,},
           {key: "actions", thStyle: {width: '130px !important'}, tdClass: "action-rowdata" }

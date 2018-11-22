@@ -23,7 +23,7 @@
       </div>
       <sensor :sensors="selectedSensor" isPopup="true" />
     </div>
-    <b-modal size="md" :visible="true" ok-only centered lazy hide-header v-else>
+    <b-modal size="md" :visible="true" id="detailModal" ok-only centered lazy hide-header v-else>
       <b-container>
         <div class="clearfix">
           <div class="thumbnail">
@@ -40,8 +40,8 @@
 </template>
 
 <script>
-import { DISP, TXDETAIL_ITEMS } from '../sub/constant/config'
-import { getTxDetailItems } from '../sub/helper/PositionHelper'
+import { DISP } from '../../sub/constant/config'
+import { getTxDetailItems } from '../../sub/helper/PositionHelper'
 import sensor from './sensor.vue'
 
 export default {
@@ -66,14 +66,14 @@ export default {
   },
   methods: {
     getDispItems () {
-      return TXDETAIL_ITEMS.filter((e) => e.disp).map((e) => this.selectedTx[e.name])
+      return DISP.TXDETAIL_ITEMS.filter((e) => e.disp).map((e) => this.selectedTx[e.name])
     }
   },
 }
 </script>
 
 <style scoped lang="scss">
-@import "../sub/constant/config.scss";
+@import "../../sub/constant/config.scss";
 
 .balloon {
   position: absolute;

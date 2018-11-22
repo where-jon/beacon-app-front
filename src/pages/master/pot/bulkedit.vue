@@ -9,8 +9,8 @@
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import _ from 'lodash'
 import * as Util from '../../../sub/util/Util'
-import breadcrumb from '../../../components/breadcrumb.vue'
-import bulkedit from '../../../components/bulkedit.vue'
+import breadcrumb from '../../../components/layout/breadcrumb.vue'
+import bulkedit from '../../../components/page/bulkedit.vue'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 
 export default {
@@ -55,9 +55,8 @@ export default {
     },
     async save(bulkSaveFunc) {
       const MAIN_COL = "potId"
-      const NULLABLE_NUMBER_COL = ["txId", "exbId", "zoneId", "areaId"]
+      const NULLABLE_NUMBER_COL = ["txId", "exbId", "zoneId", "areaId", "potType"]
       const MANY_TO_MANY = ["groupId", "categoryId", "groupName", "categoryName"]
-      const EXT_VAL_REGEXP = /extValue\.(ruby|post|tel)/
       const extValueHeaders = ["ruby", "post", "tel"]
       await StateHelper.load('category')
       await StateHelper.load('group')

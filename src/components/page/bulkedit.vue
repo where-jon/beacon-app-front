@@ -12,7 +12,7 @@
           <label v-t="'label.csvFile'" />
           <b-form-file :key="formKey" v-model="form.csvFile" accept=".csv" :placeholder="$t('message.selectFile') "></b-form-file>
         </b-form-group>
-        <b-button type="submit" :variant="theme" @click="register(true)" >{{ label }}</b-button>
+        <b-button type="submit" :variant="getButtonTheme()" @click="register(true)" >{{ label }}</b-button>
         <b-button type="button" variant="outline-danger" @click="backToList" class="ml-2" v-t="'label.back'"/>
       </b-form>
     </div>
@@ -22,14 +22,15 @@
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import _ from 'lodash'
-import editmixinVue from './editmixin.vue'
-import { getButtonTheme } from '../sub/helper/ThemeHelper'
-import { getTheme } from '../sub/helper/ThemeHelper'
-import * as StateHelper from '../sub/helper/StateHelper'
+import commonmixinVue from '../mixin/commonmixin.vue';
+import editmixinVue from '../mixin/editmixin.vue'
+import { getButtonTheme } from '../../sub/helper/ThemeHelper'
+import { getTheme } from '../../sub/helper/ThemeHelper'
+import * as StateHelper from '../../sub/helper/StateHelper'
 
 export default {
   props: ["name", "id", "backPath", "appServicePath"],
-  mixins: [editmixinVue],
+  mixins: [ editmixinVue, commonmixinVue ],
   data() {
     return {
       mutex: false,
@@ -44,10 +45,6 @@ export default {
     StateHelper.load('sensor')
   },
   computed: {
-    theme () {
-      const theme = getTheme(this.$store.state.loginId)
-      return 'outline-' + theme
-    },
     ...mapState('app_service', [
       'sensors',
     ]),

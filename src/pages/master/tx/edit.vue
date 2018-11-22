@@ -28,6 +28,10 @@
               <label v-t="'label.category'" />
               <b-form-select v-model="form.categoryId" :options="categoryOptions" class="mb-3 ml-3 col-4" :disabled="!isEditable" :readonly="!isEditable" />
             </b-form-group>
+            <b-form-group v-show="isShown('TX_WITH_GROUP')">
+              <label v-t="'label.group'" />
+              <b-form-select v-model="form.groupId" :options="groupOptions" class="mb-3 ml-3 col-4" :disabled="!isEditable" :readonly="!isEditable" />
+            </b-form-group>
             <b-form-group v-show="showTx('btxId')">
               <label v-t="'label.btxId'" />
               <b-form-input type="number" v-model="form.btxId" max="65535" :required="showTx('btxId')" :readonly="!isEditable" />
@@ -52,9 +56,9 @@
               <label v-t="'label.description'" />
               <b-form-textarea v-model="form.description" :rows="3" :max-rows="6" :readonly="!isEditable" ></b-form-textarea>
             </b-form-group>
-            <b-button type="button" variant="outline-danger" @click="backToList" v-t="'label.back'"/>
-            <b-button v-if="isEditable" type="submit" :variant="theme" @click="register(false)" class="ml-2">{{ label }}</b-button>
-            <b-button v-if="isEditable && !isUpdate" type="submit" :variant="theme" @click="register(true)" class="ml-2" v-t="'label.registerAgain'"/>
+            <b-button type="button" variant="outline-danger" @click="backToList" class="mr-2 my-1" v-t="'label.back'"/>
+            <b-button v-if="isEditable" type="submit" :variant="theme" @click="register(false)" class="mr-2 my-1">{{ label }}</b-button>
+            <b-button v-if="isEditable && !isUpdate" type="submit" :variant="theme" @click="register(true)" class="my-1" v-t="'label.registerAgain'"/>
           </b-form>
         </b-col>
       </b-row>
@@ -68,12 +72,13 @@ import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import _ from 'lodash'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as Util from '../../../sub/util/Util'
-import editmixinVue from '../../../components/editmixin.vue'
-import breadcrumb from '../../../components/breadcrumb.vue'
+import editmixinVue from '../../../components/mixin/editmixin.vue'
+import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import { APP } from '../../../sub/constant/config.js'
+import { CATEGORY } from '../../../sub/constant/Constants';
 
 export default {
   components: {
@@ -92,6 +97,7 @@ export default {
         "txSensorList.0.sensor.sensorId",
         "pot.potId", "pot.potCd", "pot.displayName", "pot.description",
         "pot.potCategoryList.0.category.categoryId",
+        "pot.potGroupList.0.group.groupId",
       ]),
       items: [
         {
@@ -126,10 +132,23 @@ export default {
       return options
     },
     categoryOptions() {
-      let options = this.categories.map((category) => {
+      let options = this.categories.filter((category) => {
+        return category.categoryType != CATEGORY.getTypes()[2].value
+      }).map((category) => {
           return {
             value: category.categoryId,
             text: category.categoryName
+          }
+        }
+      )
+      options.unshift({value:null, text:''})
+      return options
+    },
+    groupOptions() {
+      let options = this.groups.map((group) => {
+          return {
+            value: group.groupId,
+            text: group.groupName
           }
         }
       )
@@ -145,6 +164,7 @@ export default {
     ...mapState('app_service', [
       'tx',
       'categories',
+      'groups',
       'sensors',
       'pots',
       'potImages',
@@ -153,6 +173,7 @@ export default {
   mounted() {
     StateHelper.load('sensor')
     StateHelper.load('category')
+    StateHelper.load('group')
   },
   methods: {
     showTx(col) {
@@ -192,7 +213,7 @@ export default {
       await StateHelper.load('pot')
       const randName = () =>  txId + "_" + (new Date().getTime() % 10000)
       const relatedPot = _.find(this.pots, (pot) => pot.potId == this.form.potId)
-      const isPotForm = this.form.potId || this.form.categoryId
+      const isPotForm = this.form.potId || this.form.categoryId || this.form.groupId
           || this.form.displayName || this.form.description
 
       let newPot = {}
@@ -211,12 +232,12 @@ export default {
       newPot.potCd = this.form.potCd || newPot.potCd
       newPot.displayName = this.form.displayName || newPot.displayName
       newPot.description = this.form.description || newPot.description
-      if (this.form.categoryId) {
-        const potCategoryPK = {categoryId: this.form.categoryId}
-        newPot.potCategoryList = [{potCategoryPK}]
-        const category = _.find(this.categories, (cat) => cat.categoryId == this.form.categoryId)
-        newPot.potType = category ? category.categoryType : null
-      }
+
+      newPot.potCategoryList = this.form.categoryId? [ {potCategoryPK: {categoryId: this.form.categoryId}} ]: null
+      const category = _.find(this.categories, (cat) => cat.categoryId == this.form.categoryId)
+      newPot.potType = category ? category.categoryType : null
+
+      newPot.potGroupList = this.form.groupId? [ {potGroupPK: {groupId: this.form.groupId}} ]: null
       newPot.tx = null
       return newPot
     },

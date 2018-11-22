@@ -18,13 +18,13 @@
 </template>
 
 <script>
-import { DISP } from '../sub/constant/config'
+import { APP } from '../../sub/constant/config'
 
 export default {
   props: ['sensors', 'isPopup'],
   data() {
     return {
-      DOWN_RED_TIME: DISP.DOWN_RED_TIME,
+      DOWN_RED_TIME: APP.DOWN_RED_TIME,
     }
   },
   computed: {

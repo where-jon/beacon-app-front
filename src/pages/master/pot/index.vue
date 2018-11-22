@@ -6,15 +6,15 @@
 </template>
 
 <script>
-import mList from '../../../components/list.vue'
+import mList from '../../../components/page/list.vue'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as Util from '../../../sub/util/Util'
 import { addLabelByKey } from '../../../sub/helper/ViewHelper'
 import { APP } from '../../../sub/constant/config.js'
-import listmixinVue from '../../../components/listmixin.vue'
-import breadcrumb from '../../../components/breadcrumb.vue'
+import listmixinVue from '../../../components/mixin/listmixin.vue'
+import breadcrumb from '../../../components/layout/breadcrumb.vue'
 
 export default {
   components: {
@@ -33,7 +33,7 @@ export default {
         bulkUploadPath: '/master/pot/bulkUpload',
         csvOut: true,
         extraFilter: ['group', 'category'],
-        custumCsvColumns: ["potId", "thumbnail", "txId", "txName", "potCd", "potName", "extValue.ruby",
+        custumCsvColumns: ["potId", "thumbnail", "txId", "txName", "potCd", "potName", "potType", "extValue.ruby",
             "displayName", "groupName", "categoryName", "extValue.post", "extValue.tel", "description", "actions"],
         fields: addLabelByKey(this.$i18n, [ 
           {key: "potId", sortable: true, tdClass: "thumb-rowdata"},

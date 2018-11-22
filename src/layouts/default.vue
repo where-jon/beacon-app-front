@@ -34,12 +34,12 @@ import Vue from 'vue'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import _ from 'lodash'
 import { EventBus } from '../sub/helper/EventHelper'
-import { getTheme, themeColors, getThemeClasses } from '../sub/helper/ThemeHelper'
+import { getThemeColor, getThemeClasses } from '../sub/helper/ThemeHelper'
 import { APP, DISP } from '../sub/constant/config'
 import styles from '../sub/constant/config.scss'
 
-import mSidebar from '~/components/sidebar.vue'
-import mNav from '~/components/nav.vue'
+import mSidebar from '../components/layout/sidebar.vue'
+import mNav from '../components/layout/nav.vue'
 
 import vSelect from 'vue-select'
 import BootstrapVue from 'bootstrap-vue'
@@ -80,7 +80,7 @@ export default {
       return this.$store.state.loginId
     },
     isLoginPage() {
-      return this.$route.path == APP.LOGIN_PAGE || this.$route.path == (APP.LOGIN_PAGE + '/')
+      return this.$route.path == APP.LOGIN_PAGE || this.$route.path == APP.LOGIN_PAGE + '/'
     },
     ...mapState([
       'showProgress',
@@ -108,8 +108,7 @@ export default {
       })
     },
     setDropdownMenuColor() {
-      const theme = getTheme(this.loginId)
-      const color = themeColors[theme]
+      const color = getThemeColor(this.loginId)
       this.setColor('dropdown-menu', color)
       this.setColor('dropdown-item', color)
     }

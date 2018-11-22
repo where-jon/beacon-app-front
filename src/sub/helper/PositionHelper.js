@@ -1,4 +1,4 @@
-import { DISP, DEV, APP } from '../constant/config'
+import { APP, DISP, DEV } from '../constant/config'
 import * as Util from '../util/Util'
 import * as mock from '../../assets/mock/mock.js'
 import styles from '../constant/config.scss'
@@ -21,7 +21,7 @@ export const correctPosId = (orgPositions, now) => {
   }, [])
   .uniqWith(_.isEqual) // 重複除去
   .map((val) => { if (DEV.DEBUG) console.log('受信日時: ' + new Date(val.timestamp), '現在日時: ' + new Date(now), (now - val.timestamp) / 1000 + '秒前', 'RSSI: ' + val.rssi); return val})
-  .filter((val) => val.rssi >= DISP.RSSI_MIN && val.timestamp >= now - DISP.HIDE_TIME) // RSSI値、指定時刻でフィルタ
+  .filter((val) => val.rssi >= APP.RSSI_MIN && val.timestamp >= now - APP.HIDE_TIME) // RSSI値、指定時刻でフィルタ
   .orderBy(['btx_id', 'pos_id', 'timestamp']) // btx_id, pos_id, timestampでソート
   .value()
 
@@ -50,12 +50,12 @@ export const correctPosId = (orgPositions, now) => {
   let usedTx = []
   let usedPos = []  // １つの場所に１TXの場合
   positions = _.reduce(positions, (result, val) => { // 回数とRSSI値の強い順にpos_idとbtx_idのペアを決めていく
-    if (!usedTx.includes(val.btx_id) && (!DISP.TX_POS_ONE_TO_ONE || !usedPos.includes(val.pos_id))) {
+    if (!usedTx.includes(val.btx_id) && (!APP.TX_POS_ONE_TO_ONE || !usedPos.includes(val.pos_id))) {
       usedTx.push(val.btx_id)
-      if (DISP.TX_POS_ONE_TO_ONE) {
+      if (APP.TX_POS_ONE_TO_ONE) {
         usedPos.push(val.pos_id)
       }
-      result.push({...val, rssi:val.rssiAvg, transparent: val.timestamp < now - DISP.TRANSPARENT_TIME})
+      result.push({...val, rssi:val.rssiAvg, transparent: val.timestamp < now - APP.TRANSPARENT_TIME})
     }
     return result
   }, [])
