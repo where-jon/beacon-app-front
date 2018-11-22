@@ -37,7 +37,7 @@
             </b-form-group>
             <b-form-group v-show="isShown('POT_WITH_RUBY')">
               <label v-t="'label.ruby'" />
-              <b-form-input type="text" v-model="form.ruby" maxlength="20" :readonly="!isEditable" />
+              <b-form-input type="text" v-model="form.ruby" pattern="^[ぁ-んーァ-ヶa-zA-Z0-9ａ-ｚＡ-Ｚ０-９]+$" maxlength="20" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.displayName'" />
