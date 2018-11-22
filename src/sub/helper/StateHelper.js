@@ -94,7 +94,7 @@ const appStateConf = {
       store.commit('app_service/replaceAS', {['potImages']:potImages})
       return arr.map((val) => ({
         ...val,
-        txIdName: val.txId? Util.getValue(val, 'tx.txName', '') + '(' + val.txId + ')': null,
+        txIdName: val.txId? val.txId + '(' + Util.getValue(val, 'tx.txName', '') + ')': null,
         txName: val.txId? Util.getValue(val, 'tx.txName', '') : null,
         groupName: Util.getValue(val, 'potGroupList.0.group.groupName', ''),
         groupId: Util.getValue(val, 'potGroupList.0.group.groupId', ''),
