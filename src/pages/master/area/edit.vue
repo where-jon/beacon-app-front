@@ -24,9 +24,9 @@
               <b-button v-if="isEditable && form.mapImage" type="button" :variant="getButtonTheme()" @click="clearImage" class="float-right mt-3">{{ $i18n.tnl('label.clear') }}</b-button>
               <img v-if="form.mapImage" ref="mapImage" :src="form.mapImage" width="100" class="mt-1 ml-3" />
             </b-form-group>
-            <b-button type="button" variant="outline-danger" @click="backToList" v-t="'label.back'" />
-            <b-button v-if="isEditable" type="submit" :variant="getButtonTheme()" @click="beforeSubmit(false)" class="ml-2">{{ label }}</b-button>
-            <b-button v-if="isEditable && !isUpdate" type="submit" :variant="getButtonTheme()" @click="beforeSubmit(true)" class="ml-2" v-t="'label.registerAgain'"/>
+            <b-button type="button" variant="outline-danger" @click="backToList" v-t="'label.back'" class="mr-2 my-1" />
+            <b-button v-if="isEditable" type="submit" :variant="getButtonTheme()" @click="beforeSubmit(false)" class="mr-2 my-1">{{ label }}</b-button>
+            <b-button v-if="isEditable && !isUpdate" type="submit" :variant="getButtonTheme()" @click="beforeSubmit(true)" class="my-1" v-t="'label.registerAgain'"/>
           </b-form>
         </b-col>
       </b-row>

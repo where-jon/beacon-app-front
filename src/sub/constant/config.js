@@ -98,6 +98,9 @@ export const APP = { // 機能面に関する設定
   POT_WITH_GROUP: true,      // グループ使用　use group on pot master
   POT_WITH_CATEGORY: true,   // カテゴリ使用　use category on pot master
 
+  // 動線分析関連設定
+  ANALYSIS_DATETIME_INTERVAL: 60 * 24, // Fromを設定した場合、この設定値分未来の日付をToに自動入力する（分単位）
+
   // その他
   AREA_THUMBNAIL_MAX: 200, // サムネイルリサイズ時の最大幅・高さ
 
@@ -193,8 +196,15 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
       notReceive: '#ffc107',
       undetect: '#dc3545'
     }
+  },
+
+  ANALYSIS: { // 分析
+    LINE: {
+      MAX_WEIGHT: 10,   // 動線の最大太さ
+      COLOR: "#ff0000", // 動線の色 (#xxxxxx)
+      OPACITY: 1,       // 動線の透過度 (0～1。0.5などの小数も可)
+    }
   }
-    
 }
 
 // used when APP.LOGIN_MODE != APP_SERVICE with excloud old api -----------------------------------------------------

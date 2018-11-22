@@ -362,6 +362,12 @@ export const MENU = [
         feature: '/sum/numUsers',
         icon: 'fas fa-chart-area'
       },
+      {
+        key: 'flowlineAnalysis',
+        path: 'flowlineAnalysis',
+        feature: '/sum/flowlineAnalysis',
+        icon: 'fas fa-shoe-prints'
+      },
     ]
   },
   {

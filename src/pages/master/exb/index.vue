@@ -44,11 +44,11 @@ export default {
           APP.EXB_WITH_DEVICE_IDX? {key: "deviceIdX", sortable: true }: null,
           {key: "locationName", label:'locationName', sortable: true,},
           APP.EXB_WITH_POSID? {key: "posId", label:'posId', sortable: true,}: null,
-          {key: "areaName", label:'areaName', sortable: true,},
+          {key: "areaName", label:'area', sortable: true,},
           {key: "x", label:'locationX', sortable: true,},
           {key: "y", label:'locationY', sortable: true,},
           {key: "sensor", label:'type', sortable: true,},
-          {key: "zoneName", sortable: true,},
+          {key: "zoneName", label: 'Zone', sortable: true,},
           {key: "actions", thStyle: {width: '130px !important'} }
         ]),
         initTotalRows: this.$store.state.app_service.exbs.length

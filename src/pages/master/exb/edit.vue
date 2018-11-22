@@ -31,7 +31,7 @@
               <b-form-input type="text" v-model="form.locationName" maxlength="20" required :readonly="!isEditable" />
             </b-form-group>
             <b-form-group>
-              <label v-t="'label.areaName'" />
+              <label v-t="'label.area'" />
               <b-form-select v-model="form.areaId" :options="areaOptions" class="mb-3 ml-3 col-4" :disabled="!isEditable" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group v-show="isShown('EXB_WITH_POSID')">
@@ -65,12 +65,12 @@
               <b-form-select v-model="form.sensorId" :options="sensorOptionsExb" class="mb-3 ml-3 col-4" :disabled="!isEditable" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group>
-              <label v-t="'label.zoneName'" />
+              <label v-t="'label.zone'" />
               <b-form-select v-model="form.zoneId" :options="zoneNames" class="mb-3 ml-3 col-4" :disabled="!isEditable" :readonly="!isEditable" />
             </b-form-group>
-            <b-button type="button" variant="outline-danger" @click="backToList" v-t="'label.back'"/>
-            <b-button v-if="isEditable" type="submit" :variant="theme" @click="register(false)" class="ml-2" >{{ label }}</b-button>
-            <b-button v-if="isEditable && !isUpdate" type="submit" :variant="theme" @click="register(true)" class="ml-2" v-t="'label.registerAgain'"/>
+            <b-button type="button" variant="outline-danger" @click="backToList" class="mr-2 my-1" v-t="'label.back'"/>
+            <b-button v-if="isEditable" type="submit" :variant="theme" @click="register(false)" class="mr-2 my-1" >{{ label }}</b-button>
+            <b-button v-if="isEditable && !isUpdate" type="submit" :variant="theme" @click="register(true)" class="my-1" v-t="'label.registerAgain'"/>
           </b-form>
         </b-col>
       </b-row>
