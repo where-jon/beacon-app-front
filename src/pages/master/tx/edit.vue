@@ -56,9 +56,9 @@
               <label v-t="'label.description'" />
               <b-form-textarea v-model="form.description" :rows="3" :max-rows="6" :readonly="!isEditable" ></b-form-textarea>
             </b-form-group>
-            <b-button type="button" variant="outline-danger" @click="backToList" v-t="'label.back'"/>
-            <b-button v-if="isEditable" type="submit" :variant="theme" @click="register(false)" class="ml-2">{{ label }}</b-button>
-            <b-button v-if="isEditable && !isUpdate" type="submit" :variant="theme" @click="register(true)" class="ml-2" v-t="'label.registerAgain'"/>
+            <b-button type="button" variant="outline-danger" @click="backToList" class="mr-2 my-1" v-t="'label.back'"/>
+            <b-button v-if="isEditable" type="submit" :variant="theme" @click="register(false)" class="mr-2 my-1">{{ label }}</b-button>
+            <b-button v-if="isEditable && !isUpdate" type="submit" :variant="theme" @click="register(true)" class="my-1" v-t="'label.registerAgain'"/>
           </b-form>
         </b-col>
       </b-row>

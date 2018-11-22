@@ -93,6 +93,9 @@ export default {
         }
         this.replaceAS({roleFeatures})
       }
+      else{
+        this.replaceAS({roleFeatures: []})
+      }
       this.replace({showProgress: false})
     },
   }
