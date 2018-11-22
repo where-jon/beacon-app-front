@@ -356,16 +356,16 @@ export const MENU = [
         icon: 'fas fa-chart-area'
       },
       {
-        key: 'heatmapPosition',
-        path: 'heatmap-position',
-        feature: '',
-        icon: 'fas fas fa-fire',
-      },
-      {
         key: 'flowlineAnalysis',
         path: 'flowlineAnalysis',
         feature: '/sum/flowlineAnalysis',
         icon: 'fas fa-shoe-prints'
+      },
+      {
+        key: 'heatmapPosition',
+        path: 'heatmap-position',
+        feature: '/sum/heatmapPosition',
+        icon: 'fas fas fa-fire',
       },
     ]
   },
