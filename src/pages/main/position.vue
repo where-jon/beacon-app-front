@@ -235,7 +235,10 @@ export default {
         }
         let positions = await EXCloudHelper.fetchPosition(this.exbs, this.txs, pMock)
         // 移動平均数分のポジションデータを保持する
+        // 注：11/21 positionレコードのpos_idが書き換わっている。要確認
+        console.log(positions)
         this.pushOrgPositions(positions)
+        console.log(this.positions)
 
         if (APP.USE_MEDITAG) {
           let meditagSensors = await EXCloudHelper.fetchSensor(SENSOR.MEDITAG)
