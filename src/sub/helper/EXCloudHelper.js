@@ -4,7 +4,7 @@ import * as mock from '../../assets/mock/mock'
 import moment from 'moment'
 import * as HttpHelper from './HttpHelper'
 
-const dateform = (time) => moment(time).format('YYYY/MM/DD HH:mm:ss')
+export const dateform = (time) => moment(time).format('YYYY/MM/DD HH:mm:ss')
 
 export const fetchPosition = async (exbs, txs, pMock) => {
     let data = pMock? pMock: DEV.USE_MOCK_EXC? mock.position:
@@ -58,7 +58,7 @@ export const fetchGateway = async () => {
         await HttpHelper.getExCloud(APP_SERVICE.BASE_URL + EXCLOUD.GATEWAY_URL + new Date().getTime())
     return _(data)
     .map((val) => {
-        return {...val, updated: dateform(val.updated)}
+        return {...val, updated: dateform(val.timestamp)}
     })
     .compact().value()
 }

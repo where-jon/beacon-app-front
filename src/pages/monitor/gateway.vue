@@ -109,14 +109,12 @@ export default {
       this.isLoad = true
       try {
         let gateways = await EXCloudHelper.fetchGateway()
-        console.log(gateways)
         if (payload && payload.done) {
           payload.done()
         }
         const currentTime = new Date().getTime()
         gateways = gateways.map((e) => {
-          const timestamp = formattedDateToDatetime(e.updated)
-          const state = this.$i18n.t('label.' + this.getGatewayState(e.updated))
+          const state = this.$i18n.t('label.' + this.getGatewayState(e.timestamp))
           return { ...e, state: state }
         })
         this.replaceMonitor({gateways})
@@ -157,7 +155,6 @@ export default {
       }
     },
     download() {
-      console.log(this.gateways)
       HtmlUtil.fileDL("gateway.csv", Util.converToCsv(this.gateways), getCharSet(this.$store.state.loginId))
     },
   }
