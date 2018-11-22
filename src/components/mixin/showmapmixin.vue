@@ -140,24 +140,38 @@ export default {
         }
       }
     },
+    calcFitSize(target, parent, top = 82) {
+      const parentHeight = document.documentElement.clientHeight - parent.offsetTop - top
+      const isMapWidthLarger = parentHeight / parent.clientWidth > target.height / target.width
+      let fitWidth
+      if (HtmlUtil.isMobile()) {
+        fitWidth = (this.tempMapFitMobile == "both" && isMapWidthLarger) || this.tempMapFitMobile == "width"
+      } else {
+         fitWidth = (DISP.MAP_FIT == "both" && isMapWidthLarger) || DISP.MAP_FIT == "width"
+      }
+      const result = {}
+      if (fitWidth) {
+        result.width = parent.clientWidth
+        result.height = parent.clientWidth * target.height / target.width
+      } else {
+        result.width = parentHeight * target.width / target.height
+        result.height = parentHeight
+      }
+      this.oldMapImageScale = this.mapImageScale
+      this.mapImageScale = result.width / target.width
+      console.debug(fitWidth, result.width, result.height, parentHeight)
+      return result
+    },
     drawMapImage(bg) {
       let canvas = this.$refs.map
       this.mapWidth = bg.width
       this.mapHeight = bg.height
       this.isShownMapImage = true
       let parent = document.getElementById("map").parentElement
-      let parentHeight = document.documentElement.clientHeight - parent.offsetTop - 82
-      let isMapWidthLarger = parentHeight / parent.clientWidth > bg.height / bg.width
-      let fitWidth = HtmlUtil.isMobile()? ((this.tempMapFitMobile == "both" && isMapWidthLarger) || this.tempMapFitMobile == "width"): (DISP.MAP_FIT == "both" && isMapWidthLarger) || DISP.MAP_FIT == "width"
-      if (fitWidth) {
-        canvas.width = parent.clientWidth
-        canvas.height = parent.clientWidth * bg.height / bg.width
-      }
-      else {
-        canvas.width = parentHeight * bg.width / bg.height
-        canvas.height = parentHeight
-      }
-      console.debug(fitWidth, canvas.width, canvas.height, parentHeight)
+
+      const size = this.calcFitSize(bg, parent)
+      canvas.width = size.width
+      canvas.height = size.height
 
       if (this.stage) { 
         this.stage.removeAllChildren()
@@ -179,8 +193,7 @@ export default {
       }
 
       var bitmap = new Bitmap(bg)
-      this.oldMapImageScale = this.mapImageScale
-      this.mapImageScale = bitmap.scaleY = bitmap.scaleX = canvas.width / bg.width
+      bitmap.scaleY = bitmap.scaleX = this.mapImageScale
       bitmap.width = canvas.width
       bitmap.height = canvas.height
       this.stage.addChild(bitmap)

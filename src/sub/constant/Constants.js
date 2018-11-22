@@ -369,6 +369,12 @@ export const MENU = [
         feature: '/sum/flowlineAnalysis',
         icon: 'fas fa-shoe-prints'
       },
+      {
+        key: 'heatmapPosition',
+        path: 'heatmap-position',
+        feature: '/sum/heatmapPosition',
+        icon: 'fas fas fa-fire',
+      },
     ]
   },
   {

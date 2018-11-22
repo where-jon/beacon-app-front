@@ -310,6 +310,8 @@
     "flowlineAnalysis": "動線分析",
     "individual": "個人",
 
+    "heatmapPosition": "ヒートマップ(測位)",
+
     "allRejection": "すべて拒否",
     "systemReadOnly": "システムの読み取りのみ許可",
     "readOnly": "読み取りのみ許可",
