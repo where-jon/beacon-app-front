@@ -135,7 +135,7 @@ export const setDetectState = (positions) => {
   _.forEach(positions, (position) => {
     let lastDetect
     const nearest = _.filter(position.nearest, (val) =>
-      val.rssi >= DISP.RSSI_MIN // rssi最低値でフィルタ
+      val.rssi >= APP.RSSI_MIN // rssi最低値でフィルタ
     )
     if (!Util.hasValue(nearest)) {
       lastDetect = -1
