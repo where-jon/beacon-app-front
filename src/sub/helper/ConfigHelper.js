@@ -2,6 +2,28 @@ import _ from 'lodash'
 import axios from 'axios'
 import * as config from '../constant/config'
 
+export const convertValue = (str, type) => {
+  if(!/^.*(list|array)$/.test(type.toLowerCase())){
+    switch(type) {
+      case "number":
+      case "float":
+      case "double":
+      case "int":
+        return Number(str)
+      case "boolean":
+        return str == "true"
+    }
+    return str
+  }
+  return str.split(",").filter((val) => val.length != 0).map((val) => {
+    val.trim()
+    if(/^number.*$/.test(type)){
+      val = Number(val)
+    }
+    return val
+  })
+}
+
 export const loadConfigJson = async () => {
   let configJson = await axios.get("/config.json")
   if (configJson.data) {
@@ -31,21 +53,7 @@ export const applyAppServiceSetting = (settingArr, defaultConfig = null) => {
     let val = setting.value
     let valType = setting.valType? setting.valType.toLowerCase(): null
     if (val && valType) {
-      switch(valType) {
-      case "number":
-      case "float":
-      case "double":
-      case "int":
-        val = Number(val)
-        break
-      case "boolean":
-        val = val == "true"
-        break
-      case "list":
-      case "array":
-        val = val.split(",")
-        break
-      }
+      val = convertValue(val, valType)
     }
     result[key] = val
     return result

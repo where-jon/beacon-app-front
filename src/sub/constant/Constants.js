@@ -360,6 +360,12 @@ export const MENU = [
         feature: '',
         icon: 'fas fas fa-fire',
       },
+      {
+        key: 'flowlineAnalysis',
+        path: 'flowlineAnalysis',
+        feature: '/sum/flowlineAnalysis',
+        icon: 'fas fa-shoe-prints'
+      },
     ]
   },
   {

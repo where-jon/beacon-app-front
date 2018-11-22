@@ -346,8 +346,8 @@ export default {
       let stage = this.stage
       let txBtn = new Container()
       let btnBg = new Shape()
-      let bgColor = (magnet && magnet.magnet == SENSOR.MAGNET_STATUS.OFF)? display.color: display.bgColor
-      let color = (magnet && magnet.magnet == SENSOR.MAGNET_STATUS.OFF)? display.bgColor : display.color
+      let bgColor = (magnet && magnet.magnet === SENSOR.MAGNET_STATUS.ON)? display.color: display.bgColor
+      let color = (magnet && magnet.magnet === SENSOR.MAGNET_STATUS.ON)? display.bgColor : display.color
       btnBg.graphics.beginStroke("#ccc").beginFill('#' + bgColor)
       switch(display.shape) {
       case SHAPE.CIRCLE:

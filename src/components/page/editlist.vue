@@ -13,14 +13,10 @@
           <div v-for="row in multiList[categoryId]" :key="row.id">
             <b-form-group :label="getName(row.key)" :description="getName(row.description)">
               <span v-for="field in fields" :key="field.key">
-                <span v-if="useValueTypeRow(row, field)">
-                  <span v-if="usePullDownRow(row, field)">
-                    <b-form-select v-model="row[field.key]" :options="getBooleanOptions()" form="updateForm"/>
-                  </span>
-                  <span v-else>
-                    <b-form-input v-model="row[field.key]" :type="getInputTypeRow(row, field)" maxlength="1000" form="updateForm"/>
-                  </span>
-                </span>
+                <b-form-select v-if="useInputPullDown(row[field.type])" v-model="row[field.key]" :options="getBooleanOptions()" form="updateForm"/>
+                <b-form-input v-else-if="useInputNumberType(row[field.type])" v-model="row[field.key]" type="text" class="form-control-sm" :formatter="numberFormat" maxlength="1000" required/>
+                <b-form-input v-else-if="useInputNumberListType(row[field.type])" v-model="row[field.key]" type="text" class="form-control-sm" :formatter="numberListFormat" maxlength="1000" required/>
+                <b-form-input v-else v-model="row[field.key]" :type="getInputType(row[field.type])" maxlength="1000" form="updateForm" required/>
               </span>
               <b-button v-if="isSuperEditable" size="sm" @click.stop="deleteConfirm(row, $event.target)" variant="outline-danger" v-t="'label.delete'" class="mt-2 float-right" />
             </b-form-group>
@@ -42,8 +38,10 @@
             </b-form-row>
             <b-form-row class="mb-2">
               <label v-t="'label.value'" class="mr-2" />
-              <b-form-select v-if="usePullDown(newForm.type)" v-model="newForm.value" :options="getBooleanOptions()" required/>
-              <b-form-input v-if="!usePullDown(newForm.type)" v-model="newForm.value" :type="getInputType(newForm.type)" class="form-control-sm" maxlength="1000" required/>
+              <b-form-select v-if="useInputPullDown(newForm.type)" v-model="newForm.value" :options="getBooleanOptions()" required/>
+              <b-form-input v-else-if="useInputNumberType(newForm.type)" v-model="newForm.value" type="text" class="form-control-sm" :formatter="numberFormat" maxlength="1000" required/>
+              <b-form-input v-else-if="useInputNumberListType(newForm.type)" v-model="newForm.value" type="text" class="form-control-sm" :formatter="numberListFormat" maxlength="1000" required/>
+              <b-form-input v-else v-model="newForm.value" :type="getInputType(newForm.type)" class="form-control-sm" maxlength="1000" required/>
             </b-form-row>
             <b-form-row class="float-right mt-3">
               <b-button v-if="isEditable" type="submit" :variant="getButtonTheme()" @click="register(true)" v-t="'label.add'" />
@@ -51,11 +49,11 @@
             </b-form-row>
           </div>
         </div>
-        <b-button v-if="!useRegistForm" type="button" :variant="theme" @click="showForm(true)" v-t="'label.addForm'" class="float-right"/>
+        <b-button v-if="!useRegistForm" type="button" :variant="getButtonTheme()" @click="showForm(true)" v-t="'label.addForm'" class="float-right"/>
       </b-form>
 
       <b-form @submit="onSubmit" v-if="show" :id="'updateForm'">
-        <b-button v-if="isEditable && !useRegistForm" type="submit" :variant="theme" @click="register(true)" class="ml-2" v-t="'label.update'" />
+        <b-button v-if="isEditable && !useRegistForm" type="submit" :variant="getButtonTheme()" @click="register(true)" class="ml-2" v-t="'label.update'" />
       </b-form>
     </div>
 
@@ -96,8 +94,6 @@ export default {
   },
   mounted() {
     this.$parent.$options.methods.fetchData.apply(this.$parent)
-    const theme = getTheme(this.loginId)
-    return 'outline-' + theme
   },
   methods: {
     getName(id) {
@@ -110,40 +106,51 @@ export default {
       }
       return name
     },
-    useValueTypeRow(row, field) {
-      return field.type && row[field.type]
+    useInputPullDown(type) {
+      return /^boolean$/.test(type? type.toLowerCase(): type)
     },
-    usePullDownRow(row, field) {
-      return this.usePullDown(row[field.type])
+    useInputNumberType(type) {
+      return /^(number|int|float|double)$/.test(type? type.toLowerCase(): type)
     },
-    usePullDown(type) {
-      return new RegExp(`^${type}$`, "i").test("boolean")
+    useInputNumberListType(type) {
+      return /^(number|int|float|double)(list|array)$/.test(type? type.toLowerCase(): type)
     },
     getBooleanOptions() {
       return [{text: "true", value: "true"}, {text: "false", value: "false"}]
     },
-    getInputTypeRow(row, field) {
-      return this.getInputType(row[field.type])
-    },
     getInputType(type) {
-      const regExp = new RegExp(`^${type}$`, "i")
-      if(regExp.test("int") || regExp.test("number")){
+      if(this.useInputNumberType(type)){
         return "number"
-      }
-      if(regExp.test("email")){
-        return "email"
-      }
-      if(regExp.test("url")){
-        return "url"
       }
       return "text"
     },
     getTypeOptions() {
       return [
-        {text: "文字列", value: "string"},
-        {text: "数値", value: "number"},
-        {text: "真偽値", value: "boolean"},
+        {text: this.$i18n.tnl("label.string"), value: "string"},
+        {text: this.$i18n.tnl("label.stringList"), value: "stringList"},
+        {text: this.$i18n.tnl("label.number"), value: "number"},
+        {text: this.$i18n.tnl("label.numberList"), value: "numberList"},
+        {text: this.$i18n.tnl("label.boolean"), value: "boolean"},
       ]
+    },
+    numberFormat(value, event) {
+      if(!value){
+        return value
+      }
+      const isMinus = value.indexOf("-") == 0
+      value = value.replace(/[^0-9\.]/g, "")
+      const dotPosition = value.indexOf(".")
+      value = value.replace(/[^0-9]/g, "")
+      if(1 <= dotPosition){
+        value = `${value.slice(0, dotPosition)}.${value.slice(dotPosition, value.length)}`
+      }
+      if(isMinus){
+        value = `-${value}`
+      }
+      return value
+    },
+    numberListFormat(value, event) {
+      return value? value.split(",").map((val) => this.numberFormat(val.trim(), event)).join(","): value
     },
     clearValue(){
       this.newForm.value = null

@@ -6,7 +6,7 @@
       <b-row>
         <b-col md="10" offset-md="1">
           <pagetitle title="label.system" />
-          <edit-list :params="params" :multiList="categorySettings" :newForm="newForm" />
+          <edit-list :params="params" :multiList="categorySettings" :newForm="newForm" ref="editList" />
         </b-col>
       </b-row>
     </div>
@@ -94,12 +94,31 @@ export default {
       this.newForm = {}
       await this.fetchData(true)
     },
+    formatNumberList(str, type){
+      return str.split(",").filter((val) => val.trim().length != 0).map((val) => {
+        val.trim()
+        if(/^number.*$/.test(type)){
+          val = Number(val)
+        }
+        return val
+      }).join(",")
+    },
+    format(str, type){
+      const typeLow = type.toLowerCase()
+      if(this.$refs.editList.useInputNumberType(typeLow)){
+        return Number(str)
+      }
+      if(/^.*(list|array)$/.test(typeLow)){
+        return this.formatNumberList(str, typeLow)
+      }
+      return str
+    },
     addNewEntity() {
       return {
         settingId: -1,
         key: this.newForm.key,
         valType: this.newForm.type,
-        value: this.newForm.value,
+        value: this.format(this.newForm.value, this.newForm.type),
       }
     },
     async deleteEntity(entity) {
@@ -112,7 +131,7 @@ export default {
         this.categorySettings[key].map((val) => {
           entity.push({
             settingId: val.settingId,
-            value: val.value,
+            value: this.format(val.value, val.valType),
             key: val.key,
             valType: val.valType,
           })
