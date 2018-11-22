@@ -216,7 +216,6 @@ export default {
       })
     },
     fetchDataHeatmap(){
-      //地図表示
       const map = new Image()
       map.src = this.mapImage
 
@@ -247,5 +246,8 @@ export default {
 }
 .inputdateto {
   width: 200px;
+}
+div#heatmap {
+  display: inline-block;
 }
 </style>

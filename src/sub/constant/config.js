@@ -205,7 +205,10 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
       MAX_WEIGHT: 10,   // 動線の最大太さ
       COLOR: "#ff0000", // 動線の色 (#xxxxxx)
       OPACITY: 1,       // 動線の透過度 (0～1。0.5などの小数も可)
-    }
+    },
+    HEATMAP: {
+      RADIUS: 150,      // 直径
+    },
   }
 }
 

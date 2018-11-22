@@ -18,6 +18,7 @@
 <script>
 import h337 from 'heatmap.js'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import { DISP } from '../../sub/constant/config'
 import * as Util from '../../sub/util/Util'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
@@ -115,7 +116,8 @@ export default {
       this.removeHeatmap()
       Util.debug(this.heatmapData)
       let heatmap = h337.create({
-        container: element
+        radius: DISP.ANALYSIS.HEATMAP.RADIUS,
+        container: element,
       })
       heatmap.setData(this.heatmapData)
       this.heatmap = element.lastElementChild
