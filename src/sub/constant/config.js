@@ -50,7 +50,7 @@ export const APP = { // 機能面に関する設定
   USE_THERMOPILE: true, // サーモパイルセンサーの使用
   USE_MEDITAG: false, // メディタグの使用
   USE_MAGNET: false, // マグネットセンサの使用
-  USE_LEGEND: true, // 凡例を表示
+  USE_LEGEND: false, // 凡例を表示
 
   // 将来実装予定項目 START
   LOG_KEEP_TIME: 30,
