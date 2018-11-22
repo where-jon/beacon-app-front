@@ -157,6 +157,8 @@ export default {
         result.width = parentHeight * target.width / target.height
         result.height = parentHeight
       }
+      this.oldMapImageScale = this.mapImageScale
+      this.mapImageScale = result.width / target.width
       console.debug(fitWidth, result.width, result.height, parentHeight)
       return result
     },
@@ -191,8 +193,7 @@ export default {
       }
 
       var bitmap = new Bitmap(bg)
-      this.oldMapImageScale = this.mapImageScale
-      this.mapImageScale = bitmap.scaleY = bitmap.scaleX = canvas.width / bg.width
+      bitmap.scaleY = bitmap.scaleX = this.mapImageScale
       bitmap.width = canvas.width
       bitmap.height = canvas.height
       this.stage.addChild(bitmap)

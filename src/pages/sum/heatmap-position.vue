@@ -6,7 +6,7 @@
       <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">
         <div v-html="message" />
       </b-alert>
-      <analysis-search :fromHeatmap="fromHeatmap"/>
+      <analysis-search :fromHeatmap="fromHeatmap" @:resetHeatmap="removeHeatmap()"/>
     </div>
     <!-- modal -->
     <b-modal id="modalError" :title="$t('label.error')" ok-only>
@@ -32,6 +32,7 @@ export default {
     return {
       positionHistories: [],
       heatmap: null,
+      mapScale: 1,
       fromHeatmap: true,
       showInfo: false,
       showAlert: false,
@@ -50,6 +51,7 @@ export default {
   },
   computed: {
     heatmapData() {
+      const scale = this.mapScale
       let positions = 
         _.reduce(this.positionHistories, (ary, hist) => {
           if (ary[hist.posId]) {
@@ -57,31 +59,33 @@ export default {
           } else {
             ary[hist.posId] = {
               posId: hist.posId,
-              x: hist.x,
-              y: hist.y,
+              x: Math.round(hist.x * scale),
+              y: Math.round(hist.y * scale),
               value: 1,
             }
           }
           return ary
         }, [])
       console.log(positions)
-      positions = _.compact(positions)  
-      return positions
+      positions = _.compact(positions)
+      let maxValue = _.maxBy(positions, 'value').value
+      return {
+        max: maxValue,
+        data: positions,
+      }
     }
-  },
-  mounted() {
-    this.heatmap = this.$refs.heatmap
-    this.fetchData()
   },
   methods: {
     async display(param) {
       if(param.errorMessage){
         this.message = param.errorMessage
         this.showAlert = true
+        this.removeHeatmap()
         return
       }
       try {
         const form = param.form
+        this.mapScale = param.mapScale
         let reqParam = [
           '/core/positionHistory',
           form.areaId,
@@ -96,51 +100,31 @@ export default {
         if(!results.length){
           this.message = this.$i18n.tnl("message.notFoundData", {target: this.$i18n.tnl("label.heatmapPosition")})
           this.showAlert = true
+          this.removeHeatmap()
           return
         }
         this.positionHistories = results
-        console.log(this.heatmapData)
 
-        let heatmap = h337.create({
-          container: document.getElementById('heatmap')
-        })
-        heatmap.setData({
-          max: 5,
-          data: this.heatmapData
-        })
+        this.drawHeatmap(document.getElementById('heatmap'))
+
       } catch (e) {
         console.error(e)
       }
     },
-    reset() {
-      this.fetchData()
+    drawHeatmap(element) {
+      this.removeHeatmap()
+      Util.debug(this.heatmapData)
+      let heatmap = h337.create({
+        container: element
+      })
+      heatmap.setData(this.heatmapData)
+      this.heatmap = element.lastElementChild
     },
-    async fetchData(payload) {
-      try {
-        console.log('fetchData start.')
-
-         // <- 今はここが動かない。
-
-        
-
-        // map.onload = (evt) => {
-        //   console.log('in onload...')
-        //   const size = this.calcFitSize(map, heatmap.parentElement)
-        //   map.width = size.width
-        //   map.height = size.height
-        //   console.log(size)
-          
-          
-        // }
-
-        if (payload && payload.done) {
-          payload.done()
-        }
+    removeHeatmap() {
+      if (this.heatmap && this.heatmap.parentNode) {
+        this.heatmap.parentNode.removeChild(this.heatmap)
       }
-      catch(e) {
-        console.error(e)
-      }
-      //this.replace({showProgress: false})
+      this.heatmap = null
     },
   }
 }

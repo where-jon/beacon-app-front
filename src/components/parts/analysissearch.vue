@@ -45,8 +45,8 @@
         </b-form-group>
       </b-form>
       <canvas id="map" ref="map" v-if="!fromHeatmap"/>
-      <div id="heatmap" ref="heatmap" v-if="fromHeatmap" />
     </div>
+    <div id="heatmap" ref="heatmap" v-if="fromHeatmap" />
   </div>
 </template>
 
@@ -178,6 +178,9 @@ export default {
     },
     reset() {
       this.isShownMapImage = false
+      if (this.fromHeatmap) {
+        this.fetchDataHeatmap()
+      }
     },
     async fetchData(payload){
       try {
@@ -217,6 +220,7 @@ export default {
       const map = new Image()
       map.src = this.mapImage
 
+      this.$emit('resetHeatmap')
       let heatmap = document.getElementById('heatmap')
       while (heatmap.firstChild) {
         heatmap.removeChild(heatmap.firstChild)
