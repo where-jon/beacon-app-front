@@ -139,8 +139,9 @@ export const DETECT_STATE = {
   getTypes(){ 
     return [
       {value: 1, text: i18n.t('label.detected')},
-      {value: 2, text: i18n.t('label.detectAfterUndetect')},
-      {value: 3, text: i18n.t('label.undetect')},
+      {value: 2, text: i18n.t('label.temporaryUndetect')},
+      {value: 3, text: i18n.t('label.todayUndetect')},
+      {value: 4, text: i18n.t('label.undetect')},
     ]
   },
 }

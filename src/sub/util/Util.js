@@ -3,7 +3,7 @@ import jschardet from 'jschardet'
 import Encoding from 'encoding-japanese'
 import Papa from 'papaparse'
 import moment from 'moment'
-import { DEV } from '../constant/config';
+import { DEV, APP } from '../constant/config';
 
 // sleep (for test)
 export const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))
@@ -255,6 +255,22 @@ export const getEntityFromIds = (list, entity, ids) => {
     }
   }
   return null
+}
+
+/**
+ * 現在の日付の午前0時を表す数値を返す。
+ */
+export const getMidnightMs = () => {
+  const now = new Date()
+  const dayMs = 24 * 60 * 60 * 1000
+  const offset = APP.POSITION_TIMEZONE * 60 * 60 * 1000
+  const nowToday = Math.floor(now.getTime() / dayMs)
+  const midnight = (nowToday * dayMs) + offset
+  debug("calcurating midnight. now is ", now)
+  debug(now.getTime())
+  debug("midnight is ", midnight)
+  debug(new Date(midnight))
+  return midnight
 }
 
 export const getOptions = (key, list, valField, txtField) => {

@@ -79,9 +79,6 @@ export default {
       'exbs',
       'positions',
     ]),
-    ...mapState('main', [
-      'orgPositions',
-    ]),
   },
   methods: {
     ...mapActions('main', [
@@ -98,24 +95,11 @@ export default {
         // 移動平均数分のポジションデータを保持する
         this.pushOrgPositions(positions)
 
-        // 在席表示画面と同じ検知状態の取得
-        let now = !DEV.USE_MOCK_EXC? new Date().getTime(): mock.positions_conf.start + this.count++ * mock.positions_conf.interval  // for mock
-        let correctPositions = PositionHelper.correctPosId(this.orgPositions, now)
-        positions = positions.map((pos) => {
-          const correctPos = _.find(correctPositions, (val) => {
-            return pos.btx_id == val.btx_id && pos.pos_id == val.pos_id
-          })
-          if (!correctPos) { // 未検知
-            return {...pos, phase: 3, noSelectedTx: true}
-          } else if (correctPos.transparent) { // 検知後未検知
-            return {...pos, phase: 2}
-          } else { // 検知中
-            return {...pos, phase: 1}
-          }
-        }),
+        // 検知状態の取得
+        PositionHelper.setDetectState(positions)
 
         positions = positions.map((pos) => {
-          const stateOpt = DETECT_STATE.getTypes().find((val) => pos.phase === val.value)
+          const stateOpt = DETECT_STATE.getTypes().find((val) => pos.detectState === val.value)
           return {
             ...pos,
             state: stateOpt ? stateOpt.text : null,
@@ -127,7 +111,6 @@ export default {
             areaName: Util.getValue(pos, "exb.areaName", null),
             locationName: Util.getValue(pos, "exb.locationName", null),
             // 追加フィルタ用
-            detectState: pos.phase,
             groupId: Util.getValue(pos, 'tx.group.groupId').val,
             areaId: Util.getValue(pos, 'exb.location.areaId').val,
           }
