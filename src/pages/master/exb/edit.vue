@@ -87,7 +87,7 @@ import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as Util from '../../../sub/util/Util'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
 import { APP } from '../../../sub/constant/config.js'
-import { txViewTypes } from '../../../sub/constant/Constants'
+import { TX_VIEW_TYPES } from '../../../sub/constant/Constants'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 
@@ -102,7 +102,6 @@ export default {
       id: 'exbId',
       backPath: '/master/exb',
       appServicePath: '/core/exb',
-      txViewTypes: txViewTypes,
       mutex: false,
       form: ViewHelper.extract(this.$store.state.app_service.exb, [
           "exbId", "deviceId", "enabled",
@@ -165,6 +164,12 @@ export default {
       )
       Util.addNoSelect(options)
       return options
+    },
+    txViewTypes() {
+      return Object.keys(TX_VIEW_TYPES).map(key => {
+        const label = `label.txViewType${key.charAt(0).toUpperCase()}${key.slice(1).toLowerCase()}`
+        return {value: TX_VIEW_TYPES[key], text: this.$i18n.tnl(label)}
+      })
     },
     ...mapState('app_service', [
       'exb',

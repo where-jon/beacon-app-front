@@ -347,6 +347,14 @@
     "notUse": "未使用",
     "totalRecordsCount": "総件数",
 
+
+    "---------------- App position ---------------":"",
+    "txViewTypeDefault": "通常",
+    "txViewTypeSquare": "長方形",
+    "txViewTypeDiamond": "ひし形",
+    "txViewTypeSpiral": "渦巻",
+    "txViewTypeTile": "タイル",
+
     "string": "文字列",
     "stringList": "文字列リスト",
     "number": "数値",

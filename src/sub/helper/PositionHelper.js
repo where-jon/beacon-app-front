@@ -1,7 +1,181 @@
 import { APP, DISP, DEV } from '../constant/config'
+import { TX_VIEW_TYPES } from '../constant/Constants'
 import * as Util from '../util/Util'
 import * as mock from '../../assets/mock/mock.js'
 import styles from '../constant/config.scss'
+
+const iconsUnitNum = 9
+const tileLayoutIconsNum = 5
+const TILE_LAYOUT_MAXICONS = 25
+const PIdiv180 = Math.PI / 180
+const diameter = DISP.TX_R * 2
+const angle = 45
+
+/**
+ * 配列をnumで指定された要素数で区切る
+ * @param {*} array パーティショニング元配列
+ * @param {*} num 1つのパーティションの要素数
+ */
+const partitioningArray = (array, num) => {
+  const len = array.length
+  const c = []
+  for (let i = 0 ; i < len ; i += num) {
+    c.push(array.slice(i, (i+num)))
+  }
+  return c
+}
+
+// 長方形配置時の、原点からの距離(半径)を取得する
+const getRadiusSquare = (index, radius) => index % 2 === 0 ? radius : Math.sqrt(Math.pow(radius, 2) * 2)
+// ひし形配置時の、原点からの距離(半径)を取得する
+const getRadiusDiamond = (index, radius) => (index % 2 !== 0 && index % 6 !== 0) ? radius : radius * 1.5
+
+/**
+ * デフォルトレイアウトのTXアイコン配置座標の配列を取得する
+ * @param {*} exb EXBオブジェクト
+ * @param {*} ratio ウインドウ縮小割合
+ * @param {*} samePos 同じEXBの位置に配置するTXオブジェクトの配列
+ */
+const getCoordinateDefault = (exb, ratio, samePos) => {
+  let baseX = exb.location.x * ratio
+  let baseY = exb.location.y * ratio
+  const ret = []
+  switch (samePos.length) {
+    case 1:
+      ret.push({...samePos[0], x: baseX, y: baseY})
+      break
+    case 2:
+      ret.push({...samePos[0], x: baseX - DISP.TX_R / DISP.TX_DIV_2, y: baseY})
+      ret.push({...samePos[1], x: baseX + DISP.TX_R / DISP.TX_DIV_2, y: baseY})
+      break
+    case 3:
+      ret.push({...samePos[0], x: baseX - DISP.TX_R / DISP.TX_DIV_3, y: baseY})
+      ret.push({...samePos[1], x: baseX, y: baseY})
+      ret.push({...samePos[2], x: baseX + DISP.TX_R / DISP.TX_DIV_3, y: baseY})
+      break
+    case 4:
+      ret.push({...samePos[0], x: baseX - DISP.TX_R / DISP.TX_DIV_2, y: baseY - DISP.TX_R / DISP.TX_DIV_2})
+      ret.push({...samePos[1], x: baseX + DISP.TX_R / DISP.TX_DIV_2, y: baseY - DISP.TX_R / DISP.TX_DIV_2})
+      ret.push({...samePos[2], x: baseX - DISP.TX_R / DISP.TX_DIV_2, y: baseY + DISP.TX_R / DISP.TX_DIV_2})
+      ret.push({...samePos[3], x: baseX + DISP.TX_R / DISP.TX_DIV_2, y: baseY + DISP.TX_R / DISP.TX_DIV_2})
+      break
+    default:
+      ret.push({...samePos[0], x: baseX - DISP.TX_R / DISP.TX_DIV_3, y: baseY - DISP.TX_R / DISP.TX_DIV_2})
+      ret.push({...samePos[1], x: baseX, y: baseY - DISP.TX_R / DISP.TX_DIV_2})
+      ret.push({...samePos[2], x: baseX + DISP.TX_R / DISP.TX_DIV_3, y: baseY - DISP.TX_R / DISP.TX_DIV_2})
+      ret.push({...samePos[3], x: baseX - DISP.TX_R / DISP.TX_DIV_3, y: baseY + DISP.TX_R / DISP.TX_DIV_2})
+      if (samePos.length <= 6) {
+        ret.push({...samePos[4], x: baseX, y: baseY + DISP.TX_R / DISP.TX_DIV_2})
+      }
+      if (samePos.length == 6) {
+        ret.push({...samePos[5], x: baseX + DISP.TX_R / DISP.TX_DIV_3, y: baseY + DISP.TX_R / DISP.TX_DIV_2})
+      }
+      if (samePos.length > 6) { // 6超の場合、2段目を分割して重ねて表示
+        for (let i=4; i < samePos.length; i++) {
+          ret.push({...samePos[i], x: baseX - DISP.TX_R / DISP.TX_DIV_3 + DISP.TX_R * 5 / (samePos.length - 3) * (i - 3), y: baseY + DISP.TX_R / DISP.TX_DIV_2})
+        }
+      }
+      break
+  }
+  return ret
+}
+
+/**
+ * TXアイコンタイル形配置時、個々のTXアイコン配置座標を取得する
+ * @param {*} orgX アイコン配置開始X座標値
+ * @param {*} orgY アイコン配置開始Y座標値
+ * @param {*} positions EXBの配置座標配列
+ */
+const getCoordinateTile = (orgX, orgY, positions) => {
+  return partitioningArray(positions, tileLayoutIconsNum).flatMap((array, i, a) => {
+    return array.map((b, j, c) => {
+      return {...b, x: orgX + diameter * j, y: orgY + diameter * i }
+    })
+  })
+}
+
+/**
+ * TXアイコン長方形配置時、個々のTXアイコン配置座標を取得する
+ * @param {*} index インデックス
+ * @param {*} x EXB X座標値
+ * @param {*} y EXB Y座標値
+ * @param {*} isDiamond trueの場合、ひし形に配置
+ */
+const getCoordinateSquare = (index, x, y, isDiamond = false) => {
+  const i = index % iconsUnitNum
+  if (i < 1) {
+    return {x: x, y: y}
+  }
+  const r = isDiamond ? getRadiusDiamond(index, diameter) : getRadiusSquare(index, diameter)
+  const radian = angle * i * PIdiv180
+  return {x: x + r * Math.cos(radian), y: y + r * Math.sin(radian)}
+}
+
+/**
+ * TXアイコンをスパイラル状に配置時、個々のTXアイコン配置座標を取得する
+ * @param {*} index インデックス
+ * @param {*} x  EXB X座標値
+ * @param {*} y  EXB Y座標値
+ * @param {*} theta 原点からのアイコン配置角
+ * @param {*} radius 原点からのアイコン配置距離(半径)
+ */
+const getCoordinateSpiral = (index, x, y, theta, radius) => {
+  const radian = theta * PIdiv180
+  return {
+    x: index > 0 ? x + radius * Math.cos(radian) : x,
+    y: index > 0 ? y + radius * Math.sin(radian) : y
+  }
+}
+
+/**
+ * TXアイコンを配置する座標を取得
+ * @param {*} orgX アイコン配置開始X座標値
+ * @param {*} orgY アイコン配置開始Y座標値
+ * @param {*} positions EXBの配置座標配列
+ * @param {*} viewType アイコン配置タイプ
+ */
+const getCoordinate = (orgX, orgY, positions, viewType) => {
+  if (viewType === TX_VIEW_TYPES.TILE) {
+    return getCoordinateTile(orgX, orgY, positions)
+  }
+  return positions.length > 1 ? positions.map((e, i, a) => {
+    const xy = (() => {
+      switch (viewType) {
+        case TX_VIEW_TYPES.SQUARE :
+          return getCoordinateSquare(i, orgX, orgY)
+        case TX_VIEW_TYPES.DIAMOND :
+          return getCoordinateSquare(i, orgX, orgY, true)
+        case TX_VIEW_TYPES.SPIRAL :
+          return getCoordinateSpiral(i, orgX, orgY, 360 / positions.length * i, diameter)
+      }
+    })()
+    return {...e, x: xy.x, y: xy.y}
+  }) : {...positions[0], x: orgX, y: orgY}
+}
+
+/**
+ * 複数TXアイコンが同じEXBの位置に重複する場合の
+ * 配置座標を取得する
+ * @param {*} exb EXBオブジェクト 
+ * @param {*} ratio ブラウザウインドウ縮小割合
+ * @param {*} samePos TXアイコン座標配列
+ */
+const getPositionsToOverlap = (exb, ratio, samePos) => {
+  const viewType = exb.location.txViewType
+  if (viewType === TX_VIEW_TYPES.DEFAULT ||
+    !Object.keys(TX_VIEW_TYPES).find(key => viewType === TX_VIEW_TYPES[key])) {
+    return getCoordinateDefault(exb, ratio, samePos)
+  }
+  let baseX = exb.location.x * ratio
+  let baseY = exb.location.y * ratio
+  const c = partitioningArray(samePos, viewType !== TX_VIEW_TYPES.TILE ? iconsUnitNum : TILE_LAYOUT_MAXICONS)
+  return c.flatMap((e, i, a) => {
+    const coordinate = getCoordinate(baseX, baseY, e, viewType)
+    baseX += DISP.TX_R
+    baseY += DISP.TX_R
+    return coordinate
+  })
+}
 
 /**
  * 過去の位置データの移動平均、RSSIによるフィルタリング、時間によるフィルタリングで位置を決定
@@ -77,54 +251,10 @@ export const correctPosId = (orgPositions, now) => {
 }
 
 export const adjustPosition = (positions, ratio, exbs = []) => {
-  const ret = []
-  exbs.forEach((exb) => {
-    let samePos = positions.filter((pos) => pos.pos_id == exb.location.posId)
-    if (!samePos || samePos.length == 0) {
-      return
-    }
-    let baseX = exb.location.x * ratio
-    let baseY = exb.location.y * ratio
-    switch (samePos.length) {
-      case 1:
-        ret.push({...samePos[0], x: baseX, y: baseY})
-        break
-      case 2:
-        ret.push({...samePos[0], x: baseX - DISP.TX_R / DISP.TX_DIV_2, y: baseY})
-        ret.push({...samePos[1], x: baseX + DISP.TX_R / DISP.TX_DIV_2, y: baseY})
-        break
-      case 3:
-        ret.push({...samePos[0], x: baseX - DISP.TX_R / DISP.TX_DIV_3, y: baseY})
-        ret.push({...samePos[1], x: baseX, y: baseY})
-        ret.push({...samePos[2], x: baseX + DISP.TX_R / DISP.TX_DIV_3, y: baseY})
-        break
-      case 4:
-        ret.push({...samePos[0], x: baseX - DISP.TX_R / DISP.TX_DIV_2, y: baseY - DISP.TX_R / DISP.TX_DIV_2})
-        ret.push({...samePos[1], x: baseX + DISP.TX_R / DISP.TX_DIV_2, y: baseY - DISP.TX_R / DISP.TX_DIV_2})
-        ret.push({...samePos[2], x: baseX - DISP.TX_R / DISP.TX_DIV_2, y: baseY + DISP.TX_R / DISP.TX_DIV_2})
-        ret.push({...samePos[3], x: baseX + DISP.TX_R / DISP.TX_DIV_2, y: baseY + DISP.TX_R / DISP.TX_DIV_2})
-        break
-      default:
-        ret.push({...samePos[0], x: baseX - DISP.TX_R / DISP.TX_DIV_3, y: baseY - DISP.TX_R / DISP.TX_DIV_2})
-        ret.push({...samePos[1], x: baseX, y: baseY - DISP.TX_R / DISP.TX_DIV_2})
-        ret.push({...samePos[2], x: baseX + DISP.TX_R / DISP.TX_DIV_3, y: baseY - DISP.TX_R / DISP.TX_DIV_2})
-        ret.push({...samePos[3], x: baseX - DISP.TX_R / DISP.TX_DIV_3, y: baseY + DISP.TX_R / DISP.TX_DIV_2})
-        if (samePos.length <= 6) {
-          ret.push({...samePos[4], x: baseX, y: baseY + DISP.TX_R / DISP.TX_DIV_2})
-        }
-        if (samePos.length == 6) {
-          ret.push({...samePos[5], x: baseX + DISP.TX_R / DISP.TX_DIV_3, y: baseY + DISP.TX_R / DISP.TX_DIV_2})
-        }
-        if (samePos.length > 6) { // 6超の場合、2段目を分割して重ねて表示
-          for (let i=4; i < samePos.length; i++) {
-            ret.push({...samePos[i], x: baseX - DISP.TX_R / DISP.TX_DIV_3 + DISP.TX_R * 5 / (samePos.length - 3) * (i - 3), y: baseY + DISP.TX_R / DISP.TX_DIV_2})
-          }
-        }
-        break
-      }
-    })
-
-    return ret
+  return exbs.map((exb) => {
+    const samePos = positions.filter((pos) => pos.pos_id == exb.location.posId)
+    return (!samePos || samePos.length == 0) ? null : getPositionsToOverlap(exb, ratio, samePos)
+  }).filter(e => e).flatMap(e => e)
 }
 
 export const setDetectState = (positions) => {
