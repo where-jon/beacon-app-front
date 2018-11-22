@@ -1,15 +1,13 @@
 <template>
   <div id="mapContainer" class="container-fluid">
-    <breadcrumb :items="items" :reload="true" />
-    <b-row class="mt-2">
-      <b-form inline class="mt-2">
-        <label class="ml-3 mr-2">{{ $t('label.area') }}</label>
-        <b-form-select v-model="selectedArea" :options="areaOptions" @change="changeArea" required class="ml-2"></b-form-select>
-      </b-form>
-    </b-row>
-    <b-row class="mt-3">
-      <div id="heatmap" ref="heatmap"></div>
-    </b-row>
+    <breadcrumb :items="items" :reload="false" />
+    <div class="container">
+      <b-alert variant="info" dismissible :show="showInfo">{{ message }}</b-alert>
+      <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">
+        <div v-html="message" />
+      </b-alert>
+      <analysis-search :fromHeatmap="fromHeatmap"/>
+    </div>
     <!-- modal -->
     <b-modal id="modalError" :title="$t('label.error')" ok-only>
       {{ $t('message.noMapImage') }}
@@ -20,92 +18,120 @@
 <script>
 import h337 from 'heatmap.js'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
-import * as StateHelper from '../../sub/helper/StateHelper'
-import { DEV, DISP, APP } from '../../sub/constant/config'
-import { SENSOR } from '../../sub/constant/Constants'
 import * as Util from '../../sub/util/Util'
-import { Shape, Stage, Container, Bitmap, Text, Touch } from '@createjs/easeljs/dist/easeljs.module'
-import { Tween, Ticker } from '@createjs/tweenjs/dist/tweenjs.module'
+import * as HttpHelper from '../../sub/helper/HttpHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
-import showmapmixin from '../../components/mixin/showmapmixin.vue'
+import analysisSearch from '../../components/parts/analysissearch.vue'
 
 export default {
-  mixins: [showmapmixin],
   components: {
     breadcrumb,
+    analysisSearch
   },
   data() {
-     return {
-       keepExbPosition: false,
-       toggleCallBack: () => {
-        this.keepExbPosition = true
-      },
+    return {
+      positionHistories: [],
+      heatmap: null,
+      fromHeatmap: true,
+      showInfo: false,
+      showAlert: false,
+      message: "",
       items: [
         {
-          text: this.$i18n.tnl('label.main'),
+          text: this.$i18n.tnl('label.analysis'),
           active: true
         },
         {
-          text: this.$i18n.tnl('label.pir'),
+          text: this.$i18n.tnl('label.heatmapPosition'),
           active: true
-        },
+        }
       ],
     }
   },
   computed: {
+    heatmapData() {
+      let positions = 
+        _.reduce(this.positionHistories, (ary, hist) => {
+          if (ary[hist.posId]) {
+            ary[hist.posId].value++
+          } else {
+            ary[hist.posId] = {
+              posId: hist.posId,
+              x: hist.x,
+              y: hist.y,
+              value: 1,
+            }
+          }
+          return ary
+        }, [])
+      console.log(positions)
+      positions = _.compact(positions)  
+      return positions
+    }
   },
   mounted() {
-    this.replace({title: this.$i18n.tnl('label.pir')})
+    this.heatmap = this.$refs.heatmap
     this.fetchData()
   },
   methods: {
+    async display(param) {
+      if(param.errorMessage){
+        this.message = param.errorMessage
+        this.showAlert = true
+        return
+      }
+      try {
+        const form = param.form
+        let reqParam = [
+          '/core/positionHistory',
+          form.areaId,
+          form.groupId ? form.groupId : '0',
+          form.potId ? form.potId : '0',
+          form.datetimeFrom.getTime(),
+          form.datetimeTo.getTime(),
+        ].join('/')
+        console.log(reqParam)
+        const results = await HttpHelper.getAppService(reqParam)
+        console.log(results)
+        if(!results.length){
+          this.message = this.$i18n.tnl("message.notFoundData", {target: this.$i18n.tnl("label.heatmapPosition")})
+          this.showAlert = true
+          return
+        }
+        this.positionHistories = results
+        console.log(this.heatmapData)
+
+        let heatmap = h337.create({
+          container: document.getElementById('heatmap')
+        })
+        heatmap.setData({
+          max: 5,
+          data: this.heatmapData
+        })
+      } catch (e) {
+        console.error(e)
+      }
+    },
     reset() {
       this.fetchData()
     },
     async fetchData(payload) {
       try {
-        this.replace({showProgress: true})
         console.log('fetchData start.')
-        await StateHelper.load('area')
 
-        const map = new Image()
-        map.src = this.mapImage
+         // <- 今はここが動かない。
 
-        let heatmap = document.getElementById('heatmap')
-        while (heatmap.firstChild) {
-          heatmap.removeChild(heatmap.firstChild)
-        }
-        heatmap.appendChild(map)
+        
 
-        map.onload = (evt) => {
-          console.log('in onload...')
-          const size = this.calcFitSize(map, heatmap.parentElement)
-          map.width = size.width
-          map.height = size.height
-          console.log(size)
+        // map.onload = (evt) => {
+        //   console.log('in onload...')
+        //   const size = this.calcFitSize(map, heatmap.parentElement)
+        //   map.width = size.width
+        //   map.height = size.height
+        //   console.log(size)
           
-          heatmap = h337.create({
-            container: heatmap
-          })
-          heatmap.setData({
-            max: 20,
-            data: [
-              { x: 10, y: 15, value: 5},
-              { x: 20, y: 25, value: 7},
-              { x: 30, y: 35, value: 10},
-              { x: 40, y: 45, value: 15},
-              { x: 50, y: 55, value: 18},
-              { x: 50, y: 65, value: 20},
-              { x: 500, y: 370, value: 5},
-              { x: 500, y: 380, value: 7},
-              { x: 500, y: 390, value: 10},
-              { x: 500, y: 400, value: 15},
-              { x: 500, y: 430, value: 18},
-              { x: 500, y: 450, value: 20},
-            ]
-          })
-        }
+          
+        // }
 
         if (payload && payload.done) {
           payload.done()
@@ -114,7 +140,7 @@ export default {
       catch(e) {
         console.error(e)
       }
-      this.replace({showProgress: false})
+      //this.replace({showProgress: false})
     },
   }
 }

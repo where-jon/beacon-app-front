@@ -44,7 +44,8 @@
           </b-form-row>
         </b-form-group>
       </b-form>
-      <canvas id="map" ref="map" />
+      <canvas id="map" ref="map" v-if="!fromHeatmap"/>
+      <div id="heatmap" ref="heatmap" v-if="fromHeatmap" />
     </div>
   </div>
 </template>
@@ -67,6 +68,12 @@ export default {
   mixins: [showmapmixin, validatemixin],
   components: {
     DatePicker,
+  },
+  props: {
+    fromHeatmap: {
+      type: Boolean,
+      default: false,
+    },
   },
   data () {
     return {
@@ -165,9 +172,9 @@ export default {
       return this.formatValidateMessage(errors)
     },
     async display() {
-      this.container.removeAllChildren()
+      this.container ? this.container.removeAllChildren() : null
       await this.$parent.$options.methods.display.call(this.$parent, {view: this.container, form: this.form, errorMessage: this.validate(), mapScale: this.mapImageScale})
-      this.stage.update()
+      this.stage ? this.stage.update() : null
     },
     reset() {
       this.isShownMapImage = false
@@ -175,22 +182,8 @@ export default {
     async fetchData(payload){
       try {
         this.replace({showProgress: true})
-        this.showMapImageDef(() => {
-          if (this.container) {
-            this.container.removeAllChildren()
-            this.stage.removeChild(this.container)
-          }
-          if (!this.container) {
-            this.container = new Container()
-          }
-          this.container.x = 0
-          this.container.y = 0
-          this.container.width = this.bitmap.width
-          this.container.height = this.bitmap.height
-          this.stage.addChild(this.container)
-          this.stage.update()
-          this.forceUpdateRealWidth()
-        })
+
+        this.fromHeatmap ? this.fetchDataHeatmap() : this.fetchDataFlowline()
 
         if (payload && payload.done) {
           payload.done()
@@ -200,6 +193,42 @@ export default {
         console.error(e)
       }
       this.replace({showProgress: false})
+    },
+    fetchDataFlowline(){
+      this.showMapImageDef(() => {
+        if (this.container) {
+          this.container.removeAllChildren()
+          this.stage.removeChild(this.container)
+        }
+        if (!this.container) {
+          this.container = new Container()
+        }
+        this.container.x = 0
+        this.container.y = 0
+        this.container.width = this.bitmap.width
+        this.container.height = this.bitmap.height
+        this.stage.addChild(this.container)
+        this.stage.update()
+        this.forceUpdateRealWidth()
+      })
+    },
+    fetchDataHeatmap(){
+      //地図表示
+      const map = new Image()
+      map.src = this.mapImage
+
+      let heatmap = document.getElementById('heatmap')
+      while (heatmap.firstChild) {
+        heatmap.removeChild(heatmap.firstChild)
+      }
+      heatmap.appendChild(map)
+      map.onload = (evt) => {
+        console.log('in onload...')
+        const size = this.calcFitSize(map, heatmap.parentElement)
+        map.width = size.width
+        map.height = size.height
+        console.log(size)
+      }
     },
   }
 }
