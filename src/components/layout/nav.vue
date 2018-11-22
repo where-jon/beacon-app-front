@@ -1,5 +1,5 @@
 <template>
-  <b-navbar toggleable="md" type="dark" :class="navbarClasses">
+  <b-navbar toggleable="md" type="dark" :class="topNavBarClasses">
     <!-- Responsive menu -->
     <b-navbar-toggle target="nav_collapse" v-show="!isLoginPage && showNav"></b-navbar-toggle>  
 
@@ -79,6 +79,14 @@ export default {
       const storeTheme = this.$store.state.setting.theme
       return getThemeClasses(this.loginId)
     },
+    topNavBarClasses() {
+      let classes = {}
+      Object.assign(classes , this.navbarClasses);
+      if(!this.isLoginPage && this.showNav && HtmlUtil.getLangShort() != "ja"){
+        classes["topMenuNavbar"] = true
+      }
+      return classes
+    },
   },
   methods: {
     logout() {
@@ -100,6 +108,12 @@ export default {
 
 .rotate {
   animation: fa-spin 2s infinite linear;
+}
+
+.topMenuNavbar {
+  @media (max-width: 1119px) and (min-width: 768px) {
+    min-width: 1120px;
+  }
 }
 
 .navbar-dark .navbar-nav .nav-link {
