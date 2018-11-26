@@ -64,7 +64,7 @@
               <label v-t="'label.type'" />
               <b-form-select v-model="form.sensorId" :options="sensorOptionsExb" class="mb-3 ml-3 col-4" :disabled="!isEditable" :readonly="!isEditable" />
             </b-form-group>
-            <b-form-group>
+            <b-form-group v-show="useZone">
               <label v-t="'label.zone'" />
               <b-form-select v-model="form.zoneId" :options="zoneNames" class="mb-3 ml-3 col-4" :disabled="!isEditable" :readonly="!isEditable" />
             </b-form-group>
@@ -84,6 +84,7 @@ import _ from 'lodash'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
+import * as MenuHelper from '../../../sub/helper/MenuHelper'
 import * as Util from '../../../sub/util/Util'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
 import { APP } from '../../../sub/constant/config.js'
@@ -116,6 +117,7 @@ export default {
       deviceId: null,
       deviceIdX: null,
       deviceNum: null,
+      useZone: MenuHelper.isMenuEntry('/master/zoneClass'),
       items: [
         {
           text: this.$i18n.tnl('label.master'),
