@@ -30,6 +30,7 @@ export const mutations = {
     if (state.locales.indexOf(locale) !== -1) {
       state.locale = locale
       this.$i18n.locale = locale
+      window.localStorage.setItem('langShort', locale)
     }
   },
   clearAll(state) {
