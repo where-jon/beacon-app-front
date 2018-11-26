@@ -324,7 +324,7 @@ export default {
     deleteConfirm(item, index, button) {
       this.setEmptyMessage()
       this.modalInfo.title = this.$i18n.tnl('label.confirm')
-      this.modalInfo.content = this.$i18n.tnl('message.deleteConfirm', {target: "ID:" + item[this.id]})
+      this.modalInfo.content = this.$i18n.tnl('message.deleteConfirm', this.params.mainColumn? {target: `${this.params.mainColumn.name}:${item[this.params.mainColumn.id]}`}: {target: "ID:" + item[this.id]})
       this.modalInfo.id = item[this.id]
       this.$root.$emit('bv::show::modal', 'modalInfo', button)
     },
