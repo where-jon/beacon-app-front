@@ -46,7 +46,7 @@
     
       <!-- table -->
       <b-table show-empty stacked="md" striped hover :items="list" :fields="fields" :current-page="currentPage" :per-page="perPage" outlined
-              :filter="filterGrid" @filtered="onFiltered" :bordered="params.bordered">
+              :filter="filterGrid" @filtered="onFiltered" :bordered="params.bordered" :sort-by.sync="sortBy">
         <template slot="style" slot-scope="row">
           <div v-bind:style="style(row.item)">A</div>
         </template>
@@ -150,6 +150,7 @@ export default {
       detectState: DETECT_STATE,
       message: null,
       error: null,
+      sortBy: null,
       ...this.params
     }
   },
@@ -257,6 +258,7 @@ export default {
           StateHelper.load(str)
         });
     }
+    this.sortBy = this.params.sortBy? this.params.sortBy: null
     const theme = getTheme(this.loginId)
   },
   watch: {

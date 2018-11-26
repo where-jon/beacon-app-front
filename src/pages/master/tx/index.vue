@@ -47,6 +47,7 @@ export default {
           {key: "sensor", label:'type', sortable: true,},
           {key: "actions", thStyle: {width: '130px !important'}, tdClass: "action-rowdata" }
         ]),
+        sortBy: APP.TX_WITH_TXID? "": APP.TX_BTX_MINOR != "minor"? "btxId": "minor",
         initTotalRows: this.$store.state.app_service.txs.length
       },
       items: [
