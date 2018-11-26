@@ -139,6 +139,8 @@ export default {
     this.fetchData()
     this.replace({title: this.$i18n.tnl('label.position')})
     this.locationMap = this.getExbRecords()
+    console.log('@@@@ locationMap')
+    console.log(this.locationMap)
     if (!this.isDev) {
       return
     }
@@ -188,7 +190,7 @@ export default {
         const record = {
           [this.label_minor]: e.minor,
           [this.label_name]: name != null ? name : '—',
-          [this.label_receivePlace]: this.locationMap[e.device_id],
+          [this.label_receivePlace]: e.device_id ? this.locationMap[e.device_id] : '',
           [this.label_powerLevel]: e.power_level,
           [this.label_timestamp]: this.getTimestamp(e.updatetime),
           [this.label_state]: this.txState(e.updatetime),
