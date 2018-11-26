@@ -91,6 +91,7 @@ export default {
       useCategory: MenuHelper.useMaster('category'),
       selectedGroup: null,
       selectedCategory: null,
+      ICON_FONTSIZE_RATIO: 0.7,
       toggleCallBack: () => this.reset(),
     }
   },
@@ -235,10 +236,7 @@ export default {
         }
         let positions = await EXCloudHelper.fetchPosition(this.exbs, this.txs, pMock)
         // 移動平均数分のポジションデータを保持する
-        // 注：11/21 positionレコードのpos_idが書き換わっている。要確認
-        console.log(positions)
         this.pushOrgPositions(positions)
-        console.log(this.positions)
 
         if (APP.USE_MEDITAG) {
           let meditagSensors = await EXCloudHelper.fetchSensor(SENSOR.MEDITAG)
@@ -251,12 +249,10 @@ export default {
           })
           .sortBy((val) => (new Date().getTime() - val.downLatest < APP.DOWN_RED_TIME)? val.downLatest * -1: val.btx_id)
           .value()
-          console.log('Meditag:', this.meditagSensors, meditagSensors)
         }
 
         if (APP.USE_MAGNET) {
           this.magnetSensors = await EXCloudHelper.fetchSensor(SENSOR.MAGNET)
-          console.log('Magnet:', this.magnetSensors)
         }
 
         this.showMapImage()
@@ -345,7 +341,6 @@ export default {
         Util.debug('magnet', magnet)
       }
       let display = this.getDisplay(tx)
-
       let stage = this.stage
       let txBtn = new Container()
       let btnBg = new Shape()
@@ -369,7 +364,7 @@ export default {
       txBtn.addChild(btnBg)
 
       let label = new Text(pos.label)
-      label.font = DISP.TX_FONT
+      label.font = `${DISP.TX_R * this.ICON_FONTSIZE_RATIO}px Arial`
       label.color = '#' + color
       label.textAlign = "center"
       label.textBaseline = "middle"

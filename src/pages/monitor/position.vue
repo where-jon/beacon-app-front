@@ -139,8 +139,6 @@ export default {
     this.fetchData()
     this.replace({title: this.$i18n.tnl('label.position')})
     this.locationMap = this.getExbRecords()
-    console.log('@@@@ locationMap')
-    console.log(this.locationMap)
     if (!this.isDev) {
       return
     }
@@ -280,10 +278,6 @@ export default {
     table-layout:fixed;
   }
   
-  thead {
-    /* width: calc( 100% - 1em ) */
-  }
-
   .badge-warning {
     color: white;
   }

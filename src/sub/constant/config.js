@@ -131,7 +131,7 @@ export const EXCLOUD = {
 export const DISP = { // 表示系設定（表示・色・フォント・サイズ）
   // 位置表示：TX
   TX_R: 26, // Txの半径
-  ROUNDRECT_RADIUS: 15, // Tx角丸表示時のRADIUS
+  ROUNDRECT_RADIUS: 26, // Tx角丸表示時のRADIUS
   TX_BGCOLOR: "3bcddc", // Tx表示時のデフォルト背景色
   TX_COLOR: "000", // Tx表示時のデフォルト文字色
   TX_FONT: "20px Arial", // Tx表示時のフォント
