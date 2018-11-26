@@ -214,7 +214,10 @@ export default {
       if (val > this.powerLevelWarn) {
         return isClass ? (this.badgeClassPrefix + 'warning') : this.label_powerLevelWarn
       }
-      return isClass ? (this.badgeClassPrefix + 'danger') : this.label_powerLevelPoor
+      if (val != null) {
+        return isClass ? (this.badgeClassPrefix + 'danger') : this.label_powerLevelPoor
+      }
+      return isClass ? "": "-"
     },
     txState(updatetime) {
       const time = new Date().getTime() - moment(updatetime).local().toDate().getTime()
