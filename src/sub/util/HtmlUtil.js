@@ -9,7 +9,8 @@ export const addClass = (e, cls) => e && e.target.classList && e.target.classLis
 export const removeClass = (e, cls) => e && e.target.classList && e.target.classList.remove(cls)
 
 export const getLangShort = () => {
-  let lang = getLang()
+  const strageLangShort = window.localStorage.getItem('langShort')
+  let lang = strageLangShort? strageLangShort: getLang()
   if (lang && lang.length >= 2) {
     return lang.substr(0, 2)
   }
