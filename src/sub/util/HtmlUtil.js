@@ -1,7 +1,13 @@
+import Vue from 'vue'
 import Encoding from 'encoding-japanese'
 import { str2Array } from './Util'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
 
+let locale
+
+export const setApp = (pi18n) => {
+  locale = pi18n.locale
+}
 
 
 export const addClass = (e, cls) => e && e.target.classList && e.target.classList.add(cls)
@@ -9,8 +15,7 @@ export const addClass = (e, cls) => e && e.target.classList && e.target.classLis
 export const removeClass = (e, cls) => e && e.target.classList && e.target.classList.remove(cls)
 
 export const getLangShort = () => {
-  const strageLangShort = window.localStorage.getItem('langShort')
-  let lang = strageLangShort? strageLangShort: getLang()
+  let lang = locale? locale: getLang()
   if (lang && lang.length >= 2) {
     return lang.substr(0, 2)
   }
