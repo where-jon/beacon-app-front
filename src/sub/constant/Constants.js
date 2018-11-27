@@ -15,6 +15,7 @@ export const THEME = [
   {id: 2,  name: 'earthcolor', color: '#5C7886'},
   {id: 3,  name: 'autumn', color: '#927760'},
   {id: 4,  name: 'vivid', color: '#D50057'},
+  {id: 5,  name: 'yokogawa', color: '#5c7886'}
 ]
 
 export const CHAR_SET = [

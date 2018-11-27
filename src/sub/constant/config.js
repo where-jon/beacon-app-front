@@ -140,7 +140,7 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
 
   SHOW_NAV: true, // show nav  
   SHOW_SIDEBAR: true, // show sidebar  
-  THEME: "default", // デフォルトのテーマ
+  THEME: "yokogawa", // デフォルトのテーマ
   DISPLAY_PRIORITY: ['category','group'], // TX表示の際に参照するdisplay方法の優先順位
 
   MAP_FIT: "both", // マップを画面表示範囲内にフィットさせるか。width or height or both
