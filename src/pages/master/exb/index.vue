@@ -53,7 +53,7 @@ export default {
               {key: "zoneName", label: 'zoneName', sortable: true,} : null,
           {key: "actions", thStyle: {width: '130px !important'} }
         ]),
-        sortBy: APP.EXB_WITH_EXBID? "": APP.EXB_WITH_DEVICE_NUM? "deviceNum": APP.EXB_WITH_DEVICE_ID? "deviceId": APP.EXB_WITH_DEVICE_IDX? "deviceIdX": "",
+        sortBy: APP.EXB_WITH_EXBID? "exbId": APP.EXB_WITH_DEVICE_NUM? "deviceNum": APP.EXB_WITH_DEVICE_ID? "deviceId": APP.EXB_WITH_DEVICE_IDX? "deviceIdX": "",
         initTotalRows: this.$store.state.app_service.exbs.length
       },
       items: [
