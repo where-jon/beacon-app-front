@@ -235,10 +235,7 @@ export default {
         }
         let positions = await EXCloudHelper.fetchPosition(this.exbs, this.txs, pMock)
         // 移動平均数分のポジションデータを保持する
-        // 注：11/21 positionレコードのpos_idが書き換わっている。要確認
-        console.log(positions)
         this.pushOrgPositions(positions)
-        console.log(this.positions)
 
         if (APP.USE_MEDITAG) {
           let meditagSensors = await EXCloudHelper.fetchSensor(SENSOR.MEDITAG)
@@ -251,12 +248,10 @@ export default {
           })
           .sortBy((val) => (new Date().getTime() - val.downLatest < APP.DOWN_RED_TIME)? val.downLatest * -1: val.btx_id)
           .value()
-          console.log('Meditag:', this.meditagSensors, meditagSensors)
         }
 
         if (APP.USE_MAGNET) {
           this.magnetSensors = await EXCloudHelper.fetchSensor(SENSOR.MAGNET)
-          console.log('Magnet:', this.magnetSensors)
         }
 
         this.showMapImage()

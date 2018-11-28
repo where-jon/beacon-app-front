@@ -388,6 +388,12 @@ export const MENU = [
         feature: '/history/temperatureHistory',
         icon: 'fas fa-thermometer'
       },
+      {
+        key: 'positionHistory',
+        path: 'positionHistory',
+        feature: '/history/positionHistory',
+        icon: 'fas fa-thermometer'
+      }
     ]
   },
   {
