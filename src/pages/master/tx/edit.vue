@@ -120,7 +120,7 @@ export default {
       return Util.hasValue(this.form.txId)
     },
     theme () {
-      const theme = getButtonTheme(this.$store.state.loginId)
+      const theme = getButtonTheme()
       return 'outline-' + theme
     },
     isMajorRequired() {

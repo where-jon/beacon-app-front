@@ -36,7 +36,7 @@ export default {
   },
   computed: {
     theme() {
-      return getButtonTheme(this.$store.state.loginId)
+      return getButtonTheme()
     },
   },
   methods: {

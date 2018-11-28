@@ -93,7 +93,7 @@ export default {
   },
   computed: {
     theme () {
-      const theme = getTheme(this.$store.state.loginId)
+      const theme = getTheme()
       return 'outline-' + theme
     },
     ...mapState('app_service', [

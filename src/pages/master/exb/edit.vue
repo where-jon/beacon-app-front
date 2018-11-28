@@ -150,7 +150,7 @@ export default {
       return Util.hasValue(this.form.exbId)
     },
     theme () {
-      const theme = getButtonTheme(this.$store.state.loginId)
+      const theme = getButtonTheme()
       return 'outline-' + theme
     },
     sensorOptionsExb() {

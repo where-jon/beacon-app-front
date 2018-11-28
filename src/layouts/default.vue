@@ -89,10 +89,9 @@ export default {
     ]),
     sidebarClasses () {
       const storeTheme = this.$store.state.setting.theme
-      const loginId = this.loginId
       return {
         'bd-sidebar': true,
-        ...getThemeClasses(loginId)
+        ...getThemeClasses()
       }
     }
   },
