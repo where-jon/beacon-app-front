@@ -5,7 +5,10 @@
 
     <!-- Title -->
     <b-navbar-brand>
-      <img src="/toplogo.png" width=220 height=36 />
+      <div class="appTitle">
+        <img src="/toplogo.png" width="220" height="36" v-if="showLogo" />
+        <span v-if="!showLogo" v-t="'label.title'"></span>
+      </div>
     </b-navbar-brand>
 
     <b-collapse is-nav id="nav_collapse" v-show="!isLoginPage && showNav">
@@ -54,6 +57,7 @@ export default {
     return {
       version: APP.VERSION,
       nav : this.$store.state.menu,
+      showLogo: DISP.SHOW_LOGO,
       showNav: HtmlUtil.isMobile() || DISP.SHOW_NAV
     }
   },
@@ -120,8 +124,8 @@ export default {
   color: white;
 }
 
-ul.navbar-nav {
-  margin-left: 5%;
+div.appTitle {
+  min-width: calc(15vw);
 }
 
 a.dropdown-item.default:hover {
@@ -141,15 +145,7 @@ a.dropdown-item.vivid:hover {
 }
 
 div.navbar-brand {
-  @media (max-width: 767px) {
-    margin-right: 32%;
-  }
-  @media (max-width: 620px) {
-    margin-right: 28%;
-  }
-  @media (max-width: 500px) {
-    margin-right: 18%;
-  }
+  margin: 0 auto;
 }
 
 em:not(:hover) {
