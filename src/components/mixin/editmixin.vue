@@ -155,7 +155,12 @@ export default {
     },
     modifyVal(col, val) {
       if (col == 'TXID' && !APP.TX_WITH_TXID){
-        return APP.TX_BTX_MINOR == 'minor'? this.minor: this.btxId
+        if(APP.TX_BTX_MINOR == 'minor' && this.minor){
+          return this.minor
+        }
+        if(APP.TX_BTX_MINOR != 'minor' && this.btxId){
+          return this.btxId
+        }
       }
       return val
     },
