@@ -15,6 +15,10 @@
           <label class="ml-sm-4 ml-2 mr-1">{{ $t('label.category') }}</label>
           <b-form-select v-model="selectedCategory" :options="categoryOptionsForPot" class="ml-1 mr-2"></b-form-select>
         </b-form-row>
+        <b-form-row ref="detectedElement" class="my-1 ml-2 ml-sm-0" style="visibility: hidden;">
+          <span class="ml-sm-4 ml-2 mr-1">{{ $t('label.detectedCount') + ' : '  }}</span>
+          <span ref="detectedId" class="mr-1"></span>
+        </b-form-row>
       </b-form>
     </b-row>
     <b-row class="mt-3">
@@ -117,6 +121,10 @@ export default {
     positions() {
       let now = !DEV.USE_MOCK_EXC? new Date().getTime(): mock.positions_conf.start + this.count++ * mock.positions_conf.interval  // for mock
       let positions = PositionHelper.correctPosId(this.orgPositions, now)
+      if (APP.SHOW_DETECTED_COUNT) {
+          this.$refs.detectedElement.style.visibility = APP.SHOW_DETECTED_COUNT ? "visible" : "hidden";
+          this.$refs.detectedId.textContent = positions.length  // 検知数表示
+      }
       if (APP.USE_MEDITAG && this.meditagSensors) {
         positions = SensorHelper.setStress(positions, this.meditagSensors)
       }

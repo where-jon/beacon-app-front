@@ -225,6 +225,7 @@
     "sensorId": "Sensor ID",
     "sensorName": "Sensor name",
     "detectCount": "Number of detections (detection count)",
+    "detectedCount": "Number of detections",
     
     "proximity": "Interactions",
     "proximityId": "Interaction ID",
