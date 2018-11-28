@@ -51,6 +51,7 @@ import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import { CATEGORY, SHAPE } from '../../../sub/constant/Constants'
 import colorPicker from '../../../components/parts/colorpicker'
+import { APP } from '../../../sub/constant/config'
 
 export default {
   components: {
@@ -98,7 +99,7 @@ export default {
       'category',
     ]),
     categoryTypes(){
-      return CATEGORY.getTypes()
+      return CATEGORY.getTypes().filter((val) => APP.CATEGORY_TYPES.includes(val.value))
     },
     shapes(){
       return SHAPE.getShapes()
