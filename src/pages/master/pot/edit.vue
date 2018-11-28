@@ -17,11 +17,19 @@
             </b-form-group>
             <b-form-group>
               <label v-t="'label.tx'" />
-              <b-form-select v-model="form.txId" :options="txOptions" class="mb-3 ml-3 col-4" :disabled="!isEditable" :readonly="!isEditable" />
+              <b-form-select v-model="form.txId" :options="txOptions" @change="changeTx" class="mb-3 ml-3 col-4" :disabled="!isEditable" :readonly="!isEditable" />
             </b-form-group>
-            <b-form-group>
+            <b-form-group v-show="isShown('TX_WITH_TXID')">
               <label v-t="'label.txId'" />
-              <b-form-input type="number" v-model="form.txId" min="0" max="65535" :readonly="!isEditable" />
+              <b-form-input type="number" v-model="txId" min="0" max="65535" :readonly="!isEditable" />
+            </b-form-group>
+            <b-form-group v-show="!isShown('TX_WITH_TXID') && isShown('TX_BTX_MINOR') != 'minor'">
+              <label v-t="'label.btxId'" />
+              <b-form-input type="number" v-model="btxId" min="0" max="65535" :readonly="!isEditable" />
+            </b-form-group>
+            <b-form-group v-show="!isShown('TX_WITH_TXID') && isShown('TX_BTX_MINOR') == 'minor'">
+              <label v-t="'label.minor'" />
+              <b-form-input type="number" v-model="minor" min="0" max="65535" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.categoryType'" />
@@ -104,6 +112,9 @@ export default {
       backPath: '/master/pot',
       appServicePath: '/basic/pot',
       category: _.slice(CATEGORY.getTypes(), 0, 2),
+      txId: null,
+      btxId: null,
+      minor: null,
       form: {personOrThing: CATEGORY.getTypes()[0].value,
           ...ViewHelper.extract(this.$store.state.app_service.pot,
           ["potId", "potCd", "potName", "potType", "extValue.ruby",
@@ -160,7 +171,7 @@ export default {
       options = options.map((tx) => {
           return {
             value: tx.txId,
-            text: `${tx.txId}(${tx.txName? tx.txName: ""})`
+            text: StateHelper.getTxIdName(tx)
           }
         }
       )
@@ -175,12 +186,41 @@ export default {
       'txs',
     ]),
   },
-  mounted() {
+  async mounted() {
     StateHelper.load('group')
     StateHelper.load('category')
-    StateHelper.load('tx')
+    await StateHelper.load('tx')
+    this.changeTx(this.form.txId)
+  },
+  watch: {
+    txId: function(newVal, oldVal) {
+      if(newVal == oldVal){
+        return
+      }
+      this.form.txId = newVal
+    },
+    btxId: function(newVal, oldVal) {
+      if(newVal == oldVal){
+        return
+      }
+      const tx = this.txs.find((tx) => this.btxId && this.btxId == tx.btxId)
+      this.form.txId = tx? tx.txId: null
+    },
+    minor: function(newVal, oldVal) {
+      if(newVal == oldVal){
+        return
+      }
+      const tx = this.txs.find((tx) => this.minor && this.minor == tx.minor)
+      this.form.txId = tx? tx.txId: null
+    },
   },
   methods: {
+    changeTx(newVal){
+      const tx = this.txs.find((tx) => newVal == tx.txId)
+      this.txId = tx? tx.txId: null
+      this.btxId = tx? tx.btxId: null
+      this.minor = tx? tx.minor: null
+    },
     beforeSubmit(again){
       if(!this.isShown('POT_WITH_POTCD')){
         this.form.potCd = this.form.potName

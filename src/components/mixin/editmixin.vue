@@ -123,7 +123,7 @@ export default {
       catch(e) {
         console.error(e)
         if (e.key) {
-          this.message = this.$i18n.tnl('message.' + e.type, {key: this.$i18n.tnl('label.' + this.modifyColName(Util.snake2camel(e.key))), val: e.val})
+          this.message = this.$i18n.tnl('message.' + e.type, {key: this.$i18n.tnl('label.' + this.modifyColName(Util.snake2camel(e.key))), val: this.modifyVal(Util.snake2camel(e.key), e.val)})
         }
         else if (e.bulkError) {
           this.message = _.map(e.bulkError, (err) => {
@@ -145,10 +145,19 @@ export default {
       this.replace({showProgress: false})
     },
     modifyColName(col) {
+      if (col == 'TXID' && !APP.TX_WITH_TXID){
+        return APP.TX_BTX_MINOR == 'minor'? 'minor': 'btxId'
+      }
       if (col == 'btxId' && APP.TX_BTX_MINOR == 'minor') {
         return 'minor'
       }
       return col
+    },
+    modifyVal(col, val) {
+      if (col == 'TXID' && !APP.TX_WITH_TXID){
+        return APP.TX_BTX_MINOR == 'minor'? this.minor: this.btxId
+      }
+      return val
     },
     readImageView(e, imgViewName, imgWidthName, imgHeightName, thumbnailName, resize) {
       HtmlUtil.readImage(e, (evt, width, height, thumbnail) => {
