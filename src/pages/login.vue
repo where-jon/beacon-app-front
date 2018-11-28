@@ -1,15 +1,16 @@
 <template>
     <form class="form-signin" method="post" @submit.prevent="onSubmit">
-        <div class="error-message">{{ message }}</div>
-        <input type="text" v-model="userId" class="form-control" maxlength="20" placeholder="ID" />
-        <input type="password" v-model="password" class="form-control" maxlength="20" placeholder="PASSWORD" />
-        <button class="btn-lg btn-block login-button" type="submit"><i class="fas fa-sign-in-alt"></i>&nbsp;&nbsp;{{$i18n.tnl('label.login')}}</button>
+      <div class="error-message">{{ message }}</div>
+      <input type="text" v-model="userId" class="form-control" maxlength="20" placeholder="ID" />
+      <input type="password" v-model="password" class="form-control" maxlength="20" placeholder="PASSWORD" />
+      <b-button class="btn-lg btn-block" :variant="theme" type="submit"><i class="fas fa-sign-in-alt"></i>&nbsp;&nbsp;{{$i18n.tnl('label.login')}}</b-button>
     </form>
 </template>
 
 <script>
 import axios from 'axios'
 import * as AuthHelper from '../sub/helper/AuthHelper'
+import { getButtonTheme } from '../sub/helper/ThemeHelper'
 import { APP,DISP } from '../sub/constant/config'
 import * as Util from '../sub/util/Util'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
@@ -32,6 +33,11 @@ export default {
         'btn-dark': DISP.THEME === 'dark',
       }
     }
+  },
+  computed: {
+    theme() {
+      return getButtonTheme(this.$store.state.loginId)
+    },
   },
   methods: {
     ...mapMutations('setting', [

@@ -82,7 +82,7 @@ export default {
     topNavBarClasses() {
       let classes = {}
       Object.assign(classes , this.navbarClasses);
-      if(!this.isLoginPage && this.showNav && HtmlUtil.getLangShort() != "ja"){
+      if(this.showNav && HtmlUtil.getLangShort() != "ja"){
         classes["topMenuNavbar"] = true
       }
       return classes

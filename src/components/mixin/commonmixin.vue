@@ -25,7 +25,7 @@ export default {
     getSensorId(exb) {
       return Util.getValue(exb, 'exbSensorList.0.sensor.sensorId').val
     },
-    getButtonTheme () {
+    getButtonTheme() {
       const storeTheme = this.$store.state.setting.theme
       return 'outline-' + getButtonTheme(this.$store.state.loginId)
     },

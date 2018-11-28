@@ -90,7 +90,7 @@ export default {
     hasId(){
       return Util.hasValue(this.form.categoryId)
     },
-    theme () {
+    theme() {
       const theme = getButtonTheme(this.$store.state.loginId)
       return 'outline-' + theme
     },

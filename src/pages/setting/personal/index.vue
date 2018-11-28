@@ -209,7 +209,7 @@ export default {
       // storeにテーマをセット。navbar,sidebar,menu-itemのcomputedプロパティにて
       // storeを参照しているため、テーマの変更を検知する
       this.replaceSetting({theme})
-      window.localStorage.setItem(this.$store.state.loginId + '-theme', theme)
+      window.localStorage.setItem(document.domain + '-theme', theme)
     },
     charSetSelected (selected) {
       const cs = CHAR_SET.find((e) => {
