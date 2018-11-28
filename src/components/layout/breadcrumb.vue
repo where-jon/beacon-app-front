@@ -98,7 +98,7 @@ export default {
     },
     extNavClasses() {
       const storeTheme = this.$store.state.setting.theme
-      const theme = getThemeClasses(this.loginId)
+      const theme = getThemeClasses()
       return _.findKey(theme, (val) => {return val})
     },
     availableNavSpec() {
@@ -140,7 +140,7 @@ export default {
       })
     },
     setDropdownMenuColor() {
-      const color = getThemeColor(this.loginId)
+      const color = getThemeColor()
       this.setColor('dropdown-menu', color)
       this.setColor('dropdown-item', color)
     },

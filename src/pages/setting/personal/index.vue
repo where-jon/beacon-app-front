@@ -156,7 +156,7 @@ export default {
   computed: {
     theme () {
       const storeTheme = this.$store.state.setting.theme
-      return 'outline-' + getButtonTheme(this.$store.state.loginId)
+      return 'outline-' + getButtonTheme()
     },
     hasError() {
       return Object.keys(this.errorMessages)
@@ -181,7 +181,7 @@ export default {
   },
   created () {
     this.setLoginUser()
-    const theme = getTheme(this.$store.state.loginId)
+    const theme = getTheme()
     const selected = THEME.find((item) => {
       return item.name === theme
     })
@@ -209,7 +209,7 @@ export default {
       // storeにテーマをセット。navbar,sidebar,menu-itemのcomputedプロパティにて
       // storeを参照しているため、テーマの変更を検知する
       this.replaceSetting({theme})
-      window.localStorage.setItem(this.$store.state.loginId + '-theme', theme)
+      window.localStorage.setItem(document.domain + '-theme', theme)
     },
     charSetSelected (selected) {
       const cs = CHAR_SET.find((e) => {

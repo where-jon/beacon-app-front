@@ -66,7 +66,9 @@ export default {
   },
   methods: {
     getDispItems () {
-      return DISP.TXDETAIL_ITEMS.filter((e) => e.disp).map((e) => this.selectedTx[e.name])
+      return Object.keys(DISP.TXDETAIL_ITEMS)
+      .filter((key) => DISP.TXDETAIL_ITEMS[key])
+      .map((e) => this.selectedTx[e])
     }
   },
 }

@@ -296,7 +296,6 @@ export default {
       })
 
       exbBtn.on('pressup', (evt) => {
-        console.log(evt.stageX, evt.stageY)
         exb.x = evt.stageX
         exb.y = evt.stageY + offsetY
         this.isChanged = true
@@ -320,7 +319,6 @@ export default {
       let start
       let stage = this.stage
       this.stage.addEventListener('stagemousedown', (evt) => {
-        console.log("stage on click " + messureCount, evt.stageX, evt.stageY)
         if (messureCount == 2) {
           return
         }
@@ -454,7 +452,6 @@ export default {
         this.workExbs.forEach((exb) => { // deleted
           if (exb.location.areaId == this.selectedArea) {
             if (!this.positionedExb.find((pExb) => {
-              console.log(exb)
               return pExb.exbId == exb.exbId
               })) {
               exb.location = {locationId: exb.location.locationId, areaId: null, x: null, y: null}

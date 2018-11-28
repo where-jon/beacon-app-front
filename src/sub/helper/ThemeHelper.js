@@ -1,25 +1,23 @@
 import { THEME } from "../constant/Constants"
+import { DISP } from '../constant/config'
 
-export const getButtonTheme = (loginId) => {
-  const theme = getTheme(loginId)
+export const getButtonTheme = () => {
+  const theme = getTheme()
   return theme !== 'default' ? theme : 'buttonDefault'
 }
 
-export const getThemeColor = (loginId) => {
-  const themeName = getTheme(loginId)
+export const getThemeColor = () => {
+  const themeName = getTheme()
   return THEME.find((theme) => theme.name == themeName).color
 }
 
-export const getTheme = (loginId) => {
-  if (!loginId || loginId == null) {
-    return 'default'
-  }
-  const theme = window.localStorage.getItem(loginId + '-theme')
-  return theme && theme !== 'undefined' ? theme : 'default'
+export const getTheme = () => {
+  const theme = window.localStorage.getItem(document.domain + '-theme')
+  return theme && theme !== 'undefined' ? theme : DISP.THEME
 }
 
-export const getThemeClasses = (loginId) => {
-  const theme = getTheme(loginId)
+export const getThemeClasses = () => {
+  const theme = getTheme()
   const obj = {}
   THEME.forEach((e) => {
     obj[e.name] = e.name === theme

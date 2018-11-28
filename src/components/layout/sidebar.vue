@@ -47,7 +47,7 @@ export default {
       return {
         'menu-item': true,
         item: true,
-        ...getThemeClasses(this.loginId)
+        ...getThemeClasses()
       }
     }
   },

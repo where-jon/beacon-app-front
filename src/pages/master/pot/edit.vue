@@ -21,7 +21,7 @@
             </b-form-group>
             <b-form-group>
               <label v-t="'label.txId'" />
-              <b-form-input type="number" v-model="form.txId" max="65535" :readonly="!isEditable" />
+              <b-form-input type="number" v-model="form.txId" min="0" max="65535" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.categoryType'" />
@@ -127,7 +127,7 @@ export default {
   },
   computed: {
     theme () {
-      const theme = getButtonTheme(this.$store.state.loginId)
+      const theme = getButtonTheme()
       return 'outline-' + theme
     },
     categoryOptions() {

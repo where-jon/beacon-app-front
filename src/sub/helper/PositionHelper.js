@@ -86,8 +86,8 @@ const getCoordinateDefault = (exb, ratio, samePos) => {
  * @param {*} orgY アイコン配置開始Y座標値
  * @param {*} positions EXBの配置座標配列
  */
-const getCoordinateTile = (orgX, orgY, positions) => {
-  return partitioningArray(positions, tileLayoutIconsNum).flatMap((array, i, a) => {
+const getCoordinateTile = (orgX, orgY, positions, viewType) => {
+  return partitioningArray(positions, viewType.horizon).flatMap((array, i, a) => {
     return array.map((b, j, c) => {
       return {...b, x: orgX + diameter * j, y: orgY + diameter * i }
     })
@@ -135,18 +135,20 @@ const getCoordinateSpiral = (index, x, y, theta, radius) => {
  * @param {*} viewType アイコン配置タイプ
  */
 const getCoordinate = (orgX, orgY, positions, viewType) => {
-  if (viewType === TX_VIEW_TYPES.TILE) {
-    return getCoordinateTile(orgX, orgY, positions)
+  if (viewType.displayFormat === TX_VIEW_TYPES.TILE) {
+    return getCoordinateTile(orgX, orgY, positions, viewType)
   }
   return positions.length > 1 ? positions.map((e, i, a) => {
     const xy = (() => {
-      switch (viewType) {
+      switch (viewType.displayFormat) {
         case TX_VIEW_TYPES.SQUARE :
           return getCoordinateSquare(i, orgX, orgY)
         case TX_VIEW_TYPES.DIAMOND :
           return getCoordinateSquare(i, orgX, orgY, true)
         case TX_VIEW_TYPES.SPIRAL :
           return getCoordinateSpiral(i, orgX, orgY, 360 / positions.length * i, diameter)
+        default :
+          return {x: baseX, y: baseY}
       }
     })()
     return {...e, x: xy.x, y: xy.y}
@@ -161,20 +163,36 @@ const getCoordinate = (orgX, orgY, positions, viewType) => {
  * @param {*} samePos TXアイコン座標配列
  */
 const getPositionsToOverlap = (exb, ratio, samePos) => {
-  const viewType = exb.location.txViewType
-  if (viewType === TX_VIEW_TYPES.DEFAULT ||
-    !Object.keys(TX_VIEW_TYPES).find(key => viewType === TX_VIEW_TYPES[key])) {
+  const viewType = getTxViewType(exb.location.txViewType)
+  if (viewType.displayFormat === TX_VIEW_TYPES.DEFAULT ||
+    !Object.keys(TX_VIEW_TYPES).find(key => viewType.displayFormat === TX_VIEW_TYPES[key])) {
     return getCoordinateDefault(exb, ratio, samePos)
   }
+  const maxIcons = viewType.horizon * viewType.vertical
   let baseX = exb.location.x * ratio
   let baseY = exb.location.y * ratio
-  const c = partitioningArray(samePos, viewType !== TX_VIEW_TYPES.TILE ? iconsUnitNum : TILE_LAYOUT_MAXICONS)
+  const c = partitioningArray(samePos, viewType.displayFormat !== TX_VIEW_TYPES.TILE ? iconsUnitNum : maxIcons)
   return c.flatMap((e, i, a) => {
     const coordinate = getCoordinate(baseX, baseY, e, viewType)
     baseX += DISP.TX_R
     baseY += DISP.TX_R
     return coordinate
   })
+}
+
+const getTxViewType = (txViewType) => {
+    return txViewType !== null ?
+    {
+      displayFormat: txViewType.displayFormat ? txViewType.displayFormat : TX_VIEW_TYPES.DEFAULT,
+      horizon: txViewType.horizon ? txViewType.horizon : tileLayoutIconsNum,
+      vertical: txViewType.vertical ? txViewType.vertical : tileLayoutIconsNum,
+      a: txViewType.displayFormat
+    } :
+    {
+      displayFormat: TX_VIEW_TYPES.DEFAULT,
+      horizon: tileLayoutIconsNum,
+      vertical: tileLayoutIconsNum,
+    }
 }
 
 /**
