@@ -45,22 +45,23 @@ export default {
     ]),
   },
   methods: {
-    resetStyle(entity){
-        const updateData = this.groups.find((val) => val.groupId == entity.groupId)
-        if(updateData && updateData.display){
-          if (!entity.display) {
-            entity.display = {}
-          }
-          if(!entity.display.color){
-            entity.display.color = updateData.display.color
-          }
-          if(!entity.display.bgColor){
-            entity.display.bgColor = updateData.display.bgColor
-          }
-          if(!entity.display.shape){
-            entity.display.shape = updateData.display.shape
-          }
+    resetStyle(entity, dummyKey){
+      const updateData = this.groups.find((val) => val.groupId == entity.groupId)
+      if(updateData && updateData.display){
+        if (!entity.display) {
+          entity.display = {}
         }
+        if(!entity.display.color){
+          entity.display.color = updateData.display.color
+        }
+        if(!entity.display.bgColor){
+          entity.display.bgColor = updateData.display.bgColor
+        }
+        if(!entity.display.shape){
+          entity.display.shape = updateData.display.shape
+        }
+      }
+      return dummyKey
     },
     async save(bulkSaveFunc) {
       const MAIN_COL = "groupId"
@@ -80,7 +81,7 @@ export default {
           entity[headerName] = val
         }
         return dummyKey
-      }, (entity, dummyKey) => this.resetStyle(entity))
+      }, (entity, dummyKey) => this.resetStyle(entity, dummyKey))
     },
   }
 }

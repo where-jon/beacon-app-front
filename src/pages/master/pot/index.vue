@@ -32,7 +32,7 @@ export default {
         bulkEditPath: '/master/pot/bulkEdit',
         bulkUploadPath: '/master/pot/bulkUpload',
         csvOut: true,
-        extraFilter: ['group', 'category'],
+        extraFilter: this.getExtraFilter(),
         custumCsvColumns: ["potId", "thumbnail", "txId", "txName", "potCd", "potName", "potType", "extValue.ruby",
             "displayName", "groupName", "categoryName", "extValue.post", "extValue.tel", "description", "actions"],
         fields: addLabelByKey(this.$i18n, [ 
@@ -75,6 +75,9 @@ export default {
   methods: {
     afterCrud(){
       StateHelper.setForceFetch('tx', true)
+    },
+    getExtraFilter(){
+      return [this.isEnabledMenu("group")? 'group': null, this.isEnabledMenu("category")? 'category': null].filter((val) => val)
     },
     async fetchData(payload) {
       try {

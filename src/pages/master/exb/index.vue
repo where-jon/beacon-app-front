@@ -30,6 +30,11 @@ export default {
         editPath: '/master/exb/edit',
         bulkEditPath: '/master/exb/bulkedit',
         appServicePath: '/core/exb',
+        mainColumn: APP.EXB_WITH_EXBID? {name: this.$i18n.tnl("label.exbId"), id: "exbId"}:
+          APP.EXB_WITH_DEVICE_NUM? {name: this.$i18n.tnl("label.deviceNum"), id: "deviceNum"}:
+          APP.EXB_WITH_DEVICE_ID? {name: this.$i18n.tnl("label.deviceId"), id: "deviceId"}:
+          APP.EXB_WITH_DEVICE_IDX? {name: this.$i18n.tnl("label.deviceIdX"), id: "deviceIdX"}:
+          null,
         csvOut: true,
         custumCsvColumns: [
           APP.EXB_WITH_EXBID? "exbId": null,

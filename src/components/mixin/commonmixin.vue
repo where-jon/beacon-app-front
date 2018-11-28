@@ -29,6 +29,16 @@ export default {
       const storeTheme = this.$store.state.setting.theme
       return 'outline-' + getButtonTheme(this.$store.state.loginId)
     },
+    isEnabledMenu (key) {
+      for(let group of this.$store.state.menu){
+        for(let page of group.pages){
+          if(page.key == key){
+            return true
+          }
+        }
+      }
+      return false
+    }
   }
 }
 </script>
