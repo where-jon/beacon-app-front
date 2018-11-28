@@ -53,12 +53,16 @@
             </b-form-radio-group>
           </b-form-group>
           <b-button v-show="isEditable" type="submit" class="my-1"
-              @click="buttonClick(true)" v-t="'label.start'" :variant="theme" />
+              @click="buttonClick(true)" v-t="'label.start'" :variant="theme" :disabled="noDevice" />
           <b-button v-show="isEditable" type="submit" class="ml-2 my-1" 
-              @click="buttonClick(false)" v-t="'label.end'" :variant="theme" :disabled="!form.lightOn"/>
+              @click="buttonClick(false)" v-t="'label.end'" :variant="theme" :disabled="!form.lightOn" />
         </b-form>
       </b-form-row>
     </b-container>
+    <!-- modal -->
+    <b-modal id="modalError" :title="$t('label.error')" ok-only>
+      {{ $t('message.noLedDevice') }}
+    </b-modal>
   </div>
 </template>
 
@@ -87,11 +91,10 @@ export default {
       name: 'led',
       id: 'ledId',
       appServicePath: '/core/excloud/led',
-      mutex: false,
-      selectedTheme: null,
       ledColors: LED_COLORS,
       ledBlinkTypes: LED_BLINK_TYPES,
       lightOnCandidate: false,
+      noDevice: false,
       again: false,
       form: {
         deviceId: "",
@@ -152,6 +155,9 @@ export default {
 
         if (deviceIds && deviceIds.length == 1) {
           this.form.deviceId = deviceIds[0].value
+        } else if(!Util.hasValue(deviceIds)) {
+          this.noDevice = true
+          this.$root.$emit('bv::show::modal', 'modalError')
         }
 
         if (payload && payload.done) {
@@ -183,7 +189,6 @@ export default {
       this.lightOnCandidate = bool
     },
     backToList() {}, // editMixinのメソッドを無効化
-    showMapImage() {}, // showMapMixin用ダミー
   }
 }
 </script>
