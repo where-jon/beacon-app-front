@@ -30,8 +30,9 @@ export default {
         editPath: '/master/tx/edit',
         bulkEditPath: '/master/tx/bulkedit',
         appServicePath: '/core/tx',
-        mainColumn: !APP.TX_WITH_TXID && APP.TX_BTX_MINOR == "minor"? {name: "minor", id: "minor"}:
-          !APP.TX_WITH_TXID && APP.TX_BTX_MINOR != "minor"? {name: "btxId", id: "btxId"}: null,
+        mainColumn: !APP.TX_WITH_TXID && APP.TX_BTX_MINOR == "minor"? {name: this.$i18n.tnl("label.minor"), id: "minor"}:
+          !APP.TX_WITH_TXID && APP.TX_BTX_MINOR != "minor"? {name: this.$i18n.tnl("label.btxId"), id: "btxId"}:
+          {name: this.$i18n.tnl("label.txId"), id: "txId"},
         csvOut: true,
         fields: addLabelByKey(this.$i18n, [ 
           !APP.TX_WITH_TXID && APP.TX_BTX_MINOR == 'minor'? {key: "minor", sortable: true, tdClass: "action-rowdata" }: null,
