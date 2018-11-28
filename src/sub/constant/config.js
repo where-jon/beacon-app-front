@@ -183,14 +183,14 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     MIN_HEIGHT: 30,
   },
   
-  TXDETAIL_ITEMS: [ // TX詳細表示項目
-    {name: 'minor', disp: true},
-    {name: 'major', disp: true},
-    {name: 'name', disp: true},
-    {name: 'timestamp', disp: true},
-    {name: 'group', disp: true},
-    {name: 'category', disp: true},
-  ],
+  TXDETAIL_ITEMS: { // TX詳細表示項目
+    minor: true,
+    major: true,
+    name: true,
+    timestamp: true,
+    group: true,
+    category: true,
+  },
 
   GATEWAY: { // ゲートウエイ
     STATE_COLOR: { // 状態別色
