@@ -101,6 +101,8 @@ export const APP = { // 機能面に関する設定
   POT_WITH_GROUP: true,      // グループ使用　use group on pot master
   POT_WITH_CATEGORY: true,   // カテゴリ使用　use category on pot master
 
+  // category
+  CATEGORY_TYPES: [1,2,3],   // 選択可能な種別
   // 動線分析関連設定
   ANALYSIS_DATETIME_INTERVAL: 60 * 24, // Fromを設定した場合、この設定値分未来の日付をToに自動入力する（分単位）
 
