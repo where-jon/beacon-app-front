@@ -60,6 +60,20 @@
     <b-modal id="modalDeleteConfirm" :title="$t('label.confirm')" @ok="deleteExbDone" >
       {{ $t('message.deleteConfirm', {target: deleteTarget? this.getExbDisp(deleteTarget.deviceId): null}) }}
     </b-modal>
+    <b-modal id="modalSettingExb" :title="$t('label.settingExbeacon')" @ok="settingExbDone" >
+      <b-form>
+        <b-form-group>
+          <label v-t="'label.txViewType'" />
+          <b-form-select :options="txViewTypes" class="mb-3 ml-3 col-3" />
+          <label v-t="'label.txIconColumns'" class="txicons-num"/>
+          <b-form-select :options="txIconsNumHorizon" class="mb-3 ml-3 col-1" />
+          <label v-t="'label.txIconColumnsUnit'" />
+          <label v-t="'label.txIconLines'" class="txicons-num" />
+          <b-form-select :options="txIconsNumVertical" class="mb-3 ml-3 col-1" />
+          <label v-t="'label.txIconLinesUnit'" />
+        </b-form-group>
+      </b-form>
+    </b-modal>
   </div>
 </template>
 
@@ -111,15 +125,14 @@ export default {
           text: this.$i18n.tnl('label.locationSetting'),
           active: true
         }
-      ]
+      ],
+      selectedDeviceId: null,
     }
   },
   watch: {
     mapRatio: function(newVal, oldVal) {
-      console.log({newVal, oldVal})
     },
     selectedArea: function(newVal, oldVal) {
-      console.log({newVal, oldVal})
     }
   },
   computed: {
@@ -155,13 +168,15 @@ export default {
       this.selectedArea = this.pageSendParam.areaId
       this.changeArea()
       this.replaceAS({pageSendParam: null})
-    }
-    else{
+    } else{
       this.selectedArea = null
     }
+    document.addEventListener('keydown', function(e){
+    })
   },
   beforeDestroy() {
     this.selectedArea = null
+    document.removeEventListener('keydown')
   },
   methods: {
     reset() {
@@ -261,7 +276,8 @@ export default {
       const y = h + fromY
       const exbBtn = new Container()
       const s = new Shape()
-      s.graphics.beginFill(DISP.EXB_LOC_BGCOLOR)
+      exbBtn.changeColorCommand =
+      s.graphics.beginFill(DISP.EXB_LOC_BGCOLOR).command
       s.graphics.moveTo(fromX, fromY)
       s.graphics.lineTo(x, fromY)
       s.graphics.lineTo(x, y)
@@ -270,6 +286,7 @@ export default {
       s.graphics.lineTo(x - this.ICON_ARROW_WIDTH - this.ICON_ARROW_WIDTH, y)
       s.graphics.lineTo(fromX, y)
       s.graphics.lineTo(fromX, fromY)
+      s.name = exb.deviceId
       exbBtn.addChild(s)
       const label = new Text(this.getExbDisp(exb.deviceId))
       label.font = DISP.EXB_LOC_FONT
@@ -281,12 +298,24 @@ export default {
       exbBtn.exbId = exb.exbId
       exbBtn.x = exb.x
       exbBtn.y = exb.y - (h / 2 + this.ICON_ARROW_HEIGHT)
+      exbBtn.name = exb.deviceId
       return exbBtn
+    },
+    setTxSelected(exbBtn) {
+        const deviceId = this.selectedDeviceId ? this.selectedDeviceId : ''
+        const previous = this.exbCon.getChildByName(this.selectedDeviceId)
+        if (previous) {
+          previous.changeColorCommand.style = DISP.EXB_LOC_BGCOLOR
+        }
+        exbBtn.changeColorCommand.style = "#ed55a2"
+        this.stage.update()
+        this.selectedDeviceId = exbBtn.name
     },
     showExb(exb) {
       let stage = this.stage
       const offsetY = (DISP.EXB_LOC_SIZE.h / 2) + this.ICON_ARROW_HEIGHT
       const exbBtn = this.createExbIcon(exb)
+
       exbBtn.on('pressmove', (evt) => {
         evt.currentTarget.set({
             x: evt.stageX,
@@ -296,16 +325,17 @@ export default {
       })
 
       exbBtn.on('pressup', (evt) => {
-        console.log(evt.stageX, evt.stageY)
         exb.x = evt.stageX
         exb.y = evt.stageY + offsetY
         this.isChanged = true
         exb.isChanged = true
+        this.setTxSelected(exbBtn)
       })
 
       exbBtn.on('dblclick', (evt) => {
-        this.deleteTarget = exbBtn
-        this.$root.$emit('bv::show::modal', 'modalDeleteConfirm')
+        // this.deleteTarget = exbBtn
+        this.$root.$emit('bv::show::modal', 'modalSettingExb')
+        // this.setTxSelected(exbBtn)
       })
       this.exbCon.addChild(exbBtn)
     },
@@ -320,7 +350,6 @@ export default {
       let start
       let stage = this.stage
       this.stage.addEventListener('stagemousedown', (evt) => {
-        console.log("stage on click " + messureCount, evt.stageX, evt.stageY)
         if (messureCount == 2) {
           return
         }
@@ -435,6 +464,8 @@ export default {
       this.exbCon.removeChild(this.deleteTarget)
       this.stage.update()
     },
+    settingExbDone(evt) {
+    },
     async save() {
       this.replace({showProgress: true})
       this.message = ''
@@ -454,7 +485,6 @@ export default {
         this.workExbs.forEach((exb) => { // deleted
           if (exb.location.areaId == this.selectedArea) {
             if (!this.positionedExb.find((pExb) => {
-              console.log(exb)
               return pExb.exbId == exb.exbId
               })) {
               exb.location = {locationId: exb.location.locationId, areaId: null, x: null, y: null}

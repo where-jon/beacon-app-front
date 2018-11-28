@@ -133,6 +133,7 @@
     "positionHistoryId": "tx位置ID",
 
     "exbeacon": "EXBeacon",
+    "settingExbeacon": "EXBeacon設定",
     "pir": "人感センサ",
     "thermohumidity":"温湿度",
     "thermopile":"サーモパイル",

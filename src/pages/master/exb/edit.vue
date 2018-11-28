@@ -56,10 +56,15 @@
                 {{ $t('label.visible') }}
               </b-form-checkbox>
             </b-form-group>
-            <b-form-group>
-              <label v-t="'label.txViewType'" />
-              <b-form-select v-model="form.txViewType" :options="txViewTypes" class="mb-3 ml-3 col-3" :disabled="!isEditable" :readonly="!isEditable" />
-            </b-form-group>
+            <settingtxview
+              :isEditable="isEditable"
+              :dispFormat="form.txViewType ? form.txViewType.displayFormat : txIconsDispFormat"
+              :horizon="form.txViewType ? form.txViewType.horizon : txIconsHorizon"
+              :vertical="form.txViewType ? form.txViewType.vertical : txIconsVertical"
+              @changeFormat="onChangeDispFormat"
+              @changeHorizon ="onChangeHorizon"
+              @changeVertical="onChangeVertical"
+            />
             <b-form-group>
               <label v-t="'label.type'" />
               <b-form-select v-model="form.sensorId" :options="sensorOptionsExb" class="mb-3 ml-3 col-4" :disabled="!isEditable" :readonly="!isEditable" />
@@ -87,14 +92,16 @@ import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as Util from '../../../sub/util/Util'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
 import { APP } from '../../../sub/constant/config.js'
-import { TX_VIEW_TYPES } from '../../../sub/constant/Constants'
+import { TX_VIEW_TYPES, txViewTypes } from '../../../sub/constant/Constants'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
+import settingtxview from '../../../components/parts/settingtxview.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 
 export default {
   mixins: [editmixinVue],
   components: {
     breadcrumb,
+    settingtxview,
   },
   data() {
     return {
@@ -129,7 +136,11 @@ export default {
           text: this.$i18n.tnl('label.exb') + this.$i18n.tnl('label.detail'),
           active: true
         }
-      ]
+      ],
+      txIconsDispFormat: 1,
+      txIconsHorizon: 5,
+      txIconsVertical: 5,
+      TXICONS_DISPFORMAT_TILE: 5,
     }
   },
   computed: {
@@ -170,6 +181,27 @@ export default {
         const label = `label.txViewType${key.charAt(0).toUpperCase()}${key.slice(1).toLowerCase()}`
         return {value: TX_VIEW_TYPES[key], text: this.$i18n.tnl(label)}
       })
+    },
+    txIconsNumHorizon() {
+      return [
+        {value: 1, text: 1},
+        {value: 2, text: 2},
+        {value: 3, text: 3},
+        {value: 4, text: 4},
+        {value: 5, text: 5},
+      ]
+    },
+    txIconsNumVertical() {
+      return [
+        {value: 1, text: 1},
+        {value: 2, text: 2},
+        {value: 3, text: 3},
+        {value: 4, text: 4},
+        {value: 5, text: 5},
+      ]
+    },
+    isIconsDispFormatTile() {
+      return this.txIconsDispFormat === this.TXICONS_DISPFORMAT_TILE
     },
     ...mapState('app_service', [
       'exb',
@@ -222,8 +254,23 @@ export default {
     StateHelper.load('sensor')
     StateHelper.load('area')
     StateHelper.load('zone')
+    if (!this.form.txViewType) {
+      return
+    }
+    this.txIconsDispFormat = this.form.txViewType.displayFormat
+    this.txIconsHorizon = this.form.txViewType.horizon
+    this.txIconsVertical = this.form.txViewType.vertical
   },
   methods: {
+    onChangeDispFormat(dispFormat) {
+      this.txIconsDispFormat = dispFormat
+    },
+    onChangeHorizon(horizon) {
+      this.txIconsHorizon = horizon
+    },
+    onChangeVertical(vertical) {
+      this.txIconsVertical = vertical
+    },
     async save() {
       let entity = {
         exbId: this.form.exbId != null? this.form.exbId: -1,
@@ -235,7 +282,11 @@ export default {
           areaId: this.form.areaId,
           locationName: this.form.locationName,
           visible: this.form.visible,
-          txViewType: this.form.txViewType,
+          txViewType: {
+            displayFormat: this.txIconsDispFormat,
+            horizon: this.txIconsHorizon,
+            vertical: this.txIconsVertical
+          },
           posId: this.form.posId,
           x: this.form.x,
           y: this.form.y,
@@ -261,5 +312,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
+label.txicons-num {
+  margin-left: 20px;
+}
 </style>
