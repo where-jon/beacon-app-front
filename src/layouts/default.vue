@@ -108,7 +108,7 @@ export default {
       })
     },
     setDropdownMenuColor() {
-      const color = getThemeColor(this.loginId)
+      const color = getThemeColor()
       this.setColor('dropdown-menu', color)
       this.setColor('dropdown-item', color)
     }
