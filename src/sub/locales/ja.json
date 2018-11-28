@@ -231,6 +231,7 @@
     "sensorId": "センサID",
     "sensorName": "センサ名",
     "detectCount": "検知回数",
+    "detectedCount": "検知数",
     
     "proximity": "交流",
     "proximityId": "交流ID",

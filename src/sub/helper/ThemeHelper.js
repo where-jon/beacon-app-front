@@ -1,4 +1,5 @@
 import { THEME } from "../constant/Constants"
+import { DISP } from '../constant/config'
 
 export const getButtonTheme = () => {
   const theme = getTheme()
@@ -12,7 +13,7 @@ export const getThemeColor = () => {
 
 export const getTheme = () => {
   const theme = window.localStorage.getItem(document.domain + '-theme')
-  return theme && theme !== 'undefined' ? theme : 'default'
+  return theme && theme !== 'undefined' ? theme : DISP.THEME
 }
 
 export const getThemeClasses = () => {

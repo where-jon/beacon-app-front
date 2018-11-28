@@ -36,7 +36,7 @@
             </b-form-group>
             <b-form-group v-show="isShown('EXB_WITH_POSID')">
               <label v-t="'label.posId'" />
-              <b-form-input type="number" v-model="form.posId" max="65535" required :readonly="!isEditable" />
+              <b-form-input type="number" v-model="form.posId" min="0" max="65535" required :readonly="!isEditable" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.locationX'" />

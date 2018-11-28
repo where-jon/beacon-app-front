@@ -102,14 +102,7 @@ export default {
       'pots',
     ]),
     enableGroup () {
-      for(let group of this.$store.state.menu){
-        for(let page of group.pages){
-          if(page.key == "group"){
-            return true
-          }
-        }
-      }
-      return false
+      return this.isEnabledMenu("group")
     },
   },
   async created() {

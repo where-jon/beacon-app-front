@@ -52,9 +52,9 @@
               </b-form-radio>
             </b-form-radio-group>
           </b-form-group>
-          <b-button v-show="isEditable" type="submit" 
+          <b-button v-show="isEditable" type="submit" class="my-1"
               @click="buttonClick(true)" v-t="'label.start'" :variant="theme" />
-          <b-button v-show="isEditable" type="submit" class="ml-2" 
+          <b-button v-show="isEditable" type="submit" class="ml-2 my-1" 
               @click="buttonClick(false)" v-t="'label.end'" :variant="theme" :disabled="!form.lightOn"/>
         </b-form>
       </b-form-row>
