@@ -2,6 +2,7 @@ import _ from 'lodash'
 import * as AppServiceHelper from './AppServiceHelper'
 import * as Util from '../util/Util'
 import { CATEGORY, SHAPE } from '../constant/Constants'
+import { APP } from '../constant/config'
 
 
 // TODO: 全体的にState管理を共通化する
@@ -12,6 +13,16 @@ let i18n
 export const setApp = (pStore, pi18n) => {
     store = pStore
     i18n = pi18n
+}
+
+export const getTxIdName = (tx) => {
+  if(!tx){
+    return null
+  }
+  const id = APP.TX_WITH_TXID && tx.txId? tx.txId:
+    APP.TX_BTX_MINOR != "minor" && tx.btxId? tx.btxId:
+    APP.TX_BTX_MINOR == "minor" && tx.minor? tx.minor: null
+  return id? id + '(' + Util.getValue(tx, 'txName', '') + ')': null
 }
 
 export const getCategoryTypeName = (category) => {
@@ -94,7 +105,7 @@ const appStateConf = {
       store.commit('app_service/replaceAS', {['potImages']:potImages})
       return arr.map((val) => ({
         ...val,
-        txIdName: val.txId? val.txId + '(' + Util.getValue(val, 'tx.txName', '') + ')': null,
+        txIdName: getTxIdName(val.tx),
         txName: val.txId? Util.getValue(val, 'tx.txName', '') : null,
         groupName: Util.getValue(val, 'potGroupList.0.group.groupName', ''),
         groupId: Util.getValue(val, 'potGroupList.0.group.groupId', ''),
