@@ -1,14 +1,30 @@
 <template>
-  <b-form-group>
+  <b-form-group v-if="!isModal">
     <label v-t="'label.txViewType'" />
     <b-form-select v-model="txDispFormat" :options="txViewTypes" class="mb-3 ml-3 col-3" :disabled="!isEditable" :readonly="!isEditable" @change="onChangeDispFormat" />
-    <label v-t="'label.txIconColumns'" class="txicons-num" v-show="isIconsDispFormatTile"/>
-    <b-form-select v-model="layoutHorizon" :options="txIconsNumHorizon" class="mb-3 ml-3 col-1" :disabled="!isEditable" :readonly="!isEditable" @change="onChangeHorizon" v-show="isIconsDispFormatTile"/>
-    <label v-t="'label.txIconColumnsUnit'"  v-show="isIconsDispFormatTile"/>
-    <label v-t="'label.txIconLines'" class="txicons-num" v-show="isIconsDispFormatTile"/>
-    <b-form-select v-model="layoutVertical" :options="txIconsNumVertical" class="mb-3 ml-3 col-1" :disabled="!isEditable" :readonly="!isEditable" @change="onChangeVertical" v-show="isIconsDispFormatTile"/>
-    <label v-t="'label.txIconLinesUnit'" v-show="isIconsDispFormatTile"/>
+    <label v-t="'label.txIconColumns'" class="txicons-num" :disabled="!isIconsDispFormatTile"/>
+    <b-form-select v-model="layoutHorizon" :options="txIconsNumHorizon" class="mb-3 ml-3 col-1" :disabled="!isEditable || !isIconsDispFormatTile" :readonly="!isEditable" @change="onChangeHorizon" />
+    <label v-t="'label.txIconColumnsUnit'"  :disabled="!isIconsDispFormatTile"/>
+    <label v-t="'label.txIconLines'" class="txicons-num" :disabled="!isIconsDispFormatTile"/>
+    <b-form-select v-model="layoutVertical" :options="txIconsNumVertical" class="mb-3 ml-3 col-1" :disabled="!isEditable || !isIconsDispFormatTile" :readonly="!isEditable" @change="onChangeVertical" />
+    <label v-t="'label.txIconLinesUnit'" :disabled="!isIconsDispFormatTile"/>
   </b-form-group>
+  <div v-else>
+    <b-form-group>
+      <label v-t="'label.txViewType'" />
+      <b-form-select v-model="txDispFormat" :options="txViewTypes" class="mb-3 ml-3 col-3" :disabled="!isEditable" :readonly="!isEditable" @change="onChangeDispFormat" />
+    </b-form-group>
+    <b-form-group>
+      <label v-t="'label.txIconColumns'" class="txicons-num" :disabled="!isIconsDispFormatTile"/>
+      <b-form-select v-model="layoutHorizon" :options="txIconsNumHorizon" class="col-3" :disabled="!isEditable" :readonly="!isEditable" @change="onChangeHorizon" />
+      <label v-t="'label.txIconColumnsUnit'"  :disabled="!isIconsDispFormatTile"/>
+    </b-form-group>
+    <b-form-group>
+      <label v-t="'label.txIconLines'" class="txicons-num" :disabled="!isIconsDispFormatTile"/>
+      <b-form-select v-model="layoutVertical" :options="txIconsNumVertical" class="col-3" :disabled="!isEditable" :readonly="!isEditable" @change="onChangeVertical" />
+      <label v-t="'label.txIconLinesUnit'" :disabled="!isIconsDispFormatTile"/>
+    </b-form-group>
+  </div>
 </template>
 
 <script>
@@ -20,7 +36,7 @@ export default {
   props: {
     isEditable: {
       type: Boolean,
-      default: true
+      default: true,
     },
     dispFormat: {
       type: Number,
@@ -33,6 +49,10 @@ export default {
     vertical: {
       type: Number,
       default: 5,
+    },
+    isModal: {
+      type: Boolean,
+      default: false,
     }
   },
   data() {
@@ -87,6 +107,7 @@ export default {
     this.txDispFormat = this.dispFormat
     this.layoutHorizon = this.horizon
     this.layoutVertical = this.vertical
+    console.log(`horizon = ${this.layoutHorizon},vertical = ${this.layoutVertical}`)
   },
 }
 </script>

@@ -61,18 +61,16 @@
       {{ $t('message.deleteConfirm', {target: deleteTarget? this.getExbDisp(deleteTarget.deviceId): null}) }}
     </b-modal>
     <b-modal id="modalSettingExb" :title="$t('label.settingExbeacon')" @ok="settingExbDone" >
-      <b-form>
-        <b-form-group>
-          <label v-t="'label.txViewType'" />
-          <b-form-select :options="txViewTypes" class="mb-3 ml-3 col-3" />
-          <label v-t="'label.txIconColumns'" class="txicons-num"/>
-          <b-form-select :options="txIconsNumHorizon" class="mb-3 ml-3 col-1" />
-          <label v-t="'label.txIconColumnsUnit'" />
-          <label v-t="'label.txIconLines'" class="txicons-num" />
-          <b-form-select :options="txIconsNumVertical" class="mb-3 ml-3 col-1" />
-          <label v-t="'label.txIconLinesUnit'" />
-        </b-form-group>
-      </b-form>
+      <settingtxview
+        :isEditable="true"
+        :dispFormat="1"
+        :horizon="1"
+        :vertical="1"
+        :isModal="true"
+        @changeFormat="onChangeDispFormat"
+        @changeHorizon ="onChangeHorizon"
+        @changeVertical="onChangeVertical"
+      />
     </b-modal>
   </div>
 </template>
@@ -89,11 +87,13 @@ import { Tween, Ticker } from '@createjs/tweenjs/dist/tweenjs.module'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import commonmixinVue from '../../../components/mixin/commonmixin.vue'
 import showmapmixin from '../../../components/mixin/showmapmixin.vue'
+import settingtxview from '../../../components/parts/settingtxview.vue'
 
 export default {
   mixins: [showmapmixin, commonmixinVue ],
   components: {
     breadcrumb,
+    settingtxview,
   },
   data() {
      return {
@@ -171,12 +171,9 @@ export default {
     } else{
       this.selectedArea = null
     }
-    document.addEventListener('keydown', function(e){
-    })
   },
   beforeDestroy() {
     this.selectedArea = null
-    document.removeEventListener('keydown')
   },
   methods: {
     reset() {
@@ -335,6 +332,7 @@ export default {
       exbBtn.on('dblclick', (evt) => {
         // this.deleteTarget = exbBtn
         this.$root.$emit('bv::show::modal', 'modalSettingExb')
+        console.log(exb)
         // this.setTxSelected(exbBtn)
       })
       this.exbCon.addChild(exbBtn)
@@ -520,6 +518,12 @@ export default {
       }
       this.replace({showProgress: false})
     },
+    onChangeDispFormat() {
+    },
+    onChangeHorizon() {
+    },
+    onChangeVertical() {
+    },
   }
 }
 </script>
@@ -527,9 +531,14 @@ export default {
 <style scoped lang="scss">
 @import "../../../sub/constant/config.scss";
 
+.modal-dialog {
+  width: 700px;
+}
+
 ::-webkit-scrollbar { 
   display: none; 
 }
+
 
 @media screen and (max-width: 1050px) {
   .w-le-sm-100 {
@@ -549,6 +558,7 @@ export default {
 .vdr.active:before {
   content: none;
 }
+
 
 @media screen and (max-width: 575px) {
   .mt-mobile {margin-top:5px;}
@@ -571,4 +581,5 @@ export default {
   from { background-color: white; }
   to { background-color: #ffc107; }
 }
+
 </style>
