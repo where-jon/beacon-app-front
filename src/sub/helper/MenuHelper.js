@@ -77,3 +77,16 @@ export const useMaster = (feature) => {
   const path = '/master/' + feature
   return tenantOk(path, featureList)
 }
+
+export const isMenuEntry = (path) => {
+  const menus = store.state.menu
+  const pathList = []
+  _.forEach(menus, (menu) => {
+    const base = '/' + menu.base
+    _.forEach(menu.pages, (page) => {
+      pathList.push(base + page.path)
+    })
+  })
+
+  return _.some(pathList, (pth) => pth === path)
+}

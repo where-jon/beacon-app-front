@@ -9,6 +9,7 @@
 import mList from '../../../components/page/list.vue'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import * as StateHelper from '../../../sub/helper/StateHelper'
+import * as MenuHelper from '../../../sub/helper/MenuHelper'
 import { addLabelByKey } from '../../../sub/helper/ViewHelper'
 import { APP } from '../../../sub/constant/config.js'
 import listmixinVue from '../../../components/mixin/listmixin.vue'
@@ -48,9 +49,11 @@ export default {
           {key: "x", label:'locationX', sortable: true,},
           {key: "y", label:'locationY', sortable: true,},
           {key: "sensor", label:'type', sortable: true,},
-          {key: "zoneName", label: 'Zone', sortable: true,},
+          MenuHelper.isMenuEntry('/master/zoneClass') ?
+              {key: "zoneName", label: 'zoneName', sortable: true,} : null,
           {key: "actions", thStyle: {width: '130px !important'} }
         ]),
+        sortBy: APP.EXB_WITH_EXBID? "exbId": APP.EXB_WITH_DEVICE_NUM? "deviceNum": APP.EXB_WITH_DEVICE_ID? "deviceId": APP.EXB_WITH_DEVICE_IDX? "deviceIdX": "",
         initTotalRows: this.$store.state.app_service.exbs.length
       },
       items: [
