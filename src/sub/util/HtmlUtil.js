@@ -17,8 +17,7 @@ export const removeClass = (e, cls) => e && e.target.classList && e.target.class
 export const getLangShort = () => {
   let lang = locale? locale: getLang()
   if (lang && lang.length >= 2) {
-    const shortLang = lang.substr(0, 2)
-    return shortLang == "ja"? shortLang: "en"
+    return lang.substr(0, 2)
   }
   return lang
 }

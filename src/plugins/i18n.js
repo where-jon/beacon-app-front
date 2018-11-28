@@ -15,6 +15,9 @@ export default async ({ app, store }, inject) => {
       'ja': _.merge(require('~/sub/locales/ja.json'), await getMessageData('ja'))
     }
   })
+  if(!app.i18n.messages[lang]){
+    app.i18n.locale = 'en'
+  }
   app.i18n.tnl = (path, param) => {
     const message = app.i18n.t(path, param)
     return /^label\..*$/.test(message)? message.replace(/^label\./, ""): message
