@@ -110,8 +110,6 @@
     "txViewType": "TX表示形式",
     "txIconColumns": "横",
     "txIconLines": "縦",
-    "txIconColumnsUnit": "列",
-    "txIconLinesUnit": "行",
 
     "map": "マップ",
     "areaId": "エリアID",

@@ -63,9 +63,9 @@
     <b-modal id="modalSettingExb" :title="$t('label.settingExbeacon')" @ok="settingExbDone" >
       <settingtxview
         :isEditable="true"
-        :dispFormat="1"
-        :horizon="1"
-        :vertical="1"
+        :dispFormat="txDispFormat"
+        :horizon="txDispHorizon"
+        :vertical="txDispVertical"
         :isModal="true"
         @changeFormat="onChangeDispFormat"
         @changeHorizon ="onChangeHorizon"
@@ -127,6 +127,12 @@ export default {
         }
       ],
       selectedDeviceId: null,
+      txDispFormat: null,
+      txDispHorizon: null,
+      txDispVertical: null,
+      defaultDispFormat: 1,
+      defaultHorizon: 5,
+      defaultVertical: 5,
     }
   },
   watch: {
@@ -331,8 +337,11 @@ export default {
 
       exbBtn.on('dblclick', (evt) => {
         // this.deleteTarget = exbBtn
+        const txViewType = exb.location.txViewType
+        this.txDispFormat = txViewType ? txViewType.displayFormat : this.defaultDispFormat
+        this.txDispHorizon = txViewType ? txViewType.horizon : this.defaultHorizon
+        this.txDispVertical = txViewType ? txViewType.vertical : this.defaultVertical
         this.$root.$emit('bv::show::modal', 'modalSettingExb')
-        console.log(exb)
         // this.setTxSelected(exbBtn)
       })
       this.exbCon.addChild(exbBtn)
@@ -506,7 +515,6 @@ export default {
         this.isChanged = false
         this.exbs = this.positionedExb
       } catch (e) {
-        console.log(e)
         if (e.key) {
           this.message = this.$i18n.tnl('message.' + e.type, {key: this.$i18n.tnl('label.' + Util.snake2camel(e.key)), val: e.val})
         }
