@@ -461,8 +461,6 @@ export default {
       this.exbCon.removeChild(this.deleteTarget)
       this.stage.update()
     },
-    settingExbDone(evt) {
-    },
     async save() {
       this.replace({showProgress: true})
       this.message = ''
