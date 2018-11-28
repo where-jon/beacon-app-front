@@ -171,12 +171,9 @@ export default {
     } else{
       this.selectedArea = null
     }
-    document.addEventListener('keydown', function(e){
-    })
   },
   beforeDestroy() {
     this.selectedArea = null
-    document.removeEventListener('keydown')
   },
   methods: {
     reset() {
