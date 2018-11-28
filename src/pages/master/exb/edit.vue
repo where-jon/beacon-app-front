@@ -51,11 +51,15 @@
                 {{ $t('label.enabled') }}
               </b-form-checkbox>
             </b-form-group>
+            <!-- ver0.9 リリースのため、表示フラグ欄とTX表示形式欄を非表示とする -->
+            <!--
             <b-form-group>
               <b-form-checkbox v-model="form.visible" value="true" unchecked-value="false" :disabled="!isEditable" :readonly="!isEditable">
                 {{ $t('label.visible') }}
               </b-form-checkbox>
             </b-form-group>
+            -->
+            <!--
             <settingtxview
               :isEditable="isEditable"
               :dispFormat="form.txViewType ? form.txViewType.displayFormat : txIconsDispFormat"
@@ -65,6 +69,7 @@
               @changeHorizon ="onChangeHorizon"
               @changeVertical="onChangeVertical"
             />
+            -->
             <b-form-group>
               <label v-t="'label.type'" />
               <b-form-select v-model="form.sensorId" :options="sensorOptionsExb" class="mb-3 ml-3 col-4" :disabled="!isEditable" :readonly="!isEditable" />
