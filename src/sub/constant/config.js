@@ -67,9 +67,9 @@ export const APP = { // 機能面に関する設定
 
   // TX関連設定
   TX_SENSOR: [5,6], // TXのタイプに設定可能なセンサーID
-  TX_WITH_TXID: true, // 画面上TXIDを使用するか否か
+  TX_WITH_TXID: false, // 画面上TXIDを使用するか否か
   TX_WITH_CATEGORY: true, // TX管理で個体.カテゴリを表示
-  TX_WITH_GROUP: true, // TX管理で個体.グループを表示
+  TX_WITH_GROUP: false, // TX管理で個体.グループを表示
   TX_WITH_DISPLAY_NAME: true, // TX管理で個体.表示名を表示
   TX_WITH_DESCRIPTION: true, // TX管理で個体.備考を表示
   TX_WITH_MAJOR: true, // TX管理でmajorを表示
@@ -78,10 +78,10 @@ export const APP = { // 機能面に関する設定
 
   // EXB関連設定
   EXB_SENSOR: [1,2,3,4], // EXBのタイプに設定可能なセンサーID
-  EXB_WITH_EXBID: true,       // 画面上EXBIDを使用するか否か 
+  EXB_WITH_EXBID: false,       // 画面上EXBIDを使用するか否か 
   EXB_WITH_DEVICE_NUM: true,  // 画面上端末IDを使用するか否か
-  EXB_WITH_DEVICE_ID: true,   // 画面上デバイスIDを使用するか否か
-  EXB_WITH_DEVICE_IDX: true,  // 画面上デバイスID（16進数）を使用するか否か
+  EXB_WITH_DEVICE_ID: false,   // 画面上デバイスIDを使用するか否か
+  EXB_WITH_DEVICE_IDX: false,  // 画面上デバイスID（16進数）を使用するか否か
   EXB_WITH_POSID: true,      // 画面上POSIDを使用するか否か
 
   // USER関連設定
@@ -94,15 +94,15 @@ export const APP = { // 機能面に関する設定
   POSITION_TIMEZONE: -9, // 午前0時を決定するためのタイムゾーン(時)
 
   // POT関連設定
-  POT_WITH_RUBY: true,       // るび使用　use ruby on pot master
-  POT_WITH_POST: true,       // 役職使用　use post on pot master
-  POT_WITH_TEL: true,        // 電話使用　use tel on pot master
-  POT_WITH_POTCD: true,      // コード使用　use potCd on pot master
-  POT_WITH_GROUP: true,      // グループ使用　use group on pot master
+  POT_WITH_RUBY: false,       // るび使用　use ruby on pot master
+  POT_WITH_POST: false,       // 役職使用　use post on pot master
+  POT_WITH_TEL: false,        // 電話使用　use tel on pot master
+  POT_WITH_POTCD: false,      // コード使用　use potCd on pot master
+  POT_WITH_GROUP: false,      // グループ使用　use group on pot master
   POT_WITH_CATEGORY: true,   // カテゴリ使用　use category on pot master
 
   // category
-  CATEGORY_TYPES: [1,2,3],   // 選択可能な種別
+  CATEGORY_TYPES: [1,2],   // 選択可能な種別
   // 動線分析関連設定
   ANALYSIS_DATETIME_INTERVAL: 60 * 24, // Fromを設定した場合、この設定値分未来の日付をToに自動入力する（分単位）
 
@@ -143,6 +143,7 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
 
   SHOW_NAV: true, // show nav  
   SHOW_SIDEBAR: true, // show sidebar  
+  SHOW_LOGO: true, // show logo
   THEME: "default", // デフォルトのテーマ
   DISPLAY_PRIORITY: ['category','group'], // TX表示の際に参照するdisplay方法の優先順位
 
