@@ -130,7 +130,7 @@ export default {
       return Util.hasValue(this.form.zoneId)
     },
     theme () {
-      const theme = getButtonTheme(this.$store.state.loginId)
+      const theme = getButtonTheme()
       return 'outline-' + theme
     },
     ...mapState('app_service', [

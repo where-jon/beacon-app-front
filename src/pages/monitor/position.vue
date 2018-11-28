@@ -278,10 +278,6 @@ export default {
     table-layout:fixed;
   }
   
-  thead {
-    /* width: calc( 100% - 1em ) */
-  }
-
   .badge-warning {
     color: white;
   }

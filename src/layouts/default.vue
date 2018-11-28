@@ -89,10 +89,9 @@ export default {
     ]),
     sidebarClasses () {
       const storeTheme = this.$store.state.setting.theme
-      const loginId = this.loginId
       return {
         'bd-sidebar': true,
-        ...getThemeClasses(loginId)
+        ...getThemeClasses()
       }
     }
   },
@@ -108,7 +107,7 @@ export default {
       })
     },
     setDropdownMenuColor() {
-      const color = getThemeColor(this.loginId)
+      const color = getThemeColor()
       this.setColor('dropdown-menu', color)
       this.setColor('dropdown-item', color)
     }

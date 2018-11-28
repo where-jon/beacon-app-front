@@ -132,7 +132,7 @@ export const EXCLOUD = {
 export const DISP = { // 表示系設定（表示・色・フォント・サイズ）
   // 位置表示：TX
   TX_R: 26, // Txの半径
-  ROUNDRECT_RADIUS: 15, // Tx角丸表示時のRADIUS
+  ROUNDRECT_RADIUS: 26, // Tx角丸表示時のRADIUS
   TX_BGCOLOR: "3bcddc", // Tx表示時のデフォルト背景色
   TX_COLOR: "000", // Tx表示時のデフォルト文字色
   TX_FONT: "20px Arial", // Tx表示時のフォント
@@ -183,14 +183,14 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     MIN_HEIGHT: 30,
   },
   
-  TXDETAIL_ITEMS: [ // TX詳細表示項目
-    {name: 'minor', disp: true},
-    {name: 'major', disp: true},
-    {name: 'name', disp: true},
-    {name: 'timestamp', disp: true},
-    {name: 'group', disp: true},
-    {name: 'category', disp: true},
-  ],
+  TXDETAIL_ITEMS: { // TX詳細表示項目
+    minor: true,
+    major: true,
+    name: true,
+    timestamp: true,
+    group: true,
+    category: true,
+  },
 
   GATEWAY: { // ゲートウエイ
     STATE_COLOR: { // 状態別色

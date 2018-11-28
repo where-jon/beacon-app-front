@@ -108,6 +108,10 @@
     "locationY": "Y座標",
     "locationZ": "Z座標",
     "txViewType": "TX表示形式",
+    "txIconColumns": "横",
+    "txIconLines": "縦",
+    "txIconColumnsUnit": "列",
+    "txIconLinesUnit": "行",
 
     "map": "マップ",
     "areaId": "エリアID",
@@ -129,6 +133,7 @@
     "positionHistoryId": "tx位置ID",
 
     "exbeacon": "EXBeacon",
+    "settingExbeacon": "EXBeacon設定",
     "pir": "人感センサ",
     "thermohumidity":"温湿度",
     "thermopile":"サーモパイル",

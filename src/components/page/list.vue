@@ -259,7 +259,7 @@ export default {
         });
     }
     this.sortBy = this.params.sortBy? this.params.sortBy: null
-    const theme = getTheme(this.loginId)
+    const theme = getTheme()
   },
   watch: {
     filter() {

@@ -51,7 +51,6 @@ export default {
   components: {
     breadcrumb,
   },
-  mixins: [editmixinVue],
   mixins: [editmixinVue, commonmixinVue ],
   data() {
     return {

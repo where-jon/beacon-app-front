@@ -77,12 +77,12 @@ export default {
     ]),
     navbarClasses() {
       const storeTheme = this.$store.state.setting.theme
-      return getThemeClasses(this.loginId)
+      return getThemeClasses()
     },
     topNavBarClasses() {
       let classes = {}
       Object.assign(classes , this.navbarClasses);
-      if(!this.isLoginPage && this.showNav && HtmlUtil.getLangShort() != "ja"){
+      if(this.showNav && HtmlUtil.getLangShort() != "ja"){
         classes["topMenuNavbar"] = true
       }
       return classes
