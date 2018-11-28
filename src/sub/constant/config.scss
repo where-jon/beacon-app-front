@@ -13,7 +13,6 @@ $default: #588BC1;
 $earth-color: #5C7886;
 $autumn: #927760;
 $vivid: #D50057;
-$yokogawa: #5c7886;
 
 $button-default: #376495;
 
@@ -40,10 +39,6 @@ $vivid-menu-item: #FF4784;
 
 .vivid {
   background-color: $vivid;
-}
-
-.yokogawa {
-  background-color: $yokogawa;
 }
 
 // To use css value in js, export as the follwing
