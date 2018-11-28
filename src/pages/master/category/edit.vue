@@ -68,6 +68,9 @@ export default {
       defaultColor: "#000000",
       defaultBgColor: "#ffffff",
       form: ViewHelper.extract(this.$store.state.app_service.category, ["categoryId", "categoryName", "categoryType", "display", "description"]),
+      defValue: {
+        "categoryType": APP.CATEGORY_TYPES[0],
+      },
       items: [
         {
           text: this.$i18n.tnl('label.master'),
@@ -86,6 +89,9 @@ export default {
   },
   created() {
     this.beforeReload()
+  },
+  async mounted() {
+    ViewHelper.applyDef(this.form, this.defValue)
   },
   computed: {
     hasId(){

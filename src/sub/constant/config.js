@@ -102,7 +102,7 @@ export const APP = { // 機能面に関する設定
   POT_WITH_CATEGORY: true,   // カテゴリ使用　use category on pot master
 
   // category
-  CATEGORY_TYPES: [1,2],   // 選択可能な種別
+  CATEGORY_TYPES: [1,2],   // 選択可能な種別（1人,2物,3ゾーン）
   // 動線分析関連設定
   ANALYSIS_DATETIME_INTERVAL: 60 * 24, // Fromを設定した場合、この設定値分未来の日付をToに自動入力する（分単位）
 
@@ -143,7 +143,7 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
 
   SHOW_NAV: true, // show nav  
   SHOW_SIDEBAR: true, // show sidebar  
-  SHOW_LOGO: true, // show logo
+  SHOW_LOGO: true, // show logo (or show title text)
   THEME: "default", // デフォルトのテーマ
   DISPLAY_PRIORITY: ['category','group'], // TX表示の際に参照するdisplay方法の優先順位
 

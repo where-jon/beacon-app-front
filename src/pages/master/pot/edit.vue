@@ -31,7 +31,7 @@
               <label v-t="'label.minor'" />
               <b-form-input type="number" v-model="minor" min="0" max="65535" :readonly="!isEditable" />
             </b-form-group>
-            <b-form-group>
+            <b-form-group v-show="category.length > 1">
               <label v-t="'label.categoryType'" />
               <b-form-radio-group v-model="form.potType" :options="category" :disabled="!isEditable" />
             </b-form-group>
@@ -99,6 +99,7 @@ import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import { CATEGORY } from '../../../sub/constant/Constants'
+import { APP } from '../../../sub/constant/config.js'
 
 export default {
   components: {
@@ -111,15 +112,19 @@ export default {
       id: 'potId',
       backPath: '/master/pot',
       appServicePath: '/basic/pot',
-      category: _.slice(CATEGORY.getTypes(), 0, 2),
+      category: _.slice(CATEGORY.getTypes(), 0, 2).filter((val) => APP.CATEGORY_TYPES.includes(val.value)),
       txId: null,
       btxId: null,
       minor: null,
-      form: {personOrThing: CATEGORY.getTypes()[0].value,
+      form: {
           ...ViewHelper.extract(this.$store.state.app_service.pot,
           ["potId", "potCd", "potName", "potType", "extValue.ruby",
           "displayName", "potGroupList.0.group.groupId", "potCategoryList.0.category.categoryId", "extValue.tel", "txId",
-          "extValue.post", "thumbnail", "description"])},
+          "extValue.post", "thumbnail", "description"])
+      },
+      defValue: {
+        "potType": APP.CATEGORY_TYPES[0] != 3? APP.CATEGORY_TYPES[0]: null,
+      },
       items: [
         {
           text: this.$i18n.tnl('label.master'),
@@ -187,6 +192,7 @@ export default {
     ]),
   },
   async mounted() {
+    ViewHelper.applyDef(this.form, this.defValue)
     StateHelper.load('group')
     StateHelper.load('category')
     await StateHelper.load('tx')
