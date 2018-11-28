@@ -77,7 +77,7 @@ export default {
       StateHelper.setForceFetch('tx', true)
     },
     getExtraFilter(){
-      return [this.isEnabledMenu("group")? 'group': null, this.isEnabledMenu("category")? 'category': null].filter((val) => val)
+      return [this.isEnabledMenu("group") && APP.POT_WITH_GROUP? 'group': null, this.isEnabledMenu("category") && APP.POT_WITH_CATEGORY? 'category': null].filter((val) => val)
     },
     async fetchData(payload) {
       try {
