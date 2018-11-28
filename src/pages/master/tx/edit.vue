@@ -48,8 +48,8 @@
               <label v-t="'label.txName'" />
               <b-form-input type="text" v-model="form.txName" maxlength="20" :readonly="!isEditable" />
             </b-form-group>
-            <b-form-group>
-              <label v-t="'label.displayName'" v-show="isShown('TX_WITH_DISPLAY_NAME')" />
+            <b-form-group v-show="isShown('TX_WITH_DISPLAY_NAME')">
+              <label v-t="'label.displayName'" />
               <b-form-input type="text" v-model="form.displayName" maxlength="3" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group v-show="isShown('TX_WITH_DESCRIPTION')">
