@@ -61,16 +61,7 @@
       {{ $t('message.deleteConfirm', {target: deleteTarget? this.getExbDisp(deleteTarget.deviceId): null}) }}
     </b-modal>
     <b-modal id="modalSettingExb" :title="$t('label.settingExbeacon')" @ok="settingExbDone" >
-      <settingtxview
-        :isEditable="true"
-        :dispFormat="txDispFormat"
-        :horizon="txDispHorizon"
-        :vertical="txDispVertical"
-        :isModal="true"
-        @changeFormat="onChangeDispFormat"
-        @changeHorizon ="onChangeHorizon"
-        @changeVertical="onChangeVertical"
-      />
+      <settingtxview :isEditable="true" :isModal="true" @change="onChangeTxSetting" />
     </b-modal>
   </div>
 </template>
@@ -127,9 +118,6 @@ export default {
         }
       ],
       selectedDeviceId: null,
-      txDispFormat: null,
-      txDispHorizon: null,
-      txDispVertical: null,
       defaultDispFormat: 1,
       defaultHorizon: 5,
       defaultVertical: 5,
@@ -139,7 +127,16 @@ export default {
     mapRatio: function(newVal, oldVal) {
     },
     selectedArea: function(newVal, oldVal) {
-    }
+    },
+    txDispFormat: function(newVal, oldVal) {
+      return newVal
+    },
+    txDispHorizon: function(newVal, oldVal) {
+      return newVal
+    },
+    txDispVertical: function(newVal, oldVal) {
+      return newVal
+    },
   },
   computed: {
     ...mapState('app_service', [
@@ -338,10 +335,14 @@ export default {
       exbBtn.on('dblclick', (evt) => {
         // this.deleteTarget = exbBtn
         const txViewType = exb.location.txViewType
-        this.txDispFormat = txViewType ? txViewType.displayFormat : this.defaultDispFormat
-        this.txDispHorizon = txViewType ? txViewType.horizon : this.defaultHorizon
-        this.txDispVertical = txViewType ? txViewType.vertical : this.defaultVertical
-        this.$root.$emit('bv::show::modal', 'modalSettingExb')
+        this.$root.$emit('bv::show::modal', 'modalSettingExb',
+          {
+            deviceId: exb.deviceId,
+            format: txViewType ? txViewType.displayFormat : this.defaultDispFormat,
+            horizon: txViewType ? txViewType.horizon : this.defaultHorizon,
+            vertical: txViewType ? txViewType.vertical : this.defaultVertical,
+          }
+        )
         // this.setTxSelected(exbBtn)
       })
       this.exbCon.addChild(exbBtn)
@@ -483,7 +484,13 @@ export default {
 
         this.positionedExb.forEach((exb) => {
           if (exb.isChanged) {
-            exb.location = {locationId: exb.location.locationId, areaId: this.selectedArea, x: Math.round(exb.x / this.mapImageScale), y: Math.round(exb.y / this.mapImageScale)}
+            exb.location = {
+              locationId: exb.location.locationId,
+              areaId: this.selectedArea,
+              x: Math.round(exb.x / this.mapImageScale),
+              y: Math.round(exb.y / this.mapImageScale),
+              txViewType: exb.location.txViewType,
+            }
             param.push(exb.location)
             exb.isChanged = false
           }
@@ -526,12 +533,17 @@ export default {
       }
       this.replace({showProgress: false})
     },
-    onChangeDispFormat() {
-    },
-    onChangeHorizon() {
-    },
-    onChangeVertical() {
-    },
+    onChangeTxSetting(deviceId, dispFormat, horizon, vertical) {
+      const exb = this.positionedExb.find(e => e.deviceId === deviceId)
+      if (!exb) {
+        return
+      }
+      exb.location.txViewType = {
+        displayFormat: dispFormat,
+        horizon: horizon,
+        vertical: vertical,
+      }
+    }
   }
 }
 </script>

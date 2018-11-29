@@ -65,6 +65,8 @@
     "charSet": "CSV文字コード",
     "null": "未指定",
     "undefined": "未定義",
+    "column": "{column}列",
+    "line": "{line}行",
 
     "---------------- App exbeacon ---------------":"",
 
