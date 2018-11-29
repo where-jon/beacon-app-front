@@ -1,14 +1,16 @@
 import * as MenuHelper from '../sub/helper/MenuHelper'
 import * as ConfigHelper from '../sub/helper/ConfigHelper'
+import * as HttpHelper from '../sub/helper/HttpHelper'
 import * as config from '../sub/constant/config'
 import _ from 'lodash'
 
-export default (context, inject) => {
+export default async (context, inject) => {
     console.log("App Init") // If you need common initialize procedure, write here.
     context.store.commit('app_service/replaceAS', {'defaultConfig': _.cloneDeep(config)})
     MenuHelper.setStore(context.store)
     ConfigHelper.loadConfigJson()
-    ConfigHelper.loadSetting()
+    let setting = await HttpHelper.getAppServiceNoCrd('/meta/setting/byTenant/default')
+    ConfigHelper.applyAppServiceSetting(setting)
 }
   
 if (String.prototype.includes) {

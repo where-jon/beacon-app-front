@@ -31,13 +31,6 @@ export const loadConfigJson = async () => {
   }
 }
 
-export const loadSetting = async () => {
-  const settingArr = JSON.parse(window.localStorage.getItem('setting'))
-  if (settingArr) {
-    applyAppServiceSetting(settingArr)
-  }
-}
-
 /**
  * update config with AppService's m_setting
  * key: category + "." + key (if category is not empty)
