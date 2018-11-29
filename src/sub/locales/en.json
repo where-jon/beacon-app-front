@@ -35,6 +35,7 @@
 
     "---------------- App common ---------------":"",
     "login": "Login",
+    "logout": "Logout",
     "loginId": "Login ID",
     "user": "User",
     "userId": "User ID",
