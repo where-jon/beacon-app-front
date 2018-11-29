@@ -6,7 +6,7 @@
       <b-row>
         <b-col md="10" offset-md="1">
           <pagetitle title="label.system" />
-          <edit-list :params="params" :multiList="categorySettings" :newForm="newForm" ref="editList" />
+          <edit-list :params="params" :multiList="categorySettings" :newForm="newForm" :showKeyName="true" ref="editList" />
         </b-col>
       </b-row>
     </div>
