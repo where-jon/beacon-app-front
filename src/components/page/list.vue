@@ -455,7 +455,7 @@ export default {
   td {
     word-break: break-all;
   }
-  @media (min-width: 768px) {
+  @media (min-width: 769px) {
     td {
       max-width: 200px;
     }
