@@ -108,7 +108,7 @@ export default {
           href: '/master/zoneClass',
         },
         {
-          text: this.$i18n.tnl('label.zoneClass') + this.$i18n.tnl('label.detail'),
+          text: this.$i18n.tnl('label.zoneClass') + this.$i18n.tnl(Util.getDetailCaptionKey(this.$store.state.app_service.zone.zoneId)),
           active: true
         }
       ]

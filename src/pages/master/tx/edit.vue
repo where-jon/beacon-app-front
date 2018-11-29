@@ -109,7 +109,7 @@ export default {
           href: '/master/tx'
         },
         {
-          text: labelTx + this.$i18n.tnl('label.detail'),
+          text: labelTx + this.$i18n.tnl(Util.getDetailCaptionKey(this.$store.state.app_service.tx.txId)),
           active: true
         },
       ]

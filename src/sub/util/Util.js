@@ -283,3 +283,7 @@ export const getOptions = (key, list, valField, txtField) => {
   options.unshift({value: null, text: ""})
   return options
 }
+
+export const getDetailCaptionKey = (id) => {
+  return `label.${hasValue(id)? 'update': 'addSetting'}`
+}

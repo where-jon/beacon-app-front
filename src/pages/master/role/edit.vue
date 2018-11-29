@@ -65,7 +65,7 @@ export default {
           href: '/master/role',
         },
         {
-          text: this.$i18n.tnl('label.role') + this.$i18n.tnl('label.detail'),
+          text: this.$i18n.tnl('label.role') + this.$i18n.tnl(Util.getDetailCaptionKey(this.$store.state.app_service.role.roleId)),
           active: true
         }
       ]

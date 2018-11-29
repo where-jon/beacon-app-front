@@ -65,11 +65,11 @@ export default {
           href: '/master/role',
         },
         {
-          text: this.$i18n.tnl('label.role') + this.$i18n.tnl('label.detail'),
+          text: this.$i18n.tnl('label.role') + this.$i18n.tnl('label.update'),
           href: '/master/role/edit',
         },
         {
-          text: this.$i18n.tnl('label.feature') + this.$i18n.tnl('label.detail'),
+          text: this.$i18n.tnl('label.feature') + this.$i18n.tnl(Util.getDetailCaptionKey(this.$store.state.app_service.roleFeature.feature? this.$store.state.app_service.roleFeature.feature.featureId: null)),
           active: true
         }
       ]

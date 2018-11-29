@@ -71,7 +71,7 @@ export default {
           href: '/master/region',
         },
         {
-          text: this.$i18n.tnl('label.region') + this.$i18n.tnl('label.detail'),
+          text: this.$i18n.tnl('label.region') + this.$i18n.tnl(Util.getDetailCaptionKey(this.$store.state.app_service.region.regionId)),
           active: true
         }
       ]
