@@ -95,6 +95,7 @@ import _ from 'lodash'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
+import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
@@ -135,7 +136,7 @@ export default {
           href: '/master/pot',
         },
         {
-          text: this.$i18n.tnl('label.pot') + this.$i18n.tnl('label.detail'),
+          text: this.$i18n.tnl('label.pot') + this.$i18n.tnl(Util.getDetailCaptionKey(this.$store.state.app_service.pot.potId)),
           active: true
         }
       ]
