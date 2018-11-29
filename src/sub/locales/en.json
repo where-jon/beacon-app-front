@@ -107,7 +107,11 @@
     "locationX": "X",
     "locationY": "Y",
     "locationZ": "Z",
-    "txViewType": "Tx display format",
+    "txViewType": "TX display format",
+    "txIconColumns": "Horizontal",
+    "txIconLines": "Vertical",
+    "txIconColumnsUnit": "Column",
+    "txIconLinesUnit": "Row",
 
     "map": "Map",
     "areaId": "Area ID",
@@ -129,6 +133,7 @@
     "positionHistoryId": "Tx Position ID",
 
     "exbeacon": "EXBeacon",
+    "settingExbeacon": "EXBeacon Setting",
     "pir": "Human detection",
     "thermohumidity":"Temp. & humidity",
     "thermopile":"Thermopile",
@@ -190,7 +195,8 @@
     "positionListShort": "List",
     "detectState": "State",
     "detected": "Detecting",
-    "detectAfterUndetect": "Undetected after detection",
+    "temporaryUndetect": "Disappear",
+    "todayUndetect": "No detection",
     "power-null": "‐",
     "final-receive-location": "Last position",
     "mapDisplay": "Map display",
@@ -306,6 +312,12 @@
     "temperatureHistoryType0": "All temp. & humidity",
     "temperatureHistoryType1": "Temp. & humidity by time",
 
+    "analysis": "Analysis",
+    "flowlineAnalysis": "Route analysis",
+    "individual": "Individual",
+
+    "heatmapPosition": "Heat map (Positioning)",
+
     "allRejection": "Reject all",
     "systemReadOnly": "Allow system Read Only",
     "readOnly": "Allow Read Only",
@@ -341,18 +353,31 @@
     "notUse": "Not in use",
     "totalRecordsCount": "Total number",
 
+
+    "---------------- App position ---------------": "",
+    "txViewTypeDefault": "Normal",
+    "txViewTypeSquare": "Rectangle",
+    "txViewTypeDiamond": "Diamond",
+    "txViewTypeSpiral": "Spiral",
+    "txViewTypeTile": "Tile",
+
+    "string": "String",
+    "stringList": "String list",
+    "number": "Number",
+    "numberList": "Number list",
+    "boolean": "Boolean value",
+
     "---------------- Config key name ---------------":"",
 
-    "APP.LOG_KEEP_TM": "Log preservation period",
-    "APP.MONITORING_TM": "Monitoring refresh interval",
-    "APP.PASSWORD_CHANGE": "Password change function",
+    "APP.LOG_KEEP_TIME": "Long retention period",
+    "APP.MONITOR_REFESH_TIME": "Monitoring update interval",
+    "APP.PASSWORD_CHANGEABLE": "password change function",
     "APP.PASSWORD_CHECK": "Password strength check",
-    "APP.UP_POS_EFFECT": "Position change effect",
-    "APP.TIMEZONE": "Time zone",
-    "APP.DISP_REFRESH_TM": "Screen update interval",
+    "APP.UPDATE_POSITION_EFFECT": "Position change effect",
+    "APP.TIME_ZONE": "Time zone",
     "APP.SLACK_WEBHOOC": "Slack Webhook registration",
     "APP.MAIL_ADDRESS": " Email address to notify",
-    "APP.IP_FILTER": " IP address filter",
+    "APP.IP_ADDRESS_FILTER": "IP address filter",
 
     "APP.SERVICE_BASE_URL": "API settings & End point",
     "APP.SERVICE_UP_TM": " API settings & update interval ",
@@ -381,6 +406,10 @@
     "overLength": "Please enter a string within {length} for {target}.",
     "selectFile": "Please select a file.",
     "required": "Please enter {target}.",
+    "requiredMore": "Please enter one {target}.",
+    "invalid": "{target} is invalid",
+    "invalidLessHours": "Please enter {target} within {max} hours",
+    "notFoundData": "There is no data for {target}",
     "notMatchCureentPassword": "The password is incorrect.",
     "invalidPassword": "Invalid password format.",
     "notMatchPassword": "The changed & confirmation password do not match.",
@@ -412,6 +441,7 @@
     "uploadWarnData": "{val} data does not exist, so it cannot be registered.",
     "loadingFile": "Loading file. ({now} / {all})",
     "networkError": "Unable to connect to the server.",
+    "noLedDevice": "There are no LED devices to operate",
 
     "dummy": "" 
   }
