@@ -73,7 +73,7 @@
     "showPositionShort": "地図",
     "telemetry": "EXB状態監視",
     "gateway": "ゲートウェイ",
-    "position": "TX状態監視",
+    "position": "Tx状態監視",
     "monitor": "モニタ",
     "area": "エリア",
     "exb": "EXBeacon",
@@ -81,8 +81,8 @@
     "locationSetting": "EXB配置設定",
     "develop": "開発用",
 
-    "exbId": "exb ID",
-    "exbName": "exb名",
+    "exbId": "EXB ID",
+    "exbName": "EXB名",
     "deviceId": "デバイスID",
     "deviceIdX": "デバイスID(16進数)",
     "deviceNum": "端末ID",
@@ -96,7 +96,7 @@
     "power-poor": "交換",
 
     "tx": "Tx",
-    "txId": "TXID",
+    "txId": "TxID",
     "txName": "Tx名",
     "btxId": "btxId",
     "major": "major",
@@ -107,7 +107,7 @@
     "locationX": "X座標",
     "locationY": "Y座標",
     "locationZ": "Z座標",
-    "txViewType": "TX表示形式",
+    "txViewType": "Tx表示形式",
     "txIconColumns": "横",
     "txIconLines": "縦",
     "txIconColumnsUnit": "列",
@@ -130,7 +130,7 @@
 
     "posId": "pos ID",
     "positionHistory": "位置情報",
-    "positionHistoryId": "tx位置ID",
+    "positionHistoryId": "Tx位置ID",
 
     "exbeacon": "EXBeacon",
     "settingExbeacon": "EXBeacon設定",
