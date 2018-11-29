@@ -68,6 +68,10 @@ export const authByAppService = async (loginId, password, success, err) => {
     // get region
     let currentRegion = await HttpHelper.getAppService('/core/region/current')
 
+    // get setting (again in case failed on init or reload)
+    let setting = await HttpHelper.getAppServiceNoCrd('/meta/setting/byTenant/default')
+    ConfigHelper.applyAppServiceSetting(setting)  
+
     // Login process
     await login({loginId, username:user.name, role:data.role, featureList, tenantFeatureList, menu, currentRegion, frontRev, serviceRev})
     success()
