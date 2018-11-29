@@ -40,7 +40,7 @@ export default {
       message: "",
       items: [
         {
-          text: this.$i18n.tnl('label.analysis'),
+          text: this.$i18n.tnl('label.sumTitle'),
           active: true
         },
         {
