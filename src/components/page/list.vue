@@ -454,7 +454,11 @@ export default {
 
   td {
     word-break: break-all;
-    max-width: 200px;
+  }
+  @media (min-width: 768px) {
+    td {
+      max-width: 200px;
+    }
   }
 
   div.empty-icon {
