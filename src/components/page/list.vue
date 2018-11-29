@@ -47,7 +47,7 @@
       </b-row>
     
       <!-- table -->
-      <b-table show-empty stacked="md" striped hover :items="list" :fields="fields" :current-page="currentPage" :per-page="perPage" outlined
+      <b-table show-empty stacked="md" striped hover :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" outlined
               :filter="filterGrid" @filtered="onFiltered" :bordered="params.bordered" :sort-by.sync="sortBy">
         <template slot="style" slot-scope="row">
           <div v-bind:style="style(row.item)">A</div>
@@ -157,6 +157,14 @@ export default {
     }
   },
   computed: {
+    items() {
+      return this.list.map((item) => {
+        return _.reduce(item, (result, val, key) => {
+          result[key] = Util.cutOnLong(val, 50)
+          return result
+        }, {})
+      })
+    },
     crud() {
       return !this.isEditable? 'refer':  'update'
     },
@@ -441,6 +449,11 @@ export default {
   
   select.extra-filter {
     max-width: 10em;
+  }
+
+  td {
+    word-break: break-all;
+    max-width: 200px;
   }
 
   div.empty-icon {
