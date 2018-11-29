@@ -36,7 +36,7 @@
       <p></p>
       <b-row align-h="end">
         <b-col md="2" class="mb-2">
-          <b-button v-if="!ios" :variant="getButtonTheme()" @click="download()" v-t="'label.download'"/>
+          <b-button v-if="!iosOrAndroid" :variant="getButtonTheme()" @click="download()" v-t="'label.download'"/>
         </b-col>
       </b-row>
       <table class="table table-hover table-bordered">

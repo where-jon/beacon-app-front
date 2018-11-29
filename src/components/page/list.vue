@@ -33,9 +33,9 @@
           <b-col v-if="!params.disableTableButtons && isEditable" cols="auto" class="ml-auto">
             <b-button :variant='theme' class="mx-1" @click="edit()"
                 v-t="'label.createNew'" />
-            <b-button :variant='theme' class="mx-1" v-if="params.bulkEditPath && !ios" @click="bulkEdit()" 
+            <b-button :variant='theme' class="mx-1" v-if="params.bulkEditPath && !iosOrAndroid" @click="bulkEdit()" 
                 v-t="'label.bulkRegister'" />
-            <b-button :variant='theme' class="mx-1" v-if="params.csvOut && !ios" @click="exportCsv"
+            <b-button :variant='theme' class="mx-1" v-if="params.csvOut && !iosOrAndroid" @click="exportCsv"
                 v-t="'label.download'" />
           </b-col>
         </b-form-row>
@@ -102,7 +102,7 @@
         </b-col>
         <!-- bulk upload button -->
         <b-col v-if="isEditable" md="6" class="my-1">
-          <b-button v-if="params.bulkUploadPath && !ios" :variant='theme'
+          <b-button v-if="params.bulkUploadPath && !iosOrAndroid" :variant='theme'
             @click="bulkUpload()" v-t="'label.bulkUpload'"  class="float-right" />
         </b-col>
       </b-row>
@@ -172,8 +172,8 @@ export default {
     isEditable() {
       return MenuHelper.isEditable(this.appServicePath)
     },
-    ios() {
-      return Util.isIos()
+    iosOrAndroid() {
+      return Util.isAndroidOrIOS()
     },
     extraFilterSpec() {
       if (!this.params.extraFilter) {

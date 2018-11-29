@@ -5,7 +5,7 @@
       <b-row align-h="end">
         <all-count :count="allCount" />
         <b-col md="2" class="mb-3 mr-3">
-          <b-button v-if="!ios" :variant='getButtonTheme()' @click="download()" v-t="'label.download'" />
+          <b-button v-if="!iosOrAndroid" :variant='getButtonTheme()' @click="download()" v-t="'label.download'" />
         </b-col>
       </b-row>
       <div class="table-area">

@@ -49,7 +49,7 @@
       <p></p>
       <b-row>
         <b-col md="10" offset-md="2">
-          <b-button v-if="!ios" :variant="getButtonTheme()" @click="download()" v-t="'label.download'" />
+          <b-button v-if="!iosOrAndroid" :variant="getButtonTheme()" @click="download()" v-t="'label.download'" />
         </b-col>
       </b-row>
     </div>
