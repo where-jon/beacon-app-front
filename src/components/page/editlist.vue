@@ -11,7 +11,7 @@
         <label class="card-header" v-t="getName(categoryId)" />
         <div class="card-body">
           <div v-for="row in multiList[categoryId]" :key="row.id">
-            <b-form-group :label="getName(row.key)" :description="getName(row.description)">
+            <b-form-group :label="getName(row.key, showKeyName)" :description="getName(row.description)">
               <span v-for="field in fields" :key="field.key">
                 <b-form-select v-if="useInputPullDown(row[field.type])" v-model="row[field.key]" :options="getBooleanOptions()" form="updateForm"/>
                 <b-form-input v-else-if="useInputNumberType(row[field.type])" v-model="row[field.key]" type="text" class="form-control-sm" :formatter="numberFormat" maxlength="1000" required/>
@@ -76,7 +76,7 @@ import * as Util from '../../sub/util/Util'
 
 export default {
   mixins: [ editmixinVue, commonmixinVue ],
-  props: ['params', 'multiList', 'newForm'],
+  props: ['params', 'multiList', 'newForm', 'showKeyName'],
   data() {
     return {
       ...this.params,
@@ -96,13 +96,16 @@ export default {
     this.$parent.$options.methods.fetchData.apply(this.$parent)
   },
   methods: {
-    getName(id) {
+    getName(id, showKeyName = false) {
       if (!Util.hasValue(id)) {
         return null
       }
       let name = this.$i18n.tnl(`label["${id}"]`)
       if (name.startsWith("label[")) {
         return id
+      }
+      if(showKeyName){
+        return `${id}(${name})`
       }
       return name
     },
