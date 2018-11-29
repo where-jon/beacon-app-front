@@ -41,7 +41,14 @@ export default {
           APP.EXB_WITH_DEVICE_NUM? "deviceNum": null,
           APP.EXB_WITH_DEVICE_ID? "deviceId": null,
           APP.EXB_WITH_DEVICE_IDX? "deviceIdX": null,
-          "locationName", "posId", "areaName", "x", "y", "enabled", "sensor", "zoneName"
+          "locationName",
+          "posId",
+          "areaName",
+          "x",
+          "y",
+          "enabled",
+          "sensor",
+          MenuHelper.isMenuEntry('/master/zoneClass') ? "zoneName": null
         ].filter((val) => val),
         fields: addLabelByKey(this.$i18n, [ 
           APP.EXB_WITH_EXBID? {key: "exbId", sortable: true }: null,
