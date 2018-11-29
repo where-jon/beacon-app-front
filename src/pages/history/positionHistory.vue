@@ -22,7 +22,7 @@
             <b-form-row>
               <b-form-row class="mb-3 mr-2">
                 <label v-t="'label.historyDateFrom'" class="mr-2"/>
-                <date-picker v-model="form.datetimeFrom" type="datetime" :clearable="false" @change="changeDatetimeFrom" class="mr-2 inputdatefrom" required/>
+                <date-picker v-model="form.datetimeFrom" type="datetime" :clearable="false" class="mr-2 inputdatefrom" required/>
               </b-form-row>
               <b-form-row class="mb-3 mr-2">
                 <label v-t="'label.historyDateTo'" class="mr-2" />
@@ -40,7 +40,7 @@
         <slot></slot>
         <b-row class="mt-3">
         </b-row>
-        <b-table show-empty stacked="md" striped hover :items="list" :fields="fields" :current-page="currentPage" :per-page="perPage" outlined :sort-by.sync="sortBy">
+        <b-table show-empty stacked="md" striped hover :items="list" :empty-text="emptyMessage" :fields="fields" :current-page="currentPage" :per-page="perPage" outlined :sort-by.sync="sortBy">
         </b-table>
         <b-row>
           <b-col md="6" class="my-1">{{ footerMessage }}</b-col>
@@ -83,6 +83,7 @@ export default {
   data () {
     return {
       name: 'positionHistory',
+      emptyMessage: this.$i18n.tnl('message.listEmpty'),
       items: [
         {
           text: this.$i18n.tnl('label.historyTitle'),
@@ -176,14 +177,6 @@ export default {
     this.footerMessage = `${this.$i18n.tnl("message.totalRowsMessage", {row: this.fetchRows, maxRows: this.maxRows})}`
   },
   methods: {
-    changeDatetimeFrom(newVal = this.form.datetimeFrom) {
-      if(newVal){
-        this.form.datetimeTo = this.getDatetime(newVal, {minutes: APP.ANALYSIS_DATETIME_INTERVAL})
-      }
-      else{
-        this.form.datetimeTo = null
-      }
-    },
     getDatetime(baseDatetime, controlData){
       const datetime = new Date(baseDatetime.getTime())
       datetime.setMilliseconds(0)
