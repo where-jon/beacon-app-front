@@ -15,9 +15,9 @@
           <label class="ml-sm-4 ml-2 mr-1">{{ $t('label.category') }}</label>
           <b-form-select v-model="selectedCategory" :options="categoryOptionsForPot" class="ml-1 mr-2"></b-form-select>
         </b-form-row>
-        <b-form-row ref="detectedElement" class="my-1 ml-2 ml-sm-0" style="visibility: hidden;">
+        <b-form-row class="my-1 ml-2 ml-sm-0" v-if="showDetected">
           <span class="ml-sm-4 ml-2 mr-1">{{ $t('label.detectedCount') + ' : '  }}</span>
-          <span ref="detectedId" class="mr-1"></span>
+          <span class="mr-1">{{detectedCount}}</span>
         </b-form-row>
       </b-form>
     </b-row>
@@ -82,9 +82,11 @@ export default {
           active: true
         },
       ],
-      count: 0, // for mock test 
+      count: 0, // for mock test
+      detectedCount: 0, // 検知数
       pot: {},
       showMeditag: APP.USE_MEDITAG,
+      showDetected: APP.SHOW_DETECTED_COUNT,
       meditagSensors: [],
       showReady: false,
       shortName: this.$i18n.tnl('label.showPositionShort'),
@@ -123,8 +125,8 @@ export default {
       let now = !DEV.USE_MOCK_EXC? new Date().getTime(): mock.positions_conf.start + this.count++ * mock.positions_conf.interval  // for mock
       let positions = PositionHelper.correctPosId(this.orgPositions, now)
       if (APP.SHOW_DETECTED_COUNT) {
-          this.$refs.detectedElement.style.visibility = APP.SHOW_DETECTED_COUNT ? "visible" : "hidden";
-          this.$refs.detectedId.textContent = positions.length  // 検知数表示
+          //this.$refs.detectedElement.style.visibility = APP.SHOW_DETECTED_COUNT ? "visible" : "hidden";
+          //this.$refs.detectedId.textContent = positions.length  // 検知数表示
       }
       if (APP.USE_MEDITAG && this.meditagSensors) {
         positions = SensorHelper.setStress(positions, this.meditagSensors)
@@ -207,6 +209,7 @@ export default {
       return null
     },
     resetDetail() {
+      this.detectedCount = 0　// 検知カウントリセット
       if (!this.showingDetailTime || new Date().getTime() - this.showingDetailTime > 100) {
         let selectedTx = {}
         this.replaceMain({selectedTx})
@@ -318,7 +321,6 @@ export default {
       PositionHelper.adjustPosition(this.positions, this.mapImageScale, this.positionedExb).forEach((pos) => { // TODO: Txのチェックも追加
         this.showTx(pos)
       })
-
       if (this.selectedTx.btxId) {
         const tx = this.selectedTx
         const position = PositionHelper.adjustPosition(this.positions, this.mapImageScale, this.positionedExb)
@@ -370,7 +372,6 @@ export default {
         btnBg.alpha = 0.6
       }
       txBtn.addChild(btnBg)
-
       let label = new Text(pos.label)
       label.font = `${DISP.TX_R * this.ICON_FONTSIZE_RATIO}px Arial`
       label.color = '#' + color
@@ -389,6 +390,7 @@ export default {
       })
       this.txCont.addChild(txBtn)
       stage.update()
+      this.detectedCount++  // 検知数カウント増加
     },
     isShowModal() {
       return window.innerWidth < this.shwoIconMinWidth
