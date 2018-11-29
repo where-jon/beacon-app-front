@@ -11,7 +11,7 @@
           <b-form-group class="mr-5">
             <b-form-row>
               <b-form-row class="mb-3 mr-2">
-                <label v-t="'label.tx'" class="mr-2"/>
+                <label v-t="'label.minor'" class="mr-2"/>
                 <b-form-select v-model="form.txId" :options="txOptions" class="mr-2"/>
               </b-form-row>
             </b-form-row>
@@ -42,6 +42,9 @@
         </b-row>
         <b-table show-empty stacked="md" striped hover :items="list" :fields="fields" :current-page="currentPage" :per-page="perPage" outlined :sort-by.sync="sortBy">
         </b-table>
+        <b-row>
+          <b-col md="6" class="my-1">{{ footerMessage }}</b-col>
+        </b-row>
         <b-row>
           <b-col md="6" class="my-1">
             <b-pagination :total-rows="totalRows" :per-page="perPage" v-model="currentPage" class="my-0" />
@@ -97,27 +100,46 @@ export default {
       },
       list: [],
       custumCsvColumns: [
-        "positionHistoryId", "txId", "major", "minor", "exbId", "locationId", "x", "y", "positionDt"
+        "positionDt",
+        "txName",
+        "major",
+        "minor",
+        APP.EXB_WITH_EXBID?"exbId":null,
+        APP.EXB_WITH_DEVICE_NUM?"deviceNum":null,
+        APP.EXB_WITH_DEVICE_ID?"deviceId":null,
+        APP.EXB_WITH_DEVICE_IDX?"deviceIdX":null,
+        "locationName",
+        APP.EXB_WITH_POSID?"posId":null,
+        "areaName",
+        "x",
+        "y",
       ].filter((val) => val),
       fields: addLabelByKey(this.$i18n, [
-        {key: "positionHistoryId", sortable: true },
-        {key: "txId", sortable: true },
+        {key: "positionDt", sortable: true, label:"dt"},
+        {key: "txName", sortable: true },
         {key: "major", sortable: true },
         {key: "minor", sortable: true },
-        {key: "exbId", sortable: true,},
-        {key: "locationId", sortable: true,},
+        APP.EXB_WITH_EXBID? {key: "exbId", sortable: true }: null,
+        APP.EXB_WITH_DEVICE_NUM? {key: "deviceNum", sortable: true }: null,
+        APP.EXB_WITH_DEVICE_ID? {key: "deviceId", sortable: true }: null,
+        APP.EXB_WITH_DEVICE_IDX? {key: "deviceIdX", sortable: true }: null,
+        {key: "locationName", label:'locationZoneName', sortable: true,},
+        APP.EXB_WITH_POSID? {key: "posId", label:'posId', sortable: true,}: null,
+        {key: "areaName", label:'area', sortable: true,},
         {key: "x", sortable: true, label:"locationX"},
         {key: "y", sortable: true, label:"locationY"},
-        {key: "positionDt", sortable: true, label:"dt"},
       ]),
       currentPage: 1,
-      perPage: 10,
-      totalRows: this.initTotalRows,
+      perPage: 20,
+      maxRows: 100,
+      totalRows: 0,
+      fetchRows: 0,
       sortBy: null,
       //
       showInfo: false,
       showAlert: false,
       message: "",
+      footerMessage: "",
     }
   },
   computed: {
@@ -126,13 +148,13 @@ export default {
       return 'outline-' + theme
     },
     ...mapState('app_service', [
-      'txs'
+      'txs', 'exbs'
     ]),
     txOptions() {
       let txOp = this.txs.map((tx) => {
           return {
             value: tx.txId,
-            text: tx.txId
+            text: tx.minor
           }
         }
       )
@@ -150,6 +172,8 @@ export default {
       locale.use(mojule.default)
     })
     StateHelper.load('tx')
+    StateHelper.load('exb')
+    this.footerMessage = `${this.$i18n.tnl("message.totalRowsMessage", {row: this.fetchRows, maxRows: this.maxRows})}`
   },
   methods: {
     changeDatetimeFrom(newVal = this.form.datetimeFrom) {
@@ -180,21 +204,44 @@ export default {
     },
     async displayImpl(){
       this.showAlert = false
+      this.list = []
+      this.totalRows = 0
+      this.fetchRows = 0
+      this.footerMessage = `${this.$i18n.tnl("message.totalRowsMessage", {row: this.fetchRows, maxRows: this.maxRows})}`
       try {
-        const aTxid = (this.form.txId != null)?this.form.txId:0
-        this.list = await HttpHelper.getAppService(
-          `/core/positionHistory/find/${aTxid}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}`
+        const aTxId = (this.form.txId != null)?this.form.txId:0
+        var posHists = await HttpHelper.getAppService(
+          `/core/positionHistory/find/${aTxId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}`
         )
-        if (this.list.length == null || !this.list.length) {
+        if (posHists.length == null || !posHists.length) {
           this.message = this.$i18n.tnl("message.notFoundData", {target: this.$i18n.tnl("label.positionHistory")})
           this.showAlert = true
-          this.list = []
           return
         }
-        this.list.forEach(element => {
-          const d = new Date(element.positionDt)
-          element.positionDt = moment(d.getTime()).format('YYYY/MM/DD HH:mm:ss')
-        });
+        this.fetchRows = posHists.length
+        var count = 0
+        for (var posHist of posHists) {
+          const d = new Date(posHist.positionDt)
+          posHist.positionDt = moment(d.getTime()).format('YYYY/MM/DD HH:mm:ss')
+          let aTx = _.find(this.txs, (tx) => { return tx.txId == posHist.txId })
+          posHist.txName = aTx.txName
+          let aExb = _.find(this.exbs, (exb) => { return exb.exbId == posHist.exbId })
+          posHist.deviceNum = aExb.deviceNum
+          posHist.deviceId = aExb.deviceId
+          posHist.deviceIdX = aExb.deviceIdX
+          posHist.locationName = aExb.locationName
+          posHist.posId = aExb.posId
+          posHist.areaName = aExb.areaName
+          posHist.x = aExb.x
+          posHist.y = aExb.y
+          this.list.push(posHist)
+          count++
+          if (count >= this.maxRows) {
+            break
+          }
+        }
+        this.totalRows = this.list.length
+        this.footerMessage = `${this.$i18n.tnl("message.totalRowsMessage", {row: this.fetchRows, maxRows: this.maxRows})}`
       } catch(e) {
         console.error(e)
       }
