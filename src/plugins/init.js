@@ -8,7 +8,7 @@ export default async (context, inject) => {
     console.log("App Init") // If you need common initialize procedure, write here.
     context.store.commit('app_service/replaceAS', {'defaultConfig': _.cloneDeep(config)})
     MenuHelper.setStore(context.store)
-    ConfigHelper.loadConfigJson()
+    await ConfigHelper.loadConfigJson()
     let setting = await HttpHelper.getAppServiceNoCrd('/meta/setting/byTenant/default')
     ConfigHelper.applyAppServiceSetting(setting)
 }
