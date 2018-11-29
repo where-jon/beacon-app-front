@@ -37,7 +37,7 @@
             </b-form-group>
             <b-form-group v-if="isShown('POT_WITH_POTCD')">
               <label v-t="'label.potCd'" />
-              <b-form-input type="text" v-model="form.potCd" maxlength="20" required :readonly="!isEditable" />
+              <b-form-input type="text" v-model="form.potCd" maxlength="20" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.potName'" />
@@ -45,7 +45,7 @@
             </b-form-group>
             <b-form-group v-show="isShown('POT_WITH_RUBY')">
               <label v-t="'label.ruby'" />
-              <b-form-input type="text" v-model="form.ruby" pattern="^[ぁ-んーァ-ヶa-zA-Z0-9ａ-ｚＡ-Ｚ０-９]+$" maxlength="20" :readonly="!isEditable" />
+              <b-form-input type="text" v-model="form.ruby" maxlength="20" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.displayName'" />
@@ -229,9 +229,6 @@ export default {
       this.minor = tx? tx.minor: null
     },
     beforeSubmit(again){
-      if(!this.isShown('POT_WITH_POTCD')){
-        this.form.potCd = this.form.potName
-      }
       this.register(again)
     },
     afterCrud(){
