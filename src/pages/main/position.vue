@@ -314,15 +314,26 @@ export default {
       }
       this.txCont.removeAllChildren()
       this.stage.update()
-      PositionHelper.adjustPosition(this.positions, this.mapImageScale, this.positionedExb).forEach((pos) => { // TODO: Txのチェックも追加
-        this.showTx(pos)
+
+      // for debug
+      let disabledExbs = _.filter(this.exbs, (exb) => !exb.enabled || !exb.location.x || exb.location.y <= 0)
+      this.positions.forEach((pos) => {
+          let exb = disabledExbs.find((exb) => exb.posId == pos.pos_id)
+          if (exb) {
+              console.error("Found at disabled exb", pos, exb)
+          }
       })
+
+      let position = PositionHelper.adjustPosition(this.positions, this.mapImageScale, this.positionedExb)
+      position.forEach((pos) => { // TODO: Txのチェックも追加
+          this.showTx(pos)
+      })
+
       if (this.selectedTx.btxId) {
         const tx = this.selectedTx
-        const position = PositionHelper.adjustPosition(this.positions, this.mapImageScale, this.positionedExb)
-            .filter((pos) => pos.btx_id == tx.btxId)
-        if (position.length == 1) {
-          this.showDetail(tx.btxId, position[0].x, position[0].y)
+        const selectedTxPosition = position.find((pos) => pos.btx_id == tx.btxId)
+        if (selectedTxPosition) {
+            this.showDetail(tx.btxId, selectedTxPosition.x, selectedTxPosition.y)
         }
       }
     },
