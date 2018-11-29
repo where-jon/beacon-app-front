@@ -28,7 +28,7 @@
               <b-form-input type="number" v-model="btxId" min="0" max="65535" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group v-show="!isShown('TX_WITH_TXID') && isShown('TX_BTX_MINOR') == 'minor'">
-              <label v-t="'label.minor'" />
+              Tx(<label v-t="'label.minor'" />)
               <b-form-input type="number" v-model="minor" min="0" max="65535" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group v-show="category.length > 1">
