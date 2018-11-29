@@ -1,5 +1,5 @@
 <template>
-  <b-form inline>
+  <b-form inline @submit.prevent>
     <b-container :fluid="isFluid">
       <b-alert variant="info" dismissible :show="showMessage">{{ message }}</b-alert>
       <b-alert variant="danger" dismissible :show="showError">{{ error }}</b-alert>
