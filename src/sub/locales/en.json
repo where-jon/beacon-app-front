@@ -73,7 +73,7 @@
     "showPositionShort": "Map",
     "telemetry": "EXB state",
     "gateway": "Gateway",
-    "position": "TX state",
+    "position": "Tx state",
     "monitor": "Monitor",
     "area": "Area",
     "exb": "EXBeacon",
@@ -81,7 +81,7 @@
     "locationSetting": "EXB placement",
     "develop": "Developer",
 
-    "exbId": "exb ID",
+    "exbId": "EXB ID",
     "exbName": "EXB name",
     "deviceId": "Device ID",
     "deviceIdX": "Device ID (Hex)",
@@ -96,7 +96,7 @@
     "power-poor": "Replace",
 
     "tx": "Tx",
-    "txId": "TXID",
+    "txId": "TxID",
     "txName": "Tx name",
     "btxId": "btxId",
     "major": "Major",
@@ -107,7 +107,7 @@
     "locationX": "X",
     "locationY": "Y",
     "locationZ": "Z",
-    "txViewType": "TX display format",
+    "txViewType": "Tx display format",
 
     "map": "Map",
     "areaId": "Area ID",
@@ -126,7 +126,7 @@
 
     "posId": "pos ID",
     "positionHistory": "Position history",
-    "positionHistoryId": "TX Position ID",
+    "positionHistoryId": "Tx Position ID",
 
     "exbeacon": "EXBeacon",
     "pir": "Human detection",
