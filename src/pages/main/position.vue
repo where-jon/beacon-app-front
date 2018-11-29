@@ -318,22 +318,22 @@ export default {
       // for debug
       let disabledExbs = _.filter(this.exbs, (exb) => !exb.enabled || !exb.location.x || exb.location.y <= 0)
       this.positions.forEach((pos) => {
-          let exb = disabledExbs.find((exb) => exb.posId == pos.pos_id)
-          if (exb) {
-              console.error("Found at disabled exb", pos, exb)
-          }
+        let exb = disabledExbs.find((exb) => exb.posId == pos.pos_id)
+        if (exb) {
+          console.error("Found at disabled exb", pos, exb)
+        }
       })
 
       let position = PositionHelper.adjustPosition(this.positions, this.mapImageScale, this.positionedExb)
       position.forEach((pos) => { // TODO: Txのチェックも追加
-          this.showTx(pos)
+        this.showTx(pos)
       })
 
       if (this.selectedTx.btxId) {
         const tx = this.selectedTx
         const selectedTxPosition = position.find((pos) => pos.btx_id == tx.btxId)
         if (selectedTxPosition) {
-            this.showDetail(tx.btxId, selectedTxPosition.x, selectedTxPosition.y)
+          this.showDetail(tx.btxId, selectedTxPosition.x, selectedTxPosition.y)
         }
       }
     },
@@ -379,6 +379,7 @@ export default {
         btnBg.alpha = 0.6
       }
       txBtn.addChild(btnBg)
+
       let label = new Text(pos.label)
       label.font = `${DISP.TX_R * this.ICON_FONTSIZE_RATIO}px Arial`
       label.color = '#' + color
