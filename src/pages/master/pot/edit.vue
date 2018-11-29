@@ -65,7 +65,7 @@
             </b-form-group>
             <b-form-group v-show="isShown('POT_WITH_TEL')">
               <label v-t="'label.tel'" />
-              <b-form-input type="tel" v-model="form.tel" :readonly="!isEditable" pattern="[-\d]*" />
+              <b-form-input type="tel" v-model="form.tel" maxlength="20" :readonly="!isEditable" pattern="[-\d]*" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.thumbnail'" />
@@ -75,7 +75,7 @@
             </b-form-group>
             <b-form-group>
               <label v-t="'label.description'" />
-              <b-form-textarea v-model="form.description" :rows="3" :max-rows="6" :readonly="!isEditable" ></b-form-textarea>
+              <b-form-textarea v-model="form.description" :rows="3" :max-rows="6" maxlength="1000" :readonly="!isEditable" ></b-form-textarea>
             </b-form-group>
 
             <b-button type="button" variant="outline-danger" @click="backToList" class="mr-2 my-1" v-t="'label.back'"/>
