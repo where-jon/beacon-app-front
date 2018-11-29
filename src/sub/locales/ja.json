@@ -442,6 +442,7 @@
     "loadingFile": "ファイルを読み込んでいます。({now} / {all} 件)",
     "networkError": "サーバに接続できません。",
     "noLedDevice": "操作できるLEDデバイスがありません。",
+    "totalRowsMessage": "{row}件(表示は最新{maxRows}件まで)",
 
     "dummy": "" 
   }
