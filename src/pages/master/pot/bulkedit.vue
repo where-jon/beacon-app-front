@@ -12,6 +12,7 @@ import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
 import * as StateHelper from '../../../sub/helper/StateHelper'
+import { APP } from '../../../sub/constant/config'
 
 export default {
   components: {
@@ -47,11 +48,14 @@ export default {
   },
   methods: {
     resetThumbnail(entity, dummyKey){
-        const updateData = this.potImages.find((val) => val.id == entity.potId)
-        if(updateData){
-          entity.thumbnail = updateData.thumbnail
-        }
-        return dummyKey
+      const updateData = this.potImages.find((val) => val.id == entity.potId)
+      if(updateData){
+        entity.thumbnail = updateData.thumbnail
+      }
+      if(!APP.POT_WITH_POTCD){
+        entity.potCd = entity.potName
+      }
+      return dummyKey
     },
     async save(bulkSaveFunc) {
       const MAIN_COL = "potId"

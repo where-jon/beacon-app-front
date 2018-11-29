@@ -125,6 +125,9 @@ export default {
         if (e.key) {
           this.message = this.$i18n.tnl('message.' + e.type, {key: this.$i18n.tnl('label.' + this.modifyColName(Util.snake2camel(e.key))), val: this.modifyVal(Util.snake2camel(e.key), e.val)})
         }
+        else if(e.col){
+          this.message = this.$i18n.tnl('message.' + e.type, {col: this.$i18n.tnl(`label.${e.col}`), value: e.val})
+        }
         else if (e.bulkError) {
           this.message = _.map(e.bulkError, (err) => {
             let col = this.modifyColName(err.col.trim())
