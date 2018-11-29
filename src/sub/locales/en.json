@@ -442,6 +442,7 @@
     "loadingFile": "Loading file. ({now} / {all})",
     "networkError": "Unable to connect to the server.",
     "noLedDevice": "There are no LED devices to operate",
+    "listEmpty": "There are no records matching your request",
 
     "dummy": "" 
   }

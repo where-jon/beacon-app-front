@@ -48,7 +48,7 @@
     
       <!-- table -->
       <b-table show-empty stacked="md" striped hover :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" outlined
-              :filter="filterGrid" @filtered="onFiltered" :bordered="params.bordered" :sort-by.sync="sortBy">
+              :filter="filterGrid" @filtered="onFiltered" :bordered="params.bordered" :sort-by.sync="sortBy" :empty-filtered-text="emptyMessage">
         <template slot="style" slot-scope="row">
           <div v-bind:style="style(row.item)">A</div>
         </template>
@@ -146,6 +146,7 @@ export default {
           detectState: '',
         },
       },
+      emptyMessage: this.$i18n.tnl('message.listEmpty'),
       modalInfo: { title: '', content: '', id:'' },
       totalRows: this.initTotalRows,
       file: null,
