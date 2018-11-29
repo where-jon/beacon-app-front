@@ -20,8 +20,10 @@
           <template v-if="params.extraFilter" >
             <b-form-row v-for="item of extraFilterSpec" v-bind:key="item.key" class="mr-4 mb-2">
               <label for="item.key" v-t="'label.' + item.key" class="mr-2"/>
-              <b-form-select :id="item.key" :options="item.options" v-model="filter.extra[item.key]"
-                  class="extra-filter"/>
+              <b-input-group>
+                <b-form-select :id="item.key" :options="item.options" v-model="filter.extra[item.key]"
+                    class="extra-filter"/>
+              </b-input-group>
             </b-form-row>
           </template>
           <div v-if="params.extraFilter" class="w-100 mb-2 " />
