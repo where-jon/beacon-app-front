@@ -36,7 +36,7 @@
             </b-form-group>
             <b-form-group v-show="isShown('EXB_WITH_POSID')">
               <label v-t="'label.posId'" />
-              <b-form-input type="number" v-model="form.posId" max="65535" required :readonly="!isEditable" />
+              <b-form-input type="number" v-model="form.posId" min="0" max="65535" required :readonly="!isEditable" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.locationX'" />
@@ -51,11 +51,15 @@
                 {{ $t('label.enabled') }}
               </b-form-checkbox>
             </b-form-group>
+            <!-- ver0.9 リリースのため、表示フラグ欄とTX表示形式欄を非表示とする -->
+            <!--
             <b-form-group>
               <b-form-checkbox v-model="form.visible" value="true" unchecked-value="false" :disabled="!isEditable" :readonly="!isEditable">
                 {{ $t('label.visible') }}
               </b-form-checkbox>
             </b-form-group>
+            -->
+            <!--
             <settingtxview
               :isEditable="isEditable"
               :dispFormat="form.txViewType ? form.txViewType.displayFormat : txIconsDispFormat"
@@ -63,6 +67,7 @@
               :vertical="form.txViewType ? form.txViewType.vertical : txIconsVertical"
               @change="onChangeTxSetting"
             />
+            -->
             <b-form-group>
               <label v-t="'label.type'" />
               <b-form-select v-model="form.sensorId" :options="sensorOptionsExb" class="mb-3 ml-3 col-4" :disabled="!isEditable" :readonly="!isEditable" />
@@ -133,7 +138,7 @@ export default {
           href: '/master/exb',
         },
         {
-          text: this.$i18n.tnl('label.exb') + this.$i18n.tnl('label.detail'),
+          text: this.$i18n.tnl('label.exb') + this.$i18n.tnl(Util.getDetailCaptionKey(this.$store.state.app_service.exb.exbId)),
           active: true
         }
       ],
@@ -148,7 +153,7 @@ export default {
       return Util.hasValue(this.form.exbId)
     },
     theme () {
-      const theme = getButtonTheme(this.$store.state.loginId)
+      const theme = getButtonTheme()
       return 'outline-' + theme
     },
     sensorOptionsExb() {

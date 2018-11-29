@@ -2,7 +2,7 @@
   <div>
     <breadcrumb :items="items" :extraNavSpec="extraNavSpec"
         :reload="reload" :shortName="shortName" />
-    <m-list :params="params" :list="positions" :isFluid="true" />
+    <m-list :params="params" :list="positions" />
   </div>
 </template>
 

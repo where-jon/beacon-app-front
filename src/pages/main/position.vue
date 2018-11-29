@@ -15,6 +15,10 @@
           <label class="ml-sm-4 ml-2 mr-1">{{ $t('label.category') }}</label>
           <b-form-select v-model="selectedCategory" :options="categoryOptionsForPot" class="ml-1 mr-2"></b-form-select>
         </b-form-row>
+        <b-form-row ref="detectedElement" class="my-1 ml-2 ml-sm-0" style="visibility: hidden;">
+          <span class="ml-sm-4 ml-2 mr-1">{{ $t('label.detectedCount') + ' : '  }}</span>
+          <span ref="detectedId" class="mr-1"></span>
+        </b-form-row>
       </b-form>
     </b-row>
     <b-row class="mt-3">
@@ -118,6 +122,10 @@ export default {
     positions() {
       let now = !DEV.USE_MOCK_EXC? new Date().getTime(): mock.positions_conf.start + this.count++ * mock.positions_conf.interval  // for mock
       let positions = PositionHelper.correctPosId(this.orgPositions, now)
+      if (APP.SHOW_DETECTED_COUNT) {
+          this.$refs.detectedElement.style.visibility = APP.SHOW_DETECTED_COUNT ? "visible" : "hidden";
+          this.$refs.detectedId.textContent = positions.length  // 検知数表示
+      }
       if (APP.USE_MEDITAG && this.meditagSensors) {
         positions = SensorHelper.setStress(positions, this.meditagSensors)
       }
@@ -307,16 +315,26 @@ export default {
       }
       this.txCont.removeAllChildren()
       this.stage.update()
-      PositionHelper.adjustPosition(this.positions, this.mapImageScale, this.positionedExb).forEach((pos) => { // TODO: Txのチェックも追加
-        this.showTx(pos)
+
+      // for debug
+      let disabledExbs = _.filter(this.exbs, (exb) => !exb.enabled || !exb.location.x || exb.location.y <= 0)
+      this.positions.forEach((pos) => {
+        let exb = disabledExbs.find((exb) => exb.posId == pos.pos_id)
+        if (exb) {
+          console.error("Found at disabled exb", pos, exb)
+        }
       })
 
+      let position = PositionHelper.adjustPosition(this.positions, this.mapImageScale, this.positionedExb)
+      position.forEach((pos) => { // TODO: Txのチェックも追加
+        this.showTx(pos)
+      })
+    
       if (this.selectedTx.btxId) {
         const tx = this.selectedTx
-        const position = PositionHelper.adjustPosition(this.positions, this.mapImageScale, this.positionedExb)
-            .filter((pos) => pos.btx_id == tx.btxId)
-        if (position.length == 1) {
-          this.showDetail(tx.btxId, position[0].x, position[0].y)
+        const selectedTxPosition = position.find((pos) => pos.btx_id == tx.btxId)
+        if (selectedTxPosition) {
+          this.showDetail(tx.btxId, selectedTxPosition.x, selectedTxPosition.y)
         }
       }
     },

@@ -31,7 +31,7 @@
         </b-form-group>
         <b-form-group>
           <label v-t="'label.description'" />
-          <b-form-textarea v-model="form.description" :rows="3" :max-rows="6" :readonly="!isEditable" ></b-form-textarea>
+          <b-form-textarea v-model="form.description" :rows="3" :max-rows="6" maxlength="1000" :readonly="!isEditable" ></b-form-textarea>
         </b-form-group>
         <b-form-group>
           <label v-t="'label.password'" />
@@ -91,7 +91,7 @@ export default {
           href: '/master/user',
         },
         {
-          text: this.$i18n.tnl('label.user') + this.$i18n.tnl('label.detail'),
+          text: this.$i18n.tnl('label.user') + this.$i18n.tnl(Util.getDetailCaptionKey(this.$store.state.app_service.user.userId)),
           active: true
         }
       ],
@@ -111,7 +111,7 @@ export default {
       return Util.hasValue(this.form.userId)
     },
     theme () {
-      const theme = getButtonTheme(this.$store.state.loginId)
+      const theme = getButtonTheme()
       return 'outline-' + theme
     },
     showEmail() {

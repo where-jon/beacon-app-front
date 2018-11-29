@@ -125,17 +125,9 @@ export default {
   },
   watch: {
     mapRatio: function(newVal, oldVal) {
+      console.log({newVal, oldVal})
     },
     selectedArea: function(newVal, oldVal) {
-    },
-    txDispFormat: function(newVal, oldVal) {
-      return newVal
-    },
-    txDispHorizon: function(newVal, oldVal) {
-      return newVal
-    },
-    txDispVertical: function(newVal, oldVal) {
-      return newVal
     },
   },
   computed: {
@@ -171,7 +163,8 @@ export default {
       this.selectedArea = this.pageSendParam.areaId
       this.changeArea()
       this.replaceAS({pageSendParam: null})
-    } else{
+    }
+    else{
       this.selectedArea = null
     }
   },
@@ -286,7 +279,6 @@ export default {
       s.graphics.lineTo(x - this.ICON_ARROW_WIDTH - this.ICON_ARROW_WIDTH, y)
       s.graphics.lineTo(fromX, y)
       s.graphics.lineTo(fromX, fromY)
-      s.name = exb.deviceId
       exbBtn.addChild(s)
       const label = new Text(this.getExbDisp(exb.deviceId))
       label.font = DISP.EXB_LOC_FONT
@@ -315,7 +307,6 @@ export default {
       let stage = this.stage
       const offsetY = (DISP.EXB_LOC_SIZE.h / 2) + this.ICON_ARROW_HEIGHT
       const exbBtn = this.createExbIcon(exb)
-
       exbBtn.on('pressmove', (evt) => {
         evt.currentTarget.set({
             x: evt.stageX,

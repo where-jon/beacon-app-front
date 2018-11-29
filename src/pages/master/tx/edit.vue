@@ -18,7 +18,7 @@
             </b-form-group>
             <b-form-group v-if="showMinorHead" v-show="showTx('minor')">
               <label v-t="'label.minor'" />
-              <b-form-input type="number" v-model="form.minor" :readonly="!isEditable" :required="showTx('minor')"/>
+              <b-form-input type="number" v-model="form.minor" min="0" max="65535" :readonly="!isEditable" :required="showTx('minor')"/>
             </b-form-group>
             <b-form-group>
               <label v-t="'label.type'" />
@@ -34,27 +34,27 @@
             </b-form-group>
             <b-form-group v-show="showTx('btxId')">
               <label v-t="'label.btxId'" />
-              <b-form-input type="number" v-model="form.btxId" max="65535" :required="showTx('btxId')" :readonly="!isEditable" />
+              <b-form-input type="number" v-model="form.btxId" min="0" max="65535" :required="showTx('btxId')" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group v-show="isShown('TX_WITH_MAJOR')">
               <label v-t="'label.major'" />
-              <b-form-input type="number" v-model="form.major" max="65535" :required="isMajorRequired" :readonly="!isEditable" />
+              <b-form-input type="number" v-model="form.major" min="0" max="65535" :required="isMajorRequired" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group v-if="showMinorMid" v-show="showTx('minor')">
               <label v-t="'label.minor'" />
-              <b-form-input type="number" v-model="form.minor" max="65535" :readonly="!isEditable" :required="showTx('minor')"/>
+              <b-form-input type="number" v-model="form.minor" min="0" max="65535" :readonly="!isEditable" :required="showTx('minor')"/>
             </b-form-group>
             <b-form-group>
               <label v-t="'label.txName'" />
               <b-form-input type="text" v-model="form.txName" maxlength="20" :readonly="!isEditable" />
             </b-form-group>
-            <b-form-group>
-              <label v-t="'label.displayName'" v-show="isShown('TX_WITH_DISPLAY_NAME')" />
+            <b-form-group v-show="isShown('TX_WITH_DISPLAY_NAME')">
+              <label v-t="'label.displayName'" />
               <b-form-input type="text" v-model="form.displayName" maxlength="3" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group v-show="isShown('TX_WITH_DESCRIPTION')">
               <label v-t="'label.description'" />
-              <b-form-textarea v-model="form.description" :rows="3" :max-rows="6" :readonly="!isEditable" ></b-form-textarea>
+              <b-form-textarea v-model="form.description" :rows="3" :max-rows="6" maxlength="1000" :readonly="!isEditable" ></b-form-textarea>
             </b-form-group>
             <b-button type="button" variant="outline-danger" @click="backToList" class="mr-2 my-1" v-t="'label.back'"/>
             <b-button v-if="isEditable" type="submit" :variant="theme" @click="register(false)" class="mr-2 my-1">{{ label }}</b-button>
@@ -109,7 +109,7 @@ export default {
           href: '/master/tx'
         },
         {
-          text: labelTx + this.$i18n.tnl('label.detail'),
+          text: labelTx + this.$i18n.tnl(Util.getDetailCaptionKey(this.$store.state.app_service.tx.txId)),
           active: true
         },
       ]
@@ -120,7 +120,7 @@ export default {
       return Util.hasValue(this.form.txId)
     },
     theme () {
-      const theme = getButtonTheme(this.$store.state.loginId)
+      const theme = getButtonTheme()
       return 'outline-' + theme
     },
     isMajorRequired() {

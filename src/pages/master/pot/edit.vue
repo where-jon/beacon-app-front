@@ -17,13 +17,21 @@
             </b-form-group>
             <b-form-group>
               <label v-t="'label.tx'" />
-              <b-form-select v-model="form.txId" :options="txOptions" class="mb-3 ml-3 col-4" :disabled="!isEditable" :readonly="!isEditable" />
+              <b-form-select v-model="form.txId" :options="txOptions" @change="changeTx" class="mb-3 ml-3 col-4" :disabled="!isEditable" :readonly="!isEditable" />
             </b-form-group>
-            <b-form-group>
+            <b-form-group v-show="isShown('TX_WITH_TXID')">
               <label v-t="'label.txId'" />
-              <b-form-input type="number" v-model="form.txId" max="65535" :readonly="!isEditable" />
+              <b-form-input type="number" v-model="txId" min="0" max="65535" :readonly="!isEditable" />
             </b-form-group>
-            <b-form-group>
+            <b-form-group v-show="!isShown('TX_WITH_TXID') && isShown('TX_BTX_MINOR') != 'minor'">
+              <label v-t="'label.btxId'" />
+              <b-form-input type="number" v-model="btxId" min="0" max="65535" :readonly="!isEditable" />
+            </b-form-group>
+            <b-form-group v-show="!isShown('TX_WITH_TXID') && isShown('TX_BTX_MINOR') == 'minor'">
+              <label v-t="'label.minor'" />
+              <b-form-input type="number" v-model="minor" min="0" max="65535" :readonly="!isEditable" />
+            </b-form-group>
+            <b-form-group v-show="category.length > 1">
               <label v-t="'label.categoryType'" />
               <b-form-radio-group v-model="form.potType" :options="category" :disabled="!isEditable" />
             </b-form-group>
@@ -57,7 +65,7 @@
             </b-form-group>
             <b-form-group v-show="isShown('POT_WITH_TEL')">
               <label v-t="'label.tel'" />
-              <b-form-input type="tel" v-model="form.tel" :readonly="!isEditable" pattern="[-\d]*" />
+              <b-form-input type="tel" v-model="form.tel" maxlength="20" :readonly="!isEditable" pattern="[-\d]*" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.thumbnail'" />
@@ -67,7 +75,7 @@
             </b-form-group>
             <b-form-group>
               <label v-t="'label.description'" />
-              <b-form-textarea v-model="form.description" :rows="3" :max-rows="6" :readonly="!isEditable" ></b-form-textarea>
+              <b-form-textarea v-model="form.description" :rows="3" :max-rows="6" maxlength="1000" :readonly="!isEditable" ></b-form-textarea>
             </b-form-group>
 
             <b-button type="button" variant="outline-danger" @click="backToList" class="mr-2 my-1" v-t="'label.back'"/>
@@ -87,10 +95,12 @@ import _ from 'lodash'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
+import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import { CATEGORY } from '../../../sub/constant/Constants'
+import { APP } from '../../../sub/constant/config.js'
 
 export default {
   components: {
@@ -103,12 +113,19 @@ export default {
       id: 'potId',
       backPath: '/master/pot',
       appServicePath: '/basic/pot',
-      category: _.slice(CATEGORY.getTypes(), 0, 2),
-      form: {personOrThing: CATEGORY.getTypes()[0].value,
+      category: _.slice(CATEGORY.getTypes(), 0, 2).filter((val) => APP.CATEGORY_TYPES.includes(val.value)),
+      txId: null,
+      btxId: null,
+      minor: null,
+      form: {
           ...ViewHelper.extract(this.$store.state.app_service.pot,
           ["potId", "potCd", "potName", "potType", "extValue.ruby",
           "displayName", "potGroupList.0.group.groupId", "potCategoryList.0.category.categoryId", "extValue.tel", "txId",
-          "extValue.post", "thumbnail", "description"])},
+          "extValue.post", "thumbnail", "description"])
+      },
+      defValue: {
+        "potType": APP.CATEGORY_TYPES[0] != 3? APP.CATEGORY_TYPES[0]: null,
+      },
       items: [
         {
           text: this.$i18n.tnl('label.master'),
@@ -119,7 +136,7 @@ export default {
           href: '/master/pot',
         },
         {
-          text: this.$i18n.tnl('label.pot') + this.$i18n.tnl('label.detail'),
+          text: this.$i18n.tnl('label.pot') + this.$i18n.tnl(Util.getDetailCaptionKey(this.$store.state.app_service.pot.potId)),
           active: true
         }
       ]
@@ -127,7 +144,7 @@ export default {
   },
   computed: {
     theme () {
-      const theme = getButtonTheme(this.$store.state.loginId)
+      const theme = getButtonTheme()
       return 'outline-' + theme
     },
     categoryOptions() {
@@ -160,7 +177,7 @@ export default {
       options = options.map((tx) => {
           return {
             value: tx.txId,
-            text: `${tx.txId}(${tx.txName? tx.txName: ""})`
+            text: StateHelper.getTxIdName(tx)
           }
         }
       )
@@ -175,12 +192,42 @@ export default {
       'txs',
     ]),
   },
-  mounted() {
+  async mounted() {
+    ViewHelper.applyDef(this.form, this.defValue)
     StateHelper.load('group')
     StateHelper.load('category')
-    StateHelper.load('tx')
+    await StateHelper.load('tx')
+    this.changeTx(this.form.txId)
+  },
+  watch: {
+    txId: function(newVal, oldVal) {
+      if(newVal == oldVal){
+        return
+      }
+      this.form.txId = newVal
+    },
+    btxId: function(newVal, oldVal) {
+      if(newVal == oldVal){
+        return
+      }
+      const tx = this.txs.find((tx) => this.btxId && this.btxId == tx.btxId)
+      this.form.txId = tx? tx.txId: null
+    },
+    minor: function(newVal, oldVal) {
+      if(newVal == oldVal){
+        return
+      }
+      const tx = this.txs.find((tx) => this.minor && this.minor == tx.minor)
+      this.form.txId = tx? tx.txId: null
+    },
   },
   methods: {
+    changeTx(newVal){
+      const tx = this.txs.find((tx) => newVal == tx.txId)
+      this.txId = tx? tx.txId: null
+      this.btxId = tx? tx.btxId: null
+      this.minor = tx? tx.minor: null
+    },
     beforeSubmit(again){
       if(!this.isShown('POT_WITH_POTCD')){
         this.form.potCd = this.form.potName

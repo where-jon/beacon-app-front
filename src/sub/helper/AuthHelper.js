@@ -68,12 +68,8 @@ export const authByAppService = async (loginId, password, success, err) => {
     // get region
     let currentRegion = await HttpHelper.getAppService('/core/region/current')
 
-    // get setting
-    let setting = await HttpHelper.getAppService('/meta/setting')
-    ConfigHelper.applyAppServiceSetting(setting)
-
     // Login process
-    await login({loginId, username:user.name, role:data.role, featureList, tenantFeatureList, menu, currentRegion, frontRev, serviceRev}, setting)
+    await login({loginId, username:user.name, role:data.role, featureList, tenantFeatureList, menu, currentRegion, frontRev, serviceRev})
     success()
   } catch (e) {
     console.error(e)
@@ -81,16 +77,14 @@ export const authByAppService = async (loginId, password, success, err) => {
   }
 }
 
-export const login = (login, setting) => {
+export const login = (login) => {
   console.log({login})
   store.commit('replace', login)
   window.localStorage.setItem('login', JSON.stringify({...login, dt: new Date().getTime()}))
-  window.localStorage.setItem('setting', JSON.stringify(setting))
 }
 
 export const logout = () => {
   window.localStorage.removeItem('login')
-  window.localStorage.removeItem('setting')
   store.commit('clearAll')
   store.commit('app_service/clearAll')
   store.commit('main/clearAll')

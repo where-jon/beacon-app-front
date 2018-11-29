@@ -51,7 +51,6 @@ export default {
   components: {
     breadcrumb,
   },
-  mixins: [editmixinVue],
   mixins: [editmixinVue, commonmixinVue ],
   data() {
     return {
@@ -71,7 +70,7 @@ export default {
           href: '/master/area',
         },
         {
-          text: this.$i18n.tnl('label.area') + this.$i18n.tnl('label.detail'),
+          text: this.$i18n.tnl('label.area') + this.$i18n.tnl(Util.getDetailCaptionKey(this.$store.state.app_service.area.areaId)),
           active: true
         }
       ]

@@ -29,7 +29,7 @@
         <color-picker :caption="'label.bgColor'" :name="'displayBgColor'"></color-picker>
         <b-form-group>
           <label v-t="'label.description'" />
-          <b-form-textarea v-model="form.description" :rows="3" :max-rows="6" :readonly="!isEditable" ></b-form-textarea>
+          <b-form-textarea v-model="form.description" :rows="3" :max-rows="6" maxlength="1000" :readonly="!isEditable" ></b-form-textarea>
         </b-form-group>
 
         <b-button type="button" variant="outline-danger" @click="backToList" class="mr-2 my-1" v-t="'label.back'"/>
@@ -51,6 +51,7 @@ import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import { CATEGORY, SHAPE } from '../../../sub/constant/Constants'
 import colorPicker from '../../../components/parts/colorpicker'
+import { APP } from '../../../sub/constant/config'
 
 export default {
   components: {
@@ -67,6 +68,9 @@ export default {
       defaultColor: "#000000",
       defaultBgColor: "#ffffff",
       form: ViewHelper.extract(this.$store.state.app_service.category, ["categoryId", "categoryName", "categoryType", "display", "description"]),
+      defValue: {
+        "categoryType": APP.CATEGORY_TYPES[0],
+      },
       items: [
         {
           text: this.$i18n.tnl('label.master'),
@@ -77,7 +81,7 @@ export default {
           href: '/master/category',
         },
         {
-          text: this.$i18n.tnl('label.category') + this.$i18n.tnl('label.detail'),
+          text: this.$i18n.tnl('label.category') + this.$i18n.tnl(Util.getDetailCaptionKey(this.$store.state.app_service.category.categoryId)),
           active: true
         }
       ]
@@ -86,19 +90,22 @@ export default {
   created() {
     this.beforeReload()
   },
+  async mounted() {
+    ViewHelper.applyDef(this.form, this.defValue)
+  },
   computed: {
     hasId(){
       return Util.hasValue(this.form.categoryId)
     },
-    theme () {
-      const theme = getButtonTheme(this.$store.state.loginId)
+    theme() {
+      const theme = getButtonTheme()
       return 'outline-' + theme
     },
     ...mapState('app_service', [
       'category',
     ]),
     categoryTypes(){
-      return CATEGORY.getTypes()
+      return CATEGORY.getTypes().filter((val) => APP.CATEGORY_TYPES.includes(val.value))
     },
     shapes(){
       return SHAPE.getShapes()

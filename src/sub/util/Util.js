@@ -20,6 +20,8 @@ export const str2boolean = (str) => hasValue(str) && str.toLowerCase() != "false
 
 export const isIos = () => /(iPhone|iPod|iPad)/.test(navigator.userAgent)
 
+export const formatDate = (timestamp, format = 'YYYY/MM/DD HH:mm:ss') => moment(timestamp).format(format)
+
 export const luminance = (hex) => {
   const num = parseInt(hex, 16)
   const r = num >> 16
@@ -282,4 +284,8 @@ export const getOptions = (key, list, valField, txtField) => {
   })
   options.unshift({value: null, text: ""})
   return options
+}
+
+export const getDetailCaptionKey = (id) => {
+  return `label.${hasValue(id)? 'update': 'addSetting'}`
 }

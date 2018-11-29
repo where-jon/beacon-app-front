@@ -48,7 +48,21 @@ export default {
   methods: {
     search(key) {
       const target = this.pots.find((val) => val.potId == key)
-      return target? {id: target.potId, name: target.potName, ...target}: null
+      return target? {
+        id: target.potId,
+        name: target.potName,
+        potId: target.potId,
+        potCd: target.potCd,
+        potName: target.potName,
+        potType: target.potType,
+        extValue: target.extValue,
+        displayName: target.displayName,
+        potGroupList: target.groupId? [{ potGroupPK: {groupId: target.groupId} }]: [],
+        potCategoryList: target.categoryId? [{ potCategoryPK: {categoryId: target.categoryId} }]: [],
+        txId: target.txId,
+        thumbnail: target.thumbnail,
+        description: target.description,
+      }: null
     },
     async save(thumbnails) {
       return await AppServiceHelper.bulkSave(this.appServicePath, thumbnails)

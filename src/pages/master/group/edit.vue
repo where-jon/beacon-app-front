@@ -29,7 +29,7 @@
         <color-picker :caption="'label.bgColor'" :name="'displayBgColor'"></color-picker>
         <b-form-group>
           <label v-t="'label.description'" />
-          <b-form-textarea v-model="form.description" :rows="3" :max-rows="6" :readonly="!isEditable" ></b-form-textarea>
+          <b-form-textarea v-model="form.description" :rows="3" :max-rows="6" maxlength="1000" :readonly="!isEditable" ></b-form-textarea>
         </b-form-group>
 
         <b-button type="button" variant="outline-danger" @click="backToList" class="mr-2 my-1" v-t="'label.back'"/>
@@ -77,7 +77,7 @@ export default {
           href: '/master/group',
         },
         {
-          text: this.$i18n.tnl('label.group') + this.$i18n.tnl('label.detail'),
+          text: this.$i18n.tnl('label.group') + this.$i18n.tnl(Util.getDetailCaptionKey(this.$store.state.app_service.group.groupId)),
           active: true
         }
       ]
@@ -91,7 +91,7 @@ export default {
       return Util.hasValue(this.form.groupId)
     },
     theme () {
-      const theme = getButtonTheme(this.$store.state.loginId)
+      const theme = getButtonTheme()
       return 'outline-' + theme
     },
     ...mapState('app_service', [

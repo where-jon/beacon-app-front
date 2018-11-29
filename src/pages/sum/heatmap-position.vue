@@ -78,6 +78,7 @@ export default {
   },
   methods: {
     async display(param) {
+      this.showAlert = false
       if(param.errorMessage){
         this.message = param.errorMessage
         this.showAlert = true
