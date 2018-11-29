@@ -235,10 +235,10 @@ export default {
     this.txIconsVertical = this.form.txViewType.vertical
   },
   methods: {
-    onChangeTxSetting(deviceId, dispFormat, horizon, vertical) {
-      this.txIconsDispFormat = dispFormat
-      this.txIconsHorizon = horizon
-      this.txIconsVertical = vertical
+    onChangeTxSetting(param) {
+      this.txIconsDispFormat = param.format
+      this.txIconsHorizon = param.horizon
+      this.txIconsVertical = param.vertical
     },
     async save() {
       let entity = {

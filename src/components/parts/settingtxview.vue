@@ -8,19 +8,25 @@
     <b-form-select v-model="layoutVertical" :options="getSelectElements('line')" class="mb-3 ml-3 col-2" :disabled="!isEditable" v-if="isIconsDispFormatTile" :readonly="!isEditable" @change="onChangeVertical" />
   </b-form-group>
   <div v-else>
+    <b-alert variant="danger" :show="isDelete"><i class="fas fa-exclamation-circle"></i>&nbsp;&nbsp;{{ $t('message.deleteConfirm',{target: deviceId}) }}</b-alert>
     <b-form>
       <b-form-group>
-        <label v-t="'label.txViewType'" />
-        <b-form-select v-model="txDispFormat " :options="txViewTypes" :disabled="!isEditable" :readonly="!isEditable" @change="onChangeDispFormat" />
+        <b-form-checkbox v-model="isDelete" @change="onCheckDelete">{{ $t('label.delete') }}</b-form-checkbox>
       </b-form-group>
-      <b-form-group v-if="isIconsDispFormatTile">
-        <label v-t="'label.txIconColumns'" :disabled="!isIconsDispFormatTile"/>
-        <b-form-select v-model="layoutHorizon " :options="getSelectElements('column')" :disabled="!isEditable" :readonly="!isEditable" @change="onChangeHorizon" />
-      </b-form-group>
-      <b-form-group v-if="isIconsDispFormatTile">
-        <label v-t="'label.txIconLines'" :disabled="!isIconsDispFormatTile"/>
-        <b-form-select v-model="layoutVertical " :options="getSelectElements('line')" :disabled="!isEditable" :readonly="!isEditable" @change="onChangeVertical" />
-      </b-form-group>
+      <div v-if="!isDelete">
+        <b-form-group>
+          <label v-t="'label.txViewType'" />
+          <b-form-select v-model="txDispFormat " :options="txViewTypes" :disabled="!isEditable" :readonly="!isEditable" @change="onChangeDispFormat" />
+        </b-form-group>
+        <b-form-group v-if="isIconsDispFormatTile">
+          <label v-t="'label.txIconColumns'" :disabled="!isIconsDispFormatTile"/>
+          <b-form-select v-model="layoutHorizon " :options="getSelectElements('column')" :disabled="!isEditable" :readonly="!isEditable" @change="onChangeHorizon" />
+        </b-form-group>
+        <b-form-group v-if="isIconsDispFormatTile">
+          <label v-t="'label.txIconLines'" :disabled="!isIconsDispFormatTile"/>
+          <b-form-select v-model="layoutVertical " :options="getSelectElements('line')" :disabled="!isEditable" :readonly="!isEditable" @change="onChangeVertical" />
+        </b-form-group>
+      </div>
     </b-form>
   </div>
 </template>
@@ -61,6 +67,7 @@ export default {
       txDispFormat: this.isModal ? null : this.dispFormat,
       layoutHorizon: this.isModal ? DISP.TX_HORIZON : this.horizon,
       layoutVertical: this.isModal ? DISP.TX_VERTICAL: this.vertical,
+      isDelete: false,
     }
   },
   created() {
@@ -68,6 +75,10 @@ export default {
       return
     }
     this.$root.$on('bv::show::modal', (target, param) => {
+      if (target !== 'modalSettingExb') {
+        return
+      }
+      this.isDelete = false
       this.deviceId = param.deviceId
       this.txDispFormat = param.format
       this.layoutHorizon = param.horizon
@@ -99,19 +110,52 @@ export default {
         this.layoutHorizon = DISP.TX_HORIZON
         this.layoutVertical = DISP.TX_VERTICAL
       }
-      this.$emit('change', this.deviceId, value, this.layoutHorizon, this.layoutVertical)
+      this.$emit('change', {
+        deviceId: this.deviceId,
+        format: value,
+        horizon: this.layoutHorizon,
+        vertical: this.layoutVertical,
+        isDelete: false,
+      })
     },
     onChangeHorizon(value) {
-      this.$emit('change', this.deviceId, this.TXICONS_DISPFORMAT_TILE, value, this.layoutVertical)
+      this.$emit('change', {
+        deviceId: this.deviceId,
+        format: this.TXICONS_DISPFORMAT_TILE,
+        horizon: value,
+        vertical: this.layoutVertical,
+        isDelete: false,
+      })
     },
     onChangeVertical(value) {
-      this.$emit('change', this.deviceId, this.TXICONS_DISPFORMAT_TILE, this.layoutHorizon, value)
+      this.$emit('change', {
+        deviceId: this.deviceId,
+        format: this.TXICONS_DISPFORMAT_TILE,
+        horizon: this.layoutHorizon,
+        vertical: value,
+        isDelete: false,
+      })
     },
+    onCheckDelete(value) {
+      if (!value) {
+        return
+      }
+      this.$emit('change', {
+        deviceId: this.deviceId,
+        format: this.txDispFormat,
+        horizon: this.layoutHorizon,
+        vertical: this.layoutVertical,
+        isDelete: true,
+      })
+    }
   },
 }
 </script>
 
 <style scoped lang="scss">
+div.confirm-delete {
+  margin-bottom: 17px;
+}
 label.txicons-num {
   margin-left: 20px;
 }

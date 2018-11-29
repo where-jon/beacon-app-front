@@ -60,7 +60,7 @@
     <b-modal id="modalDeleteConfirm" :title="$t('label.confirm')" @ok="deleteExbDone" >
       {{ $t('message.deleteConfirm', {target: deleteTarget? this.getExbDisp(deleteTarget.deviceId): null}) }}
     </b-modal>
-    <b-modal id="modalSettingExb" :title="$t('label.settingExbeacon')" @ok="settingExbDone" >
+    <b-modal id="modalSettingExb" :title="$t('label.settingExbeacon')" @ok="deleteExbDone">
       <settingtxview :isEditable="true" :isModal="true" @change="onChangeTxSetting" />
     </b-modal>
   </div>
@@ -302,14 +302,14 @@ export default {
       return exbBtn
     },
     setTxSelected(exbBtn) {
-        const deviceId = this.selectedDeviceId ? this.selectedDeviceId : ''
-        const previous = this.exbCon.getChildByName(this.selectedDeviceId)
-        if (previous) {
-          previous.changeColorCommand.style = DISP.EXB_LOC_BGCOLOR
-        }
-        exbBtn.changeColorCommand.style = "#ed55a2"
-        this.stage.update()
-        this.selectedDeviceId = exbBtn.name
+      const deviceId = this.selectedDeviceId ? this.selectedDeviceId : ''
+      const previous = this.exbCon.getChildByName(this.selectedDeviceId)
+      if (previous) {
+        previous.changeColorCommand.style = DISP.EXB_LOC_BGCOLOR
+      }
+      exbBtn.changeColorCommand.style = "#ed55a2"
+      this.stage.update()
+      this.selectedDeviceId = exbBtn.name
     },
     showExb(exb) {
       let stage = this.stage
@@ -333,7 +333,6 @@ export default {
       })
 
       exbBtn.on('dblclick', (evt) => {
-        // this.deleteTarget = exbBtn
         const txViewType = exb.location.txViewType
         this.$root.$emit('bv::show::modal', 'modalSettingExb',
           {
@@ -343,7 +342,6 @@ export default {
             vertical: txViewType ? txViewType.vertical : this.defaultVertical,
           }
         )
-        // this.setTxSelected(exbBtn)
       })
       this.exbCon.addChild(exbBtn)
     },
@@ -462,6 +460,9 @@ export default {
       })
     },
     deleteExbDone(evt) {
+      if (!this.deleteTarget) {
+        return
+      }
       let exb = this.positionedExb.find((exb) => exb.deviceId == this.deleteTarget.deviceId)
       if (exb && exb.location) {
         exb.location.x = exb.location.y = null
@@ -471,8 +472,6 @@ export default {
       this.exbOptions.push({label: "" + this.getExbDisp(this.deleteTarget.deviceId), value: this.deleteTarget.exbId})
       this.exbCon.removeChild(this.deleteTarget)
       this.stage.update()
-    },
-    settingExbDone(evt) {
     },
     async save() {
       this.replace({showProgress: true})
@@ -533,17 +532,22 @@ export default {
       }
       this.replace({showProgress: false})
     },
-    onChangeTxSetting(deviceId, dispFormat, horizon, vertical) {
-      const exb = this.positionedExb.find(e => e.deviceId === deviceId)
+    onChangeTxSetting(param) {
+      const exb = this.positionedExb.find(e => e.deviceId === param.deviceId)
       if (!exb) {
         return
       }
-      exb.location.txViewType = {
-        displayFormat: dispFormat,
-        horizon: horizon,
-        vertical: vertical,
+      if (param.isDelete) {
+        this.deleteTarget = this.exbCon.getChildByName(param.deviceId)
+        return
       }
-    }
+      this.deleteTarget = null
+      exb.location.txViewType = {
+        displayFormat: param.format,
+        horizon: param.horizon,
+        vertical: param.vertical,
+      }
+    },
   }
 }
 </script>
