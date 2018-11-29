@@ -24,7 +24,7 @@
         </div>
       </div>
 
-      <b-form @submit="onRegistSubmit" v-if="isSuperEditable">
+      <b-form @submit.prevent="onRegistSubmit" v-if="isSuperEditable">
         <div v-if="useRegistForm" class="card shadow-sm mt-5 mb-3">
           <label class="card-header" v-t="'label.addSetting'" />
           <div class="card-body">
@@ -52,7 +52,7 @@
         <b-button v-if="!useRegistForm" type="button" :variant="getButtonTheme()" @click="showForm(true)" v-t="'label.addForm'" class="float-right"/>
       </b-form>
 
-      <b-form @submit="onSubmit" v-if="show" :id="'updateForm'">
+      <b-form @submit.prevent="onSubmit" v-if="show" :id="'updateForm'">
         <b-button v-if="isEditable && !useRegistForm" type="submit" :variant="getButtonTheme()" @click="register(true)" class="ml-2" v-t="'label.update'" />
       </b-form>
     </div>

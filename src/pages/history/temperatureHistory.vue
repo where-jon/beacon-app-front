@@ -4,7 +4,7 @@
     <div class="container">
       <b-alert variant="info" dismissible :show="showInfo">{{ message }}</b-alert>
       <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">{{ message }}</b-alert>
-      <b-form>
+      <b-form @submit.prevent>
         <b-form-group>
           <b-form-row>
             <b-form-row class="mr-2">

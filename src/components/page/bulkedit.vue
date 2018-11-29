@@ -7,7 +7,7 @@
         <div v-html="message" />
       </b-alert>
 
-      <b-form @submit="onSubmit" v-if="show">
+      <b-form @submit.prevent="onSubmit" v-if="show">
         <b-form-group>
           <label v-t="'label.csvFile'" />
           <b-form-file :key="formKey" v-model="form.csvFile" accept=".csv" :placeholder="$t('message.selectFile') "></b-form-file>

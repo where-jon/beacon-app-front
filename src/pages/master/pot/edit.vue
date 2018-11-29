@@ -10,7 +10,7 @@
 
       <b-row>
         <b-col md="8" offset-md="2">
-          <b-form @submit="onSubmit" v-if="show">
+          <b-form @submit.prevent="onSubmit" v-if="show">
             <b-form-group v-if="form.potId">
               <label v-t="'label.potId'" />
               <b-form-input type="text" v-model="form.potId" readonly="readonly" />

@@ -11,7 +11,7 @@
 
       <b-row>
         <b-col md="8" offset-md="2">
-          <b-form @submit="onSubmit" v-if="show">
+          <b-form @submit.prevent="onSubmit" v-if="show">
             <b-form-group v-if="hasId" v-show="isShown('TX_WITH_TXID')">
               <label v-t="'label.txId'" />
               <b-form-input type="text" v-model="form.txId" readonly="readonly" />

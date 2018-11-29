@@ -1,7 +1,7 @@
 <template>
   <div class="mapContainer mb-5">
     <div class="container">
-      <b-form inline>
+      <b-form inline @submit.prevent>
         <b-form-group>
           <b-form-row>
             <b-form-row class="mb-3">
@@ -11,7 +11,7 @@
           </b-form-row>
         </b-form-group>          
       </b-form>
-      <b-form inline>
+      <b-form inline @submit.prevent>
         <b-form-group>
           <b-form-row>
             <b-form-row v-if="enableGroup" class="mb-3 mr-5">
@@ -25,7 +25,7 @@
           </b-form-row>
         </b-form-group>
       </b-form>
-      <b-form inline>
+      <b-form inline @submit.prevent>
         <b-form-group class="mr-5">
           <b-form-row>
             <b-form-row class="mb-3 mr-2">

@@ -2,7 +2,7 @@
   <div id="mapContainer" class="container-fluid">
     <breadcrumb :items="items" :reload="true" />
     <b-row class="mt-2">
-      <b-form inline class="mt-2">
+      <b-form inline @submit.prevent class="mt-2">
         <label class="ml-3 mr-2">{{ $t('label.area') }}</label>
         <b-form-select v-model="selectedArea" :options="areaOptions" @change="changeArea" required class="ml-2"></b-form-select>
       </b-form>

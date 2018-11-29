@@ -4,7 +4,7 @@
     <b-container>
       <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">{{ message }}</b-alert>
       <b-form-row>
-        <b-form @submit="onSubmit">
+        <b-form @submit.prevent="onSubmit">
           <b-form-group :label="$t('label.deviceId')">
             <b-form-select v-model="form.deviceId" :options="deviceIds" required :readonly="!isEditable" />
           </b-form-group>

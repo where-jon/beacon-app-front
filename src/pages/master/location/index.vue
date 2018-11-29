@@ -6,14 +6,14 @@
       <div v-html="message" />
     </b-alert>
 
-    <b-form inline class="mt-2">
+    <b-form inline @submit.prevent class="mt-2">
       <b-form-row class="ml-1">
         <label class="mr-2 mb-2">{{ $t('label.area') }}</label>
         <b-form-select v-model="selectedArea" :options="areaOptions" class="mr-2 mb-2 areaOptions" :disabled="settingStart"></b-form-select>
         <b-button size="sm" class="mb-2" :variant="getButtonTheme()" v-t="'label.load'" @click="changeArea" :disabled="settingStart"></b-button>
       </b-form-row>
     </b-form>
-    <b-form inline class="mt-2">
+    <b-form inline @submit.prevent class="mt-2">
       <b-form-row class="ml-1">
         <label class="mt-mobile mr-2 mb-2">{{ $t('label.exb') }}</label>
         <b-form-select v-model="exbDisp" :options="exbDispOptions" class="mr-2 mb-2" :disabled="settingStart" @change="changeExbDisp"></b-form-select>
@@ -25,7 +25,7 @@
         </b-form-row>
       </b-form-row>
     </b-form>
-    <b-form inline class="mt-2">
+    <b-form inline @submit.prevent class="mt-2">
       <b-form-row class="mr-3 mb-3 ml-1">
         <label class="mr-2">{{ $t('label.mapRatio') }}</label>
         <b-form-input size="sm" type="number" :value="mapRatio" :readonly="true" class="ratioInput"/>

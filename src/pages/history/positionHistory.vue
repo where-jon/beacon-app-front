@@ -7,7 +7,7 @@
         <div v-html="message" />
       </b-alert>
       <div class="mapContainer mb-5">
-        <b-form inline>
+        <b-form inline @submit.prevent>
           <b-form-group class="mr-5">
             <b-form-row>
               <b-form-row class="mb-3 mr-2">
@@ -17,7 +17,7 @@
             </b-form-row>
           </b-form-group>
         </b-form>
-        <b-form inline>
+        <b-form inline @submit.prevent>
           <b-form-group class="mr-5">
             <b-form-row>
               <b-form-row class="mb-3 mr-2">
