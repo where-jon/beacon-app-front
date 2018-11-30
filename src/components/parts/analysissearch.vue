@@ -44,7 +44,9 @@
           </b-form-row>
         </b-form-group>
       </b-form>
-      <canvas id="map" ref="map" v-if="!fromHeatmap"/>
+      <b-row>
+        <canvas id="map" ref="map" v-if="!fromHeatmap"/>
+      </b-row>
     </div>
     <div id="heatmap" ref="heatmap" v-if="fromHeatmap" />
   </div>
@@ -89,6 +91,7 @@ export default {
       interval: 24 * 60 * 60 * 1000,
       intervalHours: 24,
       container: null,
+      isShownFlowline: false,
     }
   },
   computed: {
@@ -166,8 +169,13 @@ export default {
     },
     async display() {
       this.container ? this.container.removeAllChildren() : null
-      await this.$parent.$options.methods.display.call(this.$parent, {view: this.container, form: this.form, errorMessage: this.validate(), mapScale: this.mapImageScale})
+      this.isShownFlowline = 
+          await this.$parent.$options.methods.display.call(this.$parent, {view: this.container, form: this.form, errorMessage: this.validate(), mapScale: this.mapImageScale})
       this.stage ? this.stage.update() : null
+    },
+    showMapImage() {
+      // 地図ダブルタップ時のみ利用
+      this.fetchData()
     },
     reset() {
       this.isShownMapImage = false
@@ -206,6 +214,9 @@ export default {
         this.stage.addChild(this.container)
         this.stage.update()
         this.forceUpdateRealWidth()
+        if (this.isShownFlowline) {
+          this.display()
+        }
       })
     },
     fetchDataHeatmap(){
