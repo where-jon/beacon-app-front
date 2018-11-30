@@ -34,21 +34,6 @@
         </div>
       </div>
     </txdetailmodal >
-    <!--
-    <b-modal size="md" :visible="true" ref="detailModal"  :style="{backgroundColor: '#0000ff'}" :modal-class="myclass" ok-only centered lazy hide-header v-else>
-      <b-container :style="{backgroundColor: '#0000ff'}">
-        <div class="clearfix">
-          <div class="thumbnail">
-            <img :src="selectedTx.thumbnail" width="auto" height="125" v-if="selectedTx.thumbnail.length > 0" />
-            <img src="/default.png" width="auto" height="116" v-else />
-          </div>
-          <div class="description">
-            <div v-for="(item, index) in getDispItems()" :key="index">{{ item }}</div>
-          </div>
-        </div>
-      </b-container>
-    </b-modal>
-    -->
   </div>
 </template>
 
@@ -80,12 +65,6 @@ export default {
       myclass: ['myclass'],
       bodyBgVariant: 'success'
     }
-  },
-  mounted() {
-    const modal = document.querySelector('div.modal-content')
-    console.log(modal)
-    modal.style.backgroundColor = '#0000ff !mportant'
-    console.log(modal.style)
   },
   methods: {
     getDispItems () {
