@@ -54,6 +54,7 @@ export default {
     if (this.$route.path.startsWith("/main")) {      
       let timer = 0
       let path = this.$route.path
+      let currentWidth = window.innerWidth
       let onResize = () => {
         if (path != this.$route.path) {
           window.removeEventListener('resize', onResize)
@@ -64,6 +65,13 @@ export default {
           clearTimeout(timer);
         } 
         timer = setTimeout(() => {
+          if (currentWidth === window.innerWidth && Util.isAndroidOrIOS()) {
+            // モバイル端末だと表示の直後にリサイズイベントが発生してしまうため、
+            // 画面横幅が変わっていなければ処理をキャンセル
+            return
+          } else {
+            currentWidth = window.innerWidth
+          }
           console.log(path + " : " + this.$route.path, this)
           this.reset()
           if (this.stage) {

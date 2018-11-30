@@ -33,7 +33,7 @@
           <b-form-group>
             <b-form-row class="mb-3 mr-2">
               <b-button :variant="theme" class="mx-1" @click="display" v-t="'label.display'" />
-              <b-button :variant='theme' class="mx-1" @click="exportCsv" v-t="'label.download'" />
+              <b-button :variant='theme' class="mx-1" v-if="!iosOrAndroid" @click="exportCsv" v-t="'label.download'" />
             </b-form-row>
           </b-form-group>
         </b-form>

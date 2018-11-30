@@ -140,6 +140,8 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   TX_FONT: "20px Arial", // Tx表示時のフォント
   TX_DIV_2: 1, // Txが重なった際に２つ上下左右に並べる場合にずらす倍率
   TX_DIV_3: 0.5, // Txが重なった際に３つ左右に並べる場合にずらす倍率
+  TX_HORIZON: 5, // TXアイコンタイル表示時の列数
+  TX_VERTICAL: 5, // TXアイコンタイル表示時の行数
 
   SHOW_NAV: true, // show nav  
   SHOW_SIDEBAR: true, // show sidebar  
