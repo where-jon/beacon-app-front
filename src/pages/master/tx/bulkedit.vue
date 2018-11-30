@@ -87,6 +87,7 @@ export default {
       const BOOL_TYPE_LIST = ["visible", "enabled"]
       await StateHelper.load('category')
       await StateHelper.load('group')
+      await StateHelper.load('pot')
 
       await bulkSaveFunc(MAIN_COL, NUMBER_TYPE_LIST, BOOL_TYPE_LIST, (entity, headerName, val, dummyKey) => {
         if (Util.equalsAny(headerName, POT)) {
