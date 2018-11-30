@@ -23,8 +23,20 @@
       </div>
       <sensor :sensors="selectedSensor" isPopup="true" />
     </div>
-    <b-modal size="md" :visible="true" id="detailModal" ok-only centered lazy hide-header v-else>
-      <b-container>
+    <txdetailmodal :bgColor="this.selectedTx.bgColor" :color="this.selectedTx.color" v-else>
+      <div class="clearfix" :style="{backgroundColor: this.selectedTx.bgColor}">
+        <div class="thumbnail">
+          <img :src="selectedTx.thumbnail" width="auto" height="125" v-if="selectedTx.thumbnail.length > 0" />
+          <img src="/default.png" width="auto" height="116" v-else />
+        </div>
+        <div class="description">
+          <div v-for="(item, index) in getDispItems()" :key="index">{{ item }}</div>
+        </div>
+      </div>
+    </txdetailmodal >
+    <!--
+    <b-modal size="md" :visible="true" ref="detailModal"  :style="{backgroundColor: '#0000ff'}" :modal-class="myclass" ok-only centered lazy hide-header v-else>
+      <b-container :style="{backgroundColor: '#0000ff'}">
         <div class="clearfix">
           <div class="thumbnail">
             <img :src="selectedTx.thumbnail" width="auto" height="125" v-if="selectedTx.thumbnail.length > 0" />
@@ -36,6 +48,7 @@
         </div>
       </b-container>
     </b-modal>
+    -->
   </div>
 </template>
 
@@ -43,6 +56,7 @@
 import { DISP } from '../../sub/constant/config'
 import { getTxDetailItems } from '../../sub/helper/PositionHelper'
 import sensor from './sensor.vue'
+import txdetailmodal from './txdetailmodal.vue'
 
 export default {
   props: {
@@ -59,10 +73,19 @@ export default {
   },
   components: {
     'sensor': sensor,
+    txdetailmodal,
   },
   data() {
     return {
+      myclass: ['myclass'],
+      bodyBgVariant: 'success'
     }
+  },
+  mounted() {
+    const modal = document.querySelector('div.modal-content')
+    console.log(modal)
+    modal.style.backgroundColor = '#0000ff !mportant'
+    console.log(modal.style)
   },
   methods: {
     getDispItems () {
@@ -79,7 +102,7 @@ export default {
 
 .balloon {
   position: absolute;
-  padding: 5px;
+  padding: 0px;
 }
 .balloon::before {
   content: '';
@@ -163,6 +186,4 @@ export default {
   float: left;
   vertical-align: middle;
 }
-
-
 </style>
