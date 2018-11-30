@@ -466,7 +466,7 @@ export default {
           await StateHelper.load('exb', true)
         }
 
-        if (this.mapRatioChanged) {
+        if (this.mapRatioChanged && this.mapRatio != null) {
           await AppServiceHelper.bulkSave('/core/area', [{areaId: this.selectedArea, mapRatio: this.mapRatio * this.mapImageScale}], UPDATE_ONLY_NN.EMPTY_ZERO)
           await StateHelper.load('area')
         }

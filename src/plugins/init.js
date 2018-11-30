@@ -5,17 +5,27 @@ import * as config from '../sub/constant/config'
 import _ from 'lodash'
 
 export default async (context, inject) => {
-    console.log("App Init") // If you need common initialize procedure, write here.
-    context.store.commit('app_service/replaceAS', {'defaultConfig': _.cloneDeep(config)})
-    MenuHelper.setStore(context.store)
-    await ConfigHelper.loadConfigJson()
-    try {
-      let setting = await HttpHelper.getAppServiceNoCrd('/meta/setting/byTenant/default')
-      ConfigHelper.applyAppServiceSetting(setting)  
+  console.log("App Init") // If you need common initialize procedure, write here.
+  context.store.commit('app_service/replaceAS', {'defaultConfig': _.cloneDeep(config)})
+  MenuHelper.setStore(context.store)
+  await ConfigHelper.loadConfigJson()
+  try {
+    let setting = await HttpHelper.getAppServiceNoCrd('/meta/setting/byTenant/default')
+    ConfigHelper.applyAppServiceSetting(setting)  
+  }
+  catch (e) {
+    console.error(e) // ignore
+  }
+
+  context.app.router.onError((error) => {
+    console.error('called onError', error)
+    const pattern = /Loading chunk (\d)+ failed/g
+    const isChunkLoadFailed = error.message.match(pattern)
+    const targetPath = router.history.pending.fullPath
+    if (isChunkLoadFailed) {
+      router.replace(targetPath)
     }
-    catch (e) {
-      console.error(e) // ignore
-    }
+  })
 }
   
 if (String.prototype.includes) {
