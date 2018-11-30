@@ -107,6 +107,8 @@ const appStateConf = {
         ...val,
         txIdName: getTxIdName(val.tx),
         txName: val.txId? Util.getValue(val, 'tx.txName', '') : null,
+        btxId: val.txId? Util.getValue(val, 'tx.btxId', '') : null,
+        minor: val.txId? Util.getValue(val, 'tx.minor', '') : null,
         groupName: Util.getValue(val, 'potGroupList.0.group.groupName', ''),
         groupId: Util.getValue(val, 'potGroupList.0.group.groupId', ''),
         categoryName: Util.getValue(val, 'potCategoryList.0.category.categoryName', ''),
