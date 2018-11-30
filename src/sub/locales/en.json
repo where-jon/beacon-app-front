@@ -35,6 +35,7 @@
 
     "---------------- App common ---------------":"",
     "login": "Login",
+    "logout": "Logout",
     "loginId": "Login ID",
     "user": "User",
     "userId": "User ID",
@@ -308,7 +309,6 @@
     "temperatureHistory": "Temp. & humidity",
     "historyDateFrom": "Period",
     "historyDateTo": "～",
-    "temperatureHistoryType": "",
     "temperatureHistoryType0": "All temp. & humidity",
     "temperatureHistoryType1": "Temp. & humidity by time",
 
@@ -407,9 +407,9 @@
     "selectFile": "Please select a file.",
     "required": "Please enter {target}.",
     "requiredMore": "Please enter one {target}.",
-    "invalid": "{target} is invalid",
-    "invalidLessHours": "Please enter {target} within {max} hours",
-    "notFoundData": "There is no data for {target}",
+    "invalid": "{target} is invalid.",
+    "invalidLessHours": "Please enter {target} within {max} hours.",
+    "notFoundData": "There is no data for {target}.",
     "notMatchCureentPassword": "The password is incorrect.",
     "invalidPassword": "Invalid password format.",
     "notMatchPassword": "The changed & confirmation password do not match.",
@@ -441,7 +441,9 @@
     "uploadWarnData": "{val} data does not exist, so it cannot be registered.",
     "loadingFile": "Loading file. ({now} / {all})",
     "networkError": "Unable to connect to the server.",
-    "noLedDevice": "There are no LED devices to operate",
+    "noLedDevice": "There are no LED devices to operate.",
+    "totalRowsMessage": "Total: {row} (Only latest {maxRows} are displayed)",
+    "listEmpty": "There are no records matching your request.",
 
     "dummy": "" 
   }

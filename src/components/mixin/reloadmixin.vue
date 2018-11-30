@@ -13,8 +13,8 @@ export default {
     })
   },
   computed: {
-    ios() {
-      return Util.isIos()
+    iosOrAndroid() {
+      return Util.isAndroidOrIOS()
     },
   }
 }

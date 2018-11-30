@@ -30,8 +30,8 @@
           <template slot="button-content">
             <i class="fa fa-user" aria-hidden="true"></i>&nbsp;<em>{{ loginId }}</em>
           </template>
-          <b-dropdown-item href="#" @click="move('/setting/personal')">Profile</b-dropdown-item>
-          <b-dropdown-item href="#" @click="logout"><i class="fas fa-sign-out-alt"></i>&nbsp;Logout</b-dropdown-item>
+          <b-dropdown-item href="#" @click="move('/setting/personal')" v-t="'label.personal'"></b-dropdown-item>
+          <b-dropdown-item href="#" @click="logout"><i class="fas fa-sign-out-alt"></i>&nbsp;<span v-t="'label.logout'"></span></b-dropdown-item>
           <b-dropdown-divider/>
           <b-dropdown-item @click="versionClick">{{ version }}</b-dropdown-item>
         </b-nav-item-dropdown>

@@ -4,7 +4,7 @@
     <div class="container">
       <b-alert variant="info" dismissible :show="showInfo">{{ message }}</b-alert>
       <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">{{ message }}</b-alert>
-      <b-form>
+      <b-form @submit.prevent>
         <b-form-group>
           <b-form-row>
             <b-form-row class="mr-2">
@@ -49,7 +49,7 @@
       <p></p>
       <b-row>
         <b-col md="10" offset-md="2">
-          <b-button v-if="!ios" :variant="getButtonTheme()" @click="download()" v-t="'label.download'" />
+          <b-button v-if="!iosOrAndroid" :variant="getButtonTheme()" @click="download()" v-t="'label.download'" />
         </b-col>
       </b-row>
     </div>

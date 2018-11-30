@@ -1,5 +1,5 @@
 <template>
-  <b-form inline>
+  <b-form inline @submit.prevent>
     <b-container :fluid="isFluid">
       <b-alert variant="info" dismissible :show="showMessage">{{ message }}</b-alert>
       <b-alert variant="danger" dismissible :show="showError">{{ error }}</b-alert>
@@ -33,9 +33,9 @@
           <b-col v-if="!params.disableTableButtons && isEditable" cols="auto" class="ml-auto">
             <b-button :variant='theme' class="mx-1" @click="edit()"
                 v-t="'label.createNew'" />
-            <b-button :variant='theme' class="mx-1" v-if="params.bulkEditPath && !ios" @click="bulkEdit()" 
+            <b-button :variant='theme' class="mx-1" v-if="params.bulkEditPath && !iosOrAndroid" @click="bulkEdit()" 
                 v-t="'label.bulkRegister'" />
-            <b-button :variant='theme' class="mx-1" v-if="params.csvOut && !ios" @click="exportCsv"
+            <b-button :variant='theme' class="mx-1" v-if="params.csvOut && !iosOrAndroid" @click="exportCsv"
                 v-t="'label.download'" />
           </b-col>
         </b-form-row>
@@ -47,8 +47,8 @@
       </b-row>
     
       <!-- table -->
-      <b-table show-empty stacked="md" striped hover :items="list" :fields="fields" :current-page="currentPage" :per-page="perPage" outlined
-              :filter="filterGrid" @filtered="onFiltered" :bordered="params.bordered" :sort-by.sync="sortBy">
+      <b-table show-empty stacked="md" striped hover :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" outlined
+              :filter="filterGrid" @filtered="onFiltered" :bordered="params.bordered" :sort-by.sync="sortBy" :empty-filtered-text="emptyMessage">
         <template slot="style" slot-scope="row">
           <div v-bind:style="style(row.item)">A</div>
         </template>
@@ -101,8 +101,8 @@
           <b-pagination :total-rows="totalRows" :per-page="perPage" v-model="currentPage" class="my-0" />
         </b-col>
         <!-- bulk upload button -->
-        <b-col v-if="isEditable" md="6" class="my-1">
-          <b-button v-if="params.bulkUploadPath && !ios" :variant='theme'
+        <b-col v-if="isEditable && params.bulkUploadPath && !iosOrAndroid" md="6" class="my-1">
+          <b-button :variant='theme'
             @click="bulkUpload()" v-t="'label.bulkUpload'"  class="float-right" />
         </b-col>
       </b-row>
@@ -146,6 +146,7 @@ export default {
           detectState: '',
         },
       },
+      emptyMessage: this.$i18n.tnl('message.listEmpty'),
       modalInfo: { title: '', content: '', id:'' },
       totalRows: this.initTotalRows,
       file: null,
@@ -157,14 +158,22 @@ export default {
     }
   },
   computed: {
+    items() {
+      return this.list.map((item) => {
+        return _.reduce(item, (result, val, key) => {
+          result[key] = Util.cutOnLong(val, 50)
+          return result
+        }, {})
+      })
+    },
     crud() {
       return !this.isEditable? 'refer':  'update'
     },
     isEditable() {
       return MenuHelper.isEditable(this.appServicePath)
     },
-    ios() {
-      return Util.isIos()
+    iosOrAndroid() {
+      return Util.isAndroidOrIOS()
     },
     extraFilterSpec() {
       if (!this.params.extraFilter) {
@@ -441,6 +450,15 @@ export default {
   
   select.extra-filter {
     max-width: 10em;
+  }
+
+  td {
+    word-break: break-all;
+  }
+  @media (min-width: 769px) {
+    td {
+      max-width: 200px;
+    }
   }
 
   div.empty-icon {

@@ -5,38 +5,38 @@
       <b-alert variant="info" dismissible :show="showInfo">{{ message }}</b-alert>
       <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">{{ message }}</b-alert>
       <b-row>
-        <b-form inline class="mb-2">
+        <b-form inline @submit.prevent class="mb-2">
           <label v-t="'label.sumYearMonth'" />
           <v-select v-model="vModelYearMonth" :options="yearMonthOptions" :on-change="yearMonthChange" class="vselectMonth">
             <div slot="no-options">{{$i18n.tnl('label.vSelectNoOptions')}}</div>
           </v-select>
         </b-form>
-        <b-form inline class="mb-2">
+        <b-form inline @submit.prevent class="mb-2">
           <label v-t="'label.sumDay'" />
           <v-select v-model="vModelDay" :options="dayOptions" :on-change="dayChange" class="vselectDay">
             <div slot="no-options">{{$i18n.tnl('label.vSelectNoOptions')}}</div>
           </v-select>
         </b-form>
-        <b-form inline class="mb-2">
+        <b-form inline @submit.prevent class="mb-2">
           <label v-t="'label.zoneCategoryName'" />
           <v-select v-model="vModelCategory" :options="categoryOptions" :on-change="categoryChange" class="vselectCategory">
             <div slot="no-options">{{$i18n.tnl('label.vSelectNoOptions')}}</div>
           </v-select>
         </b-form>
-        <b-form inline class="mb-2">
+        <b-form inline @submit.prevent class="mb-2">
           <label v-t="'label.zone'" />
           <v-select v-model="vModelZone" :options="zoneOptions" :on-change="zoneChange" class="vselectZone">
             <div slot="no-options">{{$i18n.tnl('label.vSelectNoOptions')}}</div>
           </v-select>
         </b-form>
-        <b-form inline class="mb-2">
+        <b-form inline @submit.prevent class="mb-2">
           <b-button size="sm" :variant="getButtonTheme()" v-t="'label.search'" @click="search()"></b-button> 
         </b-form>
       </b-row>
       <p></p>
       <b-row align-h="end">
         <b-col md="2" class="mb-2">
-          <b-button v-if="!ios" :variant="getButtonTheme()" @click="download()" v-t="'label.download'"/>
+          <b-button v-if="!iosOrAndroid" :variant="getButtonTheme()" @click="download()" v-t="'label.download'"/>
         </b-col>
       </b-row>
       <table class="table table-hover table-bordered">

@@ -8,7 +8,7 @@
         <div v-html="message" />
       </b-alert>
 
-      <b-form @submit="onSubmit" v-if="show">
+      <b-form @submit.prevent="onSubmit" v-if="show">
         <b-form-group>
           <label v-t="'label.featureName'" />
           <b-form-select v-model="featureId" :options="featureNames" class="mb-3 ml-3 col-3" required :disabled="systemReadOnly" />

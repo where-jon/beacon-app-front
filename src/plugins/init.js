@@ -9,8 +9,13 @@ export default async (context, inject) => {
     context.store.commit('app_service/replaceAS', {'defaultConfig': _.cloneDeep(config)})
     MenuHelper.setStore(context.store)
     await ConfigHelper.loadConfigJson()
-    let setting = await HttpHelper.getAppServiceNoCrd('/meta/setting/byTenant/default')
-    ConfigHelper.applyAppServiceSetting(setting)
+    try {
+      let setting = await HttpHelper.getAppServiceNoCrd('/meta/setting/byTenant/default')
+      ConfigHelper.applyAppServiceSetting(setting)  
+    }
+    catch (e) {
+      console.error(e) // ignore
+    }
 }
   
 if (String.prototype.includes) {

@@ -139,7 +139,13 @@ const handleError = (e, url) => {
           if(e.type == "duplicate"){
             convertDuplicateErrorInfo(e)
           }
-        }  
+        }
+        else if(message.match(/not found: Id=[0-9]+$/)){
+          const token = message.split("=")
+          e.type = "bulkExistFailed"
+          e.col = "id"
+          e.val = token[token.length - 1]
+        }
       }
       else if (e.response.data instanceof Array) { // bulk save failed
         e.bulkError = e.response.data

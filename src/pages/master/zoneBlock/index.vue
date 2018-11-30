@@ -17,7 +17,7 @@
         </b-form-row>
       </b-form-group>
 
-      <b-form inline v-if="show">
+      <b-form inline @submit.prevent v-if="show">
         <b-form-row>
           <b-form-row v-if="hasId" class="mr-4 mb-2">
             <label v-t="'label.zoneId'" class="control-label mr-2" />
@@ -35,7 +35,7 @@
         </b-form-row>
       </b-form>
 
-      <b-form @submit="onSubmit" v-if="show">
+      <b-form @submit.prevent="onSubmit" v-if="show">
         <b-form-group>
           <b-form-row>
             <b-form-row>

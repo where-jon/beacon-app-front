@@ -14,7 +14,7 @@
         <div v-html="message" />
       </b-alert>
 
-      <b-form @submit="onSubmit" v-if="show">
+      <b-form @submit.prevent="onSubmit" v-if="show">
         <b-form-group>
           <label v-t="'label.zipFile'" />
           <b-form-file :key="formKey" v-model="form.zipFile" @change="loadThumbnail" accept=".zip" :placeholder="$t('message.selectFile') " :disabled="loading" ></b-form-file>

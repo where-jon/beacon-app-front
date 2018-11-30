@@ -392,8 +392,8 @@ export const MENU = [
         key: 'positionHistory',
         path: 'positionHistory',
         feature: '/history/positionHistory',
-        icon: 'fas fa-thermometer'
-      }
+        icon: 'fas fa-cube'
+      },
     ]
   },
   {

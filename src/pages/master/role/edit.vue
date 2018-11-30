@@ -8,7 +8,7 @@
         <div v-html="message" />
       </b-alert>
 
-      <b-form @submit="onSubmit" v-if="show">
+      <b-form @submit.prevent="onSubmit" v-if="show">
         <b-form-group v-if="hasId">
           <label v-t="'label.roleId'" />
           <b-form-input type="text" v-model="form.roleId" readonly="readonly" />

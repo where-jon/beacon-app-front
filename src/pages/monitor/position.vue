@@ -5,7 +5,7 @@
       <b-row align-h="end">
         <all-count :count="allCount" />
         <b-col md="2" class="mb-3 mr-3">
-          <b-button v-if="!ios" :variant='getButtonTheme()' @click="download()" v-t="'label.download'" />
+          <b-button v-if="!iosOrAndroid" :variant='getButtonTheme()' @click="download()" v-t="'label.download'" />
         </b-col>
       </b-row>
       <div class="table-area">
@@ -90,6 +90,7 @@ export default {
         }
       ],
       isLoad: false,
+      label_major: this.$i18n.tnl('label.major'),
       label_minor: this.$i18n.tnl('label.minor'),
       label_powerLevel: this.$i18n.tnl('label.power-level'),
       label_name: this.$i18n.tnl('label.name'),
@@ -109,6 +110,7 @@ export default {
       locationMap: {},
       badgeClassPrefix: 'badge badge-pill badge-',
       csvHeaders: {
+        ['major']: 'major',
         ['minor']: 'minor',
         [this.$i18n.tnl('label.name')]: 'name',
         [this.$i18n.tnl('label.final-receive-timestamp')]: 'timestamp',
@@ -129,7 +131,7 @@ export default {
       'positions',
     ]),
     ...mapState('app_service', [
-      'pots', 'exbs'
+      'txs', 'exbs'
     ]),
     allCount() {
       return this.positions.length
@@ -175,19 +177,13 @@ export default {
       if (this.isDev) {
         return positions
       }
-      await StateHelper.load('pot')
-      const map = {}
-      this.pots.forEach((e) => {
-        if (e.tx) {
-          map[e.tx.btxId] = e.tx.txName
-        }
-      })
-
+      await StateHelper.load('tx')
       return positions.map((e) => {
-        const name = map[e.btx_id]
+        const tx = this.txs.find((tx) => tx.btxId == e.btx_id)
         const record = {
+          [this.label_major]: e.major,
           [this.label_minor]: e.minor,
-          [this.label_name]: name != null ? name : '—',
+          [this.label_name]: tx != null ? tx.txName : '—',
           [this.label_receivePlace]: e.device_id ? this.locationMap[e.device_id] : '',
           [this.label_powerLevel]: e.power_level,
           [this.label_timestamp]: this.getTimestamp(e.updatetime),

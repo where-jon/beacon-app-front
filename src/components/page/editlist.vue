@@ -11,7 +11,7 @@
         <label class="card-header" v-t="getName(categoryId)" />
         <div class="card-body">
           <div v-for="row in multiList[categoryId]" :key="row.id">
-            <b-form-group :label="getName(row.key)" :description="getName(row.description)">
+            <b-form-group :label="getName(row.key, showKeyName)" :description="getName(row.description)">
               <span v-for="field in fields" :key="field.key">
                 <b-form-select v-if="useInputPullDown(row[field.type])" v-model="row[field.key]" :options="getBooleanOptions()" form="updateForm"/>
                 <b-form-input v-else-if="useInputNumberType(row[field.type])" v-model="row[field.key]" type="text" class="form-control-sm" :formatter="numberFormat" maxlength="1000" required/>
@@ -24,7 +24,7 @@
         </div>
       </div>
 
-      <b-form @submit="onRegistSubmit" v-if="isSuperEditable">
+      <b-form @submit.prevent="onRegistSubmit" v-if="isSuperEditable">
         <div v-if="useRegistForm" class="card shadow-sm mt-5 mb-3">
           <label class="card-header" v-t="'label.addSetting'" />
           <div class="card-body">
@@ -52,7 +52,7 @@
         <b-button v-if="!useRegistForm" type="button" :variant="getButtonTheme()" @click="showForm(true)" v-t="'label.addForm'" class="float-right"/>
       </b-form>
 
-      <b-form @submit="onSubmit" v-if="show" :id="'updateForm'">
+      <b-form @submit.prevent="onSubmit" v-if="show" :id="'updateForm'">
         <b-button v-if="isEditable && !useRegistForm" type="submit" :variant="getButtonTheme()" @click="register(true)" class="ml-2" v-t="'label.update'" />
       </b-form>
     </div>
@@ -76,7 +76,7 @@ import * as Util from '../../sub/util/Util'
 
 export default {
   mixins: [ editmixinVue, commonmixinVue ],
-  props: ['params', 'multiList', 'newForm'],
+  props: ['params', 'multiList', 'newForm', 'showKeyName'],
   data() {
     return {
       ...this.params,
@@ -96,13 +96,16 @@ export default {
     this.$parent.$options.methods.fetchData.apply(this.$parent)
   },
   methods: {
-    getName(id) {
+    getName(id, showKeyName = false) {
       if (!Util.hasValue(id)) {
         return null
       }
       let name = this.$i18n.tnl(`label["${id}"]`)
       if (name.startsWith("label[")) {
         return id
+      }
+      if(showKeyName){
+        return `${id}(${name})`
       }
       return name
     },

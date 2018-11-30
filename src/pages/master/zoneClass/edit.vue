@@ -8,7 +8,7 @@
         <div v-html="message" />
       </b-alert>
 
-      <b-form @submit="onSubmit" v-if="show">
+      <b-form @submit.prevent="onSubmit" v-if="show">
         <b-form-group>
           <b-form-row v-if="hasId">
             <label v-t="'label.zoneId'" class="control-label" />

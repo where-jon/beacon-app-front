@@ -35,6 +35,7 @@
 
     "---------------- App common ---------------":"",
     "login": "ログイン",
+    "logout": "ログアウト",
     "loginId": "ログインID",
     "user": "ユーザ",
     "userId": "ユーザID",
@@ -308,7 +309,6 @@
     "temperatureHistory": "温湿度履歴",
     "historyDateFrom": "期間",
     "historyDateTo": "～",
-    "temperatureHistoryType": "",
     "temperatureHistoryType0": "すべての温湿度",
     "temperatureHistoryType1": "時間毎の温湿度",
 
@@ -442,6 +442,8 @@
     "loadingFile": "ファイルを読み込んでいます。({now} / {all} 件)",
     "networkError": "サーバに接続できません。",
     "noLedDevice": "操作できるLEDデバイスがありません。",
+    "totalRowsMessage": "{row}件(表示は最新{maxRows}件まで)",
+    "listEmpty": "データが存在しません。",
 
     "dummy": "" 
   }

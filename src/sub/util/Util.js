@@ -20,7 +20,22 @@ export const str2boolean = (str) => hasValue(str) && str.toLowerCase() != "false
 
 export const isIos = () => /(iPhone|iPod|iPad)/.test(navigator.userAgent)
 
+export const isAndroid = () => /(Android)/.test(navigator.userAgent)
+
+export const isAndroidOrIOS = () => isIos() || isAndroid()
+
 export const formatDate = (timestamp, format = 'YYYY/MM/DD HH:mm:ss') => moment(timestamp).format(format)
+
+export const cutOnLong = (val, max) => {
+  if (!val || !max) {
+    return val
+  }
+
+  if (typeof val == 'string' && val.length > max) {
+    return val.substr(0, max) + "..."
+  }
+  return val
+}
 
 export const luminance = (hex) => {
   const num = parseInt(hex, 16)

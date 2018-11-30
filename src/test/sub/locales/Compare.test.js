@@ -8,8 +8,9 @@ const compare = (targetJson) => {
   let categories = ['label','message']
   categories.forEach((cat) => {
     for (let key in ja[cat]) {
-      if (!targetJson[cat][key]) {
-        result.push('"' + key + '": "' + ja[cat][key] + '",')
+      // if (!targetJson[cat][key]) {
+      if (targetJson[cat][key] === undefined) {
+          result.push('"' + key + '": "' + ja[cat][key] + '",')
       }
     }
   })
