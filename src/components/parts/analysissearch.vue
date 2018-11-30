@@ -44,7 +44,9 @@
           </b-form-row>
         </b-form-group>
       </b-form>
-      <canvas id="map" ref="map" v-if="!fromHeatmap"/>
+      <b-row>
+        <canvas id="map" ref="map" v-if="!fromHeatmap"/>
+      </b-row>
     </div>
     <div id="heatmap" ref="heatmap" v-if="fromHeatmap" />
   </div>
