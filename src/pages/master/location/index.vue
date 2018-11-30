@@ -6,14 +6,14 @@
       <div v-html="message" />
     </b-alert>
 
-    <b-form inline @submit.prevent class="mt-2">
+    <b-form inline class="mt-2">
       <b-form-row class="ml-1">
         <label class="mr-2 mb-2">{{ $t('label.area') }}</label>
         <b-form-select v-model="selectedArea" :options="areaOptions" class="mr-2 mb-2 areaOptions" :disabled="settingStart"></b-form-select>
         <b-button size="sm" class="mb-2" :variant="getButtonTheme()" v-t="'label.load'" @click="changeArea" :disabled="settingStart"></b-button>
       </b-form-row>
     </b-form>
-    <b-form inline @submit.prevent class="mt-2">
+    <b-form inline class="mt-2">
       <b-form-row class="ml-1">
         <label class="mt-mobile mr-2 mb-2">{{ $t('label.exb') }}</label>
         <b-form-select v-model="exbDisp" :options="exbDispOptions" class="mr-2 mb-2" :disabled="settingStart" @change="changeExbDisp"></b-form-select>
@@ -25,7 +25,7 @@
         </b-form-row>
       </b-form-row>
     </b-form>
-    <b-form inline @submit.prevent class="mt-2">
+    <b-form inline class="mt-2">
       <b-form-row class="mr-3 mb-3 ml-1">
         <label class="mr-2">{{ $t('label.mapRatio') }}</label>
         <b-form-input size="sm" type="number" :value="mapRatio" :readonly="true" class="ratioInput"/>
@@ -60,9 +60,6 @@
     <b-modal id="modalDeleteConfirm" :title="$t('label.confirm')" @ok="deleteExbDone" >
       {{ $t('message.deleteConfirm', {target: deleteTarget? this.getExbDisp(deleteTarget.deviceId): null}) }}
     </b-modal>
-    <b-modal id="modalSettingExb" :title="$t('label.settingExbeacon')" @ok="deleteExbDone">
-      <settingtxview :isEditable="true" :isModal="true" @change="onChangeTxSetting" />
-    </b-modal>
   </div>
 </template>
 
@@ -78,13 +75,11 @@ import { Tween, Ticker } from '@createjs/tweenjs/dist/tweenjs.module'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import commonmixinVue from '../../../components/mixin/commonmixin.vue'
 import showmapmixin from '../../../components/mixin/showmapmixin.vue'
-import settingtxview from '../../../components/parts/settingtxview.vue'
 
 export default {
   mixins: [showmapmixin, commonmixinVue ],
   components: {
     breadcrumb,
-    settingtxview,
   },
   data() {
      return {
@@ -116,11 +111,7 @@ export default {
           text: this.$i18n.tnl('label.locationSetting'),
           active: true
         }
-      ],
-      selectedDeviceId: null,
-      defaultDispFormat: 1,
-      defaultHorizon: 5,
-      defaultVertical: 5,
+      ]
     }
   },
   watch: {
@@ -128,7 +119,8 @@ export default {
       console.log({newVal, oldVal})
     },
     selectedArea: function(newVal, oldVal) {
-    },
+      console.log({newVal, oldVal})
+    }
   },
   computed: {
     ...mapState('app_service', [
@@ -269,8 +261,7 @@ export default {
       const y = h + fromY
       const exbBtn = new Container()
       const s = new Shape()
-      exbBtn.changeColorCommand =
-      s.graphics.beginFill(DISP.EXB_LOC_BGCOLOR).command
+      s.graphics.beginFill(DISP.EXB_LOC_BGCOLOR)
       s.graphics.moveTo(fromX, fromY)
       s.graphics.lineTo(x, fromY)
       s.graphics.lineTo(x, y)
@@ -290,18 +281,7 @@ export default {
       exbBtn.exbId = exb.exbId
       exbBtn.x = exb.x
       exbBtn.y = exb.y - (h / 2 + this.ICON_ARROW_HEIGHT)
-      exbBtn.name = exb.deviceId
       return exbBtn
-    },
-    setTxSelected(exbBtn) {
-      const deviceId = this.selectedDeviceId ? this.selectedDeviceId : ''
-      const previous = this.exbCon.getChildByName(this.selectedDeviceId)
-      if (previous) {
-        previous.changeColorCommand.style = DISP.EXB_LOC_BGCOLOR
-      }
-      exbBtn.changeColorCommand.style = "#ed55a2"
-      this.stage.update()
-      this.selectedDeviceId = exbBtn.name
     },
     showExb(exb) {
       let stage = this.stage
@@ -320,19 +300,11 @@ export default {
         exb.y = evt.stageY + offsetY
         this.isChanged = true
         exb.isChanged = true
-        this.setTxSelected(exbBtn)
       })
 
       exbBtn.on('dblclick', (evt) => {
-        const txViewType = exb.location.txViewType
-        this.$root.$emit('bv::show::modal', 'modalSettingExb',
-          {
-            deviceId: exb.deviceId,
-            format: txViewType ? txViewType.displayFormat : this.defaultDispFormat,
-            horizon: txViewType ? txViewType.horizon : this.defaultHorizon,
-            vertical: txViewType ? txViewType.vertical : this.defaultVertical,
-          }
-        )
+        this.deleteTarget = exbBtn
+        this.$root.$emit('bv::show::modal', 'modalDeleteConfirm')
       })
       this.exbCon.addChild(exbBtn)
     },
@@ -439,7 +411,7 @@ export default {
     },
     bulkAdd() {
       let counter = 0
-      let y = 40
+      let y = 20
       this.exbOptions.forEach((val) => {
         let x = 30 + counter++ * 60
         if (x > this.mapWidth) {
@@ -451,9 +423,6 @@ export default {
       })
     },
     deleteExbDone(evt) {
-      if (!this.deleteTarget) {
-        return
-      }
       let exb = this.positionedExb.find((exb) => exb.deviceId == this.deleteTarget.deviceId)
       if (exb && exb.location) {
         exb.location.x = exb.location.y = null
@@ -474,13 +443,7 @@ export default {
 
         this.positionedExb.forEach((exb) => {
           if (exb.isChanged) {
-            exb.location = {
-              locationId: exb.location.locationId,
-              areaId: this.selectedArea,
-              x: Math.round(exb.x / this.mapImageScale),
-              y: Math.round(exb.y / this.mapImageScale),
-              txViewType: exb.location.txViewType,
-            }
+            exb.location = {locationId: exb.location.locationId, areaId: this.selectedArea, x: Math.round(exb.x / this.mapImageScale), y: Math.round(exb.y / this.mapImageScale)}
             param.push(exb.location)
             exb.isChanged = false
           }
@@ -512,6 +475,7 @@ export default {
         this.isChanged = false
         this.exbs = this.positionedExb
       } catch (e) {
+        console.log(e)
         if (e.key) {
           this.message = this.$i18n.tnl('message.' + e.type, {key: this.$i18n.tnl('label.' + Util.snake2camel(e.key)), val: e.val})
         }
@@ -523,22 +487,6 @@ export default {
       }
       this.replace({showProgress: false})
     },
-    onChangeTxSetting(param) {
-      const exb = this.positionedExb.find(e => e.deviceId === param.deviceId)
-      if (!exb) {
-        return
-      }
-      if (param.isDelete) {
-        this.deleteTarget = this.exbCon.getChildByName(param.deviceId)
-        return
-      }
-      this.deleteTarget = null
-      exb.location.txViewType = {
-        displayFormat: param.format,
-        horizon: param.horizon,
-        vertical: param.vertical,
-      }
-    },
   }
 }
 </script>
@@ -546,14 +494,9 @@ export default {
 <style scoped lang="scss">
 @import "../../../sub/constant/config.scss";
 
-.modal-dialog {
-  width: 700px;
-}
-
 ::-webkit-scrollbar { 
   display: none; 
 }
-
 
 @media screen and (max-width: 1050px) {
   .w-le-sm-100 {
@@ -573,7 +516,6 @@ export default {
 .vdr.active:before {
   content: none;
 }
-
 
 @media screen and (max-width: 575px) {
   .mt-mobile {margin-top:5px;}
@@ -596,5 +538,4 @@ export default {
   from { background-color: white; }
   to { background-color: #ffc107; }
 }
-
 </style>
