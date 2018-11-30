@@ -174,7 +174,16 @@ export default {
           if (imgWidthName) this.form[imgWidthName] = width
           if (imgHeightName) this.form[imgHeightName] = height
           if (thumbnailName) this.form[thumbnailName] = thumbnail
-      }, resize)
+      }, resize, (size) => {
+        this.message = this.$i18n.tnl("message.uploadMax", {target: Math.floor(APP.MAX_IMAGE_SIZE/1024/1024)})
+        this.showAlert = true
+        if (this.clearImage) {
+          this.clearImage()
+        }
+        setTimeout(()=> {
+          window.scrollTo(0, 0)
+        }, 0)
+      })
     },
     formatErrorLine(lines){
       let errorMessage = this.$i18n.tnl("message.csvLineStart")
