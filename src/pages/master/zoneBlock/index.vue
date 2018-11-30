@@ -25,7 +25,7 @@
           </b-form-row>
           <b-form-row class="mr-4 mb-2">
             <label v-t="'label.zoneName'" class="control-label mr-2" />
-            <b-form-input type="text" v-model="zoneName" maxlength="20" required :readonly="!isEditable" :disabled="!isEnableNameText" />
+            <input type="text" v-model="zoneName" maxlength="20" class="form-control" required :readonly="!isEditable" :disabled="!isEnableNameText" />
           </b-form-row>
           <b-form-row class="mr-4 mb-2">
             <label v-t="'label.categoryName'" class="control-label mr-2 mb-2" />

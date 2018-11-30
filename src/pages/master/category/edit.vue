@@ -11,11 +11,11 @@
       <b-form @submit.prevent="onSubmit" v-if="show">
         <b-form-group v-if="hasId">
           <label v-t="'label.categoryId'" />
-          <b-form-input type="text" v-model="form.categoryId" readonly="readonly" />
+          <b-form-input type="text" v-model="form.categoryId" class="form-control" readonly="readonly" />
         </b-form-group>
         <b-form-group>
           <label v-t="'label.categoryName'" />
-          <b-form-input type="text" v-model="form.categoryName" maxlength="20" required :readonly="!isEditable" />
+          <input type="text" v-model="form.categoryName" maxlength="20" class="form-control" required :readonly="!isEditable" />
         </b-form-group>
         <b-form-group>
           <label v-t="'label.categoryType'" />

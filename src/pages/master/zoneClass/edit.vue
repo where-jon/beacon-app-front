@@ -23,7 +23,7 @@
           </b-form-row>
           <b-form-row>
             <b-col sm="5">
-              <b-form-input type="text" v-model="form.zoneName" maxlength="20" required :readonly="!isEditable" :disabled="!isEnableNameText" />
+              <input type="text" v-model="form.zoneName" maxlength="20" class="form-control" required :readonly="!isEditable" :disabled="!isEnableNameText" />
             </b-col>
           </b-form-row>
         </b-form-group>
