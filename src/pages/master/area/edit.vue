@@ -12,11 +12,11 @@
           <b-form @submit.prevent="onSubmit" v-if="show">
             <b-form-group v-if="hasId">
               <label v-t="'label.areaId'" />
-              <b-form-input type="text" v-model="form.areaId" readonly="readonly" />
+              <input type="text" v-model="form.areaId" class="form-control" readonly="readonly" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.areaName'" />
-              <b-form-input type="text" v-model="form.areaName" maxlength="20" required :readonly="!isEditable" />
+              <input type="text" v-model="form.areaName" maxlength="20" class="form-control" required :readonly="!isEditable" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.map'" />

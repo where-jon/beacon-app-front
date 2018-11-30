@@ -15,11 +15,11 @@
         </b-form-group>
         <b-form-group v-show="showName">
           <label v-t="'label.name'" />
-          <b-form-input type="text" v-model="form.name" maxlength="20" :readonly="!isEditable" />
+          <input type="text" v-model="form.name" maxlength="20" class="form-control" :readonly="!isEditable" />
         </b-form-group>
         <b-form-group>
           <label v-t="'label.loginId'" />
-          <b-form-input type="text" v-model="form.loginId" maxlength="16" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" required :readonly="!isEditable" />
+          <input type="text" v-model="form.loginId" maxlength="16" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" class="form-control" required :readonly="!isEditable" />
         </b-form-group>
         <b-form-group v-show="showEmail">
           <label v-t="'label.email'" />
