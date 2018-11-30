@@ -66,6 +66,8 @@
     "charSet": "CSV文字コード",
     "null": "未指定",
     "undefined": "未定義",
+    "column": "{column}列",
+    "line": "{line}行",
 
     "---------------- App exbeacon ---------------":"",
 
@@ -111,8 +113,6 @@
     "txViewType": "Tx表示形式",
     "txIconColumns": "横",
     "txIconLines": "縦",
-    "txIconColumnsUnit": "列",
-    "txIconLinesUnit": "行",
 
     "map": "マップ",
     "areaId": "エリアID",

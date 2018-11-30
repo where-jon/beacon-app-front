@@ -65,9 +65,7 @@
               :dispFormat="form.txViewType ? form.txViewType.displayFormat : txIconsDispFormat"
               :horizon="form.txViewType ? form.txViewType.horizon : txIconsHorizon"
               :vertical="form.txViewType ? form.txViewType.vertical : txIconsVertical"
-              @changeFormat="onChangeDispFormat"
-              @changeHorizon ="onChangeHorizon"
-              @changeVertical="onChangeVertical"
+              @change="onChangeTxSetting"
             />
             -->
             <b-form-group>
@@ -183,33 +181,6 @@ export default {
       Util.addNoSelect(options)
       return options
     },
-    txViewTypes() {
-      return Object.keys(TX_VIEW_TYPES).map(key => {
-        const label = `label.txViewType${key.charAt(0).toUpperCase()}${key.slice(1).toLowerCase()}`
-        return {value: TX_VIEW_TYPES[key], text: this.$i18n.tnl(label)}
-      })
-    },
-    txIconsNumHorizon() {
-      return [
-        {value: 1, text: 1},
-        {value: 2, text: 2},
-        {value: 3, text: 3},
-        {value: 4, text: 4},
-        {value: 5, text: 5},
-      ]
-    },
-    txIconsNumVertical() {
-      return [
-        {value: 1, text: 1},
-        {value: 2, text: 2},
-        {value: 3, text: 3},
-        {value: 4, text: 4},
-        {value: 5, text: 5},
-      ]
-    },
-    isIconsDispFormatTile() {
-      return this.txIconsDispFormat === this.TXICONS_DISPFORMAT_TILE
-    },
     ...mapState('app_service', [
       'exb',
       'areas',
@@ -269,14 +240,10 @@ export default {
     this.txIconsVertical = this.form.txViewType.vertical
   },
   methods: {
-    onChangeDispFormat(dispFormat) {
-      this.txIconsDispFormat = dispFormat
-    },
-    onChangeHorizon(horizon) {
-      this.txIconsHorizon = horizon
-    },
-    onChangeVertical(vertical) {
-      this.txIconsVertical = vertical
+    onChangeTxSetting(param) {
+      this.txIconsDispFormat = param.format
+      this.txIconsHorizon = param.horizon
+      this.txIconsVertical = param.vertical
     },
     async save() {
       let entity = {
