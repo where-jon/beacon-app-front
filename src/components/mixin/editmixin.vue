@@ -8,7 +8,7 @@ import * as MenuHelper from '../../sub/helper/MenuHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import { sleep } from '../../sub/util/Util'
 import { APP } from '../../sub/constant/config.js'
-import { ROLE } from '../../sub/constant/Constants'
+import { ROLE, UPDATE_ONLY_NN, IGNORE } from '../../sub/constant/Constants'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
 import commonmixinVue from './commonmixin.vue';
@@ -174,7 +174,16 @@ export default {
           if (imgWidthName) this.form[imgWidthName] = width
           if (imgHeightName) this.form[imgHeightName] = height
           if (thumbnailName) this.form[thumbnailName] = thumbnail
-      }, resize)
+      }, resize, (size) => {
+        this.message = this.$i18n.tnl("message.uploadMax", {target: Math.floor(APP.MAX_IMAGE_SIZE/1024/1024)})
+        this.showAlert = true
+        if (this.clearImage) {
+          this.clearImage()
+        }
+        setTimeout(()=> {
+          window.scrollTo(0, 0)
+        }, 0)
+      })
     },
     formatErrorLine(lines){
       let errorMessage = this.$i18n.tnl("message.csvLineStart")
@@ -299,7 +308,7 @@ export default {
       }
 
       this.replaceAS({showLine: true})
-      await AppServiceHelper.bulkSave(this.appServicePath, entities)
+      await AppServiceHelper.bulkSave(this.appServicePath, entities, UPDATE_ONLY_NN.NONE, IGNORE.ON)
       if(this.afterCrud) {
         this.afterCrud()
       }

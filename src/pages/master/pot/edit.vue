@@ -21,15 +21,15 @@
             </b-form-group>
             <b-form-group v-show="isShown('TX_WITH_TXID')">
               <label v-t="'label.txId'" />
-              <b-form-input type="number" v-model="txId" min="0" max="65535" :readonly="!isEditable" />
+              <input type="number" v-model="txId" min="0" max="65535" class="form-control" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group v-show="!isShown('TX_WITH_TXID') && isShown('TX_BTX_MINOR') != 'minor'">
               <label v-t="'label.btxId'" />
-              <b-form-input type="number" v-model="btxId" min="0" max="65535" :readonly="!isEditable" />
+              <input type="number" v-model="btxId" min="0" max="65535" class="form-control" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group v-show="!isShown('TX_WITH_TXID') && isShown('TX_BTX_MINOR') == 'minor'">
               Tx(<label v-t="'label.minor'" />)
-              <b-form-input type="number" v-model="minor" min="0" max="65535" :readonly="!isEditable" />
+              <input type="number" v-model="minor" min="0" max="65535" class="form-control" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group v-show="category.length > 1">
               <label v-t="'label.categoryType'" />
@@ -37,19 +37,19 @@
             </b-form-group>
             <b-form-group v-if="isShown('POT_WITH_POTCD')">
               <label v-t="'label.potCd'" />
-              <b-form-input type="text" v-model="form.potCd" maxlength="20" :readonly="!isEditable" />
+              <input type="text" v-model="form.potCd" maxlength="20" class="form-control" required :readonly="!isEditable" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.potName'" />
-              <b-form-input type="text" v-model="form.potName" maxlength="20" required :readonly="!isEditable" />
+              <input type="text" v-model="form.potName" maxlength="20" class="form-control" required :readonly="!isEditable" />
             </b-form-group>
             <b-form-group v-show="isShown('POT_WITH_RUBY')">
               <label v-t="'label.ruby'" />
-              <b-form-input type="text" v-model="form.ruby" maxlength="20" :readonly="!isEditable" />
+              <input type="text" v-model="form.ruby" maxlength="20" class="form-control" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.displayName'" />
-              <b-form-input type="text" v-model="form.displayName" maxlength="3" :readonly="!isEditable" />
+              <input type="text" v-model="form.displayName" maxlength="3" class="form-control" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group v-show="isShown('POT_WITH_GROUP')">
               <label v-t="'label.group'" />
@@ -61,7 +61,7 @@
             </b-form-group>
             <b-form-group v-show="isShown('POT_WITH_POST')">
               <label v-t="'label.post'" />
-              <b-form-input type="text" v-model="form.post" maxlength="20" :readonly="!isEditable" />
+              <input type="text" v-model="form.post" maxlength="20" class="form-control" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group v-show="isShown('POT_WITH_TEL')">
               <label v-t="'label.tel'" />

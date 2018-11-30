@@ -10,7 +10,7 @@
             <!-- 標準絞り込みフィルタ -->
             <label v-t="'label.filter'" class="mr-2"></label>
             <b-input-group>
-              <b-form-input v-model="filter.reg"  class="align-self-center"/>
+              <input v-model="filter.reg" class="form-control align-self-center"/>
               <b-input-group-append>
                 <b-btn :disabled="!filter.reg" @click="filter.reg = ''" variant="secondary" v-t="'label.clear'"  class="align-self-center"/>
               </b-input-group-append>

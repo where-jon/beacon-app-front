@@ -139,17 +139,18 @@ export default {
       if(param.errorMessage){
         this.message = param.errorMessage
         this.showAlert = true
-        return
+        return false
       }
       try {
         const results = await HttpHelper.getAppService(`/core/positionHistory/${param.form.areaId}/${param.form.groupId? param.form.groupId: 0}/${param.form.potId? param.form.potId: 0}/${param.form.datetimeFrom.getTime()}/${param.form.datetimeTo.getTime()}`)
         if(!results.length){
           this.message = this.$i18n.tnl("message.notFoundData", {target: this.$i18n.tnl("label.flowlineAnalysis")})
           this.showAlert = true
-          return
+          return false
         }
         const analysisResults = this.analyseFlowline(results)
         this.draw(param, analysisResults)
+        return true
       }catch(e){
         console.error(e)
       }
