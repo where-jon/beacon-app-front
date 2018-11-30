@@ -444,6 +444,7 @@
     "noLedDevice": "There are no LED devices to operate.",
     "totalRowsMessage": "Total: {row} (Only latest {maxRows} are displayed)",
     "listEmpty": "There are no records matching your request.",
+    "uploadMax": "Upload file size is limited to target}Mbytes.",
 
     "dummy": "" 
   }

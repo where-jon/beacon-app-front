@@ -33,6 +33,7 @@ import commonmixinVue from '../mixin/commonmixin.vue';
 import editmixinVue from '../mixin/editmixin.vue'
 import { getButtonTheme } from '../../sub/helper/ThemeHelper'
 import { getTheme } from '../../sub/helper/ThemeHelper'
+import { APP } from '../../sub/constant/config.js'
 import Encoding from 'encoding-japanese'
 import * as Util from '../../sub/util/Util'
 import JsZip from 'jszip'
@@ -147,9 +148,17 @@ export default {
       this.form.warnThumbnails = []
       this.submittable = false
       if(Util.hasValue(e.target.files)){
+        const file = e.target.files[0]
+        if (file.size > APP.MAX_IMAGE_SIZE) {
+          this.message = this.$i18n.tnl("message.uploadMax", {target: Math.floor(APP.MAX_IMAGE_SIZE/1024/1024)})
+          this.showAlert = true
+          window.scrollTo(0, 0)
+          return
+        }
+
         this.loading = true
         this.uploadMessage()
-        fileReader.readAsArrayBuffer(e.target.files[0])
+        fileReader.readAsArrayBuffer(file)
       }
       else{
         this.loading = false

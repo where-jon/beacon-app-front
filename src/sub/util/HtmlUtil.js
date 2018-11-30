@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Encoding from 'encoding-japanese'
 import { str2Array } from './Util'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
+import { APP } from '../constant/config';
 
 let locale
 
@@ -75,9 +76,15 @@ export const fileDL = (name, content, charSet = "UTF8") => {
   document.body.removeChild(e)
 }
 
-export const readImage = (e, onload, resize) => {
+export const readImage = (e, onload, resize, onerror) => {
   let files = e.target.files
   if ( files && files[0] ) {
+    let size = files[0].size
+    if (size > APP.MAX_IMAGE_SIZE && onerror) {
+      console.warn("Image file exceed " + APP.MAX_IMAGE_SIZE, size)
+      onerror(size)
+      return
+    }
     let fr = new FileReader()
     fr.onload = (evt) => {
       let image = new Image()
