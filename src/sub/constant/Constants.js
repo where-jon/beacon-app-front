@@ -394,6 +394,12 @@ export const MENU = [
         feature: '/history/positionHistory',
         icon: 'fas fa-cube'
       },
+      {
+        key: 'sensorHistory',
+        path: 'sensorHistory',
+        feature: '/history/sensorHistory',
+        icon: 'fas fa-eye'
+      },
     ]
   },
   {
