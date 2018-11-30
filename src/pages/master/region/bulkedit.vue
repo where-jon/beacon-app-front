@@ -47,7 +47,7 @@ export default {
   methods: {
     async save(bulkSaveFunc) {
       const MAIN_COL = "regionId"
-      const NUMBER_TYPE_LIST = ["regionId", "meshId"]
+      const NUMBER_TYPE_LIST = ["regionId"]
       await bulkSaveFunc(MAIN_COL, NUMBER_TYPE_LIST)
     },
   }
