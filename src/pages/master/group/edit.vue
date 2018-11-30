@@ -19,7 +19,7 @@
         </b-form-group>
         <b-form-group>
           <label v-t="'label.ruby'" />
-          <input type="text" v-model="form.ruby" pattern="^[ぁ-んーァ-ヶa-zA-Z0-9ａ-ｚＡ-Ｚ０-９]+$" class="form-control" maxlength="20" :readonly="!isEditable" />
+          <input type="text" v-model="form.ruby" class="form-control" maxlength="20" :readonly="!isEditable" />
         </b-form-group>
         <b-form-group>
           <label v-t="'label.shape'" />
