@@ -105,7 +105,7 @@ export default {
       'pots',
     ]),
     enableGroup () {
-      return this.isEnabledMenu("group")
+      return this.isEnabledMenu("group") && APP.POT_WITH_GROUP
     },
   },
   async created() {
