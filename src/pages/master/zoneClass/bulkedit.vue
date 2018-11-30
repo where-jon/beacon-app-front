@@ -11,6 +11,7 @@ import _ from 'lodash'
 import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
+import * as StateHelper from '../../../sub/helper/StateHelper'
 import { ZONE } from '../../../sub/constant/Constants'
 
 export default {
@@ -43,17 +44,19 @@ export default {
   computed: {
     ...mapState('app_service', [
       'zone',
+      'categories',
     ]),
   },
   methods: {
     async save(bulkSaveFunc) {
       const MAIN_COL = "zoneId"
       const LOCATION_ZONE_COL = ["zoneId", "locationId"]
-      const ZONE_CATEGORY_COL = ["zoneId", "categoryId"]
+      const ZONE_CATEGORY_COL = ["zoneId", "categoryId", "categoryName"]
       const ZONE_COL = ["zoneName", "areaId"]
       const NUMBER_TYPE_LIST = ["locationId", "categoryId", "areaId"]
       let locationId = null
       let categoryId = null
+      await StateHelper.load('category')
       await bulkSaveFunc(MAIN_COL, NUMBER_TYPE_LIST, null, (entity, headerName, val, dummyKey) => {
         if(headerName === "zoneId"){
           entity.zoneId = Util.hasValue(val)? Number(val): --dummyKey  
@@ -64,6 +67,12 @@ export default {
         }
         else if(headerName === "categoryId"){
           categoryId = val
+        }
+        else if(headerName === "categoryName"){
+          const category = this.categories.find((category) => category.categoryName == val)
+          if(category){
+            categoryId = category.categoryId
+          }
         }
         if(headerName == "areaName") {
           entity.area = {areaId: dummyKey--, areaName: val}
