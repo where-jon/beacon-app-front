@@ -15,15 +15,15 @@
         </b-form-group>
         <b-form-group>
           <label v-t="'label.regionName'" />
-          <b-form-input type="text" v-model="form.regionName" maxlength="20" required :readonly="!isEditable" />
+          <input type="text" v-model="form.regionName" maxlength="20" class="form-control" required :readonly="!isEditable" />
         </b-form-group>
         <b-form-group>
           <label v-t="'label.meshId'" />
-          <b-form-input type="number" v-model="form.meshId" min="0" max="65535" :readonly="!isEditable" />
+          <input type="number" v-model="form.meshId" min="0" max="65535" class="form-control" :readonly="!isEditable" />
         </b-form-group>
         <b-form-group>
           <label v-t="'label.deviceOffset'" />
-          <b-form-input type="number" v-model="form.deviceOffset" min="0" max="65535" required :readonly="!isEditable" />
+          <input type="number" v-model="form.deviceOffset" min="0" max="65535" class="form-control" required :readonly="!isEditable" />
         </b-form-group>
         <b-form-group>
           <label v-t="'label.description'" />

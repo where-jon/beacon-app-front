@@ -14,9 +14,9 @@
             <b-form-group :label="getName(row.key, showKeyName)" :description="getName(row.description)">
               <span v-for="field in fields" :key="field.key">
                 <b-form-select v-if="useInputPullDown(row[field.type])" v-model="row[field.key]" :options="getBooleanOptions()" form="updateForm"/>
-                <b-form-input v-else-if="useInputNumberType(row[field.type])" v-model="row[field.key]" type="text" class="form-control-sm" :formatter="numberFormat" maxlength="1000" required/>
-                <b-form-input v-else-if="useInputNumberListType(row[field.type])" v-model="row[field.key]" type="text" class="form-control-sm" :formatter="numberListFormat" maxlength="1000" required/>
-                <b-form-input v-else v-model="row[field.key]" :type="getInputType(row[field.type])" maxlength="1000" form="updateForm" required/>
+                <input v-else-if="useInputNumberType(row[field.type])" v-model="row[field.key]" type="text" class="form-control form-control-sm" :pattern="numberPattern" maxlength="1000" required/>
+                <input v-else-if="useInputNumberListType(row[field.type])" v-model="row[field.key]" type="text" class="form-control form-control-sm" :pattern="numberListPattern" maxlength="1000" required/>
+                <input v-else v-model="row[field.key]" :type="getInputType(row[field.type])" maxlength="1000" class="form-control" form="updateForm" required/>
               </span>
               <b-button v-if="isSuperEditable" size="sm" @click.stop="deleteConfirm(row, $event.target)" variant="outline-danger" v-t="'label.delete'" class="mt-2 float-right" />
             </b-form-group>
@@ -30,7 +30,7 @@
           <div class="card-body">
             <b-form-row class="mb-2">
               <label v-t="'label.key'" class="mr-2" />
-              <b-form-input v-model="newForm.key" :type="'text'" class="form-control-sm" maxlength="200" required />
+              <input v-model="newForm.key" :type="'text'" class="form-control form-control-sm" maxlength="200" required />
             </b-form-row>
             <b-form-row class="mb-2">
               <label v-t="'label.valType'" class="mr-2" />
@@ -39,9 +39,9 @@
             <b-form-row class="mb-2">
               <label v-t="'label.value'" class="mr-2" />
               <b-form-select v-if="useInputPullDown(newForm.type)" v-model="newForm.value" :options="getBooleanOptions()" required/>
-              <b-form-input v-else-if="useInputNumberType(newForm.type)" v-model="newForm.value" type="text" class="form-control-sm" :formatter="numberFormat" maxlength="1000" required/>
-              <b-form-input v-else-if="useInputNumberListType(newForm.type)" v-model="newForm.value" type="text" class="form-control-sm" :formatter="numberListFormat" maxlength="1000" required/>
-              <b-form-input v-else v-model="newForm.value" :type="getInputType(newForm.type)" class="form-control-sm" maxlength="1000" required/>
+              <input v-else-if="useInputNumberType(newForm.type)" v-model="newForm.value" type="text" class="form-control form-control-sm" :pattern="numberPattern" maxlength="1000" required/>
+              <input v-else-if="useInputNumberListType(newForm.type)" v-model="newForm.value" type="text" class="form-control form-control-sm" :pattern="numberListPattern" maxlength="1000" required/>
+              <input v-else v-model="newForm.value" :type="getInputType(newForm.type)" class="form-control form-control-sm" maxlength="1000" required/>
             </b-form-row>
             <b-form-row class="float-right mt-3">
               <b-button v-if="isEditable" type="submit" :variant="getButtonTheme()" @click="register(true)" v-t="'label.add'" />
@@ -82,6 +82,8 @@ export default {
       ...this.params,
       useRegistForm: false,
       modalInfo: { title: '', content: '', id:'' },
+      numberPattern: "^-?[0-9]+[\.]?[0-9]*$",
+      numberListPattern: "^(-?[0-9]+[\.]?[0-9]*)+(,-?[0-9]+[\.]?[0-9]*)*$",
     }
   },
   computed: {
@@ -135,25 +137,6 @@ export default {
         {text: this.$i18n.tnl("label.numberList"), value: "numberList"},
         {text: this.$i18n.tnl("label.boolean"), value: "boolean"},
       ]
-    },
-    numberFormat(value, event) {
-      if(!value){
-        return value
-      }
-      const isMinus = value.indexOf("-") == 0
-      value = value.replace(/[^0-9\.]/g, "")
-      const dotPosition = value.indexOf(".")
-      value = value.replace(/[^0-9]/g, "")
-      if(1 <= dotPosition){
-        value = `${value.slice(0, dotPosition)}.${value.slice(dotPosition, value.length)}`
-      }
-      if(isMinus){
-        value = `-${value}`
-      }
-      return value
-    },
-    numberListFormat(value, event) {
-      return value? value.split(",").map((val) => this.numberFormat(val.trim(), event)).join(","): value
     },
     clearValue(){
       this.newForm.value = null

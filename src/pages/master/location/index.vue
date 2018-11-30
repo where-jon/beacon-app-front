@@ -28,15 +28,15 @@
     <b-form inline class="mt-2">
       <b-form-row class="mr-3 mb-3 ml-1">
         <label class="mr-2">{{ $t('label.mapRatio') }}</label>
-        <b-form-input size="sm" type="number" :value="mapRatio" :readonly="true" class="ratioInput"/>
+        <input size="sm" type="number" :value="mapRatio" :readonly="true" class="ratioInput form-control"/>
       </b-form-row>
       <b-form-row class="mr-3 mb-3 ml-1">
         <label class="mr-2 mt-mobile">{{ "= "+ $t('label.realWidth') }}</label>
-        <b-form-input size="sm" type="number" v-model="realWidth" class="mt-mobile ratioInput"/>
+        <input size="sm" type="number" v-model="realWidth" class="mt-mobile ratioInput form-control"/>
       </b-form-row>
       <b-form-row class="mr-3 mb-3 ml-1">
         <label class="mr-2">{{ "/ "+ $t('label.pixelWidth') }}</label>
-        <b-form-input size="sm" type="number" v-model="pixelWidth" :readonly="true" class="ratioInput"/>
+        <input size="sm" type="number" v-model="pixelWidth" :readonly="true" class="ratioInput form-control"/>
       </b-form-row>
       <b-form-row class="mb-3 ml-1">
         <b-button size="sm" :variant="getButtonTheme()" v-t="settingStart?'label.settingNow':'label.settingStart'" @click="ratioSettingStart" :class="{'mt-mobile':true, 'mt-mobile-button': true, 'mr-2':true, blink:settingStart}"></b-button> 
