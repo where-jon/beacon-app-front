@@ -94,7 +94,7 @@ export default {
       this.toggleCallBack && this.toggleCallBack()
       this.isShownMapImage = false
       this.toggleMapFitMobile()
-      this.showMapImage()
+      this.showMapImage && this.showMapImage()
     })
   },
   beforeDestroy() {
