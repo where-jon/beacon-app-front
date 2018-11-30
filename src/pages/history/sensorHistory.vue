@@ -7,17 +7,17 @@
         <div v-html="message" />
       </b-alert>
       <div class="mapContainer mb-5">
-        <b-form inline @submit.prevent>
+        <b-form inline>
           <b-form-group class="mr-5">
             <b-form-row>
               <b-form-row class="mb-3 mr-2">
-                <label v-t="'label.minor'" class="mr-2"/>
-                <b-form-select v-model="form.txId" :options="txOptions" class="mr-2"/>
+                <label v-t="'label.sensor'" class="mr-2"/>
+                <b-form-select v-model="form.sensorId" :options="sensorOptions" class="mr-2"/>
               </b-form-row>
             </b-form-row>
           </b-form-group>
         </b-form>
-        <b-form inline @submit.prevent>
+        <b-form inline>
           <b-form-group class="mr-5">
             <b-form-row>
               <b-form-row class="mb-3 mr-2">
@@ -40,7 +40,7 @@
         <slot></slot>
         <b-row class="mt-3">
         </b-row>
-        <b-table show-empty stacked="md" striped hover :items="viewList" :empty-text="emptyMessage" :fields="fields" :current-page="currentPage" :per-page="perPage" outlined :sort-by.sync="sortBy">
+        <b-table show-empty stacked="md" striped hover :items="viewList" :fields="fields" :current-page="currentPage" :per-page="perPage" outlined :sort-by.sync="sortBy">
         </b-table>
         <b-row>
           <b-col md="6" class="my-1">{{ footerMessage }}</b-col>
@@ -82,27 +82,27 @@ export default {
   },
   data () {
     return {
-      name: 'positionHistory',
-      emptyMessage: this.$i18n.tnl('message.listEmpty'),
+      name: 'sensorHistory',
       items: [
         {
           text: this.$i18n.tnl('label.historyTitle'),
           active: true
         },
         {
-          text: this.$i18n.tnl('label.positionHistory'),
+          text: this.$i18n.tnl('label.sensorHistory'),
           active: true
         }
       ],
       form: {
-        txId: null,
+        sensorId: null,
         datetimeFrom: null,
         datetimeTo: null,
       },
       fetchList: [],
       viewList: [],
-      custumCsvColumns: [
-        "positionDt",
+      custumCsvColumns: [],
+      custumCsvColumns1: [
+        "sensorDt",
         "txName",
         "major",
         "minor",
@@ -113,11 +113,26 @@ export default {
         "locationName",
         APP.EXB_WITH_POSID?"posId":null,
         "areaName",
-        "x",
-        "y",
+        "humidity",
+        "temperature",
       ].filter((val) => val),
-      fields: addLabelByKey(this.$i18n, [
-        {key: "positionDt", sortable: true, label:"dt"},
+      custumCsvColumns2: [
+        "sensorDt",
+        "txName",
+        "major",
+        "minor",
+        APP.EXB_WITH_EXBID?"exbId":null,
+        APP.EXB_WITH_DEVICE_NUM?"deviceNum":null,
+        APP.EXB_WITH_DEVICE_ID?"deviceId":null,
+        APP.EXB_WITH_DEVICE_IDX?"deviceIdX":null,
+        "locationName",
+        APP.EXB_WITH_POSID?"posId":null,
+        "areaName",
+        "count",
+      ].filter((val) => val),
+      fields: [],
+      fields1: addLabelByKey(this.$i18n, [
+        {key: "sensorDt", sortable: true, label:"dt"},
         {key: "txName", sortable: true },
         {key: "major", sortable: true },
         {key: "minor", sortable: true },
@@ -128,14 +143,28 @@ export default {
         {key: "locationName", label:'locationZoneName', sortable: true,},
         APP.EXB_WITH_POSID? {key: "posId", label:'posId', sortable: true,}: null,
         {key: "areaName", label:'area', sortable: true,},
-        {key: "x", sortable: true, label:"locationX"},
-        {key: "y", sortable: true, label:"locationY"},
+        {key: "humidity", sortable: true},
+        {key: "temperature", sortable: true},
+      ]),
+      fields2: addLabelByKey(this.$i18n, [
+        {key: "sensorDt", sortable: true, label:"dt"},
+        {key: "txName", sortable: true },
+        {key: "major", sortable: true },
+        {key: "minor", sortable: true },
+        APP.EXB_WITH_EXBID? {key: "exbId", sortable: true }: null,
+        APP.EXB_WITH_DEVICE_NUM? {key: "deviceNum", sortable: true }: null,
+        APP.EXB_WITH_DEVICE_ID? {key: "deviceId", sortable: true }: null,
+        APP.EXB_WITH_DEVICE_IDX? {key: "deviceIdX", sortable: true }: null,
+        {key: "locationName", label:'locationZoneName', sortable: true,},
+        APP.EXB_WITH_POSID? {key: "posId", label:'posId', sortable: true,}: null,
+        {key: "areaName", label:'area', sortable: true,},
+        {key: "count", label:"numUsers", sortable: true},
       ]),
       currentPage: 1,
       perPage: 20,
-      maxRows: 100,
       totalRows: 0,
       fetchRows: 0,
+      maxRows: 100,
       sortBy: null,
       //
       showInfo: false,
@@ -150,31 +179,32 @@ export default {
       return 'outline-' + theme
     },
     ...mapState('app_service', [
-      'txs', 'exbs'
+      'sensors'
     ]),
-    txOptions() {
-      let txOp = this.txs.map((tx) => {
+    sensorOptions() {
+      let sensorOp = this.sensors.map((sensor) => {
           return {
-            value: tx.txId,
-            text: tx.minor
+            value: sensor.sensorId,
+            text: this.$i18n.tnl('label.' + sensor.sensorName)
           }
         }
       )
-      txOp.unshift({value:null, text:''})
-      return txOp
+      return sensorOp
     },
   },
   async created() {
+    this.form.sensorId = 1
     const date = new Date()
     this.form.datetimeFrom = this.getDatetime(date, {hours: -1})
     this.form.datetimeTo = this.getDatetime(date)
+    this.custumCsvColumns = this.custumCsvColumns1
+    this.fields = this.fields1
   },
   mounted() {
     import(`element-ui/lib/locale/lang/${this.$i18n.locale}`).then( (mojule) =>{
       locale.use(mojule.default)
     })
-    StateHelper.load('tx')
-    StateHelper.load('exb')
+    StateHelper.load('sensor')
     this.footerMessage = `${this.$i18n.tnl("message.totalRowsMessage", {row: this.fetchRows, maxRows: this.maxRows})}`
   },
   methods: {
@@ -200,41 +230,63 @@ export default {
       this.showAlert = false
       this.fetchList = []
       this.viewList = []
-      this.totalRows = 0
-      this.fetchRows = 0
       this.footerMessage = `${this.$i18n.tnl("message.totalRowsMessage", {row: this.fetchRows, maxRows: this.maxRows})}`
       try {
-        const aTxId = (this.form.txId != null)?this.form.txId:0
+        const aSensorId = (this.form.sensorId != null)?this.form.sensorId:0
+        if (aSensorId == 1) {
+          this.custumCsvColumns = this.custumCsvColumns1
+          this.fields = this.fields1
+        }
+        if (aSensorId == 2) {
+          this.custumCsvColumns = this.custumCsvColumns2
+          this.fields = this.fields2
+        }
         this.fetchList = await HttpHelper.getAppService(
-          `/core/positionHistory/find/${aTxId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}`
+          `/basic/sensorHistory/findsensor/${aSensorId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}`
         )
         if (this.fetchList.length == null || !this.fetchList.length) {
-          this.message = this.$i18n.tnl("message.notFoundData", {target: this.$i18n.tnl("label.positionHistory")})
-          this.showAlert = true
+          this.message = this.$i18n.tnl("message.notFoundData", {target: this.$i18n.tnl("label.sensorHistory")})
           return
         }
-        this.fetchRows = this.fetchList.length
         var count = 0
-        for (var posHist of this.fetchList) {
-          const d = new Date(posHist.positionDt)
-          posHist.positionDt = moment(d.getTime()).format('YYYY/MM/DD HH:mm:ss')
-          let aTx = _.find(this.txs, (tx) => { return tx.txId == posHist.txId })
-          posHist.txName = aTx.txName
-          let aExb = _.find(this.exbs, (exb) => { return exb.exbId == posHist.exbId })
-          posHist.deviceNum = aExb.deviceNum
-          posHist.deviceId = aExb.deviceId
-          posHist.deviceIdX = aExb.deviceIdX
-          posHist.locationName = aExb.locationName
-          posHist.posId = aExb.posId
-          posHist.areaName = aExb.areaName
-          posHist.x = aExb.x
-          posHist.y = aExb.y
+        for (var senHist of this.fetchList) {
+          const d = new Date(senHist.sensorDt)
+          senHist.sensorDt = moment(d.getTime()).format('YYYY/MM/DD HH:mm:ss')
+          if (senHist.txId != null) {
+            let aTx = _.find(this.txs, (tx) => { return tx.txId == senHist.txId })
+            senHist.txName = aTx.txName
+          } else {
+            senHist.txName = ""
+          }
+          let aExb = _.find(this.exbs, (exb) => { return exb.exbId == senHist.exbId })
+          if (aExb != null) {
+            senHist.deviceNum = aExb.deviceNum
+            senHist.deviceId = aExb.deviceId
+            senHist.deviceIdX = aExb.deviceIdX
+            senHist.locationName = aExb.locationName
+            senHist.posId = aExb.posId
+            senHist.areaName = aExb.areaName
+          } else {
+            senHist.deviceNum = ""
+            senHist.deviceId = ""
+            senHist.deviceIdX = ""
+            senHist.locationName = ""
+            senHist.posId = ""
+            senHist.areaName = ""
+          }
+          if (senHist.sensorId == 1) {
+            senHist.humidity = senHist.value.humidity
+            senHist.temperature = senHist.value.temperature
+          }
+          if (senHist.sensorId == 2 || senHist.sensorId == 3) {
+            senHist.count = senHist.value.count
+          }
           count++
           if (count < this.maxRows) {
-            this.viewList.push(posHist)
+            this.viewList.push(senHist)
           }
         }
-        this.totalRows = this.viewList.length
+        this.fetchRows = this.viewList.length
         this.footerMessage = `${this.$i18n.tnl("message.totalRowsMessage", {row: this.fetchRows, maxRows: this.maxRows})}`
       } catch(e) {
         console.error(e)
