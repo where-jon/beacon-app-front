@@ -47,11 +47,7 @@ export default {
     ]),
   },
   methods: {
-    resetThumbnail(entity, dummyKey){
-      const updateData = this.potImages.find((val) => val.id == entity.potId)
-      if(updateData){
-        entity.thumbnail = updateData.thumbnail
-      }
+    resetData(entity, dummyKey){
       if(!APP.POT_WITH_POTCD){
         entity.potCd = entity.potName
       }
@@ -119,7 +115,7 @@ export default {
         }
         entity[headerName] = newVal
         return dummyKey
-      }, (entity, dummyKey) => this.resetThumbnail(entity, dummyKey))
+      }, (entity, dummyKey) => this.resetData(entity, dummyKey))
     },
   }
 }

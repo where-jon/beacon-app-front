@@ -60,6 +60,8 @@ export const FEATURE = {
 
 export const UPDATE_ONLY_NN = { NONE: 0, NULL: 1, EMPTY_ZERO: 2 };
 
+export const IGNORE = { OFF: 0, ON: 1 };
+
 export const txViewTypes = [
   {value: 1, text: "pattern1"},
   {value: 2, text: "pattern2"},

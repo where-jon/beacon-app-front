@@ -8,7 +8,7 @@ import * as MenuHelper from '../../sub/helper/MenuHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import { sleep } from '../../sub/util/Util'
 import { APP } from '../../sub/constant/config.js'
-import { ROLE } from '../../sub/constant/Constants'
+import { ROLE, UPDATE_ONLY_NN, IGNORE } from '../../sub/constant/Constants'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
 import commonmixinVue from './commonmixin.vue';
@@ -308,7 +308,7 @@ export default {
       }
 
       this.replaceAS({showLine: true})
-      await AppServiceHelper.bulkSave(this.appServicePath, entities)
+      await AppServiceHelper.bulkSave(this.appServicePath, entities, UPDATE_ONLY_NN.NONE, IGNORE.ON)
       if(this.afterCrud) {
         this.afterCrud()
       }
