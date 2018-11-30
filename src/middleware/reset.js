@@ -7,6 +7,7 @@ export default function (context) {
   HtmlUtil.removeInterval()
   // loading chunk failed対策
   setTimeout(() => {
+    console.debug("check chunk")
     let errorPages = document.getElementsByClassName("__nuxt-error-page")
     if (errorPages.length > 0) {
       location.reload()
