@@ -309,7 +309,6 @@
     "temperatureHistory": "温湿度履歴",
     "historyDateFrom": "期間",
     "historyDateTo": "～",
-    "temperatureHistoryType": "",
     "temperatureHistoryType0": "すべての温湿度",
     "temperatureHistoryType1": "時間毎の温湿度",
 

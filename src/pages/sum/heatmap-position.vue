@@ -1,5 +1,5 @@
 <template>
-  <div id="mapContainer" class="container-fluid">
+  <div id="mapContainer">
     <breadcrumb :items="items" :reload="false" />
     <div class="container">
       <b-alert variant="info" dismissible :show="showInfo">{{ message }}</b-alert>

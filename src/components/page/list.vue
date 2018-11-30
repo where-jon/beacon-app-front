@@ -101,8 +101,8 @@
           <b-pagination :total-rows="totalRows" :per-page="perPage" v-model="currentPage" class="my-0" />
         </b-col>
         <!-- bulk upload button -->
-        <b-col v-if="isEditable" md="6" class="my-1">
-          <b-button v-if="params.bulkUploadPath && !iosOrAndroid" :variant='theme'
+        <b-col v-if="isEditable && params.bulkUploadPath && !iosOrAndroid" md="6" class="my-1">
+          <b-button :variant='theme'
             @click="bulkUpload()" v-t="'label.bulkUpload'"  class="float-right" />
         </b-col>
       </b-row>
