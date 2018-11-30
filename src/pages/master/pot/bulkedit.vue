@@ -43,7 +43,7 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'pot', 'potImages', 'categories', 'groups'
+      'pot', 'potImages', 'categories', 'groups', 'txs'
     ]),
   },
   methods: {
@@ -62,8 +62,10 @@ export default {
       const NULLABLE_NUMBER_COL = ["txId", "exbId", "zoneId", "areaId", "potType"]
       const MANY_TO_MANY = ["groupId", "categoryId", "groupName", "categoryName"]
       const extValueHeaders = ["ruby", "post", "tel"]
+      const txIdHeaders = ["btxId", "minor"]
       await StateHelper.load('category')
       await StateHelper.load('group')
+      await StateHelper.load('tx')
 
       await bulkSaveFunc(MAIN_COL, null, null, (entity, headerName, val, dummyKey) => {
         // relation
@@ -89,6 +91,14 @@ export default {
           return dummyKey
         }
 
+        // minor, btxId
+        if(_.includes(txIdHeaders, headerName)){
+          const tx = this.txs.find((tx) => tx[headerName] == val)
+          if(tx){
+            entity.txId = tx.txId
+          }
+          return dummyKey
+        }
         // extValue
         if (!entity.extValue) {
           entity.extValue = {}

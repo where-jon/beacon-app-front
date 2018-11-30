@@ -36,7 +36,7 @@ export default {
         custumCsvColumns: [
           "potId",
           "thumbnail",
-          "txId",
+          APP.TX_WITH_TXID? "txId": APP.TX_BTX_MINOR == 'minor'? "minor": "btxId",
           "txName",
           APP.POT_WITH_POTCD? "potCd": null,
           "potName",
