@@ -16,6 +16,17 @@ export default async (context, inject) => {
   catch (e) {
     console.error(e) // ignore
   }
+
+  // loading chunk failed対策 Loading chunk 6 failed.
+  setInterval(() => {
+    console.debug("check chunk")
+    let error = document.querySelector(".__nuxt-error-page .error .title")
+    if (error && error.innerText && error.innerText.match(/Loading chunk (\d)+ failed/g)) {
+      alert("reload")
+      location.reload()
+    }
+  }, 3000)
+  
 }
   
 if (String.prototype.includes) {
