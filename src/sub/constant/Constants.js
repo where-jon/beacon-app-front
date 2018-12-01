@@ -385,7 +385,7 @@ export const MENU = [
     path: '/history/temperatureHistory',
     icon: 'far fa-clipboard',
     pages: [{
-        key: 'temperatureHistory',
+        key: 'thermohumidity',
         path: 'temperatureHistory',
         feature: '/history/temperatureHistory',
         icon: 'fas fa-thermometer'
