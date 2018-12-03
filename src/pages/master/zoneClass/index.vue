@@ -56,13 +56,14 @@ export default {
   computed: {
     ...mapState('app_service', [
       'zones',
+      'forceFetchZone',
     ]),
   },
   methods: {
     async fetchData(payload) {
       try {
         this.replace({showProgress: true})
-        await StateHelper.load('zone')
+        await StateHelper.load('zone', this.forceFetchZone)
         if (payload && payload.done) {
           payload.done()
         }
