@@ -36,6 +36,8 @@ export const state = () => ({
   sensorHistories: [],
   forceFetchPot: true,
   forceFetchTx: true,
+  forceFetchExb: true,
+  forceFetchZone: true,
   listMessage: null,
   defaultConfig: {},
   showLine: false,

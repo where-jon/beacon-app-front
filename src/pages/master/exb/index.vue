@@ -84,6 +84,7 @@ export default {
     ...mapState('app_service', [
       'exbs',
       'exbImages',
+      'forceFetchExb',
     ]),
   },
   mounted() {
@@ -92,7 +93,7 @@ export default {
     async fetchData(payload) {
       try {
         this.replace({showProgress: true})
-        await StateHelper.load('exb')
+        await StateHelper.load('exb', this.forceFetchExb)
         if (payload && payload.done) {
           payload.done()
         }
