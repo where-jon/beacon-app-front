@@ -214,7 +214,6 @@ export default {
       return null
     },
     resetDetail() {
-      this.detectedCount = 0　// 検知カウントリセット
       if (!this.showingDetailTime || new Date().getTime() - this.showingDetailTime > 100) {
         let selectedTx = {}
         this.replaceMain({selectedTx})
@@ -333,6 +332,7 @@ export default {
         }
       })
 
+      this.detectedCount = 0　// 検知カウントリセット
       let position = PositionHelper.adjustPosition(this.positions, this.mapImageScale, this.positionedExb)
       position.forEach((pos) => { // TODO: Txのチェックも追加
         this.showTx(pos)
