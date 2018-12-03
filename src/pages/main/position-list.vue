@@ -90,7 +90,7 @@ export default {
         await StateHelper.load('area')
         await StateHelper.load('tx')
         await StateHelper.load('exb')
-        let positions = await EXCloudHelper.fetchPositionList(this.exbs, this.txs)
+        let positions = await EXCloudHelper.fetchPosition(this.exbs, this.txs)
 
         // 移動平均数分のポジションデータを保持する
         this.pushOrgPositions(positions)

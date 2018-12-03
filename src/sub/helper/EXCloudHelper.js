@@ -23,23 +23,10 @@ export const fetchPosition = async (exbs, txs, pMock) => {
       let tx = _.find(txs, (tx) => tx.btxId == val.btx_id)
       let exb = _.find(exbs, (exb) => exb.location.posId == val.pos_id)
       let label = tx && tx.displayName? tx.displayName: val.btx_id
-      return {btx_id: val.btx_id, pos_id: val.pos_id, label, exb, tx, nearest: val.nearest}
+      return {btx_id: val.btx_id, minor: val.minor, power_level: val.power_level, 
+        pos_id: val.pos_id, label, exb, tx, nearest: val.nearest, updatetime: dateform(val.updatetime)}
     })
     .compact().value()
-}
-
-export const fetchPositionList = async (exbs, txs) => {
-    let data = DEV.USE_MOCK_EXC? mock.position:
-        await HttpHelper.getExCloud(url(EXCLOUD.POSITION_URL) + new Date().getTime())
-    return _(data)
-    .map((val) => {
-        let tx = _.find(txs, (tx) => tx.btxId == val.btx_id)
-        if (!DEV.NOT_FILTER_TX || !tx) { return null}
-        let exb = _.find(exbs, (exb) => exb.location.posId == val.pos_id)
-        if (!exb || !exb.enabled) { return null}
-        let label = tx && tx.displayName? tx.displayName: val.btx_id
-        return {...val, tx: tx, exb: exb, label, updatetime: dateform(val.updatetime)}
-    }).compact().value()
 }
 
 export const fetchSensor = async (sensorId) => {
