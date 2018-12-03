@@ -19,7 +19,7 @@
         </b-form-group>
         <b-form-group>
           <label v-t="'label.loginId'" />
-          <input type="text" v-model="form.loginId" maxlength="16" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" class="form-control" required :readonly="!isEditable" />
+          <input type="text" v-model="form.loginId" maxlength="16" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" class="form-control" :title="$i18n.tnl('message.validationList', {validate: $i18n.tnl('message.loginValidationList')})" required :readonly="!isEditable" />
         </b-form-group>
         <b-form-group v-show="showEmail">
           <label v-t="'label.email'" />

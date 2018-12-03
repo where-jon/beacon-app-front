@@ -444,6 +444,8 @@
     "totalRowsMessage": "{row}件(表示は最新{maxRows}件まで)",
     "listEmpty": "データが存在しません。",
     "uploadMax": "アップロード可能な最大ファイルサイズは{target}Mバイトです。",
+    "validationList": "入力可能な文字は{validate}です。",
+    "loginValidationList": "半角英数字、アンダーバー( _ )、ハイフン(-)、アットマーク(@)、ドット(.)",
 
     "dummy": "" 
   }
