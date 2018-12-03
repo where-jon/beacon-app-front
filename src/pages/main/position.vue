@@ -180,7 +180,7 @@ export default {
         btxId,
         minor: 'minor:' + btxId,
         major: tx.major? 'major:' + tx.major : '',
-
+        isMeditag: this.getMeditagSensor(btxId) !== null,
         // TX詳細ポップアップ内部で表示座標計算する際に必要
         orgLeft: x + offsetX,
         orgTop: y + offsetY,
@@ -188,10 +188,6 @@ export default {
         containerWidth: containerParent.width,
         containerHeight: containerParent.height,
         class: balloonClass,
-        // 以下のleft,topの代入式は、削除するとMeditagの位置表示に影響を及ぼすかもしれないので残してある
-        left: x + offsetX - DISP.TX_R,
-        top: rev ? y + offsetY - DISP.TX_R - popupHeight : y + offsetY + DISP.TX_R + tipOffsetY,
-
         name: tx.txName? tx.txName: p.potName ? p.potName : '',
         timestamp: position ? this.getFinalReceiveTime(position.timestamp) : '',
         thumbnail: p.thumbnail ? p.thumbnail : '',
