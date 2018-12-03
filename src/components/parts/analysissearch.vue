@@ -107,6 +107,9 @@ export default {
     enableGroup () {
       return this.isEnabledMenu("group") && APP.POT_WITH_GROUP
     },
+    requirePerson(){
+      return !this.fromHeatmap
+    }
   },
   async created() {
     await StateHelper.load('area')
@@ -159,12 +162,14 @@ export default {
     validate() {
       const errors = this.validateCheck([
         {type: "require", names: ["area"], values: [this.form.areaId]},
-        {type: "require", names: [this.enableGroup? "group": null, "individual"].filter((val) => val), values: [this.enableGroup? this.form.groupId: null, this.form.potId].filter((val) => val)},
+        {type: "require", 
+          names: [this.enableGroup? "group": null, this.requirePerson? "individual": null].filter((val) => val),
+          values: [this.enableGroup? this.form.groupId: null, this.requirePerson? this.form.potId: null].filter((val) => val)},
         {type: "require", names: ["historyDateFrom"], values: [this.form.datetimeFrom]},
         {type: "require", names: ["historyDateFrom"], values: [this.form.datetimeTo]},
         this.form.datetimeFrom && this.form.datetimeTo? {type: "asc", names: ["historyDateFrom"], values: [this.form.datetimeFrom.getTime(), this.form.datetimeTo.getTime()], equal: false}: null,
         this.form.datetimeFrom && this.form.datetimeTo? {type: "less", names: ["historyDateFrom"], values: [this.form.datetimeFrom.getTime() * -1, this.form.datetimeTo.getTime()], base: this.interval, displayBase: this.intervalHours, equal: true}: null,
-      ].filter((val) => val))
+      ].filter((val) => val && val.names.length >= 1))
       return this.formatValidateMessage(errors)
     },
     async display() {
