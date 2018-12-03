@@ -171,7 +171,8 @@ export default {
       )
     },
     zoneNames() {
-      let options = this.zones.map((zone) => {
+      let options = this.zones.filter((zone) => zone.areaId == this.form.areaId)
+        .map((zone) => {
           return {
             value: zone.zoneId,
             text: zone.zoneName
@@ -246,6 +247,9 @@ export default {
       this.txIconsVertical = param.vertical
     },
     async save() {
+      if(!this.zoneNames.find((zone) => zone.zoneId == this.form.zoneId)){
+        this.form.zoneId = null
+      }
       let entity = {
         exbId: this.form.exbId != null? this.form.exbId: -1,
         deviceId: this.deviceId,
