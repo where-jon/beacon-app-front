@@ -180,7 +180,6 @@ export default {
         btxId,
         minor: 'minor:' + btxId,
         major: tx.major? 'major:' + tx.major : '',
-        isMeditag: this.getMeditagSensor(btxId) !== null,
         // TX詳細ポップアップ内部で表示座標計算する際に必要
         orgLeft: x + offsetX,
         orgTop: y + offsetY,
