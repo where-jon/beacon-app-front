@@ -34,7 +34,7 @@
           <b-form-textarea v-model="form.description" :rows="3" :max-rows="6" maxlength="1000" :readonly="!isEditable" ></b-form-textarea>
         </b-form-group>
         <b-form-group>
-          <label v-t="'label.password'" />
+          <label v-t="'label.passwordUpdate'" />
           <b-form-input type="password" v-model="pass" pattern="^[a-zA-Z0-9_\-\/!#\$%&@]*$" :readonly="!isEditable" />
         </b-form-group>
         <b-form-group>
@@ -169,7 +169,7 @@ export default {
         this.showAlert = true
       }
       else if(this.isErrorPasswordValue()){
-        this.message = this.$i18n.tnl('message.invalidPassword')
+        this.message = this.$i18n.tnl('message.notMatchPassword')
         this.showAlert = true
       }
       if(this.showAlert){
