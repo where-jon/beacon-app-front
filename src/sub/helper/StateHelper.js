@@ -212,6 +212,7 @@ export const loadAreaImage = async (areaId, force) => {
     return
   }
 
+  console.log("load ares", areaId)
   let base64 = await AppServiceHelper.fetchMapImage("/core/area/" + areaId + "/mapImage")
   // let mimetype="image/png"
   // base64 = "data:" + mimetype + ";base64," + base64
