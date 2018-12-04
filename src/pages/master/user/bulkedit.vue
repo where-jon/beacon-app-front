@@ -56,9 +56,7 @@ export default {
         if (_.includes(ROLE_COL, headerName)) {
           entity.role = {roleId: dummyKey--, roleName: val}
         }
-        else{
-          entity[headerName] = val
-        }
+        entity[headerName] = val
         return dummyKey
       })
     },
