@@ -6,7 +6,15 @@
       <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">
         <div v-html="message" />
       </b-alert>
-      <analysis-search/>
+      <div class="mapContainer mb-5">
+        <div class="container">
+          <analysis-search :areaOptions="areaOptions" v-on:changeArea="changeArea"
+              v-on:display="display" />
+          <b-row>
+            <canvas id="map" ref="map"/>
+          </b-row>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -15,14 +23,15 @@
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import { Shape } from '@createjs/easeljs/dist/easeljs.module'
 import { DISP, APP } from '../../sub/constant/config'
+import { Container } from '@createjs/easeljs/dist/easeljs.module'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import analysisSearch from '../../components/parts/analysissearch.vue'
+import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import drawMixin from '../../components/mixin/drawmixin.vue'
 import { getTheme } from '../../sub/helper/ThemeHelper'
-import * as HttpHelper from '../../sub/helper/HttpHelper'
 
 export default {
-  mixins: [ drawMixin ],
+  mixins: [showmapmixin, drawMixin ],
   components: {
     breadcrumb,
     analysisSearch,
@@ -42,6 +51,8 @@ export default {
       dotRadius: 3,
       startInfo: {caption: "start", color: "#2299cc"},
       endInfo: {caption: "end", color: "#ee0033"},
+      container: null,
+      shownParam: null,
       //
       showInfo: false,
       showAlert: false,
@@ -56,6 +67,50 @@ export default {
     },
   },
   methods: {
+    showMapImage() {
+      // 地図ダブルタップ時のみ利用
+      this.fetchData()
+    },
+    reset() {
+      this.isShownMapImage = false
+      this.shownParam = null
+    },
+    async fetchData(payload){
+      try {
+        this.replace({showProgress: true})
+        this.showMapImageDef(() => {
+          if (this.container) {
+            this.container.removeAllChildren()
+            this.stage.removeChild(this.container)
+          }
+          if (!this.container) {
+            this.container = new Container()
+          }
+          this.container.x = 0
+          this.container.y = 0
+          this.container.width = this.bitmap.width
+          this.container.height = this.bitmap.height
+          this.stage.addChild(this.container)
+          this.stage.update()
+          this.forceUpdateRealWidth()
+          if (this.shownParam) {
+            this.display(this.shownParam)
+          }
+        })
+        if (payload && payload.done) {
+          payload.done()
+        }
+      }
+      catch(e) {
+        console.error(e)
+      }
+      this.replace({showProgress: false})
+    },
+    showMapImage() {
+      // 地図ダブルタップ時のみ利用
+      this.fetchData()
+    },
+
     analysePotInfos(results){
       const potInfos = {}
       results.forEach((val) => {
@@ -139,21 +194,18 @@ export default {
       if(param.errorMessage){
         this.message = param.errorMessage
         this.showAlert = true
-        return false
+        return
       }
-      try {
-        const results = await HttpHelper.getAppService(`/core/positionHistory/${param.form.areaId}/${param.form.groupId? param.form.groupId: 0}/${param.form.potId? param.form.potId: 0}/${param.form.datetimeFrom.getTime()}/${param.form.datetimeTo.getTime()}`)
-        if(!results.length){
-          this.message = this.$i18n.tnl("message.notFoundData", {target: this.$i18n.tnl("label.flowlineAnalysis")})
-          this.showAlert = true
-          return false
-        }
-        const analysisResults = this.analyseFlowline(results)
-        this.draw(param, analysisResults)
-        return true
-      }catch(e){
-        console.error(e)
+      const analysisResults = this.analyseFlowline(param.results)
+      param = {
+        ...param,
+        view: this.container,
+        mapScale: this.mapImageScale
       }
+      this.container.removeAllChildren()
+      this.draw(param, analysisResults)
+      this.stage.update()
+      this.shownParam = param
     },
   }
 }
