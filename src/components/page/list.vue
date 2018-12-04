@@ -143,7 +143,7 @@ export default {
           category: '',
           group: '',
           area: '',
-          detectState: '',
+          detectState: null,
         },
       },
       emptyMessage: this.$i18n.tnl('message.listEmpty'),
@@ -386,7 +386,7 @@ export default {
             }
             break
             case 'detectState':
-            if (extra.detectState &&
+            if (extra.detectState != null &&
                 !(extra.detectState === originItem.detectState)) {
               extBool = false
             }

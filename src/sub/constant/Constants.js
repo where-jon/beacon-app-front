@@ -145,11 +145,11 @@ export const DETECT_STATE = {
   NONE: 0,
   getTypes() {
     return [
-      {id: this.DETECTED, text: i18n.t('label.detected')},
-      {id: this.LOST, text: i18n.t('label.temporaryUndetect')},
-      {id: this.TODAY_UNDETECT, text: i18n.t('label.todayUndetect')},
-      {id: this.UNDETECT, text: i18n.t('label.undetect')},
-      {id: this.NONE, text: i18n.t('label.none')}
+      {value: this.DETECTED, text: i18n.t('label.detected')},
+      {value: this.LOST, text: i18n.t('label.temporaryUndetect')},
+      {value: this.TODAY_UNDETECT, text: i18n.t('label.todayUndetect')},
+      {value: this.UNDETECT, text: i18n.t('label.undetect')},
+      {value: this.NONE, text: i18n.t('label.none')}
     ]
   },
 }

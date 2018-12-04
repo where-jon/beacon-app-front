@@ -5,7 +5,7 @@ import * as mock from '../../assets/mock/mock'
 import * as Util from '../util/Util'
 
 export const getLabel = (state) => {
-  return DETECT_STATE.getTypes().find((type) => type.id === state).text
+  return DETECT_STATE.getTypes().find((type) => type.value === state).text
 }
 
 export const getClass = (state) => {
