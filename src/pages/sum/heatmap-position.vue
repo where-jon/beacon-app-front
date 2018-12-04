@@ -6,7 +6,15 @@
       <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">
         <div v-html="message" />
       </b-alert>
-      <analysis-search :fromHeatmap="fromHeatmap" @:resetHeatmap="removeHeatmap()"/>
+      <div class="mapContainer mb-5">
+        <div class="container">
+          <analysis-search :fromHeatmap="fromHeatmap" :areaOptions="areaOptions"
+              v-on:changeArea="changeArea" v-on:display="display"/>
+        </div>
+        <b-row>
+          <div id="heatmap" ref="heatmap" class="mx-auto"/>
+        </b-row>
+      </div>
     </div>
     <!-- modal -->
     <b-modal id="modalError" :title="$t('label.error')" ok-only>
@@ -21,6 +29,7 @@ import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import { DISP } from '../../sub/constant/config'
 import * as Util from '../../sub/util/Util'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
+import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import analysisSearch from '../../components/parts/analysissearch.vue'
 
@@ -29,11 +38,11 @@ export default {
     breadcrumb,
     analysisSearch
   },
+  mixins: [showmapmixin],
   data() {
     return {
       positionHistories: [],
       heatmap: null,
-      mapScale: 1,
       fromHeatmap: true,
       showInfo: false,
       showAlert: false,
@@ -52,7 +61,7 @@ export default {
   },
   computed: {
     heatmapData() {
-      const scale = this.mapScale
+      const scale = this.mapImageScale
       let positions = 
         _.reduce(this.positionHistories, (ary, hist) => {
           if (ary[hist.posId]) {
@@ -67,7 +76,6 @@ export default {
           }
           return ary
         }, [])
-      console.log(positions)
       positions = _.compact(positions)
       let maxValue = _.maxBy(positions, 'value').value
       return {
@@ -77,6 +85,37 @@ export default {
     }
   },
   methods: {
+    reset() {
+      this.fetchData()
+    },
+    async fetchData(payload){
+      try {
+        this.replace({showProgress: true})
+        const map = new Image()
+        map.src = this.mapImage
+
+        this.removeHeatmap()
+        let heatmap = document.getElementById('heatmap')
+        while (heatmap.firstChild) {
+          heatmap.removeChild(heatmap.firstChild)
+        }
+        heatmap.appendChild(map)
+        map.onload = (evt) => {
+          Util.debug('in onload...')
+          const size = this.calcFitSize(map, heatmap.parentElement)
+          map.width = size.width
+          map.height = size.height
+          Util.debug(size)
+        }
+        if (payload && payload.done) {
+          payload.done()
+        }
+      }
+      catch(e) {
+        console.error(e)
+      }
+      this.replace({showProgress: false})
+    },
     async display(param) {
       this.showAlert = false
       if(param.errorMessage){
@@ -87,7 +126,6 @@ export default {
       }
       try {
         const form = param.form
-        this.mapScale = param.mapScale
         let reqParam = [
           '/core/positionHistory',
           form.areaId,
@@ -96,9 +134,9 @@ export default {
           form.datetimeFrom.getTime(),
           form.datetimeTo.getTime(),
         ].join('/')
-        console.log(reqParam)
+        Util.debug(reqParam)
         const results = await HttpHelper.getAppService(reqParam)
-        console.log(results)
+        Util.debug(results)
         if(!results.length){
           this.message = this.$i18n.tnl("message.notFoundData", {target: this.$i18n.tnl("label.heatmapPosition")})
           this.showAlert = true
@@ -139,6 +177,7 @@ export default {
 ::-webkit-scrollbar { 
   display: none; 
 }
-
-
+div#heatmap {
+  display: inline-block;
+}
 </style>
