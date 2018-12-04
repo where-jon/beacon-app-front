@@ -20,7 +20,7 @@
             <td>{{ gateway.deviceid }}</td>
             <td>{{ gateway.updated }}</td>
             <td>
-              <span class="badge badge-pill" :style="{backgroundColor: getGatewayStateColor(gateway.timestamp)}">{{ $i18n.t('label.' + getGatewayState(gateway.timestamp)) }}</span>
+              <span :class="stateClass(gateway.timestamp)">{{ getGatewayState(gateway.timestamp) }}</span>
             </td>
           </tr>
         </tbody>
@@ -42,6 +42,7 @@ import commonmixinVue from '../../components/mixin/commonmixin.vue'
 import reloadmixinVue from '../../components/mixin/reloadmixin.vue'
 import moment from 'moment'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
+import * as DetectStateHelper from '../../sub/helper/DetectStateHelper'
 import allCount from '../../components/parts/allcount.vue'
 
 export default {
@@ -67,9 +68,7 @@ export default {
       labelDeviceId: this.$i18n.t('label.deviceId'),
       labelTimestamp: this.$i18n.t('label.final-receive-timestamp'),
       labelState: this.$i18n.t('label.state'),
-      labelReceiveNormal: this.$i18n.t('label.receiveNormal'),
-      labelMalfunction: this.$i18n.t('label.malfunction'),
-      gatewayState: DISP.GATEWAY.STATE_COLOR
+      badgeClassPrefix: 'badge badge-pill badge-',
     }
   },
   props: {
@@ -114,7 +113,7 @@ export default {
         }
         const currentTime = new Date().getTime()
         gateways = gateways.map((e) => {
-          const state = this.$i18n.t('label.' + this.getGatewayState(e.timestamp))
+          const state = this.getGatewayState(e.timestamp)
           return { ...e, state: state }
         })
         this.replaceMonitor({gateways})
@@ -125,34 +124,21 @@ export default {
       this.replace({showProgress: false})
       this.isLoad = false
     },
-    isUndetect(updated) {
-      if (updated == null) {
-        return false
-      }
-      return updated == "" || new Date().getTime() - updated > APP.GATEWAY.UNDETECT
+    isUndetect(updatetime) {
+      const state = DetectStateHelper.getExbState(updatetime)
+      return DetectStateHelper.isUndetect(state)
     },
     getTableHeaders() {
       return !this.isDev ? [this.labelNo,this.labelDeviceId,this.labelTimestamp,this.labelState]
       : [this.labelNo,'deviceid','updated','state']
     },
-    getGatewayStateColor(updated) {
-      return DISP.GATEWAY.STATE_COLOR[this.getGatewayState(updated)]
+    stateClass(updatetime) {
+      const state = DetectStateHelper.getExbState(updatetime)
+      return this.badgeClassPrefix + DetectStateHelper.getClass(state)
     },
-    getGatewayState(updated) {
-      // 未検知
-      if (this.isUndetect(updated)) {
-        return 'undetect'
-      }
-      const time = new Date().getTime() - new Date(updated).getTime()
-      if (time > APP.GATEWAY.NOTRECEIVE) {
-        return 'notReceive'
-      }
-      if (time > APP.GATEWAY.MALFUNCTION) {
-        return 'malfunction'
-      }
-      else {
-        return 'receiveNormal'
-      }
+    getGatewayState(updatetime) {
+      const state = DetectStateHelper.getGwState(updatetime)
+      return DetectStateHelper.getLabel(state)
     },
     download() {
       HtmlUtil.fileDL("gateway.csv", Util.converToCsv(this.gateways), getCharSet(this.$store.state.loginId))

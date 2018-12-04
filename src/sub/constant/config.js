@@ -1,7 +1,7 @@
 // configuration for app
 // Basically using const but values are not primitive but objects or arrays because it may change from outside.
 
-import { LOGIN_MODE } from './Constants';
+import { LOGIN_MODE, DETECT_STATE } from './Constants';
 
 export const DEV = { // 開発デバッグ関連
   DEBUG: 0, // デバッグモード (0:なし、1以上デバッグレベル)
@@ -22,29 +22,27 @@ export const APP = { // 機能面に関する設定
   // 時間設定
   TIMEOUT: 60 * 60 * 1000, // session timeout(using local storage)
   AUTO_RELOAD: 60000, // 自動リロード間隔(ミリ秒)
-  UNDETECT_TIME: 60 * 60 * 1000, // used on telemetry 
+
+  TRANSPARENT_TIME: 60 * 1000, // 半透明：現在時刻から経過した段階で半透明（ミリ秒）
+  HIDE_TIME: 10 * 60 * 1000, // 消失とみなす時間（ミリ秒）
+  UNDETECT_TIME: 60 * 60 * 1000, // 未検知とみなす時間（ミリ秒）
+
   DOWN_RED_TIME: 60000, // MEDiTAG使用時：転倒時赤枠の表示時間
   TEMPERATURE_LINE_HOUR_START: 8,  // 温湿度グラフの開始時間
   TEMPERATURE_LINE_HOUR_END: 21,  // 温湿度グラフの終了時間
   GATEWAY: {
-    MALFUNCTION: 30 * 60 * 1000, // 動作不良時間（ミリ秒）
-    NOTRECEIVE: 60 * 60 * 1000, // 未受信時間（ミリ秒）
-    UNDETECT: 24 * 60 * 60 * 1000, // 未検知時間（ミリ秒）
+    HIDE_TIME: 30 * 60 * 1000, // 消失とみなす時間（ミリ秒）
+    UNDETECT_TIME: 60 * 60 * 1000, // 未検知とみなす時間（ミリ秒）
   },
-  MONITOR_TX: {
-    ABSENT: 20 * 60 * 1000, // 不在時間（ミリ秒）
-    UNDETECT: 24 * 60 * 60 * 1000,  // 未検知時間（ミリ秒）
-  },  
   TELEMETRY: {
-    NOSIGNAL: 30 * 60 * 1000, // 未検知時間（ミリ秒）
+    HIDE_TIME: 30 * 60 * 1000, // 消失とみなす時間（ミリ秒）
+    UNDETECT_TIME: 60 * 60 * 1000, // 未検知とみなす時間（ミリ秒）
   },
     
   // 測位関連設定
   TX_POS_ONE_TO_ONE: false, // 1つの場所に1TXのみ存在可能
   RSSI_MIN: -67, // RSSI下限値
   MOVING_AVERAGE: 5, // 5回分移動平均
-  TRANSPARENT_TIME: 1 * 1000, // 現在時刻から経過した段階で半透明(ms)
-  HIDE_TIME: 90000 * 1000, // 現在時刻から経過した段階で表示(ms)
   
   // 機能
   USE_THERMOPILE: true, // サーモパイルセンサーの使用
@@ -90,7 +88,6 @@ export const APP = { // 機能面に関する設定
 
   // 位置把握(一覧)画面
   POSITION_WITH_AREA: true, // エリアを表示
-  POSITION_UNDETECT_TIME: 10 * 60 * 1000, //TXを検知後未検知とみなす時間(ms)
   POSITION_TIMEZONE: -9, // 午前0時を決定するためのタイムゾーン(時)
 
   // POT関連設定
@@ -125,7 +122,7 @@ export const EXCLOUD = {
   // POSITION_URL: EXCLOUD_BASE_URL + "/beacon/position-kalman?_=",
   // GATEWAY_URL: EXCLOUD_BASE_URL + "/gateway/0?=",
   // TELEMETRY_URL: EXCLOUD_BASE_URL + "/telemetry/0?=",
-  POSITION_URL: "/core/excloud/positionfetch/", // "/core/excloud/position?_=",
+  POSITION_URL: "/core/excloud/position?_=", // "/core/excloud/position?_=",
   GATEWAY_URL: "/core/excloud/gateway?_=",
   TELEMETRY_URL: "/core/excloud/telemetry?_=",
   SENSOR_URL: "/core/excloud/sensor/{id}?_=",
@@ -200,10 +197,10 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
 
   GATEWAY: { // ゲートウエイ
     STATE_COLOR: { // 状態別色
-      receiveNormal: '#28a745',
-      malfunction: '#dc3545',
-      notReceive: '#ffc107',
-      undetect: '#dc3545'
+      [DETECT_STATE.DETECTED]: '#28a745',
+      [DETECT_STATE.LOST]: '#ffc107',
+      [DETECT_STATE.UNDETECT]: '#dc3545',
+      [DETECT_STATE.NONE]: '#dc3545'
     }
   },
 

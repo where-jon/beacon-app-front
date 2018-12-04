@@ -17,7 +17,7 @@
             <tr v-for="(position, index) in positions" :key="index">
               <td scope="row" v-for="(val, key) in position" :key="key">
                 <span :class="powerLevel(val, true)" v-if="key === label_powerLevel">{{ powerLevel(val, false) }}</span>
-                <span :class="txStateClass(val)" v-else-if="key === label_state">{{ val }}</span>
+                <span :class="txStateClass(position[label_timestamp])" v-else-if="key === label_state">{{ val }}</span>
                 {{ key !== label_powerLevel && key !== label_state ? val : ''}}
               </td>
             </tr>
@@ -61,6 +61,7 @@ import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
 import { EventBus } from '../../sub/helper/EventHelper'
 import { EXB, DISP, APP } from '../../sub/constant/config'
+import * as DetectStateHelper from '../../sub/helper/DetectStateHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import VueScrollingTable from "vue-scrolling-table"
 import moment from 'moment'
@@ -101,9 +102,6 @@ export default {
       label_powerLevelWarn: this.$i18n.tnl('label.power-warning'),
       label_powerLevelPoor: this.$i18n.tnl('label.power-poor'),
       label_state: this.$i18n.tnl('label.state'),
-      label_receiveNormal: this.$i18n.tnl('label.receiveNormal'),
-      label_absent: this.$i18n.tnl('label.absent'),
-      label_undetect: this.$i18n.tnl('label.undetect'),
       interval: null,
       powerLevelGood: 69,
       powerLevelWarn: 39,
@@ -216,20 +214,12 @@ export default {
       return isClass ? "": "-"
     },
     txState(updatetime) {
-      const time = new Date().getTime() - moment(updatetime).local().toDate().getTime()
-      if (time < APP.MONITOR_TX.ABSENT) {
-        return this.label_receiveNormal
-      }
-
-      if (time < APP.MONITOR_TX.UNDETECT) {
-        return this.label_absent
-      }
-
-      return this.label_undetect
+      const state = DetectStateHelper.getTxState(updatetime)
+      return DetectStateHelper.getLabel(state)
     },
-    txStateClass(txState) {
-      return this.badgeClassPrefix + (txState === this.label_receiveNormal ?
-      'success' : (txState === this.label_absent ? 'warning' : 'danger'))
+    txStateClass(updatetime) {
+      const state = DetectStateHelper.getExbState(updatetime)
+      return this.badgeClassPrefix + DetectStateHelper.getClass(state)
     },
     download() {
       const records = this.positions.map(e => {
