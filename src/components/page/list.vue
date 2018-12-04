@@ -150,7 +150,6 @@ export default {
       modalInfo: { title: '', content: '', id:'' },
       totalRows: this.initTotalRows,
       file: null,
-      detectState: DETECT_STATE,
       message: null,
       error: null,
       sortBy: null,
@@ -235,7 +234,7 @@ export default {
       return options
     },
     detectStateOptions() {
-      let options = this.detectState.getTypes()
+      let options = DETECT_STATE.getTypes()
       options.unshift({value:null, text:''})
       return options
     },

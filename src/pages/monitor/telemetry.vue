@@ -17,7 +17,7 @@
             <tr v-for="(telemetry, index) in telemetrys" :key="index" :class="getTrClass(index, telemetry[label_timestamp])">
               <td scope="row" v-for="(val, key) in telemetry" :key="key" :class="getTdClass(index, val, key)" v-if="val !== null">
                 <span v-if="key === label_powerLevel"><i :class="getPowerLevelClass(val)"></i>{{ val }}</span>
-                <span :class="exbStateClass(val)" v-else-if="key === label_state">{{ val }}</span>
+                <span :class="exbStateClass(telemetry[label_timestamp])" v-else-if="key === label_state">{{ val }}</span>
                 {{ key !== label_powerLevel && key !== label_state ? val : '' }}
               </td>
             </tr>
@@ -47,6 +47,7 @@ import * as Util from '../../sub/util/Util'
 import { EventBus } from '../../sub/helper/EventHelper'
 import { EXB, DISP, APP, DEV } from '../../sub/constant/config'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
+import * as DetectStateHelper from '../../sub/helper/DetectStateHelper'
 import VueScrollingTable from "vue-scrolling-table"
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import commonmixinVue from '../../components/mixin/commonmixin.vue'
@@ -92,10 +93,7 @@ export default {
       label_name: this.$i18n.tnl('label.location'),
       label_timestamp: this.$i18n.tnl('label.final-receive-timestamp'),
       label_powerLevel: this.$i18n.tnl('label.power-level'),
-      label_receiveNormal: this.$i18n.tnl('label.receiveNormal'),
       label_state: this.$i18n.tnl('label.state'),
-      label_undetect: this.$i18n.tnl('label.undetect'),
-      label_nosignal: this.$i18n.tnl('label.no-signal', {min: APP.TELEMETRY.NOSIGNAL / (60 * 1000)}),
       badgeClassPrefix: 'badge badge-pill badge-',
       csvHeaders: {
         [this.$i18n.tnl('label.deviceNum')]: APP.EXB_WITH_DEVICE_NUM ? 'deviceNum' : null,
@@ -161,12 +159,9 @@ export default {
       this.replace({showProgress: false})
       this.isLoad = false
     },
-    isUndetect(yyymmddHHmiss) {
-      const time = moment(yyymmddHHmiss).local().toDate().getTime()
-      return new Date().getTime() - time > APP.UNDETECT_TIME
-    },
-    getTrClass (index, timestamp) {
-      return this.isUndetect(timestamp) ? 'undetect' : (index % 2 === 1 ? 'odd' : '')
+    getTrClass (index, updatetime) {
+      const state = DetectStateHelper.getExbState(updatetime)
+      return DetectStateHelper.isUndetect(state) ? 'undetect' : (index % 2 === 1 ? 'odd' : '')
     },
     getTdClass (index, val, key) {
       const tdClass = !this.isDev && key === this.label_powerLevel ? 'powerlevel' : ''
@@ -222,13 +217,12 @@ export default {
       return "fas fa-battery-empty power-empty"
     },
     exbState(updatetime) {
-      const time = new Date().getTime() - moment(updatetime).local().toDate().getTime()
-      return time < APP.TELEMETRY.NOSIGNAL ? this.label_receiveNormal :
-      (this.isUndetect(updatetime) ? this.label_undetect : this.label_nosignal)
+      const state = DetectStateHelper.getExbState(updatetime)
+      return DetectStateHelper.getLabel(state)
     },
-    exbStateClass(exbState) {
-      return this.badgeClassPrefix + (exbState === this.label_receiveNormal ?
-      'success' : (exbState === this.label_nosignal ? 'warning' : 'danger'))
+    exbStateClass(updatetime) {
+      const state = DetectStateHelper.getExbState(updatetime)
+      return this.badgeClassPrefix + DetectStateHelper.getClass(state)
     },
   }
 }

@@ -138,12 +138,18 @@ export const LED_BLINK_TYPES = {
 }
 
 export const DETECT_STATE = {
-  getTypes(){ 
+  DETECTED: 1,
+  LOST: 2,
+  TODAY_UNDETECT: 3,
+  UNDETECT: 4,
+  NONE: 0,
+  getTypes() {
     return [
-      {value: 1, text: i18n.t('label.detected')},
-      {value: 2, text: i18n.t('label.temporaryUndetect')},
-      {value: 3, text: i18n.t('label.todayUndetect')},
-      {value: 4, text: i18n.t('label.noDetect')},
+      {id: this.DETECTED, text: i18n.t('label.detected')},
+      {id: this.LOST, text: i18n.t('label.temporaryUndetect')},
+      {id: this.TODAY_UNDETECT, text: i18n.t('label.todayUndetect')},
+      {id: this.UNDETECT, text: i18n.t('label.undetect')},
+      {id: this.NONE, text: i18n.t('label.none')}
     ]
   },
 }
