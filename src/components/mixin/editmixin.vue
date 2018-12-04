@@ -132,7 +132,7 @@ export default {
           this.message = _.map(e.bulkError, (err) => {
             let col = this.modifyColName(err.col.trim())
             return this.$i18n.tline('message.bulk' + err.type + 'Failed', 
-              {line: err.line, col: this.$i18n.tnl(`label.${col}`), value: err.value, min: err.min, max: err.max, candidates: err.candidates},
+              {line: err.line, col: this.$i18n.tnl(`label.${col}`), value: Util.sanitize(err.value), min: err.min, max: err.max, candidates: err.candidates},
               this.showLine)
           }).join("<br>")
         }
