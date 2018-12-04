@@ -2,7 +2,7 @@
   <div>
     <breadcrumb :items="items" :extraNavSpec="extraNavSpec"
         :reload="reload" :shortName="shortName" />
-    <m-list :params="params" :list="positions" />
+    <m-list :params="params" :list="positionList" />
   </div>
 </template>
 
@@ -54,7 +54,7 @@ export default {
           {key: "powerLevel", label: 'power-level', tdClass: "action-rowdata", 'class': "text-md-center"},
           {key: "mapDisplay", tdClass: "action-rowdata"},
         ]),
-        initTotalRows: this.$store.state.app_service.positions.length,
+        initTotalRows: this.$store.state.app_service.positionList.length,
       },
       count: 0, // mockテスト用
       items: [
@@ -77,7 +77,7 @@ export default {
       'txs',
       'areas',
       'exbs',
-      'positions',
+      'positionList',
     ]),
   },
   methods: {
@@ -116,7 +116,7 @@ export default {
           }
         })
         console.log(positions)
-        this.replaceAS({positions})
+        this.replaceAS({positionList: positions})
         if (payload && payload.done) {
           payload.done()
         }
@@ -141,7 +141,7 @@ export default {
     },
     async checkDetectedTx(tx) {
       await this.fetchData()
-      return _.some(this.positions, (pos) => {
+      return _.some(this.positionList, (pos) => {
         return pos.tx.txId == tx.txId
             && !pos.noSelectedTx
       })

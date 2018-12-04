@@ -5,6 +5,7 @@ import {CATEGORY} from '../sub/constant/Constants'
 export const state = () => ({
   pots: [],
   pot: {},
+  positionList: [],
   positions: [],
   led: {},
   sensors: [],

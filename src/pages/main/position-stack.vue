@@ -21,8 +21,6 @@ import { DISP, DEV } from '../../sub/constant/config'
 import { SHAPE, EXTRA_NAV } from '../../sub/constant/Constants'
 import * as Util from '../../sub/util/Util'
 
-let that
-
 export default {
   components: {
     mList,
@@ -79,10 +77,7 @@ export default {
       'eachAreas',
     ])
   },
-  mounted() {
-    that = this
-    this.fetchData()
-  },
+  
   beforeDestroy() {
     this.replaceAS({positions: []})
   },
@@ -112,7 +107,7 @@ export default {
         positions = _.filter(positions, (pos) => 
           _.some(correctPositions, (cPos) => pos.btx_id == cPos.btx_id)
         )
-
+        
         this.replaceAS({positions})
 
         // スタイルをセット
