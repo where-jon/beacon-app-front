@@ -1,54 +1,48 @@
 <template>
-  <div class="mapContainer mb-5">
-    <div class="container">
-      <b-form inline @submit.prevent>
-        <b-form-group>
-          <b-form-row>
-            <b-form-row class="mb-3">
-              <label v-t="'label.area'" class="mr-2 mb-2"/>
-              <b-form-select v-model="form.areaId" :options="areaOptions" @change="changeArea" class="inputSelect" required />
-            </b-form-row>
+  <div>
+    <b-form inline @submit.prevent>
+      <b-form-group>
+        <b-form-row>
+          <b-form-row class="mb-3">
+            <label v-t="'label.area'" class="mr-2 mb-2"/>
+            <b-form-select v-model="form.areaId" :options="areaOptions"  class="inputSelect" required />
           </b-form-row>
-        </b-form-group>          
-      </b-form>
-      <b-form inline @submit.prevent>
-        <b-form-group>
-          <b-form-row>
-            <b-form-row v-if="enableGroup" class="mb-3 mr-5">
-              <label v-t="'label.group'" class="mr-2" />
-              <b-form-select v-model="form.groupId" :options="groupOptions" @change="changeGroup" class="mr-2 inputSelect" />
-            </b-form-row>
-            <b-form-row class="mb-3 mr-2">
-              <label v-t="'label.individual'" class="mr-2" />
-              <b-form-select v-model="form.potId" :options="potOptions" class="mr-2 inputSelect" />
-            </b-form-row>
+        </b-form-row>
+      </b-form-group>          
+    </b-form>
+    <b-form inline @submit.prevent>
+      <b-form-group>
+        <b-form-row>
+          <b-form-row v-if="enableGroup" class="mb-3 mr-5">
+            <label v-t="'label.group'" class="mr-2" />
+            <b-form-select v-model="form.groupId" :options="groupOptions" @change="changeGroup" class="mr-2 inputSelect" />
           </b-form-row>
-        </b-form-group>
-      </b-form>
-      <b-form inline @submit.prevent>
-        <b-form-group class="mr-5">
-          <b-form-row>
-            <b-form-row class="mb-3 mr-2">
-              <label v-t="'label.historyDateFrom'" class="mr-2"/>
-              <date-picker v-model="form.datetimeFrom" type="datetime" :clearable="false" @change="changeDatetimeFrom" class="mr-2 inputdatefrom" required/>
-            </b-form-row>
-            <b-form-row class="mb-3 mr-2">
-              <label v-t="'label.historyDateTo'" class="mr-2" />
-              <date-picker v-model="form.datetimeTo" type="datetime" :clearable="false" class="mr-2 inputdateto" required/>
-            </b-form-row>
-          </b-form-row>
-        </b-form-group>
-        <b-form-group>
           <b-form-row class="mb-3 mr-2">
-            <b-button :variant="theme" @click="display" v-t="'label.display'" />
+            <label v-t="'label.individual'" class="mr-2" />
+            <b-form-select v-model="form.potId" :options="potOptions" class="mr-2 inputSelect" />
           </b-form-row>
-        </b-form-group>
-      </b-form>
-      <b-row>
-        <canvas id="map" ref="map" v-if="!fromHeatmap"/>
-      </b-row>
-    </div>
-    <div id="heatmap" ref="heatmap" v-if="fromHeatmap" />
+        </b-form-row>
+      </b-form-group>
+    </b-form>
+    <b-form inline @submit.prevent>
+      <b-form-group class="mr-5">
+        <b-form-row>
+          <b-form-row class="mb-3 mr-2">
+            <label v-t="'label.historyDateFrom'" class="mr-2"/>
+            <date-picker v-model="form.datetimeFrom" type="datetime" :clearable="false" @change="changeDatetimeFrom" class="mr-2 inputdatefrom" required/>
+          </b-form-row>
+          <b-form-row class="mb-3 mr-2">
+            <label v-t="'label.historyDateTo'" class="mr-2" />
+            <date-picker v-model="form.datetimeTo" type="datetime" :clearable="false" class="mr-2 inputdateto" required/>
+          </b-form-row>
+        </b-form-row>
+      </b-form-group>
+      <b-form-group>
+        <b-form-row class="mb-3 mr-2">
+          <b-button :variant="theme" @click="display" v-t="'label.display'" />
+        </b-form-row>
+      </b-form-group>
+    </b-form>
   </div>
 </template>
 
@@ -56,18 +50,18 @@
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import { Container } from '@createjs/easeljs/dist/easeljs.module'
 import locale from 'element-ui/lib/locale'
 import * as Util from '../../sub/util/Util'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
+import * as HttpHelper from '../../sub/helper/HttpHelper'
 import { APP } from '../../sub/constant/config.js'
 import { CATEGORY } from '../../sub/constant/Constants'
-import showmapmixin from '../mixin/showmapmixin.vue'
 import validatemixin from '../mixin/validatemixin.vue'
+import commonmixinVue from '../mixin/commonmixin.vue'
 
 export default {
-  mixins: [showmapmixin, validatemixin],
+  mixins: [validatemixin, commonmixinVue],
   components: {
     DatePicker,
   },
@@ -76,6 +70,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    areaOptions: {
+      type: Array,
+      required: true,
+    }
   },
   data () {
     return {
@@ -86,12 +84,11 @@ export default {
         datetimeFrom: null,
         datetimeTo: null,
       },
+      appServicePath: '/core/positionHistory',
       groupOptions: [],
       potOptions: [],
       interval: 24 * 60 * 60 * 1000,
       intervalHours: 24,
-      container: null,
-      isShownFlowline: false,
     }
   },
   computed: {
@@ -109,6 +106,11 @@ export default {
     },
     requirePerson(){
       return !this.fromHeatmap
+    }
+  },
+  watch: {
+    'form.areaId' : function(newAreaId, oldAreaId){
+      this.changeArea(newAreaId)
     }
   },
   async created() {
@@ -151,6 +153,9 @@ export default {
         this.form.potId = null
       }
     },
+    changeArea(areaId) {
+      this.$emit("changeArea", areaId)
+    },
     changeDatetimeFrom(newVal = this.form.datetimeFrom) {
       if(newVal){
         this.form.datetimeTo = this.getDatetime(newVal, {minutes: APP.ANALYSIS_DATETIME_INTERVAL})
@@ -173,73 +178,30 @@ export default {
       return this.formatValidateMessage(errors)
     },
     async display() {
-      this.container ? this.container.removeAllChildren() : null
-      this.isShownFlowline = 
-          await this.$parent.$options.methods.display.call(this.$parent, {view: this.container, form: this.form, errorMessage: this.validate(), mapScale: this.mapImageScale})
-      this.stage ? this.stage.update() : null
-    },
-    showMapImage() {
-      // 地図ダブルタップ時のみ利用
-      this.fetchData()
-    },
-    reset() {
-      this.isShownMapImage = false
-      if (this.fromHeatmap) {
-        this.fetchDataHeatmap()
-      }
-    },
-    async fetchData(payload){
-      try {
-        this.replace({showProgress: true})
-
-        this.fromHeatmap ? this.fetchDataHeatmap() : this.fetchDataFlowline()
-
-        if (payload && payload.done) {
-          payload.done()
+      let errorMessage = this.validate()
+      if (errorMessage) {
+         this.$emit("display", {form: this.form, results: [], errorMessage})
+      } else {
+        try {
+          const form = this.form
+          let reqParam = [
+            this.appServicePath,
+            form.areaId,
+            form.groupId ? form.groupId : '0',
+            form.potId ? form.potId : '0',
+            form.datetimeFrom.getTime(),
+            form.datetimeTo.getTime(),
+          ].join('/')
+          Util.debug(reqParam)
+          const results = await HttpHelper.getAppService(reqParam)
+          Util.debug(results)
+          if(!results.length){
+            errorMessage = this.$i18n.tnl("message.notFoundData", {target: this.$i18n.tnl("label.heatmapPosition")})
+          }
+          this.$emit("display", {form: this.form, results, errorMessage})
+        } catch (e) {
+          console.error(e)
         }
-      }
-      catch(e) {
-        console.error(e)
-      }
-      this.replace({showProgress: false})
-    },
-    fetchDataFlowline(){
-      this.showMapImageDef(() => {
-        if (this.container) {
-          this.container.removeAllChildren()
-          this.stage.removeChild(this.container)
-        }
-        if (!this.container) {
-          this.container = new Container()
-        }
-        this.container.x = 0
-        this.container.y = 0
-        this.container.width = this.bitmap.width
-        this.container.height = this.bitmap.height
-        this.stage.addChild(this.container)
-        this.stage.update()
-        this.forceUpdateRealWidth()
-        if (this.isShownFlowline) {
-          this.display()
-        }
-      })
-    },
-    fetchDataHeatmap(){
-      const map = new Image()
-      map.src = this.mapImage
-
-      this.$emit('resetHeatmap')
-      let heatmap = document.getElementById('heatmap')
-      while (heatmap.firstChild) {
-        heatmap.removeChild(heatmap.firstChild)
-      }
-      heatmap.appendChild(map)
-      map.onload = (evt) => {
-        console.log('in onload...')
-        const size = this.calcFitSize(map, heatmap.parentElement)
-        map.width = size.width
-        map.height = size.height
-        console.log(size)
       }
     },
   }
@@ -255,8 +217,5 @@ export default {
 }
 .inputdateto {
   width: 200px;
-}
-div#heatmap {
-  display: inline-block;
 }
 </style>
