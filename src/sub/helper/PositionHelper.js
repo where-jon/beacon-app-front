@@ -296,7 +296,7 @@ export const setDetectState = (positions) => {
     }
 
     position.detectState = DetectStateHelper.getTxState(updatetime)
-    position.noSelectedTx = position.detectState < DETECT_STATE.UNDETECT
+    position.noSelectedTx = position.detectState != DETECT_STATE.DETECTED
   })
 
 }
