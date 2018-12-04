@@ -304,6 +304,7 @@ export const setDetectState = (positions) => {
       position.detectState = 1
     } else if (lastDetect > boundary) {
       position.detectState = 2
+      position.noSelectedTx = true
     } else if (!(lastDetect === -1)) {
       position.detectState = 3
       position.noSelectedTx = true
