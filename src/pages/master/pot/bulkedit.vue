@@ -56,7 +56,7 @@ export default {
     async save(bulkSaveFunc) {
       const MAIN_COL = "potId"
       const NULLABLE_NUMBER_COL = ["txId", "exbId", "zoneId", "areaId", "potType"]
-      const MANY_TO_MANY = ["groupId", "categoryId", "groupName", "categoryName"]
+      const MANY_TO_MANY = ["groupId", "categoryId"]
       const extValueHeaders = ["ruby", "post", "tel"]
       const txIdHeaders = ["btxId", "minor"]
       await StateHelper.load('category')
@@ -71,18 +71,6 @@ export default {
           }
           else if("categoryId" === headerName) {
             entity.potCategoryList = [{potCategoryPK: {categoryId: Number(val)}}]
-          }
-          else if("groupName" === headerName) {
-            const group = this.groups.find((group) => group.groupName == val)
-            if(group){
-              entity.potGroupList = [{potGroupPK: {groupId: group.groupId}}]
-            }
-          }
-          else if("categoryName" === headerName) {
-            const category = this.categories.find((category) => category.categoryName == val)
-            if(category){
-              entity.potCategoryList = [{potCategoryPK: {categoryId: category.categoryId}}]
-            }
           }
           return dummyKey
         }
