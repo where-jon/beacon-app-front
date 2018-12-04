@@ -51,13 +51,13 @@ export default {
         if (!entity.display) {
           entity.display = {}
         }
-        if(!entity.display.color){
+        if(entity.display.color == null){
           entity.display.color = updateData.display.color
         }
-        if(!entity.display.bgColor){
+        if(entity.display.bgColor == null){
           entity.display.bgColor = updateData.display.bgColor
         }
-        if(!entity.display.shape){
+        if(entity.display.shape == null){
           entity.display.shape = updateData.display.shape
         }
       }
