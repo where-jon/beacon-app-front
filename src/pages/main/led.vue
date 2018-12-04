@@ -8,7 +8,7 @@
           <b-form-group :label="$t('label.deviceId')">
             <b-form-select v-model="form.deviceId" :options="deviceIds" required :readonly="!isEditable" />
           </b-form-group>
-          <b-form-group :label="$t('label.color')">
+          <b-form-group :label="$t('label.ledColor')">
             <b-form-checkbox-group v-model="form.colors">
               <b-form-checkbox class="checkBlue" :value="ledColors.BLUE" :readonly="!isEditable">
                 {{$t('label.blue')}}
