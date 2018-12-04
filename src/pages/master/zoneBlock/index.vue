@@ -117,8 +117,8 @@ export default {
   },
   computed: {
     base64 () {
-      const area = this.$store.state.app_service.areas.find((a) => { return a.areaId === this.areaId })
-      return area ? area.mapImage : ''
+      const areaImage = this.$store.state.app_service.areaImages.find((a) => { return a.areaId === this.areaId })
+      return areaImage ? areaImage.mapImage : ''
     },
     hasId (){
       return Util.hasValue(this.form.zoneId)

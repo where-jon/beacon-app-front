@@ -51,7 +51,7 @@ export default {
   components: {
     breadcrumb,
   },
-  mixins: [editmixinVue, commonmixinVue ],
+  mixins: [editmixinVue, commonmixinVue],
   data() {
     return {
       name: 'area',

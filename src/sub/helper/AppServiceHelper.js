@@ -21,6 +21,12 @@ export const fetch = async (target, id) => {
     return data
 }
 
+export const fetchMapImage = async (path) => {
+  return await HttpHelper.getAppService(path + "?_=" + new Date().getTime())
+  // let data = await HttpHelper.getAppService(path + "?_=" + new Date().getTime(), {responseType: 'arraybuffer'})
+  // return new Buffer(data, 'binary').toString('base64')
+}
+
 export const save = async (target, entity, updateOnlyNN = UPDATE_ONLY_NN.NONE) => {
     const path = target
     var params = new URLSearchParams()

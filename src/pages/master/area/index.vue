@@ -70,7 +70,7 @@ export default {
       try {
         this.replace({showProgress: true})
         await StateHelper.load('area')
-        this.areaImages = this.areas.map((val) => ({ id: val.areaId, mapImage: val.mapImage, thumbnail: val.thumbnail}))
+        this.areaImages = this.areas.map((val) => ({ areaId: val.areaId, thumbnail: val.thumbnail}))
         this.areaList = this.areas.map((val) => ({
           ...val,
           zoneList: Util.hasValue(val.zoneList)? val.zoneList: [],
@@ -88,7 +88,7 @@ export default {
       this.replace({showProgress: false})
     },
     thumbnail(row) {
-      const img = this.areaImages.find((val) => val.id == row.areaId)
+      const img = this.areaImages.find((val) => val.areaId == row.areaId)
       return img? img.thumbnail: null
     },
   },

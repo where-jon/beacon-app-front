@@ -1,6 +1,7 @@
 import * as MenuHelper from '../sub/helper/MenuHelper'
 import * as ConfigHelper from '../sub/helper/ConfigHelper'
 import * as HttpHelper from '../sub/helper/HttpHelper'
+import * as StateHelper from '../sub/helper/StateHelper'
 import * as config from '../sub/constant/config'
 import _ from 'lodash'
 
@@ -16,6 +17,11 @@ export default async (context, inject) => {
   catch (e) {
     console.error(e) // ignore
   }
+
+  // load map image
+  setTimeout(() => {
+    StateHelper.loadAreaImages()
+  }, 500)
 
   // loading chunk failed対策 Loading chunk 6 failed.
   setInterval(() => {

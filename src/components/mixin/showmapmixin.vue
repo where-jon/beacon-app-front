@@ -32,7 +32,7 @@ export default {
         }
         return area.areaId == this.selectedArea
       })
-      return area && area.mapImage
+      return area && this.getMapImage(area.areaId)
     },
     areaOptions() {
       let ret = _(this.$store.state.app_service.areas).map((val) => {
@@ -104,10 +104,17 @@ export default {
     ...mapMutations('main', [
       'replaceMain', 
     ]),
+    getMapImage(areaId) {
+      let areaImage = _.find(this.$store.state.app_service.areaImages, (areaImage) => {
+        return areaImage.areaId == areaId
+      })
+      return areaImage && areaImage.mapImage
+    },
     async fetchAreaExbs(tx) {
       if (this.isFirstTime) {
         await StateHelper.load('area')
         this.selectedArea = this.selectedArea ? this.selectedArea : Util.getValue(this, 'areas.0.areaId', null)
+        StateHelper.loadAreaImage(this.selectedArea)
         console.log("after loadAreas. selectedArea=" + this.selectedArea)
         await StateHelper.load('exb')
         if (tx) {
@@ -215,7 +222,7 @@ export default {
         let area = _.find(this.areas, (area) => {
           return area.areaId == val
         })
-        if (area.mapImage) {
+        if (this.getMapImage(area.areaId)) {
           this.reset()
           this.selectedArea = val
           this.fetchData()
