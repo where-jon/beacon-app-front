@@ -99,7 +99,7 @@ export default {
         PositionHelper.setDetectState(positions)
 
         positions = positions.map((pos) => {
-          const stateOpt = DETECT_STATE.getTypes().find((val) => pos.detectState === val.id)
+          const stateOpt = DETECT_STATE.getTypes().find((val) => pos.detectState === val.value)
           return {
             ...pos,
             state: stateOpt ? stateOpt.text : null,
