@@ -54,6 +54,7 @@ import locale from 'element-ui/lib/locale'
 import * as Util from '../../sub/util/Util'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
+import * as HttpHelper from '../../sub/helper/HttpHelper'
 import { APP } from '../../sub/constant/config.js'
 import { CATEGORY } from '../../sub/constant/Constants'
 import validatemixin from '../mixin/validatemixin.vue'
@@ -83,6 +84,7 @@ export default {
         datetimeFrom: null,
         datetimeTo: null,
       },
+      appServicePath: '/core/positionHistory',
       groupOptions: [],
       potOptions: [],
       interval: 24 * 60 * 60 * 1000,
@@ -176,7 +178,31 @@ export default {
       return this.formatValidateMessage(errors)
     },
     async display() {
-      this.$emit("display", {form: this.form, errorMessage: this.validate()})
+      let errorMessage = this.validate()
+      if (errorMessage) {
+         this.$emit("display", {form: this.form, results: [], errorMessage})
+      } else {
+        try {
+          const form = this.form
+          let reqParam = [
+            this.appServicePath,
+            form.areaId,
+            form.groupId ? form.groupId : '0',
+            form.potId ? form.potId : '0',
+            form.datetimeFrom.getTime(),
+            form.datetimeTo.getTime(),
+          ].join('/')
+          Util.debug(reqParam)
+          const results = await HttpHelper.getAppService(reqParam)
+          Util.debug(results)
+          if(!results.length){
+            errorMessage = this.$i18n.tnl("message.notFoundData", {target: this.$i18n.tnl("label.heatmapPosition")})
+          }
+          this.$emit("display", {form: this.form, results, errorMessage})
+        } catch (e) {
+          console.error(e)
+        }
+      }
     },
   }
 }

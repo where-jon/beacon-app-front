@@ -29,7 +29,6 @@ import analysisSearch from '../../components/parts/analysissearch.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import drawMixin from '../../components/mixin/drawmixin.vue'
 import { getTheme } from '../../sub/helper/ThemeHelper'
-import * as HttpHelper from '../../sub/helper/HttpHelper'
 
 export default {
   mixins: [showmapmixin, drawMixin ],
@@ -197,26 +196,16 @@ export default {
         this.showAlert = true
         return
       }
-      try {
-        const results = await HttpHelper.getAppService(`/core/positionHistory/${param.form.areaId}/${param.form.groupId? param.form.groupId: 0}/${param.form.potId? param.form.potId: 0}/${param.form.datetimeFrom.getTime()}/${param.form.datetimeTo.getTime()}`)
-        if(!results.length){
-          this.message = this.$i18n.tnl("message.notFoundData", {target: this.$i18n.tnl("label.flowlineAnalysis")})
-          this.showAlert = true
-          return
-        }
-        const analysisResults = this.analyseFlowline(results)
-        param = {
-          ...param,
-          view: this.container,
-          mapScale: this.mapImageScale
-        }
-        this.container.removeAllChildren()
-        this.draw(param, analysisResults)
-        this.stage.update()
-        this.shownParam = param
-      }catch(e){
-        console.error(e)
+      const analysisResults = this.analyseFlowline(param.results)
+      param = {
+        ...param,
+        view: this.container,
+        mapScale: this.mapImageScale
       }
+      this.container.removeAllChildren()
+      this.draw(param, analysisResults)
+      this.stage.update()
+      this.shownParam = param
     },
   }
 }

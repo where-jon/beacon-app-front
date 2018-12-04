@@ -28,7 +28,6 @@ import h337 from 'heatmap.js'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import { DISP } from '../../sub/constant/config'
 import * as Util from '../../sub/util/Util'
-import * as HttpHelper from '../../sub/helper/HttpHelper'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import analysisSearch from '../../components/parts/analysissearch.vue'
@@ -124,32 +123,8 @@ export default {
         this.removeHeatmap()
         return
       }
-      try {
-        const form = param.form
-        let reqParam = [
-          '/core/positionHistory',
-          form.areaId,
-          form.groupId ? form.groupId : '0',
-          form.potId ? form.potId : '0',
-          form.datetimeFrom.getTime(),
-          form.datetimeTo.getTime(),
-        ].join('/')
-        Util.debug(reqParam)
-        const results = await HttpHelper.getAppService(reqParam)
-        Util.debug(results)
-        if(!results.length){
-          this.message = this.$i18n.tnl("message.notFoundData", {target: this.$i18n.tnl("label.heatmapPosition")})
-          this.showAlert = true
-          this.removeHeatmap()
-          return
-        }
-        this.positionHistories = results
-
-        this.drawHeatmap(document.getElementById('heatmap'))
-
-      } catch (e) {
-        console.error(e)
-      }
+      this.positionHistories = param.results
+      this.drawHeatmap(document.getElementById('heatmap'))
     },
     drawHeatmap(element) {
       this.removeHeatmap()
