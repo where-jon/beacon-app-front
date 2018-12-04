@@ -62,6 +62,10 @@ export default {
     ]),
   },
   methods: {
+    afterCrud(){
+      StateHelper.setForceFetch('exb', true)
+      StateHelper.setForceFetch('zone', true)
+    },
     async fetchData(payload) {
       try {
         this.replace({showProgress: true})

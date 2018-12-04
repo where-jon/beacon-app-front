@@ -6,7 +6,7 @@
     :style="{
         left: getLeft(),
         top: getTop(),
-        backgroundColor: this.selectedTx.bgColor,
+        backgroundColor: this.selectedSensor.length == 0 ? this.selectedTx.bgColor : this.selectedSensor[0].bg,
         color: this.selectedTx.color,
       }"
     v-if="!isShowModal"
@@ -24,8 +24,11 @@
       </div>
       <sensor :sensors="selectedSensor" isPopup="true" />
     </div>
-    <txdetailmodal :bgColor="this.selectedTx.bgColor" :color="this.selectedTx.color" v-else>
-      <div class="clearfix" :style="{backgroundColor: this.selectedTx.bgColor}">
+    <txdetailmodal
+    :bgColor="selectedSensor.length == 0 ? this.selectedTx.bgColor : this.selectedSensor[0].bg"
+    :color="this.selectedTx.color"
+    v-else>
+      <div class="clearfix" :style="{backgroundColor: this.selectedTx.bgColor}" v-if="selectedSensor.length == 0">
         <div class="thumbnail">
           <img :src="selectedTx.thumbnail" width="auto" height="125" v-if="selectedTx.thumbnail.length > 0" />
           <img src="/default.png" width="auto" height="116" v-else />
@@ -34,6 +37,7 @@
           <div v-for="(item, index) in getDispItems()" :key="index">{{ item }}</div>
         </div>
       </div>
+      <sensor :sensors="selectedSensor" isPopup="true" v-else />
     </txdetailmodal >
   </div>
 </template>
@@ -73,14 +77,16 @@ export default {
   data() {
     return {
       imageHeight: 125,
-      popupHeight: 135,
+      popupHeight: this.getPopupHeight(),
       tipHeight: 15,
       imageWidth: 0,
       descriptionWidth: 143,
       left: 0,
+      meditagWidth: 266,
     }
   },
   updated() {
+    this.popupHeight = this.getPopupHeight()
     this.left = this.getLeft()
   },
   methods: {
@@ -88,8 +94,13 @@ export default {
       this.imageWidth = await loadImage(this.selectedTx.thumbnail, this.imageHeight)
     },
     isOutOfFrame() {
-      this.setImageWidth()
-      return this.selectedTx.containerWidth - 45 <= this.selectedTx.orgLeft + this.descriptionWidth + this.imageWidth
+      const containerWidth = this.selectedTx.containerWidth - 45
+      if (this.selectedSensor.length == 0) {
+        this.setImageWidth()
+        return containerWidth <= this.selectedTx.orgLeft + this.descriptionWidth + this.imageWidth
+      }
+      // Meditagの場合
+      return containerWidth <= this.selectedTx.orgLeft + this.meditagWidth
     },
     getDispItems () {
       return Object.keys(DISP.TXDETAIL_ITEMS)
@@ -113,7 +124,10 @@ export default {
         return !isOut ? 'balloon-b' : 'balloon-br'
       }
       return !isOut ? 'balloon-u' : 'balloon-ur'
-    }
+    },
+    getPopupHeight() {
+      return this.selectedSensor.length == 0 ? 135 : 211
+    },
   },
 }
 </script>

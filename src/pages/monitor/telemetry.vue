@@ -211,10 +211,10 @@ export default {
         return "fas fa-battery-full power-safe"
       }
       if (59 < num) {
-        return "fas fa-three-quarters power-safe"
+        return "fas fa-battery-three-quarters power-safe"
       }
       if (39 < num) {
-        return "fas fa-half power-warning"
+        return "fas fa-battery-half power-warning"
       }
       if (19 < num) {
         return "fas fa-battery-quarter power-empty"
