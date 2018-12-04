@@ -411,6 +411,7 @@
     "notFoundData": "{target}のデータがありません。",
     "notMatchCureentPassword": "パスワードが違います。",
     "invalidPassword": "パスワードの形式が不正です。",
+    "notMatchPasswordRegist": "パスワードと確認パスワードが一致していません。",
     "notMatchPassword": "変更パスワードと確認パスワードが一致していません。",
     "lengthRange": "{target}は{min}文字以上{max}文字以下で指定してください。",
     "emptyFile": "ファイルの中身が空です。",
