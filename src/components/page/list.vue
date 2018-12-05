@@ -148,7 +148,7 @@ export default {
       },
       emptyMessage: this.$i18n.tnl('message.listEmpty'),
       modalInfo: { title: '', content: '', id:'' },
-      totalRows: this.initTotalRows,
+      totalRows: this.params.initTotalRows,
       file: null,
       message: null,
       error: null,
