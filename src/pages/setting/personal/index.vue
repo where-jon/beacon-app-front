@@ -8,7 +8,7 @@
           target: $i18n.tnl('label.login-user-profile')})
         }}</b-alert>
       <b-alert variant="danger" dismissible :show="hasError">{{ 
-        $i18n.tnl('message.updateFailedNoCode', {
+        $i18n.terror('message.updateFailed', {
           target: $i18n.tnl('label.login-user-profile')
         })
         }}</b-alert>

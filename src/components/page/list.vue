@@ -411,7 +411,7 @@ export default {
         this.message = this.$i18n.tnl('message.deleteCompleted', {target: this.$i18n.tnl('label.' + this.params.name)})
         this.$parent.$options.methods.fetchData.apply(this.$parent)        
       } catch (e) {
-        this.error = this.$i18n.tnl('message.deleteFailed', {target: this.$i18n.tnl('label.' + this.params.name), code: e.response.status})
+        this.error = this.$i18n.terror('message.deleteFailed', {target: this.$i18n.tnl('label.' + this.params.name), code: e.response.status})
       }
     },
     // 位置把握(一覧)から在席表示に遷移する

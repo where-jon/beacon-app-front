@@ -25,6 +25,10 @@ export default async ({ app, store }, inject) => {
   app.i18n.tline = (path, param, showLine = true) => {
     return (showLine && param && param.line? app.i18n.t("message.csvLine", param).concat(": "): "").concat(app.i18n.t(path, param))
   }
+  app.i18n.terror = (path, param) => {
+    const messageCode = param && param.code? app.i18n.tnl("message.failedCode", param): ""
+    return app.i18n.tnl(path, param).concat(messageCode)
+  }
   inject('i18n', app.i18n)
   setI18nConstants(app.i18n)
   setApp(app.i18n)
