@@ -43,15 +43,11 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'pot', 'potImages', 'categories', 'groups'
+      'pot', 'potImages', 'categories', 'groups', 'txs'
     ]),
   },
   methods: {
-    resetThumbnail(entity, dummyKey){
-      const updateData = this.potImages.find((val) => val.id == entity.potId)
-      if(updateData){
-        entity.thumbnail = updateData.thumbnail
-      }
+    resetData(entity, dummyKey){
       if(!APP.POT_WITH_POTCD){
         entity.potCd = entity.potName
       }
@@ -60,10 +56,12 @@ export default {
     async save(bulkSaveFunc) {
       const MAIN_COL = "potId"
       const NULLABLE_NUMBER_COL = ["txId", "exbId", "zoneId", "areaId", "potType"]
-      const MANY_TO_MANY = ["groupId", "categoryId", "groupName", "categoryName"]
+      const MANY_TO_MANY = ["groupId", "categoryId"]
       const extValueHeaders = ["ruby", "post", "tel"]
+      const txIdHeaders = ["btxId", "minor"]
       await StateHelper.load('category')
       await StateHelper.load('group')
+      await StateHelper.load('tx')
 
       await bulkSaveFunc(MAIN_COL, null, null, (entity, headerName, val, dummyKey) => {
         // relation
@@ -74,21 +72,17 @@ export default {
           else if("categoryId" === headerName) {
             entity.potCategoryList = [{potCategoryPK: {categoryId: Number(val)}}]
           }
-          else if("groupName" === headerName) {
-            const group = this.groups.find((group) => group.groupName == val)
-            if(group){
-              entity.potGroupList = [{potGroupPK: {groupId: group.groupId}}]
-            }
-          }
-          else if("categoryName" === headerName) {
-            const category = this.categories.find((category) => category.categoryName == val)
-            if(category){
-              entity.potCategoryList = [{potCategoryPK: {categoryId: category.categoryId}}]
-            }
-          }
           return dummyKey
         }
 
+        // minor, btxId
+        if(_.includes(txIdHeaders, headerName)){
+          const tx = this.txs.find((tx) => tx[headerName] == val)
+          if(tx){
+            entity.txId = tx.txId
+          }
+          return dummyKey
+        }
         // extValue
         if (!entity.extValue) {
           entity.extValue = {}
@@ -109,7 +103,7 @@ export default {
         }
         entity[headerName] = newVal
         return dummyKey
-      }, (entity, dummyKey) => this.resetThumbnail(entity, dummyKey))
+      }, (entity, dummyKey) => this.resetData(entity, dummyKey))
     },
   }
 }

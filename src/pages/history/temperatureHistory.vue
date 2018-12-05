@@ -85,7 +85,7 @@ export default {
           active: true
         },
         {
-          text: this.$i18n.tnl('label.temperatureHistory'),
+          text: this.$i18n.tnl('label.thermohumidity'),
           active: true
         }
       ],

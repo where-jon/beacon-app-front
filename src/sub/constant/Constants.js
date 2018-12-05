@@ -60,6 +60,8 @@ export const FEATURE = {
 
 export const UPDATE_ONLY_NN = { NONE: 0, NULL: 1, EMPTY_ZERO: 2 };
 
+export const IGNORE = { OFF: 0, ON: 1 };
+
 export const txViewTypes = [
   {value: 1, text: "pattern1"},
   {value: 2, text: "pattern2"},
@@ -136,12 +138,18 @@ export const LED_BLINK_TYPES = {
 }
 
 export const DETECT_STATE = {
-  getTypes(){ 
+  DETECTED: 1,
+  LOST: 2,
+  TODAY_UNDETECT: 3,
+  UNDETECT: 4,
+  NONE: 0,
+  getTypes() {
     return [
-      {value: 1, text: i18n.t('label.detected')},
-      {value: 2, text: i18n.t('label.temporaryUndetect')},
-      {value: 3, text: i18n.t('label.todayUndetect')},
-      {value: 4, text: i18n.t('label.undetect')},
+      {value: this.DETECTED, text: i18n.t('label.detected')},
+      {value: this.LOST, text: i18n.t('label.temporaryUndetect')},
+      {value: this.TODAY_UNDETECT, text: i18n.t('label.todayUndetect')},
+      {value: this.UNDETECT, text: i18n.t('label.undetect')},
+      {value: this.NONE, text: i18n.t('label.none')}
     ]
   },
 }
@@ -383,7 +391,7 @@ export const MENU = [
     path: '/history/temperatureHistory',
     icon: 'far fa-clipboard',
     pages: [{
-        key: 'temperatureHistory',
+        key: 'thermohumidity',
         path: 'temperatureHistory',
         feature: '/history/temperatureHistory',
         icon: 'fas fa-thermometer'

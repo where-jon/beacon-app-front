@@ -69,12 +69,10 @@ export default {
           categoryId = val
         }
         else if(headerName === "categoryName"){
-          const category = this.categories.find((category) => category.categoryName == val)
-          if(category){
-            categoryId = category.categoryId
-          }
+          entity[headerName] = val
         }
         if(headerName == "areaName") {
+          entity[headerName] = val
           entity.area = {areaId: dummyKey--, areaName: val}
         }
         if(ZONE_COL.includes(headerName)) {

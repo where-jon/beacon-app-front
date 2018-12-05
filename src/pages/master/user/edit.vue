@@ -15,11 +15,11 @@
         </b-form-group>
         <b-form-group v-show="showName">
           <label v-t="'label.name'" />
-          <b-form-input type="text" v-model="form.name" maxlength="20" :readonly="!isEditable" />
+          <input type="text" v-model="form.name" maxlength="20" class="form-control" :readonly="!isEditable" />
         </b-form-group>
         <b-form-group>
           <label v-t="'label.loginId'" />
-          <b-form-input type="text" v-model="form.loginId" maxlength="16" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" required :readonly="!isEditable" />
+          <input type="text" v-model="form.loginId" maxlength="16" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" class="form-control" :title="$i18n.tnl('message.validationList', {validate: $i18n.tnl('message.loginValidationList')})" required :readonly="!isEditable" />
         </b-form-group>
         <b-form-group v-show="showEmail">
           <label v-t="'label.email'" />
@@ -34,7 +34,8 @@
           <b-form-textarea v-model="form.description" :rows="3" :max-rows="6" maxlength="1000" :readonly="!isEditable" ></b-form-textarea>
         </b-form-group>
         <b-form-group>
-          <label v-t="'label.password'" />
+          <label v-if="hasId" v-t="'label.passwordUpdate'" />
+          <label v-else v-t="'label.password'" />
           <b-form-input type="password" v-model="pass" pattern="^[a-zA-Z0-9_\-\/!#\$%&@]*$" :readonly="!isEditable" />
         </b-form-group>
         <b-form-group>
@@ -154,7 +155,13 @@ export default {
       }
       return true
     },
+    afterCrud(){
+      this.role = null
+      this.pass = null
+      this.passConfirm = null
+    },
     beforeSubmit(event, again){
+      this.showInfo = false
       this.showAlert = false
       if(this.isErrorPasswordRequired()){
         this.message = this.$i18n.tnl('message.required', {target: this.$i18n.tnl('label.password')})
@@ -169,7 +176,7 @@ export default {
         this.showAlert = true
       }
       else if(this.isErrorPasswordValue()){
-        this.message = this.$i18n.tnl('message.invalidPassword')
+        this.message = this.$i18n.tnl(this.hasId? 'message.notMatchPassword': 'message.notMatchPasswordRegist')
         this.showAlert = true
       }
       if(this.showAlert){

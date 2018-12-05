@@ -8,9 +8,8 @@
           target: $i18n.tnl('label.login-user-profile')})
         }}</b-alert>
       <b-alert variant="danger" dismissible :show="hasError">{{ 
-        $i18n.tnl('message.updateFailed', {
-          target: $i18n.tnl('label.login-user-profile'),
-          code: 0
+        $i18n.terror('message.updateFailed', {
+          target: $i18n.tnl('label.login-user-profile')
         })
         }}</b-alert>
       <b-row>
@@ -63,12 +62,12 @@
 
                 <!-- 変更パスワード -->
                 <b-form-group :label="$i18n.tnl('label.passwordUpdate')" label-class="text-sm-right" label-for="password-update">
-                  <b-form-input type="password" id="password-update" v-model="loginUser.passwordUpdate" v-on:input="handleUpdateConfirmPass" maxlength="16"></b-form-input>
+                  <b-form-input type="password" id="password-update" v-model="loginUser.passwordUpdate" maxlength="16"></b-form-input>
                 </b-form-group>
 
                 <!-- 確認パスワード -->
                 <b-form-group :label="$i18n.tnl('label.passwordConfirm')" label-class="text-sm-right" label-for="password-confirm">
-                  <b-form-input type="password" id="password-confirm" v-model="loginUser.passwordConfirm" v-on:input="handleUpdateConfirmPass" maxlength="16"></b-form-input>
+                  <b-form-input type="password" id="password-confirm" v-model="loginUser.passwordConfirm" maxlength="16"></b-form-input>
                 </b-form-group>
 
               </b-form-group>
@@ -80,7 +79,7 @@
       <b-row :style="{ marginTop: '30px' }" v-show="isChange">
         <b-form-group class="col text-center">
           <b-button type="button" v-t="'label.cancel'" class="mr-4 mb-2 input-btn" variant="outline-danger" @click="handleCancelButton" />
-          <b-button type="button" v-t="'label.modify'" class="ml-4 mb-2 input-btn" :variant="theme" @click="onSubmit" :disabled="passErrorMessage !== null"/>
+          <b-button type="button" v-t="'label.modify'" class="ml-4 mb-2 input-btn" :variant="theme" @click="onSubmit" />
         </b-form-group>
       </b-row>
     </div>
@@ -136,8 +135,8 @@ export default {
         roleId: null,
         description: null,
         password: null,
-        passwordUpdate: null,
-        passwordConfirm: null,
+        passwordUpdate: "",
+        passwordConfirm: "",
       },
       errorMessages: {
         loginId: [],
@@ -223,7 +222,7 @@ export default {
       const passwordUpdate = this.loginUser.passwordUpdate 
       const passwordConfirm = this.loginUser.passwordConfirm
       if (passwordUpdate === null && passwordConfirm === null) {
-        return
+        return false
       }
 
       if (value.length < this.passMinLength || value.length > this.passMaxLength) {
@@ -232,27 +231,28 @@ export default {
           min: this.passMinLength,
           max: this.passMaxLength,
         })
-        return
+        return false
       }
 
       const result = ValidateUtil.validatePattern(value, /^[a-zA-Z0-9_\-\/!#\$%&@]*$/, this.$i18n.tnl('message.invalidPassword'))
       if (result !== null) {
         this.passErrorMessage = result
-        return
+        return false
       }
 
       const update = passwordUpdate ? passwordUpdate : ''
       const confirm = passwordConfirm ? passwordConfirm : ''
       if (update !== confirm) {
         this.passErrorMessage = this.$i18n.tnl('message.notMatchPassword')
-        return
+        return false
       }
       this.passErrorMessage = null
+      return true
     },
     handleCancelButton () {
       this.loginUser.password = null
-      this.loginUser.passwordUpdate = null
-      this.loginUser.passwordConfirm = null
+      this.loginUser.passwordUpdate = ""
+      this.loginUser.passwordConfirm = ""
       this.errorMessages.password = []
       this.passErrorMessage = null
       this.isChange = false
@@ -286,6 +286,9 @@ export default {
         this.loginUser.password,
         async () => {
           try {
+            if(!this.handleUpdateConfirmPass(this.loginUser.passwordUpdate) || !this.handleUpdateConfirmPass(this.loginUser.passwordConfirm)){
+              return
+            }
             await this.save()
             this.isSuccess = true
           } catch(e) {

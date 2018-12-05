@@ -15,7 +15,7 @@
         </b-form-group>
         <b-form-group>
           <label v-t="'label.roleName'" />
-          <b-form-input type="text" v-model="form.roleName" maxlength="20" required :readonly="!isEditable" />
+          <input type="text" v-model="form.roleName" maxlength="20" class="form-control" required :readonly="!isEditable" />
         </b-form-group>
 
         <b-form-group>

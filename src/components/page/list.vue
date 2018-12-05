@@ -10,7 +10,7 @@
             <!-- 標準絞り込みフィルタ -->
             <label v-t="'label.filter'" class="mr-2"></label>
             <b-input-group>
-              <b-form-input v-model="filter.reg"  class="align-self-center"/>
+              <input v-model="filter.reg" class="form-control align-self-center"/>
               <b-input-group-append>
                 <b-btn :disabled="!filter.reg" @click="filter.reg = ''" variant="secondary" v-t="'label.clear'"  class="align-self-center"/>
               </b-input-group-append>
@@ -143,14 +143,13 @@ export default {
           category: '',
           group: '',
           area: '',
-          detectState: '',
+          detectState: null,
         },
       },
       emptyMessage: this.$i18n.tnl('message.listEmpty'),
       modalInfo: { title: '', content: '', id:'' },
       totalRows: this.initTotalRows,
       file: null,
-      detectState: DETECT_STATE,
       message: null,
       error: null,
       sortBy: null,
@@ -235,7 +234,7 @@ export default {
       return options
     },
     detectStateOptions() {
-      let options = this.detectState.getTypes()
+      let options = DETECT_STATE.getTypes()
       options.unshift({value:null, text:''})
       return options
     },
@@ -387,7 +386,7 @@ export default {
             }
             break
             case 'detectState':
-            if (extra.detectState &&
+            if (extra.detectState != null &&
                 !(extra.detectState === originItem.detectState)) {
               extBool = false
             }
@@ -412,7 +411,7 @@ export default {
         this.message = this.$i18n.tnl('message.deleteCompleted', {target: this.$i18n.tnl('label.' + this.params.name)})
         this.$parent.$options.methods.fetchData.apply(this.$parent)        
       } catch (e) {
-        this.error = this.$i18n.tnl('message.deleteFailed', {target: this.$i18n.tnl('label.' + this.params.name), code: e.response.status})
+        this.error = this.$i18n.terror('message.deleteFailed', {target: this.$i18n.tnl('label.' + this.params.name), code: e.response.status})
       }
     },
     // 位置把握(一覧)から在席表示に遷移する

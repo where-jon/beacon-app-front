@@ -23,7 +23,7 @@
           </b-form-row>
           <b-form-row>
             <b-col sm="5">
-              <b-form-input type="text" v-model="form.zoneName" maxlength="20" required :readonly="!isEditable" :disabled="!isEnableNameText" />
+              <input type="text" v-model="form.zoneName" maxlength="20" class="form-control" required :readonly="!isEditable" :disabled="!isEnableNameText" />
             </b-col>
           </b-form-row>
         </b-form-group>
@@ -123,8 +123,8 @@ export default {
   },
   computed: {
     base64 () {
-      const area = this.$store.state.app_service.areas.find((a) => { return a.areaId === this.form.areaId })
-      return area ? area.mapImage : ''
+      const areaImage = this.$store.state.app_service.areaImages.find((a) => { return a.areaId === this.form.areaId })
+      return areaImage ? areaImage.mapImage : ''
     },
     hasId (){
       return Util.hasValue(this.form.zoneId)

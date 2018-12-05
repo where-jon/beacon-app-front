@@ -61,6 +61,11 @@ export default {
     ]),
   },
   methods: {
+    afterCrud(){
+      StateHelper.setForceFetch('pot', true)
+      StateHelper.setForceFetch('tx', true)
+      StateHelper.setForceFetch('zone', true)
+    },
     async fetchData(payload) {
       try {
         this.replace({showProgress: true})

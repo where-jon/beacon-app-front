@@ -15,11 +15,11 @@
         </b-form-group>
         <b-form-group>
           <label v-t="'label.groupName'" />
-          <b-form-input type="text" v-model="form.groupName" maxlength="20" required :readonly="!isEditable" />
+          <input type="text" v-model="form.groupName" maxlength="20" class="form-control" required :readonly="!isEditable" />
         </b-form-group>
         <b-form-group>
           <label v-t="'label.ruby'" />
-          <b-form-input type="text" v-model="form.ruby" pattern="^[ぁ-んーァ-ヶa-zA-Z0-9ａ-ｚＡ-Ｚ０-９]+$" maxlength="20" :readonly="!isEditable" />
+          <input type="text" v-model="form.ruby" class="form-control" maxlength="20" :readonly="!isEditable" />
         </b-form-group>
         <b-form-group>
           <label v-t="'label.shape'" />

@@ -2,6 +2,7 @@ import md5 from 'md5'
 import _ from 'lodash'
 import axios from 'axios'
 import * as HttpHelper from './HttpHelper'
+import * as StateHelper from './StateHelper'
 import * as MenuHelper from './MenuHelper'
 import * as ConfigHelper from './ConfigHelper'
 import { APP, LOCAL_LOGIN } from '../constant/config'
@@ -75,6 +76,8 @@ export const authByAppService = async (loginId, password, success, err) => {
     // Login process
     await login({loginId, username:user.name, role:data.role, featureList, tenantFeatureList, menu, currentRegion, frontRev, serviceRev})
     success()
+    StateHelper.loadAreaImages()
+
   } catch (e) {
     console.error(e)
     err(e)

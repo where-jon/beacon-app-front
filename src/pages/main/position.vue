@@ -111,6 +111,7 @@ export default {
       'categories',
       'groups',
       'txs',
+      'forceFetchTx',
     ]),
     ...mapGetters('app_service' ,[
       'categoryOptionsForPot',
@@ -167,7 +168,7 @@ export default {
     showDetail(btxId, x, y) {
       const tipOffsetX = 15
       const tipOffsetY = 15
-      const popupHeight = this.getMeditagSensor(btxId)? 236: 156
+      const popupHeight = this.getMeditagSensor(btxId)? 236: 135
       let tx = this.txs.find((tx) => tx.btxId == btxId)
       let display = this.getDisplay(tx)
       let map = HtmlUtil.getRect("#map")
@@ -177,8 +178,7 @@ export default {
       const isDispRight = x + offsetX + 100 < window.innerWidth
       // rev === trueの場合、ポップアップを上に表示
       const rev = y + map.top + DISP.TX_R + tipOffsetY + popupHeight > window.innerHeight
-      const p = tx.pot
-      if (p == null) return
+      const p = tx.pot? tx.pot: {}
 
       const position = this.positions.find((e) => {
         return e.btx_id === btxId
@@ -188,9 +188,13 @@ export default {
         btxId,
         minor: 'minor:' + btxId,
         major: tx.major? 'major:' + tx.major : '',
+        // TX詳細ポップアップ内部で表示座標計算する際に必要
+        orgLeft: x + offsetX,
+        orgTop: y + offsetY,
+        isAbove: rev,
+        containerWidth: containerParent.width,
+        containerHeight: containerParent.height,
         class: balloonClass,
-        left: x + offsetX - DISP.TX_R,
-        top: rev ? y + offsetY - DISP.TX_R - popupHeight : y + offsetY + DISP.TX_R + tipOffsetY,
         name: tx.txName? tx.txName: p.potName ? p.potName : '',
         timestamp: position ? this.getFinalReceiveTime(position.timestamp) : '',
         thumbnail: p.thumbnail ? p.thumbnail : '',
@@ -213,7 +217,6 @@ export default {
       return null
     },
     resetDetail() {
-      this.detectedCount = 0　// 検知カウントリセット
       if (!this.showingDetailTime || new Date().getTime() - this.showingDetailTime > 100) {
         let selectedTx = {}
         this.replaceMain({selectedTx})
@@ -241,7 +244,7 @@ export default {
     async fetchData(payload) {
       try {
         this.replace({showProgress: true})
-        await StateHelper.load('tx')
+        await StateHelper.load('tx', this.forceFetchTx)
         this.loadLegends()
         await this.fetchAreaExbs(true)
 
@@ -337,6 +340,7 @@ export default {
         }
       })
 
+      this.detectedCount = 0　// 検知カウントリセット
       let position = PositionHelper.adjustPosition(this.positions, this.mapImageScale, this.positionedExb)
       position.forEach((pos) => { // TODO: Txのチェックも追加
         this.showTx(pos)

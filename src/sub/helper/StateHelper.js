@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import * as AppServiceHelper from './AppServiceHelper'
 import * as Util from '../util/Util'
+import * as HtmlUtil from '../util/HtmlUtil'
 import { CATEGORY, SHAPE } from '../constant/Constants'
 import { APP } from '../constant/config'
 
@@ -53,7 +54,7 @@ const appStateConf = {
     sort: 'regionId',
   },
   areas: {
-    path: '/core/area/withImage',
+    path: '/core/area',
     sort: 'areaId',
   },
   exbs: {
@@ -107,6 +108,8 @@ const appStateConf = {
         ...val,
         txIdName: getTxIdName(val.tx),
         txName: val.txId? Util.getValue(val, 'tx.txName', '') : null,
+        btxId: val.txId? Util.getValue(val, 'tx.btxId', '') : null,
+        minor: val.txId? Util.getValue(val, 'tx.minor', '') : null,
         groupName: Util.getValue(val, 'potGroupList.0.group.groupName', ''),
         groupId: Util.getValue(val, 'potGroupList.0.group.groupId', ''),
         categoryName: Util.getValue(val, 'potCategoryList.0.category.categoryName', ''),
@@ -201,4 +204,38 @@ export const load = async (target, force) => {
     }
     store.commit('app_service/replaceAS', {[target]:arr})
   }
+}
+
+export const loadAreaImage = async (areaId, force) => {
+  if (store.state.app_service.areaImages.find((areaImage) => areaImage.areaId == areaId) && !force) {
+    console.log("FOUND ares", areaId)
+    return
+  }
+
+  console.log("load ares", areaId)
+  let base64 = await AppServiceHelper.fetchMapImage("/core/area/" + areaId + "/mapImage")
+  // let mimetype="image/png"
+  // base64 = "data:" + mimetype + ";base64," + base64
+  // HtmlUtil.toDataURL("http://localhost:8080/core/area/" + area.areaId + "/mapImage", (dataUrl) => {
+    let areaImages = _.cloneDeep(store.state.app_service.areaImages)
+    let areaImage = areaImages.find((areaImage) => areaImage.areaId == areaId)
+    if (areaImage) {
+      areaImage.mapImage = base64
+    }
+    else {
+      areaImages.push({areaId, mapImage: base64})
+    }
+    console.log(areaId, areaImages)
+    store.commit('app_service/replaceAS', {areaImages})    
+
+  // })
+}
+
+export const loadAreaImages = async () => {
+  if (store.state.app_service.areas.length == 0) {
+    await load('area')
+  }
+  store.state.app_service.areas.forEach(async (area) => {
+    await loadAreaImage(area.areaId)
+  })
 }

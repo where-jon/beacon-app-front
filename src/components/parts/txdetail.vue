@@ -1,11 +1,12 @@
 <template>
   <div>
     <div
-    :class="'balloon ' + selectedTx.class"
+    id="txDetail"
+    :class="'balloon ' + getClass()"
     :style="{
-        left: this.selectedTx.left + 'px',
-        top: this.selectedTx.top +'px',
-        backgroundColor: this.selectedTx.bgColor,
+        left: getLeft(),
+        top: getTop(),
+        backgroundColor: this.selectedSensor.length == 0 ? this.selectedTx.bgColor : this.selectedSensor[0].bg,
         color: this.selectedTx.color,
       }"
     v-if="!isShowModal"
@@ -13,7 +14,7 @@
       <div class="potBox" @click="$emit('resetDetail')" v-if="selectedSensor.length == 0">
         <div class="clearfix">
           <div class="thumbnail">
-            <img :src="selectedTx.thumbnail" width="auto" height="125" v-if="selectedTx.thumbnail.length > 0" />
+            <img id="img" :src="selectedTx.thumbnail" width="auto" :height="imageHeight" v-if="selectedTx.thumbnail.length > 0" />
             <img src="/default.png" width="auto" height="116" v-else />
           </div>
           <div class="description">
@@ -23,8 +24,11 @@
       </div>
       <sensor :sensors="selectedSensor" isPopup="true" />
     </div>
-    <txdetailmodal :bgColor="this.selectedTx.bgColor" :color="this.selectedTx.color" v-else>
-      <div class="clearfix" :style="{backgroundColor: this.selectedTx.bgColor}">
+    <txdetailmodal
+    :bgColor="selectedSensor.length == 0 ? this.selectedTx.bgColor : this.selectedSensor[0].bg"
+    :color="this.selectedTx.color"
+    v-else>
+      <div class="clearfix" :style="{backgroundColor: this.selectedTx.bgColor}" v-if="selectedSensor.length == 0">
         <div class="thumbnail">
           <img :src="selectedTx.thumbnail" width="auto" height="125" v-if="selectedTx.thumbnail.length > 0" />
           <img src="/default.png" width="auto" height="116" v-else />
@@ -33,6 +37,7 @@
           <div v-for="(item, index) in getDispItems()" :key="index">{{ item }}</div>
         </div>
       </div>
+      <sensor :sensors="selectedSensor" isPopup="true" v-else />
     </txdetailmodal >
   </div>
 </template>
@@ -40,8 +45,17 @@
 <script>
 import { DISP } from '../../sub/constant/config'
 import { getTxDetailItems } from '../../sub/helper/PositionHelper'
+import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import sensor from './sensor.vue'
 import txdetailmodal from './txdetailmodal.vue'
+
+const loadImage = (src, fixHeight) => {
+  return new Promise((resolve, reject) => {
+    let img = new Image()
+    img.src = src
+    img.onload = () => resolve(img.width * (fixHeight / img.height))
+  })
+}
 
 export default {
   props: {
@@ -62,16 +76,58 @@ export default {
   },
   data() {
     return {
-      myclass: ['myclass'],
-      bodyBgVariant: 'success'
+      imageHeight: 125,
+      popupHeight: this.getPopupHeight(),
+      tipHeight: 15,
+      imageWidth: 0,
+      descriptionWidth: 143,
+      left: 0,
+      meditagWidth: 266,
     }
   },
+  updated() {
+    this.popupHeight = this.getPopupHeight()
+    this.left = this.getLeft()
+  },
   methods: {
+    async setImageWidth() {
+      this.imageWidth = await loadImage(this.selectedTx.thumbnail, this.imageHeight)
+    },
+    isOutOfFrame() {
+      const containerWidth = this.selectedTx.containerWidth - 45
+      if (this.selectedSensor.length == 0) {
+        this.setImageWidth()
+        return containerWidth <= this.selectedTx.orgLeft + this.descriptionWidth + this.imageWidth
+      }
+      // Meditagの場合
+      return containerWidth <= this.selectedTx.orgLeft + this.meditagWidth
+    },
     getDispItems () {
       return Object.keys(DISP.TXDETAIL_ITEMS)
       .filter((key) => DISP.TXDETAIL_ITEMS[key])
       .map((e) => this.selectedTx[e])
-    }
+    },
+    getLeft() {
+      this.setImageWidth()
+      const isOut = this.isOutOfFrame()
+      const left = !isOut ? this.selectedTx.orgLeft - DISP.TX_R : (this.selectedTx.orgLeft - (this.descriptionWidth + this.imageWidth))
+      return left + 'px'
+    },
+    getTop() {
+      const top = !this.isAbove ? (this.selectedTx.orgTop - this.popupHeight - DISP.TX_R - this.tipHeight) :
+      this.selectedTx.orgTop + DISP.TX_R + this.tipHeight
+      return top + 'px'
+    },
+    getClass() {
+      const isOut = this.isOutOfFrame()
+      if (this.isAbove) {
+        return !isOut ? 'balloon-b' : 'balloon-br'
+      }
+      return !isOut ? 'balloon-u' : 'balloon-ur'
+    },
+    getPopupHeight() {
+      return this.selectedSensor.length == 0 ? 135 : 211
+    },
   },
 }
 </script>
@@ -134,6 +190,20 @@ export default {
   transform: rotate(45deg) skew(10deg,10deg);
 }
 
+/* 下辺右側 */
+.balloon-ur::before {
+  bottom: -8px;
+  right: 15px;
+  transform: rotate(45deg) skew(10deg,10deg);
+}
+
+/* 上辺右側 */
+.balloon-br::before {
+  top: -8px;
+  right: 15px;
+  transform: rotate(45deg) skew(10deg,10deg) translateZ(-1px);
+}
+
 .potBox {
   padding: 5px;
   overflow: hidden;
@@ -157,6 +227,7 @@ export default {
 
 .description {
   float: left;
+  width: 160px;
   font-weight: bold;
   padding-left: 10px;
 }

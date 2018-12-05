@@ -8,7 +8,7 @@ import * as MenuHelper from '../../sub/helper/MenuHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import { sleep } from '../../sub/util/Util'
 import { APP } from '../../sub/constant/config.js'
-import { ROLE } from '../../sub/constant/Constants'
+import { ROLE, UPDATE_ONLY_NN, IGNORE } from '../../sub/constant/Constants'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
 import commonmixinVue from './commonmixin.vue';
@@ -99,6 +99,14 @@ export default {
           this.afterCrud()
         }
         await StateHelper.load(this.name, true)
+        if (this.name == 'area') {
+          if (this.form.areaId) {
+            await StateHelper.loadAreaImage(this.form.areaId, true)
+          }
+          else {
+            await StateHelper.loadAreaImages()
+          }
+        }
         this.message = this.$i18n.tnl('message.' + this.crud + 'Completed', {target: this.$i18n.tnl('label.' + this.name)})
         this.showInfo = true
         if (this.again) {
@@ -132,12 +140,12 @@ export default {
           this.message = _.map(e.bulkError, (err) => {
             let col = this.modifyColName(err.col.trim())
             return this.$i18n.tline('message.bulk' + err.type + 'Failed', 
-              {line: err.line, col: this.$i18n.tnl(`label.${col}`), value: err.value, min: err.min, max: err.max, candidates: err.candidates},
+              {line: err.line, col: this.$i18n.tnl(`label.${col}`), value: Util.sanitize(err.value), min: err.min, max: err.max, candidates: err.candidates},
               this.showLine)
           }).join("<br>")
         }
         else {
-          this.message = this.$i18n.tnl('message.' + this.crud + 'Failed', {target: this.$i18n.tnl('label.' + this.name), code: e.message})
+          this.message = this.$i18n.terror('message.' + this.crud + 'Failed', {target: this.$i18n.tnl('label.' + this.name), code: e.message})
         }
         this.showAlert = true
         window.scrollTo(0, 0)
@@ -174,7 +182,16 @@ export default {
           if (imgWidthName) this.form[imgWidthName] = width
           if (imgHeightName) this.form[imgHeightName] = height
           if (thumbnailName) this.form[thumbnailName] = thumbnail
-      }, resize)
+      }, resize, (size) => {
+        this.message = this.$i18n.tnl("message.uploadMax", {target: Math.floor(APP.MAX_IMAGE_SIZE/1024/1024)})
+        this.showAlert = true
+        if (this.clearImage) {
+          this.clearImage()
+        }
+        setTimeout(()=> {
+          window.scrollTo(0, 0)
+        }, 0)
+      })
     },
     formatErrorLine(lines){
       let errorMessage = this.$i18n.tnl("message.csvLineStart")
@@ -299,7 +316,7 @@ export default {
       }
 
       this.replaceAS({showLine: true})
-      await AppServiceHelper.bulkSave(this.appServicePath, entities)
+      await AppServiceHelper.bulkSave(this.appServicePath, entities, UPDATE_ONLY_NN.NONE, IGNORE.ON)
       if(this.afterCrud) {
         this.afterCrud()
       }

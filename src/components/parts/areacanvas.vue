@@ -42,8 +42,8 @@ export default {
   },
   watch: {
     areaId: function(newVal, oldVal) {
-      const area = this.$store.state.app_service.areas.find((a) => { return a.areaId === newVal })
-      const base64 = area ? area.mapImage : ''
+      const areaImage = this.$store.state.app_service.areaImages.find((a) => { return a.areaId === newVal })
+      const base64 = areaImage ? areaImage.mapImage : ''
       this.setupCanvas(base64)
     },
     isRegist: function(newVal, oldVal) {

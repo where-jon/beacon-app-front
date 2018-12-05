@@ -60,6 +60,9 @@ export default {
     ]),
   },
   methods: {
+    afterCrud(){
+      StateHelper.setForceFetch('pot', true)
+    },
     async fetchData(payload) {
       try {
         this.replace({showProgress: true})

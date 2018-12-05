@@ -61,7 +61,6 @@
     "normal": "Normal",
     "malfunction": "Malfunction",
     "notReceive": "Poor",
-    "receiveNormal": "Normal",
     "absent": "Absent",
     "charSet": "CSV character code",
     "null": "Unspecified",
@@ -90,8 +89,6 @@
     "final-receive-timestamp": "Last date",
     "receive-place": "Detected at",
     "power-level": "Battery level",
-    "undetect": "Undetected",
-    "no-signal": "No signal for {min} minutes",
     "power-good": "Enough",
     "power-warning": "Decrease",
     "power-poor": "Replace",
@@ -196,8 +193,10 @@
     "positionListShort": "List",
     "detectState": "State",
     "detected": "Detecting",
-    "temporaryUndetect": "Disappear",
-    "todayUndetect": "No detection",
+    "temporaryUndetect": "Lost",
+    "todayUndetect": "Not detected",
+    "undetect": "Undetected",
+    "none": "None",
     "power-null": "‐",
     "final-receive-location": "Last position",
     "mapDisplay": "Map display",
@@ -306,7 +305,6 @@
     "sumDay": "Specified date",
 
     "historyTitle": "History",
-    "temperatureHistory": "Temp. & humidity",
     "historyDateFrom": "Period",
     "historyDateTo": "-",
     "temperatureHistoryType0": "All temp. & humidity",
@@ -351,7 +349,7 @@
     "legend": "Legend",
     "using": "：In use",
     "notUse": "Not in use",
-    "totalRecordsCount": "Total number",
+    "totalRecordsCount": "Total",
 
 
     "---------------- App position ---------------": "",
@@ -444,6 +442,7 @@
     "noLedDevice": "There are no LED devices to operate.",
     "totalRowsMessage": "Total: {row} (Only latest {maxRows} are displayed)",
     "listEmpty": "There are no records matching your request.",
+    "uploadMax": "Upload file size is limited to target}Mbytes.",
 
     "dummy": "" 
   }

@@ -16,19 +16,19 @@
             </b-form-group>
             <b-form-group v-show="isShown('EXB_WITH_DEVICE_NUM')">
               <label v-t="'label.deviceNum'" />
-              <b-form-input type="number" v-model.lazy="deviceNum" required :readonly="!isEditable" />
+              <input type="number" v-model.lazy="deviceNum" class="form-control" required :readonly="!isEditable" />
             </b-form-group>
             <b-form-group v-show="isShown('EXB_WITH_DEVICE_ID')">
               <label v-t="'label.deviceId'" />
-              <b-form-input type="number" v-model.lazy="deviceId" required :readonly="!isEditable" />
+              <input type="number" v-model.lazy="deviceId" class="form-control" required :readonly="!isEditable" />
             </b-form-group>
             <b-form-group v-show="isShown('EXB_WITH_DEVICE_IDX')">
               <label v-t="'label.deviceIdX'" />
-              <b-form-input type="text" v-model.lazy="deviceIdX" required :readonly="!isEditable" />
+              <input type="text" v-model.lazy="deviceIdX" class="form-control" required :readonly="!isEditable" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.locationName'" />
-              <b-form-input type="text" v-model="form.locationName" maxlength="20" required :readonly="!isEditable" />
+              <input type="text" v-model="form.locationName" maxlength="20" class="form-control" required :readonly="!isEditable" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.area'" />
@@ -36,15 +36,15 @@
             </b-form-group>
             <b-form-group v-show="isShown('EXB_WITH_POSID')">
               <label v-t="'label.posId'" />
-              <b-form-input type="number" v-model="form.posId" min="0" max="65535" required :readonly="!isEditable" />
+              <input type="number" v-model="form.posId" min="0" max="65535" class="form-control" required :readonly="!isEditable" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.locationX'" />
-              <b-form-input type="number" v-model="form.x" min="0" max="99999" :readonly="!isEditable" />
+              <input type="number" v-model="form.x" min="0" max="99999" class="form-control" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.locationY'" />
-              <b-form-input type="number" v-model="form.y" min="0" max="99999" :readonly="!isEditable" />
+              <input type="number" v-model="form.y" min="0" max="99999" class="form-control" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group>
               <b-form-checkbox v-model="form.enabled" value="true" unchecked-value="false" :disabled="!isEditable" :readonly="!isEditable">
@@ -171,7 +171,8 @@ export default {
       )
     },
     zoneNames() {
-      let options = this.zones.map((zone) => {
+      let options = this.zones.filter((zone) => zone.areaId == this.form.areaId)
+        .map((zone) => {
           return {
             value: zone.zoneId,
             text: zone.zoneName
@@ -246,6 +247,9 @@ export default {
       this.txIconsVertical = param.vertical
     },
     async save() {
+      if(!this.zoneNames.find((zone) => zone.zoneId == this.form.zoneId)){
+        this.form.zoneId = null
+      }
       let entity = {
         exbId: this.form.exbId != null? this.form.exbId: -1,
         deviceId: this.deviceId,

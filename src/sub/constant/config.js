@@ -1,7 +1,7 @@
 // configuration for app
 // Basically using const but values are not primitive but objects or arrays because it may change from outside.
 
-import { LOGIN_MODE } from './Constants';
+import { LOGIN_MODE, DETECT_STATE } from './Constants';
 
 export const DEV = { // 開発デバッグ関連
   DEBUG: 0, // デバッグモード (0:なし、1以上デバッグレベル)
@@ -22,21 +22,21 @@ export const APP = { // 機能面に関する設定
   // 時間設定
   TIMEOUT: 60 * 60 * 1000, // session timeout(using local storage)
   AUTO_RELOAD: 60000, // 自動リロード間隔(ミリ秒)
-  UNDETECT_TIME: 60 * 60 * 1000, // used on telemetry 
+
+  TRANSPARENT_TIME: 60 * 1000, // 半透明：現在時刻から経過した段階で半透明（ミリ秒）
+  HIDE_TIME: 10 * 60 * 1000, // 消失とみなす時間（ミリ秒）
+  UNDETECT_TIME: 60 * 60 * 1000, // 未検知とみなす時間（ミリ秒）
+
   DOWN_RED_TIME: 60000, // MEDiTAG使用時：転倒時赤枠の表示時間
   TEMPERATURE_LINE_HOUR_START: 8,  // 温湿度グラフの開始時間
   TEMPERATURE_LINE_HOUR_END: 21,  // 温湿度グラフの終了時間
   GATEWAY: {
-    MALFUNCTION: 30 * 60 * 1000, // 動作不良時間（ミリ秒）
-    NOTRECEIVE: 60 * 60 * 1000, // 未受信時間（ミリ秒）
-    UNDETECT: 24 * 60 * 60 * 1000, // 未検知時間（ミリ秒）
+    HIDE_TIME: 30 * 60 * 1000, // 消失とみなす時間（ミリ秒）
+    UNDETECT_TIME: 60 * 60 * 1000, // 未検知とみなす時間（ミリ秒）
   },
-  MONITOR_TX: {
-    ABSENT: 20 * 60 * 1000, // 不在時間（ミリ秒）
-    UNDETECT: 24 * 60 * 60 * 1000,  // 未検知時間（ミリ秒）
-  },  
   TELEMETRY: {
-    NOSIGNAL: 30 * 60 * 1000, // 未検知時間（ミリ秒）
+    HIDE_TIME: 30 * 60 * 1000, // 消失とみなす時間（ミリ秒）
+    UNDETECT_TIME: 60 * 60 * 1000, // 未検知とみなす時間（ミリ秒）
   },
     
   // 測位関連設定
@@ -44,8 +44,6 @@ export const APP = { // 機能面に関する設定
   TX_POS_ONE_TO_ONE: false, // 1つの場所に1TXのみ存在可能
   RSSI_MIN: -67, // RSSI下限値
   MOVING_AVERAGE: 5, // 5回分移動平均
-  TRANSPARENT_TIME: 1 * 1000, // 現在時刻から経過した段階で半透明(ms)
-  HIDE_TIME: 90000 * 1000, // 現在時刻から経過した段階で表示(ms)
   
   // 機能
   USE_THERMOPILE: true, // サーモパイルセンサーの使用
@@ -91,7 +89,6 @@ export const APP = { // 機能面に関する設定
 
   // 位置把握(一覧)画面
   POSITION_WITH_AREA: true, // エリアを表示
-  POSITION_UNDETECT_TIME: 10 * 60 * 1000, //TXを検知後未検知とみなす時間(ms)
   POSITION_TIMEZONE: -9, // 午前0時を決定するためのタイムゾーン(時)
 
   // POT関連設定
@@ -108,6 +105,7 @@ export const APP = { // 機能面に関する設定
   ANALYSIS_DATETIME_INTERVAL: 60 * 24, // Fromを設定した場合、この設定値分未来の日付をToに自動入力する（分単位）
 
   // その他
+  MAX_IMAGE_SIZE: 20 * 1024 * 1024, // アップロード可能な最大イメージサイズ(Byte)
   AREA_THUMBNAIL_MAX: 200, // サムネイルリサイズ時の最大幅・高さ
 
 }
@@ -136,7 +134,7 @@ export const EXCLOUD = {
 export const DISP = { // 表示系設定（表示・色・フォント・サイズ）
   // 位置表示：TX
   TX_R: 26, // Txの半径
-  ROUNDRECT_RADIUS: 26, // Tx角丸表示時のRADIUS
+  ROUNDRECT_RADIUS: 13, // Tx角丸表示時のRADIUS
   TX_BGCOLOR: "3bcddc", // Tx表示時のデフォルト背景色
   TX_COLOR: "000", // Tx表示時のデフォルト文字色
   TX_FONT: "20px Arial", // Tx表示時のフォント
@@ -201,10 +199,10 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
 
   GATEWAY: { // ゲートウエイ
     STATE_COLOR: { // 状態別色
-      receiveNormal: '#28a745',
-      malfunction: '#dc3545',
-      notReceive: '#ffc107',
-      undetect: '#dc3545'
+      [DETECT_STATE.DETECTED]: '#28a745',
+      [DETECT_STATE.LOST]: '#ffc107',
+      [DETECT_STATE.UNDETECT]: '#dc3545',
+      [DETECT_STATE.NONE]: '#dc3545'
     }
   },
 

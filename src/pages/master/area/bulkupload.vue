@@ -12,6 +12,7 @@ import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkupload from '../../../components/page/bulkupload.vue'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
+import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as HtmlUtil from '../../../sub/util/HtmlUtil'
 import { APP } from '../../../sub/constant/config.js'
 
@@ -63,7 +64,10 @@ export default {
     },
     async save(thumbnails) {
       await Util.sleep(100)
-      return await AppServiceHelper.bulkSave(this.appServicePath, thumbnails)
+      let ret = await AppServiceHelper.bulkSave(this.appServicePath, thumbnails)
+      thumbnails.forEach((thumbnail) => {
+        StateHelper.loadAreaImage(thumbnail.id, true)
+      })
     },
   }
 }
