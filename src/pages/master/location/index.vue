@@ -97,6 +97,9 @@ export default {
       exbDisp: 'deviceIdX',
       deleteTarget: null,
       keepExbPosition: false,
+      mapRatio: null,
+      revTrgCnt: [],
+      lineCnt: null,
       toggleCallBack: () => {
         this.keepExbPosition = true
       },
@@ -115,11 +118,13 @@ export default {
     }
   },
   watch: {
-    mapRatio: function(newVal, oldVal) {
+    realWidth: function(newVal, oldVal) {
       console.log({newVal, oldVal})
+      this.onMapImageScale()
     },
-    selectedArea: function(newVal, oldVal) {
+    pixelWidth: function(newVal, oldVal) {
       console.log({newVal, oldVal})
+      this.onMapImageScale()
     }
   },
   computed: {
@@ -133,19 +138,6 @@ export default {
       if (APP.EXB_WITH_DEVICE_ID) options.push({value:'deviceId', text: this.$i18n.tnl('label.deviceId')})
       this.exbDisp = options[0].value
       return options
-    },
-    mapRatio() {
-      if (this.pixelWidth || this.realWidth) {
-        if (this.pixelWidth && this.realWidth) {
-          return Math.floor(this.realWidth / this.pixelWidth) 
-        } 
-      }
-      else if (this.oldSelectedArea) {
-        let area = _.find(this.$store.state.app_service.areas, (area) => this.oldSelectedArea && area.areaId == this.oldSelectedArea.value)
-        if (area && area.mapRatio) {
-         return area.mapRatio / this.mapImageScale
-        }
-      }
     },
   },
   mounted() {
@@ -177,6 +169,9 @@ export default {
       this.isChangeArea = false
       this.positionedExb = []
       this.exbOptions = []
+      this.mapRatio = null
+      this.revTrgCnt = []
+      this.lineCnt = null
     },
     async fetchData(payload) {
       try {
@@ -190,6 +185,17 @@ export default {
       }
       catch(e) {
         console.error(e)
+      }
+    },
+    onMapImageScale() {
+      if (this.pixelWidth && this.realWidth) {
+        this.mapRatio = Math.floor(this.realWidth / this.pixelWidth)
+      }
+      else if (this.selectedArea) {
+        let area = _.find(this.$store.state.app_service.areas, (area) => area.areaId == this.selectedArea)
+        if (area && area.mapRatio) {
+         this.mapRatio = area.mapRatio
+        }
       }
     },
     setExbPosition() {
@@ -313,6 +319,7 @@ export default {
       if (!this.settingStart) {
         return
       }
+      this.clearPrevious()
       this.$root.$emit('bv::show::modal', 'modalInfo')
 
       let messureCount = 0
@@ -322,25 +329,10 @@ export default {
         if (messureCount == 2) {
           return
         }
-        let revTrgCnt = new Container()
-        let revTrg = new Shape()
-        let color = messureCount == 0? '#2299cc': '#ee0033'
         let current = {x:evt.stageX, y:evt.stageY}
-        revTrg.graphics.beginFill(color).drawPolyStar(0, -20, 20, 3, 0, 90)
-
-        let label = new Text(messureCount == 0? 'start': 'end')
-        label.font = "16px Arial"
-        label.color = "#000"
-        label.textAlign = "center"
-        label.textBaseline = "middle"
-        label.y = -40
-
-        revTrgCnt.x = current.x
-        revTrgCnt.y = current.y
-        revTrgCnt.addChild(label)
-        revTrgCnt.addChild(revTrg)
-
+        let revTrgCnt = this.createTriangle(messureCount, current) 
         stage.addChild(revTrgCnt)
+        this.revTrgCnt[messureCount] = revTrgCnt
         if (messureCount == 0) {
           start = current
         }
@@ -350,8 +342,10 @@ export default {
           line.graphics.setStrokeStyle(1)
           line.graphics.moveTo(start.x, start.y)
           line.graphics.lineTo(current.x, current.y)
-          stage.addChild(line)
-          this.pixelWidth = Math.floor(Math.sqrt(Math.pow(current.x-start.x, 2) + Math.pow(current.y-start.y, 2)))
+          this.lineCnt = new Container()
+          this.lineCnt.addChild(line)
+          stage.addChild(this.lineCnt)
+          this.pixelWidth = Math.floor(Math.sqrt(Math.pow(current.x-start.x, 2) + Math.pow(current.y-start.y, 2))) / this.mapImageScale
           this.mapRatioChanged = true
           this.isChanged = true
         }
@@ -359,6 +353,38 @@ export default {
 
         stage.update()
       })
+    },
+    clearPrevious() {
+      if (this.revTrgCnt[0]) {
+        this.revTrgCnt[0].removeAllChildren()
+      }
+      if (this.revTrgCnt[1]) {
+        this.revTrgCnt[1].removeAllChildren()
+      }
+      if (this.lineCnt) {
+        this.lineCnt.removeAllChildren()
+      }
+      this.stage.update()
+    },
+    createTriangle(messureCount, current) {
+      let revTrgCnt = new Container()
+      let revTrg = new Shape()
+      let color = messureCount == 0? '#2299cc': '#ee0033'
+      revTrg.graphics.beginFill(color).drawPolyStar(0, -20, 20, 3, 0, 90)
+
+      let label = new Text(messureCount == 0? 'start': 'end')
+      label.font = "16px Arial"
+      label.color = "#000"
+      label.textAlign = "center"
+      label.textBaseline = "middle"
+      label.y = -40
+
+      revTrgCnt.x = current.x
+      revTrgCnt.y = current.y
+      revTrgCnt.addChild(label)
+      revTrgCnt.addChild(revTrg)
+
+      return revTrgCnt
     },
     changeArea() {
       this.tempMapFitMobile = DISP.MAP_FIT_MOBILE
@@ -467,13 +493,12 @@ export default {
         }
 
         if (this.mapRatioChanged && this.mapRatio != null) {
-          await AppServiceHelper.bulkSave('/core/area', [{areaId: this.selectedArea, mapRatio: this.mapRatio * this.mapImageScale}], UPDATE_ONLY_NN.EMPTY_ZERO)
-          await StateHelper.load('area')
+          await AppServiceHelper.save('/core/area', {areaId: this.selectedArea, mapRatio: this.mapRatio}, UPDATE_ONLY_NN.EMPTY_ZERO)
+          await StateHelper.load('area', true)
         }
         this.message = this.$i18n.tnl('message.completed', {target: this.$i18n.tnl('label.save')})
         this.showInfo = true
         this.isChanged = false
-        this.exbs = this.positionedExb
       } catch (e) {
         console.log(e)
         if (e.key) {
