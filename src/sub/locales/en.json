@@ -86,9 +86,8 @@
     "deviceId": "Device ID",
     "deviceIdX": "Device ID (Hex)",
     "deviceNum": "Device No",
-    "final-receive-timestamp": "Last date",
-    "receive-place": "Detected at",
-    "power-level": "Battery level",
+    "finalReceiveTimestamp": "Last date",
+    "powerLevel": "Battery level",
     "power-good": "Enough",
     "power-warning": "Decrease",
     "power-poor": "Replace",
@@ -198,7 +197,7 @@
     "undetect": "Undetected",
     "none": "None",
     "power-null": "‐",
-    "final-receive-location": "Last position",
+    "finalReceiveLocation": "Last position",
     "mapDisplay": "Map display",
 
     "positionStack": "Position (Whole)",
@@ -380,7 +379,7 @@
     "APP.SERVICE_BASE_URL": "API settings & End point",
     "APP.SERVICE_UP_TM": " API settings & update interval ",
 
-    "APP.HIDE_TIME": "Unreceived state judgment time",
+    "APP.LOST_TIME": "Unreceived state judgment time",
 
     "dummy": ""
   },

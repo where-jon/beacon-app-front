@@ -49,9 +49,9 @@ export default {
           MenuHelper.useMaster('group') && APP.POT_WITH_GROUP ? {key: "groupName", label: 'group', sortable: true, tdClass: "action-rowdata"} : null,
           {key: "state", sortable: true, tdClass: "action-rowdata"},
           APP.POSITION_WITH_AREA ? {key: "areaName", label: 'area', sortable: true, tdClass: "action-rowdata"} : null,
-          {key: "locationName", label: 'final-receive-location', sortable: true, tdClass: "action-rowdata"},
-          {key: "updatetime", label: 'final-receive-timestamp', sortable: true, tdClass: "action-rowdata"},
-          {key: "powerLevel", label: 'power-level', tdClass: "action-rowdata", 'class': "text-md-center"},
+          {key: "locationName", label: 'finalReceiveLocation', sortable: true, tdClass: "action-rowdata"},
+          {key: "updatetime", label: 'finalReceiveTimestamp', sortable: true, tdClass: "action-rowdata"},
+          {key: "powerLevel", label: 'powerLevel', tdClass: "action-rowdata", 'class': "text-md-center"},
           {key: "mapDisplay", tdClass: "action-rowdata"},
         ]),
         initTotalRows: this.$store.state.app_service.positionList.length,
@@ -99,10 +99,8 @@ export default {
         PositionHelper.setDetectState(positions)
 
         positions = positions.map((pos) => {
-          const stateOpt = DETECT_STATE.getTypes().find((val) => pos.detectState === val.value)
           return {
             ...pos,
-            state: stateOpt ? stateOpt.text : null,
             powerLevel: this.getPowerLevel(pos),
             txId: Util.getValue(pos, "tx.txId" , null),
             potCd: Util.getValue(pos, "tx.pot.potCd", null),

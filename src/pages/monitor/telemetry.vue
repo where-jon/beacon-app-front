@@ -17,7 +17,7 @@
             <tr v-for="(telemetry, index) in telemetrys" :key="index" :class="getTrClass(index, telemetry[label_timestamp])">
               <td scope="row" v-for="(val, key) in telemetry" :key="key" :class="getTdClass(index, val, key)" v-if="val !== null">
                 <span v-if="key === label_powerLevel"><i :class="getPowerLevelClass(val)"></i>{{ val }}</span>
-                <span :class="exbStateClass(telemetry[label_timestamp])" v-else-if="key === label_state">{{ val }}</span>
+                <span :class="getStateClass('exb', telemetry[label_timestamp])" v-else-if="key === label_state">{{ val }}</span>
                 {{ key !== label_powerLevel && key !== label_state ? val : '' }}
               </td>
             </tr>
@@ -57,9 +57,10 @@ import { getCharSet } from '../../sub/helper/CharSetHelper'
 import moment from 'moment'
 import { addLabelByKey } from '../../sub/helper/ViewHelper'
 import allCount from '../../components/parts/allcount.vue'
+import statusmixinVue from '../../components/mixin/statusmixin.vue';
 
 export default {
-  mixins: [reloadmixinVue, commonmixinVue ],
+  mixins: [reloadmixinVue, commonmixinVue, statusmixinVue ],
   components: {
     breadcrumb,
     VueScrollingTable,
@@ -82,8 +83,8 @@ export default {
         APP.EXB_WITH_DEVICE_ID ? {key: "deviceId", sortable: true }: null,
         APP.EXB_WITH_DEVICE_IDX ? {key: "deviceIdX", sortable: true }: null,
         {key: "locationName", label:'locationName', sortable: true,},
-        {key: "power-level", label:'power-level', sortable: true,},
-        {key: "final-receive-timestamp", label:'final-receive-timestamp', sortable: true,},
+        {key: "powerLevel", label:'powerLevel', sortable: true,},
+        {key: "finalReceiveTimestamp", label:'finalReceiveTimestamp', sortable: true,},
         {key: "state", label:'state', sortable: true,},
       ]),
       isLoad: false,
@@ -91,17 +92,16 @@ export default {
       label_deviceNum: this.$i18n.tnl('label.deviceNum'),
       label_deviceIdX: this.$i18n.tnl('label.deviceIdX'),
       label_name: this.$i18n.tnl('label.location'),
-      label_timestamp: this.$i18n.tnl('label.final-receive-timestamp'),
-      label_powerLevel: this.$i18n.tnl('label.power-level'),
+      label_timestamp: this.$i18n.tnl('label.finalReceiveTimestamp'),
+      label_powerLevel: this.$i18n.tnl('label.powerLevel'),
       label_state: this.$i18n.tnl('label.state'),
-      badgeClassPrefix: 'badge badge-pill badge-',
       csvHeaders: {
         [this.$i18n.tnl('label.deviceNum')]: APP.EXB_WITH_DEVICE_NUM ? 'deviceNum' : null,
         [this.$i18n.tnl('label.deviceId')]: APP.EXB_WITH_DEVICE_ID ? 'deviceId' : null,
         [this.$i18n.tnl('label.deviceIdX')]: APP.EXB_WITH_DEVICE_IDX ? 'deviceId(HEX)' : null,
-        [this.$i18n.tnl('label.location')]: 'finalReceivePlace',
-        [this.$i18n.tnl('label.final-receive-timestamp')]: 'timestamp',
-        [this.$i18n.tnl('label.power-level')]: 'powerLevel',
+        [this.$i18n.tnl('label.location')]: 'name',
+        [this.$i18n.tnl('label.finalReceiveTimestamp')]: 'timestamp',
+        [this.$i18n.tnl('label.powerLevel')]: 'powerLevel',
         [this.$i18n.tnl('label.state')]: 'state'
       },
       interval: null,
@@ -160,7 +160,7 @@ export default {
       this.isLoad = false
     },
     getTrClass (index, updatetime) {
-      const state = DetectStateHelper.getExbState(updatetime)
+      const state = DetectStateHelper.getState('exb', updatetime)
       return DetectStateHelper.isUndetect(state) ? 'undetect' : (index % 2 === 1 ? 'odd' : '')
     },
     getTdClass (index, val, key) {
@@ -196,7 +196,7 @@ export default {
           [this.label_name]: name != null ? name : 'ー',
           [this.label_powerLevel]:e.power_level * 2,
           [this.label_timestamp]: e.timestamp,
-          [this.label_state]: this.exbState(e.timestamp)
+          [this.label_state]: this.getStateLabel('exb', e.timestamp)
         }
       })
     },
@@ -216,62 +216,54 @@ export default {
       }
       return "fas fa-battery-empty power-empty"
     },
-    exbState(updatetime) {
-      const state = DetectStateHelper.getExbState(updatetime)
-      return DetectStateHelper.getLabel(state)
-    },
-    exbStateClass(updatetime) {
-      const state = DetectStateHelper.getExbState(updatetime)
-      return this.badgeClassPrefix + DetectStateHelper.getClass(state)
-    },
   }
 }
 </script>
 
 <style scoped lang="scss">
-  @import "../../sub/constant/scrolltable.scss";
+@import "../../sub/constant/scrolltable.scss";
 
-  div.table-area {
-    overflow-x: auto;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-  }
+div.table-area {
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+}
 
-  tbody {
-    display:block;
-    height:400px;
-    overflow:auto;
-    min-width: 630px;
-  }
+tbody {
+  display:block;
+  height:400px;
+  overflow:auto;
+  min-width: 630px;
+}
 
-  thead, tbody tr {
-    display:table;
-    width:100%;
-    table-layout:fixed;
-  }
+thead, tbody tr {
+  display:table;
+  width:100%;
+  table-layout:fixed;
+}
 
-  span.badge {
-    margin-right: 0px;
-  }
+span.badge {
+  margin-right: 0px;
+}
 
-  td.exb-state {
-    padding: 0.75rem 0rem 0.75rem 0rem;
-  }
+td.exb-state {
+  padding: 0.75rem 0rem 0.75rem 0rem;
+}
 
-  thead {
-    width: calc( 100% - 1em )
-  }
+thead {
+  width: calc( 100% - 1em )
+}
 
-  .power-safe {
-    color: #28a745;
-  }
-  
-  .power-warning {
-    color: #ffd700;
-  }
+.power-safe {
+  color: #28a745;
+}
 
-  .power-empty {
-    color: #f17777;
-  }
+.power-warning {
+  color: #ffd700;
+}
+
+.power-empty {
+  color: #f17777;
+}
 
 </style>

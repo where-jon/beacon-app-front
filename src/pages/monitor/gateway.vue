@@ -15,12 +15,12 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(gateway, index) in gateways" :key="index" :class="{undetect: isUndetect(gateway.updated)}">
+          <tr v-for="(gateway, index) in gateways" :key="index" :class="{undetect: isUndetect('gw', gateway.updated)}">
             <td>{{ gateway.num }}</td>
             <td>{{ gateway.deviceid }}</td>
             <td>{{ gateway.updated }}</td>
             <td>
-              <span :class="stateClass(gateway.timestamp)">{{ getGatewayState(gateway.timestamp) }}</span>
+              <span :class="getStateClass('gw', gateway.updated)">{{ getStateLabel('gw', gateway.updated) }}</span>
             </td>
           </tr>
         </tbody>
@@ -44,9 +44,10 @@ import moment from 'moment'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import * as DetectStateHelper from '../../sub/helper/DetectStateHelper'
 import allCount from '../../components/parts/allcount.vue'
+import statusmixinVue from '../../components/mixin/statusmixin.vue';
 
 export default {
-  mixins: [reloadmixinVue, commonmixinVue ],
+  mixins: [reloadmixinVue, commonmixinVue, statusmixinVue],
   components: {
     breadcrumb,
     allCount,
@@ -66,9 +67,8 @@ export default {
       isLoad: false,
       labelNo: this.$i18n.t('label.no'),
       labelDeviceId: this.$i18n.t('label.deviceId'),
-      labelTimestamp: this.$i18n.t('label.final-receive-timestamp'),
+      labelTimestamp: this.$i18n.t('label.finalReceiveTimestamp'),
       labelState: this.$i18n.t('label.state'),
-      badgeClassPrefix: 'badge badge-pill badge-',
     }
   },
   props: {
@@ -113,7 +113,7 @@ export default {
         }
         const currentTime = new Date().getTime()
         gateways = gateways.map((e) => {
-          const state = this.getGatewayState(e.timestamp)
+          const state = this.getStateLabel('gw', e.timestamp)
           return { ...e, state: state }
         })
         this.replaceMonitor({gateways})
@@ -124,21 +124,9 @@ export default {
       this.replace({showProgress: false})
       this.isLoad = false
     },
-    isUndetect(updatetime) {
-      const state = DetectStateHelper.getExbState(updatetime)
-      return DetectStateHelper.isUndetect(state)
-    },
     getTableHeaders() {
       return !this.isDev ? [this.labelNo,this.labelDeviceId,this.labelTimestamp,this.labelState]
       : [this.labelNo,'deviceid','updated','state']
-    },
-    stateClass(updatetime) {
-      const state = DetectStateHelper.getExbState(updatetime)
-      return this.badgeClassPrefix + DetectStateHelper.getClass(state)
-    },
-    getGatewayState(updatetime) {
-      const state = DetectStateHelper.getGwState(updatetime)
-      return DetectStateHelper.getLabel(state)
     },
     download() {
       HtmlUtil.fileDL("gateway.csv", Util.converToCsv(this.gateways), getCharSet(this.$store.state.loginId))
@@ -153,8 +141,4 @@ export const formattedDateToDatetime = (formatted) => {
 </script>
 
 <style scoped lang="scss">
-span.badge.badge-pill {
-  color: white;
-  font-size: 0.9rem;
-}
 </style>

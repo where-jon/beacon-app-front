@@ -214,12 +214,12 @@ export const correctPosId = (orgPositions, now) => {
   .uniqWith(_.isEqual) // 重複除去
   .filter((val) => {
     if (DEV.DEBUG) {
-      let method = now - val.timestamp > APP.HIDE_TIME || val.rssi < APP.RSSI_MIN? 'warn': 'log'
+      let method = now - val.timestamp > APP.LOST_TIME || val.rssi < APP.RSSI_MIN? 'warn': 'log'
       console[method]('btxId', val.btx_id, Util.formatDate(val.timestamp), (now - val.timestamp) / 1000 + '秒前', 'RSSI: ' + Math.round(val.rssi * 100)/ 100)
     }
     return true
   })
-  .filter((val) => val.rssi >= APP.RSSI_MIN && val.timestamp >= now - APP.HIDE_TIME) // RSSI値、指定時刻でフィルタ
+  .filter((val) => val.rssi >= APP.RSSI_MIN && val.timestamp >= now - APP.LOST_TIME) // RSSI値、指定時刻でフィルタ
   .orderBy(['btx_id', 'pos_id', 'timestamp']) // btx_id, pos_id, timestampでソート
   .value()
 
@@ -294,7 +294,8 @@ export const setDetectState = (positions) => {
           .sort().last()
     }
 
-    position.detectState = DetectStateHelper.getTxState(updatetime)
+    position.detectState = DetectStateHelper.getState('tx', updatetime) // nearestのtimestampを使用
+    position.state = DetectStateHelper.getLabel(position.detectState)
     position.noSelectedTx = position.detectState != DETECT_STATE.DETECTED
   })
 

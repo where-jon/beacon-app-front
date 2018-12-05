@@ -11,14 +11,26 @@
       <div class="table-area">
         <table v-if="!isDev" class="table striped">
           <thead>
-            <th scope="col" v-for="(val, key) in positions[0]" :key="key" >{{ key }}</th>
+            <th v-t="'label.major'"></th>
+            <th v-t="'label.minor'"></th>
+            <th v-t="'label.name'"></th>
+            <th v-t="'label.finalReceiveLocation'"></th>
+            <th v-t="'label.powerLevel'"></th>
+            <th v-t="'label.finalReceiveTimestamp'"></th>
+            <th v-t="'label.state'"></th>
           </thead>
           <tbody>
-            <tr v-for="(position, index) in positions" :key="index">
-              <td scope="row" v-for="(val, key) in position" :key="key">
-                <span :class="powerLevel(val, true)" v-if="key === label_powerLevel">{{ powerLevel(val, false) }}</span>
-                <span :class="txStateClass(position[label_timestamp])" v-else-if="key === label_state">{{ val }}</span>
-                {{ key !== label_powerLevel && key !== label_state ? val : ''}}
+            <tr v-for="(position, index) in positions" :key="index" :class="{undetect: isUndetect('tx', position.updatetime)}">
+              <td>{{ position.major }}</td>
+              <td>{{ position.minor }}</td>
+              <td>{{ position.name }}</td>
+              <td>{{ position.finalReceiveLocation }}</td>
+              <td>
+                <span :class="powerLevelClass(position.power_level)" >{{ powerLevelLabel(position.power_level) }}</span>
+              </td>
+              <td>{{ position.finalReceiveTimestamp }}</td>
+              <td>
+                <span :class="getStateClass('tx', position.updatetime)">{{ position.state }}</span>
               </td>
             </tr>
           </tbody>
@@ -70,9 +82,10 @@ import reloadmixinVue from '../../components/mixin/reloadmixin.vue'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import _ from 'lodash'
 import allCount from '../../components/parts/allcount.vue'
+import statusmixinVue from '../../components/mixin/statusmixin.vue';
 
 export default {
-  mixins: [reloadmixinVue, commonmixinVue ],
+  mixins: [reloadmixinVue, commonmixinVue, statusmixinVue],
   components: {
     breadcrumb,
     VueScrollingTable,
@@ -91,31 +104,7 @@ export default {
         }
       ],
       isLoad: false,
-      label_major: this.$i18n.tnl('label.major'),
-      label_minor: this.$i18n.tnl('label.minor'),
-      label_powerLevel: this.$i18n.tnl('label.power-level'),
-      label_name: this.$i18n.tnl('label.name'),
-      label_receivePlace: this.$i18n.tnl('label.receive-place'),
-      label_timestamp: this.$i18n.tnl('label.final-receive-timestamp'),
-      label_undetect: this.$i18n.tnl('label.undetect'),
-      label_powerLevelGood: this.$i18n.tnl('label.power-good'),
-      label_powerLevelWarn: this.$i18n.tnl('label.power-warning'),
-      label_powerLevelPoor: this.$i18n.tnl('label.power-poor'),
-      label_state: this.$i18n.tnl('label.state'),
       interval: null,
-      powerLevelGood: 69,
-      powerLevelWarn: 39,
-      locationMap: {},
-      badgeClassPrefix: 'badge badge-pill badge-',
-      csvHeaders: {
-        ['major']: 'major',
-        ['minor']: 'minor',
-        [this.$i18n.tnl('label.name')]: 'name',
-        [this.$i18n.tnl('label.final-receive-timestamp')]: 'timestamp',
-        [this.$i18n.tnl('label.receive-place')]: 'finalReceivePlace',
-        [this.$i18n.tnl('label.state')]: 'state',
-        [this.$i18n.tnl('label.power-level')]: 'powerLevel'
-      }
     }
   },
   props: {
@@ -138,7 +127,6 @@ export default {
   mounted() {
     this.fetchData()
     this.replace({title: this.$i18n.tnl('label.position')})
-    this.locationMap = this.getExbRecords()
     if (!this.isDev) {
       return
     }
@@ -159,7 +147,9 @@ export default {
       this.isLoad = true
       try {
         let positions = await EXCloudHelper.fetchRawPosition()
-        positions = await this.makePositionRecords(positions)
+        if (!this.isDev) {
+          positions = await this.makePositionRecords(positions)
+        }
         if (payload && payload.done) {
           payload.done()
         }
@@ -172,99 +162,93 @@ export default {
       this.isLoad = false
     },
     async makePositionRecords(positions) {
-      if (this.isDev) {
-        return positions
-      }
+      await StateHelper.load('exb')
       await StateHelper.load('tx')
       return positions.map((e) => {
         const tx = this.txs.find((tx) => tx.btxId == e.btx_id)
-        const record = {
-          [this.label_major]: e.major,
-          [this.label_minor]: e.minor,
-          [this.label_name]: tx != null ? tx.txName : '—',
-          [this.label_receivePlace]: e.device_id ? this.locationMap[e.device_id] : '',
-          [this.label_powerLevel]: e.power_level,
-          [this.label_timestamp]: this.getTimestamp(e.updatetime),
-          [this.label_state]: this.txState(e.updatetime),
+        const exb = this.exbs.find((exb) => exb.location.posId == e.pos_id)
+        return {
+          ...e,
+          name: tx != null ? tx.txName : '—',
+          finalReceiveLocation: exb? exb.location.locationName  : '',
+          finalReceiveTimestamp: this.getTimestamp(e.updatetime),
+          state: this.getStateLabel('tx', e.updatetime),
         }
-        return record
       })
     },
     getTimestamp(timestamp) {
-      if (!timestamp || timestamp == null) {
-        return this.label_undetect
+      if (timestamp) {
+        try {
+          return moment(timestamp).format('YYYY/MM/DD HH:mm:ss')
+        } catch (e) {}
       }
-      try {
-        const d = new Date(timestamp)
-        return moment(d.getTime()).format('YYYY/MM/DD HH:mm:ss')
-      } catch (e) {
-        return this.label_undetect
-      }
+      return this.$i18n.tnl('label.undetect')
     },
-    powerLevel(val, isClass) {
-      if (val > this.powerLevelGood) {
-        return isClass ? (this.badgeClassPrefix + 'success') : this.label_powerLevelGood
+    powerLevel(val) {
+      if (val > APP.POWER_LEVEL_GOOD) {
+        return 'good'
       }
-      if (val > this.powerLevelWarn) {
-        return isClass ? (this.badgeClassPrefix + 'warning') : this.label_powerLevelWarn
+      if (val > APP.POWER_LEVEL_WARN) {
+        return 'warning'
       }
       if (val != null) {
-        return isClass ? (this.badgeClassPrefix + 'danger') : this.label_powerLevelPoor
+        return 'poor'
       }
-      return isClass ? "": "-"
+      return null
     },
-    txState(updatetime) {
-      const state = DetectStateHelper.getTxState(updatetime)
-      return DetectStateHelper.getLabel(state)
+    powerLevelLabel(val) {
+      let powerLevel = this.powerLevel(val)
+      if (powerLevel) {
+        return this.$i18n.tnl('label.power-' + powerLevel)
+      }
+      return "-"
     },
-    txStateClass(updatetime) {
-      const state = DetectStateHelper.getExbState(updatetime)
-      return this.badgeClassPrefix + DetectStateHelper.getClass(state)
+    powerLevelClass(val) {
+      const LEVEL_CLASS_MAP = {good:'success', warning:'warning', poor:'danger'}
+      let powerLevel = this.powerLevel(val)
+      if (powerLevel) {
+        return this.badgeClassPrefix + LEVEL_CLASS_MAP[powerLevel]
+      }
+      return ""
     },
     download() {
-      const records = this.positions.map(e => {
-        const obj = {}
-        Object.keys(e).forEach(k => {
-          obj[this.csvHeaders[k]] = e[k]
-        })
-        return obj
+      const dldata = this.positions.map((pos) => {
+        return {
+          major: pos.major,
+          minor: pos.minor,
+          name: pos.name,
+          powerLevel: this.powerLevelLabel(pos.power_level),
+          finalReceiveLocation: pos.finalReceiveLocation,
+          finalReceiveTimestamp: pos.finalReceiveTimestamp,
+          state: pos.state,
+        }
       })
-      HtmlUtil.fileDL("position.csv", Util.converToCsv(records), getCharSet(this.$store.state.loginId))
+      HtmlUtil.fileDL("position.csv", Util.converToCsv(dldata), getCharSet(this.$store.state.loginId))
     },
-    async getExbRecords() {
-      await StateHelper.load('exb')
-      this.locationMap = this.exbs.reduce((obj, record) => {
-        obj[record.deviceId] = record.location.locationName
-        return obj
-      }, {})
-    }
   }
 }
 </script>
 
 <style scoped lang="scss">
-  @import "../../sub/constant/scrolltable.scss";
+@import "../../sub/constant/scrolltable.scss";
 
-  div.table-area {
-    overflow-x: auto;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-  }
+div.table-area {
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+}
 
-  tbody {
-    display:block;
-    height:400px;
-    overflow:auto;
-    min-width: 530px;
-  }
+tbody {
+  display:block;
+  height:400px;
+  overflow:auto;
+  min-width: 530px;
+}
 
-  thead, tbody tr {
-    display:table;
-    width:100%;
-    table-layout:fixed;
-  }
-  
-  .badge-warning {
-    color: white;
-  }
+thead, tbody tr {
+  display:table;
+  width:100%;
+  table-layout:fixed;
+}
+
 </style>
