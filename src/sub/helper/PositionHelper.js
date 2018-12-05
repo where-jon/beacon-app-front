@@ -203,7 +203,6 @@ const getTxViewType = (txViewType) => {
  */
 export const correctPosId = (orgPositions, now) => {
   Util.debug(now, orgPositions)
-  console.log('現在日時: ' + Util.formatDate(now))
   let positions = _.chain(orgPositions).reduce((result, positions, idx) => { // MOVING_AVERAGE回の測位データを集約し、nearestをフラットにして１階層のオブジェエクト配列にする
     _.forEach(positions, (pos) => {
       _.forEach(pos.nearest, (val) => {
