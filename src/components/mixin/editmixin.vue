@@ -145,7 +145,7 @@ export default {
           }).join("<br>")
         }
         else {
-          this.message = this.$i18n.tnl('message.' + this.crud + 'Failed', {target: this.$i18n.tnl('label.' + this.name), code: e.message})
+          this.message = this.$i18n.terror('message.' + this.crud + 'Failed', {target: this.$i18n.tnl('label.' + this.name), code: e.message})
         }
         this.showAlert = true
         window.scrollTo(0, 0)
