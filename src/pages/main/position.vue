@@ -105,6 +105,7 @@ export default {
     ...mapState('main', [
       'selectedTx',
       'orgPositions',
+      'positionHistores',
     ]),
     ...mapState('app_service', [
       'categories',
@@ -122,8 +123,13 @@ export default {
       return ret? [ret]: []
     },
     positions() {
-      let now = !DEV.USE_MOCK_EXC? new Date().getTime(): mock.positions_conf.start + this.count++ * mock.positions_conf.interval  // for mock
-      let positions = PositionHelper.correctPosId(this.orgPositions, now)
+        let positions = []
+      if (APP.USE_POSITION_HISTORY) {
+        positions = this.positionHistores
+      } else {
+        let now = !DEV.USE_MOCK_EXC? new Date().getTime(): mock.positions_conf.start + this.count++ * mock.positions_conf.interval  // for mock
+        positions = PositionHelper.correctPosId(this.orgPositions, now)
+      }
       if (APP.USE_MEDITAG && this.meditagSensors) {
         positions = SensorHelper.setStress(positions, this.meditagSensors)
       }
@@ -152,6 +158,7 @@ export default {
   methods: {
     ...mapActions('main', [
       'pushOrgPositions',
+      'setPositionHistores',
     ]),
     reset() {
       this.isShownMapImage = false
@@ -171,6 +178,7 @@ export default {
       // rev === trueの場合、ポップアップを上に表示
       const rev = y + map.top + DISP.TX_R + tipOffsetY + popupHeight > window.innerHeight
       const p = tx.pot
+      if (p == null) return
 
       const position = this.positions.find((e) => {
         return e.btx_id === btxId
@@ -241,9 +249,14 @@ export default {
           // var pMock = mock.position
           var pMock = mock.positions[this.count]
         }
-        let positions = await EXCloudHelper.fetchPosition(this.exbs, this.txs, pMock)
-        // 移動平均数分のポジションデータを保持する
-        this.pushOrgPositions(positions)
+        if (APP.USE_POSITION_HISTORY) {
+          // Serverで計算された位置情報を得る
+          var aData = await EXCloudHelper.fetchPositionHistory(this.exbs, this.txs, pMock)
+          this.setPositionHistores(aData)
+        } else {
+          // 移動平均数分のポジションデータを保持する
+          this.pushOrgPositions(await EXCloudHelper.fetchPosition(this.exbs, this.txs, pMock))
+        }
 
         if (APP.USE_MEDITAG) {
           let meditagSensors = await EXCloudHelper.fetchSensor(SENSOR.MEDITAG)

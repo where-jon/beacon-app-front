@@ -40,6 +40,7 @@ export const APP = { // 機能面に関する設定
   },
     
   // 測位関連設定
+  USE_POSITION_HISTORY: true, // 位置情報にT_POSITION_HISTORYを使う
   TX_POS_ONE_TO_ONE: false, // 1つの場所に1TXのみ存在可能
   RSSI_MIN: -67, // RSSI下限値
   MOVING_AVERAGE: 5, // 5回分移動平均
@@ -124,11 +125,12 @@ export const EXCLOUD = {
   // POSITION_URL: EXCLOUD_BASE_URL + "/beacon/position-kalman?_=",
   // GATEWAY_URL: EXCLOUD_BASE_URL + "/gateway/0?=",
   // TELEMETRY_URL: EXCLOUD_BASE_URL + "/telemetry/0?=",
-  POSITION_URL: "/core/excloud/positionfetch/", // "/core/excloud/position?_=",
+  POSITION_URL: "/core/excloud/position?_=",
   GATEWAY_URL: "/core/excloud/gateway?_=",
   TELEMETRY_URL: "/core/excloud/telemetry?_=",
   SENSOR_URL: "/core/excloud/sensor/{id}?_=",
   LED_URL: "/core/excloud/led?_=",
+  POSITION_HISTORY_FETCH_URL: "/core/positionHistory/fetch?_=",
 }
 
 export const DISP = { // 表示系設定（表示・色・フォント・サイズ）
