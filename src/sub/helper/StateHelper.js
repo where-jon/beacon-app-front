@@ -2,7 +2,7 @@ import _ from 'lodash'
 import * as AppServiceHelper from './AppServiceHelper'
 import * as Util from '../util/Util'
 import * as HtmlUtil from '../util/HtmlUtil'
-import { CATEGORY, SHAPE } from '../constant/Constants'
+import { ROLE, CATEGORY, SHAPE } from '../constant/Constants'
 import { APP } from '../constant/config'
 
 
@@ -14,6 +14,10 @@ let i18n
 export const setApp = (pStore, pi18n) => {
     store = pStore
     i18n = pi18n
+}
+
+export const isAboveSuperUser = (targetRoleName) => {
+  return store.state.role != ROLE.SUPER_ADMIN && targetRoleName == ROLE.SUPER_ADMIN
 }
 
 export const getTxIdName = (tx) => {
