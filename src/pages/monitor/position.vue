@@ -218,8 +218,8 @@ export default {
           minor: pos.minor,
           name: pos.name,
           powerLevel: this.powerLevelLabel(pos.power_level),
-          finalReceiveLocation: pos.finalReceiveLocation,
-          finalReceiveTimestamp: pos.finalReceiveTimestamp,
+          location: pos.finalReceiveLocation,
+          timestamp: pos.finalReceiveTimestamp,
           state: pos.state,
         }
       })

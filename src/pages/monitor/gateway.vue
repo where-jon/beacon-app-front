@@ -129,7 +129,11 @@ export default {
       : [this.labelNo,'deviceid','updated','state']
     },
     download() {
-      HtmlUtil.fileDL("gateway.csv", Util.converToCsv(this.gateways), getCharSet(this.$store.state.loginId))
+      let dldata = this.gateways.map((gw) => {
+        const {updated, ...rest} = gw // updatedを除く
+        return rest
+      })
+      HtmlUtil.fileDL("gateway.csv", Util.converToCsv(dldata), getCharSet(this.$store.state.loginId))
     },
   }
 }
