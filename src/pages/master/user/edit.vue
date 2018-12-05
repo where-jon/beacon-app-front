@@ -107,7 +107,7 @@ export default {
       this.roleOptions = this.roleOptions.filter((val) => superAdmin? val.value != superAdmin.roleId || this.form.roleId == superAdmin.roleId: true)
     }
     this.role = this.form.roleId
-    const userRole = this.roles.find((role) => role.roleId == this.form.roleId)
+    const userRole = this.roles.find((role) => role.roleId == this.user.roleId)
     if(userRole){
       this.aboveSuperUser = StateHelper.isAboveSuperUser(userRole.roleName)
     }
