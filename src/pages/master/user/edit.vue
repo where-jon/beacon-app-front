@@ -57,6 +57,7 @@ import * as StateHelper from '../../../sub/helper/StateHelper'
 import _ from 'lodash'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import * as AuthHelper from '../../../sub/helper/AuthHelper'
 import { APP } from '../../../sub/constant/config.js'
 import { ROLE } from '../../../sub/constant/Constants'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
@@ -82,6 +83,7 @@ export default {
       passConfirm: null,
       passMinLength: 3,
       passMaxLength: 16,
+      selfUpdate: this.$store.state.loginId == this.$store.state.app_service.user.loginId,
       items: [
         {
           text: this.$i18n.tnl('label.master'),
@@ -159,6 +161,13 @@ export default {
       this.role = null
       this.pass = null
       this.passConfirm = null
+
+      if(this.selfUpdate && Util.hasValue(this.form.pass)){
+        AuthHelper.authByAppService(
+          this.form.loginId,
+          this.form.pass
+        )
+      }
     },
     beforeSubmit(event, again){
       this.showInfo = false
