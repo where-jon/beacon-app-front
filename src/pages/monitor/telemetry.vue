@@ -266,4 +266,8 @@ thead {
   color: #f17777;
 }
 
+td {
+  word-break: break-all;
+}
+
 </style>

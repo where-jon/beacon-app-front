@@ -141,4 +141,9 @@ export const formattedDateToDatetime = (formatted) => {
 </script>
 
 <style scoped lang="scss">
+
+td {
+  word-break: break-all;
+}
+
 </style>

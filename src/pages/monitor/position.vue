@@ -251,4 +251,8 @@ thead, tbody tr {
   table-layout:fixed;
 }
 
+td {
+  word-break: break-all;
+}
+
 </style>

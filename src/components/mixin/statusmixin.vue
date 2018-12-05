@@ -32,8 +32,4 @@ export default {
 </script>
 
 <style scoped lang="scss">
-span.badge.badge-pill {
-  color: white;
-  font-size: 0.9rem;
-}
 </style>
