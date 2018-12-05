@@ -12,6 +12,8 @@ import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkupload from '../../../components/page/bulkupload.vue'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
+import * as HtmlUtil from '../../../sub/util/HtmlUtil'
+import { APP } from '../../../sub/constant/config'
 
 export default {
   components: {
@@ -63,6 +65,12 @@ export default {
         thumbnail: target.thumbnail,
         description: target.description,
       }: null
+    },
+    addLoadImage(imgInfo) {
+      const blob = Util.base64ToBlob(imgInfo.thumbnail)
+      HtmlUtil.readImage({target: {files: [blob]}}, (evt, width, height, thumbnail) => {
+          imgInfo.thumbnail = thumbnail
+      }, APP.POT_THUMBNAIL_MAX)
     },
     async save(thumbnails) {
       return await AppServiceHelper.bulkSave(this.appServicePath, thumbnails)
