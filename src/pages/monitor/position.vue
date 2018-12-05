@@ -107,15 +107,26 @@ export default {
       powerLevelWarn: 39,
       locationMap: {},
       badgeClassPrefix: 'badge badge-pill badge-',
-      csvHeaders: {
-        ['major']: 'major',
-        ['minor']: 'minor',
-        [this.$i18n.tnl('label.name')]: 'name',
-        [this.$i18n.tnl('label.final-receive-timestamp')]: 'timestamp',
-        [this.$i18n.tnl('label.receive-place')]: 'finalReceivePlace',
-        [this.$i18n.tnl('label.state')]: 'state',
-        [this.$i18n.tnl('label.power-level')]: 'powerLevel'
-      }
+      csvHeaders: this.isDev? {
+          'btx_id': 'btx_id',
+          'device_id': 'device_id',
+          'pos_id': 'pos_id',
+          'phase': 'phase',
+          'power_level': 'power_level',
+          'updatetime': 'updatetime',
+          'nearest1': 'nearest1',
+          'nearest2': 'nearest2',
+          'nearest3': 'nearest3',
+        }:
+        {
+          ['major']: 'major',
+          ['minor']: 'minor',
+          [this.$i18n.tnl('label.name')]: 'name',
+          [this.$i18n.tnl('label.receive-place')]: 'finalReceivePlace',
+          [this.$i18n.tnl('label.power-level')]: 'powerLevel',
+          [this.$i18n.tnl('label.final-receive-timestamp')]: 'timestamp',
+          [this.$i18n.tnl('label.state')]: 'state',
+        }
     }
   },
   props: {
@@ -173,7 +184,14 @@ export default {
     },
     async makePositionRecords(positions) {
       if (this.isDev) {
-        return positions
+        return positions.map((position) =>{
+          return {
+            ...position,
+            nearest1: position.nearest && position.nearest.length > 0? position.nearest[0]: null,
+            nearest2: position.nearest && position.nearest.length > 1? position.nearest[1]: null,
+            nearest3: position.nearest && position.nearest.length > 2? position.nearest[2]: null,
+          }
+        })
       }
       await StateHelper.load('tx')
       return positions.map((e) => {
@@ -224,8 +242,8 @@ export default {
     download() {
       const records = this.positions.map(e => {
         const obj = {}
-        Object.keys(e).forEach(k => {
-          obj[this.csvHeaders[k]] = e[k]
+        Object.keys(this.csvHeaders).forEach(csvHeader => {
+          obj[this.csvHeaders[csvHeader]] = e[csvHeader]
         })
         return obj
       })
