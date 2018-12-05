@@ -11,7 +11,7 @@
       </div>
     </b-navbar-brand>
 
-    <b-collapse is-nav id="nav_collapse" v-show="!isLoginPage && showNav">
+    <b-collapse ref="collapse" is-nav id="nav_collapse" v-show="!isLoginPage && showNav">
 
       <!-- left (navi dropdown menu) -->
       <b-navbar-nav>
@@ -94,6 +94,7 @@ export default {
   },
   methods: {
     logout() {
+      this.$refs.collapse.show = false
       AuthHelper.logout()
     },
     move(page) {
