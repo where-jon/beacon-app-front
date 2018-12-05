@@ -285,11 +285,8 @@ export const setDetectState = (positions) => {
 
   _.forEach(positions, (position) => {
     let updatetime = null
-    const nearest = _.filter(position.nearest, (val) =>
-      val.rssi >= APP.RSSI_MIN // rssi最低値でフィルタ
-    )
-    if (Util.hasValue(nearest)) {
-      updatetime = _(nearest)
+    if (Util.hasValue(position.nearest)) {
+      updatetime = _(position.nearest)
           .map((val) => val.timestamp)
           .sort().last()
     }
