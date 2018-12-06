@@ -17,11 +17,9 @@ export default {
       return DetectStateHelper.isUndetect(this.getState(type, updatetime))
     },
     getStateClass(type, updatetime) {
-      console.log(this.getState(type, updatetime), DetectStateHelper.getClass(this.getState(type, updatetime)))
       return this.badgeClassPrefix + DetectStateHelper.getClass(this.getState(type, updatetime))
     },
     getStateLabel(type, updatetime) {
-      console.log(updatetime, this.getState(type, updatetime), DetectStateHelper.getLabel(this.getState(type, updatetime)))
       return DetectStateHelper.getLabel(this.getState(type, updatetime))
     },
     getState(type, updatetime) {
