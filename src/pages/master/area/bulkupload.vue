@@ -37,7 +37,7 @@ export default {
           href: '/master/area',
         },
         {
-          text: this.$i18n.tnl('label.area') + this.$i18n.tnl('label.bulkUpload'),
+          text: this.$i18n.tnl('label.bulkUpload'),
           active: true
         }
       ]

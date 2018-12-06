@@ -95,7 +95,7 @@ export default {
           href: '/master/user',
         },
         {
-          text: this.$i18n.tnl('label.user') + this.$i18n.tnl(Util.getDetailCaptionKey(this.$store.state.app_service.user.userId)),
+          text: this.$i18n.tnl(Util.getDetailCaptionKey(this.$store.state.app_service.user.userId)),
           active: true
         }
       ],

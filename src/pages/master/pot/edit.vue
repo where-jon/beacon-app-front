@@ -136,7 +136,7 @@ export default {
           href: '/master/pot',
         },
         {
-          text: this.$i18n.tnl('label.pot') + this.$i18n.tnl(Util.getDetailCaptionKey(this.$store.state.app_service.pot.potId)),
+          text: this.$i18n.tnl(Util.getDetailCaptionKey(this.$store.state.app_service.pot.potId)),
           active: true
         }
       ]

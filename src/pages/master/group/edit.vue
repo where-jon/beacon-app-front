@@ -77,7 +77,7 @@ export default {
           href: '/master/group',
         },
         {
-          text: this.$i18n.tnl('label.group') + this.$i18n.tnl(Util.getDetailCaptionKey(this.$store.state.app_service.group.groupId)),
+          text: this.$i18n.tnl(Util.getDetailCaptionKey(this.$store.state.app_service.group.groupId)),
           active: true
         }
       ]

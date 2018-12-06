@@ -33,7 +33,7 @@ export default {
           href: '/master/user',
         },
         {
-          text: this.$i18n.tnl('label.user') + this.$i18n.tnl('label.bulkRegister'),
+          text: this.$i18n.tnl('label.bulkRegister'),
           active: true
         }
       ]

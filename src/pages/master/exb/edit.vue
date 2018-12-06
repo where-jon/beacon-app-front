@@ -138,7 +138,7 @@ export default {
           href: '/master/exb',
         },
         {
-          text: this.$i18n.tnl('label.exb') + this.$i18n.tnl(Util.getDetailCaptionKey(this.$store.state.app_service.exb.exbId)),
+          text: this.$i18n.tnl(Util.getDetailCaptionKey(this.$store.state.app_service.exb.exbId)),
           active: true
         }
       ],
