@@ -43,6 +43,9 @@ export default {
     ...mapMutations('setting', [
       'replaceSetting', 
     ]),
+    ...mapMutations([
+      'replace', 
+    ]),
     onSubmit() {
       AuthHelper.setApp(this.$router, this.$store)
       AuthHelper.auth(this.userId, this.password, ()=>{
@@ -50,6 +53,7 @@ export default {
         this.message = ""
         const theme = window.localStorage.getItem(this.userId + '-theme')
         const charSet = window.localStorage.getItem(this.userId + '-charSet')
+        this.replace({pass: this.password})
         this.replaceSetting({theme, charSet})
       },
       () => {
