@@ -105,9 +105,6 @@ export default {
       ],
       isLoad: false,
       interval: null,
-      powerLevelGood: 69,
-      powerLevelWarn: 39,
-      locationMap: {},
       badgeClassPrefix: 'badge badge-pill badge-',
       csvHeaders: this.isDev? {
           'btx_id': 'btx_id',
@@ -121,13 +118,13 @@ export default {
           'nearest3': 'nearest3',
         }:
         {
-          ['major']: 'major',
-          ['minor']: 'minor',
-          [this.$i18n.tnl('label.name')]: 'name',
-          [this.$i18n.tnl('label.receive-place')]: 'finalReceivePlace',
-          [this.$i18n.tnl('label.power-level')]: 'powerLevel',
-          [this.$i18n.tnl('label.final-receive-timestamp')]: 'timestamp',
-          [this.$i18n.tnl('label.state')]: 'state',
+          'major': 'major',
+          'minor': 'minor',
+          'name': 'name',
+          'finalReceiveLocation': 'location',
+          'powerLevel': 'powerLevel',
+          'finalReceiveTimestamp': 'timestamp',
+          'state': 'state',
         }
     }
   },
@@ -204,6 +201,7 @@ export default {
           name: tx != null ? tx.txName : '—',
           finalReceiveLocation: exb? exb.location.locationName  : '',
           finalReceiveTimestamp: this.getTimestamp(e.updatetime),
+          powerLevel: this.powerLevelLabel(e.power_level),
           state: this.getStateLabel('tx', e.updatetime),
         }
       })
@@ -245,22 +243,11 @@ export default {
     },
     download() {
       const dldata = this.positions.map((pos) => {
-        if(this.isDev){
-          const obj = {}
-          Object.keys(this.csvHeaders).forEach(csvHeader => {
-            obj[this.csvHeaders[csvHeader]] = pos[csvHeader]
-          })
-          return obj
-        }
-        return {
-          major: pos.major,
-          minor: pos.minor,
-          name: pos.name,
-          location: pos.finalReceiveLocation,
-          powerLevel: this.powerLevelLabel(pos.power_level),
-          timestamp: pos.finalReceiveTimestamp,
-          state: pos.state,
-        }
+        const obj = {}
+        Object.keys(this.csvHeaders).forEach(csvHeader => {
+          obj[this.csvHeaders[csvHeader]] = pos[csvHeader]
+        })
+        return obj
       })
       HtmlUtil.fileDL("position.csv", Util.converToCsv(dldata), getCharSet(this.$store.state.loginId))
     },
