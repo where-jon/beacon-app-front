@@ -11,18 +11,20 @@
       </b-form-group>          
     </b-form>
     <b-form inline @submit.prevent>
-      <b-form-group>
-        <b-form-row>
+      <b-form-row>
+        <b-form-group>
           <b-form-row v-if="enableGroup" class="mb-3 mr-5">
             <label v-t="'label.group'" class="mr-2" />
             <b-form-select v-model="form.groupId" :options="groupOptions" @change="changeGroup" class="mr-2 inputSelect" />
           </b-form-row>
+        </b-form-group>
+        <b-form-group>
           <b-form-row class="mb-3 mr-2">
             <label v-t="'label.individual'" class="mr-2" />
             <b-form-select v-model="form.potId" :options="potOptions" class="mr-2 inputSelect" />
           </b-form-row>
-        </b-form-row>
-      </b-form-group>
+        </b-form-group>
+      </b-form-row>
     </b-form>
     <b-form inline @submit.prevent>
       <b-form-group class="mr-5">
