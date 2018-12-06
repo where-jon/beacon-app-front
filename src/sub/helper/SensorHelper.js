@@ -18,7 +18,6 @@ export const getDiscomfortColor = (temperature, humidity) => {
 
 export const getDiscomfort = (temperature, humidity) => {
   let di = calcDiscomfortIndex(temperature, humidity)
-  console.debug({di})
   if (di <= 60) {
     return DISCOMFORT.COLD
   }
@@ -47,8 +46,6 @@ export const showThermoHumidityChart = (id, data, i18n) => {
     }
     return result
   }, [])
-
-  console.log(data)
 
   return new Chart(id, {
     type:'line', 
@@ -97,7 +94,7 @@ export const showThermoHumidityChart = (id, data, i18n) => {
         line:{ tension: 0 }
       }
     }
-  })  
+  })
 }
 
 export const getStressBg = (stress) => {

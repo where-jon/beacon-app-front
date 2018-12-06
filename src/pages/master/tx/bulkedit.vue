@@ -46,7 +46,9 @@ export default {
       'tx', 'txs', 'categories', 'groups', 'pots', 'potImages'
     ]),
     sensorOptionsTx() {
-      return this.$refs.bulkEdit.sensorOptions('tx')
+      const options = this.$refs.bulkEdit.sensorOptions('tx')
+      options.unshift({value:null, text:this.$i18n.tnl('label.normal')})
+      return options
     },
   },
   methods: {
@@ -130,8 +132,11 @@ export default {
         else if (Util.equalsAny(headerName, TX_SENSOR) && val) {
           if(headerName == "sensor"){
             const sensor = this.sensorOptionsTx.find((sensor) => sensor.text == val)
-            if(sensor){
-              entity.txSensorList = [{txSensorPK: {txId: dummyKey--, sensorId: sensor.value}}]
+            if(sensor && sensor.value != null){
+              entity.txSensorList = [{txSensorPK: {sensorId: sensor.value}, sensorName: val}]
+            }
+            else if(!sensor){
+              entity.txSensorList = [{txSensorPK: {sensorId: dummyKey--}, sensorName: val}]
             }
           }
           else{

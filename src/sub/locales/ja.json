@@ -89,9 +89,8 @@
     "deviceId": "デバイスID",
     "deviceIdX": "デバイスID(16進数)",
     "deviceNum": "端末ID",
-    "final-receive-timestamp": "最終取得時間",
-    "receive-place": "検知場所",
-    "power-level": "電池レベル",
+    "finalReceiveTimestamp": "最終取得時間",
+    "powerLevel": "電池レベル",
     "power-good": "良好",
     "power-warning": "減少",
     "power-poor": "交換",
@@ -199,7 +198,7 @@
     "todayUndetect": "本日未検知",
     "none": "なし",
     "power-null": "‐",
-    "final-receive-location": "最終取得場所",
+    "finalReceiveLocation": "最終取得場所",
     "mapDisplay": "マップ表示",
 
     "positionStack": "位置表示(全体)",
@@ -381,7 +380,7 @@
     "APP.SERVICE_BASE_URL": "API設定・エンドポイント",
     "APP.SERVICE_UP_TM": "API設定・更新間隔",
 
-    "APP.HIDE_TIME": "未受信状態判定時間",
+    "APP.LOST_TIME": "未受信状態判定時間",
 
     "dummy": ""
   },

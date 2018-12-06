@@ -114,7 +114,7 @@ export default {
       if (this.isFirstTime) {
         await StateHelper.load('area')
         this.selectedArea = this.selectedArea ? this.selectedArea : Util.getValue(this, 'areas.0.areaId', null)
-        StateHelper.loadAreaImage(this.selectedArea)
+        await StateHelper.loadAreaImage(this.selectedArea)
         console.log("after loadAreas. selectedArea=" + this.selectedArea)
         await StateHelper.load('exb')
         if (tx) {
@@ -175,6 +175,9 @@ export default {
       this.oldMapImageScale = this.mapImageScale
       this.mapImageScale = result.width / target.width
       console.debug(fitWidth, result.width, result.height, parentHeight)
+      if (this.onMapImageScale) {
+        this.onMapImageScale()
+      }
       return result
     },
     drawMapImage(bg) {

@@ -28,7 +28,7 @@ export default async (context, inject) => {
 
   // loading chunk failed対策 Loading chunk 6 failed.
   setInterval(() => {
-    console.debug("check chunk")
+    //console.debug("check chunk")
     let error = document.querySelector(".__nuxt-error-page .error .title")
     if (error && error.innerText && error.innerText.match(/Loading chunk (\d)+ failed/g)) {
       location.reload()

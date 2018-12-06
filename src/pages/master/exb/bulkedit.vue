@@ -46,7 +46,9 @@ export default {
       'exb', 'exbs',
     ]),
     sensorOptionsExb() {
-      return this.$refs.bulkEdit.sensorOptions('exb')
+      const options = this.$refs.bulkEdit.sensorOptions('exb')
+      options.unshift({value:null, text:this.$i18n.tnl('label.normal')})
+      return options
     },
   },
   methods: {
@@ -80,7 +82,6 @@ export default {
       const MAIN_COL = APP.EXB_WITH_EXBID? "exbId": APP.EXB_WITH_DEVICE_ID? "deviceId": APP.EXB_WITH_DEVICE_NUM? "deviceNum": "deviceIdX"
       const LOCATION = ["locationId","areaName","locationName","visible","txViewType","posId","x","y", "zoneName"]
       const ZONE = ["zoneName"]
-      const SENSOR = ["sensor"]
       const NUMBER_TYPE_LIST = ["deviceId", "exbId", "areaId", "locationId", "posId", "x", "y", "z", "txViewType"]
       const BOOL_TYPE_LIST = ["visible", "enabled"]
 
@@ -109,13 +110,13 @@ export default {
             entity.location[headerName] = val
           }
         }
-        else if (Util.equalsAny(headerName, SENSOR)) {
+        else if (headerName == "sensor") {
           const sensor = this.sensorOptionsExb.find((option) => option.text == val)
-          if(sensor){
-            if (!entity.exbSensorList) {
-              entity.exbSensorList = []
-            }
-            entity.exbSensorList.push({exbSensorPK: {sensorId: sensor.value}})
+          if(sensor && sensor.value != null){
+            entity.exbSensorList = [{exbSensorPK: {sensorId: sensor.value}, sensorName: val}]
+          }
+          else if(!sensor){
+            entity.exbSensorList = [{exbSensorPK: {sensorId: dummyKey--}, sensorName: val}]
           }
         }
         else {

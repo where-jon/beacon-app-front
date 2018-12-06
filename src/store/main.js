@@ -8,14 +8,14 @@ export const state = () => ({
   selectedArea: null,
   selectedTx: {},
   eachAreas: [],
-  sample: "sample" // sample
+  sample: "sample", // sample
+  positionHistores: []
 })
 
 const initState = state()
 
 export const mutations = {
   replaceMain(state, obj) {
-    console.debug("replaceMain")
     if (obj) {
       for (let key in obj) {
         Vue.set(state, key, obj[key])
@@ -38,7 +38,6 @@ export const getters = { // Sample
 export const actions = { // Sample
   async getIP ({ commit, state }) {
     const ip = await axios.get('http://icanhazip.com')
-    console.log({ip})
     commit('sample', ip)
   },
   pushOrgPositions({ commit, state }, payload) {
@@ -49,4 +48,8 @@ export const actions = { // Sample
     orgPositions.push(payload)
     commit('replaceMain', {orgPositions})
   },
+  setPositionHistores({ commit, state }, payload) {
+    let positionHistores = payload
+    commit('replaceMain', {positionHistores})
+  }
 }

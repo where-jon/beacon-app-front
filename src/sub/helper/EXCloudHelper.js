@@ -29,6 +29,35 @@ export const fetchPosition = async (exbs, txs, pMock) => {
     .compact().value()
 }
 
+export const fetchPositionHistory = async (exbs, txs, pMock) => {
+    let data = pMock? pMock: DEV.USE_MOCK_EXC? mock.position:
+        await HttpHelper.getExCloud(url(EXCLOUD.POSITION_HISTORY_FETCH_URL) + new Date().getTime())
+    return _(data)
+    .filter((val) => DEV.NOT_FILTER_TX || txs && txs.some((tx) => tx.txId == val.txId))
+    .filter((val) => exbs && exbs.some((exb) => exb.location.locationId == val.locationId))
+    .map((val) => {
+      let tx = _.find(txs, (tx) => tx.txId == val.txId)
+      let exb = _.find(exbs, (exb) => exb.exbId == val.exbId)
+      let label = tx.displayName? tx.displayName: tx.btxId
+      return { btx_id: tx.btxId,  tx_id: val.txId, pos_id: exb.posId, label, exb, tx}
+    })
+    .compact().value()
+}
+
+export const fetchPositionList = async (exbs, txs) => {
+    let data = DEV.USE_MOCK_EXC? mock.position:
+        await HttpHelper.getExCloud(url(EXCLOUD.POSITION_URL) + new Date().getTime())
+    return _(data)
+    .map((val) => {
+        let tx = _.find(txs, (tx) => tx.btxId == val.btx_id)
+        if (!DEV.NOT_FILTER_TX || !tx) { return null}
+        let exb = _.find(exbs, (exb) => exb.location.posId == val.pos_id)
+        if (!exb || !exb.enabled) { return null}
+        let label = tx && tx.displayName? tx.displayName: val.btx_id
+        return {...val, tx: tx, exb: exb, label, updatetime: dateform(val.updatetime)}
+    }).compact().value()
+}
+
 export const fetchSensor = async (sensorId) => {
   let data = DEV.USE_MOCK_EXC? mock.sensor[sensorId]:
       await HttpHelper.getExCloud(url(EXCLOUD.SENSOR_URL).replace("{id}", sensorId) + new Date().getTime())

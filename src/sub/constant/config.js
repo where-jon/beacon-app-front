@@ -12,34 +12,35 @@ export const DEV = { // 開発デバッグ関連
 
 export const APP = { // 機能面に関する設定
   VERSION: "Version 0.9.0", // バージョン　this application version
+  LOGIN_MODE: LOGIN_MODE.APP_SERVICE, // ログインモード(なし、ローカル、AppService)
 
   // ページ遷移設定
   TOP_PAGE: "/main/position", // トップページパス　must not be / otherwise recursive infinitely
   LOGIN_PAGE: "/login", // ログインページパス　if no login then /
   ERROR_PAGE: "/error", // エラーページパス　if no login then /
-  LOGIN_MODE: LOGIN_MODE.APP_SERVICE, // ログインモード(なし、ローカル、AppService)
 
   // 時間設定
   TIMEOUT: 60 * 60 * 1000, // session timeout(using local storage)
   AUTO_RELOAD: 60000, // 自動リロード間隔(ミリ秒)
 
   TRANSPARENT_TIME: 60 * 1000, // 半透明：現在時刻から経過した段階で半透明（ミリ秒）
-  HIDE_TIME: 10 * 60 * 1000, // 消失とみなす時間（ミリ秒）
+  LOST_TIME: 10 * 60 * 1000, // 消失とみなす時間（ミリ秒）
   UNDETECT_TIME: 60 * 60 * 1000, // 未検知とみなす時間（ミリ秒）
+  GATEWAY: {
+    LOST_TIME: 30 * 60 * 1000, // 消失とみなす時間（ミリ秒）
+    UNDETECT_TIME: 60 * 60 * 1000, // 未検知とみなす時間（ミリ秒）
+  },
+  TELEMETRY: {
+    LOST_TIME: 30 * 60 * 1000, // 消失とみなす時間（ミリ秒）
+    UNDETECT_TIME: 60 * 60 * 1000, // 未検知とみなす時間（ミリ秒）
+  },
 
   DOWN_RED_TIME: 60000, // MEDiTAG使用時：転倒時赤枠の表示時間
   TEMPERATURE_LINE_HOUR_START: 8,  // 温湿度グラフの開始時間
   TEMPERATURE_LINE_HOUR_END: 21,  // 温湿度グラフの終了時間
-  GATEWAY: {
-    HIDE_TIME: 30 * 60 * 1000, // 消失とみなす時間（ミリ秒）
-    UNDETECT_TIME: 60 * 60 * 1000, // 未検知とみなす時間（ミリ秒）
-  },
-  TELEMETRY: {
-    HIDE_TIME: 30 * 60 * 1000, // 消失とみなす時間（ミリ秒）
-    UNDETECT_TIME: 60 * 60 * 1000, // 未検知とみなす時間（ミリ秒）
-  },
     
   // 測位関連設定
+  USE_POSITION_HISTORY: true, // 位置情報にT_POSITION_HISTORYを使う
   TX_POS_ONE_TO_ONE: false, // 1つの場所に1TXのみ存在可能
   RSSI_MIN: -67, // RSSI下限値
   MOVING_AVERAGE: 5, // 5回分移動平均
@@ -105,7 +106,10 @@ export const APP = { // 機能面に関する設定
 
   // その他
   MAX_IMAGE_SIZE: 20 * 1024 * 1024, // アップロード可能な最大イメージサイズ(Byte)
-  AREA_THUMBNAIL_MAX: 200, // サムネイルリサイズ時の最大幅・高さ
+  AREA_THUMBNAIL_MAX: 200, // サムネイルリサイズ時の最大幅・高さ(エリア)
+  POT_THUMBNAIL_MAX: 200, // サムネイルリサイズ時の最大幅・高さ(pot)
+  POWER_LEVEL_GOOD: 69,  // 電池レベルで良好とみなす下限値
+  POWER_LEVEL_WARN: 39,  // 電池レベルで減少とみなす下限値
 
 }
 
@@ -122,11 +126,12 @@ export const EXCLOUD = {
   // POSITION_URL: EXCLOUD_BASE_URL + "/beacon/position-kalman?_=",
   // GATEWAY_URL: EXCLOUD_BASE_URL + "/gateway/0?=",
   // TELEMETRY_URL: EXCLOUD_BASE_URL + "/telemetry/0?=",
-  POSITION_URL: "/core/excloud/position?_=", // "/core/excloud/position?_=",
+  POSITION_URL: "/core/excloud/position?_=",
   GATEWAY_URL: "/core/excloud/gateway?_=",
   TELEMETRY_URL: "/core/excloud/telemetry?_=",
   SENSOR_URL: "/core/excloud/sensor/{id}?_=",
   LED_URL: "/core/excloud/led?_=",
+  POSITION_HISTORY_FETCH_URL: "/core/positionHistory/fetch?_=",
 }
 
 export const DISP = { // 表示系設定（表示・色・フォント・サイズ）

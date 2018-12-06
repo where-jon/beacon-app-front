@@ -259,7 +259,7 @@ export default {
       return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
     },
     readImage(e) {
-      this.readImageView(e, 'thumbnail')
+      this.readImageView(e, 'thumbnail', null, null, 'thumbnail', APP.POT_THUMBNAIL_MAX)
     },
     clearImage(e) {
       this.form.thumbnail = undefined

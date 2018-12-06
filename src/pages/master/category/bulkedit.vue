@@ -83,7 +83,8 @@ export default {
         }
         else if(headerName == "categoryTypeName"){
           const categoryType = this.categoryTypes.find((type) => type.text == val)
-          entity.categoryType = categoryType? categoryType.value: val
+          entity.categoryType = categoryType? categoryType.value: 0
+          entity.categoryTypeName = val
         }
         else{
           entity[headerName] = val
