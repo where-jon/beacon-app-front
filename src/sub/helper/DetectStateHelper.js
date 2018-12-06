@@ -27,7 +27,7 @@ export const isUndetect = (state) => {
 
 const getTodayUndetectTime = () => {
   const today = new Date()
-  return (today.getHours() * 1 * 60 + today.getMinutes() * 60 + today.getSeconds()) * 1000
+  return (today.getHours() * 60 * 60 + today.getMinutes() * 60 + today.getSeconds()) * 1000
 }
 
 export const getState = (type, updatetime) => {
