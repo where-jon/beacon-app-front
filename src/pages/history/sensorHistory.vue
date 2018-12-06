@@ -40,7 +40,7 @@
         <slot></slot>
         <b-row class="mt-3">
         </b-row>
-        <b-table show-empty stacked="md" striped hover :items="viewList" :fields="fields" :current-page="currentPage" :per-page="perPage" outlined :sort-by.sync="sortBy">
+        <b-table stacked="md" striped hover :items="viewList" :fields="fields" :current-page="currentPage" :per-page="perPage" outlined :sort-by.sync="sortBy">
         </b-table>
         <b-row>
           <b-col md="6" class="my-1">{{ footerMessage }}</b-col>
@@ -98,38 +98,7 @@ export default {
         datetimeFrom: null,
         datetimeTo: null,
       },
-      fetchList: [],
       viewList: [],
-      custumCsvColumns: [],
-      custumCsvColumns1: [
-        "sensorDt",
-        "txName",
-        "major",
-        "minor",
-        APP.EXB_WITH_EXBID?"exbId":null,
-        APP.EXB_WITH_DEVICE_NUM?"deviceNum":null,
-        APP.EXB_WITH_DEVICE_ID?"deviceId":null,
-        APP.EXB_WITH_DEVICE_IDX?"deviceIdX":null,
-        "locationName",
-        APP.EXB_WITH_POSID?"posId":null,
-        "areaName",
-        "humidity",
-        "temperature",
-      ].filter((val) => val),
-      custumCsvColumns2: [
-        "sensorDt",
-        "txName",
-        "major",
-        "minor",
-        APP.EXB_WITH_EXBID?"exbId":null,
-        APP.EXB_WITH_DEVICE_NUM?"deviceNum":null,
-        APP.EXB_WITH_DEVICE_ID?"deviceId":null,
-        APP.EXB_WITH_DEVICE_IDX?"deviceIdX":null,
-        "locationName",
-        APP.EXB_WITH_POSID?"posId":null,
-        "areaName",
-        "count",
-      ].filter((val) => val),
       fields: [],
       fields1: addLabelByKey(this.$i18n, [
         {key: "sensorDt", sortable: true, label:"dt"},
@@ -162,9 +131,9 @@ export default {
       ]),
       currentPage: 1,
       perPage: 20,
+      limitViewRows: 100,
       totalRows: 0,
       fetchRows: 0,
-      maxRows: 100,
       sortBy: null,
       //
       showInfo: false,
@@ -197,7 +166,6 @@ export default {
     const date = new Date()
     this.form.datetimeFrom = this.getDatetime(date, {hours: -1})
     this.form.datetimeTo = this.getDatetime(date)
-    this.custumCsvColumns = this.custumCsvColumns1
     this.fields = this.fields1
   },
   mounted() {
@@ -205,7 +173,7 @@ export default {
       locale.use(mojule.default)
     })
     StateHelper.load('sensor')
-    this.footerMessage = `${this.$i18n.tnl("message.totalRowsMessage", {row: this.fetchRows, maxRows: this.maxRows})}`
+    this.footerMessage = `${this.$i18n.tnl("message.totalRowsMessage", {row: this.fetchRows, maxRows: this.limitViewRows})}`
   },
   methods: {
     getDatetime(baseDatetime, controlData){
@@ -228,35 +196,36 @@ export default {
     },
     async displayImpl(){
       this.showAlert = false
-      this.fetchList = []
       this.viewList = []
-      this.footerMessage = `${this.$i18n.tnl("message.totalRowsMessage", {row: this.fetchRows, maxRows: this.maxRows})}`
+      this.footerMessage = `${this.$i18n.tnl("message.totalRowsMessage", {row: this.fetchRows, maxRows: this.limitViewRows})}`
       try {
         const aSensorId = (this.form.sensorId != null)?this.form.sensorId:0
         if (aSensorId == 1) {
-          this.custumCsvColumns = this.custumCsvColumns1
           this.fields = this.fields1
         }
         if (aSensorId == 2) {
-          this.custumCsvColumns = this.custumCsvColumns2
           this.fields = this.fields2
         }
-        this.fetchList = await HttpHelper.getAppService(
-          `/basic/sensorHistory/findsensor/${aSensorId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}`
+        var fetchList = await HttpHelper.getAppService(
+          `/basic/sensorHistory/findsensor/${aSensorId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/${this.limitViewRows}`
         )
-        if (this.fetchList.length == null || !this.fetchList.length) {
+        if (fetchList.length == null || !fetchList.length) {
           this.message = this.$i18n.tnl("message.notFoundData", {target: this.$i18n.tnl("label.sensorHistory")})
           return
         }
         var count = 0
-        for (var senHist of this.fetchList) {
+        for (var senHist of fetchList) {
           const d = new Date(senHist.sensorDt)
           senHist.sensorDt = moment(d.getTime()).format('YYYY/MM/DD HH:mm:ss')
           if (senHist.txId != null) {
             let aTx = _.find(this.txs, (tx) => { return tx.txId == senHist.txId })
             senHist.txName = aTx.txName
+            senHist.major = aTx.major
+            senHist.minor = aTx.minor
           } else {
             senHist.txName = ""
+            senHist.major = ""
+            senHist.minor = ""
           }
           let aExb = _.find(this.exbs, (exb) => { return exb.exbId == senHist.exbId })
           if (aExb != null) {
@@ -282,12 +251,12 @@ export default {
             senHist.count = senHist.value.count
           }
           count++
-          if (count < this.maxRows) {
+          if (count < this.limitViewRows) {
             this.viewList.push(senHist)
           }
         }
         this.fetchRows = this.viewList.length
-        this.footerMessage = `${this.$i18n.tnl("message.totalRowsMessage", {row: this.fetchRows, maxRows: this.maxRows})}`
+        this.footerMessage = `${this.$i18n.tnl("message.totalRowsMessage", {row: this.fetchRows, maxRows: this.limitViewRows})}`
       } catch(e) {
         console.error(e)
       }
@@ -297,23 +266,13 @@ export default {
     },
     async fetchData(payload) {
     },
-    setEmptyMessage(){
-      this.message = null
-      this.error = null
-    },
-    exportCsv() {
-      this.setEmptyMessage()
-      if (this.fetchList.length == 0) {
-        return
-      }
-      let headers
-      if (this.custumCsvColumns) {
-        headers = this.custumCsvColumns
-      } else {
-        headers = _(this.params.fields).map((val) => val.key).uniqWith(_.isEqual).value()
-      }
-      headers = headers.filter((val) => !["style", "thumbnail", "actions", "updateAction"].includes(val))
-      HtmlUtil.fileDL(this.name + ".csv", Util.converToCsv(this.fetchList, headers), getCharSet(this.loginId))
+    async exportCsv() {
+      const aSensorId = (this.form.sensorId != null)?this.form.sensorId:0
+      var csvData = await HttpHelper.getAppService(
+          `/basic/sensorHistory/csvdownload/${aSensorId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/${this.limitViewRows}/` + getCharSet(this.$store.state.loginId)
+      )
+      HtmlUtil.fileDL(this.name + ".csv", csvData, getCharSet(this.$store.state.loginId)
+      )
     },
   }
 }

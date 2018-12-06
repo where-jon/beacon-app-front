@@ -40,7 +40,7 @@
         <slot></slot>
         <b-row class="mt-3">
         </b-row>
-        <b-table show-empty stacked="md" striped hover :items="viewList" :empty-text="emptyMessage" :fields="fields" :current-page="currentPage" :per-page="perPage" outlined :sort-by.sync="sortBy">
+        <b-table stacked="md" striped hover :items="viewList" :fields="fields" :current-page="currentPage" :per-page="perPage" outlined :sort-by.sync="sortBy">
         </b-table>
         <b-row>
           <b-col md="6" class="my-1">{{ footerMessage }}</b-col>
@@ -83,7 +83,6 @@ export default {
   data () {
     return {
       name: 'positionHistory',
-      emptyMessage: this.$i18n.tnl('message.listEmpty'),
       items: [
         {
           text: this.$i18n.tnl('label.historyTitle'),
@@ -99,23 +98,7 @@ export default {
         datetimeFrom: null,
         datetimeTo: null,
       },
-      fetchList: [],
       viewList: [],
-      custumCsvColumns: [
-        "positionDt",
-        "txName",
-        "major",
-        "minor",
-        APP.EXB_WITH_EXBID?"exbId":null,
-        APP.EXB_WITH_DEVICE_NUM?"deviceNum":null,
-        APP.EXB_WITH_DEVICE_ID?"deviceId":null,
-        APP.EXB_WITH_DEVICE_IDX?"deviceIdX":null,
-        "locationName",
-        APP.EXB_WITH_POSID?"posId":null,
-        "areaName",
-        "x",
-        "y",
-      ].filter((val) => val),
       fields: addLabelByKey(this.$i18n, [
         {key: "positionDt", sortable: true, label:"dt"},
         {key: "txName", sortable: true },
@@ -133,9 +116,9 @@ export default {
       ]),
       currentPage: 1,
       perPage: 20,
-      maxRows: 100,
+      limitViewRows: 100,
+      limitCSVRows: 10000,
       totalRows: 0,
-      fetchRows: 0,
       sortBy: null,
       //
       showInfo: false,
@@ -175,7 +158,7 @@ export default {
     })
     StateHelper.load('tx')
     StateHelper.load('exb')
-    this.footerMessage = `${this.$i18n.tnl("message.totalRowsMessage", {row: this.fetchRows, maxRows: this.maxRows})}`
+    this.footerMessage = `${this.$i18n.tnl("message.totalRowsMessage", {row: this.viewList.length, maxRows: this.limitViewRows})}`
   },
   methods: {
     getDatetime(baseDatetime, controlData){
@@ -198,24 +181,20 @@ export default {
     },
     async displayImpl(){
       this.showAlert = false
-      this.fetchList = []
       this.viewList = []
       this.totalRows = 0
-      this.fetchRows = 0
-      this.footerMessage = `${this.$i18n.tnl("message.totalRowsMessage", {row: this.fetchRows, maxRows: this.maxRows})}`
+      this.footerMessage = `${this.$i18n.tnl("message.totalRowsMessage", {row: this.viewList.length, maxRows: this.limitViewRows})}`
       try {
         const aTxId = (this.form.txId != null)?this.form.txId:0
-        this.fetchList = await HttpHelper.getAppService(
-          `/core/positionHistory/find/${aTxId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}`
+        var fetchList = await HttpHelper.getAppService(
+          `/core/positionHistory/find/${aTxId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/${this.limitViewRows}`
         )
-        if (this.fetchList.length == null || !this.fetchList.length) {
+        if (fetchList.length == null || !fetchList.length) {
           this.message = this.$i18n.tnl("message.notFoundData", {target: this.$i18n.tnl("label.positionHistory")})
           this.showAlert = true
           return
         }
-        this.fetchRows = this.fetchList.length
-        var count = 0
-        for (var posHist of this.fetchList) {
+        for (var posHist of fetchList) {
           const d = new Date(posHist.positionDt)
           posHist.positionDt = moment(d.getTime()).format('YYYY/MM/DD HH:mm:ss')
           let aTx = _.find(this.txs, (tx) => { return tx.txId == posHist.txId })
@@ -229,13 +208,10 @@ export default {
           posHist.areaName = aExb.areaName
           posHist.x = aExb.x
           posHist.y = aExb.y
-          count++
-          if (count < this.maxRows) {
-            this.viewList.push(posHist)
-          }
+          this.viewList.push(posHist)
         }
         this.totalRows = this.viewList.length
-        this.footerMessage = `${this.$i18n.tnl("message.totalRowsMessage", {row: this.fetchRows, maxRows: this.maxRows})}`
+        this.footerMessage = `${this.$i18n.tnl("message.totalRowsMessage", {row: this.viewList.length, maxRows: this.limitViewRows})}`
       } catch(e) {
         console.error(e)
       }
@@ -245,23 +221,13 @@ export default {
     },
     async fetchData(payload) {
     },
-    setEmptyMessage(){
-      this.message = null
-      this.error = null
-    },
-    exportCsv() {
-      this.setEmptyMessage()
-      if (this.fetchList.length == 0) {
-        return
-      }
-      let headers
-      if (this.custumCsvColumns) {
-        headers = this.custumCsvColumns
-      } else {
-        headers = _(this.params.fields).map((val) => val.key).uniqWith(_.isEqual).value()
-      }
-      headers = headers.filter((val) => !["style", "thumbnail", "actions", "updateAction"].includes(val))
-      HtmlUtil.fileDL(this.name + ".csv", Util.converToCsv(this.fetchList, headers), getCharSet(this.loginId))
+    async exportCsv() {
+      const aTxId = (this.form.txId != null)?this.form.txId:0
+      var csvData = await HttpHelper.getAppService(
+          `/core/positionHistory/csvdownload/${aTxId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/${this.limitCSVRows}/` + getCharSet(this.$store.state.loginId)
+      )
+      HtmlUtil.fileDL(this.name + ".csv", csvData, getCharSet(this.$store.state.loginId)
+      )
     },
   }
 }

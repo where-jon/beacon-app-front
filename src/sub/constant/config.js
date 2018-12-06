@@ -40,7 +40,7 @@ export const APP = { // 機能面に関する設定
   TEMPERATURE_LINE_HOUR_END: 21,  // 温湿度グラフの終了時間
     
   // 測位関連設定
-  USE_POSITION_HISTORY: true, // 位置情報にT_POSITION_HISTORYを使う
+  USE_POSITION_HISTORY: false, // 位置情報にT_POSITION_HISTORYを使う
   TX_POS_ONE_TO_ONE: false, // 1つの場所に1TXのみ存在可能
   RSSI_MIN: -67, // RSSI下限値
   MOVING_AVERAGE: 5, // 5回分移動平均
