@@ -247,7 +247,7 @@ export default {
       this.txIconsVertical = param.vertical
     },
     async save() {
-      if(!this.zoneNames.find((zone) => zone.zoneId == this.form.zoneId)){
+      if(!this.zoneNames.find((zone) => zone.value == this.form.zoneId)){
         this.form.zoneId = null
       }
       let entity = {
