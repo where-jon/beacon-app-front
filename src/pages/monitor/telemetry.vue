@@ -195,9 +195,6 @@ export default {
           .forEach(csvHeader => obj[this.csvHeaders[csvHeader]] = e[csvHeader])
         return obj
       })
-      console.log("@@@@@")
-      console.log(records)
-      console.log(this.telemetrys)
       HtmlUtil.fileDL("telemetry.csv", Util.converToCsv(records), getCharSet(this.$store.state.loginId))
     },
     async makeTelemetryRecords(telemetrys) {
