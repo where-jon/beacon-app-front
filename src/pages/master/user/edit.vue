@@ -162,15 +162,18 @@ export default {
       }
       return true
     },
-    afterCrud(){
+    async afterCrud(){
       this.role = null
       this.pass = null
       this.passConfirm = null
-
-      if(this.selfUpdate && Util.hasValue(this.form.pass)){
-        AuthHelper.authByAppService(
+      if(this.selfUpdate){
+        const authPass = Util.hasValue(this.form.pass)? this.form.pass: this.$store.state.pass
+        await AuthHelper.authByAppService(
           this.form.loginId,
-          this.form.pass
+          authPass,
+          () => {
+            this.replace({pass: authPass})
+          }
         )
       }
     },
