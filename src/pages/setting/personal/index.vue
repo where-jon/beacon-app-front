@@ -231,12 +231,14 @@ export default {
           min: this.passMinLength,
           max: this.passMaxLength,
         })
+        this.errorMessages.general.push(this.passErrorMessage)
         return false
       }
 
       const result = ValidateUtil.validatePattern(value, /^[a-zA-Z0-9_\-\/!#\$%&@]*$/, this.$i18n.tnl('message.invalidPassword'))
       if (result !== null) {
         this.passErrorMessage = result
+        this.errorMessages.general.push(this.passErrorMessage)
         return false
       }
 
@@ -244,6 +246,7 @@ export default {
       const confirm = passwordConfirm ? passwordConfirm : ''
       if (update !== confirm) {
         this.passErrorMessage = this.$i18n.tnl('message.notMatchPassword')
+        this.errorMessages.general.push(this.passErrorMessage)
         return false
       }
       this.passErrorMessage = null
@@ -258,6 +261,7 @@ export default {
       this.isChange = false
     },
     async onSubmit() {
+      Object.keys(this.errorMessages).forEach((key) => this.errorMessages[key] = [])
       const errorMessages = this.errorMessages
       errorMessages.loginId = this.validateLoginIdPassword(
         this.loginUser.loginId,
@@ -290,6 +294,7 @@ export default {
               return
             }
             await this.save()
+            this.replace({pass: this.loginUser.passwordConfirm})
             this.isSuccess = true
           } catch(e) {
             errorMessages.general.push(this.$i18n.tnl('message.error'))
@@ -332,6 +337,9 @@ export default {
     },
     ...mapMutations('setting', [
       'replaceSetting', 
+    ]),
+    ...mapMutations([
+      'replace', 
     ]),
   },
 }
