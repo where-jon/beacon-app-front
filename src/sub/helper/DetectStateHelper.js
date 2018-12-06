@@ -7,7 +7,7 @@ import * as Util from '../util/Util'
 export const getTypes = (type) => {
   return DETECT_STATE.getTypes().filter((type) => {
     if (type.value === DETECT_STATE.TODAY_UNDETECT) {
-      return getTodayUndetectTime() > (type == 'tx'?  APP.UNDETECT_TIME: type == 'gw'? APP.GATEWAY.UNDETECT_TIME: APP.TELEMETRY.UNDETECT_TIME)
+      return getTodayUndetectTime() < (type == 'tx'?  APP.UNDETECT_TIME: type == 'gw'? APP.GATEWAY.UNDETECT_TIME: APP.TELEMETRY.UNDETECT_TIME)
     }
     return true
   })
