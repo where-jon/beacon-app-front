@@ -14,6 +14,7 @@ export const state = () => ({
   error: null,
   currentRegion: {},
   showProgress: false,
+  reload: false,
 })
 
 const initState = state()
