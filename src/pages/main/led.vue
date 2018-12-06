@@ -55,7 +55,7 @@
           <b-button v-show="isEditable" type="submit" class="my-1"
               @click="buttonClick(true)" v-t="'label.start'" :variant="theme" :disabled="noDevice" />
           <b-button v-show="isEditable" type="submit" class="ml-2 my-1" 
-              @click="buttonClick(false)" v-t="'label.end'" :variant="theme" :disabled="!form.lightOn" />
+              @click="buttonClick(false)" v-t="'label.end'" :variant="theme" :disabled="noDevice" />
         </b-form>
       </b-form-row>
     </b-container>
@@ -100,7 +100,6 @@ export default {
         deviceId: "",
         colors: [2],
         blink: 1,
-        lightOn: false,
       },
       items: [
         {
@@ -182,8 +181,8 @@ export default {
         rgb2: 0,
         pattern2: 0,
       }]
+      Util.debug('led send: ', entity)
       await EXCloudHelper.postLed(entity)
-      this.form.lightOn = this.lightOnCandidate
     },
     buttonClick(bool) {
       this.lightOnCandidate = bool
