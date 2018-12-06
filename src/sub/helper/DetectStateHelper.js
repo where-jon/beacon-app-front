@@ -4,6 +4,15 @@ import { DETECT_STATE } from '../constant/Constants'
 import * as mock from '../../assets/mock/mock'
 import * as Util from '../util/Util'
 
+export const getTypes = (type) => {
+  return DETECT_STATE.getTypes().filter((type) => {
+    if (type.value === DETECT_STATE.TODAY_UNDETECT) {
+      return getTodayUndetectTime() > (type == 'tx'?  APP.UNDETECT_TIME: type == 'gw'? APP.GATEWAY.UNDETECT_TIME: APP.TELEMETRY.UNDETECT_TIME)
+    }
+    return true
+  })
+}
+
 export const getLabel = (state) => {
   return DETECT_STATE.getTypes().find((type) => type.value === state).text
 }
@@ -16,12 +25,16 @@ export const isUndetect = (state) => {
   return !Util.equalsAny(state, [DETECT_STATE.DETECTED, DETECT_STATE.LOST])
 }
 
+const getTodayUndetectTime = () => {
+  const today = new Date()
+  return (today.getHours() * 1 * 60 + today.getMinutes() * 60 + today.getSeconds()) * 1000
+}
+
 export const getState = (type, updatetime) => {
   if (!updatetime) return DETECT_STATE.NONE
 
-  const today = new Date()
   let UNDETECT_TIME
-  let TODAY_UNDETECT_TIME = (today.getHours() * 1 * 60 + today.getMinutes() * 60 + today.getSeconds()) * 1000
+  let TODAY_UNDETECT_TIME = getTodayUndetectTime()
   let LOST_TIME
   switch(type) {
     case 'tx':
@@ -39,7 +52,7 @@ export const getState = (type, updatetime) => {
   }
 
   const now = !DEV.USE_MOCK_EXC? new Date().getTime(): mock.positions_conf.start
-  const time = now - moment(updatetime).local().toDate().getTime()
+  const time = now - new Date(updatetime).getTime()
   let state = time > UNDETECT_TIME? DETECT_STATE.UNDETECT:
     time > TODAY_UNDETECT_TIME? DETECT_STATE.TODAY_UNDETECT:
     time > LOST_TIME? DETECT_STATE.LOST:

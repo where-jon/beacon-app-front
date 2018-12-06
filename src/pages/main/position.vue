@@ -124,7 +124,7 @@ export default {
       return ret? [ret]: []
     },
     positions() {
-        let positions = []
+      let positions = []
       if (APP.USE_POSITION_HISTORY) {
         positions = this.positionHistores
       } else {

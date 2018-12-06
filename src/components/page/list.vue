@@ -123,6 +123,7 @@ import * as StateHelper from '../../sub/helper/StateHelper'
 import { addLabelByKey } from '../../sub/helper/ViewHelper'
 import { EventBus } from '../../sub/helper/EventHelper'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
+import * as DetectStateHelper from '../../sub/helper/DetectStateHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
 import { getButtonTheme, getTheme } from '../../sub/helper/ThemeHelper'
@@ -234,7 +235,7 @@ export default {
       return options
     },
     detectStateOptions() {
-      let options = DETECT_STATE.getTypes()
+      let options = DetectStateHelper.getTypes()
       options.unshift({value:null, text:''})
       return options
     },

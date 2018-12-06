@@ -103,10 +103,14 @@ export default {
         let now = !DEV.USE_MOCK_EXC ? new Date().getTime()
             : mock.positions_conf.start + this.count++ * mock.positions_conf.interval
         const correctPositions = PositionHelper.correctPosId(this.orgPositions, now)
-
-        positions = _.filter(positions, (pos) => 
-          _.some(correctPositions, (cPos) => pos.btx_id == cPos.btx_id)
-        )
+        positions = _(positions).map((pos) => {
+          let cPos = _.find(correctPositions, (cPos) => pos.btx_id == cPos.btx_id)
+          if (cPos) {
+            return {...pos, transparent: cPos.transparent}
+          }
+          return null
+        })
+        .compact().value()
         
         this.replaceAS({positions})
 
@@ -120,6 +124,9 @@ export default {
           }
           display = display || this.defaultDisplay
           display = this.getStyleDisplay1(display)        
+          if (pos.transparent) {
+            display.opacity = 0.6
+          }
           return {
             ...pos,
             display,
