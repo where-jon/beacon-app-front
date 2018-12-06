@@ -52,6 +52,7 @@
     "version": "Version",
     "visible": "Display flag",
     "bgColor": "Background color",
+    "ledColor": "Color",
     "color": "Color",
     "textColor": "Text color",
     "dt": "Date and time",

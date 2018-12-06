@@ -105,6 +105,27 @@ export default {
       ],
       isLoad: false,
       interval: null,
+      badgeClassPrefix: 'badge badge-pill badge-',
+      csvHeaders: this.isDev? {
+          'btx_id': 'btx_id',
+          'device_id': 'device_id',
+          'pos_id': 'pos_id',
+          'phase': 'phase',
+          'power_level': 'power_level',
+          'updatetime': 'updatetime',
+          'nearest1': 'nearest1',
+          'nearest2': 'nearest2',
+          'nearest3': 'nearest3',
+        }:
+        {
+          'major': 'major',
+          'minor': 'minor',
+          'name': 'name',
+          'finalReceiveLocation': 'location',
+          'powerLevel': 'powerLevel',
+          'finalReceiveTimestamp': 'timestamp',
+          'state': 'state',
+        }
     }
   },
   props: {
@@ -147,9 +168,7 @@ export default {
       this.isLoad = true
       try {
         let positions = await EXCloudHelper.fetchRawPosition()
-        if (!this.isDev) {
-          positions = await this.makePositionRecords(positions)
-        }
+        positions = await this.makePositionRecords(positions)
         if (payload && payload.done) {
           payload.done()
         }
@@ -162,6 +181,16 @@ export default {
       this.isLoad = false
     },
     async makePositionRecords(positions) {
+      if (this.isDev) {
+        return positions.map((position) =>{
+          return {
+            ...position,
+            nearest1: position.nearest && position.nearest.length > 0? position.nearest[0]: null,
+            nearest2: position.nearest && position.nearest.length > 1? position.nearest[1]: null,
+            nearest3: position.nearest && position.nearest.length > 2? position.nearest[2]: null,
+          }
+        })
+      }
       await StateHelper.load('exb')
       await StateHelper.load('tx')
       return positions.map((e) => {
@@ -172,6 +201,7 @@ export default {
           name: tx != null ? tx.txName : '—',
           finalReceiveLocation: exb? exb.location.locationName  : '',
           finalReceiveTimestamp: this.getTimestamp(e.updatetime),
+          powerLevel: this.powerLevelLabel(e.power_level),
           state: this.getStateLabel('tx', e.updatetime),
         }
       })
@@ -213,15 +243,11 @@ export default {
     },
     download() {
       const dldata = this.positions.map((pos) => {
-        return {
-          major: pos.major,
-          minor: pos.minor,
-          name: pos.name,
-          powerLevel: this.powerLevelLabel(pos.power_level),
-          location: pos.finalReceiveLocation,
-          timestamp: pos.finalReceiveTimestamp,
-          state: pos.state,
-        }
+        const obj = {}
+        Object.keys(this.csvHeaders).forEach(csvHeader => {
+          obj[this.csvHeaders[csvHeader]] = pos[csvHeader]
+        })
+        return obj
       })
       HtmlUtil.fileDL("position.csv", Util.converToCsv(dldata), getCharSet(this.$store.state.loginId))
     },

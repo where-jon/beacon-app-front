@@ -95,15 +95,35 @@ export default {
       label_timestamp: this.$i18n.tnl('label.finalReceiveTimestamp'),
       label_powerLevel: this.$i18n.tnl('label.powerLevel'),
       label_state: this.$i18n.tnl('label.state'),
-      csvHeaders: {
-        [this.$i18n.tnl('label.deviceNum')]: APP.EXB_WITH_DEVICE_NUM ? 'deviceNum' : null,
-        [this.$i18n.tnl('label.deviceId')]: APP.EXB_WITH_DEVICE_ID ? 'deviceId' : null,
-        [this.$i18n.tnl('label.deviceIdX')]: APP.EXB_WITH_DEVICE_IDX ? 'deviceId(HEX)' : null,
-        [this.$i18n.tnl('label.location')]: 'name',
-        [this.$i18n.tnl('label.finalReceiveTimestamp')]: 'timestamp',
-        [this.$i18n.tnl('label.powerLevel')]: 'powerLevel',
-        [this.$i18n.tnl('label.state')]: 'state'
-      },
+      badgeClassPrefix: 'badge badge-pill badge-',
+      csvHeaders: this.isDev?
+        {
+          meshid_deviceid: 'meshid_deviceid',
+          deviceid: 'deviceid',
+          description: 'description',
+          timestamp: 'timestamp',
+          firm_ver: 'firm_ver',
+          power_level: 'power_level',
+          ibeacon_major: 'ibeacon_major',
+          ibeacon_minor: 'ibeacon_minor',
+          ibeacon_txpower: 'ibeacon_txpower',
+          ibeacon_interval: 'ibeacon_interval',
+          hour168_count: 'hour168_count',
+          hour24_count: 'hour24_count',
+          hour12_count: 'hour12_count',
+          hour6_count: 'hour6_count',
+          hour3_count: 'hour3_count',
+          ibeacon_received: 'ibeacon_received',
+        }:
+        {
+          [this.$i18n.tnl('label.deviceNum')]: APP.EXB_WITH_DEVICE_NUM ? 'deviceNum' : null,
+          [this.$i18n.tnl('label.deviceId')]: APP.EXB_WITH_DEVICE_ID ? 'deviceId' : null,
+          [this.$i18n.tnl('label.deviceIdX')]: APP.EXB_WITH_DEVICE_IDX ? 'deviceId(HEX)' : null,
+          [this.$i18n.tnl('label.location')]: 'finalReceivePlace',
+          [this.$i18n.tnl('label.powerLevel')]: 'powerLevel',
+          [this.$i18n.tnl('label.finalReceiveTimestamp')]: 'timestamp',
+          [this.$i18n.tnl('label.state')]: 'state'
+        },
       interval: null,
     }
   },
@@ -170,7 +190,9 @@ export default {
     download() {
       const records = this.telemetrys.map(e => {
         const obj = {}
-        Object.keys(e).filter(k => this.csvHeaders[k]).forEach(k => obj[this.csvHeaders[k]] = e[k])
+        Object.keys(this.csvHeaders)
+          .filter(csvHeader => this.csvHeaders[csvHeader])
+          .forEach(csvHeader => obj[this.csvHeaders[csvHeader]] = e[csvHeader])
         return obj
       })
       HtmlUtil.fileDL("telemetry.csv", Util.converToCsv(records), getCharSet(this.$store.state.loginId))

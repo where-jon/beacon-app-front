@@ -7,6 +7,7 @@ export const state = () => ({
   serviceRev: null,
   frontRev: null,
   loginId: '',
+  pass: '',
   role: '',
   featureList: [],
   menu: [],
