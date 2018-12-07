@@ -66,6 +66,8 @@
     "charSet": "CSV character code",
     "null": "Unspecified",
     "undefined": "Undefined",
+    "column": "Col: {column}",
+    "line": "Line: {line}",
 
     "---------------- App exbeacon ---------------":"",
 
@@ -108,8 +110,6 @@
     "txViewType": "TX display format",
     "txIconColumns": "Horizontal",
     "txIconLines": "Vertical",
-    "txIconColumnsUnit": "Column",
-    "txIconLinesUnit": "Row",
 
     "map": "Map",
     "areaId": "Area ID",
@@ -391,6 +391,7 @@
     "registerCompleted": "{target} registration completed.",
     "bulkRegisterCompleted": "{target} bulk registration completed.",
     "deleteCompleted": "{target} deletion completed.",
+    "failedCode": "({code})",
     "updateFailed": "{target} update failed. ({code})",
     "registerFailed": "{target} registration failed. ({code})",
     "deleteFailed": "{target} deletion failed. ({code})",
@@ -410,6 +411,7 @@
     "notFoundData": "There is no data for {target}.",
     "notMatchCureentPassword": "The password is incorrect.",
     "invalidPassword": "Invalid password format.",
+    "notMatchPasswordRegist": "Update password and Confirm password are not matched.",
     "notMatchPassword": "The changed & confirmation password do not match.",
     "lengthRange": "{target} >= {min} characters and <= {max} characters.",
     "emptyFile": "File is empty.",
@@ -428,8 +430,10 @@
     "bulkOneOfFailed": "{col} ({value}) must be one of the values of [{candidates}].",
     "bulkRangeFailed": "{col} ({value}) must be between {min} and {max}.",
     "bulkSizeFailed": "{col} ({value}) must be the number of characters {min} to {max}.",
+    "bulkSizeSameFailed": "{col} ({value}) must be no less than {min} characters",
     "bulkNotNullFailed": "{col} is mandatory.",
     "bulkExistFailed": "{col} ({value}) does not exist.",
+    "bulkInvalidFailed": "{col} ({value}) is invalid form",
     "monthDayTemperature": "{month}/{day} Temperature and humidity",
     "invalidLoginId": "Login ID must be alphanumeric character.",
     "notFound": "No results found.",
@@ -443,7 +447,9 @@
     "totalRowsMessage": "Total: {row} (Only latest {maxRows} are displayed)",
     "listEmpty": "There are no records matching your request.",
     "uploadMax": "Upload file size is limited to target}Mbytes.",
-
+    "validationList": "Valid characters are {validate}.",
+    "loginValidationList": "half alphanumberic, underscore( _ ), hyphen(-), at sign(@), dot(.).",
+    
     "dummy": "" 
   }
 }
