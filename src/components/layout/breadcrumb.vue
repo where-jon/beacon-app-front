@@ -84,7 +84,9 @@ export default {
     if (reload) {
       HtmlUtil.registerInterval(()=>{
         this.$store.commit('replace', {reload: true})
+        const windowScroll = {x: window.pageXOffset , y: window.pageYOffset}
         reload.click()
+        window.scroll(windowScroll.x, windowScroll.y)
       }, APP.AUTO_RELOAD)  
     }
 
