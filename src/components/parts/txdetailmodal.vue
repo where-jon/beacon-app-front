@@ -6,7 +6,7 @@
           <slot/>
         </div>
         <footer class="md-footer" :style="modalStyle">
-          <button class="btn" @click="$emit('close')">OK</button>
+          <b-button class="btn" @click="$emit('close')">OK</b-button>
         </footer>
       </div>
     </div>
