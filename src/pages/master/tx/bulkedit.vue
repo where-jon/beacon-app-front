@@ -85,13 +85,13 @@ export default {
       const POT_GROUP = ["groupId", "groupName"]
       const TX_SENSOR = ["sensorId", "sensor"]
 
-      const NUMBER_TYPE_LIST = ["deviceId", "exbId", "areaId", "locationId", "posId", "x", "y", "z", "txViewType", "zoneName"]
+      const NUMBER_TYPE_LIST = ["deviceId", "major", "minor", "exbId", "areaId", "locationId", "posId", "x", "y", "z", "txViewType", "zoneName"]
       const BOOL_TYPE_LIST = ["visible", "enabled"]
       await StateHelper.load('category')
       await StateHelper.load('group')
       await StateHelper.load('pot')
 
-      await bulkSaveFunc(MAIN_COL, NUMBER_TYPE_LIST, BOOL_TYPE_LIST, (entity, headerName, val, dummyKey) => {
+      await bulkSaveFunc(MAIN_COL, null, BOOL_TYPE_LIST, (entity, headerName, val, dummyKey) => {
         if (Util.equalsAny(headerName, POT)) {
           if(Util.hasValue(val)){
             if (!entity.pot) {
@@ -110,6 +110,9 @@ export default {
               entity.pot.potType = category.categoryType
               entity.pot.potCategoryList = [{potCategoryPK: {potId: dummyKey--, categoryId: category.categoryId}}]
             }
+            else{
+              entity.pot.categoryName = val
+            }
           }
           else{
             entity.pot.potCategoryList = [{potCategoryPK: {potId: dummyKey--, categoryId: val}}]
@@ -123,6 +126,9 @@ export default {
             const group = this.groups.find((group) => group.groupName == val)
             if(group){
               entity.pot.potGroupList = [{potGroupPK: {potId: dummyKey--, groupId: group.groupId}}]
+            }
+            else{
+              entity.pot.groupName = val
             }
           }
           else{
@@ -144,6 +150,13 @@ export default {
           }
         }
         else {
+          if(Util.equalsAny(headerName, NUMBER_TYPE_LIST)){
+            const num = Number(val)
+            if(isNaN(num)){
+              entity[`${headerName}Name`] = val
+            }
+            val = num
+          }
           if (headerName == MAIN_COL){
             if(!val) {
               val = dummyKey--
