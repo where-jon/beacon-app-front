@@ -16,6 +16,8 @@ export const getByteLength = (str) => encodeURI(str == null? "": str).replace(/%
 
 export const numberRange = (start, end) => new Array(end - start + 1).fill().map((d, i) => i + start)
 
+export const str2booleanComplate = (str) => str.toLowerCase() == "true"? true: str.toLowerCase() == "false"? false: str
+
 export const str2boolean = (str) => hasValue(str) && str.toLowerCase() != "false"
 
 export const isIos = () => /(iPhone|iPod|iPad)/.test(navigator.userAgent)
