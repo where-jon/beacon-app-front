@@ -64,9 +64,6 @@ export default {
         }
       }
       if(targetEntity){
-        if(entity.enabled == null){
-          entity.enabled = targetEntity.enabled
-        }
         if(entity.location && targetEntity.location){
           if(!entity.location.txViewType){
             entity.location.txViewType = targetEntity.location.txViewType
@@ -82,8 +79,8 @@ export default {
       const MAIN_COL = APP.EXB_WITH_EXBID? "exbId": APP.EXB_WITH_DEVICE_ID? "deviceId": APP.EXB_WITH_DEVICE_NUM? "deviceNum": "deviceIdX"
       const LOCATION = ["locationId","areaName","locationName","visible","txViewType","posId","x","y", "zoneName"]
       const ZONE = ["zoneName"]
-      const NUMBER_TYPE_LIST = ["deviceId", "exbId", "areaId", "locationId", "posId", "x", "y", "z", "txViewType"]
-      const BOOL_TYPE_LIST = ["visible", "enabled"]
+      const NUMBER_TYPE_LIST = ["deviceId", "exbId", "areaId", "locationId", "x", "y", "z", "txViewType"]
+      const BOOL_TYPE_LIST = ["visible"]
 
       await bulkSaveFunc(MAIN_COL, NUMBER_TYPE_LIST, BOOL_TYPE_LIST, (entity, headerName, val, dummyKey) => {
         if (Util.equalsAny(headerName, LOCATION)) {
@@ -106,6 +103,13 @@ export default {
               }
             }]
           }
+          else if(headerName == "posId"){
+            const posIdVal = Number(val)
+            if(isNaN(posIdVal)){
+              entity.location["posIdName"] = val
+            }
+            entity.location[headerName] = posIdVal
+          }
           else{
             entity.location[headerName] = val
           }
@@ -122,6 +126,13 @@ export default {
         else {
           if (headerName == MAIN_COL && !val) {
             val = dummyKey--
+          }
+          if(headerName == "enabled"){
+            const enabledVal = Util.str2booleanComplate(val)
+            if(typeof enabledVal != 'boolean'){
+              entity["enabledName"] = val
+            }
+            val = Util.str2boolean(val)
           }
           entity[headerName] = val
         }
