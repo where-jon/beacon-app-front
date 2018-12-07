@@ -35,7 +35,7 @@ export default {
           href: '/master/zoneClass',
         },
         {
-          text: this.$i18n.tnl('label.zoneClass') + this.$i18n.tnl('label.bulkRegister'),
+          text: this.$i18n.tnl('label.bulkRegister'),
           active: true
         }
       ]

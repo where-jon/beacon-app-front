@@ -36,7 +36,7 @@ export default {
           href: '/master/pot',
         },
         {
-          text: this.$i18n.tnl('label.pot') + this.$i18n.tnl('label.bulkUpload'),
+          text: this.$i18n.tnl('label.bulkUpload'),
           active: true
         }
       ]

@@ -33,7 +33,7 @@ export default {
           href: '/master/group',
         },
         {
-          text: this.$i18n.tnl('label.group') + this.$i18n.tnl('label.bulkRegister'),
+          text: this.$i18n.tnl('label.bulkRegister'),
           active: true
         }
       ]

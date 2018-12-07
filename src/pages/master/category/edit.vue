@@ -81,7 +81,7 @@ export default {
           href: '/master/category',
         },
         {
-          text: this.$i18n.tnl('label.category') + this.$i18n.tnl(Util.getDetailCaptionKey(this.$store.state.app_service.category.categoryId)),
+          text: this.$i18n.tnl(Util.getDetailCaptionKey(this.$store.state.app_service.category.categoryId)),
           active: true
         }
       ]

@@ -34,7 +34,7 @@ export default {
           href: '/master/category',
         },
         {
-          text: this.$i18n.tnl('label.category') + this.$i18n.tnl('label.bulkRegister'),
+          text: this.$i18n.tnl('label.bulkRegister'),
           active: true
         }
       ]

@@ -33,7 +33,7 @@ export default {
           href: '/master/area',
         },
         {
-          text: this.$i18n.tnl('label.area') + this.$i18n.tnl('label.bulkRegister'),
+          text: this.$i18n.tnl('label.bulkRegister'),
           active: true
         }
       ]
