@@ -109,7 +109,7 @@
 
       <!-- modal -->
       <b-modal id="modalInfo" @hide="resetModal" :title="modalInfo.title" @ok="execDelete(modalInfo.id)">
-        <pre>{{ modalInfo.content }}</pre>
+        {{ modalInfo.content }}
       </b-modal>
     </b-container>
   </b-form>
