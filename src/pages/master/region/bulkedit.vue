@@ -47,8 +47,23 @@ export default {
   methods: {
     async save(bulkSaveFunc) {
       const MAIN_COL = "regionId"
-      const NUMBER_TYPE_LIST = ["regionId"]
-      await bulkSaveFunc(MAIN_COL, NUMBER_TYPE_LIST)
+      const NUMBER_TYPE_LIST = ["regionId", "meshId", "deviceOffset"]
+      await bulkSaveFunc(MAIN_COL, null, null, (entity, headerName, val, dummyKey) => {
+        if(Util.equalsAny(headerName, NUMBER_TYPE_LIST)){
+          const num = Number(val)
+          if(isNaN(num)){
+            entity[`${headerName}Name`] = val
+          }
+          val = num
+        }
+        if (headerName == MAIN_COL){
+          if(!val) {
+            val = dummyKey--
+          }
+        }
+        entity[headerName] = val
+        return dummyKey
+      })
     },
   }
 }
