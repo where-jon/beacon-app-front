@@ -83,6 +83,7 @@ export default {
     let reload = document.getElementById("reload")
     if (reload) {
       HtmlUtil.registerInterval(()=>{
+        this.$store.commit('replace', {reload: true})
         reload.click()
       }, APP.AUTO_RELOAD)  
     }

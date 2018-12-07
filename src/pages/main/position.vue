@@ -99,6 +99,7 @@ export default {
       selectedCategory: null,
       ICON_FONTSIZE_RATIO: 0.7,
       toggleCallBack: () => this.reset(),
+      reloadSelectedTx: {},
     }
   },
   computed: {
@@ -112,6 +113,9 @@ export default {
       'groups',
       'txs',
       'forceFetchTx',
+    ]),
+    ...mapState([
+      'reload',
     ]),
     ...mapGetters('app_service' ,[
       'categoryOptionsForPot',
@@ -243,8 +247,11 @@ export default {
     },
     async fetchData(payload) {
       try {
+        this.reloadSelectedTx = this.reload? this.selectedTx: {}
+        this.replace({reload: false})
         this.replace({showProgress: true})
         await StateHelper.load('tx', this.forceFetchTx)
+        StateHelper.setForceFetch('tx', false)
         this.loadLegends()
         await this.fetchAreaExbs(true)
 
@@ -279,7 +286,6 @@ export default {
         }
 
         this.showMapImage()
-
         if (payload && payload.done) {
           payload.done()
         }
@@ -413,6 +419,10 @@ export default {
         let txBtn = evt.currentTarget
         this.showDetail(txBtn.txId, txBtn.x, txBtn.y)
       })
+      if(this.reloadSelectedTx.btxId == pos.btx_id){
+        this.showingDetailTime = new Date().getTime()
+        this.showDetail(txBtn.txId, txBtn.x, txBtn.y)
+      }
       this.txCont.addChild(txBtn)
       stage.update()
       this.detectedCount++  // 検知数カウント増加
