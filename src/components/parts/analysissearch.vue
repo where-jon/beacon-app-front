@@ -198,7 +198,7 @@ export default {
           const results = await HttpHelper.getAppService(reqParam)
           Util.debug(results)
           if(!results.length){
-            errorMessage = this.$i18n.tnl("message.notFoundData", {target: this.$i18n.tnl("label.heatmapPosition")})
+            errorMessage = this.$i18n.tnl("message.notFoundData", {target: this.fromHeatmap? this.$i18n.tnl("label.heatmapPosition"): this.$i18n.tnl("label.flowlineAnalysis")})
           }
           this.$emit("display", {form: this.form, results, errorMessage})
         } catch (e) {
