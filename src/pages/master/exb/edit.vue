@@ -16,11 +16,11 @@
             </b-form-group>
             <b-form-group v-show="isShown('EXB_WITH_DEVICE_NUM')">
               <label v-t="'label.deviceNum'" />
-              <input type="number" v-model.lazy="deviceNum" class="form-control" required :readonly="!isEditable" />
+              <input type="number" v-model.lazy="deviceNum" class="form-control" min="0" :max="maxDeviceNum" required :readonly="!isEditable" />
             </b-form-group>
             <b-form-group v-show="isShown('EXB_WITH_DEVICE_ID')">
               <label v-t="'label.deviceId'" />
-              <input type="number" v-model.lazy="deviceId" class="form-control" required :readonly="!isEditable" />
+              <input type="number" v-model.lazy="deviceId" class="form-control" min="0" :max="maxDeviceId" required :readonly="!isEditable" />
             </b-form-group>
             <b-form-group v-show="isShown('EXB_WITH_DEVICE_IDX')">
               <label v-t="'label.deviceIdX'" />
@@ -146,6 +146,8 @@ export default {
       txIconsHorizon: 5,
       txIconsVertical: 5,
       TXICONS_DISPFORMAT_TILE: 5,
+      maxDeviceId: 65535,
+      maxDeviceNum: 65535 - this.$store.state.currentRegion.deviceOffset,
     }
   },
   computed: {
