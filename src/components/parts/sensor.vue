@@ -61,7 +61,6 @@ export default {
 
 .numberBox {
   float: left;
-  border: solid 1px #3612d4;
   background-color: #ffffff;
   border-radius: 5.0vmin;
   text-align: center;
