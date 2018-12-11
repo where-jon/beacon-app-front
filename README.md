@@ -3,9 +3,9 @@
 > Nuxt.js project
 
 ## Related Project
-・https://github.com/whereinc/exbeacon-app-service  
-・https://github.com/whereinc/exbeacon-app-env  
 ・https://github.com/whereinc/exbeacon-app-doc  
+・https://github.com/whereinc/exbeacon-app-env  
+・https://github.com/whereinc/exbeacon-app-service  
 
 ## Build Setup
 
