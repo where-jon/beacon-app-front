@@ -114,6 +114,43 @@ sensor[3] = [
   {"deviceid":15,"count":5,"timestamp":now},
 ]
 
+sensor[5] = [
+  {
+  "battery_level":97,
+  "timestamp":now,
+  "step":84,
+  "beat":75,
+  "stress":4,
+  "meshid_major_minor":"00000_2_924",
+  "low":80,
+  "pressure":1149234187,
+  "rssi":-70,
+  "measuredPower":-60,
+  "high":119,
+  "downLatest":now,
+  "down":1,
+  "type":"meditag",
+  "btx_id":601
+  },
+  {
+  "battery_level":88,
+  "timestamp":now,
+  "step":226,
+  "beat":0,
+  "stress":0,
+  "meshid_major_minor":"00000_2_923",
+  "low":0,
+  "pressure":1149213729,
+  "rssi":-48,
+  "measuredPower":-60,
+  "high":0,
+  "downLatest":1542763347060,
+  "down":0,
+  "type":"meditag",
+  "btx_id":602
+  }
+]
+
 this['/basic/sensorHistory/1/1/today/hour'] = {
   month: 10,
   day: 14,
