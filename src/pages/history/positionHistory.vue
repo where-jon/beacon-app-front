@@ -139,7 +139,7 @@ export default {
       let txOp = this.txs.map((tx) => {
           return {
             value: tx.txId,
-            text: tx.minor
+            text: (tx.minor != null)?tx.minor:"-"
           }
         }
       )
