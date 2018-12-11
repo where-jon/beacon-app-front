@@ -434,6 +434,7 @@
     "bulkNotNullFailed": "{col}は必須です。",
     "bulkExistFailed": "{col}（{value}）は存在していません。",
     "bulkInvalidFailed": "{col}（{value}）の形式が不正です。",
+    "bulkAuthFailed": "{col}（{value}）は設定できません。",
     "monthDayTemperature": "{month}月{day}日の温湿度",
     "invalidLoginId": "ログインIDは英数記号を指定してください。",
     "notFound": "検索結果が存在しませんでした。",
