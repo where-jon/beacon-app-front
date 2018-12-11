@@ -197,6 +197,7 @@ export default {
     async displayImpl(){
       this.showAlert = false
       this.viewList = []
+      this.fetchRows = 0
       this.footerMessage = `${this.$i18n.tnl("message.totalRowsMessage", {row: this.fetchRows, maxRows: this.limitViewRows})}`
       try {
         const aSensorId = (this.form.sensorId != null)?this.form.sensorId:0
@@ -209,7 +210,7 @@ export default {
         var fetchList = await HttpHelper.getAppService(
           `/basic/sensorHistory/findsensor/${aSensorId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/${this.limitViewRows}`
         )
-        if (fetchList.length == null || !fetchList.length) {
+        if (fetchList == null || !fetchList.length) {
           this.message = this.$i18n.tnl("message.notFoundData", {target: this.$i18n.tnl("label.sensorHistory")})
           return
         }

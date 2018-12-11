@@ -117,7 +117,6 @@ export default {
       currentPage: 1,
       perPage: 20,
       limitViewRows: 100,
-      limitCSVRows: 10000,
       totalRows: 0,
       sortBy: null,
       //
@@ -139,7 +138,7 @@ export default {
       let txOp = this.txs.map((tx) => {
           return {
             value: tx.txId,
-            text: tx.minor
+            text: (tx.minor != null)?tx.minor:"-"
           }
         }
       )
@@ -224,7 +223,7 @@ export default {
     async exportCsv() {
       const aTxId = (this.form.txId != null)?this.form.txId:0
       var csvData = await HttpHelper.getAppService(
-          `/core/positionHistory/csvdownload/${aTxId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/${this.limitCSVRows}/` + getCharSet(this.$store.state.loginId)
+          `/core/positionHistory/csvdownload/${aTxId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/` + getCharSet(this.$store.state.loginId)
       )
       HtmlUtil.fileDL(this.name + ".csv", csvData, getCharSet(this.$store.state.loginId)
       )
