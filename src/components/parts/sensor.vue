@@ -75,7 +75,7 @@ export default {
 
 .presBox {
   float: left;
-  border: solid 1px #3612d4;
+  border: solid 1px #646464;
   background-color: #ffffff;
   border-radius: 7px;
   padding: 5px 5px 0px 5px;
@@ -97,7 +97,7 @@ export default {
 
 .smallBox {
   float: left;
-  border: solid 1px #3612d4;
+  border: solid 1px #646464;
   background-color: #ffffff;
   border-radius: 7px;
   padding: 3px 8px;
