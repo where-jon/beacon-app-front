@@ -261,8 +261,8 @@ export default {
         }
         if (APP.USE_POSITION_HISTORY) {
           // Serverで計算された位置情報を得る
-          var aData = await EXCloudHelper.fetchPositionHistory(this.exbs, this.txs, pMock)
-          this.setPositionHistores(aData)
+          let positionHistores = await EXCloudHelper.fetchPositionHistory(this.exbs, this.txs, pMock)
+          this.replaceMain({positionHistores})
         } else {
           // 移動平均数分のポジションデータを保持する
           this.pushOrgPositions(await EXCloudHelper.fetchPosition(this.exbs, this.txs, pMock))

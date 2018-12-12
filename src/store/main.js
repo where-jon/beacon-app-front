@@ -47,9 +47,5 @@ export const actions = { // Sample
     }
     orgPositions.push(payload)
     commit('replaceMain', {orgPositions})
-  },
-  setPositionHistores({ commit, state }, payload) {
-    let positionHistores = payload
-    commit('replaceMain', {positionHistores})
   }
 }
