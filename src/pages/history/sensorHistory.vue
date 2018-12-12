@@ -270,7 +270,7 @@ export default {
     async exportCsv() {
       const aSensorId = (this.form.sensorId != null)?this.form.sensorId:0
       var csvData = await HttpHelper.getAppService(
-          `/basic/sensorHistory/csvdownload/${aSensorId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/${this.limitViewRows}/` + getCharSet(this.$store.state.loginId)
+          `/basic/sensorHistory/csvdownload/${aSensorId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/` + getCharSet(this.$store.state.loginId)
       )
       HtmlUtil.fileDL(this.name + ".csv", csvData, getCharSet(this.$store.state.loginId)
       )
