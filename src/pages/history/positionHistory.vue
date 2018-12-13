@@ -72,6 +72,7 @@ import * as Util from '../../sub/util/Util'
 import { CATEGORY } from '../../sub/constant/Constants'
 import { APP } from '../../sub/constant/config.js'
 import moment from 'moment'
+import { EXCLOUD, APP_SERVICE } from '../../sub/constant/config'
 
 
 export default {
@@ -222,10 +223,10 @@ export default {
     },
     async exportCsv() {
       const aTxId = (this.form.txId != null)?this.form.txId:0
-      var csvData = await HttpHelper.getAppService(
-          `/core/positionHistory/csvdownload/${aTxId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/` + getCharSet(this.$store.state.loginId)
-      )
-      HtmlUtil.fileDL(this.name + ".csv", csvData, getCharSet(this.$store.state.loginId)
+      HtmlUtil.executeFileDL(
+        APP_SERVICE.BASE_URL
+        + `/core/positionHistory/csvdownload/${aTxId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/` 
+        + getCharSet(this.$store.state.loginId)
       )
     },
   }
