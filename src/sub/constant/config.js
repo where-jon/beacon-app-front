@@ -195,9 +195,9 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     minor: true,
     major: true,
     name: true,
-    timestamp: true,
     group: true,
     category: true,
+    timestamp: true,
   },
 
   GATEWAY: { // ゲートウエイ
