@@ -86,7 +86,7 @@ export default {
   grid-template-columns: 1fr 1fr;
   float: left;
   display: grid;
-  border: solid 1px #3612d4;
+  border: solid 1px #646464;
   background-color: #ffffff;
   border-radius: 7px;
   padding: 5px 5px 0px 5px;
@@ -113,7 +113,7 @@ export default {
 .smallBox {
   float: left;
   grid-template-columns: 1fr 1fr 1fr;
-  border: solid 1px #3612d4;
+  border: solid 1px #646464;
   background-color: #ffffff;
   border-radius: 7px;
   padding: 6px;
