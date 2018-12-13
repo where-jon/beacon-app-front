@@ -70,9 +70,8 @@ import { getTheme } from '../../sub/helper/ThemeHelper'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import * as Util from '../../sub/util/Util'
 import { CATEGORY } from '../../sub/constant/Constants'
-import { APP } from '../../sub/constant/config.js'
+import { APP, APP_SERVICE } from '../../sub/constant/config.js'
 import moment from 'moment'
-
 
 export default {
   mixins: [showmapmixin ],
@@ -269,10 +268,10 @@ export default {
     },
     async exportCsv() {
       const aSensorId = (this.form.sensorId != null)?this.form.sensorId:0
-      var csvData = await HttpHelper.getAppService(
-          `/basic/sensorHistory/csvdownload/${aSensorId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/` + getCharSet(this.$store.state.loginId)
-      )
-      HtmlUtil.fileDL(this.name + ".csv", csvData, getCharSet(this.$store.state.loginId)
+      HtmlUtil.executeFileDL(
+        APP_SERVICE.BASE_URL
+        + `/basic/sensorHistory/csvdownload/${aSensorId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/`
+        + getCharSet(this.$store.state.loginId)
       )
     },
   }

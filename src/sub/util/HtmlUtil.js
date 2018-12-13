@@ -76,6 +76,16 @@ export const fileDL = (name, content, charSet = "UTF8") => {
   document.body.removeChild(e)
 }
 
+export const executeFileDL = (url) => {
+  let e = document.createElement("a")
+  e.href = url
+  e.download = name;
+  e.style.display = "none"
+  document.body.appendChild(e)
+  e.click()
+  document.body.removeChild(e)
+}
+
 export const readImage = (e, onload, resize, onerror) => {
   let files = e.target.files
   if ( files && files[0] ) {
