@@ -3,7 +3,7 @@
     <div v-for="val in sensors" :key="val.btx_id" class="personBox" :style="{'background-color': val.bg, 'border': border, 'border-color': (new Date().getTime() - val.downLatest < DOWN_RED_TIME)?'red':'white'}">
       <div class="personUpperBox">
         <div class="titleBox">
-          <div class="numberBox">{{ val.label }}</div>
+          <div class="numberBox" :style="{'font-size': val.label.length > 2? '0.8em': '1.2em'}">{{ val.label }}</div>
         </div>
         <div class="presBox">
           <div class="pres high"><div v-t="'label.h_blood_pressure'"></div><div class="numval">{{val.high}}</div></div>
@@ -90,12 +90,12 @@ export default {
     border-radius: 20px;
     text-align: center;
     line-height: 30px;
-    font-size: 1.2em;
     font-weight: bolder;
-    padding: 3px;
     width: 40px;
     height: 40px;
     margin: 5px;
+    display: table-cell;
+    vertical-align: middle;
   }
 }
 
