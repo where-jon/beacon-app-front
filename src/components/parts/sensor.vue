@@ -87,7 +87,7 @@ export default {
     align-self: center;
     -ms-grid-column-align: center;
     background-color: #ffffff;
-    border-radius: 5.0vmin;
+    border-radius: 20px;
     text-align: center;
     line-height: 30px;
     font-size: 1.2em;
