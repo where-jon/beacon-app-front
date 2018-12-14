@@ -108,7 +108,7 @@ export default {
   border: solid 1px #646464;
   background-color: #ffffff;
   border-radius: 7px;
-  padding: 5px 5px 0px 5px;
+  padding: 5px 1px 0px 1px;
   margin: 4px;
   flex-direction: row;
   -ms-grid-column: 2;
@@ -117,7 +117,6 @@ export default {
     grid-template-rows: 1fr 1fr;
     -ms-grid-rows: 1fr 1fr;
     -ms-grid-column-align: center;
-    background-color: #ffffff;
     text-align: center;
     padding: 3px;
     div {
