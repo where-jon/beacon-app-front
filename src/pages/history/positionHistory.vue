@@ -12,7 +12,9 @@
             <b-form-row>
               <b-form-row class="mb-3 mr-2">
                 <label v-t="'label.minor'" class="mr-2"/>
-                <b-form-select v-model="form.txId" :options="txOptions" class="mr-2"/>
+                <v-select v-model="form.tx" :options="txOptions" class="mr-2">
+                  <div slot="no-options">{{$i18n.tnl('label.vSelectNoOptions')}}</div>
+                </v-select>
               </b-form-row>
             </b-form-row>
           </b-form-group>
@@ -95,7 +97,7 @@ export default {
         }
       ],
       form: {
-        txId: null,
+        tx: null,
         datetimeFrom: null,
         datetimeTo: null,
       },
@@ -136,14 +138,12 @@ export default {
       'txs', 'exbs'
     ]),
     txOptions() {
-      let txOp = this.txs.map((tx) => {
-          return {
-            value: tx.txId,
-            text: (tx.minor != null)?tx.minor:"-"
+      let txOp = this.txs.map(tx => {
+        return {
+            label: (tx.minor!=null)?(""+tx.minor):"txId=" + tx.txId,
+            value: "" + tx.txId
           }
-        }
-      )
-      txOp.unshift({value:null, text:''})
+      })
       return txOp
     },
   },
@@ -185,7 +185,8 @@ export default {
       this.totalRows = 0
       this.footerMessage = `${this.$i18n.tnl("message.totalRowsMessage", {row: this.viewList.length, maxRows: this.limitViewRows})}`
       try {
-        const aTxId = (this.form.txId != null)?this.form.txId:0
+        const aTxId = (this.form.tx != null && this.form.tx.value != null)?this.form.tx.value:0
+        console.log(aTxId)
         var fetchList = await HttpHelper.getAppService(
           `/core/positionHistory/find/${aTxId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/${this.limitViewRows}`
         )
@@ -222,7 +223,7 @@ export default {
     async fetchData(payload) {
     },
     async exportCsv() {
-      const aTxId = (this.form.txId != null)?this.form.txId:0
+      const aTxId = (this.form.tx != null && this.form.tx.value != null)?this.form.tx.value:0
       HtmlUtil.executeFileDL(
         APP_SERVICE.BASE_URL
         + `/core/positionHistory/csvdownload/${aTxId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/` 
