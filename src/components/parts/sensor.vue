@@ -90,7 +90,7 @@ export default {
     border-radius: 5.0vmin;
     text-align: center;
     line-height: 30px;
-    font-size: 2.5vmin;
+    font-size: 1.2em;
     font-weight: bolder;
     padding: 3px;
     width: 40px;
