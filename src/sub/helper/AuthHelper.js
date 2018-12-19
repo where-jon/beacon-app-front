@@ -48,8 +48,9 @@ export const authByAppService = async (loginId, password, success, err) => {
     let serviceRev = apsIndex.match(new RegExp('Head:([0-9a-zA-Z]+)'))
     serviceRev = serviceRev && serviceRev[1]
 
-    var params = new URLSearchParams()
-    params.append('username', loginId) // username: Spring Boot Security reserved name
+    let params = new URLSearchParams()
+    let tenantCd = getTenantCd()
+    params.append('username', (tenantCd? tenantCd+":":"") + loginId) // username: Spring Boot Security reserved name
     params.append('password', password)
     let data = await HttpHelper.postAppService('/login', params)
 
@@ -116,3 +117,11 @@ export const checkSession = () => {
   }
   return false
 }
+
+export const getTenantCd = () => { // xxx.saas.ドメインの場合、先頭がtenantCdとなる。
+  if (location.host.includes(APP.SAAS_DOMAIN)) {
+    return location.host.split(".")[0]
+  }
+  return null
+}
+

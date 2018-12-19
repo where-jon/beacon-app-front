@@ -13,6 +13,7 @@ export const DEV = { // 開発デバッグ関連
 export const APP = { // 機能面に関する設定
   VERSION: "Version 0.9.0", // バージョン　this application version
   LOGIN_MODE: LOGIN_MODE.APP_SERVICE, // ログインモード(なし、ローカル、AppService)
+  SAAS_DOMAIN: ".saas.",
 
   // ページ遷移設定
   TOP_PAGE: "/main/position", // トップページパス　must not be / otherwise recursive infinitely
