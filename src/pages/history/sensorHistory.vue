@@ -70,9 +70,8 @@ import { getTheme } from '../../sub/helper/ThemeHelper'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import * as Util from '../../sub/util/Util'
 import { CATEGORY } from '../../sub/constant/Constants'
-import { APP } from '../../sub/constant/config.js'
+import { APP, APP_SERVICE } from '../../sub/constant/config.js'
 import moment from 'moment'
-
 
 export default {
   mixins: [showmapmixin ],
@@ -197,6 +196,7 @@ export default {
     async displayImpl(){
       this.showAlert = false
       this.viewList = []
+      this.fetchRows = 0
       this.footerMessage = `${this.$i18n.tnl("message.totalRowsMessage", {row: this.fetchRows, maxRows: this.limitViewRows})}`
       try {
         const aSensorId = (this.form.sensorId != null)?this.form.sensorId:0
@@ -209,7 +209,7 @@ export default {
         var fetchList = await HttpHelper.getAppService(
           `/basic/sensorHistory/findsensor/${aSensorId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/${this.limitViewRows}`
         )
-        if (fetchList.length == null || !fetchList.length) {
+        if (fetchList == null || !fetchList.length) {
           this.message = this.$i18n.tnl("message.notFoundData", {target: this.$i18n.tnl("label.sensorHistory")})
           return
         }
@@ -268,10 +268,10 @@ export default {
     },
     async exportCsv() {
       const aSensorId = (this.form.sensorId != null)?this.form.sensorId:0
-      var csvData = await HttpHelper.getAppService(
-          `/basic/sensorHistory/csvdownload/${aSensorId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/${this.limitViewRows}/` + getCharSet(this.$store.state.loginId)
-      )
-      HtmlUtil.fileDL(this.name + ".csv", csvData, getCharSet(this.$store.state.loginId)
+      HtmlUtil.executeFileDL(
+        APP_SERVICE.BASE_URL
+        + `/basic/sensorHistory/csvdownload/${aSensorId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/`
+        + getCharSet(this.$store.state.loginId)
       )
     },
   }

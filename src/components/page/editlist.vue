@@ -157,9 +157,8 @@ export default {
       await this.$parent.$options.methods.deleteEntity.call(this.$parent, entity)
       await this.$parent.$options.methods.fetchData.call(this.$parent, true)
     },
-    async showForm(isShow){
+    showForm(isShow){
       this.useRegistForm = isShow
-      await this.$parent.$options.methods.resetNewForm.call(this.$parent, isShow)
     },
     onRegistSubmit(evt){
       const entity = this.$parent.$options.methods.addNewEntity.apply(this.$parent)

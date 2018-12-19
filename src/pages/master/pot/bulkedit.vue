@@ -13,7 +13,6 @@ import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import { APP } from '../../../sub/constant/config'
-import { CATEGORY } from '../../../sub/constant/Constants'
 
 export default {
   components: {
@@ -26,7 +25,6 @@ export default {
       id: 'potId',
       backPath: '/master/pot',
       appServicePath: '/basic/pot',
-      category: _.slice(CATEGORY.getTypes(), 0, 2).filter((val) => APP.CATEGORY_TYPES.includes(val.value)),
       items: [
         {
           text: this.$i18n.tnl('label.master'),
@@ -99,20 +97,9 @@ export default {
         if (MAIN_COL === headerName && !val) {
           newVal = dummyKey--
         } else if (NULLABLE_NUMBER_COL.includes(headerName)) {
-          if(!Util.hasValue(val)){
-            newVal = null
-          }
-          else{
-            newVal = Number(val)
-            if(headerName == "potType" && !isNaN(newVal) && !this.category.find((val) => val.value == newVal)){
-              entity[`${headerName}OneOf`] = this.category.map((val) => val.value)
-            }
-          }
+          newVal = Util.hasValue(val)? Number(val): null
         } else {
           newVal = val
-        }
-        if(isNaN(newVal)){
-          entity[`${headerName}Name`] = val
         }
         entity[headerName] = newVal
         return dummyKey

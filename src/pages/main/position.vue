@@ -261,8 +261,8 @@ export default {
         }
         if (APP.USE_POSITION_HISTORY) {
           // Serverで計算された位置情報を得る
-          var aData = await EXCloudHelper.fetchPositionHistory(this.exbs, this.txs, pMock)
-          this.setPositionHistores(aData)
+          let positionHistores = await EXCloudHelper.fetchPositionHistory(this.exbs, this.txs, pMock)
+          this.replaceMain({positionHistores})
         } else {
           // 移動平均数分のポジションデータを保持する
           this.pushOrgPositions(await EXCloudHelper.fetchPosition(this.exbs, this.txs, pMock))
@@ -279,10 +279,12 @@ export default {
           })
           .sortBy((val) => (new Date().getTime() - val.downLatest < APP.DOWN_RED_TIME)? val.downLatest * -1: val.btx_id)
           .value()
+          Util.debug(this.meditagSensors)
         }
 
         if (APP.USE_MAGNET) {
           this.magnetSensors = await EXCloudHelper.fetchSensor(SENSOR.MAGNET)
+          Util.debug(this.magnetSensors)
         }
 
         this.showMapImage()
@@ -369,6 +371,9 @@ export default {
         shape: display.shape || SHAPE.CIRCLE
       }
     },
+    isMagnetOn(magnet) {
+      return magnet && magnet.magnet === SENSOR.MAGNET_STATUS.ON
+    },
     showTx(pos) {
       let tx = this.txs.find((tx) => tx.btxId == pos.btx_id)
       Util.debug('showTx', pos, tx && tx.sensor)
@@ -380,12 +385,16 @@ export default {
         var magnet = this.magnetSensors && this.magnetSensors.find((sensor) => sensor.btx_id == tx.btxId)
         Util.debug('magnet', magnet)
       }
+      if (tx.sensorId === SENSOR.MEDITAG) {
+        var meditag = this.getMeditagSensor(tx.btxId)
+        Util.debug('meditag', meditag)
+      }
       let display = this.getDisplay(tx)
       let stage = this.stage
       let txBtn = new Container()
       let btnBg = new Shape()
-      let bgColor = (magnet && magnet.magnet === SENSOR.MAGNET_STATUS.ON)? display.color: display.bgColor
-      let color = (magnet && magnet.magnet === SENSOR.MAGNET_STATUS.ON)? display.bgColor : display.color
+      let bgColor = meditag? meditag.bg.substr(1): this.isMagnetOn(magnet)? display.color: display.bgColor
+      let color = meditag? "000": this.isMagnetOn(magnet)? display.bgColor : display.color
       btnBg.graphics.beginStroke("#ccc").beginFill('#' + bgColor)
       switch(display.shape) {
       case SHAPE.CIRCLE:
