@@ -6,7 +6,7 @@
       <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">
         <div v-html="message" />
       </b-alert>
-      <div class="mapContainer mb-5">
+      <div class="mapContainer">
         <div class="container">
           <analysis-search :areaOptions="areaOptions" v-on:changeArea="changeArea"
               v-on:display="display" />

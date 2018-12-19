@@ -6,7 +6,7 @@
       <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">
         <div v-html="message" />
       </b-alert>
-      <div class="mapContainer mb-5">
+      <div class="mapContainer">
         <div class="container">
           <analysis-search :fromHeatmap="fromHeatmap" :areaOptions="areaOptions"
               v-on:changeArea="changeArea" v-on:display="display"/>
@@ -130,7 +130,7 @@ export default {
       this.removeHeatmap()
       Util.debug(this.heatmapData)
       let heatmap = h337.create({
-        radius: DISP.ANALYSIS.HEATMAP.RADIUS,
+        radius: DISP.ANALYSIS.HEATMAP.RADIUS * this.mapImageScale,
         container: element,
       })
       heatmap.setData(this.heatmapData)
