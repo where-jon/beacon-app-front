@@ -271,23 +271,14 @@ tbody {
   min-width: 530px;
 }
 
-thead {
-  min-width: 530px;
-}
-
 thead, tbody tr {
   display:table;
   width:100%;
   table-layout:fixed;
 }
 
-table {
-  table-layout:fixed;
-}
-
 td {
   word-break: break-all;
-  overflow-wrap : break-word;
 }
 
 </style>
