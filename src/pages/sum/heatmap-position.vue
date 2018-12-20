@@ -93,7 +93,7 @@ export default {
       try {
         this.replace({showProgress: true})
         const map = new Image()
-        map.src = this.mapImage
+        map.src = this.mapImage()
 
         this.removeHeatmap()
         let heatmap = document.getElementById('heatmap')

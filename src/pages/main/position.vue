@@ -135,20 +135,6 @@ export default {
       }
       return ret? [ret]: []
     },
-    positions() {
-      let positions = []
-      if (APP.USE_POSITION_HISTORY) {
-        positions = this.positionHistores
-      } else {
-        let now = !DEV.USE_MOCK_EXC? new Date().getTime(): mock.positions_conf.start + this.count++ * mock.positions_conf.interval  // for mock
-        positions = PositionHelper.correctPosId(this.orgPositions, now)
-      }
-      if (APP.USE_MEDITAG && this.meditagSensors) {
-        positions = SensorHelper.setStress(positions, this.meditagSensors)
-      }
-      positions = this.positionFilter(positions, this.selectedGroup, this.selectedCategory)
-      return positions
-    },
     filter() {
       return [this.selectedGroup, this.selectedCategory]
     },
@@ -173,6 +159,20 @@ export default {
       'pushOrgPositions',
       'setPositionHistores',
     ]),
+    positions() {
+      let positions = []
+      if (APP.USE_POSITION_HISTORY) {
+        positions = this.positionHistores
+      } else {
+        let now = !DEV.USE_MOCK_EXC? new Date().getTime(): mock.positions_conf.start + this.count++ * mock.positions_conf.interval  // for mock
+        positions = PositionHelper.correctPosId(this.orgPositions, now)
+      }
+      if (APP.USE_MEDITAG && this.meditagSensors) {
+        positions = SensorHelper.setStress(positions, this.meditagSensors)
+      }
+      positions = this.positionFilter(positions, this.selectedGroup, this.selectedCategory)
+      return positions
+    },
     reset() {
       this.isShownMapImage = false
       this.resetDetail()
@@ -191,7 +191,7 @@ export default {
       const rev = y + map.top + DISP.TX_R + tipOffsetY + popupHeight > window.innerHeight
       const p = tx.pot? tx.pot: {}
 
-      const position = this.positions.find((e) => {
+      const position = this.positions().find((e) => {
         return e.btx_id === btxId
       })
       const balloonClass = !btxId ? '': 'balloon' + (rev ? '-u': '-b')
@@ -348,7 +348,7 @@ export default {
 
       // for debug
       let disabledExbs = _.filter(this.exbs, (exb) => !exb.enabled || !exb.location.x || exb.location.y <= 0)
-      this.positions.forEach((pos) => {
+      this.positions().forEach((pos) => {
         let exb = disabledExbs.find((exb) => exb.posId == pos.pos_id)
         if (exb) {
           console.error('Found at disabled exb', pos, exb)
@@ -356,7 +356,7 @@ export default {
       })
 
       this.detectedCount = 0 // 検知カウントリセット
-      let position = PositionHelper.adjustPosition(this.positions, this.mapImageScale, this.positionedExb)
+      let position = PositionHelper.adjustPosition(this.positions(), this.mapImageScale, this.positionedExb)
       position.forEach((pos) => { // TODO: Txのチェックも追加
         this.showTx(pos)
       })

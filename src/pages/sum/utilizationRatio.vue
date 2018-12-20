@@ -120,7 +120,7 @@ export default {
       vModelDay: null,
       categoryOptionList: [{label:'', value:null}],
       zoneOptionList: [],
-      dayOptionList: [{label:'', value:null}],
+      dayOptionList: [],
       //
       zoneCategorys: [],
       categoryId: -1,
@@ -157,7 +157,6 @@ export default {
           yyyy--
         }
       }
-      this.dayOptionList = []
       return pullDowns
     },
     dayOptions() {

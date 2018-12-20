@@ -22,15 +22,6 @@ export default {
     }
   },
   computed: {
-    mapImage() {
-      let area = _.find(this.$store.state.app_service.areas, (area) => {
-        if (this.selectedArea == null) {
-          this.selectedArea = area.areaId // nullの場合、最初のものにする
-        }
-        return area.areaId == this.selectedArea
-      })
-      return area && this.getMapImage(area.areaId)
-    },
     areaOptions() {
       let ret = _(this.$store.state.app_service.areas).map((val) => {
         return {text: val.areaName, value: val.areaId}
@@ -101,6 +92,15 @@ export default {
     ...mapMutations('main', [
       'replaceMain', 
     ]),
+    mapImage() {
+      let area = _.find(this.areas, (area) => {
+        if (this.selectedArea == null) {
+          this.selectedArea = area.areaId // nullの場合、最初のものにする
+        }
+        return area.areaId == this.selectedArea
+      })
+      return area && this.getMapImage(area.areaId)
+    },
     getMapImage(areaId) {
       let areaImage = _.find(this.$store.state.app_service.areaImages, (areaImage) => {
         return areaImage.areaId == areaId
@@ -144,7 +144,7 @@ export default {
       }
 
       var bg = new Image()
-      bg.src = this.mapImage
+      bg.src = this.mapImage()
       bg.onload = (evt) => {
         this.drawMapImage(bg)
         if (callback) {

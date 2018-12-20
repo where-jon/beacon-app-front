@@ -109,6 +109,7 @@ export default {
       workExbs: [],
       exbOptions: [],
       exbDisp: 'deviceIdX',
+      exbDispOptions: [],
       deleteTarget: null,
       keepExbPosition: false,
       mapRatio: null,
@@ -145,14 +146,6 @@ export default {
     ...mapState('app_service', [
       'pageSendParam',
     ]),
-    exbDispOptions() {
-      let options = []
-      if (APP.EXB_WITH_DEVICE_NUM) options.push({value:'deviceNum', text: this.$i18n.tnl('label.deviceNum')})
-      if (APP.EXB_WITH_DEVICE_IDX) options.push({value:'deviceIdX', text: this.$i18n.tnl('label.deviceIdX')})
-      if (APP.EXB_WITH_DEVICE_ID) options.push({value:'deviceId', text: this.$i18n.tnl('label.deviceId')})
-      this.exbDisp = options[0].value
-      return options
-    },
   },
   mounted() {
     this.replace({title: this.$i18n.tnl('label.location')})
@@ -165,6 +158,13 @@ export default {
     else{
       this.selectedArea = null
     }
+
+    const options = []
+    if (APP.EXB_WITH_DEVICE_NUM) options.push({value:'deviceNum', text: this.$i18n.tnl('label.deviceNum')})
+    if (APP.EXB_WITH_DEVICE_IDX) options.push({value:'deviceIdX', text: this.$i18n.tnl('label.deviceIdX')})
+    if (APP.EXB_WITH_DEVICE_ID) options.push({value:'deviceId', text: this.$i18n.tnl('label.deviceId')})
+    this.exbDispOptions = options
+    this.exbDisp = options[0].value
   },
   beforeDestroy() {
     this.selectedArea = null

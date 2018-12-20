@@ -221,7 +221,7 @@ export const converToCsv = (array, headers) => {
       if (val == null){
         return val
       }
-      if (typeof val === 'object' || typeof val === 'array') {
+      if (typeof val === 'object' || isArray('array')) {
         return JSON.stringify(val).split('"').join('\'')
       }
       else {
