@@ -34,5 +34,6 @@ module.exports = {
 
     // eslint-plugin-vue
     "vue/max-attributes-per-line": "off",               // 1行に書ける属性の最大数チェックはしない
+    "vue/component-name-in-template-casing":"off",      // タグ名の書き換えをしない
   }
 }
