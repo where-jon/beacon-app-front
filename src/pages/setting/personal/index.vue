@@ -44,7 +44,7 @@
               <label v-t="'label.charSet'" />
               <b-form-select v-model="selectedCharSet" :options="charSets" class="mb-3" @change="charSetSelected"/>
             </b-form-group>
-            <b-form-group>
+            <b-form-group v-show="!isProvider">
               <b-button type="button" :variant="theme" class="btn-block" 
               v-t="'label.changeProfilePassword'" @click="isChange = true" v-show="!isChange" />
             </b-form-group>
@@ -326,7 +326,7 @@ export default {
       return result ? [result] : []
     },
     async setLoginUser () {
-      const user = await HttpHelper.getAppService('/meta/user/currentUser')
+      const user = await AppServiceHelper.getCurrentUser()
       this.loginUser.userId = user.userId
       this.loginUser.loginId = user.loginId
       this.loginUser.name = user.name

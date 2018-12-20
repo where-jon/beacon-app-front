@@ -16,10 +16,6 @@ export const setApp = (pStore, pi18n) => {
     i18n = pi18n
 }
 
-export const isAboveSuperUser = (targetRoleName) => {
-  return store.state.role != ROLE.SUPER_ADMIN && targetRoleName == ROLE.SUPER_ADMIN
-}
-
 export const getTxIdName = (tx) => {
   if(!tx){
     return null

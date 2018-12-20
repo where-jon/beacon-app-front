@@ -23,7 +23,6 @@ export const CHAR_SET = [
 ]
 
 export const ROLE = {
-  SUPER_ADMIN: "SUPER_ADMIN", // TO BE REMOVED in the future
 }
 
 export const ROLE_FEATURE = {

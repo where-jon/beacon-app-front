@@ -19,7 +19,7 @@
         </b-form-group>
         <b-form-group>
           <label v-t="'label.loginId'" />
-          <input type="text" v-model="form.loginId" maxlength="16" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" class="form-control" :title="$i18n.tnl('message.validationList', {validate: $i18n.tnl('message.loginValidationList')})" required :readonly="!isEditable || aboveSuperUser" />
+          <input type="text" v-model="form.loginId" maxlength="16" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" class="form-control" :title="$i18n.tnl('message.validationList', {validate: $i18n.tnl('message.loginValidationList')})" required :readonly="!isEditable" />
         </b-form-group>
         <b-form-group v-show="showEmail">
           <label v-t="'label.email'" />
@@ -27,7 +27,7 @@
         </b-form-group>
         <b-form-group>
           <label v-t="'label.role'" />
-          <b-form-select v-model="role" :options="roleOptions" required :disabled="!isEditable || aboveSuperUser" ></b-form-select>
+          <b-form-select v-model="role" :options="roleOptions" required :disabled="!isEditable" ></b-form-select>
         </b-form-group>
         <b-form-group>
           <label v-t="'label.description'" />
@@ -36,11 +36,11 @@
         <b-form-group>
           <label v-if="hasId" v-t="'label.passwordUpdate'" />
           <label v-else v-t="'label.password'" />
-          <b-form-input type="password" v-model="pass" pattern="^[a-zA-Z0-9_\-\/!#\$%&@]*$" :readonly="!isEditable || aboveSuperUser" />
+          <b-form-input type="password" v-model="pass" pattern="^[a-zA-Z0-9_\-\/!#\$%&@]*$" :readonly="!isEditable" />
         </b-form-group>
         <b-form-group>
           <label v-t="'label.passwordConfirm'" />
-          <b-form-input type="password" v-model="passConfirm" pattern="^[a-zA-Z0-9_\-\/!#\$%&@]*$" :readonly="!isEditable || aboveSuperUser" />
+          <b-form-input type="password" v-model="passConfirm" pattern="^[a-zA-Z0-9_\-\/!#\$%&@]*$" :readonly="!isEditable" />
         </b-form-group>
 
         <b-button type="button" variant="outline-danger" @click="backToList" class="mr-2 my-1" v-t="'label.back'"/>
@@ -79,7 +79,6 @@ export default {
       form: ViewHelper.extract(this.$store.state.app_service.user, ["userId", "loginId", "name", "email", "roleId", "description"]),
       roleOptions: [],
       role: null,
-      aboveSuperUser: false,
       pass: null,
       passConfirm: null,
       passMinLength: 3,
@@ -104,15 +103,12 @@ export default {
   async created(){
     await StateHelper.load('role')
     this.roleOptions = this.roles.map((val) => ({text: val.roleName, value: val.roleId}))
-    if(!this.isSuperEditable){
-      const superAdmin = this.roles.find((val) => val.roleName == ROLE.SUPER_ADMIN)
-      this.roleOptions = this.roleOptions.filter((val) => superAdmin? val.value != superAdmin.roleId || this.form.roleId == superAdmin.roleId: true)
-    }
+    // if(!this.isSuperEditable){ 廃止
+    //   const superAdmin = this.roles.find((val) => val.roleName == ROLE.SUPER_ADMIN)
+    //   this.roleOptions = this.roleOptions.filter((val) => superAdmin? val.value != superAdmin.roleId || this.form.roleId == superAdmin.roleId: true)
+    // }
     this.role = this.form.roleId
     const userRole = this.roles.find((role) => role.roleId == this.user.roleId)
-    if(userRole){
-      this.aboveSuperUser = StateHelper.isAboveSuperUser(userRole.roleName)
-    }
   },
   computed: {
     hasId(){

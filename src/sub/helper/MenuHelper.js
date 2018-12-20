@@ -8,10 +8,9 @@ export const setStore = (pStore) => {
 }
 
 export const fetchNav = (featureList, tenantFeatureList, role) => {
-  let isSuperAdmin = role.roleName == ROLE.SUPER_ADMIN // TO BE REMOVED in the future
   let retNav = _.map(MENU, (group) => {
     let pages = _.filter(group.pages, (page) => {
-      return isSuperAdmin || tenantOk("/" + group.base + page.path, tenantFeatureList) && getMode(page.feature, featureList) > ROLE_FEATURE.MODE.RO_SYS
+      return role.isSuperAdmin || tenantOk("/" + group.base + page.path, tenantFeatureList) && getMode(page.feature, featureList) > ROLE_FEATURE.MODE.RO_SYS
     })
     return {...group, pages}
   })
@@ -70,7 +69,7 @@ export const isShowMenu = (page, role) => {
 
 export const useMaster = (feature) => {
   const role = store.state.role
-  if (role == ROLE.SUPER_ADMIN) {
+  if (role.isSuperAdmin) {
     return true
   }
   const featureList = store.state.tenantFeatureList

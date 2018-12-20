@@ -28,7 +28,7 @@ export default function (context) {
       context.app.router.push(APP.ERROR_PAGE)
       return
     }
-    let isSuperAdmin = context.store.state.role == ROLE.SUPER_ADMIN // TO BE REMOVED in the future
+    let isSuperAdmin = context.store.state.role.isSuperAdmin
     if (!isSuperAdmin && tenantFeatureList && !MenuHelper.tenantOk(context.route.path, tenantFeatureList)) {
       if (MenuHelper.tenantOk(APP.TOP_PAGE, tenantFeatureList)) {
         context.app.router.push(APP.TOP_PAGE)

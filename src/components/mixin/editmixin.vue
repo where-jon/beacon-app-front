@@ -41,7 +41,7 @@ export default {
       return MenuHelper.isEditable(this.featurePath? this.featurePath: this.appServicePath)
     },
     isSuperEditable() {
-      return this.$store.state.role == ROLE.SUPER_ADMIN
+      return this.$store.state.role.isSuperAdmin
     },
     ...mapState('app_service', [
       'listMessage',

@@ -2,6 +2,7 @@ import md5 from 'md5'
 import _ from 'lodash'
 import axios from 'axios'
 import * as HttpHelper from './HttpHelper'
+import * as AppServiceHelper from './AppServiceHelper'
 import * as StateHelper from './StateHelper'
 import * as MenuHelper from './MenuHelper'
 import * as ConfigHelper from './ConfigHelper'
@@ -60,7 +61,7 @@ export const authByAppService = async (loginId, password, success, err) => {
     console.log({tenantFeatureList})
 
     // get role feature list
-    let user = await HttpHelper.getAppService('/meta/user/currentUser')
+    let user = await AppServiceHelper.getCurrentUser()
     console.log(user)
     let featureList = _(user.role.roleFeatureList).map((roleFeature) => {
         return {path: roleFeature.feature.path, mode: roleFeature.mode}
