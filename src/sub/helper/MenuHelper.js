@@ -7,9 +7,12 @@ export const setStore = (pStore) => {
   store = pStore
 }
 
-export const fetchNav = (featureList, tenantFeatureList, role) => {
+export const fetchNav = (featureList, tenantFeatureList, role, isTenantAdmin) => {
   let retNav = _.map(MENU, (group) => {
     let pages = _.filter(group.pages, (page) => {
+      if (!isTenantAdmin && group.base == "provider/") {
+        return false
+      }
       return role.isSuperAdmin || tenantOk("/" + group.base + page.path, tenantFeatureList) && getMode(page.feature, featureList) > ROLE_FEATURE.MODE.RO_SYS
     })
     return {...group, pages}

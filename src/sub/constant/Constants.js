@@ -223,6 +223,20 @@ export const EXTRA_NAV = [
 
 export const MENU = [
   {
+    key: 'provider',
+    base: 'provider/',
+    path: 'provider/tenant',
+    icon: 'fas fa-database',
+    pages: [
+      {
+        key: 'tenant',
+        path: 'tenant',
+        feature: '/meta/tenant',
+        icon: 'far fa-building',
+      },
+    ]
+  },
+  {
     key: 'main',
     base: 'main/',
     path: 'main/position',

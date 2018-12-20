@@ -39,6 +39,7 @@
     "loginId": "ログインID",
     "user": "ユーザ",
     "userId": "ユーザID",
+    "provider": "プロバイダ",
     "id": "ID",
     "type": "タイプ",
     "thumbnail": "サムネイル",

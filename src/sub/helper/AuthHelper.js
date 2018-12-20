@@ -54,6 +54,9 @@ export const authByAppService = async (loginId, password, success, err) => {
     params.append('username', (tenantCd? tenantCd+":":"") + loginId) // username: Spring Boot Security reserved name
     params.append('password', password)
     let data = await HttpHelper.postAppService('/login', params)
+    if (data.tenantAdmin) {
+      APP.TOP_PAGE = "/provider/tenant"
+    }
 
     // get tenant feature list
     let tenant = await HttpHelper.getAppService('/meta/tenant/currentTenant')
@@ -66,7 +69,7 @@ export const authByAppService = async (loginId, password, success, err) => {
     let featureList = _(user.role.roleFeatureList).map((roleFeature) => {
         return {path: roleFeature.feature.path, mode: roleFeature.mode}
     }).sortBy((val) => val.path.length * -1).value()
-    let menu = MenuHelper.fetchNav(featureList, tenantFeatureList, user.role)
+    let menu = MenuHelper.fetchNav(featureList, tenantFeatureList, user.role, data.tenantAdmin)
 
     // get region
     let currentRegion = await HttpHelper.getAppService('/core/region/current')
@@ -76,7 +79,7 @@ export const authByAppService = async (loginId, password, success, err) => {
     ConfigHelper.applyAppServiceSetting(setting)  
 
     // Login process
-    await login({loginId, username:user.name, role:data.role, featureList, tenantFeatureList, menu, currentRegion, frontRev, serviceRev})
+    await login({loginId, username:user.name, role:user.role, featureList, tenantFeatureList, menu, currentRegion, frontRev, serviceRev})
     success()
     StateHelper.loadAreaImages()
 
