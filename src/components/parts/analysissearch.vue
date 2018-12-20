@@ -124,8 +124,8 @@ export default {
     this.form.areaId = this.areas? this.areas[0].areaId: null
     this.changeArea(this.form.areaId)
     const date = new Date()
-    this.form.datetimeFrom = this.getDatetime(date, {hours: -1})
-    this.form.datetimeTo = this.getDatetime(date)
+    this.form.datetimeFrom = Util.getDatetime(date, {hours: -1})
+    this.form.datetimeTo = Util.getDatetime(date)
   },
   mounted() {
     import(`element-ui/lib/locale/lang/${this.$i18n.locale}`).then( (mojule) =>{
@@ -133,19 +133,6 @@ export default {
     })
   },
   methods: {
-    getDatetime(baseDatetime, controlData){
-      const datetime = new Date(baseDatetime.getTime())
-      datetime.setMilliseconds(0)
-      if(!controlData){
-        return datetime
-      }
-      datetime.setFullYear(datetime.getFullYear() + (controlData.year? controlData.year: 0))
-      datetime.setDate(datetime.getDate() + (controlData.date? controlData.date: 0))
-      datetime.setHours(datetime.getHours() + (controlData.hours? controlData.hours: 0))
-      datetime.setMinutes(datetime.getMinutes() + (controlData.minutes? controlData.minutes: 0))
-      datetime.setSeconds(datetime.getSeconds() + (controlData.seconds? controlData.seconds: 0))
-      return datetime
-    },
     changeGroup(newVal = this.form.groupId) {
       const options = this.pots.filter((val) => 
         val.potType == CATEGORY.getTypes()[0].value && (!newVal || val.groupId == newVal)
@@ -160,7 +147,7 @@ export default {
     },
     changeDatetimeFrom(newVal = this.form.datetimeFrom) {
       if(newVal){
-        this.form.datetimeTo = this.getDatetime(newVal, {minutes: APP.ANALYSIS_DATETIME_INTERVAL})
+        this.form.datetimeTo = Util.getDatetime(newVal, {minutes: APP.ANALYSIS_DATETIME_INTERVAL})
       }
       else{
         this.form.datetimeTo = null

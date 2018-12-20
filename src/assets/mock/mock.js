@@ -172,4 +172,64 @@ this['/basic/sensorHistory/1/1/today/hour'] = {
   {key:22, temperature:4.2, humidity:10},
 ]}
 
+export const sensorGraph = () => {
+  return {
+    minute: [
+      {sensorHistoryId: 1, sensorKey:"2019/1/1 00:10", sensorDt: (new Date("2019/01/01 00:10")).getTime(), temperature:29.0, humidity:48, count: 49, step: 50, beat: 51, stress: 52, low: 53, high: 54, pressure: 55, downLatest: 56, down: 57, magnet: 0},
+      {sensorHistoryId: 2, sensorKey:"2019/1/1 00:20", sensorDt: (new Date("2019/01/01 00:20")).getTime(), temperature:29.5, humidity:49, count: 50, step: 51, beat: 52, stress: 53, low: 54, high: 55, pressure: 56, downLatest: 57, down: 58, magnet: 0},
+      {sensorHistoryId: 3, sensorKey:"2019/1/1 00:30", sensorDt: (new Date("2019/01/01 00:30")).getTime(), temperature:30.0, humidity:50, count: 51, step: 52, beat: 53, stress: 54, low: 55, high: 56, pressure: 57, downLatest: 58, down: 59, magnet: 4},
+      {sensorHistoryId: 4, sensorKey:"2019/1/1 00:40", sensorDt: (new Date("2019/01/01 00:40")).getTime(), temperature:30.5, humidity:51, count: 52, step: 53, beat: 54, stress: 55, low: 56, high: 57, pressure: 58, downLatest: 59, down: 60, magnet: 4},
+      {sensorHistoryId: 5, sensorKey:"2019/1/1 00:50", sensorDt: (new Date("2019/01/01 00:50")).getTime(), temperature:31.0, humidity:52, count: 53, step: 54, beat: 55, stress: 56, low: 57, high: 58, pressure: 59, downLatest: 60, down: 61, magnet: 0},
 
+      {sensorHistoryId: 6, sensorKey:"2019/1/1 01:00", sensorDt: (new Date("2019/01/01 01:00")).getTime(), temperature:31.5, humidity:53, count: 54, step: 55, beat: 56, stress: 57, low: 58, high: 59, pressure: 60, downLatest: 61, down: 62, magnet: 4},
+      {sensorHistoryId: 7, sensorKey:"2019/1/1 01:10", sensorDt: (new Date("2019/01/01 01:10")).getTime(), temperature:32.0, humidity:54, count: 55, step: 56, beat: 57, stress: 58, low: 59, high: 60, pressure: 61, downLatest: 62, down: 63, magnet: 0},
+      {sensorHistoryId: 8, sensorKey:"2019/1/1 01:20", sensorDt: (new Date("2019/01/01 01:20")).getTime(), temperature:32.5, humidity:55, count: 56, step: 57, beat: 58, stress: 59, low: 60, high: 61, pressure: 62, downLatest: 63, down: 64, magnet: 4},
+      {sensorHistoryId: 9, sensorKey:"2019/1/1 01:30", sensorDt: (new Date("2019/01/01 01:30")).getTime(), temperature:33.0, humidity:56, count: 57, step: 58, beat: 59, stress: 60, low: 61, high: 62, pressure: 63, downLatest: 64, down: 65, magnet: 0},
+      {sensorHistoryId: 10, sensorKey:"2019/1/1 01:40", sensorDt: (new Date("2019/01/01 01:40")).getTime(), temperature:33.5, humidity:57, count: 58, step: 59, beat: 60, stress: 61, low: 62, high: 63, pressure: 64, downLatest: 65, down: 66, magnet: 4},
+      {sensorHistoryId: 11, sensorKey:"2019/1/1 01:50", sensorDt: (new Date("2019/01/01 01:50")).getTime(), temperature:10.0, humidity:10, count: 11, step: 12, beat: 13, stress: 14, low: 15, high: 16, pressure: 17, downLatest: 18, down: 19, magnet: 0},
+
+      {sensorHistoryId: 12, sensorKey:"2019/1/1 02:00", sensorDt: (new Date("2019/01/01 02:00")).getTime(), temperature:10.5, humidity:11, count: 12, step: 13, beat: 14, stress: 15, low: 16, high: 17, pressure: 18, downLatest: 19, down: 20, magnet: 0},
+      {sensorHistoryId: 13, sensorKey:"2019/1/1 02:10", sensorDt: (new Date("2019/01/01 02:10")).getTime(), temperature:11.0, humidity:12, count: 13, step: 14, beat: 15, stress: 16, low: 17, high: 18, pressure: 19, downLatest: 20, down: 21, magnet: 4},
+      {sensorHistoryId: 14, sensorKey:"2019/1/1 02:20", sensorDt: (new Date("2019/01/01 02:20")).getTime(), temperature:11.5, humidity:13, count: 14, step: 15, beat: 16, stress: 17, low: 18, high: 19, pressure: 20, downLatest: 21, down: 22, magnet: 4},
+      {sensorHistoryId: 15, sensorKey:"2019/1/1 02:30", sensorDt: (new Date("2019/01/01 02:30")).getTime(), temperature:12.0, humidity:14, count: 15, step: 16, beat: 17, stress: 18, low: 19, high: 20, pressure: 21, downLatest: 22, down: 23, magnet: 0},
+      {sensorHistoryId: 16, sensorKey:"2019/1/1 02:40", sensorDt: (new Date("2019/01/01 02:40")).getTime(), temperature:12.5, humidity:15, count: 16, step: 17, beat: 18, stress: 19, low: 20, high: 21, pressure: 22, downLatest: 23, down: 24, magnet: 4},
+      {sensorHistoryId: 17, sensorKey:"2019/1/1 02:50", sensorDt: (new Date("2019/01/01 02:50")).getTime(), temperature:13.0, humidity:16, count: 17, step: 18, beat: 19, stress: 20, low: 21, high: 22, pressure: 23, downLatest: 24, down: 25, magnet: 0},
+    ],
+    hour: [
+      {sensorHistoryId: 1, sensorKey:"2019/1/1 19:00", sensorDt: (new Date("2019/01/01 19:00")).getTime(), temperature:29.0, humidity:48, count: 49, step: 50, beat: 51, stress: 52, low: 53, high: 54, pressure: 55, downLatest: 56, down: 57, magnet: 0},
+      {sensorHistoryId: 2, sensorKey:"2019/1/1 19:00", sensorDt: (new Date("2019/01/01 19:30")).getTime(), temperature:29.5, humidity:49, count: 50, step: 51, beat: 52, stress: 53, low: 54, high: 55, pressure: 56, downLatest: 57, down: 58, magnet: 0},
+      {sensorHistoryId: 3, sensorKey:"2019/1/1 20:00", sensorDt: (new Date("2019/01/01 20:00")).getTime(), temperature:30.0, humidity:50, count: 51, step: 52, beat: 53, stress: 54, low: 55, high: 56, pressure: 57, downLatest: 58, down: 59, magnet: 4},
+      {sensorHistoryId: 4, sensorKey:"2019/1/1 20:00", sensorDt: (new Date("2019/01/01 20:30")).getTime(), temperature:30.5, humidity:51, count: 52, step: 53, beat: 54, stress: 55, low: 56, high: 57, pressure: 58, downLatest: 59, down: 60, magnet: 4},
+      {sensorHistoryId: 5, sensorKey:"2019/1/1 21:00", sensorDt: (new Date("2019/01/01 21:00")).getTime(), temperature:31.0, humidity:52, count: 53, step: 54, beat: 55, stress: 56, low: 57, high: 58, pressure: 59, downLatest: 60, down: 61, magnet: 0},
+      {sensorHistoryId: 6, sensorKey:"2019/1/1 21:00", sensorDt: (new Date("2019/01/01 21:30")).getTime(), temperature:31.5, humidity:53, count: 54, step: 55, beat: 56, stress: 57, low: 58, high: 59, pressure: 60, downLatest: 61, down: 62, magnet: 4},
+      {sensorHistoryId: 7, sensorKey:"2019/1/1 22:00", sensorDt: (new Date("2019/01/01 22:00")).getTime(), temperature:32.0, humidity:54, count: 55, step: 56, beat: 57, stress: 58, low: 59, high: 60, pressure: 61, downLatest: 62, down: 63, magnet: 0},
+      {sensorHistoryId: 8, sensorKey:"2019/1/1 22:00", sensorDt: (new Date("2019/01/01 22:30")).getTime(), temperature:32.5, humidity:55, count: 56, step: 57, beat: 58, stress: 59, low: 60, high: 61, pressure: 62, downLatest: 63, down: 64, magnet: 4},
+      {sensorHistoryId: 9, sensorKey:"2019/1/1 23:00", sensorDt: (new Date("2019/01/01 23:00")).getTime(), temperature:33.0, humidity:56, count: 57, step: 58, beat: 59, stress: 60, low: 61, high: 62, pressure: 63, downLatest: 64, down: 65, magnet: 0},
+      {sensorHistoryId: 10, sensorKey:"2019/1/1 23:00", sensorDt: (new Date("2019/01/01 23:30")).getTime(), temperature:33.5, humidity:57, count: 58, step: 59, beat: 60, stress: 61, low: 62, high: 63, pressure: 64, downLatest: 65, down: 66, magnet: 4},
+
+      {sensorHistoryId: 11, sensorKey:"2019/1/2 00:00", sensorDt: (new Date("2019/01/02 00:00")).getTime(), temperature:10.0, humidity:10, count: 11, step: 12, beat: 13, stress: 14, low: 15, high: 16, pressure: 17, downLatest: 18, down: 19, magnet: 0},
+      {sensorHistoryId: 12, sensorKey:"2019/1/2 00:00", sensorDt: (new Date("2019/01/02 00:30")).getTime(), temperature:10.5, humidity:11, count: 12, step: 13, beat: 14, stress: 15, low: 16, high: 17, pressure: 18, downLatest: 19, down: 20, magnet: 0},
+      {sensorHistoryId: 13, sensorKey:"2019/1/2 01:00", sensorDt: (new Date("2019/01/02 01:00")).getTime(), temperature:11.0, humidity:12, count: 13, step: 14, beat: 15, stress: 16, low: 17, high: 18, pressure: 19, downLatest: 20, down: 21, magnet: 4},
+      {sensorHistoryId: 14, sensorKey:"2019/1/2 01:00", sensorDt: (new Date("2019/01/02 01:30")).getTime(), temperature:11.5, humidity:13, count: 14, step: 15, beat: 16, stress: 17, low: 18, high: 19, pressure: 20, downLatest: 21, down: 22, magnet: 4},
+      {sensorHistoryId: 15, sensorKey:"2019/1/2 02:00", sensorDt: (new Date("2019/01/02 02:00")).getTime(), temperature:12.0, humidity:14, count: 15, step: 16, beat: 17, stress: 18, low: 19, high: 20, pressure: 21, downLatest: 22, down: 23, magnet: 0},
+      {sensorHistoryId: 16, sensorKey:"2019/1/2 02:00", sensorDt: (new Date("2019/01/02 02:30")).getTime(), temperature:12.5, humidity:15, count: 16, step: 17, beat: 18, stress: 19, low: 20, high: 21, pressure: 22, downLatest: 23, down: 24, magnet: 4},
+      {sensorHistoryId: 17, sensorKey:"2019/1/2 03:00", sensorDt: (new Date("2019/01/02 03:00")).getTime(), temperature:13.0, humidity:16, count: 17, step: 18, beat: 19, stress: 20, low: 21, high: 22, pressure: 23, downLatest: 24, down: 25, magnet: 0},
+    ],
+    day: [
+      {sensorHistoryId: 1, sensorKey:"2019/1/1 00:00", sensorDt: (new Date("2019/01/01 00:00")).getTime(), temperature:10.0, humidity:10, count: 11, step: 12, beat: 13, stress: 14, low: 15, high: 16, pressure: 17, downLatest: 18, down: 19, magnet: 0},
+      {sensorHistoryId: 2, sensorKey:"2019/1/1 00:00", sensorDt: (new Date("2019/01/01 00:30")).getTime(), temperature:10.5, humidity:11, count: 12, step: 13, beat: 14, stress: 15, low: 16, high: 17, pressure: 18, downLatest: 19, down: 20, magnet: 0},
+      {sensorHistoryId: 3, sensorKey:"2019/1/1 00:00", sensorDt: (new Date("2019/01/01 01:00")).getTime(), temperature:11.0, humidity:12, count: 13, step: 14, beat: 15, stress: 16, low: 17, high: 18, pressure: 19, downLatest: 20, down: 21, magnet: 0},
+      {sensorHistoryId: 4, sensorKey:"2019/1/1 00:00", sensorDt: (new Date("2019/01/01 01:30")).getTime(), temperature:11.5, humidity:13, count: 14, step: 15, beat: 16, stress: 17, low: 18, high: 19, pressure: 20, downLatest: 21, down: 22, magnet: 0},
+
+      {sensorHistoryId: 5, sensorKey:"2019/1/2 00:00", sensorDt: (new Date("2019/01/02 00:00")).getTime(), temperature:10.0, humidity:10, count: 11, step: 12, beat: 13, stress: 14, low: 15, high: 16, pressure: 17, downLatest: 18, down: 19, magnet: 0},
+      {sensorHistoryId: 6, sensorKey:"2019/1/2 00:00", sensorDt: (new Date("2019/01/02 00:30")).getTime(), temperature:10.5, humidity:11, count: 12, step: 13, beat: 14, stress: 15, low: 16, high: 17, pressure: 18, downLatest: 19, down: 20, magnet: 4},
+      {sensorHistoryId: 7, sensorKey:"2019/1/2 00:00", sensorDt: (new Date("2019/01/02 01:00")).getTime(), temperature:11.0, humidity:12, count: 13, step: 14, beat: 15, stress: 16, low: 17, high: 18, pressure: 19, downLatest: 20, down: 21, magnet: 0},
+      {sensorHistoryId: 8, sensorKey:"2019/1/2 00:00", sensorDt: (new Date("2019/01/02 01:30")).getTime(), temperature:11.5, humidity:13, count: 14, step: 15, beat: 16, stress: 17, low: 18, high: 19, pressure: 20, downLatest: 21, down: 22, magnet: 4},
+
+      {sensorHistoryId: 9, sensorKey:"2019/1/3 00:00", sensorDt: (new Date("2019/01/03 00:00")).getTime(), temperature:20.0, humidity:10, count: 11, step: 12, beat: 13, stress: 14, low: 15, high: 16, pressure: 17, downLatest: 18, down: 19, magnet: 0},
+      {sensorHistoryId: 10, sensorKey:"2019/1/3 00:00", sensorDt: (new Date("2019/01/03 00:30")).getTime(), temperature:10.5, humidity:11, count: 12, step: 13, beat: 14, stress: 15, low: 16, high: 17, pressure: 18, downLatest: 19, down: 20, magnet: 4},
+      {sensorHistoryId: 11, sensorKey:"2019/1/3 00:00", sensorDt: (new Date("2019/01/03 01:00")).getTime(), temperature:11.0, humidity:12, count: 13, step: 14, beat: 15, stress: 16, low: 17, high: 18, pressure: 19, downLatest: 20, down: 21, magnet: 4},
+      {sensorHistoryId: 12, sensorKey:"2019/1/3 00:00", sensorDt: (new Date("2019/01/03 01:30")).getTime(), temperature:11.5, humidity:13, count: 14, step: 15, beat: 16, stress: 17, low: 18, high: 19, pressure: 20, downLatest: 21, down: 22, magnet: 4},
+    ]
+  }
+}
