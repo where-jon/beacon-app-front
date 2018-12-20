@@ -14,9 +14,10 @@
             <th v-t="'label.major'"></th>
             <th v-t="'label.minor'"></th>
             <th v-t="'label.name'"></th>
-            <th v-t="'label.finalReceiveLocation'"></th>
             <th v-t="'label.powerLevel'"></th>
+            <th v-t="'label.finalReceiveLocation'"></th>
             <th v-t="'label.finalReceiveTimestamp'"></th>
+            <th v-t="'label.rssi'"></th>
             <th v-t="'label.state'"></th>
           </thead>
           <tbody>
@@ -24,11 +25,12 @@
               <td>{{ position.major }}</td>
               <td>{{ position.minor }}</td>
               <td>{{ position.name }}</td>
-              <td>{{ position.finalReceiveLocation }}</td>
               <td>
                 <span :class="powerLevelClass(position.power_level)" >{{ powerLevelLabel(position.power_level) }}</span>
               </td>
+              <td>{{ position.finalReceiveLocation }}</td>
               <td>{{ position.finalReceiveTimestamp }}</td>
+              <td>{{ position.rssi }} </td>
               <td>
                 <span :class="getStateClass('tx', position.updatetime)">{{ position.state }}</span>
               </td>
@@ -121,9 +123,10 @@ export default {
           'major': 'major',
           'minor': 'minor',
           'name': 'name',
-          'finalReceiveLocation': 'location',
           'powerLevel': 'powerLevel',
+          'finalReceiveLocation': 'location',
           'finalReceiveTimestamp': 'timestamp',
+          'rssi': 'RSSI',
           'state': 'state',
         }
     }
@@ -201,10 +204,20 @@ export default {
           name: tx != null ? tx.txName : '—',
           finalReceiveLocation: exb? exb.location.locationName  : '',
           finalReceiveTimestamp: this.getTimestamp(e.updatetime),
+          rssi: this.getRssi(e.nearest),
           powerLevel: this.powerLevelLabel(e.power_level),
           state: this.getStateLabel('tx', e.updatetime),
         }
       })
+    },
+    getRssi(nearestList) {
+      const rssiNearIndex = 0
+      if (nearestList.length > rssiNearIndex) {
+          try {
+              return nearestList[rssiNearIndex].rssi.toFixed(1)
+          } catch (e) {}
+      }
+      return this.$i18n.tnl('label.undetect')
     },
     getTimestamp(timestamp) {
       if (timestamp) {

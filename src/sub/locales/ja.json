@@ -101,6 +101,7 @@
     "btxId": "btxId",
     "major": "major",
     "minor": "minor",
+    "rssi": "RSSI",
     
     "locationId": "位置ID",
     "locationName": "名前",
