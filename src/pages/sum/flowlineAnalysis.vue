@@ -69,10 +69,6 @@ export default {
     },
   },
   methods: {
-    showMapImage() {
-      // 地図ダブルタップ時のみ利用
-      this.fetchData()
-    },
     reset() {
       this.isShownMapImage = false
       this.shownParam = null

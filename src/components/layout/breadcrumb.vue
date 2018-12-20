@@ -229,7 +229,7 @@ export default {
   }
 
   ol.breadcrumb-items li:not(:first-child):before {
-    content: '　/　';
+    content: '  /  ';
   }
 
   div.reload-button-container {

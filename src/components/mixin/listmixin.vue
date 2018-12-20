@@ -22,13 +22,10 @@ export default {
         'width': (DISP.TX_R * 2) + 'px',
         'height': (DISP.TX_R * 2) + 'px',
         'justify-content': 'center',
-        'display': '-ms-flexbox',
-        'display': '-webkit-flex',
-        'display': 'flex',
+        'display': ['-ms-flexbox', '-webkit-flex', 'flex'],
         '-ms-flex-align': 'center',
         '-webkit-box-align': 'center',
         'align-items': 'center',
-        'justify-content': 'center',
       }
     }
   }

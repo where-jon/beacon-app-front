@@ -355,7 +355,7 @@ export default {
         }
       })
 
-      this.detectedCount = 0　// 検知カウントリセット
+      this.detectedCount = 0 // 検知カウントリセット
       let position = PositionHelper.adjustPosition(this.positions, this.mapImageScale, this.positionedExb)
       position.forEach((pos) => { // TODO: Txのチェックも追加
         this.showTx(pos)
