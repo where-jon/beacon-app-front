@@ -1,11 +1,13 @@
 <template>
   <div style="background-color: #FFFFFF;">
     <fieldset class="border border-primary px-3">
-      <legend v-t="'label.legend'" class="text-center px-3" style="width: auto;"/>
+      <legend v-t="'label.legend'" class="text-center px-3" style="width: auto;" />
       <table class="my-2" style="width: auto;">
         <tr v-for="legendItem in legendItems" :key="legendItem.id">
           <td v-for="item in legendItem.items" :key="item.id" class="pr-2 py-1">
-            <div v-bind:style="item.style">{{item.text}}</div>
+            <div :style="item.style">
+              {{ item.text }}
+            </div>
           </td>
         </tr>
       </table>

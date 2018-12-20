@@ -1,37 +1,47 @@
 <template>
-  <div id="mapContainer" class="container-fluid" @click="resetDetail" >
-    <breadcrumb :items="items" :extraNavSpec="extraNavSpec" :reload="true" :shortName="shortName" :legendItems="legendItems" />
+  <div id="mapContainer" class="container-fluid" @click="resetDetail">
+    <breadcrumb :items="items" :extra-nav-spec="extraNavSpec" :reload="true" :short-name="shortName" :legend-items="legendItems" />
     <b-row class="mt-2">
-      <b-form inline @submit.prevent class="mt-2">
+      <b-form inline class="mt-2" @submit.prevent>
         <b-form-row class="my-1 ml-2 ml-sm-0">
-          <label class="ml-sm-4 ml-2 mr-1">{{ $t('label.area') }}</label>
-          <b-form-select v-model="selectedArea" :options="areaOptions" @change="changeArea" required class="ml-1 mr-2"></b-form-select>
+          <label class="ml-sm-4 ml-2 mr-1">
+            {{ $t('label.area') }}
+          </label>
+          <b-form-select v-model="selectedArea" :options="areaOptions" required class="ml-1 mr-2" @change="changeArea" />
         </b-form-row>
         <b-form-row v-if="useGroup" class="my-1 ml-2 ml-sm-0">
-          <label class="ml-sm-4 ml-2 mr-1">{{ $t('label.group') }}</label>
-          <b-form-select v-model="selectedGroup" :options="groupOptions" class="ml-1 mr-2"></b-form-select>
+          <label class="ml-sm-4 ml-2 mr-1">
+            {{ $t('label.group') }}
+          </label>
+          <b-form-select v-model="selectedGroup" :options="groupOptions" class="ml-1 mr-2" />
         </b-form-row>
         <b-form-row v-if="useCategory" class="my-1 ml-2 ml-sm-0">
-          <label class="ml-sm-4 ml-2 mr-1">{{ $t('label.category') }}</label>
-          <b-form-select v-model="selectedCategory" :options="categoryOptionsForPot" class="ml-1 mr-2"></b-form-select>
+          <label class="ml-sm-4 ml-2 mr-1">
+            {{ $t('label.category') }}
+          </label>
+          <b-form-select v-model="selectedCategory" :options="categoryOptionsForPot" class="ml-1 mr-2" />
         </b-form-row>
-        <b-form-row class="my-1 ml-2 ml-sm-0" v-if="showDetected">
-          <span class="ml-sm-4 ml-2 mr-1">{{ $t('label.detectedCount') + ' : '  }}</span>
-          <span class="mr-1">{{detectedCount}}</span>
+        <b-form-row v-if="showDetected" class="my-1 ml-2 ml-sm-0">
+          <span class="ml-sm-4 ml-2 mr-1">
+            {{ $t('label.detectedCount') + ' : ' }}
+          </span>
+          <span class="mr-1">
+            {{ detectedCount }}
+          </span>
         </b-form-row>
       </b-form>
     </b-row>
     <b-row class="mt-3">
-      <canvas id="map" ref="map" v-if="!showMeditag"></canvas>
-      <b-col  v-if="showMeditag">
-        <canvas id="map" ref="map"></canvas>
+      <canvas v-if="!showMeditag" id="map" ref="map" />
+      <b-col v-if="showMeditag">
+        <canvas id="map" ref="map" />
       </b-col>
-      <b-col class="rightPane" v-if="showMeditag">
-        <sensor :sensors="meditagSensors" class="rightPane"></sensor>
+      <b-col v-if="showMeditag" class="rightPane">
+        <sensor :sensors="meditagSensors" class="rightPane" />
       </b-col>
     </b-row>
-    <div v-if="selectedTx.btxId && showReady" >
-      <txdetail :selectedTx="selectedTx" @resetDetail="resetDetail" :selectedSensor="selectedSensor" :isShowModal="isShowModal()" />
+    <div v-if="selectedTx.btxId && showReady">
+      <txdetail :selected-tx="selectedTx" :selected-sensor="selectedSensor" :is-show-modal="isShowModal()" @resetDetail="resetDetail" />
     </div>
     <!-- modal -->
     <b-modal id="modalError" :title="$t('label.error')" ok-only>
@@ -64,14 +74,14 @@ import moment from 'moment'
 import { rightpanewidth, rightpaneleft } from '../../sub/constant/config.scss'
 
 export default {
-  mixins: [showmapmixin, listmixin],
   components: {
     'sensor': sensor,
     'txdetail': txdetail,
     breadcrumb,
   },
+  mixins: [showmapmixin, listmixin],
   data() {
-     return {
+    return {
       items: [
         {
           text: this.$i18n.tnl('label.main'),
@@ -175,8 +185,8 @@ export default {
       const popupHeight = this.getMeditagSensor(btxId)? 236: 135
       let tx = this.txs.find((tx) => tx.btxId == btxId)
       let display = this.getDisplay(tx)
-      let map = HtmlUtil.getRect("#map")
-      let containerParent = HtmlUtil.getRect("#mapContainer", "parentNode")
+      let map = HtmlUtil.getRect('#map')
+      let containerParent = HtmlUtil.getRect('#mapContainer', 'parentNode')
       let offsetX = map.left - containerParent.left
       let offsetY = map.top - containerParent.top
       const isDispRight = x + offsetX + 100 < window.innerWidth
@@ -187,7 +197,7 @@ export default {
       const position = this.positions.find((e) => {
         return e.btx_id === btxId
       })
-      const balloonClass = !btxId ? "": "balloon" + (rev ? "-u": "-b")
+      const balloonClass = !btxId ? '': 'balloon' + (rev ? '-u': '-b')
       let selectedTx = {
         btxId,
         minor: 'minor:' + btxId,
@@ -235,12 +245,12 @@ export default {
       this.legendItems = this.categories.map((val) => ({
         id: val.categoryId,
         items: magnetCategoryTypes.includes(val.categoryId)? [
-          { id: 1, text: "A", style: this.getStyleDisplay1(val) },
-          { id: 2, text: `${val.categoryName}${this.$i18n.tnl("label.using")}`, style: null },
-          { id: 3, text: "A", style: this.getStyleDisplay1(val, true) },
-          { id: 4, text: `${this.$i18n.tnl("label.notUse")}`, style: {} },
+          { id: 1, text: 'A', style: this.getStyleDisplay1(val) },
+          { id: 2, text: `${val.categoryName}${this.$i18n.tnl('label.using')}`, style: null },
+          { id: 3, text: 'A', style: this.getStyleDisplay1(val, true) },
+          { id: 4, text: `${this.$i18n.tnl('label.notUse')}`, style: {} },
         ]: [
-          { id: 1, text: "A", style: this.getStyleDisplay1(val) },
+          { id: 1, text: 'A', style: this.getStyleDisplay1(val) },
           { id: 2, text: val.categoryName, style: {} },
         ]
       }))
@@ -271,14 +281,14 @@ export default {
         if (APP.USE_MEDITAG) {
           let meditagSensors = await EXCloudHelper.fetchSensor(SENSOR.MEDITAG)
           this.meditagSensors = _(meditagSensors)
-          .filter((val) => this.txs.some((tx) => tx.btxId == val.btx_id))
-          .map((val) => {
+            .filter((val) => this.txs.some((tx) => tx.btxId == val.btx_id))
+            .map((val) => {
               let tx = this.txs.find((tx) => tx.btxId == val.btx_id)
               let label = tx && tx.displayName? tx.displayName: val.btx_id
               return {...val, label, bg: SensorHelper.getStressBg(val.stress), down: val.down?val.down:0}
-          })
-          .sortBy((val) => (new Date().getTime() - val.downLatest < APP.DOWN_RED_TIME)? val.downLatest * -1: val.btx_id)
-          .value()
+            })
+            .sortBy((val) => (new Date().getTime() - val.downLatest < APP.DOWN_RED_TIME)? val.downLatest * -1: val.btx_id)
+            .value()
           Util.debug(this.meditagSensors)
         }
 
@@ -326,7 +336,7 @@ export default {
         }).value()
         Util.debug('positionedExb', this.positionedExb)
         if (this.positionedExb.length == 0) {
-          console.warn("positionedExb is empty. check if exbs are enabled")
+          console.warn('positionedExb is empty. check if exbs are enabled')
         }
   
         this.showTxAll()
@@ -344,7 +354,7 @@ export default {
       this.positions.forEach((pos) => {
         let exb = disabledExbs.find((exb) => exb.posId == pos.pos_id)
         if (exb) {
-          console.error("Found at disabled exb", pos, exb)
+          console.error('Found at disabled exb', pos, exb)
         }
       })
 
@@ -378,7 +388,7 @@ export default {
       let tx = this.txs.find((tx) => tx.btxId == pos.btx_id)
       Util.debug('showTx', pos, tx && tx.sensor)
       if (!tx) {
-        console.warn("tx not found. btx_id=" + pos.btx_id)
+        console.warn('tx not found. btx_id=' + pos.btx_id)
         return
       }
       if (tx.sensorId === SENSOR.MAGNET) {
@@ -394,8 +404,8 @@ export default {
       let txBtn = new Container()
       let btnBg = new Shape()
       let bgColor = meditag? meditag.bg.substr(1): this.isMagnetOn(magnet)? display.color: display.bgColor
-      let color = meditag? "000": this.isMagnetOn(magnet)? display.bgColor : display.color
-      btnBg.graphics.beginStroke("#ccc").beginFill('#' + bgColor)
+      let color = meditag? '000': this.isMagnetOn(magnet)? display.bgColor : display.color
+      btnBg.graphics.beginStroke('#ccc').beginFill('#' + bgColor)
       switch(display.shape) {
       case SHAPE.CIRCLE:
         btnBg.graphics.drawCircle(0, 0, DISP.TX_R)
@@ -415,8 +425,8 @@ export default {
       let label = new Text(pos.label)
       label.font = `${DISP.TX_R * this.ICON_FONTSIZE_RATIO}px Arial`
       label.color = '#' + color
-      label.textAlign = "center"
-      label.textBaseline = "middle"
+      label.textAlign = 'center'
+      label.textBaseline = 'middle'
       txBtn.addChild(label)
 
       txBtn.txId = pos.btx_id

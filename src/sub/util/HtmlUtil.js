@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Encoding from 'encoding-japanese'
 import { str2Array } from './Util'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
-import { APP } from '../constant/config';
+import { APP } from '../constant/config'
 
 let locale
 
@@ -24,7 +24,7 @@ export const getLangShort = () => {
 }
 
 export const isMobile = () => {
-  let isMobile = window.matchMedia("only screen and (max-width: 760px)")
+  let isMobile = window.matchMedia('only screen and (max-width: 760px)')
   return isMobile && isMobile.matches
 }
 
@@ -48,39 +48,39 @@ export const getRect = (selector, key) => {
   return elm.getBoundingClientRect()
 }
 
-export const fileDL = (name, content, charSet = "UTF8") => {
-  let e = document.createElement("a")
+export const fileDL = (name, content, charSet = 'UTF8') => {
+  let e = document.createElement('a')
   const encodeString = Encoding.convert(str2Array(content),
-    { from: "UNICODE", to: charSet }
+    { from: 'UNICODE', to: charSet }
   )
-  const uint8_array = new Uint8Array( encodeString );
+  const uint8_array = new Uint8Array( encodeString )
   const bom = new Uint8Array([0xEF, 0xBB, 0xBF])
-  const blob = new Blob([ charSet == "UTF8"? bom: null, uint8_array ].filter((val) => val), { type: 'text/csv' });
+  const blob = new Blob([ charSet == 'UTF8'? bom: null, uint8_array ].filter((val) => val), { type: 'text/csv' })
 
   if(window.navigator.msSaveBlob){
     window.navigator.msSaveBlob(blob, name)
     return
   }
 
-  window.URL = window.URL || window.webkitURL;
-  e.href = window.URL.createObjectURL(blob);
+  window.URL = window.URL || window.webkitURL
+  e.href = window.URL.createObjectURL(blob)
   // IE対応
   if (window.navigator.msSaveBlob) {
-    window.navigator.msSaveOrOpenBlob(blob, name);
+    window.navigator.msSaveOrOpenBlob(blob, name)
     return
   }
-  e.download = name;
-  e.style.display = "none"
+  e.download = name
+  e.style.display = 'none'
   document.body.appendChild(e)
   e.click()
   document.body.removeChild(e)
 }
 
 export const executeFileDL = (url) => {
-  let e = document.createElement("a")
+  let e = document.createElement('a')
   e.href = url
-  e.download = name;
-  e.style.display = "none"
+  e.download = name
+  e.style.display = 'none'
   document.body.appendChild(e)
   e.click()
   document.body.removeChild(e)
@@ -91,7 +91,7 @@ export const readImage = (e, onload, resize, onerror) => {
   if ( files && files[0] ) {
     let size = files[0].size
     if (size > APP.MAX_IMAGE_SIZE && onerror) {
-      console.warn("Image file exceed " + APP.MAX_IMAGE_SIZE, size)
+      console.warn('Image file exceed ' + APP.MAX_IMAGE_SIZE, size)
       onerror(size)
       return
     }
@@ -99,7 +99,7 @@ export const readImage = (e, onload, resize, onerror) => {
     fr.onload = (evt) => {
       let image = new Image()
       image.src = evt.target.result
-      image.crossOrigin = "Anonymous"
+      image.crossOrigin = 'Anonymous'
       image.onload = function() {
         let thumbnail
         if (resize) {
@@ -119,17 +119,17 @@ export const readImage = (e, onload, resize, onerror) => {
 
 // not use now
 export const toDataURL = (url, callback) => {
-  var xhr = new XMLHttpRequest();
+  var xhr = new XMLHttpRequest()
   xhr.onload = function() {
-    var reader = new FileReader();
+    var reader = new FileReader()
     reader.onloadend = function() {
-      callback(reader.result);
+      callback(reader.result)
     }
-    reader.readAsDataURL(xhr.response);
-  };
-  xhr.open('GET', url);
-  xhr.responseType = 'blob';
-  xhr.send();
+    reader.readAsDataURL(xhr.response)
+  }
+  xhr.open('GET', url)
+  xhr.responseType = 'blob'
+  xhr.send()
 }
 
 export const getMessageData = async (lang) => {

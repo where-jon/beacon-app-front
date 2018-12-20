@@ -2,34 +2,35 @@
   <div>
     <breadcrumb :items="items" />
     <div class="container">
-
-      <b-alert variant="info" dismissible :show="showInfo">{{ message }}</b-alert>
-      <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">
+      <b-alert variant="info" dismissible :show="showInfo">
+        {{ message }}
+      </b-alert>
+      <b-alert variant="danger" dismissible :show="showAlert" @dismissed="showAlert=false">
         <div v-html="message" />
       </b-alert>
 
       <b-row>
         <b-col md="8" offset-md="2">
-          <b-form @submit.prevent="onSubmit" v-if="show">
+          <b-form v-if="show" @submit.prevent="onSubmit">
             <b-form-group v-if="form.potId">
               <label v-t="'label.potId'" />
-              <b-form-input type="text" v-model="form.potId" readonly="readonly" />
+              <b-form-input v-model="form.potId" type="text" readonly="readonly" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.tx'" />
-              <b-form-select v-model="form.txId" :options="txOptions" @change="changeTx" class="mb-3 ml-3 col-4" :disabled="!isEditable" :readonly="!isEditable" />
+              <b-form-select v-model="form.txId" :options="txOptions" class="mb-3 ml-3 col-4" :disabled="!isEditable" :readonly="!isEditable" @change="changeTx" />
             </b-form-group>
             <b-form-group v-show="isShown('TX_WITH_TXID')">
               <label v-t="'label.txId'" />
-              <input type="number" v-model="txId" min="0" max="65535" class="form-control" :readonly="!isEditable" />
+              <input v-model="txId" type="number" min="0" max="65535" class="form-control" :readonly="!isEditable">
             </b-form-group>
             <b-form-group v-show="!isShown('TX_WITH_TXID') && isShown('TX_BTX_MINOR') != 'minor'">
               <label v-t="'label.btxId'" />
-              <input type="number" v-model="btxId" min="0" max="65535" class="form-control" :readonly="!isEditable" />
+              <input v-model="btxId" type="number" min="0" max="65535" class="form-control" :readonly="!isEditable">
             </b-form-group>
             <b-form-group v-show="!isShown('TX_WITH_TXID') && isShown('TX_BTX_MINOR') == 'minor'">
               Tx(<label v-t="'label.minor'" />)
-              <input type="number" v-model="minor" min="0" max="65535" class="form-control" :readonly="!isEditable" />
+              <input v-model="minor" type="number" min="0" max="65535" class="form-control" :readonly="!isEditable">
             </b-form-group>
             <b-form-group v-show="category.length > 1">
               <label v-t="'label.categoryType'" />
@@ -37,19 +38,19 @@
             </b-form-group>
             <b-form-group v-if="isShown('POT_WITH_POTCD')">
               <label v-t="'label.potCd'" />
-              <input type="text" v-model="form.potCd" maxlength="20" class="form-control" required :readonly="!isEditable" />
+              <input v-model="form.potCd" type="text" maxlength="20" class="form-control" required :readonly="!isEditable">
             </b-form-group>
             <b-form-group>
               <label v-t="'label.potName'" />
-              <input type="text" v-model="form.potName" maxlength="20" class="form-control" required :readonly="!isEditable" />
+              <input v-model="form.potName" type="text" maxlength="20" class="form-control" required :readonly="!isEditable">
             </b-form-group>
             <b-form-group v-show="isShown('POT_WITH_RUBY')">
               <label v-t="'label.ruby'" />
-              <input type="text" v-model="form.ruby" maxlength="20" class="form-control" :readonly="!isEditable" />
+              <input v-model="form.ruby" type="text" maxlength="20" class="form-control" :readonly="!isEditable">
             </b-form-group>
             <b-form-group>
               <label v-t="'label.displayName'" />
-              <input type="text" v-model="form.displayName" maxlength="3" class="form-control" :readonly="!isEditable" />
+              <input v-model="form.displayName" type="text" maxlength="3" class="form-control" :readonly="!isEditable">
             </b-form-group>
             <b-form-group v-show="isShown('POT_WITH_GROUP')">
               <label v-t="'label.group'" />
@@ -61,30 +62,33 @@
             </b-form-group>
             <b-form-group v-show="isShown('POT_WITH_POST')">
               <label v-t="'label.post'" />
-              <input type="text" v-model="form.post" maxlength="20" class="form-control" :readonly="!isEditable" />
+              <input v-model="form.post" type="text" maxlength="20" class="form-control" :readonly="!isEditable">
             </b-form-group>
             <b-form-group v-show="isShown('POT_WITH_TEL')">
               <label v-t="'label.tel'" />
-              <b-form-input type="tel" v-model="form.tel" maxlength="20" :readonly="!isEditable" pattern="[-\d]*" />
+              <b-form-input v-model="form.tel" type="tel" maxlength="20" :readonly="!isEditable" pattern="[-\d]*" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.thumbnail'" />
-              <b-form-file v-if="isEditable" @change="readImage" v-model="form.thumbnail" ref="inputThumbnail" accept="image/jpeg, image/png, image/gif" :placeholder="$t('message.selectFile') "></b-form-file>
-              <b-button v-if="isEditable && form.thumbnail" type="button" :variant="theme" @click="clearImage" class="float-right mt-3">{{ $i18n.tnl('label.clear') }}</b-button>
-              <img v-if="form.thumbnail" ref="thumbnail" :src="form.thumbnail" width="100" class="mt-1 ml-3" />
+              <b-form-file v-if="isEditable" ref="inputThumbnail" v-model="form.thumbnail" accept="image/jpeg, image/png, image/gif" :placeholder="$t('message.selectFile') " @change="readImage" />
+              <b-button v-if="isEditable && form.thumbnail" type="button" :variant="theme" class="float-right mt-3" @click="clearImage">
+                {{ $i18n.tnl('label.clear') }}
+              </b-button>
+              <img v-if="form.thumbnail" ref="thumbnail" :src="form.thumbnail" width="100" class="mt-1 ml-3">
             </b-form-group>
             <b-form-group>
               <label v-t="'label.description'" />
-              <b-form-textarea v-model="form.description" :rows="3" :max-rows="6" maxlength="1000" :readonly="!isEditable" ></b-form-textarea>
+              <b-form-textarea v-model="form.description" :rows="3" :max-rows="6" maxlength="1000" :readonly="!isEditable" />
             </b-form-group>
 
-            <b-button type="button" variant="outline-danger" @click="backToList" class="mr-2 my-1" v-t="'label.back'"/>
-            <b-button v-if="isEditable" type="submit" :variant="theme" @click="beforeSubmit(false)" class="mr-2 my-1"  >{{ label }}</b-button>
-            <b-button v-if="isEditable && !isUpdate" type="submit" :variant="theme" @click="beforeSubmit(true)" class="my-1" v-t="'label.registerAgain'"/>
+            <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
+            <b-button v-if="isEditable" type="submit" :variant="theme" class="mr-2 my-1" @click="beforeSubmit(false)">
+              {{ label }}
+            </b-button>
+            <b-button v-if="isEditable && !isUpdate" v-t="'label.registerAgain'" type="submit" :variant="theme" class="my-1" @click="beforeSubmit(true)" />
           </b-form>
         </b-col>
       </b-row>
-
     </div>
   </div>
 </template>
@@ -118,13 +122,13 @@ export default {
       btxId: null,
       minor: null,
       form: {
-          ...ViewHelper.extract(this.$store.state.app_service.pot,
-          ["potId", "potCd", "potName", "potType", "extValue.ruby",
-          "displayName", "potGroupList.0.group.groupId", "potCategoryList.0.category.categoryId", "extValue.tel", "txId",
-          "extValue.post", "thumbnail", "description"])
+        ...ViewHelper.extract(this.$store.state.app_service.pot,
+          ['potId', 'potCd', 'potName', 'potType', 'extValue.ruby',
+            'displayName', 'potGroupList.0.group.groupId', 'potCategoryList.0.category.categoryId', 'extValue.tel', 'txId',
+            'extValue.post', 'thumbnail', 'description'])
       },
       defValue: {
-        "potType": APP.CATEGORY_TYPES[0] != 3? APP.CATEGORY_TYPES[0]: null,
+        'potType': APP.CATEGORY_TYPES[0] != 3? APP.CATEGORY_TYPES[0]: null,
       },
       items: [
         {
@@ -151,22 +155,22 @@ export default {
       let options = this.categories.filter((category) => 
         category.categoryType === this.form.potType
       ).map((category) => {
-          return {
-            value: category.categoryId,
-            text: category.categoryName
-          }
+        return {
+          value: category.categoryId,
+          text: category.categoryName
         }
+      }
       )
       options.unshift({value:null, text:''})
       return options
     },
     groupOptions() {
       let options = this.groups.map((group) => {
-          return {
-            value: group.groupId,
-            text: group.groupName
-          }
+        return {
+          value: group.groupId,
+          text: group.groupName
         }
+      }
       )
       options.unshift({value:null, text:''})
       return options
@@ -175,11 +179,11 @@ export default {
       const useTxIds = this.pots.map((val) => val.txId)
       let options = this.txs.filter((tx) => !_.includes(useTxIds, tx.txId) || tx.txId == this.pot.txId )
       options = options.map((tx) => {
-          return {
-            value: tx.txId,
-            text: StateHelper.getTxIdName(tx)
-          }
+        return {
+          value: tx.txId,
+          text: StateHelper.getTxIdName(tx)
         }
+      }
       )
       options.unshift({value:null, text:''})
       return options
@@ -191,13 +195,6 @@ export default {
       'categories',
       'txs',
     ]),
-  },
-  async mounted() {
-    ViewHelper.applyDef(this.form, this.defValue)
-    StateHelper.load('group')
-    StateHelper.load('category')
-    await StateHelper.load('tx')
-    this.changeTx(this.form.txId)
   },
   watch: {
     txId: function(newVal, oldVal) {
@@ -220,6 +217,13 @@ export default {
       const tx = this.txs.find((tx) => this.minor && this.minor == tx.minor)
       this.form.txId = tx? tx.txId: null
     },
+  },
+  async mounted() {
+    ViewHelper.applyDef(this.form, this.defValue)
+    StateHelper.load('group')
+    StateHelper.load('category')
+    await StateHelper.load('tx')
+    this.changeTx(this.form.txId)
   },
   methods: {
     changeTx(newVal){

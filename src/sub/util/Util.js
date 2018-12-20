@@ -3,22 +3,22 @@ import jschardet from 'jschardet'
 import Encoding from 'encoding-japanese'
 import Papa from 'papaparse'
 import moment from 'moment'
-import { DEV, APP } from '../constant/config';
+import { DEV, APP } from '../constant/config'
 
 // sleep (for test)
 export const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 
 export const snake2camel = (str) => str.replace(/_./g, (s) => s.charAt(1).toUpperCase())
 
-export const addNoSelect = (option) => option.unshift({value: null, text: ""})
+export const addNoSelect = (option) => option.unshift({value: null, text: ''})
 
-export const getByteLength = (str) => encodeURI(str == null? "": str).replace(/%../g, "*").length
+export const getByteLength = (str) => encodeURI(str == null? '': str).replace(/%../g, '*').length
 
 export const numberRange = (start, end) => new Array(end - start + 1).fill().map((d, i) => i + start)
 
-export const str2booleanComplate = (str) => str.toLowerCase() == "true"? true: str.toLowerCase() == "false"? false: str
+export const str2booleanComplate = (str) => str.toLowerCase() == 'true'? true: str.toLowerCase() == 'false'? false: str
 
-export const str2boolean = (str) => hasValue(str) && str.toLowerCase() != "false"
+export const str2boolean = (str) => hasValue(str) && str.toLowerCase() != 'false'
 
 export const isIos = () => /(iPhone|iPod|iPad)/.test(navigator.userAgent)
 
@@ -28,7 +28,7 @@ export const isAndroidOrIOS = () => isIos() || isAndroid()
 
 export const formatDate = (timestamp, format = 'YYYY/MM/DD HH:mm:ss') => moment(timestamp).format(format)
 
-export const sanitize = (str) => str && str.replace? str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#x27;"): str
+export const sanitize = (str) => str && str.replace? str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#x27;'): str
 
 export const cutOnLong = (val, max) => {
   if (!val || !max) {
@@ -36,7 +36,7 @@ export const cutOnLong = (val, max) => {
   }
 
   if (typeof val == 'string' && val.length > max) {
-    return val.substr(0, max) + "..."
+    return val.substr(0, max) + '...'
   }
   return val
 }
@@ -69,19 +69,19 @@ export const debug = function(log) {
 
 export const colorCd4db = (obj) => {
   if(!obj){
-    return "000000"
+    return '000000'
   }
   const str = obj.hex? obj.hex: obj
-  const color = str.replace("#", "")
+  const color = str.replace('#', '')
   return color.slice(0, 8)
 }
 
-export const colorCd4display = (obj, defaultColor = "#000000") => {
+export const colorCd4display = (obj, defaultColor = '#000000') => {
   if(!obj){
     return defaultColor
   }
   let color = obj.hex? obj.hex: obj
-  return "#" + color.replace("#", "").slice(0, 8)
+  return '#' + color.replace('#', '').slice(0, 8)
 }
 
 export const isArray = (obj) => Object.prototype.toString.call(obj) === '[object Array]'
@@ -112,9 +112,9 @@ export const pathMatch = (target, path) => {
   if (!path || !target) {
     return false
   }
-  if (path.endsWith("*")) {
+  if (path.endsWith('*')) {
     path = path.slice(0, -1)
-    if (path.endsWith("/")) {
+    if (path.endsWith('/')) {
       if (path.slice(0, -1) == target) {
         return true
       }
@@ -132,7 +132,7 @@ export const pathMatch = (target, path) => {
  * @param {*} def 省略すると、値と最後のキー値のペアを返す。省略しないとnullのときdefを返す
  */
 export const getValue = (obj, path, def) => {
-  let pathSpl = path.split(".")
+  let pathSpl = path.split('.')
   let val = obj
   let lastKey
   for (let i=0; i<pathSpl.length; i++) {
@@ -161,7 +161,7 @@ export const extraCheckCsvObj = (papaResult) => {
 }
 
 export const csv2Obj = (str) => {
-  str = str.replace("\xEF\xBB\xBF", "") // remove bom
+  str = str.replace('\xEF\xBB\xBF', '') // remove bom
   str = convert2Unicode(str)
   str = removeCrLfDup(str)
   return extraCheckCsvObj(convertCsv2Obj(str))
@@ -175,12 +175,12 @@ export const convert2Unicode = (str) => {
 
 export const removeCrLfDup = (str) => {
   if (!str) return str
-  str = str.replace(/\r?\n/g,"\n")
-  str = str.replace(/\r/g,"\n")
-  let strArr = _.filter(str.split("\n"), (line) => {
-    return line && line.trim() != ""
+  str = str.replace(/\r?\n/g,'\n')
+  str = str.replace(/\r/g,'\n')
+  let strArr = _.filter(str.split('\n'), (line) => {
+    return line && line.trim() != ''
   })
-  return strArr.join("\n")
+  return strArr.join('\n')
 }
 
 export const str2Array = (str) => {
@@ -211,7 +211,7 @@ export const converToCsv = (array, headers) => {
   }
   // ヘッダ出力から"."以降の部分のみ抽出
   const outputHeaders = headers.map((header) => {
-    let result = header.split(".")
+    let result = header.split('.')
     return result ? result[result.length - 1] : header
   })
   let header = '"' + outputHeaders.join('","') + '"\n'
@@ -222,7 +222,7 @@ export const converToCsv = (array, headers) => {
         return val
       }
       if (typeof val === 'object' || typeof val === 'array') {
-        return JSON.stringify(val).split('"').join("'")
+        return JSON.stringify(val).split('"').join('\'')
       }
       else {
         return val.replace? val.replace(/"/g, '""'): val
@@ -255,7 +255,7 @@ export const getMaxTextLength = (list, minMax = Infinity) => {
 }
 
 export const base64ToBlob = (base64) => {
-  const byteString = atob( base64.split( "," )[1] )
+  const byteString = atob( base64.split( ',' )[1] )
   const mimeType = base64.match( /(:)([a-z\/]+)(;)/ )[2]
   const byteLength = byteString.length
   const content = new Uint8Array(byteLength)
@@ -287,9 +287,9 @@ export const getMidnightMs = () => {
   const offset = APP.POSITION_TIMEZONE * 60 * 60 * 1000
   const nowToday = Math.floor(now.getTime() / dayMs)
   const midnight = (nowToday * dayMs) + offset
-  debug("calcurating midnight. now is ", now)
+  debug('calcurating midnight. now is ', now)
   debug(now.getTime())
-  debug("midnight is ", midnight)
+  debug('midnight is ', midnight)
   debug(new Date(midnight))
   return midnight
 }
@@ -301,7 +301,7 @@ export const getOptions = (key, list, valField, txtField) => {
       text: txtField ? entity[txtField] : entity[key + 'Name'],
     }
   })
-  options.unshift({value: null, text: ""})
+  options.unshift({value: null, text: ''})
   return options
 }
 

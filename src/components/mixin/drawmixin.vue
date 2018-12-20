@@ -10,10 +10,10 @@ export default {
       triangle.graphics.beginFill(triangleColor).drawPolyStar(0, -20, 20, 3, 0, 90)
 
       const label = new Text(caption)
-      label.font = "16px Arial"
-      label.color = "#000"
-      label.textAlign = "center"
-      label.textBaseline = "middle"
+      label.font = '16px Arial'
+      label.color = '#000'
+      label.textAlign = 'center'
+      label.textBaseline = 'middle'
       label.y = -40
 
       const arrowContainer = new Container()

@@ -17,11 +17,11 @@ import * as Util from '../../../sub/util/Util'
 import { APP } from '../../../sub/constant/config.js'
 
 export default {
-  mixins: [listmixinVue],
   components: {
     mList, 
     breadcrumb,
   },
+  mixins: [listmixinVue],
   data() {
     return {
       params: {
@@ -30,25 +30,25 @@ export default {
         editPath: '/master/tx/edit',
         bulkEditPath: '/master/tx/bulkedit',
         appServicePath: '/core/tx',
-        mainColumn: !APP.TX_WITH_TXID && APP.TX_BTX_MINOR == "minor"? {name: this.$i18n.tnl("label.minor"), id: "minor"}:
-          !APP.TX_WITH_TXID && APP.TX_BTX_MINOR != "minor"? {name: this.$i18n.tnl("label.btxId"), id: "btxId"}:
-          {name: this.$i18n.tnl("label.txId"), id: "txId"},
+        mainColumn: !APP.TX_WITH_TXID && APP.TX_BTX_MINOR == 'minor'? {name: this.$i18n.tnl('label.minor'), id: 'minor'}:
+          !APP.TX_WITH_TXID && APP.TX_BTX_MINOR != 'minor'? {name: this.$i18n.tnl('label.btxId'), id: 'btxId'}:
+            {name: this.$i18n.tnl('label.txId'), id: 'txId'},
         csvOut: true,
         fields: addLabelByKey(this.$i18n, [ 
-          !APP.TX_WITH_TXID && APP.TX_BTX_MINOR == 'minor'? {key: "minor", sortable: true, tdClass: "action-rowdata" }: null,
-          APP.TX_WITH_TXID? {key: "txId", sortable: true, tdClass: "action-rowdata" }: null,
-          APP.TX_BTX_MINOR != 'minor'? {key: "btxId", sortable: true, tdClass: "action-rowdata" }: null,
-          {key: "txName", sortable: true, tdClass: "action-rowdata" },
-          APP.TX_WITH_DISPLAY_NAME? {key: "displayName", sortable: true, tdClass: "action-rowdata" }: null,
-          APP.TX_WITH_MAJOR? {key: "major", sortable: true, tdClass: "action-rowdata" }: null,
-          APP.TX_WITH_TXID || APP.TX_BTX_MINOR != 'btxId'? {key: "minor", sortable: true, tdClass: "action-rowdata" }: null,
-          APP.TX_WITH_CATEGORY? {key: "categoryName", label: 'category', sortable: true, tdClass: "action-rowdata" }: null,
-          APP.TX_WITH_GROUP? {key: "groupName", label: 'group', sortable: true, tdClass: "action-rowdata" }: null,
-          APP.TX_WITH_DESCRIPTION? {key: "description", sortable: true, tdClass: "action-rowdata" }: null,
-          {key: "sensor", label:'type', sortable: true,},
-          {key: "actions", thStyle: {width: '130px !important'}, tdClass: "action-rowdata" }
+          !APP.TX_WITH_TXID && APP.TX_BTX_MINOR == 'minor'? {key: 'minor', sortable: true, tdClass: 'action-rowdata' }: null,
+          APP.TX_WITH_TXID? {key: 'txId', sortable: true, tdClass: 'action-rowdata' }: null,
+          APP.TX_BTX_MINOR != 'minor'? {key: 'btxId', sortable: true, tdClass: 'action-rowdata' }: null,
+          {key: 'txName', sortable: true, tdClass: 'action-rowdata' },
+          APP.TX_WITH_DISPLAY_NAME? {key: 'displayName', sortable: true, tdClass: 'action-rowdata' }: null,
+          APP.TX_WITH_MAJOR? {key: 'major', sortable: true, tdClass: 'action-rowdata' }: null,
+          APP.TX_WITH_TXID || APP.TX_BTX_MINOR != 'btxId'? {key: 'minor', sortable: true, tdClass: 'action-rowdata' }: null,
+          APP.TX_WITH_CATEGORY? {key: 'categoryName', label: 'category', sortable: true, tdClass: 'action-rowdata' }: null,
+          APP.TX_WITH_GROUP? {key: 'groupName', label: 'group', sortable: true, tdClass: 'action-rowdata' }: null,
+          APP.TX_WITH_DESCRIPTION? {key: 'description', sortable: true, tdClass: 'action-rowdata' }: null,
+          {key: 'sensor', label:'type', sortable: true,},
+          {key: 'actions', thStyle: {width: '130px !important'}, tdClass: 'action-rowdata' }
         ]),
-        sortBy: APP.TX_WITH_TXID? "txId": APP.TX_BTX_MINOR != "minor"? "btxId": "minor",
+        sortBy: APP.TX_WITH_TXID? 'txId': APP.TX_BTX_MINOR != 'minor'? 'btxId': 'minor',
         initTotalRows: this.$store.state.app_service.txs.length
       },
       items: [

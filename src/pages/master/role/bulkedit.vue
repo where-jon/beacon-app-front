@@ -1,7 +1,7 @@
 <template>
   <div>
     <breadcrumb :items="items" />
-    <bulkedit :name="name" :id="id" :backPath="backPath" :app-service-path="appServicePath" />
+    <bulkedit :id="id" :name="name" :back-path="backPath" :app-service-path="appServicePath" />
   </div>
 </template>
 
@@ -46,7 +46,7 @@ export default {
   },
   methods: {
     async save(bulkSaveFunc) {
-      const MAIN_COL = "roleId"
+      const MAIN_COL = 'roleId'
       await bulkSaveFunc(MAIN_COL)
     },
   }

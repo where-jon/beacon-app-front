@@ -99,22 +99,22 @@ export const postExCloud = async (url, config) => {
 }
 
 const convertDuplicateErrorInfo = (e) => {
-  const keys = e.key.split(",")
-  const vals = e.val.split(",")
-  let newKeys = ""
-  let newVals = ""
+  const keys = e.key.split(',')
+  const vals = e.val.split(',')
+  let newKeys = ''
+  let newVals = ''
 
   for(let idx = 0; idx < keys.length; idx++){
     const key = Util.snake2camel(keys[idx].trim())
-    if(key == "tenantId"){
+    if(key == 'tenantId'){
       continue
     }
     if(newKeys.length != 0){
-      newKeys = newKeys.concat(", ")
+      newKeys = newKeys.concat(', ')
     }
     newKeys = newKeys.concat(i18n.tnl(`label.${key}`))
     if(newVals.length != 0){
-      newVals = newVals.concat(", ")
+      newVals = newVals.concat(', ')
     }
     newVals = newVals.concat(vals[idx].trim())
   }
@@ -135,15 +135,15 @@ const handleError = (e, url) => {
         if (key && key[1]) {
           e.key = key[1]
           e.val = key[2]
-          e.type = message.includes("duplicate key")? "duplicate": message.includes("violates foreign key")? "foreignKey": ""
-          if(e.type == "duplicate"){
+          e.type = message.includes('duplicate key')? 'duplicate': message.includes('violates foreign key')? 'foreignKey': ''
+          if(e.type == 'duplicate'){
             convertDuplicateErrorInfo(e)
           }
         }
         else if(message.match(/not found: Id=[0-9]+$/)){
-          const token = message.split("=")
-          e.type = "bulkExistFailed"
-          e.col = "id"
+          const token = message.split('=')
+          e.type = 'bulkExistFailed'
+          e.col = 'id'
           e.val = token[token.length - 1]
         }
       }
@@ -152,9 +152,9 @@ const handleError = (e, url) => {
       }
     }
 
-    let ignore = !url.endsWith("/") && context.route.path.indexOf("/login") != -1 // Loginエラーでポップアップが表示されるのを防ぐ
-    if (e.message && e.message == "Network Error" && !ignore) {
-      e.key = "networkError"
+    let ignore = !url.endsWith('/') && context.route.path.indexOf('/login') != -1 // Loginエラーでポップアップが表示されるのを防ぐ
+    if (e.message && e.message == 'Network Error' && !ignore) {
+      e.key = 'networkError'
       context.app.store.commit('replace', {error: e})
       context.app.router.app.$root.$emit('bv::show::modal', 'modalRootError')
     }

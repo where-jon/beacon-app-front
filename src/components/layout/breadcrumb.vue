@@ -4,33 +4,41 @@
       <div class="col-auto mr-auto list-container">
         <ol class="breadcrumb-items">
           <li v-for="(item, index) in items" :key="index">
-            <span v-if="isActive(item)" v-text="item.text"></span>
-            <a v-if="isLink(item)" v-text="item.text" href="#" @click="move(item.href)"></a>
+            <span v-if="isActive(item)" v-text="item.text" />
+            <a v-if="isLink(item)" href="#" @click="move(item.href)" v-text="item.text" />
           </li>
         </ol>
       </div>
-      <div v-if="useLegend && legendItems" ref="legendButton" class="col-auto px-0" >
-        <b-button v-if="showLegend" class="legend-button-active" @click="switchLegend">{{$i18n.tnl('label.legend')}}</b-button>
-        <b-button v-else class="legend-button" @click="switchLegend">{{$i18n.tnl('label.legend')}}</b-button>
+      <div v-if="useLegend && legendItems" ref="legendButton" class="col-auto px-0">
+        <b-button v-if="showLegend" class="legend-button-active" @click="switchLegend">
+          {{ $i18n.tnl('label.legend') }}
+        </b-button>
+        <b-button v-else class="legend-button" @click="switchLegend">
+          {{ $i18n.tnl('label.legend') }}
+        </b-button>
       </div>
-      <div class="col-auto px-0" >
+      <div class="col-auto px-0">
         <b-nav-item-dropdown v-if="availableNavSpec.length > 1" class="extra-nav"
-          :extra-menu-classes="extNavClasses" right>
+                             :extra-menu-classes="extNavClasses" right
+        >
           <template slot="button-content">
-            <em>{{shortName}}</em>
+            <em>{{ shortName }}</em>
           </template>
           <b-dropdown-item v-for="extraNav in availableNavSpec" :key="extraNav.key"
-              @click="move(extraNav.path)" :class="extNavClasses">
-            <i :class="extraNav.icon" class="mx-1" />&nbsp;{{$t('label.' + extraNav.key)}}
+                           :class="extNavClasses" @click="move(extraNav.path)"
+          >
+            <i :class="extraNav.icon" class="mx-1" />&nbsp;{{ $t('label.' + extraNav.key) }}
           </b-dropdown-item>
         </b-nav-item-dropdown>
       </div>
       <div class="col-auto reload-button-container ">
-        <a href="#" id="reload" v-if="reload" @click="onClickReload"><i title="リロード" :class="classes"></i></a>
+        <a v-if="reload" id="reload" href="#" @click="onClickReload">
+          <i title="リロード" :class="classes" />
+        </a>
       </div>
     </div>
-    <div ref="legendItem" v-if="showLegend && legendItems" class="legend-item">
-      <legend-item :legendItems="legendItems" />
+    <div v-if="showLegend && legendItems" ref="legendItem" class="legend-item">
+      <legend-item :legend-items="legendItems" />
     </div>
   </div>
 </template>
@@ -49,13 +57,6 @@ export default {
   components: {
     'legendItem': LegendItem,
   },
-  data () {
-    return {
-      showLegend: false,
-      touchLegend: false,
-      useLegend: APP.USE_LEGEND,
-    }
-  },
   props: {
     items: Array,
     reload: {
@@ -72,25 +73,19 @@ export default {
     },
     shortName: {
       type: String,
-      default: ""
+      default: ''
     },
     legendItems: {
       type: Array,
       default: null
     },
   },
-  mounted() {
-    let reload = document.getElementById("reload")
-    if (reload) {
-      HtmlUtil.registerInterval(()=>{
-        this.$store.commit('replace', {reload: true})
-        const windowScroll = {x: window.pageXOffset , y: window.pageYOffset}
-        reload.click()
-        window.scroll(windowScroll.x, windowScroll.y)
-      }, APP.AUTO_RELOAD)  
+  data () {
+    return {
+      showLegend: false,
+      touchLegend: false,
+      useLegend: APP.USE_LEGEND,
     }
-
-    this.setDropdownMenuColor()
   },
   computed: {
     loginId() {
@@ -118,6 +113,19 @@ export default {
       })
     }
   },
+  mounted() {
+    let reload = document.getElementById('reload')
+    if (reload) {
+      HtmlUtil.registerInterval(()=>{
+        this.$store.commit('replace', {reload: true})
+        const windowScroll = {x: window.pageXOffset , y: window.pageYOffset}
+        reload.click()
+        window.scroll(windowScroll.x, windowScroll.y)
+      }, APP.AUTO_RELOAD)  
+    }
+
+    this.setDropdownMenuColor()
+  },
   methods: {
     isActive (item) {
       return item.active != null && item.active
@@ -129,10 +137,10 @@ export default {
       this.$router.push(page)
     },
     onClickReload(e) {
-      HtmlUtil.addClass(e, "rotate")
+      HtmlUtil.addClass(e, 'rotate')
       EventBus.$emit('reload', {
         done() {
-          HtmlUtil.removeClass(e, "rotate")
+          HtmlUtil.removeClass(e, 'rotate')
           AuthHelper.checkSession()
         }
       })

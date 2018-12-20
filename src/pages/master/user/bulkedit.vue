@@ -1,7 +1,7 @@
 <template>
   <div>
     <breadcrumb :items="items" />
-    <bulkedit :name="name" :id="id" :backPath="backPath" :app-service-path="appServicePath" />
+    <bulkedit :id="id" :name="name" :back-path="backPath" :app-service-path="appServicePath" />
   </div>
 </template>
 
@@ -46,9 +46,9 @@ export default {
   },
   methods: {
     async save(bulkSaveFunc) {
-      const MAIN_COL = "userId"
-      const ROLE_COL = ["roleName"]
-      const NUMBER_TYPE_LIST = ["roleId"]
+      const MAIN_COL = 'userId'
+      const ROLE_COL = ['roleName']
+      const NUMBER_TYPE_LIST = ['roleId']
       await bulkSaveFunc(MAIN_COL, NUMBER_TYPE_LIST, null, (entity, headerName, val, dummyKey) => {
         if (headerName == MAIN_COL && !Util.hasValue(val)) {
           val = dummyKey--

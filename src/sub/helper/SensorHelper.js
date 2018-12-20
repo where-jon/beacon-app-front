@@ -7,12 +7,12 @@ import _ from 'lodash'
 export const getDiscomfortColor = (temperature, humidity) => {
   let discomfort = getDiscomfort(temperature, humidity)
   switch (discomfort) {
-    case DISCOMFORT.COLD:
-      return DISP.DISCOMFORT_COLD
-    case DISCOMFORT.COMFORT:
-      return DISP.DISCOMFORT_COMFORT
-    case DISCOMFORT.HOT:
-      return DISP.DISCOMFORT_HOT
+  case DISCOMFORT.COLD:
+    return DISP.DISCOMFORT_COLD
+  case DISCOMFORT.COMFORT:
+    return DISP.DISCOMFORT_COMFORT
+  case DISCOMFORT.HOT:
+    return DISP.DISCOMFORT_HOT
   }
 }
 
@@ -35,7 +35,7 @@ export const showThermoHumidityChart = (id, data, i18n) => {
 
   // This logic is for hour only(TODO: for min or day)
   let range = Util.numberRange(APP.TEMPERATURE_LINE_HOUR_START, APP.TEMPERATURE_LINE_HOUR_END)
-  let suffix = ":00"
+  let suffix = ':00'
   data = _.reduce(range, (result, key) => {
     const datum = data.find((val) => val.key == key)
     if (datum) {
@@ -76,7 +76,7 @@ export const showThermoHumidityChart = (id, data, i18n) => {
           position: 'left',
           scaleLabel: {
             display: true,
-            labelString: i18n.tnl('label.temperature') + " (℃)"
+            labelString: i18n.tnl('label.temperature') + ' (℃)'
           },
           ticks:{ min: 0, max: 40 }
         }, {
@@ -85,7 +85,7 @@ export const showThermoHumidityChart = (id, data, i18n) => {
           position: 'right',
           scaleLabel: {
             display: true,
-            labelString: i18n.tnl('label.humidity') + " (%)",
+            labelString: i18n.tnl('label.humidity') + ' (%)',
           },
           ticks: { max: 100, min: 0, stepSize: 25},
         }]
@@ -104,7 +104,7 @@ export const getStressBg = (stress) => {
 
 export const setStress = (positions, sensors) => {
   return positions.map((position) => {
-      let sensor = sensors.find((sensor) => sensor.id == position.btxId)
-      return sensor? {...position, bg: getStressBg(sensor.stress)}: position
+    let sensor = sensors.find((sensor) => sensor.id == position.btxId)
+    return sensor? {...position, bg: getStressBg(sensor.stress)}: position
   })
 }

@@ -2,13 +2,14 @@
   <div>
     <breadcrumb :items="items" />
     <div class="container">
-
-      <b-alert variant="info" dismissible :show="showInfo">{{ message }}</b-alert>
-      <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">
+      <b-alert variant="info" dismissible :show="showInfo">
+        {{ message }}
+      </b-alert>
+      <b-alert variant="danger" dismissible :show="showAlert" @dismissed="showAlert=false">
         <div v-html="message" />
       </b-alert>
 
-      <b-form @submit.prevent="onSubmit" v-if="show">
+      <b-form v-if="show" @submit.prevent="onSubmit">
         <b-form-group>
           <label v-t="'label.featureName'" />
           <b-form-select v-model="featureId" :options="featureNames" class="mb-3 ml-3 col-3" required :disabled="systemReadOnly" />
@@ -22,9 +23,11 @@
           <b-form-select v-model="form.mode" :options="modes" class="mb-3 ml-3 col-3" required :disabled="!isEditable" :readonly="!isEditable" />
         </b-form-group>
 
-        <b-button type="button" variant="outline-danger" @click="backToList" class="mr-2 my-1" v-t="'label.back'"/>
-        <b-button v-if="isEditable" type="submit" :variant="theme" @click="register(false)" class="mr-2 my-1" >{{ label }}</b-button>
-        <b-button v-if="isEditable && !isUpdate" type="submit" :variant="theme" @click="register(true)" class="my-1" v-t="'label.registerAgain'"/>
+        <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
+        <b-button v-if="isEditable" type="submit" :variant="theme" class="mr-2 my-1" @click="register(false)">
+          {{ label }}
+        </b-button>
+        <b-button v-if="isEditable && !isUpdate" v-t="'label.registerAgain'" type="submit" :variant="theme" class="my-1" @click="register(true)" />
       </b-form>
     </div>
   </div>
@@ -53,7 +56,7 @@ export default {
       backPath: '/master/role/edit',
       appServicePath: '/meta/roleFeature',
       featureId: -1,
-      form: ViewHelper.extract(this.$store.state.app_service.roleFeature, ["feature.featureId", "feature.featureName", "feature.path", "mode"]),
+      form: ViewHelper.extract(this.$store.state.app_service.roleFeature, ['feature.featureId', 'feature.featureName', 'feature.path', 'mode']),
       featureNames: [],
       items: [
         {
@@ -102,7 +105,7 @@ export default {
   watch: {
     featureId: function(newVal, oldVal) {
       const feature = this.features.find((val) => val.featureId === newVal)
-      this.form.path = feature != null? feature.path: ""
+      this.form.path = feature != null? feature.path: ''
     },
   },
   methods: {

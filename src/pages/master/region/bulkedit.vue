@@ -1,7 +1,7 @@
 <template>
   <div>
     <breadcrumb :items="items" />
-    <bulkedit :name="name" :id="id" :backPath="backPath" :app-service-path="appServicePath" />
+    <bulkedit :id="id" :name="name" :back-path="backPath" :app-service-path="appServicePath" />
   </div>
 </template>
 
@@ -46,8 +46,8 @@ export default {
   },
   methods: {
     async save(bulkSaveFunc) {
-      const MAIN_COL = "regionId"
-      const NUMBER_TYPE_LIST = ["regionId", "meshId", "deviceOffset"]
+      const MAIN_COL = 'regionId'
+      const NUMBER_TYPE_LIST = ['regionId', 'meshId', 'deviceOffset']
       await bulkSaveFunc(MAIN_COL, null, null, (entity, headerName, val, dummyKey) => {
         if(Util.equalsAny(headerName, NUMBER_TYPE_LIST)){
           const num = Number(val)

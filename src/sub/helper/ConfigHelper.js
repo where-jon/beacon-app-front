@@ -5,17 +5,17 @@ import * as config from '../constant/config'
 export const convertValue = (str, type) => {
   if(!/^.*(list|array)$/.test(type.toLowerCase())){
     switch(type) {
-      case "number":
-      case "float":
-      case "double":
-      case "int":
-        return Number(str)
-      case "boolean":
-        return str == "true"
+    case 'number':
+    case 'float':
+    case 'double':
+    case 'int':
+      return Number(str)
+    case 'boolean':
+      return str == 'true'
     }
     return str
   }
-  return str.split(",").filter((val) => val.length != 0).map((val) => {
+  return str.split(',').filter((val) => val.length != 0).map((val) => {
     val.trim()
     if(/^number.*$/.test(type)){
       val = Number(val)
@@ -25,7 +25,7 @@ export const convertValue = (str, type) => {
 }
 
 export const loadConfigJson = async () => {
-  let configJson = await axios.get("/config.json")
+  let configJson = await axios.get('/config.json')
   if (configJson.data) {
     updateConfig(configJson.data)
   }
@@ -42,7 +42,7 @@ export const applyAppServiceSetting = (settingArr, defaultConfig = null) => {
   if (!settingArr) return
 
   let updateData = _.reduce(settingArr, (result, setting) => {
-    let key = (setting.category? setting.category + ".": "") + setting.key
+    let key = (setting.category? setting.category + '.': '') + setting.key
     let val = setting.value
     let valType = setting.valType? setting.valType.toLowerCase(): null
     if (val && valType) {
@@ -58,7 +58,7 @@ export const updateConfig = (updateData, defaultConfig = null) => {
   _(updateData).forEach((val, propKey) => {
     let curKey = config
     let curDefaultConfig = defaultConfig
-    propKey.split(".").forEach((key, idx, arr) => {
+    propKey.split('.').forEach((key, idx, arr) => {
       if (idx == arr.length - 1) {
         if(val != null){
           curKey[key] = val

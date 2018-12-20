@@ -2,23 +2,24 @@
   <div>
     <breadcrumb :items="items" />
     <div class="container">
-
-      <b-alert variant="info" dismissible :show="showInfo">{{ message }}</b-alert>
-      <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">
+      <b-alert variant="info" dismissible :show="showInfo">
+        {{ message }}
+      </b-alert>
+      <b-alert variant="danger" dismissible :show="showAlert" @dismissed="showAlert=false">
         <div v-html="message" />
       </b-alert>
 
 
       <b-row>
         <b-col md="8" offset-md="2">
-          <b-form @submit.prevent="onSubmit" v-if="show">
+          <b-form v-if="show" @submit.prevent="onSubmit">
             <b-form-group v-if="hasId" v-show="isShown('TX_WITH_TXID')">
               <label v-t="'label.txId'" />
-              <b-form-input type="text" v-model="form.txId" readonly="readonly" />
+              <b-form-input v-model="form.txId" type="text" readonly="readonly" />
             </b-form-group>
             <b-form-group v-if="showMinorHead" v-show="showTx('minor')">
               <label v-t="'label.minor'" />
-              <input type="number" v-model="form.minor" min="0" max="65535" class="form-control" :readonly="!isEditable" :required="showTx('minor')"/>
+              <input v-model="form.minor" type="number" min="0" max="65535" class="form-control" :readonly="!isEditable" :required="showTx('minor')">
             </b-form-group>
             <b-form-group>
               <label v-t="'label.type'" />
@@ -34,35 +35,36 @@
             </b-form-group>
             <b-form-group v-show="showTx('btxId')">
               <label v-t="'label.btxId'" />
-              <input type="number" v-model="form.btxId" min="0" max="65535" class="form-control" :required="showTx('btxId')" :readonly="!isEditable" />
+              <input v-model="form.btxId" type="number" min="0" max="65535" class="form-control" :required="showTx('btxId')" :readonly="!isEditable">
             </b-form-group>
             <b-form-group v-show="isShown('TX_WITH_MAJOR')">
               <label v-t="'label.major'" />
-              <input type="number" v-model="form.major" min="0" max="65535" class="form-control" :required="isMajorRequired" :readonly="!isEditable" />
+              <input v-model="form.major" type="number" min="0" max="65535" class="form-control" :required="isMajorRequired" :readonly="!isEditable">
             </b-form-group>
             <b-form-group v-if="showMinorMid" v-show="showTx('minor')">
               <label v-t="'label.minor'" />
-              <input type="number" v-model="form.minor" min="0" max="65535" class="form-control" :readonly="!isEditable" :required="showTx('minor')"/>
+              <input v-model="form.minor" type="number" min="0" max="65535" class="form-control" :readonly="!isEditable" :required="showTx('minor')">
             </b-form-group>
             <b-form-group>
               <label v-t="'label.txName'" />
-              <input type="text" v-model="form.txName" maxlength="20" class="form-control" :readonly="!isEditable" />
+              <input v-model="form.txName" type="text" maxlength="20" class="form-control" :readonly="!isEditable">
             </b-form-group>
             <b-form-group v-show="isShown('TX_WITH_DISPLAY_NAME')">
               <label v-t="'label.displayName'" />
-              <input type="text" v-model="form.displayName" maxlength="3" class="form-control" :readonly="!isEditable" />
+              <input v-model="form.displayName" type="text" maxlength="3" class="form-control" :readonly="!isEditable">
             </b-form-group>
             <b-form-group v-show="isShown('TX_WITH_DESCRIPTION')">
               <label v-t="'label.description'" />
-              <b-form-textarea v-model="form.description" :rows="3" :max-rows="6" maxlength="1000" :readonly="!isEditable" ></b-form-textarea>
+              <b-form-textarea v-model="form.description" :rows="3" :max-rows="6" maxlength="1000" :readonly="!isEditable" />
             </b-form-group>
-            <b-button type="button" variant="outline-danger" @click="backToList" class="mr-2 my-1" v-t="'label.back'"/>
-            <b-button v-if="isEditable" type="submit" :variant="theme" @click="register(false)" class="mr-2 my-1">{{ label }}</b-button>
-            <b-button v-if="isEditable && !isUpdate" type="submit" :variant="theme" @click="register(true)" class="my-1" v-t="'label.registerAgain'"/>
+            <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
+            <b-button v-if="isEditable" type="submit" :variant="theme" class="mr-2 my-1" @click="register(false)">
+              {{ label }}
+            </b-button>
+            <b-button v-if="isEditable && !isUpdate" v-t="'label.registerAgain'" type="submit" :variant="theme" class="my-1" @click="register(true)" />
           </b-form>
         </b-col>
       </b-row>
-
     </div>
   </div>
 </template>
@@ -78,7 +80,7 @@ import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import { APP } from '../../../sub/constant/config.js'
-import { CATEGORY } from '../../../sub/constant/Constants';
+import { CATEGORY } from '../../../sub/constant/Constants'
 
 export default {
   components: {
@@ -93,11 +95,11 @@ export default {
       backPath: '/master/tx',
       appServicePath: '/core/tx',
       form: ViewHelper.extract(this.$store.state.app_service.tx, [
-        "txId", "btxId", "major", "minor", "txName", "displayName",  "mapImage",
-        "txSensorList.0.sensor.sensorId",
-        "pot.potId", "pot.potCd", "pot.displayName", "pot.description",
-        "pot.potCategoryList.0.category.categoryId",
-        "pot.potGroupList.0.group.groupId",
+        'txId', 'btxId', 'major', 'minor', 'txName', 'displayName',  'mapImage',
+        'txSensorList.0.sensor.sensorId',
+        'pot.potId', 'pot.potCd', 'pot.displayName', 'pot.description',
+        'pot.potCategoryList.0.category.categoryId',
+        'pot.potGroupList.0.group.groupId',
       ]),
       items: [
         {
@@ -135,22 +137,22 @@ export default {
       let options = this.categories.filter((category) => {
         return category.categoryType != CATEGORY.getTypes()[2].value
       }).map((category) => {
-          return {
-            value: category.categoryId,
-            text: category.categoryName
-          }
+        return {
+          value: category.categoryId,
+          text: category.categoryName
         }
+      }
       )
       options.unshift({value:null, text:''})
       return options
     },
     groupOptions() {
       let options = this.groups.map((group) => {
-          return {
-            value: group.groupId,
-            text: group.groupName
-          }
+        return {
+          value: group.groupId,
+          text: group.groupName
         }
+      }
       )
       options.unshift({value:null, text:''})
       return options
@@ -178,12 +180,12 @@ export default {
   methods: {
     showTx(col) {
       switch(APP.TX_BTX_MINOR) {
-        case 'both':
-          return true
-        case 'minor':
-          return col == 'minor'
-        case 'btxId':
-          return col == 'btxId'
+      case 'both':
+        return true
+      case 'minor':
+        return col == 'minor'
+      case 'btxId':
+        return col == 'btxId'
       }
       return true
     },
@@ -193,10 +195,10 @@ export default {
     async save() {
       let txId = Util.hasValue(this.form.txId)? this.form.txId: -1
       switch(APP.TX_BTX_MINOR) {
-        case 'minor':
-          this.form.btxId = this.form.minor
-        case 'btxId':
-          this.form.minor = this.form.btxId
+      case 'minor':
+        this.form.btxId = this.form.minor
+      case 'btxId':
+        this.form.minor = this.form.btxId
       }
       let entity = {
         ...this.form,
@@ -211,7 +213,7 @@ export default {
     async getRelatedPot(txId) {
       StateHelper.setForceFetch('pot', true)
       await StateHelper.load('pot')
-      const randName = () =>  txId + "_" + (new Date().getTime() % 10000)
+      const randName = () =>  txId + '_' + (new Date().getTime() % 10000)
       const relatedPot = _.find(this.pots, (pot) => pot.potId == this.form.potId)
       const isPotForm = this.form.potId || this.form.categoryId || this.form.groupId
           || this.form.displayName || this.form.description

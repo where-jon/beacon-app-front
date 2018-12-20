@@ -6,7 +6,7 @@
       <b-row>
         <b-col md="10" offset-md="1">
           <pagetitle title="label.system" />
-          <edit-list :params="params" :multiList="categorySettings" :newForm="newForm" :showKeyName="true" ref="editList" />
+          <edit-list ref="editList" :params="params" :multi-list="categorySettings" :new-form="newForm" :show-key-name="true" />
         </b-col>
       </b-row>
     </div>
@@ -41,7 +41,7 @@ export default {
       params: {
         name: 'setting',
         fields: [ 
-          {key: "value", type: "valType", tooltip: "description" },
+          {key: 'value', type: 'valType', tooltip: 'description' },
         ],
       },
       items: [
@@ -95,13 +95,13 @@ export default {
       await this.fetchData(true)
     },
     formatNumberList(str, type){
-      return str.split(",").filter((val) => val.trim().length != 0).map((val) => {
+      return str.split(',').filter((val) => val.trim().length != 0).map((val) => {
         val.trim()
         if(/^number.*$/.test(type)){
           val = Number(val)
         }
         return val
-      }).join(",")
+      }).join(',')
     },
     format(str, type){
       const typeLow = type.toLowerCase()

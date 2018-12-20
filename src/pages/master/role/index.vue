@@ -30,9 +30,9 @@ export default {
         appServicePath: '/meta/role',
         csvOut: true,
         fields: addLabelByKey(this.$i18n, [ 
-          {key: "roleId", sortable: true },
-          {key: "roleName", sortable: true },
-          {key: "actions", thStyle: {width:'130px !important'} }
+          {key: 'roleId', sortable: true },
+          {key: 'roleName', sortable: true },
+          {key: 'actions', thStyle: {width:'130px !important'} }
         ]),
         initTotalRows: this.$store.state.app_service.roles.length
       },

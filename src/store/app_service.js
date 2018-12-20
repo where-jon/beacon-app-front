@@ -65,7 +65,7 @@ export const getters = {
 
 export const mutations = {
   replaceAS(state, obj) {
-    console.debug("replaceAS")
+    console.debug('replaceAS')
     if (obj) {
       for (let key in obj) {
         Vue.set(state, key, obj[key])
@@ -73,7 +73,7 @@ export const mutations = {
     }
   },
   clear(state, obj) {
-    console.debug("clear", obj)
+    console.debug('clear', obj)
     if (obj) {
       for (let key in obj) {
         Vue.set(state, key, {})

@@ -2,16 +2,19 @@
   <div>
     <breadcrumb :items="items" :reload="false" />
     <div class="container">
-      <b-alert variant="info" dismissible :show="showInfo">{{ message }}</b-alert>
-      <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">
+      <b-alert variant="info" dismissible :show="showInfo">
+        {{ message }}
+      </b-alert>
+      <b-alert variant="danger" dismissible :show="showAlert" @dismissed="showAlert=false">
         <div v-html="message" />
       </b-alert>
       <div class="mapContainer mb-5">
         <div class="container">
-          <analysis-search :areaOptions="areaOptions" v-on:changeArea="changeArea"
-              v-on:display="display" />
+          <analysis-search :area-options="areaOptions" @changeArea="changeArea"
+                           @display="display"
+          />
           <b-row>
-            <canvas id="map" ref="map"/>
+            <canvas id="map" ref="map" />
           </b-row>
         </div>
       </div>
@@ -31,11 +34,11 @@ import drawMixin from '../../components/mixin/drawmixin.vue'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 
 export default {
-  mixins: [showmapmixin, drawMixin ],
   components: {
     breadcrumb,
     analysisSearch,
   },
+  mixins: [showmapmixin, drawMixin ],
   data () {
     return {
       items: [
@@ -49,14 +52,14 @@ export default {
         }
       ],
       dotRadius: 3,
-      startInfo: {caption: "start", color: "#2299cc"},
-      endInfo: {caption: "end", color: "#ee0033"},
+      startInfo: {caption: 'start', color: '#2299cc'},
+      endInfo: {caption: 'end', color: '#ee0033'},
       container: null,
       shownParam: null,
       //
       showInfo: false,
       showAlert: false,
-      message: "",
+      message: '',
       //
     }
   },

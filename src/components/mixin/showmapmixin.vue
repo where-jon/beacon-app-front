@@ -51,18 +51,18 @@ export default {
     },
   },
   created() {
-    if (this.$route.path.startsWith("/main")) {      
+    if (this.$route.path.startsWith('/main')) {      
       let timer = 0
       let path = this.$route.path
       let currentWidth = window.innerWidth
       let onResize = () => {
         if (path != this.$route.path) {
           window.removeEventListener('resize', onResize)
-          clearTimeout(timer);
+          clearTimeout(timer)
           return
         }
         if (timer > 0) {
-          clearTimeout(timer);
+          clearTimeout(timer)
         } 
         timer = setTimeout(() => {
           if (currentWidth === window.innerWidth && Util.isAndroidOrIOS()) {
@@ -72,7 +72,7 @@ export default {
           } else {
             currentWidth = window.innerWidth
           }
-          console.log(path + " : " + this.$route.path, this)
+          console.log(path + ' : ' + this.$route.path, this)
           this.reset()
           if (this.stage) {
             this.stage.removeAllChildren()
@@ -82,7 +82,7 @@ export default {
             this.stage.update()
             this.fetchData()
           }
-        }, 200);
+        }, 200)
       }
       window.addEventListener('resize', onResize)
     }
@@ -115,7 +115,7 @@ export default {
         await StateHelper.load('area')
         this.selectedArea = this.selectedArea ? this.selectedArea : Util.getValue(this, 'areas.0.areaId', null)
         await StateHelper.loadAreaImage(this.selectedArea)
-        console.log("after loadAreas. selectedArea=" + this.selectedArea)
+        console.log('after loadAreas. selectedArea=' + this.selectedArea)
         await StateHelper.load('exb')
         if (tx) {
           await StateHelper.load('tx')
@@ -136,7 +136,7 @@ export default {
       if (!this.mapImage) {
         if (this.showTryCount < 10) {
           this.$nextTick(() => {
-            console.warn("again because no image")
+            console.warn('again because no image')
             this.showMapImage()
           })
         }
@@ -160,9 +160,9 @@ export default {
       const isMapWidthLarger = parentHeight / parent.clientWidth > target.height / target.width
       let fitWidth
       if (HtmlUtil.isMobile()) {
-        fitWidth = (this.tempMapFitMobile == "both" && isMapWidthLarger) || this.tempMapFitMobile == "width"
+        fitWidth = (this.tempMapFitMobile == 'both' && isMapWidthLarger) || this.tempMapFitMobile == 'width'
       } else {
-         fitWidth = (DISP.MAP_FIT == "both" && isMapWidthLarger) || DISP.MAP_FIT == "width"
+        fitWidth = (DISP.MAP_FIT == 'both' && isMapWidthLarger) || DISP.MAP_FIT == 'width'
       }
       const result = {}
       if (fitWidth) {
@@ -185,7 +185,7 @@ export default {
       this.mapWidth = bg.width
       this.mapHeight = bg.height
       this.isShownMapImage = true
-      let parent = document.getElementById("map").parentElement
+      let parent = document.getElementById('map').parentElement
 
       const size = this.calcFitSize(bg, parent)
       canvas.width = size.width
@@ -203,7 +203,7 @@ export default {
           this.exbCon = null
         }
       }
-      this.stage = new Stage("map")
+      this.stage = new Stage('map')
       this.stage.canvas = canvas
       this.stage.mouseEnabled = true
       if (Touch.isSupported()) {
@@ -242,7 +242,7 @@ export default {
       if (!this.realWidth) { // Due to force update computed property mapRatio
         this.realWidth = 1
         this.$nextTick(() => {
-          this.realWidth = ""
+          this.realWidth = ''
         })
       }
     },

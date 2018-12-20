@@ -1,7 +1,7 @@
 <template>
   <div>
     <breadcrumb :items="items" />
-    <bulkupload :name="name" :id="id" :backPath="backPath" :app-service-path="appServicePath" />
+    <bulkupload :id="id" :name="name" :back-path="backPath" :app-service-path="appServicePath" />
   </div>
 </template>
 
@@ -56,10 +56,10 @@ export default {
     addLoadImage(imgInfo) {
       const blob = Util.base64ToBlob(imgInfo.thumbnail)
       HtmlUtil.readImage({target: {files: [blob]}}, (evt, width, height, thumbnail) => {
-          imgInfo.mapImage = imgInfo.thumbnail
-          imgInfo.mapWidth = width
-          imgInfo.mapHeight = height
-          imgInfo.thumbnail = thumbnail
+        imgInfo.mapImage = imgInfo.thumbnail
+        imgInfo.mapWidth = width
+        imgInfo.mapHeight = height
+        imgInfo.thumbnail = thumbnail
       }, APP.AREA_THUMBNAIL_MAX)
     },
     async save(thumbnails) {

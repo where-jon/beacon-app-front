@@ -1,8 +1,7 @@
 <template>
   <div>
     <breadcrumb :items="items" />
-    <m-list :params="params" :list="zones" >
-    </m-list>
+    <m-list :params="params" :list="zones" />
   </div>
 </template>
 
@@ -17,11 +16,11 @@ import listmixinVue from '../../../components/mixin/listmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 
 export default {
-  mixins: [listmixinVue],
   components: {
     mList, 
     breadcrumb,
   },
+  mixins: [listmixinVue],
   data() {
     return {
       params: {
@@ -32,12 +31,12 @@ export default {
         appServicePath: '/core/zone',
         csvOut: true,
         fields: addLabelByKey(this.$i18n, [ 
-          {key: "zoneId", sortable: true },
-          {key: "zoneName", sortable: true },
-          {key: "areaName", sortable: true},
+          {key: 'zoneId', sortable: true },
+          {key: 'zoneName', sortable: true },
+          {key: 'areaName', sortable: true},
           //{key: "locationName", label: "locationZoneName", sortable: true},
-          {key: "categoryName", sortable: true},
-          {key: "actions", thStyle: {width:'130px !important'} }
+          {key: 'categoryName', sortable: true},
+          {key: 'actions', thStyle: {width:'130px !important'} }
         ]),
         initTotalRows: this.$store.state.app_service.zones.length
       },

@@ -1,8 +1,7 @@
 <template>
   <div>
     <breadcrumb :items="items" />
-    <m-list :params="params" :list="users" >
-    </m-list>
+    <m-list :params="params" :list="users" />
   </div>
 </template>
 
@@ -31,13 +30,13 @@ export default {
         appServicePath: '/meta/user',
         csvOut: true,
         fields: addLabelByKey(this.$i18n, [ 
-          {key: "userId", sortable: true },
-          APP.USER_WITH_NAME? {key: "name", sortable: true  }: null,
-          {key: "loginId", sortable: true  },
-          APP.USER_WITH_EMAIL? {key: "email", sortable: true }: null,
-          {key: "roleName", label: "role", sortable: true },
-          {key: "description", sortable: true },
-          {key: "actions", thStyle: {width:'130px !important'} }
+          {key: 'userId', sortable: true },
+          APP.USER_WITH_NAME? {key: 'name', sortable: true  }: null,
+          {key: 'loginId', sortable: true  },
+          APP.USER_WITH_EMAIL? {key: 'email', sortable: true }: null,
+          {key: 'roleName', label: 'role', sortable: true },
+          {key: 'description', sortable: true },
+          {key: 'actions', thStyle: {width:'130px !important'} }
         ]),
         initTotalRows: this.$store.state.app_service.users.length
       },

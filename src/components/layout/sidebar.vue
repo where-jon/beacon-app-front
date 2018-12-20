@@ -1,24 +1,26 @@
 <template>
-    <ul class="menu-groups">
-      <li class="menu-group" v-for="(group, i) in nav" :key="group.path" :to="'/' + group.base" active-class="active">
-        <ul class="menu-group-items">
-          <li class="menu-item title clearfix" @click.stop="onMenuClick(i)">
-            <span class="title"><i :class="group.icon"></i>&nbsp;&nbsp;{{ $t("label." + group.key) }}</span>
-            <span class="direction">
-              <i class="fa fa-angle-left" v-if="selectedItem !== i"></i>
-              <i class="fa fa-angle-down" v-if="selectedItem === i"></i>
-            </span>
+  <ul class="menu-groups">
+    <li v-for="(group, i) in nav" :key="group.path" class="menu-group" :to="'/' + group.base" active-class="active">
+      <ul class="menu-group-items">
+        <li class="menu-item title clearfix" @click.stop="onMenuClick(i)">
+          <span class="title">
+            <i :class="group.icon" />&nbsp;&nbsp;{{ $t("label." + group.key) }}
+          </span>
+          <span class="direction">
+            <i v-if="selectedItem !== i" class="fa fa-angle-left" />
+            <i v-if="selectedItem === i" class="fa fa-angle-down" />
+          </span>
+        </li>
+        <vue-slide-up-down :active="selectedItem === i">
+          <li v-for="(page, j) in group.pages" :key="page.key" :class="menuItemClasses">
+            <router-link class="bd-toc-link" :to="'/' + group.base + page.path">
+              <i :class="page.icon" class="ml-3 menu-item-icon" />&nbsp;{{ $t("label." + page.key) }}
+            </router-link>
           </li>
-          <vue-slide-up-down :active="selectedItem === i">
-            <li :class="menuItemClasses" v-for="(page, j) in group.pages" :key="page.key">
-              <router-link class="bd-toc-link" :to="'/' + group.base + page.path">
-                <i :class="page.icon" class="ml-3 menu-item-icon"></i>&nbsp;{{ $t("label." + page.key) }}
-              </router-link>
-            </li>
-          </vue-slide-up-down>
-        </ul>
-      </li>
-    </ul>
+        </vue-slide-up-down>
+      </ul>
+    </li>
+  </ul>
 </template>
 
 <script>

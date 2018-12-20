@@ -1,7 +1,7 @@
 <template>
   <div>
     <breadcrumb :items="items" />
-    <bulkedit :name="name" :id="id" :backPath="backPath" :app-service-path="appServicePath" />
+    <bulkedit :id="id" :name="name" :back-path="backPath" :app-service-path="appServicePath" />
   </div>
 </template>
 
@@ -64,23 +64,23 @@ export default {
   },
   methods: {
     async save(bulkSaveFunc) {
-      const MAIN_COL = ["roleId", "featureId"]
-      const PRIMARY_KEYS = ["roleId", "featureId"]
+      const MAIN_COL = ['roleId', 'featureId']
+      const PRIMARY_KEYS = ['roleId', 'featureId']
       await bulkSaveFunc(MAIN_COL, null, null, (entity, headerName, val, dummyKey) => {
         if (Util.equalsAny(headerName, PRIMARY_KEYS)) {
           if(!entity.roleFeaturePK){
             entity.roleFeaturePK = Object()
           }
-          if (headerName === "roleId" && Util.hasValue(val)) {
+          if (headerName === 'roleId' && Util.hasValue(val)) {
             entity.roleFeaturePK.roleId = Number(val)
             entity.roleId = Number(val)
           }
-          else if (headerName === "featureId" && Util.hasValue(val)) {
+          else if (headerName === 'featureId' && Util.hasValue(val)) {
             entity.roleFeaturePK.featureId = Number(val)
             entity.featureId = Number(val)
           }
         }
-        else if(headerName == "modeText") {
+        else if(headerName == 'modeText') {
           const modeOption = this.modeOptions.find((type) => type.text == val)
           entity.mode = modeOption? modeOption.value: val
         }
@@ -89,7 +89,7 @@ export default {
         }
         return dummyKey
       })
-      const roleFeatures = await AppServiceHelper.fetch("/meta/roleFeature", this.role.roleId)
+      const roleFeatures = await AppServiceHelper.fetch('/meta/roleFeature', this.role.roleId)
       this.replaceAS({roleFeatures})
     },
   }

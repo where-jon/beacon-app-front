@@ -32,7 +32,7 @@ export const auth = async (loginId, password, success, err) => {
 
 export const authByLocal = async (loginId, password, success, err) => {
   // console.log(md5(loginId + ":" + password)) // for create
-  if (_.includes(LOCAL_LOGIN.ID_PASS, md5(loginId + ":" + password))) {
+  if (_.includes(LOCAL_LOGIN.ID_PASS, md5(loginId + ':' + password))) {
     await login(loginId)
     success()
   }
@@ -43,14 +43,14 @@ export const authByLocal = async (loginId, password, success, err) => {
 
 export const authByAppService = async (loginId, password, success, err) => {
   try {
-    let frontRev = (await axios.get("/head.txt")).data
+    let frontRev = (await axios.get('/head.txt')).data
     let apsIndex = await HttpHelper.getAppServiceNoCrd('/') // pre network check
     let serviceRev = apsIndex.match(new RegExp('Head:([0-9a-zA-Z]+)'))
     serviceRev = serviceRev && serviceRev[1]
 
     let params = new URLSearchParams()
     let tenantCd = getTenantCd()
-    params.append('username', (tenantCd? tenantCd+":":"") + loginId) // username: Spring Boot Security reserved name
+    params.append('username', (tenantCd? tenantCd+':':'') + loginId) // username: Spring Boot Security reserved name
     params.append('password', password)
     let data = await HttpHelper.postAppService('/login', params)
 
@@ -63,7 +63,7 @@ export const authByAppService = async (loginId, password, success, err) => {
     let user = await HttpHelper.getAppService('/meta/user/currentUser')
     console.log(user)
     let featureList = _(user.role.roleFeatureList).map((roleFeature) => {
-        return {path: roleFeature.feature.path, mode: roleFeature.mode}
+      return {path: roleFeature.feature.path, mode: roleFeature.mode}
     }).sortBy((val) => val.path.length * -1).value()
     let menu = MenuHelper.fetchNav(featureList, tenantFeatureList, user.role)
 
@@ -120,7 +120,7 @@ export const checkSession = () => {
 
 export const getTenantCd = () => { // xxx.saas.ドメインの場合、先頭がtenantCdとなる。
   if (location.host.includes(APP.SAAS_DOMAIN)) {
-    return location.host.split(".")[0]
+    return location.host.split('.')[0]
   }
   return null
 }

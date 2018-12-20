@@ -1,7 +1,7 @@
 <template>
   <div>
     <breadcrumb :items="items" />
-    <m-list :params="params" :list="areaList" :another-page-params="anotherPageParams" ></m-list>
+    <m-list :params="params" :list="areaList" :another-page-params="anotherPageParams" />
   </div>
 </template>
 
@@ -33,16 +33,16 @@ export default {
         appServicePath: '/core/area',
         csvOut: true,
         fields: addLabelByKey(this.$i18n, [ 
-          {key: "areaId", sortable: true, tdClass: "action-rowdata" },
-          {key: "areaName", sortable: true, tdClass: "action-rowdata"},
-          {key: "thumbnail", tdClass: "action-rowdata" },
-          {key: "actions", thStyle: {width: '130px !important'}, tdClass: "action-rowdata" }
+          {key: 'areaId', sortable: true, tdClass: 'action-rowdata' },
+          {key: 'areaName', sortable: true, tdClass: 'action-rowdata'},
+          {key: 'thumbnail', tdClass: 'action-rowdata' },
+          {key: 'actions', thStyle: {width: '130px !important'}, tdClass: 'action-rowdata' }
         ]),
         initTotalRows: this.$store.state.app_service.areas.length
       },
       anotherPageParams: [
-        { name: "zone", id: "zoneList", jumpPath: "/master/zoneBlock/", sendParamNames: ["areaId"]},
-        { name: "location", id: "locationList", jumpPath: "/master/location/", sendParamNames: ["areaId"]}, 
+        { name: 'zone', id: 'zoneList', jumpPath: '/master/zoneBlock/', sendParamNames: ['areaId']},
+        { name: 'location', id: 'locationList', jumpPath: '/master/location/', sendParamNames: ['areaId']}, 
       ],
       items: [
         {
@@ -75,8 +75,8 @@ export default {
           ...val,
           zoneList: Util.hasValue(val.zoneList)? val.zoneList: [],
           locationList: Util.hasValue(val.locationList)? val.locationList: [],
-          mapImage: "",
-          thumbnail: ""
+          mapImage: '',
+          thumbnail: ''
         })) // omit images to avoid being filtering target
         if (payload && payload.done) {
           payload.done()

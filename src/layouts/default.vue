@@ -1,18 +1,18 @@
 <template>
   <div>
-    <m-nav></m-nav>
+    <m-nav />
     <b-container fluid>
-      <b-row class="flex-xl-nowrap2" v-if="!isLoginPage">
-        <b-col md="2" xl="2" id="bd-sidebar" class="d-none d-sm-none d-md-block" :class="sidebarClasses" v-if="showSidebar">
-          <m-sidebar></m-sidebar>
+      <b-row v-if="!isLoginPage" class="flex-xl-nowrap2">
+        <b-col v-if="showSidebar" id="bd-sidebar" md="2" xl="2" class="d-none d-sm-none d-md-block" :class="sidebarClasses">
+          <m-sidebar />
         </b-col>
         <b-col :md="showSidebar? 10: 12" class="pl-0 pr-0">
           <b-container fluid>
             <b-row>
               <b-col class="pb-md-3 pl-md-5 pl-xl-5 pr-xl-5 bd-content">
-                <nuxt/>
-                <div class="spinner-parent" v-if="showProgress">
-                  <vue-simple-spinner size="large" line-fg-color="#a09e9e" line-bg-color="#dee2e6"></vue-simple-spinner>
+                <nuxt />
+                <div v-if="showProgress" class="spinner-parent">
+                  <vue-simple-spinner size="large" line-fg-color="#a09e9e" line-bg-color="#dee2e6" />
                 </div>
               </b-col>
             </b-row>
@@ -61,18 +61,18 @@ export default {
     mSidebar, 
     mNav
   },
-  mounted() {
-    this.setDropdownMenuColor()
-  },
   data() {
     return {
       showSidebar: DISP.SHOW_SIDEBAR,
     }
   },
+  mounted() {
+    this.setDropdownMenuColor()
+  },
   computed: {
     errorMessage() {
       if (this.$store.state.error) {
-        return this.$i18n.t("message." + this.$store.state.error.key)
+        return this.$i18n.t('message.' + this.$store.state.error.key)
       }
       return ''
     },

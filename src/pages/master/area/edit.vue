@@ -2,31 +2,37 @@
   <div>
     <breadcrumb :items="items" />
     <div class="container">
-      <b-alert variant="info" dismissible :show="showInfo">{{ message }}</b-alert>
-      <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">
+      <b-alert variant="info" dismissible :show="showInfo">
+        {{ message }}
+      </b-alert>
+      <b-alert variant="danger" dismissible :show="showAlert" @dismissed="showAlert=false">
         <div v-html="message" />
       </b-alert>
 
       <b-row>
         <b-col md="8" offset-md="2">
-          <b-form @submit.prevent="onSubmit" v-if="show">
+          <b-form v-if="show" @submit.prevent="onSubmit">
             <b-form-group v-if="hasId">
               <label v-t="'label.areaId'" />
-              <input type="text" v-model="form.areaId" class="form-control" readonly="readonly" />
+              <input v-model="form.areaId" type="text" class="form-control" readonly="readonly">
             </b-form-group>
             <b-form-group>
               <label v-t="'label.areaName'" />
-              <input type="text" v-model="form.areaName" maxlength="20" class="form-control" required :readonly="!isEditable" />
+              <input v-model="form.areaName" type="text" maxlength="20" class="form-control" required :readonly="!isEditable">
             </b-form-group>
             <b-form-group>
               <label v-t="'label.map'" />
-              <b-form-file v-if="isEditable" @change="readImage" v-model="form.mapImage" ref="inputThumbnail" accept="image/jpeg, image/png, image/gif" :placeholder="$t('message.selectFile') "></b-form-file>
-              <b-button v-if="isEditable && form.mapImage" type="button" :variant="getButtonTheme()" @click="clearImage" class="float-right mt-3">{{ $i18n.tnl('label.clear') }}</b-button>
-              <img v-if="form.mapImage" ref="mapImage" :src="form.mapImage" width="100" class="mt-1 ml-3" />
+              <b-form-file v-if="isEditable" ref="inputThumbnail" v-model="form.mapImage" accept="image/jpeg, image/png, image/gif" :placeholder="$t('message.selectFile') " @change="readImage" />
+              <b-button v-if="isEditable && form.mapImage" type="button" :variant="getButtonTheme()" class="float-right mt-3" @click="clearImage">
+                {{ $i18n.tnl('label.clear') }}
+              </b-button>
+              <img v-if="form.mapImage" ref="mapImage" :src="form.mapImage" width="100" class="mt-1 ml-3">
             </b-form-group>
-            <b-button type="button" variant="outline-danger" @click="backToList" v-t="'label.back'" class="mr-2 my-1" />
-            <b-button v-if="isEditable" type="submit" :variant="getButtonTheme()" @click="beforeSubmit(false)" class="mr-2 my-1">{{ label }}</b-button>
-            <b-button v-if="isEditable && !isUpdate" type="submit" :variant="getButtonTheme()" @click="beforeSubmit(true)" class="my-1" v-t="'label.registerAgain'"/>
+            <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
+            <b-button v-if="isEditable" type="submit" :variant="getButtonTheme()" class="mr-2 my-1" @click="beforeSubmit(false)">
+              {{ label }}
+            </b-button>
+            <b-button v-if="isEditable && !isUpdate" v-t="'label.registerAgain'" type="submit" :variant="getButtonTheme()" class="my-1" @click="beforeSubmit(true)" />
           </b-form>
         </b-col>
       </b-row>
@@ -59,7 +65,7 @@ export default {
       backPath: '/master/area',
       appServicePath: '/core/area',
       updateOnlyNN: UPDATE_ONLY_NN.NULL,
-      form: ViewHelper.extract(this.$store.state.app_service.area, ["areaId", "areaName", "mapImage"]),
+      form: ViewHelper.extract(this.$store.state.app_service.area, ['areaId', 'areaName', 'mapImage']),
       items: [
         {
           text: this.$i18n.tnl('label.master'),

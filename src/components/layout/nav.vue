@@ -1,42 +1,46 @@
 <template>
   <b-navbar toggleable="md" type="dark" :class="topNavBarClasses">
     <!-- Responsive menu -->
-    <b-navbar-toggle target="nav_collapse" v-show="!isLoginPage && showNav"></b-navbar-toggle>  
+    <b-navbar-toggle v-show="!isLoginPage && showNav" target="nav_collapse" />  
 
     <!-- Title -->
     <b-navbar-brand>
       <div class="appTitle">
-        <img src="/toplogo.png" width="220" height="36" v-if="showLogo" />
-        <span v-if="!showLogo" v-t="'label.title'"></span>
+        <img v-if="showLogo" src="/toplogo.png" width="220" height="36">
+        <span v-if="!showLogo" v-t="'label.title'" />
       </div>
     </b-navbar-brand>
 
-    <b-collapse ref="collapse" is-nav id="nav_collapse" v-show="!isLoginPage && showNav">
-
+    <b-collapse v-show="!isLoginPage && showNav" id="nav_collapse" ref="collapse" is-nav>
       <!-- left (navi dropdown menu) -->
       <b-navbar-nav>
         <b-nav-item-dropdown v-for="group in this.$store.state.menu" :key="group.path">
           <template slot="button-content">
             <em v-t="'label.' + group.key" />
           </template>
-          <b-dropdown-item v-for="page in group.pages" :key="page.key" href="#" @click="move('/' + group.base + page.path)" v-t="'label.' + page.key" :class="navbarClasses"/>
+          <b-dropdown-item v-for="page in group.pages" :key="page.key" v-t="'label.' + page.key" href="#" :class="navbarClasses" @click="move('/' + group.base + page.path)" />
         </b-nav-item-dropdown>
       </b-navbar-nav>
 
       <!-- right -->
-      <b-navbar-nav class="ml-auto" v-show="!isLoginPage && showNav">
+      <b-navbar-nav v-show="!isLoginPage && showNav" class="ml-auto">
         <!-- user & logout -->
         <b-nav-item-dropdown right>
           <template slot="button-content">
-            <i class="fa fa-user" aria-hidden="true"></i>&nbsp;<em>{{ loginId }}</em>
+            <i class="fa fa-user" aria-hidden="true" />&nbsp;<em>{{ loginId }}</em>
           </template>
-          <b-dropdown-item href="#" @click="move('/setting/personal')"><i class="fas fa-user-cog menu-item-icon"></i>&nbsp;{{ $t('label.personal') }}</b-dropdown-item>
-          <b-dropdown-item href="#" @click="logout"><i class="fas fa-sign-out-alt menu-item-icon"></i>&nbsp;{{ $t('label.logout') }}</b-dropdown-item>
-          <b-dropdown-divider/>
-          <b-dropdown-item @click="versionClick">{{ version }}</b-dropdown-item>
+          <b-dropdown-item href="#" @click="move('/setting/personal')">
+            <i class="fas fa-user-cog menu-item-icon" />&nbsp;{{ $t('label.personal') }}
+          </b-dropdown-item>
+          <b-dropdown-item href="#" @click="logout">
+            <i class="fas fa-sign-out-alt menu-item-icon" />&nbsp;{{ $t('label.logout') }}
+          </b-dropdown-item>
+          <b-dropdown-divider />
+          <b-dropdown-item @click="versionClick">
+            {{ version }}
+          </b-dropdown-item>
         </b-nav-item-dropdown>
       </b-navbar-nav>
-
     </b-collapse>
   </b-navbar>
 </template>
@@ -49,7 +53,7 @@ import { DISP, APP } from '../../sub/constant/config'
 import { LOGIN_MODE } from '../../sub/constant/Constants'
 import { getThemeClasses } from '../../sub/helper/ThemeHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
-import commonmixinVue from '../mixin/commonmixin.vue';
+import commonmixinVue from '../mixin/commonmixin.vue'
 
 export default {
   mixin: [commonmixinVue],
@@ -62,9 +66,9 @@ export default {
     }
   },
   mounted() {
-      window.addEventListener('resize', () => {
-        this.showNav = HtmlUtil.isMobile() || DISP.SHOW_NAV
-      })
+    window.addEventListener('resize', () => {
+      this.showNav = HtmlUtil.isMobile() || DISP.SHOW_NAV
+    })
   },
   computed: {
     isLoginPage() {
@@ -85,9 +89,9 @@ export default {
     },
     topNavBarClasses() {
       let classes = {}
-      Object.assign(classes , this.navbarClasses);
-      if(this.showNav && HtmlUtil.getLangShort() != "ja"){
-        classes["topMenuNavbar"] = true
+      Object.assign(classes , this.navbarClasses)
+      if(this.showNav && HtmlUtil.getLangShort() != 'ja'){
+        classes['topMenuNavbar'] = true
       }
       return classes
     },
@@ -101,8 +105,8 @@ export default {
       this.$router.push(page)
     },
     versionClick() {
-      console.log("app service revision:", this.$store.state.serviceRev)
-      console.log("app front revision:", this.$store.state.frontRev)
+      console.log('app service revision:', this.$store.state.serviceRev)
+      console.log('app front revision:', this.$store.state.frontRev)
     }
   }
 }

@@ -1,26 +1,31 @@
 <template>
   <div>
     <div class="container">
-
       <b-alert variant="info" dismissible :show="showInfo">
         {{ message }}
-        <div v-for="thumbnail in form.thumbnails" :key="thumbnail.id">ID:{{thumbnail.id}}({{thumbnail.name}})</div>
+        <div v-for="thumbnail in form.thumbnails" :key="thumbnail.id">
+          ID:{{ thumbnail.id }}({{ thumbnail.name }})
+        </div>
       </b-alert>
       <b-alert variant="warning" dismissible :show="showWarn">
         {{ warnMessage }}
-        <div v-for="warnThumbnail in form.warnThumbnails" :key="warnThumbnail.id">ID:{{warnThumbnail.id}}</div>
+        <div v-for="warnThumbnail in form.warnThumbnails" :key="warnThumbnail.id">
+          ID:{{ warnThumbnail.id }}
+        </div>
       </b-alert>
-      <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false" >
+      <b-alert variant="danger" dismissible :show="showAlert" @dismissed="showAlert=false">
         <div v-html="message" />
       </b-alert>
 
-      <b-form @submit.prevent="onSubmit" v-if="show">
+      <b-form v-if="show" @submit.prevent="onSubmit">
         <b-form-group>
           <label v-t="'label.zipFile'" />
-          <b-form-file :key="formKey" v-model="form.zipFile" @change="loadThumbnail" accept=".zip" :placeholder="$t('message.selectFile') " :disabled="loading" ></b-form-file>
+          <b-form-file :key="formKey" v-model="form.zipFile" accept=".zip" :placeholder="$t('message.selectFile') " :disabled="loading" @change="loadThumbnail" />
         </b-form-group>
-        <b-button type="submit" :variant="getButtonTheme()" @click="register(true)" :disabled="!submittable" >{{ label }}</b-button>
-        <b-button type="button" variant="outline-danger" @click="backToList" class="ml-2" v-t="'label.back'"/>
+        <b-button type="submit" :variant="getButtonTheme()" :disabled="!submittable" @click="register(true)">
+          {{ label }}
+        </b-button>
+        <b-button v-t="'label.back'" type="button" variant="outline-danger" class="ml-2" @click="backToList" />
       </b-form>
     </div>
   </div>
@@ -29,7 +34,7 @@
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import _ from 'lodash'
-import commonmixinVue from '../mixin/commonmixin.vue';
+import commonmixinVue from '../mixin/commonmixin.vue'
 import editmixinVue from '../mixin/editmixin.vue'
 import { getButtonTheme } from '../../sub/helper/ThemeHelper'
 import { getTheme } from '../../sub/helper/ThemeHelper'
@@ -41,8 +46,8 @@ import JsZip from 'jszip'
 let fileReader
 
 export default {
-  props: ["name", "id", "backPath", "appServicePath"],
   mixins: [ editmixinVue, commonmixinVue ],
+  props: ['name', 'id', 'backPath', 'appServicePath'],
   data() {
     return {
       mutex: false,
@@ -71,11 +76,11 @@ export default {
             const id = this.getFileName(key)
             const target = this.$parent.$options.methods.search.call(this.$parent, id)
             if(target){
-              zip.file(key).async("base64").then((val) =>{
+              zip.file(key).async('base64').then((val) =>{
                 let imgInfo = {
                   ...target,
-                  type: key.slice(key.lastIndexOf(".") + 1),
-                  thumbnail: `data:image/${key.slice(key.lastIndexOf(".") + 1)};base64,${val}`
+                  type: key.slice(key.lastIndexOf('.') + 1),
+                  thumbnail: `data:image/${key.slice(key.lastIndexOf('.') + 1)};base64,${val}`
                 }
                 if(this.$parent.$options.methods.addLoadImage){
                   this.$parent.$options.methods.addLoadImage.call(this.$parent, imgInfo)
@@ -102,7 +107,7 @@ export default {
       }
     },
     getFileName(key){
-      return key.slice(key.lastIndexOf("/") + 1, key.lastIndexOf("."))
+      return key.slice(key.lastIndexOf('/') + 1, key.lastIndexOf('.'))
     },
     isImageFile(key){
       return Util.hasValue(key) && /^.*\.(png)|(jpg)|(jpeg)|(gif)$/.test(key) &&
@@ -119,7 +124,7 @@ export default {
     },
     uploadMessage(){
       if(this.loading){
-        this.message = `${this.$i18n.tnl("message.loadingFile", {now: this.form.thumbnails.length, all: this.fileCount})}`
+        this.message = `${this.$i18n.tnl('message.loadingFile', {now: this.form.thumbnails.length, all: this.fileCount})}`
         this.showInfo = true
         this.showWarn = false
         this.showAlert = false
@@ -127,10 +132,10 @@ export default {
       }
       const hasUploadThumbnails = this.form && Util.hasValue(this.form.thumbnails)
       this.message = hasUploadThumbnails?
-        `${this.$i18n.tnl("message.uploadData", {val: this.form.thumbnails.length})}`:
-        `${this.$i18n.tnl("message.uploadNoData")}`
+        `${this.$i18n.tnl('message.uploadData', {val: this.form.thumbnails.length})}`:
+        `${this.$i18n.tnl('message.uploadNoData')}`
       const hasUploadWarnThumbnails = this.form && Util.hasValue(this.form.warnThumbnails)
-      this.warnMessage = hasUploadWarnThumbnails? `${this.$i18n.tnl("message.uploadWarnData", {val: this.form.warnThumbnails.length})}`: ""
+      this.warnMessage = hasUploadWarnThumbnails? `${this.$i18n.tnl('message.uploadWarnData', {val: this.form.warnThumbnails.length})}`: ''
       this.showInfo = hasUploadThumbnails
       this.showAlert = !hasUploadThumbnails || Util.hasValue(this.errorThumbnails)
       this.showWarn = hasUploadWarnThumbnails
@@ -150,7 +155,7 @@ export default {
       if(Util.hasValue(e.target.files)){
         const file = e.target.files[0]
         if (file.size > APP.MAX_IMAGE_SIZE) {
-          this.message = this.$i18n.tnl("message.uploadMax", {target: Math.floor(APP.MAX_IMAGE_SIZE/1024/1024)})
+          this.message = this.$i18n.tnl('message.uploadMax', {target: Math.floor(APP.MAX_IMAGE_SIZE/1024/1024)})
           this.showAlert = true
           window.scrollTo(0, 0)
           return

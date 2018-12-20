@@ -1,14 +1,14 @@
 <template>
-  <gateway :isDev="true" />
+  <gateway :is-dev="true" />
 </template>
 
 <script>
-  import gateway from '../monitor/gateway.vue'
+import gateway from '../monitor/gateway.vue'
 
-  export default {
-    components: { gateway },
-    data () {
-      return {}
-    }
+export default {
+  components: { gateway },
+  data () {
+    return {}
   }
+}
 </script>

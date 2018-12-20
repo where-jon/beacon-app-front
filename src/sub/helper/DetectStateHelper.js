@@ -37,26 +37,26 @@ export const getState = (type, updatetime) => {
   let TODAY_UNDETECT_TIME = getTodayUndetectTime()
   let LOST_TIME
   switch(type) {
-    case 'tx':
-      LOST_TIME = APP.LOST_TIME
-      UNDETECT_TIME = APP.UNDETECT_TIME
-      break
-    case 'exb':
-      LOST_TIME = APP.TELEMETRY.LOST_TIME
-      UNDETECT_TIME = APP.TELEMETRY.UNDETECT_TIME
-      break
-    case 'gw':
-      LOST_TIME = APP.GATEWAY.LOST_TIME
-      UNDETECT_TIME = APP.GATEWAY.UNDETECT_TIME
-      break
+  case 'tx':
+    LOST_TIME = APP.LOST_TIME
+    UNDETECT_TIME = APP.UNDETECT_TIME
+    break
+  case 'exb':
+    LOST_TIME = APP.TELEMETRY.LOST_TIME
+    UNDETECT_TIME = APP.TELEMETRY.UNDETECT_TIME
+    break
+  case 'gw':
+    LOST_TIME = APP.GATEWAY.LOST_TIME
+    UNDETECT_TIME = APP.GATEWAY.UNDETECT_TIME
+    break
   }
 
   const now = !DEV.USE_MOCK_EXC? new Date().getTime(): mock.positions_conf.start
   const time = now - new Date(updatetime).getTime()
   let state = time > UNDETECT_TIME? DETECT_STATE.UNDETECT:
     time > TODAY_UNDETECT_TIME? DETECT_STATE.TODAY_UNDETECT:
-    time > LOST_TIME? DETECT_STATE.LOST:
-    DETECT_STATE.DETECTED
+      time > LOST_TIME? DETECT_STATE.LOST:
+        DETECT_STATE.DETECTED
 
   // console.debug(updatetime, time, state)
   return state

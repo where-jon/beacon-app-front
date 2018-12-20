@@ -5,7 +5,7 @@ import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 export default {
   methods: {
     concatNames(names){
-      let allNames = ""
+      let allNames = ''
       for(let idx = 0; idx < names.length; idx++) {
         if(idx != 0){
           allNames = `${allNames}, `
@@ -16,7 +16,7 @@ export default {
     },
     validateRequire(param){
       if(!param.values.find((value) => value != null)){
-        param.message = this.$i18n.tnl((1 < param.names.length? "message.requiredMore": "message.required"), {target: this.concatNames(param.names)})
+        param.message = this.$i18n.tnl((1 < param.names.length? 'message.requiredMore': 'message.required'), {target: this.concatNames(param.names)})
         return param
       }
       return null
@@ -25,7 +25,7 @@ export default {
       for(let idx = 0; idx < param.values.length - 1; idx++){
         if(param.values[idx] > param.values[idx + 1] ||
           (!param.equal && param.values[idx] == param.values[idx + 1])){
-          param.message = this.$i18n.tnl("message.invalid", {target: this.concatNames(param.names)})
+          param.message = this.$i18n.tnl('message.invalid', {target: this.concatNames(param.names)})
           return param
         }
       }
@@ -37,7 +37,7 @@ export default {
         total += param.values[idx]
       }
       if(total > param.base || (!param.equal && total == param.base)){
-        param.message = this.$i18n.tnl("message.invalidLessHours", {target: this.concatNames(param.names), max: param.displayBase? param.displayBase: param.base})
+        param.message = this.$i18n.tnl('message.invalidLessHours', {target: this.concatNames(param.names), max: param.displayBase? param.displayBase: param.base})
         return param
       }
       return null
@@ -46,13 +46,13 @@ export default {
       const errors = []
       params.forEach((param) => {
         let result = null
-        if(param.type == "require"){
+        if(param.type == 'require'){
           result = this.validateRequire(param)
         }
-        else if(param.type == "asc"){
+        else if(param.type == 'asc'){
           result = this.validateAsc(param)
         }
-        else if(param.type == "less"){
+        else if(param.type == 'less'){
           result = this.validateLess(param)
         }
         if(result){
@@ -63,7 +63,7 @@ export default {
     },
     formatValidateMessage(errors){
       const errorMessages = errors.map((error) => error.message)
-      return errorMessages.filter((errorMessage, index) => errorMessages.indexOf(errorMessage) == index).map((errorMessage) => errorMessage).join("<br>")
+      return errorMessages.filter((errorMessage, index) => errorMessages.indexOf(errorMessage) == index).map((errorMessage) => errorMessage).join('<br>')
     },
   }
 }

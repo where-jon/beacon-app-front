@@ -1,7 +1,7 @@
 <template>
   <div>
     <breadcrumb :items="items" />
-    <bulkedit ref="bulkEdit" :name="name" :id="id" :backPath="backPath" :app-service-path="appServicePath" />
+    <bulkedit :id="id" ref="bulkEdit" :name="name" :back-path="backPath" :app-service-path="appServicePath" />
   </div>
 </template>
 
@@ -53,7 +53,7 @@ export default {
   },
   methods: {
     resetId(entity, dummyKey){
-      const targetEntity = Util.getEntityFromIds(this.exbs, entity, ["exbId", "deviceNum", "deviceId", "deviceIdX"])
+      const targetEntity = Util.getEntityFromIds(this.exbs, entity, ['exbId', 'deviceNum', 'deviceId', 'deviceIdX'])
       entity.exbId = targetEntity && targetEntity.exbId? targetEntity.exbId: dummyKey--
       if(!entity.deviceId){
         if(entity.deviceNum){
@@ -76,15 +76,15 @@ export default {
       return dummyKey
     },
     async save(bulkSaveFunc) {
-      const MAIN_COL = APP.EXB_WITH_EXBID? "exbId": APP.EXB_WITH_DEVICE_ID? "deviceId": APP.EXB_WITH_DEVICE_NUM? "deviceNum": "deviceIdX"
-      const LOCATION = ["locationId","areaName","locationName","visible","txViewType","posId","x","y", "zoneName"]
-      const ZONE = ["zoneName"]
-      const NUMBER_TYPE_LIST = ["deviceId", "exbId", "areaId", "locationId", "x", "y", "z", "txViewType"]
-      const BOOL_TYPE_LIST = ["visible"]
+      const MAIN_COL = APP.EXB_WITH_EXBID? 'exbId': APP.EXB_WITH_DEVICE_ID? 'deviceId': APP.EXB_WITH_DEVICE_NUM? 'deviceNum': 'deviceIdX'
+      const LOCATION = ['locationId','areaName','locationName','visible','txViewType','posId','x','y', 'zoneName']
+      const ZONE = ['zoneName']
+      const NUMBER_TYPE_LIST = ['deviceId', 'exbId', 'areaId', 'locationId', 'x', 'y', 'z', 'txViewType']
+      const BOOL_TYPE_LIST = ['visible']
 
       await bulkSaveFunc(MAIN_COL, NUMBER_TYPE_LIST, BOOL_TYPE_LIST, (entity, headerName, val, dummyKey) => {
         if (Util.equalsAny(headerName, LOCATION)) {
-          if (headerName == "locationId" && !val) {
+          if (headerName == 'locationId' && !val) {
             val = dummyKey--          
           }
           if (!entity.location) {
@@ -103,10 +103,10 @@ export default {
               }
             }]
           }
-          else if(headerName == "posId"){
+          else if(headerName == 'posId'){
             const posIdVal = Number(val)
             if(isNaN(posIdVal)){
-              entity.location["posIdName"] = val
+              entity.location['posIdName'] = val
             }
             entity.location[headerName] = posIdVal
           }
@@ -114,7 +114,7 @@ export default {
             entity.location[headerName] = val
           }
         }
-        else if (headerName == "sensor") {
+        else if (headerName == 'sensor') {
           const sensor = this.sensorOptionsExb.find((option) => option.text == val)
           if(sensor && sensor.value != null){
             entity.exbSensorList = [{exbSensorPK: {sensorId: sensor.value}, sensorName: val}]
@@ -127,10 +127,10 @@ export default {
           if (headerName == MAIN_COL && !val) {
             val = dummyKey--
           }
-          if(headerName == "enabled"){
+          if(headerName == 'enabled'){
             const enabledVal = Util.str2booleanComplate(val)
             if(typeof enabledVal != 'boolean'){
-              entity["enabledName"] = val
+              entity['enabledName'] = val
             }
             val = Util.str2boolean(val)
           }
@@ -139,7 +139,7 @@ export default {
         return dummyKey
       },
       (entity, dummyKey) => this.resetId(entity, dummyKey)
-    )},
+      )},
   }
 }
 </script>
