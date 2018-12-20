@@ -169,6 +169,24 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
 
   TEMPERATURE_LINE_COLOR: "#fc5800",// 温度グラフの線色
   HUMIDITY_LINE_COLOR: "#7da6e8",// 湿度グラフの線色
+  PIR_LINE_COLOR: "#fc5800",// 人感センサグラフの線色
+  THERMOPILE_LINE_COLOR: "#fc5800",// サーモパイルセンサグラフの線色
+  LED_LINE_COLOR: "#fc5800",// LEDセンサグラフの線色
+  MAGNET_LINE_COLOR: "#fc5800",// マグネットセンサグラフの線色
+  H_BLOOD_PRESSURE_LINE_COLOR: "#fc5800",// MEDiTAGセンサグラフの線色
+  L_BLOOD_PRESSURE_LINE_COLOR: "#7da6e8",// 湿度グラフの線色
+  HEART_RATE_LINE_COLOR: "#7de8a6",// 湿度グラフの線色
+  STEP_LINE_COLOR: "#7da6e8",// 歩数グラフの線色
+  DOWN_COUNT_LINE_COLOR: "#fc5800",// 転倒数グラフの線色
+
+  BLOOD_PRESSURE_MAX: 200,// 血圧最大メモリ
+  BLOOD_PRESSURE_STEP: 25,// 血圧メモリ間隔
+  HEART_RATE_MAX: 200,// 心拍最大メモリ
+  HEART_RATE_STEP: 25,// 心拍メモリ間隔
+  STEP_MAX: 200,// 歩数最大メモリ
+  STEP_STEP: 25,// 歩数メモリ間隔
+  DOWN_COUNT_MAX: 200,// 転倒数メモリ
+  DOWN_COUNT_STEP: 25,// 転倒数メモリ間隔
 
   PIR_R_SIZE: 26,  // PIR表示時の円の半径
   PIR_MIN_COUNT: 2, // PIRでの存在条件の最小カウント値

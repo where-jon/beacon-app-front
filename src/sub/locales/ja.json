@@ -316,6 +316,18 @@
 
     "heatmapPosition": "ヒートマップ(測位)",
 
+    "sensorGraph": "センサーグラフ",
+    "sumUnit": "集計単位",
+    "sumTarget": "集計対象",
+    "minute": "分",
+    "hour": "時間",
+    "day": "日",
+    "immediate": "直近値",
+    "average": "平均値",
+    "max": "最大値",
+    "min": "最小値",
+    "blood_pressure": "血圧",
+
     "allRejection": "すべて拒否",
     "systemReadOnly": "システムの読み取りのみ許可",
     "readOnly": "読み取りのみ許可",

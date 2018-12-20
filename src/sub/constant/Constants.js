@@ -113,6 +113,27 @@ export const SENSOR = {
   }
 }
 
+export const SUM_UNIT = {
+  getOptions(){
+    return [
+      {value:1, text: i18n.t('label.minute'), param: "minute"},
+      {value:2, text: i18n.t('label.hour'), param: "hour"},
+      {value:3, text: i18n.t('label.day'), param: "day"},
+    ]
+  }
+}
+
+export const SUM_TARGET = {
+  getOptions(){
+    return [
+      {value:1, text: i18n.t('label.immediate')},
+      {value:2, text: i18n.t('label.average')},
+      {value:3, text: i18n.t('label.max')},
+      {value:4, text: i18n.t('label.min')},
+    ]
+  }
+}
+
 export const DISCOMFORT = {
   HOT: "hot",
   COMFORT: "comfort",
@@ -382,6 +403,12 @@ export const MENU = [
         path: 'heatmap-position',
         feature: '/sum/heatmapPosition',
         icon: 'fas fas fa-fire',
+      },
+      {
+        key: 'sensorGraph',
+        path: 'sensorGraph',
+        feature: '/sum/sensorGraph',
+        icon: 'fas fa-chart-bar',
       },
     ]
   },
