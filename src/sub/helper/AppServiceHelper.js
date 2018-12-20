@@ -1,8 +1,7 @@
 import _ from 'lodash'
-import { DEV, APP_SERVICE } from '../constant/config'
+import { DEV } from '../constant/config'
 import { UPDATE_ONLY_NN, IGNORE } from '../constant/Constants'
 import * as mock from '../../assets/mock/mock'
-import { sleep } from '../util/Util'
 import * as HttpHelper from './HttpHelper'
 
 export const fetchList = async (target, sortBy, pMock) => {

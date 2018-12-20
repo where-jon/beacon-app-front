@@ -1,13 +1,10 @@
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-import { Shape, Stage, Container, Bitmap, Text, Touch } from '@createjs/easeljs/dist/easeljs.module'
-import { Tween, Ticker } from '@createjs/tweenjs/dist/tweenjs.module'
-import { EventBus } from '../../sub/helper/EventHelper'
+import { mapState, mapMutations } from 'vuex'
+import { Stage, Bitmap, Touch } from '@createjs/easeljs/dist/easeljs.module'
 import { DISP } from '../../sub/constant/config.js'
 import * as Util from '../../sub/util/Util'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
-import * as PositionHelper from '../../sub/helper/PositionHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import reloadmixinVue from './reloadmixin.vue'
 

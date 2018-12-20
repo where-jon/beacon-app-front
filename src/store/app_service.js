@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import {getOptions, getValue} from '../sub/util/Util'
+import {getOptions} from '../sub/util/Util'
 import {CATEGORY} from '../sub/constant/Constants'
 
 export const state = () => ({

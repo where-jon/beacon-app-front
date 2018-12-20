@@ -8,20 +8,18 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import mList from '../../components/page/list.vue'
 import listmixinVue from '../../components/mixin/listmixin.vue'
-import * as mock from '../../assets/mock/mock'
-import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as PositionHelper from '../../sub/helper/PositionHelper'
 import { addLabelByKey } from '../../sub/helper/ViewHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
-import { DETECT_STATE, BATTERY_STATE, BATTERY_BOUNDARY, EXTRA_NAV } from '../../sub/constant/Constants'
+import { BATTERY_STATE, BATTERY_BOUNDARY, EXTRA_NAV } from '../../sub/constant/Constants'
 import * as Util from '../../sub/util/Util'
-import { APP, DISP, DEV } from '../../sub/constant/config.js'
+import { APP } from '../../sub/constant/config.js'
 
 export default {
   components: {

@@ -12,7 +12,7 @@
           </span>
         </li>
         <vue-slide-up-down :active="selectedItem === i">
-          <li v-for="(page, j) in group.pages" :key="page.key" :class="menuItemClasses">
+          <li v-for="page in group.pages" :key="page.key" :class="menuItemClasses">
             <router-link class="bd-toc-link" :to="'/' + group.base + page.path">
               <i :class="page.icon" class="ml-3 menu-item-icon" />&nbsp;{{ $t("label." + page.key) }}
             </router-link>
@@ -25,7 +25,6 @@
 
 <script>
 
-import { DISP, DEV } from '../../sub/constant/config'
 import { getThemeClasses } from '../../sub/helper/ThemeHelper'
 import VueSlideUpDown from 'vue-slide-up-down'
 
@@ -45,7 +44,6 @@ export default {
       return this.$store.state.loginId
     },
     menuItemClasses () {
-      const storeTheme = this.$store.state.setting.theme
       return {
         'menu-item': true,
         item: true,

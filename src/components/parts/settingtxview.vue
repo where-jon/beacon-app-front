@@ -36,10 +36,8 @@
 </template>
 
 <script>
-import { TX_VIEW_TYPES, txViewTypes } from '../../sub/constant/Constants'
+import { TX_VIEW_TYPES } from '../../sub/constant/Constants'
 import { DISP } from '../../sub/constant/config'
-import * as ViewHelper from '../../sub/helper/ViewHelper'
-import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 
 export default {
   props: {

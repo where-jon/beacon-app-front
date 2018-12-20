@@ -1,4 +1,3 @@
-import Vue from 'vue'
 import Encoding from 'encoding-japanese'
 import { str2Array } from './Util'
 import * as HttpHelper from '../../sub/helper/HttpHelper'

@@ -93,10 +93,10 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapMutations } from 'vuex'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import pagetitle from '../../../components/layout/pagetitle.vue'
-import { APP, DISP } from '../../../sub/constant/config'
+import { APP } from '../../../sub/constant/config'
 import { THEME, CHAR_SET } from '../../../sub/constant/Constants'
 import { getTheme, getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import { getCharSet } from '../../../sub/helper/CharSetHelper'
@@ -160,7 +160,6 @@ export default {
   },
   computed: {
     theme () {
-      const storeTheme = this.$store.state.setting.theme
       return 'outline-' + getButtonTheme()
     },
     hasError() {

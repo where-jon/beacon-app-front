@@ -46,8 +46,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-import _ from 'lodash'
+import { mapState } from 'vuex'
 import * as AuthHelper from '../../sub/helper/AuthHelper'
 import { DISP, APP } from '../../sub/constant/config'
 import { LOGIN_MODE } from '../../sub/constant/Constants'
@@ -84,7 +83,6 @@ export default {
       'pots',
     ]),
     navbarClasses() {
-      const storeTheme = this.$store.state.setting.theme
       return getThemeClasses()
     },
     topNavBarClasses() {

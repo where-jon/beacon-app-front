@@ -23,9 +23,8 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import { Shape } from '@createjs/easeljs/dist/easeljs.module'
-import { DISP, APP } from '../../sub/constant/config'
+import { DISP } from '../../sub/constant/config'
 import { Container } from '@createjs/easeljs/dist/easeljs.module'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import analysisSearch from '../../components/parts/analysissearch.vue'

@@ -6,7 +6,6 @@ import * as mock from '../../assets/mock/mock.js'
 
 const iconsUnitNum = 9
 const tileLayoutIconsNum = 5
-const TILE_LAYOUT_MAXICONS = 25
 const PIdiv180 = Math.PI / 180
 const diameter = DISP.TX_R * 2
 const angle = 45

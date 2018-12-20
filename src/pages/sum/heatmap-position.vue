@@ -28,7 +28,6 @@
 
 <script>
 import h337 from 'heatmap.js'
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import { DISP } from '../../sub/constant/config'
 import * as Util from '../../sub/util/Util'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'

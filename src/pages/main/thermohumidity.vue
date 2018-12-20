@@ -29,17 +29,14 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as SensorHelper from '../../sub/helper/SensorHelper'
 import txdetail from '../../components/parts/txdetail.vue'
-import { DEV, DISP, APP } from '../../sub/constant/config'
+import { DEV, DISP } from '../../sub/constant/config'
 import * as mock from '../../assets/mock/mock'
-import * as Util from '../../sub/util/Util'
 import { SENSOR, DISCOMFORT } from '../../sub/constant/Constants'
-import { Shape, Stage, Container, Bitmap, Text, Touch } from '@createjs/easeljs/dist/easeljs.module'
-import { Tween, Ticker } from '@createjs/tweenjs/dist/tweenjs.module'
+import { Shape, Container, Bitmap, Text } from '@createjs/easeljs/dist/easeljs.module'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import cold from '../../assets/icon/cold.png'
@@ -175,7 +172,6 @@ export default {
       stage.enableMouseOver()
 
       exbBtn.on('click', async (evt) =>{
-        let exbBtn = evt.currentTarget
         if (DEV.USE_MOCK_EXC) {
           let key = '/basic/sensorHistory/1/1/today/hour'
           var pMock = mock[key]
@@ -189,7 +185,7 @@ export default {
       stage.update()
     },
     showChart(sensorData) {
-      const dayChart = SensorHelper.showThermoHumidityChart('dayChart', sensorData.data, this.$i18n)
+      SensorHelper.showThermoHumidityChart('dayChart', sensorData.data, this.$i18n)
       this.isShownChart = true
       this.chartTitle = this.$i18n.tnl('message.monthDayTemperature', {month: sensorData.month, day: sensorData.day})
     }

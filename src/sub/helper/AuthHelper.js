@@ -6,7 +6,7 @@ import * as StateHelper from './StateHelper'
 import * as MenuHelper from './MenuHelper'
 import * as ConfigHelper from './ConfigHelper'
 import { APP, LOCAL_LOGIN } from '../constant/config'
-import { LOGIN_MODE, MENU } from '../constant/Constants'
+import { LOGIN_MODE } from '../constant/Constants'
 
 let router
 let store

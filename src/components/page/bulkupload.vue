@@ -32,14 +32,9 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-import _ from 'lodash'
 import commonmixinVue from '../mixin/commonmixin.vue'
 import editmixinVue from '../mixin/editmixin.vue'
-import { getButtonTheme } from '../../sub/helper/ThemeHelper'
-import { getTheme } from '../../sub/helper/ThemeHelper'
 import { APP } from '../../sub/constant/config.js'
-import Encoding from 'encoding-japanese'
 import * as Util from '../../sub/util/Util'
 import JsZip from 'jszip'
 
@@ -68,7 +63,7 @@ export default {
     this.submittable = false
     fileReader = new FileReader()
     fileReader.onload = () =>{
-      const contents = JsZip.loadAsync(fileReader.result, {base64: true}).then((zip) => {
+      JsZip.loadAsync(fileReader.result, {base64: true}).then((zip) => {
         this.countFile(zip)
         this.uploadMessage()
         for(let key in zip.files){

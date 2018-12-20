@@ -49,8 +49,6 @@
 
 <script>
 import { DISP } from '../../sub/constant/config'
-import { getTxDetailItems } from '../../sub/helper/PositionHelper'
-import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import sensor from './sensor.vue'
 import txdetailmodal from './txdetailmodal.vue'
 

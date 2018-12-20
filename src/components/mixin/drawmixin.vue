@@ -1,6 +1,5 @@
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import { Shape, Container, Text } from '@createjs/easeljs/dist/easeljs.module'
 
 export default {

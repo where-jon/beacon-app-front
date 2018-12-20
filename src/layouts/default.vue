@@ -31,12 +31,9 @@
 <script>
 
 import Vue from 'vue'
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-import _ from 'lodash'
-import { EventBus } from '../sub/helper/EventHelper'
+import { mapState } from 'vuex'
 import { getThemeColor, getThemeClasses } from '../sub/helper/ThemeHelper'
 import { APP, DISP } from '../sub/constant/config'
-import styles from '../sub/constant/config.scss'
 
 import mSidebar from '../components/layout/sidebar.vue'
 import mNav from '../components/layout/nav.vue'
@@ -88,7 +85,6 @@ export default {
       'error',
     ]),
     sidebarClasses () {
-      const storeTheme = this.$store.state.setting.theme
       return {
         'bd-sidebar': true,
         ...getThemeClasses()

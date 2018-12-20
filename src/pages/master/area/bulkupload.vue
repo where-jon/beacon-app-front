@@ -6,8 +6,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-import _ from 'lodash'
+import { mapState } from 'vuex'
 import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkupload from '../../../components/page/bulkupload.vue'
@@ -64,7 +63,7 @@ export default {
     },
     async save(thumbnails) {
       await Util.sleep(100)
-      let ret = await AppServiceHelper.bulkSave(this.appServicePath, thumbnails)
+      await AppServiceHelper.bulkSave(this.appServicePath, thumbnails)
       thumbnails.forEach((thumbnail) => {
         StateHelper.loadAreaImage(thumbnail.id, true)
       })

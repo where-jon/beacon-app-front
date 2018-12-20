@@ -1,6 +1,5 @@
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 
 export default {
   methods: {

@@ -45,12 +45,11 @@
 
 <script>
 
-import Breadcrumb from 'bootstrap-vue/es/components/breadcrumb'
 import { getThemeColor, getThemeClasses } from '../../sub/helper/ThemeHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as AuthHelper from '../../sub/helper/AuthHelper'
 import { EventBus } from '../../sub/helper/EventHelper'
-import { DISP, APP } from '../../sub/constant/config'
+import { APP } from '../../sub/constant/config'
 import LegendItem from '../parts/legend.vue'
 
 export default {
@@ -95,7 +94,6 @@ export default {
       return 'fas fa-sync-alt' + (!this.isLoad ? '' : ' fa-spin')
     },
     extNavClasses() {
-      const storeTheme = this.$store.state.setting.theme
       const theme = getThemeClasses()
       return _.findKey(theme, (val) => {return val})
     },
