@@ -256,7 +256,7 @@ export const getMaxTextLength = (list, minMax = Infinity) => {
 
 export const base64ToBlob = (base64) => {
   const byteString = atob( base64.split( ',' )[1] )
-  const mimeType = base64.match( /(:)([a-z\/]+)(;)/ )[2]
+  const mimeType = base64.match( /(:)([a-z/]+)(;)/ )[2]
   const byteLength = byteString.length
   const content = new Uint8Array(byteLength)
   for( let i = 0; i < byteLength; i++ ) {

@@ -243,10 +243,6 @@ export default {
         })
       }
     },
-    async getPotByTxId(txId) {
-      let pot = await AppServiceHelper.fetch('/basic/pot', txId)
-      this.replaceMain({pot})
-    },
     replaceExb(exb, nokeep) {
       if (this.keepExbPosition) {
         exb.x = exb.x / this.oldMapImageScale * this.mapImageScale

@@ -131,7 +131,7 @@ const handleError = (e, url) => {
     if (e.response && e.response.data) {
       let message = e.response.data.message
       if (message) {
-        let key = message.match(/Key \(([^\)]*)\)=\(([^\)]*)\)/)
+        let key = message.match(/Key \(([^)]*)\)=\(([^)]*)\)/)
         if (key && key[1]) {
           e.key = key[1]
           e.val = key[2]

@@ -147,7 +147,7 @@ const getCoordinate = (orgX, orgY, positions, viewType) => {
       case TX_VIEW_TYPES.SPIRAL :
         return getCoordinateSpiral(i, orgX, orgY, 360 / positions.length * i, diameter)
       default :
-        return {x: baseX, y: baseY}
+        return {x: orgX, y: orgY}
       }
     })()
     return {...e, x: xy.x, y: xy.y}

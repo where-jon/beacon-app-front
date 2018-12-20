@@ -240,7 +240,7 @@ export default {
         return false
       }
 
-      const result = ValidateUtil.validatePattern(value, /^[a-zA-Z0-9_\-\/!#\$%&@]*$/, this.$i18n.tnl('message.invalidPassword'))
+      const result = ValidateUtil.validatePattern(value, /^[a-zA-Z0-9_\-/!#$%&@]*$/, this.$i18n.tnl('message.invalidPassword'))
       if (result !== null) {
         this.passErrorMessage = result
         this.errorMessages.general.push(this.passErrorMessage)
@@ -322,7 +322,7 @@ export default {
       if (required.length > 0) {
         return required
       }
-      const pattern = ValidateUtil.validatePattern(value, /^[a-zA-Z0-9_\-\/!#\$%&@]*$/, invalidPatternMessage)
+      const pattern = ValidateUtil.validatePattern(value, /^[a-zA-Z0-9_\-/!#$%&@]*$/, invalidPatternMessage)
       return pattern ? [pattern] : []
     },
     validateRequire (val, label) {

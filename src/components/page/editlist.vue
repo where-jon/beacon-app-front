@@ -81,8 +81,8 @@ export default {
       ...this.params,
       useRegistForm: false,
       modalInfo: { title: '', content: '', id:'' },
-      numberPattern: '^-?[0-9]+[\.]?[0-9]*$',
-      numberListPattern: '^(-?[0-9]+[\.]?[0-9]*)+(,-?[0-9]+[\.]?[0-9]*)*$',
+      numberPattern: '^-?[0-9]+[.]?[0-9]*$',
+      numberListPattern: '^(-?[0-9]+[.]?[0-9]*)+(,-?[0-9]+[.]?[0-9]*)*$',
     }
   },
   computed: {
