@@ -229,7 +229,7 @@ export default {
   }
 
   ol.breadcrumb-items li:not(:first-child):before {
-    content: '  /  ';
+    content: '\00a0\00a0\00a0/\00a0\00a0\00a0'; /* \00a0 = &nbsp; */
   }
 
   div.reload-button-container {
