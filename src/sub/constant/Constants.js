@@ -226,13 +226,13 @@ export const MENU = [
     key: 'provider',
     base: 'provider/',
     path: 'provider/tenant',
-    icon: 'fas fa-database',
+    icon: 'fas fa-cogs',
     pages: [
       {
         key: 'tenant',
         path: 'tenant',
         feature: '/meta/tenant',
-        icon: 'far fa-building',
+        icon: 'fas fa-store-alt',
       },
     ]
   },
