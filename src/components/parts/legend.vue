@@ -17,7 +17,12 @@
 
 <script>
 export default {
-  props: ['legendItems'],
+  props: {
+    legendItems: {
+      type: Array,
+      required: true,
+    },
+  },
 }
 </script>
 

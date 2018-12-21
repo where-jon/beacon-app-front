@@ -23,7 +23,16 @@ export default {
   components: {
     'chrome-picker': Chrome,
   },
-  props: ['caption', 'name'],
+  props: {
+    caption: {
+      type: String,
+      required: true,
+    },
+    name: {
+      type: String,
+      required: true,
+    },
+  },
   data() {
     return {
       ...this.model,

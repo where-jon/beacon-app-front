@@ -82,7 +82,23 @@ import * as Util from '../../sub/util/Util'
 
 export default {
   mixins: [ editmixinVue, commonmixinVue ],
-  props: ['params', 'multiList', 'newForm', 'showKeyName'],
+  props: {
+    params: {
+      type: Object,
+      required: true,
+    },
+    multiList: {
+      type: Object,
+      default: () => []
+    },
+    newForm: {
+      type: Object,
+      default: () => {}
+    },
+    showKeyName: {
+      type: Boolean,
+    },
+  },
   data() {
     return {
       ...this.params,

@@ -37,7 +37,24 @@ import * as StateHelper from '../../sub/helper/StateHelper'
 
 export default {
   mixins: [ editmixinVue, commonmixinVue ],
-  props: ['name', 'id', 'backPath', 'appServicePath'],
+  props: {
+    name: {
+      type: String,
+      required: true,
+    },
+    id: {
+      type: String,
+      required: true,
+    },
+    backPath: {
+      type: String,
+      required: true,
+    },
+    appServicePath: {
+      type: String,
+      required: true,
+    },
+  },
   data() {
     return {
       mutex: false,

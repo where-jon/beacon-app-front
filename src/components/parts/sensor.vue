@@ -45,7 +45,15 @@
 import { APP } from '../../sub/constant/config'
 
 export default {
-  props: ['sensors', 'isPopup'],
+  props: {
+    sensors: {
+      type: Array,
+      required: true,
+    },
+    isPopup: {
+      type: Boolean,
+    },
+  },
   data() {
     return {
       DOWN_RED_TIME: APP.DOWN_RED_TIME,

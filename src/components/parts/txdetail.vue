@@ -68,9 +68,11 @@ export default {
   props: {
     selectedTx: {
       type: Object,
+      required: true,
     },
     selectedSensor: {
       type: Array,
+      default: () => [],
     },
     isShowModal: {
       type: Boolean,

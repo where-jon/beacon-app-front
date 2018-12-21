@@ -144,7 +144,23 @@ import { CATEGORY } from '../../sub/constant/Constants'
 
 export default {
   mixin: [commonmixinVue], // not work
-  props: ['params', 'list', 'isFluid', 'anotherPageParams'],
+  props: {
+    params: {
+      type: Object,
+      required: true,
+    },
+    list: {
+      type: Array,
+      required: true,
+    },
+    isFluid: {
+      type: Boolean,
+    },
+    anotherPageParams: {
+      type: Array,
+      default: () => [],
+    },
+  },
   data() {
     return {
       currentPage: 1,

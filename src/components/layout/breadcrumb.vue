@@ -57,7 +57,10 @@ export default {
     'legendItem': LegendItem,
   },
   props: {
-    items: Array,
+    items: {
+      type: Array,
+      required: true,
+    },
     reload: {
       type: Boolean,
       default: false
