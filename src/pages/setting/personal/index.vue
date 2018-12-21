@@ -23,17 +23,17 @@
             <b-form-group>
               <label v-t="'label.loginId'" />
               <b-form-input v-model="loginUser.loginId" type="text" maxlength="16" readonly :state="errorMessages.loginId.length > 0 ? false : null" />
-              <p v-for="(val, key) in errorMessages.loginId" v-if="errorMessages.loginId.length > 0" :key="key" v-t="val" class="error" />
+              <p v-for="(val, key) in errorMessages.loginId" :key="key" v-t="val" class="error" />
             </b-form-group>
             <b-form-group v-show="showName">
               <label v-t="'label.name'" />
               <b-form-input v-model="loginUser.name" type="text" :readonly="!isChange" :state="errorMessages.name.length > 0 ? false : null" />
-              <p v-for="(val, key) in errorMessages.name" v-if="errorMessages.name.length > 0" :key="key" v-t="val" class="error" />
+              <p v-for="(val, key) in errorMessages.name" :key="key" v-t="val" class="error" />
             </b-form-group>
             <b-form-group v-show="showEmail">
               <label v-t="'label.email'" />
               <b-form-input v-model="loginUser.email" type="email" :readonly="!isChange" :state="errorMessages.email.length > 0 ? false : null" />
-              <p v-for="(val, key) in errorMessages.email" v-if="errorMessages.email.length > 0" :key="key" v-t="val" class="error" />
+              <p v-for="(val, key) in errorMessages.email" :key="key" v-t="val" class="error" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.role'" />
@@ -62,7 +62,7 @@
                                 type="password" maxlength="16"
                                 :state="errorMessages.password.length > 0 ? false : null"
                   />
-                  <p v-for="(val, key) in errorMessages.password" v-if="errorMessages.password.length > 0" :key="key" v-t="val" class="error" />
+                  <p v-for="(val, key) in errorMessages.password" :key="key" v-t="val" class="error" />
                 </b-form-group>
 
                 <!-- 変更パスワード -->

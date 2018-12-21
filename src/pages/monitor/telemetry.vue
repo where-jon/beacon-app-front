@@ -16,8 +16,8 @@
             </th>
           </thead>
           <tbody>
-            <tr v-for="(telemetry, index) in telemetrys" :key="index" :class="getTrClass(index, telemetry[label_timestamp])">
-              <td v-for="(val, key) in telemetry" v-if="val !== null" :key="key" scope="row" :class="getTdClass(index, val, key)">
+            <tr v-for="(telemetry, index) in telemetrysForTable" :key="index" :class="getTrClass(index, telemetry[label_timestamp])">
+              <td v-for="(val, key) in telemetry" :key="key" scope="row" :class="getTdClass(index, val, key)">
                 <span v-if="key === label_powerLevel">
                   <i :class="getPowerLevelClass(val)" />{{ val }}
                 </span>
@@ -149,6 +149,16 @@ export default {
     allCount() {
       return this.telemetrys.length
     },
+    telemetrysForTable() {
+      return _.map(this.telemetrys, (telem) => {
+        let newObj = {} 
+        for (let key of Object.keys(telem)) {
+          let value = telem[key]
+          if (value) newObj[key] = value
+        }
+        return newObj
+      })
+    }
   },
   mounted() {
     this.replace({title: this.$i18n.tnl('label.telemetry')})
