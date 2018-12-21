@@ -69,9 +69,10 @@ import { addLabelByKey } from '../../sub/helper/ViewHelper'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import * as Util from '../../sub/util/Util'
-import { CATEGORY } from '../../sub/constant/Constants'
+import { CATEGORY, SENSOR } from '../../sub/constant/Constants'
 import { APP, APP_SERVICE } from '../../sub/constant/config.js'
 import moment from 'moment'
+import _ from 'lodash'
 
 export default {
   mixins: [showmapmixin ],
@@ -101,32 +102,44 @@ export default {
       fields: [],
       fields1: addLabelByKey(this.$i18n, [
         {key: "sensorDt", sortable: true, label:"dt"},
-        {key: "txName", sortable: true },
-        {key: "major", sortable: true },
-        {key: "minor", sortable: true },
-        APP.EXB_WITH_EXBID? {key: "exbId", sortable: true }: null,
+        {key: "exbId", sortable: true },
         APP.EXB_WITH_DEVICE_NUM? {key: "deviceNum", sortable: true }: null,
         APP.EXB_WITH_DEVICE_ID? {key: "deviceId", sortable: true }: null,
         APP.EXB_WITH_DEVICE_IDX? {key: "deviceIdX", sortable: true }: null,
         {key: "locationName", label:'locationZoneName', sortable: true,},
-        APP.EXB_WITH_POSID? {key: "posId", label:'posId', sortable: true,}: null,
+        {key: "posId", label:'posId', sortable: true,},
         {key: "areaName", label:'area', sortable: true,},
         {key: "humidity", sortable: true},
         {key: "temperature", sortable: true},
       ]),
       fields2: addLabelByKey(this.$i18n, [
         {key: "sensorDt", sortable: true, label:"dt"},
-        {key: "txName", sortable: true },
-        {key: "major", sortable: true },
-        {key: "minor", sortable: true },
-        APP.EXB_WITH_EXBID? {key: "exbId", sortable: true }: null,
+        {key: "exbId", sortable: true },
         APP.EXB_WITH_DEVICE_NUM? {key: "deviceNum", sortable: true }: null,
         APP.EXB_WITH_DEVICE_ID? {key: "deviceId", sortable: true }: null,
         APP.EXB_WITH_DEVICE_IDX? {key: "deviceIdX", sortable: true }: null,
         {key: "locationName", label:'locationZoneName', sortable: true,},
-        APP.EXB_WITH_POSID? {key: "posId", label:'posId', sortable: true,}: null,
+        {key: "posId", label:'posId', sortable: true,},
         {key: "areaName", label:'area', sortable: true,},
         {key: "count", label:"numUsers", sortable: true},
+      ]),
+      fields5: addLabelByKey(this.$i18n, [
+        {key: "sensorDt", sortable: true, label:"dt"},
+        {key: "txName", sortable: true },
+        {key: "major", sortable: true },
+        {key: "minor", sortable: true },
+        {key: "high", label:"h_blood_pressure", sortable: true},
+        {key: "low", label:"l_blood_pressure", sortable: true},
+        {key: "beat", label:"heart_rate", sortable: true},
+        {key: "step", label:"step", sortable: true},
+        {key: "down", label:"down_count", sortable: true},
+      ]),
+      fields6: addLabelByKey(this.$i18n, [
+        {key: "sensorDt", sortable: true, label:"dt"},
+        {key: "txName", sortable: true },
+        {key: "major", sortable: true },
+        {key: "minor", sortable: true },
+        {key: "state", sortable: true},
       ]),
       currentPage: 1,
       perPage: 20,
@@ -150,13 +163,12 @@ export default {
       'sensors'
     ]),
     sensorOptions() {
-      let sensorOp = this.sensors.map((sensor) => {
-          return {
-            value: sensor.sensorId,
-            text: this.$i18n.tnl('label.' + sensor.sensorName)
-          }
+      var sensorOp = []
+      this.sensors.forEach((sensor) => {
+        if (sensor.sensorId != SENSOR.LED) {
+          sensorOp.push({text: this.$i18n.tnl('label.' + sensor.sensorName), value: sensor.sensorId})
         }
-      )
+      })
       return sensorOp
     },
   },
@@ -203,8 +215,14 @@ export default {
         if (aSensorId == 1) {
           this.fields = this.fields1
         }
-        if (aSensorId == 2) {
+        if (aSensorId == 2 || aSensorId == 3) {
           this.fields = this.fields2
+        }
+        if (aSensorId == 5) {
+          this.fields = this.fields5
+        }
+        if (aSensorId == 6) {
+          this.fields = this.fields6
         }
         var fetchList = await HttpHelper.getAppService(
           `/basic/sensorHistory/findsensor/${aSensorId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/${this.limitViewRows}`
@@ -243,12 +261,22 @@ export default {
             senHist.posId = ""
             senHist.areaName = ""
           }
-          if (senHist.sensorId == 1) {
+          if (senHist.sensorId == SENSOR.TEMPERATURE) {
             senHist.humidity = senHist.value.humidity
             senHist.temperature = senHist.value.temperature
           }
-          if (senHist.sensorId == 2 || senHist.sensorId == 3) {
+          if (senHist.sensorId == SENSOR.PIR || senHist.sensorId == SENSOR.THERMOPILE) {
             senHist.count = senHist.value.count
+          }
+          if (senHist.sensorId == SENSOR.MEDITAG) {
+            senHist.high = senHist.value.high
+            senHist.low = senHist.value.low
+            senHist.beat = senHist.value.beat
+            senHist.step = senHist.value.step
+            senHist.down = senHist.value.down
+          }
+          if (senHist.sensorId == SENSOR.MAGNET) {
+            senHist.state = senHist.value.state
           }
           count++
           if (count < this.limitViewRows) {
