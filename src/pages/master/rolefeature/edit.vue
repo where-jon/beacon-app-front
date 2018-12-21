@@ -88,11 +88,6 @@ export default {
       ]
     }
   },
-  created() {
-    this.featureId = Util.hasValue(this.form.featureId)? this.form.featureId: -1
-    this.roleFeature.featureId = Util.hasValue(this.form.featureId)? this.form.featureId: null
-    this.resetFeatureNames()
-  },
   computed: {
     theme () {
       const theme = getButtonTheme()
@@ -113,6 +108,11 @@ export default {
       const feature = this.features.find((val) => val.featureId === newVal)
       this.form.path = feature != null? feature.path: ''
     },
+  },
+  created() {
+    this.featureId = Util.hasValue(this.form.featureId)? this.form.featureId: -1
+    this.roleFeature.featureId = Util.hasValue(this.form.featureId)? this.form.featureId: null
+    this.resetFeatureNames()
   },
   methods: {
     async resetFeatureNames(){

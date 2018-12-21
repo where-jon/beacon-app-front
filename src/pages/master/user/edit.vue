@@ -109,19 +109,6 @@ export default {
       ],
     }
   },
-  async created(){
-    await StateHelper.load('role')
-    this.roleOptions = this.roles.map((val) => ({text: val.roleName, value: val.roleId}))
-    if(!this.isSuperEditable){
-      const superAdmin = this.roles.find((val) => val.roleName == ROLE.SUPER_ADMIN)
-      this.roleOptions = this.roleOptions.filter((val) => superAdmin? val.value != superAdmin.roleId || this.form.roleId == superAdmin.roleId: true)
-    }
-    this.role = this.form.roleId
-    const userRole = this.roles.find((role) => role.roleId == this.user.roleId)
-    if(userRole){
-      this.aboveSuperUser = StateHelper.isAboveSuperUser(userRole.roleName)
-    }
-  },
   computed: {
     hasId(){
       return Util.hasValue(this.form.userId)
@@ -139,6 +126,19 @@ export default {
     ...mapState('app_service', [
       'user', 'roles'
     ]),
+  },
+  async created(){
+    await StateHelper.load('role')
+    this.roleOptions = this.roles.map((val) => ({text: val.roleName, value: val.roleId}))
+    if(!this.isSuperEditable){
+      const superAdmin = this.roles.find((val) => val.roleName == ROLE.SUPER_ADMIN)
+      this.roleOptions = this.roleOptions.filter((val) => superAdmin? val.value != superAdmin.roleId || this.form.roleId == superAdmin.roleId: true)
+    }
+    this.role = this.form.roleId
+    const userRole = this.roles.find((role) => role.roleId == this.user.roleId)
+    if(userRole){
+      this.aboveSuperUser = StateHelper.isAboveSuperUser(userRole.roleName)
+    }
   },
   methods: {
     isErrorPasswordRequired(){

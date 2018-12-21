@@ -92,9 +92,6 @@ export default {
       ]
     }
   },
-  created() {
-    this.beforeReload()
-  },
   computed: {
     hasId(){
       return Util.hasValue(this.form.groupId)
@@ -109,6 +106,9 @@ export default {
     shapes(){
       return SHAPE.getShapes()
     },
+  },
+  created() {
+    this.beforeReload()
   },
   methods: {
     beforeReload(){

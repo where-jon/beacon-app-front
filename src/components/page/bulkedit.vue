@@ -48,13 +48,13 @@ export default {
       },
     }
   },
-  mounted() {
-    StateHelper.load('sensor')
-  },
   computed: {
     ...mapState('app_service', [
       'sensors',
     ]),
+  },
+  mounted() {
+    StateHelper.load('sensor')
   },
   methods: {
     beforeReload(){

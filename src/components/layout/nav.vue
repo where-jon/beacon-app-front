@@ -64,11 +64,6 @@ export default {
       showNav: HtmlUtil.isMobile() || DISP.SHOW_NAV
     }
   },
-  mounted() {
-    window.addEventListener('resize', () => {
-      this.showNav = HtmlUtil.isMobile() || DISP.SHOW_NAV
-    })
-  },
   computed: {
     isLoginPage() {
       return this.$route.path == APP.LOGIN_PAGE || this.$route.path == APP.LOGIN_PAGE + '/' || this.$route.path == APP.ERROR_PAGE
@@ -93,6 +88,11 @@ export default {
       }
       return classes
     },
+  },
+  mounted() {
+    window.addEventListener('resize', () => {
+      this.showNav = HtmlUtil.isMobile() || DISP.SHOW_NAV
+    })
   },
   methods: {
     logout() {

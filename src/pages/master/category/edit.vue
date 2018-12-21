@@ -96,12 +96,6 @@ export default {
       ]
     }
   },
-  created() {
-    this.beforeReload()
-  },
-  async mounted() {
-    ViewHelper.applyDef(this.form, this.defValue)
-  },
   computed: {
     hasId(){
       return Util.hasValue(this.form.categoryId)
@@ -119,6 +113,12 @@ export default {
     shapes(){
       return SHAPE.getShapes()
     },
+  },
+  created() {
+    this.beforeReload()
+  },
+  async mounted() {
+    ViewHelper.applyDef(this.form, this.defValue)
   },
   methods: {
     beforeReload(){

@@ -114,13 +114,6 @@ export default {
       ]
     }
   },
-  created() {
-    this.initAreaNames()
-    this.initLocationNames()
-    this.initCategoryNames()
-  },
-  mounted() {
-  },
   computed: {
     base64 () {
       const areaImage = this.$store.state.app_service.areaImages.find((a) => { return a.areaId === this.areaId })
@@ -136,6 +129,11 @@ export default {
     ...mapState('app_service', [
       'zone', 'locations', 'areas', 'pageSendParam'
     ]),
+  },
+  created() {
+    this.initAreaNames()
+    this.initLocationNames()
+    this.initCategoryNames()
   },
   methods: {
     reset () {

@@ -63,9 +63,6 @@ export default {
       showSidebar: DISP.SHOW_SIDEBAR,
     }
   },
-  mounted() {
-    this.setDropdownMenuColor()
-  },
   computed: {
     errorMessage() {
       if (this.$store.state.error) {
@@ -95,6 +92,9 @@ export default {
     sidebarClasses: function(newVal, oldVal) {
       this.setDropdownMenuColor()
     }
+  },
+  mounted() {
+    this.setDropdownMenuColor()
   },
   methods: {
     setColor(className, color) {

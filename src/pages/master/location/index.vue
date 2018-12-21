@@ -79,7 +79,7 @@
       {{ $t('message.unsavedData') }}
     </b-modal>
     <b-modal id="modalDeleteConfirm" :title="$t('label.confirm')" @ok="deleteExbDone">
-      {{ $t('message.deleteConfirm', {target: deleteTarget? this.getExbDisp(deleteTarget.deviceId): null}) }}
+      {{ $t('message.deleteConfirm', {target: deleteTarget? getExbDisp(deleteTarget.deviceId): null}) }}
     </b-modal>
   </div>
 </template>
@@ -139,6 +139,11 @@ export default {
       ]
     }
   },
+  computed: {
+    ...mapState('app_service', [
+      'pageSendParam',
+    ]),
+  },
   watch: {
     realWidth: function(newVal, oldVal) {
       console.log({newVal, oldVal})
@@ -148,11 +153,6 @@ export default {
       console.log({newVal, oldVal})
       this.onMapImageScale()
     }
-  },
-  computed: {
-    ...mapState('app_service', [
-      'pageSendParam',
-    ]),
   },
   mounted() {
     this.replace({title: this.$i18n.tnl('label.location')})

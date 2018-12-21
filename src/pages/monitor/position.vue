@@ -60,9 +60,9 @@
               </td>
               <td>{{ pos.power_level }}</td>
               <td>{{ pos.updatetime }}</td>
-              <td v-for="index in [0,1,2]" :key="index">
-                <div v-if="pos.nearest && pos.nearest[index]">
-                  <div v-for="(value, key) in pos.nearest[index]" :key="key">
+              <td v-for="idx in [0,1,2]" :key="idx">
+                <div v-if="pos.nearest && pos.nearest[idx]">
+                  <div v-for="(value, key) in pos.nearest[idx]" :key="key">
                     {{ key }}:{{ value }}
                   </div>
                 </div>

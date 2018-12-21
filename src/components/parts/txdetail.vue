@@ -7,8 +7,8 @@
       :style="{
         left: getLeft(),
         top: getTop(),
-        backgroundColor: this.selectedSensor.length == 0 ? this.selectedTx.bgColor : this.selectedSensor[0].bg,
-        color: this.selectedTx.color,
+        backgroundColor: selectedSensor.length == 0 ? selectedTx.bgColor : selectedSensor[0].bg,
+        color: selectedTx.color,
       }"
     >
       <div v-if="selectedSensor.length == 0" class="potBox" @click="$emit('resetDetail')">
@@ -28,10 +28,10 @@
     </div>
     <txdetailmodal
       v-else
-      :bg-color="selectedSensor.length == 0 ? this.selectedTx.bgColor : this.selectedSensor[0].bg"
-      :color="this.selectedTx.color"
+      :bg-color="selectedSensor.length == 0 ? selectedTx.bgColor : selectedSensor[0].bg"
+      :color="selectedTx.color"
     >
-      <div v-if="selectedSensor.length == 0" class="clearfix" :style="{backgroundColor: this.selectedTx.bgColor}">
+      <div v-if="selectedSensor.length == 0" class="clearfix" :style="{backgroundColor: selectedTx.bgColor}">
         <div class="thumbnail">
           <img v-if="selectedTx.thumbnail.length > 0" :src="selectedTx.thumbnail" width="auto" height="125">
           <img v-else src="/default.png" width="auto" height="116">
