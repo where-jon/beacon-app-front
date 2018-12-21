@@ -99,13 +99,13 @@ import * as MenuHelper from '../../../sub/helper/MenuHelper'
 import * as Util from '../../../sub/util/Util'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
-import settingtxview from '../../../components/parts/settingtxview.vue'
+// import settingtxview from '../../../components/parts/settingtxview.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 
 export default {
   components: {
     breadcrumb,
-    settingtxview,
+    // settingtxview,
   },
   mixins: [editmixinVue],
   data() {

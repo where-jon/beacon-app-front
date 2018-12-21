@@ -197,6 +197,7 @@ export default {
       switch(APP.TX_BTX_MINOR) {
       case 'minor':
         this.form.btxId = this.form.minor
+        break
       case 'btxId':
         this.form.minor = this.form.btxId
       }

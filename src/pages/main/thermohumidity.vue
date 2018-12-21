@@ -32,7 +32,6 @@
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as SensorHelper from '../../sub/helper/SensorHelper'
-import txdetail from '../../components/parts/txdetail.vue'
 import { DEV, DISP } from '../../sub/constant/config'
 import * as mock from '../../assets/mock/mock'
 import { SENSOR, DISCOMFORT } from '../../sub/constant/Constants'
@@ -45,7 +44,6 @@ import comfort from '../../assets/icon/comfort.png'
 
 export default {
   components: {
-    'txdetail': txdetail,
     breadcrumb,
   },
   mixins: [showmapmixin],
