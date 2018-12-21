@@ -6,7 +6,14 @@
         {{ message }}
       </b-alert>
       <b-alert variant="danger" dismissible :show="showAlert" @dismissed="showAlert=false">
-        <div v-html="message" />
+        <template v-if="Array.isArray(message)">
+          <span v-for="line in message" :key="line">
+            {{ line }} <br>
+          </span>
+        </template>
+        <span v-else>
+          {{ message }}
+        </span>
       </b-alert>
       <div class="mapContainer mb-5">
         <div class="container">
