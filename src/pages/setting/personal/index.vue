@@ -49,8 +49,9 @@
               <b-form-select v-model="selectedCharSet" :options="charSets" class="mb-3" @change="charSetSelected" />
             </b-form-group>
             <b-form-group v-show="!isProvider">
-              <b-button type="button" :variant="theme" class="btn-block" 
-              v-t="'label.changeProfilePassword'" @click="isChange = true" v-show="!isChange" />
+              <b-button v-show="!isChange" v-t="'label.changeProfilePassword'" type="button" 
+                        :variant="theme" class="btn-block" @click="isChange = true"
+              />
             </b-form-group>
 
             <b-card v-show="isChange" bg-variant="light">

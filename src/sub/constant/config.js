@@ -167,17 +167,17 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   DISCOMFORT_COMFORT: '#15db75', // 温湿度表示時の不快指数Comfort時の背景色
   DISCOMFORT_COLD: '#7da6e8', // 温湿度表示時の不快指数Cold時の背景色
 
-  TEMPERATURE_LINE_COLOR: "#fc5800",// 温度グラフの線色
-  HUMIDITY_LINE_COLOR: "#7da6e8",// 湿度グラフの線色
-  PIR_LINE_COLOR: "#fc5800",// 人感センサグラフの線色
-  THERMOPILE_LINE_COLOR: "#fc5800",// サーモパイルセンサグラフの線色
-  LED_LINE_COLOR: "#fc5800",// LEDセンサグラフの線色
-  MAGNET_LINE_COLOR: "#fc5800",// マグネットセンサグラフの線色
-  H_BLOOD_PRESSURE_LINE_COLOR: "#fc5800",// MEDiTAGセンサグラフの線色
-  L_BLOOD_PRESSURE_LINE_COLOR: "#7da6e8",// 湿度グラフの線色
-  HEART_RATE_LINE_COLOR: "#7de8a6",// 湿度グラフの線色
-  STEP_LINE_COLOR: "#7da6e8",// 歩数グラフの線色
-  DOWN_COUNT_LINE_COLOR: "#fc5800",// 転倒数グラフの線色
+  TEMPERATURE_LINE_COLOR: '#fc5800',// 温度グラフの線色
+  HUMIDITY_LINE_COLOR: '#7da6e8',// 湿度グラフの線色
+  PIR_LINE_COLOR: '#fc5800',// 人感センサグラフの線色
+  THERMOPILE_LINE_COLOR: '#fc5800',// サーモパイルセンサグラフの線色
+  LED_LINE_COLOR: '#fc5800',// LEDセンサグラフの線色
+  MAGNET_LINE_COLOR: '#fc5800',// マグネットセンサグラフの線色
+  H_BLOOD_PRESSURE_LINE_COLOR: '#fc5800',// MEDiTAGセンサグラフの線色
+  L_BLOOD_PRESSURE_LINE_COLOR: '#7da6e8',// 湿度グラフの線色
+  HEART_RATE_LINE_COLOR: '#7de8a6',// 湿度グラフの線色
+  STEP_LINE_COLOR: '#7da6e8',// 歩数グラフの線色
+  DOWN_COUNT_LINE_COLOR: '#fc5800',// 転倒数グラフの線色
 
   BLOOD_PRESSURE_MAX: 200,// 血圧最大メモリ
   BLOOD_PRESSURE_STEP: 25,// 血圧メモリ間隔

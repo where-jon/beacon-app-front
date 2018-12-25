@@ -51,14 +51,14 @@ export const createChartGraphDatasets = (yAxisID, label, chartData, targetId, bo
       fill: false, borderColor: borderColor
     }: null,
     max? {
-      label: `${label}${by == "day"? i18n.tnl('label.max'): ""}`, yAxisID: yAxisID, spanGaps: true,
+      label: `${label}${by == 'day'? i18n.tnl('label.max'): ''}`, yAxisID: yAxisID, spanGaps: true,
       data: chartData.map((val) => val.max? val.max[targetId]: null),
-      fill: false, borderDash: by == "day"? [5, 5]: [5, 0], borderColor: borderColor
+      fill: false, borderDash: by == 'day'? [5, 5]: [5, 0], borderColor: borderColor
     }: null,
     min? {
-      label: `${label}${by == "day"? i18n.tnl('label.min'): ""}`, yAxisID: yAxisID, spanGaps: true,
+      label: `${label}${by == 'day'? i18n.tnl('label.min'): ''}`, yAxisID: yAxisID, spanGaps: true,
       data: chartData.map((val) => val.min? val.min[targetId]: null),
-      fill: false, borderDash: by == "day"? [5, 5]: [5, 0], borderColor: borderColor
+      fill: false, borderDash: by == 'day'? [5, 5]: [5, 0], borderColor: borderColor
     }: null,
   ].filter((val) => val)
 }
@@ -90,16 +90,16 @@ export const createChartThermohumidityOptions = (chartData, by, i18n) => {
       labels: chartData.map((val) => val.key),
       datasets: 
         createChartGraphDatasets('temperature', i18n.tnl('label.temperature'), chartData, 'temperature', DISP.TEMPERATURE_LINE_COLOR, by, i18n)
-        .concat(createChartGraphDatasets('humidity', i18n.tnl('label.humidity'), chartData, 'humidity', DISP.HUMIDITY_LINE_COLOR, by, i18n))
+          .concat(createChartGraphDatasets('humidity', i18n.tnl('label.humidity'), chartData, 'humidity', DISP.HUMIDITY_LINE_COLOR, by, i18n))
     },
     options: createChartGraphOptions(
       {
         id: 'temperature',
-        label: i18n.tnl('label.temperature') + " (℃)",
+        label: i18n.tnl('label.temperature') + ' (℃)',
         ticks: { min: 0, max: 40 },
       }, {
         id: 'humidity',
-        label: i18n.tnl('label.humidity') + " (%)",
+        label: i18n.tnl('label.humidity') + ' (%)',
         ticks: { min: 0, max: 100, stepSize: 25},
       }
     )
@@ -159,12 +159,12 @@ export const createChartMagnetOptions = (chartData, by, i18n) => {
     options: createChartGraphOptions(
       {
         id: 'magnet',
-        label: "",
+        label: '',
         ticks: {
           min: SENSOR.MAGNET_STATUS.OFF,
           max: SENSOR.MAGNET_STATUS.ON,
           callback: function(value, index, values){
-            return value == SENSOR.MAGNET_STATUS.ON? i18n.tnl('label.InUse'): value == SENSOR.MAGNET_STATUS.OFF? i18n.tnl('label.notUse'): ""
+            return value == SENSOR.MAGNET_STATUS.ON? i18n.tnl('label.InUse'): value == SENSOR.MAGNET_STATUS.OFF? i18n.tnl('label.notUse'): ''
           }
         }
       }
@@ -179,8 +179,8 @@ export const createChartMeditagOptions = (chartData, by, i18n) => {
       labels: chartData.map((val) => val.key),
       datasets: 
         createChartGraphDatasets('blood_pressure', i18n.tnl('label.h_blood_pressure'), chartData, 'high', DISP.H_BLOOD_PRESSURE_LINE_COLOR, by, i18n)
-        .concat(createChartGraphDatasets('blood_pressure', i18n.tnl('label.l_blood_pressure'), chartData, 'low', DISP.L_BLOOD_PRESSURE_LINE_COLOR, by, i18n))
-        .concat(createChartGraphDatasets('heart_rate', i18n.tnl('label.heart_rate'), chartData, 'beat', DISP.HEART_RATE_LINE_COLOR, by, i18n))
+          .concat(createChartGraphDatasets('blood_pressure', i18n.tnl('label.l_blood_pressure'), chartData, 'low', DISP.L_BLOOD_PRESSURE_LINE_COLOR, by, i18n))
+          .concat(createChartGraphDatasets('heart_rate', i18n.tnl('label.heart_rate'), chartData, 'beat', DISP.HEART_RATE_LINE_COLOR, by, i18n))
     },
     options: createChartGraphOptions(
       {
@@ -203,7 +203,7 @@ export const createChartSubMeditagOptions = (chartData, by, i18n) => {
       labels: chartData.map((val) => val.key),
       datasets: 
         createChartGraphDatasets('step', i18n.tnl('label.step'), chartData, 'step', DISP.STEP_LINE_COLOR, by, i18n)
-        .concat(createChartGraphDatasets('down_count', i18n.tnl('label.down_count'), chartData, 'down', DISP.DOWN_COUNT_LINE_COLOR, by, i18n))
+          .concat(createChartGraphDatasets('down_count', i18n.tnl('label.down_count'), chartData, 'down', DISP.DOWN_COUNT_LINE_COLOR, by, i18n))
     },
     options: createChartGraphOptions(
       {
@@ -228,10 +228,10 @@ export const createChartGraph = (canvasId, sensorId, chartData, by, i18n) => {
   }
   chart = new Chart(canvasId, 
     sensorId == SENSOR.PIR? createChartPirOptions(chartData, by, i18n):
-    sensorId == SENSOR.THERMOPILE? createChartThermopileOptions(chartData, by, i18n):
-    sensorId == SENSOR.MAGNET? createChartMagnetOptions(chartData, by, i18n):
-    sensorId == SENSOR.MEDITAG? createChartMeditagOptions(chartData, by, i18n):
-    createChartThermohumidityOptions(chartData, by, i18n)
+      sensorId == SENSOR.THERMOPILE? createChartThermopileOptions(chartData, by, i18n):
+        sensorId == SENSOR.MAGNET? createChartMagnetOptions(chartData, by, i18n):
+          sensorId == SENSOR.MEDITAG? createChartMeditagOptions(chartData, by, i18n):
+            createChartThermohumidityOptions(chartData, by, i18n)
   )
   chart.update()
   if(sensorId == SENSOR.MEDITAG){
@@ -262,9 +262,9 @@ export const createChartData = (range, data) => {
 export const showThermoHumidityChart = (id, data, i18n) => {
   const range = Util.numberRange(APP.TEMPERATURE_LINE_HOUR_START, APP.TEMPERATURE_LINE_HOUR_END)
   const chartData = createChartData(range, data.map((val) => {return {key: val.key, immediate: {...val}}}))
-  const suffix = ":00"
+  const suffix = ':00'
   chartData.forEach((val) => val.key = val.key + suffix)
-  return createChartGraph(id, SENSOR.TEMPERATURE, chartData, "hour", i18n)
+  return createChartGraph(id, SENSOR.TEMPERATURE, chartData, 'hour', i18n)
 }
 
 export const showChartDetail = (canvasId, sensorId, dateFrom, dateTo, sensorData, by, i18n) => {

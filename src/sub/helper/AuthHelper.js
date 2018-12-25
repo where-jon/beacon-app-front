@@ -55,7 +55,7 @@ export const authByAppService = async (loginId, password, success, err) => {
     params.append('password', password)
     let data = await HttpHelper.postAppService('/login', params)
     if (data.tenantAdmin) {
-      APP.TOP_PAGE = "/provider/tenant"
+      APP.TOP_PAGE = '/provider/tenant'
     }
 
     // get tenant feature list

@@ -18,10 +18,10 @@ export const numberRange = (start, end) => new Array(end - start + 1).fill().map
 
 export const formatDateRange = (date, by) => {
   let key = `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`
-  if(by == "day"){
+  if(by == 'day'){
     return {key: `${key} 00:00`, text: key}
   }
-  if(by == "hour"){
+  if(by == 'hour'){
     return {
       key: `${key} ${`00${date.getHours()}`.slice(-2)}:00`,
     }
@@ -34,14 +34,14 @@ export const formatDateRange = (date, by) => {
 export const dateRange = (start, end, by) => {
   const ret = []
   const date = new Date(start)
-  if(by == "day"){
+  if(by == 'day'){
     for(; date < end; date.setDate(date.getDate() + 1)) {
       ret.push(formatDateRange(date, by))
     }
     ret.push(formatDateRange(date, by))
     return ret
   }
-  if(by == "hour"){
+  if(by == 'hour'){
     for(; date < end; date.setHours(date.getHours() + 1)) {
       ret.push(formatDateRange(date, by))
     }

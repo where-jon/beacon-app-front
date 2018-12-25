@@ -2,13 +2,17 @@
   <div>
     <breadcrumb :items="items" :reload="false" />
     <div class="container">
-      <b-alert variant="info" dismissible :show="showInfo">{{ message }}</b-alert>
-      <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">{{ message }}</b-alert>
+      <b-alert variant="info" dismissible :show="showInfo">
+        {{ message }}
+      </b-alert>
+      <b-alert variant="danger" dismissible :show="showAlert" @dismissed="showAlert=false">
+        {{ message }}
+      </b-alert>
       <b-form inline @submit.prevent>
         <b-form-group>
           <b-form-row class="mb-3">
-            <label v-t="'label.sensor'"/>
-            <b-form-select v-model="form.sensorId" :options="sensorOptions" @change="changeSensorId" class="ml-2 inputSelect" required />
+            <label v-t="'label.sensor'" />
+            <b-form-select v-model="form.sensorId" :options="sensorOptions" class="ml-2 inputSelect" required @change="changeSensorId" />
           </b-form-row>
         </b-form-group>
       </b-form>
@@ -17,11 +21,11 @@
           <b-form-row>
             <b-form-row class="mb-3">
               <label v-t="'label.historyDateFrom'" />
-              <date-picker v-model="form.datetimeFrom" type="datetime" :clearable="false" @change="changeDatetimeFrom" class="ml-2 inputdatefrom" required/>
+              <date-picker v-model="form.datetimeFrom" type="datetime" :clearable="false" class="ml-2 inputdatefrom" required @change="changeDatetimeFrom" />
             </b-form-row>
             <b-form-row class="ml-2 mb-3">
               <label v-t="'label.historyDateTo'" />
-              <date-picker v-model="form.datetimeTo" type="datetime" :clearable="false" @change="changeDatetimeTo" class="ml-2 inputdateto" required/>
+              <date-picker v-model="form.datetimeTo" type="datetime" :clearable="false" class="ml-2 inputdateto" required @change="changeDatetimeTo" />
             </b-form-row>
           </b-form-row>
         </b-form-group>
@@ -29,12 +33,12 @@
       <b-form inline @submit.prevent>
         <b-form-group>
           <b-form-row class="mb-3">
-            <label v-t="'label.sumUnit'"/>
-            <b-form-select v-model="form.sumUnit" :options="sumUnitOptions" @change="changeSumUnit" class="ml-2 inputSelect" required />
+            <label v-t="'label.sumUnit'" />
+            <b-form-select v-model="form.sumUnit" :options="sumUnitOptions" class="ml-2 inputSelect" required @change="changeSumUnit" />
           </b-form-row>
         </b-form-group>
       </b-form>
-      <b-form inline @submit.prevent v-if="showSumTarget">
+      <b-form v-if="showSumTarget" inline @submit.prevent>
         <b-form-group>
           <b-form-row class="mb-3">
             <label v-t="'label.sumTarget'" />
@@ -44,11 +48,11 @@
       </b-form>
       <b-form inline @submit.prevent>
         <b-form-group>
-          <b-form-row class="mb-3" v-if="showExb">
+          <b-form-row v-if="showExb" class="mb-3">
             <label v-t="'label.exb'" />
             <b-form-select v-model="form.exbId" :options="exbOptions" class="ml-2 inputSelect" required />
           </b-form-row>
-          <b-form-row class="mb-3" v-if="showTx">
+          <b-form-row v-if="showTx" class="mb-3">
             <label v-t="'label.tx'" />
             <b-form-select v-model="form.txId" :options="txOptions" class="ml-2 inputSelect" required />
           </b-form-row>
@@ -57,8 +61,8 @@
       <b-form inline @submit.prevent>
         <b-form-group>
           <b-form-row class="mb-3">
-            <b-button :variant="theme" @click="display" v-t="'label.display'" />
-            <b-button :variant="theme" @click="download" v-t="'label.download'" class="ml-2" :disabled="!dataList || dataList.length == 0" />
+            <b-button v-t="'label.display'" :variant="theme" @click="display" />
+            <b-button v-t="'label.download'" :variant="theme" class="ml-2" :disabled="!dataList || dataList.length == 0" @click="download" />
           </b-form-row>
         </b-form-group>
       </b-form>
@@ -91,11 +95,11 @@ import * as mock from '../../assets/mock/mock'
 import validatemixin from '../../components/mixin/validatemixin.vue'
 
 export default {
-  mixins: [validatemixin],
   components: {
     breadcrumb,
     DatePicker,
   },
+  mixins: [validatemixin],
   data () {
     return {
       form: {
@@ -118,11 +122,11 @@ export default {
         }
       ],
       headers: {
-        temperature: [ "sensorKey", "temperature(max)", "temperature(avg)", "temperature(min)", "humidity(max)", "humidity(avg)", "humidity(min)" ],
-        pir: [ "sensorKey", "count(max)", "count(avg)", "count(min)" ],
-        thermopile: [ "sensorKey", "count(max)", "count(avg)", "count(min)" ],
-        meditag: [ "sensorKey", "high(max)", "high(avg)", "high(min)", "low(max)", "low(avg)", "low(min)", "beat(max)", "beat(avg)", "beat(min)", "step(max)", "step(avg)", "step(min)", "down(max)", "down(avg)", "down(min)" ],
-        magnet: [ "sensorKey", "magnet(max)", "magnet(min)" ]
+        temperature: [ 'sensorKey', 'temperature(max)', 'temperature(avg)', 'temperature(min)', 'humidity(max)', 'humidity(avg)', 'humidity(min)' ],
+        pir: [ 'sensorKey', 'count(max)', 'count(avg)', 'count(min)' ],
+        thermopile: [ 'sensorKey', 'count(max)', 'count(avg)', 'count(min)' ],
+        meditag: [ 'sensorKey', 'high(max)', 'high(avg)', 'high(min)', 'low(max)', 'low(avg)', 'low(min)', 'beat(max)', 'beat(avg)', 'beat(min)', 'step(max)', 'step(avg)', 'step(min)', 'down(max)', 'down(avg)', 'down(min)' ],
+        magnet: [ 'sensorKey', 'magnet(max)', 'magnet(min)' ]
       },
       sumUnitOptions: [],
       exbOptions: [],
@@ -136,7 +140,7 @@ export default {
       dataList: [],
       showInfo: false,
       showAlert: false,
-      message: "",
+      message: '',
     }
   },
   computed: {
@@ -338,42 +342,42 @@ export default {
     createCsvData(sensorKey, average, max, min){
       const ret = {}
       const sumUnit = SUM_UNIT.getOptions()
-      ret["sensorKey"] = this.form.sumUnit == sumUnit[0].value? `${sensorKey}:00`:
+      ret['sensorKey'] = this.form.sumUnit == sumUnit[0].value? `${sensorKey}:00`:
         this.form.sumUnit == sumUnit[1].value? `${sensorKey}:00`:
-        this.form.sumUnit == sumUnit[2].value? `${sensorKey.substring(0, sensorKey.length - 6)}`: sensorKey
+          this.form.sumUnit == sumUnit[2].value? `${sensorKey.substring(0, sensorKey.length - 6)}`: sensorKey
       if(this.form.sensorId == SENSOR.TEMPERATURE){
-        ret["humidity(max)"] = max.humidity
-        ret["humidity(avg)"] = average.humidity
-        ret["humidity(min)"] = min.humidity
-        ret["temperature(max)"] = max.temperature
-        ret["temperature(avg)"] = average.temperature
-        ret["temperature(min)"] = min.temperature
+        ret['humidity(max)'] = max.humidity
+        ret['humidity(avg)'] = average.humidity
+        ret['humidity(min)'] = min.humidity
+        ret['temperature(max)'] = max.temperature
+        ret['temperature(avg)'] = average.temperature
+        ret['temperature(min)'] = min.temperature
       }
       if(this.form.sensorId == SENSOR.PIR || this.form.sensorId == SENSOR.THERMOPILE){
-        ret["count(max)"] = max.count
-        ret["count(avg)"] = average.count
-        ret["count(min)"] = min.count
+        ret['count(max)'] = max.count
+        ret['count(avg)'] = average.count
+        ret['count(min)'] = min.count
       }
       if(this.form.sensorId == SENSOR.MEDITAG){
-        ret["step(max)"] = max.step
-        ret["step(avg)"] = average.step
-        ret["step(min)"] = min.step
-        ret["beat(max)"] = max.beat
-        ret["beat(avg)"] = average.beat
-        ret["beat(min)"] = min.beat
-        ret["low(max)"] = max.low
-        ret["low(avg)"] = average.low
-        ret["low(min)"] = min.low
-        ret["high(max)"] = max.high
-        ret["high(avg)"] = average.high
-        ret["high(min)"] = min.high
-        ret["down(max)"] = max.down
-        ret["down(avg)"] = average.down
-        ret["down(min)"] = min.down
+        ret['step(max)'] = max.step
+        ret['step(avg)'] = average.step
+        ret['step(min)'] = min.step
+        ret['beat(max)'] = max.beat
+        ret['beat(avg)'] = average.beat
+        ret['beat(min)'] = min.beat
+        ret['low(max)'] = max.low
+        ret['low(avg)'] = average.low
+        ret['low(min)'] = min.low
+        ret['high(max)'] = max.high
+        ret['high(avg)'] = average.high
+        ret['high(min)'] = min.high
+        ret['down(max)'] = max.down
+        ret['down(avg)'] = average.down
+        ret['down(min)'] = min.down
       }
       if(this.form.sensorId == SENSOR.MAGNET){
-        ret["magnet(max)"] = max.magnet
-        ret["magnet(min)"] = min.magnet
+        ret['magnet(max)'] = max.magnet
+        ret['magnet(min)'] = min.magnet
       }
       return ret
     },
@@ -383,7 +387,7 @@ export default {
       const time = `${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}`
       let sensorData = await AppServiceHelper.fetchList(`/basic/sensorHistory/graph/${this.form.sensorId}/${id}/${time}/${by}`)
       if (DEV.USE_MOCK_EXC) {
-        let key = this.form.sumUnit == sumUnitOption[0].value? "minute": this.form.sumUnit == sumUnitOption[1].value? "hour": "day"
+        let key = this.form.sumUnit == sumUnitOption[0].value? 'minute': this.form.sumUnit == sumUnitOption[1].value? 'hour': 'day'
         sensorData = {data: mock.sensorGraph()[key]}
       }
       if(!sensorData || !sensorData.data || sensorData.data.length == 0){
@@ -405,8 +409,8 @@ export default {
         const min = this.createMinDataList(key, sensorEditData[key])
         const data = this.form.sumTarget == this.sumTargetOptions[0].value? immediate:
           this.form.sumTarget == this.sumTargetOptions[1].value? average:
-          this.form.sumTarget == this.sumTargetOptions[2].value? max:
-          this.form.sumTarget == this.sumTargetOptions[3].value? min: {}
+            this.form.sumTarget == this.sumTargetOptions[2].value? max:
+              this.form.sumTarget == this.sumTargetOptions[3].value? min: {}
         return {
           key: key,
           data: data,
@@ -420,12 +424,12 @@ export default {
     },
     validate() {
       const errors = this.validateCheck([
-        {type: "require", 
-          names: [this.showExb? "exbId": null, this.showTx? "tx": null].filter((val) => val),
+        {type: 'require', 
+          names: [this.showExb? 'exbId': null, this.showTx? 'tx': null].filter((val) => val),
           values: [this.showExb? this.form.exbId: null, this.showTx? this.form.txId: null].filter((val) => val)},
-        {type: "require", names: ["historyDateFrom"], values: [this.form.datetimeFrom]},
-        {type: "require", names: ["historyDateFrom"], values: [this.form.datetimeTo]},
-        this.form.datetimeFrom && this.form.datetimeTo? {type: "asc", names: ["historyDateFrom"], values: [this.form.datetimeFrom.getTime(), this.form.datetimeTo.getTime()], equal: false}: null,
+        {type: 'require', names: ['historyDateFrom'], values: [this.form.datetimeFrom]},
+        {type: 'require', names: ['historyDateFrom'], values: [this.form.datetimeTo]},
+        this.form.datetimeFrom && this.form.datetimeTo? {type: 'asc', names: ['historyDateFrom'], values: [this.form.datetimeFrom.getTime(), this.form.datetimeTo.getTime()], equal: false}: null,
       ].filter((val) => val && val.names.length >= 1))
       return this.formatValidateMessage(errors)
     },
@@ -446,7 +450,7 @@ export default {
         return
       }
       this.dataSensorId = this.form.sensorId
-      const dayChart = SensorHelper.showChartDetail("dayChart", this.form.sensorId, this.form.datetimeFrom, this.form.datetimeTo, sensorData, by, this.$i18n)
+      const dayChart = SensorHelper.showChartDetail('dayChart', this.form.sensorId, this.form.datetimeFrom, this.form.datetimeTo, sensorData, by, this.$i18n)
     },
     async download(){
       if (this.dataList == null || this.dataList.length == 0) {
@@ -456,11 +460,11 @@ export default {
       }
       const header = this.dataSensorId == SENSOR.TEMPERATURE? this.headers.temperature: 
         this.dataSensorId == SENSOR.PIR? this.headers.pir: 
-        this.dataSensorId == SENSOR.THERMOPILE? this.headers.thermopile: 
-        this.dataSensorId == SENSOR.MEDITAG? this.headers.meditag: 
-        this.dataSensorId == SENSOR.MAGNET? this.headers.magnet: null
+          this.dataSensorId == SENSOR.THERMOPILE? this.headers.thermopile: 
+            this.dataSensorId == SENSOR.MEDITAG? this.headers.meditag: 
+              this.dataSensorId == SENSOR.MAGNET? this.headers.magnet: null
       HtmlUtil.fileDL(
-        "sensorGraph.csv",
+        'sensorGraph.csv',
         Util.converToCsv(this.dataList, header),
         getCharSet(this.$store.state.loginId)
       )

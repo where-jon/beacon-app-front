@@ -11,14 +11,14 @@
       <div class="table-area">
         <table v-if="!isDev" class="table striped">
           <thead>
-            <th v-t="'label.major'"></th>
-            <th v-t="'label.minor'"></th>
-            <th v-t="'label.name'"></th>
-            <th v-t="'label.powerLevel'"></th>
-            <th v-t="'label.finalReceiveLocation'"></th>
-            <th v-t="'label.finalReceiveTimestamp'"></th>
-            <th v-t="'label.rssi'"></th>
-            <th v-t="'label.state'"></th>
+            <th v-t="'label.major'" />
+            <th v-t="'label.minor'" />
+            <th v-t="'label.name'" />
+            <th v-t="'label.powerLevel'" />
+            <th v-t="'label.finalReceiveLocation'" />
+            <th v-t="'label.finalReceiveTimestamp'" />
+            <th v-t="'label.rssi'" />
+            <th v-t="'label.state'" />
           </thead>
           <tbody>
             <tr v-for="(position, index) in positions" :key="index" :class="{undetect: isUndetect('tx', position.updatetime)}">
@@ -220,9 +220,9 @@ export default {
     getRssi(nearestList) {
       const rssiNearIndex = 0
       if (nearestList.length > rssiNearIndex) {
-          try {
-              return nearestList[rssiNearIndex].rssi.toFixed(1)
-          } catch (e) {}
+        try {
+          return nearestList[rssiNearIndex].rssi.toFixed(1)
+        } catch (e) {}
       }
       return this.$i18n.tnl('label.undetect')
     },

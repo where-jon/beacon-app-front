@@ -115,9 +115,9 @@ export const SENSOR = {
 export const SUM_UNIT = {
   getOptions(){
     return [
-      {value:1, text: i18n.t('label.minute'), param: "minute"},
-      {value:2, text: i18n.t('label.hour'), param: "hour"},
-      {value:3, text: i18n.t('label.day'), param: "day"},
+      {value:1, text: i18n.t('label.minute'), param: 'minute'},
+      {value:2, text: i18n.t('label.hour'), param: 'hour'},
+      {value:3, text: i18n.t('label.day'), param: 'day'},
     ]
   }
 }
@@ -394,35 +394,35 @@ export const MENU = [
     path: 'sum/utilizationRatio',
     icon: 'fas fa-chart-line',
     pages: [{
-        key: 'utilizationRatio',
-        path: 'utilizationRatio',
-        feature: '/sum/utilizationRatio',
-        icon: 'fas fa-chart-pie'
-      },
-      {
-        key: 'numUsers',
-        path: 'numUsers',
-        feature: '/sum/numUsers',
-        icon: 'fas fa-chart-area'
-      },
-      {
-        key: 'flowlineAnalysis',
-        path: 'flowlineAnalysis',
-        feature: '/sum/flowlineAnalysis',
-        icon: 'fas fa-shoe-prints'
-      },
-      {
-        key: 'heatmapPosition',
-        path: 'heatmap-position',
-        feature: '/sum/heatmapPosition',
-        icon: 'fas fas fa-fire',
-      },
-      {
-        key: 'sensorGraph',
-        path: 'sensorGraph',
-        feature: '/sum/sensorGraph',
-        icon: 'fas fa-chart-bar',
-      },
+      key: 'utilizationRatio',
+      path: 'utilizationRatio',
+      feature: '/sum/utilizationRatio',
+      icon: 'fas fa-chart-pie'
+    },
+    {
+      key: 'numUsers',
+      path: 'numUsers',
+      feature: '/sum/numUsers',
+      icon: 'fas fa-chart-area'
+    },
+    {
+      key: 'flowlineAnalysis',
+      path: 'flowlineAnalysis',
+      feature: '/sum/flowlineAnalysis',
+      icon: 'fas fa-shoe-prints'
+    },
+    {
+      key: 'heatmapPosition',
+      path: 'heatmap-position',
+      feature: '/sum/heatmapPosition',
+      icon: 'fas fas fa-fire',
+    },
+    {
+      key: 'sensorGraph',
+      path: 'sensorGraph',
+      feature: '/sum/sensorGraph',
+      icon: 'fas fa-chart-bar',
+    },
     ]
   },
   {

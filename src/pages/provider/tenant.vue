@@ -1,9 +1,13 @@
 <template>
   <div>
     てなんとかんりサンプル<br>
-    <button @click="switchTenant(1)">テナント切換</button>
+    <button @click="switchTenant(1)">
+      テナント切換
+    </button>
     <br>
-    <button @click="switchRegion(3)">リージョン切換</button>
+    <button @click="switchRegion(3)">
+      リージョン切換
+    </button>
   </div>
 </template>
 

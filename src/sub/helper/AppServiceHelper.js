@@ -30,7 +30,7 @@ export const getCurrentUser = async () => {
   const user = await HttpHelper.getAppService('/meta/user/currentUser')
   if (user.providerUserId != null) {
     this.isProvider = true
-    user.role = {roleId: -1, roleName: "tenantAdmin", isSuperAdmin: true}
+    user.role = {roleId: -1, roleName: 'tenantAdmin', isSuperAdmin: true}
   }
   return user
 }
