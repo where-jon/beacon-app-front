@@ -35,6 +35,8 @@ export const state = () => ({
   zones: [],
   zone: {},
   settings: [],
+  tenants: [],
+  tenant: {},
   sensorHistories: [],
   forceFetchPot: true,
   forceFetchTx: true,

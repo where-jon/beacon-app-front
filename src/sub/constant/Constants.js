@@ -203,6 +203,8 @@ export const TX_VIEW_TYPES = {
   TILE: 5,
 }
 
+export const AUTH_TENANT_CD = ["default", "provider", "saas", "exbeacon"]
+
 export const EXTRA_NAV = [
   {
     key: 'showPositionShort',

@@ -42,12 +42,38 @@ export const authByLocal = async (loginId, password, success, err) => {
   }
 }
 
+export const getRevInfo = async () => {
+  const frontRev = (await axios.get("/head.txt")).data
+  const apsIndex = await HttpHelper.getAppServiceNoCrd('/') // pre network check
+  const serviceRev = apsIndex.match(new RegExp('Head:([0-9a-zA-Z]+)'))
+  return {frontRev: frontRev, serviceRev: serviceRev && serviceRev[1]}
+}
+
+export const getUserInfo = async (tenantAdmin) => {
+  // get tenant feature list
+  const tenant = await HttpHelper.getAppService('/meta/tenant/currentTenant')
+  const tenantFeatureList = tenant.tenantFeatureList.map((tenantFeature) => tenantFeature.feature.path)
+  console.log({tenantFeatureList})
+
+  // get role feature list
+  const user = await AppServiceHelper.getCurrentUser()
+  console.log(user)
+  const featureList = _(user.role.roleFeatureList).map((roleFeature) => {
+      return {path: roleFeature.feature.path, mode: roleFeature.mode}
+  }).sortBy((val) => val.path.length * -1).value()
+  const menu = MenuHelper.fetchNav(featureList, tenantFeatureList, user.role, tenantAdmin)
+
+  // get region
+  const currentRegion = await HttpHelper.getAppService('/core/region/current')
+
+  // get setting (again in case failed on init or reload)
+  const setting = await HttpHelper.getAppServiceNoCrd('/meta/setting/byTenant/default')
+  return {tenant, tenantFeatureList, user, featureList, menu, currentRegion, setting}
+}
+
 export const authByAppService = async (loginId, password, success, err) => {
   try {
-    let frontRev = (await axios.get("/head.txt")).data
-    let apsIndex = await HttpHelper.getAppServiceNoCrd('/') // pre network check
-    let serviceRev = apsIndex.match(new RegExp('Head:([0-9a-zA-Z]+)'))
-    serviceRev = serviceRev && serviceRev[1]
+    const revInfo = await getRevInfo()
 
     let params = new URLSearchParams()
     let tenantCd = getTenantCd()
@@ -58,28 +84,11 @@ export const authByAppService = async (loginId, password, success, err) => {
       APP.TOP_PAGE = "/provider/tenant"
     }
 
-    // get tenant feature list
-    let tenant = await HttpHelper.getAppService('/meta/tenant/currentTenant')
-    let tenantFeatureList = tenant.tenantFeatureList.map((tenantFeature) => tenantFeature.feature.path)
-    console.log({tenantFeatureList})
-
-    // get role feature list
-    let user = await AppServiceHelper.getCurrentUser()
-    console.log(user)
-    let featureList = _(user.role.roleFeatureList).map((roleFeature) => {
-        return {path: roleFeature.feature.path, mode: roleFeature.mode}
-    }).sortBy((val) => val.path.length * -1).value()
-    let menu = MenuHelper.fetchNav(featureList, tenantFeatureList, user.role, data.tenantAdmin)
-
-    // get region
-    let currentRegion = await HttpHelper.getAppService('/core/region/current')
-
-    // get setting (again in case failed on init or reload)
-    let setting = await HttpHelper.getAppServiceNoCrd('/meta/setting/byTenant/default')
-    ConfigHelper.applyAppServiceSetting(setting)  
+    const userInfo = await getUserInfo(data.tenantAdmin)
+    ConfigHelper.applyAppServiceSetting(userInfo.setting)  
 
     // Login process
-    await login({loginId, username:user.name, role:user.role, featureList, tenantFeatureList, menu, currentRegion, frontRev, serviceRev})
+    await login({loginId, username:userInfo.user.name, role: userInfo.user.role, featureList: userInfo.featureList, tenantFeatureList: userInfo.tenantFeatureList, menu: userInfo.menu, currentRegion: userInfo.currentRegion, frontRev: revInfo.frontRev, serviceRev: revInfo.serviceRev, tenantAdmin: data.tenantAdmin, currentTenant: userInfo.tenant})
     success()
     StateHelper.loadAreaImages()
 
@@ -89,7 +98,41 @@ export const authByAppService = async (loginId, password, success, err) => {
   }
 }
 
-export const login = (login) => {
+export const switchTenant = async (tenantId) => {
+  await HttpHelper.putAppService(`/meta/tenant/current/${tenantId}`)
+  await switchAppService()
+}
+
+export const switchRegion = async (regionId) => {
+  await HttpHelper.putAppService(`/core/region/current/${regionId}`)
+  await switchAppService()
+}
+
+export const switchAppService = async () => {
+  try {
+    const loginInfo = JSON.parse(window.localStorage.getItem('login'))
+
+    const revInfo = await getRevInfo()
+    const userInfo = await getUserInfo(loginInfo.tenantAdmin)
+    ConfigHelper.applyAppServiceSetting(userInfo.setting)  
+
+    loginInfo.featureList = userInfo.featureList
+    loginInfo.tenantFeatureList = userInfo.tenantFeatureList
+    loginInfo.menu = userInfo.menu
+    loginInfo.currentRegion = userInfo.currentRegion
+    loginInfo.frontRev = revInfo.frontRev
+    loginInfo.serviceRev = revInfo.serviceRev
+    loginInfo.currentTenant = userInfo.tenant
+
+    await login(loginInfo)
+    StateHelper.loadAreaImages()
+
+  } catch (e) {
+    console.error(e)
+  }
+}
+
+export const login = async (login) => {
   console.log({login})
   store.commit('replace', login)
   window.localStorage.setItem('login', JSON.stringify({...login, dt: new Date().getTime()}))
