@@ -1,6 +1,6 @@
 
 <script>
-import { mapMutations } from 'vuex'
+import { mapMutations, mapActions } from 'vuex'
 import * as Util from '../../sub/util/Util'
 import { getButtonTheme } from '../../sub/helper/ThemeHelper'
 
