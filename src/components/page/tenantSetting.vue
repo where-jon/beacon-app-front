@@ -1,10 +1,5 @@
 <template>
   <div>
-    <b-alert variant="info" dismissible :show="showInfo">{{ message }}</b-alert>
-    <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">
-      <div v-html="message" />
-    </b-alert>
-
     <!-- table -->
     <div v-if="show">
       <div v-for="categoryId in getCategoryIds(multiList)" :key="categoryId" class="card shadow-sm mb-3">
@@ -51,16 +46,7 @@
         </div>
         <b-button v-if="!useRegistForm" type="button" :variant="getButtonTheme()" @click="showForm(true)" v-t="'label.addForm'" class="float-right"/>
       </b-form>
-
-      <b-form @submit.prevent="onSubmit" v-if="show" :id="'updateForm'">
-        <b-button v-if="isEditable && !useRegistForm" type="submit" :variant="getButtonTheme()" @click="register(true)" class="ml-2" v-t="'label.update'" />
-      </b-form>
     </div>
-
-    <!-- modal -->
-    <b-modal id="modalInfo" :title="modalInfo.title" @ok="execDelete(modalInfo.item)">
-      {{ modalInfo.content }}
-    </b-modal>
   </div>
 </template>
 
@@ -68,7 +54,7 @@
 
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import _ from 'lodash'
-import commonmixinVue from '../mixin/commonmixin.vue'
+import commonmixinVue from '../mixin/commonmixin.vue';
 import editmixinVue from '../mixin/editmixin.vue'
 import settingmixinVue from '../mixin/settingmixin.vue'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
@@ -77,60 +63,48 @@ import * as Util from '../../sub/util/Util'
 
 export default {
   mixins: [ editmixinVue, commonmixinVue, settingmixinVue ],
-  props: ['params', 'multiList', 'newForm', 'showKeyName'],
+  props: ['params', 'multiList', 'showKeyName'],
   data() {
     return {
       ...this.params,
       useRegistForm: false,
-      modalInfo: { title: '', content: '', id:'' },
       numberPattern: "^-?[0-9]+[\.]?[0-9]*$",
       numberListPattern: "^(-?[0-9]+[\.]?[0-9]*)+(,-?[0-9]+[\.]?[0-9]*)*$",
+      newForm: {},
+      dummyKey: -1,
+      column: "null",
     }
-  },
-  computed: {
-    crud() {
-      return 'update'
-    },
-  },
-  mounted() {
-    this.$parent.$options.methods.fetchData.apply(this.$parent)
   },
   methods: {
     clearValue(){
       this.newForm.value = null
     },
-    beforeReload(){
-      this.useRegistForm = false
-      this.$parent.$options.methods.beforeReload.apply(this.$parent)
-    },
     deleteConfirm(item, button) {
-      this.modalInfo.title = this.$i18n.tnl('label.confirm')
-      this.modalInfo.content = this.$i18n.tnl('message.deleteConfirm', {target: this.getName(item.key)})
-      this.modalInfo.id = item.id
-      this.modalInfo.item = item
-      this.$root.$emit('bv::show::modal', 'modalInfo', button)
-    },
-    async execDelete(entity) {
-      entity.value = null
-      await this.$parent.$options.methods.deleteEntity.call(this.$parent, entity)
-      await this.$parent.$options.methods.fetchData.call(this.$parent, true)
+      this.multiList[this.column] = this.multiList[this.column].filter((val) => val.settingId != item.settingId)
+      if(this.multiList[this.column].length == 0){
+        delete this.multiList[this.column]
+      }
+      this.$forceUpdate()
     },
     showForm(isShow){
       this.useRegistForm = isShow
     },
     onRegistSubmit(evt){
-      const entity = this.$parent.$options.methods.addNewEntity.apply(this.$parent)
+      const entity = {
+        settingId: this.dummyKey--,
+        key: this.newForm.key,
+        valType: this.newForm.type,
+        value: this.format(this.newForm.value, this.newForm.type),
+      }
       if(!this.multiList){
         this.multiList = []
       }
-      if(!_.includes(this.getCategoryIds(this.multiList), "")){
-        this.multiList[""] = []
+      if(!_.includes(this.getCategoryIds(this.multiList), this.column)){
+        this.multiList[this.column] = []
       }
-      this.multiList[""].push(entity)
-      this.onSubmit(evt)
-    },
-    async save() {
-      return this.$parent.$options.methods.save.apply(this.$parent)
+      this.multiList[this.column].push(entity)
+      this.showForm(false)
+      this.newForm = {}
     },
   }
 }

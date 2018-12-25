@@ -35,93 +35,106 @@
             </b-col>
           </b-form-row>
         </b-form-group>
-      </b-form>
 
-      <b-form-group v-if="!hasId">
-        <b-form-row>
-          <label v-t="'label.initUser'" class="control-label" />
-        </b-form-row>
-      </b-form-group>
-      <b-form-group v-if="!hasId">
-        <b-form-row>
-          <label v-t="'label.initSysAdminColumn'" class="control-label" />
-        </b-form-row>
-      </b-form-group>
-      <b-form inline @submit.prevent="onSubmit" v-if="!hasId && show">
-        <b-form-row class="mb-2 mr-3">
-          <label v-t="'label.id'" class="mr-3"/>
-          <input type="text" v-model="form.sysAdminLoginId" maxlength="16" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" class="form-control" required :readonly="!isEditable" />
+        <b-form-group v-if="!hasId">
+          <b-form-row>
+            <label v-t="'label.initUser'" class="control-label" />
+          </b-form-row>
+        </b-form-group>
+        <b-form-group v-if="!hasId">
+          <b-form-row>
+            <label v-t="'label.initSysAdminColumn'" class="control-label" />
+          </b-form-row>
+        </b-form-group>
+        <div class="form-row" v-if="!hasId && show">
+          <div class="col mb-2 mr-3">
+            <label v-t="'label.id'" class="mr-3"/>
+            <input type="text" v-model="form.sysAdminLoginId" maxlength="16" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" class="form-control" required :readonly="!isEditable" />
+            <input type="text" tabIndex="-1" class="chromeAutoInput" />
+            <input type="password" tabIndex="-1" class="chromeAutoInput" />
+          </div>
+          <div class="col mb-2">
+            <label v-t="'label.password'" class="mr-3"/>
+            <input type="password" v-model="form.sysAdminPass" maxlength="16" pattern="^[a-zA-Z0-9_\-\/!#\$%&@]*$" class="form-control" :required="requireInput(form.sysAdminLoginId)" :readonly="!isEditable"/>
+            <input type="text" tabIndex="-1" class="chromeAutoInput" />
+            <input type="password" tabIndex="-1" class="chromeAutoInput" />
+          </div>
+        </div>
+        <b-form-group v-if="!hasId">
+          <b-form-row>
+            <label v-t="'label.initAdminColumn'" class="control-label" />
+          </b-form-row>
+        </b-form-group>
+        <div class="form-row" v-if="!hasId && show">
+          <div class="col mb-2 mr-3">
+            <label v-t="'label.id'" class="mr-3"/>
+            <input type="text" v-model="form.adminLoginId" maxlength="16" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" class="form-control" :readonly="!isEditable" />
+            <input type="text" tabIndex="-1" class="chromeAutoInput" />
+            <input type="password" tabIndex="-1" class="chromeAutoInput" />
+          </div>
+          <div class="col mb-2">
+            <label v-t="'label.password'" class="mr-3"/>
+            <input type="password" v-model="form.adminPass" maxlength="16" pattern="^[a-zA-Z0-9_\-\/!#\$%&@]*$" class="form-control" :required="requireInput(form.adminLoginId)" :readonly="!isEditable" />
+            <input type="text" tabIndex="-1" class="chromeAutoInput" />
+            <input type="password" tabIndex="-1" class="chromeAutoInput" />
+          </div>
+        </div>
+        <b-form-group v-if="!hasId">
+          <b-form-row>
+            <label v-t="'label.initUserColumn'" class="control-label" />
+          </b-form-row>
+        </b-form-group>
+        <div class="form-row" v-if="!hasId && show">
+          <div class="col mb-2 mr-3">
+            <label v-t="'label.id'" class="mr-3"/>
+            <input type="text" v-model="form.userLoginId" maxlength="16" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" class="form-control" :readonly="!isEditable" />
+            <input type="text" tabIndex="-1" class="chromeAutoInput" />
+            <input type="password" tabIndex="-1" class="chromeAutoInput" />
+          </div>
+          <div class="col mb-2">
+            <label v-t="'label.password'" class="mr-3"/>
+            <input type="password" v-model="form.userPass" maxlength="16" pattern="^[a-zA-Z0-9_\-\/!#\$%&@]*$" class="form-control" :required="requireInput(form.userLoginId)" :readonly="!isEditable" />
+            <input type="text" tabIndex="-1" class="chromeAutoInput" />
+            <input type="password" tabIndex="-1" class="chromeAutoInput" />
+          </div>
+        </div>
+
+        <b-form-group v-if="!hasId" class="mt-3">
+          <b-form-row>
+              <label v-t="'label.initRegion'" class="control-label" />
+          </b-form-row>
+        </b-form-group>
+        <div class="form-row" v-if="!hasId && show">
+          <b-form-row class="mb-3">
+            <label v-t="'label.regionName'" class="mr-3" />
+            <input type="text" v-model="form.regionName" maxlength="20" class="form-control" required :readonly="!isEditable" />
+          </b-form-row>
+        </div>
+        <div class="form-row" v-if="!hasId && show">
+          <b-form-row class="mb-3">
+            <label v-t="'label.meshId'" class="mr-3" />
+            <input type="number" v-model="form.meshId" min="0" max="65535" class="form-control" :readonly="!isEditable" />
+          </b-form-row>
+        </div>
+        <div class="form-row" v-if="!hasId && show">
+          <b-form-row class="mb-5">
+            <label v-t="'label.deviceOffset'" class="mr-3" />
+            <input type="number" v-model="form.deviceOffset" min="0" max="65535" class="form-control" required :readonly="!isEditable" />
+          </b-form-row>
+        </div>
+
+        <b-form-row class="mb-2">
+          <b-button type="button" :variant="theme" @click="showFeatureEdit" class="mr-2 my-1" v-t="'label.featureSetting'"/>
         </b-form-row>
         <b-form-row class="mb-2">
-          <label v-t="'label.password'" class="mr-3"/>
-          <input type="password" v-model="form.sysAdminPass" maxlength="16" pattern="^[a-zA-Z0-9_\-\/!#\$%&@]*$" class="form-control" :required="requireInput(form.sysAdminLoginId)" :readonly="!isEditable"/>
+          <b-button type="button" :variant="theme" @click="showSettingEdit" class="mr-2 my-1" v-t="'label.system'"/>
         </b-form-row>
-      </b-form>
-      <b-form-group v-if="!hasId">
-        <b-form-row>
-          <label v-t="'label.initAdminColumn'" class="control-label" />
-        </b-form-row>
-      </b-form-group>
-      <b-form inline @submit.prevent="onSubmit" v-if="!hasId && show">
-        <b-form-row class="mb-2 mr-3">
-          <label v-t="'label.id'" class="mr-3"/>
-          <input type="text" v-model="form.adminLoginId" maxlength="16" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" class="form-control" :readonly="!isEditable" />
-        </b-form-row>
+
         <b-form-row class="mb-2">
-          <label v-t="'label.password'" class="mr-3"/>
-          <input type="password" v-model="form.adminPass" maxlength="16" pattern="^[a-zA-Z0-9_\-\/!#\$%&@]*$" class="form-control" :required="requireInput(form.adminLoginId)" :readonly="!isEditable" />
+          <label v-if="hasId" v-t="'label.createDt'" class="mr-2"/>
+          <label v-if="hasId" v-t="createDt" />
         </b-form-row>
-      </b-form>
-      <b-form-group v-if="!hasId">
-        <b-form-row>
-          <label v-t="'label.initUserColumn'" class="control-label" />
-        </b-form-row>
-      </b-form-group>
-      <b-form inline @submit.prevent="onSubmit" v-if="!hasId && show">
-        <b-form-row class="mb-2 mr-3">
-          <label v-t="'label.id'" class="mr-3"/>
-          <input type="text" v-model="form.userLoginId" maxlength="16" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" class="form-control" :readonly="!isEditable" />
-        </b-form-row>
-        <b-form-row class="mb-2">
-          <label v-t="'label.password'" class="mr-3"/>
-          <input type="password" v-model="form.userPass" maxlength="16" pattern="^[a-zA-Z0-9_\-\/!#\$%&@]*$" class="form-control" :required="requireInput(form.userLoginId)" :readonly="!isEditable" />
-        </b-form-row>
-      </b-form>
 
-      <b-form-group v-if="!hasId" class="mt-3">
-        <b-form-row>
-            <label v-t="'label.initRegion'" class="control-label" />
-        </b-form-row>
-      </b-form-group>
-      <b-form inline @submit.prevent="onSubmit" v-if="!hasId && show">
-        <b-form-row class="mb-3">
-          <label v-t="'label.regionName'" class="mr-3" />
-          <input type="text" v-model="form.regionName" maxlength="20" class="form-control" required :readonly="!isEditable" />
-        </b-form-row>
-      </b-form>
-      <b-form inline @submit.prevent="onSubmit" v-if="!hasId && show">
-        <b-form-row class="mb-3">
-          <label v-t="'label.meshId'" class="mr-3" />
-          <input type="number" v-model="form.meshId" min="0" max="65535" class="form-control" :readonly="!isEditable" />
-        </b-form-row>
-      </b-form>
-      <b-form inline @submit.prevent="onSubmit" v-if="!hasId && show">
-        <b-form-row class="mb-5">
-          <label v-t="'label.deviceOffset'" class="mr-3" />
-          <input type="number" v-model="form.deviceOffset" min="0" max="65535" class="form-control" required :readonly="!isEditable" />
-        </b-form-row>
-      </b-form>
-
-      <b-form-row class="mb-2">
-        <b-button type="button" :variant="theme" @click="showFeatureEdit" class="mr-2 my-1" v-t="'label.featureSetting'"/>
-      </b-form-row>
-
-      <b-form-row class="mb-2">
-        <label v-if="hasId" v-t="'label.createDt'" class="mr-2"/>
-        <label v-if="hasId" v-t="createDt" />
-      </b-form-row>
-
-      <b-form @submit.prevent="onSubmit" v-if="show">
         <b-button type="button" variant="outline-danger" @click="backToList" class="mr-2 my-1" v-t="'label.back'"/>
         <b-button v-if="isEditable" type="submit" :variant="theme" @click="register(false)" class="mr-2 my-1" >{{ label }}</b-button>
         <b-button v-if="isEditable && !isUpdate" type="submit" :variant="theme" @click="register(true)" class="my-1" v-t="'label.registerAgain'"/>
@@ -129,8 +142,11 @@
     </div>
 
     <!-- modal -->
-    <b-modal id="modalInfo" ok-only :ok-title="$i18n.tnl('label.setting')" :ok-variant="theme" :title="$i18n.tnl('label.featureSetting')" @ok="storeInfo" @hide="resetModal" >
+    <b-modal id="modalFeatureInfo" ok-only :ok-title="$i18n.tnl('label.setting')" :ok-variant="theme" :title="$i18n.tnl('label.featureSetting')" @ok="storeFeatureInfo" @hide="resetModal" >
       <feature-list :list="editFeatureList" :fields="fields" />
+    </b-modal>
+    <b-modal id="modalSettingInfo" ok-only :ok-title="$i18n.tnl('label.setting')" :ok-variant="theme" :title="$i18n.tnl('label.system')" @ok="storeSettingInfo" @hide="resetModal" >
+      <tenant-setting :params="settingParams" :multiList="editCategorySettingList" :showKeyName="true" />
     </b-modal>
   </div>
 </template>
@@ -142,19 +158,22 @@ import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
+import settingmixinVue from '../../../components/mixin/settingmixin.vue'
 import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import featureList from '../../../components/page/featureList.vue'
+import tenantSetting from '../../../components/page/tenantSetting.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import { AUTH_TENANT_CD, ROLE } from '../../../sub/constant/Constants'
 import { EXCLOUD_BASE_URL } from '../../../sub/constant/config'
 import { addLabelByKey } from '../../../sub/helper/ViewHelper'
 
 export default {
-  mixins: [editmixinVue],
+  mixins: [editmixinVue, settingmixinVue],
   components: {
     breadcrumb,
     featureList,
+    tenantSetting,
   },
   data() {
     return {
@@ -162,7 +181,7 @@ export default {
       id: 'tenantId',
       backPath: '/provider/tenant',
       appServicePath: '/meta/tenant',
-      form: ViewHelper.extract(this.$store.state.app_service.tenant, ["tenantId", "tenantCd", "tenantName", "sysAdminLoginId", "sysAdminPass", "adminLoginId", "adminPass", "userLoginId", "userPass", "regionName", "meshId", "deviceOffset", "createDt"]),
+      form: ViewHelper.extract(this.$store.state.app_service.tenant, ["tenantId", "tenantCd", "tenantName", "sysAdminLoginId", "sysAdminPass", "adminLoginId", "adminPass", "userLoginId", "userPass", "regionName", "meshId", "deviceOffset", "createDt", "delFlg"]),
       items: [
         {
           text: this.$i18n.tnl('label.master'),
@@ -183,9 +202,18 @@ export default {
         {key: "featureName" },
         {key: "path" },
       ]),
+      settingParams: {
+        name: 'setting',
+        fields: [ 
+          {key: "value", type: "valType", tooltip: "description" },
+        ],
+      },
       featureList: [],
       editFeatureList: [],
-      init: true,
+      categorySettingList: {},
+      editCategorySettingList: {},
+      newForm: {},
+      dummyKey: -1
     }
   },
   computed: {
@@ -207,16 +235,22 @@ export default {
     await StateHelper.load('feature')
     this.featureList = this.features.map((feature) => {
       const featureIds = this.getFeatureIds(feature.featureId)
+      const tenantFeature = this.tenant && this.tenant.tenantFeatureList? this.tenant.tenantFeatureList.find((val) => val.tenantFeaturePK.featureId == feature.featureId): null
+      const parentFeature = featureIds.subId != 0 && this.tenant && this.tenant.tenantFeatureList? this.tenant.tenantFeatureList.find((val) => {
+        const ids = this.getFeatureIds(val.tenantFeaturePK.featureId)
+        return ids.parentId == featureIds.parentId && ids.subId == 0
+      }): null
       return {
+        ...feature,
         parentShow: featureIds.subId == 0,
         parentId: featureIds.parentId,
         subShow: featureIds.subId != 0,
         subId: featureIds.subId,
-        checked: false,
-        disabled: false,
-        ...feature,
+        checked: tenantFeature? true: false,
+        disabled: parentFeature? true: false,
       }
-    }).sort((a, b) => {
+    })
+    .sort((a, b) => {
       if(a.featureType != b.featureType){
         return a.featureType < b.featureType? -1: 1
       }
@@ -228,16 +262,17 @@ export default {
       }
       return 0
     })
-  },
-  beforeUpdate() {
-    if(this.init){
-      this.form.sysAdminId = ""
-      this.form.sysAdminPass = ""
-      this.form.adminId = ""
-      this.form.adminPass = ""
-      this.form.userId = ""
-      this.form.userPass = ""
-      this.init = false
+    this.categorySettingList = {}
+    if(this.tenant && this.tenant.settingList){
+      _.forEach(this.tenant.settingList, (value, key) => {
+        if(this.categorySettingList[value.category] == null){
+          this.categorySettingList[value.category] = []
+        }
+        this.categorySettingList[value.category].push({
+          ...value,
+          id: value.settingId,
+        })
+      })
     }
   },
   methods: {
@@ -246,10 +281,17 @@ export default {
     },
     showFeatureEdit() {
       this.editFeatureList = this.featureList.map((val) => {return {...val}})
-      this.$root.$emit('bv::show::modal', 'modalInfo', null)
+      this.$root.$emit('bv::show::modal', 'modalFeatureInfo', null)
     },
-    storeInfo() {
+    showSettingEdit() {
+      this.editCategorySettingList = _.cloneDeep(this.categorySettingList)
+      this.$root.$emit('bv::show::modal', 'modalSettingInfo', null)
+    },
+    storeFeatureInfo() {
       this.featureList = this.editFeatureList.map((val) => {return {...val}})
+    },
+    storeSettingInfo() {
+      this.categorySettingList = _.cloneDeep(this.editCategorySettingList)
     },
     resetModal() {
     },
@@ -261,14 +303,33 @@ export default {
         subId: featureIdStr.length <= 6? Number(featureIdStr.substring(featureIdDigit)): 0,
       }
     },
+    afterCrud(){
+      this.featureList.forEach((feature) => {
+        feature.checked = false
+        feature.disabled = false
+      })
+      this.categorySettingList = {}
+    },
     async save() {
       let dummyKey = -1
       const tenantId = Util.hasValue(this.form.tenantId)? this.form.tenantId: dummyKey--
+      const defaultConfig = JSON.parse(window.localStorage.getItem("defaultConfig"))
+      const settingEntity = []
+      for(let key in this.categorySettingList){
+        this.categorySettingList[key].map((val) => {
+          settingEntity.push({
+            settingId: val.settingId,
+            value: this.format(val.value, val.valType),
+            key: val.key,
+            valType: val.valType,
+          })
+        })
+      }
       let entity = {
         tenantId: tenantId,
         tenantCd: this.form.tenantCd,
-        tenantCdAuth: !AUTH_TENANT_CD.includes(this.form.tenantCd),
         tenantName: this.form.tenantName,
+        delFlg: !Util.hasValue(this.form.tenantId)? 0: this.form.delFlg,
         roleList: !Util.hasValue(this.form.tenantId)? [
           { roleId: dummyKey--, roleName: "SYS_ADMIN" },
           { roleId: dummyKey--, roleName: "ADMIN" },
@@ -280,14 +341,15 @@ export default {
           Util.hasValue(this.form.userLoginId)? {userId: dummyKey--, loginId: this.form.userLoginId, pass: this.form.userPass, role: { roleId: dummyKey--, roleName: "USER" }}: null,
         ].filter((val) => val): null,
         region: !Util.hasValue(this.form.tenantId)? {regionId: dummyKey--, regionName: this.form.regionName, meshId: Util.hasValue(this.form.meshId)? this.form.meshId: null, deviceOffset: this.form.deviceOffset}: null,
-        excloudBaseUrl: !Util.hasValue(this.form.tenantId)? EXCLOUD_BASE_URL: null,
+        defaultExcloudBaseUrl: defaultConfig.EXCLOUD_BASE_URL,
+        excloudBaseUrl: EXCLOUD_BASE_URL,
         tenantFeatureList: this.featureList.map((val) => {
           return val.checked? {
             tenantFeaturePK:{tenantId: dummyKey--, featureId: val.featureId},
           }: null
         }).filter((val) => val),
+        settingList: settingEntity.length != 0? settingEntity: null,
       }
-      this.init = true
       return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
     },
   }
@@ -297,5 +359,11 @@ export default {
 <style scoped lang="scss">
   label.control-label {
     padding-top: 7px;
+  }
+  .chromeAutoInput{
+    position: fixed;
+    width: 0px;
+    height: 0px;
+    top: -999px;
   }
 </style>

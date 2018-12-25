@@ -9,7 +9,7 @@
       </template>
       <template slot="subCheck" slot-scope="row">
         <div class="custom-control custom-checkbox" v-if="row.item.subShow" >
-          <input type="checkbox" class="custom-control-input" :id="getCheckId(row.item)" v-model="row.item.checked" >
+          <input type="checkbox" class="custom-control-input" :id="getCheckId(row.item)" v-model="row.item.checked" :disabled="row.item.disabled">
           <label class="custom-control-label mb-3" :for="getCheckId(row.item)" />
         </div>
       </template>
@@ -41,7 +41,7 @@ export default {
     getFeatureName(item){
       return this.$i18n.tnl(`label.${item.featureName.replace(/ /g, '')}`)
     },
-    parentChange(item, checked){
+    parentChange(item){
       this.list.forEach((val) => {
         if(val.parentId == item.parentId){
           val.checked = item.checked
