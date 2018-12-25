@@ -86,7 +86,7 @@ export default {
     ]),
     async fetchData(payload) {
       try {
-        this.replace({showProgress: true})
+        this.showProgress()
         await StateHelper.load('area')
         await StateHelper.load('tx')
         await StateHelper.load('exb')
@@ -122,7 +122,7 @@ export default {
       catch(e) {
         console.error(e)
       }
-      this.replace({showProgress: false})
+      this.hideProgress()
     },
     getPowerLevel(position){
       const batteryOpts = BATTERY_STATE.getTypes()

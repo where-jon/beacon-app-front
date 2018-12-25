@@ -140,7 +140,7 @@ export default {
   methods: {
     async fetchData(payload) {
       try {
-        this.replace({showProgress: true})
+        this.showProgress()
         await StateHelper.load('exb')
         let deviceIds = _.filter(this.exbs,
           exb => exb.enabled && this.getSensorId(exb) == SENSOR.LED
@@ -166,7 +166,7 @@ export default {
       } catch(e) {
         console.error(e)
       }
-      this.replace({showProgress: false})
+      this.hideProgress()
     },
     async save() {
       var rgb = 0

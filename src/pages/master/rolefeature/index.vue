@@ -80,7 +80,7 @@ export default {
       }
     },
     async fetchData(payload) {
-      this.replace({showProgress: true})
+      this.showProgress()
       await StateHelper.load('feature')
       if(Util.hasValue(this.role.roleId)){
         let roleFeatures = await AppServiceHelper.fetchList(`/meta/roleFeature/${this.role.roleId}`)
@@ -96,7 +96,7 @@ export default {
       else{
         this.replaceAS({roleFeatures: []})
       }
-      this.replace({showProgress: false})
+      this.hideProgress()
     },
   }
 }

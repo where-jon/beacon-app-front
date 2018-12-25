@@ -94,7 +94,7 @@ export default {
     },
     async fetchData(payload) {
       try {
-        this.replace({showProgress: true})
+        this.showProgress()
         await StateHelper.load('pot', this.forceFetchPot)
         StateHelper.setForceFetch('pot', false)
         if (payload && payload.done) {
@@ -104,7 +104,7 @@ export default {
       catch(e) {
         console.error(e)
       }
-      this.replace({showProgress: false})
+      this.hideProgress()
     },
     thumbnail(row) {
       const img = this.potImages.find((val) => val.id == row.potId)

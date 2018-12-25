@@ -104,7 +104,7 @@ export default {
   },
   methods: {
     async fetchData(payload) {
-      this.replace({showProgress: true})
+      this.showProgress()
       this.isLoad = true
       try {
         let gateways = await EXCloudHelper.fetchGateway()
@@ -121,7 +121,7 @@ export default {
       catch(e) {
         console.error(e)
       }
-      this.replace({showProgress: false})
+      this.hideProgress()
       this.isLoad = false
     },
     getTableHeaders() {

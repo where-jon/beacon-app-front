@@ -163,7 +163,7 @@ export default {
   },
   methods: {
     async fetchData(payload) {
-      this.replace({showProgress: true})
+      this.showProgress()
       this.isLoad = true
       try {
         let telemetrys = await EXCloudHelper.fetchTelemetry()
@@ -176,7 +176,7 @@ export default {
       catch(e) {
         console.error(e)
       }
-      this.replace({showProgress: false})
+      this.hideProgress()
       this.isLoad = false
     },
     getTrClass (index, updatetime) {

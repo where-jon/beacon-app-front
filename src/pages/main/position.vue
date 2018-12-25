@@ -249,7 +249,7 @@ export default {
       try {
         this.reloadSelectedTx = this.reload? this.selectedTx: {}
         this.replace({reload: false})
-        this.replace({showProgress: true})
+        this.showProgress()
         await StateHelper.load('tx', this.forceFetchTx)
         StateHelper.setForceFetch('tx', false)
         this.loadLegends()
@@ -295,7 +295,7 @@ export default {
       catch(e) {
         console.error(e)
       }
-      this.replace({showProgress: false})
+      this.hideProgress()
     },
     async getDetail(txId) {
       let tx = await AppServiceHelper.fetch('/core/tx', txId)

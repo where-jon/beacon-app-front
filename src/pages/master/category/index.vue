@@ -68,7 +68,7 @@ export default {
     },
     async fetchData(payload) {
       try {
-        this.replace({showProgress: true})
+        this.showProgress()
         await StateHelper.load('category')
         this.categoryStyles = this.getStyleDisplay(this.categories)
         if (payload && payload.done) {
@@ -78,7 +78,7 @@ export default {
       catch(e) {
         console.error(e)
       }
-      this.replace({showProgress: false})
+      this.hideProgress()
     },
     style(row) {
       const categoryStyle = this.categoryStyles.find((val) => val.entity.categoryId == row.categoryId)

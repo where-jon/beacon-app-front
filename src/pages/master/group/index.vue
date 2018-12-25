@@ -65,7 +65,7 @@ export default {
     },
     async fetchData(payload) {
       try {
-        this.replace({showProgress: true})
+        this.showProgress()
         await StateHelper.load('group')
         this.groupStyles = this.getStyleDisplay(this.groups)
         if (payload && payload.done) {
@@ -75,7 +75,7 @@ export default {
       catch(e) {
         console.error(e)
       }
-      this.replace({showProgress: false})
+      this.hideProgress()
     },
     style(row) {
       const groupStyle = this.groupStyles.find((val) => val.entity.groupId == row.groupId)

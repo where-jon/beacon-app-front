@@ -87,7 +87,7 @@ export default {
     ]),
     async fetchData(payload) {
       try {
-        this.replace({showProgress: true})
+        this.showProgress()
         console.log('fetchData Started.')
         await StateHelper.load('area')
         await StateHelper.load('tx')
@@ -154,7 +154,7 @@ export default {
       } catch(e) {
         console.error(e)
       }
-      this.replace({showProgress: false})
+      this.hideProgress()
       console.log('fetchData End.')
     },
     async checkDetectedTx(tx) {
