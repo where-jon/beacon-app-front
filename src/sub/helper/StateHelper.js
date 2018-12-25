@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import * as AppServiceHelper from './AppServiceHelper'
 import * as Util from '../util/Util'
-import { ROLE, CATEGORY, SHAPE } from '../constant/Constants'
+import { CATEGORY, SHAPE } from '../constant/Constants'
 import { APP } from '../constant/config'
 
 

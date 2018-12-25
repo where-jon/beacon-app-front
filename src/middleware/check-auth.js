@@ -3,7 +3,7 @@ import * as MenuHelper from '../sub/helper/MenuHelper'
 import * as StateHelper from '../sub/helper/StateHelper'
 import * as HttpHelper from '../sub/helper/HttpHelper'
 import { APP } from '../sub/constant/config'
-import { LOGIN_MODE, ROLE } from '../sub/constant/Constants'
+import { LOGIN_MODE } from '../sub/constant/Constants'
 
 export default function (context) {
   console.debug('checkAuth')

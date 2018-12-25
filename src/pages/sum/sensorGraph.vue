@@ -77,7 +77,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import locale from 'element-ui/lib/locale'
@@ -450,7 +450,7 @@ export default {
         return
       }
       this.dataSensorId = this.form.sensorId
-      const dayChart = SensorHelper.showChartDetail('dayChart', this.form.sensorId, this.form.datetimeFrom, this.form.datetimeTo, sensorData, by, this.$i18n)
+      SensorHelper.showChartDetail('dayChart', this.form.sensorId, this.form.datetimeFrom, this.form.datetimeTo, sensorData, by, this.$i18n)
     },
     async download(){
       if (this.dataList == null || this.dataList.length == 0) {

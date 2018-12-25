@@ -1,4 +1,4 @@
-import { ROLE_FEATURE, MENU, ROLE } from '../constant/Constants'
+import { ROLE_FEATURE, MENU } from '../constant/Constants'
 import * as Util from '../util/Util'
 
 let store
