@@ -3,17 +3,39 @@
     <div v-for="val in sensors" :key="val.btx_id" class="personBox" :style="{'background-color': val.bg, 'border': border, 'border-color': (new Date().getTime() - val.downLatest < DOWN_RED_TIME)?'red':'white'}">
       <div class="personUpperBox">
         <div class="titleBox">
-          <div class="numberBox" :style="{'font-size': val.label.length > 2? '0.8em': '1.2em'}">{{ val.label }}</div>
+          <div class="numberBox" :style="{'font-size': val.label.length > 2? '0.8em': '1.2em'}">
+            {{ val.label }}
+          </div>
         </div>
         <div class="presBox">
-          <div class="pres high"><div v-t="'label.h_blood_pressure'"></div><div class="numval">{{val.high}}</div></div>
-          <div class="pres low"><div v-t="'label.l_blood_pressure'"></div><div class="numval">{{val.low}}</div></div>
+          <div class="pres high">
+            <div v-t="'label.h_blood_pressure'" /><div class="numval">
+              {{ val.high }}
+            </div>
+          </div>
+          <div class="pres low">
+            <div v-t="'label.l_blood_pressure'" /><div class="numval">
+              {{ val.low }}
+            </div>
+          </div>
         </div>
       </div>
       <div class="personUnderBox">
-        <div class="smallBox beat"><div><img src="~/assets/icon/beat.svg" width="32" height="32"></div><div class="numval">{{val.beat}}</div><div class="title" v-t="'label.heart_rate'"></div></div>
-        <div class="smallBox step" style="min-width: 84px;"><div><img src="~/assets/icon/step.svg" width="32" height="32"></div><div class="numval" :style="{'font-size': val.step > 999999? '1.5em': '1.8em'}">{{val.step}}</div><div class="title" v-t="'label.step'"></div></div>
-        <div class="smallBox down"><div><img src="~/assets/icon/down.svg" width="32" height="32"></div><div class="numval">{{val.down}}</div><div class="title" v-t="'label.down_count'"></div></div>
+        <div class="smallBox beat">
+          <div><img src="~/assets/icon/beat.svg" width="32" height="32"></div><div class="numval">
+            {{ val.beat }}
+          </div><div v-t="'label.heart_rate'" class="title" />
+        </div>
+        <div class="smallBox step" style="min-width: 84px;">
+          <div><img src="~/assets/icon/step.svg" width="32" height="32"></div><div class="numval" :style="{'font-size': val.step > 999999? '1.5em': '1.8em'}">
+            {{ val.step }}
+          </div><div v-t="'label.step'" class="title" />
+        </div>
+        <div class="smallBox down">
+          <div><img src="~/assets/icon/down.svg" width="32" height="32"></div><div class="numval">
+            {{ val.down }}
+          </div><div v-t="'label.down_count'" class="title" />
+        </div>
       </div>
     </div>
   </transition-group>
@@ -23,7 +45,15 @@
 import { APP } from '../../sub/constant/config'
 
 export default {
-  props: ['sensors', 'isPopup'],
+  props: {
+    sensors: {
+      type: Array,
+      required: true,
+    },
+    isPopup: {
+      type: Boolean,
+    },
+  },
   data() {
     return {
       DOWN_RED_TIME: APP.DOWN_RED_TIME,

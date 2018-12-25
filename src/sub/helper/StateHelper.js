@@ -1,8 +1,7 @@
 import _ from 'lodash'
 import * as AppServiceHelper from './AppServiceHelper'
 import * as Util from '../util/Util'
-import * as HtmlUtil from '../util/HtmlUtil'
-import { ROLE, CATEGORY, SHAPE } from '../constant/Constants'
+import { CATEGORY, SHAPE } from '../constant/Constants'
 import { APP } from '../constant/config'
 
 
@@ -12,8 +11,8 @@ let store
 let i18n
 
 export const setApp = (pStore, pi18n) => {
-    store = pStore
-    i18n = pi18n
+  store = pStore
+  i18n = pi18n
 }
 
 export const getTxIdName = (tx) => {
@@ -21,8 +20,8 @@ export const getTxIdName = (tx) => {
     return null
   }
   const id = APP.TX_WITH_TXID && tx.txId? tx.txId:
-    APP.TX_BTX_MINOR != "minor" && tx.btxId? tx.btxId:
-    APP.TX_BTX_MINOR == "minor" && tx.minor? tx.minor: null
+    APP.TX_BTX_MINOR != 'minor' && tx.btxId? tx.btxId:
+      APP.TX_BTX_MINOR == 'minor' && tx.minor? tx.minor: null
   return id? id + '(' + Util.getValue(tx, 'txName', '') + ')': null
 }
 
@@ -97,7 +96,7 @@ const appStateConf = {
           sensor: i18n.tnl('label.' + Util.getValue(tx, 'txSensorList.0.sensor.sensorName', 'normal'))
         }
       })
-  }
+    }
   },
   pots: {
     path: '/basic/pot/withThumbnail',
@@ -117,7 +116,7 @@ const appStateConf = {
         categoryId: Util.getValue(val, 'potCategoryList.0.category.categoryId', ''),
         ruby: Util.getValue(val, 'extValue.ruby' ,null),
         extValue: val.extValue ? val.extValue : this.extValueDefault,
-        thumbnail: ""
+        thumbnail: ''
       })) // omit images to avoid being filtering target
     }
   },
@@ -200,8 +199,8 @@ const appStateConf = {
 }
 
 export const load = async (target, force) => {
-  if (!target.endsWith("s")) {
-    target = target.endsWith("y")? target.slice(0, -1) + "ies" : target + "s"
+  if (!target.endsWith('s')) {
+    target = target.endsWith('y')? target.slice(0, -1) + 'ies' : target + 's'
   }
   if (!appStateConf[target]) {
     return
@@ -219,25 +218,25 @@ export const load = async (target, force) => {
 
 export const loadAreaImage = async (areaId, force) => {
   if (store.state.app_service.areaImages.find((areaImage) => areaImage.areaId == areaId) && !force) {
-    console.log("FOUND ares", areaId)
+    console.log('FOUND ares', areaId)
     return
   }
 
-  console.log("load ares", areaId)
-  let base64 = await AppServiceHelper.fetchMapImage("/core/area/" + areaId + "/mapImage")
+  console.log('load ares', areaId)
+  let base64 = await AppServiceHelper.fetchMapImage('/core/area/' + areaId + '/mapImage')
   // let mimetype="image/png"
   // base64 = "data:" + mimetype + ";base64," + base64
   // HtmlUtil.toDataURL("http://localhost:8080/core/area/" + area.areaId + "/mapImage", (dataUrl) => {
-    let areaImages = _.cloneDeep(store.state.app_service.areaImages)
-    let areaImage = areaImages.find((areaImage) => areaImage.areaId == areaId)
-    if (areaImage) {
-      areaImage.mapImage = base64
-    }
-    else {
-      areaImages.push({areaId, mapImage: base64})
-    }
-    console.log(areaId, areaImages)
-    store.commit('app_service/replaceAS', {areaImages})    
+  let areaImages = _.cloneDeep(store.state.app_service.areaImages)
+  let areaImage = areaImages.find((areaImage) => areaImage.areaId == areaId)
+  if (areaImage) {
+    areaImage.mapImage = base64
+  }
+  else {
+    areaImages.push({areaId, mapImage: base64})
+  }
+  console.log(areaId, areaImages)
+  store.commit('app_service/replaceAS', {areaImages})    
 
   // })
 }

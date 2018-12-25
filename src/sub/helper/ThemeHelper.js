@@ -1,4 +1,4 @@
-import { THEME } from "../constant/Constants"
+import { THEME } from '../constant/Constants'
 import { DISP } from '../constant/config'
 
 export const getButtonTheme = () => {

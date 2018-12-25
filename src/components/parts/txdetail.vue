@@ -1,51 +1,54 @@
 <template>
   <div>
     <div
-    id="txDetail"
-    :class="'balloon ' + getClass()"
-    :style="{
+      v-if="!isShowModal"
+      id="txDetail"
+      :class="'balloon ' + getClass()"
+      :style="{
         left: getLeft(),
         top: getTop(),
-        backgroundColor: this.selectedSensor.length == 0 ? this.selectedTx.bgColor : this.selectedSensor[0].bg,
-        color: this.selectedTx.color,
+        backgroundColor: selectedSensor.length == 0 ? selectedTx.bgColor : selectedSensor[0].bg,
+        color: selectedTx.color,
       }"
-    v-if="!isShowModal"
     >
-      <div class="potBox" @click="$emit('resetDetail')" v-if="selectedSensor.length == 0">
+      <div v-if="selectedSensor.length == 0" class="potBox" @click="$emit('resetDetail')">
         <div class="clearfix">
           <div class="thumbnail">
-            <img id="img" :src="selectedTx.thumbnail" width="auto" :height="imageHeight" v-if="selectedTx.thumbnail.length > 0" />
-            <img src="/default.png" width="auto" height="116" v-else />
+            <img v-if="selectedTx.thumbnail.length > 0" id="img" :src="selectedTx.thumbnail" width="auto" :height="imageHeight">
+            <img v-else src="/default.png" width="auto" height="116">
           </div>
           <div class="description">
-            <div v-for="(item, index) in getDispItems()" :key="index">{{ item }}</div>
+            <div v-for="(item, index) in getDispItems()" :key="index">
+              {{ item }}
+            </div>
           </div>
         </div>
       </div>
-      <sensor :sensors="selectedSensor" isPopup="true" />
+      <sensor :sensors="selectedSensor" is-popup="true" />
     </div>
     <txdetailmodal
-    :bgColor="selectedSensor.length == 0 ? this.selectedTx.bgColor : this.selectedSensor[0].bg"
-    :color="this.selectedTx.color"
-    v-else>
-      <div class="clearfix" :style="{backgroundColor: this.selectedTx.bgColor}" v-if="selectedSensor.length == 0">
+      v-else
+      :bg-color="selectedSensor.length == 0 ? selectedTx.bgColor : selectedSensor[0].bg"
+      :color="selectedTx.color"
+    >
+      <div v-if="selectedSensor.length == 0" class="clearfix" :style="{backgroundColor: selectedTx.bgColor}">
         <div class="thumbnail">
-          <img :src="selectedTx.thumbnail" width="auto" height="125" v-if="selectedTx.thumbnail.length > 0" />
-          <img src="/default.png" width="auto" height="116" v-else />
+          <img v-if="selectedTx.thumbnail.length > 0" :src="selectedTx.thumbnail" width="auto" height="125">
+          <img v-else src="/default.png" width="auto" height="116">
         </div>
         <div class="description">
-          <div v-for="(item, index) in getDispItems()" :key="index">{{ item }}</div>
+          <div v-for="(item, index) in getDispItems()" :key="index">
+            {{ item }}
+          </div>
         </div>
       </div>
-      <sensor :sensors="selectedSensor" isPopup="true" v-else />
-    </txdetailmodal >
+      <sensor v-else :sensors="selectedSensor" is-popup="true" />
+    </txdetailmodal>
   </div>
 </template>
 
 <script>
 import { DISP } from '../../sub/constant/config'
-import { getTxDetailItems } from '../../sub/helper/PositionHelper'
-import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import sensor from './sensor.vue'
 import txdetailmodal from './txdetailmodal.vue'
 
@@ -58,21 +61,23 @@ const loadImage = (src, fixHeight) => {
 }
 
 export default {
+  components: {
+    'sensor': sensor,
+    txdetailmodal,
+  },
   props: {
     selectedTx: {
       type: Object,
+      required: true,
     },
     selectedSensor: {
       type: Array,
+      default: () => [],
     },
     isShowModal: {
       type: Boolean,
       default: false
     }
-  },
-  components: {
-    'sensor': sensor,
-    txdetailmodal,
   },
   data() {
     return {
@@ -104,8 +109,8 @@ export default {
     },
     getDispItems () {
       return Object.keys(DISP.TXDETAIL_ITEMS)
-      .filter((key) => DISP.TXDETAIL_ITEMS[key])
-      .map((e) => this.selectedTx[e])
+        .filter((key) => DISP.TXDETAIL_ITEMS[key])
+        .map((e) => this.selectedTx[e])
     },
     getLeft() {
       this.setImageWidth()
@@ -115,7 +120,7 @@ export default {
     },
     getTop() {
       const top = !this.isAbove ? (this.selectedTx.orgTop - this.popupHeight - DISP.TX_R - this.tipHeight) :
-      this.selectedTx.orgTop + DISP.TX_R + this.tipHeight
+        this.selectedTx.orgTop + DISP.TX_R + this.tipHeight
       return top + 'px'
     },
     getClass() {

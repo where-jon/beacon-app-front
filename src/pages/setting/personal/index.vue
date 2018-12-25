@@ -3,33 +3,37 @@
   <div>
     <breadcrumb :items="items" />
     <div class="container">
-      <b-alert variant="success" dismissible :show="isSuccess">{{ 
-        $i18n.tnl('message.updateCompleted', {
-          target: $i18n.tnl('label.login-user-profile')})
-        }}</b-alert>
-      <b-alert variant="danger" dismissible :show="hasError">{{ 
-        $i18n.terror('message.updateFailed', {
-          target: $i18n.tnl('label.login-user-profile')
-        })
-        }}</b-alert>
+      <b-alert variant="success" dismissible :show="isSuccess">
+        {{ 
+          $i18n.tnl('message.updateCompleted', {
+            target: $i18n.tnl('label.login-user-profile')})
+        }}
+      </b-alert>
+      <b-alert variant="danger" dismissible :show="hasError">
+        {{ 
+          $i18n.terror('message.updateFailed', {
+            target: $i18n.tnl('label.login-user-profile')
+          })
+        }}
+      </b-alert>
       <b-row>
         <b-col md="10" offset-md="1">
           <pagetitle title="label.login-user-profile" />
           <b-form>
             <b-form-group>
               <label v-t="'label.loginId'" />
-              <b-form-input type="text" v-model="loginUser.loginId" maxlength="16" readonly :state="errorMessages.loginId.length > 0 ? false : null"/>
-              <p class="error" v-for="(val, key) in errorMessages.loginId" :key="key" v-if="errorMessages.loginId.length > 0" v-t="val"></p>
+              <b-form-input v-model="loginUser.loginId" type="text" maxlength="16" readonly :state="errorMessages.loginId.length > 0 ? false : null" />
+              <p v-for="(val, key) in errorMessages.loginId" :key="key" v-t="val" class="error" />
             </b-form-group>
             <b-form-group v-show="showName">
               <label v-t="'label.name'" />
-              <b-form-input type="text" v-model="loginUser.name" :readonly="!isChange" :state="errorMessages.name.length > 0 ? false : null" />
-              <p class="error" v-for="(val, key) in errorMessages.name" :key="key" v-if="errorMessages.name.length > 0" v-t="val"></p>
+              <b-form-input v-model="loginUser.name" type="text" :readonly="!isChange" :state="errorMessages.name.length > 0 ? false : null" />
+              <p v-for="(val, key) in errorMessages.name" :key="key" v-t="val" class="error" />
             </b-form-group>
             <b-form-group v-show="showEmail">
               <label v-t="'label.email'" />
-              <b-form-input type="email" v-model="loginUser.email" :readonly="!isChange"  :state="errorMessages.email.length > 0 ? false : null" />
-              <p class="error" v-for="(val, key) in errorMessages.email" :key="key" v-if="errorMessages.email.length > 0" v-t="val"></p>
+              <b-form-input v-model="loginUser.email" type="email" :readonly="!isChange" :state="errorMessages.email.length > 0 ? false : null" />
+              <p v-for="(val, key) in errorMessages.email" :key="key" v-t="val" class="error" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.role'" />
@@ -37,49 +41,51 @@
             </b-form-group>
             <b-form-group>
               <label v-t="'label.theme'" />
-              <b-form-select v-model="selectedTheme" :options="themes" class="mb-3" @change="themeSelected"/>
+              <b-form-select v-model="selectedTheme" :options="themes" class="mb-3" @change="themeSelected" />
             </b-form-group>
             <!-- プロフィール・パスワードを変更するボタン -->
             <b-form-group>
               <label v-t="'label.charSet'" />
-              <b-form-select v-model="selectedCharSet" :options="charSets" class="mb-3" @change="charSetSelected"/>
+              <b-form-select v-model="selectedCharSet" :options="charSets" class="mb-3" @change="charSetSelected" />
             </b-form-group>
             <b-form-group v-show="!isProvider">
-              <b-button type="button" :variant="theme" class="btn-block" 
-              v-t="'label.changeProfilePassword'" @click="isChange = true" v-show="!isChange" />
+              <b-button v-show="!isChange" v-t="'label.changeProfilePassword'" type="button" 
+                        :variant="theme" class="btn-block" @click="isChange = true"
+              />
             </b-form-group>
 
-            <b-card bg-variant="light" v-show="isChange">
+            <b-card v-show="isChange" bg-variant="light">
               <b-form-group breakpoint="lg" :label="$i18n.tnl('label.changePassword')" label-size="md">
-
                 <!-- 現在のパスワード -->
                 <b-form-group :label="$i18n.tnl('label.passwordCurrent')" label-class="text-sm-right" label-for="password-current">
-                  <b-form-input type="password" id="password-current"
-                   v-model="loginUser.password" maxlength="16"
-                   :state="errorMessages.password.length > 0 ? false : null" />
-                  <p class="error" v-for="(val, key) in errorMessages.password" :key="key" v-if="errorMessages.password.length > 0" v-t="val"></p>
+                  <b-form-input id="password-current" v-model="loginUser.password"
+                                type="password" maxlength="16"
+                                :state="errorMessages.password.length > 0 ? false : null"
+                  />
+                  <p v-for="(val, key) in errorMessages.password" :key="key" v-t="val" class="error" />
                 </b-form-group>
 
                 <!-- 変更パスワード -->
                 <b-form-group :label="$i18n.tnl('label.passwordUpdate')" label-class="text-sm-right" label-for="password-update">
-                  <b-form-input type="password" id="password-update" v-model="loginUser.passwordUpdate" maxlength="16"></b-form-input>
+                  <b-form-input id="password-update" v-model="loginUser.passwordUpdate" type="password" maxlength="16" />
                 </b-form-group>
 
                 <!-- 確認パスワード -->
                 <b-form-group :label="$i18n.tnl('label.passwordConfirm')" label-class="text-sm-right" label-for="password-confirm">
-                  <b-form-input type="password" id="password-confirm" v-model="loginUser.passwordConfirm" maxlength="16"></b-form-input>
+                  <b-form-input id="password-confirm" v-model="loginUser.passwordConfirm" type="password" maxlength="16" />
                 </b-form-group>
-
               </b-form-group>
-              <b-alert variant="danger" dismissible :show="passErrorMessage !== null">{{ passErrorMessage }}</b-alert>
+              <b-alert variant="danger" dismissible :show="passErrorMessage !== null">
+                {{ passErrorMessage }}
+              </b-alert>
             </b-card>
           </b-form>
         </b-col>
       </b-row>
-      <b-row :style="{ marginTop: '30px' }" v-show="isChange">
+      <b-row v-show="isChange" :style="{ marginTop: '30px' }">
         <b-form-group class="col text-center">
-          <b-button type="button" v-t="'label.cancel'" class="mr-4 mb-2 input-btn" variant="outline-danger" @click="handleCancelButton" />
-          <b-button type="button" v-t="'label.modify'" class="ml-4 mb-2 input-btn" :variant="theme" @click="onSubmit" />
+          <b-button v-t="'label.cancel'" type="button" class="mr-4 mb-2 input-btn" variant="outline-danger" @click="handleCancelButton" />
+          <b-button v-t="'label.modify'" type="button" class="ml-4 mb-2 input-btn" :variant="theme" @click="onSubmit" />
         </b-form-group>
       </b-row>
     </div>
@@ -87,19 +93,18 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapMutations } from 'vuex'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import pagetitle from '../../../components/layout/pagetitle.vue'
-import { APP, DISP } from '../../../sub/constant/config'
+import { APP } from '../../../sub/constant/config'
 import { THEME, CHAR_SET } from '../../../sub/constant/Constants'
 import { getTheme, getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import { getCharSet } from '../../../sub/helper/CharSetHelper'
 import * as AuthHelper from '../../../sub/helper/AuthHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
-import * as HttpHelper from '../../../sub/helper/HttpHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as ValidateUtil from '../../../sub/util/ValidateUtil'
-import commonmixinVue from '../../../components/mixin/commonmixin.vue';
+import commonmixinVue from '../../../components/mixin/commonmixin.vue'
 
 export default {
   mixin: [commonmixinVue],
@@ -135,8 +140,8 @@ export default {
         roleId: null,
         description: null,
         password: null,
-        passwordUpdate: "",
-        passwordConfirm: "",
+        passwordUpdate: '',
+        passwordConfirm: '',
       },
       errorMessages: {
         loginId: [],
@@ -154,15 +159,14 @@ export default {
   },
   computed: {
     theme () {
-      const storeTheme = this.$store.state.setting.theme
       return 'outline-' + getButtonTheme()
     },
     hasError() {
       return Object.keys(this.errorMessages)
-      .map((key) => {
-        return this.errorMessages[key].length
-      })
-      .reduce((prev, cur, i, a) => { return prev + cur }) > 0
+        .map((key) => {
+          return this.errorMessages[key].length
+        })
+        .reduce((prev, cur, i, a) => { return prev + cur }) > 0
     },
     showEmail() {
       return APP.USER_WITH_EMAIL
@@ -235,7 +239,7 @@ export default {
         return false
       }
 
-      const result = ValidateUtil.validatePattern(value, /^[a-zA-Z0-9_\-\/!#\$%&@]*$/, this.$i18n.tnl('message.invalidPassword'))
+      const result = ValidateUtil.validatePattern(value, /^[a-zA-Z0-9_\-/!#$%&@]*$/, this.$i18n.tnl('message.invalidPassword'))
       if (result !== null) {
         this.passErrorMessage = result
         this.errorMessages.general.push(this.passErrorMessage)
@@ -254,8 +258,8 @@ export default {
     },
     handleCancelButton () {
       this.loginUser.password = null
-      this.loginUser.passwordUpdate = ""
-      this.loginUser.passwordConfirm = ""
+      this.loginUser.passwordUpdate = ''
+      this.loginUser.passwordConfirm = ''
       this.errorMessages.password = []
       this.passErrorMessage = null
       this.isChange = false
@@ -304,7 +308,7 @@ export default {
       )
     },
     async save() {
-      const param = ViewHelper.extract(this.loginUser, ["userId", "loginId", "name", "email", "roleId", "description"])
+      const param = ViewHelper.extract(this.loginUser, ['userId', 'loginId', 'name', 'email', 'roleId', 'description'])
       if (this.loginUser.passwordConfirm !== null) {
         param['pass'] = this.loginUser.passwordConfirm
       }
@@ -317,7 +321,7 @@ export default {
       if (required.length > 0) {
         return required
       }
-      const pattern = ValidateUtil.validatePattern(value, /^[a-zA-Z0-9_\-\/!#\$%&@]*$/, invalidPatternMessage)
+      const pattern = ValidateUtil.validatePattern(value, /^[a-zA-Z0-9_\-/!#$%&@]*$/, invalidPatternMessage)
       return pattern ? [pattern] : []
     },
     validateRequire (val, label) {

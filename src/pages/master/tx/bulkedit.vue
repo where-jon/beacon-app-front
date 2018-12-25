@@ -1,13 +1,12 @@
 <template>
   <div>
     <breadcrumb :items="items" />
-    <bulkedit ref="bulkEdit" :name="name" :id="id" :backPath="backPath" :app-service-path="appServicePath" />
+    <bulkedit :id="id" ref="bulkEdit" :name="name" :back-path="backPath" :app-service-path="appServicePath" />
   </div>
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-import _ from 'lodash'
+import { mapState } from 'vuex'
 import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
@@ -56,18 +55,18 @@ export default {
       StateHelper.setForceFetch('pot', true)
     },
     resetId(entity, dummyKey){
-      const targetEntity = Util.getEntityFromIds(this.txs, entity, ["txId", "btxId", "minor"])
+      const targetEntity = Util.getEntityFromIds(this.txs, entity, ['txId', 'btxId', 'minor'])
       entity.txId = targetEntity? targetEntity.txId: dummyKey--
-      if(APP.TX_BTX_MINOR == "minor"){
+      if(APP.TX_BTX_MINOR == 'minor'){
         entity.btxId = entity.minor
       }
-      else if(APP.TX_BTX_MINOR == "btxId"){
+      else if(APP.TX_BTX_MINOR == 'btxId'){
         entity.minor = entity.btxId
       }
       if (entity.pot) {
         entity.pot.potId = dummyKey--,
-        entity.pot.potCd = entity.pot.potId + "_" + (new Date().getTime() % 10000)
-        entity.pot.potName = entity.pot.potId + "_" + (new Date().getTime() % 10000)
+        entity.pot.potCd = entity.pot.potId + '_' + (new Date().getTime() % 10000)
+        entity.pot.potName = entity.pot.potId + '_' + (new Date().getTime() % 10000)
         const pot = this.pots.find((val) => val.txId == entity.txId)
         if(pot){
           const potImage = this.potImages.find((val) => val.txId == entity.txId)
@@ -79,14 +78,14 @@ export default {
       return dummyKey
     },
     async save(bulkSaveFunc) {
-      const MAIN_COL = APP.TX_WITH_TXID? "txId": APP.TX_BTX_MINOR == "minor"? "minor": "btxId"
-      const POT = ["displayName","description","potCategoryList"]
-      const POT_CATEGORY = ["categoryId", "categoryName"]
-      const POT_GROUP = ["groupId", "groupName"]
-      const TX_SENSOR = ["sensorId", "sensor"]
+      const MAIN_COL = APP.TX_WITH_TXID? 'txId': APP.TX_BTX_MINOR == 'minor'? 'minor': 'btxId'
+      const POT = ['displayName','description','potCategoryList']
+      const POT_CATEGORY = ['categoryId', 'categoryName']
+      const POT_GROUP = ['groupId', 'groupName']
+      const TX_SENSOR = ['sensorId', 'sensor']
 
-      const NUMBER_TYPE_LIST = ["deviceId", "major", "minor", "exbId", "areaId", "locationId", "posId", "x", "y", "z", "txViewType", "zoneName"]
-      const BOOL_TYPE_LIST = ["visible", "enabled"]
+      const NUMBER_TYPE_LIST = ['deviceId', 'major', 'minor', 'exbId', 'areaId', 'locationId', 'posId', 'x', 'y', 'z', 'txViewType', 'zoneName']
+      const BOOL_TYPE_LIST = ['visible', 'enabled']
       await StateHelper.load('category')
       await StateHelper.load('group')
       await StateHelper.load('pot')
@@ -104,7 +103,7 @@ export default {
           if (!entity.pot) {
             entity.pot = {}
           }
-          if(headerName == "categoryName"){
+          if(headerName == 'categoryName'){
             const category = this.categories.find((category) => category.categoryName == val)
             if(category){
               entity.pot.potType = category.categoryType
@@ -122,7 +121,7 @@ export default {
           if (!entity.pot) {
             entity.pot = {}
           }
-          if(headerName == "groupName"){
+          if(headerName == 'groupName'){
             const group = this.groups.find((group) => group.groupName == val)
             if(group){
               entity.pot.potGroupList = [{potGroupPK: {potId: dummyKey--, groupId: group.groupId}}]
@@ -136,7 +135,7 @@ export default {
           }
         }
         else if (Util.equalsAny(headerName, TX_SENSOR) && val) {
-          if(headerName == "sensor"){
+          if(headerName == 'sensor'){
             const sensor = this.sensorOptionsTx.find((sensor) => sensor.text == val)
             if(sensor && sensor.value != null){
               entity.txSensorList = [{txSensorPK: {sensorId: sensor.value}, sensorName: val}]
@@ -167,7 +166,7 @@ export default {
         return dummyKey
       },
       (entity, dummyKey) => this.resetId(entity, dummyKey)
-    )},
+      )},
   }
 }
 </script>

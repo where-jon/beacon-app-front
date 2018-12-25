@@ -10,7 +10,7 @@ const initState = state()
 
 export const mutations = {
   replaceMonitor(state, obj) {
-    console.debug("replaceMonitor")
+    console.debug('replaceMonitor')
     if (obj) {
       for (let key in obj) {
         Vue.set(state, key, obj[key])

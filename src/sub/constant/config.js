@@ -1,24 +1,24 @@
 // configuration for app
 // Basically using const but values are not primitive but objects or arrays because it may change from outside.
 
-import { LOGIN_MODE, DETECT_STATE } from './Constants';
+import { LOGIN_MODE, DETECT_STATE } from './Constants'
 
 export const DEV = { // 開発デバッグ関連
   DEBUG: 0, // デバッグモード (0:なし、1以上デバッグレベル)
-  USE_MOCK_APS: false || location.search.indexOf("mockAps") != -1, // AppService API結果の代わりにモックデータを使用する
-  USE_MOCK_EXC: false || location.search.indexOf("mockExc") != -1, // Excloud API結果の代わりにモックデータを使用する
+  USE_MOCK_APS: false || location.search.indexOf('mockAps') != -1, // AppService API結果の代わりにモックデータを使用する
+  USE_MOCK_EXC: false || location.search.indexOf('mockExc') != -1, // Excloud API結果の代わりにモックデータを使用する
   NOT_FILTER_TX: true,
 }
 
 export const APP = { // 機能面に関する設定
-  VERSION: "Version 0.9.0", // バージョン　this application version
+  VERSION: 'Version 0.9.0', // バージョン　this application version
   LOGIN_MODE: LOGIN_MODE.APP_SERVICE, // ログインモード(なし、ローカル、AppService)
-  SAAS_DOMAIN: ".saas.",
+  SAAS_DOMAIN: '.saas.',
 
   // ページ遷移設定
-  TOP_PAGE: "/main/position", // トップページパス　must not be / otherwise recursive infinitely
-  LOGIN_PAGE: "/login", // ログインページパス　if no login then /
-  ERROR_PAGE: "/error", // エラーページパス　if no login then /
+  TOP_PAGE: '/main/position', // トップページパス　must not be / otherwise recursive infinitely
+  LOGIN_PAGE: '/login', // ログインページパス　if no login then /
+  ERROR_PAGE: '/error', // エラーページパス　if no login then /
 
   // 時間設定
   TIMEOUT: 60 * 60 * 1000, // session timeout(using local storage)
@@ -61,8 +61,8 @@ export const APP = { // 機能面に関する設定
   UPDATE_POSITION_EFFECT: true,
   TIME_ZONE: 0,
   SLACK_WEBHOOC: false,
-  MAIL_ADDRESS: "",
-  IP_ADDRESS_FILTER: "",
+  MAIL_ADDRESS: '',
+  IP_ADDRESS_FILTER: '',
   // 将来実装予定項目 END
 
   // TX関連設定
@@ -117,31 +117,31 @@ export const APP = { // 機能面に関する設定
 
 // URL関連設定
 export const APP_SERVICE = { // used if APP.LOGIN_MODE == APP_SERVICE
-  BASE_URL: "http://localhost:8080"
+  BASE_URL: 'http://localhost:8080'
 }
 
-export const EXCLOUD_BASE_URL = "https://nsome8q880.execute-api.ap-northeast-1.amazonaws.com/prod" // used if APP.LOGIN_MODE != APP_SERVICE
+export const EXCLOUD_BASE_URL = 'https://nsome8q880.execute-api.ap-northeast-1.amazonaws.com/prod' // used if APP.LOGIN_MODE != APP_SERVICE
 
 export const EXCLOUD = {
   withCredentials: true, // false if APP.LOGIN_MODE != APP_SERVICE
   // POSITION_URL: EXCLOUD_BASE_URL + "/beacon/position-kalman?_=",
   // GATEWAY_URL: EXCLOUD_BASE_URL + "/gateway/0?=",
   // TELEMETRY_URL: EXCLOUD_BASE_URL + "/telemetry/0?=",
-  POSITION_URL: "/core/excloud/position?_=",
-  GATEWAY_URL: "/core/excloud/gateway?_=",
-  TELEMETRY_URL: "/core/excloud/telemetry?_=",
-  SENSOR_URL: "/core/excloud/sensor/{id}?_=",
-  LED_URL: "/core/excloud/led?_=",
-  POSITION_HISTORY_FETCH_URL: "/core/positionHistory/fetch?_=",
+  POSITION_URL: '/core/excloud/position?_=',
+  GATEWAY_URL: '/core/excloud/gateway?_=',
+  TELEMETRY_URL: '/core/excloud/telemetry?_=',
+  SENSOR_URL: '/core/excloud/sensor/{id}?_=',
+  LED_URL: '/core/excloud/led?_=',
+  POSITION_HISTORY_FETCH_URL: '/core/positionHistory/fetch?_=',
 }
 
 export const DISP = { // 表示系設定（表示・色・フォント・サイズ）
   // 位置表示：TX
   TX_R: 26, // Txの半径
   ROUNDRECT_RADIUS: 13, // Tx角丸表示時のRADIUS
-  TX_BGCOLOR: "3bcddc", // Tx表示時のデフォルト背景色
-  TX_COLOR: "000", // Tx表示時のデフォルト文字色
-  TX_FONT: "20px Arial", // Tx表示時のフォント
+  TX_BGCOLOR: '3bcddc', // Tx表示時のデフォルト背景色
+  TX_COLOR: '000', // Tx表示時のデフォルト文字色
+  TX_FONT: '20px Arial', // Tx表示時のフォント
   TX_DIV_2: 1, // Txが重なった際に２つ上下左右に並べる場合にずらす倍率
   TX_DIV_3: 0.5, // Txが重なった際に３つ左右に並べる場合にずらす倍率
   TX_HORIZON: 5, // TXアイコンタイル表示時の列数
@@ -150,34 +150,34 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   SHOW_NAV: true, // show nav  
   SHOW_SIDEBAR: true, // show sidebar  
   SHOW_LOGO: true, // show logo (or show title text)
-  THEME: "default", // デフォルトのテーマ
+  THEME: 'default', // デフォルトのテーマ
   DISPLAY_PRIORITY: ['category','group'], // TX表示の際に参照するdisplay方法の優先順位
 
-  MAP_FIT: "both", // マップを画面表示範囲内にフィットさせるか。width or height or both
-  MAP_FIT_MOBILE: "width", // (モバイル)マップを画面表示範囲内にフィットさせるか。width or height or both
+  MAP_FIT: 'both', // マップを画面表示範囲内にフィットさせるか。width or height or both
+  MAP_FIT_MOBILE: 'width', // (モバイル)マップを画面表示範囲内にフィットさせるか。width or height or both
 
   EXB_LOC_SIZE: {w: 60, h: 30}, // EXB配置設定のEXB表示サイズ
-  EXB_LOC_BGCOLOR: "#76ccf7", // EXB配置設定のEXB表示背景色
-  EXB_LOC_COLOR: "#000", // EXB配置設定のEXB表示文字色
-  EXB_LOC_FONT: "16px Arial", // EXB配置設定のEXB表示フォント
+  EXB_LOC_BGCOLOR: '#76ccf7', // EXB配置設定のEXB表示背景色
+  EXB_LOC_COLOR: '#000', // EXB配置設定のEXB表示文字色
+  EXB_LOC_FONT: '16px Arial', // EXB配置設定のEXB表示フォント
 
-  THERMOH_DISP: "color", // icon / color
-  THERMOH_FONT: "12px Arial", // 温湿度表示時のフォント
-  DISCOMFORT_HOT: "#fc5800", // 温湿度表示時の不快指数Hot時の背景色
-  DISCOMFORT_COMFORT: "#15db75", // 温湿度表示時の不快指数Comfort時の背景色
-  DISCOMFORT_COLD: "#7da6e8", // 温湿度表示時の不快指数Cold時の背景色
+  THERMOH_DISP: 'color', // icon / color
+  THERMOH_FONT: '12px Arial', // 温湿度表示時のフォント
+  DISCOMFORT_HOT: '#fc5800', // 温湿度表示時の不快指数Hot時の背景色
+  DISCOMFORT_COMFORT: '#15db75', // 温湿度表示時の不快指数Comfort時の背景色
+  DISCOMFORT_COLD: '#7da6e8', // 温湿度表示時の不快指数Cold時の背景色
 
-  TEMPERATURE_LINE_COLOR: "#fc5800",// 温度グラフの線色
-  HUMIDITY_LINE_COLOR: "#7da6e8",// 湿度グラフの線色
-  PIR_LINE_COLOR: "#fc5800",// 人感センサグラフの線色
-  THERMOPILE_LINE_COLOR: "#fc5800",// サーモパイルセンサグラフの線色
-  LED_LINE_COLOR: "#fc5800",// LEDセンサグラフの線色
-  MAGNET_LINE_COLOR: "#fc5800",// マグネットセンサグラフの線色
-  H_BLOOD_PRESSURE_LINE_COLOR: "#fc5800",// MEDiTAGセンサグラフの線色
-  L_BLOOD_PRESSURE_LINE_COLOR: "#7da6e8",// 湿度グラフの線色
-  HEART_RATE_LINE_COLOR: "#7de8a6",// 湿度グラフの線色
-  STEP_LINE_COLOR: "#7da6e8",// 歩数グラフの線色
-  DOWN_COUNT_LINE_COLOR: "#fc5800",// 転倒数グラフの線色
+  TEMPERATURE_LINE_COLOR: '#fc5800',// 温度グラフの線色
+  HUMIDITY_LINE_COLOR: '#7da6e8',// 湿度グラフの線色
+  PIR_LINE_COLOR: '#fc5800',// 人感センサグラフの線色
+  THERMOPILE_LINE_COLOR: '#fc5800',// サーモパイルセンサグラフの線色
+  LED_LINE_COLOR: '#fc5800',// LEDセンサグラフの線色
+  MAGNET_LINE_COLOR: '#fc5800',// マグネットセンサグラフの線色
+  H_BLOOD_PRESSURE_LINE_COLOR: '#fc5800',// MEDiTAGセンサグラフの線色
+  L_BLOOD_PRESSURE_LINE_COLOR: '#7da6e8',// 湿度グラフの線色
+  HEART_RATE_LINE_COLOR: '#7de8a6',// 湿度グラフの線色
+  STEP_LINE_COLOR: '#7da6e8',// 歩数グラフの線色
+  DOWN_COUNT_LINE_COLOR: '#fc5800',// 転倒数グラフの線色
 
   BLOOD_PRESSURE_MAX: 200,// 血圧最大メモリ
   BLOOD_PRESSURE_STEP: 25,// 血圧メモリ間隔
@@ -190,14 +190,14 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
 
   PIR_R_SIZE: 26,  // PIR表示時の円の半径
   PIR_MIN_COUNT: 2, // PIRでの存在条件の最小カウント値
-  PIR_BGCOLOR: "#FC7E82", // "#E2A6A5" // PIR表示の円の背景色
-  PIR_FGCOLOR: "#FFFFFF", // PIR表示時の文字色
-  PIR_INUSE_LABEL: "InUse", // PIRで存在時のラベルキー
-  PIR_INUSE_FONT: "bold 24px Arial", // PIRで存在時のフォント
+  PIR_BGCOLOR: '#FC7E82', // "#E2A6A5" // PIR表示の円の背景色
+  PIR_FGCOLOR: '#FFFFFF', // PIR表示時の文字色
+  PIR_INUSE_LABEL: 'InUse', // PIRで存在時のラベルキー
+  PIR_INUSE_FONT: 'bold 24px Arial', // PIRで存在時のフォント
   PIR_EMPTY_SHOW: true, // PIRで不在時に表示するか否か
-  PIR_EMPTY_BGCOLOR: "#595959", // PIRで不存時の背景色
-  PIR_EMPTY_LABEL: "Empty", // PIRで不在時のラベルキー
-  PIR_EMPTY_FONT: "bold 32px Arial", // PIRで不在時のフォント
+  PIR_EMPTY_BGCOLOR: '#595959', // PIRで不存時の背景色
+  PIR_EMPTY_LABEL: 'Empty', // PIRで不在時のラベルキー
+  PIR_EMPTY_FONT: 'bold 32px Arial', // PIRで不在時のフォント
 
   THERMOPILE_S_SIZE: 20, // サーモパイル円Sサイズ
   THERMOPILE_M_SIZE: 40, // サーモパイル円Mサイズ
@@ -231,7 +231,7 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   ANALYSIS: { // 分析
     LINE: {
       MAX_WEIGHT: 10,   // 動線の最大太さ
-      COLOR: "#ff0000", // 動線の色 (#xxxxxx)
+      COLOR: '#ff0000', // 動線の色 (#xxxxxx)
       OPACITY: 1,       // 動線の透過度 (0～1。0.5などの小数も可)
     },
     HEATMAP: {
@@ -244,7 +244,7 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
 
 // ローカルログイン認証設定
 export const LOCAL_LOGIN = { // local login md5 hash of id:pass // TODO: add Role
-  ID_PASS: ["0636c3371cd14c53cf2dae4e81fd4aff", "d2abaa37a7c3db1137d385e1d8c15fd2"]
+  ID_PASS: ['0636c3371cd14c53cf2dae4e81fd4aff', 'd2abaa37a7c3db1137d385e1d8c15fd2']
 }
 
 export const EXB = [

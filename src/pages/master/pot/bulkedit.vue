@@ -1,12 +1,12 @@
 <template>
   <div>
     <breadcrumb :items="items" />
-    <bulkedit :name="name" :id="id" :backPath="backPath" :app-service-path="appServicePath" />
+    <bulkedit :id="id" :name="name" :back-path="backPath" :app-service-path="appServicePath" />
   </div>
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapState } from 'vuex'
 import _ from 'lodash'
 import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
@@ -54,11 +54,11 @@ export default {
       return dummyKey
     },
     async save(bulkSaveFunc) {
-      const MAIN_COL = "potId"
-      const NULLABLE_NUMBER_COL = ["txId", "exbId", "zoneId", "areaId", "potType"]
-      const MANY_TO_MANY = ["groupId", "categoryId"]
-      const extValueHeaders = ["ruby", "post", "tel"]
-      const txIdHeaders = ["btxId", "minor"]
+      const MAIN_COL = 'potId'
+      const NULLABLE_NUMBER_COL = ['txId', 'exbId', 'zoneId', 'areaId', 'potType']
+      const MANY_TO_MANY = ['groupId', 'categoryId']
+      const extValueHeaders = ['ruby', 'post', 'tel']
+      const txIdHeaders = ['btxId', 'minor']
       await StateHelper.load('category')
       await StateHelper.load('group')
       await StateHelper.load('tx')
@@ -66,10 +66,10 @@ export default {
       await bulkSaveFunc(MAIN_COL, null, null, (entity, headerName, val, dummyKey) => {
         // relation
         if (MANY_TO_MANY.includes(headerName) && Util.hasValue(val)) {
-          if("groupId" === headerName) {
+          if('groupId' === headerName) {
             entity.potGroupList = [{potGroupPK: {groupId: Number(val)}}]
           }
-          else if("categoryId" === headerName) {
+          else if('categoryId' === headerName) {
             entity.potCategoryList = [{potCategoryPK: {categoryId: Number(val)}}]
           }
           return dummyKey

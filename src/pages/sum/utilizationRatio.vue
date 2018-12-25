@@ -2,50 +2,70 @@
   <div>
     <breadcrumb :items="items" :reload="false" />
     <div class="container">
-      <b-alert variant="info" dismissible :show="showInfo">{{ message }}</b-alert>
-      <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">{{ message }}</b-alert>
+      <b-alert variant="info" dismissible :show="showInfo">
+        {{ message }}
+      </b-alert>
+      <b-alert variant="danger" dismissible :show="showAlert" @dismissed="showAlert=false">
+        {{ message }}
+      </b-alert>
       <b-row>
-        <b-form inline @submit.prevent class="mb-2">
+        <b-form inline class="mb-2" @submit.prevent>
           <label v-t="'label.sumYearMonth'" />
           <v-select v-model="vModelYearMonth" :options="yearMonthOptions" :on-change="yearMonthChange" class="vselectMonth">
-            <div slot="no-options">{{$i18n.tnl('label.vSelectNoOptions')}}</div>
+            <div slot="no-options">
+              {{ $i18n.tnl('label.vSelectNoOptions') }}
+            </div>
           </v-select>
         </b-form>
-        <b-form inline @submit.prevent class="mb-2">
+        <b-form inline class="mb-2" @submit.prevent>
           <label v-t="'label.sumDay'" />
           <v-select v-model="vModelDay" :options="dayOptions" :on-change="dayChange" class="vselectDay">
-            <div slot="no-options">{{$i18n.tnl('label.vSelectNoOptions')}}</div>
+            <div slot="no-options">
+              {{ $i18n.tnl('label.vSelectNoOptions') }}
+            </div>
           </v-select>
         </b-form>
-        <b-form inline @submit.prevent class="mb-2">
+        <b-form inline class="mb-2" @submit.prevent>
           <label v-t="'label.zoneCategoryName'" />
           <v-select v-model="vModelCategory" :options="categoryOptions" :on-change="categoryChange" class="vselectCategory">
-            <div slot="no-options">{{$i18n.tnl('label.vSelectNoOptions')}}</div>
+            <div slot="no-options">
+              {{ $i18n.tnl('label.vSelectNoOptions') }}
+            </div>
           </v-select>
         </b-form>
-        <b-form inline @submit.prevent class="mb-2">
+        <b-form inline class="mb-2" @submit.prevent>
           <label v-t="'label.zone'" />
           <v-select v-model="vModelZone" :options="zoneOptions" :on-change="zoneChange" class="vselectZone">
-            <div slot="no-options">{{$i18n.tnl('label.vSelectNoOptions')}}</div>
+            <div slot="no-options">
+              {{ $i18n.tnl('label.vSelectNoOptions') }}
+            </div>
           </v-select>
         </b-form>
-        <b-form inline @submit.prevent class="mb-2">
-          <b-button size="sm" :variant="getButtonTheme()" v-t="'label.search'" @click="search()"></b-button> 
+        <b-form inline class="mb-2" @submit.prevent>
+          <b-button v-t="'label.search'" size="sm" :variant="getButtonTheme()" @click="search()" /> 
         </b-form>
       </b-row>
-      <p></p>
+      <p />
       <b-row align-h="end">
         <b-col md="2" class="mb-2">
-          <b-button v-if="!iosOrAndroid" :variant="getButtonTheme()" @click="download()" v-t="'label.download'"/>
+          <b-button v-if="!iosOrAndroid" v-t="'label.download'" :variant="getButtonTheme()" @click="download()" />
         </b-col>
       </b-row>
       <table class="table table-hover table-bordered">
         <thead>
           <tr>
-            <th scope="col">{{ $i18n.tnl('label.zoneCategoryName') }}</th>
-            <th scope="col">{{ $i18n.tnl('label.zoneName') }}</th>
-            <th scope="col">{{ $i18n.tnl('label.utilizationRatioP') }}</th>
-            <th scope="col">{{ $i18n.tnl('label.utilizationTime') }}</th>
+            <th scope="col">
+              {{ $i18n.tnl('label.zoneCategoryName') }}
+            </th>
+            <th scope="col">
+              {{ $i18n.tnl('label.zoneName') }}
+            </th>
+            <th scope="col">
+              {{ $i18n.tnl('label.utilizationRatioP') }}
+            </th>
+            <th scope="col">
+              {{ $i18n.tnl('label.utilizationTime') }}
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -54,7 +74,7 @@
             <td>{{ utilizationRatio.zoneName }}</td>
             <td>
               <div class="graph">
-                <span class="bar" v-bind:style="{ width:utilizationRatio.rate + '%' }">
+                <span class="bar" :style="{ width:utilizationRatio.rate + '%' }">
                   {{ utilizationRatio.rate }}%
                 </span>
               </div>
@@ -68,23 +88,20 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapState } from 'vuex'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
-import { EventBus } from '../../sub/helper/EventHelper'
-import { EXB, DISP, APP } from '../../sub/constant/config'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
-import { getTheme } from '../../sub/helper/ThemeHelper'
 import commonmixinVue from '../../components/mixin/commonmixin.vue'
 import reloadmixinVue from '../../components/mixin/reloadmixin.vue'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 
 export default {
-  mixins: [reloadmixinVue, commonmixinVue ],
   components: {
     breadcrumb,
   },
+  mixins: [reloadmixinVue, commonmixinVue ],
   data () {
     return {
       items: [
@@ -101,9 +118,9 @@ export default {
       vModelZone: null,
       vModelYearMonth: null,
       vModelDay: null,
-      categoryOptionList: [{label:"", value:null}],
+      categoryOptionList: [{label:'', value:null}],
       zoneOptionList: [],
-      dayOptionList: [{label:"", value:null}],
+      dayOptionList: [],
       //
       zoneCategorys: [],
       categoryId: -1,
@@ -114,7 +131,7 @@ export default {
       //
       showInfo: false,
       showAlert: false,
-      message: ""
+      message: ''
     }
   },
   computed: {
@@ -131,16 +148,15 @@ export default {
       var pullDowns = []
       for (var idx = 0; idx < 6; idx++) {
         pullDowns.push({
-          label: yyyy + "/" + ("00" + mm).substr(-2),
+          label: yyyy + '/' + ('00' + mm).substr(-2),
           value: yyyy*100 + mm
         })
         mm--
         if (mm < 1) {
           mm = 12
-          yyyy--;
+          yyyy--
         }
       }
-      this.dayOptionList = []
       return pullDowns
     },
     dayOptions() {
@@ -233,7 +249,7 @@ export default {
       var pullDowns = []
       for (var idx = 1; idx <= lastDay; idx++) {
         pullDowns.push({
-          label: "" + idx, value: idx
+          label: '' + idx, value: idx
         })
       }
       this.selectedYearMonth = val.value
@@ -255,20 +271,20 @@ export default {
     download() {
       if (this.dataList == null || this.dataList.length == null) {
         this.message = this.$i18n.tnl('message.notFound')
-        this.showAlert = true;
+        this.showAlert = true
         return
       }
       HtmlUtil.fileDL(
-        "utilizationRatio.csv",
+        'utilizationRatio.csv',
         Util.converToCsv(this.dataList),
         getCharSet(this.$store.state.loginId)
       )
     },
     async search() {
-      this.showAlert = false;
+      this.showAlert = false
       if (this.selectedYearMonth == null || this.selectedYearMonth == 0) {
         this.message = this.$i18n.tnl('message.pleaseEnterSearchCriteria')
-        this.showAlert = true;
+        this.showAlert = true
         return
       }
       var paramCategoryId = (this.categoryId != null)?this.categoryId:-1
@@ -285,7 +301,7 @@ export default {
       this.replaceMonitor({utilizationRatios})
       if (utilizationRatios.length == null) {
         this.message = this.$i18n.tnl('message.notFound')
-        this.showAlert = true;
+        this.showAlert = true
       }
     },
   }

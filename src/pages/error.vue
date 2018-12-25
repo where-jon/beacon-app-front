@@ -1,6 +1,5 @@
 <template>
-  <div v-t="'message.error'">
-  </div>
+  <div v-t="'message.error'" />
 </template>
 
 <script>

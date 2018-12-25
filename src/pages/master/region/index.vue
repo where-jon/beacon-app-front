@@ -1,26 +1,24 @@
 <template>
   <div>
     <breadcrumb :items="items" />
-    <m-list :params="params" :list="regions" >
-    </m-list>
+    <m-list :params="params" :list="regions" />
   </div>
 </template>
 
 <script>
 import mList from '../../../components/page/list.vue'
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapState } from 'vuex'
 import * as StateHelper from '../../../sub/helper/StateHelper'
-import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import { addLabelByKey } from '../../../sub/helper/ViewHelper'
 import listmixinVue from '../../../components/mixin/listmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 
 export default {
-  mixins: [listmixinVue],
   components: {
     mList, 
     breadcrumb,
   },
+  mixins: [listmixinVue],
   data() {
     return {
       params: {
@@ -31,12 +29,12 @@ export default {
         appServicePath: '/core/region',
         csvOut: true,
         fields: addLabelByKey(this.$i18n, [ 
-          {key: "regionId", sortable: true },
-          {key: "regionName", sortable: true },
-          {key: "meshId", sortable: true},
-          {key: "deviceOffset", sortable: true},
-          {key: "description", sortable: true },
-          {key: "actions", thStyle: {width:'130px !important'} }
+          {key: 'regionId', sortable: true },
+          {key: 'regionName', sortable: true },
+          {key: 'meshId', sortable: true},
+          {key: 'deviceOffset', sortable: true},
+          {key: 'description', sortable: true },
+          {key: 'actions', thStyle: {width:'130px !important'} }
         ]),
         initTotalRows: this.$store.state.app_service.regions.length
       },
