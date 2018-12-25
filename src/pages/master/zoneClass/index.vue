@@ -35,7 +35,6 @@ export default {
           {key: "zoneId", sortable: true },
           {key: "zoneName", sortable: true },
           {key: "areaName", sortable: true},
-          //{key: "locationName", label: "locationZoneName", sortable: true},
           {key: "categoryName", sortable: true},
           {key: "actions", thStyle: {width:'130px !important'} }
         ]),
