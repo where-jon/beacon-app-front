@@ -303,10 +303,6 @@ export default {
     showMapImage() {
       this.showMapImageDef(() => {
 
-        if (Touch.isSupported()) {
-          Touch.enable(this.stage)
-        }
-
         this.stage.on('click', (evt) => {
           this.resetDetail()
         })

@@ -53,11 +53,9 @@ export default {
       endInfo: {caption: "end", color: "#ee0033"},
       container: null,
       shownParam: null,
-      //
       showInfo: false,
       showAlert: false,
       message: "",
-      //
     }
   },
   computed: {
@@ -67,10 +65,6 @@ export default {
     },
   },
   methods: {
-    showMapImage() {
-      // 地図ダブルタップ時のみ利用
-      this.fetchData()
-    },
     reset() {
       this.isShownMapImage = false
       this.shownParam = null

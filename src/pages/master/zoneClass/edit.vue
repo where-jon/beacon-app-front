@@ -51,13 +51,6 @@
         <b-button v-if="isEditable" type="submit" :variant="theme" @click="register(false)" class="mr-2 my-1" >{{ label }}</b-button>
         <b-button v-if="isEditable && !isUpdate" type="submit" :variant="theme" @click="register(true)" class="my-1" v-t="'label.registerAgain'"/>
       </b-form>
-      <AreaCanvas :base64="base64" :isRegist="isRegist" 
-      @regist="doRegist"
-      @selected="onSelected"
-      @unselected="unSelected"
-      @created="onCreated"
-      @deleted="onDeleted"
-      />
     </div>
   </div>
 </template>
@@ -166,49 +159,6 @@ export default {
       }
       return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
     },
-    onCreated(zoneData) {
-      this.onSelected(zoneData)
-      this.zones.push(zoneData)
-    },
-    onSelected (zoneData) {
-      this.isEnableNameText = true
-      this.form.zoneName = zoneData.name
-    },
-    unSelected() {
-      this.isEnableNameText = false
-      this.form.zoneName = ''
-    },
-    onDeleted (id) {
-      this.zones = this.zones.filter((e) => {
-        return e.id !== id
-      })
-      this.unSelected()
-    },
-    regist () {
-      this.isRegist = true
-    },
-    async doRegist (zones, deleted) {
-      const path = this.appServicePath
-      const areaId = this.form.areaId
-      const entities = zones.map((e) => {
-        return {
-          zoneId: -1 * e.id,
-          zoneName: e.name,
-          zoneType: ZONE.getTypes()[1].value,
-          areaId: areaId,
-          x: e.left,
-          y: e.top,
-          w: e.width,
-          h: e.height,
-        }
-      })
-      const saveId = await AppServiceHelper.bulkSave(path, entities, 0)
-      await deleted.forEach(zoneId => {
-        AppServiceHelper.deleteEntity(path, zoneId)
-      });
-      this.isRegist = false
-      return saveId
-    }
   }
 }
 </script>
