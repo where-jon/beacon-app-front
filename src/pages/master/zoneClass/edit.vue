@@ -71,7 +71,6 @@ import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
-import AreaCanvas from '../../../components/parts/areacanvas.vue'
 import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
@@ -81,7 +80,6 @@ import showmapmixin from '../../../components/mixin/showmapmixin.vue'
 export default {
   components: {
     breadcrumb,
-    AreaCanvas,
   },
   mixins: [editmixinVue, showmapmixin],
   data() {
