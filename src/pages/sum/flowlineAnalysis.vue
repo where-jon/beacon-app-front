@@ -2,16 +2,26 @@
   <div>
     <breadcrumb :items="items" :reload="false" />
     <div class="container">
-      <b-alert variant="info" dismissible :show="showInfo">{{ message }}</b-alert>
-      <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">
-        <div v-html="message" />
+      <b-alert variant="info" dismissible :show="showInfo">
+        {{ message }}
+      </b-alert>
+      <b-alert variant="danger" dismissible :show="showAlert" @dismissed="showAlert=false">
+        <template v-if="Array.isArray(message)">
+          <span v-for="line in message" :key="line">
+            {{ line }} <br>
+          </span>
+        </template>
+        <span v-else>
+          {{ message }}
+        </span>
       </b-alert>
       <div class="mapContainer mb-5">
         <div class="container">
-          <analysis-search :areaOptions="areaOptions" v-on:changeArea="changeArea"
-              v-on:display="display" />
+          <analysis-search :area-options="areaOptions" @changeArea="changeArea"
+                           @display="display"
+          />
           <b-row>
-            <canvas id="map" ref="map"/>
+            <canvas id="map" ref="map" />
           </b-row>
         </div>
       </div>
@@ -20,9 +30,8 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import { Shape } from '@createjs/easeljs/dist/easeljs.module'
-import { DISP, APP } from '../../sub/constant/config'
+import { DISP } from '../../sub/constant/config'
 import { Container } from '@createjs/easeljs/dist/easeljs.module'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import analysisSearch from '../../components/parts/analysissearch.vue'
@@ -31,11 +40,11 @@ import drawMixin from '../../components/mixin/drawmixin.vue'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 
 export default {
-  mixins: [showmapmixin, drawMixin ],
   components: {
     breadcrumb,
     analysisSearch,
   },
+  mixins: [showmapmixin, drawMixin ],
   data () {
     return {
       items: [
@@ -49,13 +58,13 @@ export default {
         }
       ],
       dotRadius: 3,
-      startInfo: {caption: "start", color: "#2299cc"},
-      endInfo: {caption: "end", color: "#ee0033"},
+      startInfo: {caption: 'start', color: '#2299cc'},
+      endInfo: {caption: 'end', color: '#ee0033'},
       container: null,
       shownParam: null,
       showInfo: false,
       showAlert: false,
-      message: "",
+      message: '',
     }
   },
   computed: {

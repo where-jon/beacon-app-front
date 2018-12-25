@@ -1,36 +1,60 @@
 <template>
   <div>
     <div class="container">
-
-      <b-alert variant="info" dismissible :show="showInfo">{{ message }}</b-alert>
-      <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">
-        <div v-html="message" />
+      <b-alert variant="info" dismissible :show="showInfo">
+        {{ message }}
+      </b-alert>
+      <b-alert variant="danger" dismissible :show="showAlert" @dismissed="showAlert=false">
+        <template v-if="Array.isArray(message)">
+          <span v-for="line in message" :key="line">
+            {{ line }} <br>
+          </span>
+        </template>
+        <span v-else>
+          {{ message }}
+        </span>
       </b-alert>
 
-      <b-form @submit.prevent="onSubmit" v-if="show">
+      <b-form v-if="show" @submit.prevent="onSubmit">
         <b-form-group>
           <label v-t="'label.csvFile'" />
-          <b-form-file :key="formKey" v-model="form.csvFile" accept=".csv" :placeholder="$t('message.selectFile') "></b-form-file>
+          <b-form-file :key="formKey" v-model="form.csvFile" accept=".csv" :placeholder="$t('message.selectFile') " />
         </b-form-group>
-        <b-button type="submit" :variant="getButtonTheme()" @click="register(true)" >{{ label }}</b-button>
-        <b-button type="button" variant="outline-danger" @click="backToList" class="ml-2" v-t="'label.back'"/>
+        <b-button type="submit" :variant="getButtonTheme()" @click="register(true)">
+          {{ label }}
+        </b-button>
+        <b-button v-t="'label.back'" type="button" variant="outline-danger" class="ml-2" @click="backToList" />
       </b-form>
     </div>
   </div>
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-import _ from 'lodash'
-import commonmixinVue from '../mixin/commonmixin.vue';
+import { mapState } from 'vuex'
+import commonmixinVue from '../mixin/commonmixin.vue'
 import editmixinVue from '../mixin/editmixin.vue'
-import { getButtonTheme } from '../../sub/helper/ThemeHelper'
-import { getTheme } from '../../sub/helper/ThemeHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 
 export default {
-  props: ["name", "id", "backPath", "appServicePath"],
   mixins: [ editmixinVue, commonmixinVue ],
+  props: {
+    name: {
+      type: String,
+      required: true,
+    },
+    id: {
+      type: String,
+      required: true,
+    },
+    backPath: {
+      type: String,
+      required: true,
+    },
+    appServicePath: {
+      type: String,
+      required: true,
+    },
+  },
   data() {
     return {
       mutex: false,
@@ -41,13 +65,13 @@ export default {
       },
     }
   },
-  mounted() {
-    StateHelper.load('sensor')
-  },
   computed: {
     ...mapState('app_service', [
       'sensors',
     ]),
+  },
+  mounted() {
+    StateHelper.load('sensor')
   },
   methods: {
     beforeReload(){

@@ -2,27 +2,36 @@
   <div>
     <label v-t="caption" />
     <div ref="colorpickerButton" style="width: 1px">
-      <label :style="detailButtonStyle()" @click="switchEditMode()" class="align-middle text-center">{{ colorValue }}</label>
+      <label :style="detailButtonStyle()" class="align-middle text-center" @click="switchEditMode()">
+        {{ colorValue }}
+      </label>
     </div>
     <div ref="colorpicker" style="width: 1px">
-      <span v-if="editMode" >
-        <chrome-picker v-model="$parent.form[name]" :disableAlpha="true" :style="{'width': '256px'}" class="mt-1" @input="changeColor" />
+      <span v-if="editMode">
+        <chrome-picker v-model="$parent.form[name]" :disable-alpha="true" :style="{'width': '256px'}" class="mt-1" @input="changeColor" />
       </span>
     </div>
   </div>
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-import _ from 'lodash'
 import { Chrome } from 'vue-color'
 import * as Util from '../../sub/util/Util'
 import { getButtonTheme } from '../../sub/helper/ThemeHelper'
 
 export default {
-  props: ["caption", "name"],
   components: {
     'chrome-picker': Chrome,
+  },
+  props: {
+    caption: {
+      type: String,
+      required: true,
+    },
+    name: {
+      type: String,
+      required: true,
+    },
   },
   data() {
     return {
@@ -33,14 +42,14 @@ export default {
       touchColorPicker: false,
     }
   },
-  created(){
-    this.changeColor(this.$parent.form[this.name])
-  },
   computed: {
     theme(){
       const theme = getButtonTheme()
       return 'outline-' + theme
     },
+  },
+  created(){
+    this.changeColor(this.$parent.form[this.name])
   },
   methods: {
     detailButtonStyle(colorArea = false){
@@ -56,7 +65,7 @@ export default {
     },
     changeColor(color){
       this.colorValue = Util.colorCd4display(color)
-      this.colorText = Util.luminance(Util.colorCd4db(color)) <= 128? "#FFFFFF": "#000000"
+      this.colorText = Util.luminance(Util.colorCd4db(color)) <= 128? '#FFFFFF': '#000000'
     },
     switchEditMode(){
       if(this.$parent.isEditable){

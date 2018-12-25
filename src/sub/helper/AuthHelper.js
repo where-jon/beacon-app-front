@@ -7,7 +7,7 @@ import * as StateHelper from './StateHelper'
 import * as MenuHelper from './MenuHelper'
 import * as ConfigHelper from './ConfigHelper'
 import { APP, LOCAL_LOGIN } from '../constant/config'
-import { LOGIN_MODE, MENU } from '../constant/Constants'
+import { LOGIN_MODE } from '../constant/Constants'
 
 let router
 let store
@@ -33,7 +33,7 @@ export const auth = async (loginId, password, success, err) => {
 
 export const authByLocal = async (loginId, password, success, err) => {
   // console.log(md5(loginId + ":" + password)) // for create
-  if (_.includes(LOCAL_LOGIN.ID_PASS, md5(loginId + ":" + password))) {
+  if (_.includes(LOCAL_LOGIN.ID_PASS, md5(loginId + ':' + password))) {
     await login(loginId)
     success()
   }
@@ -43,7 +43,7 @@ export const authByLocal = async (loginId, password, success, err) => {
 }
 
 export const getRevInfo = async () => {
-  const frontRev = (await axios.get("/head.txt")).data
+  const frontRev = (await axios.get('/head.txt')).data
   const apsIndex = await HttpHelper.getAppServiceNoCrd('/') // pre network check
   const serviceRev = apsIndex.match(new RegExp('Head:([0-9a-zA-Z]+)'))
   return {frontRev: frontRev, serviceRev: serviceRev && serviceRev[1]}
@@ -59,7 +59,7 @@ export const getUserInfo = async (tenantAdmin) => {
   const user = await AppServiceHelper.getCurrentUser()
   console.log(user)
   const featureList = _(user.role.roleFeatureList).map((roleFeature) => {
-      return {path: roleFeature.feature.path, mode: roleFeature.mode}
+    return {path: roleFeature.feature.path, mode: roleFeature.mode}
   }).sortBy((val) => val.path.length * -1).value()
   const menu = MenuHelper.fetchNav(featureList, tenantFeatureList, user.role, tenantAdmin)
 
@@ -77,11 +77,11 @@ export const authByAppService = async (loginId, password, success, err) => {
 
     let params = new URLSearchParams()
     let tenantCd = getTenantCd()
-    params.append('username', (tenantCd? tenantCd+":":"") + loginId) // username: Spring Boot Security reserved name
+    params.append('username', (tenantCd? tenantCd+':':'') + loginId) // username: Spring Boot Security reserved name
     params.append('password', password)
     let data = await HttpHelper.postAppService('/login', params)
     if (data.tenantAdmin) {
-      APP.TOP_PAGE = "/provider/tenant"
+      APP.TOP_PAGE = '/provider/tenant'
     }
 
     const userInfo = await getUserInfo(data.tenantAdmin)
@@ -167,7 +167,7 @@ export const checkSession = () => {
 
 export const getTenantCd = () => { // xxx.saas.ドメインの場合、先頭がtenantCdとなる。
   if (location.host.includes(APP.SAAS_DOMAIN)) {
-    return location.host.split(".")[0]
+    return location.host.split('.')[0]
   }
   return null
 }

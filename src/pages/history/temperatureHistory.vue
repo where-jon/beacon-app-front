@@ -2,19 +2,23 @@
   <div>
     <breadcrumb :items="items" :reload="false" />
     <div class="container">
-      <b-alert variant="info" dismissible :show="showInfo">{{ message }}</b-alert>
-      <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">{{ message }}</b-alert>
+      <b-alert variant="info" dismissible :show="showInfo">
+        {{ message }}
+      </b-alert>
+      <b-alert variant="danger" dismissible :show="showAlert" @dismissed="showAlert=false">
+        {{ message }}
+      </b-alert>
       <b-form @submit.prevent>
         <b-form-group>
           <b-form-row>
             <b-form-row class="mr-2">
-              <label v-t="'label.historyDateFrom'" class="mr-2 mb-2 d-flex align-items-center"/>
-              <b-form-input v-if="useInputDate" type="date" required v-on:change="dateFromChange" class="mb-2 inputdatefrom" />
+              <label v-t="'label.historyDateFrom'" class="mr-2 mb-2 d-flex align-items-center" />
+              <b-form-input v-if="useInputDate" type="date" required class="mb-2 inputdatefrom" @change="dateFromChange" />
               <date-picker v-else v-model="dateFrom" type="date" value-format="yyyyMMdd" class="mr-2 mb-2 inputdatefrom" />
             </b-form-row>
             <b-form-row class="mr-2">
               <label v-t="'label.historyDateTo'" class="mr-2 mb-2 d-flex align-items-center" />
-              <b-form-input v-if="useInputDate" type="date" required v-on:change="dateToChange" class="mb-2 inputdateto" />
+              <b-form-input v-if="useInputDate" type="date" required class="mb-2 inputdateto" @change="dateToChange" />
               <date-picker v-else v-model="dateTo" type="date" value-format="yyyyMMdd" class="mb-2 inputdateto" />
             </b-form-row>
           </b-form-row>
@@ -22,15 +26,19 @@
         <b-form-group>
           <b-form-row>
             <b-form-row class="mr-2 mb-3">
-              <label v-t="'label.zoneCategoryName'" class="mr-2 mb-2 d-flex align-items-center"/>
+              <label v-t="'label.zoneCategoryName'" class="mr-2 mb-2 d-flex align-items-center" />
               <v-select v-model="vModelCategory" :options="categoryOptions" :on-change="categoryChange" required class="ml-2 mb-2">
-                <div slot="no-options">{{$i18n.tnl('label.vSelectNoOptions')}}</div>
+                <div slot="no-options">
+                  {{ $i18n.tnl('label.vSelectNoOptions') }}
+                </div>
               </v-select>
             </b-form-row>
             <b-form-row class="mb-2">
               <label v-t="'label.zone'" class="mr-2 mb-2 d-flex align-items-center" />
               <v-select v-model="vModelZone" :options="zoneOptions" :on-change="zoneChange" required class="ml-2 mb-2">
-                <div slot="no-options">{{$i18n.tnl('label.vSelectNoOptions')}}</div>
+                <div slot="no-options">
+                  {{ $i18n.tnl('label.vSelectNoOptions') }}
+                </div>
               </v-select>
             </b-form-row>
           </b-form-row>
@@ -38,18 +46,18 @@
         <b-form-group>
           <b-form-radio-group v-model="historyType">
             <b-form-radio :value="0">
-              {{$t('label.temperatureHistoryType0')}}
+              {{ $t('label.temperatureHistoryType0') }}
             </b-form-radio>
             <b-form-radio :value="1">
-              {{$t('label.temperatureHistoryType1')}}
+              {{ $t('label.temperatureHistoryType1') }}
             </b-form-radio>
           </b-form-radio-group>
         </b-form-group>
       </b-form>
-      <p></p>
+      <p />
       <b-row>
         <b-col md="10" offset-md="2">
-          <b-button v-if="!iosOrAndroid" :variant="getButtonTheme()" @click="download()" v-t="'label.download'" />
+          <b-button v-if="!iosOrAndroid" v-t="'label.download'" :variant="getButtonTheme()" @click="download()" />
         </b-col>
       </b-row>
     </div>
@@ -57,26 +65,24 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import locale from 'element-ui/lib/locale'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
-import { EventBus } from '../../sub/helper/EventHelper'
-import { EXB, DISP, APP } from '../../sub/constant/config'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import commonmixinVue from '../../components/mixin/commonmixin.vue'
 import reloadmixinVue from '../../components/mixin/reloadmixin.vue'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 
 export default {
-  mixins: [reloadmixinVue, commonmixinVue ],
   components: {
     breadcrumb,
     DatePicker,
   },
+  mixins: [reloadmixinVue, commonmixinVue ],
   data () {
     return {
       items: [
@@ -93,22 +99,22 @@ export default {
       vModelZone: null,
       vModelYearMonth: null,
       vModelDay: null,
-      categoryOptionList: [{label:"", value:null}],
+      categoryOptionList: [{label:'', value:null}],
       zoneOptionList: [],
       //
       zoneCategorys: [],
       categoryId: null,
       zoneId: null,
-      dateFrom: Util.supportInputType("date")? 0: null,
-      dateTo: Util.supportInputType("date")? 0: null,
+      dateFrom: Util.supportInputType('date')? 0: null,
+      dateTo: Util.supportInputType('date')? 0: null,
       historyType: 0,
       temperatureHistoryData: null,
       //
       showInfo: false,
       showAlert: false,
-      message: "",
+      message: '',
       //
-      useInputDate: Util.supportInputType("date"),
+      useInputDate: Util.supportInputType('date'),
     }
   },
   computed: {
@@ -226,11 +232,11 @@ export default {
       var list = []
       try {
         list = await AppServiceHelper.fetch(
-          '/basic/sensorHistory/' + paramCategoryId + "/" +
-            paramZoneId + "/" +
-            paramExbId + "/" +
-            paramDyFrom + "/" +
-            paramDyTo + "/" +
+          '/basic/sensorHistory/' + paramCategoryId + '/' +
+            paramZoneId + '/' +
+            paramExbId + '/' +
+            paramDyFrom + '/' +
+            paramDyTo + '/' +
             paramHistoryType,
           ''
         )
@@ -239,7 +245,7 @@ export default {
         }
         list.forEach(data => {
           delete data['sensorHistoryId']
-       })
+        })
       } catch (e) {
         console.log(e)
         list = []
@@ -261,7 +267,7 @@ export default {
         return
       }
       HtmlUtil.fileDL(
-        "temperatureHistory.csv",
+        'temperatureHistory.csv',
         Util.converToCsv(this.temperatureHistoryData),
         getCharSet(this.$store.state.loginId)
       )

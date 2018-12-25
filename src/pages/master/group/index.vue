@@ -7,12 +7,10 @@
 
 <script>
 import mList from '../../../components/page/list.vue'
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapState } from 'vuex'
 import * as StateHelper from '../../../sub/helper/StateHelper'
-import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import { addLabelByKey } from '../../../sub/helper/ViewHelper'
 import listmixinVue from '../../../components/mixin/listmixin.vue'
-import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 
 export default {
@@ -30,14 +28,14 @@ export default {
         bulkEditPath: '/master/group/bulkedit',
         appServicePath: '/basic/group',
         csvOut: true,
-        custumCsvColumns: ["groupId", "groupName", "ruby", "display.color", "display.bgColor", "display.shape", "description"],
+        custumCsvColumns: ['groupId', 'groupName', 'ruby', 'display.color', 'display.bgColor', 'display.shape', 'description'],
         fields: addLabelByKey(this.$i18n, [ 
-          {key: "groupId", sortable: true },
-          {key: "groupName", sortable: true },
-          {key: "ruby", sortable: true },
-          {key: "style", label: "display" } ,
-          {key: "description" },
-          {key: "actions", thStyle: {width:'130px !important'} }
+          {key: 'groupId', sortable: true },
+          {key: 'groupName', sortable: true },
+          {key: 'ruby', sortable: true },
+          {key: 'style', label: 'display' } ,
+          {key: 'description' },
+          {key: 'actions', thStyle: {width:'130px !important'} }
         ]),
         initTotalRows: this.$store.state.app_service.groups.length
       },

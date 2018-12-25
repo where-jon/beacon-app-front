@@ -1,71 +1,73 @@
 <template>
   <b-navbar toggleable="md" type="dark" :class="topNavBarClasses">
     <!-- Responsive menu -->
-    <b-navbar-toggle target="nav_collapse" v-show="!isLoginPage && showNav"></b-navbar-toggle>  
+    <b-navbar-toggle v-show="!isLoginPage && showNav" target="nav_collapse" />  
 
     <!-- Title -->
     <b-navbar-brand>
       <div class="appTitle">
-        <img src="/toplogo.png" width="220" height="36" v-if="showLogo" />
-        <span v-if="!showLogo" v-t="'label.title'"></span>
+        <img v-if="showLogo" src="/toplogo.png" width="220" height="36">
+        <span v-if="!showLogo" v-t="'label.title'" />
       </div>
     </b-navbar-brand>
 
-    <b-collapse ref="collapse" is-nav id="nav_collapse" v-show="!isLoginPage && showNav">
-
+    <b-collapse v-show="!isLoginPage && showNav" id="nav_collapse" ref="collapse" is-nav>
       <!-- left (navi dropdown menu) -->
       <b-navbar-nav>
         <b-nav-item-dropdown v-for="group in this.$store.state.menu" :key="group.path">
           <template slot="button-content">
             <em v-t="'label.' + group.key" />
           </template>
-          <b-dropdown-item v-for="page in group.pages" :key="page.key" href="#" @click="move('/' + group.base + page.path)" v-t="'label.' + page.key" :class="navbarClasses"/>
+          <b-dropdown-item v-for="page in group.pages" :key="page.key" v-t="'label.' + page.key" href="#" :class="navbarClasses" @click="move('/' + group.base + page.path)" />
         </b-nav-item-dropdown>
       </b-navbar-nav>
 
       <!-- right -->
-      <b-navbar-nav class="ml-auto" v-show="!isLoginPage && showNav">
+      <b-navbar-nav v-show="!isLoginPage && showNav" class="ml-auto">
         <!-- region -->
         <b-nav-item-dropdown right>
           <template slot="button-content">
             <div v-if="isTenantAdmin">
-              <i class="far fa-building mr-1" aria-hidden="true" style="visibility: hidden;" ></i>
+              <i class="far fa-building mr-1" aria-hidden="true" style="visibility: hidden;" />
               <span>{{ currentTenantName }}</span>
             </div>
-            <i class="far fa-building mr-1" aria-hidden="true" ></i>
+            <i class="far fa-building mr-1" aria-hidden="true" />
             <span>{{ currentRegionName }}</span>
           </template>
           <b-dropdown-item v-for="region in this.$store.state.app_service.regions" :key="region.regionId" href="#" @click="switchRegion(region)">
-            <i class="far fa-building mr-1" aria-hidden="true" :style="getStyleDropdownRegion(region.regionId)" ></i>
+            <i class="far fa-building mr-1" aria-hidden="true" :style="getStyleDropdownRegion(region.regionId)" />
             <span>{{ region.regionName }}</span>
           </b-dropdown-item>
         </b-nav-item-dropdown>
         <!-- user & logout -->
         <b-nav-item-dropdown right>
           <template slot="button-content">
-            <i class="fa fa-user" aria-hidden="true"></i>&nbsp;<em>{{ loginId }}</em>
+            <i class="fa fa-user" aria-hidden="true" />&nbsp;<em>{{ loginId }}</em>
           </template>
-          <b-dropdown-item href="#" @click="move('/setting/personal')"><i class="fas fa-user-cog menu-item-icon"></i>&nbsp;{{ $t('label.personal') }}</b-dropdown-item>
-          <b-dropdown-item href="#" @click="logout"><i class="fas fa-sign-out-alt menu-item-icon"></i>&nbsp;{{ $t('label.logout') }}</b-dropdown-item>
-          <b-dropdown-divider/>
-          <b-dropdown-item @click="versionClick">{{ version }}</b-dropdown-item>
+          <b-dropdown-item href="#" @click="move('/setting/personal')">
+            <i class="fas fa-user-cog menu-item-icon" />&nbsp;{{ $t('label.personal') }}
+          </b-dropdown-item>
+          <b-dropdown-item href="#" @click="logout">
+            <i class="fas fa-sign-out-alt menu-item-icon" />&nbsp;{{ $t('label.logout') }}
+          </b-dropdown-item>
+          <b-dropdown-divider />
+          <b-dropdown-item @click="versionClick">
+            {{ version }}
+          </b-dropdown-item>
         </b-nav-item-dropdown>
       </b-navbar-nav>
-
     </b-collapse>
   </b-navbar>
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-import _ from 'lodash'
+import { mapState } from 'vuex'
 import * as AuthHelper from '../../sub/helper/AuthHelper'
 import { DISP, APP } from '../../sub/constant/config'
 import { LOGIN_MODE } from '../../sub/constant/Constants'
 import { getThemeClasses } from '../../sub/helper/ThemeHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import commonmixinVue from '../mixin/commonmixin.vue'
-import * as HttpHelper from '../../sub/helper/HttpHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 
 export default {
@@ -77,25 +79,11 @@ export default {
       showLogo: DISP.SHOW_LOGO,
       showNav: HtmlUtil.isMobile() || DISP.SHOW_NAV,
       login: JSON.parse(window.localStorage.getItem('login')),
-      currentTenantName: "",
-      currentRegionName: "",
+      currentTenantName: '',
+      currentRegionName: '',
       currentRegionId: null,
       switchReload: true,
     }
-  },
-  async created() {
-    this.currentTenantName = this.login && this.login.currentTenant? this.login.currentTenant.tenantName: ""
-    this.currentRegionName = this.login && this.login.currentRegion? this.login.currentRegion.regionName: ""
-    this.currentRegionId = this.login && this.login.currentRegion? this.login.currentRegion.regionId: null
-    if(this.switchReload){
-      this.switchReload = false
-      await StateHelper.load('region')
-    }
-  },
-  async mounted() {
-    window.addEventListener('resize', () => {
-      this.showNav = HtmlUtil.isMobile() || DISP.SHOW_NAV
-    })
   },
   computed: {
     isLoginPage() {
@@ -111,17 +99,30 @@ export default {
       'pots', 'regions',
     ]),
     navbarClasses() {
-      const storeTheme = this.$store.state.setting.theme
       return getThemeClasses()
     },
     topNavBarClasses() {
       let classes = {}
-      Object.assign(classes , this.navbarClasses);
-      if(this.showNav && HtmlUtil.getLangShort() != "ja"){
-        classes["topMenuNavbar"] = true
+      Object.assign(classes , this.navbarClasses)
+      if(this.showNav && HtmlUtil.getLangShort() != 'ja'){
+        classes['topMenuNavbar'] = true
       }
       return classes
     },
+  },
+  async created() {
+    this.currentTenantName = this.login && this.login.currentTenant? this.login.currentTenant.tenantName: ''
+    this.currentRegionName = this.login && this.login.currentRegion? this.login.currentRegion.regionName: ''
+    this.currentRegionId = this.login && this.login.currentRegion? this.login.currentRegion.regionId: null
+    if(this.switchReload){
+      this.switchReload = false
+      await StateHelper.load('region')
+    }
+  },
+  async mounted() {
+    window.addEventListener('resize', () => {
+      this.showNav = HtmlUtil.isMobile() || DISP.SHOW_NAV
+    })
   },
   methods: {
     logout() {
@@ -132,7 +133,7 @@ export default {
       return this.$store.state.tenantAdmin
     },
     getStyleDropdownRegion(regionId) {
-      return {visibility: this.currentRegionId == regionId? "visible": "hidden"}
+      return {visibility: this.currentRegionId == regionId? 'visible': 'hidden'}
     },
     move(page) {
       this.$router.push(page)
@@ -142,8 +143,8 @@ export default {
       location.reload()
     },
     versionClick() {
-      console.log("app service revision:", this.$store.state.serviceRev)
-      console.log("app front revision:", this.$store.state.frontRev)
+      console.log('app service revision:', this.$store.state.serviceRev)
+      console.log('app front revision:', this.$store.state.frontRev)
     }
   }
 }

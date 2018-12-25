@@ -2,47 +2,56 @@
   <div>
     <breadcrumb :items="items" />
     <div class="container">
-
-      <b-alert variant="info" dismissible :show="showInfo">{{ message }}</b-alert>
-      <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">
-        <div v-html="message" />
+      <b-alert variant="info" dismissible :show="showInfo">
+        {{ message }}
+      </b-alert>
+      <b-alert variant="danger" dismissible :show="showAlert" @dismissed="showAlert=false">
+        <template v-if="Array.isArray(message)">
+          <span v-for="line in message" :key="line">
+            {{ line }} <br>
+          </span>
+        </template>
+        <span v-else>
+          {{ message }}
+        </span>
       </b-alert>
 
-      <b-form @submit.prevent="onSubmit" v-if="show">
+      <b-form v-if="show" @submit.prevent="onSubmit">
         <b-form-group v-if="hasId">
           <label v-t="'label.groupId'" />
-          <b-form-input type="text" v-model="form.groupId" readonly="readonly" />
+          <b-form-input v-model="form.groupId" type="text" readonly="readonly" />
         </b-form-group>
         <b-form-group>
           <label v-t="'label.groupName'" />
-          <input type="text" v-model="form.groupName" maxlength="20" class="form-control" required :readonly="!isEditable" />
+          <input v-model="form.groupName" type="text" maxlength="20" class="form-control" required :readonly="!isEditable">
         </b-form-group>
         <b-form-group>
           <label v-t="'label.ruby'" />
-          <input type="text" v-model="form.ruby" class="form-control" maxlength="20" :readonly="!isEditable" />
+          <input v-model="form.ruby" type="text" class="form-control" maxlength="20" :readonly="!isEditable">
         </b-form-group>
         <b-form-group>
           <label v-t="'label.shape'" />
           <b-form-select v-model="form.displayShape" :options="shapes" required :disabled="!isEditable" :readonly="!isEditable" />
         </b-form-group>
-        <color-picker :caption="'label.textColor'" :name="'displayColor'"></color-picker>
-        <color-picker :caption="'label.bgColor'" :name="'displayBgColor'"></color-picker>
+        <color-picker :caption="'label.textColor'" :name="'displayColor'" />
+        <color-picker :caption="'label.bgColor'" :name="'displayBgColor'" />
         <b-form-group>
           <label v-t="'label.description'" />
-          <b-form-textarea v-model="form.description" :rows="3" :max-rows="6" maxlength="1000" :readonly="!isEditable" ></b-form-textarea>
+          <b-form-textarea v-model="form.description" :rows="3" :max-rows="6" maxlength="1000" :readonly="!isEditable" />
         </b-form-group>
 
-        <b-button type="button" variant="outline-danger" @click="backToList" class="mr-2 my-1" v-t="'label.back'"/>
-        <b-button v-if="isEditable" type="submit" :variant="theme" @click="register(false)" class="mr-2 my-1" >{{ label }}</b-button>
-        <b-button v-if="isEditable && !isUpdate" type="submit" :variant="theme" @click="register(true)" class="my-1" v-t="'label.registerAgain'"/>
+        <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
+        <b-button v-if="isEditable" type="submit" :variant="theme" class="mr-2 my-1" @click="register(false)">
+          {{ label }}
+        </b-button>
+        <b-button v-if="isEditable && !isUpdate" v-t="'label.registerAgain'" type="submit" :variant="theme" class="my-1" @click="register(true)" />
       </b-form>
     </div>
   </div>
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-import _ from 'lodash'
+import { mapState } from 'vuex'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
 import * as Util from '../../../sub/util/Util'
@@ -64,9 +73,9 @@ export default {
       id: 'groupId',
       backPath: '/master/group',
       appServicePath: '/basic/group',
-      defaultColor: "#000000",
-      defaultBgColor: "#ffffff",
-      form: ViewHelper.extract(this.$store.state.app_service.group, ["groupId", "groupName", "ruby", "display", "description"]),
+      defaultColor: '#000000',
+      defaultBgColor: '#ffffff',
+      form: ViewHelper.extract(this.$store.state.app_service.group, ['groupId', 'groupName', 'ruby', 'display', 'description']),
       items: [
         {
           text: this.$i18n.tnl('label.master'),
@@ -83,9 +92,6 @@ export default {
       ]
     }
   },
-  created() {
-    this.beforeReload()
-  },
   computed: {
     hasId(){
       return Util.hasValue(this.form.groupId)
@@ -100,6 +106,9 @@ export default {
     shapes(){
       return SHAPE.getShapes()
     },
+  },
+  created() {
+    this.beforeReload()
   },
   methods: {
     beforeReload(){

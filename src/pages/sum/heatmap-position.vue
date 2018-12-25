@@ -2,17 +2,27 @@
   <div id="mapContainer">
     <breadcrumb :items="items" :reload="false" />
     <div class="container">
-      <b-alert variant="info" dismissible :show="showInfo">{{ message }}</b-alert>
-      <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">
-        <div v-html="message" />
+      <b-alert variant="info" dismissible :show="showInfo">
+        {{ message }}
+      </b-alert>
+      <b-alert variant="danger" dismissible :show="showAlert" @dismissed="showAlert=false">
+        <template v-if="Array.isArray(message)">
+          <span v-for="line in message" :key="line">
+            {{ line }} <br>
+          </span>
+        </template>
+        <span v-else>
+          {{ message }}
+        </span>
       </b-alert>
       <div class="mapContainer mb-5">
         <div class="container">
-          <analysis-search :fromHeatmap="fromHeatmap" :areaOptions="areaOptions"
-              v-on:changeArea="changeArea" v-on:display="display"/>
+          <analysis-search :from-heatmap="fromHeatmap" :area-options="areaOptions"
+                           @changeArea="changeArea" @display="display"
+          />
         </div>
         <b-row>
-          <div id="heatmap" ref="heatmap" class="mx-auto"/>
+          <div id="heatmap" ref="heatmap" class="mx-auto" />
         </b-row>
       </div>
     </div>
@@ -25,7 +35,6 @@
 
 <script>
 import h337 from 'heatmap.js'
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import { DISP } from '../../sub/constant/config'
 import * as Util from '../../sub/util/Util'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
@@ -45,7 +54,7 @@ export default {
       fromHeatmap: true,
       showInfo: false,
       showAlert: false,
-      message: "",
+      message: '',
       items: [
         {
           text: this.$i18n.tnl('label.sumTitle'),
@@ -91,7 +100,7 @@ export default {
       try {
         this.replace({showProgress: true})
         const map = new Image()
-        map.src = this.mapImage
+        map.src = this.mapImage()
 
         this.removeHeatmap()
         let heatmap = document.getElementById('heatmap')

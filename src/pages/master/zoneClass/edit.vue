@@ -2,20 +2,28 @@
   <div>
     <breadcrumb :items="items" />
     <div class="container">
-
-      <b-alert variant="info" dismissible :show="showInfo">{{ message }}</b-alert>
-      <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">
-        <div v-html="message" />
+      <b-alert variant="info" dismissible :show="showInfo">
+        {{ message }}
+      </b-alert>
+      <b-alert variant="danger" dismissible :show="showAlert" @dismissed="showAlert=false">
+        <template v-if="Array.isArray(message)">
+          <span v-for="line in message" :key="line">
+            {{ line }} <br>
+          </span>
+        </template>
+        <span v-else>
+          {{ message }}
+        </span>
       </b-alert>
 
-      <b-form @submit.prevent="onSubmit" v-if="show">
+      <b-form v-if="show" @submit.prevent="onSubmit">
         <b-form-group>
           <b-form-row v-if="hasId">
             <label v-t="'label.zoneId'" class="control-label" />
           </b-form-row>
           <b-form-row v-if="hasId">
             <b-col sm="2">
-              <b-form-input type="text" v-model="form.zoneId" readonly="readonly" />
+              <b-form-input v-model="form.zoneId" type="text" readonly="readonly" />
             </b-col>
           </b-form-row>
           <b-form-row>
@@ -23,7 +31,7 @@
           </b-form-row>
           <b-form-row>
             <b-col sm="5">
-              <input type="text" v-model="form.zoneName" maxlength="20" class="form-control" required :readonly="!isEditable" :disabled="!isEnableNameText" />
+              <input v-model="form.zoneName" type="text" maxlength="20" class="form-control" required :readonly="!isEditable" :disabled="!isEnableNameText">
             </b-col>
           </b-form-row>
         </b-form-group>
@@ -47,19 +55,19 @@
           </b-form-row>
         </b-form-group>
 
-        <b-button type="button" variant="outline-danger" @click="backToList" class="mr-2 my-1" v-t="'label.back'"/>
-        <b-button v-if="isEditable" type="submit" :variant="theme" @click="register(false)" class="mr-2 my-1" >{{ label }}</b-button>
-        <b-button v-if="isEditable && !isUpdate" type="submit" :variant="theme" @click="register(true)" class="my-1" v-t="'label.registerAgain'"/>
+        <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
+        <b-button v-if="isEditable" type="submit" :variant="theme" class="mr-2 my-1" @click="register(false)">
+          {{ label }}
+        </b-button>
+        <b-button v-if="isEditable && !isUpdate" v-t="'label.registerAgain'" type="submit" :variant="theme" class="my-1" @click="register(true)" />
       </b-form>
     </div>
   </div>
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-import { Shape, Stage, Container, Bitmap, Text, Touch } from '@createjs/easeljs/dist/easeljs.module'
+import { mapState } from 'vuex'
 import * as StateHelper from '../../../sub/helper/StateHelper'
-import _ from 'lodash'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
@@ -69,21 +77,20 @@ import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import { CATEGORY, ZONE } from '../../../sub/constant/Constants'
 import showmapmixin from '../../../components/mixin/showmapmixin.vue'
-import { fabric } from 'fabric'
 
 export default {
-  mixins: [editmixinVue, showmapmixin],
   components: {
     breadcrumb,
     AreaCanvas,
   },
+  mixins: [editmixinVue, showmapmixin],
   data() {
     return {
       name: 'zone',
       id: 'zoneId',
       backPath: '/master/zoneClass',
       appServicePath: '/core/zone',
-      form: ViewHelper.extract(this.$store.state.app_service.zone, ["zoneId", "zoneName", "areaId", "locationZoneList.0.locationZonePK.locationId", "zoneCategoryList.0.zoneCategoryPK.categoryId"]),
+      form: ViewHelper.extract(this.$store.state.app_service.zone, ['zoneId', 'zoneName', 'areaId', 'locationZoneList.0.locationZonePK.locationId', 'zoneCategoryList.0.zoneCategoryPK.categoryId']),
       areaNames: [],
       locationNames: [],
       categoryNames: [],
@@ -107,13 +114,6 @@ export default {
       ]
     }
   },
-  created() {
-    this.initAreaNames()
-    this.initLocationNames()
-    this.initCategoryNames()
-  },
-  mounted() {
-  },
   computed: {
     base64 () {
       const areaImage = this.$store.state.app_service.areaImages.find((a) => { return a.areaId === this.form.areaId })
@@ -129,6 +129,11 @@ export default {
     ...mapState('app_service', [
       'zone', 'locations', 'areas'
     ]),
+  },
+  created() {
+    this.initAreaNames()
+    this.initLocationNames()
+    this.initCategoryNames()
   },
   methods: {
     reset () {
