@@ -68,7 +68,6 @@ import { LOGIN_MODE } from '../../sub/constant/Constants'
 import { getThemeClasses } from '../../sub/helper/ThemeHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import commonmixinVue from '../mixin/commonmixin.vue'
-import * as HttpHelper from '../../sub/helper/HttpHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 
 export default {
@@ -84,15 +83,6 @@ export default {
       currentRegionName: '',
       currentRegionId: null,
       switchReload: true,
-    }
-  },
-  async created() {
-    this.currentTenantName = this.login && this.login.currentTenant? this.login.currentTenant.tenantName: ''
-    this.currentRegionName = this.login && this.login.currentRegion? this.login.currentRegion.regionName: ''
-    this.currentRegionId = this.login && this.login.currentRegion? this.login.currentRegion.regionId: null
-    if(this.switchReload){
-      this.switchReload = false
-      await StateHelper.load('region')
     }
   },
   computed: {
@@ -119,6 +109,15 @@ export default {
       }
       return classes
     },
+  },
+  async created() {
+    this.currentTenantName = this.login && this.login.currentTenant? this.login.currentTenant.tenantName: ''
+    this.currentRegionName = this.login && this.login.currentRegion? this.login.currentRegion.regionName: ''
+    this.currentRegionId = this.login && this.login.currentRegion? this.login.currentRegion.regionId: null
+    if(this.switchReload){
+      this.switchReload = false
+      await StateHelper.load('region')
+    }
   },
   async mounted() {
     window.addEventListener('resize', () => {

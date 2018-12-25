@@ -156,8 +156,7 @@ import * as Util from '../../sub/util/Util'
 import { getButtonTheme } from '../../sub/helper/ThemeHelper'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import commonmixinVue from '../mixin/commonmixin.vue'
-import { DETECT_STATE, CATEGORY } from '../../sub/constant/Constants'
-import * as HttpHelper from '../../sub/helper/HttpHelper'
+import { CATEGORY } from '../../sub/constant/Constants'
 import * as AuthHelper from '../../sub/helper/AuthHelper'
 
 export default {

@@ -6,7 +6,14 @@
         {{ message }}
       </b-alert>
       <b-alert variant="danger" dismissible :show="showAlert" @dismissed="showAlert=false">
-        <div v-html="message" />
+        <template v-if="Array.isArray(message)">
+          <span v-for="line in message" :key="line">
+            {{ line }} <br>
+          </span>
+        </template>
+        <span v-else>
+          {{ message }}
+        </span>
       </b-alert>
 
       <b-form v-if="show" @submit.prevent="onSubmit">
@@ -139,8 +146,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-import _ from 'lodash'
+import { mapState } from 'vuex'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
@@ -149,7 +155,7 @@ import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import featureList from '../../../components/page/featureList.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
-import { AUTH_TENANT_CD, ROLE } from '../../../sub/constant/Constants'
+import { AUTH_TENANT_CD } from '../../../sub/constant/Constants'
 import { EXCLOUD_BASE_URL } from '../../../sub/constant/config'
 import { addLabelByKey } from '../../../sub/helper/ViewHelper'
 

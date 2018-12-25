@@ -22,13 +22,20 @@
 
 <script>
 
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-import { getButtonTheme, getTheme } from '../../sub/helper/ThemeHelper'
 import commonmixinVue from '../mixin/commonmixin.vue'
 
 export default {
   mixin: [commonmixinVue], 
-  props: ['list', 'fields'],
+  props: {
+    list: {
+      type: Array,
+      required: true,
+    }, 
+    fields: {
+      type: Array,
+      required: true,
+    }
+  },
   data() {
     return {
     }
