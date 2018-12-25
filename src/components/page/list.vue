@@ -33,6 +33,14 @@
           </template>
           <div v-if="params.extraFilter" class="w-100 mb-2 " />
         </b-form-row>
+        <b-form-row v-if="params.delFilter" class="mb-2">
+          <b-form-row>
+            <!-- 削除済みフィルタ -->
+            <b-form-checkbox id="delFilter" v-model="filter.del" :value="true" :unchecked-value="false">
+              <span v-text="$i18n.tnl('label.delFilter')" />
+            </b-form-checkbox>
+          </b-form-row>
+        </b-form-row>
         <b-form-row class="mb-1">
           <!-- ボタン部 -->
           <b-col v-if="!params.disableTableButtons && isEditable" cols="auto" class="ml-auto">
@@ -76,6 +84,14 @@
             <!-- location button -->
             <div v-if="getAnotherPageParam('location', row.item)">
               <b-button v-t="'label.location'" size="sm" :variant="theme" class="btn-block my-1" :style="anotherActionButtonStyle" @click.stop="jumpAnotherPage('location', row.item)" />
+            </div>
+          </div>
+          <!-- for tenant -->
+          <div v-if="isTenantAdmin && params.tenantAction" :style="{'width': '100px'}">
+            <!-- switch button -->
+            <div>
+              <b-button size="sm" v-if="isCurrentTenant(row.item)" :variant="theme" class="btn-block my-1" style="opacity: 1.0 !important; border-radius: 0px;" v-t="'label.now'" :style="anotherActionButtonStyle" :disabled="true" />
+              <b-button size="sm" v-else @click.stop="switchTenant(row.item)" :variant="theme" class="btn-block my-1" v-t="'label.switch'" :style="anotherActionButtonStyle" />
             </div>
           </div>
         </template>
@@ -139,8 +155,10 @@ import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
 import { getButtonTheme } from '../../sub/helper/ThemeHelper'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
-import commonmixinVue from '../mixin/commonmixin.vue'
-import { CATEGORY } from '../../sub/constant/Constants'
+import commonmixinVue from '../mixin/commonmixin.vue';
+import { DETECT_STATE, CATEGORY } from '../../sub/constant/Constants'
+import * as HttpHelper from '../../sub/helper/HttpHelper'
+import * as AuthHelper from '../../sub/helper/AuthHelper'
 
 export default {
   mixin: [commonmixinVue], // not work
@@ -173,6 +191,7 @@ export default {
           area: '',
           detectState: null,
         },
+        del: false,
       },
       emptyMessage: this.$i18n.tnl('message.listEmpty'),
       modalInfo: { title: '', content: '', id:'' },
@@ -181,6 +200,8 @@ export default {
       message: null,
       error: null,
       sortBy: null,
+      login: JSON.parse(window.localStorage.getItem('login')),
+      switchReload: false,
       ...this.params
     }
   },
@@ -269,6 +290,9 @@ export default {
     loginId() {
       return this.$store.state.loginId
     },
+    isTenantAdmin() {
+      return this.login.tenantAdmin
+    },
     theme () {
       const theme = getButtonTheme(this.loginId)
       return 'outline-' + theme
@@ -286,10 +310,11 @@ export default {
       return HtmlUtil.getLangShort() == 'ja'? {width: '100px !important'}: {width: '110px !important'}
     },
   },
-  watch: {
-    filter() {
-      console.log('filter is')
-      console.log(this.filter)
+  async created() {
+    this.switchReload = this.params.tenantAction? this.params.tenantAction: false
+    if(this.switchReload){
+      this.switchReload = false
+      await StateHelper.load('region')
     }
   },
   mounted() {
@@ -317,6 +342,14 @@ export default {
     setEmptyMessage(){
       this.message = null
       this.error = null
+    },
+    isCurrentTenant(item){
+      return item.tenantId == this.login.currentTenant.tenantId
+    },
+    async switchTenant(item){
+      await AuthHelper.switchTenant(item.tenantId)
+      this.switchReload = true
+      location.reload()
     },
     exportCsv() {
       this.setEmptyMessage()
@@ -363,7 +396,7 @@ export default {
     deleteConfirm(item, index, button) {
       this.setEmptyMessage()
       this.modalInfo.title = this.$i18n.tnl('label.confirm')
-      this.modalInfo.content = this.$i18n.tnl('message.deleteConfirm', this.params.mainColumn? {target: `${this.params.mainColumn.name}:${item[this.params.mainColumn.id]}`}: {target: 'ID:' + item[this.id]})
+      this.modalInfo.content = this.$i18n.tnl(this.params.delFilter && item.delFlg != 0? 'message.completeDeleteConfirm': 'message.deleteConfirm', this.params.mainColumn? {target: `${this.params.mainColumn.name}:${item[this.params.mainColumn.id]}`}: {target: "ID:" + item[this.id]})
       this.modalInfo.id = item[this.id]
       this.$root.$emit('bv::show::modal', 'modalInfo', button)
     },
@@ -421,8 +454,18 @@ export default {
           }
         }
       }
+      let delBool = true
+      if(!this.params.delFilter){
+        delBool = true
+      }
+      else if(this.filter.del){
+        delBool = true
+      }
+      else{
+        delBool = originItem.delFlg == 0
+      }
       //console.log("filtering table...")
-      return regBool && extBool
+      return regBool && extBool && delBool
     },
     onFiltered(filteredItems) {
       this.totalRows = filteredItems.length

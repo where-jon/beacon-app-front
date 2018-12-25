@@ -186,6 +186,16 @@ const appStateConf = {
     path: '/meta/setting',
     sort: 'settingId',
   },
+  tenants: {
+    path: '/meta/tenant',
+    sort: 'tenantId',
+    beforeCommit: (arr) => {
+      return  arr.map((val) => ({
+        ...val,
+        createDt: Util.formatDate(val.createDt),
+      }))
+    }
+  },
 }
 
 export const load = async (target, force) => {

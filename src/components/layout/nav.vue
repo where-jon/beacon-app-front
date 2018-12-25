@@ -23,7 +23,22 @@
       </b-navbar-nav>
 
       <!-- right -->
-      <b-navbar-nav v-show="!isLoginPage && showNav" class="ml-auto">
+      <b-navbar-nav class="ml-auto" v-show="!isLoginPage && showNav">
+        <!-- region -->
+        <b-nav-item-dropdown right>
+          <template slot="button-content">
+            <div v-if="isTenantAdmin">
+              <i class="far fa-building mr-1" aria-hidden="true" style="visibility: hidden;" ></i>
+              <span>{{ currentTenantName }}</span>
+            </div>
+            <i class="far fa-building mr-1" aria-hidden="true" ></i>
+            <span>{{ currentRegionName }}</span>
+          </template>
+          <b-dropdown-item v-for="region in this.$store.state.app_service.regions" :key="region.regionId" href="#" @click="switchRegion(region)">
+            <i class="far fa-building mr-1" aria-hidden="true" :style="getStyleDropdownRegion(region.regionId)" ></i>
+            <span>{{ region.regionName }}</span>
+          </b-dropdown-item>
+        </b-nav-item-dropdown>
         <!-- user & logout -->
         <b-nav-item-dropdown right>
           <template slot="button-content">
@@ -53,6 +68,8 @@ import { LOGIN_MODE } from '../../sub/constant/Constants'
 import { getThemeClasses } from '../../sub/helper/ThemeHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import commonmixinVue from '../mixin/commonmixin.vue'
+import * as HttpHelper from '../../sub/helper/HttpHelper'
+import * as StateHelper from '../../sub/helper/StateHelper'
 
 export default {
   mixin: [commonmixinVue],
@@ -61,7 +78,21 @@ export default {
       version: APP.VERSION,
       nav : this.$store.state.menu,
       showLogo: DISP.SHOW_LOGO,
-      showNav: HtmlUtil.isMobile() || DISP.SHOW_NAV
+      showNav: HtmlUtil.isMobile() || DISP.SHOW_NAV,
+      login: JSON.parse(window.localStorage.getItem('login')),
+      currentTenantName: "",
+      currentRegionName: "",
+      currentRegionId: null,
+      switchReload: true,
+    }
+  },
+  async created() {
+    this.currentTenantName = this.login && this.login.currentTenant? this.login.currentTenant.tenantName: ""
+    this.currentRegionName = this.login && this.login.currentRegion? this.login.currentRegion.regionName: ""
+    this.currentRegionId = this.login && this.login.currentRegion? this.login.currentRegion.regionId: null
+    if(this.switchReload){
+      this.switchReload = false
+      await StateHelper.load('region')
     }
   },
   computed: {
@@ -75,7 +106,7 @@ export default {
       return this.$store.state.loginId
     },
     ...mapState('app_service', [
-      'pots',
+      'pots', 'regions',
     ]),
     navbarClasses() {
       return getThemeClasses()
@@ -89,7 +120,7 @@ export default {
       return classes
     },
   },
-  mounted() {
+  async mounted() {
     window.addEventListener('resize', () => {
       this.showNav = HtmlUtil.isMobile() || DISP.SHOW_NAV
     })
@@ -99,8 +130,18 @@ export default {
       this.$refs.collapse.show = false
       AuthHelper.logout()
     },
+    isTenantAdmin() {
+      return this.$store.state.tenantAdmin
+    },
+    getStyleDropdownRegion(regionId) {
+      return {visibility: this.currentRegionId == regionId? "visible": "hidden"}
+    },
     move(page) {
       this.$router.push(page)
+    },
+    async switchRegion(item) {
+      await AuthHelper.switchRegion(item.regionId)
+      location.reload()
     },
     versionClick() {
       console.log('app service revision:', this.$store.state.serviceRev)
