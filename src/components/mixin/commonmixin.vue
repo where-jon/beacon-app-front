@@ -22,6 +22,10 @@ export default {
     ...mapMutations('setting', [
       'replaceSetting', 
     ]),
+    ...mapActions([
+      'showProgress',
+      'hideProgress',
+    ]),
     getSensorId(exb) {
       return Util.getValue(exb, 'exbSensorList.0.sensor.sensorId').val
     },
