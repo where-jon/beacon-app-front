@@ -49,7 +49,6 @@ export default {
     ]),
   },
   mounted() {
-    this.replace({title: this.$i18n.tnl('label.' + this.name) + this.label})
     this.replaceAS({listMessage: null})
   },
   methods: {

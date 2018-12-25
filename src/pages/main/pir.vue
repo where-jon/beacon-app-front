@@ -56,7 +56,6 @@ export default {
   computed: {
   },
   mounted() {
-    this.replace({title: this.$i18n.tnl('label.pir')})
     this.fetchData()
   },
   methods: {

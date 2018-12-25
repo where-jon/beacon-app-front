@@ -151,7 +151,6 @@ export default {
     },
   },
   async mounted() {
-    this.replace({title: this.$i18n.tnl('label.showPosition')})
     await StateHelper.load('category')
     await StateHelper.load('group')
     document.addEventListener('touchstart', this.touchEnd)

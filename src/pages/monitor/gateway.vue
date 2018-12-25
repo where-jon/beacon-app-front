@@ -87,7 +87,6 @@ export default {
   },
   mounted() {
     this.fetchData()
-    this.replace({title: this.$i18n.t('label.gateway')})
     if (!this.isDev) {
       return
     }
