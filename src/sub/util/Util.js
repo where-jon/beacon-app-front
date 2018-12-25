@@ -14,7 +14,46 @@ export const addNoSelect = (option) => option.unshift({value: null, text: ''})
 
 export const getByteLength = (str) => encodeURI(str == null? '': str).replace(/%../g, '*').length
 
-export const numberRange = (start, end) => new Array(end - start + 1).fill().map((d, i) => i + start)
+export const numberRange = (start, end) => new Array(end - start + 1).fill().map((d, i) => {return {key: i + start}})
+
+export const formatDateRange = (date, by) => {
+  let key = `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`
+  if(by == "day"){
+    return {key: `${key} 00:00`, text: key}
+  }
+  if(by == "hour"){
+    return {
+      key: `${key} ${`00${date.getHours()}`.slice(-2)}:00`,
+    }
+  }
+  return {
+    key: `${key} ${`00${date.getHours()}`.slice(-2)}:${`00${date.getMinutes()}`.slice(-2)}`,
+  }
+}
+
+export const dateRange = (start, end, by) => {
+  const ret = []
+  const date = new Date(start)
+  if(by == "day"){
+    for(; date < end; date.setDate(date.getDate() + 1)) {
+      ret.push(formatDateRange(date, by))
+    }
+    ret.push(formatDateRange(date, by))
+    return ret
+  }
+  if(by == "hour"){
+    for(; date < end; date.setHours(date.getHours() + 1)) {
+      ret.push(formatDateRange(date, by))
+    }
+    ret.push(formatDateRange(date, by))
+    return ret
+  }
+  for(; date < end; date.setMinutes(date.getMinutes() + 1)) {
+    ret.push(formatDateRange(date, by))
+  }
+  ret.push(formatDateRange(date, by))
+  return ret
+}
 
 export const str2booleanComplate = (str) => str.toLowerCase() == 'true'? true: str.toLowerCase() == 'false'? false: str
 
@@ -307,4 +346,27 @@ export const getOptions = (key, list, valField, txtField) => {
 
 export const getDetailCaptionKey = (id) => {
   return `label.${hasValue(id)? 'update': 'addSetting'}`
+}
+
+export const getDatetime = (baseDatetime, controlData) => {
+  const datetime = new Date(baseDatetime.getTime())
+  datetime.setMilliseconds(0)
+  if(!controlData){
+    return datetime
+  }
+  datetime.setFullYear(datetime.getFullYear() + (controlData.year? controlData.year: 0))
+  datetime.setDate(datetime.getDate() + (controlData.date? controlData.date: 0))
+  datetime.setHours(datetime.getHours() + (controlData.hours? controlData.hours: 0))
+  datetime.setMinutes(datetime.getMinutes() + (controlData.minutes? controlData.minutes: 0))
+  datetime.setSeconds(datetime.getSeconds() + (controlData.seconds? controlData.seconds: 0))
+  return datetime
+}
+
+export const getSubDatetime = (datetimeFrom, datetimeTo) => {
+  const subTime = new Date(datetimeTo.getTime()) - new Date(datetimeFrom.getTime())
+  const subDatetime = {}
+  subDatetime.minute = subTime / 1000 / 60
+  subDatetime.hour = subDatetime.minute / 60
+  subDatetime.date = subDatetime.hour / 24
+  return subDatetime
 }

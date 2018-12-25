@@ -101,6 +101,7 @@
     "btxId": "btxId",
     "major": "Major",
     "minor": "Minor",
+    "rssi": "RSSI",
     
     "locationId": "Position ID",
     "locationName": "Name",

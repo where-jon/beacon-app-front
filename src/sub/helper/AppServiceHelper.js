@@ -26,6 +26,15 @@ export const fetchMapImage = async (path) => {
   // return new Buffer(data, 'binary').toString('base64')
 }
 
+export const getCurrentUser = async () => {
+  const user = await HttpHelper.getAppService('/meta/user/currentUser')
+  if (user.providerUserId != null) {
+    this.isProvider = true
+    user.role = {roleId: -1, roleName: "tenantAdmin", isSuperAdmin: true}
+  }
+  return user
+}
+
 export const save = async (target, entity, updateOnlyNN = UPDATE_ONLY_NN.NONE) => {
   const path = target
   var params = new URLSearchParams()

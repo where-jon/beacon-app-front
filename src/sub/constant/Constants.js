@@ -23,7 +23,6 @@ export const CHAR_SET = [
 ]
 
 export const ROLE = {
-  SUPER_ADMIN: 'SUPER_ADMIN', // TO BE REMOVED in the future
 }
 
 export const ROLE_FEATURE = {
@@ -110,6 +109,27 @@ export const SENSOR = {
   MAGNET_STATUS: {
     OFF: 0,
     ON: 4,
+  }
+}
+
+export const SUM_UNIT = {
+  getOptions(){
+    return [
+      {value:1, text: i18n.t('label.minute'), param: "minute"},
+      {value:2, text: i18n.t('label.hour'), param: "hour"},
+      {value:3, text: i18n.t('label.day'), param: "day"},
+    ]
+  }
+}
+
+export const SUM_TARGET = {
+  getOptions(){
+    return [
+      {value:1, text: i18n.t('label.immediate')},
+      {value:2, text: i18n.t('label.average')},
+      {value:3, text: i18n.t('label.max')},
+      {value:4, text: i18n.t('label.min')},
+    ]
   }
 }
 
@@ -202,6 +222,20 @@ export const EXTRA_NAV = [
 ]
 
 export const MENU = [
+  {
+    key: 'provider',
+    base: 'provider/',
+    path: 'provider/tenant',
+    icon: 'fas fa-cogs',
+    pages: [
+      {
+        key: 'tenant',
+        path: 'tenant',
+        feature: '/meta/tenant',
+        icon: 'fas fa-store-alt',
+      },
+    ]
+  },
   {
     key: 'main',
     base: 'main/',
@@ -360,29 +394,35 @@ export const MENU = [
     path: 'sum/utilizationRatio',
     icon: 'fas fa-chart-line',
     pages: [{
-      key: 'utilizationRatio',
-      path: 'utilizationRatio',
-      feature: '/sum/utilizationRatio',
-      icon: 'fas fa-chart-pie'
-    },
-    {
-      key: 'numUsers',
-      path: 'numUsers',
-      feature: '/sum/numUsers',
-      icon: 'fas fa-chart-area'
-    },
-    {
-      key: 'flowlineAnalysis',
-      path: 'flowlineAnalysis',
-      feature: '/sum/flowlineAnalysis',
-      icon: 'fas fa-shoe-prints'
-    },
-    {
-      key: 'heatmapPosition',
-      path: 'heatmap-position',
-      feature: '/sum/heatmapPosition',
-      icon: 'fas fas fa-fire',
-    },
+        key: 'utilizationRatio',
+        path: 'utilizationRatio',
+        feature: '/sum/utilizationRatio',
+        icon: 'fas fa-chart-pie'
+      },
+      {
+        key: 'numUsers',
+        path: 'numUsers',
+        feature: '/sum/numUsers',
+        icon: 'fas fa-chart-area'
+      },
+      {
+        key: 'flowlineAnalysis',
+        path: 'flowlineAnalysis',
+        feature: '/sum/flowlineAnalysis',
+        icon: 'fas fa-shoe-prints'
+      },
+      {
+        key: 'heatmapPosition',
+        path: 'heatmap-position',
+        feature: '/sum/heatmapPosition',
+        icon: 'fas fas fa-fire',
+      },
+      {
+        key: 'sensorGraph',
+        path: 'sensorGraph',
+        feature: '/sum/sensorGraph',
+        icon: 'fas fa-chart-bar',
+      },
     ]
   },
   {
