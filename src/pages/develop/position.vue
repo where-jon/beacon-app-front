@@ -1,16 +1,16 @@
 <template>
-  <position :isDev="true" />
+  <position :is-dev="true" />
 </template>
 
 <script>
-  import position from '../monitor/position.vue'
+import position from '../monitor/position.vue'
 
-  export default {
-    components: {
-      position
-    },
-    data () {
-      return {}
-    }
+export default {
+  components: {
+    position
+  },
+  data () {
+    return {}
   }
+}
 </script>

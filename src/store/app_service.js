@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import {getOptions, getValue} from '../sub/util/Util'
+import {getOptions} from '../sub/util/Util'
 import {CATEGORY} from '../sub/constant/Constants'
 
 export const state = () => ({
@@ -66,7 +66,7 @@ export const getters = {
 
 export const mutations = {
   replaceAS(state, obj) {
-    console.debug("replaceAS")
+    console.debug('replaceAS')
     if (obj) {
       for (let key in obj) {
         Vue.set(state, key, obj[key])
@@ -74,7 +74,7 @@ export const mutations = {
     }
   },
   clear(state, obj) {
-    console.debug("clear", obj)
+    console.debug('clear', obj)
     if (obj) {
       for (let key in obj) {
         Vue.set(state, key, {})

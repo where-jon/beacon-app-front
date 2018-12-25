@@ -2,13 +2,15 @@
   <div id="mapContainer" class="container-fluid">
     <breadcrumb :items="items" :reload="true" />
     <b-row class="mt-2">
-      <b-form inline @submit.prevent class="mt-2">
-        <label class="ml-3 mr-2">{{ $t('label.area') }}</label>
-        <b-form-select v-model="selectedArea" :options="areaOptions" @change="changeArea" required class="ml-2"></b-form-select>
+      <b-form inline class="mt-2" @submit.prevent>
+        <label class="ml-3 mr-2">
+          {{ $t('label.area') }}
+        </label>
+        <b-form-select v-model="selectedArea" :options="areaOptions" required class="ml-2" @change="changeArea" />
       </b-form>
     </b-row>
     <b-row class="mt-3">
-      <canvas id="map" ref="map"></canvas>
+      <canvas id="map" ref="map" />
     </b-row>
     <!-- modal -->
     <b-modal id="modalError" :title="$t('label.error')" ok-only>
@@ -18,27 +20,22 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
-import txdetail from '../../components/parts/txdetail.vue'
-import { DEV, DISP, APP } from '../../sub/constant/config'
+import { DISP, APP } from '../../sub/constant/config'
 import { SENSOR } from '../../sub/constant/Constants'
-import * as Util from '../../sub/util/Util'
-import { Shape, Stage, Container, Bitmap, Text, Touch } from '@createjs/easeljs/dist/easeljs.module'
-import { Tween, Ticker } from '@createjs/tweenjs/dist/tweenjs.module'
+import { Shape, Container, Text } from '@createjs/easeljs/dist/easeljs.module'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
 
 export default {
-  mixins: [showmapmixin],
   components: {
-    'txdetail': txdetail,
     breadcrumb,
   },
+  mixins: [showmapmixin],
   data() {
-     return {
-       keepExbPosition: false,
-       toggleCallBack: () => {
+    return {
+      keepExbPosition: false,
+      toggleCallBack: () => {
         this.keepExbPosition = true
       },
       items: [
@@ -74,18 +71,18 @@ export default {
         this.positionedExb = _(this.exbs).filter((exb) => {
           return exb.location.areaId == this.selectedArea && exb.location.x && exb.location.y > 0 // && Util.equalsAny(this.getSensorId(exb), [SENSOR.PIR, SENSOR.THERMOPILE])
         })
-        .map((exb) => {
-          let pir = pirSensors.find((val) => val.deviceid == exb.deviceId && val.count >= DISP.PIR_MIN_COUNT)
-          let thermopile = thermopileSensors.find((val) => val.deviceid == exb.deviceId)
-          console.log({exb, pir, thermopile, pirSensors, thermopileSensors})
-          return {
-            exbId: exb.exbId, deviceId: exb.deviceId, x: exb.location.x, y: exb.location.y,
-            count: pir? pir.count: thermopile? thermopile.count: 0,
-            sensorId: pir? SENSOR.PIR: thermopile? SENSOR.THERMOPILE: null
-          }
-        })
-        .filter((exb) => exb.count > 0 || DISP.PIR_EMPTY_SHOW)
-        .value()
+          .map((exb) => {
+            let pir = pirSensors.find((val) => val.deviceid == exb.deviceId && val.count >= DISP.PIR_MIN_COUNT)
+            let thermopile = thermopileSensors.find((val) => val.deviceid == exb.deviceId)
+            console.log({exb, pir, thermopile, pirSensors, thermopileSensors})
+            return {
+              exbId: exb.exbId, deviceId: exb.deviceId, x: exb.location.x, y: exb.location.y,
+              count: pir? pir.count: thermopile? thermopile.count: 0,
+              sensorId: pir? SENSOR.PIR: thermopile? SENSOR.THERMOPILE: null
+            }
+          })
+          .filter((exb) => exb.count > 0 || DISP.PIR_EMPTY_SHOW)
+          .value()
 
         if (payload && payload.done) {
           payload.done()
@@ -134,13 +131,13 @@ export default {
         }
 
         // only for Exhibition（delete immediately）
-        let label = new Text(exb.count + "名","bold 32px Arial","#FF3222")
-        label.textAlign = "center"
-        label.textBaseline = "middle"
+        let label = new Text(exb.count + '名','bold 32px Arial','#FF3222')
+        label.textAlign = 'center'
+        label.textBaseline = 'middle'
         exbBtn.addChild(label)
         exbBtn.x = exb.x
         exbBtn.y = exb.y
-        exbBtn.cursor = ""
+        exbBtn.cursor = ''
         this.exbCon.addChild(exbBtn)
         stage.addChild(this.exbCon)
         stage.update()
@@ -153,11 +150,11 @@ export default {
       exbBtn.addChild(btnBg)
 
       if (DISP.PIR_INUSE_LABEL || DISP.PIR_EMPTY_LABEL) {
-        let label = new Text(this.$i18n.tnl("label." + (exb.count > 0? DISP.PIR_INUSE_LABEL: DISP.PIR_EMPTY_LABEL)))
+        let label = new Text(this.$i18n.tnl('label.' + (exb.count > 0? DISP.PIR_INUSE_LABEL: DISP.PIR_EMPTY_LABEL)))
         label.font = exb.count > 0? DISP.PIR_INUSE_FONT: DISP.PIR_EMPTY_FONT
         label.color = DISP.PIR_FGCOLOR
-        label.textAlign = "center"
-        label.textBaseline = "middle"
+        label.textAlign = 'center'
+        label.textBaseline = 'middle'
         exbBtn.addChild(label)
       }
 
@@ -165,7 +162,7 @@ export default {
       exbBtn.exbId = exb.exbId
       exbBtn.x = exb.x
       exbBtn.y = exb.y
-      exbBtn.cursor = ""
+      exbBtn.cursor = ''
 
       this.exbCon.addChild(exbBtn)
       stage.addChild(this.exbCon)

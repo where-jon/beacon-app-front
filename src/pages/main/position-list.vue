@@ -1,26 +1,25 @@
 <template>
   <div>
-    <breadcrumb :items="items" :extraNavSpec="extraNavSpec"
-        :reload="reload" :shortName="shortName" />
+    <breadcrumb :items="items" :extra-nav-spec="extraNavSpec"
+                :reload="reload" :short-name="shortName"
+    />
     <m-list :params="params" :list="positionList" />
   </div>
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import mList from '../../components/page/list.vue'
 import listmixinVue from '../../components/mixin/listmixin.vue'
-import * as mock from '../../assets/mock/mock'
-import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as PositionHelper from '../../sub/helper/PositionHelper'
 import { addLabelByKey } from '../../sub/helper/ViewHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
-import { DETECT_STATE, BATTERY_STATE, BATTERY_BOUNDARY, EXTRA_NAV } from '../../sub/constant/Constants'
+import { BATTERY_STATE, BATTERY_BOUNDARY, EXTRA_NAV } from '../../sub/constant/Constants'
 import * as Util from '../../sub/util/Util'
-import { APP, DISP, DEV } from '../../sub/constant/config.js'
+import { APP } from '../../sub/constant/config.js'
 
 export default {
   components: {
@@ -39,20 +38,20 @@ export default {
         disableTableButtons: true,
         fields: addLabelByKey(this.$i18n, [ 
           !APP.TX_WITH_TXID && APP.TX_BTX_MINOR == 'minor' ? 
-              {key: "minor", label: 'minor', sortable: true, tdClass: "action-rowdata" }: null,
-          APP.TX_WITH_TXID ? {key: "txId", label: 'txId', sortable: true, tdClass: "action-rowdata" }: null,
-          APP.TX_BTX_MINOR != 'minor' ? {key: "btx_id", label: 'btxId', sortable: true, tdClass: "action-rowdata" }: null,
+            {key: 'minor', label: 'minor', sortable: true, tdClass: 'action-rowdata' }: null,
+          APP.TX_WITH_TXID ? {key: 'txId', label: 'txId', sortable: true, tdClass: 'action-rowdata' }: null,
+          APP.TX_BTX_MINOR != 'minor' ? {key: 'btx_id', label: 'btxId', sortable: true, tdClass: 'action-rowdata' }: null,
           APP.TX_WITH_TXID || APP.TX_BTX_MINOR != 'btxId' ?
-              {key: "minor", label:'minor', sortable: true, tdClass: "action-rowdata" }: null,
-          APP.POT_WITH_POTCD ? {key: "potCd", label: 'potCd', sortable: true, tdClass: "action-rowdata"} : null,
-          {key: "potName", label: 'name', sortable: true, tdClass: "action-rowdata"},
-          MenuHelper.useMaster('group') && APP.POT_WITH_GROUP ? {key: "groupName", label: 'group', sortable: true, tdClass: "action-rowdata"} : null,
-          {key: "state", sortable: true, tdClass: "action-rowdata"},
-          APP.POSITION_WITH_AREA ? {key: "areaName", label: 'area', sortable: true, tdClass: "action-rowdata"} : null,
-          {key: "locationName", label: 'finalReceiveLocation', sortable: true, tdClass: "action-rowdata"},
-          {key: "updatetime", label: 'finalReceiveTimestamp', sortable: true, tdClass: "action-rowdata"},
-          {key: "powerLevel", label: 'powerLevel', tdClass: "action-rowdata", 'class': "text-md-center"},
-          {key: "mapDisplay", tdClass: "action-rowdata"},
+            {key: 'minor', label:'minor', sortable: true, tdClass: 'action-rowdata' }: null,
+          APP.POT_WITH_POTCD ? {key: 'potCd', label: 'potCd', sortable: true, tdClass: 'action-rowdata'} : null,
+          {key: 'potName', label: 'name', sortable: true, tdClass: 'action-rowdata'},
+          MenuHelper.useMaster('group') && APP.POT_WITH_GROUP ? {key: 'groupName', label: 'group', sortable: true, tdClass: 'action-rowdata'} : null,
+          {key: 'state', sortable: true, tdClass: 'action-rowdata'},
+          APP.POSITION_WITH_AREA ? {key: 'areaName', label: 'area', sortable: true, tdClass: 'action-rowdata'} : null,
+          {key: 'locationName', label: 'finalReceiveLocation', sortable: true, tdClass: 'action-rowdata'},
+          {key: 'updatetime', label: 'finalReceiveTimestamp', sortable: true, tdClass: 'action-rowdata'},
+          {key: 'powerLevel', label: 'powerLevel', tdClass: 'action-rowdata', 'class': 'text-md-center'},
+          {key: 'mapDisplay', tdClass: 'action-rowdata'},
         ]),
         initTotalRows: this.$store.state.app_service.positionList.length,
       },
@@ -102,12 +101,12 @@ export default {
           return {
             ...pos,
             powerLevel: this.getPowerLevel(pos),
-            txId: Util.getValue(pos, "tx.txId" , null),
-            potCd: Util.getValue(pos, "tx.pot.potCd", null),
-            potName: Util.getValue(pos, "tx.pot.potName", null),
-            groupName: Util.getValue(pos, "tx.group.groupName", null),
-            areaName: Util.getValue(pos, "exb.areaName", null),
-            locationName: Util.getValue(pos, "exb.locationName", null),
+            txId: Util.getValue(pos, 'tx.txId' , null),
+            potCd: Util.getValue(pos, 'tx.pot.potCd', null),
+            potName: Util.getValue(pos, 'tx.pot.potName', null),
+            groupName: Util.getValue(pos, 'tx.group.groupName', null),
+            areaName: Util.getValue(pos, 'exb.areaName', null),
+            locationName: Util.getValue(pos, 'exb.locationName', null),
             // 追加フィルタ用
             groupId: Util.getValue(pos, 'tx.group.groupId').val,
             areaId: Util.getValue(pos, 'exb.location.areaId').val,

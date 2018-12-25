@@ -2,18 +2,29 @@
   <div>
     <breadcrumb :items="items" :reload="false" />
     <div class="container">
-      <b-alert variant="info" dismissible :show="showInfo">{{ message }}</b-alert>
-      <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">
-        <div v-html="message" />
+      <b-alert variant="info" dismissible :show="showInfo">
+        {{ message }}
+      </b-alert>
+      <b-alert variant="danger" dismissible :show="showAlert" @dismissed="showAlert=false">
+        <template v-if="Array.isArray(message)">
+          <span v-for="line in message" :key="line">
+            {{ line }} <br>
+          </span>
+        </template>
+        <span v-else>
+          {{ message }}
+        </span>
       </b-alert>
       <div class="mapContainer mb-5">
         <b-form inline @submit.prevent>
           <b-form-group class="mr-5">
             <b-form-row>
               <b-form-row class="mb-3 mr-2">
-                <label v-t="'label.minor'" class="mr-2"/>
+                <label v-t="'label.minor'" class="mr-2" />
                 <v-select v-model="form.tx" :options="txOptions" class="mr-2">
-                  <div slot="no-options">{{$i18n.tnl('label.vSelectNoOptions')}}</div>
+                  <div slot="no-options">
+                    {{ $i18n.tnl('label.vSelectNoOptions') }}
+                  </div>
                 </v-select>
               </b-form-row>
             </b-form-row>
@@ -23,33 +34,33 @@
           <b-form-group class="mr-5">
             <b-form-row>
               <b-form-row class="mb-3 mr-2">
-                <label v-t="'label.historyDateFrom'" class="mr-2"/>
-                <date-picker v-model="form.datetimeFrom" type="datetime" :clearable="false" class="mr-2 inputdatefrom" required/>
+                <label v-t="'label.historyDateFrom'" class="mr-2" />
+                <date-picker v-model="form.datetimeFrom" type="datetime" :clearable="false" class="mr-2 inputdatefrom" required />
               </b-form-row>
               <b-form-row class="mb-3 mr-2">
                 <label v-t="'label.historyDateTo'" class="mr-2" />
-                <date-picker v-model="form.datetimeTo" type="datetime" :clearable="false" class="mr-2 inputdateto" required/>
+                <date-picker v-model="form.datetimeTo" type="datetime" :clearable="false" class="mr-2 inputdateto" required />
               </b-form-row>
             </b-form-row>
           </b-form-group>
           <b-form-group>
             <b-form-row class="mb-3 mr-2">
-              <b-button :variant="theme" class="mx-1" @click="display" v-t="'label.display'" />
-              <b-button :variant='theme' class="mx-1" v-if="!iosOrAndroid" @click="exportCsv" v-t="'label.download'" />
+              <b-button v-t="'label.display'" :variant="theme" class="mx-1" @click="display" />
+              <b-button v-if="!iosOrAndroid" v-t="'label.download'" :variant="theme" class="mx-1" @click="exportCsv" />
             </b-form-row>
           </b-form-group>
         </b-form>
-        <slot></slot>
-        <b-row class="mt-3">
-        </b-row>
-        <b-table stacked="md" striped hover :items="viewList" :fields="fields" :current-page="currentPage" :per-page="perPage" outlined :sort-by.sync="sortBy">
-        </b-table>
+        <slot />
+        <b-row class="mt-3" />
+        <b-table stacked="md" striped hover :items="viewList" :fields="fields" :current-page="currentPage" :per-page="perPage" outlined :sort-by.sync="sortBy" />
         <b-row>
-          <b-col md="6" class="my-1">{{ footerMessage }}</b-col>
+          <b-col md="6" class="my-1">
+            {{ footerMessage }}
+          </b-col>
         </b-row>
         <b-row>
           <b-col md="6" class="my-1">
-            <b-pagination :total-rows="totalRows" :per-page="perPage" v-model="currentPage" class="my-0" />
+            <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" class="my-0" />
           </b-col>
         </b-row>
       </div>
@@ -58,7 +69,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import locale from 'element-ui/lib/locale'
@@ -70,19 +81,17 @@ import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import { addLabelByKey } from '../../sub/helper/ViewHelper'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
-import * as Util from '../../sub/util/Util'
-import { CATEGORY } from '../../sub/constant/Constants'
 import { APP } from '../../sub/constant/config.js'
 import moment from 'moment'
-import { EXCLOUD, APP_SERVICE } from '../../sub/constant/config'
+import { APP_SERVICE } from '../../sub/constant/config'
 
 
 export default {
-  mixins: [showmapmixin ],
   components: {
     breadcrumb,
     DatePicker,
   },
+  mixins: [showmapmixin ],
   data () {
     return {
       name: 'positionHistory',
@@ -103,19 +112,19 @@ export default {
       },
       viewList: [],
       fields: addLabelByKey(this.$i18n, [
-        {key: "positionDt", sortable: true, label:"dt"},
-        {key: "txName", sortable: true },
-        {key: "major", sortable: true },
-        {key: "minor", sortable: true },
-        APP.EXB_WITH_EXBID? {key: "exbId", sortable: true }: null,
-        APP.EXB_WITH_DEVICE_NUM? {key: "deviceNum", sortable: true }: null,
-        APP.EXB_WITH_DEVICE_ID? {key: "deviceId", sortable: true }: null,
-        APP.EXB_WITH_DEVICE_IDX? {key: "deviceIdX", sortable: true }: null,
-        {key: "locationName", label:'locationZoneName', sortable: true,},
-        APP.EXB_WITH_POSID? {key: "posId", label:'posId', sortable: true,}: null,
-        {key: "areaName", label:'area', sortable: true,},
-        {key: "x", sortable: true, label:"locationX"},
-        {key: "y", sortable: true, label:"locationY"},
+        {key: 'positionDt', sortable: true, label:'dt'},
+        {key: 'txName', sortable: true },
+        {key: 'major', sortable: true },
+        {key: 'minor', sortable: true },
+        APP.EXB_WITH_EXBID? {key: 'exbId', sortable: true }: null,
+        APP.EXB_WITH_DEVICE_NUM? {key: 'deviceNum', sortable: true }: null,
+        APP.EXB_WITH_DEVICE_ID? {key: 'deviceId', sortable: true }: null,
+        APP.EXB_WITH_DEVICE_IDX? {key: 'deviceIdX', sortable: true }: null,
+        {key: 'locationName', label:'locationZoneName', sortable: true,},
+        APP.EXB_WITH_POSID? {key: 'posId', label:'posId', sortable: true,}: null,
+        {key: 'areaName', label:'area', sortable: true,},
+        {key: 'x', sortable: true, label:'locationX'},
+        {key: 'y', sortable: true, label:'locationY'},
       ]),
       currentPage: 1,
       perPage: 20,
@@ -125,8 +134,8 @@ export default {
       //
       showInfo: false,
       showAlert: false,
-      message: "",
-      footerMessage: "",
+      message: '',
+      footerMessage: '',
     }
   },
   computed: {
@@ -140,9 +149,9 @@ export default {
     txOptions() {
       let txOp = this.txs.map(tx => {
         return {
-            label: (tx.minor!=null)?(""+tx.minor):"txId=" + tx.txId,
-            value: "" + tx.txId
-          }
+          label: (tx.minor!=null)?(''+tx.minor):'txId=' + tx.txId,
+          value: '' + tx.txId
+        }
       })
       return txOp
     },
@@ -158,7 +167,7 @@ export default {
     })
     StateHelper.load('tx')
     StateHelper.load('exb')
-    this.footerMessage = `${this.$i18n.tnl("message.totalRowsMessage", {row: this.viewList.length, maxRows: this.limitViewRows})}`
+    this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.viewList.length, maxRows: this.limitViewRows})}`
   },
   methods: {
     getDatetime(baseDatetime, controlData){
@@ -183,7 +192,7 @@ export default {
       this.showAlert = false
       this.viewList = []
       this.totalRows = 0
-      this.footerMessage = `${this.$i18n.tnl("message.totalRowsMessage", {row: this.viewList.length, maxRows: this.limitViewRows})}`
+      this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.viewList.length, maxRows: this.limitViewRows})}`
       try {
         const aTxId = (this.form.tx != null && this.form.tx.value != null)?this.form.tx.value:0
         console.log(aTxId)
@@ -191,7 +200,7 @@ export default {
           `/core/positionHistory/find/${aTxId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/${this.limitViewRows}`
         )
         if (fetchList.length == null || !fetchList.length) {
-          this.message = this.$i18n.tnl("message.notFoundData", {target: this.$i18n.tnl("label.positionHistory")})
+          this.message = this.$i18n.tnl('message.notFoundData', {target: this.$i18n.tnl('label.positionHistory')})
           this.showAlert = true
           return
         }
@@ -212,7 +221,7 @@ export default {
           this.viewList.push(posHist)
         }
         this.totalRows = this.viewList.length
-        this.footerMessage = `${this.$i18n.tnl("message.totalRowsMessage", {row: this.viewList.length, maxRows: this.limitViewRows})}`
+        this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.viewList.length, maxRows: this.limitViewRows})}`
       } catch(e) {
         console.error(e)
       }

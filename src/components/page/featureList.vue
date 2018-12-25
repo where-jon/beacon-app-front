@@ -1,9 +1,9 @@
 <template>
   <b-container>
-    <b-table show-empty stacked="md" striped bordered outlined hover :items="list" :fields="fields" >
+    <b-table show-empty stacked="md" striped bordered outlined hover :items="list" :fields="fields">
       <template slot="parentCheck" slot-scope="row">
-        <div class="custom-control custom-checkbox" v-if="row.item.parentShow" >
-          <input type="checkbox" class="custom-control-input" :id="getCheckId(row.item)" v-model="row.item.checked" @change="parentChange(row.item)" >
+        <div v-if="row.item.parentShow" class="custom-control custom-checkbox">
+          <input :id="getCheckId(row.item)" v-model="row.item.checked" type="checkbox" class="custom-control-input" @change="parentChange(row.item)">
           <label class="custom-control-label mb-3" :for="getCheckId(row.item)" />
         </div>
       </template>
@@ -14,22 +14,28 @@
         </div>
       </template>
       <template slot="featureName" slot-scope="row">
-        <span>{{getFeatureName(row.item)}}</span>
+        <span>{{ getFeatureName(row.item) }}</span>
       </template>
     </b-table>
-    
   </b-container>
 </template>
 
 <script>
 
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-import { getButtonTheme, getTheme } from '../../sub/helper/ThemeHelper'
 import commonmixinVue from '../mixin/commonmixin.vue'
 
 export default {
   mixin: [commonmixinVue], 
-  props: ['list', 'fields'],
+  props: {
+    list: {
+      type: Array,
+      required: true,
+    }, 
+    fields: {
+      type: Array,
+      required: true,
+    }
+  },
   data() {
     return {
     }

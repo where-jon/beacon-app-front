@@ -2,16 +2,20 @@
   <b-form-group v-if="!isModal">
     <label v-t="'label.txViewType'" />
     <b-form-select v-model="txDispFormat" :options="txViewTypes" class="mb-3 ml-3 col-3" :disabled="!isEditable" :readonly="!isEditable" @change="onChangeDispFormat" />
-    <label v-t="'label.txIconColumns'" class="txicons-num"  v-if="isIconsDispFormatTile" :disabled="!isIconsDispFormatTile"/>
-    <b-form-select v-model="layoutHorizon" :options="getSelectElements('column')" class="mb-3 ml-3 col-2" :disabled="!isEditable" v-if="isIconsDispFormatTile" :readonly="!isEditable" @change="onChangeHorizon" />
-    <label v-t="'label.txIconLines'" class="txicons-num"  v-if="isIconsDispFormatTile" :disabled="!isIconsDispFormatTile"/>
-    <b-form-select v-model="layoutVertical" :options="getSelectElements('line')" class="mb-3 ml-3 col-2" :disabled="!isEditable" v-if="isIconsDispFormatTile" :readonly="!isEditable" @change="onChangeVertical" />
+    <label v-if="isIconsDispFormatTile" v-t="'label.txIconColumns'" class="txicons-num" :disabled="!isIconsDispFormatTile" />
+    <b-form-select v-if="isIconsDispFormatTile" v-model="layoutHorizon" :options="getSelectElements('column')" class="mb-3 ml-3 col-2" :disabled="!isEditable" :readonly="!isEditable" @change="onChangeHorizon" />
+    <label v-if="isIconsDispFormatTile" v-t="'label.txIconLines'" class="txicons-num" :disabled="!isIconsDispFormatTile" />
+    <b-form-select v-if="isIconsDispFormatTile" v-model="layoutVertical" :options="getSelectElements('line')" class="mb-3 ml-3 col-2" :disabled="!isEditable" :readonly="!isEditable" @change="onChangeVertical" />
   </b-form-group>
   <div v-else>
-    <b-alert variant="danger" :show="isDelete"><i class="fas fa-exclamation-circle"></i>&nbsp;&nbsp;{{ $t('message.deleteConfirm',{target: deviceId}) }}</b-alert>
+    <b-alert variant="danger" :show="isDelete">
+      <i class="fas fa-exclamation-circle" />&nbsp;&nbsp;{{ $t('message.deleteConfirm',{target: deviceId}) }}
+    </b-alert>
     <b-form>
       <b-form-group>
-        <b-form-checkbox v-model="isDelete" @change="onCheckDelete">{{ $t('label.delete') }}</b-form-checkbox>
+        <b-form-checkbox v-model="isDelete" @change="onCheckDelete">
+          {{ $t('label.delete') }}
+        </b-form-checkbox>
       </b-form-group>
       <div v-if="!isDelete">
         <b-form-group>
@@ -19,11 +23,11 @@
           <b-form-select v-model="txDispFormat " :options="txViewTypes" :disabled="!isEditable" :readonly="!isEditable" @change="onChangeDispFormat" />
         </b-form-group>
         <b-form-group v-if="isIconsDispFormatTile">
-          <label v-t="'label.txIconColumns'" :disabled="!isIconsDispFormatTile"/>
+          <label v-t="'label.txIconColumns'" :disabled="!isIconsDispFormatTile" />
           <b-form-select v-model="layoutHorizon " :options="getSelectElements('column')" :disabled="!isEditable" :readonly="!isEditable" @change="onChangeHorizon" />
         </b-form-group>
         <b-form-group v-if="isIconsDispFormatTile">
-          <label v-t="'label.txIconLines'" :disabled="!isIconsDispFormatTile"/>
+          <label v-t="'label.txIconLines'" :disabled="!isIconsDispFormatTile" />
           <b-form-select v-model="layoutVertical " :options="getSelectElements('line')" :disabled="!isEditable" :readonly="!isEditable" @change="onChangeVertical" />
         </b-form-group>
       </div>
@@ -32,10 +36,8 @@
 </template>
 
 <script>
-import { TX_VIEW_TYPES, txViewTypes } from '../../sub/constant/Constants'
+import { TX_VIEW_TYPES } from '../../sub/constant/Constants'
 import { DISP } from '../../sub/constant/config'
-import * as ViewHelper from '../../sub/helper/ViewHelper'
-import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 
 export default {
   props: {
@@ -70,6 +72,17 @@ export default {
       isDelete: false,
     }
   },
+  computed: {
+    txViewTypes() {
+      return Object.keys(TX_VIEW_TYPES).map(key => {
+        const label = `label.txViewType${key.charAt(0).toUpperCase()}${key.slice(1).toLowerCase()}`
+        return {value: TX_VIEW_TYPES[key], text: this.$i18n.tnl(label)}
+      })
+    },
+    isIconsDispFormatTile() {
+      return this.txDispFormat === this.TXICONS_DISPFORMAT_TILE
+    },
+  },
   created() {
     if (!this.isModal) {
       return
@@ -84,17 +97,6 @@ export default {
       this.layoutHorizon = param.horizon
       this.layoutVertical = param.vertical
     })
-  },
-  computed: {
-    txViewTypes() {
-      return Object.keys(TX_VIEW_TYPES).map(key => {
-        const label = `label.txViewType${key.charAt(0).toUpperCase()}${key.slice(1).toLowerCase()}`
-        return {value: TX_VIEW_TYPES[key], text: this.$i18n.tnl(label)}
-      })
-    },
-    isIconsDispFormatTile() {
-      return this.txDispFormat === this.TXICONS_DISPFORMAT_TILE
-    },
   },
   methods: {
     getSelectElements(columnOrLine) {

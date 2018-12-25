@@ -1,28 +1,33 @@
 <template>
   <b-form inline @submit.prevent>
     <b-container :fluid="isFluid">
-      <b-alert variant="info" dismissible :show="showMessage">{{ message }}</b-alert>
-      <b-alert variant="danger" dismissible :show="showError">{{ error }}</b-alert>
+      <b-alert variant="info" dismissible :show="showMessage">
+        {{ message }}
+      </b-alert>
+      <b-alert variant="danger" dismissible :show="showError">
+        {{ error }}
+      </b-alert>
       <!-- searchbox -->
       <template v-if="!params.hideSearchBox">
         <b-form-row class="mb-2">
           <b-form-row class="mr-4 mb-2">
             <!-- 標準絞り込みフィルタ -->
-            <label v-t="'label.filter'" class="mr-2"></label>
+            <label v-t="'label.filter'" class="mr-2" />
             <b-input-group>
-              <input v-model="filter.reg" class="form-control align-self-center"/>
+              <input v-model="filter.reg" class="form-control align-self-center">
               <b-input-group-append>
-                <b-btn :disabled="!filter.reg" @click="filter.reg = ''" variant="secondary" v-t="'label.clear'"  class="align-self-center"/>
+                <b-btn v-t="'label.clear'" :disabled="!filter.reg" variant="secondary" class="align-self-center" @click="filter.reg = ''" />
               </b-input-group-append>
             </b-input-group>
           </b-form-row>
           <!-- カスタムフィルタ -->
-          <template v-if="params.extraFilter" >
-            <b-form-row v-for="item of extraFilterSpec" v-bind:key="item.key" class="mr-4 mb-2">
-              <label for="item.key" v-t="'label.' + item.key" class="mr-2"/>
+          <template v-if="params.extraFilter">
+            <b-form-row v-for="item of extraFilterSpec" :key="item.key" class="mr-4 mb-2">
+              <label v-t="'label.' + item.key" for="item.key" class="mr-2" />
               <b-input-group>
-                <b-form-select :id="item.key" :options="item.options" v-model="filter.extra[item.key]"
-                    class="extra-filter"/>
+                <b-form-select :id="item.key" v-model="filter.extra[item.key]" :options="item.options"
+                               class="extra-filter"
+                />
               </b-input-group>
             </b-form-row>
           </template>
@@ -39,32 +44,37 @@
         <b-form-row class="mb-1">
           <!-- ボタン部 -->
           <b-col v-if="!params.disableTableButtons && isEditable" cols="auto" class="ml-auto">
-            <b-button :variant='theme' class="mx-1" @click="edit()"
-                v-t="'label.createNew'" />
-            <b-button :variant='theme' class="mx-1" v-if="params.bulkEditPath && !iosOrAndroid" @click="bulkEdit()" 
-                v-t="'label.bulkRegister'" />
-            <b-button :variant='theme' class="mx-1" v-if="params.csvOut && !iosOrAndroid" @click="exportCsv"
-                v-t="'label.download'" />
+            <b-button v-t="'label.createNew'" :variant="theme" class="mx-1"
+                      @click="edit()"
+            />
+            <b-button v-if="params.bulkEditPath && !iosOrAndroid" v-t="'label.bulkRegister'" :variant="theme" class="mx-1" 
+                      @click="bulkEdit()"
+            />
+            <b-button v-if="params.csvOut && !iosOrAndroid" v-t="'label.download'" :variant="theme" class="mx-1"
+                      @click="exportCsv"
+            />
           </b-col>
         </b-form-row>
       </template>
 
-      <slot></slot>
+      <slot />
 
-      <b-row class="mt-3">
-      </b-row>
+      <b-row class="mt-3" />
     
       <!-- table -->
       <b-table show-empty stacked="md" striped hover :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" outlined
-              :filter="filterGrid" @filtered="onFiltered" :bordered="params.bordered" :sort-by.sync="sortBy" :empty-filtered-text="emptyMessage">
+               :filter="filterGrid" :bordered="params.bordered" :sort-by.sync="sortBy" :empty-filtered-text="emptyMessage" @filtered="onFiltered"
+      >
         <template slot="style" slot-scope="row">
-          <div v-bind:style="style(row.item)">A</div>
+          <div :style="style(row.item)">
+            A
+          </div>
         </template>
         <template slot="actions" slot-scope="row">
           <!-- 更新ボタン -->
-          <b-button size="sm" @click.stop="edit(row.item, row.index, $event.target)" :variant="theme" class="mr-2 my-1" v-t="'label.' + crud" :style="actionButtonStyle" />
+          <b-button v-t="'label.' + crud" size="sm" :variant="theme" class="mr-2 my-1" :style="actionButtonStyle" @click.stop="edit(row.item, row.index, $event.target)" />
           <!-- 削除ボタン -->
-          <b-button v-if="isEditable" size="sm" @click.stop="deleteConfirm(row.item, row.index, $event.target)" variant="outline-danger" class="mr-1 my-1" v-t="'label.delete'" :style="actionButtonStyle" />
+          <b-button v-if="isEditable" v-t="'label.delete'" size="sm" variant="outline-danger" class="mr-1 my-1" :style="actionButtonStyle" @click.stop="deleteConfirm(row.item, row.index, $event.target)" />
           <!-- jump another master page -->
           <div v-if="isEditable && anotherPageParams" :style="{'width': '100px'}">
             <!-- zone button -->
@@ -73,40 +83,42 @@
             </div> -->
             <!-- location button -->
             <div v-if="getAnotherPageParam('location', row.item)">
-              <b-button size="sm" @click.stop="jumpAnotherPage('location', row.item)" :variant="theme" class="btn-block my-1" v-t="'label.location'" :style="anotherActionButtonStyle" />
+              <b-button v-t="'label.location'" size="sm" :variant="theme" class="btn-block my-1" :style="anotherActionButtonStyle" @click.stop="jumpAnotherPage('location', row.item)" />
             </div>
           </div>
           <!-- for tenant -->
           <div v-if="isTenantAdmin && params.tenantAction" :style="{'width': '100px'}">
             <!-- switch button -->
             <div>
-              <b-button size="sm" v-if="isCurrentTenant(row.item)" :variant="theme" class="btn-block my-1" style="opacity: 1.0 !important; border-radius: 0px;" v-t="'label.now'" :style="anotherActionButtonStyle" :disabled="true" />
-              <b-button size="sm" v-else @click.stop="switchTenant(row.item)" :variant="theme" class="btn-block my-1" v-t="'label.switch'" :style="anotherActionButtonStyle" />
+              <b-button v-if="isCurrentTenant(row.item)" v-t="'label.now'" size="sm" :variant="theme" class="btn-block my-1" style="opacity: 1.0 !important; border-radius: 0px;" :style="anotherActionButtonStyle" :disabled="true" />
+              <b-button v-else v-t="'label.switch'" size="sm" :variant="theme" class="btn-block my-1" :style="anotherActionButtonStyle" @click.stop="switchTenant(row.item)" />
             </div>
           </div>
         </template>
         <template slot="thumbnail" slot-scope="row">
-          <img v-if="thumbnail(row.item)" :src="thumbnail(row.item)" height="70" />
+          <img v-if="thumbnail(row.item)" :src="thumbnail(row.item)" height="70">
         </template>
         <!-- 電池レベル -->
         <template slot="powerLevel" slot-scope="row">
           <span :class="'badge badge-pill badge-' + row.item.powerLevel.class">
-            {{row.item.powerLevel.text}}
+            {{ row.item.powerLevel.text }}
           </span>
         </template>
         <!-- マップ表示 -->
         <template slot="mapDisplay" slot-scope="row">
-          <b-button size="sm" @click.stop="mapDisplay(row.item)" :variant="theme"
-              v-t="'label.mapDisplay'" :disabled="row.item.noSelectedTx" class="mx-1" />
+          <b-button v-t="'label.mapDisplay'" size="sm" :variant="theme"
+                    :disabled="row.item.noSelectedTx" class="mx-1" @click.stop="mapDisplay(row.item)"
+          />
         </template>
         <!-- カテゴリ等アイコン横並び表示 -->
         <template slot="icons" slot-scope="row">
-          <div class="empty-icon d-inline-flex"></div><!-- 横幅0の「支柱」 -->
+          <div class="empty-icon d-inline-flex" /><!-- 横幅0の「支柱」 -->
           <div class="d-inline-flex flex-wrap">
-          <div v-for="position in row.item.positions" :key="position.areaId"
-              class="d-inline-flex m-1" v-bind:style="position.display" @click.stop="mapDisplay(position)">
-              {{position.label}}
-          </div>
+            <div v-for="position in row.item.positions" :key="position.areaId"
+                 class="d-inline-flex m-1" :style="position.display" @click.stop="mapDisplay(position)"
+            >
+              {{ position.label }}
+            </div>
           </div>
         </template>
       </b-table>
@@ -114,17 +126,18 @@
       <!-- pager -->
       <b-row>
         <b-col md="6" class="my-1">
-          <b-pagination :total-rows="totalRows" :per-page="perPage" v-model="currentPage" class="my-0" />
+          <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" class="my-0" />
         </b-col>
         <!-- bulk upload button -->
         <b-col v-if="isEditable && params.bulkUploadPath && !iosOrAndroid" md="6" class="my-1">
-          <b-button :variant='theme'
-            @click="bulkUpload()" v-t="'label.bulkUpload'"  class="float-right" />
+          <b-button v-t="'label.bulkUpload'"
+                    :variant="theme" class="float-right" @click="bulkUpload()"
+          />
         </b-col>
       </b-row>
 
       <!-- modal -->
-      <b-modal id="modalInfo" @hide="resetModal" :title="modalInfo.title" @ok="execDelete(modalInfo.id)">
+      <b-modal id="modalInfo" :title="modalInfo.title" @hide="resetModal" @ok="execDelete(modalInfo.id)">
         {{ modalInfo.content }}
       </b-modal>
     </b-container>
@@ -133,25 +146,38 @@
 
 <script>
 
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
-import { addLabelByKey } from '../../sub/helper/ViewHelper'
-import { EventBus } from '../../sub/helper/EventHelper'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
 import * as DetectStateHelper from '../../sub/helper/DetectStateHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
-import { getButtonTheme, getTheme } from '../../sub/helper/ThemeHelper'
+import { getButtonTheme } from '../../sub/helper/ThemeHelper'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
-import commonmixinVue from '../mixin/commonmixin.vue';
-import { DETECT_STATE, CATEGORY } from '../../sub/constant/Constants'
-import * as HttpHelper from '../../sub/helper/HttpHelper'
+import commonmixinVue from '../mixin/commonmixin.vue'
+import { CATEGORY } from '../../sub/constant/Constants'
 import * as AuthHelper from '../../sub/helper/AuthHelper'
 
 export default {
   mixin: [commonmixinVue], // not work
-  props: ['params', 'list', 'isFluid', 'anotherPageParams'],
+  props: {
+    params: {
+      type: Object,
+      required: true,
+    },
+    list: {
+      type: Array,
+      required: true,
+    },
+    isFluid: {
+      type: Boolean,
+    },
+    anotherPageParams: {
+      type: Array,
+      default: () => [],
+    },
+  },
   data() {
     return {
       currentPage: 1,
@@ -224,33 +250,33 @@ export default {
       let options = this.categories.filter((category) => 
         category.categoryType != CATEGORY.getTypes()[2].value
       ).map((category) => {
-          return {
-            value: category.categoryId,
-            text: category.categoryName
-          }
+        return {
+          value: category.categoryId,
+          text: category.categoryName
         }
+      }
       )
       options.unshift({value:null, text:''})
       return options
     },
     groupOptions() {
       let options = this.groups.map((group) => {
-          return {
-            value: group.groupId,
-            text: group.groupName
-          }
+        return {
+          value: group.groupId,
+          text: group.groupName
         }
+      }
       )
       options.unshift({value:null, text:''})
       return options
     },
     areaOptions() {
       let options = this.areas.map((area) => {
-          return {
-            value: area.areaId,
-            text: area.areaName
-          }
+        return {
+          value: area.areaId,
+          text: area.areaName
         }
+      }
       )
       options.unshift({value:null, text:''})
       return options
@@ -277,10 +303,10 @@ export default {
       return Util.hasValue(this.error)
     },
     actionButtonStyle(){
-      return HtmlUtil.getLangShort() == "ja"? {}: {width: '110px !important'}
+      return HtmlUtil.getLangShort() == 'ja'? {}: {width: '110px !important'}
     },
     anotherActionButtonStyle(){
-      return HtmlUtil.getLangShort() == "ja"? {width: '100px !important'}: {width: '110px !important'}
+      return HtmlUtil.getLangShort() == 'ja'? {width: '100px !important'}: {width: '110px !important'}
     },
   },
   async created() {
@@ -298,16 +324,9 @@ export default {
       this.params.extraFilter.filter((str) => !(str === 'detectState'))
         .forEach(str => {
           StateHelper.load(str)
-        });
+        })
     }
     this.sortBy = this.params.sortBy? this.params.sortBy: null
-    const theme = getTheme()
-  },
-  watch: {
-    filter() {
-      console.log("filter is")
-      console.log(this.filter)
-    }
   },
   methods: {
     ...mapMutations('app_service', [
@@ -339,8 +358,8 @@ export default {
       } else {
         headers = _(this.params.fields).map((val) => val.key).uniqWith(_.isEqual).value()
       }
-      headers = headers.filter((val) => !["style", "thumbnail", "actions", "updateAction"].includes(val))
-      HtmlUtil.fileDL(this.params.name + ".csv", Util.converToCsv(this.list, headers), getCharSet(this.loginId))
+      headers = headers.filter((val) => !['style', 'thumbnail', 'actions', 'updateAction'].includes(val))
+      HtmlUtil.fileDL(this.params.name + '.csv', Util.converToCsv(this.list, headers), getCharSet(this.loginId))
     },
     style(index) {
       return this.$parent.$options.methods.style.call(this.$parent, index)
@@ -376,7 +395,7 @@ export default {
     deleteConfirm(item, index, button) {
       this.setEmptyMessage()
       this.modalInfo.title = this.$i18n.tnl('label.confirm')
-      this.modalInfo.content = this.$i18n.tnl(this.params.delFilter && item.delFlg != 0? 'message.completeDeleteConfirm': 'message.deleteConfirm', this.params.mainColumn? {target: `${this.params.mainColumn.name}:${item[this.params.mainColumn.id]}`}: {target: "ID:" + item[this.id]})
+      this.modalInfo.content = this.$i18n.tnl(this.params.delFilter && item.delFlg != 0? 'message.completeDeleteConfirm': 'message.deleteConfirm', this.params.mainColumn? {target: `${this.params.mainColumn.name}:${item[this.params.mainColumn.id]}`}: {target: 'ID:' + item[this.id]})
       this.modalInfo.id = item[this.id]
       this.$root.$emit('bv::show::modal', 'modalInfo', button)
     },
@@ -391,7 +410,7 @@ export default {
         regBool = true
       } else {
         try{
-          const regExp = new RegExp(".*" + this.filter.reg + ".*", "i")
+          const regExp = new RegExp('.*' + this.filter.reg + '.*', 'i')
           const param = this.params.fields.map((val) => Util.getValue(originItem, val.key, ''))
           regBool = regExp.test(JSON.stringify(param))
         }
@@ -407,25 +426,25 @@ export default {
         const extra = this.filter.extra
         for (let item of this.params.extraFilter) {
           switch (item) {
-            case 'category':
+          case 'category':
             if (extra.category && 
                   !(extra.category === originItem.categoryId)) {
               extBool = false
             }
             break
-            case 'group':
+          case 'group':
             if  (extra.group && 
                   !(extra.group === originItem.groupId)) {
               extBool = false
             }
             break
-            case 'area':
+          case 'area':
             if (extra.area &&
                 !(extra.area === originItem.areaId)) {
               extBool = false
             }
             break
-            case 'detectState':
+          case 'detectState':
             if (extra.detectState != null &&
                 !(extra.detectState === originItem.detectState)) {
               extBool = false
@@ -479,7 +498,7 @@ export default {
         this.replaceMain({selectedTx})
       }
       this.replaceMain({selectedArea})
-      this.$router.push("/main/position")
+      this.$router.push('/main/position')
     }
   }
 }

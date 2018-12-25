@@ -1,17 +1,19 @@
 <template>
   <div>
-    <breadcrumb :items="items" :reload="true" :isLoad="isLoad" @reload="fetchData" />
-    <div class="container" v-show="!isLoad">
+    <breadcrumb :items="items" :reload="true" :is-load="isLoad" @reload="fetchData" />
+    <div v-show="!isLoad" class="container">
       <b-row align-h="end">
         <all-count :count="allCount" />
         <b-col md="2" class="mb-3 mr-3">
-          <b-button v-if="!iosOrAndroid" :variant="getButtonTheme()" @click="download()" v-t="'label.download'" />
+          <b-button v-if="!iosOrAndroid" v-t="'label.download'" :variant="getButtonTheme()" @click="download()" />
         </b-col>
       </b-row>
       <table class="table table-hover">
         <thead>
           <tr>
-            <th scope="col" v-for="(val, key) in getTableHeaders()" :key="key" >{{ val }}</th>
+            <th v-for="(val, key) in getTableHeaders()" :key="key" scope="col">
+              {{ val }}
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -20,7 +22,9 @@
             <td>{{ gateway.deviceid }}</td>
             <td>{{ gateway.updated }}</td>
             <td>
-              <span :class="getStateClass('gw', gateway.updated)">{{ getStateLabel('gw', gateway.updated) }}</span>
+              <span :class="getStateClass('gw', gateway.updated)">
+                {{ getStateLabel('gw', gateway.updated) }}
+              </span>
             </td>
           </tr>
         </tbody>
@@ -30,27 +34,29 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapState } from 'vuex'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
-import { EventBus } from '../../sub/helper/EventHelper'
-import { EXB, DISP, APP } from '../../sub/constant/config'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
-import { getTheme } from '../../sub/helper/ThemeHelper'
 import commonmixinVue from '../../components/mixin/commonmixin.vue'
 import reloadmixinVue from '../../components/mixin/reloadmixin.vue'
 import moment from 'moment'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
-import * as DetectStateHelper from '../../sub/helper/DetectStateHelper'
 import allCount from '../../components/parts/allcount.vue'
-import statusmixinVue from '../../components/mixin/statusmixin.vue';
+import statusmixinVue from '../../components/mixin/statusmixin.vue'
 
 export default {
-  mixins: [reloadmixinVue, commonmixinVue, statusmixinVue],
   components: {
     breadcrumb,
     allCount,
+  },
+  mixins: [reloadmixinVue, commonmixinVue, statusmixinVue],
+  props: {
+    isDev: {
+      type: Boolean,
+      default: false
+    }
   },
   data () {
     return {
@@ -69,12 +75,6 @@ export default {
       labelDeviceId: this.$i18n.t('label.deviceId'),
       labelTimestamp: this.$i18n.t('label.finalReceiveTimestamp'),
       labelState: this.$i18n.t('label.state'),
-    }
-  },
-  props: {
-    isDev: {
-      type: Boolean,
-      default: false
     }
   },
   computed: {
@@ -111,7 +111,6 @@ export default {
         if (payload && payload.done) {
           payload.done()
         }
-        const currentTime = new Date().getTime()
         gateways = gateways.map((e) => {
           const state = this.getStateLabel('gw', e.timestamp)
           return { ...e, state: state }
@@ -126,21 +125,22 @@ export default {
     },
     getTableHeaders() {
       return !this.isDev ? [this.labelNo,this.labelDeviceId,this.labelTimestamp,this.labelState]
-      : [this.labelNo,'deviceid','updated','state']
+        : [this.labelNo,'deviceid','updated','state']
     },
     download() {
       let dldata = this.gateways.map((gw) => {
         const {updated, ...rest} = gw // updatedを除く
+        Util.debug(updated)
         return rest
       })
-      HtmlUtil.fileDL("gateway.csv", Util.converToCsv(dldata), getCharSet(this.$store.state.loginId))
+      HtmlUtil.fileDL('gateway.csv', Util.converToCsv(dldata), getCharSet(this.$store.state.loginId))
     },
   }
 }
 
 export const formattedDateToDatetime = (formatted) => {
   return moment(formatted.replace('/', '-').replace('/','-').replace(' ', 'T'))
-  .toDate().getTime()
+    .toDate().getTime()
 }
 </script>
 

@@ -1,28 +1,30 @@
 <template>
-    <form class="form-signin" method="post" @submit.prevent="onSubmit">
-      <div class="error-message">{{ message }}</div>
-      <input type="text" v-model="userId" class="form-control" maxlength="20" placeholder="ID" />
-      <input type="password" v-model="password" class="form-control" maxlength="20" placeholder="PASSWORD" />
-      <b-button class="btn-lg btn-block" :variant="theme" type="submit"><i class="fas fa-sign-in-alt"></i>&nbsp;&nbsp;{{$i18n.tnl('label.login')}}</b-button>
-    </form>
+  <form class="form-signin" method="post" @submit.prevent="onSubmit">
+    <div class="error-message">
+      {{ message }}
+    </div>
+    <input v-model="userId" type="text" class="form-control" maxlength="20" placeholder="ID">
+    <input v-model="password" type="password" class="form-control" maxlength="20" placeholder="PASSWORD">
+    <b-button class="btn-lg btn-block" :variant="theme" type="submit">
+      <i class="fas fa-sign-in-alt" />&nbsp;&nbsp;{{ $i18n.tnl('label.login') }}
+    </b-button>
+  </form>
 </template>
 
 <script>
-import axios from 'axios'
+import { mapMutations } from 'vuex'
 import * as AuthHelper from '../sub/helper/AuthHelper'
 import { getButtonTheme } from '../sub/helper/ThemeHelper'
 import { APP,DISP } from '../sub/constant/config'
-import * as Util from '../sub/util/Util'
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-import commonmixinVue from '../components/mixin/commonmixin.vue';
+import commonmixinVue from '../components/mixin/commonmixin.vue'
 
 export default {
   mixin: [commonmixinVue],
   data() {
     return {
-      userId: "",
-      password: "",
-      message: "",
+      userId: '',
+      password: '',
+      message: '',
       btnClasses: {
         'btn-primary': DISP.THEME === 'primary' || DISP.THEME === 'default',
         'btn-secondary': DISP.THEME === 'secondary',
@@ -50,15 +52,15 @@ export default {
       AuthHelper.setApp(this.$router, this.$store)
       AuthHelper.auth(this.userId, this.password, ()=>{
         this.$router.push(APP.TOP_PAGE)
-        this.message = ""
+        this.message = ''
         const theme = window.localStorage.getItem(this.userId + '-theme')
         const charSet = window.localStorage.getItem(this.userId + '-charSet')
         this.replace({pass: this.password})
         this.replaceSetting({theme, charSet})
       },
       () => {
-        console.error("failed")
-        this.message = this.$i18n.tnl("message.loginFailed")
+        console.error('failed')
+        this.message = this.$i18n.tnl('message.loginFailed')
       })
     },
   },

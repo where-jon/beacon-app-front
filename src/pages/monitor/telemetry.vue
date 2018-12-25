@@ -1,23 +1,29 @@
 <template>
   <div>
-    <breadcrumb :items="items" :reload="true" :isLoad="isLoad"  @reload="fetchData" />
-    <div class="container" v-show="!isLoad">
+    <breadcrumb :items="items" :reload="true" :is-load="isLoad" @reload="fetchData" />
+    <div v-show="!isLoad" class="container">
       <b-row align-h="end">
         <all-count :count="allCount" />
         <b-col md="2" class="mb-3 mr-3">
-          <b-button v-if="!iosOrAndroid" :variant='getButtonTheme()' @click="download()" v-t="'label.download'" />
+          <b-button v-if="!iosOrAndroid" v-t="'label.download'" :variant="getButtonTheme()" @click="download()" />
         </b-col>
       </b-row>
       <div class="table-area">
         <table v-if="!isDev" class="table striped">
           <thead>
-            <th scope="col" v-for="(val, key) in fields.filter(e => e)" :key="key" :class="val.key !== 'state' ? '' : 'exb-state'">{{ val.label }}</th>
+            <th v-for="(val, key) in fields.filter(e => e)" :key="key" scope="col" :class="val.key !== 'state' ? '' : 'exb-state'">
+              {{ val.label }}
+            </th>
           </thead>
           <tbody>
-            <tr v-for="(telemetry, index) in telemetrys" :key="index" :class="getTrClass(index, telemetry[label_timestamp])">
-              <td scope="row" v-for="(val, key) in telemetry" :key="key" :class="getTdClass(index, val, key)" v-if="val !== null">
-                <span v-if="key === label_powerLevel"><i :class="getPowerLevelClass(val)"></i>{{ val }}</span>
-                <span :class="getStateClass('exb', telemetry[label_timestamp])" v-else-if="key === label_state">{{ val }}</span>
+            <tr v-for="(telemetry, index) in telemetrysForTable" :key="index" :class="getTrClass(index, telemetry[label_timestamp])">
+              <td v-for="(val, key) in telemetry" :key="key" scope="row" :class="getTdClass(index, val, key)">
+                <span v-if="key === label_powerLevel">
+                  <i :class="getPowerLevelClass(val)" />{{ val }}
+                </span>
+                <span v-else-if="key === label_state" :class="getStateClass('exb', telemetry[label_timestamp])">
+                  {{ val }}
+                </span>
                 {{ key !== label_powerLevel && key !== label_state ? val : '' }}
               </td>
             </tr>
@@ -25,11 +31,15 @@
         </table>
         <vue-scrolling-table v-if="isDev">
           <template slot="thead">
-            <th scope="col" v-for="(val, key) in telemetrys[0]" :key="key" >{{ key }}</th>
+            <th v-for="(val, key) in telemetrys[0]" :key="key" scope="col">
+              {{ key }}
+            </th>
           </template>
           <template slot="tbody">
             <tr v-for="(telemetry, index) in telemetrys" :key="index" :class="getTrClass(index, telemetry.timestamp)">
-              <td scope="row" v-for="(val, key) in telemetry" :key="key">{{ val }}</td>
+              <td v-for="(val, key) in telemetry" :key="key" scope="row">
+                {{ val }}
+              </td>
             </tr>
           </template>
         </vue-scrolling-table>
@@ -39,32 +49,34 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapState } from 'vuex'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
-import { EventBus } from '../../sub/helper/EventHelper'
-import { EXB, DISP, APP, DEV } from '../../sub/constant/config'
+import { APP } from '../../sub/constant/config'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import * as DetectStateHelper from '../../sub/helper/DetectStateHelper'
-import VueScrollingTable from "vue-scrolling-table"
-import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
+import VueScrollingTable from 'vue-scrolling-table'
 import commonmixinVue from '../../components/mixin/commonmixin.vue'
 import reloadmixinVue from '../../components/mixin/reloadmixin.vue'
-import gatewayVue from './gateway.vue'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
-import moment from 'moment'
 import { addLabelByKey } from '../../sub/helper/ViewHelper'
 import allCount from '../../components/parts/allcount.vue'
-import statusmixinVue from '../../components/mixin/statusmixin.vue';
+import statusmixinVue from '../../components/mixin/statusmixin.vue'
 
 export default {
-  mixins: [reloadmixinVue, commonmixinVue, statusmixinVue ],
   components: {
     breadcrumb,
     VueScrollingTable,
     allCount,
+  },
+  mixins: [reloadmixinVue, commonmixinVue, statusmixinVue ],
+  props: {
+    isDev: {
+      type: Boolean,
+      default: false
+    }
   },
   data () {
     return {
@@ -79,13 +91,13 @@ export default {
         }
       ],
       fields: addLabelByKey(this.$i18n, [ 
-        APP.EXB_WITH_DEVICE_NUM ? {key: "deviceNum", sortable: true }: null,
-        APP.EXB_WITH_DEVICE_ID ? {key: "deviceId", sortable: true }: null,
-        APP.EXB_WITH_DEVICE_IDX ? {key: "deviceIdX", sortable: true }: null,
-        {key: "locationName", label:'locationName', sortable: true,},
-        {key: "powerLevel", label:'powerLevel', sortable: true,},
-        {key: "finalReceiveTimestamp", label:'finalReceiveTimestamp', sortable: true,},
-        {key: "state", label:'state', sortable: true,},
+        APP.EXB_WITH_DEVICE_NUM ? {key: 'deviceNum', sortable: true }: null,
+        APP.EXB_WITH_DEVICE_ID ? {key: 'deviceId', sortable: true }: null,
+        APP.EXB_WITH_DEVICE_IDX ? {key: 'deviceIdX', sortable: true }: null,
+        {key: 'locationName', label:'locationName', sortable: true,},
+        {key: 'powerLevel', label:'powerLevel', sortable: true,},
+        {key: 'finalReceiveTimestamp', label:'finalReceiveTimestamp', sortable: true,},
+        {key: 'state', label:'state', sortable: true,},
       ]),
       isLoad: false,
       label_deviceId: this.$i18n.tnl('label.deviceId'),
@@ -127,12 +139,6 @@ export default {
       interval: null,
     }
   },
-  props: {
-    isDev: {
-      type: Boolean,
-      default: false
-    }
-  },
   computed: {
     ...mapState('monitor', [
       'telemetrys',
@@ -143,6 +149,16 @@ export default {
     allCount() {
       return this.telemetrys.length
     },
+    telemetrysForTable() {
+      return _.map(this.telemetrys, (telem) => {
+        let newObj = {} 
+        for (let key of Object.keys(telem)) {
+          let value = telem[key]
+          if (value) newObj[key] = value
+        }
+        return newObj
+      })
+    }
   },
   mounted() {
     this.replace({title: this.$i18n.tnl('label.telemetry')})
@@ -195,7 +211,7 @@ export default {
           .forEach(csvHeader => obj[this.csvHeaders[csvHeader]] = e[csvHeader])
         return obj
       })
-      HtmlUtil.fileDL("telemetry.csv", Util.converToCsv(records), getCharSet(this.$store.state.loginId))
+      HtmlUtil.fileDL('telemetry.csv', Util.converToCsv(records), getCharSet(this.$store.state.loginId))
     },
     async makeTelemetryRecords(telemetrys) {
       if (this.isDev) {
@@ -225,18 +241,18 @@ export default {
     getPowerLevelClass(val) {
       const num = parseInt(val , 10)
       if (79 < num) {
-        return "fas fa-battery-full power-safe"
+        return 'fas fa-battery-full power-safe'
       }
       if (59 < num) {
-        return "fas fa-battery-three-quarters power-safe"
+        return 'fas fa-battery-three-quarters power-safe'
       }
       if (39 < num) {
-        return "fas fa-battery-half power-warning"
+        return 'fas fa-battery-half power-warning'
       }
       if (19 < num) {
-        return "fas fa-battery-quarter power-empty"
+        return 'fas fa-battery-quarter power-empty'
       }
-      return "fas fa-battery-empty power-empty"
+      return 'fas fa-battery-empty power-empty'
     },
   }
 }

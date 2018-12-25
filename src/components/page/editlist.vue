@@ -1,8 +1,17 @@
 <template>
   <div>
-    <b-alert variant="info" dismissible :show="showInfo">{{ message }}</b-alert>
-    <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">
-      <div v-html="message" />
+    <b-alert variant="info" dismissible :show="showInfo">
+      {{ message }}
+    </b-alert>
+    <b-alert variant="danger" dismissible :show="showAlert" @dismissed="showAlert=false">
+      <template v-if="Array.isArray(message)">
+        <span v-for="line in message" :key="line">
+          {{ line }} <br>
+        </span>
+      </template>
+      <span v-else>
+        {{ message }}
+      </span>
     </b-alert>
 
     <!-- table -->
@@ -13,47 +22,47 @@
           <div v-for="row in multiList[categoryId]" :key="row.id">
             <b-form-group :label="getName(row.key, showKeyName)" :description="getName(row.description)">
               <span v-for="field in fields" :key="field.key">
-                <b-form-select v-if="useInputPullDown(row[field.type])" v-model="row[field.key]" :options="getBooleanOptions()" form="updateForm"/>
-                <input v-else-if="useInputNumberType(row[field.type])" v-model="row[field.key]" type="text" class="form-control form-control-sm" :pattern="numberPattern" maxlength="1000" required/>
-                <input v-else-if="useInputNumberListType(row[field.type])" v-model="row[field.key]" type="text" class="form-control form-control-sm" :pattern="numberListPattern" maxlength="1000" required/>
-                <input v-else v-model="row[field.key]" :type="getInputType(row[field.type])" maxlength="1000" class="form-control" form="updateForm" required/>
+                <b-form-select v-if="useInputPullDown(row[field.type])" v-model="row[field.key]" :options="getBooleanOptions()" form="updateForm" />
+                <input v-else-if="useInputNumberType(row[field.type])" v-model="row[field.key]" type="text" class="form-control form-control-sm" :pattern="numberPattern" maxlength="1000" required>
+                <input v-else-if="useInputNumberListType(row[field.type])" v-model="row[field.key]" type="text" class="form-control form-control-sm" :pattern="numberListPattern" maxlength="1000" required>
+                <input v-else v-model="row[field.key]" :type="getInputType(row[field.type])" maxlength="1000" class="form-control" form="updateForm" required>
               </span>
-              <b-button v-if="isSuperEditable" size="sm" @click.stop="deleteConfirm(row, $event.target)" variant="outline-danger" v-t="'label.delete'" class="mt-2 float-right" />
+              <b-button v-if="isSuperEditable" v-t="'label.delete'" size="sm" variant="outline-danger" class="mt-2 float-right" @click.stop="deleteConfirm(row, $event.target)" />
             </b-form-group>
           </div>
         </div>
       </div>
 
-      <b-form @submit.prevent="onRegistSubmit" v-if="isSuperEditable">
+      <b-form v-if="isSuperEditable" @submit.prevent="onRegistSubmit">
         <div v-if="useRegistForm" class="card shadow-sm mt-5 mb-3">
-          <label class="card-header" v-t="'label.addSetting'" />
+          <label v-t="'label.addSetting'" class="card-header" />
           <div class="card-body">
             <b-form-row class="mb-2">
               <label v-t="'label.key'" class="mr-2" />
-              <input v-model="newForm.key" :type="'text'" class="form-control form-control-sm" maxlength="200" required />
+              <input v-model="newForm.key" :type="'text'" class="form-control form-control-sm" maxlength="200" required>
             </b-form-row>
             <b-form-row class="mb-2">
               <label v-t="'label.valType'" class="mr-2" />
-              <b-form-select v-model="newForm.type" :options="getTypeOptions()" @change="clearValue()" class="form-control-sm" required />
+              <b-form-select v-model="newForm.type" :options="getTypeOptions()" class="form-control-sm" required @change="clearValue()" />
             </b-form-row>
             <b-form-row class="mb-2">
               <label v-t="'label.value'" class="mr-2" />
-              <b-form-select v-if="useInputPullDown(newForm.type)" v-model="newForm.value" :options="getBooleanOptions()" required/>
-              <input v-else-if="useInputNumberType(newForm.type)" v-model="newForm.value" type="text" class="form-control form-control-sm" :pattern="numberPattern" maxlength="1000" required/>
-              <input v-else-if="useInputNumberListType(newForm.type)" v-model="newForm.value" type="text" class="form-control form-control-sm" :pattern="numberListPattern" maxlength="1000" required/>
-              <input v-else v-model="newForm.value" :type="getInputType(newForm.type)" class="form-control form-control-sm" maxlength="1000" required/>
+              <b-form-select v-if="useInputPullDown(newForm.type)" v-model="newForm.value" :options="getBooleanOptions()" required />
+              <input v-else-if="useInputNumberType(newForm.type)" v-model="newForm.value" type="text" class="form-control form-control-sm" :pattern="numberPattern" maxlength="1000" required>
+              <input v-else-if="useInputNumberListType(newForm.type)" v-model="newForm.value" type="text" class="form-control form-control-sm" :pattern="numberListPattern" maxlength="1000" required>
+              <input v-else v-model="newForm.value" :type="getInputType(newForm.type)" class="form-control form-control-sm" maxlength="1000" required>
             </b-form-row>
             <b-form-row class="float-right mt-3">
-              <b-button v-if="isEditable" type="submit" :variant="getButtonTheme()" @click="register(true)" v-t="'label.add'" />
-              <b-button type="button" variant="outline-danger" @click="showForm(false)" v-t="'label.cancel'" class="ml-2" />
+              <b-button v-if="isEditable" v-t="'label.add'" type="submit" :variant="getButtonTheme()" @click="register(true)" />
+              <b-button v-t="'label.cancel'" type="button" variant="outline-danger" class="ml-2" @click="showForm(false)" />
             </b-form-row>
           </div>
         </div>
-        <b-button v-if="!useRegistForm" type="button" :variant="getButtonTheme()" @click="showForm(true)" v-t="'label.addForm'" class="float-right"/>
+        <b-button v-if="!useRegistForm" v-t="'label.addForm'" type="button" :variant="getButtonTheme()" class="float-right" @click="showForm(true)" />
       </b-form>
 
-      <b-form @submit.prevent="onSubmit" v-if="show" :id="'updateForm'">
-        <b-button v-if="isEditable && !useRegistForm" type="submit" :variant="getButtonTheme()" @click="register(true)" class="ml-2" v-t="'label.update'" />
+      <b-form v-if="show" :id="'updateForm'" @submit.prevent="onSubmit">
+        <b-button v-if="isEditable && !useRegistForm" v-t="'label.update'" type="submit" :variant="getButtonTheme()" class="ml-2" @click="register(true)" />
       </b-form>
     </div>
 
@@ -66,25 +75,37 @@
 
 <script>
 
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import _ from 'lodash'
 import commonmixinVue from '../mixin/commonmixin.vue'
 import editmixinVue from '../mixin/editmixin.vue'
-import settingmixinVue from '../mixin/settingmixin.vue'
-import * as MenuHelper from '../../sub/helper/MenuHelper'
-import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
 
 export default {
-  mixins: [ editmixinVue, commonmixinVue, settingmixinVue ],
-  props: ['params', 'multiList', 'newForm', 'showKeyName'],
+  mixins: [ editmixinVue, commonmixinVue ],
+  props: {
+    params: {
+      type: Object,
+      required: true,
+    },
+    multiList: {
+      type: Object,
+      default: () => []
+    },
+    newForm: {
+      type: Object,
+      default: () => {}
+    },
+    showKeyName: {
+      type: Boolean,
+    },
+  },
   data() {
     return {
       ...this.params,
       useRegistForm: false,
       modalInfo: { title: '', content: '', id:'' },
-      numberPattern: "^-?[0-9]+[\.]?[0-9]*$",
-      numberListPattern: "^(-?[0-9]+[\.]?[0-9]*)+(,-?[0-9]+[\.]?[0-9]*)*$",
+      numberPattern: '^-?[0-9]+[.]?[0-9]*$',
+      numberListPattern: '^(-?[0-9]+[.]?[0-9]*)+(,-?[0-9]+[.]?[0-9]*)*$',
     }
   },
   computed: {
@@ -126,7 +147,7 @@ export default {
       if(!_.includes(this.getCategoryIds(this.multiList), "")){
         this.multiList[""] = []
       }
-      this.multiList[""].push(entity)
+      this.multiList[''].push(entity)
       this.onSubmit(evt)
     },
     async save() {

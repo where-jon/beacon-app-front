@@ -3,10 +3,12 @@
     <div class="modal modal-overlay" @click.self="$emit('close')">
       <div class="modal-window" :style="modalStyle">
         <div class="modal-content" :style="modalStyle">
-          <slot/>
+          <slot />
         </div>
         <footer class="md-footer" :style="modalStyle">
-          <b-button class="btn" @click="$emit('close')">OK</b-button>
+          <b-button class="btn" @click="$emit('close')">
+            OK
+          </b-button>
         </footer>
       </div>
     </div>
@@ -28,9 +30,9 @@ export default {
   computed: {
     modalStyle: function() {
       return {
-          color: this.color,
-          backgroundColor: this.bgColor,
-          border: `1px solid ${this.bgColor}`,
+        color: this.color,
+        backgroundColor: this.bgColor,
+        border: `1px solid ${this.bgColor}`,
       }
     }
   }

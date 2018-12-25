@@ -1,13 +1,14 @@
 <template>
   <div>
-    <breadcrumb :items="items" :extraNavSpec="extraNavSpec"
-        :reload="reload" :shortName="shortName" />
+    <breadcrumb :items="items" :extra-nav-spec="extraNavSpec"
+                :reload="reload" :short-name="shortName"
+    />
     <m-list :params="params" :list="eachAreas" />
   </div>
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import * as mock from '../../assets/mock/mock'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import mList from '../../components/page/list.vue'
@@ -29,7 +30,7 @@ export default {
   mixins: [
     commonmixinVue,
     listmixinVue,
-   ],
+  ],
   data() {
     return {
       params: {
@@ -101,7 +102,7 @@ export default {
 
         // 在席表示と同じ、表示txを取得する。
         let now = !DEV.USE_MOCK_EXC ? new Date().getTime()
-            : mock.positions_conf.start + this.count++ * mock.positions_conf.interval
+          : mock.positions_conf.start + this.count++ * mock.positions_conf.interval
         const correctPositions = PositionHelper.correctPosId(this.orgPositions, now)
         positions = _(positions).map((pos) => {
           let cPos = _.find(correctPositions, (cPos) => pos.btx_id == cPos.btx_id)
@@ -110,7 +111,7 @@ export default {
           }
           return null
         })
-        .compact().value()
+          .compact().value()
         
         this.replaceAS({positions})
 

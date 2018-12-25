@@ -1,51 +1,72 @@
 <template>
   <div id="locationSetting">
     <breadcrumb :items="items" />
-    <b-alert variant="info" dismissible :show="showInfo">{{ message }}</b-alert>
-    <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">
-      <div v-html="message" />
+    <b-alert variant="info" dismissible :show="showInfo">
+      {{ message }}
+    </b-alert>
+    <b-alert variant="danger" dismissible :show="showAlert" @dismissed="showAlert=false">
+      <template v-if="Array.isArray(message)">
+        <span v-for="line in message" :key="line">
+          {{ line }} <br>
+        </span>
+      </template>
+      <span v-else>
+        {{ message }}
+      </span>
     </b-alert>
 
     <b-form inline class="mt-2">
       <b-form-row class="ml-1">
-        <label class="mr-2 mb-2">{{ $t('label.area') }}</label>
-        <b-form-select v-model="selectedArea" :options="areaOptions" class="mr-2 mb-2 areaOptions" :disabled="settingStart"></b-form-select>
-        <b-button size="sm" class="mb-2" :variant="getButtonTheme()" v-t="'label.load'" @click="changeArea" :disabled="settingStart"></b-button>
+        <label class="mr-2 mb-2">
+          {{ $t('label.area') }}
+        </label>
+        <b-form-select v-model="selectedArea" :options="areaOptions" class="mr-2 mb-2 areaOptions" :disabled="settingStart" />
+        <b-button v-t="'label.load'" size="sm" class="mb-2" :variant="getButtonTheme()" :disabled="settingStart" @click="changeArea" />
       </b-form-row>
     </b-form>
     <b-form inline class="mt-2">
       <b-form-row class="ml-1">
-        <label class="mt-mobile mr-2 mb-2">{{ $t('label.exb') }}</label>
-        <b-form-select v-model="exbDisp" :options="exbDispOptions" class="mr-2 mb-2" :disabled="settingStart" @change="changeExbDisp"></b-form-select>
+        <label class="mt-mobile mr-2 mb-2">
+          {{ $t('label.exb') }}
+        </label>
+        <b-form-select v-model="exbDisp" :options="exbDispOptions" class="mr-2 mb-2" :disabled="settingStart" @change="changeExbDisp" />
         <b-form-row>
-          <v-select size="sm" v-model="selectedExb_" :options="exbOptions" :on-change="showExbOnMap" class="mb-2 mt-mobile exbOptions" :disabled="settingStart">
-            <div slot="no-options">{{$i18n.tnl('label.vSelectNoOptions')}}</div>
+          <v-select v-model="selectedExb_" size="sm" :options="exbOptions" :on-change="showExbOnMap" class="mb-2 mt-mobile exbOptions" :disabled="settingStart">
+            <div slot="no-options">
+              {{ $i18n.tnl('label.vSelectNoOptions') }}
+            </div>
           </v-select>
-          <b-button size="sm" :variant="getButtonTheme()" v-t="'label.bulkAdd'" @click="bulkAdd" class="mt-mobile mb-2" :disabled="settingStart"></b-button> 
+          <b-button v-t="'label.bulkAdd'" size="sm" :variant="getButtonTheme()" class="mt-mobile mb-2" :disabled="settingStart" @click="bulkAdd" /> 
         </b-form-row>
       </b-form-row>
     </b-form>
     <b-form inline class="mt-2">
       <b-form-row class="mr-3 mb-3 ml-1">
-        <label class="mr-2">{{ $t('label.mapRatio') }}</label>
-        <input size="sm" type="number" :value="mapRatio" :readonly="true" class="ratioInput form-control"/>
+        <label class="mr-2">
+          {{ $t('label.mapRatio') }}
+        </label>
+        <input size="sm" type="number" :value="mapRatio" :readonly="true" class="ratioInput form-control">
       </b-form-row>
       <b-form-row class="mr-3 mb-3 ml-1">
-        <label class="mr-2 mt-mobile">{{ "= "+ $t('label.realWidth') }}</label>
-        <input size="sm" type="number" v-model="realWidth" class="mt-mobile ratioInput form-control"/>
+        <label class="mr-2 mt-mobile">
+          {{ "= "+ $t('label.realWidth') }}
+        </label>
+        <input v-model="realWidth" size="sm" type="number" class="mt-mobile ratioInput form-control">
       </b-form-row>
       <b-form-row class="mr-3 mb-3 ml-1">
-        <label class="mr-2">{{ "/ "+ $t('label.pixelWidth') }}</label>
-        <input size="sm" type="number" v-model="pixelWidth" :readonly="true" class="ratioInput form-control"/>
+        <label class="mr-2">
+          {{ "/ "+ $t('label.pixelWidth') }}
+        </label>
+        <input v-model="pixelWidth" size="sm" type="number" :readonly="true" class="ratioInput form-control">
       </b-form-row>
       <b-form-row class="mb-3 ml-1">
-        <b-button size="sm" :variant="getButtonTheme()" v-t="settingStart?'label.settingNow':'label.settingStart'" @click="ratioSettingStart" :class="{'mt-mobile':true, 'mt-mobile-button': true, 'mr-2':true, blink:settingStart}"></b-button> 
-        <b-button size="sm" :variant="getButtonTheme()" v-t="'label.save'" @click="save" :disabled="!isChanged"></b-button> 
+        <b-button v-t="settingStart?'label.settingNow':'label.settingStart'" size="sm" :variant="getButtonTheme()" :class="{'mt-mobile':true, 'mt-mobile-button': true, 'mr-2':true, blink:settingStart}" @click="ratioSettingStart" /> 
+        <b-button v-t="'label.save'" size="sm" :variant="getButtonTheme()" :disabled="!isChanged" @click="save" /> 
       </b-form-row>
     </b-form>
-    <p></p>
+    <p />
     <div class="mt-3">
-      <canvas id="map" ref="map"></canvas>
+      <canvas id="map" ref="map" />
     </div>
     <!-- modal -->
     <b-modal id="modalError" :title="$t('label.error')" ok-only>
@@ -54,35 +75,35 @@
     <b-modal id="modalInfo" :title="$t('label.mapRatioSetting')" ok-only>
       {{ $t('message.mapRatioSetting') }}
     </b-modal>
-    <b-modal id="modalWarn" :title="$t('label.confirm')" @ok="setChangeArea" @hide="changeAreaDone" >
+    <b-modal id="modalWarn" :title="$t('label.confirm')" @ok="setChangeArea" @hide="changeAreaDone">
       {{ $t('message.unsavedData') }}
     </b-modal>
-    <b-modal id="modalDeleteConfirm" :title="$t('label.confirm')" @ok="deleteExbDone" >
-      {{ $t('message.deleteConfirm', {target: deleteTarget? this.getExbDisp(deleteTarget.deviceId): null}) }}
+    <b-modal id="modalDeleteConfirm" :title="$t('label.confirm')" @ok="deleteExbDone">
+      {{ $t('message.deleteConfirm', {target: deleteTarget? getExbDisp(deleteTarget.deviceId): null}) }}
     </b-modal>
   </div>
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapState } from 'vuex'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as HttpHelper from '../../../sub/helper/HttpHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
+import * as Util from '../../../sub/util/Util'
 import { APP, DISP } from '../../../sub/constant/config'
 import { UPDATE_ONLY_NN } from '../../../sub/constant/Constants'
-import { Shape, Stage, Container, Bitmap, Text, Touch } from '@createjs/easeljs/dist/easeljs.module'
-import { Tween, Ticker } from '@createjs/tweenjs/dist/tweenjs.module'
+import { Shape, Container, Text } from '@createjs/easeljs/dist/easeljs.module'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import commonmixinVue from '../../../components/mixin/commonmixin.vue'
 import showmapmixin from '../../../components/mixin/showmapmixin.vue'
 
 export default {
-  mixins: [showmapmixin, commonmixinVue ],
   components: {
     breadcrumb,
   },
+  mixins: [showmapmixin, commonmixinVue ],
   data() {
-     return {
+    return {
       showInfo: false,
       showAlert: false,
       message: '',
@@ -95,6 +116,7 @@ export default {
       workExbs: [],
       exbOptions: [],
       exbDisp: 'deviceIdX',
+      exbDispOptions: [],
       deleteTarget: null,
       keepExbPosition: false,
       mapRatio: null,
@@ -117,6 +139,11 @@ export default {
       ]
     }
   },
+  computed: {
+    ...mapState('app_service', [
+      'pageSendParam',
+    ]),
+  },
   watch: {
     realWidth: function(newVal, oldVal) {
       console.log({newVal, oldVal})
@@ -126,19 +153,6 @@ export default {
       console.log({newVal, oldVal})
       this.onMapImageScale()
     }
-  },
-  computed: {
-    ...mapState('app_service', [
-      'pageSendParam',
-    ]),
-    exbDispOptions() {
-      let options = []
-      if (APP.EXB_WITH_DEVICE_NUM) options.push({value:'deviceNum', text: this.$i18n.tnl('label.deviceNum')})
-      if (APP.EXB_WITH_DEVICE_IDX) options.push({value:'deviceIdX', text: this.$i18n.tnl('label.deviceIdX')})
-      if (APP.EXB_WITH_DEVICE_ID) options.push({value:'deviceId', text: this.$i18n.tnl('label.deviceId')})
-      this.exbDisp = options[0].value
-      return options
-    },
   },
   mounted() {
     this.replace({title: this.$i18n.tnl('label.location')})
@@ -151,6 +165,13 @@ export default {
     else{
       this.selectedArea = null
     }
+
+    const options = []
+    if (APP.EXB_WITH_DEVICE_NUM) options.push({value:'deviceNum', text: this.$i18n.tnl('label.deviceNum')})
+    if (APP.EXB_WITH_DEVICE_IDX) options.push({value:'deviceIdX', text: this.$i18n.tnl('label.deviceIdX')})
+    if (APP.EXB_WITH_DEVICE_ID) options.push({value:'deviceId', text: this.$i18n.tnl('label.deviceId')})
+    this.exbDispOptions = options
+    this.exbDisp = options[0].value
   },
   beforeDestroy() {
     this.selectedArea = null
@@ -194,7 +215,7 @@ export default {
       else if (this.selectedArea) {
         let area = _.find(this.$store.state.app_service.areas, (area) => area.areaId == this.selectedArea)
         if (area && area.mapRatio) {
-         this.mapRatio = area.mapRatio
+          this.mapRatio = area.mapRatio
         }
       }
     },
@@ -205,12 +226,12 @@ export default {
       this.exbOptions = _(this.workExbs).filter((val) => {
         return val.enabled && (!val.location.x || !val.location.y || (val.location.x && val.location.y <= 0))
       })
-      .map((val) => {
-        return {
-          label: '' + this.getExbDisp(val.deviceId), 
-          value: val.exbId
-        }
-      }).value()
+        .map((val) => {
+          return {
+            label: '' + this.getExbDisp(val.deviceId), 
+            value: val.exbId
+          }
+        }).value()
     },
     getExbDisp(deviceId) {
       switch(this.exbDisp) {
@@ -280,8 +301,8 @@ export default {
       const label = new Text(this.getExbDisp(exb.deviceId))
       label.font = DISP.EXB_LOC_FONT
       label.color = DISP.EXB_LOC_COLOR
-      label.textAlign = "center"
-      label.textBaseline = "middle"
+      label.textAlign = 'center'
+      label.textBaseline = 'middle'
       exbBtn.addChild(label)
       exbBtn.deviceId = exb.deviceId
       exbBtn.exbId = exb.exbId
@@ -295,8 +316,8 @@ export default {
       const exbBtn = this.createExbIcon(exb)
       exbBtn.on('pressmove', (evt) => {
         evt.currentTarget.set({
-            x: evt.stageX,
-            y: evt.stageY
+          x: evt.stageX,
+          y: evt.stageY
         })
         stage.update()
       })
@@ -338,7 +359,7 @@ export default {
         }
         else {
           let line = new Shape()
-          line.graphics.beginStroke("#ff2244")
+          line.graphics.beginStroke('#ff2244')
           line.graphics.setStrokeStyle(1)
           line.graphics.moveTo(start.x, start.y)
           line.graphics.lineTo(current.x, current.y)
@@ -373,10 +394,10 @@ export default {
       revTrg.graphics.beginFill(color).drawPolyStar(0, -20, 20, 3, 0, 90)
 
       let label = new Text(messureCount == 0? 'start': 'end')
-      label.font = "16px Arial"
-      label.color = "#000"
-      label.textAlign = "center"
-      label.textBaseline = "middle"
+      label.font = '16px Arial'
+      label.color = '#000'
+      label.textAlign = 'center'
+      label.textBaseline = 'middle'
       label.y = -40
 
       revTrgCnt.x = current.x
@@ -455,7 +476,7 @@ export default {
         exb.x = exb.y = null
       }
       this.positionedExb = this.positionedExb.filter((exb) => exb.deviceId != this.deleteTarget.deviceId)
-      this.exbOptions.push({label: "" + this.getExbDisp(this.deleteTarget.deviceId), value: this.deleteTarget.exbId})
+      this.exbOptions.push({label: '' + this.getExbDisp(this.deleteTarget.deviceId), value: this.deleteTarget.exbId})
       this.exbCon.removeChild(this.deleteTarget)
       this.stage.update()
     },
@@ -479,7 +500,7 @@ export default {
           if (exb.location.areaId == this.selectedArea) {
             if (!this.positionedExb.find((pExb) => {
               return pExb.exbId == exb.exbId
-              })) {
+            })) {
               exb.location = {locationId: exb.location.locationId, areaId: null, x: null, y: null}
               exb.isChanged = false
               param.push(exb.location)

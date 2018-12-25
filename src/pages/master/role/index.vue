@@ -7,9 +7,8 @@
 
 <script>
 import mList from '../../../components/page/list.vue'
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapState } from 'vuex'
 import * as StateHelper from '../../../sub/helper/StateHelper'
-import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import { addLabelByKey } from '../../../sub/helper/ViewHelper'
 import listmixinVue from '../../../components/mixin/listmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
@@ -30,9 +29,9 @@ export default {
         appServicePath: '/meta/role',
         csvOut: true,
         fields: addLabelByKey(this.$i18n, [ 
-          {key: "roleId", sortable: true },
-          {key: "roleName", sortable: true },
-          {key: "actions", thStyle: {width:'130px !important'} }
+          {key: 'roleId', sortable: true },
+          {key: 'roleName', sortable: true },
+          {key: 'actions', thStyle: {width:'130px !important'} }
         ]),
         initTotalRows: this.$store.state.app_service.roles.length
       },

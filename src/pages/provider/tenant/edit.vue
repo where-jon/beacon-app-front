@@ -2,20 +2,28 @@
   <div>
     <breadcrumb :items="items" />
     <div class="container">
-
-      <b-alert variant="info" dismissible :show="showInfo">{{ message }}</b-alert>
-      <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">
-        <div v-html="message" />
+      <b-alert variant="info" dismissible :show="showInfo">
+        {{ message }}
+      </b-alert>
+      <b-alert variant="danger" dismissible :show="showAlert" @dismissed="showAlert=false">
+        <template v-if="Array.isArray(message)">
+          <span v-for="line in message" :key="line">
+            {{ line }} <br>
+          </span>
+        </template>
+        <span v-else>
+          {{ message }}
+        </span>
       </b-alert>
 
-      <b-form @submit.prevent="onSubmit" v-if="show">
+      <b-form v-if="show" @submit.prevent="onSubmit">
         <b-form-group>
           <b-form-row v-if="hasId">
             <label v-t="'label.tenantId'" class="control-label" />
           </b-form-row>
           <b-form-row v-if="hasId">
             <b-col sm="2">
-              <b-form-input type="text" v-model="form.tenantId" readonly="readonly" />
+              <b-form-input v-model="form.tenantId" type="text" readonly="readonly" />
             </b-col>
           </b-form-row>
           <b-form-row>
@@ -23,7 +31,7 @@
           </b-form-row>
           <b-form-row>
             <b-col sm="5">
-              <input type="text" v-model="form.tenantCd" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" maxlength="31" class="form-control" required :readonly="!isEditable" />
+              <input v-model="form.tenantCd" type="text" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" maxlength="31" class="form-control" required :readonly="!isEditable">
             </b-col>
           </b-form-row>
           <b-form-row>
@@ -31,7 +39,7 @@
           </b-form-row>
           <b-form-row>
             <b-col sm="5">
-              <input type="text" v-model="form.tenantName" maxlength="20" class="form-control" required :readonly="!isEditable" />
+              <input v-model="form.tenantName" type="text" maxlength="20" class="form-control" required :readonly="!isEditable">
             </b-col>
           </b-form-row>
         </b-form-group>
@@ -152,8 +160,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-import _ from 'lodash'
+import { mapState } from 'vuex'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
@@ -164,7 +171,7 @@ import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import featureList from '../../../components/page/featureList.vue'
 import tenantSetting from '../../../components/page/tenantSetting.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
-import { AUTH_TENANT_CD, ROLE } from '../../../sub/constant/Constants'
+import { AUTH_TENANT_CD } from '../../../sub/constant/Constants'
 import { EXCLOUD_BASE_URL } from '../../../sub/constant/config'
 import { addLabelByKey } from '../../../sub/helper/ViewHelper'
 
@@ -175,6 +182,7 @@ export default {
     featureList,
     tenantSetting,
   },
+  mixins: [editmixinVue],
   data() {
     return {
       name: 'tenant',
@@ -197,10 +205,10 @@ export default {
         }
       ],
       fields: addLabelByKey(this.$i18n, [ 
-        {key: "parentCheck", label: "dummy", thStyle: {width:'4px !important'} },
-        {key: "subCheck", label: "dummy", thStyle: {width:'4px !important'} },
-        {key: "featureName" },
-        {key: "path" },
+        {key: 'parentCheck', label: 'dummy', thStyle: {width:'4px !important'} },
+        {key: 'subCheck', label: 'dummy', thStyle: {width:'4px !important'} },
+        {key: 'featureName' },
+        {key: 'path' },
       ]),
       settingParams: {
         name: 'setting',
@@ -331,14 +339,14 @@ export default {
         tenantName: this.form.tenantName,
         delFlg: !Util.hasValue(this.form.tenantId)? 0: this.form.delFlg,
         roleList: !Util.hasValue(this.form.tenantId)? [
-          { roleId: dummyKey--, roleName: "SYS_ADMIN" },
-          { roleId: dummyKey--, roleName: "ADMIN" },
-          { roleId: dummyKey--, roleName: "USER" },
+          { roleId: dummyKey--, roleName: 'SYS_ADMIN' },
+          { roleId: dummyKey--, roleName: 'ADMIN' },
+          { roleId: dummyKey--, roleName: 'USER' },
         ]: null,
         userList: !Util.hasValue(this.form.tenantId)? [
-          Util.hasValue(this.form.sysAdminLoginId)? {userId: dummyKey--, loginId: this.form.sysAdminLoginId, pass: this.form.sysAdminPass, role: { roleId: dummyKey--, roleName: "SYS_ADMIN" }}: null,
-          Util.hasValue(this.form.adminLoginId)? {userId: dummyKey--, loginId: this.form.adminLoginId, pass: this.form.adminPass, role: { roleId: dummyKey--, roleName: "ADMIN" }}: null,
-          Util.hasValue(this.form.userLoginId)? {userId: dummyKey--, loginId: this.form.userLoginId, pass: this.form.userPass, role: { roleId: dummyKey--, roleName: "USER" }}: null,
+          Util.hasValue(this.form.sysAdminLoginId)? {userId: dummyKey--, loginId: this.form.sysAdminLoginId, pass: this.form.sysAdminPass, role: { roleId: dummyKey--, roleName: 'SYS_ADMIN' }}: null,
+          Util.hasValue(this.form.adminLoginId)? {userId: dummyKey--, loginId: this.form.adminLoginId, pass: this.form.adminPass, role: { roleId: dummyKey--, roleName: 'ADMIN' }}: null,
+          Util.hasValue(this.form.userLoginId)? {userId: dummyKey--, loginId: this.form.userLoginId, pass: this.form.userPass, role: { roleId: dummyKey--, roleName: 'USER' }}: null,
         ].filter((val) => val): null,
         region: !Util.hasValue(this.form.tenantId)? {regionId: dummyKey--, regionName: this.form.regionName, meshId: Util.hasValue(this.form.meshId)? this.form.meshId: null, deviceOffset: this.form.deviceOffset}: null,
         defaultExcloudBaseUrl: defaultConfig.EXCLOUD_BASE_URL,

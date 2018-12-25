@@ -1,24 +1,24 @@
 <template>
   <div>
-    <breadcrumb :items="items" :reload="true" :isLoad="isLoad" @reload="fetchData" />
-    <div class="container" v-show="!isLoad">
+    <breadcrumb :items="items" :reload="true" :is-load="isLoad" @reload="fetchData" />
+    <div v-show="!isLoad" class="container">
       <b-row align-h="end">
         <all-count :count="allCount" />
         <b-col md="2" class="mb-3 mr-3">
-          <b-button v-if="!iosOrAndroid" :variant='getButtonTheme()' @click="download()" v-t="'label.download'" />
+          <b-button v-if="!iosOrAndroid" v-t="'label.download'" :variant="getButtonTheme()" @click="download()" />
         </b-col>
       </b-row>
       <div class="table-area">
         <table v-if="!isDev" class="table striped">
           <thead>
-            <th v-t="'label.major'"></th>
-            <th v-t="'label.minor'"></th>
-            <th v-t="'label.name'"></th>
-            <th v-t="'label.powerLevel'"></th>
-            <th v-t="'label.finalReceiveLocation'"></th>
-            <th v-t="'label.finalReceiveTimestamp'"></th>
-            <th v-t="'label.rssi'"></th>
-            <th v-t="'label.state'"></th>
+            <th v-t="'label.major'" />
+            <th v-t="'label.minor'" />
+            <th v-t="'label.name'" />
+            <th v-t="'label.powerLevel'" />
+            <th v-t="'label.finalReceiveLocation'" />
+            <th v-t="'label.finalReceiveTimestamp'" />
+            <th v-t="'label.rssi'" />
+            <th v-t="'label.state'" />
           </thead>
           <tbody>
             <tr v-for="(position, index) in positions" :key="index" :class="{undetect: isUndetect('tx', position.updatetime)}">
@@ -26,34 +26,45 @@
               <td>{{ position.minor }}</td>
               <td>{{ position.name }}</td>
               <td>
-                <span :class="powerLevelClass(position.power_level)" >{{ powerLevelLabel(position.power_level) }}</span>
+                <span :class="powerLevelClass(position.power_level)">
+                  {{ powerLevelLabel(position.power_level) }}
+                </span>
               </td>
               <td>{{ position.finalReceiveLocation }}</td>
               <td>{{ position.finalReceiveTimestamp }}</td>
               <td>{{ position.rssi }} </td>
               <td>
-                <span :class="getStateClass('tx', position.updatetime)">{{ position.state }}</span>
+                <span :class="getStateClass('tx', position.updatetime)">
+                  {{ position.state }}
+                </span>
               </td>
             </tr>
           </tbody>
         </table>
         <vue-scrolling-table v-if="isDev && !isLoad">
           <template slot="thead">
-            <th scope="col"
-            v-for="(val, key) in ['btx_id','device_id','pos_id','phase','power_level','updatetime','nearest1','nearest2','nearest3']"
-            :key="key" >{{ val }}</th>
+            <th v-for="(val, key) in ['btx_id','device_id','pos_id','phase','power_level','updatetime','nearest1','nearest2','nearest3']"
+                :key="key"
+                scope="col"
+            >
+              {{ val }}
+            </th>
           </template>
           <template slot="tbody">
             <tr v-for="(pos, index) in positions" :key="index">
-              <td scope="row">{{ pos.btx_id }}</td>
+              <td scope="row">
+                {{ pos.btx_id }}
+              </td>
               <td>{{ pos.device_id }}</td>
               <td>{{ pos.pos_id }}</td>
-              <td variant="danger" >{{ pos.phase }}</td>
+              <td variant="danger">
+                {{ pos.phase }}
+              </td>
               <td>{{ pos.power_level }}</td>
               <td>{{ pos.updatetime }}</td>
-              <td v-for="index in [0,1,2]" :key="index">
-                <div v-if="pos.nearest && pos.nearest[index]">
-                  <div v-for="(value, key) in pos.nearest[index]" :key="key">
+              <td v-for="idx in [0,1,2]" :key="idx">
+                <div v-if="pos.nearest && pos.nearest[idx]">
+                  <div v-for="(value, key) in pos.nearest[idx]" :key="key">
                     {{ key }}:{{ value }}
                   </div>
                 </div>
@@ -67,31 +78,33 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapState } from 'vuex'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
-import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
-import { EventBus } from '../../sub/helper/EventHelper'
-import { EXB, DISP, APP } from '../../sub/constant/config'
-import * as DetectStateHelper from '../../sub/helper/DetectStateHelper'
+import { APP } from '../../sub/constant/config'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
-import VueScrollingTable from "vue-scrolling-table"
+import VueScrollingTable from 'vue-scrolling-table'
 import moment from 'moment'
 import commonmixinVue from '../../components/mixin/commonmixin.vue'
 import reloadmixinVue from '../../components/mixin/reloadmixin.vue'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
-import _ from 'lodash'
 import allCount from '../../components/parts/allcount.vue'
-import statusmixinVue from '../../components/mixin/statusmixin.vue';
+import statusmixinVue from '../../components/mixin/statusmixin.vue'
 
 export default {
-  mixins: [reloadmixinVue, commonmixinVue, statusmixinVue],
   components: {
     breadcrumb,
     VueScrollingTable,
     allCount,
+  },
+  mixins: [reloadmixinVue, commonmixinVue, statusmixinVue],
+  props: {
+    isDev: {
+      type: Boolean,
+      default: false
+    }
   },
   data () {
     return {
@@ -109,16 +122,16 @@ export default {
       interval: null,
       badgeClassPrefix: 'badge badge-pill badge-',
       csvHeaders: this.isDev? {
-          'btx_id': 'btx_id',
-          'device_id': 'device_id',
-          'pos_id': 'pos_id',
-          'phase': 'phase',
-          'power_level': 'power_level',
-          'updatetime': 'updatetime',
-          'nearest1': 'nearest1',
-          'nearest2': 'nearest2',
-          'nearest3': 'nearest3',
-        }:
+        'btx_id': 'btx_id',
+        'device_id': 'device_id',
+        'pos_id': 'pos_id',
+        'phase': 'phase',
+        'power_level': 'power_level',
+        'updatetime': 'updatetime',
+        'nearest1': 'nearest1',
+        'nearest2': 'nearest2',
+        'nearest3': 'nearest3',
+      }:
         {
           'major': 'major',
           'minor': 'minor',
@@ -129,12 +142,6 @@ export default {
           'rssi': 'RSSI',
           'state': 'state',
         }
-    }
-  },
-  props: {
-    isDev: {
-      type: Boolean,
-      default: false
     }
   },
   computed: {
@@ -213,9 +220,9 @@ export default {
     getRssi(nearestList) {
       const rssiNearIndex = 0
       if (nearestList.length > rssiNearIndex) {
-          try {
-              return nearestList[rssiNearIndex].rssi.toFixed(1)
-          } catch (e) {}
+        try {
+          return nearestList[rssiNearIndex].rssi.toFixed(1)
+        } catch (e) {}
       }
       return this.$i18n.tnl('label.undetect')
     },
@@ -244,7 +251,7 @@ export default {
       if (powerLevel) {
         return this.$i18n.tnl('label.power-' + powerLevel)
       }
-      return "-"
+      return '-'
     },
     powerLevelClass(val) {
       const LEVEL_CLASS_MAP = {good:'success', warning:'warning', poor:'danger'}
@@ -252,7 +259,7 @@ export default {
       if (powerLevel) {
         return this.badgeClassPrefix + LEVEL_CLASS_MAP[powerLevel]
       }
-      return ""
+      return ''
     },
     download() {
       const dldata = this.positions.map((pos) => {
@@ -262,7 +269,7 @@ export default {
         })
         return obj
       })
-      HtmlUtil.fileDL("position.csv", Util.converToCsv(dldata), getCharSet(this.$store.state.loginId))
+      HtmlUtil.fileDL('position.csv', Util.converToCsv(dldata), getCharSet(this.$store.state.loginId))
     },
   }
 }

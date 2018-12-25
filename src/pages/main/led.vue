@@ -2,7 +2,9 @@
   <div>
     <breadcrumb :items="items" />
     <b-container>
-      <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">{{ message }}</b-alert>
+      <b-alert variant="danger" dismissible :show="showAlert" @dismissed="showAlert=false">
+        {{ message }}
+      </b-alert>
       <b-form-row>
         <b-form @submit.prevent="onSubmit">
           <b-form-group :label="$t('label.deviceId')">
@@ -11,51 +13,53 @@
           <b-form-group :label="$t('label.ledColor')">
             <b-form-checkbox-group v-model="form.colors">
               <b-form-checkbox class="checkBlue" :value="ledColors.BLUE" :readonly="!isEditable">
-                {{$t('label.blue')}}
+                {{ $t('label.blue') }}
               </b-form-checkbox>
               <b-form-checkbox class="checkRed" :value="ledColors.RED" :readonly="!isEditable">
-                {{$t('label.red')}}
+                {{ $t('label.red') }}
               </b-form-checkbox>
               <b-form-checkbox class="checkPurple" :value="ledColors.PURPLE" :readonly="!isEditable">
-                {{$t('label.purple')}}
+                {{ $t('label.purple') }}
               </b-form-checkbox>
               <b-form-checkbox class="checkGreen" :value="ledColors.GREEN" :readonly="!isEditable">
-                {{$t('label.green')}}
+                {{ $t('label.green') }}
               </b-form-checkbox>
               <b-form-checkbox class="checkPaleblue" :value="ledColors.PALEBLUE" :readonly="!isEditable">
-                {{$t('label.paleblue')}}
+                {{ $t('label.paleblue') }}
               </b-form-checkbox>
               <b-form-checkbox class="checkYellow" :value="ledColors.YELLOW" :readonly="!isEditable">
-                {{$t('label.yellow')}}
+                {{ $t('label.yellow') }}
               </b-form-checkbox>
               <b-form-checkbox class="checkWhite" :value="ledColors.WHITE" :readonly="!isEditable">
-                {{$t('label.white')}}
+                {{ $t('label.white') }}
               </b-form-checkbox>
               <b-form-checkbox class="checkBlack" :value="ledColors.BLACK" :readonly="!isEditable">
-                {{$t('label.black')}}
+                {{ $t('label.black') }}
               </b-form-checkbox>
             </b-form-checkbox-group>
           </b-form-group>
           <b-form-group :label="$t('label.blink')">
             <b-form-radio-group v-model="form.blink">
               <b-form-radio :value="ledBlinkTypes.CHANGE_SLOW" :readonly="!isEditable">
-                {{$t('label.changeSlow')}}
+                {{ $t('label.changeSlow') }}
               </b-form-radio>
               <b-form-radio :value="ledBlinkTypes.CHANGE_FAST" :readonly="!isEditable">
-                {{$t('label.changeFast')}}
+                {{ $t('label.changeFast') }}
               </b-form-radio>
               <b-form-radio :value="ledBlinkTypes.BLINK_SLOW" :readonly="!isEditable">
-                {{$t('label.blinkSlow')}}
+                {{ $t('label.blinkSlow') }}
               </b-form-radio>
               <b-form-radio :value="ledBlinkTypes.BLINK_FAST" :readonly="!isEditable">
-                {{$t('label.blinkFast')}}
+                {{ $t('label.blinkFast') }}
               </b-form-radio>
             </b-form-radio-group>
           </b-form-group>
-          <b-button v-show="isEditable" type="submit" class="my-1"
-              @click="buttonClick(true)" v-t="'label.start'" :variant="theme" :disabled="noDevice" />
-          <b-button v-show="isEditable" type="submit" class="ml-2 my-1" 
-              @click="buttonClick(false)" v-t="'label.end'" :variant="theme" :disabled="noDevice" />
+          <b-button v-show="isEditable" v-t="'label.start'" type="submit"
+                    class="my-1" :variant="theme" :disabled="noDevice" @click="buttonClick(true)"
+          />
+          <b-button v-show="isEditable" v-t="'label.end'" type="submit" 
+                    class="ml-2 my-1" :variant="theme" :disabled="noDevice" @click="buttonClick(false)"
+          />
         </b-form>
       </b-form-row>
     </b-container>
@@ -67,25 +71,22 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapState } from 'vuex'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
-import { DISP, EXCLOUD } from '../../sub/constant/config'
 import { getButtonTheme } from '../../sub/helper/ThemeHelper'
 import { LED_COLORS, LED_BLINK_TYPES, SENSOR } from '../../sub/constant/Constants'
-import * as ViewHelper from '../../sub/helper/ViewHelper'
-import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as Util from '../../sub/util/Util'
 import editmixinVue from '../../components/mixin/editmixin.vue'
 
 export default {
-  mixins: [
-    editmixinVue,
-  ],
   components: {
     breadcrumb,
   },
+  mixins: [
+    editmixinVue,
+  ],
   data () {
     return {
       name: 'led',
@@ -97,7 +98,7 @@ export default {
       noDevice: false,
       again: false,
       form: {
-        deviceId: "",
+        deviceId: '',
         colors: [2],
         blink: 1,
       },
@@ -124,10 +125,6 @@ export default {
       'exbs',
     ]),
   },
-  mounted(){
-    this.createMessage = false
-    this.fetchData()
-  },
   watch: {
     'form.colors': function(newVal, oldVal) {
       // チェックの数が0にされたら値を元に戻す。
@@ -137,6 +134,10 @@ export default {
       }
     },
   },
+  mounted(){
+    this.createMessage = false
+    this.fetchData()
+  },
   methods: {
     async fetchData(payload) {
       try {
@@ -145,12 +146,12 @@ export default {
         let deviceIds = _.filter(this.exbs,
           exb => exb.enabled && this.getSensorId(exb) == SENSOR.LED
         )
-        .map(
-          exb => {
-            let deviceOffset = this.$store.state.currentRegion.deviceOffset
-            return {text:(exb.deviceId - deviceOffset) + " (0x" + exb.deviceId.toString(16) + ", " + exb.deviceId + ")", value: exb.deviceId}
-          }
-        )
+          .map(
+            exb => {
+              let deviceOffset = this.$store.state.currentRegion.deviceOffset
+              return {text:(exb.deviceId - deviceOffset) + ' (0x' + exb.deviceId.toString(16) + ', ' + exb.deviceId + ')', value: exb.deviceId}
+            }
+          )
 
         if (deviceIds && deviceIds.length == 1) {
           this.form.deviceId = deviceIds[0].value
@@ -170,7 +171,6 @@ export default {
     },
     async save() {
       var rgb = 0
-      var pattern = 0
       for (var i of this.form.colors) {
         rgb += i
       }

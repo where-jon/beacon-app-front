@@ -18,8 +18,8 @@ export const THEME = [
 ]
 
 export const CHAR_SET = [
-  {id: 1,  name: "UTF8"},
-  {id: 2,  name: "SJIS"},
+  {id: 1,  name: 'UTF8'},
+  {id: 2,  name: 'SJIS'},
 ]
 
 export const ROLE = {
@@ -57,14 +57,14 @@ export const FEATURE = {
   }
 }
 
-export const UPDATE_ONLY_NN = { NONE: 0, NULL: 1, EMPTY_ZERO: 2 };
+export const UPDATE_ONLY_NN = { NONE: 0, NULL: 1, EMPTY_ZERO: 2 }
 
-export const IGNORE = { OFF: 0, ON: 1 };
+export const IGNORE = { OFF: 0, ON: 1 }
 
 export const txViewTypes = [
-  {value: 1, text: "pattern1"},
-  {value: 2, text: "pattern2"},
-  {value: 3, text: "pattern3"},
+  {value: 1, text: 'pattern1'},
+  {value: 2, text: 'pattern2'},
+  {value: 3, text: 'pattern3'},
 ]
 
 export const CATEGORY = {
@@ -84,10 +84,10 @@ export const SHAPE = {
   ROUND_SQUARE: 3,
   getShapes() {
     return [
-    {value: 1, text: i18n.tnl('label.circle')},
-    {value: 2, text: i18n.tnl('label.square')},
-    {value: 3, text: i18n.tnl('label.roundedSquare')},
-  ]}
+      {value: 1, text: i18n.tnl('label.circle')},
+      {value: 2, text: i18n.tnl('label.square')},
+      {value: 3, text: i18n.tnl('label.roundedSquare')},
+    ]}
 }
 
 export const ZONE = {
@@ -115,9 +115,9 @@ export const SENSOR = {
 export const SUM_UNIT = {
   getOptions(){
     return [
-      {value:1, text: i18n.t('label.minute'), param: "minute"},
-      {value:2, text: i18n.t('label.hour'), param: "hour"},
-      {value:3, text: i18n.t('label.day'), param: "day"},
+      {value:1, text: i18n.t('label.minute'), param: 'minute'},
+      {value:2, text: i18n.t('label.hour'), param: 'hour'},
+      {value:3, text: i18n.t('label.day'), param: 'day'},
     ]
   }
 }
@@ -134,9 +134,9 @@ export const SUM_TARGET = {
 }
 
 export const DISCOMFORT = {
-  HOT: "hot",
-  COMFORT: "comfort",
-  COLD: "cold",
+  HOT: 'hot',
+  COMFORT: 'comfort',
+  COLD: 'cold',
 }
 
 export const LED_COLORS = {
@@ -242,41 +242,41 @@ export const MENU = [
     path: 'main/position',
     icon: 'fas fa-home',
     pages: [{
-        key: 'showPosition',
-        path: 'position',
-        feature: '',
-        icon: 'fas fa-map-marker-alt',
-      },
-      {
-        key: 'pir',
-        path: 'pir',
-        feature: '',
-        icon: 'fas fa-users',
-      },
-      {
-        key: 'thermohumidity',
-        path: 'thermohumidity',
-        feature: '',
-        icon: 'fas fa-thermometer-half',
-      },
-      {
-        key: 'positionList',
-        path: 'position-list',
-        feature: '/basic/position-list',
-        icon: 'fas fa-list',
-      },
-      {
-        key: 'positionStack',
-        path: 'position-stack',
-        feature: '/basic/position-stack',
-        icon: 'far fa-building',
-      },
-      {
-        key: 'ledOperation',
-        path: 'led',
-        feature: '/basic/led',
-        icon: 'far fa-lightbulb',
-      }
+      key: 'showPosition',
+      path: 'position',
+      feature: '',
+      icon: 'fas fa-map-marker-alt',
+    },
+    {
+      key: 'pir',
+      path: 'pir',
+      feature: '',
+      icon: 'fas fa-users',
+    },
+    {
+      key: 'thermohumidity',
+      path: 'thermohumidity',
+      feature: '',
+      icon: 'fas fa-thermometer-half',
+    },
+    {
+      key: 'positionList',
+      path: 'position-list',
+      feature: '/basic/position-list',
+      icon: 'fas fa-list',
+    },
+    {
+      key: 'positionStack',
+      path: 'position-stack',
+      feature: '/basic/position-stack',
+      icon: 'far fa-building',
+    },
+    {
+      key: 'ledOperation',
+      path: 'led',
+      feature: '/basic/led',
+      icon: 'far fa-lightbulb',
+    }
     ]
   },
   {
@@ -394,35 +394,35 @@ export const MENU = [
     path: 'sum/utilizationRatio',
     icon: 'fas fa-chart-line',
     pages: [{
-        key: 'utilizationRatio',
-        path: 'utilizationRatio',
-        feature: '/sum/utilizationRatio',
-        icon: 'fas fa-chart-pie'
-      },
-      {
-        key: 'numUsers',
-        path: 'numUsers',
-        feature: '/sum/numUsers',
-        icon: 'fas fa-chart-area'
-      },
-      {
-        key: 'flowlineAnalysis',
-        path: 'flowlineAnalysis',
-        feature: '/sum/flowlineAnalysis',
-        icon: 'fas fa-shoe-prints'
-      },
-      {
-        key: 'heatmapPosition',
-        path: 'heatmap-position',
-        feature: '/sum/heatmapPosition',
-        icon: 'fas fas fa-fire',
-      },
-      {
-        key: 'sensorGraph',
-        path: 'sensorGraph',
-        feature: '/sum/sensorGraph',
-        icon: 'fas fa-chart-bar',
-      },
+      key: 'utilizationRatio',
+      path: 'utilizationRatio',
+      feature: '/sum/utilizationRatio',
+      icon: 'fas fa-chart-pie'
+    },
+    {
+      key: 'numUsers',
+      path: 'numUsers',
+      feature: '/sum/numUsers',
+      icon: 'fas fa-chart-area'
+    },
+    {
+      key: 'flowlineAnalysis',
+      path: 'flowlineAnalysis',
+      feature: '/sum/flowlineAnalysis',
+      icon: 'fas fa-shoe-prints'
+    },
+    {
+      key: 'heatmapPosition',
+      path: 'heatmap-position',
+      feature: '/sum/heatmapPosition',
+      icon: 'fas fas fa-fire',
+    },
+    {
+      key: 'sensorGraph',
+      path: 'sensorGraph',
+      feature: '/sum/sensorGraph',
+      icon: 'fas fa-chart-bar',
+    },
     ]
   },
   {
@@ -431,23 +431,23 @@ export const MENU = [
     path: '/history/temperatureHistory',
     icon: 'far fa-clipboard',
     pages: [{
-        key: 'thermohumidity',
-        path: 'temperatureHistory',
-        feature: '/history/temperatureHistory',
-        icon: 'fas fa-thermometer'
-      },
-      {
-        key: 'positionHistory',
-        path: 'positionHistory',
-        feature: '/history/positionHistory',
-        icon: 'fas fa-cube'
-      },
-      {
-        key: 'sensorHistory',
-        path: 'sensorHistory',
-        feature: '/history/sensorHistory',
-        icon: 'fas fa-eye'
-      },
+      key: 'thermohumidity',
+      path: 'temperatureHistory',
+      feature: '/history/temperatureHistory',
+      icon: 'fas fa-thermometer'
+    },
+    {
+      key: 'positionHistory',
+      path: 'positionHistory',
+      feature: '/history/positionHistory',
+      icon: 'fas fa-cube'
+    },
+    {
+      key: 'sensorHistory',
+      path: 'sensorHistory',
+      feature: '/history/sensorHistory',
+      icon: 'fas fa-eye'
+    },
     ]
   },
   {
@@ -456,17 +456,17 @@ export const MENU = [
     path: 'setting/personal',
     icon: 'fas fa-cog',
     pages: [{
-        key: 'personal',
-        path: 'personal',
-        feature: '/setting/personal',
-        icon: 'fas fa-user-cog',
-      },
-      {
-        key: 'system',
-        path: 'system',
-        feature: '/setting/system',
-        icon: 'fas fa-cogs',
-      },
+      key: 'personal',
+      path: 'personal',
+      feature: '/setting/personal',
+      icon: 'fas fa-user-cog',
+    },
+    {
+      key: 'system',
+      path: 'system',
+      feature: '/setting/system',
+      icon: 'fas fa-cogs',
+    },
     ]
   },
   {
