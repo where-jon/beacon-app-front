@@ -23,19 +23,19 @@
       </b-navbar-nav>
 
       <!-- right -->
-      <b-navbar-nav class="ml-auto" v-show="!isLoginPage && showNav">
+      <b-navbar-nav v-show="!isLoginPage && showNav" class="ml-auto">
         <!-- region -->
         <b-nav-item-dropdown right>
           <template slot="button-content">
             <div v-if="isTenantAdmin">
-              <i class="far fa-building mr-1" aria-hidden="true" style="visibility: hidden;" ></i>
+              <i class="far fa-building mr-1" aria-hidden="true" style="visibility: hidden;" />
               <span>{{ currentTenantName }}</span>
             </div>
-            <i class="far fa-building mr-1" aria-hidden="true" ></i>
+            <i class="far fa-building mr-1" aria-hidden="true" />
             <span>{{ currentRegionName }}</span>
           </template>
           <b-dropdown-item v-for="region in this.$store.state.app_service.regions" :key="region.regionId" href="#" @click="switchRegion(region)">
-            <i class="far fa-building mr-1" aria-hidden="true" :style="getStyleDropdownRegion(region.regionId)" ></i>
+            <i class="far fa-building mr-1" aria-hidden="true" :style="getStyleDropdownRegion(region.regionId)" />
             <span>{{ region.regionName }}</span>
           </b-dropdown-item>
         </b-nav-item-dropdown>
@@ -80,15 +80,15 @@ export default {
       showLogo: DISP.SHOW_LOGO,
       showNav: HtmlUtil.isMobile() || DISP.SHOW_NAV,
       login: JSON.parse(window.localStorage.getItem('login')),
-      currentTenantName: "",
-      currentRegionName: "",
+      currentTenantName: '',
+      currentRegionName: '',
       currentRegionId: null,
       switchReload: true,
     }
   },
   async created() {
-    this.currentTenantName = this.login && this.login.currentTenant? this.login.currentTenant.tenantName: ""
-    this.currentRegionName = this.login && this.login.currentRegion? this.login.currentRegion.regionName: ""
+    this.currentTenantName = this.login && this.login.currentTenant? this.login.currentTenant.tenantName: ''
+    this.currentRegionName = this.login && this.login.currentRegion? this.login.currentRegion.regionName: ''
     this.currentRegionId = this.login && this.login.currentRegion? this.login.currentRegion.regionId: null
     if(this.switchReload){
       this.switchReload = false
@@ -134,7 +134,7 @@ export default {
       return this.$store.state.tenantAdmin
     },
     getStyleDropdownRegion(regionId) {
-      return {visibility: this.currentRegionId == regionId? "visible": "hidden"}
+      return {visibility: this.currentRegionId == regionId? 'visible': 'hidden'}
     },
     move(page) {
       this.$router.push(page)

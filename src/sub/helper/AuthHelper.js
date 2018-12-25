@@ -43,7 +43,7 @@ export const authByLocal = async (loginId, password, success, err) => {
 }
 
 export const getRevInfo = async () => {
-  const frontRev = (await axios.get("/head.txt")).data
+  const frontRev = (await axios.get('/head.txt')).data
   const apsIndex = await HttpHelper.getAppServiceNoCrd('/') // pre network check
   const serviceRev = apsIndex.match(new RegExp('Head:([0-9a-zA-Z]+)'))
   return {frontRev: frontRev, serviceRev: serviceRev && serviceRev[1]}
@@ -59,7 +59,7 @@ export const getUserInfo = async (tenantAdmin) => {
   const user = await AppServiceHelper.getCurrentUser()
   console.log(user)
   const featureList = _(user.role.roleFeatureList).map((roleFeature) => {
-      return {path: roleFeature.feature.path, mode: roleFeature.mode}
+    return {path: roleFeature.feature.path, mode: roleFeature.mode}
   }).sortBy((val) => val.path.length * -1).value()
   const menu = MenuHelper.fetchNav(featureList, tenantFeatureList, user.role, tenantAdmin)
 

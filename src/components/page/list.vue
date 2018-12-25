@@ -90,8 +90,8 @@
           <div v-if="isTenantAdmin && params.tenantAction" :style="{'width': '100px'}">
             <!-- switch button -->
             <div>
-              <b-button size="sm" v-if="isCurrentTenant(row.item)" :variant="theme" class="btn-block my-1" style="opacity: 1.0 !important; border-radius: 0px;" v-t="'label.now'" :style="anotherActionButtonStyle" :disabled="true" />
-              <b-button size="sm" v-else @click.stop="switchTenant(row.item)" :variant="theme" class="btn-block my-1" v-t="'label.switch'" :style="anotherActionButtonStyle" />
+              <b-button v-if="isCurrentTenant(row.item)" v-t="'label.now'" size="sm" :variant="theme" class="btn-block my-1" style="opacity: 1.0 !important; border-radius: 0px;" :style="anotherActionButtonStyle" :disabled="true" />
+              <b-button v-else v-t="'label.switch'" size="sm" :variant="theme" class="btn-block my-1" :style="anotherActionButtonStyle" @click.stop="switchTenant(row.item)" />
             </div>
           </div>
         </template>
@@ -155,7 +155,7 @@ import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
 import { getButtonTheme } from '../../sub/helper/ThemeHelper'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
-import commonmixinVue from '../mixin/commonmixin.vue';
+import commonmixinVue from '../mixin/commonmixin.vue'
 import { DETECT_STATE, CATEGORY } from '../../sub/constant/Constants'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
 import * as AuthHelper from '../../sub/helper/AuthHelper'
@@ -396,7 +396,7 @@ export default {
     deleteConfirm(item, index, button) {
       this.setEmptyMessage()
       this.modalInfo.title = this.$i18n.tnl('label.confirm')
-      this.modalInfo.content = this.$i18n.tnl(this.params.delFilter && item.delFlg != 0? 'message.completeDeleteConfirm': 'message.deleteConfirm', this.params.mainColumn? {target: `${this.params.mainColumn.name}:${item[this.params.mainColumn.id]}`}: {target: "ID:" + item[this.id]})
+      this.modalInfo.content = this.$i18n.tnl(this.params.delFilter && item.delFlg != 0? 'message.completeDeleteConfirm': 'message.deleteConfirm', this.params.mainColumn? {target: `${this.params.mainColumn.name}:${item[this.params.mainColumn.id]}`}: {target: 'ID:' + item[this.id]})
       this.modalInfo.id = item[this.id]
       this.$root.$emit('bv::show::modal', 'modalInfo', button)
     },
