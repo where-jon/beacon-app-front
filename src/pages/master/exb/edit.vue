@@ -2,33 +2,42 @@
   <div>
     <breadcrumb :items="items" />
     <div class="container">
-      <b-alert variant="info" dismissible :show="showInfo">{{ message }}</b-alert>
-      <b-alert variant="danger" dismissible :show="showAlert"  @dismissed="showAlert=false">
-        <div v-html="message" />
+      <b-alert variant="info" dismissible :show="showInfo">
+        {{ message }}
+      </b-alert>
+      <b-alert variant="danger" dismissible :show="showAlert" @dismissed="showAlert=false">
+        <template v-if="Array.isArray(message)">
+          <span v-for="line in message" :key="line">
+            {{ line }} <br>
+          </span>
+        </template>
+        <span v-else>
+          {{ message }}
+        </span>
       </b-alert>
 
       <b-row>
         <b-col md="8" offset-md="2">
-          <b-form @submit.prevent="onSubmit" v-if="show">
+          <b-form v-if="show" @submit.prevent="onSubmit">
             <b-form-group v-if="hasId" v-show="isShown('EXB_WITH_EXBID')">
               <label v-t="'label.exbId'" />
-              <b-form-input type="text" v-model="form.exbId" readonly="readonly" />
+              <b-form-input v-model="form.exbId" type="text" readonly="readonly" />
             </b-form-group>
             <b-form-group v-show="isShown('EXB_WITH_DEVICE_NUM')">
               <label v-t="'label.deviceNum'" />
-              <input type="number" v-model.lazy="deviceNum" class="form-control" min="0" :max="maxDeviceNum" required :readonly="!isEditable" />
+              <input v-model.lazy="deviceNum" type="number" class="form-control" min="0" :max="maxDeviceNum" required :readonly="!isEditable">
             </b-form-group>
             <b-form-group v-show="isShown('EXB_WITH_DEVICE_ID')">
               <label v-t="'label.deviceId'" />
-              <input type="number" v-model.lazy="deviceId" class="form-control" min="0" :max="maxDeviceId" required :readonly="!isEditable" />
+              <input v-model.lazy="deviceId" type="number" class="form-control" min="0" :max="maxDeviceId" required :readonly="!isEditable">
             </b-form-group>
             <b-form-group v-show="isShown('EXB_WITH_DEVICE_IDX')">
               <label v-t="'label.deviceIdX'" />
-              <input type="text" v-model.lazy="deviceIdX" class="form-control" required :readonly="!isEditable" />
+              <input v-model.lazy="deviceIdX" type="text" class="form-control" required :readonly="!isEditable">
             </b-form-group>
             <b-form-group>
               <label v-t="'label.locationName'" />
-              <input type="text" v-model="form.locationName" maxlength="20" class="form-control" required :readonly="!isEditable" />
+              <input v-model="form.locationName" type="text" maxlength="20" class="form-control" required :readonly="!isEditable">
             </b-form-group>
             <b-form-group>
               <label v-t="'label.area'" />
@@ -36,15 +45,15 @@
             </b-form-group>
             <b-form-group v-show="isShown('EXB_WITH_POSID')">
               <label v-t="'label.posId'" />
-              <input type="number" v-model="form.posId" min="0" max="65535" class="form-control" required :readonly="!isEditable" />
+              <input v-model="form.posId" type="number" min="0" max="65535" class="form-control" required :readonly="!isEditable">
             </b-form-group>
             <b-form-group>
               <label v-t="'label.locationX'" />
-              <input type="number" v-model="form.x" min="0" max="99999" class="form-control" :readonly="!isEditable" />
+              <input v-model="form.x" type="number" min="0" max="99999" class="form-control" :readonly="!isEditable">
             </b-form-group>
             <b-form-group>
               <label v-t="'label.locationY'" />
-              <input type="number" v-model="form.y" min="0" max="99999" class="form-control" :readonly="!isEditable" />
+              <input v-model="form.y" type="number" min="0" max="99999" class="form-control" :readonly="!isEditable">
             </b-form-group>
             <b-form-group>
               <b-form-checkbox v-model="form.enabled" value="true" unchecked-value="false" :disabled="!isEditable" :readonly="!isEditable">
@@ -76,9 +85,11 @@
               <label v-t="'label.zone'" />
               <b-form-select v-model="form.zoneId" :options="zoneNames" class="mb-3 ml-3 col-4" :disabled="!isEditable" :readonly="!isEditable" />
             </b-form-group>
-            <b-button type="button" variant="outline-danger" @click="backToList" class="mr-2 my-1" v-t="'label.back'"/>
-            <b-button v-if="isEditable" type="submit" :variant="theme" @click="register(false)" class="mr-2 my-1" >{{ label }}</b-button>
-            <b-button v-if="isEditable && !isUpdate" type="submit" :variant="theme" @click="register(true)" class="my-1" v-t="'label.registerAgain'"/>
+            <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
+            <b-button v-if="isEditable" type="submit" :variant="theme" class="mr-2 my-1" @click="register(false)">
+              {{ label }}
+            </b-button>
+            <b-button v-if="isEditable && !isUpdate" v-t="'label.registerAgain'" type="submit" :variant="theme" class="my-1" @click="register(true)" />
           </b-form>
         </b-col>
       </b-row>
@@ -87,26 +98,23 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-import _ from 'lodash'
+import { mapState } from 'vuex'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as MenuHelper from '../../../sub/helper/MenuHelper'
 import * as Util from '../../../sub/util/Util'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
-import { APP } from '../../../sub/constant/config.js'
-import { TX_VIEW_TYPES, txViewTypes } from '../../../sub/constant/Constants'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
-import settingtxview from '../../../components/parts/settingtxview.vue'
+// import settingtxview from '../../../components/parts/settingtxview.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 
 export default {
-  mixins: [editmixinVue],
   components: {
     breadcrumb,
-    settingtxview,
+    // settingtxview,
   },
+  mixins: [editmixinVue],
   data() {
     return {
       name: 'exb',
@@ -115,14 +123,14 @@ export default {
       appServicePath: '/core/exb',
       mutex: false,
       form: ViewHelper.extract(this.$store.state.app_service.exb, [
-          "exbId", "deviceId", "enabled",
-          "location.locationName", "location.areaId", "location.locationId", "location.posId",
-          "location.x", "location.y", "location.visible", "location.txViewType",
-          "exbSensorList.0.sensor.sensorId", "location.locationZoneList.0.locationZonePK.zoneId"
-        ]
+        'exbId', 'deviceId', 'enabled',
+        'location.locationName', 'location.areaId', 'location.locationId', 'location.posId',
+        'location.x', 'location.y', 'location.visible', 'location.txViewType',
+        'exbSensorList.0.sensor.sensorId', 'location.locationZoneList.0.locationZonePK.zoneId'
+      ]
       ),
       defValue: {
-        "enabled": true,
+        'enabled': true,
       },
       deviceId: null,
       deviceIdX: null,
@@ -165,11 +173,11 @@ export default {
     },
     areaOptions() {
       return this.areas.map((area) => {
-          return {
-            value: area.areaId,
-            text: area.areaName
-          }
+        return {
+          value: area.areaId,
+          text: area.areaName
         }
+      }
       )
     },
     zoneNames() {
@@ -180,7 +188,7 @@ export default {
             text: zone.zoneName
           }
         }
-      )
+        )
       Util.addNoSelect(options)
       return options
     },
@@ -286,7 +294,7 @@ export default {
       this.deviceIdX = null
       this.deviceNum = null
       return ret
-   },
+    },
   }
 }
 </script>

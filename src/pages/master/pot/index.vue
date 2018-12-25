@@ -7,10 +7,8 @@
 
 <script>
 import mList from '../../../components/page/list.vue'
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapState } from 'vuex'
 import * as StateHelper from '../../../sub/helper/StateHelper'
-import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
-import * as Util from '../../../sub/util/Util'
 import { addLabelByKey } from '../../../sub/helper/ViewHelper'
 import { APP } from '../../../sub/constant/config.js'
 import listmixinVue from '../../../components/mixin/listmixin.vue'
@@ -34,33 +32,33 @@ export default {
         csvOut: true,
         extraFilter: this.getExtraFilter(),
         custumCsvColumns: [
-          "potId",
-          "thumbnail",
-          APP.TX_WITH_TXID? "txId": APP.TX_BTX_MINOR == 'minor'? "minor": "btxId",
-          "txName",
-          APP.POT_WITH_POTCD? "potCd": null,
-          "potName",
-          "potType",
-          APP.POT_WITH_RUBY? "extValue.ruby": null,
-          "displayName",
-          APP.POT_WITH_GROUP? "groupName": null,
-          APP.POT_WITH_CATEGORY? "categoryName": null,
-          APP.POT_WITH_POST? "extValue.post": null,
-          APP.POT_WITH_TEL? "extValue.tel": null,
-          "description"].filter((val) => val),
+          'potId',
+          'thumbnail',
+          APP.TX_WITH_TXID? 'txId': APP.TX_BTX_MINOR == 'minor'? 'minor': 'btxId',
+          'txName',
+          APP.POT_WITH_POTCD? 'potCd': null,
+          'potName',
+          'potType',
+          APP.POT_WITH_RUBY? 'extValue.ruby': null,
+          'displayName',
+          APP.POT_WITH_GROUP? 'groupName': null,
+          APP.POT_WITH_CATEGORY? 'categoryName': null,
+          APP.POT_WITH_POST? 'extValue.post': null,
+          APP.POT_WITH_TEL? 'extValue.tel': null,
+          'description'].filter((val) => val),
         fields: addLabelByKey(this.$i18n, [ 
-          {key: "potId", sortable: true, tdClass: "thumb-rowdata"},
-          {key: "thumbnail", tdClass: "thumb-rowdata" },
-          {key: "txIdName", label:'tx', sortable: true, tdClass: "thumb-rowdata"},
-          APP.POT_WITH_POTCD? {key: "potCd", sortable: true , tdClass: "thumb-rowdata"}: null,
-          {key: "potName", sortable: true , tdClass: "thumb-rowdata"},
-          APP.POT_WITH_RUBY? {key: "ruby", label: "ruby", sortable: true, tdClass: "thumb-rowdata"}: null,
-          {key: "displayName", sortable: true, tdClass: "thumb-rowdata"},
-          APP.POT_WITH_GROUP? {key: "groupName", label: "group", sortable: true, tdClass: "thumb-rowdata"}: null,
-          APP.POT_WITH_CATEGORY? {key: "categoryName", label: "category", sortable: true, tdClass: "thumb-rowdata"}: null,
-          APP.POT_WITH_POST? {key: "extValue.post", label: "post", tdClass: "thumb-rowdata"}: null,
-          APP.POT_WITH_TEL? {key: "extValue.tel", label: "tel", tdClass: "thumb-rowdata"}: null,
-          {key: "actions", thStyle: {width:'130px !important'} , tdClass: "thumb-rowdata"},
+          {key: 'potId', sortable: true, tdClass: 'thumb-rowdata'},
+          {key: 'thumbnail', tdClass: 'thumb-rowdata' },
+          {key: 'txIdName', label:'tx', sortable: true, tdClass: 'thumb-rowdata'},
+          APP.POT_WITH_POTCD? {key: 'potCd', sortable: true , tdClass: 'thumb-rowdata'}: null,
+          {key: 'potName', sortable: true , tdClass: 'thumb-rowdata'},
+          APP.POT_WITH_RUBY? {key: 'ruby', label: 'ruby', sortable: true, tdClass: 'thumb-rowdata'}: null,
+          {key: 'displayName', sortable: true, tdClass: 'thumb-rowdata'},
+          APP.POT_WITH_GROUP? {key: 'groupName', label: 'group', sortable: true, tdClass: 'thumb-rowdata'}: null,
+          APP.POT_WITH_CATEGORY? {key: 'categoryName', label: 'category', sortable: true, tdClass: 'thumb-rowdata'}: null,
+          APP.POT_WITH_POST? {key: 'extValue.post', label: 'post', tdClass: 'thumb-rowdata'}: null,
+          APP.POT_WITH_TEL? {key: 'extValue.tel', label: 'tel', tdClass: 'thumb-rowdata'}: null,
+          {key: 'actions', thStyle: {width:'130px !important'} , tdClass: 'thumb-rowdata'},
         ]),
         initTotalRows: this.$store.state.app_service.pots.length,
       },
@@ -90,7 +88,7 @@ export default {
       StateHelper.setForceFetch('tx', true)
     },
     getExtraFilter(){
-      return [this.isEnabledMenu("group") && APP.POT_WITH_GROUP? 'group': null, this.isEnabledMenu("category") && APP.POT_WITH_CATEGORY? 'category': null].filter((val) => val)
+      return [this.isEnabledMenu('group') && APP.POT_WITH_GROUP? 'group': null, this.isEnabledMenu('category') && APP.POT_WITH_CATEGORY? 'category': null].filter((val) => val)
     },
     async fetchData(payload) {
       try {

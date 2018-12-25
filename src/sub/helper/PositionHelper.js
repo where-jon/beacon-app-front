@@ -6,7 +6,6 @@ import * as mock from '../../assets/mock/mock.js'
 
 const iconsUnitNum = 9
 const tileLayoutIconsNum = 5
-const TILE_LAYOUT_MAXICONS = 25
 const PIdiv180 = Math.PI / 180
 const diameter = DISP.TX_R * 2
 const angle = 45
@@ -41,41 +40,41 @@ const getCoordinateDefault = (exb, ratio, samePos) => {
   let baseY = exb.location.y * ratio
   const ret = []
   switch (samePos.length) {
-    case 1:
-      ret.push({...samePos[0], x: baseX, y: baseY})
-      break
-    case 2:
-      ret.push({...samePos[0], x: baseX - DISP.TX_R / DISP.TX_DIV_2, y: baseY})
-      ret.push({...samePos[1], x: baseX + DISP.TX_R / DISP.TX_DIV_2, y: baseY})
-      break
-    case 3:
-      ret.push({...samePos[0], x: baseX - DISP.TX_R / DISP.TX_DIV_3, y: baseY})
-      ret.push({...samePos[1], x: baseX, y: baseY})
-      ret.push({...samePos[2], x: baseX + DISP.TX_R / DISP.TX_DIV_3, y: baseY})
-      break
-    case 4:
-      ret.push({...samePos[0], x: baseX - DISP.TX_R / DISP.TX_DIV_2, y: baseY - DISP.TX_R / DISP.TX_DIV_2})
-      ret.push({...samePos[1], x: baseX + DISP.TX_R / DISP.TX_DIV_2, y: baseY - DISP.TX_R / DISP.TX_DIV_2})
-      ret.push({...samePos[2], x: baseX - DISP.TX_R / DISP.TX_DIV_2, y: baseY + DISP.TX_R / DISP.TX_DIV_2})
-      ret.push({...samePos[3], x: baseX + DISP.TX_R / DISP.TX_DIV_2, y: baseY + DISP.TX_R / DISP.TX_DIV_2})
-      break
-    default:
-      ret.push({...samePos[0], x: baseX - DISP.TX_R / DISP.TX_DIV_3, y: baseY - DISP.TX_R / DISP.TX_DIV_2})
-      ret.push({...samePos[1], x: baseX, y: baseY - DISP.TX_R / DISP.TX_DIV_2})
-      ret.push({...samePos[2], x: baseX + DISP.TX_R / DISP.TX_DIV_3, y: baseY - DISP.TX_R / DISP.TX_DIV_2})
-      ret.push({...samePos[3], x: baseX - DISP.TX_R / DISP.TX_DIV_3, y: baseY + DISP.TX_R / DISP.TX_DIV_2})
-      if (samePos.length <= 6) {
-        ret.push({...samePos[4], x: baseX, y: baseY + DISP.TX_R / DISP.TX_DIV_2})
+  case 1:
+    ret.push({...samePos[0], x: baseX, y: baseY})
+    break
+  case 2:
+    ret.push({...samePos[0], x: baseX - DISP.TX_R / DISP.TX_DIV_2, y: baseY})
+    ret.push({...samePos[1], x: baseX + DISP.TX_R / DISP.TX_DIV_2, y: baseY})
+    break
+  case 3:
+    ret.push({...samePos[0], x: baseX - DISP.TX_R / DISP.TX_DIV_3, y: baseY})
+    ret.push({...samePos[1], x: baseX, y: baseY})
+    ret.push({...samePos[2], x: baseX + DISP.TX_R / DISP.TX_DIV_3, y: baseY})
+    break
+  case 4:
+    ret.push({...samePos[0], x: baseX - DISP.TX_R / DISP.TX_DIV_2, y: baseY - DISP.TX_R / DISP.TX_DIV_2})
+    ret.push({...samePos[1], x: baseX + DISP.TX_R / DISP.TX_DIV_2, y: baseY - DISP.TX_R / DISP.TX_DIV_2})
+    ret.push({...samePos[2], x: baseX - DISP.TX_R / DISP.TX_DIV_2, y: baseY + DISP.TX_R / DISP.TX_DIV_2})
+    ret.push({...samePos[3], x: baseX + DISP.TX_R / DISP.TX_DIV_2, y: baseY + DISP.TX_R / DISP.TX_DIV_2})
+    break
+  default:
+    ret.push({...samePos[0], x: baseX - DISP.TX_R / DISP.TX_DIV_3, y: baseY - DISP.TX_R / DISP.TX_DIV_2})
+    ret.push({...samePos[1], x: baseX, y: baseY - DISP.TX_R / DISP.TX_DIV_2})
+    ret.push({...samePos[2], x: baseX + DISP.TX_R / DISP.TX_DIV_3, y: baseY - DISP.TX_R / DISP.TX_DIV_2})
+    ret.push({...samePos[3], x: baseX - DISP.TX_R / DISP.TX_DIV_3, y: baseY + DISP.TX_R / DISP.TX_DIV_2})
+    if (samePos.length <= 6) {
+      ret.push({...samePos[4], x: baseX, y: baseY + DISP.TX_R / DISP.TX_DIV_2})
+    }
+    if (samePos.length == 6) {
+      ret.push({...samePos[5], x: baseX + DISP.TX_R / DISP.TX_DIV_3, y: baseY + DISP.TX_R / DISP.TX_DIV_2})
+    }
+    if (samePos.length > 6) { // 6超の場合、2段目を分割して重ねて表示
+      for (let i=4; i < samePos.length; i++) {
+        ret.push({...samePos[i], x: baseX - DISP.TX_R / DISP.TX_DIV_3 + DISP.TX_R * 5 / (samePos.length - 3) * (i - 3), y: baseY + DISP.TX_R / DISP.TX_DIV_2})
       }
-      if (samePos.length == 6) {
-        ret.push({...samePos[5], x: baseX + DISP.TX_R / DISP.TX_DIV_3, y: baseY + DISP.TX_R / DISP.TX_DIV_2})
-      }
-      if (samePos.length > 6) { // 6超の場合、2段目を分割して重ねて表示
-        for (let i=4; i < samePos.length; i++) {
-          ret.push({...samePos[i], x: baseX - DISP.TX_R / DISP.TX_DIV_3 + DISP.TX_R * 5 / (samePos.length - 3) * (i - 3), y: baseY + DISP.TX_R / DISP.TX_DIV_2})
-        }
-      }
-      break
+    }
+    break
   }
   return ret
 }
@@ -141,14 +140,14 @@ const getCoordinate = (orgX, orgY, positions, viewType) => {
   return positions.length > 1 ? positions.map((e, i, a) => {
     const xy = (() => {
       switch (viewType.displayFormat) {
-        case TX_VIEW_TYPES.SQUARE :
-          return getCoordinateSquare(i, orgX, orgY)
-        case TX_VIEW_TYPES.DIAMOND :
-          return getCoordinateSquare(i, orgX, orgY, true)
-        case TX_VIEW_TYPES.SPIRAL :
-          return getCoordinateSpiral(i, orgX, orgY, 360 / positions.length * i, diameter)
-        default :
-          return {x: baseX, y: baseY}
+      case TX_VIEW_TYPES.SQUARE :
+        return getCoordinateSquare(i, orgX, orgY)
+      case TX_VIEW_TYPES.DIAMOND :
+        return getCoordinateSquare(i, orgX, orgY, true)
+      case TX_VIEW_TYPES.SPIRAL :
+        return getCoordinateSpiral(i, orgX, orgY, 360 / positions.length * i, diameter)
+      default :
+        return {x: orgX, y: orgY}
       }
     })()
     return {...e, x: xy.x, y: xy.y}
@@ -181,7 +180,7 @@ const getPositionsToOverlap = (exb, ratio, samePos) => {
 }
 
 const getTxViewType = (txViewType) => {
-    return txViewType !== null ?
+  return txViewType !== null ?
     {
       displayFormat: txViewType.displayFormat ? txViewType.displayFormat : TX_VIEW_TYPES.DEFAULT,
       horizon: txViewType.horizon ? txViewType.horizon : tileLayoutIconsNum,
@@ -211,17 +210,17 @@ export const correctPosId = (orgPositions, now) => {
     })
     return result
   }, [])
-  .uniqWith(_.isEqual) // 重複除去
-  .filter((val) => {
-    if (DEV.DEBUG) {
-      let method = now - val.timestamp > APP.LOST_TIME || val.rssi < APP.RSSI_MIN? 'warn': 'log'
-      console[method]('btxId', val.btx_id, Util.formatDate(val.timestamp), (now - val.timestamp) / 1000 + '秒前', 'RSSI: ' + Math.round(val.rssi * 100)/ 100)
-    }
-    return true
-  })
-  .filter((val) => val.rssi >= APP.RSSI_MIN && val.timestamp >= now - APP.LOST_TIME) // RSSI値、指定時刻でフィルタ
-  .orderBy(['btx_id', 'pos_id', 'timestamp']) // btx_id, pos_id, timestampでソート
-  .value()
+    .uniqWith(_.isEqual) // 重複除去
+    .filter((val) => {
+      if (DEV.DEBUG) {
+        let method = now - val.timestamp > APP.LOST_TIME || val.rssi < APP.RSSI_MIN? 'warn': 'log'
+        console[method]('btxId', val.btx_id, Util.formatDate(val.timestamp), (now - val.timestamp) / 1000 + '秒前', 'RSSI: ' + Math.round(val.rssi * 100)/ 100)
+      }
+      return true
+    })
+    .filter((val) => val.rssi >= APP.RSSI_MIN && val.timestamp >= now - APP.LOST_TIME) // RSSI値、指定時刻でフィルタ
+    .orderBy(['btx_id', 'pos_id', 'timestamp']) // btx_id, pos_id, timestampでソート
+    .value()
 
   Util.table('足切り＆単純ソート後', positions)
 
@@ -238,9 +237,9 @@ export const correctPosId = (orgPositions, now) => {
     }
     return result
   }, [])
-  .map((val => ({...val, count: val.count>1? 2: 1}))) // count 2以上は2とみなす（1回のみとは区別）
-  .orderBy(['count', 'rssiAvg', 'pos_id', 'btx_id'], ['desc','desc','asc','asc']) // 記録回数（多）、RSSI（強）、pos_id、btx_idでソート 
-  .value()
+    .map((val => ({...val, count: val.count>1? 2: 1}))) // count 2以上は2とみなす（1回のみとは区別）
+    .orderBy(['count', 'rssiAvg', 'pos_id', 'btx_id'], ['desc','desc','asc','asc']) // 記録回数（多）、RSSI（強）、pos_id、btx_idでソート 
+    .value()
 
   Util.table('btxId&posIdグルーピング後', positions)
 
@@ -259,7 +258,7 @@ export const correctPosId = (orgPositions, now) => {
   }, [])
 
   if (DEV.DEBUG > 1 && mock.insertPosition) {
-    console.warn("insert mock position")
+    console.warn('insert mock position')
     positions = positions.concat(mock.insertPosition)
   }
 
@@ -287,8 +286,8 @@ export const setDetectState = (positions) => {
     let updatetime = null
     if (Util.hasValue(position.nearest)) {
       updatetime = _(position.nearest)
-          .map((val) => val.timestamp)
-          .sort().last()
+        .map((val) => val.timestamp)
+        .sort().last()
     }
 
     position.detectState = DetectStateHelper.getState('tx', updatetime) // nearestのtimestampを使用

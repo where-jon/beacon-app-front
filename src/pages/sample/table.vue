@@ -7,35 +7,41 @@
           <b-input-group>
             <b-form-input v-model="filter" />
             <b-input-group-append>
-              <b-btn :disabled="!filter" @click="filter = ''">Clear</b-btn>
+              <b-btn :disabled="!filter" @click="filter = ''">
+                Clear
+              </b-btn>
             </b-input-group-append>
           </b-input-group>
         </b-form-group>
       </b-col>
     </b-row>
-    <p></p>
+    <p />
 
     <!-- Main table element -->
     <b-table show-empty stacked="md" :items="items" :fields="fields"
              :current-page="currentPage" :per-page="perPage"
-             :filter="filter" @filtered="onFiltered" >
+             :filter="filter" @filtered="onFiltered"
+    >
       <template slot="actions" slot-scope="row">
-        <b-button size="sm" @click.stop="info(row.item, row.index, $event.target)" class="mr-1">Edit</b-button>
-        <b-button size="sm" @click.stop="info(row.item, row.index, $event.target)" class="mr-1">Delete</b-button>
+        <b-button size="sm" class="mr-1" @click.stop="info(row.item, row.index, $event.target)">
+          Edit
+        </b-button>
+        <b-button size="sm" class="mr-1" @click.stop="info(row.item, row.index, $event.target)">
+          Delete
+        </b-button>
       </template>
     </b-table>
 
     <b-row>
       <b-col md="6" class="my-1">
-        <b-pagination :total-rows="totalRows" :per-page="perPage" v-model="currentPage" class="my-0" />
+        <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" class="my-0" />
       </b-col>
     </b-row>
 
     <!-- Info modal -->
-    <b-modal id="modalInfo" @hide="resetModal" :title="modalInfo.title" @ok="handleOk">
+    <b-modal id="modalInfo" :title="modalInfo.title" @hide="resetModal" @ok="handleOk">
       <pre>{{ modalInfo.content }}</pre>
     </b-modal>
-
   </b-container>
 </template>
 
@@ -101,7 +107,7 @@ export default {
       this.currentPage = 1
     },
     handleOk() {
-        alert()
+      alert()
     }
   }
 }

@@ -7,7 +7,7 @@ import * as config from '../sub/constant/config'
 import _ from 'lodash'
 
 export default async (context, inject) => {
-  console.log("App Init") // If you need common initialize procedure, write here.
+  console.log('App Init') // If you need common initialize procedure, write here.
   context.store.commit('app_service/replaceAS', {'defaultConfig': _.cloneDeep(config)})
   MenuHelper.setStore(context.store)
   await ConfigHelper.loadConfigJson()
@@ -28,8 +28,8 @@ export default async (context, inject) => {
 
   // loading chunk failed対策 Loading chunk 6 failed.
   setInterval(() => {
-    console.debug("check chunk")
-    let error = document.querySelector(".__nuxt-error-page .error .title")
+    console.debug('check chunk')
+    let error = document.querySelector('.__nuxt-error-page .error .title')
     if (error && error.innerText && error.innerText.match(/Loading chunk (\d)+ failed/g)) {
       location.reload()
     }
@@ -38,7 +38,7 @@ export default async (context, inject) => {
 }
   
 if (String.prototype.includes) {
-  console.info("Adding methods. Don't use methods in IE before this is called.")
+  console.info('Adding methods. Don\'t use methods in IE before this is called.')
   String.prototype.includes = function(search, start) {
     'use strict'
     if (typeof start !== 'number') {

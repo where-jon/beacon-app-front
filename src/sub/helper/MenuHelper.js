@@ -1,5 +1,5 @@
-import { ROLE_FEATURE, MENU, ROLE } from "../constant/Constants"
-import * as Util from "../util/Util"
+import { ROLE_FEATURE, MENU } from '../constant/Constants'
+import * as Util from '../util/Util'
 
 let store
 
@@ -10,10 +10,10 @@ export const setStore = (pStore) => {
 export const fetchNav = (featureList, tenantFeatureList, role, isTenantAdmin) => {
   let retNav = _.map(MENU, (group) => {
     let pages = _.filter(group.pages, (page) => {
-      if (!isTenantAdmin && group.base == "provider/") {
+      if (!isTenantAdmin && group.base == 'provider/') {
         return false
       }
-      return role.isSuperAdmin || tenantOk("/" + group.base + page.path, tenantFeatureList) && getMode(page.feature, featureList) > ROLE_FEATURE.MODE.RO_SYS
+      return role.isSuperAdmin || tenantOk('/' + group.base + page.path, tenantFeatureList) && getMode(page.feature, featureList) > ROLE_FEATURE.MODE.RO_SYS
     })
     return {...group, pages}
   })
@@ -31,10 +31,10 @@ export const tenantOk = (target, tenantFeatureList) => {
 export const getMode = (path, featureList = store.state.featureList) => {
   let feature = _.find(featureList, (feature) => {
     if (Util.pathMatch(path, feature.path)) {
-        return true
+      return true
     }
   })
-  console.debug("feature.mode", path, feature && feature.mode)
+  console.debug('feature.mode', path, feature && feature.mode)
 
   let ret = feature && feature.mode
   return ret != null? ret: ROLE_FEATURE.MODE.RW

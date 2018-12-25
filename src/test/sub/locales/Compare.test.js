@@ -10,7 +10,7 @@ const compare = (targetJson) => {
     for (let key in ja[cat]) {
       // if (!targetJson[cat][key]) {
       if (targetJson[cat][key] === undefined) {
-          result.push('"' + key + '": "' + ja[cat][key] + '",')
+        result.push('"' + key + '": "' + ja[cat][key] + '",')
       }
     }
   })
@@ -22,7 +22,7 @@ test('compare', async t => {
   result.forEach((val) => {
     console.log(val)
   })
-//  t.true(result.length == 0)
+  //  t.true(result.length == 0)
   t.true(true)
 })
 

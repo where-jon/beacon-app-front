@@ -1,12 +1,12 @@
 <template>
   <div>
     <breadcrumb :items="items" />
-    <bulkedit :name="name" :id="id" :backPath="backPath" :app-service-path="appServicePath" />
+    <bulkedit :id="id" :name="name" :back-path="backPath" :app-service-path="appServicePath" />
   </div>
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapState } from 'vuex'
 import _ from 'lodash'
 import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
@@ -68,9 +68,9 @@ export default {
       return dummyKey
     },
     async save(bulkSaveFunc) {
-      const MAIN_COL = "categoryId"
-      const NUMBER_TYPE_LIST = ["categoryType", "shape"]
-      const DISPLAY_COL = ["shape", "color", "bgColor"]
+      const MAIN_COL = 'categoryId'
+      const NUMBER_TYPE_LIST = ['categoryType', 'shape']
+      const DISPLAY_COL = ['shape', 'color', 'bgColor']
       await bulkSaveFunc(MAIN_COL, NUMBER_TYPE_LIST, null, (entity, headerName, val, dummyKey) => {
         if(headerName == MAIN_COL){
           entity.categoryId = Util.hasValue(val)? Number(val): --dummyKey  
@@ -81,7 +81,7 @@ export default {
           }
           entity.display[headerName] = val
         }
-        else if(headerName == "categoryTypeName"){
+        else if(headerName == 'categoryTypeName'){
           const categoryType = this.categoryTypes.find((type) => type.text == val)
           entity.categoryType = categoryType? categoryType.value: 0
           entity.categoryTypeName = val

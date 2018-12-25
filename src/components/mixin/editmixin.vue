@@ -1,17 +1,16 @@
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapState } from 'vuex'
 import _ from 'lodash'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
-import { sleep } from '../../sub/util/Util'
 import { APP } from '../../sub/constant/config.js'
-import { ROLE, UPDATE_ONLY_NN, IGNORE } from '../../sub/constant/Constants'
+import { UPDATE_ONLY_NN, IGNORE } from '../../sub/constant/Constants'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
-import commonmixinVue from './commonmixin.vue';
+import commonmixinVue from './commonmixin.vue'
 
 export default {
   mixins: [commonmixinVue],  
@@ -61,23 +60,23 @@ export default {
     },
     sensorOptions(entity) {
       return _(this.sensors)
-      .filter((sensor) => {
-        if (entity == 'exb') {
-          return APP.EXB_SENSOR.includes(sensor.sensorId)
-        }
-        else if (entity == 'tx') {
-          return APP.TX_SENSOR.includes(sensor.sensorId)
-        }
-        return true
-      })
-      .map((sensor) => {
+        .filter((sensor) => {
+          if (entity == 'exb') {
+            return APP.EXB_SENSOR.includes(sensor.sensorId)
+          }
+          else if (entity == 'tx') {
+            return APP.TX_SENSOR.includes(sensor.sensorId)
+          }
+          return true
+        })
+        .map((sensor) => {
           return {
             value: sensor.sensorId,
             text: this.$i18n.tnl('label.' + sensor.sensorName)
           }
         }
-      )
-      .value()
+        )
+        .value()
     },
     isShown(conf) {
       return APP[conf]
@@ -94,7 +93,7 @@ export default {
       this.showAlert = false
       evt.preventDefault()
       try {
-        let res = await this.save()
+        await this.save()
         if(this.afterCrud) {
           this.afterCrud()
         }
@@ -115,7 +114,7 @@ export default {
           if(this.beforeReload) {
             this.beforeReload()
           }
-          let customFileLabel = document.getElementsByClassName("custom-file-label")
+          let customFileLabel = document.getElementsByClassName('custom-file-label')
           if (customFileLabel && customFileLabel[0]) {
             customFileLabel[0].innerText =''
           }
@@ -142,7 +141,7 @@ export default {
             return this.$i18n.tline('message.bulk' + err.type + 'Failed', 
               {line: err.line, col: this.$i18n.tnl(`label.${col}`), value: Util.sanitize(err.value), min: err.min, max: err.max, candidates: err.candidates},
               this.showLine)
-          }).join("<br>")
+          })
         }
         else {
           this.message = this.$i18n.terror('message.' + this.crud + 'Failed', {target: this.$i18n.tnl('label.' + this.name), code: e.message})
@@ -177,13 +176,13 @@ export default {
     },
     readImageView(e, imgViewName, imgWidthName, imgHeightName, thumbnailName, resize) {
       HtmlUtil.readImage(e, (evt, width, height, thumbnail) => {
-          this.$refs[imgViewName].src = evt.target.result
-          this.form[imgViewName] = evt.target.result
-          if (imgWidthName) this.form[imgWidthName] = width
-          if (imgHeightName) this.form[imgHeightName] = height
-          if (thumbnailName) this.form[thumbnailName] = thumbnail
+        this.$refs[imgViewName].src = evt.target.result
+        this.form[imgViewName] = evt.target.result
+        if (imgWidthName) this.form[imgWidthName] = width
+        if (imgHeightName) this.form[imgHeightName] = height
+        if (thumbnailName) this.form[thumbnailName] = thumbnail
       }, resize, (size) => {
-        this.message = this.$i18n.tnl("message.uploadMax", {target: Math.floor(APP.MAX_IMAGE_SIZE/1024/1024)})
+        this.message = this.$i18n.tnl('message.uploadMax', {target: Math.floor(APP.MAX_IMAGE_SIZE/1024/1024)})
         this.showAlert = true
         if (this.clearImage) {
           this.clearImage()
@@ -194,14 +193,14 @@ export default {
       })
     },
     formatErrorLine(lines){
-      let errorMessage = this.$i18n.tnl("message.csvLineStart")
+      let errorMessage = this.$i18n.tnl('message.csvLineStart')
       lines.forEach((val, idx) => {
         if(idx != 0){
-          errorMessage = errorMessage.concat(",")
+          errorMessage = errorMessage.concat(',')
         }
-        errorMessage = errorMessage.concat(`${this.$i18n.tnl("message.csvLine", {line: val})}`)
+        errorMessage = errorMessage.concat(`${this.$i18n.tnl('message.csvLine', {line: val})}`)
       })
-      errorMessage = errorMessage.concat(this.$i18n.tnl("message.csvLineEnd"))
+      errorMessage = errorMessage.concat(this.$i18n.tnl('message.csvLineEnd'))
       return errorMessage
     },
     async bulkSave(mainCol, intTypeList, boolTypeList, callback, idSetCallback) {
@@ -219,7 +218,7 @@ export default {
           let csv = Util.csv2Obj(Util.arrayBuffer2str(reader.result))
           if (!csv || !csv.data || csv.errors && csv.errors.length > 0) {
             console.error(csv.errors)
-            if (csv.errors && typeof csv.errors[0] == 'string' && csv.errors[0].startsWith("message.")) {
+            if (csv.errors && typeof csv.errors[0] == 'string' && csv.errors[0].startsWith('message.')) {
               error = this.$t(csv.errors[0])
             }
             if (csv.errors && typeof csv.errors[0] == 'object' ) {
@@ -227,7 +226,7 @@ export default {
                 .map((val) => val.row)
                 .filter((val, idx, arr) => arr.indexOf(val) === idx)
                 .sort((a, b) => a < b? -1: a > b? 1: 0)
-              error = `${this.$i18n.tnl("message.csvInvalidLine")}${this.formatErrorLine(errorLine)}`
+              error = `${this.$i18n.tnl('message.csvInvalidLine')}${this.formatErrorLine(errorLine)}`
             }
             readFin = true
             return
@@ -328,7 +327,7 @@ export default {
         mainCol = `${col}Id`
       }
       await StateHelper.load(mainCol.slice(0, -2), true)
-   },
+    },
   }
 }
 </script>

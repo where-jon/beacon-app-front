@@ -1,11 +1,16 @@
 <template>
-  <h3 v-t="title" class="loginuser-profile"/>
+  <h3 v-t="title" class="loginuser-profile" />
 </template>
 
 <script>
-  export default {
-      props: ['title']
+export default {
+  props: {
+    title: {
+      type: String,
+      required: true,
+    }
   }
+}
 </script>
 
 <style scoped lang="scss">

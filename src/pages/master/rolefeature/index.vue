@@ -6,7 +6,7 @@
 
 <script>
 import mList from '../../../components/page/list.vue'
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapState } from 'vuex'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import { addLabelByKey } from '../../../sub/helper/ViewHelper'
@@ -28,17 +28,17 @@ export default {
         bulkEditPath: '/master/rolefeature/bulkedit',
         appServicePath: '/meta/roleFeature',
         csvOut: true,
-        custumCsvColumns: ["roleId", "featureId", "featureName", "path", "modeText", "featureTypeName", "version", "enabledName"],
+        custumCsvColumns: ['roleId', 'featureId', 'featureName', 'path', 'modeText', 'featureTypeName', 'version', 'enabledName'],
         hideSearchBox: !Util.hasValue(this.$store.state.app_service.role.roleId),
         fields: addLabelByKey(this.$i18n, [ 
-          {key: "featureId", sortable: true },
-          {key: "featureName", sortable: true },
-          {key: "path", sortable: true },
-          {key: "modeText", label: "mode", sortable: true },
-          {key: "featureTypeName", label: "featureType", sortable: true },
-          {key: "version", sortable: true },
-          {key: "enabledName", label: "enabled", sortable: true },
-          {key: "actions", thStyle: {width:'130x !important'} }
+          {key: 'featureId', sortable: true },
+          {key: 'featureName', sortable: true },
+          {key: 'path', sortable: true },
+          {key: 'modeText', label: 'mode', sortable: true },
+          {key: 'featureTypeName', label: 'featureType', sortable: true },
+          {key: 'version', sortable: true },
+          {key: 'enabledName', label: 'enabled', sortable: true },
+          {key: 'actions', thStyle: {width:'130x !important'} }
         ]),
         initTotalRows: this.$store.state.app_service.features.length,
       },

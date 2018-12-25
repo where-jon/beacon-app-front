@@ -1,6 +1,6 @@
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapMutations } from 'vuex'
 import * as Util from '../../sub/util/Util'
 import { getButtonTheme } from '../../sub/helper/ThemeHelper'
 
@@ -30,7 +30,6 @@ export default {
       return Util.getValue(exb, 'exbSensorList.0.sensor.sensorId').val
     },
     getButtonTheme() {
-      const storeTheme = this.$store.state.setting.theme
       return 'outline-' + getButtonTheme()
     },
     isEnabledMenu (key) {

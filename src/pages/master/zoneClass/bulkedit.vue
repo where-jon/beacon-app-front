@@ -1,13 +1,12 @@
 <template>
   <div>
     <breadcrumb :items="items" />
-    <bulkedit :name="name" :id="id" :backPath="backPath" :app-service-path="appServicePath" />
+    <bulkedit :id="id" :name="name" :back-path="backPath" :app-service-path="appServicePath" />
   </div>
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-import _ from 'lodash'
+import { mapState } from 'vuex'
 import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
@@ -49,29 +48,29 @@ export default {
   },
   methods: {
     async save(bulkSaveFunc) {
-      const MAIN_COL = "zoneId"
-      const LOCATION_ZONE_COL = ["zoneId", "locationId"]
-      const ZONE_CATEGORY_COL = ["zoneId", "categoryId", "categoryName"]
-      const ZONE_COL = ["zoneName", "areaId"]
-      const NUMBER_TYPE_LIST = ["locationId", "categoryId", "areaId"]
+      const MAIN_COL = 'zoneId'
+      const LOCATION_ZONE_COL = ['zoneId', 'locationId']
+      const ZONE_CATEGORY_COL = ['zoneId', 'categoryId', 'categoryName']
+      const ZONE_COL = ['zoneName', 'areaId']
+      const NUMBER_TYPE_LIST = ['locationId', 'categoryId', 'areaId']
       let locationId = null
       let categoryId = null
       await StateHelper.load('category')
       await bulkSaveFunc(MAIN_COL, NUMBER_TYPE_LIST, null, (entity, headerName, val, dummyKey) => {
-        if(headerName === "zoneId"){
+        if(headerName === 'zoneId'){
           entity.zoneId = Util.hasValue(val)? Number(val): --dummyKey  
           entity.zoneType = ZONE.getTypes()[1].value
         }
-        else if(headerName === "locationId"){
+        else if(headerName === 'locationId'){
           locationId = val
         }
-        else if(headerName === "categoryId"){
+        else if(headerName === 'categoryId'){
           categoryId = val
         }
-        else if(headerName === "categoryName"){
+        else if(headerName === 'categoryName'){
           entity[headerName] = val
         }
-        if(headerName == "areaName") {
+        if(headerName == 'areaName') {
           entity[headerName] = val
           entity.area = {areaId: dummyKey--, areaName: val}
         }

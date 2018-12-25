@@ -2,42 +2,40 @@
   <div id="mapContainer" class="container-fluid">
     <breadcrumb :items="items" :reload="true" />
     <b-row class="mt-2">
-      <b-form inline @submit.prevent class="mt-2">
-        <label class="ml-3 mr-2">{{ $t('label.area') }}</label>
-        <b-form-select v-model="selectedArea" :options="areaOptions" @change="changeArea" required class="ml-2"></b-form-select>
+      <b-form inline class="mt-2" @submit.prevent>
+        <label class="ml-3 mr-2">
+          {{ $t('label.area') }}
+        </label>
+        <b-form-select v-model="selectedArea" :options="areaOptions" required class="ml-2" @change="changeArea" />
       </b-form>
     </b-row>
     <b-row class="mt-3">
-      <canvas id="map" ref="map"></canvas>
+      <canvas id="map" ref="map" />
     </b-row>
     <!-- modal -->
     <b-modal id="modalError" :title="$t('label.error')" ok-only>
       {{ $t('message.noMapImage') }}
     </b-modal>
     <b-modal v-model="isShownChart" size="lg" :title="chartTitle" header-bg-variant="light" hide-footer>
-       <b-container fluid style="height:350px;">
-         <b-row class="mb-1">
-           <b-col cols="12">
-            <canvas id="dayChart" width="450" height="200"></canvas>
-           </b-col>
-         </b-row>
-       </b-container>
+      <b-container fluid style="height:350px;">
+        <b-row class="mb-1">
+          <b-col cols="12">
+            <canvas id="dayChart" width="450" height="200" />
+          </b-col>
+        </b-row>
+      </b-container>
     </b-modal>
   </div>
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as SensorHelper from '../../sub/helper/SensorHelper'
-import txdetail from '../../components/parts/txdetail.vue'
-import { DEV, DISP, APP } from '../../sub/constant/config'
+import { DEV, DISP } from '../../sub/constant/config'
 import * as mock from '../../assets/mock/mock'
-import * as Util from '../../sub/util/Util'
 import { SENSOR, DISCOMFORT } from '../../sub/constant/Constants'
-import { Shape, Stage, Container, Bitmap, Text, Touch } from '@createjs/easeljs/dist/easeljs.module'
-import { Tween, Ticker } from '@createjs/tweenjs/dist/tweenjs.module'
+import { Shape, Container, Bitmap, Text } from '@createjs/easeljs/dist/easeljs.module'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import cold from '../../assets/icon/cold.png'
@@ -45,13 +43,12 @@ import hot from '../../assets/icon/hot.png'
 import comfort from '../../assets/icon/comfort.png'
 
 export default {
-  mixins: [showmapmixin],
   components: {
-    'txdetail': txdetail,
     breadcrumb,
   },
+  mixins: [showmapmixin],
   data() {
-     return {
+    return {
       items: [
         {
           text: this.$i18n.tnl('label.main'),
@@ -63,7 +60,7 @@ export default {
         },
       ],
       isShownChart: false,
-      chartTitle: "",
+      chartTitle: '',
       keepExbPosition: false,
       toggleCallBack: () => {
         this.keepExbPosition = true
@@ -90,17 +87,17 @@ export default {
         this.positionedExb = _(this.exbs).filter((exb) => {
           return exb.location && exb.location.areaId == this.selectedArea && exb.location.x && exb.location.y > 0 && this.getSensorId(exb) == SENSOR.TEMPERATURE
         })
-        .map((exb) => {
-          let sensor = sensors.find((val) => val.deviceid == exb.deviceId && (val.timestamp||val.updatetime))
-          return {
-            exbId: exb.exbId, deviceId: exb.deviceId, x: exb.location.x, y: exb.location.y,
-            humidity: sensor? sensor.humidity: null,
-            temperature: sensor? sensor.temperature: null,
-            sensorId: SENSOR.TEMPERATURE
-          }
-        })
-        .filter((exb) => exb.temperature != null)
-        .value()
+          .map((exb) => {
+            let sensor = sensors.find((val) => val.deviceid == exb.deviceId && (val.timestamp||val.updatetime))
+            return {
+              exbId: exb.exbId, deviceId: exb.deviceId, x: exb.location.x, y: exb.location.y,
+              humidity: sensor? sensor.humidity: null,
+              temperature: sensor? sensor.temperature: null,
+              sensorId: SENSOR.TEMPERATURE
+            }
+          })
+          .filter((exb) => exb.temperature != null)
+          .value()
 
         if (payload && payload.done) {
           payload.done()
@@ -153,14 +150,14 @@ export default {
         let w = DISP.PIR_R_SIZE
         let iconcolor = SensorHelper.getDiscomfortColor(exb.temperature, exb.humidity)
         btnicon.graphics.beginFill(iconcolor).drawCircle(0, 0, w, w)
-        btnicon.alpha = 0.5;
+        btnicon.alpha = 0.5
         exbBtn.addChild(btnicon)
 
-        let label = new Text(exb.temperature + "℃\n" + exb.humidity + "%")
+        let label = new Text(exb.temperature + '℃\n' + exb.humidity + '%')
         label.font = DISP.THERMOH_FONT
-        label.color = "black"
-        label.textAlign = "center"
-        label.textBaseline = "middle"
+        label.color = 'black'
+        label.textAlign = 'center'
+        label.textBaseline = 'middle'
         label.y = -5
         exbBtn.addChild(label)
       }
@@ -173,7 +170,6 @@ export default {
       stage.enableMouseOver()
 
       exbBtn.on('click', async (evt) =>{
-        let exbBtn = evt.currentTarget
         if (DEV.USE_MOCK_EXC) {
           let key = '/basic/sensorHistory/1/1/today/hour'
           var pMock = mock[key]
@@ -187,7 +183,7 @@ export default {
       stage.update()
     },
     showChart(sensorData) {
-      const dayChart = SensorHelper.showThermoHumidityChart("dayChart", sensorData.data, this.$i18n)
+      SensorHelper.showThermoHumidityChart('dayChart', sensorData.data, this.$i18n)
       this.isShownChart = true
       this.chartTitle = this.$i18n.tnl('message.monthDayTemperature', {month: sensorData.month, day: sensorData.day})
     }

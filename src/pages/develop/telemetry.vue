@@ -1,16 +1,16 @@
 <template>
-  <telemetry :isDev="true" />
+  <telemetry :is-dev="true" />
 </template>
 
 <script>
-  import telemetry from '../monitor/telemetry.vue'
+import telemetry from '../monitor/telemetry.vue'
 
-  export default {
-    components: {
-      telemetry
-    },
-    data () {
-      return {}
-    }
+export default {
+  components: {
+    telemetry
+  },
+  data () {
+    return {}
   }
+}
 </script>

@@ -1,13 +1,10 @@
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-import { Shape, Stage, Container, Bitmap, Text, Touch } from '@createjs/easeljs/dist/easeljs.module'
-import { Tween, Ticker } from '@createjs/tweenjs/dist/tweenjs.module'
-import { EventBus } from '../../sub/helper/EventHelper'
+import { mapState, mapMutations } from 'vuex'
+import { Stage, Bitmap, Touch } from '@createjs/easeljs/dist/easeljs.module'
 import { DISP } from '../../sub/constant/config.js'
 import * as Util from '../../sub/util/Util'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
-import * as PositionHelper from '../../sub/helper/PositionHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import reloadmixinVue from './reloadmixin.vue'
 
@@ -25,15 +22,6 @@ export default {
     }
   },
   computed: {
-    mapImage() {
-      let area = _.find(this.$store.state.app_service.areas, (area) => {
-        if (this.selectedArea == null) {
-          this.selectedArea = area.areaId // nullの場合、最初のものにする
-        }
-        return area.areaId == this.selectedArea
-      })
-      return area && this.getMapImage(area.areaId)
-    },
     areaOptions() {
       let ret = _(this.$store.state.app_service.areas).map((val) => {
         return {text: val.areaName, value: val.areaId}
@@ -51,18 +39,18 @@ export default {
     },
   },
   created() {
-    if (this.$route.path.startsWith("/main")) {      
+    if (this.$route.path.startsWith('/main')) {      
       let timer = 0
       let path = this.$route.path
       let currentWidth = window.innerWidth
       let onResize = () => {
         if (path != this.$route.path) {
           window.removeEventListener('resize', onResize)
-          clearTimeout(timer);
+          clearTimeout(timer)
           return
         }
         if (timer > 0) {
-          clearTimeout(timer);
+          clearTimeout(timer)
         } 
         timer = setTimeout(() => {
           if (currentWidth === window.innerWidth && Util.isAndroidOrIOS()) {
@@ -72,7 +60,7 @@ export default {
           } else {
             currentWidth = window.innerWidth
           }
-          console.log(path + " : " + this.$route.path, this)
+          console.log(path + ' : ' + this.$route.path, this)
           this.reset()
           if (this.stage) {
             this.stage.removeAllChildren()
@@ -82,7 +70,7 @@ export default {
             this.stage.update()
             this.fetchData()
           }
-        }, 200);
+        }, 200)
       }
       window.addEventListener('resize', onResize)
     }
@@ -104,6 +92,15 @@ export default {
     ...mapMutations('main', [
       'replaceMain', 
     ]),
+    mapImage() {
+      let area = _.find(this.areas, (area) => {
+        if (this.selectedArea == null) {
+          this.selectedArea = area.areaId // nullの場合、最初のものにする
+        }
+        return area.areaId == this.selectedArea
+      })
+      return area && this.getMapImage(area.areaId)
+    },
     getMapImage(areaId) {
       let areaImage = _.find(this.$store.state.app_service.areaImages, (areaImage) => {
         return areaImage.areaId == areaId
@@ -115,7 +112,7 @@ export default {
         await StateHelper.load('area')
         this.selectedArea = this.selectedArea ? this.selectedArea : Util.getValue(this, 'areas.0.areaId', null)
         await StateHelper.loadAreaImage(this.selectedArea)
-        console.log("after loadAreas. selectedArea=" + this.selectedArea)
+        console.log('after loadAreas. selectedArea=' + this.selectedArea)
         await StateHelper.load('exb')
         if (tx) {
           await StateHelper.load('tx')
@@ -136,7 +133,7 @@ export default {
       if (!this.mapImage) {
         if (this.showTryCount < 10) {
           this.$nextTick(() => {
-            console.warn("again because no image")
+            console.warn('again because no image')
             this.showMapImage()
           })
         }
@@ -147,7 +144,7 @@ export default {
       }
 
       var bg = new Image()
-      bg.src = this.mapImage
+      bg.src = this.mapImage()
       bg.onload = (evt) => {
         this.drawMapImage(bg)
         if (callback) {
@@ -160,9 +157,9 @@ export default {
       const isMapWidthLarger = parentHeight / parent.clientWidth > target.height / target.width
       let fitWidth
       if (HtmlUtil.isMobile()) {
-        fitWidth = (this.tempMapFitMobile == "both" && isMapWidthLarger) || this.tempMapFitMobile == "width"
+        fitWidth = (this.tempMapFitMobile == 'both' && isMapWidthLarger) || this.tempMapFitMobile == 'width'
       } else {
-         fitWidth = (DISP.MAP_FIT == "both" && isMapWidthLarger) || DISP.MAP_FIT == "width"
+        fitWidth = (DISP.MAP_FIT == 'both' && isMapWidthLarger) || DISP.MAP_FIT == 'width'
       }
       const result = {}
       if (fitWidth) {
@@ -185,7 +182,7 @@ export default {
       this.mapWidth = bg.width
       this.mapHeight = bg.height
       this.isShownMapImage = true
-      let parent = document.getElementById("map").parentElement
+      let parent = document.getElementById('map').parentElement
 
       const size = this.calcFitSize(bg, parent)
       canvas.width = size.width
@@ -203,7 +200,7 @@ export default {
           this.exbCon = null
         }
       }
-      this.stage = new Stage("map")
+      this.stage = new Stage('map')
       this.stage.canvas = canvas
       this.stage.mouseEnabled = true
       if (Touch.isSupported()) {
@@ -242,13 +239,9 @@ export default {
       if (!this.realWidth) { // Due to force update computed property mapRatio
         this.realWidth = 1
         this.$nextTick(() => {
-          this.realWidth = ""
+          this.realWidth = ''
         })
       }
-    },
-    async getPotByTxId(txId) {
-      let pot = await AppServiceHelper.fetch('/basic/pot', txId)
-      this.replaceMain({pot})
     },
     replaceExb(exb, nokeep) {
       if (this.keepExbPosition) {

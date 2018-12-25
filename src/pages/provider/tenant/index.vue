@@ -1,25 +1,24 @@
 <template>
   <div>
     <breadcrumb :items="items" />
-    <m-list :params="params" :list="tenants" >
-    </m-list>
+    <m-list :params="params" :list="tenants" />
   </div>
 </template>
 
 <script>
 import mList from '../../../components/page/list.vue'
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapState } from 'vuex'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import { addLabelByKey } from '../../../sub/helper/ViewHelper'
 import listmixinVue from '../../../components/mixin/listmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 
 export default {
-  mixins: [listmixinVue],
   components: {
     mList, 
     breadcrumb,
   },
+  mixins: [listmixinVue],
   data() {
     return {
       params: {
@@ -30,11 +29,11 @@ export default {
         delFilter: true,
         tenantAction: true,
         fields: addLabelByKey(this.$i18n, [ 
-          {key: "tenantId", sortable: true },
-          {key: "tenantCd", sortable: true },
-          {key: "tenantName", sortable: true },
-          {key: "createDt", sortable: true},
-          {key: "actions", thStyle: {width:'130px !important'} }
+          {key: 'tenantId', sortable: true },
+          {key: 'tenantCd', sortable: true },
+          {key: 'tenantName', sortable: true },
+          {key: 'createDt', sortable: true},
+          {key: 'actions', thStyle: {width:'130px !important'} }
         ]),
         initTotalRows: this.$store.state.app_service.tenants.length
       },
