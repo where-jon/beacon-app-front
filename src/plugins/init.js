@@ -8,7 +8,7 @@ import _ from 'lodash'
 
 export default async (context, inject) => {
   console.log("App Init") // If you need common initialize procedure, write here.
-  context.store.commit('app_service/replaceAS', {'defaultConfig': _.cloneDeep(config)})
+  window.localStorage.setItem("defaultConfig", JSON.stringify(_.cloneDeep(config)))
   MenuHelper.setStore(context.store)
   await ConfigHelper.loadConfigJson()
   try {
