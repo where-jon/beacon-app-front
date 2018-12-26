@@ -27,14 +27,14 @@
         <!-- region -->
         <b-nav-item-dropdown right>
           <template slot="button-content">
-            <div v-if="isTenantAdmin">
+            <div v-if="isTenantAdmin()">
               <i class="far fa-building mr-1" aria-hidden="true" style="visibility: hidden;" />
-              <span>{{ currentTenantName }}</span>
+              <span>{{ this.$store.state.currentTenant? this.$store.state.currentTenant.tenantName: '' }}</span>
             </div>
             <i class="far fa-building mr-1" aria-hidden="true" />
-            <span>{{ currentRegionName }}</span>
+            <span>{{ this.$store.state.currentRegion? this.$store.state.currentRegion.regionName: '' }}</span>
           </template>
-          <b-dropdown-item v-for="region in this.$store.state.app_service.regions" :key="region.regionId" href="#" @click="switchRegion(region)">
+          <b-dropdown-item v-for="region in regions" :key="region.regionId" :class="dropdownbarClasses" href="#" @click="switchRegion($event.target, region)">
             <i :style="getStyleDropdownRegion(region.regionId)" class="far fa-building mr-1" aria-hidden="true" />
             <span>{{ region.regionName }}</span>
           </b-dropdown-item>
@@ -78,11 +78,6 @@ export default {
       nav : this.$store.state.menu,
       showLogo: DISP.SHOW_LOGO,
       showNav: HtmlUtil.isMobile() || DISP.SHOW_NAV,
-      login: JSON.parse(window.localStorage.getItem('login')),
-      currentTenantName: '',
-      currentRegionName: '',
-      currentRegionId: null,
-      switchReload: true,
     }
   },
   computed: {
@@ -98,6 +93,9 @@ export default {
     ...mapState('app_service', [
       'pots', 'regions',
     ]),
+    dropdownbarClasses() {
+      return {...getThemeClasses()}
+    },
     navbarClasses() {
       return getThemeClasses()
     },
@@ -110,19 +108,14 @@ export default {
       return classes
     },
   },
-  async created() {
-    this.currentTenantName = this.login && this.login.currentTenant? this.login.currentTenant.tenantName: ''
-    this.currentRegionName = this.login && this.login.currentRegion? this.login.currentRegion.regionName: ''
-    this.currentRegionId = this.login && this.login.currentRegion? this.login.currentRegion.regionId: null
-    if(this.switchReload){
-      this.switchReload = false
-      await StateHelper.load('region')
-    }
-  },
   async mounted() {
     window.addEventListener('resize', () => {
       this.showNav = HtmlUtil.isMobile() || DISP.SHOW_NAV
     })
+    if(window.localStorage.getItem('login') != null){
+      await StateHelper.load('region', true)
+      this.$forceUpdate()
+    }
   },
   methods: {
     logout() {
@@ -130,15 +123,18 @@ export default {
       AuthHelper.logout()
     },
     isTenantAdmin() {
-      return this.$store.state.tenantAdmin
+      const login = JSON.parse(window.localStorage.getItem('login'))
+      return login? login.tenantAdmin: false
     },
     getStyleDropdownRegion(regionId) {
-      return {visibility: this.currentRegionId == regionId? 'visible': 'hidden'}
+      const login = JSON.parse(window.localStorage.getItem('login'))
+      const currentRegionId = login && login.currentRegion? login.currentRegion.regionId: null
+      return {visibility: currentRegionId == regionId? 'visible': 'hidden'}
     },
     move(page) {
       this.$router.push(page)
     },
-    async switchRegion(item) {
+    async switchRegion(target, item) {
       await AuthHelper.switchRegion(item.regionId)
       location.reload()
     },
@@ -171,19 +167,23 @@ div.appTitle {
   min-width: calc(15vw);
 }
 
-a.dropdown-item.default:hover {
+a.dropdown-item.default:hover,
+a.dropdown-item.default:focus {
   background-color: #7EA0C4 !important;
 }
 
-a.dropdown-item.earthcolor:hover {
+a.dropdown-item.earthcolor:hover,
+a.dropdown-item.earthcolor:focus {
   background-color: #819E6E !important;
 }
 
-a.dropdown-item.autumn:hover {
+a.dropdown-item.autumn:hover,
+a.dropdown-item.autumn:focus {
   background: #C5AA78 !important;
 }
 
-a.dropdown-item.vivid:hover {
+a.dropdown-item.vivid:hover, 
+a.dropdown-item.vivid:focus {
   background: #EE5588 !important;
 }
 

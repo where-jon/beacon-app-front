@@ -43,104 +43,118 @@
             </b-col>
           </b-form-row>
         </b-form-group>
-      </b-form>
 
-      <b-form-group v-if="!hasId">
-        <b-form-row>
-          <label v-t="'label.initUser'" class="control-label" />
-        </b-form-row>
-      </b-form-group>
-      <b-form-group v-if="!hasId">
-        <b-form-row>
-          <label v-t="'label.initSysAdminColumn'" class="control-label" />
-        </b-form-row>
-      </b-form-group>
-      <b-form v-if="!hasId && show" inline @submit.prevent="onSubmit">
-        <b-form-row class="mb-2 mr-3">
-          <label v-t="'label.id'" class="mr-3" />
-          <input v-model="form.sysAdminLoginId" :readonly="!isEditable" type="text" maxlength="16" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" class="form-control" required>
+        <b-form-group v-if="!hasId">
+          <b-form-row>
+            <label v-t="'label.initUser'" class="control-label" />
+          </b-form-row>
+        </b-form-group>
+        <b-form-group v-if="!hasId">
+          <b-form-row>
+            <label v-t="'label.initSysAdminColumn'" class="control-label" />
+          </b-form-row>
+        </b-form-group>
+        <div v-if="!hasId && show" class="form-row">
+          <div class="col mb-2 mr-3">
+            <label v-t="'label.id'" class="mr-3"/>
+            <input v-model="form.sysAdminLoginId" :readonly="!isEditable" type="text" maxlength="16" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" class="form-control" required >
+            <input type="text" tabIndex="-1" class="chromeAutoInput" >
+            <input type="password" tabIndex="-1" class="chromeAutoInput" >
+          </div>
+          <div class="col mb-2">
+            <label v-t="'label.password'" class="mr-3"/>
+            <input v-model="form.sysAdminPass" :required="requireInput(form.sysAdminLoginId)" :readonly="!isEditable" type="password" maxlength="16" pattern="^[a-zA-Z0-9_\-\/!#\$%&@]*$" class="form-control">
+            <input type="text" tabIndex="-1" class="chromeAutoInput" >
+            <input type="password" tabIndex="-1" class="chromeAutoInput" >
+          </div>
+        </div>
+        <b-form-group v-if="!hasId">
+          <b-form-row>
+            <label v-t="'label.initAdminColumn'" class="control-label" />
+          </b-form-row>
+        </b-form-group>
+        <div v-if="!hasId && show" class="form-row">
+          <div class="col mb-2 mr-3">
+            <label v-t="'label.id'" class="mr-3"/>
+            <input v-model="form.adminLoginId" :readonly="!isEditable" type="text" maxlength="16" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" class="form-control" >
+            <input type="text" tabIndex="-1" class="chromeAutoInput" >
+            <input type="password" tabIndex="-1" class="chromeAutoInput" >
+          </div>
+          <div class="col mb-2">
+            <label v-t="'label.password'" class="mr-3"/>
+            <input v-model="form.adminPass" :required="requireInput(form.adminLoginId)" :readonly="!isEditable" type="password" maxlength="16" pattern="^[a-zA-Z0-9_\-\/!#\$%&@]*$" class="form-control" >
+            <input type="text" tabIndex="-1" class="chromeAutoInput" >
+            <input type="password" tabIndex="-1" class="chromeAutoInput" >
+          </div>
+        </div>
+        <b-form-group v-if="!hasId">
+          <b-form-row>
+            <label v-t="'label.initUserColumn'" class="control-label" />
+          </b-form-row>
+        </b-form-group>
+        <div v-if="!hasId && show" class="form-row">
+          <div class="col mb-2 mr-3">
+            <label v-t="'label.id'" class="mr-3"/>
+            <input v-model="form.userLoginId" :readonly="!isEditable" type="text" maxlength="16" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" class="form-control" >
+            <input type="text" tabIndex="-1" class="chromeAutoInput" >
+            <input type="password" tabIndex="-1" class="chromeAutoInput" >
+          </div>
+          <div class="col mb-2">
+            <label v-t="'label.password'" class="mr-3"/>
+            <input v-model="form.userPass" :required="requireInput(form.userLoginId)" :readonly="!isEditable" type="password" maxlength="16" pattern="^[a-zA-Z0-9_\-\/!#\$%&@]*$" class="form-control" >
+            <input type="text" tabIndex="-1" class="chromeAutoInput" >
+            <input type="password" tabIndex="-1" class="chromeAutoInput" >
+          </div>
+        </div>
+
+        <b-form-group v-if="!hasId" class="mt-3">
+          <b-form-row>
+            <label v-t="'label.initRegion'" class="control-label" />
+          </b-form-row>
+        </b-form-group>
+        <div v-if="!hasId && show" class="form-row">
+          <b-form-row class="mb-3">
+            <label v-t="'label.regionName'" class="mr-3" />
+            <input v-model="form.regionName" :readonly="!isEditable" type="text" maxlength="20" class="form-control" required >
+          </b-form-row>
+        </div>
+        <div v-if="!hasId && show" class="form-row">
+          <b-form-row class="mb-3">
+            <label v-t="'label.meshId'" class="mr-3" />
+            <input v-model="form.meshId" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control" >
+          </b-form-row>
+        </div>
+        <div v-if="!hasId && show" class="form-row">
+          <b-form-row class="mb-5">
+            <label v-t="'label.deviceOffset'" class="mr-3" />
+            <input v-model="form.deviceOffset" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control" required >
+          </b-form-row>
+        </div>
+
+        <b-form-row class="mb-2">
+          <b-button v-t="'label.featureSetting'" :variant="theme" type="button" class="mr-2 my-1" @click="showFeatureEdit"/>
         </b-form-row>
         <b-form-row class="mb-2">
-          <label v-t="'label.password'" class="mr-3" />
-          <input v-model="form.sysAdminPass" :required="requireInput(form.sysAdminLoginId)" :readonly="!isEditable" type="password" maxlength="16" pattern="^[a-zA-Z0-9_\-\/!#\$%&@]*$" class="form-control">
+          <b-button v-t="'label.system'" :variant="theme" type="button" class="mr-2 my-1" @click="showSettingEdit"/>
         </b-form-row>
-      </b-form>
-      <b-form-group v-if="!hasId">
-        <b-form-row>
-          <label v-t="'label.initAdminColumn'" class="control-label" />
-        </b-form-row>
-      </b-form-group>
-      <b-form v-if="!hasId && show" inline @submit.prevent="onSubmit">
-        <b-form-row class="mb-2 mr-3">
-          <label v-t="'label.id'" class="mr-3" />
-          <input v-model="form.adminLoginId" :readonly="!isEditable" type="text" maxlength="16" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" class="form-control">
-        </b-form-row>
+
         <b-form-row class="mb-2">
-          <label v-t="'label.password'" class="mr-3" />
-          <input v-model="form.adminPass" :required="requireInput(form.adminLoginId)" :readonly="!isEditable" type="password" maxlength="16" pattern="^[a-zA-Z0-9_\-\/!#\$%&@]*$" class="form-control">
+          <label v-t="'label.createDt'" v-if="hasId" class="mr-2"/>
+          <label v-t="createDt" v-if="hasId" />
         </b-form-row>
-      </b-form>
-      <b-form-group v-if="!hasId">
-        <b-form-row>
-          <label v-t="'label.initUserColumn'" class="control-label" />
-        </b-form-row>
-      </b-form-group>
-      <b-form v-if="!hasId && show" inline @submit.prevent="onSubmit">
-        <b-form-row class="mb-2 mr-3">
-          <label v-t="'label.id'" class="mr-3" />
-          <input v-model="form.userLoginId" :readonly="!isEditable" type="text" maxlength="16" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" class="form-control">
-        </b-form-row>
-        <b-form-row class="mb-2">
-          <label v-t="'label.password'" class="mr-3" />
-          <input v-model="form.userPass" :required="requireInput(form.userLoginId)" :readonly="!isEditable" type="password" maxlength="16" pattern="^[a-zA-Z0-9_\-\/!#\$%&@]*$" class="form-control">
-        </b-form-row>
-      </b-form>
 
-      <b-form-group v-if="!hasId" class="mt-3">
-        <b-form-row>
-          <label v-t="'label.initRegion'" class="control-label" />
-        </b-form-row>
-      </b-form-group>
-      <b-form v-if="!hasId && show" inline @submit.prevent="onSubmit">
-        <b-form-row class="mb-3">
-          <label v-t="'label.regionName'" class="mr-3" />
-          <input v-model="form.regionName" :readonly="!isEditable" type="text" maxlength="20" class="form-control" required>
-        </b-form-row>
-      </b-form>
-      <b-form v-if="!hasId && show" inline @submit.prevent="onSubmit">
-        <b-form-row class="mb-3">
-          <label v-t="'label.meshId'" class="mr-3" />
-          <input v-model="form.meshId" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control">
-        </b-form-row>
-      </b-form>
-      <b-form v-if="!hasId && show" inline @submit.prevent="onSubmit">
-        <b-form-row class="mb-5">
-          <label v-t="'label.deviceOffset'" class="mr-3" />
-          <input v-model="form.deviceOffset" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control" required>
-        </b-form-row>
-      </b-form>
-
-      <b-form-row class="mb-2">
-        <b-button v-t="'label.featureSetting'" :variant="theme" type="button" class="mr-2 my-1" @click="showFeatureEdit" />
-      </b-form-row>
-
-      <b-form-row class="mb-2">
-        <label v-t="'label.createDt'" v-if="hasId" class="mr-2" />
-        <label v-t="createDt" v-if="hasId" />
-      </b-form-row>
-
-      <b-form v-if="show" @submit.prevent="onSubmit">
-        <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
-        <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="register(false)">
-          {{ label }}
-        </b-button>
-        <b-button v-t="'label.registerAgain'" v-if="isEditable && !isUpdate" :variant="theme" type="submit" class="my-1" @click="register(true)" />
+        <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList"/>
+        <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="register(false)" >{{ label }}</b-button>
+        <b-button v-t="'label.registerAgain'" v-if="isEditable && !isUpdate" :variant="theme" type="submit" class="my-1" @click="register(true)"/>
       </b-form>
     </div>
 
     <!-- modal -->
-    <b-modal id="modalInfo" :ok-title="$i18n.tnl('label.setting')" :ok-variant="theme" :title="$i18n.tnl('label.featureSetting')" ok-only @ok="storeInfo" @hide="resetModal">
+    <b-modal id="modalFeatureInfo" :ok-title="$i18n.tnl('label.setting')" :ok-variant="theme" :title="$i18n.tnl('label.featureSetting')" ok-only @ok="storeFeatureInfo" @hide="resetModal" >
       <feature-list :list="editFeatureList" :fields="fields" />
+    </b-modal>
+    <b-modal id="modalSettingInfo" :ok-title="$i18n.tnl('label.setting')" :ok-variant="theme" :title="$i18n.tnl('label.system')" ok-only @ok="storeSettingInfo" @hide="resetModal" >
+      <tenant-setting :params="settingParams" :multi-list="editCategorySettingList" :show-key-name="true" />
     </b-modal>
   </div>
 </template>
@@ -151,11 +165,12 @@ import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
+import settingmixinVue from '../../../components/mixin/settingmixin.vue'
 import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import featureList from '../../../components/page/featureList.vue'
+import tenantSetting from '../../../components/page/tenantSetting.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
-import { AUTH_TENANT_CD } from '../../../sub/constant/Constants'
 import { EXCLOUD_BASE_URL } from '../../../sub/constant/config'
 import { addLabelByKey } from '../../../sub/helper/ViewHelper'
 
@@ -163,15 +178,16 @@ export default {
   components: {
     breadcrumb,
     featureList,
+    tenantSetting,
   },
-  mixins: [editmixinVue],
+  mixins: [editmixinVue, settingmixinVue],
   data() {
     return {
       name: 'tenant',
       id: 'tenantId',
       backPath: '/provider/tenant',
       appServicePath: '/meta/tenant',
-      form: ViewHelper.extract(this.$store.state.app_service.tenant, ['tenantId', 'tenantCd', 'tenantName', 'sysAdminLoginId', 'sysAdminPass', 'adminLoginId', 'adminPass', 'userLoginId', 'userPass', 'regionName', 'meshId', 'deviceOffset', 'createDt']),
+      form: ViewHelper.extract(this.$store.state.app_service.tenant, ['tenantId', 'tenantCd', 'tenantName', 'sysAdminLoginId', 'sysAdminPass', 'adminLoginId', 'adminPass', 'userLoginId', 'userPass', 'regionName', 'meshId', 'deviceOffset', 'createDt', 'delFlg']),
       items: [
         {
           text: this.$i18n.tnl('label.master'),
@@ -192,9 +208,18 @@ export default {
         {key: 'featureName' },
         {key: 'path' },
       ]),
+      settingParams: {
+        name: 'setting',
+        fields: [ 
+          {key: 'value', type: 'valType', tooltip: 'description' },
+        ],
+      },
       featureList: [],
       editFeatureList: [],
-      init: true,
+      categorySettingList: {},
+      editCategorySettingList: {},
+      newForm: {},
+      dummyKey: -1
     }
   },
   computed: {
@@ -216,37 +241,44 @@ export default {
     await StateHelper.load('feature')
     this.featureList = this.features.map((feature) => {
       const featureIds = this.getFeatureIds(feature.featureId)
+      const tenantFeature = this.tenant && this.tenant.tenantFeatureList? this.tenant.tenantFeatureList.find((val) => val.tenantFeaturePK.featureId == feature.featureId): null
+      const parentFeature = featureIds.subId != 0 && this.tenant && this.tenant.tenantFeatureList? this.tenant.tenantFeatureList.find((val) => {
+        const ids = this.getFeatureIds(val.tenantFeaturePK.featureId)
+        return ids.parentId == featureIds.parentId && ids.subId == 0
+      }): null
       return {
+        ...feature,
         parentShow: featureIds.subId == 0,
         parentId: featureIds.parentId,
         subShow: featureIds.subId != 0,
         subId: featureIds.subId,
-        checked: false,
-        disabled: false,
-        ...feature,
+        checked: tenantFeature? true: false,
+        disabled: parentFeature? true: false,
       }
-    }).sort((a, b) => {
-      if(a.featureType != b.featureType){
-        return a.featureType < b.featureType? -1: 1
-      }
-      if(a.parentId != b.parentId){
-        return a.parentId < b.parentId? -1: 1
-      }
-      if(a.subId != b.subId){
-        return a.subId < b.subId? -1: 1
-      }
-      return 0
     })
-  },
-  beforeUpdate() {
-    if(this.init){
-      this.form.sysAdminId = ''
-      this.form.sysAdminPass = ''
-      this.form.adminId = ''
-      this.form.adminPass = ''
-      this.form.userId = ''
-      this.form.userPass = ''
-      this.init = false
+      .sort((a, b) => {
+        if(a.featureType != b.featureType){
+          return a.featureType < b.featureType? -1: 1
+        }
+        if(a.parentId != b.parentId){
+          return a.parentId < b.parentId? -1: 1
+        }
+        if(a.subId != b.subId){
+          return a.subId < b.subId? -1: 1
+        }
+        return 0
+      })
+    this.categorySettingList = {}
+    if(this.tenant && this.tenant.settingList){
+      _.forEach(this.tenant.settingList, (value, key) => {
+        if(this.categorySettingList[value.category] == null){
+          this.categorySettingList[value.category] = []
+        }
+        this.categorySettingList[value.category].push({
+          ...value,
+          id: value.settingId,
+        })
+      })
     }
   },
   methods: {
@@ -255,10 +287,17 @@ export default {
     },
     showFeatureEdit() {
       this.editFeatureList = this.featureList.map((val) => {return {...val}})
-      this.$root.$emit('bv::show::modal', 'modalInfo', null)
+      this.$root.$emit('bv::show::modal', 'modalFeatureInfo', null)
     },
-    storeInfo() {
+    showSettingEdit() {
+      this.editCategorySettingList = _.cloneDeep(this.categorySettingList)
+      this.$root.$emit('bv::show::modal', 'modalSettingInfo', null)
+    },
+    storeFeatureInfo() {
       this.featureList = this.editFeatureList.map((val) => {return {...val}})
+    },
+    storeSettingInfo() {
+      this.categorySettingList = _.cloneDeep(this.editCategorySettingList)
     },
     resetModal() {
     },
@@ -270,14 +309,33 @@ export default {
         subId: featureIdStr.length <= 6? Number(featureIdStr.substring(featureIdDigit)): 0,
       }
     },
+    afterCrud(){
+      this.featureList.forEach((feature) => {
+        feature.checked = false
+        feature.disabled = false
+      })
+      this.categorySettingList = {}
+    },
     async save() {
       let dummyKey = -1
       const tenantId = Util.hasValue(this.form.tenantId)? this.form.tenantId: dummyKey--
+      const defaultConfig = JSON.parse(window.localStorage.getItem('defaultConfig'))
+      const settingEntity = []
+      for(let key in this.categorySettingList){
+        this.categorySettingList[key].map((val) => {
+          settingEntity.push({
+            settingId: val.settingId,
+            value: this.format(val.value, val.valType),
+            key: val.key,
+            valType: val.valType,
+          })
+        })
+      }
       let entity = {
         tenantId: tenantId,
         tenantCd: this.form.tenantCd,
-        tenantCdAuth: !AUTH_TENANT_CD.includes(this.form.tenantCd),
         tenantName: this.form.tenantName,
+        delFlg: !Util.hasValue(this.form.tenantId)? 0: this.form.delFlg,
         roleList: !Util.hasValue(this.form.tenantId)? [
           { roleId: dummyKey--, roleName: 'SYS_ADMIN' },
           { roleId: dummyKey--, roleName: 'ADMIN' },
@@ -289,14 +347,15 @@ export default {
           Util.hasValue(this.form.userLoginId)? {userId: dummyKey--, loginId: this.form.userLoginId, pass: this.form.userPass, role: { roleId: dummyKey--, roleName: 'USER' }}: null,
         ].filter((val) => val): null,
         region: !Util.hasValue(this.form.tenantId)? {regionId: dummyKey--, regionName: this.form.regionName, meshId: Util.hasValue(this.form.meshId)? this.form.meshId: null, deviceOffset: this.form.deviceOffset}: null,
-        excloudBaseUrl: !Util.hasValue(this.form.tenantId)? EXCLOUD_BASE_URL: null,
+        defaultExcloudBaseUrl: defaultConfig.EXCLOUD_BASE_URL,
+        excloudBaseUrl: EXCLOUD_BASE_URL,
         tenantFeatureList: this.featureList.map((val) => {
           return val.checked? {
             tenantFeaturePK:{tenantId: dummyKey--, featureId: val.featureId},
           }: null
         }).filter((val) => val),
+        settingList: settingEntity.length != 0? settingEntity: null,
       }
-      this.init = true
       return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
     },
   }
@@ -306,5 +365,11 @@ export default {
 <style scoped lang="scss">
   label.control-label {
     padding-top: 7px;
+  }
+  .chromeAutoInput{
+    position: fixed;
+    width: 0px;
+    height: 0px;
+    top: -999px;
   }
 </style>

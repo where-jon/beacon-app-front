@@ -32,7 +32,6 @@ export default {
           {key: 'zoneId', sortable: true },
           {key: 'zoneName', sortable: true },
           {key: 'areaName', sortable: true},
-          //{key: "locationName", label: "locationZoneName", sortable: true},
           {key: 'categoryName', sortable: true},
           {key: 'actions', thStyle: {width:'130px !important'} }
         ]),
@@ -59,7 +58,7 @@ export default {
   methods: {
     async fetchData(payload) {
       try {
-        this.replace({showProgress: true})
+        this.showProgress()
         await StateHelper.load('zone', this.forceFetchZone)
         if (payload && payload.done) {
           payload.done()
@@ -68,7 +67,7 @@ export default {
       catch(e) {
         console.error(e)
       }
-      this.replace({showProgress: false})
+      this.hideProgress()
     },
   }
 }

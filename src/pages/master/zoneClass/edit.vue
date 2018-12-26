@@ -61,13 +61,6 @@
         </b-button>
         <b-button v-t="'label.registerAgain'" v-if="isEditable && !isUpdate" :variant="theme" type="submit" class="my-1" @click="register(true)" />
       </b-form>
-      <AreaCanvas :base64="base64" :is-regist="isRegist" 
-                  @regist="doRegist"
-                  @selected="onSelected"
-                  @unselected="unSelected"
-                  @created="onCreated"
-                  @deleted="onDeleted"
-      />
     </div>
   </div>
 </template>
@@ -78,7 +71,6 @@ import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
-import AreaCanvas from '../../../components/parts/areacanvas.vue'
 import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
@@ -88,7 +80,6 @@ import showmapmixin from '../../../components/mixin/showmapmixin.vue'
 export default {
   components: {
     breadcrumb,
-    AreaCanvas,
   },
   mixins: [editmixinVue, showmapmixin],
   data() {
@@ -171,49 +162,6 @@ export default {
       }
       return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
     },
-    onCreated(zoneData) {
-      this.onSelected(zoneData)
-      this.zones.push(zoneData)
-    },
-    onSelected (zoneData) {
-      this.isEnableNameText = true
-      this.form.zoneName = zoneData.name
-    },
-    unSelected() {
-      this.isEnableNameText = false
-      this.form.zoneName = ''
-    },
-    onDeleted (id) {
-      this.zones = this.zones.filter((e) => {
-        return e.id !== id
-      })
-      this.unSelected()
-    },
-    regist () {
-      this.isRegist = true
-    },
-    async doRegist (zones, deleted) {
-      const path = this.appServicePath
-      const areaId = this.form.areaId
-      const entities = zones.map((e) => {
-        return {
-          zoneId: -1 * e.id,
-          zoneName: e.name,
-          zoneType: ZONE.getTypes()[1].value,
-          areaId: areaId,
-          x: e.left,
-          y: e.top,
-          w: e.width,
-          h: e.height,
-        }
-      })
-      const saveId = await AppServiceHelper.bulkSave(path, entities, 0)
-      await deleted.forEach(zoneId => {
-        AppServiceHelper.deleteEntity(path, zoneId)
-      })
-      this.isRegist = false
-      return saveId
-    }
   }
 }
 </script>

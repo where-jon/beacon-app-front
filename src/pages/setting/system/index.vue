@@ -59,13 +59,12 @@ export default {
   computed: {
     ...mapState('app_service', [
       'settings',
-      'defaultConfig',
     ]),
   },
   methods: {
     async fetchData(force = false) {
       try {
-        this.replace({showProgress: true})
+        this.showProgress()
         await StateHelper.load('settings', force)
         if(force){
           ConfigHelper.applyAppServiceSetting(this.settings)
@@ -88,7 +87,7 @@ export default {
       catch(e) {
         console.error(e)
       }
-      this.replace({showProgress: false})
+      this.hideProgress()
     },
     async beforeReload(){
       this.newForm = {}
@@ -123,7 +122,7 @@ export default {
     },
     async deleteEntity(entity) {
       await AppServiceHelper.deleteEntity(this.appServicePath, entity.id)
-      ConfigHelper.applyAppServiceSetting([entity], this.defaultConfig)
+      ConfigHelper.applyAppServiceSetting([entity], JSON.parse(window.localStorage.getItem('defaultConfig')))
     },
     async save() {
       const entity = []

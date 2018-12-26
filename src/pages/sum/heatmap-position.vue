@@ -98,7 +98,7 @@ export default {
     },
     async fetchData(payload){
       try {
-        this.replace({showProgress: true})
+        this.showProgress()
         const map = new Image()
         map.src = this.mapImage()
 
@@ -122,7 +122,7 @@ export default {
       catch(e) {
         console.error(e)
       }
-      this.replace({showProgress: false})
+      this.hideProgress()
     },
     async display(param) {
       this.showAlert = false

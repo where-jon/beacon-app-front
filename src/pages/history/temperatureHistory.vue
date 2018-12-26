@@ -133,7 +133,6 @@ export default {
       locale.use(mojule.default)
     })
     this.fetchPrev()
-    this.replace({title: this.$i18n.tnl('label.temperatureHistory')})
   },
   methods: {
     async fetchZoneCategoryList() {

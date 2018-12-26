@@ -155,7 +155,6 @@ export default {
     }
   },
   mounted() {
-    this.replace({title: this.$i18n.tnl('label.location')})
     this.fetchData()
     if(this.pageSendParam){
       this.selectedArea = this.pageSendParam.areaId
@@ -481,7 +480,7 @@ export default {
       this.stage.update()
     },
     async save() {
-      this.replace({showProgress: true})
+      this.showProgress()
       this.message = ''
       this.showInfo = false
       this.showAlert = false
@@ -531,7 +530,7 @@ export default {
         this.showAlert = true
         window.scrollTo(0, 0)
       }
-      this.replace({showProgress: false})
+      this.hideProgress()
     },
   }
 }
