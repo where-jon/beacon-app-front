@@ -6,8 +6,10 @@ import * as AppServiceHelper from './AppServiceHelper'
 import * as StateHelper from './StateHelper'
 import * as MenuHelper from './MenuHelper'
 import * as ConfigHelper from './ConfigHelper'
+import * as LocaleHelper from './LocaleHelper'
 import { APP, LOCAL_LOGIN } from '../constant/config'
 import { LOGIN_MODE } from '../constant/Constants'
+import { getLangShort } from '../util/HtmlUtil'
 
 let router
 let store
@@ -92,6 +94,8 @@ export const authByAppService = async (loginId, password, success, err) => {
     await login({loginId, username:userInfo.user.name, role: userInfo.user.role, featureList: userInfo.featureList, tenantFeatureList: userInfo.tenantFeatureList, menu: userInfo.menu, currentRegion: userInfo.currentRegion, frontRev: revInfo.frontRev, serviceRev: revInfo.serviceRev, tenantAdmin: data.tenantAdmin, currentTenant: userInfo.tenant})
     success()
     StateHelper.loadAreaImages()
+    LocaleHelper.setLocale(LocaleHelper.getLocale())
+    store.commit('setLang', LocaleHelper.getLocale(getLangShort()))
 
   } catch (e) {
     console.error(e)
