@@ -1,6 +1,5 @@
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import * as Util from '../../sub/util/Util'
 
 export default {
@@ -13,7 +12,7 @@ export default {
         return null
       }
       let name = this.$i18n.tnl(`label["${id}"]`)
-      if (name.startsWith("label[")) {
+      if (name.startsWith('label[')) {
         return id
       }
       if(showKeyName){
@@ -31,31 +30,31 @@ export default {
       return /^(number|int|float|double)(list|array)$/.test(type? type.toLowerCase(): type)
     },
     getBooleanOptions() {
-      return [{text: "true", value: "true"}, {text: "false", value: "false"}]
+      return [{text: 'true', value: 'true'}, {text: 'false', value: 'false'}]
     },
     getInputType(type) {
       if(this.useInputNumberType(type)){
-        return "number"
+        return 'number'
       }
-      return "text"
+      return 'text'
     },
     getTypeOptions() {
       return [
-        {text: this.$i18n.tnl("label.string"), value: "string"},
-        {text: this.$i18n.tnl("label.stringList"), value: "stringList"},
-        {text: this.$i18n.tnl("label.number"), value: "number"},
-        {text: this.$i18n.tnl("label.numberList"), value: "numberList"},
-        {text: this.$i18n.tnl("label.boolean"), value: "boolean"},
+        {text: this.$i18n.tnl('label.string'), value: 'string'},
+        {text: this.$i18n.tnl('label.stringList'), value: 'stringList'},
+        {text: this.$i18n.tnl('label.number'), value: 'number'},
+        {text: this.$i18n.tnl('label.numberList'), value: 'numberList'},
+        {text: this.$i18n.tnl('label.boolean'), value: 'boolean'},
       ]
     },
     formatNumberList(str, type){
-      return str.split(",").filter((val) => val.trim().length != 0).map((val) => {
+      return str.split(',').filter((val) => val.trim().length != 0).map((val) => {
         val.trim()
         if(/^number.*$/.test(type)){
           val = Number(val)
         }
         return val
-      }).join(",")
+      }).join(',')
     },
     format(str, type){
       const typeLow = type.toLowerCase()

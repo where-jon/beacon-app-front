@@ -14,7 +14,7 @@
       <div v-if="selectedSensor.length == 0" class="potBox" @click="$emit('resetDetail')">
         <div class="clearfix">
           <div class="thumbnail">
-            <img v-if="selectedTx.thumbnail.length > 0" id="img" :src="selectedTx.thumbnail" width="auto" :height="imageHeight">
+            <img v-if="selectedTx.thumbnail.length > 0" id="img" :src="selectedTx.thumbnail" :height="imageHeight" width="auto">
             <img v-else src="/default.png" width="auto" height="116">
           </div>
           <div class="description">
@@ -31,7 +31,7 @@
       :bg-color="selectedSensor.length == 0 ? selectedTx.bgColor : selectedSensor[0].bg"
       :color="selectedTx.color"
     >
-      <div v-if="selectedSensor.length == 0" class="clearfix" :style="{backgroundColor: selectedTx.bgColor}">
+      <div v-if="selectedSensor.length == 0" :style="{backgroundColor: selectedTx.bgColor}" class="clearfix">
         <div class="thumbnail">
           <img v-if="selectedTx.thumbnail.length > 0" :src="selectedTx.thumbnail" width="auto" height="125">
           <img v-else src="/default.png" width="auto" height="116">

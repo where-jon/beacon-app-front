@@ -1,19 +1,19 @@
 <template>
   <div>
     <div class="container">
-      <b-alert variant="info" dismissible :show="showInfo">
+      <b-alert :show="showInfo" variant="info" dismissible>
         {{ message }}
         <div v-for="thumbnail in form.thumbnails" :key="thumbnail.id">
           ID:{{ thumbnail.id }}({{ thumbnail.name }})
         </div>
       </b-alert>
-      <b-alert variant="warning" dismissible :show="showWarn">
+      <b-alert :show="showWarn" variant="warning" dismissible>
         {{ warnMessage }}
         <div v-for="warnThumbnail in form.warnThumbnails" :key="warnThumbnail.id">
           ID:{{ warnThumbnail.id }}
         </div>
       </b-alert>
-      <b-alert variant="danger" dismissible :show="showAlert" @dismissed="showAlert=false">
+      <b-alert :show="showAlert" variant="danger" dismissible @dismissed="showAlert=false">
         <template v-if="Array.isArray(message)">
           <span v-for="line in message" :key="line">
             {{ line }} <br>
@@ -27,9 +27,9 @@
       <b-form v-if="show" @submit.prevent="onSubmit">
         <b-form-group>
           <label v-t="'label.zipFile'" />
-          <b-form-file :key="formKey" v-model="form.zipFile" accept=".zip" :placeholder="$t('message.selectFile') " :disabled="loading" @change="loadThumbnail" />
+          <b-form-file :key="formKey" v-model="form.zipFile" :placeholder="$t('message.selectFile') " :disabled="loading" accept=".zip" @change="loadThumbnail" />
         </b-form-group>
-        <b-button type="submit" :variant="getButtonTheme()" :disabled="!submittable" @click="register(true)">
+        <b-button :variant="getButtonTheme()" :disabled="!submittable" type="submit" @click="register(true)">
           {{ label }}
         </b-button>
         <b-button v-t="'label.back'" type="button" variant="outline-danger" class="ml-2" @click="backToList" />

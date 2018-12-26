@@ -2,10 +2,10 @@
   <div>
     <breadcrumb :items="items" />
     <div class="container">
-      <b-alert variant="info" dismissible :show="showInfo">
+      <b-alert :show="showInfo" variant="info" dismissible>
         {{ message }}
       </b-alert>
-      <b-alert variant="danger" dismissible :show="showAlert" @dismissed="showAlert=false">
+      <b-alert :show="showAlert" variant="danger" dismissible @dismissed="showAlert=false">
         <template v-if="Array.isArray(message)">
           <span v-for="line in message" :key="line">
             {{ line }} <br>
@@ -25,19 +25,19 @@
             </b-form-group>
             <b-form-group>
               <label v-t="'label.tx'" />
-              <b-form-select v-model="form.txId" :options="txOptions" class="mb-3 ml-3 col-4" :disabled="!isEditable" :readonly="!isEditable" @change="changeTx" />
+              <b-form-select v-model="form.txId" :options="txOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-3 col-4" @change="changeTx" />
             </b-form-group>
             <b-form-group v-show="isShown('TX_WITH_TXID')">
               <label v-t="'label.txId'" />
-              <input v-model="txId" type="number" min="0" max="65535" class="form-control" :readonly="!isEditable">
+              <input v-model="txId" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control">
             </b-form-group>
             <b-form-group v-show="!isShown('TX_WITH_TXID') && isShown('TX_BTX_MINOR') != 'minor'">
               <label v-t="'label.btxId'" />
-              <input v-model="btxId" type="number" min="0" max="65535" class="form-control" :readonly="!isEditable">
+              <input v-model="btxId" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control">
             </b-form-group>
             <b-form-group v-show="!isShown('TX_WITH_TXID') && isShown('TX_BTX_MINOR') == 'minor'">
               Tx(<label v-t="'label.minor'" />)
-              <input v-model="minor" type="number" min="0" max="65535" class="form-control" :readonly="!isEditable">
+              <input v-model="minor" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control">
             </b-form-group>
             <b-form-group v-show="category.length > 1">
               <label v-t="'label.categoryType'" />
@@ -45,54 +45,54 @@
             </b-form-group>
             <b-form-group v-if="isShown('POT_WITH_POTCD')">
               <label v-t="'label.potCd'" />
-              <input v-model="form.potCd" type="text" maxlength="20" class="form-control" required :readonly="!isEditable">
+              <input v-model="form.potCd" :readonly="!isEditable" type="text" maxlength="20" class="form-control" required>
             </b-form-group>
             <b-form-group>
               <label v-t="'label.potName'" />
-              <input v-model="form.potName" type="text" maxlength="20" class="form-control" required :readonly="!isEditable">
+              <input v-model="form.potName" :readonly="!isEditable" type="text" maxlength="20" class="form-control" required>
             </b-form-group>
             <b-form-group v-show="isShown('POT_WITH_RUBY')">
               <label v-t="'label.ruby'" />
-              <input v-model="form.ruby" type="text" maxlength="20" class="form-control" :readonly="!isEditable">
+              <input v-model="form.ruby" :readonly="!isEditable" type="text" maxlength="20" class="form-control">
             </b-form-group>
             <b-form-group>
               <label v-t="'label.displayName'" />
-              <input v-model="form.displayName" type="text" maxlength="3" class="form-control" :readonly="!isEditable">
+              <input v-model="form.displayName" :readonly="!isEditable" type="text" maxlength="3" class="form-control">
             </b-form-group>
             <b-form-group v-show="isShown('POT_WITH_GROUP')">
               <label v-t="'label.group'" />
-              <b-form-select v-model="form.groupId" :options="groupOptions" class="mb-3 ml-3 col-4" :disabled="!isEditable" :readonly="!isEditable" />
+              <b-form-select v-model="form.groupId" :options="groupOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-3 col-4" />
             </b-form-group>
             <b-form-group v-show="isShown('POT_WITH_CATEGORY')">
               <label v-t="'label.category'" />
-              <b-form-select v-model="form.categoryId" :options="categoryOptions" class="mb-3 ml-3 col-4" :disabled="!isEditable" :readonly="!isEditable" />
+              <b-form-select v-model="form.categoryId" :options="categoryOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-3 col-4" />
             </b-form-group>
             <b-form-group v-show="isShown('POT_WITH_POST')">
               <label v-t="'label.post'" />
-              <input v-model="form.post" type="text" maxlength="20" class="form-control" :readonly="!isEditable">
+              <input v-model="form.post" :readonly="!isEditable" type="text" maxlength="20" class="form-control">
             </b-form-group>
             <b-form-group v-show="isShown('POT_WITH_TEL')">
               <label v-t="'label.tel'" />
-              <b-form-input v-model="form.tel" type="tel" maxlength="20" :readonly="!isEditable" pattern="[-\d]*" />
+              <b-form-input v-model="form.tel" :readonly="!isEditable" type="tel" maxlength="20" pattern="[-\d]*" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.thumbnail'" />
-              <b-form-file v-if="isEditable" ref="inputThumbnail" v-model="form.thumbnail" accept="image/jpeg, image/png, image/gif" :placeholder="$t('message.selectFile') " @change="readImage" />
-              <b-button v-if="isEditable && form.thumbnail" type="button" :variant="theme" class="float-right mt-3" @click="clearImage">
+              <b-form-file v-if="isEditable" ref="inputThumbnail" v-model="form.thumbnail" :placeholder="$t('message.selectFile') " accept="image/jpeg, image/png, image/gif" @change="readImage" />
+              <b-button v-if="isEditable && form.thumbnail" :variant="theme" type="button" class="float-right mt-3" @click="clearImage">
                 {{ $i18n.tnl('label.clear') }}
               </b-button>
               <img v-if="form.thumbnail" ref="thumbnail" :src="form.thumbnail" width="100" class="mt-1 ml-3">
             </b-form-group>
             <b-form-group>
               <label v-t="'label.description'" />
-              <b-form-textarea v-model="form.description" :rows="3" :max-rows="6" maxlength="1000" :readonly="!isEditable" />
+              <b-form-textarea v-model="form.description" :rows="3" :max-rows="6" :readonly="!isEditable" maxlength="1000" />
             </b-form-group>
 
             <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
-            <b-button v-if="isEditable" type="submit" :variant="theme" class="mr-2 my-1" @click="beforeSubmit(false)">
+            <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="beforeSubmit(false)">
               {{ label }}
             </b-button>
-            <b-button v-if="isEditable && !isUpdate" v-t="'label.registerAgain'" type="submit" :variant="theme" class="my-1" @click="beforeSubmit(true)" />
+            <b-button v-t="'label.registerAgain'" v-if="isEditable && !isUpdate" :variant="theme" type="submit" class="my-1" @click="beforeSubmit(true)" />
           </b-form>
         </b-col>
       </b-row>

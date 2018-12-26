@@ -31,11 +31,11 @@
         <b-form-row>
           <b-form-row class="mb-3 mr-2">
             <label v-t="'label.historyDateFrom'" class="mr-2" />
-            <date-picker v-model="form.datetimeFrom" type="datetime" :clearable="false" class="mr-2 inputdatefrom" required @change="changeDatetimeFrom" />
+            <date-picker v-model="form.datetimeFrom" :clearable="false" type="datetime" class="mr-2 inputdatefrom" required @change="changeDatetimeFrom" />
           </b-form-row>
           <b-form-row class="mb-3 mr-2">
             <label v-t="'label.historyDateTo'" class="mr-2" />
-            <date-picker v-model="form.datetimeTo" type="datetime" :clearable="false" class="mr-2 inputdateto" required />
+            <date-picker v-model="form.datetimeTo" :clearable="false" type="datetime" class="mr-2 inputdateto" required />
           </b-form-row>
         </b-form-row>
       </b-form-group>

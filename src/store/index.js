@@ -12,6 +12,7 @@ export const state = () => ({
   featureList: [],
   menu: [],
   error: null,
+  currentTenant: {},
   currentRegion: {},
   showProgress: false,
   reload: false,

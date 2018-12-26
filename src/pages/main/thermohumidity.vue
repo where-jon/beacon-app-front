@@ -16,7 +16,7 @@
     <b-modal id="modalError" :title="$t('label.error')" ok-only>
       {{ $t('message.noMapImage') }}
     </b-modal>
-    <b-modal v-model="isShownChart" size="lg" :title="chartTitle" header-bg-variant="light" hide-footer>
+    <b-modal v-model="isShownChart" :title="chartTitle" size="lg" header-bg-variant="light" hide-footer>
       <b-container fluid style="height:350px;">
         <b-row class="mb-1">
           <b-col cols="12">

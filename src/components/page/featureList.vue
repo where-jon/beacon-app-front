@@ -1,16 +1,16 @@
 <template>
   <b-container>
-    <b-table show-empty stacked="md" striped bordered outlined hover :items="list" :fields="fields">
+    <b-table :items="list" :fields="fields" show-empty stacked="md" striped bordered outlined hover>
       <template slot="parentCheck" slot-scope="row">
         <div v-if="row.item.parentShow" class="custom-control custom-checkbox">
           <input :id="getCheckId(row.item)" v-model="row.item.checked" type="checkbox" class="custom-control-input" @change="parentChange(row.item)">
-          <label class="custom-control-label mb-3" :for="getCheckId(row.item)" />
+          <label :for="getCheckId(row.item)" class="custom-control-label mb-3" />
         </div>
       </template>
       <template slot="subCheck" slot-scope="row">
-        <div class="custom-control custom-checkbox" v-if="row.item.subShow" >
-          <input type="checkbox" class="custom-control-input" :id="getCheckId(row.item)" v-model="row.item.checked" :disabled="row.item.disabled">
-          <label class="custom-control-label mb-3" :for="getCheckId(row.item)" />
+        <div v-if="row.item.subShow" class="custom-control custom-checkbox" >
+          <input :id="getCheckId(row.item)" v-model="row.item.checked" :disabled="row.item.disabled" type="checkbox" class="custom-control-input">
+          <label :for="getCheckId(row.item)" class="custom-control-label mb-3" />
         </div>
       </template>
       <template slot="featureName" slot-scope="row">

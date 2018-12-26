@@ -2,10 +2,10 @@
   <div>
     <breadcrumb :items="items" />
     <div class="container">
-      <b-alert variant="info" dismissible :show="showInfo">
+      <b-alert :show="showInfo" variant="info" dismissible>
         {{ message }}
       </b-alert>
-      <b-alert variant="danger" dismissible :show="showAlert" @dismissed="showAlert=false">
+      <b-alert :show="showAlert" variant="danger" dismissible @dismissed="showAlert=false">
         <template v-if="Array.isArray(message)">
           <span v-for="line in message" :key="line">
             {{ line }} <br>
@@ -26,49 +26,49 @@
             </b-form-group>
             <b-form-group v-if="showMinorHead" v-show="showTx('minor')">
               <label v-t="'label.minor'" />
-              <input v-model="form.minor" type="number" min="0" max="65535" class="form-control" :readonly="!isEditable" :required="showTx('minor')">
+              <input v-model="form.minor" :readonly="!isEditable" :required="showTx('minor')" type="number" min="0" max="65535" class="form-control">
             </b-form-group>
             <b-form-group>
               <label v-t="'label.type'" />
-              <b-form-select v-model="form.sensorId" :options="sensorOptionsTx" class="mb-3 ml-3 col-4" :disabled="!isEditable" :readonly="!isEditable" />
+              <b-form-select v-model="form.sensorId" :options="sensorOptionsTx" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-3 col-4" />
             </b-form-group>
             <b-form-group v-show="isShown('TX_WITH_CATEGORY')">
               <label v-t="'label.category'" />
-              <b-form-select v-model="form.categoryId" :options="categoryOptions" class="mb-3 ml-3 col-4" :disabled="!isEditable" :readonly="!isEditable" />
+              <b-form-select v-model="form.categoryId" :options="categoryOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-3 col-4" />
             </b-form-group>
             <b-form-group v-show="isShown('TX_WITH_GROUP')">
               <label v-t="'label.group'" />
-              <b-form-select v-model="form.groupId" :options="groupOptions" class="mb-3 ml-3 col-4" :disabled="!isEditable" :readonly="!isEditable" />
+              <b-form-select v-model="form.groupId" :options="groupOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-3 col-4" />
             </b-form-group>
             <b-form-group v-show="showTx('btxId')">
               <label v-t="'label.btxId'" />
-              <input v-model="form.btxId" type="number" min="0" max="65535" class="form-control" :required="showTx('btxId')" :readonly="!isEditable">
+              <input v-model="form.btxId" :required="showTx('btxId')" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control">
             </b-form-group>
             <b-form-group v-show="isShown('TX_WITH_MAJOR')">
               <label v-t="'label.major'" />
-              <input v-model="form.major" type="number" min="0" max="65535" class="form-control" :required="isMajorRequired" :readonly="!isEditable">
+              <input v-model="form.major" :required="isMajorRequired" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control">
             </b-form-group>
             <b-form-group v-if="showMinorMid" v-show="showTx('minor')">
               <label v-t="'label.minor'" />
-              <input v-model="form.minor" type="number" min="0" max="65535" class="form-control" :readonly="!isEditable" :required="showTx('minor')">
+              <input v-model="form.minor" :readonly="!isEditable" :required="showTx('minor')" type="number" min="0" max="65535" class="form-control">
             </b-form-group>
             <b-form-group>
               <label v-t="'label.txName'" />
-              <input v-model="form.txName" type="text" maxlength="20" class="form-control" :readonly="!isEditable">
+              <input v-model="form.txName" :readonly="!isEditable" type="text" maxlength="20" class="form-control">
             </b-form-group>
             <b-form-group v-show="isShown('TX_WITH_DISPLAY_NAME')">
               <label v-t="'label.displayName'" />
-              <input v-model="form.displayName" type="text" maxlength="3" class="form-control" :readonly="!isEditable">
+              <input v-model="form.displayName" :readonly="!isEditable" type="text" maxlength="3" class="form-control">
             </b-form-group>
             <b-form-group v-show="isShown('TX_WITH_DESCRIPTION')">
               <label v-t="'label.description'" />
-              <b-form-textarea v-model="form.description" :rows="3" :max-rows="6" maxlength="1000" :readonly="!isEditable" />
+              <b-form-textarea v-model="form.description" :rows="3" :max-rows="6" :readonly="!isEditable" maxlength="1000" />
             </b-form-group>
             <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
-            <b-button v-if="isEditable" type="submit" :variant="theme" class="mr-2 my-1" @click="register(false)">
+            <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="register(false)">
               {{ label }}
             </b-button>
-            <b-button v-if="isEditable && !isUpdate" v-t="'label.registerAgain'" type="submit" :variant="theme" class="my-1" @click="register(true)" />
+            <b-button v-t="'label.registerAgain'" v-if="isEditable && !isUpdate" :variant="theme" type="submit" class="my-1" @click="register(true)" />
           </b-form>
         </b-col>
       </b-row>

@@ -2,10 +2,10 @@
   <div>
     <breadcrumb :items="items" />
     <div class="container">
-      <b-alert variant="info" dismissible :show="showInfo">
+      <b-alert :show="showInfo" variant="info" dismissible>
         {{ message }}
       </b-alert>
-      <b-alert variant="danger" dismissible :show="showAlert" @dismissed="showAlert=false">
+      <b-alert :show="showAlert" variant="danger" dismissible @dismissed="showAlert=false">
         <template v-if="Array.isArray(message)">
           <span v-for="line in message" :key="line">
             {{ line }} <br>
@@ -23,28 +23,28 @@
         </b-form-group>
         <b-form-group>
           <label v-t="'label.groupName'" />
-          <input v-model="form.groupName" type="text" maxlength="20" class="form-control" required :readonly="!isEditable">
+          <input v-model="form.groupName" :readonly="!isEditable" type="text" maxlength="20" class="form-control" required>
         </b-form-group>
         <b-form-group>
           <label v-t="'label.ruby'" />
-          <input v-model="form.ruby" type="text" class="form-control" maxlength="20" :readonly="!isEditable">
+          <input v-model="form.ruby" :readonly="!isEditable" type="text" class="form-control" maxlength="20">
         </b-form-group>
         <b-form-group>
           <label v-t="'label.shape'" />
-          <b-form-select v-model="form.displayShape" :options="shapes" required :disabled="!isEditable" :readonly="!isEditable" />
+          <b-form-select v-model="form.displayShape" :options="shapes" :disabled="!isEditable" :readonly="!isEditable" required />
         </b-form-group>
         <color-picker :caption="'label.textColor'" :name="'displayColor'" />
         <color-picker :caption="'label.bgColor'" :name="'displayBgColor'" />
         <b-form-group>
           <label v-t="'label.description'" />
-          <b-form-textarea v-model="form.description" :rows="3" :max-rows="6" maxlength="1000" :readonly="!isEditable" />
+          <b-form-textarea v-model="form.description" :rows="3" :max-rows="6" :readonly="!isEditable" maxlength="1000" />
         </b-form-group>
 
         <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
-        <b-button v-if="isEditable" type="submit" :variant="theme" class="mr-2 my-1" @click="register(false)">
+        <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="register(false)">
           {{ label }}
         </b-button>
-        <b-button v-if="isEditable && !isUpdate" v-t="'label.registerAgain'" type="submit" :variant="theme" class="my-1" @click="register(true)" />
+        <b-button v-t="'label.registerAgain'" v-if="isEditable && !isUpdate" :variant="theme" type="submit" class="my-1" @click="register(true)" />
       </b-form>
     </div>
   </div>
