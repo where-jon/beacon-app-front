@@ -70,7 +70,7 @@ export const getUserInfo = async (tenantAdmin) => {
   await StateHelper.load('region', true)
 
   // get setting (again in case failed on init or reload)
-  const setting = await HttpHelper.getAppServiceNoCrd('/meta/setting/byTenant/' + getTenantCd('default'))
+  const setting = await HttpHelper.getAppService('/meta/setting/wsByTenant/' + getTenantCd('default'))
   return {tenant, tenantFeatureList, user, featureList, menu, currentRegion, setting}
 }
 
