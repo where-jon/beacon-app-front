@@ -3,13 +3,13 @@
   <div>
     <breadcrumb :items="items" />
     <div class="container">
-      <b-alert variant="success" dismissible :show="isSuccess">
+      <b-alert :show="isSuccess" variant="success" dismissible>
         {{ 
           $i18n.tnl('message.updateCompleted', {
             target: $i18n.tnl('label.login-user-profile')})
         }}
       </b-alert>
-      <b-alert variant="danger" dismissible :show="hasError">
+      <b-alert :show="hasError" variant="danger" dismissible>
         {{ 
           $i18n.terror('message.updateFailed', {
             target: $i18n.tnl('label.login-user-profile')
@@ -22,22 +22,22 @@
           <b-form>
             <b-form-group>
               <label v-t="'label.loginId'" />
-              <b-form-input v-model="loginUser.loginId" type="text" maxlength="16" readonly :state="errorMessages.loginId.length > 0 ? false : null" />
-              <p v-for="(val, key) in errorMessages.loginId" :key="key" v-t="val" class="error" />
+              <b-form-input v-model="loginUser.loginId" :state="errorMessages.loginId.length > 0 ? false : null" type="text" maxlength="16" readonly />
+              <p v-t="val" v-for="(val, key) in errorMessages.loginId" :key="key" class="error" />
             </b-form-group>
             <b-form-group v-show="showName">
               <label v-t="'label.name'" />
-              <b-form-input v-model="loginUser.name" type="text" :readonly="!isChange" :state="errorMessages.name.length > 0 ? false : null" />
-              <p v-for="(val, key) in errorMessages.name" :key="key" v-t="val" class="error" />
+              <b-form-input v-model="loginUser.name" :readonly="!isChange" :state="errorMessages.name.length > 0 ? false : null" type="text" />
+              <p v-t="val" v-for="(val, key) in errorMessages.name" :key="key" class="error" />
             </b-form-group>
             <b-form-group v-show="showEmail">
               <label v-t="'label.email'" />
-              <b-form-input v-model="loginUser.email" type="email" :readonly="!isChange" :state="errorMessages.email.length > 0 ? false : null" />
-              <p v-for="(val, key) in errorMessages.email" :key="key" v-t="val" class="error" />
+              <b-form-input v-model="loginUser.email" :readonly="!isChange" :state="errorMessages.email.length > 0 ? false : null" type="email" />
+              <p v-t="val" v-for="(val, key) in errorMessages.email" :key="key" class="error" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.role'" />
-              <b-form-input type="text" :value="loginUser.role" :readonly="true" />
+              <b-form-input :value="loginUser.role" :readonly="true" type="text" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.theme'" />
@@ -49,20 +49,20 @@
               <b-form-select v-model="selectedCharSet" :options="charSets" class="mb-3" @change="charSetSelected" />
             </b-form-group>
             <b-form-group v-show="!isProvider">
-              <b-button v-show="!isChange" v-t="'label.changeProfilePassword'" type="button" 
-                        :variant="theme" class="btn-block" @click="isChange = true"
+              <b-button v-t="'label.changeProfilePassword'" v-show="!isChange" :variant="theme" 
+                        type="button" class="btn-block" @click="isChange = true"
               />
             </b-form-group>
 
             <b-card v-show="isChange" bg-variant="light">
-              <b-form-group breakpoint="lg" :label="$i18n.tnl('label.changePassword')" label-size="md">
+              <b-form-group :label="$i18n.tnl('label.changePassword')" breakpoint="lg" label-size="md">
                 <!-- 現在のパスワード -->
                 <b-form-group :label="$i18n.tnl('label.passwordCurrent')" label-class="text-sm-right" label-for="password-current">
                   <b-form-input id="password-current" v-model="loginUser.password"
-                                type="password" maxlength="16"
-                                :state="errorMessages.password.length > 0 ? false : null"
+                                :state="errorMessages.password.length > 0 ? false : null" type="password"
+                                maxlength="16"
                   />
-                  <p v-for="(val, key) in errorMessages.password" :key="key" v-t="val" class="error" />
+                  <p v-t="val" v-for="(val, key) in errorMessages.password" :key="key" class="error" />
                 </b-form-group>
 
                 <!-- 変更パスワード -->
@@ -75,7 +75,7 @@
                   <b-form-input id="password-confirm" v-model="loginUser.passwordConfirm" type="password" maxlength="16" />
                 </b-form-group>
               </b-form-group>
-              <b-alert variant="danger" dismissible :show="passErrorMessage !== null">
+              <b-alert :show="passErrorMessage !== null" variant="danger" dismissible>
                 {{ passErrorMessage }}
               </b-alert>
             </b-card>
@@ -85,7 +85,7 @@
       <b-row v-show="isChange" :style="{ marginTop: '30px' }">
         <b-form-group class="col text-center">
           <b-button v-t="'label.cancel'" type="button" class="mr-4 mb-2 input-btn" variant="outline-danger" @click="handleCancelButton" />
-          <b-button v-t="'label.modify'" type="button" class="ml-4 mb-2 input-btn" :variant="theme" @click="onSubmit" />
+          <b-button v-t="'label.modify'" :variant="theme" type="button" class="ml-4 mb-2 input-btn" @click="onSubmit" />
         </b-form-group>
       </b-row>
     </div>

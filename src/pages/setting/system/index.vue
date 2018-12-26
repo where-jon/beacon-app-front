@@ -59,7 +59,6 @@ export default {
   computed: {
     ...mapState('app_service', [
       'settings',
-      'defaultConfig',
     ]),
   },
   methods: {
@@ -123,7 +122,7 @@ export default {
     },
     async deleteEntity(entity) {
       await AppServiceHelper.deleteEntity(this.appServicePath, entity.id)
-      ConfigHelper.applyAppServiceSetting([entity], this.defaultConfig)
+      ConfigHelper.applyAppServiceSetting([entity], JSON.parse(window.localStorage.getItem('defaultConfig')))
     },
     async save() {
       const entity = []

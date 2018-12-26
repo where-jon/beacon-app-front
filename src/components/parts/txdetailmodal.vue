@@ -1,11 +1,11 @@
 <template>
   <transition name="modal" appear>
     <div class="modal modal-overlay" @click.self="$emit('close')">
-      <div class="modal-window" :style="modalStyle">
-        <div class="modal-content" :style="modalStyle">
+      <div :style="modalStyle" class="modal-window">
+        <div :style="modalStyle" class="modal-content">
           <slot />
         </div>
-        <footer class="md-footer" :style="modalStyle">
+        <footer :style="modalStyle" class="md-footer">
           <b-button class="btn" @click="$emit('close')">
             OK
           </b-button>

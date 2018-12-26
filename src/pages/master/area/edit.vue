@@ -2,10 +2,10 @@
   <div>
     <breadcrumb :items="items" />
     <div class="container">
-      <b-alert variant="info" dismissible :show="showInfo">
+      <b-alert :show="showInfo" variant="info" dismissible>
         {{ message }}
       </b-alert>
-      <b-alert variant="danger" dismissible :show="showAlert" @dismissed="showAlert=false">
+      <b-alert :show="showAlert" variant="danger" dismissible @dismissed="showAlert=false">
         <template v-if="Array.isArray(message)">
           <span v-for="line in message" :key="line">
             {{ line }} <br>
@@ -25,21 +25,21 @@
             </b-form-group>
             <b-form-group>
               <label v-t="'label.areaName'" />
-              <input v-model="form.areaName" type="text" maxlength="20" class="form-control" required :readonly="!isEditable">
+              <input v-model="form.areaName" :readonly="!isEditable" type="text" maxlength="20" class="form-control" required>
             </b-form-group>
             <b-form-group>
               <label v-t="'label.map'" />
-              <b-form-file v-if="isEditable" ref="inputThumbnail" v-model="form.mapImage" accept="image/jpeg, image/png, image/gif" :placeholder="$t('message.selectFile') " @change="readImage" />
-              <b-button v-if="isEditable && form.mapImage" type="button" :variant="getButtonTheme()" class="float-right mt-3" @click="clearImage">
+              <b-form-file v-if="isEditable" ref="inputThumbnail" v-model="form.mapImage" :placeholder="$t('message.selectFile') " accept="image/jpeg, image/png, image/gif" @change="readImage" />
+              <b-button v-if="isEditable && form.mapImage" :variant="getButtonTheme()" type="button" class="float-right mt-3" @click="clearImage">
                 {{ $i18n.tnl('label.clear') }}
               </b-button>
               <img v-if="form.mapImage" ref="mapImage" :src="form.mapImage" width="100" class="mt-1 ml-3">
             </b-form-group>
             <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
-            <b-button v-if="isEditable" type="submit" :variant="getButtonTheme()" class="mr-2 my-1" @click="beforeSubmit(false)">
+            <b-button v-if="isEditable" :variant="getButtonTheme()" type="submit" class="mr-2 my-1" @click="beforeSubmit(false)">
               {{ label }}
             </b-button>
-            <b-button v-if="isEditable && !isUpdate" v-t="'label.registerAgain'" type="submit" :variant="getButtonTheme()" class="my-1" @click="beforeSubmit(true)" />
+            <b-button v-t="'label.registerAgain'" v-if="isEditable && !isUpdate" :variant="getButtonTheme()" type="submit" class="my-1" @click="beforeSubmit(true)" />
           </b-form>
         </b-col>
       </b-row>

@@ -2,10 +2,10 @@
   <div>
     <breadcrumb :items="items" />
     <div class="container">
-      <b-alert variant="info" dismissible :show="showInfo">
+      <b-alert :show="showInfo" variant="info" dismissible>
         {{ message }}
       </b-alert>
-      <b-alert variant="danger" dismissible :show="showAlert" @dismissed="showAlert=false">
+      <b-alert :show="showAlert" variant="danger" dismissible @dismissed="showAlert=false">
         <template v-if="Array.isArray(message)">
           <span v-for="line in message" :key="line">
             {{ line }} <br>
@@ -23,7 +23,7 @@
         </b-form-group>
         <b-form-group>
           <label v-t="'label.roleName'" />
-          <input v-model="form.roleName" type="text" maxlength="20" class="form-control" required :readonly="!isEditable">
+          <input v-model="form.roleName" :readonly="!isEditable" type="text" maxlength="20" class="form-control" required>
         </b-form-group>
 
         <b-form-group>
@@ -32,10 +32,10 @@
         </b-form-group>
 
         <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
-        <b-button v-if="isEditable" type="submit" :variant="theme" class="mr-2 my-1" @click="register(false)">
+        <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="register(false)">
           {{ label }}
         </b-button>
-        <b-button v-if="isEditable && !isUpdate" v-t="'label.registerAgain'" type="submit" :variant="theme" class="my-1" @click="register(true)" />
+        <b-button v-t="'label.registerAgain'" v-if="isEditable && !isUpdate" :variant="theme" type="submit" class="my-1" @click="register(true)" />
       </b-form>
     </div>
   </div>

@@ -5,19 +5,19 @@
       <b-row align-h="end">
         <all-count :count="allCount" />
         <b-col md="2" class="mb-3 mr-3">
-          <b-button v-if="!iosOrAndroid" v-t="'label.download'" :variant="getButtonTheme()" @click="download()" />
+          <b-button v-t="'label.download'" v-if="!iosOrAndroid" :variant="getButtonTheme()" @click="download()" />
         </b-col>
       </b-row>
       <div class="table-area">
         <table v-if="!isDev" class="table striped">
           <thead>
-            <th v-for="(val, key) in fields.filter(e => e)" :key="key" scope="col" :class="val.key !== 'state' ? '' : 'exb-state'">
+            <th v-for="(val, key) in fields.filter(e => e)" :key="key" :class="val.key !== 'state' ? '' : 'exb-state'" scope="col">
               {{ val.label }}
             </th>
           </thead>
           <tbody>
             <tr v-for="(telemetry, index) in telemetrysForTable" :key="index" :class="getTrClass(index, telemetry[label_timestamp])">
-              <td v-for="(val, key) in telemetry" :key="key" scope="row" :class="getTdClass(index, val, key)">
+              <td v-for="(val, key) in telemetry" :key="key" :class="getTdClass(index, val, key)" scope="row">
                 <span v-if="key === label_powerLevel">
                   <i :class="getPowerLevelClass(val)" />{{ val }}
                 </span>

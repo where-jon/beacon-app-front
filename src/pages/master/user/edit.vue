@@ -2,10 +2,10 @@
   <div>
     <breadcrumb :items="items" />
     <div class="container">
-      <b-alert variant="info" dismissible :show="showInfo">
+      <b-alert :show="showInfo" variant="info" dismissible>
         {{ message }}
       </b-alert>
-      <b-alert variant="danger" dismissible :show="showAlert" @dismissed="showAlert=false">
+      <b-alert :show="showAlert" variant="danger" dismissible @dismissed="showAlert=false">
         <template v-if="Array.isArray(message)">
           <span v-for="line in message" :key="line">
             {{ line }} <br>
@@ -23,39 +23,39 @@
         </b-form-group>
         <b-form-group v-show="showName">
           <label v-t="'label.name'" />
-          <input v-model="form.name" type="text" maxlength="20" class="form-control" :readonly="!isEditable">
+          <input v-model="form.name" :readonly="!isEditable" type="text" maxlength="20" class="form-control">
         </b-form-group>
         <b-form-group>
           <label v-t="'label.loginId'" />
-          <input v-model="form.loginId" type="text" maxlength="16" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" class="form-control" :title="$i18n.tnl('message.validationList', {validate: $i18n.tnl('message.loginValidationList')})" required :readonly="!isEditable">
+          <input v-model="form.loginId" :title="$i18n.tnl('message.validationList', {validate: $i18n.tnl('message.loginValidationList')})" :readonly="!isEditable" type="text" maxlength="16" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" class="form-control" required>
         </b-form-group>
         <b-form-group v-show="showEmail">
           <label v-t="'label.email'" />
-          <b-form-input v-model="form.email" type="email" maxlength="255" :readonly="!isEditable" />
+          <b-form-input v-model="form.email" :readonly="!isEditable" type="email" maxlength="255" />
         </b-form-group>
         <b-form-group>
           <label v-t="'label.role'" />
-          <b-form-select v-model="role" :options="roleOptions" required :disabled="!isEditable" />
+          <b-form-select v-model="role" :options="roleOptions" :disabled="!isEditable" required />
         </b-form-group>
         <b-form-group>
           <label v-t="'label.description'" />
-          <b-form-textarea v-model="form.description" :rows="3" :max-rows="6" maxlength="1000" :readonly="!isEditable" />
+          <b-form-textarea v-model="form.description" :rows="3" :max-rows="6" :readonly="!isEditable" maxlength="1000" />
         </b-form-group>
         <b-form-group>
-          <label v-if="hasId" v-t="'label.passwordUpdate'" />
-          <label v-else v-t="'label.password'" />
-          <b-form-input v-model="pass" type="password" pattern="^[a-zA-Z0-9_\-\/!#\$%&@]*$" :readonly="!isEditable" />
+          <label v-t="'label.passwordUpdate'" v-if="hasId" />
+          <label v-t="'label.password'" v-else />
+          <b-form-input v-model="pass" :readonly="!isEditable" type="password" pattern="^[a-zA-Z0-9_\-\/!#\$%&@]*$" />
         </b-form-group>
         <b-form-group>
           <label v-t="'label.passwordConfirm'" />
-          <b-form-input v-model="passConfirm" type="password" pattern="^[a-zA-Z0-9_\-\/!#\$%&@]*$" :readonly="!isEditable" />
+          <b-form-input v-model="passConfirm" :readonly="!isEditable" type="password" pattern="^[a-zA-Z0-9_\-\/!#\$%&@]*$" />
         </b-form-group>
 
         <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
-        <b-button v-if="isEditable" type="submit" :variant="theme" class="mr-2 my-1" @click="beforeSubmit($event, false)">
+        <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="beforeSubmit($event, false)">
           {{ label }}
         </b-button>
-        <b-button v-if="isEditable && !isUpdate" v-t="'label.registerAgain'" type="submit" :variant="theme" class="my-1" @click="beforeSubmit($event, true)" />
+        <b-button v-t="'label.registerAgain'" v-if="isEditable && !isUpdate" :variant="theme" type="submit" class="my-1" @click="beforeSubmit($event, true)" />
       </b-form>
     </div>
   </div>

@@ -2,10 +2,10 @@
   <div>
     <breadcrumb :items="items" :reload="false" />
     <div class="container">
-      <b-alert variant="info" dismissible :show="showInfo">
+      <b-alert :show="showInfo" variant="info" dismissible>
         {{ message }}
       </b-alert>
-      <b-alert variant="danger" dismissible :show="showAlert" @dismissed="showAlert=false">
+      <b-alert :show="showAlert" variant="danger" dismissible @dismissed="showAlert=false">
         {{ message }}
       </b-alert>
       <b-form inline @submit.prevent>
@@ -21,11 +21,11 @@
           <b-form-row>
             <b-form-row class="mb-3">
               <label v-t="'label.historyDateFrom'" />
-              <date-picker v-model="form.datetimeFrom" type="datetime" :clearable="false" class="ml-2 inputdatefrom" required @change="changeDatetimeFrom" />
+              <date-picker v-model="form.datetimeFrom" :clearable="false" type="datetime" class="ml-2 inputdatefrom" required @change="changeDatetimeFrom" />
             </b-form-row>
             <b-form-row class="ml-2 mb-3">
               <label v-t="'label.historyDateTo'" />
-              <date-picker v-model="form.datetimeTo" type="datetime" :clearable="false" class="ml-2 inputdateto" required @change="changeDatetimeTo" />
+              <date-picker v-model="form.datetimeTo" :clearable="false" type="datetime" class="ml-2 inputdateto" required @change="changeDatetimeTo" />
             </b-form-row>
           </b-form-row>
         </b-form-group>
@@ -62,7 +62,7 @@
         <b-form-group>
           <b-form-row class="mb-3">
             <b-button v-t="'label.display'" :variant="theme" @click="display" />
-            <b-button v-t="'label.download'" :variant="theme" class="ml-2" :disabled="!dataList || dataList.length == 0" @click="download" />
+            <b-button v-t="'label.download'" :variant="theme" :disabled="!dataList || dataList.length == 0" class="ml-2" @click="download" />
           </b-form-row>
         </b-form-group>
       </b-form>

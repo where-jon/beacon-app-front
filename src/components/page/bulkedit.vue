@@ -1,10 +1,10 @@
 <template>
   <div>
     <div class="container">
-      <b-alert variant="info" dismissible :show="showInfo">
+      <b-alert :show="showInfo" variant="info" dismissible>
         {{ message }}
       </b-alert>
-      <b-alert variant="danger" dismissible :show="showAlert" @dismissed="showAlert=false">
+      <b-alert :show="showAlert" variant="danger" dismissible @dismissed="showAlert=false">
         <template v-if="Array.isArray(message)">
           <span v-for="line in message" :key="line">
             {{ line }} <br>
@@ -18,9 +18,9 @@
       <b-form v-if="show" @submit.prevent="onSubmit">
         <b-form-group>
           <label v-t="'label.csvFile'" />
-          <b-form-file :key="formKey" v-model="form.csvFile" accept=".csv" :placeholder="$t('message.selectFile') " />
+          <b-form-file :key="formKey" v-model="form.csvFile" :placeholder="$t('message.selectFile') " accept=".csv" />
         </b-form-group>
-        <b-button type="submit" :variant="getButtonTheme()" @click="register(true)">
+        <b-button :variant="getButtonTheme()" type="submit" @click="register(true)">
           {{ label }}
         </b-button>
         <b-button v-t="'label.back'" type="button" variant="outline-danger" class="ml-2" @click="backToList" />

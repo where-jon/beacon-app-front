@@ -1,14 +1,14 @@
 <template>
   <b-form-group v-if="!isModal">
     <label v-t="'label.txViewType'" />
-    <b-form-select v-model="txDispFormat" :options="txViewTypes" class="mb-3 ml-3 col-3" :disabled="!isEditable" :readonly="!isEditable" @change="onChangeDispFormat" />
-    <label v-if="isIconsDispFormatTile" v-t="'label.txIconColumns'" class="txicons-num" :disabled="!isIconsDispFormatTile" />
-    <b-form-select v-if="isIconsDispFormatTile" v-model="layoutHorizon" :options="getSelectElements('column')" class="mb-3 ml-3 col-2" :disabled="!isEditable" :readonly="!isEditable" @change="onChangeHorizon" />
-    <label v-if="isIconsDispFormatTile" v-t="'label.txIconLines'" class="txicons-num" :disabled="!isIconsDispFormatTile" />
-    <b-form-select v-if="isIconsDispFormatTile" v-model="layoutVertical" :options="getSelectElements('line')" class="mb-3 ml-3 col-2" :disabled="!isEditable" :readonly="!isEditable" @change="onChangeVertical" />
+    <b-form-select v-model="txDispFormat" :options="txViewTypes" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-3 col-3" @change="onChangeDispFormat" />
+    <label v-t="'label.txIconColumns'" v-if="isIconsDispFormatTile" :disabled="!isIconsDispFormatTile" class="txicons-num" />
+    <b-form-select v-if="isIconsDispFormatTile" v-model="layoutHorizon" :options="getSelectElements('column')" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-3 col-2" @change="onChangeHorizon" />
+    <label v-t="'label.txIconLines'" v-if="isIconsDispFormatTile" :disabled="!isIconsDispFormatTile" class="txicons-num" />
+    <b-form-select v-if="isIconsDispFormatTile" v-model="layoutVertical" :options="getSelectElements('line')" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-3 col-2" @change="onChangeVertical" />
   </b-form-group>
   <div v-else>
-    <b-alert variant="danger" :show="isDelete">
+    <b-alert :show="isDelete" variant="danger">
       <i class="fas fa-exclamation-circle" />&nbsp;&nbsp;{{ $t('message.deleteConfirm',{target: deviceId}) }}
     </b-alert>
     <b-form>
