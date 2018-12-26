@@ -393,38 +393,33 @@ export const MENU = [
   {
     key: 'sumTitle',
     base: 'sum/',
-    path: 'sum/utilizationRatio',
+    path: 'sum/usage-situation',
     icon: 'fas fa-chart-line',
-    pages: [{
-      key: 'utilizationRatio',
-      path: 'utilizationRatio',
-      feature: '/sum/utilizationRatio',
-      icon: 'fas fa-chart-pie'
-    },
-    {
-      key: 'numUsers',
-      path: 'numUsers',
-      feature: '/sum/numUsers',
-      icon: 'fas fa-chart-area'
-    },
-    {
-      key: 'flowlineAnalysis',
-      path: 'flowlineAnalysis',
-      feature: '/sum/flowlineAnalysis',
-      icon: 'fas fa-shoe-prints'
-    },
-    {
-      key: 'heatmapPosition',
-      path: 'heatmap-position',
-      feature: '/sum/heatmapPosition',
-      icon: 'fas fas fa-fire',
-    },
-    {
-      key: 'sensorGraph',
-      path: 'sensorGraph',
-      feature: '/sum/sensorGraph',
-      icon: 'fas fa-chart-bar',
-    },
+    pages: [
+      {
+        key: 'usageSituation',
+        path: 'usage-situation',
+        feature: '/sum/usage-situation',
+        icon: 'fas fa-chart-area'
+      },
+      {
+        key: 'flowlineAnalysis',
+        path: 'flowlineAnalysis',
+        feature: '/sum/flowlineAnalysis',
+        icon: 'fas fa-shoe-prints'
+      },
+      {
+        key: 'heatmapPosition',
+        path: 'heatmap-position',
+        feature: '/sum/heatmapPosition',
+        icon: 'fas fas fa-fire',
+      },
+      {
+        key: 'sensorGraph',
+        path: 'sensorGraph',
+        feature: '/sum/sensorGraph',
+        icon: 'fas fa-chart-bar',
+      },
     ]
   },
   {
