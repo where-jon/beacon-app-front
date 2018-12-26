@@ -78,7 +78,7 @@ export default {
     },
     async fetchData(payload) {
       try {
-        this.replace({showProgress: true})
+        this.showProgress()
         await this.fetchAreaExbs()
 
         let sensors = await EXCloudHelper.fetchSensor(SENSOR.TEMPERATURE)
@@ -106,7 +106,7 @@ export default {
       catch(e) {
         console.error(e)
       }
-      this.replace({showProgress: false})
+      this.hideProgress()
     },
     showMapImage() {
       this.showMapImageDef(() => {

@@ -173,7 +173,7 @@ export default {
   },
   methods: {
     async fetchData(payload) {
-      this.replace({showProgress: true})
+      this.showProgress()
       this.isLoad = true
       try {
         let positions = await EXCloudHelper.fetchRawPosition()
@@ -186,7 +186,7 @@ export default {
       catch(e) {
         console.error(e)
       }
-      this.replace({showProgress: false})
+      this.hideProgress()
       this.isLoad = false
     },
     async makePositionRecords(positions) {

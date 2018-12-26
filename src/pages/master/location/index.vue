@@ -480,7 +480,7 @@ export default {
       this.stage.update()
     },
     async save() {
-      this.replace({showProgress: true})
+      this.showProgress()
       this.message = ''
       this.showInfo = false
       this.showAlert = false
@@ -530,7 +530,7 @@ export default {
         this.showAlert = true
         window.scrollTo(0, 0)
       }
-      this.replace({showProgress: false})
+      this.hideProgress()
     },
   }
 }

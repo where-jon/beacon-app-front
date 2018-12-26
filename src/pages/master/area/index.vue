@@ -68,7 +68,7 @@ export default {
     },
     async fetchData(payload) {
       try {
-        this.replace({showProgress: true})
+        this.showProgress()
         await StateHelper.load('area')
         this.areaImages = this.areas.map((val) => ({ areaId: val.areaId, thumbnail: val.thumbnail}))
         this.areaList = this.areas.map((val) => ({
@@ -85,7 +85,7 @@ export default {
       catch(e) {
         console.error(e)
       }
-      this.replace({showProgress: false})
+      this.hideProgress()
     },
     thumbnail(row) {
       const img = this.areaImages.find((val) => val.areaId == row.areaId)

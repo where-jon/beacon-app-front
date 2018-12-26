@@ -84,7 +84,7 @@ export default {
       return await AppServiceHelper.save(this.appServicePath, this.form, this.updateOnlyNN)
     },
     async onSubmit(evt) {
-      this.replace({showProgress: true})
+      this.showProgress()
       this.message = ''
       this.warnMessage = ''
       this.showInfo = false
@@ -151,7 +151,7 @@ export default {
       finally{
         this.replaceAS({showLine: false})
       }
-      this.replace({showProgress: false})
+      this.hideProgress()
     },
     modifyColName(col) {
       if (col == 'TXID' && !APP.TX_WITH_TXID){

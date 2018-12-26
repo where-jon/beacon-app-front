@@ -80,7 +80,7 @@ export default {
     },
     async fetchData(payload){
       try {
-        this.replace({showProgress: true})
+        this.showProgress()
         this.showMapImageDef(() => {
           if (this.container) {
             this.container.removeAllChildren()
@@ -107,7 +107,7 @@ export default {
       catch(e) {
         console.error(e)
       }
-      this.replace({showProgress: false})
+      this.hideProgress()
     },
     showMapImage() {
       // 地図ダブルタップ時のみ利用

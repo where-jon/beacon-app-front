@@ -41,3 +41,12 @@ export const mutations = {
     }
   }
 }
+
+export const actions = {
+  showProgress({ commit }) {
+    commit('replace', {showProgress: true})
+  },
+  hideProgress({ commit }) {
+    commit('replace', {showProgress: false})
+  }
+}
