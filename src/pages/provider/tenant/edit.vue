@@ -280,13 +280,18 @@ export default {
         })
       })
     }
+    if(!this.hasId){
+      this.form.sysAdminLoginId = 'sysadmin'
+      this.form.adminLoginId = 'admin'
+      this.form.userLoginId = 'user'
+    }
   },
   methods: {
     requireInput(param){
       return Util.hasValue(param)
     },
     showFeatureEdit() {
-      this.editFeatureList = this.featureList.map((val) => {return {...val}})
+      this.editFeatureList = this.featureList.filter((val) => val.featureType == 0).map((val) => {return {...val}})
       this.$root.$emit('bv::show::modal', 'modalFeatureInfo', null)
     },
     showSettingEdit() {

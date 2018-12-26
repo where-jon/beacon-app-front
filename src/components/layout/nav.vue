@@ -25,20 +25,28 @@
       <!-- right -->
       <b-navbar-nav v-show="!isLoginPage && showNav" class="ml-auto">
         <!-- region -->
-        <b-nav-item-dropdown right>
+        <b-nav-item-dropdown v-if="hasMultiRegion()" :class="navbarClasses" right>
           <template slot="button-content">
             <div v-if="isTenantAdmin()">
-              <i class="far fa-building mr-1" aria-hidden="true" style="visibility: hidden;" />
-              <span>{{ this.$store.state.currentTenant? this.$store.state.currentTenant.tenantName: '' }}</span>
+              <i class="far fa-building mr-1" style="visibility: hidden;" />
+              <em v-t="this.$store.state.currentTenant? this.$store.state.currentTenant.tenantName: ''" />
             </div>
-            <i class="far fa-building mr-1" aria-hidden="true" />
+            <i class="far fa-building mr-1" />
             <span>{{ this.$store.state.currentRegion? this.$store.state.currentRegion.regionName: '' }}</span>
           </template>
-          <b-dropdown-item v-for="region in regions" :key="region.regionId" :class="dropdownbarClasses" href="#" @click="switchRegion($event.target, region)">
+          <b-dropdown-item v-for="region in regions" :key="region.regionId" :class="navbarClasses" href="#" @click="switchRegion($event.target, region)">
             <i :style="getStyleDropdownRegion(region.regionId)" class="far fa-building mr-1" aria-hidden="true" />
             <span>{{ region.regionName }}</span>
           </b-dropdown-item>
         </b-nav-item-dropdown>
+        <div v-else class="mr-3 single-nav">
+          <div v-if="isTenantAdmin()">
+            <i class="far fa-building mr-1" aria-hidden="true" style="visibility: hidden;" />
+            <span>{{ this.$store.state.currentTenant? this.$store.state.currentTenant.tenantName: '' }}</span>
+          </div>
+          <i class="far fa-building mr-1" aria-hidden="true" />
+          <span>{{ this.$store.state.currentRegion? this.$store.state.currentRegion.regionName: '' }}</span>
+        </div>
         <!-- user & logout -->
         <b-nav-item-dropdown right>
           <template slot="button-content">
@@ -93,9 +101,6 @@ export default {
     ...mapState('app_service', [
       'pots', 'regions',
     ]),
-    dropdownbarClasses() {
-      return {...getThemeClasses()}
-    },
     navbarClasses() {
       return getThemeClasses()
     },
@@ -125,6 +130,9 @@ export default {
     isTenantAdmin() {
       const login = JSON.parse(window.localStorage.getItem('login'))
       return login? login.tenantAdmin: false
+    },
+    hasMultiRegion(){
+      return this.regions && this.regions.length > 1
     },
     getStyleDropdownRegion(regionId) {
       const login = JSON.parse(window.localStorage.getItem('login'))
@@ -159,12 +167,32 @@ export default {
   }
 }
 
+.single-nav {
+  color: white !important;
+}
+
 .navbar-dark .navbar-nav .nav-link {
   color: white;
 }
 
 div.appTitle {
   min-width: calc(15vw);
+}
+
+li.nav-item.b-nav-dropdown.default > *{
+  background-color: $default;
+}
+
+li.nav-item.b-nav-dropdown.earthcolor > *{
+  background-color: $earth-color;
+}
+
+li.nav-item.b-nav-dropdown.autumn > *{
+  background-color: $autumn;
+}
+
+li.nav-item.b-nav-dropdown.vivid > *{
+  background-color: $vivid;
 }
 
 a.dropdown-item.default:hover,
