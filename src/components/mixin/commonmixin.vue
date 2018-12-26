@@ -16,9 +16,6 @@ export default {
     ...mapMutations('main', [
       'replaceMain', 
     ]),
-    ...mapMutations('monitor', [
-      'replaceMonitor', 
-    ]),
     ...mapMutations('setting', [
       'replaceSetting', 
     ]),

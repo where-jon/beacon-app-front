@@ -80,7 +80,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
@@ -106,6 +105,7 @@ export default {
           active: true
         }
       ],
+      numUsers: [],
       vModelCategory: null,
       vModelZone: null,
       vModelYearMonth: null,
@@ -154,9 +154,6 @@ export default {
     dayOptions() {
       return this.dayOptionList
     },
-    ...mapState('monitor', [
-      'numUsers',
-    ])
   },
   mounted() {
     this.fetchPrev()
@@ -290,7 +287,7 @@ export default {
         ''
       )
       this.dataList = numUsers
-      this.replaceMonitor({numUsers})
+      this.numUsers = numUsers
       if (numUsers.length == null) {
         this.message = this.$i18n.tnl('message.notFound')
         this.showAlert = true

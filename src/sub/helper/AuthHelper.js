@@ -143,7 +143,6 @@ export const logout = () => {
   store.commit('clearAll')
   store.commit('app_service/clearAll')
   store.commit('main/clearAll')
-  store.commit('monitor/clearAll')
   store.commit('setting/clearAll')
   router.push(APP.LOGIN_PAGE)
   if (APP.LOGIN_MODE == LOGIN_MODE.APP_SERVICE) {
