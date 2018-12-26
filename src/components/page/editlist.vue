@@ -78,9 +78,10 @@
 import _ from 'lodash'
 import commonmixinVue from '../mixin/commonmixin.vue'
 import editmixinVue from '../mixin/editmixin.vue'
+import settingmixinVue from '../mixin/settingmixin.vue'
 
 export default {
-  mixins: [ editmixinVue, commonmixinVue ],
+  mixins: [ editmixinVue, commonmixinVue, settingmixinVue ],
   props: {
     params: {
       type: Object,
@@ -136,8 +137,9 @@ export default {
       await this.$parent.$options.methods.deleteEntity.call(this.$parent, entity)
       await this.$parent.$options.methods.fetchData.call(this.$parent, true)
     },
-    showForm(isShow){
+    async showForm(isShow){
       this.useRegistForm = isShow
+      await this.$parent.$options.methods.resetNewForm.call(this.$parent, isShow)
     },
     onRegistSubmit(evt){
       const entity = this.$parent.$options.methods.addNewEntity.apply(this.$parent)
