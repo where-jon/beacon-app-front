@@ -1,6 +1,6 @@
 
 <script>
-import { mapMutations } from 'vuex'
+import { mapMutations, mapActions } from 'vuex'
 import * as Util from '../../sub/util/Util'
 import { getButtonTheme } from '../../sub/helper/ThemeHelper'
 
@@ -18,6 +18,10 @@ export default {
     ]),
     ...mapMutations('setting', [
       'replaceSetting', 
+    ]),
+    ...mapActions([
+      'showProgress',
+      'hideProgress',
     ]),
     getSensorId(exb) {
       return Util.getValue(exb, 'exbSensorList.0.sensor.sensorId').val

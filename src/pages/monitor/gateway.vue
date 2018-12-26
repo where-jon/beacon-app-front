@@ -5,7 +5,7 @@
       <b-row align-h="end">
         <all-count :count="allCount" />
         <b-col md="2" class="mb-3 mr-3">
-          <b-button v-if="!iosOrAndroid" v-t="'label.download'" :variant="getButtonTheme()" @click="download()" />
+          <b-button v-t="'label.download'" v-if="!iosOrAndroid" :variant="getButtonTheme()" @click="download()" />
         </b-col>
       </b-row>
       <table class="table table-hover">
@@ -84,7 +84,6 @@ export default {
   },
   mounted() {
     this.fetchData()
-    this.replace({title: this.$i18n.t('label.gateway')})
     if (!this.isDev) {
       return
     }
@@ -101,7 +100,7 @@ export default {
   },
   methods: {
     async fetchData(payload) {
-      this.replace({showProgress: true})
+      this.showProgress()
       this.isLoad = true
       try {
         let gateways = await EXCloudHelper.fetchGateway()
@@ -117,7 +116,7 @@ export default {
       catch(e) {
         console.error(e)
       }
-      this.replace({showProgress: false})
+      this.hideProgress()
       this.isLoad = false
     },
     getTableHeaders() {

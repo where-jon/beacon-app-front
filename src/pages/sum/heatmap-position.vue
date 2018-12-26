@@ -2,10 +2,10 @@
   <div id="mapContainer">
     <breadcrumb :items="items" :reload="false" />
     <div class="container">
-      <b-alert variant="info" dismissible :show="showInfo">
+      <b-alert :show="showInfo" variant="info" dismissible>
         {{ message }}
       </b-alert>
-      <b-alert variant="danger" dismissible :show="showAlert" @dismissed="showAlert=false">
+      <b-alert :show="showAlert" variant="danger" dismissible @dismissed="showAlert=false">
         <template v-if="Array.isArray(message)">
           <span v-for="line in message" :key="line">
             {{ line }} <br>
@@ -98,7 +98,7 @@ export default {
     },
     async fetchData(payload){
       try {
-        this.replace({showProgress: true})
+        this.showProgress()
         const map = new Image()
         map.src = this.mapImage()
 
@@ -122,7 +122,7 @@ export default {
       catch(e) {
         console.error(e)
       }
-      this.replace({showProgress: false})
+      this.hideProgress()
     },
     async display(param) {
       this.showAlert = false

@@ -2,10 +2,10 @@
   <div>
     <breadcrumb :items="items" :reload="false" />
     <div class="container">
-      <b-alert variant="info" dismissible :show="showInfo">
+      <b-alert :show="showInfo" variant="info" dismissible>
         {{ message }}
       </b-alert>
-      <b-alert variant="danger" dismissible :show="showAlert" @dismissed="showAlert=false">
+      <b-alert :show="showAlert" variant="danger" dismissible @dismissed="showAlert=false">
         {{ message }}
       </b-alert>
       <b-row>
@@ -42,13 +42,13 @@
           </v-select>
         </b-form>
         <b-form inline class="mb-2" @submit.prevent>
-          <b-button v-t="'label.search'" size="sm" :variant="getButtonTheme()" @click="search()" /> 
+          <b-button v-t="'label.search'" :variant="getButtonTheme()" size="sm" @click="search()" /> 
         </b-form>
       </b-row>
       <p />
       <b-row align-h="end">
         <b-col md="2" class="mb-2">
-          <b-button v-if="!iosOrAndroid" v-t="'label.download'" :variant="getButtonTheme()" @click="download()" />
+          <b-button v-t="'label.download'" v-if="!iosOrAndroid" :variant="getButtonTheme()" @click="download()" />
         </b-col>
       </b-row>
       <table class="table table-hover table-bordered">
@@ -74,7 +74,7 @@
             <td>{{ utilizationRatio.zoneName }}</td>
             <td>
               <div class="graph">
-                <span class="bar" :style="{ width:utilizationRatio.rate + '%' }">
+                <span :style="{ width:utilizationRatio.rate + '%' }" class="bar">
                   {{ utilizationRatio.rate }}%
                 </span>
               </div>
@@ -165,7 +165,6 @@ export default {
   },
   mounted() {
     this.fetchPrev()
-    this.replace({title: this.$i18n.tnl('label.utilizationRatio')})
   },
   methods: {
     async fetchZoneCategoryList() {

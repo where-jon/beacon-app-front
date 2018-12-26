@@ -1,9 +1,9 @@
 <template>
   <transition-group tag="div">
-    <div v-for="val in sensors" :key="val.btx_id" class="personBox" :style="{'background-color': val.bg, 'border': border, 'border-color': (new Date().getTime() - val.downLatest < DOWN_RED_TIME)?'red':'white'}">
+    <div v-for="val in sensors" :key="val.btx_id" :style="{'background-color': val.bg, 'border': border, 'border-color': (new Date().getTime() - val.downLatest < DOWN_RED_TIME)?'red':'white'}" class="personBox">
       <div class="personUpperBox">
         <div class="titleBox">
-          <div class="numberBox" :style="{'font-size': val.label.length > 2? '0.8em': '1.2em'}">
+          <div :style="{'font-size': val.label.length > 2? '0.8em': '1.2em'}" class="numberBox">
             {{ val.label }}
           </div>
         </div>
@@ -27,7 +27,7 @@
           </div><div v-t="'label.heart_rate'" class="title" />
         </div>
         <div class="smallBox step" style="min-width: 84px;">
-          <div><img src="~/assets/icon/step.svg" width="32" height="32"></div><div class="numval" :style="{'font-size': val.step > 999999? '1.5em': '1.8em'}">
+          <div><img src="~/assets/icon/step.svg" width="32" height="32"></div><div :style="{'font-size': val.step > 999999? '1.5em': '1.8em'}" class="numval">
             {{ val.step }}
           </div><div v-t="'label.step'" class="title" />
         </div>
@@ -52,6 +52,7 @@ export default {
     },
     isPopup: {
       type: Boolean,
+      default: false,
     },
   },
   data() {

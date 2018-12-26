@@ -65,6 +65,7 @@ export const getUserInfo = async (tenantAdmin) => {
 
   // get region
   const currentRegion = await HttpHelper.getAppService('/core/region/current')
+  await StateHelper.load('region', true)
 
   // get setting (again in case failed on init or reload)
   const setting = await HttpHelper.getAppServiceNoCrd('/meta/setting/byTenant/default')
