@@ -92,6 +92,7 @@ export default {
       name: 'led',
       id: 'ledId',
       appServicePath: '/core/excloud/led',
+      deviceIds: [],
       ledColors: LED_COLORS,
       ledBlinkTypes: LED_BLINK_TYPES,
       lightOnCandidate: false,
@@ -120,8 +121,6 @@ export default {
       return 'outline-' + theme
     },
     ...mapState('app_service', [
-      'led',
-      'deviceIds',
       'exbs',
     ]),
   },
@@ -163,7 +162,7 @@ export default {
         if (payload && payload.done) {
           payload.done()
         }
-        this.replaceAS({deviceIds})
+        this.deviceIds = deviceIds
       } catch(e) {
         console.error(e)
       }

@@ -99,6 +99,7 @@ export default {
         {key: 'finalReceiveTimestamp', label:'finalReceiveTimestamp', sortable: true,},
         {key: 'state', label:'state', sortable: true,},
       ]),
+      telemetrys: [],
       isLoad: false,
       label_deviceId: this.$i18n.tnl('label.deviceId'),
       label_deviceNum: this.$i18n.tnl('label.deviceNum'),
@@ -140,9 +141,6 @@ export default {
     }
   },
   computed: {
-    ...mapState('monitor', [
-      'telemetrys',
-    ]),
     ...mapState('app_service', [
       'exbs',
     ]),
@@ -187,7 +185,7 @@ export default {
         if (payload && payload.done) {
           payload.done()
         }
-        this.replaceMonitor({telemetrys})
+        this.telemetrys = telemetrys
       }
       catch(e) {
         console.error(e)

@@ -118,6 +118,7 @@ export default {
           active: true
         }
       ],
+      positions: [],
       isLoad: false,
       interval: null,
       badgeClassPrefix: 'badge badge-pill badge-',
@@ -145,9 +146,6 @@ export default {
     }
   },
   computed: {
-    ...mapState('monitor', [
-      'positions',
-    ]),
     ...mapState('app_service', [
       'txs', 'exbs'
     ]),
@@ -182,7 +180,7 @@ export default {
         if (payload && payload.done) {
           payload.done()
         }
-        this.replaceMonitor({positions})
+        this.positions = positions
       }
       catch(e) {
         console.error(e)

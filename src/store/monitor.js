@@ -1,9 +1,6 @@
 import Vue from 'vue'
 
 export const state = () => ({
-  gateways: [],
-  telemetrys: [],
-  positions: [],
 })
 
 const initState = state()
