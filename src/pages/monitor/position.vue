@@ -157,7 +157,6 @@ export default {
   },
   mounted() {
     this.fetchData()
-    this.replace({title: this.$i18n.tnl('label.position')})
     if (!this.isDev) {
       return
     }

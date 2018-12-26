@@ -62,11 +62,9 @@ export default {
       endInfo: {caption: 'end', color: '#ee0033'},
       container: null,
       shownParam: null,
-      //
       showInfo: false,
       showAlert: false,
       message: '',
-      //
     }
   },
   computed: {

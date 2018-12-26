@@ -161,7 +161,6 @@ export default {
     }
   },
   mounted() {
-    this.replace({title: this.$i18n.tnl('label.telemetry')})
     this.fetchData()
     if (!this.isDev) {
       return

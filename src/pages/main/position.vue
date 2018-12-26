@@ -64,7 +64,7 @@ import * as mock from '../../assets/mock/mock'
 import txdetail from '../../components/parts/txdetail.vue'
 import { APP, DISP, DEV } from '../../sub/constant/config'
 import { SHAPE, SENSOR, EXTRA_NAV, POSITION } from '../../sub/constant/Constants'
-import { Shape, Container, Text, Touch } from '@createjs/easeljs/dist/easeljs.module'
+import { Shape, Container, Text } from '@createjs/easeljs/dist/easeljs.module'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import listmixin from '../../components/mixin/listmixin.vue'
@@ -145,7 +145,6 @@ export default {
     },
   },
   async mounted() {
-    this.replace({title: this.$i18n.tnl('label.showPosition')})
     await StateHelper.load('category')
     await StateHelper.load('group')
     document.addEventListener('touchstart', this.touchEnd)
@@ -310,10 +309,6 @@ export default {
     },
     showMapImage() {
       this.showMapImageDef(() => {
-
-        if (Touch.isSupported()) {
-          Touch.enable(this.stage)
-        }
 
         this.stage.on('click', (evt) => {
           this.resetDetail()

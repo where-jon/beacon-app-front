@@ -155,7 +155,6 @@ export default {
     }
   },
   mounted() {
-    this.replace({title: this.$i18n.tnl('label.location')})
     this.fetchData()
     if(this.pageSendParam){
       this.selectedArea = this.pageSendParam.areaId

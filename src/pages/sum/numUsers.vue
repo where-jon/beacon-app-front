@@ -160,7 +160,6 @@ export default {
   },
   mounted() {
     this.fetchPrev()
-    this.replace({title: this.$i18n.tnl('label.numUsers')})
   },
   methods: {
     async fetchZoneCategoryList() {
