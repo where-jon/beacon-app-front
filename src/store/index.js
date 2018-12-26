@@ -12,6 +12,7 @@ export const state = () => ({
   featureList: [],
   menu: [],
   error: null,
+  currentTenant: {},
   currentRegion: {},
   showProgress: false,
   reload: false,
@@ -38,5 +39,14 @@ export const mutations = {
     for (let key in initState) {
       Vue.set(state, key, initState[key])
     }
+  }
+}
+
+export const actions = {
+  showProgress({ commit }) {
+    commit('replace', {showProgress: true})
+  },
+  hideProgress({ commit }) {
+    commit('replace', {showProgress: false})
   }
 }

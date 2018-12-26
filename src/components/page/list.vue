@@ -1,10 +1,10 @@
 <template>
   <b-form inline @submit.prevent>
     <b-container :fluid="isFluid">
-      <b-alert variant="info" dismissible :show="showMessage">
+      <b-alert :show="showMessage" variant="info" dismissible>
         {{ message }}
       </b-alert>
-      <b-alert variant="danger" dismissible :show="showError">
+      <b-alert :show="showError" variant="danger" dismissible>
         {{ error }}
       </b-alert>
       <!-- searchbox -->
@@ -47,10 +47,10 @@
             <b-button v-t="'label.createNew'" :variant="theme" class="mx-1"
                       @click="edit()"
             />
-            <b-button v-if="params.bulkEditPath && !iosOrAndroid" v-t="'label.bulkRegister'" :variant="theme" class="mx-1" 
+            <b-button v-t="'label.bulkRegister'" v-if="params.bulkEditPath && !iosOrAndroid" :variant="theme" class="mx-1" 
                       @click="bulkEdit()"
             />
-            <b-button v-if="params.csvOut && !iosOrAndroid" v-t="'label.download'" :variant="theme" class="mx-1"
+            <b-button v-t="'label.download'" v-if="params.csvOut && !iosOrAndroid" :variant="theme" class="mx-1"
                       @click="exportCsv"
             />
           </b-col>
@@ -62,8 +62,8 @@
       <b-row class="mt-3" />
     
       <!-- table -->
-      <b-table show-empty stacked="md" striped hover :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" outlined
-               :filter="filterGrid" :bordered="params.bordered" :sort-by.sync="sortBy" :empty-filtered-text="emptyMessage" @filtered="onFiltered"
+      <b-table :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" :filter="filterGrid" :bordered="params.bordered" :sort-by.sync="sortBy" :empty-filtered-text="emptyMessage" show-empty
+               stacked="md" striped hover outlined @filtered="onFiltered"
       >
         <template slot="style" slot-scope="row">
           <div :style="style(row.item)">
@@ -72,9 +72,9 @@
         </template>
         <template slot="actions" slot-scope="row">
           <!-- 更新ボタン -->
-          <b-button v-t="'label.' + crud" size="sm" :variant="theme" class="mr-2 my-1" :style="actionButtonStyle" @click.stop="edit(row.item, row.index, $event.target)" />
+          <b-button v-t="'label.' + crud" :variant="theme" :style="actionButtonStyle" size="sm" class="mr-2 my-1" @click.stop="edit(row.item, row.index, $event.target)" />
           <!-- 削除ボタン -->
-          <b-button v-if="isEditable" v-t="'label.delete'" size="sm" variant="outline-danger" class="mr-1 my-1" :style="actionButtonStyle" @click.stop="deleteConfirm(row.item, row.index, $event.target)" />
+          <b-button v-t="'label.delete'" v-if="isEditable" :style="actionButtonStyle" size="sm" variant="outline-danger" class="mr-1 my-1" @click.stop="deleteConfirm(row.item, row.index, $event.target)" />
           <!-- jump another master page -->
           <div v-if="isEditable && anotherPageParams" :style="{'width': '100px'}">
             <!-- zone button -->
@@ -83,15 +83,15 @@
             </div> -->
             <!-- location button -->
             <div v-if="getAnotherPageParam('location', row.item)">
-              <b-button v-t="'label.location'" size="sm" :variant="theme" class="btn-block my-1" :style="anotherActionButtonStyle" @click.stop="jumpAnotherPage('location', row.item)" />
+              <b-button v-t="'label.location'" :variant="theme" :style="anotherActionButtonStyle" size="sm" class="btn-block my-1" @click.stop="jumpAnotherPage('location', row.item)" />
             </div>
           </div>
           <!-- for tenant -->
           <div v-if="isTenantAdmin && params.tenantAction" :style="{'width': '100px'}">
             <!-- switch button -->
             <div>
-              <b-button v-if="isCurrentTenant(row.item)" v-t="'label.now'" size="sm" :variant="theme" class="btn-block my-1" style="opacity: 1.0 !important; border-radius: 0px;" :style="anotherActionButtonStyle" :disabled="true" />
-              <b-button v-else v-t="'label.switch'" size="sm" :variant="theme" class="btn-block my-1" :style="anotherActionButtonStyle" @click.stop="switchTenant(row.item)" />
+              <b-button v-t="'label.now'" v-if="isCurrentTenant(row.item)" :variant="theme" :style="anotherActionButtonStyle" :disabled="true" size="sm" class="btn-block my-1" style="opacity: 1.0 !important; border-radius: 0px;" />
+              <b-button v-t="'label.switch'" v-else :variant="theme" :style="anotherActionButtonStyle" size="sm" class="btn-block my-1" @click.stop="switchTenant(row.item)" />
             </div>
           </div>
         </template>
@@ -106,8 +106,8 @@
         </template>
         <!-- マップ表示 -->
         <template slot="mapDisplay" slot-scope="row">
-          <b-button v-t="'label.mapDisplay'" size="sm" :variant="theme"
-                    :disabled="row.item.noSelectedTx" class="mx-1" @click.stop="mapDisplay(row.item)"
+          <b-button v-t="'label.mapDisplay'" :variant="theme" :disabled="row.item.noSelectedTx"
+                    size="sm" class="mx-1" @click.stop="mapDisplay(row.item)"
           />
         </template>
         <!-- カテゴリ等アイコン横並び表示 -->
@@ -115,7 +115,7 @@
           <div class="empty-icon d-inline-flex" /><!-- 横幅0の「支柱」 -->
           <div class="d-inline-flex flex-wrap">
             <div v-for="position in row.item.positions" :key="position.areaId"
-                 class="d-inline-flex m-1" :style="position.display" @click.stop="mapDisplay(position)"
+                 :style="position.display" class="d-inline-flex m-1" @click.stop="mapDisplay(position)"
             >
               {{ position.label }}
             </div>
@@ -172,6 +172,7 @@ export default {
     },
     isFluid: {
       type: Boolean,
+      default: false,
     },
     anotherPageParams: {
       type: Array,

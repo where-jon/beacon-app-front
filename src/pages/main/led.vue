@@ -2,38 +2,38 @@
   <div>
     <breadcrumb :items="items" />
     <b-container>
-      <b-alert variant="danger" dismissible :show="showAlert" @dismissed="showAlert=false">
+      <b-alert :show="showAlert" variant="danger" dismissible @dismissed="showAlert=false">
         {{ message }}
       </b-alert>
       <b-form-row>
         <b-form @submit.prevent="onSubmit">
           <b-form-group :label="$t('label.deviceId')">
-            <b-form-select v-model="form.deviceId" :options="deviceIds" required :readonly="!isEditable" />
+            <b-form-select v-model="form.deviceId" :options="deviceIds" :readonly="!isEditable" required />
           </b-form-group>
           <b-form-group :label="$t('label.ledColor')">
             <b-form-checkbox-group v-model="form.colors">
-              <b-form-checkbox class="checkBlue" :value="ledColors.BLUE" :readonly="!isEditable">
+              <b-form-checkbox :value="ledColors.BLUE" :readonly="!isEditable" class="checkBlue">
                 {{ $t('label.blue') }}
               </b-form-checkbox>
-              <b-form-checkbox class="checkRed" :value="ledColors.RED" :readonly="!isEditable">
+              <b-form-checkbox :value="ledColors.RED" :readonly="!isEditable" class="checkRed">
                 {{ $t('label.red') }}
               </b-form-checkbox>
-              <b-form-checkbox class="checkPurple" :value="ledColors.PURPLE" :readonly="!isEditable">
+              <b-form-checkbox :value="ledColors.PURPLE" :readonly="!isEditable" class="checkPurple">
                 {{ $t('label.purple') }}
               </b-form-checkbox>
-              <b-form-checkbox class="checkGreen" :value="ledColors.GREEN" :readonly="!isEditable">
+              <b-form-checkbox :value="ledColors.GREEN" :readonly="!isEditable" class="checkGreen">
                 {{ $t('label.green') }}
               </b-form-checkbox>
-              <b-form-checkbox class="checkPaleblue" :value="ledColors.PALEBLUE" :readonly="!isEditable">
+              <b-form-checkbox :value="ledColors.PALEBLUE" :readonly="!isEditable" class="checkPaleblue">
                 {{ $t('label.paleblue') }}
               </b-form-checkbox>
-              <b-form-checkbox class="checkYellow" :value="ledColors.YELLOW" :readonly="!isEditable">
+              <b-form-checkbox :value="ledColors.YELLOW" :readonly="!isEditable" class="checkYellow">
                 {{ $t('label.yellow') }}
               </b-form-checkbox>
-              <b-form-checkbox class="checkWhite" :value="ledColors.WHITE" :readonly="!isEditable">
+              <b-form-checkbox :value="ledColors.WHITE" :readonly="!isEditable" class="checkWhite">
                 {{ $t('label.white') }}
               </b-form-checkbox>
-              <b-form-checkbox class="checkBlack" :value="ledColors.BLACK" :readonly="!isEditable">
+              <b-form-checkbox :value="ledColors.BLACK" :readonly="!isEditable" class="checkBlack">
                 {{ $t('label.black') }}
               </b-form-checkbox>
             </b-form-checkbox-group>
@@ -54,11 +54,11 @@
               </b-form-radio>
             </b-form-radio-group>
           </b-form-group>
-          <b-button v-show="isEditable" v-t="'label.start'" type="submit"
-                    class="my-1" :variant="theme" :disabled="noDevice" @click="buttonClick(true)"
+          <b-button v-t="'label.start'" v-show="isEditable" :variant="theme"
+                    :disabled="noDevice" type="submit" class="my-1" @click="buttonClick(true)"
           />
-          <b-button v-show="isEditable" v-t="'label.end'" type="submit" 
-                    class="ml-2 my-1" :variant="theme" :disabled="noDevice" @click="buttonClick(false)"
+          <b-button v-t="'label.end'" v-show="isEditable" :variant="theme" 
+                    :disabled="noDevice" type="submit" class="ml-2 my-1" @click="buttonClick(false)"
           />
         </b-form>
       </b-form-row>
@@ -141,7 +141,7 @@ export default {
   methods: {
     async fetchData(payload) {
       try {
-        this.replace({showProgress: true})
+        this.showProgress()
         await StateHelper.load('exb')
         let deviceIds = _.filter(this.exbs,
           exb => exb.enabled && this.getSensorId(exb) == SENSOR.LED
@@ -167,7 +167,7 @@ export default {
       } catch(e) {
         console.error(e)
       }
-      this.replace({showProgress: false})
+      this.hideProgress()
     },
     async save() {
       var rgb = 0

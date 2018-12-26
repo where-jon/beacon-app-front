@@ -18,8 +18,8 @@
         </b-button>
       </div>
       <div class="col-auto px-0">
-        <b-nav-item-dropdown v-if="availableNavSpec.length > 1" class="extra-nav"
-                             :extra-menu-classes="extNavClasses" right
+        <b-nav-item-dropdown v-if="availableNavSpec.length > 1" :extra-menu-classes="extNavClasses"
+                             class="extra-nav" right
         >
           <template slot="button-content">
             <em>{{ shortName }}</em>
@@ -33,7 +33,7 @@
       </div>
       <div class="col-auto reload-button-container ">
         <a v-if="reload" id="reload" href="#" @click="onClickReload">
-          <i title="リロード" :class="classes" />
+          <i :class="classes" title="リロード" />
         </a>
       </div>
     </div>

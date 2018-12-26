@@ -1,10 +1,10 @@
 <template>
   <div id="locationSetting">
     <breadcrumb :items="items" />
-    <b-alert variant="info" dismissible :show="showInfo">
+    <b-alert :show="showInfo" variant="info" dismissible>
       {{ message }}
     </b-alert>
-    <b-alert variant="danger" dismissible :show="showAlert" @dismissed="showAlert=false">
+    <b-alert :show="showAlert" variant="danger" dismissible @dismissed="showAlert=false">
       <template v-if="Array.isArray(message)">
         <span v-for="line in message" :key="line">
           {{ line }} <br>
@@ -20,8 +20,8 @@
         <label class="mr-2 mb-2">
           {{ $t('label.area') }}
         </label>
-        <b-form-select v-model="selectedArea" :options="areaOptions" class="mr-2 mb-2 areaOptions" :disabled="settingStart" />
-        <b-button v-t="'label.load'" size="sm" class="mb-2" :variant="getButtonTheme()" :disabled="settingStart" @click="changeArea" />
+        <b-form-select v-model="selectedArea" :options="areaOptions" :disabled="settingStart" class="mr-2 mb-2 areaOptions" />
+        <b-button v-t="'label.load'" :variant="getButtonTheme()" :disabled="settingStart" size="sm" class="mb-2" @click="changeArea" />
       </b-form-row>
     </b-form>
     <b-form inline class="mt-2">
@@ -29,14 +29,14 @@
         <label class="mt-mobile mr-2 mb-2">
           {{ $t('label.exb') }}
         </label>
-        <b-form-select v-model="exbDisp" :options="exbDispOptions" class="mr-2 mb-2" :disabled="settingStart" @change="changeExbDisp" />
+        <b-form-select v-model="exbDisp" :options="exbDispOptions" :disabled="settingStart" class="mr-2 mb-2" @change="changeExbDisp" />
         <b-form-row>
-          <v-select v-model="selectedExb_" size="sm" :options="exbOptions" :on-change="showExbOnMap" class="mb-2 mt-mobile exbOptions" :disabled="settingStart">
+          <v-select v-model="selectedExb_" :options="exbOptions" :on-change="showExbOnMap" :disabled="settingStart" size="sm" class="mb-2 mt-mobile exbOptions">
             <div slot="no-options">
               {{ $i18n.tnl('label.vSelectNoOptions') }}
             </div>
           </v-select>
-          <b-button v-t="'label.bulkAdd'" size="sm" :variant="getButtonTheme()" class="mt-mobile mb-2" :disabled="settingStart" @click="bulkAdd" /> 
+          <b-button v-t="'label.bulkAdd'" :variant="getButtonTheme()" :disabled="settingStart" size="sm" class="mt-mobile mb-2" @click="bulkAdd" /> 
         </b-form-row>
       </b-form-row>
     </b-form>
@@ -45,7 +45,7 @@
         <label class="mr-2">
           {{ $t('label.mapRatio') }}
         </label>
-        <input size="sm" type="number" :value="mapRatio" :readonly="true" class="ratioInput form-control">
+        <input :value="mapRatio" :readonly="true" size="sm" type="number" class="ratioInput form-control">
       </b-form-row>
       <b-form-row class="mr-3 mb-3 ml-1">
         <label class="mr-2 mt-mobile">
@@ -57,11 +57,11 @@
         <label class="mr-2">
           {{ "/ "+ $t('label.pixelWidth') }}
         </label>
-        <input v-model="pixelWidth" size="sm" type="number" :readonly="true" class="ratioInput form-control">
+        <input v-model="pixelWidth" :readonly="true" size="sm" type="number" class="ratioInput form-control">
       </b-form-row>
       <b-form-row class="mb-3 ml-1">
-        <b-button v-t="settingStart?'label.settingNow':'label.settingStart'" size="sm" :variant="getButtonTheme()" :class="{'mt-mobile':true, 'mt-mobile-button': true, 'mr-2':true, blink:settingStart}" @click="ratioSettingStart" /> 
-        <b-button v-t="'label.save'" size="sm" :variant="getButtonTheme()" :disabled="!isChanged" @click="save" /> 
+        <b-button v-t="settingStart?'label.settingNow':'label.settingStart'" :variant="getButtonTheme()" :class="{'mt-mobile':true, 'mt-mobile-button': true, 'mr-2':true, blink:settingStart}" size="sm" @click="ratioSettingStart" /> 
+        <b-button v-t="'label.save'" :variant="getButtonTheme()" :disabled="!isChanged" size="sm" @click="save" /> 
       </b-form-row>
     </b-form>
     <p />
@@ -155,7 +155,6 @@ export default {
     }
   },
   mounted() {
-    this.replace({title: this.$i18n.tnl('label.location')})
     this.fetchData()
     if(this.pageSendParam){
       this.selectedArea = this.pageSendParam.areaId
@@ -481,7 +480,7 @@ export default {
       this.stage.update()
     },
     async save() {
-      this.replace({showProgress: true})
+      this.showProgress()
       this.message = ''
       this.showInfo = false
       this.showAlert = false
@@ -531,7 +530,7 @@ export default {
         this.showAlert = true
         window.scrollTo(0, 0)
       }
-      this.replace({showProgress: false})
+      this.hideProgress()
     },
   }
 }
