@@ -49,7 +49,7 @@
             </b-form-group>
             <b-form-group>
               <label v-t="'label.locale'" />
-              <b-form-select v-model="selectedLocale" :options="locales" class="mb-3" @change="localeSelected"/>
+              <b-form-select v-model="selectedLocale" :options="locales" class="mb-3" @change="localeSelected" />
             </b-form-group>
             <!-- プロフィール・パスワードを変更するボタン -->
             <b-form-group v-show="!isProvider">
@@ -64,7 +64,7 @@
                                   :state="errorMessages.password.length > 0 ? false : null" type="password"
                                   maxlength="16"
                     />
-                    <p v-t="val" v-for="(val, key) in errorMessages.password" :key="key" class="error" />
+                    <p v-for="(val, key) in errorMessages.password" :key="key" v-t="val" class="error" />
                   </b-form-group>
 
                   <!-- 変更パスワード -->
@@ -81,7 +81,8 @@
                   {{ passErrorMessage }}
                 </b-alert>
               </b-card>
-          </b-form-group></b-form>
+            </b-form-group>
+          </b-form>
         </b-col>
       </b-row>
       <b-row v-show="isChange" :style="{ marginTop: '30px' }">
