@@ -22,6 +22,12 @@ export const CHAR_SET = [
   {id: 2,  name: 'SJIS'},
 ]
 
+export const LOCALE = [
+  {id: 1,  name: 'null'},
+  {id: 2,  name: 'ja'},
+  {id: 3,  name: 'en'},
+]
+
 export const ROLE = {
 }
 

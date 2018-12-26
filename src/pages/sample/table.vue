@@ -18,9 +18,9 @@
     <p />
 
     <!-- Main table element -->
-    <b-table show-empty stacked="md" :items="items" :fields="fields"
-             :current-page="currentPage" :per-page="perPage"
-             :filter="filter" @filtered="onFiltered"
+    <b-table :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage"
+             :filter="filter" show-empty
+             stacked="md" @filtered="onFiltered"
     >
       <template slot="actions" slot-scope="row">
         <b-button size="sm" class="mr-1" @click.stop="info(row.item, row.index, $event.target)">

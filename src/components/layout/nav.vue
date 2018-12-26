@@ -1,5 +1,5 @@
 <template>
-  <b-navbar toggleable="md" type="dark" :class="topNavBarClasses">
+  <b-navbar :class="topNavBarClasses" toggleable="md" type="dark">
     <!-- Responsive menu -->
     <b-navbar-toggle v-show="!isLoginPage && showNav" target="nav_collapse" />  
 
@@ -7,7 +7,7 @@
     <b-navbar-brand>
       <div class="appTitle">
         <img v-if="showLogo" src="/toplogo.png" width="220" height="36">
-        <span v-if="!showLogo" v-t="'label.title'" />
+        <span v-t="'label.title'" v-if="!showLogo" />
       </div>
     </b-navbar-brand>
 
@@ -18,7 +18,7 @@
           <template slot="button-content">
             <em v-t="'label.' + group.key" />
           </template>
-          <b-dropdown-item v-for="page in group.pages" :key="page.key" v-t="'label.' + page.key" href="#" :class="navbarClasses" @click="move('/' + group.base + page.path)" />
+          <b-dropdown-item v-t="'label.' + page.key" v-for="page in group.pages" :key="page.key" :class="navbarClasses" href="#" @click="move('/' + group.base + page.path)" />
         </b-nav-item-dropdown>
       </b-navbar-nav>
 
@@ -35,7 +35,7 @@
             <span>{{ currentRegionName }}</span>
           </template>
           <b-dropdown-item v-for="region in this.$store.state.app_service.regions" :key="region.regionId" href="#" @click="switchRegion(region)">
-            <i class="far fa-building mr-1" aria-hidden="true" :style="getStyleDropdownRegion(region.regionId)" />
+            <i :style="getStyleDropdownRegion(region.regionId)" class="far fa-building mr-1" aria-hidden="true" />
             <span>{{ region.regionName }}</span>
           </b-dropdown-item>
         </b-nav-item-dropdown>

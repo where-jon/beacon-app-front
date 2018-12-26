@@ -2,10 +2,10 @@
   <div>
     <breadcrumb :items="items" />
     <div class="container">
-      <b-alert variant="info" dismissible :show="showInfo">
+      <b-alert :show="showInfo" variant="info" dismissible>
         {{ message }}
       </b-alert>
-      <b-alert variant="danger" dismissible :show="showAlert" @dismissed="showAlert=false">
+      <b-alert :show="showAlert" variant="danger" dismissible @dismissed="showAlert=false">
         <template v-if="Array.isArray(message)">
           <span v-for="line in message" :key="line">
             {{ line }} <br>
@@ -31,7 +31,7 @@
           </b-form-row>
           <b-form-row>
             <b-col sm="5">
-              <input v-model="form.tenantCd" type="text" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" maxlength="31" class="form-control" required :readonly="!isEditable">
+              <input v-model="form.tenantCd" :readonly="!isEditable" type="text" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" maxlength="31" class="form-control" required>
             </b-col>
           </b-form-row>
           <b-form-row>
@@ -39,7 +39,7 @@
           </b-form-row>
           <b-form-row>
             <b-col sm="5">
-              <input v-model="form.tenantName" type="text" maxlength="20" class="form-control" required :readonly="!isEditable">
+              <input v-model="form.tenantName" :readonly="!isEditable" type="text" maxlength="20" class="form-control" required>
             </b-col>
           </b-form-row>
         </b-form-group>
@@ -58,11 +58,11 @@
       <b-form v-if="!hasId && show" inline @submit.prevent="onSubmit">
         <b-form-row class="mb-2 mr-3">
           <label v-t="'label.id'" class="mr-3" />
-          <input v-model="form.sysAdminLoginId" type="text" maxlength="16" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" class="form-control" required :readonly="!isEditable">
+          <input v-model="form.sysAdminLoginId" :readonly="!isEditable" type="text" maxlength="16" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" class="form-control" required>
         </b-form-row>
         <b-form-row class="mb-2">
           <label v-t="'label.password'" class="mr-3" />
-          <input v-model="form.sysAdminPass" type="password" maxlength="16" pattern="^[a-zA-Z0-9_\-\/!#\$%&@]*$" class="form-control" :required="requireInput(form.sysAdminLoginId)" :readonly="!isEditable">
+          <input v-model="form.sysAdminPass" :required="requireInput(form.sysAdminLoginId)" :readonly="!isEditable" type="password" maxlength="16" pattern="^[a-zA-Z0-9_\-\/!#\$%&@]*$" class="form-control">
         </b-form-row>
       </b-form>
       <b-form-group v-if="!hasId">
@@ -73,11 +73,11 @@
       <b-form v-if="!hasId && show" inline @submit.prevent="onSubmit">
         <b-form-row class="mb-2 mr-3">
           <label v-t="'label.id'" class="mr-3" />
-          <input v-model="form.adminLoginId" type="text" maxlength="16" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" class="form-control" :readonly="!isEditable">
+          <input v-model="form.adminLoginId" :readonly="!isEditable" type="text" maxlength="16" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" class="form-control">
         </b-form-row>
         <b-form-row class="mb-2">
           <label v-t="'label.password'" class="mr-3" />
-          <input v-model="form.adminPass" type="password" maxlength="16" pattern="^[a-zA-Z0-9_\-\/!#\$%&@]*$" class="form-control" :required="requireInput(form.adminLoginId)" :readonly="!isEditable">
+          <input v-model="form.adminPass" :required="requireInput(form.adminLoginId)" :readonly="!isEditable" type="password" maxlength="16" pattern="^[a-zA-Z0-9_\-\/!#\$%&@]*$" class="form-control">
         </b-form-row>
       </b-form>
       <b-form-group v-if="!hasId">
@@ -88,11 +88,11 @@
       <b-form v-if="!hasId && show" inline @submit.prevent="onSubmit">
         <b-form-row class="mb-2 mr-3">
           <label v-t="'label.id'" class="mr-3" />
-          <input v-model="form.userLoginId" type="text" maxlength="16" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" class="form-control" :readonly="!isEditable">
+          <input v-model="form.userLoginId" :readonly="!isEditable" type="text" maxlength="16" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" class="form-control">
         </b-form-row>
         <b-form-row class="mb-2">
           <label v-t="'label.password'" class="mr-3" />
-          <input v-model="form.userPass" type="password" maxlength="16" pattern="^[a-zA-Z0-9_\-\/!#\$%&@]*$" class="form-control" :required="requireInput(form.userLoginId)" :readonly="!isEditable">
+          <input v-model="form.userPass" :required="requireInput(form.userLoginId)" :readonly="!isEditable" type="password" maxlength="16" pattern="^[a-zA-Z0-9_\-\/!#\$%&@]*$" class="form-control">
         </b-form-row>
       </b-form>
 
@@ -104,42 +104,42 @@
       <b-form v-if="!hasId && show" inline @submit.prevent="onSubmit">
         <b-form-row class="mb-3">
           <label v-t="'label.regionName'" class="mr-3" />
-          <input v-model="form.regionName" type="text" maxlength="20" class="form-control" required :readonly="!isEditable">
+          <input v-model="form.regionName" :readonly="!isEditable" type="text" maxlength="20" class="form-control" required>
         </b-form-row>
       </b-form>
       <b-form v-if="!hasId && show" inline @submit.prevent="onSubmit">
         <b-form-row class="mb-3">
           <label v-t="'label.meshId'" class="mr-3" />
-          <input v-model="form.meshId" type="number" min="0" max="65535" class="form-control" :readonly="!isEditable">
+          <input v-model="form.meshId" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control">
         </b-form-row>
       </b-form>
       <b-form v-if="!hasId && show" inline @submit.prevent="onSubmit">
         <b-form-row class="mb-5">
           <label v-t="'label.deviceOffset'" class="mr-3" />
-          <input v-model="form.deviceOffset" type="number" min="0" max="65535" class="form-control" required :readonly="!isEditable">
+          <input v-model="form.deviceOffset" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control" required>
         </b-form-row>
       </b-form>
 
       <b-form-row class="mb-2">
-        <b-button v-t="'label.featureSetting'" type="button" :variant="theme" class="mr-2 my-1" @click="showFeatureEdit" />
+        <b-button v-t="'label.featureSetting'" :variant="theme" type="button" class="mr-2 my-1" @click="showFeatureEdit" />
       </b-form-row>
 
       <b-form-row class="mb-2">
-        <label v-if="hasId" v-t="'label.createDt'" class="mr-2" />
-        <label v-if="hasId" v-t="createDt" />
+        <label v-t="'label.createDt'" v-if="hasId" class="mr-2" />
+        <label v-t="createDt" v-if="hasId" />
       </b-form-row>
 
       <b-form v-if="show" @submit.prevent="onSubmit">
         <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
-        <b-button v-if="isEditable" type="submit" :variant="theme" class="mr-2 my-1" @click="register(false)">
+        <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="register(false)">
           {{ label }}
         </b-button>
-        <b-button v-if="isEditable && !isUpdate" v-t="'label.registerAgain'" type="submit" :variant="theme" class="my-1" @click="register(true)" />
+        <b-button v-t="'label.registerAgain'" v-if="isEditable && !isUpdate" :variant="theme" type="submit" class="my-1" @click="register(true)" />
       </b-form>
     </div>
 
     <!-- modal -->
-    <b-modal id="modalInfo" ok-only :ok-title="$i18n.tnl('label.setting')" :ok-variant="theme" :title="$i18n.tnl('label.featureSetting')" @ok="storeInfo" @hide="resetModal">
+    <b-modal id="modalInfo" :ok-title="$i18n.tnl('label.setting')" :ok-variant="theme" :title="$i18n.tnl('label.featureSetting')" ok-only @ok="storeInfo" @hide="resetModal">
       <feature-list :list="editFeatureList" :fields="fields" />
     </b-modal>
   </div>

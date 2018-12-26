@@ -1,6 +1,6 @@
 <template>
   <ul class="menu-groups">
-    <li v-for="(group, i) in nav" :key="group.path" class="menu-group" :to="'/' + group.base" active-class="active">
+    <li v-for="(group, i) in nav" :key="group.path" :to="'/' + group.base" class="menu-group" active-class="active">
       <ul class="menu-group-items">
         <li class="menu-item title clearfix" @click.stop="onMenuClick(i)">
           <span class="title">
@@ -13,7 +13,7 @@
         </li>
         <vue-slide-up-down :active="selectedItem === i">
           <li v-for="page in group.pages" :key="page.key" :class="menuItemClasses">
-            <router-link class="bd-toc-link" :to="'/' + group.base + page.path">
+            <router-link :to="'/' + group.base + page.path" class="bd-toc-link">
               <i :class="page.icon" class="ml-3 menu-item-icon" />&nbsp;{{ $t("label." + page.key) }}
             </router-link>
           </li>

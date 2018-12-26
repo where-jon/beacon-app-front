@@ -3,13 +3,13 @@
   <div>
     <breadcrumb :items="items" />
     <div class="container">
-      <b-alert variant="success" dismissible :show="isSuccess">
+      <b-alert :show="isSuccess" variant="success" dismissible>
         {{ 
           $i18n.tnl('message.updateCompleted', {
             target: $i18n.tnl('label.login-user-profile')})
         }}
       </b-alert>
-      <b-alert variant="danger" dismissible :show="hasError">
+      <b-alert :show="hasError" variant="danger" dismissible>
         {{ 
           $i18n.terror('message.updateFailed', {
             target: $i18n.tnl('label.login-user-profile')
@@ -22,70 +22,73 @@
           <b-form>
             <b-form-group>
               <label v-t="'label.loginId'" />
-              <b-form-input v-model="loginUser.loginId" type="text" maxlength="16" readonly :state="errorMessages.loginId.length > 0 ? false : null" />
-              <p v-for="(val, key) in errorMessages.loginId" :key="key" v-t="val" class="error" />
+              <b-form-input v-model="loginUser.loginId" :state="errorMessages.loginId.length > 0 ? false : null" type="text" maxlength="16" readonly />
+              <p v-t="val" v-for="(val, key) in errorMessages.loginId" :key="key" class="error" />
             </b-form-group>
             <b-form-group v-show="showName">
               <label v-t="'label.name'" />
-              <b-form-input v-model="loginUser.name" type="text" :readonly="!isChange" :state="errorMessages.name.length > 0 ? false : null" />
-              <p v-for="(val, key) in errorMessages.name" :key="key" v-t="val" class="error" />
+              <b-form-input v-model="loginUser.name" :readonly="!isChange" :state="errorMessages.name.length > 0 ? false : null" type="text" />
+              <p v-t="val" v-for="(val, key) in errorMessages.name" :key="key" class="error" />
             </b-form-group>
             <b-form-group v-show="showEmail">
               <label v-t="'label.email'" />
-              <b-form-input v-model="loginUser.email" type="email" :readonly="!isChange" :state="errorMessages.email.length > 0 ? false : null" />
-              <p v-for="(val, key) in errorMessages.email" :key="key" v-t="val" class="error" />
+              <b-form-input v-model="loginUser.email" :readonly="!isChange" :state="errorMessages.email.length > 0 ? false : null" type="email" />
+              <p v-t="val" v-for="(val, key) in errorMessages.email" :key="key" class="error" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.role'" />
-              <b-form-input type="text" :value="loginUser.role" :readonly="true" />
+              <b-form-input :value="loginUser.role" :readonly="true" type="text" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.theme'" />
               <b-form-select v-model="selectedTheme" :options="themes" class="mb-3" @change="themeSelected" />
             </b-form-group>
-            <!-- プロフィール・パスワードを変更するボタン -->
             <b-form-group>
               <label v-t="'label.charSet'" />
               <b-form-select v-model="selectedCharSet" :options="charSets" class="mb-3" @change="charSetSelected" />
             </b-form-group>
-            <b-form-group v-show="!isProvider">
-              <b-button v-show="!isChange" v-t="'label.changeProfilePassword'" type="button" 
-                        :variant="theme" class="btn-block" @click="isChange = true"
-              />
+            <b-form-group>
+              <label v-t="'label.locale'" />
+              <b-form-select v-model="selectedLocale" :options="locales" class="mb-3" @change="localeSelected"/>
             </b-form-group>
+            <!-- プロフィール・パスワードを変更するボタン -->
+            <b-form-group v-show="!isProvider">
+              <b-button v-t="'label.changeProfilePassword'" v-show="!isChange" :variant="theme" 
+                        type="button" class="btn-block" @click="isChange = true"
+              />
 
-            <b-card v-show="isChange" bg-variant="light">
-              <b-form-group breakpoint="lg" :label="$i18n.tnl('label.changePassword')" label-size="md">
-                <!-- 現在のパスワード -->
-                <b-form-group :label="$i18n.tnl('label.passwordCurrent')" label-class="text-sm-right" label-for="password-current">
-                  <b-form-input id="password-current" v-model="loginUser.password"
-                                type="password" maxlength="16"
-                                :state="errorMessages.password.length > 0 ? false : null"
-                  />
-                  <p v-for="(val, key) in errorMessages.password" :key="key" v-t="val" class="error" />
-                </b-form-group>
+              <b-card v-show="isChange" bg-variant="light">
+                <b-form-group :label="$i18n.tnl('label.changePassword')" breakpoint="lg" label-size="md">
+                  <!-- 現在のパスワード -->
+                  <b-form-group :label="$i18n.tnl('label.passwordCurrent')" label-class="text-sm-right" label-for="password-current">
+                    <b-form-input id="password-current" v-model="loginUser.password"
+                                  :state="errorMessages.password.length > 0 ? false : null" type="password"
+                                  maxlength="16"
+                    />
+                    <p v-t="val" v-for="(val, key) in errorMessages.password" :key="key" class="error" />
+                  </b-form-group>
 
-                <!-- 変更パスワード -->
-                <b-form-group :label="$i18n.tnl('label.passwordUpdate')" label-class="text-sm-right" label-for="password-update">
-                  <b-form-input id="password-update" v-model="loginUser.passwordUpdate" type="password" maxlength="16" />
-                </b-form-group>
+                  <!-- 変更パスワード -->
+                  <b-form-group :label="$i18n.tnl('label.passwordUpdate')" label-class="text-sm-right" label-for="password-update">
+                    <b-form-input id="password-update" v-model="loginUser.passwordUpdate" type="password" maxlength="16" />
+                  </b-form-group>
 
-                <!-- 確認パスワード -->
-                <b-form-group :label="$i18n.tnl('label.passwordConfirm')" label-class="text-sm-right" label-for="password-confirm">
-                  <b-form-input id="password-confirm" v-model="loginUser.passwordConfirm" type="password" maxlength="16" />
+                  <!-- 確認パスワード -->
+                  <b-form-group :label="$i18n.tnl('label.passwordConfirm')" label-class="text-sm-right" label-for="password-confirm">
+                    <b-form-input id="password-confirm" v-model="loginUser.passwordConfirm" type="password" maxlength="16" />
+                  </b-form-group>
                 </b-form-group>
-              </b-form-group>
-              <b-alert variant="danger" dismissible :show="passErrorMessage !== null">
-                {{ passErrorMessage }}
-              </b-alert>
-            </b-card>
-          </b-form>
+                <b-alert :show="passErrorMessage !== null" variant="danger" dismissible>
+                  {{ passErrorMessage }}
+                </b-alert>
+              </b-card>
+          </b-form-group></b-form>
         </b-col>
       </b-row>
       <b-row v-show="isChange" :style="{ marginTop: '30px' }">
         <b-form-group class="col text-center">
           <b-button v-t="'label.cancel'" type="button" class="mr-4 mb-2 input-btn" variant="outline-danger" @click="handleCancelButton" />
-          <b-button v-t="'label.modify'" type="button" class="ml-4 mb-2 input-btn" :variant="theme" @click="onSubmit" />
+          <b-button v-t="'label.modify'" :variant="theme" type="button" class="ml-4 mb-2 input-btn" @click="onSubmit" />
         </b-form-group>
       </b-row>
     </div>
@@ -97,13 +100,15 @@ import { mapMutations } from 'vuex'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import pagetitle from '../../../components/layout/pagetitle.vue'
 import { APP } from '../../../sub/constant/config'
-import { THEME, CHAR_SET } from '../../../sub/constant/Constants'
+import { THEME, CHAR_SET, LOCALE } from '../../../sub/constant/Constants'
 import { getTheme, getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import { getCharSet } from '../../../sub/helper/CharSetHelper'
+import * as LocaleHelper from '../../../sub/helper/LocaleHelper'
 import * as AuthHelper from '../../../sub/helper/AuthHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as ValidateUtil from '../../../sub/util/ValidateUtil'
+import { getLangShort } from '../../../sub/util/HtmlUtil'
 import commonmixinVue from '../../../components/mixin/commonmixin.vue'
 
 export default {
@@ -117,20 +122,13 @@ export default {
       name: 'setting',
       id: 'settingId',
       appServicePath: '/meta/user/currentUser',
-      items: [
-        {
-          text: this.$i18n.tnl('label.setting'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.personal'),
-          active: true
-        },
-      ],
+      items: [],
       themes: [],
       selectedTheme: null,
       charSets: [],
       selectedCharSet: null,
+      locales: [],
+      selectedLocale: null,
       loginUser: {
         userId: null,
         loginId: null,
@@ -183,27 +181,37 @@ export default {
     }
   },
   created () {
-    this.setLoginUser()
-    const theme = getTheme()
-    const selected = THEME.find((item) => {
-      return item.name === theme
-    })
-    this.selectedTheme = selected != null? selected.id : THEME[0].id
-    const charSet = getCharSet(this.$store.state.loginId)
-    const selectedCs = CHAR_SET.find((item) => {
-      return item.name === charSet
-    })
-    this.selectedCharSet = selectedCs != null ? selectedCs.id : CHAR_SET[0].id
-    this.themes = THEME.map((e) => {
-      const text = this.$i18n.tnl('label.' + e.name)
-      return { value: e.id, text: text }
-    })
-    this.charSets = CHAR_SET.map((e) => {
-      const text = this.$i18n.tnl('label.' + e.name)
-      return { value: e.id, text: text }
-    })
+    this.initialize()
   },
   methods: {
+    async initialize(){
+      await this.setLoginUser()
+      const theme = getTheme()
+      const selected = THEME.find((item) => {
+        return item.name === theme
+      })
+      this.selectedTheme = selected != null? selected.id : THEME[0].id
+      const charSet = getCharSet(this.$store.state.loginId)
+      const selectedCs = CHAR_SET.find((item) => {
+        return item.name === charSet
+      })
+      this.selectedCharSet = selectedCs != null ? selectedCs.id : CHAR_SET[0].id
+      this.themes = THEME.map((e) => {
+        const text = this.$i18n.tnl('label.' + e.name)
+        return { value: e.id, text: text }
+      })
+      this.charSets = CHAR_SET.map((e) => {
+        const text = this.$i18n.tnl('label.' + e.name)
+        return { value: e.id, text: text }
+      })
+      const selectedLc = LOCALE.find((val) => val.name == LocaleHelper.getLocale(this.loginUser.loginId))
+      this.selectedLocale = selectedLc != null ? selectedLc.id : LOCALE[0].id
+      this.locales = LOCALE.map((e) => {return { value: e.id, text: this.$i18n.tnl('label.' + e.name) }})
+      this.items = [
+        { text: this.$i18n.tnl('label.setting'), active: true },
+        { text: this.$i18n.tnl('label.personal'), active: true },
+      ]
+    },
     themeSelected (selected) {
       const t = THEME.find((e) => {
         return e.id === selected
@@ -221,6 +229,13 @@ export default {
       const charSet = cs != null ? cs.name : CHAR_SET[0].name
       this.replaceSetting({charSet})
       window.localStorage.setItem(this.$store.state.loginId + '-charSet', charSet)
+    },
+    localeSelected (selected) {
+      const lc = LOCALE.find((e) => e.id === selected)
+      const locale = lc != null && lc.id != LOCALE[0].id? lc.name : ''
+      this.setLang(locale? locale: getLangShort())
+      LocaleHelper.setLocale(locale)
+      this.initialize()
     },
     handleUpdateConfirmPass (value) {
       const passwordUpdate = this.loginUser.passwordUpdate 
@@ -344,6 +359,7 @@ export default {
     ]),
     ...mapMutations([
       'replace', 
+      'setLang',
     ]),
   },
 }

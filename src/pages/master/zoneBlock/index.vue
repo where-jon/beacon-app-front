@@ -2,10 +2,10 @@
   <div>
     <breadcrumb :items="items" />
     <div class="container">
-      <b-alert variant="info" dismissible :show="showInfo">
+      <b-alert :show="showInfo" variant="info" dismissible>
         {{ message }}
       </b-alert>
-      <b-alert variant="danger" dismissible :show="showAlert" @dismissed="showAlert=false">
+      <b-alert :show="showAlert" variant="danger" dismissible @dismissed="showAlert=false">
         <template v-if="Array.isArray(message)">
           <span v-for="line in message" :key="line">
             {{ line }} <br>
@@ -33,12 +33,12 @@
           </b-form-row>
           <b-form-row class="mr-4 mb-2">
             <label v-t="'label.zoneName'" class="control-label mr-2" />
-            <input v-model="zoneName" type="text" maxlength="20" class="form-control" required :readonly="!isEditable" :disabled="!isEnableNameText">
+            <input v-model="zoneName" :readonly="!isEditable" :disabled="!isEnableNameText" type="text" maxlength="20" class="form-control" required>
           </b-form-row>
           <b-form-row class="mr-4 mb-2">
             <label v-t="'label.categoryName'" class="control-label mr-2 mb-2" />
-            <b-form-select v-model="categoryId" :options="categoryNames" class="mr-3 mb-2" :disabled="!isEnableNameText" />
-            <b-button v-t="'label.setting'" type="button" :variant="theme" class="mb-2" :disabled="!isEnableNameText" @click="onSetting" />
+            <b-form-select v-model="categoryId" :options="categoryNames" :disabled="!isEnableNameText" class="mr-3 mb-2" />
+            <b-button v-t="'label.setting'" :variant="theme" :disabled="!isEnableNameText" type="button" class="mb-2" @click="onSetting" />
           </b-form-row>
         </b-form-row>
       </b-form>
@@ -48,7 +48,7 @@
           <b-form-row>
             <b-form-row>
               <b-button v-t="'label.back'" type="button" variant="outline-danger" @click="backToList" />
-              <b-button v-if="isEditable" type="button" :variant="theme" class="ml-2" @click="regist()">
+              <b-button v-if="isEditable" :variant="theme" type="button" class="ml-2" @click="regist()">
                 {{ label }}
               </b-button>
             </b-form-row>

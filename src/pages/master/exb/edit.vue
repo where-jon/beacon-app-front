@@ -2,10 +2,10 @@
   <div>
     <breadcrumb :items="items" />
     <div class="container">
-      <b-alert variant="info" dismissible :show="showInfo">
+      <b-alert :show="showInfo" variant="info" dismissible>
         {{ message }}
       </b-alert>
-      <b-alert variant="danger" dismissible :show="showAlert" @dismissed="showAlert=false">
+      <b-alert :show="showAlert" variant="danger" dismissible @dismissed="showAlert=false">
         <template v-if="Array.isArray(message)">
           <span v-for="line in message" :key="line">
             {{ line }} <br>
@@ -25,38 +25,38 @@
             </b-form-group>
             <b-form-group v-show="isShown('EXB_WITH_DEVICE_NUM')">
               <label v-t="'label.deviceNum'" />
-              <input v-model.lazy="deviceNum" type="number" class="form-control" min="0" :max="maxDeviceNum" required :readonly="!isEditable">
+              <input v-model.lazy="deviceNum" :max="maxDeviceNum" :readonly="!isEditable" type="number" class="form-control" min="0" required>
             </b-form-group>
             <b-form-group v-show="isShown('EXB_WITH_DEVICE_ID')">
               <label v-t="'label.deviceId'" />
-              <input v-model.lazy="deviceId" type="number" class="form-control" min="0" :max="maxDeviceId" required :readonly="!isEditable">
+              <input v-model.lazy="deviceId" :max="maxDeviceId" :readonly="!isEditable" type="number" class="form-control" min="0" required>
             </b-form-group>
             <b-form-group v-show="isShown('EXB_WITH_DEVICE_IDX')">
               <label v-t="'label.deviceIdX'" />
-              <input v-model.lazy="deviceIdX" type="text" class="form-control" required :readonly="!isEditable">
+              <input v-model.lazy="deviceIdX" :readonly="!isEditable" type="text" class="form-control" required>
             </b-form-group>
             <b-form-group>
               <label v-t="'label.locationName'" />
-              <input v-model="form.locationName" type="text" maxlength="20" class="form-control" required :readonly="!isEditable">
+              <input v-model="form.locationName" :readonly="!isEditable" type="text" maxlength="20" class="form-control" required>
             </b-form-group>
             <b-form-group>
               <label v-t="'label.area'" />
-              <b-form-select v-model="form.areaId" :options="areaOptions" class="mb-3 ml-3 col-4" :disabled="!isEditable" :readonly="!isEditable" />
+              <b-form-select v-model="form.areaId" :options="areaOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-3 col-4" />
             </b-form-group>
             <b-form-group v-show="isShown('EXB_WITH_POSID')">
               <label v-t="'label.posId'" />
-              <input v-model="form.posId" type="number" min="0" max="65535" class="form-control" required :readonly="!isEditable">
+              <input v-model="form.posId" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control" required>
             </b-form-group>
             <b-form-group>
               <label v-t="'label.locationX'" />
-              <input v-model="form.x" type="number" min="0" max="99999" class="form-control" :readonly="!isEditable">
+              <input v-model="form.x" :readonly="!isEditable" type="number" min="0" max="99999" class="form-control">
             </b-form-group>
             <b-form-group>
               <label v-t="'label.locationY'" />
-              <input v-model="form.y" type="number" min="0" max="99999" class="form-control" :readonly="!isEditable">
+              <input v-model="form.y" :readonly="!isEditable" type="number" min="0" max="99999" class="form-control">
             </b-form-group>
             <b-form-group>
-              <b-form-checkbox v-model="form.enabled" value="true" unchecked-value="false" :disabled="!isEditable" :readonly="!isEditable">
+              <b-form-checkbox v-model="form.enabled" :disabled="!isEditable" :readonly="!isEditable" value="true" unchecked-value="false">
                 {{ $t('label.enabled') }}
               </b-form-checkbox>
             </b-form-group>
@@ -79,17 +79,17 @@
             -->
             <b-form-group>
               <label v-t="'label.type'" />
-              <b-form-select v-model="form.sensorId" :options="sensorOptionsExb" class="mb-3 ml-3 col-4" :disabled="!isEditable" :readonly="!isEditable" />
+              <b-form-select v-model="form.sensorId" :options="sensorOptionsExb" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-3 col-4" />
             </b-form-group>
             <b-form-group v-show="useZone">
               <label v-t="'label.zone'" />
-              <b-form-select v-model="form.zoneId" :options="zoneNames" class="mb-3 ml-3 col-4" :disabled="!isEditable" :readonly="!isEditable" />
+              <b-form-select v-model="form.zoneId" :options="zoneNames" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-3 col-4" />
             </b-form-group>
             <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
-            <b-button v-if="isEditable" type="submit" :variant="theme" class="mr-2 my-1" @click="register(false)">
+            <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="register(false)">
               {{ label }}
             </b-button>
-            <b-button v-if="isEditable && !isUpdate" v-t="'label.registerAgain'" type="submit" :variant="theme" class="my-1" @click="register(true)" />
+            <b-button v-t="'label.registerAgain'" v-if="isEditable && !isUpdate" :variant="theme" type="submit" class="my-1" @click="register(true)" />
           </b-form>
         </b-col>
       </b-row>
