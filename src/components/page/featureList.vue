@@ -8,7 +8,7 @@
         </div>
       </template>
       <template slot="subCheck" slot-scope="row">
-        <div v-if="row.item.subShow" class="custom-control custom-checkbox" >
+        <div v-if="row.item.subShow" class="custom-control custom-checkbox">
           <input :id="getCheckId(row.item)" v-model="row.item.checked" :disabled="row.item.disabled" type="checkbox" class="custom-control-input">
           <label :for="getCheckId(row.item)" class="custom-control-label mb-3" />
         </div>

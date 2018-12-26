@@ -5,7 +5,7 @@
       <b-row align-h="end">
         <all-count :count="allCount" />
         <b-col md="2" class="mb-3 mr-3">
-          <b-button v-t="'label.download'" v-if="!iosOrAndroid" :variant="getButtonTheme()" @click="download()" />
+          <b-button v-if="!iosOrAndroid" v-t="'label.download'" :variant="getButtonTheme()" @click="download()" />
         </b-col>
       </b-row>
       <table class="table table-hover">
@@ -34,7 +34,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
@@ -70,6 +69,7 @@ export default {
           active: true
         }
       ],
+      gateways: [],
       isLoad: false,
       labelNo: this.$i18n.t('label.no'),
       labelDeviceId: this.$i18n.t('label.deviceId'),
@@ -78,9 +78,6 @@ export default {
     }
   },
   computed: {
-    ...mapState('monitor', [
-      'gateways',
-    ]),
     allCount() {
       return this.gateways.length
     },
@@ -114,7 +111,7 @@ export default {
           const state = this.getStateLabel('gw', e.timestamp)
           return { ...e, state: state }
         })
-        this.replaceMonitor({gateways})
+        this.gateways = gateways
       }
       catch(e) {
         console.error(e)

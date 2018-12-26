@@ -5,7 +5,7 @@
       <b-row align-h="end">
         <all-count :count="allCount" />
         <b-col md="2" class="mb-3 mr-3">
-          <b-button v-t="'label.download'" v-if="!iosOrAndroid" :variant="getButtonTheme()" @click="download()" />
+          <b-button v-if="!iosOrAndroid" v-t="'label.download'" :variant="getButtonTheme()" @click="download()" />
         </b-col>
       </b-row>
       <div class="table-area">
@@ -118,6 +118,7 @@ export default {
           active: true
         }
       ],
+      positions: [],
       isLoad: false,
       interval: null,
       badgeClassPrefix: 'badge badge-pill badge-',
@@ -145,9 +146,6 @@ export default {
     }
   },
   computed: {
-    ...mapState('monitor', [
-      'positions',
-    ]),
     ...mapState('app_service', [
       'txs', 'exbs'
     ]),
@@ -181,7 +179,7 @@ export default {
         if (payload && payload.done) {
           payload.done()
         }
-        this.replaceMonitor({positions})
+        this.positions = positions
       }
       catch(e) {
         console.error(e)

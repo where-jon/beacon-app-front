@@ -54,10 +54,10 @@
               </b-form-radio>
             </b-form-radio-group>
           </b-form-group>
-          <b-button v-t="'label.start'" v-show="isEditable" :variant="theme"
+          <b-button v-show="isEditable" v-t="'label.start'" :variant="theme"
                     :disabled="noDevice" type="submit" class="my-1" @click="buttonClick(true)"
           />
-          <b-button v-t="'label.end'" v-show="isEditable" :variant="theme" 
+          <b-button v-show="isEditable" v-t="'label.end'" :variant="theme" 
                     :disabled="noDevice" type="submit" class="ml-2 my-1" @click="buttonClick(false)"
           />
         </b-form>
@@ -92,6 +92,7 @@ export default {
       name: 'led',
       id: 'ledId',
       appServicePath: '/core/excloud/led',
+      deviceIds: [],
       ledColors: LED_COLORS,
       ledBlinkTypes: LED_BLINK_TYPES,
       lightOnCandidate: false,
@@ -120,8 +121,6 @@ export default {
       return 'outline-' + theme
     },
     ...mapState('app_service', [
-      'led',
-      'deviceIds',
       'exbs',
     ]),
   },
@@ -163,7 +162,7 @@ export default {
         if (payload && payload.done) {
           payload.done()
         }
-        this.replaceAS({deviceIds})
+        this.deviceIds = deviceIds
       } catch(e) {
         console.error(e)
       }

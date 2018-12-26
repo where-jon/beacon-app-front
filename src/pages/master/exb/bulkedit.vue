@@ -1,7 +1,7 @@
 <template>
   <div>
     <breadcrumb :items="items" />
-    <bulkedit ref="bulkEdit" :id="id" :name="name" :back-path="backPath" :app-service-path="appServicePath" />
+    <bulkedit :id="id" ref="bulkEdit" :name="name" :back-path="backPath" :app-service-path="appServicePath" />
   </div>
 </template>
 

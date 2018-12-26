@@ -2,9 +2,9 @@
   <b-form-group v-if="!isModal">
     <label v-t="'label.txViewType'" />
     <b-form-select v-model="txDispFormat" :options="txViewTypes" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-3 col-3" @change="onChangeDispFormat" />
-    <label v-t="'label.txIconColumns'" v-if="isIconsDispFormatTile" :disabled="!isIconsDispFormatTile" class="txicons-num" />
+    <label v-if="isIconsDispFormatTile" v-t="'label.txIconColumns'" :disabled="!isIconsDispFormatTile" class="txicons-num" />
     <b-form-select v-if="isIconsDispFormatTile" v-model="layoutHorizon" :options="getSelectElements('column')" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-3 col-2" @change="onChangeHorizon" />
-    <label v-t="'label.txIconLines'" v-if="isIconsDispFormatTile" :disabled="!isIconsDispFormatTile" class="txicons-num" />
+    <label v-if="isIconsDispFormatTile" v-t="'label.txIconLines'" :disabled="!isIconsDispFormatTile" class="txicons-num" />
     <b-form-select v-if="isIconsDispFormatTile" v-model="layoutVertical" :options="getSelectElements('line')" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-3 col-2" @change="onChangeVertical" />
   </b-form-group>
   <div v-else>

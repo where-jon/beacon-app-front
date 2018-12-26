@@ -39,7 +39,7 @@
             <b-button v-if="isEditable" :variant="getButtonTheme()" type="submit" class="mr-2 my-1" @click="beforeSubmit(false)">
               {{ label }}
             </b-button>
-            <b-button v-t="'label.registerAgain'" v-if="isEditable && !isUpdate" :variant="getButtonTheme()" type="submit" class="my-1" @click="beforeSubmit(true)" />
+            <b-button v-if="isEditable && !isUpdate" v-t="'label.registerAgain'" :variant="getButtonTheme()" type="submit" class="my-1" @click="beforeSubmit(true)" />
           </b-form>
         </b-col>
       </b-row>

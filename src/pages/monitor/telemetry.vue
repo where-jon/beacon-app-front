@@ -5,7 +5,7 @@
       <b-row align-h="end">
         <all-count :count="allCount" />
         <b-col md="2" class="mb-3 mr-3">
-          <b-button v-t="'label.download'" v-if="!iosOrAndroid" :variant="getButtonTheme()" @click="download()" />
+          <b-button v-if="!iosOrAndroid" v-t="'label.download'" :variant="getButtonTheme()" @click="download()" />
         </b-col>
       </b-row>
       <div class="table-area">
@@ -99,6 +99,7 @@ export default {
         {key: 'finalReceiveTimestamp', label:'finalReceiveTimestamp', sortable: true,},
         {key: 'state', label:'state', sortable: true,},
       ]),
+      telemetrys: [],
       isLoad: false,
       label_deviceId: this.$i18n.tnl('label.deviceId'),
       label_deviceNum: this.$i18n.tnl('label.deviceNum'),
@@ -140,9 +141,6 @@ export default {
     }
   },
   computed: {
-    ...mapState('monitor', [
-      'telemetrys',
-    ]),
     ...mapState('app_service', [
       'exbs',
     ]),
@@ -186,7 +184,7 @@ export default {
         if (payload && payload.done) {
           payload.done()
         }
-        this.replaceMonitor({telemetrys})
+        this.telemetrys = telemetrys
       }
       catch(e) {
         console.error(e)
