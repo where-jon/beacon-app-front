@@ -7,7 +7,7 @@
     <b-navbar-brand>
       <div class="appTitle">
         <img v-if="showLogo" src="/toplogo.png" width="220" height="36">
-        <span v-t="'label.title'" v-if="!showLogo" />
+        <span v-if="!showLogo" v-t="'label.title'" />
       </div>
     </b-navbar-brand>
 
@@ -18,7 +18,7 @@
           <template slot="button-content">
             <em v-t="'label.' + group.key" />
           </template>
-          <b-dropdown-item v-t="'label.' + page.key" v-for="page in group.pages" :key="page.key" :class="navbarClasses" href="#" @click="move('/' + group.base + page.path)" />
+          <b-dropdown-item v-for="page in group.pages" :key="page.key" v-t="'label.' + page.key" :class="navbarClasses" href="#" @click="move('/' + group.base + page.path)" />
         </b-nav-item-dropdown>
       </b-navbar-nav>
 

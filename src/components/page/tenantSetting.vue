@@ -8,12 +8,12 @@
           <div v-for="row in multiList[categoryId]" :key="row.id">
             <b-form-group :label="getName(row.key, showKeyName)" :description="getName(row.description)">
               <span v-for="field in fields" :key="field.key">
-                <b-form-select v-if="useInputPullDown(row[field.type])" v-model="row[field.key]" :options="getBooleanOptions()" form="updateForm"/>
+                <b-form-select v-if="useInputPullDown(row[field.type])" v-model="row[field.key]" :options="getBooleanOptions()" form="updateForm" />
                 <input v-else-if="useInputNumberType(row[field.type])" v-model="row[field.key]" :pattern="numberPattern" type="text" class="form-control form-control-sm" maxlength="1000" required>
                 <input v-else-if="useInputNumberListType(row[field.type])" v-model="row[field.key]" :pattern="numberListPattern" type="text" class="form-control form-control-sm" maxlength="1000" required>
                 <input v-else v-model="row[field.key]" :type="getInputType(row[field.type])" maxlength="1000" class="form-control" form="updateForm" required>
               </span>
-              <b-button v-t="'label.delete'" v-if="isSuperEditable" size="sm" variant="outline-danger" class="mt-2 float-right" @click.stop="deleteConfirm(row, $event.target)" />
+              <b-button v-if="isSuperEditable" v-t="'label.delete'" size="sm" variant="outline-danger" class="mt-2 float-right" @click.stop="deleteConfirm(row, $event.target)" />
             </b-form-group>
           </div>
         </div>
@@ -25,7 +25,7 @@
           <div class="card-body">
             <b-form-row class="mb-2">
               <label v-t="'label.key'" class="mr-2" />
-              <input v-model="newForm.key" :type="'text'" class="form-control form-control-sm" maxlength="200" required >
+              <input v-model="newForm.key" :type="'text'" class="form-control form-control-sm" maxlength="200" required>
             </b-form-row>
             <b-form-row class="mb-2">
               <label v-t="'label.valType'" class="mr-2" />
@@ -33,18 +33,18 @@
             </b-form-row>
             <b-form-row class="mb-2">
               <label v-t="'label.value'" class="mr-2" />
-              <b-form-select v-if="useInputPullDown(newForm.type)" v-model="newForm.value" :options="getBooleanOptions()" required/>
+              <b-form-select v-if="useInputPullDown(newForm.type)" v-model="newForm.value" :options="getBooleanOptions()" required />
               <input v-else-if="useInputNumberType(newForm.type)" v-model="newForm.value" :pattern="numberPattern" type="text" class="form-control form-control-sm" maxlength="1000" required>
               <input v-else-if="useInputNumberListType(newForm.type)" v-model="newForm.value" :pattern="numberListPattern" type="text" class="form-control form-control-sm" maxlength="1000" required>
               <input v-else v-model="newForm.value" :type="getInputType(newForm.type)" class="form-control form-control-sm" maxlength="1000" required>
             </b-form-row>
             <b-form-row class="float-right mt-3">
-              <b-button v-t="'label.add'" v-if="isEditable" :variant="getButtonTheme()" type="submit" @click="register(true)" />
+              <b-button v-if="isEditable" v-t="'label.add'" :variant="getButtonTheme()" type="submit" @click="register(true)" />
               <b-button v-t="'label.cancel'" type="button" variant="outline-danger" class="ml-2" @click="showForm(false)" />
             </b-form-row>
           </div>
         </div>
-        <b-button v-t="'label.addForm'" v-if="!useRegistForm" :variant="getButtonTheme()" type="button" class="float-right" @click="showForm(true)"/>
+        <b-button v-if="!useRegistForm" v-t="'label.addForm'" :variant="getButtonTheme()" type="button" class="float-right" @click="showForm(true)" />
       </b-form>
     </div>
   </div>

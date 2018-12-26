@@ -56,16 +56,16 @@
         </b-form-group>
         <div v-if="!hasId && show" class="form-row">
           <div class="col mb-2 mr-3">
-            <label v-t="'label.id'" class="mr-3"/>
-            <input v-model="form.sysAdminLoginId" :readonly="!isEditable" type="text" maxlength="16" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" class="form-control" required >
-            <input type="text" tabIndex="-1" class="chromeAutoInput" >
-            <input type="password" tabIndex="-1" class="chromeAutoInput" >
+            <label v-t="'label.id'" class="mr-3" />
+            <input v-model="form.sysAdminLoginId" :readonly="!isEditable" type="text" maxlength="16" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" class="form-control" required>
+            <input type="text" tabIndex="-1" class="chromeAutoInput">
+            <input type="password" tabIndex="-1" class="chromeAutoInput">
           </div>
           <div class="col mb-2">
-            <label v-t="'label.password'" class="mr-3"/>
+            <label v-t="'label.password'" class="mr-3" />
             <input v-model="form.sysAdminPass" :required="requireInput(form.sysAdminLoginId)" :readonly="!isEditable" type="password" maxlength="16" pattern="^[a-zA-Z0-9_\-\/!#\$%&@]*$" class="form-control">
-            <input type="text" tabIndex="-1" class="chromeAutoInput" >
-            <input type="password" tabIndex="-1" class="chromeAutoInput" >
+            <input type="text" tabIndex="-1" class="chromeAutoInput">
+            <input type="password" tabIndex="-1" class="chromeAutoInput">
           </div>
         </div>
         <b-form-group v-if="!hasId">
@@ -75,16 +75,16 @@
         </b-form-group>
         <div v-if="!hasId && show" class="form-row">
           <div class="col mb-2 mr-3">
-            <label v-t="'label.id'" class="mr-3"/>
-            <input v-model="form.adminLoginId" :readonly="!isEditable" type="text" maxlength="16" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" class="form-control" >
-            <input type="text" tabIndex="-1" class="chromeAutoInput" >
-            <input type="password" tabIndex="-1" class="chromeAutoInput" >
+            <label v-t="'label.id'" class="mr-3" />
+            <input v-model="form.adminLoginId" :readonly="!isEditable" type="text" maxlength="16" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" class="form-control">
+            <input type="text" tabIndex="-1" class="chromeAutoInput">
+            <input type="password" tabIndex="-1" class="chromeAutoInput">
           </div>
           <div class="col mb-2">
-            <label v-t="'label.password'" class="mr-3"/>
-            <input v-model="form.adminPass" :required="requireInput(form.adminLoginId)" :readonly="!isEditable" type="password" maxlength="16" pattern="^[a-zA-Z0-9_\-\/!#\$%&@]*$" class="form-control" >
-            <input type="text" tabIndex="-1" class="chromeAutoInput" >
-            <input type="password" tabIndex="-1" class="chromeAutoInput" >
+            <label v-t="'label.password'" class="mr-3" />
+            <input v-model="form.adminPass" :required="requireInput(form.adminLoginId)" :readonly="!isEditable" type="password" maxlength="16" pattern="^[a-zA-Z0-9_\-\/!#\$%&@]*$" class="form-control">
+            <input type="text" tabIndex="-1" class="chromeAutoInput">
+            <input type="password" tabIndex="-1" class="chromeAutoInput">
           </div>
         </div>
         <b-form-group v-if="!hasId">
@@ -94,16 +94,16 @@
         </b-form-group>
         <div v-if="!hasId && show" class="form-row">
           <div class="col mb-2 mr-3">
-            <label v-t="'label.id'" class="mr-3"/>
-            <input v-model="form.userLoginId" :readonly="!isEditable" type="text" maxlength="16" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" class="form-control" >
-            <input type="text" tabIndex="-1" class="chromeAutoInput" >
-            <input type="password" tabIndex="-1" class="chromeAutoInput" >
+            <label v-t="'label.id'" class="mr-3" />
+            <input v-model="form.userLoginId" :readonly="!isEditable" type="text" maxlength="16" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" class="form-control">
+            <input type="text" tabIndex="-1" class="chromeAutoInput">
+            <input type="password" tabIndex="-1" class="chromeAutoInput">
           </div>
           <div class="col mb-2">
-            <label v-t="'label.password'" class="mr-3"/>
-            <input v-model="form.userPass" :required="requireInput(form.userLoginId)" :readonly="!isEditable" type="password" maxlength="16" pattern="^[a-zA-Z0-9_\-\/!#\$%&@]*$" class="form-control" >
-            <input type="text" tabIndex="-1" class="chromeAutoInput" >
-            <input type="password" tabIndex="-1" class="chromeAutoInput" >
+            <label v-t="'label.password'" class="mr-3" />
+            <input v-model="form.userPass" :required="requireInput(form.userLoginId)" :readonly="!isEditable" type="password" maxlength="16" pattern="^[a-zA-Z0-9_\-\/!#\$%&@]*$" class="form-control">
+            <input type="text" tabIndex="-1" class="chromeAutoInput">
+            <input type="password" tabIndex="-1" class="chromeAutoInput">
           </div>
         </div>
 
@@ -115,45 +115,47 @@
         <div v-if="!hasId && show" class="form-row">
           <b-form-row class="mb-3">
             <label v-t="'label.regionName'" class="mr-3" />
-            <input v-model="form.regionName" :readonly="!isEditable" type="text" maxlength="20" class="form-control" required >
+            <input v-model="form.regionName" :readonly="!isEditable" type="text" maxlength="20" class="form-control" required>
           </b-form-row>
         </div>
         <div v-if="!hasId && show" class="form-row">
           <b-form-row class="mb-3">
             <label v-t="'label.meshId'" class="mr-3" />
-            <input v-model="form.meshId" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control" >
+            <input v-model="form.meshId" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control">
           </b-form-row>
         </div>
         <div v-if="!hasId && show" class="form-row">
           <b-form-row class="mb-5">
             <label v-t="'label.deviceOffset'" class="mr-3" />
-            <input v-model="form.deviceOffset" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control" required >
+            <input v-model="form.deviceOffset" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control" required>
           </b-form-row>
         </div>
 
         <b-form-row class="mb-2">
-          <b-button v-t="'label.featureSetting'" :variant="theme" type="button" class="mr-2 my-1" @click="showFeatureEdit"/>
+          <b-button v-t="'label.featureSetting'" :variant="theme" type="button" class="mr-2 my-1" @click="showFeatureEdit" />
         </b-form-row>
         <b-form-row class="mb-2">
-          <b-button v-t="'label.system'" :variant="theme" type="button" class="mr-2 my-1" @click="showSettingEdit"/>
+          <b-button v-t="'label.system'" :variant="theme" type="button" class="mr-2 my-1" @click="showSettingEdit" />
         </b-form-row>
 
         <b-form-row class="mb-2">
-          <label v-t="'label.createDt'" v-if="hasId" class="mr-2"/>
-          <label v-t="createDt" v-if="hasId" />
+          <label v-if="hasId" v-t="'label.createDt'" class="mr-2" />
+          <label v-if="hasId" v-t="createDt" />
         </b-form-row>
 
-        <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList"/>
-        <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="register(false)" >{{ label }}</b-button>
-        <b-button v-t="'label.registerAgain'" v-if="isEditable && !isUpdate" :variant="theme" type="submit" class="my-1" @click="register(true)"/>
+        <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
+        <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="register(false)">
+          {{ label }}
+        </b-button>
+        <b-button v-if="isEditable && !isUpdate" v-t="'label.registerAgain'" :variant="theme" type="submit" class="my-1" @click="register(true)" />
       </b-form>
     </div>
 
     <!-- modal -->
-    <b-modal id="modalFeatureInfo" :ok-title="$i18n.tnl('label.setting')" :ok-variant="theme" :title="$i18n.tnl('label.featureSetting')" ok-only @ok="storeFeatureInfo" @hide="resetModal" >
+    <b-modal id="modalFeatureInfo" :ok-title="$i18n.tnl('label.setting')" :ok-variant="theme" :title="$i18n.tnl('label.featureSetting')" ok-only @ok="storeFeatureInfo" @hide="resetModal">
       <feature-list :list="editFeatureList" :fields="fields" />
     </b-modal>
-    <b-modal id="modalSettingInfo" :ok-title="$i18n.tnl('label.setting')" :ok-variant="theme" :title="$i18n.tnl('label.system')" ok-only @ok="storeSettingInfo" @hide="resetModal" >
+    <b-modal id="modalSettingInfo" :ok-title="$i18n.tnl('label.setting')" :ok-variant="theme" :title="$i18n.tnl('label.system')" ok-only @ok="storeSettingInfo" @hide="resetModal">
       <tenant-setting :params="settingParams" :multi-list="editCategorySettingList" :show-key-name="true" />
     </b-modal>
   </div>
