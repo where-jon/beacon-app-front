@@ -66,6 +66,7 @@
     "notReceive": "受信不良",
     "absent": "不在",
     "charSet": "CSV文字コード",
+    "locale": "言語設定",
     "null": "未指定",
     "undefined": "未定義",
     "column": "{column}列",
@@ -159,6 +160,9 @@
 
     "UTF8": "UTF-8",
     "SJIS": "Shift-JIS",
+
+    "ja": "日本語",
+    "en": "英語",
     "---------------- App specific ---------------":"",
     
     "setting": "設定",
@@ -299,6 +303,7 @@
     
     "mode": "モード",
     "sumTitle": "集計・分析",
+    "usageSituation": "利用状況",
     "utilizationRatio": "利用率",
     "utilizationRatioP": "利用率[%]",
     "utilizationTime": "利用時間[H]",

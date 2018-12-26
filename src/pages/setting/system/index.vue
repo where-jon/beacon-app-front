@@ -124,6 +124,11 @@ export default {
       await AppServiceHelper.deleteEntity(this.appServicePath, entity.id)
       ConfigHelper.applyAppServiceSetting([entity], JSON.parse(window.localStorage.getItem('defaultConfig')))
     },
+    resetNewForm(isShow){
+      if(!isShow){
+        this.newForm = {}
+      }
+    },
     async save() {
       const entity = []
       for(let key in this.categorySettings){
