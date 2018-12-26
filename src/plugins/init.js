@@ -12,7 +12,7 @@ export default async (context, inject) => {
   MenuHelper.setStore(context.store)
   await ConfigHelper.loadConfigJson()
   try {
-    let setting = await HttpHelper.getAppServiceNoCrd('/meta/setting/byTenant/default')
+    let setting = await HttpHelper.getAppServiceNoCrd('/meta/setting/byTenant/' + AuthHelper.getTenantCd('default'))
     ConfigHelper.applyAppServiceSetting(setting)  
   }
   catch (e) {

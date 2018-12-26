@@ -70,7 +70,7 @@ export const getUserInfo = async (tenantAdmin) => {
   await StateHelper.load('region', true)
 
   // get setting (again in case failed on init or reload)
-  const setting = await HttpHelper.getAppServiceNoCrd('/meta/setting/byTenant/default')
+  const setting = await HttpHelper.getAppServiceNoCrd('/meta/setting/byTenant/' + getTenantCd('default'))
   return {tenant, tenantFeatureList, user, featureList, menu, currentRegion, setting}
 }
 
@@ -170,10 +170,10 @@ export const checkSession = () => {
   return false
 }
 
-export const getTenantCd = () => { // xxx.saas.ドメインの場合、先頭がtenantCdとなる。
+export const getTenantCd = (def) => { // xxx.saas.ドメインの場合、先頭がtenantCdとなる。
   if (location.host.includes(APP.SAAS_DOMAIN)) {
     return location.host.split('.')[0]
   }
-  return null
+  return def
 }
 
