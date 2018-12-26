@@ -296,6 +296,7 @@
     
     "mode": "Mode",
     "sumTitle": "Aggregate",
+    "usageSituation": "Usage situation",
     "utilizationRatio": "Utilization ratio",
     "utilizationRatioP": "Utilization ratio [%]",
     "utilizationTime": "Utilization time [H]",
