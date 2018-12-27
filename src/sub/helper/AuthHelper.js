@@ -90,8 +90,10 @@ export const authByAppService = async (loginId, password, success, err) => {
     const userInfo = await getUserInfo(data.tenantAdmin)
     ConfigHelper.applyAppServiceSetting(userInfo.setting)  
 
+    const userRegionIdList = userInfo.user.userRegionList? userInfo.user.userRegionList.map((val) => val.userRegionPK.regionId): []
+    const allRegionMove = userInfo.user.role && userInfo.user.role.roleFeatureList? userInfo.user.role.roleFeatureList.find((val) => val.feature.featureType == 2)? true: false: false
     // Login process
-    await login({loginId, username:userInfo.user.name, role: userInfo.user.role, featureList: userInfo.featureList, tenantFeatureList: userInfo.tenantFeatureList, menu: userInfo.menu, currentRegion: userInfo.currentRegion, frontRev: revInfo.frontRev, serviceRev: revInfo.serviceRev, tenantAdmin: data.tenantAdmin, currentTenant: userInfo.tenant})
+    await login({loginId, username:userInfo.user.name, role: userInfo.user.role, featureList: userInfo.featureList, tenantFeatureList: userInfo.tenantFeatureList, menu: userInfo.menu, currentRegion: userInfo.currentRegion, frontRev: revInfo.frontRev, serviceRev: revInfo.serviceRev, tenantAdmin: data.tenantAdmin, isProvider: userInfo.user.providerUserId? true: false, currentTenant: userInfo.tenant, userRegionIdList: userRegionIdList, allRegionMove: allRegionMove })
     success()
     StateHelper.loadAreaImages()
     LocaleHelper.setLocale(LocaleHelper.getLocale())

@@ -25,7 +25,7 @@
       <!-- right -->
       <b-navbar-nav v-show="!isLoginPage && showNav" class="ml-auto">
         <!-- region -->
-        <b-nav-item-dropdown v-if="hasMultiRegion()" :class="navbarClasses" right>
+        <b-nav-item-dropdown v-if="hasMultiRegion(regions)" :class="navbarClasses" right>
           <template slot="button-content">
             <div v-if="isTenantAdmin()">
               <i class="far fa-building mr-1" style="visibility: hidden;" />
@@ -34,12 +34,12 @@
             <i class="far fa-building mr-1" />
             <span>{{ this.$store.state.currentRegion? this.$store.state.currentRegion.regionName: '' }}</span>
           </template>
-          <b-dropdown-item v-for="region in regions" :key="region.regionId" :class="navbarClasses" href="#" @click="switchRegion($event.target, region)">
+          <b-dropdown-item v-for="region in regionOptions(regions)" :key="region.regionId" :class="navbarClasses" href="#" @click="switchRegion($event.target, region)">
             <i :style="getStyleDropdownRegion(region.regionId)" class="far fa-building mr-1" aria-hidden="true" />
             <span>{{ region.regionName }}</span>
           </b-dropdown-item>
         </b-nav-item-dropdown>
-        <div v-else class="mr-3 single-nav">
+        <div v-else class="mr-3 my-auto single-nav">
           <div v-if="isTenantAdmin()">
             <i class="far fa-building mr-1" aria-hidden="true" style="visibility: hidden;" />
             <span>{{ this.$store.state.currentTenant? this.$store.state.currentTenant.tenantName: '' }}</span>
@@ -131,8 +131,9 @@ export default {
       const login = JSON.parse(window.localStorage.getItem('login'))
       return login? login.tenantAdmin: false
     },
-    hasMultiRegion(){
-      return this.regions && this.regions.length > 1
+    hasMultiRegion(regions){
+      const regs = this.regionOptions(regions)
+      return regs && regs.length > 1
     },
     getStyleDropdownRegion(regionId) {
       const login = JSON.parse(window.localStorage.getItem('login'))
@@ -141,6 +142,10 @@ export default {
     },
     move(page) {
       this.$router.push(page)
+    },
+    regionOptions(regions){
+      const login = JSON.parse(window.localStorage.getItem('login'))
+      return login? login.allRegionMove || login.isProvider || login.tenantAdmin? regions: regions.filter((region) => login.userRegionIdList.includes(region.regionId)): []
     },
     async switchRegion(target, item) {
       await AuthHelper.switchRegion(item.regionId)
