@@ -23,17 +23,17 @@
             <b-form-group>
               <label v-t="'label.loginId'" />
               <b-form-input v-model="loginUser.loginId" :state="errorMessages.loginId.length > 0 ? false : null" type="text" maxlength="16" readonly />
-              <p v-for="(val, key) in errorMessages.loginId" :key="key" v-t="val" class="error" />
+              <p v-t="val" v-for="(val, key) in errorMessages.loginId" :key="key" class="error" />
             </b-form-group>
             <b-form-group v-show="showName">
               <label v-t="'label.name'" />
               <b-form-input v-model="loginUser.name" :readonly="!isChange" :state="errorMessages.name.length > 0 ? false : null" type="text" />
-              <p v-for="(val, key) in errorMessages.name" :key="key" v-t="val" class="error" />
+              <p v-t="val" v-for="(val, key) in errorMessages.name" :key="key" class="error" />
             </b-form-group>
             <b-form-group v-show="showEmail">
               <label v-t="'label.email'" />
               <b-form-input v-model="loginUser.email" :readonly="!isChange" :state="errorMessages.email.length > 0 ? false : null" type="email" />
-              <p v-for="(val, key) in errorMessages.email" :key="key" v-t="val" class="error" />
+              <p v-t="val" v-for="(val, key) in errorMessages.email" :key="key" class="error" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.role'" />
@@ -52,8 +52,8 @@
               <b-form-select v-model="selectedLocale" :options="locales" class="mb-3" @change="localeSelected" />
             </b-form-group>
             <!-- プロフィール・パスワードを変更するボタン -->
-            <b-form-group v-show="!isProvider">
-              <b-button v-show="!isChange" v-t="'label.changeProfilePassword'" :variant="theme" 
+            <b-form-group v-show="!provider">
+              <b-button v-t="'label.changeProfilePassword'" v-show="!isChange" :variant="theme" 
                         type="button" class="btn-block" @click="isChange = true"
               />
               <b-card v-show="isChange" bg-variant="light">
@@ -64,7 +64,7 @@
                                   :state="errorMessages.password.length > 0 ? false : null" type="password"
                                   maxlength="16"
                     />
-                    <p v-for="(val, key) in errorMessages.password" :key="key" v-t="val" class="error" />
+                    <p v-t="val" v-for="(val, key) in errorMessages.password" :key="key" class="error" />
                   </b-form-group>
 
                   <!-- 変更パスワード -->
@@ -171,7 +171,11 @@ export default {
     },
     showName() {
       return APP.USER_WITH_NAME
-    }
+    },
+    provider(){
+      const loginInfo = JSON.parse(window.localStorage.getItem('login'))
+      return loginInfo.isProvider
+    },
   },
   watch: {
     hasError(value){

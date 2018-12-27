@@ -54,10 +54,10 @@
               </b-form-radio>
             </b-form-radio-group>
           </b-form-group>
-          <b-button v-show="isEditable" v-t="'label.start'" :variant="theme"
+          <b-button v-t="'label.start'" v-show="isEditable" :variant="theme"
                     :disabled="noDevice" type="submit" class="my-1" @click="buttonClick(true)"
           />
-          <b-button v-show="isEditable" v-t="'label.end'" :variant="theme" 
+          <b-button v-t="'label.end'" v-show="isEditable" :variant="theme" 
                     :disabled="noDevice" type="submit" class="ml-2 my-1" @click="buttonClick(false)"
           />
         </b-form>

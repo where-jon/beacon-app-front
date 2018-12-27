@@ -13,7 +13,7 @@ export const getThemeColor = () => {
 
 export const getTheme = () => {
   const theme = window.localStorage.getItem(document.domain + '-theme')
-  return theme && theme !== 'undefined' ? theme : DISP.THEME
+  return theme && theme !== null ? theme : DISP.THEME
 }
 
 export const getThemeClasses = () => {

@@ -7,7 +7,7 @@
     <b-navbar-brand>
       <div class="appTitle">
         <img v-if="showLogo" src="/toplogo.png" width="220" height="36">
-        <span v-if="!showLogo" v-t="'label.title'" />
+        <span v-t="'label.title'" v-if="!showLogo" />
       </div>
     </b-navbar-brand>
 
@@ -18,7 +18,7 @@
           <template slot="button-content">
             <em v-t="'label.' + group.key" />
           </template>
-          <b-dropdown-item v-for="page in group.pages" :key="page.key" v-t="'label.' + page.key" :class="navbarClasses" href="#" @click="move('/' + group.base + page.path)" />
+          <b-dropdown-item v-t="'label.' + page.key" v-for="page in group.pages" :key="page.key" :class="navbarClasses" href="#" @click="move('/' + group.base + page.path)" />
         </b-nav-item-dropdown>
       </b-navbar-nav>
 
@@ -102,6 +102,8 @@ export default {
       'pots', 'regions',
     ]),
     navbarClasses() {
+      // use for update theme-color
+      this.$store.state.setting.theme
       return getThemeClasses()
     },
     topNavBarClasses() {
@@ -195,6 +197,14 @@ li.nav-item.b-nav-dropdown.vivid > *{
   background-color: $vivid;
 }
 
+li.nav-item.b-nav-dropdown.gray-scale > *{
+  background-color: $gray-scale;
+}
+
+li.nav-item.b-nav-dropdown.indigo > *{
+  background-color: $indigo;
+}
+
 a.dropdown-item.default:hover,
 a.dropdown-item.default:focus {
   background-color: #7EA0C4 !important;
@@ -213,6 +223,16 @@ a.dropdown-item.autumn:focus {
 a.dropdown-item.vivid:hover, 
 a.dropdown-item.vivid:focus {
   background: #EE5588 !important;
+}
+
+a.dropdown-item.gray-scale:hover, 
+a.dropdown-item.gray-scale:focus {
+  background: #787878 !important;
+}
+
+a.dropdown-item.indigo:hover, 
+a.dropdown-item.indigo:focus {
+  background: #8A91C7 !important;
 }
 
 div.navbar-brand {

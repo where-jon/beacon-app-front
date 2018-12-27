@@ -42,8 +42,8 @@
           <b-form-textarea v-model="form.description" :rows="3" :max-rows="6" :readonly="!isEditable" maxlength="1000" />
         </b-form-group>
         <b-form-group>
-          <label v-if="hasId" v-t="'label.passwordUpdate'" />
-          <label v-else v-t="'label.password'" />
+          <label v-t="'label.passwordUpdate'" v-if="hasId" />
+          <label v-t="'label.password'" v-else />
           <b-form-input v-model="pass" :readonly="!isEditable" type="password" pattern="^[a-zA-Z0-9_\-\/!#\$%&@]*$" />
         </b-form-group>
         <b-form-group>
@@ -55,7 +55,7 @@
         <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="beforeSubmit($event, false)">
           {{ label }}
         </b-button>
-        <b-button v-if="isEditable && !isUpdate" v-t="'label.registerAgain'" :variant="theme" type="submit" class="my-1" @click="beforeSubmit($event, true)" />
+        <b-button v-t="'label.registerAgain'" v-if="isEditable && !isUpdate" :variant="theme" type="submit" class="my-1" @click="beforeSubmit($event, true)" />
       </b-form>
     </div>
   </div>

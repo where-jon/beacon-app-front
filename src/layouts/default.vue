@@ -82,6 +82,8 @@ export default {
       'error',
     ]),
     sidebarClasses () {
+      // use for update theme-color
+      this.$store.state.setting.theme
       return {
         'bd-sidebar': true,
         ...getThemeClasses()

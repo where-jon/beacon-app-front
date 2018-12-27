@@ -27,7 +27,7 @@
                 <input v-else-if="useInputNumberListType(row[field.type])" v-model="row[field.key]" :pattern="numberListPattern" type="text" class="form-control form-control-sm" maxlength="1000" required>
                 <input v-else v-model="row[field.key]" :type="getInputType(row[field.type])" maxlength="1000" class="form-control" form="updateForm" required>
               </span>
-              <b-button v-if="isSuperEditable" v-t="'label.delete'" size="sm" variant="outline-danger" class="mt-2 float-right" @click.stop="deleteConfirm(row, $event.target)" />
+              <b-button v-t="'label.delete'" v-if="isSuperEditable" size="sm" variant="outline-danger" class="mt-2 float-right" @click.stop="deleteConfirm(row, $event.target)" />
             </b-form-group>
           </div>
         </div>
@@ -53,16 +53,16 @@
               <input v-else v-model="newForm.value" :type="getInputType(newForm.type)" class="form-control form-control-sm" maxlength="1000" required>
             </b-form-row>
             <b-form-row class="float-right mt-3">
-              <b-button v-if="isEditable" v-t="'label.add'" :variant="getButtonTheme()" type="submit" @click="register(true)" />
+              <b-button v-t="'label.add'" v-if="isEditable" :variant="getButtonTheme()" type="submit" @click="register(true)" />
               <b-button v-t="'label.cancel'" type="button" variant="outline-danger" class="ml-2" @click="showForm(false)" />
             </b-form-row>
           </div>
         </div>
-        <b-button v-if="!useRegistForm" v-t="'label.addForm'" :variant="getButtonTheme()" type="button" class="float-right" @click="showForm(true)" />
+        <b-button v-t="'label.addForm'" v-if="!useRegistForm" :variant="getButtonTheme()" type="button" class="float-right" @click="showForm(true)" />
       </b-form>
 
       <b-form v-if="show" :id="'updateForm'" @submit.prevent="onSubmit">
-        <b-button v-if="isEditable && !useRegistForm" v-t="'label.update'" :variant="getButtonTheme()" type="submit" class="ml-2" @click="register(true)" />
+        <b-button v-t="'label.update'" v-if="isEditable && !useRegistForm" :variant="getButtonTheme()" type="submit" class="ml-2" @click="register(true)" />
       </b-form>
     </div>
 
