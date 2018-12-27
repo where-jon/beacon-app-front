@@ -48,7 +48,7 @@
       <p />
       <b-row align-h="end">
         <b-col md="2" class="mb-2">
-          <b-button v-t="'label.download'" v-if="!iosOrAndroid" :variant="getButtonTheme()" @click="download()" />
+          <b-button v-if="!iosOrAndroid" v-t="'label.download'" :variant="getButtonTheme()" @click="download()" />
         </b-col>
       </b-row>
       <table class="table table-hover table-bordered">

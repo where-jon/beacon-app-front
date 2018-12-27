@@ -47,10 +47,10 @@
             <b-button v-t="'label.createNew'" :variant="theme" class="mx-1"
                       @click="edit()"
             />
-            <b-button v-t="'label.bulkRegister'" v-if="params.bulkEditPath && !iosOrAndroid" :variant="theme" class="mx-1" 
+            <b-button v-if="params.bulkEditPath && !iosOrAndroid" v-t="'label.bulkRegister'" :variant="theme" class="mx-1" 
                       @click="bulkEdit()"
             />
-            <b-button v-t="'label.download'" v-if="params.csvOut && !iosOrAndroid" :variant="theme" class="mx-1"
+            <b-button v-if="params.csvOut && !iosOrAndroid" v-t="'label.download'" :variant="theme" class="mx-1"
                       @click="exportCsv"
             />
           </b-col>
@@ -74,7 +74,7 @@
           <!-- 更新ボタン -->
           <b-button v-t="'label.' + crud" :variant="theme" :style="actionButtonStyle" size="sm" class="mr-2 my-1" @click.stop="edit(row.item, row.index, $event.target)" />
           <!-- 削除ボタン -->
-          <b-button v-t="'label.delete'" v-if="isEditable" :style="actionButtonStyle" size="sm" variant="outline-danger" class="mr-1 my-1" @click.stop="deleteConfirm(row.item, row.index, $event.target)" />
+          <b-button v-if="isEditable" v-t="'label.delete'" :style="actionButtonStyle" size="sm" variant="outline-danger" class="mr-1 my-1" @click.stop="deleteConfirm(row.item, row.index, $event.target)" />
           <!-- jump another master page -->
           <div v-if="isEditable && anotherPageParams" :style="{'width': '100px'}">
             <!-- zone button -->
@@ -90,8 +90,8 @@
           <div v-if="isTenantAdmin && params.tenantAction" :style="{'width': '100px'}">
             <!-- switch button -->
             <div>
-              <b-button v-t="'label.now'" v-if="isCurrentTenant(row.item)" :variant="theme" :style="anotherActionButtonStyle" :disabled="true" size="sm" class="btn-block my-1" style="opacity: 1.0 !important; border-radius: 0px;" />
-              <b-button v-t="'label.switch'" v-else :variant="theme" :style="anotherActionButtonStyle" size="sm" class="btn-block my-1" @click.stop="switchTenant(row.item)" />
+              <b-button v-if="isCurrentTenant(row.item)" v-t="'label.now'" :variant="theme" :style="anotherActionButtonStyle" :disabled="true" size="sm" class="btn-block my-1" style="opacity: 1.0 !important; border-radius: 0px;" />
+              <b-button v-else v-t="'label.switch'" :variant="theme" :style="anotherActionButtonStyle" size="sm" class="btn-block my-1" @click.stop="switchTenant(row.item)" />
             </div>
           </div>
         </template>
