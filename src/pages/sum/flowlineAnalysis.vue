@@ -65,6 +65,7 @@ export default {
       showInfo: false,
       showAlert: false,
       message: '',
+      noImageErrorKey: 'noMapImage',
     }
   },
   computed: {

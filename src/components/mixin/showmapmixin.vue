@@ -33,6 +33,9 @@ export default {
       'exbs',
       'txs',
     ]),
+    ...mapState([
+      'loginId'
+    ]),
     selectedArea: {
       get() { return this.$store.state.main.selectedArea},
       set(val) { this.replaceMain({'selectedArea': val})},
@@ -138,7 +141,7 @@ export default {
         }
         else {
           Util.debug('No mapImage in showMapImageDef.')
-          this.noImageErrorKey && this.showErrorModal({key: this.noImageErrorKey})
+          this.noImageErrorKey && this.loginId && this.showErrorModal({key: this.noImageErrorKey})
         }
         return
       }
