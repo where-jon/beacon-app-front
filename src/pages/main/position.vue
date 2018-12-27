@@ -43,10 +43,6 @@
     <div v-if="selectedTx.btxId && showReady">
       <txdetail :selected-tx="selectedTx" :selected-sensor="selectedSensor" :is-show-modal="isShowModal()" @resetDetail="resetDetail" />
     </div>
-    <!-- modal -->
-    <b-modal id="modalError" :title="$t('label.error')" ok-only>
-      {{ $t('message.noMapImage') }}
-    </b-modal>
   </div>
 </template>
 
@@ -108,6 +104,7 @@ export default {
       ICON_FONTSIZE_RATIO: 0.7,
       toggleCallBack: () => this.reset(),
       reloadSelectedTx: {},
+      noImageErrorKey: 'noMapImage',
     }
   },
   computed: {

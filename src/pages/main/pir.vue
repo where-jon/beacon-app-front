@@ -12,10 +12,6 @@
     <b-row class="mt-3">
       <canvas id="map" ref="map" />
     </b-row>
-    <!-- modal -->
-    <b-modal id="modalError" :title="$t('label.error')" ok-only>
-      {{ $t('message.noMapImage') }}
-    </b-modal>
   </div>
 </template>
 
@@ -38,6 +34,7 @@ export default {
       toggleCallBack: () => {
         this.keepExbPosition = true
       },
+      noImageErrorKey: 'noMapImage',
       items: [
         {
           text: this.$i18n.tnl('label.main'),

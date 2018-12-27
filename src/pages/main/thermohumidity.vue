@@ -12,10 +12,6 @@
     <b-row class="mt-3">
       <canvas id="map" ref="map" />
     </b-row>
-    <!-- modal -->
-    <b-modal id="modalError" :title="$t('label.error')" ok-only>
-      {{ $t('message.noMapImage') }}
-    </b-modal>
     <b-modal v-model="isShownChart" :title="chartTitle" size="lg" header-bg-variant="light" hide-footer>
       <b-container fluid style="height:350px;">
         <b-row class="mb-1">
@@ -65,6 +61,7 @@ export default {
       toggleCallBack: () => {
         this.keepExbPosition = true
       },
+      noImageErrorKey: 'noMapImage',
     }
   },
   computed: {
