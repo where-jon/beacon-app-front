@@ -172,13 +172,14 @@ export default {
       return options
     },
     areaOptions() {
-      return this.areas.map((area) => {
-        return {
-          value: area.areaId,
-          text: area.areaName
-        }
-      }
-      )
+      return StateHelper.getOptionsFromState('area', false, true)
+      // return this.areas.map((area) => {
+      //   return {
+      //     value: area.areaId,
+      //     text: area.areaName
+      //   }
+      // }
+      // )
     },
     zoneNames() {
       let options = this.zones.filter((zone) => zone.areaId == this.form.areaId)
