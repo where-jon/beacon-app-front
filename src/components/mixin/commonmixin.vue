@@ -13,6 +13,9 @@ export default {
     ...mapMutations([
       'replace', 
     ]),
+    ...mapActions([
+      'showErrorModal'
+    ]),
     ...mapMutations('main', [
       'replaceMain', 
     ]),

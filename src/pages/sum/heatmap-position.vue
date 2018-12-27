@@ -26,10 +26,6 @@
         </b-row>
       </div>
     </div>
-    <!-- modal -->
-    <b-modal id="modalError" :title="$t('label.error')" ok-only>
-      {{ $t('message.noMapImage') }}
-    </b-modal>
   </div>
 </template>
 
@@ -55,6 +51,7 @@ export default {
       showInfo: false,
       showAlert: false,
       message: '',
+      noImageErrorKey: 'noMapImage',
       items: [
         {
           text: this.$i18n.tnl('label.sumTitle'),

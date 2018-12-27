@@ -68,10 +68,6 @@
     <div class="mt-3">
       <canvas id="map" ref="map" />
     </div>
-    <!-- modal -->
-    <b-modal id="modalError" :title="$t('label.error')" ok-only>
-      {{ $t('message.noMapImage') }}
-    </b-modal>
     <b-modal id="modalInfo" :title="$t('label.mapRatioSetting')" ok-only>
       {{ $t('message.mapRatioSetting') }}
     </b-modal>
@@ -127,6 +123,7 @@ export default {
       },
       ICON_ARROW_WIDTH: 20,
       ICON_ARROW_HEIGHT: 10,
+      noImageErrorKey: 'noMapImage',
       items: [
         {
           text: this.$i18n.tnl('label.master'),

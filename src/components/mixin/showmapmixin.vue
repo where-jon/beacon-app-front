@@ -33,6 +33,9 @@ export default {
       'exbs',
       'txs',
     ]),
+    ...mapState([
+      'loginId'
+    ]),
     selectedArea: {
       get() { return this.$store.state.main.selectedArea},
       set(val) { this.replaceMain({'selectedArea': val})},
@@ -129,8 +132,7 @@ export default {
         }
         return
       }
-
-      if (!this.mapImage) {
+      if (!this.mapImage()) {
         if (this.showTryCount < 10) {
           this.$nextTick(() => {
             console.warn('again because no image')
@@ -138,7 +140,8 @@ export default {
           })
         }
         else {
-          this.$root.$emit('bv::show::modal', 'modalError')
+          Util.debug('No mapImage in showMapImageDef.')
+          this.noImageErrorKey && this.loginId && this.showErrorModal({key: this.noImageErrorKey})
         }
         return
       }
@@ -228,7 +231,8 @@ export default {
           this.fetchData()
         }
         else {
-          this.$root.$emit('bv::show::modal', 'modalError')
+          Util.debug('No mapImage in changeArea.')
+          this.noImageErrorKey && this.showErrorModal({key: this.noImageErrorKey})
           this.$nextTick(() => {
             this.selectedArea = this.oldSelectedArea
           })
