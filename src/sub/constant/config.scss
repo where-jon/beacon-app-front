@@ -13,6 +13,8 @@ $default: #588BC1;
 $earth-color: #5C7886;
 $autumn: #927760;
 $vivid: #D50057;
+$gray-scale: #484848;
+$indigo: #5968B0;
 
 $button-default: #376495;
 
@@ -20,6 +22,8 @@ $default-menu-item: #85A9D1;
 $earth-color-menu-item: #89A874;
 $autumn-menu-item: #C59E57;
 $vivid-menu-item: #FF4784;
+$gray-scale-menu-item: #7F7F7F;
+$indigo-menu-item: #919ACA;
 
 .default {
   background-color: $default;
@@ -41,6 +45,14 @@ $vivid-menu-item: #FF4784;
   background-color: $vivid;
 }
 
+.gray-scale {
+  background-color: $gray-scale;
+}
+
+.indigo {
+  background-color: $indigo;
+}
+
 // To use css value in js, export as the follwing
 :export {
     txdetailbg: $txdetail-bg;
@@ -49,7 +61,7 @@ $vivid-menu-item: #FF4784;
 }
 
 $blue:    #007bff !default;
-$indigo:  #6610f2 !default;
+$indigo-100:  #6610f2 !default;
 $purple:  #6f42c1 !default;
 $pink:    #eebbcb !default;
 $red:     #dc3545 !default;
@@ -65,7 +77,7 @@ $gray-800: #343a40;
 
 $colors: (
   blue: $blue,
-  indigo: $indigo,
+  indigo: $indigo-100,
   purple: $purple,
   pink: $pink,
   red: $red,
@@ -86,6 +98,8 @@ $theme-colors: map-merge((
   earthcolor : $earth-color,
   autumn : $autumn,
   vivid : $vivid,
+  gray-scale : $gray-scale,
+  indigo : $indigo,
   buttonDefault: $button-default,
 ), $theme-colors);
 

@@ -44,6 +44,8 @@ export default {
       return this.$store.state.loginId
     },
     menuItemClasses () {
+      // use for update theme-color
+      this.$store.state.setting.theme
       return {
         'menu-item': true,
         item: true,
@@ -187,6 +189,22 @@ li.menu-item.item.vivid {
 
 li.menu-item.item.vivid:hover {
   background: #EE5588;
+}
+
+li.menu-item.item.gray-scale {
+  background: $gray-scale-menu-item;
+}
+
+li.menu-item.item.gray-scale:hover {
+  background: #787878;
+}
+
+li.menu-item.item.indigo {
+  background: $indigo-menu-item;
+}
+
+li.menu-item.item.indigo:hover {
+  background: #8A91C7;
 }
 
 .clearfix::after {
