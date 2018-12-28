@@ -28,14 +28,16 @@ export default {
         bulkEditPath: '/master/region/bulkedit',
         appServicePath: '/core/region',
         csvOut: true,
+        custumCsvColumns: ['regionId', 'regionName', 'meshId', 'deviceOffset', 'description'],
         fields: addLabelByKey(this.$i18n, [ 
-          {key: 'regionId', sortable: true },
           {key: 'regionName', sortable: true },
           {key: 'meshId', sortable: true},
           {key: 'deviceOffset', sortable: true},
           {key: 'description', sortable: true },
+          {key: 'regionId', sortable: true },
           {key: 'actions', thStyle: {width:'130px !important'} }
         ]),
+        sortBy: 'regionName',
         initTotalRows: this.$store.state.app_service.regions.length
       },
       items: [

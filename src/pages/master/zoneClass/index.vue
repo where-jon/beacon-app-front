@@ -28,13 +28,15 @@ export default {
         bulkEditPath: '/master/zoneClass/bulkedit',
         appServicePath: '/core/zone',
         csvOut: true,
+        custumCsvColumns: ['zoneId', 'zoneName', 'areaName', 'categoryName'],
         fields: addLabelByKey(this.$i18n, [ 
-          {key: 'zoneId', sortable: true },
           {key: 'zoneName', sortable: true },
           {key: 'areaName', sortable: true},
           {key: 'categoryName', sortable: true},
+          {key: 'zoneId', sortable: true },
           {key: 'actions', thStyle: {width:'130px !important'} }
         ]),
+        sortBy: 'zoneName',
         initTotalRows: this.$store.state.app_service.zones.length
       },
       items: [

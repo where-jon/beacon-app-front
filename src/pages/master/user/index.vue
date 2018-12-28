@@ -29,15 +29,24 @@ export default {
         bulkEditPath: '/master/user/bulkedit',
         appServicePath: '/meta/user',
         csvOut: true,
+        custumCsvColumns: [
+          'userId',
+          APP.USER_WITH_NAME? 'name': null,
+          'loginId',
+          APP.USER_WITH_EMAIL? 'email': null,
+          'roleName',
+          'description',
+        ].filter((val) => val),
         fields: addLabelByKey(this.$i18n, [ 
-          {key: 'userId', sortable: true },
           APP.USER_WITH_NAME? {key: 'name', sortable: true  }: null,
           {key: 'loginId', sortable: true  },
           APP.USER_WITH_EMAIL? {key: 'email', sortable: true }: null,
           {key: 'roleName', label: 'role', sortable: true },
           {key: 'description', sortable: true },
+          {key: 'userId', sortable: true },
           {key: 'actions', thStyle: {width:'130px !important'} }
         ]),
+        sortBy: APP.USER_WITH_NAME? 'name': 'loginId',
         initTotalRows: this.$store.state.app_service.users.length
       },
       items: [

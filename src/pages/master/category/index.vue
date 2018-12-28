@@ -30,13 +30,14 @@ export default {
         csvOut: true,
         custumCsvColumns: ['categoryId', 'categoryName', 'categoryTypeName', 'display.color', 'display.bgColor', 'display.shape', 'description'],
         fields: addLabelByKey(this.$i18n, [ 
-          {key: 'categoryId', sortable: true },
           {key: 'categoryName', sortable: true },
           {key: 'categoryTypeName', label: 'categoryType', sortable: true },
           {key: 'style', label: 'display' },
           {key: 'description' },
+          {key: 'categoryId', sortable: true },
           {key: 'actions', thStyle: {width:'130px !important'} }
         ]),
+        sortBy: 'categoryName',
         initTotalRows: this.$store.state.app_service.categories.length
       },
       categoryStyles: [],
