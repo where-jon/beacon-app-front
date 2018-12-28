@@ -93,6 +93,9 @@ export default {
             }
           }]
         }
+        if(!entity[headerName]){
+          entity[headerName] = val
+        }
         return dummyKey
       })
     },
