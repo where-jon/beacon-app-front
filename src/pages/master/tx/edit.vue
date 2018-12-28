@@ -137,32 +137,16 @@ export default {
     },
     sensorOptionsTx() {
       let options = this.sensorOptions('tx')
-      options.unshift({value:null, text:this.$i18n.tnl('label.normal')})
+      // options.unshift({value:null, text:this.$i18n.tnl('label.normal')})
       return options
     },
     categoryOptions() {
-      let options = this.categories.filter((category) => {
-        return category.categoryType != CATEGORY.getTypes()[2].value
-      }).map((category) => {
-        return {
-          value: category.categoryId,
-          text: category.categoryName
-        }
-      }
+      return StateHelper.getOptionsFromState('category', false, false, 
+        category => CATEGORY.POT_AVAILABLE.includes(category.categoryType)
       )
-      options.unshift({value:null, text:''})
-      return options
     },
     groupOptions() {
-      let options = this.groups.map((group) => {
-        return {
-          value: group.groupId,
-          text: group.groupName
-        }
-      }
-      )
-      options.unshift({value:null, text:''})
-      return options
+      return StateHelper.getOptionsFromState('group')
     },
     showMinorMid() {
       return !this.showMinorHead

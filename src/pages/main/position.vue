@@ -51,7 +51,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapActions } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as PositionHelper from '../../sub/helper/PositionHelper'
 import * as SensorHelper from '../../sub/helper/SensorHelper'
@@ -63,7 +63,7 @@ import * as Util from '../../sub/util/Util'
 import * as mock from '../../assets/mock/mock'
 import txdetail from '../../components/parts/txdetail.vue'
 import { APP, DISP, DEV } from '../../sub/constant/config'
-import { SHAPE, SENSOR, EXTRA_NAV, POSITION } from '../../sub/constant/Constants'
+import { SHAPE, SENSOR, EXTRA_NAV, POSITION, CATEGORY } from '../../sub/constant/Constants'
 import { Shape, Container, Text } from '@createjs/easeljs/dist/easeljs.module'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
@@ -125,10 +125,14 @@ export default {
     ...mapState([
       'reload',
     ]),
-    ...mapGetters('app_service' ,[
-      'categoryOptionsForPot',
-      'groupOptions',
-    ]),
+    categoryOptionsForPot() {
+      return StateHelper.getOptionsFromState('category', false, false,
+        category => CATEGORY.POT_AVAILABLE.includes(category.categoryType)
+      )
+    },
+    groupOptions() {
+      return StateHelper.getOptionsFromState('group')
+    },
     selectedSensor() {
       if (this.selectedTx && this.selectedTx.btxId) {
         var ret = this.getMeditagSensor(this.selectedTx.btxId)

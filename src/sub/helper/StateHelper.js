@@ -271,13 +271,11 @@ export const loadAreaImages = async () => {
  *    (val) => APP.TX_SENSOR.includes(val.senserId)) // Txのセンサーに絞り込む
  */
 export const getOptionsFromState = (key, textField, notNull, filterCallback) => {
-  Util.debug('Enter getOptionsFromState')
+  Util.debug('getOptionsFromState')
   let keys
   if (!key.endsWith('s')) {
     keys = key.endsWith('y')? key.slice(0, -1) + 'ies' : key + 's'
   }
-  Util.debug('key: ', key)
-  Util.debug('keys: ', keys)
   const masterList = store.state.app_service[keys]
   
   Util.debug('masterList:', masterList)
@@ -293,21 +291,18 @@ export const getOptionsFromState = (key, textField, notNull, filterCallback) => 
   } else if (typeof textField === 'function') {
     getText = (obj) => textField(obj)
   }
-  Util.debug('getText: ' , getText)
-  Util.debug('test: ', getText(masterList[0]))
 
   let emptyOption = false
   if (!notNull) {
     emptyOption = {value: null, text: ''}
-  } else if (notNull.name && notNull.value) {
+  } else if (notNull.text || notNull.value) {
     emptyOption = notNull
   }
   Util.debug('emptyOption: ', emptyOption)
 
   let options = _(masterList)
-    .map(obj => ({text: getText(obj), value: obj[keyId], orig: obj}))
-    .filter(obj => filterCallback ? filterCallback(obj.orig) : true)
-    .map(obj => ({text: obj.text, value: obj.value}))
+    .filter(obj => filterCallback ? filterCallback(obj) : true)
+    .map(obj => ({text: getText(obj), label: getText(obj), value: obj[keyId]}))
     .value()
   Util.debug('filtered: ', options)
   

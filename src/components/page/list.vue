@@ -248,39 +248,15 @@ export default {
       'selectedarea',
     ]),
     categoryOptions() {
-      let options = this.categories.filter((category) => 
-        category.categoryType != CATEGORY.getTypes()[2].value
-      ).map((category) => {
-        return {
-          value: category.categoryId,
-          text: category.categoryName
-        }
-      }
+      return StateHelper.getOptionsFromState('category', false, false, 
+        category => CATEGORY.POT_AVAILABLE.includes(category.categoryType)
       )
-      options.unshift({value:null, text:''})
-      return options
     },
     groupOptions() {
-      let options = this.groups.map((group) => {
-        return {
-          value: group.groupId,
-          text: group.groupName
-        }
-      }
-      )
-      options.unshift({value:null, text:''})
-      return options
+      return StateHelper.getOptionsFromState('group')
     },
     areaOptions() {
-      let options = this.areas.map((area) => {
-        return {
-          value: area.areaId,
-          text: area.areaName
-        }
-      }
-      )
-      options.unshift({value:null, text:''})
-      return options
+      return StateHelper.getOptionsFromState('area')
     },
     detectStateOptions() {
       let options = DetectStateHelper.getTypes()
