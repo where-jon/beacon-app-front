@@ -102,6 +102,8 @@ export default {
       'pots', 'regions',
     ]),
     navbarClasses() {
+      // use for update theme-color
+      this.$store.state.setting.theme
       return getThemeClasses()
     },
     topNavBarClasses() {
@@ -200,6 +202,14 @@ li.nav-item.b-nav-dropdown.vivid > *{
   background-color: $vivid;
 }
 
+li.nav-item.b-nav-dropdown.gray-scale > *{
+  background-color: $gray-scale;
+}
+
+li.nav-item.b-nav-dropdown.indigo > *{
+  background-color: $indigo;
+}
+
 a.dropdown-item.default:hover,
 a.dropdown-item.default:focus {
   background-color: #7EA0C4 !important;
@@ -218,6 +228,16 @@ a.dropdown-item.autumn:focus {
 a.dropdown-item.vivid:hover, 
 a.dropdown-item.vivid:focus {
   background: #EE5588 !important;
+}
+
+a.dropdown-item.gray-scale:hover, 
+a.dropdown-item.gray-scale:focus {
+  background: #787878 !important;
+}
+
+a.dropdown-item.indigo:hover, 
+a.dropdown-item.indigo:focus {
+  background: #8A91C7 !important;
 }
 
 div.navbar-brand {

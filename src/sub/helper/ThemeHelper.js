@@ -13,7 +13,19 @@ export const getThemeColor = () => {
 
 export const getTheme = () => {
   const theme = window.localStorage.getItem(document.domain + '-theme')
-  return theme && theme !== 'undefined' ? theme : DISP.THEME
+  if(theme){
+    return theme
+  }
+  const login = JSON.parse(window.localStorage.getItem('login'))
+  if(login){
+    if(login.tenantAdmin){
+      return THEME[0].name
+    }
+    if(login.isProvider){
+      return THEME[4].name
+    }
+  }
+  return DISP.THEME
 }
 
 export const getThemeClasses = () => {

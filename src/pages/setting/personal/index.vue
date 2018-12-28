@@ -52,7 +52,7 @@
               <b-form-select v-model="selectedLocale" :options="locales" class="mb-3" @change="localeSelected" />
             </b-form-group>
             <!-- プロフィール・パスワードを変更するボタン -->
-            <b-form-group v-show="!isProvider">
+            <b-form-group v-show="!provider">
               <b-button v-show="!isChange" v-t="'label.changeProfilePassword'" :variant="theme" 
                         type="button" class="btn-block" @click="isChange = true"
               />
@@ -171,7 +171,11 @@ export default {
     },
     showName() {
       return APP.USER_WITH_NAME
-    }
+    },
+    provider(){
+      const loginInfo = JSON.parse(window.localStorage.getItem('login'))
+      return loginInfo.isProvider
+    },
   },
   watch: {
     hasError(value){
