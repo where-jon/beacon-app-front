@@ -63,10 +63,6 @@
         </b-form>
       </b-form-row>
     </b-container>
-    <!-- modal -->
-    <b-modal id="modalError" :title="$t('label.error')" ok-only>
-      {{ $t('message.noLedDevice') }}
-    </b-modal>
   </div>
 </template>
 
@@ -156,7 +152,7 @@ export default {
           this.form.deviceId = deviceIds[0].value
         } else if(!Util.hasValue(deviceIds)) {
           this.noDevice = true
-          this.$root.$emit('bv::show::modal', 'modalError')
+          this.showErrorModal({key: 'noLedDevice'})
         }
 
         if (payload && payload.done) {

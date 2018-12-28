@@ -48,5 +48,10 @@ export const actions = {
   },
   hideProgress({ commit }) {
     commit('replace', {showProgress: false})
-  }
+  },
+  showErrorModal({commit}, payload) {
+    console.debug('modalRootError')
+    commit('replace', {error: payload})
+    this.$router.app.$root.$emit('bv::show::modal', 'modalRootError')
+  },
 }

@@ -2,10 +2,10 @@
   <div>
     <breadcrumb :items="items" :reload="false" />
     <div class="container">
-      <b-alert variant="info" dismissible :show="showInfo">
+      <b-alert :show="showInfo" variant="info" dismissible>
         {{ message }}
       </b-alert>
-      <b-alert variant="danger" dismissible :show="showAlert" @dismissed="showAlert=false">
+      <b-alert :show="showAlert" variant="danger" dismissible @dismissed="showAlert=false">
         <template v-if="Array.isArray(message)">
           <span v-for="line in message" :key="line">
             {{ line }} <br>
@@ -72,7 +72,7 @@
         </b-form>
         <slot />
         <b-row class="mt-3" />
-        <b-table stacked="md" striped hover :items="viewList" :fields="fields" :current-page="currentPage" :per-page="perPage" outlined :sort-by.sync="sortBy" />
+        <b-table :items="viewList" :fields="fields" :current-page="currentPage" :per-page="perPage" :sort-by.sync="sortBy" stacked="md" striped hover outlined />
         <b-row>
           <b-col md="6" class="my-1">
             <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" class="my-0" />

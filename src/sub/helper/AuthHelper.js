@@ -91,7 +91,7 @@ export const authByAppService = async (loginId, password, success, err) => {
     ConfigHelper.applyAppServiceSetting(userInfo.setting)  
 
     // Login process
-    await login({loginId, username:userInfo.user.name, role: userInfo.user.role, featureList: userInfo.featureList, tenantFeatureList: userInfo.tenantFeatureList, menu: userInfo.menu, currentRegion: userInfo.currentRegion, frontRev: revInfo.frontRev, serviceRev: revInfo.serviceRev, tenantAdmin: data.tenantAdmin, currentTenant: userInfo.tenant})
+    await login({loginId, username:userInfo.user.name, role: userInfo.user.role, featureList: userInfo.featureList, tenantFeatureList: userInfo.tenantFeatureList, menu: userInfo.menu, currentRegion: userInfo.currentRegion, frontRev: revInfo.frontRev, serviceRev: revInfo.serviceRev, tenantAdmin: data.tenantAdmin, isProvider: userInfo.user.providerUserId != null, currentTenant: userInfo.tenant})
     success()
     StateHelper.loadAreaImages()
     LocaleHelper.setLocale(LocaleHelper.getLocale())
