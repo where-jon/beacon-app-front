@@ -127,9 +127,6 @@ export default {
         category => CATEGORY.POT_AVAILABLE.includes(category.categoryType)
       )
     },
-    groupOptions() {
-      return StateHelper.getOptionsFromState('group')
-    },
     selectedSensor() {
       if (this.selectedTx && this.selectedTx.btxId) {
         var ret = this.getMeditagSensor(this.selectedTx.btxId)

@@ -2,9 +2,15 @@
 <script>
 import { mapMutations, mapActions } from 'vuex'
 import * as Util from '../../sub/util/Util'
+import * as StateHelper from '../../sub/helper/StateHelper'
 import { getButtonTheme } from '../../sub/helper/ThemeHelper'
 
 export default {
+  computed: {
+    groupOptions() {
+      return StateHelper.getOptionsFromState('group')
+    },
+  },
   methods: {
     ...mapMutations('app_service', [
       'replaceAS', 

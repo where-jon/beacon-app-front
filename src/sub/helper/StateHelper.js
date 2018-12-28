@@ -262,10 +262,10 @@ export const loadAreaImages = async () => {
  * 
  * @example
  * グループのオプション
- * const groupOptions = getOptionsFromState('group')
+ * StateHelper.getOptionsFromState('group')
  * 
  * txのセンサー名一覧のオプション
- * const sensorOptions = getOptionsFromState('sensor', 
+ * StateHelper.getOptionsFromState('sensor', 
  *    (val) => {this.$i18n.t('label.' + val.sensorName})}, // 表示は言語ファイルから取る。
  *    {value: null, text: this.$i18n.t('label.normal')}, // センサーのnullは「通常」
  *    (val) => APP.TX_SENSOR.includes(val.senserId)) // Txのセンサーに絞り込む
@@ -294,7 +294,7 @@ export const getOptionsFromState = (key, textField, notNull, filterCallback) => 
 
   let emptyOption = false
   if (!notNull) {
-    emptyOption = {value: null, text: ''}
+    emptyOption = {value: null, label: '', text: ''}
   } else if (notNull.text || notNull.value) {
     emptyOption = notNull
   }
