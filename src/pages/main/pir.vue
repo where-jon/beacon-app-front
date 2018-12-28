@@ -1,5 +1,5 @@
 <template>
-  <div id="mapContainer" class="container-fluid">
+  <div id="mapContainer" class="container-fluid" @click="resetDetail">
     <breadcrumb :items="items" :reload="true" />
     <b-row class="mt-2">
       <b-form inline class="mt-2" @submit.prevent>
@@ -12,11 +12,19 @@
     <b-row class="mt-3">
       <canvas id="map" ref="map" />
     </b-row>
+    <div v-if="selectedTx.btxId && showReady">
+      <txdetail :selected-tx="selectedTx" :selected-sensor="[]" :is-show-modal="isShowModal()" @resetDetail="resetDetail" />
+    </div>
   </div>
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
+import * as PositionHelper from '../../sub/helper/PositionHelper'
+import * as StateHelper from '../../sub/helper/StateHelper'
+import * as Util from '../../sub/util/Util'
+import txdetail from '../../components/parts/txdetail.vue'
 import { DISP, APP } from '../../sub/constant/config'
 import { SENSOR } from '../../sub/constant/Constants'
 import { Shape, Container, Text } from '@createjs/easeljs/dist/easeljs.module'
@@ -26,6 +34,7 @@ import showmapmixin from '../../components/mixin/showmapmixin.vue'
 export default {
   components: {
     breadcrumb,
+    'txdetail': txdetail,
   },
   mixins: [showmapmixin],
   data() {
@@ -33,6 +42,7 @@ export default {
       keepExbPosition: false,
       toggleCallBack: () => {
         this.keepExbPosition = true
+        this.reset()
       },
       noImageErrorKey: 'noMapImage',
       items: [
@@ -48,18 +58,31 @@ export default {
     }
   },
   computed: {
+    ...mapState('main', [
+      'selectedTx',
+    ]),
+    ...mapState('app_service', [
+      'txs',
+      'forceFetchTx',
+    ]),
+    ...mapState([
+      'reload',
+    ]),
   },
   mounted() {
+    document.addEventListener('touchstart', this.touchEnd)
     this.fetchData()
   },
+  beforeDestroy() {
+    this.resetDetail()
+  },
   methods: {
-    reset() {
-      this.isShownMapImage = false
-    },
     async fetchData(payload) {
       try {
+        this.reloadSelectedTx = this.reload? this.selectedTx: {}
+        this.replace({reload: false})
         this.showProgress()
-        await this.fetchAreaExbs()
+        await this.fetchAreaExbs(true)
 
         let pirSensors = await EXCloudHelper.fetchSensor(SENSOR.PIR)
         let thermopileSensors = APP.USE_THERMOPILE? await EXCloudHelper.fetchSensor(SENSOR.THERMOPILE): []
@@ -80,10 +103,18 @@ export default {
           .filter((exb) => exb.count > 0 || DISP.PIR_EMPTY_SHOW)
           .value()
 
+        if (APP.SHOW_MAGNET_ON_PIR) {
+          await StateHelper.load('tx', this.forceFetchTx)
+          StateHelper.setForceFetch('tx', false)
+          await this.storePositionHistory(this.count)
+          this.magnetSensors = await EXCloudHelper.fetchSensor(SENSOR.MAGNET)
+          Util.debug(this.magnetSensors)
+        }
+
+        this.showMapImage()
         if (payload && payload.done) {
           payload.done()
         }
-        this.showMapImage()
       }
       catch(e) {
         console.error(e)
@@ -103,6 +134,14 @@ export default {
           this.showExb(exb)
         })
         this.keepExbPosition = false
+
+        if (APP.SHOW_MAGNET_ON_PIR) {
+          this.stage.on('click', (evt) => {
+            this.resetDetail()
+          })
+          this.setPositionedExb()
+          this.showTxAll()
+        }
       })
     },
     showExb(exb) {
@@ -111,6 +150,7 @@ export default {
       let stage = this.stage
       if (!this.exbCon) {
         this.exbCon = new Container()
+        stage.addChild(this.exbCon)
       }
       let exbBtn = new Container()
       let btnBg = new Shape()
@@ -135,7 +175,6 @@ export default {
         exbBtn.y = exb.y
         exbBtn.cursor = ''
         this.exbCon.addChild(exbBtn)
-        stage.addChild(this.exbCon)
         stage.update()
         return 
       }
@@ -161,9 +200,59 @@ export default {
       exbBtn.cursor = ''
 
       this.exbCon.addChild(exbBtn)
-      stage.addChild(this.exbCon)
       stage.update()
     },
+    showTxAll() {
+      if (!this.txCont) {
+        this.txCont = new Container()
+        this.txCont.width = this.bitmap.width
+        this.txCont.height = this.bitmap.height
+        this.stage.addChild(this.txCont)
+        this.stage.update()
+      }
+      if (!this.txCont) {
+        this.txCont.removeAllChildren()
+      }
+      this.stage.update()
+      // for debug
+      this.disableExbsCheck()
+      let position = PositionHelper.adjustPosition(this.positions(), this.mapImageScale, this.positionedExb)
+      position.forEach((pos) => { // TODO: Txのチェックも追加
+        this.showTx(pos)
+      })
+      this.reShowTx(position)
+    },
+    showTx(pos) {
+      const tx = this.txs.find((tx) => tx.btxId == pos.btx_id)
+      Util.debug('showTx', pos, tx && tx.sensor)
+      if (!tx) {
+        console.warn('tx not found. btx_id=' + pos.btx_id)
+        return
+      }
+      if (tx.sensorId != SENSOR.MAGNET) {
+        return
+      }
+      const magnet = this.magnetSensors && this.magnetSensors.find((sensor) => sensor.btx_id == tx.btxId)
+      Util.debug('magnet', magnet)
+
+      const display = this.getDisplay(tx)
+      const color = this.isMagnetOn(magnet)? display.bgColor : display.color
+      const bgColor = this.isMagnetOn(magnet)? display.color: display.bgColor
+      const txBtn = this.createTxBtn(pos, display.shape, color, bgColor)
+
+      if(this.reloadSelectedTx.btxId == pos.btx_id){
+        this.showingDetailTime = new Date().getTime()
+        this.showDetail(txBtn.txId, txBtn.x, txBtn.y)
+      }
+      this.txCont.addChild(txBtn)
+      this.stage.update()
+    },
+    touchEnd (evt) {
+      if (evt.target.id === 'map') {
+        return
+      }
+      this.resetDetail()
+    }
   }
 }
 </script>
