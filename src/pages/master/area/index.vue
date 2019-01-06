@@ -32,12 +32,14 @@ export default {
         bulkUploadPath: '/master/area/bulkUpload',
         appServicePath: '/core/area',
         csvOut: true,
+        custumCsvColumns: ['areaId', 'areaName'],
         fields: addLabelByKey(this.$i18n, [ 
-          {key: 'areaId', sortable: true, tdClass: 'action-rowdata' },
           {key: 'areaName', sortable: true, tdClass: 'action-rowdata'},
           {key: 'thumbnail', tdClass: 'action-rowdata' },
+          {key: 'areaId', sortable: true, tdClass: 'action-rowdata' },
           {key: 'actions', thStyle: {width: '130px !important'}, tdClass: 'action-rowdata' }
         ]),
+        sortBy: 'areaName',
         initTotalRows: this.$store.state.app_service.areas.length
       },
       anotherPageParams: [
