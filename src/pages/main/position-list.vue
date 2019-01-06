@@ -33,7 +33,8 @@ export default {
         name: 'position-list',
         id: 'positionListId',
         extraFilter: _(['detectState',
-          MenuHelper.useMaster('group') && APP.POT_WITH_GROUP ? 'group' : null,
+          MenuHelper.useMaster('group')? 'group' : null,
+          MenuHelper.useMaster('category')? 'category' : null,
           APP.POSITION_WITH_AREA ? 'area' : null]).compact().value(),
         disableTableButtons: true,
         fields: addLabelByKey(this.$i18n, [ 
@@ -109,6 +110,7 @@ export default {
             locationName: Util.getValue(pos, 'exb.locationName', null),
             // 追加フィルタ用
             groupId: Util.getValue(pos, 'tx.group.groupId').val,
+            categoryId: Util.getValue(pos, 'tx.category.categoryId').val,
             areaId: Util.getValue(pos, 'exb.location.areaId').val,
           }
         })
