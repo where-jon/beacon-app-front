@@ -360,7 +360,9 @@ export default {
         headers = _(this.params.fields).map((val) => val.key).uniqWith(_.isEqual).value()
       }
       headers = headers.filter((val) => !['style', 'thumbnail', 'actions', 'updateAction'].includes(val))
-      HtmlUtil.fileDL(this.params.name + '.csv', Util.converToCsv(this.list, headers), getCharSet(this.loginId))
+      headers.push('delFlg')
+      const list = this.list.map((val) => ({...val, delFlg: 0}))
+      HtmlUtil.fileDL(this.params.name + '.csv', Util.converToCsv(list, headers), getCharSet(this.loginId))
     },
     style(index) {
       return this.$parent.$options.methods.style.call(this.$parent, index)
