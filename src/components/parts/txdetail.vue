@@ -24,7 +24,7 @@
           </div>
         </div>
       </div>
-      <sensor :sensors="selectedSensor" is-popup="true" />
+      <sensor :sensors="selectedSensor" :is-popup="true" />
     </div>
     <txdetailmodal
       v-else
