@@ -4,7 +4,6 @@ import { mapMutations, mapActions } from 'vuex'
 import * as Util from '../../sub/util/Util'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import { getButtonTheme } from '../../sub/helper/ThemeHelper'
-import * as StateHelper from '../../sub/helper/StateHelper'
 
 export default {
   computed: {
