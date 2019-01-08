@@ -30,13 +30,14 @@ export default {
         csvOut: true,
         custumCsvColumns: ['groupId', 'groupName', 'ruby', 'display.color', 'display.bgColor', 'display.shape', 'description'],
         fields: addLabelByKey(this.$i18n, [ 
-          {key: 'groupId', sortable: true },
           {key: 'groupName', sortable: true },
           {key: 'ruby', sortable: true },
           {key: 'style', label: 'display' } ,
           {key: 'description' },
+          {key: 'groupId', sortable: true },
           {key: 'actions', thStyle: {width:'130px !important'} }
         ]),
+        sortBy: 'groupName',
         initTotalRows: this.$store.state.app_service.groups.length
       },
       groupStyles: [],

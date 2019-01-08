@@ -28,11 +28,13 @@ export default {
         bulkEditPath: '/master/role/bulkedit',
         appServicePath: '/meta/role',
         csvOut: true,
+        custumCsvColumns: ['roleId', 'roleName'],
         fields: addLabelByKey(this.$i18n, [ 
-          {key: 'roleId', sortable: true },
           {key: 'roleName', sortable: true },
+          {key: 'roleId', sortable: true },
           {key: 'actions', thStyle: {width:'130px !important'} }
         ]),
+        sortBy: 'roleName',
         initTotalRows: this.$store.state.app_service.roles.length
       },
       items: [

@@ -31,15 +31,16 @@ export default {
         custumCsvColumns: ['roleId', 'featureId', 'featureName', 'path', 'modeText', 'featureTypeName', 'version', 'enabledName'],
         hideSearchBox: !Util.hasValue(this.$store.state.app_service.role.roleId),
         fields: addLabelByKey(this.$i18n, [ 
-          {key: 'featureId', sortable: true },
           {key: 'featureName', sortable: true },
           {key: 'path', sortable: true },
           {key: 'modeText', label: 'mode', sortable: true },
           {key: 'featureTypeName', label: 'featureType', sortable: true },
           {key: 'version', sortable: true },
           {key: 'enabledName', label: 'enabled', sortable: true },
+          {key: 'featureId', sortable: true },
           {key: 'actions', thStyle: {width:'130x !important'} }
         ]),
+        sortBy: 'featureName',
         initTotalRows: this.$store.state.app_service.features.length,
       },
     }

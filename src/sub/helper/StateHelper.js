@@ -50,15 +50,15 @@ const appStateConf = {
   },
   regions: {
     path: '/core/region',
-    sort: 'regionId',
+    sort: 'regionName',
   },
   areas: {
     path: '/core/area',
-    sort: 'areaId',
+    sort: 'areaName',
   },
   exbs: {
     path: '/core/exb/withLocation',
-    sort: 'exbId',
+    sort: APP.EXB_WITH_EXBID? 'exbId': APP.EXB_WITH_DEVICE_NUM? 'deviceNum': APP.EXB_WITH_DEVICE_ID? 'deviceId': APP.EXB_WITH_DEVICE_IDX? 'deviceIdX': 'exbId',
     beforeCommit: (arr) => {
       return arr.map((exb) => {
         const location = exb.location
@@ -81,7 +81,7 @@ const appStateConf = {
   },
   txs: {
     path: '/core/tx/withPot',
-    sort: 'txId',
+    sort: APP.TX_WITH_TXID? 'txId': APP.TX_BTX_MINOR != 'minor'? 'btxId': 'minor',
     beforeCommit: (arr) => {
       return arr.map((tx) => {
         return {
@@ -100,7 +100,7 @@ const appStateConf = {
   },
   pots: {
     path: '/basic/pot/withThumbnail',
-    sort: 'potId',
+    sort: 'potName',
     beforeCommit: (arr) => {
       let potImages = arr.map((val) => ({ id: val.potId, txId: val.txId, thumbnail: val.thumbnail}))
       store.commit('app_service/replaceAS', {['potImages']:potImages})
@@ -122,7 +122,7 @@ const appStateConf = {
   },
   categories: {
     path: '/basic/category',
-    sort: 'categoryId',
+    sort: 'categoryName',
     beforeCommit: (arr) => {
       return arr.map((val) => ({
         ...val,
@@ -136,7 +136,7 @@ const appStateConf = {
   },
   groups: {
     path: '/basic/group',
-    sort: 'groupId',
+    sort: 'groupName',
     beforeCommit: (arr) => {
       return arr.map((val) => ({
         ...val,
@@ -149,18 +149,18 @@ const appStateConf = {
   },
   users: {
     path: '/meta/user',
-    sort: 'userId',
+    sort: APP.USER_WITH_NAME? 'name': 'loginId',
     beforeCommit: (arr) => {
       return arr.map((val) => ({...val, roleName: val.role.roleName}))
     }
   },
   roles: {
     path: '/meta/role',
-    sort: 'roleId',
+    sort: 'roleName',
   },
   features: {
     path: '/meta/feature',
-    sort: 'featureId',
+    sort: 'featureName',
   },
   locations: {
     path: '/core/location',
@@ -168,7 +168,7 @@ const appStateConf = {
   },
   zones: {
     path: '/core/zone/coordinates',
-    sort: 'zoneId',
+    sort: 'zoneName',
     beforeCommit: (arr) => {
       return  arr.map((val) => ({
         zoneId: val.zoneId,
