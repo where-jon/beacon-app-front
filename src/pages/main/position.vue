@@ -56,7 +56,7 @@ import * as StateHelper from '../../sub/helper/StateHelper'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
 import * as Util from '../../sub/util/Util'
 import txdetail from '../../components/parts/txdetail.vue'
-import { APP } from '../../sub/constant/config'
+import { APP, DISP } from '../../sub/constant/config'
 import { SENSOR, EXTRA_NAV } from '../../sub/constant/Constants'
 import { Container } from '@createjs/easeljs/dist/easeljs.module'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
@@ -139,20 +139,36 @@ export default {
   },
   methods: {
     async loadLegends () {
-      const magnetCategoryTypes = this.txs.filter((val) => val.category && val.sensorId == SENSOR.MAGNET)
-        .map((val) => val.category.categoryId)
-      this.legendItems = this.categories.map((val) => ({
-        id: val.categoryId,
-        items: magnetCategoryTypes.includes(val.categoryId)? [
-          { id: 1, text: 'A', style: this.getStyleDisplay1(val) },
-          { id: 2, text: `${val.categoryName}${this.$i18n.tnl('label.using')}`, style: null },
-          { id: 3, text: 'A', style: this.getStyleDisplay1(val, true) },
+      const loadCategory = DISP.DISPLAY_PRIORITY[0] == 'category'
+      const magnetCategoryTypes = loadCategory? this.getMagnetCategoryTypes(): this.getMagnetGroupTypes()
+      const legendElements = loadCategory? this.getCategoryLegendElements(): this.getGroupLegendElements()
+
+      this.legendItems = legendElements.map((legendElement) => ({
+        id: legendElement.id,
+        items: magnetCategoryTypes.includes(legendElement.id)? [
+          { id: 1, text: 'A', style: this.getStyleDisplay1(legendElement) },
+          { id: 2, text: `${legendElement.name}${this.$i18n.tnl('label.using')}`, style: null },
+          { id: 3, text: 'A', style: this.getStyleDisplay1(legendElement, true) },
           { id: 4, text: `${this.$i18n.tnl('label.notUse')}`, style: {} },
         ]: [
-          { id: 1, text: 'A', style: this.getStyleDisplay1(val) },
-          { id: 2, text: val.categoryName, style: {} },
+          { id: 1, text: 'A', style: this.getStyleDisplay1(legendElement) },
+          { id: 2, text: legendElement.name, style: {} },
         ]
       }))
+    },
+    getMagnetCategoryTypes () {
+      return this.txs.filter((val) => val.category && val.sensorId == SENSOR.MAGNET)
+        .map((val) => val.category.categoryId)
+    },
+    getCategoryLegendElements () {
+      return this.categories.map((val) => ({ id: val.categoryId, name: val.categoryName, ...val,}))
+    },
+    getMagnetGroupTypes () {
+      return this.txs.filter((val) => val.group && val.sensorId == SENSOR.MAGNET)
+        .map((val) => val.group.groupId)
+    },
+    getGroupLegendElements () {
+      return this.groups.map((val) => ({id: val.groupId, name: val.groupName, ...val, }))
     },
     async fetchData(payload) {
       try {
