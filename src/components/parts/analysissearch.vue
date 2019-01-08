@@ -87,7 +87,6 @@ export default {
         datetimeTo: null,
       },
       appServicePath: '/core/positionHistory',
-      groupOptions: [],
       potOptions: [],
       interval: 24 * 60 * 60 * 1000,
       intervalHours: 24,
@@ -119,7 +118,6 @@ export default {
     await StateHelper.load('area')
     await StateHelper.load('group')
     await StateHelper.load('pot')
-    this.groupOptions = StateHelper.getOptionsFromState('group')
     this.changeGroup()
     this.form.areaId = this.areas? this.areas[0].areaId: null
     this.changeArea(this.form.areaId)

@@ -163,9 +163,6 @@ export default {
         category => category.categoryType === this.form.potType
       )
     },
-    groupOptions() {
-      return StateHelper.getOptionsFromState('group')
-    },
     txOptions() {
       const useTxIds = this.pots.map((val) => val.txId)
       return StateHelper.getOptionsFromState('tx',

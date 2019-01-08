@@ -137,16 +137,12 @@ export default {
     },
     sensorOptionsTx() {
       let options = this.sensorOptions('tx')
-      // options.unshift({value:null, text:this.$i18n.tnl('label.normal')})
       return options
     },
     categoryOptions() {
       return StateHelper.getOptionsFromState('category', false, false, 
         category => CATEGORY.POT_AVAILABLE.includes(category.categoryType)
       )
-    },
-    groupOptions() {
-      return StateHelper.getOptionsFromState('group')
     },
     showMinorMid() {
       return !this.showMinorHead
