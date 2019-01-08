@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapActions } from 'vuex'
+import { mapState } from 'vuex'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as PositionHelper from '../../sub/helper/PositionHelper'
 import * as SensorHelper from '../../sub/helper/SensorHelper'
@@ -56,9 +56,9 @@ import * as StateHelper from '../../sub/helper/StateHelper'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
 import * as Util from '../../sub/util/Util'
 import txdetail from '../../components/parts/txdetail.vue'
-import { APP, DISP, DEV } from '../../sub/constant/config'
-import { SHAPE, SENSOR, EXTRA_NAV, POSITION, CATEGORY } from '../../sub/constant/Constants'
-import { Shape, Container, Text } from '@createjs/easeljs/dist/easeljs.module'
+import { APP } from '../../sub/constant/config'
+import { SENSOR, EXTRA_NAV, CATEGORY } from '../../sub/constant/Constants'
+import { Container } from '@createjs/easeljs/dist/easeljs.module'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import listmixin from '../../components/mixin/listmixin.vue'
