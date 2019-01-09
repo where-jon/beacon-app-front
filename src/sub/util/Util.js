@@ -17,7 +17,9 @@ export const getByteLength = (str) => encodeURI(str == null? '': str).replace(/%
 export const numberRange = (start, end) => new Array(end - start + 1).fill().map((d, i) => {return {key: i + start}})
 
 export const formatDateRange = (date, by) => {
-  let key = `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`
+  const zMonth = `00${date.getMonth() + 1}`.slice(-2)
+  const zDate = `00${date.getDate()}`.slice(-2)
+  let key = `${date.getFullYear()}/${zMonth}/${zDate}`
   if(by == 'day'){
     return {key: `${key} 00:00`, text: key}
   }

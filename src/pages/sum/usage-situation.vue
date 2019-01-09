@@ -2,19 +2,8 @@
   <div>
     <breadcrumb :items="items" :reload="false" />
     <div class="container">
-      <b-alert :show="showInfo" variant="info" dismissible>
-        {{ message }}
-      </b-alert>
-      <b-alert :show="showAlert" variant="danger" dismissible @dismissed="showAlert=false">
-        <template v-if="Array.isArray(message)">
-          <span v-for="line in message" :key="line">
-            {{ line }} <br>
-          </span>
-        </template>
-        <span v-else>
-          {{ message }}
-        </span>
-      </b-alert>
+      <alert :message="message" />
+
       <div class="mapContainer mb-5">
         <b-form inline>
           <b-form-group class="mr-5">
@@ -88,6 +77,7 @@ import { mapState } from 'vuex'
 import 'element-ui/lib/theme-chalk/index.css'
 import locale from 'element-ui/lib/locale'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
+import alert from '../../components/parts/alert.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import commonmixinVue from '../../components/mixin/commonmixin.vue'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
@@ -100,7 +90,8 @@ import { getCharSet } from '../../sub/helper/CharSetHelper'
 
 export default {
   components: {
-    breadcrumb
+    breadcrumb,
+    alert,
   },
   mixins: [showmapmixin, commonmixinVue ],
   data () {
@@ -139,8 +130,6 @@ export default {
       totalRows: 0,
       sortBy: null,
       //
-      showInfo: false,
-      showAlert: false,
       message: '',
       //
       dayOptionList: [],
@@ -278,12 +267,12 @@ export default {
       this.stage ? this.stage.update() : null
     },
     async displayImpl(){
-      this.showAlert = false
+      this.replace({showAlert: false})
       this.viewList = []
       try {
         if (this.form.selectedYearMonth == null || this.form.selectedYearMonth == 0) {
           this.message = this.$i18n.tnl('message.pleaseEnterSearchCriteria')
-          this.showAlert = true
+          this.replace({showAlert: true})
           return
         }
         var paramCategoryId = (this.categoryId != null)?this.categoryId:-1
@@ -310,6 +299,7 @@ export default {
         }
         if (fetchList == null || !fetchList.length) {
           this.message = this.$i18n.tnl('message.notFoundData', {target: this.$i18n.tnl('label.usageSituation')})
+          this.replace({showAlert: true})
           return
         }
         for (var line of fetchList) {

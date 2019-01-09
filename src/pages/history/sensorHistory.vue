@@ -2,19 +2,8 @@
   <div>
     <breadcrumb :items="items" :reload="false" />
     <div class="container">
-      <b-alert :show="showInfo" variant="info" dismissible>
-        {{ message }}
-      </b-alert>
-      <b-alert :show="showAlert" variant="danger" dismissible @dismissed="showAlert=false">
-        <template v-if="Array.isArray(message)">
-          <span v-for="line in message" :key="line">
-            {{ line }} <br>
-          </span>
-        </template>
-        <span v-else>
-          {{ message }}
-        </span>
-      </b-alert>
+      <alert :message="message" />
+
       <div class="mapContainer mb-5">
         <b-form inline>
           <b-form-group class="mr-5">
@@ -70,6 +59,7 @@ import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import locale from 'element-ui/lib/locale'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
+import alert from '../../components/parts/alert.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
@@ -85,6 +75,7 @@ import _ from 'lodash'
 export default {
   components: {
     breadcrumb,
+    alert,
     DatePicker,
   },
   mixins: [showmapmixin ],
@@ -156,8 +147,6 @@ export default {
       fetchRows: 0,
       sortBy: null,
       //
-      showInfo: false,
-      showAlert: false,
       message: '',
       footerMessage: '',
     }
@@ -212,7 +201,7 @@ export default {
       this.stage ? this.stage.update() : null
     },
     async displayImpl(){
-      this.showAlert = false
+      this.replace({showAlert: false})
       this.viewList = []
       this.fetchRows = 0
       this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.fetchRows, maxRows: this.limitViewRows})}`
@@ -235,6 +224,7 @@ export default {
         )
         if (fetchList == null || !fetchList.length) {
           this.message = this.$i18n.tnl('message.notFoundData', {target: this.$i18n.tnl('label.sensorHistory')})
+          this.replace({showAlert: true})
           return
         }
         var count = 0

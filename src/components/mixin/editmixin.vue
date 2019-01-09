@@ -17,9 +17,6 @@ export default {
   data() {
     return {
       show: true,
-      showInfo: false,
-      showWarn: false,
-      showAlert: false,
       message: '',
       warnMessage: '',
       again: true,
@@ -49,6 +46,9 @@ export default {
   },
   mounted() {
     this.replaceAS({listMessage: null})
+    this.replace({showWarn: false})
+    this.replace({showAlert: false})
+    this.replace({showInfo: false})
   },
   methods: {
     register(again) {
@@ -81,9 +81,9 @@ export default {
       this.showProgress()
       this.message = ''
       this.warnMessage = ''
-      this.showInfo = false
-      this.showWarn = false
-      this.showAlert = false
+      this.replace({showWarn: false})
+      this.replace({showAlert: false})
+      this.replace({showInfo: false})
       evt.preventDefault()
       try {
         await this.save()
@@ -100,7 +100,7 @@ export default {
           }
         }
         this.message = this.$i18n.tnl('message.' + this.crud + 'Completed', {target: this.$i18n.tnl('label.' + this.name)})
-        this.showInfo = true
+        this.replace({showInfo: true})
         if (this.again) {
           this.form = {}
           ViewHelper.applyDef(this.form, this.defValue)
@@ -139,7 +139,7 @@ export default {
         else {
           this.message = this.$i18n.terror('message.' + this.crud + 'Failed', {target: this.$i18n.tnl('label.' + this.name), code: e.message})
         }
-        this.showAlert = true
+        this.replace({showAlert: true})
         window.scrollTo(0, 0)
       }
       finally{
@@ -176,7 +176,7 @@ export default {
         if (thumbnailName) this.form[thumbnailName] = thumbnail
       }, resize, (size) => {
         this.message = this.$i18n.tnl('message.uploadMax', {target: Math.floor(APP.MAX_IMAGE_SIZE/1024/1024)})
-        this.showAlert = true
+        this.replace({showAlert: true})
         if (this.clearImage) {
           this.clearImage()
         }

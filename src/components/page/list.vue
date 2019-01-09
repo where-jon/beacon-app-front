@@ -1,12 +1,8 @@
 <template>
   <b-form inline @submit.prevent>
     <b-container :fluid="isFluid">
-      <b-alert :show="showMessage" variant="info" dismissible>
-        {{ message }}
-      </b-alert>
-      <b-alert :show="showError" variant="danger" dismissible>
-        {{ error }}
-      </b-alert>
+      <alert :message="showMessage? message: error" />
+
       <!-- searchbox -->
       <template v-if="!params.hideSearchBox">
         <b-form-row class="mb-2">
@@ -158,8 +154,12 @@ import { getCharSet } from '../../sub/helper/CharSetHelper'
 import commonmixinVue from '../mixin/commonmixin.vue'
 import { CATEGORY } from '../../sub/constant/Constants'
 import * as AuthHelper from '../../sub/helper/AuthHelper'
+import alert from '../parts/alert.vue'
 
 export default {
+  components: {
+    alert,
+  },
   mixin: [commonmixinVue], // not work
   props: {
     params: {
@@ -304,6 +304,9 @@ export default {
         })
     }
     this.sortBy = this.params.sortBy? this.params.sortBy: null
+    this.replace({showWarn: false})
+    this.replace({showAlert: this.showError})
+    this.replace({showInfo: this.showMessage})
   },
   methods: {
     ...mapMutations('app_service', [
@@ -311,6 +314,9 @@ export default {
     ]),
     ...mapMutations('main', [
       'replaceMain', 
+    ]),
+    ...mapMutations([
+      'replace', 
     ]),
     thumbnail(row) {
       return this.$parent.$options.methods.thumbnail.call(this.$parent, row)
@@ -450,6 +456,7 @@ export default {
       this.currentPage = 1
     },
     async execDelete(id) {
+      this.replace({showInfo: false})
       try {
         await AppServiceHelper.deleteEntity(this.appServicePath, id)
         await StateHelper.load(this.params.name, true)
@@ -457,6 +464,7 @@ export default {
           this.$parent.$options.methods.afterCrud.apply(this.$parent)
         }
         this.message = this.$i18n.tnl('message.deleteCompleted', {target: this.$i18n.tnl('label.' + this.params.name)})
+        this.replace({showInfo: true})
         this.$parent.$options.methods.fetchData.apply(this.$parent)        
       } catch (e) {
         this.error = this.$i18n.terror('message.deleteFailed', {target: this.$i18n.tnl('label.' + this.params.name), code: e.response.status})

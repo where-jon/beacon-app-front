@@ -2,19 +2,8 @@
   <div id="mapContainer">
     <breadcrumb :items="items" :reload="false" />
     <div class="container">
-      <b-alert :show="showInfo" variant="info" dismissible>
-        {{ message }}
-      </b-alert>
-      <b-alert :show="showAlert" variant="danger" dismissible @dismissed="showAlert=false">
-        <template v-if="Array.isArray(message)">
-          <span v-for="line in message" :key="line">
-            {{ line }} <br>
-          </span>
-        </template>
-        <span v-else>
-          {{ message }}
-        </span>
-      </b-alert>
+      <alert :message="message" />
+
       <div class="mapContainer mb-5">
         <div class="container">
           <analysis-search :from-heatmap="fromHeatmap" :area-options="areaOptions"
@@ -35,12 +24,14 @@ import { DISP } from '../../sub/constant/config'
 import * as Util from '../../sub/util/Util'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
+import alert from '../../components/parts/alert.vue'
 import analysisSearch from '../../components/parts/analysissearch.vue'
 
 export default {
   components: {
     breadcrumb,
-    analysisSearch
+    alert,
+    analysisSearch,
   },
   mixins: [showmapmixin],
   data() {
@@ -48,8 +39,6 @@ export default {
       positionHistories: [],
       heatmap: null,
       fromHeatmap: true,
-      showInfo: false,
-      showAlert: false,
       message: '',
       noImageErrorKey: 'noMapImage',
       items: [
@@ -122,10 +111,10 @@ export default {
       this.hideProgress()
     },
     async display(param) {
-      this.showAlert = false
+      this.replace({showAlert: false})
       if(param.errorMessage){
         this.message = param.errorMessage
-        this.showAlert = true
+        this.replace({showAlert: true})
         this.removeHeatmap()
         return
       }
