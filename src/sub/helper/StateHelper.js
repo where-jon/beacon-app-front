@@ -249,3 +249,67 @@ export const loadAreaImages = async () => {
     await loadAreaImage(area.areaId)
   })
 }
+
+/**
+ * stateからプルダウン等のオプションを取得する。
+ * @param key stateのkey。obj[key + 'Id']の形でid項目を取得するのにも使う
+ * @param textField 省略可。偽の場合、obj[key + 'Name']をtext:の値に使用する。文字列の場合、obj[textField]の形でtext項目を取得する。<br />
+ * 関数の場合、第一引数にobjを渡して、戻り値をtext項目に使用する。
+ * @param notNull 省略可。偽の場合、戻り値に{value: null, text: ''}を追加する。同様の形式のオブジェクトの場合、それを追加する。<br />
+ * その他の場合、何もしない。下のフィルタ適用の後に行う。
+ * @param filterCallback 省略可。オプションに適用するフィルタ。_.filter(ary, filterCallback)の処理を行う。
+ * aryはstateの内容。オプションではない。
+ * 
+ * @example
+ * グループのオプション
+ * StateHelper.getOptionsFromState('group')
+ * 
+ * txのセンサー名一覧のオプション
+ * StateHelper.getOptionsFromState('sensor', 
+ *    (val) => {this.$i18n.t('label.' + val.sensorName})}, // 表示は言語ファイルから取る。
+ *    {value: null, text: this.$i18n.t('label.normal')}, // センサーのnullは「通常」
+ *    (val) => APP.TX_SENSOR.includes(val.senserId)) // Txのセンサーに絞り込む
+ */
+export const getOptionsFromState = (key, textField, notNull, filterCallback) => {
+  Util.debug('getOptionsFromState')
+  let keys
+  if (!key.endsWith('s')) {
+    keys = key.endsWith('y')? key.slice(0, -1) + 'ies' : key + 's'
+  }
+  const masterList = store.state.app_service[keys]
+  
+  Util.debug('masterList:', masterList)
+  Util.debug('typeof textField: ', typeof textField)
+  const keyId = key + 'Id'
+  const keyName = key + 'Name'
+
+  let getText
+  if (!textField) {
+    getText = (obj) => obj[keyName]
+  } else if (typeof textField === 'string') {
+    getText = (obj) => obj[textField]
+  } else if (typeof textField === 'function') {
+    getText = (obj) => textField(obj)
+  }
+
+  let emptyOption = false
+  if (!notNull) {
+    emptyOption = {value: null, label: '', text: ''}
+  } else if (notNull.text || notNull.value) {
+    emptyOption = notNull
+  }
+  Util.debug('emptyOption: ', emptyOption)
+
+  let options = _(masterList)
+    .filter(obj => filterCallback ? filterCallback(obj) : true)
+    .map(obj => ({text: getText(obj), label: getText(obj), value: obj[keyId]}))
+    .value()
+  Util.debug('filtered: ', options)
+  
+  if (emptyOption) {
+    options.unshift(emptyOption)
+  }
+  Util.debug('empty add: ', options)
+
+  return options
+}

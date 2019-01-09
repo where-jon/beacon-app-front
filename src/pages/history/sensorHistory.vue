@@ -171,13 +171,11 @@ export default {
       'sensors'
     ]),
     sensorOptions() {
-      var sensorOp = []
-      this.sensors.forEach((sensor) => {
-        if (sensor.sensorId != SENSOR.LED) {
-          sensorOp.push({text: this.$i18n.tnl('label.' + sensor.sensorName), value: sensor.sensorId})
-        }
-      })
-      return sensorOp
+      return StateHelper.getOptionsFromState('sensor', 
+        sensor => this.$i18n.tnl('label.' + sensor.sensorName),
+        true,
+        sensor => sensor.sensorId != SENSOR.LED
+      )
     },
   },
   async created() {

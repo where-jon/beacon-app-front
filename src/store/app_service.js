@@ -1,6 +1,4 @@
 import Vue from 'vue'
-import {getOptions} from '../sub/util/Util'
-import {CATEGORY} from '../sub/constant/Constants'
 
 export const state = () => ({
   pots: [],
@@ -44,21 +42,6 @@ export const state = () => ({
 })
 
 const initState = state()
-
-export const getters = {
-  categoryOptions(state) {
-    return getOptions('category', state.categories)
-  },
-  categoryOptionsForPot(state) {
-    let categorys = _.filter(state.categories, (cat) => {
-      return CATEGORY.POT_AVAILABLE.includes(cat.categoryType)
-    })
-    return getOptions('category', categorys)
-  },
-  groupOptions(state) {
-    return getOptions('group', state.groups)
-  },
-}
 
 export const mutations = {
   replaceAS(state, obj) {

@@ -127,7 +127,7 @@ export default {
   },
   async created(){
     await StateHelper.load('role')
-    this.roleOptions = this.roles.map((val) => ({text: val.roleName, value: val.roleId}))
+    this.roleOptions = StateHelper.getOptionsFromState('role', false, true)
     // if(!this.isSuperEditable){ 廃止
     //   const superAdmin = this.roles.find((val) => val.roleName == ROLE.SUPER_ADMIN)
     //   this.roleOptions = this.roleOptions.filter((val) => superAdmin? val.value != superAdmin.roleId || this.form.roleId == superAdmin.roleId: true)

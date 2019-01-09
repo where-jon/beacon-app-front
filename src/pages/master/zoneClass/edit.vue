@@ -138,7 +138,8 @@ export default {
     },
     async initAreaNames() {
       await StateHelper.load('area')
-      this.areaNames = this.areas.map((val) => ({text: val.areaName, value: val.areaId}))
+      this.areaNames = StateHelper.getOptionsFromState('area', false, true)
+      // this.areaNames = this.areas.map((val) => ({text: val.areaName, value: val.areaId}))
       console.log(this.areaNames )
     },
     async initLocationNames() {
@@ -146,9 +147,10 @@ export default {
       this.locationNames = this.locations.map((val) => ({text: val.locationName, value: val.locationId}))
     },
     async initCategoryNames() {
-      let categories = await AppServiceHelper.fetchList(`/basic/category/type/${CATEGORY.getTypes()[2].value}`, 'categoryId')
-      this.categoryNames = categories.map((val) => ({text: val.categoryName, value: val.categoryId}))
-      this.categoryNames.unshift({value:null, text:''})
+      await StateHelper.load('category')
+      this.categoryNames = StateHelper.getOptionsFromState('category', false, false, 
+        category => !CATEGORY.POT_AVAILABLE.includes(category.categoryType)
+      )
     },
     async save() {
       const zoneId = Util.hasValue(this.form.zoneId)? this.form.zoneId: -1

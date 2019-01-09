@@ -38,10 +38,7 @@ export default {
   },
   computed: {
     areaOptions() {
-      let ret = _(this.$store.state.app_service.areas).map((val) => {
-        return {text: val.areaName, value: val.areaId}
-      }).value()
-      return ret
+      return StateHelper.getOptionsFromState('area', false, true)
     },
     ...mapState('app_service', [
       'areas',

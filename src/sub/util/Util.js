@@ -333,17 +333,6 @@ export const getMidnightMs = () => {
   return midnight
 }
 
-export const getOptions = (key, list, valField, txtField) => {
-  let options = list.map((entity) => {
-    return {
-      value: valField ? entity[valField] : entity[key + 'Id'],
-      text: txtField ? entity[txtField] : entity[key + 'Name'],
-    }
-  })
-  options.unshift({value: null, text: ''})
-  return options
-}
-
 export const getDetailCaptionKey = (id) => {
   return `label.${hasValue(id)? 'update': 'addSetting'}`
 }
