@@ -140,7 +140,7 @@ export default {
     },
     async initAreaNames() {
       await StateHelper.load('area')
-      this.areaNames = this.areas.map((val) => ({text: val.areaName, value: val.areaId}))
+      this.areaNames = StateHelper.getOptionsFromState('area', false, true)
       if(this.pageSendParam){
         this.areaId = this.pageSendParam.areaId
         this.replaceAS({pageSendParam: null})
@@ -154,9 +154,10 @@ export default {
       this.locationNames = this.locations.map((val) => ({text: val.locationName, value: val.locationId}))
     },
     async initCategoryNames() {
-      let categories = await AppServiceHelper.fetchList(`/basic/category/type/${CATEGORY.getTypes()[2].value}`, 'categoryId')
-      console.log(categories)
-      this.categoryNames = categories.map((val) => ({text: val.categoryName, value: val.categoryId}))
+      await StateHelper.load('category')
+      this.categoryNames = StateHelper.getOptionsFromState('category', false, true, 
+        category => !CATEGORY.POT_AVAILABLE.includes(category.categoryType)
+      )
       if (this.categoryNames.length < 1) {
         return
       }

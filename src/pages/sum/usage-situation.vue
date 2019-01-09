@@ -89,7 +89,9 @@ import 'element-ui/lib/theme-chalk/index.css'
 import locale from 'element-ui/lib/locale'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
+import commonmixinVue from '../../components/mixin/commonmixin.vue'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
+import * as StateHelper from '../../sub/helper/StateHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
 import { addLabelByKey } from '../../sub/helper/ViewHelper'
@@ -100,7 +102,7 @@ export default {
   components: {
     breadcrumb
   },
-  mixins: [showmapmixin ],
+  mixins: [showmapmixin, commonmixinVue ],
   data () {
     return {
       name: 'usageSituation',
@@ -144,6 +146,7 @@ export default {
       dayOptionList: [],
       categoryOptionList: [],
       zoneOptionList: [],
+      zoneCategorys: [],
       vModelCategory: null,
       vModelZone: null,
       vModelYearMonth: null,
@@ -196,10 +199,11 @@ export default {
     this.form.mode = 1
     this.fields = this.fields1
   },
-  mounted() {
+  async mounted() {
     import(`element-ui/lib/locale/lang/${this.$i18n.locale}`).then( (mojule) =>{
       locale.use(mojule.default)
     })
+    await StateHelper.load('category')
     this.fetchPrev()
     this.vModelYearMonth = this.yearMonthOptions[0]
   },
@@ -214,19 +218,7 @@ export default {
           '/core/zone/categoryList',
           ''
         )
-        var categories = {}
-        this.zoneCategorys.forEach(elm => {
-          if (elm.categoryId >= 0) {
-            categories[elm.categoryId] = elm.categoryName
-          }
-        })
-        this.categoryOptionList = []
-        for (var catId in categories) {
-          this.categoryOptionList.push({
-            label: categories[catId],
-            value: catId
-          })
-        }
+        this.categoryOptionList = await this.getZoneCategoryOptions(this.zoneCategorys)
       } catch(e) {
         console.error(e)
       }
@@ -261,25 +253,7 @@ export default {
       }
     },
     categoryChange(val) {
-      var zoneUniqs = {}
-      if (val == null) {
-        this.zoneCategorys.forEach(elm => {
-          zoneUniqs[elm.zoneId] = elm.zoneName
-        })
-      } else {
-        this.zoneCategorys.forEach(elm => {
-          if (elm.categoryId == val.value) {
-            zoneUniqs[elm.zoneId] = elm.zoneName
-          }
-        })
-      }
-      this.zoneOptionList = []
-      for (var zId in zoneUniqs) {
-        this.zoneOptionList.push({
-          label: zoneUniqs[zId],
-          value: zId
-        })
-      }
+      this.zoneOptionList = this.getZoneOptions(this.zoneCategorys, val)
       if (val == null) {
         this.categoryId = -1
         this.vModelCategory = null

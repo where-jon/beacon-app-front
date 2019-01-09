@@ -159,41 +159,17 @@ export default {
       return 'outline-' + theme
     },
     categoryOptions() {
-      let options = this.categories.filter((category) => 
-        category.categoryType === this.form.potType
-      ).map((category) => {
-        return {
-          value: category.categoryId,
-          text: category.categoryName
-        }
-      }
+      return StateHelper.getOptionsFromState('category', false, false,
+        category => category.categoryType === this.form.potType
       )
-      options.unshift({value:null, text:''})
-      return options
-    },
-    groupOptions() {
-      let options = this.groups.map((group) => {
-        return {
-          value: group.groupId,
-          text: group.groupName
-        }
-      }
-      )
-      options.unshift({value:null, text:''})
-      return options
     },
     txOptions() {
       const useTxIds = this.pots.map((val) => val.txId)
-      let options = this.txs.filter((tx) => !_.includes(useTxIds, tx.txId) || tx.txId == this.pot.txId )
-      options = options.map((tx) => {
-        return {
-          value: tx.txId,
-          text: StateHelper.getTxIdName(tx)
-        }
-      }
+      return StateHelper.getOptionsFromState('tx',
+        tx => StateHelper.getTxIdName(tx),
+        false,
+        tx => !useTxIds.includes(tx.txId) || tx.txId == this.pot.txId
       )
-      options.unshift({value:null, text:''})
-      return options
     },
     ...mapState('app_service', [
       'pot',

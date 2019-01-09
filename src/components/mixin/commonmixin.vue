@@ -2,9 +2,15 @@
 <script>
 import { mapMutations, mapActions } from 'vuex'
 import * as Util from '../../sub/util/Util'
+import * as StateHelper from '../../sub/helper/StateHelper'
 import { getButtonTheme } from '../../sub/helper/ThemeHelper'
 
 export default {
+  computed: {
+    groupOptions() {
+      return StateHelper.getOptionsFromState('group')
+    },
+  },
   methods: {
     ...mapMutations('app_service', [
       'replaceAS', 
@@ -41,6 +47,23 @@ export default {
         }
       }
       return false
+    },
+    getZoneCategoryOptions(zoneCategories){
+      const zoneCategoryIds = zoneCategories.filter((zoneCategory) => zoneCategory.categoryId >= 0).map((zoneCategory) => zoneCategory.categoryId)
+      return StateHelper.getOptionsFromState('category', false, true, (category) => zoneCategoryIds.includes(`${category.categoryId}`))
+    },
+    getZoneOptions(zoneCategories, selectCategory){
+      const zoneUniqs = {}
+      zoneCategories.forEach(zoneCategory => {
+        if (selectCategory == null || zoneCategory.categoryId == selectCategory.value) {
+          zoneUniqs[zoneCategory.zoneId] = zoneCategory.zoneName
+        }
+      })
+      const zoneOptionList = []
+      for (let zId in zoneUniqs) {
+        zoneOptionList.push({ label: zoneUniqs[zId], value: zId })
+      }
+      return zoneOptionList
     }
   }
 }

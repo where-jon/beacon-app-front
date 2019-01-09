@@ -168,29 +168,15 @@ export default {
     },
     sensorOptionsExb() {
       let options = this.sensorOptions('exb')
-      options.unshift({value:null, text:this.$i18n.tnl('label.normal')})
       return options
     },
     areaOptions() {
-      return this.areas.map((area) => {
-        return {
-          value: area.areaId,
-          text: area.areaName
-        }
-      }
-      )
+      return StateHelper.getOptionsFromState('area', false, true)
     },
     zoneNames() {
-      let options = this.zones.filter((zone) => zone.areaId == this.form.areaId)
-        .map((zone) => {
-          return {
-            value: zone.zoneId,
-            text: zone.zoneName
-          }
-        }
-        )
-      Util.addNoSelect(options)
-      return options
+      return StateHelper.getOptionsFromState('zone', false, false, 
+        zone => zone.areaId == this.form.areaId
+      )
     },
     ...mapState('app_service', [
       'exb',

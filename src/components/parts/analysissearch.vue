@@ -87,7 +87,6 @@ export default {
         datetimeTo: null,
       },
       appServicePath: '/core/positionHistory',
-      groupOptions: [],
       potOptions: [],
       interval: 24 * 60 * 60 * 1000,
       intervalHours: 24,
@@ -119,7 +118,6 @@ export default {
     await StateHelper.load('area')
     await StateHelper.load('group')
     await StateHelper.load('pot')
-    this.groupOptions = Util.getOptions('group', this.groups)
     this.changeGroup()
     this.form.areaId = this.areas? this.areas[0].areaId: null
     this.changeArea(this.form.areaId)
@@ -134,10 +132,9 @@ export default {
   },
   methods: {
     changeGroup(newVal = this.form.groupId) {
-      const options = this.pots.filter((val) => 
-        val.potType == CATEGORY.getTypes()[0].value && (!newVal || val.groupId == newVal)
+      this.potOptions = StateHelper.getOptionsFromState('pot', false, false, 
+        pot => pot.potType == CATEGORY.getTypes()[0].value && (!newVal || pot.groupId == newVal)
       )
-      this.potOptions = Util.getOptions('pot', options)
       if(!this.potOptions.find((val) => val.value == this.form.potId)){
         this.form.potId = null
       }

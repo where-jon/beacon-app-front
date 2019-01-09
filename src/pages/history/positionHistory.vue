@@ -147,13 +147,10 @@ export default {
       'txs', 'exbs'
     ]),
     txOptions() {
-      let txOp = this.txs.map(tx => {
-        return {
-          label: (tx.minor!=null)?(''+tx.minor):'txId=' + tx.txId,
-          value: '' + tx.txId
-        }
-      })
-      return txOp
+      return StateHelper.getOptionsFromState('tx',
+        tx => tx.minor ? '' + tx.minor : 'txid=' + tx.txId,
+        true
+      )
     },
   },
   async created() {

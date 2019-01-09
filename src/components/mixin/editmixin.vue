@@ -58,24 +58,18 @@ export default {
       this.$router.push(this.backPath)
     },
     sensorOptions(entity) {
-      return _(this.sensors)
-        .filter((sensor) => {
-          if (entity == 'exb') {
-            return APP.EXB_SENSOR.includes(sensor.sensorId)
-          }
-          else if (entity == 'tx') {
-            return APP.TX_SENSOR.includes(sensor.sensorId)
-          }
-          return true
-        })
-        .map((sensor) => {
-          return {
-            value: sensor.sensorId,
-            text: this.$i18n.tnl('label.' + sensor.sensorName)
-          }
-        }
-        )
-        .value()
+      let ids
+      if (entity == 'exb') {
+        ids = APP.EXB_SENSOR
+      } else if (entity == 'tx') {
+        ids = APP.TX_SENSOR
+      }
+
+      return StateHelper.getOptionsFromState('sensor',
+        sensor => this.$i18n.tnl('label.' + sensor.sensorName),
+        {value:null, text:this.$i18n.tnl('label.normal')},
+        sensor => ids.includes(sensor.sensorId)
+      )
     },
     isShown(conf) {
       return APP[conf]

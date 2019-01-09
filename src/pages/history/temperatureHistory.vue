@@ -70,6 +70,7 @@ import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import locale from 'element-ui/lib/locale'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
+import * as StateHelper from '../../sub/helper/StateHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
@@ -128,10 +129,11 @@ export default {
       'temperatureHistory',
     ])
   },
-  mounted() {
+  async mounted() {
     import(`element-ui/lib/locale/lang/${this.$i18n.locale}`).then( (mojule) =>{
       locale.use(mojule.default)
     })
+    await StateHelper.load('category')
     this.fetchPrev()
   },
   methods: {
@@ -142,19 +144,7 @@ export default {
           ''
         )
         console.log(this.zoneCategorys)
-        var categorys = {}
-        this.zoneCategorys.forEach(elm => {
-          if (elm.categoryId >= 0) {
-            categorys[elm.categoryId] = elm.categoryName
-          }
-        })
-        this.categoryOptionList = []
-        for (var catId in categorys) {
-          this.categoryOptionList.push({
-            label: categorys[catId],
-            value: catId
-          })
-        }
+        this.categoryOptionList = this.getZoneCategoryOptions(this.zoneCategorys)
       } catch(e) {
         console.error(e)
       }
@@ -164,25 +154,7 @@ export default {
       this.categoryChange(null)
     },
     categoryChange(val) {
-      var zoneUniqs = {}
-      if (val == null) {
-        this.zoneCategorys.forEach(elm => {
-          zoneUniqs[elm.zoneId] = elm.zoneName
-        })
-      } else {
-        this.zoneCategorys.forEach(elm => {
-          if (elm.categoryId == val.value) {
-            zoneUniqs[elm.zoneId] = elm.zoneName
-          }
-        })
-      }
-      this.zoneOptionList = []
-      for (var zId in zoneUniqs) {
-        this.zoneOptionList.push({
-          label: zoneUniqs[zId],
-          value: zId
-        })
-      }
+      this.zoneOptionList = this.getZoneOptions(this.zoneCategorys, val)
       if (val == null) {
         this.categoryId = null
         this.vModelCategory = null

@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex'
+import { mapState } from 'vuex'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as PositionHelper from '../../sub/helper/PositionHelper'
 import * as SensorHelper from '../../sub/helper/SensorHelper'
@@ -57,7 +57,7 @@ import * as MenuHelper from '../../sub/helper/MenuHelper'
 import * as Util from '../../sub/util/Util'
 import txdetail from '../../components/parts/txdetail.vue'
 import { APP, DISP } from '../../sub/constant/config'
-import { SENSOR, EXTRA_NAV } from '../../sub/constant/Constants'
+import { SENSOR, EXTRA_NAV, CATEGORY } from '../../sub/constant/Constants'
 import { Container } from '@createjs/easeljs/dist/easeljs.module'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
@@ -109,10 +109,11 @@ export default {
     ...mapState([
       'reload',
     ]),
-    ...mapGetters('app_service' ,[
-      'categoryOptionsForPot',
-      'groupOptions',
-    ]),
+    categoryOptionsForPot() {
+      return StateHelper.getOptionsFromState('category', false, false,
+        category => CATEGORY.POT_AVAILABLE.includes(category.categoryType)
+      )
+    },
     selectedSensor() {
       if (this.selectedTx && this.selectedTx.btxId) {
         var ret = this.getMeditagSensor(this.selectedTx.btxId)

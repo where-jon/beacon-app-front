@@ -46,7 +46,6 @@ export default {
     ]),
     sensorOptionsTx() {
       const options = this.$refs.bulkEdit.sensorOptions('tx')
-      options.unshift({value:null, text:this.$i18n.tnl('label.normal')})
       return options
     },
   },
