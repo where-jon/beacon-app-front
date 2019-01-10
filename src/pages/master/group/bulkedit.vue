@@ -11,6 +11,7 @@ import _ from 'lodash'
 import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
+import * as StateHelper from '../../../sub/helper/StateHelper'
 
 export default {
   components: {
@@ -62,6 +63,9 @@ export default {
         }
       }
       return dummyKey
+    },
+    afterCrud(){
+      StateHelper.setForceFetch('pot', true)
     },
     async save(bulkSaveFunc) {
       const MAIN_COL = 'groupId'

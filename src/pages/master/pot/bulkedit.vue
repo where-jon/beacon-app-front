@@ -55,6 +55,9 @@ export default {
       }
       return dummyKey
     },
+    afterCrud(){
+      StateHelper.setForceFetch('tx', true)
+    },
     async save(bulkSaveFunc) {
       const MAIN_COL = 'potId'
       const NULLABLE_NUMBER_COL = ['txId', 'exbId', 'zoneId', 'areaId', 'potType']
