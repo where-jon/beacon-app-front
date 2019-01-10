@@ -44,6 +44,7 @@ import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
 import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
+import * as StateHelper from '../../../sub/helper/StateHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
@@ -105,6 +106,9 @@ export default {
       this.form.displayShape = this.form.display? this.form.display.shape: null
       this.form.displayColor = Util.colorCd4display(this.form.display? this.form.display.color: null, this.defaultColor)
       this.form.displayBgColor = Util.colorCd4display(this.form.display? this.form.display.bgColor: null, this.defaultBgColor)
+    },
+    afterCrud(){
+      StateHelper.setForceFetch('pot', true)
     },
     async save() {
       const entity = {
