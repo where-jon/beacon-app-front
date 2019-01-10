@@ -75,6 +75,7 @@ import { DISP, APP } from '../../sub/constant/config'
 import { LOGIN_MODE } from '../../sub/constant/Constants'
 import { getThemeClasses } from '../../sub/helper/ThemeHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
+import * as Util from '../../sub/util/Util'
 import commonmixinVue from '../mixin/commonmixin.vue'
 import * as StateHelper from '../../sub/helper/StateHelper'
 
@@ -147,7 +148,33 @@ export default {
     },
     regionOptions(regions){
       const login = JSON.parse(window.localStorage.getItem('login'))
-      return login? login.allRegionMove || login.isProvider || login.tenantAdmin? regions: regions.filter((region) => login.userRegionIdList.includes(region.regionId)): []
+      if(!login){
+        return []
+      }
+      const ret = login.allRegionMove || login.isProvider || login.tenantAdmin?
+        regions.filter((val) => val):
+        regions.filter((region) => login.userRegionIdList.includes(region.regionId))
+      return ret.sort((a, b) => this.optionSort(a, b))
+    },
+    optionSort(regionA, regionB){
+      const aSortBy = regionA.regionName
+      const bSortBy = regionB.regionName
+      if(!isNaN(aSortBy) && !isNaN(bSortBy)){
+        const aNum = Number(aSortBy)
+        const bNum = Number(bSortBy)
+        return aNum < bNum? -1: aNum > bNum? 1: 0
+      }
+      const aCodeArr = Util.getSjisCodePoint(aSortBy, 'SJIS')
+      const bCodeArr = Util.getSjisCodePoint(bSortBy, 'SJIS')
+      for(let cnt = 0; cnt < aCodeArr.length && cnt < bCodeArr.length; cnt++){
+        if(aCodeArr[cnt] < bCodeArr[cnt]){
+          return -1
+        }
+        if(aCodeArr[cnt] > bCodeArr[cnt]){
+          return 1
+        }
+      }
+      return 0
     },
     async switchRegion(target, item) {
       await AuthHelper.switchRegion(item.regionId)
