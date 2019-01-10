@@ -2,19 +2,7 @@
   <div>
     <breadcrumb :items="items" />
     <div class="container">
-      <b-alert :show="showInfo" variant="info" dismissible>
-        {{ message }}
-      </b-alert>
-      <b-alert :show="showAlert" variant="danger" dismissible @dismissed="showAlert=false">
-        <template v-if="Array.isArray(message)">
-          <span v-for="line in message" :key="line">
-            {{ line }} <br>
-          </span>
-        </template>
-        <span v-else>
-          {{ message }}
-        </span>
-      </b-alert>
+      <alert :message="message" />
 
       <b-form v-if="show" @submit.prevent="onSubmit">
         <b-form-group v-if="hasId">
@@ -48,12 +36,14 @@ import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
 import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
+import alert from '../../../components/parts/alert.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import rolefeatureIndex from '../rolefeature/index.vue'
 
 export default {
   components: {
     breadcrumb,
+    alert,
     rolefeatureIndex, 
   },
   mixins: [editmixinVue],

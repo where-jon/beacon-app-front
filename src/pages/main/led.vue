@@ -2,9 +2,8 @@
   <div>
     <breadcrumb :items="items" />
     <b-container>
-      <b-alert :show="showAlert" variant="danger" dismissible @dismissed="showAlert=false">
-        {{ message }}
-      </b-alert>
+      <alert :message="message" />
+
       <b-form-row>
         <b-form @submit.prevent="onSubmit">
           <b-form-group :label="$t('label.deviceId')">
@@ -70,6 +69,7 @@
 import { mapState } from 'vuex'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
+import alert from '../../components/parts/alert.vue'
 import { getButtonTheme } from '../../sub/helper/ThemeHelper'
 import { LED_COLORS, LED_BLINK_TYPES, SENSOR } from '../../sub/constant/Constants'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
@@ -79,6 +79,7 @@ import editmixinVue from '../../components/mixin/editmixin.vue'
 export default {
   components: {
     breadcrumb,
+    alert,
   },
   mixins: [
     editmixinVue,

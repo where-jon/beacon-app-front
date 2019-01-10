@@ -1,28 +1,7 @@
 <template>
   <div>
     <div class="container">
-      <b-alert :show="showInfo" variant="info" dismissible>
-        {{ message }}
-        <div v-for="thumbnail in form.thumbnails" :key="thumbnail.id">
-          ID:{{ thumbnail.id }}({{ thumbnail.name }})
-        </div>
-      </b-alert>
-      <b-alert :show="showWarn" variant="warning" dismissible>
-        {{ warnMessage }}
-        <div v-for="warnThumbnail in form.warnThumbnails" :key="warnThumbnail.id">
-          ID:{{ warnThumbnail.id }}
-        </div>
-      </b-alert>
-      <b-alert :show="showAlert" variant="danger" dismissible @dismissed="showAlert=false">
-        <template v-if="Array.isArray(message)">
-          <span v-for="line in message" :key="line">
-            {{ line }} <br>
-          </span>
-        </template>
-        <span v-else>
-          {{ message }}
-        </span>
-      </b-alert>
+      <alert :message="message" :warn-message="warnMessage" :warn-thumbnails="form.warnThumbnails" />
 
       <b-form v-if="show" @submit.prevent="onSubmit">
         <b-form-group>
@@ -41,6 +20,7 @@
 <script>
 import commonmixinVue from '../mixin/commonmixin.vue'
 import editmixinVue from '../mixin/editmixin.vue'
+import alert from '../parts/alert.vue'
 import { APP } from '../../sub/constant/config.js'
 import * as Util from '../../sub/util/Util'
 import JsZip from 'jszip'
@@ -48,6 +28,9 @@ import JsZip from 'jszip'
 let fileReader
 
 export default {
+  components: {
+    alert,
+  },
   mixins: [ editmixinVue, commonmixinVue ],
   props: {
     name: {
@@ -144,9 +127,9 @@ export default {
     uploadMessage(){
       if(this.loading){
         this.message = `${this.$i18n.tnl('message.loadingFile', {now: this.form.thumbnails.length, all: this.fileCount})}`
-        this.showInfo = true
-        this.showWarn = false
-        this.showAlert = false
+        this.replace({showWarn: false})
+        this.replace({showAlert: false})
+        this.replace({showInfo: false})
         return
       }
       const hasUploadThumbnails = this.form && Util.hasValue(this.form.thumbnails)
@@ -155,9 +138,9 @@ export default {
         `${this.$i18n.tnl('message.uploadNoData')}`
       const hasUploadWarnThumbnails = this.form && Util.hasValue(this.form.warnThumbnails)
       this.warnMessage = hasUploadWarnThumbnails? `${this.$i18n.tnl('message.uploadWarnData', {val: this.form.warnThumbnails.length})}`: ''
-      this.showInfo = hasUploadThumbnails
-      this.showAlert = !hasUploadThumbnails || Util.hasValue(this.errorThumbnails)
-      this.showWarn = hasUploadWarnThumbnails
+      this.replace({showWarn: hasUploadWarnThumbnails})
+      this.replace({showAlert: !hasUploadThumbnails || Util.hasValue(this.errorThumbnails)})
+      this.replace({showInfo: hasUploadThumbnails})
     },
     beforeReload(){
       this.formKey++
@@ -175,7 +158,7 @@ export default {
         const file = e.target.files[0]
         if (file.size > APP.MAX_IMAGE_SIZE) {
           this.message = this.$i18n.tnl('message.uploadMax', {target: Math.floor(APP.MAX_IMAGE_SIZE/1024/1024)})
-          this.showAlert = true
+          this.replace({showAlert: true})
           window.scrollTo(0, 0)
           return
         }

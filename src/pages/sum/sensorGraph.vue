@@ -2,12 +2,8 @@
   <div>
     <breadcrumb :items="items" :reload="false" />
     <div class="container">
-      <b-alert :show="showInfo" variant="info" dismissible>
-        {{ message }}
-      </b-alert>
-      <b-alert :show="showAlert" variant="danger" dismissible @dismissed="showAlert=false">
-        {{ message }}
-      </b-alert>
+      <alert :message="message" />
+
       <b-form inline @submit.prevent>
         <b-form-group>
           <b-form-row class="mb-3">
@@ -89,17 +85,20 @@ import * as SensorHelper from '../../sub/helper/SensorHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import { SENSOR, SUM_UNIT, SUM_TARGET } from '../../sub/constant/Constants'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
+import alert from '../../components/parts/alert.vue'
 import { DEV } from '../../sub/constant/config'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import * as mock from '../../assets/mock/mock'
 import validatemixin from '../../components/mixin/validatemixin.vue'
+import commonmixinVue from '../../components/mixin/commonmixin.vue'
 
 export default {
   components: {
     breadcrumb,
+    alert,
     DatePicker,
   },
-  mixins: [validatemixin],
+  mixins: [validatemixin, commonmixinVue],
   data () {
     return {
       form: {
@@ -138,8 +137,6 @@ export default {
       dateOver: 3,
       dataSensorId: null,
       dataList: [],
-      showInfo: false,
-      showAlert: false,
       message: '',
     }
   },
@@ -152,6 +149,9 @@ export default {
       'exbs',
       'txs',
       'sensors',
+    ]),
+    ...mapState([
+      'showAlert',
     ]),
     sensorOptions() {
       return this.sensors.filter((sensor) => sensor.sensorId != SENSOR.LED).map((sensor) => {
@@ -434,11 +434,11 @@ export default {
       return this.formatValidateMessage(errors)
     },
     async display() {
-      this.showAlert = false
+      this.replace({showAlert: false})
       const errorMessage = this.validate()
       if (errorMessage) {
         this.message = errorMessage
-        this.showAlert = true
+        this.replace({showAlert: true})
         return
       }
       const by = SUM_UNIT.getOptions().find((val) => val.value == this.form.sumUnit).param
@@ -446,7 +446,7 @@ export default {
       this.dataList = sensorData.map((val) => val.csvData)
       if (sensorData.length == 0) {
         this.message = this.$i18n.tnl('message.notFound')
-        this.showAlert = true
+        this.replace({showAlert: true})
         return
       }
       this.dataSensorId = this.form.sensorId
@@ -455,7 +455,7 @@ export default {
     async download(){
       if (this.dataList == null || this.dataList.length == 0) {
         this.message = this.$i18n.tnl('message.notFound')
-        this.showAlert = true
+        this.replace({showAlert: true})
         return
       }
       const header = this.dataSensorId == SENSOR.TEMPERATURE? this.headers.temperature: 

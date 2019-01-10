@@ -2,19 +2,7 @@
   <div>
     <breadcrumb :items="items" />
     <div class="container">
-      <b-alert :show="showInfo" variant="info" dismissible>
-        {{ message }}
-      </b-alert>
-      <b-alert :show="showAlert" variant="danger" dismissible @dismissed="showAlert=false">
-        <template v-if="Array.isArray(message)">
-          <span v-for="line in message" :key="line">
-            {{ line }} <br>
-          </span>
-        </template>
-        <span v-else>
-          {{ message }}
-        </span>
-      </b-alert>
+      <alert :message="message" />
 
       <b-form-group>
         <b-form-row>
@@ -75,6 +63,7 @@ import editmixinVue from '../../../components/mixin/editmixin.vue'
 import AreaCanvas from '../../../components/parts/areacanvas.vue'
 import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
+import alert from '../../../components/parts/alert.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import { CATEGORY, ZONE } from '../../../sub/constant/Constants'
 import showmapmixin from '../../../components/mixin/showmapmixin.vue'
@@ -82,6 +71,7 @@ import showmapmixin from '../../../components/mixin/showmapmixin.vue'
 export default {
   components: {
     breadcrumb,
+    alert,
     AreaCanvas,
   },
   mixins: [editmixinVue, showmapmixin],
@@ -191,7 +181,7 @@ export default {
     },
     async doRegist (zones, deleted) {
       const path = this.appServicePath
-      this.showInfo = false
+      this.replace({showInfo: false})
       this.message = ''
       deleted.forEach((e) => {
         AppServiceHelper.deleteEntity(path, e)
@@ -219,7 +209,7 @@ export default {
       this.isRegist = false
       this.isSetNameCategory = false
       this.message = this.$i18n.t('message.updateCompleted', { target: this.$i18n.t('label.zone') })
-      this.showInfo = true
+      this.replace({showInfo: true})
       return saveId
     }
   }

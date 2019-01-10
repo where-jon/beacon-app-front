@@ -2,19 +2,8 @@
   <div>
     <breadcrumb :items="items" :reload="false" />
     <div class="container">
-      <b-alert :show="showInfo" variant="info" dismissible>
-        {{ message }}
-      </b-alert>
-      <b-alert :show="showAlert" variant="danger" dismissible @dismissed="showAlert=false">
-        <template v-if="Array.isArray(message)">
-          <span v-for="line in message" :key="line">
-            {{ line }} <br>
-          </span>
-        </template>
-        <span v-else>
-          {{ message }}
-        </span>
-      </b-alert>
+      <alert :message="message" />
+
       <div class="mapContainer mb-5">
         <div class="container">
           <analysis-search :area-options="areaOptions" @changeArea="changeArea"
@@ -34,6 +23,7 @@ import { Shape } from '@createjs/easeljs/dist/easeljs.module'
 import { DISP } from '../../sub/constant/config'
 import { Container } from '@createjs/easeljs/dist/easeljs.module'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
+import alert from '../../components/parts/alert.vue'
 import analysisSearch from '../../components/parts/analysissearch.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import drawMixin from '../../components/mixin/drawmixin.vue'
@@ -42,6 +32,7 @@ import { getTheme } from '../../sub/helper/ThemeHelper'
 export default {
   components: {
     breadcrumb,
+    alert,
     analysisSearch,
   },
   mixins: [showmapmixin, drawMixin ],
@@ -62,8 +53,6 @@ export default {
       endInfo: {caption: 'end', color: '#ee0033'},
       container: null,
       shownParam: null,
-      showInfo: false,
-      showAlert: false,
       message: '',
       noImageErrorKey: 'noMapImage',
     }
@@ -194,10 +183,10 @@ export default {
       this.drawStartEnd(param, analyseResults.potInfos, param.form.potId)
     },
     async display(param){
-      this.showAlert = false
+      this.replace({showAlert: false})
       if(param.errorMessage){
         this.message = param.errorMessage
-        this.showAlert = true
+        this.replace({showAlert: true})
         return
       }
       const analysisResults = this.analyseFlowline(param.results)

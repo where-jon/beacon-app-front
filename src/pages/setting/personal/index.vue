@@ -3,19 +3,7 @@
   <div>
     <breadcrumb :items="items" />
     <div class="container">
-      <b-alert :show="isSuccess" variant="success" dismissible>
-        {{ 
-          $i18n.tnl('message.updateCompleted', {
-            target: $i18n.tnl('label.login-user-profile')})
-        }}
-      </b-alert>
-      <b-alert :show="hasError" variant="danger" dismissible>
-        {{ 
-          $i18n.terror('message.updateFailed', {
-            target: $i18n.tnl('label.login-user-profile')
-          })
-        }}
-      </b-alert>
+      <alert :message="getMessage()" />
       <b-row>
         <b-col md="10" offset-md="1">
           <pagetitle title="label.login-user-profile" />
@@ -64,7 +52,7 @@
                                   :state="errorMessages.password.length > 0 ? false : null" type="password"
                                   maxlength="16"
                     />
-                    <p v-for="(val, key) in errorMessages.password" :key="key" v-t="val" class="error" />
+                    <p v-for="(val, key) in errorMessages.password" :key="key" class="error" >{{val}}</p>
                   </b-form-group>
 
                   <!-- 変更パスワード -->
@@ -96,8 +84,9 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
+import alert from '../../../components/parts/alert.vue'
 import pagetitle from '../../../components/layout/pagetitle.vue'
 import { APP } from '../../../sub/constant/config'
 import { THEME, CHAR_SET, LOCALE } from '../../../sub/constant/Constants'
@@ -115,6 +104,7 @@ export default {
   mixin: [commonmixinVue],
   components: {
     breadcrumb,
+    alert,
     pagetitle,
   },
   data () {
@@ -152,10 +142,13 @@ export default {
       passMinLength: 3,
       passMaxLength: 16,
       passErrorMessage: null,
-      isSuccess: false,
     }
   },
   computed: {
+    ...mapState( [
+      'showInfo',
+      'showAlert',
+    ]),
     theme () {
       return 'outline-' + getButtonTheme()
     },
@@ -179,15 +172,18 @@ export default {
   },
   watch: {
     hasError(value){
-      if (value) {
-        this.isSuccess = false
-      }
+      this.replace({showAlert: value? true: false})
     }
   },
   created () {
     this.initialize()
   },
   methods: {
+    getMessage(){
+      return this.showInfo? 
+        this.$i18n.tnl('message.updateCompleted', {target: this.$i18n.tnl('label.login-user-profile')}):
+        this.$i18n.terror('message.updateFailed', {target: this.$i18n.tnl('label.login-user-profile')})
+    },
     async initialize(){
       await this.setLoginUser()
       const theme = getTheme()
@@ -284,6 +280,7 @@ export default {
       this.isChange = false
     },
     async onSubmit() {
+      this.replace({showInfo: false})
       Object.keys(this.errorMessages).forEach((key) => this.errorMessages[key] = [])
       const errorMessages = this.errorMessages
       errorMessages.loginId = this.validateLoginIdPassword(
@@ -318,7 +315,7 @@ export default {
             }
             await this.save()
             this.replace({pass: this.loginUser.passwordConfirm})
-            this.isSuccess = true
+            this.replace({showInfo: true})
           } catch(e) {
             errorMessages.general.push(this.$i18n.tnl('message.error'))
           }

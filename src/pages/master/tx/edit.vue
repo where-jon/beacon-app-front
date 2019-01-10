@@ -2,20 +2,7 @@
   <div>
     <breadcrumb :items="items" />
     <div class="container">
-      <b-alert :show="showInfo" variant="info" dismissible>
-        {{ message }}
-      </b-alert>
-      <b-alert :show="showAlert" variant="danger" dismissible @dismissed="showAlert=false">
-        <template v-if="Array.isArray(message)">
-          <span v-for="line in message" :key="line">
-            {{ line }} <br>
-          </span>
-        </template>
-        <span v-else>
-          {{ message }}
-        </span>
-      </b-alert>
-
+      <alert :message="message" />
 
       <b-row>
         <b-col md="8" offset-md="2">
@@ -83,6 +70,7 @@ import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as Util from '../../../sub/util/Util'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
+import alert from '../../../components/parts/alert.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
@@ -92,6 +80,7 @@ import { CATEGORY } from '../../../sub/constant/Constants'
 export default {
   components: {
     breadcrumb,
+    alert,
   },
   mixins: [editmixinVue],
   data() {

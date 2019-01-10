@@ -2,19 +2,7 @@
   <div>
     <breadcrumb :items="items" />
     <div class="container">
-      <b-alert :show="showInfo" variant="info" dismissible>
-        {{ message }}
-      </b-alert>
-      <b-alert :show="showAlert" variant="danger" dismissible @dismissed="showAlert=false">
-        <template v-if="Array.isArray(message)">
-          <span v-for="line in message" :key="line">
-            {{ line }} <br>
-          </span>
-        </template>
-        <span v-else>
-          {{ message }}
-        </span>
-      </b-alert>
+      <alert :message="message" />
 
       <b-form v-if="show" @submit.prevent="onSubmit">
         <b-form-group>
@@ -170,6 +158,7 @@ import editmixinVue from '../../../components/mixin/editmixin.vue'
 import settingmixinVue from '../../../components/mixin/settingmixin.vue'
 import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
+import alert from '../../../components/parts/alert.vue'
 import featureList from '../../../components/page/featureList.vue'
 import tenantSetting from '../../../components/page/tenantSetting.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
@@ -180,6 +169,7 @@ import { ROLE_FEATURE } from '../../../sub/constant/Constants'
 export default {
   components: {
     breadcrumb,
+    alert,
     featureList,
     tenantSetting,
   },

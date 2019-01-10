@@ -2,12 +2,8 @@
   <div>
     <breadcrumb :items="items" :reload="false" />
     <div class="container">
-      <b-alert :show="showInfo" variant="info" dismissible>
-        {{ message }}
-      </b-alert>
-      <b-alert :show="showAlert" variant="danger" dismissible @dismissed="showAlert=false">
-        {{ message }}
-      </b-alert>
+      <alert :message="message" />
+
       <b-form @submit.prevent>
         <b-form-group>
           <b-form-row>
@@ -74,6 +70,7 @@ import * as StateHelper from '../../sub/helper/StateHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
+import alert from '../../components/parts/alert.vue'
 import commonmixinVue from '../../components/mixin/commonmixin.vue'
 import reloadmixinVue from '../../components/mixin/reloadmixin.vue'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
@@ -81,6 +78,7 @@ import { getCharSet } from '../../sub/helper/CharSetHelper'
 export default {
   components: {
     breadcrumb,
+    alert,
     DatePicker,
   },
   mixins: [reloadmixinVue, commonmixinVue ],
@@ -111,8 +109,6 @@ export default {
       historyType: 0,
       temperatureHistoryData: null,
       //
-      showInfo: false,
-      showAlert: false,
       message: '',
       //
       useInputDate: Util.supportInputType('date'),
@@ -225,17 +221,17 @@ export default {
       return list
     },
     async download() {
-      this.showInfo = false
-      this.showAlert = false
+      this.replace({showAlert: false})
+      this.replace({showInfo: false})
       if (this.dateFrom == 0 || this.dateTo == 0 || !Util.hasValue(this.dateFrom) || !Util.hasValue(this.dateTo)) {
         this.message = this.$i18n.tnl('message.required', {target: this.$i18n.tnl('label.historyDateFrom')})
-        this.showAlert = true
+        this.replace({showAlert: true})
         return
       }
       this.temperatureHistoryData = await this.dataDownload()
       if (this.temperatureHistoryData == null || this.temperatureHistoryData.length == 0) {
         this.message = this.$i18n.tnl('message.notFound')
-        this.showAlert = true
+        this.replace({showAlert: false})
         return
       }
       HtmlUtil.fileDL(

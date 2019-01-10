@@ -1,19 +1,7 @@
 <template>
   <div>
     <div class="container">
-      <b-alert :show="showInfo" variant="info" dismissible>
-        {{ message }}
-      </b-alert>
-      <b-alert :show="showAlert" variant="danger" dismissible @dismissed="showAlert=false">
-        <template v-if="Array.isArray(message)">
-          <span v-for="line in message" :key="line">
-            {{ line }} <br>
-          </span>
-        </template>
-        <span v-else>
-          {{ message }}
-        </span>
-      </b-alert>
+      <alert :message="message" />
 
       <b-form v-if="show" @submit.prevent="onSubmit">
         <b-form-group>
@@ -34,8 +22,12 @@ import { mapState } from 'vuex'
 import commonmixinVue from '../mixin/commonmixin.vue'
 import editmixinVue from '../mixin/editmixin.vue'
 import * as StateHelper from '../../sub/helper/StateHelper'
+import alert from '../parts/alert.vue'
 
 export default {
+  components: {
+    alert,
+  },
   mixins: [ editmixinVue, commonmixinVue ],
   props: {
     name: {

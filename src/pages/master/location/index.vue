@@ -1,19 +1,7 @@
 <template>
   <div id="locationSetting">
     <breadcrumb :items="items" />
-    <b-alert :show="showInfo" variant="info" dismissible>
-      {{ message }}
-    </b-alert>
-    <b-alert :show="showAlert" variant="danger" dismissible @dismissed="showAlert=false">
-      <template v-if="Array.isArray(message)">
-        <span v-for="line in message" :key="line">
-          {{ line }} <br>
-        </span>
-      </template>
-      <span v-else>
-        {{ message }}
-      </span>
-    </b-alert>
+    <alert :message="message" />
 
     <b-form inline class="mt-2">
       <b-form-row class="ml-1">
@@ -90,18 +78,18 @@ import { APP, DISP } from '../../../sub/constant/config'
 import { UPDATE_ONLY_NN } from '../../../sub/constant/Constants'
 import { Shape, Container, Text } from '@createjs/easeljs/dist/easeljs.module'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
+import alert from '../../../components/parts/alert.vue'
 import commonmixinVue from '../../../components/mixin/commonmixin.vue'
 import showmapmixin from '../../../components/mixin/showmapmixin.vue'
 
 export default {
   components: {
     breadcrumb,
+    alert,
   },
   mixins: [showmapmixin, commonmixinVue ],
   data() {
     return {
-      showInfo: false,
-      showAlert: false,
       message: '',
       selectedExb_: null,
       pixelWidth: null,
@@ -174,8 +162,8 @@ export default {
   },
   methods: {
     reset() {
-      this.showInfo = false
-      this.showAlert = false
+      this.replace({showAlert: false})
+      this.replace({showInfo: false})
       this.selectedExb_ = null
       this.pixelWidth = null
       this.realWidth = null
@@ -479,8 +467,8 @@ export default {
     async save() {
       this.showProgress()
       this.message = ''
-      this.showInfo = false
-      this.showAlert = false
+      this.replace({showAlert: false})
+      this.replace({showInfo: false})
       try {
         let param = []
 
@@ -514,7 +502,7 @@ export default {
           await StateHelper.load('area', true)
         }
         this.message = this.$i18n.tnl('message.completed', {target: this.$i18n.tnl('label.save')})
-        this.showInfo = true
+        this.replace({showInfo: true})
         this.isChanged = false
       } catch (e) {
         console.log(e)
@@ -524,7 +512,7 @@ export default {
         else {
           this.message = this.$i18n.tnl('message.failed', {target: this.$i18n.tnl('label.save'), code: e.message})
         }
-        this.showAlert = true
+        this.replace({showAlert: true})
         window.scrollTo(0, 0)
       }
       this.hideProgress()
