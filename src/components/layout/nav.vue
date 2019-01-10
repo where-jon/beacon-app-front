@@ -39,14 +39,6 @@
             <span>{{ region.regionName }}</span>
           </b-dropdown-item>
         </b-nav-item-dropdown>
-        <div v-else class="mr-3 my-auto single-nav">
-          <div v-if="isTenantAdmin()">
-            <i class="far fa-building mr-1" aria-hidden="true" style="visibility: hidden;" />
-            <span>{{ this.$store.state.currentTenant? this.$store.state.currentTenant.tenantName: '' }}</span>
-          </div>
-          <i class="far fa-building mr-1" aria-hidden="true" />
-          <span>{{ this.$store.state.currentRegion? this.$store.state.currentRegion.regionName: '' }}</span>
-        </div>
         <!-- user & logout -->
         <b-nav-item-dropdown right>
           <template slot="button-content">
@@ -199,10 +191,6 @@ export default {
   @media (max-width: 1119px) and (min-width: 768px) {
     min-width: 1120px;
   }
-}
-
-.single-nav {
-  color: white !important;
 }
 
 .navbar-dark .navbar-nav .nav-link {
