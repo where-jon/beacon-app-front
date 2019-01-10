@@ -256,18 +256,6 @@ export const MENU = [
       icon: 'fas fa-map-marker-alt',
     },
     {
-      key: 'pir',
-      path: 'pir',
-      feature: '',
-      icon: 'fas fa-users',
-    },
-    {
-      key: 'thermohumidity',
-      path: 'thermohumidity',
-      feature: '',
-      icon: 'fas fa-thermometer-half',
-    },
-    {
       key: 'positionList',
       path: 'position-list',
       feature: '/basic/position-list',
@@ -278,6 +266,18 @@ export const MENU = [
       path: 'position-stack',
       feature: '/basic/position-stack',
       icon: 'far fa-building',
+    },
+    {
+      key: 'pir',
+      path: 'pir',
+      feature: '',
+      icon: 'fas fa-users',
+    },
+    {
+      key: 'thermohumidity',
+      path: 'thermohumidity',
+      feature: '',
+      icon: 'fas fa-thermometer-half',
     },
     {
       key: 'ledOperation',
