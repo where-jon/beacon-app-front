@@ -40,6 +40,7 @@
 import { mapState } from 'vuex'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
+import * as AuthHelper from '../../../sub/helper/AuthHelper'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
 import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
@@ -99,6 +100,9 @@ export default {
       }
       return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
     },
+    async afterCrud(){
+      await AuthHelper.switchAppService()
+    }
   }
 }
 </script>

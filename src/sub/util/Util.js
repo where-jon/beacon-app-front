@@ -214,6 +214,17 @@ export const convert2Unicode = (str) => {
   return Encoding.codeToString(uniArray)
 }
 
+export const getSjisCodePoint = (str) => {
+  const ary = str2Array(str)
+  const ret = []
+  ary.forEach((val) => {
+    const codes = Encoding.convert([val], 'SJIS', detectEncoding(val))
+    codes.unshift(0)
+    ret.splice(-1, 0, ...codes.slice(-2))
+  })
+  return ret
+}
+
 export const removeCrLfDup = (str) => {
   if (!str) return str
   str = str.replace(/\r?\n/g,'\n')

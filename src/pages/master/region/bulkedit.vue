@@ -10,6 +10,7 @@ import { mapState } from 'vuex'
 import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
+import * as AuthHelper from '../../../sub/helper/AuthHelper'
 
 export default {
   components: {
@@ -64,6 +65,9 @@ export default {
         return dummyKey
       })
     },
+    async afterCrud(){
+      await AuthHelper.switchAppService()
+    }
   }
 }
 </script>
