@@ -1,7 +1,7 @@
 <template>
   <b-form inline @submit.prevent>
     <b-container :fluid="isFluid">
-      <alert :message="showMessage? message: error" :force-hide="alertForceHide"/>
+      <alert :message="showMessage? message: error" :force-hide="alertForceHide" />
 
       <!-- searchbox -->
       <template v-if="!params.hideSearchBox">

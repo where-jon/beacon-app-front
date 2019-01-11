@@ -151,7 +151,7 @@ sensor[5] = [
   }
 ]
 
-this['/basic/sensorHistory/1/1/today/hour'] = {
+export const basic_sensorHistory_1_1_today_hour = {
   month: 10,
   day: 14,
   data:[

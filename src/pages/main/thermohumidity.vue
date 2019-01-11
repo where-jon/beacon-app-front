@@ -150,7 +150,7 @@ export default {
       stage.enableMouseOver()
 
       exbBtn.on('click', async (evt) =>{
-        const pMock = DEV.USE_MOCK_EXC? mock['/basic/sensorHistory/1/1/today/hour']: null
+        const pMock = DEV.USE_MOCK_EXC? mock['basic_sensorHistory_1_1_today_hour']: null
         const sensorData = await AppServiceHelper.fetchList('/basic/sensorHistory/1/' + exb.exbId + '/today/hour', null, pMock)
         this.showChart(sensorData)
       })
