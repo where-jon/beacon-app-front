@@ -13,7 +13,7 @@
 
     <b-collapse v-show="!isLoginPage && showNav" id="nav_collapse" ref="collapse" is-nav>
       <!-- left (navi dropdown menu) -->
-      <b-navbar-nav>
+      <b-navbar-nav v-show="!isLoginPage && showNav">
         <b-nav-item-dropdown v-for="group in this.$store.state.menu" :key="group.path">
           <template slot="button-content">
             <em v-t="'label.' + group.key" />
@@ -23,7 +23,7 @@
       </b-navbar-nav>
 
       <!-- right -->
-      <b-navbar-nav v-show="!isLoginPage && showNav" class="ml-auto">
+      <b-navbar-nav v-show="!isLoginPage" class="ml-auto">
         <!-- region -->
         <b-nav-item-dropdown v-if="hasMultiRegion(regions)" :class="navbarClasses" right>
           <template slot="button-content">
