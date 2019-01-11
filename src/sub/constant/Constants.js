@@ -239,7 +239,6 @@ export const MENU = [
       {
         key: 'tenant',
         path: 'tenant',
-        feature: '/meta/tenant',
         icon: 'fas fa-store-alt',
       },
     ]
@@ -252,37 +251,31 @@ export const MENU = [
     pages: [{
       key: 'showPosition',
       path: 'position',
-      feature: '',
       icon: 'fas fa-map-marker-alt',
     },
     {
       key: 'positionList',
       path: 'position-list',
-      feature: '/basic/position-list',
       icon: 'fas fa-list',
     },
     {
       key: 'positionStack',
       path: 'position-stack',
-      feature: '/basic/position-stack',
       icon: 'far fa-building',
     },
     {
       key: 'pir',
       path: 'pir',
-      feature: '',
       icon: 'fas fa-users',
     },
     {
       key: 'thermohumidity',
       path: 'thermohumidity',
-      feature: '',
       icon: 'fas fa-thermometer-half',
     },
     {
       key: 'ledOperation',
       path: 'led',
-      feature: '/basic/led',
       icon: 'far fa-lightbulb',
     }
     ]
@@ -296,25 +289,21 @@ export const MENU = [
       {
         key: 'region',
         path: 'region',
-        feature: '/core/region',
         icon: 'far fa-building',
       },
       {
         key: 'area',
         path: 'area',
-        feature: '/core/area',
         icon: 'fas fa-image',
       },
       {
         key: 'exb',
         path: 'exb',
-        feature: '/core/exb',
         icon: 'far fa-hdd',
       },
       {
         key: 'tx',
         path: 'tx',
-        feature: '/core/tx',
         // icon: 'fal fa-location',
         // icon: 'fas fa-user-tag',
         icon: 'fa fa-tags',
@@ -322,50 +311,42 @@ export const MENU = [
       {
         key: 'locationSetting',
         path: 'location',
-        feature: '/core/location',
         icon: 'fas fa-map',
         // icon: 'fas fa-map-pin',
       },
       {
         key: 'pot',
         path: 'pot',
-        feature: '/basic/pot',
         icon: 'far fa-id-card',
       },
       {
         key: 'category',
         path: 'category',
-        feature: '/basic/category',
         icon: 'fa fa-object-group',
       },
       {
         key: 'group',
         path: 'group',
-        feature: '/basic/group',
         icon: 'fas fa-sitemap',
       },
       {
         key: 'user',
         path: 'user',
-        feature: '/meta/user',
         icon: 'fas fa-user',
       },
       {
         key: 'role',
         path: 'role',
-        feature: '/meta/role',
         icon: 'fas fa-chalkboard-teacher',
       },
       {
         key: 'zoneClass',
         path: 'zoneClass',
-        feature: '/core/zone',
         icon: 'far fa-compass',
       },
       {
         key: 'zoneBlock',
         path: 'zoneBlock',
-        feature: '/core/zone/blcok',
         icon: 'fas fa-th',
       },
     ]
@@ -379,19 +360,16 @@ export const MENU = [
       {
         key: 'gateway',
         path: 'gateway',
-        feature: '/core/gateway',
         icon: 'fas fa-road',
       },
       {
         key: 'position',
         path: 'position',
-        feature: '/core/position',
         icon: 'fas fa-location-arrow',
       },
       {
         key: 'telemetry',
         path: 'telemetry',
-        feature: '/core/telemetry',
         icon: 'fa fa-battery-three-quarters',
       },
     ]
@@ -405,25 +383,21 @@ export const MENU = [
       {
         key: 'usageSituation',
         path: 'usage-situation',
-        feature: '/sum/usage-situation',
         icon: 'fas fa-chart-area'
       },
       {
         key: 'flowlineAnalysis',
         path: 'flowlineAnalysis',
-        feature: '/sum/flowlineAnalysis',
         icon: 'fas fa-shoe-prints'
       },
       {
         key: 'heatmapPosition',
         path: 'heatmap-position',
-        feature: '/sum/heatmapPosition',
         icon: 'fas fas fa-fire',
       },
       {
         key: 'sensorGraph',
         path: 'sensorGraph',
-        feature: '/sum/sensorGraph',
         icon: 'fas fa-chart-bar',
       },
     ]
@@ -436,19 +410,16 @@ export const MENU = [
     pages: [{
       key: 'thermohumidity',
       path: 'temperatureHistory',
-      feature: '/history/temperatureHistory',
       icon: 'fas fa-thermometer'
     },
     {
       key: 'positionHistory',
       path: 'positionHistory',
-      feature: '/history/positionHistory',
       icon: 'fas fa-cube'
     },
     {
       key: 'sensorHistory',
       path: 'sensorHistory',
-      feature: '/history/sensorHistory',
       icon: 'fas fa-eye'
     },
     ]
@@ -461,13 +432,11 @@ export const MENU = [
     pages: [{
       key: 'personal',
       path: 'personal',
-      feature: '/setting/personal',
       icon: 'fas fa-user-cog',
     },
     {
       key: 'system',
       path: 'system',
-      feature: '/setting/system',
       icon: 'fas fa-cogs',
     },
     ]
@@ -482,19 +451,16 @@ export const MENU = [
       {
         key: 'gateway',
         path: 'gateway',
-        feature: '/develop/gateway',
         icon: 'fas fa-road',
       },
       {
         key: 'position',
         path: 'position',
-        feature: '/develop/position',
         icon: 'fas fa-location-arrow',
       },
       {
         key: 'telemetry',
         path: 'telemetry',
-        feature: '/develop/telemetry',
         icon: 'fa fa-battery-three-quarters',
       },
     ],

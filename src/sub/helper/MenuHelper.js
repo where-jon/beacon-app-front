@@ -13,7 +13,7 @@ export const fetchNav = (featureList, tenantFeatureList, role, isTenantAdmin) =>
       if (!isTenantAdmin && group.base == 'provider/') {
         return false
       }
-      return role.isSuperAdmin || tenantOk('/' + group.base + page.path, tenantFeatureList) && getMode(page.feature, featureList) > ROLE_FEATURE.MODE.RO_SYS
+      return role.isSuperAdmin || tenantOk('/' + group.base + page.path, tenantFeatureList) && getMode('/' + group.base + page.path, featureList) > ROLE_FEATURE.MODE.RO_SYS
     })
     return {...group, pages}
   })

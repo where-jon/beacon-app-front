@@ -2,13 +2,19 @@ import axios from 'axios'
 import { EXCLOUD, APP_SERVICE } from '../constant/config'
 import * as AuthHelper from './AuthHelper'
 import * as Util from '../util/Util'
+import md5 from 'md5'
 
 let i18n
 let context
+let apiKey
 
 export const setApp = (pContext) => {
   i18n = pContext.app.i18n
   context = pContext
+}
+
+export const setApiKey = (pApiKey) => {
+  apiKey = pApiKey
 }
 
 const apServiceClient = axios.create({
@@ -31,9 +37,25 @@ const apFrontClient = axios.create({
   withCredentials: true
 })
 
+const addApiKey = (config = {}) => {
+  if (!context) {
+    return config
+  }
+  if (config === false) {
+    return null
+  }
+  if (!config.headers) {
+    config.headers = {}
+  }
+  if (apiKey || context.app.store.state.apiKey) {
+    config.headers.apiKey = md5(apiKey || context.app.store.state.apiKey)
+  }
+  return config
+}
+
 export const getAppServiceNoCrd = async (path, config, ignoreError) => {
   try {
-    let res = await axiosNoCrd.get(APP_SERVICE.BASE_URL + path, config)
+    let res = await axiosNoCrd.get(APP_SERVICE.BASE_URL + path, addApiKey(config))
     return res.data
   } catch (e) {
     if (!ignoreError) {
@@ -44,7 +66,7 @@ export const getAppServiceNoCrd = async (path, config, ignoreError) => {
 
 export const getAppService = async (path, config, ignoreError) => {
   try {
-    let res = await apServiceClient.get(APP_SERVICE.BASE_URL + path, config)
+    let res = await apServiceClient.get(APP_SERVICE.BASE_URL + path, addApiKey(config))
     return res.data
   } catch (e) {
     if (!ignoreError) {
@@ -55,7 +77,7 @@ export const getAppService = async (path, config, ignoreError) => {
 
 export const deleteAppService = async (path, config) => {
   try {
-    let res = await apServiceClient.delete(APP_SERVICE.BASE_URL + path)
+    let res = await apServiceClient.delete(APP_SERVICE.BASE_URL + path, addApiKey(config))
     return res.data
   } catch (e) {
     handleError(e, path)
@@ -64,25 +86,25 @@ export const deleteAppService = async (path, config) => {
 
 export const getExCloud = async (url, config) => {
   try {
-    let res = await exCloudClient.get(url, config)
+    let res = await exCloudClient.get(url, addApiKey(config))
     return res.data
   } catch (e) {
     handleError(e, url)
   }
 }
 
-export const postAppService = async (path, config) => {
+export const postAppService = async (path, param, config) => {
   try {
-    let res = await apServiceClient.post(APP_SERVICE.BASE_URL + path, config)
+    let res = await apServiceClient.post(APP_SERVICE.BASE_URL + path, param, addApiKey(config))
     return res.data
   } catch (e) {
     handleError(e, path)
   }
 }
 
-export const putAppService = async (path, config) => {
+export const putAppService = async (path, param, config) => {
   try {
-    let res = await apServiceClient.put(APP_SERVICE.BASE_URL + path, config)
+    let res = await apServiceClient.put(APP_SERVICE.BASE_URL + path, param, addApiKey(config))
     return res.data
   } catch (e) {
     handleError(e, path)
@@ -152,11 +174,13 @@ const handleError = (e, url) => {
       }
     }
 
-    let ignore = !url.endsWith('/') && context.route.path.indexOf('/login') != -1 // Loginエラーでポップアップが表示されるのを防ぐ
-    if (e.message && e.message == 'Network Error' && !ignore) {
-      e.key = 'networkError'
-      context.app.store.commit('replace', {error: e})
-      context.app.router.app.$root.$emit('bv::show::modal', 'modalRootError')
+    if (context) {
+      let ignore = !url.endsWith('/') && context.route.path.indexOf('/login') != -1 // Loginエラーでポップアップが表示されるのを防ぐ
+      if (e.message && e.message == 'Network Error' && !ignore) {
+        e.key = 'networkError'
+        context.app.store.commit('replace', {error: e})
+        context.app.router.app.$root.$emit('bv::show::modal', 'modalRootError')
+      }  
     }
     throw e
   }

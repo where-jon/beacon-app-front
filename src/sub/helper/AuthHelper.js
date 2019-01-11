@@ -46,7 +46,7 @@ export const authByLocal = async (loginId, password, success, err) => {
 
 export const getRevInfo = async () => {
   const frontRev = (await axios.get('/head.txt')).data
-  const apsIndex = await HttpHelper.getAppServiceNoCrd('/') // pre network check
+  const apsIndex = await HttpHelper.getAppServiceNoCrd('/', false) // pre network check
   const serviceRev = apsIndex.match(new RegExp('Head:([0-9a-zA-Z]+)'))
   return {frontRev: frontRev, serviceRev: serviceRev && serviceRev[1]}
 }
@@ -82,10 +82,11 @@ export const authByAppService = async (loginId, password, success, err) => {
     let tenantCd = getTenantCd()
     params.append('username', (tenantCd? tenantCd+':':'') + loginId) // username: Spring Boot Security reserved name
     params.append('password', password)
-    let data = await HttpHelper.postAppService('/login', params)
+    let data = await HttpHelper.postAppService('/login', params, false)
     if (data.tenantAdmin) {
       APP.TOP_PAGE = '/provider/tenant'
     }
+    HttpHelper.setApiKey(data.apiKey)
 
     const userInfo = await getUserInfo(data.tenantAdmin)
     ConfigHelper.applyAppServiceSetting(userInfo.setting)  
@@ -93,7 +94,9 @@ export const authByAppService = async (loginId, password, success, err) => {
     const userRegionIdList = userInfo.user.userRegionList? userInfo.user.userRegionList.map((val) => val.userRegionPK.regionId): []
     const allRegionMove = userInfo.user.role && userInfo.user.role.roleFeatureList? userInfo.user.role.roleFeatureList.find((val) => val.feature.featureType == 2)? true: false: false
     // Login process
-    await login({loginId, username:userInfo.user.name, role: userInfo.user.role, featureList: userInfo.featureList, tenantFeatureList: userInfo.tenantFeatureList, menu: userInfo.menu, currentRegion: userInfo.currentRegion, frontRev: revInfo.frontRev, serviceRev: revInfo.serviceRev, tenantAdmin: data.tenantAdmin, isProvider: userInfo.user.providerUserId != null, currentTenant: userInfo.tenant, userRegionIdList: userRegionIdList, allRegionMove: allRegionMove })
+    await login({loginId, username:userInfo.user.name, role: userInfo.user.role, featureList: userInfo.featureList, tenantFeatureList: userInfo.tenantFeatureList, 
+      menu: userInfo.menu, currentRegion: userInfo.currentRegion, frontRev: revInfo.frontRev, serviceRev: revInfo.serviceRev, tenantAdmin: data.tenantAdmin,
+      isProvider: userInfo.user.providerUserId != null, currentTenant: userInfo.tenant, userRegionIdList: userRegionIdList, allRegionMove: allRegionMove, apiKey: data.apiKey })
     success()
     StateHelper.loadAreaImages()
     LocaleHelper.setLocale(LocaleHelper.getLocale())
