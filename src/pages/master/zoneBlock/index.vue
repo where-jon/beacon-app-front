@@ -83,7 +83,6 @@ export default {
       form: ViewHelper.extract(this.$store.state.app_service.zone, ['zoneId', 'zoneName', 'areaId', 'locationZoneList.0.locationZonePK.locationId', 'zoneCategoryList.0.zoneCategoryPK.categoryId']),
       areaNames: [],
       areaId: null,
-      locationNames: [],
       categoryNames: [],
       categoryId: null,
       canvas: null,
@@ -122,7 +121,6 @@ export default {
   },
   created() {
     this.initAreaNames()
-    this.initLocationNames()
     this.initCategoryNames()
   },
   methods: {
@@ -138,10 +136,6 @@ export default {
       else{
         this.areaId = this.areaNames[0].value
       }
-    },
-    async initLocationNames() {
-      await StateHelper.load('location')
-      this.locationNames = this.locations.map((val) => ({text: val.locationName, value: val.locationId}))
     },
     async initCategoryNames() {
       await StateHelper.load('category')

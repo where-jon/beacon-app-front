@@ -82,6 +82,15 @@ export default {
       'role',
     ]),
   },
+  created() {
+    this.message = this.listMessage
+    this.replaceAS({listMessage: null})
+  },
+  mounted() {
+    if(Util.hasValue(this.message)){
+      this.replace({showInfo: true})
+    }
+  },
   methods: {
     async save() {
       let entity = {

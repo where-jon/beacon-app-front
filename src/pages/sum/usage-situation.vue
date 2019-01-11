@@ -151,17 +151,17 @@ export default {
       ''
     ]),
     modeOptions() {
-      var modeOp = []
+      const modeOp = []
       modeOp.push({text: this.$i18n.tnl('label.utilizationRatio'), value: 1})
       modeOp.push({text: this.$i18n.tnl('label.numUsers'), value: 2})
       return modeOp
     },
     yearMonthOptions() {
-      var today = new Date()
-      var yyyy = today.getFullYear()
-      var mm = today.getMonth() + 1
-      var pullDowns = []
-      for (var idx = 0; idx < 6; idx++) {
+      const today = new Date()
+      let yyyy = today.getFullYear()
+      let mm = today.getMonth() + 1
+      const pullDowns = []
+      for (let idx = 0; idx < 6; idx++) {
         pullDowns.push({
           label: yyyy + '/' + ('00' + mm).substr(-2),
           value: yyyy*100 + mm
@@ -207,7 +207,7 @@ export default {
           '/core/zone/categoryList',
           ''
         )
-        this.categoryOptionList = await this.getZoneCategoryOptions(this.zoneCategorys)
+        this.categoryOptionList = this.getZoneCategoryOptions(this.zoneCategorys)
       } catch(e) {
         console.error(e)
       }
@@ -219,11 +219,11 @@ export default {
         this.dayOptionList = []
         return
       }
-      var year = val.value/100
-      var month = val.value%100
-      var lastDay = new Date(year, month, 0).getDate()
-      var pullDowns = []
-      for (var idx = 1; idx <= lastDay; idx++) {
+      const year = val.value / 100
+      const month = val.value % 100
+      const lastDay = new Date(year, month, 0).getDate()
+      const pullDowns = []
+      for (let idx = 1; idx <= lastDay; idx++) {
         pullDowns.push({
           label: '' + idx, value: idx
         })
@@ -275,14 +275,14 @@ export default {
           this.replace({showAlert: true})
           return
         }
-        var paramCategoryId = (this.categoryId != null)?this.categoryId:-1
-        var paramZoneId = (this.zoneId != null)?this.zoneId:-1
-        var paramDate = this.form.selectedYearMonth
+        const paramCategoryId = (this.categoryId != null)? this.categoryId: -1
+        const paramZoneId = (this.zoneId != null)? this.zoneId: -1
+        let paramDate = this.form.selectedYearMonth
         if (this.selectedDay > 0) {
-          paramDate = paramDate*100 + this.selectedDay
+          paramDate = paramDate * 100 + this.selectedDay
         }
-        const aModeId = (this.form.mode != null)?this.form.mode:1
-        var fetchList = null
+        const aModeId = (this.form.mode != null)? this.form.mode: 1
+        let fetchList = null
         if (aModeId == 1) {
           this.fields = this.fields1
           fetchList = await AppServiceHelper.fetch(
@@ -302,8 +302,8 @@ export default {
           this.replace({showAlert: true})
           return
         }
-        for (var line of fetchList) {
-          var thisLine = []
+        for (let line of fetchList) {
+          const thisLine = []
           if (aModeId == 1) {
             thisLine.zoneCategoryName = line.zoneCategoryName
             thisLine.zoneName = line.zoneName

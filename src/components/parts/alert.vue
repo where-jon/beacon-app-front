@@ -1,15 +1,15 @@
 <template>
   <b-container>
-    <b-alert :show="showInfo" variant="info" dismissible>
+    <b-alert :show="showInfo && !forceHide" variant="info" dismissible>
       {{ message }}
     </b-alert>
-    <b-alert :show="showWarn" variant="warning" dismissible>
+    <b-alert :show="showWarn && !forceHide" variant="warning" dismissible>
       {{ warnMessage }}
       <div v-for="warnThumbnail in warnThumbnails" :key="warnThumbnail.id">
         ID:{{ warnThumbnail.id }}
       </div>
     </b-alert>
-    <b-alert :show="showAlert" variant="danger" dismissible>
+    <b-alert :show="showAlert && !forceHide" variant="danger" dismissible>
       <template v-if="Array.isArray(message)">
         <span v-for="line in message" :key="line">
           {{ line }} <br>
@@ -29,7 +29,7 @@ import { mapState, mapMutations } from 'vuex'
 export default {
   props: {
     message: {
-      required: true,
+      type: [String, Array],
       default: '',
     },
     warnMessage: {
@@ -39,6 +39,10 @@ export default {
     warnThumbnails: {
       type: Array,
       default: () => [],
+    },
+    forceHide: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {

@@ -1,5 +1,6 @@
 
 <script>
+import { APP } from '../../sub/constant/config'
 import commonmixinVue from './commonmixin.vue'
 import * as DetectStateHelper from '../../sub/helper/DetectStateHelper'
 
@@ -22,6 +23,49 @@ export default {
     },
     getState(type, updatetime) {
       return DetectStateHelper.getState(type, updatetime) // 第一階層のupdatetimeを使用
+    },
+    getPositionPowerLevel(val) {
+      if (val > APP.POWER_LEVEL_GOOD) {
+        return 'good'
+      }
+      if (val > APP.POWER_LEVEL_WARN) {
+        return 'warning'
+      }
+      if (val != null) {
+        return 'poor'
+      }
+      return null
+    },
+    getPositionPowerLevelLabel(val) {
+      const powerLevel = this.getPositionPowerLevel(val)
+      if (powerLevel) {
+        return this.$i18n.tnl('label.power-' + powerLevel)
+      }
+      return '-'
+    },
+    getPositionPowerLevelClass(val) {
+      const LEVEL_CLASS_MAP = {good:'success', warning:'warning', poor:'danger'}
+      const powerLevel = this.getPositionPowerLevel(val)
+      if (powerLevel) {
+        return this.badgeClassPrefix + LEVEL_CLASS_MAP[powerLevel]
+      }
+      return ''
+    },
+    getTelemetryPowerLevelClass(val) {
+      const num = parseInt(val , 10)
+      if (79 < num) {
+        return 'fas fa-battery-full power-safe'
+      }
+      if (59 < num) {
+        return 'fas fa-battery-three-quarters power-safe'
+      }
+      if (39 < num) {
+        return 'fas fa-battery-half power-warning'
+      }
+      if (19 < num) {
+        return 'fas fa-battery-quarter power-empty'
+      }
+      return 'fas fa-battery-empty power-empty'
     },
   }
 }

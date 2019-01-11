@@ -80,9 +80,7 @@ export default {
       appServicePath: '/core/zone',
       form: ViewHelper.extract(this.$store.state.app_service.zone, ['zoneId', 'zoneName', 'areaId', 'locationZoneList.0.locationZonePK.locationId', 'zoneCategoryList.0.zoneCategoryPK.categoryId']),
       areaNames: [],
-      locationNames: [],
       categoryNames: [],
-      canvas: null,
       isEnableNameText: true,
       zones: [],
       isRegist: false,
@@ -103,10 +101,6 @@ export default {
     }
   },
   computed: {
-    base64 () {
-      const areaImage = this.$store.state.app_service.areaImages.find((a) => { return a.areaId === this.form.areaId })
-      return areaImage ? areaImage.mapImage : ''
-    },
     hasId (){
       return Util.hasValue(this.form.zoneId)
     },
@@ -115,12 +109,11 @@ export default {
       return 'outline-' + theme
     },
     ...mapState('app_service', [
-      'zone', 'locations', 'areas'
+      'zone',
     ]),
   },
   created() {
     this.initAreaNames()
-    this.initLocationNames()
     this.initCategoryNames()
   },
   methods: {
@@ -129,12 +122,7 @@ export default {
     async initAreaNames() {
       await StateHelper.load('area')
       this.areaNames = StateHelper.getOptionsFromState('area', false, true)
-      // this.areaNames = this.areas.map((val) => ({text: val.areaName, value: val.areaId}))
       console.log(this.areaNames )
-    },
-    async initLocationNames() {
-      await StateHelper.load('location')
-      this.locationNames = this.locations.map((val) => ({text: val.locationName, value: val.locationId}))
     },
     async initCategoryNames() {
       await StateHelper.load('category')
@@ -144,7 +132,7 @@ export default {
     },
     async save() {
       const zoneId = Util.hasValue(this.form.zoneId)? this.form.zoneId: -1
-      let entity = {
+      const entity = {
         zoneId: zoneId,
         zoneName: this.form.zoneName,
         zoneType: ZONE.getTypes()[1].value,

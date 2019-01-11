@@ -60,9 +60,9 @@ export default {
   created() {
     if (this.$route.path.startsWith('/main')) {      
       let timer = 0
-      let path = this.$route.path
+      const path = this.$route.path
       let currentWidth = window.innerWidth
-      let onResize = () => {
+      const onResize = () => {
         if (path != this.$route.path) {
           window.removeEventListener('resize', onResize)
           clearTimeout(timer)
@@ -115,7 +115,7 @@ export default {
       'replaceMain', 
     ]),
     mapImage() {
-      let area = _.find(this.areas, (area) => {
+      const area = _.find(this.areas, (area) => {
         if (this.selectedArea == null) {
           this.selectedArea = area.areaId // nullの場合、最初のものにする
         }
@@ -124,7 +124,7 @@ export default {
       return area && this.getMapImage(area.areaId)
     },
     getMapImage(areaId) {
-      let areaImage = _.find(this.$store.state.app_service.areaImages, (areaImage) => {
+      const areaImage = _.find(this.$store.state.app_service.areaImages, (areaImage) => {
         return areaImage.areaId == areaId
       })
       return areaImage && areaImage.mapImage
@@ -165,7 +165,7 @@ export default {
         return
       }
 
-      var bg = new Image()
+      const bg = new Image()
       bg.src = this.mapImage()
       bg.onload = (evt) => {
         this.drawMapImage(bg)
@@ -200,11 +200,11 @@ export default {
       return result
     },
     drawMapImage(bg) {
-      let canvas = this.$refs.map
+      const canvas = this.$refs.map
       this.mapWidth = bg.width
       this.mapHeight = bg.height
       this.isShownMapImage = true
-      let parent = document.getElementById('map').parentElement
+      const parent = document.getElementById('map').parentElement
 
       const size = this.calcFitSize(bg, parent)
       canvas.width = size.width
@@ -229,7 +229,7 @@ export default {
         Touch.enable(this.stage)
       }
 
-      var bitmap = new Bitmap(bg)
+      const bitmap = new Bitmap(bg)
       bitmap.scaleY = bitmap.scaleX = this.mapImageScale
       bitmap.width = canvas.width
       bitmap.height = canvas.height
@@ -241,7 +241,7 @@ export default {
     },
     changeArea(val) {
       if (val) {
-        let area = _.find(this.areas, (area) => {
+        const area = _.find(this.areas, (area) => {
           return area.areaId == val
         })
         if (this.getMapImage(area.areaId)) {
@@ -497,6 +497,37 @@ export default {
         this.replaceMain({selectedTx})
       }
     },
+    resetExb() {
+      if (this.exbCon) {
+        this.exbCon.removeAllChildren()
+      }
+      this.positionedExb.forEach((exb) => {
+        this.replaceExb(exb, (exb) => {
+          exb.x *= this.mapImageScale
+          exb.y *= this.mapImageScale
+        })
+        this.showExb(exb)
+      })
+      this.keepExbPosition = false
+    },
+    getPositionedExb(sensorFilterFunc, findSensorFunc, showSensorFunc){
+      this.positionedExb = _(this.exbs).filter((exb) => {
+        return exb.location && exb.location.areaId == this.selectedArea && exb.location.x && exb.location.y > 0
+      })
+        .filter((exb) => sensorFilterFunc? sensorFilterFunc(exb): true)
+        .map((exb) => {
+          const sensor = findSensorFunc? findSensorFunc(exb): null
+          return {
+            exbId: exb.exbId, deviceId: exb.deviceId, x: exb.location.x, y: exb.location.y,
+            humidity: sensor? sensor.humidity: null,
+            temperature: sensor? sensor.temperature: null,
+            count: sensor? sensor.count: 0,
+            sensorId: sensor? sensor.id: null
+          }
+        })
+        .filter((exb) => showSensorFunc? showSensorFunc(exb): true)
+        .value()
+    }
   }
 }
 </script>

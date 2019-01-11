@@ -114,7 +114,7 @@ export const colorCd4db = (obj) => {
   }
   const str = obj.hex? obj.hex: obj
   const color = str.replace('#', '')
-  return color.slice(0, 8)
+  return `000000${color}`.slice(-6)
 }
 
 export const colorCd4display = (obj, defaultColor = '#000000') => {
@@ -122,7 +122,7 @@ export const colorCd4display = (obj, defaultColor = '#000000') => {
     return defaultColor
   }
   let color = obj.hex? obj.hex: obj
-  return '#' + color.replace('#', '').slice(0, 8)
+  return '#' + color.replace('#', '').slice(0, 6)
 }
 
 export const isArray = (obj) => Object.prototype.toString.call(obj) === '[object Array]'

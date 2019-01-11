@@ -2,77 +2,7 @@
   <div>
     <breadcrumb :items="items" :reload="true" :is-load="isLoad" @reload="fetchData" />
     <div v-show="!isLoad" class="container">
-      <b-row align-h="end">
-        <all-count :count="allCount" />
-        <b-col md="2" class="mb-3 mr-3">
-          <b-button v-if="!iosOrAndroid" v-t="'label.download'" :variant="getButtonTheme()" @click="download()" />
-        </b-col>
-      </b-row>
-      <div class="table-area">
-        <table v-if="!isDev" class="table striped">
-          <thead>
-            <th v-t="'label.major'" />
-            <th v-t="'label.minor'" />
-            <th v-t="'label.name'" />
-            <th v-t="'label.powerLevel'" />
-            <th v-t="'label.finalReceiveLocation'" />
-            <th v-t="'label.finalReceiveTimestamp'" />
-            <th v-t="'label.rssi'" />
-            <th v-t="'label.state'" />
-          </thead>
-          <tbody>
-            <tr v-for="(position, index) in positions" :key="index" :class="{undetect: isUndetect('tx', position.updatetime)}">
-              <td>{{ position.major }}</td>
-              <td>{{ position.minor }}</td>
-              <td>{{ position.name }}</td>
-              <td>
-                <span :class="powerLevelClass(position.power_level)">
-                  {{ powerLevelLabel(position.power_level) }}
-                </span>
-              </td>
-              <td>{{ position.finalReceiveLocation }}</td>
-              <td>{{ position.finalReceiveTimestamp }}</td>
-              <td>{{ position.rssi }} </td>
-              <td>
-                <span :class="getStateClass('tx', position.updatetime)">
-                  {{ position.state }}
-                </span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <vue-scrolling-table v-if="isDev && !isLoad">
-          <template slot="thead">
-            <th v-for="(val, key) in ['btx_id','device_id','pos_id','phase','power_level','updatetime','nearest1','nearest2','nearest3']"
-                :key="key"
-                scope="col"
-            >
-              {{ val }}
-            </th>
-          </template>
-          <template slot="tbody">
-            <tr v-for="(pos, index) in positions" :key="index">
-              <td scope="row">
-                {{ pos.btx_id }}
-              </td>
-              <td>{{ pos.device_id }}</td>
-              <td>{{ pos.pos_id }}</td>
-              <td variant="danger">
-                {{ pos.phase }}
-              </td>
-              <td>{{ pos.power_level }}</td>
-              <td>{{ pos.updatetime }}</td>
-              <td v-for="idx in [0,1,2]" :key="idx">
-                <div v-if="pos.nearest && pos.nearest[idx]">
-                  <div v-for="(value, key) in pos.nearest[idx]" :key="key">
-                    {{ key }}:{{ value }}
-                  </div>
-                </div>
-              </td>
-            </tr>
-          </template>
-        </vue-scrolling-table>
-      </div>
+      <monitor-table type="position" :vue-table-mode="isDev" :all-count="allCount" :headers="headers" :datas="positions" :tr-class="getClass" />
     </div>
   </div>
 </template>
@@ -83,21 +13,19 @@ import * as StateHelper from '../../sub/helper/StateHelper'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
-import { APP } from '../../sub/constant/config'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
-import VueScrollingTable from 'vue-scrolling-table'
 import moment from 'moment'
 import commonmixinVue from '../../components/mixin/commonmixin.vue'
 import reloadmixinVue from '../../components/mixin/reloadmixin.vue'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
-import allCount from '../../components/parts/allcount.vue'
+import monitorTable from '../../components/parts/monitortable.vue'
 import statusmixinVue from '../../components/mixin/statusmixin.vue'
+import { addLabelByKey } from '../../sub/helper/ViewHelper'
 
 export default {
   components: {
     breadcrumb,
-    VueScrollingTable,
-    allCount,
+    monitorTable,
   },
   mixins: [reloadmixinVue, commonmixinVue, statusmixinVue],
   props: {
@@ -119,9 +47,28 @@ export default {
         }
       ],
       positions: [],
+      headers: addLabelByKey(this.isDev? null: this.$i18n,
+        this.isDev? [
+          { key: 'btx_id' },
+          { key: 'device_id' },
+          { key: 'pos_id' },
+          { key: 'phase' },
+          { key: 'power_level' },
+          { key: 'updatetime' },
+          { key: 'nearest1' },
+          { key: 'nearest2' },
+          { key: 'nearest3' },
+        ]: [
+          { key: 'major' },
+          { key: 'minor' },
+          { key: 'name' },
+          { key: 'powerLevel' },
+          { key: 'finalReceiveLocation' },
+          { key: 'finalReceiveTimestamp' },
+          { key: 'rssi' },
+          { key: 'state' },
+        ]),
       isLoad: false,
-      interval: null,
-      badgeClassPrefix: 'badge badge-pill badge-',
       csvHeaders: this.isDev? {
         'btx_id': 'btx_id',
         'device_id': 'device_id',
@@ -170,16 +117,18 @@ export default {
     ]
   },
   methods: {
+    getClass(position){
+      return {undetect: this.isUndetect('tx', position.updatetime)}
+    },
     async fetchData(payload) {
       this.showProgress()
       this.isLoad = true
       try {
-        let positions = await EXCloudHelper.fetchRawPosition()
-        positions = await this.makePositionRecords(positions)
+        const positions = await EXCloudHelper.fetchRawPosition()
+        this.positions = await this.makePositionRecords(positions)
         if (payload && payload.done) {
           payload.done()
         }
-        this.positions = positions
       }
       catch(e) {
         console.error(e)
@@ -209,7 +158,7 @@ export default {
           finalReceiveLocation: exb? exb.location.locationName  : '',
           finalReceiveTimestamp: this.getTimestamp(e.updatetime),
           rssi: this.getRssi(e.nearest),
-          powerLevel: this.powerLevelLabel(e.power_level),
+          powerLevel: this.getPositionPowerLevelLabel(e.power_level),
           state: this.getStateLabel('tx', e.updatetime),
         }
       })
@@ -231,33 +180,6 @@ export default {
       }
       return this.$i18n.tnl('label.undetect')
     },
-    powerLevel(val) {
-      if (val > APP.POWER_LEVEL_GOOD) {
-        return 'good'
-      }
-      if (val > APP.POWER_LEVEL_WARN) {
-        return 'warning'
-      }
-      if (val != null) {
-        return 'poor'
-      }
-      return null
-    },
-    powerLevelLabel(val) {
-      let powerLevel = this.powerLevel(val)
-      if (powerLevel) {
-        return this.$i18n.tnl('label.power-' + powerLevel)
-      }
-      return '-'
-    },
-    powerLevelClass(val) {
-      const LEVEL_CLASS_MAP = {good:'success', warning:'warning', poor:'danger'}
-      let powerLevel = this.powerLevel(val)
-      if (powerLevel) {
-        return this.badgeClassPrefix + LEVEL_CLASS_MAP[powerLevel]
-      }
-      return ''
-    },
     download() {
       const dldata = this.positions.map((pos) => {
         const obj = {}
@@ -273,29 +195,4 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import "../../sub/constant/scrolltable.scss";
-
-div.table-area {
-  overflow-x: auto;
-  overflow-y: hidden;
-  -webkit-overflow-scrolling: touch;
-}
-
-tbody {
-  display:block;
-  height:400px;
-  overflow:auto;
-  min-width: 530px;
-}
-
-thead, tbody tr {
-  display:table;
-  width:100%;
-  table-layout:fixed;
-}
-
-td {
-  word-break: break-all;
-}
-
 </style>

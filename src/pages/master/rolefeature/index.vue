@@ -1,6 +1,6 @@
 <template slot="feature">
   <div>
-    <m-list :params="params" :list="roleFeatures" />
+    <m-list :params="params" :list="roleFeatures" :alert-force-hide="true" />
   </div>
 </template>
 

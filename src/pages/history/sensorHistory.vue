@@ -64,6 +64,7 @@ import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
+import * as Util from '../../sub/util/Util'
 import { addLabelByKey } from '../../sub/helper/ViewHelper'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
@@ -170,8 +171,8 @@ export default {
   async created() {
     this.form.sensorId = 1
     const date = new Date()
-    this.form.datetimeFrom = this.getDatetime(date, {hours: -1})
-    this.form.datetimeTo = this.getDatetime(date)
+    this.form.datetimeFrom = Util.getDatetime(date, {hours: -1})
+    this.form.datetimeTo = Util.getDatetime(date)
     this.fields = this.fields1
   },
   mounted() {
@@ -182,19 +183,6 @@ export default {
     this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.fetchRows, maxRows: this.limitViewRows})}`
   },
   methods: {
-    getDatetime(baseDatetime, controlData){
-      const datetime = new Date(baseDatetime.getTime())
-      datetime.setMilliseconds(0)
-      if(!controlData){
-        return datetime
-      }
-      datetime.setFullYear(datetime.getFullYear() + (controlData.year? controlData.year: 0))
-      datetime.setDate(datetime.getDate() + (controlData.date? controlData.date: 0))
-      datetime.setHours(datetime.getHours() + (controlData.hours? controlData.hours: 0))
-      datetime.setMinutes(datetime.getMinutes() + (controlData.minutes? controlData.minutes: 0))
-      datetime.setSeconds(datetime.getSeconds() + (controlData.seconds? controlData.seconds: 0))
-      return datetime
-    },
     async display() {
       this.container ? this.container.removeAllChildren() : null
       await this.displayImpl()

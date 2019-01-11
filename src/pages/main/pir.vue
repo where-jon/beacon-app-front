@@ -84,24 +84,19 @@ export default {
         this.showProgress()
         await this.fetchAreaExbs(true)
 
-        let pirSensors = await EXCloudHelper.fetchSensor(SENSOR.PIR)
-        let thermopileSensors = APP.USE_THERMOPILE? await EXCloudHelper.fetchSensor(SENSOR.THERMOPILE): []
+        const pirSensors = await EXCloudHelper.fetchSensor(SENSOR.PIR)
+        const thermopileSensors = APP.USE_THERMOPILE? await EXCloudHelper.fetchSensor(SENSOR.THERMOPILE): []
 
-        this.positionedExb = _(this.exbs).filter((exb) => {
-          return exb.location.areaId == this.selectedArea && exb.location.x && exb.location.y > 0 // && Util.equalsAny(this.getSensorId(exb), [SENSOR.PIR, SENSOR.THERMOPILE])
-        })
-          .map((exb) => {
-            let pir = pirSensors.find((val) => val.deviceid == exb.deviceId && val.count >= DISP.PIR_MIN_COUNT)
-            let thermopile = thermopileSensors.find((val) => val.deviceid == exb.deviceId)
+        this.getPositionedExb(
+          null,
+          (exb) => {
+            const pir = pirSensors.find((val) => val.deviceid == exb.deviceId && val.count >= DISP.PIR_MIN_COUNT)
+            const thermopile = thermopileSensors.find((val) => val.deviceid == exb.deviceId)
             console.log({exb, pir, thermopile, pirSensors, thermopileSensors})
-            return {
-              exbId: exb.exbId, deviceId: exb.deviceId, x: exb.location.x, y: exb.location.y,
-              count: pir? pir.count: thermopile? thermopile.count: 0,
-              sensorId: pir? SENSOR.PIR: thermopile? SENSOR.THERMOPILE: null
-            }
-          })
-          .filter((exb) => exb.count > 0 || DISP.PIR_EMPTY_SHOW)
-          .value()
+            return pir? {id: SENSOR.PIR, ...pir}: thermopile? {id: SENSOR.THERMOPILE, ...thermopile}: null
+          },
+          (exb) => exb.count > 0 || DISP.PIR_EMPTY_SHOW
+        )
 
         if (APP.SHOW_MAGNET_ON_PIR) {
           await StateHelper.load('tx', this.forceFetchTx)
@@ -123,17 +118,7 @@ export default {
     },
     showMapImage() {
       this.showMapImageDef(() => {
-        if (this.exbCon) {
-          this.exbCon.removeAllChildren()
-        }
-        this.positionedExb.forEach((exb) => {
-          this.replaceExb(exb, (exb) => {
-            exb.x *= this.mapImageScale
-            exb.y *= this.mapImageScale
-          })
-          this.showExb(exb)
-        })
-        this.keepExbPosition = false
+        this.resetExb()
 
         if (APP.SHOW_MAGNET_ON_PIR) {
           this.stage.on('click', (evt) => {
@@ -147,24 +132,23 @@ export default {
     showExb(exb) {
       console.log({exb})
 
-      let stage = this.stage
+      const stage = this.stage
       if (!this.exbCon) {
         this.exbCon = new Container()
         stage.addChild(this.exbCon)
       }
-      let exbBtn = new Container()
-      let btnBg = new Shape()
-      let w = DISP.PIR_R_SIZE
+      const exbBtn = new Container()
       if (exb.sensorId == SENSOR.THERMOPILE) {
-        if (exb.count > 10) {
-          w = DISP.THERMOPILE_L_SIZE
-        }
-        else if (exb.count > 5) {
-          w = DISP.THERMOPILE_M_SIZE          
-        }
-        else {
-          w = DISP.THERMOPILE_S_SIZE
-        }
+        // not use?
+        // if (exb.count > 10) {
+        //   w = DISP.THERMOPILE_L_SIZE
+        // }
+        // else if (exb.count > 5) {
+        //   w = DISP.THERMOPILE_M_SIZE          
+        // }
+        // else {
+        //   w = DISP.THERMOPILE_S_SIZE
+        // }
 
         // only for Exhibition（delete immediately）
         let label = new Text(exb.count + '名','bold 32px Arial','#FF3222')
@@ -179,13 +163,15 @@ export default {
         return 
       }
 
-      let bgColor = (exb.count > 0)? DISP.PIR_BGCOLOR: DISP.PIR_EMPTY_BGCOLOR
+      const w = DISP.PIR_R_SIZE
+      const btnBg = new Shape()
+      const bgColor = (exb.count > 0)? DISP.PIR_BGCOLOR: DISP.PIR_EMPTY_BGCOLOR
       btnBg.graphics.beginFill(bgColor).drawCircle(0, 0, w, w)
       // btnBg.alpha = 0.9;
       exbBtn.addChild(btnBg)
 
       if (DISP.PIR_INUSE_LABEL || DISP.PIR_EMPTY_LABEL) {
-        let label = new Text(this.$i18n.tnl('label.' + (exb.count > 0? DISP.PIR_INUSE_LABEL: DISP.PIR_EMPTY_LABEL)))
+        const label = new Text(this.$i18n.tnl('label.' + (exb.count > 0? DISP.PIR_INUSE_LABEL: DISP.PIR_EMPTY_LABEL)))
         label.font = exb.count > 0? DISP.PIR_INUSE_FONT: DISP.PIR_EMPTY_FONT
         label.color = DISP.PIR_FGCOLOR
         label.textAlign = 'center'
@@ -216,7 +202,7 @@ export default {
       this.stage.update()
       // for debug
       this.disableExbsCheck()
-      let position = PositionHelper.adjustPosition(this.positions(), this.mapImageScale, this.positionedExb)
+      const position = PositionHelper.adjustPosition(this.positions(), this.mapImageScale, this.positionedExb)
       position.forEach((pos) => { // TODO: Txのチェックも追加
         this.showTx(pos)
       })
