@@ -111,8 +111,7 @@ export default {
       this.hideProgress()
     },
     async display(param) {
-      this.replace({showAlert: false})
-      if(param.errorMessage){
+      if(Util.hasValue(param.errorMessage)){
         this.message = param.errorMessage
         this.replace({showAlert: true})
         this.removeHeatmap()

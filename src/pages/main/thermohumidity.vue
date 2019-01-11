@@ -78,22 +78,13 @@ export default {
         this.showProgress()
         await this.fetchAreaExbs()
 
-        let sensors = await EXCloudHelper.fetchSensor(SENSOR.TEMPERATURE)
+        const sensors = await EXCloudHelper.fetchSensor(SENSOR.TEMPERATURE)
 
-        this.positionedExb = _(this.exbs).filter((exb) => {
-          return exb.location && exb.location.areaId == this.selectedArea && exb.location.x && exb.location.y > 0 && this.getSensorId(exb) == SENSOR.TEMPERATURE
-        })
-          .map((exb) => {
-            let sensor = sensors.find((val) => val.deviceid == exb.deviceId && (val.timestamp||val.updatetime))
-            return {
-              exbId: exb.exbId, deviceId: exb.deviceId, x: exb.location.x, y: exb.location.y,
-              humidity: sensor? sensor.humidity: null,
-              temperature: sensor? sensor.temperature: null,
-              sensorId: SENSOR.TEMPERATURE
-            }
-          })
-          .filter((exb) => exb.temperature != null)
-          .value()
+        this.getPositionedExb(
+          (exb) => this.getSensorId(exb) == SENSOR.TEMPERATURE,
+          (exb) => {return {id: SENSOR.TEMPERATURE, ...sensors.find((val) => val.deviceid == exb.deviceId && (val.timestamp || val.updatetime))}},
+          (exb) => exb.temperature != null
+        )
 
         if (payload && payload.done) {
           payload.done()
@@ -107,29 +98,22 @@ export default {
     },
     showMapImage() {
       this.showMapImageDef(() => {
-        this.positionedExb.forEach((exb) => {
-          this.replaceExb(exb, (exb) => {
-            exb.x *= this.mapImageScale
-            exb.y *= this.mapImageScale
-          })
-          this.showExb(exb)
-        })
-        this.keepExbPosition = false
+        this.resetExb()
       })
     },
     showExb(exb) {
       console.log({exb})
 
-      let stage = this.stage
+      const stage = this.stage
       if (!this.exbCon) {
         this.exbCon = new Container()
       }
-      let exbBtn = new Container()
+      const exbBtn = new Container()
 
       if (DISP.THERMOH_DISP == 'icon') {
-        let discomfort = SensorHelper.getDiscomfort(exb.temperature, exb.humidity)
-        let bitmap = discomfort == DISCOMFORT.COLD? cold: discomfort == DISCOMFORT.COMFORT? comfort: hot
-        let icon = new Bitmap(bitmap)
+        const discomfort = SensorHelper.getDiscomfort(exb.temperature, exb.humidity)
+        const bitmap = discomfort == DISCOMFORT.COLD? cold: discomfort == DISCOMFORT.COMFORT? comfort: hot
+        const icon = new Bitmap(bitmap)
         icon.image.onload = () => {
           icon.x = 0
           icon.y = 0
@@ -142,14 +126,14 @@ export default {
         exbBtn.addChild(icon)
       }
       else {
-        let btnicon = new Shape()
-        let w = DISP.PIR_R_SIZE
-        let iconcolor = SensorHelper.getDiscomfortColor(exb.temperature, exb.humidity)
+        const btnicon = new Shape()
+        const w = DISP.PIR_R_SIZE
+        const iconcolor = SensorHelper.getDiscomfortColor(exb.temperature, exb.humidity)
         btnicon.graphics.beginFill(iconcolor).drawCircle(0, 0, w, w)
         btnicon.alpha = 0.5
         exbBtn.addChild(btnicon)
 
-        let label = new Text(exb.temperature + '℃\n' + exb.humidity + '%')
+        const label = new Text(exb.temperature + '℃\n' + exb.humidity + '%')
         label.font = DISP.THERMOH_FONT
         label.color = 'black'
         label.textAlign = 'center'
@@ -166,11 +150,8 @@ export default {
       stage.enableMouseOver()
 
       exbBtn.on('click', async (evt) =>{
-        if (DEV.USE_MOCK_EXC) {
-          let key = '/basic/sensorHistory/1/1/today/hour'
-          var pMock = mock[key]
-        }
-        let sensorData = await AppServiceHelper.fetchList('/basic/sensorHistory/1/' + exb.exbId + '/today/hour', null, pMock)
+        const pMock = DEV.USE_MOCK_EXC? mock['/basic/sensorHistory/1/1/today/hour']: null
+        const sensorData = await AppServiceHelper.fetchList('/basic/sensorHistory/1/' + exb.exbId + '/today/hour', null, pMock)
         this.showChart(sensorData)
       })
 

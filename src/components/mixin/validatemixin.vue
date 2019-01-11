@@ -62,7 +62,7 @@ export default {
     },
     formatValidateMessage(errors){
       const errorMessages = errors.map((error) => error.message)
-      return errorMessages.filter((errorMessage, index) => errorMessages.indexOf(errorMessage) == index).map((errorMessage) => errorMessage).join('<br>')
+      return errorMessages.filter((errorMessage, index) => errorMessages.indexOf(errorMessage) == index).map((errorMessage) => errorMessage)
     },
   }
 }

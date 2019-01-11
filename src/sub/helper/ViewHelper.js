@@ -4,7 +4,7 @@ import * as Util from '../util/Util'
 
 export const addLabelByKey = (i18n, objArr) => {
   return _(objArr).map((val) => {
-    return val? {...val, label: i18n.tnl('label.' + (val.label || val.key))}: null
+    return val? {...val, label: i18n? i18n.tnl('label.' + (val.label || val.key)): val.label || val.key}: null
   })
     .filter((val) => val != null).value()
 }

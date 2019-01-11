@@ -52,7 +52,9 @@
                                   :state="errorMessages.password.length > 0 ? false : null" type="password"
                                   maxlength="16"
                     />
-                    <p v-for="(val, key) in errorMessages.password" :key="key" class="error" >{{val}}</p>
+                    <p v-for="(val, key) in errorMessages.password" :key="key" class="error">
+                      {{ val }}
+                    </p>
                   </b-form-group>
 
                   <!-- 変更パスワード -->

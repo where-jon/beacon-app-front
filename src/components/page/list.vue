@@ -1,7 +1,7 @@
 <template>
   <b-form inline @submit.prevent>
     <b-container :fluid="isFluid">
-      <alert :message="showMessage? message: error" />
+      <alert :message="showMessage? message: error" :force-hide="alertForceHide"/>
 
       <!-- searchbox -->
       <template v-if="!params.hideSearchBox">
@@ -177,6 +177,10 @@ export default {
     anotherPageParams: {
       type: Array,
       default: () => [],
+    },
+    alertForceHide: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

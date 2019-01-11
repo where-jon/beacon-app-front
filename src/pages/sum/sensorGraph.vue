@@ -436,7 +436,7 @@ export default {
     async display() {
       this.replace({showAlert: false})
       const errorMessage = this.validate()
-      if (errorMessage) {
+      if (Util.hasValue(errorMessage)) {
         this.message = errorMessage
         this.replace({showAlert: true})
         return

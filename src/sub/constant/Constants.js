@@ -102,7 +102,7 @@ export const ZONE = {
   getTypes(){ 
     return [
       {value: 0, text: i18n.tnl('label.coordinate')},
-      {value: 1, text: i18n.tnl('label.nonCoodinate')},
+      {value: 1, text: i18n.tnl('label.nonCoordinate')},
     ]
   },
 }

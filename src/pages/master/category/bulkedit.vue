@@ -83,7 +83,7 @@ export default {
           if (!entity.display) {
             entity.display = {}
           }
-          entity.display[headerName] = val
+          entity.display[headerName] = ['color', 'bgColor'].includes(headerName)? Util.colorCd4db(val) : val
         }
         else if(headerName == 'categoryTypeName'){
           const categoryType = this.categoryTypes.find((type) => type.text == val)

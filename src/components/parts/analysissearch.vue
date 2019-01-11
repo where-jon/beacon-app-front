@@ -164,8 +164,10 @@ export default {
       return this.formatValidateMessage(errors)
     },
     async display() {
+      this.replace({showAlert: false})
       let errorMessage = this.validate()
-      if (errorMessage) {
+      if (Util.hasValue(errorMessage)) {
+        this.replace({showAlert: true})
         this.$emit('display', {form: this.form, results: [], errorMessage})
       } else {
         try {
@@ -182,6 +184,7 @@ export default {
           const results = await HttpHelper.getAppService(reqParam)
           Util.debug(results)
           if(!results.length){
+            this.replace({showAlert: true})
             errorMessage = this.$i18n.tnl('message.notFoundData', {target: this.fromHeatmap? this.$i18n.tnl('label.heatmapPosition'): this.$i18n.tnl('label.flowlineAnalysis')})
           }
           this.$emit('display', {form: this.form, results, errorMessage})

@@ -28,6 +28,7 @@ import analysisSearch from '../../components/parts/analysissearch.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import drawMixin from '../../components/mixin/drawmixin.vue'
 import { getTheme } from '../../sub/helper/ThemeHelper'
+import * as Util from '../../sub/util/Util'
 
 export default {
   components: {
@@ -183,10 +184,8 @@ export default {
       this.drawStartEnd(param, analyseResults.potInfos, param.form.potId)
     },
     async display(param){
-      this.replace({showAlert: false})
-      if(param.errorMessage){
+      if(Util.hasValue(param.errorMessage)){
         this.message = param.errorMessage
-        this.replace({showAlert: true})
         return
       }
       const analysisResults = this.analyseFlowline(param.results)
