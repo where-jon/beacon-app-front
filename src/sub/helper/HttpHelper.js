@@ -111,9 +111,9 @@ export const putAppService = async (path, param, config) => {
   }
 }
 
-export const postExCloud = async (url, config) => {
+export const postExCloud = async (url, param, config) => {
   try {
-    let res = await exCloudClient.post(url, config)
+    let res = await exCloudClient.post(url, param, addApiKey(config))
     return res.data
   } catch (e) {
     handleError(e, url)
