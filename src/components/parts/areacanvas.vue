@@ -28,7 +28,11 @@ export default {
     categoryId: {
       default: -1,
       type: Number,
-    }
+    },
+    auth: {
+      default: () => {return {regist: true, update: true, delete: true}},
+      type: Object,
+    },
   },
   data () {
     return {
@@ -38,6 +42,11 @@ export default {
       toX: 0,
       toY: 0,
       deleted: [],
+    }
+  },
+  computed: {
+    isEditable(){
+      return this.auth.regist || this.auth.update || this.auth.delete
     }
   },
   watch: {
@@ -66,7 +75,12 @@ export default {
   },
   mounted () {
     this.canvas = new fabric.Canvas('map')
+    if(!this.isEditable){
+      this.canvas.hoverCursor = 'default'
+      this.canvas.selection = false
+    }
     const that = this
+
     // Canvas内でのみドラッグ可とする
     this.canvas.on('object:moving', function(e){
       const obj = e.target
@@ -94,6 +108,10 @@ export default {
       that.toX = e.e.offsetX
       that.toY = e.e.offsetY
 
+      if(!that.auth.regist){
+        return 
+      }
+
       if (Math.abs(that.fromX - that.toX) < DISP.ZONE.MIN_WIDTH ||
           Math.abs(that.fromY - that.toY) < DISP.ZONE.MIN_HEIGHT) {
         return
@@ -111,7 +129,7 @@ export default {
         height: Math.floor(Math.max(that.toY, that.fromY)) - top,
         name: 'zone' + id
       }
-      const group = that.addZone(dimension)
+      const group = that.addZone(dimension, false)
       that.canvas.setActiveObject(group)
       that.$emit('created', dimension)
     })
@@ -127,6 +145,9 @@ export default {
       if (!active) {
         return
       }
+      if(!that.auth.delete && (that.auth.regist && active.id > 0)){
+        return
+      }
       that.canvas.remove(active)
       if (active.id > 0) {
         that.deleted.push(active.id)
@@ -136,6 +157,10 @@ export default {
 
     this.canvas.on('object:selected', function(event) {
       if (!event.e) {
+        return
+      }
+      if(!that.isEditable){
+        that.canvas.discardActiveObject(event.e)
         return
       }
       that.$emit('selected', {
@@ -183,7 +208,7 @@ export default {
           width: e.w,
           height: e.h,
           name: e.zoneName
-        })
+        }, !this.auth.update)
       })
     },
     getTopLeft (bounds) {
@@ -194,7 +219,7 @@ export default {
         left: bounds.x > -1 ? (limitX > bounds.x ? bounds.x : limitX) : 0
       }
     },
-    addZone (dimension) {
+    addZone (dimension, lock = false) {
       const rect = new fabric.Rect({
         width: dimension.width,
         height: dimension.height,
@@ -204,6 +229,15 @@ export default {
         strokeWidth: 1,
         originX: 'center',
         originY: 'center',
+        lockMovementX: lock,
+        lockMovementY: lock,
+        lockRotation: lock,
+        lockScalingFlip: lock,
+        lockScalingX: lock,
+        lockScalingY: lock,
+        lockSkewingX: lock,
+        lockSkewingY: lock,
+        lockUniScaling: lock,
       })
 
       const text = new fabric.Text(

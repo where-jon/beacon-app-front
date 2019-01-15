@@ -28,9 +28,9 @@ export default function (context) {
       context.app.router.push(APP.ERROR_PAGE)
       return
     }
-    let isSuperAdmin = context.store.state.role.isSuperAdmin
-    if (!isSuperAdmin && tenantFeatureList && !MenuHelper.tenantOk(context.route.path, tenantFeatureList)) {
-      if (MenuHelper.tenantOk(APP.TOP_PAGE, tenantFeatureList)) {
+    const isTenantAdmin = JSON.parse(window.localStorage.getItem('login')).tenantAdmin
+    if (!isTenantAdmin && tenantFeatureList && !MenuHelper.featureOk(context.route.path, tenantFeatureList)) {
+      if (MenuHelper.featureOk(APP.TOP_PAGE, tenantFeatureList)) {
         context.app.router.push(APP.TOP_PAGE)
       }
       else {

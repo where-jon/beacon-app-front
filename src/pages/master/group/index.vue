@@ -24,6 +24,7 @@ export default {
       params: {
         name: 'group',
         id: 'groupId',
+        indexPath: '/master/group',
         editPath: '/master/group/edit',
         bulkEditPath: '/master/group/bulkedit',
         appServicePath: '/basic/group',

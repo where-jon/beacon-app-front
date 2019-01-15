@@ -35,18 +35,39 @@ export const ROLE = {
 
 export const ROLE_FEATURE = {
   MODE: {
-    DENY: 0,
-    RO_SYS: 1,
-    RO: 2,
-    RW: 3,
+    DENY: 0x0000,
+    SYS_REFERENCE: 0x0001,
+    SYS_UPDATE: 0x0002,
+    LIST_REFERENCE: 0x0004,
+    DETAIL_REFERENCE: 0x0008,
+    BULK_REFERENCE: 0x0010,
+    UPDATE: 0x0020,
+    REGIST: 0x0040,
+    DELETE: 0x0080,
+    BULK_REGIST: 0x0100,
+    RESERVATION_1: 0x0200,
+    RESERVATION_2: 0x0400,
+    RESERVATION_3: 0x0800,
+    SYS_ALL: 0x01FF,
+    ALL: 0x01FC,
+  },
+  getAllAuthorizationOption(){
+    const isProvider = JSON.parse(window.localStorage.getItem('login')).isProvider
+    return {text: i18n.tnl('label.allAuthorization'), value: isProvider? ROLE_FEATURE.MODE.SYS_ALL: ROLE_FEATURE.MODE.ALL}
   },
   getModeOptions(){
+    const isProvider = JSON.parse(window.localStorage.getItem('login')).isProvider
     return [
-      {text: i18n.tnl('label.allRejection'), value: 0},
-      {text: i18n.tnl('label.systemReadOnly'), value: 1},
-      {text: i18n.tnl('label.readOnly'), value: 2},
-      {text: i18n.tnl('label.allAuthorization'), value: 3},
-    ]
+      isProvider? {text: i18n.tnl('label.refer'), value: ROLE_FEATURE.MODE.SYS_REFERENCE}: null,
+      isProvider? {text: i18n.tnl('label.update'), value: ROLE_FEATURE.MODE.SYS_UPDATE}: null,
+      {text: i18n.tnl('label.listReference'), value: ROLE_FEATURE.MODE.LIST_REFERENCE},
+      {text: i18n.tnl('label.detailReference'), value: ROLE_FEATURE.MODE.DETAIL_REFERENCE},
+      {text: i18n.tnl('label.bulkReference'), value: ROLE_FEATURE.MODE.BULK_REFERENCE},
+      {text: i18n.tnl('label.modify'), value: ROLE_FEATURE.MODE.UPDATE},
+      {text: i18n.tnl('label.createNew'), value: ROLE_FEATURE.MODE.REGIST},
+      {text: i18n.tnl('label.delete'), value: ROLE_FEATURE.MODE.DELETE},
+      {text: i18n.tnl('label.bulkRegist'), value: ROLE_FEATURE.MODE.BULK_REGIST},
+    ].filter((val) => val)
   }
 }
 

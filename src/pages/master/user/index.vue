@@ -25,6 +25,7 @@ export default {
       params: {
         name: 'user',
         id: 'userId',
+        indexPath: '/master/user',
         editPath: '/master/user/edit',
         bulkEditPath: '/master/user/bulkedit',
         appServicePath: '/meta/user',

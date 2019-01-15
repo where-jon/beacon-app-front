@@ -1,29 +1,37 @@
 <template slot="feature">
   <div>
-    <m-list :params="params" :list="roleFeatures" :alert-force-hide="true" />
+    <m-list ref="ref" :params="params" :list="roleFeatures" :alert-force-hide="true" />
   </div>
 </template>
 
 <script>
 import mList from '../../../components/page/list.vue'
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import { addLabelByKey } from '../../../sub/helper/ViewHelper'
 import * as Util from '../../../sub/util/Util'
 import listmixinVue from '../../../components/mixin/listmixin.vue'
+import featuremixinVue from '../../../components/mixin/featuremixin.vue'
 import { ROLE_FEATURE, FEATURE } from '../../../sub/constant/Constants'
 
 export default {
   components: {
     mList, 
   },
-  mixins: [listmixinVue],
+  mixins: [listmixinVue, featuremixinVue],
+  props: {
+    messageParams: {
+      type: [Object],
+      required: true,
+    },
+  },
   data() {
     return {
       params: {
         name: 'roleFeature',
         id: 'key',
+        indexPath: '/master/role',
         editPath: '/master/rolefeature/edit',
         bulkEditPath: '/master/rolefeature/bulkedit',
         appServicePath: '/meta/roleFeature',
@@ -51,9 +59,16 @@ export default {
     ]),
   },
   methods: {
+    ...mapActions([
+      'showProgress',
+      'hideProgress',
+    ]),
     getModeText(roleFeature){
-      const modeName = ROLE_FEATURE.getModeOptions().find((val) => val.value === roleFeature.mode)
-      return modeName? modeName.text: null
+      const modeName = ROLE_FEATURE.getModeOptions().filter((val) => val.value & roleFeature.mode)
+      if(!Util.hasValue(modeName)){
+        return this.$i18n.tnl('label.allRejection')
+      }
+      return roleFeature.mode == ROLE_FEATURE.getAllAuthorizationOption().value? this.$i18n.tnl('label.allAuthorization'): modeName.map((val) => val.text).join(', ')
     },
     getEnableName(feature){
       const enabled = FEATURE.getEnabledOptions().find((val) => val.value === feature.enabled)
@@ -69,7 +84,7 @@ export default {
         key: `${roleFeature.roleFeaturePK.roleId}/${roleFeature.roleFeaturePK.featureId}`,
         roleId: roleFeature.roleFeaturePK.roleId,
         featureId: roleFeature.roleFeaturePK.featureId,
-        featureName: feature.featureName,
+        featureName: this.$i18n.tnl(`label.${feature.featureName}`),
         path: feature.path,
         mode: roleFeature.mode,
         modeText: this.getModeText(roleFeature),
@@ -80,14 +95,20 @@ export default {
         enabledName: this.getEnableName(feature),
       }
     },
+    afterCrud(){
+      if(this.$refs.ref.message){
+        this.messageParams.message = this.$refs.ref.message
+      }
+    },
     async fetchData(payload) {
       this.showProgress()
       await StateHelper.load('feature')
       if(Util.hasValue(this.role.roleId)){
         let roleFeatures = await AppServiceHelper.fetchList(`/meta/roleFeature/${this.role.roleId}`)
         if(Util.hasValue(roleFeatures) && Util.isArray(roleFeatures)){
+          roleFeatures = this.getFilterRoleFeatureList(roleFeatures)
           roleFeatures = roleFeatures.map((val) => (this.getFeatureInfo(this.features, val)))
-          roleFeatures = _(roleFeatures).sortBy((val) => val.featureId).compact().value()
+          roleFeatures = _(roleFeatures).sortBy((val) => val.featureName).compact().value()
         }
         else{
           roleFeatures = []

@@ -26,6 +26,7 @@ export default {
       params: {
         name: 'exb',
         id: 'exbId',
+        indexPath: '/master/exb',
         editPath: '/master/exb/edit',
         bulkEditPath: '/master/exb/bulkedit',
         appServicePath: '/core/exb',

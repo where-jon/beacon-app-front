@@ -15,14 +15,19 @@
         </b-form-group>
         <b-form-group>
           <label v-t="'label.mode'" />
-          <b-form-select v-model="form.mode" :options="modes" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-3 col-3" required />
+          <b-form-group>
+            <b-form-checkbox v-model="selectedAll" stacked :disabled="!isUpdatable" class="ml-3">
+              {{ selectedAllText }}
+            </b-form-checkbox>
+            <b-form-checkbox-group v-if="!selectedAll" v-model="selectedModes" stacked :options="modeOptions" :disabled="!isUpdatable" class="mb-3 ml-3" />
+          </b-form-group>
         </b-form-group>
 
         <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
         <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="register(false)">
-          {{ label }}
+          {{ $i18n.tnl(`label.${isUpdate? 'update': 'register'}`) }}
         </b-button>
-        <b-button v-if="isEditable && !isUpdate" v-t="'label.registerAgain'" :variant="theme" type="submit" class="my-1" @click="register(true)" />
+        <b-button v-if="isRegistable && !isUpdate" v-t="'label.registerAgain'" :variant="theme" type="submit" class="my-1" @click="register(true)" />
       </b-form>
     </div>
   </div>
@@ -33,6 +38,7 @@ import { mapState } from 'vuex'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
+import featuremixinVue from '../../../components/mixin/featuremixin.vue'
 import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
@@ -44,7 +50,7 @@ export default {
     breadcrumb,
     alert,
   },
-  mixins: [editmixinVue],
+  mixins: [editmixinVue, featuremixinVue],
   data() {
     return {
       name: 'roleFeature',
@@ -54,6 +60,9 @@ export default {
       featureId: -1,
       form: ViewHelper.extract(this.$store.state.app_service.roleFeature, ['feature.featureId', 'feature.featureName', 'feature.path', 'mode']),
       featureNames: [],
+      selectedModes: [],
+      selectedAll: false,
+      modeOptions: ROLE_FEATURE.getModeOptions(),
       items: [
         {
           text: this.$i18n.tnl('label.master'),
@@ -75,7 +84,7 @@ export default {
           text: this.$i18n.tnl(Util.getDetailCaptionKey(this.$store.state.app_service.roleFeature.feature? this.$store.state.app_service.roleFeature.feature.featureId: null)),
           active: true
         },
-      ]
+      ],
     }
   },
   computed: {
@@ -92,17 +101,29 @@ export default {
     systemReadOnly(){
       return !this.isEditable || Util.hasValue(this.form.featureId)
     },
+    selectedAllText(){
+      return ROLE_FEATURE.getAllAuthorizationOption().text
+    },
   },
   watch: {
     featureId: function(newVal, oldVal) {
       const feature = this.features.find((val) => val.featureId === newVal)
       this.form.path = feature != null? feature.path: ''
     },
+    selectedAll: function(newVal, oldVal) {
+      this.selectedModes = newVal? [ ROLE_FEATURE.getAllAuthorizationOption().value ]: []
+    },
   },
   created() {
     this.featureId = Util.hasValue(this.form.featureId)? this.form.featureId: -1
     this.roleFeature.featureId = Util.hasValue(this.form.featureId)? this.form.featureId: null
     this.resetFeatureNames()
+    this.selectedModes = []
+    this.modes.forEach((mode) => {
+      if(this.form.mode & mode.value || this.form.mode == mode.value){
+        this.selectedModes.push(mode.value)
+      }
+    })
   },
   methods: {
     async resetFeatureNames(){
@@ -112,13 +133,17 @@ export default {
       }
       this.replaceAS({roleFeatures})
       const featureOptions = this.features.filter((feature) => {
+        if(!this.isShowRelationFeature(feature)){
+          return false
+        }
         if(!Util.hasValue(this.roleFeatures)){
           return true
         }
-        const roleFeature = this.roleFeatures.find((roleFeature) => feature.featureId === roleFeature.feature.featureId)
-        return this.systemReadOnly? roleFeature != null: roleFeature == null
+        const sameFeature = this.roleFeatures.find((roleFeature) => feature.featureId === roleFeature.feature.featureId)
+        return this.systemReadOnly? sameFeature: !sameFeature
       })
-      this.featureNames = featureOptions.map((val) => ({text: val.featureName, value: val.featureId}))
+      this.featureNames = featureOptions.map((val) => ({text: this.$i18n.tnl(`label.${val.featureName}`), value: val.featureId}))
+      this.featureNames = _(this.featureNames).sortBy((val) => val.text).compact().value()
     },
     beforeReload(){
       this.resetFeatureNames()
@@ -126,7 +151,7 @@ export default {
     async save() {
       let entity = {
         roleFeaturePK:{roleId: this.role.roleId, featureId: this.featureId},
-        mode: this.form.mode
+        mode: Util.hasValue(this.selectedModes)? this.selectedModes.reduce((a, b) => a | b): 0
       }
       const saveId = await AppServiceHelper.bulkSave(this.appServicePath, [entity])
       return saveId

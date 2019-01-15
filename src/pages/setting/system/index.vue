@@ -36,9 +36,10 @@ export default {
     return {
       appServicePath: '/meta/setting',
       featurePath: '/setting/system',
-      categorySettings: [],
+      categorySettings: {},
       newForm: {},
       params: {
+        backPath: '/setting/system',
         name: 'setting',
         fields: [ 
           {key: 'value', type: 'valType', tooltip: 'description' },

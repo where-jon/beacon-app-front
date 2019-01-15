@@ -24,6 +24,7 @@ export default {
       params: {
         name: 'region',
         id: 'regionId',
+        indexPath: '/master/region',
         editPath: '/master/region/edit',
         bulkEditPath: '/master/region/bulkedit',
         appServicePath: '/core/region',

@@ -156,6 +156,7 @@ import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
 import settingmixinVue from '../../../components/mixin/settingmixin.vue'
+import featuremixinVue from '../../../components/mixin/featuremixin.vue'
 import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
@@ -164,7 +165,6 @@ import tenantSetting from '../../../components/page/tenantSetting.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import { EXCLOUD_BASE_URL } from '../../../sub/constant/config'
 import { addLabelByKey } from '../../../sub/helper/ViewHelper'
-import { ROLE_FEATURE } from '../../../sub/constant/Constants'
 
 export default {
   components: {
@@ -173,7 +173,7 @@ export default {
     featureList,
     tenantSetting,
   },
-  mixins: [editmixinVue, settingmixinVue],
+  mixins: [editmixinVue, settingmixinVue, featuremixinVue],
   data() {
     return {
       name: 'tenant',
@@ -299,14 +299,6 @@ export default {
     },
     resetModal() {
     },
-    getFeatureIds(featureId){
-      const featureIdStr = String(featureId)
-      const featureIdDigit = featureIdStr.length % 2 == 0? 2: 1
-      return {
-        parentId: featureIdStr.length <= 6? Number(featureIdStr.slice(0, featureIdDigit)): featureId,
-        subId: featureIdStr.length <= 6? Number(featureIdStr.substring(featureIdDigit)): 0,
-      }
-    },
     afterCrud(){
       this.featureList.forEach((feature) => {
         feature.checked = false
@@ -329,15 +321,13 @@ export default {
           })
         })
       }
-      const roleFeatureList = this.features.filter((val) => val.featureType == 2)
-        .map((val) => {return {roleFeaturePK: {roleId: dummyKey--, featureId: val.featureId}, mode: ROLE_FEATURE.MODE.RW} })
       let entity = {
         tenantId: tenantId,
         tenantCd: this.form.tenantCd,
         tenantName: this.form.tenantName,
         delFlg: !Util.hasValue(this.form.tenantId)? 0: this.form.delFlg,
         roleList: !Util.hasValue(this.form.tenantId)? [
-          Util.hasValue(this.form.sysAdminLoginId)? { roleId: dummyKey--, roleName: 'SYS_ADMIN', roleFeatureList: roleFeatureList }: null,
+          Util.hasValue(this.form.sysAdminLoginId)? { roleId: dummyKey--, roleName: 'SYS_ADMIN' }: null,
           Util.hasValue(this.form.adminLoginId)? { roleId: dummyKey--, roleName: 'ADMIN' }: null,
           Util.hasValue(this.form.userLoginId)? { roleId: dummyKey--, roleName: 'USER' }: null,
         ].filter((val) => val): null,

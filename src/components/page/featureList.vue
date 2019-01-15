@@ -25,7 +25,7 @@
 import commonmixinVue from '../mixin/commonmixin.vue'
 
 export default {
-  mixin: [commonmixinVue], 
+  mixins: [commonmixinVue], 
   props: {
     list: {
       type: Array,

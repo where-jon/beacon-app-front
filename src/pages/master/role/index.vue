@@ -24,6 +24,7 @@ export default {
       params: {
         name: 'role',
         id: 'roleId',
+        indexPath: '/master/role',
         editPath: '/master/role/edit',
         bulkEditPath: '/master/role/bulkedit',
         appServicePath: '/meta/role',

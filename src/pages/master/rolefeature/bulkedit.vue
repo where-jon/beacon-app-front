@@ -62,6 +62,24 @@ export default {
     },
   },
   methods: {
+    getModeValue(pModeText){
+      if(!Util.hasValue(pModeText)){
+        return ROLE_FEATURE.MODE.DENY
+      }
+      const modeOptions = ROLE_FEATURE.getModeOptions()
+      const modeTexts = pModeText.split(',')
+      let modeValue = 0
+      modeTexts.forEach((modeText) => {
+        const all = ROLE_FEATURE.getAllAuthorizationOption()
+        if(all.text == modeText.trim()){
+          modeOptions.forEach((modeOption) => modeValue = modeValue | modeOption.value)
+          return modeValue
+        }
+        const mode = modeOptions.find((modeOption) => modeOption.text == modeText.trim())
+        modeValue = modeValue | (mode? mode.value: 0)
+      })
+      return modeValue
+    },
     async save(bulkSaveFunc) {
       const MAIN_COL = ['roleId', 'featureId']
       const PRIMARY_KEYS = ['roleId', 'featureId']
@@ -80,8 +98,7 @@ export default {
           }
         }
         else if(headerName == 'modeText') {
-          const modeOption = this.modeOptions.find((type) => type.text == val)
-          entity.mode = modeOption? modeOption.value: val
+          entity.mode = this.getModeValue(val)
         }
         else {
           entity[headerName] = val

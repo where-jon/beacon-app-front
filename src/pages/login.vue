@@ -19,7 +19,7 @@ import { APP,DISP } from '../sub/constant/config'
 import commonmixinVue from '../components/mixin/commonmixin.vue'
 
 export default {
-  mixin: [commonmixinVue],
+  mixins: [commonmixinVue],
   data() {
     return {
       userId: '',

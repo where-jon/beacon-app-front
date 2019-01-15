@@ -24,6 +24,7 @@ export default {
       params: {
         name: 'tenant',
         id: 'tenantId',
+        indexPath: 'tenant',
         editPath: 'tenant/edit',
         appServicePath: '/meta/tenant',
         delFilter: true,

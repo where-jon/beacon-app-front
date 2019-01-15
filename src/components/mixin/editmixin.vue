@@ -28,16 +28,26 @@ export default {
       return this.$i18n.tnl('label.' + this.crud)
     },
     crud() {
-      return this.bulkRegister? 'bulkRegister': !this.isEditable? 'refer': this.isUpdate? 'update': 'register'
+      return this.bulkRegister? 'bulkRegister': this.isUpdate? 'update': 'register'
     },
     isUpdate() {
       return this[this.name] && this[this.name][this.id] != null
     },
-    isEditable() {
-      return MenuHelper.isEditable(this.featurePath? this.featurePath: this.appServicePath)
+    isUpdatable() {
+      return MenuHelper.isUpdatable(this.backPath)
     },
-    isSuperEditable() {
-      return this.$store.state.role.isSuperAdmin
+    isRegistable() {
+      return MenuHelper.isRegistable(this.backPath)
+    },
+    isDeleteable() {
+      return MenuHelper.isDeleteable(this.backPath)
+    },
+    isEditable() {
+      return this.isRegistable || this.isUpdatable
+    },
+    isProvider(){
+      const loginInfo = JSON.parse(window.localStorage.getItem('login'))
+      return loginInfo.isProvider
     },
     ...mapState('app_service', [
       'listMessage',
@@ -54,8 +64,8 @@ export default {
     register(again) {
       this.again = again
     },
-    backToList() {
-      this.$router.push(this.backPath)
+    backToList(path) {
+      this.$router.push(path? path: this.backPath)
     },
     sensorOptions(entity) {
       let ids

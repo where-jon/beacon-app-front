@@ -72,7 +72,7 @@ import commonmixinVue from '../mixin/commonmixin.vue'
 import * as StateHelper from '../../sub/helper/StateHelper'
 
 export default {
-  mixin: [commonmixinVue],
+  mixins: [commonmixinVue],
   data() {
     return {
       version: APP.VERSION,
