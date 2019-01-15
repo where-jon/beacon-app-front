@@ -164,7 +164,6 @@ import tenantSetting from '../../../components/page/tenantSetting.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import { EXCLOUD_BASE_URL } from '../../../sub/constant/config'
 import { addLabelByKey } from '../../../sub/helper/ViewHelper'
-import { ROLE_FEATURE } from '../../../sub/constant/Constants'
 
 export default {
   components: {
@@ -329,18 +328,11 @@ export default {
           })
         })
       }
-      const roleFeatureList = this.features.filter((val) => val.featureType == 2)
-        .map((val) => {return {roleFeaturePK: {roleId: dummyKey--, featureId: val.featureId}, mode: ROLE_FEATURE.MODE.RW} })
       let entity = {
         tenantId: tenantId,
         tenantCd: this.form.tenantCd,
         tenantName: this.form.tenantName,
         delFlg: !Util.hasValue(this.form.tenantId)? 0: this.form.delFlg,
-        roleList: !Util.hasValue(this.form.tenantId)? [
-          Util.hasValue(this.form.sysAdminLoginId)? { roleId: dummyKey--, roleName: 'SYS_ADMIN', roleFeatureList: roleFeatureList }: null,
-          Util.hasValue(this.form.adminLoginId)? { roleId: dummyKey--, roleName: 'ADMIN' }: null,
-          Util.hasValue(this.form.userLoginId)? { roleId: dummyKey--, roleName: 'USER' }: null,
-        ].filter((val) => val): null,
         userList: !Util.hasValue(this.form.tenantId)? [
           Util.hasValue(this.form.sysAdminLoginId)? {userId: dummyKey--, loginId: this.form.sysAdminLoginId, pass: this.form.sysAdminPass, role: { roleId: dummyKey--, roleName: 'SYS_ADMIN' }}: null,
           Util.hasValue(this.form.adminLoginId)? {userId: dummyKey--, loginId: this.form.adminLoginId, pass: this.form.adminPass, role: { roleId: dummyKey--, roleName: 'ADMIN' }}: null,
