@@ -197,6 +197,7 @@ export default {
       this.form.userId = Util.hasValue(this.form.userId) ? String(this.form.userId) : null
       this.form.roleId = String(this.role)
       this.form.pass = this.pass
+      this.form.roleNameAuth = true
       this.register(again)
     }
   },
