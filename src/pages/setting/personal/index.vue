@@ -29,18 +29,18 @@
             </b-form-group>
             <b-form-group>
               <label v-t="'label.theme'" />
-              <b-form-select v-model="selectedTheme" :options="themes" class="mb-3" @change="themeSelected" />
+              <b-form-select v-model="selectedTheme" :options="themes" class="mb-3" :readonly="!isUpdatable" :disabled="!isUpdatable" @change="themeSelected" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.charSet'" />
-              <b-form-select v-model="selectedCharSet" :options="charSets" class="mb-3" @change="charSetSelected" />
+              <b-form-select v-model="selectedCharSet" :options="charSets" class="mb-3" :readonly="!isUpdatable" :disabled="!isUpdatable" @change="charSetSelected" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.locale'" />
-              <b-form-select v-model="selectedLocale" :options="locales" class="mb-3" @change="localeSelected" />
+              <b-form-select v-model="selectedLocale" :options="locales" class="mb-3" :readonly="!isUpdatable" :disabled="!isUpdatable" @change="localeSelected" />
             </b-form-group>
             <!-- プロフィール・パスワードを変更するボタン -->
-            <b-form-group v-show="!provider">
+            <b-form-group v-show="!provider && isUpdatable">
               <b-button v-show="!isChange" v-t="'label.changeProfilePassword'" :variant="theme" 
                         type="button" class="btn-block" @click="isChange = true"
               />
@@ -101,18 +101,20 @@ import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as ValidateUtil from '../../../sub/util/ValidateUtil'
 import { getLangShort } from '../../../sub/util/HtmlUtil'
 import commonmixinVue from '../../../components/mixin/commonmixin.vue'
+import editmixinVue from '../../../components/mixin/editmixin.vue'
 
 export default {
-  mixin: [commonmixinVue],
   components: {
     breadcrumb,
     alert,
     pagetitle,
   },
+  mixins: [commonmixinVue, editmixinVue],
   data () {
     return {
       name: 'setting',
       id: 'settingId',
+      backPath: '/setting/personal',
       appServicePath: '/meta/user/currentUser',
       items: [],
       themes: [],

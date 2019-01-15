@@ -40,10 +40,10 @@
         </b-form-group>
 
         <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
-        <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="beforeSubmit($event, false)">
-          {{ label }}
+        <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="register(false)">
+          {{ $i18n.tnl(`label.${isUpdate? 'update': 'register'}`) }}
         </b-button>
-        <b-button v-if="isEditable && !isUpdate" v-t="'label.registerAgain'" :variant="theme" type="submit" class="my-1" @click="beforeSubmit($event, true)" />
+        <b-button v-if="isRegistable && !isUpdate" v-t="'label.registerAgain'" :variant="theme" type="submit" class="my-1" @click="register(true)" />
       </b-form>
     </div>
   </div>
@@ -118,12 +118,7 @@ export default {
   async created(){
     await StateHelper.load('role')
     this.roleOptions = StateHelper.getOptionsFromState('role', false, true)
-    // if(!this.isSuperEditable){ 廃止
-    //   const superAdmin = this.roles.find((val) => val.roleName == ROLE.SUPER_ADMIN)
-    //   this.roleOptions = this.roleOptions.filter((val) => superAdmin? val.value != superAdmin.roleId || this.form.roleId == superAdmin.roleId: true)
-    // }
     this.role = this.form.roleId
-    //const userRole = this.roles.find((role) => role.roleId == this.user.roleId)
   },
   methods: {
     isErrorPasswordRequired(){

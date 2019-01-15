@@ -24,6 +24,7 @@ export default {
       params: {
         name: 'category',
         id: 'categoryId',
+        indexPath: '/master/category',
         editPath: '/master/category/edit',
         bulkEditPath: '/master/category/bulkedit',
         appServicePath: '/basic/category',

@@ -39,14 +39,14 @@
         </b-form-row>
         <b-form-row class="mb-1">
           <!-- ボタン部 -->
-          <b-col v-if="!params.disableTableButtons && isEditable" cols="auto" class="ml-auto">
-            <b-button v-t="'label.createNew'" :variant="theme" class="mx-1"
+          <b-col v-if="!params.disableTableButtons && (isRegistable || isBulkRegistable || isBulkReferenceable)" cols="auto" class="ml-auto">
+            <b-button v-if="isRegistable" v-t="'label.createNew'" :variant="theme" class="mx-1"
                       @click="edit()"
             />
-            <b-button v-if="params.bulkEditPath && !iosOrAndroid" v-t="'label.bulkRegister'" :variant="theme" class="mx-1" 
+            <b-button v-if="isBulkRegistable && params.bulkEditPath && !iosOrAndroid" v-t="'label.bulkRegister'" :variant="theme" class="mx-1" 
                       @click="bulkEdit()"
             />
-            <b-button v-if="params.csvOut && !iosOrAndroid" v-t="'label.download'" :variant="theme" class="mx-1"
+            <b-button v-if="isBulkReferenceable && params.csvOut && !iosOrAndroid" v-t="'label.download'" :variant="theme" class="mx-1"
                       @click="exportCsv"
             />
           </b-col>
@@ -67,10 +67,12 @@
           </div>
         </template>
         <template slot="actions" slot-scope="row">
+          <!-- 参照ボタン -->
+          <b-button v-if="isDetailReferenceable" v-t="'label.refer'" :variant="theme" :style="actionButtonStyle" size="sm" class="mr-2 my-1" @click.stop="edit(row.item, row.index, $event.target)" />
           <!-- 更新ボタン -->
-          <b-button v-t="'label.' + crud" :variant="theme" :style="actionButtonStyle" size="sm" class="mr-2 my-1" @click.stop="edit(row.item, row.index, $event.target)" />
+          <b-button v-if="isUpdatable" v-t="'label.update'" :variant="theme" :style="actionButtonStyle" size="sm" class="mr-2 my-1" @click.stop="edit(row.item, row.index, $event.target)" />
           <!-- 削除ボタン -->
-          <b-button v-if="isEditable" v-t="'label.delete'" :style="actionButtonStyle" size="sm" variant="outline-danger" class="mr-1 my-1" @click.stop="deleteConfirm(row.item, row.index, $event.target)" />
+          <b-button v-if="isDeleteable" v-t="'label.delete'" :style="actionButtonStyle" size="sm" variant="outline-danger" class="mr-1 my-1" @click.stop="deleteConfirm(row.item, row.index, $event.target)" />
           <!-- jump another master page -->
           <div v-if="isEditable && anotherPageParams" :style="{'width': '100px'}">
             <!-- zone button -->
@@ -125,7 +127,7 @@
           <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" class="my-0" />
         </b-col>
         <!-- bulk upload button -->
-        <b-col v-if="isEditable && params.bulkUploadPath && !iosOrAndroid" md="6" class="my-1">
+        <b-col v-if="isBulkRegistable && params.bulkUploadPath && !iosOrAndroid" md="6" class="my-1">
           <b-button v-t="'label.bulkUpload'"
                     :variant="theme" class="float-right" @click="bulkUpload()"
           />
@@ -160,7 +162,7 @@ export default {
   components: {
     alert,
   },
-  mixin: [commonmixinVue], // not work
+  mixins: [commonmixinVue], // not work
   props: {
     params: {
       type: Object,
@@ -218,11 +220,26 @@ export default {
         }, {})
       })
     },
-    crud() {
-      return !this.isEditable? 'refer':  'update'
+    isDetailReferenceable() {
+      return MenuHelper.isDetailReferenceable(this.indexPath)
+    },
+    isUpdatable() {
+      return MenuHelper.isUpdatable(this.indexPath)
+    },
+    isDeleteable() {
+      return MenuHelper.isDeleteable(this.indexPath)
+    },
+    isRegistable() {
+      return MenuHelper.isRegistable(this.indexPath)
+    },
+    isBulkRegistable() {
+      return MenuHelper.isBulkRegistable(this.indexPath)
+    },
+    isBulkReferenceable() {
+      return MenuHelper.isBulkReferenceable(this.indexPath)
     },
     isEditable() {
-      return MenuHelper.isEditable(this.appServicePath)
+      return MenuHelper.isEditable(this.indexPath)
     },
     iosOrAndroid() {
       return Util.isAndroidOrIOS()
@@ -464,12 +481,12 @@ export default {
       try {
         await AppServiceHelper.deleteEntity(this.appServicePath, id)
         await StateHelper.load(this.params.name, true)
+        this.message = this.$i18n.tnl('message.deleteCompleted', {target: this.$i18n.tnl('label.' + this.params.name)})
         if(this.$parent.$options.methods.afterCrud){
           this.$parent.$options.methods.afterCrud.apply(this.$parent)
         }
-        this.message = this.$i18n.tnl('message.deleteCompleted', {target: this.$i18n.tnl('label.' + this.params.name)})
         this.replace({showInfo: true})
-        this.$parent.$options.methods.fetchData.apply(this.$parent)        
+        await this.$parent.$options.methods.fetchData.apply(this.$parent)        
       } catch (e) {
         this.error = this.$i18n.terror('message.deleteFailed', {target: this.$i18n.tnl('label.' + this.params.name), code: e.response.status})
       }

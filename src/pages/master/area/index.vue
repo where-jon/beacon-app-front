@@ -27,6 +27,7 @@ export default {
       params: {
         name: 'area',
         id: 'areaId',
+        indexPath: '/master/area',
         editPath: '/master/area/edit',
         bulkEditPath: '/master/area/bulkedit',
         bulkUploadPath: '/master/area/bulkUpload',

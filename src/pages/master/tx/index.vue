@@ -25,6 +25,7 @@ export default {
       params: {
         name: 'tx',
         id: 'txId',
+        indexPath: '/master/tx',
         editPath: '/master/tx/edit',
         bulkEditPath: '/master/tx/bulkedit',
         appServicePath: '/core/tx',

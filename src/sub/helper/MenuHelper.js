@@ -7,13 +7,16 @@ export const setStore = (pStore) => {
   store = pStore
 }
 
-export const fetchNav = (featureList, tenantFeatureList, role, isTenantAdmin) => {
+export const fetchNav = (masterFeatureList, tenantFeatureList, featureList, isTenantAdmin) => {
   let retNav = _.map(MENU, (group) => {
     let pages = _.filter(group.pages, (page) => {
+      if(!featureOk('/' + group.base + page.path, masterFeatureList)){
+        return false
+      }
       if (!isTenantAdmin && group.base == 'provider/') {
         return false
       }
-      return role.isSuperAdmin || tenantOk('/' + group.base + page.path, tenantFeatureList) && getMode('/' + group.base + page.path, featureList) > ROLE_FEATURE.MODE.RO_SYS
+      return isTenantAdmin || featureOk('/' + group.base + page.path, tenantFeatureList) && getMode('/' + group.base + page.path, featureList) & ROLE_FEATURE.MODE.SYS_ALL
     })
     return {...group, pages}
   })
@@ -24,8 +27,8 @@ export const fetchNav = (featureList, tenantFeatureList, role, isTenantAdmin) =>
   return retNav
 }
 
-export const tenantOk = (target, tenantFeatureList) => {
-  return tenantFeatureList.find((path) => Util.pathMatch(target, path)) != null
+export const featureOk = (target, featurePathList) => {
+  return featurePathList.find((path) => Util.pathMatch(target, path)) != null
 }
 
 export const getMode = (path, featureList = store.state.featureList) => {
@@ -37,11 +40,39 @@ export const getMode = (path, featureList = store.state.featureList) => {
   console.debug('feature.mode', path, feature && feature.mode)
 
   let ret = feature && feature.mode
-  return ret != null? ret: ROLE_FEATURE.MODE.RW
+  return ret != null? ret: ROLE_FEATURE.MODE.SYS_ALL
+}
+
+export const isActionable = (path) => {
+  return isDetailReferenceable(path) || isUpdatable(path) || isDeleteable(path)
+}
+
+export const isDetailReferenceable = (path) => {
+  return (!isUpdatable(path)) && (getMode(path) & ROLE_FEATURE.MODE.DETAIL_REFERENCE? true: false)
+}
+
+export const isUpdatable = (path) => {
+  return (getMode(path) & ROLE_FEATURE.MODE.UPDATE)? true: false
+}
+
+export const isDeleteable = (path) => {
+  return getMode(path) & ROLE_FEATURE.MODE.DELETE
+}
+
+export const isRegistable = (path) => {
+  return (getMode(path) & ROLE_FEATURE.MODE.REGIST? true: false)
+}
+
+export const isBulkRegistable = (path) => {
+  return (getMode(path) & ROLE_FEATURE.MODE.BULK_REGIST? true: false)
+}
+
+export const isBulkReferenceable = (path) => {
+  return (getMode(path) & ROLE_FEATURE.MODE.BULK_REFERENCE? true: false)
 }
 
 export const isEditable = (path) => {
-  return getMode(path) == ROLE_FEATURE.MODE.RW
+  return isUpdatable(path) || isDeleteable(path)
 }
 
 export const getThemeClasses = (selectedTheme) => {
@@ -71,13 +102,12 @@ export const isShowMenu = (page, role) => {
 }
 
 export const useMaster = (feature) => {
-  const role = store.state.role
-  if (role.isSuperAdmin) {
+  if (JSON.parse(window.localStorage.getItem('login')).tenantAdmin) {
     return true
   }
   const featureList = store.state.tenantFeatureList
   const path = '/master/' + feature
-  return tenantOk(path, featureList)
+  return featureOk(path, featureList)
 }
 
 export const isMenuEntry = (path) => {

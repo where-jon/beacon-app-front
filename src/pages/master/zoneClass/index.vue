@@ -24,6 +24,7 @@ export default {
       params: {
         name: 'zone',
         id: 'zoneId',
+        indexPath: '/master/zoneClass',
         editPath: '/master/zoneClass/edit',
         bulkEditPath: '/master/zoneClass/bulkedit',
         appServicePath: '/core/zone',

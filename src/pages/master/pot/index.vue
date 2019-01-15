@@ -25,6 +25,7 @@ export default {
       params: {
         name: 'pot',
         id: 'potId',
+        indexPath: '/master/pot',
         editPath: '/master/pot/edit',
         appServicePath: '/basic/pot',
         bulkEditPath: '/master/pot/bulkEdit',

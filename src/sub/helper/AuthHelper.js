@@ -52,6 +52,10 @@ export const getRevInfo = async () => {
 }
 
 export const getUserInfo = async (tenantAdmin) => {
+  // get feature list
+  const master = await HttpHelper.getAppService('/meta/feature')
+  const masterFeatureList = master.map((m) => m.path)
+
   // get tenant feature list
   const tenant = await HttpHelper.getAppService('/meta/tenant/currentTenant')
   const tenantFeatureList = tenant.tenantFeatureList.map((tenantFeature) => tenantFeature.feature.path)
@@ -63,7 +67,7 @@ export const getUserInfo = async (tenantAdmin) => {
   const featureList = _(user.role.roleFeatureList).map((roleFeature) => {
     return {path: roleFeature.feature.path, mode: roleFeature.mode}
   }).sortBy((val) => val.path.length * -1).value()
-  const menu = MenuHelper.fetchNav(featureList, tenantFeatureList, user.role, tenantAdmin)
+  const menu = MenuHelper.fetchNav(masterFeatureList, tenantFeatureList, featureList, tenantAdmin)
 
   // get region
   const currentRegion = await HttpHelper.getAppService('/core/region/current')

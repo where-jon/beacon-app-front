@@ -35,8 +35,8 @@
         <b-form-group>
           <b-form-row>
             <b-form-row>
-              <b-button v-t="'label.back'" type="button" variant="outline-danger" @click="backToList" />
-              <b-button v-if="isEditable" :variant="theme" type="button" class="ml-2" @click="regist()">
+              <b-button v-t="'label.back'" type="button" variant="outline-danger" @click="backToList(zoneClassPath)" />
+              <b-button v-if="isEditable || isDeleteable" :variant="theme" type="button" class="ml-2" @click="regist()">
                 {{ label }}
               </b-button>
             </b-form-row>
@@ -44,6 +44,7 @@
         </b-form-group>
       </b-form>
       <AreaCanvas :area-id="areaId" :is-regist="isRegist" :name="zoneName" :category-id="categoryId" :is-set-name-category="isSetNameCategory"
+                  :auth="{regist: isRegistable, update: isUpdatable, delete: isDeleteable}"
                   @regist="doRegist"
                   @selected="onSelected"
                   @unselected="unSelected"
@@ -78,7 +79,8 @@ export default {
   data() {
     return {
       id: -1,
-      backPath: '/master/zoneClass',
+      zoneClassPath: '/master/zoneClass',
+      backPath: '/master/zoneBlock',
       appServicePath: '/core/zone',
       form: ViewHelper.extract(this.$store.state.app_service.zone, ['zoneId', 'zoneName', 'areaId', 'locationZoneList.0.locationZonePK.locationId', 'zoneCategoryList.0.zoneCategoryPK.categoryId']),
       areaNames: [],

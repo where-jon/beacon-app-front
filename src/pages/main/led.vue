@@ -2,7 +2,7 @@
   <div>
     <breadcrumb :items="items" />
     <b-container>
-      <alert :message="message" />
+      <alert :message="message" :force-hide="true" />
 
       <b-form-row>
         <b-form @submit.prevent="onSubmit">

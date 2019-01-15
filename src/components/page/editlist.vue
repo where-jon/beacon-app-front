@@ -11,17 +11,17 @@
             <b-form-group :label="getName(row.key, showKeyName)" :description="getName(row.description)">
               <span v-for="field in fields" :key="field.key">
                 <b-form-select v-if="useInputPullDown(row[field.type])" v-model="row[field.key]" :options="getBooleanOptions()" form="updateForm" />
-                <input v-else-if="useInputNumberType(row[field.type])" v-model="row[field.key]" :pattern="numberPattern" type="text" class="form-control form-control-sm" maxlength="1000" required>
-                <input v-else-if="useInputNumberListType(row[field.type])" v-model="row[field.key]" :pattern="numberListPattern" type="text" class="form-control form-control-sm" maxlength="1000" required>
-                <input v-else v-model="row[field.key]" :type="getInputType(row[field.type])" maxlength="1000" class="form-control" form="updateForm" required>
+                <input v-else-if="useInputNumberType(row[field.type])" v-model="row[field.key]" :pattern="numberPattern" type="text" class="form-control form-control-sm" maxlength="1000" required :readonly="!isUpdatable" :disabled="!isUpdatable">
+                <input v-else-if="useInputNumberListType(row[field.type])" v-model="row[field.key]" :pattern="numberListPattern" type="text" class="form-control form-control-sm" maxlength="1000" required :readonly="!isUpdatable" :disabled="!isUpdatable">
+                <input v-else v-model="row[field.key]" :type="getInputType(row[field.type])" maxlength="1000" class="form-control" form="updateForm" required :readonly="!isUpdatable" :disabled="!isUpdatable">
               </span>
-              <b-button v-if="isSuperEditable" v-t="'label.delete'" size="sm" variant="outline-danger" class="mt-2 float-right" @click.stop="deleteConfirm(row, $event.target)" />
+              <b-button v-if="isDeleteable" v-t="'label.delete'" size="sm" variant="outline-danger" class="mt-2 float-right" @click.stop="deleteConfirm(row, $event.target)" />
             </b-form-group>
           </div>
         </div>
       </div>
 
-      <b-form v-if="isSuperEditable" @submit.prevent="onRegistSubmit">
+      <b-form v-if="isRegistable" @submit.prevent="onRegistSubmit">
         <div v-if="useRegistForm" class="card shadow-sm mt-5 mb-3">
           <label v-t="'label.addSetting'" class="card-header" />
           <div class="card-body">
@@ -41,7 +41,7 @@
               <input v-else v-model="newForm.value" :type="getInputType(newForm.type)" class="form-control form-control-sm" maxlength="1000" required>
             </b-form-row>
             <b-form-row class="float-right mt-3">
-              <b-button v-if="isEditable" v-t="'label.add'" :variant="getButtonTheme()" type="submit" @click="register(true)" />
+              <b-button v-t="'label.add'" :variant="getButtonTheme()" type="submit" @click="register(true)" />
               <b-button v-t="'label.cancel'" type="button" variant="outline-danger" class="ml-2" @click="showForm(false)" />
             </b-form-row>
           </div>
@@ -50,7 +50,7 @@
       </b-form>
 
       <b-form v-if="show" :id="'updateForm'" @submit.prevent="onSubmit">
-        <b-button v-if="isEditable && !useRegistForm" v-t="'label.update'" :variant="getButtonTheme()" type="submit" class="ml-2" @click="register(true)" />
+        <b-button v-if="isUpdatable && !useRegistForm" v-t="'label.update'" :variant="getButtonTheme()" type="submit" class="ml-2" @click="register(true)" />
       </b-form>
     </div>
 
@@ -81,7 +81,7 @@ export default {
     },
     multiList: {
       type: Object,
-      default: () => []
+      default: () => {}
     },
     newForm: {
       type: Object,

@@ -156,6 +156,7 @@ import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
 import settingmixinVue from '../../../components/mixin/settingmixin.vue'
+import featuremixinVue from '../../../components/mixin/featuremixin.vue'
 import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
@@ -172,7 +173,7 @@ export default {
     featureList,
     tenantSetting,
   },
-  mixins: [editmixinVue, settingmixinVue],
+  mixins: [editmixinVue, settingmixinVue, featuremixinVue],
   data() {
     return {
       name: 'tenant',
@@ -297,14 +298,6 @@ export default {
       this.categorySettingList = _.cloneDeep(this.editCategorySettingList)
     },
     resetModal() {
-    },
-    getFeatureIds(featureId){
-      const featureIdStr = String(featureId)
-      const featureIdDigit = featureIdStr.length % 2 == 0? 2: 1
-      return {
-        parentId: featureIdStr.length <= 6? Number(featureIdStr.slice(0, featureIdDigit)): featureId,
-        subId: featureIdStr.length <= 6? Number(featureIdStr.substring(featureIdDigit)): 0,
-      }
     },
     afterCrud(){
       this.featureList.forEach((feature) => {
