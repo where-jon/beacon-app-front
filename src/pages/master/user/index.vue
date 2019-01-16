@@ -34,6 +34,7 @@ export default {
           'userId',
           APP.USER_WITH_NAME? 'name': null,
           'loginId',
+          'pass',
           APP.USER_WITH_EMAIL? 'email': null,
           'roleName',
           'description',
