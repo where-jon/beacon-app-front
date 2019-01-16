@@ -51,7 +51,6 @@ export default {
       const MAIN_COL = 'zoneId'
       const LOCATION_ZONE_COL = ['zoneId', 'locationId']
       const ZONE_CATEGORY_COL = ['zoneId', 'categoryId', 'categoryName']
-      const ZONE_COL = ['zoneName', 'areaId']
       const NUMBER_TYPE_LIST = ['locationId', 'categoryId', 'areaId']
       let locationId = null
       let categoryId = null
@@ -67,15 +66,8 @@ export default {
         else if(headerName === 'categoryId'){
           categoryId = val
         }
-        else if(headerName === 'categoryName'){
-          entity[headerName] = val
-        }
         if(headerName == 'areaName') {
-          entity[headerName] = val
           entity.area = {areaId: dummyKey--, areaName: val}
-        }
-        if(ZONE_COL.includes(headerName)) {
-          entity[headerName] = val
         }
         if(LOCATION_ZONE_COL.includes(headerName) && entity.zoneId != null && locationId != null){
           entity.locationZoneList = [{

@@ -202,60 +202,15 @@ const getTxViewType = (txViewType) => {
  */
 export const correctPosId = (orgPositions, now) => {
   Util.debug(now, orgPositions)
-  let positions = _.chain(orgPositions).reduce((result, positions, idx) => { // MOVING_AVERAGE回の測位データを集約し、nearestをフラットにして１階層のオブジェエクト配列にする
-    _.forEach(positions, (pos) => {
-      _.forEach(pos.nearest, (val) => {
-        result.push({btx_id:pos.btx_id, pos_id:val.place_id, label:pos.label, rssi:val.rssi, timestamp:val.timestamp})
-      })
-    })
-    return result
-  }, [])
-    .uniqWith(_.isEqual) // 重複除去
-    .filter((val) => {
-      if (DEV.DEBUG) {
-        let method = now - val.timestamp > APP.LOST_TIME || val.rssi < APP.RSSI_MIN? 'warn': 'log'
-        console[method]('btxId', val.btx_id, Util.formatDate(val.timestamp), (now - val.timestamp) / 1000 + '秒前', 'RSSI: ' + Math.round(val.rssi * 100)/ 100)
-      }
-      return true
-    })
-    .filter((val) => val.rssi >= APP.RSSI_MIN && val.timestamp >= now - APP.LOST_TIME) // RSSI値、指定時刻でフィルタ
-    .orderBy(['btx_id', 'pos_id', 'timestamp']) // btx_id, pos_id, timestampでソート
-    .value()
+  let positions = correctNearestPositions(orgPositions, now)
 
   Util.table('足切り＆単純ソート後', positions)
-
-  positions = _.chain(positions).reduce((result, pos, idx) => { // btx_id,pos_idグループでsum(rssi), countを集計（lodashのgroupByは複数には対応していない）
-    let prev = _.find(result, (val) => val.btx_id == pos.btx_id && val.pos_id == pos.pos_id)
-    if (prev) {
-      prev.rssiTotal += pos.rssi
-      prev.count++
-      prev.rssiAvg = prev.rssiTotal / prev.count
-      prev.timestamp = pos.timestamp
-    }
-    else {
-      result.push({...pos, count:1, rssiTotal:pos.rssi, rssiAvg:pos.rssi})
-    }
-    return result
-  }, [])
-    .map((val => ({...val, count: val.count>1? 2: 1}))) // count 2以上は2とみなす（1回のみとは区別）
-    .orderBy(['count', 'rssiAvg', 'pos_id', 'btx_id'], ['desc','desc','asc','asc']) // 記録回数（多）、RSSI（強）、pos_id、btx_idでソート 
-    .value()
+  positions = correctSumCount(positions)
 
   Util.table('btxId&posIdグルーピング後', positions)
 
   // 上記の順番で取り出す
-  let usedTx = []
-  let usedPos = []  // １つの場所に１TXの場合
-  positions = _.reduce(positions, (result, val) => { // 回数とRSSI値の強い順にpos_idとbtx_idのペアを決めていく
-    if (!usedTx.includes(val.btx_id) && (!APP.TX_POS_ONE_TO_ONE || !usedPos.includes(val.pos_id))) {
-      usedTx.push(val.btx_id)
-      if (APP.TX_POS_ONE_TO_ONE) {
-        usedPos.push(val.pos_id)
-      }
-      result.push({...val, rssi:val.rssiAvg, transparent: val.timestamp < now - APP.TRANSPARENT_TIME})
-    }
-    return result
-  }, [])
+  positions = correctPair(positions)
 
   if (DEV.DEBUG > 1 && mock.insertPosition) {
     console.warn('insert mock position')
@@ -271,6 +226,62 @@ export const correctPosId = (orgPositions, now) => {
   Util.table('各TX単位(最終)', positions)
 
   return positions
+}
+
+export const correctNearestPositions = (orgPositions, now) => {
+  return _.chain(orgPositions).reduce((result, positions, idx) => { // MOVING_AVERAGE回の測位データを集約し、nearestをフラットにして１階層のオブジェエクト配列にする
+    _.forEach(positions, (pos) => {
+      _.forEach(pos.nearest, (val) => {
+        result.push({btx_id:pos.btx_id, pos_id:val.place_id, label:pos.label, rssi:val.rssi, timestamp:val.timestamp})
+      })
+    })
+    return result
+  }, [])
+    .uniqWith(_.isEqual) // 重複除去
+    .filter((val) => {
+      if (DEV.DEBUG) {
+        const method = now - val.timestamp > APP.LOST_TIME || val.rssi < APP.RSSI_MIN? 'warn': 'log'
+        console[method]('btxId', val.btx_id, Util.formatDate(val.timestamp), (now - val.timestamp) / 1000 + '秒前', 'RSSI: ' + Math.round(val.rssi * 100)/ 100)
+      }
+      return true
+    })
+    .filter((val) => val.rssi >= APP.RSSI_MIN && val.timestamp >= now - APP.LOST_TIME) // RSSI値、指定時刻でフィルタ
+    .orderBy(['btx_id', 'pos_id', 'timestamp']) // btx_id, pos_id, timestampでソート
+    .value()
+}
+
+export const correctSumCount = (orgPositions) => {
+  return _.chain(orgPositions).reduce((result, pos) => { // btx_id,pos_idグループでsum(rssi), countを集計（lodashのgroupByは複数には対応していない）
+    const prev = _.find(result, (val) => val.btx_id == pos.btx_id && val.pos_id == pos.pos_id)
+    if (prev) {
+      prev.rssiTotal += pos.rssi
+      prev.count++
+      prev.rssiAvg = prev.rssiTotal / prev.count
+      prev.timestamp = pos.timestamp
+    }
+    else {
+      result.push({...pos, count:1, rssiTotal:pos.rssi, rssiAvg:pos.rssi})
+    }
+    return result
+  }, [])
+    .map((val => ({...val, count: val.count>1? 2: 1}))) // count 2以上は2とみなす（1回のみとは区別）
+    .orderBy(['count', 'rssiAvg', 'pos_id', 'btx_id'], ['desc','desc','asc','asc']) // 記録回数（多）、RSSI（強）、pos_id、btx_idでソート 
+    .value()
+}
+
+export const correctPair = (orgPositions, now) => {
+  const usedTx = []
+  const usedPos = []  // １つの場所に１TXの場合
+  return _.reduce(orgPositions, (result, val) => { // 回数とRSSI値の強い順にpos_idとbtx_idのペアを決めていく
+    if (!usedTx.includes(val.btx_id) && (!APP.TX_POS_ONE_TO_ONE || !usedPos.includes(val.pos_id))) {
+      usedTx.push(val.btx_id)
+      if (APP.TX_POS_ONE_TO_ONE) {
+        usedPos.push(val.pos_id)
+      }
+      result.push({...val, rssi:val.rssiAvg, transparent: val.timestamp < now - APP.TRANSPARENT_TIME})
+    }
+    return result
+  }, [])
 }
 
 export const adjustPosition = (positions, ratio, exbs = []) => {

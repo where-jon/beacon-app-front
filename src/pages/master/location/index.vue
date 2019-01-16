@@ -464,33 +464,41 @@ export default {
       this.exbCon.removeChild(this.deleteTarget)
       this.stage.update()
     },
+    createErrorMessage(e){
+      if (e.key) {
+        return this.$i18n.tnl('message.' + e.type, {key: this.$i18n.tnl('label.' + Util.snake2camel(e.key)), val: e.val})
+      }
+      return this.$i18n.tnl('message.failed', {target: this.$i18n.tnl('label.save'), code: e.message})
+    },
+    pushPositionedLocation(param){
+      this.positionedExb.forEach((exb) => {
+        if (exb.isChanged) {
+          exb.location = {locationId: exb.location.locationId, areaId: this.selectedArea, x: Math.round(exb.x / this.mapImageScale), y: Math.round(exb.y / this.mapImageScale)}
+          param.push(exb.location)
+          exb.isChanged = false
+        }
+      })
+    },
+    pushWorkLocation(param){
+      this.workExbs.forEach((exb) => { // deleted
+        if (exb.location.areaId == this.selectedArea) {
+          if (!this.positionedExb.find((pExb) => pExb.exbId == exb.exbId)) {
+            exb.location = {locationId: exb.location.locationId, areaId: null, x: null, y: null}
+            exb.isChanged = false
+            param.push(exb.location)
+          }
+        }
+      })
+    },
     async save() {
       this.showProgress()
       this.message = ''
       this.replace({showAlert: false})
       this.replace({showInfo: false})
       try {
-        let param = []
-
-        this.positionedExb.forEach((exb) => {
-          if (exb.isChanged) {
-            exb.location = {locationId: exb.location.locationId, areaId: this.selectedArea, x: Math.round(exb.x / this.mapImageScale), y: Math.round(exb.y / this.mapImageScale)}
-            param.push(exb.location)
-            exb.isChanged = false
-          }
-        })
-
-        this.workExbs.forEach((exb) => { // deleted
-          if (exb.location.areaId == this.selectedArea) {
-            if (!this.positionedExb.find((pExb) => {
-              return pExb.exbId == exb.exbId
-            })) {
-              exb.location = {locationId: exb.location.locationId, areaId: null, x: null, y: null}
-              exb.isChanged = false
-              param.push(exb.location)
-            }
-          }
-        })
+        const param = []
+        this.pushPositionedLocation(param)
+        this.pushWorkLocation(param)
 
         if (param.length > 0) {
           await HttpHelper.postAppService('/core/location/updateLocation', param)
@@ -506,12 +514,7 @@ export default {
         this.isChanged = false
       } catch (e) {
         console.log(e)
-        if (e.key) {
-          this.message = this.$i18n.tnl('message.' + e.type, {key: this.$i18n.tnl('label.' + Util.snake2camel(e.key)), val: e.val})
-        }
-        else {
-          this.message = this.$i18n.tnl('message.failed', {target: this.$i18n.tnl('label.save'), code: e.message})
-        }
+        this.message = this.createErrorMessage(e)
         this.replace({showAlert: true})
         window.scrollTo(0, 0)
       }

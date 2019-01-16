@@ -100,47 +100,10 @@ export default {
       },
       viewList: [],
       fields: [],
-      fields1: addLabelByKey(this.$i18n, [
-        {key: 'sensorDt', sortable: true, label:'dt'},
-        {key: 'exbId', sortable: true },
-        APP.EXB_WITH_DEVICE_NUM? {key: 'deviceNum', sortable: true }: null,
-        APP.EXB_WITH_DEVICE_ID? {key: 'deviceId', sortable: true }: null,
-        APP.EXB_WITH_DEVICE_IDX? {key: 'deviceIdX', sortable: true }: null,
-        {key: 'locationName', label:'locationZoneName', sortable: true,},
-        {key: 'posId', label:'posId', sortable: true,},
-        {key: 'areaName', label:'area', sortable: true,},
-        {key: 'humidity', sortable: true},
-        {key: 'temperature', sortable: true},
-      ]),
-      fields2: addLabelByKey(this.$i18n, [
-        {key: 'sensorDt', sortable: true, label:'dt'},
-        {key: 'exbId', sortable: true },
-        APP.EXB_WITH_DEVICE_NUM? {key: 'deviceNum', sortable: true }: null,
-        APP.EXB_WITH_DEVICE_ID? {key: 'deviceId', sortable: true }: null,
-        APP.EXB_WITH_DEVICE_IDX? {key: 'deviceIdX', sortable: true }: null,
-        {key: 'locationName', label:'locationZoneName', sortable: true,},
-        {key: 'posId', label:'posId', sortable: true,},
-        {key: 'areaName', label:'area', sortable: true,},
-        {key: 'count', label:'numUsers', sortable: true},
-      ]),
-      fields5: addLabelByKey(this.$i18n, [
-        {key: 'sensorDt', sortable: true, label:'dt'},
-        {key: 'txName', sortable: true },
-        {key: 'major', sortable: true },
-        {key: 'minor', sortable: true },
-        {key: 'high', label:'h_blood_pressure', sortable: true},
-        {key: 'low', label:'l_blood_pressure', sortable: true},
-        {key: 'beat', label:'heart_rate', sortable: true},
-        {key: 'step', label:'step', sortable: true},
-        {key: 'down', label:'down_count', sortable: true},
-      ]),
-      fields6: addLabelByKey(this.$i18n, [
-        {key: 'sensorDt', sortable: true, label:'dt'},
-        {key: 'txName', sortable: true },
-        {key: 'major', sortable: true },
-        {key: 'minor', sortable: true },
-        {key: 'state', sortable: true},
-      ]),
+      fields1: this.getFields1(),
+      fields2: this.getFields2(),
+      fields5: this.getFields5(),
+      fields6: this.getFields6(),
       currentPage: 1,
       perPage: 20,
       limitViewRows: 100,
@@ -183,10 +146,94 @@ export default {
     this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.fetchRows, maxRows: this.limitViewRows})}`
   },
   methods: {
+    getFields1(){
+      return addLabelByKey(this.$i18n, [
+        {key: 'sensorDt', sortable: true, label:'dt'},
+        {key: 'exbId', sortable: true },
+        APP.EXB_WITH_DEVICE_NUM? {key: 'deviceNum', sortable: true }: null,
+        APP.EXB_WITH_DEVICE_ID? {key: 'deviceId', sortable: true }: null,
+        APP.EXB_WITH_DEVICE_IDX? {key: 'deviceIdX', sortable: true }: null,
+        {key: 'locationName', label:'locationZoneName', sortable: true,},
+        {key: 'posId', label:'posId', sortable: true,},
+        {key: 'areaName', label:'area', sortable: true,},
+        {key: 'humidity', sortable: true},
+        {key: 'temperature', sortable: true},
+      ])
+    },
+    getFields2(){
+      return addLabelByKey(this.$i18n, [
+        {key: 'sensorDt', sortable: true, label:'dt'},
+        {key: 'exbId', sortable: true },
+        APP.EXB_WITH_DEVICE_NUM? {key: 'deviceNum', sortable: true }: null,
+        APP.EXB_WITH_DEVICE_ID? {key: 'deviceId', sortable: true }: null,
+        APP.EXB_WITH_DEVICE_IDX? {key: 'deviceIdX', sortable: true }: null,
+        {key: 'locationName', label:'locationZoneName', sortable: true,},
+        {key: 'posId', label:'posId', sortable: true,},
+        {key: 'areaName', label:'area', sortable: true,},
+        {key: 'count', label:'numUsers', sortable: true},
+      ])
+    },
+    getFields5(){
+      return addLabelByKey(this.$i18n, [
+        {key: 'sensorDt', sortable: true, label:'dt'},
+        {key: 'txName', sortable: true },
+        {key: 'major', sortable: true },
+        {key: 'minor', sortable: true },
+        {key: 'high', label:'h_blood_pressure', sortable: true},
+        {key: 'low', label:'l_blood_pressure', sortable: true},
+        {key: 'beat', label:'heart_rate', sortable: true},
+        {key: 'step', label:'step', sortable: true},
+        {key: 'down', label:'down_count', sortable: true},
+      ])
+    },
+    getFields6(){
+      return addLabelByKey(this.$i18n, [
+        {key: 'sensorDt', sortable: true, label:'dt'},
+        {key: 'txName', sortable: true },
+        {key: 'major', sortable: true },
+        {key: 'minor', sortable: true },
+        {key: 'state', sortable: true},
+      ])
+    },
     async display() {
       this.container ? this.container.removeAllChildren() : null
       await this.displayImpl()
       this.stage ? this.stage.update() : null
+    },
+    editSensorHistoryData(senHist){
+      const d = new Date(senHist.sensorDt)
+      senHist.sensorDt = moment(d.getTime()).format('YYYY/MM/DD HH:mm:ss')
+
+      let aTx = _.find(this.txs, (tx) => { return tx.txId == senHist.txId })
+      senHist.txName = senHist.txId != null? aTx.txName: ''
+      senHist.major = senHist.txId != null? aTx.major: ''
+      senHist.minor = senHist.txId != null? aTx.minor: ''
+
+      let aExb = _.find(this.exbs, (exb) => { return exb.exbId == senHist.exbId })
+      senHist.deviceNum = aExb != null? aExb.deviceNum: ''
+      senHist.deviceId = aExb != null? aExb.deviceId: ''
+      senHist.deviceIdX = aExb != null? aExb.deviceIdX: ''
+      senHist.locationName = aExb != null? aExb.locationName: ''
+      senHist.posId = aExb != null? aExb.posId: ''
+      senHist.areaName = aExb != null? aExb.areaName: ''
+
+      if (senHist.sensorId == SENSOR.TEMPERATURE) {
+        senHist.humidity = senHist.value.humidity
+        senHist.temperature = senHist.value.temperature
+      }
+      if (senHist.sensorId == SENSOR.PIR || senHist.sensorId == SENSOR.THERMOPILE) {
+        senHist.count = senHist.value.count
+      }
+      if (senHist.sensorId == SENSOR.MEDITAG) {
+        senHist.high = senHist.value.high
+        senHist.low = senHist.value.low
+        senHist.beat = senHist.value.beat
+        senHist.step = senHist.value.step
+        senHist.down = senHist.value.down
+      }
+      if (senHist.sensorId == SENSOR.MAGNET) {
+        senHist.state = senHist.value.state
+      }
     },
     async displayImpl(){
       this.replace({showAlert: false})
@@ -217,51 +264,7 @@ export default {
         }
         var count = 0
         for (var senHist of fetchList) {
-          const d = new Date(senHist.sensorDt)
-          senHist.sensorDt = moment(d.getTime()).format('YYYY/MM/DD HH:mm:ss')
-          if (senHist.txId != null) {
-            let aTx = _.find(this.txs, (tx) => { return tx.txId == senHist.txId })
-            senHist.txName = aTx.txName
-            senHist.major = aTx.major
-            senHist.minor = aTx.minor
-          } else {
-            senHist.txName = ''
-            senHist.major = ''
-            senHist.minor = ''
-          }
-          let aExb = _.find(this.exbs, (exb) => { return exb.exbId == senHist.exbId })
-          if (aExb != null) {
-            senHist.deviceNum = aExb.deviceNum
-            senHist.deviceId = aExb.deviceId
-            senHist.deviceIdX = aExb.deviceIdX
-            senHist.locationName = aExb.locationName
-            senHist.posId = aExb.posId
-            senHist.areaName = aExb.areaName
-          } else {
-            senHist.deviceNum = ''
-            senHist.deviceId = ''
-            senHist.deviceIdX = ''
-            senHist.locationName = ''
-            senHist.posId = ''
-            senHist.areaName = ''
-          }
-          if (senHist.sensorId == SENSOR.TEMPERATURE) {
-            senHist.humidity = senHist.value.humidity
-            senHist.temperature = senHist.value.temperature
-          }
-          if (senHist.sensorId == SENSOR.PIR || senHist.sensorId == SENSOR.THERMOPILE) {
-            senHist.count = senHist.value.count
-          }
-          if (senHist.sensorId == SENSOR.MEDITAG) {
-            senHist.high = senHist.value.high
-            senHist.low = senHist.value.low
-            senHist.beat = senHist.value.beat
-            senHist.step = senHist.value.step
-            senHist.down = senHist.value.down
-          }
-          if (senHist.sensorId == SENSOR.MAGNET) {
-            senHist.state = senHist.value.state
-          }
+          this.editSensorHistoryData(senHist)
           count++
           if (count < this.limitViewRows) {
             this.viewList.push(senHist)

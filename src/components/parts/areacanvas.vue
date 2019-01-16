@@ -79,105 +79,7 @@ export default {
       this.canvas.hoverCursor = 'default'
       this.canvas.selection = false
     }
-    const that = this
-
-    // Canvas内でのみドラッグ可とする
-    this.canvas.on('object:moving', function(e){
-      const obj = e.target
-      const topLeft = that.getTopLeft({
-        x: obj.left,
-        y: obj.top,
-        width: obj.width,
-        height: obj.height
-      })
-      obj.top = topLeft.top
-      obj.left = topLeft.left
-    })
-
-    this.canvas.on('mouse:down', function(e) {
-      that.fromX = e.e.offsetX
-      that.fromY = e.e.offsetY
-    })
-
-    this.canvas.on('mouse:up', function(e) {
-
-      if (e.target !== null) {
-        return
-      }
-
-      that.toX = e.e.offsetX
-      that.toY = e.e.offsetY
-
-      if(!that.auth.regist){
-        return 
-      }
-
-      if (Math.abs(that.fromX - that.toX) < DISP.ZONE.MIN_WIDTH ||
-          Math.abs(that.fromY - that.toY) < DISP.ZONE.MIN_HEIGHT) {
-        return
-      }
-
-      const top = Math.floor(Math.min(that.fromY, that.toY))
-      const left = Math.floor(Math.min(that.fromX, that.toX))
-      const id = that.assignId()
-      const dimension = {
-        id: id * -1,
-        categoryId: that.categoryId,
-        top: top,
-        left: left,
-        width: Math.floor(Math.max(that.toX, that.fromX)) - left,
-        height: Math.floor(Math.max(that.toY, that.fromY)) - top,
-        name: 'zone' + id
-      }
-      const group = that.addZone(dimension, false)
-      that.canvas.setActiveObject(group)
-      that.$emit('created', dimension)
-    })
-
-    // DELボタン押下時に選択エリアを削除する
-    const canvasWrapper = document.getElementsByClassName('upper-canvas')[0]
-    canvasWrapper.tabIndex = 1000
-    canvasWrapper.addEventListener('keydown', function(e) {
-      if (e.keyCode !== 46) {
-        return
-      }
-      const active = that.canvas.getActiveObject()
-      if (!active) {
-        return
-      }
-      if(!that.auth.delete && (that.auth.regist && active.id > 0)){
-        return
-      }
-      that.canvas.remove(active)
-      if (active.id > 0) {
-        that.deleted.push(active.id)
-      }
-      that.$emit('deleted', active.id)
-    }, false)
-
-    this.canvas.on('object:selected', function(event) {
-      if (!event.e) {
-        return
-      }
-      if(!that.isEditable){
-        that.canvas.discardActiveObject(event.e)
-        return
-      }
-      that.$emit('selected', {
-        id: event.target.id,
-        name: event.target.name,
-        top: event.target.top,
-        left: event.target.left,
-        width: event.target.width,
-        height: event.target.height,
-        categoryId: event.target.categoryId,
-      })
-    })
-
-    this.canvas.on('selection:cleared', function(e) {
-      that.$emit('unselected')
-    })
-
+    this.setCanvasListener()
     this.setupCanvas(this.base64)
   },
   methods: {
@@ -264,7 +166,119 @@ export default {
     assignId () {
       const ids = this.canvas.getObjects().map((e) => Math.abs(e.id))
       return ids.length > 0 ? Math.max(...ids) + 1 : 1
-    }
+    },
+    setCanvasMovingListener(){
+      const that = this
+      // Canvas内でのみドラッグ可とする
+      this.canvas.on('object:moving', function(e){
+        const obj = e.target
+        const topLeft = that.getTopLeft({
+          x: obj.left,
+          y: obj.top,
+          width: obj.width,
+          height: obj.height
+        })
+        obj.top = topLeft.top
+        obj.left = topLeft.left
+      })
+    },
+    setCanvasMouseDownListener(){
+      const that = this
+      this.canvas.on('mouse:down', function(e) {
+        that.fromX = e.e.offsetX
+        that.fromY = e.e.offsetY
+      })
+    },
+    setCanvasMouseUpListener(){
+      const that = this
+      this.canvas.on('mouse:up', function(e) {
+        if (e.target !== null) {
+          return
+        }
+        that.toX = e.e.offsetX
+        that.toY = e.e.offsetY
+        if(!that.auth.regist){
+          return 
+        }
+        if (Math.abs(that.fromX - that.toX) < DISP.ZONE.MIN_WIDTH || Math.abs(that.fromY - that.toY) < DISP.ZONE.MIN_HEIGHT) {
+          return
+        }
+
+        const top = Math.floor(Math.min(that.fromY, that.toY))
+        const left = Math.floor(Math.min(that.fromX, that.toX))
+        const id = that.assignId()
+        const dimension = {
+          id: id * -1,
+          categoryId: that.categoryId,
+          top: top,
+          left: left,
+          width: Math.floor(Math.max(that.toX, that.fromX)) - left,
+          height: Math.floor(Math.max(that.toY, that.fromY)) - top,
+          name: 'zone' + id
+        }
+        const group = that.addZone(dimension, false)
+        that.canvas.setActiveObject(group)
+        that.$emit('created', dimension)
+      })
+    },
+    setCanvasKeyDownListener(){
+      const that = this
+      // DELボタン押下時に選択エリアを削除する
+      const canvasWrapper = document.getElementsByClassName('upper-canvas')[0]
+      canvasWrapper.tabIndex = 1000
+      canvasWrapper.addEventListener('keydown', function(e) {
+        if (e.keyCode !== 46) {
+          return
+        }
+        const active = that.canvas.getActiveObject()
+        if (!active) {
+          return
+        }
+        if(!that.auth.delete && (that.auth.regist && active.id > 0)){
+          return
+        }
+        that.canvas.remove(active)
+        if (active.id > 0) {
+          that.deleted.push(active.id)
+        }
+        that.$emit('deleted', active.id)
+      }, false)
+    },
+    setCanvasSelectedListener(){
+      const that = this
+      this.canvas.on('object:selected', function(event) {
+        if (!event.e) {
+          return
+        }
+        if(!that.isEditable){
+          that.canvas.discardActiveObject(event.e)
+          return
+        }
+        that.$emit('selected', {
+          id: event.target.id,
+          name: event.target.name,
+          top: event.target.top,
+          left: event.target.left,
+          width: event.target.width,
+          height: event.target.height,
+          categoryId: event.target.categoryId,
+        })
+      })
+    },
+    setCanvaslearedListener(){
+      const that = this
+      this.canvas.on('selection:cleared', function(e) {
+        that.$emit('unselected')
+      })
+    },
+    setCanvasListener(){
+      this.setCanvasMovingListener()
+      this.setCanvasMouseDownListener()
+      this.setCanvasMouseUpListener()
+      this.setCanvasKeyDownListener()
+      this.setCanvasSelectedListener()
+      this.setCanvaslearedListener()
+    },
   }
 }
 </script>

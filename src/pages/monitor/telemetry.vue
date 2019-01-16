@@ -47,63 +47,10 @@ export default {
           active: true
         }
       ],
-      headers: addLabelByKey(this.isDev? null: this.$i18n,
-        this.isDev? [
-          { key: 'meshid_deviceid' },
-          { key: 'deviceid' },
-          { key: 'description' },
-          { key: 'timestamp' },
-          { key: 'firm_ver' },
-          { key: 'power_level' },
-          { key: 'ibeacon_major' },
-          { key: 'ibeacon_minor' },
-          { key: 'ibeacon_txpower' },
-          { key: 'ibeacon_interval' },
-          { key: 'hour168_count' },
-          { key: 'hour24_count' },
-          { key: 'hour12_count' },
-          { key: 'hour6_count' },
-          { key: 'hour3_count' },
-          { key: 'ibeacon_received' },
-        ]: [
-          APP.EXB_WITH_DEVICE_NUM? { key: 'deviceNum' }: null,
-          APP.EXB_WITH_DEVICE_ID? { key: 'deviceId' }: null,
-          APP.EXB_WITH_DEVICE_IDX? { key: 'deviceIdX' }: null,
-          { key: 'name', label: 'locationName'},
-          { key: 'powerLevel' },
-          { key: 'timestamp', label: 'finalReceiveTimestamp'},
-          { key: 'state' },
-        ].filter((val) => val)),
+      headers: this.getHeaders(),
       telemetrys: [],
       isLoad: false,
-      csvHeaders: this.isDev?
-        {
-          meshid_deviceid: 'meshid_deviceid',
-          deviceid: 'deviceid',
-          description: 'description',
-          timestamp: 'timestamp',
-          firm_ver: 'firm_ver',
-          power_level: 'power_level',
-          ibeacon_major: 'ibeacon_major',
-          ibeacon_minor: 'ibeacon_minor',
-          ibeacon_txpower: 'ibeacon_txpower',
-          ibeacon_interval: 'ibeacon_interval',
-          hour168_count: 'hour168_count',
-          hour24_count: 'hour24_count',
-          hour12_count: 'hour12_count',
-          hour6_count: 'hour6_count',
-          hour3_count: 'hour3_count',
-          ibeacon_received: 'ibeacon_received',
-        }:
-        {
-          deviceNum: APP.EXB_WITH_DEVICE_NUM ? 'deviceNum' : null,
-          deviceId: APP.EXB_WITH_DEVICE_ID ? 'deviceId' : null,
-          deviceIdX: APP.EXB_WITH_DEVICE_IDX ? 'deviceId(HEX)' : null,
-          name: 'finalReceivePlace',
-          powerLevel: 'powerLevel',
-          timestamp: 'timestamp',
-          state: 'state'
-        },
+      csvHeaders: this.getCsvHeaders(),
     }
   },
   computed: {
@@ -131,6 +78,65 @@ export default {
     ]
   },
   methods: {
+    getHeaders(){
+      return addLabelByKey(this.isDev? null: this.$i18n,
+        this.isDev? [
+          { key: 'meshid_deviceid' },
+          { key: 'deviceid' },
+          { key: 'description' },
+          { key: 'timestamp' },
+          { key: 'firm_ver' },
+          { key: 'power_level' },
+          { key: 'ibeacon_major' },
+          { key: 'ibeacon_minor' },
+          { key: 'ibeacon_txpower' },
+          { key: 'ibeacon_interval' },
+          { key: 'hour168_count' },
+          { key: 'hour24_count' },
+          { key: 'hour12_count' },
+          { key: 'hour6_count' },
+          { key: 'hour3_count' },
+          { key: 'ibeacon_received' },
+        ]: [
+          APP.EXB_WITH_DEVICE_NUM? { key: 'deviceNum' }: null,
+          APP.EXB_WITH_DEVICE_ID? { key: 'deviceId' }: null,
+          APP.EXB_WITH_DEVICE_IDX? { key: 'deviceIdX' }: null,
+          { key: 'name', label: 'locationName'},
+          { key: 'powerLevel' },
+          { key: 'timestamp', label: 'finalReceiveTimestamp'},
+          { key: 'state' },
+        ].filter((val) => val))
+    },
+    getCsvHeaders(){
+      return this.isDev?
+        {
+          meshid_deviceid: 'meshid_deviceid',
+          deviceid: 'deviceid',
+          description: 'description',
+          timestamp: 'timestamp',
+          firm_ver: 'firm_ver',
+          power_level: 'power_level',
+          ibeacon_major: 'ibeacon_major',
+          ibeacon_minor: 'ibeacon_minor',
+          ibeacon_txpower: 'ibeacon_txpower',
+          ibeacon_interval: 'ibeacon_interval',
+          hour168_count: 'hour168_count',
+          hour24_count: 'hour24_count',
+          hour12_count: 'hour12_count',
+          hour6_count: 'hour6_count',
+          hour3_count: 'hour3_count',
+          ibeacon_received: 'ibeacon_received',
+        }:
+        {
+          deviceNum: APP.EXB_WITH_DEVICE_NUM ? 'deviceNum' : null,
+          deviceId: APP.EXB_WITH_DEVICE_ID ? 'deviceId' : null,
+          deviceIdX: APP.EXB_WITH_DEVICE_IDX ? 'deviceId(HEX)' : null,
+          name: 'finalReceivePlace',
+          powerLevel: 'powerLevel',
+          timestamp: 'timestamp',
+          state: 'state'
+        }
+    },
     getClass(telemetry, index){
       return this.getTrClass(index, telemetry.timestamp)
     },

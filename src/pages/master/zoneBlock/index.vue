@@ -35,7 +35,7 @@
         <b-form-group>
           <b-form-row>
             <b-form-row>
-              <b-button v-t="'label.back'" type="button" variant="outline-danger" @click="backToList(zoneClassPath)" />
+              <b-button v-t="'label.back'" type="button" variant="outline-danger" @click="backToList($event, zoneClassPath)" />
               <b-button v-if="isEditable || isDeleteable" :variant="theme" type="button" class="ml-2" @click="regist()">
                 {{ label }}
               </b-button>

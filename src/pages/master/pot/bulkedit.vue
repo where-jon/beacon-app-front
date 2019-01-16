@@ -58,9 +58,48 @@ export default {
     afterCrud(){
       StateHelper.setForceFetch('tx', true)
     },
+    setParamRelation(entity, headerName, val, dummyKey){
+      if('groupId' === headerName) {
+        entity.potGroupList = [{potGroupPK: {groupId: Number(val)}}]
+      }
+      else if('categoryId' === headerName) {
+        entity.potCategoryList = [{potCategoryPK: {categoryId: Number(val)}}]
+      }
+      return dummyKey
+    },
+    setMinorBtxId(entity, headerName, val, dummyKey){
+      const tx = this.txs.find((tx) => tx[headerName] == val)
+      if(tx){
+        entity.txId = tx.txId
+      }
+      return dummyKey
+    },
+    setOther(entity, headerName, val, dummyKey, mainCol){
+      const NULLABLE_NUMBER_COL = ['txId', 'exbId', 'zoneId', 'areaId', 'potType']
+      let newVal
+      if (mainCol === headerName && !val) {
+        newVal = dummyKey--
+      } else if (NULLABLE_NUMBER_COL.includes(headerName)) {
+        if(!Util.hasValue(val)){
+          newVal = null
+        }
+        else{
+          newVal = Number(val)
+          if(headerName == 'potType' && !isNaN(newVal) && !this.category.find((val) => val.value == newVal)){
+            entity[`${headerName}OneOf`] = this.category.map((val) => val.value)
+          }
+        }
+      } else {
+        newVal = val
+      }
+      if(isNaN(newVal)){
+        entity[`${headerName}Name`] = val
+      }
+      entity[headerName] = newVal
+      return dummyKey
+    },
     async save(bulkSaveFunc) {
       const MAIN_COL = 'potId'
-      const NULLABLE_NUMBER_COL = ['txId', 'exbId', 'zoneId', 'areaId', 'potType']
       const MANY_TO_MANY = ['groupId', 'categoryId']
       const extValueHeaders = ['ruby', 'post', 'tel']
       const txIdHeaders = ['btxId', 'minor']
@@ -71,22 +110,11 @@ export default {
       await bulkSaveFunc(MAIN_COL, null, null, (entity, headerName, val, dummyKey) => {
         // relation
         if (MANY_TO_MANY.includes(headerName) && Util.hasValue(val)) {
-          if('groupId' === headerName) {
-            entity.potGroupList = [{potGroupPK: {groupId: Number(val)}}]
-          }
-          else if('categoryId' === headerName) {
-            entity.potCategoryList = [{potCategoryPK: {categoryId: Number(val)}}]
-          }
-          return dummyKey
+          return this.setParamRelation(entity, headerName, val, dummyKey)
         }
-
         // minor, btxId
         if(_.includes(txIdHeaders, headerName)){
-          const tx = this.txs.find((tx) => tx[headerName] == val)
-          if(tx){
-            entity.txId = tx.txId
-          }
-          return dummyKey
+          return this.setMinorBtxId(entity, headerName, val, dummyKey)
         }
         // extValue
         if (!entity.extValue) {
@@ -98,27 +126,7 @@ export default {
         }
 
         // other
-        let newVal
-        if (MAIN_COL === headerName && !val) {
-          newVal = dummyKey--
-        } else if (NULLABLE_NUMBER_COL.includes(headerName)) {
-          if(!Util.hasValue(val)){
-            newVal = null
-          }
-          else{
-            newVal = Number(val)
-            if(headerName == 'potType' && !isNaN(newVal) && !this.category.find((val) => val.value == newVal)){
-              entity[`${headerName}OneOf`] = this.category.map((val) => val.value)
-            }
-          }
-        } else {
-          newVal = val
-        }
-        if(isNaN(newVal)){
-          entity[`${headerName}Name`] = val
-        }
-        entity[headerName] = newVal
-        return dummyKey
+        return this.setOther(entity, headerName, val, dummyKey, MAIN_COL)
       }, (entity, dummyKey) => this.resetData(entity, dummyKey))
     },
   }

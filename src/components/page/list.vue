@@ -410,65 +410,64 @@ export default {
       this.modalInfo.content = ''
       this.modalInfo.id = ''
     },
-    filterGrid(originItem) {
-      let regBool
+    filterGridGeneral(originItem){
       if(!this.filter.reg){
-        regBool = true
-      } else {
-        try{
-          const regExp = new RegExp('.*' + this.filter.reg + '.*', 'i')
-          const param = this.params.fields.map((val) => Util.getValue(originItem, val.key, ''))
-          regBool = regExp.test(JSON.stringify(param))
-        }
-        catch(e){
-          regBool = false
-        }
+        return true
       }
-      // 追加フィルタ
-      let extBool = true
+      try{
+        const regExp = new RegExp('.*' + this.filter.reg + '.*', 'i')
+        const param = this.params.fields.map((val) => Util.getValue(originItem, val.key, ''))
+        return regExp.test(JSON.stringify(param))
+      }
+      catch(e){
+        return false
+      }
+    },
+    filterGridExt(originItem){
       if (!this.params.extraFilter) {
-        extBool = true
-      } else {
-        const extra = this.filter.extra
-        for (let item of this.params.extraFilter) {
-          switch (item) {
-          case 'category':
-            if (extra.category && 
-                  !(extra.category === originItem.categoryId)) {
-              extBool = false
-            }
-            break
-          case 'group':
-            if  (extra.group && 
-                  !(extra.group === originItem.groupId)) {
-              extBool = false
-            }
-            break
-          case 'area':
-            if (extra.area &&
-                !(extra.area === originItem.areaId)) {
-              extBool = false
-            }
-            break
-          case 'detectState':
-            if (extra.detectState != null &&
-                !(extra.detectState === originItem.detectState)) {
-              extBool = false
-            }
-            break
+        return true
+      }
+      const extra = this.filter.extra
+      for (let item of this.params.extraFilter) {
+        switch (item) {
+        case 'category':
+          if (extra.category && !(extra.category === originItem.categoryId)) {
+            return false
           }
+          break
+        case 'group':
+          if (extra.group && !(extra.group === originItem.groupId)) {
+            return false
+          }
+          break
+        case 'area':
+          if (extra.area && !(extra.area === originItem.areaId)) {
+            return false
+          }
+          break
+        case 'detectState':
+          if (extra.detectState != null && !(extra.detectState === originItem.detectState)) {
+            return false
+          }
+          break
         }
       }
-      let delBool = true
+      return true
+    },
+    filterGridDel(originItem){
       if(!this.params.delFilter){
-        delBool = true
+        return true
       }
-      else if(this.filter.del){
-        delBool = true
+      if(this.filter.del){
+        return true
       }
-      else{
-        delBool = originItem.delFlg == 0
-      }
+      return originItem.delFlg == 0
+    },
+    filterGrid(originItem) {
+      let regBool = this.filterGridGeneral(originItem)
+      // 追加フィルタ
+      let extBool = this.filterGridExt(originItem)
+      let delBool = this.filterGridDel(originItem)
       //console.log("filtering table...")
       return regBool && extBool && delBool
     },

@@ -266,6 +266,32 @@ export default {
       await this.displayImpl()
       this.stage ? this.stage.update() : null
     },
+    createViewList(aModeId, fetchList){
+      const viewList = []
+      for (let line of fetchList) {
+        const thisLine = []
+        if (aModeId == 1) {
+          thisLine.zoneCategoryName = line.zoneCategoryName
+          thisLine.zoneName = line.zoneName
+          thisLine.rate = line.rate
+          thisLine.cnt = (line.cnt / 60).toFixed(2)
+        }
+        if (aModeId == 2) {
+          thisLine.zoneCategoryName = line.zoneCategoryName
+          thisLine.zoneName = line.zoneName
+          thisLine.numUse = line.numUse
+        }
+        viewList.push(thisLine)
+      }
+      return viewList
+    },
+    getParamDate(){
+      const paramDate = this.form.selectedYearMonth
+      if (this.selectedDay > 0) {
+        return paramDate * 100 + this.selectedDay
+      }
+      return paramDate
+    },
     async displayImpl(){
       this.replace({showAlert: false})
       this.viewList = []
@@ -277,46 +303,23 @@ export default {
         }
         const paramCategoryId = (this.categoryId != null)? this.categoryId: -1
         const paramZoneId = (this.zoneId != null)? this.zoneId: -1
-        let paramDate = this.form.selectedYearMonth
-        if (this.selectedDay > 0) {
-          paramDate = paramDate * 100 + this.selectedDay
-        }
+        const paramDate = this.getParamDate()
         const aModeId = (this.form.mode != null)? this.form.mode: 1
         let fetchList = null
         if (aModeId == 1) {
           this.fields = this.fields1
-          fetchList = await AppServiceHelper.fetch(
-            '/office/utilizationRatio/' + paramCategoryId + '/' + paramZoneId + '/' + paramDate,
-            ''
-          )
+          fetchList = await AppServiceHelper.fetch('/office/utilizationRatio/' + paramCategoryId + '/' + paramZoneId + '/' + paramDate, '')
         }
         if (aModeId == 2) {
           this.fields = this.fields2
-          fetchList = await AppServiceHelper.fetch(
-            '/office/numUsers/' + paramCategoryId + '/' + paramZoneId + '/' + paramDate,
-            ''
-          )
+          fetchList = await AppServiceHelper.fetch('/office/numUsers/' + paramCategoryId + '/' + paramZoneId + '/' + paramDate, '')
         }
         if (fetchList == null || !fetchList.length) {
           this.message = this.$i18n.tnl('message.notFoundData', {target: this.$i18n.tnl('label.usageSituation')})
           this.replace({showAlert: true})
           return
         }
-        for (let line of fetchList) {
-          const thisLine = []
-          if (aModeId == 1) {
-            thisLine.zoneCategoryName = line.zoneCategoryName
-            thisLine.zoneName = line.zoneName
-            thisLine.rate = line.rate
-            thisLine.cnt = (line.cnt/60).toFixed(2)
-          }
-          if (aModeId == 2) {
-            thisLine.zoneCategoryName = line.zoneCategoryName
-            thisLine.zoneName = line.zoneName
-            thisLine.numUse = line.numUse
-          }
-          this.viewList.push(thisLine)
-        }
+        this.viewList = this.createViewList(aModeId, fetchList)
       } catch(e) {
         console.error(e)
       }
