@@ -1,0 +1,235 @@
+<template>
+  <div>
+    <breadcrumb :items="items" :reload="false" />
+    <div class="container">
+      <alert :message="message" />
+
+      <div class="mapContainer mb-5">
+        <b-form inline @submit.prevent>
+          <b-form-group class="mr-5">
+            <b-form-row>
+              <b-form-row class="mb-3 mr-2">
+                <label v-t="'label.txName'" class="mr-2" />
+                <v-select v-model="form.tx" :options="txOptions" class="mr-2">
+                  <div slot="no-options">
+                    {{ $i18n.tnl('label.vSelectNoOptions') }}
+                  </div>
+                </v-select>
+              </b-form-row>
+            </b-form-row>
+          </b-form-group>
+
+          <!--種別-->
+          <b-form-group class="mr-5">
+            <b-form-row>
+              <b-form-row class="mb-3 mr-2">
+                <label v-t="'label.category'" class="mr-2"/>
+                <b-form-select v-model="form.notifyState" :options="notifyStateOptions" class="mr-2"/>
+              </b-form-row>
+            </b-form-row>
+          </b-form-group>
+
+        </b-form>
+
+
+        <b-form inline @submit.prevent>
+          <b-form-group class="mr-5">
+            <b-form-row>
+              <b-form-row class="mb-3 mr-2">
+                <label v-t="'label.historyDateFrom'" class="mr-2" />
+                <date-picker v-model="form.datetimeFrom" :clearable="false" type="datetime" class="mr-2 inputdatefrom" required />
+              </b-form-row>
+              <b-form-row class="mb-3 mr-2">
+                <label v-t="'label.historyDateTo'" class="mr-2" />
+                <date-picker v-model="form.datetimeTo" :clearable="false" type="datetime" class="mr-2 inputdateto" required />
+              </b-form-row>
+            </b-form-row>
+          </b-form-group>
+          <b-form-group>
+            <b-form-row class="mb-3 mr-2">
+              <b-button v-t="'label.display'" :variant="theme" class="mx-1" @click="display" />
+              <b-button v-if="!iosOrAndroid" v-t="'label.download'" :variant="theme" class="mx-1" @click="exportCsv" />
+            </b-form-row>
+          </b-form-group>
+        </b-form>
+        <slot />
+        <b-row class="mt-3" />
+        <b-table :items="viewList" :fields="fields" :current-page="currentPage" :per-page="perPage" :sort-by.sync="sortBy" stacked="md" striped hover outlined />
+        <b-row>
+          <b-col md="6" class="my-1">
+            {{ footerMessage }}
+          </b-col>
+        </b-row>
+        <b-row>
+          <b-col md="6" class="my-1">
+            <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" class="my-0" />
+          </b-col>
+        </b-row>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import { mapState } from 'vuex'
+import { DatePicker } from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
+import locale from 'element-ui/lib/locale'
+import breadcrumb from '../../components/layout/breadcrumb.vue'
+import alert from '../../components/parts/alert.vue'
+import showmapmixin from '../../components/mixin/showmapmixin.vue'
+import * as StateHelper from '../../sub/helper/StateHelper'
+import * as HttpHelper from '../../sub/helper/HttpHelper'
+import * as HtmlUtil from '../../sub/util/HtmlUtil'
+import * as Util from '../../sub/util/Util'
+import { addLabelByKey } from '../../sub/helper/ViewHelper'
+import { getTheme } from '../../sub/helper/ThemeHelper'
+import { getCharSet } from '../../sub/helper/CharSetHelper'
+import { APP } from '../../sub/constant/config.js'
+import { NOTIFY_STATE } from '../../sub/constant/Constants'
+import moment from 'moment'
+import { APP_SERVICE } from '../../sub/constant/config'
+
+
+export default {
+  components: {
+    breadcrumb,
+    alert,
+    DatePicker,
+  },
+  mixins: [showmapmixin ],
+  data () {
+    return {
+      name: 'positionHistory',
+      items: [
+        {
+          text: this.$i18n.tnl('label.historyTitle'),
+          active: true
+        },
+        {
+          text: this.$i18n.tnl('label.txButtonHistory'),
+          active: true
+        }
+      ],
+      form: {
+        tx: null,
+        datetimeFrom: null,
+        datetimeTo: null,
+        notifyState: null,
+      },
+      viewList: [],
+      fields: addLabelByKey(this.$i18n, [
+        {key: "positionDt", sortable: true, label:"dt"},
+        {key: "notifyTo", sortable: true,label:"notifyTo" },
+        {key: "txName", sortable: true,label:"txName" },
+        {key: "exbName", sortable: true,label:"exbName" },
+        {key: "major", sortable: true,label:"major" },
+        {key: "minor", sortable: true,label:"minor" },
+        {key: "txId", sortable: true,label:"txId" },
+        {key: "powerLevel", sortable: true,label:"powerLevel" },
+        {key: "finalReceiveTime", sortable: true,label:"finalReceiveTime" },
+        {key: "notifyMedium", sortable: true,label:"notifyMedium" },
+      ]),
+      currentPage: 1,
+      perPage: 20,
+      limitViewRows: 100,
+      totalRows: 0,
+      sortBy: null,
+      //
+      message: '',
+      footerMessage: '',
+    }
+  },
+  computed: {
+    theme () {
+      const theme = getTheme(this.$store.state.loginId)
+      return 'outline-' + theme
+    },
+    ...mapState('app_service', [
+      'txs', 'exbs'
+    ]),
+
+    notifyStateOptions() {
+      return NOTIFY_STATE.getOptions()
+    },
+    txOptions() {
+      return StateHelper.getOptionsFromState('tx',
+        tx => StateHelper.getTxIdName(tx),
+        true
+      )
+    },
+  },
+  async created() {
+    const date = new Date()
+    this.form.datetimeFrom = Util.getDatetime(date, {hours: -1})
+    this.form.datetimeTo = Util.getDatetime(date)
+    this.form.notifyState = this.notifyStateOptions[0].value
+  },
+  mounted() {
+      import(`element-ui/lib/locale/lang/${this.$i18n.locale}`).then( (mojule) =>{
+        locale.use(mojule.default)
+      })
+      StateHelper.load('tx')
+      StateHelper.load('exb')
+      this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.viewList.length, maxRows: this.limitViewRows})}`
+  },
+  methods: {
+    async display() {
+      this.container ? this.container.removeAllChildren() : null
+      await this.displayImpl()
+      this.stage ? this.stage.update() : null
+    },
+    async displayImpl(){
+      this.replace({showAlert: false})
+      this.viewList = []
+      this.totalRows = 0
+      this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.viewList.length, maxRows: this.limitViewRows})}`
+      try {
+        const aTxId = (this.form.tx != null && this.form.tx.value != null)?this.form.tx.value:0
+        console.log(aTxId)
+        var fetchList = await HttpHelper.getAppService(
+          `/core/positionHistory/find/${aTxId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/${this.limitViewRows}`
+        )
+        if (fetchList.length == null || !fetchList.length) {
+          this.message = this.$i18n.tnl('message.notFoundData', {target: this.$i18n.tnl('label.positionHistory')})
+          this.replace({showAlert: true})
+          return
+        }
+        for (var posHist of fetchList) {
+          const d = new Date(posHist.positionDt)
+          posHist.positionDt = moment(d.getTime()).format('YYYY/MM/DD HH:mm:ss')
+          let aTx = _.find(this.txs, (tx) => { return tx.txId == posHist.txId })
+          posHist.txName = aTx.txName
+          let aExb = _.find(this.exbs, (exb) => { return exb.exbId == posHist.exbId })
+          posHist.deviceNum = aExb.deviceNum
+          posHist.deviceId = aExb.deviceId
+          posHist.deviceIdX = aExb.deviceIdX
+          posHist.locationName = aExb.locationName
+          posHist.posId = aExb.posId
+          posHist.areaName = aExb.areaName
+          posHist.x = aExb.x
+          posHist.y = aExb.y
+          this.viewList.push(posHist)
+        }
+        this.totalRows = this.viewList.length
+        this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.viewList.length, maxRows: this.limitViewRows})}`
+      } catch(e) {
+        console.error(e)
+      }
+    },
+    reset() {
+      this.isShownMapImage = false
+    },
+    async fetchData(payload) {
+    },
+    async exportCsv() {
+      const aTxId = (this.form.tx != null && this.form.tx.value != null)?this.form.tx.value:0
+      HtmlUtil.executeFileDL(
+        APP_SERVICE.BASE_URL
+          + `/core/positionHistory/csvdownload/${aTxId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/`
+          + getCharSet(this.$store.state.loginId)
+      )
+    },
+  }
+}
+</script>
