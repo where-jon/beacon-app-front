@@ -69,9 +69,8 @@ export default {
     },
     async save(bulkSaveFunc) {
       const MAIN_COL = 'groupId'
-      const NUMBER_TYPE_LIST = ['shape']
       const DISPLAY_COL = ['shape', 'color', 'bgColor']
-      await bulkSaveFunc(MAIN_COL, NUMBER_TYPE_LIST, null, (entity, headerName, val, dummyKey) => {
+      await bulkSaveFunc(MAIN_COL, null, null, (entity, headerName, val, dummyKey) => {
         if(headerName == MAIN_COL){
           entity.groupId = Util.hasValue(val)? Number(val): --dummyKey  
         }
@@ -79,7 +78,7 @@ export default {
           if (!entity.display) {
             entity.display = {}
           }
-          entity.display[headerName] = ['color', 'bgColor'].includes(headerName)? Util.colorCd4db(val) : val
+          entity.display[headerName] = val
         }
         else{
           entity[headerName] = val

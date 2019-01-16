@@ -73,7 +73,7 @@ export default {
     },
     async save(bulkSaveFunc) {
       const MAIN_COL = 'categoryId'
-      const NUMBER_TYPE_LIST = ['categoryType', 'shape']
+      const NUMBER_TYPE_LIST = ['categoryType']
       const DISPLAY_COL = ['shape', 'color', 'bgColor']
       await bulkSaveFunc(MAIN_COL, NUMBER_TYPE_LIST, null, (entity, headerName, val, dummyKey) => {
         if(headerName == MAIN_COL){
@@ -83,7 +83,7 @@ export default {
           if (!entity.display) {
             entity.display = {}
           }
-          entity.display[headerName] = ['color', 'bgColor'].includes(headerName)? Util.colorCd4db(val) : val
+          entity.display[headerName] = val
         }
         else if(headerName == 'categoryTypeName'){
           const categoryType = this.categoryTypes.find((type) => type.text == val)
