@@ -345,6 +345,10 @@ export default {
     setEmptyMessage(){
       this.message = null
       this.error = null
+      this.replace({showWarn: false})
+      this.replace({showAlert: false})
+      this.replace({showInfo: false})
+      this.$forceUpdate()
     },
     isCurrentTenant(item){
       return item.tenantId == this.login.currentTenant.tenantId
