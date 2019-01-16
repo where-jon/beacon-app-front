@@ -214,6 +214,18 @@ export const BATTERY_STATE = {
   }
 }
 
+export const NOTIFY_STATE = {
+  getOptions(){
+    return [
+      {value:'TX_DELIVERY_NOTIFY', text: i18n.t('label.txBtnNotify')},
+      {value:'GW_ALERT', text: i18n.t('label.gwNotify')},
+      {value:'EXB_ALERT', text: i18n.t('label.exbNotify')},
+      {value:'TX_BATTERY_ALERT', text: i18n.t('label.txBatteryNotify')},
+      {value:'TX_SOS_ALERT', text: i18n.t('label.sosNotify')},
+    ]
+  }
+}
+
 export const BATTERY_BOUNDARY = {
   GOOD: 31,
   WARNING: 21,
@@ -442,6 +454,12 @@ export const MENU = [
       key: 'sensorHistory',
       path: 'sensorHistory',
       icon: 'fas fa-eye'
+    },
+    {
+      key: 'txButtonHistory',
+      path: 'txButtonHistory',
+      feature: '/history/txButtonHistory',
+      icon: 'fa fa-battery-three-quarters',
     },
     ]
   },

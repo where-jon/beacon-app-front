@@ -10,11 +10,11 @@
             <b-form-row>
               <b-form-row class="mb-3 mr-2">
                 <label v-t="'label.txName'" class="mr-2" />
-                <v-select v-model="form.tx" :options="txOptions" class="mr-2">
+                <b-form-select v-model="form.tx" :options="txOptions" class="mr-2" @change="changeTx">
                   <div slot="no-options">
                     {{ $i18n.tnl('label.vSelectNoOptions') }}
                   </div>
-                </v-select>
+                </b-form-select>
               </b-form-row>
             </b-form-row>
           </b-form-group>
@@ -24,7 +24,7 @@
             <b-form-row>
               <b-form-row class="mb-3 mr-2">
                 <label v-t="'label.category'" class="mr-2"/>
-                <b-form-select v-model="form.notifyState" :options="notifyStateOptions" class="mr-2"/>
+                <b-form-select v-model="form.notifyState" :options="notifyStateOptions" class="mr-2" @change="signalChange"/>
               </b-form-row>
             </b-form-row>
           </b-form-group>
@@ -85,7 +85,6 @@ import * as Util from '../../sub/util/Util'
 import { addLabelByKey } from '../../sub/helper/ViewHelper'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
-import { APP } from '../../sub/constant/config.js'
 import { NOTIFY_STATE } from '../../sub/constant/Constants'
 import moment from 'moment'
 import { APP_SERVICE } from '../../sub/constant/config'
@@ -101,6 +100,7 @@ export default {
   data () {
     return {
       name: 'positionHistory',
+      txId: null,
       items: [
         {
           text: this.$i18n.tnl('label.historyTitle'),
@@ -118,17 +118,48 @@ export default {
         notifyState: null,
       },
       viewList: [],
-      fields: addLabelByKey(this.$i18n, [
+      fields: [],
+      fields1: addLabelByKey(this.$i18n, [  // TXボタン押下通知
         {key: "positionDt", sortable: true, label:"dt"},
         {key: "notifyTo", sortable: true,label:"notifyTo" },
         {key: "txName", sortable: true,label:"txName" },
+        {key: "major", sortable: true,label:"major" },
+        {key: "minor", sortable: true,label:"minor" },
+        {key: "txId", sortable: true,label:"txId" },
+        {key: "notifyResult", sortable: true,label:"notifyResult" },
+      ]),
+      fields2: addLabelByKey(this.$i18n, [  // GW状態アラート
+        {key: "positionDt", sortable: true, label:"dt"},
+        {key: "notifyTo", sortable: true,label:"notifyTo" },
+        {key: "finalReceiveTime", sortable: true,label:"finalReceiveTime" },
+        {key: "notifyResult", sortable: true,label:"notifyResult" },
+      ]),
+      fields3: addLabelByKey(this.$i18n, [  // EXB状態アラート
+        {key: "positionDt", sortable: true, label:"dt"},
+        {key: "notifyTo", sortable: true,label:"notifyTo" },
         {key: "exbName", sortable: true,label:"exbName" },
+        {key: "finalReceiveTime", sortable: true,label:"finalReceiveTime" },
+        {key: "notifyResult", sortable: true,label:"notifyResult" },
+      ]),
+      fields4: addLabelByKey(this.$i18n, [  // TX電池状態アラート
+        {key: "positionDt", sortable: true, label:"dt"},
+        {key: "notifyTo", sortable: true,label:"notifyTo" },
+        {key: "txName", sortable: true,label:"txName" },
         {key: "major", sortable: true,label:"major" },
         {key: "minor", sortable: true,label:"minor" },
         {key: "txId", sortable: true,label:"txId" },
         {key: "powerLevel", sortable: true,label:"powerLevel" },
         {key: "finalReceiveTime", sortable: true,label:"finalReceiveTime" },
-        {key: "notifyMedium", sortable: true,label:"notifyMedium" },
+        {key: "notifyResult", sortable: true,label:"notifyResult" },
+      ]),
+      fields5: addLabelByKey(this.$i18n, [  // SOSボタン押下通知
+        {key: "positionDt", sortable: true, label:"dt"},
+        {key: "notifyTo", sortable: true,label:"notifyTo" },
+        {key: "txName", sortable: true,label:"txName" },
+        {key: "major", sortable: true,label:"major" },
+        {key: "minor", sortable: true,label:"minor" },
+        {key: "txId", sortable: true,label:"txId" },
+        {key: "notifyResult", sortable: true,label:"notifyResult" },
       ]),
       currentPage: 1,
       perPage: 20,
@@ -164,6 +195,7 @@ export default {
     this.form.datetimeFrom = Util.getDatetime(date, {hours: -1})
     this.form.datetimeTo = Util.getDatetime(date)
     this.form.notifyState = this.notifyStateOptions[0].value
+    this.fields = this.fields1
   },
   mounted() {
       import(`element-ui/lib/locale/lang/${this.$i18n.locale}`).then( (mojule) =>{
@@ -171,9 +203,23 @@ export default {
       })
       StateHelper.load('tx')
       StateHelper.load('exb')
+      this.changeTx(this.form.txId)
       this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.viewList.length, maxRows: this.limitViewRows})}`
   },
   methods: {
+    async changeTx(newVal){
+      const tx = this.txs.find((tx) => newVal == tx.txId)
+      this.txId = tx? tx.txId: null
+      this.btxId = tx? tx.btxId: null
+      this.minor = tx? tx.minor: null
+    },
+    async signalChange(evt) {
+      if(evt!=1) {
+        //APP.TX_NAME = false
+      }
+      //this.display()
+      console.log(evt)
+    },
     async display() {
       this.container ? this.container.removeAllChildren() : null
       await this.displayImpl()
@@ -184,36 +230,43 @@ export default {
       this.viewList = []
       this.totalRows = 0
       this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.viewList.length, maxRows: this.limitViewRows})}`
+
       try {
-        const aTxId = (this.form.tx != null && this.form.tx.value != null)?this.form.tx.value:0
-        console.log(aTxId)
+        const aNotifyState = (this.form.notifyState != null)?this.form.notifyState:0
+        if (aNotifyState == 'TX_DELIVERY_NOTIFY') {
+          this.fields = this.fields1
+        }else if (aNotifyState == 'GW_ALERT') {
+          this.fields = this.fields2
+        }else if (aNotifyState == 'EXB_ALERT') {
+          this.fields = this.fields3
+        }else if (aNotifyState == 'TX_BATTERY_ALERT') {
+          this.fields = this.fields4
+        }else if (aNotifyState == 'TX_SOS_ALERT') {
+          this.fields = this.fields5
+        }
+        const aTx = this.txId
         var fetchList = await HttpHelper.getAppService(
-          `/core/positionHistory/find/${aTxId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/${this.limitViewRows}`
+          `/core/rcvexcloud/history/${aNotifyState}/${aTx}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}`
         )
-        if (fetchList.length == null || !fetchList.length) {
-          this.message = this.$i18n.tnl('message.notFoundData', {target: this.$i18n.tnl('label.positionHistory')})
+        if (fetchList == null || !fetchList.length) {
+          this.message = this.$i18n.tnl('message.notFoundData', {target: this.$i18n.tnl('label.sensorHistory')})
           this.replace({showAlert: true})
           return
         }
-        for (var posHist of fetchList) {
-          const d = new Date(posHist.positionDt)
-          posHist.positionDt = moment(d.getTime()).format('YYYY/MM/DD HH:mm:ss')
-          let aTx = _.find(this.txs, (tx) => { return tx.txId == posHist.txId })
-          posHist.txName = aTx.txName
-          let aExb = _.find(this.exbs, (exb) => { return exb.exbId == posHist.exbId })
-          posHist.deviceNum = aExb.deviceNum
-          posHist.deviceId = aExb.deviceId
-          posHist.deviceIdX = aExb.deviceIdX
-          posHist.locationName = aExb.locationName
-          posHist.posId = aExb.posId
-          posHist.areaName = aExb.areaName
-          posHist.x = aExb.x
-          posHist.y = aExb.y
-          this.viewList.push(posHist)
+        var count = 0
+        for (var senHist of fetchList) {
+          const d = new Date(senHist.notifyDatetime)
+          senHist.positionDt = moment(d.getTime()).format('YYYY/MM/DD HH:mm:ss')
+          if (senHist.txId != null && this.txId == senHist.txId ) {
+            count++
+            if (count < this.limitViewRows) {
+              this.viewList.push(senHist)
+            }
+          }
         }
-        this.totalRows = this.viewList.length
-        this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.viewList.length, maxRows: this.limitViewRows})}`
-      } catch(e) {
+        this.fetchRows = this.viewList.length
+        this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.fetchRows, maxRows: this.limitViewRows})}`
+      }catch (e) {
         console.error(e)
       }
     },

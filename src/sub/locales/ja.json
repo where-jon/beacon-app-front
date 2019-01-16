@@ -134,6 +134,17 @@
     "positionHistory": "位置情報",
     "positionHistoryId": "Tx位置ID",
 
+    "txButtonHistory": "通知履歴情報",
+    "notifyTo": "連絡先",
+    "finalReceiveTime": "最終受信日時",
+    "notifyResult": "通知結果",
+
+    "txBtnNotify": "TXボタン押下通知",
+    "gwNotify": "GW状態アラート",
+    "exbNotify": "EXB状態アラート",
+    "txBatteryNotify": "TX電池状態アラート",
+    "sosNotify": "SOSボタン押下通知",
+
     "exbeacon": "EXBeacon",
     "settingExbeacon": "EXBeacon設定",
     "pir": "人感センサ",
