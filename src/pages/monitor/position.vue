@@ -47,49 +47,9 @@ export default {
         }
       ],
       positions: [],
-      headers: addLabelByKey(this.isDev? null: this.$i18n,
-        this.isDev? [
-          { key: 'btx_id' },
-          { key: 'device_id' },
-          { key: 'pos_id' },
-          { key: 'phase' },
-          { key: 'power_level' },
-          { key: 'updatetime' },
-          { key: 'nearest1' },
-          { key: 'nearest2' },
-          { key: 'nearest3' },
-        ]: [
-          { key: 'major' },
-          { key: 'minor' },
-          { key: 'name' },
-          { key: 'powerLevel' },
-          { key: 'finalReceiveLocation' },
-          { key: 'finalReceiveTimestamp' },
-          { key: 'rssi' },
-          { key: 'state' },
-        ]),
+      headers: this.getHeaders(),
       isLoad: false,
-      csvHeaders: this.isDev? {
-        'btx_id': 'btx_id',
-        'device_id': 'device_id',
-        'pos_id': 'pos_id',
-        'phase': 'phase',
-        'power_level': 'power_level',
-        'updatetime': 'updatetime',
-        'nearest1': 'nearest1',
-        'nearest2': 'nearest2',
-        'nearest3': 'nearest3',
-      }:
-        {
-          'major': 'major',
-          'minor': 'minor',
-          'name': 'name',
-          'powerLevel': 'powerLevel',
-          'finalReceiveLocation': 'location',
-          'finalReceiveTimestamp': 'timestamp',
-          'rssi': 'RSSI',
-          'state': 'state',
-        }
+      csvHeaders: this.getCsvHeaders(),
     }
   },
   computed: {
@@ -117,6 +77,52 @@ export default {
     ]
   },
   methods: {
+    getHeaders(){
+      return addLabelByKey(this.isDev? null: this.$i18n,
+        this.isDev? [
+          { key: 'btx_id' },
+          { key: 'device_id' },
+          { key: 'pos_id' },
+          { key: 'phase' },
+          { key: 'power_level' },
+          { key: 'updatetime' },
+          { key: 'nearest1' },
+          { key: 'nearest2' },
+          { key: 'nearest3' },
+        ]: [
+          { key: 'major' },
+          { key: 'minor' },
+          { key: 'name' },
+          { key: 'powerLevel' },
+          { key: 'finalReceiveLocation' },
+          { key: 'finalReceiveTimestamp' },
+          { key: 'rssi' },
+          { key: 'state' },
+        ])
+    },
+    getCsvHeaders(){
+      return this.isDev? {
+        'btx_id': 'btx_id',
+        'device_id': 'device_id',
+        'pos_id': 'pos_id',
+        'phase': 'phase',
+        'power_level': 'power_level',
+        'updatetime': 'updatetime',
+        'nearest1': 'nearest1',
+        'nearest2': 'nearest2',
+        'nearest3': 'nearest3',
+      }:
+        {
+          'major': 'major',
+          'minor': 'minor',
+          'name': 'name',
+          'powerLevel': 'powerLevel',
+          'finalReceiveLocation': 'location',
+          'finalReceiveTimestamp': 'timestamp',
+          'rssi': 'RSSI',
+          'state': 'state',
+        }
+    },
     getClass(position){
       return {undetect: this.isUndetect('tx', position.updatetime)}
     },

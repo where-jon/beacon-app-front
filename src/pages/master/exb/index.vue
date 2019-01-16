@@ -36,35 +36,8 @@ export default {
               APP.EXB_WITH_DEVICE_IDX? {name: this.$i18n.tnl('label.deviceIdX'), id: 'deviceIdX'}:
                 null,
         csvOut: true,
-        custumCsvColumns: [
-          APP.EXB_WITH_EXBID? 'exbId': null,
-          APP.EXB_WITH_DEVICE_NUM? 'deviceNum': null,
-          APP.EXB_WITH_DEVICE_ID? 'deviceId': null,
-          APP.EXB_WITH_DEVICE_IDX? 'deviceIdX': null,
-          'locationName',
-          'posId',
-          'areaName',
-          'x',
-          'y',
-          'enabled',
-          'sensor',
-          MenuHelper.isMenuEntry('/master/zoneClass') ? 'zoneName': null
-        ].filter((val) => val),
-        fields: addLabelByKey(this.$i18n, [ 
-          APP.EXB_WITH_EXBID? {key: 'exbId', sortable: true }: null,
-          APP.EXB_WITH_DEVICE_NUM? {key: 'deviceNum', sortable: true }: null,
-          APP.EXB_WITH_DEVICE_ID? {key: 'deviceId', sortable: true }: null,
-          APP.EXB_WITH_DEVICE_IDX? {key: 'deviceIdX', sortable: true }: null,
-          {key: 'locationName', label:'locationName', sortable: true,},
-          APP.EXB_WITH_POSID? {key: 'posId', label:'posId', sortable: true,}: null,
-          {key: 'areaName', label:'area', sortable: true,},
-          {key: 'x', label:'locationX', sortable: true,},
-          {key: 'y', label:'locationY', sortable: true,},
-          {key: 'sensor', label:'type', sortable: true,},
-          MenuHelper.isMenuEntry('/master/zoneClass') ?
-            {key: 'zoneName', label: 'zoneName', sortable: true,} : null,
-          {key: 'actions', thStyle: {width: '130px !important'} }
-        ]),
+        custumCsvColumns: this.getCustumCsvColumns(),
+        fields: this.getFields(),
         sortBy: APP.EXB_WITH_EXBID? 'exbId': APP.EXB_WITH_DEVICE_NUM? 'deviceNum': APP.EXB_WITH_DEVICE_ID? 'deviceId': APP.EXB_WITH_DEVICE_IDX? 'deviceIdX': '',
         initTotalRows: this.$store.state.app_service.exbs.length
       },
@@ -90,6 +63,39 @@ export default {
   mounted() {
   },
   methods: {
+    getCustumCsvColumns(){
+      return [
+        APP.EXB_WITH_EXBID? 'exbId': null,
+        APP.EXB_WITH_DEVICE_NUM? 'deviceNum': null,
+        APP.EXB_WITH_DEVICE_ID? 'deviceId': null,
+        APP.EXB_WITH_DEVICE_IDX? 'deviceIdX': null,
+        'locationName',
+        'posId',
+        'areaName',
+        'x',
+        'y',
+        'enabled',
+        'sensor',
+        MenuHelper.isMenuEntry('/master/zoneClass') ? 'zoneName': null
+      ].filter((val) => val)
+    },
+    getFields(){
+      return addLabelByKey(this.$i18n, [ 
+        APP.EXB_WITH_EXBID? {key: 'exbId', sortable: true }: null,
+        APP.EXB_WITH_DEVICE_NUM? {key: 'deviceNum', sortable: true }: null,
+        APP.EXB_WITH_DEVICE_ID? {key: 'deviceId', sortable: true }: null,
+        APP.EXB_WITH_DEVICE_IDX? {key: 'deviceIdX', sortable: true }: null,
+        {key: 'locationName', label:'locationName', sortable: true,},
+        APP.EXB_WITH_POSID? {key: 'posId', label:'posId', sortable: true,}: null,
+        {key: 'areaName', label:'area', sortable: true,},
+        {key: 'x', label:'locationX', sortable: true,},
+        {key: 'y', label:'locationY', sortable: true,},
+        {key: 'sensor', label:'type', sortable: true,},
+        MenuHelper.isMenuEntry('/master/zoneClass') ?
+          {key: 'zoneName', label: 'zoneName', sortable: true,} : null,
+        {key: 'actions', thStyle: {width: '130px !important'} }
+      ])
+    },
     async fetchData(payload) {
       try {
         this.showProgress()

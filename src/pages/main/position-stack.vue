@@ -86,6 +86,49 @@ export default {
     ...mapActions('main', [
       'pushOrgPositions',
     ]),
+    getShowTxPositions(positions){
+      const now = !DEV.USE_MOCK_EXC ? new Date().getTime(): mock.positions_conf.start + this.count++ * mock.positions_conf.interval
+      const correctPositions = PositionHelper.correctPosId(this.orgPositions, now)
+      return _(positions).map((pos) => {
+        let cPos = _.find(correctPositions, (cPos) => pos.btx_id == cPos.btx_id)
+        if (cPos) {
+          return {...pos, transparent: cPos.transparent}
+        }
+        return null
+      }).compact().value()
+    },
+    setPositionStyle(positions){
+      return _.map(positions, pos => {
+        // 設定により、カテゴリとグループのどちらの設定で表示するかが変わる。
+        let display
+        if (pos.tx) {
+          const styleSrc = pos.tx[DISP.DISPLAY_PRIORITY[0]] || pos.tx[DISP.DISPLAY_PRIORITY[1]]
+          display = styleSrc && styleSrc.display
+        }
+        display = display || this.defaultDisplay
+        display = this.getStyleDisplay1(display)        
+        if (pos.transparent) {
+          display.opacity = 0.6
+        }
+        return {
+          ...pos,
+          display,
+        }
+      })
+    },
+    splitArea(positions){
+      const tempArea = _.map(this.areas, (area) => ({areaId: area.areaId, label: area.areaName, positions: []}))
+
+      _.forEach(positions, (pos) => {
+        const posAreaId = Util.getValue(pos, 'exb.location.areaId', null)
+        _.forEach(tempArea, (area) => {
+          if (posAreaId == area.areaId) {
+            area.positions.push(pos)
+          }
+        })
+      })
+      return tempArea
+    },
     async fetchData(payload) {
       try {
         this.showProgress()
@@ -96,58 +139,17 @@ export default {
 
         // positionデータ取得
         let positions = await EXCloudHelper.fetchPosition(this.exbs, this.txs)
-
         // 移動平均数分のポジションデータを保持する
         this.pushOrgPositions(positions)
-
         // 在席表示と同じ、表示txを取得する。
-        let now = !DEV.USE_MOCK_EXC ? new Date().getTime()
-          : mock.positions_conf.start + this.count++ * mock.positions_conf.interval
-        const correctPositions = PositionHelper.correctPosId(this.orgPositions, now)
-        positions = _(positions).map((pos) => {
-          let cPos = _.find(correctPositions, (cPos) => pos.btx_id == cPos.btx_id)
-          if (cPos) {
-            return {...pos, transparent: cPos.transparent}
-          }
-          return null
-        })
-          .compact().value()
-        
+        positions = this.getShowTxPositions(positions)
         this.replaceAS({positions})
 
         // スタイルをセット
-        positions = _.map(positions, pos => {
-          // 設定により、カテゴリとグループのどちらの設定で表示するかが変わる。
-          let display
-          if (pos.tx) {
-            const styleSrc = pos.tx[DISP.DISPLAY_PRIORITY[0]] || pos.tx[DISP.DISPLAY_PRIORITY[1]]
-            display = styleSrc && styleSrc.display
-          }
-          display = display || this.defaultDisplay
-          display = this.getStyleDisplay1(display)        
-          if (pos.transparent) {
-            display.opacity = 0.6
-          }
-          return {
-            ...pos,
-            display,
-          }
-        })
+        positions = this.setPositionStyle(positions)
 
         // エリアごとに分類
-        const tempArea = _.map(this.areas, (area) => ({
-          areaId: area.areaId,
-          label: area.areaName,
-          positions: []}))
-
-        _.forEach(positions, (pos) => {
-          const posAreaId = Util.getValue(pos, 'exb.location.areaId', null)
-          _.forEach(tempArea, (area) => {
-            if (posAreaId == area.areaId) {
-              area.positions.push(pos)
-            }
-          })
-        })
+        const tempArea = this.splitArea(positions)
         this.replaceMain({eachAreas: tempArea})
         if (payload && payload.done) {
           payload.done()

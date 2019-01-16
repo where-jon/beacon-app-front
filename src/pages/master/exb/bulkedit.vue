@@ -72,6 +72,55 @@ export default {
       }
       return dummyKey
     },
+    setParamZone(entity, headerName, val, dummyKey){
+      if (!entity.location) {
+        entity.location = {locationId: dummyKey--}
+      }
+      entity.location.locationZoneList = [{
+        locationZonePK: {
+          locationId: dummyKey--,
+          zoneId: dummyKey--
+        },
+        zone: {
+          zoneId: dummyKey--,
+          zoneName: val,
+          areaId: dummyKey--,
+        }
+      }]
+      return dummyKey
+    },
+    setParamPosId(entity, headerName, val, dummyKey){
+      const posIdVal = Number(val)
+      if(isNaN(posIdVal)){
+        entity.location['posIdName'] = val
+      }
+      entity.location[headerName] = posIdVal
+      return dummyKey
+    },
+    setParamSensor(entity, headerName, val, dummyKey){
+      const sensor = this.sensorOptionsExb.find((option) => option.text == val)
+      if(sensor && sensor.value != null){
+        entity.exbSensorList = [{exbSensorPK: {sensorId: sensor.value}, sensorName: val}]
+      }
+      else if(!sensor){
+        entity.exbSensorList = [{exbSensorPK: {sensorId: dummyKey--}, sensorName: val}]
+      }
+      return dummyKey
+    },
+    setParamOther(entity, headerName, val, dummyKey, mainCol){
+      if (headerName == mainCol && !val) {
+        val = dummyKey--
+      }
+      if(headerName == 'enabled'){
+        const enabledVal = Util.str2booleanComplate(val)
+        if(typeof enabledVal != 'boolean'){
+          entity['enabledName'] = val
+        }
+        val = Util.str2boolean(val)
+      }
+      entity[headerName] = val
+      return dummyKey
+    },
     async save(bulkSaveFunc) {
       const MAIN_COL = APP.EXB_WITH_EXBID? 'exbId': APP.EXB_WITH_DEVICE_ID? 'deviceId': APP.EXB_WITH_DEVICE_NUM? 'deviceNum': 'deviceIdX'
       const LOCATION = ['locationId','areaName','locationName','visible','txViewType','posId','x','y', 'zoneName']
@@ -88,50 +137,20 @@ export default {
             entity.location = {locationId: dummyKey--}
           }
           if (Util.equalsAny(headerName, ZONE)) {
-            entity.location.locationZoneList = [{
-              locationZonePK: {
-                locationId: dummyKey--,
-                zoneId: dummyKey--
-              },
-              zone: {
-                zoneId: dummyKey--,
-                zoneName: val,
-                areaId: dummyKey--,
-              }
-            }]
+            dummyKey = this.setParamZone(entity, headerName, val, dummyKey)
           }
           else if(headerName == 'posId'){
-            const posIdVal = Number(val)
-            if(isNaN(posIdVal)){
-              entity.location['posIdName'] = val
-            }
-            entity.location[headerName] = posIdVal
+            dummyKey = this.setParamPosId(entity, headerName, val, dummyKey)
           }
           else{
             entity.location[headerName] = val
           }
         }
         else if (headerName == 'sensor') {
-          const sensor = this.sensorOptionsExb.find((option) => option.text == val)
-          if(sensor && sensor.value != null){
-            entity.exbSensorList = [{exbSensorPK: {sensorId: sensor.value}, sensorName: val}]
-          }
-          else if(!sensor){
-            entity.exbSensorList = [{exbSensorPK: {sensorId: dummyKey--}, sensorName: val}]
-          }
+          dummyKey = this.setParamSensor(entity, headerName, val, dummyKey)
         }
         else {
-          if (headerName == MAIN_COL && !val) {
-            val = dummyKey--
-          }
-          if(headerName == 'enabled'){
-            const enabledVal = Util.str2booleanComplate(val)
-            if(typeof enabledVal != 'boolean'){
-              entity['enabledName'] = val
-            }
-            val = Util.str2boolean(val)
-          }
-          entity[headerName] = val
+          dummyKey = this.setParamOther(entity, headerName, val, dummyKey, MAIN_COL)
         }
         return dummyKey
       },

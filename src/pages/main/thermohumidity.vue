@@ -101,6 +101,38 @@ export default {
         this.resetExb()
       })
     },
+    createIcon(stage, exb){
+      const discomfort = SensorHelper.getDiscomfort(exb.temperature, exb.humidity)
+      const bitmap = discomfort == DISCOMFORT.COLD? cold: discomfort == DISCOMFORT.COMFORT? comfort: hot
+      const icon = new Bitmap(bitmap)
+      icon.image.onload = () => {
+        icon.x = 0
+        icon.y = 0
+        icon.scaleX = 40 / icon.image.width
+        icon.scaleY = icon.scaleX 
+        icon.regX = icon.image.width / 2
+        icon.regY = icon.image.height / 2
+        stage.update()
+      }
+      return icon
+    },
+    createButtonIcon(exb){
+      const btnicon = new Shape()
+      const w = DISP.PIR_R_SIZE
+      const iconcolor = SensorHelper.getDiscomfortColor(exb.temperature, exb.humidity)
+      btnicon.graphics.beginFill(iconcolor).drawCircle(0, 0, w, w)
+      btnicon.alpha = 0.5
+      return btnicon
+    },
+    createButtonLabel(exb){
+      const label = new Text(exb.temperature + '℃\n' + exb.humidity + '%')
+      label.font = DISP.THERMOH_FONT
+      label.color = 'black'
+      label.textAlign = 'center'
+      label.textBaseline = 'middle'
+      label.y = -5
+      return label
+    },
     showExb(exb) {
       console.log({exb})
 
@@ -111,35 +143,11 @@ export default {
       const exbBtn = new Container()
 
       if (DISP.THERMOH_DISP == 'icon') {
-        const discomfort = SensorHelper.getDiscomfort(exb.temperature, exb.humidity)
-        const bitmap = discomfort == DISCOMFORT.COLD? cold: discomfort == DISCOMFORT.COMFORT? comfort: hot
-        const icon = new Bitmap(bitmap)
-        icon.image.onload = () => {
-          icon.x = 0
-          icon.y = 0
-          icon.scaleX = 40 / icon.image.width
-          icon.scaleY = icon.scaleX 
-          icon.regX = icon.image.width / 2
-          icon.regY = icon.image.height / 2
-          stage.update()
-        }
-        exbBtn.addChild(icon)
+        exbBtn.addChild(this.createIcon(stage, exb))
       }
       else {
-        const btnicon = new Shape()
-        const w = DISP.PIR_R_SIZE
-        const iconcolor = SensorHelper.getDiscomfortColor(exb.temperature, exb.humidity)
-        btnicon.graphics.beginFill(iconcolor).drawCircle(0, 0, w, w)
-        btnicon.alpha = 0.5
-        exbBtn.addChild(btnicon)
-
-        const label = new Text(exb.temperature + '℃\n' + exb.humidity + '%')
-        label.font = DISP.THERMOH_FONT
-        label.color = 'black'
-        label.textAlign = 'center'
-        label.textBaseline = 'middle'
-        label.y = -5
-        exbBtn.addChild(label)
+        exbBtn.addChild(this.createButtonIcon(exb))
+        exbBtn.addChild(this.createButtonLabel(exb))
       }
 
       exbBtn.deviceId = exb.deviceId

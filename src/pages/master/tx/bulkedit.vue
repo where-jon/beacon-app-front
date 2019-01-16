@@ -53,6 +53,74 @@ export default {
     afterCrud(){
       StateHelper.setForceFetch('pot', true)
     },
+    setParamCategory(entity, headerName, val, dummyKey){
+      if (!entity.pot) {
+        entity.pot = {}
+      }
+      if(headerName == 'categoryName'){
+        const category = this.categories.find((category) => category.categoryName == val)
+        if(category){
+          entity.pot.potType = category.categoryType
+          entity.pot.potCategoryList = [{potCategoryPK: {potId: dummyKey--, categoryId: category.categoryId}}]
+        }
+        else{
+          entity.pot.categoryName = val
+        }
+      }
+      else{
+        entity.pot.potCategoryList = [{potCategoryPK: {potId: dummyKey--, categoryId: val}}]
+      }
+      return dummyKey
+    },
+    setParamGroup(entity, headerName, val, dummyKey){
+      if (!entity.pot) {
+        entity.pot = {}
+      }
+      if(headerName == 'groupName'){
+        const group = this.groups.find((group) => group.groupName == val)
+        if(group){
+          entity.pot.potGroupList = [{potGroupPK: {potId: dummyKey--, groupId: group.groupId}}]
+        }
+        else{
+          entity.pot.groupName = val
+        }
+      }
+      else{
+        entity.pot.potGroupList = [{potGroupPK: {potId: dummyKey--, groupId: val}}]
+      }
+      return dummyKey
+    },
+    setParamTxSensor(entity, headerName, val, dummyKey){
+      if(headerName == 'sensor'){
+        const sensor = this.sensorOptionsTx.find((sensor) => sensor.text == val)
+        if(sensor && sensor.value != null){
+          entity.txSensorList = [{txSensorPK: {sensorId: sensor.value}, sensorName: val}]
+        }
+        else if(!sensor){
+          entity.txSensorList = [{txSensorPK: {sensorId: dummyKey--}, sensorName: val}]
+        }
+      }
+      else{
+        entity.txSensorList = [{txSensorPK: {txId: dummyKey--, sensorId: val}}]
+      }
+      return dummyKey
+    },
+    setParamOther(entity, headerName, val, dummyKey, mainCol, numberTypeList){
+      if(Util.equalsAny(headerName, numberTypeList)){
+        const num = Number(val)
+        if(isNaN(num)){
+          entity[`${headerName}Name`] = val
+        }
+        val = num
+      }
+      if (headerName == mainCol){
+        if(!val) {
+          val = dummyKey--
+        }
+      }
+      entity[headerName] = val
+      return dummyKey
+    },
     resetId(entity, dummyKey){
       const targetEntity = Util.getEntityFromIds(this.txs, entity, ['txId', 'btxId', 'minor'])
       entity.txId = targetEntity? targetEntity.txId: dummyKey--
@@ -99,68 +167,16 @@ export default {
           }
         }
         else if (Util.equalsAny(headerName, POT_CATEGORY) && Util.hasValue(val)) {
-          if (!entity.pot) {
-            entity.pot = {}
-          }
-          if(headerName == 'categoryName'){
-            const category = this.categories.find((category) => category.categoryName == val)
-            if(category){
-              entity.pot.potType = category.categoryType
-              entity.pot.potCategoryList = [{potCategoryPK: {potId: dummyKey--, categoryId: category.categoryId}}]
-            }
-            else{
-              entity.pot.categoryName = val
-            }
-          }
-          else{
-            entity.pot.potCategoryList = [{potCategoryPK: {potId: dummyKey--, categoryId: val}}]
-          }
+          dummyKey = this.setParamCategory(entity, headerName, val, dummyKey)
         }
         else if (Util.equalsAny(headerName, POT_GROUP) && Util.hasValue(val)) {
-          if (!entity.pot) {
-            entity.pot = {}
-          }
-          if(headerName == 'groupName'){
-            const group = this.groups.find((group) => group.groupName == val)
-            if(group){
-              entity.pot.potGroupList = [{potGroupPK: {potId: dummyKey--, groupId: group.groupId}}]
-            }
-            else{
-              entity.pot.groupName = val
-            }
-          }
-          else{
-            entity.pot.potGroupList = [{potGroupPK: {potId: dummyKey--, groupId: val}}]
-          }
+          dummyKey = this.setParamGroup(entity, headerName, val, dummyKey)
         }
         else if (Util.equalsAny(headerName, TX_SENSOR) && val) {
-          if(headerName == 'sensor'){
-            const sensor = this.sensorOptionsTx.find((sensor) => sensor.text == val)
-            if(sensor && sensor.value != null){
-              entity.txSensorList = [{txSensorPK: {sensorId: sensor.value}, sensorName: val}]
-            }
-            else if(!sensor){
-              entity.txSensorList = [{txSensorPK: {sensorId: dummyKey--}, sensorName: val}]
-            }
-          }
-          else{
-            entity.txSensorList = [{txSensorPK: {txId: dummyKey--, sensorId: val}}]
-          }
+          dummyKey = this.setParamTxSensor(entity, headerName, val, dummyKey)
         }
         else {
-          if(Util.equalsAny(headerName, NUMBER_TYPE_LIST)){
-            const num = Number(val)
-            if(isNaN(num)){
-              entity[`${headerName}Name`] = val
-            }
-            val = num
-          }
-          if (headerName == MAIN_COL){
-            if(!val) {
-              val = dummyKey--
-            }
-          }
-          entity[headerName] = val
+          dummyKey = this.setParamOther(entity, headerName, val, dummyKey, MAIN_COL, NUMBER_TYPE_LIST)
         }
         return dummyKey
       },

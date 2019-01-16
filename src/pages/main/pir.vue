@@ -129,6 +129,33 @@ export default {
         }
       })
     },
+    createExhibitionButton(exb){
+      const exbBtn = new Container()
+      let label = new Text(exb.count + '名','bold 32px Arial','#FF3222')
+      label.textAlign = 'center'
+      label.textBaseline = 'middle'
+      exbBtn.addChild(label)
+      exbBtn.x = exb.x
+      exbBtn.y = exb.y
+      exbBtn.cursor = ''
+      return exbBtn
+    },
+    createButton(exb){
+      const btnBg = new Shape()
+      const w = DISP.PIR_R_SIZE
+      const bgColor = (exb.count > 0)? DISP.PIR_BGCOLOR: DISP.PIR_EMPTY_BGCOLOR
+      btnBg.graphics.beginFill(bgColor).drawCircle(0, 0, w, w)
+      // btnBg.alpha = 0.9;
+      return btnBg
+    },
+    createEmptyLabel(exb){
+      const label = new Text(this.$i18n.tnl('label.' + (exb.count > 0? DISP.PIR_INUSE_LABEL: DISP.PIR_EMPTY_LABEL)))
+      label.font = exb.count > 0? DISP.PIR_INUSE_FONT: DISP.PIR_EMPTY_FONT
+      label.color = DISP.PIR_FGCOLOR
+      label.textAlign = 'center'
+      label.textBaseline = 'middle'
+      return label
+    },
     showExb(exb) {
       console.log({exb})
 
@@ -137,7 +164,6 @@ export default {
         this.exbCon = new Container()
         stage.addChild(this.exbCon)
       }
-      const exbBtn = new Container()
       if (exb.sensorId == SENSOR.THERMOPILE) {
         // not use?
         // if (exb.count > 10) {
@@ -151,34 +177,16 @@ export default {
         // }
 
         // only for Exhibition（delete immediately）
-        let label = new Text(exb.count + '名','bold 32px Arial','#FF3222')
-        label.textAlign = 'center'
-        label.textBaseline = 'middle'
-        exbBtn.addChild(label)
-        exbBtn.x = exb.x
-        exbBtn.y = exb.y
-        exbBtn.cursor = ''
-        this.exbCon.addChild(exbBtn)
+        this.exbCon.addChild(this.createExhibitionButton(exb))
         stage.update()
         return 
       }
 
-      const w = DISP.PIR_R_SIZE
-      const btnBg = new Shape()
-      const bgColor = (exb.count > 0)? DISP.PIR_BGCOLOR: DISP.PIR_EMPTY_BGCOLOR
-      btnBg.graphics.beginFill(bgColor).drawCircle(0, 0, w, w)
-      // btnBg.alpha = 0.9;
-      exbBtn.addChild(btnBg)
-
+      const exbBtn = new Container()
+      exbBtn.addChild(this.createButton(exb))
       if (DISP.PIR_INUSE_LABEL || DISP.PIR_EMPTY_LABEL) {
-        const label = new Text(this.$i18n.tnl('label.' + (exb.count > 0? DISP.PIR_INUSE_LABEL: DISP.PIR_EMPTY_LABEL)))
-        label.font = exb.count > 0? DISP.PIR_INUSE_FONT: DISP.PIR_EMPTY_FONT
-        label.color = DISP.PIR_FGCOLOR
-        label.textAlign = 'center'
-        label.textBaseline = 'middle'
-        exbBtn.addChild(label)
+        exbBtn.addChild(this.createEmptyLabel(exb))
       }
-
       exbBtn.deviceId = exb.deviceId
       exbBtn.exbId = exb.exbId
       exbBtn.x = exb.x

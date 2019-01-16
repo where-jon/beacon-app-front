@@ -64,7 +64,7 @@ export default {
     register(again) {
       this.again = again
     },
-    backToList(path) {
+    backToList(event, path) {
       this.$router.push(path? path: this.backPath)
     },
     sensorOptions(entity) {
@@ -87,6 +87,43 @@ export default {
     async save() {
       return await AppServiceHelper.save(this.appServicePath, this.form, this.updateOnlyNN)
     },
+    async loadImageArea(){
+      if (this.form.areaId) {
+        await StateHelper.loadAreaImage(this.form.areaId, true)
+      }
+      else {
+        await StateHelper.loadAreaImages()
+      }
+    },
+    editAgain(){
+      this.form = {}
+      ViewHelper.applyDef(this.form, this.defValue)
+      if(this.beforeReload) {
+        this.beforeReload()
+      }
+      let customFileLabel = document.getElementsByClassName('custom-file-label')
+      if (customFileLabel && customFileLabel[0]) {
+        customFileLabel[0].innerText =''
+      }
+      window.scrollTo(0, 0)
+    },
+    getSubmitErrorMessage(e){
+      if (e.key) {
+        return this.$i18n.tnl('message.' + e.type, {key: this.$i18n.tnl('label.' + this.modifyColName(Util.snake2camel(e.key))), val: this.modifyVal(Util.snake2camel(e.key), e.val)})
+      }
+      if(e.col){
+        return this.$i18n.tnl('message.' + e.type, {col: this.$i18n.tnl(`label.${e.col}`), value: e.val})
+      }
+      if(e.bulkError) {
+        return _.map(e.bulkError, (err) => {
+          let col = this.modifyColName(err.col.trim())
+          return this.$i18n.tline('message.bulk' + err.type + 'Failed', 
+            {line: err.line, col: this.$i18n.tnl(`label.${col}`), value: Util.sanitize(err.value), min: err.min, max: err.max, candidates: err.candidates},
+            this.showLine)
+        })
+      }
+      return this.message = this.$i18n.terror('message.' + this.crud + 'Failed', {target: this.$i18n.tnl('label.' + this.name), code: e.message})
+    },
     async onSubmit(evt) {
       this.showProgress()
       this.message = ''
@@ -102,26 +139,12 @@ export default {
         }
         await StateHelper.load(this.name, true)
         if (this.name == 'area') {
-          if (this.form.areaId) {
-            await StateHelper.loadAreaImage(this.form.areaId, true)
-          }
-          else {
-            await StateHelper.loadAreaImages()
-          }
+          await this.loadImageArea()
         }
         this.message = this.$i18n.tnl('message.' + this.crud + 'Completed', {target: this.$i18n.tnl('label.' + this.name)})
         this.replace({showInfo: true})
         if (this.again) {
-          this.form = {}
-          ViewHelper.applyDef(this.form, this.defValue)
-          if(this.beforeReload) {
-            this.beforeReload()
-          }
-          let customFileLabel = document.getElementsByClassName('custom-file-label')
-          if (customFileLabel && customFileLabel[0]) {
-            customFileLabel[0].innerText =''
-          }
-          window.scrollTo(0, 0)
+          this.editAgain()
         }
         else {
           if(this.createMessage){
@@ -132,23 +155,7 @@ export default {
       }
       catch(e) {
         console.error(e)
-        if (e.key) {
-          this.message = this.$i18n.tnl('message.' + e.type, {key: this.$i18n.tnl('label.' + this.modifyColName(Util.snake2camel(e.key))), val: this.modifyVal(Util.snake2camel(e.key), e.val)})
-        }
-        else if(e.col){
-          this.message = this.$i18n.tnl('message.' + e.type, {col: this.$i18n.tnl(`label.${e.col}`), value: e.val})
-        }
-        else if (e.bulkError) {
-          this.message = _.map(e.bulkError, (err) => {
-            let col = this.modifyColName(err.col.trim())
-            return this.$i18n.tline('message.bulk' + err.type + 'Failed', 
-              {line: err.line, col: this.$i18n.tnl(`label.${col}`), value: Util.sanitize(err.value), min: err.min, max: err.max, candidates: err.candidates},
-              this.showLine)
-          })
-        }
-        else {
-          this.message = this.$i18n.terror('message.' + this.crud + 'Failed', {target: this.$i18n.tnl('label.' + this.name), code: e.message})
-        }
+        this.message = this.getSubmitErrorMessage(e)
         this.replace({showAlert: true})
         window.scrollTo(0, 0)
       }
@@ -206,32 +213,86 @@ export default {
       errorMessage = errorMessage.concat(this.$i18n.tnl('message.csvLineEnd'))
       return errorMessage
     },
-    async bulkSave(mainCol, intTypeList, boolTypeList, callback, idSetCallback) {
-      if (!this.form.csvFile) {
-        throw new Error(this.$t('message.emptyFile'))
+    createCsvErrorMessage(csvErrors){
+      if (csvErrors && typeof csvErrors[0] == 'string' && csvErrors[0].startsWith('message.')) {
+        return this.$t(csvErrors[0])
       }
+      if (csvErrors && typeof csvErrors[0] == 'object' ) {
+        const errorLine = csvErrors.filter((val) => val.row)
+          .map((val) => val.row)
+          .filter((val, idx, arr) => arr.indexOf(val) === idx)
+          .sort((a, b) => a < b? -1: a > b? 1: 0)
+        return `${this.$i18n.tnl('message.csvInvalidLine')}${this.formatErrorLine(errorLine)}`
+      }
+      return null
+    },
+    csvHeaderCheck(mainCol, header){
+      if(Util.isArray(mainCol)){
+        let hasHeader = true
+        mainCol.forEach((val) => hasHeader = header.includes(val)? hasHeader: false)
+        if (!hasHeader) {
+          throw Error(this.$i18n.tnl('message.csvHeaderRequired'))
+        }
+      }
+      else if (!header.includes(mainCol)) {
+        throw Error(this.$i18n.tnl('message.csvHeaderRequired'))
+      }
+    },
+    convertCsvParamType(headerName, val, intTypeList, boolTypeList){
+      if (Util.equalsAny(headerName, boolTypeList)) { // Boolean type
+        return Util.str2boolean(val)
+      }
+      else if (Util.equalsAny(headerName, intTypeList)) { // Number type
+        return Number(val)
+      }
+      return val
+    },
+    createSameEntity(entities, entity, mainCol){
+      return Util.isArray(mainCol)?
+        entities.find((val) => {
+          for(let idx = 0; idx < mainCol.length; idx++){
+            const col = mainCol[idx]
+            if(val[col] != entity[col]){
+              return false
+            }
+          }
+          return true
+        }):
+        entities.find((val) => val[mainCol] == entity[mainCol])
+    },
+    sameDataCheck(sameLine, lineIdx, entities, entity, mainCol){
+      if(this.createSameEntity(entities, entity, mainCol)){
+        sameLine.push(lineIdx)
+      }
+    },
+    setCsvParam(entity, line, header, mainCol, intTypeList, boolTypeList, dummyKey, callback){
+      line.forEach((val, idx) => {
+        const headerName = header[idx]
+        if (!headerName) {
+          return
+        }
+        val = this.convertCsvParamType(headerName, val, intTypeList, boolTypeList)
 
-      const reader = new FileReader()
-      let readFin = false
-      let error = null
-      let entities = []
-      const sameLine = []
+        if (callback) {
+          dummyKey = callback(entity, headerName, val, dummyKey)
+        }
+        else {
+          if (headerName == mainCol && !val) {
+            val = dummyKey--
+          }
+          entity[headerName] = val
+        }
+      })
+      return dummyKey
+    },
+    setReaderOnload(reader, readerParam, mainCol, intTypeList, boolTypeList, callback, idSetCallback){
       reader.onload = () => {
         try {
-          let csv = Util.csv2Obj(Util.arrayBuffer2str(reader.result))
+          const csv = Util.csv2Obj(Util.arrayBuffer2str(reader.result))
           if (!csv || !csv.data || csv.errors && csv.errors.length > 0) {
             console.error(csv.errors)
-            if (csv.errors && typeof csv.errors[0] == 'string' && csv.errors[0].startsWith('message.')) {
-              error = this.$t(csv.errors[0])
-            }
-            if (csv.errors && typeof csv.errors[0] == 'object' ) {
-              const errorLine = csv.errors.filter((val) => val.row)
-                .map((val) => val.row)
-                .filter((val, idx, arr) => arr.indexOf(val) === idx)
-                .sort((a, b) => a < b? -1: a > b? 1: 0)
-              error = `${this.$i18n.tnl('message.csvInvalidLine')}${this.formatErrorLine(errorLine)}`
-            }
-            readFin = true
+            readerParam.error = this.createCsvErrorMessage(csv.errors)
+            readerParam.readFin = true
             return
           }
           console.debug(csv)
@@ -240,85 +301,49 @@ export default {
           csv.data.forEach((line, lineIdx) => {
             if (lineIdx == 0) {
               header = line
-              if(Util.isArray(mainCol)){
-                let hasHeader = true
-                mainCol.forEach((val) => hasHeader = header.includes(val)? hasHeader: false)
-                if (!hasHeader) {
-                  throw Error(this.$i18n.tnl('message.csvHeaderRequired'))
-                }
-              }
-              else if (!header.includes(mainCol)) {
-                throw Error(this.$i18n.tnl('message.csvHeaderRequired'))
-              }
+              this.csvHeaderCheck(mainCol, header)
             }
             else {
-              let entity = {}
-              line.forEach((val, idx) => {
-                let headerName = header[idx]
-                if (!headerName) {
-                  return
-                }
-                if (Util.equalsAny(headerName, boolTypeList)) { // Boolean type
-                  val = Util.str2boolean(val)
-                }
-                else if (Util.equalsAny(headerName, intTypeList)) { // Number type
-                  val = Number(val)
-                }
-
-                if (callback) {
-                  dummyKey = callback(entity, headerName, val, dummyKey)
-                }
-                else {
-                  if (headerName == mainCol && !val) {
-                    val = dummyKey--
-                  }
-                  entity[headerName] = val
-                }
-              })
+              const entity = {}
+              dummyKey = this.setCsvParam(entity, line, header, mainCol, intTypeList, boolTypeList, dummyKey, callback)
               if(idSetCallback){
                 dummyKey = idSetCallback(entity, dummyKey)
               }
-              const sameEntity = Util.isArray(mainCol)?
-                entities.find((val) => {
-                  for(let idx = 0; idx < mainCol.length; idx++){
-                    const col = mainCol[idx]
-                    if(val[col] != entity[col]){
-                      return false
-                    }
-                  }
-                  return true
-                }):
-                entities.find((val) => val[mainCol] == entity[mainCol])
-              if(sameEntity){
-                sameLine.push(lineIdx)
-              }
-              entities.push(entity)
+              this.sameDataCheck(readerParam.sameLine, lineIdx, readerParam.entities, entity, mainCol)
+              readerParam.entities.push(entity)
             }
           })
-          console.debug({entities})
+          console.debug(readerParam.entities)
         } catch (e) {
           console.error(e)
-          error = e.message
+          readerParam.error = e.message
         }
-
-        readFin = true
+        readerParam.readFin = true
       }
-      
+    },
+    async bulkSave(mainCol, intTypeList, boolTypeList, callback, idSetCallback) {
+      if (!this.form.csvFile) {
+        throw new Error(this.$t('message.emptyFile'))
+      }
+
+      const reader = new FileReader()
+      const readerParam = {readFin: false, error: null, entities: [], sameLine: []}
+      this.setReaderOnload(reader, readerParam, mainCol, intTypeList, boolTypeList, callback, idSetCallback)
       reader.readAsArrayBuffer(this.form.csvFile)
 
-      if (!readFin) {
+      if (!readerParam.readFin) {
         await Util.sleep(100)
       }
       
-      if (error || !entities || entities.length == 0) {
-        throw new Error(error? error: this.$i18n.tnl('message.csvNotFound'))
+      if (readerParam.error || !readerParam.entities || readerParam.entities.length == 0) {
+        throw new Error(readerParam.error? readerParam.error: this.$i18n.tnl('message.csvNotFound'))
       }
-      if(Util.hasValue(sameLine)){
-        throw new Error(`${this.$i18n.tnl('message.csvSameKey')}${this.formatErrorLine(sameLine)}`)
+      if(Util.hasValue(readerParam.sameLine)){
+        throw new Error(`${this.$i18n.tnl('message.csvSameKey')}${this.formatErrorLine(readerParam.sameLine)}`)
       }
 
       this.replaceAS({showLine: true})
-      await AppServiceHelper.bulkSave(this.appServicePath, entities, UPDATE_ONLY_NN.NONE, IGNORE.ON)
+      await AppServiceHelper.bulkSave(this.appServicePath, readerParam.entities, UPDATE_ONLY_NN.NONE, IGNORE.ON)
       if(this.afterCrud) {
         this.afterCrud()
       }
