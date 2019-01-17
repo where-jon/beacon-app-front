@@ -389,6 +389,8 @@
     "now": "現在",
     "switch": "切替",
 
+    "userUnit": "名",
+
     "Main": "メイン",
     "PositionMap": "位置表示(地図)",
     "Pir": "人感センサ",
@@ -502,6 +504,7 @@
     "bulkRegisterFailed": "{target}の一括登録に失敗しました。",
     "duplicate": "{key}（{val}）はすでに使用されています。",
     "foreignKey": "{key}（{val}）は存在しません。",
+    "used": "{key}（{val}）は{num}{unit}の{target}が使用しています。",
     "noMapImage": "マップイメージが登録されていません。",
     "deleteConfirm": "{target}を削除してもよろしいですか？",
     "completeDeleteConfirm": "{target}を完全に削除します。よろしいですか？",
@@ -540,6 +543,7 @@
     "bulkExistFailed": "{col}（{value}）は存在していません。",
     "bulkInvalidFailed": "{col}（{value}）の形式が不正です。",
     "bulkAuthFailed": "{col}（{value}）は使用できません。",
+    "bulkUseFailed": "{col}（{value}）は{num}{unit}の{target}が使用しています。",
     "monthDayTemperature": "{month}月{day}日の温湿度",
     "invalidLoginId": "ログインIDは英数記号を指定してください。",
     "notFound": "検索結果が存在しませんでした。",

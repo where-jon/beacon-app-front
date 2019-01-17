@@ -496,7 +496,26 @@ export default {
         this.replace({showInfo: true})
         await this.$parent.$options.methods.fetchData.apply(this.$parent)        
       } catch (e) {
-        this.error = this.$i18n.terror('message.deleteFailed', {target: this.$i18n.tnl('label.' + this.params.name), code: e.response.status})
+        this.message = null
+        if(e && e.response && e.response.data && Util.isArray(e.response.data.errorList)){
+          const errorList = e.response.data.errorList
+          this.error = []
+          errorList.forEach((error) => {
+            if(error.type == 'Use'){
+              this.error.push(this.$i18n.tnl('message.used', {
+                key: this.$i18n.tnl(`label.${error.col}`),
+                val: error.value,
+                num: error.num,
+                unit: this.$i18n.tnl(`label.${error.unit}Unit`),
+                target: this.$i18n.tnl(`label.${error.target}`)
+              }))
+            }
+          })
+          this.replace({showAlert: true})
+        }
+        else{
+          this.error = this.$i18n.terror('message.deleteFailed', {target: this.$i18n.tnl('label.' + this.params.name), code: e.response.status})
+        }
       }
     },
     // 位置把握(一覧)から在席表示に遷移する
