@@ -276,10 +276,11 @@ export default {
     async fetchData(payload) {
     },
     async exportCsv() {
-      const aTxId = (this.form.tx != null && this.form.tx.value != null)?this.form.tx.value:0
+      const aTxId = this.txId
+      const aNotifyState = (this.form.notifyState != null)?this.form.notifyState:0
       HtmlUtil.executeFileDL(
         APP_SERVICE.BASE_URL
-          + `/core/positionHistory/csvdownload/${aTxId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/`
+          + `/core/rcvexcloud/csvdownload/${aNotifyState}/${aTxId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/`
           + getCharSet(this.$store.state.loginId)
       )
     },
