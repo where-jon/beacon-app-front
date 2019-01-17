@@ -40,10 +40,10 @@
         </b-form-group>
 
         <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
-        <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="register(false)">
+        <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="beforeSubmit(false)">
           {{ $i18n.tnl(`label.${isUpdate? 'update': 'register'}`) }}
         </b-button>
-        <b-button v-if="isRegistable && !isUpdate" v-t="'label.registerAgain'" :variant="theme" type="submit" class="my-1" @click="register(true)" />
+        <b-button v-if="isRegistable && !isUpdate" v-t="'label.registerAgain'" :variant="theme" type="submit" class="my-1" @click="beforeSubmit(true)" />
       </b-form>
     </div>
   </div>
@@ -166,11 +166,11 @@ export default {
       }
     },
     beforeSubmit(event, again){
-      this.showInfo = false
-      this.showAlert = false
+      this.replace({showAlert: false})
+      this.replace({showInfo: false})
       if(this.isErrorPasswordRequired()){
         this.message = this.$i18n.tnl('message.required', {target: this.$i18n.tnl('label.password')})
-        this.showAlert = true
+        this.replace({showAlert: true})
       }
       else if(this.isErrorPasswordLength()){
         this.message = this.$i18n.tnl('message.lengthRange', {
@@ -178,11 +178,11 @@ export default {
           min: this.passMinLength,
           max: this.passMaxLength,
         })
-        this.showAlert = true
+        this.replace({showAlert: true})
       }
       else if(this.isErrorPasswordValue()){
         this.message = this.$i18n.tnl(this.hasId? 'message.notMatchPassword': 'message.notMatchPasswordRegist')
-        this.showAlert = true
+        this.replace({showAlert: true})
       }
       if(this.showAlert){
         window.scrollTo(0, 0)
