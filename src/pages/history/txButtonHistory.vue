@@ -120,46 +120,46 @@ export default {
       viewList: [],
       fields: [],
       fields1: addLabelByKey(this.$i18n, [  // TXボタン押下通知
-        {key: "positionDt", sortable: true, label:"dt"},
-        {key: "notifyTo", sortable: true,label:"notifyTo" },
-        {key: "txName", sortable: true,label:"txName" },
-        {key: "major", sortable: true,label:"major" },
-        {key: "minor", sortable: true,label:"minor" },
-        {key: "txId", sortable: true,label:"txId" },
-        {key: "notifyResult", sortable: true,label:"notifyResult" },
+        {key: 'positionDt', sortable: true, label:'dt'},
+        {key: 'notifyTo', sortable: true,label:'notifyTo' },
+        {key: 'txName', sortable: true,label:'txName' },
+        {key: 'major', sortable: true,label:'major' },
+        {key: 'minor', sortable: true,label:'minor' },
+        {key: 'txId', sortable: true,label:'txId' },
+        {key: 'notifyResult', sortable: true,label:'notifyResult' },
       ]),
       fields2: addLabelByKey(this.$i18n, [  // GW状態アラート
-        {key: "positionDt", sortable: true, label:"dt"},
-        {key: "notifyTo", sortable: true,label:"notifyTo" },
-        {key: "finalReceiveTime", sortable: true,label:"finalReceiveTime" },
-        {key: "notifyResult", sortable: true,label:"notifyResult" },
+        {key: 'positionDt', sortable: true, label:'dt'},
+        {key: 'notifyTo', sortable: true,label:'notifyTo' },
+        {key: 'finalReceiveTime', sortable: true,label:'finalReceiveTime' },
+        {key: 'notifyResult', sortable: true,label:'notifyResult' },
       ]),
       fields3: addLabelByKey(this.$i18n, [  // EXB状態アラート
-        {key: "positionDt", sortable: true, label:"dt"},
-        {key: "notifyTo", sortable: true,label:"notifyTo" },
-        {key: "exbName", sortable: true,label:"exbName" },
-        {key: "finalReceiveTime", sortable: true,label:"finalReceiveTime" },
-        {key: "notifyResult", sortable: true,label:"notifyResult" },
+        {key: 'positionDt', sortable: true, label:'dt'},
+        {key: 'notifyTo', sortable: true,label:'notifyTo' },
+        {key: 'exbName', sortable: true,label:'exbName' },
+        {key: 'finalReceiveTime', sortable: true,label:'finalReceiveTime' },
+        {key: 'notifyResult', sortable: true,label:'notifyResult' },
       ]),
       fields4: addLabelByKey(this.$i18n, [  // TX電池状態アラート
-        {key: "positionDt", sortable: true, label:"dt"},
-        {key: "notifyTo", sortable: true,label:"notifyTo" },
-        {key: "txName", sortable: true,label:"txName" },
-        {key: "major", sortable: true,label:"major" },
-        {key: "minor", sortable: true,label:"minor" },
-        {key: "txId", sortable: true,label:"txId" },
-        {key: "powerLevel", sortable: true,label:"powerLevel" },
-        {key: "finalReceiveTime", sortable: true,label:"finalReceiveTime" },
-        {key: "notifyResult", sortable: true,label:"notifyResult" },
+        {key: 'positionDt', sortable: true, label:'dt'},
+        {key: 'notifyTo', sortable: true,label:'notifyTo' },
+        {key: 'txName', sortable: true,label:'txName' },
+        {key: 'major', sortable: true,label:'major' },
+        {key: 'minor', sortable: true,label:'minor' },
+        {key: 'txId', sortable: true,label:'txId' },
+        {key: 'powerLevel', sortable: true,label:'powerLevel' },
+        {key: 'finalReceiveTime', sortable: true,label:'finalReceiveTime' },
+        {key: 'notifyResult', sortable: true,label:'notifyResult' },
       ]),
       fields5: addLabelByKey(this.$i18n, [  // SOSボタン押下通知
-        {key: "positionDt", sortable: true, label:"dt"},
-        {key: "notifyTo", sortable: true,label:"notifyTo" },
-        {key: "txName", sortable: true,label:"txName" },
-        {key: "major", sortable: true,label:"major" },
-        {key: "minor", sortable: true,label:"minor" },
-        {key: "txId", sortable: true,label:"txId" },
-        {key: "notifyResult", sortable: true,label:"notifyResult" },
+        {key: 'positionDt', sortable: true, label:'dt'},
+        {key: 'notifyTo', sortable: true,label:'notifyTo' },
+        {key: 'txName', sortable: true,label:'txName' },
+        {key: 'major', sortable: true,label:'major' },
+        {key: 'minor', sortable: true,label:'minor' },
+        {key: 'txId', sortable: true,label:'txId' },
+        {key: 'notifyResult', sortable: true,label:'notifyResult' },
       ]),
       currentPage: 1,
       perPage: 20,
@@ -244,20 +244,20 @@ export default {
         }else if (aNotifyState == 'TX_SOS_ALERT') {
           this.fields = this.fields5
         }
-        const aTx = this.txId
+        const aTxId = this.txId ? this.txId:-1
         var fetchList = await HttpHelper.getAppService(
-          `/core/rcvexcloud/history/${aNotifyState}/${aTx}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}`
+          `/core/rcvexcloud/history/${aNotifyState}/${aTxId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}`
         )
         if (fetchList == null || !fetchList.length) {
-          this.message = this.$i18n.tnl('message.notFoundData', {target: this.$i18n.tnl('label.sensorHistory')})
+          this.message = this.$i18n.tnl('message.notFoundData', {target: this.$i18n.tnl('label.txButtonHistory')})
           this.replace({showAlert: true})
           return
         }
         var count = 0
         for (var senHist of fetchList) {
-          const d = new Date(senHist.notifyDatetime)
-          senHist.positionDt = moment(d.getTime()).format('YYYY/MM/DD HH:mm:ss')
           if (senHist.txId != null && this.txId == senHist.txId ) {
+            const d = new Date(senHist.notifyDatetime)
+            senHist.positionDt = moment(d.getTime()).format('YYYY/MM/DD HH:mm:ss')
             count++
             if (count < this.limitViewRows) {
               this.viewList.push(senHist)
@@ -276,7 +276,7 @@ export default {
     async fetchData(payload) {
     },
     async exportCsv() {
-      const aTxId = this.txId
+      const aTxId = this.txId ? this.txId : -1
       const aNotifyState = (this.form.notifyState != null)?this.form.notifyState:0
       HtmlUtil.executeFileDL(
         APP_SERVICE.BASE_URL
