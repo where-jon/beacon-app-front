@@ -99,7 +99,7 @@ export default {
   mixins: [showmapmixin ],
   data () {
     return {
-      name: 'positionHistory',
+      name: 'txButtonHistory',
       txId: null,
       items: [
         {
@@ -166,7 +166,6 @@ export default {
       limitViewRows: 100,
       totalRows: 0,
       sortBy: null,
-      //
       message: '',
       footerMessage: '',
     }
@@ -177,7 +176,7 @@ export default {
       return 'outline-' + theme
     },
     ...mapState('app_service', [
-      'txs', 'exbs'
+      'txs'
     ]),
 
     notifyStateOptions() {
@@ -202,7 +201,6 @@ export default {
         locale.use(mojule.default)
       })
       StateHelper.load('tx')
-      StateHelper.load('exb')
       this.changeTx(this.form.txId)
       this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.viewList.length, maxRows: this.limitViewRows})}`
   },
@@ -210,8 +208,6 @@ export default {
     async changeTx(newVal){
       const tx = this.txs.find((tx) => newVal == tx.txId)
       this.txId = tx? tx.txId: null
-      this.btxId = tx? tx.btxId: null
-      this.minor = tx? tx.minor: null
     },
     async display() {
       this.container ? this.container.removeAllChildren() : null
