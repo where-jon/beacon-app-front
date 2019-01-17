@@ -235,8 +235,10 @@ export default {
         }
         const aTxId = this.txId
         var fetchList = await HttpHelper.getAppService(
-          `/core/rcvexcloud/history/${aNotifyState}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}?txId=${aTxId}`
+          aTxId? `/core/rcvexcloud/history/${aNotifyState}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}?txId=${aTxId}`
+            :`/core/rcvexcloud/history/${aNotifyState}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}`
         )
+
         if (fetchList == null || !fetchList.length) {
           this.message = this.$i18n.tnl('message.notFoundData', {target: this.$i18n.tnl('label.txButtonHistory')})
           this.replace({showAlert: true})
@@ -244,7 +246,7 @@ export default {
         }
         var count = 0
         for (var senHist of fetchList) {
-          if (senHist.txId != null && this.txId == senHist.txId ) {
+          if (senHist.txId != null && this.txId == senHist.txId || this.txId == null) {
             const d = new Date(senHist.notifyDatetime)
             senHist.positionDt = moment(d.getTime()).format('YYYY/MM/DD HH:mm:ss')
             count++
@@ -253,8 +255,8 @@ export default {
             }
           }
         }
-        this.fetchRows = this.viewList.length
-        this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.fetchRows, maxRows: this.limitViewRows})}`
+        this.totalRows = this.viewList.length
+        this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.viewList.length, maxRows: this.limitViewRows})}`
       }catch (e) {
         console.error(e)
       }
@@ -268,9 +270,11 @@ export default {
       const aTxId = this.txId
       const aNotifyState = (this.form.notifyState != null)?this.form.notifyState:0
       HtmlUtil.executeFileDL(
-        APP_SERVICE.BASE_URL
+        aTxId? APP_SERVICE.BASE_URL
           + `/core/rcvexcloud/csvdownload/${aNotifyState}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/`
-          + getCharSet(this.$store.state.loginId) + `?txId=${aTxId}`
+          + getCharSet(this.$store.state.loginId) + `?txId=${aTxId}`: APP_SERVICE.BASE_URL
+            + `/core/rcvexcloud/csvdownload/${aNotifyState}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/`
+            + getCharSet(this.$store.state.loginId)
       )
     },
   }
