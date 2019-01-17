@@ -382,6 +382,11 @@ export const MENU = [
         path: 'zoneBlock',
         icon: 'fas fa-th',
       },
+      {
+        key: 'mailTemplate',
+        path: 'mailTemplate',
+        icon: 'fas fa-envelope',
+      },
     ]
   },
   {
@@ -459,7 +464,7 @@ export const MENU = [
       key: 'txButtonHistory',
       path: 'txButtonHistory',
       feature: '/history/txButtonHistory',
-      icon: 'fa fa-battery-three-quarters',
+      icon: 'fa fa-history',
     },
     ]
   },

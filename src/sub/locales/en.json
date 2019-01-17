@@ -131,6 +131,17 @@
     "positionHistory": "Position history",
     "positionHistoryId": "Tx Position ID",
 
+    "txButtonHistory": "Notification history information",
+    "notifyTo": "contact address",
+    "finalReceiveTime": "Last reception date and time",
+    "notifyResult": "Notification result",
+
+    "txBtnNotify": "TX button press notification",
+    "gwNotify": "GW status alert",
+    "exbNotify": "EXB status alert",
+    "txBatteryNotify": "TX battery status alert",
+    "sosNotify": "SOS button press notification",
+
     "exbeacon": "EXBeacon",
     "settingExbeacon": "EXBeacon Setting",
     "pir": "Human detection",
@@ -278,6 +289,8 @@
     "locationZoneName": "Name of the place",
     "coordinate": "Coordinates specified",
     "nonCoordinate": "Coordinates unspecified",
+
+    "mailTemplate": "Mail text template",
 
     "ledOperation": "LED operation",
     "blink": "Blink",

@@ -297,6 +297,8 @@
     "coordinate": "座標指定あり",
     "nonCoordinate": "座標指定なし",
 
+    "mailTemplate": "メール文面テンプレート",
+
     "ledOperation": "LED操作",
     "blink": "点滅",
     "blue": "青",
