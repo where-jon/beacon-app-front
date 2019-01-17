@@ -5,6 +5,11 @@
       <alert :message="message" />
 
       <b-form v-if="show" @submit.prevent="onSubmit">
+        <b-form-group v-if="form.notifyTemplateId">
+          <label v-t="'label.templateId'" />
+          <b-form-input v-model="form.notifyTemplateId" type="text" readonly="readonly" />
+        </b-form-group>
+
         <!--種別-->
         <b-form-group>
           <b-form-row>
@@ -12,7 +17,7 @@
           </b-form-row>
           <b-form-row>
             <b-col sm="5">
-              <b-form-select v-model="form.notifyState" :options="notifyStateOptions" class="mr-2" @change="signalChange"/>
+              <b-form-select v-model="form.notifyTemplateKey" :options="notifyStateOptions" class="mr-2" @change="signalChange"/>
             </b-col>
           </b-form-row>
         </b-form-group>
@@ -20,31 +25,31 @@
         <!--通知媒体-->
         <b-form-group v-show="notify.length > 1">
           <label v-t="'label.notifyMedium'" />
-          <b-form-radio-group v-model="form.potType" :options="notify" :disabled="!isEditable" />
+          <b-form-radio-group v-model="selected" :options="notify" :disabled="!isEditable" @change="radioChange" />
         </b-form-group>
 
         <!--通知先-->
-        <b-form-group>
+        <b-form-group v-if="bNotifyTo">
           <label v-t="'label.notifyTo'" />
-          <b-form-textarea v-model="form.description" :rows="3" :max-rows="6" :readonly="!isEditable" maxlength="1000" />
+          <b-form-textarea v-model="form.notifyTo" :rows="3" :max-rows="6" :readonly="!isEditable" maxlength="1000" />
         </b-form-group>
 
         <!--件名-->
-        <b-form-group>
+        <b-form-group v-if="bSubject">
           <label v-t="'label.subject'" />
-          <input v-model="form.potName" :readonly="!isEditable" type="text" maxlength="20" class="form-control" required>
+          <input v-model="form.subject" :readonly="!isEditable" type="text" maxlength="20" class="form-control" required>
         </b-form-group>
 
         <!--From-->
         <b-form-group>
           <label v-t="'label.mailFrom'" />
-          <input v-model="form.potName" :readonly="!isEditable" type="text" maxlength="20" class="form-control" required>
+          <input v-model="form.mailFrom" :readonly="!isEditable" type="text" maxlength="20" class="form-control" required>
         </b-form-group>
 
         <!--テンプレート-->
         <b-form-group>
           <label v-t="'label.template'" />
-          <b-form-textarea v-model="form.description" :rows="3" :max-rows="6" :readonly="!isEditable" maxlength="1000" />
+          <b-form-textarea v-model="form.template" :rows="3" :max-rows="6" :readonly="!isEditable" maxlength="1000" />
         </b-form-group>
 
         <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
@@ -79,17 +84,21 @@ export default {
   mixins: [editmixinVue, showmapmixin],
   data() {
     return {
-      name: 'zone',
-      id: 'zoneId',
+      name: 'template',
+      id: 'notifyTemplateId',
       notify: _.slice(NOTIFY_MIDIUM.getTypes(), 0, 2).filter((val) => APP.NOTIFY_MIDIUM_TYPES.includes(val.value)),
       backPath: '/master/mailTemplate',
-      appServicePath: '/core/zone',
-      form: ViewHelper.extract(this.$store.state.app_service.zone, ['zoneId', 'zoneName', 'areaId', 'locationZoneList.0.locationZonePK.locationId', 'zoneCategoryList.0.zoneCategoryPK.categoryId']),
+      appServicePath: '/core/rcvexcloud/template/save',
+      selected: 0,
+      form: ViewHelper.extract(this.$store.state.app_service.template,
+        ['notifyTemplateId', 'notifyTemplateKey' , 'notifyMedium', 'notifyTo', 'subject', 'mailFrom', 'template' ]),
       areaNames: [],
       categoryNames: [],
       isEnableNameText: true,
       zones: [],
       isRegist: false,
+      bNotifyTo:true,
+      bSubject:true,
       items: [
         {
           text: this.$i18n.tnl('label.master'),
@@ -100,7 +109,7 @@ export default {
           href: '/master/mailTemplate',
         },
         {
-          text: this.$i18n.tnl(Util.getDetailCaptionKey(this.$store.state.app_service.zone.zoneId)),
+          text: this.$i18n.tnl(Util.getDetailCaptionKey(this.$store.state.app_service.zone.notifyTemplateId)),
           active: true
         }
       ]
@@ -110,9 +119,8 @@ export default {
     notifyStateOptions() {
       return NOTIFY_STATE.getOptions()
     },
-
     hasId (){
-      return Util.hasValue(this.form.zoneId)
+      return Util.hasValue(this.form.notifyTemplateId)
     },
     theme () {
       const theme = getButtonTheme()
@@ -130,10 +138,20 @@ export default {
     reset () {
     },
     async signalChange(evt) {
-      if(evt!=1) {
-        //APP.TX_NAME = false
+      if (evt == 'TX_DELIVERY_NOTIFY') {
+        this.bNotifyTo = false
+        this.selected =1
+      }else{
+        this.bNotifyTo = true
       }
-      //this.display()
+      console.log(evt)
+    },
+    async radioChange(evt) {
+      if (evt == 2) {
+        this.bSubject = false
+      }else{
+        this.bSubject = true
+      }
       console.log(evt)
     },
     async initAreaNames() {
@@ -148,14 +166,16 @@ export default {
       )
     },
     async save() {
-      const zoneId = Util.hasValue(this.form.zoneId)? this.form.zoneId: -1
+      const notifyTemplateId = Util.hasValue(this.form.notifyTemplateId)? this.form.notifyTemplateId: -1
+      const aNotifyState = (this.form.notifyTemplateKey != null)?this.form.notifyTemplateKey:0
       const entity = {
-        zoneId: zoneId,
-        zoneName: this.form.zoneName,
-        zoneType: ZONE.getTypes()[1].value,
-        areaId: this.form.areaId,
-        locationZoneList: this.form.locationId? [{locationZonePK: {zoneId: zoneId, locationId: this.form.locationId}}]: null,
-        zoneCategoryList: this.form.categoryId? [{zoneCategoryPK: {zoneId: zoneId, categoryId: this.form.categoryId}}]: null
+        notifyTemplateId: notifyTemplateId,
+        notifyTemplateKey: aNotifyState,
+        notifyMedium: this.form.notifyMedium,
+        notifyTo: this.form.notifyTo,
+        subject: this.form.subject,
+        mailFrom: this.form.mailFrom,
+        template: this.form.template,
       }
       return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
     },
