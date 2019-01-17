@@ -369,6 +369,11 @@ export default {
       headers = headers.filter((val) => !['style', 'thumbnail', 'actions', 'updateAction'].includes(val))
       headers.push('delFlg')
       const list = this.list.map((val) => ({...val, delFlg: 0}))
+      if(this.$parent.$options.methods.customCsvData){
+        list.forEach((val) => {
+          this.$parent.$options.methods.customCsvData.call(this.$parent, val)
+        })
+      }
       HtmlUtil.fileDL(this.params.name + '.csv', Util.converToCsv(list, headers), getCharSet(this.loginId))
     },
     style(index) {

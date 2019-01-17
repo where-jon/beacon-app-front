@@ -12,6 +12,7 @@ import * as StateHelper from '../../../sub/helper/StateHelper'
 import { addLabelByKey } from '../../../sub/helper/ViewHelper'
 import listmixinVue from '../../../components/mixin/listmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
+import * as Util from '../../../sub/util/Util'
 
 export default {
   components: {
@@ -29,7 +30,7 @@ export default {
         bulkEditPath: '/master/group/bulkedit',
         appServicePath: '/basic/group',
         csvOut: true,
-        custumCsvColumns: ['groupId', 'groupName', 'ruby', 'display.color', 'display.bgColor', 'display.shape', 'description'],
+        custumCsvColumns: ['groupId', 'groupName', 'ruby', 'color', 'bgColor', 'display.shape', 'description'],
         fields: addLabelByKey(this.$i18n, [ 
           {key: 'groupName', sortable: true },
           {key: 'ruby', sortable: true },
@@ -80,6 +81,10 @@ export default {
     style(row) {
       const groupStyle = this.groupStyles.find((val) => val.entity.groupId == row.groupId)
       return groupStyle? groupStyle.style: null
+    },
+    customCsvData(val){
+      val.color = Util.colorCd4display(val.display.color)
+      val.bgColor = Util.colorCd4display(val.display.bgColor)
     },
   }
 }

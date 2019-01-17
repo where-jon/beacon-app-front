@@ -127,9 +127,9 @@ export default {
         categoryType: this.form.categoryType,
         description: this.form.description,
         display: {
-          shape: this.form.displayShape,
-          color: Util.colorCd4db(this.form.displayColor),
-          bgColor: Util.colorCd4db(this.form.displayBgColor),
+          shape: `${this.form.displayShape}`,
+          color: Util.colorCd4display(this.form.displayColor),
+          bgColor: Util.colorCd4display(this.form.displayBgColor),
         },
       }
       return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
