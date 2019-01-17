@@ -56,7 +56,6 @@
               </b-form-checkbox>
             </b-form-group>
             -->
-            <!--
             <settingtxview
               :isEditable="isEditable"
               :dispFormat="form.txViewType ? form.txViewType.displayFormat : txIconsDispFormat"
@@ -64,7 +63,6 @@
               :vertical="form.txViewType ? form.txViewType.vertical : txIconsVertical"
               @change="onChangeTxSetting"
             />
-            -->
             <b-form-group>
               <label v-t="'label.type'" />
               <b-form-select v-model="form.sensorId" :options="sensorOptionsExb" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-3 col-4" />
@@ -96,14 +94,14 @@ import * as Util from '../../../sub/util/Util'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
-// import settingtxview from '../../../components/parts/settingtxview.vue'
+import settingtxview from '../../../components/parts/settingtxview.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 
 export default {
   components: {
     breadcrumb,
     alert,
-    // settingtxview,
+    settingtxview,
   },
   mixins: [editmixinVue],
   data() {
