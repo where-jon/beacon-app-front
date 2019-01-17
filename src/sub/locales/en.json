@@ -132,7 +132,6 @@
     "positionHistoryId": "Tx Position ID",
 
     "txButtonHistory": "Notification history information",
-    "notifyTo": "contact address",
     "finalReceiveTime": "Last reception date and time",
     "notifyResult": "Notification result",
 
@@ -291,6 +290,14 @@
     "nonCoordinate": "Coordinates unspecified",
 
     "mailTemplate": "Mail text template",
+    "notifyState": "Type",
+    "notifyMedium": "Notification medium",
+    "notifyTo": "Notification destination",
+    "subject": "subject",
+    "mailFrom": "From",
+    "template": "template",
+    "templateId": "ID",
+    "slack": "slack",
 
     "ledOperation": "LED operation",
     "blink": "Blink",

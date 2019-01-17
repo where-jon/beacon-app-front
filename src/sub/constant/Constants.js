@@ -107,6 +107,16 @@ export const CATEGORY = {
   POT_AVAILABLE: [1, 2],
 }
 
+export const NOTIFY_MIDIUM = {
+  getTypes(){
+    return [
+      {value: 1, text: i18n.tnl('label.email')},
+      {value: 2, text: i18n.tnl('label.slack')},
+    ]
+  },
+  POT_AVAILABLE: [1, 2],
+}
+
 export const SHAPE = {
   CIRCLE: 1,
   SQUARE: 2,

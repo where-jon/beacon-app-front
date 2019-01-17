@@ -135,7 +135,6 @@
     "positionHistoryId": "Tx位置ID",
 
     "txButtonHistory": "通知履歴情報",
-    "notifyTo": "連絡先",
     "finalReceiveTime": "最終受信日時",
     "notifyResult": "通知結果",
 
@@ -298,6 +297,14 @@
     "nonCoordinate": "座標指定なし",
 
     "mailTemplate": "メール文面テンプレート",
+    "notifyState": "種別",
+    "notifyMedium": "通知媒体",
+    "notifyTo": "通知先",
+    "subject": "件名",
+    "mailFrom": "From",
+    "template": "テンプレート",
+    "templateId": "ID",
+    "slack": "slack",
 
     "ledOperation": "LED操作",
     "blink": "点滅",
