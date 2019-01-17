@@ -231,7 +231,7 @@ export default {
       this.temperatureHistoryData = await this.dataDownload()
       if (this.temperatureHistoryData == null || this.temperatureHistoryData.length == 0) {
         this.message = this.$i18n.tnl('message.notFound')
-        this.replace({showAlert: false})
+        this.replace({showAlert: true})
         return
       }
       HtmlUtil.fileDL(
