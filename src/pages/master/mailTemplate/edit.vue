@@ -136,13 +136,13 @@ export default {
     async signalChange(evt) {
       if (evt == 'TX_DELIVERY_NOTIFY') {
         this.bNotifyTo = false
-        this.form.notifyMedium = 1
+        this.form.notifyMedium = 0
         this.bSubject = true
         this.form.notifyTo = ''
       }else{
         this.bNotifyTo = true
       }
-      if(this.radioSelect== 1){
+      if(this.radioSelect== 0){
         this.bSubject = true
       }
     },
