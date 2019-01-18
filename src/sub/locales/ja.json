@@ -297,13 +297,13 @@
     "nonCoordinate": "座標指定なし",
 
     "mailTemplate": "メール文面テンプレート",
-    "notifyState": "種別",
+    "notifyTemplateKey": "種別",
     "notifyMedium": "通知媒体",
     "notifyTo": "通知先",
     "subject": "件名",
     "mailFrom": "From",
     "template": "テンプレート",
-    "templateId": "ID",
+    "notifyTemplateId": "ID",
     "slack": "slack",
 
     "ledOperation": "LED操作",

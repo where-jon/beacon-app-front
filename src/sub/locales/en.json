@@ -290,13 +290,13 @@
     "nonCoordinate": "Coordinates unspecified",
 
     "mailTemplate": "Mail text template",
-    "notifyState": "Type",
+    "notifyTemplateKey": "Type",
     "notifyMedium": "Notification medium",
     "notifyTo": "Notification destination",
     "subject": "subject",
     "mailFrom": "From",
     "template": "template",
-    "templateId": "ID",
+    "notifyTemplateId": "ID",
     "slack": "slack",
 
     "ledOperation": "LED operation",
