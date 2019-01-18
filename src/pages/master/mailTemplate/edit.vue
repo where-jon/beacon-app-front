@@ -6,7 +6,7 @@
 
       <b-form v-if="show" @submit.prevent="onSubmit">
         <b-form-group v-if="form.notifyTemplateId">
-          <label v-t="'label.templateId'" />
+          <label v-t="'label.notifyTemplateId'" />
           <b-form-input v-model="form.notifyTemplateId" type="text" readonly="readonly" />
         </b-form-group>
 
@@ -148,7 +148,7 @@ export default {
     },
     async radioChange(evt) {
       this.radioSelect = evt
-      if (evt == 2) {
+      if (evt == 1) {
         this.bSubject = false
 
       }else{
@@ -161,7 +161,7 @@ export default {
       const entity = {
         notifyTemplateId: notifyTemplateId,
         notifyTemplateKey: aNotifyState,
-        notifyMedium: this.form.notifyMedium ? this.form.notifyMedium -1: '' ,
+        notifyMedium: this.form.notifyMedium ? this.form.notifyMedium : '' ,
         notifyTo: this.form.notifyTo? this.form.notifyTo:'',
         subject: this.form.subject,
         mailFrom: this.form.mailFrom,
