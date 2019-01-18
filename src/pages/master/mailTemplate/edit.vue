@@ -13,7 +13,7 @@
         <!--種別-->
         <b-form-group>
           <b-form-row>
-            <label v-t="'label.notifyState'" class="control-label" />
+            <label v-t="'label.notifyTemplateKey'" class="control-label" />
           </b-form-row>
           <b-form-row>
             <b-col sm="5">
@@ -25,7 +25,7 @@
         <!--通知媒体-->
         <b-form-group v-show="notify.length > 1">
           <label v-t="'label.notifyMedium'" />
-          <b-form-radio-group v-model="form.notifyMedium" :options="notify" :disabled="!isEditable" @change="radioChange" />
+          <b-form-radio-group v-model="form.notifyMedium" :options="notify" :disabled="!bNotifyTo" @change="radioChange" />
         </b-form-group>
 
         <!--通知先-->
@@ -49,7 +49,7 @@
         <!--テンプレート-->
         <b-form-group>
           <label v-t="'label.template'" />
-          <b-form-textarea v-model="form.template" :rows="3" :max-rows="6"/>
+          <b-form-textarea v-model="form.template" :rows="3" :max-rows="6" required/>
         </b-form-group>
 
         <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
@@ -85,6 +85,7 @@ export default {
     return {
       name: 'template',
       id: 'notifyTemplateId',
+      radioSelect:-1,
       notify: _.slice(NOTIFY_MIDIUM.getTypes(), 0, 2).filter((val) => APP.NOTIFY_MIDIUM_TYPES.includes(val.value)),
       backPath: '/master/mailTemplate',
       appServicePath: '/core/rcvexcloud',
@@ -136,18 +137,23 @@ export default {
       if (evt == 'TX_DELIVERY_NOTIFY') {
         this.bNotifyTo = false
         this.form.notifyMedium = 1
+        this.bSubject = true
+        this.form.notifyTo = ''
       }else{
         this.bNotifyTo = true
       }
-      console.log(evt)
+      if(this.radioSelect== 1){
+        this.bSubject = true
+      }
     },
     async radioChange(evt) {
+      this.radioSelect = evt
       if (evt == 2) {
         this.bSubject = false
+
       }else{
         this.bSubject = true
       }
-      console.log(evt)
     },
     async save() {
       const notifyTemplateId = Util.hasValue(this.form.notifyTemplateId)? this.form.notifyTemplateId: -1
@@ -156,7 +162,7 @@ export default {
         notifyTemplateId: notifyTemplateId,
         notifyTemplateKey: aNotifyState,
         notifyMedium: this.form.notifyMedium ? this.form.notifyMedium -1: '' ,
-        notifyTo: this.form.notifyTo? this.notifyTo:'',
+        notifyTo: this.form.notifyTo? this.form.notifyTo:'',
         subject: this.form.subject,
         mailFrom: this.form.mailFrom,
         template: this.form.template,
