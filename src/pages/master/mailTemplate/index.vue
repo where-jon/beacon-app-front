@@ -22,22 +22,22 @@ export default {
   data() {
     return {
       params: {
-        name: 'zone',
-        id: 'zoneId',
+        name: 'template',
+        id: 'notifyTemplateId',
         indexPath: '/master/mailTemplate',
         editPath: '/master/mailTemplate/edit',
         appServicePath: '/core/rcvexcloud',
-        custumCsvColumns: ['zoneId', 'zoneName', 'areaName', 'categoryName'],
+        // custumCsvColumns: ['notifyTemplateId', 'zoneName', 'areaName', 'categoryName'],
         fields: addLabelByKey(this.$i18n, [
-          {key: 'notifyState', sortable: true },
+          {key: 'notifyTemplateKey', sortable: true },
           {key: 'notifyMedium', sortable: true },
           {key: 'notifyTo', sortable: true },
           {key: 'subject', sortable: true},
           {key: 'mailFrom', sortable: true},
-          {key: 'templateId', sortable: true},
+          {key: 'notifyTemplateId', sortable: true},
           {key: 'actions', thStyle: {width:'130px !important'} }
         ]),
-        sortBy: 'zoneName',
+        sortBy: 'notifyTemplateId',
         initTotalRows: this.$store.state.app_service.templates.length
       },
       items: [

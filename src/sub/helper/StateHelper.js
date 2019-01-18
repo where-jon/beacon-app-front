@@ -106,7 +106,6 @@ const appStateConf = {
       return arr.map((template) => {
         return {
           ...template,
-          subject: Util.getValue(template, 'template.subject', null),
         }
       })
     }
