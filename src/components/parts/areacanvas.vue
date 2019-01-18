@@ -158,7 +158,8 @@ export default {
         hasRotatingPoint: false,
         lockRotation: true,
         name: dimension.name,
-        categoryId: this.categoryId
+        categoryId: this.categoryId,
+        lock: lock
       })
       this.canvas.add(group)
       return group
@@ -234,14 +235,13 @@ export default {
         if (!active) {
           return
         }
-        if(!that.auth.delete && (that.auth.regist && active.id > 0)){
-          return
+        if(that.auth.delete || (that.auth.regist && active.id < 0)){
+          that.canvas.remove(active)
+          if (active.id > 0) {
+            that.deleted.push(active.id)
+          }
+          that.$emit('deleted', active.id)
         }
-        that.canvas.remove(active)
-        if (active.id > 0) {
-          that.deleted.push(active.id)
-        }
-        that.$emit('deleted', active.id)
       }, false)
     },
     setCanvasSelectedListener(){
@@ -262,6 +262,7 @@ export default {
           width: event.target.width,
           height: event.target.height,
           categoryId: event.target.categoryId,
+          lock: event.target.lock,
         })
       })
     },

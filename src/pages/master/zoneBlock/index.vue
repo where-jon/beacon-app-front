@@ -154,7 +154,7 @@ export default {
     },
     onSelected (zoneData) {
       this.id = zoneData.id
-      this.isEnableNameText = true
+      this.isEnableNameText = !zoneData.lock
       this.zoneName = zoneData.name
       this.isSetNameCategory = false
     },
