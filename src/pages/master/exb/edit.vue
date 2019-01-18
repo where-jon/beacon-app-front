@@ -57,8 +57,8 @@
             </b-form-group>
             -->
             <settingtxview
-              :isEditable="isEditable"
-              :dispFormat="form.txViewType ? form.txViewType.displayFormat : txIconsDispFormat"
+              :is-editable="isEditable"
+              :disp-format="form.txViewType ? form.txViewType.displayFormat : txIconsDispFormat"
               :horizon="form.txViewType ? form.txViewType.horizon : txIconsHorizon"
               :vertical="form.txViewType ? form.txViewType.vertical : txIconsVertical"
               @change="onChangeTxSetting"

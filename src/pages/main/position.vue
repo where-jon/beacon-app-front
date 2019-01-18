@@ -126,6 +126,7 @@ export default {
   },
   watch: {
     filter() {
+      this.reloadSelectedTx = {}
       this.showTxAll()
     },
   },
