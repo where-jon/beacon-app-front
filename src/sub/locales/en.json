@@ -131,6 +131,16 @@
     "positionHistory": "Position history",
     "positionHistoryId": "Tx Position ID",
 
+    "txButtonHistory": "Notification history information",
+    "finalReceiveTime": "Last reception date and time",
+    "notifyResult": "Notification result",
+
+    "txBtnNotify": "TX button press notification",
+    "gwNotify": "GW status alert",
+    "exbNotify": "EXB status alert",
+    "txBatteryNotify": "TX battery status alert",
+    "sosNotify": "SOS button press notification",
+
     "exbeacon": "EXBeacon",
     "settingExbeacon": "EXBeacon Setting",
     "pir": "Human detection",
@@ -278,6 +288,16 @@
     "locationZoneName": "Name of the place",
     "coordinate": "Coordinates specified",
     "nonCoordinate": "Coordinates unspecified",
+
+    "mailTemplate": "Mail text template",
+    "notifyTemplateKey": "Type",
+    "notifyMedium": "Notification medium",
+    "notifyTo": "Notification destination",
+    "subject": "subject",
+    "mailFrom": "From",
+    "template": "template",
+    "notifyTemplateId": "ID",
+    "slack": "slack",
 
     "ledOperation": "LED operation",
     "blink": "Blink",

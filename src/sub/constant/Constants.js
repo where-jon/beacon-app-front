@@ -107,6 +107,15 @@ export const CATEGORY = {
   POT_AVAILABLE: [1, 2],
 }
 
+export const NOTIFY_MIDIUM = {
+  getTypes(){
+    return [
+      {value: 0, text: i18n.tnl('label.email')},
+      {value: 1, text: i18n.tnl('label.slack')},
+    ]
+  },
+}
+
 export const SHAPE = {
   CIRCLE: 1,
   SQUARE: 2,
@@ -210,6 +219,18 @@ export const BATTERY_STATE = {
       {value:2, text: i18n.t('label.power-warning'), class: 'warning'},
       {value:3, text: i18n.t('label.power-poor'), class: 'danger'},
       {value:4, text: i18n.t('label.power-null'), class: 'secondary'},
+    ]
+  }
+}
+
+export const NOTIFY_STATE = {
+  getOptions(){
+    return [
+      {value:'TX_DELIVERY_NOTIFY', text: i18n.t('label.txBtnNotify')},
+      {value:'GW_ALERT', text: i18n.t('label.gwNotify')},
+      {value:'EXB_ALERT', text: i18n.t('label.exbNotify')},
+      {value:'TX_BATTERY_ALERT', text: i18n.t('label.txBatteryNotify')},
+      {value:'TX_SOS_ALERT', text: i18n.t('label.sosNotify')},
     ]
   }
 }
@@ -370,6 +391,11 @@ export const MENU = [
         path: 'zoneBlock',
         icon: 'fas fa-th',
       },
+      {
+        key: 'mailTemplate',
+        path: 'mailTemplate',
+        icon: 'fas fa-envelope',
+      },
     ]
   },
   {
@@ -442,6 +468,12 @@ export const MENU = [
       key: 'sensorHistory',
       path: 'sensorHistory',
       icon: 'fas fa-eye'
+    },
+    {
+      key: 'txButtonHistory',
+      path: 'txButtonHistory',
+      feature: '/history/txButtonHistory',
+      icon: 'fa fa-history',
     },
     ]
   },

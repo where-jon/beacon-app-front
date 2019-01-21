@@ -134,6 +134,16 @@
     "positionHistory": "位置情報",
     "positionHistoryId": "Tx位置ID",
 
+    "txButtonHistory": "通知履歴情報",
+    "finalReceiveTime": "最終受信日時",
+    "notifyResult": "通知結果",
+
+    "txBtnNotify": "TXボタン押下通知",
+    "gwNotify": "GW状態アラート",
+    "exbNotify": "EXB状態アラート",
+    "txBatteryNotify": "TX電池状態アラート",
+    "sosNotify": "SOSボタン押下通知",
+
     "exbeacon": "EXBeacon",
     "settingExbeacon": "EXBeacon設定",
     "pir": "人感センサ",
@@ -286,6 +296,16 @@
     "locationZoneName": "場所名",
     "coordinate": "座標指定あり",
     "nonCoordinate": "座標指定なし",
+
+    "mailTemplate": "メール文面テンプレート",
+    "notifyTemplateKey": "種別",
+    "notifyMedium": "通知媒体",
+    "notifyTo": "通知先",
+    "subject": "件名",
+    "mailFrom": "From",
+    "template": "テンプレート",
+    "notifyTemplateId": "ID",
+    "slack": "slack",
 
     "ledOperation": "LED操作",
     "blink": "点滅",

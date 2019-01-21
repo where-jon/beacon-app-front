@@ -98,6 +98,19 @@ const appStateConf = {
       })
     }
   },
+
+  templates: {
+    path: '/core/rcvexcloud/template/list',
+    sort: 'notifyTemplateId',
+    beforeCommit: (arr) => {
+      return arr.map((template) => {
+        return {
+          ...template,
+        }
+      })
+    }
+  },
+
   pots: {
     path: '/basic/pot/withThumbnail',
     sort: 'potName',
