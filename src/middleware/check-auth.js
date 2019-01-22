@@ -19,7 +19,7 @@ export default function (context) {
   }
   else if (APP.LOGIN_MODE != LOGIN_MODE.NO_LOGIN && !AuthHelper.checkSession()) { // check Session
     console.warn('checkauth ng')
-    context.app.router.push(APP.LOGIN_PAGE)
+    context.redirect(APP.LOGIN_PAGE)
   }
   else { // check tenant feature
     let tenantFeatureList = context.store.state.tenantFeatureList
