@@ -58,7 +58,7 @@
         <b-form-group>
           <b-form-row class="mb-3">
             <b-button v-t="'label.display'" :variant="theme" @click="display" />
-            <b-button v-t="'label.download'" :variant="theme" :disabled="!dataList || dataList.length == 0" class="ml-2" @click="download" />
+            <b-button v-if="!iosOrAndroid" v-t="'label.download'" :variant="theme" :disabled="!dataList || dataList.length == 0" class="ml-2" @click="download" />
           </b-form-row>
         </b-form-group>
       </b-form>
@@ -163,6 +163,9 @@ export default {
     },
     sumTargetOptions() {
       return SUM_TARGET.getOptions()
+    },
+    iosOrAndroid() {
+      return Util.isAndroidOrIOS()
     },
   },
   async created() {
