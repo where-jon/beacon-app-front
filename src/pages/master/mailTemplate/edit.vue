@@ -86,6 +86,7 @@ export default {
       name: 'template',
       id: 'notifyTemplateId',
       radioSelect:-1,
+      deliveryState:null,
       notify: _.slice(NOTIFY_MIDIUM.getTypes(), 0, 2).filter((val) => APP.NOTIFY_MIDIUM_TYPES.includes(val.value)),
       backPath: '/master/mailTemplate',
       appServicePath: '/core/rcvexcloud',
@@ -129,12 +130,14 @@ export default {
     ]),
   },
   created() {
+    this.deliveryState = NOTIFY_STATE.getOptions()[0].value
+    this.form.notifyTemplateKey== this.deliveryState? this.bNotifyTo=false: this.bNotifyTo=true
   },
   methods: {
     reset () {
     },
     async signalChange(evt) {
-      if (evt == 'TX_DELIVERY_NOTIFY') {
+      if (evt == this.deliveryState) {
         this.bNotifyTo = false
         this.form.notifyMedium = 0
         this.bSubject = true
