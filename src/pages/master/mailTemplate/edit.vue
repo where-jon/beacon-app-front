@@ -87,7 +87,6 @@ export default {
       id: 'notifyTemplateId',
       radioSelect:-1,
       deliveryState:null,
-      slackState:null,
       notify: _.slice(NOTIFY_MIDIUM.getTypes(), 0, 2).filter((val) => APP.NOTIFY_MIDIUM_TYPES.includes(val.value)),
       backPath: '/master/mailTemplate',
       appServicePath: '/core/rcvexcloud',
