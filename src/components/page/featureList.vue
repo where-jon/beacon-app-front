@@ -1,6 +1,6 @@
 <template>
   <b-container>
-    <b-table :items="list" :fields="fields" show-empty stacked="md" striped bordered outlined hover>
+    <b-table :items="list" :fields="fields" show-empty thead-class="hidden_header" small stacked="md">
       <template slot="parentCheck" slot-scope="row">
         <div v-if="row.item.parentShow" class="custom-control custom-checkbox">
           <input :id="getCheckId(row.item)" v-model="row.item.checked" type="checkbox" class="custom-control-input" @change="parentChange(row.item)">
@@ -63,8 +63,12 @@ export default {
 </script>
 
 <style>
+  .hidden_header {
+    display: none;
+  }
   td {
     word-break: break-all;
+    border: 0px !important;
   }
   @media (min-width: 769px) {
     td {

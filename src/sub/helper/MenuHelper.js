@@ -7,10 +7,10 @@ export const setStore = (pStore) => {
   store = pStore
 }
 
-export const fetchNav = (masterFeatureList, tenantFeatureList, featureList, isTenantAdmin) => {
+export const fetchNav = (masterFeatureList, tenantFeatureList, featureList, isProvider, isTenantAdmin) => {
   let retNav = _.map(MENU, (group) => {
     let pages = _.filter(group.pages, (page) => {
-      if(!featureOk('/' + group.base + page.path, masterFeatureList)){
+      if(!isProvider && !featureOk('/' + group.base + page.path, masterFeatureList)){
         return false
       }
       if (!isTenantAdmin && group.base == 'provider/') {

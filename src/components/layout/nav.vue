@@ -25,20 +25,28 @@
       <!-- right -->
       <b-navbar-nav v-show="!isLoginPage" class="ml-auto">
         <!-- region -->
-        <b-nav-item-dropdown v-if="hasMultiRegion(regions)" :class="navbarClasses" right>
-          <template slot="button-content">
-            <div v-if="isTenantAdmin()">
+        <table v-if="isTenantAdmin() || hasMultiRegion(regions)" class="region-table">
+          <tr v-if="isTenantAdmin()">
+            <td>
               <i class="far fa-building mr-1" style="visibility: hidden;" />
-              <em v-t="this.$store.state.currentTenant? this.$store.state.currentTenant.tenantName: ''" />
-            </div>
-            <i class="far fa-building mr-1" />
-            <span>{{ this.$store.state.currentRegion? this.$store.state.currentRegion.regionName: '' }}</span>
-          </template>
-          <b-dropdown-item v-for="region in regionOptions(regions)" :key="region.regionId" :class="navbarClasses" href="#" @click="switchRegion($event.target, region)">
-            <i :style="getStyleDropdownRegion(region.regionId)" class="far fa-building mr-1" aria-hidden="true" />
-            <span>{{ region.regionName }}</span>
-          </b-dropdown-item>
-        </b-nav-item-dropdown>
+              <em v-t="this.$store.state.currentTenant? this.$store.state.currentTenant.tenantName: ''" class="region-em" />
+            </td>
+          </tr>
+          <tr v-if="hasMultiRegion(regions)">
+            <td class="region">
+              <b-nav-item-dropdown :class="navbarClasses" size="sm" right>
+                <template slot="button-content">
+                  <i class="far fa-building mr-1" />
+                  <span>{{ this.$store.state.currentRegion? this.$store.state.currentRegion.regionName: '' }}</span>
+                </template>
+                <b-dropdown-item v-for="region in regionOptions(regions)" :key="region.regionId" :class="navbarClasses" href="#" @click="switchRegion($event.target, region)">
+                  <i :style="getStyleDropdownRegion(region.regionId)" class="far fa-building mr-1" aria-hidden="true" />
+                  <span>{{ region.regionName }}</span>
+                </b-dropdown-item>
+              </b-nav-item-dropdown>
+            </td>
+          </tr>
+        </table>
         <!-- user & logout -->
         <b-nav-item-dropdown right>
           <template slot="button-content">
@@ -127,8 +135,7 @@ export default {
       return login? login.tenantAdmin: false
     },
     hasMultiRegion(regions){
-      const regs = this.regionOptions(regions)
-      return regs && regs.length > 1
+      return regions && regions.length > 1
     },
     getStyleDropdownRegion(regionId) {
       const login = JSON.parse(window.localStorage.getItem('login'))
@@ -145,7 +152,9 @@ export default {
       }
       const ret = login.allRegionMove || login.isProvider || login.tenantAdmin?
         regions.filter((val) => val):
-        regions.filter((region) => login.userRegionIdList.includes(region.regionId))
+        Util.hasValue(login.userRegionIdList)?
+          regions.filter((region) => login.userRegionIdList.includes(region.regionId)):
+          regions.filter((val) => val)
       return ret.sort((a, b) => this.optionSort(a, b))
     },
     optionSort(regionA, regionB){
@@ -168,7 +177,17 @@ export default {
       }
       return 0
     },
+    disableSwitchRegion(item){
+      const login = JSON.parse(window.localStorage.getItem('login'))
+      if(!login || !login.currentRegion){
+        return true
+      }
+      return item.regionId == login.currentRegion.regionId
+    },
     async switchRegion(target, item) {
+      if(this.disableSwitchRegion(item)){
+        return
+      }
       await AuthHelper.switchRegion(item.regionId)
       location.reload()
     },
@@ -259,8 +278,22 @@ div.navbar-brand {
   margin: 0 auto;
 }
 
+.region > li > a {
+  padding: 0px !important;
+}
+
 em:not(:hover) {
   color: white;
+}
+
+.region-table {
+  margin-bottom: auto;
+  margin-top: auto;
+  margin-right: 2px;
+}
+
+.region-em {
+  color: white !important;
 }
 
 i.menu-item-icon {
