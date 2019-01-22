@@ -153,6 +153,7 @@ export default {
       this.radioSelect = evt
       if (evt == 1) {
         this.bSubject = false
+        this.form.subject = ''
 
       }else{
         this.bSubject = true
@@ -166,9 +167,9 @@ export default {
         notifyTemplateKey: aNotifyState,
         notifyMedium: this.form.notifyMedium ? this.form.notifyMedium : '' ,
         notifyTo: this.form.notifyTo? this.form.notifyTo:'',
-        subject: this.form.subject,
-        mailFrom: this.form.mailFrom,
-        template: this.form.template,
+        subject: this.form.subject? this.form.subject:'',
+        mailFrom: this.form.mailFrom? this.form.mailFrom:'',
+        template: this.form.template? this.form.template:'',
       }
       return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
     },
