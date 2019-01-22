@@ -87,6 +87,7 @@ export default {
       id: 'notifyTemplateId',
       radioSelect:-1,
       deliveryState:null,
+      slackState:null,
       notify: _.slice(NOTIFY_MIDIUM.getTypes(), 0, 2).filter((val) => APP.NOTIFY_MIDIUM_TYPES.includes(val.value)),
       backPath: '/master/mailTemplate',
       appServicePath: '/core/rcvexcloud',
@@ -108,7 +109,7 @@ export default {
           href: '/master/mailTemplate',
         },
         {
-          text: this.$i18n.tnl(Util.getDetailCaptionKey(this.$store.state.app_service.zone.notifyTemplateId)),
+          text: this.$i18n.tnl(Util.getDetailCaptionKey(this.$store.state.app_service.template.notifyTemplateId)),
           active: true
         }
       ]
@@ -131,6 +132,7 @@ export default {
   },
   created() {
     this.deliveryState = NOTIFY_STATE.getOptions()[0].value
+    this.form.notifyMedium == 1 ?this.bSubject = false: this.bSubject = true
     this.form.notifyTemplateKey== this.deliveryState? this.bNotifyTo=false: this.bNotifyTo=true
   },
   methods: {
