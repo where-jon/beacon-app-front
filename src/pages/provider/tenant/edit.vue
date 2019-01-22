@@ -140,7 +140,7 @@
     </div>
 
     <!-- modal -->
-    <b-modal id="modalFeatureInfo" :ok-title="$i18n.tnl('label.setting')" :ok-variant="theme" :title="$i18n.tnl('label.featureSetting')" ok-only @ok="storeFeatureInfo" @hide="resetModal">
+    <b-modal id="modalFeatureInfo" :ok-title="$i18n.tnl('label.setting')" :ok-variant="theme" :title="$i18n.tnl('label.featureSetting')" size="sm" ok-only @ok="storeFeatureInfo" @hide="resetModal">
       <feature-list :list="editFeatureList" :fields="fields" />
     </b-modal>
     <b-modal id="modalSettingInfo" :ok-title="$i18n.tnl('label.setting')" :ok-variant="theme" :title="$i18n.tnl('label.system')" ok-only @ok="storeSettingInfo" @hide="resetModal">
@@ -199,7 +199,6 @@ export default {
         {key: 'parentCheck', label: 'dummy', thStyle: {width:'4px !important'} },
         {key: 'subCheck', label: 'dummy', thStyle: {width:'4px !important'} },
         {key: 'featureName' },
-        {key: 'path' },
       ]),
       settingParams: {
         name: 'setting',

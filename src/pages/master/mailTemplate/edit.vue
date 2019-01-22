@@ -17,7 +17,7 @@
           </b-form-row>
           <b-form-row>
             <b-col sm="5">
-              <b-form-select v-model="form.notifyTemplateKey" :options="notifyStateOptions" class="mr-2" @change="signalChange"/>
+              <b-form-select v-model="form.notifyTemplateKey" :options="notifyStateOptions" class="mr-2" @change="signalChange" />
             </b-col>
           </b-form-row>
         </b-form-group>
@@ -49,7 +49,7 @@
         <!--テンプレート-->
         <b-form-group>
           <label v-t="'label.template'" />
-          <b-form-textarea v-model="form.template" :rows="3" :max-rows="6" required/>
+          <b-form-textarea v-model="form.template" :rows="3" :max-rows="6" required />
         </b-form-group>
 
         <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
