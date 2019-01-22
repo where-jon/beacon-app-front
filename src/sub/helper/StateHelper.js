@@ -106,6 +106,7 @@ const appStateConf = {
       return arr.map((template) => {
         return {
           ...template,
+          notifyMedium: template.notifyMedium==0? i18n.tnl('label.email'):i18n.tnl('label.slack'),
         }
       })
     }
