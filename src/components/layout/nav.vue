@@ -6,7 +6,7 @@
     <!-- Title -->
     <b-navbar-brand>
       <div class="appTitle">
-        <img v-if="showLogo" src="/toplogo.png" width="220" height="36">
+        <img v-if="showLogo" id="topLogo" src="/toplogo.png" width="0" height="0" @load="setLogo">
         <span v-if="!showLogo" v-t="'label.title'" />
       </div>
     </b-navbar-brand>
@@ -175,6 +175,19 @@ export default {
     versionClick() {
       console.log('app service revision:', this.$store.state.serviceRev)
       console.log('app front revision:', this.$store.state.frontRev)
+    },
+    setLogo(){
+      const topLogo = document.getElementById('topLogo')
+      if(!topLogo){
+        return
+      }
+      const maxWidth = 220
+      const maxHeight = 36
+      const widthRatio = maxWidth / topLogo.naturalWidth
+      const heightRatio = maxHeight / topLogo.naturalHeight
+      const ratio = widthRatio < heightRatio? widthRatio: heightRatio
+      topLogo.width = Math.ceil(topLogo.naturalWidth * ratio)
+      topLogo.height = Math.ceil(topLogo.naturalHeight * ratio)
     }
   }
 }
