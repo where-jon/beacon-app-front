@@ -96,7 +96,6 @@ export default {
           { key: 'powerLevel' },
           { key: 'finalReceiveLocation' },
           { key: 'finalReceiveTimestamp' },
-          { key: 'rssi' },
           { key: 'state' },
         ])
     },
@@ -119,7 +118,6 @@ export default {
           'powerLevel': 'powerLevel',
           'finalReceiveLocation': 'location',
           'finalReceiveTimestamp': 'timestamp',
-          'rssi': 'RSSI',
           'state': 'state',
         }
     },
@@ -163,20 +161,10 @@ export default {
           name: tx != null ? tx.txName : '—',
           finalReceiveLocation: exb? exb.location.locationName  : '',
           finalReceiveTimestamp: this.getTimestamp(e.updatetime),
-          rssi: this.getRssi(e.nearest),
           powerLevel: this.getPositionPowerLevelLabel(e.power_level),
           state: this.getStateLabel('tx', e.updatetime),
         }
       })
-    },
-    getRssi(nearestList) {
-      const rssiNearIndex = 0
-      if (nearestList.length > rssiNearIndex) {
-        try {
-          return nearestList[rssiNearIndex].rssi.toFixed(1)
-        } catch (e) {}
-      }
-      return this.$i18n.tnl('label.undetect')
     },
     getTimestamp(timestamp) {
       if (timestamp) {
