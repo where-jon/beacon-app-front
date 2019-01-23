@@ -32,18 +32,18 @@
         <b-form-group>
           <label v-if="hasId" v-t="'label.passwordUpdate'" />
           <label v-else v-t="'label.password'" />
-          <b-form-input v-model="pass" :readonly="!isEditable" type="password" pattern="^[a-zA-Z0-9_\-\/!#\$%&@]*$" />
+          <b-form-input v-model="pass" :readonly="!isEditable" type="password" maxlength="16" pattern="^[a-zA-Z0-9_\-\/!#\$%&@]*$" />
         </b-form-group>
         <b-form-group>
           <label v-t="'label.passwordConfirm'" />
-          <b-form-input v-model="passConfirm" :readonly="!isEditable" type="password" pattern="^[a-zA-Z0-9_\-\/!#\$%&@]*$" />
+          <b-form-input v-model="passConfirm" :readonly="!isEditable" type="password" maxlength="16" pattern="^[a-zA-Z0-9_\-\/!#\$%&@]*$" />
         </b-form-group>
 
         <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
-        <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="beforeSubmit(false)">
+        <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="beforeSubmit($event, false)">
           {{ $i18n.tnl(`label.${isUpdate? 'update': 'register'}`) }}
         </b-button>
-        <b-button v-if="isRegistable && !isUpdate" v-t="'label.registerAgain'" :variant="theme" type="submit" class="my-1" @click="beforeSubmit(true)" />
+        <b-button v-if="isRegistable && !isUpdate" v-t="'label.registerAgain'" :variant="theme" type="submit" class="my-1" @click="beforeSubmit($event, true)" />
       </b-form>
     </div>
   </div>
@@ -113,6 +113,9 @@ export default {
     },
     ...mapState('app_service', [
       'user', 'roles'
+    ]),
+    ...mapState([
+      'showAlert'
     ]),
   },
   async created(){
