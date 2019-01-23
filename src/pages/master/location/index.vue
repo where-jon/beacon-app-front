@@ -299,6 +299,7 @@ export default {
       const offsetY = (DISP.EXB_LOC_SIZE.h / 2) + this.ICON_ARROW_HEIGHT
       const exbBtn = this.createExbIcon(exb)
       exbBtn.on('pressmove', (evt) => {
+        exb.delEvent = false
         evt.currentTarget.set({
           x: evt.stageX,
           y: evt.stageY
@@ -318,18 +319,18 @@ export default {
         this.showDeletConfirm()
       })
       if(Util.isAndroidOrIOS()){
-        const listener = this.getDblTapListener( () => {
-          this.showDeletConfirm()
+        exbBtn.on('mousedown', (evt) => {
+          exb.delEvent = true
         })
+
         exbBtn.addEventListener('click', (evt) => {
-          this.deleteTarget = exbBtn
-          listener(evt)
+          if(exb.delEvent){
+            this.deleteTarget = exbBtn
+            this.showDeletConfirm()
+          }
         })
       }
       this.exbCon.addChild(exbBtn)
-    },
-    isTouch(touchPosList){
-      return false
     },
     showDeletConfirm(){
       this.$root.$emit('bv::show::modal', 'modalDeleteConfirm')
