@@ -315,9 +315,24 @@ export default {
 
       exbBtn.on('dblclick', (evt) => {
         this.deleteTarget = exbBtn
-        this.$root.$emit('bv::show::modal', 'modalDeleteConfirm')
+        this.showDeletConfirm()
       })
+      if(Util.isAndroidOrIOS()){
+        const listener = this.getDblTapListener( () => {
+          this.showDeletConfirm()
+        })
+        exbBtn.addEventListener('click', (evt) => {
+          this.deleteTarget = exbBtn
+          listener(evt)
+        })
+      }
       this.exbCon.addChild(exbBtn)
+    },
+    isTouch(touchPosList){
+      return false
+    },
+    showDeletConfirm(){
+      this.$root.$emit('bv::show::modal', 'modalDeleteConfirm')
     },
     ratioSettingStart() {
       this.settingStart = !this.settingStart

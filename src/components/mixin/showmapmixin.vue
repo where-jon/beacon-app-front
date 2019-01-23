@@ -300,7 +300,12 @@ export default {
       Util.debug('add listener')
       const listener = this.getDblTapListener(callback)
       const map = this.$refs.map
-      map && map.addEventListener('touchstart', (evt) => listener(evt))
+      map && map.addEventListener('touchstart', (evt) => {
+        if(this.isTouch && !this.isTouch(evt.touches)){
+          return
+        }
+        listener(evt)
+      })
     },
     positionFilter(positions, groupId, categoryId) {
       return _(positions).filter((pos) => {
