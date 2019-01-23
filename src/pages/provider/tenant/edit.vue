@@ -19,7 +19,7 @@
           </b-form-row>
           <b-form-row>
             <b-col sm="5">
-              <input v-model="form.tenantCd" :readonly="!isEditable" type="text" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" maxlength="31" class="form-control" required>
+              <input v-model="form.tenantCd" :readonly="!isEditable" type="text" pattern="^[a-z][a-z0-9_\-@\.]*$" maxlength="31" class="form-control" required>
             </b-col>
           </b-form-row>
           <b-form-row>
