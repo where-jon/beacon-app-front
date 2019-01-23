@@ -49,7 +49,7 @@ export default {
           {key: 'actions', thStyle: {width:'130x !important'} }
         ]),
         sortBy: 'featureName',
-        initTotalRows: this.$store.state.app_service.features.length,
+        initTotalRows: this.$store.state.app_service.roleFeatures.length,
       },
     }
   },
