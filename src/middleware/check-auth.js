@@ -16,12 +16,13 @@ export default function (context) {
 
   if (context.route.path == APP.LOGIN_PAGE
     ||context.route.path == APP.ERROR_PAGE) { // Login Page is always OK
-  }
-  else if (APP.LOGIN_MODE != LOGIN_MODE.NO_LOGIN && !AuthHelper.checkSession()) { // check Session
+  }else if(context.route.path == '/'){
+    context.app.router.push(APP.LOGIN_PAGE)
+  }else if (APP.LOGIN_MODE != LOGIN_MODE.NO_LOGIN && !AuthHelper.checkSession()) { // check Session
     console.warn('checkauth ng')
-    context.redirect(APP.LOGIN_PAGE)
-  }
-  else { // check tenant feature
+    context.redirect('/')
+    context.app.router.push(APP.LOGIN_PAGE)
+  }else { // check tenant feature
     let tenantFeatureList = context.store.state.tenantFeatureList
     if (!tenantFeatureList || tenantFeatureList.length == 0) {
       console.error('No tenant feature List', context.route.path)
