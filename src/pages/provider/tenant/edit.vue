@@ -45,7 +45,7 @@
         <div v-if="!hasId && show" class="form-row">
           <div class="col mb-2 mr-3">
             <label v-t="'label.id'" class="mr-3" />
-            <input v-model="form.sysAdminLoginId" :readonly="!isEditable" type="text" maxlength="16" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" class="form-control" required>
+            <input v-model="form.sysAdminLoginId" :readonly="!isEditable" type="text" minlength="3" maxlength="16" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" class="form-control" required>
             <input type="text" tabIndex="-1" class="chromeAutoInput">
             <input type="password" tabIndex="-1" class="chromeAutoInput">
           </div>
@@ -64,7 +64,7 @@
         <div v-if="!hasId && show" class="form-row">
           <div class="col mb-2 mr-3">
             <label v-t="'label.id'" class="mr-3" />
-            <input v-model="form.adminLoginId" :readonly="!isEditable" type="text" maxlength="16" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" class="form-control">
+            <input v-model="form.adminLoginId" :readonly="!isEditable" type="text" :minlength="form.adminLoginId? 3: 0" maxlength="16" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" class="form-control">
             <input type="text" tabIndex="-1" class="chromeAutoInput">
             <input type="password" tabIndex="-1" class="chromeAutoInput">
           </div>
@@ -83,7 +83,7 @@
         <div v-if="!hasId && show" class="form-row">
           <div class="col mb-2 mr-3">
             <label v-t="'label.id'" class="mr-3" />
-            <input v-model="form.userLoginId" :readonly="!isEditable" type="text" maxlength="16" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" class="form-control">
+            <input v-model="form.userLoginId" :readonly="!isEditable" type="text" :minlength="form.userLoginId? 3: 0" maxlength="16" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" class="form-control">
             <input type="text" tabIndex="-1" class="chromeAutoInput">
             <input type="password" tabIndex="-1" class="chromeAutoInput">
           </div>
