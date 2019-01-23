@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import * as AppServiceHelper from './AppServiceHelper'
 import * as Util from '../util/Util'
-import { CATEGORY, SHAPE } from '../constant/Constants'
+import { CATEGORY, SHAPE, NOTIFY_STATE } from '../constant/Constants'
 import { APP } from '../constant/config'
 
 
@@ -33,6 +33,11 @@ export const getCategoryTypeName = (category) => {
 export const getShapeName = (shape) => {
   const shapeName = SHAPE.getShapes().find((tval) => tval.value === shape)
   return shapeName != null? shapeName.text: null
+}
+
+export const getTemplateKeyName = (templateKey) => {
+  const templateKeyName = NOTIFY_STATE.getOptions().find((tval) => tval.value === templateKey)
+  return templateKeyName != null? templateKeyName.text: null
 }
 
 export const setForceFetch = (name, force) => {
@@ -106,6 +111,8 @@ const appStateConf = {
       return arr.map((template) => {
         return {
           ...template,
+          notifyTemplateKey: template.notifyTemplateKey? getTemplateKeyName(template.notifyTemplateKey): null,
+          notifyMedium: template.notifyMedium==0? i18n.tnl('label.email'):i18n.tnl('label.slack'),
         }
       })
     }

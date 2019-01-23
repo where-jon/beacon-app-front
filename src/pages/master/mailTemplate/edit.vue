@@ -86,6 +86,7 @@ export default {
       name: 'template',
       id: 'notifyTemplateId',
       radioSelect:-1,
+      deliveryState:null,
       notify: _.slice(NOTIFY_MIDIUM.getTypes(), 0, 2).filter((val) => APP.NOTIFY_MIDIUM_TYPES.includes(val.value)),
       backPath: '/master/mailTemplate',
       appServicePath: '/core/rcvexcloud',
@@ -107,7 +108,7 @@ export default {
           href: '/master/mailTemplate',
         },
         {
-          text: this.$i18n.tnl(Util.getDetailCaptionKey(this.$store.state.app_service.zone.notifyTemplateId)),
+          text: this.$i18n.tnl(Util.getDetailCaptionKey(this.$store.state.app_service.template.notifyTemplateId)),
           active: true
         }
       ]
@@ -129,12 +130,15 @@ export default {
     ]),
   },
   created() {
+    this.deliveryState = NOTIFY_STATE.getOptions()[0].value
+    this.form.notifyMedium == 1 ?this.bSubject = false: this.bSubject = true
+    this.form.notifyTemplateKey== this.deliveryState? this.bNotifyTo=false: this.bNotifyTo=true
   },
   methods: {
     reset () {
     },
     async signalChange(evt) {
-      if (evt == 'TX_DELIVERY_NOTIFY') {
+      if (evt == this.deliveryState) {
         this.bNotifyTo = false
         this.form.notifyMedium = 0
         this.bSubject = true
@@ -150,6 +154,7 @@ export default {
       this.radioSelect = evt
       if (evt == 1) {
         this.bSubject = false
+        this.form.subject = ''
 
       }else{
         this.bSubject = true
@@ -163,9 +168,9 @@ export default {
         notifyTemplateKey: aNotifyState,
         notifyMedium: this.form.notifyMedium ? this.form.notifyMedium : '' ,
         notifyTo: this.form.notifyTo? this.form.notifyTo:'',
-        subject: this.form.subject,
-        mailFrom: this.form.mailFrom,
-        template: this.form.template,
+        subject: this.form.subject? this.form.subject:'',
+        mailFrom: this.form.mailFrom? this.form.mailFrom:'',
+        template: this.form.template? this.form.template:'',
       }
       return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
     },
