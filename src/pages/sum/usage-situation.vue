@@ -6,48 +6,60 @@
 
       <div class="mapContainer mb-5">
         <b-form inline>
-          <b-form-group class="mr-5">
+          <b-form-group>
             <b-form-row>
-              <b-form-row class="mb-3 mr-2">
+              <b-form-row class="mb-3">
                 <label v-t="'label.mode'" class="mr-2" />
-                <b-form-select v-model="form.mode" :options="modeOptions" class="mr-2" />
+                <b-form-select v-model="form.mode" :options="modeOptions" />
               </b-form-row>
             </b-form-row>
           </b-form-group>
         </b-form>
         <b-form inline>
-          <b-form-group class="mr-5">
-            <b-form-row class="mb-3 mr-2">
-              <label v-t="'label.sumYearMonth'" />
-              <v-select v-model="vModelYearMonth" :options="yearMonthOptions" :on-change="yearMonthChange" class="vselectMonth">
-                <div slot="no-options">
-                  {{ $i18n.tnl('label.vSelectNoOptions') }}
-                </div>
-              </v-select>
-              <label v-t="'label.sumDay'" />
-              <v-select v-model="vModelDay" :options="dayOptions" :on-change="dayChange" class="vselectDay">
-                <div slot="no-options">
-                  {{ $i18n.tnl('label.vSelectNoOptions') }}
-                </div>
-              </v-select>
+          <b-form-group>
+            <b-form-row>
+              <b-form-row class="mb-3 mr-2">
+                <label v-t="'label.sumYearMonth'" class="mr-2" />
+                <v-select v-model="vModelYearMonth" :options="yearMonthOptions" :on-change="yearMonthChange" class="vselectMonth">
+                  <div slot="no-options">
+                    {{ $i18n.tnl('label.vSelectNoOptions') }}
+                  </div>
+                </v-select>
+              </b-form-row>
+              <b-form-row class="mb-3">
+                <label v-t="'label.sumDay'" class="mr-2" />
+                <v-select v-model="vModelDay" :options="dayOptions" :on-change="dayChange" class="vselectDay">
+                  <div slot="no-options">
+                    {{ $i18n.tnl('label.vSelectNoOptions') }}
+                  </div>
+                </v-select>
+              </b-form-row>
             </b-form-row>
           </b-form-group>
         </b-form>
         <b-form inline>
-          <b-form-group class="mr-5">
-            <b-form-row class="mb-3 mr-2">
-              <label v-t="'label.zoneCategoryName'" />
-              <v-select v-model="vModelCategory" :options="categoryOptions" :on-change="categoryChange" class="vselectCategory">
-                <div slot="no-options">
-                  {{ $i18n.tnl('label.vSelectNoOptions') }}
-                </div>
-              </v-select>
-              <label v-t="'label.zone'" />
-              <v-select v-model="vModelZone" :options="zoneOptions" :on-change="zoneChange" class="vselectZone">
-                <div slot="no-options">
-                  {{ $i18n.tnl('label.vSelectNoOptions') }}
-                </div>
-              </v-select>
+          <b-form-group>
+            <b-form-row>
+              <b-form-row class="mb-3 mr-2">
+                <label v-t="'label.zoneCategoryName'" class="mr-2" />
+                <v-select v-model="vModelCategory" :options="categoryOptions" :on-change="categoryChange" class="vselectCategory">
+                  <div slot="no-options">
+                    {{ $i18n.tnl('label.vSelectNoOptions') }}
+                  </div>
+                </v-select>
+              </b-form-row>
+            </b-form-row>
+          </b-form-group>
+          <b-form-group>
+            <b-form-row>
+              <b-form-row class="mb-3">
+                <label v-t="'label.zone'" class="mr-2" />
+                <v-select v-model="vModelZone" :options="zoneOptions" :on-change="zoneChange" class="vselectZone">
+                  <div slot="no-options">
+                    {{ $i18n.tnl('label.vSelectNoOptions') }}
+                  </div>
+                </v-select>
+              </b-form-row>
             </b-form-row>
           </b-form-group>
         </b-form>
