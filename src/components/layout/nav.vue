@@ -33,7 +33,7 @@
             </td>
           </tr>
           <tr v-if="hasMultiRegion(regions)">
-            <td class="region">
+            <td :class="regionTdClasses">
               <b-nav-item-dropdown :class="navbarClasses" size="sm" right>
                 <template slot="button-content">
                   <i class="far fa-building mr-1" />
@@ -112,6 +112,13 @@ export default {
       Object.assign(classes , this.navbarClasses)
       if(this.showNav && HtmlUtil.getLangShort() != 'ja'){
         classes['topMenuNavbar'] = true
+      }
+      return classes
+    },
+    regionTdClasses() {
+      const classes = {region: true}
+      if(Util.isIos()){
+        classes['mobile-region'] = true
       }
       return classes
     },
@@ -313,6 +320,15 @@ div.navbar-brand {
   margin: 0 auto;
 }
 
+.mobile-region {
+  @media (max-width: 1023px) and (min-width: 768px) {
+    max-width: 64px;
+  }
+  @media (max-width: 1119px) and (min-width: 1024px) {
+    max-width: 192px;
+  }
+}
+
 .region > li > a {
   padding: 0px !important;
 }
@@ -325,6 +341,9 @@ em:not(:hover) {
   margin-bottom: auto;
   margin-top: auto;
   margin-right: 2px;
+  @media (max-width: 1119px) and (min-width: 768px) {
+    table-layout: fixed;
+  }
 }
 
 .region-em {
