@@ -328,10 +328,6 @@ em:not(:hover) {
   color: white !important;
 }
 
-.word-break {
-  width: 10px;
-}
-
 i.menu-item-icon {
   width: 20px;
 }
