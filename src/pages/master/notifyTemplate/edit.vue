@@ -104,8 +104,8 @@ export default {
           active: true
         },
         {
-          text: this.$i18n.tnl('label.mailTemplate'),
-          href: '/master/mailTemplate',
+          text: this.$i18n.tnl('label.notifyTemplate'),
+          href: '/master/notifyTemplate',
         },
         {
           text: this.$i18n.tnl(Util.getDetailCaptionKey(this.$store.state.app_service.template.notifyTemplateId)),

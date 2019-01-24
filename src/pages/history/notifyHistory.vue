@@ -97,7 +97,7 @@ export default {
   mixins: [showmapmixin ],
   data () {
     return {
-      name: 'txButtonHistory',
+      name: 'notifyHistory',
       txId: null,
       items: [
         {
@@ -105,7 +105,7 @@ export default {
           active: true
         },
         {
-          text: this.$i18n.tnl('label.txButtonHistory'),
+          text: this.$i18n.tnl('label.notifyHistory'),
           active: true
         }
       ],
@@ -238,7 +238,7 @@ export default {
         )
 
         if (fetchList == null || !fetchList.length) {
-          this.message = this.$i18n.tnl('message.notFoundData', {target: this.$i18n.tnl('label.txButtonHistory')})
+          this.message = this.$i18n.tnl('message.notFoundData', {target: this.$i18n.tnl('label.notifyHistory')})
           this.replace({showAlert: true})
           return
         }

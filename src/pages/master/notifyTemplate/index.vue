@@ -46,7 +46,7 @@ export default {
           active: true
         },
         {
-          text: this.$i18n.tnl('label.mailTemplate'),
+          text: this.$i18n.tnl('label.notifyTemplate'),
           active: true
         }
       ]
