@@ -5,8 +5,8 @@
 
     <!-- Title -->
     <b-navbar-brand>
-      <div class="appTitle">
-        <img v-if="showLogo" id="topLogo" src="/toplogo.png" width="0" height="0" @load="setLogo">
+      <div id="appTitle" class="appTitle">
+        <img v-if="showLogo" id="topLogo" src="/toplogo.png" width="0" height="0" :style="{position: 'relative'}" @load="setLogo">
         <span v-if="!showLogo" v-t="'label.title'" />
       </div>
     </b-navbar-brand>
@@ -119,6 +119,7 @@ export default {
   async mounted() {
     window.addEventListener('resize', () => {
       this.showNav = HtmlUtil.isMobile() || DISP.SHOW_NAV
+      this.adjustLogoOffsetX()
     })
     if(window.localStorage.getItem('login') != null){
       await StateHelper.load('region', true)
@@ -195,6 +196,26 @@ export default {
       console.log('app service revision:', this.$store.state.serviceRev)
       console.log('app front revision:', this.$store.state.frontRev)
     },
+    getAppTitleWidth(){
+      const appTitle = document.getElementById('appTitle')
+      return appTitle? appTitle.clientWidth - appTitle.offsetLeft : 0
+    },
+    getLogoWidth(){
+      const logo = document.getElementById('topLogo')
+      return logo? logo.width: 0
+    },
+    getLogoOffsetX(){
+      const appTitleWidth = this.getAppTitleWidth()
+      const logoWidth = this.getLogoWidth()
+      return appTitleWidth <= logoWidth? 0: Math.ceil((appTitleWidth - logoWidth) / 2)
+    },
+    adjustLogoOffsetX(){
+      const topLogo = document.getElementById('topLogo')
+      if(!topLogo){
+        return
+      }
+      topLogo.style.left = `${this.getLogoOffsetX()}px`
+    },
     setLogo(){
       const topLogo = document.getElementById('topLogo')
       if(!topLogo){
@@ -207,6 +228,7 @@ export default {
       const ratio = widthRatio < heightRatio? widthRatio: heightRatio
       topLogo.width = Math.ceil(topLogo.naturalWidth * ratio)
       topLogo.height = Math.ceil(topLogo.naturalHeight * ratio)
+      this.adjustLogoOffsetX()
     }
   }
 }
