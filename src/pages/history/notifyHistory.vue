@@ -68,6 +68,12 @@
             </span>
           </template>
 
+          <template slot="minor" slot-scope="row">
+            <span v-for= "(val, key) in row.item.minors" :key="key">
+              {{ val }}<br>
+            </span>
+          </template>
+
           <template slot="minors" slot-scope="row">
             <span v-for= "(val, key) in row.item.minors" :key="key">
               {{ val }}({{row.item.powerLevels[key]}})<br>
@@ -158,7 +164,7 @@ export default {
         {key: 'positionDt', sortable: true, label:'dt'},
         {key: 'notifyTo', sortable: true,label:'notifyTo' },
         {key: 'majors', sortable: true,label:'majors' },
-        {key: 'minors', sortable: true,label:'minor' },
+        {key: 'minor', sortable: true,label:'minor' },
         {key: 'txNames', sortable: true,label:'tx' },
         {key: 'notifyResult', sortable: true,label:'notifyResult' },
       ]),
@@ -188,7 +194,7 @@ export default {
         {key: 'positionDt', sortable: true, label:'dt'},
         {key: 'notifyTo', sortable: true,label:'notifyTo' },
         {key: 'majors', sortable: true,label:'major' },
-        {key: 'minors', sortable: true,label:'minor' },
+        {key: 'minor', sortable: true,label:'minor' },
         {key: 'txNames', sortable: true,label:'tx' },
         {key: 'notifyResult', sortable: true,label:'notifyResult' },
       ]),
