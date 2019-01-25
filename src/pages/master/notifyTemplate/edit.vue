@@ -11,7 +11,7 @@
         </b-form-group>
 
         <!--種別-->
-        <b-form-group>
+        <b-form-group :disabled="!bNotifyTemplateKey">
           <b-form-row>
             <label v-t="'label.notifyTemplateKey'" class="control-label" />
           </b-form-row>
@@ -43,7 +43,7 @@
         <!--From-->
         <b-form-group>
           <label v-t="'label.mailFrom'" />
-          <input v-model="form.mailFrom" type="text" maxlength="255" class="form-control" required>
+          <input v-model="form.mailFrom" :type="fromType" maxlength="255" class="form-control" required>
         </b-form-group>
 
         <!--テンプレート-->
@@ -86,9 +86,10 @@ export default {
       name: 'template',
       id: 'notifyTemplateId',
       radioSelect:-1,
+      fromType:'email',
       deliveryState:null,
       notify: _.slice(NOTIFY_MIDIUM.getTypes(), 0, 2).filter((val) => APP.NOTIFY_MIDIUM_TYPES.includes(val.value)),
-      backPath: '/master/mailTemplate',
+      backPath: '/master/notifyTemplate',
       appServicePath: '/core/rcvexcloud',
       form: ViewHelper.extract(this.$store.state.app_service.template,
         ['notifyTemplateId', 'notifyTemplateKey' , 'notifyMedium', 'notifyTo', 'subject', 'mailFrom', 'template' ]),
@@ -98,14 +99,15 @@ export default {
       isRegist: false,
       bNotifyTo:true,
       bSubject:true,
+      bNotifyTemplateKey:true,
       items: [
         {
           text: this.$i18n.tnl('label.master'),
           active: true
         },
         {
-          text: this.$i18n.tnl('label.mailTemplate'),
-          href: '/master/mailTemplate',
+          text: this.$i18n.tnl('label.notifyTemplate'),
+          href: '/master/notifyTemplate',
         },
         {
           text: this.$i18n.tnl(Util.getDetailCaptionKey(this.$store.state.app_service.template.notifyTemplateId)),
@@ -116,7 +118,7 @@ export default {
   },
   computed: {
     notifyStateOptions() {
-      return NOTIFY_STATE.getOptions()
+      return _.slice(NOTIFY_STATE.getOptions()).filter((val) => APP.NOTIFY_STATE_TYPES.includes(val.index))
     },
     hasId (){
       return Util.hasValue(this.form.notifyTemplateId)
@@ -133,6 +135,11 @@ export default {
     this.deliveryState = NOTIFY_STATE.getOptions()[0].value
     this.form.notifyMedium == 1 ?this.bSubject = false: this.bSubject = true
     this.form.notifyTemplateKey== this.deliveryState? this.bNotifyTo=false: this.bNotifyTo=true
+    //let radionElement = document.getElementsByClassName('custom-radio')[1].style.display = 'none'
+    //radionElement.style.display = 'none'
+    this.form.notifyTemplateKey== this.deliveryState? document.getElementsByClassName(): this.bNotifyTo=true
+    let labelUpdate = Util.getDetailCaptionKey(this.$store.state.app_service.template.notifyTemplateId)
+    labelUpdate == 'label.update' ? this.bNotifyTemplateKey = false: this.bNotifyTemplateKey = true
   },
   methods: {
     reset () {
@@ -151,11 +158,12 @@ export default {
       }
     },
     async radioChange(evt) {
+      this.form.mailFrom
       this.radioSelect = evt
       if (evt == 1) {
         this.bSubject = false
         this.form.subject = ''
-
+        this.fromType = 'text'
       }else{
         this.bSubject = true
       }

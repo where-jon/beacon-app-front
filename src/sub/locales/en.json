@@ -101,6 +101,7 @@
     "btxId": "btxId",
     "major": "Major",
     "minor": "Minor",
+    "minorPowerLevel": "Minor(Battery level)",
 
     "locationId": "Position ID",
     "locationName": "Name",
@@ -130,7 +131,7 @@
     "positionHistory": "Position history",
     "positionHistoryId": "Tx Position ID",
 
-    "txButtonHistory": "Notification history information",
+    "notifyHistory": "Notification history information",
     "finalReceiveTime": "Last reception date and time",
     "notifyResult": "Notification result",
 
@@ -288,7 +289,7 @@
     "coordinate": "Coordinates specified",
     "nonCoordinate": "Coordinates unspecified",
 
-    "mailTemplate": "Mail text template",
+    "notifyTemplate": "Alert template",
     "notifyTemplateKey": "Type",
     "notifyMedium": "Notification medium",
     "notifyTo": "Notification destination",
@@ -296,7 +297,7 @@
     "mailFrom": "From",
     "template": "template",
     "notifyTemplateId": "ID",
-    "slack": "slack",
+    "slack": "Slack",
 
     "ledOperation": "LED operation",
     "blink": "Blink",

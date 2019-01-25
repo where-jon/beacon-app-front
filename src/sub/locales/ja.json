@@ -104,6 +104,7 @@
     "btxId": "btxId",
     "major": "major",
     "minor": "minor",
+    "minorPowerLevel": "minor(電池レベル)",
 
     "locationId": "位置ID",
     "locationName": "名前",
@@ -133,7 +134,7 @@
     "positionHistory": "位置情報",
     "positionHistoryId": "Tx位置ID",
 
-    "txButtonHistory": "通知履歴情報",
+    "notifyHistory": "通知履歴情報",
     "finalReceiveTime": "最終受信日時",
     "notifyResult": "通知結果",
 
@@ -228,7 +229,7 @@
     "passwordUpdate": "変更パスワード",
     "passwordConfirm": "確認パスワード",
     "name": "名前",
-    "email": "email",
+    "email": "メール",
 
     "category": "カテゴリ",
     "categoryId": "カテゴリID",
@@ -296,15 +297,15 @@
     "coordinate": "座標指定あり",
     "nonCoordinate": "座標指定なし",
 
-    "mailTemplate": "メール文面テンプレート",
+    "notifyTemplate": "通知テンプレート",
     "notifyTemplateKey": "種別",
     "notifyMedium": "通知媒体",
     "notifyTo": "通知先",
     "subject": "件名",
-    "mailFrom": "From",
+    "mailFrom": "差出元",
     "template": "テンプレート",
     "notifyTemplateId": "ID",
-    "slack": "slack",
+    "slack": "Slack",
 
     "ledOperation": "LED操作",
     "blink": "点滅",
