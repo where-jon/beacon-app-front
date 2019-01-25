@@ -86,8 +86,8 @@ export const APP = { // 機能面に関する設定
   EXB_WITH_POSID: true,      // 画面上POSIDを使用するか否か
 
   // USER関連設定
-  USER_WITH_EMAIL: false, // ユーザ設定でメールアドレスを使用する
-  USER_WITH_NAME: false, // ユーザ設定で名前を使用する
+  USER_WITH_EMAIL: true, // ユーザ設定でメールアドレスを使用する
+  USER_WITH_NAME: true, // ユーザ設定で名前を使用する
 
   // 位置把握(一覧)画面
   POSITION_WITH_AREA: true, // エリアを表示

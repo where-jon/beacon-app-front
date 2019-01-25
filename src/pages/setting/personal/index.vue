@@ -15,13 +15,18 @@
             </b-form-group>
             <b-form-group v-show="showName">
               <label v-t="'label.name'" />
-              <b-form-input v-model="loginUser.name" :readonly="!isChange" :state="errorMessages.name.length > 0 ? false : null" type="text" />
+              <b-form-input v-model="loginUser.name" :readonly="!isChange" :state="errorMessages.name.length > 0 ? false : null" type="text" maxlength="20" />
               <p v-for="(val, key) in errorMessages.name" :key="key" v-t="val" class="error" />
             </b-form-group>
             <b-form-group v-show="showEmail">
               <label v-t="'label.email'" />
               <b-form-input v-model="loginUser.email" :readonly="!isChange" :state="errorMessages.email.length > 0 ? false : null" type="email" />
               <p v-for="(val, key) in errorMessages.email" :key="key" v-t="val" class="error" />
+            </b-form-group>
+            <b-form-group>
+              <label v-t="'label.minor'" />
+              <input v-model="loginUser.minor" :readonly="!isChange" type="number" min="1" max="9999" class="form-control">
+              <p v-for="(val, key) in errorMessages.minor" :key="key" v-t="val" class="error" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.role'" />
@@ -128,6 +133,7 @@ export default {
         loginId: null,
         name: null,
         email: null,
+        minor: null,
         role: null,
         roleId: null,
         description: null,
@@ -139,6 +145,7 @@ export default {
         loginId: [],
         name: [],
         email: [],
+        minor: [],
         password: [],
         general: [],
       },
@@ -324,7 +331,7 @@ export default {
       )
     },
     async save() {
-      const param = ViewHelper.extract(this.loginUser, ['userId', 'loginId', 'name', 'email', 'roleId', 'description'])
+      const param = ViewHelper.extract(this.loginUser, ['userId', 'loginId', 'name', 'email', 'minor', 'roleId', 'description'])
       if (this.loginUser.passwordConfirm !== null) {
         param['pass'] = this.loginUser.passwordConfirm
       }
