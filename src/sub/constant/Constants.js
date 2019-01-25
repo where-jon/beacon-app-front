@@ -226,11 +226,11 @@ export const BATTERY_STATE = {
 export const NOTIFY_STATE = {
   getOptions(){
     return [
-      {value:'TX_DELIVERY_NOTIFY', text: i18n.t('label.txBtnNotify')},
-      {value:'GW_ALERT', text: i18n.t('label.gwNotify')},
-      {value:'EXB_ALERT', text: i18n.t('label.exbNotify')},
-      {value:'TX_BATTERY_ALERT', text: i18n.t('label.txBatteryNotify')},
-      {value:'TX_SOS_ALERT', text: i18n.t('label.sosNotify')},
+      {value:'TX_DELIVERY_NOTIFY', text: i18n.t('label.txBtnNotify'), index:0},
+      {value:'GW_ALERT', text: i18n.t('label.gwNotify'), index:1},
+      {value:'EXB_ALERT', text: i18n.t('label.exbNotify'), index:1},
+      {value:'TX_BATTERY_ALERT', text: i18n.t('label.txBatteryNotify'), index:1},
+      {value:'TX_SOS_ALERT', text: i18n.t('label.sosNotify'), index:2},
     ]
   }
 }

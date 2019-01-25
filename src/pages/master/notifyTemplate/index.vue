@@ -24,8 +24,8 @@ export default {
       params: {
         name: 'template',
         id: 'notifyTemplateId',
-        indexPath: '/master/mailTemplate',
-        editPath: '/master/mailTemplate/edit',
+        indexPath: '/master/notifyTemplate',
+        editPath: '/master/notifyTemplate/edit',
         appServicePath: '/core/rcvexcloud',
         // custumCsvColumns: ['notifyTemplateId', 'zoneName', 'areaName', 'categoryName'],
         fields: addLabelByKey(this.$i18n, [

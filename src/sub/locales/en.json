@@ -101,6 +101,7 @@
     "btxId": "btxId",
     "major": "Major",
     "minor": "Minor",
+    "minorPowerLevel": "Minor(Battery level)",
 
     "locationId": "Position ID",
     "locationName": "Name",
@@ -296,7 +297,7 @@
     "mailFrom": "From",
     "template": "template",
     "notifyTemplateId": "ID",
-    "slack": "slack",
+    "slack": "Slack",
 
     "ledOperation": "LED operation",
     "blink": "Blink",
