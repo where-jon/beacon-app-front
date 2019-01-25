@@ -300,7 +300,7 @@ export const setDetectState = (positions, usePositionHistory = false) => {
         .map((val) => val.timestamp)
         .sort().last()
     }else if(usePositionHistory){
-      updatetime = position.updatetime
+      updatetime = position.timestamp
     }
 
     position.detectState = DetectStateHelper.getState('tx', updatetime) // nearestのtimestampを使用
