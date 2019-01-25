@@ -56,6 +56,24 @@
         <slot />
         <b-row class="mt-3" />
         <b-table :items="viewList" :fields="fields" :current-page="currentPage" :per-page="perPage" :sort-by.sync="sortBy" stacked="md" striped hover outline>
+          <template slot="txNames" slot-scope="row">
+            <span v-for= "(val, key) in row.item.txNames" :key="key">
+              {{ val }} <br>
+            </span>
+          </template>
+
+          <template slot="majors" slot-scope="row">
+            <span v-for= "(val, key) in row.item.majors" :key="key">
+              {{ val }}<br>
+            </span>
+          </template>
+
+          <template slot="minors" slot-scope="row">
+            <span v-for= "(val, key) in row.item.minors" :key="key">
+              {{ val }}({{row.item.powerLevels[key]}})<br>
+            </span>
+          </template>
+
           <template slot="deviceNums" slot-scope="row">
             <span v-for= "(val, key) in row.item.deviceNums" :key="key">
               {{ val }} <br>
@@ -139,10 +157,9 @@ export default {
       fields1: addLabelByKey(this.$i18n, [  // TXボタン押下通知
         {key: 'positionDt', sortable: true, label:'dt'},
         {key: 'notifyTo', sortable: true,label:'notifyTo' },
-        {key: 'txName', sortable: true,label:'tx' },
-        {key: 'major', sortable: true,label:'major' },
-        {key: 'minor', sortable: true,label:'minor' },
-        // {key: 'txId', sortable: true,label:'txId' },
+        {key: 'majors', sortable: true,label:'majors' },
+        {key: 'minors', sortable: true,label:'minor' },
+        {key: 'txNames', sortable: true,label:'tx' },
         {key: 'notifyResult', sortable: true,label:'notifyResult' },
       ]),
       fields2: addLabelByKey(this.$i18n, [  // GW状態アラート
@@ -163,16 +180,16 @@ export default {
       fields4: addLabelByKey(this.$i18n, [  // TX電池状態アラート
         {key: 'positionDt', sortable: true, label:'dt'},
         {key: 'notifyTo', sortable: true,label:'notifyTo' },
-        {key: 'txName', sortable: true,label:'tx' },
-        {key: 'minor', sortable: true,label:'minorPowerLevel'},
+        {key: 'minors', sortable: true,label:'minorPowerLevel'},
+        {key: 'txNames', sortable: true,label:'tx' },
         {key: 'notifyResult', sortable: true,label:'notifyResult' },
       ]),
       fields5: addLabelByKey(this.$i18n, [  // SOSボタン押下通知
         {key: 'positionDt', sortable: true, label:'dt'},
         {key: 'notifyTo', sortable: true,label:'notifyTo' },
-        {key: 'txName', sortable: true,label:'tx' },
-        {key: 'major', sortable: true,label:'major' },
-        {key: 'minor', sortable: true,label:'minor' },
+        {key: 'majors', sortable: true,label:'major' },
+        {key: 'minors', sortable: true,label:'minor' },
+        {key: 'txNames', sortable: true,label:'tx' },
         {key: 'notifyResult', sortable: true,label:'notifyResult' },
       ]),
       currentPage: 1,
@@ -267,7 +284,7 @@ export default {
             const d = new Date(senHist.notifyDatetime)
             senHist.positionDt = moment(d.getTime()).format('YYYY/MM/DD HH:mm:ss')
             senHist.notifyResult = senHist.notifyResult == 0 ? '成功' : '失敗'
-            senHist.txName = senHist.minor + '(' + senHist.txName + ')'
+            //senHist.txNames = senHist.minors + '(' + senHist.txNames + ')'
 
             count++
             if (count < this.limitViewRows) {
