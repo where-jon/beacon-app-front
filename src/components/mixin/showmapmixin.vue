@@ -331,9 +331,12 @@ export default {
         // Serverで計算された位置情報を得る
         const positionHistores = await EXCloudHelper.fetchPositionHistory(this.exbs, this.txs, pMock)
         this.replaceMain({positionHistores})
+        return positionHistores
       } else {
         // 移動平均数分のポジションデータを保持する
-        this.pushOrgPositions(await EXCloudHelper.fetchPosition(this.exbs, this.txs, pMock))
+        const positions = await EXCloudHelper.fetchPosition(this.exbs, this.txs, pMock)
+        this.pushOrgPositions(positions)
+        return positions
       }
     },
     setPositionedExb(){

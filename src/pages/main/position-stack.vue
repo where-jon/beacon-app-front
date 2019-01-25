@@ -14,11 +14,11 @@ import breadcrumb from '../../components/layout/breadcrumb.vue'
 import mList from '../../components/page/list.vue'
 import commonmixinVue from '../../components/mixin/commonmixin.vue'
 import listmixinVue from '../../components/mixin/listmixin.vue'
-import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
+import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as PositionHelper from '../../sub/helper/PositionHelper'
 import { addLabelByKey } from '../../sub/helper/ViewHelper'
-import { DISP, DEV } from '../../sub/constant/config'
+import { APP, DISP, DEV } from '../../sub/constant/config'
 import { SHAPE, EXTRA_NAV } from '../../sub/constant/Constants'
 import * as Util from '../../sub/util/Util'
 
@@ -30,6 +30,7 @@ export default {
   mixins: [
     commonmixinVue,
     listmixinVue,
+    showmapmixin,
   ],
   data() {
     return {
@@ -75,6 +76,7 @@ export default {
     ]),
     ...mapState('main', [
       'orgPositions',
+      'positionHistores',
       'eachAreas',
     ])
   },
@@ -88,7 +90,7 @@ export default {
     ]),
     getShowTxPositions(positions){
       const now = !DEV.USE_MOCK_EXC ? new Date().getTime(): mock.positions_conf.start + this.count++ * mock.positions_conf.interval
-      const correctPositions = PositionHelper.correctPosId(this.orgPositions, now)
+      const correctPositions = APP.USE_POSITION_HISTORY? this.positionHistores: PositionHelper.correctPosId(this.orgPositions, now)
       return _(positions).map((pos) => {
         let cPos = _.find(correctPositions, (cPos) => pos.btx_id == cPos.btx_id)
         if (cPos) {
@@ -138,9 +140,7 @@ export default {
         await StateHelper.load('exb')
 
         // positionデータ取得
-        let positions = await EXCloudHelper.fetchPosition(this.exbs, this.txs)
-        // 移動平均数分のポジションデータを保持する
-        this.pushOrgPositions(positions)
+        let positions = await this.storePositionHistory()
         // 在席表示と同じ、表示txを取得する。
         positions = this.getShowTxPositions(positions)
         this.replaceAS({positions})

@@ -12,7 +12,7 @@ import { mapState, mapActions } from 'vuex'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import mList from '../../components/page/list.vue'
 import listmixinVue from '../../components/mixin/listmixin.vue'
-import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
+import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import * as PositionHelper from '../../sub/helper/PositionHelper'
 import { addLabelByKey } from '../../sub/helper/ViewHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
@@ -26,7 +26,10 @@ export default {
     mList,
     breadcrumb,
   },
-  mixins: [listmixinVue],
+  mixins: [
+    listmixinVue,
+    showmapmixin,
+  ],
   data() {
     return {
       params: {
@@ -90,13 +93,10 @@ export default {
         await StateHelper.load('area')
         await StateHelper.load('tx')
         await StateHelper.load('exb')
-        let positions = await EXCloudHelper.fetchPosition(this.exbs, this.txs)
-
-        // 移動平均数分のポジションデータを保持する
-        this.pushOrgPositions(positions)
+        let positions = await this.storePositionHistory()
 
         // 検知状態の取得
-        PositionHelper.setDetectState(positions)
+        PositionHelper.setDetectState(positions, APP.USE_POSITION_HISTORY)
 
         positions = positions.map((pos) => {
           return {
