@@ -29,15 +29,15 @@
             </b-form-group>
             <b-form-group>
               <label v-t="'label.theme'" />
-              <b-form-select v-model="selectedTheme" :options="themes" class="mb-3" :readonly="!isUpdatable" :disabled="!isUpdatable" @change="themeSelected" />
+              <b-form-select v-model="selectedTheme" :options="themes" class="mb-3" @change="themeSelected" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.charSet'" />
-              <b-form-select v-model="selectedCharSet" :options="charSets" class="mb-3" :readonly="!isUpdatable" :disabled="!isUpdatable" @change="charSetSelected" />
+              <b-form-select v-model="selectedCharSet" :options="charSets" class="mb-3" @change="charSetSelected" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.locale'" />
-              <b-form-select v-model="selectedLocale" :options="locales" class="mb-3" :readonly="!isUpdatable" :disabled="!isUpdatable" @change="localeSelected" />
+              <b-form-select v-model="selectedLocale" :options="locales" class="mb-3" @change="localeSelected" />
             </b-form-group>
             <!-- プロフィール・パスワードを変更するボタン -->
             <b-form-group>
