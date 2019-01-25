@@ -118,7 +118,7 @@ export default {
   },
   computed: {
     notifyStateOptions() {
-      return NOTIFY_STATE.getOptions()
+      return _.slice(NOTIFY_STATE.getOptions()).filter((val) => APP.NOTIFY_STATE_TYPES.includes(val.index))
     },
     hasId (){
       return Util.hasValue(this.form.notifyTemplateId)
