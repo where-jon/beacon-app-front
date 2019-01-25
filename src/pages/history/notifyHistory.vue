@@ -55,7 +55,19 @@
         </b-form>
         <slot />
         <b-row class="mt-3" />
-        <b-table :items="viewList" :fields="fields" :current-page="currentPage" :per-page="perPage" :sort-by.sync="sortBy" stacked="md" striped hover outlined />
+        <b-table :items="viewList" :fields="fields" :current-page="currentPage" :per-page="perPage" :sort-by.sync="sortBy" stacked="md" striped hover outline>
+          <template slot="deviceNums" slot-scope="row">
+            <span v-for= "(val, key) in row.item.deviceNums" :key="key">
+              {{ val }} <br>
+            </span>
+          </template>
+          <template slot="lastRcvDatetimes" slot-scope="row">
+            <span v-for= "(val, key) in row.item.lastRcvDatetimes" :key="key">
+              {{ val }} <br>
+            </span>
+          </template>
+        </b-table>
+
         <b-row>
           <b-col md="6" class="my-1">
             {{ footerMessage }}
@@ -103,6 +115,8 @@ export default {
     return {
       name: 'notifyHistory',
       txId: null,
+      arDeviceNums : null,
+      test:0,
       bTx:true,
       items: [
         {
@@ -134,24 +148,23 @@ export default {
       fields2: addLabelByKey(this.$i18n, [  // GW状態アラート
         {key: 'positionDt', sortable: true, label:'dt'},
         {key: 'notifyTo', sortable: true,label:'notifyTo' },
-        {key: 'finalReceiveTime', sortable: true,label:'finalReceiveTime' },
+        {key: 'deviceNums', sortable: true,label:'deviceNum' },
+        {key: 'lastRcvDatetimes', sortable: true,label:'finalReceiveTime' },
         {key: 'notifyResult', sortable: true,label:'notifyResult' },
+        {key: 'newLine', thStyle: {width:'130px !important'} }
       ]),
       fields3: addLabelByKey(this.$i18n, [  // EXB状態アラート
         {key: 'positionDt', sortable: true, label:'dt'},
         {key: 'notifyTo', sortable: true,label:'notifyTo' },
-        {key: 'exbName', sortable: true,label:'exbName' },
-        {key: 'finalReceiveTime', sortable: true,label:'finalReceiveTime' },
+        {key: 'deviceNums', sortable: true,label:'deviceNum' },
+        {key: 'lastRcvDatetimes', sortable: true,label:'finalReceiveTime' },
         {key: 'notifyResult', sortable: true,label:'notifyResult' },
       ]),
       fields4: addLabelByKey(this.$i18n, [  // TX電池状態アラート
         {key: 'positionDt', sortable: true, label:'dt'},
         {key: 'notifyTo', sortable: true,label:'notifyTo' },
         {key: 'txName', sortable: true,label:'tx' },
-        {key: 'major', sortable: true,label:'major' },
-        {key: 'minor', sortable: true,label:'minor' },
-        {key: 'powerLevel', sortable: true,label:'powerLevel' },
-        {key: 'finalReceiveTime', sortable: true,label:'finalReceiveTime' },
+        {key: 'minor', sortable: true,label:'minorPowerLevel'},
         {key: 'notifyResult', sortable: true,label:'notifyResult' },
       ]),
       fields5: addLabelByKey(this.$i18n, [  // SOSボタン押下通知
@@ -249,7 +262,7 @@ export default {
           return
         }
         let count = 0
-        fetchList.forEach((senHist, propKey) => {
+        fetchList.forEach((senHist) => {
           if (senHist.txId != null && this.txId == senHist.txId || this.txId == null) {
             const d = new Date(senHist.notifyDatetime)
             senHist.positionDt = moment(d.getTime()).format('YYYY/MM/DD HH:mm:ss')
