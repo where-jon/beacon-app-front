@@ -8,7 +8,6 @@
 <script>
 import { mapState } from 'vuex'
 import * as Util from '../../../sub/util/Util'
-import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
 import commonmixinVue from '../../../components/mixin/commonmixin.vue'
@@ -104,9 +103,7 @@ export default {
           entity[headerName] = val
         }
         return dummyKey
-      })
-      const roleFeatures = await AppServiceHelper.fetch('/meta/roleFeature', this.role.roleId)
-      this.replaceAS({roleFeatures})
+      }, (entity, dummyKey) => entity.rootRoleId = this.role.roleId )
     },
   }
 }
