@@ -183,9 +183,7 @@ export default {
         mailFrom: this.form.mailFrom? this.form.mailFrom:'',
         template: this.form.template? this.form.template:'',
       }
-
-      const gg = await AppServiceHelper.bulkSave(this.appServicePath, [entity])
-      return gg
+      return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
     },
   }
 }
