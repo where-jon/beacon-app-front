@@ -277,6 +277,7 @@ export const MENU = [
     base: 'provider/',
     path: 'provider/tenant',
     icon: 'fas fa-cogs',
+    tenantOnly: true,
     pages: [
       {
         key: 'tenant',
@@ -499,7 +500,7 @@ export const MENU = [
     base: 'develop/',
     path: 'develop/position-dev',
     icon: 'fas fa-wrench',
-    roles: ['SYS_ADMIN'],
+    providerOnly: true,
     pages: [
       {
         key: 'gateway',

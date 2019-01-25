@@ -13,7 +13,10 @@ export const fetchNav = (masterFeatureList, tenantFeatureList, featureList, isPr
       if(!isProvider && !featureOk('/' + group.base + page.path, masterFeatureList)){
         return false
       }
-      if (!isTenantAdmin && group.base == 'provider/') {
+      if (!isTenantAdmin && group.tenantOnly) {
+        return false
+      }
+      if (!isProvider && group.providerOnly) {
         return false
       }
       return isTenantAdmin || featureOk('/' + group.base + page.path, tenantFeatureList) && getMode('/' + group.base + page.path, featureList) & ROLE_FEATURE.MODE.SYS_ALL
@@ -87,18 +90,6 @@ export const getThemeClasses = (selectedTheme) => {
     light: selectedTheme === 'light',
     dark: selectedTheme === 'dark',
   }
-}
-
-export const isShowMenu = (page, role) => {
-  if (page.roles == null || page.roles.length < 1) {
-    return true
-  }
-
-  const result = page.roles.find((e) => {
-    return role === e
-  })
-
-  return result != null
 }
 
 export const useMaster = (feature) => {
