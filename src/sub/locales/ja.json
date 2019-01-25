@@ -133,7 +133,7 @@
     "positionHistory": "位置情報",
     "positionHistoryId": "Tx位置ID",
 
-    "txButtonHistory": "通知履歴情報",
+    "notifyHistory": "通知履歴情報",
     "finalReceiveTime": "最終受信日時",
     "notifyResult": "通知結果",
 
@@ -296,7 +296,7 @@
     "coordinate": "座標指定あり",
     "nonCoordinate": "座標指定なし",
 
-    "mailTemplate": "メール文面テンプレート",
+    "notifyTemplate": "通知テンプレート",
     "notifyTemplateKey": "種別",
     "notifyMedium": "通知媒体",
     "notifyTo": "通知先",

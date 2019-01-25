@@ -392,8 +392,8 @@ export const MENU = [
         icon: 'fas fa-th',
       },
       {
-        key: 'mailTemplate',
-        path: 'mailTemplate',
+        key: 'notifyTemplate',
+        path: 'notifyTemplate',
         icon: 'fas fa-envelope',
       },
     ]
@@ -470,9 +470,9 @@ export const MENU = [
       icon: 'fas fa-eye'
     },
     {
-      key: 'txButtonHistory',
-      path: 'txButtonHistory',
-      feature: '/history/txButtonHistory',
+      key: 'notifyHistory',
+      path: 'notifyHistory',
+      feature: '/history/notifyHistory',
       icon: 'fa fa-history',
     },
     ]

@@ -130,7 +130,7 @@
     "positionHistory": "Position history",
     "positionHistoryId": "Tx Position ID",
 
-    "txButtonHistory": "Notification history information",
+    "notifyHistory": "Notification history information",
     "finalReceiveTime": "Last reception date and time",
     "notifyResult": "Notification result",
 
@@ -288,7 +288,7 @@
     "coordinate": "Coordinates specified",
     "nonCoordinate": "Coordinates unspecified",
 
-    "mailTemplate": "Mail text template",
+    "notifyTemplate": "Alert template",
     "notifyTemplateKey": "Type",
     "notifyMedium": "Notification medium",
     "notifyTo": "Notification destination",
