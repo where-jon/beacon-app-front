@@ -291,7 +291,7 @@ export const adjustPosition = (positions, ratio, exbs = []) => {
   }).filter(e => e).flatMap(e => e)
 }
 
-export const setDetectState = (positions) => {
+export const setDetectState = (positions, usePositionHistory = false) => {
 
   _.forEach(positions, (position) => {
     let updatetime = null
@@ -299,6 +299,8 @@ export const setDetectState = (positions) => {
       updatetime = _(position.nearest)
         .map((val) => val.timestamp)
         .sort().last()
+    }else if(usePositionHistory){
+      updatetime = position.updatetime
     }
 
     position.detectState = DetectStateHelper.getState('tx', updatetime) // nearestのtimestampを使用
