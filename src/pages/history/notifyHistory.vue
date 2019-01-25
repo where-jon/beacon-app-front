@@ -6,10 +6,22 @@
 
       <div class="mapContainer mb-5">
         <b-form inline @submit.prevent>
+
+          <!--種別-->
           <b-form-group class="mr-5">
             <b-form-row>
               <b-form-row class="mb-3 mr-2">
-                <label v-t="'label.txName'" class="mr-2" />
+                <label v-t="'label.category'" class="mr-2" />
+                <b-form-select v-model="form.notifyState" :options="notifyStateOptions" class="mr-2" @change="categoryChange" />
+              </b-form-row>
+            </b-form-row>
+          </b-form-group>
+
+          <!--Tx-->
+          <b-form-group v-if="bTx" class="mr-5">
+            <b-form-row>
+              <b-form-row class="mb-3 mr-2">
+                <label v-t="'label.tx'" class="mr-2" />
                 <b-form-select v-model="form.tx" :options="txOptions" class="mr-2" @change="changeTx">
                   <div slot="no-options">
                     {{ $i18n.tnl('label.vSelectNoOptions') }}
@@ -19,15 +31,6 @@
             </b-form-row>
           </b-form-group>
 
-          <!--種別-->
-          <b-form-group class="mr-5">
-            <b-form-row>
-              <b-form-row class="mb-3 mr-2">
-                <label v-t="'label.category'" class="mr-2" />
-                <b-form-select v-model="form.notifyState" :options="notifyStateOptions" class="mr-2" />
-              </b-form-row>
-            </b-form-row>
-          </b-form-group>
         </b-form>
 
         <b-form inline @submit.prevent>
@@ -84,6 +87,7 @@ import { addLabelByKey } from '../../sub/helper/ViewHelper'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import { NOTIFY_STATE } from '../../sub/constant/Constants'
+import { APP } from '../../sub/constant/config.js'
 import moment from 'moment'
 import { APP_SERVICE } from '../../sub/constant/config'
 
@@ -99,6 +103,7 @@ export default {
     return {
       name: 'notifyHistory',
       txId: null,
+      bTx:true,
       items: [
         {
           text: this.$i18n.tnl('label.historyTitle'),
@@ -120,10 +125,10 @@ export default {
       fields1: addLabelByKey(this.$i18n, [  // TXボタン押下通知
         {key: 'positionDt', sortable: true, label:'dt'},
         {key: 'notifyTo', sortable: true,label:'notifyTo' },
-        {key: 'txName', sortable: true,label:'txName' },
+        {key: 'txName', sortable: true,label:'tx' },
         {key: 'major', sortable: true,label:'major' },
         {key: 'minor', sortable: true,label:'minor' },
-        {key: 'txId', sortable: true,label:'txId' },
+        // {key: 'txId', sortable: true,label:'txId' },
         {key: 'notifyResult', sortable: true,label:'notifyResult' },
       ]),
       fields2: addLabelByKey(this.$i18n, [  // GW状態アラート
@@ -142,10 +147,9 @@ export default {
       fields4: addLabelByKey(this.$i18n, [  // TX電池状態アラート
         {key: 'positionDt', sortable: true, label:'dt'},
         {key: 'notifyTo', sortable: true,label:'notifyTo' },
-        {key: 'txName', sortable: true,label:'txName' },
+        {key: 'txName', sortable: true,label:'tx' },
         {key: 'major', sortable: true,label:'major' },
         {key: 'minor', sortable: true,label:'minor' },
-        {key: 'txId', sortable: true,label:'txId' },
         {key: 'powerLevel', sortable: true,label:'powerLevel' },
         {key: 'finalReceiveTime', sortable: true,label:'finalReceiveTime' },
         {key: 'notifyResult', sortable: true,label:'notifyResult' },
@@ -153,10 +157,9 @@ export default {
       fields5: addLabelByKey(this.$i18n, [  // SOSボタン押下通知
         {key: 'positionDt', sortable: true, label:'dt'},
         {key: 'notifyTo', sortable: true,label:'notifyTo' },
-        {key: 'txName', sortable: true,label:'txName' },
+        {key: 'txName', sortable: true,label:'tx' },
         {key: 'major', sortable: true,label:'major' },
         {key: 'minor', sortable: true,label:'minor' },
-        {key: 'txId', sortable: true,label:'txId' },
         {key: 'notifyResult', sortable: true,label:'notifyResult' },
       ]),
       currentPage: 1,
@@ -178,7 +181,7 @@ export default {
     ]),
 
     notifyStateOptions() {
-      return NOTIFY_STATE.getOptions()
+      return _.slice(NOTIFY_STATE.getOptions()).filter((val) => APP.NOTIFY_STATE_TYPES.includes(val.index))
     },
     txOptions() {
       return StateHelper.getOptionsFromState('tx',
@@ -203,6 +206,9 @@ export default {
       this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.viewList.length, maxRows: this.limitViewRows})}`
   },
   methods: {
+    async categoryChange(evt) {
+      this.bTx = (evt == 'TX_DELIVERY_NOTIFY' || evt == 'TX_BATTERY_ALERT') ? true: false
+    },
     async changeTx(newVal){
       const tx = this.txs.find((tx) => newVal == tx.txId)
       this.txId = tx? tx.txId: null
@@ -242,17 +248,20 @@ export default {
           this.replace({showAlert: true})
           return
         }
-        var count = 0
-        for (var senHist of fetchList) {
+        let count = 0
+        fetchList.forEach((senHist, propKey) => {
           if (senHist.txId != null && this.txId == senHist.txId || this.txId == null) {
             const d = new Date(senHist.notifyDatetime)
             senHist.positionDt = moment(d.getTime()).format('YYYY/MM/DD HH:mm:ss')
+            senHist.notifyResult = senHist.notifyResult == 0 ? '成功' : '失敗'
+            senHist.txName = senHist.minor + '(' + senHist.txName + ')'
+
             count++
             if (count < this.limitViewRows) {
               this.viewList.push(senHist)
             }
           }
-        }
+        })
         this.totalRows = this.viewList.length
         this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.viewList.length, maxRows: this.limitViewRows})}`
       }catch (e) {
