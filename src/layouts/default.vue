@@ -31,7 +31,7 @@
 <script>
 
 import Vue from 'vue'
-import { mapState } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 import { getThemeColor, getThemeClasses } from '../sub/helper/ThemeHelper'
 import { APP, DISP } from '../sub/constant/config'
 
@@ -47,6 +47,8 @@ import '@fortawesome/fontawesome-free-webfonts/css/fa-brands.css'
 import '@fortawesome/fontawesome-free-webfonts/css/fa-regular.css'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
+import * as LocaleHelper from '../sub/helper/LocaleHelper'
+import { getLangShort } from '../sub/util/HtmlUtil'
 
 Vue.use(BootstrapVue)
 Vue.component('vue-simple-spinner', Spinner)
@@ -97,8 +99,12 @@ export default {
   },
   mounted() {
     this.setDropdownMenuColor()
+    this.setLang(LocaleHelper.getLocale(getLangShort()))
   },
   methods: {
+    ...mapMutations([
+      'setLang',
+    ]),
     setColor(className, color) {
       [].forEach.call(document.getElementsByClassName(className), (e) => {
         e.style.backgroundColor = color
