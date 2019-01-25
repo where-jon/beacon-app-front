@@ -124,7 +124,7 @@ export default {
       this.removeHeatmap()
       Util.debug(this.heatmapData)
       let heatmap = h337.create({
-        radius: DISP.ANALYSIS.HEATMAP.RADIUS,
+        radius: DISP.ANALYSIS.HEATMAP.RADIUS * this.mapImageScale,
         container: element,
       })
       heatmap.setData(this.heatmapData)
