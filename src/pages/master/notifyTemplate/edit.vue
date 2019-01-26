@@ -23,7 +23,7 @@
         </b-form-group>
 
         <!--通知媒体-->
-        <b-form-group v-show="notify.length > 1">
+        <b-form-group v-show="notify.length > 0">
           <label v-t="'label.notifyMedium'" />
           <b-form-radio-group v-model="form.notifyMedium" :options="notify" :disabled="!bNotifyTo" @change="radioChange" />
         </b-form-group>
@@ -88,7 +88,7 @@ export default {
       radioSelect:-1,
       fromType:'email',
       deliveryState:null,
-      notify: _.slice(NOTIFY_MIDIUM.getTypes(), 0, 2).filter((val) => APP.NOTIFY_MIDIUM_TYPES.includes(val.value)),
+      notify: _.slice(NOTIFY_MIDIUM.getTypes()).filter((val) => APP.NOTIFY_MIDIUM_TYPES.includes(val.value)),
       backPath: '/master/notifyTemplate',
       appServicePath: '/core/rcvexcloud',
       form: ViewHelper.extract(this.$store.state.app_service.template,
@@ -117,6 +117,9 @@ export default {
     }
   },
   computed: {
+    notifOptions() {
+      return _.slice(NOTIFY_STATE.getOptions()).filter((val) => APP.NOTIFY_STATE_TYPES.includes(val.index))
+    },
     notifyStateOptions() {
       return _.slice(NOTIFY_STATE.getOptions()).filter((val) => APP.NOTIFY_STATE_TYPES.includes(val.index))
     },
@@ -134,10 +137,8 @@ export default {
   created() {
     this.deliveryState = NOTIFY_STATE.getOptions()[0].value
     this.form.notifyMedium == 1 ?this.bSubject = false: this.bSubject = true
-    this.form.notifyTemplateKey== this.deliveryState? this.bNotifyTo=false: this.bNotifyTo=true
-    //let radionElement = document.getElementsByClassName('custom-radio')[1].style.display = 'none'
-    //radionElement.style.display = 'none'
-    this.form.notifyTemplateKey== this.deliveryState? document.getElementsByClassName(): this.bNotifyTo=true
+    this.form.notifyTemplateKey== this.deliveryState? this.bNotifyTo=false : this.bNotifyTo=true
+    this.form.notifyTemplateKey== this.deliveryState? this.notify = _.slice(NOTIFY_MIDIUM.getTypes()).filter((val) => [0].includes(val.value)) : this.notify
     let labelUpdate = Util.getDetailCaptionKey(this.$store.state.app_service.template.notifyTemplateId)
     labelUpdate == 'label.update' ? this.bNotifyTemplateKey = false: this.bNotifyTemplateKey = true
   },
@@ -146,12 +147,14 @@ export default {
     },
     async signalChange(evt) {
       if (evt == this.deliveryState) {
+        this.notify = _.slice(NOTIFY_MIDIUM.getTypes()).filter((val) => [0].includes(val.value))
         this.bNotifyTo = false
         this.form.notifyMedium = 0
         this.bSubject = true
         this.form.notifyTo = ''
       }else{
         this.bNotifyTo = true
+        this.notify = _.slice(NOTIFY_MIDIUM.getTypes()).filter((val) => APP.NOTIFY_MIDIUM_TYPES.includes(val.value))
       }
       if(this.radioSelect== 0){
         this.bSubject = true
