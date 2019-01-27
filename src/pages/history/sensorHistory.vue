@@ -143,6 +143,7 @@ export default {
       locale.use(mojule.default)
     })
     StateHelper.load('sensor')
+    StateHelper.load('tx')
     this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.fetchRows, maxRows: this.limitViewRows})}`
   },
   methods: {
@@ -205,17 +206,21 @@ export default {
       senHist.sensorDt = moment(d.getTime()).format('YYYY/MM/DD HH:mm:ss')
 
       let aTx = _.find(this.txs, (tx) => { return tx.txId == senHist.txId })
-      senHist.txName = senHist.txId != null? aTx.txName: ''
-      senHist.major = senHist.txId != null? aTx.major: ''
-      senHist.minor = senHist.txId != null? aTx.minor: ''
+      if (senHist.txId != null && aTx) {
+        senHist.txName = aTx.txName
+        senHist.major = aTx.major
+        senHist.minor = aTx.minor
+      }
 
       let aExb = _.find(this.exbs, (exb) => { return exb.exbId == senHist.exbId })
-      senHist.deviceNum = aExb != null? aExb.deviceNum: ''
-      senHist.deviceId = aExb != null? aExb.deviceId: ''
-      senHist.deviceIdX = aExb != null? aExb.deviceIdX: ''
-      senHist.locationName = aExb != null? aExb.locationName: ''
-      senHist.posId = aExb != null? aExb.posId: ''
-      senHist.areaName = aExb != null? aExb.areaName: ''
+      if (aExb != null && aExb) {
+        senHist.deviceNum = aExb.deviceNum
+        senHist.deviceId = aExb.deviceId
+        senHist.deviceIdX = aExb.deviceIdX
+        senHist.locationName = aExb.locationName
+        senHist.posId = aExb.posId
+        senHist.areaName = aExb.areaName
+      }
 
       if (senHist.sensorId == SENSOR.TEMPERATURE) {
         senHist.humidity = senHist.value.humidity
@@ -232,7 +237,8 @@ export default {
         senHist.down = senHist.value.down
       }
       if (senHist.sensorId == SENSOR.MAGNET) {
-        senHist.state = senHist.value.state
+        let labelKey = (senHist.value.magnet === SENSOR.MAGNET_STATUS.ON)? 'notUse': 'using'
+        senHist.state = this.$i18n.tnl('label.' + labelKey)
       }
     },
     async displayImpl(){
