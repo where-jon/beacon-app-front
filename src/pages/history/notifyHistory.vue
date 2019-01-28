@@ -73,7 +73,7 @@
 
           <template slot="minor" slot-scope="row">
             <span v-for= "(val, key) in row.item.minors" :key="key">
-              <div v-if= "!bUserCheck && gIndex == key">{{ val }}</div>
+              <div v-if= "!bUserCheck && userMinor == val">{{ val }}</div>
               <div v-if="bUserCheck">{{ val }}<br></div>
             </span>
           </template>
