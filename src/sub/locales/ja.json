@@ -142,7 +142,7 @@
     "gwNotify": "GW状態アラート",
     "exbNotify": "EXB状態アラート",
     "txBatteryNotify": "TX電池状態アラート",
-    "userRegNotify": "ユーザ登録・更新",
+    "userRegNotify": "ユーザ登録通知",
     "sosNotify": "SOSボタン押下通知",
 
     "exbeacon": "EXBeacon",
