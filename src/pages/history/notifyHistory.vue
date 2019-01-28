@@ -6,7 +6,6 @@
 
       <div class="mapContainer mb-5">
         <b-form inline @submit.prevent>
-
           <!--種別-->
           <b-form-group class="mr-5">
             <b-form-row>
@@ -30,7 +29,6 @@
               </b-form-row>
             </b-form-row>
           </b-form-group>
-
         </b-form>
 
         <b-form inline @submit.prevent>
@@ -57,36 +55,36 @@
         <b-row class="mt-3" />
         <b-table :items="viewList" :fields="fields" :current-page="currentPage" :per-page="perPage" :sort-by.sync="sortBy" stacked="md" striped hover outline>
           <template slot="txNames" slot-scope="row">
-            <span v-for= "(val, key) in row.item.txNames" :key="key">
+            <span v-for="(val, key) in row.item.txNames" :key="key">
               {{ val }} <br>
             </span>
           </template>
 
           <template slot="majors" slot-scope="row">
-            <span v-for= "(val, key) in row.item.majors" :key="key">
+            <span v-for="(val, key) in row.item.majors" :key="key">
               {{ val }}<br>
             </span>
           </template>
 
           <template slot="minor" slot-scope="row">
-            <span v-for= "(val, key) in row.item.minors" :key="key">
+            <span v-for="(val, key) in row.item.minors" :key="key">
               {{ val }}<br>
             </span>
           </template>
 
           <template slot="minors" slot-scope="row">
-            <span v-for= "(val, key) in row.item.minors" :key="key">
-              {{ val }}({{row.item.powerLevels[key]}})<br>
+            <span v-for="(val, key) in row.item.minors" :key="key">
+              {{ val }}({{ row.item.powerLevels[key] }})<br>
             </span>
           </template>
 
           <template slot="deviceNums" slot-scope="row">
-            <span v-for= "(val, key) in row.item.deviceNums" :key="key">
+            <span v-for="(val, key) in row.item.deviceNums" :key="key">
               {{ val }} <br>
             </span>
           </template>
           <template slot="lastRcvDatetimes" slot-scope="row">
-            <span v-for= "(val, key) in row.item.lastRcvDatetimes" :key="key">
+            <span v-for="(val, key) in row.item.lastRcvDatetimes" :key="key">
               {{ val }} <br>
             </span>
           </template>
