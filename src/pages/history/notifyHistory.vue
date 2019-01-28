@@ -243,7 +243,7 @@ export default {
   },
   methods: {
     async categoryChange(evt) {
-      this.bTx = (evt == 'TX_DELIVERY_NOTIFY' || evt == 'TX_BATTERY_ALERT') ? true: false
+      this.bTx = (evt == 'TX_DELIVERY_NOTIFY' || evt == 'TX_BATTERY_ALERT' || evt == 'USER_REG_NOTIFY') ? true: false
     },
     async changeTx(newVal){
       const tx = this.txs.find((tx) => newVal == tx.txId)

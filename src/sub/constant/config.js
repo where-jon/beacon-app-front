@@ -107,7 +107,7 @@ export const APP = { // 機能面に関する設定
   NOTIFY_MIDIUM_TYPES: [0,1],   // 選択可能な種別（1メール,2slack）
 
   // 通知
-  NOTIFY_STATE_TYPES: [0,1], // 選択可能な種別（0 TXボタン通知,1 アラート系, 2 SOS）
+  NOTIFY_STATE_TYPES: [0,1,2], // 選択可能な種別（0 TXボタン通知,1 アラート系, 2 ユーザ登録・更新 , 3 sos）
 
   // 動線分析関連設定
   ANALYSIS_DATETIME_INTERVAL: 60 * 24, // Fromを設定した場合、この設定値分未来の日付をToに自動入力する（分単位）

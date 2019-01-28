@@ -139,6 +139,7 @@
     "gwNotify": "GW status alert",
     "exbNotify": "EXB status alert",
     "txBatteryNotify": "TX battery status alert",
+    "userRegNotify": "User registration / update",
     "sosNotify": "SOS button press notification",
 
     "exbeacon": "EXBeacon",
