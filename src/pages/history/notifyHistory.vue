@@ -57,26 +57,31 @@
         <b-row class="mt-3" />
         <b-table :items="viewList" :fields="fields" :current-page="currentPage" :per-page="perPage" :sort-by.sync="sortBy" stacked="md" striped hover outline>
           <template slot="txNames" slot-scope="row">
-            <span v-for= "(val, key) in row.item.txNames" :key="key">
+            <div v-if= "!bUserCheck">{{userTxName}}</div>
+            <span v-if= "bUserCheck" v-for= "(val, key) in row.item.txNames" :key="key">
               {{ val }} <br>
             </span>
+
           </template>
 
           <template slot="majors" slot-scope="row">
             <span v-for= "(val, key) in row.item.majors" :key="key">
-              {{ val }}<br>
+              <div v-if= "!bUserCheck && gIndex == key">{{ val }}</div>
+              <div v-if="bUserCheck">{{ val }}<br></div>
             </span>
           </template>
 
           <template slot="minor" slot-scope="row">
             <span v-for= "(val, key) in row.item.minors" :key="key">
-              {{ val }}<br>
+              <div v-if= "!bUserCheck && gIndex == key">{{ val }}</div>
+              <div v-if="bUserCheck">{{ val }}<br></div>
             </span>
           </template>
 
           <template slot="minors" slot-scope="row">
             <span v-for= "(val, key) in row.item.minors" :key="key">
-              {{ val }}({{row.item.powerLevels[key]}})<br>
+              <div v-if= "!bUserCheck &&userMinor == val" >{{ val }}({{gPowerLevel}})</div>
+              <div v-if="bUserCheck">{{ val }}({{row.item.powerLevels[key]}})<br></div>
             </span>
           </template>
 
@@ -126,6 +131,7 @@ import { NOTIFY_STATE } from '../../sub/constant/Constants'
 import { APP } from '../../sub/constant/config.js'
 import moment from 'moment'
 import { APP_SERVICE } from '../../sub/constant/config'
+import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 
 
 export default {
@@ -139,9 +145,16 @@ export default {
     return {
       name: 'notifyHistory',
       txId: null,
+      userState:null,
+      bUserCheck:false,
+      userMinor:null,
+      gPowerLevel:null,
+      gIndex:null,
+      userMajor:null,
+      userTxName:null,
       arDeviceNums : null,
-      test:0,
-      bTx:true,
+      testMinor:602,
+      bTx:false,
       items: [
         {
           text: this.$i18n.tnl('label.historyTitle'),
@@ -198,6 +211,10 @@ export default {
         {key: 'txNames', sortable: true,label:'tx' },
         {key: 'notifyResult', sortable: true,label:'notifyResult' },
       ]),
+      fields6: addLabelByKey(this.$i18n, [  // ユーザ登録通知
+        {key: 'notifyTo', sortable: true,label:'notifyTo' },
+        {key: 'notifyResult', sortable: true,label:'notifyResult' },
+      ]),
       currentPage: 1,
       perPage: 20,
       limitViewRows: 100,
@@ -227,10 +244,16 @@ export default {
     },
   },
   async created() {
+    console.log('created')
     const date = new Date()
     this.form.datetimeFrom = Util.getDatetime(date, {hours: -1})
     this.form.datetimeTo = Util.getDatetime(date)
     this.form.notifyState = this.notifyStateOptions[0].value
+    const user = await AppServiceHelper.getCurrentUser()
+    this.userState = user.role.roleFeatureList[3].feature.featureName
+    this.userState == 'ALL_REGION'? this.bTx = true: this.bTx = false
+    this.userState == 'ALL_REGION'? this.bUserCheck = true: this.bUserCheck = false
+    this.userState == 'ALL_REGION'? null: this.userMinor = this.testMinor
     this.fields = this.fields1
   },
   mounted() {
@@ -243,7 +266,7 @@ export default {
   },
   methods: {
     async categoryChange(evt) {
-      this.bTx = (evt == 'TX_DELIVERY_NOTIFY' || evt == 'TX_BATTERY_ALERT' || evt == 'USER_REG_NOTIFY') ? true: false
+      this.bTx = ((evt == 'TX_DELIVERY_NOTIFY' || evt == 'TX_BATTERY_ALERT' || evt == 'USER_REG_NOTIFY') && this.userState == 'ALL_REGION') ? true: false
     },
     async changeTx(newVal){
       const tx = this.txs.find((tx) => newVal == tx.txId)
@@ -272,6 +295,8 @@ export default {
           this.fields = this.fields4
         }else if (aNotifyState == 'TX_SOS_ALERT') {
           this.fields = this.fields5
+        }else if (aNotifyState == 'USER_REG_NOTIFY') {
+          this.fields = this.fields6
         }
         const aTxId = this.txId
         var fetchList = await HttpHelper.getAppService(
@@ -289,8 +314,22 @@ export default {
           const d = new Date(senHist.notifyDatetime)
           senHist.positionDt = moment(d.getTime()).format('YYYY/MM/DD HH:mm:ss')
           senHist.notifyResult = senHist.notifyResult == 0 ? '成功' : '失敗'
-          count++
-          if (count < this.limitViewRows) {
+          if(this.userState == 'ALL_REGION'){
+            count++
+            if (count < this.limitViewRows) {
+              this.viewList.push(senHist)
+            }
+          }else{
+            senHist.minor = senHist.minors.find((tval,index) =>
+              tval == this.userMinor ? this.gIndex = index:null
+            )
+            this.gPowerLevel= senHist.powerLevels[this.gIndex]
+            senHist.minors = senHist.minor
+            this.userMinor = senHist.minors
+            senHist.majors = senHist.majors[this.gIndex]
+            senHist.txNames = senHist.txNames[this.gIndex]
+            this.userTxName = senHist.txNames
+            senHist.minor ? count++:null
             this.viewList.push(senHist)
           }
         })
