@@ -286,16 +286,12 @@ export default {
         }
         let count = 0
         fetchList.forEach((senHist) => {
-          if (senHist.txId != null && this.txId == senHist.txId || this.txId == null) {
-            const d = new Date(senHist.notifyDatetime)
-            senHist.positionDt = moment(d.getTime()).format('YYYY/MM/DD HH:mm:ss')
-            senHist.notifyResult = senHist.notifyResult == 0 ? '成功' : '失敗'
-            //senHist.txNames = senHist.minors + '(' + senHist.txNames + ')'
-
-            count++
-            if (count < this.limitViewRows) {
-              this.viewList.push(senHist)
-            }
+          const d = new Date(senHist.notifyDatetime)
+          senHist.positionDt = moment(d.getTime()).format('YYYY/MM/DD HH:mm:ss')
+          senHist.notifyResult = senHist.notifyResult == 0 ? '成功' : '失敗'
+          count++
+          if (count < this.limitViewRows) {
+            this.viewList.push(senHist)
           }
         })
         this.totalRows = this.viewList.length
