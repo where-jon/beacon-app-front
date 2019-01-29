@@ -125,7 +125,6 @@ export default {
         if (payload && payload.done) {
           payload.done()
         }
-        console.error(this.txs)
         this.workTxs = _.cloneDeep(this.txs)
         this.setTxPosition()
         this.showMapImage()
