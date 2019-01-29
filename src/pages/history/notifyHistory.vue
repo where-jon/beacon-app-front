@@ -148,7 +148,6 @@ export default {
     return {
       name: 'notifyHistory',
       testMinor:602,
-      HISTORY_PAGE : 4,
       txId: null,
       userState:null,
       bUserCheck:false,
@@ -252,7 +251,10 @@ export default {
     this.form.datetimeTo = Util.getDatetime(date)
     this.form.notifyState = this.notifyStateOptions[0].value
     const user = await AppServiceHelper.getCurrentUser()
-    this.userState = user.role.roleFeatureList[this.HISTORY_PAGE].feature.featureName
+
+    user.role.roleFeatureList.find((tval) =>
+      tval.feature.featureName == 'ALL_REGION'? this.userState = 'ALL_REGION':this.userState = null
+    )
     this.userState == 'ALL_REGION'? this.bTx = true: this.bTx = false
     this.userState == 'ALL_REGION'? this.bUserCheck = true: this.bUserCheck = false
     this.userState == 'ALL_REGION'? null: this.userMinor = this.testMinor
