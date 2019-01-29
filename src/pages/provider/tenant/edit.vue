@@ -183,7 +183,7 @@ export default {
       form: ViewHelper.extract(this.$store.state.app_service.tenant, ['tenantId', 'tenantCd', 'tenantName', 'sysAdminLoginId', 'sysAdminPass', 'adminLoginId', 'adminPass', 'userLoginId', 'userPass', 'regionName', 'meshId', 'deviceOffset', 'createDt', 'delFlg']),
       items: [
         {
-          text: this.$i18n.tnl('label.master'),
+          text: this.$i18n.tnl('label.provider'),
           active: true
         },
         {

@@ -40,7 +40,7 @@ export default {
       },
       items: [
         {
-          text: this.$i18n.tnl('label.master'),
+          text: this.$i18n.tnl('label.provider'),
           active: true
         },
         {
