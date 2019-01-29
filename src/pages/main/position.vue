@@ -57,7 +57,7 @@ import * as MenuHelper from '../../sub/helper/MenuHelper'
 import * as Util from '../../sub/util/Util'
 import txdetail from '../../components/parts/txdetail.vue'
 import { APP, DISP } from '../../sub/constant/config'
-import { SENSOR, EXTRA_NAV, CATEGORY } from '../../sub/constant/Constants'
+import { SENSOR, EXTRA_NAV, CATEGORY, TX } from '../../sub/constant/Constants'
 import { Container } from '@createjs/easeljs/dist/easeljs.module'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
@@ -244,7 +244,7 @@ export default {
       this.disableExbsCheck()
       this.detectedCount = 0 // 検知カウントリセット
       let position = PositionHelper.adjustPosition(this.positions(), this.mapImageScale, this.positionedExb)
-      position.forEach((pos) => { // TODO: Txのチェックも追加
+      position.forEach((pos) => {
         this.showTx(pos)
       })
       this.reShowTx(position)
@@ -254,6 +254,10 @@ export default {
       Util.debug('showTx', pos, tx && tx.sensor)
       if (!tx) {
         console.warn('tx not found. btx_id=' + pos.btx_id)
+        return
+      }
+      if (!Util.bitON(tx.disp, TX.DISP.POS)) {
+        Util.debug('tx is not allowed to show', tx)
         return
       }
       let magnet = null
@@ -270,6 +274,11 @@ export default {
       const color = meditag? '000': this.isMagnetOn(magnet)? display.bgColor : display.color
       const bgColor = meditag? meditag.bg.substr(1): this.isMagnetOn(magnet)? display.color: display.bgColor
       const txBtn = this.createTxBtn(pos, display.shape, color, bgColor)
+      if (tx.location && tx.location.areaId == this.selectedArea && tx.location.x * tx.location.y > 0) {
+        Util.debug('fixed location', tx) // TODO: 常時表示は未対応
+        txBtn.x = tx.location.x * this.mapImageScale
+        txBtn.y = tx.location.y * this.mapImageScale
+      }
 
       if(this.reloadSelectedTx.btxId == pos.btx_id){
         this.showingDetailTime = new Date().getTime()

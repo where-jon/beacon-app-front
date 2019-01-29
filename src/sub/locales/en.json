@@ -506,7 +506,15 @@
     "OfficeNumUsers": "Used Number",
     "SensorGraph": "Sensor Graph",
     "ALL_REGION": "All Regions",
-
+    "txLocationSetting": "TX Location",
+    "button": "Button",
+    "editUserInfo": "User Edit",
+    "dispPos": "Show on position",
+    "dispPir": "Show on pir",
+    "dispAlways": "Show always",
+    "MasterNotifyTemplate": "Notify Template",
+    "MasterTxLocation": "TX Location",
+    "NotifyHistory": "Notify History",
     "dummy": ""
   },
   "message": {

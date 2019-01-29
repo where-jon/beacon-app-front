@@ -53,6 +53,7 @@ export const APP = { // 機能面に関する設定
   USE_LEGEND: false, // 凡例を表示
   SHOW_DETECTED_COUNT: false, // 検知数を表示
   SHOW_MAGNET_ON_PIR: false, // 人感センサ画面でマグネットセンサを表示
+  MAGNET_ON_IS_USED: true, // マグネットセンサーONのとき使用中とするか
 
   // 将来実装予定項目 START
   LOG_KEEP_TIME: 30,

@@ -21,12 +21,11 @@
 <script>
 import { mapState } from 'vuex'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
-import * as PositionHelper from '../../sub/helper/PositionHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as Util from '../../sub/util/Util'
 import txdetail from '../../components/parts/txdetail.vue'
 import { DISP, APP } from '../../sub/constant/config'
-import { SENSOR } from '../../sub/constant/Constants'
+import { SENSOR, TX } from '../../sub/constant/Constants'
 import { Shape, Container, Text } from '@createjs/easeljs/dist/easeljs.module'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
@@ -208,40 +207,29 @@ export default {
         this.txCont.removeAllChildren()
       }
       this.stage.update()
-      // for debug
-      this.disableExbsCheck()
-      const position = PositionHelper.adjustPosition(this.positions(), this.mapImageScale, this.positionedExb)
-      position.forEach((pos) => { // TODO: Txのチェックも追加
-        this.showTx(pos)
-      })
-      this.reShowTx(position)
+
+      //　表示条件：マグネットセンサ、固定位置登録＆同一エリア、PIR画面表示設定
+      _(this.txs).filter((tx) => tx.sensorId == SENSOR.MAGNET && tx.location && tx.location.x * tx.location.y > 0 
+        && tx.location.areaId == this.selectedArea && Util.bitON(tx.disp, TX.DISP.PIR))
+        .forEach((tx) => {
+          this.showTx(tx)
+        })
     },
-    showTx(pos) {
-      const tx = this.txs.find((tx) => tx.btxId == pos.btx_id)
-      Util.debug('showTx', pos, tx && tx.sensor)
-      if (!tx) {
-        console.warn('tx not found. btx_id=' + pos.btx_id)
-        return
-      }
-      if (tx.sensorId != SENSOR.MAGNET) {
-        return
-      }
+    showTx(tx) {
+      Util.debug('showTx', tx)
       const magnet = this.magnetSensors && this.magnetSensors.find((sensor) => sensor.btx_id == tx.btxId)
       Util.debug('magnet', magnet)
 
-      const count = (magnet.magnet == SENSOR.MAGNET_STATUS.ON)? 0: 1
+      const magnetOn = (magnet.magnet == SENSOR.MAGNET_STATUS.ON)
+      const count = (APP.MAGNET_ON_IS_USED && magnetOn || !APP.MAGNET_ON_IS_USED && !magnetOn)? 1: 0
       const txBtn = new Container()
       txBtn.addChild(this.createShape(count))
       if (DISP.PIR_INUSE_LABEL || DISP.PIR_EMPTY_LABEL) {
         txBtn.addChild(this.createLabel(count))
       }
 
-      if(this.reloadSelectedTx.btxId == pos.btx_id){
-        this.showingDetailTime = new Date().getTime()
-        this.showDetail(txBtn.txId, txBtn.x, txBtn.y)
-      }
-      txBtn.x = pos.exb.x
-      txBtn.y = pos.exb.y
+      txBtn.x = tx.location.x * this.mapImageScale
+      txBtn.y = tx.location.y * this.mapImageScale
       this.txCont.addChild(txBtn)
       this.stage.update()
     },

@@ -75,6 +75,20 @@ export default {
     afterCrud(){
       StateHelper.setForceFetch('pot', true)
     },
+    convBeforeEdit(tx) {
+      if (tx.disp != null) {
+        tx.dispPos = tx.disp & 1
+        tx.dispPir = tx.disp & 2
+        tx.dispAlways = tx.disp & 4
+      }
+      else {
+        tx.dispPos = 1
+        tx.dispPir = 0
+        tx.dispAlways = 0
+      }
+      
+      return tx
+    },
     async fetchData(payload) {
       try {
         this.showProgress()

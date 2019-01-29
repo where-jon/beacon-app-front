@@ -51,7 +51,21 @@
               <label v-t="'label.description'" />
               <b-form-textarea v-model="form.description" :rows="3" :max-rows="6" :readonly="!isEditable" maxlength="1000" />
             </b-form-group>
-
+            <b-form-group>
+              <b-form-checkbox id="dispPos" v-model="form.dispPos" :value="1" :unchecked-value="0">
+                <span v-text="$i18n.tnl('label.dispPos')" />
+              </b-form-checkbox>
+            </b-form-group>
+            <b-form-group>
+              <b-form-checkbox id="dispPir" v-model="form.dispPir" :value="2" :unchecked-value="0">
+                <span v-text="$i18n.tnl('label.dispPir')" />
+              </b-form-checkbox>
+            </b-form-group>
+            <b-form-group>
+              <b-form-checkbox id="dispAlways" v-model="form.dispAlways" :value="4" :unchecked-value="0">
+                <span v-text="$i18n.tnl('label.dispAlways')" />
+              </b-form-checkbox>
+            </b-form-group>
             <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
             <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="register(false)">
               {{ $i18n.tnl(`label.${isUpdate? 'update': 'register'}`) }}
@@ -92,12 +106,15 @@ export default {
       backPath: '/master/tx',
       appServicePath: '/core/tx',
       form: ViewHelper.extract(this.$store.state.app_service.tx, [
-        'txId', 'btxId', 'major', 'minor', 'txName', 'displayName',  'mapImage',
-        'txSensorList.0.sensor.sensorId',
-        'pot.potId', 'pot.potCd', 'pot.displayName', 'pot.description',
-        'pot.potCategoryList.0.category.categoryId',
-        'pot.potGroupList.0.group.groupId',
+        'txId', 'btxId', 'major', 'minor', 'txName', 'potTxList.0.pot.displayName', 'mapImage', 'dispPos', 'dispPir', 'dispAlways',
+        'txSensorList.0.sensor.sensorId', 'locationId',
+        'potTxList.0.pot.potId', 'potTxList.0.pot.potCd', 'potTxList.0.pot.displayName', 'potTxList.0.pot.description',
+        'potTxList.0.pot.potCategoryList.0.category.categoryId',
+        'potTxList.0.pot.potGroupList.0.group.groupId',
       ]),
+      defValue: {
+        'dispPos': 1,
+      },
       items: [
         {
           text: this.$i18n.tnl('label.master'),
@@ -150,6 +167,7 @@ export default {
     ]),
   },
   mounted() {
+    ViewHelper.applyDef(this.form, this.defValue)
     StateHelper.load('sensor')
     StateHelper.load('category')
     StateHelper.load('group')
@@ -178,10 +196,16 @@ export default {
       case 'btxId':
         this.form.minor = this.form.btxId
       }
+      let disp = this.form.dispPos |  this.form.dispPir | this.form.dispAlways
+      let pot = await this.getRelatedPot(txId)
+      if (pot) {
+        pot.potTxList = null
+      }
       let entity = {
         ...this.form,
         txId,
-        pot: await this.getRelatedPot(txId),
+        disp,
+        potTxList: pot? [{potTxPK:{txId, potId: pot.potId}, pot}]: null,
         txSensorList: this.form.sensorId? [
           {txSensorPK: {sensorId: this.form.sensorId}}
         ]: null

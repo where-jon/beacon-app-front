@@ -39,6 +39,7 @@ export const loadConfigJson = async () => {
  * @param {*} settingArr 
  */
 export const applyAppServiceSetting = (settingArr, defaultConfig = null) => {
+  console.log(settingArr)
   if (!settingArr) return
 
   let updateData = _.reduce(settingArr, (result, setting) => {

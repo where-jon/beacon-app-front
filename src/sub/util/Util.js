@@ -292,6 +292,10 @@ export const equalsAny = (target, arr) => {
   return arr.includes(target)
 }
 
+export const bitON = (target, bit) => {
+  return (target & bit) == bit
+}
+
 /**
  * 文字列リストのうち、最も長い文字列のバイト数を返す。
  * 

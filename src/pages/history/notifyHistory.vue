@@ -60,17 +60,23 @@
             <span  v-if= "!bUserCheck">
               {{ row.item.txNames }}
             </span>
-            <span v-if= "bUserCheck" v-for= "(val, key) in row.item.txNames" :key="key">
-              {{ val }} <br>
+            <span v-if= "bUserCheck" >
+              <span v-for= "(val, key) in row.item.txNames" :key="key">
+                {{ val }} <br>
+              </span>
             </span>
           </template>
 
           <template slot="majors" slot-scope="row">
-            <span v-if= "!bUserCheck" v-for= "(val, key) in row.item.majors" :key="key">
-              {{ val }}
+            <span v-if= "!bUserCheck">
+              <span v-for= "(val, key) in row.item.majors" :key="key">
+                {{ val }}
+              </span>
             </span>
-            <span v-if="bUserCheck" v-for= "(val, key) in row.item.majors" :key="key">
-              <div >{{ val }}<br></div>
+            <span v-if="bUserCheck">
+              <span v-for= "(val, key) in row.item.majors" :key="key">
+                <div >{{ val }}<br></div>
+              </span>
             </span>
           </template>
 

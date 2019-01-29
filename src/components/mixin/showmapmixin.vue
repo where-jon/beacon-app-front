@@ -267,7 +267,7 @@ export default {
       }
     },
     replaceExb(exb, nokeep) {
-      if (this.keepExbPosition) {
+      if (this.keepExbPosition || this.keepTxPosition) {
         exb.x = exb.x / this.oldMapImageScale * this.mapImageScale
         exb.y = exb.y / this.oldMapImageScale * this.mapImageScale
       } else {
