@@ -230,7 +230,8 @@ export const NOTIFY_STATE = {
       {value:'GW_ALERT', text: i18n.t('label.gwNotify'), index:1},
       {value:'EXB_ALERT', text: i18n.t('label.exbNotify'), index:1},
       {value:'TX_BATTERY_ALERT', text: i18n.t('label.txBatteryNotify'), index:1},
-      {value:'TX_SOS_ALERT', text: i18n.t('label.sosNotify'), index:2},
+      {value:'USER_REG_NOTIFY', text: i18n.t('label.userRegNotify'), index:2},
+      {value:'TX_SOS_ALERT', text: i18n.t('label.sosNotify'), index:3},
     ]
   }
 }

@@ -6,6 +6,7 @@
 
       <div class="mapContainer mb-5">
         <b-form inline @submit.prevent>
+
           <!--種別-->
           <b-form-group class="mr-5">
             <b-form-row>
@@ -29,6 +30,7 @@
               </b-form-row>
             </b-form-row>
           </b-form-group>
+
         </b-form>
 
         <b-form inline @submit.prevent>
@@ -55,36 +57,44 @@
         <b-row class="mt-3" />
         <b-table :items="viewList" :fields="fields" :current-page="currentPage" :per-page="perPage" :sort-by.sync="sortBy" stacked="md" striped hover outline>
           <template slot="txNames" slot-scope="row">
-            <span v-for="(val, key) in row.item.txNames" :key="key">
+            <span  v-if= "!bUserCheck">
+              {{ row.item.txNames }}
+            </span>
+            <span v-if= "bUserCheck" v-for= "(val, key) in row.item.txNames" :key="key">
               {{ val }} <br>
             </span>
           </template>
 
           <template slot="majors" slot-scope="row">
-            <span v-for="(val, key) in row.item.majors" :key="key">
-              {{ val }}<br>
+            <span v-if= "!bUserCheck" v-for= "(val, key) in row.item.majors" :key="key">
+              {{ val }}
+            </span>
+            <span v-if="bUserCheck" v-for= "(val, key) in row.item.majors" :key="key">
+              <div >{{ val }}<br></div>
             </span>
           </template>
 
           <template slot="minor" slot-scope="row">
-            <span v-for="(val, key) in row.item.minors" :key="key">
-              {{ val }}<br>
+            <span v-for= "(val, key) in row.item.minors" :key="key">
+              <div v-if= "!bUserCheck && userMinor == val">{{ val }}</div>
+              <div v-if="bUserCheck">{{ val }}<br></div>
             </span>
           </template>
 
           <template slot="minors" slot-scope="row">
-            <span v-for="(val, key) in row.item.minors" :key="key">
-              {{ val }}({{ row.item.powerLevels[key] }})<br>
+            <span v-for= "(val, key) in row.item.minors" :key="key">
+              <div v-if= "!bUserCheck && userMinor == val" >{{ val }}({{gPowerLevel}})</div>
+              <div v-if="bUserCheck">{{ val }}({{row.item.powerLevels[key]}})<br></div>
             </span>
           </template>
 
           <template slot="deviceNums" slot-scope="row">
-            <span v-for="(val, key) in row.item.deviceNums" :key="key">
+            <span v-for= "(val, key) in row.item.deviceNums" :key="key">
               {{ val }} <br>
             </span>
           </template>
           <template slot="lastRcvDatetimes" slot-scope="row">
-            <span v-for="(val, key) in row.item.lastRcvDatetimes" :key="key">
+            <span v-for= "(val, key) in row.item.lastRcvDatetimes" :key="key">
               {{ val }} <br>
             </span>
           </template>
@@ -124,6 +134,7 @@ import { NOTIFY_STATE } from '../../sub/constant/Constants'
 import { APP } from '../../sub/constant/config.js'
 import moment from 'moment'
 import { APP_SERVICE } from '../../sub/constant/config'
+import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 
 
 export default {
@@ -136,10 +147,13 @@ export default {
   data () {
     return {
       name: 'notifyHistory',
+      testMinor:602,
       txId: null,
-      arDeviceNums : null,
-      test:0,
-      bTx:true,
+      userState:null,
+      bUserCheck:false,
+      userMinor:null,
+      gPowerLevel:null,
+      bTx:false,
       items: [
         {
           text: this.$i18n.tnl('label.historyTitle'),
@@ -163,7 +177,7 @@ export default {
         {key: 'notifyTo', sortable: true,label:'notifyTo' },
         {key: 'majors', sortable: true,label:'majors' },
         {key: 'minor', sortable: true,label:'minor' },
-        {key: 'txNames', sortable: true,label:'tx' },
+        {key: 'txNames', sortable: true,label:'txName' },
         {key: 'notifyResult', sortable: true,label:'notifyResult' },
       ]),
       fields2: addLabelByKey(this.$i18n, [  // GW状態アラート
@@ -172,7 +186,6 @@ export default {
         {key: 'deviceNums', sortable: true,label:'deviceNum' },
         {key: 'lastRcvDatetimes', sortable: true,label:'finalReceiveTime' },
         {key: 'notifyResult', sortable: true,label:'notifyResult' },
-        {key: 'newLine', thStyle: {width:'130px !important'} }
       ]),
       fields3: addLabelByKey(this.$i18n, [  // EXB状態アラート
         {key: 'positionDt', sortable: true, label:'dt'},
@@ -185,7 +198,7 @@ export default {
         {key: 'positionDt', sortable: true, label:'dt'},
         {key: 'notifyTo', sortable: true,label:'notifyTo' },
         {key: 'minors', sortable: true,label:'minorPowerLevel'},
-        {key: 'txNames', sortable: true,label:'tx' },
+        {key: 'txNames', sortable: true,label:'txName' },
         {key: 'notifyResult', sortable: true,label:'notifyResult' },
       ]),
       fields5: addLabelByKey(this.$i18n, [  // SOSボタン押下通知
@@ -193,7 +206,14 @@ export default {
         {key: 'notifyTo', sortable: true,label:'notifyTo' },
         {key: 'majors', sortable: true,label:'major' },
         {key: 'minor', sortable: true,label:'minor' },
-        {key: 'txNames', sortable: true,label:'tx' },
+        {key: 'txNames', sortable: true,label:'txName' },
+        {key: 'notifyResult', sortable: true,label:'notifyResult' },
+      ]),
+      fields6: addLabelByKey(this.$i18n, [  // ユーザ登録通知
+        {key: 'positionDt', sortable: true, label:'dt'},
+        {key: 'notifyTo', sortable: true,label:'notifyTo' },
+        {key: 'minor', sortable: true,label:'minor' },
+        {key: 'txNames', sortable: true,label:'txName' },
         {key: 'notifyResult', sortable: true,label:'notifyResult' },
       ]),
       currentPage: 1,
@@ -225,10 +245,19 @@ export default {
     },
   },
   async created() {
+    console.log('created')
     const date = new Date()
     this.form.datetimeFrom = Util.getDatetime(date, {hours: -1})
     this.form.datetimeTo = Util.getDatetime(date)
     this.form.notifyState = this.notifyStateOptions[0].value
+    const user = await AppServiceHelper.getCurrentUser()
+
+    user.role.roleFeatureList.find((tval) =>
+      tval.feature.featureName == 'ALL_REGION'? this.userState = 'ALL_REGION':this.userState = null
+    )
+    this.userState == 'ALL_REGION'? this.bTx = true: this.bTx = false
+    this.userState == 'ALL_REGION'? this.bUserCheck = true: this.bUserCheck = false
+    this.userState == 'ALL_REGION'? null: this.userMinor = this.testMinor
     this.fields = this.fields1
   },
   mounted() {
@@ -241,7 +270,7 @@ export default {
   },
   methods: {
     async categoryChange(evt) {
-      this.bTx = (evt == 'TX_DELIVERY_NOTIFY' || evt == 'TX_BATTERY_ALERT') ? true: false
+      this.bTx = ((evt == 'TX_DELIVERY_NOTIFY' || evt == 'TX_BATTERY_ALERT' || evt == 'USER_REG_NOTIFY') && this.userState == 'ALL_REGION') ? true: false
     },
     async changeTx(newVal){
       const tx = this.txs.find((tx) => newVal == tx.txId)
@@ -270,6 +299,8 @@ export default {
           this.fields = this.fields4
         }else if (aNotifyState == 'TX_SOS_ALERT') {
           this.fields = this.fields5
+        }else if (aNotifyState == 'USER_REG_NOTIFY') {
+          this.fields = this.fields6
         }
         const aTxId = this.txId
         var fetchList = await HttpHelper.getAppService(
@@ -284,16 +315,25 @@ export default {
         }
         let count = 0
         fetchList.forEach((senHist) => {
-          if (senHist.txId != null && this.txId == senHist.txId || this.txId == null) {
-            const d = new Date(senHist.notifyDatetime)
-            senHist.positionDt = moment(d.getTime()).format('YYYY/MM/DD HH:mm:ss')
-            senHist.notifyResult = senHist.notifyResult == 0 ? '成功' : '失敗'
-            //senHist.txNames = senHist.minors + '(' + senHist.txNames + ')'
-
+          const d = new Date(senHist.notifyDatetime)
+          senHist.positionDt = moment(d.getTime()).format('YYYY/MM/DD HH:mm:ss')
+          senHist.notifyResult = senHist.notifyResult == 0 ? '成功' : '失敗'
+          if(this.userState == 'ALL_REGION' || aNotifyState == 'GW_ALERT' || aNotifyState == 'EXB_ALERT'){
             count++
             if (count < this.limitViewRows) {
               this.viewList.push(senHist)
             }
+          }else{
+            let tempIndex = 0
+            senHist.minors.find((tval,index) =>
+              tval == this.userMinor ? tempIndex = index:null
+            )
+            senHist.minors = senHist.minors[tempIndex]
+            this.gPowerLevel= senHist.powerLevels[tempIndex]
+            senHist.majors = senHist.majors[tempIndex]
+            senHist.txNames = senHist.txNames[tempIndex]
+            senHist.minors == this.userMinor? this.viewList.push(senHist) : null
+            senHist.minors == this.userMinor? count++:null
           }
         })
         this.totalRows = this.viewList.length

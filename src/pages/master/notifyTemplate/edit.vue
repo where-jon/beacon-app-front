@@ -87,7 +87,8 @@ export default {
       id: 'notifyTemplateId',
       radioSelect:-1,
       fromType:'email',
-      deliveryState:null,
+      deliveryState:NOTIFY_STATE.getOptions()[0].value,
+      userMailState:NOTIFY_STATE.getOptions()[4].value,
       notify: _.slice(NOTIFY_MIDIUM.getTypes()).filter((val) => APP.NOTIFY_MIDIUM_TYPES.includes(val.value)),
       backPath: '/master/notifyTemplate',
       appServicePath: '/core/rcvexcloud',
@@ -135,10 +136,9 @@ export default {
     ]),
   },
   created() {
-    this.deliveryState = NOTIFY_STATE.getOptions()[0].value
     this.form.notifyMedium == 1 ?this.bSubject = false: this.bSubject = true
     this.form.notifyTemplateKey== this.deliveryState? this.bNotifyTo=false : this.bNotifyTo=true
-    this.form.notifyTemplateKey== this.deliveryState? this.notify = _.slice(NOTIFY_MIDIUM.getTypes()).filter((val) => [0].includes(val.value)) : this.notify
+    this.form.notifyTemplateKey== this.deliveryState || this.form.notifyTemplateKey==this.userMailState? this.notify = _.slice(NOTIFY_MIDIUM.getTypes()).filter((val) => [0].includes(val.value)) : this.notify
     let labelUpdate = Util.getDetailCaptionKey(this.$store.state.app_service.template.notifyTemplateId)
     labelUpdate == 'label.update' ? this.bNotifyTemplateKey = false: this.bNotifyTemplateKey = true
   },
