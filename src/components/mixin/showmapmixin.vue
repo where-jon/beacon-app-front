@@ -341,7 +341,7 @@ export default {
     },
     setPositionedExb(){
       Util.debug('Raw exb', this.exbs, this.selectedArea)
-      this.positionedExb = _(this.exbs).filter((exb) => {
+      this.positionedExb = _(_.cloneDeep(this.exbs)).filter((exb) => {
         return exb.enabled && exb.location.areaId == this.selectedArea && exb.location.x && exb.location.y > 0
       }).value()
       Util.debug('positionedExb', this.positionedExb)

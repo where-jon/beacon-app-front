@@ -19,7 +19,10 @@ export const fetchNav = (masterFeatureList, tenantFeatureList, featureList, isPr
       if (!isProvider && group.providerOnly) {
         return false
       }
-      return isTenantAdmin || featureOk('/' + group.base + page.path, tenantFeatureList) && getMode('/' + group.base + page.path, featureList) & ROLE_FEATURE.MODE.SYS_ALL
+      if(isTenantAdmin || isProvider){
+        return true
+      }
+      return featureOk('/' + group.base + page.path, tenantFeatureList) && getMode('/' + group.base + page.path, featureList) & ROLE_FEATURE.MODE.SYS_ALL
     })
     return {...group, pages}
   })
