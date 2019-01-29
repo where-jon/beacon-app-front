@@ -70,7 +70,7 @@
           <!-- 参照ボタン -->
           <b-button v-if="isDetailReferenceable" v-t="'label.refer'" :variant="theme" :style="actionButtonStyle" size="sm" class="mr-2 my-1" @click.stop="edit(row.item, row.index, $event.target)" />
           <!-- 更新ボタン -->
-          <b-button v-if="isUpdatable" v-t="'label.update'" :variant="theme" :style="actionButtonStyle" size="sm" class="mr-2 my-1" @click.stop="edit(row.item, row.index, $event.target)" />
+          <b-button v-if="isUpdatable" v-t="'label.update'" :variant="theme" :style="actionButtonStyle" size="sm" class="mr-2 my-1" :disabled="disabledTenantButton(row.item)" @click.stop="edit(row.item, row.index, $event.target)" />
           <!-- 削除ボタン -->
           <b-button v-if="isDeleteable" v-t="'label.delete'" :style="actionButtonStyle" size="sm" variant="outline-danger" class="mr-1 my-1" @click.stop="deleteConfirm(row.item, row.index, $event.target)" />
           <!-- jump another master page -->
@@ -89,7 +89,7 @@
             <!-- switch button -->
             <div>
               <b-button v-if="isCurrentTenant(row.item)" v-t="'label.now'" :variant="theme" :style="anotherActionButtonStyle" :disabled="true" size="sm" class="btn-block my-1" style="opacity: 1.0 !important; border-radius: 0px;" />
-              <b-button v-else v-t="'label.switch'" :variant="theme" :style="anotherActionButtonStyle" size="sm" class="btn-block my-1" @click.stop="switchTenant(row.item)" />
+              <b-button v-else v-t="'label.switch'" :variant="theme" :style="anotherActionButtonStyle" size="sm" class="btn-block my-1" :disabled="disabledTenantButton(row.item)" @click.stop="switchTenant(row.item)" />
             </div>
           </div>
         </template>
@@ -360,6 +360,12 @@ export default {
     },
     isCurrentTenant(item){
       return item.tenantId == this.login.currentTenant.tenantId
+    },
+    disabledTenantButton(item){
+      if(item.tenantId == null){
+        return false
+      }
+      return item.delFlg != 0
     },
     async switchTenant(item){
       await AuthHelper.switchTenant(item.tenantId)
