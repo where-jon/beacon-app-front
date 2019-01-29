@@ -66,13 +66,15 @@ export default {
   computed: {
     ...mapState('app_service', [
       'users',
+      'forceFetchUser',
     ]),
   },
   methods: {
     async fetchData(payload) {
       try {
         this.showProgress()
-        await StateHelper.load('user')
+        await StateHelper.load('user', this.forceFetchUser)
+        StateHelper.setForceFetch('user', false)
         if (payload && payload.done) {
           payload.done()
         }

@@ -53,10 +53,17 @@ export default {
       if(!APP.POT_WITH_POTCD){
         entity.potCd = entity.potName
       }
+      if(Util.hasValue(entity.potTxList)){
+        entity.potTxList.forEach((potTx) => potTx.potTxPK.potId = entity.potId)
+      }
+      if(Util.hasValue(entity.potUserList)){
+        entity.potUserList[0].user.name = entity.potName
+      }
       return dummyKey
     },
     afterCrud(){
       StateHelper.setForceFetch('tx', true)
+      StateHelper.setForceFetch('user', true)
     },
     setParamRelation(entity, headerName, val, dummyKey){
       if('groupId' === headerName) {
@@ -68,10 +75,41 @@ export default {
       return dummyKey
     },
     setMinorBtxId(entity, headerName, val, dummyKey){
-      const tx = this.txs.find((tx) => tx[headerName] == val)
-      if(tx){
-        entity.txId = tx.txId
+      if(!Util.hasValue(val)){
+        return dummyKey
       }
+      const valList = val.split(',').map((val) => val.trim())
+      if(!entity.potTxList){
+        entity.potTxList = []
+        valList.forEach((v, idx) => {
+          const tx = this.txs.find((tx) => tx[headerName] == v)
+          const potTx = {potTxPK: {potId: dummyKey--, txId: tx? tx.txId: dummyKey--}}
+          potTx[tx? headerName: `${headerName}Error`] = v
+          entity.potTxList.push(potTx)
+        })
+      }
+      else{
+        valList.forEach((v, idx) => {
+          const tx = this.txs.find((tx) => tx[headerName] == v)
+          const potTxList = entity.potTxList
+          if(idx < potTxList.length){
+            potTxList[idx][tx? headerName: `${headerName}Error`] = v
+          }
+        })
+      }
+      return dummyKey
+    },
+    setUser(entity, headerName, val, dummyKey){
+      if(!Util.hasValue(val)){
+        return dummyKey
+      }
+      if(!entity.potUserList){
+        entity.potUserList = [{potUserPK: {potId: dummyKey--, userId: dummyKey--}, user: {}}]
+      }
+      if(headerName == 'userId'){
+        entity.potUserList[0].potUserPK.userId = val
+      }
+      entity.potUserList[0].user[headerName] = val
       return dummyKey
     },
     setOther(entity, headerName, val, dummyKey, mainCol){
@@ -102,7 +140,8 @@ export default {
       const MAIN_COL = 'potId'
       const MANY_TO_MANY = ['groupId', 'categoryId']
       const extValueHeaders = ['ruby', 'post', 'tel']
-      const txIdHeaders = ['btxId', 'minor']
+      const txHeaders = ['txId', 'btxId', 'minor']
+      const userHeaders = ['userId', 'loginId', 'roleName', 'pass', 'email']
       await StateHelper.load('category')
       await StateHelper.load('group')
       await StateHelper.load('tx')
@@ -112,8 +151,8 @@ export default {
         if (MANY_TO_MANY.includes(headerName) && Util.hasValue(val)) {
           return this.setParamRelation(entity, headerName, val, dummyKey)
         }
-        // minor, btxId
-        if(_.includes(txIdHeaders, headerName)){
+        // minor, btxId, txId
+        if(_.includes(txHeaders, headerName)){
           return this.setMinorBtxId(entity, headerName, val, dummyKey)
         }
         // extValue
@@ -122,6 +161,11 @@ export default {
         }
         if (_.includes(extValueHeaders, headerName)) {
           entity.extValue[headerName] = val
+          return dummyKey
+        }
+        // user
+        if (_.includes(userHeaders, headerName)) {
+          this.setUser(entity, headerName, val, dummyKey)
           return dummyKey
         }
 

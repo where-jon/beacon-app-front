@@ -144,6 +144,7 @@ export const SENSOR = {
   LED: 4,
   MEDITAG: 5,
   MAGNET: 6,
+  BUTTON: 7,
   MAGNET_STATUS: {
     OFF: 0,
     ON: 4,

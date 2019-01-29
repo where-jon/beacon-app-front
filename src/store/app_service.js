@@ -36,6 +36,7 @@ export const state = () => ({
   tenant: {},
   forceFetchPot: true,
   forceFetchTx: true,
+  forceFetchUser: true,
   forceFetchExb: true,
   forceFetchZone: true,
   forceFetchTemplate: true,
