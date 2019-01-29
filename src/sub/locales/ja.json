@@ -155,6 +155,7 @@
     "led": "LED",
     "meditag": "MEDiTAG",
     "magnet": "マグネット",
+    "button": "ボタン",
     "InUse": "使用",
     "Empty": "空",
 
@@ -208,6 +209,7 @@
     "post": "役職",
     "ruby": "ふりがな",
     "tel": "電話番号",
+    "editUserInfo": "ユーザ情報設定",
 
     "positionList": "位置表示(一覧)",
     "positionListShort": "一覧",

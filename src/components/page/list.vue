@@ -96,6 +96,14 @@
         <template slot="thumbnail" slot-scope="row">
           <img v-if="thumbnail(row.item)" :src="thumbnail(row.item)" height="70">
         </template>
+        <!-- tx名 -->
+        <template slot="txIdName" slot-scope="row">
+          <div>
+            <span v-for="(txIdName, index) in row.item.txIdNames" :key="index" class="row">
+              {{ txIdName }}
+            </span>
+          </div>
+        </template>
         <!-- 電池レベル -->
         <template slot="powerLevel" slot-scope="row">
           <span :class="'badge badge-pill badge-' + row.item.powerLevel.class">

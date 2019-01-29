@@ -11,22 +11,38 @@
               <label v-t="'label.potId'" />
               <b-form-input v-model="form.potId" type="text" readonly="readonly" />
             </b-form-group>
-            <b-form-group>
-              <label v-t="'label.tx'" />
-              <b-form-select v-model="form.txId" :options="txOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-3 col-4" @change="changeTx" />
-            </b-form-group>
-            <b-form-group v-show="isShown('TX_WITH_TXID')">
-              <label v-t="'label.txId'" />
-              <input v-model="txId" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control">
-            </b-form-group>
-            <b-form-group v-show="!isShown('TX_WITH_TXID') && isShown('TX_BTX_MINOR') != 'minor'">
-              <label v-t="'label.btxId'" />
-              <input v-model="btxId" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control">
-            </b-form-group>
-            <b-form-group v-show="!isShown('TX_WITH_TXID') && isShown('TX_BTX_MINOR') == 'minor'">
-              Tx(<label v-t="'label.minor'" />)
-              <input v-model="minor" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control">
-            </b-form-group>
+            <span v-for="(potTx, index) in form.potTxList" :key="index">
+              <b-form inline @submit.prevent>
+                <b-form-group>
+                  <b-form-row>
+                    <b-form-row class="mb-3 mr-5">
+                      <label>
+                        {{ $i18n.tnl('label.tx') + (index + 1) }}
+                      </label>
+                      <b-form-select v-model="potTx.txId" :options="getTxOptions(index)" :disabled="!isEditable" :readonly="!isEditable" class="ml-3" @change="changeTx($event, index)" />
+                    </b-form-row>
+                    <b-form-row v-show="isShown('TX_WITH_TXID')" class="mb-3 mr-3">
+                      <label>
+                        {{ $i18n.tnl('label.txId') + (index + 1) }}
+                      </label>
+                      <input v-model="txIds[index]" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control ml-3">
+                    </b-form-row>
+                    <b-form-row v-show="!isShown('TX_WITH_TXID') && isShown('TX_BTX_MINOR') != 'minor'" class="mb-3 mr-3">
+                      <label>
+                        {{ $i18n.tnl('label.btxId') + (index + 1) }}
+                      </label>
+                      <input v-model="btxIds[index]" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control ml-3">
+                    </b-form-row>
+                    <b-form-row v-show="!isShown('TX_WITH_TXID') && isShown('TX_BTX_MINOR') == 'minor'" class="mb-3 mr-3">
+                      <label>
+                        {{ `Tx(${$i18n.tnl('label.minor')}${index + 1})` }}
+                      </label>
+                      <input v-model="minors[index]" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control ml-3">
+                    </b-form-row>
+                  </b-form-row>
+                </b-form-group>
+              </b-form>
+            </span>
             <b-form-group v-show="category.length > 1">
               <label v-t="'label.categoryType'" />
               <b-form-radio-group v-model="form.potType" :options="category" :disabled="!isEditable" />
@@ -76,6 +92,29 @@
               <b-form-textarea v-model="form.description" :rows="3" :max-rows="6" :readonly="!isEditable" maxlength="1000" />
             </b-form-group>
 
+            <b-form-group v-show="showEmail">
+              <label v-t="'label.email'" />
+              <b-form-input v-model="userForm.email" type="email" maxlength="255" />
+            </b-form-group>
+            <b-form-group v-if="isShown('POT_WITH_USER')">
+              <b-form-checkbox v-model="editShowUser" :value="true" :unchecked-value="false" @change="nextShowEmailCheck()">
+                <span v-text="$i18n.tnl('label.editUserInfo')" />
+              </b-form-checkbox>
+            </b-form-group>
+            <b-form-group v-show="editShowUser">
+              <label v-t="'label.loginId'" />
+              <input v-model="userForm.loginId" :title="$i18n.tnl('message.validationList', {validate: $i18n.tnl('message.loginValidationList')})" type="text" minlength="3" maxlength="16" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" class="form-control" :required="editShowUser">
+            </b-form-group>
+            <b-form-group v-show="editShowUser">
+              <label v-t="'label.role'" />
+              <b-form-select v-model="userForm.roleId" :options="roleOptions" :required="editShowUser" />
+            </b-form-group>
+            <b-form-group v-show="editShowUser">
+              <label v-if="hasUserId" v-t="'label.passwordUpdate'" />
+              <label v-else v-t="'label.password'" />
+              <input v-model="userForm.pass" type="password" :minlength="userForm.pass? 3: 0" maxlength="16" pattern="^[a-zA-Z0-9_\-\/!#\$%&@]*$" class="form-control" :required="editShowUser && !hasUserId" />
+            </b-form-group>
+
             <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
             <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="register(false)">
               {{ $i18n.tnl(`label.${isUpdate? 'update': 'register'}`) }}
@@ -99,7 +138,7 @@ import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
-import { CATEGORY } from '../../../sub/constant/Constants'
+import { CATEGORY, SENSOR } from '../../../sub/constant/Constants'
 import { APP } from '../../../sub/constant/config.js'
 
 export default {
@@ -115,14 +154,24 @@ export default {
       backPath: '/master/pot',
       appServicePath: '/basic/pot',
       category: _.slice(CATEGORY.getTypes(), 0, 2).filter((val) => APP.CATEGORY_TYPES.includes(val.value)),
-      txId: null,
-      btxId: null,
-      minor: null,
+      txIds: Array(APP.POT_TX_MAX),
+      btxIds: Array(APP.POT_TX_MAX),
+      minors: Array(APP.POT_TX_MAX),
+      showEmail: false,
+      editShowUser: false,
+      roleOptions: [],
       form: {
         ...ViewHelper.extract(this.$store.state.app_service.pot,
           ['potId', 'potCd', 'potName', 'potType', 'extValue.ruby',
-            'displayName', 'potGroupList.0.group.groupId', 'potCategoryList.0.category.categoryId', 'extValue.tel', 'txId',
+            'displayName', 'potGroupList.0.group.groupId', 'potCategoryList.0.category.categoryId', 'extValue.tel',
             'extValue.post', 'thumbnail', 'description'])
+      },
+      userForm: {
+        userId: null,
+        loginId: null,
+        pass: null,
+        roleId: null,
+        email: null,
       },
       defValue: {
         'potType': APP.CATEGORY_TYPES[0] != 3? APP.CATEGORY_TYPES[0]: null,
@@ -153,14 +202,6 @@ export default {
         category => category.categoryType === this.form.potType
       )
     },
-    txOptions() {
-      const useTxIds = this.pots.map((val) => val.txId)
-      return StateHelper.getOptionsFromState('tx',
-        tx => StateHelper.getTxIdName(tx),
-        false,
-        tx => !useTxIds.includes(tx.txId) || tx.txId == this.pot.txId
-      )
-    },
     ...mapState('app_service', [
       'pot',
       'pots',
@@ -168,52 +209,175 @@ export default {
       'categories',
       'txs',
     ]),
+    hasUserId(){
+      return Util.hasValue(this.userForm.userId)
+    },
   },
   watch: {
-    txId: function(newVal, oldVal) {
-      if(newVal == oldVal){
-        return
-      }
-      this.form.txId = newVal
+    txIds: function(newVal, oldVal) {
+      this.watchTxIds(newVal)
     },
-    btxId: function(newVal, oldVal) {
-      if(newVal == oldVal){
-        return
-      }
-      const tx = this.txs.find((tx) => this.btxId && this.btxId == tx.btxId)
-      this.form.txId = tx? tx.txId: null
+    btxIds: function(newVal, oldVal) {
+      this.watchBtxIds(newVal)
     },
-    minor: function(newVal, oldVal) {
-      if(newVal == oldVal){
-        return
+    minors: function(newVal, oldVal) {
+      this.watchMinors(newVal)
+    }
+  },
+  async created(){
+    this.form.potTxList = this.pot.potTxList? this.pot.potTxList.map((val) => {
+      return {
+        potId: val.potTxPK.potId,
+        txId: val.potTxPK.txId,
       }
-      const tx = this.txs.find((tx) => this.minor && this.minor == tx.minor)
-      this.form.txId = tx? tx.txId: null
-    },
+    }): []
+    const maxTx = APP.POT_MULTI_TX? APP.POT_TX_MAX: 1
+    for(let cnt = this.form.potTxList.length; cnt < maxTx; cnt++){
+      this.form.potTxList.push({
+        potId: null,
+        txId: null
+      })
+    }
+    await StateHelper.load('role')
+    this.roleOptions = StateHelper.getOptionsFromState('role', false, true)
+
+    const potUser = Util.hasValue(this.pot.potUserList)? this.pot.potUserList[0]: null
+    if(potUser && potUser.user){
+      this.userForm.userId = potUser.user.userId
+      this.userForm.loginId = potUser.user.loginId
+      this.userForm.roleId = potUser.user.roleId
+      this.userForm.email = potUser.user.email
+    }
+    else{
+      const maxRole = this.roleOptions.reduce((a, b) => a.value > b.value? a: b)
+      this.userForm.roleId = maxRole? maxRole.value: null
+    }
   },
   async mounted() {
     ViewHelper.applyDef(this.form, this.defValue)
     StateHelper.load('group')
     StateHelper.load('category')
     await StateHelper.load('tx')
-    this.changeTx(this.form.txId)
+    this.form.potTxList.forEach((potTx, idx) => {
+      this.changeTx(this.form.potTxList[idx].txId, idx)
+    })
   },
   methods: {
-    changeTx(newVal){
-      const tx = this.txs.find((tx) => newVal == tx.txId)
-      this.txId = tx? tx.txId: null
-      this.btxId = tx? tx.btxId: null
-      this.minor = tx? tx.minor: null
+    watchTxIds(newVal){
+      this.form.potTxList.forEach((potTx, idx) => {
+        const txOptions = this.getTxOptions(idx).map((val) => val.value)
+        this.form.potTxList[idx].txId = txOptions.includes(newVal[idx])? newVal[idx]: null
+      })
+    },
+    watchBtxIds(newVal){
+      this.form.potTxList.forEach((potTx, idx) => {
+        const tx = this.txs.find((tx) => idx < this.btxIds.length && this.btxIds[idx] && this.btxIds[idx] == tx.btxId)
+        const txOptions = this.getTxOptions(idx).map((val) => val.value)
+        const newTxId = tx? tx.txId: null
+        this.form.potTxList[idx].txId = txOptions.includes(newTxId)? newTxId: null
+      })
+    },
+    watchMinors(newVal){
+      this.form.potTxList.forEach((potTx, idx) => {
+        const tx = this.txs.find((tx) => idx < this.minors.length && this.minors[idx] && this.minors[idx] == tx.minor)
+        const txOptions = this.getTxOptions(idx).map((val) => val.value)
+        const newTxId = tx? tx.txId: null
+        this.form.potTxList[idx].txId = txOptions.includes(newTxId)? newTxId: null
+      })
+    },
+    nextShowEmailCheck(){
+      this.$nextTick(() => {
+        this.showEmailCheck()
+      })
+    },
+    showEmailCheck(){
+      if(!this.form.potTxList){
+        this.showEmail = false
+        return this.showEmail
+      }
+      if(!this.editShowUser){
+        this.showEmail = false
+        return this.showEmail
+      }
+      for(let cnt = 0; cnt < this.form.potTxList.length; cnt++){
+        const tx = this.txs.find((tx) => this.form.potTxList[cnt].txId == tx.txId)
+        if(tx && Util.hasValue(tx.txSensorList) && tx.txSensorList[0].txSensorPK.sensorId == SENSOR.BUTTON){
+          this.showEmail = true
+          return this.showEmail
+        }
+      }
+      this.showEmail = false
+      return this.showEmail
+    },
+    getTxOptions(index) {
+      const nowTxIds = this.form.potTxList? this.form.potTxList.filter((val, idx) => {
+        if(!val.txId){
+          return false
+        }
+        if(idx == index){
+          return false
+        }
+        if(this.form.potTxList[idx].txId != this.form.potTxList[index].txId){
+          return true
+        }
+        return idx < index
+      }).map((val) => val.txId): []
+      const selfUseTxIds = this.pot.potTxList? this.pot.potTxList.filter((val) => val.potTxPK).map((val) => val.potTxPK.txId): []
+      let useTxIds = []
+      this.pots.forEach((pot) => {
+        useTxIds.push(pot.txIds? pot.txIds.filter((val) => val): [])
+      })
+      useTxIds = useTxIds.reduce((a, b) => a.concat(b)).filter((val) => !selfUseTxIds.includes(val))
+      return StateHelper.getOptionsFromState('tx',
+        tx => StateHelper.getTxIdName(tx),
+        false,
+        tx => !useTxIds.includes(tx.txId) && !nowTxIds.includes(tx.txId)
+      )
+    },
+    changeTx(newVal, index){
+      this.$nextTick(() => {
+        const tx = this.txs.find((tx) => newVal == tx.txId)
+        this.txIds[index] = tx? tx.txId: null
+        this.btxIds[index] = tx? tx.btxId: null
+        this.minors[index] = tx? tx.minor: null
+        if(this.isShown('TX_WITH_TXID')){
+          this.watchTxIds(this.form.txIds)
+        }
+        if(!this.isShown('TX_WITH_TXID') && this.isShown('TX_BTX_MINOR') != 'minor'){
+          this.watchBtxIds(this.form.btxIds)
+        }
+        if(!this.isShown('TX_WITH_TXID') && this.isShown('TX_BTX_MINOR') == 'minor'){
+          this.watchMinors(this.form.minors)
+        }
+
+        this.showEmailCheck()
+        this.$forceUpdate()
+      })
     },
     beforeSubmit(again){
       this.register(again)
     },
     afterCrud(){
       StateHelper.setForceFetch('tx', true)
+      StateHelper.setForceFetch('user', true)
+    },
+    getUserEntity(dummyParam) {
+      if(!this.editShowUser){
+        return null
+      }
+      return {
+        userId: this.userForm.userId? this.userForm.userId: dummyParam.dummyKey--,
+        loginId: this.userForm.loginId,
+        pass: this.userForm.pass,
+        roleId: this.userForm.roleId,
+        email: this.showEmail? this.userForm.email: null,
+        name: this.form.potName,
+      }
     },
     async save() {
+      let dummyKey = -1
       const entity = {
-        potId: this.form.potId || -1,
+        potId: this.form.potId || dummyKey--,
         potCd: this.form.potCd,
         potName: this.form.potName,
         potType: this.form.potType,
@@ -229,10 +393,29 @@ export default {
         potCategoryList: this.form.categoryId ? [{
           potCategoryPK: {categoryId: this.form.categoryId}
         }] : [],
+        potUserList: this.editShowUser ? [{
+          potUserPK: {
+            potId: this.form.potId || dummyKey--,
+            userId: this.userForm.userId? this.userForm.userId: dummyKey--
+          },
+          user: this.getUserEntity({dummyKey: dummyKey})
+        }] : [],
         txId: this.form.txId,
         thumbnail: this.form.thumbnail,
         description: this.form.description,
       }
+      const potTxList = []
+      this.form.potTxList.forEach((potTx) => {
+        if(potTx.txId){
+          potTxList.push({
+            potTxPK: {
+              potId: this.form.potId || dummyKey--,
+              txId: potTx.txId
+            }
+          })
+        }
+      })
+      entity.potTxList = potTxList
       return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
     },
     readImage(e) {

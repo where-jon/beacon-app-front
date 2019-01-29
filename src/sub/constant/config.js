@@ -67,7 +67,7 @@ export const APP = { // 機能面に関する設定
   // 将来実装予定項目 END
 
   // TX関連設定
-  TX_SENSOR: [5,6], // TXのタイプに設定可能なセンサーID
+  TX_SENSOR: [5,6,7], // TXのタイプに設定可能なセンサーID
   TX_WITH_TXID: false, // 画面上TXIDを使用するか否か
   TX_WITH_CATEGORY: true, // TX管理で個体.カテゴリを表示
   TX_WITH_GROUP: false, // TX管理で個体.グループを表示
@@ -100,6 +100,10 @@ export const APP = { // 機能面に関する設定
   POT_WITH_POTCD: false,      // コード使用　use potCd on pot master
   POT_WITH_GROUP: false,      // グループ使用　use group on pot master
   POT_WITH_CATEGORY: true,   // カテゴリ使用　use category on pot master
+  POT_WITH_USER: true,        // ユーザ使用
+  POT_MULTI_TX: true,         // 複数Tx使用
+
+  POT_TX_MAX: 2,   // 所持Tx最大数
 
   // category
   CATEGORY_TYPES: [1,2],   // 選択可能な種別（1人,2物,3ゾーン）

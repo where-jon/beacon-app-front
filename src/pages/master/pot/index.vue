@@ -13,6 +13,7 @@ import { addLabelByKey } from '../../../sub/helper/ViewHelper'
 import { APP } from '../../../sub/constant/config.js'
 import listmixinVue from '../../../components/mixin/listmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
+import * as Util from '../../../sub/util/Util'
 
 export default {
   components: {
@@ -55,6 +56,7 @@ export default {
     ...mapState('app_service', [
       'pots',
       'potImages',
+      'roles',
       'forceFetchPot',
     ]),
   },
@@ -74,13 +76,32 @@ export default {
         APP.POT_WITH_CATEGORY? 'categoryName': null,
         APP.POT_WITH_POST? 'extValue.post': null,
         APP.POT_WITH_TEL? 'extValue.tel': null,
-        'description'].filter((val) => val)
+        'description',
+        'userId',
+        'loginId',
+        'roleName',
+        'pass',
+        'email',
+      ].filter((val) => val)
+    },
+    customCsvData(val){
+      const id = APP.TX_WITH_TXID? 'txId': APP.TX_BTX_MINOR == 'minor'? 'minor': 'btxId'
+      if(Util.hasValue(val.potTxList)){
+        val[id] = val.potTxList.map((potTx) => potTx.tx? potTx.tx[id]: '').join(',')
+        val.txName = val.potTxList.map((potTx) => potTx.tx? potTx.tx.txName: '').join(',')
+      }
+      if(Util.hasValue(val.potUserList)){
+        val.userId = val.potUserList[0].user.userId
+        val.loginId = val.potUserList[0].user.loginId
+        const targetRole = this.roles.find((role) => role.roleId == val.potUserList[0].user.roleId)
+        val.roleName = targetRole? targetRole.roleName: ''
+      }
     },
     getFields(){
       return addLabelByKey(this.$i18n, [ 
         {key: 'potName', sortable: true , tdClass: 'thumb-rowdata'},
         {key: 'thumbnail', tdClass: 'thumb-rowdata' },
-        {key: 'txIdName', label:'tx', sortable: true, tdClass: 'thumb-rowdata'},
+        {key: 'txIdName', label:'tx', sortable: true, },
         APP.POT_WITH_POTCD? {key: 'potCd', sortable: true , tdClass: 'thumb-rowdata'}: null,
         APP.POT_WITH_RUBY? {key: 'ruby', label: 'ruby', sortable: true, tdClass: 'thumb-rowdata'}: null,
         {key: 'displayName', sortable: true, tdClass: 'thumb-rowdata'},
@@ -101,6 +122,7 @@ export default {
     async fetchData(payload) {
       try {
         this.showProgress()
+        await StateHelper.load('role')
         await StateHelper.load('pot', this.forceFetchPot)
         StateHelper.setForceFetch('pot', false)
         if (payload && payload.done) {
