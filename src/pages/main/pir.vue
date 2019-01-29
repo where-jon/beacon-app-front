@@ -129,41 +129,41 @@ export default {
         }
       })
     },
-    createExhibitionButton(exb){
+    createCountButton(count){
       const exbBtn = new Container()
-      let label = new Text(exb.count + '名','bold 32px Arial','#FF3222')
+      let label = new Text(count + '名','bold 32px Arial','#FF3222')
       label.textAlign = 'center'
       label.textBaseline = 'middle'
       exbBtn.addChild(label)
-      exbBtn.x = exb.x
-      exbBtn.y = exb.y
       exbBtn.cursor = ''
       return exbBtn
     },
-    createButton(exb){
+    createShape(count){
       const btnBg = new Shape()
       const w = DISP.PIR_R_SIZE
-      const bgColor = (exb.count > 0)? DISP.PIR_BGCOLOR: DISP.PIR_EMPTY_BGCOLOR
+      const bgColor = (count > 0)? DISP.PIR_BGCOLOR: DISP.PIR_EMPTY_BGCOLOR
       btnBg.graphics.beginFill(bgColor).drawCircle(0, 0, w, w)
       // btnBg.alpha = 0.9;
       return btnBg
     },
-    createEmptyLabel(exb){
-      const label = new Text(this.$i18n.tnl('label.' + (exb.count > 0? DISP.PIR_INUSE_LABEL: DISP.PIR_EMPTY_LABEL)))
-      label.font = exb.count > 0? DISP.PIR_INUSE_FONT: DISP.PIR_EMPTY_FONT
+    createLabel(count){
+      const label = new Text(this.$i18n.tnl('label.' + (count > 0? DISP.PIR_INUSE_LABEL: DISP.PIR_EMPTY_LABEL)))
+      label.font = count > 0? DISP.PIR_INUSE_FONT: DISP.PIR_EMPTY_FONT
       label.color = DISP.PIR_FGCOLOR
       label.textAlign = 'center'
       label.textBaseline = 'middle'
       return label
     },
     showExb(exb) {
-      console.log({exb})
+      if (!Util.equalsAny(exb.sensorId, [SENSOR.PIR, SENSOR.THERMOPILE])) {
+        return
+      }
 
-      const stage = this.stage
       if (!this.exbCon) {
         this.exbCon = new Container()
-        stage.addChild(this.exbCon)
+        this.stage.addChild(this.exbCon)
       }
+      let exbBtn = null
       if (exb.sensorId == SENSOR.THERMOPILE) {
         // not use?
         // if (exb.count > 10) {
@@ -177,16 +177,16 @@ export default {
         // }
 
         // only for Exhibition（delete immediately）
-        this.exbCon.addChild(this.createExhibitionButton(exb))
-        stage.update()
-        return 
+        exbBtn = this.createCountButton(exb.count)
+      }
+      else {
+        exbBtn = new Container()
+        exbBtn.addChild(this.createShape(exb.count))
+        if (DISP.PIR_INUSE_LABEL || DISP.PIR_EMPTY_LABEL) {
+          exbBtn.addChild(this.createLabel(exb.count))
+        }
       }
 
-      const exbBtn = new Container()
-      exbBtn.addChild(this.createButton(exb))
-      if (DISP.PIR_INUSE_LABEL || DISP.PIR_EMPTY_LABEL) {
-        exbBtn.addChild(this.createEmptyLabel(exb))
-      }
       exbBtn.deviceId = exb.deviceId
       exbBtn.exbId = exb.exbId
       exbBtn.x = exb.x
@@ -194,7 +194,7 @@ export default {
       exbBtn.cursor = ''
 
       this.exbCon.addChild(exbBtn)
-      stage.update()
+      this.stage.update()
     },
     showTxAll() {
       if (!this.txCont) {
@@ -229,15 +229,19 @@ export default {
       const magnet = this.magnetSensors && this.magnetSensors.find((sensor) => sensor.btx_id == tx.btxId)
       Util.debug('magnet', magnet)
 
-      const display = this.getDisplay(tx)
-      const color = this.isMagnetOn(magnet)? display.bgColor : display.color
-      const bgColor = this.isMagnetOn(magnet)? display.color: display.bgColor
-      const txBtn = this.createTxBtn(pos, display.shape, color, bgColor)
+      const count = (magnet.magnet == SENSOR.MAGNET_STATUS.ON)? 0: 1
+      const txBtn = new Container()
+      txBtn.addChild(this.createShape(count))
+      if (DISP.PIR_INUSE_LABEL || DISP.PIR_EMPTY_LABEL) {
+        txBtn.addChild(this.createLabel(count))
+      }
 
       if(this.reloadSelectedTx.btxId == pos.btx_id){
         this.showingDetailTime = new Date().getTime()
         this.showDetail(txBtn.txId, txBtn.x, txBtn.y)
       }
+      txBtn.x = pos.exb.x
+      txBtn.y = pos.exb.y
       this.txCont.addChild(txBtn)
       this.stage.update()
     },
