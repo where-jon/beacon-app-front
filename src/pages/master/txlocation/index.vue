@@ -371,7 +371,6 @@ export default {
         this.pushWorkLocation(param)
 
         if (param.length > 0) {
-          param.forEach((p) => console.error(p))
           await HttpHelper.postAppService('/core/tx/bulk?updateOnlyNN=' + UPDATE_ONLY_NN.NULL, param)
           await StateHelper.load('tx', true)
         }

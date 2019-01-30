@@ -206,10 +206,12 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   PIR_FGCOLOR: '#FFFFFF', // PIR表示時の文字色
   PIR_INUSE_LABEL: 'InUse', // PIRで存在時のラベルキー
   PIR_INUSE_FONT: 'bold 24px Arial', // PIRで存在時のフォント
+  PIR_INUSE_FONT_EN: 'bold 14px Arial', // PIRで存在時のフォント
   PIR_EMPTY_SHOW: true, // PIRで不在時に表示するか否か
   PIR_EMPTY_BGCOLOR: '#595959', // PIRで不存時の背景色
   PIR_EMPTY_LABEL: 'Empty', // PIRで不在時のラベルキー
   PIR_EMPTY_FONT: 'bold 32px Arial', // PIRで不在時のフォント
+  PIR_EMPTY_FONT_EN: 'bold 14px Arial', // PIRで不在時のフォント
 
   THERMOPILE_S_SIZE: 20, // サーモパイル円Sサイズ
   THERMOPILE_M_SIZE: 40, // サーモパイル円Mサイズ

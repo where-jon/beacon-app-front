@@ -147,7 +147,12 @@ export default {
     },
     createLabel(count){
       const label = new Text(this.$i18n.tnl('label.' + (count > 0? DISP.PIR_INUSE_LABEL: DISP.PIR_EMPTY_LABEL)))
-      label.font = count > 0? DISP.PIR_INUSE_FONT: DISP.PIR_EMPTY_FONT
+      if (this.$i18n.locale == 'ja') {
+        label.font = count > 0? DISP.PIR_INUSE_FONT: DISP.PIR_EMPTY_FONT
+      }
+      else {
+        label.font = count > 0? DISP.PIR_INUSE_FONT_EN: DISP.PIR_EMPTY_FONT_EN
+      }
       label.color = DISP.PIR_FGCOLOR
       label.textAlign = 'center'
       label.textBaseline = 'middle'
