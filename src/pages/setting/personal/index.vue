@@ -104,6 +104,7 @@ import * as AuthHelper from '../../../sub/helper/AuthHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as ValidateUtil from '../../../sub/util/ValidateUtil'
+import * as Util from '../../../sub/util/Util'
 import { getLangShort } from '../../../sub/util/HtmlUtil'
 import commonmixinVue from '../../../components/mixin/commonmixin.vue'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
@@ -247,7 +248,11 @@ export default {
     handleUpdateConfirmPass (value) {
       const passwordUpdate = this.loginUser.passwordUpdate 
       const passwordConfirm = this.loginUser.passwordConfirm
-      if (passwordUpdate === null && passwordConfirm === null) {
+      if (!Util.hasValue(passwordUpdate) && !Util.hasValue(passwordConfirm)) {
+        this.passErrorMessage = this.$i18n.tnl('message.required', {
+          target: this.$i18n.tnl('label.passwordUpdate'),
+        })
+        this.errorMessages.general.push(this.passErrorMessage)
         return false
       }
 
@@ -295,40 +300,41 @@ export default {
         this.$i18n.tnl('label.loginId'),
         this.$i18n.tnl('message.invalidLoginId')
       )
-      if (this.showName) {
-        errorMessages.name = this.validateRequire(this.loginUser.name, this.$i18n.tnl('label.name'))
-      }
-      if (this.showEmail) {
-        errorMessages.email = this.validateRequire(this.loginUser.email, this.$i18n.tnl('label.email'))
-      }
       errorMessages.password = this.validateLoginIdPassword(
         this.loginUser.password,
         this.$i18n.tnl('label.password'),
-        this.$i18n.tnl('message.invalidPassword')
+        this.$i18n.tnl('message.invalidPassword'),
+        true
       )
 
       if (this.hasError) {
         return
       }
 
-      // 現在のパスワードで認証を実行する
-      AuthHelper.authByAppService(
-        this.$store.state.loginId,
-        this.loginUser.password,
-        async () => {
-          try {
-            if(!this.handleUpdateConfirmPass(this.loginUser.passwordUpdate) || !this.handleUpdateConfirmPass(this.loginUser.passwordConfirm)){
-              return
+      if(!Util.hasValue(this.loginUser.password)){
+        await this.save()
+        this.replace({showInfo: true})
+      }
+      else{
+        // 現在のパスワードで認証を実行する
+        AuthHelper.authByAppService(
+          this.$store.state.loginId,
+          this.loginUser.password,
+          async () => {
+            try {
+              if(!this.handleUpdateConfirmPass(this.loginUser.passwordUpdate) || !this.handleUpdateConfirmPass(this.loginUser.passwordConfirm)){
+                return
+              }
+              await this.save()
+              this.replace({pass: this.loginUser.passwordConfirm})
+              this.replace({showInfo: true})
+            } catch(e) {
+              errorMessages.general.push(this.$i18n.tnl('message.error'))
             }
-            await this.save()
-            this.replace({pass: this.loginUser.passwordConfirm})
-            this.replace({showInfo: true})
-          } catch(e) {
-            errorMessages.general.push(this.$i18n.tnl('message.error'))
-          }
-        },
-        () => { errorMessages.password.push(this.$i18n.tnl('message.notMatchCureentPassword')) }
-      )
+          },
+          () => { errorMessages.password.push(this.$i18n.tnl('message.notMatchCureentPassword')) }
+        )
+      }
     },
     async save() {
       const param = ViewHelper.extract(this.loginUser, ['userId', 'loginId', 'name', 'email', 'minor', 'roleId', 'description'])
@@ -339,7 +345,10 @@ export default {
       this.handleCancelButton()
       return result
     },
-    validateLoginIdPassword (value, label, invalidPatternMessage) {
+    validateLoginIdPassword (value, label, invalidPatternMessage, isPassword) {
+      if(isPassword && !Util.hasValue(value)){
+        return []
+      }
       const required = this.validateRequire(value, label)
       if (required.length > 0) {
         return required
