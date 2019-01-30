@@ -327,7 +327,9 @@ export default {
       this.pots.forEach((pot) => {
         useTxIds.push(pot.txIds? pot.txIds.filter((val) => val): [])
       })
-      useTxIds = useTxIds.reduce((a, b) => a.concat(b)).filter((val) => !selfUseTxIds.includes(val))
+      if(useTxIds.length != 0){
+        useTxIds = useTxIds.reduce((a, b) => a.concat(b)).filter((val) => !selfUseTxIds.includes(val))
+      }
       return StateHelper.getOptionsFromState('tx',
         tx => StateHelper.getTxIdName(tx),
         false,
