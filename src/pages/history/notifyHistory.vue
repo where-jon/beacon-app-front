@@ -6,7 +6,6 @@
 
       <div class="mapContainer mb-5">
         <b-form inline @submit.prevent>
-
           <!--種別-->
           <b-form-group class="mr-5">
             <b-form-row>
@@ -30,7 +29,6 @@
               </b-form-row>
             </b-form-row>
           </b-form-group>
-
         </b-form>
 
         <b-form inline @submit.prevent>
@@ -57,50 +55,58 @@
         <b-row class="mt-3" />
         <b-table :items="viewList" :fields="fields" :current-page="currentPage" :per-page="perPage" :sort-by.sync="sortBy" stacked="md" striped hover outline>
           <template slot="txNames" slot-scope="row">
-            <span  v-if= "!bUserCheck">
+            <span v-if="!bUserCheck">
               {{ row.item.txNames }}
             </span>
-            <span v-if= "bUserCheck" >
-              <span v-for= "(val, key) in row.item.txNames" :key="key">
+            <span v-if="bUserCheck">
+              <span v-for="(val, key) in row.item.txNames" :key="key">
                 {{ val }} <br>
               </span>
             </span>
           </template>
 
           <template slot="majors" slot-scope="row">
-            <span v-if= "!bUserCheck">
-              <span v-for= "(val, key) in row.item.majors" :key="key">
+            <span v-if="!bUserCheck">
+              <span v-for="(val, key) in row.item.majors" :key="key">
                 {{ val }}
               </span>
             </span>
             <span v-if="bUserCheck">
-              <span v-for= "(val, key) in row.item.majors" :key="key">
-                <div >{{ val }}<br></div>
+              <span v-for="(val, key) in row.item.majors" :key="key">
+                <div>{{ val }}<br></div>
               </span>
             </span>
           </template>
 
           <template slot="minor" slot-scope="row">
-            <span v-for= "(val, key) in row.item.minors" :key="key">
-              <div v-if= "!bUserCheck && userMinor == val">{{ val }}</div>
-              <div v-if="bUserCheck">{{ val }}<br></div>
+            <span v-for="(val, key) in row.item.minors" :key="key">
+              <div v-if="!bUserCheck && userMinor == val">
+                {{ val }}
+              </div>
+              <div v-if="bUserCheck">
+                {{ val }}<br>
+              </div>
             </span>
           </template>
 
           <template slot="minors" slot-scope="row">
-            <span v-for= "(val, key) in row.item.minors" :key="key">
-              <div v-if= "!bUserCheck && userMinor == val" >{{ val }}({{gPowerLevel}})</div>
-              <div v-if="bUserCheck">{{ val }}({{row.item.powerLevels[key]}})<br></div>
+            <span v-for="(val, key) in row.item.minors" :key="key">
+              <div v-if="!bUserCheck && userMinor == val">
+                {{ val }}({{ gPowerLevel }})
+              </div>
+              <div v-if="bUserCheck">
+                {{ val }}({{ row.item.powerLevels[key] }})<br>
+              </div>
             </span>
           </template>
 
           <template slot="deviceNums" slot-scope="row">
-            <span v-for= "(val, key) in row.item.deviceNums" :key="key">
+            <span v-for="(val, key) in row.item.deviceNums" :key="key">
               {{ val }} <br>
             </span>
           </template>
           <template slot="lastRcvDatetimes" slot-scope="row">
-            <span v-for= "(val, key) in row.item.lastRcvDatetimes" :key="key">
+            <span v-for="(val, key) in row.item.lastRcvDatetimes" :key="key">
               {{ val }} <br>
             </span>
           </template>

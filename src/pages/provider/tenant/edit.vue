@@ -211,7 +211,8 @@ export default {
       categorySettingList: {},
       editCategorySettingList: {},
       newForm: {},
-      dummyKey: -1
+      dummyKey: -1,
+      defaultCheckFeatureNames: ['PositionMap', 'PositionList', 'PositionStack'],
     }
   },
   computed: {
@@ -244,7 +245,7 @@ export default {
         parentId: featureIds.parentId,
         subShow: featureIds.subId != 0,
         subId: featureIds.subId,
-        checked: tenantFeature? true: false,
+        checked: !this.hasId && this.defaultCheckFeatureNames.includes(feature.featureName)? true: tenantFeature? true: false,
         disabled: parentFeature? true: false,
       }
     })
