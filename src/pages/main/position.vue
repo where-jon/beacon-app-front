@@ -37,7 +37,7 @@
         <canvas id="map" ref="map" />
       </b-col>
       <b-col v-if="showMeditag" class="rightPane">
-        <sensor :sensors="meditagSensors" class="rightPane" />
+        <sensor :sensors="meditagSensors" class="rightPaneChild" />
       </b-col>
     </b-row>
     <div v-if="selectedTx.btxId && showReady">
@@ -315,8 +315,21 @@ $right-pane-left-px: $right-pane-left * 1px;
   padding: 3px;
   width: $right-pane-width-px;
   min-width: $right-pane-width-px;
-  overflow: scroll;
+  overflow-x: scroll;
+  overflow-y: scroll;
+  -ms-overflow-x: auto;
+  -ms-overflow-y: auto;
   height: calc(100vh - 100px);
+}
+
+.rightPaneChild {
+  @extend .rightPane;
+}
+
+@media all and (-ms-high-contrast: none){
+  .rightPaneChild {
+    height: calc(100vh - 140px);
+  }
 }
 
 </style>
