@@ -522,6 +522,7 @@
     "dummy": ""
   },
   "message": {
+    "notMatchedEmail": "メール形式ではありません。（追加の場合、コンマ区切）",
     "error": "エラーが発生しました。",
     "loginFailed": "IDもしくはパスワードが不正です。",
     "updateCompleted": "{target}の更新が完了しました。",
