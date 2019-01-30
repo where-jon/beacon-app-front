@@ -50,7 +50,10 @@
         <!-- user & logout -->
         <b-nav-item-dropdown right>
           <template slot="button-content">
-            <i class="fa fa-user" aria-hidden="true" />&nbsp;<em>{{ loginId }}</em>
+            <i class="fa fa-user" aria-hidden="true" />&nbsp;
+            <em class="login-user">
+              {{ loginId }}
+            </em>
           </template>
           <b-dropdown-item href="#" @click="move('/setting/personal')">
             <i class="fas fa-user-cog menu-item-icon" />&nbsp;{{ $t('label.personal') }}
@@ -318,6 +321,10 @@ a.dropdown-item.indigo:focus {
 
 div.navbar-brand {
   margin: 0 auto;
+}
+
+.login-user {
+  word-break: break-all !important;
 }
 
 .mobile-region {
