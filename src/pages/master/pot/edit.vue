@@ -112,7 +112,7 @@
             <b-form-group v-show="editShowUser">
               <label v-if="hasUserId" v-t="'label.passwordUpdate'" />
               <label v-else v-t="'label.password'" />
-              <input v-model="userForm.pass" type="password" :minlength="userForm.pass? 3: 0" maxlength="16" pattern="^[a-zA-Z0-9_\-\/!#\$%&@]*$" class="form-control" :required="editShowUser && !hasUserId" />
+              <input v-model="userForm.pass" type="password" :minlength="userForm.pass? 3: 0" maxlength="16" pattern="^[a-zA-Z0-9_\-\/!#\$%&@]*$" class="form-control" :required="editShowUser && !hasUserId">
             </b-form-group>
 
             <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
