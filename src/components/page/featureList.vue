@@ -1,6 +1,6 @@
 <template>
   <b-container>
-    <b-table :items="list" :fields="fields" show-empty thead-class="hidden_header" small stacked="md">
+    <b-table :items="list" :fields="fields" show-empty thead-class="hidden_header" small>
       <template slot="parentCheck" slot-scope="row">
         <div v-if="row.item.parentShow" class="custom-control custom-checkbox">
           <input :id="getCheckId(row.item)" v-model="row.item.checked" type="checkbox" class="custom-control-input" @change="parentChange(row.item)">
