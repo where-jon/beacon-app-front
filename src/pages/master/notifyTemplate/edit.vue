@@ -31,7 +31,8 @@
         <!--通知先-->
         <b-form-group v-if="bNotifyTo">
           <label v-t="'label.notifyTo'" />
-          <b-form-textarea v-model="form.notifyTo" :rows="3" :max-rows="6" maxlength="2000" />
+          <b-form-textarea v-model="form.notifyTo" :rows="3" :max-rows="6" maxlength="2000" :state="errorMessages.email.length > 0 ? false : null" />
+          <p v-for="(val, key) in errorMessages.email" :key="key" v-t="val" class="error" />
         </b-form-group>
 
         <!--件名-->
@@ -53,10 +54,10 @@
         </b-form-group>
 
         <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
-        <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="register(false)">
+        <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="beforeSubmit($event, false)">
           {{ $i18n.tnl(`label.${isUpdate? 'update': 'register'}`) }}
         </b-button>
-        <b-button v-if="isRegistable && !isUpdate" v-t="'label.registerAgain'" :variant="theme" type="submit" class="my-1" @click="register(true)" />
+        <b-button v-if="isRegistable && !isUpdate" v-t="'label.registerAgain'" :variant="theme" type="submit" class="my-1" @click="beforeSubmit($event, false)" />
       </b-form>
     </div>
   </div>
@@ -101,6 +102,9 @@ export default {
       bNotifyTo:true,
       bSubject:true,
       bNotifyTemplateKey:true,
+      errorMessages: {
+        email: [],
+      },
       items: [
         {
           text: this.$i18n.tnl('label.master'),
@@ -118,6 +122,9 @@ export default {
     }
   },
   computed: {
+    ...mapState( [
+      'showAlert',
+    ]),
     notifOptions() {
       return _.slice(NOTIFY_STATE.getOptions()).filter((val) => APP.NOTIFY_STATE_TYPES.includes(val.index))
     },
@@ -138,6 +145,7 @@ export default {
   created() {
     this.form.notifyMedium == 1 ?this.bSubject = false: this.bSubject = true
     this.form.notifyTemplateKey== this.deliveryState? this.bNotifyTo=false : this.bNotifyTo=true
+    this.form.notifyTemplateKey== this.userMailState? this.bNotifyTo=false : this.bNotifyTo=true
     this.form.notifyTemplateKey== this.deliveryState || this.form.notifyTemplateKey==this.userMailState? this.notify = _.slice(NOTIFY_MIDIUM.getTypes()).filter((val) => [0].includes(val.value)) : this.notify
     let labelUpdate = Util.getDetailCaptionKey(this.$store.state.app_service.template.notifyTemplateId)
     labelUpdate == 'label.update' ? this.bNotifyTemplateKey = false: this.bNotifyTemplateKey = true
@@ -146,7 +154,7 @@ export default {
     reset () {
     },
     async signalChange(evt) {
-      if (evt == this.deliveryState) {
+      if (evt == this.deliveryState || evt == this.userMailState ) {
         this.notify = _.slice(NOTIFY_MIDIUM.getTypes()).filter((val) => [0].includes(val.value))
         this.bNotifyTo = false
         this.form.notifyMedium = 0
@@ -161,7 +169,6 @@ export default {
       }
     },
     async radioChange(evt) {
-      this.form.mailFrom
       this.radioSelect = evt
       if (evt == 1) {
         this.bSubject = false
@@ -170,6 +177,40 @@ export default {
       }else{
         this.bSubject = true
       }
+    },
+    notifyToValidationCheck(){
+      let result = false
+      if(this.form.notifyMedium == 0
+          && ( this.form.notifyTemplateKey != this.deliveryState && this.form.notifyTemplateKey != this.userMailState )){
+        let re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i
+        let emailList = this.form.notifyTo.split(',')
+        if(emailList.length > 1){
+          emailList.some((email) => {
+            result = re.test(email) ? true:false
+            if(!result) return true
+          })
+        }else{
+          result = re.test(this.form.notifyTo)
+        }
+      }else{ // slackやTXボタン押下とユーザ登録通知場合
+        result = true
+      }
+      return  result
+    },
+    beforeSubmit(event, again){
+      if(!this.notifyToValidationCheck()){
+        this.errorMessages.email = []
+        this.replace({showAlert: false})
+        this.errorMessages.email.push(this.$i18n.tnl('message.notMatchedEmail'))
+        this.message = this.$i18n.tnl('message.error')
+        this.replace({showAlert: true})
+        if(this.showAlert){
+          window.scrollTo(0, 0)
+          event.preventDefault()
+          return false
+        }
+      }
+      this.register(again)
     },
     async save() {
       const notifyTemplateId = Util.hasValue(this.form.notifyTemplateId)? this.form.notifyTemplateId: -1
@@ -183,6 +224,8 @@ export default {
         mailFrom: this.form.mailFrom? this.form.mailFrom:'',
         template: this.form.template? this.form.template:'',
       }
+      this.errorMessages.email = []
+      this.replace({showAlert: false})
       return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
     },
   }
@@ -192,5 +235,8 @@ export default {
 <style scoped lang="scss">
   label.control-label {
     padding-top: 7px;
+  }
+   p.error {
+    color: #dc3545;
   }
 </style>

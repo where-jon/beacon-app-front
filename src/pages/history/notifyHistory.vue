@@ -159,7 +159,6 @@ export default {
   data () {
     return {
       name: 'notifyHistory',
-      testMinor:602,
       txId: null,
       userState:null,
       bUserCheck:false,
@@ -269,7 +268,7 @@ export default {
     )
     this.userState == 'ALL_REGION'? this.bTx = true: this.bTx = false
     this.userState == 'ALL_REGION'? this.bUserCheck = true: this.bUserCheck = false
-    this.userState == 'ALL_REGION'? null: this.userMinor = this.testMinor
+    this.userState == 'ALL_REGION'? null: this.userMinor = user.minor
     this.fields = this.fields1
   },
   mounted() {

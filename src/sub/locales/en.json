@@ -587,6 +587,7 @@
     "completeDeleteConfirm": "Are you sure to delete {target} completely?",
     "bulkAuthFailed": "{col}（{value}） cannot be used.",
     "bulkUseFailed": "{col}（{value}） is used for {target} of {num}{unit}.",
+    "notMatchedEmail": "It is not a mail format. (In case of addition, comma separated)",
 
     "dummy": "" 
   }
