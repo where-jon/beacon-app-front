@@ -1,12 +1,15 @@
 <template>
   <div>
     <breadcrumb :items="items" :reload="true" @reload="fetchData" />
+    <div v-for="(env, index) in envs" :key="index">
+      <div>{{ env.key }}</div>
       <table>
-        <tr v-for="(env, index) in envs" :key="index">
-          <td>{{ env.key }}</td>
-          <td v-html="env.val"></td>
+        <tr v-for="(cenv, cindex) in env.val" :key="cindex">
+          <td>{{ cenv.key }}</td>
+          <td v-html="cenv.val"></td>
         </tr>
       </table>
+    </div>
   </div>
 </template>
 
@@ -43,9 +46,15 @@ export default {
         this.envs = Object.keys(data).sort().map((key) => {
           return {
             key,
-            val: this.isJson(data[key])?
-              JSON.stringify(data[key], null, 2).split('\\n').join('<br>').split('  ').join('&nbsp;&nbsp;').split('\\"').join('&quot;')
-              : data[key]
+            val: Object.keys(data[key]).sort().map((ckey) => {
+              let cval = data[key][ckey]
+              return {
+                key: ckey,
+                val: this.isJson(cval)?
+                  JSON.stringify(cval, null, 2).split('\\n').join('<br>').split('  ').join('&nbsp;&nbsp;').split('\\"').join('&quot;')
+                  : cval
+              }
+            })
           }
         })
         if (payload && payload.done) {
