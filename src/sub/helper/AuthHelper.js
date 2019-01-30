@@ -10,6 +10,7 @@ import * as LocaleHelper from './LocaleHelper'
 import { APP, LOCAL_LOGIN } from '../constant/config'
 import { LOGIN_MODE } from '../constant/Constants'
 import { getLangShort } from '../util/HtmlUtil'
+import * as Util from '../util/Util'
 
 let router
 let store
@@ -83,7 +84,7 @@ export const authByAppService = async (loginId, password, success, err) => {
     const revInfo = await getRevInfo()
 
     let params = new URLSearchParams()
-    let tenantCd = getTenantCd()
+    let tenantCd = getTenantCd(null, true)
     params.append('username', (tenantCd? tenantCd+':':'') + loginId) // username: Spring Boot Security reserved name
     params.append('password', password)
     let data = await HttpHelper.postAppService('/login', params, false)
@@ -178,10 +179,15 @@ export const checkSession = () => {
   return false
 }
 
-export const getTenantCd = (def) => { // xxx.saas.ドメインの場合、先頭がtenantCdとなる。
+export const getTenantCd = (def, providerOk) => { // xxx.saas.ドメインの場合、先頭がtenantCdとなる。
+  let tenantCd
   if (location.host.includes(APP.SAAS_DOMAIN)) {
-    return location.host.split('.')[0]
+    tenantCd = location.host.split('.')[0]
   }
-  return def
+  if (!providerOk && tenantCd == 'provider') {
+    const login = JSON.parse(window.localStorage.getItem('login'))
+    tenantCd = Util.getValue(login, 'currentTenant.tenantCd', null)
+  }
+  return tenantCd || def
 }
 
