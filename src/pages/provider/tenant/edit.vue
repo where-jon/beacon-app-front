@@ -198,7 +198,7 @@ export default {
       fields: addLabelByKey(this.$i18n, [ 
         {key: 'parentCheck', label: 'dummy', thStyle: {width:'4px !important'} },
         {key: 'subCheck', label: 'dummy', thStyle: {width:'4px !important'} },
-        {key: 'featureName' },
+        {key: 'featureName', label: 'dummy'},
       ]),
       settingParams: {
         name: 'setting',

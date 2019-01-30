@@ -24,14 +24,14 @@ export default function (context) {
     context.app.router.push(APP.LOGIN_PAGE)
   }else { // check tenant feature
     let tenantFeatureList = context.store.state.tenantFeatureList
-    if (!tenantFeatureList || tenantFeatureList.length == 0) {
+    const loginInfo = JSON.parse(window.localStorage.getItem('login'))
+    const isTenantAdmin = loginInfo.tenantAdmin
+    const isProvider = loginInfo.isProvider
+    if (!isProvider && !isTenantAdmin && (!tenantFeatureList || tenantFeatureList.length == 0)) {
       console.error('No tenant feature List', context.route.path)
       context.app.router.push(APP.ERROR_PAGE)
       return
     }
-    const loginInfo = JSON.parse(window.localStorage.getItem('login'))
-    const isTenantAdmin = loginInfo.tenantAdmin
-    const isProvider = loginInfo.isProvider
     if (!isProvider && !isTenantAdmin && tenantFeatureList && !MenuHelper.featureOk(context.route.path, tenantFeatureList)) {
       if (MenuHelper.featureOk(APP.TOP_PAGE, tenantFeatureList)) {
         context.app.router.push(APP.TOP_PAGE)
