@@ -319,7 +319,12 @@ $right-pane-left-px: $right-pane-left * 1px;
   overflow-y: scroll;
   -ms-overflow-x: auto;
   -ms-overflow-y: auto;
-  height: calc(100vh - 100px);
+  @media (min-width: 769px) {
+    height: calc(100vh - 100px);
+  }
+  @media (max-width: 768px) {
+    height: calc(70vh - 100px);
+  }
 }
 
 .rightPaneChild {
