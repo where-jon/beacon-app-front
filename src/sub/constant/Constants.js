@@ -533,6 +533,11 @@ export const MENU = [
         path: 'telemetry',
         icon: 'fa fa-battery-three-quarters',
       },
+      {
+        key: 'env',
+        path: 'serverenv',
+        icon: 'fas fa-cog',
+      },
     ],
   },
 ]

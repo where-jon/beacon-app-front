@@ -83,6 +83,7 @@
     "location": "EXB Placement",
     "locationSetting": "EXB placement",
     "develop": "Developer",
+    "env": "Environment Variables",
 
     "exbId": "EXB ID",
     "exbName": "EXB name",

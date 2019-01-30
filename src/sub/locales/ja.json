@@ -87,6 +87,7 @@
     "locationSetting": "EXB配置設定",
     "txLocationSetting": "TX配置設定",
     "develop": "開発用",
+    "env": "環境変数",
 
     "exbId": "EXB ID",
     "exbName": "EXB名",
