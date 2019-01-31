@@ -17,25 +17,25 @@
                   <b-form-row>
                     <b-form-row class="mb-3 mr-5">
                       <label>
-                        {{ $i18n.tnl('label.tx') + (index + 1) }}
+                        {{ $i18n.tnl('label.tx') + getTxIndex(index) }}
                       </label>
                       <b-form-select v-model="potTx.txId" :options="getTxOptions(index)" :disabled="!isEditable" :readonly="!isEditable" class="ml-3" @change="changeTx($event, index)" />
                     </b-form-row>
                     <b-form-row v-show="isShown('TX_WITH_TXID')" class="mb-3 mr-3">
                       <label>
-                        {{ $i18n.tnl('label.txId') + (index + 1) }}
+                        {{ $i18n.tnl('label.txId') + getTxIndex(index) }}
                       </label>
                       <input v-model="txIds[index]" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control ml-3">
                     </b-form-row>
                     <b-form-row v-show="!isShown('TX_WITH_TXID') && isShown('TX_BTX_MINOR') != 'minor'" class="mb-3 mr-3">
                       <label>
-                        {{ $i18n.tnl('label.btxId') + (index + 1) }}
+                        {{ $i18n.tnl('label.btxId') + getTxIndex(index) }}
                       </label>
                       <input v-model="btxIds[index]" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control ml-3">
                     </b-form-row>
                     <b-form-row v-show="!isShown('TX_WITH_TXID') && isShown('TX_BTX_MINOR') == 'minor'" class="mb-3 mr-3">
                       <label>
-                        {{ `Tx(${$i18n.tnl('label.minor')}${index + 1})` }}
+                        {{ `Tx(${$i18n.tnl('label.minor')}${getTxIndex(index)})` }}
                       </label>
                       <input v-model="minors[index]" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control ml-3">
                     </b-form-row>
@@ -225,19 +225,7 @@ export default {
     }
   },
   async created(){
-    this.form.potTxList = this.pot.potTxList? this.pot.potTxList.map((val) => {
-      return {
-        potId: val.potTxPK.potId,
-        txId: val.potTxPK.txId,
-      }
-    }): []
-    const maxTx = APP.POT_MULTI_TX? APP.POT_TX_MAX: 1
-    for(let cnt = this.form.potTxList.length; cnt < maxTx; cnt++){
-      this.form.potTxList.push({
-        potId: null,
-        txId: null
-      })
-    }
+    this.initPotTxList()
     await StateHelper.load('role')
     this.roleOptions = StateHelper.getOptionsFromState('role', false, true)
 
@@ -263,6 +251,27 @@ export default {
     })
   },
   methods: {
+    initPotTxList(){
+      this.form.potTxList = this.pot.potTxList? this.pot.potTxList.map((val) => {
+        return {
+          potId: val.potTxPK.potId,
+          txId: val.potTxPK.txId,
+        }
+      }): []
+      const maxTx = APP.POT_MULTI_TX? APP.POT_TX_MAX: 1
+      for(let cnt = this.form.potTxList.length; cnt < maxTx; cnt++){
+        this.form.potTxList.push({
+          potId: null,
+          txId: null
+        })
+      }
+      this.txIds = this.txIds.map(() => null)
+      this.btxIds = this.btxIds.map(() => null)
+      this.minors = this.minors.map(() => null)
+    },
+    getTxIndex(index){
+      return APP.POT_MULTI_TX? 1 < APP.POT_TX_MAX? `${index + 1}`: '': ''
+    },
     watchTxIds(newVal){
       this.form.potTxList.forEach((potTx, idx) => {
         const txOptions = this.getTxOptions(idx).map((val) => val.value)
@@ -358,6 +367,9 @@ export default {
     },
     beforeSubmit(again){
       this.register(again)
+    },
+    beforeReload(){
+      this.initPotTxList()
     },
     afterCrud(){
       StateHelper.setForceFetch('tx', true)
