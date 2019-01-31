@@ -351,8 +351,11 @@ export default {
       else {
         tx.location = {...tx.location, areaId: this.selectedArea, x: Math.round(tx.x / this.mapImageScale), y: Math.round(tx.y / this.mapImageScale)}
       }
-      if (tx.txSensorList && tx.txSensorList.sensor) {
-        tx.txSensorList.sensor = null
+      if (tx.txSensorList) {
+        tx.txSensorList.forEach((txSensor) =>{
+          console.error(txSensor)
+          txSensor.sensor = null
+        })
       }
       if (tx.potTxList && tx.potTxList.pot) {
         tx.potTxList.pot = null
