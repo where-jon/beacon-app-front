@@ -61,10 +61,18 @@
                 <span v-text="$i18n.tnl('label.dispPir')" />
               </b-form-checkbox>
             </b-form-group>
-            <b-form-group>
+            <b-form-group v-if="false">
               <b-form-checkbox id="dispAlways" v-model="form.dispAlways" :value="4" :unchecked-value="0">
                 <span v-text="$i18n.tnl('label.dispAlways')" />
               </b-form-checkbox>
+            </b-form-group>
+            <b-form-group v-if="form.x != null">
+              <label v-t="'label.locationX'" />
+              <input v-model="form.x" :readonly="!isEditable" type="number" min="0" class="form-control">
+            </b-form-group>
+            <b-form-group v-if="form.y != null">
+              <label v-t="'label.locationY'" />
+              <input v-model="form.y" :readonly="!isEditable" type="number" min="0" class="form-control">
             </b-form-group>
             <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
             <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="register(false)">
@@ -107,7 +115,7 @@ export default {
       appServicePath: '/core/tx',
       form: ViewHelper.extract(this.$store.state.app_service.tx, [
         'txId', 'btxId', 'major', 'minor', 'txName', 'potTxList.0.pot.displayName', 'mapImage', 'dispPos', 'dispPir', 'dispAlways',
-        'txSensorList.0.sensor.sensorId', 'locationId',
+        'txSensorList.0.sensor.sensorId', 'locationId', 'location.x', 'location.y', 'location',
         'potTxList.0.pot.potId', 'potTxList.0.pot.potCd', 'potTxList.0.pot.displayName', 'potTxList.0.pot.description',
         'potTxList.0.pot.potCategoryList.0.category.categoryId',
         'potTxList.0.pot.potGroupList.0.group.groupId',
@@ -201,10 +209,16 @@ export default {
       if (pot) {
         pot.potTxList = null
       }
+      if (this.form.location) {
+        var location = _.cloneDeep(this.form.location)
+        location.x = this.form.x || 0
+        location.y = this.form.y || 0
+      }
       let entity = {
         ...this.form,
         txId,
         disp,
+        location,
         potTxList: pot? [{potTxPK:{txId, potId: pot.potId}, pot}]: null,
         txSensorList: this.form.sensorId? [
           {txSensorPK: {sensorId: this.form.sensorId}}

@@ -77,6 +77,7 @@ export const APP = { // 機能面に関する設定
   TX_WITH_MAJOR: true, // TX管理でmajorを表示
   TX_MAJOR_REQUIRED: false, // majorを必須にする ※サーバでも要設定
   TX_BTX_MINOR: 'both', // both:両方表示し、別々に設定、minor/btxId:片方のみ表示し、保存の際同一の値を設定
+  TX_WITH_LOCATION: true, // TXを固定位置表示する（TX管理画面に影響）
 
   // EXB関連設定
   EXB_SENSOR: [1,2,3,4], // EXBのタイプに設定可能なセンサーID

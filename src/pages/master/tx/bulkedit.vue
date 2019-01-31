@@ -130,7 +130,10 @@ export default {
       else if(APP.TX_BTX_MINOR == 'btxId'){
         entity.minor = entity.btxId
       }
-      if (entity.potTxList[0]) {
+      if (entity.locationId == 0) {
+        entity.locationId = null
+      }
+      if (entity.potTxList && entity.potTxList[0]) {
         entity.potTxList[0].pot.potId = dummyKey--,
         entity.potTxList[0].pot.potCd = entity.potTxList[0].pot.potId + '_' + (new Date().getTime() % 10000)
         entity.potTxList[0].pot.potName = entity.potTxList[0].pot.potId + '_' + (new Date().getTime() % 10000)

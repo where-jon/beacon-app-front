@@ -45,6 +45,8 @@ export default {
           APP.TX_WITH_GROUP? {key: 'groupName', label: 'group', sortable: true, tdClass: 'action-rowdata' }: null,
           APP.TX_WITH_DESCRIPTION? {key: 'description', sortable: true, tdClass: 'action-rowdata' }: null,
           {key: 'sensor', label:'type', sortable: true,},
+          {key: 'disp', label:'disp', sortable: false,},
+          APP.TX_WITH_LOCATION? {key: 'locationId', label:'locationId', sortable: false,}: null,
           {key: 'actions', thStyle: {width: '130px !important'}, tdClass: 'action-rowdata' }
         ]),
         sortBy: APP.TX_WITH_TXID? 'txId': APP.TX_BTX_MINOR != 'minor'? 'btxId': 'minor',

@@ -225,6 +225,7 @@
     "finalReceiveLocation": "最終取得場所",
     "mapDisplay": "マップ表示",
 
+    "disp": "表示フラグ",
     "dispPos": "位置表示",
     "dispPir": "空室チェックで表示",
     "dispAlways": "常時表示",
