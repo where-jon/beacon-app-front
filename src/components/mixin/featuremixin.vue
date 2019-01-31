@@ -8,6 +8,9 @@ export default {
     isShowFeature(feature) {
       return feature.featureType == 0 && this.getTenantFeatureList().find((tenantFeature) => tenantFeature.feature.featureId == feature.featureId)
     },
+    isSystemFeature(feature) {
+      return feature.featureType == 1
+    },
     isShowRelationFeature(feature) {
       if(this.isShowFeature(feature)){
         return true
@@ -24,7 +27,9 @@ export default {
       return relation? true: false
     },
     getFilterRoleFeatureList(roleFeatureList) {
-      const ret = roleFeatureList.filter((roleFeature) => this.isShowRelationFeature(roleFeature.feature))
+      const ret = roleFeatureList.filter((roleFeature) => {
+        return this.isSystemFeature(roleFeature.feature) || this.isShowRelationFeature(roleFeature.feature)
+      })
       return ret? ret: []
     },
     getFeatureIds(featureId){
