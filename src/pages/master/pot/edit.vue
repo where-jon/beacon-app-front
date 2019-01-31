@@ -19,25 +19,27 @@
                       <label>
                         {{ $i18n.tnl('label.tx') + getTxIndex(index) }}
                       </label>
-                      <b-form-select v-model="potTx.txId" :options="getTxOptions(index)" :disabled="!isEditable" :readonly="!isEditable" class="ml-3" @change="changeTx($event, index)" />
+                      <b-form-select v-model="potTx.txId" :options="getTxOptions(index)" :disabled="!isEditable" :readonly="!isEditable" class="ml-3 tx-select" @change="changeTx($event, index)" />
                     </b-form-row>
                     <b-form-row v-show="isShown('TX_WITH_TXID')" class="mb-3 mr-3">
-                      <label>
-                        {{ $i18n.tnl('label.txId') + getTxIndex(index) }}
-                      </label>
-                      <input v-model="txIds[index]" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control ml-3">
+                      <b-form-row>
+                        <label>
+                          {{ $i18n.tnl('label.txId') + getTxIndex(index) }}
+                        </label>
+                        <input v-model="txIds[index]" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control ml-3 tx-select">
+                      </b-form-row>
                     </b-form-row>
                     <b-form-row v-show="!isShown('TX_WITH_TXID') && isShown('TX_BTX_MINOR') != 'minor'" class="mb-3 mr-3">
                       <label>
                         {{ $i18n.tnl('label.btxId') + getTxIndex(index) }}
                       </label>
-                      <input v-model="btxIds[index]" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control ml-3">
+                      <input v-model="btxIds[index]" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control ml-3 tx-select">
                     </b-form-row>
                     <b-form-row v-show="!isShown('TX_WITH_TXID') && isShown('TX_BTX_MINOR') == 'minor'" class="mb-3 mr-3">
                       <label>
                         {{ `Tx(${$i18n.tnl('label.minor')}${getTxIndex(index)})` }}
                       </label>
-                      <input v-model="minors[index]" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control ml-3">
+                      <input v-model="minors[index]" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control ml-3 tx-select">
                     </b-form-row>
                   </b-form-row>
                 </b-form-group>
@@ -215,13 +217,13 @@ export default {
   },
   watch: {
     txIds: function(newVal, oldVal) {
-      this.watchTxIds(newVal)
+      this.watchIds(newVal, 'txId')
     },
     btxIds: function(newVal, oldVal) {
-      this.watchBtxIds(newVal)
+      this.watchIds(newVal, 'btxId')
     },
     minors: function(newVal, oldVal) {
-      this.watchMinors(newVal)
+      this.watchIds(newVal, 'minor')
     }
   },
   async created(){
@@ -265,30 +267,13 @@ export default {
           txId: null
         })
       }
-      this.txIds = this.txIds.map(() => null)
-      this.btxIds = this.btxIds.map(() => null)
-      this.minors = this.minors.map(() => null)
     },
     getTxIndex(index){
       return APP.POT_MULTI_TX? 1 < APP.POT_TX_MAX? `${index + 1}`: '': ''
     },
-    watchTxIds(newVal){
+    watchIds(newVal, idName){
       this.form.potTxList.forEach((potTx, idx) => {
-        const txOptions = this.getTxOptions(idx).map((val) => val.value)
-        this.form.potTxList[idx].txId = txOptions.includes(newVal[idx])? newVal[idx]: null
-      })
-    },
-    watchBtxIds(newVal){
-      this.form.potTxList.forEach((potTx, idx) => {
-        const tx = this.txs.find((tx) => idx < this.btxIds.length && this.btxIds[idx] && this.btxIds[idx] == tx.btxId)
-        const txOptions = this.getTxOptions(idx).map((val) => val.value)
-        const newTxId = tx? tx.txId: null
-        this.form.potTxList[idx].txId = txOptions.includes(newTxId)? newTxId: null
-      })
-    },
-    watchMinors(newVal){
-      this.form.potTxList.forEach((potTx, idx) => {
-        const tx = this.txs.find((tx) => idx < this.minors.length && this.minors[idx] && this.minors[idx] == tx.minor)
+        const tx = this.txs.find((tx) => idx < this[`${idName}s`].length && this[`${idName}s`][idx] && this[`${idName}s`][idx] == tx[idName])
         const txOptions = this.getTxOptions(idx).map((val) => val.value)
         const newTxId = tx? tx.txId: null
         this.form.potTxList[idx].txId = txOptions.includes(newTxId)? newTxId: null
@@ -352,13 +337,13 @@ export default {
         this.btxIds[index] = tx? tx.btxId: null
         this.minors[index] = tx? tx.minor: null
         if(this.isShown('TX_WITH_TXID')){
-          this.watchTxIds(this.form.txIds)
+          this.watchIds(this.txIds, 'txId')
         }
         if(!this.isShown('TX_WITH_TXID') && this.isShown('TX_BTX_MINOR') != 'minor'){
-          this.watchBtxIds(this.form.btxIds)
+          this.watchIds(this.btxIds, 'btxId')
         }
         if(!this.isShown('TX_WITH_TXID') && this.isShown('TX_BTX_MINOR') == 'minor'){
-          this.watchMinors(this.form.minors)
+          this.watchIds(this.minors, 'minor')
         }
 
         this.showEmailCheck()
@@ -369,6 +354,9 @@ export default {
       this.register(again)
     },
     beforeReload(){
+      this.txIds = this.txIds.map(() => null)
+      this.btxIds = this.btxIds.map(() => null)
+      this.minors = this.minors.map(() => null)
       this.initPotTxList()
     },
     afterCrud(){
@@ -444,5 +432,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
+.tx-select{
+  width: 160px;
+}
 </style>
