@@ -145,7 +145,6 @@ import { getCharSet } from '../../sub/helper/CharSetHelper'
 import { NOTIFY_STATE } from '../../sub/constant/Constants'
 import { APP } from '../../sub/constant/config.js'
 import moment from 'moment'
-import { APP_SERVICE } from '../../sub/constant/config'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 
 
@@ -234,6 +233,7 @@ export default {
       sortBy: null,
       message: '',
       footerMessage: '',
+      csvHeaders: this.getCsvHeaders('TX_DELIVERY_NOTIFY'),
     }
   },
   computed: {
@@ -249,27 +249,35 @@ export default {
       return _.slice(NOTIFY_STATE.getOptions()).filter((val) => APP.NOTIFY_STATE_TYPES.includes(val.index))
     },
     txOptions() {
-      return StateHelper.getOptionsFromState('tx',
+      let result =  StateHelper.getOptionsFromState('tx',
         tx => StateHelper.getTxIdName(tx),
         true
       )
+      result.unshift( {value: null, label: '', text: ''})
+      return result
     },
   },
   async created() {
-    console.log('created')
     const date = new Date()
     this.form.datetimeFrom = Util.getDatetime(date, {hours: -1})
     this.form.datetimeTo = Util.getDatetime(date)
     this.form.notifyState = this.notifyStateOptions[0].value
     const user = await AppServiceHelper.getCurrentUser()
+    const isProvider = JSON.parse(window.localStorage.getItem('login')).isProvider
+    if(user.role.roleFeatureList){
+      user.role.roleFeatureList.find((tval) =>
+        tval.feature.featureName == 'ALL_REGION'? this.userState = 'ALL_REGION':this.userState = null
+      )
+    }else if(isProvider){
+      isProvider? this.userState = 'ALL_REGION':this.userState = null
+    }
 
-    user.role.roleFeatureList.find((tval) =>
-      tval.feature.featureName == 'ALL_REGION'? this.userState = 'ALL_REGION':this.userState = null
-    )
     this.userState == 'ALL_REGION'? this.bTx = true: this.bTx = false
     this.userState == 'ALL_REGION'? this.bUserCheck = true: this.bUserCheck = false
     this.userState == 'ALL_REGION'? null: this.userMinor = user.minor
+
     this.fields = this.fields1
+
   },
   mounted() {
       import(`element-ui/lib/locale/lang/${this.$i18n.locale}`).then( (mojule) =>{
@@ -280,6 +288,62 @@ export default {
       this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.viewList.length, maxRows: this.limitViewRows})}`
   },
   methods: {
+    getCsvHeaders(num){
+      switch(num) {
+      case 'TX_DELIVERY_NOTIFY':
+        return {
+          positionDt: 'notifyDatetime',
+          notifyTo : 'notifyTo',
+          majors : 'majors',
+          minors  : 'minors',
+          txNames : 'txNames',
+          notifyResult : 'notifyResult',
+        }
+      case 'GW_ALERT':
+        return {
+          positionDt: 'notifyDatetime',
+          notifyTo : 'notifyTo',
+          deviceNums  : 'deviceNums',
+          lastRcvDatetimes : 'lastRcvDatetimes',
+          notifyResult : 'notifyResult',
+        }
+      case 'EXB_ALERT':
+        return {
+          positionDt: 'notifyDatetime',
+          notifyTo : 'notifyTo',
+          deviceNums  : 'deviceNums',
+          lastRcvDatetimes : 'lastRcvDatetimes',
+          notifyResult : 'notifyResult',
+        }
+      case 'TX_BATTERY_ALERT':
+        return {
+          positionDt: 'notifyDatetime',
+          notifyTo : 'notifyTo',
+          minorPowerLevel  : 'minorPowerLevel',
+          txNames : 'txNames',
+          notifyResult : 'notifyResult',
+          minors  : 'minors',
+          powerLevels  : 'powerLevels',
+        }
+      case 'TX_SOS_ALERT':
+        return {
+          positionDt: 'notifyDatetime',
+          notifyTo : 'notifyTo',
+          minors  : 'minors',
+          txNames : 'txNames',
+          notifyResult : 'notifyResult',
+        }
+      case 'USER_REG_NOTIFY':
+        return {
+          positionDt: 'notifyDatetime',
+          notifyTo : 'notifyTo',
+          majors : 'majors',
+          minors  : 'minors',
+          txNames : 'txNames',
+          notifyResult : 'notifyResult',
+        }
+      }
+    },
     async categoryChange(evt) {
       this.bTx = ((evt == 'TX_DELIVERY_NOTIFY' || evt == 'TX_BATTERY_ALERT' || evt == 'USER_REG_NOTIFY') && this.userState == 'ALL_REGION') ? true: false
     },
@@ -313,8 +377,9 @@ export default {
         }else if (aNotifyState == 'USER_REG_NOTIFY') {
           this.fields = this.fields6
         }
+        this.csvHeaders = this.getCsvHeaders(aNotifyState)
         const aTxId = this.txId
-        var fetchList = await HttpHelper.getAppService(
+        const fetchList = await HttpHelper.getAppService(
           aTxId? `/core/rcvexcloud/history/${aNotifyState}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}?txId=${aTxId}`
             :`/core/rcvexcloud/history/${aNotifyState}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}`
         )
@@ -325,26 +390,26 @@ export default {
           return
         }
         let count = 0
-        fetchList.forEach((senHist) => {
-          const d = new Date(senHist.notifyDatetime)
-          senHist.positionDt = moment(d.getTime()).format('YYYY/MM/DD HH:mm:ss')
-          senHist.notifyResult = senHist.notifyResult == 0 ? '成功' : '失敗'
+        fetchList.forEach((notifyData) => {
+          const d = new Date(notifyData.notifyDatetime)
+          notifyData.positionDt = moment(d.getTime()).format('YYYY/MM/DD HH:mm:ss')
+          notifyData.notifyResult = notifyData.notifyResult == 0 ? '成功' : '失敗'
           if(this.userState == 'ALL_REGION' || aNotifyState == 'GW_ALERT' || aNotifyState == 'EXB_ALERT'){
             count++
             if (count < this.limitViewRows) {
-              this.viewList.push(senHist)
+              this.viewList.push(notifyData)
             }
           }else{
             let tempIndex = 0
-            senHist.minors.find((tval,index) =>
+            notifyData.minors.find((tval,index) =>
               tval == this.userMinor ? tempIndex = index:null
             )
-            senHist.minors = senHist.minors[tempIndex]
-            this.gPowerLevel= senHist.powerLevels[tempIndex]
-            senHist.majors = senHist.majors[tempIndex]
-            senHist.txNames = senHist.txNames[tempIndex]
-            senHist.minors == this.userMinor? this.viewList.push(senHist) : null
-            senHist.minors == this.userMinor? count++:null
+            notifyData.minors = notifyData.minors[tempIndex]
+            this.gPowerLevel= notifyData.powerLevels[tempIndex]
+            notifyData.majors = notifyData.majors[tempIndex]
+            notifyData.txNames = notifyData.txNames[tempIndex]
+            notifyData.minors == this.userMinor? this.viewList.push(notifyData) : null
+            notifyData.minors == this.userMinor? count++:null
           }
         })
         this.totalRows = this.viewList.length
@@ -353,21 +418,53 @@ export default {
         console.error(e)
       }
     },
-    reset() {
-      this.isShownMapImage = false
-    },
-    async fetchData(payload) {
-    },
     async exportCsv() {
-      const aTxId = this.txId
-      const aNotifyState = (this.form.notifyState != null)?this.form.notifyState:0
-      HtmlUtil.executeFileDL(
-        aTxId? APP_SERVICE.BASE_URL
-          + `/core/rcvexcloud/csvdownload/${aNotifyState}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/`
-          + getCharSet(this.$store.state.loginId) + `?txId=${aTxId}`: APP_SERVICE.BASE_URL
-            + `/core/rcvexcloud/csvdownload/${aNotifyState}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/`
-            + getCharSet(this.$store.state.loginId)
-      )
+      const records = this.viewList.map(e => {
+        const obj = {}
+        Object.keys(this.csvHeaders)
+          .filter(csvHeader => this.csvHeaders[csvHeader])
+          .forEach(csvHeader => obj[this.csvHeaders[csvHeader]] = e[csvHeader])
+        return obj
+      })
+      records.forEach((record) => {
+        if(record.txNames!=null){
+          let txNames = record.txNames.toString()
+          record.txNames = txNames.replace( /,/gi, ';')
+        }
+        if(record.majors!=null){
+          let majors = record.majors.toString()
+          record.majors = majors.replace( /,/gi, ';')
+        }
+        if(record.minors!=null){
+          let minors = record.minors.toString()
+          record.minors = minors.replace( /,/gi, ';')
+        }
+        if(record.deviceNums!=null){
+          let deviceNums = record.deviceNums.toString()
+          record.deviceNums = deviceNums.replace( /,/gi, ';')
+        }
+        if(record.lastRcvDatetimes!=null){
+          let lastRcvDatetimes = record.lastRcvDatetimes.toString()
+          record.lastRcvDatetimes = lastRcvDatetimes.replace( /,/gi, ';')
+        }
+        if(record.powerLevels!=null){
+          let powerLevels = record.powerLevels.toString()
+          record.powerLevels = powerLevels.replace( /,/gi, ';')
+        }
+        if(this.form.notifyState == 'TX_BATTERY_ALERT' && record.minors && record.powerLevels){
+          let minors = record.minors.split(';')
+          let powerLevels = record.powerLevels.split(';')
+          let minorPowerLevel = ''
+          minors.forEach((minor,index) => {
+            minorPowerLevel += minor + '(' + powerLevels[index] + ');'
+          })
+          record.minorPowerLevel = minorPowerLevel
+          delete record.minors
+          delete record.powerLevels
+        }
+      })
+      HtmlUtil.fileDL('notifyHistory.csv', Util.converToCsv(records), getCharSet(this.$store.state.loginId))
+
     },
   }
 }
