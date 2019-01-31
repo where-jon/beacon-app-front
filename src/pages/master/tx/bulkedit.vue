@@ -54,39 +54,39 @@ export default {
       StateHelper.setForceFetch('pot', true)
     },
     setParamCategory(entity, headerName, val, dummyKey){
-      if (!entity.pot) {
-        entity.pot = {}
+      if (!entity.potTxList) {
+        entity.potTxList = [{potTxPK: {potId: dummyKey--, txId: dummyKey--}, pot: {}}]
       }
       if(headerName == 'categoryName'){
         const category = this.categories.find((category) => category.categoryName == val)
         if(category){
-          entity.pot.potType = category.categoryType
-          entity.pot.potCategoryList = [{potCategoryPK: {potId: dummyKey--, categoryId: category.categoryId}}]
+          entity.potTxList[0].pot.potType = category.categoryType
+          entity.potTxList[0].pot.potCategoryList = [{potCategoryPK: {potId: dummyKey--, categoryId: category.categoryId}}]
         }
         else{
-          entity.pot.categoryName = val
+          entity.potTxList[0].pot.categoryName = val
         }
       }
       else{
-        entity.pot.potCategoryList = [{potCategoryPK: {potId: dummyKey--, categoryId: val}}]
+        entity.potTxList[0].pot.potCategoryList = [{potCategoryPK: {potId: dummyKey--, categoryId: val}}]
       }
       return dummyKey
     },
     setParamGroup(entity, headerName, val, dummyKey){
-      if (!entity.pot) {
-        entity.pot = {}
+      if (!entity.potTxList) {
+        entity.potTxList = [{potTxPK: {potId: dummyKey--, txId: dummyKey--}, pot: {}}]
       }
       if(headerName == 'groupName'){
         const group = this.groups.find((group) => group.groupName == val)
         if(group){
-          entity.pot.potGroupList = [{potGroupPK: {potId: dummyKey--, groupId: group.groupId}}]
+          entity.potTxList[0].pot.potGroupList = [{potGroupPK: {potId: dummyKey--, groupId: group.groupId}}]
         }
         else{
-          entity.pot.groupName = val
+          entity.potTxList[0].pot.groupName = val
         }
       }
       else{
-        entity.pot.potGroupList = [{potGroupPK: {potId: dummyKey--, groupId: val}}]
+        entity.potTxList[0].pot.potGroupList = [{potGroupPK: {potId: dummyKey--, groupId: val}}]
       }
       return dummyKey
     },
@@ -130,17 +130,19 @@ export default {
       else if(APP.TX_BTX_MINOR == 'btxId'){
         entity.minor = entity.btxId
       }
-      if (entity.pot) {
-        entity.pot.potId = dummyKey--,
-        entity.pot.potCd = entity.pot.potId + '_' + (new Date().getTime() % 10000)
-        entity.pot.potName = entity.pot.potId + '_' + (new Date().getTime() % 10000)
+      if (entity.potTxList[0]) {
+        entity.potTxList[0].pot.potId = dummyKey--,
+        entity.potTxList[0].pot.potCd = entity.potTxList[0].pot.potId + '_' + (new Date().getTime() % 10000)
+        entity.potTxList[0].pot.potName = entity.potTxList[0].pot.potId + '_' + (new Date().getTime() % 10000)
         const pot = this.pots.find((val) => val.txId == entity.txId)
         if(pot){
           const potImage = this.potImages.find((val) => val.txId == entity.txId)
-          entity.pot.potType = pot.potType
-          entity.pot.thumbnail = potImage? potImage.thumbnail: null
-          entity.pot.extValue = pot.extValue
+          entity.potTxList[0].pot.potType = pot.potType
+          entity.potTxList[0].pot.thumbnail = potImage? potImage.thumbnail: null
+          entity.potTxList[0].pot.extValue = pot.extValue
         }
+        entity.potTxList[0].potTxPK.potId = dummyKey--
+        entity.potTxList[0].potTxPK.txId = entity.txId
       }
       return dummyKey
     },
@@ -160,10 +162,10 @@ export default {
       await bulkSaveFunc(MAIN_COL, null, BOOL_TYPE_LIST, (entity, headerName, val, dummyKey) => {
         if (Util.equalsAny(headerName, POT)) {
           if(Util.hasValue(val)){
-            if (!entity.pot) {
-              entity.pot = {}
+            if (!entity.potTxList) {
+              entity.potTxList = [{potTxPK: {potId: dummyKey--, txId: dummyKey--}, pot: {}}]
             }
-            entity.pot[headerName] = val
+            entity.potTxList[0].pot[headerName] = val
           }
         }
         else if (Util.equalsAny(headerName, POT_CATEGORY) && Util.hasValue(val)) {
