@@ -270,7 +270,7 @@ export default {
       this.minors = this.minors.map(() => null)
     },
     getTxIndex(index){
-      return APP.POT_MULTI_TX? APP.POT_TX_MAX? `${index + 1}`: '': ''
+      return APP.POT_MULTI_TX? 1 < APP.POT_TX_MAX? `${index + 1}`: '': ''
     },
     watchTxIds(newVal){
       this.form.potTxList.forEach((potTx, idx) => {
