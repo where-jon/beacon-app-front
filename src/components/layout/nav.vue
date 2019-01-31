@@ -16,7 +16,9 @@
       <b-navbar-nav v-show="!isLoginPage && showNav">
         <b-nav-item-dropdown v-for="group in this.$store.state.menu" :key="group.path">
           <template slot="button-content">
-            <em v-t="'label.' + group.key" />
+            <em class="word-break">
+              {{ $i18n.tnl('label.' + group.key) }}
+            </em>
           </template>
           <b-dropdown-item v-for="page in group.pages" :key="page.key" v-t="'label.' + page.key" :class="navbarClasses" href="#" @click="move('/' + group.base + page.path)" />
         </b-nav-item-dropdown>
@@ -29,7 +31,7 @@
           <tr v-if="isTenantAdmin()">
             <td>
               <i class="far fa-building mr-1" style="visibility: hidden;" />
-              <em v-t="this.$store.state.currentTenant? this.$store.state.currentTenant.tenantName: ''" class="region-em" />
+              <em v-t="this.$store.state.currentTenant? this.$store.state.currentTenant.tenantName: ''" class="region-em word-break" />
             </td>
           </tr>
           <tr v-if="hasMultiRegion(regions)">
@@ -51,7 +53,7 @@
         <b-nav-item-dropdown right>
           <template slot="button-content">
             <i class="fa fa-user" aria-hidden="true" />&nbsp;
-            <em class="login-user">
+            <em class="word-break">
               {{ loginId }}
             </em>
           </template>
@@ -323,7 +325,7 @@ div.navbar-brand {
   margin: 0 auto;
 }
 
-.login-user {
+.word-break {
   word-break: break-all !important;
 }
 
