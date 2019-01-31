@@ -133,6 +133,9 @@ export default {
       }
       this.replaceAS({roleFeatures})
       const featureOptions = this.features.filter((feature) => {
+        if(this.isSystemFeature(feature)){
+          return true
+        }
         if(!this.isShowRelationFeature(feature)){
           return false
         }
