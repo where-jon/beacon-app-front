@@ -396,7 +396,7 @@ export default {
       const isDispRight = x + offsetX + 100 < window.innerWidth
       // rev === trueの場合、ポップアップを上に表示
       const rev = y + map.top + DISP.TX_R + tipOffsetY + popupHeight > window.innerHeight
-      const p = tx.pot? tx.pot: {}
+      const p = Util.getValue(tx, 'potTxList.0.pot', {})
 
       const position = this.positions().find((e) => {
         return e.btx_id === btxId
