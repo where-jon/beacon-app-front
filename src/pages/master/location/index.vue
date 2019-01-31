@@ -422,6 +422,7 @@ export default {
         this.isChangeArea = false
         if (this.selectedArea) {
           this.reset()
+          this.workExbs = _.cloneDeep(this.exbs)
           this.setExbPosition()
           this.showMapImage()
         }
