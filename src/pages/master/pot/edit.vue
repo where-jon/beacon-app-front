@@ -94,14 +94,14 @@
               <b-form-textarea v-model="form.description" :rows="3" :max-rows="6" :readonly="!isEditable" maxlength="1000" />
             </b-form-group>
 
-            <b-form-group v-show="showEmail">
-              <label v-t="'label.email'" />
-              <b-form-input v-model="userForm.email" type="email" maxlength="255" />
-            </b-form-group>
             <b-form-group v-if="isShown('POT_WITH_USER')">
               <b-form-checkbox v-model="editShowUser" :value="true" :unchecked-value="false" @change="nextShowEmailCheck()">
                 <span v-text="$i18n.tnl('label.editUserInfo')" />
               </b-form-checkbox>
+            </b-form-group>
+            <b-form-group v-show="showEmail">
+              <label v-t="'label.email'" />
+              <b-form-input v-model="userForm.email" type="email" maxlength="255" />
             </b-form-group>
             <b-form-group v-show="editShowUser">
               <label v-t="'label.loginId'" />
@@ -140,7 +140,7 @@ import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
-import { CATEGORY, SENSOR } from '../../../sub/constant/Constants'
+import { CATEGORY } from '../../../sub/constant/Constants'
 import { APP } from '../../../sub/constant/config.js'
 
 export default {
@@ -285,22 +285,11 @@ export default {
       })
     },
     showEmailCheck(){
-      if(!this.form.potTxList){
-        this.showEmail = false
-        return this.showEmail
-      }
       if(!this.editShowUser){
         this.showEmail = false
         return this.showEmail
       }
-      for(let cnt = 0; cnt < this.form.potTxList.length; cnt++){
-        const tx = this.txs.find((tx) => this.form.potTxList[cnt].txId == tx.txId)
-        if(tx && Util.hasValue(tx.txSensorList) && tx.txSensorList[0].txSensorPK.sensorId == SENSOR.BUTTON){
-          this.showEmail = true
-          return this.showEmail
-        }
-      }
-      this.showEmail = false
+      this.showEmail = true
       return this.showEmail
     },
     getTxOptions(index) {
