@@ -319,7 +319,7 @@ export default {
         return {
           positionDt: 'notifyDatetime',
           notifyTo : 'notifyTo',
-          minorPowerLevel  : 'minorPowerLevel',
+          minorPowerLevel  : 'minor(powerLevel)',
           txNames : 'txNames',
           notifyResult : 'notifyResult',
           minors  : 'minors',
