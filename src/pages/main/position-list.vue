@@ -17,7 +17,7 @@ import * as PositionHelper from '../../sub/helper/PositionHelper'
 import { addLabelByKey } from '../../sub/helper/ViewHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
-import { BATTERY_STATE, BATTERY_BOUNDARY, EXTRA_NAV } from '../../sub/constant/Constants'
+import { /*BATTERY_STATE, BATTERY_BOUNDARY,*/ EXTRA_NAV } from '../../sub/constant/Constants'
 import * as Util from '../../sub/util/Util'
 import { APP } from '../../sub/constant/config.js'
 
@@ -54,7 +54,7 @@ export default {
           APP.POSITION_WITH_AREA ? {key: 'areaName', label: 'area', sortable: true, tdClass: 'action-rowdata'} : null,
           {key: 'locationName', label: 'finalReceiveLocation', sortable: true, tdClass: 'action-rowdata'},
           {key: 'updatetime', label: 'finalReceiveTimestamp', sortable: true, tdClass: 'action-rowdata'},
-          {key: 'powerLevel', label: 'powerLevel', tdClass: 'action-rowdata', 'class': 'text-md-center'},
+          // {key: 'powerLevel', label: 'powerLevel', tdClass: 'action-rowdata', 'class': 'text-md-center'},
           {key: 'mapDisplay', tdClass: 'action-rowdata'},
         ]),
         initTotalRows: this.$store.state.app_service.positionList.length,
@@ -101,7 +101,7 @@ export default {
         positions = positions.map((pos) => {
           return {
             ...pos,
-            powerLevel: this.getPowerLevel(pos),
+            // powerLevel: this.getPowerLevel(pos),
             txId: Util.getValue(pos, 'tx.txId' , null),
             potCd: Util.getValue(pos, 'tx.pot.potCd', null),
             potName: Util.getValue(pos, 'tx.pot.potName', null),
@@ -125,19 +125,19 @@ export default {
       }
       this.hideProgress()
     },
-    getPowerLevel(position){
-      const batteryOpts = BATTERY_STATE.getTypes()
-      const powerLevel = position.power_level
-      if (!powerLevel) {
-        return batteryOpts.find((val) => val.value === 4)
-      } else if (powerLevel >= BATTERY_BOUNDARY.GOOD) {
-        return batteryOpts.find((val) => val.value === 1)
-      } else if (powerLevel >= BATTERY_BOUNDARY.WARNING) {
-        return batteryOpts.find((val) => val.value === 2)
-      } else {
-        return batteryOpts.find((val) => val.value === 3)
-      }
-    },
+    // getPowerLevel(position){
+    //   const batteryOpts = BATTERY_STATE.getTypes()
+    //   const powerLevel = position.power_level
+    //   if (!powerLevel) {
+    //     return batteryOpts.find((val) => val.value === 4)
+    //   } else if (powerLevel >= BATTERY_BOUNDARY.GOOD) {
+    //     return batteryOpts.find((val) => val.value === 1)
+    //   } else if (powerLevel >= BATTERY_BOUNDARY.WARNING) {
+    //     return batteryOpts.find((val) => val.value === 2)
+    //   } else {
+    //     return batteryOpts.find((val) => val.value === 3)
+    //   }
+    // },
     async checkDetectedTx(tx) {
       await this.fetchData()
       return _.some(this.positionList, (pos) => {
