@@ -146,6 +146,7 @@ export default {
       try {
         const telemetrys = await EXCloudHelper.fetchTelemetry()
         this.telemetrys = await this.makeTelemetryRecords(telemetrys)
+        console.log(this.telemetrys)
         if (payload && payload.done) {
           payload.done()
         }
@@ -175,6 +176,7 @@ export default {
       HtmlUtil.fileDL('telemetry.csv', Util.converToCsv(records), getCharSet(this.$store.state.loginId))
     },
     async makeTelemetryRecords(telemetrys) {
+      // "telemetrys"という単語は有りなのか？
       if (this.isDev) {
         return telemetrys
       }
@@ -199,10 +201,10 @@ export default {
           ret.deviceNum = deviceId - offset
         }
         if(APP.EXB_WITH_DEVICE_ID){
-          ret.deviceNum = deviceId
+          ret.deviceId = deviceId
         }
         if(APP.EXB_WITH_DEVICE_IDX){
-          ret.deviceNum = e.deviceid.toUpperCase()
+          ret.deviceIdX= e.deviceid.toUpperCase()
         }
         return ret
       })
