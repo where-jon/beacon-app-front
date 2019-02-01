@@ -113,7 +113,7 @@ export default {
             categoryId: Util.getValue(pos, 'tx.category.categoryId').val,
             areaId: Util.getValue(pos, 'exb.location.areaId').val,
           }
-        })
+        }).filter((pos) => pos.tx.disp > 0)
         console.log(positions)
         this.replaceAS({positionList: positions})
         if (payload && payload.done) {

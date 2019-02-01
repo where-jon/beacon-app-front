@@ -91,7 +91,7 @@ export default {
     getShowTxPositions(positions){
       const now = !DEV.USE_MOCK_EXC ? new Date().getTime(): mock.positions_conf.start + this.count++ * mock.positions_conf.interval
       const correctPositions = APP.USE_POSITION_HISTORY? this.positionHistores: PositionHelper.correctPosId(this.orgPositions, now)
-      return _(positions).map((pos) => {
+      return _(positions).filter((pos) => pos.tx.disp > 0).map((pos) => {
         let cPos = _.find(correctPositions, (cPos) => pos.btx_id == cPos.btx_id)
         if (cPos) {
           return {...pos, transparent: cPos.transparent}

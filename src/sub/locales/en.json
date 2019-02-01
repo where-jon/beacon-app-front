@@ -510,6 +510,7 @@
     "txLocationSetting": "TX Location",
     "button": "Button",
     "editUserInfo": "User Edit",
+    "disp": "Disp flag",
     "dispPos": "Show on position",
     "dispPir": "Show on pir",
     "dispAlways": "Show always",
