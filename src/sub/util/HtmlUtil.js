@@ -97,7 +97,6 @@ export const readImage = (e, onload, resize, onerror) => {
     let fr = new FileReader()
     fr.onload = (evt) => {
       let image = new Image()
-      image.src = evt.target.result
       image.crossOrigin = 'Anonymous'
       image.onload = function() {
         let thumbnail
@@ -111,6 +110,7 @@ export const readImage = (e, onload, resize, onerror) => {
         }
         onload && onload(evt, this.width, this.height, thumbnail)
       }
+      image.src = evt.target.result
     }       
     fr.readAsDataURL(files[0])
   }
