@@ -51,7 +51,7 @@
             </b-form-group>
             <b-form-group v-if="isShown('POT_WITH_POTCD')">
               <label v-t="'label.potCd'" />
-              <input v-model="form.potCd" :readonly="!isEditable" type="text" maxlength="20" class="form-control" required>
+              <input v-model="form.potCd" :readonly="!isEditable" type="text" maxlength="20" class="form-control">
             </b-form-group>
             <b-form-group>
               <label v-t="'label.potName'" />
