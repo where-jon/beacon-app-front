@@ -413,7 +413,7 @@ export default {
         containerWidth: containerParent.width,
         containerHeight: containerParent.height,
         class: balloonClass,
-        name: tx.txName? tx.txName: p.potName ? p.potName : '',
+        name: p.potName ? p.potName : tx.txName? tx.txName: '',
         timestamp: position ? this.getFinalReceiveTime(position.timestamp) : '',
         thumbnail: p.thumbnail ? p.thumbnail : '',
         category: p.potCategoryList && p.potCategoryList.length > 0 ? p.potCategoryList[0].category.categoryName : '',
