@@ -8,7 +8,7 @@ import * as MenuHelper from './MenuHelper'
 import * as ConfigHelper from './ConfigHelper'
 import * as LocaleHelper from './LocaleHelper'
 import { APP, LOCAL_LOGIN } from '../constant/config'
-import { LOGIN_MODE } from '../constant/Constants'
+import { LOGIN_MODE, FEATURE } from '../constant/Constants'
 import { getLangShort } from '../util/HtmlUtil'
 import * as Util from '../util/Util'
 
@@ -97,7 +97,7 @@ export const authByAppService = async (loginId, password, success, err) => {
     ConfigHelper.applyAppServiceSetting(userInfo.setting)  
 
     const userRegionIdList = userInfo.user.userRegionList? userInfo.user.userRegionList.map((val) => val.userRegionPK.regionId): []
-    const allRegionMove = userInfo.user.role && userInfo.user.role.roleFeatureList? userInfo.user.role.roleFeatureList.find((val) => val.feature.featureType == 2)? true: false: false
+    const allRegionMove = userInfo.user.role && userInfo.user.role.roleFeatureList? userInfo.user.role.roleFeatureList.find((val) => val.feature.featureName == FEATURE.NAME.ALL_REGION)? true: false: false
     // Login process
     await login({loginId, username:userInfo.user.name, role: userInfo.user.role, featureList: userInfo.featureList, tenantFeatureList: userInfo.tenantFeatureList, 
       menu: userInfo.menu, currentRegion: userInfo.currentRegion, frontRev: revInfo.frontRev, serviceRev: revInfo.serviceRev, tenantAdmin: data.tenantAdmin,

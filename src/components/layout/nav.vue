@@ -167,7 +167,7 @@ export default {
         regions.filter((val) => val):
         Util.hasValue(login.userRegionIdList)?
           regions.filter((region) => login.userRegionIdList.includes(region.regionId)):
-          regions.filter((val) => val)
+          regions.filter((region) => login.currentRegion? region.regionId == login.currentRegion.regionId: false)
       return ret.sort((a, b) => this.optionSort(a, b))
     },
     optionSort(regionA, regionB){

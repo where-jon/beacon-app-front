@@ -72,6 +72,9 @@ export const ROLE_FEATURE = {
 }
 
 export const FEATURE = {
+  NAME: {
+    ALL_REGION: 'ALL_REGION'
+  },
   getTypeOptions(){
     return [
       {text: i18n.tnl('label.noLimitType'), value: 0},
