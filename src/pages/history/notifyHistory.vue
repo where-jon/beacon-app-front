@@ -300,7 +300,9 @@ export default {
           notifyTo : 'notifyTo',
           majors : 'majors',
           minors  : 'minors',
-          txNames : 'txNames',
+          major : 'major',
+          minor  : 'minor',
+          txName : 'txNames',
           notifyResult : 'notifyResult',
         }
       case 'GW_ALERT':
@@ -323,10 +325,11 @@ export default {
         return {
           positionDt: 'notifyDatetime',
           notifyTo : 'notifyTo',
-          minorPowerLevel  : 'minor(powerLevel)',
+          minorPowerLevel  : 'minorPowerLevel',
           txNames : 'txNames',
           notifyResult : 'notifyResult',
           minors  : 'minors',
+          minor  : 'minor',
           powerLevels  : 'powerLevels',
         }
       case 'TX_SOS_ALERT':
@@ -334,6 +337,7 @@ export default {
           positionDt: 'notifyDatetime',
           notifyTo : 'notifyTo',
           minors  : 'minors',
+          minor  : 'minor',
           txNames : 'txNames',
           notifyResult : 'notifyResult',
         }
@@ -343,6 +347,8 @@ export default {
           notifyTo : 'notifyTo',
           majors : 'majors',
           minors  : 'minors',
+          major : 'major',
+          minor  : 'minor',
           txNames : 'txNames',
           notifyResult : 'notifyResult',
         }
@@ -444,6 +450,10 @@ export default {
         Object.keys(this.csvHeaders)
           .filter(csvHeader => this.csvHeaders[csvHeader])
           .forEach(csvHeader => obj[this.csvHeaders[csvHeader]] = e[csvHeader])
+        obj.majors? obj.major=obj.majors:null
+        obj.majors? delete obj.majors:null
+        obj.minors? obj.minor=obj.minors:null
+        obj.minors? delete obj.minors:null
         return obj
       })
       records.forEach((record) => {
@@ -455,13 +465,13 @@ export default {
           let notifyTos = record.notifyTo.toString()
           record.notifyTo = notifyTos.replace( /,/gi, ';')
         }
-        if(record.majors!=null){
-          let majors = record.majors.toString()
-          record.majors = majors.replace( /,/gi, ';')
+        if(record.major!=null){
+          let majors = record.major.toString()
+          record.major = majors.replace( /,/gi, ';')
         }
-        if(record.minors!=null){
-          let minors = record.minors.toString()
-          record.minors = minors.replace( /,/gi, ';')
+        if(record.minor!=null){
+          let minors = record.minor.toString()
+          record.minor = minors.replace( /,/gi, ';')
         }
         if(record.deviceNums!=null){
           let deviceNums = record.deviceNums.toString()
@@ -475,14 +485,15 @@ export default {
           let powerLevels = record.powerLevels.toString()
           record.powerLevels = powerLevels.replace( /,/gi, ';')
         }
-        if(this.form.notifyState == 'TX_BATTERY_ALERT' && record.minors && record.powerLevels){
-          let minors = record.minors.split(';')
+        if(this.form.notifyState == 'TX_BATTERY_ALERT' && record.minor && record.powerLevels){
+          let minors = record.minor.split(';')
           let powerLevels = record.powerLevels.split(';')
           let minorPowerLevel = ''
           minors.forEach((minor,index) => {
             minorPowerLevel += minor + '(' + powerLevels[index] + ');'
           })
           record.minorPowerLevel = minorPowerLevel
+          delete record.minor
           delete record.minors
           delete record.powerLevels
         }
