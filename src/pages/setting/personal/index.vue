@@ -23,11 +23,13 @@
               <input v-model="loginUser.email" :readonly="!isChange" :state="errorMessages.email.length > 0 ? false : null" type="email" class="form-control">
               <p v-for="(val, key) in errorMessages.email" :key="key" v-t="val" class="error" />
             </b-form-group>
+            <!--
             <b-form-group>
               <label v-t="'label.minor'" />
               <input v-model="loginUser.minor" :readonly="!isChange" type="number" min="1" max="9999" class="form-control">
               <p v-for="(val, key) in errorMessages.minor" :key="key" v-t="val" class="error" />
             </b-form-group>
+            -->
             <b-form-group>
               <label v-t="'label.role'" />
               <b-form-input :value="loginUser.role" :readonly="true" type="text" />
