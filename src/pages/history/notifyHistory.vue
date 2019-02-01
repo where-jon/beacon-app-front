@@ -64,7 +64,11 @@
               </span>
             </span>
           </template>
-
+          <template slot="notifyTo" slot-scope="row">
+            <span v-for="(val, key) in row.item.notifyTo" :key="key">
+              {{ val }} <br>
+            </span>
+          </template>
           <template slot="majors" slot-scope="row">
             <span v-if="!bUserCheck">
               <span v-for="(val, key) in row.item.majors" :key="key">
@@ -185,7 +189,7 @@ export default {
       fields1: addLabelByKey(this.$i18n, [  // TXボタン押下通知
         {key: 'positionDt', sortable: true, label:'dt'},
         {key: 'notifyTo', sortable: true,label:'notifyTo' },
-        {key: 'majors', sortable: true,label:'majors' },
+        {key: 'majors', sortable: true,label:'major' },
         {key: 'minor', sortable: true,label:'minor' },
         {key: 'txNames', sortable: true,label:'txName' },
         {key: 'notifyResult', sortable: true,label:'notifyResult' },
@@ -344,6 +348,18 @@ export default {
         }
       }
     },
+    getNotifyTo(notifyToData){
+      let notifysTo = notifyToData.split(',')
+      let arNotify = []
+      if(notifysTo){
+        notifysTo.forEach((notifyTo) => {
+          arNotify.push(notifyTo)
+        })
+      }else{
+        arNotify = null
+      }
+      return arNotify
+    },
     async categoryChange(evt) {
       this.bTx = ((evt == 'TX_DELIVERY_NOTIFY' || evt == 'TX_BATTERY_ALERT' || evt == 'USER_REG_NOTIFY') && this.userState == 'ALL_REGION') ? true: false
     },
@@ -397,6 +413,8 @@ export default {
           if(this.userState == 'ALL_REGION' || aNotifyState == 'GW_ALERT' || aNotifyState == 'EXB_ALERT'){
             count++
             if (count < this.limitViewRows) {
+              let arNotifyto = this.getNotifyTo(notifyData.notifyTo)
+              arNotifyto ? notifyData.notifyTo = arNotifyto: null
               this.viewList.push(notifyData)
             }
           }else{
@@ -408,6 +426,8 @@ export default {
             this.gPowerLevel= notifyData.powerLevels[tempIndex]
             notifyData.majors = notifyData.majors[tempIndex]
             notifyData.txNames = notifyData.txNames[tempIndex]
+            let arNotifyto = this.getNotifyTo(notifyData.notifyTo)
+            arNotifyto ? notifyData.notifyTo = arNotifyto: null
             notifyData.minors == this.userMinor? this.viewList.push(notifyData) : null
             notifyData.minors == this.userMinor? count++:null
           }
@@ -430,6 +450,10 @@ export default {
         if(record.txNames!=null){
           let txNames = record.txNames.toString()
           record.txNames = txNames.replace( /,/gi, ';')
+        }
+        if(record.notifyTo!=null){
+          let notifyTos = record.notifyTo.toString()
+          record.notifyTo = notifyTos.replace( /,/gi, ';')
         }
         if(record.majors!=null){
           let majors = record.majors.toString()
