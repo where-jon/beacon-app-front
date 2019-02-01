@@ -140,7 +140,7 @@ import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
-import { CATEGORY } from '../../../sub/constant/Constants'
+import { CATEGORY, SENSOR, USER } from '../../../sub/constant/Constants'
 import { APP } from '../../../sub/constant/config.js'
 
 export default {
@@ -169,11 +169,10 @@ export default {
             'extValue.post', 'thumbnail', 'description'])
       },
       userForm: {
-        userId: null,
-        loginId: null,
-        pass: null,
-        roleId: null,
-        email: null,
+        userId: null, loginId: null, pass: null, roleId: null, email: null,
+      },
+      oldUserForm: {
+        userId: null, loginId: null, pass: null, roleId: null, email: null,
       },
       defValue: {
         'potType': APP.CATEGORY_TYPES[0] != 3? APP.CATEGORY_TYPES[0]: null,
@@ -237,6 +236,10 @@ export default {
       this.userForm.loginId = potUser.user.loginId
       this.userForm.roleId = potUser.user.roleId
       this.userForm.email = potUser.user.email
+      this.oldUserForm.userId = potUser.user.userId
+      this.oldUserForm.loginId = potUser.user.loginId
+      this.oldUserForm.roleId = potUser.user.roleId
+      this.oldUserForm.email = potUser.user.email
     }
     else{
       const maxRole = this.roleOptions.reduce((a, b) => a.value > b.value? a: b)
@@ -285,11 +288,22 @@ export default {
       })
     },
     showEmailCheck(){
-      if(!this.editShowUser){
+      if(this.editShowUser){
+        this.showEmail = true
+        return this.showEmail
+      }
+      if(!Util.hasValue(this.form.potTxList)){
         this.showEmail = false
         return this.showEmail
       }
-      this.showEmail = true
+      for(let cnt = 0; cnt < this.form.potTxList.length; cnt++){
+        const tx = this.txs.find((tx) => this.form.potTxList[cnt].txId == tx.txId)
+        if(tx && Util.hasValue(tx.txSensorList) && tx.txSensorList[0].txSensorPK.sensorId == SENSOR.BUTTON){
+          this.showEmail = true
+          return this.showEmail
+        }
+      }
+      this.showEmail = false
       return this.showEmail
     },
     getTxOptions(index) {
@@ -352,23 +366,36 @@ export default {
       StateHelper.setForceFetch('tx', true)
       StateHelper.setForceFetch('user', true)
     },
-    getUserEntity(dummyParam) {
-      if(!this.editShowUser){
+    setDummyParam(dummyUser, paramName, showForm){
+      dummyUser[paramName] = showForm? this.userForm[paramName]: this.hasUserId? this.oldUserForm[paramName]: dummyUser[paramName]
+    },
+    async getUserEntity(dummyParam) {
+      if(!this.hasId && !this.editShowUser && !this.showEmail){
         return null
       }
-      return {
-        userId: this.userForm.userId? this.userForm.userId: dummyParam.dummyKey--,
-        loginId: this.userForm.loginId,
-        pass: this.userForm.pass,
-        roleId: this.userForm.roleId,
-        email: this.showEmail? this.userForm.email: null,
-        name: this.form.potName,
+
+      const login = JSON.parse(window.localStorage.getItem('login'))
+      const dummyLoginId = this.createDummyLoginId([
+        login.currentRegion.regionId,
+        ...this.form.potTxList.map((potTx) => potTx.txId? potTx.txId: 0)
+      ])
+      const dummyUser = await this.createDummyUser(dummyLoginId)
+
+      dummyUser.userId = this.userForm.userId? this.userForm.userId: dummyParam.dummyKey--
+      dummyUser.name = this.form.potName
+      this.setDummyParam(dummyUser, 'loginId', this.editShowUser)
+      this.setDummyParam(dummyUser, 'pass', this.editShowUser)
+      this.setDummyParam(dummyUser, 'roleId', this.editShowUser)
+      this.setDummyParam(dummyUser, 'email', this.showEmail)
+      if(!this.editShowUser && this.showEmail){
+        dummyUser.encrypt = USER.ENCRYPT.OFF
       }
+      return dummyUser
     },
     async save() {
-      let dummyKey = -1
+      let dummyParam = {dummyKey: -1}
       const entity = {
-        potId: this.form.potId || dummyKey--,
+        potId: this.form.potId || dummyParam.dummyKey--,
         potCd: this.form.potCd,
         potName: this.form.potName,
         potType: this.form.potType,
@@ -384,12 +411,12 @@ export default {
         potCategoryList: this.form.categoryId ? [{
           potCategoryPK: {categoryId: this.form.categoryId}
         }] : [],
-        potUserList: this.editShowUser ? [{
+        potUserList: this.hasUserId || this.editShowUser || this.showEmail ? [{
           potUserPK: {
-            potId: this.form.potId || dummyKey--,
-            userId: this.userForm.userId? this.userForm.userId: dummyKey--
+            potId: this.form.potId || dummyParam.dummyKey--,
+            userId: this.userForm.userId? this.userForm.userId: dummyParam.dummyKey--
           },
-          user: this.getUserEntity({dummyKey: dummyKey})
+          user: await this.getUserEntity(dummyParam)
         }] : [],
         txId: this.form.txId,
         thumbnail: this.form.thumbnail,
@@ -400,7 +427,7 @@ export default {
         if(potTx.txId){
           potTxList.push({
             potTxPK: {
-              potId: this.form.potId || dummyKey--,
+              potId: this.form.potId || dummyParam.dummyKey--,
               txId: potTx.txId
             }
           })

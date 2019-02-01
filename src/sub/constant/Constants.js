@@ -30,6 +30,16 @@ export const LOCALE = [
   {id: 3,  name: 'en'},
 ]
 
+export const USER = {
+  DUMMY: {
+    PASS: 'dummy',
+  },
+  ENCRYPT: {
+    ON: 1,
+    OFF: 0,
+  }
+}
+
 export const ROLE = {
 }
 
