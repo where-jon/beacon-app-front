@@ -7,7 +7,7 @@ import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import { APP } from '../../sub/constant/config.js'
-import { UPDATE_ONLY_NN, IGNORE } from '../../sub/constant/Constants'
+import { UPDATE_ONLY_NN, IGNORE, USER } from '../../sub/constant/Constants'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
 import commonmixinVue from './commonmixin.vue'
@@ -50,6 +50,7 @@ export default {
       return loginInfo.isProvider
     },
     ...mapState('app_service', [
+      'roles',
       'listMessage',
       'showLine',
     ]),
@@ -83,6 +84,21 @@ export default {
     },
     isShown(conf) {
       return APP[conf]
+    },
+    createDummyLoginId(ids) {
+      return `d${ids.join('_')}`
+    },
+    async createDummyUser(dummyLoginId, noEncrypt = USER.ENCRYPT.ON) {
+      await StateHelper.load('role')
+      return {
+        userId: -1,
+        loginId: dummyLoginId,
+        pass: USER.DUMMY.PASS,
+        name: null,
+        roleId: this.roles.reduce((a, b) => a.roleId > b.roleId? a: b).roleId,
+        email: null,
+        noEncrypt: noEncrypt,
+      }
     },
     async save() {
       return await AppServiceHelper.save(this.appServicePath, this.form, this.updateOnlyNN)
