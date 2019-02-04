@@ -3,7 +3,7 @@
 import { mapState, mapMutations, mapActions } from 'vuex'
 import { Shape, Container, Stage, Bitmap, Text, Touch } from '@createjs/easeljs/dist/easeljs.module'
 import { APP, DISP, DEV } from '../../sub/constant/config.js'
-import { SHAPE, SENSOR, POSITION } from '../../sub/constant/Constants'
+import { SHAPE, SENSOR, POSITION, FONT } from '../../sub/constant/Constants'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as PositionHelper from '../../sub/helper/PositionHelper'
 import * as SensorHelper from '../../sub/helper/SensorHelper'
@@ -369,6 +369,10 @@ export default {
         return this.meditagSensors.find((val) => btxId == val.btx_id)
       }
       return null
+    },
+    getAdjustFontSize(getFontSize, isBold = false){
+      const size = Math.round(getFontSize())
+      return `${isBold? 'bold ': ''}${(size < FONT.SIZE.MIN? FONT.SIZE.MIN: size)}${FONT.TYPE}`
     },
     positions() {
       let positions = []

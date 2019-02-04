@@ -54,6 +54,9 @@ export default {
           active: true
         },
       ],
+      INUSE_FONTSIZE_RATIO: 0.9,
+      PIR_FONTSIZE_RATIO_EN: 0.5,
+      EMPTY_FONTSIZE_RATIO: 1.2,
     }
   },
   computed: {
@@ -148,10 +151,10 @@ export default {
     createLabel(count){
       const label = new Text(this.$i18n.tnl('label.' + (count > 0? DISP.PIR_INUSE_LABEL: DISP.PIR_EMPTY_LABEL)))
       if (this.$i18n.locale == 'ja') {
-        label.font = count > 0? DISP.PIR_INUSE_FONT: DISP.PIR_EMPTY_FONT
+        label.font = this.getAdjustFontSize(() => DISP.PIR_R_SIZE * (count > 0? this.INUSE_FONTSIZE_RATIO: this.EMPTY_FONTSIZE_RATIO), true)
       }
       else {
-        label.font = count > 0? DISP.PIR_INUSE_FONT_EN: DISP.PIR_EMPTY_FONT_EN
+        label.font = this.getAdjustFontSize(() => DISP.PIR_R_SIZE * this.PIR_FONTSIZE_RATIO_EN, true)
       }
       label.color = DISP.PIR_FGCOLOR
       label.textAlign = 'center'

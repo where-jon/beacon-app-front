@@ -277,6 +277,13 @@ export const TX_VIEW_TYPES = {
   TILE: 5,
 }
 
+export const FONT = {
+  SIZE: {
+    MIN: 6,
+  },
+  TYPE: 'px Arial',
+}
+
 export const EXTRA_NAV = [
   {
     key: 'showPositionShort',
