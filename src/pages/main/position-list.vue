@@ -98,7 +98,7 @@ export default {
         // 検知状態の取得
         PositionHelper.setDetectState(positions, APP.USE_POSITION_HISTORY)
 
-        console.log(positions)
+        Util.debug(positions)
         positions = positions.map((pos) => {
           return {
             ...pos,
@@ -114,8 +114,8 @@ export default {
             categoryId: Util.getValue(pos, 'tx.category.categoryId').val,
             areaId: Util.getValue(pos, 'exb.location.areaId').val,
           }
-        }).filter((pos) => pos.tx.disp > 0)
-        console.log(positions)
+        }).filter((pos) => !pos.tx || pos.tx.disp > 0)
+        Util.debug(positions)
         this.replaceAS({positionList: positions})
         if (payload && payload.done) {
           payload.done()
