@@ -98,6 +98,7 @@ export default {
         // 検知状態の取得
         PositionHelper.setDetectState(positions, APP.USE_POSITION_HISTORY)
 
+        console.log(positions)
         positions = positions.map((pos) => {
           return {
             ...pos,

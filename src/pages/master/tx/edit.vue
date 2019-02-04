@@ -207,7 +207,9 @@ export default {
       let disp = this.form.dispPos |  this.form.dispPir | this.form.dispAlways
       let pot = await this.getRelatedPot(txId)
       if (pot) {
-        pot.potTxList = null
+        pot.potTxList = null // potTx関連を削除
+        pot.potUserList = null // ここではpotUser関連は登録しない
+        pot.user = null
       }
       if (this.form.location) {
         var location = _.cloneDeep(this.form.location)
