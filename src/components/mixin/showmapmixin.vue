@@ -372,7 +372,7 @@ export default {
     },
     getAdjustFontSize(getFontSize, isBold = false){
       const size = Math.round(getFontSize())
-      return `${isBold? 'bold': ''} ${(size < FONT.SIZE.MIN? FONT.SIZE.MIN: size)}${FONT.TYPE}`
+      return `${isBold? 'bold ': ''}${(size < FONT.SIZE.MIN? FONT.SIZE.MIN: size)}${FONT.TYPE}`
     },
     positions() {
       let positions = []
