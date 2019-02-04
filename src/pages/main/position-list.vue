@@ -142,7 +142,7 @@ export default {
     async checkDetectedTx(tx) {
       await this.fetchData()
       return _.some(this.positionList, (pos) => {
-        return pos.tx.txId == tx.txId
+        return pos.tx && pos.tx.txId == tx.txId
             && !pos.noSelectedTx
       })
     }
