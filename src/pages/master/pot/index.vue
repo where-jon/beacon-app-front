@@ -87,8 +87,8 @@ export default {
     customCsvData(val){
       const id = APP.TX_WITH_TXID? 'txId': APP.TX_BTX_MINOR == 'minor'? 'minor': 'btxId'
       if(Util.hasValue(val.potTxList)){
-        val[id] = val.potTxList.map((potTx) => potTx.tx? potTx.tx[id]: '').join(',')
-        val.txName = val.potTxList.map((potTx) => potTx.tx? potTx.tx.txName: '').join(',')
+        val[id] = val.potTxList.map((potTx) => potTx.tx? potTx.tx[id]: '').join(';')
+        val.txName = val.potTxList.map((potTx) => potTx.tx? potTx.tx.txName: '').join(';')
       }
       if(Util.hasValue(val.potUserList)){
         val.userId = val.potUserList[0].user.userId
