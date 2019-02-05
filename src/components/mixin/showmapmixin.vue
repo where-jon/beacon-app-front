@@ -138,7 +138,8 @@ export default {
     async fetchAreaExbs(tx) {
       if (this.isFirstTime) {
         await StateHelper.load('area')
-        this.selectedArea = this.selectedArea ? this.selectedArea : Util.getValue(this, 'areas.0.areaId', null)
+        const areaOption = Util.hasValue(this.areaOptions)? this.areaOptions[0].value: null
+        this.selectedArea = this.selectedArea ? this.selectedArea : areaOption
         await StateHelper.loadAreaImage(this.selectedArea)
         console.log('after loadAreas. selectedArea=' + this.selectedArea)
         await StateHelper.load('exb')
@@ -166,7 +167,9 @@ export default {
         }
         else {
           Util.debug('No mapImage in showMapImageDef.')
-          this.noImageErrorKey && this.loginId && this.showErrorModal({key: this.noImageErrorKey})
+          if (this.$route.path.startsWith('/main')) {      
+            this.noImageErrorKey && this.loginId && this.showErrorModal({key: this.noImageErrorKey})
+          }
         }
         return
       }
