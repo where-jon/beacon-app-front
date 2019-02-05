@@ -85,7 +85,7 @@ export const APP = { // 機能面に関する設定
   EXB_WITH_DEVICE_NUM: true,  // 画面上端末IDを使用するか否か
   EXB_WITH_DEVICE_ID: false,   // 画面上デバイスIDを使用するか否か
   EXB_WITH_DEVICE_IDX: false,  // 画面上デバイスID（16進数）を使用するか否か
-  EXB_WITH_POSID: false,      // 画面上POSIDを使用するか否か
+  EXB_WITH_POSID: true,      // 画面上POSIDを使用するか否か
 
   // USER関連設定
   USER_WITH_EMAIL: true, // ユーザ設定でメールアドレスを使用する

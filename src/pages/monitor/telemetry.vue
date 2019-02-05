@@ -131,7 +131,7 @@ export default {
           deviceNum: APP.EXB_WITH_DEVICE_NUM ? 'deviceNum' : null,
           deviceId: APP.EXB_WITH_DEVICE_ID ? 'deviceId' : null,
           deviceIdX: APP.EXB_WITH_DEVICE_IDX ? 'deviceId(HEX)' : null,
-          name: 'finalReceivePlace',
+          name: 'name',
           powerLevel: 'powerLevel',
           timestamp: 'timestamp',
           state: 'state'
@@ -146,7 +146,6 @@ export default {
       try {
         const telemetrys = await EXCloudHelper.fetchTelemetry()
         this.telemetrys = await this.makeTelemetryRecords(telemetrys)
-        console.log(this.telemetrys)
         if (payload && payload.done) {
           payload.done()
         }
@@ -176,7 +175,6 @@ export default {
       HtmlUtil.fileDL('telemetry.csv', Util.converToCsv(records), getCharSet(this.$store.state.loginId))
     },
     async makeTelemetryRecords(telemetrys) {
-      // "telemetrys"という単語は有りなのか？
       if (this.isDev) {
         return telemetrys
       }
@@ -197,6 +195,7 @@ export default {
 
         const offset = this.$store.state.currentRegion.deviceOffset
         const deviceId = parseInt(e.deviceid, 16)
+
         if(APP.EXB_WITH_DEVICE_NUM){
           ret.deviceNum = deviceId - offset
         }
