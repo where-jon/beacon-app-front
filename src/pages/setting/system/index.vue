@@ -19,6 +19,7 @@ import * as StateHelper from '../../../sub/helper/StateHelper'
 import _ from 'lodash'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as ConfigHelper from '../../../sub/helper/ConfigHelper'
+import * as AuthHelper from '../../../sub/helper/AuthHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import pagetitle from '../../../components/layout/pagetitle.vue'
 import editList from '../../../components/page/editlist.vue'
@@ -129,6 +130,11 @@ export default {
       if(!isShow){
         this.newForm = {}
       }
+    },
+    async afterCrud() {
+      const login = JSON.parse(window.localStorage.getItem('login'))
+      const userInfo = await AuthHelper.getUserInfo(login.tenantAdmin)
+      AuthHelper.resetConfig(login.tenantAdmin, userInfo.setting)
     },
     async save() {
       const entity = []

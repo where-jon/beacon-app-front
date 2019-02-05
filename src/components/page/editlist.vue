@@ -127,6 +127,9 @@ export default {
     async execDelete(entity) {
       entity.value = null
       await this.$parent.$options.methods.deleteEntity.call(this.$parent, entity)
+      if(this.$parent.$options.methods.afterCrud){
+        await this.$parent.$options.methods.afterCrud.apply(this.$parent)
+      }
       await this.$parent.$options.methods.fetchData.call(this.$parent, true)
     },
     async showForm(isShow){
@@ -144,8 +147,13 @@ export default {
       this.multiList[''].push(entity)
       this.onSubmit(evt)
     },
+    async afterCrud() {
+      if(this.$parent.$options.methods.afterCrud){
+        await this.$parent.$options.methods.afterCrud.apply(this.$parent)
+      }
+    },
     async save() {
-      return this.$parent.$options.methods.save.apply(this.$parent)
+      return await this.$parent.$options.methods.save.apply(this.$parent)
     },
   }
 }
