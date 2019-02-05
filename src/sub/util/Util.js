@@ -4,6 +4,7 @@ import Encoding from 'encoding-japanese'
 import Papa from 'papaparse'
 import moment from 'moment'
 import { DEV, APP } from '../constant/config'
+import { FONT } from '../constant/constants'
 
 // sleep (for test)
 export const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))
@@ -375,4 +376,9 @@ export const getSubDatetime = (datetimeFrom, datetimeTo) => {
   subDatetime.hour = subDatetime.minute / 60
   subDatetime.date = subDatetime.hour / 24
   return subDatetime
+}
+
+export const getAdjustFontSize = (getFontSize, isBold = false) => {
+  const size = Math.round(getFontSize())
+  return `${isBold? 'bold ': ''}${(size < FONT.SIZE.MIN? FONT.SIZE.MIN: size)}${FONT.TYPE}`
 }

@@ -108,7 +108,7 @@ export default {
           display = styleSrc && styleSrc.display
         }
         display = display || this.defaultDisplay
-        display = this.getStyleDisplay1(display)        
+        display = this.getStyleDisplay1(display, {fixSize: false})        
         if (pos.transparent) {
           display.opacity = 0.6
         }
