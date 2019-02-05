@@ -19,7 +19,7 @@ import * as StateHelper from '../../sub/helper/StateHelper'
 import * as PositionHelper from '../../sub/helper/PositionHelper'
 import { addLabelByKey } from '../../sub/helper/ViewHelper'
 import { APP, DISP, DEV } from '../../sub/constant/config'
-import { SHAPE, EXTRA_NAV } from '../../sub/constant/Constants'
+import { SHAPE, EXTRA_NAV, TX } from '../../sub/constant/Constants'
 import * as Util from '../../sub/util/Util'
 
 export default {
@@ -91,7 +91,7 @@ export default {
     getShowTxPositions(positions){
       const now = !DEV.USE_MOCK_EXC ? new Date().getTime(): mock.positions_conf.start + this.count++ * mock.positions_conf.interval
       const correctPositions = APP.USE_POSITION_HISTORY? this.positionHistores: PositionHelper.correctPosId(this.orgPositions, now)
-      return _(positions).filter((pos) => pos.tx && pos.tx.disp > 0).map((pos) => {
+      return _(positions).filter((pos) => pos.tx && Util.bitON(pos.tx.disp, TX.DISP.POS)).map((pos) => {
         let cPos = _.find(correctPositions, (cPos) => pos.btx_id == cPos.btx_id)
         if (cPos) {
           return {...pos, transparent: cPos.transparent}

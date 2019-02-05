@@ -17,7 +17,7 @@ import * as PositionHelper from '../../sub/helper/PositionHelper'
 import { addLabelByKey } from '../../sub/helper/ViewHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
-import { /*BATTERY_STATE, BATTERY_BOUNDARY,*/ EXTRA_NAV } from '../../sub/constant/Constants'
+import { TX, EXTRA_NAV } from '../../sub/constant/Constants'
 import * as Util from '../../sub/util/Util'
 import { APP } from '../../sub/constant/config.js'
 
@@ -114,7 +114,7 @@ export default {
             categoryId: Util.getValue(pos, 'tx.category.categoryId').val,
             areaId: Util.getValue(pos, 'exb.location.areaId').val,
           }
-        }).filter((pos) => !pos.tx || pos.tx.disp > 0)
+        }).filter((pos) => !pos.tx || Util.bitON(pos.tx.disp, TX.DISP.POS))
         Util.debug(positions)
         this.replaceAS({positionList: positions})
         if (payload && payload.done) {
