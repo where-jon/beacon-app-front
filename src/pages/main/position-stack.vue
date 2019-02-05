@@ -9,17 +9,14 @@
 
 <script>
 import { mapState, mapActions } from 'vuex'
-import * as mock from '../../assets/mock/mock'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import mList from '../../components/page/list.vue'
 import commonmixinVue from '../../components/mixin/commonmixin.vue'
 import listmixinVue from '../../components/mixin/listmixin.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import * as StateHelper from '../../sub/helper/StateHelper'
-import * as PositionHelper from '../../sub/helper/PositionHelper'
 import { addLabelByKey } from '../../sub/helper/ViewHelper'
-import { APP, DISP, DEV } from '../../sub/constant/config'
-import { SHAPE, EXTRA_NAV, TX } from '../../sub/constant/Constants'
+import { EXTRA_NAV } from '../../sub/constant/Constants'
 import * as Util from '../../sub/util/Util'
 
 export default {
@@ -48,11 +45,6 @@ export default {
       },
       reload: true,
       styles: [],
-      defaultDisplay: {
-        color: DISP.TX_COLOR,
-        bgColor: DISP.TX_BGCOLOR,
-        shape: SHAPE.CIRCLE,
-      },
       items: [
         {
           text: this.$i18n.t('label.main'),
@@ -88,36 +80,6 @@ export default {
     ...mapActions('main', [
       'pushOrgPositions',
     ]),
-    getShowTxPositions(positions){
-      const now = !DEV.USE_MOCK_EXC ? new Date().getTime(): mock.positions_conf.start + this.count++ * mock.positions_conf.interval
-      const correctPositions = APP.USE_POSITION_HISTORY? this.positionHistores: PositionHelper.correctPosId(this.orgPositions, now)
-      return _(positions).filter((pos) => pos.tx && Util.bitON(pos.tx.disp, TX.DISP.POS)).map((pos) => {
-        let cPos = _.find(correctPositions, (cPos) => pos.btx_id == cPos.btx_id)
-        if (cPos) {
-          return {...pos, transparent: cPos.transparent}
-        }
-        return null
-      }).compact().value()
-    },
-    setPositionStyle(positions){
-      return _.map(positions, pos => {
-        // 設定により、カテゴリとグループのどちらの設定で表示するかが変わる。
-        let display
-        if (pos.tx) {
-          const styleSrc = pos.tx[DISP.DISPLAY_PRIORITY[0]] || pos.tx[DISP.DISPLAY_PRIORITY[1]]
-          display = styleSrc && styleSrc.display
-        }
-        display = display || this.defaultDisplay
-        display = this.getStyleDisplay1(display, {fixSize: false})        
-        if (pos.transparent) {
-          display.opacity = 0.6
-        }
-        return {
-          ...pos,
-          display,
-        }
-      })
-    },
     splitArea(positions){
       const tempArea = _.map(this.areas, (area) => ({areaId: area.areaId, label: area.areaName, positions: []}))
 
@@ -140,16 +102,11 @@ export default {
         await StateHelper.load('exb')
 
         // positionデータ取得
-        let positions = await this.storePositionHistory()
-        // 在席表示と同じ、表示txを取得する。
-        positions = this.getShowTxPositions(positions)
-        this.replaceAS({positions})
-
-        // スタイルをセット
-        positions = this.setPositionStyle(positions)
+        await this.storePositionHistory()
+        this.replaceAS({positions: this.getPositions()})
 
         // エリアごとに分類
-        const tempArea = this.splitArea(positions)
+        const tempArea = this.splitArea(this.positions)
         this.replaceMain({eachAreas: tempArea})
         if (payload && payload.done) {
           payload.done()
