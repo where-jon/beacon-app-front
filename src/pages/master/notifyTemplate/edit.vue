@@ -29,7 +29,7 @@
         </b-form-group>
 
         <!--通知先-->
-        <b-form-group v-if="bNotifyTo">
+        <b-form-group v-if="bNotifyTo && form.notifyTemplateKey!='TX_DELIVERY_NOTIFY'">
           <label v-t="'label.notifyTo'" />
           <b-form-textarea v-model="form.notifyTo" :rows="3" :max-rows="6" maxlength="2000" :state="errorMessages.email.length > 0 ? false : null" />
           <p v-for="(val, key) in errorMessages.email" :key="key" v-t="val" class="error" />
