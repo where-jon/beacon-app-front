@@ -82,3 +82,15 @@ export const updateConfig = (updateData, defaultConfig = null) => {
   })
   console.debug({config})
 }
+
+export const initConfig = () => {
+  const defaultConfig = JSON.parse(window.localStorage.getItem('defaultConfig'))
+  const toString = Object.prototype.toString
+  _(defaultConfig).forEach((defaultConfigVal, propKey) => {
+    if(toString.call(defaultConfigVal) == '[object Object]'){
+      _(defaultConfigVal).forEach((paramVal, paramKey) => {
+        config[propKey][paramKey] = paramVal
+      })
+    }
+  })
+}

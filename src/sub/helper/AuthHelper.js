@@ -79,6 +79,14 @@ export const getUserInfo = async (tenantAdmin) => {
   return {tenant, tenantFeatureList, user, featureList, menu, currentRegion, setting}
 }
 
+export const resetConfig = async (isTenantAdmin, setting) => {
+  ConfigHelper.initConfig()
+  ConfigHelper.applyAppServiceSetting(setting)  
+  if (isTenantAdmin) {
+    APP.TOP_PAGE = '/provider/tenant'
+  }
+}
+
 export const authByAppService = async (loginId, password, success, err) => {
   try {
     const revInfo = await getRevInfo()
@@ -88,13 +96,10 @@ export const authByAppService = async (loginId, password, success, err) => {
     params.append('username', (tenantCd? tenantCd+':':'') + loginId) // username: Spring Boot Security reserved name
     params.append('password', password)
     let data = await HttpHelper.postAppService('/login', params, false)
-    if (data.tenantAdmin) {
-      APP.TOP_PAGE = '/provider/tenant'
-    }
     HttpHelper.setApiKey(data.apiKey)
 
     const userInfo = await getUserInfo(data.tenantAdmin)
-    ConfigHelper.applyAppServiceSetting(userInfo.setting)  
+    resetConfig(data.tenantAdmin, userInfo.setting)
 
     const userRegionIdList = userInfo.user.userRegionList? userInfo.user.userRegionList.map((val) => val.userRegionPK.regionId): []
     const allRegionMove = userInfo.user.role && userInfo.user.role.roleFeatureList? userInfo.user.role.roleFeatureList.find((val) => val.feature.featureName == FEATURE.NAME.ALL_REGION)? true: false: false
@@ -129,7 +134,7 @@ export const switchAppService = async () => {
 
     const revInfo = await getRevInfo()
     const userInfo = await getUserInfo(loginInfo.tenantAdmin)
-    ConfigHelper.applyAppServiceSetting(userInfo.setting)  
+    resetConfig(loginInfo.tenantAdmin, userInfo.setting)
 
     loginInfo.featureList = userInfo.featureList
     loginInfo.tenantFeatureList = userInfo.tenantFeatureList
