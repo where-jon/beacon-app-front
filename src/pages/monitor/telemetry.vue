@@ -131,7 +131,7 @@ export default {
           deviceNum: APP.EXB_WITH_DEVICE_NUM ? 'deviceNum' : null,
           deviceId: APP.EXB_WITH_DEVICE_ID ? 'deviceId' : null,
           deviceIdX: APP.EXB_WITH_DEVICE_IDX ? 'deviceId(HEX)' : null,
-          name: 'finalReceivePlace',
+          name: 'name',
           powerLevel: 'powerLevel',
           timestamp: 'timestamp',
           state: 'state'
@@ -195,14 +195,15 @@ export default {
 
         const offset = this.$store.state.currentRegion.deviceOffset
         const deviceId = parseInt(e.deviceid, 16)
+
         if(APP.EXB_WITH_DEVICE_NUM){
           ret.deviceNum = deviceId - offset
         }
         if(APP.EXB_WITH_DEVICE_ID){
-          ret.deviceNum = deviceId
+          ret.deviceId = deviceId
         }
         if(APP.EXB_WITH_DEVICE_IDX){
-          ret.deviceNum = e.deviceid.toUpperCase()
+          ret.deviceIdX= e.deviceid.toUpperCase()
         }
         return ret
       })
