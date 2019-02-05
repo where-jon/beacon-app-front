@@ -3,7 +3,7 @@
 import { mapState, mapMutations, mapActions } from 'vuex'
 import { Shape, Container, Stage, Bitmap, Text, Touch } from '@createjs/easeljs/dist/easeljs.module'
 import { APP, DISP, DEV } from '../../sub/constant/config.js'
-import { SHAPE, SENSOR, POSITION } from '../../sub/constant/Constants'
+import { SHAPE, SENSOR, POSITION, FONT } from '../../sub/constant/Constants'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as PositionHelper from '../../sub/helper/PositionHelper'
 import * as SensorHelper from '../../sub/helper/SensorHelper'
@@ -370,6 +370,10 @@ export default {
       }
       return null
     },
+    getAdjustFontSize(getFontSize, isBold = false){
+      const size = Math.round(getFontSize())
+      return `${isBold? 'bold ': ''}${(size < FONT.SIZE.MIN? FONT.SIZE.MIN: size)}${FONT.TYPE}`
+    },
     positions() {
       let positions = []
       if (APP.USE_POSITION_HISTORY) {
@@ -413,7 +417,7 @@ export default {
         containerWidth: containerParent.width,
         containerHeight: containerParent.height,
         class: balloonClass,
-        name: tx.txName? tx.txName: p.potName ? p.potName : '',
+        name: p.potName ? p.potName : tx.txName? tx.txName: '',
         timestamp: position ? this.getFinalReceiveTime(position.timestamp) : '',
         thumbnail: p.thumbnail ? p.thumbnail : '',
         category: p.potCategoryList && p.potCategoryList.length > 0 ? p.potCategoryList[0].category.categoryName : '',

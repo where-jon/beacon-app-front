@@ -154,7 +154,7 @@ export default {
       'showAlert',
     ]),
     sensorOptions() {
-      return this.sensors.filter((sensor) => sensor.sensorId != SENSOR.LED).map((sensor) => {
+      return this.sensors.filter((sensor) => sensor.sensorId != SENSOR.LED && sensor.sensorId != SENSOR.BUTTON).map((sensor) => {
         return {
           value: sensor.sensorId,
           text: this.$i18n.tnl('label.' + sensor.sensorName)

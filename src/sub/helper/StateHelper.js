@@ -280,6 +280,10 @@ export const load = async (target, force) => {
 }
 
 export const loadAreaImage = async (areaId, force) => {
+  if (areaId == null) {
+    console.log('empty areas', areaId)
+    return
+  }
   if (store.state.app_service.areaImages.find((areaImage) => areaImage.areaId == areaId) && !force) {
     console.log('FOUND ares', areaId)
     return

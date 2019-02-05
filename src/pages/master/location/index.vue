@@ -208,7 +208,7 @@ export default {
         return exb.location.areaId == this.selectedArea && exb.location.x && exb.location.y > 0
       })
       this.exbOptions = _(this.workExbs).filter((val) => {
-        return val.enabled && (!val.location.x || !val.location.y || (val.location.x && val.location.y <= 0))
+        return val.enabled && (val.location.areaId == null || !val.location.x || !val.location.y || (val.location.x && val.location.y <= 0))
       })
         .map((val) => {
           return {

@@ -122,8 +122,8 @@ export const APP = { // 機能面に関する設定
   MAX_IMAGE_SIZE: 20 * 1024 * 1024, // アップロード可能な最大イメージサイズ(Byte)
   AREA_THUMBNAIL_MAX: 200, // サムネイルリサイズ時の最大幅・高さ(エリア)
   POT_THUMBNAIL_MAX: 200, // サムネイルリサイズ時の最大幅・高さ(pot)
-  POWER_LEVEL_GOOD: 69,  // 電池レベルで良好とみなす下限値
-  POWER_LEVEL_WARN: 39,  // 電池レベルで減少とみなす下限値
+  POWER_LEVEL_GOOD: 50,  // 電池レベルで良好とみなす下限値
+  POWER_LEVEL_WARN: 30,  // 電池レベルで減少とみなす下限値
 
 }
 
@@ -206,13 +206,9 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   PIR_BGCOLOR: '#FC7E82', // "#E2A6A5" // PIR表示の円の背景色
   PIR_FGCOLOR: '#FFFFFF', // PIR表示時の文字色
   PIR_INUSE_LABEL: 'InUse', // PIRで存在時のラベルキー
-  PIR_INUSE_FONT: 'bold 24px Arial', // PIRで存在時のフォント
-  PIR_INUSE_FONT_EN: 'bold 14px Arial', // PIRで存在時のフォント
   PIR_EMPTY_SHOW: true, // PIRで不在時に表示するか否か
   PIR_EMPTY_BGCOLOR: '#595959', // PIRで不存時の背景色
   PIR_EMPTY_LABEL: 'Empty', // PIRで不在時のラベルキー
-  PIR_EMPTY_FONT: 'bold 32px Arial', // PIRで不在時のフォント
-  PIR_EMPTY_FONT_EN: 'bold 14px Arial', // PIRで不在時のフォント
 
   THERMOPILE_S_SIZE: 20, // サーモパイル円Sサイズ
   THERMOPILE_M_SIZE: 40, // サーモパイル円Mサイズ

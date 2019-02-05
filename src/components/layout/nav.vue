@@ -1,19 +1,19 @@
 <template>
   <b-navbar :class="topNavBarClasses" toggleable="md" type="dark">
     <!-- Responsive menu -->
-    <b-navbar-toggle v-show="!isLoginPage && showNav" target="nav_collapse" />  
+    <b-navbar-toggle v-show="!isLoginPage && getShowNav()" target="nav_collapse" />  
 
     <!-- Title -->
     <b-navbar-brand>
       <div id="appTitle" class="appTitle">
-        <img v-if="showLogo" id="topLogo" src="/toplogo.png" width="0" height="0" :style="{position: 'relative'}" @load="setLogo">
-        <span v-if="!showLogo" v-t="'label.title'" />
+        <img v-if="getShowLogo()" id="topLogo" src="/toplogo.png" width="0" height="0" :style="{position: 'relative'}" @load="setLogo">
+        <span v-else v-t="'label.title'" />
       </div>
     </b-navbar-brand>
 
-    <b-collapse v-show="!isLoginPage && showNav" id="nav_collapse" ref="collapse" is-nav>
+    <b-collapse v-show="!isLoginPage && getShowNav()" id="nav_collapse" ref="collapse" is-nav>
       <!-- left (navi dropdown menu) -->
-      <b-navbar-nav v-show="!isLoginPage && showNav">
+      <b-navbar-nav v-show="!isLoginPage && getShowNav()">
         <b-nav-item-dropdown v-for="group in this.$store.state.menu" :key="group.path">
           <template slot="button-content">
             <em class="word-break">
@@ -65,7 +65,7 @@
           </b-dropdown-item>
           <b-dropdown-divider />
           <b-dropdown-item @click="versionClick">
-            {{ version }}
+            {{ getVersion() }}
           </b-dropdown-item>
         </b-nav-item-dropdown>
       </b-navbar-nav>
@@ -88,10 +88,7 @@ export default {
   mixins: [commonmixinVue],
   data() {
     return {
-      version: APP.VERSION,
       nav : this.$store.state.menu,
-      showLogo: DISP.SHOW_LOGO,
-      showNav: HtmlUtil.isMobile() || DISP.SHOW_NAV,
     }
   },
   computed: {
@@ -115,7 +112,7 @@ export default {
     topNavBarClasses() {
       let classes = {}
       Object.assign(classes , this.navbarClasses)
-      if(this.showNav && HtmlUtil.getLangShort() != 'ja'){
+      if(this.getShowNav() && HtmlUtil.getLangShort() != 'ja'){
         classes['topMenuNavbar'] = true
       }
       return classes
@@ -130,7 +127,6 @@ export default {
   },
   async mounted() {
     window.addEventListener('resize', () => {
-      this.showNav = HtmlUtil.isMobile() || DISP.SHOW_NAV
       this.adjustLogoOffsetX()
     })
     if(window.localStorage.getItem('login') != null){
@@ -139,6 +135,15 @@ export default {
     }
   },
   methods: {
+    getVersion(){
+      return APP.VERSION
+    },
+    getShowLogo(){
+      return DISP.SHOW_LOGO
+    },
+    getShowNav(){
+      return HtmlUtil.isMobile() || DISP.SHOW_NAV
+    },
     logout() {
       this.$refs.collapse.show = false
       AuthHelper.logout()

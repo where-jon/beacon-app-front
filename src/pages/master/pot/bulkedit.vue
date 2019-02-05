@@ -78,7 +78,7 @@ export default {
       if(!Util.hasValue(val)){
         return dummyKey
       }
-      const valList = val.split(',').map((val) => val.trim())
+      const valList = val.split(';').map((val) => val.trim())
       if(!entity.potTxList){
         entity.potTxList = []
         valList.forEach((v, idx) => {
