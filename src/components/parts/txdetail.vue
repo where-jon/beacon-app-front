@@ -9,6 +9,7 @@
         top: getTop(),
         backgroundColor: selectedSensor.length == 0 ? selectedTx.bgColor : selectedSensor[0].bg,
         color: selectedTx.color,
+       'text-shadow': drawShadow(selectedTx.color)? '1px 1px 1px #000000': 'none',
       }"
     >
       <div v-if="selectedSensor.length == 0" class="potBox" @click="$emit('resetDetail')">
@@ -51,6 +52,7 @@
 import { DISP } from '../../sub/constant/config'
 import sensor from './sensor.vue'
 import txdetailmodal from './txdetailmodal.vue'
+import * as Util from '../../sub/util/Util'
 
 const loadImage = (src, fixHeight) => {
   return new Promise((resolve, reject) => {
@@ -132,6 +134,9 @@ export default {
     },
     getPopupHeight() {
       return this.selectedSensor.length == 0 ? 135 : 211
+    },
+    drawShadow(color){
+      return Util.luminance(Util.colorCd4db(color)) > 240
     },
   },
 }
