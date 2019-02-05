@@ -243,7 +243,7 @@ export default {
       // for debug
       this.disableExbsCheck()
       this.detectedCount = 0 // 検知カウントリセット
-      let position = PositionHelper.adjustPosition(this.positions(), this.mapImageScale, this.positionedExb)
+      let position = PositionHelper.adjustPosition(this.getPositions(), this.mapImageScale, this.positionedExb)
       position.forEach((pos) => {
         this.showTx(pos)
       })
@@ -257,6 +257,10 @@ export default {
         return
       }
       if (!Util.bitON(tx.disp, TX.DISP.POS)) {
+        Util.debug('tx is not allowed to show', tx)
+        return
+      }
+      if (pos.noSelectedTx) {
         Util.debug('tx is not allowed to show', tx)
         return
       }

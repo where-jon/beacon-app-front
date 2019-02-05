@@ -210,7 +210,7 @@ export const correctPosId = (orgPositions, now) => {
   Util.table('btxId&posIdグルーピング後', positions)
 
   // 上記の順番で取り出す
-  positions = correctPair(positions)
+  positions = correctPair(positions, now)
 
   if (DEV.DEBUG > 1 && mock.insertPosition) {
     console.warn('insert mock position')
@@ -225,6 +225,17 @@ export const correctPosId = (orgPositions, now) => {
 
   Util.table('各TX単位(最終)', positions)
 
+  orgPositions.forEach((orgPositionList) => {
+    orgPositionList.forEach((orgPosition) => {
+      _.forEach(orgPosition, (orgValue, orgKey) => {
+        positions.forEach((position) => {
+          if(orgPosition.btx_id == position.btx_id && position[orgKey] == null){
+            position[orgKey] = orgValue
+          }
+        })
+      })
+    })
+  })
   return positions
 }
 
@@ -278,7 +289,7 @@ export const correctPair = (orgPositions, now) => {
       if (APP.TX_POS_ONE_TO_ONE) {
         usedPos.push(val.pos_id)
       }
-      result.push({...val, rssi:val.rssiAvg, transparent: val.timestamp < now - APP.TRANSPARENT_TIME})
+      result.push({...val, rssi:val.rssiAvg, transparent: isTransparent(val.timestamp, now)})
     }
     return result
   }, [])
@@ -310,3 +321,7 @@ export const setDetectState = (positions, usePositionHistory = false) => {
 
 }
 
+export const isTransparent = (timestamp, now) => {
+  const date = new Date(timestamp)
+  return date.getTime() < now - APP.TRANSPARENT_TIME
+}

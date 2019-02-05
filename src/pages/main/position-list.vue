@@ -13,7 +13,6 @@ import breadcrumb from '../../components/layout/breadcrumb.vue'
 import mList from '../../components/page/list.vue'
 import listmixinVue from '../../components/mixin/listmixin.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
-import * as PositionHelper from '../../sub/helper/PositionHelper'
 import { addLabelByKey } from '../../sub/helper/ViewHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
@@ -93,10 +92,8 @@ export default {
         await StateHelper.load('area')
         await StateHelper.load('tx')
         await StateHelper.load('exb')
-        let positions = await this.storePositionHistory()
-
-        // 検知状態の取得
-        PositionHelper.setDetectState(positions, APP.USE_POSITION_HISTORY)
+        await this.storePositionHistory()
+        let positions = this.getPositions()
 
         Util.debug(positions)
         positions = positions.map((pos) => {

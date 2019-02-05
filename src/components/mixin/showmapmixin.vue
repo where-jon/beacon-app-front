@@ -3,7 +3,7 @@
 import { mapState, mapMutations, mapActions } from 'vuex'
 import { Shape, Container, Stage, Bitmap, Text, Touch } from '@createjs/easeljs/dist/easeljs.module'
 import { APP, DISP, DEV } from '../../sub/constant/config.js'
-import { SHAPE, SENSOR, POSITION } from '../../sub/constant/Constants'
+import { SHAPE, SENSOR, POSITION, TX } from '../../sub/constant/Constants'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as PositionHelper from '../../sub/helper/PositionHelper'
 import * as SensorHelper from '../../sub/helper/SensorHelper'
@@ -11,11 +11,12 @@ import * as StateHelper from '../../sub/helper/StateHelper'
 import * as Util from '../../sub/util/Util'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import reloadmixinVue from './reloadmixin.vue'
+import listmixinVue from './listmixin.vue'
 import moment from 'moment'
 import * as mock from '../../assets/mock/mock'
 
 export default {
-  mixins: [reloadmixinVue],
+  mixins: [reloadmixinVue, listmixinVue],
   data() {
     return {
       isShownMapImage: false,
@@ -34,6 +35,11 @@ export default {
       selectedGroup: null,
       selectedCategory: null,
       showingDetailTime: null,
+      defaultDisplay: {
+        color: DISP.TX_COLOR,
+        bgColor: DISP.TX_BGCOLOR,
+        shape: SHAPE.CIRCLE,
+      },
     }
   },
   computed: {
@@ -327,17 +333,59 @@ export default {
     },
     async storePositionHistory(count){
       const pMock = DEV.USE_MOCK_EXC? mock.positions[count]: null
+      let positions = []
       if (APP.USE_POSITION_HISTORY) {
         // Serverで計算された位置情報を得る
-        const positionHistores = await EXCloudHelper.fetchPositionHistory(this.exbs, this.txs, pMock)
-        this.replaceMain({positionHistores})
-        return positionHistores
+        positions = await EXCloudHelper.fetchPositionHistory(this.exbs, this.txs, pMock)
+        this.replaceMain({positionHistores: positions})
       } else {
         // 移動平均数分のポジションデータを保持する
-        const positions = await EXCloudHelper.fetchPosition(this.exbs, this.txs, pMock)
+        positions = await EXCloudHelper.fetchPosition(this.exbs, this.txs, pMock)
         this.pushOrgPositions(positions)
-        return positions
       }
+      // 検知状態の取得
+      PositionHelper.setDetectState(positions, APP.USE_POSITION_HISTORY)
+      // 在席表示と同じ、表示txを取得する。
+      positions = this.getShowTxPositions(positions)
+      // スタイルをセット
+      positions = this.setPositionStyle(positions)
+      if (APP.USE_POSITION_HISTORY) {
+        this.replaceMain({positionHistores: positions})
+      } else {
+        this.replaceMain({orgPositions: []})
+        this.pushOrgPositions(positions)
+      }
+      return positions
+    },
+    getShowTxPositions(positions){
+      const now = !DEV.USE_MOCK_EXC ? new Date().getTime(): mock.positions_conf.start + this.count++ * mock.positions_conf.interval
+      const correctPositions = APP.USE_POSITION_HISTORY? this.positionHistores: PositionHelper.correctPosId(this.orgPositions, now)
+      return _(positions).filter((pos) => pos.tx && Util.bitON(pos.tx.disp, TX.DISP.POS)).map((pos) => {
+        let cPos = _.find(correctPositions, (cPos) => pos.btx_id == cPos.btx_id)
+        if (cPos) {
+          return {...pos, transparent: cPos.transparent? cPos.transparent: PositionHelper.isTransparent(cPos.timestamp, now)}
+        }
+        return null
+      }).compact().value()
+    },
+    setPositionStyle(positions){
+      return _.map(positions, pos => {
+        // 設定により、カテゴリとグループのどちらの設定で表示するかが変わる。
+        let display
+        if (pos.tx) {
+          const styleSrc = pos.tx[DISP.DISPLAY_PRIORITY[0]] || pos.tx[DISP.DISPLAY_PRIORITY[1]]
+          display = styleSrc && styleSrc.display
+        }
+        display = display || this.defaultDisplay
+        display = this.getStyleDisplay1(display, {fixSize: false})        
+        if (pos.transparent) {
+          display.opacity = 0.6
+        }
+        return {
+          ...pos,
+          display,
+        }
+      })
     },
     setPositionedExb(){
       Util.debug('Raw exb', this.exbs, this.selectedArea)
@@ -370,7 +418,7 @@ export default {
       }
       return null
     },
-    positions() {
+    getPositions() {
       let positions = []
       if (APP.USE_POSITION_HISTORY) {
         positions = this.positionHistores
@@ -398,7 +446,7 @@ export default {
       const rev = y + map.top + DISP.TX_R + tipOffsetY + popupHeight > window.innerHeight
       const p = Util.getValue(tx, 'potTxList.0.pot', {})
 
-      const position = this.positions().find((e) => {
+      const position = this.getPositions().find((e) => {
         return e.btx_id === btxId
       })
       const balloonClass = !btxId ? '': 'balloon' + (rev ? '-u': '-b')
@@ -474,7 +522,7 @@ export default {
     disableExbsCheck(){
       // for debug
       const disabledExbs = _.filter(this.exbs, (exb) => !exb.enabled || !exb.location.x || exb.location.y <= 0)
-      this.positions().forEach((pos) => {
+      this.getPositions().forEach((pos) => {
         const exb = disabledExbs.find((exb) => exb.posId == pos.pos_id)
         if (exb) {
           console.error('Found at disabled exb', pos, exb)
