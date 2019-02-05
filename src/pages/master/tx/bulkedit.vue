@@ -12,7 +12,7 @@ import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import { APP } from '../../../sub/constant/config.js'
-import { IGNORE } from '../../../sub/constant/constants'
+import { IGNORE } from '../../../sub/constant/Constants'
 
 export default {
   components: {
