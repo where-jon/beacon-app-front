@@ -51,6 +51,13 @@ export default {
   created(){
     this.changeColor(this.$parent.form[this.name])
   },
+  beforeDestroy(){
+    document.removeEventListener('mousedown', this.touchStart)
+    document.removeEventListener('mouseup', this.touchEnd)
+    document.removeEventListener('touchstart', this.touchStart)
+    document.removeEventListener('touchmove', this.touchMove)
+    document.removeEventListener('touchend', this.touchEnd)
+  },
   methods: {
     detailButtonStyle(colorArea = false){
       const style = {
