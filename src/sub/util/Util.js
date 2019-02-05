@@ -4,7 +4,7 @@ import Encoding from 'encoding-japanese'
 import Papa from 'papaparse'
 import moment from 'moment'
 import { DEV, APP } from '../constant/config'
-import { FONT } from '../constant/constants'
+import { FONT } from '../constant/Constants'
 
 // sleep (for test)
 export const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))
