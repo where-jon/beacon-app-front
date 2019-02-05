@@ -12,6 +12,7 @@ import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import { APP } from '../../../sub/constant/config.js'
+import { IGNORE } from '../../../sub/constant/constants'
 
 export default {
   components: {
@@ -126,9 +127,15 @@ export default {
       entity.txId = targetEntity? targetEntity.txId: dummyKey--
       if(APP.TX_BTX_MINOR == 'minor'){
         entity.btxId = entity.minor
+        if(Util.hasValue(entity.minorName) || 65535 < entity.minor){
+          entity.ignoreBtxId = IGNORE.ON
+        }
       }
       else if(APP.TX_BTX_MINOR == 'btxId'){
         entity.minor = entity.btxId
+        if(Util.hasValue(entity.btxIdName) || 65535 < entity.btxId){
+          entity.ignoreMinor = IGNORE.ON
+        }
       }
       if (entity.locationId == 0) {
         entity.locationId = null
@@ -156,7 +163,7 @@ export default {
       const POT_GROUP = ['groupId', 'groupName']
       const TX_SENSOR = ['sensorId', 'sensor']
 
-      const NUMBER_TYPE_LIST = ['deviceId', 'major', 'minor', 'exbId', 'areaId', 'locationId', 'posId', 'x', 'y', 'z', 'txViewType', 'zoneName']
+      const NUMBER_TYPE_LIST = ['deviceId', 'txId', 'btxId', 'major', 'minor', 'exbId', 'areaId', 'locationId', 'posId', 'x', 'y', 'z', 'txViewType', 'zoneName']
       const BOOL_TYPE_LIST = ['visible', 'enabled']
       await StateHelper.load('category')
       await StateHelper.load('group')
