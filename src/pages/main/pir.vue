@@ -151,10 +151,10 @@ export default {
     createLabel(count){
       const label = new Text(this.$i18n.tnl('label.' + (count > 0? DISP.PIR_INUSE_LABEL: DISP.PIR_EMPTY_LABEL)))
       if (this.$i18n.locale == 'ja') {
-        label.font = this.getAdjustFontSize(() => DISP.PIR_R_SIZE * (count > 0? this.INUSE_FONTSIZE_RATIO: this.EMPTY_FONTSIZE_RATIO), true)
+        label.font = Util.getAdjustFontSize(() => DISP.PIR_R_SIZE * (count > 0? this.INUSE_FONTSIZE_RATIO: this.EMPTY_FONTSIZE_RATIO), true)
       }
       else {
-        label.font = this.getAdjustFontSize(() => DISP.PIR_R_SIZE * this.PIR_FONTSIZE_RATIO_EN, true)
+        label.font = Util.getAdjustFontSize(() => DISP.PIR_R_SIZE * this.PIR_FONTSIZE_RATIO_EN, true)
       }
       label.color = DISP.PIR_FGCOLOR
       label.textAlign = 'center'

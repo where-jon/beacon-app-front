@@ -150,7 +150,7 @@ export default {
         items: magnetCategoryTypes.includes(legendElement.id)? [
           { id: 1, text: 'A', style: this.getStyleDisplay1(legendElement) },
           { id: 2, text: `${legendElement.name} : ${this.$i18n.tnl('label.using')}`, style: null },
-          { id: 3, text: 'A', style: this.getStyleDisplay1(legendElement, true) },
+          { id: 3, text: 'A', style: this.getStyleDisplay1(legendElement, {reverceColor: true, fixSize: true}) },
           { id: 4, text: `${this.$i18n.tnl('label.notUse')}`, style: {} },
         ]: [
           { id: 1, text: 'A', style: this.getStyleDisplay1(legendElement) },
