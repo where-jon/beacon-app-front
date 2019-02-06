@@ -87,7 +87,7 @@ export const initConfig = () => {
   const defaultConfig = JSON.parse(window.localStorage.getItem('defaultConfig'))
   const toString = Object.prototype.toString
   _(defaultConfig).forEach((defaultConfigVal, propKey) => {
-    if(toString.call(defaultConfigVal) == '[object Object]'){
+    if(['DEV', 'APP', 'DISP'].includes(propKey) && toString.call(defaultConfigVal) == '[object Object]'){
       _(defaultConfigVal).forEach((paramVal, paramKey) => {
         config[propKey][paramKey] = paramVal
       })
