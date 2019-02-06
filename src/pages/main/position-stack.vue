@@ -86,7 +86,7 @@ export default {
       _.forEach(positions, (pos) => {
         const posAreaId = Util.getValue(pos, 'exb.location.areaId', null)
         _.forEach(tempArea, (area) => {
-          if (posAreaId == area.areaId) {
+          if (posAreaId == area.areaId && !pos.noSelectedTx) {
             area.positions.push(pos)
           }
         })
