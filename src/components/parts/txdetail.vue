@@ -9,7 +9,7 @@
         top: getTop(),
         backgroundColor: selectedSensor.length == 0 ? selectedTx.bgColor : selectedSensor[0].bg,
         color: selectedTx.color,
-       'text-shadow': drawShadow(selectedTx.color)? '1px 1px 1px #000000': 'none',
+        'text-shadow': drawShadow(selectedTx.color)? '1px 1px 1px #000000': 'none',
       }"
     >
       <div v-if="selectedSensor.length == 0" class="potBox" @click="$emit('resetDetail')">
