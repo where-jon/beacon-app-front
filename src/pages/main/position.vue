@@ -172,7 +172,7 @@ export default {
     getGroupLegendElements () {
       return this.groups.map((val) => ({id: val.groupId, name: val.groupName, ...val, }))
     },
-    async fetchData(payload) {
+    async fetchData(payload, disableErrorPopup) {
       try {
         this.reloadSelectedTx = this.reload? this.selectedTx: {}
         this.replace({reload: false})
@@ -203,7 +203,7 @@ export default {
           Util.debug(this.magnetSensors)
         }
 
-        this.showMapImage()
+        this.showMapImage(disableErrorPopup)
         if (payload && payload.done) {
           payload.done()
         }
@@ -217,7 +217,7 @@ export default {
       let tx = await AppServiceHelper.fetch('/core/tx', txId)
       return tx && tx.pot
     },
-    showMapImage() {
+    showMapImage(disableErrorPopup) {
       this.showMapImageDef(() => {
 
         this.stage.on('click', (evt) => {
@@ -232,7 +232,7 @@ export default {
         }
         this.setPositionedExb()
         this.showTxAll()
-      })
+      }, disableErrorPopup)
     },
     showTxAll() {
       if (!this.txCont) {

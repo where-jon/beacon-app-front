@@ -93,7 +93,7 @@ export default {
               this.resetDetail()
             }
             this.stage.update()
-            this.fetchData()
+            this.fetchData(null, true)
           }
         }, 200)
       }
@@ -149,7 +149,7 @@ export default {
         this.isFirstTime = false
       }
     },
-    showMapImageDef(callback) {
+    showMapImageDef(callback, disableErrorPopup) {
       this.showTryCount++
       console.log('showMapImageDef', this.selectedArea, this.isShownMapImage)
       if (this.isShownMapImage) {
@@ -162,12 +162,12 @@ export default {
         if (this.showTryCount < 10) {
           this.$nextTick(() => {
             console.warn('again because no image')
-            this.showMapImage()
+            this.showMapImage(disableErrorPopup)
           })
         }
         else {
           Util.debug('No mapImage in showMapImageDef.')
-          if (this.$route.path.startsWith('/main')) {      
+          if (this.$route.path.startsWith('/main') && !disableErrorPopup) {
             this.noImageErrorKey && this.loginId && this.showErrorModal({key: this.noImageErrorKey})
           }
         }
@@ -528,7 +528,7 @@ export default {
       this.getPositions().forEach((pos) => {
         const exb = disabledExbs.find((exb) => exb.posId == pos.pos_id)
         if (exb) {
-          console.error('Found at disabled exb', pos, exb)
+          console.debug('Found at disabled exb', pos, exb)
         }
       })
     },
