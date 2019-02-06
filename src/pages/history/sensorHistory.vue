@@ -270,8 +270,7 @@ export default {
         var count = 0
         for (var senHist of fetchList) {
           this.editSensorHistoryData(senHist)
-          count++
-          if (count < this.limitViewRows) {
+          if (++count <= this.limitViewRows) {
             this.viewList.push(senHist)
           }
         }
