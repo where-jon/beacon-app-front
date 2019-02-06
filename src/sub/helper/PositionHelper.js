@@ -29,6 +29,16 @@ const getRadiusSquare = (index, radius) => index % 2 === 0 ? radius : Math.sqrt(
 // ひし形配置時の、原点からの距離(半径)を取得する
 const getRadiusDiamond = (index, radius) => (index % 2 !== 0 && index % 6 !== 0) ? radius : radius * 1.5
 
+const hasTxLocation = (pos) => pos && pos.tx && pos.tx.location && pos.tx.location.x && pos.tx.location.y
+
+const getCoordinateFix = (ratio, fixPositions) => {
+  const ret = []
+  fixPositions.forEach((fixPosition) => {
+    ret.push(hasTxLocation(fixPosition)? {...fixPosition, x: fixPosition.tx.location.x * ratio, y: fixPosition.tx.location.y * ratio}: null)
+  })
+  return ret.filter((val) => val)
+}
+
 /**
  * デフォルトレイアウトのTXアイコン配置座標の配列を取得する
  * @param {*} exb EXBオブジェクト
@@ -297,8 +307,18 @@ export const correctPair = (orgPositions, now) => {
 
 export const adjustPosition = (positions, ratio, exbs = []) => {
   return exbs.map((exb) => {
-    const samePos = positions.filter((pos) => pos.pos_id == exb.location.posId)
-    return (!samePos || samePos.length == 0) ? null : getPositionsToOverlap(exb, ratio, samePos)
+    const samePos = positions.filter((pos) => {
+      const location = hasTxLocation(pos)? pos.tx.location: null
+      return pos.pos_id == exb.location.posId && !location
+    })
+    const same = (!samePos || samePos.length == 0) ? [] : getPositionsToOverlap(exb, ratio, samePos)
+
+    const fixPos = positions.filter((pos) => {
+      const location = hasTxLocation(pos)? pos.tx.location: null
+      return pos.pos_id == exb.location.posId && location
+    })
+    const fix = (!fixPos || fixPos.length == 0) ? [] : getCoordinateFix(ratio, fixPos)
+    return same.concat(fix)
   }).filter(e => e).flatMap(e => e)
 }
 
