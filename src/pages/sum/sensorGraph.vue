@@ -384,13 +384,16 @@ export default {
       }
       return ret
     },
-    async fetch(by){
+    unitFunc(dayFunc, hourFunc, minuteFunc){
       const sumUnitOption = SUM_UNIT.getOptions()
+      return this.form.sumUnit == sumUnitOption[0].value? minuteFunc(): this.form.sumUnit == sumUnitOption[1].value? hourFunc(): dayFunc()
+    },
+    async fetch(by){
       const id = `${this.showExb? `1/${this.form.exbId}`: `0/${this.form.txId}`}`
       const time = `${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}`
       let sensorData = await AppServiceHelper.fetchList(`/basic/sensorHistory/graph/${this.form.sensorId}/${id}/${time}/${by}`)
       if (DEV.USE_MOCK_EXC) {
-        let key = this.form.sumUnit == sumUnitOption[0].value? 'minute': this.form.sumUnit == sumUnitOption[1].value? 'hour': 'day'
+        let key = this.unitFunc(() => 'day', () => 'hour', () => 'minute')
         sensorData = {data: mock.sensorGraph()[key]}
       }
       if(!sensorData || !sensorData.data || sensorData.data.length == 0){
@@ -398,12 +401,14 @@ export default {
       }
       const sensorEditData = {}
       sensorData.data.forEach((val) => {
-        const key = Util.formatDate(val.sensorDt, 'YYYY/MM/DD HH:mm')
+        const key = Util.formatDate(val.sensorDt, this.unitFunc(() => 'YYYY/MM/DD [00]:[00]', () => 'YYYY/MM/DD HH:[00]', () => 'YYYY/MM/DD HH:mm'))
+        console.error(key)
         if(!sensorEditData[key]){
           sensorEditData[key] = []
         }
         sensorEditData[key].push(val)
       })
+      const sumUnitOption = SUM_UNIT.getOptions()
       return Object.keys(sensorEditData).map((keyVal) => {
         const key = keyVal
         const immediate = sensorEditData[key].reduce((a, b) => this.compare(a.sensorDt, b.sensorDt) > 0? a: b)
