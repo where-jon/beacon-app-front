@@ -278,6 +278,9 @@ export const TX_VIEW_TYPES = {
 }
 
 export const FONT = {
+  COLOR: {
+    BLACK: '#000000',
+  },
   SIZE: {
     MIN: 6,
   },
