@@ -121,11 +121,11 @@ export default {
         }
       ],
       headers: {
-        temperature: [ 'sensorKey', 'temperature(max)', 'temperature(avg)', 'temperature(min)', 'humidity(max)', 'humidity(avg)', 'humidity(min)' ],
-        pir: [ 'sensorKey', 'count(max)', 'count(avg)', 'count(min)' ],
-        thermopile: [ 'sensorKey', 'count(max)', 'count(avg)', 'count(min)' ],
-        meditag: [ 'sensorKey', 'high(max)', 'high(avg)', 'high(min)', 'low(max)', 'low(avg)', 'low(min)', 'beat(max)', 'beat(avg)', 'beat(min)', 'step(max)', 'step(avg)', 'step(min)', 'down(max)', 'down(avg)', 'down(min)' ],
-        magnet: [ 'sensorKey', 'magnet(max)', 'magnet(min)' ]
+        temperature: [ 'dt', 'humidity(max)', 'humidity(avg)', 'humidity(min)', 'temperature(max)', 'temperature(avg)', 'temperature(min)', ],
+        pir: [ 'dt', 'count(max)', 'count(avg)', 'count(min)' ],
+        thermopile: [ 'dt', 'count(max)', 'count(avg)', 'count(min)' ],
+        meditag: [ 'dt', 'high(max)', 'high(avg)', 'high(min)', 'low(max)', 'low(avg)', 'low(min)', 'beat(max)', 'beat(avg)', 'beat(min)', 'step(max)', 'step(avg)', 'step(min)', 'down(max)', 'down(avg)', 'down(min)' ],
+        magnet: [ 'dt', 'magnet(max)', 'magnet(min)' ]
       },
       sumUnitOptions: [],
       exbOptions: [],
@@ -345,7 +345,7 @@ export default {
     createCsvData(sensorKey, average, max, min){
       const ret = {}
       const sumUnit = SUM_UNIT.getOptions()
-      ret['sensorKey'] = this.form.sumUnit == sumUnit[0].value? `${sensorKey}:00`:
+      ret['dt'] = this.form.sumUnit == sumUnit[0].value? `${sensorKey}:00`:
         this.form.sumUnit == sumUnit[1].value? `${sensorKey}:00`:
           this.form.sumUnit == sumUnit[2].value? `${sensorKey.substring(0, sensorKey.length - 6)}`: sensorKey
       if(this.form.sensorId == SENSOR.TEMPERATURE){
@@ -398,7 +398,7 @@ export default {
       }
       const sensorEditData = {}
       sensorData.data.forEach((val) => {
-        const key = val.sensorKey
+        const key = Util.formatDate(val.sensorDt, 'YYYY/MM/DD HH:mm')
         if(!sensorEditData[key]){
           sensorEditData[key] = []
         }
