@@ -183,7 +183,9 @@ export default {
       bg.onload = (evt) => {
         this.drawMapImage(bg)
         if (callback) {
-          callback()
+          this.$nextTick(() => {
+            callback()
+          })
         }
       }
     },
