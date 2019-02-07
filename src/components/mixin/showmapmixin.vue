@@ -64,8 +64,9 @@ export default {
       set(val) { this.replaceMain({'selectedArea': val})},
     },
   },
-  created() {
+  async created() {
     if (this.$route.path.startsWith('/main')) {      
+      await StateHelper.loadAreaImages()
       let timer = 0
       const path = this.$route.path
       let currentWidth = window.innerWidth
@@ -123,7 +124,8 @@ export default {
       'replaceMain', 
     ]),
     getInitAreaOption(){
-      return this.selectedArea? this.selectedArea : Util.hasValue(this.areaOptions)? this.areaOptions[0].value: null
+      const areaOptions = this.areaOptions
+      return this.selectedArea? this.selectedArea : Util.hasValue(areaOptions)? areaOptions[0].value: null
     },
     mapImage() {
       this.selectedArea = this.getInitAreaOption()
