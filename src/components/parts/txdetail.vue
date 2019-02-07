@@ -8,8 +8,7 @@
         left: getLeft(),
         top: getTop(),
         backgroundColor: selectedSensor.length == 0 ? selectedTx.bgColor : selectedSensor[0].bg,
-        color: selectedTx.color,
-        'text-shadow': drawShadow(selectedTx.color)? '1px 1px 1px #000000': 'none',
+        color: selectedSensor.length == 0? selectedTx.color: blackColor,
       }"
     >
       <div v-if="selectedSensor.length == 0" class="potBox" @click="$emit('resetDetail')">
@@ -30,7 +29,7 @@
     <txdetailmodal
       v-else
       :bg-color="selectedSensor.length == 0 ? selectedTx.bgColor : selectedSensor[0].bg"
-      :color="selectedTx.color"
+      :color="selectedSensor.length == 0? selectedTx.color: blackColor"
     >
       <div v-if="selectedSensor.length == 0" :style="{backgroundColor: selectedTx.bgColor}" class="clearfix">
         <div class="thumbnail">
@@ -50,6 +49,7 @@
 
 <script>
 import { DISP } from '../../sub/constant/config'
+import { FONT } from '../../sub/constant/Constants'
 import sensor from './sensor.vue'
 import txdetailmodal from './txdetailmodal.vue'
 import * as Util from '../../sub/util/Util'
@@ -90,6 +90,7 @@ export default {
       descriptionWidth: 143,
       left: 0,
       meditagWidth: 266,
+      blackColor: FONT.COLOR.BLACK,
     }
   },
   updated() {
