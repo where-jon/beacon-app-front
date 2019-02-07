@@ -5,21 +5,43 @@
       <alert :message="message" />
 
       <b-form inline @submit.prevent>
-        <b-form-group>
+        <b-form-group class="mr-5">
           <b-form-row class="mb-3">
-            <label v-t="'label.sensor'" />
-            <b-form-select v-model="form.sensorId" :options="sensorOptions" class="ml-2 inputSelect" required @change="changeSensorId" />
+            <b-form-row class="mr-1">
+              <label v-t="'label.sensor'" />
+            </b-form-row>
+            <b-form-row>
+              <b-form-select v-model="form.sensorId" :options="sensorOptions" class="ml-2 inputSelect" required @change="changeSensorId" />
+            </b-form-row>
+          </b-form-row>
+        </b-form-group>
+        <b-form-group>
+          <b-form-row v-if="showExb" class="mb-3">
+            <b-form-row class="mr-1">
+              <label v-t="'label.exb'" />
+            </b-form-row>
+            <b-form-row>
+              <b-form-select v-model="form.exbId" :options="exbOptions" class="ml-2 inputSelect" required />
+            </b-form-row>
+          </b-form-row>
+          <b-form-row v-if="showTx" class="mb-3">
+            <b-form-row class="mr-1">
+              <label v-t="'label.tx'" />
+            </b-form-row>
+            <b-form-row>
+              <b-form-select v-model="form.txId" :options="txOptions" class="ml-2 inputSelect" required />
+            </b-form-row>
           </b-form-row>
         </b-form-group>
       </b-form>
       <b-form inline @submit.prevent>
         <b-form-group>
           <b-form-row>
-            <b-form-row class="mb-3">
+            <b-form-row class="mr-2 mb-3">
               <label v-t="'label.historyDateFrom'" />
               <date-picker v-model="form.datetimeFrom" :clearable="false" type="datetime" class="ml-2 inputdatefrom" required @change="changeDatetimeFrom" />
             </b-form-row>
-            <b-form-row class="ml-2 mb-3">
+            <b-form-row class="mb-3">
               <label v-t="'label.historyDateTo'" />
               <date-picker v-model="form.datetimeTo" :clearable="false" type="datetime" class="ml-2 inputdateto" required @change="changeDatetimeTo" />
             </b-form-row>
@@ -27,30 +49,24 @@
         </b-form-group>
       </b-form>
       <b-form inline @submit.prevent>
-        <b-form-group>
-          <b-form-row class="mb-3">
-            <label v-t="'label.sumUnit'" />
-            <b-form-select v-model="form.sumUnit" :options="sumUnitOptions" class="ml-2 inputSelect" required @change="changeSumUnit" />
+        <b-form-group class="mr-4">
+          <b-form-row class="mb-3 mr-1">
+            <b-form-row class="mr-1">
+              <label v-t="'label.sumUnit'" />
+            </b-form-row>
+            <b-form-row>
+              <b-form-select v-model="form.sumUnit" :options="sumUnitOptions" class="ml-2 inputSelect" required @change="changeSumUnit" />
+            </b-form-row>
           </b-form-row>
         </b-form-group>
-      </b-form>
-      <b-form v-if="showSumTarget" inline @submit.prevent>
-        <b-form-group>
+        <b-form-group v-if="showSumTarget">
           <b-form-row class="mb-3">
-            <label v-t="'label.sumTarget'" />
-            <b-form-select v-model="form.sumTarget" :options="sumTargetOptions" class="ml-2 inputSelect" required />
-          </b-form-row>
-        </b-form-group>
-      </b-form>
-      <b-form inline @submit.prevent>
-        <b-form-group>
-          <b-form-row v-if="showExb" class="mb-3">
-            <label v-t="'label.exb'" />
-            <b-form-select v-model="form.exbId" :options="exbOptions" class="ml-2 inputSelect" required />
-          </b-form-row>
-          <b-form-row v-if="showTx" class="mb-3">
-            <label v-t="'label.tx'" />
-            <b-form-select v-model="form.txId" :options="txOptions" class="ml-2 inputSelect" required />
+            <b-form-row class="mr-1">
+              <label v-t="'label.sumTarget'" />
+            </b-form-row>
+            <b-form-row>
+              <b-form-select v-model="form.sumTarget" :options="sumTargetOptions" class="ml-2 inputSelect" required />
+            </b-form-row>
           </b-form-row>
         </b-form-group>
       </b-form>
