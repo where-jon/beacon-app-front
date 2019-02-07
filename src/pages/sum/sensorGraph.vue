@@ -420,7 +420,6 @@ export default {
       const sensorEditData = {}
       sensorData.data.forEach((val) => {
         const key = Util.formatDate(val.sensorDt, this.unitFunc(() => 'YYYY/MM/DD [00]:[00]', () => 'YYYY/MM/DD HH:[00]', () => 'YYYY/MM/DD HH:mm'))
-        console.error(key)
         if(!sensorEditData[key]){
           sensorEditData[key] = []
         }
