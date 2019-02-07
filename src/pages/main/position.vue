@@ -90,8 +90,8 @@ export default {
       shortName: this.$i18n.tnl('label.showPositionShort'),
       extraNavSpec: EXTRA_NAV,
       legendItems: [],
-      useGroup: MenuHelper.useMaster('group'),
-      useCategory: MenuHelper.useMaster('category'),
+      useGroup: MenuHelper.useMaster('group') && APP.TX_WITH_GROUP,
+      useCategory: MenuHelper.useMaster('category') && APP.TX_WITH_CATEGORY,
       toggleCallBack: () => this.reset(),
       noImageErrorKey: 'noMapImage',
     }

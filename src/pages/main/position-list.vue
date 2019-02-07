@@ -35,8 +35,8 @@ export default {
         name: 'position-list',
         id: 'positionListId',
         extraFilter: _(['detectState',
-          MenuHelper.useMaster('group')? 'group' : null,
-          MenuHelper.useMaster('category')? 'category' : null,
+          MenuHelper.useMaster('group') && APP.TX_WITH_GROUP? 'group' : null,
+          MenuHelper.useMaster('category') && APP.TX_WITH_CATEGORY? 'category' : null,
           APP.POSITION_WITH_AREA ? 'area' : null]).compact().value(),
         disableTableButtons: true,
         fields: addLabelByKey(this.$i18n, [ 
