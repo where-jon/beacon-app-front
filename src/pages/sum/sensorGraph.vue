@@ -63,10 +63,10 @@
         </b-form-group>
       </b-form>
       <div>
-        <canvas v-show="!showAlert" id="dayChart" width="450" height="200" />
+        <canvas v-show="!showAlert && showChart" id="dayChart" :width="iosOrAndroid? 300: 450" :height="iosOrAndroid? 250: 400" />
       </div>
       <div>
-        <canvas v-show="!showAlert" id="dayChartSub" width="450" height="200" />
+        <canvas v-show="!showAlert && showSubChart" id="dayChartSub" :width="iosOrAndroid? 300: 450" :height="iosOrAndroid? 250: 400" />
       </div>
     </div>
   </div>
@@ -138,6 +138,8 @@ export default {
       dataSensorId: null,
       dataList: [],
       message: '',
+      showChart: false,
+      showSubChart: false,
     }
   },
   computed: {
@@ -440,6 +442,8 @@ export default {
       this.replace({showAlert: false})
       const errorMessage = this.validate()
       this.dataList = []
+      this.showChart = false
+      this.showSubChart = false
       if (Util.hasValue(errorMessage)) {
         this.message = errorMessage
         this.replace({showAlert: true})
@@ -454,7 +458,11 @@ export default {
         return
       }
       this.dataSensorId = this.form.sensorId
-      SensorHelper.showChartDetail('dayChart', this.form.sensorId, this.form.datetimeFrom, this.form.datetimeTo, sensorData, by, this.$i18n)
+      this.showChart = true
+      this.showSubChart = this.form.sensorId == SENSOR.MEDITAG
+      this.$nextTick(() => {
+        SensorHelper.showChartDetail('dayChart', this.form.sensorId, this.form.datetimeFrom, this.form.datetimeTo, sensorData, by, this.$i18n)
+      })
     },
     async download(){
       if (this.dataList == null || this.dataList.length == 0) {

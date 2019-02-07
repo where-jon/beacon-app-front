@@ -79,6 +79,8 @@ export const createChartGraphOptions = (left, right) => {
         }: null
       ].filter((val) => val)
     },
+    responsive: true,
+    maintainAspectRatio: false,
     elements:{ line:{ tension: 0 } }
   }
 }
