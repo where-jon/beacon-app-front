@@ -40,6 +40,7 @@ export default {
         bgColor: DISP.TX_BGCOLOR,
         shape: SHAPE.CIRCLE,
       },
+      oldSelectedArea: null,
     }
   },
   computed: {
@@ -77,7 +78,7 @@ export default {
         if (timer > 0) {
           clearTimeout(timer)
         } 
-        timer = setTimeout(() => {
+        timer = setTimeout( async () => {
           if (currentWidth === window.innerWidth && Util.isAndroidOrIOS()) {
             // モバイル端末だと表示の直後にリサイズイベントが発生してしまうため、
             // 画面横幅が変わっていなければ処理をキャンセル
@@ -93,7 +94,7 @@ export default {
               this.resetDetail()
             }
             this.stage.update()
-            this.fetchData(null, true)
+            await this.fetchData(null, true)
           }
         }, 200)
       }
@@ -101,6 +102,7 @@ export default {
     }
   },
   mounted() {
+    this.oldSelectedArea = this.getInitAreaOption()
     Util.debug('In showmapmixin mounted.')
     this.addDblTapListener(() => {
       Util.debug('in Listener')
@@ -120,11 +122,12 @@ export default {
     ...mapMutations('main', [
       'replaceMain', 
     ]),
+    getInitAreaOption(){
+      return this.selectedArea? this.selectedArea : Util.hasValue(this.areaOptions)? this.areaOptions[0].value: null
+    },
     mapImage() {
+      this.selectedArea = this.getInitAreaOption()
       const area = _.find(this.areas, (area) => {
-        if (this.selectedArea == null) {
-          this.selectedArea = area.areaId // nullの場合、最初のものにする
-        }
         return area.areaId == this.selectedArea
       })
       return area && this.getMapImage(area.areaId)
@@ -138,8 +141,7 @@ export default {
     async fetchAreaExbs(tx) {
       if (this.isFirstTime) {
         await StateHelper.load('area')
-        const areaOption = Util.hasValue(this.areaOptions)? this.areaOptions[0].value: null
-        this.selectedArea = this.selectedArea ? this.selectedArea : areaOption
+        this.selectedArea = this.getInitAreaOption()
         await StateHelper.loadAreaImage(this.selectedArea)
         console.log('after loadAreas. selectedArea=' + this.selectedArea)
         await StateHelper.load('exb')
@@ -248,7 +250,7 @@ export default {
       this.bitmap = bitmap
       this.oldSelectedArea = this.selectedArea
     },
-    changeArea(val) {
+    async changeArea(val) {
       if (val) {
         const area = _.find(this.areas, (area) => {
           return area.areaId == val
@@ -256,7 +258,7 @@ export default {
         if (this.getMapImage(area.areaId)) {
           this.reset()
           this.selectedArea = val
-          this.fetchData()
+          await this.fetchData()
         }
         else {
           Util.debug('No mapImage in changeArea.')

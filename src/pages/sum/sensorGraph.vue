@@ -5,21 +5,43 @@
       <alert :message="message" />
 
       <b-form inline @submit.prevent>
-        <b-form-group>
+        <b-form-group class="mr-5">
           <b-form-row class="mb-3">
-            <label v-t="'label.sensor'" />
-            <b-form-select v-model="form.sensorId" :options="sensorOptions" class="ml-2 inputSelect" required @change="changeSensorId" />
+            <b-form-row class="mr-1">
+              <label v-t="'label.sensor'" />
+            </b-form-row>
+            <b-form-row>
+              <b-form-select v-model="form.sensorId" :options="sensorOptions" class="ml-2 inputSelect" required @change="changeSensorId" />
+            </b-form-row>
+          </b-form-row>
+        </b-form-group>
+        <b-form-group>
+          <b-form-row v-if="showExb" class="mb-3">
+            <b-form-row class="mr-1">
+              <label v-t="'label.exb'" />
+            </b-form-row>
+            <b-form-row>
+              <b-form-select v-model="form.exbId" :options="exbOptions" class="ml-2 inputSelect" required />
+            </b-form-row>
+          </b-form-row>
+          <b-form-row v-if="showTx" class="mb-3">
+            <b-form-row class="mr-1">
+              <label v-t="'label.tx'" />
+            </b-form-row>
+            <b-form-row>
+              <b-form-select v-model="form.txId" :options="txOptions" class="ml-2 inputSelect" required />
+            </b-form-row>
           </b-form-row>
         </b-form-group>
       </b-form>
       <b-form inline @submit.prevent>
         <b-form-group>
           <b-form-row>
-            <b-form-row class="mb-3">
+            <b-form-row class="mr-2 mb-3">
               <label v-t="'label.historyDateFrom'" />
               <date-picker v-model="form.datetimeFrom" :clearable="false" type="datetime" class="ml-2 inputdatefrom" required @change="changeDatetimeFrom" />
             </b-form-row>
-            <b-form-row class="ml-2 mb-3">
+            <b-form-row class="mb-3">
               <label v-t="'label.historyDateTo'" />
               <date-picker v-model="form.datetimeTo" :clearable="false" type="datetime" class="ml-2 inputdateto" required @change="changeDatetimeTo" />
             </b-form-row>
@@ -27,30 +49,24 @@
         </b-form-group>
       </b-form>
       <b-form inline @submit.prevent>
-        <b-form-group>
-          <b-form-row class="mb-3">
-            <label v-t="'label.sumUnit'" />
-            <b-form-select v-model="form.sumUnit" :options="sumUnitOptions" class="ml-2 inputSelect" required @change="changeSumUnit" />
+        <b-form-group class="mr-4">
+          <b-form-row class="mb-3 mr-1">
+            <b-form-row class="mr-1">
+              <label v-t="'label.sumUnit'" />
+            </b-form-row>
+            <b-form-row>
+              <b-form-select v-model="form.sumUnit" :options="sumUnitOptions" class="ml-2 inputSelect" required @change="changeSumUnit" />
+            </b-form-row>
           </b-form-row>
         </b-form-group>
-      </b-form>
-      <b-form v-if="showSumTarget" inline @submit.prevent>
-        <b-form-group>
+        <b-form-group v-if="showSumTarget">
           <b-form-row class="mb-3">
-            <label v-t="'label.sumTarget'" />
-            <b-form-select v-model="form.sumTarget" :options="sumTargetOptions" class="ml-2 inputSelect" required />
-          </b-form-row>
-        </b-form-group>
-      </b-form>
-      <b-form inline @submit.prevent>
-        <b-form-group>
-          <b-form-row v-if="showExb" class="mb-3">
-            <label v-t="'label.exb'" />
-            <b-form-select v-model="form.exbId" :options="exbOptions" class="ml-2 inputSelect" required />
-          </b-form-row>
-          <b-form-row v-if="showTx" class="mb-3">
-            <label v-t="'label.tx'" />
-            <b-form-select v-model="form.txId" :options="txOptions" class="ml-2 inputSelect" required />
+            <b-form-row class="mr-1">
+              <label v-t="'label.sumTarget'" />
+            </b-form-row>
+            <b-form-row>
+              <b-form-select v-model="form.sumTarget" :options="sumTargetOptions" class="ml-2 inputSelect" required />
+            </b-form-row>
           </b-form-row>
         </b-form-group>
       </b-form>
@@ -121,11 +137,11 @@ export default {
         }
       ],
       headers: {
-        temperature: [ 'sensorKey', 'temperature(max)', 'temperature(avg)', 'temperature(min)', 'humidity(max)', 'humidity(avg)', 'humidity(min)' ],
-        pir: [ 'sensorKey', 'count(max)', 'count(avg)', 'count(min)' ],
-        thermopile: [ 'sensorKey', 'count(max)', 'count(avg)', 'count(min)' ],
-        meditag: [ 'sensorKey', 'high(max)', 'high(avg)', 'high(min)', 'low(max)', 'low(avg)', 'low(min)', 'beat(max)', 'beat(avg)', 'beat(min)', 'step(max)', 'step(avg)', 'step(min)', 'down(max)', 'down(avg)', 'down(min)' ],
-        magnet: [ 'sensorKey', 'magnet(max)', 'magnet(min)' ]
+        temperature: [ 'dt', 'humidity(max)', 'humidity(avg)', 'humidity(min)', 'temperature(max)', 'temperature(avg)', 'temperature(min)', ],
+        pir: [ 'dt', 'count(max)', 'count(avg)', 'count(min)' ],
+        thermopile: [ 'dt', 'count(max)', 'count(avg)', 'count(min)' ],
+        meditag: [ 'dt', 'high(max)', 'high(avg)', 'high(min)', 'low(max)', 'low(avg)', 'low(min)', 'beat(max)', 'beat(avg)', 'beat(min)', 'step(max)', 'step(avg)', 'step(min)', 'down(max)', 'down(avg)', 'down(min)' ],
+        magnet: [ 'dt', 'magnet(max)', 'magnet(min)' ]
       },
       sumUnitOptions: [],
       exbOptions: [],
@@ -347,7 +363,7 @@ export default {
     createCsvData(sensorKey, average, max, min){
       const ret = {}
       const sumUnit = SUM_UNIT.getOptions()
-      ret['sensorKey'] = this.form.sumUnit == sumUnit[0].value? `${sensorKey}:00`:
+      ret['dt'] = this.form.sumUnit == sumUnit[0].value? `${sensorKey}:00`:
         this.form.sumUnit == sumUnit[1].value? `${sensorKey}:00`:
           this.form.sumUnit == sumUnit[2].value? `${sensorKey.substring(0, sensorKey.length - 6)}`: sensorKey
       if(this.form.sensorId == SENSOR.TEMPERATURE){
@@ -386,13 +402,16 @@ export default {
       }
       return ret
     },
-    async fetch(by){
+    unitFunc(dayFunc, hourFunc, minuteFunc){
       const sumUnitOption = SUM_UNIT.getOptions()
+      return this.form.sumUnit == sumUnitOption[0].value? minuteFunc(): this.form.sumUnit == sumUnitOption[1].value? hourFunc(): dayFunc()
+    },
+    async fetch(by){
       const id = `${this.showExb? `1/${this.form.exbId}`: `0/${this.form.txId}`}`
       const time = `${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}`
       let sensorData = await AppServiceHelper.fetchList(`/basic/sensorHistory/graph/${this.form.sensorId}/${id}/${time}/${by}`)
       if (DEV.USE_MOCK_EXC) {
-        let key = this.form.sumUnit == sumUnitOption[0].value? 'minute': this.form.sumUnit == sumUnitOption[1].value? 'hour': 'day'
+        let key = this.unitFunc(() => 'day', () => 'hour', () => 'minute')
         sensorData = {data: mock.sensorGraph()[key]}
       }
       if(!sensorData || !sensorData.data || sensorData.data.length == 0){
@@ -400,12 +419,14 @@ export default {
       }
       const sensorEditData = {}
       sensorData.data.forEach((val) => {
-        const key = val.sensorKey
+        const key = Util.formatDate(val.sensorDt, this.unitFunc(() => 'YYYY/MM/DD [00]:[00]', () => 'YYYY/MM/DD HH:[00]', () => 'YYYY/MM/DD HH:mm'))
+        console.error(key)
         if(!sensorEditData[key]){
           sensorEditData[key] = []
         }
         sensorEditData[key].push(val)
       })
+      const sumUnitOption = SUM_UNIT.getOptions()
       return Object.keys(sensorEditData).map((keyVal) => {
         const key = keyVal
         const immediate = sensorEditData[key].reduce((a, b) => this.compare(a.sensorDt, b.sensorDt) > 0? a: b)
