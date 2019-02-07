@@ -134,7 +134,7 @@ export default {
     await StateHelper.load('category')
     await StateHelper.load('group')
     document.addEventListener('touchstart', this.touchEnd)
-    this.fetchData()
+    await this.fetchData()
   },
   beforeDestroy() {
     this.resetDetail()
