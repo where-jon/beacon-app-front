@@ -357,8 +357,24 @@ export default {
           txSensor.sensor = null
         })
       }
-      if (tx.potTxList && tx.potTxList.pot) {
-        tx.potTxList.pot = null
+      if (Util.hasValue(tx.potTxList)) {
+        tx.potTxList.forEach((potTx) => {
+          if(potTx.pot){
+            const dummyKey = potTx.potTxPK.txId * -1
+            if(Util.hasValue(potTx.pot.potCategoryList)){
+              potTx.pot.potCategoryList.forEach((potCategory) => {
+                potCategory.potCategoryPK.potId = dummyKey
+                potCategory.category = null
+              })
+            }
+            if(Util.hasValue(potTx.pot.potGroupList)){
+              potTx.pot.potGroupList.forEach((potGroup) => {
+                potGroup.potGroupPK.potId = dummyKey
+                potGroup.group = null
+              })
+            }
+          }
+        })
       }
       param.push(tx)
       tx.isChanged = false
