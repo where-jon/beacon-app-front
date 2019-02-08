@@ -63,8 +63,8 @@ export const createChartGraphDatasets = (yAxisID, label, chartData, targetId, bo
   ].filter((val) => val)
 }
 
-export const createChartGraphOptions = (left, right) => {
-  return {
+export const createChartGraphOptions = (left, right, isResponsive = false) => {
+  const ret = {
     scales:{
       yAxes:[
         left? {
@@ -79,13 +79,16 @@ export const createChartGraphOptions = (left, right) => {
         }: null
       ].filter((val) => val)
     },
-    responsive: true,
-    maintainAspectRatio: false,
     elements:{ line:{ tension: 0 } }
   }
+  if(isResponsive){
+    ret.responsive = true
+    ret.maintainAspectRatio = false
+  }
+  return ret
 }
 
-export const createChartThermohumidityOptions = (chartData, by, i18n) => {
+export const createChartThermohumidityOptions = (chartData, by, i18n, isResponsive = false) => {
   return {
     type:'line', 
     data:{
@@ -103,12 +106,13 @@ export const createChartThermohumidityOptions = (chartData, by, i18n) => {
         id: 'humidity',
         label: i18n.tnl('label.humidity') + ' (%)',
         ticks: { min: 0, max: 100, stepSize: 25},
-      }
+      },
+      isResponsive
     )
   }
 }
 
-export const createChartPirOptions = (chartData, by, i18n) => {
+export const createChartPirOptions = (chartData, by, i18n, isResponsive = false) => {
   return {
     type:'line', 
     data:{
@@ -124,12 +128,14 @@ export const createChartPirOptions = (chartData, by, i18n) => {
           min: 0,
           max: Math.ceil(Math.max(...chartData.map((val) => val && val.data? val.data.count: 0)) / 10 ) * 10
         },
-      }
+      },
+      null,
+      isResponsive
     )
   }
 }
 
-export const createChartThermopileOptions = (chartData, by, i18n) => {
+export const createChartThermopileOptions = (chartData, by, i18n, isResponsive = false) => {
   return {
     type:'line', 
     data:{
@@ -145,12 +151,14 @@ export const createChartThermopileOptions = (chartData, by, i18n) => {
           min: 0,
           max: Math.ceil(Math.max(...chartData.map((val) => val && val.data? val.data.count: 0)) / 10 ) * 10
         }
-      }
+      },
+      null,
+      isResponsive
     )
   }
 }
 
-export const createChartMagnetOptions = (chartData, by, i18n) => {
+export const createChartMagnetOptions = (chartData, by, i18n, isResponsive = false) => {
   return {
     type:'line', 
     data:{
@@ -169,12 +177,14 @@ export const createChartMagnetOptions = (chartData, by, i18n) => {
             return value == SENSOR.MAGNET_STATUS.ON? i18n.tnl('label.InUse'): value == SENSOR.MAGNET_STATUS.OFF? i18n.tnl('label.notUse'): ''
           }
         }
-      }
+      },
+      null,
+      isResponsive
     )
   }
 }
 
-export const createChartMeditagOptions = (chartData, by, i18n) => {
+export const createChartMeditagOptions = (chartData, by, i18n, isResponsive = false) => {
   return {
     type:'line', 
     data:{
@@ -193,12 +203,13 @@ export const createChartMeditagOptions = (chartData, by, i18n) => {
         id: 'heart_rate',
         label: i18n.tnl('label.heart_rate'),
         ticks: { min: 0, max: DISP.HEART_RATE_MAX, stepSize: DISP.HEART_RATE_STEP },
-      }
+      },
+      isResponsive
     )
   }
 }
 
-export const createChartSubMeditagOptions = (chartData, by, i18n) => {
+export const createChartSubMeditagOptions = (chartData, by, i18n, isResponsive = false) => {
   return {
     type:'line', 
     data:{
@@ -216,12 +227,13 @@ export const createChartSubMeditagOptions = (chartData, by, i18n) => {
         id: 'down_count',
         label: i18n.tnl('label.down_count'),
         ticks: { min: 0, max: DISP.DOWN_COUNT_MAX, stepSize: DISP.DOWN_COUNT_STEP },
-      }
+      },
+      isResponsive
     )
   }
 }
 
-export const createChartGraph = (canvasId, sensorId, chartData, by, i18n) => {
+export const createChartGraph = (canvasId, sensorId, chartData, by, i18n, isResponsive = false) => {
   if(chart){
     chart.destroy()
   }
@@ -229,16 +241,16 @@ export const createChartGraph = (canvasId, sensorId, chartData, by, i18n) => {
     subChart.destroy()
   }
   chart = new Chart(canvasId, 
-    sensorId == SENSOR.PIR? createChartPirOptions(chartData, by, i18n):
-      sensorId == SENSOR.THERMOPILE? createChartThermopileOptions(chartData, by, i18n):
-        sensorId == SENSOR.MAGNET? createChartMagnetOptions(chartData, by, i18n):
-          sensorId == SENSOR.MEDITAG? createChartMeditagOptions(chartData, by, i18n):
-            createChartThermohumidityOptions(chartData, by, i18n)
+    sensorId == SENSOR.PIR? createChartPirOptions(chartData, by, i18n, isResponsive):
+      sensorId == SENSOR.THERMOPILE? createChartThermopileOptions(chartData, by, i18n, isResponsive):
+        sensorId == SENSOR.MAGNET? createChartMagnetOptions(chartData, by, i18n, isResponsive):
+          sensorId == SENSOR.MEDITAG? createChartMeditagOptions(chartData, by, i18n, isResponsive):
+            createChartThermohumidityOptions(chartData, by, i18n, isResponsive)
   )
   chart.update()
   if(sensorId == SENSOR.MEDITAG){
     subChart = new Chart(`${canvasId}Sub`, 
-      createChartSubMeditagOptions(chartData, by, i18n)
+      createChartSubMeditagOptions(chartData, by, i18n, isResponsive)
     )
     subChart.update()
   }
@@ -272,7 +284,7 @@ export const showThermoHumidityChart = (id, data, i18n) => {
 export const showChartDetail = (canvasId, sensorId, dateFrom, dateTo, sensorData, by, i18n) => {
   const range = Util.dateRange(dateFrom, dateTo, by)
   const chartData = createChartData(range, sensorData)
-  return createChartGraph(canvasId, sensorId, chartData, by, i18n)
+  return createChartGraph(canvasId, sensorId, chartData, by, i18n, true)
 }
 
 export const getStressBg = (stress) => {
