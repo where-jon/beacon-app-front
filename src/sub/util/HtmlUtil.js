@@ -12,7 +12,7 @@ export const setApp = (pi18n) => {
 
 export const addClass = (e, cls) => e && e.target.classList && e.target.classList.add(cls)
 
-export const removeClass = (e, cls) => e && e.target.classList && e.target.classList.remove(cls)
+export const removeClass = (e, cls) => e && e.target && e.target.classList && e.target.classList.remove(cls)
 
 export const getLangShort = () => {
   let lang = locale? locale: getLang()

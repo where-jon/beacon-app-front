@@ -133,7 +133,7 @@ export default {
     },
     createCountButton(count){
       const exbBtn = new Container()
-      let label = new Text(count + '名','bold 32px Arial','#FF3222')
+      let label = new Text(this.$i18n.tnl('message.count', {count}),'bold 32px Arial','#FF3222')
       label.textAlign = 'center'
       label.textBaseline = 'middle'
       exbBtn.addChild(label)
@@ -171,7 +171,7 @@ export default {
         this.stage.addChild(this.exbCon)
       }
       let exbBtn = null
-      if (exb.sensorId == SENSOR.THERMOPILE) {
+      if (exb.sensorId == SENSOR.THERMOPILE && exb.count != null) {
         // not use?
         // if (exb.count > 10) {
         //   w = DISP.THERMOPILE_L_SIZE
