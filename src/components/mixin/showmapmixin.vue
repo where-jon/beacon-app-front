@@ -158,7 +158,7 @@ export default {
       console.log('showMapImageDef', this.selectedArea, this.isShownMapImage)
       if (this.isShownMapImage) {
         if (callback) {
-          callback()
+          setTimeout(() => callback(), 0)
         }
         return
       }
@@ -183,9 +183,7 @@ export default {
       bg.onload = (evt) => {
         this.drawMapImage(bg)
         if (callback) {
-          this.$nextTick(() => {
-            callback()
-          })
+          setTimeout(() => callback(), 0)
         }
       }
     },
