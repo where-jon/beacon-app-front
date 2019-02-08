@@ -63,7 +63,6 @@
 
 <script>
 
-import _ from 'lodash'
 import commonmixinVue from '../mixin/commonmixin.vue'
 import editmixinVue from '../mixin/editmixin.vue'
 import settingmixinVue from '../mixin/settingmixin.vue'
@@ -137,14 +136,6 @@ export default {
       await this.$parent.$options.methods.resetNewForm.call(this.$parent, isShow)
     },
     onRegistSubmit(evt){
-      const entity = this.$parent.$options.methods.addNewEntity.apply(this.$parent)
-      if(!this.multiList){
-        this.multiList = []
-      }
-      if(!_.includes(this.getCategoryIds(this.multiList), '')){
-        this.multiList[''] = []
-      }
-      this.multiList[''].push(entity)
       this.onSubmit(evt)
     },
     async afterCrud() {
