@@ -176,7 +176,7 @@ const handleError = (e, url) => {
 
     if (context) {
       let ignore = !url.endsWith('/') && context.route.path.indexOf('/login') != -1 // Loginエラーでポップアップが表示されるのを防ぐ
-      if (e.message && e.message == 'Network Error' && !ignore) {
+      if (e.message && (e.message == 'Network Error' || e.message.startsWith('timeout of ')) && !ignore) {
         e.key = 'networkError'
         context.app.store.commit('replace', {error: e})
         context.app.router.app.$root.$emit('bv::show::modal', 'modalRootError')
