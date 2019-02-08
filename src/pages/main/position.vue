@@ -202,7 +202,9 @@ export default {
         this.showProgress()
         await StateHelper.load('tx', this.forceFetchTx)
         StateHelper.setForceFetch('tx', false)
-        this.loadLegends()
+        this.$nextTick(() => {
+          this.loadLegends()
+        })
         this.showMapImage(disableErrorPopup)
         if (payload && payload.done) {
           payload.done()
@@ -218,9 +220,9 @@ export default {
       return tx && tx.pot
     },
     showMapImage(disableErrorPopup) {
-      this.showMapImageDef(() => {
+      this.showMapImageDef(async () => {
 
-        this.fetchPositionData()
+        await this.fetchPositionData()
 
         this.stage.on('click', (evt) => {
           this.resetDetail()
