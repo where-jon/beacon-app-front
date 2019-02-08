@@ -69,6 +69,9 @@ export const APP = { // 機能面に関する設定
   IP_ADDRESS_FILTER: '',
   // 将来実装予定項目 END
 
+  // 位置表示(一覧)
+  POS_LIST_WITH_TEL: false, // 位置表示(一覧)に電話番号を表示
+
   // TX関連設定
   TX_SENSOR: [1,5,6,7], // TXのタイプに設定可能なセンサーID
   TX_WITH_TXID: false, // 画面上TXIDを使用するか否か
