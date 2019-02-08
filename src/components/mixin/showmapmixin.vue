@@ -41,12 +41,10 @@ export default {
         shape: SHAPE.CIRCLE,
       },
       oldSelectedArea: null,
+      areaOptions: [],
     }
   },
   computed: {
-    areaOptions() {
-      return StateHelper.getOptionsFromState('area', false, true)
-    },
     ...mapState('app_service', [
       'areas',
       'exbs',
@@ -65,8 +63,10 @@ export default {
     },
   },
   async created() {
-    if (this.$route.path.startsWith('/main')) {      
-      await StateHelper.loadAreaImages()
+    await StateHelper.load('area')
+    this.areaOptions = StateHelper.getOptionsFromState('area', false, true)
+    this.selectedArea = this.getInitAreaOption()
+    if (this.$route.path.startsWith('/main')) {
       let timer = 0
       const path = this.$route.path
       let currentWidth = window.innerWidth
@@ -95,12 +95,17 @@ export default {
               this.resetDetail()
             }
             this.stage.update()
-            await this.fetchData(null, true)
+            this.$nextTick(async () => {
+              await this.fetchData(null, true)
+            })
           }
         }, 200)
       }
       window.addEventListener('resize', onResize)
     }
+  },
+  async beforeMount(){
+    await StateHelper.loadAreaImages()
   },
   mounted() {
     this.oldSelectedArea = this.getInitAreaOption()
@@ -142,7 +147,6 @@ export default {
     },
     async fetchAreaExbs(tx) {
       if (this.isFirstTime) {
-        await StateHelper.load('area')
         this.selectedArea = this.getInitAreaOption()
         await StateHelper.loadAreaImage(this.selectedArea)
         console.log('after loadAreas. selectedArea=' + this.selectedArea)
