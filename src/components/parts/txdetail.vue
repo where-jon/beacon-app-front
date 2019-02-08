@@ -15,7 +15,7 @@
         <div class="clearfix">
           <div class="thumbnail">
             <img v-if="selectedTx.thumbnail.length > 0" id="img" :src="selectedTx.thumbnail" :height="imageHeight" width="auto">
-            <img v-else src="/default.png" width="auto" height="116">
+            <img v-else src="/default.png" width="auto" :height="imageHeight">
           </div>
           <div class="description">
             <div v-for="(item, index) in getDispItems()" :key="index">
@@ -55,6 +55,9 @@ import txdetailmodal from './txdetailmodal.vue'
 import * as Util from '../../sub/util/Util'
 
 const loadImage = (src, fixHeight) => {
+  if(!src){
+    return fixHeight
+  }
   return new Promise((resolve, reject) => {
     let img = new Image()
     img.src = src
@@ -87,7 +90,7 @@ export default {
       popupHeight: this.getPopupHeight(),
       tipHeight: 15,
       imageWidth: 0,
-      descriptionWidth: 143,
+      descriptionWidth: 147,
       left: 0,
       meditagWidth: 266,
       blackColor: FONT.COLOR.BLACK,
@@ -118,7 +121,8 @@ export default {
     getLeft() {
       this.setImageWidth()
       const isOut = this.isOutOfFrame()
-      const left = !isOut ? this.selectedTx.orgLeft - DISP.TX_R : (this.selectedTx.orgLeft - (this.descriptionWidth + this.imageWidth))
+      const left = !isOut ? this.selectedTx.orgLeft - DISP.TX_R : 
+        this.selectedSensor.length == 0? (this.selectedTx.orgLeft - (this.descriptionWidth + this.imageWidth)): this.selectedTx.orgLeft + DISP.TX_R - this.meditagWidth
       return left + 'px'
     },
     getTop() {
