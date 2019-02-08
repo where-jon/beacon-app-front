@@ -114,13 +114,13 @@ export default {
       }
       return str
     },
-    addNewEntity() {
-      return {
+    createAddEntity() {
+      return Util.hasValue(this.newForm.key) && this.newForm.type != null && Util.hasValue(this.newForm.value)?{
         settingId: -1,
         key: this.newForm.key,
         valType: this.newForm.type,
         value: this.format(this.newForm.value, this.newForm.type),
-      }
+      }: null
     },
     async deleteEntity(entity) {
       await AppServiceHelper.deleteEntity(this.appServicePath, entity.id)
@@ -137,9 +137,13 @@ export default {
       AuthHelper.resetConfig(login.tenantAdmin, userInfo.setting)
     },
     async save() {
+      const newEntity = this.createAddEntity()
+      if(newEntity){
+        return await AppServiceHelper.bulkSave(this.appServicePath, [newEntity])
+      }
       const entity = []
       for(let key in this.categorySettings){
-        this.categorySettings[key].map((val) => {
+        this.categorySettings[key].forEach((val) => {
           entity.push({
             settingId: val.settingId,
             value: this.format(val.value, val.valType),
