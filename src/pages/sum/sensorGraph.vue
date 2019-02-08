@@ -8,7 +8,7 @@
         <b-form-group class="mr-5">
           <b-form-row class="mb-3">
             <b-form-row class="mr-1">
-              <label v-t="'label.sensor'" />
+              <span v-t="'label.sensor'" class="d-flex align-items-center" />
             </b-form-row>
             <b-form-row>
               <b-form-select v-model="form.sensorId" :options="sensorOptions" class="ml-2 inputSelect" required @change="changeSensorId" />
@@ -18,7 +18,7 @@
         <b-form-group>
           <b-form-row v-if="showExb" class="mb-3">
             <b-form-row class="mr-1">
-              <label v-t="'label.exb'" />
+              <span v-t="'label.exb'" class="d-flex align-items-center" />
             </b-form-row>
             <b-form-row>
               <b-form-select v-model="form.exbId" :options="exbOptions" class="ml-2 inputSelect" required />
@@ -26,7 +26,7 @@
           </b-form-row>
           <b-form-row v-if="showTx" class="mb-3">
             <b-form-row class="mr-1">
-              <label v-t="'label.tx'" />
+              <span v-t="'label.tx'" class="d-flex align-items-center" />
             </b-form-row>
             <b-form-row>
               <b-form-select v-model="form.txId" :options="txOptions" class="ml-2 inputSelect" required />
@@ -38,11 +38,11 @@
         <b-form-group>
           <b-form-row>
             <b-form-row class="mr-2 mb-3">
-              <label v-t="'label.historyDateFrom'" />
+              <span v-t="'label.historyDateFrom'" class="d-flex align-items-center" />
               <date-picker v-model="form.datetimeFrom" :clearable="false" type="datetime" class="ml-2 inputdatefrom" required @change="changeDatetimeFrom" />
             </b-form-row>
             <b-form-row class="mb-3">
-              <label v-t="'label.historyDateTo'" />
+              <span v-t="'label.historyDateTo'" class="d-flex align-items-center" />
               <date-picker v-model="form.datetimeTo" :clearable="false" type="datetime" class="ml-2 inputdateto" required @change="changeDatetimeTo" />
             </b-form-row>
           </b-form-row>
@@ -52,7 +52,7 @@
         <b-form-group class="mr-4">
           <b-form-row class="mb-3 mr-1">
             <b-form-row class="mr-1">
-              <label v-t="'label.sumUnit'" />
+              <span v-t="'label.sumUnit'" class="d-flex align-items-center" />
             </b-form-row>
             <b-form-row>
               <b-form-select v-model="form.sumUnit" :options="sumUnitOptions" class="ml-2 inputSelect" required @change="changeSumUnit" />
@@ -62,7 +62,7 @@
         <b-form-group v-if="showSumTarget">
           <b-form-row class="mb-3">
             <b-form-row class="mr-1">
-              <label v-t="'label.sumTarget'" />
+              <span v-t="'label.sumTarget'" class="d-flex align-items-center" />
             </b-form-row>
             <b-form-row>
               <b-form-select v-model="form.sumTarget" :options="sumTargetOptions" class="ml-2 inputSelect" required />
