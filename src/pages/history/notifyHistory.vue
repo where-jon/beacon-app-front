@@ -185,6 +185,7 @@ export default {
         notifyState: null,
       },
       viewList: [],
+      csvList: [],
       fields: [],
       fields1: addLabelByKey(this.$i18n, [  // TXボタン押下通知
         {key: 'positionDt', sortable: true, label:'dt'},
@@ -302,7 +303,7 @@ export default {
           minors  : 'minors',
           major : 'major',
           minor  : 'minor',
-          txName : 'txNames',
+          txNames : 'txNames',
           notifyResult : 'notifyResult',
         }
       case 'GW_ALERT':
@@ -417,12 +418,12 @@ export default {
           notifyData.positionDt = moment(d.getTime()).format('YYYY/MM/DD HH:mm:ss')
           notifyData.notifyResult = notifyData.notifyResult == 0 ? '成功' : '失敗'
           if(this.userState == 'ALL_REGION' || aNotifyState == 'GW_ALERT' || aNotifyState == 'EXB_ALERT'){
-            count++
-            if (count < this.limitViewRows) {
-              let arNotifyto = this.getNotifyTo(notifyData.notifyTo)
-              arNotifyto ? notifyData.notifyTo = arNotifyto: null
+            let arNotifyto = this.getNotifyTo(notifyData.notifyTo)
+            arNotifyto ? notifyData.notifyTo = arNotifyto: null
+            if (++count <= this.limitViewRows) {
               this.viewList.push(notifyData)
             }
+            this.csvList.push(notifyData)
           }else{
             let tempIndex = 0
             notifyData.minors.find((tval,index) =>
@@ -434,7 +435,10 @@ export default {
             notifyData.txNames = notifyData.txNames[tempIndex]
             let arNotifyto = this.getNotifyTo(notifyData.notifyTo)
             arNotifyto ? notifyData.notifyTo = arNotifyto: null
-            notifyData.minors == this.userMinor? this.viewList.push(notifyData) : null
+            if (++count <= this.limitViewRows) {
+              notifyData.minors == this.userMinor? this.viewList.push(notifyData) : null
+            }
+            notifyData.minors == this.userMinor? this.csvList.push(notifyData) : null
             notifyData.minors == this.userMinor? count++:null
           }
         })
@@ -445,7 +449,7 @@ export default {
       }
     },
     async exportCsv() {
-      const records = this.viewList.map(e => {
+      const records = this.csvList.map(e => {
         const obj = {}
         Object.keys(this.csvHeaders)
           .filter(csvHeader => this.csvHeaders[csvHeader])
