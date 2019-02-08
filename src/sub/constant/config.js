@@ -57,6 +57,9 @@ export const APP = { // 機能面に関する設定
   SHOW_MAGNET_ON_PIR: false, // 人感センサ画面でマグネットセンサを表示
   MAGNET_ON_IS_USED: true, // マグネットセンサーONのとき使用中とするか
 
+  // ヒートマップ
+  HEATMAP_USE_INDIVIDUAL: false, // 個人プルダウンの表示
+
   // 将来実装予定項目 START
   LOG_KEEP_TIME: 30,
   MONITOR_REFESH_TIME: 10 * 60 * 1000,
