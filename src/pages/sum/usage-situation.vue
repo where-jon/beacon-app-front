@@ -307,6 +307,7 @@ export default {
     async displayImpl(){
       this.replace({showAlert: false})
       this.viewList = []
+      this.totalRows = 0
       try {
         if (this.form.selectedYearMonth == null || this.form.selectedYearMonth == 0) {
           this.message = this.$i18n.tnl('message.pleaseEnterSearchCriteria')
@@ -332,6 +333,7 @@ export default {
           return
         }
         this.viewList = this.createViewList(aModeId, fetchList)
+        this.totalRows = this.viewList.length
       } catch(e) {
         console.error(e)
       }
