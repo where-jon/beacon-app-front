@@ -1,13 +1,97 @@
 <template>
-  <canvas id="map" ref="map" />
+  <div>
+    <div id="stage"></div>
+  </div>
 </template>
 
 <script>
-import { fabric } from 'fabric'
-import { DISP } from '../../sub/constant/config'
-import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
+// import { DISP } from '../../sub/constant/config'
+// import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
+import Konva from 'konva'
+
+class Zone {
+  constructor(prop) {
+    this.startX = prop.startX
+    this.startY = prop.startY
+    this.stage = prop.stage
+    this.rectLayer = new Konva.Layer()
+    this.stage.add(this.rectLayer)
+    this.konvaRect = null
+    const anchorColor = '#b4b4b4'
+    this.tr = new Konva.Transformer({
+      anchorStroke: anchorColor,
+      anchorFill: 'white',
+      anchorSize: 10,
+      borderStroke: anchorColor,
+      borderDash: [3, 3],
+      rotateEnabled: false,
+    })
+    this.tr.on('mousedown', (e) => {e.evt.stopImmediatePropagation()})
+    this.tr.on('mousemove', (e) => {e.evt.stopImmediatePropagation()})
+    this.drawingRect.bind(this)
+    this.setListener.bind(this)
+    this.attachTransformer.bind(this)
+    this.detachTransformer.bind(this)
+    this.active.bind(this)
+    this.inactive.bind(this)
+    this._isActive = false
+  }
+
+  drawingRect(x, y) {
+    const w = x - this.startX
+    const h = y - this.startY
+    this.rectLayer.removeChildren()
+    this.konvaRect = new Konva.Rect({
+      x: this.startX,
+      y: this.startY,
+      width: w,
+      height: h,
+      strokeWidth: 1,
+      fill: 'rgba(0, 0, 209, 0.5)',
+      stroke : 'rgba(32, 16, 64)',
+      draggable: true,
+    })
+    this.rectLayer.add(this.konvaRect)
+    this.rectLayer.draw()
+  }
+
+  setListener(listener) {
+    this.rectLayer.add(this.tr)
+    this.attachTransformer()
+    this.rectLayer.draw()
+    this.konvaRect.setListening(true)
+    this.konvaRect.on('mousedown', listener)
+    this.konvaRect.on('mouseenter', () => { this.stage.container().style.cursor = 'move' })
+    this.konvaRect.on('mouseleave', () => { this.stage.container().style.cursor = 'default' })
+    this._isActive = true
+  }
+
+  active() {
+    this._isActive = true
+  }
+
+  inactive() {
+    this._isActive = false
+  }
+
+  get isActive() {
+    return this._isActive
+  }
+
+  attachTransformer() {
+    if (!this._isActive) {
+      this.tr.attachTo(this.konvaRect)
+      this._isActive = true
+    }
+  }
+
+  detachTransformer() {
+    this.tr.detach()
+  }
+}
 
 export default {
+  plugins: [Konva],
   props: {
     areaId: {
       default: -1,
@@ -36,12 +120,14 @@ export default {
   },
   data () {
     return {
-      canvas: null,
+      stage: null,
       fromX: 0,
       fromY: 0,
       toX: 0,
       toY: 0,
       deleted: [],
+      dragging: false,
+      zones: [],
     }
   },
   computed: {
@@ -61,225 +147,102 @@ export default {
       }
       this.$emit('regist', this.canvas.getObjects(), this.deleted)
     },
-    isSetNameCategory: function(newVal, oldVal) {
-      if (!newVal) {
-        return
-      }
-      const group = this.canvas.getActiveObject()
-      group.name = this.name
-      group.categoryId = this.categoryId
-      const text = group.getObjects('text')[0]
-      text.setText(this.name)
-      this.canvas.renderAll()
-    }
+    // isSetNameCategory: function(newVal, oldVal) {
+    //   if (!newVal) {
+    //     return
+    //   }
+    //   const group = this.canvas.getActiveObject()
+    //   group.name = this.name
+    //   group.categoryId = this.categoryId
+    //   const text = group.getObjects('text')[0]
+    //   text.setText(this.name)
+    //   this.canvas.renderAll()
+    // }
   },
   mounted () {
-    this.canvas = new fabric.Canvas('map')
-    if(!this.isEditable){
-      this.canvas.hoverCursor = 'default'
-      this.canvas.selection = false
+    this.stage = new Konva.Stage({
+      container: 'stage',
+      width: 0,
+      height: 0
+    })
+
+    const drawArea = document.getElementById('stage')
+    const that = this
+    let zone = null
+
+    drawArea.addEventListener('mousedown', (e) => {
+      that.dragging = true
+      zone = new Zone({
+        startX: e.offsetX,
+        startY: e.offsetY,
+        stage: that.stage,
+      })
+    })
+
+    drawArea.addEventListener('mousemove', (e) => {
+      if (!that.dragging) return
+      zone.drawingRect(e.offsetX, e.offsetY)
+    })
+
+    const setInActive = () => {
+      const active = that.zones.find((e) => { return e.isActive })
+      if (active) {
+        active.inactive()
+      }
     }
-    this.setCanvasListener()
+
+    drawArea.addEventListener('mouseup', (e) => {
+      that.dragging = false 
+      zone.setListener((e) => {
+        e.evt.stopImmediatePropagation()
+        that.dragging = false
+        setInActive()
+        zone.active()
+      })
+      setInActive()
+      zone.active()
+      that.zones.push(zone)
+    })
     this.setupCanvas(this.base64)
   },
   methods: {
     setupCanvas (base64) {
-      this.canvas.clear()
-      const that = this
-      fabric.Image.fromURL(base64, async function(img) {
-        that.canvas.setWidth(parseInt(img.width, 10))
-        that.canvas.setHeight(parseInt(img.height, 10))
-        that.canvas.setBackgroundImage(img, that.canvas.renderAll.bind(that.canvas), {
-          scaleX: 1,
-          scaleY: 1,
+      const stage = this.stage
+      const img = new Image()
+      img.onload = () => {
+        stage.removeChildren()
+        stage.size({
+          width: img.width,
+          height: img.height
         })
-        that.addZones()
-      })
-    },
-    async addZones() {
-      if (!this.areaId) {
-        return
+        this.layer = new Konva.Layer()
+        const konvaImg = new Konva.Image({
+          x: 0,
+          y: 0,
+          image: img,
+          width: img.width,
+          height: img.height,
+        })
+        this.layer.add(konvaImg)
+        stage.add(this.layer)
       }
-      const zones = await AppServiceHelper.fetchList(`/core/zone/area/${this.areaId}`, 'id')
-      const that = this
-      zones.forEach((e) => {
-        that.addZone({
-          id: e.zoneId,
-          top: e.y,
-          left: e.x,
-          width: e.w,
-          height: e.h,
-          name: e.zoneName
-        }, !this.auth.update)
-      })
+      img.src = base64
     },
-    getTopLeft (bounds) {
-      const limitX = this.canvas.getWidth() - bounds.width
-      const limitY = this.canvas.getHeight() - bounds.height
-      return {
-        top : bounds.y > -1 ? (limitY > bounds.y ? bounds.y : limitY) : 0,
-        left: bounds.x > -1 ? (limitX > bounds.x ? bounds.x : limitX) : 0
-      }
-    },
-    addZone (dimension, lock = false) {
-      const rect = new fabric.Rect({
-        width: dimension.width,
-        height: dimension.height,
-        fill: 'blue',
-        opacity: 0.3,
-        stroke: 'blue',
-        strokeWidth: 1,
-        originX: 'center',
-        originY: 'center',
-        lockMovementX: lock,
-        lockMovementY: lock,
-        lockRotation: lock,
-        lockScalingFlip: lock,
-        lockScalingX: lock,
-        lockScalingY: lock,
-        lockSkewingX: lock,
-        lockSkewingY: lock,
-        lockUniScaling: lock,
-      })
-
-      const text = new fabric.Text(
-        dimension.name.toString(),
-        {
-          fontSize: 20,
-          fill: '#fff',
-          originX: 'center',
-          originY: 'center'
-        })
-
-      const group = new fabric.Group([ rect, text ], {
-        id: dimension.id,
-        left: dimension.left,
-        top: dimension.top,
-        hasRotatingPoint: false,
-        lockRotation: true,
-        name: dimension.name,
-        categoryId: this.categoryId,
-        lock: lock
-      })
-      this.canvas.add(group)
-      return group
-    },
-    assignId () {
-      const ids = this.canvas.getObjects().map((e) => Math.abs(e.id))
-      return ids.length > 0 ? Math.max(...ids) + 1 : 1
-    },
-    setCanvasMovingListener(){
-      const that = this
-      // Canvas内でのみドラッグ可とする
-      this.canvas.on('object:moving', function(e){
-        const obj = e.target
-        const topLeft = that.getTopLeft({
-          x: obj.left,
-          y: obj.top,
-          width: obj.width,
-          height: obj.height
-        })
-        obj.top = topLeft.top
-        obj.left = topLeft.left
-      })
-    },
-    setCanvasMouseDownListener(){
-      const that = this
-      this.canvas.on('mouse:down', function(e) {
-        that.fromX = e.e.offsetX
-        that.fromY = e.e.offsetY
-      })
-    },
-    setCanvasMouseUpListener(){
-      const that = this
-      this.canvas.on('mouse:up', function(e) {
-        if (e.target !== null) {
-          return
-        }
-        that.toX = e.e.offsetX
-        that.toY = e.e.offsetY
-        if(!that.auth.regist){
-          return 
-        }
-        if (Math.abs(that.fromX - that.toX) < DISP.ZONE.MIN_WIDTH || Math.abs(that.fromY - that.toY) < DISP.ZONE.MIN_HEIGHT) {
-          return
-        }
-
-        const top = Math.floor(Math.min(that.fromY, that.toY))
-        const left = Math.floor(Math.min(that.fromX, that.toX))
-        const id = that.assignId()
-        const dimension = {
-          id: id * -1,
-          categoryId: that.categoryId,
-          top: top,
-          left: left,
-          width: Math.floor(Math.max(that.toX, that.fromX)) - left,
-          height: Math.floor(Math.max(that.toY, that.fromY)) - top,
-          name: 'zone' + id
-        }
-        const group = that.addZone(dimension, false)
-        that.canvas.setActiveObject(group)
-        that.$emit('created', dimension)
-      })
-    },
-    setCanvasKeyDownListener(){
-      const that = this
-      // DELボタン押下時に選択エリアを削除する
-      const canvasWrapper = document.getElementsByClassName('upper-canvas')[0]
-      canvasWrapper.tabIndex = 1000
-      canvasWrapper.addEventListener('keydown', function(e) {
-        if (e.keyCode !== 46) {
-          return
-        }
-        const active = that.canvas.getActiveObject()
-        if (!active) {
-          return
-        }
-        if(that.auth.delete || (that.auth.regist && active.id < 0)){
-          that.canvas.remove(active)
-          if (active.id > 0) {
-            that.deleted.push(active.id)
-          }
-          that.$emit('deleted', active.id)
-        }
-      }, false)
-    },
-    setCanvasSelectedListener(){
-      const that = this
-      this.canvas.on('object:selected', function(event) {
-        if (!event.e) {
-          return
-        }
-        if(!that.isEditable){
-          that.canvas.discardActiveObject(event.e)
-          return
-        }
-        that.$emit('selected', {
-          id: event.target.id,
-          name: event.target.name,
-          top: event.target.top,
-          left: event.target.left,
-          width: event.target.width,
-          height: event.target.height,
-          categoryId: event.target.categoryId,
-          lock: event.target.lock,
-        })
-      })
-    },
-    setCanvaslearedListener(){
-      const that = this
-      this.canvas.on('selection:cleared', function(e) {
-        that.$emit('unselected')
-      })
-    },
-    setCanvasListener(){
-      this.setCanvasMovingListener()
-      this.setCanvasMouseDownListener()
-      this.setCanvasMouseUpListener()
-      this.setCanvasKeyDownListener()
-      this.setCanvasSelectedListener()
-      this.setCanvaslearedListener()
-    },
+    // setCanvasMovingListener(){
+    //   const that = this
+    //   // Canvas内でのみドラッグ可とする
+    //   this.canvas.on('object:moving', function(e){
+    //     const obj = e.target
+    //     const topLeft = that.getTopLeft({
+    //       x: obj.left,
+    //       y: obj.top,
+    //       width: obj.width,
+    //       height: obj.height
+    //     })
+    //     obj.top = topLeft.top
+    //     obj.left = topLeft.left
+    //   })
+    // },
   }
 }
 </script>
