@@ -67,7 +67,7 @@
           <b-form-group>
             <b-form-row class="mb-3 mr-2">
               <b-button v-t="'label.display'" :variant="theme" class="mx-1" @click="display" />
-              <b-button v-if="!iosOrAndroid" v-t="'label.download'" :variant="theme" class="mx-1" @click="exportCsv" />
+              <b-button v-if="!iosOrAndroid" v-t="'label.download'" :variant="theme" :disabled="!viewList || viewList.length == 0" class="mx-1" @click="exportCsv" />
             </b-form-row>
           </b-form-group>
         </b-form>
@@ -344,14 +344,16 @@ export default {
     async fetchData(payload) {
     },
     async exportCsv() {
-      await this.display()
-      if (this.viewList.length > 0) {
-        HtmlUtil.fileDL(
-          'usage-situation.csv',
-          Util.converToCsv(this.viewList),
-          getCharSet(this.$store.state.loginId)
-        )
+      if (this.viewList == null || this.viewList.length == 0) {
+        this.message = this.$i18n.tnl('message.notFound')
+        this.replace({showAlert: true})
+        return
       }
+      HtmlUtil.fileDL(
+        'usage-situation.csv',
+        Util.converToCsv(this.viewList),
+        getCharSet(this.$store.state.loginId)
+      )
     },
   }
 }
