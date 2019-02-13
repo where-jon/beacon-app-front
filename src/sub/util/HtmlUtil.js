@@ -134,3 +134,8 @@ export const toDataURL = (url, callback) => {
 export const getMessageData = async (lang) => {
   return await HttpHelper.getFronServerFile('/' + lang + '.json')
 }
+
+export const endsWithSlashUrl = (vueComponent) => {
+  const nodeKey = vueComponent.$vnode && vueComponent.$vnode.data? vueComponent.$vnode.data.key: ''
+  return nodeKey.endsWith('/')
+}

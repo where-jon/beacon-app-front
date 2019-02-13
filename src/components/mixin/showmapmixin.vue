@@ -157,6 +157,9 @@ export default {
       }
     },
     showMapImageDef(callback, disableErrorPopup) {
+      if(HtmlUtil.endsWithSlashUrl(this)){
+        return
+      }
       if(!this.loadComplete){
         setTimeout(() => {
           this.showMapImage(disableErrorPopup)
