@@ -275,12 +275,15 @@ export const load = async (target, force) => {
   } 
   let {path, sort, beforeCommit} = appStateConf[target]
   let arr = store.state.app_service[target]
-  if (!arr || arr.length == 0 || force) {
+  const expiredKey = `${target}Expired`
+  if (!arr || arr.length == 0 || force || Util.isExpired(store.state.app_service[expiredKey])) {
     arr = await AppServiceHelper.fetchList(path, sort)
     if (beforeCommit) {
       arr = beforeCommit(arr)
     }
     store.commit('app_service/replaceAS', {[target]:arr})
+    const expiredTime = (new Date()).getTime() + APP.STATE_EXPIRE_TIME
+    store.commit('app_service/replaceAS', {[expiredKey]: expiredTime})
   }
 }
 
