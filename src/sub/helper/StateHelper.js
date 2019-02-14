@@ -126,6 +126,8 @@ const appStateConf = {
     sort: APP.TX_WITH_TXID? 'txId': APP.TX_BTX_MINOR != 'minor'? 'btxId': 'minor',
     beforeCommit: (arr) => {
       return arr.map((tx) => {
+        const location = tx.location
+        const area = location? location.area: null
         return {
           ...tx,
           displayName: Util.getValue(tx, 'potTxList.0.pot.displayName', null),
@@ -138,7 +140,10 @@ const appStateConf = {
           sensor: i18n.tnl('label.' + Util.getValue(tx, 'txSensorList.0.sensor.sensorName', 'normal')),
           dispPos: tx.disp & 1,
           dispPir: tx.disp & 2,
-          dispAlways: tx.disp & 4
+          dispAlways: tx.disp & 4,
+          locationName: location? location.locationName: null,
+          posId: location? location.posId: null,
+          areaName: area? area.areaName: null,
         }
       })
     }

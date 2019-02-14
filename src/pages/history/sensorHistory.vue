@@ -126,7 +126,7 @@ export default {
       return StateHelper.getOptionsFromState('sensor', 
         sensor => this.$i18n.tnl('label.' + sensor.sensorName),
         true,
-        sensor => sensor.sensorId != SENSOR.LED
+        sensor => sensor.sensorId != SENSOR.LED && sensor.sensorId != SENSOR.BUTTON
       )
     },
   },
@@ -149,7 +149,7 @@ export default {
     getFields1(){
       return addLabelByKey(this.$i18n, [
         {key: 'sensorDt', sortable: true, label:'dt'},
-        {key: 'exbId', sortable: true },
+        {key: 'txName', sortable: true },
         APP.EXB_WITH_DEVICE_NUM? {key: 'deviceNum', sortable: true }: null,
         APP.EXB_WITH_DEVICE_ID? {key: 'deviceId', sortable: true }: null,
         APP.EXB_WITH_DEVICE_IDX? {key: 'deviceIdX', sortable: true }: null,
@@ -163,7 +163,6 @@ export default {
     getFields2(){
       return addLabelByKey(this.$i18n, [
         {key: 'sensorDt', sortable: true, label:'dt'},
-        {key: 'exbId', sortable: true },
         APP.EXB_WITH_DEVICE_NUM? {key: 'deviceNum', sortable: true }: null,
         APP.EXB_WITH_DEVICE_ID? {key: 'deviceId', sortable: true }: null,
         APP.EXB_WITH_DEVICE_IDX? {key: 'deviceIdX', sortable: true }: null,
@@ -209,6 +208,9 @@ export default {
         senHist.txName = aTx.txName
         senHist.major = aTx.major
         senHist.minor = aTx.minor
+        senHist.locationName = aTx.locationName
+        senHist.posId = aTx.posId
+        senHist.areaName = aTx.areaName
       }
 
       let aExb = _.find(this.exbs, (exb) => { return exb.exbId == senHist.exbId })
@@ -236,7 +238,7 @@ export default {
         senHist.down = senHist.value.down
       }
       if (senHist.sensorId == SENSOR.MAGNET) {
-        let labelKey = (senHist.value.magnet === SENSOR.MAGNET_STATUS.ON)? 'notUse': 'using'
+        let labelKey = (senHist.value.magnet === SENSOR.MAGNET_STATUS.ON)? 'using': 'notUse'
         senHist.state = this.$i18n.tnl('label.' + labelKey)
       }
     },
