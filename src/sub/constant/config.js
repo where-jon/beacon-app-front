@@ -70,7 +70,7 @@ export const APP = { // 機能面に関する設定
   // 将来実装予定項目 END
 
   // TX関連設定
-  TX_SENSOR: [5,6,7], // TXのタイプに設定可能なセンサーID
+  TX_SENSOR: [1,5,6,7], // TXのタイプに設定可能なセンサーID
   TX_WITH_TXID: false, // 画面上TXIDを使用するか否か
   TX_WITH_CATEGORY: true, // TX管理で個体.カテゴリを表示
   TX_WITH_GROUP: false, // TX管理で個体.グループを表示
