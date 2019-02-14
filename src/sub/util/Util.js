@@ -72,6 +72,8 @@ export const formatDate = (timestamp, format = 'YYYY/MM/DD HH:mm:ss') => moment(
 
 export const sanitize = (str) => str && str.replace? str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#x27;'): str
 
+export const isExpired = (time) => time != null? time < (new Date()).getTime(): false
+
 export const cutOnLong = (val, max) => {
   if (!val || !max) {
     return val
