@@ -26,12 +26,11 @@ class Zone {
       borderDash: [3, 3],
       rotateEnabled: false,
     })
+    this.tr.on('mouseup', (e) => { e.evt.stopImmediatePropagation() })
     this.tr.on('mousedown', (e) => {e.evt.stopImmediatePropagation()})
-    this.tr.on('mousemove', (e) => {e.evt.stopImmediatePropagation()})
+    this.tr.on('mousemove', (e) => { e.evt.stopImmediatePropagation() })
     this.drawingRect.bind(this)
     this.setListener.bind(this)
-    this.attachTransformer.bind(this)
-    this.detachTransformer.bind(this)
     this.active.bind(this)
     this.inactive.bind(this)
     this._isActive = false
@@ -57,36 +56,32 @@ class Zone {
 
   setListener(listener) {
     this.rectLayer.add(this.tr)
-    this.attachTransformer()
-    this.rectLayer.draw()
     this.konvaRect.setListening(true)
-    this.konvaRect.on('mousedown', listener)
+    this.konvaRect.on('mousedown', (e) => {
+      listener(e)
+      this.active()
+    })
+    this.konvaRect.on('mouseup', (e) => { e.evt.stopImmediatePropagation() })
     this.konvaRect.on('mouseenter', () => { this.stage.container().style.cursor = 'move' })
     this.konvaRect.on('mouseleave', () => { this.stage.container().style.cursor = 'default' })
-    this._isActive = true
+    this.konvaRect.on('transformend', (e) => { e.evt.stopImmediatePropagation() })
+    this.active()
   }
 
   active() {
     this._isActive = true
+    this.tr.attachTo(this.konvaRect)
+    this.rectLayer.draw()
   }
 
   inactive() {
     this._isActive = false
+    this.tr.detach()
+    this.rectLayer.draw()
   }
 
   get isActive() {
     return this._isActive
-  }
-
-  attachTransformer() {
-    if (!this._isActive) {
-      this.tr.attachTo(this.konvaRect)
-      this._isActive = true
-    }
-  }
-
-  detachTransformer() {
-    this.tr.detach()
   }
 }
 
@@ -193,11 +188,13 @@ export default {
 
     drawArea.addEventListener('mouseup', (e) => {
       that.dragging = false 
-      zone.setListener((e) => {
-        e.evt.stopImmediatePropagation()
+      zone.setListener((rectEvent) => {
+        rectEvent.evt.stopImmediatePropagation()
         that.dragging = false
-        setInActive()
-        zone.active()
+        const active = that.zones.find((r) => { return r.isActive })
+        if (active) {
+          active.inactive()
+        }
       })
       setInActive()
       zone.active()
