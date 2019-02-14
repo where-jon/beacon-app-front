@@ -11,11 +11,17 @@ import Konva from 'konva'
 
 class Zone {
   constructor(prop) {
+    this.MIN_WIDTH = 50
+    this.MIN_HEIGHT = 50
+    this.name = prop.name
     this.startX = prop.startX
     this.startY = prop.startY
     this.stage = prop.stage
     this.rectLayer = new Konva.Layer()
     this.stage.add(this.rectLayer)
+    const size = this.stage.size()
+    this.parentWidth = size.width
+    this.parentHeight = size.height
     this.konvaRect = null
     const anchorColor = '#b4b4b4'
     this.tr = new Konva.Transformer({
@@ -25,14 +31,27 @@ class Zone {
       borderStroke: anchorColor,
       borderDash: [3, 3],
       rotateEnabled: false,
+      boundBoxFunc: (oldBoundBox, newBoundBox) => {
+        // 左方向に伸長した場合
+        newBoundBox.x = Math.max(0, newBoundBox.x)
+        if (newBoundBox.x === 0) {
+          newBoundBox.width = oldBoundBox.width
+        }
+        // 上方向に伸長した場合
+        newBoundBox.y = Math.max(0, newBoundBox.y)
+        if (newBoundBox.y === 0) {
+          newBoundBox.height = oldBoundBox.height
+        }
+        // 右方向に伸長した場合
+        newBoundBox.width = Math.min(this.parentWidth - newBoundBox.x, newBoundBox.width)
+        // 下方向に伸長した場合
+        newBoundBox.height = Math.min(this.parentHeight - newBoundBox.y, newBoundBox.height)
+        return newBoundBox
+      }
     })
     this.tr.on('mouseup', (e) => { e.evt.stopImmediatePropagation() })
     this.tr.on('mousedown', (e) => {e.evt.stopImmediatePropagation()})
     this.tr.on('mousemove', (e) => { e.evt.stopImmediatePropagation() })
-    this.drawingRect.bind(this)
-    this.setListener.bind(this)
-    this.active.bind(this)
-    this.inactive.bind(this)
     this._isActive = false
   }
 
@@ -49,12 +68,22 @@ class Zone {
       fill: 'rgba(0, 0, 209, 0.5)',
       stroke : 'rgba(32, 16, 64)',
       draggable: true,
+      dragBoundFunc: (pos) => {
+        const rect = this.konvaRect
+        return {
+          x: Math.max(0, Math.min(this.parentWidth - rect.scaleX() * rect.width() , pos.x)),
+          y: Math.max(0, Math.min(this.parentHeight - rect.scaleY() * rect.height(), pos.y))
+        }
+      }
     })
     this.rectLayer.add(this.konvaRect)
     this.rectLayer.draw()
   }
 
   setListener(listener) {
+    if (!this.konvaRect) {
+      return
+    }
     this.rectLayer.add(this.tr)
     this.konvaRect.setListening(true)
     this.konvaRect.on('mousedown', (e) => {
@@ -69,6 +98,9 @@ class Zone {
   }
 
   active() {
+    if (!this.konvaRect) {
+      return
+    }
     this._isActive = true
     this.tr.attachTo(this.konvaRect)
     this.rectLayer.draw()
@@ -80,8 +112,87 @@ class Zone {
     this.rectLayer.draw()
   }
 
+  remove() {
+    this._isActive = false
+    this.stage.container().style.cursor = 'default'
+    if (this.konvaRect) {
+      this.konvaRect.off('mousedown')
+      this.konvaRect.off('mouseup')
+      this.konvaRect.off('mouseenter')
+      this.konvaRect.off('mouseleave')
+      this.konvaRect.off('transformend')
+    }
+    this.tr.off('mouseup')
+    this.tr.off('mousedown')
+    this.tr.off('mousemove')
+    this.rectLayer.destroy()
+    this.stage.draw()
+    this.name = null
+    this.startX = null
+    this.startY = null
+    this.stage = null
+    this.rectLayer = null
+    this.parentWidth = null
+    this.parentHeight = null
+  }
+
   get isActive() {
     return this._isActive
+  }
+
+  get x() {
+    return this.konvaRect ? this.konvaRect.x() : -1
+  }
+
+  get y() {
+    return this.konvaRect ? this.konvaRect.y() : -1
+  }
+
+  get width() {
+    return this.konvaRect ? this.konvaRect.scaleX() * this.konvaRect.width() : 0
+  }
+
+  get height() {
+    return this.konvaRect ? this.konvaRect.scaleY() * this.konvaRect.height() : 0
+  }
+}
+
+class Zones {
+  constructor() {
+    this.zones = []
+  }
+
+  add(zone) {
+    this.setInActive()
+    zone.active()
+    this.zones.push(zone)
+  }
+
+  setInActive() {
+    const active = this.activeZone
+    if (active) {
+      active.inactive()
+    }
+  }
+
+  setAllInActive() {
+    this.zones.forEach((e) => e.inactive())
+  }
+
+  deleteSelectedZone() {
+    const target = this.zones.find((e) => e.isActive)
+    if (target) {
+      target.remove()
+    }
+    this.zones = this.zones.filter((e) => e.name !== null)
+  }
+
+  get activeZone() {
+    return this.zones.find((e) => e.isActive)
+  }
+
+  get list() {
+    return this.zones
   }
 }
 
@@ -123,6 +234,7 @@ export default {
       deleted: [],
       dragging: false,
       zones: [],
+      MINIMUM_SIZE: 50,
     }
   },
   computed: {
@@ -142,17 +254,6 @@ export default {
       }
       this.$emit('regist', this.canvas.getObjects(), this.deleted)
     },
-    // isSetNameCategory: function(newVal, oldVal) {
-    //   if (!newVal) {
-    //     return
-    //   }
-    //   const group = this.canvas.getActiveObject()
-    //   group.name = this.name
-    //   group.categoryId = this.categoryId
-    //   const text = group.getObjects('text')[0]
-    //   text.setText(this.name)
-    //   this.canvas.renderAll()
-    // }
   },
   mounted () {
     this.stage = new Konva.Stage({
@@ -160,14 +261,17 @@ export default {
       width: 0,
       height: 0
     })
-
     const drawArea = document.getElementById('stage')
+    const zones = new Zones()
     const that = this
     let zone = null
+    let cnt = 0
 
     drawArea.addEventListener('mousedown', (e) => {
       that.dragging = true
+      that.zones.forEach((e) => {e.inactive()})
       zone = new Zone({
+        name: `Zone${++cnt}`,
         startX: e.offsetX,
         startY: e.offsetY,
         stage: that.stage,
@@ -179,26 +283,23 @@ export default {
       zone.drawingRect(e.offsetX, e.offsetY)
     })
 
-    const setInActive = () => {
-      const active = that.zones.find((e) => { return e.isActive })
-      if (active) {
-        active.inactive()
-      }
-    }
-
     drawArea.addEventListener('mouseup', (e) => {
       that.dragging = false 
       zone.setListener((rectEvent) => {
         rectEvent.evt.stopImmediatePropagation()
         that.dragging = false
-        const active = that.zones.find((r) => { return r.isActive })
-        if (active) {
-          active.inactive()
-        }
+        zones.setInActive()
       })
-      setInActive()
-      zone.active()
-      that.zones.push(zone)
+      if (zone.width < this.MINIMUM_SIZE || zone.height < this.MINIMUM_SIZE) {
+        zone.remove()
+        return
+      }
+      zones.add(zone)
+    })
+
+    window.addEventListener('keydown', (e) => {
+      console.log(e)
+      zones.deleteSelectedZone()
     })
     this.setupCanvas(this.base64)
   },
@@ -225,21 +326,6 @@ export default {
       }
       img.src = base64
     },
-    // setCanvasMovingListener(){
-    //   const that = this
-    //   // Canvas内でのみドラッグ可とする
-    //   this.canvas.on('object:moving', function(e){
-    //     const obj = e.target
-    //     const topLeft = that.getTopLeft({
-    //       x: obj.left,
-    //       y: obj.top,
-    //       width: obj.width,
-    //       height: obj.height
-    //     })
-    //     obj.top = topLeft.top
-    //     obj.left = topLeft.left
-    //   })
-    // },
   }
 }
 </script>
