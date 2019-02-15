@@ -3,14 +3,14 @@
 </template>
 
 <script>
-// import { DISP } from '../../sub/constant/config'
-// import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
-// import showmapmixin from '../../components/mixin/showmapmixin.vue'
+import {ZONE} from '../../sub/constant/Constants'
 import Konva from 'konva'
 
 class Zone {
   constructor(prop) {
-    this.id = prop.id ? prop.id : -1 * (new Date().getTime())
+    this._areaId = prop.areaId
+    // this.id = prop.id ? prop.id : -1 * (new Date().getTime())
+    this.id = prop.id ? prop.id : -1
     this.MIN_WIDTH = 50
     this.MIN_HEIGHT = 50
     this.categoryId = prop.categoryId ? prop.categoryId : -1
@@ -87,7 +87,7 @@ class Zone {
       fontSize: 18,
       fontFamily: 'Calibri',
       fill: 'white',
-      width: this.width,
+      width: this.w,
       align: 'center'
     })
     this.group.add(rect)
@@ -163,6 +163,22 @@ class Zone {
     return this._isActive
   }
 
+  get areaId() {
+    return this._areaId
+  }
+
+  get zoneType() {
+    return ZONE.getTypes()[0].value
+  }
+
+  get zoneName() {
+    return this.name
+  }
+
+  get zoneId() {
+    return this.id
+  }
+
   get x() {
     return this.group ? this.group.x() : -1
   }
@@ -171,11 +187,11 @@ class Zone {
     return this.group ? this.group.y() : -1
   }
 
-  get width() {
+  get w() {
     return this.group ? this.group.scaleX() * this.group.width() : 0
   }
 
-  get height() {
+  get h() {
     return this.group ? this.group.scaleY() * this.group.height() : 0
   }
 }
@@ -217,13 +233,29 @@ class Zones {
   }
 
   get list() {
-    return this.zones
+    return this.zones.map((zone, index, array) => {
+      return {
+        zoneId: -1 * (index + 1),
+        zoneName: zone.zoneName,
+        zoneType: zone.zoneType,
+        areaId: zone.areaId,
+        x: zone.x,
+        y: zone.y,
+        w: zone.w,
+        h: zone.h,
+        zoneCategoryList: [{
+          zoneCategoryPK: {
+            zoneId: zone.zoneId,
+            categoryId: zone.categoryId
+          }
+        }],
+      }
+    })
   }
 }
 
 export default {
   plugins: [Konva],
-  // mixins: [showmapmixin],
   props: {
     areaId: {
       default: -1,
@@ -232,6 +264,10 @@ export default {
     nameAndCategory: {
       default: () => {return {name: '', categoryId: -1}},
       type: Object
+    },
+    isRegist: {
+      default: false,
+      type: Boolean
     },
     auth: {
       default: () => {return {regist: true, update: true, delete: true}},
@@ -270,7 +306,12 @@ export default {
         }
       },
       deep: true
-    }
+    },
+    isRegist: function(newVal, oldVal) {
+      if (newVal) {
+        this.$emit('regist', this.zones.list)
+      }
+    },
   },
   mounted () {
     const drawArea = document.getElementById('stage')
@@ -298,6 +339,7 @@ export default {
       this.zones.setAllInActive()
       this.$emit('unselected')
       zone = new Zone({
+        areaId: this.areaId,
         name: `Zone${++this.cnt}`,
         categoryId: this.nameAndCategory.categoryId,
         startX: e.offsetX,
@@ -318,7 +360,7 @@ export default {
         emitZone(fixedZone)
         this.zones.setInActive()
       })
-      if (zone.width < this.MINIMUM_SIZE || zone.height < this.MINIMUM_SIZE) {
+      if (zone.w < this.MINIMUM_SIZE || zone.h < this.MINIMUM_SIZE) {
         zone.remove()
         --this.cnt
         return

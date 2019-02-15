@@ -38,11 +38,10 @@
           </b-form-row>
         </b-form-group>
       </b-form>
-      <AreaCanvas :area-id="areaId" :nameAndCategory="nameAndCategory" :auth="{regist: isRegistable, update: isUpdatable, delete: isDeleteable}"
+      <AreaCanvas :area-id="areaId" :name-and-category="nameAndCategory" :is-regist="isRegist" :auth="{regist: isRegistable, update: isUpdatable, delete: isDeleteable}"
                   @regist="doRegist"
                   @selected="onSelected"
                   @unselected="unSelected"
-                  @created="onCreated"
                   @deleted="onDeleted"
       />
     </div>
@@ -60,7 +59,7 @@ import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
-import { CATEGORY, ZONE } from '../../../sub/constant/Constants'
+import { CATEGORY } from '../../../sub/constant/Constants'
 import showmapmixin from '../../../components/mixin/showmapmixin.vue'
 
 export default {
@@ -83,9 +82,8 @@ export default {
       categoryId: null,
       isEnableNameText: false,
       zoneName: null,
-      zones: [],
+      deletedIds: [],
       isRegist: false,
-      isSetNameCategory: false,
       nameAndCategory: {
         name: '',
         categoryId: -1,
@@ -147,25 +145,20 @@ export default {
       this.categoryId = this.categoryNames[0].value
       this.nameAndCategory.categoryId = this.categoryId
     },
-    onCreated(zoneData) {
-      this.onSelected(zoneData)
-    },
     onSelected (zoneData) {
       this.id = zoneData.id
       this.zoneName = zoneData.name
       this.categoryId = zoneData.categoryId
       this.isEnableNameText = true
-      this.isSetNameCategory = true
     },
     unSelected() {
       this.isEnableNameText = false
       this.zoneName = ''
-      this.isSetNameCategory = false
     },
     onDeleted (id) {
-      this.zones = this.zones.filter((e) => {
-        return e.id !== id
-      })
+      if (id > -1) {
+        this.deletedIds.push(id)
+      }
       this.unSelected()
     },
     regist () {
@@ -175,41 +168,16 @@ export default {
       this.nameAndCategory.name = this.zoneName
       this.nameAndCategory.categoryId = this.categoryId
     },
-    async doRegist (zones, deleted) {
+    async doRegist (zones) {
       const path = this.appServicePath
       this.replace({showInfo: false})
       this.message = ''
-      deleted.forEach((e) => {
-        AppServiceHelper.deleteEntity(path, e)
-      })
-      const areaId = this.areaId
-      const entities = zones.map((e) => {
-        return {
-          zoneId: e.id,
-          zoneName: e.name,
-          zoneType: ZONE.getTypes()[0].value,
-          areaId: areaId,
-          x: Math.floor(e.aCoords.tl.x),
-          y: Math.floor(e.aCoords.tl.y),
-          w: Math.floor(e.aCoords.br.x - e.aCoords.tl.x),
-          h: Math.floor(e.aCoords.br.y - e.aCoords.tl.y),
-          zoneCategoryList: [{
-            zoneCategoryPK: {
-              zoneId: e.id,
-              categoryId: e.categoryId
-            }
-          }]
-        }
-      })
-      const saveId = await AppServiceHelper.bulkSave(this.appServicePath, entities, 0)
+      const saveId = await AppServiceHelper.bulkSave(path, zones, 0)
       this.isRegist = false
-      this.isSetNameCategory = false
       this.message = this.$i18n.t('message.updateCompleted', { target: this.$i18n.t('label.zone') })
       this.replace({showInfo: true})
       return saveId
     },
-    onChangeCategory() {
-    }
   }
 }
 </script>
