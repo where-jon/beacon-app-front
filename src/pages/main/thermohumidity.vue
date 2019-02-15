@@ -58,8 +58,10 @@ export default {
       isShownChart: false,
       chartTitle: '',
       keepExbPosition: false,
+      keepTxPosition: false,
       toggleCallBack: () => {
         this.keepExbPosition = true
+        this.keepTxPosition = true
       },
       noImageErrorKey: 'noMapImage',
     }
@@ -82,8 +84,14 @@ export default {
 
         this.getPositionedExb(
           (exb) => this.getSensorId(exb) == SENSOR.TEMPERATURE,
-          (exb) => {return {id: SENSOR.TEMPERATURE, ...sensors.find((val) => val.deviceid == exb.deviceId && (val.timestamp || val.updatetime))}},
+          (exb) => {return {id: SENSOR.TEMPERATURE, ...sensors.find((sensor) => sensor.deviceid == exb.deviceId && (sensor.timestamp || sensor.updatetime))}},
           (exb) => exb.temperature != null
+        )
+
+        this.getPositionedTx(
+          (tx) => tx.sensorId == SENSOR.TEMPERATURE,
+          (tx) => {return {id: SENSOR.TEMPERATURE, ...sensors.find((sensor) => sensor.btx_id == tx.btxId && (sensor.timestamp || sensor.updatetime))}},
+          (tx) => tx.temperature != null
         )
 
         if (payload && payload.done) {
@@ -99,6 +107,7 @@ export default {
     showMapImage() {
       this.showMapImageDef(() => {
         this.resetExb()
+        this.resetTx()
       })
     },
     createIcon(stage, exb){
@@ -159,12 +168,43 @@ export default {
 
       exbBtn.on('click', async (evt) =>{
         const pMock = DEV.USE_MOCK_EXC? mock['basic_sensorHistory_1_1_today_hour']: null
-        const sensorData = await AppServiceHelper.fetchList('/basic/sensorHistory/1/' + exb.exbId + '/today/hour', null, pMock)
+        const sensorData = await AppServiceHelper.fetchList('/basic/sensorHistory/1/1/' + exb.exbId + '/today/hour', null, pMock)
         this.showChart(sensorData)
       })
 
       this.exbCon.addChild(exbBtn)
       stage.addChild(this.exbCon)
+      stage.update()
+    },
+    showTx(tx) {
+      const stage = this.stage
+      if (!this.txCon) {
+        this.txCon = new Container()
+      }
+      const txBtn = new Container()
+
+      if (DISP.THERMOH_DISP == 'icon') {
+        txBtn.addChild(this.createIcon(stage, tx))
+      }
+      else {
+        txBtn.addChild(this.createButtonIcon(tx))
+        txBtn.addChild(this.createButtonLabel(tx))
+      }
+
+      txBtn.txId = tx.txId
+      txBtn.x = tx.x
+      txBtn.y = tx.y
+      txBtn.cursor = 'pointer'
+      stage.enableMouseOver()
+
+      txBtn.on('click', async (evt) =>{
+        const pMock = DEV.USE_MOCK_EXC? mock['basic_sensorHistory_1_1_today_hour']: null
+        const sensorData = await AppServiceHelper.fetchList('/basic/sensorHistory/1/0/' + tx.txId + '/today/hour', null, pMock)
+        this.showChart(sensorData)
+      })
+
+      this.txCon.addChild(txBtn)
+      stage.addChild(this.txCon)
       stage.update()
     },
     showChart(sensorData) {
