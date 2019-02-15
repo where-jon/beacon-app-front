@@ -231,7 +231,7 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   },
   
   TXDETAIL_POPUP_SIZE: 211, // TX詳細表示ポップアップの高さ
-  TXSENSOR_POPUP_SIZE: 135, // TXセンサー表示ポップアップの高さ
+  TXSENSOR_POPUP_SIZE: 165, // TXセンサー表示ポップアップの高さ
   TXMEDITAG_POPUP_SIZE: 236, // TXMEDITAG表示ポップアップの高さ
 
   TXDETAIL_ITEMS: { // TX詳細表示項目
@@ -240,6 +240,7 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     name: true,
     group: true,
     category: true,
+    tel: true,
     timestamp: true,
   },
 
