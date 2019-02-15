@@ -4,31 +4,26 @@
     <div class="container">
       <alert :message="message" />
 
-      <b-form-group>
-        <b-form-row>
-          <b-form-row>
-            <label v-t="'label.areaName'" class="control-label mr-2" />
-            <b-form-select v-model="areaId" :options="areaNames" required />
-          </b-form-row>
-        </b-form-row>
-      </b-form-group>
-
       <b-form v-if="show" inline @submit.prevent>
-        <b-form-row>
+          <!--
           <b-form-row v-if="hasId" class="mr-4 mb-2">
             <label v-t="'label.zoneId'" class="control-label mr-2" />
             <b-form-input v-model="form.zoneId" type="text" readonly="readonly" />
           </b-form-row>
+          -->
+          <b-form-row class="mr-4 mb-2">
+            <label v-t="'label.areaName'" class="control-label mr-2" />
+            <b-form-select v-model="areaId" :options="areaNames" required />
+          </b-form-row>
           <b-form-row class="mr-4 mb-2">
             <label v-t="'label.zoneName'" class="control-label mr-2" />
-            <input v-model="zoneName" :readonly="!isEditable" :disabled="!isEnableNameText" type="text" maxlength="20" class="form-control" required>
+            <input v-model="zoneName" type="text" maxlength="20" :disabled="!isEnableNameText" class="form-control" required>
           </b-form-row>
           <b-form-row class="mr-4 mb-2">
             <label v-t="'label.categoryName'" class="control-label mr-2 mb-2" />
-            <b-form-select v-model="categoryId" :options="categoryNames" :disabled="!isEnableNameText" class="mr-3 mb-2" />
-            <b-button v-t="'label.setting'" :variant="theme" :disabled="!isEnableNameText" type="button" class="mb-2" @click="onSetting" />
+            <b-form-select v-model="categoryId" :options="categoryNames" :disabled="!isEnableNameText" class="mr-3 mb-2" @change="onChangeCategory" />
+            <b-button v-t="'label.setting'" :variant="theme" type="button" class="mb-2" :disabled="!isEnableNameText" @click="onSetting" />
           </b-form-row>
-        </b-form-row>
       </b-form>
 
       <b-form v-if="show" @submit.prevent="onSubmit">
@@ -43,8 +38,7 @@
           </b-form-row>
         </b-form-group>
       </b-form>
-      <AreaCanvas :area-id="areaId" :is-regist="isRegist" :name="zoneName" :category-id="categoryId" :is-set-name-category="isSetNameCategory"
-                  :auth="{regist: isRegistable, update: isUpdatable, delete: isDeleteable}"
+      <AreaCanvas :area-id="areaId" :nameAndCategory="nameAndCategory" :auth="{regist: isRegistable, update: isUpdatable, delete: isDeleteable}"
                   @regist="doRegist"
                   @selected="onSelected"
                   @unselected="unSelected"
@@ -87,12 +81,15 @@ export default {
       areaId: null,
       categoryNames: [],
       categoryId: null,
-      canvas: null,
       isEnableNameText: false,
       zoneName: null,
       zones: [],
       isRegist: false,
       isSetNameCategory: false,
+      nameAndCategory: {
+        name: '',
+        categoryId: -1,
+      },
       items: [
         {
           text: this.$i18n.t('label.master'),
@@ -148,19 +145,21 @@ export default {
         return
       }
       this.categoryId = this.categoryNames[0].value
+      this.nameAndCategory.categoryId = this.categoryId
     },
     onCreated(zoneData) {
       this.onSelected(zoneData)
     },
     onSelected (zoneData) {
       this.id = zoneData.id
-      this.isEnableNameText = !zoneData.lock
       this.zoneName = zoneData.name
-      this.isSetNameCategory = false
+      this.categoryId = zoneData.categoryId
+      this.isEnableNameText = true
+      this.isSetNameCategory = true
     },
     unSelected() {
       this.isEnableNameText = false
-      this.form.zoneName = ''
+      this.zoneName = ''
       this.isSetNameCategory = false
     },
     onDeleted (id) {
@@ -173,7 +172,8 @@ export default {
       this.isRegist = true
     },
     onSetting () {
-      this.isSetNameCategory = true
+      this.nameAndCategory.name = this.zoneName
+      this.nameAndCategory.categoryId = this.categoryId
     },
     async doRegist (zones, deleted) {
       const path = this.appServicePath
@@ -207,6 +207,8 @@ export default {
       this.message = this.$i18n.t('message.updateCompleted', { target: this.$i18n.t('label.zone') })
       this.replace({showInfo: true})
       return saveId
+    },
+    onChangeCategory() {
     }
   }
 }
