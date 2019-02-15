@@ -42,6 +42,7 @@ export default {
       },
       oldSelectedArea: null,
       areaOptions: [],
+      loadComplete: false,
     }
   },
   computed: {
@@ -66,6 +67,8 @@ export default {
     await StateHelper.load('area')
     this.areaOptions = StateHelper.getOptionsFromState('area', false, true)
     this.selectedArea = this.getInitAreaOption()
+    await StateHelper.loadAreaImage(this.selectedArea)
+    this.loadComplete = true
     if (this.$route.path.startsWith('/main')) {
       let timer = 0
       const path = this.$route.path
@@ -104,9 +107,6 @@ export default {
       window.addEventListener('resize', onResize)
     }
   },
-  async beforeMount(){
-    await StateHelper.loadAreaImages()
-  },
   mounted() {
     this.oldSelectedArea = this.getInitAreaOption()
     Util.debug('In showmapmixin mounted.')
@@ -129,8 +129,7 @@ export default {
       'replaceMain', 
     ]),
     getInitAreaOption(){
-      const areaOptions = this.areaOptions
-      return this.selectedArea? this.selectedArea : Util.hasValue(areaOptions)? areaOptions[0].value: null
+      return this.selectedArea? this.selectedArea : Util.hasValue(this.areaOptions)? this.areaOptions[0].value: null
     },
     mapImage() {
       this.selectedArea = this.getInitAreaOption()
@@ -158,6 +157,15 @@ export default {
       }
     },
     showMapImageDef(callback, disableErrorPopup) {
+      if(HtmlUtil.endsWithSlashUrl(this)){
+        return
+      }
+      if(!this.loadComplete){
+        setTimeout(() => {
+          this.showMapImage(disableErrorPopup)
+        }, 200)
+        return
+      }
       this.showTryCount++
       console.log('showMapImageDef', this.selectedArea, this.isShownMapImage)
       if (this.isShownMapImage) {
