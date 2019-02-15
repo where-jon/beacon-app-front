@@ -230,6 +230,10 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     MIN_HEIGHT: 30,
   },
   
+  TXDETAIL_POPUP_SIZE: 211, // TX詳細表示ポップアップの高さ
+  TXSENSOR_POPUP_SIZE: 135, // TXセンサー表示ポップアップの高さ
+  TXMEDITAG_POPUP_SIZE: 236, // TXMEDITAG表示ポップアップの高さ
+
   TXDETAIL_ITEMS: { // TX詳細表示項目
     minor: true,
     major: true,
@@ -238,6 +242,8 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     category: true,
     timestamp: true,
   },
+
+  TXDETAIL_SUMBNAIL_UNREGIST_DISABLE: false, // TX詳細サムネイル非表示（未登録の場合）
 
   GATEWAY: { // ゲートウエイ
     STATE_COLOR: { // 状態別色

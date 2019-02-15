@@ -453,7 +453,7 @@ export default {
     },
     showDetail(btxId, x, y) {
       const tipOffsetY = 15
-      const popupHeight = this.getMeditagSensor(btxId)? 236: 135
+      const popupHeight = this.getMeditagSensor(btxId)? DISP.TXMEDITAG_POPUP_SIZE: DISP.TXSENSOR_POPUP_SIZE
       const tx = this.txs.find((tx) => tx.btxId == btxId)
       const display = this.getDisplay(tx)
       const map = HtmlUtil.getRect('#map')
