@@ -147,7 +147,8 @@ export default {
       if (this.isDisableThumbnail()) {
         pHeight = this.popupHeight - minusHeight
       } else {
-        if ((this.popupHeight - minusHeight) <= this.imageHeight) {
+        const detailHeight = Object.keys(this.getPopupDispItems()).length * oneSize
+        if (detailHeight <= this.imageHeight + 10) {
           pHeight = this.imageHeight + 10 // 余白分をプラス
         } else {
           // 何もしない
