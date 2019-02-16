@@ -37,8 +37,8 @@ export const APP = { // 機能面に関する設定
   },
 
   DOWN_RED_TIME: 60000, // MEDiTAG使用時：転倒時赤枠の表示時間
-  TEMPERATURE_LINE_HOUR_START: 8,  // 温湿度グラフの開始時間
-  TEMPERATURE_LINE_HOUR_END: 21,  // 温湿度グラフの終了時間
+  TEMPERATURE_LINE_HOUR_START: 0,  // 温湿度グラフの開始時間
+  TEMPERATURE_LINE_HOUR_END: 24,  // 温湿度グラフの終了時間
     
   STATE_EXPIRE_TIME: 10 * 60 * 1000, // マスタキャッシュ有効時間(ミリ秒)
 
@@ -80,6 +80,7 @@ export const APP = { // 機能面に関する設定
   TX_MAJOR_REQUIRED: false, // majorを必須にする ※サーバでも要設定
   TX_BTX_MINOR: 'both', // both:両方表示し、別々に設定、minor/btxId:片方のみ表示し、保存の際同一の値を設定
   TX_WITH_LOCATION: true, // TXを固定位置表示する（TX管理画面に影響）
+  TX_WITH_DISP_ALWAYS: false, // TX管理で常時表示を表示
 
   // EXB関連設定
   EXB_SENSOR: [1,2,3,4], // EXBのタイプに設定可能なセンサーID

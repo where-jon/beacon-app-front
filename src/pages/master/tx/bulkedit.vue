@@ -108,11 +108,13 @@ export default {
     },
     setParamOther(entity, headerName, val, dummyKey, mainCol, numberTypeList){
       if(Util.equalsAny(headerName, numberTypeList)){
-        const num = Number(val)
-        if(isNaN(num)){
-          entity[`${headerName}Name`] = val
+        if(Util.hasValue(val)){
+          const num = Number(val)
+          if(isNaN(num)){
+            entity[`${headerName}Name`] = val
+          }
+          val = num
         }
-        val = num
       }
       if (headerName == mainCol){
         if(!val) {

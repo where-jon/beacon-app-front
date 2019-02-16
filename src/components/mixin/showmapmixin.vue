@@ -21,6 +21,7 @@ export default {
     return {
       isShownMapImage: false,
       positionedExb: [],
+      positionedTx: [],
       realWidth: null,
       isFirstTime: true,
       showTryCount: 0,
@@ -292,11 +293,19 @@ export default {
       }
     },
     replaceExb(exb, nokeep) {
-      if (this.keepExbPosition || this.keepTxPosition) {
+      if (this.keepExbPosition) {
         exb.x = exb.x / this.oldMapImageScale * this.mapImageScale
         exb.y = exb.y / this.oldMapImageScale * this.mapImageScale
       } else {
         nokeep(exb)
+      }
+    },
+    replaceTx(tx, nokeep) {
+      if (this.keepTxPosition) {
+        tx.x = tx.x / this.oldMapImageScale * this.mapImageScale
+        tx.y = tx.y / this.oldMapImageScale * this.mapImageScale
+      } else {
+        nokeep(tx)
       }
     },
     toggleMapFitMobile() {
@@ -598,7 +607,37 @@ export default {
         })
         .filter((exb) => showSensorFunc? showSensorFunc(exb): true)
         .value()
-    }
+    },
+    resetTx() {
+      if (this.txCon) {
+        this.txCon.removeAllChildren()
+      }
+      this.positionedTx.forEach((tx) => {
+        this.replaceTx(tx, (tx) => {
+          tx.x *= this.mapImageScale
+          tx.y *= this.mapImageScale
+        })
+        this.showTx(tx)
+      })
+      this.keepTxPosition = false
+    },
+    getPositionedTx(sensorFilterFunc, findSensorFunc, showSensorFunc){
+      this.positionedTx = _(this.txs).filter((tx) => {
+        return tx.location && tx.location.areaId == this.selectedArea && tx.location.x && tx.location.y > 0
+      })
+        .filter((tx) => sensorFilterFunc? sensorFilterFunc(tx): true)
+        .map((tx) => {
+          const sensor = findSensorFunc? findSensorFunc(tx): null
+          return {
+            txId: tx.txId, x: tx.location.x, y: tx.location.y,
+            humidity: sensor? sensor.humidity: null,
+            temperature: sensor? sensor.temperature: null,
+            sensorId: sensor? sensor.id: null
+          }
+        })
+        .filter((tx) => showSensorFunc? showSensorFunc(tx): true)
+        .value()
+    },
   }
 }
 </script>

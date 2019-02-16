@@ -13,7 +13,7 @@
             </b-form-group>
             <b-form-group v-if="showMinorHead" v-show="showTx('minor')">
               <label v-t="'label.minor'" />
-              <input v-model="form.minor" :readonly="!isEditable" :required="showTx('minor')" type="number" min="0" max="65535" class="form-control">
+              <input v-model="form.minor" :readonly="!isEditable" :required="requiredMinor" type="number" min="0" max="65535" class="form-control">
             </b-form-group>
             <b-form-group>
               <label v-t="'label.type'" />
@@ -37,7 +37,7 @@
             </b-form-group>
             <b-form-group v-if="showMinorMid" v-show="showTx('minor')">
               <label v-t="'label.minor'" />
-              <input v-model="form.minor" :readonly="!isEditable" :required="showTx('minor')" type="number" min="0" max="65535" class="form-control">
+              <input v-model="form.minor" :readonly="!isEditable" :required="requiredMinor" type="number" min="0" max="65535" class="form-control">
             </b-form-group>
             <b-form-group>
               <label v-t="'label.txName'" />
@@ -61,7 +61,7 @@
                 <span v-text="$i18n.tnl('label.dispPir')" />
               </b-form-checkbox>
             </b-form-group>
-            <b-form-group v-if="false">
+            <b-form-group v-if="isShown('TX_WITH_DISP_ALWAYS')">
               <b-form-checkbox id="dispAlways" v-model="form.dispAlways" :value="4" :unchecked-value="0">
                 <span v-text="$i18n.tnl('label.dispAlways')" />
               </b-form-checkbox>
@@ -98,7 +98,7 @@ import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import { APP } from '../../../sub/constant/config.js'
-import { CATEGORY } from '../../../sub/constant/Constants'
+import { CATEGORY, SENSOR } from '../../../sub/constant/Constants'
 
 export default {
   components: {
@@ -164,6 +164,9 @@ export default {
     },
     showMinorHead() {
       return !APP.TX_WITH_TXID && APP.TX_BTX_MINOR == 'minor'
+    },
+    requiredMinor() {
+      return this.showTx('minor') && this.form.sensorId != SENSOR.TEMPERATURE
     },
     ...mapState('app_service', [
       'tx',

@@ -202,6 +202,7 @@ export default {
         list = await AppServiceHelper.fetch(
           '/basic/sensorHistory/' + paramCategoryId + '/' +
             paramZoneId + '/' +
+            '1/' +
             paramExbId + '/' +
             paramDyFrom + '/' +
             paramDyTo + '/' +
