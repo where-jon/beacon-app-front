@@ -13,7 +13,7 @@
     >
       <div v-if="selectedSensor.length == 0" class="potBox" @click="$emit('resetDetail')">
         <div class="clearfix">
-          <div class="thumbnail">
+          <div v-if="enableThumbnail" class="thumbnail">
             <img v-if="selectedTx.thumbnail.length > 0" id="img" :src="selectedTx.thumbnail" :height="imageHeight" width="auto">
             <img v-else src="/default.png" width="auto" :height="imageHeight">
           </div>
@@ -32,7 +32,7 @@
       :color="selectedSensor.length == 0? selectedTx.color: blackColor"
     >
       <div v-if="selectedSensor.length == 0" :style="{backgroundColor: selectedTx.bgColor}" class="clearfix">
-        <div class="thumbnail">
+        <div v-if="enableThumbnail" class="thumbnail">
           <img v-if="selectedTx.thumbnail.length > 0" :src="selectedTx.thumbnail" width="auto" height="125">
           <img v-else src="/default.png" width="auto" height="116">
         </div>
@@ -96,11 +96,19 @@ export default {
       blackColor: FONT.COLOR.BLACK,
     }
   },
+  computed: {
+    enableThumbnail () {
+      return !this.isDisableThumbnail()
+    },
+  },
   updated() {
     this.popupHeight = this.getPopupHeight()
     this.left = this.getLeft()
   },
   methods: {
+    isDisableThumbnail() {
+      return DISP.TXDETAIL_SUMBNAIL_UNREGIST_DISABLE ? !(this.selectedTx.thumbnail.length > 0) : false
+    },
     async setImageWidth() {
       this.imageWidth = await loadImage(this.selectedTx.thumbnail, this.imageHeight)
     },
@@ -125,8 +133,28 @@ export default {
         this.selectedSensor.length == 0? (this.selectedTx.orgLeft - (this.descriptionWidth + this.imageWidth)): this.selectedTx.orgLeft + DISP.TX_R - this.meditagWidth
       return left + 'px'
     },
+    getPopupDispItems() {
+      return Object.keys(DISP.TXDETAIL_ITEMS)
+        .filter((key) => DISP.TXDETAIL_ITEMS[key])
+        .map((e) => this.selectedTx[e])
+        .filter((elem) => elem)
+    },
     getTop() {
-      const top = !this.isAbove ? (this.selectedTx.orgTop - this.popupHeight - DISP.TX_R - this.tipHeight) :
+      let pHeight = this.popupHeight
+      const minusItemCount = Object.keys(DISP.TXDETAIL_ITEMS).length - Object.keys(this.getPopupDispItems()).length
+      const oneSize = ((this.popupHeight - 10) / Object.keys(DISP.TXDETAIL_ITEMS).length) // 余白分10をマイナス
+      const minusHeight = (minusItemCount * oneSize)
+      if (this.isDisableThumbnail()) {
+        pHeight = this.popupHeight - minusHeight
+      } else {
+        const detailHeight = Object.keys(this.getPopupDispItems()).length * oneSize
+        if (detailHeight <= this.imageHeight + 10) {
+          pHeight = this.imageHeight + 10 // 余白分をプラス
+        } else {
+          // 何もしない
+        }
+      }
+      const top = !this.isAbove ? (this.selectedTx.orgTop - pHeight - DISP.TX_R - this.tipHeight) :
         this.selectedTx.orgTop + DISP.TX_R + this.tipHeight
       return top + 'px'
     },
@@ -138,7 +166,7 @@ export default {
       return !isOut ? 'balloon-u' : 'balloon-ur'
     },
     getPopupHeight() {
-      return this.selectedSensor.length == 0 ? 135 : 211
+      return this.selectedSensor.length == 0 ? DISP.TXSENSOR_POPUP_SIZE : DISP.TXDETAIL_POPUP_SIZE
     },
     drawShadow(color){
       return Util.luminance(Util.colorCd4db(color)) > 240

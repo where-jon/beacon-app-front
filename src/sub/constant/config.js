@@ -57,6 +57,9 @@ export const APP = { // 機能面に関する設定
   SHOW_MAGNET_ON_PIR: false, // 人感センサ画面でマグネットセンサを表示
   MAGNET_ON_IS_USED: true, // マグネットセンサーONのとき使用中とするか
 
+  // ヒートマップ
+  HEATMAP_USE_INDIVIDUAL: false, // 個人プルダウンの表示
+
   // 将来実装予定項目 START
   LOG_KEEP_TIME: 30,
   MONITOR_REFESH_TIME: 10 * 60 * 1000,
@@ -68,6 +71,9 @@ export const APP = { // 機能面に関する設定
   MAIL_ADDRESS: '',
   IP_ADDRESS_FILTER: '',
   // 将来実装予定項目 END
+
+  // 位置表示(一覧)
+  POS_LIST_WITH_TEL: false, // 位置表示(一覧)に電話番号を表示
 
   // TX関連設定
   TX_SENSOR: [1,5,6,7], // TXのタイプに設定可能なセンサーID
@@ -225,14 +231,21 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     MIN_HEIGHT: 30,
   },
   
+  TXDETAIL_POPUP_SIZE: 211, // TX詳細表示ポップアップの高さ
+  TXSENSOR_POPUP_SIZE: 165, // TXセンサー表示ポップアップの高さ
+  TXMEDITAG_POPUP_SIZE: 236, // TXMEDITAG表示ポップアップの高さ
+
   TXDETAIL_ITEMS: { // TX詳細表示項目
     minor: true,
     major: true,
     name: true,
     group: true,
     category: true,
+    tel: true,
     timestamp: true,
   },
+
+  TXDETAIL_SUMBNAIL_UNREGIST_DISABLE: false, // TX詳細サムネイル非表示（未登録の場合）
 
   GATEWAY: { // ゲートウエイ
     STATE_COLOR: { // 状態別色

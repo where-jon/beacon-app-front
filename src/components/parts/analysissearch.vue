@@ -19,7 +19,7 @@
           </b-form-row>
         </b-form-group>
         <b-form-group>
-          <b-form-row class="mb-3 mr-2">
+          <b-form-row v-if="enableIndividual" class="mb-3 mr-2">
             <label v-t="'label.individual'" class="mr-2" />
             <b-form-select v-model="form.potId" :options="potOptions" class="mr-2 inputSelect" />
           </b-form-row>
@@ -104,6 +104,9 @@ export default {
     ]),
     enableGroup () {
       return this.isEnabledMenu('group') && APP.POT_WITH_GROUP
+    },
+    enableIndividual () {
+      return !this.fromHeatmap || (this.fromHeatmap && APP.HEATMAP_USE_INDIVIDUAL)
     },
     requirePerson(){
       return !this.fromHeatmap

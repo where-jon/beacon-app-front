@@ -462,7 +462,7 @@ export default {
     },
     showDetail(btxId, x, y) {
       const tipOffsetY = 15
-      const popupHeight = this.getMeditagSensor(btxId)? 236: 135
+      const popupHeight = this.getMeditagSensor(btxId)? DISP.TXMEDITAG_POPUP_SIZE: DISP.TXSENSOR_POPUP_SIZE
       const tx = this.txs.find((tx) => tx.btxId == btxId)
       const display = this.getDisplay(tx)
       const map = HtmlUtil.getRect('#map')
@@ -490,6 +490,7 @@ export default {
         containerHeight: containerParent.height,
         class: balloonClass,
         name: p.potName ? p.potName : tx.txName? tx.txName: '',
+        tel: p.extValue ? p.extValue.tel ? p.extValue.tel : '': '',
         timestamp: position ? this.getFinalReceiveTime(position.timestamp) : '',
         thumbnail: p.thumbnail ? p.thumbnail : '',
         category: p.potCategoryList && p.potCategoryList.length > 0 ? p.potCategoryList[0].category.categoryName : '',
