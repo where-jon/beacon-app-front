@@ -60,7 +60,7 @@ export default {
         displayName: target.displayName,
         potGroupList: target.groupId? [{ potGroupPK: {groupId: target.groupId} }]: [],
         potCategoryList: target.categoryId? [{ potCategoryPK: {categoryId: target.categoryId} }]: [],
-        txId: target.txId,
+        potTxList: target.potTxList,
         thumbnail: target.thumbnail,
         description: target.description,
       }: null
