@@ -369,6 +369,7 @@
     "max": "最大値",
     "min": "最小値",
     "blood_pressure": "血圧",
+    "device": "デバイス",
 
     "initUser": "初期ユーザ",
     "initSysAdminColumn": "SysAdmin",
