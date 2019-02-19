@@ -13,6 +13,12 @@
     <b-form inline @submit.prevent>
       <b-form-row>
         <b-form-group>
+          <b-form-row v-if="enableCategory" class="mb-3 mr-5">
+            <label v-t="'label.category'" class="mr-2" />
+            <b-form-select v-model="form.categoryId" :options="getCategoryOptions(showCategoryTypes)" class="mr-2 inputSelect" @change="changeCategory" />
+          </b-form-row>
+        </b-form-group>
+        <b-form-group>
           <b-form-row v-if="enableGroup" class="mb-3 mr-5">
             <label v-t="'label.group'" class="mr-2" />
             <b-form-select v-model="form.groupId" :options="groupOptions" class="mr-2 inputSelect" @change="changeGroup" />
@@ -72,6 +78,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    showCategory: {
+      type: Boolean,
+      default: false,
+    },
     areaOptions: {
       type: Array,
       required: true,
@@ -81,6 +91,7 @@ export default {
     return {
       form: {
         areaId: null,
+        categoryId: null,
         groupId: null,
         potId: null,
         datetimeFrom: null,
@@ -99,9 +110,16 @@ export default {
     },
     ...mapState('app_service', [
       'areas',
+      'categories',
       'groups',
       'pots',
     ]),
+    showCategoryTypes () {
+      return CATEGORY.POT_AVAILABLE
+    },
+    enableCategory () {
+      return this.showCategory && this.isEnabledMenu('category') && APP.POT_WITH_CATEGORY
+    },
     enableGroup () {
       return this.isEnabledMenu('group') && APP.POT_WITH_GROUP
     },
@@ -119,8 +137,10 @@ export default {
   },
   async created() {
     await StateHelper.load('area')
+    await StateHelper.load('category')
     await StateHelper.load('group')
     await StateHelper.load('pot')
+    this.changeCategory()
     this.changeGroup()
     this.form.areaId = this.areas? this.areas[0].areaId: null
     this.changeArea(this.form.areaId)
@@ -134,6 +154,14 @@ export default {
     })
   },
   methods: {
+    changeCategory(newVal = this.form.categoryId) {
+      this.potOptions = StateHelper.getOptionsFromState('pot', false, false, 
+        pot => pot.potType == CATEGORY.getTypes()[0].value && (!newVal || pot.categoryId == newVal)
+      )
+      if(!this.potOptions.find((val) => val.value == this.form.potId)){
+        this.form.potId = null
+      }
+    },
     changeGroup(newVal = this.form.groupId) {
       this.potOptions = StateHelper.getOptionsFromState('pot', false, false, 
         pot => pot.potType == CATEGORY.getTypes()[0].value && (!newVal || pot.groupId == newVal)
@@ -157,8 +185,8 @@ export default {
       const errors = this.validateCheck([
         {type: 'require', names: ['area'], values: [this.form.areaId]},
         {type: 'require', 
-          names: [this.enableGroup? 'group': null, this.requirePerson? 'individual': null].filter((val) => val),
-          values: [this.enableGroup? this.form.groupId: null, this.requirePerson? this.form.potId: null].filter((val) => val)},
+          names: [this.enableCategory? 'category': null, this.enableGroup? 'group': null, this.requirePerson? 'individual': null].filter((val) => val),
+          values: [this.enableCategory? this.form.categoryId: null, this.enableGroup? this.form.groupId: null, this.requirePerson? this.form.potId: null].filter((val) => val)},
         {type: 'require', names: ['historyDateFrom'], values: [this.form.datetimeFrom]},
         {type: 'require', names: ['historyDateFrom'], values: [this.form.datetimeTo]},
         this.form.datetimeFrom && this.form.datetimeTo? {type: 'asc', names: ['historyDateFrom'], values: [this.form.datetimeFrom.getTime(), this.form.datetimeTo.getTime()], equal: false}: null,
@@ -178,6 +206,7 @@ export default {
           let reqParam = [
             this.appServicePath,
             form.areaId,
+            form.categoryId ? form.categoryId : '0',
             form.groupId ? form.groupId : '0',
             form.potId ? form.potId : '0',
             form.datetimeFrom.getTime(),
