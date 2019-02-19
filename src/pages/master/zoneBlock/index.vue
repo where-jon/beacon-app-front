@@ -172,6 +172,7 @@ export default {
       const path = this.appServicePath
       this.replace({showInfo: false})
       this.message = ''
+      await this.deletedIds.forEach((id) => AppServiceHelper.deleteEntity(path, id))
       const saveId = await AppServiceHelper.bulkSave(path, zones, 0)
       this.isRegist = false
       this.message = this.$i18n.t('message.updateCompleted', { target: this.$i18n.t('label.zone') })

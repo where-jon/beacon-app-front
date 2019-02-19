@@ -5,11 +5,11 @@
 <script>
 import {ZONE} from '../../sub/constant/Constants'
 import Konva from 'konva'
+import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 
 class Zone {
   constructor(prop) {
     this._areaId = prop.areaId
-    // this.id = prop.id ? prop.id : -1 * (new Date().getTime())
     this.id = prop.id ? prop.id : -1
     this.MIN_WIDTH = 50
     this.MIN_HEIGHT = 50
@@ -235,7 +235,7 @@ class Zones {
   get list() {
     return this.zones.map((zone, index, array) => {
       return {
-        zoneId: -1 * (index + 1),
+        zoneId: zone.id && zone.id > 0 ? zone.id : -1 * (index + 1),
         zoneName: zone.zoneName,
         zoneType: zone.zoneType,
         areaId: zone.areaId,
@@ -322,17 +322,6 @@ export default {
     })
     this.zones = new Zones()
     let zone = null
-    const emitZone = (z) => {
-      this.$emit('selected', {
-        id: z.id,
-        name: z.name,
-        top: z.y,
-        left: z.x,
-        width: z.width,
-        height: z.height,
-        categoryId: z.categoryId,
-      })
-    }
 
     drawArea.addEventListener('mousedown', (e) => {
       this.dragging = true
@@ -357,7 +346,7 @@ export default {
       this.dragging = false 
       zone.fix((fixedZone) => {
         this.dragging = false
-        emitZone(fixedZone)
+        this.emitZone(fixedZone)
         this.zones.setInActive()
       })
       if (zone.w < this.MINIMUM_SIZE || zone.h < this.MINIMUM_SIZE) {
@@ -366,7 +355,7 @@ export default {
         return
       }
       this.zones.add(zone)
-      emitZone(zone)
+      this.emitZone(zone)
     })
 
     window.addEventListener('keydown', (e) => {
@@ -377,6 +366,17 @@ export default {
     this.setupCanvas(this.base64)
   },
   methods: {
+    emitZone(zone) {
+      this.$emit('selected', {
+        id: zone.id,
+        name: zone.name,
+        top: zone.y,
+        left: zone.x,
+        width: zone.width,
+        height: zone.height,
+        categoryId: zone.categoryId,
+      })
+    },
     setupCanvas (base64) {
       const stage = this.stage
       const img = new Image()
@@ -403,8 +403,37 @@ export default {
         })
         this.layer.add(konvaImg)
         stage.add(this.layer)
+        this.addZones()
       }
       img.src = base64
+    },
+    async addZones() {
+      if (!this.areaId) {
+        return
+      }
+      const zoneRecs = await AppServiceHelper.fetchList(`/core/zone/area/${this.areaId}`, 'id')
+      this.cnt = zoneRecs.length
+      zoneRecs.forEach((zoneRec) => this.addZone(zoneRec))
+    },
+    addZone (zoneRec) {
+      const zoneCategory = zoneRec.zoneCategoryList && zoneRec.zoneCategoryList.length > 0 ? zoneRec.zoneCategoryList[0] : null
+      const categoryId = zoneCategory ? zoneCategory.zoneCategoryPK.categoryId : -1
+      const zone = new Zone({
+        id: zoneRec.zoneId,
+        areaId: this.areaId,
+        name: zoneRec.zoneName,
+        categoryId: categoryId,
+        startX: zoneRec.x,
+        startY: zoneRec.y,
+        stage: this.stage,
+      })
+      zone.drawingRect(zone.startX + zoneRec.w, zone.startY + zoneRec.h)
+      zone.fix((fixedZone) => {
+        this.dragging = false
+        this.emitZone(fixedZone)
+        this.zones.setInActive()
+      })
+      this.zones.add(zone)
     },
   }
 }
