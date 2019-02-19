@@ -192,8 +192,8 @@ export default {
       }
       return true
     },
-    afterCrud(){
-      StateHelper.setForceFetch('pot', true)
+    async afterCrud(){
+      await StateHelper.load('pot', true)
     },
     async save() {
       let txId = Util.hasValue(this.form.txId)? this.form.txId: -1
@@ -251,7 +251,7 @@ export default {
       }
       newPot.potCd = this.form.potCd || newPot.potCd
       newPot.displayName = this.form.displayName || newPot.displayName
-      newPot.description = this.form.description || newPot.description
+      newPot.description = this.form.description != null? this.form.description: newPot.description
 
       newPot.potCategoryList = this.form.categoryId? [ {potCategoryPK: {categoryId: this.form.categoryId}} ]: null
       const category = _.find(this.categories, (cat) => cat.categoryId == this.form.categoryId)
