@@ -160,6 +160,7 @@
     "button": "ボタン",
     "InUse": "使用",
     "Empty": "空",
+    "showHeatmap":"ヒートマップを表示",
 
     "zoneId": "ゾーンID",
     "zoneName": "ゾーン名",
