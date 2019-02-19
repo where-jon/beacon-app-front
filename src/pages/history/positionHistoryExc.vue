@@ -121,7 +121,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .v-select {
   min-width: 100px;
   width: 100px;
