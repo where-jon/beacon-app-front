@@ -194,6 +194,17 @@ export const SUM_TARGET = {
   }
 }
 
+export const DEVICE = {
+  EXB: 0,
+  TX: 1,
+  getOptions(){
+    return [
+      {value: 0, text: i18n.t('label.exb')},
+      {value: 1, text: i18n.t('label.tx')},
+    ]
+  }
+}
+
 export const DISCOMFORT = {
   HOT: 'hot',
   COMFORT: 'comfort',

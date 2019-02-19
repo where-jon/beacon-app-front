@@ -15,6 +15,16 @@
             </b-form-row>
           </b-form-row>
         </b-form-group>
+        <b-form-group v-if="showDevice" class="mr-5">
+          <b-form-row class="mb-3">
+            <b-form-row class="mr-1">
+              <span v-t="'label.device'" class="d-flex align-items-center" />
+            </b-form-row>
+            <b-form-row>
+              <b-form-select v-model="deviceType" :options="deviceOptions" class="ml-2 inputSelect" required />
+            </b-form-row>
+          </b-form-row>
+        </b-form-group>
         <b-form-group>
           <b-form-row v-if="showExb" class="mb-3">
             <b-form-row class="mr-1">
@@ -99,7 +109,7 @@ import { getTheme } from '../../sub/helper/ThemeHelper'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as SensorHelper from '../../sub/helper/SensorHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
-import { SENSOR, SUM_UNIT, SUM_TARGET } from '../../sub/constant/Constants'
+import { SENSOR, SUM_UNIT, SUM_TARGET, DEVICE } from '../../sub/constant/Constants'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
 import { DEV } from '../../sub/constant/config'
@@ -143,11 +153,12 @@ export default {
         meditag: [ 'dt', 'high(max)', 'high(avg)', 'high(min)', 'low(max)', 'low(avg)', 'low(min)', 'beat(max)', 'beat(avg)', 'beat(min)', 'step(max)', 'step(avg)', 'step(min)', 'down(max)', 'down(avg)', 'down(min)' ],
         magnet: [ 'dt', 'magnet(max)', 'magnet(min)' ]
       },
+      exbType: [SENSOR.PIR, SENSOR.THERMOPILE, SENSOR.LED],
+      txType: [SENSOR.MEDITAG, SENSOR.MAGNET],
       sumUnitOptions: [],
       exbOptions: [],
       txOptions: [],
-      showExb: true,
-      showTx: true,
+      deviceType: DEVICE.EXB,
       showSumTarget: true,
       hourOver: 4,
       dateOver: 3,
@@ -182,8 +193,20 @@ export default {
     sumTargetOptions() {
       return SUM_TARGET.getOptions()
     },
+    deviceOptions() {
+      return DEVICE.getOptions()
+    },
     iosOrAndroid() {
       return Util.isAndroidOrIOS()
+    },
+    showDevice(){
+      return this.form.sensorId == SENSOR.TEMPERATURE
+    },
+    showTx(){
+      return this.deviceType == DEVICE.TX
+    },
+    showExb(){
+      return this.deviceType == DEVICE.EXB
     },
   },
   async created() {
@@ -238,13 +261,15 @@ export default {
       this.txOptions = txs? txs.map((val) => ({value: val.txId, text: val.txName})): []
       this.form.txId = this.txOptions.length == 0? null: this.txOptions[0].value
     },
+    setDeviceTypeFromSensorId(sensorId){
+      this.deviceType = DEVICE.getOptions()[this.txType.includes(sensorId)? DEVICE.TX: DEVICE.EXB].value
+    },
     changeSensorId(newVal = this.form.sensorId) {
-      this.showExb = [SENSOR.TEMPERATURE, SENSOR.PIR, SENSOR.THERMOPILE, SENSOR.LED].includes(newVal)
-      this.showTx = [SENSOR.MEDITAG, SENSOR.MAGNET].includes(newVal)
       this.getExbOptions(newVal)
       this.getTxOptions(newVal)
       this.form.sensorId = newVal
       this.showSumTarget = this.isShowSumTarget()
+      this.setDeviceTypeFromSensorId(newVal)
     },
     changeDatetime(timeFrom, timeTo) {
       this.getSumUnitOptions(timeFrom, timeTo)
