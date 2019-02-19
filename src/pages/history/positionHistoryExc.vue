@@ -44,7 +44,7 @@ import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import { addLabelByKey } from '../../sub/helper/ViewHelper'
-import * as ExCloudHelper from '../../sub/helper/ExCloudHelper'
+import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as Util from '../../sub/util/Util'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import { getTheme } from '../../sub/helper/ThemeHelper'
@@ -110,11 +110,11 @@ export default {
         month = month.value
       }
       if (year && month) {
-        this.viewList = await ExCloudHelper.fetchDlList(year + '' + month)
+        this.viewList = await EXCloudHelper.fetchDlList(year + '' + month)
       }
     },
     async download(item) {
-      let url = ExCloudHelper.url(EXCLOUD.DL_URL).replace('{yyyymmdd}', item.date.split('/').join('')) + new Date().getTime()
+      let url = EXCloudHelper.url(EXCLOUD.DL_URL).replace('{yyyymmdd}', item.date.split('/').join('')) + new Date().getTime()
       HtmlUtil.executeFileDL(url)
     },
   }
