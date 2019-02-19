@@ -190,6 +190,10 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   DISCOMFORT_COMFORT: '#15db75', // 温湿度表示時の不快指数Comfort時の背景色
   DISCOMFORT_COLD: '#7da6e8', // 温湿度表示時の不快指数Cold時の背景色
 
+  TEMPERATURE_MAX: 20,  // 温湿度ヒートマップ最大値
+  TEMPERATURE_MIN: 0,   // 温湿度ヒートマップ最小値
+  TEMPERATURE_RADIUS: 150,   // 温湿度ヒートマップ直径
+
   TEMPERATURE_LINE_COLOR: '#fc5800',// 温度グラフの線色
   HUMIDITY_LINE_COLOR: '#7da6e8',// 湿度グラフの線色
   PIR_LINE_COLOR: '#fc5800',// 人感センサグラフの線色

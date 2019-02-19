@@ -2,15 +2,33 @@
   <div id="mapContainer" class="container-fluid">
     <breadcrumb :items="items" :reload="true" />
     <b-row class="mt-2">
-      <b-form inline class="mt-2" @submit.prevent>
-        <label class="ml-3 mr-2">
-          {{ $t('label.area') }}
-        </label>
-        <b-form-select v-model="selectedArea" :options="areaOptions" required class="ml-2" @change="changeArea" />
+      <b-form inline class="ml-3 mt-2" @submit.prevent>
+        <b-form-group class="mr-5">
+          <b-form-row>
+            <b-form-row>
+              <span class="mr-2 d-flex align-items-center">
+                {{ $t('label.area') }}
+              </span>
+            </b-form-row>
+            <b-form-row>
+              <b-form-select v-model="selectedArea" :options="areaOptions" required class="ml-2" @change="changeArea" />
+            </b-form-row>
+          </b-form-row>
+        </b-form-group>
+        <b-form-group>
+          <b-form-row>
+            <b-form-row>
+              <b-form-checkbox v-model="isHeatmap" :value="true" :unchecked-value="false">
+                {{ $t('label.showHeatmap') }}
+              </b-form-checkbox>
+            </b-form-row>
+          </b-form-row>
+        </b-form-group>
       </b-form>
     </b-row>
     <b-row class="mt-3">
-      <canvas id="map" ref="map" />
+      <canvas v-show="isLoading || !isHeatmap" id="map" ref="map" />
+      <div v-show="isLoading || isHeatmap" id="heatmap" ref="heatmap" class="mx-auto" />
     </b-row>
     <b-modal v-model="isShownChart" :title="chartTitle" size="lg" header-bg-variant="light" hide-footer>
       <b-container fluid style="height:350px;">
@@ -28,6 +46,7 @@
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as SensorHelper from '../../sub/helper/SensorHelper'
+import * as HeatmapHelper from '../../sub/helper/HeatmapHelper'
 import { DEV, DISP } from '../../sub/constant/config'
 import * as mock from '../../assets/mock/mock'
 import { SENSOR, DISCOMFORT } from '../../sub/constant/Constants'
@@ -64,9 +83,20 @@ export default {
         this.keepTxPosition = true
       },
       noImageErrorKey: 'noMapImage',
+      isHeatmap: false,
+      isLoading: false,
     }
   },
   computed: {
+    heatmapData() {
+      const dataList = this.positionedTx.concat(this.positionedExb)
+      return HeatmapHelper.collect(dataList,
+        {max: DISP.TEMPERATURE_MAX, min: DISP.TEMPERATURE_MIN},
+        (data) => `${data.x}-${data.y}`,
+        (result, data) => data.temperature,
+        (data) => {return {x: data.x * this.mapImageScale, y: data.y * this.mapImageScale}}
+      )
+    }
   },
   mounted() {
     this.fetchData()
@@ -78,7 +108,7 @@ export default {
     async fetchData(payload) {
       try {
         this.showProgress()
-        await this.fetchAreaExbs()
+        await this.fetchAreaExbs(true)
 
         const sensors = await EXCloudHelper.fetchSensor(SENSOR.TEMPERATURE)
 
@@ -104,10 +134,30 @@ export default {
       }
       this.hideProgress()
     },
+    createHeatmap(onLoad){
+      HeatmapHelper.create('heatmap', this.mapImage(), (evt, mapElement, map) => {
+        map.width = this.$refs.map.width
+        map.height = this.$refs.map.height
+        HeatmapHelper.draw(
+          mapElement, 
+          {
+            radius: DISP.TEMPERATURE_RADIUS * this.mapImageScale,
+            gradient: HeatmapHelper.createGradient()
+          },
+          this.heatmapData
+        )
+        onLoad && onLoad()
+      })
+    },
     showMapImage() {
+      this.isLoading = true
       this.showMapImageDef(() => {
         this.resetExb()
         this.resetTx()
+        this.isLoading = false
+      })
+      this.createHeatmap(() => {
+        this.isLoading = false
       })
     },
     createIcon(stage, exb){
