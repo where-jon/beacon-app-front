@@ -157,6 +157,8 @@ export const ZONE = {
       {value: 1, text: i18n.tnl('label.nonCoordinate')},
     ]
   },
+  MIN_WIDTH: 50,
+  MIN_HEIGHT: 50,
 }
 
 export const SENSOR = {

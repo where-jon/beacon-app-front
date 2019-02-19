@@ -2,7 +2,7 @@
   <div>
     <breadcrumb :items="items" />
     <div class="container">
-      <alert :message="message" />
+      <alert :message="message"/>
 
       <b-form v-if="show" inline @submit.prevent>
           <!--
@@ -38,11 +38,12 @@
           </b-form-row>
         </b-form-group>
       </b-form>
-      <AreaCanvas :area-id="areaId" :name-and-category="nameAndCategory" :is-regist="isRegist" :auth="{regist: isRegistable, update: isUpdatable, delete: isDeleteable}"
+      <AreaCanvas :area-id="areaId" :name-and-category="nameAndCategory" :is-regist="isRegist" :is-complete-regist="isCompleteRegist" :auth="{regist: isRegistable, update: isUpdatable, delete: isDeleteable}"
                   @regist="doRegist"
                   @selected="onSelected"
                   @unselected="unSelected"
                   @deleted="onDeleted"
+                  @validated="validated"
       />
     </div>
   </div>
@@ -84,6 +85,7 @@ export default {
       zoneName: null,
       deletedIds: [],
       isRegist: false,
+      isCompleteRegist: false,
       nameAndCategory: {
         name: '',
         categoryId: -1,
@@ -121,8 +123,6 @@ export default {
     this.initCategoryNames()
   },
   methods: {
-    reset () {
-    },
     async initAreaNames() {
       await StateHelper.load('area')
       this.areaNames = StateHelper.getOptionsFromState('area', false, true)
@@ -165,8 +165,15 @@ export default {
       this.isRegist = true
     },
     onSetting () {
+      this.message = ''
+      this.replace({showAlert: false})
       this.nameAndCategory.name = this.zoneName
       this.nameAndCategory.categoryId = this.categoryId
+    },
+    validated(message) {
+      this.message = message
+      this.replace({showAlert: true})
+      window.scrollTo(0, 0)
     },
     async doRegist (zones) {
       const path = this.appServicePath
@@ -177,6 +184,7 @@ export default {
       this.isRegist = false
       this.message = this.$i18n.t('message.updateCompleted', { target: this.$i18n.t('label.zone') })
       this.replace({showInfo: true})
+      this.isCompleteRegist = true
       return saveId
     },
   }

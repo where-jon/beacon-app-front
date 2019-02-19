@@ -11,8 +11,6 @@ class Zone {
   constructor(prop) {
     this._areaId = prop.areaId
     this.id = prop.id ? prop.id : -1
-    this.MIN_WIDTH = 50
-    this.MIN_HEIGHT = 50
     this.categoryId = prop.categoryId ? prop.categoryId : -1
     this.name = prop.name
     this.text = null
@@ -44,9 +42,9 @@ class Zone {
           newBoundBox.height = oldBoundBox.height
         }
         // 右方向に伸長した場合
-        newBoundBox.width = Math.min(this.parentWidth - newBoundBox.x, newBoundBox.width)
+        newBoundBox.width = Math.max(Math.min(this.parentWidth - newBoundBox.x, newBoundBox.width), ZONE.MIN_WIDTH)
         // 下方向に伸長した場合
-        newBoundBox.height = Math.min(this.parentHeight - newBoundBox.y, newBoundBox.height)
+        newBoundBox.height = Math.max(Math.min(this.parentHeight - newBoundBox.y, newBoundBox.height), ZONE.MIN_HEIGHT)
         return newBoundBox
       }
     })
@@ -233,6 +231,10 @@ class Zones {
   }
 
   get list() {
+    return this.zones
+  }
+
+  get entities() {
     return this.zones.map((zone, index, array) => {
       return {
         zoneId: zone.id && zone.id > 0 ? zone.id : -1 * (index + 1),
@@ -269,6 +271,10 @@ export default {
       default: false,
       type: Boolean
     },
+    isCompleteRegist: {
+      default: false,
+      type: Boolean
+    },
     auth: {
       default: () => {return {regist: true, update: true, delete: true}},
       type: Object,
@@ -301,6 +307,12 @@ export default {
       handler: function (newVal, oldVal) {
         const activeZone = this.zones.activeZone
         if (activeZone) {
+          const message = this.validateZoneName(activeZone.id, newVal.categoryId, newVal.name)
+          if (message) {
+            this.$emit('validated', message)
+            return
+          }
+          activeZone.id = newVal.id
           activeZone.rename(newVal.name)
           activeZone.categoryId = newVal.categoryId
         }
@@ -309,9 +321,16 @@ export default {
     },
     isRegist: function(newVal, oldVal) {
       if (newVal) {
-        this.$emit('regist', this.zones.list)
+        this.$emit('regist', this.zones.entities)
       }
     },
+    isCompleteRegist: function(newVal, oldVal) {
+      if (newVal) {
+        console.log('@@@@@@@@@@@@ isCompleteRegist')
+        this.setupCanvas(this.base64)
+        this.isCompleteRegist = false
+      }
+    }
   },
   mounted () {
     const drawArea = document.getElementById('stage')
@@ -362,7 +381,6 @@ export default {
       if (e.key !== 'Delete') return
       this.$emit('deleted', this.zones.deleteSelectedZone())
     })
-
     this.setupCanvas(this.base64)
   },
   methods: {
@@ -407,12 +425,18 @@ export default {
       }
       img.src = base64
     },
+    validateZoneName(id, categoryId, name) {
+      const duprecated = this.zones.list.find((zone) => {
+        return id !== zone.id && categoryId === zone.categoryId && name === zone.name
+      })
+      return duprecated ? this.$i18n.tnl('message.duplicate', {key: this.$i18n.tnl('label.zoneName'), val: name}) : null
+    },
     async addZones() {
       if (!this.areaId) {
         return
       }
       const zoneRecs = await AppServiceHelper.fetchList(`/core/zone/area/${this.areaId}`, 'id')
-      this.cnt = zoneRecs.length
+      this.cnt = Math.max(...zoneRecs.map((zoneRec) => zoneRec.zoneId)) + 1
       zoneRecs.forEach((zoneRec) => this.addZone(zoneRec))
     },
     addZone (zoneRec) {
