@@ -72,6 +72,10 @@ export const formatDate = (timestamp, format = 'YYYY/MM/DD HH:mm:ss') => moment(
 
 export const sanitize = (str) => str && str.replace? str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#x27;'): str
 
+export const zeroPad = (num, length) => ('0'.repeat(length) + num).slice(-length)
+
+export const range = (start, stop, step = 1) => Array(Math.ceil((stop + step - start) / step)).fill(start).map((start, i) => start + i * step)
+
 export const isExpired = (time) => time != null? time < (new Date()).getTime(): false
 
 export const cutOnLong = (val, max) => {

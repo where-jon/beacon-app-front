@@ -130,6 +130,7 @@
 
     "posId": "pos ID",
     "positionHistory": "Position history",
+    "positionHistoryExc": "Position history",
     "positionHistoryId": "Tx Position ID",
 
     "notifyHistory": "Notification history information",
@@ -328,6 +329,9 @@
     "numOfUsers": "Number of users (Average)",
     "zoneCategoryName": "Category",
     "sumYearMonth": "Year and month",
+    "year": "Year",
+    "month": "Month",
+    "date": "Date",
     "sumDay": "Specified date",
 
     "historyTitle": "History",
@@ -475,6 +479,7 @@
     "History": "History",
     "TemperatureHistory": "Thermohumidity(History)",
     "PositionHistory": "Position History",
+    "PositionHistoryExc": "Position History",
     "SensorHistory": "Sensor History",
     "Setting": "Setting",
     "Personal": "Personal Setting",

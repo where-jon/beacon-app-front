@@ -134,6 +134,7 @@
 
     "posId": "pos ID",
     "positionHistory": "位置情報",
+    "positionHistoryExc": "位置情報",
     "positionHistoryId": "Tx位置ID",
 
     "notifyHistory": "通知履歴情報",
@@ -345,6 +346,9 @@
     "numOfUsers": "利用人数(平均)",
     "zoneCategoryName": "ゾーンカテゴリ名",
     "sumYearMonth": "年月",
+    "year": "年",
+    "month": "月",
+    "date": "日付",
     "sumDay": "日指定",
 
     "historyTitle": "履歴",
@@ -459,6 +463,7 @@
     "History": "履歴",
     "TemperatureHistory": "温湿度(履歴)",
     "PositionHistory": "位置情報",
+    "PositionHistoryExc": "位置情報",
     "SensorHistory": "センサ情報",
     "NotifyHistory": "通知履歴情報",
     "Setting": "設定",

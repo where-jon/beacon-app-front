@@ -104,3 +104,7 @@ export const postLed = async (param) => {
   return data
 }
 
+export const fetchDlList = async (yyyymmdd) => {
+  let data = await HttpHelper.getExCloud(url(EXCLOUD.DL_LIST_URL).replace('{yyyymm}', yyyymmdd) + new Date().getTime())
+  return _(data).map((val) => ({date: val})).compact().value()
+}
