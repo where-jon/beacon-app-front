@@ -346,10 +346,10 @@ export default {
         tx.location.locationName = 'Loc' + (tx.btxId * -1)
       }
       if (reset) {
-        tx.location = {...tx.location, areaId: null, x: null, y: null}
+        tx.location = {...tx.location, areaId: null, x: null, y: null, area: null}
       }
       else {
-        tx.location = {...tx.location, areaId: this.selectedArea, x: Math.round(tx.x / this.mapImageScale), y: Math.round(tx.y / this.mapImageScale)}
+        tx.location = {...tx.location, areaId: this.selectedArea, area: null, x: Math.round(tx.x / this.mapImageScale), y: Math.round(tx.y / this.mapImageScale)}
       }
       if (tx.txSensorList) {
         tx.txSensorList.forEach((txSensor) =>{
