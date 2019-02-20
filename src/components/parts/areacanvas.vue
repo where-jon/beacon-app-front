@@ -226,6 +226,10 @@ class Zones {
     return id
   }
 
+  clear() {
+    this.zones = []
+  }
+
   get activeZone() {
     return this.zones.find((e) => e.isActive)
   }
@@ -263,11 +267,19 @@ export default {
       default: -1,
       type: Number 
     },
-    nameAndCategory: {
-      default: () => {return {name: '', categoryId: -1}},
-      type: Object
+    zoneName: {
+      default: null,
+      type: String
+    },
+    categoryId: {
+      default: -1,
+      type: Number
     },
     isRegist: {
+      default: false,
+      type: Boolean
+    },
+    isDelete: {
       default: false,
       type: Boolean
     },
@@ -298,38 +310,35 @@ export default {
   },
   watch: {
     areaId: function(newVal, oldVal) {
-      const areaImage = this.$store.state.app_service.areaImages.find((a) => { return a.areaId === newVal })
-      const base64 = areaImage ? areaImage.mapImage : ''
-      this.cnt = 0
-      this.setupCanvas(base64)
+      this.onChangeAreaId(newVal)
     },
-    nameAndCategory: {
-      handler: function (newVal, oldVal) {
-        const activeZone = this.zones.activeZone
-        if (activeZone) {
-          const message = this.validateZoneName(activeZone.id, newVal.categoryId, newVal.name)
-          if (message) {
-            this.$emit('validated', message)
-            return
-          }
-          activeZone.id = newVal.id
-          activeZone.rename(newVal.name)
-          activeZone.categoryId = newVal.categoryId
-        }
-      },
-      deep: true
+    categoryId: function(newVal, oldVal) {
+      const activeZone = this.zones.activeZone
+      if (!activeZone) return
+      activeZone.categoryId = newVal
+    },
+    zoneName: function(newVal, oldVal) {
+      const activeZone = this.zones.activeZone
+      if (!activeZone) return
+      const message = this.validateZoneName(activeZone.id, newVal)
+      if (message) {
+        this.$emit('validated', message)
+        return
+      }
+      activeZone.rename(newVal)
     },
     isRegist: function(newVal, oldVal) {
-      if (newVal) {
-        this.$emit('regist', this.zones.entities)
-      }
+      if (!newVal) return
+      this.$emit('regist', this.zones.entities)
+    },
+    isDelete: function(newVal, oldVal) {
+      if (!newVal) return
+      this.$emit('deleted', this.zones.deleteSelectedZone())
     },
     isCompleteRegist: function(newVal, oldVal) {
-      if (newVal) {
-        console.log('@@@@@@@@@@@@ isCompleteRegist')
-        this.setupCanvas(this.base64)
-        this.isCompleteRegist = false
-      }
+      if (!newVal) return
+      this.onChangeAreaId(this.areaId)
+      this.$emit('reloaded')
     }
   },
   mounted () {
@@ -349,7 +358,7 @@ export default {
       zone = new Zone({
         areaId: this.areaId,
         name: `Zone${++this.cnt}`,
-        categoryId: this.nameAndCategory.categoryId,
+        categoryId: this.categoryId,
         startX: e.offsetX,
         startY: e.offsetY,
         stage: this.stage,
@@ -378,8 +387,9 @@ export default {
     })
 
     window.addEventListener('keydown', (e) => {
-      if (e.key !== 'Delete') return
-      this.$emit('deleted', this.zones.deleteSelectedZone())
+      if (e.key === 'Delete' && this.zones.activeZone ) {
+        this.$emit('pressDelKey')
+      }
     })
     this.setupCanvas(this.base64)
   },
@@ -394,6 +404,12 @@ export default {
         height: zone.height,
         categoryId: zone.categoryId,
       })
+    },
+    onChangeAreaId(areaId) {
+      const areaImage = this.$store.state.app_service.areaImages.find((a) => { return a.areaId === areaId })
+      const base64 = areaImage ? areaImage.mapImage : ''
+      this.cnt = 0
+      this.setupCanvas(base64)
     },
     setupCanvas (base64) {
       const stage = this.stage
@@ -425,9 +441,9 @@ export default {
       }
       img.src = base64
     },
-    validateZoneName(id, categoryId, name) {
+    validateZoneName(id, name) {
       const duprecated = this.zones.list.find((zone) => {
-        return id !== zone.id && categoryId === zone.categoryId && name === zone.name
+        return id !== zone.id && name === zone.name
       })
       return duprecated ? this.$i18n.tnl('message.duplicate', {key: this.$i18n.tnl('label.zoneName'), val: name}) : null
     },
@@ -435,9 +451,11 @@ export default {
       if (!this.areaId) {
         return
       }
+      this.zones.clear()
       const zoneRecs = await AppServiceHelper.fetchList(`/core/zone/area/${this.areaId}`, 'id')
-      this.cnt = Math.max(...zoneRecs.map((zoneRec) => zoneRec.zoneId)) + 1
+      this.cnt = zoneRecs.length > 0 ? Math.max(...zoneRecs.map((zoneRec) => zoneRec.zoneId)) + 1 : 0
       zoneRecs.forEach((zoneRec) => this.addZone(zoneRec))
+      this.zones.setInActive()
     },
     addZone (zoneRec) {
       const zoneCategory = zoneRec.zoneCategoryList && zoneRec.zoneCategoryList.length > 0 ? zoneRec.zoneCategoryList[0] : null

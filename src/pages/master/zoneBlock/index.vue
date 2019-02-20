@@ -3,49 +3,30 @@
     <breadcrumb :items="items" />
     <div class="container">
       <alert :message="message"/>
-
       <b-form v-if="show" inline @submit.prevent>
-          <!--
-          <b-form-row v-if="hasId" class="mr-4 mb-2">
-            <label v-t="'label.zoneId'" class="control-label mr-2" />
-            <b-form-input v-model="form.zoneId" type="text" readonly="readonly" />
-          </b-form-row>
-          -->
-          <b-form-row class="mr-4 mb-2">
-            <label v-t="'label.areaName'" class="control-label mr-2" />
-            <b-form-select v-model="areaId" :options="areaNames" required />
-          </b-form-row>
-          <b-form-row class="mr-4 mb-2">
-            <label v-t="'label.zoneName'" class="control-label mr-2" />
-            <input v-model="zoneName" type="text" maxlength="20" :disabled="!isEnableNameText" class="form-control" required>
-          </b-form-row>
-          <b-form-row class="mr-4 mb-2">
-            <label v-t="'label.categoryName'" class="control-label mr-2 mb-2" />
-            <b-form-select v-model="categoryId" :options="categoryNames" :disabled="!isEnableNameText" class="mr-3 mb-2" @change="onChangeCategory" />
-            <b-button v-t="'label.setting'" :variant="theme" type="button" class="mb-2" :disabled="!isEnableNameText" @click="onSetting" />
-          </b-form-row>
+        <label v-t="'label.areaName'" class="control-label mr-sm-2"/>
+        <b-form-select v-model="areaId" :options="areaNames" class="mb-2 mr-sm-2 mb-sm-0" required />
+        <label v-t="'label.zoneName'" class="control-label mr-sm-2" />
+        <input v-model="zoneName" type="text" maxlength="20" :disabled="!isEnableNameText" class="form-control mb-2 mr-sm-2 mb-sm-0" required>
+        <label v-t="'label.categoryName'" class="control-label mr-sm-2" />
+        <b-form-select v-model="categoryId" :options="categoryNames" :disabled="!isEnableNameText" class="mb-2 mr-sm-2 mb-sm-0" @change="onChangeCategory" />
+        <b-button v-if="isEditable || isDeleteable" type="button" variant="outline-danger" v-t="'label.delete'" :disabled="!isEnableNameText" @click="confirmDelete($event.target)" />
+        <b-button class="button-regist" v-if="isEditable || isDeleteable" :variant="theme" type="button" @click="regist()">
+          {{ label }}
+        </b-button>
       </b-form>
-
-      <b-form v-if="show" @submit.prevent="onSubmit">
-        <b-form-group>
-          <b-form-row>
-            <b-form-row>
-              <b-button v-t="'label.back'" type="button" variant="outline-danger" @click="backToList($event, zoneClassPath)" />
-              <b-button v-if="isEditable || isDeleteable" :variant="theme" type="button" class="ml-2" @click="regist()">
-                {{ label }}
-              </b-button>
-            </b-form-row>
-          </b-form-row>
-        </b-form-group>
-      </b-form>
-      <AreaCanvas :area-id="areaId" :name-and-category="nameAndCategory" :is-regist="isRegist" :is-complete-regist="isCompleteRegist" :auth="{regist: isRegistable, update: isUpdatable, delete: isDeleteable}"
-                  @regist="doRegist"
-                  @selected="onSelected"
-                  @unselected="unSelected"
-                  @deleted="onDeleted"
-                  @validated="validated"
+      <AreaCanvas :area-id="areaId" :zone-name="zoneName" :category-id="categoryId" :is-regist="isRegist" :is-complete-regist="isCompleteRegist" :is-delete="isDelete" :auth="{regist: isRegistable, update: isUpdatable, delete: isDeleteable}"
+        @regist="doRegist"
+        @selected="onSelected"
+        @unselected="unSelected"
+        @deleted="onDeleted"
+        @pressDelKey="confirmDelete"
+        @validated="validated"
+        @reloaded="reloaded"
       />
     </div>
+    <!-- modal -->
+    <b-modal id="modalInfo" :title="`${$t('label.Zone')}${$t('label.delete')}`" @ok="isDelete = true">{{ $i18n.tnl('message.deleteConfirm', {target: zoneName}) }}</b-modal>
   </div>
 </template>
 
@@ -85,6 +66,7 @@ export default {
       zoneName: null,
       deletedIds: [],
       isRegist: false,
+      isDelete: false,
       isCompleteRegist: false,
       nameAndCategory: {
         name: '',
@@ -145,7 +127,11 @@ export default {
       this.categoryId = this.categoryNames[0].value
       this.nameAndCategory.categoryId = this.categoryId
     },
+    confirmDelete(button) {
+      this.$root.$emit('bv::show::modal', 'modalInfo', button)
+    },
     onSelected (zoneData) {
+      this.replace({showAlert: false})
       this.id = zoneData.id
       this.zoneName = zoneData.name
       this.categoryId = zoneData.categoryId
@@ -159,16 +145,11 @@ export default {
       if (id > -1) {
         this.deletedIds.push(id)
       }
+      this.isDelete = false
       this.unSelected()
     },
     regist () {
       this.isRegist = true
-    },
-    onSetting () {
-      this.message = ''
-      this.replace({showAlert: false})
-      this.nameAndCategory.name = this.zoneName
-      this.nameAndCategory.categoryId = this.categoryId
     },
     validated(message) {
       this.message = message
@@ -187,12 +168,18 @@ export default {
       this.isCompleteRegist = true
       return saveId
     },
+    reloaded() {
+      this.isCompleteRegist = false
+    },
   }
 }
 </script>
 
 <style scoped lang="scss">
-  label.control-label {
-    padding-top: 7px;
+  form.form-inline {
+    margin-bottom: 20px;
+  }
+  button.button-regist {
+    margin-left: 10px;
   }
 </style>
