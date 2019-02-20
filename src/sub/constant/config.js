@@ -153,8 +153,8 @@ export const EXCLOUD = {
   GATEWAY_URL: '/core/excloud/gateway?_=',
   TELEMETRY_URL: '/core/excloud/telemetry?_=',
   SENSOR_URL: '/core/excloud/sensor/{id}?_=',
-  DL_LIST_URL: '/core/excloud/dllist/{yyyymm}?_=',
-  DL_URL: '/core/excloud/dl/{yyyymmdd}?_=',
+  DL_LIST_URL: '/core/excloud/dllist/{type}/{yyyymm}?_=',
+  DL_URL: '/core/excloud/dl/{type}/{yyyymmdd}?_=',
   LED_URL: '/core/excloud/led?_=',
   POSITION_HISTORY_FETCH_URL: '/core/positionHistory/fetch?_=',
 }

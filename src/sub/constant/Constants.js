@@ -170,7 +170,8 @@ export const SENSOR = {
   MAGNET_STATUS: {
     OFF: 0,
     ON: 4,
-  }
+  },
+  STRING: ['','temperature','pir','thermopile','led','meditag','magnet','button']
 }
 
 export const SUM_UNIT = {
@@ -524,6 +525,11 @@ export const MENU = [
     {
       key: 'sensorHistory',
       path: 'sensorHistory',
+      icon: 'fas fa-eye'
+    },
+    {
+      key: 'sensorHistoryExc',
+      path: 'sensorHistoryExc',
       icon: 'fas fa-eye'
     },
     {

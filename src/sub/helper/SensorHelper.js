@@ -19,6 +19,10 @@ export const getDiscomfortColor = (temperature, humidity) => {
   }
 }
 
+export const availableSensorAll = () =>  _([...APP.EXB_SENSOR, ...APP.TX_SENSOR]).sort().uniqWith(_.isEqual).value()
+
+export const onlyOne = () => availableSensorAll().length == 1 && availableSensorAll()[0]
+
 export const getDiscomfort = (temperature, humidity) => {
   let di = calcDiscomfortIndex(temperature, humidity)
   if (di <= 60) {
