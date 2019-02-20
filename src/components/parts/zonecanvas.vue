@@ -371,7 +371,6 @@ export default {
     })
 
     drawArea.addEventListener('mouseup', (e) => {
-      this.dragging = false 
       zone.fix((fixedZone) => {
         this.dragging = false
         this.emitZone(fixedZone)
@@ -384,6 +383,7 @@ export default {
       }
       this.zones.add(zone)
       this.emitZone(zone)
+      this.dragging = false 
     })
 
     window.addEventListener('keydown', (e) => {

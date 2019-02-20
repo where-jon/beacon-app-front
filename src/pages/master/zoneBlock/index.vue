@@ -15,7 +15,7 @@
           {{ label }}
         </b-button>
       </b-form>
-      <AreaCanvas :area-id="areaId" :zone-name="zoneName" :category-id="categoryId" :is-regist="isRegist" :is-complete-regist="isCompleteRegist" :is-delete="isDelete" :auth="{regist: isRegistable, update: isUpdatable, delete: isDeleteable}"
+      <ZoneCanvas :area-id="areaId" :zone-name="zoneName" :category-id="categoryId" :is-regist="isRegist" :is-complete-regist="isCompleteRegist" :is-delete="isDelete" :auth="{regist: isRegistable, update: isUpdatable, delete: isDeleteable}"
         @regist="doRegist"
         @selected="onSelected"
         @unselected="unSelected"
@@ -36,7 +36,7 @@ import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
-import AreaCanvas from '../../../components/parts/areacanvas.vue'
+import ZoneCanvas from '../../../components/parts/zonecanvas.vue'
 import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
@@ -48,7 +48,7 @@ export default {
   components: {
     breadcrumb,
     alert,
-    AreaCanvas,
+    ZoneCanvas,
   },
   mixins: [editmixinVue, showmapmixin],
   data() {
