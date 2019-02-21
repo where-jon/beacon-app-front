@@ -62,14 +62,14 @@ import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import * as StateHelper from '../../sub/helper/StateHelper'
+import * as SensorHelper from '../../sub/helper/SensorHelper'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
-import { addLabelByKey } from '../../sub/helper/ViewHelper'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import { SENSOR } from '../../sub/constant/Constants'
-import { APP, APP_SERVICE } from '../../sub/constant/config.js'
+import { APP_SERVICE } from '../../sub/constant/config.js'
 import moment from 'moment'
 import _ from 'lodash'
 
@@ -100,10 +100,10 @@ export default {
       },
       viewList: [],
       fields: [],
-      fields1: this.getFields1(),
-      fields2: this.getFields2(),
-      fields5: this.getFields5(),
-      fields6: this.getFields6(),
+      fields1: SensorHelper.getFields1(),
+      fields2: SensorHelper.getFields2(),
+      fields5: SensorHelper.getFields5(),
+      fields6: SensorHelper.getFields6(),
       currentPage: 1,
       perPage: 20,
       limitViewRows: 100,
@@ -146,54 +146,6 @@ export default {
     this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.fetchRows, maxRows: this.limitViewRows})}`
   },
   methods: {
-    getFields1(){
-      return addLabelByKey(this.$i18n, [
-        {key: 'sensorDt', sortable: true, label:'dt'},
-        {key: 'txName', sortable: true },
-        APP.EXB_WITH_DEVICE_NUM? {key: 'deviceNum', sortable: true }: null,
-        APP.EXB_WITH_DEVICE_ID? {key: 'deviceId', sortable: true }: null,
-        APP.EXB_WITH_DEVICE_IDX? {key: 'deviceIdX', sortable: true }: null,
-        {key: 'locationName', label:'locationZoneName', sortable: true,},
-        {key: 'posId', label:'posId', sortable: true,},
-        {key: 'areaName', label:'area', sortable: true,},
-        {key: 'humidity', sortable: true},
-        {key: 'temperature', sortable: true},
-      ])
-    },
-    getFields2(){
-      return addLabelByKey(this.$i18n, [
-        {key: 'sensorDt', sortable: true, label:'dt'},
-        APP.EXB_WITH_DEVICE_NUM? {key: 'deviceNum', sortable: true }: null,
-        APP.EXB_WITH_DEVICE_ID? {key: 'deviceId', sortable: true }: null,
-        APP.EXB_WITH_DEVICE_IDX? {key: 'deviceIdX', sortable: true }: null,
-        {key: 'locationName', label:'locationZoneName', sortable: true,},
-        {key: 'posId', label:'posId', sortable: true,},
-        {key: 'areaName', label:'area', sortable: true,},
-        {key: 'count', label:'numUsers', sortable: true},
-      ])
-    },
-    getFields5(){
-      return addLabelByKey(this.$i18n, [
-        {key: 'sensorDt', sortable: true, label:'dt'},
-        {key: 'txName', sortable: true },
-        {key: 'major', sortable: true },
-        {key: 'minor', sortable: true },
-        {key: 'high', label:'h_blood_pressure', sortable: true},
-        {key: 'low', label:'l_blood_pressure', sortable: true},
-        {key: 'beat', label:'heart_rate', sortable: true},
-        {key: 'step', label:'step', sortable: true},
-        {key: 'down', label:'down_count', sortable: true},
-      ])
-    },
-    getFields6(){
-      return addLabelByKey(this.$i18n, [
-        {key: 'sensorDt', sortable: true, label:'dt'},
-        {key: 'txName', sortable: true },
-        {key: 'major', sortable: true },
-        {key: 'minor', sortable: true },
-        {key: 'state', sortable: true},
-      ])
-    },
     async display() {
       this.container ? this.container.removeAllChildren() : null
       await this.displayImpl()

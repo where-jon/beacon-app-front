@@ -117,6 +117,9 @@ const appStateConf = {
           sensor: i18n.tnl('label.' + Util.getValue(exb, 'exbSensorList.0.sensor.sensorName', 'normal')),
           sensorId: Util.getValue(exb, 'exbSensorList.0.sensor.sensorId', null),
           zoneName: location? Util.getValue(location, 'locationZoneList.0.zone.zoneName', null): null,
+          areaId: area? area.areaId: null,
+          zoneId: location? Util.getValue(location, 'locationZoneList.0.zone.zoneId', null): null,
+          zoneCategoryId: location? Util.getValue(location, 'locationZoneList.0.zone.zoneCategoryList.0.category.categoryId', null): null,
         }
       })
     }
@@ -144,6 +147,9 @@ const appStateConf = {
           locationName: location? location.locationName: null,
           posId: location? location.posId: null,
           areaName: area? area.areaName: null,
+          areaId: area? area.areaId: null,
+          zoneId: location? Util.getValue(location, 'locationZoneList.0.zone.zoneId', null): null,
+          zoneCategoryId: location? Util.getValue(location, 'locationZoneList.0.zone.zoneCategoryList.0.category.categoryId', null): null,
         }
       })
     }

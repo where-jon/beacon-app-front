@@ -591,9 +591,9 @@ export default {
       })
       this.keepExbPosition = false
     },
-    getPositionedExb(sensorFilterFunc, findSensorFunc, showSensorFunc){
+    getPositionedExb(sensorFilterFunc, findSensorFunc, showSensorFunc, allArea){
       this.positionedExb = _(this.exbs).filter((exb) => {
-        return exb.location && exb.location.areaId == this.selectedArea && exb.location.x && exb.location.y > 0
+        return exb.location && (allArea || exb.location.areaId == this.selectedArea) && exb.location.x && exb.location.y > 0
       })
         .filter((exb) => sensorFilterFunc? sensorFilterFunc(exb): true)
         .map((exb) => {
@@ -603,7 +603,16 @@ export default {
             humidity: sensor? sensor.humidity: null,
             temperature: sensor? sensor.temperature: null,
             count: sensor? sensor.count: 0,
-            sensorId: sensor? sensor.id: null
+            sensorId: sensor? sensor.id: null,
+            updatetime: sensor? sensor.updatetime? sensor.updatetime: sensor.timestamp: null,
+            areaName: exb.areaName,
+            locationName: exb.locationName,
+            posId: exb.posId,
+            deviceNum: exb.deviceNum,
+            deviceIdX: exb.deviceIdX,
+            areaId: exb.areaId,
+            zoneId: exb.zoneId,
+            zoneCategoryId: exb.zoneCategoryId,
           }
         })
         .filter((exb) => showSensorFunc? showSensorFunc(exb): true)
@@ -622,9 +631,9 @@ export default {
       })
       this.keepTxPosition = false
     },
-    getPositionedTx(sensorFilterFunc, findSensorFunc, showSensorFunc){
+    getPositionedTx(sensorFilterFunc, findSensorFunc, showSensorFunc, allArea){
       this.positionedTx = _(this.txs).filter((tx) => {
-        return tx.location && tx.location.areaId == this.selectedArea && tx.location.x && tx.location.y > 0
+        return tx.location && (allArea || tx.location.areaId == this.selectedArea) && tx.location.x && tx.location.y > 0
       })
         .filter((tx) => sensorFilterFunc? sensorFilterFunc(tx): true)
         .map((tx) => {
@@ -633,7 +642,23 @@ export default {
             txId: tx.txId, x: tx.location.x, y: tx.location.y,
             humidity: sensor? sensor.humidity: null,
             temperature: sensor? sensor.temperature: null,
-            sensorId: sensor? sensor.id: null
+            sensorId: sensor? sensor.id: null,
+            updatetime: sensor? sensor.updatetime? sensor.updatetime: sensor.timestamp: null,
+            areaName: tx.areaName,
+            locationName: tx.locationName,
+            posId: tx.posId,
+            txName: tx.txName,
+            major: tx.major,
+            minor: tx.minor,
+            high: sensor? sensor.high: null,
+            low: sensor? sensor.low: null,
+            beat: sensor? sensor.beat: null,
+            step: sensor? sensor.step: null,
+            down: sensor? sensor.down: null,
+            magnet: sensor? sensor.magnet: null,
+            areaId: tx.areaId,
+            zoneId: tx.zoneId,
+            zoneCategoryId: tx.zoneCategoryId,
           }
         })
         .filter((tx) => showSensorFunc? showSensorFunc(tx): true)
