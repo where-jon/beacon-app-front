@@ -1,4 +1,4 @@
-import { DISCOMFORT, SENSOR } from '../constant/Constants'
+import { DISCOMFORT, SENSOR, THERMOHUMIDITY } from '../constant/Constants'
 import { APP, DISP } from '../constant/config'
 import * as Util from '../util/Util'
 import { addLabelByKey } from './ViewHelper'
@@ -7,6 +7,36 @@ import _ from 'lodash'
 
 let chart = null
 let subChart = null
+
+export const getThermohumidityIconConfig = () => {
+  if(Util.hasValue(DISP.THERMOH_PATTERN)){
+    return DISP.THERMOH_PATTERN.map((pattern) => {
+      const patternRet = {}
+      pattern.split(' ').forEach((val) => {
+        const topChar = val.slice(0, 1)
+        if(topChar == '#'){
+          patternRet.color = val
+        }
+        else if(!isNaN(Number(topChar))){
+          patternRet.base = Number(val)
+        }
+        else{
+          patternRet.flash = DISP[`THERMON_FLASH_${val}`]
+        }
+      })
+      if(!patternRet.color){
+        patternRet.color = '#000000'
+      }
+      return patternRet
+    }).sort((a, b) => a.base == null? 1: b.base == null? -1: a.base - b.base)
+  }
+  return []
+}
+
+export const getThermohumidityIconInfo = (thermohumidityIconConfig, temperature, humidity) => {
+  const point = DISP.THERMOH_CALC == THERMOHUMIDITY.CALC.TEMPERATURE? temperature: calcDiscomfortIndex(temperature, humidity)
+  return thermohumidityIconConfig.find((conf, idx) => conf.base != null && point <= conf.base || thermohumidityIconConfig.length <= idx + 1)
+}
 
 export const getDiscomfortColor = (temperature, humidity) => {
   let discomfort = getDiscomfort(temperature, humidity)
