@@ -6,7 +6,7 @@
       <!-- searchbox -->
       <template v-if="!params.hideSearchBox">
         <b-form-row class="mb-2">
-          <b-form-row class="mr-4 mb-2">
+          <b-form-row v-if="!params.hideNormalSearchBox" class="mr-4 mb-2">
             <!-- 標準絞り込みフィルタ -->
             <label v-t="'label.filter'" class="mr-2" />
             <b-input-group>
@@ -22,7 +22,7 @@
               <label v-t="'label.' + item.key" for="item.key" class="mr-2" />
               <b-input-group>
                 <b-form-select :id="item.key" v-model="filter.extra[item.key]" :options="item.options"
-                               class="extra-filter"
+                               class="extra-filter" @change="item.change"
                 />
               </b-input-group>
             </b-form-row>
@@ -162,7 +162,7 @@ import * as Util from '../../sub/util/Util'
 import { getButtonTheme } from '../../sub/helper/ThemeHelper'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import commonmixinVue from '../mixin/commonmixin.vue'
-import { CATEGORY } from '../../sub/constant/Constants'
+import { CATEGORY, SENSOR } from '../../sub/constant/Constants'
 import * as AuthHelper from '../../sub/helper/AuthHelper'
 import alert from '../parts/alert.vue'
 
@@ -203,6 +203,9 @@ export default {
           category: '',
           group: '',
           area: '',
+          sensor: SENSOR.TEMPERATURE,
+          zone: '',
+          zoneCategory: '',
           detectState: null,
         },
         del: false,
@@ -260,6 +263,7 @@ export default {
         return {
           key: key,
           options: this[key + 'Options'],
+          change: this.params[key + 'Change']? this.params[key + 'Change']: () => {},
         }
       })
     },
@@ -279,6 +283,21 @@ export default {
     categoryOptions() {
       return StateHelper.getOptionsFromState('category', false, false, 
         category => CATEGORY.POT_AVAILABLE.includes(category.categoryType)
+      )
+    },
+    sensorOptions() {
+      return StateHelper.getOptionsFromState('sensor', 
+        sensor => this.$i18n.tnl('label.' + sensor.sensorName),
+        true,
+        sensor => sensor.sensorId != SENSOR.LED && sensor.sensorId != SENSOR.BUTTON
+      )
+    },
+    zoneOptions() {
+      return StateHelper.getOptionsFromState('zone')
+    },
+    zoneCategoryOptions() {
+      return StateHelper.getOptionsFromState('category', false, false, 
+        category => CATEGORY.ZONE_AVAILABLE.includes(category.categoryType)
       )
     },
     groupOptions() {
@@ -470,6 +489,16 @@ export default {
           break
         case 'detectState':
           if (extra.detectState != null && !(extra.detectState === originItem.detectState)) {
+            return false
+          }
+          break
+        case 'zone':
+          if (extra.zone && !(extra.zone === originItem.zoneId)) {
+            return false
+          }
+          break
+        case 'zoneCategory':
+          if (extra.zoneCategory && !(extra.zoneCategory === originItem.zoneCategoryId)) {
             return false
           }
           break

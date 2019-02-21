@@ -227,6 +227,9 @@
     "finalReceiveLocation": "最終取得場所",
     "mapDisplay": "マップ表示",
 
+    "sensorList": "センサ現在情報一覧",
+    "zoneCategory": "ゾーンカテゴリ",
+
     "disp": "表示フラグ",
     "dispPos": "位置表示",
     "dispPir": "空室チェックで表示",
@@ -433,6 +436,7 @@
     "Pir": "人感センサ",
     "Thermohumidity": "温湿度(メイン)",
     "PositionList": "位置表示(一覧)",
+    "SensorList": "センサ現在情報一覧",
     "Led": "LED",
     "PositionStack": "位置表示(全体)",
     "Master": "マスタ",

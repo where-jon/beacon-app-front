@@ -127,6 +127,7 @@ export const CATEGORY = {
     ]
   },
   POT_AVAILABLE: [1, 2],
+  ZONE_AVAILABLE: [3],
 }
 
 export const NOTIFY_MIDIUM = {
@@ -361,6 +362,11 @@ export const MENU = [
       key: 'thermohumidity',
       path: 'thermohumidity',
       icon: 'fas fa-thermometer-half',
+    },
+    {
+      key: 'sensorList',
+      path: 'sensor-list',
+      icon: 'fas fa-tablet',
     },
     {
       key: 'ledOperation',

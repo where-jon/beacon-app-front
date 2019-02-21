@@ -1,6 +1,7 @@
 import { DISCOMFORT, SENSOR } from '../constant/Constants'
 import { APP, DISP } from '../constant/config'
 import * as Util from '../util/Util'
+import { addLabelByKey } from './ViewHelper'
 import Chart from 'chart.js'
 import _ from 'lodash'
 
@@ -301,4 +302,77 @@ export const setStress = (positions, sensors) => {
     let sensor = sensors.find((sensor) => sensor.id == position.btxId)
     return sensor? {...position, bg: getStressBg(sensor.stress)}: position
   })
+}
+
+export const getMagnetStateKey = (i18n, magnetState) => i18n.tnl(`label.${magnetState === SENSOR.MAGNET_STATUS.ON? 'using': 'notUse'}`)
+
+export const getFields1 = (i18n) => {
+  return addLabelByKey(i18n, [
+    {key: 'sensorDt', sortable: true, label:'dt'},
+    {key: 'txName', sortable: true },
+    APP.EXB_WITH_DEVICE_NUM? {key: 'deviceNum', sortable: true }: null,
+    APP.EXB_WITH_DEVICE_ID? {key: 'deviceId', sortable: true }: null,
+    APP.EXB_WITH_DEVICE_IDX? {key: 'deviceIdX', sortable: true }: null,
+    {key: 'locationName', label:'locationZoneName', sortable: true,},
+    {key: 'posId', label:'posId', sortable: true,},
+    {key: 'areaName', label:'area', sortable: true,},
+    {key: 'humidity', sortable: true},
+    {key: 'temperature', sortable: true},
+  ])
+}
+
+export const getFields2 = (i18n) =>{
+  return addLabelByKey(i18n, [
+    {key: 'sensorDt', sortable: true, label:'dt'},
+    APP.EXB_WITH_DEVICE_NUM? {key: 'deviceNum', sortable: true }: null,
+    APP.EXB_WITH_DEVICE_ID? {key: 'deviceId', sortable: true }: null,
+    APP.EXB_WITH_DEVICE_IDX? {key: 'deviceIdX', sortable: true }: null,
+    {key: 'locationName', label:'locationZoneName', sortable: true,},
+    {key: 'posId', label:'posId', sortable: true,},
+    {key: 'areaName', label:'area', sortable: true,},
+    {key: 'count', label:'numUsers', sortable: true},
+  ])
+}
+
+export const getFields5 = (i18n) => {
+  return addLabelByKey(i18n, [
+    {key: 'sensorDt', sortable: true, label:'dt'},
+    {key: 'txName', sortable: true },
+    {key: 'major', sortable: true },
+    {key: 'minor', sortable: true },
+    {key: 'high', label:'h_blood_pressure', sortable: true},
+    {key: 'low', label:'l_blood_pressure', sortable: true},
+    {key: 'beat', label:'heart_rate', sortable: true},
+    {key: 'step', label:'step', sortable: true},
+    {key: 'down', label:'down_count', sortable: true},
+  ])
+}
+
+export const getFields6 = (i18n) => {
+  return addLabelByKey(i18n, [
+    {key: 'sensorDt', sortable: true, label:'dt'},
+    {key: 'txName', sortable: true },
+    {key: 'major', sortable: true },
+    {key: 'minor', sortable: true },
+    {key: 'state', sortable: true},
+  ])
+}
+
+export const getFields = (sensorId, i18n) => {
+  if(sensorId == SENSOR.TEMPERATURE){
+    return getFields1(i18n)
+  }
+  if(sensorId == SENSOR.PIR){
+    return getFields2(i18n)
+  }
+  if(sensorId == SENSOR.THERMOPILE){
+    return getFields2(i18n)
+  }
+  if(sensorId == SENSOR.MEDITAG){
+    return getFields5(i18n)
+  }
+  if(sensorId == SENSOR.MAGNET){
+    return getFields6(i18n)
+  }
+  return getFields1(i18n)
 }
