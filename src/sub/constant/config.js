@@ -116,7 +116,7 @@ export const APP = { // 機能面に関する設定
   POT_WITH_GROUP: false,      // グループ使用　use group on pot master
   POT_WITH_CATEGORY: true,   // カテゴリ使用　use category on pot master
   POT_WITH_USER: true,        // ユーザ使用
-  POT_MULTI_TX: true,         // 複数Tx使用
+  POT_MULTI_TX: false,         // 複数Tx使用
 
   POT_TX_MAX: 2,   // 所持Tx最大数
 
