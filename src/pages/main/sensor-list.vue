@@ -34,6 +34,7 @@ export default {
         id: 'positionListId',
         extraFilter: ['sensor', 'area', 'zone', 'zoneCategory'],
         sensorChange: newVal => this.sensorChange(newVal),
+        showOnlyHas: ['zone', 'zoneCategory'],
         disableTableButtons: true,
         hideNormalSearchBox: true,
         fields: [],
