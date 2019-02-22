@@ -207,6 +207,13 @@ export const DEVICE = {
   }
 }
 
+export const THERMOHUMIDITY = {
+  CALC: {
+    DISCOMFORT: 1,
+    TEMPERATURE: 2,
+  },
+}
+
 export const DISCOMFORT = {
   HOT: 'hot',
   COMFORT: 'comfort',

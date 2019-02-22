@@ -639,7 +639,8 @@ export default {
         .map((tx) => {
           const sensor = findSensorFunc? findSensorFunc(tx): null
           return {
-            txId: tx.txId, x: tx.location.x, y: tx.location.y,
+            txId: tx.txId, btxId: tx.btxId,
+            x: tx.location.x, y: tx.location.y,
             humidity: sensor? sensor.humidity: null,
             temperature: sensor? sensor.temperature: null,
             sensorId: sensor? sensor.id: null,

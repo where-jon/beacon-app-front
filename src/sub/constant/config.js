@@ -75,6 +75,10 @@ export const APP = { // 機能面に関する設定
   // 位置表示(一覧)
   POS_LIST_WITH_TEL: false, // 位置表示(一覧)に電話番号を表示
 
+  // 温湿度
+  USE_HUMIDITY_ALERT: true, // 湿度アラートの使用
+  HUMIDITY_ALERT: 60,       // 湿度アラートの閾値
+
   // TX関連設定
   TX_SENSOR: [1,5,6,7], // TXのタイプに設定可能なセンサーID
   TX_WITH_TXID: false, // 画面上TXIDを使用するか否か
@@ -191,6 +195,11 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   DISCOMFORT_HOT: '#fc5800', // 温湿度表示時の不快指数Hot時の背景色
   DISCOMFORT_COMFORT: '#15db75', // 温湿度表示時の不快指数Comfort時の背景色
   DISCOMFORT_COLD: '#7da6e8', // 温湿度表示時の不快指数Cold時の背景色
+  THERMOH_CALC: 2, // アイコン状態算出方法(1:不快指数 2:温度)
+  THERMON_FLASH_WARN: 1000, // 警告アイコン点滅周期(ミリ秒)
+  THERMON_FLASH_DANGER: 500, // 危険アイコン点滅周期(ミリ秒)
+  THERMON_ALPHA: 1, // アルファ値(0:透明～1:不透明)
+  THERMOH_PATTERN: ['10 #a0d8ef', '20 #00FF00', '30 #FFFF00 WARN', '#FF0000 DANGER'],
 
   TEMPERATURE_MAX: 20,  // 温湿度ヒートマップ最大値
   TEMPERATURE_MIN: 0,   // 温湿度ヒートマップ最小値

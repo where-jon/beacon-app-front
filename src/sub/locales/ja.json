@@ -607,6 +607,7 @@
     "loginValidationList": "半角英数字、アンダーバー( _ )、ハイフン(-)、アットマーク(@)、ドット(.)",
     "notMatchedEmail": "メール形式ではありません。（追加の場合、コンマ区切）",
     "count": "{count} 名",
+    "alertHumidity": "センサ({sensors})の湿度が{humidity}％を超えました。",
 
     "dummy": "" 
   }
