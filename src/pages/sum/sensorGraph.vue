@@ -194,7 +194,15 @@ export default {
       return SUM_TARGET.getOptions()
     },
     deviceOptions() {
-      return DEVICE.getOptions()
+      return DEVICE.getOptions().filter((val) => {
+        if(val.value == DEVICE.EXB){
+          return Util.hasValue(this.exbOptions)
+        }
+        if(val.value == DEVICE.TX){
+          return Util.hasValue(this.txOptions)
+        }
+        return false
+      })
     },
     iosOrAndroid() {
       return Util.isAndroidOrIOS()
@@ -262,7 +270,7 @@ export default {
       this.form.txId = this.txOptions.length == 0? null: this.txOptions[0].value
     },
     setDeviceTypeFromSensorId(sensorId){
-      this.deviceType = DEVICE.getOptions()[this.txType.includes(sensorId)? DEVICE.TX: DEVICE.EXB].value
+      this.deviceType = Util.hasValue(this.deviceOptions)? this.deviceOptions[0].value: this.txType.includes(sensorId)? DEVICE.TX: DEVICE.EXB
     },
     changeSensorId(newVal = this.form.sensorId) {
       this.getExbOptions(newVal)
