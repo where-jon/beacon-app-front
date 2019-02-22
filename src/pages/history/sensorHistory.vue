@@ -100,10 +100,10 @@ export default {
       },
       viewList: [],
       fields: [],
-      fields1: SensorHelper.getFields1(),
-      fields2: SensorHelper.getFields2(),
-      fields5: SensorHelper.getFields5(),
-      fields6: SensorHelper.getFields6(),
+      fields1: SensorHelper.getFields1(this.$i18n),
+      fields2: SensorHelper.getFields2(this.$i18n),
+      fields5: SensorHelper.getFields5(this.$i18n),
+      fields6: SensorHelper.getFields6(this.$i18n),
       currentPage: 1,
       perPage: 20,
       limitViewRows: 100,
@@ -122,16 +122,20 @@ export default {
     ...mapState('app_service', [
       'sensors'
     ]),
-    sensorOptions() {
+    sensorOptions() { // TODO: refactoring duplicate 
       return StateHelper.getOptionsFromState('sensor', 
         sensor => this.$i18n.tnl('label.' + sensor.sensorName),
         true,
-        sensor => sensor.sensorId != SENSOR.LED && sensor.sensorId != SENSOR.BUTTON
+        sensor => {
+          return SensorHelper.availableSensorAll().includes(sensor.sensorId) 
+            && sensor.sensorId != SENSOR.LED && sensor.sensorId != SENSOR.BUTTON
+        }
       )
     },
   },
   async created() {
-    this.form.sensorId = 1
+    await StateHelper.load('sensor')
+    this.form.sensorId = Util.hasValue(this.sensorOptions)? this.sensorOptions[0].value: null
     const date = new Date()
     this.form.datetimeFrom = Util.getDatetime(date, {hours: -1})
     this.form.datetimeTo = Util.getDatetime(date)
@@ -141,7 +145,6 @@ export default {
     import(`element-ui/lib/locale/lang/${this.$i18n.locale}`).then( (mojule) =>{
       locale.use(mojule.default)
     })
-    StateHelper.load('sensor')
     StateHelper.load('tx')
     this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.fetchRows, maxRows: this.limitViewRows})}`
   },
