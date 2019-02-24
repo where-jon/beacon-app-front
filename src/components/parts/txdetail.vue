@@ -148,7 +148,7 @@ export default {
         pHeight = this.popupHeight - minusHeight
       } else {
         const detailHeight = Object.keys(this.getPopupDispItems()).length * oneSize
-        if (detailHeight <= this.imageHeight + 10) {
+        if (this.selectedSensor.length == 0 && detailHeight <= this.imageHeight + 10) {
           pHeight = this.imageHeight + 10 // 余白分をプラス
         } else {
           // 何もしない
