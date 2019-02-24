@@ -83,11 +83,11 @@
             </b-form-group>
             <b-form-group>
               <label v-t="'label.thumbnail'" />
-              <b-form-file v-if="isEditable" ref="inputThumbnail" v-model="form.thumbnail" :placeholder="$t('message.selectFile') " accept="image/jpeg, image/png, image/gif" @change="readImage" />
+              <b-form-file v-if="isEditable" ref="inputThumbnail" v-model="form.thumbnailTemp" :placeholder="$t('message.selectFile') " accept="image/jpeg, image/png, image/gif" @change="readImage" />
               <b-button v-if="isEditable && form.thumbnail" :variant="theme" type="button" class="float-right mt-3" @click="clearImage">
                 {{ $i18n.tnl('label.clear') }}
               </b-button>
-              <img v-if="form.thumbnail" ref="thumbnail" :src="form.thumbnail" width="100" class="mt-1 ml-3">
+              <img v-show="form.thumbnail" ref="thumbnail" :src="form.thumbnail" width="100" class="mt-1 ml-3">
             </b-form-group>
             <b-form-group>
               <label v-t="'label.description'" />
@@ -437,11 +437,19 @@ export default {
       return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
     },
     readImage(e) {
-      this.readImageView(e, 'thumbnail', null, null, 'thumbnail', APP.POT_THUMBNAIL_MAX)
+      this.form.thumbnail = this.form.thumbnailTemp
+      this.form.thumbnailTemp = null
+      this.$nextTick(() => {
+        this.readImageView(e, 'thumbnail', null, null, 'thumbnail', APP.POT_THUMBNAIL_MAX)
+        this.form.thumbnailTemp = this.form.thumbnail
+      })
     },
     clearImage(e) {
-      this.form.thumbnail = undefined
-      this.$refs.inputThumbnail.reset()
+      this.$nextTick(() => {
+        this.form.thumbnailTemp = null
+        this.form.thumbnail = null
+        this.$refs.inputThumbnail.reset()
+      })
     },
   },
 }

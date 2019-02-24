@@ -17,11 +17,11 @@
             </b-form-group>
             <b-form-group>
               <label v-t="'label.map'" />
-              <b-form-file v-if="isEditable" ref="inputThumbnail" v-model="form.mapImage" :placeholder="$t('message.selectFile') " accept="image/jpeg, image/png, image/gif" @change="readImage" />
+              <b-form-file v-if="isEditable" ref="inputThumbnail" v-model="form.mapImageTemp" :placeholder="$t('message.selectFile') " accept="image/jpeg, image/png, image/gif" @change="readImage" />
               <b-button v-if="isEditable && form.mapImage" :variant="getButtonTheme()" type="button" class="float-right mt-3" @click="clearImage">
                 {{ $i18n.tnl('label.clear') }}
               </b-button>
-              <img v-if="form.mapImage" ref="mapImage" :src="form.mapImage" width="100" class="mt-1 ml-3">
+              <img v-show="form.mapImage" ref="mapImage" :src="form.mapImage" width="100" class="mt-1 ml-3">
             </b-form-group>
 
             <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
@@ -87,12 +87,20 @@ export default {
   },
   methods: {
     readImage(e) {
-      this.readImageView(e, 'mapImage', 'mapWidth', 'mapHeight', 'thumbnail', APP.AREA_THUMBNAIL_MAX)
+      this.form.mapImage = this.form.mapImageTemp
+      this.form.mapImageTemp = null
+      this.$nextTick(() => {
+        this.readImageView(e, 'mapImage', 'mapWidth', 'mapHeight', 'thumbnail', APP.AREA_THUMBNAIL_MAX)
+        this.form.mapImageTemp = this.form.mapImage
+      })
     },
     clearImage(e) {
-      this.form.mapImage = undefined
-      this.form.thumbnail = undefined
-      this.$refs.inputThumbnail.reset()
+      this.$nextTick(() => {
+        this.form.mapImageTemp = null
+        this.form.mapImage = null
+        this.form.thumbnail = null
+        this.$refs.inputThumbnail.reset()
+      })
     },
     beforeSubmit(again){
       if(this.form.areaId != null){
