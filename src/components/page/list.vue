@@ -19,12 +19,14 @@
           <!-- カスタムフィルタ -->
           <template v-if="params.extraFilter">
             <b-form-row v-for="item of extraFilterSpec" :key="item.key" class="mr-4 mb-2">
-              <label v-t="'label.' + item.key" for="item.key" class="mr-2" />
-              <b-input-group>
-                <b-form-select :id="item.key" v-model="filter.extra[item.key]" :options="item.options"
-                               class="extra-filter" @change="item.change"
-                />
-              </b-input-group>
+              <b-form-row v-if="item.show">
+                <label v-t="'label.' + item.key" for="item.key" class="mr-2" />
+                <b-input-group>
+                  <b-form-select :id="item.key" v-model="filter.extra[item.key]" :options="item.options"
+                                class="extra-filter" @change="item.change"
+                  />
+                </b-input-group>
+              </b-form-row>
             </b-form-row>
           </template>
           <div v-if="params.extraFilter" class="w-100 mb-2 " />
@@ -264,6 +266,7 @@ export default {
           key: key,
           options: this[key + 'Options'],
           change: this.params[key + 'Change']? this.params[key + 'Change']: () => {},
+          show: this.params.showOnlyHas && this.params.showOnlyHas.includes(key)? Util.hasValue(this[key + 'Options'].filter((val) => val.value != null)): true,
         }
       })
     },
