@@ -146,9 +146,9 @@ export default {
         entity.potTxList[0].pot.potId = dummyKey--,
         entity.potTxList[0].pot.potCd = entity.potTxList[0].pot.potId + '_' + (new Date().getTime() % 10000)
         entity.potTxList[0].pot.potName = entity.potTxList[0].pot.potId + '_' + (new Date().getTime() % 10000)
-        const pot = this.pots.find((val) => val.txId == entity.txId)
+        const pot = this.pots.find(val => Util.hasValue(val.potTxList) && val.potTxList.find(potTx => potTx.tx.txId == entity.txId))
         if(pot){
-          const potImage = this.potImages.find((val) => val.txId == entity.txId)
+          const potImage = this.potImages.find((val) => val.id == pot.potId)
           entity.potTxList[0].pot.potType = pot.potType
           entity.potTxList[0].pot.thumbnail = potImage? potImage.thumbnail: null
           entity.potTxList[0].pot.extValue = pot.extValue
