@@ -89,6 +89,26 @@ export const cutOnLong = (val, max) => {
   return val
 }
 
+export const cutOnLongByte = (val, max) => {
+  if (!val || !max) {
+    return val
+  }
+
+  if (typeof val == 'string' && val.length > max) {
+    const parts = val.split('')
+    let cnt = 0
+    parts.forEach((part) => {
+      const length = getByteLength(part) > 1? 2: 1
+      if(0 <= max - length){
+        cnt++
+        max -= length
+      }
+    })
+    return `${val.substr(0, cnt)}...`
+  }
+  return val
+}
+
 export const luminance = (hex) => {
   const num = parseInt(hex, 16)
   const r = num >> 16
