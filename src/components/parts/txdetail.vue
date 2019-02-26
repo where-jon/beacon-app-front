@@ -145,7 +145,7 @@ export default {
       const minusItemCount = Object.keys(DISP.TXDETAIL_ITEMS).length - Object.keys(this.getPopupDispItems()).length
       const oneSize = ((this.popupHeight - 10) / Object.keys(DISP.TXDETAIL_ITEMS).length) // 余白分10をマイナス
       const minusHeight = (minusItemCount * oneSize)
-      if (this.isDisableThumbnail()) {
+      if (this.selectedSensor.length == 0 && this.isDisableThumbnail()) {
         pHeight = this.popupHeight - minusHeight
       } else {
         const detailHeight = Object.keys(this.getPopupDispItems()).length * oneSize
