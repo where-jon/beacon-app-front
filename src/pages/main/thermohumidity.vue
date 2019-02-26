@@ -99,6 +99,7 @@ export default {
       txIcons: [],
       iconInterval: 100,
       warnMessage: null,
+      iconAlphaMin: 0.01,
     }
   },
   computed: {
@@ -164,8 +165,8 @@ export default {
           if(icon.config.flash != null){
             const per = this.iconInterval* 2 / icon.config.flash 
             icon.button.alpha += icon.sign * per
-            if(icon.button.alpha < 0){
-              icon.button.alpha = 0
+            if(icon.button.alpha < this.iconAlphaMin){
+              icon.button.alpha = this.iconAlphaMin
               icon.sign *= -1
             }
             if(icon.button.alpha > 1){
