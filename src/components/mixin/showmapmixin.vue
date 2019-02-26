@@ -412,6 +412,7 @@ export default {
         return exb.enabled && exb.location.areaId == this.selectedArea && exb.location.x && exb.location.y > 0
       }).value()
       Util.debug('positionedExb', this.positionedExb)
+      console.log(this.positionedExb)
       if (this.positionedExb.length == 0) {
         console.warn('positionedExb is empty. check if exbs are enabled')
       }

@@ -1,6 +1,7 @@
 <template>
   <div id="mapContainer" class="container-fluid" @click="resetDetail">
-    <breadcrumb :items="items" :extra-nav-spec="extraNavSpec" :reload="true" :short-name="shortName" :legend-items="legendItems" />
+    <breadcrumb :items="items" :extra-nav-spec="extraNavSpec" :reload="true" :short-name="shortName" :legend-items="legendItems" v-if="!isInstallation"/>
+    <breadcrumb :items="installationItems" :reload="true" v-else />
     <b-row class="mt-2">
       <b-form inline class="mt-2" @submit.prevent>
         <b-form-row class="my-1 ml-2 ml-sm-0">
@@ -71,6 +72,12 @@ export default {
     breadcrumb,
   },
   mixins: [showmapmixin, listmixin],
+  props: {
+    isInstallation: {
+      default: false,
+      type: Boolean
+    },
+  },
   data() {
     return {
       items: [
@@ -80,6 +87,16 @@ export default {
         },
         {
           text: this.$i18n.tnl('label.showPosition'),
+          active: true
+        },
+      ],
+      installationItems: [
+        {
+          text: this.$i18n.tnl('label.develop'),
+          active: true
+        },
+        {
+          text: this.$i18n.tnl('label.installation'),
           active: true
         },
       ],
