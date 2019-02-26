@@ -216,7 +216,9 @@ export default {
           mapElement, 
           {
             radius: DISP.TEMPERATURE_RADIUS * this.mapImageScale,
-            gradient: HeatmapHelper.createGradient()
+            gradient: HeatmapHelper.createGradient(),
+            width: this.$refs.map.width,
+            height: this.$refs.map.height,
           },
           this.heatmapData
         )
