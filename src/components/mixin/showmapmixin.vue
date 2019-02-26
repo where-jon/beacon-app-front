@@ -409,7 +409,7 @@ export default {
     setPositionedExb(){
       Util.debug('Raw exb', this.exbs, this.selectedArea)
       this.positionedExb = _(_.cloneDeep(this.exbs)).filter((exb) => {
-        return exb.enabled && exb.location.areaId == this.selectedArea && exb.location.x && exb.location.y > 0
+        return exb.enabled && !exb.isAbsentZone && exb.location.areaId == this.selectedArea && exb.location.x && exb.location.y > 0
       }).value()
       Util.debug('positionedExb', this.positionedExb)
       if (this.positionedExb.length == 0) {
@@ -540,7 +540,7 @@ export default {
     },
     disableExbsCheck(){
       // for debug
-      const disabledExbs = _.filter(this.exbs, (exb) => !exb.enabled || !exb.location.x || exb.location.y <= 0)
+      const disabledExbs = _.filter(this.exbs, (exb) => !exb.enabled || exb.isAbsentZone || !exb.location.x || exb.location.y <= 0)
       this.getPositions().forEach((pos) => {
         const exb = disabledExbs.find((exb) => exb.posId == pos.pos_id)
         if (exb) {

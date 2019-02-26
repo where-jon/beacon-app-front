@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import * as AppServiceHelper from './AppServiceHelper'
 import * as Util from '../util/Util'
-import { CATEGORY, SHAPE, NOTIFY_STATE } from '../constant/Constants'
+import { CATEGORY, SHAPE, NOTIFY_STATE, SYSTEM_ZONE_CATEGORY_NAME } from '../constant/Constants'
 import { APP } from '../constant/config'
 
 
@@ -117,6 +117,7 @@ const appStateConf = {
           sensor: i18n.tnl('label.' + Util.getValue(exb, 'exbSensorList.0.sensor.sensorName', 'normal')),
           sensorId: Util.getValue(exb, 'exbSensorList.0.sensor.sensorId', null),
           zoneName: location? Util.getValue(location, 'locationZoneList.0.zone.zoneName', null): null,
+          isAbsentZone: location? Util.getValue(location, 'locationZoneList.0.zone.zoneCategoryList.0.category.categoryName', false) === SYSTEM_ZONE_CATEGORY_NAME.ABSENT: false,
         }
       })
     }
