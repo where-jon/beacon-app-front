@@ -113,6 +113,7 @@ export default {
         this.showProgress()
 
         const exCluodSensors = await EXCloudHelper.fetchSensor(this.selectedSensor)
+        const positionHistory = await this.storePositionHistory()
         this.getPositionedExb(
           (exb) => exb.sensorId == this.selectedSensor,
           (exb) => {return {id: this.selectedSensor, ...exCluodSensors.find((sensor) => sensor.deviceid == exb.deviceId && (sensor.timestamp || sensor.updatetime))}},
@@ -120,8 +121,26 @@ export default {
         )
         this.getPositionedTx(
           (tx) => tx.sensorId == this.selectedSensor,
-          (tx) => {return {id: this.selectedSensor, ...exCluodSensors.find((sensor) => sensor.btx_id == tx.btxId && (sensor.timestamp || sensor.updatetime))}},
-          null, true
+          (tx) => {
+            const ret = {
+              id: this.selectedSensor,
+              ...exCluodSensors.find((sensor) => sensor.btx_id == tx.btxId && (sensor.timestamp || sensor.updatetime)),
+            }
+            if(this.selectedSensor == SENSOR.MEDITAG){
+              const pos = positionHistory.find((position) => position.btx_id == tx.btxId)
+              if(!ret.areaId){
+                ret.areaId = pos && pos.exb? pos.exb.areaId: null
+              }
+              if(!ret.zoneId){
+                ret.zoneId = pos && pos.exb? pos.exb.zoneId: null
+              }
+              if(!ret.zoneCategoryId){
+                ret.zoneCategoryId = pos && pos.exb? pos.exb.zoneCategoryId: null
+              }
+            }
+            return ret
+          },
+          null, true, this.selectedSensor == SENSOR.MEDITAG
         )
 
         this.sensorList = this.positionedExb.concat(this.positionedTx).map((device) => {
