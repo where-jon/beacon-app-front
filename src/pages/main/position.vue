@@ -247,7 +247,12 @@ export default {
       // for debug
       this.disableExbsCheck()
       this.detectedCount = 0 // 検知カウントリセット
-      let position = PositionHelper.adjustPosition(this.getPositions(), this.mapImageScale, this.positionedExb)
+      let position = []
+      if(APP.USE_MULTI_POSITIONING){
+        position = PositionHelper.adjustMultiPosition(this.getPositions(), this.mapImageScale)
+      }else{
+        position = PositionHelper.adjustPosition(this.getPositions(), this.mapImageScale, this.positionedExb)
+      }
       position.forEach((pos) => {
         this.showTx(pos)
       })
