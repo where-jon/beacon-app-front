@@ -631,9 +631,9 @@ export default {
       })
       this.keepTxPosition = false
     },
-    getPositionedTx(sensorFilterFunc, findSensorFunc, showSensorFunc, allArea){
+    getPositionedTx(sensorFilterFunc, findSensorFunc, showSensorFunc, allArea, allPosition){
       this.positionedTx = _(this.txs).filter((tx) => {
-        return tx.location && (allArea || tx.location.areaId == this.selectedArea) && tx.location.x && tx.location.y > 0
+        return allPosition? true: tx.location && (allArea || tx.location.areaId == this.selectedArea) && tx.location.x && tx.location.y > 0
       })
         .filter((tx) => sensorFilterFunc? sensorFilterFunc(tx): true)
         .map((tx) => {
@@ -657,9 +657,9 @@ export default {
             step: sensor? sensor.step: null,
             down: sensor? sensor.down: null,
             magnet: sensor? sensor.magnet: null,
-            areaId: tx.areaId,
-            zoneId: tx.zoneId,
-            zoneCategoryId: tx.zoneCategoryId,
+            areaId: allPosition && sensor? sensor.areaId: tx.areaId,
+            zoneId: allPosition && sensor? sensor.zoneId: tx.zoneId,
+            zoneCategoryId: allPosition && sensor? sensor.zoneCategoryId: tx.zoneCategoryId,
           }
         })
         .filter((tx) => showSensorFunc? showSensorFunc(tx): true)
