@@ -152,6 +152,15 @@ export const colorCd4display = (obj, defaultColor = '#000000') => {
   return '#' + color.replace('#', '').slice(0, 6)
 }
 
+export const colorCdHex2Decimal = (hex) => {
+  const hexCd = hex.replace('#', '')
+  return [
+    parseInt(hexCd.slice(0, 2), 16),
+    parseInt(hexCd.slice(2, 4), 16),
+    parseInt(hexCd.slice(4, 6), 16)
+  ]
+}
+
 export const isArray = (obj) => Object.prototype.toString.call(obj) === '[object Array]'
 export const hasValue = (obj) => obj != null && obj.length !== 0
 export const detectEncoding = (str) => jschardet.detect(str)
