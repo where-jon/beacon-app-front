@@ -55,6 +55,7 @@ import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
 import * as Util from '../../sub/util/Util'
+import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import txdetail from '../../components/parts/txdetail.vue'
 import { APP, DISP } from '../../sub/constant/config'
 import { SENSOR, EXTRA_NAV, CATEGORY, TX } from '../../sub/constant/Constants'
@@ -94,6 +95,7 @@ export default {
       useCategory: MenuHelper.useMaster('category') && APP.TX_WITH_CATEGORY,
       toggleCallBack: () => this.reset(),
       noImageErrorKey: 'noMapImage',
+      firstTime: true,
     }
   },
   computed: {
@@ -221,7 +223,11 @@ export default {
     },
     showMapImage(disableErrorPopup) {
       this.showMapImageDef(async () => {
-
+        this.showProgress()
+        const reloadButton = document.getElementById('reloadIcon')
+        if(!this.firstTime && reloadButton){
+          HtmlUtil.addClass({target: reloadButton}, 'rotate')
+        }
         await this.fetchPositionData()
 
         this.stage.on('click', (evt) => {
@@ -236,6 +242,11 @@ export default {
         }
         this.setPositionedExb()
         this.showTxAll()
+        if(!this.firstTime && reloadButton){
+          HtmlUtil.removeClass({target: reloadButton}, 'rotate')
+        }
+        this.firstTime = false
+        this.hideProgress()
       }, disableErrorPopup)
     },
     showTxAll() {
