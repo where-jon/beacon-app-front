@@ -39,6 +39,8 @@ export default function (context) {
         context.app.router.push(APP.TOP_PAGE)
       }
       else {
+        AuthHelper.logout()
+        context.redirect('/')
         context.app.router.push(APP.LOGIN_PAGE)
       }
     }
