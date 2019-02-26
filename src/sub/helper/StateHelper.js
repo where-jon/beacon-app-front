@@ -15,6 +15,24 @@ export const setApp = (pStore, pi18n) => {
   i18n = pi18n
 }
 
+export const getSensorIdName = (sensor) => {
+  if(!sensor){
+    return null
+  }
+  return Util.getValue(sensor, 'sensorName', '')
+}
+
+export const getSensorIdNames = (exbSensorList) => {
+  if(!Util.hasValue(exbSensorList)){
+    return [i18n.tnl('label.normal')]
+  }
+  const names = []
+  exbSensorList.forEach((exbSensor) => {
+    names.push(i18n.tnl(`label.${getSensorIdName(exbSensor.sensor)}`))
+  })
+  return names.map((name) => name)
+}
+
 export const getTxIdName = (tx) => {
   if(!tx){
     return null
@@ -119,6 +137,7 @@ const appStateConf = {
           sensorId: Util.getValue(exb, 'exbSensorList.0.sensor.sensorId', null),
           zoneId: location? Util.getValue(location, 'locationZoneList.0.zone.zoneId', null): null,
           zoneName: location? Util.getValue(location, 'locationZoneList.0.zone.zoneName', null): null,
+          sensorIdNames: getSensorIdNames(exb.exbSensorList),
         }
       })
     }

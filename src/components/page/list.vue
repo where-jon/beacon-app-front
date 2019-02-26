@@ -104,6 +104,14 @@
             </span>
           </div>
         </template>
+        <!-- センサ名 -->
+        <template slot="sensorIdName" slot-scope="row">
+          <div>
+            <span v-for="(sensorIdName, index) in row.item.sensorIdNames" :key="index" class="row">
+              {{ sensorIdName }}
+            </span>
+          </div>
+        </template>
         <!-- 電池レベル -->
         <template slot="powerLevel" slot-scope="row">
           <span :class="'badge badge-pill badge-' + row.item.powerLevel.class">
