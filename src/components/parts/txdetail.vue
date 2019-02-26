@@ -129,8 +129,9 @@ export default {
     getLeft() {
       this.setImageWidth()
       const isOut = this.isOutOfFrame()
+      const imageWidth = this.isDisableThumbnail()? 0 : this.imageWidth
       const left = !isOut ? this.selectedTx.orgLeft - DISP.TX_R : 
-        this.selectedSensor.length == 0? (this.selectedTx.orgLeft - (this.descriptionWidth + this.imageWidth)): this.selectedTx.orgLeft + DISP.TX_R - this.meditagWidth
+        this.selectedSensor.length == 0? (this.selectedTx.orgLeft - (this.descriptionWidth + imageWidth)): this.selectedTx.orgLeft + DISP.TX_R - this.meditagWidth
       return left + 'px'
     },
     getPopupDispItems() {
