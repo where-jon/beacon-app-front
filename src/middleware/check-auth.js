@@ -23,7 +23,7 @@ export default function (context) {
     context.redirect('/')
     context.app.router.push(APP.LOGIN_PAGE)
   }else if(context.route.path.slice(-1) == '/'){
-    context.app.router.push(`${context.route.path.slice(0, -1)}#`)
+    context.app.router.push(`${context.route.path.slice(0, -1)}${context.route.hash? '': '#'}`)
   }else { // check tenant feature
     let tenantFeatureList = context.store.state.tenantFeatureList
     const loginInfo = JSON.parse(window.localStorage.getItem('login'))
