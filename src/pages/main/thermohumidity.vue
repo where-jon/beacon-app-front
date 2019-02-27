@@ -99,7 +99,7 @@ export default {
       txIcons: [],
       iconInterval: 100,
       warnMessage: null,
-      iconAlphaMin: 0.01,
+      iconAlphaMin: 0.1,
     }
   },
   computed: {
