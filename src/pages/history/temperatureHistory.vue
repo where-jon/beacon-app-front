@@ -194,18 +194,14 @@ export default {
       let paramCategoryId = (this.categoryId != null)?this.categoryId:-1
       let paramZoneId = (this.zoneId != null)?this.zoneId:-1
       let paramExbId = -1
+      let paramIsExb = -1
       let paramDyFrom = this.dateFrom
       let paramDyTo = this.dateTo
       let paramHistoryType = this.historyType
       var list = []
       try {
         list = await AppServiceHelper.fetch(
-          '/basic/sensorHistory/' + paramCategoryId + '/' +
-            paramZoneId + '/' +
-            paramExbId + '/' +
-            paramDyFrom + '/' +
-            paramDyTo + '/' +
-            paramHistoryType,
+          `/basic/sensorHistory/${paramCategoryId}/${paramZoneId}/${paramIsExb}/${paramExbId}/${paramDyFrom}/${paramDyTo}/${paramHistoryType}`,
           ''
         )
         if (list.length == null) {
