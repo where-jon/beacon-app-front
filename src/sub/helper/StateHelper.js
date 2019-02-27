@@ -33,23 +33,23 @@ export const getDeviceId = (device) => {
   return ''
 }
 
-export const getTxIdName = (tx) => {
+export const getTxIdName = (tx, idOnly = false) => {
   if(!tx){
     return null
   }
   const id = APP.TX_WITH_TXID && tx.txId? tx.txId:
     APP.TX_BTX_MINOR != 'minor' && tx.btxId? tx.btxId:
       APP.TX_BTX_MINOR == 'minor' && tx.minor? tx.minor: null
-  return id? id + '(' + Util.getValue(tx, 'txName', '') + ')': null
+  return idOnly? id: id? `${id}(${Util.getValue(tx, 'txName', '')})`: null
 }
 
-export const getTxIdNames = (potTxList) => {
+export const getTxIdNames = (potTxList, idOnly = false) => {
   if(!Util.hasValue(potTxList)){
     return null
   }
   const names = []
   potTxList.forEach((potTx) => {
-    names.push(getTxIdName(potTx.tx))
+    names.push(getTxIdName(potTx.tx, idOnly))
   })
   return names.map((name) => name)
 }
@@ -197,6 +197,7 @@ const appStateConf = {
         ...val,
         txIds: getTxIds(val.potTxList),
         txIdNames: getTxIdNames(val.potTxList),
+        txSortIds: getTxIdNames(val.potTxList, true),
         txParams: getTxParams(val.potTxList),
         txName: val.txId? Util.getValue(val, 'tx.txName', '') : null,
         btxId: val.txId? Util.getValue(val, 'tx.btxId', '') : null,
@@ -411,4 +412,31 @@ export const getOptionsFromState = (key, textField, notNull, filterCallback) => 
   Util.debug('empty add: ', options)
 
   return options
+}
+
+export const sortCompareArray = (aAry, bAry) => {
+  if(!Util.hasValue(aAry) && !Util.hasValue(bAry)){
+    return 0
+  }
+  if(!Util.hasValue(aAry)){
+    return -1
+  }
+  if(!Util.hasValue(bAry)){
+    return 1
+  }
+
+  const max = aAry.length < bAry.length? bAry.length: aAry.length
+  for(let idx = 0; idx < max; idx++){
+    if(aAry.length <= idx){
+      return -1
+    }
+    if(bAry.length <= idx){
+      return 1
+    }
+    if(aAry[idx] == bAry[idx]){
+      continue
+    }
+    return aAry[idx] < bAry[idx]? -1: 1
+  }
+  return 0
 }

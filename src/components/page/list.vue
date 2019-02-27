@@ -60,7 +60,7 @@
       <b-row class="mt-3" />
     
       <!-- table -->
-      <b-table :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" :filter="filterGrid" :bordered="params.bordered" :sort-by.sync="sortBy" :empty-filtered-text="emptyMessage" show-empty
+      <b-table :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" :filter="filterGrid" :bordered="params.bordered" :sort-by.sync="sortBy" :sort-compare="sortCompare" :empty-filtered-text="emptyMessage" show-empty
                stacked="md" striped hover outlined @filtered="onFiltered"
       >
         <template slot="style" slot-scope="row">
@@ -219,6 +219,7 @@ export default {
       message: null,
       error: null,
       sortBy: null,
+      sortCompare: (aData, bData, key) => this.sortCompareCustom(aData, bData, key),
       login: JSON.parse(window.localStorage.getItem('login')),
       switchReload: false,
       ...this.params
@@ -388,6 +389,12 @@ export default {
         return false
       }
       return item.delFlg != 0
+    },
+    sortCompareCustom(aData, bData, key){
+      if(key == 'txIdName'){
+        return StateHelper.sortCompareArray(aData.txSortIds, bData.txSortIds)
+      }
+      return null
     },
     async switchTenant(item){
       await AuthHelper.switchTenant(item.tenantId)
