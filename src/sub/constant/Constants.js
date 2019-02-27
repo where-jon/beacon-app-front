@@ -157,6 +157,8 @@ export const ZONE = {
       {value: 1, text: i18n.tnl('label.nonCoordinate')},
     ]
   },
+  MIN_WIDTH: 50,
+  MIN_HEIGHT: 50,
 }
 
 export const SENSOR = {
@@ -303,6 +305,11 @@ export const EXTRA_NAV = [
     path: '/main/position-stack',
     icon: 'far fa-building',
   },
+  {
+    key: 'positionZoneShort',
+    path: '/main/position-zone',
+    icon: 'fas fa-th',
+  },
 ]
 
 export const MENU = [
@@ -339,6 +346,11 @@ export const MENU = [
       key: 'positionStack',
       path: 'position-stack',
       icon: 'far fa-building',
+    },
+    {
+      key: 'positionZone',
+      path: 'position-zone',
+      icon: 'fas fa-th',
     },
     {
       key: 'pir',

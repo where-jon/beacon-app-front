@@ -3,7 +3,7 @@
     <breadcrumb :items="items" :extra-nav-spec="extraNavSpec"
                 :reload="reload" :short-name="shortName"
     />
-    <position-class position-name="stack" class-name="area" />
+    <position-class position-name="zone" class-name="zone" />
   </div>
 </template>
 
@@ -27,15 +27,15 @@ export default {
           active: true
         },
         {
-          text: this.$i18n.t('label.positionStack'),
+          text: this.$i18n.t('label.positionZone'),
           active: true
         }
       ],
-      shortName: this.$i18n.t('label.positionStackShort'),
+      shortName: this.$i18n.t('label.positionZoneShort'),
       extraNavSpec: EXTRA_NAV,
     }
   },
-}
+}  
 </script>
 
 <style scoped lang="scss">

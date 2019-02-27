@@ -18,6 +18,18 @@
               </b-form-row>
             </b-form-row>
           </b-form-group>
+          <b-form-group v-if="enableGroup" class="mr-5">
+            <b-form-row>
+              <b-form-row class="mb-3 mr-2">
+                <label v-t="'label.group'" class="mr-2" />
+                <v-select v-model="form.group" :options="groupOptions" class="mr-2">
+                  <div slot="no-options">
+                    {{ $i18n.tnl('label.vSelectNoOptions') }}
+                  </div>
+                </v-select>
+              </b-form-row>
+            </b-form-row>
+          </b-form-group>
         </b-form>
         <b-form inline @submit.prevent>
           <b-form-group class="mr-5">
@@ -99,6 +111,7 @@ export default {
       ],
       form: {
         tx: null,
+        group: null,
         datetimeFrom: null,
         datetimeTo: null,
       },
@@ -142,8 +155,18 @@ export default {
         true
       )
     },
+    enableGroup () {
+      return this.isEnabledMenu('group') && APP.POT_WITH_GROUP
+    },
+    groupOptions() {
+      return StateHelper.getOptionsFromState('group',
+        group => group.groupName,
+        true
+      )
+    },
   },
   async created() {
+    StateHelper.load('group')
     const date = new Date()
     this.form.datetimeFrom = Util.getDatetime(date, {hours: -1})
     this.form.datetimeTo = Util.getDatetime(date)
@@ -170,8 +193,9 @@ export default {
       try {
         const aTxId = (this.form.tx != null && this.form.tx.value != null)?this.form.tx.value:0
         console.log(aTxId)
+        const aGroupId = (this.form.group != null && this.form.group.value != null)? this.form.group.value: 0
         var fetchList = await HttpHelper.getAppService(
-          `/core/positionHistory/find/${aTxId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/${this.limitViewRows}`
+          `/core/positionHistory/find/${aGroupId}/${aTxId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/${this.limitViewRows}`
         )
         if (fetchList.length == null || !fetchList.length) {
           this.message = this.$i18n.tnl('message.notFoundData', {target: this.$i18n.tnl('label.positionHistory')})
@@ -207,9 +231,10 @@ export default {
     },
     async exportCsv() {
       const aTxId = (this.form.tx != null && this.form.tx.value != null)?this.form.tx.value:0
+      const aGroupId = (this.form.group != null && this.form.group.value != null)? this.form.group.value: 0
       HtmlUtil.executeFileDL(
         APP_SERVICE.BASE_URL
-        + `/core/positionHistory/csvdownload/${aTxId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/` 
+        + `/core/positionHistory/csvdownload/${aGroupId}/${aTxId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/` 
         + getCharSet(this.$store.state.loginId)
       )
     },
