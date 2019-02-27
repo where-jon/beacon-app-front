@@ -640,7 +640,7 @@ export default {
           const sensor = findSensorFunc? findSensorFunc(tx): null
           return {
             txId: tx.txId, btxId: tx.btxId,
-            x: tx.location.x, y: tx.location.y,
+            x: tx.location? tx.location.x: null, y: tx.location? tx.location.y: null,
             humidity: sensor? sensor.humidity: null,
             temperature: sensor? sensor.temperature: null,
             sensorId: sensor? sensor.id: null,

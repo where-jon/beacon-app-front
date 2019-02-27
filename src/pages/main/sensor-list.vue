@@ -127,7 +127,7 @@ export default {
               ...exCluodSensors.find((sensor) => sensor.btx_id == tx.btxId && (sensor.timestamp || sensor.updatetime)),
             }
             if(this.selectedSensor == SENSOR.MEDITAG){
-              const pos = positionHistory.find((position) => position.btx_id == tx.btxId)
+              const pos = positionHistory.find((position) => position.txId == tx.txId || position.btx_id == tx.btxId)
               if(!ret.areaId){
                 ret.areaId = pos && pos.exb? pos.exb.areaId: null
               }
