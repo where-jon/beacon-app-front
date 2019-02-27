@@ -1,6 +1,7 @@
 
 <script>
 import { Shape, Container, Text } from '@createjs/easeljs/dist/easeljs.module'
+import * as Util from '../../sub/util/Util'
 
 export default {
   methods: {
@@ -28,9 +29,9 @@ export default {
       dot.graphics.beginFill(color).drawCircle(pos.x * pos.mapScale, pos.y * pos.mapScale, radius)
       container.addChild(dot)
     },
-    getRGBA(rgbString, alpha){
-      const opacity = `0${(Math.round(alpha * 255)).toString(16)}`.slice(-2)
-      return `${rgbString}${opacity}`
+    getRGBA(colorCd, alpha){
+      const cds = Util.colorCdHex2Decimal(colorCd)
+      return `rgba(${cds.toString()},${alpha})`
     },
   }
 }
