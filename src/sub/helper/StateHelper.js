@@ -252,12 +252,13 @@ const appStateConf = {
     sort: 'locationId',
   },
   zones: {
-    path: '/core/zone/coordinates',
+    path: '/core/zone',
     sort: 'zoneName',
     beforeCommit: (arr) => {
       return  arr.map((val) => ({
         zoneId: val.zoneId,
         zoneName: val.zoneName,
+        zoneType: val.zoneType,
         areaId: Util.hasValue(val.area)? val.area.areaId: null,
         areaName: Util.hasValue(val.area)? val.area.areaName: null,
         locationId: Util.hasValue(val.locationZoneList)? val.locationZoneList[0].locationZonePK.locationId: null,
