@@ -140,7 +140,7 @@ export default {
         this.showProgress()
         await StateHelper.load('exb')
         let deviceIds = _.filter(this.exbs,
-          exb => exb.enabled && this.getSensorId(exb) == SENSOR.LED
+          exb => exb.enabled && this.getSensorIds(exb).includes(SENSOR.LED)
         )
           .map(
             exb => {

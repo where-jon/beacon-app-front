@@ -90,11 +90,14 @@ export default {
         {key: 'areaName', label:'area', sortable: true,},
         {key: 'x', label:'locationX', sortable: true,},
         {key: 'y', label:'locationY', sortable: true,},
-        {key: 'sensor', label:'type', sortable: true,},
+        {key: 'sensorIdName', label:'type', sortable: true,},
         MenuHelper.isMenuEntry('/master/zoneClass') ?
           {key: 'zoneName', label: 'zoneName', sortable: true,} : null,
         {key: 'actions', thStyle: {width: '130px !important'} }
       ])
+    },
+    customCsvData(val){
+      val.sensor = val.sensorIdNames.join(';')
     },
     async fetchData(payload) {
       try {
