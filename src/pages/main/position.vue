@@ -1,6 +1,7 @@
 <template>
   <div id="mapContainer" class="container-fluid" @click="resetDetail">
     <breadcrumb :items="items" :extra-nav-spec="extraNavSpec" :reload="true" :short-name="shortName" :legend-items="legendItems" v-if="!isInstallation"/>
+    <!-- 設置支援の場合に表示 -->
     <breadcrumb :items="installationItems" :reload="true" v-else />
     <b-row class="mt-2">
       <b-form inline class="mt-2" @submit.prevent>
@@ -30,6 +31,13 @@
             {{ detectedCount }}
           </span>
         </b-form-row>
+        <div v-if="isInstallation">
+          <b-form-row>
+            <b-form-checkbox v-model="modeRssi" class="ml-sm-4 ml-2 mr-1">
+              {{ $t('label.dispRssi') }}
+            </b-form-checkbox>
+          </b-form-row>
+        </div>
       </b-form>
     </b-row>
     <b-row class="mt-3">
@@ -111,6 +119,7 @@ export default {
       useCategory: MenuHelper.useMaster('category') && APP.TX_WITH_CATEGORY,
       toggleCallBack: () => this.reset(),
       noImageErrorKey: 'noMapImage',
+      modeRssi: false,
     }
   },
   computed: {
@@ -145,6 +154,9 @@ export default {
     filter() {
       this.reloadSelectedTx = {}
       this.showTxAll()
+    },
+    modeRssi: function(newVal, oldVal) {
+      this.$emit('rssi', newVal)
     },
   },
   async mounted() {

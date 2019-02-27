@@ -230,6 +230,7 @@
     "dispPos": "位置表示",
     "dispPir": "空室チェックで表示",
     "dispAlways": "常時表示",
+    "dispRssi": "RSSI表示",
 
     "positionStack": "位置表示(全体)",
     "positionStackShort": "全体",
