@@ -162,7 +162,6 @@ export default {
       showEmail: false,
       editShowUser: false,
       roleOptions: [],
-      maxFileNameByte: 32,
       form: {
         ...ViewHelper.extract(this.$store.state.app_service.pot,
           ['potId', 'potCd', 'potName', 'potType', 'extValue.ruby',
@@ -437,6 +436,10 @@ export default {
       entity.potTxList = potTxList
       return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
     },
+    getNameByteLangth(){
+      const fileElement = Util.getValue(document.getElementsByClassName('custom-file'), '0', null)
+      return fileElement? (fileElement.clientWidth - 80) / 12: 0
+    },
     setFileName(name){
       const file = Util.getValue(document.getElementsByClassName('custom-file-label'), '0', null)
       const param = file.textContent? 'textContent': 'innerText'
@@ -450,7 +453,7 @@ export default {
         this.form.thumbnailTemp = this.form.thumbnail
 
         const inputFileName = Util.getValue(e, 'target.files.0.name', null)
-        this.setFileName(inputFileName? Util.cutOnLongByte(inputFileName, this.maxFileNameByte): null)
+        this.setFileName(inputFileName? Util.cutOnLongByte(inputFileName, this.getNameByteLangth()): null)
         if(!inputFileName){
           this.clearImage(e)
         }

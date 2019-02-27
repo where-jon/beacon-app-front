@@ -61,7 +61,6 @@ export default {
       appServicePath: '/core/area',
       updateOnlyNN: UPDATE_ONLY_NN.NULL,
       form: ViewHelper.extract(this.$store.state.app_service.area, ['areaId', 'areaName', 'mapImage']),
-      maxFileNameByte: 32,
       items: [
         {
           text: this.$i18n.tnl('label.master'),
@@ -87,6 +86,10 @@ export default {
     ]),
   },
   methods: {
+    getNameByteLangth(){
+      const fileElement = Util.getValue(document.getElementsByClassName('custom-file'), '0', null)
+      return fileElement? (fileElement.clientWidth - 80) / 12: 0
+    },
     setFileName(name){
       const file = Util.getValue(document.getElementsByClassName('custom-file-label'), '0', null)
       const param = file.textContent? 'textContent': 'innerText'
@@ -100,7 +103,7 @@ export default {
         this.form.mapImageTemp = this.form.mapImage
 
         const inputFileName = Util.getValue(e, 'target.files.0.name', null)
-        this.setFileName(inputFileName? Util.cutOnLongByte(inputFileName, this.maxFileNameByte): null)
+        this.setFileName(inputFileName? Util.cutOnLongByte(inputFileName, this.getNameByteLangth()): null)
         if(!inputFileName){
           this.clearImage(e)
         }
