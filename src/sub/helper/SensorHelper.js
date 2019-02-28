@@ -8,7 +8,7 @@ import _ from 'lodash'
 let chart = null
 let subChart = null
 
-export const getThermohumidityIconConfig = () => {
+export const getThermoPatternConfig = () => {
   if(Util.hasValue(DISP.THERMOH_PATTERN)){
     return DISP.THERMOH_PATTERN.map((pattern) => {
       const patternRet = {}
@@ -20,8 +20,11 @@ export const getThermohumidityIconConfig = () => {
         else if(!isNaN(Number(topChar))){
           patternRet.base = Number(val)
         }
-        else{
-          patternRet.flash = DISP[`THERMON_FLASH_${val}`]
+        else if(topChar == '$'){
+          patternRet.flash = DISP[`THERMON_FLASH_${val.slice(1)}`]
+        }
+        else if(val.toLowerCase() == 'or'){
+          patternRet.or = true
         }
       })
       if(!patternRet.color){
@@ -35,7 +38,63 @@ export const getThermohumidityIconConfig = () => {
 
 export const getThermohumidityIconInfo = (thermohumidityIconConfig, temperature, humidity) => {
   const point = DISP.THERMOH_CALC == THERMOHUMIDITY.CALC.TEMPERATURE? temperature: calcDiscomfortIndex(temperature, humidity)
-  return thermohumidityIconConfig.find((conf, idx) => conf.base != null && point <= conf.base || thermohumidityIconConfig.length <= idx + 1)
+  return thermohumidityIconConfig.find((conf, idx) => {
+    if(thermohumidityIconConfig.length <= idx + 1){
+      return true
+    }
+    if(conf.base == null){
+      return false
+    }
+    return conf.or? point <= conf.base: point < conf.base
+  })
+}
+
+export const getHumidityPatternConfig = () => {
+  if(Util.hasValue(DISP.HUMIDITY_PATTERN)){
+    const ret = {less: [], more: []}
+    DISP.HUMIDITY_PATTERN.map((pattern) => {
+      const patternRet = {}
+      pattern.split(' ').forEach((val) => {
+        const v = val.toLowerCase()
+        if(['more', 'less'].includes(v)){
+          patternRet.label = v
+        }
+        else if(!isNaN(Number(v))){
+          patternRet.base = Number(v)
+        }
+      })
+      return patternRet
+    }).forEach((pattern) => {
+      if(pattern.label == 'less'){
+        ret.less.push(pattern)
+      }
+      if(pattern.label == 'more'){
+        ret.more.push(pattern)
+      }
+    })
+    ret.less.sort((a, b) => a.base == null? 1: b.base == null? -1: a.base - b.base)
+    ret.more.sort((a, b) => a.base == null? 1: b.base == null? -1: b.base - a.base)
+    return ret
+  }
+  return []
+}
+
+export const getHumidityInfo = (humidityPatternConfig, humidity) => {
+  const less = humidityPatternConfig.less.find((conf) => {
+    if(conf.base == null){
+      return false
+    }
+    return humidity <= conf.base
+  })
+  if(less){
+    return less
+  }
+  return humidityPatternConfig.more.find((conf) => {
+    if(conf.base == null){
+      return false
+    }
+    return humidity >= conf.base
+  })
 }
 
 export const getDiscomfortColor = (temperature, humidity) => {

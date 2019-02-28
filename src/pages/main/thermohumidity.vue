@@ -94,7 +94,8 @@ export default {
       isHeatmap: false,
       isLoading: false,
       iconTicker: null,
-      iconConfig: SensorHelper.getThermohumidityIconConfig(),
+      thermoPatternConfig: SensorHelper.getThermoPatternConfig(),
+      humidityPatternConfig: SensorHelper.getHumidityPatternConfig(),
       exbIcons: [],
       txIcons: [],
       iconInterval: 100,
@@ -133,29 +134,51 @@ export default {
         this.iconTicker = null
       }
     },
-    getWarnDevices(){
-      const exbRet = this.exbIcons.filter((val) => val.device.humidity >= APP.HUMIDITY_ALERT).map((val) => StateHelper.getDeviceId(val.device))
-      const txRet = this.txIcons.filter((val) => val.device.humidity >= APP.HUMIDITY_ALERT).map((val) => StateHelper.getDeviceId(val.device))
-      return {
-        exbWarn: Util.hasValue(exbRet)? this.$i18n.tnl(`label.${StateHelper.getDeviceIdName({exbId: true})}`): null,
-        exb: exbRet,
-        txWarn: Util.hasValue(txRet)? this.$i18n.tnl(`label.${StateHelper.getDeviceIdName({txId: true})}`): null,
-        tx: txRet
-      }
+    setWarnDevices(){
+      this.humidityPatternConfig.less.forEach(conf => {
+        conf.exbs = []
+        conf.txs = []
+      })
+      this.humidityPatternConfig.more.forEach(conf => {
+        conf.exbs = []
+        conf.txs = []
+      })
+      this.exbIcons.forEach(exbIcon => {
+        const alertInfo = SensorHelper.getHumidityInfo(this.humidityPatternConfig, exbIcon.device.humidity)
+        if(alertInfo){
+          alertInfo.exbs.push(exbIcon.device)
+        }
+      })
+      this.txIcons.forEach(txIcon => {
+        const alertInfo = SensorHelper.getHumidityInfo(this.humidityPatternConfig, txIcon.device.humidity)
+        if(alertInfo){
+          alertInfo.txs.push(txIcon.device)
+        }
+      })
+    },
+    createWarnMessages(){
+      this.setWarnDevices()
+      const ret = []
+      const exbIdName = StateHelper.getDeviceIdName({exbId: true})
+      const txIdName = StateHelper.getDeviceIdName({txId: true})
+      this.humidityPatternConfig.less.concat(this.humidityPatternConfig.more).forEach(conf => {
+        if(conf.exbs.length == 0 && conf.txs.length == 0){
+          return
+        }
+        const exbAlert = conf.exbs.length == 0? '': `${this.$i18n.tnl(`label.${exbIdName}`)}[${conf.exbs.map(exb => exb[exbIdName]).filter(val => val).join(', ')}]`
+        const txAlert = conf.txs.length == 0? '': `${this.$i18n.tnl(`label.${txIdName}`)}[${conf.txs.map(tx => tx[txIdName]).filter(val => val).join(', ')}]`
+        ret.push(this.$i18n.tnl(`message.${conf.label}AlertHumidity`, {
+          sensors: `${exbAlert}${exbAlert && txAlert? ', ': ''}${txAlert}`,
+          humidity: conf.base,
+        }))
+      })
+      return ret.join(this.$i18n.tnl('message.readingPoint'))
     },
     addWarnMessage(){
       if(APP.USE_HUMIDITY_ALERT){
-        const warnDevices = this.getWarnDevices()
-        const exbMessage = warnDevices.exbWarn? `${warnDevices.exbWarn}[${warnDevices.exb}]`: ''
-        const txMessage = warnDevices.txWarn? `${warnDevices.txWarn}[${warnDevices.tx}]`: ''
-        const sensorMessage = [exbMessage, txMessage].filter((val) => val).join(', ')
-        if(Util.hasValue(sensorMessage)){
-          this.warnMessage = this.$i18n.tnl('message.alertHumidity', {
-            sensors: sensorMessage,
-            humidity: APP.HUMIDITY_ALERT
-          })
-          this.replace({showWarn: true})
-        }
+        const mes = this.createWarnMessages()
+        this.warnMessage = Util.hasValue(mes)? mes: null
+        this.replace({showWarn: Util.hasValue(this.warnMessage)})
       }
     },
     iconTick() {
@@ -280,7 +303,7 @@ export default {
       }
       const exbBtn = new Container()
 
-      const iconInfo = SensorHelper.getThermohumidityIconInfo(this.iconConfig, exb.temperature, exb.humidity)
+      const iconInfo = SensorHelper.getThermohumidityIconInfo(this.thermoPatternConfig, exb.temperature, exb.humidity)
       if (DISP.THERMOH_DISP == 'icon') {
         exbBtn.addChild(this.createIcon(stage, exb))
       }
@@ -314,7 +337,7 @@ export default {
       }
       const txBtn = new Container()
 
-      const iconInfo = SensorHelper.getThermohumidityIconInfo(this.iconConfig, tx.temperature, tx.humidity)
+      const iconInfo = SensorHelper.getThermohumidityIconInfo(this.thermoPatternConfig, tx.temperature, tx.humidity)
       if (DISP.THERMOH_DISP == 'icon') {
         txBtn.addChild(this.createIcon(stage, tx))
       }
