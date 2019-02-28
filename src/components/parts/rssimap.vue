@@ -115,7 +115,7 @@ export default {
       EXB_ICON_RADIUS: 18,
       nearest: [],
       targetTx: null,
-      rssiContainers: [],
+      exbBtns : [],
       RSSI_SCALE: 5,
       RSSI_ICON_WIDTH: DISP.INSTALLATION.RSSI_ICON_WIDTH,
       RSSI_ICON_HEIGHT: DISP.INSTALLATION.RSSI_ICON_HEIGHT,
@@ -139,48 +139,21 @@ export default {
       this.$emit('rssi', newVal)
     },
     targetTx: function(newVal, oldVal) {
-      if (this.rssiCon) {
-        this.rssiCon.removeAllChildren()
-      }
-      else {
-        this.rssiCon = new Container()
-        this.stage.addChild(this.rssiCon)
-      }
-
-      const target = this.nearest.find((n) => n.btx_id === newVal)
-      if (!target) {
-        return
-      }
-
-      const minusX = this.RSSI_ICON_WIDTH / 2
-      const minusY = (this.RSSI_ICON_HEIGHT - 2) * 2
-      const pow = Math.pow(10, this.RSSI_SCALE)
-
-      target.nearest.filter((t) => t.x && t.y).forEach((t, i, a) => {
-        const rssi = Math.floor(t.rssi * pow) / pow 
-        rssiIcon = new RssiIcon(rssi, i).add(this.rssiCon, t.x - minusX, t.y - minusY)
-      })
-      this.stage.update()
-    }
+      this.dispRssiIcons(newVal)
+    },
   },
   async mounted() {
     await StateHelper.load('category')
     await StateHelper.load('group')
-    await this.fetchData()
+    this.fetchData()
   },
   methods: {
     async fetchData(payload, disableErrorPopup) {
       this.showMapImageDef(async () => {
         await this.fetchAreaExbs()
         this.positionedExb = this.getExbPosition()
-        if (this.exbCon) {
-          this.exbCon.removeAllChildren()
-        }
-        else {
-          this.exbCon = new Container()
-        }
-
-        const exbBtns = this.positionedExb.map((exb) => {
+        this.exbCon = new Container()
+        this.exbBtns = this.positionedExb.map((exb) => {
           const clone = Object.assign({}, exb)
           this.replaceExb(exb, (exb) => {
             clone.x = exb.location.x * this.mapImageScale
@@ -190,7 +163,7 @@ export default {
           this.exbCon.addChild(exbBtn)
           return exbBtn
         })
-        this.nearest = await this.getNearest(exbBtns)
+        this.nearest = await this.getNearest(this.exbBtns)
         this.keepExbPosition = false
         this.stage.addChild(this.exbCon)
         this.stage.update()
@@ -242,6 +215,30 @@ export default {
           })
           return {btx_id: position.btx_id, nearest: position.nearest}
         })
+    },
+    dispRssiIcons(btxId) {
+      if (this.rssiCon) {
+        this.rssiCon.removeAllChildren()
+      }
+      else {
+        this.rssiCon = new Container()
+        this.stage.addChild(this.rssiCon)
+      }
+
+      const target = this.nearest.find((n) => n.btx_id === btxId)
+      if (!target) {
+        return
+      }
+
+      const minusX = this.RSSI_ICON_WIDTH / 2
+      const minusY = (this.RSSI_ICON_HEIGHT - 2) * 2
+      const pow = Math.pow(10, this.RSSI_SCALE)
+
+      target.nearest.filter((t) => t.x && t.y).forEach((t, i, a) => {
+        const rssi = Math.floor(t.rssi * pow) / pow 
+        new RssiIcon(rssi, i).add(this.rssiCon, t.x - minusX, t.y - minusY)
+      })
+      this.stage.update()
     },
   },
 }
