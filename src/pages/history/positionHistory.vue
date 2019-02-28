@@ -73,7 +73,6 @@ import { addLabelByKey } from '../../sub/helper/ViewHelper'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import { APP } from '../../sub/constant/config.js'
-import moment from 'moment'
 import { APP_SERVICE } from '../../sub/constant/config'
 
 
@@ -180,7 +179,7 @@ export default {
         }
         for (var posHist of fetchList) {
           const d = new Date(posHist.positionDt)
-          posHist.positionDt = moment(d.getTime()).format('YYYY/MM/DD HH:mm:ss')
+          posHist.positionDt = Util.formatDate(d.getTime())
           let aTx = _.find(this.txs, (tx) => { return tx.txId == posHist.txId })
           posHist.txName = aTx.txName
           let aExb = _.find(this.exbs, (exb) => { return exb.exbId == posHist.exbId })

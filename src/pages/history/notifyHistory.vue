@@ -148,7 +148,6 @@ import { getTheme } from '../../sub/helper/ThemeHelper'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import { NOTIFY_STATE } from '../../sub/constant/Constants'
 import { APP } from '../../sub/constant/config.js'
-import moment from 'moment'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 
 
@@ -415,7 +414,7 @@ export default {
         let count = 0
         fetchList.forEach((notifyData) => {
           const d = new Date(notifyData.notifyDatetime)
-          notifyData.positionDt = moment(d.getTime()).format('YYYY/MM/DD HH:mm:ss')
+          notifyData.positionDt = Util.formatDate(d.getTime())
           notifyData.notifyResult = notifyData.notifyResult == 0 ? '成功' : '失敗'
           if(this.userState == 'ALL_REGION' || aNotifyState == 'GW_ALERT' || aNotifyState == 'EXB_ALERT'){
             let arNotifyto = this.getNotifyTo(notifyData.notifyTo)

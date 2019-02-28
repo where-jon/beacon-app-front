@@ -14,7 +14,6 @@ import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
-import moment from 'moment'
 import commonmixinVue from '../../components/mixin/commonmixin.vue'
 import reloadmixinVue from '../../components/mixin/reloadmixin.vue'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
@@ -169,7 +168,7 @@ export default {
     getTimestamp(timestamp) {
       if (timestamp) {
         try {
-          return moment(timestamp).format('YYYY/MM/DD HH:mm:ss')
+          return Util.formatDate(timestamp)
         } catch (e) {}
       }
       return this.$i18n.tnl('label.undetect')
