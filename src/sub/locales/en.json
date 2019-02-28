@@ -588,7 +588,7 @@
     "noLedDevice": "There are no LED devices to operate.",
     "totalRowsMessage": "Total: {row} (Only latest {maxRows} are displayed)",
     "listEmpty": "There are no records matching your request.",
-    "uploadMax": "Upload file size is limited to target}Mbytes.",
+    "uploadMax": "Upload file size is limited to {target}Mbytes.",
     "validationList": "Valid characters are {validate}.",
     "loginValidationList": "half alphanumberic, underscore( _ ), hyphen(-), at sign(@), dot(.).",
     "used": "{key}（{val}）is used for {target} of {num}{unit}",
