@@ -607,7 +607,9 @@
     "loginValidationList": "半角英数字、アンダーバー( _ )、ハイフン(-)、アットマーク(@)、ドット(.)",
     "notMatchedEmail": "メール形式ではありません。（追加の場合、コンマ区切）",
     "count": "{count} 名",
-    "alertHumidity": "センサ({sensors})の湿度が{humidity}％を超えました。",
+    "readingPoint": "、",
+    "lessAlertHumidity": "「{sensors}低湿：{humidity}％以下」",
+    "moreAlertHumidity": "「{sensors}高湿：{humidity}％以上」",
 
     "dummy": "" 
   }
