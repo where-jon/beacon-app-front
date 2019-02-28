@@ -90,7 +90,6 @@ export default {
           } else {
             currentWidth = window.innerWidth
           }
-          console.log(path + ' : ' + this.$route.path, this)
           this.reset()
           if (this.stage) {
             this.stage.removeAllChildren()
@@ -145,11 +144,9 @@ export default {
       return areaImage && areaImage.mapImage
     },
     async fetchAreaExbs(tx) {
-      console.log(`isFirstTime = ${this.isFirstTime}`)
       if (this.isFirstTime) {
         this.selectedArea = this.getInitAreaOption()
         await StateHelper.loadAreaImage(this.selectedArea)
-        console.log('after loadAreas. selectedArea=' + this.selectedArea)
         await StateHelper.load('exb')
         if (tx) {
           await StateHelper.load('tx')
@@ -168,7 +165,6 @@ export default {
         return
       }
       this.showTryCount++
-      console.log('showMapImageDef', this.selectedArea, this.isShownMapImage)
       if (this.isShownMapImage) {
         if (callback) {
           setTimeout(() => callback(), 0)

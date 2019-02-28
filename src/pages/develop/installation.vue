@@ -9,6 +9,7 @@
 // import breadcrumb from '../../components/layout/breadcrumb.vue'
 import position from '../main/position.vue'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
+import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import rssimap from '../../components/parts/rssimap.vue'
 import { APP } from '../../sub/constant/config'
@@ -41,6 +42,9 @@ export default {
   },
   methods: {
     onModeRssi(mode) {
+      if (mode) {
+        HtmlUtil.removeInterval()
+      }
       this.modeRssi = mode
     }
   },

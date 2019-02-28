@@ -149,6 +149,7 @@ export default {
   },
   methods: {
     async fetchData(payload, disableErrorPopup) {
+      console.log('fetchDaaaaaaaaaaaaaaaaaaaaaata')
       this.showMapImageDef(async () => {
         await this.fetchAreaExbs()
         this.positionedExb = this.getExbPosition()
