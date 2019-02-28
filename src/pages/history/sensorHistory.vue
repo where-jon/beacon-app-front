@@ -70,7 +70,6 @@ import { getTheme } from '../../sub/helper/ThemeHelper'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import { SENSOR } from '../../sub/constant/Constants'
 import { APP_SERVICE } from '../../sub/constant/config.js'
-import moment from 'moment'
 import _ from 'lodash'
 
 export default {
@@ -156,7 +155,7 @@ export default {
     },
     editSensorHistoryData(senHist){
       const d = new Date(senHist.sensorDt)
-      senHist.sensorDt = moment(d.getTime()).format('YYYY/MM/DD HH:mm:ss')
+      senHist.sensorDt = Util.formatDate(d.getTime())
 
       let aTx = _.find(this.txs, (tx) => { return tx.txId == senHist.txId })
       if (senHist.txId != null && aTx) {

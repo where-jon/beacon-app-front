@@ -16,7 +16,6 @@ import * as SensorHelper from '../../sub/helper/SensorHelper'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import { SENSOR } from '../../sub/constant/Constants'
 import * as Util from '../../sub/util/Util'
-import moment from 'moment'
 
 export default {
   components: {
@@ -82,7 +81,7 @@ export default {
     createDeviceInfo(device){
       const d = new Date(device.updatetime)
       return {
-        sensorDt: moment(d.getTime()).format('YYYY/MM/DD HH:mm:ss'),
+        sensorDt: Util.formatDate(d.getTime()),
         txName: Util.getValue(device, 'txName', ''),
         deviceId: Util.getValue(device, 'deviceId', ''),
         deviceNum: Util.getValue(device, 'deviceNum', ''),

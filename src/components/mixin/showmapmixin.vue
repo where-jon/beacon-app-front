@@ -12,7 +12,6 @@ import * as Util from '../../sub/util/Util'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import reloadmixinVue from './reloadmixin.vue'
 import listmixinVue from './listmixin.vue'
-import moment from 'moment'
 import * as mock from '../../assets/mock/mock'
 
 export default {
@@ -435,7 +434,7 @@ export default {
       }
     },
     getFinalReceiveTime (time) {
-      return time ? moment(time).format('YYYY/MM/DD HH:mm:ss') : ''
+      return Util.formatDate(time)
     },
     isShowModal() {
       return window.innerWidth < this.showIconMinWidth
