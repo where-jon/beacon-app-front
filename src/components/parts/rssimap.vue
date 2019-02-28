@@ -21,18 +21,16 @@
           </label>
           <b-form-select v-model="selectedCategory" :options="categoryOptionsForPot" class="ml-1 mr-2" />
         </b-form-row>
-        <b-form-row v-if="showDetected" class="my-1 ml-2 ml-sm-0">
-          <span class="ml-sm-4 ml-2 mr-1">
-            {{ $t('label.detectedCount') + ' : ' }}
-          </span>
-          <span class="mr-1">
-            {{ detectedCount }}
-          </span>
-        </b-form-row>
         <b-form-row>
           <b-form-checkbox v-model="modeRssi" class="ml-sm-4 ml-2 mr-1">
             {{ $t('label.dispRssi') }}
           </b-form-checkbox>
+        </b-form-row>
+        <b-form-row class="my-1 ml-2 ml-sm-0">
+          <label class="ml-sm-4 ml-2 mr-1">
+            {{ $t('label.tx') }}
+          </label>
+          <b-form-select v-model="targetTx" :options="txs" class="ml-1 mr-2" />
         </b-form-row>
       </b-form>
     </b-row>
@@ -54,6 +52,44 @@ import { CATEGORY } from '../../sub/constant/Constants'
 import { Container, Shape, Text } from '@createjs/easeljs/dist/easeljs.module'
 import commonmixinVue from '../../components/mixin/commonmixin.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
+
+class RssiIcon {
+  constructor(rssi, level = 3) {
+    const RSSI_ICON_WIDTH = DISP.INSTALLATION.RSSI_ICON_WIDTH
+    const RSSI_ICON_HEIGHT = DISP.INSTALLATION.RSSI_ICON_HEIGHT
+    const color = (() => {
+      switch (level) {
+      case 0:
+        return {bg: '#dc143c', text: 'white'}
+      case 1:
+        return {bg: '#ff4500', text: 'white'}
+      case 2:
+        return {bg: '#ff6347', text: 'white'}
+      default:
+        return {bg: '#87cefa', text: 'black'}
+      }
+    })()
+    this.container = new Container()
+    const s = new Shape()
+    s.graphics.beginFill(color.bg).drawRect(0, 0, RSSI_ICON_WIDTH, RSSI_ICON_HEIGHT)
+    const label = new Text(rssi)
+    this.container.addChild(s, label)
+    label.set({
+      font: DISP.EXB_LOC_FONT,
+      color: color.text,
+      textAlign: 'center',
+      textBaseline: 'middle',
+      x: RSSI_ICON_WIDTH / 2,
+      y: RSSI_ICON_HEIGHT / 2,
+    })
+  }
+
+  add(parent, x, y) {
+    this.container.x = x
+    this.container.y = y
+    parent.addChild(this.container)
+  }
+}
 
 export default {
   components: {
@@ -77,7 +113,12 @@ export default {
       modeRssi: true,
       exbDisp: 'deviceNum',
       EXB_ICON_RADIUS: 18,
-      txs: [],
+      nearest: [],
+      targetTx: null,
+      rssiContainers: [],
+      RSSI_SCALE: 5,
+      RSSI_ICON_WIDTH: DISP.INSTALLATION.RSSI_ICON_WIDTH,
+      RSSI_ICON_HEIGHT: DISP.INSTALLATION.RSSI_ICON_HEIGHT,
     }
   },
   computed: {
@@ -89,11 +130,38 @@ export default {
         category => CATEGORY.POT_AVAILABLE.includes(category.categoryType)
       )
     },
+    txs() {
+      return this.nearest.map((n) => n.btx_id)
+    },
   },
   watch: {
     modeRssi: function(newVal, oldVal) {
       this.$emit('rssi', newVal)
     },
+    targetTx: function(newVal, oldVal) {
+      if (this.rssiCon) {
+        this.rssiCon.removeAllChildren()
+      }
+      else {
+        this.rssiCon = new Container()
+        this.stage.addChild(this.rssiCon)
+      }
+
+      const target = this.nearest.find((n) => n.btx_id === newVal)
+      if (!target) {
+        return
+      }
+
+      const minusX = this.RSSI_ICON_WIDTH / 2
+      const minusY = (this.RSSI_ICON_HEIGHT - 2) * 2
+      const pow = Math.pow(10, this.RSSI_SCALE)
+
+      target.nearest.filter((t) => t.x && t.y).forEach((t, i, a) => {
+        const rssi = Math.floor(t.rssi * pow) / pow 
+        rssiIcon = new RssiIcon(rssi, i).add(this.rssiCon, t.x - minusX, t.y - minusY)
+      })
+      this.stage.update()
+    }
   },
   async mounted() {
     await StateHelper.load('category')
@@ -105,30 +173,29 @@ export default {
       this.showMapImageDef(async () => {
         await this.fetchAreaExbs()
         this.positionedExb = this.getExbPosition()
-        this.getRssiMap(this.positionedExb)
         if (this.exbCon) {
           this.exbCon.removeAllChildren()
         }
         else {
           this.exbCon = new Container()
         }
-        this.positionedExb.forEach((exb) => {
+
+        const exbBtns = this.positionedExb.map((exb) => {
           const clone = Object.assign({}, exb)
           this.replaceExb(exb, (exb) => {
             clone.x = exb.location.x * this.mapImageScale
             clone.y = exb.location.y * this.mapImageScale
           })
-          this.showExb(clone)
+          const exbBtn = this.createExbIcon(clone)
+          this.exbCon.addChild(exbBtn)
+          return exbBtn
         })
+        this.nearest = await this.getNearest(exbBtns)
         this.keepExbPosition = false
         this.stage.addChild(this.exbCon)
         this.stage.update()
         this.forceUpdateRealWidth()
       }, disableErrorPopup)
-    },
-    showExb(exb) {
-      const exbBtn = this.createExbIcon(exb)
-      this.exbCon.addChild(exbBtn)
     },
     createExbIcon(exb) {
       const exbBtn = new Container()
@@ -160,13 +227,21 @@ export default {
     getExbPosition() {
       return this.exbs.filter((exb) => exb.location.areaId === this.selectedArea && exb.location.x && exb.location.y > 0)
     },
-    async getRssiMap(exbs) {
-      let positions = await HttpHelper.getExCloud(EXCloudHelper.url(EXCLOUD.POSITION_URL) + new Date().getTime())
-      positions = positions.filter((position) => exbs.some((exb) => exb.deviceId === position.device_id))
+    async getNearest(exbs) {
+      const positions = await HttpHelper.getExCloud(EXCloudHelper.url(EXCLOUD.POSITION_URL) + new Date().getTime())
+      const xymap = {}
+      exbs.forEach((e) => xymap[e.deviceId] = {x: e.x, y: e.y})
+      return positions.filter((position) => exbs.some((exb) => exb.deviceId === position.device_id))
         .map((position) => {
+          position.nearest.forEach((n) => {
+            const target = xymap[n.device_id]
+            if (target) {
+              n.x = target.x
+              n.y = target.y
+            }
+          })
           return {btx_id: position.btx_id, nearest: position.nearest}
         })
-      console.log(positions)
     },
   },
 }
