@@ -537,7 +537,7 @@
     "updateFailed": "{target} update failed. ({code})",
     "registerFailed": "{target} registration failed. ({code})",
     "deleteFailed": "{target} deletion failed. ({code})",
-    "bulkRegisterFailed": "{target} bulk registration failed. ({code})",
+    "bulkRegisterFailed": "{target} bulk registration failed. ",
     "duplicate": "{key} ({val}) is already in use.",
     "foreignKey": "{key} ({val}) does not exist.",
     "noMapImage": "Map image is not registered.",
