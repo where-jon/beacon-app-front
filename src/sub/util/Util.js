@@ -356,7 +356,7 @@ export const getMidnightMs = () => {
 }
 
 export const getDetailCaptionKey = (id) => {
-  return `label.${hasValue(id)? 'update': 'addSetting'}`
+  return `${hasValue(id)? 'update': 'addSetting'}`
 }
 
 export const getDatetime = (baseDatetime, controlData) => {

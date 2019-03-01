@@ -1,6 +1,11 @@
 import _ from 'lodash'
 import * as Util from '../util/Util'
 
+let i18n
+
+export const setApp = (pi18n) => {
+  i18n = pi18n
+}
 
 export const addLabelByKey = (i18n, objArr) => {
   return _(objArr).map((val) => {
@@ -29,5 +34,18 @@ export const extract = (obj, fields) => {
   })
 
   console.log('extract', {ret})
+  return ret
+}
+
+export const createBreadCrumbItems = (...columns) => {
+  const ret = []
+  columns.forEach(column => {
+    const isString = typeof column == 'string'
+    ret.push({
+      text: i18n.tnl(`label.${isString? column: column.text}`),
+      active: isString? true: column.href == null,
+      href: isString? null: column.href,
+    })
+  })
   return ret
 }

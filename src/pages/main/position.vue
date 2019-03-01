@@ -54,6 +54,7 @@ import * as SensorHelper from '../../sub/helper/SensorHelper'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as Util from '../../sub/util/Util'
 import txdetail from '../../components/parts/txdetail.vue'
 import { APP, DISP } from '../../sub/constant/config'
@@ -73,16 +74,7 @@ export default {
   mixins: [showmapmixin, listmixin],
   data() {
     return {
-      items: [
-        {
-          text: this.$i18n.tnl('label.main'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.showPosition'),
-          active: true
-        },
-      ],
+      items: ViewHelper.createBreadCrumbItems('main', 'showPosition'),
       detectedCount: 0, // 検知数
       pot: {},
       showMeditag: APP.USE_MEDITAG,

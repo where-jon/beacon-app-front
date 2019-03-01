@@ -52,8 +52,8 @@
 import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import locale from 'element-ui/lib/locale'
 import * as Util from '../../sub/util/Util'
+import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
@@ -126,9 +126,7 @@ export default {
     this.form.datetimeTo = Util.getDatetime(date)
   },
   mounted() {
-    import(`element-ui/lib/locale/lang/${this.$i18n.locale}`).then( (mojule) =>{
-      locale.use(mojule.default)
-    })
+    HtmlUtil.importElementUI()
   },
   methods: {
     changeGroup(newVal = this.form.groupId) {

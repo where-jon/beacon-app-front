@@ -13,6 +13,7 @@ import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
 import { CATEGORY } from '../../../sub/constant/Constants'
 import * as StateHelper from '../../../sub/helper/StateHelper'
+import * as ViewHelper from '../../../sub/helper/ViewHelper'
 
 export default {
   components: {
@@ -25,20 +26,7 @@ export default {
       id: 'categoryId',
       backPath: '/master/category',
       appServicePath: '/basic/category',
-      items: [
-        {
-          text: this.$i18n.tnl('label.master'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.category'),
-          href: '/master/category',
-        },
-        {
-          text: this.$i18n.tnl('label.bulkRegister'),
-          active: true
-        }
-      ]
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'category', href: '/master/category'}, 'bulkRegister'),
     }
   },
   computed: {

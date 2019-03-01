@@ -11,6 +11,7 @@ import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
 import * as StateHelper from '../../../sub/helper/StateHelper'
+import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import { ZONE } from '../../../sub/constant/Constants'
 
 export default {
@@ -24,20 +25,7 @@ export default {
       id: 'zoneId',
       backPath: '/master/zoneClass',
       appServicePath: '/core/zone',
-      items: [
-        {
-          text: this.$i18n.tnl('label.master'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.zoneClass'),
-          href: '/master/zoneClass',
-        },
-        {
-          text: this.$i18n.tnl('label.bulkRegister'),
-          active: true
-        }
-      ]
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'zoneClass', href: '/master/zoneClass'}, 'bulkRegister'),
     }
   },
   computed: {

@@ -57,15 +57,14 @@
 import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import locale from 'element-ui/lib/locale'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
-import { addLabelByKey } from '../../sub/helper/ViewHelper'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import { SENSOR } from '../../sub/constant/Constants'
@@ -83,16 +82,7 @@ export default {
   data () {
     return {
       name: 'sensorHistory',
-      items: [
-        {
-          text: this.$i18n.tnl('label.historyTitle'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.sensorHistory'),
-          active: true
-        }
-      ],
+      items: ViewHelper.createBreadCrumbItems('historyTitle', 'sensorHistory'),
       form: {
         sensorId: null,
         datetimeFrom: null,
@@ -138,16 +128,14 @@ export default {
     this.fields = this.fields1
   },
   mounted() {
-    import(`element-ui/lib/locale/lang/${this.$i18n.locale}`).then( (mojule) =>{
-      locale.use(mojule.default)
-    })
+    HtmlUtil.importElementUI()
     StateHelper.load('sensor')
     StateHelper.load('tx')
     this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.fetchRows, maxRows: this.limitViewRows})}`
   },
   methods: {
     getFields1(){
-      return addLabelByKey(this.$i18n, [
+      return ViewHelper.addLabelByKey(this.$i18n, [
         {key: 'sensorDt', sortable: true, label:'dt'},
         {key: 'exbId', sortable: true },
         APP.EXB_WITH_DEVICE_NUM? {key: 'deviceNum', sortable: true }: null,
@@ -161,7 +149,7 @@ export default {
       ])
     },
     getFields2(){
-      return addLabelByKey(this.$i18n, [
+      return ViewHelper.addLabelByKey(this.$i18n, [
         {key: 'sensorDt', sortable: true, label:'dt'},
         {key: 'exbId', sortable: true },
         APP.EXB_WITH_DEVICE_NUM? {key: 'deviceNum', sortable: true }: null,
@@ -174,7 +162,7 @@ export default {
       ])
     },
     getFields5(){
-      return addLabelByKey(this.$i18n, [
+      return ViewHelper.addLabelByKey(this.$i18n, [
         {key: 'sensorDt', sortable: true, label:'dt'},
         {key: 'txName', sortable: true },
         {key: 'major', sortable: true },
@@ -187,7 +175,7 @@ export default {
       ])
     },
     getFields6(){
-      return addLabelByKey(this.$i18n, [
+      return ViewHelper.addLabelByKey(this.$i18n, [
         {key: 'sensorDt', sortable: true, label:'dt'},
         {key: 'txName', sortable: true },
         {key: 'major', sortable: true },

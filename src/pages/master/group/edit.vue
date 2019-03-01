@@ -67,20 +67,7 @@ export default {
       defaultColor: '#000000',
       defaultBgColor: '#ffffff',
       form: ViewHelper.extract(this.$store.state.app_service.group, ['groupId', 'groupName', 'ruby', 'display', 'description']),
-      items: [
-        {
-          text: this.$i18n.tnl('label.master'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.group'),
-          href: '/master/group',
-        },
-        {
-          text: this.$i18n.tnl(Util.getDetailCaptionKey(this.$store.state.app_service.group.groupId)),
-          active: true
-        }
-      ]
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'group', href: '/master/group'}, Util.getDetailCaptionKey(this.$store.state.app_service.group.groupId)),
     }
   },
   computed: {
