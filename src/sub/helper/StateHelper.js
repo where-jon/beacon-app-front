@@ -85,9 +85,16 @@ export const getCategoryTypeName = (category) => {
   return categoryTypeName != null? categoryTypeName.text: null
 }
 
-// システム利用カテゴリの名称を各言語用にコンバートする
+// システム利用　カテゴリの名称　⇔　各言語用名称　コンバートする
 export const getConvertCategoryName = (categoryname) => {
-  return categoryname == SYSTEM_ZONE_CATEGORY_NAME.ABSENT? i18n.tnl('system.absentCategoryName'): categoryname
+  switch(categoryname) {
+  case SYSTEM_ZONE_CATEGORY_NAME.ABSENT:
+    return i18n.tnl('system.absentCategoryName')
+  case i18n.tnl('system.absentCategoryName'):
+    return SYSTEM_ZONE_CATEGORY_NAME.ABSENT
+  default:
+    return categoryname
+  }
 }
 
 export const getShapeName = (shape) => {
