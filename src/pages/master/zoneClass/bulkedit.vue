@@ -70,7 +70,7 @@ export default {
           entity.area = {areaId: dummyKey--, areaName: val}
         }
         if(headerName == 'categoryName') {
-          entity.categoryName = StateHelper.getConvertCategoryName(val)
+          entity.categoryName = StateHelper.isSystemUseCategoryName(val)? val: StateHelper.getConvertCategoryName(val)
         }
         if(LOCATION_ZONE_COL.includes(headerName) && entity.zoneId != null && locationId != null){
           entity.locationZoneList = [{

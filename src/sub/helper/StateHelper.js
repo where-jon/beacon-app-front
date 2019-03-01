@@ -97,6 +97,17 @@ export const getConvertCategoryName = (categoryname) => {
   }
 }
 
+// システム利用カテゴリ名称かどうかを判定する
+export const isSystemUseCategoryName = (val) => {
+  let systemUseCategoryName = false
+  switch(val) {
+  case SYSTEM_ZONE_CATEGORY_NAME.ABSENT:
+    systemUseCategoryName = true
+    break
+  }
+  return systemUseCategoryName
+}
+
 export const getShapeName = (shape) => {
   const shapeName = SHAPE.getShapes().find((tval) => tval.value === shape)
   return shapeName != null? shapeName.text: null
