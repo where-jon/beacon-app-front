@@ -33,6 +33,8 @@
     "cancel": "キャンセル",
     "modify": "変更",
     "info": "INFO",
+    "pause": "停止",
+    "restart": "再開",
 
     "---------------- App common ---------------":"",
     "login": "ログイン",

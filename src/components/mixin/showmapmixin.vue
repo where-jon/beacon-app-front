@@ -69,7 +69,7 @@ export default {
     this.selectedArea = this.getInitAreaOption()
     await StateHelper.loadAreaImage(this.selectedArea)
     this.loadComplete = true
-    if (this.$route.path.startsWith('/main')) {
+    if (this.$route.path.startsWith('/main') || this.$route.path.startsWith('/develop/installation')) {
       let timer = 0
       const path = this.$route.path
       let currentWidth = window.innerWidth
@@ -455,8 +455,8 @@ export default {
       const display = this.getDisplay(tx)
       const map = HtmlUtil.getRect('#map')
       const containerParent = HtmlUtil.getRect('#mapContainer', 'parentNode')
-      const offsetX = map.left - containerParent.left
-      const offsetY = map.top - containerParent.top
+      const offsetX = map.left - containerParent.left + (!this.isInstallation ? 0 : 48)
+      const offsetY = map.top - containerParent.top + (!this.isInstallation ? 0 : 20)
       const isDispRight = x + offsetX + 100 < window.innerWidth
       // rev === trueの場合、ポップアップを上に表示
       const rev = y + map.top + DISP.TX_R + tipOffsetY + popupHeight > window.innerHeight

@@ -32,10 +32,14 @@
           </span>
         </b-form-row>
         <div v-if="isInstallation">
-          <b-form-row>
+          <b-form-row class="my-1 ml-2 ml-sm-0">
             <b-form-checkbox v-model="modeRssi" class="ml-sm-4 ml-2 mr-1">
               {{ $t('label.dispRssi') }}
             </b-form-checkbox>
+            <b-button  class="ml-sm-4 ml-2 mr-1" :pressed.sync="isPause" variant="primary">
+              <span v-if="!isPause"><i class="fas fa-pause"></i>&nbsp;{{ $t('label.reload') }}{{ $t('label.pause') }}</span>
+              <span v-else><i class="fas fa-play"></i>&nbsp;{{ $t('label.reload') }}{{ $t('label.restart') }}</span>
+            </b-button>
           </b-form-row>
         </div>
       </b-form>
@@ -120,6 +124,7 @@ export default {
       toggleCallBack: () => this.reset(),
       noImageErrorKey: 'noMapImage',
       modeRssi: false,
+      isPause: false,
     }
   },
   computed: {
@@ -157,6 +162,14 @@ export default {
     },
     modeRssi: function(newVal, oldVal) {
       this.$emit('rssi', newVal)
+    },
+    isPause: function(newVal, oldVal) {
+      if (!this.isInstallation) return
+      if (newVal) {
+        this.stopAutoReload()
+        return
+      }
+      this.startAutoReload()
     },
   },
   async mounted() {

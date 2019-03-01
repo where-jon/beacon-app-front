@@ -1,6 +1,6 @@
 <template>
   <div id="mapContainer" class="container-fluid">
-    <breadcrumb :items="items" :reload="false" />
+    <breadcrumb :items="items" :reload="true" />
     <b-row class="mt-2">
       <b-form inline class="mt-2" @submit.prevent>
         <b-form-row class="my-1 ml-2 ml-sm-0">
@@ -32,6 +32,12 @@
           </label>
           <b-form-select v-model="targetTx" :options="txs" class="ml-1 mr-2" />
         </b-form-row>
+        <b-form-row class="my-1 ml-2 ml-sm-0">
+          <b-button  class="ml-sm-4 ml-2 mr-1" :pressed.sync="isPause" variant="primary">
+            <span v-if="!isPause"><i class="fas fa-pause"></i>&nbsp;{{ $t('label.reload') }}{{ $t('label.pause') }}</span>
+            <span v-else><i class="fas fa-play"></i>&nbsp;{{ $t('label.reload') }}{{ $t('label.restart') }}</span>
+          </b-button>
+        </b-form-row>
       </b-form>
     </b-row>
     <b-row class="mt-3">
@@ -50,7 +56,6 @@ import * as HttpHelper from '../../sub/helper/HttpHelper'
 import { APP, DISP, EXCLOUD } from '../../sub/constant/config'
 import { CATEGORY } from '../../sub/constant/Constants'
 import { Container, Shape, Text } from '@createjs/easeljs/dist/easeljs.module'
-import commonmixinVue from '../../components/mixin/commonmixin.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
 
 class RssiIcon {
@@ -95,7 +100,7 @@ export default {
   components: {
     breadcrumb,
   },
-  mixins: [showmapmixin, commonmixinVue],
+  mixins: [showmapmixin],
   data () {
     return {
       items: [
@@ -119,11 +124,15 @@ export default {
       RSSI_SCALE: 5,
       RSSI_ICON_WIDTH: DISP.INSTALLATION.RSSI_ICON_WIDTH,
       RSSI_ICON_HEIGHT: DISP.INSTALLATION.RSSI_ICON_HEIGHT,
+      isPause: false,
     }
   },
   computed: {
     ...mapState('app_service', [
       'pageSendParam',
+    ]),
+    ...mapState([
+      'reload',
     ]),
     categoryOptionsForPot() {
       return StateHelper.getOptionsFromState('category', false, false,
@@ -141,6 +150,15 @@ export default {
     targetTx: function(newVal, oldVal) {
       this.dispRssiIcons(newVal)
     },
+    isPause: function(newVal, oldVal) {
+      // リロード一時停止
+      if (newVal) {
+        this.stopAutoReload()
+        return
+      }
+      // リロード再開
+      this.startAutoReload()
+    },
   },
   async mounted() {
     await StateHelper.load('category')
@@ -149,10 +167,13 @@ export default {
   },
   methods: {
     async fetchData(payload, disableErrorPopup) {
-      console.log('fetchDaaaaaaaaaaaaaaaaaaaaaata')
       this.showMapImageDef(async () => {
+        this.showProgress()
         await this.fetchAreaExbs()
         this.positionedExb = this.getExbPosition()
+        if (this.exbCon && this.exbCon !== null) {
+          this.stage.removeChild(this.exbCon)
+        }
         this.exbCon = new Container()
         this.exbBtns = this.positionedExb.map((exb) => {
           const clone = Object.assign({}, exb)
@@ -165,10 +186,16 @@ export default {
           return exbBtn
         })
         this.nearest = await this.getNearest(this.exbBtns)
-        this.keepExbPosition = false
         this.stage.addChild(this.exbCon)
         this.stage.update()
         this.forceUpdateRealWidth()
+        if (this.targetTx) {
+          this.dispRssiIcons(this.targetTx)
+        }
+        if (payload && payload.done) {
+          payload.done()
+        }
+        this.hideProgress()
       }, disableErrorPopup)
     },
     createExbIcon(exb) {
@@ -232,7 +259,7 @@ export default {
       }
 
       const minusX = this.RSSI_ICON_WIDTH / 2
-      const minusY = (this.RSSI_ICON_HEIGHT - 2) * 2
+      const minusY = (this.RSSI_ICON_HEIGHT-1) * 2
       const pow = Math.pow(10, this.RSSI_SCALE)
 
       target.nearest.filter((t) => t.x && t.y).forEach((t, i, a) => {
