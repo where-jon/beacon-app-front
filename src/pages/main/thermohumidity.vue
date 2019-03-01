@@ -159,8 +159,8 @@ export default {
     createWarnMessages(){
       this.setWarnDevices()
       const ret = []
-      const exbIdName = StateHelper.getDeviceIdName({exbId: true})
-      const txIdName = StateHelper.getDeviceIdName({txId: true})
+      const exbIdName = StateHelper.getDeviceIdName({exbId: true}, true)
+      const txIdName = StateHelper.getDeviceIdName({txId: true}, true)
       this.humidityPatternConfig.less.concat(this.humidityPatternConfig.more).forEach(conf => {
         if(conf.exbs.length == 0 && conf.txs.length == 0){
           return

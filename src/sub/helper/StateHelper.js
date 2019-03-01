@@ -15,12 +15,12 @@ export const setApp = (pStore, pi18n) => {
   i18n = pi18n
 }
 
-export const getDeviceIdName = (device) => {
+export const getDeviceIdName = (device, ignorePrimaryKey = false) => {
   if(device.exbId){
-    return APP.EXB_WITH_EXBID? 'exbId': APP.EXB_WITH_DEVICE_NUM? 'deviceNum': APP.EXB_WITH_DEVICE_ID? 'deviceId': APP.EXB_WITH_DEVICE_IDX? 'deviceIdX': 'exbId'
+    return APP.EXB_WITH_EXBID && !ignorePrimaryKey? 'exbId': APP.EXB_WITH_DEVICE_NUM? 'deviceNum': APP.EXB_WITH_DEVICE_ID? 'deviceId': APP.EXB_WITH_DEVICE_IDX? 'deviceIdX': 'exbId'
   }
   if(device.txId){
-    return APP.TX_WITH_TXID? 'txId': APP.TX_BTX_MINOR != 'minor'? 'btxId': 'minor'
+    return APP.TX_WITH_TXID && !ignorePrimaryKey? 'txId': APP.TX_BTX_MINOR != 'minor'? 'btxId': 'minor'
   }
   return null
 }
