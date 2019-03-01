@@ -94,8 +94,8 @@ export default {
         await StateHelper.load('area')
         await StateHelper.load('tx')
         await StateHelper.load('exb')
-        await this.storePositionHistory()
-        let positions = this.getPositions()
+        await this.storePositionHistory(0, true)
+        let positions = this.getPositions(true)
 
         Util.debug(positions)
         positions = positions.map((pos) => {
