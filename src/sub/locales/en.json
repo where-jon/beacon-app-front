@@ -594,5 +594,8 @@
     "count": "Count:{count}",
 
     "dummy": "" 
+  },
+  "system": {
+    "absentCategoryName": "" 
   }
 }

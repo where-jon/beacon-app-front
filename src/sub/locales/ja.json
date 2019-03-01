@@ -603,5 +603,8 @@
     "count": "{count} 名",
 
     "dummy": "" 
+  },
+  "system": {
+    "absentCategoryName": "不在" 
   }
 }
