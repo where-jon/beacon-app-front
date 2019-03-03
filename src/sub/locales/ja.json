@@ -506,7 +506,7 @@
 
     "---------------- App position ---------------":"",
     "txViewTypeDefault": "通常",
-    "txViewTypeSquare": "長方形",
+    "txViewTypeSquare": "正方形",
     "txViewTypeDiamond": "ひし形",
     "txViewTypeSpiral": "渦巻",
     "txViewTypeTile": "タイル",

@@ -385,7 +385,7 @@
 
     "---------------- App position ---------------": "",
     "txViewTypeDefault": "Normal",
-    "txViewTypeSquare": "Rectangle",
+    "txViewTypeSquare": "Square",
     "txViewTypeDiamond": "Diamond",
     "txViewTypeSpiral": "Spiral",
     "txViewTypeTile": "Tile",
