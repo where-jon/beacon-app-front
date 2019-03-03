@@ -358,7 +358,7 @@ export default {
     isMagnetOn(magnet) {
       return magnet && magnet.magnet === SENSOR.MAGNET_STATUS.ON
     },
-    async storePositionHistory(count){
+    async storePositionHistory(count, allShow = false){
       const pMock = DEV.USE_MOCK_EXC? mock.positions[count]: null
       let positions = []
       if (APP.USE_POSITION_HISTORY) {
@@ -373,7 +373,7 @@ export default {
       // 検知状態の取得
       PositionHelper.setDetectState(positions, APP.USE_POSITION_HISTORY)
       // 在席表示と同じ、表示txを取得する。
-      positions = this.getShowTxPositions(positions)
+      positions = this.getShowTxPositions(positions, allShow)
       // スタイルをセット
       positions = this.setPositionStyle(positions)
       if (APP.USE_POSITION_HISTORY) {
@@ -384,13 +384,16 @@ export default {
       }
       return positions
     },
-    getShowTxPositions(positions){
+    getShowTxPositions(positions, allShow = false){
       const now = !DEV.USE_MOCK_EXC ? new Date().getTime(): mock.positions_conf.start + this.count++ * mock.positions_conf.interval
       const correctPositions = APP.USE_POSITION_HISTORY? this.positionHistores: PositionHelper.correctPosId(this.orgPositions, now)
       return _(positions).filter((pos) => pos.tx && Util.bitON(pos.tx.disp, TX.DISP.POS)).map((pos) => {
         let cPos = _.find(correctPositions, (cPos) => pos.btx_id == cPos.btx_id)
-        if (cPos) {
-          return {...pos, transparent: cPos.transparent? cPos.transparent: PositionHelper.isTransparent(cPos.timestamp, now)}
+        if (cPos || allShow) {
+          return {
+            ...pos,
+            transparent: !cPos? true: cPos.transparent? cPos.transparent: PositionHelper.isTransparent(cPos.timestamp, now)
+          }
         }
         return null
       }).compact().value()
@@ -445,13 +448,13 @@ export default {
       }
       return null
     },
-    getPositions() {
+    getPositions(showAllTime = false) {
       let positions = []
       if (APP.USE_POSITION_HISTORY) {
         positions = this.positionHistores
       } else {
         const now = !DEV.USE_MOCK_EXC? new Date().getTime(): mock.positions_conf.start + this.count++ * mock.positions_conf.interval  // for mock
-        positions = PositionHelper.correctPosId(this.orgPositions, now)
+        positions = PositionHelper.correctPosId(this.orgPositions, now, showAllTime)
       }
       if (APP.USE_MEDITAG && this.meditagSensors) {
         positions = SensorHelper.setStress(positions, this.meditagSensors)
