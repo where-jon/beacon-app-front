@@ -105,20 +105,7 @@ export default {
       errorMessages: {
         email: [],
       },
-      items: [
-        {
-          text: this.$i18n.tnl('label.master'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.notifyTemplate'),
-          href: '/master/notifyTemplate',
-        },
-        {
-          text: this.$i18n.tnl(Util.getDetailCaptionKey(this.$store.state.app_service.template.notifyTemplateId)),
-          active: true
-        }
-      ]
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'notifyTemplate', href: '/master/notifyTemplate'}, Util.getDetailCaptionKey(this.$store.state.app_service.template.notifyTemplateId)),
     }
   },
   computed: {

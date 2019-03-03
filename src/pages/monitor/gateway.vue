@@ -9,6 +9,7 @@
 
 <script>
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
@@ -17,7 +18,6 @@ import reloadmixinVue from '../../components/mixin/reloadmixin.vue'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import monitorTable from '../../components/parts/monitortable.vue'
 import statusmixinVue from '../../components/mixin/statusmixin.vue'
-import { addLabelByKey } from '../../sub/helper/ViewHelper'
 
 export default {
   components: {
@@ -33,18 +33,9 @@ export default {
   },
   data () {
     return {
-      items: [
-        {
-          text: this.$i18n.t('label.monitor'),
-          active: true
-        },
-        {
-          text: this.$i18n.t('label.gateway'),
-          active: true
-        }
-      ],
+      items: ViewHelper.createBreadCrumbItems('monitor', 'gateway'),
       gateways: [],
-      headers: addLabelByKey(this.isDev? null: this.$i18n, [
+      headers: ViewHelper.addLabelByKey(this.isDev? null: this.$i18n, [
         { key: 'num' , label: 'no'},
         { key: 'deviceid', label: this.isDev? 'deviceid': 'deviceId'},
         { key: 'updated', label: this.isDev? 'updated': 'finalReceiveTimestamp'},
@@ -70,16 +61,7 @@ export default {
     if (!this.isDev) {
       return
     }
-    this.items = [
-      {
-        text: this.$i18n.t('label.develop'),
-        active: true
-      },
-      {
-        text: this.$i18n.t('label.gateway'),
-        active: true
-      }
-    ]
+    this.items = ViewHelper.createBreadCrumbItems('develop', 'gateway')
   },
   methods: {
     getClass(gateway){

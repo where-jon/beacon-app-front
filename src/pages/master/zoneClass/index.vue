@@ -9,7 +9,7 @@
 import mList from '../../../components/page/list.vue'
 import { mapState } from 'vuex'
 import * as StateHelper from '../../../sub/helper/StateHelper'
-import { addLabelByKey } from '../../../sub/helper/ViewHelper'
+import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import listmixinVue from '../../../components/mixin/listmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 
@@ -30,7 +30,7 @@ export default {
         appServicePath: '/core/zone',
         csvOut: true,
         custumCsvColumns: ['zoneId', 'zoneName', 'areaName', 'categoryName'],
-        fields: addLabelByKey(this.$i18n, [ 
+        fields: ViewHelper.addLabelByKey(this.$i18n, [ 
           {key: 'zoneName', sortable: true },
           {key: 'areaName', sortable: true},
           {key: 'categoryName', sortable: true},
@@ -40,16 +40,7 @@ export default {
         sortBy: 'zoneName',
         initTotalRows: this.$store.state.app_service.zones.length
       },
-      items: [
-        {
-          text: this.$i18n.tnl('label.master'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.zoneClass'),
-          active: true
-        }
-      ]
+      items: ViewHelper.createBreadCrumbItems('master', 'zoneClass'),
     }
   },
   computed: {

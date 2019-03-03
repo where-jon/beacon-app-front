@@ -46,6 +46,7 @@ import { mapState } from 'vuex'
 // import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as HttpHelper from '../../../sub/helper/HttpHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
+import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as Util from '../../../sub/util/Util'
 import { DISP } from '../../../sub/constant/config'
 import { UPDATE_ONLY_NN } from '../../../sub/constant/Constants'
@@ -77,16 +78,7 @@ export default {
       ICON_ARROW_WIDTH: 20,
       ICON_ARROW_HEIGHT: 10,
       noImageErrorKey: 'noMapImage',
-      items: [
-        {
-          text: this.$i18n.tnl('label.master'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.txLocationSetting'),
-          active: true
-        }
-      ]
+      items: ViewHelper.createBreadCrumbItems('master', 'txLocationSetting'),
     }
   },
   computed: {

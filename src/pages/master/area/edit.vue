@@ -61,20 +61,7 @@ export default {
       appServicePath: '/core/area',
       updateOnlyNN: UPDATE_ONLY_NN.NULL,
       form: ViewHelper.extract(this.$store.state.app_service.area, ['areaId', 'areaName', 'mapImage']),
-      items: [
-        {
-          text: this.$i18n.tnl('label.master'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.area'),
-          href: '/master/area',
-        },
-        {
-          text: this.$i18n.tnl(Util.getDetailCaptionKey(this.$store.state.app_service.area.areaId)),
-          active: true
-        }
-      ]
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'area', href: '/master/area'}, Util.getDetailCaptionKey(this.$store.state.app_service.area.areaId)),
     }
   },
   computed: {

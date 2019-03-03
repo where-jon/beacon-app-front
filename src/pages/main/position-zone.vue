@@ -10,6 +10,7 @@
 <script>
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import positionClass from '../../components/page/position-class.vue'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
 import { EXTRA_NAV } from '../../sub/constant/Constants'
 
 export default {
@@ -21,16 +22,7 @@ export default {
     return {
       reload: true,
       styles: [],
-      items: [
-        {
-          text: this.$i18n.t('label.main'),
-          active: true
-        },
-        {
-          text: this.$i18n.t('label.positionZone'),
-          active: true
-        }
-      ],
+      items: ViewHelper.createBreadCrumbItems('main', 'positionZone'),
       shortName: this.$i18n.t('label.positionZoneShort'),
       extraNavSpec: EXTRA_NAV,
     }

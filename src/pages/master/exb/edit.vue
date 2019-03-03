@@ -130,20 +130,7 @@ export default {
       deviceIdX: null,
       deviceNum: null,
       useZone: MenuHelper.isMenuEntry('/master/zoneClass'),
-      items: [
-        {
-          text: this.$i18n.tnl('label.master'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.exb'),
-          href: '/master/exb',
-        },
-        {
-          text: this.$i18n.tnl(Util.getDetailCaptionKey(this.$store.state.app_service.exb.exbId)),
-          active: true
-        }
-      ],
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'exb', href: '/master/exb'}, Util.getDetailCaptionKey(this.$store.state.app_service.exb.exbId)),
       txIconsDispFormat: 1,
       txIconsHorizon: 5,
       txIconsVertical: 5,

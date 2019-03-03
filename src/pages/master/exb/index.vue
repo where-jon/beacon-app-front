@@ -10,7 +10,7 @@ import mList from '../../../components/page/list.vue'
 import { mapState } from 'vuex'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as MenuHelper from '../../../sub/helper/MenuHelper'
-import { addLabelByKey } from '../../../sub/helper/ViewHelper'
+import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import { APP } from '../../../sub/constant/config.js'
 import listmixinVue from '../../../components/mixin/listmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
@@ -41,16 +41,7 @@ export default {
         sortBy: APP.EXB_WITH_EXBID? 'exbId': APP.EXB_WITH_DEVICE_NUM? 'deviceNum': APP.EXB_WITH_DEVICE_ID? 'deviceId': APP.EXB_WITH_DEVICE_IDX? 'deviceIdX': '',
         initTotalRows: this.$store.state.app_service.exbs.length
       },
-      items: [
-        {
-          text: this.$i18n.tnl('label.master'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.exb'),
-          active: true
-        }
-      ]
+      items: ViewHelper.createBreadCrumbItems('master', 'exb'),
     }
   },
   computed: {
@@ -80,7 +71,7 @@ export default {
       ].filter((val) => val)
     },
     getFields(){
-      return addLabelByKey(this.$i18n, [ 
+      return ViewHelper.addLabelByKey(this.$i18n, [ 
         APP.EXB_WITH_EXBID? {key: 'exbId', sortable: true }: null,
         APP.EXB_WITH_DEVICE_NUM? {key: 'deviceNum', sortable: true }: null,
         APP.EXB_WITH_DEVICE_ID? {key: 'deviceId', sortable: true }: null,
