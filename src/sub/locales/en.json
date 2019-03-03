@@ -524,6 +524,11 @@
     "MasterNotifyTemplate": "Notify Template",
     "MasterTxLocation": "TX Location",
     "NotifyHistory": "Notify History",
+    "showHeatmap": "Show Heatmap",
+    "sensorList": "Current Sensor List",
+    "zoneCategory": "Zone Category",
+    "device": "Device",
+    "SensorList": "Current Sensor List",
     "dummy": ""
   },
   "message": {
@@ -597,6 +602,9 @@
     "bulkUseFailed": "{col}（{value}） is used for {target} of {num}{unit}.",
     "notMatchedEmail": "It is not a mail format. (In case of addition, comma separated)",
     "count": "Count:{count}",
+    "readingPoint": ", ",
+    "lessAlertHumidity": "{sensors} LOW：Under {humidity}％ ",
+    "moreAlertHumidity": "{sensors} HIGH：Over {humidity}％ ",
 
     "dummy": "" 
   }
