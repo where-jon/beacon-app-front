@@ -7,6 +7,7 @@
 
 <script>
 import { mapState } from 'vuex'
+import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
@@ -23,20 +24,7 @@ export default {
       id: 'exbId',
       backPath: '/master/exb',
       appServicePath: '/core/exb',
-      items: [
-        {
-          text: this.$i18n.tnl('label.master'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.exb'),
-          href: '/master/exb',
-        },
-        {
-          text: this.$i18n.tnl('label.bulkRegister'),
-          active: true
-        }
-      ]
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'exb', href: '/master/exb'}, 'bulkRegister'),
     }
   },
   computed: {
@@ -98,13 +86,15 @@ export default {
       return dummyKey
     },
     setParamSensor(entity, headerName, val, dummyKey){
-      const sensor = this.sensorOptionsExb.find((option) => option.text == val)
-      if(sensor && sensor.value != null){
-        entity.exbSensorList = [{exbSensorPK: {sensorId: sensor.value}, sensorName: val}]
-      }
-      else if(!sensor){
-        entity.exbSensorList = [{exbSensorPK: {sensorId: dummyKey--}, sensorName: val}]
-      }
+      const sensorNameList = val.split(';').map((val) => val.trim())
+      const exbSensorList = []
+      sensorNameList.forEach((sensorName) => {
+        const sensor = this.sensorOptionsExb.find((option) => option.text == sensorName)
+        if(sensor && sensor.value != null){
+          exbSensorList.push({exbSensorPK: {sensorId: sensor.value}, sensorName: sensorName})
+        }
+      })
+      entity.exbSensorList = exbSensorList
       return dummyKey
     },
     setParamOther(entity, headerName, val, dummyKey, mainCol){

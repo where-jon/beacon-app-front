@@ -9,6 +9,10 @@ import { FONT } from '../constant/Constants'
 // sleep (for test)
 export const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 
+export const single2multi = (str) => str.endsWith('y')? str.slice(0, -1) + 'ies' : str + 's'
+
+export const concatCamel = (...strs) => strs.map((str, idx) => idx == 0? str: `${str.charAt(0).toUpperCase()}${str.slice(1)}`).join('')
+
 export const snake2camel = (str) => str.replace(/_./g, (s) => s.charAt(1).toUpperCase())
 
 export const addNoSelect = (option) => option.unshift({value: null, text: ''})
@@ -352,7 +356,7 @@ export const getMidnightMs = () => {
 }
 
 export const getDetailCaptionKey = (id) => {
-  return `label.${hasValue(id)? 'update': 'addSetting'}`
+  return `${hasValue(id)? 'update': 'addSetting'}`
 }
 
 export const getDatetime = (baseDatetime, controlData) => {

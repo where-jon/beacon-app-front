@@ -234,8 +234,11 @@
     "dispAlways": "常時表示",
     "dispRssi": "RSSI表示",
 
-    "positionStack": "位置表示(全体)",
-    "positionStackShort": "全体",
+    "positionStack": "位置表示(エリア別)",
+    "positionStackShort": "エリア別",
+
+    "positionZone": "位置表示(ゾーン別)",
+    "positionZoneShort": "ゾーン別",
 
     "pass": "パスワード",
     "password": "パスワード",
@@ -431,7 +434,8 @@
     "Thermohumidity": "温湿度(メイン)",
     "PositionList": "位置表示(一覧)",
     "Led": "LED",
-    "PositionStack": "位置表示(全体)",
+    "PositionStack": "位置表示(エリア別)",
+    "PositionZone": "位置表示(ゾーン別)",
     "Master": "マスタ",
     "MasterRegion": "リージョン",
     "MasterArea": "エリア",

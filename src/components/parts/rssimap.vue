@@ -33,7 +33,7 @@
           <b-form-select v-model="targetTx" :options="txs" class="ml-1 mr-2" />
         </b-form-row>
         <b-form-row class="my-1 ml-2 ml-sm-0">
-          <b-button  class="ml-sm-4 ml-2 mr-1" :pressed.sync="isPause" variant="primary">
+          <b-button  class="ml-sm-4 ml-2 mr-1" :pressed.sync="isPause" :variant="getButtonTheme()">
             <span v-if="!isPause"><i class="fas fa-pause"></i>&nbsp;{{ $t('label.reload') }}{{ $t('label.pause') }}</span>
             <span v-else><i class="fas fa-play"></i>&nbsp;{{ $t('label.reload') }}{{ $t('label.restart') }}</span>
           </b-button>
@@ -57,6 +57,7 @@ import { APP, DISP, EXCLOUD } from '../../sub/constant/config'
 import { CATEGORY } from '../../sub/constant/Constants'
 import { Container, Shape, Text } from '@createjs/easeljs/dist/easeljs.module'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
+import commonmixinVue from '../mixin/commonmixin.vue'
 
 class RssiIcon {
   constructor(rssi, level = 3) {
@@ -100,7 +101,7 @@ export default {
   components: {
     breadcrumb,
   },
-  mixins: [showmapmixin],
+  mixins: [showmapmixin, commonmixinVue],
   data () {
     return {
       items: [

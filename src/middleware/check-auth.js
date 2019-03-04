@@ -2,6 +2,7 @@ import * as AuthHelper from '../sub/helper/AuthHelper'
 import * as MenuHelper from '../sub/helper/MenuHelper'
 import * as StateHelper from '../sub/helper/StateHelper'
 import * as HttpHelper from '../sub/helper/HttpHelper'
+import * as ViewHelper from '../sub/helper/ViewHelper'
 import { APP } from '../sub/constant/config'
 import { LOGIN_MODE } from '../sub/constant/Constants'
 
@@ -9,6 +10,7 @@ export default function (context) {
   console.debug('checkAuth')
   AuthHelper.setApp(context.app.router, context.app.store)
   StateHelper.setApp(context.app.store, context.app.i18n)
+  ViewHelper.setApp(context.app.i18n)
   HttpHelper.setApp(context)
   if (!process.browser) {
     return

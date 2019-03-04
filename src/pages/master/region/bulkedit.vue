@@ -11,6 +11,7 @@ import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
 import * as AuthHelper from '../../../sub/helper/AuthHelper'
+import * as ViewHelper from '../../../sub/helper/ViewHelper'
 
 export default {
   components: {
@@ -23,20 +24,7 @@ export default {
       id: 'regionId',
       backPath: '/master/region',
       appServicePath: '/core/region',
-      items: [
-        {
-          text: this.$i18n.tnl('label.master'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.region'),
-          href: '/master/region',
-        },
-        {
-          text: this.$i18n.tnl('label.bulkRegister'),
-          active: true
-        }
-      ]
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'region', href: '/master/region'}, 'bulkRegister'),
     }
   },
   computed: {

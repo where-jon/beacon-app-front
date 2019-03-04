@@ -2,13 +2,19 @@ import Encoding from 'encoding-japanese'
 import { str2Array } from './Util'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
 import { APP } from '../constant/config'
+import elementLocale from 'element-ui/lib/locale'
 
+let i18n
 let locale
 
 export const setApp = (pi18n) => {
+  i18n = pi18n
   locale = pi18n.locale
 }
 
+export const importElementUI = () => {
+  import(`element-ui/lib/locale/lang/${i18n.locale}`).then(mojule => elementLocale.use(mojule.default))
+}
 
 export const addClass = (e, cls) => e && e.target.classList && e.target.classList.add(cls)
 

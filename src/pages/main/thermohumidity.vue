@@ -28,6 +28,7 @@
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as SensorHelper from '../../sub/helper/SensorHelper'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
 import { DEV, DISP } from '../../sub/constant/config'
 import * as mock from '../../assets/mock/mock'
 import { SENSOR, DISCOMFORT } from '../../sub/constant/Constants'
@@ -45,16 +46,7 @@ export default {
   mixins: [showmapmixin],
   data() {
     return {
-      items: [
-        {
-          text: this.$i18n.tnl('label.main'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.thermohumidity'),
-          active: true
-        },
-      ],
+      items: ViewHelper.createBreadCrumbItems('main', 'thermohumidity'),
       isShownChart: false,
       chartTitle: '',
       keepExbPosition: false,
@@ -81,7 +73,7 @@ export default {
         const sensors = await EXCloudHelper.fetchSensor(SENSOR.TEMPERATURE)
 
         this.getPositionedExb(
-          (exb) => this.getSensorId(exb) == SENSOR.TEMPERATURE,
+          (exb) => this.getSensorIds(exb).includes(SENSOR.TEMPERATURE),
           (exb) => {return {id: SENSOR.TEMPERATURE, ...sensors.find((val) => val.deviceid == exb.deviceId && (val.timestamp || val.updatetime))}},
           (exb) => exb.temperature != null
         )

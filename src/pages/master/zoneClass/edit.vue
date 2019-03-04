@@ -84,20 +84,7 @@ export default {
       isEnableNameText: true,
       zones: [],
       isRegist: false,
-      items: [
-        {
-          text: this.$i18n.tnl('label.master'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.zoneClass'),
-          href: '/master/zoneClass',
-        },
-        {
-          text: this.$i18n.tnl(Util.getDetailCaptionKey(this.$store.state.app_service.zone.zoneId)),
-          active: true
-        }
-      ]
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'zoneClass', href: '/master/zoneClass'}, Util.getDetailCaptionKey(this.$store.state.app_service.zone.zoneId)),
     }
   },
   computed: {

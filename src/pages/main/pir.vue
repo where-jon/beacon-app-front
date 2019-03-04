@@ -22,6 +22,7 @@
 import { mapState } from 'vuex'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as Util from '../../sub/util/Util'
 import txdetail from '../../components/parts/txdetail.vue'
 import { DISP, APP } from '../../sub/constant/config'
@@ -44,16 +45,7 @@ export default {
         this.reset()
       },
       noImageErrorKey: 'noMapImage',
-      items: [
-        {
-          text: this.$i18n.tnl('label.main'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.pir'),
-          active: true
-        },
-      ],
+      items: ViewHelper.createBreadCrumbItems('main', 'pir'),
       INUSE_FONTSIZE_RATIO: 0.9,
       PIR_FONTSIZE_RATIO_EN: 0.5,
       EMPTY_FONTSIZE_RATIO: 1.2,

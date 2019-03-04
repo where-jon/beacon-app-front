@@ -32,8 +32,14 @@ export default {
       'showProgress',
       'hideProgress',
     ]),
-    getSensorId(exb) {
-      return Util.getValue(exb, 'exbSensorList.0.sensor.sensorId').val
+    getSensorIds(exb) {
+      const exbSensorList = Util.getValue(exb, 'exbSensorList', null)
+      if(Util.hasValue(exbSensorList)){
+        const ret = []
+        exbSensorList.forEach(exbSensor => ret.push(Util.getValue(exbSensor, 'sensor.sensorId', null)))
+        return ret
+      }
+      return [null]
     },
     getButtonTheme() {
       return 'outline-' + getButtonTheme()
