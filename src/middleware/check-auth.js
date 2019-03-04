@@ -4,7 +4,7 @@ import * as StateHelper from '../sub/helper/StateHelper'
 import * as HttpHelper from '../sub/helper/HttpHelper'
 import * as ViewHelper from '../sub/helper/ViewHelper'
 import { APP } from '../sub/constant/config'
-import { LOGIN_MODE } from '../sub/constant/Constants'
+import { LOGIN_MODE, FORCE_PUSH_MENU } from '../sub/constant/Constants'
 
 export default function (context) {
   console.debug('checkAuth')
@@ -31,6 +31,12 @@ export default function (context) {
     const loginInfo = JSON.parse(window.localStorage.getItem('login'))
     const isTenantAdmin = loginInfo.tenantAdmin
     const isProvider = loginInfo.isProvider
+
+    const extraMenu = FORCE_PUSH_MENU.find(menu => menu.parent == context.route.path && menu.isPush())
+    if(extraMenu){
+      context.app.router.push(extraMenu.path)
+      return
+    }
     if (!isProvider && !isTenantAdmin && (!tenantFeatureList || tenantFeatureList.length == 0)) {
       console.error('No tenant feature List', context.route.path)
       context.app.router.push(APP.ERROR_PAGE)
