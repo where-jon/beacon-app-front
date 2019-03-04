@@ -249,7 +249,9 @@ export default {
       this.detectedCount = 0 // 検知カウントリセット
       let position = []
       if(APP.USE_MULTI_POSITIONING){
-        position = PositionHelper.adjustMultiPosition(this.getPositions(), this.mapImageScale)
+        let area = _.find(this.$store.state.app_service.areas, (area) => area.areaId == this.selectedArea)
+        let mapRatio = area.mapRatio
+        position = PositionHelper.adjustMultiPosition(this.getPositions(), this.mapImageScale * mapRatio)
       }else{
         position = PositionHelper.adjustPosition(this.getPositions(), this.mapImageScale, this.positionedExb)
       }
