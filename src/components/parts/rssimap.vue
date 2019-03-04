@@ -129,9 +129,6 @@ export default {
     }
   },
   computed: {
-    ...mapState('app_service', [
-      'pageSendParam',
-    ]),
     ...mapState([
       'reload',
     ]),
@@ -251,6 +248,9 @@ export default {
       }
       else {
         this.rssiCon = new Container()
+      }
+
+      if (!this.rssiCon.parent) {
         this.stage.addChild(this.rssiCon)
       }
 

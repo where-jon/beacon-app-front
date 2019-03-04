@@ -223,6 +223,9 @@ export default {
     },
     drawMapImage(bg) {
       const canvas = this.$refs.map
+      if (!canvas) {
+        return
+      }
       this.mapWidth = bg.width
       this.mapHeight = bg.height
       this.isShownMapImage = true
