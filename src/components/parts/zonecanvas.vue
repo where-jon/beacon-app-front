@@ -452,7 +452,8 @@ export default {
         return
       }
       this.zones.clear()
-      const zoneRecs = await AppServiceHelper.fetchList(`/core/zone/area/${this.areaId}`, 'id')
+      let zoneRecs = await AppServiceHelper.fetchList(`/core/zone/area/${this.areaId}`, 'id')
+      zoneRecs = _.filter(zoneRecs, (zone) => zone.zoneType ==  ZONE.getTypes()[0].value)
       this.cnt = zoneRecs.length > 0 ? Math.max(...zoneRecs.map((zoneRec) => zoneRec.zoneId)) + 1 : 0
       zoneRecs.forEach((zoneRec) => this.addZone(zoneRec))
       this.zones.setInActive()

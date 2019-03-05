@@ -1,7 +1,7 @@
 <template>
   <div>
     <breadcrumb :items="items" />
-    <m-list :params="params" :list="categories" />
+    <m-list :params="params" :list="categoryList" />
   </div>
 </template>
 
@@ -40,13 +40,19 @@ export default {
           {key: 'actions', thStyle: {width:'130px !important'} }
         ]),
         sortBy: 'categoryName',
-        initTotalRows: this.$store.state.app_service.categories.length
+        initTotalRows: this.categoryLength
       },
       categoryStyles: [],
       items: ViewHelper.createBreadCrumbItems('master', 'category'),
     }
   },
   computed: {
+    categoryList() {
+      return this.$store.state.app_service.categories.filter((category)=> !category.systemUse)
+    },
+    categoryLength() {
+      return this.categoryList().length
+    },
     ...mapState('app_service', [
       'categories',
     ]),

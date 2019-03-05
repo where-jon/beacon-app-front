@@ -1,7 +1,7 @@
 <template>
   <div>
     <breadcrumb :items="items" />
-    <m-list :params="params" :list="zones" />
+    <m-list :params="params" :list="zoneList" />
   </div>
 </template>
 
@@ -12,6 +12,7 @@ import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import listmixinVue from '../../../components/mixin/listmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
+import {ZONE} from '../../../sub/constant/Constants'
 
 export default {
   components: {
@@ -38,12 +39,19 @@ export default {
           {key: 'actions', thStyle: {width:'130px !important'} }
         ]),
         sortBy: 'zoneName',
-        initTotalRows: this.$store.state.app_service.zones.length
+        initTotalRows: this.zoneLength
       },
       items: ViewHelper.createBreadCrumbItems('master', 'zoneClass'),
     }
   },
   computed: {
+    zoneList() {
+      console.table(this.$store.state.app_service.zones)
+      return this.$store.state.app_service.zones.filter((zone)=> zone.zoneType ==  ZONE.getTypes()[1].value)
+    },
+    zoneLength() {
+      return this.zoneList().length
+    },
     ...mapState('app_service', [
       'zones',
       'forceFetchZone',

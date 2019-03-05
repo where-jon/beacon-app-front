@@ -1,5 +1,5 @@
 import { APP, DISP, DEV } from '../constant/config'
-import { TX_VIEW_TYPES, DETECT_STATE } from '../constant/Constants'
+import { TX_VIEW_TYPES, DETECT_STATE, TX } from '../constant/Constants'
 import * as DetectStateHelper from '../helper/DetectStateHelper'
 import * as Util from '../util/Util'
 import * as mock from '../../assets/mock/mock.js'
@@ -234,7 +234,6 @@ export const correctPosId = (orgPositions, now) => {
   // })
 
   Util.table('各TX単位(最終)', positions)
-
   orgPositions.forEach((orgPositionList) => {
     orgPositionList.forEach((orgPosition) => {
       _.forEach(orgPosition, (orgValue, orgKey) => {
@@ -299,7 +298,7 @@ export const correctPair = (orgPositions, now) => {
       if (APP.TX_POS_ONE_TO_ONE) {
         usedPos.push(val.pos_id)
       }
-      result.push({...val, rssi:val.rssiAvg, transparent: isTransparent(val.timestamp, now)})
+      result.push({...val, rssi:val.rssiAvg, transparent: isTransparent(val.timestamp, now), isLost: isLost(val.timestamp, now)})
     }
     return result
   }, [])
@@ -342,7 +341,7 @@ export const setDetectState = (positions, usePositionHistory = false) => {
       updatetime = position.timestamp
     }
 
-    position.detectState = DetectStateHelper.getState('tx', updatetime) // nearestのtimestampを使用
+    position.detectState = DetectStateHelper.getState('tx', updatetime, Util.bitON(position.tx.disp, TX.DISP.ALWAYS)) // nearestのtimestampを使用
     position.state = DetectStateHelper.getLabel(position.detectState)
     position.noSelectedTx = position.detectState != DETECT_STATE.DETECTED
   })
@@ -352,4 +351,9 @@ export const setDetectState = (positions, usePositionHistory = false) => {
 export const isTransparent = (timestamp, now) => {
   const date = new Date(timestamp)
   return date.getTime() < now - APP.TRANSPARENT_TIME
+}
+
+export const isLost = (timestamp, now) => {
+  const date = new Date(timestamp)
+  return date.getTime() < now - APP.LOST_TIME
 }

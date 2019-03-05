@@ -59,6 +59,7 @@ export default {
       zoneClassPath: '/master/zoneClass',
       backPath: '/master/zoneBlock',
       appServicePath: '/core/zone',
+      appServiceSavePath: '/edit',
       form: ViewHelper.extract(this.$store.state.app_service.zone, ['zoneId', 'zoneName', 'areaId', 'locationZoneList.0.locationZonePK.locationId', 'zoneCategoryList.0.zoneCategoryPK.categoryId']),
       areaNames: [],
       areaId: null,
@@ -154,7 +155,7 @@ export default {
       this.replace({showInfo: false})
       this.message = ''
       await this.deletedIds.forEach((id) => AppServiceHelper.deleteEntity(path, id))
-      const saveId = await AppServiceHelper.bulkSave(path, zones, 0)
+      const saveId = await AppServiceHelper.bulkSave(this.appServicePath + this.appServiceSavePath, zones, 0)
       this.isRegist = false
       this.message = this.$i18n.t('message.updateCompleted', { target: this.$i18n.t('label.zone') })
       this.replace({showInfo: true})

@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import * as AppServiceHelper from './AppServiceHelper'
 import * as Util from '../util/Util'
-import { CATEGORY, SHAPE, NOTIFY_STATE } from '../constant/Constants'
+import { CATEGORY, SHAPE, NOTIFY_STATE, SYSTEM_ZONE_CATEGORY_NAME } from '../constant/Constants'
 import { APP } from '../constant/config'
 
 
@@ -85,6 +85,29 @@ export const getCategoryTypeName = (category) => {
   return categoryTypeName != null? categoryTypeName.text: null
 }
 
+// システム利用　カテゴリの名称　⇔　各言語用名称　コンバートする
+export const getConvertCategoryName = (categoryname) => {
+  switch(categoryname) {
+  case SYSTEM_ZONE_CATEGORY_NAME.ABSENT:
+    return i18n.tnl('system.absentCategoryName')
+  case i18n.tnl('system.absentCategoryName'):
+    return SYSTEM_ZONE_CATEGORY_NAME.ABSENT
+  default:
+    return categoryname
+  }
+}
+
+// システム利用カテゴリ名称かどうかを判定する
+export const isSystemUseCategoryName = (val) => {
+  let systemUseCategoryName = false
+  switch(val) {
+  case SYSTEM_ZONE_CATEGORY_NAME.ABSENT:
+    systemUseCategoryName = true
+    break
+  }
+  return systemUseCategoryName
+}
+
 export const getShapeName = (shape) => {
   const shapeName = SHAPE.getShapes().find((tval) => tval.value === shape)
   return shapeName != null? shapeName.text: null
@@ -137,6 +160,7 @@ const appStateConf = {
           sensorId: Util.getValue(exb, 'exbSensorList.0.sensor.sensorId', null),
           zoneId: location? Util.getValue(location, 'locationZoneList.0.zone.zoneId', null): null,
           zoneName: location? Util.getValue(location, 'locationZoneList.0.zone.zoneName', null): null,
+          isAbsentZone: location? Util.getValue(location, 'locationZoneList.0.zone.zoneCategoryList.0.category.categoryName', false) === SYSTEM_ZONE_CATEGORY_NAME.ABSENT: false,
           sensorIdNames: getSensorIdNames(exb.exbSensorList),
         }
       })
@@ -152,7 +176,7 @@ const appStateConf = {
           displayName: Util.getValue(tx, 'potTxList.0.pot.displayName', null),
           description: Util.getValue(tx, 'potTxList.0.pot.description', null),
           category: Util.getValue(tx, 'potTxList.0.pot.potCategoryList.0.category', null),
-          categoryName: Util.getValue(tx, 'potTxList.0.pot.potCategoryList.0.category.categoryName', null),
+          categoryName: getConvertCategoryName(Util.getValue(tx, 'potTxList.0.pot.potCategoryList.0.category.categoryName', null)),
           group: Util.getValue(tx, 'potTxList.0.pot.potGroupList.0.group', null),
           groupName: Util.getValue(tx, 'potTxList.0.pot.potGroupList.0.group.groupName', null),
           sensorId: Util.getValue(tx, 'txSensorList.0.sensor.sensorId', null),
@@ -195,7 +219,7 @@ const appStateConf = {
         minor: val.txId? Util.getValue(val, 'tx.minor', '') : null,
         groupName: Util.getValue(val, 'potGroupList.0.group.groupName', ''),
         groupId: Util.getValue(val, 'potGroupList.0.group.groupId', ''),
-        categoryName: Util.getValue(val, 'potCategoryList.0.category.categoryName', ''),
+        categoryName: getConvertCategoryName(Util.getValue(val, 'potCategoryList.0.category.categoryName', '')),
         categoryId: Util.getValue(val, 'potCategoryList.0.category.categoryId', ''),
         ruby: Util.getValue(val, 'extValue.ruby' ,null),
         extValue: val.extValue ? val.extValue : this.extValueDefault,
@@ -210,6 +234,7 @@ const appStateConf = {
     beforeCommit: (arr) => {
       return arr.map((val) => ({
         ...val,
+        categoryName: getConvertCategoryName(val.categoryName),
         shape: val.display? val.display.shape: null,
         color: val.display? val.display.color: null,
         bgColor: val.display? val.display.bgColor: null,
@@ -251,18 +276,19 @@ const appStateConf = {
     sort: 'locationId',
   },
   zones: {
-    path: '/core/zone/coordinates',
+    path: '/core/zone',
     sort: 'zoneName',
     beforeCommit: (arr) => {
       return  arr.map((val) => ({
         zoneId: val.zoneId,
         zoneName: val.zoneName,
+        zoneType: val.zoneType,
         areaId: Util.hasValue(val.area)? val.area.areaId: null,
         areaName: Util.hasValue(val.area)? val.area.areaName: null,
         locationId: Util.hasValue(val.locationZoneList)? val.locationZoneList[0].locationZonePK.locationId: null,
         locationName: Util.hasValue(val.locationZoneList)? val.locationZoneList[0].location.locationName: null,
         categoryId: Util.hasValue(val.zoneCategoryList)? val.zoneCategoryList[0].zoneCategoryPK.categoryId: null,
-        categoryName: Util.hasValue(val.zoneCategoryList)? val.zoneCategoryList[0].category.categoryName: null,
+        categoryName: getConvertCategoryName(Util.hasValue(val.zoneCategoryList)? val.zoneCategoryList[0].category.categoryName: null),
       }))
     }
   },

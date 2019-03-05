@@ -61,7 +61,7 @@
                 <span v-text="$i18n.tnl('label.dispPir')" />
               </b-form-checkbox>
             </b-form-group>
-            <b-form-group v-if="false">
+            <b-form-group>
               <b-form-checkbox id="dispAlways" v-model="form.dispAlways" :value="4" :unchecked-value="0">
                 <span v-text="$i18n.tnl('label.dispAlways')" />
               </b-form-checkbox>

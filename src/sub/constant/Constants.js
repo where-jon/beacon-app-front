@@ -593,3 +593,7 @@ export const MENU = [
     ],
   },
 ]
+
+export const SYSTEM_ZONE_CATEGORY_NAME = {
+  ABSENT: 'ABSENT',
+}

@@ -585,6 +585,9 @@
     "bulkInvalidFailed": "{col}（{value}）の形式が不正です。",
     "bulkAuthFailed": "{col}（{value}）は使用できません。",
     "bulkUseFailed": "{col}（{value}）は{num}{unit}の{target}が使用しています。",
+    "bulkSystemUseFailed": "{col}（{value}）はシステムで使用する固定データの為変更できません。",
+    "bulkSystemUseNameFailed": "{col}（{value}）はシステムで使用する固定名称の為使用できません。",
+    "bulkInvalidUpdateLineFailed": "{col}（{value}）データは本画面で変更できません。",
     "monthDayTemperature": "{month}月{day}日の温湿度",
     "invalidLoginId": "ログインIDは英数記号を指定してください。",
     "notFound": "検索結果が存在しませんでした。",
@@ -604,5 +607,8 @@
     "count": "{count} 名",
 
     "dummy": "" 
+  },
+  "system": {
+    "absentCategoryName": "不在エリア" 
   }
 }
