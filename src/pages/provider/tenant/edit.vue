@@ -217,36 +217,9 @@ export default {
     }
   },
   async created(){
+    const currentFeatureList = this.tenant && this.tenant.tenantFeatureList? this.tenant.tenantFeatureList: []
     await StateHelper.load('feature')
-    this.featureList = this.features.map((feature) => {
-      const featureIds = this.getFeatureIds(feature.featureId)
-      const tenantFeature = this.tenant && this.tenant.tenantFeatureList? this.tenant.tenantFeatureList.find((val) => val.tenantFeaturePK.featureId == feature.featureId): null
-      const parentFeature = featureIds.subId != 0 && this.tenant && this.tenant.tenantFeatureList? this.tenant.tenantFeatureList.find((val) => {
-        const ids = this.getFeatureIds(val.tenantFeaturePK.featureId)
-        return ids.parentId == featureIds.parentId && ids.subId == 0
-      }): null
-      return {
-        ...feature,
-        parentShow: featureIds.subId == 0,
-        parentId: featureIds.parentId,
-        subShow: featureIds.subId != 0,
-        subId: featureIds.subId,
-        checked: !this.hasId && this.defaultCheckFeatureNames.includes(feature.featureName)? true: tenantFeature? true: false,
-        disabled: parentFeature? true: false,
-      }
-    })
-      .sort((a, b) => {
-        if(a.featureType != b.featureType){
-          return a.featureType < b.featureType? -1: 1
-        }
-        if(a.parentId != b.parentId){
-          return a.parentId < b.parentId? -1: 1
-        }
-        if(a.subId != b.subId){
-          return a.subId < b.subId? -1: 1
-        }
-        return 0
-      })
+    this.featureList = this.createFeatureTable(this.features, currentFeatureList)
     this.categorySettingList = {}
     if(this.tenant && this.tenant.settingList){
       _.forEach(this.tenant.settingList, (value, key) => {
@@ -321,7 +294,7 @@ export default {
         defaultExcloudBaseUrl: defaultConfig.EXCLOUD_BASE_URL,
         excloudBaseUrl: EXCLOUD_BASE_URL,
         tenantFeatureList: this.featureList.map((val) => {
-          return val.checked? {
+          return !val.disabled && val.checked? {
             tenantFeaturePK:{tenantId: dummyKey--, featureId: val.featureId},
           }: null
         }).filter((val) => val),

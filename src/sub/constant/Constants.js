@@ -289,6 +289,17 @@ export const FONT = {
   TYPE: 'px Arial',
 }
 
+export const FORCE_PUSH_MENU = [
+  {
+    parent: '/provider/tenant',
+    path: '/provider/tenant/tenantFeature',
+    isPush: () => {
+      const login = JSON.parse(window.localStorage.getItem('login'))
+      return !login || !login.tenantAdmin && login.isProvider
+    } ,
+  },
+]
+
 export const EXTRA_NAV = [
   {
     key: 'showPositionShort',
@@ -319,6 +330,7 @@ export const MENU = [
     path: 'provider/tenant',
     icon: 'fas fa-cogs',
     tenantOnly: true,
+    providerOnlyForce: true,
     pages: [
       {
         key: 'tenant',

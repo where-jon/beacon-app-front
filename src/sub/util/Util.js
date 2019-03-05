@@ -6,6 +6,8 @@ import moment from 'moment'
 import { DEV, APP } from '../constant/config'
 import { FONT } from '../constant/Constants'
 
+export const getLogin = () => JSON.parse(window.localStorage.getItem('login'))
+
 // sleep (for test)
 export const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 
