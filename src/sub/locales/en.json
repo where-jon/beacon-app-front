@@ -160,6 +160,11 @@
     "zoneName": "Zone name",
     "zoneType": "Zone type",
 
+    "---------------- App news ---------------":"",
+    "news":"<News>",
+    "newsDt":"News date",
+    "newsContent":"Content",
+
     "---------------- App setting ---------------":"",
     "login-user-profile": "Login user profile",
     "default": "Corporate",
