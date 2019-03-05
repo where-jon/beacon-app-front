@@ -8,6 +8,7 @@ import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as PositionHelper from '../../sub/helper/PositionHelper'
 import * as SensorHelper from '../../sub/helper/SensorHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as Util from '../../sub/util/Util'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import reloadmixinVue from './reloadmixin.vue'
@@ -382,7 +383,7 @@ export default {
       return _(positions).filter((pos) => pos.tx && Util.bitON(pos.tx.disp, TX.DISP.POS)).map((pos) => {
         let cPos = _.find(correctPositions, (cPos) => pos.btx_id == cPos.btx_id)
         if (cPos) {
-          return {...pos, transparent: cPos.transparent? cPos.transparent: PositionHelper.isTransparent(cPos.timestamp, now)}
+          return {...pos, transparent: cPos.transparent? cPos.transparent: PositionHelper.isTransparent(cPos.timestamp, now), isLost: PositionHelper.isLost(cPos.timestamp, now)}
         }
         return null
       }).compact().value()
@@ -409,7 +410,7 @@ export default {
     setPositionedExb(){
       Util.debug('Raw exb', this.exbs, this.selectedArea)
       this.positionedExb = _(_.cloneDeep(this.exbs)).filter((exb) => {
-        return exb.enabled && !exb.isAbsentZone && exb.location.areaId == this.selectedArea && exb.location.x && exb.location.y > 0
+        return exb.enabled && exb.location.areaId == this.selectedArea && exb.location.x && exb.location.y > 0
       }).value()
       Util.debug('positionedExb', this.positionedExb)
       if (this.positionedExb.length == 0) {
@@ -496,8 +497,9 @@ export default {
       }
     },
     createBtnBg(pos, shape, bgColor){
-      const btnBg = new Shape()
-      btnBg.graphics.beginStroke('#ccc').beginFill('#' + bgColor)
+      let btnBg = new Shape()
+      
+      btnBg = this.setbtnColor(btnBg, bgColor, pos)
       switch(shape) {
       case SHAPE.CIRCLE:
         btnBg.graphics.drawCircle(0, 0, DISP.TX_R)
@@ -509,9 +511,22 @@ export default {
         btnBg.graphics.drawRoundRect(-DISP.TX_R, -DISP.TX_R, DISP.TX_R * 2, DISP.TX_R * 2, DISP.ROUNDRECT_RADIUS)
         break
       }
-      if (pos.transparent) {
-        btnBg.alpha = 0.6
+      return btnBg
+    },
+    setbtnColor(btnBg, bgColor, pos) {
+      let strokeAlpha = 1
+      let fillAlpha = 1
+      if (Util.bitON(pos.tx.disp, TX.DISP.ALWAYS)) {
+        // 常時表示時
+        fillAlpha = pos.isLost? DISP.TX_LOST_ALPHA: pos.transparent? DISP.TX_ALPHA: fillAlpha
+      } else if (pos.transparent) {
+        // 通常の離席時
+        strokeAlpha = DISP.TX_ALPHA
+        fillAlpha = DISP.TX_ALPHA
       }
+      const backGroundColor = ViewHelper.getRGBA(bgColor, fillAlpha)
+      const strokeColor = ViewHelper.getRGBA(DISP.TX_STROKE_COLOR, strokeAlpha)
+      btnBg.graphics.beginStroke(strokeColor).setStrokeStyle(DISP.TX_STROKE_WIDTH).beginFill(backGroundColor)
       return btnBg
     },
     createBtnLabel(pos, color){
@@ -540,7 +555,7 @@ export default {
     },
     disableExbsCheck(){
       // for debug
-      const disabledExbs = _.filter(this.exbs, (exb) => !exb.enabled || exb.isAbsentZone || !exb.location.x || exb.location.y <= 0)
+      const disabledExbs = _.filter(this.exbs, (exb) => !exb.enabled || !exb.location.x || exb.location.y <= 0)
       this.getPositions().forEach((pos) => {
         const exb = disabledExbs.find((exb) => exb.posId == pos.pos_id)
         if (exb) {

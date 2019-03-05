@@ -24,8 +24,8 @@ export const APP = { // 機能面に関する設定
   TIMEOUT: 60 * 60 * 1000, // session timeout(using local storage)
   AUTO_RELOAD: 60000, // 自動リロード間隔(ミリ秒)
 
-  TRANSPARENT_TIME: 60 * 1000, // 半透明：現在時刻から経過した段階で半透明（ミリ秒）
-  LOST_TIME: 10 * 60 * 1000, // 消失とみなす時間（ミリ秒）
+  TRANSPARENT_TIME: 1 * 1000, // 半透明：現在時刻から経過した段階で半透明（ミリ秒）
+  LOST_TIME: 3 * 1000, // 消失とみなす時間（ミリ秒）
   UNDETECT_TIME: 60 * 60 * 1000, // 未検知とみなす時間（ミリ秒）
   GATEWAY: {
     LOST_TIME: 30 * 60 * 1000, // 消失とみなす時間（ミリ秒）
@@ -157,7 +157,11 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   TX_FIX_R: 26, // Txの半径(カテゴリ一覧、グループ一覧、凡例表示用)
   ROUNDRECT_RADIUS: 13, // Tx角丸表示時のRADIUS
   TX_BGCOLOR: '3bcddc', // Tx表示時のデフォルト背景色
-  TX_COLOR: '000', // Tx表示時のデフォルト文字色
+  TX_COLOR: '000000', // Tx表示時のデフォルト文字色
+  TX_STROKE_COLOR: 'cccccc', // Tx表示時のデフォルト枠線色
+  TX_STROKE_WIDTH: 1, // Tx表示時のデフォルト枠線幅
+  TX_ALPHA: 0.6, // Tx表示時(離席)のデフォルト透過値
+  TX_LOST_ALPHA: 0.1, // Tx固定表示(不在)時のデフォルト透過値
   TX_FONT: '20px Arial', // Tx表示時のフォント
   TX_DIV_2: 1, // Txが重なった際に２つ上下左右に並べる場合にずらす倍率
   TX_DIV_3: 0.5, // Txが重なった際に３つ左右に並べる場合にずらす倍率
