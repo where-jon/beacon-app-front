@@ -238,6 +238,9 @@ const appStateConf = {
       return arr.map((val) => ({...val, roleName: val.role.roleName}))
     }
   },
+  news: {
+    path: '/login'
+  },
   roles: {
     path: '/meta/role',
     sort: 'roleName',

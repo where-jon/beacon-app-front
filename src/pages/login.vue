@@ -1,24 +1,22 @@
 <template>
-  <form class="form-signin" method="post" @submit.prevent="onSubmit">
-    <div class="error-message">
+  <form method="post" @submit.prevent="onSubmit">
+    <div class=" form-signin error-message">
       {{ message }}
-    </div>
     <input v-model="userId" type="text" class="form-control" maxlength="20" placeholder="ID">
     <input v-model="password" type="password" class="form-control" maxlength="20" placeholder="PASSWORD">
     <b-button :variant="theme" class="btn-lg btn-block" type="submit">
       <i class="fas fa-sign-in-alt" />&nbsp;&nbsp;{{ $i18n.tnl('label.login') }}
     </b-button>
-    <div v-if="isNews">
-      <m-list :params="params" :list="newsList" />
+    </div>
+    <div v-if="isNews" class="container">
+      <news-table :headers="headers" :datas="newsList"  />
     </div>
   </form>
 </template>
 
 <script>
-import mList from '../components/page/list.vue'
 import * as Util from '../sub/util/Util'
 import { mapState } from 'vuex'
-import breadcrumb from '../components/layout/breadcrumb.vue'
 import * as ViewHelper from '../sub/helper/ViewHelper'
 import * as StateHelper from '../sub/helper/StateHelper'
 import { mapMutations } from 'vuex'
@@ -26,18 +24,27 @@ import * as AuthHelper from '../sub/helper/AuthHelper'
 import { getButtonTheme } from '../sub/helper/ThemeHelper'
 import { APP,DISP } from '../sub/constant/config'
 import commonmixinVue from '../components/mixin/commonmixin.vue'
+import newsTable from '../components/parts/newstable.vue'
 
 export default {
   components: {
-    mList,
-    breadcrumb
+    newsTable,
+  },
+  props: {
+    isDev: {
+      type: Boolean,
+      default: false
+    }
   },
   mixins: [commonmixinVue],
   data() {
     return {
       isNews:true,
       newsList: [],
-      appServicePath: '/signin',
+      headers: ViewHelper.addLabelByKey(this.isDev? null: this.$i18n, [
+        { key: 'newsDate' , label: 'newsDt'},
+        { key: 'content', label: 'newsContent'},
+      ]),
       userId: '',
       password: '',
       message: '',
@@ -51,15 +58,6 @@ export default {
         'btn-danger': DISP.THEME === 'danger',
         'btn-dark': DISP.THEME === 'dark',
       },
-      params: {
-        name: 'news',
-        fields: ViewHelper.addLabelByKey(this.$i18n, [
-          {key: 'newsDate', sortable: true },
-          {key: 'content', sortable: true }
-        ]),
-      },
-      initTotalRows: this.$store.state.app_service.news.length,
-      items: ViewHelper.createBreadCrumbItems('test', 'osirase'),
     }
   },
   computed: {
@@ -71,20 +69,22 @@ export default {
       return getButtonTheme()
     },
   },
+  mounted() {
+    this.fetchData()
+    if (!this.isDev) {
+      return
+    }
+  },
   methods: {
     async fetchData(payload) {
       try {
         this.showProgress()
         await StateHelper.load('news')
-        //await StateHelper.load('news', this.forceFetchNews)
-        //StateHelper.setForceFetch('news', false)
-        console.log('this.isRegistable::' + this.isRegistable)
         this.newsList = this.news.map((val) => ({
           ...val,
-          //newsId: val.newsId,
           newsDate: Util.formatDate(val.newsDate),
           content: val.content,
-        })) // omit images to avoid being filtering target
+        }))
         this.newsList.length > 0 ?this.isNews = true: this.isNews = false
         if (payload && payload.done) {
           payload.done()
