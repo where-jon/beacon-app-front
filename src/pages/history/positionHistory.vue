@@ -73,15 +73,14 @@
 import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import locale from 'element-ui/lib/locale'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
-import { addLabelByKey } from '../../sub/helper/ViewHelper'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import { APP } from '../../sub/constant/config.js'
@@ -99,16 +98,7 @@ export default {
   data () {
     return {
       name: 'positionHistory',
-      items: [
-        {
-          text: this.$i18n.tnl('label.historyTitle'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.positionHistory'),
-          active: true
-        }
-      ],
+      items: ViewHelper.createBreadCrumbItems('historyTitle', 'positionHistory'),
       form: {
         tx: null,
         group: null,
@@ -116,7 +106,7 @@ export default {
         datetimeTo: null,
       },
       viewList: [],
-      fields: addLabelByKey(this.$i18n, [
+      fields: ViewHelper.addLabelByKey(this.$i18n, [
         {key: 'positionDt', sortable: true, label:'dt'},
         {key: 'txName', sortable: true },
         {key: 'major', sortable: true },
@@ -172,9 +162,7 @@ export default {
     this.form.datetimeTo = Util.getDatetime(date)
   },
   mounted() {
-    import(`element-ui/lib/locale/lang/${this.$i18n.locale}`).then( (mojule) =>{
-      locale.use(mojule.default)
-    })
+    HtmlUtil.importElementUI()
     StateHelper.load('tx')
     StateHelper.load('exb')
     this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.viewList.length, maxRows: this.limitViewRows})}`

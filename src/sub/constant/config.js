@@ -256,6 +256,11 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     HEATMAP: {
       RADIUS: 150,      // 直径
     },
+  },
+
+  INSTALLATION: { // 設置支援
+    RSSI_ICON_WIDTH: 100,
+    RSSI_ICON_HEIGHT: 20,
   }
 }
 

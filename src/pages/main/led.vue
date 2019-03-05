@@ -68,6 +68,7 @@
 <script>
 import { mapState } from 'vuex'
 import * as StateHelper from '../../sub/helper/StateHelper'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
 import { getButtonTheme } from '../../sub/helper/ThemeHelper'
@@ -100,16 +101,7 @@ export default {
         colors: [2],
         blink: 1,
       },
-      items: [
-        {
-          text: this.$i18n.tnl('label.main'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.ledOperation'),
-          active: true
-        }
-      ],
+      items: ViewHelper.createBreadCrumbItems('main', 'ledOperation'),
     }
   },
   computed: {

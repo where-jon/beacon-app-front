@@ -63,28 +63,13 @@ export default {
       selectedModes: [],
       selectedAll: false,
       modeOptions: ROLE_FEATURE.getModeOptions(),
-      items: [
-        {
-          text: this.$i18n.tnl('label.master'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.role'),
-          href: '/master/role',
-        },
-        {
-          text: this.$i18n.tnl('label.update'),
-          href: '/master/role/edit',
-        },
-        {
-          text: this.$i18n.tnl('label.feature'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl(Util.getDetailCaptionKey(this.$store.state.app_service.roleFeature.feature? this.$store.state.app_service.roleFeature.feature.featureId: null)),
-          active: true
-        },
-      ],
+      items: ViewHelper.createBreadCrumbItems(
+        'master',
+        {text: 'role', href: '/master/role'},
+        {text: 'update', href: '/master/role/edit'},
+        'feature',
+        Util.getDetailCaptionKey(this.$store.state.app_service.roleFeature.feature? this.$store.state.app_service.roleFeature.feature.featureId: null)
+      ),
     }
   },
   computed: {

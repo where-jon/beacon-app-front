@@ -2,31 +2,33 @@
   <div>
     <breadcrumb :items="items" />
     <div class="container">
-      <alert :message="message"/>
+      <alert :message="message" />
       <b-form v-if="show" inline @submit.prevent>
-        <label v-t="'label.areaName'" class="control-label mr-sm-2"/>
+        <label v-t="'label.areaName'" class="control-label mr-sm-2" />
         <b-form-select v-model="areaId" :options="areaNames" class="mb-2 mr-sm-2 mb-sm-0" required />
         <label v-t="'label.zoneName'" class="control-label mr-sm-2" />
         <input v-model="zoneName" type="text" maxlength="20" :disabled="!isEnableNameText" class="form-control mb-2 mr-sm-2 mb-sm-0" required>
         <label v-t="'label.categoryName'" class="control-label mr-sm-2" />
         <b-form-select v-model="categoryId" :options="categoryNames" :disabled="!isEnableNameText" class="mb-2 mr-sm-2 mb-sm-0" @change="onChangeCategory" />
-        <b-button v-if="isEditable || isDeleteable" type="button" variant="outline-danger" v-t="'label.delete'" :disabled="!isEnableNameText" @click="confirmDelete($event.target)" />
-        <b-button class="button-regist" v-if="isEditable || isDeleteable" :variant="theme" type="button" @click="regist()">
+        <b-button v-if="isEditable || isDeleteable" v-t="'label.delete'" type="button" variant="outline-danger" :disabled="!isEnableNameText" @click="confirmDelete($event.target)" />
+        <b-button v-if="isEditable || isDeleteable" class="button-regist" :variant="theme" type="button" @click="regist()">
           {{ label }}
         </b-button>
       </b-form>
       <ZoneCanvas :area-id="areaId" :zone-name="zoneName" :category-id="categoryId" :is-regist="isRegist" :is-complete-regist="isCompleteRegist" :is-delete="isDelete" :auth="{regist: isRegistable, update: isUpdatable, delete: isDeleteable}"
-        @regist="doRegist"
-        @selected="onSelected"
-        @unselected="unSelected"
-        @deleted="onDeleted"
-        @pressDelKey="confirmDelete"
-        @validated="validated"
-        @reloaded="reloaded"
+                  @regist="doRegist"
+                  @selected="onSelected"
+                  @unselected="unSelected"
+                  @deleted="onDeleted"
+                  @pressDelKey="confirmDelete"
+                  @validated="validated"
+                  @reloaded="reloaded"
       />
     </div>
     <!-- modal -->
-    <b-modal id="modalInfo" :title="`${$t('label.Zone')}${$t('label.delete')}`" @ok="isDelete = true">{{ $i18n.tnl('message.deleteConfirm', {target: zoneName}) }}</b-modal>
+    <b-modal id="modalInfo" :title="`${$t('label.Zone')}${$t('label.delete')}`" @ok="isDelete = true">
+      {{ $i18n.tnl('message.deleteConfirm', {target: zoneName}) }}
+    </b-modal>
   </div>
 </template>
 
@@ -73,16 +75,7 @@ export default {
         name: '',
         categoryId: -1,
       },
-      items: [
-        {
-          text: this.$i18n.t('label.master'),
-          active: true
-        },
-        {
-          text: this.$i18n.t('label.zoneBlock'),
-          active: true
-        }
-      ]
+      items: ViewHelper.createBreadCrumbItems('master', 'zoneBlock'),
     }
   },
   computed: {

@@ -6,6 +6,8 @@ import moment from 'moment'
 import { DEV, APP } from '../constant/config'
 import { FONT } from '../constant/Constants'
 
+export const getLogin = () => JSON.parse(window.localStorage.getItem('login'))
+
 // sleep (for test)
 export const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 
@@ -356,21 +358,31 @@ export const getMidnightMs = () => {
 }
 
 export const getDetailCaptionKey = (id) => {
-  return `label.${hasValue(id)? 'update': 'addSetting'}`
+  return `${hasValue(id)? 'update': 'addSetting'}`
 }
 
-export const getDatetime = (baseDatetime, controlData) => {
+export const formatDatetime = (date, format) => {
+  return format.replace(/yyyy/g, `0000${date.getFullYear()}`.slice(-4))
+    .replace(/MM/g, `00${date.getMonth() + 1}`.slice(-2))
+    .replace(/dd/g, `00${date.getDate()}`.slice(-2))
+    .replace(/HH/g, `00${date.getHours()}`.slice(-2))
+    .replace(/mm/g, `00${date.getMinutes()}`.slice(-2))
+    .replace(/ss/g, `00${date.getSeconds()}`.slice(-2))
+    .replace(/SSS/g, `000${date.getMilliseconds()}`.slice(-3))
+}
+
+export const getDatetime = (baseDatetime, controlData, format) => {
   const datetime = new Date(baseDatetime.getTime())
   datetime.setMilliseconds(0)
   if(!controlData){
-    return datetime
+    return format? formatDatetime(datetime, format): datetime
   }
   datetime.setFullYear(datetime.getFullYear() + (controlData.year? controlData.year: 0))
   datetime.setDate(datetime.getDate() + (controlData.date? controlData.date: 0))
   datetime.setHours(datetime.getHours() + (controlData.hours? controlData.hours: 0))
   datetime.setMinutes(datetime.getMinutes() + (controlData.minutes? controlData.minutes: 0))
   datetime.setSeconds(datetime.getSeconds() + (controlData.seconds? controlData.seconds: 0))
-  return datetime
+  return format? formatDatetime(datetime, format): datetime
 }
 
 export const getSubDatetime = (datetimeFrom, datetimeTo) => {

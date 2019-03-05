@@ -87,16 +87,15 @@
 <script>
 import { mapState } from 'vuex'
 import 'element-ui/lib/theme-chalk/index.css'
-import locale from 'element-ui/lib/locale'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import commonmixinVue from '../../components/mixin/commonmixin.vue'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
-import { addLabelByKey } from '../../sub/helper/ViewHelper'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 
@@ -109,16 +108,7 @@ export default {
   data () {
     return {
       name: 'usageSituation',
-      items: [
-        {
-          text: this.$i18n.tnl('label.sumTitle'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.usageSituation'),
-          active: true
-        }
-      ],
+      items: ViewHelper.createBreadCrumbItems('sumTitle', 'usageSituation'),
       form: {
         mode: null,
         selectedYearMonth: 0,
@@ -126,13 +116,13 @@ export default {
       },
       viewList: [],
       fields: [],
-      fields1: addLabelByKey(this.$i18n, [
+      fields1: ViewHelper.addLabelByKey(this.$i18n, [
         {key: 'zoneCategoryName', sortable: true},
         {key: 'zoneName', sortable: true },
         {key: 'rate', label:'utilizationRatioP', sortable: true,},
         {key: 'cnt', label:'utilizationTime', sortable: true,},
       ]),
-      fields2: addLabelByKey(this.$i18n, [
+      fields2: ViewHelper.addLabelByKey(this.$i18n, [
         {key: 'zoneCategoryName', sortable: true},
         {key: 'zoneName', sortable: true },
         {key: 'numUse', label: 'numOfUsers', sortable: true,},
@@ -201,9 +191,7 @@ export default {
     this.fields = this.fields1
   },
   async mounted() {
-    import(`element-ui/lib/locale/lang/${this.$i18n.locale}`).then( (mojule) =>{
-      locale.use(mojule.default)
-    })
+    HtmlUtil.importElementUI()
     await StateHelper.load('category')
     this.fetchPrev()
     this.vModelYearMonth = this.yearMonthOptions[0]

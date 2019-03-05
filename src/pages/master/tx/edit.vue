@@ -107,7 +107,6 @@ export default {
   },
   mixins: [editmixinVue],
   data() {
-    const labelTx = this.$i18n.tnl('label.tx')
     return {
       name: 'tx',
       id: 'txId',
@@ -123,20 +122,7 @@ export default {
       defValue: {
         'dispPos': 1,
       },
-      items: [
-        {
-          text: this.$i18n.tnl('label.master'),
-          active: true
-        },
-        {
-          text: labelTx,
-          href: '/master/tx'
-        },
-        {
-          text: this.$i18n.tnl(Util.getDetailCaptionKey(this.$store.state.app_service.tx.txId)),
-          active: true
-        },
-      ]
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'tx', href: '/master/tx'}, Util.getDetailCaptionKey(this.$store.state.app_service.tx.txId)),
     }
   },
   computed: {
