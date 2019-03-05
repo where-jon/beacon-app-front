@@ -45,6 +45,7 @@ export const APP = { // 機能面に関する設定
   TX_POS_ONE_TO_ONE: false, // 1つの場所に1TXのみ存在可能
   RSSI_MIN: -67, // RSSI下限値
   MOVING_AVERAGE: 5, // 5回分移動平均
+  USE_MULTI_POSITIONING: false, // ３点測位を使う
   
   // 機能
   USE_THERMOPILE: true, // サーモパイルセンサーの使用

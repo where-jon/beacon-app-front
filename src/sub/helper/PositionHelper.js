@@ -322,6 +322,14 @@ export const adjustPosition = (positions, ratio, exbs = []) => {
   }).filter(e => e).flatMap(e => e)
 }
 
+export const adjustMultiPosition = (positions, ratio) => {
+  const ret = []
+  positions.map((pos) => {
+    ret.push( {...pos, x: pos.x * ratio, y: pos.y * ratio} )
+  })
+  return ret
+}
+
 export const setDetectState = (positions, usePositionHistory = false) => {
 
   _.forEach(positions, (position) => {

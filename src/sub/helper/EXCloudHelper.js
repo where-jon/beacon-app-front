@@ -40,6 +40,7 @@ export const fetchPositionHistory = async (exbs, txs, pMock) => {
       let exb = _.find(exbs, (exb) => exb.exbId == val.exbId)
       let label = tx? tx.displayName? tx.displayName: tx.btxId: ''
       return { btx_id: tx? tx.btxId: '',  minor: val.minor, pos_id: exb.posId, tx_id: val.txId,
+        x: val.x, y: val.y,
         label, exb, tx, updatetime: dateform(val.positionDt), timestamp:dateform(val.positionDt)}
     })
     .compact().value()
