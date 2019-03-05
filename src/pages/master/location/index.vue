@@ -465,7 +465,7 @@ export default {
         let x = 30 + counter++ * 60
         if (x > mapMaxPosX) {
           x = 30
-          counter = 0
+          counter = 1
           y += 20
         }
         this.showExbOnMap(val, x, y)
