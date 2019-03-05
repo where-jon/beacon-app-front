@@ -585,6 +585,11 @@ export const MENU = [
         path: 'serverenv',
         icon: 'fas fa-cog',
       },
+      {
+        key: 'installation',
+        path: 'installation',
+        icon: 'fas fa-ruler-combined',
+      },
     ],
   },
 ]

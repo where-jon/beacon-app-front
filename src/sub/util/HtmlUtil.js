@@ -143,5 +143,5 @@ export const getMessageData = async (lang) => {
 
 export const endsWithSlashUrl = (vueComponent) => {
   const nodeKey = vueComponent.$vnode && vueComponent.$vnode.data? vueComponent.$vnode.data.key: ''
-  return nodeKey.endsWith('/')
+  return nodeKey ? nodeKey.endsWith('/') : ''
 }
