@@ -134,6 +134,10 @@
     "settingStart": "設定開始",
     "settingNow": "設定中",
     "mapRatioSetting": "マップ比率設定方法",
+    "mapConfig": "デバイス配置座標設定",
+    "keepPosition": "配置座標を維持する",
+    "adjustPosition": "配置座標を、新しいマップの比率に合わせて調整する",
+    "initPosition": "配置座標を初期化する",
 
     "posId": "pos ID",
     "positionHistory": "位置情報",
