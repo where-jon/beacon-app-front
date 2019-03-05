@@ -95,8 +95,8 @@ export default {
       zoneCategorys: [],
       categoryId: null,
       zoneId: null,
-      dateFrom: Util.supportInputType('date')? 0: null,
-      dateTo: Util.supportInputType('date')? 0: null,
+      dateFrom: Util.supportInputType('date')? 0: Util.getDatetime(new Date(), null, 'yyyyMMdd'),
+      dateTo: Util.supportInputType('date')? 0: Util.getDatetime(new Date(), null, 'yyyyMMdd'),
       historyType: 0,
       temperatureHistoryData: null,
       //
@@ -160,16 +160,16 @@ export default {
     },
     dateFromChange(val) {
       if (val == null) {
-        this.dateFrom = 0
+        this.dateFrom = '0'
       } else {
-        this.dateFrom = (val.substr(0, 4) + val.substr(5, 2) + val.substr(8, 2))/1
+        this.dateFrom = val.substr(0, 4) + val.substr(5, 2) + val.substr(8, 2)
       }
     },
     dateToChange(val) {
       if (val == null) {
-        this.dateTo = 0
+        this.dateTo = '0'
       } else {
-        this.dateTo = (val.substr(0, 4) + val.substr(5, 2) + val.substr(8, 2))/1
+        this.dateTo = val.substr(0, 4) + val.substr(5, 2) + val.substr(8, 2)
       }
     },
     typeChange(val) {
@@ -179,15 +179,21 @@ export default {
         this.historyType = val.value
       }
     },
+    convertParamDate(fromTime, toTime){
+      const retFrom = new Date(fromTime.slice(0, 4), parseInt(fromTime.slice(4, 6)) - 1, fromTime.slice(6, 8))
+      const retTo = new Date(toTime.slice(0, 4), parseInt(toTime.slice(4, 6)) - 1, parseInt(toTime.slice(6, 8)) + 1)
+      return {from: retFrom.getTime(), to: retTo.getTime() - 1}
+    },
     async dataDownload() {
-      let paramCategoryId = (this.categoryId != null)?this.categoryId:-1
-      let paramZoneId = (this.zoneId != null)?this.zoneId:-1
-      let paramExbId = -1
-      let paramIsExb = -1
-      let paramDyFrom = this.dateFrom
-      let paramDyTo = this.dateTo
-      let paramHistoryType = this.historyType
-      var list = []
+      const paramCategoryId = (this.categoryId != null)?this.categoryId:-1
+      const paramZoneId = (this.zoneId != null)?this.zoneId:-1
+      const paramExbId = -1
+      const paramIsExb = -1
+      const paramDate = this.convertParamDate(this.dateFrom, this.dateTo)
+      const paramDyFrom = paramDate.from
+      const paramDyTo = paramDate.to
+      const paramHistoryType = this.historyType
+      let list = []
       try {
         list = await AppServiceHelper.fetch(
           `/basic/sensorHistory/${paramCategoryId}/${paramZoneId}/${paramIsExb}/${paramExbId}/${paramDyFrom}/${paramDyTo}/${paramHistoryType}`,
