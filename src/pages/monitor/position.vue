@@ -11,6 +11,7 @@
 import { mapState } from 'vuex'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
@@ -20,7 +21,6 @@ import reloadmixinVue from '../../components/mixin/reloadmixin.vue'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import monitorTable from '../../components/parts/monitortable.vue'
 import statusmixinVue from '../../components/mixin/statusmixin.vue'
-import { addLabelByKey } from '../../sub/helper/ViewHelper'
 
 export default {
   components: {
@@ -36,16 +36,7 @@ export default {
   },
   data () {
     return {
-      items: [
-        {
-          text: this.$i18n.tnl('label.monitor'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.position'),
-          active: true
-        }
-      ],
+      items: ViewHelper.createBreadCrumbItems('monitor', 'position'),
       positions: [],
       headers: this.getHeaders(),
       isLoad: false,
@@ -65,20 +56,11 @@ export default {
     if (!this.isDev) {
       return
     }
-    this.items = [
-      {
-        text: this.$i18n.tnl('label.develop'),
-        active: true
-      },
-      {
-        text: this.$i18n.tnl('label.position'),
-        active: true
-      }
-    ]
+    this.items = ViewHelper.createBreadCrumbItems('develop', 'position')
   },
   methods: {
     getHeaders(){
-      return addLabelByKey(this.isDev? null: this.$i18n,
+      return ViewHelper.addLabelByKey(this.isDev? null: this.$i18n,
         this.isDev? [
           { key: 'btx_id' },
           { key: 'device_id' },

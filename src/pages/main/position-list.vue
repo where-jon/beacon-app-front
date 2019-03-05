@@ -13,9 +13,9 @@ import breadcrumb from '../../components/layout/breadcrumb.vue'
 import mList from '../../components/page/list.vue'
 import listmixinVue from '../../components/mixin/listmixin.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
-import { addLabelByKey } from '../../sub/helper/ViewHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
 import { TX, EXTRA_NAV } from '../../sub/constant/Constants'
 import * as Util from '../../sub/util/Util'
 import { APP } from '../../sub/constant/config.js'
@@ -39,7 +39,7 @@ export default {
           MenuHelper.useMaster('category') && APP.TX_WITH_CATEGORY? 'category' : null,
           APP.POSITION_WITH_AREA ? 'area' : null]).compact().value(),
         disableTableButtons: true,
-        fields: addLabelByKey(this.$i18n, [ 
+        fields: ViewHelper.addLabelByKey(this.$i18n, [ 
           !APP.TX_WITH_TXID && APP.TX_BTX_MINOR == 'minor' ? 
             {key: 'minor', label: 'minor', sortable: true, tdClass: 'action-rowdata' }: null,
           APP.TX_WITH_TXID ? {key: 'txId', label: 'txId', sortable: true, tdClass: 'action-rowdata' }: null,
@@ -60,16 +60,7 @@ export default {
         initTotalRows: this.$store.state.app_service.positionList.length,
       },
       count: 0, // mockテスト用
-      items: [
-        {
-          text: this.$i18n.t('label.main'),
-          active: true
-        },
-        {
-          text: this.$i18n.t('label.positionList'),
-          active: true
-        }
-      ],
+      items: ViewHelper.createBreadCrumbItems('main', 'positionList'),
       reload: true,
       shortName: this.$i18n.t('label.positionListShort'),
       extraNavSpec: EXTRA_NAV,

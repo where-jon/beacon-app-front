@@ -164,7 +164,6 @@ import featureList from '../../../components/page/featureList.vue'
 import tenantSetting from '../../../components/page/tenantSetting.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import { EXCLOUD_BASE_URL } from '../../../sub/constant/config'
-import { addLabelByKey } from '../../../sub/helper/ViewHelper'
 
 export default {
   components: {
@@ -181,21 +180,8 @@ export default {
       backPath: '/provider/tenant',
       appServicePath: '/meta/tenant',
       form: ViewHelper.extract(this.$store.state.app_service.tenant, ['tenantId', 'tenantCd', 'tenantName', 'sysAdminLoginId', 'sysAdminPass', 'adminLoginId', 'adminPass', 'userLoginId', 'userPass', 'regionName', 'meshId', 'deviceOffset', 'createDt', 'delFlg']),
-      items: [
-        {
-          text: this.$i18n.tnl('label.provider'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.tenant'),
-          href: '/provider/tenant',
-        },
-        {
-          text: this.$i18n.tnl(Util.getDetailCaptionKey(this.$store.state.app_service.tenant.tenantId)),
-          active: true
-        }
-      ],
-      fields: addLabelByKey(this.$i18n, [ 
+      items: ViewHelper.createBreadCrumbItems('provider', {text: 'tenant', href: '/provider/tenant'}, Util.getDetailCaptionKey(this.$store.state.app_service.tenant.tenantId)),
+      fields: ViewHelper.addLabelByKey(this.$i18n, [ 
         {key: 'parentCheck', label: 'dummy', thStyle: {width:'4px !important'} },
         {key: 'subCheck', label: 'dummy', thStyle: {width:'4px !important'} },
         {key: 'featureName', label: 'dummy'},
@@ -231,36 +217,9 @@ export default {
     }
   },
   async created(){
+    const currentFeatureList = this.tenant && this.tenant.tenantFeatureList? this.tenant.tenantFeatureList: []
     await StateHelper.load('feature')
-    this.featureList = this.features.map((feature) => {
-      const featureIds = this.getFeatureIds(feature.featureId)
-      const tenantFeature = this.tenant && this.tenant.tenantFeatureList? this.tenant.tenantFeatureList.find((val) => val.tenantFeaturePK.featureId == feature.featureId): null
-      const parentFeature = featureIds.subId != 0 && this.tenant && this.tenant.tenantFeatureList? this.tenant.tenantFeatureList.find((val) => {
-        const ids = this.getFeatureIds(val.tenantFeaturePK.featureId)
-        return ids.parentId == featureIds.parentId && ids.subId == 0
-      }): null
-      return {
-        ...feature,
-        parentShow: featureIds.subId == 0,
-        parentId: featureIds.parentId,
-        subShow: featureIds.subId != 0,
-        subId: featureIds.subId,
-        checked: !this.hasId && this.defaultCheckFeatureNames.includes(feature.featureName)? true: tenantFeature? true: false,
-        disabled: parentFeature? true: false,
-      }
-    })
-      .sort((a, b) => {
-        if(a.featureType != b.featureType){
-          return a.featureType < b.featureType? -1: 1
-        }
-        if(a.parentId != b.parentId){
-          return a.parentId < b.parentId? -1: 1
-        }
-        if(a.subId != b.subId){
-          return a.subId < b.subId? -1: 1
-        }
-        return 0
-      })
+    this.featureList = this.createFeatureTable(this.features, currentFeatureList)
     this.categorySettingList = {}
     if(this.tenant && this.tenant.settingList){
       _.forEach(this.tenant.settingList, (value, key) => {
@@ -335,7 +294,7 @@ export default {
         defaultExcloudBaseUrl: defaultConfig.EXCLOUD_BASE_URL,
         excloudBaseUrl: EXCLOUD_BASE_URL,
         tenantFeatureList: this.featureList.map((val) => {
-          return val.checked? {
+          return !val.disabled && val.checked? {
             tenantFeaturePK:{tenantId: dummyKey--, featureId: val.featureId},
           }: null
         }).filter((val) => val),

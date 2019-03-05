@@ -289,6 +289,17 @@ export const FONT = {
   TYPE: 'px Arial',
 }
 
+export const FORCE_PUSH_MENU = [
+  {
+    parent: '/provider/tenant',
+    path: '/provider/tenant/tenantFeature',
+    isPush: () => {
+      const login = JSON.parse(window.localStorage.getItem('login'))
+      return !login || !login.tenantAdmin && login.isProvider
+    } ,
+  },
+]
+
 export const EXTRA_NAV = [
   {
     key: 'showPositionShort',
@@ -305,6 +316,11 @@ export const EXTRA_NAV = [
     path: '/main/position-stack',
     icon: 'far fa-building',
   },
+  {
+    key: 'positionZoneShort',
+    path: '/main/position-zone',
+    icon: 'fas fa-th',
+  },
 ]
 
 export const MENU = [
@@ -314,6 +330,7 @@ export const MENU = [
     path: 'provider/tenant',
     icon: 'fas fa-cogs',
     tenantOnly: true,
+    providerOnlyForce: true,
     pages: [
       {
         key: 'tenant',
@@ -341,6 +358,11 @@ export const MENU = [
       key: 'positionStack',
       path: 'position-stack',
       icon: 'far fa-building',
+    },
+    {
+      key: 'positionZone',
+      path: 'position-zone',
+      icon: 'fas fa-th',
     },
     {
       key: 'pir',
@@ -562,6 +584,11 @@ export const MENU = [
         key: 'env',
         path: 'serverenv',
         icon: 'fas fa-cog',
+      },
+      {
+        key: 'installation',
+        path: 'installation',
+        icon: 'fas fa-ruler-combined',
       },
     ],
   },

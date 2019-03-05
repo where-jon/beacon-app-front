@@ -9,7 +9,7 @@
 import mList from '../../../components/page/list.vue'
 import { mapState } from 'vuex'
 import * as StateHelper from '../../../sub/helper/StateHelper'
-import { addLabelByKey } from '../../../sub/helper/ViewHelper'
+import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import listmixinVue from '../../../components/mixin/listmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import * as Util from '../../../sub/util/Util'
@@ -34,7 +34,7 @@ export default {
         appServicePath: '/core/area',
         csvOut: true,
         custumCsvColumns: ['areaId', 'areaName'],
-        fields: addLabelByKey(this.$i18n, [ 
+        fields: ViewHelper.addLabelByKey(this.$i18n, [ 
           {key: 'areaName', sortable: true, tdClass: 'action-rowdata'},
           {key: 'thumbnail', tdClass: 'action-rowdata' },
           {key: 'areaId', sortable: true, tdClass: 'action-rowdata' },
@@ -47,16 +47,7 @@ export default {
         { name: 'zone', id: 'zoneList', jumpPath: '/master/zoneBlock/', sendParamNames: ['areaId']},
         { name: 'location', id: 'locationList', jumpPath: '/master/location/', sendParamNames: ['areaId']}, 
       ],
-      items: [
-        {
-          text: this.$i18n.tnl('label.master'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.area'),
-          active: true
-        }
-      ]
+      items: ViewHelper.createBreadCrumbItems('master', 'area'),
     }
   },
   computed: {

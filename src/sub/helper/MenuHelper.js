@@ -13,6 +13,9 @@ export const fetchNav = (masterFeatureList, tenantFeatureList, featureList, isPr
       if (isTenantAdmin && group.tenantOnly) {
         return true
       }
+      if (isProvider && group.providerOnlyForce) {
+        return true
+      }
       if(!featureOk('/' + group.base + page.path, masterFeatureList)){
         return false
       }

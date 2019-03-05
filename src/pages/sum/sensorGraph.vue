@@ -92,13 +92,13 @@
 import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import locale from 'element-ui/lib/locale'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as SensorHelper from '../../sub/helper/SensorHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
 import { SENSOR, SUM_UNIT, SUM_TARGET } from '../../sub/constant/Constants'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
@@ -126,16 +126,7 @@ export default {
         exbId: null,
         txId: null,
       },
-      items: [
-        {
-          text: this.$i18n.tnl('label.sumTitle'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.sensorGraph'),
-          active: true
-        }
-      ],
+      items: ViewHelper.createBreadCrumbItems('sumTitle', 'sensorGraph'),
       headers: {
         temperature: [ 'dt', 'humidity(max)', 'humidity(avg)', 'humidity(min)', 'temperature(max)', 'temperature(avg)', 'temperature(min)', ],
         pir: [ 'dt', 'count(max)', 'count(avg)', 'count(min)' ],
@@ -201,9 +192,7 @@ export default {
     this.changeSumUnit()
   },
   async mounted() {
-    import(`element-ui/lib/locale/lang/${this.$i18n.locale}`).then( (mojule) =>{
-      locale.use(mojule.default)
-    })
+    HtmlUtil.importElementUI()
   },
   methods: {
     getSumUnitOptions(newDatetimeFrom = this.form.datetimeFrom, newDatetimeTo = this.form.datetimeTo) {
@@ -229,7 +218,7 @@ export default {
       this.sumUnitOptions = options
     },
     getExbOptions(newVal = this.form.sensorId){
-      const exbs = this.exbs.filter((val) => val.sensorId == newVal)
+      const exbs = this.exbs.filter((val) => this.getSensorIds(val).includes(newVal))
       this.exbOptions = exbs? exbs.map((val) => ({value: val.exbId, text: val.locationName})): []
       this.form.exbId = this.exbOptions.length == 0? null: this.exbOptions[0].value
     },

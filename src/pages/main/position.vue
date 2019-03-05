@@ -29,6 +29,17 @@
             {{ detectedCount }}
           </span>
         </b-form-row>
+        <div v-if="isInstallation">
+          <b-form-row class="my-1 ml-2 ml-sm-0">
+            <b-form-checkbox v-model="modeRssi" class="ml-sm-4 ml-2 mr-1">
+              {{ $t('label.dispRssi') }}
+            </b-form-checkbox>
+            <b-button  class="ml-sm-4 ml-2 mr-1" :pressed.sync="isPause" :variant="getButtonTheme()">
+              <span v-if="!isPause"><i class="fas fa-pause"></i>&nbsp;{{ $t('label.reload') }}{{ $t('label.pause') }}</span>
+              <span v-else><i class="fas fa-play"></i>&nbsp;{{ $t('label.reload') }}{{ $t('label.restart') }}</span>
+            </b-button>
+          </b-form-row>
+        </div>
       </b-form>
     </b-row>
     <b-row class="mt-3">
@@ -54,6 +65,7 @@ import * as SensorHelper from '../../sub/helper/SensorHelper'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as Util from '../../sub/util/Util'
 import txdetail from '../../components/parts/txdetail.vue'
 import { APP, DISP } from '../../sub/constant/config'
@@ -63,6 +75,7 @@ import breadcrumb from '../../components/layout/breadcrumb.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import listmixin from '../../components/mixin/listmixin.vue'
 import sensor from '../../components/parts/sensor.vue'
+import commonmixinVue from '../../components/mixin/commonmixin.vue'
 
 export default {
   components: {
@@ -70,19 +83,16 @@ export default {
     'txdetail': txdetail,
     breadcrumb,
   },
-  mixins: [showmapmixin, listmixin],
+  mixins: [showmapmixin, listmixin, commonmixinVue],
+  props: {
+    isInstallation: {
+      default: false,
+      type: Boolean
+    },
+  },
   data() {
     return {
-      items: [
-        {
-          text: this.$i18n.tnl('label.main'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.showPosition'),
-          active: true
-        },
-      ],
+      items: !this.isInstallation ? ViewHelper.createBreadCrumbItems('main', 'showPosition') : ViewHelper.createBreadCrumbItems('develop', 'installation'),
       detectedCount: 0, // 検知数
       pot: {},
       showMeditag: APP.USE_MEDITAG,
@@ -94,6 +104,8 @@ export default {
       useCategory: MenuHelper.useMaster('category') && APP.TX_WITH_CATEGORY,
       toggleCallBack: () => this.reset(),
       noImageErrorKey: 'noMapImage',
+      modeRssi: false,
+      isPause: false,
     }
   },
   computed: {
@@ -128,6 +140,17 @@ export default {
     filter() {
       this.reloadSelectedTx = {}
       this.showTxAll()
+    },
+    modeRssi: function(newVal, oldVal) {
+      this.$emit('rssi', newVal)
+    },
+    isPause: function(newVal, oldVal) {
+      if (!this.isInstallation) return
+      if (newVal) {
+        this.stopAutoReload()
+        return
+      }
+      this.startAutoReload()
     },
   },
   async mounted() {

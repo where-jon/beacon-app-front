@@ -88,6 +88,9 @@ export const APP = { // 機能面に関する設定
   EXB_WITH_DEVICE_IDX: false,  // 画面上デバイスID（16進数）を使用するか否か
   EXB_WITH_POSID: true,      // 画面上POSIDを使用するか否か
 
+  EXB_MULTI_SENSOR: true,
+  EXB_SENSOR_MAX: 2,   // センサー種類最大数
+
   // USER関連設定
   USER_WITH_EMAIL: true, // ユーザ設定でメールアドレスを使用する
   USER_WITH_NAME: true, // ユーザ設定で名前を使用する
@@ -250,6 +253,11 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     HEATMAP: {
       RADIUS: 150,      // 直径
     },
+  },
+
+  INSTALLATION: { // 設置支援
+    RSSI_ICON_WIDTH: 100,
+    RSSI_ICON_HEIGHT: 20,
   }
 }
 

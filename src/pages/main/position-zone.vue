@@ -3,7 +3,7 @@
     <breadcrumb :items="items" :extra-nav-spec="extraNavSpec"
                 :reload="reload" :short-name="shortName"
     />
-    <position-class position-name="stack" class-name="area" />
+    <position-class position-name="zone" class-name="zone" />
   </div>
 </template>
 
@@ -22,12 +22,12 @@ export default {
     return {
       reload: true,
       styles: [],
-      items: ViewHelper.createBreadCrumbItems('main', 'positionStack'),
-      shortName: this.$i18n.t('label.positionStackShort'),
+      items: ViewHelper.createBreadCrumbItems('main', 'positionZone'),
+      shortName: this.$i18n.t('label.positionZoneShort'),
       extraNavSpec: EXTRA_NAV,
     }
   },
-}
+}  
 </script>
 
 <style scoped lang="scss">

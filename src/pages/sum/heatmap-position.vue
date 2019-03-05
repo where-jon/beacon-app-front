@@ -26,6 +26,7 @@ import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
 import analysisSearch from '../../components/parts/analysissearch.vue'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
 
 export default {
   components: {
@@ -41,16 +42,7 @@ export default {
       fromHeatmap: true,
       message: '',
       noImageErrorKey: 'noMapImage',
-      items: [
-        {
-          text: this.$i18n.tnl('label.sumTitle'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.heatmapPosition'),
-          active: true
-        }
-      ],
+      items: ViewHelper.createBreadCrumbItems('sumTitle', 'heatmapPosition'),
     }
   },
   computed: {

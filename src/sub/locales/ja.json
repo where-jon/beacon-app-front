@@ -33,6 +33,8 @@
     "cancel": "キャンセル",
     "modify": "変更",
     "info": "INFO",
+    "pause": "停止",
+    "restart": "再開",
 
     "---------------- App common ---------------":"",
     "login": "ログイン",
@@ -88,6 +90,7 @@
     "txLocationSetting": "TX配置設定",
     "develop": "開発用",
     "env": "環境変数",
+    "installation": "設置支援",
 
     "exbId": "EXB ID",
     "exbName": "EXB名",
@@ -229,9 +232,13 @@
     "dispPos": "位置表示",
     "dispPir": "空室チェックで表示",
     "dispAlways": "常時表示",
+    "dispRssi": "RSSI表示",
 
-    "positionStack": "位置表示(全体)",
-    "positionStackShort": "全体",
+    "positionStack": "位置表示(エリア別)",
+    "positionStackShort": "エリア別",
+
+    "positionZone": "位置表示(ゾーン別)",
+    "positionZoneShort": "ゾーン別",
 
     "pass": "パスワード",
     "password": "パスワード",
@@ -427,7 +434,8 @@
     "Thermohumidity": "温湿度(メイン)",
     "PositionList": "位置表示(一覧)",
     "Led": "LED",
-    "PositionStack": "位置表示(全体)",
+    "PositionStack": "位置表示(エリア別)",
+    "PositionZone": "位置表示(ゾーン別)",
     "Master": "マスタ",
     "MasterRegion": "リージョン",
     "MasterArea": "エリア",
