@@ -133,6 +133,9 @@ export default {
         console.error(e)
       }
     },
+    getLabel(tx){
+      return tx.minor? tx.minor: tx.btxId
+    },
     setTxPosition() {
       this.positionedTx = _.filter(this.workTxs, (tx) => {
         return tx.location && tx.location.areaId == this.selectedArea && tx.location.x && tx.location.y > 0
@@ -142,7 +145,7 @@ export default {
       })
         .map((val) => { // TODO: minor以外の表示対応
           return {
-            label: '' + val.minor + '(' + val.txName + ')', 
+            label: '' + this.getLabel(val) + '(' + val.txName + ')', 
             value: val.txId
           }
         }).value()
@@ -188,7 +191,7 @@ export default {
       s.graphics.lineTo(fromX, y)
       s.graphics.lineTo(fromX, fromY)
       txBtn.addChild(s)
-      const label = new Text(tx.minor)
+      const label = new Text(this.getLabel(tx))
       label.font = DISP.EXB_LOC_FONT
       label.color = DISP.EXB_LOC_COLOR
       label.textAlign = 'center'
