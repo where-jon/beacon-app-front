@@ -157,6 +157,7 @@
 import { mapState, mapMutations } from 'vuex'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
+import * as SensorHelper from '../../sub/helper/SensorHelper'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
 import * as DetectStateHelper from '../../sub/helper/DetectStateHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
@@ -293,7 +294,10 @@ export default {
       return StateHelper.getOptionsFromState('sensor', 
         sensor => this.$i18n.tnl('label.' + sensor.sensorName),
         true,
-        sensor => sensor.sensorId != SENSOR.LED && sensor.sensorId != SENSOR.BUTTON
+        sensor => {
+          return SensorHelper.availableSensorAll().includes(sensor.sensorId) 
+            && sensor.sensorId != SENSOR.LED && sensor.sensorId != SENSOR.BUTTON
+        }
       )
     },
     zoneOptions() {

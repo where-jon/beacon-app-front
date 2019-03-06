@@ -218,7 +218,7 @@ export default {
 
         this.getPositionedTx(
           (tx) => tx.sensorId == SENSOR.TEMPERATURE,
-          (tx) => {return {id: SENSOR.TEMPERATURE, ...sensors.find((sensor) => sensor.btx_id == tx.btxId && (sensor.timestamp || sensor.updatetime))}},
+          (tx) => {return {id: SENSOR.TEMPERATURE, ...sensors.find((sensor) => (sensor.btxid == tx.btxId || sensor.btx_id == tx.btxId) && (sensor.timestamp || sensor.updatetime))}},
           (tx) => tx.temperature != null
         )
 
