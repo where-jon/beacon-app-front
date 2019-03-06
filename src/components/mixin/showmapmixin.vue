@@ -498,17 +498,18 @@ export default {
     },
     createBtnBg(pos, shape, bgColor){
       let btnBg = new Shape()
+      let TxRadius = DISP.TX_R * this.mapImageScale
       
       btnBg = this.setbtnColor(btnBg, bgColor, pos)
       switch(shape) {
       case SHAPE.CIRCLE:
-        btnBg.graphics.drawCircle(0, 0, DISP.TX_R)
+        btnBg.graphics.drawCircle(0, 0, TxRadius)
         break
       case SHAPE.SQUARE:
-        btnBg.graphics.drawRect(-DISP.TX_R, -DISP.TX_R, DISP.TX_R * 2, DISP.TX_R * 2)
+        btnBg.graphics.drawRect(-TxRadius, -TxRadius, TxRadius * 2, TxRadius * 2)
         break
       case SHAPE.ROUND_SQUARE:
-        btnBg.graphics.drawRoundRect(-DISP.TX_R, -DISP.TX_R, DISP.TX_R * 2, DISP.TX_R * 2, DISP.ROUNDRECT_RADIUS)
+        btnBg.graphics.drawRoundRect(-TxRadius, -TxRadius, TxRadius * 2, TxRadius * 2, DISP.ROUNDRECT_RADIUS)
         break
       }
       return btnBg
