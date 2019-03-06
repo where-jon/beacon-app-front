@@ -239,7 +239,7 @@ const appStateConf = {
     }
   },
   news: {
-    path: '/login'
+    path: '/news'
   },
   roles: {
     path: '/meta/role',
