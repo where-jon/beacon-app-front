@@ -17,6 +17,11 @@ export const getByteLength = (str) => encodeURI(str == null? '': str).replace(/%
 
 export const numberRange = (start, end) => new Array(end - start + 1).fill().map((d, i) => {return {key: i + start}})
 
+export const floorVal = (val, decimalPoint = 2) => {
+  const operate = 10 * decimalPoint
+  return Math.floor(val * operate) / operate
+}
+
 export const formatDateRange = (date, by) => {
   const zMonth = `00${date.getMonth() + 1}`.slice(-2)
   const zDate = `00${date.getDate()}`.slice(-2)

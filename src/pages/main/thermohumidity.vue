@@ -286,7 +286,7 @@ export default {
       return btnicon
     },
     createButtonLabel(device){
-      const label = new Text(device.temperature + '℃\n' + device.humidity + '%')
+      const label = new Text(Util.floorVal(device.temperature, 2) + '℃\n' + Util.floorVal(device.humidity, 2) + '%')
       label.font = DISP.THERMOH_FONT
       label.color = 'black'
       label.textAlign = 'center'

@@ -36,7 +36,7 @@
       {{ $t('message.unsavedData') }}
     </b-modal>
     <b-modal id="modalDeleteConfirm" :title="$t('label.confirm')" @ok="deleteTxDone">
-      {{ $t('message.deleteConfirm', {target: deleteTarget? deleteTarget.minor: null}) }}
+      {{ $t('message.deleteConfirm', {target: deleteTarget? getLabel(deleteTarget): null}) }}
     </b-modal>
   </div>
 </template>
@@ -197,6 +197,8 @@ export default {
       label.textAlign = 'center'
       label.textBaseline = 'middle'
       txBtn.addChild(label)
+      txBtn.txName = tx.txName
+      txBtn.btxId = tx.btxId
       txBtn.minor = tx.minor
       txBtn.txId = tx.txId
       txBtn.x = tx.x
@@ -316,8 +318,8 @@ export default {
         tx.location.x = tx.location.y = null
         tx.x = tx.y = null
       }
-      this.positionedTx = this.positionedTx.filter((tx) => tx.minor != this.deleteTarget.minor)
-      this.txOptions.push({label: '' + this.deleteTarget.minor, value: this.deleteTarget.txId})
+      this.positionedTx = this.positionedTx.filter((tx) => (this.deleteTarget.minor && tx.minor != this.deleteTarget.minor) || tx.btxId != this.deleteTarget.btxId)
+      this.txOptions.push({label: `${this.getLabel(this.deleteTarget)}(${this.deleteTarget.txName})`, value: this.deleteTarget.txId})
       this.txCon.removeChild(this.deleteTarget)
       this.stage.update()
     },
