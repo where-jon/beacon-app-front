@@ -183,12 +183,14 @@ export default {
       'showAlert',
     ]),
     sensorOptions() {
-      return this.sensors.filter((sensor) => sensor.sensorId != SENSOR.LED && sensor.sensorId != SENSOR.BUTTON).map((sensor) => {
-        return {
-          value: sensor.sensorId,
-          text: this.$i18n.tnl('label.' + sensor.sensorName)
+      return StateHelper.getOptionsFromState('sensor', 
+        sensor => this.$i18n.tnl('label.' + sensor.sensorName),
+        true,
+        sensor => {
+          return SensorHelper.availableSensorAll().includes(sensor.sensorId) 
+            && sensor.sensorId != SENSOR.LED && sensor.sensorId != SENSOR.BUTTON
         }
-      })
+      )
     },
     sumTargetOptions() {
       return SUM_TARGET.getOptions()

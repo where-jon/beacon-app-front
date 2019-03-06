@@ -281,7 +281,7 @@ export default {
       }
       let magnet = null
       if (tx.sensorId === SENSOR.MAGNET) {
-        magnet = this.magnetSensors && this.magnetSensors.find((sensor) => sensor.btx_id == tx.btxId)
+        magnet = this.magnetSensors && this.magnetSensors.find((sensor) => sensor.btxid == tx.btxId || sensor.btx_id == tx.btxId)
         Util.debug('magnet', magnet)
       }
       let meditag = null
