@@ -18,7 +18,7 @@ export const getByteLength = (str) => encodeURI(str == null? '': str).replace(/%
 export const numberRange = (start, end) => new Array(end - start + 1).fill().map((d, i) => {return {key: i + start}})
 
 export const floorVal = (val, decimalPoint = 2) => {
-  const operate = 10 * decimalPoint
+  const operate = Math.pow(10, decimalPoint)
   return Math.floor(val * operate) / operate
 }
 
