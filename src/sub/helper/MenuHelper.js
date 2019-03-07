@@ -13,7 +13,7 @@ export const fetchNav = (masterFeatureList, tenantFeatureList, featureList, isPr
       if (isTenantAdmin && group.tenantOnly) {
         return true
       }
-      if (isProvider && group.providerOnlyForce) {
+      if (isProvider && group.providerOnlyForce && page.providerOnlyForce) {
         return true
       }
       if(!featureOk('/' + group.base + page.path, masterFeatureList)){

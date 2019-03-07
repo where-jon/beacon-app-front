@@ -336,6 +336,12 @@ export const MENU = [
         key: 'tenant',
         path: 'tenant',
         icon: 'fas fa-store-alt',
+        providerOnlyForce: true,
+      },
+      {
+        key: 'news',
+        path: 'news',
+        icon: 'far fa-newspaper',
       },
     ]
   },
