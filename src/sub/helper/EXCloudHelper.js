@@ -6,6 +6,8 @@ import * as HttpHelper from './HttpHelper'
 
 export const dateform = (time) => time? moment(time).format('YYYY/MM/DD HH:mm:ss'): ''
 
+export const getDispTime = (pos) => pos.updatetime? pos.updatetime: pos.timestamp
+
 export const url = (excloudUrl) => {
   if (excloudUrl.startsWith('http')) {
     return excloudUrl

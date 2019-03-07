@@ -13,6 +13,7 @@ import * as StateHelper from '../../sub/helper/StateHelper'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
+import { APP } from '../../sub/constant/config'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import commonmixinVue from '../../components/mixin/commonmixin.vue'
 import reloadmixinVue from '../../components/mixin/reloadmixin.vue'
@@ -89,6 +90,7 @@ export default {
           { key: 'nearest2' },
           { key: 'nearest3' },
         ]: [
+          APP.POSITION_WITH_BTXID? { key: 'btx_id' }: null,
           { key: 'major' },
           { key: 'minor' },
           { key: 'name' },
@@ -96,32 +98,48 @@ export default {
           { key: 'finalReceiveLocation' },
           { key: 'finalReceiveTimestamp' },
           { key: 'state' },
-        ])
+        ].filter(val => val))
     },
     getCsvHeaders(){
-      return this.isDev? {
-        'btx_id': 'btx_id',
-        'device_id': 'device_id',
-        'pos_id': 'pos_id',
-        'phase': 'phase',
-        'power_level': 'power_level',
-        'updatetime': 'updatetime',
-        'nearest1': 'nearest1',
-        'nearest2': 'nearest2',
-        'nearest3': 'nearest3',
-      }:
-        {
-          'major': 'major',
-          'minor': 'minor',
-          'name': 'name',
-          'powerLevel': 'powerLevel',
-          'finalReceiveLocation': 'location',
-          'finalReceiveTimestamp': 'timestamp',
-          'state': 'state',
+      if(this.isDev){
+        return {
+          'btx_id': 'btx_id',
+          'device_id': 'device_id',
+          'pos_id': 'pos_id',
+          'phase': 'phase',
+          'power_level': 'power_level',
+          'updatetime': 'updatetime',
+          'nearest1': 'nearest1',
+          'nearest2': 'nearest2',
+          'nearest3': 'nearest3',
         }
+      }
+
+      const ret = {}
+      if(APP.POSITION_WITH_BTXID){
+        ret['btx_id'] = 'btx_id'
+      }
+      ret['major'] = 'major'
+      ret['minor'] = 'minor'
+      ret['name'] = 'name'
+      ret['powerLevel'] = 'powerLevel'
+      ret['finalReceiveLocation'] = 'finalReceiveLocation'
+      ret['finalReceiveTimestamp'] = 'finalReceiveTimestamp'
+      ret['state'] = 'state'
+      return ret
     },
     getClass(position){
       return {undetect: this.isUndetect('tx', position.updatetime)}
+    },
+    async fetchSensorHistory(){
+      const exCloudSensors = {}
+      if(!Util.hasValue(APP.POSITION_SENSOR)){
+        return exCloudSensors
+      }
+      for(let idx = 0; idx < APP.POSITION_SENSOR.length; idx++){
+        exCloudSensors[`${APP.POSITION_SENSOR[idx]}`] = await EXCloudHelper.fetchSensor(APP.POSITION_SENSOR[idx])
+      }
+      return exCloudSensors
     },
     async fetchData(payload) {
       this.showProgress()
@@ -129,6 +147,7 @@ export default {
       try {
         const positions = await EXCloudHelper.fetchRawPosition()
         this.positions = await this.makePositionRecords(positions)
+        this.positions = await this.margeSensorRecords(this.positions)
         if (payload && payload.done) {
           payload.done()
         }
@@ -162,8 +181,36 @@ export default {
           finalReceiveTimestamp: this.getTimestamp(e.updatetime),
           powerLevel: this.getPositionPowerLevelLabel(e.power_level),
           state: this.getStateLabel('tx', e.updatetime),
+          sensorIds: Util.getValue(tx, 'txSensorList', []).map(txSensor => txSensor.sensor.sensorId),
         }
       })
+    },
+    async margeSensorRecords(positions){
+      if(this.isDev){
+        return positions
+      }
+      const sensorHistories = await this.fetchSensorHistory()
+
+      const ret = positions.map(position => {
+        if(!Util.hasValue(position.sensorIds)){
+          return position
+        }
+        const sensorDataList = []
+        position.sensorIds.forEach(sensorId => {
+          const mergeData = sensorHistories[`${sensorId}`]? sensorHistories[`${sensorId}`].find(sensorHistory => sensorHistory.btxid == position.btx_id): null
+          if(mergeData){
+            sensorDataList.push(mergeData)
+          }
+        })
+        if(!Util.hasValue(sensorDataList)){
+          return position
+        }
+        const target = sensorDataList.reduce((prev, cur) => EXCloudHelper.getDispTime(prev) > EXCloudHelper.getDispTime(cur)? prev: cur)
+        position.power_level = target.power_level
+        position.finalReceiveTimestamp = this.getTimestamp(EXCloudHelper.getDispTime(target))
+        return position
+      })
+      return ret
     },
     getTimestamp(timestamp) {
       if (timestamp) {
