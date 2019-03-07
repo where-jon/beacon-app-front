@@ -3,6 +3,7 @@
     <breadcrumb :items="items" :extra-nav-spec="extraNavSpec"
                 :reload="reload" :short-name="shortName"
     />
+    <prohibit :messageList = "message" />
     <m-list :params="params" :list="positionList" />
   </div>
 </template>
@@ -10,6 +11,7 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
+import prohibit from '../../components/page/prohibit.vue'
 import mList from '../../components/page/list.vue'
 import listmixinVue from '../../components/mixin/listmixin.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
@@ -24,6 +26,7 @@ export default {
   components: {
     mList,
     breadcrumb,
+    prohibit
   },
   mixins: [
     listmixinVue,
@@ -31,6 +34,7 @@ export default {
   ],
   data() {
     return {
+      message: '',
       params: {
         name: 'position-list',
         id: 'positionListId',
@@ -72,6 +76,7 @@ export default {
       'areas',
       'exbs',
       'positionList',
+      'prohibits',
     ]),
   },
   methods: {
@@ -86,6 +91,15 @@ export default {
         await StateHelper.load('exb')
         await this.storePositionHistory()
         let positions = this.getPositions()
+        await StateHelper.load('prohibit')
+        this.message = ''
+        let prohibitData = await StateHelper.checkProhibitZone(this.getPositions(),this.prohibits)
+        prohibitData.forEach((data) => {
+          this.message += '<' + this.$i18n.tnl('label.Area') + ' : '
+          this.message +=  data.areaName + '  '
+          this.message +=  this.$i18n.tnl('label.minor') + ' : '
+          this.message += data.minor + '>  '
+        })
 
         Util.debug(positions)
         positions = positions.map((pos) => {

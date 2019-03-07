@@ -1,6 +1,7 @@
 <template>
   <div id="mapContainer" class="container-fluid" @click="resetDetail">
     <breadcrumb :items="items" :extra-nav-spec="extraNavSpec" :reload="true" :short-name="shortName" :legend-items="legendItems" />
+    <prohibit :messageList = "message" />
     <b-row class="mt-2">
       <b-form inline class="mt-2" @submit.prevent>
         <b-form-row class="my-1 ml-2 ml-sm-0">
@@ -76,12 +77,14 @@ import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import listmixin from '../../components/mixin/listmixin.vue'
 import sensor from '../../components/parts/sensor.vue'
 import commonmixinVue from '../../components/mixin/commonmixin.vue'
+import prohibit from '../../components/page/prohibit.vue'
 
 export default {
   components: {
     'sensor': sensor,
     'txdetail': txdetail,
     breadcrumb,
+    prohibit,
   },
   mixins: [showmapmixin, listmixin, commonmixinVue],
   props: {
@@ -106,6 +109,7 @@ export default {
       noImageErrorKey: 'noMapImage',
       modeRssi: false,
       isPause: false,
+      message: '',
     }
   },
   computed: {
@@ -115,6 +119,7 @@ export default {
     ...mapState('app_service', [
       'categories',
       'groups',
+      'prohibits',
       'txs',
       'forceFetchTx',
     ]),
@@ -156,6 +161,7 @@ export default {
   async mounted() {
     await StateHelper.load('category')
     await StateHelper.load('group')
+    await StateHelper.load('prohibit')
     document.addEventListener('touchstart', this.touchEnd)
     await this.fetchData()
   },
@@ -181,6 +187,22 @@ export default {
         ]
       }))
     },
+    // async checkProhibitZone (position) {
+    //   position.forEach((pos) => {
+    //     this.prohibits.forEach((prohibitData) => {
+    //       // areaが一致するか
+    //       if(pos.exb.areaId == prohibitData.areaId){
+    //         if(pos.x >= prohibitData.x && pos.x <= prohibitData.w
+    //           && pos.y >= prohibitData.y && pos.y <= prohibitData.h ){
+    //           console.log('----------------------------------------')
+    //           console.log('禁止区域に火がいる::minor::' + pos.minor)
+    //           console.log('検知フロア::' + pos.exb.areaName)
+    //           console.log('----------------------------------------')
+    //         }
+    //       }
+    //     })
+    //   })
+    // },
     getMagnetCategoryTypes () {
       return this.txs.filter((val) => val.category && val.sensorId == SENSOR.MAGNET)
         .map((val) => val.category.categoryId)
@@ -259,6 +281,14 @@ export default {
         }
         this.setPositionedExb()
         this.showTxAll()
+        this.message = ''
+        let prohibitData = await StateHelper.checkProhibitZone(this.getPositions(),this.prohibits)
+        prohibitData.forEach((data) => {
+          this.message += '<' + this.$i18n.tnl('label.Area') + ' : '
+          this.message +=  data.areaName + '  '
+          this.message +=  this.$i18n.tnl('label.minor') + ' : '
+          this.message += data.minor + '>  '
+        })
       }, disableErrorPopup)
     },
     showTxAll() {

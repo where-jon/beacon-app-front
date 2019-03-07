@@ -263,6 +263,22 @@ const appStateConf = {
       return arr.map((val) => ({...val, roleName: val.role.roleName}))
     }
   },
+  prohibits: {
+    path: '/basic/prohibit',
+    beforeCommit: (arr) => {
+      let result = arr.map((val) => ({
+        ...val,
+        zoneId:val.zoneId,
+        zoneName:val.zoneName,
+        x: val.x,
+        y: val.y,
+        w: val.w,
+        h: val.h,
+        areaId: val.areaId,
+      }))
+      return result
+    }
+  },
   news: {
     path: '/news'
   },
@@ -356,6 +372,28 @@ export const loadAreaImage = async (areaId, force) => {
   store.commit('app_service/replaceAS', {areaImages})    
 
   // })
+}
+export const checkProhibitZone = async (position,prohibits) => {
+  let gBindData = []
+  position.forEach(function(pos){
+    prohibits.forEach(function(prohibitData) {
+      // areaが一致するか
+      if(pos.exb.areaId == prohibitData.areaId){
+        if(pos.x >= prohibitData.x && pos.x <= prohibitData.w
+          && pos.y >= prohibitData.y && pos.y <= prohibitData.h ){
+          let vTemp = {}
+          vTemp.minor = pos.minor
+          vTemp.areaName = pos.exb.areaName
+          gBindData.push(vTemp)
+          console.log('----------------------------------------')
+          console.log('禁止区域に火がいる::minor::' + pos.minor)
+          console.log('検知フロア::' + pos.exb.areaName)
+          console.log('----------------------------------------')
+        }
+      }
+    })
+  })
+  return gBindData
 }
 
 export const loadAreaImages = async () => {
