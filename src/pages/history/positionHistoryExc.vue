@@ -38,7 +38,7 @@
           </b-form-group>
         </b-form>
         <b-row class="mt-4" />
-        <b-table :items="viewList" :fields="fields" :sort-by.sync="sortBy" striped hover outlined >
+        <b-table :items="viewList" :fields="fields" :sort-by.sync="sortBy" :sort-desc.sync="sortDesc" striped hover outlined >
           <template slot="actions" slot-scope="row">
             <b-button v-t="'label.download'" :variant="theme" size="sm" @click.stop="download(row.item)" />
           </template>
@@ -60,7 +60,7 @@ import * as SensorHelper from '../../sub/helper/SensorHelper'
 import * as Util from '../../sub/util/Util'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import { getTheme } from '../../sub/helper/ThemeHelper'
-import { EXCLOUD } from '../../sub/constant/config'
+import { EXCLOUD, DISP } from '../../sub/constant/config'
 import { SENSOR } from '../../sub/constant/Constants'
 
 
@@ -106,7 +106,8 @@ export default {
         {key: 'actions', thStyle: {width: '130px !important'}, tdClass: 'action-rowdata' }
       ]),
       message: null,
-      sortBy: 'date'
+      sortBy: 'date',
+      sortDesc: DISP.HISTORY_SORT.toLowerCase() == 'desc',
     }
   },
   watch: {

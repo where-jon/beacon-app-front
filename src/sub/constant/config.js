@@ -250,6 +250,8 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   TXSENSOR_POPUP_SIZE: 165, // TXセンサー表示ポップアップの高さ
   TXMEDITAG_POPUP_SIZE: 236, // TXMEDITAG表示ポップアップの高さ
 
+  HISTORY_SORT: 'desc', // 履歴情報Excの日付デフォルトソート（asc or desc）
+
   TXDETAIL_ITEMS: { // TX詳細表示項目
     minor: true,
     major: true,
