@@ -263,8 +263,20 @@ const appStateConf = {
       return arr.map((val) => ({...val, roleName: val.role.roleName}))
     }
   },
-  news: {
-    path: '/news'
+  newsList: {
+    path: '/news',
+    sort: 'newsDate',
+    beforeCommit: (arr) => {
+      return arr.map((val) => ({
+        ...val,
+        newsDt: Util.formatDate(val.newsDate),
+        dispState: i18n.tnl(`label.${val.dispFlg == 0? 'hide': 'display'}`),
+      }))
+    }
+  },
+  topNewsList: {
+    path: '/news/disp',
+    sort: 'newsDate',
   },
   roles: {
     path: '/meta/role',
@@ -314,6 +326,8 @@ const appStateConf = {
 export const load = async (target, force) => {
   if (!target.endsWith('s')) {
     target = target.endsWith('y')? target.slice(0, -1) + 'ies' : target + 's'
+  }else if(['news', 'topNews'].includes(target)){
+    target = `${target}List`
   }
   if (!appStateConf[target]) {
     return

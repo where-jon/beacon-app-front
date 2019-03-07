@@ -51,6 +51,7 @@
     "master": "マスタ",
     "displayName": "表示名",
     "display": "表示",
+    "hide": "非表示",
     "enabled": "有効",
     "value": "値",
     "version": "バージョン情報",
@@ -173,9 +174,12 @@
     "zoneType": "ゾーンタイプ",
 
     "---------------- App news ---------------":"",
-    "news":"<お知らせ>",
+    "topNews":"<お知らせ>",
     "newsDt":"日付",
     "newsContent":"内容",
+    "news": "お知らせメンテナンス",
+    "dispFlg": "表示フラグ",
+    "newsId": "お知らせID",
 
     "---------------- App setting ---------------":"",
     "login-user-profile": "ログインユーザ・プロフィール",

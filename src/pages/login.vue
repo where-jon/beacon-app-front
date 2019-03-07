@@ -62,7 +62,7 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'news',
+      'topNewsList',
       'forceFetchNews',
     ]),
     theme() {
@@ -79,8 +79,8 @@ export default {
     async fetchData(payload) {
       try {
         this.showProgress()
-        await StateHelper.load('news')
-        this.newsList = this.news.map((val) => ({
+        await StateHelper.load('topNews')
+        this.newsList = this.topNewsList.map((val) => ({
           ...val,
           newsDate: Util.formatDate(val.newsDate),
           content: val.content,
