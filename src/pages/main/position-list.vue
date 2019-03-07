@@ -89,17 +89,9 @@ export default {
         await StateHelper.load('area')
         await StateHelper.load('tx')
         await StateHelper.load('exb')
+        await StateHelper.load('prohibit')
         await this.storePositionHistory()
         let positions = this.getPositions()
-        await StateHelper.load('prohibit')
-        this.message = ''
-        let prohibitData = await StateHelper.checkProhibitZone(this.getPositions(),this.prohibits)
-        prohibitData.forEach((data) => {
-          this.message += '<' + this.$i18n.tnl('label.Area') + ' : '
-          this.message +=  data.areaName + '  '
-          this.message +=  this.$i18n.tnl('label.minor') + ' : '
-          this.message += data.minor + '>  '
-        })
 
         Util.debug(positions)
         positions = positions.map((pos) => {
@@ -121,6 +113,14 @@ export default {
         }).filter((pos) => !pos.tx || Util.bitON(pos.tx.disp, TX.DISP.POS))
         Util.debug(positions)
         this.replaceAS({positionList: positions})
+        this.message = ''
+        let prohibitData = await StateHelper.checkProhibitZone(this.getPositions(),this.prohibits)
+        prohibitData.forEach((data) => {
+          this.message += '<' + this.$i18n.tnl('label.Area') + ' : '
+          this.message +=  data.areaName + '  '
+          this.message +=  this.$i18n.tnl('label.minor') + ' : '
+          this.message += data.minor + '>  '
+        })
         if (payload && payload.done) {
           payload.done()
         }

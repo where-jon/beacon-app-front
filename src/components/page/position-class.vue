@@ -104,6 +104,13 @@ export default {
         await StateHelper.load('tx')
         await StateHelper.load('exb')
         await StateHelper.load('prohibit')
+        // positionデータ取得
+        await this.storePositionHistory()
+        this.replaceAS({positions: this.getPositions()})
+
+        // 分類
+        const tempClass = this.splitClass(this.positions)
+        this.replaceMain({[`${this.eachListName}`]: tempClass})
         this.message = ''
         let prohibitData = await StateHelper.checkProhibitZone(this.getPositions(),this.prohibits)
         prohibitData.forEach((data) => {
@@ -112,14 +119,6 @@ export default {
           this.message +=  this.$i18n.tnl('label.minor') + ' : '
           this.message += data.minor + '>  '
         })
-
-        // positionデータ取得
-        await this.storePositionHistory()
-        this.replaceAS({positions: this.getPositions()})
-
-        // 分類
-        const tempClass = this.splitClass(this.positions)
-        this.replaceMain({[`${this.eachListName}`]: tempClass})
         if (payload && payload.done) {
           payload.done()
         }
