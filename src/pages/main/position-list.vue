@@ -3,7 +3,7 @@
     <breadcrumb :items="items" :extra-nav-spec="extraNavSpec"
                 :reload="reload" :short-name="shortName"
     />
-    <prohibit :messageList = "message" />
+    <prohibitAlert :messageList = "message" />
     <m-list :params="params" :list="positionList" />
   </div>
 </template>
@@ -11,7 +11,7 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
-import prohibit from '../../components/page/prohibit.vue'
+import prohibitAlert from '../../components/page/prohibitAlert.vue'
 import mList from '../../components/page/list.vue'
 import listmixinVue from '../../components/mixin/listmixin.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
@@ -26,7 +26,7 @@ export default {
   components: {
     mList,
     breadcrumb,
-    prohibit
+    prohibitAlert
   },
   mixins: [
     listmixinVue,

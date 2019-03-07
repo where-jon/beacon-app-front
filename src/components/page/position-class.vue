@@ -1,5 +1,6 @@
 <template>
   <div>
+    <prohibitAlert :messageList = "message" />
     <m-list :params="params" :list="getDataList()" />
   </div>
 </template>
@@ -7,6 +8,7 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 import mList from './list.vue'
+import prohibitAlert from '../../components/page/prohibitAlert.vue'
 import commonmixinVue from '../mixin/commonmixin.vue'
 import listmixinVue from '../mixin/listmixin.vue'
 import showmapmixin from '../mixin/showmapmixin.vue'
@@ -17,6 +19,7 @@ import * as Util from '../../sub/util/Util'
 export default {
   components: {
     mList,
+    prohibitAlert
   },
   mixins: [
     commonmixinVue,
@@ -35,6 +38,7 @@ export default {
   },
   data() {
     return {
+      message: '',
       params: {
         name: `position-${this.positionName}`,
         id: Util.concatCamel('position', this.positionName, 'id'),
@@ -59,7 +63,8 @@ export default {
       'areas',
       'zones',
       'exbs',
-      'positions'
+      'positions',
+      'prohibits'
     ]),
     ...mapState('main', [
       'orgPositions',
@@ -98,6 +103,15 @@ export default {
         await StateHelper.load(`${this.className}`)
         await StateHelper.load('tx')
         await StateHelper.load('exb')
+        await StateHelper.load('prohibit')
+        this.message = ''
+        let prohibitData = await StateHelper.checkProhibitZone(this.getPositions(),this.prohibits)
+        prohibitData.forEach((data) => {
+          this.message += '<' + this.$i18n.tnl('label.Area') + ' : '
+          this.message +=  data.areaName + '  '
+          this.message +=  this.$i18n.tnl('label.minor') + ' : '
+          this.message += data.minor + '>  '
+        })
 
         // positionデータ取得
         await this.storePositionHistory()

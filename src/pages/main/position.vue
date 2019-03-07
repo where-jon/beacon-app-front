@@ -1,7 +1,7 @@
 <template>
   <div id="mapContainer" class="container-fluid" @click="resetDetail">
     <breadcrumb :items="items" :extra-nav-spec="extraNavSpec" :reload="true" :short-name="shortName" :legend-items="legendItems" />
-    <prohibit :messageList = "message" />
+    <prohibitAlert :messageList = "message" />
     <b-row class="mt-2">
       <b-form inline class="mt-2" @submit.prevent>
         <b-form-row class="my-1 ml-2 ml-sm-0">
@@ -77,14 +77,14 @@ import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import listmixin from '../../components/mixin/listmixin.vue'
 import sensor from '../../components/parts/sensor.vue'
 import commonmixinVue from '../../components/mixin/commonmixin.vue'
-import prohibit from '../../components/page/prohibit.vue'
+import prohibitAlert from '../../components/page/prohibitAlert.vue'
 
 export default {
   components: {
     'sensor': sensor,
     'txdetail': txdetail,
     breadcrumb,
-    prohibit,
+    prohibitAlert
   },
   mixins: [showmapmixin, listmixin, commonmixinVue],
   props: {

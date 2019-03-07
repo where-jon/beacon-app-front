@@ -375,8 +375,8 @@ export const loadAreaImage = async (areaId, force) => {
 }
 export const checkProhibitZone = async (position,prohibits) => {
   let gBindData = []
-  position.forEach(function(pos){
-    prohibits.forEach(function(prohibitData) {
+  position.map((pos) => {
+    prohibits.map((prohibitData) =>{
       // areaが一致するか
       if(pos.exb.areaId == prohibitData.areaId){
         if(pos.x >= prohibitData.x && pos.x <= prohibitData.w
