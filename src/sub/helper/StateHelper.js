@@ -375,25 +375,28 @@ export const loadAreaImage = async (areaId, force) => {
 }
 export const checkProhibitZone = async (position,prohibits) => {
   let gBindData = []
-  position.map((pos) => {
-    prohibits.map((prohibitData) =>{
-      // areaが一致するか
-      if(pos.exb.areaId == prohibitData.areaId){
-        if(pos.x >= prohibitData.x && pos.x <= prohibitData.w
-          && pos.y >= prohibitData.y && pos.y <= prohibitData.h ){
-          let vTemp = {}
-          vTemp.minor = pos.minor
-          vTemp.areaName = pos.exb.areaName
-          gBindData.push(vTemp)
-          console.log('----------------------------------------')
-          console.log('禁止区域に火がいる::minor::' + pos.minor)
-          console.log('検知フロア::' + pos.exb.areaName)
-          console.log('----------------------------------------')
+  if (APP.PROHIBIT_ALERT) {
+    position.map((pos) => {
+      prohibits.map((prohibitData) =>{
+        // areaが一致するか
+        if(pos.exb.areaId == prohibitData.areaId){
+          if(pos.x >= prohibitData.x && pos.x <= prohibitData.w
+            && pos.y >= prohibitData.y && pos.y <= prohibitData.h ){
+            let vTemp = {}
+            vTemp.minor = pos.minor
+            vTemp.areaName = pos.exb.areaName
+            gBindData.push(vTemp)
+            console.log('----------------------------------------')
+            console.log('禁止区域に火がいる::minor::' + pos.minor)
+            console.log('検知フロア::' + pos.exb.areaName)
+            console.log('----------------------------------------')
+          }
         }
-      }
+      })
     })
-  })
+  }
   return gBindData
+
 }
 
 export const loadAreaImages = async () => {
