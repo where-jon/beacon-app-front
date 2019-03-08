@@ -202,7 +202,7 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   THERMON_FLASH_WARN: 1000, // 警告アイコン点滅周期(ミリ秒)
   THERMON_FLASH_DANGER: 500, // 危険アイコン点滅周期(ミリ秒)
   THERMON_ALPHA: 1, // アルファ値(0:透明～1:不透明)
-  THERMOH_PATTERN: ['19 #a0d8ef', '25 #00FF00', '26 #FFFF00', '27 #EE7800', '31 #FF0000', '32 #FFFF00 $WARN', '#FF0000 $DANGER'], // 温度アイコンパターン（順不同。数値：閾値。先頭が#：カラーコード。先頭が$：点滅パターン。OR：閾値に同値を含む。）
+  THERMOH_PATTERN: ['19 #5b9bd5', '25 #6eb290', '26 #ffd966', '27 #ff9966', '31 #ff5050', '32 #ffd966 $WARN', '#ff2525 $DANGER'], // 温度アイコンパターン（順不同。数値：閾値。先頭が#：カラーコード。先頭が$：点滅パターン。OR：閾値に同値を含む。）
   HUMIDITY_PATTERN: ['LESS 30', 'LESS 50', 'MORE 85'], // 湿度アラートパターン（順不同。数値：閾値。LESS：閾値以下の場合に警告。MORE：閾値以上の場合に警告）
 
   TEMPERATURE_MAX: 20,  // 温湿度ヒートマップ最大値
