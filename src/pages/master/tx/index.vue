@@ -33,6 +33,7 @@ export default {
           !APP.TX_WITH_TXID && APP.TX_BTX_MINOR != 'minor'? {name: this.$i18n.tnl('label.btxId'), id: 'btxId'}:
             {name: this.$i18n.tnl('label.txId'), id: 'txId'},
         csvOut: true,
+        custumCsvColumns: this.getCustumCsvColumns(),
         fields: addLabelByKey(this.$i18n, [ 
           !APP.TX_WITH_TXID && APP.TX_BTX_MINOR == 'minor'? {key: 'minor', sortable: true, tdClass: 'action-rowdata' }: null,
           APP.TX_WITH_TXID? {key: 'txId', sortable: true, tdClass: 'action-rowdata' }: null,
@@ -46,7 +47,6 @@ export default {
           APP.TX_WITH_DESCRIPTION? {key: 'description', sortable: true, tdClass: 'action-rowdata' }: null,
           {key: 'sensor', label:'type', sortable: true,},
           {key: 'disp', label:'disp', sortable: false,},
-          APP.TX_WITH_LOCATION? {key: 'locationId', label:'locationId', sortable: false,}: null,
           {key: 'actions', thStyle: {width: '130px !important'}, tdClass: 'action-rowdata' }
         ]),
         sortBy: APP.TX_WITH_TXID? 'txId': APP.TX_BTX_MINOR != 'minor'? 'btxId': 'minor',
@@ -74,6 +74,23 @@ export default {
   mounted() {
   },
   methods: {
+    getCustumCsvColumns(){
+      return [
+        !APP.TX_WITH_TXID && APP.TX_BTX_MINOR == 'minor'? 'minor': null,
+        APP.TX_WITH_TXID? 'txId': null,
+        APP.TX_BTX_MINOR != 'minor'? 'btxId': null,
+        'txName',
+        APP.TX_WITH_DISPLAY_NAME? 'displayName': null,
+        APP.TX_WITH_MAJOR? 'major': null,
+        APP.TX_WITH_TXID || APP.TX_BTX_MINOR != 'btxId'? 'minor': null,
+        APP.TX_WITH_CATEGORY? 'categoryName': null,
+        APP.TX_WITH_GROUP? 'groupName': null,
+        APP.TX_WITH_DESCRIPTION? 'description': null,
+        'sensor',
+        'disp',
+        APP.TX_WITH_LOCATION? 'locationId': null,
+      ].filter((val) => val)
+    },
     afterCrud(){
       StateHelper.setForceFetch('pot', true)
     },
