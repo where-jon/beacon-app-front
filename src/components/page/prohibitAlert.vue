@@ -1,7 +1,7 @@
 <template>
-    <b-row v-if="messageList" class="mt-3 mb-3 text-danger ">
-       {{ $t('label.detectedProhibitZone') + ' : ' }}{{ messageList }}
-    </b-row>
+  <b-alert v-if="messageList" show variant="danger" dismissible>
+    {{ $t('label.detectedProhibitZone') + ' : ' }}{{ messageList }}
+  </b-alert>
 </template>
 
 <script>
