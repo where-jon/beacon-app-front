@@ -1,12 +1,14 @@
 import Encoding from 'encoding-japanese'
-import { str2Array } from './Util'
+import { str2Array, hasValue } from './Util'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
 import { APP } from '../constant/config'
 
 let locale
+let i18n
 
 export const setApp = (pi18n) => {
   locale = pi18n.locale
+  i18n = pi18n
 }
 
 
@@ -138,4 +140,69 @@ export const getMessageData = async (lang) => {
 export const endsWithSlashUrl = (vueComponent) => {
   const nodeKey = vueComponent.$vnode && vueComponent.$vnode.data? vueComponent.$vnode.data.key: ''
   return nodeKey.endsWith('/')
+}
+
+export const createCustomValidationKey = (target) => {
+  console.error(target)
+  const key = ['badInput', 'patternMismatch', 'rangeOverflow', 'rangeUnderflow', 'stepMismatch', 'tooLong', 'tooShort', 'typeMismatch', 'valueMissing'].find(key => target.validity[key])
+  if(!key){
+    return null
+  }
+  const baseKey = `message.${key}`
+  if(key == 'badInput'){
+    const type = target.type.toLowerCase()
+    return ['number'].includes(type)? `${baseKey}${type.charAt(0).toUpperCase()}${type.slice(1)}`: baseKey
+  }
+  if(key == 'typeMismatch'){
+    const type = target.type.toLowerCase()
+    return ['email'].includes(type)? `${baseKey}${type.charAt(0).toUpperCase()}${type.slice(1)}`: baseKey
+  }
+  if(key == 'valueMissing'){
+    const tag = target.tagName.toLowerCase()
+    return ['input', 'select'].includes(tag)? `${baseKey}${tag.charAt(0).toUpperCase()}${tag.slice(1)}`: baseKey
+  }
+  return baseKey
+}
+
+export const customValidation = (e) => {
+  const target = e.target
+  const validity = target.validity
+  if(validity == null){
+    return
+  }
+  const key = createCustomValidationKey(target)
+  if(!key){
+    target.setCustomValidity('')
+    return
+  }
+  const step = hasValue(target.step) && isNaN(target.step)? Number(target.step): 1
+  target.setCustomValidity(`${i18n.tnl(key, {
+    minLength: target.minLength,
+    maxLength: target.maxLength,
+    min: target.min,
+    max: target.max,
+    length: target.value? target.value.length: 0,
+    value: target.value,
+    stepLow: Math.floor(target.valueAsNumber / step) * step,
+    stepHigh: Math.floor(target.valueAsNumber / step) * step + step,
+  })}${validity.patternMismatch && target.title? target.title: ''}`)
+  return
+}
+
+export const setCustomValidationMessage = () => {
+  const inputElements = document.getElementsByTagName('input')
+  if(inputElements != null){
+    for(let idx = 0; idx < inputElements.length; idx++){
+      inputElements[idx].addEventListener('input', e => customValidation(e))
+      inputElements[idx].addEventListener('invalid', e => customValidation(e))
+    }
+  }
+
+  const selectElements = document.getElementsByTagName('select')
+  if(selectElements != null){
+    for(let idx = 0; idx < selectElements.length; idx++){
+      selectElements[idx].addEventListener('change', e => customValidation(e))
+      selectElements[idx].addEventListener('invalid', e => customValidation(e))
+    }
+  }
 }

@@ -90,6 +90,7 @@
 import { mapState } from 'vuex'
 import _ from 'lodash'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import * as HtmlUtil from '../../../sub/util/HtmlUtil'
 import * as Util from '../../../sub/util/Util'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
@@ -182,6 +183,7 @@ export default {
     StateHelper.load('sensor')
     StateHelper.load('category')
     StateHelper.load('group')
+    HtmlUtil.setCustomValidationMessage()
   },
   methods: {
     showTx(col) {

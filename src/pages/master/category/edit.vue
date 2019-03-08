@@ -42,6 +42,7 @@
 import { mapState } from 'vuex'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
+import * as HtmlUtil from '../../../sub/util/HtmlUtil'
 import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
@@ -110,6 +111,7 @@ export default {
   },
   async mounted() {
     ViewHelper.applyDef(this.form, this.defValue)
+    HtmlUtil.setCustomValidationMessage()
   },
   methods: {
     beforeReload(){
