@@ -2,14 +2,14 @@
   <form method="post" @submit.prevent="onSubmit">
     <div class=" form-signin error-message">
       {{ message }}
-    <input v-model="userId" type="text" class="form-control" maxlength="20" placeholder="ID">
-    <input v-model="password" type="password" class="form-control" maxlength="20" placeholder="PASSWORD">
-    <b-button :variant="theme" class="btn-lg btn-block" type="submit">
-      <i class="fas fa-sign-in-alt" />&nbsp;&nbsp;{{ $i18n.tnl('label.login') }}
-    </b-button>
+      <input v-model="userId" type="text" class="form-control" maxlength="20" placeholder="ID">
+      <input v-model="password" type="password" class="form-control" maxlength="20" placeholder="PASSWORD">
+      <b-button :variant="theme" class="btn-lg btn-block" type="submit">
+        <i class="fas fa-sign-in-alt" />&nbsp;&nbsp;{{ $i18n.tnl('label.login') }}
+      </b-button>
     </div>
     <div v-if="isNews" class="container">
-      <news-table :headers="headers" :datas="newsList"  />
+      <news-table :headers="headers" :datas="newsList" />
     </div>
   </form>
 </template>
@@ -30,13 +30,13 @@ export default {
   components: {
     newsTable,
   },
+  mixins: [commonmixinVue],
   props: {
     isDev: {
       type: Boolean,
       default: false
     }
   },
-  mixins: [commonmixinVue],
   data() {
     return {
       isNews:true,
@@ -62,7 +62,7 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'topNewsList',
+      'news',
       'forceFetchNews',
     ]),
     theme() {
@@ -79,8 +79,8 @@ export default {
     async fetchData(payload) {
       try {
         this.showProgress()
-        await StateHelper.load('topNews')
-        this.newsList = this.topNewsList.map((val) => ({
+        await StateHelper.load('news')
+        this.newsList = this.news.map((val) => ({
           ...val,
           newsDate: Util.formatDate(val.newsDate),
           content: val.content,

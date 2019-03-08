@@ -2,7 +2,7 @@
   <div v-if="datas.length>0">
     <b-row class="mt-5">
       <b-col md="5">
-        <h5 class = "font-weight-bold" v-t="'label.topNews'"></h5>
+        <h5 v-t="'label.news'" class="font-weight-bold" />
       </b-col>
     </b-row>
     <div class="table-area">
@@ -17,7 +17,7 @@
         <tbody>
           <tr v-for="(data, dataIndex) in datas" :key="dataIndex" :class="trClass(data, dataIndex)">
             <td v-for="(header, headerIndex) in headers" :key="headerIndex" :class="tdClass(dataIndex, header, headerIndex)">
-                {{ data[header.key] }}
+              {{ data[header.key] }}
             </td>
           </tr>
         </tbody>
