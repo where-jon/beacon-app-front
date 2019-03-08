@@ -52,6 +52,12 @@ export const createBreadCrumbItems = (...columns) => {
 
 // 3桁 もしくは 6桁のHEXをRGBAに変換する
 export const getRGBA = (colorCode, opacity) => {
+  console.log('getRGBA: ' + colorCode)
+  if (colorCode.substring(0,1) == '#') {
+    colorCode = colorCode.slice(1)
+  }
+  console.log('colorCode: ' + colorCode)
+
   if (colorCode && colorCode.length < 6) {
     if (colorCode.length == 3) {
       let red   = parseInt(colorCode.substring(0,1) + colorCode.substring(0,1), 16)
