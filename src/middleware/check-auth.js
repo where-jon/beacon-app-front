@@ -34,7 +34,7 @@ export default function (context) {
 
     const extraMenu = FORCE_PUSH_MENU.find(menu => menu.parent == context.route.path && menu.isPush())
     if(extraMenu){
-      context.app.router.push(extraMenu.path)
+      context.redirect(extraMenu.path)
       return
     }
     if (!isProvider && !isTenantAdmin && (!tenantFeatureList || tenantFeatureList.length == 0)) {
