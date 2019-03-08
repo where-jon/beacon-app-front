@@ -261,6 +261,7 @@ export default {
         this.isChangeArea = false
         if (this.selectedArea) {
           this.reset()
+          this.workTxs = _.cloneDeep(this.txs)
           this.setTxPosition()
           this.showMapImage()
         }
