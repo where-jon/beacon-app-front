@@ -98,7 +98,8 @@ export const fetchTelemetry = async () => {
   return _(data)
     // .filter((val) => EXB.some((exb) => exb.pos_id == val.pos_id))
     .map((val) => {
-      return {...val, timestamp: dateform(val.timestamp), ibeacon_received: dateform(val.ibeacon_received)}
+      let timestamp = APP.EXSERVER ? val.timestamp*1000 : val.timestamp
+      return {...val, timestamp: dateform(timestamp), ibeacon_received: dateform(val.ibeacon_received)}
     })
     .compact().value()
 }
