@@ -33,9 +33,15 @@
           <b-form-select v-model="targetTx" :options="txs" class="ml-1 mr-2" />
         </b-form-row>
         <b-form-row class="my-1 ml-2 ml-sm-0">
-          <b-button  class="ml-sm-4 ml-2 mr-1" :pressed.sync="isPause" :variant="getButtonTheme()">
-            <span v-if="!isPause"><i class="fas fa-pause"></i>&nbsp;{{ $t('label.reload') }}{{ $t('label.pause') }}</span>
-            <span v-else><i class="fas fa-play"></i>&nbsp;{{ $t('label.reload') }}{{ $t('label.restart') }}</span>
+          <b-button class="ml-sm-4 ml-2 mr-1" :pressed.sync="isPause" :variant="getButtonTheme()">
+            <i v-if="!isPause" class="fas fa-pause" />
+            <span v-if="!isPause">
+              &nbsp;{{ $t('label.reload') }}{{ $t('label.pause') }}
+            </span>
+            <i v-if="isPause" class="fas fa-play" />
+            <span v-if="isPause">
+              &nbsp;{{ $t('label.reload') }}{{ $t('label.restart') }}
+            </span>
           </b-button>
         </b-form-row>
       </b-form>
