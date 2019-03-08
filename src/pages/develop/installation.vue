@@ -1,7 +1,7 @@
 <template>
   <div>
     <position v-if="!modeRssi" :is-installation="true" @rssi="onModeRssi" />
-    <rssimap v-else  @rssi="onModeRssi" />
+    <rssimap v-else @rssi="onModeRssi" />
   </div>
 </template>
 
