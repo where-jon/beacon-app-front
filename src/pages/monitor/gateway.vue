@@ -18,6 +18,7 @@ import reloadmixinVue from '../../components/mixin/reloadmixin.vue'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import monitorTable from '../../components/parts/monitortable.vue'
 import statusmixinVue from '../../components/mixin/statusmixin.vue'
+import { APP } from '../../sub/constant/config.js'
 
 export default {
   components: {
@@ -35,7 +36,11 @@ export default {
     return {
       items: ViewHelper.createBreadCrumbItems('monitor', 'gateway'),
       gateways: [],
-      headers: ViewHelper.addLabelByKey(this.isDev? null: this.$i18n, [
+      headers: ViewHelper.addLabelByKey(this.isDev? null: this.$i18n, APP.EXSERVER?[
+        { key: 'deviceid', label: this.isDev? 'deviceid': 'deviceId'},
+        { key: 'updated', label: this.isDev? 'updated': 'finalReceiveTimestamp'},
+        { key: 'state'},
+      ]:[
         { key: 'num' , label: 'no'},
         { key: 'deviceid', label: this.isDev? 'deviceid': 'deviceId'},
         { key: 'updated', label: this.isDev? 'updated': 'finalReceiveTimestamp'},
