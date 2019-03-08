@@ -39,6 +39,7 @@
 <script>
 import { mapState } from 'vuex'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import * as HtmlUtil from '../../../sub/util/HtmlUtil'
 import * as Util from '../../../sub/util/Util'
 import commonmixinVue from '../../../components/mixin/commonmixin.vue'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
@@ -84,6 +85,9 @@ export default {
     ...mapState('app_service', [
       'area',
     ]),
+  },
+  mounted(){
+    HtmlUtil.setCustomValidationMessage()
   },
   methods: {
     getNameByteLangth(){

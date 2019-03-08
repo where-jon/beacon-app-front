@@ -611,6 +611,20 @@
     "lessAlertHumidity": "「{sensors}低湿：{humidity}％以下」",
     "moreAlertHumidity": "「{sensors}高湿：{humidity}％以上」",
 
+    "badInput": "",
+    "badInputNumber": "数字を入力してください。",
+    "patternMismatch": "指定されている形式で入力してください。",
+    "rangeOverflow": "値は{max}以下にする必要があります。",
+    "rangeUnderflow": "値は{min}以上にする必要があります。",
+    "stepMismatch": "有効な値を入力してください。有効な値として最も近いのは {stepLow} と {stepHigh} です。",
+    "tooLong": "このテキストを半角{maxLength}文字以下にしてください（現時点で半角{length}文字です）。",
+    "tooShort": "このテキストは{minLength}文字以上で指定してください（現在{length}文字で指定されています）。",
+    "typeMismatch": "",
+    "typeMismatchEmail": "「{value}」は完全なメールアドレスではありません。",
+    "valueMissing": "",
+    "valueMissingInput": "このフィールドを入力してください。",
+    "valueMissingSelect": "リスト内の項目を選択してください。",
+
     "dummy": "" 
   }
 }

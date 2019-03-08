@@ -68,6 +68,7 @@ import { mapState } from 'vuex'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
+import * as HtmlUtil from '../../../sub/util/HtmlUtil'
 import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
@@ -149,6 +150,9 @@ export default {
     this.form.notifyTemplateKey== this.deliveryState || this.form.notifyTemplateKey==this.userMailState? this.notify = _.slice(NOTIFY_MIDIUM.getTypes()).filter((val) => [0].includes(val.value)) : this.notify
     let labelUpdate = Util.getDetailCaptionKey(this.$store.state.app_service.template.notifyTemplateId)
     labelUpdate == 'label.update' ? this.bNotifyTemplateKey = false: this.bNotifyTemplateKey = true
+  },
+  mounted(){
+    HtmlUtil.setCustomValidationMessage()
   },
   methods: {
     reset () {

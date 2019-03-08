@@ -135,6 +135,7 @@ import _ from 'lodash'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
+import * as HtmlUtil from '../../../sub/util/HtmlUtil'
 import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
@@ -254,6 +255,7 @@ export default {
     this.form.potTxList.forEach((potTx, idx) => {
       this.changeTx(this.form.potTxList[idx].txId, idx)
     })
+    HtmlUtil.setCustomValidationMessage()
   },
   methods: {
     initPotTxList(){
