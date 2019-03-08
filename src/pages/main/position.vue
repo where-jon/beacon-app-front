@@ -110,6 +110,8 @@ export default {
       modeRssi: false,
       isPause: false,
       message: '',
+      prohibitData : null,
+      arIcon : [],
     }
   },
   computed: {
@@ -187,22 +189,6 @@ export default {
         ]
       }))
     },
-    // async checkProhibitZone (position) {
-    //   position.forEach((pos) => {
-    //     this.prohibits.forEach((prohibitData) => {
-    //       // areaが一致するか
-    //       if(pos.exb.areaId == prohibitData.areaId){
-    //         if(pos.x >= prohibitData.x && pos.x <= prohibitData.w
-    //           && pos.y >= prohibitData.y && pos.y <= prohibitData.h ){
-    //           console.log('----------------------------------------')
-    //           console.log('禁止区域に火がいる::minor::' + pos.minor)
-    //           console.log('検知フロア::' + pos.exb.areaName)
-    //           console.log('----------------------------------------')
-    //         }
-    //       }
-    //     })
-    //   })
-    // },
     getMagnetCategoryTypes () {
       return this.txs.filter((val) => val.category && val.sensorId == SENSOR.MAGNET)
         .map((val) => val.category.categoryId)
@@ -264,6 +250,17 @@ export default {
       let tx = await AppServiceHelper.fetch('/core/tx', txId)
       return tx && tx.pot
     },
+    twinkle() {
+      this.arIcon.map((icon)=>{
+        if(icon.prohibit){
+          icon.visible =  !icon.visible
+        }else{
+          icon.visible = true
+        }
+        console.log('twinkle')
+        this.stage.update()
+      })
+    },
     showMapImage(disableErrorPopup) {
       this.showMapImageDef(async () => {
 
@@ -280,18 +277,20 @@ export default {
           this.stage.update()
         }
         this.setPositionedExb()
-        this.showTxAll()
         this.message = ''
-        let prohibitData = await StateHelper.checkProhibitZone(this.getPositions(),this.prohibits)
-        prohibitData.forEach((data) => {
+        this.prohibitData = await StateHelper.checkProhibitZone(this.getPositions(),this.prohibits)
+        this.prohibitData.forEach((data) => {
           this.message += '<' + this.$i18n.tnl('label.Area') + ' : '
           this.message +=  data.areaName + '  '
           this.message +=  this.$i18n.tnl('label.minor') + ' : '
           this.message += data.minor + '>  '
         })
+        this.showTxAll()
+        setInterval(this.twinkle,APP.PROHIBIT_TWINKLE)
       }, disableErrorPopup)
     },
     showTxAll() {
+      this.arIcon = []
       if (!this.txCont) {
         return
       }
@@ -361,6 +360,17 @@ export default {
           this.showDetail(txBtn.txId, txBtn.x, txBtn.y)
         }
         this.txCont.addChild(txBtn)
+        let bProhibitCheck = false
+        if(this.prohibitData!=null){
+          this.prohibitData.some((data) => {
+            if(data.minor == pos.minor){
+              bProhibitCheck = true
+              return true
+            }
+          })
+        }
+        txBtn.prohibit = bProhibitCheck
+        this.arIcon.push(txBtn)
         this.stage.update()
         this.detectedCount++  // 検知数カウント増加
       }

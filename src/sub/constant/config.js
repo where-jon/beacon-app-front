@@ -131,6 +131,7 @@ export const APP = { // 機能面に関する設定
 
   // 禁止区域関連設定
   PROHIBIT_ALERT : true,
+  PROHIBIT_TWINKLE: 1500, // 点滅間隔(ミリ秒)
 }
 
 
