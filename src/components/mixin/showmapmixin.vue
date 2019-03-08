@@ -444,7 +444,7 @@ export default {
     },
     getMeditagSensor(btxId) {
       if (this.meditagSensors) {
-        return this.meditagSensors.find((val) => btxId == val.btx_id)
+        return this.meditagSensors.find((val) => btxId == val.btxid)
       }
       return null
     },
