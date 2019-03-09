@@ -58,14 +58,9 @@ export const APP = { // 機能面に関する設定
 
   // 将来実装予定項目 START
   LOG_KEEP_TIME: 30,
-  MONITOR_REFESH_TIME: 10 * 60 * 1000,
   PASSWORD_CHANGEABLE: true,
   PASSWORD_CHECK: false,
   UPDATE_POSITION_EFFECT: true,
-  TIME_ZONE: 0,
-  SLACK_WEBHOOC: false,
-  MAIL_ADDRESS: '',
-  IP_ADDRESS_FILTER: '',
   // 将来実装予定項目 END
 
   // TX関連設定
@@ -121,6 +116,11 @@ export const APP = { // 機能面に関する設定
 
   // 動線分析関連設定
   ANALYSIS_DATETIME_INTERVAL: 60 * 24, // Fromを設定した場合、この設定値分未来の日付をToに自動入力する（分単位）
+
+  // 集計
+  SUM_AXIS_FILL_GAP: 2, // 滞在時間集計の横軸で0件項目を表示(0:しない,1:する,2:月日の場合検索期間すべて表示)
+  SUM_UNIT_HOUR: 5 * 60 * 60, // 指定秒を軸単位の最大値が超えた場合、滞在時間集計の表示を時間単位で表示する
+  SUM_UNIT_MINUTE: 20 * 60,  // 指定秒を軸単位の最大値が超えた場合、滞在時間集計の表示を分単位で表示する
 
   // その他
   MAX_IMAGE_SIZE: 20 * 1024 * 1024, // アップロード可能な最大イメージサイズ(Byte)
@@ -206,6 +206,8 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   HEART_RATE_LINE_COLOR: '#7de8a6',// 湿度グラフの線色
   STEP_LINE_COLOR: '#7da6e8',// 歩数グラフの線色
   DOWN_COUNT_LINE_COLOR: '#fc5800',// 転倒数グラフの線色
+  SUM_STACK_COLOR: ['red','orange','yellow','green','purple','skyblue','blue','navy','gray','white'], // 滞在集計の色パターン
+  SUM_STACK_BORDER_COLOR: 'gray',
 
   BLOOD_PRESSURE_MAX: 200,// 血圧最大メモリ
   BLOOD_PRESSURE_STEP: 25,// 血圧メモリ間隔

@@ -120,6 +120,15 @@ export const postExCloud = async (url, param, config) => {
   }
 }
 
+export const toParam = (e, withoutNull) => {
+  return _(e).map((val, key) => {
+    if (val == null && withoutNull) {
+      return null
+    }
+    return key + '=' + val
+  }).compact().value().join('&')
+}
+
 const convertDuplicateErrorInfo = (e) => {
   const keys = e.key.split(',')
   const vals = e.val.split(',')
