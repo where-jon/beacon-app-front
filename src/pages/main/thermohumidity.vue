@@ -288,7 +288,7 @@ export default {
     createButtonLabel(device){
       const label = new Text(Util.formatTemperature(device.temperature) + '℃\n' + Util.formatHumidity(device.humidity) + '%')
       label.font = DISP.THERMOH_FONT
-      label.color = 'black'
+      label.color = DISP.THERMOH_COLOR
       label.textAlign = 'center'
       label.textBaseline = 'middle'
       label.y = -5
