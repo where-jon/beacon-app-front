@@ -176,7 +176,7 @@ export default {
         }
 
         const offset = this.$store.state.currentRegion.deviceOffset
-        const deviceId = parseInt(e.deviceid, 16)
+        const deviceId = APP.EXSERVER ? e.deviceid : parseInt(e.deviceid, 16)
 
         if(APP.EXB_WITH_DEVICE_NUM){
           ret.deviceNum = deviceId - offset
