@@ -606,6 +606,20 @@
     "lessAlertHumidity": "{sensors} LOW：Under {humidity}％ ",
     "moreAlertHumidity": "{sensors} HIGH：Over {humidity}％ ",
 
+    "badInput": "badInput",
+    "badInputNumber": "badInputNumber",
+    "patternMismatch": "patternMismatch",
+    "rangeOverflow": "rangeOverflow",
+    "rangeUnderflow": "rangeUnderflow",
+    "stepMismatch": "stepMismatch",
+    "tooLong": "tooLong",
+    "tooShort": "tooShort",
+    "typeMismatch": "typeMismatch",
+    "typeMismatchEmail": "typeMismatchEmail",
+    "valueMissing": "valueMissing",
+    "valueMissingInput": "valueMissingInput",
+    "valueMissingSelect": "valueMissingSelect",
+
     "dummy": "" 
   }
 }
