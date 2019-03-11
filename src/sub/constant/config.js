@@ -24,8 +24,8 @@ export const APP = { // 機能面に関する設定
   TIMEOUT: 60 * 60 * 1000, // session timeout(using local storage)
   AUTO_RELOAD: 60000, // 自動リロード間隔(ミリ秒)
 
-  TRANSPARENT_TIME: 1 * 1000, // 半透明：現在時刻から経過した段階で半透明（ミリ秒）
-  LOST_TIME: 3 * 1000, // 消失とみなす時間（ミリ秒）
+  TRANSPARENT_TIME: 60 * 1000, // 半透明：現在時刻から経過した段階で半透明（ミリ秒）
+  LOST_TIME: 10 * 60 * 1000, // 消失とみなす時間（ミリ秒）
   UNDETECT_TIME: 60 * 60 * 1000, // 未検知とみなす時間（ミリ秒）
   GATEWAY: {
     LOST_TIME: 30 * 60 * 1000, // 消失とみなす時間（ミリ秒）
