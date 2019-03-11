@@ -24,10 +24,6 @@ export default {
     showmapmixin,
   ],
   props: {
-    positionName: {
-      type: String,
-      required: true,
-    },
     className: {
       type: String,
       required: true,
@@ -36,8 +32,8 @@ export default {
   data() {
     return {
       params: {
-        name: `position-${this.positionName}`,
-        id: Util.concatCamel('position', this.positionName, 'id'),
+        name: 'position-stack',
+        id: 'position-stackId',
         fields: addLabelByKey(this.$i18n, [
           {key: 'label', label: `${this.className}`, tdClass: 'icon-rowdata'},
           {key: 'icons', label: 'tx', tdClass: 'icon-rowdata align-top'},

@@ -248,11 +248,9 @@
     "dispAlways": "常時表示",
     "dispRssi": "RSSI表示",
 
-    "positionStack": "位置表示(エリア別)",
-    "positionStackShort": "エリア別",
-
-    "positionZone": "位置表示(ゾーン別)",
-    "positionZoneShort": "ゾーン別",
+    "positionStack": "位置表示(全体)",
+    "positionStackShort": "全体",
+    "positionStackType": "区分",
 
     "pass": "パスワード",
     "password": "パスワード",
