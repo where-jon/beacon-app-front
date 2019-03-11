@@ -654,6 +654,7 @@ export default {
             sensorName: tx.sensorName,
             major: tx.major,
             minor: tx.minor,
+            description: tx.description,
             high: sensor? sensor.high: null,
             low: sensor? sensor.low: null,
             beat: sensor? sensor.beat: null,

@@ -581,7 +581,7 @@
     "bulkNotNullFailed": "{col} is mandatory.",
     "bulkExistFailed": "{col} ({value}) does not exist.",
     "bulkInvalidFailed": "{col} ({value}) is invalid form",
-    "monthDayTemperature": "{month}/{day} Temperature and humidity",
+    "monthDayTemperature": "{month}/{day} Temperature and humidity ({name}{description})",
     "invalidLoginId": "Login ID must be alphanumeric character.",
     "notFound": "No results found.",
     "pleaseEnterSearchCriteria": "Please enter your search criteria.",
@@ -605,6 +605,20 @@
     "readingPoint": ", ",
     "lessAlertHumidity": "{sensors} LOW：Under {humidity}％ ",
     "moreAlertHumidity": "{sensors} HIGH：Over {humidity}％ ",
+
+    "badInput": "badInput",
+    "badInputNumber": "badInputNumber",
+    "patternMismatch": "patternMismatch",
+    "rangeOverflow": "rangeOverflow",
+    "rangeUnderflow": "rangeUnderflow",
+    "stepMismatch": "stepMismatch",
+    "tooLong": "tooLong",
+    "tooShort": "tooShort",
+    "typeMismatch": "typeMismatch",
+    "typeMismatchEmail": "typeMismatchEmail",
+    "valueMissing": "valueMissing",
+    "valueMissingInput": "valueMissingInput",
+    "valueMissingSelect": "valueMissingSelect",
 
     "dummy": "" 
   }
