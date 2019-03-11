@@ -257,7 +257,6 @@ export default {
         }else{
           icon.visible = true
         }
-        console.log('twinkle')
         this.stage.update()
       })
     },

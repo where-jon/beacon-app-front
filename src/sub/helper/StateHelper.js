@@ -386,10 +386,6 @@ export const checkProhibitZone = async (position,prohibits) => {
             vTemp.minor = pos.minor
             vTemp.areaName = pos.exb.areaName
             gBindData.push(vTemp)
-            console.log('----------------------------------------')
-            console.log('禁止区域に火がいる::minor::' + pos.minor)
-            console.log('検知フロア::' + pos.exb.areaName)
-            console.log('----------------------------------------')
           }
         }
       })
