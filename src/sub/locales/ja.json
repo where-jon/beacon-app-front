@@ -142,6 +142,7 @@
 
     "posId": "pos ID",
     "positionHistory": "位置情報",
+    "positionHistoryExc": "位置情報",
     "positionHistoryId": "Tx位置ID",
 
     "notifyHistory": "通知履歴情報",
@@ -168,6 +169,7 @@
     "button": "ボタン",
     "InUse": "使用",
     "Empty": "空",
+    "showHeatmap":"ヒートマップを表示",
 
     "zoneId": "ゾーンID",
     "zoneName": "ゾーン名",
@@ -242,6 +244,9 @@
     "finalReceiveLocation": "最終取得場所",
     "mapDisplay": "マップ表示",
 
+    "sensorList": "センサ現在情報一覧",
+    "zoneCategory": "ゾーンカテゴリ",
+
     "disp": "表示フラグ",
     "dispPos": "位置表示",
     "dispPir": "空室チェックで表示",
@@ -278,6 +283,7 @@
     "sensor": "センサ",
     "sensorDt": "日時",
     "sensorHistory": "センサ情報",
+    "sensorHistoryExc": "センサ情報",
     "sensorHistoryId": "センサ履歴ID",
     "sensorId": "センサID",
     "sensorName": "センサ名",
@@ -366,6 +372,9 @@
     "zoneCategory": "ゾーンカテゴリ",
     "zoneCategoryName": "ゾーンカテゴリ名",
     "sumYearMonth": "年月",
+    "year": "年",
+    "month": "月",
+    "date": "日付",
     "sumDay": "日指定",
     "sumUnitStack": "集計(積上)",
     "sumUnitAxis": "集計(軸)",
@@ -400,6 +409,7 @@
     "max": "最大値",
     "min": "最小値",
     "blood_pressure": "血圧",
+    "device": "デバイス",
 
     "initUser": "初期ユーザ",
     "initSysAdminColumn": "SysAdmin",
@@ -457,6 +467,7 @@
     "Pir": "人感センサ",
     "Thermohumidity": "温湿度(メイン)",
     "PositionList": "位置表示(一覧)",
+    "SensorList": "センサ現在情報一覧",
     "Led": "LED",
     "PositionStack": "位置表示(エリア別)",
     "PositionZone": "位置表示(ゾーン別)",
@@ -489,7 +500,9 @@
     "History": "履歴",
     "TemperatureHistory": "温湿度(履歴)",
     "PositionHistory": "位置情報",
+    "PositionHistoryExc": "位置情報",
     "SensorHistory": "センサ情報",
+    "SensorHistoryExc": "センサ情報",
     "NotifyHistory": "通知履歴情報",
     "Setting": "設定",
     "Personal": "個人設定",
@@ -525,7 +538,7 @@
 
     "---------------- App position ---------------":"",
     "txViewTypeDefault": "通常",
-    "txViewTypeSquare": "長方形",
+    "txViewTypeSquare": "正方形",
     "txViewTypeDiamond": "ひし形",
     "txViewTypeSpiral": "渦巻",
     "txViewTypeTile": "タイル",
@@ -630,6 +643,23 @@
     "notMatchedEmail": "メール形式ではありません。（追加の場合、コンマ区切）",
     "count": "{count} 名",
     "sumTooManyResults": "集計(軸)の項目数が多すぎで表示できません。期間等絞り込みを行ってください。",
+    "readingPoint": "、",
+    "lessAlertHumidity": "「{sensors}低湿：{humidity}％以下」",
+    "moreAlertHumidity": "「{sensors}高湿：{humidity}％以上」",
+
+    "badInput": "",
+    "badInputNumber": "数字を入力してください。",
+    "patternMismatch": "指定されている形式で入力してください。",
+    "rangeOverflow": "値は{max}以下にする必要があります。",
+    "rangeUnderflow": "値は{min}以上にする必要があります。",
+    "stepMismatch": "有効な値を入力してください。有効な値として最も近いのは {stepLow} と {stepHigh} です。",
+    "tooLong": "このテキストを半角{maxLength}文字以下にしてください（現時点で半角{length}文字です）。",
+    "tooShort": "このテキストは{minLength}文字以上で指定してください（現在{length}文字で指定されています）。",
+    "typeMismatch": "",
+    "typeMismatchEmail": "「{value}」は完全なメールアドレスではありません。",
+    "valueMissing": "",
+    "valueMissingInput": "このフィールドを入力してください。",
+    "valueMissingSelect": "リスト内の項目を選択してください。",
 
     "dummy": "" 
   },

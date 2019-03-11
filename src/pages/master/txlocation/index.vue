@@ -36,7 +36,7 @@
       {{ $t('message.unsavedData') }}
     </b-modal>
     <b-modal id="modalDeleteConfirm" :title="$t('label.confirm')" @ok="deleteTxDone">
-      {{ $t('message.deleteConfirm', {target: deleteTarget? deleteTarget.minor: null}) }}
+      {{ $t('message.deleteConfirm', {target: deleteTarget? getLabel(deleteTarget): null}) }}
     </b-modal>
   </div>
 </template>
@@ -126,6 +126,9 @@ export default {
         console.error(e)
       }
     },
+    getLabel(tx){
+      return tx.minor? tx.minor: tx.btxId
+    },
     setTxPosition() {
       this.positionedTx = _.filter(this.workTxs, (tx) => {
         return tx.location && tx.location.areaId == this.selectedArea && tx.location.x && tx.location.y > 0
@@ -135,7 +138,7 @@ export default {
       })
         .map((val) => { // TODO: minor以外の表示対応
           return {
-            label: '' + val.minor + '(' + val.txName + ')', 
+            label: '' + this.getLabel(val) + '(' + val.txName + ')', 
             value: val.txId
           }
         }).value()
@@ -181,12 +184,14 @@ export default {
       s.graphics.lineTo(fromX, y)
       s.graphics.lineTo(fromX, fromY)
       txBtn.addChild(s)
-      const label = new Text(tx.minor)
+      const label = new Text(this.getLabel(tx))
       label.font = DISP.TX_LOC_FONT * this.ICON_FONTSIZE_RATIO
       label.color = DISP.TX_LOC_COLOR
       label.textAlign = 'center'
       label.textBaseline = 'middle'
       txBtn.addChild(label)
+      txBtn.txName = tx.txName
+      txBtn.btxId = tx.btxId
       txBtn.minor = tx.minor
       txBtn.txId = tx.txId
       txBtn.x = tx.x
@@ -249,6 +254,7 @@ export default {
         this.isChangeArea = false
         if (this.selectedArea) {
           this.reset()
+          this.workTxs = _.cloneDeep(this.txs)
           this.setTxPosition()
           this.showMapImage()
         }
@@ -289,11 +295,12 @@ export default {
     bulkAdd() {
       let counter = 0
       let y = 20
+      const mapMaxPosX = this.mapWidth * this.mapImageScale
       this.txOptions.forEach((val) => {
         let x = 30 + counter++ * 60
-        if (x > this.mapWidth) {
+        if (x > mapMaxPosX) {
           x = 30
-          counter = 0
+          counter = 1
           y += 20
         }
         this.showTxOnMap(val, x, y)
@@ -305,8 +312,8 @@ export default {
         tx.location.x = tx.location.y = null
         tx.x = tx.y = null
       }
-      this.positionedTx = this.positionedTx.filter((tx) => tx.minor != this.deleteTarget.minor)
-      this.txOptions.push({label: '' + this.deleteTarget.minor, value: this.deleteTarget.txId})
+      this.positionedTx = this.positionedTx.filter((tx) => (this.deleteTarget.minor && tx.minor != this.deleteTarget.minor) || tx.btxId != this.deleteTarget.btxId)
+      this.txOptions.push({label: `${this.getLabel(this.deleteTarget)}(${this.deleteTarget.txName})`, value: this.deleteTarget.txId})
       this.txCon.removeChild(this.deleteTarget)
       this.stage.update()
     },
@@ -339,10 +346,10 @@ export default {
         tx.location.locationName = 'Loc' + (tx.btxId * -1)
       }
       if (reset) {
-        tx.location = {...tx.location, areaId: null, x: null, y: null}
+        tx.location = {...tx.location, areaId: null, x: null, y: null, area: null}
       }
       else {
-        tx.location = {...tx.location, areaId: this.selectedArea, x: Math.round(tx.x / this.mapImageScale), y: Math.round(tx.y / this.mapImageScale)}
+        tx.location = {...tx.location, areaId: this.selectedArea, area: null, x: Math.round(tx.x / this.mapImageScale), y: Math.round(tx.y / this.mapImageScale)}
       }
       if (tx.txSensorList) {
         tx.txSensorList.forEach((txSensor) =>{

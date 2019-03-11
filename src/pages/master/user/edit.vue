@@ -56,6 +56,7 @@ import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AuthHelper from '../../../sub/helper/AuthHelper'
 import { APP } from '../../../sub/constant/config.js'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
+import * as HtmlUtil from '../../../sub/util/HtmlUtil'
 import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
@@ -109,6 +110,9 @@ export default {
     await StateHelper.load('role')
     this.roleOptions = StateHelper.getOptionsFromState('role', false, true)
     this.role = this.form.roleId
+  },
+  mounted(){
+    HtmlUtil.setCustomValidationMessage()
   },
   methods: {
     isErrorPasswordRequired(){

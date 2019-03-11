@@ -141,44 +141,46 @@ export default {
       return this.message = this.$i18n.terror('message.' + this.crud + 'Failed', {target: this.$i18n.tnl('label.' + this.name), code: e.message})
     },
     async onSubmit(evt) {
-      this.showProgress()
       this.message = ''
       this.warnMessage = ''
       this.replace({showWarn: false})
       this.replace({showAlert: false})
       this.replace({showInfo: false})
       evt.preventDefault()
-      try {
-        await this.save()
-        if(this.afterCrud) {
-          this.afterCrud()
-        }
-        await StateHelper.load(this.name, true)
-        if (this.name == 'area') {
-          await this.loadImageArea()
-        }
-        this.message = this.$i18n.tnl('message.' + this.crud + 'Completed', {target: this.$i18n.tnl('label.' + this.name)})
-        this.replace({showInfo: true})
-        if (this.again) {
-          this.editAgain()
-        }
-        else {
-          if(this.createMessage){
-            this.replaceAS({listMessage: this.message})
+      this.$nextTick(async () => {
+        this.showProgress()
+        try {
+          await this.save()
+          if(this.afterCrud) {
+            this.afterCrud()
           }
-          this.backToList()
+          await StateHelper.load(this.name, true)
+          if (this.name == 'area') {
+            await this.loadImageArea()
+          }
+          this.message = this.$i18n.tnl('message.' + this.crud + 'Completed', {target: this.$i18n.tnl('label.' + this.name)})
+          this.replace({showInfo: true})
+          if (this.again) {
+            this.editAgain()
+          }
+          else {
+            if(this.createMessage){
+              this.replaceAS({listMessage: this.message})
+            }
+            this.backToList()
+          }
         }
-      }
-      catch(e) {
-        console.error(e)
-        this.message = this.getSubmitErrorMessage(e)
-        this.replace({showAlert: true})
-        window.scrollTo(0, 0)
-      }
-      finally{
-        this.replaceAS({showLine: false})
-      }
-      this.hideProgress()
+        catch(e) {
+          console.error(e)
+          this.message = this.getSubmitErrorMessage(e)
+          this.replace({showAlert: true})
+          window.scrollTo(0, 0)
+        }
+        finally{
+          this.replaceAS({showLine: false})
+        }
+        this.hideProgress()
+      })
     },
     modifyColName(col) {
       if (col == 'TXID' && !APP.TX_WITH_TXID){

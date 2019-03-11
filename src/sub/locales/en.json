@@ -130,6 +130,7 @@
 
     "posId": "pos ID",
     "positionHistory": "Position history",
+    "positionHistoryExc": "Position history",
     "positionHistoryId": "Tx Position ID",
 
     "notifyHistory": "Notification history information",
@@ -247,6 +248,7 @@
     "sensor": "Sensor",
     "sensorDt": "Date and time",
     "sensorHistory": "Sensor information",
+    "sensorHistoryExc": "Sensor information",
     "sensorHistoryId": "Sensor history ID",
     "sensorId": "Sensor ID",
     "sensorName": "Sensor name",
@@ -333,6 +335,9 @@
     "numOfUsers": "Number of users (Average)",
     "zoneCategoryName": "Category",
     "sumYearMonth": "Year and month",
+    "year": "Year",
+    "month": "Month",
+    "date": "Date",
     "sumDay": "Specified date",
 
     "historyTitle": "History",
@@ -385,7 +390,7 @@
 
     "---------------- App position ---------------": "",
     "txViewTypeDefault": "Normal",
-    "txViewTypeSquare": "Rectangle",
+    "txViewTypeSquare": "Square",
     "txViewTypeDiamond": "Diamond",
     "txViewTypeSpiral": "Spiral",
     "txViewTypeTile": "Tile",
@@ -480,7 +485,9 @@
     "History": "History",
     "TemperatureHistory": "Thermohumidity(History)",
     "PositionHistory": "Position History",
+    "PositionHistoryExc": "Position History",
     "SensorHistory": "Sensor History",
+    "SensorHistoryExc": "Sensor History",
     "Setting": "Setting",
     "Personal": "Personal Setting",
     "System": "System Setting",
@@ -548,7 +555,11 @@
     "unitHour": "Unit(hour)",
     "month": "Month",
     "PositionZone": "Position By Zone",
-    
+    "showHeatmap": "Show Heatmap",
+    "sensorList": "Current Sensor List",
+    "zoneCategory": "Zone Category",
+    "device": "Device",
+    "SensorList": "Current Sensor List",
     "dummy": ""
   },
   "message": {
@@ -562,7 +573,7 @@
     "updateFailed": "{target} update failed. ({code})",
     "registerFailed": "{target} registration failed. ({code})",
     "deleteFailed": "{target} deletion failed. ({code})",
-    "bulkRegisterFailed": "{target} bulk registration failed. ({code})",
+    "bulkRegisterFailed": "{target} bulk registration failed. ",
     "duplicate": "{key} ({val}) is already in use.",
     "foreignKey": "{key} ({val}) does not exist.",
     "noMapImage": "Map image is not registered.",
@@ -613,7 +624,7 @@
     "noLedDevice": "There are no LED devices to operate.",
     "totalRowsMessage": "Total: {row} (Only latest {maxRows} are displayed)",
     "listEmpty": "There are no records matching your request.",
-    "uploadMax": "Upload file size is limited to target}Mbytes.",
+    "uploadMax": "Upload file size is limited to {target}Mbytes.",
     "validationList": "Valid characters are {validate}.",
     "loginValidationList": "half alphanumberic, underscore( _ ), hyphen(-), at sign(@), dot(.).",
     "used": "{key}（{val}）is used for {target} of {num}{unit}",
@@ -626,6 +637,9 @@
     "count": "Count:{count}",
     "bulkInvalidUpdateLineFailed": "{col}（{value}）cannot be modified on this page.",
     "sumTooManyResults": "Too many result of sum items. Filter with period or others.",
+    "readingPoint": ", ",
+    "lessAlertHumidity": "{sensors} LOW：Under {humidity}％ ",
+    "moreAlertHumidity": "{sensors} HIGH：Over {humidity}％ ",
 
     "dummy": "" 
   },

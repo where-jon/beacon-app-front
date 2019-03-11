@@ -217,7 +217,7 @@ export default {
     },
     showTx(tx) {
       Util.debug('showTx', tx)
-      const magnet = this.magnetSensors && this.magnetSensors.find((sensor) => sensor.btx_id == tx.btxId)
+      const magnet = this.magnetSensors && this.magnetSensors.find((sensor) => sensor.btxid == tx.btxId || sensor.btx_id == tx.btxId)
       Util.debug('magnet', magnet)
 
       const magnetOn = (magnet.magnet == SENSOR.MAGNET_STATUS.ON)

@@ -17,11 +17,11 @@
             </b-form-group>
             <b-form-group>
               <label v-t="'label.map'" />
-              <b-form-file v-if="isEditable" ref="inputThumbnail" v-model="form.mapImage" :placeholder="$t('message.selectFile') " accept="image/jpeg, image/png, image/gif" @change="readImage" />
+              <b-form-file v-if="isEditable" ref="inputThumbnail" v-model="form.mapImageTemp" :placeholder="$t('message.selectFile') " accept="image/jpeg, image/png, image/gif" @change="readImage" />
               <b-button v-if="isEditable && form.mapImage" :variant="getButtonTheme()" type="button" class="float-right mt-3" @click="clearImage">
                 {{ $i18n.tnl('label.clear') }}
               </b-button>
-              <img v-if="form.mapImage" ref="mapImage" :src="form.mapImage" width="100" class="mt-1 ml-3">
+              <img v-show="form.mapImage" ref="mapImage" :src="form.mapImage" width="100" class="mt-1 ml-3">
             </b-form-group>
             <b-form-group v-if="isEditable && hasId && mapUpdate">
               <label v-t="'label.mapConfig'" />
@@ -44,6 +44,7 @@
 import { mapState } from 'vuex'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import * as HtmlUtil from '../../../sub/util/HtmlUtil'
 import * as Util from '../../../sub/util/Util'
 import commonmixinVue from '../../../components/mixin/commonmixin.vue'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
@@ -89,22 +90,47 @@ export default {
   mounted() {
     this.form.mapConfig = this.mapConfigTypes[0].value
     this.oldMap = this.hasId && this.form.mapImage? {width: this.$refs.mapImage.naturalWidth, height: this.$refs.mapImage.naturalHeight}: null
+    HtmlUtil.setCustomValidationMessage()
   },
   methods: {
+    getNameByteLangth(){
+      const fileElement = Util.getValue(document.getElementsByClassName('custom-file'), '0', null)
+      return fileElement? (fileElement.clientWidth - 80) / 12: 0
+    },
+    setFileName(name){
+      const file = Util.getValue(document.getElementsByClassName('custom-file-label'), '0', null)
+      const param = file.textContent? 'textContent': 'innerText'
+      file[param] = name? name: this.$refs.inputThumbnail.placeholder
+    },
     readImage(e) {
-      this.readImageView(e, 'mapImage', 'mapWidth', 'mapHeight', 'thumbnail', APP.AREA_THUMBNAIL_MAX)
+      this.form.mapImage = this.form.mapImageTemp
+      this.form.mapImageTemp = null
+      this.$nextTick(() => {
+        this.readImageView(e, 'mapImage', 'mapWidth', 'mapHeight', 'thumbnail', APP.AREA_THUMBNAIL_MAX)
+        this.form.mapImageTemp = this.form.mapImage
+
+        const inputFileName = Util.getValue(e, 'target.files.0.name', null)
+        this.setFileName(inputFileName? Util.cutOnLongByte(inputFileName, this.getNameByteLangth()): null)
+        if(!inputFileName){
+          this.clearImage(e)
+        }
+      })
       if(this.oldMap){
         this.mapUpdate = true
       }
     },
     clearImage(e) {
-      this.form.mapImage = undefined
-      this.form.thumbnail = undefined
-      this.$refs.inputThumbnail.reset()
-      if(this.hasId && this.oldMap){
-        this.form.scaleX = '0'
-        this.form.scaleY = '0'
-      }
+      this.$nextTick(() => {
+        this.form.mapImageTemp = null
+        this.form.mapImage = null
+        this.form.thumbnail = null
+        this.$refs.inputThumbnail.reset()
+        if(this.hasId && this.oldMap){
+          this.form.scaleX = '0'
+          this.form.scaleY = '0'
+        }
+        this.setFileName()
+      })
     },
     async afterCrud(again){
       await StateHelper.load('tx', true)

@@ -1,6 +1,6 @@
 <template>
   <transition-group tag="div">
-    <div v-for="val in sensors" :key="val.btx_id" :style="{'background-color': val.bg, 'border': border, 'border-color': (new Date().getTime() - val.downLatest < DOWN_RED_TIME)?'red':'white'}" class="personBox">
+    <div v-for="val in sensors" :key="val.btxid" :style="{'background-color': val.bg, 'border': border, 'border-color': (new Date().getTime() - val.downLatest < DOWN_RED_TIME)?'red':'white'}" class="personBox">
       <div class="personUpperBox">
         <div class="titleBox">
           <div :style="{'font-size': val.label.length > 2? '0.8em': '1.2em'}" class="numberBox">

@@ -13,15 +13,15 @@
             </b-form-group>
             <b-form-group v-show="isShown('EXB_WITH_DEVICE_NUM')">
               <label v-t="'label.deviceNum'" />
-              <input v-model.lazy="deviceNum" :max="maxDeviceNum" :readonly="!isEditable" type="number" class="form-control" min="0" required>
+              <input v-model.lazy="deviceNum" :max="maxDeviceNum" :readonly="!isEditable" type="number" class="form-control" min="0" :required="isShown('EXB_WITH_DEVICE_NUM')">
             </b-form-group>
             <b-form-group v-show="isShown('EXB_WITH_DEVICE_ID')">
               <label v-t="'label.deviceId'" />
-              <input v-model.lazy="deviceId" :max="maxDeviceId" :readonly="!isEditable" type="number" class="form-control" min="0" required>
+              <input v-model.lazy="deviceId" :max="maxDeviceId" :readonly="!isEditable" type="number" class="form-control" min="0" :required="isShown('EXB_WITH_DEVICE_ID')">
             </b-form-group>
             <b-form-group v-show="isShown('EXB_WITH_DEVICE_IDX')">
               <label v-t="'label.deviceIdX'" />
-              <input v-model.lazy="deviceIdX" :readonly="!isEditable" type="text" class="form-control" required>
+              <input v-model.lazy="deviceIdX" :readonly="!isEditable" type="text" class="form-control" :required="isShown('EXB_WITH_DEVICE_IDX')">
             </b-form-group>
             <b-form-group>
               <label v-t="'label.locationName'" />
@@ -94,6 +94,7 @@ import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as MenuHelper from '../../../sub/helper/MenuHelper'
+import * as HtmlUtil from '../../../sub/util/HtmlUtil'
 import * as Util from '../../../sub/util/Util'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
@@ -206,6 +207,7 @@ export default {
     await StateHelper.load('sensor')
     await StateHelper.load('area')
     await StateHelper.load('zone')
+    this.$nextTick(() => HtmlUtil.setCustomValidationMessage())
   },
   mounted() {
     this.deviceId = this.form.deviceId

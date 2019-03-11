@@ -1,26 +1,48 @@
 <template>
   <div id="mapContainer" class="container-fluid">
     <breadcrumb :items="items" :reload="true" />
-    <b-row class="mt-2">
-      <b-form inline class="mt-2" @submit.prevent>
-        <label class="ml-3 mr-2">
-          {{ $t('label.area') }}
-        </label>
-        <b-form-select v-model="selectedArea" :options="areaOptions" required class="ml-2" @change="changeArea" />
-      </b-form>
-    </b-row>
-    <b-row class="mt-3">
-      <canvas id="map" ref="map" />
-    </b-row>
-    <b-modal v-model="isShownChart" :title="chartTitle" size="lg" header-bg-variant="light" hide-footer>
-      <b-container fluid style="height:350px;">
-        <b-row class="mb-1">
-          <b-col cols="12">
-            <canvas id="dayChart" width="450" height="200" />
-          </b-col>
-        </b-row>
-      </b-container>
-    </b-modal>
+    <div>
+      <alert :warn-message="warnMessage" />
+
+      <b-row class="mt-2">
+        <b-form inline class="ml-3 mt-2" @submit.prevent>
+          <b-form-group class="mr-5">
+            <b-form-row>
+              <b-form-row>
+                <span class="mr-2 d-flex align-items-center">
+                  {{ $t('label.area') }}
+                </span>
+              </b-form-row>
+              <b-form-row>
+                <b-form-select v-model="selectedArea" :options="areaOptions" required class="ml-2" @change="changeArea" />
+              </b-form-row>
+            </b-form-row>
+          </b-form-group>
+          <b-form-group>
+            <b-form-row>
+              <b-form-row>
+                <b-form-checkbox v-model="isHeatmap" :value="true" :unchecked-value="false">
+                  {{ $t('label.showHeatmap') }}
+                </b-form-checkbox>
+              </b-form-row>
+            </b-form-row>
+          </b-form-group>
+        </b-form>
+      </b-row>
+      <b-row class="mt-3">
+        <canvas v-show="isLoading || !isHeatmap" id="map" ref="map" />
+        <div v-show="isLoading || isHeatmap" id="heatmap" ref="heatmap" class="mx-auto" />
+      </b-row>
+      <b-modal v-model="isShownChart" :title="chartTitle" size="lg" header-bg-variant="light" hide-footer>
+        <b-container fluid style="height:350px;">
+          <b-row class="mb-1">
+            <b-col cols="12">
+              <canvas id="dayChart" width="450" height="200" />
+            </b-col>
+          </b-row>
+        </b-container>
+      </b-modal>
+    </div>
   </div>
 </template>
 
@@ -29,11 +51,15 @@ import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as SensorHelper from '../../sub/helper/SensorHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
-import { DEV, DISP } from '../../sub/constant/config'
+import * as StateHelper from '../../sub/helper/StateHelper'
+import * as HeatmapHelper from '../../sub/helper/HeatmapHelper'
+import * as Util from '../../sub/util/Util'
+import { DEV, APP, DISP } from '../../sub/constant/config'
 import * as mock from '../../assets/mock/mock'
 import { SENSOR, DISCOMFORT } from '../../sub/constant/Constants'
 import { Shape, Container, Bitmap, Text } from '@createjs/easeljs/dist/easeljs.module'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
+import alert from '../../components/parts/alert.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import cold from '../../assets/icon/cold.png'
 import hot from '../../assets/icon/hot.png'
@@ -42,6 +68,7 @@ import comfort from '../../assets/icon/comfort.png'
 export default {
   components: {
     breadcrumb,
+    alert,
   },
   mixins: [showmapmixin],
   data() {
@@ -50,32 +77,141 @@ export default {
       isShownChart: false,
       chartTitle: '',
       keepExbPosition: false,
+      keepTxPosition: false,
       toggleCallBack: () => {
         this.keepExbPosition = true
+        this.keepTxPosition = true
       },
       noImageErrorKey: 'noMapImage',
+      isHeatmap: false,
+      isLoading: false,
+      iconTicker: null,
+      thermoPatternConfig: SensorHelper.getThermoPatternConfig(),
+      humidityPatternConfig: SensorHelper.getHumidityPatternConfig(),
+      exbIcons: [],
+      txIcons: [],
+      iconInterval: 100,
+      warnMessage: null,
+      iconAlphaMin: 0.1,
     }
   },
   computed: {
+    heatmapData() {
+      const dataList = this.positionedTx.concat(this.positionedExb)
+      return HeatmapHelper.collect(dataList,
+        {max: DISP.TEMPERATURE_MAX, min: DISP.TEMPERATURE_MIN},
+        (data) => `${data.x}-${data.y}`,
+        (result, data) => data.temperature,
+        (data) => {return {x: data.x * this.mapImageScale, y: data.y * this.mapImageScale}}
+      )
+    }
   },
   mounted() {
     this.fetchData()
+  },
+  beforeDestroy(){
+    this.removeTick()
   },
   methods: {
     reset() {
       this.isShownMapImage = false
     },
+    addTick(){
+      this.removeTick()
+      this.iconTicker = setInterval(this.iconTick, this.iconInterval)
+    },
+    removeTick(){
+      if(this.iconTicker){
+        clearInterval(this.iconTicker)
+        this.iconTicker = null
+      }
+    },
+    setWarnDevices(){
+      this.humidityPatternConfig.less.forEach(conf => {
+        conf.exbs = []
+        conf.txs = []
+      })
+      this.humidityPatternConfig.more.forEach(conf => {
+        conf.exbs = []
+        conf.txs = []
+      })
+      this.exbIcons.forEach(exbIcon => {
+        const alertInfo = SensorHelper.getHumidityInfo(this.humidityPatternConfig, exbIcon.device.humidity)
+        if(alertInfo){
+          alertInfo.exbs.push(exbIcon.device)
+        }
+      })
+      this.txIcons.forEach(txIcon => {
+        const alertInfo = SensorHelper.getHumidityInfo(this.humidityPatternConfig, txIcon.device.humidity)
+        if(alertInfo){
+          alertInfo.txs.push(txIcon.device)
+        }
+      })
+    },
+    createWarnMessages(){
+      this.setWarnDevices()
+      const ret = []
+      const exbIdName = StateHelper.getDeviceIdName({exbId: true}, true)
+      const txIdName = StateHelper.getDeviceIdName({txId: true}, true)
+      this.humidityPatternConfig.less.concat(this.humidityPatternConfig.more).forEach(conf => {
+        if(conf.exbs.length == 0 && conf.txs.length == 0){
+          return
+        }
+        const exbAlert = conf.exbs.length == 0? '': `${this.$i18n.tnl(`label.${exbIdName}`)}[${conf.exbs.map(exb => exb[exbIdName]).filter(val => val).join(', ')}]`
+        const txAlert = conf.txs.length == 0? '': `${this.$i18n.tnl(`label.${txIdName}`)}[${conf.txs.map(tx => tx[txIdName]).filter(val => val).join(', ')}]`
+        ret.push(this.$i18n.tnl(`message.${conf.label}AlertHumidity`, {
+          sensors: `${exbAlert}${exbAlert && txAlert? ', ': ''}${txAlert}`,
+          humidity: conf.base,
+        }))
+      })
+      return ret.join(this.$i18n.tnl('message.readingPoint'))
+    },
+    addWarnMessage(){
+      if(APP.USE_HUMIDITY_ALERT){
+        const mes = this.createWarnMessages()
+        this.warnMessage = Util.hasValue(mes)? mes: null
+        this.replace({showWarn: Util.hasValue(this.warnMessage)})
+      }
+    },
+    iconTick() {
+      const allIcons = [this.exbIcons, this.txIcons]
+      allIcons.forEach((icons) => {
+        icons.forEach((icon) => {
+          if(icon.config.flash != null){
+            const per = this.iconInterval* 2 / icon.config.flash 
+            icon.button.alpha += icon.sign * per
+            if(icon.button.alpha < this.iconAlphaMin){
+              icon.button.alpha = this.iconAlphaMin
+              icon.sign *= -1
+            }
+            if(icon.button.alpha > 1){
+              icon.button.alpha = 1
+              icon.sign *= -1
+            }
+          }
+        })
+      })
+      this.stage.update()
+    },
     async fetchData(payload) {
       try {
+        this.removeTick()
+        this.replace({showWarn: false})
         this.showProgress()
-        await this.fetchAreaExbs()
+        await this.fetchAreaExbs(true)
 
         const sensors = await EXCloudHelper.fetchSensor(SENSOR.TEMPERATURE)
 
         this.getPositionedExb(
           (exb) => this.getSensorIds(exb).includes(SENSOR.TEMPERATURE),
-          (exb) => {return {id: SENSOR.TEMPERATURE, ...sensors.find((val) => val.deviceid == exb.deviceId && (val.timestamp || val.updatetime))}},
+          (exb) => {return {id: SENSOR.TEMPERATURE, ...sensors.find((sensor) => sensor.deviceid == exb.deviceId && (sensor.timestamp || sensor.updatetime))}},
           (exb) => exb.temperature != null
+        )
+
+        this.getPositionedTx(
+          (tx) => tx.sensorId == SENSOR.TEMPERATURE,
+          (tx) => {return {id: SENSOR.TEMPERATURE, ...sensors.find((sensor) => (sensor.btxid == tx.btxId || sensor.btx_id == tx.btxId) && (sensor.timestamp || sensor.updatetime))}},
+          (tx) => tx.temperature != null
         )
 
         if (payload && payload.done) {
@@ -88,9 +224,36 @@ export default {
       }
       this.hideProgress()
     },
+    createHeatmap(onLoad){
+      HeatmapHelper.create('heatmap', this.mapImage(), (evt, mapElement, map) => {
+        map.width = this.$refs.map.width
+        map.height = this.$refs.map.height
+        HeatmapHelper.draw(
+          mapElement, 
+          {
+            radius: DISP.TEMPERATURE_RADIUS * this.mapImageScale,
+            gradient: HeatmapHelper.createGradient(),
+            width: this.$refs.map.width,
+            height: this.$refs.map.height,
+          },
+          this.heatmapData
+        )
+        onLoad && onLoad()
+      })
+    },
     showMapImage() {
+      this.isLoading = true
+      this.exbIcons = []
+      this.txIcons = []
       this.showMapImageDef(() => {
         this.resetExb()
+        this.resetTx()
+        this.isLoading = false
+        this.addTick()
+        this.addWarnMessage()
+      })
+      this.createHeatmap(() => {
+        this.isLoading = false
       })
     },
     createIcon(stage, exb){
@@ -108,16 +271,14 @@ export default {
       }
       return icon
     },
-    createButtonIcon(exb){
+    createButtonIcon(device, iconInfo){
       const btnicon = new Shape()
-      const w = DISP.PIR_R_SIZE
-      const iconcolor = SensorHelper.getDiscomfortColor(exb.temperature, exb.humidity)
-      btnicon.graphics.beginFill(iconcolor).drawCircle(0, 0, w, w)
-      btnicon.alpha = 0.5
+      btnicon.graphics.beginFill(iconInfo.color).drawCircle(0, 0, DISP.PIR_R_SIZE, DISP.PIR_R_SIZE)
+      btnicon.alpha = DISP.THERMON_ALPHA
       return btnicon
     },
-    createButtonLabel(exb){
-      const label = new Text(exb.temperature + '℃\n' + exb.humidity + '%')
+    createButtonLabel(device){
+      const label = new Text(Util.floorVal(device.temperature, 2) + '℃\n' + Util.floorVal(device.humidity, 2) + '%')
       label.font = DISP.THERMOH_FONT
       label.color = 'black'
       label.textAlign = 'center'
@@ -134,11 +295,12 @@ export default {
       }
       const exbBtn = new Container()
 
+      const iconInfo = SensorHelper.getThermohumidityIconInfo(this.thermoPatternConfig, exb.temperature, exb.humidity)
       if (DISP.THERMOH_DISP == 'icon') {
         exbBtn.addChild(this.createIcon(stage, exb))
       }
       else {
-        exbBtn.addChild(this.createButtonIcon(exb))
+        exbBtn.addChild(this.createButtonIcon(exb, iconInfo))
         exbBtn.addChild(this.createButtonLabel(exb))
       }
 
@@ -151,12 +313,46 @@ export default {
 
       exbBtn.on('click', async (evt) =>{
         const pMock = DEV.USE_MOCK_EXC? mock['basic_sensorHistory_1_1_today_hour']: null
-        const sensorData = await AppServiceHelper.fetchList('/basic/sensorHistory/1/' + exb.exbId + '/today/hour', null, pMock)
+        const sensorData = await AppServiceHelper.fetchList('/basic/sensorHistory/1/1/' + exb.exbId + '/today/hour', null, pMock)
         this.showChart(sensorData)
       })
 
+      this.exbIcons.push({button: exbBtn, device: exb, config: iconInfo, sign: -1})
       this.exbCon.addChild(exbBtn)
       stage.addChild(this.exbCon)
+      stage.update()
+    },
+    showTx(tx) {
+      const stage = this.stage
+      if (!this.txCon) {
+        this.txCon = new Container()
+      }
+      const txBtn = new Container()
+
+      const iconInfo = SensorHelper.getThermohumidityIconInfo(this.thermoPatternConfig, tx.temperature, tx.humidity)
+      if (DISP.THERMOH_DISP == 'icon') {
+        txBtn.addChild(this.createIcon(stage, tx))
+      }
+      else {
+        txBtn.addChild(this.createButtonIcon(tx, iconInfo))
+        txBtn.addChild(this.createButtonLabel(tx))
+      }
+
+      txBtn.txId = tx.txId
+      txBtn.x = tx.x
+      txBtn.y = tx.y
+      txBtn.cursor = 'pointer'
+      stage.enableMouseOver()
+
+      txBtn.on('click', async (evt) =>{
+        const pMock = DEV.USE_MOCK_EXC? mock['basic_sensorHistory_1_1_today_hour']: null
+        const sensorData = await AppServiceHelper.fetchList('/basic/sensorHistory/1/0/' + tx.txId + '/today/hour', null, pMock)
+        this.showChart(sensorData)
+      })
+
+      this.txIcons.push({button: txBtn, device: tx, config: iconInfo, sign: -1})
+      this.txCon.addChild(txBtn)
+      stage.addChild(this.txCon)
       stage.update()
     },
     showChart(sensorData) {

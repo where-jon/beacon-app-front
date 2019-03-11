@@ -83,11 +83,11 @@
             </b-form-group>
             <b-form-group>
               <label v-t="'label.thumbnail'" />
-              <b-form-file v-if="isEditable" ref="inputThumbnail" v-model="form.thumbnail" :placeholder="$t('message.selectFile') " accept="image/jpeg, image/png, image/gif" @change="readImage" />
+              <b-form-file v-if="isEditable" ref="inputThumbnail" v-model="form.thumbnailTemp" :placeholder="$t('message.selectFile') " accept="image/jpeg, image/png, image/gif" @change="readImage" />
               <b-button v-if="isEditable && form.thumbnail" :variant="theme" type="button" class="float-right mt-3" @click="clearImage">
                 {{ $i18n.tnl('label.clear') }}
               </b-button>
-              <img v-if="form.thumbnail" ref="thumbnail" :src="form.thumbnail" width="100" class="mt-1 ml-3">
+              <img v-show="form.thumbnail" ref="thumbnail" :src="form.thumbnail" width="100" class="mt-1 ml-3">
             </b-form-group>
             <b-form-group>
               <label v-t="'label.description'" />
@@ -135,6 +135,7 @@ import _ from 'lodash'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
+import * as HtmlUtil from '../../../sub/util/HtmlUtil'
 import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
@@ -241,6 +242,7 @@ export default {
     this.form.potTxList.forEach((potTx, idx) => {
       this.changeTx(this.form.potTxList[idx].txId, idx)
     })
+    HtmlUtil.setCustomValidationMessage()
   },
   methods: {
     initPotTxList(){
@@ -423,12 +425,36 @@ export default {
       entity.potTxList = potTxList
       return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
     },
+    getNameByteLangth(){
+      const fileElement = Util.getValue(document.getElementsByClassName('custom-file'), '0', null)
+      return fileElement? (fileElement.clientWidth - 80) / 12: 0
+    },
+    setFileName(name){
+      const file = Util.getValue(document.getElementsByClassName('custom-file-label'), '0', null)
+      const param = file.textContent? 'textContent': 'innerText'
+      file[param] = name? name: this.$refs.inputThumbnail.placeholder
+    },
     readImage(e) {
-      this.readImageView(e, 'thumbnail', null, null, 'thumbnail', APP.POT_THUMBNAIL_MAX)
+      this.form.thumbnail = this.form.thumbnailTemp
+      this.form.thumbnailTemp = null
+      this.$nextTick(() => {
+        this.readImageView(e, 'thumbnail', null, null, 'thumbnail', APP.POT_THUMBNAIL_MAX)
+        this.form.thumbnailTemp = this.form.thumbnail
+
+        const inputFileName = Util.getValue(e, 'target.files.0.name', null)
+        this.setFileName(inputFileName? Util.cutOnLongByte(inputFileName, this.getNameByteLangth()): null)
+        if(!inputFileName){
+          this.clearImage(e)
+        }
+      })
     },
     clearImage(e) {
-      this.form.thumbnail = undefined
-      this.$refs.inputThumbnail.reset()
+      this.$nextTick(() => {
+        this.form.thumbnailTemp = null
+        this.form.thumbnail = null
+        this.$refs.inputThumbnail.reset()
+        this.setFileName()
+      })
     },
   },
 }

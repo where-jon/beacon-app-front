@@ -32,6 +32,12 @@ export default {
       'showProgress',
       'hideProgress',
     ]),
+    getCategoryOptions(includeTypes = []) {
+      return StateHelper.getOptionsFromState('category').filter((option) => {
+        const category = this.$store.state.app_service.categories.find((cat) => cat.categoryId == option.value)
+        return option.value == null || category && (!Util.hasValue(includeTypes) || includeTypes.includes(category.categoryType))
+      })
+    },
     getSensorIds(exb) {
       const exbSensorList = Util.getValue(exb, 'exbSensorList', null)
       if(Util.hasValue(exbSensorList)){

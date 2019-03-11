@@ -88,3 +88,9 @@ if (!Array.prototype.includes) {
     }
   })
 }
+
+if (!String.prototype.repeat) {
+  String.prototype.repeat = function(count) {
+    return Array(count*1+1).join(this)
+  }
+}

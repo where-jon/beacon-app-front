@@ -4,7 +4,9 @@ import * as mock from '../../assets/mock/mock'
 import moment from 'moment'
 import * as HttpHelper from './HttpHelper'
 
-export const dateform = (time) => moment(time).format('YYYY/MM/DD HH:mm:ss')
+export const dateform = (time) => time? moment(time).format('YYYY/MM/DD HH:mm:ss'): ''
+
+export const getDispTime = (pos) => pos.updatetime? pos.updatetime: pos.timestamp
 
 export const url = (excloudUrl) => {
   if (excloudUrl.startsWith('http')) {
@@ -105,3 +107,7 @@ export const postLed = async (param) => {
   return data
 }
 
+export const fetchDlList = async (type, yyyymmdd) => {
+  let data = await HttpHelper.getExCloud(url(EXCLOUD.DL_LIST_URL).replace('{type}', type).replace('{yyyymm}', yyyymmdd) + new Date().getTime())
+  return _(data).map((val) => ({date: val})).compact().value()
+}

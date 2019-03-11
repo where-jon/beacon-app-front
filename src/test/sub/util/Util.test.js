@@ -19,6 +19,15 @@ test('getByteLength', t => {
   t.true(Util.getByteLength('qwe123あいう') == 15)
 })
 
+test('zeroPad', t => {
+  t.true(Util.zeroPad(123, 8) == '00000123')
+})
+
+test('range', t => {
+  t.true(Util.range(100, 103).toString() == [100,101,102,103].toString())
+  t.true(Util.range(100, 108, 2).toString() == [100,102,104,106,108].toString())
+})
+
 test('numberRange', t => {
   const arr = Util.numberRange(3, 5)
   t.true(arr[0].key == 3 && arr[1].key == 4 && arr[2].key == 5)

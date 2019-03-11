@@ -127,6 +127,7 @@ export const CATEGORY = {
     ]
   },
   POT_AVAILABLE: [1, 2],
+  ZONE_AVAILABLE: [3],
 }
 
 export const NOTIFY_MIDIUM = {
@@ -172,7 +173,8 @@ export const SENSOR = {
   MAGNET_STATUS: {
     OFF: 0,
     ON: 4,
-  }
+  },
+  STRING: ['','temperature','pir','thermopile','led','meditag','magnet','button']
 }
 
 export const SUM_UNIT = {
@@ -211,6 +213,17 @@ export const SUM_FILTER_KIND = {
   }
 }
 
+export const DEVICE = {
+  EXB: 0,
+  TX: 1,
+  getOptions(){
+    return [
+      {value: 0, text: i18n.t('label.exb')},
+      {value: 1, text: i18n.t('label.tx')},
+    ]
+  }
+}
+
 export const SUM_UNIT_STACK = {
   getOptions(){
     return [
@@ -233,6 +246,13 @@ export const SUM_UNIT_AXIS = {
       {value:'zoneCategory', text: i18n.t('label.zoneCategory')},
     ]
   }
+}
+
+export const THERMOHUMIDITY = {
+  CALC: {
+    DISCOMFORT: 1,
+    TEMPERATURE: 2,
+  },
 }
 
 export const DISCOMFORT = {
@@ -420,6 +440,11 @@ export const MENU = [
       icon: 'fas fa-thermometer-half',
     },
     {
+      key: 'sensorList',
+      path: 'sensor-list',
+      icon: 'fas fa-tablet',
+    },
+    {
       key: 'ledOperation',
       path: 'led',
       icon: 'far fa-lightbulb',
@@ -579,8 +604,19 @@ export const MENU = [
       icon: 'fas fa-cube'
     },
     {
+      key: 'positionHistoryExc',
+      path: 'positionHistoryExc',
+      feature: '/history/positionHistoryExc',
+      icon: 'fa fa-cube',
+    },
+    {
       key: 'sensorHistory',
       path: 'sensorHistory',
+      icon: 'fas fa-eye'
+    },
+    {
+      key: 'sensorHistoryExc',
+      path: 'sensorHistoryExc',
       icon: 'fas fa-eye'
     },
     {

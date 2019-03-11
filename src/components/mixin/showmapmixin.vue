@@ -13,7 +13,6 @@ import * as Util from '../../sub/util/Util'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import reloadmixinVue from './reloadmixin.vue'
 import listmixinVue from './listmixin.vue'
-import moment from 'moment'
 import * as mock from '../../assets/mock/mock'
 
 export default {
@@ -22,6 +21,7 @@ export default {
     return {
       isShownMapImage: false,
       positionedExb: [],
+      positionedTx: [],
       realWidth: null,
       isFirstTime: true,
       showTryCount: 0,
@@ -293,11 +293,19 @@ export default {
       }
     },
     replaceExb(exb, nokeep) {
-      if (this.keepExbPosition || this.keepTxPosition) {
+      if (this.keepExbPosition) {
         exb.x = exb.x / this.oldMapImageScale * this.mapImageScale
         exb.y = exb.y / this.oldMapImageScale * this.mapImageScale
       } else {
         nokeep(exb)
+      }
+    },
+    replaceTx(tx, nokeep) {
+      if (this.keepTxPosition) {
+        tx.x = tx.x / this.oldMapImageScale * this.mapImageScale
+        tx.y = tx.y / this.oldMapImageScale * this.mapImageScale
+      } else {
+        nokeep(tx)
       }
     },
     toggleMapFitMobile() {
@@ -351,7 +359,7 @@ export default {
     isMagnetOn(magnet) {
       return magnet && magnet.magnet === SENSOR.MAGNET_STATUS.ON
     },
-    async storePositionHistory(count){
+    async storePositionHistory(count, allShow = false){
       const pMock = DEV.USE_MOCK_EXC? mock.positions[count]: null
       let positions = []
       if (APP.USE_POSITION_HISTORY) {
@@ -366,7 +374,7 @@ export default {
       // 検知状態の取得
       PositionHelper.setDetectState(positions, APP.USE_POSITION_HISTORY)
       // 在席表示と同じ、表示txを取得する。
-      positions = this.getShowTxPositions(positions)
+      positions = this.getShowTxPositions(positions, allShow)
       // スタイルをセット
       positions = this.setPositionStyle(positions)
       if (APP.USE_POSITION_HISTORY) {
@@ -377,13 +385,13 @@ export default {
       }
       return positions
     },
-    getShowTxPositions(positions){
+    getShowTxPositions(positions, allShow = false){
       const now = !DEV.USE_MOCK_EXC ? new Date().getTime(): mock.positions_conf.start + this.count++ * mock.positions_conf.interval
       const correctPositions = APP.USE_POSITION_HISTORY? this.positionHistores: PositionHelper.correctPosId(this.orgPositions, now)
       return _(positions).filter((pos) => pos.tx && Util.bitON(pos.tx.disp, TX.DISP.POS)).map((pos) => {
         let cPos = _.find(correctPositions, (cPos) => pos.btx_id == cPos.btx_id)
-        if (cPos) {
-          return {...pos, transparent: cPos.transparent? cPos.transparent: PositionHelper.isTransparent(cPos.timestamp, now), isLost: PositionHelper.isLost(cPos.timestamp, now)}
+        if (cPos || allShow) {
+          return {...pos, transparent: !cPos? true: cPos.transparent? cPos.transparent: PositionHelper.isTransparent(cPos.timestamp, now), isLost: PositionHelper.isLost(cPos.timestamp, now)}
         }
         return null
       }).compact().value()
@@ -427,24 +435,24 @@ export default {
       }
     },
     getFinalReceiveTime (time) {
-      return time ? moment(time).format('YYYY/MM/DD HH:mm:ss') : ''
+      return Util.formatDate(time)
     },
     isShowModal() {
       return window.innerWidth < this.showIconMinWidth
     },
     getMeditagSensor(btxId) {
       if (this.meditagSensors) {
-        return this.meditagSensors.find((val) => btxId == val.btx_id)
+        return this.meditagSensors.find((val) => btxId == val.btxid)
       }
       return null
     },
-    getPositions() {
+    getPositions(showAllTime = false) {
       let positions = []
       if (APP.USE_POSITION_HISTORY) {
         positions = this.positionHistores
       } else {
         const now = !DEV.USE_MOCK_EXC? new Date().getTime(): mock.positions_conf.start + this.count++ * mock.positions_conf.interval  // for mock
-        positions = PositionHelper.correctPosId(this.orgPositions, now)
+        positions = PositionHelper.correctPosId(this.orgPositions, now, showAllTime)
       }
       if (APP.USE_MEDITAG && this.meditagSensors) {
         positions = SensorHelper.setStress(positions, this.meditagSensors)
@@ -454,7 +462,7 @@ export default {
     },
     showDetail(btxId, x, y) {
       const tipOffsetY = 15
-      const popupHeight = this.getMeditagSensor(btxId)? 236: 135
+      const popupHeight = this.getMeditagSensor(btxId)? DISP.TXMEDITAG_POPUP_SIZE: DISP.TXSENSOR_POPUP_SIZE
       const tx = this.txs.find((tx) => tx.btxId == btxId)
       const display = this.getDisplay(tx)
       const map = HtmlUtil.getRect('#map')
@@ -482,6 +490,7 @@ export default {
         containerHeight: containerParent.height,
         class: balloonClass,
         name: p.potName ? p.potName : tx.txName? tx.txName: '',
+        tel: p.extValue ? p.extValue.tel ? p.extValue.tel : '': '',
         timestamp: position ? this.getFinalReceiveTime(position.timestamp) : '',
         thumbnail: p.thumbnail ? p.thumbnail : '',
         category: p.potCategoryList && p.potCategoryList.length > 0 ? p.potCategoryList[0].category.categoryName : '',
@@ -597,9 +606,9 @@ export default {
       })
       this.keepExbPosition = false
     },
-    getPositionedExb(sensorFilterFunc, findSensorFunc, showSensorFunc){
+    getPositionedExb(sensorFilterFunc, findSensorFunc, showSensorFunc, allArea){
       this.positionedExb = _(this.exbs).filter((exb) => {
-        return exb.location && exb.location.areaId == this.selectedArea && exb.location.x && exb.location.y > 0
+        return exb.location && (allArea || exb.location.areaId == this.selectedArea) && exb.location.x && exb.location.y > 0
       })
         .filter((exb) => sensorFilterFunc? sensorFilterFunc(exb): true)
         .map((exb) => {
@@ -609,12 +618,68 @@ export default {
             humidity: sensor? sensor.humidity: null,
             temperature: sensor? sensor.temperature: null,
             count: sensor? sensor.count: 0,
-            sensorId: sensor? sensor.id: null
+            sensorId: sensor? sensor.id: null,
+            updatetime: sensor? sensor.updatetime? sensor.updatetime: sensor.timestamp: null,
+            areaName: exb.areaName,
+            locationName: exb.locationName,
+            posId: exb.posId,
+            deviceNum: exb.deviceNum,
+            deviceIdX: exb.deviceIdX,
+            areaId: exb.areaId,
+            zoneId: exb.zoneId,
+            zoneCategoryId: exb.zoneCategoryId,
           }
         })
         .filter((exb) => showSensorFunc? showSensorFunc(exb): true)
         .value()
-    }
+    },
+    resetTx() {
+      if (this.txCon) {
+        this.txCon.removeAllChildren()
+      }
+      this.positionedTx.forEach((tx) => {
+        this.replaceTx(tx, (tx) => {
+          tx.x *= this.mapImageScale
+          tx.y *= this.mapImageScale
+        })
+        this.showTx(tx)
+      })
+      this.keepTxPosition = false
+    },
+    getPositionedTx(sensorFilterFunc, findSensorFunc, showSensorFunc, allArea, allPosition){
+      this.positionedTx = _(this.txs).filter((tx) => {
+        return allPosition? true: tx.location && (allArea || tx.location.areaId == this.selectedArea) && tx.location.x && tx.location.y > 0
+      })
+        .filter((tx) => sensorFilterFunc? sensorFilterFunc(tx): true)
+        .map((tx) => {
+          const sensor = findSensorFunc? findSensorFunc(tx): null
+          return {
+            txId: tx.txId, btxId: tx.btxId,
+            x: tx.location? tx.location.x: null, y: tx.location? tx.location.y: null,
+            humidity: sensor? sensor.humidity: null,
+            temperature: sensor? sensor.temperature: null,
+            sensorId: sensor? sensor.id: null,
+            updatetime: sensor? sensor.updatetime? sensor.updatetime: sensor.timestamp: null,
+            areaName: tx.areaName,
+            locationName: tx.locationName,
+            posId: tx.posId,
+            txName: tx.txName,
+            major: tx.major,
+            minor: tx.minor,
+            high: sensor? sensor.high: null,
+            low: sensor? sensor.low: null,
+            beat: sensor? sensor.beat: null,
+            step: sensor? sensor.step: null,
+            down: sensor? sensor.down: null,
+            magnet: sensor? sensor.magnet: null,
+            areaId: allPosition && sensor? sensor.areaId: tx.areaId,
+            zoneId: allPosition && sensor? sensor.zoneId: tx.zoneId,
+            zoneCategoryId: allPosition && sensor? sensor.zoneCategoryId: tx.zoneCategoryId,
+          }
+        })
+        .filter((tx) => showSensorFunc? showSensorFunc(tx): true)
+        .value()
+    },
   }
 }
 </script>
