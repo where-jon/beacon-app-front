@@ -651,6 +651,7 @@ export default {
             locationName: tx.locationName,
             posId: tx.posId,
             txName: tx.txName,
+            sensorName: tx.sensorName,
             major: tx.major,
             minor: tx.minor,
             high: sensor? sensor.high: null,

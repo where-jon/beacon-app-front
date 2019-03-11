@@ -112,7 +112,7 @@ import * as StateHelper from '../../sub/helper/StateHelper'
 import { SENSOR, SUM_UNIT, SUM_TARGET, DEVICE } from '../../sub/constant/Constants'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
-import { DEV } from '../../sub/constant/config'
+import { DEV, APP } from '../../sub/constant/config'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import * as mock from '../../assets/mock/mock'
 import validatemixin from '../../components/mixin/validatemixin.vue'
@@ -210,7 +210,7 @@ export default {
       return Util.isAndroidOrIOS()
     },
     showDevice(){
-      return this.form.sensorId == SENSOR.TEMPERATURE
+      return this.form.sensorId == SENSOR.TEMPERATURE && APP.SENSORGRAPH_WITH_DEVICE
     },
     showTx(){
       return this.deviceType == DEVICE.TX
@@ -457,6 +457,12 @@ export default {
         const key = Util.formatDate(val.sensorDt, this.unitFunc(() => 'YYYY/MM/DD [00]:[00]', () => 'YYYY/MM/DD HH:[00]', () => 'YYYY/MM/DD HH:mm'))
         if(!sensorEditData[key]){
           sensorEditData[key] = []
+        }
+        if(val.humidity){
+          val.humidity = Util.formatHumidity(val.humidity)
+        }
+        if(val.temperature){
+          val.temperature = Util.formatTemperature(val.temperature)
         }
         sensorEditData[key].push(val)
       })

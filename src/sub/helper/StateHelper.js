@@ -15,12 +15,12 @@ export const setApp = (pStore, pi18n) => {
   i18n = pi18n
 }
 
-export const getDeviceIdName = (device, ignorePrimaryKey = false) => {
+export const getDeviceIdName = (device, option = {ignorePrimaryKey: false, forceSensorName: false}) => {
   if(device.exbId){
-    return APP.EXB_WITH_EXBID && !ignorePrimaryKey? 'exbId': APP.EXB_WITH_DEVICE_NUM? 'deviceNum': APP.EXB_WITH_DEVICE_ID? 'deviceId': APP.EXB_WITH_DEVICE_IDX? 'deviceIdX': 'exbId'
+    return APP.EXB_WITH_EXBID && !option.ignorePrimaryKey? 'exbId': APP.EXB_WITH_DEVICE_NUM? 'deviceNum': APP.EXB_WITH_DEVICE_ID? 'deviceId': APP.EXB_WITH_DEVICE_IDX? 'deviceIdX': 'exbId'
   }
   if(device.txId){
-    return APP.TX_WITH_TXID && !ignorePrimaryKey? 'txId': APP.TX_BTX_MINOR != 'minor'? 'btxId': 'minor'
+    return option.forceSensorName? 'sensorName': APP.TX_WITH_TXID && !option.ignorePrimaryKey? 'txId': APP.TX_BTX_MINOR != 'minor'? 'btxId': 'minor'
   }
   return null
 }
@@ -159,6 +159,7 @@ const appStateConf = {
           groupName: Util.getValue(tx, 'potTxList.0.pot.potGroupList.0.group.groupName', null),
           sensorId: Util.getValue(tx, 'txSensorList.0.sensor.sensorId', null),
           sensor: i18n.tnl('label.' + Util.getValue(tx, 'txSensorList.0.sensor.sensorName', 'normal')),
+          sensorName: tx.txName,
           dispPos: tx.disp & 1,
           dispPir: tx.disp & 2,
           dispAlways: tx.disp & 4,

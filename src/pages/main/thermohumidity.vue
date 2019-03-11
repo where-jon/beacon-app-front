@@ -159,8 +159,8 @@ export default {
     createWarnMessages(){
       this.setWarnDevices()
       const ret = []
-      const exbIdName = StateHelper.getDeviceIdName({exbId: true}, true)
-      const txIdName = StateHelper.getDeviceIdName({txId: true}, true)
+      const exbIdName = StateHelper.getDeviceIdName({exbId: true}, {ignorePrimaryKey: true})
+      const txIdName = StateHelper.getDeviceIdName({txId: true}, {ignorePrimaryKey: true, forceSensorName: true})
       this.humidityPatternConfig.less.concat(this.humidityPatternConfig.more).forEach(conf => {
         if(conf.exbs.length == 0 && conf.txs.length == 0){
           return
@@ -286,7 +286,7 @@ export default {
       return btnicon
     },
     createButtonLabel(device){
-      const label = new Text(Util.floorVal(device.temperature, 2) + '℃\n' + Util.floorVal(device.humidity, 2) + '%')
+      const label = new Text(Util.formatTemperature(device.temperature) + '℃\n' + Util.formatHumidity(device.humidity) + '%')
       label.font = DISP.THERMOH_FONT
       label.color = 'black'
       label.textAlign = 'center'
@@ -322,6 +322,15 @@ export default {
       exbBtn.on('click', async (evt) =>{
         const pMock = DEV.USE_MOCK_EXC? mock['basic_sensorHistory_1_1_today_hour']: null
         const sensorData = await AppServiceHelper.fetchList('/basic/sensorHistory/1/1/' + exb.exbId + '/today/hour', null, pMock)
+        sensorData.data = sensorData.data.map(val => {
+          if(val.temperature){
+            val.temperature = Util.formatTemperature(val.temperature)
+          }
+          if(val.humidity){
+            val.humidity = Util.formatHumidity(val.humidity)
+          }
+          return val
+        })
         this.showChart(sensorData)
       })
 
@@ -355,6 +364,15 @@ export default {
       txBtn.on('click', async (evt) =>{
         const pMock = DEV.USE_MOCK_EXC? mock['basic_sensorHistory_1_1_today_hour']: null
         const sensorData = await AppServiceHelper.fetchList('/basic/sensorHistory/1/0/' + tx.txId + '/today/hour', null, pMock)
+        sensorData.data = sensorData.data.map(val => {
+          if(val.temperature){
+            val.temperature = Util.formatTemperature(val.temperature)
+          }
+          if(val.humidity){
+            val.humidity = Util.formatHumidity(val.humidity)
+          }
+          return val
+        })
         this.showChart(sensorData)
       })
 
