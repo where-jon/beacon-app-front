@@ -101,6 +101,7 @@ export default {
   },
   data() {
     return {
+      prohibitInterval:null,
       items: !this.isInstallation ? ViewHelper.createBreadCrumbItems('main', 'showPosition') : ViewHelper.createBreadCrumbItems('develop', 'installation'),
       detectedCount: 0, // 検知数
       pot: {},
@@ -267,6 +268,7 @@ export default {
       })
     },
     showMapImage(disableErrorPopup) {
+      this.prohibitInterval ? clearInterval(this.prohibitInterval) : null
       this.showMapImageDef(async () => {
 
         await this.fetchPositionData()
@@ -291,7 +293,7 @@ export default {
           this.message += data.minor + '>  '
         })
         this.showTxAll()
-        setInterval(this.twinkle,APP.PROHIBIT_TWINKLE)
+        this.prohibitInterval = setInterval(this.twinkle,APP.PROHIBIT_TWINKLE)
       }, disableErrorPopup)
     },
     showTxAll() {

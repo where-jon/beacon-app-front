@@ -1,5 +1,5 @@
 <template>
-  <b-alert v-if="messagelist" show variant="danger" dismissible>
+  <b-alert v-if="messagelist" class="mt-2" show variant="danger" dismissible>
     {{ $t('label.detectedProhibitZone') + ' : ' }}{{ messagelist }}
   </b-alert>
 </template>
