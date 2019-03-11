@@ -83,13 +83,19 @@ export default {
     getDataList() {
       return this[`${this.eachListName}`]
     },
-    splitClass(positions){
+    splitClass(positions,prohibitData){
       const tempClass = _.map(this[`${this.listName}`], (cls) => ({[`${this.id}`]: cls[`${this.id}`], label: cls[`${this.name}`], positions: []}))
 
       _.forEach(positions, (pos) => {
         const posClassId = Util.getValue(pos, `exb.${this.id}`, null)
         _.forEach(tempClass, (cls) => {
           if (posClassId == cls[`${this.id}`] && !pos.noSelectedTx) {
+            prohibitData.some((data) => {
+              if(data.minor == pos.minor){
+                pos.blinking = 'blinking'
+                return true
+              }
+            })
             cls.positions.push(pos)
           }
         })
@@ -107,12 +113,11 @@ export default {
         // positionデータ取得
         await this.storePositionHistory()
         this.replaceAS({positions: this.getPositions()})
-
+        let prohibitData = await StateHelper.checkProhibitZone(this.getPositions(),this.prohibits)
         // 分類
-        const tempClass = this.splitClass(this.positions)
+        const tempClass = this.splitClass(this.positions, prohibitData)
         this.replaceMain({[`${this.eachListName}`]: tempClass})
         this.message = ''
-        let prohibitData = await StateHelper.checkProhibitZone(this.getPositions(),this.prohibits)
         prohibitData.forEach((data) => {
           this.message += '<' + this.$i18n.tnl('label.Area') + ' : '
           this.message +=  data.areaName + '  '

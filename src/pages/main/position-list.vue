@@ -34,6 +34,7 @@ export default {
   ],
   data() {
     return {
+      bProhibitCheck : false,
       message: '',
       params: {
         name: 'position-list',
@@ -92,9 +93,24 @@ export default {
         await StateHelper.load('prohibit')
         await this.storePositionHistory()
         let positions = this.getPositions()
+        this.message = ''
+        let prohibitData = await StateHelper.checkProhibitZone(this.getPositions(),this.prohibits)
+        prohibitData.forEach((data) => {
+          this.message += '<' + this.$i18n.tnl('label.Area') + ' : '
+          this.message +=  data.areaName + '  '
+          this.message +=  this.$i18n.tnl('label.minor') + ' : '
+          this.message += data.minor + '>  '
+        })
 
         Util.debug(positions)
         positions = positions.map((pos) => {
+          this.bProhibitCheck = prohibitData.some((data) => {
+            if(data.minor == pos.minor){
+              return true
+            }else
+              return false
+          })
+          //params[index].fields
           return {
             ...pos,
             // powerLevel: this.getPowerLevel(pos),
@@ -109,18 +125,11 @@ export default {
             groupId: Util.getValue(pos, 'tx.group.groupId').val,
             categoryId: Util.getValue(pos, 'tx.category.categoryId').val,
             areaId: Util.getValue(pos, 'exb.location.areaId').val,
+            blinking : this.bProhibitCheck? 'blinking' : null,
           }
         }).filter((pos) => !pos.tx || Util.bitON(pos.tx.disp, TX.DISP.POS))
         Util.debug(positions)
         this.replaceAS({positionList: positions})
-        this.message = ''
-        let prohibitData = await StateHelper.checkProhibitZone(this.getPositions(),this.prohibits)
-        prohibitData.forEach((data) => {
-          this.message += '<' + this.$i18n.tnl('label.Area') + ' : '
-          this.message +=  data.areaName + '  '
-          this.message +=  this.$i18n.tnl('label.minor') + ' : '
-          this.message += data.minor + '>  '
-        })
         if (payload && payload.done) {
           payload.done()
         }
