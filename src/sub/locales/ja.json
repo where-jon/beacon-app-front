@@ -590,7 +590,7 @@
     "bulkInvalidFailed": "{col}（{value}）の形式が不正です。",
     "bulkAuthFailed": "{col}（{value}）は使用できません。",
     "bulkUseFailed": "{col}（{value}）は{num}{unit}の{target}が使用しています。",
-    "monthDayTemperature": "{month}月{day}日の温湿度",
+    "monthDayTemperature": "{month}月{day}日の温湿度 ({name}{description})",
     "invalidLoginId": "ログインIDは英数記号を指定してください。",
     "notFound": "検索結果が存在しませんでした。",
     "pleaseEnterSearchCriteria": "検索条件を入力してください。",

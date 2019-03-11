@@ -322,7 +322,7 @@ export default {
       exbBtn.on('click', async (evt) =>{
         const pMock = DEV.USE_MOCK_EXC? mock['basic_sensorHistory_1_1_today_hour']: null
         const sensorData = await AppServiceHelper.fetchList('/basic/sensorHistory/1/1/' + exb.exbId + '/today/hour', null, pMock)
-        this.showChart(sensorData)
+        this.showChart(exb, sensorData)
       })
 
       this.exbIcons.push({button: exbBtn, device: exb, config: iconInfo, sign: -1})
@@ -355,7 +355,7 @@ export default {
       txBtn.on('click', async (evt) =>{
         const pMock = DEV.USE_MOCK_EXC? mock['basic_sensorHistory_1_1_today_hour']: null
         const sensorData = await AppServiceHelper.fetchList('/basic/sensorHistory/1/0/' + tx.txId + '/today/hour', null, pMock)
-        this.showChart(sensorData)
+        this.showChart(tx, sensorData)
       })
 
       this.txIcons.push({button: txBtn, device: tx, config: iconInfo, sign: -1})
@@ -363,10 +363,15 @@ export default {
       stage.addChild(this.txCon)
       stage.update()
     },
-    showChart(sensorData) {
+    showChart(device, sensorData) {
       SensorHelper.showThermoHumidityChart('dayChart', sensorData.data, this.$i18n)
       this.isShownChart = true
-      this.chartTitle = this.$i18n.tnl('message.monthDayTemperature', {month: sensorData.month, day: sensorData.day})
+      this.chartTitle = this.$i18n.tnl('message.monthDayTemperature', {
+        month: sensorData.month,
+        day: sensorData.day,
+        name: device.txName? device.txName: device.locationName? device.locationName: '',
+        description: device.description? ` : ${Util.cutOnLong(device.description, 10)}`: ''
+      })
     }
   }
 }
