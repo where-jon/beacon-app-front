@@ -1,6 +1,7 @@
 import { DISCOMFORT, SENSOR } from '../constant/Constants'
 import { APP, DISP } from '../constant/config'
 import * as Util from '../util/Util'
+import * as ChartHelper from './ChartHelper'
 import Chart from 'chart.js'
 import _ from 'lodash'
 
@@ -64,28 +65,7 @@ export const createChartGraphDatasets = (yAxisID, label, chartData, targetId, bo
 }
 
 export const createChartGraphOptions = (left, right, isResponsive = false) => {
-  const ret = {
-    scales:{
-      yAxes:[
-        left? {
-          id: left.id, type: 'linear', position: 'left',
-          scaleLabel: { display: true, labelString: left.label },
-          ticks: left.ticks,
-        }: null,
-        right? {
-          id: right.id, type: 'linear', position: 'right',
-          scaleLabel: { display: true, labelString: right.label },
-          ticks: right.ticks,
-        }: null
-      ].filter((val) => val)
-    },
-    elements:{ line:{ tension: 0 } }
-  }
-  if(isResponsive){
-    ret.responsive = true
-    ret.maintainAspectRatio = false
-  }
-  return ret
+  return ChartHelper.createChartGraphOptions(left, right, isResponsive)
 }
 
 export const createChartThermohumidityOptions = (chartData, by, i18n, isResponsive = false) => {

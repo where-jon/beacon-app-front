@@ -263,24 +263,20 @@ const appStateConf = {
       return arr.map((val) => ({...val, roleName: val.role.roleName}))
     }
   },
-  prohibits: {
-    path: '/basic/prohibit',
+  newsList: {
+    path: '/news',
+    sort: 'newsDate',
     beforeCommit: (arr) => {
-      let result = arr.map((val) => ({
+      return arr.map((val) => ({
         ...val,
-        zoneId:val.zoneId,
-        zoneName:val.zoneName,
-        x: val.x,
-        y: val.y,
-        w: val.w,
-        h: val.h,
-        areaId: val.areaId,
+        newsDt: Util.formatDate(val.newsDate),
+        dispState: i18n.tnl(`label.${val.dispFlg == 0? 'hide': 'display'}`),
       }))
-      return result
     }
   },
-  news: {
-    path: '/news'
+  topNewsList: {
+    path: '/news/disp',
+    sort: 'newsDate',
   },
   roles: {
     path: '/meta/role',
@@ -325,11 +321,29 @@ const appStateConf = {
       }))
     }
   },
+  prohibits: {
+    path: '/basic/prohibit',
+    beforeCommit: (arr) => {
+      let result = arr.map((val) => ({
+        ...val,
+        zoneId:val.zoneId,
+        zoneName:val.zoneName,
+        x: val.x,
+        y: val.y,
+        w: val.w,
+        h: val.h,
+        areaId: val.areaId,
+      }))
+      return result
+    }
+  },
 }
 
 export const load = async (target, force) => {
   if (!target.endsWith('s')) {
     target = target.endsWith('y')? target.slice(0, -1) + 'ies' : target + 's'
+  }else if(['news', 'topNews'].includes(target)){
+    target = `${target}List`
   }
   if (!appStateConf[target]) {
     return

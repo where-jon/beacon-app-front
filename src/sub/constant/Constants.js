@@ -196,6 +196,45 @@ export const SUM_TARGET = {
   }
 }
 
+export const SUM_FILTER_KIND = {
+  getOptions(){
+    return [
+      {value:null, text: ''},
+      {value:'potType', text: i18n.t('label.potType')},
+      {value:'pot', text: i18n.t('label.pot')},
+      {value:'category', text: i18n.t('label.category')},
+      {value:'group', text: i18n.t('label.group')},
+      {value:'area', text: i18n.t('label.area')},
+      {value:'zone', text: i18n.t('label.zone')},
+      {value:'zoneCategory', text: i18n.t('label.zoneCategory')},
+    ]
+  }
+}
+
+export const SUM_UNIT_STACK = {
+  getOptions(){
+    return [
+      {value:'pot', text: i18n.t('label.pot')},
+      {value:'area', text: i18n.t('label.area')},
+      {value:'zone', text: i18n.t('label.zone')},
+      {value:'zoneCategory', text: i18n.t('label.zoneCategory')},
+    ]
+  }
+}
+
+export const SUM_UNIT_AXIS = {
+  getOptions(){
+    return [
+      {value:'month', text: i18n.t('label.month')},
+      {value:'day', text: i18n.t('label.day')},
+      {value:'pot', text: i18n.t('label.pot')},
+      {value:'area', text: i18n.t('label.area')},
+      {value:'zone', text: i18n.t('label.zone')},
+      {value:'zoneCategory', text: i18n.t('label.zoneCategory')},
+    ]
+  }
+}
+
 export const DISCOMFORT = {
   HOT: 'hot',
   COMFORT: 'comfort',
@@ -279,6 +318,17 @@ export const TX_VIEW_TYPES = {
   TILE: 5,
 }
 
+export const POSITION_STACK_TYPES = {
+  getTypes(){ 
+    return [
+      {text: i18n.tnl('label.area'), value: 1, className: 'area'},
+      {text: i18n.tnl('label.zone'), value: 2, className: 'zone'},
+    ]
+  },
+  AREA: 1,
+  ZONE: 2,
+}
+
 export const FONT = {
   COLOR: {
     BLACK: '#000000',
@@ -336,6 +386,12 @@ export const MENU = [
         key: 'tenant',
         path: 'tenant',
         icon: 'fas fa-store-alt',
+        providerOnlyForce: true,
+      },
+      {
+        key: 'news',
+        path: 'news',
+        icon: 'far fa-newspaper',
       },
     ]
   },
@@ -358,11 +414,6 @@ export const MENU = [
       key: 'positionStack',
       path: 'position-stack',
       icon: 'far fa-building',
-    },
-    {
-      key: 'positionZone',
-      path: 'position-zone',
-      icon: 'fas fa-th',
     },
     {
       key: 'pir',
@@ -509,6 +560,11 @@ export const MENU = [
       {
         key: 'sensorGraph',
         path: 'sensorGraph',
+        icon: 'fas fa-chart-line',
+      },
+      {
+        key: 'stayTime',
+        path: 'stayTime',
         icon: 'fas fa-chart-bar',
       },
     ]
