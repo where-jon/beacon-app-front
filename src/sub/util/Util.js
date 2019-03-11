@@ -422,3 +422,6 @@ export const getAdjustFontSize = (getFontSize, isBold = false) => {
   const size = Math.round(getFontSize())
   return `${isBold? 'bold ': ''}${(size < FONT.SIZE.MIN? FONT.SIZE.MIN: size)}${FONT.TYPE}`
 }
+
+export const formatTemperature = (temperature) => typeof temperature == 'number'? floorVal(temperature, 1): ''
+export const formatHumidity = (humidity) => typeof humidity == 'number'? floorVal(humidity, 0): ''

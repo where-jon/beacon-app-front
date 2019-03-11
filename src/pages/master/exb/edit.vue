@@ -33,7 +33,7 @@
             </b-form-group>
             <b-form-group v-show="isShown('EXB_WITH_POSID')">
               <label v-t="'label.posId'" />
-              <input v-model="form.posId" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control" required>
+              <input v-model="form.posId" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control" :required="isShown('EXB_WITH_POSID')">
             </b-form-group>
             <b-form-group>
               <label v-t="'label.locationX'" />
@@ -97,6 +97,7 @@ import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
 import settingtxview from '../../../components/parts/settingtxview.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
+import { APP } from '../../../sub/constant/config'
 
 export default {
   components: {
@@ -125,7 +126,7 @@ export default {
       deviceId: null,
       deviceIdX: null,
       deviceNum: null,
-      useZone: MenuHelper.isMenuEntry('/master/zoneClass'),
+      useZone: APP.EXB_WITH_ZONE && MenuHelper.isMenuEntry('/master/zoneClass'),
       items: [
         {
           text: this.$i18n.tnl('label.master'),

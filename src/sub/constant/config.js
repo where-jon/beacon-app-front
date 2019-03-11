@@ -81,23 +81,25 @@ export const APP = { // 機能面に関する設定
   // TX関連設定
   TX_SENSOR: [1,5,6,7], // TXのタイプに設定可能なセンサーID
   TX_WITH_TXID: false, // 画面上TXIDを使用するか否か
-  TX_WITH_CATEGORY: true, // TX管理で個体.カテゴリを表示
+  TX_WITH_CATEGORY: false, // TX管理で個体.カテゴリを表示
   TX_WITH_GROUP: false, // TX管理で個体.グループを表示
-  TX_WITH_DISPLAY_NAME: true, // TX管理で個体.表示名を表示
+  TX_WITH_DISPLAY_NAME: false, // TX管理で個体.表示名を表示
   TX_WITH_DESCRIPTION: true, // TX管理で個体.備考を表示
   TX_WITH_MAJOR: true, // TX管理でmajorを表示
   TX_MAJOR_REQUIRED: false, // majorを必須にする ※サーバでも要設定
   TX_BTX_MINOR: 'both', // both:両方表示し、別々に設定、minor/btxId:片方のみ表示し、保存の際同一の値を設定
-  TX_WITH_LOCATION: true, // TXを固定位置表示する（TX管理画面に影響）
+  TX_WITH_DISPFLG: false, // TXを表示する
+  TX_WITH_LOCATION: false, // TXを固定位置表示する（TX管理画面に影響）
   TX_WITH_DISP_ALWAYS: false, // TX管理で常時表示を表示
 
   // EXB関連設定
   EXB_SENSOR: [1,2,3,4], // EXBのタイプに設定可能なセンサーID
   EXB_WITH_EXBID: false,       // 画面上EXBIDを使用するか否か 
-  EXB_WITH_DEVICE_NUM: true,  // 画面上端末IDを使用するか否か
+  EXB_WITH_DEVICE_NUM: false,  // 画面上端末IDを使用するか否か
   EXB_WITH_DEVICE_ID: false,   // 画面上デバイスIDを使用するか否か
   EXB_WITH_DEVICE_IDX: false,  // 画面上デバイスID（16進数）を使用するか否か
   EXB_WITH_POSID: true,      // 画面上POSIDを使用するか否か
+  EXB_WITH_ZONE: true,       // 画面上でゾーン名を使用するか否か
 
   // USER関連設定
   USER_WITH_EMAIL: true, // ユーザ設定でメールアドレスを使用する
@@ -131,8 +133,21 @@ export const APP = { // 機能面に関する設定
   ANALYSIS_DATETIME_INTERVAL: 60 * 24, // Fromを設定した場合、この設定値分未来の日付をToに自動入力する（分単位）
 
   // Tx状態監視
-  POSITION_WITH_BTXID: true, // btxIdを表示する
-  POSITION_SENSOR: [], // マージするセンサ情報のIDリスト
+  POSITION_WITH_BTXID: false, // btxIdを表示する
+  POSITION_WITH_MAJOR: false, // majorを表示する
+  POSITION_WITH_MINOR: false, // minorを表示する
+  POSITION_WITH_LOCATIONNAME: false, // locationNameを表示する
+  POSITION_SENSOR: [1], // マージするセンサ情報のIDリスト
+
+  SENSOR_WITH_POSID: false,       // 画面上でposIdを使用するか否か
+  SENSOR_WITH_DEVICENUM: false,       // 画面上でdeviceNumを使用するか否か
+  SENSOR_WITH_DEVICEID: false,       // 画面上でdeviceIdを使用するか否か
+  SENSOR_WITH_DEVICEIDX: false,       // 画面上でdeviceIdXを使用するか否か
+  SENSOR_WITH_LOCATIONNAME: false,       // 画面上でlocationNameを使用するか否か
+
+  TELEMETRY_WITH_POWER_LEVEL: false,         // 画面上で電池レベルを使用するか否か
+
+  SENSORGRAPH_WITH_DEVICE: false,             // 画面上でデバイスを使用するか否か
 
   // その他
   MAX_IMAGE_SIZE: 20 * 1024 * 1024, // アップロード可能な最大イメージサイズ(Byte)
@@ -195,6 +210,7 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
 
   THERMOH_DISP: 'color', // icon / color
   THERMOH_FONT: '12px Arial', // 温湿度表示時のフォント
+  THERMOH_COLOR: '#ffffff', // 温湿度表示時の文字色
   DISCOMFORT_HOT: '#fc5800', // 温湿度表示時の不快指数Hot時の背景色
   DISCOMFORT_COMFORT: '#15db75', // 温湿度表示時の不快指数Comfort時の背景色
   DISCOMFORT_COLD: '#7da6e8', // 温湿度表示時の不快指数Cold時の背景色

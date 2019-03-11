@@ -91,11 +91,11 @@ export default {
           { key: 'nearest3' },
         ]: [
           APP.POSITION_WITH_BTXID? { key: 'btx_id' }: null,
-          { key: 'major' },
-          { key: 'minor' },
+          APP.POSITION_WITH_MAJOR? { key: 'major' }: null,
+          APP.POSITION_WITH_MINOR? { key: 'minor' }: null,
           { key: 'name' },
           { key: 'powerLevel' },
-          { key: 'finalReceiveLocation' },
+          APP.POSITION_WITH_LOCATIONNAME? { key: 'finalReceiveLocation' }: null,
           { key: 'finalReceiveTimestamp' },
           { key: 'state' },
         ].filter(val => val))
@@ -119,11 +119,17 @@ export default {
       if(APP.POSITION_WITH_BTXID){
         ret['btx_id'] = 'btx_id'
       }
-      ret['major'] = 'major'
-      ret['minor'] = 'minor'
+      if(APP.POSITION_WITH_MAJOR){
+        ret['major'] = 'major'
+      }
+      if(APP.POSITION_WITH_MINOR){
+        ret['minor'] = 'minor'
+      }
       ret['name'] = 'name'
       ret['powerLevel'] = 'powerLevel'
-      ret['finalReceiveLocation'] = 'finalReceiveLocation'
+      if(APP.POSITION_WITH_LOCATIONNAME){
+        ret['finalReceiveLocation'] = 'finalReceiveLocation'
+      }
       ret['finalReceiveTimestamp'] = 'finalReceiveTimestamp'
       ret['state'] = 'state'
       return ret
@@ -206,10 +212,28 @@ export default {
           return position
         }
         const target = sensorDataList.reduce((prev, cur) => EXCloudHelper.getDispTime(prev) > EXCloudHelper.getDispTime(cur)? prev: cur)
+        position.powerLevel = this.getPositionPowerLevelLabel(target.power_level),
         position.power_level = target.power_level
         position.finalReceiveTimestamp = this.getTimestamp(EXCloudHelper.getDispTime(target))
         return position
       })
+      if(Util.hasValue(ret)){
+        const sRet = []
+        Object.keys(sensorHistories).forEach(key => {
+          sensorHistories[key].forEach(sensorHistory => {
+            const tx = this.txs.find(tx => tx.btxId == sensorHistory.btxid)
+            sRet.push({
+              ...sensorHistory,
+              btx_id: sensorHistory.btxid,
+              name: Util.getValue(tx, 'txName', ''),
+              powerLevel: this.getPositionPowerLevelLabel(sensorHistory.power_level),
+              finalReceiveTimestamp: this.getTimestamp(EXCloudHelper.getDispTime(sensorHistory)),
+              state: this.getStateLabel('tx', EXCloudHelper.getDispTime(sensorHistory)),
+            })
+          })
+        })
+        return sRet
+      }
       return ret
     },
     getTimestamp(timestamp) {
