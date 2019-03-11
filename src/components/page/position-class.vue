@@ -1,6 +1,6 @@
 <template>
   <div>
-    <prohibitAlert :messageList = "message" />
+    <prohibitAlert :messagelist="message" />
     <m-list :params="params" :list="getDataList()" />
   </div>
 </template>

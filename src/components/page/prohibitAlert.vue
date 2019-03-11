@@ -1,6 +1,6 @@
 <template>
-  <b-alert v-if="messageList" show variant="danger" dismissible>
-    {{ $t('label.detectedProhibitZone') + ' : ' }}{{ messageList }}
+  <b-alert v-if="messagelist" show variant="danger" dismissible>
+    {{ $t('label.detectedProhibitZone') + ' : ' }}{{ messagelist }}
   </b-alert>
 </template>
 
@@ -10,7 +10,7 @@ export default {
   components: {
   },
   props: {
-    messageList: {
+    messagelist: {
       type: String,
       required: true,
     },

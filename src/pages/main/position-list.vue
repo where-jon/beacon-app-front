@@ -3,7 +3,7 @@
     <breadcrumb :items="items" :extra-nav-spec="extraNavSpec"
                 :reload="reload" :short-name="shortName"
     />
-    <prohibitAlert :messageList = "message" />
+    <prohibitAlert :messagelist="message" />
     <m-list :params="params" :list="positionList" />
   </div>
 </template>

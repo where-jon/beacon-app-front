@@ -1,7 +1,7 @@
 <template>
   <div id="mapContainer" class="container-fluid" @click="resetDetail">
     <breadcrumb :items="items" :extra-nav-spec="extraNavSpec" :reload="true" :short-name="shortName" :legend-items="legendItems" />
-    <prohibitAlert :messageList = "message" />
+    <prohibitAlert :messagelist="message" />
     <b-row class="mt-2">
       <b-form inline class="mt-2" @submit.prevent>
         <b-form-row class="my-1 ml-2 ml-sm-0">
