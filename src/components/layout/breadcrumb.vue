@@ -81,6 +81,10 @@ export default {
       type: Array,
       default: null
     },
+    reloadEmitName: {
+      type: String,
+      default: 'reload',
+    },
   },
   data () {
     return {
@@ -139,7 +143,7 @@ export default {
     },
     onClickReload(e) {
       HtmlUtil.addClass(e, 'rotate')
-      EventBus.$emit('reload', {
+      EventBus.$emit(this.reloadEmitName, {
         done() {
           HtmlUtil.removeClass(e, 'rotate')
           AuthHelper.checkSession()
