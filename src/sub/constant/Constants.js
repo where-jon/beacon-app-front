@@ -338,6 +338,17 @@ export const TX_VIEW_TYPES = {
   TILE: 5,
 }
 
+export const POSITION_STACK_TYPES = {
+  getTypes(){ 
+    return [
+      {text: i18n.tnl('label.area'), value: 1, className: 'area'},
+      {text: i18n.tnl('label.zone'), value: 2, className: 'zone'},
+    ]
+  },
+  AREA: 1,
+  ZONE: 2,
+}
+
 export const FONT = {
   COLOR: {
     BLACK: '#000000',
@@ -423,11 +434,6 @@ export const MENU = [
       key: 'positionStack',
       path: 'position-stack',
       icon: 'far fa-building',
-    },
-    {
-      key: 'positionZone',
-      path: 'position-zone',
-      icon: 'fas fa-th',
     },
     {
       key: 'pir',

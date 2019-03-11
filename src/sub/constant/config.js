@@ -48,6 +48,7 @@ export const APP = { // 機能面に関する設定
   RSSI_MIN: -99, // RSSI下限値
   MOVING_AVERAGE: 5, // 5回分移動平均
   USE_MULTI_POSITIONING: false, // ３点測位を使う
+  EXSERVER: false, // EXServerを使う
   
   // 機能
   USE_THERMOPILE: true, // サーモパイルセンサーの使用
