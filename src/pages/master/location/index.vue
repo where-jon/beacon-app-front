@@ -154,6 +154,9 @@ export default {
     if (APP.EXB_WITH_DEVICE_NUM) options.push({value:'deviceNum', text: this.$i18n.tnl('label.deviceNum')})
     if (APP.EXB_WITH_DEVICE_IDX) options.push({value:'deviceIdX', text: this.$i18n.tnl('label.deviceIdX')})
     if (APP.EXB_WITH_DEVICE_ID) options.push({value:'deviceId', text: this.$i18n.tnl('label.deviceId')})
+    if(!Util.hasValue(options)){
+      options.push({value: 'locationName', text: this.$i18n.tnl('label.locationName')})
+    }
     this.exbDispOptions = options
     this.exbDisp = options[0].value
   },
@@ -225,7 +228,10 @@ export default {
         return deviceId
       case 'deviceNum':
         return deviceId - this.$store.state.currentRegion.deviceOffset
-      }
+      case 'locationName': {
+        const exb = this.exbs.find(val => val.deviceId == deviceId)      
+        return exb? exb.locationName: ''
+      }}
     },
     changeExbDisp(newVal) {
       this.exbDisp = newVal
