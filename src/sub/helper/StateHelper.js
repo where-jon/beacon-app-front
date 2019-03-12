@@ -255,6 +255,12 @@ const appStateConf = {
   features: {
     path: '/meta/feature',
     sort: 'featureName',
+    beforeCommit: (arr) => {
+      return  arr.map((val) => ({
+        ...val,
+        featureName: val.featureType == 0? Util.toLowerCaseTop(val.featureName): val.featureName,
+      }))
+    }
   },
   locations: {
     path: '/core/location',
