@@ -281,6 +281,10 @@ export default {
       this.txIconsHorizon = param.horizon
       this.txIconsVertical = param.vertical
     },
+    beforeReload(){
+      this.initExbSensorList()
+      this.changeSensors()
+    },
     async save() {
       let dummyKey = -1
       if(!this.zoneNames.find((zone) => zone.value == this.form.zoneId)){
