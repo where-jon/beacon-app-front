@@ -215,13 +215,13 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   DISCOMFORT_COMFORT: '#15db75', // 温湿度表示時の不快指数Comfort時の背景色
   DISCOMFORT_COLD: '#7da6e8', // 温湿度表示時の不快指数Cold時の背景色
   THERMOH_CALC: 2, // アイコン状態算出方法(1:不快指数 2:温度)
-  THERMON_FLASH_WARN: 1000, // 警告アイコン点滅周期(ミリ秒)
-  THERMON_FLASH_DANGER: 500, // 危険アイコン点滅周期(ミリ秒)
-  THERMON_ALPHA: 1, // アルファ値(0:透明～1:不透明)
+  THERMOH_FLASH_WARN: 1000, // 警告アイコン点滅周期(ミリ秒)
+  THERMOH_FLASH_DANGER: 500, // 危険アイコン点滅周期(ミリ秒)
+  THERMOH_ALPHA: 1, // アルファ値(0:透明～1:不透明)
   THERMOH_PATTERN: ['19 #5b9bd5', '25 #6eb290', '26 #ffd966', '27 #ff9966', '31 #ff5050', '32 #ffd966 $WARN', '#ff2525 $DANGER'], // 温度アイコンパターン（順不同。数値：閾値。先頭が#：カラーコード。先頭が$：点滅パターン。OR：閾値に同値を含む。）
   HUMIDITY_PATTERN: ['LESS 30', 'LESS 50', 'MORE 85'], // 湿度アラートパターン（順不同。数値：閾値。LESS：閾値以下の場合に警告。MORE：閾値以上の場合に警告）
 
-  TEMPERATURE_MAX: 20,  // 温湿度ヒートマップ最大値
+  TEMPERATURE_MAX: 28,  // 温湿度ヒートマップ最大値
   TEMPERATURE_MIN: 0,   // 温湿度ヒートマップ最小値
   TEMPERATURE_RADIUS: 150,   // 温湿度ヒートマップ直径
 

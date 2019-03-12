@@ -21,7 +21,7 @@ export const getThermoPatternConfig = () => {
           patternRet.base = Number(val)
         }
         else if(topChar == '$'){
-          patternRet.flash = DISP[`THERMON_FLASH_${val.slice(1)}`]
+          patternRet.flash = DISP[`THERMOH_FLASH_${val.slice(1)}`]
         }
         else if(val.toLowerCase() == 'or'){
           patternRet.or = true

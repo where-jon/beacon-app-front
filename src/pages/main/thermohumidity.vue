@@ -282,7 +282,7 @@ export default {
     createButtonIcon(device, iconInfo){
       const btnicon = new Shape()
       btnicon.graphics.beginFill(iconInfo.color).drawCircle(0, 0, DISP.PIR_R_SIZE, DISP.PIR_R_SIZE)
-      btnicon.alpha = DISP.THERMON_ALPHA
+      btnicon.alpha = DISP.THERMOH_ALPHA
       return btnicon
     },
     createButtonLabel(device){
