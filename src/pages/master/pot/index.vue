@@ -93,6 +93,7 @@ export default {
       if(Util.hasValue(val.potUserList)){
         val.userId = val.potUserList[0].user.userId
         val.loginId = val.potUserList[0].user.loginId
+        val.email = val.potUserList[0].user.email
         const targetRole = this.roles.find((role) => role.roleId == val.potUserList[0].user.roleId)
         val.roleName = targetRole? targetRole.roleName: ''
       }
