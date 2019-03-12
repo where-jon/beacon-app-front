@@ -268,7 +268,7 @@ export default {
       })
     },
     showMapImage(disableErrorPopup) {
-      this.prohibitInterval ? clearInterval(this.prohibitInterval) : null
+      clearInterval(this.prohibitInterval)
       this.showMapImageDef(async () => {
 
         await this.fetchPositionData()
