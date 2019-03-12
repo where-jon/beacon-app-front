@@ -218,6 +218,8 @@ export default {
       }
       if (this.form.location) {
         var location = _.cloneDeep(this.form.location)
+        location.locationName = 'Loc' + (this.form.btxId * -1)
+        location.posId = this.form.btxId * -1
         location.x = this.form.x || 0
         location.y = this.form.y || 0
       }
