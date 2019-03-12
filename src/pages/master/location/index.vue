@@ -74,7 +74,7 @@ import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as HttpHelper from '../../../sub/helper/HttpHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as Util from '../../../sub/util/Util'
-import { APP, DISP } from '../../../sub/constant/config'
+import { DISP } from '../../../sub/constant/config'
 import { UPDATE_ONLY_NN } from '../../../sub/constant/Constants'
 import { Shape, Container, Text } from '@createjs/easeljs/dist/easeljs.module'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
@@ -151,9 +151,7 @@ export default {
     }
 
     const options = []
-    if (APP.EXB_WITH_DEVICE_NUM) options.push({value:'deviceNum', text: this.$i18n.tnl('label.deviceNum')})
-    if (APP.EXB_WITH_DEVICE_IDX) options.push({value:'deviceIdX', text: this.$i18n.tnl('label.deviceIdX')})
-    if (APP.EXB_WITH_DEVICE_ID) options.push({value:'deviceId', text: this.$i18n.tnl('label.deviceId')})
+    options.push({value: 'locationName', text: this.$i18n.tnl('label.locationName')})
     this.exbDispOptions = options
     this.exbDisp = options[0].value
   },
@@ -225,7 +223,10 @@ export default {
         return deviceId
       case 'deviceNum':
         return deviceId - this.$store.state.currentRegion.deviceOffset
-      }
+      case 'locationName': {
+        const exb = this.exbs.find(val => val.deviceId == deviceId)      
+        return exb? exb.locationName: ''
+      }}
     },
     changeExbDisp(newVal) {
       this.exbDisp = newVal
