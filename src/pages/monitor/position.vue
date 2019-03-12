@@ -217,7 +217,7 @@ export default {
         position.finalReceiveTimestamp = this.getTimestamp(EXCloudHelper.getDispTime(target))
         return position
       })
-      if(Util.hasValue(ret)){
+      if(!Util.hasValue(ret)){
         const sRet = []
         Object.keys(sensorHistories).forEach(key => {
           sensorHistories[key].forEach(sensorHistory => {
