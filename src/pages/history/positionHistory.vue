@@ -170,7 +170,7 @@ export default {
         const aTxId = (this.form.tx != null && this.form.tx.value != null)?this.form.tx.value:0
         console.log(aTxId)
         var fetchList = await HttpHelper.getAppService(
-          `/core/positionHistory/find/${aTxId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/${this.limitViewRows}`
+          `/core/positionHistory/find/0/${aTxId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/${this.limitViewRows}`
         )
         if (fetchList.length == null || !fetchList.length) {
           this.message = this.$i18n.tnl('message.notFoundData', {target: this.$i18n.tnl('label.positionHistory')})
@@ -206,7 +206,7 @@ export default {
       const aTxId = (this.form.tx != null && this.form.tx.value != null)?this.form.tx.value:0
       HtmlUtil.executeFileDL(
         APP_SERVICE.BASE_URL
-        + `/core/positionHistory/csvdownload/${aTxId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/` 
+        + `/core/positionHistory/csvdownload/0/${aTxId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/` 
         + getCharSet(this.$store.state.loginId)
       )
     },
