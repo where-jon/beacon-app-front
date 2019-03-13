@@ -180,15 +180,17 @@ export default {
         for (var posHist of fetchList) {
           const d = new Date(posHist.positionDt)
           posHist.positionDt = Util.formatDate(d.getTime())
-          posHist.txName = Util.getValue(posHist, 'tx.txName', '')
-          posHist.deviceId = Util.getValue(posHist, 'exb.deviceId', '')
-          posHist.deviceNum =  Util.getValue(posHist, 'exb.deviceId', 0) - this.$store.state.currentRegion.deviceOffset
-          posHist.deviceIdX = Util.getValue(posHist, 'exb.deviceId', 0).toString(16).toUpperCase()
-          posHist.locationName = Util.getValue(posHist, 'exb.location.locationName', '')
-          posHist.posId = Util.getValue(posHist, 'exb.location.posId', '')
-          posHist.areaName = Util.getValue(posHist, 'exb.location.area.areaName', '')
-          posHist.x = Util.getValue(posHist, 'exb.location.x', '')
-          posHist.y = Util.getValue(posHist, 'exb.location.y', '')
+          let aTx = _.find(this.txs, (tx) => { return tx.txId == posHist.txId })
+          posHist.txName = Util.getValue(aTx, 'txName', '')
+          let aExb = _.find(this.exbs, (exb) => { return exb.exbId == posHist.exbId })
+          posHist.deviceNum = Util.getValue(aExb, 'deviceNum', '')
+          posHist.deviceId = Util.getValue(aExb, 'deviceId', '')
+          posHist.deviceIdX = Util.getValue(aExb, 'deviceIdX', '')
+          posHist.locationName = Util.getValue(aExb, 'locationName', '')
+          posHist.posId = Util.getValue(aExb, 'posId', '')
+          posHist.areaName = Util.getValue(aExb, 'areaName', '')
+          posHist.x = Util.getValue(aExb, 'x', '')
+          posHist.y = Util.getValue(aExb, 'y', '')
           this.viewList.push(posHist)
         }
         this.totalRows = this.viewList.length
