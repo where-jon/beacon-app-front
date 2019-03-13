@@ -96,7 +96,7 @@ export const cutOnLong = (val, max) => {
   return val
 }
 
-export const cutOnLongByte = (val, max) => {
+export const cutOnLongByte = (val, max, addLast = true) => {
   if (!val || !max) {
     return val
   }
@@ -111,7 +111,7 @@ export const cutOnLongByte = (val, max) => {
         max -= length
       }
     })
-    return `${val.substr(0, cnt)}...`
+    return `${val.substr(0, cnt)}${addLast? '...': ''}`
   }
   return val
 }
@@ -427,3 +427,13 @@ export const getAdjustFontSize = (getFontSize, isBold = false) => {
 
 export const formatTemperature = (temperature) => typeof temperature == 'number'? floorVal(temperature, 1): ''
 export const formatHumidity = (humidity) => typeof humidity == 'number'? floorVal(humidity, 0): ''
+
+export const getFont2Size = (font) => Number(font.split(' ').find(val => val.match(/[0-9]+/)).replace(/[^0-9]/g, ''))
+
+export const inLabel = (iconRadius, font, useLabel) => {
+  if(!useLabel){
+    return false
+  }
+  const fontSize = typeof font == 'number'? font: getFont2Size(font)
+  return iconRadius >= fontSize * 1.5
+}

@@ -2,7 +2,7 @@
   <div id="mapContainer" class="container-fluid">
     <breadcrumb :items="items" :reload="true" />
     <div>
-      <alert :warn-message="warnMessage" />
+      <alert :warn-message="warnMessage" :fix="fixHeight" />
 
       <b-row class="mt-2">
         <b-form inline class="ml-3 mt-2" @submit.prevent>
@@ -101,6 +101,7 @@ export default {
       iconInterval: 100,
       warnMessage: null,
       iconAlphaMin: 0.1,
+      fixHeight: DISP.THERMOH_ALERT_FIX_HEIGHT,
     }
   },
   computed: {
@@ -132,6 +133,16 @@ export default {
       if(this.iconTicker){
         clearInterval(this.iconTicker)
         this.iconTicker = null
+      }
+    },
+    iconMouseOver(event){
+      if(DISP.THERMOH_TOOLTIP_USE){
+        this.createTooltip(event.target.parent)
+      }
+    },
+    iconMouseOut(){
+      if(DISP.THERMOH_TOOLTIP_USE){
+        this.removeTooltip()
       }
     },
     setWarnDevices(){
@@ -281,17 +292,22 @@ export default {
     },
     createButtonIcon(device, iconInfo){
       const btnicon = new Shape()
-      btnicon.graphics.beginFill(iconInfo.color).drawCircle(0, 0, DISP.PIR_R_SIZE, DISP.PIR_R_SIZE)
+      btnicon.graphics.beginFill(iconInfo.color).drawCircle(0, 0, DISP.THERMOH_R_SIZE, DISP.THERMOH_R_SIZE)
       btnicon.alpha = DISP.THERMOH_ALPHA
+      btnicon.addEventListener('mouseover', this.iconMouseOver)
+      btnicon.addEventListener('mouseout', this.iconMouseOut)
       return btnicon
     },
     createButtonLabel(device){
-      const label = new Text(Util.formatTemperature(device.temperature) + '℃\n' + Util.formatHumidity(device.humidity) + '%')
+      const text = Util.formatTemperature(device.temperature) + '℃\n' + Util.formatHumidity(device.humidity) + '%'
+      const label = new Text(Util.inLabel(DISP.THERMOH_R_SIZE, DISP.THERMOH_FONT, DISP.THERMOH_WITH_LABEL)? text: '')
       label.font = DISP.THERMOH_FONT
       label.color = DISP.THERMOH_COLOR
       label.textAlign = 'center'
       label.textBaseline = 'middle'
       label.y = -5
+      label.addEventListener('mouseover', this.iconMouseOver)
+      label.addEventListener('mouseout', this.iconMouseOut)
       return label
     },
     showExb(exb) {
@@ -314,6 +330,7 @@ export default {
 
       exbBtn.deviceId = exb.deviceId
       exbBtn.exbId = exb.exbId
+      exbBtn.device = exb
       exbBtn.x = exb.x
       exbBtn.y = exb.y
       exbBtn.cursor = 'pointer'
@@ -356,6 +373,7 @@ export default {
       }
 
       txBtn.txId = tx.txId
+      txBtn.device = tx
       txBtn.x = tx.x
       txBtn.y = tx.y
       txBtn.cursor = 'pointer'
@@ -379,6 +397,63 @@ export default {
       this.txIcons.push({button: txBtn, device: tx, config: iconInfo, sign: -1})
       this.txCon.addChild(txBtn)
       stage.addChild(this.txCon)
+      stage.update()
+    },
+    removeTooltip() {
+      if (this.tooltipCon) {
+        this.tooltipCon.removeAllChildren()
+      }
+    },
+    createTooltipInfo(container){
+      const device = container.device
+      const ret = {
+        fontSize: Util.getFont2Size(DISP.THERMOH_FONT),
+        sensorName: device.txName? device.txName: device.locationName,
+        temperature: Util.formatTemperature(device.temperature),
+        humidity: Util.formatHumidity(device.humidity),
+        description: Util.cutOnLong(device.description, 10),
+      }
+      const count = [ret.sensorName, ret.temperature, ret.humidity, ret.description].reduce((a, b) => b? a + 1: a, 0)
+      ret.width = ret.fontSize * Util.getMaxTextLength([Util.cutOnLongByte(ret.sensorName, 10, false), ret.temperature, ret.humidity, Util.cutOnLongByte(ret.description, 10, false)])
+      ret.height = ret.fontSize * (count + 2)
+      const right = container.x + ret.width
+      ret.x = right >= this.stage.canvas.width? container.x - ret.width: container.x + 4
+      const y = container.y - ret.height
+      ret.y = y < 0? container.y + 4: y
+      return ret
+    },
+    createTooltip(container) {
+      const stage = this.stage
+      stage.enableMouseOver()
+
+      if (!this.tooltipCon) {
+        this.tooltipCon = new Container()
+        stage.addChild(this.tooltipCon)
+      }
+      this.removeTooltip()
+
+      const tooltipInfo = this.createTooltipInfo(container)
+
+      const tooltip = new Shape()
+      tooltip.graphics.beginFill(DISP.THERMOH_TOOLTIP_BORDERCOLOR)
+      tooltip.graphics.drawRoundRect(tooltipInfo.x - 1, tooltipInfo.y - 1, tooltipInfo.width + 2, tooltipInfo.height + 2, DISP.THERMOH_TOOLTIP_ROUNDRECT, DISP.THERMOH_TOOLTIP_ROUNDISP)
+      tooltip.graphics.beginFill(DISP.THERMOH_TOOLTIP_BGCOLOR)
+      tooltip.graphics.drawRoundRect(tooltipInfo.x, tooltipInfo.y, tooltipInfo.width, tooltipInfo.height, DISP.THERMOH_TOOLTIP_ROUNDRECT, DISP.THERMOH_TOOLTIP_ROUNDISP)
+      this.tooltipCon.addChild(tooltip)
+
+      const label = new Text(this.$i18n.tnl('message.positionTooltip',{
+        sensorName: tooltipInfo.sensorName,
+        temperature: tooltipInfo.temperature,
+        humidity: tooltipInfo.humidity,
+        description: tooltipInfo.description,
+      }))
+      label.x = tooltipInfo.x + DISP.THERMOH_TOOLTIP_ROUNDRECT / 2
+      label.y = tooltipInfo.y + DISP.THERMOH_TOOLTIP_ROUNDRECT
+      label.font = DISP.THERMOH_FONT
+      label.color = DISP.THERMOH_TOOLTIP_COLOR
+      label.textBaseline = 'middle'
+      this.tooltipCon.addChild(label)
+      stage.setChildIndex(this.tooltipCon, stage.numChildren - 1)
       stage.update()
     },
     showChart(device, sensorData) {

@@ -1,15 +1,15 @@
 <template>
   <b-container>
-    <b-alert :show="showInfo && !forceHide" variant="info" dismissible>
+    <b-alert :show="showInfo && !forceHide" variant="info" :dismissible="!fixAlert" :style="getAlertStyle()">
       {{ message }}
     </b-alert>
-    <b-alert :show="showWarn && !forceHide" variant="warning" dismissible>
+    <b-alert :show="showWarn && !forceHide" variant="warning" :dismissible="!fixAlert" :style="getAlertStyle()">
       {{ warnMessage }}
       <div v-for="warnThumbnail in warnThumbnails" :key="warnThumbnail.id">
         ID:{{ warnThumbnail.id }}
       </div>
     </b-alert>
-    <b-alert :show="showAlert && !forceHide" variant="danger" dismissible>
+    <b-alert :show="showAlert && !forceHide" variant="danger" :dismissible="!fixAlert" :style="getAlertStyle()">
       <template v-if="Array.isArray(message)">
         <span v-for="line in message" :key="line">
           {{ line }} <br>
@@ -19,6 +19,7 @@
         {{ message }}
       </span>
     </b-alert>
+    <b-alert :show="fixAlert && !showInfo && !showWarn && !showAlert" variant="light" :style="getAlertBlankStyle()" />
   </b-container>
 </template>
 
@@ -44,6 +45,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    fix: {
+      type: Number,
+      default: 0,
+    },
   },
   computed: {
     ...mapState([
@@ -51,6 +56,12 @@ export default {
       'showAlert',
       'showWarn',
     ]),
+    tempFor(){
+      return 0 < this.fixAlert? new Array(this.fix): []
+    },
+    fixAlert(){
+      return this.fix > 0
+    },
   },
   mounted() {
     this.replace({showWarn: false})
@@ -61,6 +72,12 @@ export default {
     ...mapMutations([
       'replace', 
     ]),
+    getAlertStyle(){
+      return this.fixAlert? {height: `${25 * (this.fix + 1)}px`, 'overflow-y': 'auto'}: {}
+    },
+    getAlertBlankStyle(){
+      return this.fixAlert? {height: `${25 * (this.fix + 1)}px`, visibility: 'hidden'}: {}
+    },
   }
 }
 
