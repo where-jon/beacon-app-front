@@ -390,8 +390,8 @@ export const loadAreaImage = async (areaId, force) => {
 export const checkProhibitZone = async (position,prohibits) => {
   let gBindData = []
   if (APP.PROHIBIT_ALERT) {
-    position.map((pos) => {
-      prohibits.map((prohibitData) =>{
+    position.some((pos) => {
+      prohibits.some((prohibitData) =>{
         // areaが一致するか
         if(pos.exb.areaId == prohibitData.areaId){
           if(pos.x >= prohibitData.x && pos.x <= prohibitData.w
@@ -400,6 +400,7 @@ export const checkProhibitZone = async (position,prohibits) => {
             vTemp.minor = pos.minor
             vTemp.areaName = pos.exb.areaName
             gBindData.push(vTemp)
+            return
           }
         }
       })
