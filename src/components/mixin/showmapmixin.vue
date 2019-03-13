@@ -615,6 +615,7 @@ export default {
             areaId: exb.areaId,
             zoneId: exb.zoneId,
             zoneCategoryId: exb.zoneCategoryId,
+            description: exb.description? exb.description: '',
           }
         })
         .filter((exb) => showSensorFunc? showSensorFunc(exb): true)
@@ -654,7 +655,7 @@ export default {
             sensorName: tx.sensorName,
             major: tx.major,
             minor: tx.minor,
-            description: tx.description,
+            description: tx.description? tx.description: '',
             high: sensor? sensor.high: null,
             low: sensor? sensor.low: null,
             beat: sensor? sensor.beat: null,

@@ -602,6 +602,8 @@
     "valueMissingInput": "このフィールドを入力してください。",
     "valueMissingSelect": "リスト内の項目を選択してください。",
 
+    "positionTooltip": "{sensorName}\n{temperature}℃\n{humidity}％\n{description}",
+
     "dummy": "" 
   }
 }

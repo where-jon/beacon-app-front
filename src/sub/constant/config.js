@@ -208,8 +208,17 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   EXB_LOC_COLOR: '#000', // EXB配置設定のEXB表示文字色
   EXB_LOC_FONT: '16px Arial', // EXB配置設定のEXB表示フォント
 
+  THERMOH_TOOLTIP_USE: false, // ツールチップを使用する
+  THERMOH_TOOLTIP_COLOR: '#000000', // ツールチップ文字色
+  THERMOH_TOOLTIP_BORDERCOLOR: '#888888', // ツールチップ枠線色
+  THERMOH_TOOLTIP_BGCOLOR: '#FFFDE6', // ツールチップ背景色
+  THERMOH_TOOLTIP_ROUNDRECT: 16, // ツールチップ角丸半径
+
+  THERMOH_ALERT_FIX_HEIGHT: 0, // 警告欄固定行高さ(0で無効)
   THERMOH_DISP: 'color', // icon / color
+  THERMOH_WITH_LABEL: true, // アイコンに温湿度を表示する
   THERMOH_FONT: '12px Arial', // 温湿度表示時のフォント
+  THERMOH_R_SIZE: 26, // 温湿度表示時の円の半径
   THERMOH_COLOR: '#ffffff', // 温湿度表示時の文字色
   DISCOMFORT_HOT: '#fc5800', // 温湿度表示時の不快指数Hot時の背景色
   DISCOMFORT_COMFORT: '#15db75', // 温湿度表示時の不快指数Comfort時の背景色
