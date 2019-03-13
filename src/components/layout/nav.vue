@@ -49,6 +49,7 @@
             </td>
           </tr>
         </table>
+        <custom-link v-if="getShowNav() && isResponsiveMenu()" :link-key="linkKey" :link-url="linkUrl" />
         <!-- user & logout -->
         <b-nav-item-dropdown right>
           <template slot="button-content">
@@ -82,9 +83,13 @@ import { getThemeClasses } from '../../sub/helper/ThemeHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
 import commonmixinVue from '../mixin/commonmixin.vue'
+import CustomLink from '../parts/customlink.vue'
 import * as StateHelper from '../../sub/helper/StateHelper'
 
 export default {
+  components: {
+    CustomLink,
+  },
   mixins: [commonmixinVue],
   data() {
     return {
@@ -100,6 +105,12 @@ export default {
     },
     loginId() {
       return this.$store.state.loginId
+    },
+    linkKey(){
+      return APP.SHOW_MENU_LINK
+    },
+    linkUrl(){
+      return APP.SHOW_MENU_LINK_URL
     },
     ...mapState('app_service', [
       'pots', 'regions',
@@ -128,6 +139,7 @@ export default {
   async mounted() {
     window.addEventListener('resize', () => {
       this.adjustLogoOffsetX()
+      this.$forceUpdate()
     })
     if(window.localStorage.getItem('login') != null){
       await StateHelper.load('region', true)
@@ -154,6 +166,9 @@ export default {
     },
     hasMultiRegion(regions){
       return regions && regions.length > 1
+    },
+    isResponsiveMenu(){
+      return Util.isResponsiveMode()
     },
     getStyleDropdownRegion(regionId) {
       const login = JSON.parse(window.localStorage.getItem('login'))

@@ -438,3 +438,7 @@ export const getAdjustFontSize = (getFontSize, isBold = false) => {
   const size = Math.round(getFontSize())
   return `${isBold? 'bold ': ''}${(size < FONT.SIZE.MIN? FONT.SIZE.MIN: size)}${FONT.TYPE}`
 }
+
+export const getFileName = key => key.slice(key.lastIndexOf('/') + 1, key.lastIndexOf('.'))
+export const isImageFile = key => hasValue(key) && /^.*\.(png$)|(jpg$)|(jpeg$)|(gif$)$/.test(key) && !/^.*(__MACOSX\/).*$/.test(key) && !/^\..*/.test(getFileName(key))
+export const isResponsiveMode = () =>  window.innerWidth < 768
