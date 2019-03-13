@@ -90,6 +90,7 @@ export const APP = { // 機能面に関する設定
   TX_BTX_MINOR: 'both', // both:両方表示し、別々に設定、minor/btxId:片方のみ表示し、保存の際同一の値を設定
   TX_WITH_DISPFLG: true, // TXを表示する
   TX_WITH_LOCATION: true, // TXを固定位置表示する（TX管理画面に影響）
+  TX_WITH_DISP_PIR: true, // 空室チェックで表示を使用
   TX_WITH_DISP_ALWAYS: false, // TX管理で常時表示を表示
 
   // EXB関連設定
