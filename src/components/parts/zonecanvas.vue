@@ -6,6 +6,7 @@
 import {ZONE} from '../../sub/constant/Constants'
 import Konva from 'konva'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
+import * as StateHelper from '../../sub/helper/StateHelper'
 
 class Zone {
   constructor(prop) {
@@ -56,6 +57,9 @@ class Zone {
   }
 
   drawingRect(x, y) {
+    if (!this.rectLayer) {
+      return
+    }
     const w = x - this.startX
     const h = y - this.startY
     this.rectLayer.removeChildren()
@@ -405,7 +409,8 @@ export default {
         categoryId: zone.categoryId,
       })
     },
-    onChangeAreaId(areaId) {
+    async onChangeAreaId(areaId) {
+      await StateHelper.loadAreaImage(areaId, true)
       const areaImage = this.$store.state.app_service.areaImages.find((a) => { return a.areaId === areaId })
       const base64 = areaImage ? areaImage.mapImage : ''
       this.cnt = 0
