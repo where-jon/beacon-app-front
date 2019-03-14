@@ -387,41 +387,19 @@ export const loadAreaImage = async (areaId, force) => {
 
   // })
 }
-export const checkProhibitZone = async (position,prohibits) => {
-  let gBindData = []
-  if (APP.PROHIBIT_ALERT) {
-    position.some((pos) => {
-      prohibits.some((prohibitData) =>{
-        // areaが一致するか
-        if(pos.exb.areaId == prohibitData.areaId){
-          if(pos.x >= prohibitData.x && pos.x <= prohibitData.w
-            && pos.y >= prohibitData.y && pos.y <= prohibitData.h ){
-            let vTemp = {}
-            // 変数変更
-            vTemp.minor = pos.minor
-            vTemp.areaName = pos.exb.areaName
-            gBindData.push(vTemp)
-            return
-          }
-        }
-      })
-    })
-  }
-  return gBindData
-}
 
 export const getProhibitData = async (position,prohibits) => {
-  let gBindData = []
+  let result = null
   if (APP.PROHIBIT_ALERT) {
-    position.filter((pos) => prohibits.some((prohibitData) => pos.exb.areaId == prohibitData.areaId
-        && pos.x >= prohibitData.x && pos.x <= prohibitData.w && pos.y >= prohibitData.y && pos.y <= prohibitData.h)).forEach((position) => {
-      let vTemp = {}
-      vTemp.minor = position.minor
-      vTemp.areaName = position.exb.areaName
-      gBindData.push(vTemp)
+    result =  position.filter((pos) => prohibits.some((prohibitData) => pos.exb.areaId == prohibitData.areaId
+        && pos.x >= prohibitData.x && pos.x <= prohibitData.w && pos.y >= prohibitData.y && pos.y <= prohibitData.h)).map((position) => {
+      let temp = {}
+      temp.minor = position.minor
+      temp.areaName = position.exb.areaName
+      return temp
     })
   }
-  return gBindData
+  return result
 }
 
 export const getProhibitMessage = async (message,prohibitData) => {

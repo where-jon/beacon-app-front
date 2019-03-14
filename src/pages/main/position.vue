@@ -281,7 +281,7 @@ export default {
         }
         this.setPositionedExb()
         this.prohibitData = await StateHelper.getProhibitData(this.getPositions(),this.prohibits)
-        this.prohibitData ? this.message = await StateHelper.getProhibitMessage(this.message,this.prohibitData) : null
+        this.message = await StateHelper.getProhibitMessage(this.message,this.prohibitData)
         this.showTxAll()
         this.prohibitInterval = setInterval(this.twinkle,DISP.PROHIBIT_TWINKLE_TIME)
       }, disableErrorPopup)
@@ -357,16 +357,7 @@ export default {
           this.showDetail(txBtn.txId, txBtn.x, txBtn.y)
         }
         this.txCont.addChild(txBtn)
-        let bProhibitCheck = false
-        //if(this.prohibitData!=null){
-        this.prohibitData.some((data) => {
-          if(data.minor == pos.minor){
-            bProhibitCheck = true
-            return true
-          }
-        })
-        //}
-        txBtn.prohibit = bProhibitCheck
+        txBtn.prohibit = this.prohibitData.some((data) => data.minor == pos.minor)
         this.icons.push(txBtn)
         this.stage.update()
         this.detectedCount++  // 検知数カウント増加
