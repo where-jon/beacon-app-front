@@ -179,7 +179,7 @@ export const EXCLOUD = {
   DL_LIST_URL: '/core/excloud/dllist/{type}/{yyyymm}?_=',
   DL_URL: '/core/excloud/dl/{type}/{yyyymmdd}?_=',
   LED_URL: '/core/excloud/led?_=',
-  POSITION_HISTORY_FETCH_URL: '/core/positionHistory/fetch?_=',
+  POSITION_HISTORY_FETCH_URL: '/core/positionHistory/fetch/{allFetch}?_=',
 }
 
 export const DISP = { // 表示系設定（表示・色・フォント・サイズ）
