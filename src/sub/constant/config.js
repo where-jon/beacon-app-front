@@ -216,6 +216,7 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   THERMOH_TOOLTIP_ROUNDRECT: 16, // ツールチップ角丸半径
 
   THERMOH_ALERT_FIX_HEIGHT: 0, // 警告欄固定行高さ(0で無効)
+  THERMOH_ALERT_WEIGHT: 'bold', // 警告フォント太さ
   THERMOH_DISP: 'color', // icon / color
   THERMOH_WITH_LABEL: true, // アイコンに温湿度を表示する
   THERMOH_FONT: '12px Arial', // 温湿度表示時のフォント

@@ -581,8 +581,8 @@
     "notMatchedEmail": "It is not a mail format. (In case of addition, comma separated)",
     "count": "Count:{count}",
     "readingPoint": ", ",
-    "lessAlertHumidity": "{sensors} LOW：Under {humidity}％ ",
-    "moreAlertHumidity": "{sensors} HIGH：Over {humidity}％ ",
+    "lessAlertHumidity": "[ Under {humidity}％ LOW : {sensors} ]",
+    "moreAlertHumidity": "[ Over {humidity}％ HIGH : {sensors} ]",
 
     "badInput": "badInput",
     "badInputNumber": "badInputNumber",
