@@ -389,17 +389,14 @@ export const loadAreaImage = async (areaId, force) => {
 }
 
 export const getProhibitData = async (position,prohibits) => {
-  let result = null
-  if (APP.PROHIBIT_ALERT) {
-    result =  position.filter((pos) => prohibits.some((prohibitData) => pos.exb.areaId == prohibitData.areaId
-        && pos.x >= prohibitData.x && pos.x <= prohibitData.w && pos.y >= prohibitData.y && pos.y <= prohibitData.h)).map((position) => {
-      let temp = {}
-      temp.minor = position.minor
-      temp.areaName = position.exb.areaName
-      return temp
-    })
+
+  if (!APP.PROHIBIT_ALERT) {
+    return null
   }
-  return result
+
+  return position.filter((pos) => prohibits.some((prohibitData) => pos.exb.areaId == prohibitData.areaId
+      && pos.x >= prohibitData.x && pos.x <= prohibitData.w && pos.y >= prohibitData.y && pos.y <= prohibitData.h))
+    .map((position) => { return {minor: position.minor, areaName: position.exb.areaName} })
 }
 
 export const getProhibitMessage = async (message,prohibitData) => {
