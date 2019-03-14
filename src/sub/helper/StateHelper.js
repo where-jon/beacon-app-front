@@ -322,7 +322,7 @@ const appStateConf = {
     }
   },
   prohibits: {
-    path: '/basic/prohibit',
+    path: '/core/zone/prohibit',
     beforeCommit: (arr) => {
       let result = arr.map((val) => ({
         ...val,
