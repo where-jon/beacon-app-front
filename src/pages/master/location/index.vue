@@ -460,7 +460,7 @@ export default {
     },
     bulkAdd() {
       let counter = 0
-      let y = 20
+      let y = 40
       const mapMaxPosX = this.mapWidth * this.mapImageScale
       this.exbOptions.forEach((val) => {
         let x = 30 + counter++ * 60
