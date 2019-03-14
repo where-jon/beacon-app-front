@@ -130,7 +130,7 @@
 
     "posId": "pos ID",
     "positionHistory": "Position history",
-    "positionHistoryExc": "Position history",
+    "positionHistoryExc": "Position history (Exc)",
     "positionHistoryId": "Tx Position ID",
 
     "notifyHistory": "Notification history information",
@@ -243,7 +243,7 @@
     "sensor": "Sensor",
     "sensorDt": "Date and time",
     "sensorHistory": "Sensor information",
-    "sensorHistoryExc": "Sensor information",
+    "sensorHistoryExc": "Sensor information (Exc)",
     "sensorHistoryId": "Sensor history ID",
     "sensorId": "Sensor ID",
     "sensorName": "Sensor name",

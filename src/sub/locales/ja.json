@@ -134,7 +134,7 @@
 
     "posId": "pos ID",
     "positionHistory": "位置情報",
-    "positionHistoryExc": "位置情報",
+    "positionHistoryExc": "位置情報(Exc)",
     "positionHistoryId": "Tx位置ID",
 
     "notifyHistory": "通知履歴情報",
@@ -262,7 +262,7 @@
     "sensor": "センサ",
     "sensorDt": "日時",
     "sensorHistory": "センサ情報",
-    "sensorHistoryExc": "センサ情報",
+    "sensorHistoryExc": "センサ情報(Exc)",
     "sensorHistoryId": "センサ履歴ID",
     "sensorId": "センサID",
     "sensorName": "センサ名",
