@@ -568,7 +568,9 @@ export default {
         const selectedTxPosition = position.find((pos) => pos.btx_id == tx.btxId)
         if (selectedTxPosition) {
           const location = selectedTxPosition.tx? selectedTxPosition.tx.location: null
-          this.showDetail(tx.btxId, location? location.x * this.mapImageScale: selectedTxPosition.x, location? location.y * this.mapImageScale: selectedTxPosition.y)
+          const x = location && location.x != null? location.x * this.mapImageScale: selectedTxPosition.x
+          const y = location && location.y != null? location.y * this.mapImageScale: selectedTxPosition.y
+          this.showDetail(tx.btxId, x, y)
         }
       }
     },
