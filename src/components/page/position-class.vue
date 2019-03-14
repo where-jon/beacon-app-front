@@ -109,17 +109,11 @@ export default {
         // positionデータ取得
         await this.storePositionHistory()
         this.replaceAS({positions: this.getPositions()})
-        let prohibitData = await StateHelper.checkProhibitZone(this.getPositions(),this.prohibits)
-        // 分類
+        let prohibitData = await StateHelper.getProhibitData(this.getPositions(),this.prohibits)
+        this.message = await StateHelper.getProhibitMessage(this.message,prohibitData)
+        // 分類checkProhibitZone
         const tempClass = this.splitClass(this.positions, prohibitData)
         this.replaceMain({[`${this.eachListName}`]: tempClass})
-        this.message = ''
-        prohibitData.forEach((data) => {
-          this.message += '<' + this.$i18n.tnl('label.Area') + ' : '
-          this.message +=  data.areaName + '  '
-          this.message +=  this.$i18n.tnl('label.minor') + ' : '
-          this.message += data.minor + '>  '
-        })
         if (payload && payload.done) {
           payload.done()
         }

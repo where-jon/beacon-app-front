@@ -118,7 +118,7 @@ export default {
       isPause: false,
       message: '',
       prohibitData : null,
-      arIcon : [],
+      icons : [],
     }
   },
   computed: {
@@ -258,12 +258,8 @@ export default {
       return tx && tx.pot
     },
     twinkle() {
-      this.arIcon.map((icon)=>{
-        if(icon.prohibit){
-          icon.visible =  !icon.visible
-        }else{
-          icon.visible = true
-        }
+      this.icons.forEach((icon)=>{
+        icon.prohibit? icon.visible=!icon.visible : icon.visible = true
         this.stage.update()
       })
     },
@@ -284,20 +280,14 @@ export default {
           this.stage.update()
         }
         this.setPositionedExb()
-        this.message = ''
-        this.prohibitData = await StateHelper.checkProhibitZone(this.getPositions(),this.prohibits)
-        this.prohibitData.forEach((data) => {
-          this.message += '<' + this.$i18n.tnl('label.Area') + ' : '
-          this.message +=  data.areaName + '  '
-          this.message +=  this.$i18n.tnl('label.minor') + ' : '
-          this.message += data.minor + '>  '
-        })
+        this.prohibitData = await StateHelper.getProhibitData(this.getPositions(),this.prohibits)
+        this.prohibitData ? this.message = await StateHelper.getProhibitMessage(this.message,this.prohibitData) : null
         this.showTxAll()
-        this.prohibitInterval = setInterval(this.twinkle,APP.PROHIBIT_TWINKLE)
+        this.prohibitInterval = setInterval(this.twinkle,DISP.PROHIBIT_TWINKLE_TIME)
       }, disableErrorPopup)
     },
     showTxAll() {
-      this.arIcon = []
+      this.icons = []
       if (!this.txCont) {
         return
       }
@@ -368,16 +358,16 @@ export default {
         }
         this.txCont.addChild(txBtn)
         let bProhibitCheck = false
-        if(this.prohibitData!=null){
-          this.prohibitData.some((data) => {
-            if(data.minor == pos.minor){
-              bProhibitCheck = true
-              return true
-            }
-          })
-        }
+        //if(this.prohibitData!=null){
+        this.prohibitData.some((data) => {
+          if(data.minor == pos.minor){
+            bProhibitCheck = true
+            return true
+          }
+        })
+        //}
         txBtn.prohibit = bProhibitCheck
-        this.arIcon.push(txBtn)
+        this.icons.push(txBtn)
         this.stage.update()
         this.detectedCount++  // 検知数カウント増加
       }

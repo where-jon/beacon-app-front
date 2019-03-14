@@ -397,6 +397,7 @@ export const checkProhibitZone = async (position,prohibits) => {
           if(pos.x >= prohibitData.x && pos.x <= prohibitData.w
             && pos.y >= prohibitData.y && pos.y <= prohibitData.h ){
             let vTemp = {}
+            // 変数変更
             vTemp.minor = pos.minor
             vTemp.areaName = pos.exb.areaName
             gBindData.push(vTemp)
@@ -407,7 +408,31 @@ export const checkProhibitZone = async (position,prohibits) => {
     })
   }
   return gBindData
+}
 
+export const getProhibitData = async (position,prohibits) => {
+  let gBindData = []
+  if (APP.PROHIBIT_ALERT) {
+    position.filter((pos) => prohibits.some((prohibitData) => pos.exb.areaId == prohibitData.areaId
+        && pos.x >= prohibitData.x && pos.x <= prohibitData.w && pos.y >= prohibitData.y && pos.y <= prohibitData.h)).forEach((position) => {
+      let vTemp = {}
+      vTemp.minor = position.minor
+      vTemp.areaName = position.exb.areaName
+      gBindData.push(vTemp)
+    })
+  }
+  return gBindData
+}
+
+export const getProhibitMessage = async (message,prohibitData) => {
+  message = ''
+  prohibitData.forEach((data) => { //backquote とplaceholder
+    message +='<' + i18n.tnl('label.Area') + ' : '
+    message +=  data.areaName + '  '
+    message +=  i18n.tnl('label.minor') + ' : '
+    message += data.minor + '>  '
+  })
+  return message
 }
 
 export const loadAreaImages = async () => {
