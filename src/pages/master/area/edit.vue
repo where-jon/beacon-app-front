@@ -23,7 +23,7 @@
               </b-button>
               <img v-show="form.mapImage" ref="mapImage" :src="form.mapImage" width="100" class="mt-1 ml-3">
             </b-form-group>
-            <b-form-group v-if="isEditable && hasId && mapUpdate">
+            <b-form-group v-if="isEditable && hasId && mapUpdate && form.mapImage">
               <label v-t="'label.mapConfig'" />
               <b-form-select v-model="form.mapConfig" :options="mapConfigTypes" required />
             </b-form-group>
