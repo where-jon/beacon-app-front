@@ -66,6 +66,7 @@ export default {
   },
   methods: {
     afterCrud(){
+      StateHelper.setForceFetch('tx', true)
       StateHelper.setForceFetch('exb', true)
       StateHelper.setForceFetch('zone', true)
     },
