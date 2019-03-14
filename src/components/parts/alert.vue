@@ -49,6 +49,10 @@ export default {
       type: Number,
       default: 0,
     },
+    style: {
+      type: Object,
+      default: () => {},
+    },
   },
   computed: {
     ...mapState([
@@ -73,7 +77,7 @@ export default {
       'replace', 
     ]),
     getAlertStyle(){
-      return this.fixAlert? {height: `${25 * (this.fix + 1)}px`, 'overflow-y': 'auto'}: {}
+      return Object.assign(this.fixAlert? {height: `${25 * (this.fix + 1)}px`, 'overflow-y': 'auto'}: {}, this.style)
     },
     getAlertBlankStyle(){
       return this.fixAlert? {height: `${25 * (this.fix + 1)}px`, visibility: 'hidden'}: {}

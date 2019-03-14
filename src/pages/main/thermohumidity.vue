@@ -2,7 +2,7 @@
   <div id="mapContainer" class="container-fluid">
     <breadcrumb :items="items" :reload="true" />
     <div>
-      <alert :warn-message="warnMessage" :fix="fixHeight" />
+      <alert :warn-message="warnMessage" :fix="fixHeight" :style="alertStyle" />
 
       <b-row class="mt-2">
         <b-form inline class="ml-3 mt-2" @submit.prevent>
@@ -113,7 +113,12 @@ export default {
         (result, data) => data.temperature,
         (data) => {return {x: data.x * this.mapImageScale, y: data.y * this.mapImageScale}}
       )
-    }
+    },
+    alertStyle(){
+      return {
+        'font-weight': DISP.THERMOH_ALERT_WEIGHT,
+      }
+    },
   },
   mounted() {
     this.fetchData()
@@ -172,18 +177,23 @@ export default {
       const ret = []
       const exbIdName = StateHelper.getDeviceIdName({exbId: true}, {ignorePrimaryKey: true})
       const txIdName = StateHelper.getDeviceIdName({txId: true}, {ignorePrimaryKey: true, forceSensorName: true})
-      this.humidityPatternConfig.less.concat(this.humidityPatternConfig.more).forEach(conf => {
+      const pattern = this.humidityPatternConfig.more.sort((a, b) => {
+        return a.base > b.base? -1: a.base < b.base? 1: 0
+      }).concat(this.humidityPatternConfig.less.sort((a, b) => {
+        return a.base < b.base? -1: a.base > b.base? 1: 0
+      }))
+      pattern.forEach(conf => {
         if(conf.exbs.length == 0 && conf.txs.length == 0){
           return
         }
-        const exbAlert = conf.exbs.length == 0? '': `${this.$i18n.tnl(`label.${exbIdName}`)}[${conf.exbs.map(exb => exb[exbIdName]).filter(val => val).join(', ')}]`
-        const txAlert = conf.txs.length == 0? '': `${this.$i18n.tnl(`label.${txIdName}`)}[${conf.txs.map(tx => tx[txIdName]).filter(val => val).join(', ')}]`
+        const exbAlert = conf.exbs.length == 0? '': `${conf.exbs.map(exb => exb[exbIdName]).filter(val => val).join(this.$i18n.tnl('message.readingPoint'))}`
+        const txAlert = conf.txs.length == 0? '': `${conf.txs.map(tx => tx[txIdName]).filter(val => val).join(this.$i18n.tnl('message.readingPoint'))}`
         ret.push(this.$i18n.tnl(`message.${conf.label}AlertHumidity`, {
-          sensors: `${exbAlert}${exbAlert && txAlert? ', ': ''}${txAlert}`,
+          sensors: `${exbAlert}${exbAlert && txAlert? `${this.$i18n.tnl('message.readingPoint')}`: ''}${txAlert}`,
           humidity: conf.base,
         }))
       })
-      return ret.join(this.$i18n.tnl('message.readingPoint'))
+      return ret.join('')
     },
     addWarnMessage(){
       if(APP.USE_HUMIDITY_ALERT){

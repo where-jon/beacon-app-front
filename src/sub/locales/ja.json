@@ -585,8 +585,8 @@
     "notMatchedEmail": "メール形式ではありません。（追加の場合、コンマ区切）",
     "count": "{count} 名",
     "readingPoint": "、",
-    "lessAlertHumidity": "「{sensors}低湿：{humidity}％以下」",
-    "moreAlertHumidity": "「{sensors}高湿：{humidity}％以上」",
+    "lessAlertHumidity": "【低湿{humidity}％以下：{sensors}】",
+    "moreAlertHumidity": "【高湿{humidity}％以上：{sensors}】",
 
     "badInput": "",
     "badInputNumber": "数字を入力してください。",
