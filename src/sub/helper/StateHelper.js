@@ -400,14 +400,9 @@ export const getProhibitData = async (position,prohibits) => {
 }
 
 export const getProhibitMessage = async (message,prohibitData) => {
-  message = ''
-  prohibitData.forEach((data) => { //backquote とplaceholder
-    message +='<' + i18n.tnl('label.Area') + ' : '
-    message +=  data.areaName + '  '
-    message +=  i18n.tnl('label.minor') + ' : '
-    message += data.minor + '>  '
-  })
-  return message
+  const labelArea = i18n.tnl('label.Area')
+  const labelMinor = i18n.tnl('label.minor')
+  return prohibitData.map((data) => `<${labelArea} : ${data.areaName}  ${labelMinor} : ${data.minor}>`).join(' ')
 }
 
 export const loadAreaImages = async () => {
