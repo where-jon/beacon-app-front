@@ -453,7 +453,7 @@ export const convertToTime = (secTime) => {
 }
 
 export const getRatio = (secTime, digit = APP.SUM_PARSENT_DIGIT, baseSecTime = getStayBaseSec()) => {
-  return Math.round((secTime / baseSecTime) * 100 * digit) / digit
+  return (Math.round((secTime / baseSecTime) * 100 * digit) / digit).toFixed(String(digit).length-1)
 }
 
 export const getStayBaseSec = () => {
