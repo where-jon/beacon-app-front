@@ -77,7 +77,7 @@ export default {
       'replace', 
     ]),
     getAlertStyle(){
-      return Object.assign(this.fixAlert? {height: `${25 * (this.fix + 1)}px`, 'overflow-y': 'auto'}: {}, this.style)
+      return Object.assign(this.fixAlert? {height: `${25 * (this.fix + 1)}px`, 'overflow-y': 'auto'}: {}, this.alertStyle)
     },
     getAlertBlankStyle(){
       return this.fixAlert? {height: `${25 * (this.fix + 1)}px`, visibility: 'hidden'}: {}

@@ -6,7 +6,14 @@
       <table>
         <tr v-for="(cenv, cindex) in env.val" :key="cindex">
           <td>{{ cenv.key }}</td>
-          <td v-html="cenv.val"></td>
+          <td v-if="!isArray(cenv.val)">
+            {{ cenv.val }}
+          </td>
+          <td v-else>
+            <div v-for="(val, key) in cenv.val" :key="key" :style="getStyle(val)">
+              {{ getLine(val) }}
+            </div>
+          </td>
         </tr>
       </table>
     </div>
@@ -16,6 +23,7 @@
 <script>
 import * as HttpHelper from '../../sub/helper/HttpHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
+import * as Util from '../../sub/util/Util'
 
 export default {
   components: {
@@ -50,9 +58,7 @@ export default {
               let cval = data[key][ckey]
               return {
                 key: ckey,
-                val: this.isJson(cval)?
-                  JSON.stringify(cval, null, 2).split('\\n').join('<br>').split('  ').join('&nbsp;&nbsp;').split('\\"').join('&quot;')
-                  : cval
+                val: this.isJson(cval)? JSON.stringify(cval, null, 2).split('\\"').join('"').split('\\n'): cval,
               }
             })
           }
@@ -71,7 +77,17 @@ export default {
       } catch (e) {
         return false
       }
-    }
+    },
+    isArray(val) {
+      return Util.isArray(val)
+    },
+    getLine(line){
+      return line.trim()
+    },
+    getStyle(line){
+      const match = line.match(/ /g)
+      return {'padding-left': `${match? Math.floor(match.length / 2): 0}em`}
+    },
   }
 }
 </script>
