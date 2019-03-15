@@ -49,6 +49,7 @@ import * as StateHelper from '../../sub/helper/StateHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
+import { getCharSet } from '../../sub/helper/CharSetHelper'
 import { APP } from '../../sub/constant/config'
 import moment from 'moment'
 import validatemixin from '../../components/mixin/validatemixin.vue'
@@ -167,35 +168,24 @@ export default {
             presentTime += list.period
           }
         })
-        presentRatio = this.getRatio(presentTime)
-        absentRatio = this.getRatio(absentTime)
-        absentRatioSub = this.getRatio(absentTimeSub)
-        lostRatio = this.getRatio(lostTime)
+        presentRatio = Util.getRatio(presentTime)
+        absentRatio = Util.getRatio(absentTime)
+        absentRatioSub = Util.getRatio(absentTimeSub)
+        lostRatio = Util.getRatio(lostTime)
 
         // どこまでの時間を表示するか？（分にすらならない秒とか）決めて、GETメソッド作って流し込む
         return {
           potId, potName, 
-          presentTime: this.getHour(presentTime), 
-          absentTime: this.getHour(absentTime), 
-          absentTimeSub: this.getHour(absentTimeSub),
-          lostTime: this.getHour(lostTime),
+          presentTime: Util.getSecToHour(presentTime), 
+          absentTime: Util.getSecToHour(absentTime), 
+          absentTimeSub: Util.getSecToHour(absentTimeSub),
+          lostTime: Util.getSecToHour(lostTime),
           presentRatio: presentRatio + ' %',
           absentRatio: absentRatio + ' %',
           absentRatioSub: absentRatioSub + ' %',
           lostRatio: lostRatio + ' %',
         }
       })
-    },
-    getHour(secTime) {
-      return secTime <= 0? secTime : Math.floor(secTime / 3600 * APP.SUM_PARSENT_DIGIT) / APP.SUM_PARSENT_DIGIT
-    },
-    getRatio(secTime, digit = APP.SUM_PARSENT_DIGIT, baseSecTime = this.getStayBaseSec()) {
-      return Math.round((secTime / baseSecTime) * 100 * digit) / digit
-    },
-    getStayBaseSec() {
-      let from = ((Math.floor(APP.SUM_FROM / 100) * 60) + Math.floor(APP.SUM_FROM % 100)) * 60
-      let to = ((Math.floor(APP.SUM_TO / 100) * 60) + Math.floor(APP.SUM_TO % 100)) * 60
-      return to - from
     },
     async download(){
     }

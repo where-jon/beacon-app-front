@@ -438,3 +438,17 @@ export const getAdjustFontSize = (getFontSize, isBold = false) => {
   const size = Math.round(getFontSize())
   return `${isBold? 'bold ': ''}${(size < FONT.SIZE.MIN? FONT.SIZE.MIN: size)}${FONT.TYPE}`
 }
+
+export const getSecToHour = (secTime) => {
+  return secTime <= 0? secTime : Math.floor(secTime / 3600 * APP.SUM_PARSENT_DIGIT) / APP.SUM_PARSENT_DIGIT
+}
+
+export const getRatio = (secTime, digit = APP.SUM_PARSENT_DIGIT, baseSecTime = getStayBaseSec()) => {
+  return Math.round((secTime / baseSecTime) * 100 * digit) / digit
+}
+
+export const getStayBaseSec = () => {
+  let from = ((Math.floor(APP.SUM_FROM / 100) * 60) + Math.floor(APP.SUM_FROM % 100)) * 60
+  let to = ((Math.floor(APP.SUM_TO / 100) * 60) + Math.floor(APP.SUM_TO % 100)) * 60
+  return to - from
+}
