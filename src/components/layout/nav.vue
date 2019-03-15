@@ -6,7 +6,7 @@
     <!-- Title -->
     <b-navbar-brand>
       <div id="appTitle" class="appTitle">
-        <img v-if="getShowLogo()" id="topLogo" src="/toplogo.png" width="0" height="0" :style="{position: 'relative'}" @load="setLogo">
+        <img v-if="getShowLogo()" id="topLogo" :src="logoSrc" width="0" height="0" :style="{position: 'relative'}" @load="setLogo">
         <span v-else v-t="'label.title'" />
       </div>
     </b-navbar-brand>
@@ -89,6 +89,7 @@ export default {
   data() {
     return {
       nav : this.$store.state.menu,
+      logoSrc: '',
     }
   },
   computed: {
@@ -124,6 +125,11 @@ export default {
       }
       return classes
     },
+  },
+  async created() {
+    HtmlUtil.getLogoData(`${HtmlUtil.getDomainCd()}.png`, (result, success) => {
+      this.logoSrc = success? result: '/toplogo.png'
+    })
   },
   async mounted() {
     window.addEventListener('resize', () => {

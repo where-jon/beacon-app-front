@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueI18n from 'vue-i18n'
-import { getLangShort, getMessageData, setApp } from '../sub/util/HtmlUtil'
+import { getLangShort, getMessageData, setApp, getDomainCd } from '../sub/util/HtmlUtil'
 import { setI18n as setI18nConstants } from '../sub/constant/Constants'
 
 Vue.use(VueI18n)
@@ -11,8 +11,8 @@ export default async ({ app, store }, inject) => {
   app.i18n = new VueI18n({
     locale: lang,
     messages: {
-      'en': _.merge(require('~/sub/locales/en.json'), await getMessageData('en')),
-      'ja': _.merge(require('~/sub/locales/ja.json'), await getMessageData('ja'))
+      'en': _.merge(require('~/sub/locales/en.json'), await getMessageData('en'), await getMessageData(`${getDomainCd()}_en`)),
+      'ja': _.merge(require('~/sub/locales/ja.json'), await getMessageData('ja'), await getMessageData(`${getDomainCd()}_ja`)),
     }
   })
   if(!app.i18n.messages[lang]){
