@@ -124,12 +124,26 @@ export default {
     async displayImpl(){
       this.replace({showAlert: false})
       this.showProgress()
-
       const param = _.cloneDeep(this.form)
+      
+      if (!param.date || param.date == '') {
+        this.message = this.$i18n.tnl('message.pleaseEnterSearchCriteria')
+        this.replace({showAlert: true})
+        this.hideProgress()
+        return
+      }
+
       param.date = moment(param.date).format('YYYYMMDD')
       const groupBy = param.groupId? '&groupId=' + param.groupId: ''
       const url = '/office/stayTime/sumByDay/' + param.date + '/zoneCategory?from=' + APP.SUM_FROM + '&to=' + APP.SUM_TO + groupBy
       const sumData = await HttpHelper.getAppService(url)
+      if (_.isEmpty(sumData)) {
+        this.message = this.$i18n.t('message.listEmpty')
+        this.replace({showAlert: true})
+        this.hideProgress()
+        return
+      }
+
       this.viewList = this.getStayDataList(sumData, APP.SUM_ABSENT_LIMIT, APP.SUM_ABSENT_SUB_LIMIT, APP.SUM_LOST_LIMIT)
       
       this.hideProgress()
