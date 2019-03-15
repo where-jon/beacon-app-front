@@ -434,6 +434,11 @@ export const getProhibitData = async (position,prohibits) => {
 }
 
 export const getProhibitMessage = async (message,prohibitData) => {
+
+  if (!APP.PROHIBIT_ALERT) {
+    return null
+  }
+
   const labelArea = i18n.tnl('label.Area')
   const labelMinor = i18n.tnl('label.minor')
   const labelZone =  i18n.tnl('label.zoneName')
