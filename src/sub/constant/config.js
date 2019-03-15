@@ -149,6 +149,7 @@ export const APP = { // 機能面に関する設定
   TELEMETRY_WITH_POWER_LEVEL: true,         // 画面上で電池レベルを使用するか否か
 
   SENSORGRAPH_WITH_DEVICE: true,             // 画面上でデバイスを使用するか否か
+  SENSORGRAPH_CSV_IMMEDIATE: false,             // csvで直近値を出力するか否か
 
   // その他
   MAX_IMAGE_SIZE: 20 * 1024 * 1024, // アップロード可能な最大イメージサイズ(Byte)
