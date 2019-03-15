@@ -77,14 +77,14 @@ export default {
       sortBy: null,
       totalRows: 0,
       fields: ViewHelper.addLabelByKey(this.$i18n, [
-        {key: 'potName', sortable: true, label: 'potName'},
-        {key: 'presentTime', sortable: true, label: 'stayTime'},
-        {key: 'absentTime', sortable: true, label: 'absentTime'},
-        {key: 'absentTimeSub', sortable: true, label: 'absentSubTime'},
+        {key: 'name', sortable: true, label: 'potName'},
+        {key: 'stayTime', sortable: true, label: 'stayTime'},
+        {key: 'under30minLost', sortable: true, label: '30minAbsent'},
+        {key: 'over30to90minLost', sortable: true, label: '30to90minAbsent'},
         {key: 'lostTime', sortable: true, label: 'lostTime'},
-        {key: 'presentRatio', sortable: true, label: 'stayRatio'},
-        {key: 'absentRatio', sortable: true, label: 'absentRatio'},
-        {key: 'absentRatioSub', sortable: true, label: 'absentSubRatio'},
+        {key: 'stayRatio', sortable: true, label: 'stayRatio'},
+        {key: 'under30minLostRatio', sortable: true, label: '30minAbsentRatio'},
+        {key: 'over30to90minLostRatio', sortable: true, label: '30to90minAbsentRatio'},
         {key: 'lostRatio', sortable: true, label: 'lostRatio'},
       ]),
     }
@@ -153,7 +153,7 @@ export default {
       return stayData.map((data) => {
         const potId = data.potId
         const potName = this.pots.find((pot) => pot.potId == data.potId).potName
-        let presentTime = 0, absentTime = 0, absentTimeSub = 0,
+        let stayTime = 0, under30minAbsentTime = 0, over30to90minAbsentTime = 0,
           lostTime = 0, presentRatio = 0, absentRatio = 0, absentRatioSub = 0, lostRatio = 0
         let isLostData = -1
 
@@ -161,28 +161,29 @@ export default {
         data.stayList.forEach((list) => {
           if (list.byId == isLostData) {
             lostTime += (absentLimit == 0 || list.period > lostLimit)? list.period: 0
-            absentTimeSub += absentSubLimit != 0?
+            over30to90minAbsentTime += absentSubLimit != 0?
               (list.period > absentLimit) && (list.period <= absentSubLimit)? list.period: 0: 0
-            absentTime += list.period <= absentLimit? list.period: 0
+            under30minAbsentTime += list.period <= absentLimit? list.period: 0
           } else {
-            presentTime += list.period
+            stayTime += list.period
           }
         })
-        presentRatio = Util.getRatio(presentTime)
-        absentRatio = Util.getRatio(absentTime)
-        absentRatioSub = Util.getRatio(absentTimeSub)
+        presentRatio = Util.getRatio(stayTime)
+        absentRatio = Util.getRatio(under30minAbsentTime)
+        absentRatioSub = Util.getRatio(over30to90minAbsentTime)
         lostRatio = Util.getRatio(lostTime)
 
         // どこまでの時間を表示するか？（分にすらならない秒とか）決めて、GETメソッド作って流し込む
         return {
-          potId, potName, 
-          presentTime: Util.convertToTime(presentTime), 
-          absentTime: Util.convertToTime(absentTime), 
-          absentTimeSub: Util.convertToTime(absentTimeSub),
+          id: potId, 
+          name: potName, 
+          stayTime: Util.convertToTime(stayTime), 
+          under30minLost: Util.convertToTime(under30minAbsentTime), 
+          over30to90minLost: Util.convertToTime(over30to90minAbsentTime),
           lostTime: Util.convertToTime(lostTime),
-          presentRatio: presentRatio + ' %',
-          absentRatio: absentRatio + ' %',
-          absentRatioSub: absentRatioSub + ' %',
+          stayRatio: presentRatio + ' %',
+          under30minLostRatio: absentRatio + ' %',
+          over30to90minLostRatio: absentRatioSub + ' %',
           lostRatio: lostRatio + ' %',
         }
       })
