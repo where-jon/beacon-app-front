@@ -116,10 +116,15 @@
             {{ row.item.powerLevel.text }}
           </span>
         </template>
+         <template slot="locationName" slot-scope="row">
+          <span :variant="theme" size="sm" :class="'mx-1 ' + row.item.blinking">
+            {{ row.item.locationName}}
+          </span>
+        </template>
         <!-- マップ表示 -->
         <template slot="mapDisplay" slot-scope="row">
           <b-button v-t="'label.mapDisplay'" :variant="theme" :disabled="row.item.noSelectedTx"
-                    size="sm" :class="'mx-1 ' + row.item.blinking" @click.stop="mapDisplay(row.item)"
+                    size="sm" class="mx-1" @click.stop="mapDisplay(row.item)"
           />
         </template>
         <!-- カテゴリ等アイコン横並び表示 -->
@@ -640,6 +645,7 @@ export default {
     border-color: #265384;
   }
   .blinking{
+    color: #ff0000;
 	-webkit-animation:blink 1.5s ease-in-out infinite alternate;
     -moz-animation:blink 1.5s ease-in-out infinite alternate;
     animation:blink 1.5s ease-in-out infinite alternate;
