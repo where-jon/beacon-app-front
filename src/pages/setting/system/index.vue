@@ -1,6 +1,6 @@
 
 <template>
-  <div>
+  <div class="container-fluid">
     <breadcrumb :items="items" />
     <div class="container">
       <b-row>

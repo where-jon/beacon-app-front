@@ -1,5 +1,5 @@
 <template>
-  <div id="txLocationSetting">
+  <div id="txLocationSetting" class="container-fluid">
     <breadcrumb :items="items" />
     <alert :message="message" />
 

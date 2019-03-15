@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container-fluid">
     <breadcrumb :items="items" :reload="true" />
     <m-list :params="params" :list="sensorList" />
   </div>
