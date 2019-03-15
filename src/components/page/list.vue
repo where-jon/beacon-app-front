@@ -23,7 +23,7 @@
                 <label v-t="'label.' + item.key" for="item.key" class="mr-2" />
                 <b-input-group>
                   <b-form-select :id="item.key" v-model="filter.extra[item.key]" :options="item.options"
-                                class="extra-filter" @change="item.change"
+                                 class="extra-filter" @change="item.change"
                   />
                 </b-input-group>
               </b-form-row>
