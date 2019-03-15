@@ -49,7 +49,7 @@ export default {
       type: Number,
       default: 0,
     },
-    style: {
+    alertStyle: {
       type: Object,
       default: () => {},
     },
