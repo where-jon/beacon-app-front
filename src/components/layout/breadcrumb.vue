@@ -31,8 +31,8 @@
           </b-dropdown-item>
         </b-nav-item-dropdown>
       </div>
-      <div v-if="reload" class="col-auto reload-button-container ">
-        <a id="reload" href="#" @click="onClickReload">
+      <div class="col-auto reload-button-container ">
+        <a v-if="reload" id="reload" href="#" @click="onClickReload">
           <i id="reloadIcon" :class="classes" title="リロード" />
         </a>
       </div>
