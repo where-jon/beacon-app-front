@@ -210,9 +210,9 @@ const getTxViewType = (txViewType) => {
  * @param {*} orgPositions 
  * @param {*} now 
  */
-export const correctPosId = (orgPositions, now) => {
+export const correctPosId = (orgPositions, now, showAllTime = false) => {
   Util.debug(now, orgPositions)
-  let positions = correctNearestPositions(orgPositions, now)
+  let positions = correctNearestPositions(orgPositions, now, showAllTime)
 
   Util.table('足切り＆単純ソート後', positions)
   positions = correctSumCount(positions)
@@ -248,7 +248,7 @@ export const correctPosId = (orgPositions, now) => {
   return positions
 }
 
-export const correctNearestPositions = (orgPositions, now) => {
+export const correctNearestPositions = (orgPositions, now, showAllTime = false) => {
   return _.chain(orgPositions).reduce((result, positions, idx) => { // MOVING_AVERAGE回の測位データを集約し、nearestをフラットにして１階層のオブジェエクト配列にする
     _.forEach(positions, (pos) => {
       _.forEach(pos.nearest, (val) => {
@@ -265,7 +265,7 @@ export const correctNearestPositions = (orgPositions, now) => {
       }
       return true
     })
-    .filter((val) => val.rssi >= APP.RSSI_MIN && val.timestamp >= now - APP.LOST_TIME) // RSSI値、指定時刻でフィルタ
+    .filter((val) => val.rssi >= APP.RSSI_MIN && (showAllTime || val.timestamp >= now - APP.LOST_TIME)) // RSSI値、指定時刻でフィルタ
     .orderBy(['btx_id', 'pos_id', 'timestamp']) // btx_id, pos_id, timestampでソート
     .value()
 }

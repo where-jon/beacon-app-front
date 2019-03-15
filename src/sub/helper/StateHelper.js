@@ -33,23 +33,41 @@ export const getSensorIdNames = (exbSensorList) => {
   return names.map((name) => name)
 }
 
-export const getTxIdName = (tx) => {
+export const getDeviceIdName = (device, ignorePrimaryKey = false) => {
+  if(device.exbId){
+    return APP.EXB_WITH_EXBID && !ignorePrimaryKey? 'exbId': APP.EXB_WITH_DEVICE_NUM? 'deviceNum': APP.EXB_WITH_DEVICE_ID? 'deviceId': APP.EXB_WITH_DEVICE_IDX? 'deviceIdX': 'exbId'
+  }
+  if(device.txId){
+    return APP.TX_WITH_TXID && !ignorePrimaryKey? 'txId': APP.TX_BTX_MINOR != 'minor'? 'btxId': 'minor'
+  }
+  return null
+}
+
+export const getDeviceId = (device) => {
+  const id = getDeviceIdName(device)
+  if(id){
+    return device[id]
+  }
+  return ''
+}
+
+export const getTxIdName = (tx, idOnly = false) => {
   if(!tx){
     return null
   }
   const id = APP.TX_WITH_TXID && tx.txId? tx.txId:
     APP.TX_BTX_MINOR != 'minor' && tx.btxId? tx.btxId:
       APP.TX_BTX_MINOR == 'minor' && tx.minor? tx.minor: null
-  return id? id + '(' + Util.getValue(tx, 'txName', '') + ')': null
+  return idOnly? id: id? `${id}(${Util.getValue(tx, 'txName', '')})`: null
 }
 
-export const getTxIdNames = (potTxList) => {
+export const getTxIdNames = (potTxList, idOnly = false) => {
   if(!Util.hasValue(potTxList)){
     return null
   }
   const names = []
   potTxList.forEach((potTx) => {
-    names.push(getTxIdName(potTx.tx))
+    names.push(getTxIdName(potTx.tx, idOnly))
   })
   return names.map((name) => name)
 }
@@ -162,6 +180,7 @@ const appStateConf = {
           zoneName: location? Util.getValue(location, 'locationZoneList.0.zone.zoneName', null): null,
           isAbsentZone: location? Util.getValue(location, 'locationZoneList.0.zone.zoneCategoryList.0.category.categoryName', false) === SYSTEM_ZONE_CATEGORY_NAME.ABSENT: false,
           sensorIdNames: getSensorIdNames(exb.exbSensorList),
+          zoneCategoryId: location? Util.getValue(location, 'locationZoneList.0.zone.zoneCategoryList.0.category.categoryId', null): null,
         }
       })
     }
@@ -171,6 +190,8 @@ const appStateConf = {
     sort: APP.TX_WITH_TXID? 'txId': APP.TX_BTX_MINOR != 'minor'? 'btxId': 'minor',
     beforeCommit: (arr) => {
       return arr.map((tx) => {
+        const location = tx.location
+        const area = location? location.area: null
         return {
           ...tx,
           displayName: Util.getValue(tx, 'potTxList.0.pot.displayName', null),
@@ -183,7 +204,13 @@ const appStateConf = {
           sensor: i18n.tnl('label.' + Util.getValue(tx, 'txSensorList.0.sensor.sensorName', 'normal')),
           dispPos: tx.disp & 1,
           dispPir: tx.disp & 2,
-          dispAlways: tx.disp & 4
+          dispAlways: tx.disp & 4,
+          locationName: location? location.locationName: null,
+          posId: location? location.posId: null,
+          areaName: area? area.areaName: null,
+          areaId: area? area.areaId: null,
+          zoneId: location? Util.getValue(location, 'locationZoneList.0.zone.zoneId', null): null,
+          zoneCategoryId: location? Util.getValue(location, 'locationZoneList.0.zone.zoneCategoryList.0.category.categoryId', null): null,
         }
       })
     }
@@ -213,6 +240,7 @@ const appStateConf = {
         ...val,
         txIds: getTxIds(val.potTxList),
         txIdNames: getTxIdNames(val.potTxList),
+        txSortIds: getTxIdNames(val.potTxList, true),
         txParams: getTxParams(val.potTxList),
         txName: val.txId? Util.getValue(val, 'tx.txName', '') : null,
         btxId: val.txId? Util.getValue(val, 'tx.btxId', '') : null,
@@ -350,12 +378,15 @@ export const load = async (target, force) => {
   } 
   let {path, sort, beforeCommit} = appStateConf[target]
   let arr = store.state.app_service[target]
-  if (!arr || arr.length == 0 || force) {
+  const expiredKey = `${target}Expired`
+  if (!arr || arr.length == 0 || force || Util.isExpired(store.state.app_service[expiredKey])) {
     arr = await AppServiceHelper.fetchList(path, sort)
     if (beforeCommit) {
       arr = beforeCommit(arr)
     }
     store.commit('app_service/replaceAS', {[target]:arr})
+    const expiredTime = (new Date()).getTime() + APP.STATE_EXPIRE_TIME
+    store.commit('app_service/replaceAS', {[expiredKey]: expiredTime})
   }
 }
 
@@ -476,4 +507,31 @@ export const getOptionsFromState = (key, textField, notNull, filterCallback) => 
   Util.debug('empty add: ', options)
 
   return options
+}
+
+export const sortCompareArray = (aAry, bAry) => {
+  if(!Util.hasValue(aAry) && !Util.hasValue(bAry)){
+    return 0
+  }
+  if(!Util.hasValue(aAry)){
+    return -1
+  }
+  if(!Util.hasValue(bAry)){
+    return 1
+  }
+
+  const max = aAry.length < bAry.length? bAry.length: aAry.length
+  for(let idx = 0; idx < max; idx++){
+    if(aAry.length <= idx){
+      return -1
+    }
+    if(bAry.length <= idx){
+      return 1
+    }
+    if(aAry[idx] == bAry[idx]){
+      continue
+    }
+    return aAry[idx] < bAry[idx]? -1: 1
+  }
+  return 0
 }

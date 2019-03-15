@@ -59,6 +59,7 @@ import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
+import * as HtmlUtil from '../../../sub/util/HtmlUtil'
 import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
@@ -103,6 +104,9 @@ export default {
   created() {
     this.initAreaNames()
     this.initCategoryNames()
+  },
+  mounted(){
+    HtmlUtil.setCustomValidationMessage()
   },
   methods: {
     reset () {

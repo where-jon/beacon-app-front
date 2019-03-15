@@ -13,7 +13,7 @@
             </b-form-group>
             <b-form-group v-if="showMinorHead" v-show="showTx('minor')">
               <label v-t="'label.minor'" />
-              <input v-model="form.minor" :readonly="!isEditable" :required="showTx('minor')" type="number" min="0" max="65535" class="form-control">
+              <input v-model="form.minor" :readonly="!isEditable" :required="requiredMinor" type="number" min="0" max="65535" class="form-control">
             </b-form-group>
             <b-form-group>
               <label v-t="'label.type'" />
@@ -37,7 +37,7 @@
             </b-form-group>
             <b-form-group v-if="showMinorMid" v-show="showTx('minor')">
               <label v-t="'label.minor'" />
-              <input v-model="form.minor" :readonly="!isEditable" :required="showTx('minor')" type="number" min="0" max="65535" class="form-control">
+              <input v-model="form.minor" :readonly="!isEditable" :required="requiredMinor" type="number" min="0" max="65535" class="form-control">
             </b-form-group>
             <b-form-group>
               <label v-t="'label.txName'" />
@@ -61,7 +61,7 @@
                 <span v-text="$i18n.tnl('label.dispPir')" />
               </b-form-checkbox>
             </b-form-group>
-            <b-form-group>
+            <b-form-group v-if="isShown('TX_WITH_DISP_ALWAYS')">
               <b-form-checkbox id="dispAlways" v-model="form.dispAlways" :value="4" :unchecked-value="0">
                 <span v-text="$i18n.tnl('label.dispAlways')" />
               </b-form-checkbox>
@@ -90,6 +90,7 @@
 import { mapState } from 'vuex'
 import _ from 'lodash'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import * as HtmlUtil from '../../../sub/util/HtmlUtil'
 import * as Util from '../../../sub/util/Util'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
@@ -98,7 +99,7 @@ import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import { APP } from '../../../sub/constant/config.js'
-import { CATEGORY } from '../../../sub/constant/Constants'
+import { CATEGORY, SENSOR } from '../../../sub/constant/Constants'
 
 export default {
   components: {
@@ -151,6 +152,9 @@ export default {
     showMinorHead() {
       return !APP.TX_WITH_TXID && APP.TX_BTX_MINOR == 'minor'
     },
+    requiredMinor() {
+      return this.showTx('minor') && this.form.sensorId != SENSOR.TEMPERATURE
+    },
     ...mapState('app_service', [
       'tx',
       'categories',
@@ -165,6 +169,7 @@ export default {
     StateHelper.load('sensor')
     StateHelper.load('category')
     StateHelper.load('group')
+    HtmlUtil.setCustomValidationMessage()
   },
   methods: {
     showTx(col) {
@@ -178,8 +183,8 @@ export default {
       }
       return true
     },
-    afterCrud(){
-      StateHelper.setForceFetch('pot', true)
+    async afterCrud(){
+      await StateHelper.load('pot', true)
     },
     async save() {
       let txId = Util.hasValue(this.form.txId)? this.form.txId: -1
@@ -237,7 +242,7 @@ export default {
       }
       newPot.potCd = this.form.potCd || newPot.potCd
       newPot.displayName = this.form.displayName || newPot.displayName
-      newPot.description = this.form.description || newPot.description
+      newPot.description = this.form.description != null? this.form.description: newPot.description
 
       newPot.potCategoryList = this.form.categoryId? [ {potCategoryPK: {categoryId: this.form.categoryId}} ]: null
       const category = _.find(this.categories, (cat) => cat.categoryId == this.form.categoryId)

@@ -1,12 +1,102 @@
-import { DISCOMFORT, SENSOR } from '../constant/Constants'
+import { DISCOMFORT, SENSOR, THERMOHUMIDITY } from '../constant/Constants'
 import { APP, DISP } from '../constant/config'
 import * as Util from '../util/Util'
 import * as ChartHelper from './ChartHelper'
+import { addLabelByKey } from './ViewHelper'
 import Chart from 'chart.js'
 import _ from 'lodash'
 
 let chart = null
 let subChart = null
+
+export const getThermoPatternConfig = () => {
+  if(Util.hasValue(DISP.THERMOH_PATTERN)){
+    return DISP.THERMOH_PATTERN.map((pattern) => {
+      const patternRet = {}
+      pattern.split(' ').forEach((val) => {
+        const topChar = val.slice(0, 1)
+        if(topChar == '#'){
+          patternRet.color = val
+        }
+        else if(!isNaN(Number(topChar))){
+          patternRet.base = Number(val)
+        }
+        else if(topChar == '$'){
+          patternRet.flash = DISP[`THERMON_FLASH_${val.slice(1)}`]
+        }
+        else if(val.toLowerCase() == 'or'){
+          patternRet.or = true
+        }
+      })
+      if(!patternRet.color){
+        patternRet.color = '#000000'
+      }
+      return patternRet
+    }).sort((a, b) => a.base == null? 1: b.base == null? -1: a.base - b.base)
+  }
+  return []
+}
+
+export const getThermohumidityIconInfo = (thermohumidityIconConfig, temperature, humidity) => {
+  const point = DISP.THERMOH_CALC == THERMOHUMIDITY.CALC.TEMPERATURE? temperature: calcDiscomfortIndex(temperature, humidity)
+  return thermohumidityIconConfig.find((conf, idx) => {
+    if(thermohumidityIconConfig.length <= idx + 1){
+      return true
+    }
+    if(conf.base == null){
+      return false
+    }
+    return conf.or? point <= conf.base: point < conf.base
+  })
+}
+
+export const getHumidityPatternConfig = () => {
+  if(Util.hasValue(DISP.HUMIDITY_PATTERN)){
+    const ret = {less: [], more: []}
+    DISP.HUMIDITY_PATTERN.map((pattern) => {
+      const patternRet = {}
+      pattern.split(' ').forEach((val) => {
+        const v = val.toLowerCase()
+        if(['more', 'less'].includes(v)){
+          patternRet.label = v
+        }
+        else if(!isNaN(Number(v))){
+          patternRet.base = Number(v)
+        }
+      })
+      return patternRet
+    }).forEach((pattern) => {
+      if(pattern.label == 'less'){
+        ret.less.push(pattern)
+      }
+      if(pattern.label == 'more'){
+        ret.more.push(pattern)
+      }
+    })
+    ret.less.sort((a, b) => a.base == null? 1: b.base == null? -1: a.base - b.base)
+    ret.more.sort((a, b) => a.base == null? 1: b.base == null? -1: b.base - a.base)
+    return ret
+  }
+  return []
+}
+
+export const getHumidityInfo = (humidityPatternConfig, humidity) => {
+  const less = humidityPatternConfig.less.find((conf) => {
+    if(conf.base == null){
+      return false
+    }
+    return humidity <= conf.base
+  })
+  if(less){
+    return less
+  }
+  return humidityPatternConfig.more.find((conf) => {
+    if(conf.base == null){
+      return false
+    }
+    return humidity >= conf.base
+  })
+}
 
 export const getDiscomfortColor = (temperature, humidity) => {
   let discomfort = getDiscomfort(temperature, humidity)
@@ -19,6 +109,10 @@ export const getDiscomfortColor = (temperature, humidity) => {
     return DISP.DISCOMFORT_HOT
   }
 }
+
+export const availableSensorAll = () =>  _([...APP.EXB_SENSOR, ...APP.TX_SENSOR]).sort().uniqWith(_.isEqual).value()
+
+export const onlyOne = () => availableSensorAll().length == 1 && availableSensorAll()[0]
 
 export const getDiscomfort = (temperature, humidity) => {
   let di = calcDiscomfortIndex(temperature, humidity)
@@ -277,4 +371,77 @@ export const setStress = (positions, sensors) => {
     let sensor = sensors.find((sensor) => sensor.id == position.btxId)
     return sensor? {...position, bg: getStressBg(sensor.stress)}: position
   })
+}
+
+export const getMagnetStateKey = (i18n, magnetState) => i18n.tnl(`label.${magnetState === SENSOR.MAGNET_STATUS.ON? 'using': 'notUse'}`)
+
+export const getFields1 = (i18n) => {
+  return addLabelByKey(i18n, [
+    {key: 'sensorDt', sortable: true, label:'dt'},
+    {key: 'txName', sortable: true },
+    APP.EXB_WITH_DEVICE_NUM? {key: 'deviceNum', sortable: true }: null,
+    APP.EXB_WITH_DEVICE_ID? {key: 'deviceId', sortable: true }: null,
+    APP.EXB_WITH_DEVICE_IDX? {key: 'deviceIdX', sortable: true }: null,
+    {key: 'locationName', label:'locationZoneName', sortable: true,},
+    {key: 'posId', label:'posId', sortable: true,},
+    {key: 'areaName', label:'area', sortable: true,},
+    {key: 'humidity', sortable: true},
+    {key: 'temperature', sortable: true},
+  ])
+}
+
+export const getFields2 = (i18n) =>{
+  return addLabelByKey(i18n, [
+    {key: 'sensorDt', sortable: true, label:'dt'},
+    APP.EXB_WITH_DEVICE_NUM? {key: 'deviceNum', sortable: true }: null,
+    APP.EXB_WITH_DEVICE_ID? {key: 'deviceId', sortable: true }: null,
+    APP.EXB_WITH_DEVICE_IDX? {key: 'deviceIdX', sortable: true }: null,
+    {key: 'locationName', label:'locationZoneName', sortable: true,},
+    {key: 'posId', label:'posId', sortable: true,},
+    {key: 'areaName', label:'area', sortable: true,},
+    {key: 'count', label:'numUsers', sortable: true},
+  ])
+}
+
+export const getFields5 = (i18n) => {
+  return addLabelByKey(i18n, [
+    {key: 'sensorDt', sortable: true, label:'dt'},
+    {key: 'txName', sortable: true },
+    {key: 'major', sortable: true },
+    {key: 'minor', sortable: true },
+    {key: 'high', label:'h_blood_pressure', sortable: true},
+    {key: 'low', label:'l_blood_pressure', sortable: true},
+    {key: 'beat', label:'heart_rate', sortable: true},
+    {key: 'step', label:'step', sortable: true},
+    {key: 'down', label:'down_count', sortable: true},
+  ])
+}
+
+export const getFields6 = (i18n) => {
+  return addLabelByKey(i18n, [
+    {key: 'sensorDt', sortable: true, label:'dt'},
+    {key: 'txName', sortable: true },
+    {key: 'major', sortable: true },
+    {key: 'minor', sortable: true },
+    {key: 'state', sortable: true},
+  ])
+}
+
+export const getFields = (sensorId, i18n) => {
+  if(sensorId == SENSOR.TEMPERATURE){
+    return getFields1(i18n)
+  }
+  if(sensorId == SENSOR.PIR){
+    return getFields2(i18n)
+  }
+  if(sensorId == SENSOR.THERMOPILE){
+    return getFields2(i18n)
+  }
+  if(sensorId == SENSOR.MEDITAG){
+    return getFields5(i18n)
+  }
+  if(sensorId == SENSOR.MAGNET){
+    return getFields6(i18n)
+  }
+  return getFields1(i18n)
 }

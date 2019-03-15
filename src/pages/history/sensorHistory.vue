@@ -61,6 +61,7 @@ import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import * as StateHelper from '../../sub/helper/StateHelper'
+import * as SensorHelper from '../../sub/helper/SensorHelper'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
@@ -69,7 +70,6 @@ import { getTheme } from '../../sub/helper/ThemeHelper'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import { SENSOR } from '../../sub/constant/Constants'
 import { APP, APP_SERVICE } from '../../sub/constant/config.js'
-import moment from 'moment'
 import _ from 'lodash'
 
 export default {
@@ -90,10 +90,10 @@ export default {
       },
       viewList: [],
       fields: [],
-      fields1: this.getFields1(),
-      fields2: this.getFields2(),
-      fields5: this.getFields5(),
-      fields6: this.getFields6(),
+      fields1: SensorHelper.getFields1(this.$i18n),
+      fields2: SensorHelper.getFields2(this.$i18n),
+      fields5: SensorHelper.getFields5(this.$i18n),
+      fields6: SensorHelper.getFields6(this.$i18n),
       currentPage: 1,
       perPage: 20,
       limitViewRows: 100,
@@ -112,16 +112,20 @@ export default {
     ...mapState('app_service', [
       'sensors'
     ]),
-    sensorOptions() {
+    sensorOptions() { // TODO: refactoring duplicate 
       return StateHelper.getOptionsFromState('sensor', 
         sensor => this.$i18n.tnl('label.' + sensor.sensorName),
         true,
-        sensor => sensor.sensorId != SENSOR.LED
+        sensor => {
+          return SensorHelper.availableSensorAll().includes(sensor.sensorId) 
+            && sensor.sensorId != SENSOR.LED && sensor.sensorId != SENSOR.BUTTON
+        }
       )
     },
   },
   async created() {
-    this.form.sensorId = 1
+    await StateHelper.load('sensor')
+    this.form.sensorId = Util.hasValue(this.sensorOptions)? this.sensorOptions[0].value: null
     const date = new Date()
     this.form.datetimeFrom = Util.getDatetime(date, {hours: -1})
     this.form.datetimeTo = Util.getDatetime(date)
@@ -190,13 +194,16 @@ export default {
     },
     editSensorHistoryData(senHist){
       const d = new Date(senHist.sensorDt)
-      senHist.sensorDt = moment(d.getTime()).format('YYYY/MM/DD HH:mm:ss')
+      senHist.sensorDt = Util.formatDate(d.getTime())
 
       let aTx = _.find(this.txs, (tx) => { return tx.txId == senHist.txId })
       if (senHist.txId != null && aTx) {
         senHist.txName = aTx.txName
         senHist.major = aTx.major
         senHist.minor = aTx.minor
+        senHist.locationName = aTx.locationName
+        senHist.posId = aTx.posId
+        senHist.areaName = aTx.areaName
       }
 
       let aExb = _.find(this.exbs, (exb) => { return exb.exbId == senHist.exbId })
@@ -224,7 +231,7 @@ export default {
         senHist.down = senHist.value.down
       }
       if (senHist.sensorId == SENSOR.MAGNET) {
-        let labelKey = (senHist.value.magnet === SENSOR.MAGNET_STATUS.ON)? 'notUse': 'using'
+        let labelKey = (senHist.value.magnet === SENSOR.MAGNET_STATUS.ON)? 'using': 'notUse'
         senHist.state = this.$i18n.tnl('label.' + labelKey)
       }
     },

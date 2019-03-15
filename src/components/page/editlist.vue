@@ -67,6 +67,7 @@ import commonmixinVue from '../mixin/commonmixin.vue'
 import editmixinVue from '../mixin/editmixin.vue'
 import settingmixinVue from '../mixin/settingmixin.vue'
 import alert from '../parts/alert.vue'
+import * as HtmlUtil from '../../sub/util/HtmlUtil'
 
 export default {
   components: {
@@ -107,6 +108,7 @@ export default {
   },
   mounted() {
     this.$parent.$options.methods.fetchData.apply(this.$parent)
+    this.$nextTick(() => HtmlUtil.setCustomValidationMessage())
   },
   methods: {
     clearValue(){
@@ -134,6 +136,7 @@ export default {
     async showForm(isShow){
       this.useRegistForm = isShow
       await this.$parent.$options.methods.resetNewForm.call(this.$parent, isShow)
+      this.$nextTick(() => HtmlUtil.setCustomValidationMessage())
     },
     onRegistSubmit(evt){
       this.onSubmit(evt)

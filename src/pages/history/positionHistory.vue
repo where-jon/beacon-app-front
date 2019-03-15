@@ -84,7 +84,6 @@ import * as Util from '../../sub/util/Util'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import { APP } from '../../sub/constant/config.js'
-import moment from 'moment'
 import { APP_SERVICE } from '../../sub/constant/config'
 
 
@@ -192,18 +191,16 @@ export default {
         }
         for (var posHist of fetchList) {
           const d = new Date(posHist.positionDt)
-          posHist.positionDt = moment(d.getTime()).format('YYYY/MM/DD HH:mm:ss')
-          let aTx = _.find(this.txs, (tx) => { return tx.txId == posHist.txId })
-          posHist.txName = aTx.txName
-          let aExb = _.find(this.exbs, (exb) => { return exb.exbId == posHist.exbId })
-          posHist.deviceNum = aExb.deviceNum
-          posHist.deviceId = aExb.deviceId
-          posHist.deviceIdX = aExb.deviceIdX
-          posHist.locationName = aExb.locationName
-          posHist.posId = aExb.posId
-          posHist.areaName = aExb.areaName
-          posHist.x = aExb.x
-          posHist.y = aExb.y
+          posHist.positionDt = Util.formatDate(d.getTime())
+          posHist.txName = Util.getValue(posHist, 'tx.txName', '')
+          posHist.deviceId = Util.getValue(posHist, 'exb.deviceId', '')
+          posHist.deviceNum =  Util.getValue(posHist, 'exb.deviceId', 0) - this.$store.state.currentRegion.deviceOffset
+          posHist.deviceIdX = Util.getValue(posHist, 'exb.deviceId', 0).toString(16).toUpperCase()
+          posHist.locationName = Util.getValue(posHist, 'exb.location.locationName', '')
+          posHist.posId = Util.getValue(posHist, 'exb.location.posId', '')
+          posHist.areaName = Util.getValue(posHist, 'exb.location.area.areaName', '')
+          posHist.x = Util.getValue(posHist, 'exb.location.x', '')
+          posHist.y = Util.getValue(posHist, 'exb.location.y', '')
           this.viewList.push(posHist)
         }
         this.totalRows = this.viewList.length

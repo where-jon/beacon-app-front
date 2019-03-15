@@ -52,6 +52,7 @@ export default {
             {key: 'minor', label:'minor', sortable: true, tdClass: 'action-rowdata' }: null,
           APP.POT_WITH_POTCD ? {key: 'potCd', label: 'potCd', sortable: true, tdClass: 'action-rowdata'} : null,
           {key: 'potName', label: 'name', sortable: true, tdClass: 'action-rowdata'},
+          APP.POS_LIST_WITH_TEL? {key: 'tel', sortable: true, tdClass: 'action-rowdata' }: null,
           MenuHelper.useMaster('category') && APP.TX_WITH_CATEGORY ? {key: 'categoryName', label: 'category', sortable: true, tdClass: 'action-rowdata'} : null,
           MenuHelper.useMaster('group') && APP.TX_WITH_GROUP ? {key: 'groupName', label: 'group', sortable: true, tdClass: 'action-rowdata'} : null,
           {key: 'state', sortable: true, tdClass: 'action-rowdata'},
@@ -90,8 +91,8 @@ export default {
         await StateHelper.load('tx')
         await StateHelper.load('exb')
         await StateHelper.load('prohibit')
-        await this.storePositionHistory()
-        let positions = this.getPositions()
+        await this.storePositionHistory(0, true)
+        let positions = this.getPositions(true)
         let prohibitData = await StateHelper.getProhibitData(this.getPositions(),this.prohibits)
         this.message = await StateHelper.getProhibitMessage(this.message,prohibitData)
 
@@ -104,6 +105,7 @@ export default {
             txId: Util.getValue(pos, 'tx.txId' , null),
             potCd: Util.getValue(pos, 'tx.potTxList.0.pot.potCd', null),
             potName: Util.getValue(pos, 'tx.potTxList.0.pot.potName', Util.getValue(pos, 'tx.txName', null)),
+            tel: Util.getValue(pos, 'tx.potTxList.0.pot.extValue.tel', null),
             categoryName: Util.getValue(pos, 'tx.category.categoryName', null),
             groupName: Util.getValue(pos, 'tx.group.groupName', null),
             areaName: Util.getValue(pos, 'exb.areaName', null),

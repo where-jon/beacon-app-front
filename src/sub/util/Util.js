@@ -23,6 +23,11 @@ export const getByteLength = (str) => encodeURI(str == null? '': str).replace(/%
 
 export const numberRange = (start, end) => new Array(end - start + 1).fill().map((d, i) => {return {key: i + start}})
 
+export const floorVal = (val, decimalPoint = 2) => {
+  const operate = Math.pow(10, decimalPoint)
+  return Math.floor(val * operate) / operate
+}
+
 export const formatDateRange = (date, by) => {
   const zMonth = `00${date.getMonth() + 1}`.slice(-2)
   const zDate = `00${date.getDate()}`.slice(-2)
@@ -74,9 +79,15 @@ export const isAndroid = () => /(Android)/.test(navigator.userAgent)
 
 export const isAndroidOrIOS = () => isIos() || isAndroid()
 
-export const formatDate = (timestamp, format = 'YYYY/MM/DD HH:mm:ss') => moment(timestamp).format(format)
+export const formatDate = (timestamp, format = 'YYYY/MM/DD HH:mm:ss') => timestamp? moment(timestamp).format(format): ''
 
 export const sanitize = (str) => str && str.replace? str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#x27;'): str
+
+export const zeroPad = (num, length) => ('0'.repeat(length) + num).slice(-length)
+
+export const range = (start, stop, step = 1) => Array(Math.ceil((stop + step - start) / step)).fill(start).map((start, i) => start + i * step)
+
+export const isExpired = (time) => time != null? time < (new Date()).getTime(): false
 
 export const cutOnLong = (val, max) => {
   if (!val || !max) {
@@ -85,6 +96,26 @@ export const cutOnLong = (val, max) => {
 
   if (typeof val == 'string' && val.length > max) {
     return val.substr(0, max) + '...'
+  }
+  return val
+}
+
+export const cutOnLongByte = (val, max) => {
+  if (!val || !max) {
+    return val
+  }
+
+  if (typeof val == 'string' && val.length > max) {
+    const parts = val.split('')
+    let cnt = 0
+    parts.forEach((part) => {
+      const length = getByteLength(part) > 1? 2: 1
+      if(0 <= max - length){
+        cnt++
+        max -= length
+      }
+    })
+    return `${val.substr(0, cnt)}...`
   }
   return val
 }
@@ -130,6 +161,15 @@ export const colorCd4display = (obj, defaultColor = '#000000') => {
   }
   let color = obj.hex? obj.hex: obj
   return '#' + color.replace('#', '').slice(0, 6)
+}
+
+export const colorCdHex2Decimal = (hex) => {
+  const hexCd = hex.replace('#', '')
+  return [
+    parseInt(hexCd.slice(0, 2), 16),
+    parseInt(hexCd.slice(2, 4), 16),
+    parseInt(hexCd.slice(4, 6), 16)
+  ]
 }
 
 export const isArray = (obj) => Object.prototype.toString.call(obj) === '[object Array]'
@@ -398,3 +438,7 @@ export const getAdjustFontSize = (getFontSize, isBold = false) => {
   const size = Math.round(getFontSize())
   return `${isBold? 'bold ': ''}${(size < FONT.SIZE.MIN? FONT.SIZE.MIN: size)}${FONT.TYPE}`
 }
+
+export const getFileName = key => key.slice(key.lastIndexOf('/') + 1, key.lastIndexOf('.'))
+export const isImageFile = key => hasValue(key) && /^.*\.(png$)|(jpg$)|(jpeg$)|(gif$)$/.test(key) && !/^.*(__MACOSX\/).*$/.test(key) && !/^\..*/.test(getFileName(key))
+export const isResponsiveMode = () =>  window.innerWidth < 768

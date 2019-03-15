@@ -15,6 +15,9 @@ export const APP = { // 機能面に関する設定
   LOGIN_MODE: LOGIN_MODE.APP_SERVICE, // ログインモード(なし、ローカル、AppService)
   SAAS_DOMAIN: '.saas.',
 
+  SHOW_MENU_LINK: '',
+  SHOW_MENU_LINK_URL: '',
+
   // ページ遷移設定
   TOP_PAGE: '/main/position', // トップページパス　must not be / otherwise recursive infinitely
   LOGIN_PAGE: '/login', // ログインページパス　if no login then /
@@ -24,8 +27,8 @@ export const APP = { // 機能面に関する設定
   TIMEOUT: 60 * 60 * 1000, // session timeout(using local storage)
   AUTO_RELOAD: 60000, // 自動リロード間隔(ミリ秒)
 
-  TRANSPARENT_TIME: 1 * 1000, // 半透明：現在時刻から経過した段階で半透明（ミリ秒）
-  LOST_TIME: 3 * 1000, // 消失とみなす時間（ミリ秒）
+  TRANSPARENT_TIME: 60 * 1000, // 半透明：現在時刻から経過した段階で半透明（ミリ秒）
+  LOST_TIME: 10 * 60 * 1000, // 消失とみなす時間（ミリ秒）
   UNDETECT_TIME: 60 * 60 * 1000, // 未検知とみなす時間（ミリ秒）
   GATEWAY: {
     LOST_TIME: 30 * 60 * 1000, // 消失とみなす時間（ミリ秒）
@@ -37,15 +40,18 @@ export const APP = { // 機能面に関する設定
   },
 
   DOWN_RED_TIME: 60000, // MEDiTAG使用時：転倒時赤枠の表示時間
-  TEMPERATURE_LINE_HOUR_START: 8,  // 温湿度グラフの開始時間
-  TEMPERATURE_LINE_HOUR_END: 21,  // 温湿度グラフの終了時間
+  TEMPERATURE_LINE_HOUR_START: 0,  // 温湿度グラフの開始時間
+  TEMPERATURE_LINE_HOUR_END: 24,  // 温湿度グラフの終了時間
     
+  STATE_EXPIRE_TIME: 10 * 60 * 1000, // マスタキャッシュ有効時間(ミリ秒)
+
   // 測位関連設定
   USE_POSITION_HISTORY: true, // 位置情報にT_POSITION_HISTORYを使う
   TX_POS_ONE_TO_ONE: false, // 1つの場所に1TXのみ存在可能
-  RSSI_MIN: -67, // RSSI下限値
+  RSSI_MIN: -99, // RSSI下限値
   MOVING_AVERAGE: 5, // 5回分移動平均
   USE_MULTI_POSITIONING: false, // ３点測位を使う
+  EXSERVER: false, // EXServerを使う
   
   // 機能
   USE_THERMOPILE: true, // サーモパイルセンサーの使用
@@ -56,6 +62,9 @@ export const APP = { // 機能面に関する設定
   SHOW_MAGNET_ON_PIR: false, // 人感センサ画面でマグネットセンサを表示
   MAGNET_ON_IS_USED: true, // マグネットセンサーONのとき使用中とするか
 
+  // ヒートマップ
+  HEATMAP_USE_INDIVIDUAL: false, // 個人プルダウンの表示
+
   // 将来実装予定項目 START
   LOG_KEEP_TIME: 30,
   PASSWORD_CHANGEABLE: true,
@@ -63,8 +72,14 @@ export const APP = { // 機能面に関する設定
   UPDATE_POSITION_EFFECT: true,
   // 将来実装予定項目 END
 
+  // 位置表示(一覧)
+  POS_LIST_WITH_TEL: false, // 位置表示(一覧)に電話番号を表示
+
+  // 温湿度
+  USE_HUMIDITY_ALERT: true, // 湿度アラートの使用
+
   // TX関連設定
-  TX_SENSOR: [5,6,7], // TXのタイプに設定可能なセンサーID
+  TX_SENSOR: [1,5,6,7], // TXのタイプに設定可能なセンサーID
   TX_WITH_TXID: false, // 画面上TXIDを使用するか否か
   TX_WITH_CATEGORY: true, // TX管理で個体.カテゴリを表示
   TX_WITH_GROUP: false, // TX管理で個体.グループを表示
@@ -74,6 +89,7 @@ export const APP = { // 機能面に関する設定
   TX_MAJOR_REQUIRED: false, // majorを必須にする ※サーバでも要設定
   TX_BTX_MINOR: 'both', // both:両方表示し、別々に設定、minor/btxId:片方のみ表示し、保存の際同一の値を設定
   TX_WITH_LOCATION: true, // TXを固定位置表示する（TX管理画面に影響）
+  TX_WITH_DISP_ALWAYS: false, // TX管理で常時表示を表示
 
   // EXB関連設定
   EXB_SENSOR: [1,2,3,4], // EXBのタイプに設定可能なセンサーID
@@ -102,7 +118,7 @@ export const APP = { // 機能面に関する設定
   POT_WITH_GROUP: false,      // グループ使用　use group on pot master
   POT_WITH_CATEGORY: true,   // カテゴリ使用　use category on pot master
   POT_WITH_USER: true,        // ユーザ使用
-  POT_MULTI_TX: true,         // 複数Tx使用
+  POT_MULTI_TX: false,         // 複数Tx使用
 
   POT_TX_MAX: 2,   // 所持Tx最大数
 
@@ -121,6 +137,10 @@ export const APP = { // 機能面に関する設定
   SUM_AXIS_FILL_GAP: 2, // 滞在時間集計の横軸で0件項目を表示(0:しない,1:する,2:月日の場合検索期間すべて表示)
   SUM_UNIT_HOUR: 5 * 60 * 60, // 指定秒を軸単位の最大値が超えた場合、滞在時間集計の表示を時間単位で表示する
   SUM_UNIT_MINUTE: 20 * 60,  // 指定秒を軸単位の最大値が超えた場合、滞在時間集計の表示を分単位で表示する
+
+  // Tx状態監視
+  POSITION_WITH_BTXID: true, // btxIdを表示する
+  POSITION_SENSOR: [], // マージするセンサ情報のIDリスト
 
   // その他
   MAX_IMAGE_SIZE: 20 * 1024 * 1024, // アップロード可能な最大イメージサイズ(Byte)
@@ -150,6 +170,8 @@ export const EXCLOUD = {
   GATEWAY_URL: '/core/excloud/gateway?_=',
   TELEMETRY_URL: '/core/excloud/telemetry?_=',
   SENSOR_URL: '/core/excloud/sensor/{id}?_=',
+  DL_LIST_URL: '/core/excloud/dllist/{type}/{yyyymm}?_=',
+  DL_URL: '/core/excloud/dl/{type}/{yyyymmdd}?_=',
   LED_URL: '/core/excloud/led?_=',
   POSITION_HISTORY_FETCH_URL: '/core/positionHistory/fetch?_=',
 }
@@ -196,6 +218,16 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   DISCOMFORT_HOT: '#fc5800', // 温湿度表示時の不快指数Hot時の背景色
   DISCOMFORT_COMFORT: '#15db75', // 温湿度表示時の不快指数Comfort時の背景色
   DISCOMFORT_COLD: '#7da6e8', // 温湿度表示時の不快指数Cold時の背景色
+  THERMOH_CALC: 2, // アイコン状態算出方法(1:不快指数 2:温度)
+  THERMON_FLASH_WARN: 1000, // 警告アイコン点滅周期(ミリ秒)
+  THERMON_FLASH_DANGER: 500, // 危険アイコン点滅周期(ミリ秒)
+  THERMON_ALPHA: 1, // アルファ値(0:透明～1:不透明)
+  THERMOH_PATTERN: ['19 #5b9bd5', '25 #6eb290', '26 #ffd966', '27 #ff9966', '31 #ff5050', '32 #ffd966 $WARN', '#ff2525 $DANGER'], // 温度アイコンパターン（順不同。数値：閾値。先頭が#：カラーコード。先頭が$：点滅パターン。OR：閾値に同値を含む。）
+  HUMIDITY_PATTERN: ['LESS 30', 'LESS 50', 'MORE 85'], // 湿度アラートパターン（順不同。数値：閾値。LESS：閾値以下の場合に警告。MORE：閾値以上の場合に警告）
+
+  TEMPERATURE_MAX: 20,  // 温湿度ヒートマップ最大値
+  TEMPERATURE_MIN: 0,   // 温湿度ヒートマップ最小値
+  TEMPERATURE_RADIUS: 150,   // 温湿度ヒートマップ直径
 
   TEMPERATURE_LINE_COLOR: '#fc5800',// 温度グラフの線色
   HUMIDITY_LINE_COLOR: '#7da6e8',// 湿度グラフの線色
@@ -241,14 +273,23 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   },
   
   TXDETAIL_DIFF: 25, // TX詳細の表示位置差分（ポップアップ左端から吹き出しの中央までの距離）
+  TXDETAIL_POPUP_SIZE: 211, // TX詳細表示ポップアップの高さ
+  TXSENSOR_POPUP_SIZE: 165, // TXセンサー表示ポップアップの高さ
+  TXMEDITAG_POPUP_SIZE: 236, // TXMEDITAG表示ポップアップの高さ
+
+  HISTORY_SORT: 'desc', // 履歴情報Excの日付デフォルトソート（asc or desc）
+
   TXDETAIL_ITEMS: { // TX詳細表示項目
     minor: true,
     major: true,
     name: true,
     group: true,
     category: true,
+    tel: true,
     timestamp: true,
   },
+
+  TXDETAIL_SUMBNAIL_UNREGIST_DISABLE: false, // TX詳細サムネイル非表示（未登録の場合）
 
   GATEWAY: { // ゲートウエイ
     STATE_COLOR: { // 状態別色

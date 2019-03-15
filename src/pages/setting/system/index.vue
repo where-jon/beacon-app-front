@@ -24,6 +24,7 @@ import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import pagetitle from '../../../components/layout/pagetitle.vue'
 import editList from '../../../components/page/editlist.vue'
+import * as HtmlUtil from '../../../sub/util/HtmlUtil'
 import * as Util from '../../../sub/util/Util'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
 
@@ -54,6 +55,9 @@ export default {
     ...mapState('app_service', [
       'settings',
     ]),
+  },
+  mounted(){
+    HtmlUtil.setCustomValidationMessage()
   },
   methods: {
     async fetchData(force = false) {

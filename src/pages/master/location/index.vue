@@ -452,11 +452,12 @@ export default {
     bulkAdd() {
       let counter = 0
       let y = 20
+      const mapMaxPosX = this.mapWidth * this.mapImageScale
       this.exbOptions.forEach((val) => {
         let x = 30 + counter++ * 60
-        if (x > this.mapWidth) {
+        if (x > mapMaxPosX) {
           x = 30
-          counter = 0
+          counter = 1
           y += 20
         }
         this.showExbOnMap(val, x, y)

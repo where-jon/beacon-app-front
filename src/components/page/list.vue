@@ -6,7 +6,7 @@
       <!-- searchbox -->
       <template v-if="!params.hideSearchBox">
         <b-form-row class="mb-2">
-          <b-form-row class="mr-4 mb-2">
+          <b-form-row v-if="!params.hideNormalSearchBox" class="mr-4 mb-2">
             <!-- 標準絞り込みフィルタ -->
             <label v-t="'label.filter'" class="mr-2" />
             <b-input-group>
@@ -19,12 +19,14 @@
           <!-- カスタムフィルタ -->
           <template v-if="params.extraFilter">
             <b-form-row v-for="item of extraFilterSpec" :key="item.key" class="mr-4 mb-2">
-              <label v-t="'label.' + item.key" for="item.key" class="mr-2" />
-              <b-input-group>
-                <b-form-select :id="item.key" v-model="filter.extra[item.key]" :options="item.options"
-                               class="extra-filter"
-                />
-              </b-input-group>
+              <b-form-row v-if="item.show">
+                <label v-t="'label.' + item.key" for="item.key" class="mr-2" />
+                <b-input-group>
+                  <b-form-select :id="item.key" v-model="filter.extra[item.key]" :options="item.options"
+                                class="extra-filter" @change="item.change"
+                  />
+                </b-input-group>
+              </b-form-row>
             </b-form-row>
           </template>
           <div v-if="params.extraFilter" class="w-100 mb-2 " />
@@ -58,7 +60,7 @@
       <b-row class="mt-3" />
     
       <!-- table -->
-      <b-table :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" :filter="filterGrid" :bordered="params.bordered" :sort-by.sync="sortBy" :sort-desc.sync="sortDesc" :empty-filtered-text="emptyMessage" show-empty
+      <b-table :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" :filter="filterGrid" :bordered="params.bordered" :sort-by.sync="sortBy" :sort-compare="sortCompare" :sort-desc.sync="sortDesc" :empty-filtered-text="emptyMessage" show-empty
                stacked="md" striped hover outlined @filtered="onFiltered"
       >
         <template slot="style" slot-scope="row">
@@ -159,6 +161,7 @@
 import { mapState, mapMutations } from 'vuex'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
+import * as SensorHelper from '../../sub/helper/SensorHelper'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
 import * as DetectStateHelper from '../../sub/helper/DetectStateHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
@@ -166,7 +169,7 @@ import * as Util from '../../sub/util/Util'
 import { getButtonTheme } from '../../sub/helper/ThemeHelper'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import commonmixinVue from '../mixin/commonmixin.vue'
-import { CATEGORY } from '../../sub/constant/Constants'
+import { CATEGORY, SENSOR } from '../../sub/constant/Constants'
 import * as AuthHelper from '../../sub/helper/AuthHelper'
 import alert from '../parts/alert.vue'
 
@@ -207,6 +210,9 @@ export default {
           category: '',
           group: '',
           area: '',
+          sensor: SENSOR.TEMPERATURE,
+          zone: '',
+          zoneCategory: '',
           detectState: null,
         },
         del: false,
@@ -219,6 +225,7 @@ export default {
       error: null,
       sortBy: null,
       sortDesc: false,
+      sortCompare: (aData, bData, key) => this.sortCompareCustom(aData, bData, key),
       login: JSON.parse(window.localStorage.getItem('login')),
       switchReload: false,
       ...this.params
@@ -265,6 +272,8 @@ export default {
         return {
           key: key,
           options: this[key + 'Options'],
+          change: this.params[key + 'Change']? this.params[key + 'Change']: () => {},
+          show: this.params.showOnlyHas && this.params.showOnlyHas.includes(key)? Util.hasValue(this[key + 'Options'].filter((val) => val.value != null)): true,
         }
       })
     },
@@ -284,6 +293,24 @@ export default {
     categoryOptions() {
       return StateHelper.getOptionsFromState('category', false, false, 
         category => CATEGORY.POT_AVAILABLE.includes(category.categoryType)
+      )
+    },
+    sensorOptions() {
+      return StateHelper.getOptionsFromState('sensor', 
+        sensor => this.$i18n.tnl('label.' + sensor.sensorName),
+        true,
+        sensor => {
+          return SensorHelper.availableSensorAll().includes(sensor.sensorId) 
+            && sensor.sensorId != SENSOR.LED && sensor.sensorId != SENSOR.BUTTON
+        }
+      )
+    },
+    zoneOptions() {
+      return StateHelper.getOptionsFromState('zone')
+    },
+    zoneCategoryOptions() {
+      return StateHelper.getOptionsFromState('category', false, false, 
+        category => CATEGORY.ZONE_AVAILABLE.includes(category.categoryType)
       )
     },
     groupOptions() {
@@ -371,6 +398,12 @@ export default {
         return false
       }
       return item.delFlg != 0
+    },
+    sortCompareCustom(aData, bData, key){
+      if(key == 'txIdName'){
+        return StateHelper.sortCompareArray(aData.txSortIds, bData.txSortIds)
+      }
+      return null
     },
     async switchTenant(item){
       await AuthHelper.switchTenant(item.tenantId)
@@ -475,6 +508,16 @@ export default {
           break
         case 'detectState':
           if (extra.detectState != null && !(extra.detectState === originItem.detectState)) {
+            return false
+          }
+          break
+        case 'zone':
+          if (extra.zone && !(extra.zone === originItem.zoneId)) {
+            return false
+          }
+          break
+        case 'zoneCategory':
+          if (extra.zoneCategory && !(extra.zoneCategory === originItem.zoneCategoryId)) {
             return false
           }
           break

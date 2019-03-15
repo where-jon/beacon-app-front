@@ -74,6 +74,7 @@ import * as StateHelper from '../../sub/helper/StateHelper'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as Util from '../../sub/util/Util'
+import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import txdetail from '../../components/parts/txdetail.vue'
 import { APP, DISP } from '../../sub/constant/config'
 import { SENSOR, EXTRA_NAV, CATEGORY, TX } from '../../sub/constant/Constants'
@@ -101,7 +102,6 @@ export default {
   },
   data() {
     return {
-      prohibitInterval:null,
       items: !this.isInstallation ? ViewHelper.createBreadCrumbItems('main', 'showPosition') : ViewHelper.createBreadCrumbItems('develop', 'installation'),
       detectedCount: 0, // 検知数
       pot: {},
@@ -116,9 +116,11 @@ export default {
       noImageErrorKey: 'noMapImage',
       modeRssi: false,
       isPause: false,
+      firstTime: true,
       message: '',
       prohibitData : null,
       icons : [],
+      prohibitInterval:null
     }
   },
   computed: {
@@ -217,13 +219,13 @@ export default {
       if (APP.USE_MEDITAG) {
         let meditagSensors = await EXCloudHelper.fetchSensor(SENSOR.MEDITAG)
         this.meditagSensors = _(meditagSensors)
-          .filter((val) => this.txs.some((tx) => tx.btxId == val.btx_id))
+          .filter((val) => this.txs.some((tx) => tx.btxId == val.btxid))
           .map((val) => {
-            let tx = this.txs.find((tx) => tx.btxId == val.btx_id)
-            let label = tx && tx.displayName? tx.displayName: val.btx_id
+            let tx = this.txs.find((tx) => tx.btxId == val.btxid)
+            let label = tx && tx.displayName? tx.displayName: val.btxid
             return {...val, label, bg: SensorHelper.getStressBg(val.stress), down: val.down?val.down:0}
           })
-          .sortBy((val) => (new Date().getTime() - val.downLatest < APP.DOWN_RED_TIME)? val.downLatest * -1: val.btx_id)
+          .sortBy((val) => (new Date().getTime() - val.downLatest < APP.DOWN_RED_TIME)? val.downLatest * -1: val.btxid)
           .value()
         Util.debug(this.meditagSensors)
       }
@@ -266,7 +268,11 @@ export default {
     showMapImage(disableErrorPopup) {
       clearInterval(this.prohibitInterval)
       this.showMapImageDef(async () => {
-
+        this.showProgress()
+        const reloadButton = document.getElementById('reloadIcon')
+        if(!this.firstTime && reloadButton){
+          HtmlUtil.addClass({target: reloadButton}, 'rotate')
+        }
         await this.fetchPositionData()
 
         this.stage.on('click', (evt) => {
@@ -284,6 +290,11 @@ export default {
         this.message = await StateHelper.getProhibitMessage(this.message,this.prohibitData)
         this.showTxAll()
         this.prohibitInterval = setInterval(this.twinkle,DISP.PROHIBIT_TWINKLE_TIME)
+        if(!this.firstTime && reloadButton){
+          HtmlUtil.removeClass({target: reloadButton}, 'rotate')
+        }
+        this.firstTime = false
+        this.hideProgress()
       }, disableErrorPopup)
     },
     showTxAll() {
@@ -327,7 +338,7 @@ export default {
       }
       let magnet = null
       if (tx.sensorId === SENSOR.MAGNET) {
-        magnet = this.magnetSensors && this.magnetSensors.find((sensor) => sensor.btx_id == tx.btxId)
+        magnet = this.magnetSensors && this.magnetSensors.find((sensor) => sensor.btxid == tx.btxId || sensor.btx_id == tx.btxId)
         Util.debug('magnet', magnet)
       }
       let meditag = null
@@ -338,32 +349,30 @@ export default {
       const display = this.getDisplay(tx)
       const color = meditag? '000': this.isMagnetOn(magnet)? display.bgColor : display.color
       const bgColor = meditag? meditag.bg.substr(1): this.isMagnetOn(magnet)? display.color: display.bgColor
-
       if (exb.isAbsentZone && !this.isFixTx(tx)) {
         // 何もしない（TX非表示）
-        return
-      }
+      } else {
+        if (exb.isAbsentZone && this.isFixTx(tx)) {
+          pos.transparent = true
+        }
 
-      if (exb.isAbsentZone && this.isFixTx(tx)) {
-        pos.transparent = true
-      }
-      
-      const txBtn = this.createTxBtn(pos, display.shape, color, bgColor)
-      if (this.isFixTx(tx)) {
-        Util.debug('fixed location', tx)
-        txBtn.x = tx.location.x * this.mapImageScale
-        txBtn.y = tx.location.y * this.mapImageScale
-      }
+        const txBtn = this.createTxBtn(pos, display.shape, color, bgColor)
+        if (this.isFixTx(tx)) {
+          Util.debug('fixed location', tx)
+          txBtn.x = tx.location.x * this.mapImageScale
+          txBtn.y = tx.location.y * this.mapImageScale
+        }
 
-      if(this.reloadSelectedTx.btxId == pos.btx_id){
-        this.showingDetailTime = new Date().getTime()
-        this.showDetail(txBtn.txId, txBtn.x, txBtn.y)
+        if(this.reloadSelectedTx.btxId == pos.btx_id){
+          this.showingDetailTime = new Date().getTime()
+          this.showDetail(txBtn.txId, txBtn.x, txBtn.y)
+        }
+        this.txCont.addChild(txBtn)
+        txBtn.prohibit = this.prohibitData.some((data) => data.minor == pos.minor)
+        this.icons.push(txBtn)
+        this.stage.update()
+        this.detectedCount++  // 検知数カウント増加
       }
-      this.txCont.addChild(txBtn)
-      txBtn.prohibit = this.prohibitData.some((data) => data.minor == pos.minor)
-      this.icons.push(txBtn)
-      this.stage.update()
-      this.detectedCount++  // 検知数カウント増加
     },
     touchEnd (evt) {
       if (evt.target.id === 'map') {

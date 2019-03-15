@@ -33,7 +33,7 @@
       </div>
       <div class="col-auto reload-button-container ">
         <a v-if="reload" id="reload" href="#" @click="onClickReload">
-          <i :class="classes" title="リロード" />
+          <i id="reloadIcon" :class="classes" title="リロード" />
         </a>
       </div>
     </div>
