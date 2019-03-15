@@ -430,7 +430,7 @@ export const getProhibitData = async (position,prohibits) => {
       && pos.exb.x >= prohibitData.x && pos.exb.x <= prohibitData.w && pos.exb.y >= prohibitData.y && pos.exb.y <= prohibitData.h){
       pos.zoneName = prohibitData.zoneName
       return true
-    }})).map((position) => { return {minor: position.tx.potTxList[0].pot.potName, areaName: position.exb.areaName, zoneName : position.zoneName} })
+    }})).map((position) => { return {minor: position.minor,potName: position.tx.potTxList[0].pot.potName, areaName: position.exb.areaName, zoneName : position.zoneName} })
 }
 
 export const getProhibitMessage = async (message,prohibitData) => {
@@ -442,7 +442,7 @@ export const getProhibitMessage = async (message,prohibitData) => {
   const labelArea = i18n.tnl('label.Area')
   const labelMinor = i18n.tnl('label.minor')
   const labelZone =  i18n.tnl('label.zoneName')
-  return prohibitData.map((data) => `< ${labelMinor} : ${data.minor} ${labelArea} : ${data.areaName} ${labelZone} : ${data.zoneName}>`).join(' ')
+  return prohibitData.map((data) => `< ${labelMinor} : ${data.potName} ${labelArea} : ${data.areaName} ${labelZone} : ${data.zoneName}>`).join(' ')
 }
 
 export const loadAreaImages = async () => {

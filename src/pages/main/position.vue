@@ -368,7 +368,7 @@ export default {
           this.showDetail(txBtn.txId, txBtn.x, txBtn.y)
         }
         this.txCont.addChild(txBtn)
-        txBtn.prohibit = this.prohibitData? this.prohibitData.some((data) => data.minor == pos.minor):null
+        txBtn.prohibit = this.prohibitData? this.prohibitData.some((data) => data.minor == pos.minor):false
         this.icons.push(txBtn)
         this.stage.update()
         this.detectedCount++  // 検知数カウント増加
