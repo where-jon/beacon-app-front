@@ -461,3 +461,8 @@ export const getStayBaseSec = () => {
   let to = ((Math.floor(APP.SUM_TO / 100) * 60) + Math.floor(APP.SUM_TO % 100)) * 60
   return to - from
 }
+
+export const getFileName = key => key.slice(key.lastIndexOf('/') + 1, key.lastIndexOf('.'))
+export const isImageFile = key => hasValue(key) && /^.*\.(png$)|(jpg$)|(jpeg$)|(gif$)$/.test(key) && !/^.*(__MACOSX\/).*$/.test(key) && !/^\..*/.test(getFileName(key))
+export const isResponsiveMode = () =>  window.innerWidth < 768
+

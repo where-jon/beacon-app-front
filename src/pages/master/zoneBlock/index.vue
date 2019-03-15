@@ -121,7 +121,7 @@ export default {
       this.categoryId = this.categoryNames[0].value
       this.nameAndCategory.categoryId = this.categoryId
     },
-    confirmDelete(button) {
+    confirmDelete (button) {
       this.$root.$emit('bv::show::modal', 'modalInfo', button)
     },
     onSelected (zoneData) {
@@ -131,7 +131,7 @@ export default {
       this.categoryId = zoneData.categoryId
       this.isEnableNameText = true
     },
-    unSelected() {
+    unSelected () {
       this.isEnableNameText = false
       this.zoneName = ''
     },
@@ -145,7 +145,7 @@ export default {
     regist () {
       this.isRegist = true
     },
-    validated(message) {
+    validated (message) {
       this.message = message
       this.replace({showAlert: true})
       window.scrollTo(0, 0)

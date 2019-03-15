@@ -15,6 +15,9 @@ export const APP = { // 機能面に関する設定
   LOGIN_MODE: LOGIN_MODE.APP_SERVICE, // ログインモード(なし、ローカル、AppService)
   SAAS_DOMAIN: '.saas.',
 
+  SHOW_MENU_LINK: '',
+  SHOW_MENU_LINK_URL: '',
+
   // ページ遷移設定
   TOP_PAGE: '/main/position', // トップページパス　must not be / otherwise recursive infinitely
   LOGIN_PAGE: '/login', // ログインページパス　if no login then /
