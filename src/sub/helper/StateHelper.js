@@ -421,22 +421,23 @@ export const loadAreaImage = async (areaId, force) => {
 
 export const getProhibitData = async (position,prohibits) => {
 
-  if (!APP.PROHIBIT_ALERT) {
+  if (!APP.PROHIBIT_ALERT || !APP.PROHIBIT_GROUPS) {
     return null
   }
-
+  const groups = APP.PROHIBIT_GROUPS
   return position.filter((pos) =>
     prohibits.some((prohibitData) =>{ if(pos.exb.areaId == prohibitData.areaId
       && pos.exb.x >= prohibitData.x && pos.exb.x <= prohibitData.w && pos.exb.y >= prohibitData.y && pos.exb.y <= prohibitData.h){
-      pos.zoneName = prohibitData.zoneName
-      return true
+      const groupCheck = groups.some((group) =>pos.tx.group.groupId == group)
+      groupCheck ? pos.zoneName = prohibitData.zoneName : null
+      return groupCheck
     }})).map((position) => { return {minor: position.minor,potName: position.tx.potTxList[0].pot.potName, areaName: position.exb.areaName, zoneName : position.zoneName} })
 }
 
 export const getProhibitMessage = async (message,prohibitData) => {
 
-  if (!APP.PROHIBIT_ALERT) {
-    return null
+  if (!APP.PROHIBIT_ALERT || !APP.PROHIBIT_GROUPS) {
+    return ''   // message空
   }
 
   const labelArea = i18n.tnl('label.Area')

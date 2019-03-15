@@ -150,7 +150,8 @@ export const APP = { // 機能面に関する設定
   POWER_LEVEL_WARN: 30,  // 電池レベルで減少とみなす下限値
 
   // 禁止区域関連設定
-  PROHIBIT_ALERT : true,
+  PROHIBIT_ALERT : true, // 禁止区域アラート設定
+  PROHIBIT_GROUPS: null, // 禁止区域非許可GROUPID
 }
 
 
