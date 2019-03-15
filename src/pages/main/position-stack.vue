@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container-fluid">
     <breadcrumb :items="items" :extra-nav-spec="extraNavSpec"
                 :reload="reload" :short-name="shortName"
     />

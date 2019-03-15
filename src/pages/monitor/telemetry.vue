@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container-fluid">
     <breadcrumb :items="items" :reload="true" :is-load="isLoad" @reload="fetchData" />
     <div v-show="!isLoad" class="container">
       <monitor-table type="telemetry" :vue-table-mode="isDev" :all-count="allCount" :headers="headers" :datas="telemetrys" :tr-class="getClass" :td-class="getTdClass" />

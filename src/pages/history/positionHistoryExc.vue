@@ -1,11 +1,11 @@
 <template>
-  <div>
+  <div class="container-fluid">
     <breadcrumb :items="items" :reload="false" />
     <div class="container">
       <alert :message="message" />
 
       <div class="mb-5">
-        <b-form inline v-if="type != 'location'">
+        <b-form v-if="type != 'location'" inline>
           <b-form-group class="mr-5">
             <b-form-row>
               <b-form-row class="mb-3 mr-2">
@@ -38,7 +38,7 @@
           </b-form-group>
         </b-form>
         <b-row class="mt-4" />
-        <b-table :items="viewList" :fields="fields" :sort-by.sync="sortBy" :sort-desc.sync="sortDesc" striped hover outlined >
+        <b-table :items="viewList" :fields="fields" :sort-by.sync="sortBy" :sort-desc.sync="sortDesc" striped hover outlined>
           <template slot="actions" slot-scope="row">
             <b-button v-t="'label.download'" :variant="theme" size="sm" @click.stop="download(row.item)" />
           </template>
@@ -73,12 +73,15 @@ export default {
   props: {
     pitems: {
       type: Array,
+      default: null,
     },
     pname: {
       type: String,
+      default: null,
     },
     ptype: {
       type: String,
+      default: null,
     }
   },
   data () {
@@ -110,17 +113,6 @@ export default {
       sortDesc: DISP.HISTORY_SORT.toLowerCase() == 'desc',
     }
   },
-  watch: {
-    month: function(newVal, oldVal) {
-      this.loadDate()
-    },
-    year: function(newVal, oldVal) {
-      this.loadDate()
-    },
-    sensorId: function(newVal, oldVal) {
-      this.loadDate()
-    }
-  },
   computed: {
     theme () {
       const theme = getTheme(this.$store.state.loginId)
@@ -136,6 +128,17 @@ export default {
         }
       )
     },
+  },
+  watch: {
+    month: function(newVal, oldVal) {
+      this.loadDate()
+    },
+    year: function(newVal, oldVal) {
+      this.loadDate()
+    },
+    sensorId: function(newVal, oldVal) {
+      this.loadDate()
+    }
   },
   mounted() {
     StateHelper.load('sensor')
