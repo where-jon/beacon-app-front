@@ -2,7 +2,7 @@
   <div v-if="datas.length>0">
     <b-row class="mt-5">
       <b-col md="5">
-        <h5 v-t="'label.news'" class="font-weight-bold" />
+        <h5 v-t="'label.topNews'" class="font-weight-bold" />
       </b-col>
     </b-row>
     <div class="table-area">

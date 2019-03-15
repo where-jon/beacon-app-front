@@ -246,7 +246,6 @@
     "mapDisplay": "マップ表示",
 
     "sensorList": "センサ現在情報一覧",
-    "zoneCategory": "ゾーンカテゴリ",
 
     "disp": "表示フラグ",
     "dispPos": "位置表示",
@@ -402,7 +401,6 @@
     "minute": "分",
     "hour": "時間",
     "day": "日",
-    "month": "月",
     "immediate": "直近値",
     "average": "平均値",
     "max": "最大値",
