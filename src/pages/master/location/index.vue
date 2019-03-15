@@ -111,6 +111,7 @@ export default {
       },
       ICON_ARROW_WIDTH: 20,
       ICON_ARROW_HEIGHT: 10,
+      DISPLAY_NAME_BYTE_LENGTH: 6,
       noImageErrorKey: 'noMapImage',
       items: [
         {
@@ -283,7 +284,7 @@ export default {
       s.graphics.lineTo(fromX, y)
       s.graphics.lineTo(fromX, fromY)
       exbBtn.addChild(s)
-      const label = new Text(this.getExbDisp(exb.deviceId))
+      const label = new Text(Util.cutOnLongByte(this.getExbDisp(exb.deviceId), this.DISPLAY_NAME_BYTE_LENGTH))
       label.font = DISP.EXB_LOC_FONT
       label.color = DISP.EXB_LOC_COLOR
       label.textAlign = 'center'
