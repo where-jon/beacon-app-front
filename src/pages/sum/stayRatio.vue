@@ -188,6 +188,16 @@ export default {
       })
     },
     async download(){
+      if (this.viewList == null || this.viewList.length == 0) {
+        this.message = this.$i18n.tnl('message.notFound')
+        this.replace({showAlert: true})
+        return
+      }
+      HtmlUtil.fileDL(
+        'stayRatio.csv',
+        Util.converToCsv(this.viewList),
+        getCharSet(this.$store.state.loginId)
+      )
     }
   }
 }
