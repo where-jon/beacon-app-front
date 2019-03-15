@@ -98,7 +98,7 @@ export default {
 
         Util.debug(positions)
         positions = positions.map((pos) => {
-          const prohibitCheck = prohibitData.some((data) => data.minor == pos.minor)
+          const prohibitCheck = prohibitData? prohibitData.some((data) => data.minor == pos.minor) : false
           return {
             ...pos,
             // powerLevel: this.getPowerLevel(pos),

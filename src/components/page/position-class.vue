@@ -86,12 +86,12 @@ export default {
         const posClassId = Util.getValue(pos, `exb.${this.id}`, null)
         _.forEach(tempClass, (cls) => {
           if (posClassId == cls[`${this.id}`] && !pos.noSelectedTx) {
-            prohibitData.some((data) => {
+            prohibitData? prohibitData.some((data) => {
               if(data.minor == pos.minor){
                 pos.blinking = 'blinking'
                 return true
               }
-            })
+            }): false
             cls.positions.push(pos)
           }
         })
