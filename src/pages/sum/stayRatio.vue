@@ -176,10 +176,10 @@ export default {
         // どこまでの時間を表示するか？（分にすらならない秒とか）決めて、GETメソッド作って流し込む
         return {
           potId, potName, 
-          presentTime: Util.getSecToHour(presentTime), 
-          absentTime: Util.getSecToHour(absentTime), 
-          absentTimeSub: Util.getSecToHour(absentTimeSub),
-          lostTime: Util.getSecToHour(lostTime),
+          presentTime: Util.convertToTime(presentTime), 
+          absentTime: Util.convertToTime(absentTime), 
+          absentTimeSub: Util.convertToTime(absentTimeSub),
+          lostTime: Util.convertToTime(lostTime),
           presentRatio: presentRatio + ' %',
           absentRatio: absentRatio + ' %',
           absentRatioSub: absentRatioSub + ' %',
