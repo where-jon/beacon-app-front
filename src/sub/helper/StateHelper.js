@@ -426,7 +426,7 @@ export const getProhibitData = async (position,prohibits) => {
   }
 
   return position.filter((pos) => prohibits.some((prohibitData) => pos.exb.areaId == prohibitData.areaId
-      && pos.x >= prohibitData.x && pos.x <= prohibitData.w && pos.y >= prohibitData.y && pos.y <= prohibitData.h))
+      && pos.exb.x >= prohibitData.x && pos.exb.x <= prohibitData.w && pos.exb.y >= prohibitData.y && pos.exb.y <= prohibitData.h))
     .map((position) => { return {minor: position.minor, areaName: position.exb.areaName} })
 }
 
