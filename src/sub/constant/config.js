@@ -157,7 +157,7 @@ export const APP = { // 機能面に関する設定
 
   // 禁止区域関連設定
   PROHIBIT_ALERT : true, // 禁止区域アラート設定
-  PROHIBIT_GROUPS: null, // 禁止区域非許可GROUPID
+  PROHIBIT_GROUPS: null, // 禁止区域非許可GROUPID[1,2,3]の形
 }
 
 
