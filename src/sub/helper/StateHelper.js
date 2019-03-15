@@ -441,9 +441,9 @@ export const getProhibitMessage = async (message,prohibitData) => {
   }
 
   const labelArea = i18n.tnl('label.Area')
-  const labelMinor = i18n.tnl('label.minor')
+  const labelpotName = i18n.tnl('label.potName')
   const labelZone =  i18n.tnl('label.zoneName')
-  return prohibitData.map((data) => `< ${labelMinor} : ${data.potName} ${labelArea} : ${data.areaName} ${labelZone} : ${data.zoneName}>`).join(' ')
+  return prohibitData.map((data) => `< ${labelpotName} : ${data.potName} ${labelArea} : ${data.areaName} ${labelZone} : ${data.zoneName}>`).join(' ')
 }
 
 export const loadAreaImages = async () => {
