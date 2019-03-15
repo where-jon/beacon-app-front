@@ -7,6 +7,7 @@
       <b-row>
         <b-col md="8" offset-md="2">
           <b-form v-if="show" @submit.prevent="onSubmit">
+            <chrome-input />
             <b-form-group v-if="form.potId">
               <label v-t="'label.potId'" />
               <b-form-input v-model="form.potId" type="text" readonly="readonly" />
@@ -139,6 +140,7 @@ import * as HtmlUtil from '../../../sub/util/HtmlUtil'
 import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
+import chromeInput from '../../../components/parts/chromeinput.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import { CATEGORY, SENSOR, USER } from '../../../sub/constant/Constants'
@@ -148,6 +150,7 @@ export default {
   components: {
     breadcrumb,
     alert,
+    chromeInput,
   },
   mixins: [editmixinVue],
   data() {
