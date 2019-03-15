@@ -592,6 +592,11 @@ export const MENU = [
         path: 'stayTime',
         icon: 'fas fa-chart-bar',
       },
+      {
+        key: 'stayRatio',
+        path: 'stayRatio',
+        icon: 'fas fa-clock',
+      },
     ]
   },
   {
