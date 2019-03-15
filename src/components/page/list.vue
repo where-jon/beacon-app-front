@@ -116,6 +116,11 @@
             {{ row.item.powerLevel.text }}
           </span>
         </template>
+         <template slot="locationName" slot-scope="row">
+          <span :variant="theme" size="sm" :class="'mx-1 ' + row.item.blinking">
+            {{ row.item.locationName}}
+          </span>
+        </template>
         <!-- マップ表示 -->
         <template slot="mapDisplay" slot-scope="row">
           <b-button v-t="'label.mapDisplay'" :variant="theme" :disabled="row.item.noSelectedTx"
@@ -127,7 +132,7 @@
           <div class="empty-icon d-inline-flex" /><!-- 横幅0の「支柱」 -->
           <div class="d-inline-flex flex-wrap">
             <div v-for="position in row.item.positions" :key="position.areaId"
-                 :style="position.display" class="d-inline-flex m-1" @click.stop="mapDisplay(position)"
+                 :style="position.display" :class="'d-inline-flex m-1 '+ position.blinking" @click.stop="mapDisplay(position)"
             >
               {{ position.label }}
             </div>
@@ -638,6 +643,24 @@ export default {
   .page-item.active .page-link {
     background-color: #376495;
     border-color: #265384;
+  }
+  .blinking{
+    color: #ff0000;
+	-webkit-animation:blink 1.5s ease-in-out infinite alternate;
+    -moz-animation:blink 1.5s ease-in-out infinite alternate;
+    animation:blink 1.5s ease-in-out infinite alternate;
+  }
+  @-webkit-keyframes blink{
+      0% {opacity:0;}
+      100% {opacity:1;}
+  }
+  @-moz-keyframes blink{
+      0% {opacity:0;}
+      100% {opacity:1;}
+  }
+  @keyframes blink{
+      0% {opacity:0;}
+      100% {opacity:1;}
   }
 
 </style>

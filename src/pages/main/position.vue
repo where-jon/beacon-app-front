@@ -1,6 +1,7 @@
 <template>
   <div id="mapContainer" class="container-fluid" @click="resetDetail">
     <breadcrumb :items="items" :extra-nav-spec="extraNavSpec" :reload="true" :short-name="shortName" :legend-items="legendItems" />
+    <prohibitAlert :messagelist="message" />
     <b-row class="mt-2">
       <b-form inline class="mt-2" @submit.prevent>
         <b-form-row class="my-1 ml-2 ml-sm-0">
@@ -83,12 +84,14 @@ import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import listmixin from '../../components/mixin/listmixin.vue'
 import sensor from '../../components/parts/sensor.vue'
 import commonmixinVue from '../../components/mixin/commonmixin.vue'
+import prohibitAlert from '../../components/page/prohibitAlert.vue'
 
 export default {
   components: {
     'sensor': sensor,
     'txdetail': txdetail,
     breadcrumb,
+    prohibitAlert
   },
   mixins: [showmapmixin, listmixin, commonmixinVue],
   props: {
@@ -114,6 +117,10 @@ export default {
       modeRssi: false,
       isPause: false,
       firstTime: true,
+      message: '',
+      prohibitData : null,
+      icons : [],
+      prohibitInterval:null
     }
   },
   computed: {
@@ -123,6 +130,7 @@ export default {
     ...mapState('app_service', [
       'categories',
       'groups',
+      'prohibits',
       'txs',
       'forceFetchTx',
     ]),
@@ -164,6 +172,7 @@ export default {
   async mounted() {
     await StateHelper.load('category')
     await StateHelper.load('group')
+    await StateHelper.load('prohibit')
     document.addEventListener('touchstart', this.touchEnd)
     await this.fetchData()
   },
@@ -250,7 +259,14 @@ export default {
       let tx = await AppServiceHelper.fetch('/core/tx', txId)
       return tx && tx.pot
     },
+    twinkle() {
+      this.icons.forEach((icon)=>{
+        icon.prohibit? icon.visible=!icon.visible : icon.visible = true
+        this.stage.update()
+      })
+    },
     showMapImage(disableErrorPopup) {
+      clearInterval(this.prohibitInterval)
       this.showMapImageDef(async () => {
         this.showProgress()
         const reloadButton = document.getElementById('reloadIcon')
@@ -270,7 +286,10 @@ export default {
           this.stage.update()
         }
         this.setPositionedExb()
+        this.prohibitData = await StateHelper.getProhibitData(this.getPositions(),this.prohibits)
+        this.message = await StateHelper.getProhibitMessage(this.message,this.prohibitData)
         this.showTxAll()
+        this.prohibitInterval = setInterval(this.twinkle,DISP.PROHIBIT_TWINKLE_TIME)
         if(!this.firstTime && reloadButton){
           HtmlUtil.removeClass({target: reloadButton}, 'rotate')
         }
@@ -279,6 +298,7 @@ export default {
       }, disableErrorPopup)
     },
     showTxAll() {
+      this.icons = []
       if (!this.txCont) {
         return
       }
@@ -335,7 +355,7 @@ export default {
         if (exb.isAbsentZone && this.isFixTx(tx)) {
           pos.transparent = true
         }
-        
+
         const txBtn = this.createTxBtn(pos, display.shape, color, bgColor)
         if (this.isFixTx(tx)) {
           Util.debug('fixed location', tx)
@@ -348,6 +368,8 @@ export default {
           this.showDetail(txBtn.txId, txBtn.x, txBtn.y)
         }
         this.txCont.addChild(txBtn)
+        txBtn.prohibit = this.prohibitData? this.prohibitData.some((data) => data.minor == pos.minor):false
+        this.icons.push(txBtn)
         this.stage.update()
         this.detectedCount++  // 検知数カウント増加
       }

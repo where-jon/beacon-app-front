@@ -149,6 +149,9 @@ export const APP = { // 機能面に関する設定
   POWER_LEVEL_GOOD: 50,  // 電池レベルで良好とみなす下限値
   POWER_LEVEL_WARN: 30,  // 電池レベルで減少とみなす下限値
 
+  // 禁止区域関連設定
+  PROHIBIT_ALERT : true, // 禁止区域アラート設定
+  PROHIBIT_GROUPS: null, // 禁止区域非許可GROUPID
 }
 
 
@@ -312,7 +315,9 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   INSTALLATION: { // 設置支援
     RSSI_ICON_WIDTH: 100,
     RSSI_ICON_HEIGHT: 20,
-  }
+  },
+  // 禁止区域関連設定
+  PROHIBIT_TWINKLE_TIME: 1500, // 点滅間隔(ミリ秒) ＸＸＸ_TIME dispに変更
 }
 
 // used when APP.LOGIN_MODE != APP_SERVICE with excloud old api -----------------------------------------------------

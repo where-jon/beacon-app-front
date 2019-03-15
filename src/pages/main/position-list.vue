@@ -3,6 +3,7 @@
     <breadcrumb :items="items" :extra-nav-spec="extraNavSpec"
                 :reload="reload" :short-name="shortName"
     />
+    <prohibitAlert :messagelist="message" />
     <m-list :params="params" :list="positionList" />
   </div>
 </template>
@@ -10,6 +11,7 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
+import prohibitAlert from '../../components/page/prohibitAlert.vue'
 import mList from '../../components/page/list.vue'
 import listmixinVue from '../../components/mixin/listmixin.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
@@ -24,6 +26,7 @@ export default {
   components: {
     mList,
     breadcrumb,
+    prohibitAlert
   },
   mixins: [
     listmixinVue,
@@ -31,6 +34,7 @@ export default {
   ],
   data() {
     return {
+      message: '',
       params: {
         name: 'position-list',
         id: 'positionListId',
@@ -73,6 +77,7 @@ export default {
       'areas',
       'exbs',
       'positionList',
+      'prohibits',
     ]),
   },
   methods: {
@@ -85,11 +90,15 @@ export default {
         await StateHelper.load('area')
         await StateHelper.load('tx')
         await StateHelper.load('exb')
+        await StateHelper.load('prohibit')
         await this.storePositionHistory(0, true)
         let positions = this.getPositions(true)
+        let prohibitData = await StateHelper.getProhibitData(this.getPositions(),this.prohibits)
+        this.message = await StateHelper.getProhibitMessage(this.message,prohibitData)
 
         Util.debug(positions)
         positions = positions.map((pos) => {
+          const prohibitCheck = prohibitData? prohibitData.some((data) => data.minor == pos.minor) : false
           return {
             ...pos,
             // powerLevel: this.getPowerLevel(pos),
@@ -105,6 +114,7 @@ export default {
             groupId: Util.getValue(pos, 'tx.group.groupId').val,
             categoryId: Util.getValue(pos, 'tx.category.categoryId').val,
             areaId: Util.getValue(pos, 'exb.location.areaId').val,
+            blinking : prohibitCheck? 'blinking' : null,
           }
         }).filter((pos) => !pos.tx || Util.bitON(pos.tx.disp, TX.DISP.POS))
         Util.debug(positions)

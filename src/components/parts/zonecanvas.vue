@@ -14,10 +14,10 @@ class Zone {
     this.id = prop.id ? prop.id : -1
     this.categoryId = prop.categoryId ? prop.categoryId : -1
     this.name = prop.name
-    this.text = null
     this.startX = prop.startX
     this.startY = prop.startY
     this.stage = prop.stage
+    this.text = null
     this.rectLayer = new Konva.Layer()
     this.stage.add(this.rectLayer)
     const size = this.stage.size()
@@ -242,17 +242,17 @@ class Zones {
     return this.zones
   }
 
-  get entities() {
+  getEntities(aspectRatio) {
     return this.zones.map((zone, index, array) => {
       return {
         zoneId: zone.id && zone.id > 0 ? zone.id : -1 * (index + 1),
         zoneName: zone.zoneName,
         zoneType: zone.zoneType,
         areaId: zone.areaId,
-        x: zone.x,
-        y: zone.y,
-        w: zone.w,
-        h: zone.h,
+        x: zone.x / aspectRatio,
+        y: zone.y / aspectRatio,
+        w: zone.w / aspectRatio,
+        h: zone.h / aspectRatio,
         zoneCategoryList: [{
           zoneCategoryPK: {
             zoneId: zone.zoneId,
@@ -302,6 +302,7 @@ export default {
       cnt: 0,
       dragging: false,
       zones: null,
+      aspectRatio: 1,
       MINIMUM_SIZE: 50,
       MAP_WIDTH: 741,
       MAP_HEIGHT: 573,
@@ -333,7 +334,7 @@ export default {
     },
     isRegist: function(newVal, oldVal) {
       if (!newVal) return
-      this.$emit('regist', this.zones.entities)
+      this.$emit('regist', this.zones.getEntities(this.aspectRatio))
     },
     isDelete: function(newVal, oldVal) {
       if (!newVal) return
@@ -395,7 +396,6 @@ export default {
         this.$emit('pressDelKey')
       }
     })
-    this.setupCanvas(this.base64)
   },
   methods: {
     emitZone(zone) {
@@ -421,13 +421,11 @@ export default {
       const img = new Image()
       img.onload = () => {
         stage.removeChildren()
-        // const result = this.calcFitSize(img, document.getElementById('stage'))
-        // img.width = result.width
-        // img.height = result.height
         // マップのサイズはEXB配置設定のマップサイズと合わせてある。
         // マップサイズは統一すべき
+        this.aspectRatio = this.MAP_WIDTH / img.width
         img.width = this.MAP_WIDTH
-        img.height = this.MAP_HEIGHT
+        img.height *= this.aspectRatio
         stage.size({
           width: img.width,
           height: img.height
@@ -471,11 +469,11 @@ export default {
         areaId: this.areaId,
         name: zoneRec.zoneName,
         categoryId: categoryId,
-        startX: zoneRec.x,
-        startY: zoneRec.y,
+        startX: zoneRec.x * this.aspectRatio,
+        startY: zoneRec.y * this.aspectRatio,
         stage: this.stage,
       })
-      zone.drawingRect(zone.startX + zoneRec.w, zone.startY + zoneRec.h)
+      zone.drawingRect(zone.startX + zoneRec.w * this.aspectRatio, zone.startY + zoneRec.h * this.aspectRatio)
       zone.fix((fixedZone) => {
         this.dragging = false
         this.emitZone(fixedZone)

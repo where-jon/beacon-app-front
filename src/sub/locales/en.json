@@ -84,6 +84,7 @@
     "locationSetting": "EXB Location",
     "develop": "Developer",
     "env": "Environment Variables",
+    "detectedProhibitZone": "Detected ProhibitZone",
 
     "exbId": "EXB ID",
     "exbName": "EXB name",

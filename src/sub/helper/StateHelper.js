@@ -349,6 +349,22 @@ const appStateConf = {
       }))
     }
   },
+  prohibits: {
+    path: '/core/zone/prohibit',
+    beforeCommit: (arr) => {
+      let result = arr.map((val) => ({
+        ...val,
+        zoneId:val.zoneId,
+        zoneName:val.zoneName,
+        x: val.x,
+        y: val.y,
+        w: val.w,
+        h: val.h,
+        areaId: val.areaId,
+      }))
+      return result
+    }
+  },
 }
 
 export const load = async (target, force) => {
@@ -401,6 +417,33 @@ export const loadAreaImage = async (areaId, force) => {
   store.commit('app_service/replaceAS', {areaImages})    
 
   // })
+}
+
+export const getProhibitData = async (position,prohibits) => {
+
+  if (!APP.PROHIBIT_ALERT || !APP.PROHIBIT_GROUPS) {
+    return null
+  }
+  const groups = APP.PROHIBIT_GROUPS
+  return position.filter((pos) =>
+    prohibits.some((prohibitData) =>{ if(pos.exb.areaId == prohibitData.areaId
+      && pos.exb.x >= prohibitData.x && pos.exb.x <= prohibitData.w && pos.exb.y >= prohibitData.y && pos.exb.y <= prohibitData.h){
+      const groupCheck = groups.some((group) =>pos.tx.group.groupId == group)
+      groupCheck ? pos.zoneName = prohibitData.zoneName : null
+      return groupCheck
+    }})).map((position) => { return {minor: position.minor,potName: position.tx.potTxList[0].pot.potName, areaName: position.exb.areaName, zoneName : position.zoneName} })
+}
+
+export const getProhibitMessage = async (message,prohibitData) => {
+
+  if (!APP.PROHIBIT_ALERT || !APP.PROHIBIT_GROUPS) {
+    return ''   // message空
+  }
+
+  const labelArea = i18n.tnl('label.Area')
+  const labelpotName = i18n.tnl('label.potName')
+  const labelZone =  i18n.tnl('label.zoneName')
+  return prohibitData.map((data) => `< ${labelpotName} : ${data.potName} ${labelArea} : ${data.areaName} ${labelZone} : ${data.zoneName}>`).join(' ')
 }
 
 export const loadAreaImages = async () => {

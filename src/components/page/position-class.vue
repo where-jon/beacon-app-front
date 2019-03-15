@@ -1,5 +1,6 @@
 <template>
   <div>
+    <prohibitAlert :messagelist="message" />
     <m-list :params="params" :list="getDataList()" />
   </div>
 </template>
@@ -7,6 +8,7 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 import mList from './list.vue'
+import prohibitAlert from '../../components/page/prohibitAlert.vue'
 import commonmixinVue from '../mixin/commonmixin.vue'
 import listmixinVue from '../mixin/listmixin.vue'
 import showmapmixin from '../mixin/showmapmixin.vue'
@@ -17,6 +19,7 @@ import * as Util from '../../sub/util/Util'
 export default {
   components: {
     mList,
+    prohibitAlert
   },
   mixins: [
     commonmixinVue,
@@ -31,6 +34,7 @@ export default {
   },
   data() {
     return {
+      message: '',
       params: {
         name: 'position-stack',
         id: 'position-stackId',
@@ -55,7 +59,8 @@ export default {
       'areas',
       'zones',
       'exbs',
-      'positions'
+      'positions',
+      'prohibits'
     ]),
     ...mapState('main', [
       'orgPositions',
@@ -74,13 +79,19 @@ export default {
     getDataList() {
       return this[`${this.eachListName}`]
     },
-    splitClass(positions){
+    splitClass(positions,prohibitData){
       const tempClass = _.map(this[`${this.listName}`], (cls) => ({[`${this.id}`]: cls[`${this.id}`], label: cls[`${this.name}`], positions: []}))
 
       _.forEach(positions, (pos) => {
         const posClassId = Util.getValue(pos, `exb.${this.id}`, null)
         _.forEach(tempClass, (cls) => {
           if (posClassId == cls[`${this.id}`] && !pos.noSelectedTx) {
+            prohibitData? prohibitData.some((data) => {
+              if(data.minor == pos.minor){
+                pos.blinking = 'blinking'
+                return true
+              }
+            }): false
             cls.positions.push(pos)
           }
         })
@@ -94,13 +105,14 @@ export default {
         await StateHelper.load(`${this.className}`)
         await StateHelper.load('tx')
         await StateHelper.load('exb')
-
+        await StateHelper.load('prohibit')
         // positionデータ取得
         await this.storePositionHistory()
         this.replaceAS({positions: this.getPositions()})
-
-        // 分類
-        const tempClass = this.splitClass(this.positions)
+        let prohibitData = await StateHelper.getProhibitData(this.getPositions(),this.prohibits)
+        this.message = await StateHelper.getProhibitMessage(this.message,prohibitData)
+        // 分類checkProhibitZone
+        const tempClass = this.splitClass(this.positions, prohibitData)
         this.replaceMain({[`${this.eachListName}`]: tempClass})
         if (payload && payload.done) {
           payload.done()
