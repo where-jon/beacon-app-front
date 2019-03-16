@@ -304,17 +304,16 @@ export const correctPair = (orgPositions, now) => {
   }, [])
 }
 
-export const adjustPosition = (positions, ratio, exbs = []) => {
+export const adjustPosition = (positions, ratio, exbs = [], selectedMapId = null) => {
   return exbs.map((exb) => {
     const samePos = positions.filter((pos) => {
-      const location = hasTxLocation(pos)? pos.tx.location: null
-      return pos.pos_id == exb.location.posId && !location
+      const isFixPosition = hasTxLocation(pos)? selectedMapId? pos.tx.location.areaId == selectedMapId: false : false
+      return pos.pos_id == exb.location.posId && !isFixPosition
     })
     const same = (!samePos || samePos.length == 0) ? [] : getPositionsToOverlap(exb, ratio, samePos)
 
     const fixPos = positions.filter((pos) => {
-      const location = hasTxLocation(pos)? pos.tx.location: null
-      return pos.pos_id == exb.location.posId && location
+      return hasTxLocation(pos)? selectedMapId? pos.tx.location.areaId == selectedMapId: false : false
     })
     const fix = (!fixPos || fixPos.length == 0) ? [] : getCoordinateFix(ratio, fixPos)
     return same.concat(fix)

@@ -313,8 +313,10 @@ export default {
         let mapRatio = area.mapRatio
         position = PositionHelper.adjustMultiPosition(this.getPositions(), this.mapImageScale * mapRatio)
       }else{
-        position = PositionHelper.adjustPosition(this.getPositions(), this.mapImageScale, this.positionedExb)
+        position = PositionHelper.adjustPosition(this.getPositions(), this.mapImageScale, this.positionedExb, this.selectedArea)
       }
+      console.log('-------showTxAll')
+      console.table(position)
       position.forEach((pos) => {
         this.showTx(pos)
       })
@@ -355,7 +357,7 @@ export default {
         return
       }
 
-      if (exb.isAbsentZone && this.isFixTx(tx)) {
+      if ((exb.isAbsentZone || this.isOtherFloorFixTx(tx, exb)) && this.isFixTx(tx)) {
         pos.transparent = true
       }
 
@@ -384,6 +386,9 @@ export default {
     },
     isFixTx (tx) {
       return tx.location && tx.location.areaId == this.selectedArea && tx.location.x * tx.location.y > 0
+    },
+    isOtherFloorFixTx (tx, exb) {
+      return tx.location && tx.location.areaId != exb.location.areaId && tx.location.x * tx.location.y > 0
     }
   }
 }
