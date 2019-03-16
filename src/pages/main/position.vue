@@ -332,7 +332,7 @@ export default {
         Util.debug('tx is not allowed to show', tx)
         return
       }
-      if (pos.noSelectedTx) {
+      if (pos.noSelectedTx && !this.isFixTx(tx)) {
         Util.debug('tx is not allowed to show', tx)
         return
       }

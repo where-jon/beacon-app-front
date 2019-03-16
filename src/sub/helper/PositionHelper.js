@@ -1,5 +1,5 @@
 import { APP, DISP, DEV } from '../constant/config'
-import { TX_VIEW_TYPES, DETECT_STATE, TX } from '../constant/Constants'
+import { TX_VIEW_TYPES, DETECT_STATE } from '../constant/Constants'
 import * as DetectStateHelper from '../helper/DetectStateHelper'
 import * as Util from '../util/Util'
 import * as mock from '../../assets/mock/mock.js'
@@ -341,9 +341,9 @@ export const setDetectState = (positions, usePositionHistory = false) => {
       updatetime = position.timestamp
     }
 
-    position.detectState = DetectStateHelper.getState('tx', updatetime, Util.bitON(position.tx.disp, TX.DISP.ALWAYS)) // nearestのtimestampを使用
+    position.detectState = DetectStateHelper.getState('tx', updatetime) // nearestのtimestampを使用
     position.state = DetectStateHelper.getLabel(position.detectState)
-    position.noSelectedTx = position.detectState != DETECT_STATE.DETECTED
+    position.noSelectedTx = (position.detectState != DETECT_STATE.DETECTED)
   })
 
 }
