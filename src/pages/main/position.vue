@@ -349,30 +349,32 @@ export default {
       const display = this.getDisplay(tx)
       const color = meditag? '000': this.isMagnetOn(magnet)? display.bgColor : display.color
       const bgColor = meditag? meditag.bg.substr(1): this.isMagnetOn(magnet)? display.color: display.bgColor
+      
+      // フリーアドレスTXが不在エリア検知の場合は以降処理を行わない
       if (exb.isAbsentZone && !this.isFixTx(tx)) {
-        // 何もしない（TX非表示）
-      } else {
-        if (exb.isAbsentZone && this.isFixTx(tx)) {
-          pos.transparent = true
-        }
-
-        const txBtn = this.createTxBtn(pos, display.shape, color, bgColor)
-        if (this.isFixTx(tx)) {
-          Util.debug('fixed location', tx)
-          txBtn.x = tx.location.x * this.mapImageScale
-          txBtn.y = tx.location.y * this.mapImageScale
-        }
-
-        if(this.reloadSelectedTx.btxId == pos.btx_id){
-          this.showingDetailTime = new Date().getTime()
-          this.showDetail(txBtn.txId, txBtn.x, txBtn.y)
-        }
-        this.txCont.addChild(txBtn)
-        txBtn.prohibit = this.prohibitData? this.prohibitData.some((data) => data.minor == pos.minor):false
-        this.icons.push(txBtn)
-        this.stage.update()
-        this.detectedCount++  // 検知数カウント増加
+        return
       }
+
+      if (exb.isAbsentZone && this.isFixTx(tx)) {
+        pos.transparent = true
+      }
+
+      const txBtn = this.createTxBtn(pos, display.shape, color, bgColor)
+      if (this.isFixTx(tx)) {
+        Util.debug('fixed location', tx)
+        txBtn.x = tx.location.x * this.mapImageScale
+        txBtn.y = tx.location.y * this.mapImageScale
+      }
+
+      if(this.reloadSelectedTx.btxId == pos.btx_id){
+        this.showingDetailTime = new Date().getTime()
+        this.showDetail(txBtn.txId, txBtn.x, txBtn.y)
+      }
+      this.txCont.addChild(txBtn)
+      txBtn.prohibit = this.prohibitData? this.prohibitData.some((data) => data.minor == pos.minor):false
+      this.icons.push(txBtn)
+      this.stage.update()
+      this.detectedCount++  // 検知数カウント増加
     },
     touchEnd (evt) {
       if (evt.target.id === 'map') {
