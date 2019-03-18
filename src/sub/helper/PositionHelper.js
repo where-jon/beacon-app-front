@@ -1,5 +1,5 @@
 import { APP, DISP, DEV } from '../constant/config'
-import { TX_VIEW_TYPES, DETECT_STATE, TX } from '../constant/Constants'
+import { TX_VIEW_TYPES, DETECT_STATE } from '../constant/Constants'
 import * as DetectStateHelper from '../helper/DetectStateHelper'
 import * as Util from '../util/Util'
 import * as mock from '../../assets/mock/mock.js'
@@ -304,21 +304,25 @@ export const correctPair = (orgPositions, now) => {
   }, [])
 }
 
-export const adjustPosition = (positions, ratio, exbs = []) => {
+export const adjustPosition = (positions, ratio, exbs = [], selectedMapId = null) => {
   return exbs.map((exb) => {
     const samePos = positions.filter((pos) => {
-      const location = hasTxLocation(pos)? pos.tx.location: null
-      return pos.pos_id == exb.location.posId && !location
+      const isFixPosition = hasTxLocation(pos)? selectedMapId? pos.tx.location.areaId == selectedMapId: false : false
+      return pos.pos_id == exb.location.posId && !isFixPosition
     })
     const same = (!samePos || samePos.length == 0) ? [] : getPositionsToOverlap(exb, ratio, samePos)
 
     const fixPos = positions.filter((pos) => {
-      const location = hasTxLocation(pos)? pos.tx.location: null
-      return pos.pos_id == exb.location.posId && location
+      return hasTxLocation(pos)? selectedMapId? pos.tx.location.areaId == selectedMapId: false : false
     })
     const fix = (!fixPos || fixPos.length == 0) ? [] : getCoordinateFix(ratio, fixPos)
     return same.concat(fix)
   }).filter(e => e).flatMap(e => e)
+    .filter(function (x, i, self) {
+      return (self.findIndex(function(val) {
+        return (x.btx_id === val.btx_id)
+      }) === i)
+    })
 }
 
 export const adjustMultiPosition = (positions, ratio) => {
@@ -341,9 +345,9 @@ export const setDetectState = (positions, usePositionHistory = false) => {
       updatetime = position.timestamp
     }
 
-    position.detectState = DetectStateHelper.getState('tx', updatetime, Util.bitON(position.tx.disp, TX.DISP.ALWAYS)) // nearestのtimestampを使用
+    position.detectState = DetectStateHelper.getState('tx', updatetime) // nearestのtimestampを使用
     position.state = DetectStateHelper.getLabel(position.detectState)
-    position.noSelectedTx = position.detectState != DETECT_STATE.DETECTED
+    position.noSelectedTx = (position.detectState != DETECT_STATE.DETECTED)
   })
 
 }

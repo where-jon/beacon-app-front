@@ -29,7 +29,7 @@ const getTodayUndetectTime = () => {
   return (today.getHours() * 60 * 60 + today.getMinutes() * 60 + today.getSeconds()) * 1000
 }
 
-export const getState = (type, updatetime, isDispAlways = false) => {
+export const getState = (type, updatetime) => {
   if (!updatetime) return DETECT_STATE.NONE
 
   let UNDETECT_TIME
@@ -54,7 +54,7 @@ export const getState = (type, updatetime, isDispAlways = false) => {
   const time = now - new Date(updatetime).getTime()
   let state = time > UNDETECT_TIME? DETECT_STATE.UNDETECT:
     time > TODAY_UNDETECT_TIME? DETECT_STATE.TODAY_UNDETECT:
-      time > LOST_TIME && !isDispAlways? DETECT_STATE.LOST:
+      time > LOST_TIME? DETECT_STATE.LOST:
         DETECT_STATE.DETECTED
 
   // console.debug(updatetime, time, state)
