@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container-fluid">
     <breadcrumb :items="items" :reload="true" @reload="fetchData" />
     <div v-for="(env, index) in envs" :key="index">
       <div>{{ env.key }}</div>

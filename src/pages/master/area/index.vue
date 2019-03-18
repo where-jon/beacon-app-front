@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container-fluid">
     <breadcrumb :items="items" />
     <m-list :params="params" :list="areaList" :another-page-params="anotherPageParams" />
   </div>
@@ -57,6 +57,7 @@ export default {
   },
   methods: {
     afterCrud(){
+      StateHelper.setForceFetch('tx', true)
       StateHelper.setForceFetch('exb', true)
       StateHelper.setForceFetch('zone', true)
     },

@@ -77,6 +77,10 @@
           <b-button v-if="isDeleteable" v-t="'label.delete'" :style="actionButtonStyle" size="sm" variant="outline-danger" class="mr-1 my-1" @click.stop="deleteConfirm(row.item, row.index, $event.target)" />
           <!-- jump another master page -->
           <div v-if="isEditable && anotherPageParams" :style="{'width': '100px'}">
+            <!-- zone button -->
+            <!-- <div v-if="getAnotherPageParam('zone', row.item)">
+              <b-button size="sm" @click.stop="jumpAnotherPage('zone', row.item)" :variant="theme" class="btn-block mt-1 mb-1" v-t="'label.zone'" :style="anotherActionButtonStyle" />
+            </div> -->
             <!-- location button -->
             <div v-if="getAnotherPageParam('location', row.item)">
               <b-button v-t="'label.location'" :variant="theme" :style="anotherActionButtonStyle" size="sm" class="btn-block my-1" @click.stop="jumpAnotherPage('location', row.item)" />
@@ -116,9 +120,9 @@
             {{ row.item.powerLevel.text }}
           </span>
         </template>
-         <template slot="locationName" slot-scope="row">
+        <template slot="locationName" slot-scope="row">
           <span :variant="theme" size="sm" :class="'mx-1 ' + row.item.blinking">
-            {{ row.item.locationName}}
+            {{ row.item.locationName }}
           </span>
         </template>
         <!-- マップ表示 -->

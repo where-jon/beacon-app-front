@@ -22,7 +22,7 @@ export const getThermoPatternConfig = () => {
           patternRet.base = Number(val)
         }
         else if(topChar == '$'){
-          patternRet.flash = DISP[`THERMON_FLASH_${val.slice(1)}`]
+          patternRet.flash = DISP[`THERMOH_FLASH_${val.slice(1)}`]
         }
         else if(val.toLowerCase() == 'or'){
           patternRet.or = true
@@ -379,14 +379,14 @@ export const getFields1 = (i18n) => {
   return addLabelByKey(i18n, [
     {key: 'sensorDt', sortable: true, label:'dt'},
     {key: 'txName', sortable: true },
-    APP.EXB_WITH_DEVICE_NUM? {key: 'deviceNum', sortable: true }: null,
-    APP.EXB_WITH_DEVICE_ID? {key: 'deviceId', sortable: true }: null,
-    APP.EXB_WITH_DEVICE_IDX? {key: 'deviceIdX', sortable: true }: null,
-    {key: 'locationName', label:'locationZoneName', sortable: true,},
-    {key: 'posId', label:'posId', sortable: true,},
+    APP.SENSOR_WITH_DEVICENUM && APP.EXB_WITH_DEVICE_NUM? {key: 'deviceNum', sortable: true }: null,
+    APP.SENSOR_WITH_DEVICEID && APP.EXB_WITH_DEVICE_ID? {key: 'deviceId', sortable: true }: null,
+    APP.SENSOR_WITH_DEVICEIDX && APP.EXB_WITH_DEVICE_IDX? {key: 'deviceIdX', sortable: true }: null,
+    APP.SENSOR_WITH_LOCATIONNAME? {key: 'locationName', label:'locationZoneName', sortable: true,}: null,
+    APP.SENSOR_WITH_POSID? {key: 'posId', label:'posId', sortable: true,}: null,
     {key: 'areaName', label:'area', sortable: true,},
-    {key: 'humidity', sortable: true},
     {key: 'temperature', sortable: true},
+    {key: 'humidity', sortable: true},
   ])
 }
 

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container-fluid">
     <breadcrumb :items="items" :reload="true" />
     <m-list :params="params" :list="sensorList" />
   </div>
@@ -91,8 +91,8 @@ export default {
         areaName: Util.getValue(device, 'areaName', ''),
         major: Util.getValue(device, 'major', ''),
         minor: Util.getValue(device, 'minor', ''),
-        temperature: Util.getValue(device, 'temperature', ''),
-        humidity: Util.getValue(device, 'humidity', ''),
+        temperature: Util.formatTemperature(Util.getValue(device, 'temperature', '')),
+        humidity: Util.formatHumidity(Util.getValue(device, 'humidity', '')),
         count: Util.getValue(device, 'count', ''),
         high: Util.getValue(device, 'high', ''),
         low: Util.getValue(device, 'low', ''),
