@@ -2,7 +2,7 @@
   <div id="mapContainer" class="container-fluid">
     <breadcrumb :items="items" :reload="true" />
     <div>
-      <alert :warn-message="warnMessage" />
+      <alert :warn-message="warnMessage" :fix="fixHeight" :alert-style="alertStyle" />
 
       <b-row class="mt-2">
         <b-form inline class="ml-3 mt-2" @submit.prevent>
@@ -93,6 +93,7 @@ export default {
       iconInterval: 100,
       warnMessage: null,
       iconAlphaMin: 0.1,
+      fixHeight: DISP.THERMOH_ALERT_FIX_HEIGHT,
     }
   },
   computed: {
@@ -104,7 +105,12 @@ export default {
         (result, data) => data.temperature,
         (data) => {return {x: data.x * this.mapImageScale, y: data.y * this.mapImageScale}}
       )
-    }
+    },
+    alertStyle(){
+      return {
+        'font-weight': DISP.THERMOH_ALERT_WEIGHT,
+      }
+    },
   },
   mounted() {
     this.fetchData()
@@ -124,6 +130,16 @@ export default {
       if(this.iconTicker){
         clearInterval(this.iconTicker)
         this.iconTicker = null
+      }
+    },
+    iconMouseOver(event){
+      if(DISP.THERMOH_TOOLTIP_USE){
+        this.createTooltip(event.target.parent)
+      }
+    },
+    iconMouseOut(){
+      if(DISP.THERMOH_TOOLTIP_USE){
+        this.removeTooltip()
       }
     },
     setWarnDevices(){
@@ -151,20 +167,25 @@ export default {
     createWarnMessages(){
       this.setWarnDevices()
       const ret = []
-      const exbIdName = StateHelper.getDeviceIdName({exbId: true}, true)
-      const txIdName = StateHelper.getDeviceIdName({txId: true}, true)
-      this.humidityPatternConfig.less.concat(this.humidityPatternConfig.more).forEach(conf => {
+      const exbIdName = StateHelper.getDeviceIdName({exbId: true}, {ignorePrimaryKey: true})
+      const txIdName = StateHelper.getDeviceIdName({txId: true}, {ignorePrimaryKey: true, forceSensorName: true})
+      const pattern = this.humidityPatternConfig.more.sort((a, b) => {
+        return a.base > b.base? -1: a.base < b.base? 1: 0
+      }).concat(this.humidityPatternConfig.less.sort((a, b) => {
+        return a.base < b.base? -1: a.base > b.base? 1: 0
+      }))
+      pattern.forEach(conf => {
         if(conf.exbs.length == 0 && conf.txs.length == 0){
           return
         }
-        const exbAlert = conf.exbs.length == 0? '': `${this.$i18n.tnl(`label.${exbIdName}`)}[${conf.exbs.map(exb => exb[exbIdName]).filter(val => val).join(', ')}]`
-        const txAlert = conf.txs.length == 0? '': `${this.$i18n.tnl(`label.${txIdName}`)}[${conf.txs.map(tx => tx[txIdName]).filter(val => val).join(', ')}]`
+        const exbAlert = conf.exbs.length == 0? '': `${conf.exbs.map(exb => exb[exbIdName]).filter(val => val).join(this.$i18n.tnl('message.readingPoint'))}`
+        const txAlert = conf.txs.length == 0? '': `${conf.txs.map(tx => tx[txIdName]).filter(val => val).join(this.$i18n.tnl('message.readingPoint'))}`
         ret.push(this.$i18n.tnl(`message.${conf.label}AlertHumidity`, {
-          sensors: `${exbAlert}${exbAlert && txAlert? ', ': ''}${txAlert}`,
+          sensors: `${exbAlert}${exbAlert && txAlert? `${this.$i18n.tnl('message.readingPoint')}`: ''}${txAlert}`,
           humidity: conf.base,
         }))
       })
-      return ret.join(this.$i18n.tnl('message.readingPoint'))
+      return ret.join('')
     },
     addWarnMessage(){
       if(APP.USE_HUMIDITY_ALERT){
@@ -273,17 +294,22 @@ export default {
     },
     createButtonIcon(device, iconInfo){
       const btnicon = new Shape()
-      btnicon.graphics.beginFill(iconInfo.color).drawCircle(0, 0, DISP.PIR_R_SIZE, DISP.PIR_R_SIZE)
-      btnicon.alpha = DISP.THERMON_ALPHA
+      btnicon.graphics.beginFill(iconInfo.color).drawCircle(0, 0, DISP.THERMOH_R_SIZE, DISP.THERMOH_R_SIZE)
+      btnicon.alpha = DISP.THERMOH_ALPHA
+      btnicon.addEventListener('mouseover', this.iconMouseOver)
+      btnicon.addEventListener('mouseout', this.iconMouseOut)
       return btnicon
     },
     createButtonLabel(device){
-      const label = new Text(Util.floorVal(device.temperature, 2) + '℃\n' + Util.floorVal(device.humidity, 2) + '%')
+      const text = Util.formatTemperature(device.temperature) + '℃\n' + Util.formatHumidity(device.humidity) + '%'
+      const label = new Text(Util.inLabel(DISP.THERMOH_R_SIZE, DISP.THERMOH_FONT, DISP.THERMOH_WITH_LABEL)? text: '')
       label.font = DISP.THERMOH_FONT
-      label.color = 'black'
+      label.color = DISP.THERMOH_COLOR
       label.textAlign = 'center'
       label.textBaseline = 'middle'
       label.y = -5
+      label.addEventListener('mouseover', this.iconMouseOver)
+      label.addEventListener('mouseout', this.iconMouseOut)
       return label
     },
     showExb(exb) {
@@ -306,6 +332,7 @@ export default {
 
       exbBtn.deviceId = exb.deviceId
       exbBtn.exbId = exb.exbId
+      exbBtn.device = exb
       exbBtn.x = exb.x
       exbBtn.y = exb.y
       exbBtn.cursor = 'pointer'
@@ -314,7 +341,16 @@ export default {
       exbBtn.on('click', async (evt) =>{
         const pMock = DEV.USE_MOCK_EXC? mock['basic_sensorHistory_1_1_today_hour']: null
         const sensorData = await AppServiceHelper.fetchList('/basic/sensorHistory/1/1/' + exb.exbId + '/today/hour', null, pMock)
-        this.showChart(sensorData)
+        sensorData.data = sensorData.data.map(val => {
+          if(val.temperature){
+            val.temperature = Util.formatTemperature(val.temperature)
+          }
+          if(val.humidity){
+            val.humidity = Util.formatHumidity(val.humidity)
+          }
+          return val
+        })
+        this.showChart(exb, sensorData)
       })
 
       this.exbIcons.push({button: exbBtn, device: exb, config: iconInfo, sign: -1})
@@ -339,6 +375,7 @@ export default {
       }
 
       txBtn.txId = tx.txId
+      txBtn.device = tx
       txBtn.x = tx.x
       txBtn.y = tx.y
       txBtn.cursor = 'pointer'
@@ -347,7 +384,16 @@ export default {
       txBtn.on('click', async (evt) =>{
         const pMock = DEV.USE_MOCK_EXC? mock['basic_sensorHistory_1_1_today_hour']: null
         const sensorData = await AppServiceHelper.fetchList('/basic/sensorHistory/1/0/' + tx.txId + '/today/hour', null, pMock)
-        this.showChart(sensorData)
+        sensorData.data = sensorData.data.map(val => {
+          if(val.temperature){
+            val.temperature = Util.formatTemperature(val.temperature)
+          }
+          if(val.humidity){
+            val.humidity = Util.formatHumidity(val.humidity)
+          }
+          return val
+        })
+        this.showChart(tx, sensorData)
       })
 
       this.txIcons.push({button: txBtn, device: tx, config: iconInfo, sign: -1})
@@ -355,11 +401,73 @@ export default {
       stage.addChild(this.txCon)
       stage.update()
     },
-    showChart(sensorData) {
+    removeTooltip() {
+      if (this.tooltipCon) {
+        this.tooltipCon.removeAllChildren()
+      }
+    },
+    createTooltipInfo(container){
+      const device = container.device
+      const ret = {
+        fontSize: Util.getFont2Size(DISP.THERMOH_FONT),
+        sensorName: device.txName? device.txName: device.locationName,
+        temperature: Util.formatTemperature(device.temperature),
+        humidity: Util.formatHumidity(device.humidity),
+        description: Util.cutOnLong(device.description, 10),
+      }
+      const count = [ret.sensorName, ret.temperature, ret.humidity, ret.description].reduce((a, b) => b? a + 1: a, 0)
+      ret.width = ret.fontSize * Util.getMaxTextLength([Util.cutOnLongByte(ret.sensorName, 10, false), ret.temperature, ret.humidity, Util.cutOnLongByte(ret.description, 10, false)])
+      ret.height = ret.fontSize * (count + 2)
+      const right = container.x + ret.width
+      ret.x = right >= this.stage.canvas.width? container.x - ret.width: container.x + 4
+      const y = container.y - ret.height
+      ret.y = y < 0? container.y + 4: y
+      return ret
+    },
+    createTooltip(container) {
+      const stage = this.stage
+      stage.enableMouseOver()
+
+      if (!this.tooltipCon) {
+        this.tooltipCon = new Container()
+        stage.addChild(this.tooltipCon)
+      }
+      this.removeTooltip()
+
+      const tooltipInfo = this.createTooltipInfo(container)
+
+      const tooltip = new Shape()
+      tooltip.graphics.beginFill(DISP.THERMOH_TOOLTIP_BORDERCOLOR)
+      tooltip.graphics.drawRoundRect(tooltipInfo.x - 1, tooltipInfo.y - 1, tooltipInfo.width + 2, tooltipInfo.height + 2, DISP.THERMOH_TOOLTIP_ROUNDRECT, DISP.THERMOH_TOOLTIP_ROUNDISP)
+      tooltip.graphics.beginFill(DISP.THERMOH_TOOLTIP_BGCOLOR)
+      tooltip.graphics.drawRoundRect(tooltipInfo.x, tooltipInfo.y, tooltipInfo.width, tooltipInfo.height, DISP.THERMOH_TOOLTIP_ROUNDRECT, DISP.THERMOH_TOOLTIP_ROUNDISP)
+      this.tooltipCon.addChild(tooltip)
+
+      const label = new Text(this.$i18n.tnl('message.positionTooltip',{
+        sensorName: tooltipInfo.sensorName,
+        temperature: tooltipInfo.temperature,
+        humidity: tooltipInfo.humidity,
+        description: tooltipInfo.description,
+      }))
+      label.x = tooltipInfo.x + DISP.THERMOH_TOOLTIP_ROUNDRECT / 2
+      label.y = tooltipInfo.y + DISP.THERMOH_TOOLTIP_ROUNDRECT
+      label.font = DISP.THERMOH_FONT
+      label.color = DISP.THERMOH_TOOLTIP_COLOR
+      label.textBaseline = 'middle'
+      this.tooltipCon.addChild(label)
+      stage.setChildIndex(this.tooltipCon, stage.numChildren - 1)
+      stage.update()
+    },
+    showChart(device, sensorData) {
       SensorHelper.showThermoHumidityChart('dayChart', sensorData.data, this.$i18n)
       this.isShownChart = true
-      this.chartTitle = this.$i18n.tnl('message.monthDayTemperature', {month: sensorData.month, day: sensorData.day})
-    }
+      this.chartTitle = this.$i18n.tnl('message.monthDayTemperature', {
+        month: sensorData.month,
+        day: sensorData.day,
+        name: device.txName? device.txName: device.locationName? device.locationName: '',
+        description: device.description? ` : ${Util.cutOnLong(device.description, 10)}`: ''
+      })
+    },
   }
 }
 </script>

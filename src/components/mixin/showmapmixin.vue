@@ -51,6 +51,7 @@ export default {
       'areas',
       'exbs',
       'txs',
+      'forceFetchTx',
     ]),
     ...mapState('main', [
       'orgPositions',
@@ -150,7 +151,8 @@ export default {
         await StateHelper.loadAreaImage(this.selectedArea)
         await StateHelper.load('exb')
         if (tx) {
-          await StateHelper.load('tx')
+          await StateHelper.load('tx', this.forceFetchTx)
+          StateHelper.setForceFetch('tx', false)
         }
         this.isFirstTime = false
       }
@@ -364,7 +366,7 @@ export default {
       let positions = []
       if (APP.USE_POSITION_HISTORY) {
         // Serverで計算された位置情報を得る
-        positions = await EXCloudHelper.fetchPositionHistory(this.exbs, this.txs, pMock)
+        positions = await EXCloudHelper.fetchPositionHistory(this.exbs, this.txs, allShow, pMock)
         this.replaceMain({positionHistores: positions})
       } else {
         // 移動平均数分のポジションデータを保持する
@@ -579,7 +581,9 @@ export default {
         const selectedTxPosition = position.find((pos) => pos.btx_id == tx.btxId)
         if (selectedTxPosition) {
           const location = selectedTxPosition.tx? selectedTxPosition.tx.location: null
-          this.showDetail(tx.btxId, location? location.x * this.mapImageScale: selectedTxPosition.x, location? location.y * this.mapImageScale: selectedTxPosition.y)
+          const x = location && location.x != null? location.x * this.mapImageScale: selectedTxPosition.x
+          const y = location && location.y != null? location.y * this.mapImageScale: selectedTxPosition.y
+          this.showDetail(tx.btxId, x, y)
         }
       }
     },
@@ -628,6 +632,7 @@ export default {
             areaId: exb.areaId,
             zoneId: exb.zoneId,
             zoneCategoryId: exb.zoneCategoryId,
+            description: exb.description? exb.description: '',
           }
         })
         .filter((exb) => showSensorFunc? showSensorFunc(exb): true)
@@ -664,8 +669,10 @@ export default {
             locationName: tx.locationName,
             posId: tx.posId,
             txName: tx.txName,
+            sensorName: tx.sensorName,
             major: tx.major,
             minor: tx.minor,
+            description: tx.description? tx.description: '',
             high: sensor? sensor.high: null,
             low: sensor? sensor.low: null,
             beat: sensor? sensor.beat: null,

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container-fluid">
     <breadcrumb :items="items" :reload="false" />
     <div class="container">
       <alert :message="message" />
@@ -217,8 +217,8 @@ export default {
       }
 
       if (senHist.sensorId == SENSOR.TEMPERATURE) {
-        senHist.humidity = senHist.value.humidity
-        senHist.temperature = senHist.value.temperature
+        senHist.humidity = isNaN(senHist.value.humidity)? '': Util.formatHumidity(Number(senHist.value.humidity))
+        senHist.temperature = isNaN(senHist.value.temperature)? '': Util.formatTemperature(Number(senHist.value.temperature))
       }
       if (senHist.sensorId == SENSOR.PIR || senHist.sensorId == SENSOR.THERMOPILE) {
         senHist.count = senHist.value.count

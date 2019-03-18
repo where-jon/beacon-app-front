@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container-fluid">
     <breadcrumb :items="items" />
     <m-list :params="params" :list="exbs" />
   </div>
@@ -11,7 +11,7 @@ import { mapState } from 'vuex'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as MenuHelper from '../../../sub/helper/MenuHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
-import { APP } from '../../../sub/constant/config.js'
+import { APP } from '../../../sub/constant/config'
 import listmixinVue from '../../../components/mixin/listmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 
@@ -67,7 +67,7 @@ export default {
         'y',
         'enabled',
         'sensor',
-        MenuHelper.isMenuEntry('/master/zoneClass') ? 'zoneName': null
+        APP.EXB_WITH_ZONE && MenuHelper.isMenuEntry('/master/zoneClass') ? 'zoneName': null
       ].filter((val) => val)
     },
     getFields(){
@@ -82,7 +82,7 @@ export default {
         {key: 'x', label:'locationX', sortable: true,},
         {key: 'y', label:'locationY', sortable: true,},
         {key: 'sensorIdName', label:'type', sortable: true,},
-        MenuHelper.isMenuEntry('/master/zoneClass') ?
+        APP.EXB_WITH_ZONE && MenuHelper.isMenuEntry('/master/zoneClass') ?
           {key: 'zoneName', label: 'zoneName', sortable: true,} : null,
         {key: 'actions', thStyle: {width: '130px !important'} }
       ])

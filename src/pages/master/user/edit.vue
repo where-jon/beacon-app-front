@@ -1,10 +1,11 @@
 <template>
-  <div>
+  <div class="container-fluid">
     <breadcrumb :items="items" />
     <div class="container">
       <alert :message="message" />
 
       <b-form v-if="show" @submit.prevent="onSubmit">
+        <chrome-input />
         <b-form-group v-if="hasId">
           <label v-t="'label.userId'" />
           <b-form-input v-model="form.userId" type="text" readonly="readonly" />
@@ -60,12 +61,14 @@ import * as HtmlUtil from '../../../sub/util/HtmlUtil'
 import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
+import chromeInput from '../../../components/parts/chromeinput.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 
 export default {
   components: {
     breadcrumb,
     alert,
+    chromeInput,
   },
   mixins: [editmixinVue],
   data() {

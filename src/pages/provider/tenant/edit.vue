@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container-fluid">
     <breadcrumb :items="items" />
     <div class="container">
       <alert :message="message" />
@@ -198,7 +198,7 @@ export default {
       editCategorySettingList: {},
       newForm: {},
       dummyKey: -1,
-      defaultCheckFeatureNames: ['PositionMap', 'PositionList', 'PositionStack'],
+      defaultCheckFeatureNames: ['positionmap', 'positionlist', 'positionstack'],
     }
   },
   computed: {

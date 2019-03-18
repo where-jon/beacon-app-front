@@ -31,9 +31,9 @@ export const fetchPosition = async (exbs, txs, pMock) => {
     .compact().value()
 }
 
-export const fetchPositionHistory = async (exbs, txs, pMock) => {
+export const fetchPositionHistory = async (exbs, txs, allShow, pMock) => {
   let data = pMock? pMock: DEV.USE_MOCK_EXC? mock.position:
-    await HttpHelper.getExCloud(url(EXCLOUD.POSITION_HISTORY_FETCH_URL) + new Date().getTime())
+    await HttpHelper.getExCloud(url(EXCLOUD.POSITION_HISTORY_FETCH_URL.replace('{allFetch}', allShow? '1': '0')) + new Date().getTime())
   return _(data)
     .filter((val) => DEV.NOT_FILTER_TX || txs && txs.some((tx) => tx.txId == val.txId))
     .filter((val) => exbs && exbs.some((exb) => exb.location.locationId == val.locationId))

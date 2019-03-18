@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container-fluid">
     <breadcrumb :items="items" :reload="true" :is-load="isLoad" @reload="fetchData" />
     <div v-show="!isLoad" class="container">
       <monitor-table type="telemetry" :vue-table-mode="isDev" :all-count="allCount" :headers="headers" :datas="telemetrys" :tr-class="getClass" :td-class="getTdClass" />
@@ -84,7 +84,7 @@ export default {
           APP.EXB_WITH_DEVICE_ID? { key: 'deviceId' }: null,
           APP.EXB_WITH_DEVICE_IDX? { key: 'deviceIdX' }: null,
           { key: 'name', label: 'locationName'},
-          { key: 'powerLevel' },
+          APP.TELEMETRY_WITH_POWER_LEVEL? { key: 'powerLevel' }: null,
           { key: 'timestamp', label: 'finalReceiveTimestamp'},
           { key: 'state' },
         ].filter((val) => val))

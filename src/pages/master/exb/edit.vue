@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container-fluid">
     <breadcrumb :items="items" />
     <div class="container">
       <alert :message="message" />
@@ -33,7 +33,7 @@
             </b-form-group>
             <b-form-group v-show="isShown('EXB_WITH_POSID')">
               <label v-t="'label.posId'" />
-              <input v-model="form.posId" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control" required>
+              <input v-model="form.posId" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control" :required="isShown('EXB_WITH_POSID')">
             </b-form-group>
             <b-form-group>
               <label v-t="'label.locationX'" />
@@ -130,7 +130,7 @@ export default {
       deviceId: null,
       deviceIdX: null,
       deviceNum: null,
-      useZone: MenuHelper.isMenuEntry('/master/zoneClass'),
+      useZone: APP.EXB_WITH_ZONE && MenuHelper.isMenuEntry('/master/zoneClass'),
       items: ViewHelper.createBreadCrumbItems('master', {text: 'exb', href: '/master/exb'}, Util.getDetailCaptionKey(this.$store.state.app_service.exb.exbId)),
       txIconsDispFormat: 1,
       txIconsHorizon: 5,

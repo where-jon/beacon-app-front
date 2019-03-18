@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container-fluid">
     <breadcrumb :items="items" :reload="false" />
     <div class="container">
       <alert :message="message" />
@@ -112,7 +112,7 @@ import * as ViewHelper from '../../sub/helper/ViewHelper'
 import { SENSOR, SUM_UNIT, SUM_TARGET, DEVICE } from '../../sub/constant/Constants'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
-import { DEV } from '../../sub/constant/config'
+import { DEV, APP } from '../../sub/constant/config'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import * as mock from '../../assets/mock/mock'
 import validatemixin from '../../components/mixin/validatemixin.vue'
@@ -138,10 +138,27 @@ export default {
       },
       items: ViewHelper.createBreadCrumbItems('sumTitle', 'sensorGraph'),
       headers: {
-        temperature: [ 'dt', 'humidity(max)', 'humidity(avg)', 'humidity(min)', 'temperature(max)', 'temperature(avg)', 'temperature(min)', ],
-        pir: [ 'dt', 'count(max)', 'count(avg)', 'count(min)' ],
-        thermopile: [ 'dt', 'count(max)', 'count(avg)', 'count(min)' ],
-        meditag: [ 'dt', 'high(max)', 'high(avg)', 'high(min)', 'low(max)', 'low(avg)', 'low(min)', 'beat(max)', 'beat(avg)', 'beat(min)', 'step(max)', 'step(avg)', 'step(min)', 'down(max)', 'down(avg)', 'down(min)' ],
+        temperature: [
+          'dt',
+          APP.SENSORGRAPH_CSV_IMMEDIATE? 'humidity(lat)': null, 'humidity(max)', 'humidity(avg)', 'humidity(min)',
+          APP.SENSORGRAPH_CSV_IMMEDIATE? 'temperature(lat)': null, 'temperature(max)', 'temperature(avg)', 'temperature(min)',
+        ].filter(val => val),
+        pir: [
+          'dt',
+          APP.SENSORGRAPH_CSV_IMMEDIATE? 'count(lat)': null, 'count(max)', 'count(avg)', 'count(min)'
+        ].filter(val => val),
+        thermopile: [
+          'dt',
+          APP.SENSORGRAPH_CSV_IMMEDIATE? 'count(lat)': null, 'count(max)', 'count(avg)', 'count(min)'
+        ].filter(val => val),
+        meditag: [
+          'dt',
+          APP.SENSORGRAPH_CSV_IMMEDIATE? 'high(lat)': null, 'high(max)', 'high(avg)', 'high(min)',
+          APP.SENSORGRAPH_CSV_IMMEDIATE? 'low(lat)': null, 'low(max)', 'low(avg)', 'low(min)',
+          APP.SENSORGRAPH_CSV_IMMEDIATE? 'beat(lat)': null, 'beat(max)', 'beat(avg)', 'beat(min)',
+          APP.SENSORGRAPH_CSV_IMMEDIATE? 'step(lat)': null, 'step(max)', 'step(avg)', 'step(min)',
+          APP.SENSORGRAPH_CSV_IMMEDIATE? 'down(lat)': null, 'down(max)', 'down(avg)', 'down(min)',
+        ].filter(val => val),
         magnet: [ 'dt', 'magnet(max)', 'magnet(min)' ]
       },
       exbType: [SENSOR.PIR, SENSOR.THERMOPILE, SENSOR.LED],
@@ -201,7 +218,7 @@ export default {
       return Util.isAndroidOrIOS()
     },
     showDevice(){
-      return this.form.sensorId == SENSOR.TEMPERATURE
+      return this.form.sensorId == SENSOR.TEMPERATURE && APP.SENSORGRAPH_WITH_DEVICE
     },
     showTx(){
       return this.deviceType == DEVICE.TX
@@ -384,38 +401,46 @@ export default {
         magnet: this.compare(a.magnet, b.magnet) > 0? a.magnet: b.magnet,
       }))
     },
-    createCsvData(sensorKey, average, max, min){
+    createCsvData(sensorKey, immediate, average, max, min){
       const ret = {}
       const sumUnit = SUM_UNIT.getOptions()
       ret['dt'] = this.form.sumUnit == sumUnit[0].value? `${sensorKey}:00`:
         this.form.sumUnit == sumUnit[1].value? `${sensorKey}:00`:
           this.form.sumUnit == sumUnit[2].value? `${sensorKey.substring(0, sensorKey.length - 6)}`: sensorKey
       if(this.form.sensorId == SENSOR.TEMPERATURE){
+        ret['humidity(lat)'] = immediate.humidity
         ret['humidity(max)'] = max.humidity
         ret['humidity(avg)'] = average.humidity
         ret['humidity(min)'] = min.humidity
+        ret['temperature(lat)'] = immediate.temperature
         ret['temperature(max)'] = max.temperature
         ret['temperature(avg)'] = average.temperature
         ret['temperature(min)'] = min.temperature
       }
       if(this.form.sensorId == SENSOR.PIR || this.form.sensorId == SENSOR.THERMOPILE){
+        ret['count(lat)'] = immediate.count
         ret['count(max)'] = max.count
         ret['count(avg)'] = average.count
         ret['count(min)'] = min.count
       }
       if(this.form.sensorId == SENSOR.MEDITAG){
+        ret['step(lat)'] = immediate.step
         ret['step(max)'] = max.step
         ret['step(avg)'] = average.step
         ret['step(min)'] = min.step
+        ret['beat(lat)'] = immediate.beat
         ret['beat(max)'] = max.beat
         ret['beat(avg)'] = average.beat
         ret['beat(min)'] = min.beat
+        ret['low(lat)'] = immediate.low
         ret['low(max)'] = max.low
         ret['low(avg)'] = average.low
         ret['low(min)'] = min.low
+        ret['high(lat)'] = immediate.high
         ret['high(max)'] = max.high
         ret['high(avg)'] = average.high
         ret['high(min)'] = min.high
+        ret['down(lat)'] = immediate.down
         ret['down(max)'] = max.down
         ret['down(avg)'] = average.down
         ret['down(min)'] = min.down
@@ -447,6 +472,12 @@ export default {
         if(!sensorEditData[key]){
           sensorEditData[key] = []
         }
+        if(val.humidity){
+          val.humidity = Util.formatHumidity(val.humidity)
+        }
+        if(val.temperature){
+          val.temperature = Util.formatTemperature(val.temperature)
+        }
         sensorEditData[key].push(val)
       })
       const sumUnitOption = SUM_UNIT.getOptions()
@@ -463,7 +494,7 @@ export default {
         return {
           key: key,
           data: data,
-          csvData: this.createCsvData(key, average, max, min),
+          csvData: this.createCsvData(key, immediate, average, max, min),
           immediate: this.form.sumTarget == this.sumTargetOptions[0].value ? immediate: null,
           average: this.form.sumTarget == this.sumTargetOptions[1].value || (this.form.sumUnit == sumUnitOption[2].value && this.form.sensorId != SENSOR.MAGNET)? average: null,
           max: this.form.sumTarget == this.sumTargetOptions[2].value || this.form.sumUnit == sumUnitOption[2].value? max: null,

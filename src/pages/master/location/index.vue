@@ -1,5 +1,5 @@
 <template>
-  <div id="locationSetting">
+  <div id="locationSetting" class="container-fluid">
     <breadcrumb :items="items" />
     <alert :message="message" />
 
@@ -112,6 +112,7 @@ export default {
       },
       ICON_ARROW_WIDTH: 20,
       ICON_ARROW_HEIGHT: 10,
+      DISPLAY_NAME_BYTE_LENGTH: 6,
       noImageErrorKey: 'noMapImage',
       items: ViewHelper.createBreadCrumbItems('master', 'locationSetting'),
     }
@@ -143,6 +144,7 @@ export default {
     }
 
     const options = []
+    options.push({value: 'locationName', text: this.$i18n.tnl('label.locationName')})
     if (APP.EXB_WITH_DEVICE_NUM) options.push({value:'deviceNum', text: this.$i18n.tnl('label.deviceNum')})
     if (APP.EXB_WITH_DEVICE_IDX) options.push({value:'deviceIdX', text: this.$i18n.tnl('label.deviceIdX')})
     if (APP.EXB_WITH_DEVICE_ID) options.push({value:'deviceId', text: this.$i18n.tnl('label.deviceId')})
@@ -217,7 +219,10 @@ export default {
         return deviceId
       case 'deviceNum':
         return deviceId - this.$store.state.currentRegion.deviceOffset
-      }
+      case 'locationName': {
+        const exb = this.exbs.find(val => val.deviceId == deviceId)      
+        return exb? exb.locationName: ''
+      }}
     },
     changeExbDisp(newVal) {
       this.exbDisp = newVal
@@ -274,7 +279,7 @@ export default {
       s.graphics.lineTo(fromX, y)
       s.graphics.lineTo(fromX, fromY)
       exbBtn.addChild(s)
-      const label = new Text(this.getExbDisp(exb.deviceId))
+      const label = new Text(Util.cutOnLongByte(this.getExbDisp(exb.deviceId), this.DISPLAY_NAME_BYTE_LENGTH))
       label.font = DISP.EXB_LOC_FONT
       label.color = DISP.EXB_LOC_COLOR
       label.textAlign = 'center'
@@ -451,7 +456,7 @@ export default {
     },
     bulkAdd() {
       let counter = 0
-      let y = 20
+      let y = 40
       const mapMaxPosX = this.mapWidth * this.mapImageScale
       this.exbOptions.forEach((val) => {
         let x = 30 + counter++ * 60

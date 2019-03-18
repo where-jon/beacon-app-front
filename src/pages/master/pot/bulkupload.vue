@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container-fluid">
     <breadcrumb :items="items" />
     <bulkupload :id="id" :name="name" :back-path="backPath" :app-service-path="appServicePath" />
   </div>
