@@ -9,7 +9,7 @@
         <label v-t="'label.zoneName'" class="control-label mr-sm-2" />
         <input v-model="zoneName" type="text" maxlength="20" :disabled="!isEnableNameText" class="form-control mb-2 mr-sm-2 mb-sm-0" required>
         <label v-t="'label.categoryName'" class="control-label mr-sm-2" />
-        <b-form-select v-model="categoryId" :options="categoryNames" :disabled="!isEnableNameText" class="mb-2 mr-sm-2 mb-sm-0" @change="onChangeCategory" />
+        <b-form-select v-model="categoryId" :options="categoryNames" :disabled="!isEnableNameText" class="mb-2 mr-sm-2 mb-sm-0" />
         <b-button v-if="isEditable || isDeleteable" v-t="'label.delete'" type="button" variant="outline-danger" :disabled="!isEnableNameText" @click="confirmDelete($event.target)" />
         <b-button v-if="isEditable || isDeleteable" class="button-regist" :variant="theme" type="button" @click="regist()">
           {{ label }}
@@ -115,9 +115,8 @@ export default {
       this.categoryNames = StateHelper.getOptionsFromState('category', false, true, 
         category => !CATEGORY.POT_AVAILABLE.includes(category.categoryType)
       )
-      if (this.categoryNames.length < 1) {
-        return
-      }
+      const none = this.$i18n.t('label.none')
+      this.categoryNames.unshift({label: none, text: none, value: -1})
       this.categoryId = this.categoryNames[0].value
       this.nameAndCategory.categoryId = this.categoryId
     },

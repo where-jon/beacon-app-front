@@ -253,12 +253,12 @@ class Zones {
         y: zone.y / aspectRatio,
         w: zone.w / aspectRatio,
         h: zone.h / aspectRatio,
-        zoneCategoryList: [{
+        zoneCategoryList: zone.categoryId > 0 ? [{
           zoneCategoryPK: {
             zoneId: zone.zoneId,
             categoryId: zone.categoryId
           }
-        }],
+        }] : [],
       }
     })
   }
