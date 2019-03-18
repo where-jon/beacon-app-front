@@ -9,7 +9,7 @@
       </b-button>
     </div>
     <div v-if="isNews" class="container">
-      <news-table :headers="headers" :datas="topNewsList" />
+      <news-table :headers="headers" :datas="newsList" />
     </div>
   </form>
 </template>
@@ -40,7 +40,6 @@ export default {
   data() {
     return {
       isNews:true,
-      topNewsList: [],
       headers: ViewHelper.addLabelByKey(this.isDev? null: this.$i18n, [
         { key: 'newsDate' , label: 'newsDt'},
         { key: 'content', label: 'newsContent'},
@@ -63,10 +62,18 @@ export default {
   computed: {
     ...mapState('app_service', [
       'newsList',
+      'topNewsList',
       'forceFetchNews',
     ]),
     theme() {
       return getButtonTheme()
+    },
+    newsList() {
+      return this.topNewsList.map((val) => ({
+        ...val,
+        newsDate: Util.formatDate(val.newsDate),
+        content: val.content,
+      }))
     },
   },
   mounted() {
@@ -79,12 +86,7 @@ export default {
     async fetchData(payload) {
       try {
         this.showProgress()
-        await StateHelper.load('news')
-        this.topNewsList = this.newsList.map((val) => ({
-          ...val,
-          newsDate: Util.formatDate(val.newsDate),
-          content: val.content,
-        }))
+        await StateHelper.load('topNews')
         this.topNewsList.length > 0 ?this.isNews = true: this.isNews = false
         if (payload && payload.done) {
           payload.done()
