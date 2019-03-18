@@ -318,6 +318,11 @@ export const adjustPosition = (positions, ratio, exbs = [], selectedMapId = null
     const fix = (!fixPos || fixPos.length == 0) ? [] : getCoordinateFix(ratio, fixPos)
     return same.concat(fix)
   }).filter(e => e).flatMap(e => e)
+    .filter(function (x, i, self) {
+      return (self.findIndex(function(val) {
+        return (x.btx_id === val.btx_id)
+      }) === i)
+    })
 }
 
 export const adjustMultiPosition = (positions, ratio) => {
