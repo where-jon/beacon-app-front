@@ -69,6 +69,9 @@ export default {
       defaultColor: '#000000',
       defaultBgColor: '#ffffff',
       form: ViewHelper.extract(this.$store.state.app_service.category, ['categoryId', 'categoryName', 'categoryType', 'display', 'description']),
+      oldShape: null,
+      oldColor: null,
+      oldBgColor: null,
       defValue: {
         'categoryType': APP.CATEGORY_TYPES[0],
       },
@@ -102,9 +105,9 @@ export default {
   },
   methods: {
     beforeReload(){
-      this.form.displayShape = this.form.display? this.form.display.shape: null
-      this.form.displayColor = Util.colorCd4display(this.form.display? this.form.display.color: null, this.defaultColor)
-      this.form.displayBgColor = Util.colorCd4display(this.form.display? this.form.display.bgColor: null, this.defaultBgColor)
+      this.form.displayShape = this.oldShape? this.oldShape: this.shapes[0].value
+      this.form.displayColor = Util.colorCd4display(this.oldColor? this.oldColor: null, this.defaultColor)
+      this.form.displayBgColor = Util.colorCd4display(this.oldBgColor? this.oldBgColor: null, this.defaultBgColor)
     },
     afterCrud(){
       StateHelper.setForceFetch('pot', true)
@@ -121,6 +124,9 @@ export default {
           bgColor: Util.colorCd4display(this.form.displayBgColor),
         },
       }
+      this.oldShape = this.form.displayShape
+      this.oldColor = this.form.displayColor
+      this.oldBgColor = this.form.displayBgColor
       return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
     },
   },
