@@ -393,6 +393,7 @@ export default {
         const pMock = DEV.USE_MOCK_EXC? mock['basic_sensorHistory_1_1_today_hour']: null
         const sensorData = await AppServiceHelper.fetchList('/basic/sensorHistory/1/0/' + tx.txId + '/today/hour', null, pMock)
         sensorData.data = sensorData.data.map(val => {
+          val.key = Util.formatDate(val.sensor_dt, 'HH')
           if(val.temperature){
             val.temperature = Util.formatTemperature(val.temperature)
           }
