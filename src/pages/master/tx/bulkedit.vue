@@ -113,8 +113,10 @@ export default {
       return dummyKey
     },
     resetId(entity, dummyKey){
-      const targetEntity = Util.getEntityFromIds(this.txs, entity, ['txId', 'btxId', 'minor'])
-      entity.txId = targetEntity? targetEntity.txId: dummyKey--
+      if(!entity.txId){
+        const targetEntity = Util.getEntityFromIds(this.txs, entity, ['txId', 'btxId', 'minor'])
+        entity.txId = targetEntity? targetEntity.txId: dummyKey--
+      }
       if(APP.TX_BTX_MINOR == 'minor'){
         entity.btxId = entity.minor
         if(Util.hasValue(entity.minorName) || 65535 < entity.minor){
