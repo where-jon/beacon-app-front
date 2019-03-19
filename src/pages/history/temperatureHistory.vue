@@ -209,7 +209,11 @@ export default {
           if(data.humidity){
             data.humidity = Util.formatHumidity(data.humidity)
           }
+          if(data.dt){
+            data.dt = Util.formatDate(new Date(data.dt))
+          }
           delete data['sensorHistoryId']
+          delete data['sensorDt']
         })
       } catch (e) {
         console.log(e)
