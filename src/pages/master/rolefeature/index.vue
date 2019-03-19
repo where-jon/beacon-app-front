@@ -1,5 +1,5 @@
 <template slot="feature">
-  <div>
+  <div class="container-fluid">
     <m-list ref="ref" :params="params" :list="roleFeatures" :alert-force-hide="true" />
   </div>
 </template>

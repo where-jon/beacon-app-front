@@ -30,6 +30,7 @@
 
 import CustomLink from '../parts/customlink.vue'
 import { APP } from '../../sub/constant/config'
+import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import { getThemeClasses } from '../../sub/helper/ThemeHelper'
 import VueSlideUpDown from 'vue-slide-up-down'
 
@@ -50,7 +51,7 @@ export default {
       return this.$store.state.loginId
     },
     linkKey(){
-      return APP.SHOW_MENU_LINK
+      return HtmlUtil.getResourcePath(APP.SHOW_MENU_LINK)
     },
     linkUrl(){
       return APP.SHOW_MENU_LINK_URL

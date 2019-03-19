@@ -1,5 +1,5 @@
 <template>
-  <div id="txLocationSetting">
+  <div id="txLocationSetting" class="container-fluid">
     <breadcrumb :items="items" />
     <alert :message="message" />
 
@@ -72,7 +72,7 @@ export default {
       txOptions: [],
       deleteTarget: null,
       keepTxPosition: false,
-      ICON_FONTSIZE_RATIO: 0.7,
+      ICON_FONTSIZE_RATIO: 1.3,
       toggleCallBack: () => {
         this.keepTxPosition = true
       },
@@ -185,7 +185,7 @@ export default {
       s.graphics.lineTo(fromX, fromY)
       txBtn.addChild(s)
       const label = new Text(this.getLabel(tx))
-      label.font = DISP.TX_LOC_FONT * this.ICON_FONTSIZE_RATIO
+      label.font = `${h / this.ICON_FONTSIZE_RATIO}px ${DISP.TX_LOC_FONT}`
       label.color = DISP.TX_LOC_COLOR
       label.textAlign = 'center'
       label.textBaseline = 'middle'
@@ -294,7 +294,7 @@ export default {
     },
     bulkAdd() {
       let counter = 0
-      let y = 20
+      let y = 40
       const mapMaxPosX = this.mapWidth * this.mapImageScale
       this.txOptions.forEach((val) => {
         let x = 30 + counter++ * 60

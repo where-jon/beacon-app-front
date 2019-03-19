@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container-fluid">
     <breadcrumb :items="items" :reload="false" />
     <div class="container">
       <alert :message="message" />
@@ -125,6 +125,8 @@ export default {
   },
   async created() {
     await StateHelper.load('sensor')
+    await StateHelper.load('tx')
+    await StateHelper.load('exb')
     this.form.sensorId = Util.hasValue(this.sensorOptions)? this.sensorOptions[0].value: null
     const date = new Date()
     this.form.datetimeFrom = Util.getDatetime(date, {hours: -1})
@@ -134,7 +136,6 @@ export default {
   mounted() {
     HtmlUtil.importElementUI()
     StateHelper.load('sensor')
-    StateHelper.load('tx')
     this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.fetchRows, maxRows: this.limitViewRows})}`
   },
   methods: {
@@ -217,8 +218,8 @@ export default {
       }
 
       if (senHist.sensorId == SENSOR.TEMPERATURE) {
-        senHist.humidity = senHist.value.humidity
-        senHist.temperature = senHist.value.temperature
+        senHist.humidity = isNaN(senHist.value.humidity)? '': Util.formatHumidity(Number(senHist.value.humidity))
+        senHist.temperature = isNaN(senHist.value.temperature)? '': Util.formatTemperature(Number(senHist.value.temperature))
       }
       if (senHist.sensorId == SENSOR.PIR || senHist.sensorId == SENSOR.THERMOPILE) {
         senHist.count = senHist.value.count

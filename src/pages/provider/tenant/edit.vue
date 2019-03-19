@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container-fluid">
     <breadcrumb :items="items" />
     <div class="container">
       <alert :message="message" />
@@ -198,7 +198,7 @@ export default {
       editCategorySettingList: {},
       newForm: {},
       dummyKey: -1,
-      defaultCheckFeatureNames: ['PositionMap', 'PositionList', 'PositionStack'],
+      defaultCheckFeatureNames: ['positionmap', 'positionlist', 'positionstack'],
     }
   },
   computed: {
@@ -219,7 +219,7 @@ export default {
   async created(){
     const currentFeatureList = this.tenant && this.tenant.tenantFeatureList? this.tenant.tenantFeatureList: []
     await StateHelper.load('feature')
-    this.featureList = this.createFeatureTable(this.features, currentFeatureList)
+    this.featureList = this.createFeatureTable(this.features, currentFeatureList, this.hasId, this.defaultCheckFeatureNames)
     this.categorySettingList = {}
     if(this.tenant && this.tenant.settingList){
       _.forEach(this.tenant.settingList, (value, key) => {

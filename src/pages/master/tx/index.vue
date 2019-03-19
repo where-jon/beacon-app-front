@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container-fluid">
     <breadcrumb :items="items" />
     <m-list :params="params" :list="txs" />
   </div>
@@ -44,9 +44,9 @@ export default {
           APP.TX_WITH_TXID || APP.TX_BTX_MINOR != 'btxId'? {key: 'minor', sortable: true, tdClass: 'action-rowdata' }: null,
           APP.TX_WITH_CATEGORY? {key: 'categoryName', label: 'category', sortable: true, tdClass: 'action-rowdata' }: null,
           APP.TX_WITH_GROUP? {key: 'groupName', label: 'group', sortable: true, tdClass: 'action-rowdata' }: null,
-          APP.TX_WITH_DESCRIPTION? {key: 'description', sortable: true, tdClass: 'action-rowdata' }: null,
+          APP.TX_WITH_DESCRIPTION? {key: 'description', sortable: true, thStyle: {width: '200px !important'}, tdClass: 'action-rowdata' }: null,
           {key: 'sensor', label:'type', sortable: true,},
-          {key: 'disp', label:'disp', sortable: false,},
+          APP.TX_WITH_DISPFLG? {key: 'disp', label:'disp', sortable: false,}: null,
           {key: 'actions', thStyle: {width: '130px !important'}, tdClass: 'action-rowdata' }
         ]),
         sortBy: APP.TX_WITH_TXID? 'txId': APP.TX_BTX_MINOR != 'minor'? 'btxId': 'minor',

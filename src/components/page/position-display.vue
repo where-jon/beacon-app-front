@@ -27,7 +27,7 @@ export default {
     showmapmixin,
   ],
   props: {
-    className: {
+    masterName: {
       type: String,
       required: true,
     },
@@ -39,18 +39,18 @@ export default {
         name: 'position-stack',
         id: 'position-stackId',
         fields: addLabelByKey(this.$i18n, [
-          {key: 'label', label: `${this.className}`, tdClass: 'icon-rowdata'},
+          {key: 'label', label: this.masterName, tdClass: 'icon-rowdata'},
           {key: 'icons', label: 'tx', tdClass: 'icon-rowdata align-top'},
         ]),
-        initTotalRows: this.$store.state.main[Util.concatCamel('each', Util.single2multi(this.className))].length,
+        initTotalRows: this.$store.state.main[Util.concatCamel('each', Util.single2multi(this.masterName))].length,
         disableTableButtons: true,
         hideSearchBox: true,
         bordered: true,
       },
-      listName: Util.single2multi(this.className),
-      eachListName: Util.concatCamel('each', Util.single2multi(this.className)),
-      id: `${this.className}Id`,
-      name: `${this.className}Name`,
+      listName: Util.single2multi(this.masterName),
+      eachListName: Util.concatCamel('each', Util.single2multi(this.masterName)),
+      id: this.masterName + 'Id',
+      name: this.masterName + 'Name',
     }
   },
   computed: {
@@ -77,32 +77,32 @@ export default {
       'pushOrgPositions',
     ]),
     getDataList() {
-      return this[`${this.eachListName}`]
+      return this[this.eachListName]
     },
-    splitClass(positions,prohibitData){
-      const tempClass = _.map(this[`${this.listName}`], (cls) => ({[`${this.id}`]: cls[`${this.id}`], label: cls[`${this.name}`], positions: []}))
+    splitMaster(positions,prohibitData){
+      const tempMaster = _.map(this[this.listName], (obj) => ({[this.id]: obj[this.id], label: obj[this.name], positions: []}))
 
       _.forEach(positions, (pos) => {
-        const posClassId = Util.getValue(pos, `exb.${this.id}`, null)
-        _.forEach(tempClass, (cls) => {
-          if (posClassId == cls[`${this.id}`] && !pos.noSelectedTx) {
+        const posMasterId = Util.getValue(pos, 'exb.' + this.id, null)
+        _.forEach(tempMaster, (obj) => {
+          if (posMasterId == obj[this.id] && !pos.noSelectedTx) {
             prohibitData? prohibitData.some((data) => {
               if(data.minor == pos.minor){
                 pos.blinking = 'blinking'
                 return true
               }
             }): false
-            cls.positions.push(pos)
+            obj.positions.push(pos)
           }
         })
       })
-      return tempClass
+      return tempMaster
     },
     async fetchData(payload) {
       try {
         this.showProgress()
         console.log('fetchData Started.')
-        await StateHelper.load(`${this.className}`)
+        await StateHelper.load(this.masterName)
         await StateHelper.load('tx')
         await StateHelper.load('exb')
         await StateHelper.load('prohibit')
@@ -112,8 +112,8 @@ export default {
         let prohibitData = await StateHelper.getProhibitData(this.getPositions(),this.prohibits)
         this.message = await StateHelper.getProhibitMessage(this.message,prohibitData)
         // 分類checkProhibitZone
-        const tempClass = this.splitClass(this.positions, prohibitData)
-        this.replaceMain({[`${this.eachListName}`]: tempClass})
+        const tempMaster = this.splitMaster(this.positions, prohibitData)
+        this.replaceMain({[this.eachListName]: tempMaster})
         if (payload && payload.done) {
           payload.done()
         }

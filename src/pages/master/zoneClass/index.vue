@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container-fluid">
     <breadcrumb :items="items" />
     <m-list :params="params" :list="zoneList" />
   </div>
@@ -13,6 +13,7 @@ import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import listmixinVue from '../../../components/mixin/listmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import {ZONE} from '../../../sub/constant/Constants'
+import * as Util from '../../../sub/util/Util'
 
 export default {
   components: {
@@ -46,7 +47,7 @@ export default {
   },
   computed: {
     zoneList() {
-      console.table(this.$store.state.app_service.zones)
+      Util.table(this.$store.state.app_service.zones)
       return this.$store.state.app_service.zones.filter((zone)=> zone.zoneType ==  ZONE.getTypes()[1].value)
     },
     zoneLength() {

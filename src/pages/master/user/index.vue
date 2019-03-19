@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container-fluid">
     <breadcrumb :items="items" />
     <m-list :params="params" :list="users" />
   </div>

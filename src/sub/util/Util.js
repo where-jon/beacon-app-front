@@ -13,6 +13,8 @@ export const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 
 export const single2multi = (str) => str.endsWith('y')? str.slice(0, -1) + 'ies' : str + 's'
 
+export const toLowerCaseTop = (str) => `${str.slice(0, 1).toLowerCase()}${str.slice(1)}`
+
 export const concatCamel = (...strs) => strs.map((str, idx) => idx == 0? str: `${str.charAt(0).toUpperCase()}${str.slice(1)}`).join('')
 
 export const snake2camel = (str) => str.replace(/_./g, (s) => s.charAt(1).toUpperCase())
@@ -100,7 +102,7 @@ export const cutOnLong = (val, max) => {
   return val
 }
 
-export const cutOnLongByte = (val, max) => {
+export const cutOnLongByte = (val, max, addLast = true) => {
   if (!val || !max) {
     return val
   }
@@ -115,7 +117,7 @@ export const cutOnLongByte = (val, max) => {
         max -= length
       }
     })
-    return `${val.substr(0, cnt)}...`
+    return `${val.substr(0, cnt)}${addLast? '...': ''}`
   }
   return val
 }
@@ -466,3 +468,15 @@ export const getFileName = key => key.slice(key.lastIndexOf('/') + 1, key.lastIn
 export const isImageFile = key => hasValue(key) && /^.*\.(png$)|(jpg$)|(jpeg$)|(gif$)$/.test(key) && !/^.*(__MACOSX\/).*$/.test(key) && !/^\..*/.test(getFileName(key))
 export const isResponsiveMode = () =>  window.innerWidth < 768
 
+export const formatTemperature = (temperature) => typeof temperature == 'number'? floorVal(temperature, 1): ''
+export const formatHumidity = (humidity) => typeof humidity == 'number'? floorVal(humidity, 0): ''
+
+export const getFont2Size = (font) => Number(font.split(' ').find(val => val.match(/[0-9]+/)).replace(/[^0-9]/g, ''))
+
+export const inLabel = (iconRadius, font, useLabel) => {
+  if(!useLabel){
+    return false
+  }
+  const fontSize = typeof font == 'number'? font: getFont2Size(font)
+  return iconRadius >= fontSize * 1.5
+}

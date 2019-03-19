@@ -23,6 +23,7 @@
 <script>
 
 import commonmixinVue from '../mixin/commonmixin.vue'
+import * as Util from '../../sub/util/Util'
 
 export default {
   mixins: [commonmixinVue], 
@@ -45,7 +46,7 @@ export default {
       return `parentCheck-${item.parentId}-${item.subId}`
     },
     getFeatureName(item){
-      return this.$i18n.tnl(`label.${item.featureName.replace(/ /g, '')}`)
+      return this.$i18n.tnl(`label.${Util.toLowerCaseTop(item.featureName.replace(/ /g, ''))}`)
     },
     parentChange(item){
       this.list.forEach((val) => {

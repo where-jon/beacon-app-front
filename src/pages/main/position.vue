@@ -313,7 +313,7 @@ export default {
         let mapRatio = area.mapRatio
         position = PositionHelper.adjustMultiPosition(this.getPositions(), this.mapImageScale * mapRatio)
       }else{
-        position = PositionHelper.adjustPosition(this.getPositions(), this.mapImageScale, this.positionedExb)
+        position = PositionHelper.adjustPosition(this.getPositions(), this.mapImageScale, this.positionedExb, this.selectedArea)
       }
       position.forEach((pos) => {
         this.showTx(pos)
@@ -332,7 +332,7 @@ export default {
         Util.debug('tx is not allowed to show', tx)
         return
       }
-      if (pos.noSelectedTx) {
+      if (pos.noSelectedTx && !this.isFixTx(tx)) {
         Util.debug('tx is not allowed to show', tx)
         return
       }
@@ -349,30 +349,32 @@ export default {
       const display = this.getDisplay(tx)
       const color = meditag? '000': this.isMagnetOn(magnet)? display.bgColor : display.color
       const bgColor = meditag? meditag.bg.substr(1): this.isMagnetOn(magnet)? display.color: display.bgColor
+      
+      // フリーアドレスTXが不在エリア検知の場合は以降処理を行わない
       if (exb.isAbsentZone && !this.isFixTx(tx)) {
-        // 何もしない（TX非表示）
-      } else {
-        if (exb.isAbsentZone && this.isFixTx(tx)) {
-          pos.transparent = true
-        }
-
-        const txBtn = this.createTxBtn(pos, display.shape, color, bgColor)
-        if (this.isFixTx(tx)) {
-          Util.debug('fixed location', tx)
-          txBtn.x = tx.location.x * this.mapImageScale
-          txBtn.y = tx.location.y * this.mapImageScale
-        }
-
-        if(this.reloadSelectedTx.btxId == pos.btx_id){
-          this.showingDetailTime = new Date().getTime()
-          this.showDetail(txBtn.txId, txBtn.x, txBtn.y)
-        }
-        this.txCont.addChild(txBtn)
-        txBtn.prohibit = this.prohibitData? this.prohibitData.some((data) => data.minor == pos.minor):false
-        this.icons.push(txBtn)
-        this.stage.update()
-        this.detectedCount++  // 検知数カウント増加
+        return
       }
+
+      if ((exb.isAbsentZone || this.isOtherFloorFixTx(tx, exb)) && this.isFixTx(tx)) {
+        pos.transparent = true
+      }
+
+      const txBtn = this.createTxBtn(pos, display.shape, color, bgColor)
+      if (this.isFixTx(tx)) {
+        Util.debug('fixed location', tx)
+        txBtn.x = tx.location.x * this.mapImageScale
+        txBtn.y = tx.location.y * this.mapImageScale
+      }
+
+      if(this.reloadSelectedTx.btxId == pos.btx_id){
+        this.showingDetailTime = new Date().getTime()
+        this.showDetail(txBtn.txId, txBtn.x, txBtn.y)
+      }
+      this.txCont.addChild(txBtn)
+      txBtn.prohibit = this.prohibitData? this.prohibitData.some((data) => data.minor == pos.minor):false
+      this.icons.push(txBtn)
+      this.stage.update()
+      this.detectedCount++  // 検知数カウント増加
     },
     touchEnd (evt) {
       if (evt.target.id === 'map') {
@@ -382,6 +384,9 @@ export default {
     },
     isFixTx (tx) {
       return tx.location && tx.location.areaId == this.selectedArea && tx.location.x * tx.location.y > 0
+    },
+    isOtherFloorFixTx (tx, exb) {
+      return tx.location && tx.location.areaId != exb.location.areaId && tx.location.x * tx.location.y > 0
     }
   }
 }

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container-fluid">
     <breadcrumb :items="items" :reload="false" />
     <div class="container">
       <alert :message="message" />
@@ -203,7 +203,17 @@ export default {
           return []
         }
         list.forEach(data => {
+          if(data.temperature){
+            data.temperature = Util.formatTemperature(data.temperature)
+          }
+          if(data.humidity){
+            data.humidity = Util.formatHumidity(data.humidity)
+          }
+          if(data.dt){
+            data.dt = Util.formatDate(new Date(data.dt))
+          }
           delete data['sensorHistoryId']
+          delete data['sensorDt']
         })
       } catch (e) {
         console.log(e)

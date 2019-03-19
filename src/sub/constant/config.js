@@ -11,7 +11,7 @@ export const DEV = { // 開発デバッグ関連
 }
 
 export const APP = { // 機能面に関する設定
-  VERSION: 'Version 1.0.0', // バージョン　this application version
+  VERSION: 'Version 1.1.0', // バージョン　this application version
   LOGIN_MODE: LOGIN_MODE.APP_SERVICE, // ログインモード(なし、ローカル、AppService)
   SAAS_DOMAIN: '.saas.',
 
@@ -51,7 +51,7 @@ export const APP = { // 機能面に関する設定
   RSSI_MIN: -99, // RSSI下限値
   MOVING_AVERAGE: 5, // 5回分移動平均
   USE_MULTI_POSITIONING: false, // ３点測位を使う
-  EXSERVER: true, // EXServerを使う
+  EXSERVER: false, // EXServerを使う
   
   // 機能
   USE_THERMOPILE: true, // サーモパイルセンサーの使用
@@ -88,7 +88,9 @@ export const APP = { // 機能面に関する設定
   TX_WITH_MAJOR: true, // TX管理でmajorを表示
   TX_MAJOR_REQUIRED: false, // majorを必須にする ※サーバでも要設定
   TX_BTX_MINOR: 'both', // both:両方表示し、別々に設定、minor/btxId:片方のみ表示し、保存の際同一の値を設定
+  TX_WITH_DISPFLG: true, // TXを表示する
   TX_WITH_LOCATION: true, // TXを固定位置表示する（TX管理画面に影響）
+  TX_WITH_DISP_PIR: true, // 空室チェックで表示を使用
   TX_WITH_DISP_ALWAYS: false, // TX管理で常時表示を表示
 
   // EXB関連設定
@@ -98,6 +100,7 @@ export const APP = { // 機能面に関する設定
   EXB_WITH_DEVICE_ID: false,   // 画面上デバイスIDを使用するか否か
   EXB_WITH_DEVICE_IDX: false,  // 画面上デバイスID（16進数）を使用するか否か
   EXB_WITH_POSID: true,      // 画面上POSIDを使用するか否か
+  EXB_WITH_ZONE: true,       // 画面上でゾーン名を使用するか否か
 
   EXB_MULTI_SENSOR: true,
   EXB_SENSOR_MAX: 2,   // センサー種類最大数
@@ -146,7 +149,21 @@ export const APP = { // 機能面に関する設定
 
   // Tx状態監視
   POSITION_WITH_BTXID: true, // btxIdを表示する
+  POSITION_WITH_MAJOR: true, // majorを表示する
+  POSITION_WITH_MINOR: true, // minorを表示する
+  POSITION_WITH_LOCATIONNAME: true, // locationNameを表示する
   POSITION_SENSOR: [], // マージするセンサ情報のIDリスト
+
+  SENSOR_WITH_POSID: true,       // 画面上でposIdを使用するか否か
+  SENSOR_WITH_DEVICE_NUM: true,       // 画面上でdeviceNumを使用するか否か
+  SENSOR_WITH_DEVICE_ID: true,       // 画面上でdeviceIdを使用するか否か
+  SENSOR_WITH_DEVICE_IDX: true,       // 画面上でdeviceIdXを使用するか否か
+  SENSOR_WITH_LOCATIONNAME: true,       // 画面上でlocationNameを使用するか否か
+
+  TELEMETRY_WITH_POWER_LEVEL: true,         // 画面上で電池レベルを使用するか否か
+
+  SENSORGRAPH_WITH_DEVICE: true,             // 画面上でデバイスを使用するか否か
+  SENSORGRAPH_CSV_IMMEDIATE: false,             // csvで直近値を出力するか否か
 
   // その他
   MAX_IMAGE_SIZE: 20 * 1024 * 1024, // アップロード可能な最大イメージサイズ(Byte)
@@ -180,7 +197,7 @@ export const EXCLOUD = {
   DL_LIST_URL: '/core/excloud/dllist/{type}/{yyyymm}?_=',
   DL_URL: '/core/excloud/dl/{type}/{yyyymmdd}?_=',
   LED_URL: '/core/excloud/led?_=',
-  POSITION_HISTORY_FETCH_URL: '/core/positionHistory/fetch?_=',
+  POSITION_HISTORY_FETCH_URL: '/core/positionHistory/fetch/{allFetch}?_=',
 }
 
 export const DISP = { // 表示系設定（表示・色・フォント・サイズ）
@@ -212,27 +229,39 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   EXB_LOC_SIZE: {w: 60, h: 30}, // EXB配置設定のEXB表示サイズ
   EXB_LOC_BGCOLOR: '#76ccf7', // EXB配置設定のEXB表示背景色
   EXB_LOC_COLOR: '#000', // EXB配置設定のEXB表示文字色
-  EXB_LOC_FONT: '16px Arial', // EXB配置設定のEXB表示フォント
+  EXB_LOC_FONT: 'Arial', // EXB配置設定のEXB表示フォント
 
   TX_LOC_SIZE: {w: 60, h: 30}, // TX配置設定のTX表示サイズ
   TX_LOC_BGCOLOR: '#76ccf7', // TX配置設定のTX表示背景色
   TX_LOC_COLOR: '#000', // TX配置設定のTX表示文字色
-  TX_LOC_FONT: '16px Arial', // TX配置設定のTX表示フォント
+  TX_LOC_FONT: 'Arial', // TX配置設定のTX表示フォント
   TX_LOC_ALPHA: 1.0, // TX配置設定のTX表示フォント
 
+  THERMOH_TOOLTIP_USE: false, // ツールチップを使用する
+  THERMOH_TOOLTIP_COLOR: '#000000', // ツールチップ文字色
+  THERMOH_TOOLTIP_BORDERCOLOR: '#888888', // ツールチップ枠線色
+  THERMOH_TOOLTIP_BGCOLOR: '#FFFDE6', // ツールチップ背景色
+  THERMOH_TOOLTIP_ROUNDRECT: 16, // ツールチップ角丸半径
+
+  THERMOH_ALERT_FIX_HEIGHT: 0, // 警告欄固定行高さ(0で無効)
+  THERMOH_ALERT_WEIGHT: 'bold', // 警告フォント太さ
+
   THERMOH_DISP: 'color', // icon / color
+  THERMOH_WITH_LABEL: true, // アイコンに温湿度を表示する
   THERMOH_FONT: '12px Arial', // 温湿度表示時のフォント
+  THERMOH_R_SIZE: 26, // 温湿度表示時の円の半径
+  THERMOH_COLOR: '#ffffff', // 温湿度表示時の文字色
   DISCOMFORT_HOT: '#fc5800', // 温湿度表示時の不快指数Hot時の背景色
   DISCOMFORT_COMFORT: '#15db75', // 温湿度表示時の不快指数Comfort時の背景色
   DISCOMFORT_COLD: '#7da6e8', // 温湿度表示時の不快指数Cold時の背景色
   THERMOH_CALC: 2, // アイコン状態算出方法(1:不快指数 2:温度)
-  THERMON_FLASH_WARN: 1000, // 警告アイコン点滅周期(ミリ秒)
-  THERMON_FLASH_DANGER: 500, // 危険アイコン点滅周期(ミリ秒)
-  THERMON_ALPHA: 1, // アルファ値(0:透明～1:不透明)
+  THERMOH_FLASH_WARN: 1000, // 警告アイコン点滅周期(ミリ秒)
+  THERMOH_FLASH_DANGER: 500, // 危険アイコン点滅周期(ミリ秒)
+  THERMOH_ALPHA: 1, // アルファ値(0:透明～1:不透明)
   THERMOH_PATTERN: ['19 #5b9bd5', '25 #6eb290', '26 #ffd966', '27 #ff9966', '31 #ff5050', '32 #ffd966 $WARN', '#ff2525 $DANGER'], // 温度アイコンパターン（順不同。数値：閾値。先頭が#：カラーコード。先頭が$：点滅パターン。OR：閾値に同値を含む。）
   HUMIDITY_PATTERN: ['LESS 30', 'LESS 50', 'MORE 85'], // 湿度アラートパターン（順不同。数値：閾値。LESS：閾値以下の場合に警告。MORE：閾値以上の場合に警告）
 
-  TEMPERATURE_MAX: 20,  // 温湿度ヒートマップ最大値
+  TEMPERATURE_MAX: 28,  // 温湿度ヒートマップ最大値
   TEMPERATURE_MIN: 0,   // 温湿度ヒートマップ最小値
   TEMPERATURE_RADIUS: 150,   // 温湿度ヒートマップ直径
 

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container-fluid">
     <breadcrumb :items="items" :reload="true" :is-load="isLoad" @reload="fetchData" />
     <div v-show="!isLoad" class="container">
       <monitor-table type="gw" :all-count="allCount" :headers="headers" :datas="gateways" :tr-class="getClass" />
@@ -53,7 +53,7 @@ export default {
       } : {
         'num': 'num',
         'deviceid': 'deviceid',
-        'timestamp': 'timestamp',
+        'updated': 'updated',
         'state': 'state',
       },
 
