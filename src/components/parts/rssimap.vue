@@ -30,7 +30,7 @@
           <label class="ml-sm-4 ml-2 mr-1">
             {{ $t('label.tx') }}
           </label>
-          <b-form-select v-model="targetTx" :options="txs" class="ml-1 mr-2" />
+          <b-form-select v-model="targetTx" :options="txRecords" class="ml-1 mr-2" />
         </b-form-row>
         <b-form-row class="my-1 ml-2 ml-sm-0">
           <b-button class="ml-sm-4 ml-2 mr-1" :pressed.sync="isPause" :variant="getButtonTheme()">
@@ -66,7 +66,7 @@ import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import commonmixinVue from '../mixin/commonmixin.vue'
 
 class RssiIcon {
-  constructor(rssi, level = 3) {
+  constructor(parent, rssi, level = 3) {
     const RSSI_ICON_WIDTH = DISP.INSTALLATION.RSSI_ICON_WIDTH
     const RSSI_ICON_HEIGHT = DISP.INSTALLATION.RSSI_ICON_HEIGHT
     const color = (() => {
@@ -94,13 +94,26 @@ class RssiIcon {
       x: RSSI_ICON_WIDTH / 2,
       y: RSSI_ICON_HEIGHT / 2,
     })
+    this.parent = parent
   }
 
-  add(parent, x, y) {
+  add(x, y) {
     this.container.x = x
     this.container.y = y
-    parent.addChild(this.container)
+    this.parent.addChild(this.container)
   }
+}
+
+const isMatchId = (selectedId, obj, propName) => {
+  if (!selectedId) {
+    return true
+  }
+
+  if (!obj || !obj[propName]) {
+    return false
+  }
+
+  return selectedId === obj[propName]
 }
 
 export default {
@@ -135,6 +148,10 @@ export default {
     }
   },
   computed: {
+    ...mapState('app_service', [
+      'txs',
+      'forceFetchTx',
+    ]),
     ...mapState([
       'reload',
     ]),
@@ -143,8 +160,14 @@ export default {
         category => CATEGORY.POT_AVAILABLE.includes(category.categoryType)
       )
     },
-    txs() {
-      return this.nearest.map((n) => n.btx_id)
+    txRecords() {
+      const btxs = this.nearest.map((n) => n.btx_id)
+      if (!this.selectedGroup && !this.selectedCategory) {
+        return btxs
+      }
+      const target = this.txs.filter((tx) => isMatchId(this.selectedGroup, tx.group, 'groupId') &&
+      isMatchId(this.selectedCategory, tx.category, 'categoryId'))
+      return target.length > 0 ? btxs.filter((btx) => target.some((t) => btx === t.btxId)) : []
     },
   },
   watch: {
@@ -153,6 +176,14 @@ export default {
     },
     targetTx: function(newVal, oldVal) {
       this.dispRssiIcons(newVal)
+    },
+    selectedGroup: function(newVal, oldVal) {
+      this.targetTx = null
+      this.dispRssiIcons(null)
+    },
+    selectedCategory: function(newVal, oldVal) {
+      this.targetTx = null
+      this.dispRssiIcons(null)
     },
     isPause: function(newVal, oldVal) {
       // リロード一時停止
@@ -189,6 +220,7 @@ export default {
           this.exbCon.addChild(exbBtn)
           return exbBtn
         })
+
         this.nearest = await this.getNearest(this.exbBtns)
         this.stage.addChild(this.exbCon)
         this.stage.update()
@@ -196,9 +228,14 @@ export default {
         if (this.targetTx) {
           this.dispRssiIcons(this.targetTx)
         }
+
+        await StateHelper.load('tx', this.forceFetchTx)
+        StateHelper.setForceFetch('tx', false)
+
         if (payload && payload.done) {
           payload.done()
         }
+
         this.hideProgress()
       }, disableErrorPopup)
     },
@@ -260,6 +297,11 @@ export default {
         this.stage.addChild(this.rssiCon)
       }
 
+      if (!btxId) {
+        this.stage.update()
+        return
+      }
+
       const target = this.nearest.find((n) => n.btx_id === btxId)
       if (!target) {
         return
@@ -271,7 +313,7 @@ export default {
 
       target.nearest.filter((t) => t.x && t.y).forEach((t, i, a) => {
         const rssi = Math.floor(t.rssi * pow) / pow 
-        new RssiIcon(rssi, i).add(this.rssiCon, t.x - minusX, t.y - minusY)
+        new RssiIcon(this.rssiCon, rssi, i).add(t.x - minusX, t.y - minusY)
       })
       this.stage.update()
     },

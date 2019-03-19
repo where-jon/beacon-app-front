@@ -9,14 +9,14 @@
         <b-form-select v-model="positionType" :options="positionTypeOptions" />
       </b-form>
     </b-row>
-    <position-class v-show="isShow('area')" ref="areaPosition" class-name="area" />
-    <position-class v-show="isShow('zone')" ref="zonePosition" class-name="zone" />
+    <position-display v-show="isShow('area')" ref="areaPosition" master-name="area" />
+    <position-display v-show="isShow('zone')" ref="zonePosition" master-name="zone" />
   </div>
 </template>
 
 <script>
 import breadcrumb from '../../components/layout/breadcrumb.vue'
-import positionClass from '../../components/page/position-class.vue'
+import positionDisplay from '../../components/page/position-display.vue'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
 import { EventBus } from '../../sub/helper/EventHelper'
 import { EXTRA_NAV, POSITION_STACK_TYPES } from '../../sub/constant/Constants'
@@ -24,7 +24,7 @@ import { EXTRA_NAV, POSITION_STACK_TYPES } from '../../sub/constant/Constants'
 export default {
   components: {
     breadcrumb,
-    positionClass,
+    positionDisplay,
   },
   data() {
     return {

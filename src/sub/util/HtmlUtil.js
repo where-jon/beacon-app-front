@@ -216,3 +216,5 @@ export const setCustomValidationMessage = () => {
     }
   }
 }
+
+export const getResourcePath = (path) => hasValue(path)? path.indexOf(0) == /^[\\./]/.test(path)? path: `/${path}`: path

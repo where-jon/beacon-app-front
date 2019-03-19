@@ -379,9 +379,9 @@ export const getFields1 = (i18n) => {
   return addLabelByKey(i18n, [
     {key: 'sensorDt', sortable: true, label:'dt'},
     {key: 'txName', sortable: true },
-    APP.SENSOR_WITH_DEVICENUM && APP.EXB_WITH_DEVICE_NUM? {key: 'deviceNum', sortable: true }: null,
-    APP.SENSOR_WITH_DEVICEID && APP.EXB_WITH_DEVICE_ID? {key: 'deviceId', sortable: true }: null,
-    APP.SENSOR_WITH_DEVICEIDX && APP.EXB_WITH_DEVICE_IDX? {key: 'deviceIdX', sortable: true }: null,
+    APP.SENSOR_WITH_DEVICE_NUM && APP.EXB_WITH_DEVICE_NUM? {key: 'deviceNum', sortable: true }: null,
+    APP.SENSOR_WITH_DEVICE_ID && APP.EXB_WITH_DEVICE_ID? {key: 'deviceId', sortable: true }: null,
+    APP.SENSOR_WITH_DEVICE_IDX && APP.EXB_WITH_DEVICE_IDX? {key: 'deviceIdX', sortable: true }: null,
     APP.SENSOR_WITH_LOCATIONNAME? {key: 'locationName', label:'locationZoneName', sortable: true,}: null,
     APP.SENSOR_WITH_POSID? {key: 'posId', label:'posId', sortable: true,}: null,
     {key: 'areaName', label:'area', sortable: true,},

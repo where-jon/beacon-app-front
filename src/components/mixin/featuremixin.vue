@@ -40,7 +40,7 @@ export default {
         subId: featureIdStr.length <= 6? Number(featureIdStr.substring(featureIdDigit)): 0,
       }
     },
-    createFeatureTable(masterFeatureList, currentFeatureList){
+    createFeatureTable(masterFeatureList, currentFeatureList, hasId = null, defaultCheckFeatureNames = []){
       return masterFeatureList.map((feature) => {
         const featureIds = this.getFeatureIds(feature.featureId)
         const tenantFeature = currentFeatureList.find((val) => val.tenantFeaturePK.featureId == feature.featureId)
@@ -54,7 +54,7 @@ export default {
           parentId: featureIds.parentId,
           subShow: featureIds.subId != 0,
           subId: featureIds.subId,
-          checked: tenantFeature? true: false,
+          checked: hasId == false && defaultCheckFeatureNames.includes(feature.featureName.toLowerCase())? true: tenantFeature? true: false,
           disabled: parentFeature? true: false,
         }
       })

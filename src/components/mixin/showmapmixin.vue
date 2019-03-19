@@ -27,14 +27,11 @@ export default {
       showTryCount: 0,
       tempMapFitMobile: DISP.MAP_FIT_MOBILE,
       oldMapImageScale: 0,
-      ICON_FONTSIZE_RATIO: 0.7,
       showIconMinWidth: POSITION.SHOW_ICON_MIN_WIDTH,
       reloadSelectedTx: {},
       showReady: false,
       count: 0, // for mock test
       meditagSensors: [],
-      selectedGroup: null,
-      selectedCategory: null,
       showingDetailTime: null,
       defaultDisplay: {
         color: DISP.TX_COLOR,
@@ -63,6 +60,14 @@ export default {
     selectedArea: {
       get() { return this.$store.state.main.selectedArea},
       set(val) { this.replaceMain({'selectedArea': val})},
+    },
+    selectedGroup: {
+      get() { return this.$store.state.main.selectedGroup},
+      set(val) { this.replaceMain({'selectedGroup': val})},
+    },
+    selectedCategory: {
+      get() { return this.$store.state.main.selectedCategory},
+      set(val) { this.replaceMain({'selectedCategory': val})},
     },
   },
   async created() {
@@ -543,7 +548,7 @@ export default {
     },
     createBtnLabel(pos, color){
       const label = new Text(pos.label)
-      label.font = `${DISP.TX_R * this.ICON_FONTSIZE_RATIO}px Arial`
+      label.font = `${DISP.TX_R * this.mapImageScale}px Arial`
       label.color = '#' + color
       label.textAlign = 'center'
       label.textBaseline = 'middle'
