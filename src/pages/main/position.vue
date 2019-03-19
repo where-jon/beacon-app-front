@@ -316,7 +316,6 @@ export default {
         position = PositionHelper.adjustPosition(this.getPositions(), this.mapImageScale, this.positionedExb, this.selectedArea)
       }
       console.log('-------showTxAll')
-      console.table(position)
       position.forEach((pos) => {
         this.showTx(pos)
       })
