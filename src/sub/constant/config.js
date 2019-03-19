@@ -155,9 +155,9 @@ export const APP = { // 機能面に関する設定
   POSITION_SENSOR: [], // マージするセンサ情報のIDリスト
 
   SENSOR_WITH_POSID: true,       // 画面上でposIdを使用するか否か
-  SENSOR_WITH_DEVICENUM: true,       // 画面上でdeviceNumを使用するか否か
-  SENSOR_WITH_DEVICEID: true,       // 画面上でdeviceIdを使用するか否か
-  SENSOR_WITH_DEVICEIDX: true,       // 画面上でdeviceIdXを使用するか否か
+  SENSOR_WITH_DEVICE_NUM: true,       // 画面上でdeviceNumを使用するか否か
+  SENSOR_WITH_DEVICE_ID: true,       // 画面上でdeviceIdを使用するか否か
+  SENSOR_WITH_DEVICE_IDX: true,       // 画面上でdeviceIdXを使用するか否か
   SENSOR_WITH_LOCATIONNAME: true,       // 画面上でlocationNameを使用するか否か
 
   TELEMETRY_WITH_POWER_LEVEL: true,         // 画面上で電池レベルを使用するか否か

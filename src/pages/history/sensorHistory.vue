@@ -125,6 +125,8 @@ export default {
   },
   async created() {
     await StateHelper.load('sensor')
+    await StateHelper.load('tx')
+    await StateHelper.load('exb')
     this.form.sensorId = Util.hasValue(this.sensorOptions)? this.sensorOptions[0].value: null
     const date = new Date()
     this.form.datetimeFrom = Util.getDatetime(date, {hours: -1})
@@ -134,7 +136,6 @@ export default {
   mounted() {
     HtmlUtil.importElementUI()
     StateHelper.load('sensor')
-    StateHelper.load('tx')
     this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.fetchRows, maxRows: this.limitViewRows})}`
   },
   methods: {
