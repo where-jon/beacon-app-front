@@ -33,8 +33,6 @@ export default {
       showReady: false,
       count: 0, // for mock test
       meditagSensors: [],
-      selectedGroup: null,
-      selectedCategory: null,
       showingDetailTime: null,
       defaultDisplay: {
         color: DISP.TX_COLOR,
@@ -63,6 +61,14 @@ export default {
     selectedArea: {
       get() { return this.$store.state.main.selectedArea},
       set(val) { this.replaceMain({'selectedArea': val})},
+    },
+    selectedGroup: {
+      get() { return this.$store.state.main.selectedGroup},
+      set(val) { this.replaceMain({'selectedGroup': val})},
+    },
+    selectedCategory: {
+      get() { return this.$store.state.main.selectedCategory},
+      set(val) { this.replaceMain({'selectedCategory': val})},
     },
   },
   async created() {
