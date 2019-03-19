@@ -104,14 +104,15 @@ export default {
       exbDispOptions: [],
       deleteTarget: null,
       keepExbPosition: false,
+      ICON_FONTSIZE_RATIO: 1.3,
       mapRatio: null,
       revTrgCnt: [],
       lineCnt: null,
       toggleCallBack: () => {
         this.keepExbPosition = true
       },
-      ICON_ARROW_WIDTH: 20,
-      ICON_ARROW_HEIGHT: 10,
+      ICON_ARROW_WIDTH: DISP.EXB_LOC_SIZE.w/3,
+      ICON_ARROW_HEIGHT: DISP.EXB_LOC_SIZE.h/3,
       DISPLAY_NAME_BYTE_LENGTH: 6,
       noImageErrorKey: 'noMapImage',
       items: ViewHelper.createBreadCrumbItems('master', 'locationSetting'),
@@ -280,7 +281,7 @@ export default {
       s.graphics.lineTo(fromX, fromY)
       exbBtn.addChild(s)
       const label = new Text(Util.cutOnLongByte(this.getExbDisp(exb.deviceId), this.DISPLAY_NAME_BYTE_LENGTH))
-      label.font = DISP.EXB_LOC_FONT
+      label.font = `${h / this.ICON_FONTSIZE_RATIO}px ${DISP.EXB_LOC_FONT}`
       label.color = DISP.EXB_LOC_COLOR
       label.textAlign = 'center'
       label.textBaseline = 'middle'
