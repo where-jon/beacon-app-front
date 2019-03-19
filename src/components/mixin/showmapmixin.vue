@@ -27,7 +27,6 @@ export default {
       showTryCount: 0,
       tempMapFitMobile: DISP.MAP_FIT_MOBILE,
       oldMapImageScale: 0,
-      ICON_FONTSIZE_RATIO: 0.7,
       showIconMinWidth: POSITION.SHOW_ICON_MIN_WIDTH,
       reloadSelectedTx: {},
       showReady: false,
@@ -543,7 +542,7 @@ export default {
     },
     createBtnLabel(pos, color){
       const label = new Text(pos.label)
-      label.font = `${DISP.TX_R * this.ICON_FONTSIZE_RATIO}px Arial`
+      label.font = `${DISP.TX_R * this.mapImageScale}px Arial`
       label.color = '#' + color
       label.textAlign = 'center'
       label.textBaseline = 'middle'
