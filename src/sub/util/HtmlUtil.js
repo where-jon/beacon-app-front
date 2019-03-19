@@ -1,5 +1,5 @@
 import Encoding from 'encoding-japanese'
-import { str2Array, hasValue } from './Util'
+import { str2Array, hasValue, isImageFile } from './Util'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
 import { APP } from '../constant/config'
 import elementLocale from 'element-ui/lib/locale'
@@ -217,4 +217,4 @@ export const setCustomValidationMessage = () => {
   }
 }
 
-export const getResourcePath = (path) => hasValue(path)? path.indexOf(0) == /^[\\./]/.test(path)? path: `/${path}`: path
+export const getResourcePath = (path) => hasValue(path) && isImageFile(path)? path.indexOf(0) == /^[\\./]/.test(path)? path: `/${path}`: path
