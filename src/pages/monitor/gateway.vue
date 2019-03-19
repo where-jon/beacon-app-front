@@ -46,7 +46,11 @@ export default {
         { key: 'updated', label: this.isDev? 'updated': 'finalReceiveTimestamp'},
         { key: 'state'},
       ]),
-      csvHeaders: {
+      csvHeaders: APP.EXSERVER ? {
+        'deviceid': 'deviceid',
+        'timestamp': 'timestamp',
+        'state': 'state',
+      } : {
         'num': 'num',
         'deviceid': 'deviceid',
         'updated': 'updated',
@@ -81,8 +85,13 @@ export default {
           payload.done()
         }
         this.gateways = gateways.map((e) => {
-          const state = this.getStateLabel('gw', e.timestamp)
-          return { ...e, state: state }
+          if(APP.EXSERVER){
+            const state = this.getStateLabel('gw', e.timestamp*1000)
+            return { ...e, state: state }
+          }else{
+            const state = this.getStateLabel('gw', e.timestamp)
+            return { ...e, state: state }
+          }
         })
       }
       catch(e) {
