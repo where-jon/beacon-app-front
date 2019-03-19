@@ -219,7 +219,7 @@ export default {
   async created(){
     const currentFeatureList = this.tenant && this.tenant.tenantFeatureList? this.tenant.tenantFeatureList: []
     await StateHelper.load('feature')
-    this.featureList = this.createFeatureTable(this.features, currentFeatureList)
+    this.featureList = this.createFeatureTable(this.features, currentFeatureList, this.hasId, this.defaultCheckFeatureNames)
     this.categorySettingList = {}
     if(this.tenant && this.tenant.settingList){
       _.forEach(this.tenant.settingList, (value, key) => {
