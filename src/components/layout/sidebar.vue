@@ -15,7 +15,7 @@
           <vue-slide-up-down :active="selectedItem === i">
             <li v-for="page in group.pages" :key="page.key" :class="menuItemClasses">
               <router-link :to="'/' + group.base + page.path" class="bd-toc-link">
-                <i :class="page.icon" class="ml-3 menu-item-icon" />&nbsp;{{ $t("label." + page.key) }}
+                <i :class="page.icon" class="ml-3 menu-item-icon" />&nbsp;{{ $t("label." + (page.label? page.label: page.key)) }}
               </router-link>
             </li>
           </vue-slide-up-down>

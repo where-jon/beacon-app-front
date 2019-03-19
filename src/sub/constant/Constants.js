@@ -616,6 +616,7 @@ export const MENU = [
     },
     {
       key: 'positionHistoryExc',
+      label: 'positionHistory',
       path: 'positionHistoryExc',
       feature: '/history/positionHistoryExc',
       icon: 'fa fa-cube',
@@ -627,6 +628,7 @@ export const MENU = [
     },
     {
       key: 'sensorHistoryExc',
+      label: 'sensorHistory',
       path: 'sensorHistoryExc',
       icon: 'fas fa-eye'
     },
