@@ -57,6 +57,7 @@ export const APP = { // 機能面に関する設定
   USE_THERMOPILE: true, // サーモパイルセンサーの使用
   USE_MEDITAG: false, // メディタグの使用
   USE_MAGNET: false, // マグネットセンサの使用
+  USE_PRESSURE: true, // 圧力センサの使用
   USE_LEGEND: false, // 凡例を表示
   SHOW_DETECTED_COUNT: false, // 検知数を表示
   SHOW_MAGNET_ON_PIR: false, // 人感センサ画面でマグネットセンサを表示
@@ -94,7 +95,7 @@ export const APP = { // 機能面に関する設定
   TX_WITH_DISP_ALWAYS: false, // TX管理で常時表示を表示
 
   // EXB関連設定
-  EXB_SENSOR: [1,2,3,4], // EXBのタイプに設定可能なセンサーID
+  EXB_SENSOR: [1,2,3,4,8], // EXBのタイプに設定可能なセンサーID
   EXB_WITH_EXBID: false,       // 画面上EXBIDを使用するか否か 
   EXB_WITH_DEVICE_NUM: true,  // 画面上端末IDを使用するか否か
   EXB_WITH_DEVICE_ID: false,   // 画面上デバイスIDを使用するか否か
@@ -271,6 +272,7 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   THERMOPILE_LINE_COLOR: '#fc5800',// サーモパイルセンサグラフの線色
   LED_LINE_COLOR: '#fc5800',// LEDセンサグラフの線色
   MAGNET_LINE_COLOR: '#fc5800',// マグネットセンサグラフの線色
+  PRESSURE_LINE_COLOR: '#fc5800',// 圧力センサグラフの線色
   H_BLOOD_PRESSURE_LINE_COLOR: '#fc5800',// MEDiTAGセンサグラフの線色
   L_BLOOD_PRESSURE_LINE_COLOR: '#7da6e8',// 湿度グラフの線色
   HEART_RATE_LINE_COLOR: '#7de8a6',// 湿度グラフの線色
@@ -296,6 +298,15 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   PIR_EMPTY_SHOW: true, // PIRで不在時に表示するか否か
   PIR_EMPTY_BGCOLOR: '#595959', // PIRで不存時の背景色
   PIR_EMPTY_LABEL: 'Empty', // PIRで不在時のラベルキー
+
+  PRESSURE_R_SIZE: 26,  // 圧力センサ表示時の円の半径
+  PRESSURE_USE_MIN: 1, // 圧力センサの使用判定値
+  PRESSURE_BGCOLOR: '#FC7E82', // "#E2A6A5" // 圧力センサ表示の円の背景色
+  PRESSURE_FGCOLOR: '#FFFFFF', // 圧力センサ表示時の文字色
+  PRESSURE_INUSE_LABEL: 'InUse', // 圧力センサで使用時のラベルキー
+  PRESSURE_EMPTY_SHOW: true, // 圧力センサで未使用時に表示するか否か
+  PRESSURE_EMPTY_BGCOLOR: '#595959', // 圧力センサで不存時の背景色
+  PRESSURE_EMPTY_LABEL: 'Empty', // 圧力センサで未使用時のラベルキー
 
   THERMOPILE_S_SIZE: 20, // サーモパイル円Sサイズ
   THERMOPILE_M_SIZE: 40, // サーモパイル円Mサイズ

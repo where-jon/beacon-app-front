@@ -69,7 +69,7 @@ import * as Util from '../../sub/util/Util'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import { SENSOR } from '../../sub/constant/Constants'
-import { APP, APP_SERVICE } from '../../sub/constant/config.js'
+import { APP_SERVICE } from '../../sub/constant/config.js'
 import _ from 'lodash'
 
 export default {
@@ -94,6 +94,7 @@ export default {
       fields2: SensorHelper.getFields2(this.$i18n),
       fields5: SensorHelper.getFields5(this.$i18n),
       fields6: SensorHelper.getFields6(this.$i18n),
+      fields8: SensorHelper.getFields8(this.$i18n),
       currentPage: 1,
       perPage: 20,
       limitViewRows: 100,
@@ -135,59 +136,9 @@ export default {
   },
   mounted() {
     HtmlUtil.importElementUI()
-    StateHelper.load('sensor')
     this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.fetchRows, maxRows: this.limitViewRows})}`
   },
   methods: {
-    getFields1(){
-      return ViewHelper.addLabelByKey(this.$i18n, [
-        {key: 'sensorDt', sortable: true, label:'dt'},
-        {key: 'exbId', sortable: true },
-        APP.EXB_WITH_DEVICE_NUM? {key: 'deviceNum', sortable: true }: null,
-        APP.EXB_WITH_DEVICE_ID? {key: 'deviceId', sortable: true }: null,
-        APP.EXB_WITH_DEVICE_IDX? {key: 'deviceIdX', sortable: true }: null,
-        {key: 'locationName', label:'locationZoneName', sortable: true,},
-        {key: 'posId', label:'posId', sortable: true,},
-        {key: 'areaName', label:'area', sortable: true,},
-        {key: 'humidity', sortable: true},
-        {key: 'temperature', sortable: true},
-      ])
-    },
-    getFields2(){
-      return ViewHelper.addLabelByKey(this.$i18n, [
-        {key: 'sensorDt', sortable: true, label:'dt'},
-        {key: 'exbId', sortable: true },
-        APP.EXB_WITH_DEVICE_NUM? {key: 'deviceNum', sortable: true }: null,
-        APP.EXB_WITH_DEVICE_ID? {key: 'deviceId', sortable: true }: null,
-        APP.EXB_WITH_DEVICE_IDX? {key: 'deviceIdX', sortable: true }: null,
-        {key: 'locationName', label:'locationZoneName', sortable: true,},
-        {key: 'posId', label:'posId', sortable: true,},
-        {key: 'areaName', label:'area', sortable: true,},
-        {key: 'count', label:'numUsers', sortable: true},
-      ])
-    },
-    getFields5(){
-      return ViewHelper.addLabelByKey(this.$i18n, [
-        {key: 'sensorDt', sortable: true, label:'dt'},
-        {key: 'txName', sortable: true },
-        {key: 'major', sortable: true },
-        {key: 'minor', sortable: true },
-        {key: 'high', label:'h_blood_pressure', sortable: true},
-        {key: 'low', label:'l_blood_pressure', sortable: true},
-        {key: 'beat', label:'heart_rate', sortable: true},
-        {key: 'step', label:'step', sortable: true},
-        {key: 'down', label:'down_count', sortable: true},
-      ])
-    },
-    getFields6(){
-      return ViewHelper.addLabelByKey(this.$i18n, [
-        {key: 'sensorDt', sortable: true, label:'dt'},
-        {key: 'txName', sortable: true },
-        {key: 'major', sortable: true },
-        {key: 'minor', sortable: true },
-        {key: 'state', sortable: true},
-      ])
-    },
     async display() {
       this.container ? this.container.removeAllChildren() : null
       await this.displayImpl()
@@ -235,6 +186,9 @@ export default {
         let labelKey = (senHist.value.magnet === SENSOR.MAGNET_STATUS.ON)? 'using': 'notUse'
         senHist.state = this.$i18n.tnl('label.' + labelKey)
       }
+      if (senHist.sensorId == SENSOR.PRESSURE) {
+        senHist.pressVol = senHist.value.press_vol
+      }
     },
     async displayImpl(){
       this.replace({showAlert: false})
@@ -254,6 +208,9 @@ export default {
         }
         if (aSensorId == 6) {
           this.fields = this.fields6
+        }
+        if (aSensorId == SENSOR.PRESSURE) {
+          this.fields = this.fields8
         }
         var fetchList = await HttpHelper.getAppService(
           `/basic/sensorHistory/findsensor/${aSensorId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/${this.limitViewRows}`

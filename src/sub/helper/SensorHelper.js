@@ -258,6 +258,29 @@ export const createChartMagnetOptions = (chartData, by, i18n, isResponsive = fal
   }
 }
 
+export const createChartPressureOptions = (chartData, by, i18n, isResponsive = false) => {
+  return {
+    type:'line', 
+    data:{
+      labels: chartData.map((val) => val.key),
+      datasets: 
+        createChartGraphDatasets('pressure', i18n.tnl('label.pressure'), chartData, 'pressVol', DISP.PRESSURE_LINE_COLOR, by, i18n)
+    },
+    options: createChartGraphOptions(
+      {
+        id: 'pressure',
+        label: i18n.tnl('label.pressVol'),
+        ticks: {
+          min: 0,
+          max: Math.ceil(Math.max(...chartData.map((val) => val && val.data? val.data.pressVol: 0)) / 10 ) * 10
+        },
+      },
+      null,
+      isResponsive
+    )
+  }
+}
+
 export const createChartMeditagOptions = (chartData, by, i18n, isResponsive = false) => {
   return {
     type:'line', 
@@ -319,7 +342,8 @@ export const createChartGraph = (canvasId, sensorId, chartData, by, i18n, isResp
       sensorId == SENSOR.THERMOPILE? createChartThermopileOptions(chartData, by, i18n, isResponsive):
         sensorId == SENSOR.MAGNET? createChartMagnetOptions(chartData, by, i18n, isResponsive):
           sensorId == SENSOR.MEDITAG? createChartMeditagOptions(chartData, by, i18n, isResponsive):
-            createChartThermohumidityOptions(chartData, by, i18n, isResponsive)
+            sensorId == SENSOR.PRESSURE? createChartPressureOptions(chartData, by, i18n, isResponsive):
+              createChartThermohumidityOptions(chartData, by, i18n, isResponsive)
   )
   chart.update()
   if(sensorId == SENSOR.MEDITAG){
@@ -427,6 +451,19 @@ export const getFields6 = (i18n) => {
   ])
 }
 
+export const getFields8 = (i18n) => {
+  return addLabelByKey(i18n, [
+    {key: 'sensorDt', sortable: true, label:'dt'},
+    APP.EXB_WITH_DEVICE_NUM? {key: 'deviceNum', sortable: true }: null,
+    APP.EXB_WITH_DEVICE_ID? {key: 'deviceId', sortable: true }: null,
+    APP.EXB_WITH_DEVICE_IDX? {key: 'deviceIdX', sortable: true }: null,
+    {key: 'locationName', label:'locationZoneName', sortable: true,},
+    {key: 'posId', label:'posId', sortable: true,},
+    {key: 'areaName', label:'area', sortable: true,},
+    {key: 'pressVol', label:'pressVol', sortable: true},
+  ])
+}
+
 export const getFields = (sensorId, i18n) => {
   if(sensorId == SENSOR.TEMPERATURE){
     return getFields1(i18n)
@@ -442,6 +479,9 @@ export const getFields = (sensorId, i18n) => {
   }
   if(sensorId == SENSOR.MAGNET){
     return getFields6(i18n)
+  }
+  if(sensorId == SENSOR.PRESSURE){
+    return getFields8(i18n)
   }
   return getFields1(i18n)
 }

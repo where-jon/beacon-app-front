@@ -170,6 +170,7 @@ export const SENSOR = {
   MEDITAG: 5,
   MAGNET: 6,
   BUTTON: 7,
+  PRESSURE: 8,
   MAGNET_STATUS: {
     OFF: 0,
     ON: 4,

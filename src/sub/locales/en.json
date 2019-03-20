@@ -529,6 +529,8 @@
     "ALL_REGION": "All Regions",
     "txLocationSetting": "TX Location",
     "button": "Button",
+    "pressure": "Pressure",
+    "pressVol": "Pressure",
     "editUserInfo": "User Edit",
     "disp": "Disp flag",
     "dispPos": "Show on position",

@@ -529,6 +529,8 @@
     "ALL_REGION": "全てのリージョン",
     "txLocationSetting": "TX配置設定",
     "button": "ボタン",
+    "pressure": "圧力センサ",
+    "pressVol": "圧力",
     "editUserInfo": "ユーザ情報設定",
     "disp": "表示フラグ",
     "dispPos": "位置表示",

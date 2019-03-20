@@ -642,6 +642,7 @@ export default {
             humidity: sensor? sensor.humidity: null,
             temperature: sensor? sensor.temperature: null,
             count: sensor? sensor.count: 0,
+            pressVol: sensor? sensor.press_vol: 0,
             sensorId: sensor? sensor.id: null,
             updatetime: sensor? sensor.updatetime? sensor.updatetime: sensor.timestamp: null,
             areaName: exb.areaName,
