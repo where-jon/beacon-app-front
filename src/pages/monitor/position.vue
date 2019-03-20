@@ -110,9 +110,9 @@ export default {
       ret['name'] = 'name'
       ret['powerLevel'] = 'powerLevel'
       if(APP.POSITION_WITH_LOCATIONNAME){
-        ret['finalReceiveLocation'] = 'finalReceiveLocation'
+        ret['finalReceiveLocation'] = 'location'
       }
-      ret['finalReceiveTimestamp'] = 'finalReceiveTimestamp'
+      ret['finalReceiveTimestamp'] = 'timestamp'
       ret['state'] = 'state'
       return ret
     },
