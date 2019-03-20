@@ -9,7 +9,7 @@
       </b-button>
     </div>
     <div v-if="isNews" class="container">
-      <news-table :headers="headers" :datas="newsList" />
+      <news-table :headers="headers" :datas="newsList" :tdClass="tdClass"/>
     </div>
   </form>
 </template>
@@ -117,6 +117,10 @@ export default {
         console.error('failed')
         this.message = this.$i18n.tnl('message.loginFailed')
       })
+    },
+    tdClass(dataIndex, header, headerIndex) {
+      console.log(header)
+      return header.key === 'newsDate' ? 'news-date' : ''
     },
   },
 }

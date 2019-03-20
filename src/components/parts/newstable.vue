@@ -1,49 +1,53 @@
 <template>
-  <div v-if="datas.length>0">
-    <b-row class="mt-5">
-      <b-col md="5">
+  <div v-if="datas.length > 0">
+    <b-row>
+      <b-col md="8" offset-md="2">
         <h5 v-t="'label.topNews'" class="font-weight-bold" />
       </b-col>
     </b-row>
-    <div class="table-area">
-      <table v-if="!vueTableMode" class="table table-hover">
-        <thead>
-          <tr>
-            <th v-for="(header, index) in headers" :key="index" scope="col">
-              {{ header.label }}
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(data, dataIndex) in datas" :key="dataIndex" :class="trClass(data, dataIndex)">
-            <td v-for="(header, headerIndex) in headers" :key="headerIndex" :class="tdClass(dataIndex, header, headerIndex)">
-              {{ data[header.key] }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <vue-scrolling-table v-else>
-        <template slot="thead">
-          <th v-for="(header, index) in headers" :key="index" scope="col">
-            {{ header.label }}
-          </th>
-        </template>
-        <template slot="tbody">
-          <tr v-for="(data, index) in datas" :key="index">
-            <td v-for="(header, headerIndex) in headers" :key="headerIndex" scope="row">
-              <span v-if="header.key.includes('nearest') && type == 'position'">
-                <div v-for="(value, key) in data[header.key]" :key="key">
-                  {{ key }}:{{ value }}
-                </div>
-              </span>
-              <span v-else>
-                {{ data[header.key] }}
-              </span>
-            </td>
-          </tr>
-        </template>
-      </vue-scrolling-table>
-    </div>
+    <b-row>
+      <b-col md="8" offset-md="2">
+        <div class="table-area">
+          <table v-if="!vueTableMode" class="table table-hover">
+            <thead>
+              <th v-for="(header, index) in headers" :key="index" scope="col">{{ header.label }}</th>
+            </thead>
+            <tbody>
+              <tr v-for="(data, dataIndex) in datas" :key="dataIndex" :class="trClass(data, dataIndex)">
+                <td v-for="(header, headerIndex) in headers" :key="headerIndex" :class="tdClass(dataIndex, header, headerIndex)">
+                  {{ data[header.key] }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <vue-scrolling-table v-else>
+            <template slot="thead">
+              <th v-for="(header, index) in headers" :key="index" scope="col">
+                {{ header.label }}
+              </th>
+            </template>
+            <template slot="tbody">
+              <tr v-for="(data, index) in datas" :key="index">
+                <td v-for="(header, headerIndex) in headers" :key="headerIndex" scope="row">
+                  <span v-if="header.key.includes('nearest') && type == 'position'">
+                    <div v-for="(value, key) in data[header.key]" :key="key">
+                      {{ key }}:{{ value }}
+                    </div>
+                  </span>
+                  <span v-else>
+                    {{ data[header.key] }}
+                  </span>
+                </td>
+              </tr>
+            </template>
+          </vue-scrolling-table>
+        </div>
+      </b-col>
+    </b-row>
+
+
+
+
   </div>
 </template>
 
@@ -119,6 +123,11 @@ thead, tbody tr {
 
 td {
   word-break: break-all;
+}
+
+td.news-date {
+  word-break: break-all;
+  width: 28%;
 }
 
 span.badge {
