@@ -214,7 +214,12 @@ export default {
     },
     async fetchPositionData() {
       await this.fetchAreaExbs(true)
-      await this.storePositionHistory(this.count)
+
+      let alwaysTxs = this.txs.filter((tx) => {
+        return tx.areaId == this.selectedArea && Util.bitON(tx.disp, TX.DISP.ALWAYS)
+      })
+      let isAllfetch = alwaysTxs? true: false
+      await this.storePositionHistory(this.count, isAllfetch)
 
       if (APP.USE_MEDITAG) {
         let meditagSensors = await EXCloudHelper.fetchSensor(SENSOR.MEDITAG)
