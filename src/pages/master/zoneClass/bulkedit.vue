@@ -46,7 +46,7 @@ export default {
       await bulkSaveFunc(MAIN_COL, NUMBER_TYPE_LIST, null, (entity, headerName, val, dummyKey) => {
         if(headerName === 'zoneId'){
           entity.zoneId = Util.hasValue(val)? Number(val): --dummyKey  
-          entity.zoneType = ZONE.getTypes()[1].value
+          entity.zoneType = ZONE.NON_COORDINATE
         }
         else if(headerName === 'locationId'){
           locationId = val
@@ -58,7 +58,7 @@ export default {
           entity.area = {areaId: dummyKey--, areaName: val}
         }
         if(headerName == 'categoryName') {
-          entity.categoryName = StateHelper.isSystemUseCategoryName(val)? val: StateHelper.getConvertCategoryName(val)
+          entity.categoryName = StateHelper.isSystemUseCategoryName(val)? val: StateHelper.convertCategoryName(val)
         }
         if(LOCATION_ZONE_COL.includes(headerName) && entity.zoneId != null && locationId != null){
           entity.locationZoneList = [{

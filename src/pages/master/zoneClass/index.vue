@@ -48,7 +48,7 @@ export default {
   computed: {
     zoneList() {
       Util.table(this.$store.state.app_service.zones)
-      return this.$store.state.app_service.zones.filter((zone)=> zone.zoneType ==  ZONE.getTypes()[1].value)
+      return this.$store.state.app_service.zones.filter((zone)=> zone.zoneType ==  ZONE.NON_COORDINATE)
     },
     zoneLength() {
       return this.zoneList().length

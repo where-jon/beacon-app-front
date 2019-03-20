@@ -104,7 +104,7 @@ export const getCategoryTypeName = (category) => {
 }
 
 // システム利用　カテゴリの名称　⇔　各言語用名称　コンバートする
-export const getConvertCategoryName = (categoryname) => {
+export const convertCategoryName = (categoryname) => {
   switch(categoryname) {
   case SYSTEM_ZONE_CATEGORY_NAME.ABSENT:
     return i18n.tnl('system.absentCategoryName')
@@ -197,7 +197,7 @@ const appStateConf = {
           displayName: Util.getValue(tx, 'potTxList.0.pot.displayName', null),
           description: Util.getValue(tx, 'potTxList.0.pot.description', null),
           category: Util.getValue(tx, 'potTxList.0.pot.potCategoryList.0.category', null),
-          categoryName: getConvertCategoryName(Util.getValue(tx, 'potTxList.0.pot.potCategoryList.0.category.categoryName', null)),
+          categoryName: convertCategoryName(Util.getValue(tx, 'potTxList.0.pot.potCategoryList.0.category.categoryName', null)),
           group: Util.getValue(tx, 'potTxList.0.pot.potGroupList.0.group', null),
           groupName: Util.getValue(tx, 'potTxList.0.pot.potGroupList.0.group.groupName', null),
           sensorId: Util.getValue(tx, 'txSensorList.0.sensor.sensorId', null),
@@ -248,7 +248,7 @@ const appStateConf = {
         minor: val.txId? Util.getValue(val, 'tx.minor', '') : null,
         groupName: Util.getValue(val, 'potGroupList.0.group.groupName', ''),
         groupId: Util.getValue(val, 'potGroupList.0.group.groupId', ''),
-        categoryName: getConvertCategoryName(Util.getValue(val, 'potCategoryList.0.category.categoryName', '')),
+        categoryName: convertCategoryName(Util.getValue(val, 'potCategoryList.0.category.categoryName', '')),
         categoryId: Util.getValue(val, 'potCategoryList.0.category.categoryId', ''),
         ruby: Util.getValue(val, 'extValue.ruby' ,null),
         extValue: val.extValue ? val.extValue : this.extValueDefault,
@@ -263,7 +263,7 @@ const appStateConf = {
     beforeCommit: (arr) => {
       return arr.map((val) => ({
         ...val,
-        categoryName: getConvertCategoryName(val.categoryName),
+        categoryName: convertCategoryName(val.categoryName),
         shape: val.display? val.display.shape: null,
         color: val.display? val.display.color: null,
         bgColor: val.display? val.display.bgColor: null,
@@ -338,7 +338,7 @@ const appStateConf = {
         locationId: Util.hasValue(val.locationZoneList)? val.locationZoneList[0].locationZonePK.locationId: null,
         locationName: Util.hasValue(val.locationZoneList)? val.locationZoneList[0].location.locationName: null,
         categoryId: Util.hasValue(val.zoneCategoryList)? val.zoneCategoryList[0].zoneCategoryPK.categoryId: null,
-        categoryName: getConvertCategoryName(Util.hasValue(val.zoneCategoryList)? val.zoneCategoryList[0].category.categoryName: null),
+        categoryName: convertCategoryName(Util.hasValue(val.zoneCategoryList)? val.zoneCategoryList[0].category.categoryName: null),
       }))
     }
   },

@@ -79,7 +79,6 @@ export default {
       id: 'zoneId',
       backPath: '/master/zoneClass',
       appServicePath: '/core/zone',
-      appServiceSavePath: '/edit',
       form: ViewHelper.extract(this.$store.state.app_service.zone, ['zoneId', 'zoneName', 'areaId', 'locationZoneList.0.locationZonePK.locationId', 'zoneCategoryList.0.zoneCategoryPK.categoryId']),
       areaNames: [],
       categoryNames: [],
@@ -127,12 +126,12 @@ export default {
       const entity = {
         zoneId: zoneId,
         zoneName: this.form.zoneName,
-        zoneType: ZONE.getTypes()[1].value,
+        zoneType: ZONE.NON_COORDINATE,
         areaId: this.form.areaId,
         locationZoneList: this.form.locationId? [{locationZonePK: {zoneId: zoneId, locationId: this.form.locationId}}]: null,
         zoneCategoryList: this.form.categoryId? [{zoneCategoryPK: {zoneId: zoneId, categoryId: this.form.categoryId}}]: null
       }
-      return await AppServiceHelper.bulkSave(this.appServicePath + this.appServiceSavePath, [entity])
+      return await AppServiceHelper.bulkSave(this.appServicePath + '/edit', [entity])
     },
   }
 }

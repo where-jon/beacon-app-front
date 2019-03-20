@@ -119,11 +119,14 @@ export const txViewTypes = [
 ]
 
 export const CATEGORY = {
+  PERSON: 1,
+  THING: 2,
+  ZONE: 3,
   getTypes(){ 
     return [
-      {value: 1, text: i18n.tnl('label.person')},
-      {value: 2, text: i18n.tnl('label.thing')},
-      {value: 3, text: i18n.tnl('label.zone')},
+      {value: CATEGORY.PERSON, text: i18n.tnl('label.person')},
+      {value: CATEGORY.THING, text: i18n.tnl('label.thing')},
+      {value: CATEGORY.ZONE, text: i18n.tnl('label.zone')},
     ]
   },
   POT_AVAILABLE: [1, 2],
@@ -152,10 +155,12 @@ export const SHAPE = {
 }
 
 export const ZONE = {
+  COORDINATE: 0,
+  NON_COORDINATE: 1,
   getTypes(){ 
     return [
-      {value: 0, text: i18n.tnl('label.coordinate')},
-      {value: 1, text: i18n.tnl('label.nonCoordinate')},
+      {value: ZONE.COORDINATE, text: i18n.tnl('label.coordinate')},
+      {value: ZONE.NON_COORDINATE, text: i18n.tnl('label.nonCoordinate')},
     ]
   },
   MIN_WIDTH: 50,

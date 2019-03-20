@@ -160,7 +160,7 @@ export default {
   methods: {
     changeCategory(newVal = this.form.categoryId) {
       this.potOptions = StateHelper.getOptionsFromState('pot', false, false, 
-        pot => pot.potType == CATEGORY.getTypes()[0].value && (!newVal || pot.categoryId == newVal)
+        pot => pot.potType == CATEGORY.PERSON && (!newVal || pot.categoryId == newVal)
       )
       if(!this.potOptions.find((val) => val.value == this.form.potId)){
         this.form.potId = null
@@ -168,7 +168,7 @@ export default {
     },
     changeGroup(newVal = this.form.groupId) {
       this.potOptions = StateHelper.getOptionsFromState('pot', false, false, 
-        pot => pot.potType == CATEGORY.getTypes()[0].value && (!newVal || pot.groupId == newVal)
+        pot => pot.potType == CATEGORY.PERSON && (!newVal || pot.groupId == newVal)
       )
       if(!this.potOptions.find((val) => val.value == this.form.potId)){
         this.form.potId = null
