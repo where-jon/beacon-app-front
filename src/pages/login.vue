@@ -119,7 +119,6 @@ export default {
       })
     },
     tdClass(dataIndex, header, headerIndex) {
-      console.log(header)
       return header.key === 'newsDate' ? 'news-date' : ''
     },
   },
