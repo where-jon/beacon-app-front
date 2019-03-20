@@ -118,8 +118,8 @@ export default {
         this.message = this.$i18n.tnl('message.loginFailed')
       })
     },
-    tdClass(dataIndex, header, headerIndex) {
-      return header.key === 'newsDate' ? 'news-date' : ''
+    tdClass(key) {
+      return key === 'newsDate' ? 'news-date' : ''
     },
   },
 }
