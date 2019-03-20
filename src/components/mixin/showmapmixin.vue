@@ -214,6 +214,7 @@ export default {
         fitWidth = (DISP.MAP_FIT == 'both' && isMapWidthLarger) || DISP.MAP_FIT == 'width'
       }
       const result = {}
+
       if (fitWidth) {
         result.width = parent.clientWidth
         result.height = parent.clientWidth * target.height / target.width
@@ -221,6 +222,13 @@ export default {
         result.width = parentHeight * target.width / target.height
         result.height = parentHeight
       }
+
+      // Retina解像度対応
+      if (devicePixelRatio > 0) {
+        result.width = result.width * devicePixelRatio
+        result.height = result.height * devicePixelRatio
+      }
+
       this.oldMapImageScale = this.mapImageScale
       this.mapImageScale = result.width / target.width
       console.debug(fitWidth, result.width, result.height, parentHeight)
@@ -255,6 +263,13 @@ export default {
           this.exbCon = null
         }
       }
+      
+      // Retina解像度対応
+      if (devicePixelRatio > 0) {
+        canvas.style.width = String(canvas.width / devicePixelRatio) + 'px'
+        canvas.style.height = String(canvas.height / devicePixelRatio) + 'px'
+      }
+
       this.stage = new Stage('map')
       this.stage.canvas = canvas
       this.stage.mouseEnabled = true
