@@ -152,10 +152,12 @@ export const SHAPE = {
 }
 
 export const ZONE = {
+  COORDINATE: 0,
+  NON_COORDINATE: 1,
   getTypes(){ 
     return [
-      {value: 0, text: i18n.tnl('label.coordinate')},
-      {value: 1, text: i18n.tnl('label.nonCoordinate')},
+      {value: ZONE.COORDINATE, text: i18n.tnl('label.coordinate')},
+      {value: ZONE.NON_COORDINATE, text: i18n.tnl('label.nonCoordinate')},
     ]
   },
   MIN_WIDTH: 50,

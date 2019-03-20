@@ -170,7 +170,7 @@ class Zone {
   }
 
   get zoneType() {
-    return ZONE.getTypes()[0].value
+    return ZONE.COORDINATE
   }
 
   get zoneName() {
@@ -456,7 +456,7 @@ export default {
       }
       this.zones.clear()
       let zoneRecs = await AppServiceHelper.fetchList(`/core/zone/area/${this.areaId}`, 'id')
-      zoneRecs = _.filter(zoneRecs, (zone) => zone.zoneType ==  ZONE.getTypes()[0].value)
+      zoneRecs = _.filter(zoneRecs, (zone) => zone.zoneType ==  ZONE.COORDINATE)
       this.cnt = zoneRecs.length > 0 ? Math.max(...zoneRecs.map((zoneRec) => zoneRec.zoneId)) + 1 : 0
       zoneRecs.forEach((zoneRec) => this.addZone(zoneRec))
       this.zones.setInActive()

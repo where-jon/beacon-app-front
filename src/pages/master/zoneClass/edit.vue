@@ -127,7 +127,7 @@ export default {
       const entity = {
         zoneId: zoneId,
         zoneName: this.form.zoneName,
-        zoneType: ZONE.getTypes()[1].value,
+        zoneType: ZONE.NON_COORDINATE,
         areaId: this.form.areaId,
         locationZoneList: this.form.locationId? [{locationZonePK: {zoneId: zoneId, locationId: this.form.locationId}}]: null,
         zoneCategoryList: this.form.categoryId? [{zoneCategoryPK: {zoneId: zoneId, categoryId: this.form.categoryId}}]: null

@@ -46,7 +46,7 @@ export default {
       await bulkSaveFunc(MAIN_COL, NUMBER_TYPE_LIST, null, (entity, headerName, val, dummyKey) => {
         if(headerName === 'zoneId'){
           entity.zoneId = Util.hasValue(val)? Number(val): --dummyKey  
-          entity.zoneType = ZONE.getTypes()[1].value
+          entity.zoneType = ZONE.NON_COORDINATE
         }
         else if(headerName === 'locationId'){
           locationId = val
