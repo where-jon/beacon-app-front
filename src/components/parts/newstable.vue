@@ -14,7 +14,7 @@
             </thead>
             <tbody>
               <tr v-for="(data, dataIndex) in datas" :key="dataIndex" :class="trClass(data, dataIndex)">
-                <td v-for="(header, headerIndex) in headers" :key="headerIndex" :class="tdClass(dataIndex, header, headerIndex)">
+                <td v-for="(header, headerIndex) in headers" :key="headerIndex" :class="tdClass(header.key)">
                   {{ data[header.key] }}
                 </td>
               </tr>
