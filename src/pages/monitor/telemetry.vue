@@ -113,7 +113,7 @@ export default {
           deviceNum: APP.EXB_WITH_DEVICE_NUM ? 'deviceNum' : null,
           deviceId: APP.EXB_WITH_DEVICE_ID ? 'deviceId' : null,
           deviceIdX: APP.EXB_WITH_DEVICE_IDX ? 'deviceId(HEX)' : null,
-          name: 'name',
+          name: 'finalRevceivePlace',
           powerLevel: 'powerLevel',
           timestamp: 'timestamp',
           state: 'state'
