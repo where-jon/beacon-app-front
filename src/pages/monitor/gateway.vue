@@ -53,7 +53,7 @@ export default {
       } : {
         'num': 'num',
         'deviceid': 'deviceid',
-        'updated': 'updated',
+        'timestamp': 'timestamp',
         'state': 'state',
       },
 
