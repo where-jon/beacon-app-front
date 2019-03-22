@@ -53,7 +53,7 @@ export default {
       csvHeaders: {
         'num': 'num',
         'deviceid': 'deviceid',
-        'timestamp': 'timestamp',
+        'updated': 'updated',
         'state': 'state',
       },
 
