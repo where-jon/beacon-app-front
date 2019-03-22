@@ -48,12 +48,12 @@ export default {
       ]),
       csvHeaders: APP.EXSERVER ? {
         'deviceid': 'deviceid',
-        'timestamp': 'timestamp',
+        'updated': 'updated',
         'state': 'state',
       } : {
         'num': 'num',
         'deviceid': 'deviceid',
-        'timestamp': 'timestamp',
+        'updated': 'updated',
         'state': 'state',
       },
 
