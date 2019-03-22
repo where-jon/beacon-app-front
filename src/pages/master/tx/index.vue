@@ -89,7 +89,7 @@ export default {
         'sensor',
         'disp',
         APP.TX_WITH_LOCATION? 'locationId': null,
-      ].filter((val) => val)
+      ].filter((val, idx, ary) => val && ary.indexOf(val) == idx)
     },
     afterCrud(){
       StateHelper.setForceFetch('pot', true)
