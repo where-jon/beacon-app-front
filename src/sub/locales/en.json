@@ -462,7 +462,7 @@
     "userUnit": "Count",
     "Main": "Main",
     "positionMap": "Position(Map)",
-    "Pir": "PIR",
+    "pirMenu": "PIR",
     "Thermohumidity": "Thermohumidity(Main)",
     "PositionList": "Position(List)",
     "Led": "LED",

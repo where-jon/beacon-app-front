@@ -45,7 +45,7 @@ export default {
         this.reset()
       },
       noImageErrorKey: 'noMapImage',
-      items: ViewHelper.createBreadCrumbItems('main', 'pir'),
+      items: ViewHelper.createBreadCrumbItems('main', 'pirMenu'),
       INUSE_FONTSIZE_RATIO: 0.9,
       FONTSIZE_RATIO_EN: 0.5,
       EMPTY_FONTSIZE_RATIO: 1.2,
