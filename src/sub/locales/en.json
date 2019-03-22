@@ -507,6 +507,8 @@
     "sensorList": "Current Sensor List",
     "zoneCategory": "Zone Category",
     "device": "Device",
+    "potType": "POT Type",
+
     "dummy": ""
   },
   "message": {
