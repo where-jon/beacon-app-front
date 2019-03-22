@@ -64,6 +64,9 @@ export default {
       }
       if(targetEntity){
         if(entity.location && targetEntity.location){
+          if(entity.location.locationId < 0){
+            entity.location.locationId = targetEntity.location.locationId
+          }
           if(!entity.location.txViewType){
             entity.location.txViewType = targetEntity.location.txViewType
           }
