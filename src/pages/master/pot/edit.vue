@@ -48,7 +48,7 @@
             </span>
             <b-form-group v-show="category.length > 1">
               <label v-t="'label.categoryType'" />
-              <b-form-radio-group v-model="form.potType" :options="category" :disabled="!isEditable" />
+              <b-form-radio-group v-model="form.potType" :options="category" :disabled="!isEditable" :required="category.length > 1" />
             </b-form-group>
             <b-form-group v-if="isShown('POT_WITH_POTCD')">
               <label v-t="'label.potCd'" />
@@ -252,6 +252,9 @@ export default {
   },
   async mounted() {
     ViewHelper.applyDef(this.form, this.defValue)
+    if(this.form.potType == null){
+      this.form.potType = this.defValue.potType
+    }
     StateHelper.load('group')
     StateHelper.load('category')
     await StateHelper.load('tx')
