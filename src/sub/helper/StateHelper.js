@@ -197,10 +197,9 @@ const appStateConf = {
       store.commit('app_service/replaceAS', {['potImages']:potImages})
       const idNames = APP.TX_WITH_TXID? 'txId': APP.TX_BTX_MINOR == 'minor'? 'minor': 'btxId'
       return arr.map((val) => {
-        const ids = getTxIds(val.potTxList)
         return {
           ...val,
-          txIds: ids.txId,
+          txIds: getTxIds(val.potTxList),
           txIdNames: getTxIdNames(val.potTxList),
           txSortIds: getTxIdNames(val.potTxList, true),
           txParams: getTxParams(val.potTxList),
