@@ -148,28 +148,12 @@ const appStateConf = {
     sort: APP.TX_WITH_TXID? 'txId': APP.TX_BTX_MINOR != 'minor'? 'btxId': 'minor',
     beforeCommit: (arr) => {
       return arr.map((tx) => {
-        const location = tx.location
-        const area = location? location.area: null
         return {
           ...tx,
-          displayName: Util.getValue(tx, 'potTxList.0.pot.displayName', null),
-          description: Util.getValue(tx, 'potTxList.0.pot.description', null),
-          category: Util.getValue(tx, 'potTxList.0.pot.potCategoryList.0.category', null),
-          categoryName: Util.getValue(tx, 'potTxList.0.pot.potCategoryList.0.category.categoryName', null),
-          group: Util.getValue(tx, 'potTxList.0.pot.potGroupList.0.group', null),
-          groupName: Util.getValue(tx, 'potTxList.0.pot.potGroupList.0.group.groupName', null),
-          sensorId: Util.getValue(tx, 'txSensorList.0.sensor.sensorId', null),
-          sensor: i18n.tnl('label.' + Util.getValue(tx, 'txSensorList.0.sensor.sensorName', 'normal')),
-          sensorName: tx.txName,
+          sensor: i18n.tnl('label.' + Util.getValue(tx, 'sensorName', 'normal')),
           dispPos: tx.disp & 1,
           dispPir: tx.disp & 2,
           dispAlways: tx.disp & 4,
-          locationName: location? location.locationName: null,
-          posId: location? location.posId: null,
-          areaName: area? area.areaName: null,
-          areaId: area? area.areaId: null,
-          zoneId: location? Util.getValue(location, 'locationZoneList.0.zone.zoneId', null): null,
-          zoneCategoryId: location? Util.getValue(location, 'locationZoneList.0.zone.zoneCategoryList.0.category.categoryId', null): null,
         }
       })
     }

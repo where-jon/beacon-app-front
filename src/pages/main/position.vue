@@ -146,6 +146,7 @@ export default {
       const loadCategory = DISP.DISPLAY_PRIORITY[0] == 'category'
       const magnetCategoryTypes = loadCategory? this.getMagnetCategoryTypes(): this.getMagnetGroupTypes()
       const legendElements = loadCategory? this.getCategoryLegendElements(): this.getGroupLegendElements()
+      // console.error(loadCategory, magnetCategoryTypes, legendElements)
 
       this.legendItems = legendElements.map((legendElement) => ({
         id: legendElement.id,
@@ -161,15 +162,15 @@ export default {
       }))
     },
     getMagnetCategoryTypes () {
-      return this.txs.filter((val) => val.category && val.sensorId == SENSOR.MAGNET)
-        .map((val) => val.category.categoryId)
+      return this.txs.filter((val) => val.categoryId && val.sensorId == SENSOR.MAGNET)
+        .map((val) => val.categoryId)
     },
     getCategoryLegendElements () {
       return this.categories.map((val) => ({ id: val.categoryId, name: val.categoryName, ...val,}))
     },
     getMagnetGroupTypes () {
-      return this.txs.filter((val) => val.group && val.sensorId == SENSOR.MAGNET)
-        .map((val) => val.group.groupId)
+      return this.txs.filter((val) => val.groupId && val.sensorId == SENSOR.MAGNET)
+        .map((val) => val.groupId)
     },
     getGroupLegendElements () {
       return this.groups.map((val) => ({id: val.groupId, name: val.groupName, ...val, }))
