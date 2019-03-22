@@ -437,3 +437,18 @@ export const inLabel = (iconRadius, font, useLabel) => {
   const fontSize = typeof font == 'number'? font: getFont2Size(font)
   return iconRadius >= fontSize * 1.5
 }
+
+export const compareArray = (a, b) => {
+  for(let idx = 0; idx < a.length || idx < b.length; idx++){
+    if(idx >= a.length){
+      return 1
+    }
+    if(idx >= b.length){
+      return -1
+    }
+    if(a[idx] != b[idx]){
+      return a[idx] <= b[idx]? -1: 1
+    }
+  }
+  return 0
+}
