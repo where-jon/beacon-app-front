@@ -13,7 +13,7 @@ import bulkedit from '../../../components/page/bulkedit.vue'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import { APP } from '../../../sub/constant/config.js'
-import { IGNORE } from '../../../sub/constant/Constants'
+import { IGNORE, CATEGORY } from '../../../sub/constant/Constants'
 
 export default {
   components: {
@@ -136,6 +136,9 @@ export default {
         entity.potTxList[0].pot.potId = dummyKey--,
         entity.potTxList[0].pot.potCd = entity.potTxList[0].pot.potId + '_' + (new Date().getTime() % 10000)
         entity.potTxList[0].pot.potName = entity.potTxList[0].pot.potId + '_' + (new Date().getTime() % 10000)
+        if(entity.potTxList[0].pot.potType == null){
+          entity.potTxList[0].pot.potType = CATEGORY.getTypes()[0].value
+        }
         const pot = this.pots.find(val => Util.hasValue(val.potTxList) && val.potTxList.find(potTx => potTx.tx.txId == entity.txId))
         if(pot){
           const potImage = this.potImages.find((val) => val.id == pot.potId)

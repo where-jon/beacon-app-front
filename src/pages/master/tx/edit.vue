@@ -248,7 +248,7 @@ export default {
 
       newPot.potCategoryList = this.form.categoryId? [ {potCategoryPK: {categoryId: this.form.categoryId}} ]: null
       const category = _.find(this.categories, (cat) => cat.categoryId == this.form.categoryId)
-      newPot.potType = category ? category.categoryType : null
+      newPot.potType = category ? category.categoryType : CATEGORY.getTypes()[0].value
 
       newPot.potGroupList = this.form.groupId? [ {potGroupPK: {groupId: this.form.groupId}} ]: null
       newPot.tx = null
