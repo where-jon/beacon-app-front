@@ -230,7 +230,7 @@ const appStateConf = {
         if(comp != 0){
           return comp
         }
-        return Util.compareArray(a.txParams.map(val => val.txNames), b.txParams.map(val => val.txNames))
+        return Util.compareArray(a.txParams.map(val => val.txName), b.txParams.map(val => val.txName))
       })// omit images to avoid being filtering target
     }
   },
