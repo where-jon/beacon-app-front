@@ -123,22 +123,13 @@ const appStateConf = {
     beforeCommit: (arr) => {
       return arr.map((exb) => {
         const location = exb.location
-        const area = location? location.area: null
         return {
           ...exb,
           deviceNum: exb.deviceId - store.state.currentRegion.deviceOffset,
           deviceIdX: exb.deviceId.toString(16).toUpperCase(),
-          locationName: location? location.locationName: null,
-          posId: location? location.posId: null,
-          areaName: area? area.areaName: null,
           x: location? Math.round(location.x * 10)/10: null,
           y: location? Math.round(location.y * 10)/10: null,
-          sensor: i18n.tnl('label.' + Util.getValue(exb, 'exbSensorList.0.sensor.sensorName', 'normal')),
-          sensorId: Util.getValue(exb, 'exbSensorList.0.sensor.sensorId', null),
-          zoneName: location? Util.getValue(location, 'locationZoneList.0.zone.zoneName', null): null,
-          areaId: area? area.areaId: null,
-          zoneId: location? Util.getValue(location, 'locationZoneList.0.zone.zoneId', null): null,
-          zoneCategoryId: location? Util.getValue(location, 'locationZoneList.0.zone.zoneCategoryList.0.category.categoryId', null): null,
+          sensor: i18n.tnl('label.' + Util.getValue(exb, 'sensorName', 'normal')),
         }
       })
     }

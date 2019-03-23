@@ -38,9 +38,6 @@ export default {
         return option.value == null || category && (!Util.hasValue(includeTypes) || includeTypes.includes(category.categoryType))
       })
     },
-    getSensorId(exb) {
-      return Util.getValue(exb, 'exbSensorList.0.sensor.sensorId').val
-    },
     getButtonTheme() {
       return 'outline-' + getButtonTheme()
     },
