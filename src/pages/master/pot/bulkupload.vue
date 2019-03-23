@@ -60,7 +60,7 @@ export default {
         displayName: target.displayName,
         potGroupList: target.groupId? [{ potGroupPK: {groupId: target.groupId} }]: [],
         potCategoryList: target.categoryId? [{ potCategoryPK: {categoryId: target.categoryId} }]: [],
-        potTxList: target.potTxList,
+        potTxList: target.potTxList, // TODO: 要検討　一括ファイルアップロード時必要？
         thumbnail: target.thumbnail,
         description: target.description,
       }: null

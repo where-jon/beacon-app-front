@@ -582,7 +582,7 @@ export default {
       const tx = item.tx
       const selectedTx = {
         btxId: tx.btxId,
-        thumbnail: Util.getValue(tx, 'pot.thumbnail', null) ? tx.pot.thumbnail : '',
+        thumbnail: tx.thumbnail,
       }
       const selectedArea = Util.getValue(item, 'exb.location.areaId', null)
       const txOk = await this.$parent.$options.methods.checkDetectedTx.call(this.$parent, tx)

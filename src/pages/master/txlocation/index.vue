@@ -364,7 +364,7 @@ export default {
           txSensor.sensor = null
         })
       }
-      if (Util.hasValue(tx.potTxList)) {
+      if (Util.hasValue(tx.potTxList)) { // TODO:
         tx.potTxList.forEach((potTx) => {
           if(potTx.pot){
             const dummyKey = potTx.potTxPK.txId * -1

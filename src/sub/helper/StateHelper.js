@@ -43,39 +43,39 @@ export const getTxIdName = (tx, idOnly = false) => {
   return idOnly? id: id? `${id}(${Util.getValue(tx, 'txName', '')})`: null
 }
 
-export const getTxIdNames = (potTxList, idOnly = false) => {
-  if(!Util.hasValue(potTxList)){
+export const getTxIdNames = (txList, idOnly = false) => {
+  if(!Util.hasValue(txList)){
     return null
   }
   const names = []
-  potTxList.forEach((potTx) => {
-    names.push(getTxIdName(potTx.tx, idOnly))
+  txList.forEach((tx) => {
+    names.push(getTxIdName(tx, idOnly))
   })
   return names.map((name) => name)
 }
 
-export const getTxIds = (potTxList) => {
-  if(!Util.hasValue(potTxList)){
+export const getTxIds = (txList) => {
+  if(!Util.hasValue(txList)){
     return null
   }
   const ids = []
-  potTxList.forEach((potTx) => {
-    ids.push(potTx.potTxPK.txId)
+  txList.forEach((potTx) => {
+    ids.push(potTx.txId)
   })
   return ids.map((name) => name)
 }
 
-export const getTxParams = (potTxList) => {
-  if(!Util.hasValue(potTxList)){
+export const getTxParams = (txList) => {
+  if(!Util.hasValue(txList)){
     return null
   }
   const txParams = []
-  potTxList.forEach((potTx) => {
+  txList.forEach((tx) => {
     txParams.push({
-      txId: Util.getValue(potTx, 'tx.txId', ''),
-      txName: Util.getValue(potTx, 'tx.txName', ''),
-      btxId: Util.getValue(potTx, 'tx.btxId', ''),
-      minor: Util.getValue(potTx, 'tx.minor', ''),
+      txId: Util.getValue(tx, 'txId', ''),
+      txName: Util.getValue(tx, 'txName', ''),
+      btxId: Util.getValue(tx, 'btxId', ''),
+      minor: Util.getValue(tx, 'minor', ''),
     })
   })
   return txParams
@@ -171,24 +171,18 @@ const appStateConf = {
       let potImages = arr.map((val) => ({ id: val.potId, txId: val.txId, thumbnail: val.thumbnail}))
       store.commit('app_service/replaceAS', {['potImages']:potImages})
       const idNames = APP.TX_WITH_TXID? 'txId': APP.TX_BTX_MINOR == 'minor'? 'minor': 'btxId'
-      return arr.map((val) => {
+      return arr.map((pot) => {
         return {
-          ...val,
-          txIds: getTxIds(val.potTxList),
-          txIdNames: getTxIdNames(val.potTxList),
-          txSortIds: getTxIdNames(val.potTxList, true),
-          txParams: getTxParams(val.potTxList),
-          txName: val.txId? Util.getValue(val, 'tx.txName', '') : null,
-          btxId: val.txId? Util.getValue(val, 'tx.btxId', '') : null,
-          minor: val.txId? Util.getValue(val, 'tx.minor', '') : null,
-          groupName: Util.getValue(val, 'potGroupList.0.group.groupName', ''),
-          groupId: Util.getValue(val, 'potGroupList.0.group.groupId', ''),
-          categoryName: Util.getValue(val, 'potCategoryList.0.category.categoryName', ''),
-          categoryId: Util.getValue(val, 'potCategoryList.0.category.categoryId', ''),
-          ruby: Util.getValue(val, 'extValue.ruby' ,null),
-          extValue: val.extValue ? val.extValue : this.extValueDefault,
-          user: Util.getValue(val, 'potUserList.0.user', {}),
-          thumbnail: ''
+          ...pot,
+          txIds: getTxIds(pot.txList),
+          txIdNames: getTxIdNames(pot.txList),
+          txSortIds: getTxIdNames(pot.txList, true),
+          txParams: getTxParams(pot.txList),
+          txName: pot.txName,
+          btxId: pot.btxId,
+          minor: pot.minor,
+          ruby: pot.extValue? pot.extValue.ruby: null,
+          extValue: pot.extValue ? pot.extValue : this.extValueDefault,
         }
       }).sort((a, b) => {
         if(!a.txParams && !b.txParams){

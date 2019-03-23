@@ -103,17 +103,17 @@ export default {
             ...pos,
             // powerLevel: this.getPowerLevel(pos),
             txId: Util.getValue(pos, 'tx.txId' , null),
-            potCd: Util.getValue(pos, 'tx.potTxList.0.pot.potCd', null),
-            potName: Util.getValue(pos, 'tx.potTxList.0.pot.potName', Util.getValue(pos, 'tx.txName', null)),
-            tel: Util.getValue(pos, 'tx.potTxList.0.pot.extValue.tel', null),
-            categoryName: Util.getValue(pos, 'tx.category.categoryName', null),
-            groupName: Util.getValue(pos, 'tx.group.groupName', null),
+            potCd: Util.getValue(pos, 'tx.potCd', null),
+            potName: Util.getValue(pos, 'tx.potName', Util.getValue(pos, 'tx.txName', null)),
+            tel: Util.getValue(pos, 'tx.extValue.tel', null),
+            categoryName: Util.getValue(pos, 'tx.categoryName', null),
+            groupName: Util.getValue(pos, 'tx.groupName', null),
             areaName: Util.getValue(pos, 'exb.areaName', null),
             locationName: Util.getValue(pos, 'exb.locationName', null),
             // 追加フィルタ用
-            groupId: Util.getValue(pos, 'tx.group.groupId').val,
-            categoryId: Util.getValue(pos, 'tx.category.categoryId').val,
-            areaId: Util.getValue(pos, 'exb.location.areaId').val,
+            groupId: Util.getValue(pos, 'tx.groupId').val,
+            categoryId: Util.getValue(pos, 'tx.categoryId').val,
+            areaId: Util.getValue(pos, 'exb.areaId').val,
           }
         }).filter((pos) => !pos.tx || Util.bitON(pos.tx.disp, TX.DISP.POS))
         Util.debug(positions)
