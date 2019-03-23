@@ -59,8 +59,8 @@ export const getTxIds = (txList) => {
     return null
   }
   const ids = []
-  txList.forEach((potTx) => {
-    ids.push(potTx.txId)
+  txList.forEach((tx) => {
+    ids.push(tx.txId)
   })
   return ids.map((name) => name)
 }
@@ -72,10 +72,10 @@ export const getTxParams = (txList) => {
   const txParams = []
   txList.forEach((tx) => {
     txParams.push({
-      txId: Util.getValue(tx, 'txId', ''),
-      txName: Util.getValue(tx, 'txName', ''),
-      btxId: Util.getValue(tx, 'btxId', ''),
-      minor: Util.getValue(tx, 'minor', ''),
+      txId: tx.txId,
+      txName: tx.txName,
+      btxId: tx.btxId,
+      minor: tx.minor
     })
   })
   return txParams
