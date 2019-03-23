@@ -442,7 +442,7 @@ export const MENU = [
       icon: 'far fa-building',
     },
     {
-      key: 'pir',
+      key: 'pirMenu',
       path: 'pir',
       icon: 'fas fa-users',
     },
