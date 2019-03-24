@@ -70,9 +70,9 @@ export default {
       defaultColor: '#000000',
       defaultBgColor: '#ffffff',
       form: ViewHelper.extract(category, ['categoryId', 'categoryName', 'categoryType', 'display', 'description']),
-      oldShape: category.display.shape,
-      oldColor: category.display.color,
-      oldBgColor: category.display.bgColor,
+      oldShape: Util.getValue(category, 'display.shape', null),
+      oldColor: Util.getValue(category, 'display.color', null),
+      oldBgColor: Util.getValue(category, 'display.bgColor', null),
       defValue: {
         'categoryType': APP.CATEGORY_TYPES[0],
       },
@@ -119,9 +119,11 @@ export default {
   },
   methods: {
     beforeReload(){
-      this.form.displayShape = this.oldShape? this.oldShape: this.shapes[0].value
-      this.form.displayColor = Util.colorCd4display(this.oldColor? this.oldColor: null, this.defaultColor)
-      this.form.displayBgColor = Util.colorCd4display(this.oldBgColor? this.oldBgColor: null, this.defaultBgColor)
+      if (this.form) {
+        this.form.displayShape = this.oldShape? this.oldShape: this.shapes[0].value
+        this.form.displayColor = Util.colorCd4display(this.oldColor? this.oldColor: null, this.defaultColor)
+        this.form.displayBgColor = Util.colorCd4display(this.oldBgColor? this.oldBgColor: null, this.defaultBgColor)
+      }
     },
     afterCrud(){
       StateHelper.setForceFetch('pot', true)
