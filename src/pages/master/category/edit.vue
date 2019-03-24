@@ -61,6 +61,7 @@ export default {
   },
   mixins: [editmixinVue],
   data() {
+    let category = this.$store.state.app_service.category
     return {
       name: 'category',
       id: 'categoryId',
@@ -68,10 +69,10 @@ export default {
       appServicePath: '/basic/category',
       defaultColor: '#000000',
       defaultBgColor: '#ffffff',
-      form: ViewHelper.extract(this.$store.state.app_service.category, ['categoryId', 'categoryName', 'categoryType', 'display', 'description']),
-      oldShape: null,
-      oldColor: null,
-      oldBgColor: null,
+      form: ViewHelper.extract(category, ['categoryId', 'categoryName', 'categoryType', 'display', 'description']),
+      oldShape: category.display.shape,
+      oldColor: category.display.color,
+      oldBgColor: category.display.bgColor,
       defValue: {
         'categoryType': APP.CATEGORY_TYPES[0],
       },
