@@ -75,7 +75,7 @@ export default {
         'email',
       ].filter((val) => val)
     },
-    customCsvData(val){
+    customCsvData(val){ // TODO:
       const id = APP.TX_WITH_TXID? 'txId': APP.TX_BTX_MINOR == 'minor'? 'minor': 'btxId'
       if(Util.hasValue(val.potTxList)){
         val[id] = val.potTxList.map((potTx) => potTx.tx? potTx.tx[id]: '').join(';')

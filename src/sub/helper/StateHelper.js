@@ -5,8 +5,6 @@ import { CATEGORY, SHAPE, NOTIFY_STATE, SYSTEM_ZONE_CATEGORY_NAME } from '../con
 import { APP } from '../constant/config'
 
 
-// TODO: 全体的にState管理を共通化する
-
 let store
 let i18n
 
@@ -172,7 +170,7 @@ const appStateConf = {
           y: location? Math.round(location.y * 10)/10: null,
           sensor: i18n.tnl('label.' + Util.getValue(exb, 'sensorName', 'normal')),
           isAbsentZone: location? Util.getValue(location, 'locationZoneList.0.zone.zoneCategoryList.0.category.categoryName', false) === SYSTEM_ZONE_CATEGORY_NAME.ABSENT: false,
-          sensorIdNames: getSensorIdNames(exb.exbSensorList), // TODO: FIX
+          // sensorIdNames: getSensorIdNames(exb.exbSensorList), // 一旦単数に戻す
         }
       })
     }
@@ -226,7 +224,6 @@ const appStateConf = {
           minor: pot.minor,
           ruby: pot.extValue? pot.extValue.ruby: null,
           extValue: pot.extValue ? pot.extValue : this.extValueDefault,
-          user: Util.getValue(val, 'potUserList.0.user', {}), // TODO: delete if no need
         }
       }).sort((a, b) => {
         if(!a.txParams && !b.txParams){

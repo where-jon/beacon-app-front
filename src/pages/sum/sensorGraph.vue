@@ -272,7 +272,8 @@ export default {
       this.sumUnitOptions = options
     },
     getExbOptions(newVal = this.form.sensorId){
-      const exbs = this.exbs.filter((val) => this.getSensorIds(val).includes(newVal))
+      const exbs = this.exbs.filter((val) => val.sensorId == newVal)
+      // const exbs = this.exbs.filter((val) => this.getSensorIds(val).includes(newVal)) 一旦単数に戻す
       this.exbOptions = exbs? exbs.map((val) => ({value: val.exbId, text: val.locationName})): []
       this.form.exbId = this.exbOptions.length == 0? null: this.exbOptions[0].value
     },

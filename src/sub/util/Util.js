@@ -19,8 +19,6 @@ export const concatCamel = (...strs) => strs.map((str, idx) => idx == 0? str: `$
 
 export const snake2camel = (str) => str.replace(/_./g, (s) => s.charAt(1).toUpperCase())
 
-export const toLowerCaseTop = (str) => `${str.slice(0, 1).toLowerCase()}${str.slice(1)}`
-
 export const addNoSelect = (option) => option.unshift({value: null, text: ''})
 
 export const getByteLength = (str) => encodeURI(str == null? '': str).replace(/%../g, '*').length
