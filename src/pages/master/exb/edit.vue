@@ -63,14 +63,18 @@
               :vertical="form.txViewType ? form.txViewType.vertical : txIconsVertical"
               @change="onChangeTxSetting"
             />
-            <span v-for="(exbSensor, index) in form.exbSensorList" :key="index">
+            <!-- <span v-for="(exbSensor, index) in form.exbSensorList" :key="index"> 一旦単数に戻す
               <b-form-group v-show="showSensor(index)">
                 <label>
                   {{ $i18n.tnl('label.type') + getSensorIndex(index) }}
                 </label>
                 <b-form-select v-model="exbSensor.sensorId" :options="getSensorOptionsExb(index)" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-3 col-4" @change="changeSensors($event, index)" />
               </b-form-group>
-            </span>
+            </span> -->
+            <b-form-group>
+              <label v-t="'label.type'" />
+              <b-form-select v-model="form.sensorId" :options="sensorOptionsExb" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-3 col-4" />
+            </b-form-group>
             <b-form-group v-show="useZone">
               <label v-t="'label.zone'" />
               <b-form-select v-model="form.zoneId" :options="zoneNames" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-3 col-4" />
@@ -150,6 +154,10 @@ export default {
     },
     areaOptions() {
       return StateHelper.getOptionsFromState('area', false, true)
+    },
+    sensorOptionsExb() {
+      let options = this.sensorOptions('exb')
+      return options
     },
     zoneNames() {
       return StateHelper.getOptionsFromState('zone', false, false, 
@@ -315,19 +323,22 @@ export default {
             }
           }]: null
         },
+        exbSensorList: this.form.sensorId? [
+          {exbSensorPK: {sensorId: this.form.sensorId}}
+        ]: null
       }
-      const exbSensorList = []
-      this.form.exbSensorList.forEach((exbSensor) => {
-        if(exbSensor.sensorId){
-          exbSensorList.push({
-            exbSensorPK: {
-              exbId: this.form.exbId || dummyKey--,
-              sensorId: exbSensor.sensorId
-            }
-          })
-        }
-      })
-      entity.exbSensorList = exbSensorList
+      // const exbSensorList = []
+      // this.form.exbSensorList.forEach((exbSensor) => {
+      //   if(exbSensor.sensorId){
+      //     exbSensorList.push({
+      //       exbSensorPK: {
+      //         exbId: this.form.exbId || dummyKey--,
+      //         sensorId: exbSensor.sensorId
+      //       }
+      //     })
+      //   }
+      // })
+      // entity.exbSensorList = exbSensorList
       let ret = await AppServiceHelper.bulkSave(this.appServicePath, [entity])
       this.deviceId = null
       this.deviceIdX = null

@@ -9,7 +9,7 @@
       </b-button>
     </div>
     <div v-if="isNews" class="container">
-      <news-table :headers="headers" :datas="newsList" :tdClass="tdClass"/>
+      <news-table :headers="headers" :datas="newsList" :class="tdClass" />
     </div>
   </form>
 </template>

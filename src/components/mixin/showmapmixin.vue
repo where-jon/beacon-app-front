@@ -364,14 +364,12 @@ export default {
         let grpHit
         let catHit
         if (groupId) {
-          const posGroupId = Util.getValue(tx, 'group.groupId', null)
-          grpHit = groupId == posGroupId
+          grpHit = groupId == tx.groupId
         } else {
           grpHit = true
         }
         if (categoryId) {
-          const posCategoryId = Util.getValue(tx, 'category.categoryId', null)
-          catHit = categoryId == posCategoryId
+          catHit = categoryId == tx.categoryId
         } else {
           catHit = true
         }
@@ -494,7 +492,6 @@ export default {
       const isDispRight = x + offsetX + 100 < window.innerWidth
       // rev === trueの場合、ポップアップを上に表示
       const rev = y + map.top + DISP.TX_R + tipOffsetY + popupHeight > window.innerHeight
-      const p = Util.getValue(tx, 'potTxList.0.pot', {})
 
       const position = this.getPositions().find((e) => {
         return e.btx_id === btxId
@@ -511,12 +508,12 @@ export default {
         containerWidth: containerParent.width,
         containerHeight: containerParent.height,
         class: balloonClass,
-        name: p.potName ? p.potName : tx.txName? tx.txName: '',
-        tel: p.extValue ? p.extValue.tel ? p.extValue.tel : '': '',
+        name: tx.potName ? tx.potName : tx.txName? tx.txName: '',
+        tel: tx.extValue ? tx.extValue.tel ? tx.extValue.tel : '': '',
         timestamp: position ? this.getFinalReceiveTime(position.timestamp) : '',
-        thumbnail: p.thumbnail ? p.thumbnail : '',
-        category: p.potCategoryList && p.potCategoryList.length > 0 ? p.potCategoryList[0].category.categoryName : '',
-        group: p.potGroupList && p.potGroupList.length > 0 ? p.potGroupList[0].group.groupName : '',
+        thumbnail: tx.thumbnail ? tx.thumbnail : '',
+        category: tx.categoryName? tx.categoryName : '',
+        group: tx.groupName? tx.groupName : '',
         bgColor: '#' + display.bgColor,
         color: '#' + display.color,
         isDispRight: isDispRight,

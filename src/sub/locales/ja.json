@@ -284,7 +284,7 @@
     "tenantName": "テナント名",
 
     "personal": "個人設定",
-    "changeProfilePassword": "プロフィール・パスワードを変更する",
+    "changeProfilePassword": "パスワードを変更する",
     "changePassword": "パスワードを変更する",
   
     "system": "システム設定",
@@ -563,6 +563,8 @@
     "showHeatmap":"ヒートマップを表示",
     "sensorList": "センサ現在情報一覧",
     "device": "デバイス",
+
+    "potType": "人＆物区分",
 
     "dummy": ""
   },

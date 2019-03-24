@@ -61,6 +61,7 @@ export default {
   },
   mixins: [editmixinVue],
   data() {
+    let category = this.$store.state.app_service.category
     return {
       name: 'category',
       id: 'categoryId',
@@ -68,10 +69,10 @@ export default {
       appServicePath: '/basic/category',
       defaultColor: '#000000',
       defaultBgColor: '#ffffff',
-      form: ViewHelper.extract(this.$store.state.app_service.category, ['categoryId', 'categoryName', 'categoryType', 'display', 'description']),
-      oldShape: null,
-      oldColor: null,
-      oldBgColor: null,
+      form: ViewHelper.extract(category, ['categoryId', 'categoryName', 'categoryType', 'display', 'description']),
+      oldShape: Util.getValue(category, 'display.shape', null),
+      oldColor: Util.getValue(category, 'display.color', null),
+      oldBgColor: Util.getValue(category, 'display.bgColor', null),
       defValue: {
         'categoryType': APP.CATEGORY_TYPES[0],
       },
@@ -105,9 +106,11 @@ export default {
   },
   methods: {
     beforeReload(){
-      this.form.displayShape = this.oldShape? this.oldShape: this.shapes[0].value
-      this.form.displayColor = Util.colorCd4display(this.oldColor? this.oldColor: null, this.defaultColor)
-      this.form.displayBgColor = Util.colorCd4display(this.oldBgColor? this.oldBgColor: null, this.defaultBgColor)
+      if (this.form) {
+        this.form.displayShape = this.oldShape? this.oldShape: this.shapes[0].value
+        this.form.displayColor = Util.colorCd4display(this.oldColor? this.oldColor: null, this.defaultColor)
+        this.form.displayBgColor = Util.colorCd4display(this.oldBgColor? this.oldBgColor: null, this.defaultBgColor)
+      }
     },
     afterCrud(){
       StateHelper.setForceFetch('pot', true)

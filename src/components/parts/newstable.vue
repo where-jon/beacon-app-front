@@ -10,7 +10,9 @@
         <div class="table-area">
           <table v-if="!vueTableMode" class="table table-hover">
             <thead>
-              <th v-for="(header, index) in headers" :key="index" scope="col">{{ header.label }}</th>
+              <th v-for="(header, index) in headers" :key="index" scope="col">
+                {{ header.label }}
+              </th>
             </thead>
             <tbody>
               <tr v-for="(data, dataIndex) in datas" :key="dataIndex" :class="trClass(data, dataIndex)">
@@ -44,10 +46,6 @@
         </div>
       </b-col>
     </b-row>
-
-
-
-
   </div>
 </template>
 

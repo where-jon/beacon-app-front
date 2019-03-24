@@ -5,8 +5,6 @@ import { CATEGORY, SHAPE, NOTIFY_STATE, SYSTEM_ZONE_CATEGORY_NAME } from '../con
 import { APP } from '../constant/config'
 
 
-// TODO: 全体的にState管理を共通化する
-
 let store
 let i18n
 
@@ -61,39 +59,39 @@ export const getTxIdName = (tx, idOnly = false) => {
   return idOnly? id: id? `${id}(${Util.getValue(tx, 'txName', '')})`: null
 }
 
-export const getTxIdNames = (potTxList, idOnly = false) => {
-  if(!Util.hasValue(potTxList)){
+export const getTxIdNames = (txList, idOnly = false) => {
+  if(!Util.hasValue(txList)){
     return null
   }
   const names = []
-  potTxList.forEach((potTx) => {
-    names.push(getTxIdName(potTx.tx, idOnly))
+  txList.forEach((tx) => {
+    names.push(getTxIdName(tx, idOnly))
   })
   return names.map((name) => name)
 }
 
-export const getTxIds = (potTxList) => {
-  if(!Util.hasValue(potTxList)){
+export const getTxIds = (txList) => {
+  if(!Util.hasValue(txList)){
     return null
   }
   const ids = []
-  potTxList.forEach((potTx) => {
-    ids.push(potTx.potTxPK.txId)
+  txList.forEach((tx) => {
+    ids.push(tx.txId)
   })
   return ids.map((name) => name)
 }
 
-export const getTxParams = (potTxList) => {
-  if(!Util.hasValue(potTxList)){
+export const getTxParams = (txList) => {
+  if(!Util.hasValue(txList)){
     return null
   }
   const txParams = []
-  potTxList.forEach((potTx) => {
+  txList.forEach((tx) => {
     txParams.push({
-      txId: Util.getValue(potTx, 'tx.txId', ''),
-      txName: Util.getValue(potTx, 'tx.txName', ''),
-      btxId: Util.getValue(potTx, 'tx.btxId', ''),
-      minor: Util.getValue(potTx, 'tx.minor', ''),
+      txId: tx.txId,
+      txName: tx.txName,
+      btxId: tx.btxId,
+      minor: tx.minor
     })
   })
   return txParams
@@ -164,24 +162,15 @@ const appStateConf = {
     beforeCommit: (arr) => {
       return arr.map((exb) => {
         const location = exb.location
-        const area = location? location.area: null
         return {
           ...exb,
           deviceNum: exb.deviceId - store.state.currentRegion.deviceOffset,
           deviceIdX: exb.deviceId.toString(16).toUpperCase(),
-          locationName: location? location.locationName: null,
-          posId: location? location.posId: null,
-          areaId: area? area.areaId: null,
-          areaName: area? area.areaName: null,
           x: location? Math.round(location.x * 10)/10: null,
           y: location? Math.round(location.y * 10)/10: null,
-          sensor: i18n.tnl('label.' + Util.getValue(exb, 'exbSensorList.0.sensor.sensorName', 'normal')),
-          sensorId: Util.getValue(exb, 'exbSensorList.0.sensor.sensorId', null),
-          zoneId: location? Util.getValue(location, 'locationZoneList.0.zone.zoneId', null): null,
-          zoneName: location? Util.getValue(location, 'locationZoneList.0.zone.zoneName', null): null,
+          sensor: i18n.tnl('label.' + Util.getValue(exb, 'sensorName', 'normal')),
           isAbsentZone: location? Util.getValue(location, 'locationZoneList.0.zone.zoneCategoryList.0.category.categoryName', false) === SYSTEM_ZONE_CATEGORY_NAME.ABSENT: false,
-          sensorIdNames: getSensorIdNames(exb.exbSensorList),
-          zoneCategoryId: location? Util.getValue(location, 'locationZoneList.0.zone.zoneCategoryList.0.category.categoryId', null): null,
+          // sensorIdNames: getSensorIdNames(exb.exbSensorList), // 一旦単数に戻す
         }
       })
     }
@@ -191,28 +180,12 @@ const appStateConf = {
     sort: APP.TX_WITH_TXID? 'txId': APP.TX_BTX_MINOR != 'minor'? 'btxId': 'minor',
     beforeCommit: (arr) => {
       return arr.map((tx) => {
-        const location = tx.location
-        const area = location? location.area: null
         return {
           ...tx,
-          displayName: Util.getValue(tx, 'potTxList.0.pot.displayName', null),
-          description: Util.getValue(tx, 'potTxList.0.pot.description', null),
-          category: Util.getValue(tx, 'potTxList.0.pot.potCategoryList.0.category', null),
-          categoryName: convertCategoryName(Util.getValue(tx, 'potTxList.0.pot.potCategoryList.0.category.categoryName', null)),
-          group: Util.getValue(tx, 'potTxList.0.pot.potGroupList.0.group', null),
-          groupName: Util.getValue(tx, 'potTxList.0.pot.potGroupList.0.group.groupName', null),
-          sensorId: Util.getValue(tx, 'txSensorList.0.sensor.sensorId', null),
-          sensor: i18n.tnl('label.' + Util.getValue(tx, 'txSensorList.0.sensor.sensorName', 'normal')),
-          sensorName: tx.txName,
+          sensor: i18n.tnl('label.' + Util.getValue(tx, 'sensorName', 'normal')),
           dispPos: tx.disp & 1,
           dispPir: tx.disp & 2,
           dispAlways: tx.disp & 4,
-          locationName: location? location.locationName: null,
-          posId: location? location.posId: null,
-          areaName: area? area.areaName: null,
-          areaId: area? area.areaId: null,
-          zoneId: location? Util.getValue(location, 'locationZoneList.0.zone.zoneId', null): null,
-          zoneCategoryId: location? Util.getValue(location, 'locationZoneList.0.zone.zoneCategoryList.0.category.categoryId', null): null,
         }
       })
     }
@@ -239,24 +212,18 @@ const appStateConf = {
       let potImages = arr.map((val) => ({ id: val.potId, txId: val.txId, thumbnail: val.thumbnail}))
       store.commit('app_service/replaceAS', {['potImages']:potImages})
       const idNames = APP.TX_WITH_TXID? 'txId': APP.TX_BTX_MINOR == 'minor'? 'minor': 'btxId'
-      return arr.map((val) => {
+      return arr.map((pot) => {
         return {
-          ...val,
-          txIds: getTxIds(val.potTxList),
-          txIdNames: getTxIdNames(val.potTxList),
-          txSortIds: getTxIdNames(val.potTxList, true),
-          txParams: getTxParams(val.potTxList),
-          txName: val.txId? Util.getValue(val, 'tx.txName', '') : null,
-          btxId: val.txId? Util.getValue(val, 'tx.btxId', '') : null,
-          minor: val.txId? Util.getValue(val, 'tx.minor', '') : null,
-          groupName: Util.getValue(val, 'potGroupList.0.group.groupName', ''),
-          groupId: Util.getValue(val, 'potGroupList.0.group.groupId', ''),
-          categoryName: convertCategoryName(Util.getValue(val, 'potCategoryList.0.category.categoryName', '')),
-          categoryId: Util.getValue(val, 'potCategoryList.0.category.categoryId', ''),
-          ruby: Util.getValue(val, 'extValue.ruby' ,null),
-          extValue: val.extValue ? val.extValue : this.extValueDefault,
-          user: Util.getValue(val, 'potUserList.0.user', {}),
-          thumbnail: ''
+          ...pot,
+          txIds: getTxIds(pot.txList),
+          txIdNames: getTxIdNames(pot.txList),
+          txSortIds: getTxIdNames(pot.txList, true),
+          txParams: getTxParams(pot.txList),
+          txName: pot.txName,
+          btxId: pot.btxId,
+          minor: pot.minor,
+          ruby: pot.extValue? pot.extValue.ruby: null,
+          extValue: pot.extValue ? pot.extValue : this.extValueDefault,
         }
       }).sort((a, b) => {
         if(!a.txParams && !b.txParams){

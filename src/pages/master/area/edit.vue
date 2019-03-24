@@ -91,6 +91,7 @@ export default {
     this.form.mapConfig = this.mapConfigTypes[0].value
     this.oldMap = this.hasId && this.form.mapImage? {width: this.$refs.mapImage.naturalWidth, height: this.$refs.mapImage.naturalHeight}: null
     HtmlUtil.setCustomValidationMessage()
+    this.oldMap = this.hasId && this.form.mapImage? {width: this.$refs.mapImage.naturalWidth, height: this.$refs.mapImage.naturalHeight}: null
   },
   methods: {
     getNameByteLangth(){
@@ -109,6 +110,9 @@ export default {
         this.readImageView(e, 'mapImage', 'mapWidth', 'mapHeight', 'thumbnail', APP.AREA_THUMBNAIL_MAX)
         this.form.mapImageTemp = this.form.mapImage
 
+        if(this.oldMap){
+          this.mapUpdate = true
+        }
         const inputFileName = Util.getValue(e, 'target.files.0.name', null)
         this.setFileName(inputFileName? Util.cutOnLongByte(inputFileName, this.getNameByteLangth()): null)
         if(!inputFileName){
@@ -130,6 +134,10 @@ export default {
           this.form.scaleY = '0'
         }
         this.setFileName()
+        if(this.hasId && this.oldMap){
+          this.form.scaleX = '0'
+          this.form.scaleY = '0'
+        }
       })
     },
     async afterCrud(again){

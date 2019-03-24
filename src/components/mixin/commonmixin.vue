@@ -39,7 +39,7 @@ export default {
       })
     },
     getSensorIds(exb) {
-      const exbSensorList = Util.getValue(exb, 'exbSensorList', null)
+      const exbSensorList = Util.getValue(exb, 'exbSensorList', null) // TODO: FIX
       if(Util.hasValue(exbSensorList)){
         const ret = []
         exbSensorList.forEach(exbSensor => ret.push(Util.getValue(exbSensor, 'sensor.sensorId', null)))
