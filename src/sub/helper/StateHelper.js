@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import * as AppServiceHelper from './AppServiceHelper'
 import * as Util from '../util/Util'
-import { CATEGORY, SHAPE, NOTIFY_STATE } from '../constant/Constants'
+import { CATEGORY, SHAPE, NOTIFY_STATE, SYSTEM_ZONE_CATEGORY_NAME } from '../constant/Constants'
 import { APP } from '../constant/config'
 
 
@@ -13,6 +13,24 @@ let i18n
 export const setApp = (pStore, pi18n) => {
   store = pStore
   i18n = pi18n
+}
+
+export const getSensorIdName = (sensor) => {
+  if(!sensor){
+    return null
+  }
+  return Util.getValue(sensor, 'sensorName', '')
+}
+
+export const getSensorIdNames = (exbSensorList) => {
+  if(!Util.hasValue(exbSensorList)){
+    return [i18n.tnl('label.normal')]
+  }
+  const names = []
+  exbSensorList.forEach((exbSensor) => {
+    names.push(i18n.tnl(`label.${getSensorIdName(exbSensor.sensor)}`))
+  })
+  return names.map((name) => name)
 }
 
 export const getDeviceIdName = (device, option = {ignorePrimaryKey: false, forceSensorName: false}) => {
@@ -86,6 +104,29 @@ export const getCategoryTypeName = (category) => {
   return categoryTypeName != null? categoryTypeName.text: null
 }
 
+// システム利用　カテゴリの名称　⇔　各言語用名称　コンバートする
+export const convertCategoryName = (categoryname) => {
+  switch(categoryname) {
+  case SYSTEM_ZONE_CATEGORY_NAME.ABSENT:
+    return i18n.tnl('system.absentCategoryName')
+  case i18n.tnl('system.absentCategoryName'):
+    return SYSTEM_ZONE_CATEGORY_NAME.ABSENT
+  default:
+    return categoryname
+  }
+}
+
+// システム利用カテゴリ名称かどうかを判定する
+export const isSystemUseCategoryName = (val) => {
+  let systemUseCategoryName = false
+  switch(val) {
+  case SYSTEM_ZONE_CATEGORY_NAME.ABSENT:
+    systemUseCategoryName = true
+    break
+  }
+  return systemUseCategoryName
+}
+
 export const getShapeName = (shape) => {
   const shapeName = SHAPE.getShapes().find((tval) => tval.value === shape)
   return shapeName != null? shapeName.text: null
@@ -130,6 +171,8 @@ const appStateConf = {
           x: location? Math.round(location.x * 10)/10: null,
           y: location? Math.round(location.y * 10)/10: null,
           sensor: i18n.tnl('label.' + Util.getValue(exb, 'sensorName', 'normal')),
+          isAbsentZone: location? Util.getValue(location, 'locationZoneList.0.zone.zoneCategoryList.0.category.categoryName', false) === SYSTEM_ZONE_CATEGORY_NAME.ABSENT: false,
+          sensorIdNames: getSensorIdNames(exb.exbSensorList), // TODO: FIX
         }
       })
     }
@@ -183,6 +226,7 @@ const appStateConf = {
           minor: pot.minor,
           ruby: pot.extValue? pot.extValue.ruby: null,
           extValue: pot.extValue ? pot.extValue : this.extValueDefault,
+          user: Util.getValue(val, 'potUserList.0.user', {}), // TODO: delete if no need
         }
       }).sort((a, b) => {
         if(!a.txParams && !b.txParams){
@@ -208,6 +252,7 @@ const appStateConf = {
     beforeCommit: (arr) => {
       return arr.map((val) => ({
         ...val,
+        categoryName: convertCategoryName(val.categoryName),
         shape: val.display? val.display.shape: null,
         color: val.display? val.display.color: null,
         bgColor: val.display? val.display.bgColor: null,
@@ -236,6 +281,21 @@ const appStateConf = {
       return arr.map((val) => ({...val, roleName: val.role.roleName}))
     }
   },
+  newsList: {
+    path: '/news',
+    sort: 'newsDate',
+    beforeCommit: (arr) => {
+      return arr.map((val) => ({
+        ...val,
+        newsDt: Util.formatDate(val.newsDate),
+        dispState: i18n.tnl(`label.${val.dispFlg == 0? 'hide': 'display'}`),
+      }))
+    }
+  },
+  topNewsList: {
+    path: '/news/disp',
+    sort: 'newsDate',
+  },
   roles: {
     path: '/meta/role',
     sort: 'roleName',
@@ -255,18 +315,19 @@ const appStateConf = {
     sort: 'locationId',
   },
   zones: {
-    path: '/core/zone/coordinates',
+    path: '/core/zone',
     sort: 'zoneName',
     beforeCommit: (arr) => {
       return  arr.map((val) => ({
         zoneId: val.zoneId,
         zoneName: val.zoneName,
+        zoneType: val.zoneType,
         areaId: Util.hasValue(val.area)? val.area.areaId: null,
         areaName: Util.hasValue(val.area)? val.area.areaName: null,
         locationId: Util.hasValue(val.locationZoneList)? val.locationZoneList[0].locationZonePK.locationId: null,
         locationName: Util.hasValue(val.locationZoneList)? val.locationZoneList[0].location.locationName: null,
         categoryId: Util.hasValue(val.zoneCategoryList)? val.zoneCategoryList[0].zoneCategoryPK.categoryId: null,
-        categoryName: Util.hasValue(val.zoneCategoryList)? val.zoneCategoryList[0].category.categoryName: null,
+        categoryName: convertCategoryName(Util.hasValue(val.zoneCategoryList)? val.zoneCategoryList[0].category.categoryName: null),
       }))
     }
   },
@@ -284,11 +345,29 @@ const appStateConf = {
       }))
     }
   },
+  prohibits: {
+    path: '/core/zone/prohibit',
+    beforeCommit: (arr) => {
+      let result = arr.map((val) => (val? { // TODO: valがundefinedになる
+        ...val,
+        zoneId: val.zoneId,
+        zoneName:val.zoneName,
+        x: val.x,
+        y: val.y,
+        w: val.w,
+        h: val.h,
+        areaId: val.areaId,
+      }: null))
+      return result
+    }
+  },
 }
 
 export const load = async (target, force) => {
   if (!target.endsWith('s')) {
     target = target.endsWith('y')? target.slice(0, -1) + 'ies' : target + 's'
+  }else if(['news', 'topNews'].includes(target)){
+    target = `${target}List`
   }
   if (!appStateConf[target]) {
     return
@@ -334,6 +413,42 @@ export const loadAreaImage = async (areaId, force) => {
   store.commit('app_service/replaceAS', {areaImages})    
 
   // })
+}
+
+export const getProhibitData = async (position,prohibits) => {
+
+  if (!APP.PROHIBIT_ALERT || !APP.PROHIBIT_GROUPS) {
+    return null
+  }
+  const groups = APP.PROHIBIT_GROUPS
+  return position.filter((pos) =>
+    prohibits.some((prohibitData) => {
+      if (pos.exb.areaId == prohibitData.areaId
+          && pos.exb.x >= prohibitData.x && pos.exb.x <= prohibitData.w
+          && pos.exb.y >= prohibitData.y && pos.exb.y <= prohibitData.h) {
+        const groupCheck = groups.some((group) => pos.tx.group.groupId == group)
+        groupCheck ? pos.zoneName = prohibitData.zoneName : null
+        return groupCheck
+      }
+    })).map((position) => {
+    return {
+      minor: position.minor,
+      potName: position.tx.potTxList[0].pot.potName,
+      areaName: position.exb.areaName,
+      zoneName: position.zoneName
+    }})
+}
+
+export const getProhibitMessage = async (message,prohibitData) => {
+
+  if (!APP.PROHIBIT_ALERT || !APP.PROHIBIT_GROUPS) {
+    return ''   // message空
+  }
+
+  const labelArea = i18n.tnl('label.Area')
+  const labelpotName = i18n.tnl('label.potName')
+  const labelZone =  i18n.tnl('label.zoneName')
+  return prohibitData.map((data) => `< ${labelpotName} : ${data.potName} ${labelArea} : ${data.areaName} ${labelZone} : ${data.zoneName}>`).join(' ')
 }
 
 export const loadAreaImages = async () => {

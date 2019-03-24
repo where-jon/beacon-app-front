@@ -102,13 +102,13 @@
 import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import locale from 'element-ui/lib/locale'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as SensorHelper from '../../sub/helper/SensorHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
 import { SENSOR, SUM_UNIT, SUM_TARGET, DEVICE } from '../../sub/constant/Constants'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
@@ -136,16 +136,7 @@ export default {
         exbId: null,
         txId: null,
       },
-      items: [
-        {
-          text: this.$i18n.tnl('label.sumTitle'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.sensorGraph'),
-          active: true
-        }
-      ],
+      items: ViewHelper.createBreadCrumbItems('sumTitle', 'sensorGraph'),
       headers: {
         temperature: [
           'dt',
@@ -168,7 +159,11 @@ export default {
           APP.SENSORGRAPH_CSV_IMMEDIATE? 'step(lat)': null, 'step(max)', 'step(avg)', 'step(min)',
           APP.SENSORGRAPH_CSV_IMMEDIATE? 'down(lat)': null, 'down(max)', 'down(avg)', 'down(min)',
         ].filter(val => val),
-        magnet: [ 'dt', 'magnet(max)', 'magnet(min)' ]
+        magnet: [ 'dt', 'magnet(max)', 'magnet(min)' ],
+        pressure: [
+          'dt',
+          APP.SENSORGRAPH_CSV_IMMEDIATE? 'pressVol(lat)': null, 'pressVol(max)', 'pressVol(avg)', 'pressVol(min)',
+        ].filter(val => val),
       },
       exbType: [SENSOR.PIR, SENSOR.THERMOPILE, SENSOR.LED],
       txType: [SENSOR.MEDITAG, SENSOR.MAGNET],
@@ -251,9 +246,7 @@ export default {
     this.changeSumUnit()
   },
   async mounted() {
-    import(`element-ui/lib/locale/lang/${this.$i18n.locale}`).then( (mojule) =>{
-      locale.use(mojule.default)
-    })
+    HtmlUtil.importElementUI()
   },
   methods: {
     getSumUnitOptions(newDatetimeFrom = this.form.datetimeFrom, newDatetimeTo = this.form.datetimeTo) {
@@ -279,7 +272,7 @@ export default {
       this.sumUnitOptions = options
     },
     getExbOptions(newVal = this.form.sensorId){
-      const exbs = this.exbs.filter((val) => val.sensorId == newVal)
+      const exbs = this.exbs.filter((val) => this.getSensorIds(val).includes(newVal))
       this.exbOptions = exbs? exbs.map((val) => ({value: val.exbId, text: val.locationName})): []
       this.form.exbId = this.exbOptions.length == 0? null: this.exbOptions[0].value
     },
@@ -361,10 +354,11 @@ export default {
         downLatest: this.add(a.downLatest, b.downLatest),
         down: this.add(a.down, b.down),
         magnet: this.add(a.magnet, b.magnet),
+        pressVol: this.add(a.pressVol, b.pressVol),
       }))
       const count = {
         temperature: 0, humidity: 0, count: 0, step: 0, beat: 0, stress: 0,
-        low: 0, high: 0, pressure: 0, downLatest: 0, down: 0, magnet: 0
+        low: 0, high: 0, pressure: 0, downLatest: 0, down: 0, magnet: 0, pressVol: 0,
       }
       dataList.forEach((data) => {
         Object.keys(data).forEach((key) => {
@@ -393,6 +387,7 @@ export default {
         downLatest: this.compare(a.downLatest, b.downLatest) < 0? a.downLatest: b.downLatest,
         down: this.compare(a.down, b.down) < 0? a.down: b.down,
         magnet: this.compare(a.magnet, b.magnet) < 0? a.magnet: b.magnet,
+        pressVol: this.compare(a.pressVol, b.pressVol) < 0? a.pressVol: b.pressVol,
       }))
     },
     createMinDataList(sensorKey, dataList){
@@ -410,6 +405,7 @@ export default {
         downLatest: this.compare(a.downLatest, b.downLatest) > 0? a.downLatest: b.downLatest,
         down: this.compare(a.down, b.down) > 0? a.down: b.down,
         magnet: this.compare(a.magnet, b.magnet) > 0? a.magnet: b.magnet,
+        pressVol: this.compare(a.pressVol, b.pressVol) > 0? a.pressVol: b.pressVol,
       }))
     },
     createCsvData(sensorKey, immediate, average, max, min){
@@ -459,6 +455,12 @@ export default {
       if(this.form.sensorId == SENSOR.MAGNET){
         ret['magnet(max)'] = max.magnet
         ret['magnet(min)'] = min.magnet
+      }
+      if(this.form.sensorId == SENSOR.PRESSURE){
+        ret['pressVol(lat)'] = immediate.pressVol
+        ret['pressVol(max)'] = max.pressVol
+        ret['pressVol(avg)'] = average.pressVol
+        ret['pressVol(min)'] = min.pressVol
       }
       return ret
     },
@@ -560,7 +562,8 @@ export default {
         this.dataSensorId == SENSOR.PIR? this.headers.pir: 
           this.dataSensorId == SENSOR.THERMOPILE? this.headers.thermopile: 
             this.dataSensorId == SENSOR.MEDITAG? this.headers.meditag: 
-              this.dataSensorId == SENSOR.MAGNET? this.headers.magnet: null
+              this.dataSensorId == SENSOR.MAGNET? this.headers.magnet: 
+                this.dataSensorId == SENSOR.PRESSURE? this.headers.pressure: null
       HtmlUtil.fileDL(
         'sensorGraph.csv',
         Util.converToCsv(this.dataList, header),

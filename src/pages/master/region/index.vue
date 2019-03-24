@@ -9,7 +9,7 @@
 import mList from '../../../components/page/list.vue'
 import { mapState } from 'vuex'
 import * as StateHelper from '../../../sub/helper/StateHelper'
-import { addLabelByKey } from '../../../sub/helper/ViewHelper'
+import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import listmixinVue from '../../../components/mixin/listmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 
@@ -30,7 +30,7 @@ export default {
         appServicePath: '/core/region',
         csvOut: true,
         custumCsvColumns: ['regionId', 'regionName', 'meshId', 'deviceOffset', 'description'],
-        fields: addLabelByKey(this.$i18n, [ 
+        fields: ViewHelper.addLabelByKey(this.$i18n, [ 
           {key: 'regionName', sortable: true },
           {key: 'meshId', sortable: true},
           {key: 'deviceOffset', sortable: true},
@@ -41,16 +41,7 @@ export default {
         sortBy: 'regionName',
         initTotalRows: this.$store.state.app_service.regions.length
       },
-      items: [
-        {
-          text: this.$i18n.tnl('label.master'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.region'),
-          active: true
-        }
-      ]
+      items: ViewHelper.createBreadCrumbItems('master', 'region'),
     }
   },
   computed: {

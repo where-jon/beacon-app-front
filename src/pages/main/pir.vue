@@ -22,6 +22,7 @@
 import { mapState } from 'vuex'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as Util from '../../sub/util/Util'
 import txdetail from '../../components/parts/txdetail.vue'
 import { DISP, APP } from '../../sub/constant/config'
@@ -44,18 +45,9 @@ export default {
         this.reset()
       },
       noImageErrorKey: 'noMapImage',
-      items: [
-        {
-          text: this.$i18n.tnl('label.main'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.pir'),
-          active: true
-        },
-      ],
+      items: ViewHelper.createBreadCrumbItems('main', 'pirMenu'),
       INUSE_FONTSIZE_RATIO: 0.9,
-      PIR_FONTSIZE_RATIO_EN: 0.5,
+      FONTSIZE_RATIO_EN: 0.5,
       EMPTY_FONTSIZE_RATIO: 1.2,
     }
   },
@@ -87,17 +79,19 @@ export default {
         await this.fetchAreaExbs(true)
 
         const pirSensors = await EXCloudHelper.fetchSensor(SENSOR.PIR)
+        const pressureSensors = APP.USE_PRESSURE? await EXCloudHelper.fetchSensor(SENSOR.PRESSURE): []
         const thermopileSensors = APP.USE_THERMOPILE? await EXCloudHelper.fetchSensor(SENSOR.THERMOPILE): []
 
         this.getPositionedExb(
           null,
           (exb) => {
             const pir = pirSensors.find((val) => val.deviceid == exb.deviceId && val.count >= DISP.PIR_MIN_COUNT)
+            const pressure = pressureSensors.find((val) => val.deviceid == exb.deviceId && val.press_vol >= 0)
             const thermopile = thermopileSensors.find((val) => val.deviceid == exb.deviceId)
-            console.log({exb, pir, thermopile, pirSensors, thermopileSensors})
-            return pir? {id: SENSOR.PIR, ...pir}: thermopile? {id: SENSOR.THERMOPILE, ...thermopile}: null
+            console.log({exb, pir, pressure, thermopile, pirSensors, pressureSensors, thermopileSensors})
+            return pir? {id: SENSOR.PIR, ...pir}: pressure? {id: SENSOR.PRESSURE, count: pressure.press_vol, ...pressure}: thermopile? {id: SENSOR.THERMOPILE, ...thermopile}: null
           },
-          (exb) => exb.count > 0 || DISP.PIR_EMPTY_SHOW
+          (exb) => exb.sensorId == SENSOR.PRESSURE? exb.count >= DISP.PRESSURE_USE_MIN || DISP.PRESSURE_EMPTY_SHOW: exb.count > 0 || DISP.PIR_EMPTY_SHOW
         )
 
         if (APP.SHOW_MAGNET_ON_PIR) {
@@ -140,29 +134,56 @@ export default {
       exbBtn.cursor = ''
       return exbBtn
     },
-    createShape(count){
+    createShapeInfo(sensorId, count){
+      if(sensorId == SENSOR.PRESSURE){
+        return {
+          bgColor: (count >= DISP.PRESSURE_USE_MIN)? DISP.PRESSURE_BGCOLOR: DISP.PRESSURE_EMPTY_BGCOLOR,
+          width: DISP.PRESSURE_R_SIZE,
+        }
+      }
+      return {
+        bgColor: (count > 0)? DISP.PIR_BGCOLOR: DISP.PIR_EMPTY_BGCOLOR,
+        width: DISP.PIR_R_SIZE,
+      }
+    },
+    createShape(sensorId, count){
       const btnBg = new Shape()
-      const w = DISP.PIR_R_SIZE
-      const bgColor = (count > 0)? DISP.PIR_BGCOLOR: DISP.PIR_EMPTY_BGCOLOR
-      btnBg.graphics.beginFill(bgColor).drawCircle(0, 0, w, w)
+      const shapeInfo = this.createShapeInfo(sensorId, count)
+      btnBg.graphics.beginFill(shapeInfo.bgColor).drawCircle(0, 0, shapeInfo.width, shapeInfo.width)
       // btnBg.alpha = 0.9;
       return btnBg
     },
-    createLabel(count){
-      const label = new Text(this.$i18n.tnl('label.' + (count > 0? DISP.PIR_INUSE_LABEL: DISP.PIR_EMPTY_LABEL)))
-      if (this.$i18n.locale == 'ja') {
-        label.font = Util.getAdjustFontSize(() => DISP.PIR_R_SIZE * (count > 0? this.INUSE_FONTSIZE_RATIO: this.EMPTY_FONTSIZE_RATIO), true)
+    createLabelInfo(sensorId, count){
+      if(sensorId == SENSOR.PRESSURE){
+        const font = this.$i18n.locale == 'ja'?
+          Util.getAdjustFontSize(() => DISP.PRESSURE_R_SIZE * (count >= DISP.PRESSURE_USE_MIN? this.INUSE_FONTSIZE_RATIO: this.EMPTY_FONTSIZE_RATIO), true):
+          Util.getAdjustFontSize(() => DISP.PRESSURE_R_SIZE * this.PRESSURE_FONTSIZE_RATIO_EN, true)
+        return {
+          label: this.$i18n.tnl('label.' + (count >= DISP.PRESSURE_USE_MIN? DISP.PRESSURE_INUSE_LABEL: DISP.PRESSURE_EMPTY_LABEL)),
+          font: font,
+          color: DISP.PRESSURE_FGCOLOR
+        }
       }
-      else {
-        label.font = Util.getAdjustFontSize(() => DISP.PIR_R_SIZE * this.PIR_FONTSIZE_RATIO_EN, true)
+      const font = this.$i18n.locale == 'ja'?
+        Util.getAdjustFontSize(() => DISP.PIR_R_SIZE * (count > 0? this.INUSE_FONTSIZE_RATIO: this.EMPTY_FONTSIZE_RATIO), true):
+        Util.getAdjustFontSize(() => DISP.PIR_R_SIZE * this.FONTSIZE_RATIO_EN, true)
+      return {
+        label: this.$i18n.tnl('label.' + (count > 0? DISP.PIR_INUSE_LABEL: DISP.PIR_EMPTY_LABEL)),
+        font: font,
+        color: DISP.PIR_FGCOLOR
       }
-      label.color = DISP.PIR_FGCOLOR
+    },
+    createLabel(sensorId, count){
+      const labelInfo = this.createLabelInfo(sensorId, count)
+      const label = new Text(labelInfo.label)
+      label.font = labelInfo.font
+      label.color = labelInfo.color
       label.textAlign = 'center'
       label.textBaseline = 'middle'
       return label
     },
     showExb(exb) {
-      if (!Util.equalsAny(exb.sensorId, [SENSOR.PIR, SENSOR.THERMOPILE])) {
+      if (!Util.equalsAny(exb.sensorId, [SENSOR.PIR, SENSOR.PRESSURE, SENSOR.THERMOPILE])) {
         return
       }
 
@@ -188,9 +209,9 @@ export default {
       }
       else {
         exbBtn = new Container()
-        exbBtn.addChild(this.createShape(exb.count))
+        exbBtn.addChild(this.createShape(exb.sensorId, exb.count))
         if (DISP.PIR_INUSE_LABEL || DISP.PIR_EMPTY_LABEL) {
-          exbBtn.addChild(this.createLabel(exb.count))
+          exbBtn.addChild(this.createLabel(exb.sensorId, exb.count))
         }
       }
 
@@ -231,9 +252,9 @@ export default {
       const magnetOn = (magnet.magnet == SENSOR.MAGNET_STATUS.ON)
       const count = (APP.MAGNET_ON_IS_USED && magnetOn || !APP.MAGNET_ON_IS_USED && !magnetOn)? 1: 0
       const txBtn = new Container()
-      txBtn.addChild(this.createShape(count))
+      txBtn.addChild(this.createShape(tx.sensorId, count))
       if (DISP.PIR_INUSE_LABEL || DISP.PIR_EMPTY_LABEL) {
-        txBtn.addChild(this.createLabel(count))
+        txBtn.addChild(this.createLabel(tx.sensorId, count))
       }
 
       txBtn.x = tx.location.x * this.mapImageScale

@@ -1,6 +1,7 @@
 import { DISCOMFORT, SENSOR, THERMOHUMIDITY } from '../constant/Constants'
 import { APP, DISP } from '../constant/config'
 import * as Util from '../util/Util'
+import * as ChartHelper from './ChartHelper'
 import { addLabelByKey } from './ViewHelper'
 import Chart from 'chart.js'
 import _ from 'lodash'
@@ -158,28 +159,7 @@ export const createChartGraphDatasets = (yAxisID, label, chartData, targetId, bo
 }
 
 export const createChartGraphOptions = (left, right, isResponsive = false) => {
-  const ret = {
-    scales:{
-      yAxes:[
-        left? {
-          id: left.id, type: 'linear', position: 'left',
-          scaleLabel: { display: true, labelString: left.label },
-          ticks: left.ticks,
-        }: null,
-        right? {
-          id: right.id, type: 'linear', position: 'right',
-          scaleLabel: { display: true, labelString: right.label },
-          ticks: right.ticks,
-        }: null
-      ].filter((val) => val)
-    },
-    elements:{ line:{ tension: 0 } }
-  }
-  if(isResponsive){
-    ret.responsive = true
-    ret.maintainAspectRatio = false
-  }
-  return ret
+  return ChartHelper.createChartGraphOptions(left, right, isResponsive)
 }
 
 export const createChartThermohumidityOptions = (chartData, by, i18n, isResponsive = false) => {
@@ -278,6 +258,29 @@ export const createChartMagnetOptions = (chartData, by, i18n, isResponsive = fal
   }
 }
 
+export const createChartPressureOptions = (chartData, by, i18n, isResponsive = false) => {
+  return {
+    type:'line', 
+    data:{
+      labels: chartData.map((val) => val.key),
+      datasets: 
+        createChartGraphDatasets('pressure', i18n.tnl('label.pressure'), chartData, 'pressVol', DISP.PRESSURE_LINE_COLOR, by, i18n)
+    },
+    options: createChartGraphOptions(
+      {
+        id: 'pressure',
+        label: i18n.tnl('label.pressVol'),
+        ticks: {
+          min: 0,
+          max: Math.ceil(Math.max(...chartData.map((val) => val && val.data? val.data.pressVol: 0)) / 10 ) * 10
+        },
+      },
+      null,
+      isResponsive
+    )
+  }
+}
+
 export const createChartMeditagOptions = (chartData, by, i18n, isResponsive = false) => {
   return {
     type:'line', 
@@ -339,7 +342,8 @@ export const createChartGraph = (canvasId, sensorId, chartData, by, i18n, isResp
       sensorId == SENSOR.THERMOPILE? createChartThermopileOptions(chartData, by, i18n, isResponsive):
         sensorId == SENSOR.MAGNET? createChartMagnetOptions(chartData, by, i18n, isResponsive):
           sensorId == SENSOR.MEDITAG? createChartMeditagOptions(chartData, by, i18n, isResponsive):
-            createChartThermohumidityOptions(chartData, by, i18n, isResponsive)
+            sensorId == SENSOR.PRESSURE? createChartPressureOptions(chartData, by, i18n, isResponsive):
+              createChartThermohumidityOptions(chartData, by, i18n, isResponsive)
   )
   chart.update()
   if(sensorId == SENSOR.MEDITAG){
@@ -399,9 +403,9 @@ export const getFields1 = (i18n) => {
   return addLabelByKey(i18n, [
     {key: 'sensorDt', sortable: true, label:'dt'},
     {key: 'txName', sortable: true },
-    APP.SENSOR_WITH_DEVICENUM && APP.EXB_WITH_DEVICE_NUM? {key: 'deviceNum', sortable: true }: null,
-    APP.SENSOR_WITH_DEVICEID && APP.EXB_WITH_DEVICE_ID? {key: 'deviceId', sortable: true }: null,
-    APP.SENSOR_WITH_DEVICEIDX && APP.EXB_WITH_DEVICE_IDX? {key: 'deviceIdX', sortable: true }: null,
+    APP.SENSOR_WITH_DEVICE_NUM && APP.EXB_WITH_DEVICE_NUM? {key: 'deviceNum', sortable: true }: null,
+    APP.SENSOR_WITH_DEVICE_ID && APP.EXB_WITH_DEVICE_ID? {key: 'deviceId', sortable: true }: null,
+    APP.SENSOR_WITH_DEVICE_IDX && APP.EXB_WITH_DEVICE_IDX? {key: 'deviceIdX', sortable: true }: null,
     APP.SENSOR_WITH_LOCATIONNAME? {key: 'locationName', label:'locationZoneName', sortable: true,}: null,
     APP.SENSOR_WITH_POSID? {key: 'posId', label:'posId', sortable: true,}: null,
     {key: 'areaName', label:'area', sortable: true,},
@@ -447,6 +451,19 @@ export const getFields6 = (i18n) => {
   ])
 }
 
+export const getFields8 = (i18n) => {
+  return addLabelByKey(i18n, [
+    {key: 'sensorDt', sortable: true, label:'dt'},
+    APP.EXB_WITH_DEVICE_NUM? {key: 'deviceNum', sortable: true }: null,
+    APP.EXB_WITH_DEVICE_ID? {key: 'deviceId', sortable: true }: null,
+    APP.EXB_WITH_DEVICE_IDX? {key: 'deviceIdX', sortable: true }: null,
+    {key: 'locationName', label:'locationZoneName', sortable: true,},
+    {key: 'posId', label:'posId', sortable: true,},
+    {key: 'areaName', label:'area', sortable: true,},
+    {key: 'pressVol', label:'pressVol', sortable: true},
+  ])
+}
+
 export const getFields = (sensorId, i18n) => {
   if(sensorId == SENSOR.TEMPERATURE){
     return getFields1(i18n)
@@ -462,6 +479,9 @@ export const getFields = (sensorId, i18n) => {
   }
   if(sensorId == SENSOR.MAGNET){
     return getFields6(i18n)
+  }
+  if(sensorId == SENSOR.PRESSURE){
+    return getFields8(i18n)
   }
   return getFields1(i18n)
 }

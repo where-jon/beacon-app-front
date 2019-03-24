@@ -57,13 +57,13 @@
 import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import locale from 'element-ui/lib/locale'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as SensorHelper from '../../sub/helper/SensorHelper'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
 import { getTheme } from '../../sub/helper/ThemeHelper'
@@ -82,16 +82,7 @@ export default {
   data () {
     return {
       name: 'sensorHistory',
-      items: [
-        {
-          text: this.$i18n.tnl('label.historyTitle'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.sensorHistory'),
-          active: true
-        }
-      ],
+      items: ViewHelper.createBreadCrumbItems('historyTitle', 'sensorHistory'),
       form: {
         sensorId: null,
         datetimeFrom: null,
@@ -103,6 +94,7 @@ export default {
       fields2: SensorHelper.getFields2(this.$i18n),
       fields5: SensorHelper.getFields5(this.$i18n),
       fields6: SensorHelper.getFields6(this.$i18n),
+      fields8: SensorHelper.getFields8(this.$i18n),
       currentPage: 1,
       perPage: 20,
       limitViewRows: 100,
@@ -134,6 +126,8 @@ export default {
   },
   async created() {
     await StateHelper.load('sensor')
+    await StateHelper.load('tx')
+    await StateHelper.load('exb')
     this.form.sensorId = Util.hasValue(this.sensorOptions)? this.sensorOptions[0].value: null
     const date = new Date()
     this.form.datetimeFrom = Util.getDatetime(date, {hours: -1})
@@ -141,10 +135,7 @@ export default {
     this.fields = this.fields1
   },
   mounted() {
-    import(`element-ui/lib/locale/lang/${this.$i18n.locale}`).then( (mojule) =>{
-      locale.use(mojule.default)
-    })
-    StateHelper.load('tx')
+    HtmlUtil.importElementUI()
     this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.fetchRows, maxRows: this.limitViewRows})}`
   },
   methods: {
@@ -195,6 +186,9 @@ export default {
         let labelKey = (senHist.value.magnet === SENSOR.MAGNET_STATUS.ON)? 'using': 'notUse'
         senHist.state = this.$i18n.tnl('label.' + labelKey)
       }
+      if (senHist.sensorId == SENSOR.PRESSURE) {
+        senHist.pressVol = senHist.value.press_vol
+      }
     },
     async displayImpl(){
       this.replace({showAlert: false})
@@ -214,6 +208,9 @@ export default {
         }
         if (aSensorId == 6) {
           this.fields = this.fields6
+        }
+        if (aSensorId == SENSOR.PRESSURE) {
+          this.fields = this.fields8
         }
         var fetchList = await HttpHelper.getAppService(
           `/basic/sensorHistory/findsensor/${aSensorId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/${this.limitViewRows}`

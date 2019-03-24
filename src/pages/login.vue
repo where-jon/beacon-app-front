@@ -1,30 +1,53 @@
 <template>
-  <form class="form-signin" method="post" @submit.prevent="onSubmit">
-    <div class="error-message">
+  <form method="post" @submit.prevent="onSubmit">
+    <div class=" form-signin error-message">
       {{ message }}
+      <input v-model="userId" type="text" class="form-control" maxlength="20" placeholder="ID">
+      <input v-model="password" type="password" class="form-control" maxlength="20" placeholder="PASSWORD">
+      <b-button :variant="theme" class="btn-lg btn-block" type="submit">
+        <i class="fas fa-sign-in-alt" />&nbsp;&nbsp;{{ $i18n.tnl('label.login') }}
+      </b-button>
     </div>
-    <input v-model="userId" type="text" class="form-control" maxlength="20" placeholder="ID">
-    <input v-model="password" type="password" class="form-control" maxlength="20" placeholder="PASSWORD">
-    <b-button :variant="theme" class="btn-lg btn-block" type="submit">
-      <i class="fas fa-sign-in-alt" />&nbsp;&nbsp;{{ $i18n.tnl('label.login') }}
-    </b-button>
+    <div v-if="isNews" class="container">
+      <news-table :headers="headers" :datas="newsList" :tdClass="tdClass"/>
+    </div>
   </form>
 </template>
 
 <script>
+import * as Util from '../sub/util/Util'
+import { mapState } from 'vuex'
+import * as ViewHelper from '../sub/helper/ViewHelper'
+import * as StateHelper from '../sub/helper/StateHelper'
 import { mapMutations } from 'vuex'
 import * as AuthHelper from '../sub/helper/AuthHelper'
 import { getButtonTheme } from '../sub/helper/ThemeHelper'
 import { APP,DISP } from '../sub/constant/config'
 import commonmixinVue from '../components/mixin/commonmixin.vue'
+import newsTable from '../components/parts/newstable.vue'
 
 export default {
+  components: {
+    newsTable,
+  },
   mixins: [commonmixinVue],
+  props: {
+    isDev: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
+      isNews:true,
+      headers: ViewHelper.addLabelByKey(this.isDev? null: this.$i18n, [
+        { key: 'newsDate' , label: 'newsDt'},
+        { key: 'content', label: 'newsContent'},
+      ]),
       userId: '',
       password: '',
       message: '',
+      tenantAction: false,
       btnClasses: {
         'btn-primary': DISP.THEME === 'primary' || DISP.THEME === 'default',
         'btn-secondary': DISP.THEME === 'secondary',
@@ -33,15 +56,47 @@ export default {
         'btn-warning': DISP.THEME === 'warning',
         'btn-danger': DISP.THEME === 'danger',
         'btn-dark': DISP.THEME === 'dark',
-      }
+      },
     }
   },
   computed: {
+    ...mapState('app_service', [
+      'newsList',
+      'topNewsList',
+      'forceFetchNews',
+    ]),
     theme() {
       return getButtonTheme()
     },
+    newsList() {
+      return this.topNewsList.map((val) => ({
+        ...val,
+        newsDate: Util.formatDate(val.newsDate),
+        content: val.content,
+      }))
+    },
+  },
+  mounted() {
+    this.fetchData()
+    if (!this.isDev) {
+      return
+    }
   },
   methods: {
+    async fetchData(payload) {
+      try {
+        this.showProgress()
+        await StateHelper.load('topNews')
+        this.topNewsList.length > 0 ?this.isNews = true: this.isNews = false
+        if (payload && payload.done) {
+          payload.done()
+        }
+      }
+      catch(e) {
+        console.error(e)
+      }
+      this.hideProgress()
+    },
     ...mapMutations('setting', [
       'replaceSetting', 
     ]),
@@ -62,6 +117,9 @@ export default {
         console.error('failed')
         this.message = this.$i18n.tnl('message.loginFailed')
       })
+    },
+    tdClass(key) {
+      return key === 'newsDate' ? 'news-date' : ''
     },
   },
 }

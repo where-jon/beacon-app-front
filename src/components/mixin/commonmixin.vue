@@ -38,6 +38,15 @@ export default {
         return option.value == null || category && (!Util.hasValue(includeTypes) || includeTypes.includes(category.categoryType))
       })
     },
+    getSensorIds(exb) {
+      const exbSensorList = Util.getValue(exb, 'exbSensorList', null) // TODO: FIX
+      if(Util.hasValue(exbSensorList)){
+        const ret = []
+        exbSensorList.forEach(exbSensor => ret.push(Util.getValue(exbSensor, 'sensor.sensorId', null)))
+        return ret
+      }
+      return [null]
+    },
     getButtonTheme() {
       return 'outline-' + getButtonTheme()
     },

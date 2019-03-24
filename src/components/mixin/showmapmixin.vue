@@ -8,6 +8,7 @@ import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as PositionHelper from '../../sub/helper/PositionHelper'
 import * as SensorHelper from '../../sub/helper/SensorHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as Util from '../../sub/util/Util'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import reloadmixinVue from './reloadmixin.vue'
@@ -26,14 +27,11 @@ export default {
       showTryCount: 0,
       tempMapFitMobile: DISP.MAP_FIT_MOBILE,
       oldMapImageScale: 0,
-      ICON_FONTSIZE_RATIO: 0.7,
       showIconMinWidth: POSITION.SHOW_ICON_MIN_WIDTH,
       reloadSelectedTx: {},
       showReady: false,
       count: 0, // for mock test
       meditagSensors: [],
-      selectedGroup: null,
-      selectedCategory: null,
       showingDetailTime: null,
       defaultDisplay: {
         color: DISP.TX_COLOR,
@@ -63,6 +61,14 @@ export default {
       get() { return this.$store.state.main.selectedArea},
       set(val) { this.replaceMain({'selectedArea': val})},
     },
+    selectedGroup: {
+      get() { return this.$store.state.main.selectedGroup},
+      set(val) { this.replaceMain({'selectedGroup': val})},
+    },
+    selectedCategory: {
+      get() { return this.$store.state.main.selectedCategory},
+      set(val) { this.replaceMain({'selectedCategory': val})},
+    },
   },
   async created() {
     await StateHelper.load('area')
@@ -70,7 +76,7 @@ export default {
     this.selectedArea = this.getInitAreaOption()
     await StateHelper.loadAreaImage(this.selectedArea)
     this.loadComplete = true
-    if (this.$route.path.startsWith('/main')) {
+    if (this.$route.path.startsWith('/main') || this.$route.path.startsWith('/develop/installation')) {
       let timer = 0
       const path = this.$route.path
       let currentWidth = window.innerWidth
@@ -91,7 +97,6 @@ export default {
           } else {
             currentWidth = window.innerWidth
           }
-          console.log(path + ' : ' + this.$route.path, this)
           this.reset()
           if (this.stage) {
             this.stage.removeAllChildren()
@@ -149,7 +154,6 @@ export default {
       if (this.isFirstTime) {
         this.selectedArea = this.getInitAreaOption()
         await StateHelper.loadAreaImage(this.selectedArea)
-        console.log('after loadAreas. selectedArea=' + this.selectedArea)
         await StateHelper.load('exb')
         if (tx) {
           await StateHelper.load('tx', this.forceFetchTx)
@@ -169,7 +173,6 @@ export default {
         return
       }
       this.showTryCount++
-      console.log('showMapImageDef', this.selectedArea, this.isShownMapImage)
       if (this.isShownMapImage) {
         if (callback) {
           setTimeout(() => callback(), 0)
@@ -211,6 +214,7 @@ export default {
         fitWidth = (DISP.MAP_FIT == 'both' && isMapWidthLarger) || DISP.MAP_FIT == 'width'
       }
       const result = {}
+
       if (fitWidth) {
         result.width = parent.clientWidth
         result.height = parent.clientWidth * target.height / target.width
@@ -218,6 +222,13 @@ export default {
         result.width = parentHeight * target.width / target.height
         result.height = parentHeight
       }
+
+      // Retina解像度対応
+      if (devicePixelRatio > 0) {
+        result.width = result.width * devicePixelRatio
+        result.height = result.height * devicePixelRatio
+      }
+
       this.oldMapImageScale = this.mapImageScale
       this.mapImageScale = result.width / target.width
       console.debug(fitWidth, result.width, result.height, parentHeight)
@@ -228,6 +239,9 @@ export default {
     },
     drawMapImage(bg) {
       const canvas = this.$refs.map
+      if (!canvas) {
+        return
+      }
       this.mapWidth = bg.width
       this.mapHeight = bg.height
       this.isShownMapImage = true
@@ -249,6 +263,13 @@ export default {
           this.exbCon = null
         }
       }
+      
+      // Retina解像度対応
+      if (devicePixelRatio > 0) {
+        canvas.style.width = String(canvas.width / devicePixelRatio) + 'px'
+        canvas.style.height = String(canvas.height / devicePixelRatio) + 'px'
+      }
+
       this.stage = new Stage('map')
       this.stage.canvas = canvas
       this.stage.mouseEnabled = true
@@ -390,10 +411,7 @@ export default {
       return _(positions).filter((pos) => pos.tx && Util.bitON(pos.tx.disp, TX.DISP.POS)).map((pos) => {
         let cPos = _.find(correctPositions, (cPos) => pos.btx_id == cPos.btx_id)
         if (cPos || allShow) {
-          return {
-            ...pos,
-            transparent: !cPos? true: cPos.transparent? cPos.transparent: PositionHelper.isTransparent(cPos.timestamp, now)
-          }
+          return {...pos, transparent: !cPos? true: cPos.transparent? cPos.transparent: PositionHelper.isTransparent(cPos.timestamp, now), isLost: PositionHelper.isLost(cPos.timestamp, now)}
         }
         return null
       }).compact().value()
@@ -469,8 +487,8 @@ export default {
       const display = this.getDisplay(tx)
       const map = HtmlUtil.getRect('#map')
       const containerParent = HtmlUtil.getRect('#mapContainer', 'parentNode')
-      const offsetX = map.left - containerParent.left
-      const offsetY = map.top - containerParent.top
+      const offsetX = map.left - containerParent.left + (!this.isInstallation ? 0 : 48)
+      const offsetY = map.top - containerParent.top + (!this.isInstallation ? 0 : 20)
       const isDispRight = x + offsetX + 100 < window.innerWidth
       // rev === trueの場合、ポップアップを上に表示
       const rev = y + map.top + DISP.TX_R + tipOffsetY + popupHeight > window.innerHeight
@@ -507,27 +525,42 @@ export default {
       }
     },
     createBtnBg(pos, shape, bgColor){
-      const btnBg = new Shape()
-      btnBg.graphics.beginStroke('#ccc').beginFill('#' + bgColor)
+      let btnBg = new Shape()
+      let TxRadius = DISP.TX_R * this.mapImageScale
+      
+      btnBg = this.setbtnColor(btnBg, bgColor, pos)
       switch(shape) {
       case SHAPE.CIRCLE:
-        btnBg.graphics.drawCircle(0, 0, DISP.TX_R)
+        btnBg.graphics.drawCircle(0, 0, TxRadius)
         break
       case SHAPE.SQUARE:
-        btnBg.graphics.drawRect(-DISP.TX_R, -DISP.TX_R, DISP.TX_R * 2, DISP.TX_R * 2)
+        btnBg.graphics.drawRect(-TxRadius, -TxRadius, TxRadius * 2, TxRadius * 2)
         break
       case SHAPE.ROUND_SQUARE:
-        btnBg.graphics.drawRoundRect(-DISP.TX_R, -DISP.TX_R, DISP.TX_R * 2, DISP.TX_R * 2, DISP.ROUNDRECT_RADIUS)
+        btnBg.graphics.drawRoundRect(-TxRadius, -TxRadius, TxRadius * 2, TxRadius * 2, DISP.ROUNDRECT_RADIUS)
         break
       }
-      if (pos.transparent) {
-        btnBg.alpha = 0.6
+      return btnBg
+    },
+    setbtnColor(btnBg, bgColor, pos) {
+      let strokeAlpha = 1
+      let fillAlpha = 1
+      if (Util.bitON(pos.tx.disp, TX.DISP.ALWAYS)) {
+        // 常時表示時
+        fillAlpha = pos.isLost? DISP.TX_LOST_ALPHA: pos.transparent? DISP.TX_ALPHA: fillAlpha
+      } else if (pos.transparent) {
+        // 通常の離席時
+        strokeAlpha = DISP.TX_ALPHA
+        fillAlpha = DISP.TX_ALPHA
       }
+      const backGroundColor = ViewHelper.getRGBA(bgColor, fillAlpha)
+      const strokeColor = ViewHelper.getRGBA(DISP.TX_STROKE_COLOR, strokeAlpha)
+      btnBg.graphics.beginStroke(strokeColor).setStrokeStyle(DISP.TX_STROKE_WIDTH).beginFill(backGroundColor)
       return btnBg
     },
     createBtnLabel(pos, color){
       const label = new Text(pos.label)
-      label.font = `${DISP.TX_R * this.ICON_FONTSIZE_RATIO}px Arial`
+      label.font = `${DISP.TX_R * this.mapImageScale}px Arial`
       label.color = '#' + color
       label.textAlign = 'center'
       label.textBaseline = 'middle'
@@ -606,6 +639,7 @@ export default {
             humidity: sensor? sensor.humidity: null,
             temperature: sensor? sensor.temperature: null,
             count: sensor? sensor.count: 0,
+            pressVol: sensor? sensor.press_vol: 0,
             sensorId: sensor? sensor.id: null,
             updatetime: sensor? sensor.updatetime? sensor.updatetime: sensor.timestamp: null,
             areaName: exb.areaName,

@@ -9,7 +9,7 @@
 import mList from '../../../components/page/list.vue'
 import { mapState } from 'vuex'
 import * as StateHelper from '../../../sub/helper/StateHelper'
-import { addLabelByKey } from '../../../sub/helper/ViewHelper'
+import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import { APP } from '../../../sub/constant/config.js'
 import listmixinVue from '../../../components/mixin/listmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
@@ -40,16 +40,7 @@ export default {
       },
       name: 'pot',
       extValueDefault: {},
-      items: [
-        {
-          text: this.$i18n.tnl('label.master'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.pot'),
-          active: true
-        }
-      ]
+      items: ViewHelper.createBreadCrumbItems('master', 'pot'),
     }
   },
   computed: {
@@ -99,7 +90,7 @@ export default {
       }
     },
     getFields(){
-      return addLabelByKey(this.$i18n, [ 
+      return ViewHelper.addLabelByKey(this.$i18n, [ 
         {key: 'potName', sortable: true , tdClass: 'thumb-rowdata'},
         {key: 'thumbnail', tdClass: 'thumb-rowdata' },
         {key: 'txIdName', label:'tx', sortable: true, },

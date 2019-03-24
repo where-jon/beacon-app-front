@@ -71,20 +71,7 @@ export default {
       oldShape: null,
       oldColor: null,
       oldBgColor: null,
-      items: [
-        {
-          text: this.$i18n.tnl('label.master'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.group'),
-          href: '/master/group',
-        },
-        {
-          text: this.$i18n.tnl(Util.getDetailCaptionKey(this.$store.state.app_service.group.groupId)),
-          active: true
-        }
-      ]
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'group', href: '/master/group'}, Util.getDetailCaptionKey(this.$store.state.app_service.group.groupId)),
     }
   },
   computed: {

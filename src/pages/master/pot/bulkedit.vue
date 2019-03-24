@@ -12,6 +12,7 @@ import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
 import * as StateHelper from '../../../sub/helper/StateHelper'
+import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import { APP } from '../../../sub/constant/config'
 import { CATEGORY } from '../../../sub/constant/Constants'
 
@@ -27,20 +28,7 @@ export default {
       backPath: '/master/pot',
       appServicePath: '/basic/pot',
       category: _.slice(CATEGORY.getTypes(), 0, 2).filter((val) => APP.CATEGORY_TYPES.includes(val.value)),
-      items: [
-        {
-          text: this.$i18n.tnl('label.master'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.pot'),
-          href: '/master/pot',
-        },
-        {
-          text: this.$i18n.tnl('label.bulkRegister'),
-          active: true
-        }
-      ]
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'pot', href: '/master/pot'}, 'bulkRegister'),
     }
   },
   computed: {

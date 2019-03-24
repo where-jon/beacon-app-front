@@ -1,136 +1,60 @@
 <template>
   <div class="container-fluid">
     <breadcrumb :items="items" :extra-nav-spec="extraNavSpec"
-                :reload="reload" :short-name="shortName"
+                :reload="reload" :short-name="shortName" reload-emit-name="allFetch"
     />
-    <m-list :params="params" :list="eachAreas" />
+    <b-row class="mt-2 ml-3">
+      <b-form inline class="mt-2" @submit.prevent>
+        <label v-t="'label.positionStackType'" class="mr-2" />
+        <b-form-select v-model="positionType" :options="positionTypeOptions" />
+      </b-form>
+    </b-row>
+    <position-display v-show="isShow('area')" ref="areaPosition" master-name="area" />
+    <position-display v-show="isShow('zone')" ref="zonePosition" master-name="zone" />
   </div>
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
-import mList from '../../components/page/list.vue'
-import commonmixinVue from '../../components/mixin/commonmixin.vue'
-import listmixinVue from '../../components/mixin/listmixin.vue'
-import showmapmixin from '../../components/mixin/showmapmixin.vue'
-import * as StateHelper from '../../sub/helper/StateHelper'
-import { addLabelByKey } from '../../sub/helper/ViewHelper'
-import { EXTRA_NAV } from '../../sub/constant/Constants'
-import * as Util from '../../sub/util/Util'
+import positionDisplay from '../../components/page/position-display.vue'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
+import { EventBus } from '../../sub/helper/EventHelper'
+import { EXTRA_NAV, POSITION_STACK_TYPES } from '../../sub/constant/Constants'
 
 export default {
   components: {
-    mList,
     breadcrumb,
+    positionDisplay,
   },
-  mixins: [
-    commonmixinVue,
-    listmixinVue,
-    showmapmixin,
-  ],
   data() {
     return {
-      params: {
-        name: 'position-stack',
-        id: 'positionStackId',
-        fields: addLabelByKey(this.$i18n, [
-          {key: 'label', label: 'area', tdClass: 'icon-rowdata'},
-          {key: 'icons', label: 'tx', tdClass: 'icon-rowdata align-top'},
-        ]),
-        initTotalRows: this.$store.state.main.eachAreas.length,
-        disableTableButtons: true,
-        hideSearchBox: true,
-        bordered: true,
-      },
       reload: true,
       styles: [],
-      items: [
-        {
-          text: this.$i18n.t('label.main'),
-          active: true
-        },
-        {
-          text: this.$i18n.t('label.positionStack'),
-          active: true
-        }
-      ],
+      items: ViewHelper.createBreadCrumbItems('main', 'positionStack'),
       shortName: this.$i18n.t('label.positionStackShort'),
       extraNavSpec: EXTRA_NAV,
+      positionType: POSITION_STACK_TYPES.AREA,
     }
   },
   computed: {
-    ...mapState('app_service', [
-      'txs',
-      'areas',
-      'exbs',
-      'positions'
-    ]),
-    ...mapState('main', [
-      'orgPositions',
-      'positionHistores',
-      'eachAreas',
-    ])
+    positionTypeOptions(){
+      return POSITION_STACK_TYPES.getTypes()
+    },
   },
-  
-  beforeDestroy() {
-    this.replaceAS({positions: []})
+  created(){
+    EventBus.$off('allFetch')
+    EventBus.$on('allFetch', (payload)=>{
+      this.$refs.areaPosition.fetchData(payload)
+      this.$refs.zonePosition.fetchData(payload)
+    })
   },
   methods: {
-    ...mapActions('main', [
-      'pushOrgPositions',
-    ]),
-    splitArea(positions){
-      const tempArea = _.map(this.areas, (area) => ({areaId: area.areaId, label: area.areaName, positions: []}))
-
-      _.forEach(positions, (pos) => {
-        const posAreaId = Util.getValue(pos, 'exb.location.areaId', null)
-        _.forEach(tempArea, (area) => {
-          if (posAreaId == area.areaId && !pos.noSelectedTx) {
-            area.positions.push(pos)
-          }
-        })
-      })
-      return tempArea
+    isShow(type){
+      return this.positionType == POSITION_STACK_TYPES[type.toUpperCase()]
     },
-    async fetchData(payload) {
-      try {
-        this.showProgress()
-        console.log('fetchData Started.')
-        await StateHelper.load('area')
-        await StateHelper.load('tx')
-        await StateHelper.load('exb')
-
-        // positionデータ取得
-        await this.storePositionHistory()
-        this.replaceAS({positions: this.getPositions()})
-
-        // エリアごとに分類
-        const tempArea = this.splitArea(this.positions)
-        this.replaceMain({eachAreas: tempArea})
-        if (payload && payload.done) {
-          payload.done()
-        }
-      } catch(e) {
-        console.error(e)
-      }
-      this.hideProgress()
-      console.log('fetchData End.')
-    },
-    async checkDetectedTx(tx) {
-      await this.fetchData()
-      return _.some(this.positions, (pos) => {
-        return pos.tx.txId == tx.txId
-      })
-    }
-  }
+  },
 }
 </script>
 
 <style scoped lang="scss">
-
-  div.canvas canvas {
-    width: 100%;
-    height: 50px;
-  }
 </style>

@@ -84,6 +84,7 @@
     "locationSetting": "EXB Location",
     "develop": "Developer",
     "env": "Environment Variables",
+    "detectedProhibitZone": "Detected ProhibitZone",
 
     "exbId": "EXB ID",
     "exbName": "EXB name",
@@ -161,6 +162,11 @@
     "zoneName": "Zone name",
     "zoneType": "Zone type",
 
+    "---------------- App news ---------------":"",
+    "news":"<News>",
+    "newsDt":"News date",
+    "newsContent":"Content",
+
     "---------------- App setting ---------------":"",
     "login-user-profile": "Login user profile",
     "default": "Corporate",
@@ -172,6 +178,7 @@
 
     "UTF8": "UTF-8",
     "SJIS": "Shift-JIS",
+
     "---------------- App specific ---------------":"",
     
     "setting": "Setting",
@@ -219,6 +226,7 @@
 
     "positionStack": "Position (Whole)",
     "positionStackShort": "Whole",
+    "positionStackType": "Type",
 
     "password": "Password",
     "passwordCurrent": "Current password",
@@ -335,6 +343,13 @@
     "date": "Date",
     "sumDay": "Specified date",
 
+
+
+
+
+
+
+
     "historyTitle": "History",
     "historyDateFrom": "Period",
     "historyDateTo": "-",
@@ -381,7 +396,6 @@
     "using": "In use",
     "notUse": "Not in use",
     "totalRecordsCount": "Total",
-
 
     "---------------- App position ---------------": "",
     "txViewTypeDefault": "Normal",
@@ -446,8 +460,13 @@
     "now": "Current",
     "switch": "Switch",
     "userUnit": "Count",
-
-    "PositionMap": "Position(Map)",
+    "Main": "Main",
+    "positionMap": "Position(Map)",
+    "pirMenu": "PIR",
+    "Thermohumidity": "Thermohumidity(Main)",
+    "PositionList": "Position(List)",
+    "Led": "LED",
+    "Master": "Master",
     "masterRegion": "Region",
     "masterArea": "Area",
     "masterExb": "EXB",
@@ -460,15 +479,27 @@
     "masterRole": "Role",
     "masterZoneClass": "Zone(Class)",
     "masterZoneBlock": "Zone(Block)",
-    "masterNotifyTemplate": "Notify Template",
-    "masterTxLocation": "TX Location",
     "masterTenant": "Tenant",
+    "UsageSituation": "Utilization",
+    "Monitor": "Monitor",
     "monitorGW": "Monitor Gateway",
     "monitorTX": "Monitor Tx",
     "monitorEXB": "Monitor EXB",
     "summary": "Summary/Analyze",
+    "SumUtilizationRatio": "Used ratio",
+    "SumNumUsers": "Used number",
+    "FlowlineAnalysis": "Flowline",
+    "HeatmapPosition": "Heatmap(Position)",
     "history": "History",
     "temperatureHistory": "Thermohumidity(History)",
+    "PositionHistory": "Position History",
+    "PositionHistoryExc": "Position History",
+    "SensorHistory": "Sensor History",
+    "SensorHistoryExc": "Sensor History",
+    "Setting": "Setting",
+    "Personal": "Personal Setting",
+    "System": "System Setting",
+    "Develop": "Developer",
     "Meta": "Meta",
     "Role": "Role",
     "MetaSetting": "Setting",
@@ -498,16 +529,40 @@
     "ALL_REGION": "All Regions",
     "txLocationSetting": "TX Location",
     "button": "Button",
+    "pressure": "Pressure",
+    "pressVol": "Pressure",
     "editUserInfo": "User Edit",
     "disp": "Disp flag",
     "dispPos": "Show on position",
     "dispPir": "Show on pir",
     "dispAlways": "Show always",
+    "masterNotifyTemplate": "Notify Template",
+    "masterTxLocation": "TX Location",
+    "NotifyHistory": "Notify History",
+    "pause": "Pause",
+    "restart": "Restart",
+    "hide": "Hide",
+    "installation": "Support Installation",
+    "mapConfig": "Configure device position",
+    "keepPosition": "Keep positions",
+    "adjustPosition": "Ajust positions by old-new ratio",
+    "initPosition": "Reset position",
+    "topNews": "News",
+    "dispFlg": "Display",
+    "newsId": "NewsID",
+    "potType": "POT Type",
+    "dispRssi": "Show RSSI",
+    "zoneCategory": "Zone Category",
+    "sumUnitStack": "SUM(Stack)",
+    "sumUnitAxis": "SUM(Axis)",
+    "stayTime": "Stay time",
+    "other": "Other",
+    "unitSecond": "Unit(sec)",
+    "unitMinute": "Unit(min)",
+    "unitHour": "Unit(hour)",
     "showHeatmap": "Show Heatmap",
     "sensorList": "Current Sensor List",
-    "zoneCategory": "Zone Category",
     "device": "Device",
-    "potType": "POT Type",
 
     "dummy": ""
   },
@@ -525,8 +580,10 @@
     "bulkRegisterFailed": "{target} bulk registration failed. ",
     "duplicate": "{key} ({val}) is already in use.",
     "foreignKey": "{key} ({val}) does not exist.",
+    "used": "{key}（{val}）is used for {target} of {num}{unit}",
     "noMapImage": "Map image is not registered.",
     "deleteConfirm": "Are you sure you want to delete {target}?",
+    "completeDeleteConfirm": "Are you sure to delete {target} completely?",
     "completed": "{target} completed.",
     "failed": "{target} failed. ({code})",
     "overLength": "Please enter a string within {length} for {target}.",
@@ -561,6 +618,11 @@
     "bulkNotNullFailed": "{col} is mandatory.",
     "bulkExistFailed": "{col} ({value}) does not exist.",
     "bulkInvalidFailed": "{col} ({value}) is invalid form",
+    "bulkAuthFailed": "{col}（{value}） cannot be used.",
+    "bulkUseFailed": "{col}（{value}） is used for {target} of {num}{unit}.",
+    "bulkSystemUseFailed": "",
+    "bulkSystemUseNameFailed": "",
+    "bulkInvalidUpdateLineFailed": "{col}（{value}）cannot be modified on this page.",
     "monthDayTemperature": "{month}/{day} Temperature and humidity ({name}{description})",
     "invalidLoginId": "Login ID must be alphanumeric character.",
     "notFound": "No results found.",
@@ -576,12 +638,9 @@
     "uploadMax": "Upload file size is limited to {target}Mbytes.",
     "validationList": "Valid characters are {validate}.",
     "loginValidationList": "half alphanumberic, underscore( _ ), hyphen(-), at sign(@), dot(.).",
-    "used": "{key}（{val}）is used for {target} of {num}{unit}",
-    "completeDeleteConfirm": "Are you sure to delete {target} completely?",
-    "bulkAuthFailed": "{col}（{value}） cannot be used.",
-    "bulkUseFailed": "{col}（{value}） is used for {target} of {num}{unit}.",
     "notMatchedEmail": "It is not a mail format. (In case of addition, comma separated)",
     "count": "Count:{count}",
+    "sumTooManyResults": "Too many result of sum items. Filter with period or others.",
     "readingPoint": ", ",
     "lessAlertHumidity": "[ Under {humidity}％ LOW : {sensors} ]",
     "moreAlertHumidity": "[ Over {humidity}％ HIGH : {sensors} ]",
@@ -599,7 +658,10 @@
     "valueMissing": "valueMissing",
     "valueMissingInput": "valueMissingInput",
     "valueMissingSelect": "valueMissingSelect",
+    "positionTooltip": "{sensorName}\n{temperature} ºC\n{humidity} %\n{description}",
 
     "dummy": "" 
+  },
+  "system": {
   }
 }

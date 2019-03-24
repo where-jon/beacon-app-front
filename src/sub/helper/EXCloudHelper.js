@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { EXCLOUD, APP_SERVICE, DEV } from '../constant/config'
+import { EXCLOUD, APP_SERVICE, DEV, APP } from '../constant/config'
 import * as mock from '../../assets/mock/mock'
 import moment from 'moment'
 import * as HttpHelper from './HttpHelper'
@@ -42,6 +42,7 @@ export const fetchPositionHistory = async (exbs, txs, allShow, pMock) => {
       let exb = _.find(exbs, (exb) => exb.exbId == val.exbId)
       let label = tx? tx.displayName? tx.displayName: tx.btxId: ''
       return { btx_id: tx? tx.btxId: '',  minor: val.minor, pos_id: exb.posId, tx_id: val.txId,
+        x: val.x, y: val.y,
         label, exb, tx, updatetime: dateform(val.positionDt), timestamp:dateform(val.positionDt)}
     })
     .compact().value()
@@ -84,7 +85,11 @@ export const fetchGateway = async () => {
     await HttpHelper.getExCloud(url(EXCLOUD.GATEWAY_URL) + new Date().getTime())
   return _(data)
     .map((val) => {
-      return {...val, updated: dateform(val.timestamp)}
+      if(APP.EXSERVER){
+        return {...val, updated: dateform(val.timestamp*1000)}
+      }else{
+        return {...val, updated: dateform(val.timestamp)}
+      }
     })
     .compact().value()
 }
@@ -95,7 +100,8 @@ export const fetchTelemetry = async () => {
   return _(data)
     // .filter((val) => EXB.some((exb) => exb.pos_id == val.pos_id))
     .map((val) => {
-      return {...val, timestamp: dateform(val.timestamp), ibeacon_received: dateform(val.ibeacon_received)}
+      let timestamp = APP.EXSERVER ? val.timestamp*1000 : val.timestamp
+      return {...val, timestamp: dateform(timestamp), ibeacon_received: dateform(val.ibeacon_received)}
     })
     .compact().value()
 }

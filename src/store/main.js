@@ -8,6 +8,7 @@ export const state = () => ({
   selectedArea: null,
   selectedTx: {},
   eachAreas: [],
+  eachZones: [],
   sample: 'sample', // sample
   positionHistores: []
 })

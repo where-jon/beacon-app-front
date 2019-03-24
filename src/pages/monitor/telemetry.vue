@@ -11,6 +11,7 @@
 import { mapState } from 'vuex'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
 import { APP } from '../../sub/constant/config'
@@ -20,7 +21,6 @@ import commonmixinVue from '../../components/mixin/commonmixin.vue'
 import reloadmixinVue from '../../components/mixin/reloadmixin.vue'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import monitorTable from '../../components/parts/monitortable.vue'
-import { addLabelByKey } from '../../sub/helper/ViewHelper'
 import statusmixinVue from '../../components/mixin/statusmixin.vue'
 
 export default {
@@ -37,16 +37,7 @@ export default {
   },
   data () {
     return {
-      items: [
-        {
-          text: this.$i18n.tnl('label.monitor'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.telemetry'),
-          active: true
-        }
-      ],
+      items: ViewHelper.createBreadCrumbItems('monitor', 'telemetry'),
       headers: this.getHeaders(),
       telemetrys: [],
       isLoad: false,
@@ -66,20 +57,11 @@ export default {
     if (!this.isDev) {
       return
     }
-    this.items = [
-      {
-        text: this.$i18n.tnl('label.develop'),
-        active: true
-      },
-      {
-        text: this.$i18n.tnl('label.telemetry'),
-        active: true
-      }
-    ]
+    this.items = ViewHelper.createBreadCrumbItems('develop', 'telemetry')
   },
   methods: {
     getHeaders(){
-      return addLabelByKey(this.isDev? null: this.$i18n,
+      return ViewHelper.addLabelByKey(this.isDev? null: this.$i18n,
         this.isDev? [
           { key: 'meshid_deviceid' },
           { key: 'deviceid' },
@@ -131,7 +113,7 @@ export default {
           deviceNum: APP.EXB_WITH_DEVICE_NUM ? 'deviceNum' : null,
           deviceId: APP.EXB_WITH_DEVICE_ID ? 'deviceId' : null,
           deviceIdX: APP.EXB_WITH_DEVICE_IDX ? 'deviceId(HEX)' : null,
-          name: 'name',
+          name: 'finalRevceivePlace',
           powerLevel: 'powerLevel',
           timestamp: 'timestamp',
           state: 'state'
@@ -194,7 +176,7 @@ export default {
         }
 
         const offset = this.$store.state.currentRegion.deviceOffset
-        const deviceId = parseInt(e.deviceid, 16)
+        const deviceId = APP.EXSERVER ? e.deviceid : parseInt(e.deviceid, 16)
 
         if(APP.EXB_WITH_DEVICE_NUM){
           ret.deviceNum = deviceId - offset

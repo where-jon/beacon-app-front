@@ -135,15 +135,14 @@
 import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import locale from 'element-ui/lib/locale'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
-import { addLabelByKey } from '../../sub/helper/ViewHelper'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import { NOTIFY_STATE } from '../../sub/constant/Constants'
@@ -167,16 +166,7 @@ export default {
       userMinor:null,
       gPowerLevel:null,
       bTx:false,
-      items: [
-        {
-          text: this.$i18n.tnl('label.historyTitle'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.notifyHistory'),
-          active: true
-        }
-      ],
+      items: ViewHelper.createBreadCrumbItems('historyTitle', 'notifyHistory'),
       form: {
         tx: null,
         datetimeFrom: null,
@@ -186,7 +176,7 @@ export default {
       viewList: [],
       csvList: [],
       fields: [],
-      fields1: addLabelByKey(this.$i18n, [  // TXボタン押下通知
+      fields1: ViewHelper.addLabelByKey(this.$i18n, [  // TXボタン押下通知
         {key: 'positionDt', sortable: true, label:'dt'},
         {key: 'notifyTo', sortable: true,label:'notifyTo' },
         {key: 'majors', sortable: true,label:'major' },
@@ -194,28 +184,28 @@ export default {
         {key: 'txNames', sortable: true,label:'txName' },
         {key: 'notifyResult', sortable: true,label:'notifyResult' },
       ]),
-      fields2: addLabelByKey(this.$i18n, [  // GW状態アラート
+      fields2: ViewHelper.addLabelByKey(this.$i18n, [  // GW状態アラート
         {key: 'positionDt', sortable: true, label:'dt'},
         {key: 'notifyTo', sortable: true,label:'notifyTo' },
         {key: 'deviceNums', sortable: true,label:'deviceNum' },
         {key: 'lastRcvDatetimes', sortable: true,label:'finalReceiveTime' },
         {key: 'notifyResult', sortable: true,label:'notifyResult' },
       ]),
-      fields3: addLabelByKey(this.$i18n, [  // EXB状態アラート
+      fields3: ViewHelper.addLabelByKey(this.$i18n, [  // EXB状態アラート
         {key: 'positionDt', sortable: true, label:'dt'},
         {key: 'notifyTo', sortable: true,label:'notifyTo' },
         {key: 'deviceNums', sortable: true,label:'deviceNum' },
         {key: 'lastRcvDatetimes', sortable: true,label:'finalReceiveTime' },
         {key: 'notifyResult', sortable: true,label:'notifyResult' },
       ]),
-      fields4: addLabelByKey(this.$i18n, [  // TX電池状態アラート
+      fields4: ViewHelper.addLabelByKey(this.$i18n, [  // TX電池状態アラート
         {key: 'positionDt', sortable: true, label:'dt'},
         {key: 'notifyTo', sortable: true,label:'notifyTo' },
         {key: 'minors', sortable: true,label:'minorPowerLevel'},
         {key: 'txNames', sortable: true,label:'txName' },
         {key: 'notifyResult', sortable: true,label:'notifyResult' },
       ]),
-      fields5: addLabelByKey(this.$i18n, [  // SOSボタン押下通知
+      fields5: ViewHelper.addLabelByKey(this.$i18n, [  // SOSボタン押下通知
         {key: 'positionDt', sortable: true, label:'dt'},
         {key: 'notifyTo', sortable: true,label:'notifyTo' },
         {key: 'majors', sortable: true,label:'major' },
@@ -223,7 +213,7 @@ export default {
         {key: 'txNames', sortable: true,label:'txName' },
         {key: 'notifyResult', sortable: true,label:'notifyResult' },
       ]),
-      fields6: addLabelByKey(this.$i18n, [  // ユーザ登録通知
+      fields6: ViewHelper.addLabelByKey(this.$i18n, [  // ユーザ登録通知
         {key: 'positionDt', sortable: true, label:'dt'},
         {key: 'notifyTo', sortable: true,label:'notifyTo' },
         {key: 'minor', sortable: true,label:'minor' },
@@ -284,12 +274,10 @@ export default {
 
   },
   mounted() {
-      import(`element-ui/lib/locale/lang/${this.$i18n.locale}`).then( (mojule) =>{
-        locale.use(mojule.default)
-      })
-      StateHelper.load('tx')
-      this.changeTx(this.form.txId)
-      this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.viewList.length, maxRows: this.limitViewRows})}`
+    HtmlUtil.importElementUI()
+    StateHelper.load('tx')
+    this.changeTx(this.form.txId)
+    this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.viewList.length, maxRows: this.limitViewRows})}`
   },
   methods: {
     getCsvHeaders(num){

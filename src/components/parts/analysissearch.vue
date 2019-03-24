@@ -58,8 +58,8 @@
 import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import locale from 'element-ui/lib/locale'
 import * as Util from '../../sub/util/Util'
+import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
@@ -155,14 +155,12 @@ export default {
     this.form.datetimeTo = Util.getDatetime(date)
   },
   mounted() {
-    import(`element-ui/lib/locale/lang/${this.$i18n.locale}`).then( (mojule) =>{
-      locale.use(mojule.default)
-    })
+    HtmlUtil.importElementUI()
   },
   methods: {
     changeCategory(newVal = this.form.categoryId) {
       this.potOptions = StateHelper.getOptionsFromState('pot', false, false, 
-        pot => pot.potType == CATEGORY.getTypes()[0].value && (!newVal || pot.categoryId == newVal)
+        pot => pot.potType == CATEGORY.PERSON && (!newVal || pot.categoryId == newVal)
       )
       if(!this.potOptions.find((val) => val.value == this.form.potId)){
         this.form.potId = null
@@ -170,7 +168,7 @@ export default {
     },
     changeGroup(newVal = this.form.groupId) {
       this.potOptions = StateHelper.getOptionsFromState('pot', false, false, 
-        pot => pot.potType == CATEGORY.getTypes()[0].value && (!newVal || pot.groupId == newVal)
+        pot => pot.potType == CATEGORY.PERSON && (!newVal || pot.groupId == newVal)
       )
       if(!this.potOptions.find((val) => val.value == this.form.potId)){
         this.form.potId = null

@@ -68,7 +68,7 @@ export default {
     backToList(event, path) {
       this.$router.push(path? path: this.backPath)
     },
-    sensorOptions(entity) {
+    sensorOptions(entity, isBlank) {
       let ids
       if (entity == 'exb') {
         ids = APP.EXB_SENSOR
@@ -78,7 +78,7 @@ export default {
 
       return StateHelper.getOptionsFromState('sensor',
         sensor => this.$i18n.tnl('label.' + sensor.sensorName),
-        {value:null, text:this.$i18n.tnl('label.normal')},
+        {value:null, text:isBlank? this.$i18n.tnl('label.null'): this.$i18n.tnl('label.normal')},
         sensor => ids.includes(sensor.sensorId)
       )
     },

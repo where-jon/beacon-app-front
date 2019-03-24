@@ -9,6 +9,7 @@
 import { mapState } from 'vuex'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
+import * as ViewHelper from '../../../sub/helper/ViewHelper'
 
 export default {
   components: {
@@ -21,20 +22,7 @@ export default {
       id: 'roleId',
       backPath: '/master/role',
       appServicePath: '/meta/role',
-      items: [
-        {
-          text: this.$i18n.tnl('label.master'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.role'),
-          href: '/master/role',
-        },
-        {
-          text: this.$i18n.tnl('label.bulkRegister'),
-          active: true
-        }
-      ]
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'role', href: '/master/role'}, 'bulkRegister'),
     }
   },
   computed: {

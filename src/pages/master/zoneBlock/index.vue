@@ -3,55 +3,32 @@
     <breadcrumb :items="items" />
     <div class="container">
       <alert :message="message" />
-
-      <b-form-group>
-        <b-form-row>
-          <b-form-row>
-            <label v-t="'label.areaName'" class="control-label mr-2" />
-            <b-form-select v-model="areaId" :options="areaNames" required />
-          </b-form-row>
-        </b-form-row>
-      </b-form-group>
-
       <b-form v-if="show" inline @submit.prevent>
-        <b-form-row>
-          <b-form-row v-if="hasId" class="mr-4 mb-2">
-            <label v-t="'label.zoneId'" class="control-label mr-2" />
-            <b-form-input v-model="form.zoneId" type="text" readonly="readonly" />
-          </b-form-row>
-          <b-form-row class="mr-4 mb-2">
-            <label v-t="'label.zoneName'" class="control-label mr-2" />
-            <input v-model="zoneName" :readonly="!isEditable" :disabled="!isEnableNameText" type="text" maxlength="20" class="form-control" required>
-          </b-form-row>
-          <b-form-row class="mr-4 mb-2">
-            <label v-t="'label.categoryName'" class="control-label mr-2 mb-2" />
-            <b-form-select v-model="categoryId" :options="categoryNames" :disabled="!isEnableNameText" class="mr-3 mb-2" />
-            <b-button v-t="'label.setting'" :variant="theme" :disabled="!isEnableNameText" type="button" class="mb-2" @click="onSetting" />
-          </b-form-row>
-        </b-form-row>
+        <label v-t="'label.areaName'" class="control-label mr-sm-2" />
+        <b-form-select v-model="areaId" :options="areaNames" class="mb-2 mr-sm-2 mb-sm-0" required />
+        <label v-t="'label.zoneName'" class="control-label mr-sm-2" />
+        <input v-model="zoneName" type="text" maxlength="20" :disabled="!isEnableNameText" class="form-control mb-2 mr-sm-2 mb-sm-0" required>
+        <label v-t="'label.categoryName'" class="control-label mr-sm-2" />
+        <b-form-select v-model="categoryId" :options="categoryNames" :disabled="!isEnableNameText" class="mb-2 mr-sm-2 mb-sm-0" />
+        <b-button v-if="isEditable || isDeleteable" v-t="'label.delete'" type="button" variant="outline-danger" :disabled="!isEnableNameText" @click="confirmDelete($event.target)" />
+        <b-button v-if="isEditable || isDeleteable" class="button-regist" :variant="theme" type="button" @click="regist()">
+          {{ label }}
+        </b-button>
       </b-form>
-
-      <b-form v-if="show" @submit.prevent="onSubmit">
-        <b-form-group>
-          <b-form-row>
-            <b-form-row>
-              <b-button v-t="'label.back'" type="button" variant="outline-danger" @click="backToList($event, zoneClassPath)" />
-              <b-button v-if="isEditable || isDeleteable" :variant="theme" type="button" class="ml-2" @click="regist()">
-                {{ label }}
-              </b-button>
-            </b-form-row>
-          </b-form-row>
-        </b-form-group>
-      </b-form>
-      <AreaCanvas :area-id="areaId" :is-regist="isRegist" :name="zoneName" :category-id="categoryId" :is-set-name-category="isSetNameCategory"
-                  :auth="{regist: isRegistable, update: isUpdatable, delete: isDeleteable}"
+      <ZoneCanvas :area-id="areaId" :zone-name="zoneName" :category-id="categoryId" :is-regist="isRegist" :is-complete-regist="isCompleteRegist" :is-delete="isDelete" :auth="{regist: isRegistable, update: isUpdatable, delete: isDeleteable}"
                   @regist="doRegist"
                   @selected="onSelected"
                   @unselected="unSelected"
-                  @created="onCreated"
                   @deleted="onDeleted"
+                  @pressDelKey="confirmDelete"
+                  @validated="validated"
+                  @reloaded="reloaded"
       />
     </div>
+    <!-- modal -->
+    <b-modal id="modalInfo" :title="`${$t('label.Zone')}${$t('label.delete')}`" @ok="isDelete = true">
+      {{ $i18n.tnl('message.deleteConfirm', {target: zoneName}) }}
+    </b-modal>
   </div>
 </template>
 
@@ -61,19 +38,19 @@ import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
-import AreaCanvas from '../../../components/parts/areacanvas.vue'
+import ZoneCanvas from '../../../components/parts/zonecanvas.vue'
 import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
-import { CATEGORY, ZONE } from '../../../sub/constant/Constants'
+import { CATEGORY } from '../../../sub/constant/Constants'
 import showmapmixin from '../../../components/mixin/showmapmixin.vue'
 
 export default {
   components: {
     breadcrumb,
     alert,
-    AreaCanvas,
+    ZoneCanvas,
   },
   mixins: [editmixinVue, showmapmixin],
   data() {
@@ -87,22 +64,17 @@ export default {
       areaId: null,
       categoryNames: [],
       categoryId: null,
-      canvas: null,
       isEnableNameText: false,
       zoneName: null,
-      zones: [],
+      deletedIds: [],
       isRegist: false,
-      isSetNameCategory: false,
-      items: [
-        {
-          text: this.$i18n.t('label.master'),
-          active: true
-        },
-        {
-          text: this.$i18n.t('label.zoneBlock'),
-          active: true
-        }
-      ]
+      isDelete: false,
+      isCompleteRegist: false,
+      nameAndCategory: {
+        name: '',
+        categoryId: -1,
+      },
+      items: ViewHelper.createBreadCrumbItems('master', 'zoneBlock'),
     }
   },
   computed: {
@@ -126,8 +98,6 @@ export default {
     this.initCategoryNames()
   },
   methods: {
-    reset () {
-    },
     async initAreaNames() {
       await StateHelper.load('area')
       this.areaNames = StateHelper.getOptionsFromState('area', false, true)
@@ -144,76 +114,64 @@ export default {
       this.categoryNames = StateHelper.getOptionsFromState('category', false, true, 
         category => !CATEGORY.POT_AVAILABLE.includes(category.categoryType)
       )
-      if (this.categoryNames.length < 1) {
-        return
-      }
+      const none = this.$i18n.t('label.none')
+      this.categoryNames.unshift({label: none, text: none, value: -1})
       this.categoryId = this.categoryNames[0].value
+      this.nameAndCategory.categoryId = this.categoryId
     },
-    onCreated(zoneData) {
-      this.onSelected(zoneData)
+    confirmDelete (button) {
+      this.$root.$emit('bv::show::modal', 'modalInfo', button)
     },
     onSelected (zoneData) {
+      this.replace({showAlert: false})
       this.id = zoneData.id
-      this.isEnableNameText = !zoneData.lock
       this.zoneName = zoneData.name
-      this.isSetNameCategory = false
+      this.categoryId = zoneData.categoryId
+      this.isEnableNameText = true
     },
-    unSelected() {
+    unSelected () {
       this.isEnableNameText = false
-      this.form.zoneName = ''
-      this.isSetNameCategory = false
+      this.zoneName = ''
     },
     onDeleted (id) {
-      this.zones = this.zones.filter((e) => {
-        return e.id !== id
-      })
+      if (id > -1) {
+        this.deletedIds.push(id)
+      }
+      this.isDelete = false
       this.unSelected()
     },
     regist () {
       this.isRegist = true
     },
-    onSetting () {
-      this.isSetNameCategory = true
+    validated (message) {
+      this.message = message
+      this.replace({showAlert: true})
+      window.scrollTo(0, 0)
     },
-    async doRegist (zones, deleted) {
+    async doRegist (zones) {
       const path = this.appServicePath
       this.replace({showInfo: false})
       this.message = ''
-      deleted.forEach((e) => {
-        AppServiceHelper.deleteEntity(path, e)
-      })
-      const areaId = this.areaId
-      const entities = zones.map((e) => {
-        return {
-          zoneId: e.id,
-          zoneName: e.name,
-          zoneType: ZONE.getTypes()[0].value,
-          areaId: areaId,
-          x: Math.floor(e.aCoords.tl.x),
-          y: Math.floor(e.aCoords.tl.y),
-          w: Math.floor(e.aCoords.br.x - e.aCoords.tl.x),
-          h: Math.floor(e.aCoords.br.y - e.aCoords.tl.y),
-          zoneCategoryList: [{
-            zoneCategoryPK: {
-              zoneId: e.id,
-              categoryId: e.categoryId
-            }
-          }]
-        }
-      })
-      const saveId = await AppServiceHelper.bulkSave(this.appServicePath, entities, 0)
+      await this.deletedIds.forEach((id) => AppServiceHelper.deleteEntity(path, id))
+      const saveId = await AppServiceHelper.bulkSave(this.appServicePath + '/edit', zones, 0)
       this.isRegist = false
-      this.isSetNameCategory = false
       this.message = this.$i18n.t('message.updateCompleted', { target: this.$i18n.t('label.zone') })
       this.replace({showInfo: true})
+      this.isCompleteRegist = true
       return saveId
-    }
+    },
+    reloaded() {
+      this.isCompleteRegist = false
+    },
   }
 }
 </script>
 
 <style scoped lang="scss">
-  label.control-label {
-    padding-top: 7px;
+  form.form-inline {
+    margin-bottom: 20px;
+  }
+  button.button-regist {
+    margin-left: 10px;
   }
 </style>

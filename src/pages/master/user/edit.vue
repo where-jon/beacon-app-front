@@ -85,20 +85,7 @@ export default {
       passMinLength: 3,
       passMaxLength: 16,
       selfUpdate: this.$store.state.loginId == this.$store.state.app_service.user.loginId,
-      items: [
-        {
-          text: this.$i18n.tnl('label.master'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.user'),
-          href: '/master/user',
-        },
-        {
-          text: this.$i18n.tnl(Util.getDetailCaptionKey(this.$store.state.app_service.user.userId)),
-          active: true
-        }
-      ],
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'user', href: '/master/user'}, Util.getDetailCaptionKey(this.$store.state.app_service.user.userId)),
     }
   },
   computed: {

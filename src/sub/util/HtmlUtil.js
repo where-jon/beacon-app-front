@@ -1,16 +1,22 @@
 import Encoding from 'encoding-japanese'
-import { str2Array, hasValue } from './Util'
+import { str2Array, hasValue, isImageFile } from './Util'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
 import { APP } from '../constant/config'
+import elementLocale from 'element-ui/lib/locale'
 
-let locale
 let i18n
+let locale
 
 export const setApp = (pi18n) => {
-  locale = pi18n.locale
   i18n = pi18n
+  locale = pi18n.locale
 }
 
+export const importElementUI = () => {
+  import(`element-ui/lib/locale/lang/${i18n.locale}`).then(mojule => elementLocale.use(mojule.default))
+}
+
+export const getDomainCd = () => document && document.domain? document.domain.split('.')[0]: ''
 
 export const addClass = (e, cls) => e && e.target.classList && e.target.classList.add(cls)
 
@@ -118,7 +124,6 @@ export const readImage = (e, onload, resize, onerror) => {
   }
 }
 
-// not use now
 export const toDataURL = (url, callback) => {
   var xhr = new XMLHttpRequest()
   xhr.onload = function() {
@@ -133,17 +138,22 @@ export const toDataURL = (url, callback) => {
   xhr.send()
 }
 
+export const getLogoData = (url, callback) => {
+  toDataURL(url, result => {
+    callback(result, /^data:image\/(png)|(jpg)|(jpeg)|(gif);base64,.*$/.test(result))
+  })
+}
+
 export const getMessageData = async (lang) => {
   return await HttpHelper.getFronServerFile('/' + lang + '.json')
 }
 
 export const endsWithSlashUrl = (vueComponent) => {
   const nodeKey = vueComponent.$vnode && vueComponent.$vnode.data? vueComponent.$vnode.data.key: ''
-  return nodeKey.endsWith('/')
+  return nodeKey ? nodeKey.endsWith('/') : ''
 }
 
 export const createCustomValidationKey = (target) => {
-  console.error(target)
   const key = ['badInput', 'patternMismatch', 'rangeOverflow', 'rangeUnderflow', 'stepMismatch', 'tooLong', 'tooShort', 'typeMismatch', 'valueMissing'].find(key => target.validity[key])
   if(!key){
     return null
@@ -206,3 +216,5 @@ export const setCustomValidationMessage = () => {
     }
   }
 }
+
+export const getResourcePath = (path) => hasValue(path) && isImageFile(path)? path.indexOf(0) == /^[\\./]/.test(path)? path: `/${path}`: path

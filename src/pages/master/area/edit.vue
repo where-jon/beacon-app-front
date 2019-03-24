@@ -23,6 +23,10 @@
               </b-button>
               <img v-show="form.mapImage" ref="mapImage" :src="form.mapImage" width="100" class="mt-1 ml-3">
             </b-form-group>
+            <b-form-group v-if="isEditable && hasId && mapUpdate && form.mapImage">
+              <label v-t="'label.mapConfig'" />
+              <b-form-select v-model="form.mapConfig" :options="mapConfigTypes" required />
+            </b-form-group>
 
             <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
             <b-button v-if="isEditable" :variant="getButtonTheme()" type="submit" class="mr-2 my-1" @click="beforeSubmit(false)">
@@ -63,20 +67,7 @@ export default {
       appServicePath: '/core/area',
       updateOnlyNN: UPDATE_ONLY_NN.NULL,
       form: ViewHelper.extract(this.$store.state.app_service.area, ['areaId', 'areaName', 'mapImage']),
-      items: [
-        {
-          text: this.$i18n.tnl('label.master'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.area'),
-          href: '/master/area',
-        },
-        {
-          text: this.$i18n.tnl(Util.getDetailCaptionKey(this.$store.state.app_service.area.areaId)),
-          active: true
-        }
-      ],
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'area', href: '/master/area'}, Util.getDetailCaptionKey(this.$store.state.app_service.area.areaId)),
       mapUpdate: false,
       oldMap: null,
     }
@@ -88,8 +79,17 @@ export default {
     ...mapState('app_service', [
       'area',
     ]),
+    mapConfigTypes(){
+      return [
+        {text: this.$i18n.tnl('label.keepPosition'), value: 1},
+        {text: this.$i18n.tnl('label.adjustPosition'), value: 2},
+        {text: this.$i18n.tnl('label.initPosition'), value: 3},
+      ]
+    }
   },
-  mounted(){
+  mounted() {
+    this.form.mapConfig = this.mapConfigTypes[0].value
+    this.oldMap = this.hasId && this.form.mapImage? {width: this.$refs.mapImage.naturalWidth, height: this.$refs.mapImage.naturalHeight}: null
     HtmlUtil.setCustomValidationMessage()
     this.oldMap = this.hasId && this.form.mapImage? {width: this.$refs.mapImage.naturalWidth, height: this.$refs.mapImage.naturalHeight}: null
   },
@@ -119,6 +119,9 @@ export default {
           this.clearImage(e)
         }
       })
+      if(this.oldMap){
+        this.mapUpdate = true
+      }
     },
     clearImage(e) {
       this.$nextTick(() => {
@@ -126,6 +129,10 @@ export default {
         this.form.mapImage = null
         this.form.thumbnail = null
         this.$refs.inputThumbnail.reset()
+        if(this.hasId && this.oldMap){
+          this.form.scaleX = '0'
+          this.form.scaleY = '0'
+        }
         this.setFileName()
         if(this.hasId && this.oldMap){
           this.form.scaleX = '0'
@@ -139,8 +146,11 @@ export default {
     },
     beforeSubmit(again){
       if(this.mapUpdate){
-        this.form.scaleX = `${Math.round(this.$refs.mapImage.naturalWidth * 100 / this.oldMap.width) / 100}`
-        this.form.scaleY = `${Math.round(this.$refs.mapImage.naturalHeight * 100 / this.oldMap.height) / 100}`
+        const mapConfigs = this.mapConfigTypes
+        this.form.scaleX = `${this.form.mapConfig == mapConfigs[0].value? 1:
+          this.form.mapConfig == mapConfigs[1].value? Math.round(this.$refs.mapImage.naturalWidth * 100 / this.oldMap.width) / 100: 0}`
+        this.form.scaleY = `${this.form.mapConfig == mapConfigs[0].value? 1:
+          this.form.mapConfig == mapConfigs[1].value? Math.round(this.$refs.mapImage.naturalHeight * 100 / this.oldMap.height) / 100: 0}`
       }
       this.register(again)
     },
