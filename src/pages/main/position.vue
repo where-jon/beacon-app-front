@@ -295,7 +295,7 @@ export default {
         this.prohibitData = await StateHelper.getProhibitData(this.getPositions(),this.prohibits)
         this.message = await StateHelper.getProhibitMessage(this.message,this.prohibitData)
         this.showTxAll()
-        this.prohibitInterval = setInterval(this.twinkle,DISP.PROHIBIT_TWINKLE_TIME)
+        // this.prohibitInterval = setInterval(this.twinkle,DISP.PROHIBIT_TWINKLE_TIME) TODO: Violation発生
         if(!this.firstTime && reloadButton){
           HtmlUtil.removeClass({target: reloadButton}, 'rotate')
         }
