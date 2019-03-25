@@ -300,7 +300,7 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   PIR_EMPTY_LABEL: 'Empty', // PIRで不在時のラベルキー
 
   PRESSURE_R_SIZE: 26,  // 圧力センサ表示時の円の半径
-  PRESSURE_USE_MIN: 1, // 圧力センサの使用判定値
+  PRESSURE_VOL_MIN: 1100, // 圧力センサの使用判定値(指定値以下で使用中扱い)
   PRESSURE_BGCOLOR: '#FC7E82', // "#E2A6A5" // 圧力センサ表示の円の背景色
   PRESSURE_FGCOLOR: '#FFFFFF', // 圧力センサ表示時の文字色
   PRESSURE_INUSE_LABEL: 'InUse', // 圧力センサで使用時のラベルキー

@@ -86,12 +86,12 @@ export default {
           null,
           (exb) => {
             const pir = pirSensors.find((val) => val.deviceid == exb.deviceId && val.count >= DISP.PIR_MIN_COUNT)
-            const pressure = pressureSensors.find((val) => val.deviceid == exb.deviceId && val.press_vol >= 0)
+            const pressure = pressureSensors.find((val) => val.deviceid == exb.deviceId && val.press_vol != null)
             const thermopile = thermopileSensors.find((val) => val.deviceid == exb.deviceId)
             console.log({exb, pir, pressure, thermopile, pirSensors, pressureSensors, thermopileSensors})
             return pir? {id: SENSOR.PIR, ...pir}: pressure? {id: SENSOR.PRESSURE, count: pressure.press_vol, ...pressure}: thermopile? {id: SENSOR.THERMOPILE, ...thermopile}: null
           },
-          (exb) => exb.sensorId == SENSOR.PRESSURE? exb.count >= DISP.PRESSURE_USE_MIN || DISP.PRESSURE_EMPTY_SHOW: exb.count > 0 || DISP.PIR_EMPTY_SHOW
+          (exb) => exb.sensorId == SENSOR.PRESSURE? exb.count <= DISP.PRESSURE_VOL_MIN || DISP.PRESSURE_EMPTY_SHOW: exb.count > 0 || DISP.PIR_EMPTY_SHOW
         )
 
         if (APP.SHOW_MAGNET_ON_PIR) {
@@ -137,7 +137,7 @@ export default {
     createShapeInfo(sensorId, count){
       if(sensorId == SENSOR.PRESSURE){
         return {
-          bgColor: (count >= DISP.PRESSURE_USE_MIN)? DISP.PRESSURE_BGCOLOR: DISP.PRESSURE_EMPTY_BGCOLOR,
+          bgColor: (count <= DISP.PRESSURE_VOL_MIN)? DISP.PRESSURE_BGCOLOR: DISP.PRESSURE_EMPTY_BGCOLOR,
           width: DISP.PRESSURE_R_SIZE,
         }
       }
@@ -156,10 +156,10 @@ export default {
     createLabelInfo(sensorId, count){
       if(sensorId == SENSOR.PRESSURE){
         const font = this.$i18n.locale == 'ja'?
-          Util.getAdjustFontSize(() => DISP.PRESSURE_R_SIZE * (count >= DISP.PRESSURE_USE_MIN? this.INUSE_FONTSIZE_RATIO: this.EMPTY_FONTSIZE_RATIO), true):
+          Util.getAdjustFontSize(() => DISP.PRESSURE_R_SIZE * (count <= DISP.PRESSURE_VOL_MIN? this.INUSE_FONTSIZE_RATIO: this.EMPTY_FONTSIZE_RATIO), true):
           Util.getAdjustFontSize(() => DISP.PRESSURE_R_SIZE * this.PRESSURE_FONTSIZE_RATIO_EN, true)
         return {
-          label: this.$i18n.tnl('label.' + (count >= DISP.PRESSURE_USE_MIN? DISP.PRESSURE_INUSE_LABEL: DISP.PRESSURE_EMPTY_LABEL)),
+          label: this.$i18n.tnl('label.' + (count <= DISP.PRESSURE_VOL_MIN? DISP.PRESSURE_INUSE_LABEL: DISP.PRESSURE_EMPTY_LABEL)),
           font: font,
           color: DISP.PRESSURE_FGCOLOR
         }
