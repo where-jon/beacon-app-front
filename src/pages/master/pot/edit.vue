@@ -244,8 +244,10 @@ export default {
       this.oldUserForm.loginId = potUser.user.loginId
       this.oldUserForm.roleId = potUser.user.roleId
       this.oldUserForm.email = potUser.user.email
+      this.editShowUser = true
     }
     else{
+      this.editShowUser = false
       const maxRole = this.roleOptions.reduce((a, b) => a.value > b.value? a: b)
       this.userForm.roleId = maxRole? maxRole.value: null
     }
