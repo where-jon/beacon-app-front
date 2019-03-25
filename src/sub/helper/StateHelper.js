@@ -102,29 +102,6 @@ export const getCategoryTypeName = (category) => {
   return categoryTypeName != null? categoryTypeName.text: null
 }
 
-// システム利用　カテゴリの名称　⇔　各言語用名称　コンバートする
-export const convertCategoryName = (categoryname) => {
-  switch(categoryname) {
-  case SYSTEM_ZONE_CATEGORY_NAME.ABSENT:
-    return i18n.tnl('system.absentCategoryName')
-  case i18n.tnl('system.absentCategoryName'):
-    return SYSTEM_ZONE_CATEGORY_NAME.ABSENT
-  default:
-    return categoryname
-  }
-}
-
-// システム利用カテゴリ名称かどうかを判定する
-export const isSystemUseCategoryName = (val) => {
-  let systemUseCategoryName = false
-  switch(val) {
-  case SYSTEM_ZONE_CATEGORY_NAME.ABSENT:
-    systemUseCategoryName = true
-    break
-  }
-  return systemUseCategoryName
-}
-
 export const getShapeName = (shape) => {
   const shapeName = SHAPE.getShapes().find((tval) => tval.value === shape)
   return shapeName != null? shapeName.text: null
@@ -249,7 +226,7 @@ const appStateConf = {
     beforeCommit: (arr) => {
       return arr.map((val) => ({
         ...val,
-        categoryName: convertCategoryName(val.categoryName),
+        categoryName: val.categoryName,
         shape: val.display? val.display.shape: null,
         color: val.display? val.display.color: null,
         bgColor: val.display? val.display.bgColor: null,
@@ -324,7 +301,7 @@ const appStateConf = {
         locationId: Util.hasValue(val.locationZoneList)? val.locationZoneList[0].locationZonePK.locationId: null,
         locationName: Util.hasValue(val.locationZoneList)? val.locationZoneList[0].location.locationName: null,
         categoryId: Util.hasValue(val.zoneCategoryList)? val.zoneCategoryList[0].zoneCategoryPK.categoryId: null,
-        categoryName: convertCategoryName(Util.hasValue(val.zoneCategoryList)? val.zoneCategoryList[0].category.categoryName: null),
+        categoryName: Util.hasValue(val.zoneCategoryList)? val.zoneCategoryList[0].category.categoryName: null,
       }))
     }
   },

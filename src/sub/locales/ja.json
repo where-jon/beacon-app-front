@@ -662,8 +662,5 @@
     "positionTooltip": "{sensorName}\n{temperature}℃\n{humidity}％\n{description}",
 
     "dummy": "" 
-  },
-  "system": {
-    "absentCategoryName": "不在エリア" 
   }
 }
