@@ -9,7 +9,7 @@
 import mList from '../../../components/page/list.vue'
 import { mapState } from 'vuex'
 import * as StateHelper from '../../../sub/helper/StateHelper'
-import { addLabelByKey } from '../../../sub/helper/ViewHelper'
+import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import listmixinVue from '../../../components/mixin/listmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import { APP } from '../../../sub/constant/config.js'
@@ -34,7 +34,7 @@ export default {
             {name: this.$i18n.tnl('label.txId'), id: 'txId'},
         csvOut: true,
         custumCsvColumns: this.getCustumCsvColumns(),
-        fields: addLabelByKey(this.$i18n, [ 
+        fields: ViewHelper.addLabelByKey(this.$i18n, [ 
           !APP.TX_WITH_TXID && APP.TX_BTX_MINOR == 'minor'? {key: 'minor', sortable: true, tdClass: 'action-rowdata' }: null,
           APP.TX_WITH_TXID? {key: 'txId', sortable: true, tdClass: 'action-rowdata' }: null,
           APP.TX_BTX_MINOR != 'minor'? {key: 'btxId', sortable: true, tdClass: 'action-rowdata' }: null,
@@ -52,16 +52,7 @@ export default {
         sortBy: APP.TX_WITH_TXID? 'txId': APP.TX_BTX_MINOR != 'minor'? 'btxId': 'minor',
         initTotalRows: this.$store.state.app_service.txs.length
       },
-      items: [
-        {
-          text: this.$i18n.tnl('label.master'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.tx'),
-          active: true
-        }
-      ]
+      items: ViewHelper.createBreadCrumbItems('master', 'tx'),
     }
   },
   computed: {

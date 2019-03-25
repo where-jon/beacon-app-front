@@ -11,6 +11,7 @@ import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
 import * as StateHelper from '../../../sub/helper/StateHelper'
+import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import { APP } from '../../../sub/constant/config.js'
 import { IGNORE, CATEGORY } from '../../../sub/constant/Constants'
 
@@ -25,20 +26,7 @@ export default {
       id: 'txId',
       backPath: '/master/tx',
       appServicePath: '/core/tx',
-      items: [
-        {
-          text: this.$i18n.tnl('label.master'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.tx'),
-          href: '/master/tx',
-        },
-        {
-          text: this.$i18n.tnl('label.bulkRegister'),
-          active: true
-        }
-      ]
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'tx', href: '/master/tx'}, 'bulkRegister'),
     }
   },
   computed: {

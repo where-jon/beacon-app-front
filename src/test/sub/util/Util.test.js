@@ -267,3 +267,27 @@ test('getSubDatetime', t => {
   t.true(Math.round(sub.minute) == 31)
 })
 
+test('convertToTime', t => {
+  const fullTestDate = 55555
+  const zeroTestDate = 4025
+  let fullTime = Util.convertToTime(fullTestDate)
+  t.true(fullTime == '15:25:55')
+  let zeroTime = Util.convertToTime(zeroTestDate)
+  t.true(zeroTime == '01:07:05')
+})
+
+test('getStayBaseSec', t => {
+  // APP.SUM_FROM, APP.SUM_TO がデフォルト前提
+  let stayBaseSec = Util.getStayBaseSec()
+  t.true(stayBaseSec == 86400)
+})
+
+test('getRatio', t => {
+  // APP.SUM_FROM, APP.SUM_TO がデフォルト前提
+  let secTime = 21650
+  let defaultResult = Util.getRatio(secTime)
+  t.true(defaultResult == '25.06')
+  let stayBaseSec = 43300
+  let half1digitResult = Util.getRatio(secTime, 10, stayBaseSec)
+  t.true(half1digitResult == '50.0')
+})

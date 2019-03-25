@@ -217,10 +217,7 @@ export default {
       const selectedLc = LOCALE.find((val) => val.name == LocaleHelper.getLocale(this.loginUser.loginId))
       this.selectedLocale = selectedLc != null ? selectedLc.id : LOCALE[0].id
       this.locales = LOCALE.map((e) => {return { value: e.id, text: this.$i18n.tnl('label.' + e.name) }})
-      this.items = [
-        { text: this.$i18n.tnl('label.setting'), active: true },
-        { text: this.$i18n.tnl('label.personal'), active: true },
-      ]
+      this.items = ViewHelper.createBreadCrumbItems('setting', 'personal')
     },
     themeSelected (selected) {
       const t = THEME.find((e) => {

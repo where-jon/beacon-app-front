@@ -46,6 +46,7 @@ import { mapState } from 'vuex'
 // import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as HttpHelper from '../../../sub/helper/HttpHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
+import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as Util from '../../../sub/util/Util'
 import { DISP } from '../../../sub/constant/config'
 import { UPDATE_ONLY_NN } from '../../../sub/constant/Constants'
@@ -71,22 +72,14 @@ export default {
       txOptions: [],
       deleteTarget: null,
       keepTxPosition: false,
+      ICON_FONTSIZE_RATIO: 1.3,
       toggleCallBack: () => {
         this.keepTxPosition = true
       },
-      ICON_ARROW_WIDTH: 20,
-      ICON_ARROW_HEIGHT: 10,
+      ICON_ARROW_WIDTH: DISP.TX_LOC_SIZE.w/3,
+      ICON_ARROW_HEIGHT: DISP.TX_LOC_SIZE.h/3,
       noImageErrorKey: 'noMapImage',
-      items: [
-        {
-          text: this.$i18n.tnl('label.master'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.txLocationSetting'),
-          active: true
-        }
-      ]
+      items: ViewHelper.createBreadCrumbItems('master', 'txLocationSetting'),
     }
   },
   computed: {
@@ -174,14 +167,14 @@ export default {
       })
     },
     createTxIcon(tx) {
-      const {w, h} = DISP.EXB_LOC_SIZE
+      const {w, h} = DISP.TX_LOC_SIZE
       const fromX = -w / 2
       const fromY = -h / 2
       const x = w + fromX
       const y = h + fromY
       const txBtn = new Container()
       const s = new Shape()
-      s.graphics.beginFill(DISP.EXB_LOC_BGCOLOR)
+      s.graphics.beginFill(ViewHelper.getRGBA(DISP.TX_LOC_BGCOLOR, DISP.TX_LOC_ALPHA))
       s.graphics.moveTo(fromX, fromY)
       s.graphics.lineTo(x, fromY)
       s.graphics.lineTo(x, y)
@@ -192,8 +185,8 @@ export default {
       s.graphics.lineTo(fromX, fromY)
       txBtn.addChild(s)
       const label = new Text(this.getLabel(tx))
-      label.font = DISP.EXB_LOC_FONT
-      label.color = DISP.EXB_LOC_COLOR
+      label.font = `${h / this.ICON_FONTSIZE_RATIO}px ${DISP.TX_LOC_FONT}`
+      label.color = DISP.TX_LOC_COLOR
       label.textAlign = 'center'
       label.textBaseline = 'middle'
       txBtn.addChild(label)
@@ -207,7 +200,7 @@ export default {
     },
     showTx(tx) {
       let stage = this.stage
-      const offsetY = (DISP.EXB_LOC_SIZE.h / 2) + this.ICON_ARROW_HEIGHT
+      const offsetY = (DISP.TX_LOC_SIZE.h / 2) + this.ICON_ARROW_HEIGHT
       const txBtn = this.createTxIcon(tx)
       txBtn.on('pressmove', (evt) => {
         tx.delEvent = false

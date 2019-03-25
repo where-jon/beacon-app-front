@@ -6,7 +6,7 @@
     <!-- Title -->
     <b-navbar-brand>
       <div id="appTitle" class="appTitle">
-        <img v-if="getShowLogo()" id="topLogo" src="/toplogo.png" width="0" height="0" :style="{position: 'relative'}" @load="setLogo">
+        <img v-if="getShowLogo()" id="topLogo" :src="logoSrc" width="0" height="0" :style="{position: 'relative'}" @load="setLogo">
         <span v-else v-t="'label.title'" />
       </div>
     </b-navbar-brand>
@@ -28,51 +28,75 @@
       <b-navbar-nav v-show="!isLoginPage" class="ml-auto">
         <!-- region -->
         <table>
-          <td>
-            <table v-if="isTenantAdmin() || hasMultiRegion(regions)" class="region-table">
-              <tr v-if="isTenantAdmin()">
-                <td>
-                  <i class="far fa-building mr-1" style="visibility: hidden;" />
-                  <em v-t="this.$store.state.currentTenant? this.$store.state.currentTenant.tenantName: ''" class="region-em word-break" />
-                </td>
-              </tr>
-              <tr v-if="hasMultiRegion(regions)">
-                <td :class="regionTdClasses">
-                  <b-nav-item-dropdown :class="navbarClasses" size="sm" right>
-                    <template slot="button-content">
-                      <i class="far fa-building mr-1" />
-                      <span>{{ this.$store.state.currentRegion? this.$store.state.currentRegion.regionName: '' }}</span>
-                    </template>
-                    <b-dropdown-item v-for="region in regionOptions(regions)" :key="region.regionId" :class="navbarClasses" href="#" @click="switchRegion($event.target, region)">
-                      <i :style="getStyleDropdownRegion(region.regionId)" class="far fa-building mr-1" aria-hidden="true" />
-                      <span>{{ region.regionName }}</span>
-                    </b-dropdown-item>
-                  </b-nav-item-dropdown>
-                </td>
-              </tr>
-            </table>
-          </td>
-          <td>
-            <!-- user & logout -->
-            <b-nav-item-dropdown right>
-              <template slot="button-content">
-                <i class="fa fa-user" aria-hidden="true" />&nbsp;
-                <em class="word-break">
-                  {{ loginId }}
-                </em>
-              </template>
-              <b-dropdown-item href="#" @click="move('/setting/personal')">
-                <i class="fas fa-user-cog menu-item-icon" />&nbsp;{{ $t('label.personal') }}
-              </b-dropdown-item>
-              <b-dropdown-item href="#" @click="logout">
-                <i class="fas fa-sign-out-alt menu-item-icon" />&nbsp;{{ $t('label.logout') }}
-              </b-dropdown-item>
-              <b-dropdown-divider />
-              <b-dropdown-item @click="versionClick">
-                {{ getVersion() }}
-              </b-dropdown-item>
-            </b-nav-item-dropdown>
-          </td>
+          <tr>
+            <td>
+              <table v-if="isTenantAdmin() || hasMultiRegion(regions)" class="region-table">
+                <tr v-if="isTenantAdmin()">
+                  <td>
+                    <i class="far fa-building mr-1" style="visibility: hidden;" />
+                    <em v-t="this.$store.state.currentTenant? this.$store.state.currentTenant.tenantName: ''" class="region-em word-break" />
+                  </td>
+                </tr>
+                <tr v-if="hasMultiRegion(regions)">
+                  <td :class="regionTdClasses">
+                    <b-nav-item-dropdown :class="navbarClasses" size="sm" right>
+                      <template slot="button-content">
+                        <i class="far fa-building mr-1" />
+                        <span>{{ this.$store.state.currentRegion? this.$store.state.currentRegion.regionName: '' }}</span>
+                      </template>
+                      <b-dropdown-item v-for="region in regionOptions(regions)" :key="region.regionId" :class="navbarClasses" href="#" @click="switchRegion($event.target, region)">
+                        <i :style="getStyleDropdownRegion(region.regionId)" class="far fa-building mr-1" aria-hidden="true" />
+                        <span>{{ region.regionName }}</span>
+                      </b-dropdown-item>
+                    </b-nav-item-dropdown>
+                  </td>
+                </tr>
+              </table>
+              <div v-show="getShowNav() && isResponsiveMenu()">
+                <custom-link :link-key="linkKey" :link-url="linkUrl" />
+                <!-- user & logout -->
+                <b-nav-item-dropdown right>
+                  <template slot="button-content">
+                    <i class="fa fa-user" aria-hidden="true" />&nbsp;
+                    <em class="word-break">
+                      {{ loginId }}
+                    </em>
+                  </template>
+                  <b-dropdown-item href="#" @click="move('/setting/personal')">
+                    <i class="fas fa-user-cog menu-item-icon" />&nbsp;{{ $t('label.personal') }}
+                  </b-dropdown-item>
+                  <b-dropdown-item href="#" @click="logout">
+                    <i class="fas fa-sign-out-alt menu-item-icon" />&nbsp;{{ $t('label.logout') }}
+                  </b-dropdown-item>
+                  <b-dropdown-divider />
+                  <b-dropdown-item @click="versionClick">
+                    {{ getVersion() }}
+                  </b-dropdown-item>
+                </b-nav-item-dropdown>
+              </div>
+            </td>
+            <td v-show="!(getShowNav() && isResponsiveMenu())">
+              <!-- user & logout -->
+              <b-nav-item-dropdown right>
+                <template slot="button-content">
+                  <i class="fa fa-user" aria-hidden="true" />&nbsp;
+                  <em class="word-break">
+                    {{ loginId }}
+                  </em>
+                </template>
+                <b-dropdown-item href="#" @click="move('/setting/personal')">
+                  <i class="fas fa-user-cog menu-item-icon" />&nbsp;{{ $t('label.personal') }}
+                </b-dropdown-item>
+                <b-dropdown-item href="#" @click="logout">
+                  <i class="fas fa-sign-out-alt menu-item-icon" />&nbsp;{{ $t('label.logout') }}
+                </b-dropdown-item>
+                <b-dropdown-divider />
+                <b-dropdown-item @click="versionClick">
+                  {{ getVersion() }}
+                </b-dropdown-item>
+              </b-nav-item-dropdown>
+            </td>
+          </tr>
         </table>
       </b-navbar-nav>
     </b-collapse>
@@ -88,13 +112,18 @@ import { getThemeClasses } from '../../sub/helper/ThemeHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
 import commonmixinVue from '../mixin/commonmixin.vue'
+import CustomLink from '../parts/customlink.vue'
 import * as StateHelper from '../../sub/helper/StateHelper'
 
 export default {
+  components: {
+    CustomLink,
+  },
   mixins: [commonmixinVue],
   data() {
     return {
       nav : this.$store.state.menu,
+      logoSrc: '',
     }
   },
   computed: {
@@ -106,6 +135,12 @@ export default {
     },
     loginId() {
       return this.$store.state.loginId
+    },
+    linkKey(){
+      return HtmlUtil.getResourcePath(APP.SHOW_MENU_LINK)
+    },
+    linkUrl(){
+      return APP.SHOW_MENU_LINK_URL
     },
     ...mapState('app_service', [
       'pots', 'regions',
@@ -131,9 +166,15 @@ export default {
       return classes
     },
   },
+  async created() {
+    HtmlUtil.getLogoData(`${HtmlUtil.getDomainCd()}.png`, (result, success) => {
+      this.logoSrc = success? result: '/toplogo.png'
+    })
+  },
   async mounted() {
     window.addEventListener('resize', () => {
       this.adjustLogoOffsetX()
+      this.$forceUpdate()
     })
     if(window.localStorage.getItem('login') != null){
       await StateHelper.load('region', true)
@@ -160,6 +201,9 @@ export default {
     },
     hasMultiRegion(regions){
       return regions && regions.length > 1
+    },
+    isResponsiveMenu(){
+      return Util.isResponsiveMode()
     },
     getStyleDropdownRegion(regionId) {
       const login = JSON.parse(window.localStorage.getItem('login'))
@@ -361,8 +405,8 @@ em:not(:hover) {
   margin-bottom: auto;
   margin-top: auto;
   margin-right: 2px;
-	word-break: break-all;
-	word-wrap: break-all;
+  word-break: break-all;
+  word-wrap: break-all;
   @media (max-width: 1119px) and (min-width: 768px) {
     table-layout: fixed;
   }

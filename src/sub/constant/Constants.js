@@ -119,11 +119,14 @@ export const txViewTypes = [
 ]
 
 export const CATEGORY = {
+  PERSON: 1,
+  THING: 2,
+  ZONE: 3,
   getTypes(){ 
     return [
-      {value: 1, text: i18n.tnl('label.person')},
-      {value: 2, text: i18n.tnl('label.thing')},
-      {value: 3, text: i18n.tnl('label.zone')},
+      {value: CATEGORY.PERSON, text: i18n.tnl('label.person')},
+      {value: CATEGORY.THING, text: i18n.tnl('label.thing')},
+      {value: CATEGORY.ZONE, text: i18n.tnl('label.zone')},
     ]
   },
   POT_AVAILABLE: [1, 2],
@@ -152,12 +155,16 @@ export const SHAPE = {
 }
 
 export const ZONE = {
+  COORDINATE: 0,
+  NON_COORDINATE: 1,
   getTypes(){ 
     return [
-      {value: 0, text: i18n.tnl('label.coordinate')},
-      {value: 1, text: i18n.tnl('label.nonCoordinate')},
+      {value: ZONE.COORDINATE, text: i18n.tnl('label.coordinate')},
+      {value: ZONE.NON_COORDINATE, text: i18n.tnl('label.nonCoordinate')},
     ]
   },
+  MIN_WIDTH: 50,
+  MIN_HEIGHT: 50,
 }
 
 export const SENSOR = {
@@ -168,11 +175,12 @@ export const SENSOR = {
   MEDITAG: 5,
   MAGNET: 6,
   BUTTON: 7,
+  PRESSURE: 8,
   MAGNET_STATUS: {
     OFF: 0,
     ON: 4,
   },
-  STRING: ['','temperature','pir','thermopile','led','meditag','magnet','button']
+  STRING: ['','temperature','pir','thermopile','led','meditag','magnet','button','pressure']
 }
 
 export const SUM_UNIT = {
@@ -196,6 +204,21 @@ export const SUM_TARGET = {
   }
 }
 
+export const SUM_FILTER_KIND = {
+  getOptions(){
+    return [
+      {value:null, text: ''},
+      {value:'potType', text: i18n.t('label.potType')},
+      {value:'pot', text: i18n.t('label.pot')},
+      {value:'category', text: i18n.t('label.category')},
+      {value:'group', text: i18n.t('label.group')},
+      {value:'area', text: i18n.t('label.area')},
+      {value:'zone', text: i18n.t('label.zone')},
+      {value:'zoneCategory', text: i18n.t('label.zoneCategory')},
+    ]
+  }
+}
+
 export const DEVICE = {
   EXB: 0,
   TX: 1,
@@ -203,6 +226,30 @@ export const DEVICE = {
     return [
       {value: 0, text: i18n.t('label.exb')},
       {value: 1, text: i18n.t('label.tx')},
+    ]
+  }
+}
+
+export const SUM_UNIT_STACK = {
+  getOptions(){
+    return [
+      {value:'pot', text: i18n.t('label.pot')},
+      {value:'area', text: i18n.t('label.area')},
+      {value:'zone', text: i18n.t('label.zone')},
+      {value:'zoneCategory', text: i18n.t('label.zoneCategory')},
+    ]
+  }
+}
+
+export const SUM_UNIT_AXIS = {
+  getOptions(){
+    return [
+      {value:'month', text: i18n.t('label.month')},
+      {value:'day', text: i18n.t('label.day')},
+      {value:'pot', text: i18n.t('label.pot')},
+      {value:'area', text: i18n.t('label.area')},
+      {value:'zone', text: i18n.t('label.zone')},
+      {value:'zoneCategory', text: i18n.t('label.zoneCategory')},
     ]
   }
 }
@@ -297,6 +344,17 @@ export const TX_VIEW_TYPES = {
   TILE: 5,
 }
 
+export const POSITION_STACK_TYPES = {
+  getTypes(){ 
+    return [
+      {text: i18n.tnl('label.area'), value: 1, className: 'area'},
+      {text: i18n.tnl('label.zone'), value: 2, className: 'zone'},
+    ]
+  },
+  AREA: 1,
+  ZONE: 2,
+}
+
 export const FONT = {
   COLOR: {
     BLACK: '#000000',
@@ -306,6 +364,17 @@ export const FONT = {
   },
   TYPE: 'px Arial',
 }
+
+export const FORCE_PUSH_MENU = [
+  {
+    parent: '/provider/tenant',
+    path: '/provider/tenant/tenantFeature',
+    isPush: () => {
+      const login = JSON.parse(window.localStorage.getItem('login'))
+      return !login || !login.tenantAdmin && login.isProvider
+    } ,
+  },
+]
 
 export const EXTRA_NAV = [
   {
@@ -323,6 +392,11 @@ export const EXTRA_NAV = [
     path: '/main/position-stack',
     icon: 'far fa-building',
   },
+  {
+    key: 'positionZoneShort',
+    path: '/main/position-zone',
+    icon: 'fas fa-th',
+  },
 ]
 
 export const MENU = [
@@ -332,11 +406,18 @@ export const MENU = [
     path: 'provider/tenant',
     icon: 'fas fa-cogs',
     tenantOnly: true,
+    providerOnlyForce: true,
     pages: [
       {
         key: 'tenant',
         path: 'tenant',
         icon: 'fas fa-store-alt',
+        providerOnlyForce: true,
+      },
+      {
+        key: 'news',
+        path: 'news',
+        icon: 'far fa-newspaper',
       },
     ]
   },
@@ -361,7 +442,7 @@ export const MENU = [
       icon: 'far fa-building',
     },
     {
-      key: 'pir',
+      key: 'pirMenu',
       path: 'pir',
       icon: 'fas fa-users',
     },
@@ -510,7 +591,17 @@ export const MENU = [
       {
         key: 'sensorGraph',
         path: 'sensorGraph',
+        icon: 'fas fa-chart-line',
+      },
+      {
+        key: 'stayTime',
+        path: 'stayTime',
         icon: 'fas fa-chart-bar',
+      },
+      {
+        key: 'stayRatio',
+        path: 'stayRatio',
+        icon: 'fas fa-clock',
       },
     ]
   },
@@ -599,6 +690,15 @@ export const MENU = [
         path: 'serverenv',
         icon: 'fas fa-cog',
       },
+      {
+        key: 'installation',
+        path: 'installation',
+        icon: 'fas fa-ruler-combined',
+      },
     ],
   },
 ]
+
+export const SYSTEM_ZONE_CATEGORY_NAME = {
+  ABSENT: 'ABSENT',
+}

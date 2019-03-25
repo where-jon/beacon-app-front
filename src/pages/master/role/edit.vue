@@ -55,20 +55,7 @@ export default {
       backPath: '/master/role',
       appServicePath: '/meta/role',
       form: ViewHelper.extract(this.$store.state.app_service.role, ['roleId', 'roleName']),
-      items: [
-        {
-          text: this.$i18n.tnl('label.master'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.role'),
-          href: '/master/role',
-        },
-        {
-          text: this.$i18n.tnl(Util.getDetailCaptionKey(this.$store.state.app_service.role.roleId)),
-          active: true
-        }
-      ],
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'role', href: '/master/role'}, Util.getDetailCaptionKey(this.$store.state.app_service.role.roleId)),
       roleFeatureMessages: {message: ''},
     }
   },

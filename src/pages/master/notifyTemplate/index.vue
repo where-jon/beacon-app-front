@@ -9,7 +9,7 @@
 import mList from '../../../components/page/list.vue'
 import { mapState } from 'vuex'
 import * as StateHelper from '../../../sub/helper/StateHelper'
-import { addLabelByKey } from '../../../sub/helper/ViewHelper'
+import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import listmixinVue from '../../../components/mixin/listmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 
@@ -28,7 +28,7 @@ export default {
         editPath: '/master/notifyTemplate/edit',
         appServicePath: '/core/rcvexcloud',
         // custumCsvColumns: ['notifyTemplateId', 'zoneName', 'areaName', 'categoryName'],
-        fields: addLabelByKey(this.$i18n, [
+        fields: ViewHelper.addLabelByKey(this.$i18n, [
           {key: 'notifyTemplateKey', sortable: true },
           {key: 'notifyMedium', sortable: true },
           {key: 'notifyTo', sortable: true },
@@ -40,16 +40,7 @@ export default {
         sortBy: 'notifyTemplateId',
         initTotalRows: this.$store.state.app_service.templates.length
       },
-      items: [
-        {
-          text: this.$i18n.tnl('label.master'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.notifyTemplate'),
-          active: true
-        }
-      ]
+      items: ViewHelper.createBreadCrumbItems('master', 'notifyTemplate'),
     }
   },
   computed: {

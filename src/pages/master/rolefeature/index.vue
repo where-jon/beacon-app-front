@@ -9,7 +9,7 @@ import mList from '../../../components/page/list.vue'
 import { mapState, mapActions } from 'vuex'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
-import { addLabelByKey } from '../../../sub/helper/ViewHelper'
+import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as Util from '../../../sub/util/Util'
 import listmixinVue from '../../../components/mixin/listmixin.vue'
 import featuremixinVue from '../../../components/mixin/featuremixin.vue'
@@ -38,7 +38,7 @@ export default {
         csvOut: true,
         custumCsvColumns: ['roleId', 'featureId', 'featureName', 'path', 'modeText', 'featureTypeName', 'version', 'enabledName'],
         hideSearchBox: !Util.hasValue(this.$store.state.app_service.role.roleId),
-        fields: addLabelByKey(this.$i18n, [ 
+        fields: ViewHelper.addLabelByKey(this.$i18n, [ 
           {key: 'featureName', sortable: true },
           {key: 'path', sortable: true },
           {key: 'modeText', label: 'mode', sortable: true },

@@ -11,6 +11,7 @@ import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkupload from '../../../components/page/bulkupload.vue'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
+import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as HtmlUtil from '../../../sub/util/HtmlUtil'
 import { APP } from '../../../sub/constant/config'
 
@@ -25,20 +26,7 @@ export default {
       id: 'potId',
       backPath: '/master/pot',
       appServicePath: '/basic/pot',
-      items: [
-        {
-          text: this.$i18n.tnl('label.master'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.pot'),
-          href: '/master/pot',
-        },
-        {
-          text: this.$i18n.tnl('label.bulkUpload'),
-          active: true
-        }
-      ]
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'pot', href: '/master/pot'}, 'bulkUpload'),
     }
   },
   computed: {

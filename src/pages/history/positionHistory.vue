@@ -18,6 +18,18 @@
               </b-form-row>
             </b-form-row>
           </b-form-group>
+          <b-form-group v-if="enableGroup" class="mr-5">
+            <b-form-row>
+              <b-form-row class="mb-3 mr-2">
+                <label v-t="'label.group'" class="mr-2" />
+                <v-select v-model="form.group" :options="groupOptions" class="mr-2">
+                  <div slot="no-options">
+                    {{ $i18n.tnl('label.vSelectNoOptions') }}
+                  </div>
+                </v-select>
+              </b-form-row>
+            </b-form-row>
+          </b-form-group>
         </b-form>
         <b-form inline @submit.prevent>
           <b-form-group class="mr-5">
@@ -61,15 +73,14 @@
 import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import locale from 'element-ui/lib/locale'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
-import { addLabelByKey } from '../../sub/helper/ViewHelper'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import { APP } from '../../sub/constant/config.js'
@@ -86,23 +97,15 @@ export default {
   data () {
     return {
       name: 'positionHistory',
-      items: [
-        {
-          text: this.$i18n.tnl('label.historyTitle'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.positionHistory'),
-          active: true
-        }
-      ],
+      items: ViewHelper.createBreadCrumbItems('historyTitle', 'positionHistory'),
       form: {
         tx: null,
+        group: null,
         datetimeFrom: null,
         datetimeTo: null,
       },
       viewList: [],
-      fields: addLabelByKey(this.$i18n, [
+      fields: ViewHelper.addLabelByKey(this.$i18n, [
         {key: 'positionDt', sortable: true, label:'dt'},
         {key: 'txName', sortable: true },
         {key: 'major', sortable: true },
@@ -141,16 +144,24 @@ export default {
         true
       )
     },
+    enableGroup () {
+      return this.isEnabledMenu('group') && APP.POT_WITH_GROUP
+    },
+    groupOptions() {
+      return StateHelper.getOptionsFromState('group',
+        group => group.groupName,
+        true
+      )
+    },
   },
   async created() {
+    StateHelper.load('group')
     const date = new Date()
     this.form.datetimeFrom = Util.getDatetime(date, {hours: -1})
     this.form.datetimeTo = Util.getDatetime(date)
   },
   mounted() {
-    import(`element-ui/lib/locale/lang/${this.$i18n.locale}`).then( (mojule) =>{
-      locale.use(mojule.default)
-    })
+    HtmlUtil.importElementUI()
     StateHelper.load('tx')
     StateHelper.load('exb')
     this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.viewList.length, maxRows: this.limitViewRows})}`
@@ -169,8 +180,9 @@ export default {
       try {
         const aTxId = (this.form.tx != null && this.form.tx.value != null)?this.form.tx.value:0
         console.log(aTxId)
+        const aGroupId = (this.form.group != null && this.form.group.value != null)? this.form.group.value: 0
         var fetchList = await HttpHelper.getAppService(
-          `/core/positionHistory/find/${aTxId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/${this.limitViewRows}`
+          `/core/positionHistory/find/${aGroupId}/${aTxId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/${this.limitViewRows}`
         )
         if (fetchList.length == null || !fetchList.length) {
           this.message = this.$i18n.tnl('message.notFoundData', {target: this.$i18n.tnl('label.positionHistory')})
@@ -183,9 +195,9 @@ export default {
           let aTx = _.find(this.txs, (tx) => { return tx.txId == posHist.txId })
           posHist.txName = Util.getValue(aTx, 'txName', '')
           let aExb = _.find(this.exbs, (exb) => { return exb.exbId == posHist.exbId })
-          posHist.deviceNum = Util.getValue(aExb, 'deviceNum', '')
           posHist.deviceId = Util.getValue(aExb, 'deviceId', '')
-          posHist.deviceIdX = Util.getValue(aExb, 'deviceIdX', '')
+          posHist.deviceNum =  Util.getValue(aExb, 'deviceNum', 0)
+          posHist.deviceIdX = Util.getValue(aExb, 'deviceIdX', 0)
           posHist.locationName = Util.getValue(aExb, 'locationName', '')
           posHist.posId = Util.getValue(aExb, 'posId', '')
           posHist.areaName = Util.getValue(aExb, 'areaName', '')
@@ -206,9 +218,10 @@ export default {
     },
     async exportCsv() {
       const aTxId = (this.form.tx != null && this.form.tx.value != null)?this.form.tx.value:0
+      const aGroupId = (this.form.group != null && this.form.group.value != null)? this.form.group.value: 0
       HtmlUtil.executeFileDL(
         APP_SERVICE.BASE_URL
-        + `/core/positionHistory/csvdownload/${aTxId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/` 
+        + `/core/positionHistory/csvdownload/${aGroupId}/${aTxId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/` 
         + getCharSet(this.$store.state.loginId)
       )
     },

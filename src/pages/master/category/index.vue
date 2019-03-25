@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid">
     <breadcrumb :items="items" />
-    <m-list :params="params" :list="categories" />
+    <m-list :params="params" :list="categoryList" />
   </div>
 </template>
 
@@ -9,7 +9,7 @@
 import mList from '../../../components/page/list.vue'
 import { mapState } from 'vuex'
 import * as StateHelper from '../../../sub/helper/StateHelper'
-import { addLabelByKey } from '../../../sub/helper/ViewHelper'
+import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import listmixinVue from '../../../components/mixin/listmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import * as Util from '../../../sub/util/Util'
@@ -31,7 +31,7 @@ export default {
         appServicePath: '/basic/category',
         csvOut: true,
         custumCsvColumns: ['categoryId', 'categoryName', 'categoryTypeName', 'color', 'bgColor', 'display.shape', 'description'],
-        fields: addLabelByKey(this.$i18n, [ 
+        fields: ViewHelper.addLabelByKey(this.$i18n, [ 
           {key: 'categoryName', sortable: true },
           {key: 'categoryTypeName', label: 'categoryType', sortable: true },
           {key: 'style', label: 'display' },
@@ -40,22 +40,19 @@ export default {
           {key: 'actions', thStyle: {width:'130px !important'} }
         ]),
         sortBy: 'categoryName',
-        initTotalRows: this.$store.state.app_service.categories.length
+        initTotalRows: this.categoryLength
       },
       categoryStyles: [],
-      items: [
-        {
-          text: this.$i18n.tnl('label.master'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.category'),
-          active: true
-        }
-      ]
+      items: ViewHelper.createBreadCrumbItems('master', 'category'),
     }
   },
   computed: {
+    categoryList() {
+      return this.$store.state.app_service.categories.filter((category)=> !category.systemUse)
+    },
+    categoryLength() {
+      return this.categoryList().length
+    },
     ...mapState('app_service', [
       'categories',
     ]),

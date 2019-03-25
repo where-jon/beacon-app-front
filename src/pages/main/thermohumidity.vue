@@ -50,6 +50,7 @@
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as SensorHelper from '../../sub/helper/SensorHelper'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as HeatmapHelper from '../../sub/helper/HeatmapHelper'
 import * as Util from '../../sub/util/Util'
@@ -72,16 +73,7 @@ export default {
   mixins: [showmapmixin],
   data() {
     return {
-      items: [
-        {
-          text: this.$i18n.tnl('label.main'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.thermohumidity'),
-          active: true
-        },
-      ],
+      items: ViewHelper.createBreadCrumbItems('main', 'thermohumidity'),
       isShownChart: false,
       chartTitle: '',
       keepExbPosition: false,
@@ -233,6 +225,7 @@ export default {
         
         this.getPositionedExb(
           (exb) => exb.sensorId == SENSOR.TEMPERATURE,
+          // (exb) => this.getSensorIds(exb).includes(SENSOR.TEMPERATURE),　 一旦単数に戻す
           (exb) => {return {id: SENSOR.TEMPERATURE, ...sensors.find((sensor) => sensor.deviceid == exb.deviceId && (sensor.timestamp || sensor.updatetime))}},
           (exb) => exb.temperature != null
         )
@@ -257,6 +250,11 @@ export default {
       HeatmapHelper.create('heatmap', this.mapImage(), (evt, mapElement, map) => {
         map.width = this.$refs.map.width
         map.height = this.$refs.map.height
+        // Retina解像度対応
+        if (devicePixelRatio > 0) {
+          map.style.width = String(map.width / devicePixelRatio) + 'px'
+          map.style.height = String(map.height / devicePixelRatio) + 'px'
+        }
         HeatmapHelper.draw(
           mapElement, 
           {
@@ -476,7 +474,7 @@ export default {
         name: device.txName? device.txName: device.locationName? device.locationName: '',
         description: device.description? ` : ${Util.cutOnLong(device.description, 10)}`: ''
       })
-    }
+    },
   }
 }
 </script>

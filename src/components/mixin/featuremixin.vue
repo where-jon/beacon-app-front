@@ -40,6 +40,37 @@ export default {
         subId: featureIdStr.length <= 6? Number(featureIdStr.substring(featureIdDigit)): 0,
       }
     },
+    createFeatureTable(masterFeatureList, currentFeatureList, hasId = null, defaultCheckFeatureNames = []){
+      return masterFeatureList.map((feature) => {
+        const featureIds = this.getFeatureIds(feature.featureId)
+        const tenantFeature = currentFeatureList.find((val) => val.tenantFeaturePK.featureId == feature.featureId)
+        const parentFeature = featureIds.subId != 0 && currentFeatureList.find((val) => {
+          const ids = this.getFeatureIds(val.tenantFeaturePK.featureId)
+          return ids.parentId == featureIds.parentId && ids.subId == 0
+        })
+        return {
+          ...feature,
+          parentShow: featureIds.subId == 0,
+          parentId: featureIds.parentId,
+          subShow: featureIds.subId != 0,
+          subId: featureIds.subId,
+          checked: hasId == false && defaultCheckFeatureNames.includes(feature.featureName.toLowerCase())? true: tenantFeature? true: false,
+          disabled: parentFeature? true: false,
+        }
+      })
+        .sort((a, b) => {
+          if(a.featureType != b.featureType){
+            return a.featureType < b.featureType? -1: 1
+          }
+          if(a.parentId != b.parentId){
+            return a.parentId < b.parentId? -1: 1
+          }
+          if(a.subId != b.subId){
+            return a.subId < b.subId? -1: 1
+          }
+          return 0
+        })
+    },
   }
 }
 </script>

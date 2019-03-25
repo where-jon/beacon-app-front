@@ -234,7 +234,6 @@ export const correctPosId = (orgPositions, now, showAllTime = false) => {
   // })
 
   Util.table('各TX単位(最終)', positions)
-
   orgPositions.forEach((orgPositionList) => {
     orgPositionList.forEach((orgPosition) => {
       _.forEach(orgPosition, (orgValue, orgKey) => {
@@ -299,27 +298,39 @@ export const correctPair = (orgPositions, now) => {
       if (APP.TX_POS_ONE_TO_ONE) {
         usedPos.push(val.pos_id)
       }
-      result.push({...val, rssi:val.rssiAvg, transparent: isTransparent(val.timestamp, now)})
+      result.push({...val, rssi:val.rssiAvg, transparent: isTransparent(val.timestamp, now), isLost: isLost(val.timestamp, now)})
     }
     return result
   }, [])
 }
 
-export const adjustPosition = (positions, ratio, exbs = []) => {
+export const adjustPosition = (positions, ratio, exbs = [], selectedMapId = null) => {
   return exbs.map((exb) => {
     const samePos = positions.filter((pos) => {
-      const location = hasTxLocation(pos)? pos.tx.location: null
-      return pos.pos_id == exb.location.posId && !location
+      const isFixPosition = hasTxLocation(pos)? selectedMapId? pos.tx.location.areaId == selectedMapId: false : false
+      return pos.pos_id == exb.location.posId && !isFixPosition
     })
     const same = (!samePos || samePos.length == 0) ? [] : getPositionsToOverlap(exb, ratio, samePos)
 
     const fixPos = positions.filter((pos) => {
-      const location = hasTxLocation(pos)? pos.tx.location: null
-      return pos.pos_id == exb.location.posId && location
+      return hasTxLocation(pos)? selectedMapId? pos.tx.location.areaId == selectedMapId: false : false
     })
     const fix = (!fixPos || fixPos.length == 0) ? [] : getCoordinateFix(ratio, fixPos)
     return same.concat(fix)
   }).filter(e => e).flatMap(e => e)
+    .filter(function (x, i, self) {
+      return (self.findIndex(function(val) {
+        return (x.btx_id === val.btx_id)
+      }) === i)
+    })
+}
+
+export const adjustMultiPosition = (positions, ratio) => {
+  const ret = []
+  positions.map((pos) => {
+    ret.push( {...pos, x: pos.x * ratio, y: pos.y * ratio} )
+  })
+  return ret
 }
 
 export const setDetectState = (positions, usePositionHistory = false) => {
@@ -336,7 +347,7 @@ export const setDetectState = (positions, usePositionHistory = false) => {
 
     position.detectState = DetectStateHelper.getState('tx', updatetime) // nearestのtimestampを使用
     position.state = DetectStateHelper.getLabel(position.detectState)
-    position.noSelectedTx = position.detectState != DETECT_STATE.DETECTED
+    position.noSelectedTx = (position.detectState != DETECT_STATE.DETECTED)
   })
 
 }
@@ -344,4 +355,9 @@ export const setDetectState = (positions, usePositionHistory = false) => {
 export const isTransparent = (timestamp, now) => {
   const date = new Date(timestamp)
   return date.getTime() < now - APP.TRANSPARENT_TIME
+}
+
+export const isLost = (timestamp, now) => {
+  const date = new Date(timestamp)
+  return date.getTime() < now - APP.LOST_TIME
 }

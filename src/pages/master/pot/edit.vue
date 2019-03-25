@@ -181,20 +181,7 @@ export default {
       defValue: {
         'potType': APP.CATEGORY_TYPES[0] != 3? APP.CATEGORY_TYPES[0]: null,
       },
-      items: [
-        {
-          text: this.$i18n.tnl('label.master'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.pot'),
-          href: '/master/pot',
-        },
-        {
-          text: this.$i18n.tnl(Util.getDetailCaptionKey(this.$store.state.app_service.pot.potId)),
-          active: true
-        }
-      ]
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'pot', href: '/master/pot'}, Util.getDetailCaptionKey(this.$store.state.app_service.pot.potId)),
     }
   },
   computed: {

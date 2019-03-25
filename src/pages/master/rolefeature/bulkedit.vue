@@ -12,6 +12,7 @@ import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
 import commonmixinVue from '../../../components/mixin/commonmixin.vue'
 import { ROLE_FEATURE } from '../../../sub/constant/Constants'
+import * as ViewHelper from '../../../sub/helper/ViewHelper'
 
 export default {
   components: {
@@ -28,28 +29,13 @@ export default {
       roleFeature:{
         roleId: this.$store.state.app_service.role.roleId
       },
-      items: [
-        {
-          text: this.$i18n.tnl('label.master'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.role'),
-          href: '/master/role',
-        },
-        {
-          text: this.$i18n.tnl('label.update'),
-          href: '/master/role/edit',
-        },
-        {
-          text: this.$i18n.tnl('label.feature'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.bulkRegister'),
-          active: true
-        },
-      ],
+      items: ViewHelper.createBreadCrumbItems(
+        'master',
+        {text: 'role', href: '/master/role'},
+        {text: 'update', href: '/master/role/edit'},
+        'feature',
+        'bulkRegister'
+      ),
     }
   },
   computed: {

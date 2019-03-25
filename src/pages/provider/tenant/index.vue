@@ -9,7 +9,7 @@
 import mList from '../../../components/page/list.vue'
 import { mapState } from 'vuex'
 import * as StateHelper from '../../../sub/helper/StateHelper'
-import { addLabelByKey } from '../../../sub/helper/ViewHelper'
+import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import listmixinVue from '../../../components/mixin/listmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 
@@ -29,7 +29,7 @@ export default {
         appServicePath: '/meta/tenant',
         delFilter: true,
         tenantAction: true,
-        fields: addLabelByKey(this.$i18n, [ 
+        fields: ViewHelper.addLabelByKey(this.$i18n, [ 
           {key: 'tenantId', sortable: true },
           {key: 'tenantCd', sortable: true },
           {key: 'tenantName', sortable: true },
@@ -38,16 +38,7 @@ export default {
         ]),
         initTotalRows: this.$store.state.app_service.tenants.length
       },
-      items: [
-        {
-          text: this.$i18n.tnl('label.provider'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.tenant'),
-          active: true
-        }
-      ]
+      items: ViewHelper.createBreadCrumbItems('provider', 'tenant'),
     }
   },
   computed: {
