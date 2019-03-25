@@ -202,10 +202,7 @@ export default {
         }
       }
     },
-    setExbPosition() {
-      this.positionedExb = _.filter(this.workExbs, (exb) => {
-        return exb.location.areaId == this.selectedArea && exb.location.x && exb.location.y > 0
-      })
+    sortExbOptions() {
       this.exbOptions = _(this.workExbs).filter((val) => {
         return val.enabled && (val.location.areaId == null || !val.location.x || !val.location.y || (val.location.x && val.location.y <= 0))
       })
@@ -214,7 +211,14 @@ export default {
             label: '' + this.getExbDisp(val.deviceId), 
             value: val.exbId
           }
-        }).value()
+        })
+        .sort((a, b) => Util.compareStrNum(a.label, b.label)).value()
+    },
+    setExbPosition() {
+      this.positionedExb = _.filter(this.workExbs, (exb) => {
+        return exb.location.areaId == this.selectedArea && exb.location.x && exb.location.y > 0
+      })
+      this.sortExbOptions()
     },
     getExbDisp(deviceId) {
       switch(this.exbDisp) {
@@ -481,6 +485,7 @@ export default {
       }
       this.positionedExb = this.positionedExb.filter((exb) => exb.deviceId != this.deleteTarget.deviceId)
       this.exbOptions.push({label: '' + this.getExbDisp(this.deleteTarget.deviceId), value: this.deleteTarget.exbId})
+      this.sortExbOptions()
       this.exbCon.removeChild(this.deleteTarget)
       this.stage.update()
     },
