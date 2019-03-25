@@ -41,6 +41,9 @@ export default {
       if(!APP.POT_WITH_POTCD){
         entity.potCd = entity.potName
       }
+      if(!Util.hasValue(entity.potType)){
+        entity.potType = CATEGORY.PERSON
+      }
       if(Util.hasValue(entity.potTxList)){
         entity.potTxList.forEach((potTx) => potTx.potTxPK.potId = entity.potId)
       }
