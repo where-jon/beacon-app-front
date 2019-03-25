@@ -104,7 +104,7 @@ export default {
         return dummyKey
       }
       if(!entity.potUserList){
-        entity.potUserList = [{potUserPK: {potId: dummyKey--, userId: dummyKey--}, user: {}}]
+        entity.potUserList = [{potUserPK: {potId: dummyKey--, userId: dummyKey}, user: {userId: dummyKey--}}]
       }
       if(headerName == 'userId'){
         entity.potUserList[0].potUserPK.userId = val
