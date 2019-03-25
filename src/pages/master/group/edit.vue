@@ -60,6 +60,7 @@ export default {
   },
   mixins: [editmixinVue],
   data() {
+    let group = this.$store.state.app_service.group
     return {
       name: 'group',
       id: 'groupId',
@@ -67,10 +68,10 @@ export default {
       appServicePath: '/basic/group',
       defaultColor: '#000000',
       defaultBgColor: '#ffffff',
-      form: ViewHelper.extract(this.$store.state.app_service.group, ['groupId', 'groupName', 'ruby', 'display', 'description']),
-      oldShape: null,
-      oldColor: null,
-      oldBgColor: null,
+      form: ViewHelper.extract(group, ['groupId', 'groupName', 'ruby', 'display', 'description']),
+      oldShape: Util.getValue(group, 'display.shape', null),
+      oldColor: Util.getValue(group, 'display.color', null),
+      oldBgColor: Util.getValue(group, 'display.bgColor', null),
       items: [
         {
           text: this.$i18n.tnl('label.master'),
@@ -110,9 +111,11 @@ export default {
   },
   methods: {
     beforeReload(){
-      this.form.displayShape = this.oldShape? this.oldShape: this.shapes[0].value
-      this.form.displayColor = Util.colorCd4display(this.oldColor? this.oldColor: null, this.defaultColor)
-      this.form.displayBgColor = Util.colorCd4display(this.oldBgColor? this.oldBgColor: null, this.defaultBgColor)
+      if(this.form){
+        this.form.displayShape = this.oldShape? this.oldShape: this.shapes[0].value
+        this.form.displayColor = Util.colorCd4display(this.oldColor? this.oldColor: null, this.defaultColor)
+        this.form.displayBgColor = Util.colorCd4display(this.oldBgColor? this.oldBgColor: null, this.defaultBgColor)
+      }
     },
     afterCrud(){
       StateHelper.setForceFetch('pot', true)
