@@ -32,7 +32,7 @@
         </b-nav-item-dropdown>
       </div>
       <div class="col-auto reload-button-container ">
-        <a v-if="reload" id="reload" href="#" @click="onClickReload">
+        <a v-if="reload" id="reload" class="rotateStop" href="#" @click="onClickReload">
           <i id="reloadIcon" :class="classes" title="リロード" />
         </a>
       </div>
@@ -209,6 +209,14 @@ export default {
 
 <style lang="scss">
   @import "../../sub/constant/config.scss";
+
+  .rotate {
+    animation: fa-spin 2s infinite linear;
+  }
+
+  .rotateStop {
+    animation: fa-spin 2s 0 linear;
+  }
 
   div.breadcrumb.navigation {
     margin-top: 20px;
