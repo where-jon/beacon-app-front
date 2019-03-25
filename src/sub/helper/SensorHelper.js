@@ -9,6 +9,20 @@ import _ from 'lodash'
 let chart = null
 let subChart = null
 
+export const calcChartMax = (chartData, column, by, cut) => {
+  const collect = chartData.map(val => {
+    if(!val){
+      return 0
+    }
+    if(by == 'day'){
+      return val.max? val.max[column]: val.data? val.data[column]: 0
+    }
+    return val.data? val.data[column]: 0
+  })
+  const cutUnit = Math.pow(10, cut)
+  return Math.ceil(Math.max(...collect) / cutUnit) * cutUnit
+}
+
 export const getThermoPatternConfig = () => {
   if(Util.hasValue(DISP.THERMOH_PATTERN)){
     return DISP.THERMOH_PATTERN.map((pattern) => {
@@ -200,7 +214,7 @@ export const createChartPirOptions = (chartData, by, i18n, isResponsive = false)
         label: i18n.tnl('label.detectedCount'),
         ticks: {
           min: 0,
-          max: Math.ceil(Math.max(...chartData.map((val) => val && val.data? val.data.count: 0)) / 10 ) * 10
+          max: calcChartMax(chartData, 'count', by, 2)
         },
       },
       null,
@@ -223,7 +237,7 @@ export const createChartThermopileOptions = (chartData, by, i18n, isResponsive =
         label: i18n.tnl('label.detectedCount'),
         ticks: {
           min: 0,
-          max: Math.ceil(Math.max(...chartData.map((val) => val && val.data? val.data.count: 0)) / 10 ) * 10
+          max: calcChartMax(chartData, 'count', by, 2)
         }
       },
       null,
@@ -272,7 +286,7 @@ export const createChartPressureOptions = (chartData, by, i18n, isResponsive = f
         label: i18n.tnl('label.pressVol'),
         ticks: {
           min: 0,
-          max: Math.ceil(Math.max(...chartData.map((val) => val && val.data? val.data.pressVol: 0)) / 10 ) * 10
+          max: calcChartMax(chartData, 'pressVol', by, 2)
         },
       },
       null,
