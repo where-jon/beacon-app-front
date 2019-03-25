@@ -495,3 +495,11 @@ export const compareArray = (a, b) => {
   }
   return 0
 }
+
+export const compareStrNum = (a, b) => {
+  const aNaN = isNaN(a)
+  const bNaN = isNaN(b)
+  const compA = !aNaN && !bNaN? Number(a): String(a)
+  const compB = !aNaN && !bNaN? Number(b): String(b)
+  return compA < compB? -1: compA > compB? 1: 0
+}
