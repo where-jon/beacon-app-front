@@ -220,6 +220,14 @@ li.menu-item.item.indigo:hover {
   background: #8A91C7;
 }
 
+li.menu-item.item.exeo {
+  background: $exeo-menu-item;
+}
+
+li.menu-item.item.exeo:hover {
+  background: #5868D5;
+}
+
 .clearfix::after {
   content: "";
   display: block;

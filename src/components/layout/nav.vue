@@ -346,6 +346,10 @@ li.nav-item.b-nav-dropdown.indigo > *{
   background-color: $indigo;
 }
 
+li.nav-item.b-nav-dropdown.exeo > *{
+  background-color: $exeo;
+}
+
 a.dropdown-item.default:hover,
 a.dropdown-item.default:focus {
   background-color: #7EA0C4 !important;
@@ -374,6 +378,11 @@ a.dropdown-item.gray-scale:focus {
 a.dropdown-item.indigo:hover, 
 a.dropdown-item.indigo:focus {
   background: #8A91C7 !important;
+}
+
+a.dropdown-item.exeo:hover, 
+a.dropdown-item.exeo:focus {
+  background: #5868D5 !important;
 }
 
 div.navbar-brand {
