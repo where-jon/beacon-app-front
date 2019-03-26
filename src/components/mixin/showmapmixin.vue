@@ -295,6 +295,7 @@ export default {
     },
     async changeArea(val) {
       if (val) {
+        await StateHelper.loadAreaImage(val)
         const area = _.find(this.areas, (area) => {
           return area.areaId == val
         })
