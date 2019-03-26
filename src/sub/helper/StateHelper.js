@@ -146,7 +146,7 @@ const appStateConf = {
           x: location? Math.round(location.x * 10)/10: null,
           y: location? Math.round(location.y * 10)/10: null,
           sensor: i18n.tnl('label.' + Util.getValue(exb, 'sensorName', 'normal')),
-          isAbsentZone: location? Util.getValue(location, 'locationZoneList.0.zone.zoneCategoryList.0.category.categoryName', false) === SYSTEM_ZONE_CATEGORY_NAME.ABSENT: false,
+          isAbsentZone: exb.zoneCategoryName === SYSTEM_ZONE_CATEGORY_NAME.ABSENT,
           // sensorIdNames: getSensorIdNames(exb.exbSensorList), // 一旦単数に戻す
         }
       })
