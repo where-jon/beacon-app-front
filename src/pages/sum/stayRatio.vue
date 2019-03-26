@@ -104,8 +104,7 @@ export default {
   async created() {
     await StateHelper.load('group')
     await StateHelper.load('pots')
-    const nowDate = new Date()
-    this.form.date = Util.getDatetime(nowDate, {nowDate: -3})
+    this.form.date = moment().add(-1, 'days').format('YYYYMMDD')
   },
   async mounted() {
     HtmlUtil.importElementUI()
