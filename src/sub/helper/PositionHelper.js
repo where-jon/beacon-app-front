@@ -48,40 +48,41 @@ const getCoordinateFix = (ratio, fixPositions) => {
 const getCoordinateDefault = (exb, ratio, samePos) => {
   let baseX = exb.location.x * ratio
   let baseY = exb.location.y * ratio
+  let txR = DISP.TX_R * ratio
   const ret = []
   switch (samePos.length) {
   case 1:
     ret.push({...samePos[0], x: baseX, y: baseY})
     break
   case 2:
-    ret.push({...samePos[0], x: baseX - DISP.TX_R / DISP.TX_DIV_2, y: baseY})
-    ret.push({...samePos[1], x: baseX + DISP.TX_R / DISP.TX_DIV_2, y: baseY})
+    ret.push({...samePos[0], x: baseX - txR / DISP.TX_DIV_2, y: baseY})
+    ret.push({...samePos[1], x: baseX + txR / DISP.TX_DIV_2, y: baseY})
     break
   case 3:
-    ret.push({...samePos[0], x: baseX - DISP.TX_R / DISP.TX_DIV_3, y: baseY})
+    ret.push({...samePos[0], x: baseX - txR / DISP.TX_DIV_3, y: baseY})
     ret.push({...samePos[1], x: baseX, y: baseY})
-    ret.push({...samePos[2], x: baseX + DISP.TX_R / DISP.TX_DIV_3, y: baseY})
+    ret.push({...samePos[2], x: baseX + txR / DISP.TX_DIV_3, y: baseY})
     break
   case 4:
-    ret.push({...samePos[0], x: baseX - DISP.TX_R / DISP.TX_DIV_2, y: baseY - DISP.TX_R / DISP.TX_DIV_2})
-    ret.push({...samePos[1], x: baseX + DISP.TX_R / DISP.TX_DIV_2, y: baseY - DISP.TX_R / DISP.TX_DIV_2})
-    ret.push({...samePos[2], x: baseX - DISP.TX_R / DISP.TX_DIV_2, y: baseY + DISP.TX_R / DISP.TX_DIV_2})
-    ret.push({...samePos[3], x: baseX + DISP.TX_R / DISP.TX_DIV_2, y: baseY + DISP.TX_R / DISP.TX_DIV_2})
+    ret.push({...samePos[0], x: baseX - txR / DISP.TX_DIV_2, y: baseY - txR / DISP.TX_DIV_2})
+    ret.push({...samePos[1], x: baseX + txR / DISP.TX_DIV_2, y: baseY - txR / DISP.TX_DIV_2})
+    ret.push({...samePos[2], x: baseX - txR / DISP.TX_DIV_2, y: baseY + txR / DISP.TX_DIV_2})
+    ret.push({...samePos[3], x: baseX + txR / DISP.TX_DIV_2, y: baseY + txR / DISP.TX_DIV_2})
     break
   default:
-    ret.push({...samePos[0], x: baseX - DISP.TX_R / DISP.TX_DIV_3, y: baseY - DISP.TX_R / DISP.TX_DIV_2})
-    ret.push({...samePos[1], x: baseX, y: baseY - DISP.TX_R / DISP.TX_DIV_2})
-    ret.push({...samePos[2], x: baseX + DISP.TX_R / DISP.TX_DIV_3, y: baseY - DISP.TX_R / DISP.TX_DIV_2})
-    ret.push({...samePos[3], x: baseX - DISP.TX_R / DISP.TX_DIV_3, y: baseY + DISP.TX_R / DISP.TX_DIV_2})
+    ret.push({...samePos[0], x: baseX - txR / DISP.TX_DIV_3, y: baseY - txR / DISP.TX_DIV_2})
+    ret.push({...samePos[1], x: baseX, y: baseY - txR / DISP.TX_DIV_2})
+    ret.push({...samePos[2], x: baseX + txR / DISP.TX_DIV_3, y: baseY - txR / DISP.TX_DIV_2})
+    ret.push({...samePos[3], x: baseX - txR / DISP.TX_DIV_3, y: baseY + txR / DISP.TX_DIV_2})
     if (samePos.length <= 6) {
-      ret.push({...samePos[4], x: baseX, y: baseY + DISP.TX_R / DISP.TX_DIV_2})
+      ret.push({...samePos[4], x: baseX, y: baseY + txR / DISP.TX_DIV_2})
     }
     if (samePos.length == 6) {
-      ret.push({...samePos[5], x: baseX + DISP.TX_R / DISP.TX_DIV_3, y: baseY + DISP.TX_R / DISP.TX_DIV_2})
+      ret.push({...samePos[5], x: baseX + txR / DISP.TX_DIV_3, y: baseY + txR / DISP.TX_DIV_2})
     }
     if (samePos.length > 6) { // 6超の場合、2段目を分割して重ねて表示
       for (let i=4; i < samePos.length; i++) {
-        ret.push({...samePos[i], x: baseX - DISP.TX_R / DISP.TX_DIV_3 + DISP.TX_R * 5 / (samePos.length - 3) * (i - 3), y: baseY + DISP.TX_R / DISP.TX_DIV_2})
+        ret.push({...samePos[i], x: baseX - txR / DISP.TX_DIV_3 + txR * 5 / (samePos.length - 3) * (i - 3), y: baseY + txR / DISP.TX_DIV_2})
       }
     }
     break
