@@ -387,16 +387,18 @@ export default {
     getShowTxPositions(positions, allShow = false){
       const now = !DEV.USE_MOCK_EXC ? new Date().getTime(): mock.positions_conf.start + this.count++ * mock.positions_conf.interval
       const correctPositions = APP.USE_POSITION_HISTORY? this.positionHistores: PositionHelper.correctPosId(this.orgPositions, now)
-      return _(positions).filter((pos) => pos.tx && Util.bitON(pos.tx.disp, TX.DISP.POS)).map((pos) => {
-        let cPos = _.find(correctPositions, (cPos) => pos.btx_id == cPos.btx_id)
-        if (cPos || allShow) {
-          return {
-            ...pos,
-            transparent: !cPos? true: cPos.transparent? cPos.transparent: PositionHelper.isTransparent(cPos.timestamp, now)
+      return _(positions)
+        .filter((pos) => allShow || (pos.tx && Util.bitON(pos.tx.disp, TX.DISP.POS)))
+        .map((pos) => {
+          let cPos = _.find(correctPositions, (cPos) => pos.btx_id == cPos.btx_id)
+          if (cPos || allShow) {
+            return {
+              ...pos,
+              transparent: !cPos? true: cPos.transparent? cPos.transparent: PositionHelper.isTransparent(cPos.timestamp, now)
+            }
           }
-        }
-        return null
-      }).compact().value()
+          return null
+        }).compact().value()
     },
     setPositionStyle(positions){
       return _.map(positions, pos => {
