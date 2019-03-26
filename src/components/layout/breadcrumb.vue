@@ -32,7 +32,7 @@
         </b-nav-item-dropdown>
       </div>
       <div class="col-auto reload-button-container ">
-        <a v-if="reload" id="reload" class="rotateStop" href="#" @click="onClickReload">
+        <a v-if="reload" id="reload" href="#" @click="onClickReload">
           <i id="reloadIcon" :class="classes" title="リロード" />
         </a>
       </div>
@@ -98,7 +98,7 @@ export default {
       return this.$store.state.loginId
     },
     classes() {
-      return 'fas fa-sync-alt' + (!this.isLoad ? '' : ' fa-spin')
+      return 'fas fa-sync-alt'
     },
     extNavClasses() {
       const theme = getThemeClasses()
@@ -142,10 +142,12 @@ export default {
       this.$router.push(page)
     },
     onClickReload(e) {
+      HtmlUtil.removeClass(e, 'rotateStop')
       HtmlUtil.addClass(e, 'rotate')
       EventBus.$emit(this.reloadEmitName, {
         done() {
           HtmlUtil.removeClass(e, 'rotate')
+          HtmlUtil.addClass(e, 'rotateStop')
           AuthHelper.checkSession()
         }
       })
@@ -215,7 +217,7 @@ export default {
   }
 
   .rotateStop {
-    animation: fa-spin 2s 0 linear;
+    animation-name: none !important;
   }
 
   div.breadcrumb.navigation {
