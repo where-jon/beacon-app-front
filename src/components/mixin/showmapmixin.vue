@@ -411,7 +411,11 @@ export default {
       return _(positions).filter((pos) => pos.tx && Util.bitON(pos.tx.disp, TX.DISP.POS)).map((pos) => {
         let cPos = _.find(correctPositions, (cPos) => pos.btx_id == cPos.btx_id)
         if (cPos || allShow) {
-          return {...pos, transparent: !cPos? true: cPos.transparent? cPos.transparent: PositionHelper.isTransparent(cPos.timestamp, now), isLost: PositionHelper.isLost(cPos.timestamp, now)}
+          return {
+            ...pos,
+            transparent: !cPos? true: cPos.transparent? cPos.transparent: PositionHelper.isTransparent(cPos.timestamp, now),
+            isLost: !cPos? true: PositionHelper.isLost(cPos.timestamp, now)
+          }
         }
         return null
       }).compact().value()
