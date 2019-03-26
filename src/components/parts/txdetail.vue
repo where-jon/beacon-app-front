@@ -130,7 +130,7 @@ export default {
       this.setImageWidth()
       const isOut = this.isOutOfFrame()
       const imageWidth = this.isDisableThumbnail()? 0 : this.imageWidth
-      const left = !isOut ? this.selectedTx.orgLeft - DISP.TX_R : 
+      const left = !isOut ? this.selectedTx.orgLeft - DISP.TXDETAIL_DIFF : 
         this.selectedSensor.length == 0? (this.selectedTx.orgLeft - (this.descriptionWidth + imageWidth)): this.selectedTx.orgLeft + DISP.TX_R - this.meditagWidth
       return left + 'px'
     },

@@ -278,6 +278,7 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     MIN_HEIGHT: 30,
   },
   
+  TXDETAIL_DIFF: 25, // TX詳細の表示位置差分（ポップアップ左端から吹き出しの中央までの距離）
   TXDETAIL_POPUP_SIZE: 211, // TX詳細表示ポップアップの高さ
   TXSENSOR_POPUP_SIZE: 165, // TXセンサー表示ポップアップの高さ
   TXMEDITAG_POPUP_SIZE: 236, // TXMEDITAG表示ポップアップの高さ
