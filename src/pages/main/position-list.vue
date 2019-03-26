@@ -16,7 +16,7 @@ import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import { addLabelByKey } from '../../sub/helper/ViewHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
-import { TX, EXTRA_NAV } from '../../sub/constant/Constants'
+import { EXTRA_NAV } from '../../sub/constant/Constants'
 import * as Util from '../../sub/util/Util'
 import { APP } from '../../sub/constant/config.js'
 
@@ -115,7 +115,7 @@ export default {
             categoryId: Util.getValue(pos, 'tx.categoryId').val,
             areaId: Util.getValue(pos, 'exb.areaId').val,
           }
-        }).filter((pos) => !pos.tx || Util.bitON(pos.tx.disp, TX.DISP.POS))
+        }).sort((cur, next) => cur.txId < next.txId ? -1 : (cur.txId > next.txId ? 1 : 0))
         Util.debug(positions)
         this.replaceAS({positionList: positions})
         if (payload && payload.done) {
