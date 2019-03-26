@@ -264,10 +264,16 @@ export default {
         }
       }
       
+      // canvasのサイズをとっておく
+      this.canvasWidth = canvas.width
+      this.canvasHeight = canvas.height
+
       // Retina解像度対応
       if (devicePixelRatio > 0) {
         canvas.style.width = String(canvas.width / devicePixelRatio) + 'px'
         canvas.style.height = String(canvas.height / devicePixelRatio) + 'px'
+        this.styleWidth = canvas.width / devicePixelRatio
+        this.styleHeight = canvas.height / devicePixelRatio
       }
 
       this.stage = new Stage('map')
@@ -496,14 +502,15 @@ export default {
       const position = this.getPositions().find((e) => {
         return e.btx_id === btxId
       })
+
       const balloonClass = !btxId ? '': 'balloon' + (rev ? '-u': '-b')
       const selectedTx = {
         btxId,
         minor: 'minor:' + btxId,
         major: tx.major? 'major:' + tx.major : '',
         // TX詳細ポップアップ内部で表示座標計算する際に必要
-        orgLeft: x + offsetX,
-        orgTop: y + offsetY,
+        orgLeft: x / this.canvasWidth * this.styleWidth + offsetX,
+        orgTop: y / this.canvasHeight * this.styleHeight + offsetY,
         isAbove: rev,
         containerWidth: containerParent.width,
         containerHeight: containerParent.height,
