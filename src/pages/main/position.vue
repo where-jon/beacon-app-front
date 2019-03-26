@@ -277,6 +277,7 @@ export default {
         this.showProgress()
         const reloadButton = document.getElementById('reloadIcon')
         if(!this.firstTime && reloadButton){
+          HtmlUtil.removeClass({target: reloadButton}, 'rotateStop')
           HtmlUtil.addClass({target: reloadButton}, 'rotate')
         }
         await this.fetchPositionData()
@@ -298,6 +299,7 @@ export default {
         // this.prohibitInterval = setInterval(this.twinkle,DISP.PROHIBIT_TWINKLE_TIME) TODO: Violation発生
         if(!this.firstTime && reloadButton){
           HtmlUtil.removeClass({target: reloadButton}, 'rotate')
+          HtmlUtil.addClass({target: reloadButton}, 'rotateStop')
         }
         this.firstTime = false
         this.hideProgress()
