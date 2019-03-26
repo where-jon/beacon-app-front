@@ -250,11 +250,6 @@ export default {
       HeatmapHelper.create('heatmap', this.mapImage(), (evt, mapElement, map) => {
         map.width = this.$refs.map.width
         map.height = this.$refs.map.height
-        // Retina解像度対応
-        if (devicePixelRatio > 0) {
-          map.style.width = String(map.width / devicePixelRatio) + 'px'
-          map.style.height = String(map.height / devicePixelRatio) + 'px'
-        }
         HeatmapHelper.draw(
           mapElement, 
           {
@@ -265,6 +260,17 @@ export default {
           },
           this.heatmapData
         )
+        // Retina解像度対応
+        if (devicePixelRatio > 0) {
+          map.style.width = String(map.width / devicePixelRatio) + 'px'
+          map.style.height = String(map.height / devicePixelRatio) + 'px'
+
+          const canvasElements = HeatmapHelper.getCanvasElements(mapElement)
+          canvasElements.forEach((canvasElement) => {
+            canvasElement.style.width = String(map.width) + 'px'
+            canvasElement.style.height = String(map.height) + 'px'
+          })
+        }
         onLoad && onLoad()
       })
     },
