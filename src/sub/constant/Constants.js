@@ -17,6 +17,7 @@ export const THEME = [
   {id: 4,  name: 'vivid', color: '#D50057'},
   {id: 5,  name: 'gray-scale', color: '#484848'},
   {id: 6,  name: 'indigo', color: '#5968B0'},
+  {id: 7,  name: 'exeo', color: '#2E45E6'},
 ]
 
 export const CHAR_SET = [

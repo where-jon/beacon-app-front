@@ -15,6 +15,7 @@ $autumn: #927760;
 $vivid: #D50057;
 $gray-scale: #484848;
 $indigo: #5968B0;
+$exeo: #2E45E6;
 
 $button-default: #376495;
 
@@ -24,6 +25,7 @@ $autumn-menu-item: #C59E57;
 $vivid-menu-item: #FF4784;
 $gray-scale-menu-item: #7F7F7F;
 $indigo-menu-item: #919ACA;
+$exeo-menu-item: #6979E6;
 
 .default {
   background-color: $default;
@@ -51,6 +53,10 @@ $indigo-menu-item: #919ACA;
 
 .indigo {
   background-color: $indigo;
+}
+
+.exeo {
+  background-color: $exeo;
 }
 
 // To use css value in js, export as the follwing
@@ -101,5 +107,6 @@ $theme-colors: map-merge((
   gray-scale : $gray-scale,
   indigo : $indigo,
   buttonDefault: $button-default,
+  exeo: $exeo,
 ), $theme-colors);
 

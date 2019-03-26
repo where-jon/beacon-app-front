@@ -1,43 +1,36 @@
 <template>
-  <div>
-    <ul class="menu-groups">
-      <li v-for="(group, i) in nav" :key="group.path" :to="'/' + group.base" class="menu-group" active-class="active">
-        <ul class="menu-group-items">
-          <li class="menu-item title clearfix" @click.stop="onMenuClick(i)">
-            <span class="title">
-              <i :class="group.icon" />&nbsp;&nbsp;{{ $t("label." + group.key) }}
-            </span>
-            <span class="direction">
-              <i v-if="selectedItem !== i" class="fa fa-angle-left" />
-              <i v-if="selectedItem === i" class="fa fa-angle-down" />
-            </span>
+  <ul class="menu-groups">
+    <li v-for="(group, i) in nav" :key="group.path" :to="'/' + group.base" class="menu-group" active-class="active">
+      <ul class="menu-group-items">
+        <li class="menu-item title clearfix" @click.stop="onMenuClick(i)">
+          <span class="title">
+            <i :class="group.icon" />&nbsp;&nbsp;{{ $t("label." + group.key) }}
+          </span>
+          <span class="direction">
+            <i v-if="selectedItem !== i" class="fa fa-angle-left" />
+            <i v-if="selectedItem === i" class="fa fa-angle-down" />
+          </span>
+        </li>
+        <vue-slide-up-down :active="selectedItem === i">
+          <li v-for="page in group.pages" :key="page.key" :class="menuItemClasses">
+            <router-link :to="'/' + group.base + page.path" class="bd-toc-link">
+              <i :class="page.icon" class="ml-3 menu-item-icon" />&nbsp;{{ $t("label." + (page.label? page.label: page.key)) }}
+            </router-link>
           </li>
-          <vue-slide-up-down :active="selectedItem === i">
-            <li v-for="page in group.pages" :key="page.key" :class="menuItemClasses">
-              <router-link :to="'/' + group.base + page.path" class="bd-toc-link">
-                <i :class="page.icon" class="ml-3 menu-item-icon" />&nbsp;{{ $t("label." + (page.label? page.label: page.key)) }}
-              </router-link>
-            </li>
-          </vue-slide-up-down>
-        </ul>
-      </li>
-    </ul>
-    <custom-link :link-key="linkKey" :link-url="linkUrl" />
-  </div>
+        </vue-slide-up-down>
+      </ul>
+    </li>
+  </ul>
 </template>
 
 <script>
 
-import CustomLink from '../parts/customlink.vue'
-import { APP } from '../../sub/constant/config'
-import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import { getThemeClasses } from '../../sub/helper/ThemeHelper'
 import VueSlideUpDown from 'vue-slide-up-down'
 
 export default {
   components: {
     'vue-slide-up-down': VueSlideUpDown,
-    CustomLink,
   },
   data() {
     return {
@@ -49,12 +42,6 @@ export default {
   computed: {
     loginId() {
       return this.$store.state.loginId
-    },
-    linkKey(){
-      return HtmlUtil.getResourcePath(APP.SHOW_MENU_LINK)
-    },
-    linkUrl(){
-      return APP.SHOW_MENU_LINK_URL
     },
     menuItemClasses () {
       // use for update theme-color
@@ -218,6 +205,14 @@ li.menu-item.item.indigo {
 
 li.menu-item.item.indigo:hover {
   background: #8A91C7;
+}
+
+li.menu-item.item.exeo {
+  background: $exeo-menu-item;
+}
+
+li.menu-item.item.exeo:hover {
+  background: #5868D5;
 }
 
 .clearfix::after {
