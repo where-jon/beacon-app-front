@@ -36,7 +36,7 @@ export const getDeviceIdName = (device, option = {ignorePrimaryKey: false, force
     return APP.EXB_WITH_EXBID && !option.ignorePrimaryKey? 'exbId': APP.EXB_WITH_DEVICE_NUM? 'deviceNum': APP.EXB_WITH_DEVICE_ID? 'deviceId': APP.EXB_WITH_DEVICE_IDX? 'deviceIdX': 'exbId'
   }
   if(device.txId){
-    return option.forceSensorName? 'sensorName': APP.TX_WITH_TXID && !option.ignorePrimaryKey? 'txId': APP.TX_BTX_MINOR != 'minor'? 'btxId': 'minor'
+    return option.forceSensorName? 'txName': APP.TX_WITH_TXID && !option.ignorePrimaryKey? 'txId': APP.TX_BTX_MINOR != 'minor'? 'btxId': 'minor'
   }
   return null
 }
