@@ -84,6 +84,7 @@ export default {
 
       _.forEach(positions, (pos) => {
         const posMasterId = Util.getValue(pos, 'exb.' + this.id, null)
+        const exb = this.exbs.find((exb) => exb.posId == pos.pos_id)
         _.forEach(tempMaster, (obj) => {
           if (posMasterId == obj[this.id] && !pos.noSelectedTx) {
             prohibitData? prohibitData.some((data) => {
@@ -92,8 +93,10 @@ export default {
                 return true
               }
             }): false
-            obj.positions.push(pos)
+            pos.isDisableArea = exb? exb.isAbsentZone: false
+            exb? exb.isAbsentZone? false: obj.positions.push(pos): obj.positions.push(pos)
           }
+          
         })
       })
       return tempMaster
