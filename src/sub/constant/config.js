@@ -78,6 +78,7 @@ export const APP = { // 機能面に関する設定
 
   // 温湿度
   USE_HUMIDITY_ALERT: true, // 湿度アラートの使用
+  USE_THERMOH_HEATMAP: true, // ヒートマップの使用
 
   // TX関連設定
   TX_SENSOR: [1,5,6,7], // TXのタイプに設定可能なセンサーID
