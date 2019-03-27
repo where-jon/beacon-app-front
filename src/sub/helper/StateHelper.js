@@ -112,6 +112,10 @@ export const getTemplateKeyName = (templateKey) => {
   return templateKeyName != null? templateKeyName.text: null
 }
 
+export const getDispCategoryName = (category) => {
+  return category.systemCategoryName? i18n.tnl('label.' + category.systemCategoryName): category.categoryName
+}
+
 export const setForceFetch = (name, force) => {
   const storeName = `forceFetch${name.charAt(0).toUpperCase()}${name.slice(1)}`
   store.commit('app_service/replaceAS', {[storeName]:force})
@@ -232,7 +236,7 @@ const appStateConf = {
         bgColor: val.display? val.display.bgColor: null,
         shapeName: val.display? getShapeName(val.display.shape): null,
         categoryTypeName: getCategoryTypeName(val),
-        dispCategoryName: val.systemUse != 0? i18n.tnl('label.' + val.categoryName.toLowerCase()): val.categoryName,
+        systemCategoryName: val.systemUse != 0? val.categoryName.toLowerCase(): null,
       }))
     }
   },
@@ -305,7 +309,7 @@ const appStateConf = {
           locationName: Util.hasValue(val.locationZoneList)? val.locationZoneList[0].location.locationName: null,
           categoryId: Util.hasValue(val.zoneCategoryList)? val.zoneCategoryList[0].zoneCategoryPK.categoryId: null,
           categoryName: category? category.categoryName: null,
-          dispCategoryName: category? category.systemUse != 0? i18n.tnl('label.' + category.categoryName.toLowerCase()): category.categoryName: null,
+          systemCategoryName: category? category.systemUse != 0? category.categoryName.toLowerCase(): null: null,
         }
       })
     }

@@ -63,7 +63,7 @@ export default {
     getZoneCategoryOptions(zoneCategories){
       const zoneCategoryIds = zoneCategories.filter((zoneCategory) => zoneCategory.categoryId >= 0).map((zoneCategory) => zoneCategory.categoryId)
       return StateHelper.getOptionsFromState('category',
-        category => category.dispCategoryName,
+        category => StateHelper.getDispCategoryName(category),
         true,
         (category) => zoneCategoryIds.includes(`${category.categoryId}`))
     },

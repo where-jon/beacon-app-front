@@ -118,7 +118,7 @@ export default {
     async initCategoryNames() {
       await StateHelper.load('category')
       this.categoryNames = StateHelper.getOptionsFromState('category',
-        category => category.dispCategoryName,
+        category => StateHelper.getDispCategoryName(category),
         false, 
         category => !CATEGORY.POT_AVAILABLE.includes(category.categoryType)
       )
