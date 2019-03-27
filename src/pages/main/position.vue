@@ -321,10 +321,7 @@ export default {
         let mapRatio = area.mapRatio
         position = PositionHelper.adjustMultiPosition(this.getPositions(), this.mapImageScale * mapRatio)
       }else{
-        let positions = this.getPositions().filter((pos) => {
-          return pos.timestamp && new Date(pos.timestamp) > new Date().getTime() - APP.LOST_TIME
-        })
-        position = PositionHelper.adjustPosition(positions, this.mapImageScale, this.positionedExb, this.selectedArea)
+        position = PositionHelper.adjustPosition(this.getPositions(), this.mapImageScale, this.positionedExb, this.selectedArea)
       }
       position.forEach((pos) => {
         this.showTx(pos)

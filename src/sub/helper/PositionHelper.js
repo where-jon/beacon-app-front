@@ -309,7 +309,8 @@ export const adjustPosition = (positions, ratio, exbs = [], selectedMapId = null
   return exbs.map((exb) => {
     const samePos = positions.filter((pos) => {
       const isFixPosition = hasTxLocation(pos)? selectedMapId? pos.tx.location.areaId == selectedMapId: false : false
-      return pos.pos_id == exb.location.posId && !isFixPosition
+      return !isFixPosition && pos.pos_id == exb.location.posId 
+        && pos.timestamp && new Date(pos.timestamp) > new Date().getTime() - APP.LOST_TIME
     })
     const same = (!samePos || samePos.length == 0) ? [] : getPositionsToOverlap(exb, ratio, samePos)
 
