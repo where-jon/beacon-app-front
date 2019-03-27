@@ -502,10 +502,11 @@ export default {
       const map = HtmlUtil.getRect('#map')
       const containerParent = HtmlUtil.getRect('#mapContainer', 'parentNode')
       const offsetX = map.left - containerParent.left + (!this.isInstallation ? 0 : 48)
-      const offsetY = map.top - containerParent.top + (!this.isInstallation ? 0 : 20)
+      //const offsetY = map.top - containerParent.top + (!this.isInstallation ? 0 : 20)
       const isDispRight = x + offsetX + 100 < window.innerWidth
       // rev === trueの場合、ポップアップを上に表示
       const rev = y + map.top + DISP.TX_R + tipOffsetY + popupHeight > window.innerHeight
+      const ratio = this.styleWidth / this.canvasWidth
 
       const position = this.getPositions().find((e) => {
         return e.btx_id === btxId
@@ -517,9 +518,10 @@ export default {
         minor: 'minor:' + btxId,
         major: tx.major? 'major:' + tx.major : '',
         // TX詳細ポップアップ内部で表示座標計算する際に必要
-        orgLeft: x / this.canvasWidth * this.styleWidth + offsetX,
-        orgTop: y / this.canvasHeight * this.styleHeight + offsetY,
+        orgLeft: x * ratio + offsetX,
+        orgTop: y * ratio,
         isAbove: rev,
+        scale: this.mapImageScale,
         containerWidth: containerParent.width,
         containerHeight: containerParent.height,
         class: balloonClass,

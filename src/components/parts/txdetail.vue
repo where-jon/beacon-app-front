@@ -141,25 +141,17 @@ export default {
         .filter((elem) => elem)
     },
     getTop() {
-      let pHeight = this.popupHeight
-      const minusItemCount = Object.keys(DISP.TXDETAIL_ITEMS).length - Object.keys(this.getPopupDispItems()).length
-      const oneSize = ((this.popupHeight - 10) / Object.keys(DISP.TXDETAIL_ITEMS).length) // 余白分10をマイナス
-      const minusHeight = (minusItemCount * oneSize)
-      if (this.selectedSensor.length == 0 && this.isDisableThumbnail()) {
-        pHeight = this.popupHeight - minusHeight
-      } else {
-        const detailHeight = Object.keys(this.getPopupDispItems()).length * oneSize
-        if (this.selectedSensor.length == 0 && detailHeight <= this.imageHeight + 10) {
-          pHeight = this.imageHeight + 10 // 余白分をプラス
-        } else {
-          // 何もしない
-        }
+      const txR = DISP.TX_R * this.selectedTx.scale
+      let offset = 0
+      if(this.selectedSensor.length > 0){
+        offset = -80 // TXとMEDITAGの高さの差
       }
-      const top = !this.isAbove ? (this.selectedTx.orgTop - pHeight - DISP.TX_R - this.tipHeight) :
-        this.selectedTx.orgTop + DISP.TX_R + this.tipHeight
+      // TODO:下に表示するケースを適切に実装する
+      const top = this.selectedTx.orgTop - txR - 5 + offset
       return top + 'px'
     },
     getClass() {
+      // TODO:isAboveがnullになってしまう
       const isOut = this.isOutOfFrame()
       if (this.isAbove) {
         return !isOut ? 'balloon-b' : 'balloon-br'
