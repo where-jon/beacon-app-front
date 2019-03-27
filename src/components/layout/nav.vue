@@ -382,7 +382,7 @@ a.dropdown-item.indigo:focus {
 
 a.dropdown-item.exeo:hover, 
 a.dropdown-item.exeo:focus {
-  background: #5868D5 !important;
+  background: #7b8ccb !important;
 }
 
 div.navbar-brand {
