@@ -1,6 +1,7 @@
 <template>
   <div id="mapContainer" class="container-fluid" @click="resetDetail">
     <breadcrumb :items="items" :extra-nav-spec="extraNavSpec" :reload="true" :short-name="shortName" :legend-items="legendItems" />
+    <prohibitAlert :messagelist="message" />
     <b-row class="mt-2">
       <b-form inline class="mt-2" @submit.prevent>
         <b-form-row class="my-1 ml-2 ml-sm-0">
@@ -29,6 +30,23 @@
             {{ detectedCount }}
           </span>
         </b-form-row>
+        <div v-if="isInstallation">
+          <b-form-row class="my-1 ml-2 ml-sm-0">
+            <b-form-checkbox v-model="modeRssi" class="ml-sm-4 ml-2 mr-1">
+              {{ $t('label.dispRssi') }}
+            </b-form-checkbox>
+            <b-button class="ml-sm-4 ml-2 mr-1" :pressed.sync="isPause" :variant="getButtonTheme()">
+              <i v-if="!isPause" class="fas fa-pause" />
+              <span v-if="!isPause">
+                &nbsp;{{ $t('label.reload') }}{{ $t('label.pause') }}
+              </span>
+              <i v-if="isPause" class="fas fa-play" />
+              <span v-if="isPause">
+                &nbsp;{{ $t('label.reload') }}{{ $t('label.restart') }}
+              </span>
+            </b-button>
+          </b-form-row>
+        </div>
       </b-form>
     </b-row>
     <b-row class="mt-3">
@@ -54,6 +72,7 @@ import * as SensorHelper from '../../sub/helper/SensorHelper'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as Util from '../../sub/util/Util'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import txdetail from '../../components/parts/txdetail.vue'
@@ -64,26 +83,26 @@ import breadcrumb from '../../components/layout/breadcrumb.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import listmixin from '../../components/mixin/listmixin.vue'
 import sensor from '../../components/parts/sensor.vue'
+import commonmixinVue from '../../components/mixin/commonmixin.vue'
+import prohibitAlert from '../../components/page/prohibitAlert.vue'
 
 export default {
   components: {
     'sensor': sensor,
     'txdetail': txdetail,
     breadcrumb,
+    prohibitAlert
   },
-  mixins: [showmapmixin, listmixin],
+  mixins: [showmapmixin, listmixin, commonmixinVue],
+  props: {
+    isInstallation: {
+      default: false,
+      type: Boolean
+    },
+  },
   data() {
     return {
-      items: [
-        {
-          text: this.$i18n.tnl('label.main'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.showPosition'),
-          active: true
-        },
-      ],
+      items: !this.isInstallation ? ViewHelper.createBreadCrumbItems('main', 'showPosition') : ViewHelper.createBreadCrumbItems('develop', 'installation'),
       detectedCount: 0, // 検知数
       pot: {},
       showMeditag: APP.USE_MEDITAG,
@@ -95,7 +114,13 @@ export default {
       useCategory: MenuHelper.useMaster('category') && APP.TX_WITH_CATEGORY,
       toggleCallBack: () => this.reset(),
       noImageErrorKey: 'noMapImage',
+      modeRssi: false,
+      isPause: false,
       firstTime: true,
+      message: '',
+      prohibitData : null,
+      icons : [],
+      prohibitInterval:null
     }
   },
   computed: {
@@ -105,6 +130,7 @@ export default {
     ...mapState('app_service', [
       'categories',
       'groups',
+      'prohibits',
       'txs',
       'forceFetchTx',
     ]),
@@ -131,10 +157,22 @@ export default {
       this.reloadSelectedTx = {}
       this.showTxAll()
     },
+    modeRssi: function(newVal, oldVal) {
+      this.$emit('rssi', newVal)
+    },
+    isPause: function(newVal, oldVal) {
+      if (!this.isInstallation) return
+      if (newVal) {
+        this.stopAutoReload()
+        return
+      }
+      this.startAutoReload()
+    },
   },
   async mounted() {
     await StateHelper.load('category')
     await StateHelper.load('group')
+    await StateHelper.load('prohibit')
     document.addEventListener('touchstart', this.touchEnd)
     await this.fetchData()
   },
@@ -177,7 +215,12 @@ export default {
     },
     async fetchPositionData() {
       await this.fetchAreaExbs(true)
-      await this.storePositionHistory(this.count)
+
+      let alwaysTxs = this.txs.filter((tx) => {
+        return tx.areaId == this.selectedArea && Util.bitON(tx.disp, TX.DISP.ALWAYS)
+      })
+      let isAllfetch = alwaysTxs? true: false
+      await this.storePositionHistory(this.count, isAllfetch)
 
       if (APP.USE_MEDITAG) {
         let meditagSensors = await EXCloudHelper.fetchSensor(SENSOR.MEDITAG)
@@ -222,11 +265,19 @@ export default {
       let tx = await AppServiceHelper.fetch('/core/tx', txId)
       return tx && tx.pot
     },
+    twinkle() {
+      this.icons.forEach((icon)=>{
+        icon.prohibit? icon.visible=!icon.visible : icon.visible = true
+        this.stage.update()
+      })
+    },
     showMapImage(disableErrorPopup) {
+      clearInterval(this.prohibitInterval)
       this.showMapImageDef(async () => {
         this.showProgress()
         const reloadButton = document.getElementById('reloadIcon')
         if(!this.firstTime && reloadButton){
+          HtmlUtil.removeClass({target: reloadButton}, 'rotateStop')
           HtmlUtil.addClass({target: reloadButton}, 'rotate')
         }
         await this.fetchPositionData()
@@ -242,15 +293,20 @@ export default {
           this.stage.update()
         }
         this.setPositionedExb()
+        this.prohibitData = await StateHelper.getProhibitData(this.getPositions(),this.prohibits)
+        this.message = await StateHelper.getProhibitMessage(this.message,this.prohibitData)
         this.showTxAll()
+        // this.prohibitInterval = setInterval(this.twinkle,DISP.PROHIBIT_TWINKLE_TIME) TODO: Violation発生
         if(!this.firstTime && reloadButton){
           HtmlUtil.removeClass({target: reloadButton}, 'rotate')
+          HtmlUtil.addClass({target: reloadButton}, 'rotateStop')
         }
         this.firstTime = false
         this.hideProgress()
       }, disableErrorPopup)
     },
     showTxAll() {
+      this.icons = []
       if (!this.txCont) {
         return
       }
@@ -259,7 +315,14 @@ export default {
       // for debug
       this.disableExbsCheck()
       this.detectedCount = 0 // 検知カウントリセット
-      let position = PositionHelper.adjustPosition(this.getPositions(), this.mapImageScale, this.positionedExb)
+      let position = []
+      if(APP.USE_MULTI_POSITIONING){
+        let area = _.find(this.$store.state.app_service.areas, (area) => area.areaId == this.selectedArea)
+        let mapRatio = area.mapRatio
+        position = PositionHelper.adjustMultiPosition(this.getPositions(), this.mapImageScale * mapRatio)
+      }else{
+        position = PositionHelper.adjustPosition(this.getPositions(), this.mapImageScale, this.positionedExb, this.selectedArea)
+      }
       position.forEach((pos) => {
         this.showTx(pos)
       })
@@ -267,6 +330,7 @@ export default {
     },
     showTx(pos) {
       const tx = this.txs.find((tx) => tx.btxId == pos.btx_id)
+      const exb = this.exbs.find((exb) => exb.posId == pos.pos_id)
       Util.debug('showTx', pos, tx && tx.sensor)
       if (!tx) {
         console.warn('tx not found. btx_id=' + pos.btx_id)
@@ -276,7 +340,7 @@ export default {
         Util.debug('tx is not allowed to show', tx)
         return
       }
-      if (pos.noSelectedTx) {
+      if (pos.noSelectedTx && !this.isFixTx(tx)) {
         Util.debug('tx is not allowed to show', tx)
         return
       }
@@ -293,9 +357,19 @@ export default {
       const display = this.getDisplay(tx)
       const color = meditag? '000': this.isMagnetOn(magnet)? display.bgColor : display.color
       const bgColor = meditag? meditag.bg.substr(1): this.isMagnetOn(magnet)? display.color: display.bgColor
+      
+      // フリーアドレスTXが不在エリア検知の場合は以降処理を行わない
+      if (exb.isAbsentZone && !this.isFixTx(tx)) {
+        return
+      }
+
+      if ((exb.isAbsentZone || this.isOtherFloorFixTx(tx, exb)) && this.isFixTx(tx)) {
+        pos.transparent = true
+      }
+
       const txBtn = this.createTxBtn(pos, display.shape, color, bgColor)
-      if (tx.location && tx.location.areaId == this.selectedArea && tx.location.x * tx.location.y > 0) {
-        Util.debug('fixed location', tx) // TODO: 常時表示は未対応
+      if (this.isFixTx(tx)) {
+        Util.debug('fixed location', tx)
         txBtn.x = tx.location.x * this.mapImageScale
         txBtn.y = tx.location.y * this.mapImageScale
       }
@@ -305,6 +379,8 @@ export default {
         this.showDetail(txBtn.txId, txBtn.x, txBtn.y)
       }
       this.txCont.addChild(txBtn)
+      txBtn.prohibit = this.prohibitData? this.prohibitData.some((data) => data.minor == pos.minor):false
+      this.icons.push(txBtn)
       this.stage.update()
       this.detectedCount++  // 検知数カウント増加
     },
@@ -313,6 +389,12 @@ export default {
         return
       }
       this.resetDetail()
+    },
+    isFixTx (tx) {
+      return tx.location && tx.location.areaId == this.selectedArea && tx.location.x * tx.location.y > 0
+    },
+    isOtherFloorFixTx (tx, exb) {
+      return tx.location && tx.location.areaId != exb.location.areaId && tx.location.x * tx.location.y > 0
     }
   }
 }

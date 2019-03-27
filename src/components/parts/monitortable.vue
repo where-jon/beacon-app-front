@@ -125,7 +125,7 @@ export default {
   methods: {
     async fetchData(payload) {
       if(this.$parent.$options.methods.fetchData){
-        await this.$parent.$options.methods.fetchData.call(this.$parent)
+        await this.$parent.$options.methods.fetchData.call(this.$parent, payload)
       }
     },
     download() {

@@ -9,7 +9,7 @@
 import mList from '../../../components/page/list.vue'
 import { mapState } from 'vuex'
 import * as StateHelper from '../../../sub/helper/StateHelper'
-import { addLabelByKey } from '../../../sub/helper/ViewHelper'
+import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import listmixinVue from '../../../components/mixin/listmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 
@@ -30,7 +30,7 @@ export default {
         appServicePath: '/meta/role',
         csvOut: true,
         custumCsvColumns: ['roleId', 'roleName'],
-        fields: addLabelByKey(this.$i18n, [ 
+        fields: ViewHelper.addLabelByKey(this.$i18n, [ 
           {key: 'roleName', sortable: true },
           {key: 'roleId', sortable: true },
           {key: 'actions', thStyle: {width:'130px !important'} }
@@ -38,16 +38,7 @@ export default {
         sortBy: 'roleName',
         initTotalRows: this.$store.state.app_service.roles.length
       },
-      items: [
-        {
-          text: this.$i18n.tnl('label.master'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.role'),
-          active: true
-        }
-      ]
+      items: ViewHelper.createBreadCrumbItems('master', 'role'),
     }
   },
   computed: {

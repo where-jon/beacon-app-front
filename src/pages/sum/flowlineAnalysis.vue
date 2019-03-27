@@ -29,6 +29,7 @@ import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import drawMixin from '../../components/mixin/drawmixin.vue'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import * as Util from '../../sub/util/Util'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
 
 export default {
   components: {
@@ -39,16 +40,7 @@ export default {
   mixins: [showmapmixin, drawMixin ],
   data () {
     return {
-      items: [
-        {
-          text: this.$i18n.tnl('label.sumTitle'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.flowlineAnalysis'),
-          active: true
-        }
-      ],
+      items: ViewHelper.createBreadCrumbItems('sumTitle', 'flowlineAnalysis'),
       dotRadius: 3,
       startInfo: {caption: 'start', color: '#2299cc'},
       endInfo: {caption: 'end', color: '#ee0033'},

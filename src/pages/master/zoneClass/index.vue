@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid">
     <breadcrumb :items="items" />
-    <m-list :params="params" :list="zones" />
+    <m-list :params="params" :list="zoneList" />
   </div>
 </template>
 
@@ -9,9 +9,11 @@
 import mList from '../../../components/page/list.vue'
 import { mapState } from 'vuex'
 import * as StateHelper from '../../../sub/helper/StateHelper'
-import { addLabelByKey } from '../../../sub/helper/ViewHelper'
+import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import listmixinVue from '../../../components/mixin/listmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
+import {ZONE} from '../../../sub/constant/Constants'
+import * as Util from '../../../sub/util/Util'
 
 export default {
   components: {
@@ -30,29 +32,27 @@ export default {
         appServicePath: '/core/zone',
         csvOut: true,
         custumCsvColumns: ['zoneId', 'zoneName', 'areaName', 'categoryName'],
-        fields: addLabelByKey(this.$i18n, [ 
+        fields: ViewHelper.addLabelByKey(this.$i18n, [ 
           {key: 'zoneName', sortable: true },
           {key: 'areaName', sortable: true},
-          {key: 'categoryName', sortable: true},
+          {key: 'dispCategoryName', label: 'categoryName', sortable: true},
           {key: 'zoneId', sortable: true },
           {key: 'actions', thStyle: {width:'130px !important'} }
         ]),
         sortBy: 'zoneName',
-        initTotalRows: this.$store.state.app_service.zones.length
+        initTotalRows: this.zoneLength
       },
-      items: [
-        {
-          text: this.$i18n.tnl('label.master'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.zoneClass'),
-          active: true
-        }
-      ]
+      items: ViewHelper.createBreadCrumbItems('master', 'zoneClass'),
     }
   },
   computed: {
+    zoneList() {
+      Util.table(this.$store.state.app_service.zones)
+      return this.$store.state.app_service.zones.filter((zone)=> zone.zoneType ==  ZONE.NON_COORDINATE)
+    },
+    zoneLength() {
+      return this.zoneList().length
+    },
     ...mapState('app_service', [
       'zones',
       'forceFetchZone',

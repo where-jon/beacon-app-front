@@ -20,6 +20,7 @@ import _ from 'lodash'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as ConfigHelper from '../../../sub/helper/ConfigHelper'
 import * as AuthHelper from '../../../sub/helper/AuthHelper'
+import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import pagetitle from '../../../components/layout/pagetitle.vue'
 import editList from '../../../components/page/editlist.vue'
@@ -47,16 +48,7 @@ export default {
           {key: 'value', type: 'valType', tooltip: 'description' },
         ],
       },
-      items: [
-        {
-          text: this.$i18n.tnl('label.setting'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.system'),
-          active: true
-        },
-      ],
+      items: ViewHelper.createBreadCrumbItems('setting', 'system'),
     }
   },
   computed: {

@@ -21,7 +21,7 @@
           <b-form-group>
             <b-form-row>
               <b-form-row>
-                <b-form-checkbox v-model="isHeatmap" :value="true" :unchecked-value="false">
+                <b-form-checkbox v-if="useHeatMap" v-model="isHeatmap" :value="true" :unchecked-value="false">
                   {{ $t('label.showHeatmap') }}
                 </b-form-checkbox>
               </b-form-row>
@@ -50,6 +50,7 @@
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as SensorHelper from '../../sub/helper/SensorHelper'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as HeatmapHelper from '../../sub/helper/HeatmapHelper'
 import * as Util from '../../sub/util/Util'
@@ -72,16 +73,7 @@ export default {
   mixins: [showmapmixin],
   data() {
     return {
-      items: [
-        {
-          text: this.$i18n.tnl('label.main'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.thermohumidity'),
-          active: true
-        },
-      ],
+      items: ViewHelper.createBreadCrumbItems('main', 'thermohumidity'),
       isShownChart: false,
       chartTitle: '',
       keepExbPosition: false,
@@ -102,6 +94,7 @@ export default {
       warnMessage: null,
       iconAlphaMin: 0.1,
       fixHeight: DISP.THERMOH_ALERT_FIX_HEIGHT,
+      useHeatMap: APP.USE_THERMOH_HEATMAP,
     }
   },
   computed: {
@@ -233,6 +226,7 @@ export default {
         
         this.getPositionedExb(
           (exb) => exb.sensorId == SENSOR.TEMPERATURE,
+          // (exb) => this.getSensorIds(exb).includes(SENSOR.TEMPERATURE),　 一旦単数に戻す
           (exb) => {return {id: SENSOR.TEMPERATURE, ...sensors.find((sensor) => sensor.deviceid == exb.deviceId && (sensor.timestamp || sensor.updatetime))}},
           (exb) => exb.temperature != null
         )
@@ -267,6 +261,17 @@ export default {
           },
           this.heatmapData
         )
+        // Retina解像度対応
+        if (devicePixelRatio > 0) {
+          map.style.width = String(map.width / devicePixelRatio) + 'px'
+          map.style.height = String(map.height / devicePixelRatio) + 'px'
+
+          const canvasElements = HeatmapHelper.getCanvasElements(mapElement)
+          canvasElements.forEach((canvasElement) => {
+            canvasElement.style.width = String(map.width) + 'px'
+            canvasElement.style.height = String(map.height) + 'px'
+          })
+        }
         onLoad && onLoad()
       })
     },
@@ -476,7 +481,7 @@ export default {
         name: device.txName? device.txName: device.locationName? device.locationName: '',
         description: device.description? ` : ${Util.cutOnLong(device.description, 10)}`: ''
       })
-    }
+    },
   }
 }
 </script>

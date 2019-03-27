@@ -81,6 +81,10 @@ export default {
       type: Array,
       default: null
     },
+    reloadEmitName: {
+      type: String,
+      default: 'reload',
+    },
   },
   data () {
     return {
@@ -94,7 +98,7 @@ export default {
       return this.$store.state.loginId
     },
     classes() {
-      return 'fas fa-sync-alt' + (!this.isLoad ? '' : ' fa-spin')
+      return 'fas fa-sync-alt'
     },
     extNavClasses() {
       const theme = getThemeClasses()
@@ -138,10 +142,12 @@ export default {
       this.$router.push(page)
     },
     onClickReload(e) {
+      HtmlUtil.removeClass(e, 'rotateStop')
       HtmlUtil.addClass(e, 'rotate')
-      EventBus.$emit('reload', {
+      EventBus.$emit(this.reloadEmitName, {
         done() {
           HtmlUtil.removeClass(e, 'rotate')
+          HtmlUtil.addClass(e, 'rotateStop')
           AuthHelper.checkSession()
         }
       })
@@ -205,6 +211,14 @@ export default {
 
 <style lang="scss">
   @import "../../sub/constant/config.scss";
+
+  .rotate {
+    animation: fa-spin 2s infinite linear;
+  }
+
+  .rotateStop {
+    animation-name: none !important;
+  }
 
   div.breadcrumb.navigation {
     margin-top: 20px;

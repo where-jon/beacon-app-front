@@ -60,7 +60,7 @@
       <b-row class="mt-3" />
     
       <!-- table -->
-      <b-table :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" :filter="filterGrid" :bordered="params.bordered" :sort-by.sync="sortBy" :sort-compare="sortCompare" :empty-filtered-text="emptyMessage" show-empty
+      <b-table :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" :filter="filterGrid" :bordered="params.bordered" :sort-by.sync="sortBy" :sort-compare="sortCompare" :sort-desc.sync="sortDesc" :empty-filtered-text="emptyMessage" show-empty
                stacked="md" striped hover outlined @filtered="onFiltered"
       >
         <template slot="style" slot-scope="row">
@@ -106,15 +106,28 @@
             </span>
           </div>
         </template>
+        <!-- センサ名 -->
+        <template slot="sensorIdName" slot-scope="row">
+          <div>
+            <span v-for="(sensorIdName, index) in row.item.sensorIdNames" :key="index" class="row">
+              {{ sensorIdName }}
+            </span>
+          </div>
+        </template>
         <!-- 電池レベル -->
         <template slot="powerLevel" slot-scope="row">
           <span :class="'badge badge-pill badge-' + row.item.powerLevel.class">
             {{ row.item.powerLevel.text }}
           </span>
         </template>
+        <template slot="locationName" slot-scope="row">
+          <span :variant="theme" size="sm" :class="'mx-1 ' + row.item.blinking">
+            {{ row.item.locationName }}
+          </span>
+        </template>
         <!-- マップ表示 -->
         <template slot="mapDisplay" slot-scope="row">
-          <b-button v-t="'label.mapDisplay'" :variant="theme" :disabled="row.item.noSelectedTx"
+          <b-button v-t="'label.mapDisplay'" :variant="theme" :disabled="row.item.noSelectedTx || row.item.isDisableArea"
                     size="sm" class="mx-1" @click.stop="mapDisplay(row.item)"
           />
         </template>
@@ -123,7 +136,7 @@
           <div class="empty-icon d-inline-flex" /><!-- 横幅0の「支柱」 -->
           <div class="d-inline-flex flex-wrap">
             <div v-for="position in row.item.positions" :key="position.areaId"
-                 :style="position.display" class="d-inline-flex m-1" @click.stop="mapDisplay(position)"
+                 :style="position.display" :class="'d-inline-flex m-1 '+ position.blinking" @click.stop="mapDisplay(position)"
             >
               {{ position.label }}
             </div>
@@ -220,6 +233,7 @@ export default {
       message: null,
       error: null,
       sortBy: null,
+      sortDesc: false,
       sortCompare: (aData, bData, key) => this.sortCompareCustom(aData, bData, key),
       login: JSON.parse(window.localStorage.getItem('login')),
       switchReload: false,
@@ -304,7 +318,9 @@ export default {
       return StateHelper.getOptionsFromState('zone')
     },
     zoneCategoryOptions() {
-      return StateHelper.getOptionsFromState('category', false, false, 
+      return StateHelper.getOptionsFromState('category',
+        category => category.dispCategoryName,
+        false, 
         category => CATEGORY.ZONE_AVAILABLE.includes(category.categoryType)
       )
     },
@@ -633,6 +649,24 @@ export default {
   .page-item.active .page-link {
     background-color: #376495;
     border-color: #265384;
+  }
+  .blinking{
+    color: #ff0000;
+	-webkit-animation:blink 1.5s ease-in-out infinite alternate;
+    -moz-animation:blink 1.5s ease-in-out infinite alternate;
+    animation:blink 1.5s ease-in-out infinite alternate;
+  }
+  @-webkit-keyframes blink{
+      0% {opacity:0;}
+      100% {opacity:1;}
+  }
+  @-moz-keyframes blink{
+      0% {opacity:0;}
+      100% {opacity:1;}
+  }
+  @keyframes blink{
+      0% {opacity:0;}
+      100% {opacity:1;}
   }
 
 </style>

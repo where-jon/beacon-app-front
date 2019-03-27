@@ -73,7 +73,7 @@ export default {
   props: {
     pitems: {
       type: Array,
-      default: null,
+      default: () => null,
     },
     pname: {
       type: String,

@@ -38,6 +38,15 @@ export default {
         return option.value == null || category && (!Util.hasValue(includeTypes) || includeTypes.includes(category.categoryType))
       })
     },
+    getSensorIds(exb) {
+      const exbSensorList = Util.getValue(exb, 'exbSensorList', null) // TODO: FIX
+      if(Util.hasValue(exbSensorList)){
+        const ret = []
+        exbSensorList.forEach(exbSensor => ret.push(Util.getValue(exbSensor, 'sensor.sensorId', null)))
+        return ret
+      }
+      return [null]
+    },
     getButtonTheme() {
       return 'outline-' + getButtonTheme()
     },
@@ -53,7 +62,10 @@ export default {
     },
     getZoneCategoryOptions(zoneCategories){
       const zoneCategoryIds = zoneCategories.filter((zoneCategory) => zoneCategory.categoryId >= 0).map((zoneCategory) => zoneCategory.categoryId)
-      return StateHelper.getOptionsFromState('category', false, true, (category) => zoneCategoryIds.includes(`${category.categoryId}`))
+      return StateHelper.getOptionsFromState('category',
+        category => category.dispCategoryName,
+        true,
+        (category) => zoneCategoryIds.includes(`${category.categoryId}`))
     },
     getZoneOptions(zoneCategories, selectCategory){
       const zoneUniqs = {}

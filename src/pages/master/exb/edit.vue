@@ -63,6 +63,14 @@
               :vertical="form.txViewType ? form.txViewType.vertical : txIconsVertical"
               @change="onChangeTxSetting"
             />
+            <!-- <span v-for="(exbSensor, index) in form.exbSensorList" :key="index"> 一旦単数に戻す
+              <b-form-group v-show="showSensor(index)">
+                <label>
+                  {{ $i18n.tnl('label.type') + getSensorIndex(index) }}
+                </label>
+                <b-form-select v-model="exbSensor.sensorId" :options="getSensorOptionsExb(index)" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-3 col-4" @change="changeSensors($event, index)" />
+              </b-form-group>
+            </span> -->
             <b-form-group>
               <label v-t="'label.type'" />
               <b-form-select v-model="form.sensorId" :options="sensorOptionsExb" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-3 col-4" />
@@ -127,20 +135,7 @@ export default {
       deviceIdX: null,
       deviceNum: null,
       useZone: APP.EXB_WITH_ZONE && MenuHelper.isMenuEntry('/master/zoneClass'),
-      items: [
-        {
-          text: this.$i18n.tnl('label.master'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.exb'),
-          href: '/master/exb',
-        },
-        {
-          text: this.$i18n.tnl(Util.getDetailCaptionKey(this.$store.state.app_service.exb.exbId)),
-          active: true
-        }
-      ],
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'exb', href: '/master/exb'}, Util.getDetailCaptionKey(this.$store.state.app_service.exb.exbId)),
       txIconsDispFormat: 1,
       txIconsHorizon: 5,
       txIconsVertical: 5,
@@ -157,12 +152,12 @@ export default {
       const theme = getButtonTheme()
       return 'outline-' + theme
     },
+    areaOptions() {
+      return StateHelper.getOptionsFromState('area', false, true)
+    },
     sensorOptionsExb() {
       let options = this.sensorOptions('exb')
       return options
-    },
-    areaOptions() {
-      return StateHelper.getOptionsFromState('area', false, true)
     },
     zoneNames() {
       return StateHelper.getOptionsFromState('zone', false, false, 
@@ -214,15 +209,17 @@ export default {
       }
     },
   },
-  created(){
+  async created() {
+    this.initExbSensorList()
+    this.changeSensors()
+    await StateHelper.load('sensor')
+    await StateHelper.load('area')
+    await StateHelper.load('zone')
     this.$nextTick(() => HtmlUtil.setCustomValidationMessage())
   },
   mounted() {
     this.deviceId = this.form.deviceId
     ViewHelper.applyDef(this.form, this.defValue)
-    StateHelper.load('sensor')
-    StateHelper.load('area')
-    StateHelper.load('zone')
     if (!this.form.txViewType) {
       return
     }
@@ -231,22 +228,83 @@ export default {
     this.txIconsVertical = this.form.txViewType.vertical
   },
   methods: {
+    isNormalSensor(index){
+      return Util.getValue(this.form, `exbSensorList.${index && 0 <= index? index: 0}.sensorId`, null)? false: true
+    },
+    showSensor(index){
+      if(index == 0){
+        return true
+      }
+      if(!APP.EXB_MULTI_SENSOR){
+        return false
+      }
+      for(let idx = index - 1; 0 <= idx; idx--){
+        if(this.isNormalSensor(idx)){
+          return false
+        }
+      }
+      return true
+    },
+    getSensorIndex(index){
+      return APP.EXB_MULTI_SENSOR && !this.isNormalSensor() && 1 < APP.EXB_SENSOR_MAX? `${index + 1}`: ''
+    },
+    getSensorOptionsExb(index) {
+      const options = this.sensorOptions('exb', index != 0)
+      return Util.hasValue(this.form.exbSensorList)? options.filter((val) => {
+        for(let cnt = 0; cnt < this.form.exbSensorList.length; cnt++){
+          if(index != cnt && val.value != null && val.value == this.form.exbSensorList[cnt].sensorId){
+            return false
+          }
+        }
+        return true
+      }): options
+    },
+    changeSensors(newVal, index) {
+      if(newVal == null){
+        this.form.exbSensorList.forEach((exbSensor, idx) => {
+          if(index == 0 || index < idx){
+            exbSensor.sensorId = null
+          }
+        })
+      }
+      this.$nextTick(() => this.$forceUpdate())
+    },
+    initExbSensorList(){
+      this.form.exbSensorList = this.exb.exbSensorList? this.exb.exbSensorList.map((val, idx) => {
+        return APP.EXB_MULTI_SENSOR && idx < APP.EXB_SENSOR_MAX || !APP.EXB_MULTI_SENSOR && idx == 0? {
+          exbId: null,
+          sensorId: val.sensor.sensorId,
+        }: null
+      }).filter((val) => val): []
+      const maxSensor = APP.EXB_MULTI_SENSOR? APP.EXB_SENSOR_MAX: 1
+      for(let cnt = this.form.exbSensorList.length; cnt < maxSensor; cnt++){
+        this.form.exbSensorList.push({
+          exbId: null,
+          sensorId: null
+        })
+      }
+    },
     onChangeTxSetting(param) {
       this.txIconsDispFormat = param.format
       this.txIconsHorizon = param.horizon
       this.txIconsVertical = param.vertical
     },
+    beforeReload(){
+      this.initExbSensorList()
+      this.changeSensors()
+    },
     async save() {
+      let dummyKey = -1
       if(!this.zoneNames.find((zone) => zone.value == this.form.zoneId)){
         this.form.zoneId = null
       }
       let entity = {
-        exbId: this.form.exbId != null? this.form.exbId: -1,
+        exbId: this.form.exbId != null? this.form.exbId: dummyKey--,
         deviceId: this.deviceId,
         locationId: this.form.locationId,
         enabled: this.form.enabled,
         location: {
-          locationId: this.form.locationId? this.form.locationId: -2,
+          locationId: this.form.locationId? this.form.locationId: dummyKey--,
           areaId: this.form.areaId,
           locationName: this.form.locationName,
           visible: this.form.visible,
@@ -260,7 +318,7 @@ export default {
           y: this.form.y,
           locationZoneList: this.form.zoneId? [{
             locationZonePK: {
-              locationId: this.form.locationId? this.form.locationId: -2,
+              locationId: this.form.locationId? this.form.locationId: dummyKey--,
               zoneId: this.form.zoneId
             }
           }]: null
@@ -269,6 +327,18 @@ export default {
           {exbSensorPK: {sensorId: this.form.sensorId}}
         ]: null
       }
+      // const exbSensorList = []
+      // this.form.exbSensorList.forEach((exbSensor) => {
+      //   if(exbSensor.sensorId){
+      //     exbSensorList.push({
+      //       exbSensorPK: {
+      //         exbId: this.form.exbId || dummyKey--,
+      //         sensorId: exbSensor.sensorId
+      //       }
+      //     })
+      //   }
+      // })
+      // entity.exbSensorList = exbSensorList
       let ret = await AppServiceHelper.bulkSave(this.appServicePath, [entity])
       this.deviceId = null
       this.deviceIdX = null

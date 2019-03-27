@@ -73,8 +73,9 @@ import { mapState } from 'vuex'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as HttpHelper from '../../../sub/helper/HttpHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
+import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as Util from '../../../sub/util/Util'
-import { DISP } from '../../../sub/constant/config'
+import { APP, DISP } from '../../../sub/constant/config'
 import { UPDATE_ONLY_NN } from '../../../sub/constant/Constants'
 import { Shape, Container, Text } from '@createjs/easeljs/dist/easeljs.module'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
@@ -103,26 +104,18 @@ export default {
       exbDispOptions: [],
       deleteTarget: null,
       keepExbPosition: false,
+      ICON_FONTSIZE_RATIO: 1.3,
       mapRatio: null,
       revTrgCnt: [],
       lineCnt: null,
       toggleCallBack: () => {
         this.keepExbPosition = true
       },
-      ICON_ARROW_WIDTH: 20,
-      ICON_ARROW_HEIGHT: 10,
+      ICON_ARROW_WIDTH: DISP.EXB_LOC_SIZE.w/3,
+      ICON_ARROW_HEIGHT: DISP.EXB_LOC_SIZE.h/3,
       DISPLAY_NAME_BYTE_LENGTH: 6,
       noImageErrorKey: 'noMapImage',
-      items: [
-        {
-          text: this.$i18n.tnl('label.master'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.locationSetting'),
-          active: true
-        }
-      ]
+      items: ViewHelper.createBreadCrumbItems('master', 'locationSetting'),
     }
   },
   computed: {
@@ -153,6 +146,9 @@ export default {
 
     const options = []
     options.push({value: 'locationName', text: this.$i18n.tnl('label.locationName')})
+    if (APP.EXB_WITH_DEVICE_NUM) options.push({value:'deviceNum', text: this.$i18n.tnl('label.deviceNum')})
+    if (APP.EXB_WITH_DEVICE_IDX) options.push({value:'deviceIdX', text: this.$i18n.tnl('label.deviceIdX')})
+    if (APP.EXB_WITH_DEVICE_ID) options.push({value:'deviceId', text: this.$i18n.tnl('label.deviceId')})
     this.exbDispOptions = options
     this.exbDisp = options[0].value
   },
@@ -289,7 +285,7 @@ export default {
       s.graphics.lineTo(fromX, fromY)
       exbBtn.addChild(s)
       const label = new Text(Util.cutOnLongByte(this.getExbDisp(exb.deviceId), this.DISPLAY_NAME_BYTE_LENGTH))
-      label.font = DISP.EXB_LOC_FONT
+      label.font = `${h / this.ICON_FONTSIZE_RATIO}px ${DISP.EXB_LOC_FONT}`
       label.color = DISP.EXB_LOC_COLOR
       label.textAlign = 'center'
       label.textBaseline = 'middle'

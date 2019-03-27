@@ -12,6 +12,7 @@ import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkupload from '../../../components/page/bulkupload.vue'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
+import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as HtmlUtil from '../../../sub/util/HtmlUtil'
 import { APP } from '../../../sub/constant/config.js'
 
@@ -26,20 +27,7 @@ export default {
       id: 'areaId',
       backPath: '/master/area',
       appServicePath: '/core/area',
-      items: [
-        {
-          text: this.$i18n.tnl('label.master'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.area'),
-          href: '/master/area',
-        },
-        {
-          text: this.$i18n.tnl('label.bulkUpload'),
-          active: true
-        }
-      ]
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'area', href: '/master/area'}, 'bulkUpload'),
     }
   },
   computed: {

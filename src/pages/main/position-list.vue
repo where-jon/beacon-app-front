@@ -3,6 +3,7 @@
     <breadcrumb :items="items" :extra-nav-spec="extraNavSpec"
                 :reload="reload" :short-name="shortName"
     />
+    <prohibitAlert :messagelist="message" />
     <m-list :params="params" :list="positionList" />
   </div>
 </template>
@@ -10,13 +11,14 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
+import prohibitAlert from '../../components/page/prohibitAlert.vue'
 import mList from '../../components/page/list.vue'
 import listmixinVue from '../../components/mixin/listmixin.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
-import { addLabelByKey } from '../../sub/helper/ViewHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
-import { EXTRA_NAV } from '../../sub/constant/Constants'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
+import { TX, EXTRA_NAV } from '../../sub/constant/Constants'
 import * as Util from '../../sub/util/Util'
 import { APP } from '../../sub/constant/config.js'
 
@@ -24,6 +26,7 @@ export default {
   components: {
     mList,
     breadcrumb,
+    prohibitAlert
   },
   mixins: [
     listmixinVue,
@@ -31,6 +34,7 @@ export default {
   ],
   data() {
     return {
+      message: '',
       params: {
         name: 'position-list',
         id: 'positionListId',
@@ -39,7 +43,7 @@ export default {
           MenuHelper.useMaster('category') && APP.TX_WITH_CATEGORY? 'category' : null,
           APP.POSITION_WITH_AREA ? 'area' : null]).compact().value(),
         disableTableButtons: true,
-        fields: addLabelByKey(this.$i18n, [ 
+        fields: ViewHelper.addLabelByKey(this.$i18n, [ 
           !APP.TX_WITH_TXID && APP.TX_BTX_MINOR == 'minor' ? 
             {key: 'minor', label: 'minor', sortable: true, tdClass: 'action-rowdata' }: null,
           APP.TX_WITH_TXID ? {key: 'txId', label: 'txId', sortable: true, tdClass: 'action-rowdata' }: null,
@@ -61,16 +65,7 @@ export default {
         initTotalRows: this.$store.state.app_service.positionList.length,
       },
       count: 0, // mockテスト用
-      items: [
-        {
-          text: this.$i18n.t('label.main'),
-          active: true
-        },
-        {
-          text: this.$i18n.t('label.positionList'),
-          active: true
-        }
-      ],
+      items: ViewHelper.createBreadCrumbItems('main', 'positionList'),
       reload: true,
       shortName: this.$i18n.t('label.positionListShort'),
       extraNavSpec: EXTRA_NAV,
@@ -82,6 +77,7 @@ export default {
       'areas',
       'exbs',
       'positionList',
+      'prohibits',
     ]),
   },
   methods: {
@@ -94,10 +90,16 @@ export default {
         await StateHelper.load('area')
         await StateHelper.load('tx')
         await StateHelper.load('exb')
+        await StateHelper.load('prohibit')
         await this.storePositionHistory(0, true)
         let positions = this.getPositions(true)
+        let prohibitData = await StateHelper.getProhibitData(this.getPositions(),this.prohibits)
+        this.message = await StateHelper.getProhibitMessage(this.message,prohibitData)
+
         Util.debug(positions)
         positions = positions.map((pos) => {
+          const prohibitCheck = prohibitData? prohibitData.some((data) => data.minor == pos.minor) : false
+          const exb = this.exbs.find((exb) => exb.posId == pos.pos_id)
           return {
             ...pos,
             // powerLevel: this.getPowerLevel(pos),
@@ -113,6 +115,8 @@ export default {
             groupId: Util.getValue(pos, 'tx.groupId').val,
             categoryId: Util.getValue(pos, 'tx.categoryId').val,
             areaId: Util.getValue(pos, 'exb.areaId').val,
+            blinking : prohibitCheck? 'blinking' : null,
+            isDisableArea: exb? exb.isAbsentZone: false,
           }
         })
         Util.debug(positions)

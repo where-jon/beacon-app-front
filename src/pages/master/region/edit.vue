@@ -62,20 +62,7 @@ export default {
       appServicePath: '/core/region',
       form: ViewHelper.extract(this.$store.state.app_service.region,
         ['regionId', 'regionName', 'meshId', 'deviceOffset', 'description']),
-      items: [
-        {
-          text: this.$i18n.tnl('label.master'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.region'),
-          href: '/master/region',
-        },
-        {
-          text: this.$i18n.tnl(Util.getDetailCaptionKey(this.$store.state.app_service.region.regionId)),
-          active: true
-        }
-      ]
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'region', href: '/master/region'}, Util.getDetailCaptionKey(this.$store.state.app_service.region.regionId)),
     }
   },
   computed: {

@@ -99,6 +99,7 @@ export default {
         beat: Util.getValue(device, 'beat', ''),
         step: Util.getValue(device, 'step', ''),
         down: Util.getValue(device, 'down', ''),
+        pressVol: Util.getValue(device, 'pressVol', ''),
         state: SensorHelper.getMagnetStateKey(this.$i18n, Util.getValue(device, 'magnet', '')),
         areaId: Util.getValue(device, 'areaId', ''),
         zoneId: Util.getValue(device, 'zoneId', ''),

@@ -85,20 +85,7 @@ export default {
       isEnableNameText: true,
       zones: [],
       isRegist: false,
-      items: [
-        {
-          text: this.$i18n.tnl('label.master'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.zoneClass'),
-          href: '/master/zoneClass',
-        },
-        {
-          text: this.$i18n.tnl(Util.getDetailCaptionKey(this.$store.state.app_service.zone.zoneId)),
-          active: true
-        }
-      ]
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'zoneClass', href: '/master/zoneClass'}, Util.getDetailCaptionKey(this.$store.state.app_service.zone.zoneId)),
     }
   },
   computed: {
@@ -130,7 +117,9 @@ export default {
     },
     async initCategoryNames() {
       await StateHelper.load('category')
-      this.categoryNames = StateHelper.getOptionsFromState('category', false, false, 
+      this.categoryNames = StateHelper.getOptionsFromState('category',
+        category => category.dispCategoryName,
+        false, 
         category => !CATEGORY.POT_AVAILABLE.includes(category.categoryType)
       )
     },
@@ -139,12 +128,12 @@ export default {
       const entity = {
         zoneId: zoneId,
         zoneName: this.form.zoneName,
-        zoneType: ZONE.getTypes()[1].value,
+        zoneType: ZONE.NON_COORDINATE,
         areaId: this.form.areaId,
         locationZoneList: this.form.locationId? [{locationZonePK: {zoneId: zoneId, locationId: this.form.locationId}}]: null,
         zoneCategoryList: this.form.categoryId? [{zoneCategoryPK: {zoneId: zoneId, categoryId: this.form.categoryId}}]: null
       }
-      return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
+      return await AppServiceHelper.bulkSave(this.appServicePath + '/edit', [entity])
     },
   }
 }
