@@ -351,12 +351,17 @@ export default {
       else {
         tx.location = {...tx.location, areaId: this.selectedArea, area: null, x: Math.round(tx.x / this.mapImageScale), y: Math.round(tx.y / this.mapImageScale)}
       }
-      if (tx.txSensorList) {
-        tx.txSensorList.forEach((txSensor) =>{
-          console.error(txSensor)
-          txSensor.sensor = null
-        })
+      if (tx.sensorId != null) {
+        tx.txSensorList = [
+          {txSensorPK: {sensorId: tx.sensorId}}
+        ]
       }
+      // if (tx.txSensorList) {
+      //   tx.txSensorList.forEach((txSensor) =>{
+      //     console.error(txSensor)
+      //     txSensor.sensor = null
+      //   })
+      // }
       if (Util.hasValue(tx.potTxList)) {
         tx.potTxList.forEach((potTx) => {
           if(potTx.pot){

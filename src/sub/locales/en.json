@@ -63,6 +63,7 @@
     "malfunction": "Malfunction",
     "notReceive": "Poor",
     "absent": "Absent",
+    "prohibit": "Prohibit",
     "charSet": "CSV character code",
     "null": "Unspecified",
     "undefined": "Undefined",

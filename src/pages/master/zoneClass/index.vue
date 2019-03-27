@@ -35,7 +35,7 @@ export default {
         fields: ViewHelper.addLabelByKey(this.$i18n, [ 
           {key: 'zoneName', sortable: true },
           {key: 'areaName', sortable: true},
-          {key: 'categoryName', sortable: true},
+          {key: 'dispCategoryName', label: 'categoryName', sortable: true},
           {key: 'zoneId', sortable: true },
           {key: 'actions', thStyle: {width:'130px !important'} }
         ]),
