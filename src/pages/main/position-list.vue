@@ -99,6 +99,7 @@ export default {
         Util.debug(positions)
         positions = positions.map((pos) => {
           const prohibitCheck = prohibitData? prohibitData.some((data) => data.minor == pos.minor) : false
+          const exb = this.exbs.find((exb) => exb.posId == pos.pos_id)
           return {
             ...pos,
             // powerLevel: this.getPowerLevel(pos),
@@ -115,6 +116,7 @@ export default {
             categoryId: Util.getValue(pos, 'tx.categoryId').val,
             areaId: Util.getValue(pos, 'exb.areaId').val,
             blinking : prohibitCheck? 'blinking' : null,
+            isDisableArea: exb? exb.isAbsentZone: false,
           }
         }).filter((pos) => !pos.tx || Util.bitON(pos.tx.disp, TX.DISP.POS))
         Util.debug(positions)

@@ -127,7 +127,7 @@
         </template>
         <!-- マップ表示 -->
         <template slot="mapDisplay" slot-scope="row">
-          <b-button v-t="'label.mapDisplay'" :variant="theme" :disabled="row.item.noSelectedTx"
+          <b-button v-t="'label.mapDisplay'" :variant="theme" :disabled="row.item.noSelectedTx || row.item.isDisableArea"
                     size="sm" class="mx-1" @click.stop="mapDisplay(row.item)"
           />
         </template>
