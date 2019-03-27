@@ -21,7 +21,7 @@
           <b-form-group>
             <b-form-row>
               <b-form-row>
-                <b-form-checkbox v-model="isHeatmap" :value="true" :unchecked-value="false">
+                <b-form-checkbox v-if="useHeatMap" v-model="isHeatmap" :value="true" :unchecked-value="false">
                   {{ $t('label.showHeatmap') }}
                 </b-form-checkbox>
               </b-form-row>
@@ -94,6 +94,7 @@ export default {
       warnMessage: null,
       iconAlphaMin: 0.1,
       fixHeight: DISP.THERMOH_ALERT_FIX_HEIGHT,
+      useHeatMap: APP.USE_THERMOH_HEATMAP,
     }
   },
   computed: {
