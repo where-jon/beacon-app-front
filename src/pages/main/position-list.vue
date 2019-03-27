@@ -96,7 +96,6 @@ export default {
         await StateHelper.load('exb')
         await this.storePositionHistory(0, true)
         let positions = this.getPositions(true)
-
         Util.debug(positions)
         positions = positions.map((pos) => {
           return {
@@ -115,7 +114,7 @@ export default {
             categoryId: Util.getValue(pos, 'tx.categoryId').val,
             areaId: Util.getValue(pos, 'exb.areaId').val,
           }
-        }).sort((cur, next) => cur.txId < next.txId ? -1 : (cur.txId > next.txId ? 1 : 0))
+        })
         Util.debug(positions)
         this.replaceAS({positionList: positions})
         if (payload && payload.done) {
