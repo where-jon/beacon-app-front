@@ -422,7 +422,7 @@ export default {
           if (cPos || allShow) {
             return {
               ...pos,
-              transparent: !cPos? true: cPos.transparent? cPos.transparent: PositionHelper.isTransparent(cPos.timestamp, now)
+              transparent: !cPos? true: cPos.transparent? cPos.transparent: PositionHelper.isTransparent(cPos.timestamp, now),
               isLost: !cPos? true: PositionHelper.isLost(cPos.timestamp, now)
             }
           }
