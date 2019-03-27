@@ -232,6 +232,7 @@ const appStateConf = {
         bgColor: val.display? val.display.bgColor: null,
         shapeName: val.display? getShapeName(val.display.shape): null,
         categoryTypeName: getCategoryTypeName(val),
+        dispCategoryName: val.systemUse != 0? i18n.tnl('label.' + val.categoryName.toLowerCase()): val.categoryName,
       }))
     }
   },
@@ -292,17 +293,21 @@ const appStateConf = {
     path: '/core/zone',
     sort: 'zoneName',
     beforeCommit: (arr) => {
-      return  arr.map((val) => ({
-        zoneId: val.zoneId,
-        zoneName: val.zoneName,
-        zoneType: val.zoneType,
-        areaId: Util.hasValue(val.area)? val.area.areaId: null,
-        areaName: Util.hasValue(val.area)? val.area.areaName: null,
-        locationId: Util.hasValue(val.locationZoneList)? val.locationZoneList[0].locationZonePK.locationId: null,
-        locationName: Util.hasValue(val.locationZoneList)? val.locationZoneList[0].location.locationName: null,
-        categoryId: Util.hasValue(val.zoneCategoryList)? val.zoneCategoryList[0].zoneCategoryPK.categoryId: null,
-        categoryName: Util.hasValue(val.zoneCategoryList)? val.zoneCategoryList[0].category.categoryName: null,
-      }))
+      return  arr.map((val) => {
+        const category = Util.getValue(val, 'zoneCategoryList.0.category', null)
+        return {
+          zoneId: val.zoneId,
+          zoneName: val.zoneName,
+          zoneType: val.zoneType,
+          areaId: Util.hasValue(val.area)? val.area.areaId: null,
+          areaName: Util.hasValue(val.area)? val.area.areaName: null,
+          locationId: Util.hasValue(val.locationZoneList)? val.locationZoneList[0].locationZonePK.locationId: null,
+          locationName: Util.hasValue(val.locationZoneList)? val.locationZoneList[0].location.locationName: null,
+          categoryId: Util.hasValue(val.zoneCategoryList)? val.zoneCategoryList[0].zoneCategoryPK.categoryId: null,
+          categoryName: category? category.categoryName: null,
+          dispCategoryName: category? category.systemUse != 0? i18n.tnl('label.' + category.categoryName.toLowerCase()): category.categoryName: null,
+        }
+      })
     }
   },
   settings: {
