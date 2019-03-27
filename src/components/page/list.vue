@@ -114,6 +114,10 @@
             </span>
           </div>
         </template>
+        <!-- センサ名 -->
+        <template slot="dispCategoryName" slot-scope="row">
+          <span class="row" v-text="getDispCategoryName(row.item)" />
+        </template>
         <!-- 電池レベル -->
         <template slot="powerLevel" slot-scope="row">
           <span :class="'badge badge-pill badge-' + row.item.powerLevel.class">
@@ -319,7 +323,7 @@ export default {
     },
     zoneCategoryOptions() {
       return StateHelper.getOptionsFromState('category',
-        category => category.dispCategoryName,
+        category => StateHelper.getDispCategoryName(category),
         false, 
         category => CATEGORY.ZONE_AVAILABLE.includes(category.categoryType)
       )
@@ -450,6 +454,9 @@ export default {
       }
       this.replaceAS({[this.name]: entity})
       this.$router.push(this.editPath)
+    },
+    getDispCategoryName(category){
+      return StateHelper.getDispCategoryName(category)
     },
     getAnotherPageParam(name, item) {
       const pageParam = this.anotherPageParams.find((val) => val.name == name)
