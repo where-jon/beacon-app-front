@@ -18,7 +18,8 @@ export const url = (excloudUrl) => {
 export const fetchPosition = async (exbs, txs, pMock, isAll = false) => {
   let data = pMock? pMock: DEV.USE_MOCK_EXC? mock.position:
     await HttpHelper.getExCloud(url(EXCLOUD.POSITION_URL) + new Date().getTime())
-  return _(data)
+
+  let pos = _(data)
     .filter((val) => isAll || (DEV.NOT_FILTER_TX || txs && txs.some((tx) => tx.btxId == val.btx_id)))
     .filter((val) => isAll || (exbs && exbs.some((exb) => exb.location.posId == val.pos_id)))
     .map((val) => {
@@ -29,6 +30,16 @@ export const fetchPosition = async (exbs, txs, pMock, isAll = false) => {
         pos_id: val.pos_id, label, exb, tx, nearest: val.nearest, updatetime: dateform(val.updatetime)}
     })
     .compact().value()
+
+  txs.forEach(tx => { // テレメトリに含まれないTX情報を付加
+    if (!pos.find((e) => e.btx_id == tx.btxId)) {
+      let label = tx && tx.displayName? tx.displayName: tx.btxId
+      pos.push({btx_id: tx.btxId, minor: tx.minor, label, tx})
+    }
+  })
+
+  return pos
+
 }
 
 export const fetchPositionHistory = async (exbs, txs, allShow, pMock) => {
