@@ -146,7 +146,6 @@ export const APP = { // 機能面に関する設定
   SUM_TO: 2400,  // 滞在時間集計終了時間(時分)
   SUM_LOST_LIMIT: 90 * 60,  // 滞在時間集計不在判定時間（秒）
   SUM_ABSENT_LIMIT: 30 * 60,  // 滞在時間集計離席判定時間（秒）
-  SUM_ABSENT_SUB_LIMIT: 0,  // 滞在時間集計離席判定時間（秒）
   SUM_PARSENT_DIGIT: 100, // 在席率表示時の小数点以下桁数。なしなら1、1桁なら10、2桁なら100 …
 
   // Tx状態監視

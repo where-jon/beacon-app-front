@@ -55,6 +55,7 @@ import moment from 'moment'
 import validatemixin from '../../components/mixin/validatemixin.vue'
 import commonmixinVue from '../../components/mixin/commonmixin.vue'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
+import { SYSTEM_ZONE_CATEGORY_NAME } from '../../sub/constant/Constants'
 
 export default {
   components: {
@@ -96,6 +97,7 @@ export default {
     ...mapState('app_service', [
       'groups',
       'pots',
+      'zones',
     ]),
     iosOrAndroid() {
       return Util.isAndroidOrIOS()
@@ -104,6 +106,7 @@ export default {
   async created() {
     await StateHelper.load('group')
     await StateHelper.load('pots')
+    await StateHelper.load('zones')
     this.form.date = moment().add(-1, 'days').format('YYYYMMDD')
   },
   async mounted() {
@@ -125,6 +128,7 @@ export default {
       this.replace({showAlert: false})
       this.showProgress()
       const param = _.cloneDeep(this.form)
+      await StateHelper.load('zones')
       
       if (!param.date || param.date == '') {
         this.message = this.$i18n.tnl('message.pleaseEnterSearchCriteria')
@@ -144,27 +148,36 @@ export default {
         return
       }
 
-      this.viewList = this.getStayDataList(sumData, APP.SUM_ABSENT_LIMIT, APP.SUM_ABSENT_SUB_LIMIT, APP.SUM_LOST_LIMIT)
+      this.viewList = this.getStayDataList(sumData, APP.SUM_ABSENT_LIMIT, APP.SUM_LOST_LIMIT)
       
       this.hideProgress()
     },
-    getStayDataList(stayData, absentLimit = 0, absentSubLimit = 0, lostLimit = APP.LOST_TIME) {
+    isAbsentZoneData(zoneId) {
+      let zone = !this.isLostData(zoneId)? this.zones.find((e) => e.zoneId == zoneId): null
+      return zone? zone.categoryName == SYSTEM_ZONE_CATEGORY_NAME.ABSENT: false
+    },
+    isLostData(byId) {
+      return byId == -1
+    },
+    getStayDataList(stayData, absentLimit = 0, lostLimit = APP.LOST_TIME) {
       return stayData.map((data) => {
         const potId = data.potId
         const potName = this.pots.find((pot) => pot.potId == data.potId).potName
         let stayTime = 0, under30minAbsentTime = 0, over30to90minAbsentTime = 0,
           lostTime = 0, presentRatio = 0, absentRatio = 0, absentRatioSub = 0, lostRatio = 0
-        let isLostData = -1
 
         // 各時間の集計
-        data.stayList.forEach((list) => {
-          if (list.byId == isLostData) {
-            lostTime += (absentLimit == 0 || list.period > lostLimit)? list.period: 0
-            over30to90minAbsentTime += absentSubLimit != 0?
-              (list.period > absentLimit) && (list.period <= absentSubLimit)? list.period: 0: 0
-            under30minAbsentTime += list.period <= absentLimit? list.period: 0
+        data.stayList.forEach((stay) => {
+          if (this.isLostData(stay.byId) || this.isAbsentZoneData(stay.byId)) {
+            if (absentLimit == 0 || stay.period > lostLimit) {
+              lostTime += stay.period
+            } else if ((stay.period > absentLimit) && (stay.period <= lostLimit)) {
+              over30to90minAbsentTime += stay.period
+            } else {
+              under30minAbsentTime += stay.period <= absentLimit? stay.period: 0
+            }
           } else {
-            stayTime += list.period
+            stayTime += stay.period
           }
         })
         presentRatio = Util.getRatio(stayTime)
@@ -172,7 +185,6 @@ export default {
         absentRatioSub = Util.getRatio(over30to90minAbsentTime)
         lostRatio = Util.getRatio(lostTime)
 
-        // どこまでの時間を表示するか？（分にすらならない秒とか）決めて、GETメソッド作って流し込む
         return {
           id: potId, 
           name: potName, 
