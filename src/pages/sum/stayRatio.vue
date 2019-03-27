@@ -150,6 +150,7 @@ export default {
 
       this.viewList = this.getStayDataList(sumData, APP.SUM_ABSENT_LIMIT, APP.SUM_LOST_LIMIT)
       
+      this.totalRows = this.viewList.length
       this.hideProgress()
     },
     isAbsentZoneData(zoneId) {
