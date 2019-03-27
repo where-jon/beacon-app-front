@@ -18,7 +18,7 @@ import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
-import { TX, EXTRA_NAV } from '../../sub/constant/Constants'
+import { EXTRA_NAV } from '../../sub/constant/Constants'
 import * as Util from '../../sub/util/Util'
 import { APP } from '../../sub/constant/config.js'
 
@@ -118,7 +118,7 @@ export default {
             blinking : prohibitCheck? 'blinking' : null,
             isDisableArea: exb? exb.isAbsentZone: false,
           }
-        }).filter((pos) => !pos.tx || Util.bitON(pos.tx.disp, TX.DISP.POS))
+        })
         Util.debug(positions)
         this.replaceAS({positionList: positions})
         if (payload && payload.done) {

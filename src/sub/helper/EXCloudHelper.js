@@ -15,12 +15,12 @@ export const url = (excloudUrl) => {
   return APP_SERVICE.BASE_URL + excloudUrl
 }
 
-export const fetchPosition = async (exbs, txs, pMock) => {
+export const fetchPosition = async (exbs, txs, pMock, isAll = false) => {
   let data = pMock? pMock: DEV.USE_MOCK_EXC? mock.position:
     await HttpHelper.getExCloud(url(EXCLOUD.POSITION_URL) + new Date().getTime())
   return _(data)
-    .filter((val) => DEV.NOT_FILTER_TX || txs && txs.some((tx) => tx.btxId == val.btx_id))
-    .filter((val) => exbs && exbs.some((exb) => exb.location.posId == val.pos_id))
+    .filter((val) => isAll || (DEV.NOT_FILTER_TX || txs && txs.some((tx) => tx.btxId == val.btx_id)))
+    .filter((val) => isAll || (exbs && exbs.some((exb) => exb.location.posId == val.pos_id)))
     .map((val) => {
       let tx = _.find(txs, (tx) => tx.btxId == val.btx_id)
       let exb = _.find(exbs, (exb) => exb.location.posId == val.pos_id)
@@ -35,13 +35,13 @@ export const fetchPositionHistory = async (exbs, txs, allShow, pMock) => {
   let data = pMock? pMock: DEV.USE_MOCK_EXC? mock.position:
     await HttpHelper.getExCloud(url(EXCLOUD.POSITION_HISTORY_FETCH_URL.replace('{allFetch}', allShow? '1': '0')) + new Date().getTime())
   return _(data)
-    .filter((val) => DEV.NOT_FILTER_TX || txs && txs.some((tx) => tx.txId == val.txId))
-    .filter((val) => exbs && exbs.some((exb) => exb.location.locationId == val.locationId))
+    .filter((val) => allShow || DEV.NOT_FILTER_TX || txs && txs.some((tx) => tx.txId == val.txId))
+    .filter((val) => allShow || exbs && exbs.some((exb) => exb.location.locationId == val.locationId))
     .map((val) => {
       let tx = _.find(txs, (tx) => tx.txId == val.txId)
       let exb = _.find(exbs, (exb) => exb.exbId == val.exbId)
       let label = tx? tx.displayName? tx.displayName: tx.btxId: ''
-      return { btx_id: tx? tx.btxId: '',  minor: val.minor, pos_id: exb.posId, tx_id: val.txId,
+      return { btx_id: tx? tx.btxId: '',  minor: val.minor, pos_id: exb ? exb.posId : -1, tx_id: val.txId,
         x: val.x, y: val.y,
         label, exb, tx, updatetime: dateform(val.positionDt), timestamp:dateform(val.positionDt)}
     })
