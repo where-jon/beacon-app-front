@@ -143,7 +143,6 @@ export const endsWithSlashUrl = (vueComponent) => {
 }
 
 export const createCustomValidationKey = (target) => {
-  console.error(target)
   const key = ['badInput', 'patternMismatch', 'rangeOverflow', 'rangeUnderflow', 'stepMismatch', 'tooLong', 'tooShort', 'typeMismatch', 'valueMissing'].find(key => target.validity[key])
   if(!key){
     return null
