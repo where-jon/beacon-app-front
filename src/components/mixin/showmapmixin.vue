@@ -367,7 +367,7 @@ export default {
         this.replaceMain({positionHistores: positions})
       } else {
         // 移動平均数分のポジションデータを保持する
-        positions = await EXCloudHelper.fetchPosition(this.exbs, this.txs, pMock)
+        positions = await EXCloudHelper.fetchPosition(this.exbs, this.txs, pMock, allShow)
         this.pushOrgPositions(positions)
       }
       // 検知状態の取得
@@ -456,13 +456,14 @@ export default {
         positions = this.positionHistores
       } else {
         const now = !DEV.USE_MOCK_EXC? new Date().getTime(): mock.positions_conf.start + this.count++ * mock.positions_conf.interval  // for mock
-        positions = PositionHelper.correctPosId(this.orgPositions, now, showAllTime)
+        positions = showAllTime ?
+          this.orgPositions.filter((pos) => Array.isArray(pos)).flatMap((pos) => pos) :
+          PositionHelper.correctPosId(this.orgPositions, now)
       }
       if (APP.USE_MEDITAG && this.meditagSensors) {
         positions = SensorHelper.setStress(positions, this.meditagSensors)
       }
-      positions = this.positionFilter(positions, this.selectedGroup, this.selectedCategory)
-      return positions
+      return showAllTime ? positions : this.positionFilter(positions, this.selectedGroup, this.selectedCategory)
     },
     showDetail(btxId, x, y) {
       const tipOffsetY = 15
