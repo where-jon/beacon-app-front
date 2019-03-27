@@ -318,7 +318,9 @@ export default {
       return StateHelper.getOptionsFromState('zone')
     },
     zoneCategoryOptions() {
-      return StateHelper.getOptionsFromState('category', false, false, 
+      return StateHelper.getOptionsFromState('category',
+        category => category.dispCategoryName,
+        false, 
         category => CATEGORY.ZONE_AVAILABLE.includes(category.categoryType)
       )
     },

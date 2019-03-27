@@ -111,7 +111,9 @@ export default {
     },
     async initCategoryNames() {
       await StateHelper.load('category')
-      this.categoryNames = StateHelper.getOptionsFromState('category', false, true, 
+      this.categoryNames = StateHelper.getOptionsFromState('category',
+        category => category.dispCategoryName,
+        true, 
         category => !CATEGORY.POT_AVAILABLE.includes(category.categoryType)
       )
       const none = this.$i18n.t('label.none')
