@@ -150,7 +150,6 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'areas',
       'forceFetchTx',
     ]),
     ...mapState([
