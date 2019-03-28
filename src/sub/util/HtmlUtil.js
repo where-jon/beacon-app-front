@@ -18,7 +18,7 @@ export const importElementUI = () => {
 
 export const getDomainCd = () => document && document.domain? document.domain.split('.')[0]: ''
 
-export const addClass = (e, cls) => e && e.target.classList && e.target.classList.add(cls)
+export const addClass = (e, cls) => e && e.target && e.target.classList && e.target.classList.add(cls)
 
 export const removeClass = (e, cls) => e && e.target && e.target.classList && e.target.classList.remove(cls)
 
