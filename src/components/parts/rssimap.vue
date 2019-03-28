@@ -101,6 +101,7 @@ class RssiIcon {
     this.container.x = x
     this.container.y = y
     this.parent.addChild(this.container)
+    return this.container
   }
 }
 
@@ -149,7 +150,6 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'txs',
       'forceFetchTx',
     ]),
     ...mapState([
@@ -205,6 +205,7 @@ export default {
       this.showMapImageDef(async () => {
         this.showProgress()
         await this.fetchAreaExbs()
+
         this.positionedExb = this.getExbPosition()
         if (this.exbCon && this.exbCon !== null) {
           this.stage.removeChild(this.exbCon)
@@ -221,8 +222,12 @@ export default {
           return exbBtn
         })
 
+        let positions = this.getPositions(false)
         this.nearest = await this.getNearest(this.exbBtns)
+        this.nearest = this.nearest.filter((n) => positions.some((pos) => pos.btx_id === n.btx_id))
+
         this.stage.addChild(this.exbCon)
+        this.stage.setChildIndex(this.exbCon, this.stage.numChildren-1)
         this.stage.update()
         this.forceUpdateRealWidth()
         if (this.targetTx) {
@@ -314,6 +319,7 @@ export default {
       target.nearest.filter((t) => t.x && t.y).forEach((t, i, a) => {
         const rssi = Math.floor(t.rssi * pow) / pow 
         new RssiIcon(this.rssiCon, rssi, i).add(t.x - minusX, t.y - minusY)
+        this.stage.setChildIndex(this.rssiCon, this.stage.numChildren-1)
       })
       this.stage.update()
     },
