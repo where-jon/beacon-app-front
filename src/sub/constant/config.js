@@ -26,6 +26,7 @@ export const APP = { // 機能面に関する設定
   // 時間設定
   TIMEOUT: 60 * 60 * 1000, // session timeout(using local storage)
   AUTO_RELOAD: 60000, // 自動リロード間隔(ミリ秒)
+  POSITION_AUTO_RELOAD: 60000, // 測位の自動リロード間隔(ミリ秒)
 
   TRANSPARENT_TIME: 60 * 1000, // 半透明：現在時刻から経過した段階で半透明（ミリ秒）
   LOST_TIME: 10 * 60 * 1000, // 消失とみなす時間（ミリ秒）

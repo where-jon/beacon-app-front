@@ -1,6 +1,6 @@
 <template>
   <div id="mapContainer" class="container-fluid" @click="resetDetail">
-    <breadcrumb :items="items" :extra-nav-spec="extraNavSpec" :reload="true" :short-name="shortName" :legend-items="legendItems" />
+    <breadcrumb :items="items" :extra-nav-spec="extraNavSpec" :reload="true" :auto-reload="false" :short-name="shortName" :legend-items="legendItems" />
     <prohibitAlert :messagelist="message" />
     <b-row class="mt-2">
       <b-form inline class="mt-2" @submit.prevent>
@@ -175,8 +175,12 @@ export default {
     await StateHelper.load('prohibit')
     document.addEventListener('touchstart', this.touchEnd)
     await this.fetchData()
+    this.startPositionAutoReload()
+    this.startOtherAutoReload()
   },
   beforeDestroy() {
+    this.stopPositionAutoReload()
+    this.stopOtherAutoReload()
     this.resetDetail()
   },
   methods: {
@@ -213,15 +217,20 @@ export default {
     getGroupLegendElements () {
       return this.groups.map((val) => ({id: val.groupId, name: val.groupName, ...val, }))
     },
-    async fetchPositionData() {
+    async fetchPositionData(payload) {
       await this.fetchAreaExbs(true)
 
       let alwaysTxs = this.txs.filter((tx) => {
         return tx.areaId == this.selectedArea && Util.bitON(tx.disp, TX.DISP.ALWAYS)
       })
       let isAllfetch = alwaysTxs? true: false
-      await this.storePositionHistory(this.count, isAllfetch)
+      if(!payload.disabledPosition){
+        await this.storePositionHistory(this.count, isAllfetch)
+      }
 
+      if(payload.disabledOther){
+        return
+      }
       if (APP.USE_MEDITAG) {
         let meditagSensors = await EXCloudHelper.fetchSensor(SENSOR.MEDITAG)
         this.meditagSensors = _(meditagSensors)
@@ -242,16 +251,19 @@ export default {
       }
     },
     async fetchData(payload, disableErrorPopup) {
+      const disabledProgress = Util.getValue(payload, 'disabledProgress', false)
       try {
         this.reloadSelectedTx = this.reload? this.selectedTx: {}
         this.replace({reload: false})
-        this.showProgress()
+        if(!disabledProgress){
+          this.showProgress()
+        }
         await StateHelper.load('tx', this.forceFetchTx)
         StateHelper.setForceFetch('tx', false)
         this.$nextTick(() => {
           this.loadLegends()
         })
-        this.showMapImage(disableErrorPopup)
+        this.showMapImage(disableErrorPopup, payload)
         if (payload && payload.done) {
           payload.done()
         }
@@ -259,7 +271,9 @@ export default {
       catch(e) {
         console.error(e)
       }
-      this.hideProgress()
+      if(!disabledProgress){
+        this.hideProgress()
+      }
     },
     async getDetail(txId) {
       let tx = await AppServiceHelper.fetch('/core/tx', txId)
@@ -271,16 +285,23 @@ export default {
         this.stage.update()
       })
     },
-    showMapImage(disableErrorPopup) {
+    showMapImage(disableErrorPopup, payload) {
+      const cPayload = {
+        disabledPosition: Util.getValue(payload, 'disabledPosition', false),
+        disabledOther: Util.getValue(payload, 'disabledOther', false),
+        disabledProgress: Util.getValue(payload, 'disabledProgress', false),
+      }
       clearInterval(this.prohibitInterval)
       this.showMapImageDef(async () => {
-        this.showProgress()
+        if(!cPayload.disabledProgress){
+          this.showProgress()
+        }
         const reloadButton = document.getElementById('reloadIcon')
         if(!this.firstTime && reloadButton){
           HtmlUtil.removeClass({target: reloadButton}, 'rotateStop')
           HtmlUtil.addClass({target: reloadButton}, 'rotate')
         }
-        await this.fetchPositionData()
+        await this.fetchPositionData(cPayload)
 
         this.stage.on('click', (evt) => {
           this.resetDetail()
@@ -302,7 +323,9 @@ export default {
           HtmlUtil.addClass({target: reloadButton}, 'rotateStop')
         }
         this.firstTime = false
-        this.hideProgress()
+        if(!cPayload.disabledProgress){
+          this.hideProgress()
+        }
       }, disableErrorPopup)
     },
     showTxAll() {
