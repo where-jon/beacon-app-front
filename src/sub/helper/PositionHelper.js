@@ -96,10 +96,10 @@ const getCoordinateDefault = (exb, ratio, samePos) => {
  * @param {*} orgY アイコン配置開始Y座標値
  * @param {*} positions EXBの配置座標配列
  */
-const getCoordinateTile = (orgX, orgY, positions, viewType) => {
+const getCoordinateTile = (ratio, orgX, orgY, positions, viewType) => {
   return partitioningArray(positions, viewType.horizon).flatMap((array, i, a) => {
     return array.map((b, j, c) => {
-      return {...b, x: orgX + diameter * j, y: orgY + diameter * i }
+      return {...b, x: orgX + diameter * ratio * j, y: orgY + diameter * ratio * i }
     })
   })
 }
@@ -111,14 +111,14 @@ const getCoordinateTile = (orgX, orgY, positions, viewType) => {
  * @param {*} y EXB Y座標値
  * @param {*} isDiamond trueの場合、ひし形に配置
  */
-const getCoordinateSquare = (index, x, y, isDiamond = false) => {
+const getCoordinateSquare = (ratio, index, x, y, isDiamond = false) => {
   const i = index % iconsUnitNum
   if (i < 1) {
     return {x: x, y: y}
   }
   const r = isDiamond ? getRadiusDiamond(index, diameter) : getRadiusSquare(index, diameter)
   const radian = angle * i * PIdiv180
-  return {x: x + r * Math.cos(radian), y: y + r * Math.sin(radian)}
+  return {x: x + r * ratio * Math.cos(radian), y: y + r * ratio * Math.sin(radian)}
 }
 
 /**
@@ -144,19 +144,19 @@ const getCoordinateSpiral = (index, x, y, theta, radius) => {
  * @param {*} positions EXBの配置座標配列
  * @param {*} viewType アイコン配置タイプ
  */
-const getCoordinate = (orgX, orgY, positions, viewType) => {
+const getCoordinate = (ratio, orgX, orgY, positions, viewType) => {
   if (viewType.displayFormat === TX_VIEW_TYPES.TILE) {
-    return getCoordinateTile(orgX, orgY, positions, viewType)
+    return getCoordinateTile(ratio, orgX, orgY, positions, viewType)
   }
   return positions.length > 1 ? positions.map((e, i, a) => {
     const xy = (() => {
       switch (viewType.displayFormat) {
       case TX_VIEW_TYPES.SQUARE :
-        return getCoordinateSquare(i, orgX, orgY)
+        return getCoordinateSquare(ratio, i, orgX, orgY)
       case TX_VIEW_TYPES.DIAMOND :
-        return getCoordinateSquare(i, orgX, orgY, true)
+        return getCoordinateSquare(ratio, i, orgX, orgY, true)
       case TX_VIEW_TYPES.SPIRAL :
-        return getCoordinateSpiral(i, orgX, orgY, 360 / positions.length * i, diameter)
+        return getCoordinateSpiral(i, orgX, orgY, 360 / positions.length * i, diameter * ratio)
       default :
         return {x: orgX, y: orgY}
       }
@@ -183,7 +183,7 @@ const getPositionsToOverlap = (exb, ratio, samePos) => {
   let baseY = exb.location.y * ratio
   const c = partitioningArray(samePos, viewType.displayFormat !== TX_VIEW_TYPES.TILE ? iconsUnitNum : maxIcons)
   return c.flatMap((e, i, a) => {
-    const coordinate = getCoordinate(baseX, baseY, e, viewType)
+    const coordinate = getCoordinate(ratio, baseX, baseY, e, viewType)
     baseX += DISP.TX_R
     baseY += DISP.TX_R
     return coordinate
