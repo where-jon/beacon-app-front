@@ -3,83 +3,33 @@
     <breadcrumb :items="items" :reload="false" />
     <div class="container">
       <alert :message="message" />
+      <b-form class="form-horizontal">
+        <b-form-group>
+          <label v-t="'label.mode'" class="control-label col-md-2 text-right" />
+          <b-form-select v-model="form.mode" :options="modeOptions" class="col-md-2" />
+          <label v-t="'label.sumYearMonth'" class="control-label col-md-1 text-right" />
+          <b-form-select v-model="vModelYearMonth" class="col-md-2" :options="yearMonthOptions" @change="yearMonthChange" />
+          <label v-t="'label.sumDay'" class="control-label col-md-1 text-right" />
+          <b-form-select v-model="vModelDay" class="col-md-1" :options="dayOptions" @change="dayChange" />
+        </b-form-group>
+        <b-form-group>
+          <label v-t="'label.zoneCategoryName'" class="control-label col-md-2 text-right" />
+          <b-form-select v-model="vModelCategory" class="col-md-3" :options="categoryOptionList" @change="categoryChange" />
+          <label v-t="'label.zone'" class="control-label col-md-1 text-right" />
+          <b-form-select v-model="vModelZone" class="col-md-3" :options="zoneOptions" @change="zoneChange" />
+        </b-form-group>
+        <b-form-group>
+          <b-button v-t="'label.display'" :variant="theme" class="col-md-1" @click="display" />
+          <b-button v-if="!iosOrAndroid" v-t="'label.download'" :variant="theme" :disabled="!viewList || viewList.length == 0" class="mx-1" @click="exportCsv" />
+        </b-form-group>
+      </b-form>
 
-      <div class="mapContainer mb-5">
-        <b-form inline>
-          <b-form-group>
-            <b-form-row>
-              <b-form-row class="mb-3">
-                <label v-t="'label.mode'" class="mr-2" />
-                <b-form-select v-model="form.mode" :options="modeOptions" />
-              </b-form-row>
-            </b-form-row>
-          </b-form-group>
-        </b-form>
-        <b-form inline>
-          <b-form-group>
-            <b-form-row>
-              <b-form-row class="mb-3 mr-2">
-                <label v-t="'label.sumYearMonth'" class="mr-2" />
-                <v-select v-model="vModelYearMonth" :options="yearMonthOptions" :on-change="yearMonthChange" class="vselectMonth">
-                  <div slot="no-options">
-                    {{ $i18n.tnl('label.vSelectNoOptions') }}
-                  </div>
-                </v-select>
-              </b-form-row>
-              <b-form-row class="mb-3">
-                <label v-t="'label.sumDay'" class="mr-2" />
-                <v-select v-model="vModelDay" :options="dayOptions" :on-change="dayChange" class="vselectDay">
-                  <div slot="no-options">
-                    {{ $i18n.tnl('label.vSelectNoOptions') }}
-                  </div>
-                </v-select>
-              </b-form-row>
-            </b-form-row>
-          </b-form-group>
-        </b-form>
-        <b-form inline>
-          <b-form-group>
-            <b-form-row>
-              <b-form-row class="mb-3 mr-2">
-                <label v-t="'label.zoneCategoryName'" class="mr-2" />
-                <v-select v-model="vModelCategory" :options="categoryOptions" :on-change="categoryChange" class="vselectCategory">
-                  <div slot="no-options">
-                    {{ $i18n.tnl('label.vSelectNoOptions') }}
-                  </div>
-                </v-select>
-              </b-form-row>
-            </b-form-row>
-          </b-form-group>
-          <b-form-group>
-            <b-form-row>
-              <b-form-row class="mb-3">
-                <label v-t="'label.zone'" class="mr-2" />
-                <v-select v-model="vModelZone" :options="zoneOptions" :on-change="zoneChange" class="vselectZone">
-                  <div slot="no-options">
-                    {{ $i18n.tnl('label.vSelectNoOptions') }}
-                  </div>
-                </v-select>
-              </b-form-row>
-            </b-form-row>
-          </b-form-group>
-        </b-form>
-        <b-form inline>
-          <b-form-group>
-            <b-form-row class="mb-3 mr-2">
-              <b-button v-t="'label.display'" :variant="theme" class="mx-1" @click="display" />
-              <b-button v-if="!iosOrAndroid" v-t="'label.download'" :variant="theme" :disabled="!viewList || viewList.length == 0" class="mx-1" @click="exportCsv" />
-            </b-form-row>
-          </b-form-group>
-        </b-form>
-        <slot />
-        <b-row class="mt-3" />
-        <b-table :items="viewList" :fields="fields" :current-page="currentPage" :per-page="perPage" :sort-by.sync="sortBy" stacked="md" striped hover outlined />
-        <b-row>
-          <b-col md="6" class="my-1">
-            <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" class="my-0" />
-          </b-col>
-        </b-row>
-      </div>
+      <b-table :items="viewList" :fields="fields" :current-page="currentPage" :per-page="perPage" :sort-by.sync="sortBy" stacked="md" striped hover outlined />
+      <b-row>
+        <b-col md="6" class="my-1">
+          <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" class="my-0" />
+        </b-col>
+      </b-row>
     </div>
   </div>
 </template>
@@ -98,6 +48,7 @@ import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
+import { CATEGORY } from '../../sub/constant/Constants'
 
 export default {
   components: {
@@ -142,6 +93,7 @@ export default {
       vModelZone: null,
       vModelYearMonth: null,
       vModelDay: null,
+      MONTHS: 6,
     }
   },
   computed: {
@@ -150,7 +102,8 @@ export default {
       return 'outline-' + theme
     },
     ...mapState('app_service', [
-      ''
+      'categories',
+      'zones',
     ]),
     modeOptions() {
       const modeOp = []
@@ -159,28 +112,24 @@ export default {
       return modeOp
     },
     yearMonthOptions() {
-      const today = new Date()
-      let yyyy = today.getFullYear()
-      let mm = today.getMonth() + 1
-      const pullDowns = []
-      for (let idx = 0; idx < 6; idx++) {
-        pullDowns.push({
-          label: yyyy + '/' + ('00' + mm).substr(-2),
-          value: yyyy*100 + mm
+      const date = new Date()
+      const months = []
+      let year = 0
+      let month = 0
+      for (let i = 0 ; i < this.MONTHS ; i++) {
+        date.setDate(1)
+        date.setTime(date.getTime() - (i > 0 ? 86400000 : 0))
+        year = date.getFullYear()
+        month = date.getMonth() + 1
+        months.push({
+          text: `${year}/${('00' + month).substr(-2)}`,
+          value: year * 100 + month
         })
-        mm--
-        if (mm < 1) {
-          mm = 12
-          yyyy--
-        }
       }
-      return pullDowns
+      return months
     },
     dayOptions() {
       return this.dayOptionList
-    },
-    categoryOptions() {
-      return this.categoryOptionList
     },
     zoneOptions() {
       return this.zoneOptionList
@@ -192,26 +141,22 @@ export default {
   },
   async mounted() {
     HtmlUtil.importElementUI()
+    this.vModelYearMonth = this.yearMonthOptions[0].value
+    this.yearMonthChange(this.vModelYearMonth)
+    this.vModelDay = this.dayOptionList[0].value
     await StateHelper.load('category')
-    this.fetchPrev()
-    this.vModelYearMonth = this.yearMonthOptions[0]
+    if (this.categories.length < 1) {
+      return
+    }
+    this.categoryOptionList = this.categories.filter((c) => c.categoryType === CATEGORY.ZONE)
+      .sort((a, b) => a.categoryId < b.categoryId ? -1 : 1)
+      .map((c) => { return {text: c.categoryName, value: c.categoryId}})
+    this.vModelCategory = this.categoryOptionList[0].value
+
+    await StateHelper.load('zone')
+    console.log(this.zones)
   },
   methods: {
-    async fetchPrev() {
-      await this.fetchZoneCategoryList()
-      this.categoryChange(null)
-    },
-    async fetchZoneCategoryList() {
-      try {
-        this.zoneCategorys = await AppServiceHelper.fetch(
-          '/core/zone/categoryList',
-          ''
-        )
-        this.categoryOptionList = this.getZoneCategoryOptions(this.zoneCategorys)
-      } catch(e) {
-        console.error(e)
-      }
-    },
     yearMonthChange(val) {
       if (val == null) {
         this.form.selectedYearMonth = 0
@@ -219,38 +164,28 @@ export default {
         this.dayOptionList = []
         return
       }
-      const year = val.value / 100
-      const month = val.value % 100
+      const year = val / 100
+      const month = val % 100
       const lastDay = new Date(year, month, 0).getDate()
       const pullDowns = []
       for (let idx = 1; idx <= lastDay; idx++) {
-        pullDowns.push({
-          label: '' + idx, value: idx
-        })
+        pullDowns.push({ text: idx, value: idx })
       }
       this.form.selectedYearMonth = val.value
-      this.vModelDay = null
+      this.vModelDay = 1
       this.dayOptionList = pullDowns
     },
     dayChange(val) {
-      if (val == null) {
-        this.selectedDay = 0
-        this.vModelDay = null
-      } else {
-        this.selectedDay = val.value
-        this.vModelDay = val
-      }
+      this.selectedDay = val ? val : 0
+      this.vModelDay = val ? val : null
     },
     categoryChange(val) {
-      this.zoneOptionList = this.getZoneOptions(this.zoneCategorys, val)
-      if (val == null) {
-        this.categoryId = -1
-        this.vModelCategory = null
-      } else {
-        this.categoryId = val.value
-        this.vModelCategory = val
+      this.zoneOptionList =this.zones.filter((zone) => zone.categoryId && zone.categoryId === val)
+        .map((zone) => {return {text: zone.zoneName, value: zone.zoneId}})
+      if (this.zoneOptionList.length < 1) {
+        return
       }
-      this.vModelZone = null
+      this.vModelZone = this.zoneOptionList[0].value
     },
     zoneChange(val) {
       if (val == null) {
