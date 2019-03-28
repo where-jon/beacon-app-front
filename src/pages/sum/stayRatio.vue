@@ -129,6 +129,7 @@ export default {
       this.showProgress()
       const param = _.cloneDeep(this.form)
       await StateHelper.load('zones')
+      await StateHelper.load('pots')
       
       if (!param.date || param.date == '') {
         this.message = this.$i18n.tnl('message.pleaseEnterSearchCriteria')
@@ -163,7 +164,7 @@ export default {
     getStayDataList(stayData, absentLimit = 0, lostLimit = APP.LOST_TIME) {
       return stayData.map((data) => {
         const potId = data.potId
-        const potName = this.pots.find((pot) => pot.potId == data.potId).potName
+        const potName = data.potName
         let stayTime = 0, under30minAbsentTime = 0, over30to90minAbsentTime = 0,
           lostTime = 0, presentRatio = 0, absentRatio = 0, absentRatioSub = 0, lostRatio = 0
 
