@@ -38,9 +38,6 @@ export default {
   },
   methods: {
     resetData(entity, dummyKey){
-      if(!APP.POT_WITH_POTCD){
-        entity.potCd = entity.potName
-      }
       if(!Util.hasValue(entity.potType) && !Util.hasValue(entity.categoryName)){
         entity.potType = CATEGORY.PERSON
       }
