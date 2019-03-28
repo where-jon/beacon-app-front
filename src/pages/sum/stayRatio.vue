@@ -87,7 +87,7 @@ export default {
         {key: 'under30minLostRatio', sortable: true, label: '30minAbsentRatio'},
         {key: 'over30to90minLostRatio', sortable: true, label: '30to90minAbsentRatio'},
         {key: 'lostRatio', sortable: true, label: 'lostRatio'},
-      ]),
+      ]).map(val => ({ ...val, originLabel: val.label})),
     }
   },
   computed: {
@@ -111,6 +111,11 @@ export default {
   },
   async mounted() {
     HtmlUtil.importElementUI()
+    window.addEventListener('resize', () => {
+      this.updateColumnName()
+      this.$forceUpdate()
+    })
+    this.updateColumnName()
   },
   methods: {
     validate() {
@@ -212,7 +217,14 @@ export default {
         Util.converToCsv(this.viewList),
         getCharSet(this.$store.state.loginId)
       )
-    }
+    },
+    updateColumnName(){
+      if(Util.hasValue(this.fields)){
+        this.fields.forEach(field => {
+          field.label = Util.isResponsiveMode()? field.originLabel.replace(/<br>/g, ''): field.originLabel
+        })
+      }
+    },
   }
 }
 </script>
