@@ -75,7 +75,7 @@ export default {
       showChart: true,
       currentPage: 1,
       perPage: 20,
-      sortBy: null,
+      sortBy: 'name',
       totalRows: 0,
       fields: ViewHelper.addLabelByKey(this.$i18n, [
         {key: 'name', sortable: true, label: 'potName'},
