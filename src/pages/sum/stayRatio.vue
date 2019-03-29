@@ -97,7 +97,7 @@ export default {
     ...mapState('app_service', [
       'groups',
       'pots',
-      'zones',
+      'categories',
     ]),
     iosOrAndroid() {
       return Util.isAndroidOrIOS()
@@ -106,7 +106,7 @@ export default {
   async created() {
     await StateHelper.load('group')
     await StateHelper.load('pots')
-    await StateHelper.load('zones')
+    await StateHelper.load('categories')
     this.form.date = moment().add(-1, 'days').format('YYYYMMDD')
   },
   async mounted() {
@@ -154,9 +154,9 @@ export default {
       this.totalRows = this.viewList.length
       this.hideProgress()
     },
-    isAbsentZoneData(zoneId) {
-      let zone = !this.isLostData(zoneId)? this.zones.find((e) => e.zoneId == zoneId): null
-      return zone? zone.categoryName == SYSTEM_ZONE_CATEGORY_NAME.ABSENT: false
+    isAbsentZoneData(categoryId) {
+      let category = !this.isLostData(categoryId)? this.categories.find((e) => e.categoryId == categoryId): null
+      return category? category.categoryName == SYSTEM_ZONE_CATEGORY_NAME.ABSENT: false
     },
     isLostData(byId) {
       return byId == -1
