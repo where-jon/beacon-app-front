@@ -221,7 +221,7 @@ export default {
     updateColumnName(){
       if(Util.hasValue(this.fields)){
         this.fields.forEach(field => {
-          field.label = Util.isResponsiveMode()? field.originLabel.replace(/<br>/g, ''): field.originLabel
+          field.label = Util.isResponsiveMode(true)? field.originLabel.replace(/<br>/g, ''): field.originLabel
         })
       }
     },
