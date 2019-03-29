@@ -274,6 +274,9 @@ const appStateConf = {
   topNewsList: {
     path: '/news/disp',
     sort: 'newsDate',
+    beforeCommit: (arr) => {
+      return _.orderBy(arr, ['newsDate'], ['desc'])
+    }
   },
   roles: {
     path: '/meta/role',
