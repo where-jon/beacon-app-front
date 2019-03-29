@@ -218,3 +218,10 @@ export const setCustomValidationMessage = () => {
 }
 
 export const getResourcePath = (path) => hasValue(path) && isImageFile(path)? path.indexOf(0) == /^[\\./]/.test(path)? path: `/${path}`: path
+
+export const addTimeToPath = (path) => {
+  if (path.includes('?_=') || path.includes('&_=')) {
+    return path
+  }
+  return path + (path.includes('?')? '&': '?') + '_=' + new Date().getTime()
+}

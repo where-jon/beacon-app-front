@@ -2,6 +2,7 @@ import axios from 'axios'
 import { EXCLOUD, APP_SERVICE } from '../constant/config'
 import * as AuthHelper from './AuthHelper'
 import * as Util from '../util/Util'
+import * as HtmlUtil from '../util/HtmlUtil'
 import md5 from 'md5'
 
 let i18n
@@ -55,7 +56,7 @@ const addApiKey = (config = {}) => {
 
 export const getAppServiceNoCrd = async (path, config, ignoreError) => {
   try {
-    let res = await axiosNoCrd.get(APP_SERVICE.BASE_URL + path, addApiKey(config))
+    let res = await axiosNoCrd.get(APP_SERVICE.BASE_URL + HtmlUtil.addTimeToPath(path), addApiKey(config))
     return res.data
   } catch (e) {
     if (!ignoreError) {
@@ -66,7 +67,7 @@ export const getAppServiceNoCrd = async (path, config, ignoreError) => {
 
 export const getAppService = async (path, config, ignoreError) => {
   try {
-    let res = await apServiceClient.get(APP_SERVICE.BASE_URL + path, addApiKey(config))
+    let res = await apServiceClient.get(APP_SERVICE.BASE_URL + HtmlUtil.addTimeToPath(path), addApiKey(config))
     return res.data
   } catch (e) {
     if (!ignoreError) {
