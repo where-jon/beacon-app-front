@@ -466,7 +466,7 @@ export const getStayBaseSec = () => {
 
 export const getFileName = key => key.slice(key.lastIndexOf('/') + 1, key.lastIndexOf('.'))
 export const isImageFile = key => hasValue(key) && /^.*\.(png$)|(jpg$)|(jpeg$)|(gif$)$/.test(key) && !/^.*(__MACOSX\/).*$/.test(key) && !/^\..*/.test(getFileName(key))
-export const isResponsiveMode = () =>  window.innerWidth < 768
+export const isResponsiveMode = (or) => or? window.innerWidth <= 768: window.innerWidth < 768
 
 export const formatTemperature = (temperature) => typeof temperature == 'number'? floorVal(temperature, 1): ''
 export const formatHumidity = (humidity) => typeof humidity == 'number'? floorVal(humidity, 0): ''
