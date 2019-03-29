@@ -7,7 +7,6 @@ import * as mock from '../../assets/mock/mock.js'
 const iconsUnitNum = 9
 const tileLayoutIconsNum = 5
 const PIdiv180 = Math.PI / 180
-const diameter = DISP.TX_R * 2
 const angle = 45
 
 /**
@@ -99,7 +98,7 @@ const getCoordinateDefault = (exb, ratio, samePos) => {
 const getCoordinateTile = (ratio, orgX, orgY, positions, viewType) => {
   return partitioningArray(positions, viewType.horizon).flatMap((array, i, a) => {
     return array.map((b, j, c) => {
-      return {...b, x: orgX + diameter * ratio * j, y: orgY + diameter * ratio * i }
+      return {...b, x: orgX + DISP.TX_R * 2 * ratio * j, y: orgY + DISP.TX_R * 2 * ratio * i }
     })
   })
 }
@@ -116,7 +115,7 @@ const getCoordinateSquare = (ratio, index, x, y, isDiamond = false) => {
   if (i < 1) {
     return {x: x, y: y}
   }
-  const r = isDiamond ? getRadiusDiamond(index, diameter) : getRadiusSquare(index, diameter)
+  const r = isDiamond ? getRadiusDiamond(index, DISP.TX_R * 2) : getRadiusSquare(index, DISP.TX_R * 2)
   const radian = angle * i * PIdiv180
   return {x: x + r * ratio * Math.cos(radian), y: y + r * ratio * Math.sin(radian)}
 }
@@ -156,7 +155,7 @@ const getCoordinate = (ratio, orgX, orgY, positions, viewType) => {
       case TX_VIEW_TYPES.DIAMOND :
         return getCoordinateSquare(ratio, i, orgX, orgY, true)
       case TX_VIEW_TYPES.SPIRAL :
-        return getCoordinateSpiral(i, orgX, orgY, 360 / positions.length * i, diameter * ratio)
+        return getCoordinateSpiral(i, orgX, orgY, 360 / positions.length * i, DISP.TX_R * 2 * ratio)
       default :
         return {x: orgX, y: orgY}
       }
