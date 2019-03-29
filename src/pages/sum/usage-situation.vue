@@ -143,7 +143,6 @@ export default {
     HtmlUtil.importElementUI()
     this.vModelYearMonth = this.yearMonthOptions[0].value
     this.yearMonthChange(this.vModelYearMonth)
-    this.vModelDay = this.dayOptionList[0].value
     await StateHelper.load('category')
     if (this.categories.length < 1) {
       return
@@ -151,10 +150,9 @@ export default {
     this.categoryOptionList = this.categories.filter((c) => c.categoryType === CATEGORY.ZONE)
       .sort((a, b) => a.categoryId < b.categoryId ? -1 : 1)
       .map((c) => { return {text: c.categoryName, value: c.categoryId}})
+    this.categoryOptionList.unshift({text: '', value: null})
     this.vModelCategory = this.categoryOptionList[0].value
-
     await StateHelper.load('zone')
-    console.log(this.zones)
   },
   methods: {
     yearMonthChange(val) {
@@ -171,8 +169,7 @@ export default {
       for (let idx = 1; idx <= lastDay; idx++) {
         pullDowns.push({ text: idx, value: idx })
       }
-      this.form.selectedYearMonth = val.value
-      this.vModelDay = 1
+      this.form.selectedYearMonth = val
       this.dayOptionList = pullDowns
     },
     dayChange(val) {
@@ -182,19 +179,10 @@ export default {
     categoryChange(val) {
       this.zoneOptionList =this.zones.filter((zone) => zone.categoryId && zone.categoryId === val)
         .map((zone) => {return {text: zone.zoneName, value: zone.zoneId}})
-      if (this.zoneOptionList.length < 1) {
-        return
-      }
-      this.vModelZone = this.zoneOptionList[0].value
     },
     zoneChange(val) {
-      if (val == null) {
-        this.zoneId = null
-        this.vModelZone = null
-      } else {
-        this.zoneId = val.value
-        this.vModelZone = val
-      }
+      this.zoneId = val
+      this.vModelZone = val
     },
     async display() {
       this.container ? this.container.removeAllChildren() : null
@@ -237,8 +225,8 @@ export default {
           this.replace({showAlert: true})
           return
         }
-        const paramCategoryId = (this.categoryId != null)? this.categoryId: -1
-        const paramZoneId = (this.zoneId != null)? this.zoneId: -1
+        const paramCategoryId = this.vModelCategory ? this.vModelCategory : -1
+        const paramZoneId = this.vModelZone ? this.vModelZone : -1
         const paramDate = this.getParamDate()
         const aModeId = (this.form.mode != null)? this.form.mode: 1
         let fetchList = null
