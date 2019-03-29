@@ -134,12 +134,12 @@ export default {
       }
     },
     iconMouseOver(event){
-      if(DISP.THERMOH_TOOLTIP_USE){
+      if(APP.USE_THERMOH_TOOLTIP){
         this.createTooltip(event.target.parent)
       }
     },
     iconMouseOut(){
-      if(DISP.THERMOH_TOOLTIP_USE){
+      if(APP.USE_THERMOH_TOOLTIP){
         this.removeTooltip()
       }
     },
@@ -424,14 +424,21 @@ export default {
       const device = container.device
       const ret = {
         fontSize: Util.getFont2Size(DISP.THERMOH_FONT),
-        sensorName: device.txName? device.txName: device.locationName,
-        temperature: Util.formatTemperature(device.temperature),
-        humidity: Util.formatHumidity(device.humidity),
-        description: Util.cutOnLong(device.description, 10),
+        sensorName: DISP.THERMOH_TOOLTIP_ITEMS.TXNAME? device.txName? device.txName: device.locationName: '',
+        temperature: DISP.THERMOH_TOOLTIP_ITEMS.TEMPERATURE? Util.formatTemperature(device.temperature) + this.$i18n.tnl('label.temperatureUnit'): '',
+        humidity: DISP.THERMOH_TOOLTIP_ITEMS.HUMIDITY? Util.formatHumidity(device.humidity) + this.$i18n.tnl('label.humidityUnit'): '',
+        description: DISP.THERMOH_TOOLTIP_ITEMS.DESCRIPTION? Util.cutOnLong(device.description, 10): '',
+        date: DISP.THERMOH_TOOLTIP_ITEMS.DATE? Util.formatDate(device.timestamp || device.updatetime): '',
       }
-      const count = [ret.sensorName, ret.temperature, ret.humidity, ret.description].reduce((a, b) => b? a + 1: a, 0)
-      ret.width = ret.fontSize * Util.getMaxTextLength([Util.cutOnLongByte(ret.sensorName, 10, false), ret.temperature, ret.humidity, Util.cutOnLongByte(ret.description, 10, false)])
+      const count = [ret.sensorName, ret.temperature, ret.humidity, ret.description, ret.date].reduce((a, b) => b? a + 1: a, 0)
+      ret.width = ret.fontSize * Util.getMaxTextLength([Util.cutOnLongByte(ret.sensorName, 10, false), ret.temperature, ret.humidity, Util.cutOnLongByte(ret.description, 10, false), ret.date]) / 1.25
+      if(ret.width <= DISP.THERMOH_TOOLTIP_ROUNDRECT * 2 + 2){
+        ret.width = DISP.THERMOH_TOOLTIP_ROUNDRECT * 2 + 2
+      }
       ret.height = ret.fontSize * (count + 2)
+      if(ret.height <= DISP.THERMOH_TOOLTIP_ROUNDRECT * 2 + 2){
+        ret.height = DISP.THERMOH_TOOLTIP_ROUNDRECT * 2 + 2
+      }
       const right = container.x + ret.width
       ret.x = right >= this.stage.canvas.width? container.x - ret.width: container.x + 4
       const y = container.y - ret.height
@@ -457,12 +464,13 @@ export default {
       tooltip.graphics.drawRoundRect(tooltipInfo.x, tooltipInfo.y, tooltipInfo.width, tooltipInfo.height, DISP.THERMOH_TOOLTIP_ROUNDRECT, DISP.THERMOH_TOOLTIP_ROUNDISP)
       this.tooltipCon.addChild(tooltip)
 
-      const label = new Text(this.$i18n.tnl('message.positionTooltip',{
-        sensorName: tooltipInfo.sensorName,
-        temperature: tooltipInfo.temperature,
-        humidity: tooltipInfo.humidity,
-        description: tooltipInfo.description,
-      }))
+      const label = new Text([
+        tooltipInfo.sensorName,
+        tooltipInfo.temperature,
+        tooltipInfo.humidity,
+        tooltipInfo.description,
+        tooltipInfo.date,
+      ].filter(val => Util.hasValue(val)).join('\n'))
       label.x = tooltipInfo.x + DISP.THERMOH_TOOLTIP_ROUNDRECT / 2
       label.y = tooltipInfo.y + DISP.THERMOH_TOOLTIP_ROUNDRECT
       label.font = DISP.THERMOH_FONT

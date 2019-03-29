@@ -565,6 +565,8 @@
     "showHeatmap": "Show Heatmap",
     "sensorList": "Current Sensor List",
     "device": "Device",
+    "temperatureUnit": " ºC",
+    "humidityUnit": " %",
     "30minAbsent": "Absent<br>(-30min)",
     "30to90minAbsent": "Absent<br>(30-90mimn)",
     "lostTime": "Absent(90min-)",
@@ -666,7 +668,6 @@
     "valueMissing": "valueMissing",
     "valueMissingInput": "valueMissingInput",
     "valueMissingSelect": "valueMissingSelect",
-    "positionTooltip": "{sensorName}\n{temperature} ºC\n{humidity} %\n{description}",
 
     "dummy": "" 
   },

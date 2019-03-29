@@ -565,6 +565,8 @@
     "showHeatmap":"ヒートマップを表示",
     "sensorList": "センサ現在情報一覧",
     "device": "デバイス",
+    "temperatureUnit": "℃",
+    "humidityUnit": "％",
 
     "dummy": ""
   },
@@ -660,8 +662,6 @@
     "valueMissing": "",
     "valueMissingInput": "このフィールドを入力してください。",
     "valueMissingSelect": "リスト内の項目を選択してください。",
-
-    "positionTooltip": "{sensorName}\n{temperature}℃\n{humidity}％\n{description}",
 
     "dummy": "" 
   }

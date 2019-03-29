@@ -79,6 +79,7 @@ export const APP = { // 機能面に関する設定
   // 温湿度
   USE_HUMIDITY_ALERT: true, // 湿度アラートの使用
   USE_THERMOH_HEATMAP: true, // ヒートマップの使用
+  USE_THERMOH_TOOLTIP: false, // ツールチップを使用する
 
   // TX関連設定
   TX_SENSOR: [1,5,6,7], // TXのタイプに設定可能なセンサーID
@@ -238,7 +239,13 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   TX_LOC_FONT: 'Arial', // TX配置設定のTX表示フォント
   TX_LOC_ALPHA: 1.0, // TX配置設定のTX表示フォント
 
-  THERMOH_TOOLTIP_USE: false, // ツールチップを使用する
+  THERMOH_TOOLTIP_ITEMS: { // ツールチップ内の表示要素
+    TXNAME: true,
+    TEMPERATURE: true,
+    HUMIDITY: true,
+    DESCRIPTION: true,
+    DATE: false,
+  },
   THERMOH_TOOLTIP_COLOR: '#000000', // ツールチップ文字色
   THERMOH_TOOLTIP_BORDERCOLOR: '#888888', // ツールチップ枠線色
   THERMOH_TOOLTIP_BGCOLOR: '#FFFDE6', // ツールチップ背景色
