@@ -577,7 +577,7 @@ export default {
     },
     createBtnLabel(pos, color){
       const label = new Text(pos.label)
-      label.font = `${DISP.TX_R * this.mapImageScale}px Arial`
+      label.font = Util.getAdjustFontSize(() => DISP.TX_R * this.mapImageScale - 4)
       label.color = '#' + color
       label.textAlign = 'center'
       label.textBaseline = 'middle'
