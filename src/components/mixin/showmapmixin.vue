@@ -264,16 +264,10 @@ export default {
         }
       }
       
-      // canvasのサイズをとっておく
-      this.canvasWidth = canvas.width
-      this.canvasHeight = canvas.height
-
       // Retina解像度対応
       if (devicePixelRatio > 0) {
         canvas.style.width = String(canvas.width / devicePixelRatio) + 'px'
         canvas.style.height = String(canvas.height / devicePixelRatio) + 'px'
-        this.styleWidth = canvas.width / devicePixelRatio
-        this.styleHeight = canvas.height / devicePixelRatio
       }
 
       this.stage = new Stage('map')
@@ -506,7 +500,7 @@ export default {
       const isDispRight = x + offsetX + 100 < window.innerWidth
       // rev === trueの場合、ポップアップを上に表示
       const rev = y + map.top + DISP.TX_R + tipOffsetY + popupHeight > window.innerHeight
-      const ratio = this.styleWidth / this.canvasWidth
+      const ratio = devicePixelRatio > 0 ? devicePixelRatio : 1
 
       const position = this.getPositions().find((e) => {
         return e.btx_id === btxId
@@ -518,10 +512,10 @@ export default {
         minor: 'minor:' + btxId,
         major: tx.major? 'major:' + tx.major : '',
         // TX詳細ポップアップ内部で表示座標計算する際に必要
-        orgLeft: x * ratio + offsetX,
-        orgTop: y * ratio,
+        orgLeft: x / ratio + offsetX,
+        orgTop: y / ratio,
         isAbove: rev,
-        scale: this.mapImageScale * ratio,
+        scale: this.mapImageScale / ratio,
         containerWidth: containerParent.width,
         containerHeight: containerParent.height,
         class: balloonClass,
