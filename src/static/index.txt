@@ -1,0 +1,8 @@
+config.json
+default.png
+en.json
+head.txt
+ja.json
+list.txt
+revision.txt
+toplogo.png

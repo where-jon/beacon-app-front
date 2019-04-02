@@ -138,14 +138,22 @@ export const toDataURL = (url, callback) => {
   xhr.send()
 }
 
-export const getLogoData = (url, callback) => {
+export const getLogoData = async (url, callback) => {
+  if(!await HttpHelper.existServerFile(url)){
+    callback(null, false)
+    return
+  }
   toDataURL(url, result => {
     callback(result, /^data:image\/(png)|(jpg)|(jpeg)|(gif);base64,.*$/.test(result))
   })
 }
 
 export const getMessageData = async (lang) => {
-  return await HttpHelper.getFronServerFile('/' + lang + '.json')
+  const fileName = lang + '.json'
+  if(!await HttpHelper.existServerFile(fileName)){
+    return ''
+  }
+  return await HttpHelper.getFronServerFile('/' + fileName)
 }
 
 export const endsWithSlashUrl = (vueComponent) => {
