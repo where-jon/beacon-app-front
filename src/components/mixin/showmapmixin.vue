@@ -636,10 +636,6 @@ export default {
         this.exbCon.removeAllChildren()
       }
       this.positionedExb.forEach((exb) => {
-        this.replaceExb(exb, (exb) => {
-          exb.x *= this.mapImageScale
-          exb.y *= this.mapImageScale
-        })
         this.showExb(exb)
       })
       this.keepExbPosition = false
@@ -721,6 +717,7 @@ export default {
         })
         .filter((tx) => showSensorFunc? showSensorFunc(tx): true)
         .value()
+      return this.positionedTx
     },
   }
 }

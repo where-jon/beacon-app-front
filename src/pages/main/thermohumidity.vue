@@ -98,15 +98,6 @@ export default {
     }
   },
   computed: {
-    heatmapData() {
-      const dataList = this.positionedTx.concat(this.positionedExb)
-      return HeatmapHelper.collect(dataList,
-        {max: DISP.TEMPERATURE_MAX, min: DISP.TEMPERATURE_MIN},
-        (data) => `${data.x}-${data.y}`,
-        (result, data) => data.temperature,
-        (data) => {return {x: data.x * this.mapImageScale, y: data.y * this.mapImageScale}}
-      )
-    },
     alertStyle(){
       return {
         'font-weight': DISP.THERMOH_ALERT_WEIGHT,
@@ -120,6 +111,16 @@ export default {
     this.removeTick()
   },
   methods: {
+    heatmapData() {
+      const dataList = this.positionedTx.concat(this.positionedExb)
+      const ratio = devicePixelRatio > 0 ? devicePixelRatio : 1
+      return HeatmapHelper.collect(dataList,
+        {max: DISP.TEMPERATURE_MAX, min: DISP.TEMPERATURE_MIN},
+        (data) => `${data.x}-${data.y}`,
+        (result, data) => data.temperature,
+        (data) => {return {x: data.x * this.mapImageScale / ratio, y: data.y * this.mapImageScale / ratio}}
+      )
+    },
     reset() {
       this.isShownMapImage = false
     },
@@ -251,26 +252,22 @@ export default {
       HeatmapHelper.create('heatmap', this.mapImage(), (evt, mapElement, map) => {
         map.width = this.$refs.map.width
         map.height = this.$refs.map.height
+        const ratio = devicePixelRatio > 0 ? devicePixelRatio : 1
         HeatmapHelper.draw(
           mapElement, 
           {
             radius: DISP.TEMPERATURE_RADIUS * this.mapImageScale,
             gradient: HeatmapHelper.createGradient(),
-            width: this.$refs.map.width,
-            height: this.$refs.map.height,
+            // ヒートマップは座標系が異なるので注意
+            width: this.$refs.map.width / ratio,
+            height: this.$refs.map.height / ratio,
           },
-          this.heatmapData
+          this.heatmapData()
         )
         // Retina解像度対応
         if (devicePixelRatio > 0) {
           map.style.width = String(map.width / devicePixelRatio) + 'px'
           map.style.height = String(map.height / devicePixelRatio) + 'px'
-
-          const canvasElements = HeatmapHelper.getCanvasElements(mapElement)
-          canvasElements.forEach((canvasElement) => {
-            canvasElement.style.width = String(map.width) + 'px'
-            canvasElement.style.height = String(map.height) + 'px'
-          })
         }
         onLoad && onLoad()
       })
@@ -326,8 +323,6 @@ export default {
       return label
     },
     showExb(exb) {
-      console.log({exb})
-
       const stage = this.stage
       if (!this.exbCon) {
         this.exbCon = new Container()
@@ -346,8 +341,8 @@ export default {
       exbBtn.deviceId = exb.deviceId
       exbBtn.exbId = exb.exbId
       exbBtn.device = exb
-      exbBtn.x = exb.x
-      exbBtn.y = exb.y
+      exbBtn.x = exb.x * this.mapImageScale
+      exbBtn.y = exb.y * this.mapImageScale
       exbBtn.cursor = 'pointer'
       stage.enableMouseOver()
 
