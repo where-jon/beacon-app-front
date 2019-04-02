@@ -265,9 +265,9 @@ export default {
           this.heatmapData()
         )
         // Retina解像度対応
-        if (devicePixelRatio > 0) {
-          map.style.width = String(map.width / devicePixelRatio) + 'px'
-          map.style.height = String(map.height / devicePixelRatio) + 'px'
+        if (ratio > 0) {
+          map.style.width = String(map.width / ratio) + 'px'
+          map.style.height = String(map.height / ratio) + 'px'
         }
         onLoad && onLoad()
       })
