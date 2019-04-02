@@ -204,3 +204,11 @@ export const getFronServerFile  = async (uri) => {
     /* NOP */
   }
 }
+
+export const existServerFile = async (fileName) => {
+  const indexData = await getFronServerFile('/index.txt')
+  if(indexData == null){
+    return true
+  }
+  return indexData.split(/\r?\n/g).includes(fileName)
+}
