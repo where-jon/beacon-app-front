@@ -521,7 +521,7 @@ export default {
         orgLeft: x * ratio + offsetX,
         orgTop: y * ratio,
         isAbove: rev,
-        scale: this.mapImageScale,
+        scale: this.mapImageScale * ratio,
         containerWidth: containerParent.width,
         containerHeight: containerParent.height,
         class: balloonClass,
