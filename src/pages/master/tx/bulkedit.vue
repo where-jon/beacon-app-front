@@ -182,7 +182,7 @@ export default {
       const POT_GROUP = ['groupId', 'groupName']
       const TX_SENSOR = ['sensorId', 'sensor']
 
-      const NUMBER_TYPE_LIST = ['deviceId', 'txId', 'btxId', 'major', 'minor', 'exbId', 'areaId', 'locationId', 'posId', 'z', 'txViewType', 'zoneName']
+      const NUMBER_TYPE_LIST = ['deviceId', 'txId', 'btxId', 'major', 'minor', 'exbId', 'areaId', 'locationId', 'posId', 'z', 'disp', 'txViewType', 'zoneName']
       const BOOL_TYPE_LIST = ['visible', 'enabled']
       await StateHelper.load('category')
       await StateHelper.load('group')
