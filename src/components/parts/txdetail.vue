@@ -146,14 +146,17 @@ export default {
       if(this.selectedSensor.length > 0){
         offset = -80 // TXとMEDITAGの高さの差
       }
-      // TODO:下に表示するケースを適切に実装する
-      const top = this.selectedTx.orgTop - txR - 5 + offset
+      let top = 0
+      if(this.selectedTx.isAbove){
+        top = this.selectedTx.orgTop + txR + 5 + offset
+      }else{
+        top = this.selectedTx.orgTop - txR - 5 + offset
+      }
       return top + 'px'
     },
     getClass() {
-      // TODO:isAboveがnullになってしまう
       const isOut = this.isOutOfFrame()
-      if (this.isAbove) {
+      if (this.selectedTx.isAbove) {
         return !isOut ? 'balloon-b' : 'balloon-br'
       }
       return !isOut ? 'balloon-u' : 'balloon-ur'
