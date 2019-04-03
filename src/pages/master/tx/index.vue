@@ -79,7 +79,9 @@ export default {
         APP.TX_WITH_DESCRIPTION? 'description': null,
         'sensor',
         'disp',
-        APP.TX_WITH_LOCATION? 'locationId': null,
+        APP.TX_WITH_LOCATION? 'areaName': null,
+        APP.TX_WITH_LOCATION? 'x': null,
+        APP.TX_WITH_LOCATION? 'y': null,
       ].filter((val, idx, ary) => val && ary.indexOf(val) == idx)
     },
     afterCrud(){

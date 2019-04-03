@@ -38,9 +38,13 @@ export default {
       return options
     },
   },
+  async mounted() {
+    await StateHelper.load('tx')
+  },
   methods: {
     afterCrud(){
       StateHelper.setForceFetch('pot', true)
+      StateHelper.setForceFetch('tx', true)
     },
     setParamCategory(entity, headerName, val, dummyKey){
       if (!entity.potTxList) {
@@ -112,9 +116,28 @@ export default {
       entity[headerName] = val
       return dummyKey
     },
+    addLocation(entity, targetEntity, dummyKey){
+      if(!APP.TX_WITH_LOCATION){
+        return dummyKey
+      }
+      entity.location = {}
+      entity.location.locationId = Util.getValue(targetEntity, 'locationId', dummyKey--)
+      entity.location.posId = entity.btxId * -1
+      entity.location.locationName = 'Loc' + (entity.btxId * -1)
+      entity.location.areaName = Util.getValue(entity, 'areaName', null)
+      const x = Util.hasValue(entity.x)? entity.x: null
+      const y = Util.hasValue(entity.y)? entity.y: null
+      if(x){
+        entity.location[isNaN(x)? 'locXName': 'x'] = x
+      }
+      if(y){
+        entity.location[isNaN(y)? 'locYName': 'y'] = y
+      }
+      return dummyKey
+    },
     resetId(entity, dummyKey){
+      const targetEntity = Util.getEntityFromIds(this.txs, entity, ['txId', 'btxId', 'minor'])
       if(!entity.txId){
-        const targetEntity = Util.getEntityFromIds(this.txs, entity, ['txId', 'btxId', 'minor'])
         entity.txId = targetEntity? targetEntity.txId: dummyKey--
       }
       if(APP.TX_BTX_MINOR == 'minor'){
@@ -149,6 +172,7 @@ export default {
         entity.potTxList[0].potTxPK.potId = dummyKey--
         entity.potTxList[0].potTxPK.txId = entity.txId
       }
+      dummyKey = this.addLocation(entity, targetEntity, dummyKey)
       return dummyKey
     },
     async save(bulkSaveFunc) {
@@ -158,7 +182,7 @@ export default {
       const POT_GROUP = ['groupId', 'groupName']
       const TX_SENSOR = ['sensorId', 'sensor']
 
-      const NUMBER_TYPE_LIST = ['deviceId', 'txId', 'btxId', 'major', 'minor', 'exbId', 'areaId', 'locationId', 'posId', 'x', 'y', 'z', 'txViewType', 'zoneName']
+      const NUMBER_TYPE_LIST = ['deviceId', 'txId', 'btxId', 'major', 'minor', 'exbId', 'areaId', 'locationId', 'posId', 'z', 'txViewType', 'zoneName']
       const BOOL_TYPE_LIST = ['visible', 'enabled']
       await StateHelper.load('category')
       await StateHelper.load('group')
