@@ -489,7 +489,7 @@ export default {
       return showAllTime ? positions : this.positionFilter(positions, this.selectedGroup, this.selectedCategory)
     },
     showDetail(btxId, x, y) {
-      const tipOffsetY = 15
+      //const tipOffsetY = 15
       const popupHeight = this.getMeditagSensor(btxId)? DISP.TXMEDITAG_POPUP_SIZE: DISP.TXSENSOR_POPUP_SIZE
       const tx = this.txs.find((tx) => tx.btxId == btxId)
       const display = this.getDisplay(tx)
@@ -498,23 +498,24 @@ export default {
       const offsetX = map.left - containerParent.left + (!this.isInstallation ? 0 : 48)
       //const offsetY = map.top - containerParent.top + (!this.isInstallation ? 0 : 20)
       const isDispRight = x + offsetX + 100 < window.innerWidth
-      // rev === trueの場合、ポップアップを上に表示
-      const rev = y + map.top + DISP.TX_R + tipOffsetY + popupHeight > window.innerHeight
       const ratio = devicePixelRatio > 0 ? devicePixelRatio : 1
+      // isAbove === trueの場合、ポップアップを下に表示
+      const isAbove = map.top + y / ratio < popupHeight + DISP.TX_R * this.mapImageScale / ratio
+      const offsetY = isAbove ? popupHeight : 0
 
       const position = this.getPositions().find((e) => {
         return e.btx_id === btxId
       })
 
-      const balloonClass = !btxId ? '': 'balloon' + (rev ? '-u': '-b')
+      const balloonClass = !btxId ? '': 'balloon' + (isAbove ? '-b': '-u')
       const selectedTx = {
         btxId,
         minor: 'minor:' + btxId,
         major: tx.major? 'major:' + tx.major : '',
         // TX詳細ポップアップ内部で表示座標計算する際に必要
         orgLeft: x / ratio + offsetX,
-        orgTop: y / ratio,
-        isAbove: rev,
+        orgTop: y / ratio + offsetY,
+        isAbove: isAbove,
         scale: this.mapImageScale / ratio,
         containerWidth: containerParent.width,
         containerHeight: containerParent.height,
