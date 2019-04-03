@@ -1,5 +1,5 @@
 <template>
-  <div v-if="linkKey" :style="{margin: '8px 0px'}">
+  <div v-if="linkKey" :style="{margin: '8px 0px'}" class="word-break">
     <span v-if="linkUrl">
       <a v-if="isImage" :href="linkUrl" target="_blank">
         <img :id="componentId" :src="linkKey" width="0" height="0" :style="{position: 'relative'}" @load="setLogo()">
@@ -114,4 +114,7 @@ export default {
 </script>
 
 <style>
+.word-break {
+  word-break: break-all !important;
+}
 </style>
