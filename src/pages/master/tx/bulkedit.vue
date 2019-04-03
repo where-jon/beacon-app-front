@@ -39,7 +39,7 @@ export default {
     },
   },
   async mounted() {
-    await StateHelper.load('tx', this.forceFetchTx)
+    await StateHelper.load('tx')
   },
   methods: {
     afterCrud(){
