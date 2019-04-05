@@ -46,6 +46,9 @@ export default {
       }
       if(Util.hasValue(entity.potUserList)){
         entity.potUserList[0].user.name = entity.potName
+        if(entity.potUserList[0].user.roleName == null){
+          entity.potUserList[0].user.roleName = ''
+        }
       }
       return dummyKey
     },
