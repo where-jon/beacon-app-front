@@ -95,14 +95,16 @@ export default {
       const exbSensorList = []
       sensorNameList.forEach((sensorName) => {
         const sensor = this.sensorOptionsExb.find((option) => option.text == sensorName)
-        exbSensorList.push({
-          exbSensorPK: {
-            sensorId: sensor && sensor.value != null? sensor.value: dummyKey--
-          },
-          sensorName: sensorName
-        })
+        if(sensor && sensor.value != null){
+          exbSensorList.push({exbSensorPK: {sensorId: sensor.value}, sensorName: sensorName})
+        }
+        else if(!sensor){
+          exbSensorList.push({exbSensorPK: {sensorId: dummyKey--}, sensorName: sensorName})
+        }
       })
-      entity.exbSensorList = exbSensorList
+      if(exbSensorList.length != 0){
+        entity.exbSensorList = exbSensorList
+      }
       return dummyKey
     },
     setParamOther(entity, headerName, val, dummyKey, mainCol){
