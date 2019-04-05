@@ -43,11 +43,16 @@ export default {
         entity.exbId = targetEntity && targetEntity.exbId? targetEntity.exbId: dummyKey--
       }
       if(!entity.deviceId){
-        if(entity.deviceNum){
+        if(entity.deviceNum && !isNaN(entity.deviceNum) && 0 <= entity.deviceNum){
           entity.deviceId = Number(entity.deviceNum) + this.$store.state.currentRegion.deviceOffset
         }
-        else if(entity.deviceIdX){
+        else if(entity.deviceIdX && !isNaN(`0x${entity.deviceIdX}`)){
           entity.deviceId = parseInt(entity.deviceIdX, 16)
+        }
+      }
+      else{
+        if(isNaN(entity.deviceId) || entity.deviceId < 0){
+          delete entity.deviceId
         }
       }
       if(targetEntity){
@@ -84,7 +89,7 @@ export default {
     },
     setParamPosId(entity, headerName, val, dummyKey){
       const posIdVal = Number(val)
-      if(isNaN(posIdVal)){
+      if(!Util.hasValue(val) || isNaN(posIdVal)){
         entity.location['posIdName'] = val
       }
       entity.location[headerName] = posIdVal
@@ -107,28 +112,36 @@ export default {
       }
       return dummyKey
     },
-    setParamOther(entity, headerName, val, dummyKey, mainCol){
+    setParamOther(entity, headerName, val, dummyKey, mainCol, numCol){
+      let newVal = val
       if (headerName == mainCol && !val) {
-        val = dummyKey--
+        newVal = dummyKey--
       }
       if(headerName == 'enabled'){
-        const enabledVal = Util.str2booleanComplate(val)
+        const enabledVal = Util.str2booleanComplate(newVal)
         if(typeof enabledVal != 'boolean'){
-          entity['enabledName'] = val
+          entity['enabledName'] = newVal
         }
-        val = Util.str2boolean(val)
+        newVal = Util.str2boolean(newVal)
       }
-      entity[headerName] = val
+      const isNumCol = numCol.includes(headerName)
+      if(isNumCol && (!Util.hasValue(val) || isNaN(val))){
+        entity[`${headerName}Name`] = val
+      }
+      if(headerName == 'deviceIdX' && (!Util.hasValue(val) || isNaN(`0x${val}`))){
+        entity[`${headerName}Name`] = val
+      }
+      entity[headerName] = isNumCol? Number(newVal): newVal
       return dummyKey
     },
     async save(bulkSaveFunc) {
       const MAIN_COL = APP.EXB_WITH_EXBID? 'exbId': APP.EXB_WITH_DEVICE_ID? 'deviceId': APP.EXB_WITH_DEVICE_NUM? 'deviceNum': 'deviceIdX'
       const LOCATION = ['locationId','areaName','locationName','visible','txViewType','posId','x','y', 'zoneName']
       const ZONE = ['zoneName']
-      const NUMBER_TYPE_LIST = ['deviceId', 'exbId', 'areaId', 'locationId', 'x', 'y', 'z', 'txViewType']
+      const NUMBER_TYPE_LIST = ['deviceId', 'deviceNum', 'exbId', 'areaId', 'posId', 'locationId', 'x', 'y', 'z', 'txViewType']
       const BOOL_TYPE_LIST = ['visible']
 
-      await bulkSaveFunc(MAIN_COL, NUMBER_TYPE_LIST, BOOL_TYPE_LIST, (entity, headerName, val, dummyKey) => {
+      await bulkSaveFunc(MAIN_COL, null, BOOL_TYPE_LIST, (entity, headerName, val, dummyKey) => {
         if (Util.equalsAny(headerName, LOCATION)) {
           if (headerName == 'locationId' && !val) {
             val = dummyKey--          
@@ -142,6 +155,14 @@ export default {
           else if(headerName == 'posId'){
             dummyKey = this.setParamPosId(entity, headerName, val, dummyKey)
           }
+          else if(['x', 'y'].includes(headerName)){
+            if(Util.hasValue(val)){
+              if(isNaN(val)){
+                entity.location[`loc${headerName.toUpperCase()}Name`] = val
+              }
+              entity.location[headerName] = Number(val)
+            }
+          }
           else{
             entity.location[headerName] = val
           }
@@ -150,7 +171,7 @@ export default {
           dummyKey = this.setParamSensor(entity, headerName, val, dummyKey)
         }
         else {
-          dummyKey = this.setParamOther(entity, headerName, val, dummyKey, MAIN_COL)
+          dummyKey = this.setParamOther(entity, headerName, val, dummyKey, MAIN_COL, NUMBER_TYPE_LIST)
         }
         return dummyKey
       },
