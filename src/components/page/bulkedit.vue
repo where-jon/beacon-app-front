@@ -8,6 +8,10 @@
           <label v-t="'label.csvFile'" />
           <b-form-file :key="formKey" v-model="form.csvFile" :placeholder="$t('message.selectFile') " accept=".csv" />
         </b-form-group>
+        <b-form-group>
+          <label v-t="'label.charSet'" />
+          <b-form-select v-model="csvCharSet" :options="charSets" @change="charSetSelected" />
+        </b-form-group>
         <b-button :variant="getButtonTheme()" type="submit" @click="register(true)">
           {{ label }}
         </b-button>
@@ -21,7 +25,9 @@
 import { mapState } from 'vuex'
 import commonmixinVue from '../mixin/commonmixin.vue'
 import editmixinVue from '../mixin/editmixin.vue'
+import * as CharSetHelper from '../../sub/helper/CharSetHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
+import { CHAR_SET } from '../../sub/constant/Constants'
 import alert from '../parts/alert.vue'
 
 export default {
@@ -55,17 +61,29 @@ export default {
       form: {
         csvFile: null,
       },
+      csvCharSet: this.getInitCharSets(),
     }
   },
   computed: {
     ...mapState('app_service', [
       'sensors',
     ]),
+    charSets(){
+      return CHAR_SET.map(e => ({ value: e.id, text: this.$i18n.tnl('label.' + e.name) }))
+    }
   },
   mounted() {
     StateHelper.load('sensor')
   },
   methods: {
+    getInitCharSets(){
+      const initSelect = CharSetHelper.detectBulkCharSet(this.$store.state.loginId)
+      const selected = CHAR_SET.find(item => item.name === initSelect)
+      return selected != null ? selected.id : CHAR_SET[0].id
+    },
+    charSetSelected (selected) {
+      CharSetHelper.setBulkCharSet(this.$store.state.loginId, selected)
+    },
     beforeReload(){
       this.formKey++
       this.form.csvFile = null
