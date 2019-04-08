@@ -65,6 +65,10 @@ export default {
       type: Boolean,
       default: false
     },
+    autoReload: {
+      type: Boolean,
+      default: true
+    },
     isLoad: {
       type: Boolean,
       default: false
@@ -119,6 +123,10 @@ export default {
     }
   },
   mounted() {
+    this.setDropdownMenuColor()
+    if(!this.autoReload){
+      return
+    }
     let reload = document.getElementById('reload')
     if (reload) {
       HtmlUtil.registerInterval(()=>{
@@ -128,8 +136,6 @@ export default {
         window.scroll(windowScroll.x, windowScroll.y)
       }, APP.AUTO_RELOAD)  
     }
-
-    this.setDropdownMenuColor()
   },
   methods: {
     isActive (item) {

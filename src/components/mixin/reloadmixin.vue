@@ -9,6 +9,12 @@ import { APP } from '../../sub/constant/config'
 
 export default {
   mixins: [commonmixinVue],
+  data() {
+    return {
+      positionInterval: null,
+      anotherInterval: null,
+    }
+  },
   computed: {
     iosOrAndroid() {
       return Util.isAndroidOrIOS()
@@ -19,8 +25,49 @@ export default {
     EventBus.$on('reload', (payload)=>{
       this.fetchData(payload)
     })
+    EventBus.$off('positionReload')
+    EventBus.$on('positionReload', (payload)=>{
+      this.fetchData(payload)
+    })
+    EventBus.$off('otherReload')
+    EventBus.$on('otherReload', (payload)=>{
+      this.fetchData(payload)
+    })
   },
   methods: {
+    startOtherAutoReload() {
+      this.stopOtherAutoReload()
+      this.anotherInterval = setInterval(() => {
+        this.$store.commit('replace', {reload: true})
+        const windowScroll = {x: window.pageXOffset , y: window.pageYOffset}
+        EventBus.$emit('otherReload', {
+          disabledPosition: true,
+          done() { AuthHelper.checkSession() }
+        })
+        window.scroll(windowScroll.x, windowScroll.y)
+      }, APP.AUTO_RELOAD)
+    },
+    stopOtherAutoReload() {
+      if(this.anotherInterval){
+        clearInterval(this.anotherInterval)
+      }
+      this.anotherInterval = null
+    },
+    startPositionAutoReload() {
+      this.stopPositionAutoReload()
+      this.positionInterval = setInterval(() => {
+        EventBus.$emit('positionReload', {
+          disabledProgress: true,
+          disabledOther: true,
+        })
+      }, APP.POSITION_AUTO_RELOAD)
+    },
+    stopPositionAutoReload() {
+      if(this.positionInterval){
+        clearInterval(this.positionInterval)
+      }
+      this.positionInterval = null
+    },
     startAutoReload() {
       HtmlUtil.registerInterval(()=>{
         this.$store.commit('replace', {reload: true})
