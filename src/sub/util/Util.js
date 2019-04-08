@@ -250,16 +250,16 @@ export const extraCheckCsvObj = (papaResult) => {
   return papaResult
 }
 
-export const csv2Obj = (str) => {
+export const csv2Obj = (str, forceCharSet) => {
   str = str.replace('\xEF\xBB\xBF', '') // remove bom
-  str = convert2Unicode(str)
+  str = convert2Unicode(str, forceCharSet)
   str = removeCrLfDup(str)
   return extraCheckCsvObj(convertCsv2Obj(str))
 }
 
-export const convert2Unicode = (str) => {
+export const convert2Unicode = (str, forceCharSet) => {
   let sArr = str2Array(str)
-  let uniArray = Encoding.convert(sArr, 'UNICODE', detectEncoding(str))
+  let uniArray = Encoding.convert(sArr, 'UNICODE', forceCharSet? forceCharSet: detectEncoding(str))
   return Encoding.codeToString(uniArray)
 }
 

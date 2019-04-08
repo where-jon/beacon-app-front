@@ -6,6 +6,7 @@ import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
+import * as CharSetHelper from '../../sub/helper/CharSetHelper'
 import { APP } from '../../sub/constant/config.js'
 import { UPDATE_ONLY_NN, IGNORE, USER } from '../../sub/constant/Constants'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
@@ -306,7 +307,7 @@ export default {
     setReaderOnload(reader, readerParam, mainCol, intTypeList, boolTypeList, callback, idSetCallback){
       reader.onload = () => {
         try {
-          const csv = Util.csv2Obj(Util.arrayBuffer2str(reader.result))
+          const csv = Util.csv2Obj(Util.arrayBuffer2str(reader.result), CharSetHelper.detectBulkCharSet(this.$store.state.loginId))
           if (!csv || !csv.data || csv.errors && csv.errors.length > 0) {
             console.error(csv.errors)
             readerParam.error = this.createCsvErrorMessage(csv.errors)
