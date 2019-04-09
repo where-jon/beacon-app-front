@@ -98,7 +98,11 @@ export default {
         entity.potUserList = [{potUserPK: {potId: dummyKey--, userId: dummyKey}, user: {userId: dummyKey--}}]
       }
       if(headerName == 'userId'){
-        entity.potUserList[0].potUserPK.userId = val
+        const success = StateHelper.bulkErrorCheck(entity.potUserList[0].user, headerName, val, true)
+        entity.potUserList[0].potUserPK.userId = success? val: dummyKey--
+        if(!success){
+          val = dummyKey--
+        }
       }
       entity.potUserList[0].user[headerName] = val
       return dummyKey
