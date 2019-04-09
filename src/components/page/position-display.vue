@@ -110,7 +110,7 @@ export default {
         await StateHelper.load('exb')
         await StateHelper.load('prohibit')
         // positionデータ取得
-        await this.storePositionHistory()
+        await this.storePositionHistory(null, false, true)
         this.replaceAS({positions: this.getPositions()})
         let prohibitData = await StateHelper.getProhibitData(this.getPositions(),this.prohibits)
         this.message = await StateHelper.getProhibitMessage(this.message,prohibitData)
