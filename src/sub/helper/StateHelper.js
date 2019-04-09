@@ -536,3 +536,14 @@ export const sortCompareArray = (aAry, bAry) => {
   }
   return 0
 }
+
+export const bulkErrorCheck = (entity, headerName, val, isNumberColumn) => {
+  if(!isNumberColumn){
+    return true
+  }
+  if(!isNaN(Number(val))){
+    return true
+  }
+  entity[`${headerName}Name`] = val
+  return false
+}
