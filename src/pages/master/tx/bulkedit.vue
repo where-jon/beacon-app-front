@@ -110,6 +110,7 @@ export default {
       }
       if (headerName == mainCol){
         if(!val) {
+          entity[`${headerName}Name`] = ''
           val = dummyKey--
         }
       }
