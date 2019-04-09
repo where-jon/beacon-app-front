@@ -106,6 +106,7 @@ export default {
     },
     afterCrud(){
       StateHelper.setForceFetch('pot', true)
+      StateHelper.setForceFetch('tx', true)
     },
     async save() {
       const entity = {
