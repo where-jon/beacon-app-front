@@ -380,7 +380,7 @@ export default {
     isMagnetOn(magnet) {
       return magnet && magnet.magnet === SENSOR.MAGNET_STATUS.ON
     },
-    async storePositionHistory(count, allShow = false){
+    async storePositionHistory(count, allShow = false, fixSize = false){
       const pMock = DEV.USE_MOCK_EXC? mock.positions[count]: null
       let positions = []
       if (APP.USE_POSITION_HISTORY) {
@@ -397,7 +397,7 @@ export default {
       // 在席表示と同じ、表示txを取得する。
       positions = this.getShowTxPositions(positions, allShow)
       // スタイルをセット
-      positions = this.setPositionStyle(positions)
+      positions = this.setPositionStyle(positions, fixSize)
       if (APP.USE_POSITION_HISTORY) {
         this.replaceMain({positionHistores: positions})
       } else {
@@ -423,7 +423,7 @@ export default {
           return null
         }).compact().value()
     },
-    setPositionStyle(positions){
+    setPositionStyle(positions, fixSize = false){
       return _.map(positions, pos => {
         // 設定により、カテゴリとグループのどちらの設定で表示するかが変わる。
         let display
@@ -432,7 +432,7 @@ export default {
           display = styleSrc && styleSrc.display
         }
         display = display || this.defaultDisplay
-        display = this.getStyleDisplay1(display, {fixSize: false})        
+        display = this.getStyleDisplay1(display, {fixSize: fixSize})        
         if (pos.transparent) {
           display.opacity = 0.6
         }
