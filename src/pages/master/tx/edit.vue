@@ -206,8 +206,8 @@ export default {
         var location = _.cloneDeep(this.form.location)
         location.locationName = 'Loc' + (this.form.btxId * -1)
         location.posId = this.form.btxId * -1
-        location.x = this.form.x || 0
-        location.y = this.form.y || 0
+        location.x = Util.hasValue(this.form.x)? this.form.x: null
+        location.y = Util.hasValue(this.form.y)? this.form.y: null
       }
       let entity = {
         ...this.form,
