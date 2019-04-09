@@ -80,12 +80,12 @@ export default {
       fields: ViewHelper.addLabelByKey(this.$i18n, [
         {key: 'name', sortable: true, label: 'potName'},
         {key: 'stayTime', sortable: true, label: 'stayTime'},
-        {key: 'under30minLost', sortable: true, label: '30minAbsent'},
-        {key: 'over30to90minLost', sortable: true, label: '30to90minAbsent'},
+        {key: 'absent1Time', sortable: true, label: 'absent1Time'},
+        {key: 'absent2Time', sortable: true, label: 'absent2Time'},
         {key: 'lostTime', sortable: true, label: 'lostTime'},
         {key: 'stayRatio', sortable: true, label: 'stayRatio'},
-        {key: 'under30minLostRatio', sortable: true, label: '30minAbsentRatio'},
-        {key: 'over30to90minLostRatio', sortable: true, label: '30to90minAbsentRatio'},
+        {key: 'absent1Ratio', sortable: true, label: 'absent1Ratio'},
+        {key: 'absent2Ratio', sortable: true, label: 'absent2Ratio'},
         {key: 'lostRatio', sortable: true, label: 'lostRatio'},
       ]).map(val => ({ ...val, originLabel: val.label})),
     }
@@ -196,12 +196,12 @@ export default {
           id: potId, 
           name: potName, 
           stayTime: Util.convertToTime(stayTime), 
-          under30minLost: Util.convertToTime(under30minAbsentTime), 
-          over30to90minLost: Util.convertToTime(over30to90minAbsentTime),
+          absent1Time: Util.convertToTime(under30minAbsentTime), 
+          absent2Time: Util.convertToTime(over30to90minAbsentTime),
           lostTime: Util.convertToTime(lostTime),
           stayRatio: presentRatio + ' %',
-          under30minLostRatio: absentRatio + ' %',
-          over30to90minLostRatio: absentRatioSub + ' %',
+          absent1Ratio: absentRatio + ' %',
+          absent2Ratio: absentRatioSub + ' %',
           lostRatio: lostRatio + ' %',
         }
       })
@@ -214,7 +214,7 @@ export default {
       }
       HtmlUtil.fileDL(
         'stayRatio.csv',
-        Util.converToCsv(this.viewList),
+        Util.converToCsv(this.viewList, null, this.getCsvHeaderNames()),
         getCharSet(this.$store.state.loginId)
       )
     },
@@ -224,6 +224,20 @@ export default {
           field.label = Util.isResponsiveMode(true)? field.originLabel.replace(/<br>/g, ''): field.originLabel
         })
       }
+    },
+    getCsvHeaderNames() {
+      return [
+        'id', 
+        'name',
+        'stayTime', 
+        this.$i18n.tnl('label.stayRatioAbsent1Time'), 
+        this.$i18n.tnl('label.stayRatioAbsent2Time'),
+        'lostTime',
+        'stayRatio',
+        this.$i18n.tnl('label.stayRatioAbsent1Ratio'),
+        this.$i18n.tnl('label.stayRatioAbsent2Ratio'),
+        'lostRatio' + '\n'
+      ]
     },
   }
 }

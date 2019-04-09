@@ -302,7 +302,7 @@ export const convertCsv2Obj = (str) => {
   return Papa.parse(str)
 }
 
-export const converToCsv = (array, headers) => {
+export const converToCsv = (array, headers, outputKeyNames) => {
   if (!array || array.length == 0) {
     return null
   }
@@ -331,7 +331,7 @@ export const converToCsv = (array, headers) => {
     }).join('","') + '"'
   }).join('\n')
 
-  return header + body
+  return outputKeyNames? outputKeyNames + body: header + body
 }
 
 export const equalsAny = (target, arr) => {
