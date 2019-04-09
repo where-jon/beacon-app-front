@@ -71,6 +71,9 @@ export default {
       return dummyKey
     },
     setParamZone(entity, headerName, val, dummyKey){
+      if(!Util.hasValue(val)){
+        return dummyKey
+      }
       if (!entity.location) {
         entity.location = {locationId: dummyKey--}
       }
