@@ -31,7 +31,7 @@ export default {
         'white-space': 'nowrap',
       }
       if(option.fixSize != false){
-        style['font-size'] = DISP.TX_FONT.split(' ')[0]
+        style.font = Util.getAdjustFontSize(() => DISP.TX_FIX_R * this.TX_FONTSIZE_RATIO)
         style.width = (DISP.TX_FIX_R * 2) + 'px'
         style.height = (DISP.TX_FIX_R * 2) + 'px'
       }
