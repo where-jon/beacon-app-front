@@ -26,7 +26,6 @@ export default {
       isFirstTime: true,
       showTryCount: 0,
       tempMapFitMobile: DISP.MAP_FIT_MOBILE,
-      oldMapImageScale: 0,
       canvasScale: 1,
       showIconMinWidth: POSITION.SHOW_ICON_MIN_WIDTH,
       reloadSelectedTx: {},
@@ -224,9 +223,6 @@ export default {
         result.height = parentHeight
       }
 
-      // TODO:mapImageScaleを廃止する
-      this.oldMapImageScale = this.mapImageScale
-      this.mapImageScale = 1 // result.width / target.width
       if (this.onMapImageScale) {
         this.onMapImageScale()
       }
@@ -281,7 +277,7 @@ export default {
       }
 
       const bitmap = new Bitmap(bg)
-      bitmap.scaleY = bitmap.scaleX = 1 // this.mapImageScale
+      bitmap.scaleY = bitmap.scaleX = 1
       bitmap.width = canvas.width
       bitmap.height = canvas.height
       this.stage.addChild(bitmap)
@@ -319,18 +315,12 @@ export default {
       }
     },
     replaceExb(exb, nokeep) {
-      if (this.keepExbPosition) {
-        exb.x = exb.x / this.oldMapImageScale * this.mapImageScale
-        exb.y = exb.y / this.oldMapImageScale * this.mapImageScale
-      } else {
+      if (!this.keepExbPosition) {
         nokeep(exb)
       }
     },
     replaceTx(tx, nokeep) {
-      if (this.keepTxPosition) {
-        tx.x = tx.x / this.oldMapImageScale * this.mapImageScale
-        tx.y = tx.y / this.oldMapImageScale * this.mapImageScale
-      } else {
+      if (!this.keepTxPosition) {
         nokeep(tx)
       }
     },
@@ -503,7 +493,7 @@ export default {
       const isDispRight = x + offsetX + 100 < window.innerWidth
       const ratio = devicePixelRatio > 0 ? devicePixelRatio : 1
       // isAbove === trueの場合、ポップアップを下に表示
-      const isAbove = map.top + y / ratio < popupHeight + DISP.TX_R * this.mapImageScale / ratio
+      const isAbove = map.top + y / ratio < popupHeight + DISP.TX_R / ratio
       const offsetY = isAbove ? popupHeight : 0
 
       const position = this.getPositions().find((e) => {
@@ -541,7 +531,7 @@ export default {
     },
     createBtnBg(pos, shape, bgColor){
       let btnBg = new Shape()
-      let TxRadius = DISP.TX_R * this.mapImageScale
+      let TxRadius = DISP.TX_R
       
       btnBg = this.setbtnColor(btnBg, bgColor, pos)
       switch(shape) {
@@ -575,7 +565,7 @@ export default {
     },
     createBtnLabel(pos, color){
       const label = new Text(pos.label)
-      label.font = Util.getAdjustFontSize(() => DISP.TX_R * this.mapImageScale - 4)
+      label.font = Util.getAdjustFontSize(() => DISP.TX_R - 4)
       label.color = '#' + color
       label.textAlign = 'center'
       label.textBaseline = 'middle'
@@ -613,8 +603,8 @@ export default {
         const selectedTxPosition = position.find((pos) => pos.btx_id == tx.btxId)
         if (selectedTxPosition) {
           const location = selectedTxPosition.tx? selectedTxPosition.tx.location: null
-          const x = location && location.x != null? location.x * this.mapImageScale: selectedTxPosition.x
-          const y = location && location.y != null? location.y * this.mapImageScale: selectedTxPosition.y
+          const x = location && location.x != null? location.x : selectedTxPosition.x
+          const y = location && location.y != null? location.y : selectedTxPosition.y
           this.showDetail(tx.btxId, x, y)
         }
       }
@@ -672,10 +662,6 @@ export default {
         this.txCon.removeAllChildren()
       }
       this.positionedTx.forEach((tx) => {
-        this.replaceTx(tx, (tx) => {
-          tx.x *= this.mapImageScale
-          tx.y *= this.mapImageScale
-        })
         this.showTx(tx)
       })
       this.keepTxPosition = false

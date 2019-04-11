@@ -254,8 +254,8 @@ export default {
 
         this.positionedExb.forEach((exb) => {
           this.replaceExb(exb, (exb) => {
-            exb.x = exb.location.x * this.mapImageScale
-            exb.y = exb.location.y * this.mapImageScale
+            exb.x = exb.location.x
+            exb.y = exb.location.y
           })
           this.showExb(exb)
         })
@@ -368,7 +368,7 @@ export default {
           this.lineCnt = new Container()
           this.lineCnt.addChild(line)
           stage.addChild(this.lineCnt)
-          this.pixelWidth = Math.floor(Math.sqrt(Math.pow(current.x-start.x, 2) + Math.pow(current.y-start.y, 2))) / this.mapImageScale
+          this.pixelWidth = Math.floor(Math.sqrt(Math.pow(current.x-start.x, 2) + Math.pow(current.y-start.y, 2)))
           this.mapRatioChanged = true
           this.isChanged = true
         }
@@ -462,7 +462,7 @@ export default {
     bulkAdd() {
       let counter = 0
       let y = 40
-      const mapMaxPosX = this.mapWidth * this.mapImageScale
+      const mapMaxPosX = this.mapWidth
       this.exbOptions.forEach((val) => {
         let x = 30 + counter++ * 60
         if (x > mapMaxPosX) {
@@ -494,7 +494,7 @@ export default {
     pushPositionedLocation(param){
       this.positionedExb.forEach((exb) => {
         if (exb.isChanged) {
-          exb.location = {locationId: exb.location.locationId, areaId: this.selectedArea, x: Math.round(exb.x / this.mapImageScale), y: Math.round(exb.y / this.mapImageScale)}
+          exb.location = {locationId: exb.location.locationId, areaId: this.selectedArea, x: Math.round(exb.x), y: Math.round(exb.y)}
           param.push(exb.location)
           exb.isChanged = false
         }

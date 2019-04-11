@@ -254,7 +254,7 @@ export default {
         HeatmapHelper.draw(
           mapElement, 
           {
-            radius: DISP.TEMPERATURE_RADIUS * this.mapImageScale,
+            radius: DISP.TEMPERATURE_RADIUS,
             gradient: HeatmapHelper.createGradient(),
             // ヒートマップは座標系が異なるので注意
             width: this.$refs.map.width * this.canvasScale,
@@ -336,8 +336,8 @@ export default {
       exbBtn.deviceId = exb.deviceId
       exbBtn.exbId = exb.exbId
       exbBtn.device = exb
-      exbBtn.x = exb.x * this.mapImageScale
-      exbBtn.y = exb.y * this.mapImageScale
+      exbBtn.x = exb.x
+      exbBtn.y = exb.y
       exbBtn.cursor = 'pointer'
       stage.enableMouseOver()
 

@@ -184,7 +184,7 @@ export default {
       param = {
         ...param,
         view: this.container,
-        mapScale: this.mapImageScale
+        mapScale: 1
       }
       this.container.removeAllChildren()
       this.draw(param, analysisResults)

@@ -214,8 +214,8 @@ export default {
         this.exbBtns = this.positionedExb.map((exb) => {
           const clone = Object.assign({}, exb)
           this.replaceExb(exb, (exb) => {
-            clone.x = exb.location.x * this.mapImageScale
-            clone.y = exb.location.y * this.mapImageScale
+            clone.x = exb.location.x
+            clone.y = exb.location.y
           })
           const exbBtn = this.createExbIcon(clone)
           this.exbCon.addChild(exbBtn)

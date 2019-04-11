@@ -154,8 +154,8 @@ export default {
 
         this.positionedTx.forEach((tx) => {
           this.replaceExb(tx, (tx) => {
-            tx.x = tx.location.x * this.mapImageScale
-            tx.y = tx.location.y * this.mapImageScale
+            tx.x = tx.location.x
+            tx.y = tx.location.y
           })
           this.showTx(tx)
         })
@@ -295,7 +295,7 @@ export default {
     bulkAdd() {
       let counter = 0
       let y = 40
-      const mapMaxPosX = this.mapWidth * this.mapImageScale
+      const mapMaxPosX = this.mapWidth
       this.txOptions.forEach((val) => {
         let x = 30 + counter++ * 60
         if (x > mapMaxPosX) {
@@ -349,7 +349,7 @@ export default {
         tx.location = {...tx.location, areaId: null, x: null, y: null, area: null}
       }
       else {
-        tx.location = {...tx.location, areaId: this.selectedArea, area: null, x: Math.round(tx.x / this.mapImageScale), y: Math.round(tx.y / this.mapImageScale)}
+        tx.location = {...tx.location, areaId: this.selectedArea, area: null, x: Math.round(tx.x), y: Math.round(tx.y)}
       }
       if (tx.sensorId != null) {
         tx.txSensorList = [
