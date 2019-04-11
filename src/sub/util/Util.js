@@ -436,6 +436,20 @@ export const getSubDatetime = (datetimeFrom, datetimeTo) => {
   return subDatetime
 }
 
+export const getInRectFontSize = (text, width, height) => {
+  if(!hasValue(text)){
+    return getAdjustFontSize(() => 0)
+  }
+  const dummyFontSize = 10
+  const canvas = document.createElement('canvas')
+  const context = canvas.getContext('2d')
+  context.font = `${dummyFontSize}${FONT.TYPE}`
+  const metrix = context.measureText(text)
+  const w = Math.floor(dummyFontSize * width / metrix.width)
+  const h = Math.floor(dummyFontSize * height / dummyFontSize) - 5
+  return getAdjustFontSize(() => (w > h? h: w) - 1)
+}
+
 export const getAdjustFontSize = (getFontSize, isBold = false) => {
   const size = Math.round(getFontSize())
   return `${isBold? 'bold ': ''}${(size < FONT.SIZE.MIN? FONT.SIZE.MIN: size)}${FONT.TYPE}`

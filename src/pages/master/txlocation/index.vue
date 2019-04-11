@@ -184,8 +184,9 @@ export default {
       s.graphics.lineTo(fromX, y)
       s.graphics.lineTo(fromX, fromY)
       txBtn.addChild(s)
-      const label = new Text(this.getLabel(tx))
-      label.font = `${h / this.ICON_FONTSIZE_RATIO}px ${DISP.TX_LOC_FONT}`
+      const text = this.getLabel(tx)
+      const label = new Text(text)
+      label.font = Util.getInRectFontSize(text, w, h)
       label.color = DISP.TX_LOC_COLOR
       label.textAlign = 'center'
       label.textBaseline = 'middle'

@@ -237,7 +237,8 @@ export default {
         if (exbBtn) {
           let text = exbBtn.getChildAt(1)
           if (text) {
-            text.text = this.getExbDisp(exbBtn.deviceId)
+            text.text = Util.cutOnLongByte(this.getExbDisp(exbBtn.deviceId), this.DISPLAY_NAME_BYTE_LENGTH)
+            text.font = Util.getInRectFontSize(text.text, DISP.EXB_LOC_SIZE.w, DISP.EXB_LOC_SIZE.h)
           }
         }
       }
@@ -284,8 +285,9 @@ export default {
       s.graphics.lineTo(fromX, y)
       s.graphics.lineTo(fromX, fromY)
       exbBtn.addChild(s)
-      const label = new Text(Util.cutOnLongByte(this.getExbDisp(exb.deviceId), this.DISPLAY_NAME_BYTE_LENGTH))
-      label.font = `${h / this.ICON_FONTSIZE_RATIO}px ${DISP.EXB_LOC_FONT}`
+      const text = Util.cutOnLongByte(this.getExbDisp(exb.deviceId), this.DISPLAY_NAME_BYTE_LENGTH)
+      const label = new Text(text)
+      label.font = Util.getInRectFontSize(text, w, h)
       label.color = DISP.EXB_LOC_COLOR
       label.textAlign = 'center'
       label.textBaseline = 'middle'
