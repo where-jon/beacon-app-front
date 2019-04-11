@@ -113,12 +113,11 @@ export default {
   methods: {
     heatmapData() {
       const dataList = this.positionedTx.concat(this.positionedExb)
-      const ratio = devicePixelRatio > 0 ? devicePixelRatio : 1
       return HeatmapHelper.collect(dataList,
         {max: DISP.TEMPERATURE_MAX, min: DISP.TEMPERATURE_MIN},
         (data) => `${data.x}-${data.y}`,
         (result, data) => data.temperature,
-        (data) => {return {x: data.x * this.mapImageScale / ratio, y: data.y * this.mapImageScale / ratio}}
+        (data) => {return {x: data.x * this.canvasScale, y: data.y * this.canvasScale}}
       )
     },
     reset() {
@@ -252,23 +251,19 @@ export default {
       HeatmapHelper.create('heatmap', this.mapImage(), (evt, mapElement, map) => {
         map.width = this.$refs.map.width
         map.height = this.$refs.map.height
-        const ratio = devicePixelRatio > 0 ? devicePixelRatio : 1
         HeatmapHelper.draw(
           mapElement, 
           {
             radius: DISP.TEMPERATURE_RADIUS * this.mapImageScale,
             gradient: HeatmapHelper.createGradient(),
             // ヒートマップは座標系が異なるので注意
-            width: this.$refs.map.width / ratio,
-            height: this.$refs.map.height / ratio,
+            width: this.$refs.map.width * this.canvasScale,
+            height: this.$refs.map.height * this.canvasScale,
           },
           this.heatmapData()
         )
-        // Retina解像度対応
-        if (ratio > 0) {
-          map.style.width = String(map.width / ratio) + 'px'
-          map.style.height = String(map.height / ratio) + 'px'
-        }
+        map.style.width = String(map.width * this.canvasScale) + 'px'
+        map.style.height = String(map.height * this.canvasScale) + 'px'
         onLoad && onLoad()
       })
     },

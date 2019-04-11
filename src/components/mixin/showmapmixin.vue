@@ -27,6 +27,7 @@ export default {
       showTryCount: 0,
       tempMapFitMobile: DISP.MAP_FIT_MOBILE,
       oldMapImageScale: 0,
+      canvasScale: 1,
       showIconMinWidth: POSITION.SHOW_ICON_MIN_WIDTH,
       reloadSelectedTx: {},
       showReady: false,
@@ -223,15 +224,9 @@ export default {
         result.height = parentHeight
       }
 
-      // Retina解像度対応
-      if (devicePixelRatio > 0) {
-        result.width = result.width * devicePixelRatio
-        result.height = result.height * devicePixelRatio
-      }
-
+      // TODO:mapImageScaleを廃止する
       this.oldMapImageScale = this.mapImageScale
-      this.mapImageScale = result.width / target.width
-      console.debug(fitWidth, result.width, result.height, parentHeight)
+      this.mapImageScale = 1 // result.width / target.width
       if (this.onMapImageScale) {
         this.onMapImageScale()
       }
@@ -242,14 +237,6 @@ export default {
       if (!canvas) {
         return
       }
-      this.mapWidth = bg.width
-      this.mapHeight = bg.height
-      this.isShownMapImage = true
-      const parent = document.getElementById('map').parentElement
-
-      const size = this.calcFitSize(bg, parent)
-      canvas.width = size.width
-      canvas.height = size.height
 
       if (this.stage) { 
         this.stage.removeAllChildren()
@@ -264,11 +251,27 @@ export default {
         }
       }
       
+      this.mapWidth = bg.width
+      this.mapHeight = bg.height
+      this.isShownMapImage = true
+      const parent = document.getElementById('map').parentElement
+      const size = this.calcFitSize(bg, parent)
+      this.canvasScale = size.width / bg.width
+
+      // キャンバスのサイズを画像サイズに合わせる
+      canvas.width = bg.width
+      canvas.height = bg.height
+
+      // cssで表示サイズを設定する
+      canvas.style.width = String(size.width) + 'px'
+      canvas.style.height = String(size.height) + 'px'
+
       // Retina解像度対応
+      /*
       if (devicePixelRatio > 0) {
         canvas.style.width = String(canvas.width / devicePixelRatio) + 'px'
         canvas.style.height = String(canvas.height / devicePixelRatio) + 'px'
-      }
+      }*/
 
       this.stage = new Stage('map')
       this.stage.canvas = canvas
@@ -278,7 +281,7 @@ export default {
       }
 
       const bitmap = new Bitmap(bg)
-      bitmap.scaleY = bitmap.scaleX = this.mapImageScale
+      bitmap.scaleY = bitmap.scaleX = 1 // this.mapImageScale
       bitmap.width = canvas.width
       bitmap.height = canvas.height
       this.stage.addChild(bitmap)
@@ -513,10 +516,10 @@ export default {
         minor: 'minor:' + btxId,
         major: tx.major? 'major:' + tx.major : '',
         // TX詳細ポップアップ内部で表示座標計算する際に必要
-        orgLeft: x / ratio + offsetX,
-        orgTop: y / ratio + offsetY,
+        orgLeft: x * this.canvasScale + offsetX,
+        orgTop: y * this.canvasScale + offsetY,
         isAbove: isAbove,
-        scale: this.mapImageScale / ratio,
+        scale: this.canvasScale,
         containerWidth: containerParent.width,
         containerHeight: containerParent.height,
         class: balloonClass,
