@@ -483,7 +483,6 @@ export default {
     },
     showDetail(btxId, x, y) {
       //const tipOffsetY = 15
-      const popupHeight = this.getMeditagSensor(btxId)? DISP.TXMEDITAG_POPUP_SIZE: DISP.TXSENSOR_POPUP_SIZE
       const tx = this.txs.find((tx) => tx.btxId == btxId)
       const display = this.getDisplay(tx)
       const map = HtmlUtil.getRect('#map')
@@ -491,9 +490,10 @@ export default {
       const offsetX = map.left - containerParent.left + (!this.isInstallation ? 0 : 48)
       //const offsetY = map.top - containerParent.top + (!this.isInstallation ? 0 : 20)
       const isDispRight = x + offsetX + 100 < window.innerWidth
-      const ratio = devicePixelRatio > 0 ? devicePixelRatio : 1
+      const popupHeight = this.getMeditagSensor(btxId) ? DISP.TXMEDITAG_POPUP_SIZE : DISP.TXSENSOR_POPUP_SIZE
       // isAbove === trueの場合、ポップアップを下に表示
-      const isAbove = map.top + y / ratio < popupHeight + DISP.TX_R / ratio
+      // 上にあるときは下向きに表示する
+      const isAbove = map.top + y < popupHeight + DISP.TX_R / this.canvasScale
       const offsetY = isAbove ? popupHeight : 0
 
       const position = this.getPositions().find((e) => {
@@ -509,7 +509,7 @@ export default {
         orgLeft: x * this.canvasScale + offsetX,
         orgTop: y * this.canvasScale + offsetY,
         isAbove: isAbove,
-        scale: this.canvasScale,
+        scale: DISP.TX_R_IS_SCREEN ? 1.0 : this.canvasScale,
         containerWidth: containerParent.width,
         containerHeight: containerParent.height,
         class: balloonClass,
@@ -531,7 +531,7 @@ export default {
     },
     createBtnBg(pos, shape, bgColor){
       let btnBg = new Shape()
-      let TxRadius = DISP.TX_R
+      let TxRadius = DISP.TX_R_IS_SCREEN ? DISP.TX_R / this.canvasScale : DISP.TX_R
       
       btnBg = this.setbtnColor(btnBg, bgColor, pos)
       switch(shape) {
