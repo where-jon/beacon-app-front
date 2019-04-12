@@ -299,7 +299,7 @@ export default {
     },
     createButtonIcon(device, iconInfo){
       const btnicon = new Shape()
-      btnicon.graphics.beginFill(iconInfo.color).drawCircle(0, 0, DISP.THERMOH_R_SIZE, DISP.THERMOH_R_SIZE)
+      btnicon.graphics.beginFill(iconInfo.color).drawCircle(0, 0, DISP.THERMOH_R_SIZE / this.canvasScale, DISP.THERMOH_R_SIZE / this.canvasScale)
       btnicon.alpha = DISP.THERMOH_ALPHA
       btnicon.addEventListener('mouseover', this.iconMouseOver)
       btnicon.addEventListener('mouseout', this.iconMouseOut)
@@ -307,8 +307,8 @@ export default {
     },
     createButtonLabel(device){
       const text = Util.formatTemperature(device.temperature) + '℃\n' + Util.formatHumidity(device.humidity) + '%'
-      const label = new Text(Util.inLabel(DISP.THERMOH_R_SIZE, DISP.THERMOH_FONT, DISP.THERMOH_WITH_LABEL)? text: '')
-      label.font = DISP.THERMOH_FONT
+      const label = new Text(text)
+      label.font = this.getThermothFont()
       label.color = DISP.THERMOH_COLOR
       label.textAlign = 'center'
       label.textBaseline = 'middle'
@@ -413,7 +413,7 @@ export default {
     createTooltipInfo(container){
       const device = container.device
       const ret = {
-        fontSize: Util.getFont2Size(DISP.THERMOH_FONT),
+        fontSize: Util.getFont2Size(this.getThermothFont()),
         sensorName: DISP.THERMOH_TOOLTIP_ITEMS.TXNAME? device.txName? device.txName: device.locationName: '',
         temperature: DISP.THERMOH_TOOLTIP_ITEMS.TEMPERATURE? Util.formatTemperature(device.temperature) + this.$i18n.tnl('label.temperatureUnit'): '',
         humidity: DISP.THERMOH_TOOLTIP_ITEMS.HUMIDITY? Util.formatHumidity(device.humidity) + this.$i18n.tnl('label.humidityUnit'): '',
@@ -463,7 +463,7 @@ export default {
       ].filter(val => Util.hasValue(val)).join('\n'))
       label.x = tooltipInfo.x + DISP.THERMOH_TOOLTIP_ROUNDRECT / 2
       label.y = tooltipInfo.y + DISP.THERMOH_TOOLTIP_ROUNDRECT
-      label.font = DISP.THERMOH_FONT
+      label.font = this.getThermothFont()
       label.color = DISP.THERMOH_TOOLTIP_COLOR
       label.textBaseline = 'middle'
       this.tooltipCon.addChild(label)
@@ -479,6 +479,11 @@ export default {
         name: device.txName? device.txName: device.locationName? device.locationName: '',
         description: device.description? ` : ${Util.cutOnLong(device.description, 10)}`: ''
       })
+    },
+    getThermothFont(){
+      const font = DISP.THERMOH_FONT.split('px')
+      const fontSize = Number(font[0]) / this.canvasScale
+      return Math.round(fontSize) + 'px' + font[1]
     },
   }
 }
