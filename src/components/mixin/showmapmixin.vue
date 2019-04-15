@@ -509,7 +509,7 @@ export default {
         orgLeft: x * this.canvasScale + offsetX,
         orgTop: y * this.canvasScale + offsetY,
         isAbove: isAbove,
-        scale: DISP.TX_R_IS_SCREEN ? 1.0 : this.canvasScale,
+        scale: DISP.TX_R_ABSOLUTE ? 1.0 : this.canvasScale,
         containerWidth: containerParent.width,
         containerHeight: containerParent.height,
         class: balloonClass,
@@ -531,7 +531,7 @@ export default {
     },
     createBtnBg(pos, shape, bgColor){
       let btnBg = new Shape()
-      let TxRadius = DISP.TX_R_IS_SCREEN ? DISP.TX_R / this.canvasScale : DISP.TX_R
+      let TxRadius = DISP.TX_R_ABSOLUTE ? DISP.TX_R / this.canvasScale : DISP.TX_R
       
       btnBg = this.setbtnColor(btnBg, bgColor, pos)
       switch(shape) {
@@ -565,7 +565,7 @@ export default {
     },
     createBtnLabel(pos, color){
       const label = new Text(pos.label)
-      label.font = Util.getAdjustFontSize(() => DISP.TX_R - 4)
+      label.font = Util.getAdjustFontSize(() => (DISP.TX_R * 0.7) / this.canvasScale)
       label.color = '#' + color
       label.textAlign = 'center'
       label.textBaseline = 'middle'
