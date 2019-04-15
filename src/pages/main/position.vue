@@ -105,7 +105,7 @@ export default {
       items: !this.isInstallation ? ViewHelper.createBreadCrumbItems('main', 'showPosition') : ViewHelper.createBreadCrumbItems('develop', 'installation'),
       detectedCount: 0, // 検知数
       pot: {},
-      showMeditag: APP.USE_MEDITAG,
+      showMeditag: APP.USE_MEDITAG && !this.isInstallation,
       showDetected: APP.SHOW_DETECTED_COUNT,
       shortName: this.$i18n.tnl('label.showPositionShort'),
       extraNavSpec: EXTRA_NAV,
