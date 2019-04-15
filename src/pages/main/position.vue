@@ -208,7 +208,7 @@ export default {
         .map((val) => val.categoryId)
     },
     getCategoryLegendElements () {
-      return this.categories.map((val) => ({ id: val.categoryId, name: StateHelper.getDispCategoryName(val), ...val,}))
+      return this.categories.filter(category => !category.systemUse).map((val) => ({ id: val.categoryId, name: StateHelper.getDispCategoryName(val), ...val,}))
     },
     getMagnetGroupTypes () {
       return this.txs.filter((val) => val.groupId && val.sensorId == SENSOR.MAGNET)
