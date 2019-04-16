@@ -565,7 +565,8 @@ export default {
     },
     createBtnLabel(pos, color){
       const label = new Text(pos.label)
-      label.font = Util.getAdjustFontSize(() => (DISP.TX_R * 0.7) / this.canvasScale)
+      const scale = DISP.TX_R_ABSOLUTE ? this.canvasScale : 1
+      label.font = Util.getAdjustFontSize(() => (DISP.TX_R * 0.7) / scale)
       label.color = '#' + color
       label.textAlign = 'center'
       label.textBaseline = 'middle'
