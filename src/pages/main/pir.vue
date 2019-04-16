@@ -217,8 +217,8 @@ export default {
 
       exbBtn.deviceId = exb.deviceId
       exbBtn.exbId = exb.exbId
-      exbBtn.x = exb.x * this.mapImageScale
-      exbBtn.y = exb.y * this.mapImageScale
+      exbBtn.x = exb.x
+      exbBtn.y = exb.y
       exbBtn.cursor = ''
 
       this.exbCon.addChild(exbBtn)
@@ -257,8 +257,8 @@ export default {
         txBtn.addChild(this.createLabel(tx.sensorId, count))
       }
 
-      txBtn.x = tx.location.x * this.mapImageScale
-      txBtn.y = tx.location.y * this.mapImageScale
+      txBtn.x = tx.location.x
+      txBtn.y = tx.location.y
       this.txCont.addChild(txBtn)
       this.stage.update()
     },

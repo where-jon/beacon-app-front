@@ -47,7 +47,6 @@ export default {
   },
   computed: {
     heatmapData() {
-      const scale = this.mapImageScale
       let positions = 
         _.reduce(this.positionHistories, (ary, hist) => {
           if (ary[hist.posId]) {
@@ -55,8 +54,8 @@ export default {
           } else {
             ary[hist.posId] = {
               posId: hist.posId,
-              x: Math.round(hist.x * scale),
-              y: Math.round(hist.y * scale),
+              x: Math.round(hist.x),
+              y: Math.round(hist.y),
               value: 1,
             }
           }
@@ -116,7 +115,7 @@ export default {
       this.removeHeatmap()
       Util.debug(this.heatmapData)
       let heatmap = h337.create({
-        radius: DISP.ANALYSIS.HEATMAP.RADIUS * this.mapImageScale,
+        radius: DISP.ANALYSIS.HEATMAP.RADIUS,
         container: element,
       })
       heatmap.setData(this.heatmapData)

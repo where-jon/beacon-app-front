@@ -36,7 +36,7 @@
           <img v-if="selectedTx.thumbnail.length > 0" :src="selectedTx.thumbnail" width="auto" height="125">
           <img v-else src="/default.png" width="auto" height="116">
         </div>
-        <div class="description">
+        <div class="descriptionSensor">
           <div v-for="(item, index) in getDispItems()" :key="index">
             {{ item }}
           </div>
@@ -267,8 +267,21 @@ export default {
 .description {
   float: left;
   width: 160px;
+  height: 125px;
   font-weight: bold;
   padding-left: 10px;
+  overflow-y: scroll;
+}
+.descriptionSensor {
+  float: left;
+  width: 160px;
+  height: 150px;
+  font-weight: bold;
+  padding-left: 10px;
+  overflow-y: scroll;
+}
+::-webkit-scrollbar { 
+  display: none; 
 }
 
 .thumbnail {

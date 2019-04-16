@@ -26,7 +26,7 @@ export default {
       isFirstTime: true,
       showTryCount: 0,
       tempMapFitMobile: DISP.MAP_FIT_MOBILE,
-      oldMapImageScale: 0,
+      canvasScale: 1,
       showIconMinWidth: POSITION.SHOW_ICON_MIN_WIDTH,
       reloadSelectedTx: {},
       showReady: false,
@@ -223,15 +223,6 @@ export default {
         result.height = parentHeight
       }
 
-      // Retina解像度対応
-      if (devicePixelRatio > 0) {
-        result.width = result.width * devicePixelRatio
-        result.height = result.height * devicePixelRatio
-      }
-
-      this.oldMapImageScale = this.mapImageScale
-      this.mapImageScale = result.width / target.width
-      console.debug(fitWidth, result.width, result.height, parentHeight)
       if (this.onMapImageScale) {
         this.onMapImageScale()
       }
@@ -242,14 +233,6 @@ export default {
       if (!canvas) {
         return
       }
-      this.mapWidth = bg.width
-      this.mapHeight = bg.height
-      this.isShownMapImage = true
-      const parent = document.getElementById('map').parentElement
-
-      const size = this.calcFitSize(bg, parent)
-      canvas.width = size.width
-      canvas.height = size.height
 
       if (this.stage) { 
         this.stage.removeAllChildren()
@@ -264,11 +247,27 @@ export default {
         }
       }
       
+      this.mapWidth = bg.width
+      this.mapHeight = bg.height
+      this.isShownMapImage = true
+      const parent = document.getElementById('map').parentElement
+      const size = this.calcFitSize(bg, parent)
+      this.canvasScale = size.width / bg.width
+
+      // キャンバスのサイズを画像サイズに合わせる
+      canvas.width = bg.width
+      canvas.height = bg.height
+
+      // cssで表示サイズを設定する
+      canvas.style.width = String(size.width) + 'px'
+      canvas.style.height = String(size.height) + 'px'
+
       // Retina解像度対応
+      /*
       if (devicePixelRatio > 0) {
         canvas.style.width = String(canvas.width / devicePixelRatio) + 'px'
         canvas.style.height = String(canvas.height / devicePixelRatio) + 'px'
-      }
+      }*/
 
       this.stage = new Stage('map')
       this.stage.canvas = canvas
@@ -278,7 +277,7 @@ export default {
       }
 
       const bitmap = new Bitmap(bg)
-      bitmap.scaleY = bitmap.scaleX = this.mapImageScale
+      bitmap.scaleY = bitmap.scaleX = 1
       bitmap.width = canvas.width
       bitmap.height = canvas.height
       this.stage.addChild(bitmap)
@@ -316,18 +315,12 @@ export default {
       }
     },
     replaceExb(exb, nokeep) {
-      if (this.keepExbPosition) {
-        exb.x = exb.x / this.oldMapImageScale * this.mapImageScale
-        exb.y = exb.y / this.oldMapImageScale * this.mapImageScale
-      } else {
+      if (!this.keepExbPosition) {
         nokeep(exb)
       }
     },
     replaceTx(tx, nokeep) {
-      if (this.keepTxPosition) {
-        tx.x = tx.x / this.oldMapImageScale * this.mapImageScale
-        tx.y = tx.y / this.oldMapImageScale * this.mapImageScale
-      } else {
+      if (!this.keepTxPosition) {
         nokeep(tx)
       }
     },
@@ -490,7 +483,6 @@ export default {
     },
     showDetail(btxId, x, y) {
       //const tipOffsetY = 15
-      const popupHeight = this.getMeditagSensor(btxId)? DISP.TXMEDITAG_POPUP_SIZE: DISP.TXSENSOR_POPUP_SIZE
       const tx = this.txs.find((tx) => tx.btxId == btxId)
       const display = this.getDisplay(tx)
       const map = HtmlUtil.getRect('#map')
@@ -498,9 +490,10 @@ export default {
       const offsetX = map.left - containerParent.left + (!this.isInstallation ? 0 : 48)
       //const offsetY = map.top - containerParent.top + (!this.isInstallation ? 0 : 20)
       const isDispRight = x + offsetX + 100 < window.innerWidth
-      const ratio = devicePixelRatio > 0 ? devicePixelRatio : 1
+      const popupHeight = this.getMeditagSensor(btxId) ? DISP.TXMEDITAG_POPUP_SIZE : DISP.TXSENSOR_POPUP_SIZE
       // isAbove === trueの場合、ポップアップを下に表示
-      const isAbove = map.top + y / ratio < popupHeight + DISP.TX_R * this.mapImageScale / ratio
+      // 上にあるときは下向きに表示する
+      const isAbove = map.top + y < popupHeight + DISP.TX_R / this.canvasScale
       const offsetY = isAbove ? popupHeight : 0
 
       const position = this.getPositions().find((e) => {
@@ -513,10 +506,10 @@ export default {
         minor: 'minor:' + btxId,
         major: tx.major? 'major:' + tx.major : '',
         // TX詳細ポップアップ内部で表示座標計算する際に必要
-        orgLeft: x / ratio + offsetX,
-        orgTop: y / ratio + offsetY,
+        orgLeft: x * this.canvasScale + offsetX,
+        orgTop: y * this.canvasScale + offsetY,
         isAbove: isAbove,
-        scale: this.mapImageScale / ratio,
+        scale: DISP.TX_R_ABSOLUTE ? 1.0 : this.canvasScale,
         containerWidth: containerParent.width,
         containerHeight: containerParent.height,
         class: balloonClass,
@@ -538,7 +531,7 @@ export default {
     },
     createBtnBg(pos, shape, bgColor){
       let btnBg = new Shape()
-      let TxRadius = DISP.TX_R * this.mapImageScale
+      let TxRadius = DISP.TX_R_ABSOLUTE ? DISP.TX_R / this.canvasScale : DISP.TX_R
       
       btnBg = this.setbtnColor(btnBg, bgColor, pos)
       switch(shape) {
@@ -572,7 +565,7 @@ export default {
     },
     createBtnLabel(pos, color){
       const label = new Text(pos.label)
-      label.font = Util.getAdjustFontSize(() => DISP.TX_R * this.mapImageScale - 4)
+      label.font = Util.getAdjustFontSize(() => (DISP.TX_R * 0.7) / this.canvasScale)
       label.color = '#' + color
       label.textAlign = 'center'
       label.textBaseline = 'middle'
@@ -610,8 +603,8 @@ export default {
         const selectedTxPosition = position.find((pos) => pos.btx_id == tx.btxId)
         if (selectedTxPosition) {
           const location = selectedTxPosition.tx? selectedTxPosition.tx.location: null
-          const x = location && location.x != null? location.x * this.mapImageScale: selectedTxPosition.x
-          const y = location && location.y != null? location.y * this.mapImageScale: selectedTxPosition.y
+          const x = location && location.x != null? location.x : selectedTxPosition.x
+          const y = location && location.y != null? location.y : selectedTxPosition.y
           this.showDetail(tx.btxId, x, y)
         }
       }
@@ -669,10 +662,6 @@ export default {
         this.txCon.removeAllChildren()
       }
       this.positionedTx.forEach((tx) => {
-        this.replaceTx(tx, (tx) => {
-          tx.x *= this.mapImageScale
-          tx.y *= this.mapImageScale
-        })
         this.showTx(tx)
       })
       this.keepTxPosition = false

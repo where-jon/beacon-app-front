@@ -33,7 +33,7 @@ const hasTxLocation = (pos) => pos && pos.tx && pos.tx.location && pos.tx.locati
 const getCoordinateFix = (ratio, fixPositions) => {
   const ret = []
   fixPositions.forEach((fixPosition) => {
-    ret.push(hasTxLocation(fixPosition)? {...fixPosition, x: fixPosition.tx.location.x * ratio, y: fixPosition.tx.location.y * ratio}: null)
+    ret.push(hasTxLocation(fixPosition)? {...fixPosition, x: fixPosition.tx.location.x, y: fixPosition.tx.location.y}: null)
   })
   return ret.filter((val) => val)
 }
@@ -45,8 +45,8 @@ const getCoordinateFix = (ratio, fixPositions) => {
  * @param {*} samePos 同じEXBの位置に配置するTXオブジェクトの配列
  */
 const getCoordinateDefault = (exb, ratio, samePos) => {
-  let baseX = exb.location.x * ratio
-  let baseY = exb.location.y * ratio
+  let baseX = exb.location.x
+  let baseY = exb.location.y
   let txR = DISP.TX_R * ratio
   const ret = []
   switch (samePos.length) {
@@ -178,8 +178,8 @@ const getPositionsToOverlap = (exb, ratio, samePos) => {
     return getCoordinateDefault(exb, ratio, samePos)
   }
   const maxIcons = viewType.horizon * viewType.vertical
-  let baseX = exb.location.x * ratio
-  let baseY = exb.location.y * ratio
+  let baseX = exb.location.x
+  let baseY = exb.location.y
   const c = partitioningArray(samePos, viewType.displayFormat !== TX_VIEW_TYPES.TILE ? iconsUnitNum : maxIcons)
   return c.flatMap((e, i, a) => {
     const coordinate = getCoordinate(ratio, baseX, baseY, e, viewType)

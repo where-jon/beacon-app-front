@@ -66,7 +66,7 @@ import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import commonmixinVue from '../mixin/commonmixin.vue'
 
 class RssiIcon {
-  constructor(parent, rssi, level = 3) {
+  constructor(parent, rssi, scale, level = 3) {
     const RSSI_ICON_WIDTH = DISP.INSTALLATION.RSSI_ICON_WIDTH
     const RSSI_ICON_HEIGHT = DISP.INSTALLATION.RSSI_ICON_HEIGHT
     const color = (() => {
@@ -83,16 +83,16 @@ class RssiIcon {
     })()
     this.container = new Container()
     const s = new Shape()
-    s.graphics.beginFill(color.bg).drawRect(0, 0, RSSI_ICON_WIDTH, RSSI_ICON_HEIGHT)
+    s.graphics.beginFill(color.bg).drawRect(0, 0, RSSI_ICON_WIDTH * scale, RSSI_ICON_HEIGHT * scale)
     const label = new Text(rssi)
     this.container.addChild(s, label)
     label.set({
-      font: DISP.EXB_LOC_FONT,
+      font: 20 * scale + 'px ' + DISP.EXB_LOC_FONT,
       color: color.text,
       textAlign: 'center',
-      textBaseline: 'middle',
-      x: RSSI_ICON_WIDTH / 2,
-      y: RSSI_ICON_HEIGHT / 2,
+      textBaseline: 'bottom',
+      x: RSSI_ICON_WIDTH * scale / 2,
+      y: RSSI_ICON_HEIGHT * scale,
     })
     this.parent = parent
   }
@@ -138,7 +138,6 @@ export default {
       useCategory: MenuHelper.useMaster('category') && APP.TX_WITH_CATEGORY,
       modeRssi: true,
       exbDisp: 'deviceNum',
-      EXB_ICON_RADIUS: 18,
       nearest: [],
       targetTx: null,
       exbBtns : [],
@@ -214,8 +213,8 @@ export default {
         this.exbBtns = this.positionedExb.map((exb) => {
           const clone = Object.assign({}, exb)
           this.replaceExb(exb, (exb) => {
-            clone.x = exb.location.x * this.mapImageScale
-            clone.y = exb.location.y * this.mapImageScale
+            clone.x = exb.location.x
+            clone.y = exb.location.y
           })
           const exbBtn = this.createExbIcon(clone)
           this.exbCon.addChild(exbBtn)
@@ -247,18 +246,18 @@ export default {
     createExbIcon(exb) {
       const exbBtn = new Container()
       const s = new Shape()
-      s.graphics.beginFill(DISP.EXB_LOC_BGCOLOR).drawCircle(0, 0, this.EXB_ICON_RADIUS, this.EXB_ICON_RADIUS)
+      s.graphics.beginFill(DISP.EXB_LOC_BGCOLOR).drawCircle(0, 0, DISP.EXB_ICON_RADIUS / this.canvasScale, DISP.EXB_ICON_RADIUS / this.canvasScale)
       exbBtn.addChild(s)
       const label = new Text(this.getExbDisp(exb.deviceId))
-      label.font = DISP.EXB_LOC_FONT
+      label.font = 20 / this.canvasScale + 'px ' + DISP.EXB_LOC_FONT
       label.color = DISP.EXB_LOC_COLOR
       label.textAlign = 'center'
       label.textBaseline = 'middle'
       exbBtn.addChild(label)
       exbBtn.deviceId = exb.deviceId
       exbBtn.exbId = exb.exbId
-      exbBtn.x = exb.x + this.EXB_ICON_RADIUS
-      exbBtn.y = exb.y + this.EXB_ICON_RADIUS
+      exbBtn.x = exb.x
+      exbBtn.y = exb.y
       return exbBtn
     },
     getExbDisp(deviceId) {
@@ -312,13 +311,13 @@ export default {
         return
       }
 
-      const minusX = this.RSSI_ICON_WIDTH / 2
-      const minusY = (this.RSSI_ICON_HEIGHT-1) * 2
+      const minusX = this.RSSI_ICON_WIDTH / this.canvasScale / 2
+      const minusY = this.RSSI_ICON_HEIGHT / this.canvasScale * 2
       const pow = Math.pow(10, this.RSSI_SCALE)
 
       target.nearest.filter((t) => t.x && t.y).forEach((t, i, a) => {
         const rssi = Math.floor(t.rssi * pow) / pow 
-        new RssiIcon(this.rssiCon, rssi, i).add(t.x - minusX, t.y - minusY)
+        new RssiIcon(this.rssiCon, rssi, 1/this.canvasScale, i).add(t.x - minusX, t.y - minusY)
         this.stage.setChildIndex(this.rssiCon, this.stage.numChildren-1)
       })
       this.stage.update()

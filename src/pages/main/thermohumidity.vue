@@ -113,12 +113,11 @@ export default {
   methods: {
     heatmapData() {
       const dataList = this.positionedTx.concat(this.positionedExb)
-      const ratio = devicePixelRatio > 0 ? devicePixelRatio : 1
       return HeatmapHelper.collect(dataList,
         {max: DISP.TEMPERATURE_MAX, min: DISP.TEMPERATURE_MIN},
         (data) => `${data.x}-${data.y}`,
         (result, data) => data.temperature,
-        (data) => {return {x: data.x * this.mapImageScale / ratio, y: data.y * this.mapImageScale / ratio}}
+        (data) => {return {x: data.x * this.canvasScale, y: data.y * this.canvasScale}}
       )
     },
     reset() {
@@ -252,23 +251,19 @@ export default {
       HeatmapHelper.create('heatmap', this.mapImage(), (evt, mapElement, map) => {
         map.width = this.$refs.map.width
         map.height = this.$refs.map.height
-        const ratio = devicePixelRatio > 0 ? devicePixelRatio : 1
         HeatmapHelper.draw(
           mapElement, 
           {
-            radius: DISP.TEMPERATURE_RADIUS * this.mapImageScale,
+            radius: DISP.TEMPERATURE_RADIUS,
             gradient: HeatmapHelper.createGradient(),
             // ヒートマップは座標系が異なるので注意
-            width: this.$refs.map.width / ratio,
-            height: this.$refs.map.height / ratio,
+            width: this.$refs.map.width * this.canvasScale,
+            height: this.$refs.map.height * this.canvasScale,
           },
           this.heatmapData()
         )
-        // Retina解像度対応
-        if (ratio > 0) {
-          map.style.width = String(map.width / ratio) + 'px'
-          map.style.height = String(map.height / ratio) + 'px'
-        }
+        map.style.width = String(map.width * this.canvasScale) + 'px'
+        map.style.height = String(map.height * this.canvasScale) + 'px'
         onLoad && onLoad()
       })
     },
@@ -304,7 +299,7 @@ export default {
     },
     createButtonIcon(device, iconInfo){
       const btnicon = new Shape()
-      btnicon.graphics.beginFill(iconInfo.color).drawCircle(0, 0, DISP.THERMOH_R_SIZE, DISP.THERMOH_R_SIZE)
+      btnicon.graphics.beginFill(iconInfo.color).drawCircle(0, 0, DISP.THERMOH_R_SIZE / this.canvasScale, DISP.THERMOH_R_SIZE / this.canvasScale)
       btnicon.alpha = DISP.THERMOH_ALPHA
       btnicon.addEventListener('mouseover', this.iconMouseOver)
       btnicon.addEventListener('mouseout', this.iconMouseOut)
@@ -312,8 +307,8 @@ export default {
     },
     createButtonLabel(device){
       const text = Util.formatTemperature(device.temperature) + '℃\n' + Util.formatHumidity(device.humidity) + '%'
-      const label = new Text(Util.inLabel(DISP.THERMOH_R_SIZE, DISP.THERMOH_FONT, DISP.THERMOH_WITH_LABEL)? text: '')
-      label.font = DISP.THERMOH_FONT
+      const label = new Text(text)
+      label.font = this.getThermothFont()
       label.color = DISP.THERMOH_COLOR
       label.textAlign = 'center'
       label.textBaseline = 'middle'
@@ -341,8 +336,8 @@ export default {
       exbBtn.deviceId = exb.deviceId
       exbBtn.exbId = exb.exbId
       exbBtn.device = exb
-      exbBtn.x = exb.x * this.mapImageScale
-      exbBtn.y = exb.y * this.mapImageScale
+      exbBtn.x = exb.x
+      exbBtn.y = exb.y
       exbBtn.cursor = 'pointer'
       stage.enableMouseOver()
 
@@ -418,7 +413,7 @@ export default {
     createTooltipInfo(container){
       const device = container.device
       const ret = {
-        fontSize: Util.getFont2Size(DISP.THERMOH_FONT),
+        fontSize: Util.getFont2Size(this.getThermothFont()),
         sensorName: DISP.THERMOH_TOOLTIP_ITEMS.TXNAME? device.txName? device.txName: device.locationName: '',
         temperature: DISP.THERMOH_TOOLTIP_ITEMS.TEMPERATURE? Util.formatTemperature(device.temperature) + this.$i18n.tnl('label.temperatureUnit'): '',
         humidity: DISP.THERMOH_TOOLTIP_ITEMS.HUMIDITY? Util.formatHumidity(device.humidity) + this.$i18n.tnl('label.humidityUnit'): '',
@@ -468,7 +463,7 @@ export default {
       ].filter(val => Util.hasValue(val)).join('\n'))
       label.x = tooltipInfo.x + DISP.THERMOH_TOOLTIP_ROUNDRECT / 2
       label.y = tooltipInfo.y + DISP.THERMOH_TOOLTIP_ROUNDRECT
-      label.font = DISP.THERMOH_FONT
+      label.font = this.getThermothFont()
       label.color = DISP.THERMOH_TOOLTIP_COLOR
       label.textBaseline = 'middle'
       this.tooltipCon.addChild(label)
@@ -484,6 +479,11 @@ export default {
         name: device.txName? device.txName: device.locationName? device.locationName: '',
         description: device.description? ` : ${Util.cutOnLong(device.description, 10)}`: ''
       })
+    },
+    getThermothFont(){
+      const font = DISP.THERMOH_FONT.split('px')
+      const fontSize = Number(font[0]) / this.canvasScale
+      return Math.round(fontSize) + 'px' + font[1]
     },
   }
 }

@@ -105,7 +105,7 @@ export default {
       items: !this.isInstallation ? ViewHelper.createBreadCrumbItems('main', 'showPosition') : ViewHelper.createBreadCrumbItems('develop', 'installation'),
       detectedCount: 0, // 検知数
       pot: {},
-      showMeditag: APP.USE_MEDITAG,
+      showMeditag: APP.USE_MEDITAG && !this.isInstallation,
       showDetected: APP.SHOW_DETECTED_COUNT,
       shortName: this.$i18n.tnl('label.showPositionShort'),
       extraNavSpec: EXTRA_NAV,
@@ -342,9 +342,9 @@ export default {
       if(APP.USE_MULTI_POSITIONING){
         let area = _.find(this.$store.state.app_service.areas, (area) => area.areaId == this.selectedArea)
         let mapRatio = area.mapRatio
-        position = PositionHelper.adjustMultiPosition(this.getPositions(), this.mapImageScale * mapRatio)
+        position = PositionHelper.adjustMultiPosition(this.getPositions(), mapRatio)
       }else{
-        position = PositionHelper.adjustPosition(this.getPositions(), this.mapImageScale, this.positionedExb, this.selectedArea)
+        position = PositionHelper.adjustPosition(this.getPositions(), 1/this.canvasScale, this.positionedExb, this.selectedArea)
       }
       position.forEach((pos) => {
         this.showTx(pos)
@@ -393,8 +393,8 @@ export default {
       const txBtn = this.createTxBtn(pos, display.shape, color, bgColor)
       if (this.isFixTx(tx)) {
         Util.debug('fixed location', tx)
-        txBtn.x = tx.location.x * this.mapImageScale
-        txBtn.y = tx.location.y * this.mapImageScale
+        txBtn.x = tx.location.x
+        txBtn.y = tx.location.y
       }
 
       if(this.reloadSelectedTx.btxId == pos.btx_id){
