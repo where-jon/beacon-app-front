@@ -203,7 +203,6 @@ export default {
 
         return {
           date: date,
-          id: potId, 
           name: potName, 
           groupName: groupName,
           stayTime: Util.convertToTime(stayTime), 
@@ -326,7 +325,6 @@ export default {
     getCsvHeaderNames() {
       return [
         'date',
-        'id', 
         'name',
         'groupName',
         'stayTime', 
