@@ -264,9 +264,8 @@ export default {
         return
       }
 
-      const inputDate = moment(param.date)
-      param.date = inputDate.format('YYYYMMDD')
-      const diff = moment().startOf('months').diff(inputDate.startOf('months'), 'months')
+      param.date = moment(param.date).format('YYYYMMDD')
+      const diff = moment().startOf('months').diff(moment(param.date).startOf('months'), 'months')
       let startDate, endDate
 
       // 取得する日付開始、終了日を設定する
@@ -285,12 +284,12 @@ export default {
       }
 
       let csvList = new Array()
-      const csvDays = endDate.diff(startDate.add(-1, 'day'), 'days')
+      const csvDays = endDate.diff(startDate, 'days')
       const groupBy = param.groupId? '&groupId=' + param.groupId: ''
 
       let day = 0
-      while (day++ < csvDays) {
-        const searchDate = startDate.add(1, 'day').format('YYYYMMDD')
+      while (day <= csvDays) {
+        const searchDate = moment(param.date).startOf('months').add(day++, 'day').format('YYYYMMDD')
         const url = '/office/stayTime/sumByDay/' + searchDate + '/zoneCategory?from=' + APP.SUM_FROM + '&to=' + APP.SUM_TO + groupBy
         const sumData = await HttpHelper.getAppService(url)
         if (_.isEmpty(sumData)) {
@@ -339,8 +338,8 @@ export default {
     },
     pickerChanged() {
       const param = _.cloneDeep(this.form)
-      const isFuture = param.date == '' ? true: moment(param.date).isAfter(moment().endOf('months'))? true: false
-      if (isFuture) {
+      const isError = param.date == '' ? true: moment(param.date).isAfter(moment().endOf('months'))? true: false
+      if (isError) {
         this.message = this.$i18n.terror('message.invalid', {target: this.$i18n.tnl('label.date')})
         this.replace({showAlert: true})
         return
