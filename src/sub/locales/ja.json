@@ -27,6 +27,7 @@
     "search": "検索",
     "actions": "アクション",
     "download": "ダウンロード",
+    "downloadMonth": "ダウンロード(月)",
     "csvFile": "CSVファイル",
     "zipFile": "zipファイル",
     "cancel": "キャンセル",

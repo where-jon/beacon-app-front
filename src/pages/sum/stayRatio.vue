@@ -23,6 +23,7 @@
           <b-form-row class="mb-3">
             <b-button v-t="'label.display'" type="submit" :variant="theme" @click="display" />
             <b-button v-if="!iosOrAndroid" v-t="'label.download'" :variant="theme" class="ml-2" @click="download" />
+            <b-button v-if="!iosOrAndroid" v-t="'label.downloadMonth'" :variant="theme" class="ml-2" @click="downloadMonth" />
           </b-form-row>
         </b-form-group>
       </b-form>
@@ -224,6 +225,76 @@ export default {
           field.label = Util.isResponsiveMode(true)? field.originLabel.replace(/<br>/g, ''): field.originLabel
         })
       }
+    },
+    async downloadMonth(){
+      this.replace({showAlert: false})
+      this.showProgress()
+
+      const param = _.cloneDeep(this.form)
+      await StateHelper.load('zones')
+      await StateHelper.load('pots')
+
+      if (!param.date || param.date == '') {
+        this.message = this.$i18n.tnl('message.pleaseEnterSearchCriteria')
+        this.replace({showAlert: true})
+        this.hideProgress()
+        return
+      }
+
+      const inputDate = moment(param.date)
+      param.date = inputDate.format('YYYYMMDD')
+      const diff = moment().startOf('months').diff(inputDate.startOf('months'), 'months')
+      let startDate, endDate
+
+      // 取得する日付開始、終了日を設定する
+      if (diff == 0) {
+        startDate = moment(param.date).startOf('months')
+        endDate = moment().subtract(1, 'd')
+      } else if (diff >= 0) {
+        startDate = moment(param.date).startOf('months')
+        endDate = moment(param.date).endOf('months')
+      } else {
+        // 未来月の場合はエラーとする
+        this.message = this.$i18n.terror('message.invalid', {target: this.$i18n.tnl('label.date')})
+        this.replace({showAlert: true})
+        this.hideProgress()
+        return
+      }
+
+      let csvList = new Array()
+      const csvDays = endDate.diff(startDate.add(-1, 'day'), 'days')
+      const groupBy = param.groupId? '&groupId=' + param.groupId: ''
+
+      let day = 0
+      while (day++ < csvDays) {
+        const searchDate = startDate.add(1, 'day').format('YYYYMMDD')
+        const url = '/office/stayTime/sumByDay/' + searchDate + '/zoneCategory?from=' + APP.SUM_FROM + '&to=' + APP.SUM_TO + groupBy
+        const sumData = await HttpHelper.getAppService(url)
+        if (_.isEmpty(sumData)) {
+          console.log('searchDate: ' + searchDate)
+          this.message = this.$i18n.t('message.listEmpty')
+          this.replace({showAlert: true})
+          this.hideProgress()
+          return
+        }
+        let list = this.getStayDataList(sumData, APP.SUM_ABSENT_LIMIT, APP.SUM_LOST_LIMIT)
+        list.sort(function(a, b) {
+          var nameA = a.name.toUpperCase() // 大文字、小文字を無視
+          var nameB = b.name.toUpperCase() // 大文字、小文字を無視
+          if (nameA < nameB) return -1
+          if (nameA > nameB) return 1
+          return 0
+        })
+        csvList = csvList.isEmpty? list: csvList.concat(list)
+      }
+
+      HtmlUtil.fileDL(
+        'stayRatio.csv',
+        Util.converToCsv(csvList, null, this.getCsvHeaderNames()),
+        getCharSet(this.$store.state.loginId)
+      )
+
+      this.hideProgress()
     },
     getCsvHeaderNames() {
       return [
