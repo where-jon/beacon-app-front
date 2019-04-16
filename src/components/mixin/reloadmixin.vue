@@ -9,12 +9,6 @@ import { APP } from '../../sub/constant/config'
 
 export default {
   mixins: [commonmixinVue],
-  data() {
-    return {
-      positionInterval: null,
-      anotherInterval: null,
-    }
-  },
   computed: {
     iosOrAndroid() {
       return Util.isAndroidOrIOS()
@@ -36,8 +30,7 @@ export default {
   },
   methods: {
     startOtherAutoReload() {
-      this.stopOtherAutoReload()
-      this.anotherInterval = setInterval(() => {
+      HtmlUtil.registerInterval(() => {
         this.$store.commit('replace', {reload: true})
         const windowScroll = {x: window.pageXOffset , y: window.pageYOffset}
         EventBus.$emit('otherReload', {
@@ -47,26 +40,13 @@ export default {
         window.scroll(windowScroll.x, windowScroll.y)
       }, APP.AUTO_RELOAD)
     },
-    stopOtherAutoReload() {
-      if(this.anotherInterval){
-        clearInterval(this.anotherInterval)
-      }
-      this.anotherInterval = null
-    },
     startPositionAutoReload() {
-      this.stopPositionAutoReload()
-      this.positionInterval = setInterval(() => {
+      HtmlUtil.registerInterval(() => {
         EventBus.$emit('positionReload', {
           disabledProgress: true,
           disabledOther: true,
         })
       }, APP.POSITION_AUTO_RELOAD)
-    },
-    stopPositionAutoReload() {
-      if(this.positionInterval){
-        clearInterval(this.positionInterval)
-      }
-      this.positionInterval = null
     },
     startAutoReload() {
       HtmlUtil.registerInterval(()=>{

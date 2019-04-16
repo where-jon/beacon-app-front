@@ -179,8 +179,6 @@ export default {
     this.startOtherAutoReload()
   },
   beforeDestroy() {
-    this.stopPositionAutoReload()
-    this.stopOtherAutoReload()
     this.resetDetail()
   },
   methods: {
