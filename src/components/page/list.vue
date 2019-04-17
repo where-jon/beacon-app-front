@@ -39,6 +39,14 @@
             </b-form-checkbox>
           </b-form-row>
         </b-form-row>
+        <b-form-row v-if="params.allShowFilter" class="mb-2">
+          <b-form-row>
+            <!-- 全て表示する -->
+            <b-form-checkbox id="allShowFilter" v-model="filter.allShow" :value="true" :unchecked-value="false">
+              <span v-text="$i18n.tnl('label.allShowFilter')" />
+            </b-form-checkbox>
+          </b-form-row>
+        </b-form-row>
         <b-form-row class="mb-1">
           <!-- ボタン部 -->
           <b-col v-if="!params.disableTableButtons && (isRegistable || isBulkRegistable || isBulkReferenceable)" cols="auto" class="ml-auto">
@@ -61,8 +69,11 @@
     
       <!-- table -->
       <b-table :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" :filter="filterGrid" :bordered="params.bordered" :sort-by.sync="sortBy" :sort-compare="sortCompare" :sort-desc.sync="sortDesc" :empty-filtered-text="emptyMessage" show-empty
-               stacked="md" striped hover outlined @filtered="onFiltered"
+               stacked="md" striped hover outlined caption-top @filtered="onFiltered"
       >
+        <template v-if="params.tableDescription" slot="table-caption">
+          {{ $i18n.tnl('label.' + params.tableDescription) }}
+        </template>
         <template slot="style" slot-scope="row">
           <div :style="style(row.item)">
             A
@@ -146,11 +157,28 @@
             </div>
           </div>
         </template>
+        <!-- 設定用 -->
+        <template slot="key" slot-scope="row">
+          <span :title="row.item.title">
+            {{ row.item.key }}
+          </span>
+        </template>
+        <template slot="keyName" slot-scope="row">
+          <span :title="row.item.title">
+            {{ row.item.keyName }}
+          </span>
+        </template>
+        <template slot="value" slot-scope="row">
+          <settinginput :input-model="getItem(row.item.key)" input-key="value" :input-type="row.item.valType" :form-id="params.formId" />
+        </template>
+        <template slot="clear" slot-scope="row">
+          <b-button v-t="'label.clear'" :variant="theme" size="sm" @click.stop="clearAction(row.item.key)" />
+        </template>
       </b-table>
 
       <!-- pager -->
       <b-row>
-        <b-col md="6" class="my-1">
+        <b-col v-if="usePagenation" md="6" class="my-1">
           <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" class="my-0" />
         </b-col>
         <!-- bulk upload button -->
@@ -185,10 +213,12 @@ import commonmixinVue from '../mixin/commonmixin.vue'
 import { CATEGORY, SENSOR } from '../../sub/constant/Constants'
 import * as AuthHelper from '../../sub/helper/AuthHelper'
 import alert from '../parts/alert.vue'
+import settinginput from '../parts/settinginput.vue'
 
 export default {
   components: {
     alert,
+    settinginput,
   },
   mixins: [commonmixinVue], // not work
   props: {
@@ -212,11 +242,18 @@ export default {
       type: Boolean,
       default: false,
     },
+    perPage: {
+      type: [String, Number],
+      default: 10,
+    },
+    usePagenation: {
+      type: Boolean,
+      default: true,
+    }
   },
   data() {
     return {
       currentPage: 1,
-      perPage: 10,
       filter: {
         reg: '',
         extra: {
@@ -229,6 +266,7 @@ export default {
           detectState: null,
         },
         del: false,
+        allShow: false,
       },
       emptyMessage: this.$i18n.tnl('message.listEmpty'),
       modalInfo: { title: '', content: '', id:'' },
@@ -248,7 +286,8 @@ export default {
     items() {
       return this.list.map((item) => {
         return _.reduce(item, (result, val, key) => {
-          result[key] = Util.cutOnLong(val, 50)
+          const isAllDisp = Util.hasValue(this.params.allDispFields) && this.params.allDispFields.includes(key)
+          result[key] = isAllDisp? val: Util.cutOnLong(val, 50)
           return result
         }, {})
       })
@@ -425,6 +464,17 @@ export default {
       this.switchReload = true
       location.reload()
     },
+    getItem(key){
+      if(this.$parent.$options.methods.getItem){
+        return this.$parent.$options.methods.getItem.call(this.$parent, key)
+      }
+      return {}
+    },
+    clearAction(key){
+      if(this.$parent.$options.methods.clearAction){
+        this.$parent.$options.methods.clearAction.call(this.$parent, key)
+      }
+    },
     exportCsv() {
       this.setEmptyMessage()
       let headers
@@ -495,7 +545,7 @@ export default {
       }
       try{
         const regExp = new RegExp('.*' + this.filter.reg + '.*', 'i')
-        const param = this.params.fields.map((val) => Util.getValue(originItem, val.key, ''))
+        const param = this.params.fields.concat(this.params.addFilterFields? this.params.addFilterFields.map(field => ({key: field})): []).map((val) => Util.getValue(originItem, val.key, ''))
         return regExp.test(JSON.stringify(param))
       }
       catch(e){
@@ -552,13 +602,23 @@ export default {
       }
       return originItem.delFlg == 0
     },
+    filterAllShow(originItem){
+      if(!this.params.allShowFilter){
+        return true
+      }
+      if(this.filter.allShow){
+        return true
+      }
+      return originItem[this.id]
+    },
     filterGrid(originItem) {
-      let regBool = this.filterGridGeneral(originItem)
+      const regBool = this.filterGridGeneral(originItem)
       // 追加フィルタ
-      let extBool = this.filterGridExt(originItem)
-      let delBool = this.filterGridDel(originItem)
+      const extBool = this.filterGridExt(originItem)
+      const delBool = this.filterGridDel(originItem)
+      const allShowBool = this.filterAllShow(originItem)
       //console.log("filtering table...")
-      return regBool && extBool && delBool
+      return regBool && extBool && delBool && allShowBool
     },
     onFiltered(filteredItems) {
       this.totalRows = filteredItems.length

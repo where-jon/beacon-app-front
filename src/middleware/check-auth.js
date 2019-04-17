@@ -3,6 +3,7 @@ import * as MenuHelper from '../sub/helper/MenuHelper'
 import * as StateHelper from '../sub/helper/StateHelper'
 import * as HttpHelper from '../sub/helper/HttpHelper'
 import * as ViewHelper from '../sub/helper/ViewHelper'
+import * as SettingHelper from '../sub/helper/SettingHelper'
 import { APP } from '../sub/constant/config'
 import { LOGIN_MODE, FORCE_PUSH_MENU } from '../sub/constant/Constants'
 
@@ -12,6 +13,7 @@ export default function (context) {
   StateHelper.setApp(context.app.store, context.app.i18n)
   ViewHelper.setApp(context.app.i18n)
   HttpHelper.setApp(context)
+  SettingHelper.setApp(context.app.i18n)
   if (!process.browser) {
     return
   }

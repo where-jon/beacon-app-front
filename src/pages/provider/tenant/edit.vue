@@ -46,14 +46,12 @@
           <div class="col mb-2 mr-3">
             <label v-t="'label.id'" class="mr-3" />
             <input v-model="form.sysAdminLoginId" :readonly="!isEditable" type="text" minlength="3" maxlength="16" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" class="form-control" required>
-            <input type="text" tabIndex="-1" class="chromeAutoInput">
-            <input type="password" tabIndex="-1" class="chromeAutoInput">
+            <chrome-input />
           </div>
           <div class="col mb-2">
             <label v-t="'label.password'" class="mr-3" />
             <input v-model="form.sysAdminPass" :required="requireInput(form.sysAdminLoginId)" :readonly="!isEditable" type="password" maxlength="16" pattern="^[a-zA-Z0-9_\-\/!#\$%&@]*$" class="form-control">
-            <input type="text" tabIndex="-1" class="chromeAutoInput">
-            <input type="password" tabIndex="-1" class="chromeAutoInput">
+            <chrome-input />
           </div>
         </div>
         <b-form-group v-if="!hasId">
@@ -65,14 +63,12 @@
           <div class="col mb-2 mr-3">
             <label v-t="'label.id'" class="mr-3" />
             <input v-model="form.adminLoginId" :readonly="!isEditable" type="text" :minlength="form.adminLoginId? 3: 0" maxlength="16" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" class="form-control">
-            <input type="text" tabIndex="-1" class="chromeAutoInput">
-            <input type="password" tabIndex="-1" class="chromeAutoInput">
+            <chrome-input />
           </div>
           <div class="col mb-2">
             <label v-t="'label.password'" class="mr-3" />
             <input v-model="form.adminPass" :required="requireInput(form.adminLoginId)" :readonly="!isEditable" type="password" maxlength="16" pattern="^[a-zA-Z0-9_\-\/!#\$%&@]*$" class="form-control">
-            <input type="text" tabIndex="-1" class="chromeAutoInput">
-            <input type="password" tabIndex="-1" class="chromeAutoInput">
+            <chrome-input />
           </div>
         </div>
         <b-form-group v-if="!hasId">
@@ -84,14 +80,12 @@
           <div class="col mb-2 mr-3">
             <label v-t="'label.id'" class="mr-3" />
             <input v-model="form.userLoginId" :readonly="!isEditable" type="text" :minlength="form.userLoginId? 3: 0" maxlength="16" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" class="form-control">
-            <input type="text" tabIndex="-1" class="chromeAutoInput">
-            <input type="password" tabIndex="-1" class="chromeAutoInput">
+            <chrome-input />
           </div>
           <div class="col mb-2">
             <label v-t="'label.password'" class="mr-3" />
             <input v-model="form.userPass" :required="requireInput(form.userLoginId)" :readonly="!isEditable" type="password" maxlength="16" pattern="^[a-zA-Z0-9_\-\/!#\$%&@]*$" class="form-control">
-            <input type="text" tabIndex="-1" class="chromeAutoInput">
-            <input type="password" tabIndex="-1" class="chromeAutoInput">
+            <chrome-input />
           </div>
         </div>
 
@@ -143,8 +137,13 @@
     <b-modal id="modalFeatureInfo" :ok-title="$i18n.tnl('label.setting')" :ok-variant="theme" :title="$i18n.tnl('label.featureSetting')" size="sm" ok-only @ok="storeFeatureInfo" @hide="resetModal">
       <feature-list :list="editFeatureList" :fields="fields" />
     </b-modal>
-    <b-modal id="modalSettingInfo" :ok-title="$i18n.tnl('label.setting')" :ok-variant="theme" :title="$i18n.tnl('label.system')" ok-only @ok="storeSettingInfo" @hide="resetModal">
-      <tenant-setting :params="settingParams" :multi-list="editCategorySettingList" :show-key-name="true" />
+    <b-modal id="modalSettingInfo" :ok-title="$i18n.tnl('label.setting')" :ok-variant="theme" :title="$i18n.tnl('label.system')" size="lg" ok-only @ok="storeSettingInfo" @hide="resetModal">
+      <b-alert :show="validationMessages" variant="danger" dismissible>
+        <div v-for="(validationMessage, index) in validationMessages" :key="index">
+          {{ validationMessage }}
+        </div>
+      </b-alert>
+      <system-setting ref="systemSetting" :p-setting-list="editSettingList" :regist-func="(setting) => onRegistSubmit(setting)" />
     </b-modal>
   </div>
 </template>
@@ -154,14 +153,15 @@ import { mapState } from 'vuex'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
+import * as SettingHelper from '../../../sub/helper/SettingHelper'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
-import settingmixinVue from '../../../components/mixin/settingmixin.vue'
 import featuremixinVue from '../../../components/mixin/featuremixin.vue'
 import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
+import chromeInput from '../../../components/parts/chromeinput.vue'
 import featureList from '../../../components/page/featureList.vue'
-import tenantSetting from '../../../components/page/tenantSetting.vue'
+import systemSetting from '../../setting/system/index.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import { EXCLOUD_BASE_URL } from '../../../sub/constant/config'
 
@@ -169,10 +169,11 @@ export default {
   components: {
     breadcrumb,
     alert,
+    chromeInput,
     featureList,
-    tenantSetting,
+    systemSetting,
   },
-  mixins: [editmixinVue, settingmixinVue, featuremixinVue],
+  mixins: [editmixinVue, featuremixinVue],
   data() {
     return {
       name: 'tenant',
@@ -192,12 +193,14 @@ export default {
           {key: 'value', type: 'valType', tooltip: 'description' },
         ],
       },
+      validationMessages: null,
       featureList: [],
       editFeatureList: [],
-      categorySettingList: {},
-      editCategorySettingList: {},
+      settingList: [],
+      editSettingList: [],
       newForm: {},
       dummyKey: -1,
+      targetTenantId: null,
       defaultCheckFeatureNames: ['positionmap', 'positionlist', 'positionstack'],
     }
   },
@@ -210,7 +213,7 @@ export default {
       return 'outline-' + theme
     },
     ...mapState('app_service', [
-      'tenant', 'features',
+      'tenant', 'features', 'settings'
     ]),
     createDt(){
       return Util.formatDate(this.form.createDt)
@@ -220,18 +223,7 @@ export default {
     const currentFeatureList = this.tenant && this.tenant.tenantFeatureList? this.tenant.tenantFeatureList: []
     await StateHelper.load('feature')
     this.featureList = this.createFeatureTable(this.features, currentFeatureList, this.hasId, this.defaultCheckFeatureNames)
-    this.categorySettingList = {}
-    if(this.tenant && this.tenant.settingList){
-      _.forEach(this.tenant.settingList, (value, key) => {
-        if(this.categorySettingList[value.category] == null){
-          this.categorySettingList[value.category] = []
-        }
-        this.categorySettingList[value.category].push({
-          ...value,
-          id: value.settingId,
-        })
-      })
-    }
+    this.settingList = this.tenant && this.tenant.settingList? this.tenant.settingList: []
     if(!this.hasId){
       this.form.sysAdminLoginId = 'sysadmin'
       this.form.adminLoginId = 'admin'
@@ -247,41 +239,54 @@ export default {
       this.$root.$emit('bv::show::modal', 'modalFeatureInfo', null)
     },
     showSettingEdit() {
-      this.editCategorySettingList = _.cloneDeep(this.categorySettingList)
-      this.$root.$emit('bv::show::modal', 'modalSettingInfo', null)
+      this.validationMessages = null
+      this.editSettingList = _.cloneDeep(this.settingList)
+      this.$forceUpdate()
+      this.$nextTick(async () => {
+        await this.$refs.systemSetting.fetchData()
+        this.$root.$emit('bv::show::modal', 'modalSettingInfo', null)
+      })
     },
     storeFeatureInfo() {
       this.featureList = this.editFeatureList.map((val) => {return {...val}})
     },
-    storeSettingInfo() {
-      this.categorySettingList = _.cloneDeep(this.editCategorySettingList)
+    storeSettingInfo(event) {
+      const parseList = this.$refs.systemSetting.parse()
+      const validation = SettingHelper.validation(parseList)
+      if(validation.length != 0){
+        this.validationMessages = validation.map(val => this.$i18n.tnl('message.bulkInvalidFailed', {col: val.key, value: val.value}))
+        event.target.scrollTop = 0
+        event.preventDefault()
+        return
+      }
+      this.validationMessages = null
+      this.settingList = _.cloneDeep(parseList)
+    },
+    onRegistSubmit(registSetting) {
+      this.$refs.systemSetting.add(registSetting)
     },
     resetModal() {
+      this.$refs.systemSetting.showNewForm(false)
     },
-    afterCrud(){
+    async afterCrud(){
       this.featureList.forEach((feature) => {
         feature.checked = false
         feature.disabled = false
       })
-      this.categorySettingList = {}
+      const login = JSON.parse(window.localStorage.getItem('login'))
+      if(this.targetTenantId == login.currentTenant.tenantId){
+        await this.$refs.systemSetting.applyConfig()
+      }
+      this.targetTenantId = null
+      this.settingList = []
     },
     async save() {
       let dummyKey = -1
-      const tenantId = Util.hasValue(this.form.tenantId)? this.form.tenantId: dummyKey--
+      const settingEntities = this.$refs.systemSetting.createSaveEntities(this.settingList)
+      this.targetTenantId = Util.hasValue(this.form.tenantId)? this.form.tenantId: dummyKey--
       const defaultConfig = JSON.parse(window.localStorage.getItem('defaultConfig'))
-      const settingEntity = []
-      for(let key in this.categorySettingList){
-        this.categorySettingList[key].map((val) => {
-          settingEntity.push({
-            settingId: val.settingId,
-            value: this.format(val.value, val.valType),
-            key: val.key,
-            valType: val.valType,
-          })
-        })
-      }
-      let entity = {
-        tenantId: tenantId,
+      const entity = {
+        tenantId: this.targetTenantId,
         tenantCd: this.form.tenantCd,
         tenantName: this.form.tenantName,
         delFlg: !Util.hasValue(this.form.tenantId)? 0: this.form.delFlg,
@@ -298,7 +303,9 @@ export default {
             tenantFeaturePK:{tenantId: dummyKey--, featureId: val.featureId},
           }: null
         }).filter((val) => val),
-        settingList: settingEntity.length != 0? settingEntity: null,
+      }
+      if(settingEntities.length != 0){
+        entity.settingList = settingEntities.map(val => ({...val, settingId: val.settingId <= 0? dummyKey--: val.settingId}))
       }
       return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
     },
@@ -309,11 +316,5 @@ export default {
 <style scoped lang="scss">
   label.control-label {
     padding-top: 7px;
-  }
-  .chromeAutoInput{
-    position: fixed;
-    width: 0px;
-    height: 0px;
-    top: -999px;
   }
 </style>
