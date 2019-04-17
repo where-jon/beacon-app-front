@@ -54,8 +54,8 @@ export default {
           } else {
             ary[hist.posId] = {
               posId: hist.posId,
-              x: Math.round(hist.x),
-              y: Math.round(hist.y),
+              x: Math.round(hist.x * this.canvasScale),
+              y: Math.round(hist.y * this.canvasScale),
               value: 1,
             }
           }
@@ -88,6 +88,7 @@ export default {
         map.onload = (evt) => {
           Util.debug('in onload...')
           const size = this.calcFitSize(map, heatmap.parentElement)
+          this.canvasScale = size.width / map.width // showmapmixinと同じ処理が必要
           map.width = size.width
           map.height = size.height
           Util.debug(size)
