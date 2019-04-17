@@ -41,6 +41,21 @@ export const USER = {
   }
 }
 
+export const PATTERN = {
+  NUMBER: '^-?[0-9]+[.]?[0-9]*$',
+  NUMBER_LIST: '^(-?[0-9]+[.]?[0-9]*)+(,-?[0-9]+[.]?[0-9]*)*$',
+}
+
+export const BOOLEAN = {
+  getOptions(addBlank){
+    return [
+      addBlank? {text: '', value: ''}: null,
+      {text: 'true', value: 'true'},
+      {text: 'false', value: 'false'},
+    ].filter(val => val)
+  },
+}
+
 export const ROLE = {
 }
 
@@ -364,6 +379,25 @@ export const FONT = {
     MIN: 6,
   },
   TYPE: 'px Arial',
+}
+
+export const SETTING = {
+  VALUES: ['string', 'stringList', 'number', 'numberList', 'boolean'],
+  STRING: 'string',
+  STRING_LIST: 'stringList',
+  NUMBER: 'number',
+  NUMBER_LIST: 'numberList',
+  BOOLEAN: 'boolean',
+  SELECT: 'select',
+  getOptions(){
+    return [
+      {text: i18n.tnl('label.string'), value: 'string'},
+      {text: i18n.tnl('label.stringList'), value: 'stringList'},
+      {text: i18n.tnl('label.number'), value: 'number'},
+      {text: i18n.tnl('label.numberList'), value: 'numberList'},
+      {text: i18n.tnl('label.boolean'), value: 'boolean'},
+    ]
+  },
 }
 
 export const FORCE_PUSH_MENU = [

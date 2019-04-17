@@ -25,6 +25,12 @@ export const getByteLength = (str) => encodeURI(str == null? '': str).replace(/%
 
 export const numberRange = (start, end) => new Array(end - start + 1).fill().map((d, i) => {return {key: i + start}})
 
+export const merge = (dest, src, excludeKeys) => {
+  const temp = Object.assign({}, src)
+  excludeKeys.forEach(key => delete temp[key])
+  return Object.assign(dest, temp)
+}
+
 export const floorVal = (val, decimalPoint = 2) => {
   const operate = Math.pow(10, decimalPoint)
   return Math.floor(val * operate) / operate
