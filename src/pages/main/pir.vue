@@ -141,9 +141,10 @@ export default {
           width: DISP.PRESSURE_R_SIZE,
         }
       }
+      const scale = DISP.TX_R_ABSOLUTE ? this.canvasScale : 1
       return {
         bgColor: (count > 0)? DISP.PIR_BGCOLOR: DISP.PIR_EMPTY_BGCOLOR,
-        width: DISP.PIR_R_SIZE,
+        width: DISP.PIR_R_SIZE / scale,
       }
     },
     createShape(sensorId, count){
@@ -164,9 +165,10 @@ export default {
           color: DISP.PRESSURE_FGCOLOR
         }
       }
+      const scale = DISP.TX_R_ABSOLUTE ? this.canvasScale : 1
       const font = this.$i18n.locale == 'ja'?
-        Util.getAdjustFontSize(() => DISP.PIR_R_SIZE * (count > 0? this.INUSE_FONTSIZE_RATIO: this.EMPTY_FONTSIZE_RATIO), true):
-        Util.getAdjustFontSize(() => DISP.PIR_R_SIZE * this.FONTSIZE_RATIO_EN, true)
+        Util.getAdjustFontSize(() => DISP.PIR_R_SIZE / scale * (count > 0? this.INUSE_FONTSIZE_RATIO: this.EMPTY_FONTSIZE_RATIO), true):
+        Util.getAdjustFontSize(() => DISP.PIR_R_SIZE / scale * this.FONTSIZE_RATIO_EN, true)
       return {
         label: this.$i18n.tnl('label.' + (count > 0? DISP.PIR_INUSE_LABEL: DISP.PIR_EMPTY_LABEL)),
         font: font,
