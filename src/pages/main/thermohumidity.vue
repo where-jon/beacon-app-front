@@ -311,8 +311,8 @@ export default {
       label.font = this.getThermothFont()
       label.color = DISP.THERMOH_COLOR
       label.textAlign = 'center'
-      label.textBaseline = 'middle'
-      label.y = -5
+      label.textBaseline = 'alphabetic'
+      label.y = -2
       label.addEventListener('mouseover', this.iconMouseOver)
       label.addEventListener('mouseout', this.iconMouseOut)
       return label
@@ -412,8 +412,9 @@ export default {
     },
     createTooltipInfo(container){
       const device = container.device
+      const scale = this.canvasScale == 0? 1: this.canvasScale
       const ret = {
-        fontSize: Util.getFont2Size(this.getThermothFont()),
+        fontSize: Util.getFont2Size(DISP.THERMOH_TOOLTIP_FONT),
         sensorName: DISP.THERMOH_TOOLTIP_ITEMS.TXNAME? device.txName? device.txName: device.locationName: '',
         temperature: DISP.THERMOH_TOOLTIP_ITEMS.TEMPERATURE? Util.formatTemperature(device.temperature) + this.$i18n.tnl('label.temperatureUnit'): '',
         humidity: DISP.THERMOH_TOOLTIP_ITEMS.HUMIDITY? Util.formatHumidity(device.humidity) + this.$i18n.tnl('label.humidityUnit'): '',
@@ -425,10 +426,12 @@ export default {
       if(ret.width <= DISP.THERMOH_TOOLTIP_ROUNDRECT * 2 + 2){
         ret.width = DISP.THERMOH_TOOLTIP_ROUNDRECT * 2 + 2
       }
-      ret.height = ret.fontSize * (count + 2)
+      ret.width /= scale
+      ret.height = ret.fontSize * count + 4
       if(ret.height <= DISP.THERMOH_TOOLTIP_ROUNDRECT * 2 + 2){
         ret.height = DISP.THERMOH_TOOLTIP_ROUNDRECT * 2 + 2
       }
+      ret.height /= scale
       const right = container.x + ret.width
       ret.x = right >= this.stage.canvas.width? container.x - ret.width: container.x + 4
       const y = container.y - ret.height
@@ -461,11 +464,11 @@ export default {
         tooltipInfo.description,
         tooltipInfo.date,
       ].filter(val => Util.hasValue(val)).join('\n'))
-      label.x = tooltipInfo.x + DISP.THERMOH_TOOLTIP_ROUNDRECT / 2
-      label.y = tooltipInfo.y + DISP.THERMOH_TOOLTIP_ROUNDRECT
-      label.font = this.getThermothFont()
+      label.x = tooltipInfo.x + (DISP.THERMOH_TOOLTIP_ROUNDRECT <= 8? 8: DISP.THERMOH_TOOLTIP_ROUNDRECT) / 2
+      label.y = tooltipInfo.y + (DISP.THERMOH_TOOLTIP_ROUNDRECT <= 8? 8: DISP.THERMOH_TOOLTIP_ROUNDRECT) / 2
+      label.font = this.getThermothFont(DISP.THERMOH_TOOLTIP_FONT)
       label.color = DISP.THERMOH_TOOLTIP_COLOR
-      label.textBaseline = 'middle'
+      label.textBaseline = 'top'
       this.tooltipCon.addChild(label)
       stage.setChildIndex(this.tooltipCon, stage.numChildren - 1)
       stage.update()
@@ -480,8 +483,8 @@ export default {
         description: device.description? ` : ${Util.cutOnLong(device.description, 10)}`: ''
       })
     },
-    getThermothFont(){
-      const font = DISP.THERMOH_FONT.split('px')
+    getThermothFont(ft = DISP.THERMOH_FONT){
+      const font = ft.split('px')
       const fontSize = Number(font[0]) / this.canvasScale
       return Math.round(fontSize) + 'px' + font[1]
     },

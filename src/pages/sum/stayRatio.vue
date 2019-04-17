@@ -8,7 +8,7 @@
         <b-form-group>
           <b-form-row class="mr-3">
             <label v-t="'label.date'" class="mr-2 mb-2 d-flex align-items-center" />
-            <date-picker v-model="form.date" type="date" value-format="yyyyMMdd" class="mr-2 mb-2 inputdatefrom" @change="pickerChanged"/>
+            <date-picker v-model="form.date" type="date" value-format="yyyyMMdd" class="mr-2 mb-2 inputdatefrom" @change="pickerChanged" />
           </b-form-row>
         </b-form-group>
         <b-form-group>

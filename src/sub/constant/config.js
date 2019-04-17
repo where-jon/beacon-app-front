@@ -248,6 +248,7 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     DESCRIPTION: true,
     DATE: false,
   },
+  THERMOH_TOOLTIP_FONT: '12px Arial', // ツールチップフォント
   THERMOH_TOOLTIP_COLOR: '#000000', // ツールチップ文字色
   THERMOH_TOOLTIP_BORDERCOLOR: '#888888', // ツールチップ枠線色
   THERMOH_TOOLTIP_BGCOLOR: '#FFFDE6', // ツールチップ背景色
