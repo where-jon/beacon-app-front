@@ -8,7 +8,7 @@
         <b-form-group>
           <b-form-row class="mr-3">
             <label v-t="'label.date'" class="mr-2 mb-2 d-flex align-items-center" />
-            <date-picker v-model="form.date" type="date" value-format="yyyyMMdd" class="mr-2 mb-2 inputdatefrom" />
+            <date-picker v-model="form.date" type="date" value-format="yyyyMMdd" class="mr-2 mb-2 inputdatefrom" @change="pickerChanged"/>
           </b-form-row>
         </b-form-group>
         <b-form-group>
@@ -23,6 +23,7 @@
           <b-form-row class="mb-3">
             <b-button v-t="'label.display'" type="submit" :variant="theme" @click="display" />
             <b-button v-if="!iosOrAndroid" v-t="'label.download'" :variant="theme" class="ml-2" @click="download" />
+            <b-button v-if="!iosOrAndroid" v-t="'label.downloadMonth'" :variant="theme" class="ml-2" @click="downloadMonth" />
           </b-form-row>
         </b-form-group>
       </b-form>
@@ -78,7 +79,9 @@ export default {
       sortBy: 'name',
       totalRows: 0,
       fields: ViewHelper.addLabelByKey(this.$i18n, [
+        {key: 'date', sortable: false, label: 'date'},
         {key: 'name', sortable: true, label: 'potName'},
+        {key: 'groupName', sortable: true, label: 'groupName'},
         {key: 'stayTime', sortable: true, label: 'stayTime'},
         {key: 'absent1Time', sortable: true, label: 'absent1Time'},
         {key: 'absent2Time', sortable: true, label: 'absent2Time'},
@@ -88,6 +91,7 @@ export default {
         {key: 'absent2Ratio', sortable: true, label: 'absent2Ratio'},
         {key: 'lostRatio', sortable: true, label: 'lostRatio'},
       ]).map(val => ({ ...val, originLabel: val.label})),
+      searchedGroupName: ''
     }
   },
   computed: {
@@ -135,6 +139,7 @@ export default {
       const param = _.cloneDeep(this.form)
       await StateHelper.load('zones')
       await StateHelper.load('pots')
+      await StateHelper.load('group')
       
       if (!param.date || param.date == '') {
         this.message = this.$i18n.tnl('message.pleaseEnterSearchCriteria')
@@ -145,6 +150,7 @@ export default {
 
       param.date = moment(param.date).format('YYYYMMDD')
       const groupBy = param.groupId? '&groupId=' + param.groupId: ''
+      const group = param.groupId? this.groups.find((val) => val.groupId == param.groupId): null
       const url = '/office/stayTime/sumByDay/' + param.date + '/zoneCategory?from=' + APP.SUM_FROM + '&to=' + APP.SUM_TO + groupBy
       const sumData = await HttpHelper.getAppService(url)
       if (_.isEmpty(sumData)) {
@@ -154,9 +160,10 @@ export default {
         return
       }
 
-      this.viewList = this.getStayDataList(sumData, APP.SUM_ABSENT_LIMIT, APP.SUM_LOST_LIMIT)
+      this.viewList = this.getStayDataList(moment(param.date).format('YYYY-MM-DD'), sumData, APP.SUM_ABSENT_LIMIT, APP.SUM_LOST_LIMIT)
       
       this.totalRows = this.viewList.length
+      this.searchedGroupName =  group? group.groupName: ''
       this.hideProgress()
     },
     isAbsentZoneData(categoryId) {
@@ -166,9 +173,11 @@ export default {
     isLostData(byId) {
       return byId == -1
     },
-    getStayDataList(stayData, absentLimit = 0, lostLimit = APP.LOST_TIME) {
+    getStayDataList(date, stayData, absentLimit = 0, lostLimit = APP.LOST_TIME) {
       return stayData.map((data) => {
         const potId = data.potId
+        const pot = this.pots.find((val) => val.potId == potId)
+        const groupName = pot? pot.groupName: ''
         const potName = data.potName
         let stayTime = 0, under30minAbsentTime = 0, over30to90minAbsentTime = 0,
           lostTime = 0, presentRatio = 0, absentRatio = 0, absentRatioSub = 0, lostRatio = 0
@@ -193,8 +202,9 @@ export default {
         lostRatio = Util.getRatio(lostTime)
 
         return {
-          id: potId, 
+          date: date,
           name: potName, 
+          groupName: groupName,
           stayTime: Util.convertToTime(stayTime), 
           absent1Time: Util.convertToTime(under30minAbsentTime), 
           absent2Time: Util.convertToTime(over30to90minAbsentTime),
@@ -212,8 +222,21 @@ export default {
         this.replace({showAlert: true})
         return
       }
+
+      this.viewList.sort(function(a, b) {
+        var nameA = a.name.toUpperCase() // 大文字、小文字を無視
+        var nameB = b.name.toUpperCase() // 大文字、小文字を無視
+        if (nameA < nameB) return -1
+        if (nameA > nameB) return 1
+        return 0
+      })
+
+      const param = _.cloneDeep(this.form)
+      const searchDate = moment(param.date).format('YYYYMMDD')
+      const groupName = this.searchedGroupName.length > 0? '_' + this.searchedGroupName: ''
+
       HtmlUtil.fileDL(
-        'stayRatio.csv',
+        searchDate + groupName + '_stayRatio.csv',
         Util.converToCsv(this.viewList, null, this.getCsvHeaderNames()),
         getCharSet(this.$store.state.loginId)
       )
@@ -225,10 +248,84 @@ export default {
         })
       }
     },
+    async downloadMonth(){
+      this.replace({showAlert: false})
+      this.showProgress()
+
+      const param = _.cloneDeep(this.form)
+      await StateHelper.load('zones')
+      await StateHelper.load('pots')
+      await StateHelper.load('group')
+
+      if (!param.date || param.date == '') {
+        this.message = this.$i18n.tnl('message.pleaseEnterSearchCriteria')
+        this.replace({showAlert: true})
+        this.hideProgress()
+        return
+      }
+
+      param.date = moment(param.date).format('YYYYMMDD')
+      const diff = moment().startOf('months').diff(moment(param.date).startOf('months'), 'months')
+      let startDate, endDate
+
+      // 取得する日付開始、終了日を設定する
+      if (diff == 0) {
+        startDate = moment(param.date).startOf('months')
+        endDate = moment().subtract(1, 'd')
+      } else if (diff >= 0) {
+        startDate = moment(param.date).startOf('months')
+        endDate = moment(param.date).endOf('months')
+      } else {
+        // 未来月の場合はエラーとする
+        this.message = this.$i18n.terror('message.invalid', {target: this.$i18n.tnl('label.date')})
+        this.replace({showAlert: true})
+        this.hideProgress()
+        return
+      }
+
+      let csvList = new Array()
+      const csvDays = endDate.diff(startDate, 'days')
+      const groupBy = param.groupId? '&groupId=' + param.groupId: ''
+
+      let day = 0
+      while (day <= csvDays) {
+        const searchDate = moment(param.date).startOf('months').add(day++, 'day').format('YYYYMMDD')
+        const url = '/office/stayTime/sumByDay/' + searchDate + '/zoneCategory?from=' + APP.SUM_FROM + '&to=' + APP.SUM_TO + groupBy
+        const sumData = await HttpHelper.getAppService(url)
+        if (_.isEmpty(sumData)) {
+          console.log('searchDate: ' + searchDate)
+          this.message = this.$i18n.t('message.listEmpty')
+          this.replace({showAlert: true})
+          this.hideProgress()
+          return
+        }
+
+        let list = this.getStayDataList(moment(searchDate).format('YYYY-MM-DD'), sumData, APP.SUM_ABSENT_LIMIT, APP.SUM_LOST_LIMIT)
+        list.sort(function(a, b) {
+          var nameA = a.name.toUpperCase() // 大文字、小文字を無視
+          var nameB = b.name.toUpperCase() // 大文字、小文字を無視
+          if (nameA < nameB) return -1
+          if (nameA > nameB) return 1
+          return 0
+        })
+        csvList = csvList.isEmpty? list: csvList.concat(list)
+      }
+
+      const group = param.groupId? this.groups.find((val) => val.groupId == param.groupId): null
+      const groupName =  group? '_' + group.groupName: ''
+      HtmlUtil.fileDL(
+        moment(param.date).format('YYYY-MM') + groupName + '_stayRatio.csv',
+        Util.converToCsv(csvList, null, this.getCsvHeaderNames()),
+        getCharSet(this.$store.state.loginId)
+      )
+
+      this.hideProgress()
+    },
     getCsvHeaderNames() {
       return [
-        'id', 
+        'date',
         'name',
+        'groupName',
         'stayTime', 
         this.$i18n.tnl('label.stayRatioAbsent1Time'), 
         this.$i18n.tnl('label.stayRatioAbsent2Time'),
@@ -239,6 +336,17 @@ export default {
         'lostRatio' + '\n'
       ]
     },
+    pickerChanged() {
+      const param = _.cloneDeep(this.form)
+      const isError = param.date == '' ? true: moment(param.date).isAfter(moment().endOf('months'))? true: false
+      if (isError) {
+        this.message = this.$i18n.terror('message.invalid', {target: this.$i18n.tnl('label.date')})
+        this.replace({showAlert: true})
+        return
+      } else {
+        this.replace({showAlert: false})
+      }
+    }
   }
 }
 </script>
