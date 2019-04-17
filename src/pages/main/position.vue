@@ -342,7 +342,8 @@ export default {
         let mapRatio = area.mapRatio
         position = PositionHelper.adjustMultiPosition(this.getPositions(), mapRatio)
       }else{
-        position = PositionHelper.adjustPosition(this.getPositions(), 1/this.canvasScale, this.positionedExb, this.selectedArea)
+        const ratio = DISP.TX_R_ABSOLUTE ? 1/this.canvasScale : 1
+        position = PositionHelper.adjustPosition(this.getPositions(), ratio, this.positionedExb, this.selectedArea)
       }
       position.forEach((pos) => {
         this.showTx(pos)

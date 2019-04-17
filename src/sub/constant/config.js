@@ -205,7 +205,7 @@ export const EXCLOUD = {
 
 export const DISP = { // 表示系設定（表示・色・フォント・サイズ）
   // 位置表示：TX
-  TX_R_IS_SCREEN: true, // Txの半径を画面解像度に合わせる
+  TX_R_ABSOLUTE: true, // Txの半径を画面解像度に合わせる
   TX_R: 26, // Txの半径
   TX_FIX_R: 26, // Txの半径(カテゴリ一覧、グループ一覧、凡例表示用)
   ROUNDRECT_RADIUS: 13, // Tx角丸表示時のRADIUS
