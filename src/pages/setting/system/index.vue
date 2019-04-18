@@ -3,53 +3,55 @@
   <div class="container-fluid">
     <breadcrumb v-if="!callee" :items="items" />
     <alert v-if="!callee" :message="message" />
-    <m-list ref="mList" :params="params" :list="settingList" :per-page="settingList.length" :use-pagenation="false" :alert-force-hide="true" />
-    <b-form id="updateForm" @submit.prevent="onUpdateSubmit">
-      <b-button v-if="!callee && !isShowNewForm" v-t="'label.update'" :variant="getButtonTheme()" type="submit" class="ml-2" @click="register(true)" />
-      <b-button v-if="isRegistable && !isShowNewForm" v-t="'label.addForm'" :variant="getButtonTheme()" type="button" class="float-right" @click="showNewForm(true)" />
-    </b-form>
-    <!-- new form -->
-    <div v-if="isShowNewForm"> 
-      <div class="card shadow-sm mt-5 mb-3">
-        <label v-t="'label.addSetting'" class="card-header" />
-        <div class="card-body">
-          <b-form-row class="mb-3">
-            <div class="error-row">
-              <label v-show="hasSameKey()" class="error">
-                {{ getDuplicationMessage() }}
-              </label>
-            </div>
-          </b-form-row>
-          <b-form-row class="mb-2">
-            <b-col cols="2">
-              <label v-t="'label.key'" class="mr-2" />
-            </b-col>
-            <b-col>
-              <input v-model="newForm.key" type="text" :maxlength="200" class="form-control form-control-sm" form="registForm" :required="isShowNewForm" @keydown="$forceUpdate()" @input="newFormEvent">
-            </b-col>
-          </b-form-row>
-          <b-form-row class="mb-2">
-            <b-col cols="2">
-              <label v-t="'label.valType'" class="mr-2" />
-            </b-col>
-            <b-col>
-              <b-form-select v-model="newForm.valType" :options="valTypeOptions" form="registForm" :required="isShowNewForm" @change="changeValType($event)" />
-            </b-col>
-          </b-form-row>
-          <b-form-row class="mb-2">
-            <b-col cols="2">
-              <label v-t="'label.value'" class="mr-2" />
-            </b-col>
-            <b-col>
-              <settinginput :input-model="newForm" input-key="value" :input-type="newForm.valType" :options="booleanOptions" :req="isShowNewForm" form-id="registForm" />
-            </b-col>
-          </b-form-row>
-          <b-form id="registForm" class="mt-3" @submit.prevent="onRegistSubmit">
-            <b-form-row class="float-right mt-3">
-              <b-button v-t="'label.add'" :variant="getButtonTheme()" type="submit" :disabled="hasSameKey()" @click="register(true)" />
-              <b-button v-t="'label.cancel'" type="button" variant="outline-danger" class="ml-2" @click="showNewForm(false)" />
+    <div class="container">
+      <m-list ref="mList" :params="params" :list="settingList" :per-page="settingList.length" :use-pagenation="false" :alert-force-hide="true" />
+      <b-form id="updateForm" @submit.prevent="onUpdateSubmit">
+        <b-button v-if="!callee && !isShowNewForm" v-t="'label.update'" :variant="getButtonTheme()" type="submit" class="ml-2" @click="register(true)" />
+        <b-button v-if="isRegistable && !isShowNewForm" v-t="'label.addForm'" :variant="getButtonTheme()" type="button" class="float-right" @click="showNewForm(true)" />
+      </b-form>
+      <!-- new form -->
+      <div v-if="isShowNewForm"> 
+        <div class="card shadow-sm mt-5 mb-3">
+          <label v-t="'label.addSetting'" class="card-header" />
+          <div class="card-body">
+            <b-form-row class="mb-3">
+              <div class="error-row">
+                <label v-show="hasSameKey()" class="error">
+                  {{ getDuplicationMessage() }}
+                </label>
+              </div>
             </b-form-row>
-          </b-form>
+            <b-form-row class="mb-2">
+              <b-col cols="2">
+                <label v-t="'label.key'" class="mr-2" />
+              </b-col>
+              <b-col>
+                <input v-model="newForm.key" type="text" :maxlength="200" class="form-control form-control-sm" form="registForm" :required="isShowNewForm" @keydown="$forceUpdate()" @input="newFormEvent">
+              </b-col>
+            </b-form-row>
+            <b-form-row class="mb-2">
+              <b-col cols="2">
+                <label v-t="'label.valType'" class="mr-2" />
+              </b-col>
+              <b-col>
+                <b-form-select v-model="newForm.valType" :options="valTypeOptions" form="registForm" :required="isShowNewForm" @change="changeValType($event)" />
+              </b-col>
+            </b-form-row>
+            <b-form-row class="mb-2">
+              <b-col cols="2">
+                <label v-t="'label.value'" class="mr-2" />
+              </b-col>
+              <b-col>
+                <settinginput :input-model="newForm" input-key="value" :input-type="newForm.valType" :options="booleanOptions" :req="isShowNewForm" form-id="registForm" />
+              </b-col>
+            </b-form-row>
+            <b-form id="registForm" class="mt-3" @submit.prevent="onRegistSubmit">
+              <b-form-row class="float-right mt-3">
+                <b-button v-t="'label.add'" :variant="getButtonTheme()" type="submit" :disabled="hasSameKey()" @click="register(true)" />
+                <b-button v-t="'label.cancel'" type="button" variant="outline-danger" class="ml-2" @click="showNewForm(false)" />
+              </b-form-row>
+            </b-form>
+          </div>
         </div>
       </div>
     </div>
