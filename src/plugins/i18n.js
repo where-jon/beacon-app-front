@@ -22,9 +22,6 @@ export default async ({ app, store }, inject) => {
     const message = app.i18n.t(path, param)
     return /^label\..*$/.test(message)? message.replace(/^label\./, ''): message
   }
-  app.i18n.tdef = (path, param = null, defValue = null) => {
-    return app.i18n.te(path)? app.i18n.tnl(path, param): defValue
-  }
   app.i18n.tline = (path, param, showLine = true) => {
     return (showLine && param && param.line? app.i18n.t('message.csvLine', param).concat(': '): '').concat(app.i18n.t(path, param))
   }
