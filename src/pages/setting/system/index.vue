@@ -3,7 +3,7 @@
   <div class="container-fluid">
     <breadcrumb v-if="!callee" :items="items" />
     <alert v-if="!callee" :message="message" />
-    <m-list ref="mList" :params="params" :list="settingList" :per-page="settingList.length" :use-pagenation="false" :alert-force-hide="true" />
+    <m-list ref="mList" :params="params" :list="settingList" :per-page="settingList.length" :use-pagenation="false" :alert-force-hide="true" max-filter-length="40" />
     <b-form id="updateForm" @submit.prevent="onUpdateSubmit">
       <b-button v-if="!callee && !isShowNewForm" v-t="'label.update'" :variant="getButtonTheme()" type="submit" class="ml-2" @click="register(true)" />
       <b-button v-if="isRegistable && !isShowNewForm" v-t="'label.addForm'" :variant="getButtonTheme()" type="button" class="float-right" @click="showNewForm(true)" />

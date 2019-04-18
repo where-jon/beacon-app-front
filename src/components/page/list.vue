@@ -10,7 +10,7 @@
             <!-- 標準絞り込みフィルタ -->
             <label v-t="'label.filter'" class="mr-2" />
             <b-input-group>
-              <input v-model="filter.reg" class="form-control align-self-center" maxlength="20">
+              <input v-model="filter.reg" class="form-control align-self-center" :maxlength="maxFilterLength">
               <b-input-group-append>
                 <b-btn v-t="'label.clear'" :disabled="!filter.reg" variant="secondary" class="align-self-center" @click="filter.reg = ''" />
               </b-input-group-append>
@@ -249,6 +249,10 @@ export default {
     usePagenation: {
       type: Boolean,
       default: true,
+    },
+    maxFilterLength: {
+      type: Number,
+      default: 20,
     }
   },
   data() {
