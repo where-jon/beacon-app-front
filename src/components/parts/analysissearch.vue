@@ -67,6 +67,7 @@ import { APP } from '../../sub/constant/config.js'
 import { CATEGORY } from '../../sub/constant/Constants'
 import validatemixin from '../mixin/validatemixin.vue'
 import commonmixinVue from '../mixin/commonmixin.vue'
+import { EventBus } from '../../sub/helper/EventHelper'
 
 export default {
   components: {
@@ -153,6 +154,10 @@ export default {
     const date = new Date()
     this.form.datetimeFrom = Util.getDatetime(date, {hours: -1})
     this.form.datetimeTo = Util.getDatetime(date)
+
+    EventBus.$on('onDisplay', (payload)=>{
+      this.onDisplay()
+    })
   },
   mounted() {
     HtmlUtil.importElementUI()
@@ -197,6 +202,9 @@ export default {
         this.form.datetimeFrom && this.form.datetimeTo? {type: 'less', names: ['historyDateFrom'], values: [this.form.datetimeFrom.getTime() * -1, this.form.datetimeTo.getTime()], base: this.interval, displayBase: this.intervalHours, equal: true}: null,
       ].filter((val) => val && val.names.length >= 1))
       return this.formatValidateMessage(errors)
+    },
+    onDisplay(){
+      this.display()
     },
     async display() {
       this.replace({showAlert: false})

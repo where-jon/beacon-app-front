@@ -30,6 +30,7 @@ import drawMixin from '../../components/mixin/drawmixin.vue'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import * as Util from '../../sub/util/Util'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
+import { EventBus } from '../../sub/helper/EventHelper'
 
 export default {
   components: {
@@ -59,7 +60,6 @@ export default {
   methods: {
     reset() {
       this.isShownMapImage = false
-      this.shownParam = null
     },
     async fetchData(payload){
       try {
@@ -81,6 +81,7 @@ export default {
           this.forceUpdateRealWidth()
           if (this.shownParam) {
             this.display(this.shownParam)
+            EventBus.$emit('onDisplay')
           }
         })
         if (payload && payload.done) {
@@ -178,6 +179,7 @@ export default {
     async display(param){
       if(Util.hasValue(param.errorMessage)){
         this.message = param.errorMessage
+        this.shownParam = null
         return
       }
       const analysisResults = this.analyseFlowline(param.results)
