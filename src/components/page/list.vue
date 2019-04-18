@@ -251,7 +251,7 @@ export default {
       default: true,
     },
     maxFilterLength: {
-      type: Number,
+      type: [String, Number],
       default: 20,
     }
   },
