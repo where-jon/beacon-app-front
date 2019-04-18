@@ -49,16 +49,23 @@ export const getDefaultValue = (key) => {
   if(!Util.hasValue(defaultConfig)){
     return null
   }
+  const langDefValue = i18n.tdef('config.DEFAULT.' + key)
+  if(langDefValue != null){
+    return langDefValue
+  }
   return key.split('.').reduce((prev, cur) => prev != null && prev[cur] != null? prev[cur]: null, defaultConfig)
 }
 
 export const getDefaultValType = (key) => {
+  const type = i18n.tdef('config.TYPE.' + key)
+  if(type != null && SETTING.VALUES.includes(type)){
+    return type
+  }
   const defaultValue = getDefaultValue(key)
   if(defaultValue != null && typeof defaultValue != 'object'){
     return typeof defaultValue
   }
-  const type = i18n.tnl('config.TYPE.' + key)
-  return SETTING.VALUES.includes(type)? type: SETTING.STRING
+  return SETTING.STRING
 }
 
 export const createSetting = (setting, option) => {
@@ -82,7 +89,7 @@ export const getI18ConfigInner = (config, parentKey = '', list = []) => {
   Object.keys(config).forEach(configKey => {
     const data = config[configKey]
     const key = parentKey + configKey
-    if(/^(TYPE|OPTIONS)(\..+)*$/g.test(key)){
+    if(/^(TYPE|DEFAULT|OPTIONS)(\..+)*$/g.test(key)){
       return
     }
     if(typeof data == 'object' && !Util.isArray(data)){
