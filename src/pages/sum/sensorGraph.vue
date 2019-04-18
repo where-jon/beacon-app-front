@@ -237,7 +237,7 @@ export default {
     await StateHelper.load('exb')
     this.form.sensorId = SENSOR.TEMPERATURE
     this.form.sumUnit = SUM_UNIT.getOptions()[1].value
-    this.form.sumTarget = this.sumTargetOptions[0].value
+    this.form.sumTarget = this.sumTargetOptions[1].value
     this.changeSensorId()
     const date = new Date()
     this.form.datetimeFrom = Util.getDatetime(date, {date: -1})
