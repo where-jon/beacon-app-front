@@ -25,7 +25,7 @@
               <label v-t="'label.key'" class="mr-2" />
             </b-col>
             <b-col>
-              <input v-model="newForm.key" type="text" :maxlength="200" class="form-control form-control-sm" form="registForm" :required="isShowNewForm" @keydown="$forceUpdate()">
+              <input v-model="newForm.key" type="text" :maxlength="200" class="form-control form-control-sm" form="registForm" :required="isShowNewForm" @keydown="$forceUpdate()" @input="newFormEvent">
             </b-col>
           </b-form-row>
           <b-form-row class="mb-2">
@@ -155,6 +155,11 @@ export default {
     },
     getDuplicationMessage(){
       return this.$i18n.tnl('message.bulkUniqueFailed', {col: this.$i18n.tnl('label.key'), value: this.newForm.key})
+    },
+    newFormEvent(event){
+      if(this.newForm && this.newForm.key && this.newForm.key.replace){
+        this.newForm.key = this.newForm.key.replace(/\s/g, '')
+      }
     },
     async fetchData() {
       try {
