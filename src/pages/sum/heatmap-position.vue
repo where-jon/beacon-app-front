@@ -27,6 +27,7 @@ import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
 import analysisSearch from '../../components/parts/analysissearch.vue'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
+import { EventBus } from '../../sub/helper/EventHelper'
 
 export default {
   components: {
@@ -96,6 +97,10 @@ export default {
         if (payload && payload.done) {
           payload.done()
         }
+
+        if(this.positionHistories.length > 0){
+          EventBus.$emit('onDisplay')
+        }
       }
       catch(e) {
         console.error(e)
@@ -116,7 +121,7 @@ export default {
       this.removeHeatmap()
       Util.debug(this.heatmapData)
       let heatmap = h337.create({
-        radius: DISP.ANALYSIS.HEATMAP.RADIUS,
+        radius: DISP.ANALYSIS.HEATMAP.RADIUS * this.canvasScale,
         container: element,
       })
       heatmap.setData(this.heatmapData)

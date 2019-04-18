@@ -76,7 +76,7 @@ export default {
     this.selectedArea = this.getInitAreaOption()
     await StateHelper.loadAreaImage(this.selectedArea)
     this.loadComplete = true
-    if (this.$route.path.startsWith('/main') || this.$route.path.startsWith('/develop/installation')) {
+    if (this.$route.path.startsWith('/main') || this.$route.path.startsWith('/sum') || this.$route.path.startsWith('/develop/installation')) {
       let timer = 0
       const path = this.$route.path
       let currentWidth = window.innerWidth
