@@ -54,7 +54,7 @@
       <b-col v-if="showMeditag">
         <canvas id="map" ref="map" />
       </b-col>
-      <b-col v-if="showMeditag" class="rightPane">
+      <b-col v-if="showMeditag && isShowRight" class="rightPane">
         <sensor :sensors="meditagSensors" class="rightPaneChild" />
       </b-col>
     </b-row>
@@ -120,7 +120,8 @@ export default {
       message: '',
       prohibitData : null,
       icons : [],
-      prohibitInterval:null
+      prohibitInterval:null,
+      isShowRight: false
     }
   },
   computed: {
@@ -249,6 +250,7 @@ export default {
       }
     },
     async fetchData(payload, disableErrorPopup) {
+      this.isShowRight = false
       const disabledProgress = Util.getValue(payload, 'disabledProgress', false)
       try {
         this.reloadSelectedTx = this.reload? this.selectedTx: {}
@@ -265,6 +267,9 @@ export default {
         if (payload && payload.done) {
           payload.done()
         }
+        setTimeout( async () => {
+          this.showRight()
+        }, 100)
       }
       catch(e) {
         console.error(e)
@@ -272,6 +277,9 @@ export default {
       if(!disabledProgress){
         this.hideProgress()
       }
+    },
+    async showRight(){
+      this.isShowRight = true
     },
     async getDetail(txId) {
       let tx = await AppServiceHelper.fetch('/core/tx', txId)
