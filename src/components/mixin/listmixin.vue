@@ -7,11 +7,6 @@ import * as Util from '../../sub/util/Util'
 
 export default {
   mixins: [reloadmixinVue],
-  data() {
-    return {
-      TX_FONTSIZE_RATIO: 0.6,
-    }
-  },
   methods: {
     getStyleDisplay(entity){
       return entity.map((val) => ({entity: val, style: this.getStyleDisplay1(val)}))
@@ -30,13 +25,16 @@ export default {
         'align-items': 'center',
         'white-space': 'nowrap',
       }
+      const label = Util.getValue(val, 'label', null)
       if(option.fixSize != false){
-        style.font = Util.getAdjustFontSize(() => DISP.TX_FIX_R * this.TX_FONTSIZE_RATIO)
+        const fontSize = label? Util.getInRectFontSize(label, DISP.TX_FIX_R * 2, DISP.TX_FIX_R * 2): DISP.TX_FIX_R
+        style.font = Util.getAdjustFontSize(() => fontSize * DISP.FONT_ICON_ADJUST_SCALE)
         style.width = (DISP.TX_FIX_R * 2) + 'px'
         style.height = (DISP.TX_FIX_R * 2) + 'px'
       }
       else{
-        style.font = Util.getAdjustFontSize(() => DISP.TX_R * this.TX_FONTSIZE_RATIO)
+        const fontSize = label? Util.getInRectFontSize(label, DISP.TX_R * 2, DISP.TX_R * 2): DISP.TX_R
+        style.font = Util.getAdjustFontSize(() => fontSize * DISP.FONT_ICON_ADJUST_SCALE)
         style.width = (DISP.TX_R * 2) + 'px'
         style.height = (DISP.TX_R * 2) + 'px'
       }
