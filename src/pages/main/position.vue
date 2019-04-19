@@ -55,7 +55,7 @@
         <canvas id="map" ref="map" />
       </b-col>
       <b-col v-if="showMeditag && isShowRight" class="rightPane">
-        <sensor :sensors="meditagSensors" class="rightPaneChild" />
+        <sensor :sensors="meditagSensors" :is-popup="false" class="rightPaneChild" />
       </b-col>
     </b-row>
     <div v-if="selectedTx.btxId && showReady">
@@ -174,7 +174,7 @@ export default {
     await StateHelper.load('category')
     await StateHelper.load('group')
     await StateHelper.load('prohibit')
-    document.addEventListener('touchstart', this.touchEnd)
+    //document.addEventListener('touchstart', this.touchEnd)
     await this.fetchData()
     this.startPositionAutoReload()
     this.startOtherAutoReload()
