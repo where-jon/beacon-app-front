@@ -65,6 +65,9 @@
                   <b-dropdown-item href="#" @click="move('/setting/personal')">
                     <i class="fas fa-user-cog menu-item-icon" />&nbsp;{{ $t('label.personal') }}
                   </b-dropdown-item>
+                  <b-dropdown-item href="#" @click="openHelp">
+                    <i class="fas fa-sign-out-alt menu-item-icon" />&nbsp;{{ $t('label.help') }}
+                  </b-dropdown-item>
                   <b-dropdown-item href="#" @click="logout">
                     <i class="fas fa-sign-out-alt menu-item-icon" />&nbsp;{{ $t('label.logout') }}
                   </b-dropdown-item>
@@ -87,6 +90,9 @@
                 <b-dropdown-item href="#" @click="move('/setting/personal')">
                   <i class="fas fa-user-cog menu-item-icon" />&nbsp;{{ $t('label.personal') }}
                 </b-dropdown-item>
+                <b-dropdown-item href="#" @click="openHelp">
+                  <i class="fas fa-sign-out-alt menu-item-icon" />&nbsp;{{ $t('label.help') }}
+                </b-dropdown-item>
                 <b-dropdown-item href="#" @click="logout">
                   <i class="fas fa-sign-out-alt menu-item-icon" />&nbsp;{{ $t('label.logout') }}
                 </b-dropdown-item>
@@ -98,6 +104,9 @@
             </td>
           </tr>
         </table>
+        <b-modal size="lg" id="helpModal" :title="$t('label.help')" ok-only>
+          <help />
+        </b-modal>
       </b-navbar-nav>
     </b-collapse>
   </b-navbar>
@@ -114,10 +123,12 @@ import * as Util from '../../sub/util/Util'
 import commonmixinVue from '../mixin/commonmixin.vue'
 import CustomLink from '../parts/customlink.vue'
 import * as StateHelper from '../../sub/helper/StateHelper'
+import Help from '../page/help.vue'
 
 export default {
   components: {
     CustomLink,
+    Help,
   },
   mixins: [commonmixinVue],
   data() {
@@ -194,6 +205,9 @@ export default {
     logout() {
       this.$refs.collapse.show = false
       AuthHelper.logout()
+    },
+    openHelp() {
+      this.$root.$emit('bv::show::modal', 'helpModal')
     },
     isTenantAdmin() {
       const login = JSON.parse(window.localStorage.getItem('login'))
