@@ -1,7 +1,7 @@
 
 <script>
 import { mapState, mapMutations, mapActions } from 'vuex'
-import { Shape, Container, Stage, Bitmap, Text, Touch } from '@createjs/easeljs/dist/easeljs.module'
+import { Stage, Bitmap, Touch } from '@createjs/easeljs/dist/easeljs.module'
 import { APP, DISP, DEV } from '../../sub/constant/config.js'
 import { SHAPE, SENSOR, POSITION, TX } from '../../sub/constant/Constants'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
@@ -9,6 +9,7 @@ import * as PositionHelper from '../../sub/helper/PositionHelper'
 import * as SensorHelper from '../../sub/helper/SensorHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
+import * as IconHelper from '../../sub/helper/IconHelper'
 import * as Util from '../../sub/util/Util'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import reloadmixinVue from './reloadmixin.vue'
@@ -149,6 +150,9 @@ export default {
         return areaImage.areaId == areaId
       })
       return areaImage && areaImage.mapImage
+    },
+    getMapScale(){
+      return DISP.TX_R_ABSOLUTE ? this.canvasScale : 1
     },
     async fetchAreaExbs(tx) {
       if (this.isFirstTime) {
@@ -425,7 +429,7 @@ export default {
           display = styleSrc && styleSrc.display
         }
         display = display || this.defaultDisplay
-        display = this.getStyleDisplay1(display, {fixSize: fixSize})        
+        display = this.getStyleDisplay1({...display, label: pos.label}, {fixSize: fixSize})        
         if (pos.transparent) {
           display.opacity = 0.6
         }
@@ -529,25 +533,13 @@ export default {
         this.$root.$emit('bv::show::modal', 'detailModal')
       }
     },
-    createBtnBg(pos, shape, bgColor){
-      let btnBg = new Shape()
-      let TxRadius = DISP.TX_R_ABSOLUTE ? DISP.TX_R / this.canvasScale : DISP.TX_R
-      
-      btnBg = this.setbtnColor(btnBg, bgColor, pos)
-      switch(shape) {
-      case SHAPE.CIRCLE:
-        btnBg.graphics.drawCircle(0, 0, TxRadius)
-        break
-      case SHAPE.SQUARE:
-        btnBg.graphics.drawRect(-TxRadius, -TxRadius, TxRadius * 2, TxRadius * 2)
-        break
-      case SHAPE.ROUND_SQUARE:
-        btnBg.graphics.drawRoundRect(-TxRadius, -TxRadius, TxRadius * 2, TxRadius * 2, DISP.ROUNDRECT_RADIUS)
-        break
+    createLabelInfo(pos, color){
+      return {
+        label: pos.label,
+        color: '#' + color,
       }
-      return btnBg
     },
-    setbtnColor(btnBg, bgColor, pos) {
+    createRectInfo(pos, bgColor){
       let strokeAlpha = 1
       let fillAlpha = 1
       if (Util.bitON(pos.tx.disp, TX.DISP.ALWAYS)) {
@@ -558,24 +550,26 @@ export default {
         strokeAlpha = DISP.TX_ALPHA
         fillAlpha = DISP.TX_ALPHA
       }
-      const backGroundColor = ViewHelper.getRGBA(bgColor, fillAlpha)
-      const strokeColor = ViewHelper.getRGBA(DISP.TX_STROKE_COLOR, strokeAlpha)
-      btnBg.graphics.beginStroke(strokeColor).setStrokeStyle(DISP.TX_STROKE_WIDTH).beginFill(backGroundColor)
-      return btnBg
+      return {
+        bgColor: ViewHelper.getRGBA(bgColor, fillAlpha),
+        strokeColor: ViewHelper.getRGBA(DISP.TX_STROKE_COLOR, strokeAlpha)
+      }
     },
-    createBtnLabel(pos, color){
-      const label = new Text(pos.label)
-      const scale = DISP.TX_R_ABSOLUTE ? this.canvasScale : 1
-      label.font = Util.getAdjustFontSize(() => (DISP.TX_R * 0.7) / scale)
-      label.color = '#' + color
-      label.textAlign = 'center'
-      label.textBaseline = 'middle'
-      return label
+    createTxIcon(pos, shape, color, bgColor){
+      const rectInfo = this.createRectInfo(pos, bgColor)
+      const labelInfo = this.createLabelInfo(pos, color)
+      const txRadius = DISP.TX_R / this.getMapScale()
+      return IconHelper.createIcon(
+        labelInfo.label, txRadius, txRadius, labelInfo.color, rectInfo.bgColor, {
+          circle: shape == SHAPE.CIRCLE,
+          roundRect: shape == SHAPE.SQUARE? 0: DISP.ROUNDRECT_RADIUS,
+          strokeColor: rectInfo.strokeColor,
+          strokeStyle: DISP.TX_STROKE_WIDTH,
+          offsetY: 5,
+        })
     },
     createTxBtn(pos, shape, color, bgColor){
-      const txBtn = new Container()
-      txBtn.addChild(this.createBtnBg(pos, shape, bgColor))
-      txBtn.addChild(this.createBtnLabel(pos, color))
+      const txBtn = this.createTxIcon(pos, shape, color, bgColor)
 
       txBtn.txId = pos.btx_id
       txBtn.x = pos.x

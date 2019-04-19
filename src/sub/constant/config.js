@@ -221,6 +221,8 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   TX_HORIZON: 5, // TXアイコンタイル表示時の列数
   TX_VERTICAL: 5, // TXアイコンタイル表示時の行数
 
+  FONT_ICON_ADJUST_SCALE: 0.7, // アイコン内テキストのフォントサイズ係数
+
   SHOW_NAV: true, // show nav  
   SHOW_SIDEBAR: true, // show sidebar  
   SHOW_LOGO: true, // show logo (or show title text)
