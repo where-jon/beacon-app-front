@@ -74,6 +74,10 @@ export const APP = { // 機能面に関する設定
   UPDATE_POSITION_EFFECT: true,
   // 将来実装予定項目 END
 
+  // 位置表示(地図)
+  POS_WITH_CATEGORY: true, // 位置表示(地図)にカテゴリを表示
+  POS_WITH_GROUP: false, // 位置表示(地図)にグループを表示
+
   // 位置表示(一覧)
   POS_LIST_WITH_TEL: false, // 位置表示(一覧)に電話番号を表示
 
