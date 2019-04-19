@@ -23,11 +23,12 @@ import { mapState } from 'vuex'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
+import * as IconHelper from '../../sub/helper/IconHelper'
 import * as Util from '../../sub/util/Util'
 import txdetail from '../../components/parts/txdetail.vue'
 import { DISP, APP } from '../../sub/constant/config'
 import { SENSOR, TX } from '../../sub/constant/Constants'
-import { Shape, Container, Text } from '@createjs/easeljs/dist/easeljs.module'
+import { Container } from '@createjs/easeljs/dist/easeljs.module'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
 
@@ -126,13 +127,10 @@ export default {
       })
     },
     createCountButton(count){
-      const exbBtn = new Container()
-      let label = new Text(this.$i18n.tnl('message.count', {count}),'bold 32px Arial','#FF3222')
-      label.textAlign = 'center'
-      label.textBaseline = 'middle'
-      exbBtn.addChild(label)
-      exbBtn.cursor = ''
-      return exbBtn
+      const scale = this.getMapScale()
+      const label = IconHelper.createCircleIcon(this.$i18n.tnl('message.count', {count}), DISP.PIR_R_SIZE / scale, '#FF3222', '#FFFFFF', {bold: true, circle: false, alpha: 0, fontSize: 40 / scale})
+      label.cursor = ''
+      return label
     },
     createShapeInfo(sensorId, count){
       if(sensorId == SENSOR.PRESSURE){
@@ -141,48 +139,28 @@ export default {
           width: DISP.PRESSURE_R_SIZE,
         }
       }
-      const scale = DISP.TX_R_ABSOLUTE ? this.canvasScale : 1
       return {
         bgColor: (count > 0)? DISP.PIR_BGCOLOR: DISP.PIR_EMPTY_BGCOLOR,
-        width: DISP.PIR_R_SIZE / scale,
+        width: DISP.PIR_R_SIZE,
       }
-    },
-    createShape(sensorId, count){
-      const btnBg = new Shape()
-      const shapeInfo = this.createShapeInfo(sensorId, count)
-      btnBg.graphics.beginFill(shapeInfo.bgColor).drawCircle(0, 0, shapeInfo.width, shapeInfo.width)
-      // btnBg.alpha = 0.9;
-      return btnBg
     },
     createLabelInfo(sensorId, count){
       if(sensorId == SENSOR.PRESSURE){
-        const font = this.$i18n.locale == 'ja'?
-          Util.getAdjustFontSize(() => DISP.PRESSURE_R_SIZE * (count <= DISP.PRESSURE_VOL_MIN? this.INUSE_FONTSIZE_RATIO: this.EMPTY_FONTSIZE_RATIO), true):
-          Util.getAdjustFontSize(() => DISP.PRESSURE_R_SIZE * this.PRESSURE_FONTSIZE_RATIO_EN, true)
         return {
           label: this.$i18n.tnl('label.' + (count <= DISP.PRESSURE_VOL_MIN? DISP.PRESSURE_INUSE_LABEL: DISP.PRESSURE_EMPTY_LABEL)),
-          font: font,
           color: DISP.PRESSURE_FGCOLOR
         }
       }
-      const scale = DISP.TX_R_ABSOLUTE ? this.canvasScale : 1
-      const font = this.$i18n.locale == 'ja'?
-        Util.getAdjustFontSize(() => DISP.PIR_R_SIZE / scale * (count > 0? this.INUSE_FONTSIZE_RATIO: this.EMPTY_FONTSIZE_RATIO), true):
-        Util.getAdjustFontSize(() => DISP.PIR_R_SIZE / scale * this.FONTSIZE_RATIO_EN, true)
       return {
         label: this.$i18n.tnl('label.' + (count > 0? DISP.PIR_INUSE_LABEL: DISP.PIR_EMPTY_LABEL)),
-        font: font,
         color: DISP.PIR_FGCOLOR
       }
     },
-    createLabel(sensorId, count){
+    createIcon(sensorId, count){
+      const scale = this.getMapScale()
+      const shapeInfo = this.createShapeInfo(sensorId, count)
       const labelInfo = this.createLabelInfo(sensorId, count)
-      const label = new Text(labelInfo.label)
-      label.font = labelInfo.font
-      label.color = labelInfo.color
-      label.textAlign = 'center'
-      label.textBaseline = 'middle'
-      return label
+      return IconHelper.createCircleIcon(labelInfo.label, shapeInfo.width / scale, labelInfo.color, shapeInfo.bgColor, {bold: false})
     },
     showExb(exb) {
       if (!Util.equalsAny(exb.sensorId, [SENSOR.PIR, SENSOR.PRESSURE, SENSOR.THERMOPILE])) {
@@ -210,11 +188,7 @@ export default {
         exbBtn = this.createCountButton(exb.count)
       }
       else {
-        exbBtn = new Container()
-        exbBtn.addChild(this.createShape(exb.sensorId, exb.count))
-        if (DISP.PIR_INUSE_LABEL || DISP.PIR_EMPTY_LABEL) {
-          exbBtn.addChild(this.createLabel(exb.sensorId, exb.count))
-        }
+        exbBtn = this.createIcon(exb.sensorId, exb.count)
       }
 
       exbBtn.deviceId = exb.deviceId
@@ -253,11 +227,7 @@ export default {
 
       const magnetOn = (magnet.magnet == SENSOR.MAGNET_STATUS.ON)
       const count = (APP.MAGNET_ON_IS_USED && magnetOn || !APP.MAGNET_ON_IS_USED && !magnetOn)? 1: 0
-      const txBtn = new Container()
-      txBtn.addChild(this.createShape(tx.sensorId, count))
-      if (DISP.PIR_INUSE_LABEL || DISP.PIR_EMPTY_LABEL) {
-        txBtn.addChild(this.createLabel(tx.sensorId, count))
-      }
+      const txBtn = this.createIcon(tx.sensorId, count)
 
       txBtn.x = tx.location.x
       txBtn.y = tx.location.y
