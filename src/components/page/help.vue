@@ -2,13 +2,36 @@
   <div class="container-fluid">
     <div class="container">
       <div id="bulkRegister">
-        <p class="labelHeader">{{ $i18n.tnl('label.bulkRegister') }}</p>
-        <p class="errorTitle">{{ $i18n.tnl('message.bulkUniqueFailed', {col: linage, value: keyName}) }}</p>
-        <p class="errorDetail">対象の項目名は、重複できない項目です。既に他の行で使用されています。</p>
-        <p class="errorTitle">{{ $i18n.tnl('message.bulkOneOfFailed', {col: linage, value: keyName, candidates: candidates}) }}</p>
-        <p class="errorDetail">対象の項目名は、複数ある設定値のうちのいずれかで指定する必要があります。</p>
-        <p class="errorTitle">{{ $i18n.tnl('message.bulkRangeFailed', {col: linage, value: keyName, min: min, max: max}) }}</p>
-        <p class="errorDetail">対象の項目名は、指定されている範囲で指定する必要があります。</p>
+        <p class="helpLabelHeader">{{ $i18n.tnl('label.bulkRegister') }}</p>
+        
+        <p class="helpTitle">{{ $i18n.tnl('label.register') }}</p>
+        <p class="helpDetail">{{ $i18n.tnl('helpDescription.bulkRegister') }}</p>
+        <p class="helpTitle">{{ $i18n.tnl('message.bulkUniqueFailed', {col: linage, value: keyName}) }}</p>
+        <p class="helpDetail">{{ $i18n.tnl('helpDescription.bulkUniqueFailed') }}</p>
+        <p class="helpTitle">{{ $i18n.tnl('message.bulkOneOfFailed', {col: linage, value: keyName, candidates: candidates}) }}</p>
+        <p class="helpDetail">{{ $i18n.tnl('helpDescription.bulkOneOfFailed') }}</p>
+        <p class="helpTitle">{{ $i18n.tnl('message.bulkRangeFailed', {col: linage, value: keyName, min: min, max: max}) }}</p>
+        <p class="helpDetail">{{ $i18n.tnl('helpDescription.bulkRangeFailed') }}</p>
+        <p class="helpTitle">{{ $i18n.tnl('message.bulkSizeFailed', {col: linage, value: keyName, min: min, max: max}) }}</p>
+        <p class="helpDetail">{{ $i18n.tnl('helpDescription.bulkSizeFailed') }}</p>
+        <p class="helpTitle">{{ $i18n.tnl('message.bulkSizeSameFailed', {col: linage, value: keyName, min: number}) }}</p>
+        <p class="helpDetail">{{ $i18n.tnl('helpDescription.bulkSizeSameFailed') }}</p>
+        <p class="helpTitle">{{ $i18n.tnl('message.bulkNotNullFailed', {col: linage}) }}</p>
+        <p class="helpDetail">{{ $i18n.tnl('helpDescription.bulkNotNullFailed') }}</p>
+        <p class="helpTitle">{{ $i18n.tnl('message.bulkExistFailed', {col: linage, value: keyName}) }}</p>
+        <p class="helpDetail">{{ $i18n.tnl('helpDescription.bulkExistFailed') }}</p>
+        <p class="helpTitle">{{ $i18n.tnl('message.bulkInvalidFailed', {col: linage, value: keyName}) }}</p>
+        <p class="helpDetail">{{ $i18n.tnl('helpDescription.bulkInvalidFailed') }}</p>
+        <p class="helpTitle">{{ $i18n.tnl('message.bulkAuthFailed', {col: linage, value: keyName}) }}</p>
+        <p class="helpDetail">{{ $i18n.tnl('helpDescription.bulkAuthFailed') }}</p>
+        <p class="helpTitle">{{ $i18n.tnl('message.bulkUseFailed', {col: linage, value: keyName, num: max, unit: unit, target: target}) }}</p>
+        <p class="helpDetail">{{ $i18n.tnl('helpDescription.bulkUseFailed') }}</p>
+        <p class="helpTitle">{{ $i18n.tnl('message.bulkSystemUseFailed', {col: linage, value: keyName}) }}</p>
+        <p class="helpDetail">{{ $i18n.tnl('helpDescription.bulkSystemUseFailed') }}</p>
+        <p class="helpTitle">{{ $i18n.tnl('message.bulkSystemUseNameFailed', {col: linage, value: keyName}) }}</p>
+        <p class="helpDetail">{{ $i18n.tnl('helpDescription.bulkSystemUseNameFailed') }}</p>
+        <p class="helpTitle">{{ $i18n.tnl('message.bulkInvalidUpdateLineFailed', {col: linage, value: keyName}) }}</p>
+        <p class="helpDetail">{{ $i18n.tnl('helpDescription.bulkInvalidUpdateLineFailed') }}</p>
       </div>
     </div>
   </div>
@@ -23,6 +46,9 @@ export default {
       candidates: this.$i18n.tnl('label.value'),
       min: this.$i18n.tnl('label.min'),
       max: this.$i18n.tnl('label.max'),
+      number: this.$i18n.tnl('label.number'),
+      unit: this.$i18n.tnl('label.keyName'),
+      target: this.$i18n.tnl('label.keyName'),
     }
   },
 }
@@ -32,15 +58,15 @@ export default {
 <style lang="scss">
 @import "../../sub/constant/config.scss";
 
-.labelHeader {
+.helpLabelHeader {
   font-weight: bold;
   font-size: 16px;
 }
-.errorTitle {
+.helpTitle {
   font-weight: bold;
   font-size: 14px;
 }
-.errorDetail {
+.helpDetail {
   font-size: 14px;
 }
 
