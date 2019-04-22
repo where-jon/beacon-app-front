@@ -528,7 +528,7 @@ export default {
         isDispRight: isDispRight,
       }
       this.replaceMain({selectedTx})
-      this.showReady = true
+      this.$nextTick(() => this.showReady = true)
       if (this.isShowModal()) {
         this.$root.$emit('bv::show::modal', 'detailModal')
       }
@@ -576,6 +576,7 @@ export default {
       txBtn.y = pos.y
       txBtn.on('click', (evt) => {
         evt.stopPropagation()
+        this.showReady = false
         this.showingDetailTime = new Date().getTime()
         const txBtn = evt.currentTarget
         this.showDetail(txBtn.txId, txBtn.x, txBtn.y)
