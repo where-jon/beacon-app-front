@@ -105,7 +105,7 @@
           </tr>
         </table>
         <b-modal size="lg" id="helpModal" :title="$t('label.help')" ok-only>
-          <help />
+          <help :from-page="fromPageUrl"/>
         </b-modal>
       </b-navbar-nav>
     </b-collapse>
@@ -135,6 +135,7 @@ export default {
     return {
       nav : this.$store.state.menu,
       logoSrc: '',
+      fromPageUrl: '',
     }
   },
   computed: {
@@ -181,6 +182,11 @@ export default {
     HtmlUtil.getLogoData(`${HtmlUtil.getDomainCd()}.png`, (result, success) => {
       this.logoSrc = success? result: '/toplogo.png'
     })
+    this.$root.$on('bv::modal::shown', (bvModalEvt, modalId) => {
+      setTimeout(() => {
+        document.getElementById('linkTest').click()
+      },100)
+    })
   },
   async mounted() {
     window.addEventListener('resize', () => {
@@ -207,6 +213,8 @@ export default {
       AuthHelper.logout()
     },
     openHelp() {
+      const path = _.filter(this.$route.path.split('/'), (path) => Boolean(path))
+      this.fromPageUrl = path? '#' + path[path.length - 1]: ''
       this.$root.$emit('bv::show::modal', 'helpModal')
     },
     isTenantAdmin() {

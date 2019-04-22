@@ -1,7 +1,14 @@
 <template>
   <div class="container-fluid">
     <div class="container">
-      <div id="bulkRegister">
+      <a id="linkTest" :href="fromPage"></a>
+      <div id="position-list">
+        <p class="helpLabelHeader">{{ $i18n.tnl('label.positionList') }}</p>
+        <p class="helpTitle">状態</p>
+        <p class="helpDetail">状態については次の定義となります。検知：未検知：消失：なし：</p>
+      </div>
+
+      <div id="bulkedit">
         <p class="helpLabelHeader">{{ $i18n.tnl('label.bulkRegister') }}</p>
         
         <p class="helpTitle">{{ $i18n.tnl('label.register') }}</p>
@@ -39,6 +46,12 @@
 
 <script>
 export default {
+  props: {
+    fromPage: {
+      type: String,
+      default: '',
+    },
+  },
   data () {
     return {
       linage: this.$i18n.tnl('label.linage'),
