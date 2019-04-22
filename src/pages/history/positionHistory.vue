@@ -83,7 +83,7 @@ import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
-import { APP } from '../../sub/constant/config.js'
+import { APP, DISP } from '../../sub/constant/config.js'
 import { APP_SERVICE } from '../../sub/constant/config'
 
 
@@ -107,18 +107,16 @@ export default {
       viewList: [],
       fields: ViewHelper.addLabelByKey(this.$i18n, [
         {key: 'positionDt', sortable: true, label:'dt'},
-        {key: 'txName', sortable: true },
-        {key: 'major', sortable: true },
-        {key: 'minor', sortable: true },
-        APP.EXB_WITH_EXBID? {key: 'exbId', sortable: true }: null,
-        APP.EXB_WITH_DEVICE_NUM? {key: 'deviceNum', sortable: true }: null,
-        APP.EXB_WITH_DEVICE_ID? {key: 'deviceId', sortable: true }: null,
-        APP.EXB_WITH_DEVICE_IDX? {key: 'deviceIdX', sortable: true }: null,
-        {key: 'locationName', label:'locationZoneName', sortable: true,},
-        APP.EXB_WITH_POSID? {key: 'posId', label:'posId', sortable: true,}: null,
-        {key: 'areaName', label:'area', sortable: true,},
-        {key: 'x', sortable: true, label:'locationX'},
-        {key: 'y', sortable: true, label:'locationY'},
+        ...DISP.POSITION_HISTORY_HEADERS.map(header => {
+          const ret = { key: header, sortable: true }
+          if(header == 'areaName'){
+            ret.label = 'area'
+          }
+          else if(header == 'locationName'){
+            ret.label = 'locationZoneName'
+          }
+          return ret
+        })
       ]),
       currentPage: 1,
       perPage: 20,
@@ -194,6 +192,7 @@ export default {
           posHist.positionDt = Util.formatDate(d.getTime())
           let aTx = _.find(this.txs, (tx) => { return tx.txId == posHist.txId })
           posHist.txName = Util.getValue(aTx, 'txName', '')
+          posHist.potName = Util.getValue(aTx, 'potName', '')
           let aExb = _.find(this.exbs, (exb) => { return exb.exbId == posHist.exbId })
           posHist.deviceId = Util.getValue(aExb, 'deviceId', '')
           posHist.deviceNum =  Util.getValue(aExb, 'deviceNum', 0)

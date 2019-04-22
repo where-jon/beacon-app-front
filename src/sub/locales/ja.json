@@ -815,6 +815,8 @@
 
       "TXDETAIL_SUMBNAIL_UNREGIST_DISABLE": "位置表示(地図)画面の詳細ポップアップに未登録のサムネイルは表示しない::位置表示(地図)画面で、選択したTxにサムネイルが登録されていない場合は詳細ポップアップにサムネイルを表示しないように設定します。",
 
+      "POSITION_HISTORY_HEADERS": "位置情報画面で表示する項目::位置表示履歴画面で表示する項目を設定します。設定可能な値は次の通りです。{POSITION_HISTORY}",
+
       "ANALYSIS": {
         "LINE": {
           "MAX_WEIGHT": "動線分析画面で表示する動線の最大太さ::動線分析画面で表示する動線の最大太さを設定します。",
@@ -878,7 +880,8 @@
         "DISPLAY_PRIORITY": "stringList",
         "THERMOH_PATTERN": "stringList",
         "HUMIDITY_PATTERN": "stringList",
-        "STRESS_BG": "stringList"
+        "STRESS_BG": "stringList",
+        "POSITION_HISTORY_HEADERS": "stringList"
       },
       "SLACK_CHANNEL": "string",
       "SLACK_TOKEN": "string"
@@ -950,6 +953,20 @@
       "SORT": {
         "asc": "昇順",
         "desc": "降順"
+      },
+      "POSITION_HISTORY": {
+        "txName": "Tx名",
+        "potName": "人＆物の名前",
+        "major": "major",
+        "minor": "minor",
+        "deviceNum": "端末ID",
+        "deviceId": "デバイスID",
+        "deviceIdX": "デバイスID(16進数)",
+        "locationName": "場所名",
+        "posId": "posId",
+        "areaName": "エリア名",
+        "x": "X座標",
+        "y": "Y座標"
       }
     }
   },
