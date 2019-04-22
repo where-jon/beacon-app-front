@@ -66,7 +66,7 @@
                     <i class="fas fa-user-cog menu-item-icon" />&nbsp;{{ $t('label.personal') }}
                   </b-dropdown-item>
                   <b-dropdown-item href="#" @click="openHelp">
-                    <i class="fas fa-sign-out-alt menu-item-icon" />&nbsp;{{ $t('label.help') }}
+                    <i class="fas fa-question-circle menu-item-icon" />&nbsp;{{ $t('label.help') }}
                   </b-dropdown-item>
                   <b-dropdown-item href="#" @click="logout">
                     <i class="fas fa-sign-out-alt menu-item-icon" />&nbsp;{{ $t('label.logout') }}
@@ -91,7 +91,7 @@
                   <i class="fas fa-user-cog menu-item-icon" />&nbsp;{{ $t('label.personal') }}
                 </b-dropdown-item>
                 <b-dropdown-item href="#" @click="openHelp">
-                  <i class="fas fa-sign-out-alt menu-item-icon" />&nbsp;{{ $t('label.help') }}
+                  <i class="fas fa-question-circle menu-item-icon" />&nbsp;{{ $t('label.help') }}
                 </b-dropdown-item>
                 <b-dropdown-item href="#" @click="logout">
                   <i class="fas fa-sign-out-alt menu-item-icon" />&nbsp;{{ $t('label.logout') }}
