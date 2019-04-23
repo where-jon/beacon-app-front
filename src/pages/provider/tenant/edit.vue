@@ -238,13 +238,14 @@ export default {
           return
         }
         for(let idx = 0; idx < modalContents.length; idx++){
-          if(Util.getValue(modalContents[idx], 'attributes.aria-labelledby.value', '').match(/^modalSettingInfo.*$/)){
-            const marginLeft = 32
-            const width = window.innerWidth - marginLeft * 2
-            modalContents[idx].style.width = '' + width + 'px'
-            const left = marginLeft - Util.getValue(modalContents[idx], 'parentElement.offsetLeft', 0)
-            modalContents[idx].style.left = '' + left + 'px'
+          if(!Util.getValue(modalContents[idx], 'attributes.aria-labelledby.value', '').match(/^modalSettingInfo.*$/)){
+            continue
           }
+          const marginLeft = 32
+          const width = window.innerWidth - marginLeft * 2
+          modalContents[idx].style.width = '' + width + 'px'
+          const left = marginLeft - Util.getValue(modalContents[idx], 'parentElement.offsetLeft', 0)
+          modalContents[idx].style.left = '' + left + 'px'
         }
       })
     },
