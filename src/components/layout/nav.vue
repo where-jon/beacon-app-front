@@ -1,5 +1,9 @@
 <template>
   <b-navbar :class="topNavBarClasses" toggleable="md" type="dark">
+    
+    <b-modal size="lg" id="helpModal" :title="$t('label.help')" ok-only>
+      <help :from-page="fromPageUrl"/>
+    </b-modal>
     <!-- Responsive menu -->
     <b-navbar-toggle v-show="!isLoginPage && getShowNav()" target="nav_collapse" />  
 
@@ -104,9 +108,6 @@
             </td>
           </tr>
         </table>
-        <b-modal size="lg" id="helpModal" :title="$t('label.help')" ok-only>
-          <help :from-page="fromPageUrl"/>
-        </b-modal>
       </b-navbar-nav>
     </b-collapse>
   </b-navbar>
