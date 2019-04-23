@@ -4,13 +4,15 @@
       <a id="linkTest" :href="fromPage"></a>
       <div id="position-list">
         <p class="helpLabelHeader">{{ $i18n.tnl('label.positionList') }}</p>
-        <p class="helpTitle">状態</p>
-        <p class="helpDetail">状態については次の定義となります。検知：未検知：消失：なし：</p>
+        <p class="helpTitle">{{ $i18n.tnl('label.state') }}</p>
+        <p class="helpDetail">{{ $i18n.tnl('helpDescription.state', 
+          {detected: detected, temporaryUndetect: temporaryUndetect, undetect: undetect, none: none}) }}</p>
       </div>
-
       <div id="bulkedit">
         <p class="helpLabelHeader">{{ $i18n.tnl('label.bulkRegister') }}</p>
         
+        <p class="helpTitle">{{ $i18n.tnl('label.notes') }}</p>
+        <p class="helpDetail">{{ $i18n.tnl('helpDescription.bulkNotes', {personal: personal, charSet: charSet, SJIS: SJIS}) }}</p>
         <p class="helpTitle">{{ $i18n.tnl('label.register') }}</p>
         <p class="helpDetail">{{ $i18n.tnl('helpDescription.bulkRegister') }}</p>
         <p class="helpTitle">{{ $i18n.tnl('message.bulkUniqueFailed', {col: linage, value: keyName}) }}</p>
@@ -40,6 +42,28 @@
         <p class="helpTitle">{{ $i18n.tnl('message.bulkInvalidUpdateLineFailed', {col: linage, value: keyName}) }}</p>
         <p class="helpDetail">{{ $i18n.tnl('helpDescription.bulkInvalidUpdateLineFailed') }}</p>
       </div>
+      <div id="category">
+        <p class="helpLabelHeader">{{ $i18n.tnl('label.category') }}</p>
+
+        <p class="helpTitle">{{ $i18n.tnl('label.system') + $i18n.tnl('label.category') }}</p>
+        <p class="helpDetail">{{ $i18n.tnl('helpDescription.systemCategory') }}</p>
+        <p class="helpTitle">{{ $i18n.tnl('label.absent') }}</p>
+        <p class="helpDetail">{{ $i18n.tnl('helpDescription.absent') }}</p>
+        <p class="helpTitle">{{ $i18n.tnl('label.prohibit') }}</p>
+        <p class="helpDetail">{{ $i18n.tnl('helpDescription.prohibit') }}</p>
+      </div>
+      <div id="zoneClass">
+        <p class="helpLabelHeader">{{ $i18n.tnl('label.zoneClass') }}</p>
+
+        <p class="helpTitle">{{ $i18n.tnl('label.zone') }}</p>
+        <p class="helpDetail">{{ $i18n.tnl('helpDescription.zoneClass') }}</p>
+      </div>
+      <div id="zoneBlock">
+        <p class="helpLabelHeader">{{ $i18n.tnl('label.zoneBlock') }}</p>
+
+        <p class="helpTitle">{{ $i18n.tnl('label.setting') }}</p>
+        <p class="helpDetail">{{ $i18n.tnl('helpDescription.zoneBlock', {zoneBlock: zoneBlock}) }}</p>
+      </div>
     </div>
   </div>
 </template>
@@ -62,6 +86,14 @@ export default {
       number: this.$i18n.tnl('label.number'),
       unit: this.$i18n.tnl('label.keyName'),
       target: this.$i18n.tnl('label.keyName'),
+      detected: this.$i18n.tnl('label.detected'),
+      temporaryUndetect: this.$i18n.tnl('label.temporaryUndetect'),
+      undetect: this.$i18n.tnl('label.undetect'),
+      none: this.$i18n.tnl('label.none'),
+      personal: this.$i18n.tnl('label.personal'),
+      charSet: this.$i18n.tnl('label.charSet'),
+      SJIS: this.$i18n.tnl('label.SJIS'),
+      zoneBlock: this.$i18n.tnl('label.zoneBlock'),
     }
   },
 }
