@@ -231,6 +231,23 @@ export default {
     }
   },
   methods: {
+    adjustModalRect(){
+      this.$nextTick(() => {
+        const modalContents = document.getElementsByClassName('modal-content')
+        if(!Util.hasValue(modalContents)){
+          return
+        }
+        for(let idx = 0; idx < modalContents.length; idx++){
+          if(Util.getValue(modalContents[idx], 'attributes.aria-labelledby.value', '').match(/^modalSettingInfo.*$/)){
+            const marginLeft = 32
+            const width = window.innerWidth - marginLeft * 2
+            modalContents[idx].style.width = '' + width + 'px'
+            const left = marginLeft - Util.getValue(modalContents[idx], 'parentElement.offsetLeft', 0)
+            modalContents[idx].style.left = '' + left + 'px'
+          }
+        }
+      })
+    },
     requireInput(param){
       return Util.hasValue(param)
     },
@@ -245,6 +262,10 @@ export default {
       this.$nextTick(async () => {
         await this.$refs.systemSetting.fetchData()
         this.$root.$emit('bv::show::modal', 'modalSettingInfo', null)
+        this.$nextTick(() => {
+          window.addEventListener('resize', this.adjustModalRect)
+          this.adjustModalRect()
+        })
       })
     },
     storeFeatureInfo() {
@@ -267,6 +288,7 @@ export default {
     },
     resetModal() {
       this.$refs.systemSetting.showNewForm(false)
+      window.removeEventListener('resize', this.adjustModalRect)
     },
     async afterCrud(){
       this.featureList.forEach((feature) => {
