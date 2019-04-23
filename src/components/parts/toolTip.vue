@@ -50,7 +50,7 @@ export default {
   line-height: 0px;
   display: block;
   padding: 8px;
-  left: 0px;
-  top: 0px;
+  left: -1000px;
+  top: -1000px;
 }
 </style>

@@ -101,8 +101,8 @@ export default {
       toolTipShow: false,
       toolTipLabel: '',
       toolTipStyle: {
-        'left': '0px',
-        'top': '0px',
+        'left': null,
+        'top': null,
         'border-color': DISP.THERMOH_TOOLTIP_BORDERCOLOR,
         'border-radius': '' + DISP.THERMOH_TOOLTIP_ROUNDRECT + 'px',
         'font': DISP.THERMOH_TOOLTIP_FONT,
@@ -420,6 +420,8 @@ export default {
     },
     removeTooltip() {
       this.toolTipShow = false
+      this.toolTipStyle.left = null
+      this.toolTipStyle.top = null
     },
     createTooltipInfo(nativeEvent, container){
       const device = container.device
@@ -431,8 +433,8 @@ export default {
         humidity: DISP.THERMOH_TOOLTIP_ITEMS.HUMIDITY? Util.formatHumidity(device.humidity) + this.$i18n.tnl('label.humidityUnit'): '',
         description: DISP.THERMOH_TOOLTIP_ITEMS.DESCRIPTION? Util.cutOnLong(device.description, 10): '',
         date: DISP.THERMOH_TOOLTIP_ITEMS.DATE? Util.formatDate(device.timestamp || device.updatetime): '',
-        baseX: window.pageXOffset + nativeEvent.x - Util.getValue(pageElement, 'offsetLeft', 0),
-        baseY: window.pageYOffset + nativeEvent.y - Util.getValue(pageElement, 'offsetTop', 0),
+        baseX: window.pageXOffset + nativeEvent.clientX - Util.getValue(pageElement, 'offsetLeft', 0),
+        baseY: window.pageYOffset + nativeEvent.clientY - Util.getValue(pageElement, 'offsetTop', 0),
         isDispRight: container.x * 2 <= this.stage.canvas.width,
       }
     },
