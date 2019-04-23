@@ -359,6 +359,8 @@
     "stayRatioAbsent1Ratio": "absent1Ratio",
     "stayRatioAbsent2Ratio": "absent2Ratio",
 
+    "positionInfo": "位置情報",
+
     "historyTitle": "履歴",
     "historyDateFrom": "期間",
     "historyDateTo": "～",
