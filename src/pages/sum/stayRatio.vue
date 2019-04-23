@@ -232,7 +232,7 @@ export default {
       })
 
       const param = _.cloneDeep(this.form)
-      const searchDate = moment(param.date).format('YYYYMMDD')
+      const searchDate = moment(param.date).format('YYYY-MM-DD')
       const groupName = this.searchedGroupName.length > 0? '_' + this.searchedGroupName: ''
 
       HtmlUtil.fileDL(
