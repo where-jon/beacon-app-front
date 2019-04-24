@@ -354,7 +354,7 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
 
   TXDETAIL_SUMBNAIL_UNREGIST_DISABLE: false, // TX詳細サムネイル非表示（未登録の場合）
 
-  POSITION_HISTORY_HEADERS: ['txName', 'major', 'minor', 'deviceNum', 'locationName', 'posId', 'areaName', 'x', 'y'], // 位置表示履歴の表示カラム
+  POSITION_HISTORY_HEADERS: ['txName', 'major', 'minor', 'deviceNum', 'locationName', 'posId', 'areaName'], // 位置表示履歴の表示カラム
 
   GATEWAY: { // ゲートウエイ
     STATE_COLOR: { // 状態別色
