@@ -41,12 +41,13 @@
       </b-form>
       <slot />
       <b-row class="mt-3" />
-      <b-table :items="viewList" :fields="fields" :current-page="currentPage" :per-page="perPage" :sort-by.sync="sortBy" stacked="md" striped hover outlined />
-      <b-row>
+      <m-list :params="params" :list="viewList" :alert-force-hide="true" :per-page="perPage"/>
+      <!-- <b-table :items="viewList" :fields="fields" :current-page="currentPage" :per-page="perPage" :sort-by.sync="sortBy" stacked="md" striped hover outlined /> -->
+      <!-- <b-row>
         <b-col md="6" class="my-1">
           <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" class="my-0" />
         </b-col>
-      </b-row>
+      </b-row> -->
     </div>
   </div>
 </template>
@@ -70,12 +71,14 @@ import commonmixinVue from '../../components/mixin/commonmixin.vue'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
 import { SYSTEM_ZONE_CATEGORY_NAME } from '../../sub/constant/Constants'
 import { CATEGORY } from '../../sub/constant/Constants'
+import mList from '../../components/page/list.vue'
 
 export default {
   components: {
     breadcrumb,
     alert,
     DatePicker,
+    mList,
   },
   mixins: [validatemixin, commonmixinVue],
   data () {
@@ -96,6 +99,7 @@ export default {
         {key: 'name', sortable: true, label: 'potName'},
         this.enableCategory? {key: 'groupName', sortable: true, label: 'groupName'}: null,
         this.enableGroup? {key: 'categoryName', sortable: true, label: 'categoryName'}: null,
+        {key: 'stayGraph', sortable: true, label: 'stayGraph'},
         {key: 'stayTime', sortable: true, label: 'stayTime'},
         {key: 'lostTime', sortable: true, label: 'lostTime'},
         {key: 'stayRatio', sortable: true, label: 'stayRatio'},
@@ -103,6 +107,23 @@ export default {
       searchedGroupName: '',
       zoneCategorys: [],
       vModelZone: null,
+      fromToSettingDiff: 0,
+      params: {
+        fields: ViewHelper.addLabelByKey(this.$i18n, [
+          {key: 'date', sortable: false, label: 'date'},
+          {key: 'name', sortable: true, label: 'potName'},
+          this.enableCategory? {key: 'groupName', sortable: true, label: 'groupName'}: null,
+          this.enableGroup? {key: 'categoryName', sortable: true, label: 'categoryName'}: null,
+          {key: 'graph', sortable: false, thStyle: {width:'130px !important'} },
+          {key: 'stayTime', sortable: true, label: 'stayTime'},
+          {key: 'lostTime', sortable: true, label: 'lostTime'},
+          {key: 'stayRatio', sortable: true, label: 'stayRatio'},
+        ]).map(val => ({ ...val, originLabel: val.label})),
+        sortBy: 'name',
+        initTotalRows: 0,
+        hideSearchBox: true,
+        isDisplayGraph: true,
+      },
     }
   },
   computed: {
@@ -142,6 +163,9 @@ export default {
     this.updateColumnName()
   },
   methods: {
+    async fetchData(payload) {
+      // 何もしない
+    },
     validate() {
       const errors = this.validateCheck([
         {type: 'require', names: ['date'], values: [this.form.date]},
@@ -160,6 +184,7 @@ export default {
       await StateHelper.load('zones')
       await StateHelper.load('pots')
       await StateHelper.load('group')
+      this.setFromToSettingDiff()
       
       if (!param.date || param.date == '') {
         this.message = this.$i18n.tnl('message.pleaseEnterSearchCriteria')
@@ -200,14 +225,21 @@ export default {
         const groupName = pot? pot.groupName: ''
         const potName = data.potName
         let stayTime = 0, lostTime = 0, presentRatio = 0
+        let graphList = new Array()
 
         // 各時間の集計
         data.stayList.forEach((stay) => {
+          let isStayData = false
           if (this.isLostData(stay.byId) || this.isAbsentZoneData(stay.byId)) {
             lostTime += stay.period
           } else {
             stayTime += stay.period
+            isStayData = true
           }
+          graphList.push({
+            isStay: isStayData,
+            percent: Math.floor((stay.period / this.fromToSettingDiff) * 100),
+          })
         })
         presentRatio = Util.getRatio(stayTime)
 
@@ -215,6 +247,7 @@ export default {
           date: date,
           name: potName, 
           groupName: groupName,
+          graph: graphList,
           stayTime: Util.convertToTime(stayTime), 
           lostTime: Util.convertToTime(lostTime),
           stayRatio: presentRatio + ' %',
@@ -331,6 +364,7 @@ export default {
         'date',
         'name',
         'groupName',
+        'stayGraph', 
         'stayTime', 
         'lostTime',
         'stayRatio' + '\n'
@@ -351,6 +385,14 @@ export default {
       this.zoneId = val
       this.vModelZone = val
     },
+    zoneOptions() {
+      return StateHelper.getOptionsFromState('zone')
+    },
+    setFromToSettingDiff() {
+      const fromMinute = Math.floor(APP.SUM_FROM / 100) * 60 + APP.SUM_FROM % 100
+      const toMinute = Math.floor(APP.SUM_TO / 100) * 60 + APP.SUM_TO % 100
+      this.fromToSettingDiff = (toMinute - fromMinute) * 60
+    }
   }
 }
 </script>

@@ -74,6 +74,14 @@
         <template v-if="params.tableDescription" slot="table-caption">
           {{ $i18n.tnl('label.' + params.tableDescription) }}
         </template>
+        <template slot="graph" slot-scope="row">
+          <div v-if="params.isDisplayGraph" >
+            <span v-for="(bar, index) in row.item.graph" :key="index" class="row">
+              <span v-if="bar.isStay" class="stayBar" :style="'width:' + bar.percent + 'px !important;'">{{ bar.percent }}% </span>
+              <span v-else class="lostBar" :style="'width:' + bar.percent + 'px !important;'">{{ bar.percent }}% </span>
+            </span>
+          </div>
+        </template>
         <template slot="style" slot-scope="row">
           <div :style="style(row.item)">
             A
@@ -738,6 +746,12 @@ export default {
   @keyframes blink{
       0% {opacity:0;}
       100% {opacity:1;}
+  }
+  .stayBar {
+    background: #0f0;
+  }
+  .lostBar {
+    background: #ccc;
   }
 
 </style>
