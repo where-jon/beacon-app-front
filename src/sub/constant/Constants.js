@@ -638,6 +638,11 @@ export const MENU = [
         path: 'stayRatio',
         icon: 'fas fa-clock',
       },
+      {
+        key: 'stayRatioBase',
+        path: 'stayRatioBase',
+        icon: 'fas fa-clock',
+      },
     ]
   },
   {
