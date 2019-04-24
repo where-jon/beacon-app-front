@@ -639,8 +639,8 @@ export const MENU = [
         icon: 'fas fa-clock',
       },
       {
-        key: 'positionInfo',
-        path: 'positionInfo',
+        key: 'positionSummary',
+        path: 'positionSummary',
         icon: 'fas fa-cube',
       },
     ]
