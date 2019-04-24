@@ -1,5 +1,9 @@
 <template>
   <b-navbar :class="topNavBarClasses" toggleable="md" type="dark">
+    
+    <b-modal size="lg" id="helpModal" :title="$t('label.help')" ok-only>
+      <help :from-page="fromPageUrl"/>
+    </b-modal>
     <!-- Responsive menu -->
     <b-navbar-toggle v-show="!isLoginPage && getShowNav()" target="nav_collapse" />  
 
@@ -65,6 +69,9 @@
                   <b-dropdown-item href="#" @click="move('/setting/personal')">
                     <i class="fas fa-user-cog menu-item-icon" />&nbsp;{{ $t('label.personal') }}
                   </b-dropdown-item>
+                  <b-dropdown-item href="#" @click="openHelp">
+                    <i class="fas fa-question-circle menu-item-icon" />&nbsp;{{ $t('label.help') }}
+                  </b-dropdown-item>
                   <b-dropdown-item href="#" @click="logout">
                     <i class="fas fa-sign-out-alt menu-item-icon" />&nbsp;{{ $t('label.logout') }}
                   </b-dropdown-item>
@@ -86,6 +93,9 @@
                 </template>
                 <b-dropdown-item href="#" @click="move('/setting/personal')">
                   <i class="fas fa-user-cog menu-item-icon" />&nbsp;{{ $t('label.personal') }}
+                </b-dropdown-item>
+                <b-dropdown-item href="#" @click="openHelp">
+                  <i class="fas fa-question-circle menu-item-icon" />&nbsp;{{ $t('label.help') }}
                 </b-dropdown-item>
                 <b-dropdown-item href="#" @click="logout">
                   <i class="fas fa-sign-out-alt menu-item-icon" />&nbsp;{{ $t('label.logout') }}
@@ -114,16 +124,19 @@ import * as Util from '../../sub/util/Util'
 import commonmixinVue from '../mixin/commonmixin.vue'
 import CustomLink from '../parts/customlink.vue'
 import * as StateHelper from '../../sub/helper/StateHelper'
+import Help from '../page/help.vue'
 
 export default {
   components: {
     CustomLink,
+    Help,
   },
   mixins: [commonmixinVue],
   data() {
     return {
       nav : this.$store.state.menu,
       logoSrc: '',
+      fromPageUrl: '',
     }
   },
   computed: {
@@ -170,6 +183,11 @@ export default {
     HtmlUtil.getLogoData(`${HtmlUtil.getDomainCd()}.png`, (result, success) => {
       this.logoSrc = success? result: '/toplogo.png'
     })
+    this.$root.$on('bv::modal::shown', (bvModalEvt, modalId) => {
+      setTimeout(() => {
+        document.getElementById('linkTest').click()
+      },100)
+    })
   },
   async mounted() {
     window.addEventListener('resize', () => {
@@ -194,6 +212,11 @@ export default {
     logout() {
       this.$refs.collapse.show = false
       AuthHelper.logout()
+    },
+    openHelp() {
+      const path = _.filter(this.$route.path.split('/'), (path) => Boolean(path))
+      this.fromPageUrl = path? '#' + path[path.length - 1]: ''
+      this.$root.$emit('bv::show::modal', 'helpModal')
     },
     isTenantAdmin() {
       const login = JSON.parse(window.localStorage.getItem('login'))
