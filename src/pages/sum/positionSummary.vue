@@ -40,7 +40,7 @@ import moment from 'moment'
 import validatemixin from '../../components/mixin/validatemixin.vue'
 import commonmixinVue from '../../components/mixin/commonmixin.vue'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
-import { APP } from '../../sub/constant/config'
+//import { APP } from '../../sub/constant/config'
 
 export default {
   components: {
@@ -103,7 +103,7 @@ export default {
       }
 
       param.date = moment(param.date).format('YYYYMMDD')
-      const url = '/office/stayTime/sumByDay/' + param.date + '/zoneCategory?from=' + APP.SUM_FROM + '&to=' + APP.SUM_TO
+      const url = '/core/positionSummary/' + param.date
       const posData = await HttpHelper.getAppService(url)
       if (_.isEmpty(posData)) {
         this.message = this.$i18n.t('message.listEmpty')
