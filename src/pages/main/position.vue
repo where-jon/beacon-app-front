@@ -86,6 +86,57 @@ import sensor from '../../components/parts/sensor.vue'
 import commonmixinVue from '../../components/mixin/commonmixin.vue'
 import prohibitAlert from '../../components/page/prohibitAlert.vue'
 
+// class IconManager {
+//   constructor() {
+//     this.icons = []
+//     this._changeArea = false
+//   }
+
+//   add(txIcon) {
+//     this.icons.push(txIcon)
+//   }
+
+//   getTxIcon(txId) {
+//     const icon = this.icons.find((e) => e.txId === txId)
+//     if (!icon) {
+//       return false
+//     }
+//     icon.visible = true
+//     return icon
+//   }
+
+//   /**
+//    * txIdがpositionsに含まれいるTxアイコンを表示に設定する。
+//    * txIdがpositionsに含まれていないTxアイコンを非表示に設定する。
+//    */
+//   setVisible(positions) {
+//     if (!positions || positions.length < 1) {
+//       this.icons.forEach((i) => i.visible = false)
+//       return
+//     }
+//     const visibleIcons = this.icons.filter((i) => positions.some((p) => p.btx_id === i.txId))
+//     const invisibleIcons = this.icons.filter((i) => !positions.some((p) => p.btx_id === i.txId))
+//     visibleIcons.forEach((i) => i.visible = true)
+//     invisibleIcons.forEach((i) => i.visible = false)
+//   }
+
+//   clear() {
+//     this.icons = []
+//   }
+
+//   get isChangeArea() {
+//     return this._changeArea
+//   }
+
+//   set changeArea(isChange) {
+//     this._changeArea = isChange
+//   }
+
+//   get list() {
+//     return this.icons
+//   }
+// }
+
 export default {
   components: {
     'sensor': sensor,
@@ -119,7 +170,9 @@ export default {
       firstTime: true,
       message: '',
       prohibitData : null,
-      icons : [],
+      // icons : new IconManager(),
+      icons: {},
+      isChangeArea: false,
       prohibitInterval:null,
       isShowRight: false
     }
@@ -168,6 +221,9 @@ export default {
         return
       }
       this.startAutoReload()
+    },
+    selectedArea: function(newVal, oldVal) {
+      this.isChangeArea = true
     },
   },
   async mounted() {
@@ -286,7 +342,7 @@ export default {
       return tx && tx.pot
     },
     twinkle() {
-      this.icons.forEach((icon)=>{
+      Object.values(this.icons).forEach((icon)=>{
         icon.prohibit? icon.visible=!icon.visible : icon.visible = true
         this.stage.update()
       })
@@ -299,6 +355,7 @@ export default {
       }
       clearInterval(this.prohibitInterval)
       this.showMapImageDef(async () => {
+        const start = new Date().getTime()
         if(!cPayload.disabledProgress){
           this.showProgress()
         }
@@ -332,16 +389,14 @@ export default {
         if(!cPayload.disabledProgress){
           this.hideProgress()
         }
+        this.isChangeArea = false
+        console.log(`@@@@@ ${new Date().getTime() - start}`)
       }, disableErrorPopup)
     },
     showTxAll() {
-      this.icons = []
       if (!this.txCont) {
         return
       }
-      this.txCont.removeAllChildren()
-      this.stage.update()
-      // for debug
       this.disableExbsCheck()
       this.detectedCount = 0 // 検知カウントリセット
       let position = []
@@ -353,10 +408,9 @@ export default {
         const ratio = DISP.TX_R_ABSOLUTE ? 1/this.canvasScale : 1
         position = PositionHelper.adjustPosition(this.getPositions(), ratio, this.positionedExb, this.selectedArea)
       }
-      position.forEach((pos) => {
-        this.showTx(pos)
-      })
+      position.forEach((pos) => this.showTx(pos))
       this.reShowTx(position)
+      this.icons.changeArea = false
     },
     showTx(pos) {
       const tx = this.txs.find((tx) => tx.btxId == pos.btx_id)
@@ -397,7 +451,20 @@ export default {
         pos.transparent = true
       }
 
-      const txBtn = this.createTxBtn(pos, display.shape, color, bgColor)
+      // 既に該当btx_idのTXアイコンが作成済みか?
+      // let txBtn = this.icons.getTxIcon(pos.btx_id)
+      let txBtn = this.icons[pos.btx_id]
+      const isNew = !txBtn
+      if (isNew) {
+        // 作成されていない場合、新規作成してからiconsに登録
+        txBtn = this.createTxBtn(pos, display.shape, color, bgColor)
+        this.icons[pos.btx_id] = txBtn
+      } else {
+        // 作成済みの場合、座標値のみセットする
+        txBtn.x = pos.x
+        txBtn.y = pos.y
+      }
+
       if (this.isFixTx(tx)) {
         Util.debug('fixed location', tx)
         txBtn.x = tx.location.x
@@ -408,9 +475,14 @@ export default {
         this.showingDetailTime = new Date().getTime()
         this.showDetail(txBtn.txId, txBtn.x, txBtn.y)
       }
-      this.txCont.addChild(txBtn)
+
+      // TXアイコンを新規作成した場合、またはエリア切替え直後はコンテナにTXアイコンを追加
+      if (isNew || this.isChangeArea) {
+        console.log('@@@@@@@@@@@@@@@@ addChild')
+        this.txCont.addChild(txBtn)
+      }
+
       txBtn.prohibit = this.prohibitData? this.prohibitData.some((data) => data.minor == pos.minor):false
-      this.icons.push(txBtn)
       this.stage.update()
       this.detectedCount++  // 検知数カウント増加
     },
