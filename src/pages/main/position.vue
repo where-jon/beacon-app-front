@@ -122,7 +122,6 @@ export default {
       icons: {},
       txsMap: {},
       exbsMap: {},
-      isChangeArea: false,
       prohibitInterval:null,
       isShowRight: false
     }
@@ -171,9 +170,6 @@ export default {
         return
       }
       this.startAutoReload()
-    },
-    selectedArea: function(newVal, oldVal) {
-      this.isChangeArea = true
     },
   },
   async mounted() {
@@ -340,7 +336,6 @@ export default {
         if(!cPayload.disabledProgress){
           this.hideProgress()
         }
-        this.isChangeArea = false
       }, disableErrorPopup)
     },
     showTxAll() {
