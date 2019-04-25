@@ -1,8 +1,7 @@
 <template>
   <b-navbar :class="topNavBarClasses" toggleable="md" type="dark">
-    
-    <b-modal size="lg" id="helpModal" :title="$t('label.help')" ok-only>
-      <help :from-page="fromPageUrl"/>
+    <b-modal id="helpModal" size="lg" :title="$t('label.help')" ok-only>
+      <help :from-page="fromPageUrl" />
     </b-modal>
     <!-- Responsive menu -->
     <b-navbar-toggle v-show="!isLoginPage && getShowNav()" target="nav_collapse" />  
@@ -184,9 +183,11 @@ export default {
       this.logoSrc = success? result: '/toplogo.png'
     })
     this.$root.$on('bv::modal::shown', (bvModalEvt, modalId) => {
-      setTimeout(() => {
-        document.getElementById('linkTest').click()
-      },100)
+      if(bvModalEvt.target.id == 'helpModal') {
+        setTimeout(() => {
+          document.getElementById('linkTest').click()
+        },200)
+      }
     })
   },
   async mounted() {
