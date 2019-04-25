@@ -54,7 +54,7 @@
       <b-col v-if="showMeditag">
         <canvas id="map" ref="map" />
       </b-col>
-      <b-col v-if="showMeditag && isShowRight" class="rightPane">
+      <b-col v-if="showMeditag && isShowRight && hasMeditagSensors()" class="rightPane">
         <sensor :sensors="meditagSensors" :is-popup="false" class="rightPaneChild" />
       </b-col>
     </b-row>
@@ -215,6 +215,9 @@ export default {
     },
     getGroupLegendElements () {
       return this.groups.map((val) => ({id: val.groupId, name: val.groupName, ...val, }))
+    },
+    hasMeditagSensors () {
+      return Util.hasValue(this.meditagSensors)
     },
     async fetchPositionData(payload) {
       await this.fetchAreaExbs(true)
