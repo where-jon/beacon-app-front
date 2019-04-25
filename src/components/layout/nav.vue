@@ -183,9 +183,11 @@ export default {
       this.logoSrc = success? result: '/toplogo.png'
     })
     this.$root.$on('bv::modal::shown', (bvModalEvt, modalId) => {
-      setTimeout(() => {
-        document.getElementById('linkTest').click()
-      },100)
+      if(modalId == 'helpModal') {
+        setTimeout(() => {
+          document.getElementById('linkTest').click()
+        },100)
+      }
     })
   },
   async mounted() {
