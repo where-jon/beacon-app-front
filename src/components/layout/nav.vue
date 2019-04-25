@@ -183,10 +183,10 @@ export default {
       this.logoSrc = success? result: '/toplogo.png'
     })
     this.$root.$on('bv::modal::shown', (bvModalEvt, modalId) => {
-      if(modalId == 'helpModal') {
+      if(bvModalEvt.target.id == 'helpModal') {
         setTimeout(() => {
           document.getElementById('linkTest').click()
-        },100)
+        },200)
       }
     })
   },
