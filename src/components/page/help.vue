@@ -61,7 +61,7 @@
           {{ $i18n.tnl('helpDescription.bulkSizeSameFailed') }}
         </p>
         <p class="helpTitle">
-          {{ $i18n.tnl('message.bulkNotNullFailed', {col: linage}) }}
+          {{ $i18n.tnl('message.bulkNotNullFailed', {col: keyName}) }}
         </p>
         <p class="helpDetail">
           {{ $i18n.tnl('helpDescription.bulkNotNullFailed') }}
