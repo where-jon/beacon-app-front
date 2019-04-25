@@ -23,12 +23,12 @@
             <b-form-select v-model="form.groupId" :options="groupOptions" class="mr-2 inputSelect" />
           </b-form-row>
         </b-form-group>
-        <b-form-group>
+        <!-- <b-form-group>
           <b-form-row class="mb-3 mr-5">
             <label v-t="'label.zone'" class="mr-2" />
             <b-form-select v-model="vModelZone" class="mr-2 inputSelect" :options="zoneOptions" @change="zoneChange" />
           </b-form-row>
-        </b-form-group>
+        </b-form-group> -->
       </b-form>
       <b-form inline @submit.prevent>
         <b-form-group>
