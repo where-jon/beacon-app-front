@@ -67,7 +67,7 @@ export default {
         APP.POT_WITH_CATEGORY? 'categoryName': null,
         APP.POT_WITH_POST? 'extValue.post': null,
         APP.POT_WITH_TEL? 'extValue.tel': null,
-        'description',
+        APP.POT_WITH_DESCRIPTION? 'description': null,
         'userId',
         'loginId',
         'roleName',
