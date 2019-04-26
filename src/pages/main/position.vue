@@ -356,7 +356,6 @@ export default {
       }
       position.forEach((pos) => this.showTx(pos))
       this.reShowTx(position)
-      this.icons.changeArea = false
     },
     showTx(pos) {
       const tx = this.txsMap[pos.btx_id]
