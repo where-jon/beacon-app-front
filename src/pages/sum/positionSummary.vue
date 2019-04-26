@@ -71,6 +71,8 @@ export default {
     },
   },
   async created() {
+    await StateHelper.load('txs')
+    await StateHelper.load('exbs')
     this.form.date = moment().add(-1, 'days').format('YYYYMMDD')
   },
   async mounted() {
@@ -88,9 +90,6 @@ export default {
     },
     async download(){
       const param = _.cloneDeep(this.form)
-      await StateHelper.load('zones')
-      await StateHelper.load('pots')
-      await StateHelper.load('group')
       
       if (!param.date || param.date == '') {
         this.message = this.$i18n.tnl('message.pleaseEnterSearchCriteria')
@@ -99,7 +98,7 @@ export default {
       }
 
       param.date = moment(param.date).format('YYYYMMDD')
-      const url = '/core/positionSummary/' + param.date + '/' + APP.POSITION_SUMMARY_INTERVAL
+      const url = '/core/positionHistory/summary/' + param.date + '/' + APP.POSITION_SUMMARY_INTERVAL
       const posData = await HttpHelper.getAppService(url)
       if (_.isEmpty(posData)) {
         this.message = this.$i18n.t('message.listEmpty')
@@ -107,23 +106,20 @@ export default {
         return
       }
 
-      const txtemp = this.txs.map(tx => tx.txId)
-      const txList = Array.from(new Set(txtemp)).sort()
-
-      const header = ',' + txList.join(',')
+      const txList = this.txs.map(tx => tx.txId).sort()
+      const header = 'Time,' + txList.join(',')
       const searchDate = moment(param.date).format('YYYY-MM-DD')
 
-      let csvList = new Array()
+      let csvList = []
       for(let h = APP.POSITION_SUMMARY_START; h <= APP.POSITION_SUMMARY_END; h++){
         for(let m = 0; m < 60; m += APP.POSITION_SUMMARY_INTERVAL){
-          let csv = new Array()
-          csv.push(h + ':' + m + (m < 10 ? '0' : '') )
+          let csv = []
+          csv.push(h + ':' + Util.zeroPad(m, 2) )
           txList.forEach(tx => {
-            const timestamp = searchDate + ' ' + (h >= 10 ? h :  h + '0') + ':' + (m >= 10 ? m : m + '0') + ':00'
-            let pos = _.find(posData, (data) => data.tx_id == tx && data.timestamp == timestamp)
-            if(pos){
-              csv.push(String(pos.exb_id))
-            }
+            const timestamp = '' + (h >= 10 ? h :  h + '0') + (m >= 10 ? m : m + '0')
+            const pos = _.find(posData, (data) => data.tx_id == tx && data.timestamp == timestamp)
+            const exb = _.find(this.exbs, exb => pos && pos.exb_id == exb.exbId)
+            csv.push(exb ? exb.locationName : '')
           })
           csvList.push(csv.join(','))
           if(h == APP.POSITION_SUMMARY_END){
@@ -134,7 +130,7 @@ export default {
       const csv = header + '\n' + csvList.join('\n')
 
       HtmlUtil.fileDL(
-        searchDate + '.csv',
+        'PositionSummary_' + searchDate + '.csv',
         csv,
         getCharSet(this.$store.state.loginId)
       )
