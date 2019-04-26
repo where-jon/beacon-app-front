@@ -176,6 +176,8 @@ export default {
     await StateHelper.load('category')
     await StateHelper.load('group')
     await StateHelper.load('prohibit')
+    await StateHelper.load('tx')
+    await StateHelper.load('exb')
     //document.addEventListener('touchstart', this.touchEnd)
     this.txs.forEach((t) => this.txsMap[t.btxId] = t)
     this.exbs.forEach((e) => this.exbsMap[e.posId] = e)
