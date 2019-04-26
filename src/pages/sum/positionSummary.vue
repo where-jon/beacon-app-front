@@ -40,7 +40,7 @@ import moment from 'moment'
 import validatemixin from '../../components/mixin/validatemixin.vue'
 import commonmixinVue from '../../components/mixin/commonmixin.vue'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
-//import { APP } from '../../sub/constant/config'
+import { APP } from '../../sub/constant/config'
 
 export default {
   components: {
@@ -63,18 +63,14 @@ export default {
       return 'outline-' + getTheme()
     },
     ...mapState('app_service', [
-      'groups',
-      'pots',
-      'categories',
+      'txs',
+      'exbs',
     ]),
     iosOrAndroid() {
       return Util.isAndroidOrIOS()
     },
   },
   async created() {
-    await StateHelper.load('group')
-    await StateHelper.load('pots')
-    await StateHelper.load('categories')
     this.form.date = moment().add(-1, 'days').format('YYYYMMDD')
   },
   async mounted() {
@@ -103,7 +99,7 @@ export default {
       }
 
       param.date = moment(param.date).format('YYYYMMDD')
-      const url = '/core/positionSummary/' + param.date
+      const url = '/core/positionSummary/' + param.date + '/' + APP.POSITION_SUMMARY_INTERVAL
       const posData = await HttpHelper.getAppService(url)
       if (_.isEmpty(posData)) {
         this.message = this.$i18n.t('message.listEmpty')
@@ -111,27 +107,37 @@ export default {
         return
       }
 
+      const txtemp = this.txs.map(tx => tx.txId)
+      const txList = Array.from(new Set(txtemp)).sort()
+
+      const header = ',' + txList.join(',')
       const searchDate = moment(param.date).format('YYYY-MM-DD')
+
+      let csvList = new Array()
+      for(let h = APP.POSITION_SUMMARY_START; h <= APP.POSITION_SUMMARY_END; h++){
+        for(let m = 0; m < 60; m += APP.POSITION_SUMMARY_INTERVAL){
+          let csv = new Array()
+          csv.push(h + ':' + m + (m < 10 ? '0' : '') )
+          txList.forEach(tx => {
+            const timestamp = searchDate + ' ' + (h >= 10 ? h :  h + '0') + ':' + (m >= 10 ? m : m + '0') + ':00'
+            let pos = _.find(posData, (data) => data.tx_id == tx && data.timestamp == timestamp)
+            if(pos){
+              csv.push(String(pos.exb_id))
+            }
+          })
+          csvList.push(csv.join(','))
+          if(h == APP.POSITION_SUMMARY_END){
+            break
+          }
+        }
+      }
+      const csv = header + '\n' + csvList.join('\n')
+
       HtmlUtil.fileDL(
         searchDate + '.csv',
-        Util.converToCsv(this.viewList, null, this.getCsvHeaderNames()),
+        csv,
         getCharSet(this.$store.state.loginId)
       )
-    },
-    getCsvHeaderNames() {
-      return [
-        'date',
-        'name',
-        'groupName',
-        'stayTime', 
-        this.$i18n.tnl('label.stayRatioAbsent1Time'), 
-        this.$i18n.tnl('label.stayRatioAbsent2Time'),
-        'lostTime',
-        'stayRatio',
-        this.$i18n.tnl('label.stayRatioAbsent1Ratio'),
-        this.$i18n.tnl('label.stayRatioAbsent2Ratio'),
-        'lostRatio' + '\n'
-      ]
     },
     pickerChanged() {
       const param = _.cloneDeep(this.form)
