@@ -185,7 +185,8 @@ export const APP = { // 機能面に関する設定
 
   POSITION_SUMMARY_START: 10, // 位置情報csvダウンロード開始時刻（時）
   POSITION_SUMMARY_END: 19,    // 位置情報csvダウンロード終了時刻（時）
-  POSITION_SUMMARY_INTERVAL: 10 // 位置情報csvダウンロード間隔（分）
+  POSITION_SUMMARY_INTERVAL: 10, // 位置情報csvダウンロード間隔（分）
+  POSITION_SUMMARY_RECEIVE_COUNT: 2 // 位置情報における受信回数の閾値
 }
 
 

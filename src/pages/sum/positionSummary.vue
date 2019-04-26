@@ -98,7 +98,7 @@ export default {
       }
 
       param.date = moment(param.date).format('YYYYMMDD')
-      const url = '/core/positionHistory/summary/' + param.date + '/' + APP.POSITION_SUMMARY_INTERVAL
+      const url = '/core/positionHistory/summary/' + param.date + '/' + APP.POSITION_SUMMARY_INTERVAL + '/' + APP.POSITION_SUMMARY_RECEIVE_COUNT
       const posData = await HttpHelper.getAppService(url)
       if (_.isEmpty(posData)) {
         this.message = this.$i18n.t('message.listEmpty')
