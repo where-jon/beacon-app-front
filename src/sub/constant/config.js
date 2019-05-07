@@ -176,7 +176,7 @@ export const APP = { // 機能面に関する設定
   MAX_IMAGE_SIZE: 20 * 1024 * 1024, // アップロード可能な最大イメージサイズ(Byte)
   AREA_THUMBNAIL_MAX: 200, // サムネイルリサイズ時の最大幅・高さ(エリア)
   POT_THUMBNAIL_MAX: 200, // サムネイルリサイズ時の最大幅・高さ(pot)
-  POWER_LEVEL_GOOD: 50,  // 電池レベルで良好とみなす下限値
+  POWER_LEVEL_GOOD: 80,  // 電池レベルで良好とみなす下限値
   POWER_LEVEL_WARN: 30,  // 電池レベルで減少とみなす下限値
 
   // 禁止区域関連設定
