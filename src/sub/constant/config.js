@@ -183,6 +183,11 @@ export const APP = { // 機能面に関する設定
   // 禁止区域関連設定
   PROHIBIT_ALERT : true, // 禁止区域アラート設定
   PROHIBIT_GROUPS: null, // 禁止区域非許可GROUPID[1,2,3]の形
+
+  POSITION_SUMMARY_START: 10, // 位置情報csvダウンロード開始時刻（時）
+  POSITION_SUMMARY_END: 19,    // 位置情報csvダウンロード終了時刻（時）
+  POSITION_SUMMARY_INTERVAL: 10, // 位置情報csvダウンロード間隔（分）
+  POSITION_SUMMARY_RECEIVE_COUNT: 2 // 位置情報における受信回数の閾値
 }
 
 

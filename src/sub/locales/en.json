@@ -580,6 +580,9 @@
     "stayRatioAbsent2Time": "absent2Time",
     "stayRatioAbsent1Ratio": "absent1Ratio",
     "stayRatioAbsent2Ratio": "absent2Ratio",
+
+    "positionSummary": "Position Summary",
+
     "dummy": ""
   },
   "message": {
