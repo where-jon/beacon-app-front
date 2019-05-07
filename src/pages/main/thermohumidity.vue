@@ -43,6 +43,7 @@
         </b-container>
       </b-modal>
     </div>
+    <tool-tip id="toolTip" :tool-tip-show="toolTipShow" :tool-tip-label="toolTipLabel" :tool-tip-style="toolTipStyle" />
   </div>
 </template>
 
@@ -60,6 +61,7 @@ import { SENSOR, DISCOMFORT } from '../../sub/constant/Constants'
 import { Shape, Container, Bitmap, Text } from '@createjs/easeljs/dist/easeljs.module'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
+import ToolTip from '../../components/parts/toolTip.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import cold from '../../assets/icon/cold.png'
 import hot from '../../assets/icon/hot.png'
@@ -69,6 +71,7 @@ export default {
   components: {
     breadcrumb,
     alert,
+    ToolTip,
   },
   mixins: [showmapmixin],
   data() {
@@ -95,6 +98,17 @@ export default {
       iconAlphaMin: 0.1,
       fixHeight: DISP.THERMOH_ALERT_FIX_HEIGHT,
       useHeatMap: APP.USE_THERMOH_HEATMAP,
+      toolTipShow: false,
+      toolTipLabel: '',
+      toolTipStyle: {
+        'left': null,
+        'top': null,
+        'border-color': DISP.THERMOH_TOOLTIP_BORDERCOLOR,
+        'border-radius': '' + DISP.THERMOH_TOOLTIP_ROUNDRECT + 'px',
+        'font': DISP.THERMOH_TOOLTIP_FONT,
+        'background-color': DISP.THERMOH_TOOLTIP_BGCOLOR,
+        'color': DISP.THERMOH_TOOLTIP_COLOR,
+      },
     }
   },
   computed: {
@@ -135,7 +149,7 @@ export default {
     },
     iconMouseOver(event){
       if(APP.USE_THERMOH_TOOLTIP){
-        this.createTooltip(event.target.parent)
+        this.createTooltip(event, event.target.parent)
       }
     },
     iconMouseOut(){
@@ -277,6 +291,7 @@ export default {
         this.isLoading = false
         this.addTick()
         this.addWarnMessage()
+        this.stage.enableMouseOver()
       })
       this.createHeatmap(() => {
         this.isLoading = false
@@ -301,8 +316,6 @@ export default {
       const btnicon = new Shape()
       btnicon.graphics.beginFill(iconInfo.color).drawCircle(0, 0, DISP.THERMOH_R_SIZE / this.canvasScale, DISP.THERMOH_R_SIZE / this.canvasScale)
       btnicon.alpha = DISP.THERMOH_ALPHA
-      btnicon.addEventListener('mouseover', this.iconMouseOver)
-      btnicon.addEventListener('mouseout', this.iconMouseOut)
       return btnicon
     },
     createButtonLabel(device){
@@ -313,8 +326,6 @@ export default {
       label.textAlign = 'center'
       label.textBaseline = 'alphabetic'
       label.y = -2
-      label.addEventListener('mouseover', this.iconMouseOver)
-      label.addEventListener('mouseout', this.iconMouseOut)
       return label
     },
     showExb(exb) {
@@ -339,7 +350,6 @@ export default {
       exbBtn.x = exb.x
       exbBtn.y = exb.y
       exbBtn.cursor = 'pointer'
-      stage.enableMouseOver()
 
       exbBtn.on('click', async (evt) =>{
         const pMock = DEV.USE_MOCK_EXC? mock['basic_sensorHistory_1_1_today_hour']: null
@@ -355,6 +365,8 @@ export default {
         })
         this.showChart(exb, sensorData)
       })
+      exbBtn.on('mouseover', this.iconMouseOver)
+      exbBtn.on('mouseout', this.iconMouseOut)
 
       this.exbIcons.push({button: exbBtn, device: exb, config: iconInfo, sign: -1})
       this.exbCon.addChild(exbBtn)
@@ -382,7 +394,6 @@ export default {
       txBtn.x = tx.x
       txBtn.y = tx.y
       txBtn.cursor = 'pointer'
-      stage.enableMouseOver()
 
       txBtn.on('click', async (evt) =>{
         const pMock = DEV.USE_MOCK_EXC? mock['basic_sensorHistory_1_1_today_hour']: null
@@ -399,6 +410,8 @@ export default {
         })
         this.showChart(tx, sensorData)
       })
+      txBtn.on('mouseover', this.iconMouseOver)
+      txBtn.on('mouseout', this.iconMouseOut)
 
       this.txIcons.push({button: txBtn, device: tx, config: iconInfo, sign: -1})
       this.txCon.addChild(txBtn)
@@ -406,72 +419,37 @@ export default {
       stage.update()
     },
     removeTooltip() {
-      if (this.tooltipCon) {
-        this.tooltipCon.removeAllChildren()
-      }
+      this.toolTipShow = false
+      this.toolTipStyle.left = null
+      this.toolTipStyle.top = null
     },
-    createTooltipInfo(container){
+    createTooltipInfo(nativeEvent, container){
       const device = container.device
-      const scale = this.canvasScale == 0? 1: this.canvasScale
-      const ret = {
+      const pageElement = document.getElementById('bd-page')
+      return {
         fontSize: Util.getFont2Size(DISP.THERMOH_TOOLTIP_FONT),
         sensorName: DISP.THERMOH_TOOLTIP_ITEMS.TXNAME? device.txName? device.txName: device.locationName: '',
         temperature: DISP.THERMOH_TOOLTIP_ITEMS.TEMPERATURE? Util.formatTemperature(device.temperature) + this.$i18n.tnl('label.temperatureUnit'): '',
         humidity: DISP.THERMOH_TOOLTIP_ITEMS.HUMIDITY? Util.formatHumidity(device.humidity) + this.$i18n.tnl('label.humidityUnit'): '',
         description: DISP.THERMOH_TOOLTIP_ITEMS.DESCRIPTION? Util.cutOnLong(device.description, 10): '',
         date: DISP.THERMOH_TOOLTIP_ITEMS.DATE? Util.formatDate(device.timestamp || device.updatetime): '',
+        baseX: window.pageXOffset + nativeEvent.clientX - Util.getValue(pageElement, 'offsetLeft', 0),
+        baseY: window.pageYOffset + nativeEvent.clientY - Util.getValue(pageElement, 'offsetTop', 0),
+        isDispRight: container.x * 2 <= this.stage.canvas.width,
       }
-      const count = [ret.sensorName, ret.temperature, ret.humidity, ret.description, ret.date].reduce((a, b) => b? a + 1: a, 0)
-      ret.width = ret.fontSize * Util.getMaxTextLength([Util.cutOnLongByte(ret.sensorName, 10, false), ret.temperature, ret.humidity, Util.cutOnLongByte(ret.description, 10, false), ret.date]) / 1.25
-      if(ret.width <= DISP.THERMOH_TOOLTIP_ROUNDRECT * 2 + 2){
-        ret.width = DISP.THERMOH_TOOLTIP_ROUNDRECT * 2 + 2
-      }
-      ret.width /= scale
-      ret.height = ret.fontSize * count + 4
-      if(ret.height <= DISP.THERMOH_TOOLTIP_ROUNDRECT * 2 + 2){
-        ret.height = DISP.THERMOH_TOOLTIP_ROUNDRECT * 2 + 2
-      }
-      ret.height /= scale
-      const right = container.x + ret.width
-      ret.x = right >= this.stage.canvas.width? container.x - ret.width: container.x + 4
-      const y = container.y - ret.height
-      ret.y = y < 0? container.y + 4: y
-      return ret
     },
-    createTooltip(container) {
-      const stage = this.stage
-      stage.enableMouseOver()
+    createTooltip(event, container) {
+      const tooltipInfo = this.createTooltipInfo(event.nativeEvent, container)
 
-      if (!this.tooltipCon) {
-        this.tooltipCon = new Container()
-        stage.addChild(this.tooltipCon)
-      }
-      this.removeTooltip()
-
-      const tooltipInfo = this.createTooltipInfo(container)
-
-      const tooltip = new Shape()
-      tooltip.graphics.beginFill(DISP.THERMOH_TOOLTIP_BORDERCOLOR)
-      tooltip.graphics.drawRoundRect(tooltipInfo.x - 1, tooltipInfo.y - 1, tooltipInfo.width + 2, tooltipInfo.height + 2, DISP.THERMOH_TOOLTIP_ROUNDRECT, DISP.THERMOH_TOOLTIP_ROUNDISP)
-      tooltip.graphics.beginFill(DISP.THERMOH_TOOLTIP_BGCOLOR)
-      tooltip.graphics.drawRoundRect(tooltipInfo.x, tooltipInfo.y, tooltipInfo.width, tooltipInfo.height, DISP.THERMOH_TOOLTIP_ROUNDRECT, DISP.THERMOH_TOOLTIP_ROUNDISP)
-      this.tooltipCon.addChild(tooltip)
-
-      const label = new Text([
-        tooltipInfo.sensorName,
-        tooltipInfo.temperature,
-        tooltipInfo.humidity,
-        tooltipInfo.description,
-        tooltipInfo.date,
-      ].filter(val => Util.hasValue(val)).join('\n'))
-      label.x = tooltipInfo.x + (DISP.THERMOH_TOOLTIP_ROUNDRECT <= 8? 8: DISP.THERMOH_TOOLTIP_ROUNDRECT) / 2
-      label.y = tooltipInfo.y + (DISP.THERMOH_TOOLTIP_ROUNDRECT <= 8? 8: DISP.THERMOH_TOOLTIP_ROUNDRECT) / 2
-      label.font = this.getThermothFont(DISP.THERMOH_TOOLTIP_FONT)
-      label.color = DISP.THERMOH_TOOLTIP_COLOR
-      label.textBaseline = 'top'
-      this.tooltipCon.addChild(label)
-      stage.setChildIndex(this.tooltipCon, stage.numChildren - 1)
-      stage.update()
+      this.toolTipLabel = [tooltipInfo.sensorName, tooltipInfo.temperature, tooltipInfo.humidity, tooltipInfo.description, tooltipInfo.date]
+      this.toolTipShow = true
+      this.$nextTick(() => {
+        const toolTipElement = document.getElementById('toolTipComponent')
+        const left = tooltipInfo.baseX + (tooltipInfo.isDispRight? 8: -1 * Util.getValue(toolTipElement, 'clientWidth', 0) - 4)
+        const top = tooltipInfo.baseY - Util.getValue(toolTipElement, 'clientHeight', 0) - 4
+        this.toolTipStyle.left = '' + left + 'px'
+        this.toolTipStyle.top = '' + top + 'px'
+      })
     },
     showChart(device, sensorData) {
       SensorHelper.showThermoHumidityChart('dayChart', sensorData.data, this.$i18n)

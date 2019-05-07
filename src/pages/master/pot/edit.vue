@@ -90,7 +90,7 @@
               </b-button>
               <img v-show="form.thumbnail" ref="thumbnail" :src="form.thumbnail" width="100" class="mt-1 ml-3">
             </b-form-group>
-            <b-form-group>
+            <b-form-group v-if="isShown('POT_WITH_DESCRIPTION')">
               <label v-t="'label.description'" />
               <b-form-textarea v-model="form.description" :rows="3" :max-rows="6" :readonly="!isEditable" maxlength="1000" />
             </b-form-group>

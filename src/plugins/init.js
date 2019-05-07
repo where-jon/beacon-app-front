@@ -10,9 +10,12 @@ export default async (context, inject) => {
   console.log('App Init') // If you need common initialize procedure, write here.
   window.localStorage.setItem('defaultConfig', JSON.stringify(_.cloneDeep(config)))
   MenuHelper.setStore(context.store)
+  HttpHelper.setApp(context)
   await ConfigHelper.loadConfigJson()
   try {
-    var setting = await HttpHelper.getAppService('/meta/setting/wsByTenant/' + AuthHelper.getTenantCd('default'), null, true)
+    const login = JSON.parse(window.localStorage.getItem('login'))
+    HttpHelper.setApiKey(login && login.apiKey? login.apiKey: null)
+    let setting = await HttpHelper.getAppService('/meta/setting/wsByTenant/' + AuthHelper.getTenantCd('default'), {}, true)
     if (setting == null) {
       setting = await HttpHelper.getAppServiceNoCrd('/meta/setting/byTenant/' + AuthHelper.getTenantCd('default'))
     }
