@@ -358,6 +358,9 @@
     "stayRatioAbsent2Time": "absent2Time",
     "stayRatioAbsent1Ratio": "absent1Ratio",
     "stayRatioAbsent2Ratio": "absent2Ratio",
+    "stay": "滞在",
+    "lost": "不在",
+    "graph": "滞在率グラフ",
 
     "historyTitle": "履歴",
     "historyDateFrom": "期間",

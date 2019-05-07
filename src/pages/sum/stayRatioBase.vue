@@ -12,23 +12,23 @@
           </b-form-row>
         </b-form-group>
         <b-form-group>
-          <b-form-row v-if="enableCategory" class="mb-3 mr-5">
-            <label v-t="'label.category'" class="mr-2" />
-            <b-form-select v-model="form.categoryId" :options="getCategoryOptions(showCategoryTypes)" class="mr-2 inputSelect" />
-          </b-form-row>
-        </b-form-group>
-        <b-form-group>
           <b-form-row v-if="enableGroup" class="mb-3 mr-5">
             <label v-t="'label.group'" class="mr-2" />
             <b-form-select v-model="form.groupId" :options="groupOptions" class="mr-2 inputSelect" />
           </b-form-row>
         </b-form-group>
-        <!-- <b-form-group>
+        <b-form-group>
+          <b-form-row v-if="enableCategory" class="mb-3 mr-5">
+            <label v-t="'label.category'" class="mr-2" />
+            <b-form-select v-model="vModelCategory" :options="categoryOptionList" class="mr-2 inputSelect" @change="categoryChange" />
+          </b-form-row>
+        </b-form-group>
+        <b-form-group>
           <b-form-row class="mb-3 mr-5">
             <label v-t="'label.zone'" class="mr-2" />
             <b-form-select v-model="vModelZone" class="mr-2 inputSelect" :options="zoneOptions" @change="zoneChange" />
           </b-form-row>
-        </b-form-group> -->
+        </b-form-group>
       </b-form>
       <b-form inline @submit.prevent>
         <b-form-group>
@@ -41,13 +41,7 @@
       </b-form>
       <slot />
       <b-row class="mt-3" />
-      <m-list :params="params" :list="viewList" :alert-force-hide="true" :per-page="perPage"/>
-      <!-- <b-table :items="viewList" :fields="fields" :current-page="currentPage" :per-page="perPage" :sort-by.sync="sortBy" stacked="md" striped hover outlined /> -->
-      <!-- <b-row>
-        <b-col md="6" class="my-1">
-          <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" class="my-0" />
-        </b-col>
-      </b-row> -->
+      <m-list :params="params" :list="viewList" :alert-force-hide="true" :per-page="perPage" />
     </div>
   </div>
 </template>
@@ -94,18 +88,10 @@ export default {
       perPage: 20,
       sortBy: 'name',
       totalRows: 0,
-      fields: ViewHelper.addLabelByKey(this.$i18n, [
-        {key: 'date', sortable: false, label: 'date'},
-        {key: 'name', sortable: true, label: 'potName'},
-        this.enableCategory? {key: 'groupName', sortable: true, label: 'groupName'}: null,
-        this.enableGroup? {key: 'categoryName', sortable: true, label: 'categoryName'}: null,
-        {key: 'stayGraph', sortable: true, label: 'stayGraph'},
-        {key: 'stayTime', sortable: true, label: 'stayTime'},
-        {key: 'lostTime', sortable: true, label: 'lostTime'},
-        {key: 'stayRatio', sortable: true, label: 'stayRatio'},
-      ]).map(val => ({ ...val, originLabel: val.label})),
       searchedGroupName: '',
-      zoneCategorys: [],
+      categoryOptionList: [],
+      zoneOptionList: [],
+      vModelCategory: null,
       vModelZone: null,
       fromToSettingDiff: 0,
       params: {
@@ -114,7 +100,7 @@ export default {
           {key: 'name', sortable: true, label: 'potName'},
           this.enableCategory? {key: 'groupName', sortable: true, label: 'groupName'}: null,
           this.enableGroup? {key: 'categoryName', sortable: true, label: 'categoryName'}: null,
-          {key: 'graph', sortable: false, thStyle: {width:'130px !important'} },
+          {key: 'graph', sortable: false, thStyle: {height: '50px !important', width:'400px !important'} },
           {key: 'stayTime', sortable: true, label: 'stayTime'},
           {key: 'lostTime', sortable: true, label: 'lostTime'},
           {key: 'stayRatio', sortable: true, label: 'stayRatio'},
@@ -134,6 +120,7 @@ export default {
       'groups',
       'pots',
       'categories',
+      'zones',
     ]),
     iosOrAndroid() {
       return Util.isAndroidOrIOS()
@@ -144,8 +131,8 @@ export default {
     enableGroup () {
       return this.isEnabledMenu('group') && APP.POT_WITH_GROUP
     },
-    showCategoryTypes () {
-      return CATEGORY.POT_AVAILABLE
+    zoneOptions() {
+      return this.zoneOptionList
     },
   },
   async created() {
@@ -161,6 +148,16 @@ export default {
       this.$forceUpdate()
     })
     this.updateColumnName()
+    await StateHelper.load('category')
+    if (this.categories.length < 1) {
+      return
+    }
+    this.categoryOptionList = this.categories.filter((c) => c.categoryType === CATEGORY.ZONE)
+      .sort((a, b) => a.categoryId < b.categoryId ? -1 : 1)
+      .map((c) => { return {text: c.categoryName, value: c.categoryId}})
+    this.categoryOptionList.unshift({text: '', value: null})
+    this.vModelCategory = this.categoryOptionList[0].value
+    await StateHelper.load('zone')
   },
   methods: {
     async fetchData(payload) {
@@ -206,7 +203,7 @@ export default {
       }
 
       this.viewList = this.getStayDataList(moment(param.date).format('YYYY-MM-DD'), sumData, APP.SUM_ABSENT_LIMIT, APP.SUM_LOST_LIMIT)
-      
+
       this.totalRows = this.viewList.length
       this.searchedGroupName =  group? group.groupName: ''
       this.hideProgress()
@@ -230,15 +227,22 @@ export default {
         // 各時間の集計
         data.stayList.forEach((stay) => {
           let isStayData = false
+          let time = ''
           if (this.isLostData(stay.byId) || this.isAbsentZoneData(stay.byId)) {
             lostTime += stay.period
+            time = Util.convertToTime(stay.period)
           } else {
             stayTime += stay.period
+            time = Util.convertToTime(stay.period)
             isStayData = true
           }
           graphList.push({
             isStay: isStayData,
-            percent: Math.floor((stay.period / this.fromToSettingDiff) * 100),
+            period: stay.period,
+            time: time,
+            baseTimeFrom: APP.SUM_FROM,
+            baseTimeTo: APP.SUM_TO,
+            percent: Math.floor((stay.period / this.fromToSettingDiff) * 10000) / 100,
           })
         })
         presentRatio = Util.getRatio(stayTime)
@@ -280,8 +284,8 @@ export default {
       )
     },
     updateColumnName(){
-      if(Util.hasValue(this.fields)){
-        this.fields.forEach(field => {
+      if(Util.hasValue(this.params.fields)){
+        this.params.fields.forEach(field => {
           field.label = Util.isResponsiveMode(true)? field.originLabel.replace(/<br>/g, ''): field.originLabel
         })
       }
@@ -321,7 +325,7 @@ export default {
         return
       }
 
-      let csvList = new Array()
+      let csvList = []
       const csvDays = endDate.diff(startDate, 'days')
       const groupBy = param.groupId? '&groupId=' + param.groupId: ''
 
@@ -359,6 +363,10 @@ export default {
 
       this.hideProgress()
     },
+    categoryChange(val) {
+      this.zoneOptionList =this.zones.filter((zone) => zone.categoryId && zone.categoryId === val)
+        .map((zone) => {return {text: zone.zoneName, value: zone.zoneId}})
+    },
     getCsvHeaderNames() {
       return [
         'date',
@@ -385,14 +393,11 @@ export default {
       this.zoneId = val
       this.vModelZone = val
     },
-    zoneOptions() {
-      return StateHelper.getOptionsFromState('zone')
-    },
     setFromToSettingDiff() {
       const fromMinute = Math.floor(APP.SUM_FROM / 100) * 60 + APP.SUM_FROM % 100
       const toMinute = Math.floor(APP.SUM_TO / 100) * 60 + APP.SUM_TO % 100
       this.fromToSettingDiff = (toMinute - fromMinute) * 60
-    }
+    },
   }
 }
 </script>
