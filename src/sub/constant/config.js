@@ -129,6 +129,7 @@ export const APP = { // 機能面に関する設定
   POT_WITH_GROUP: false,      // グループ使用　use group on pot master
   POT_WITH_CATEGORY: true,   // カテゴリ使用　use category on pot master
   POT_WITH_USER: true,        // ユーザ使用
+  POT_WITH_DESCRIPTION: true,  // 備考使用
   POT_MULTI_TX: false,         // 複数Tx使用
 
   POT_TX_MAX: 2,   // 所持Tx最大数
@@ -354,7 +355,7 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
 
   TXDETAIL_SUMBNAIL_UNREGIST_DISABLE: false, // TX詳細サムネイル非表示（未登録の場合）
 
-  POSITION_HISTORY_HEADERS: ['txName', 'major', 'minor', 'deviceNum', 'locationName', 'posId', 'areaName', 'x', 'y'], // 位置表示履歴の表示カラム
+  POSITION_HISTORY_HEADERS: ['txName', 'major', 'minor', 'deviceNum', 'locationName', 'posId', 'areaName'], // 位置表示履歴の表示カラム
 
   GATEWAY: { // ゲートウエイ
     STATE_COLOR: { // 状態別色

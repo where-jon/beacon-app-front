@@ -268,6 +268,7 @@ export default {
           zone: '',
           zoneCategory: '',
           detectState: null,
+          settingCategory: '',
         },
         del: false,
         allShow: false,
@@ -381,6 +382,15 @@ export default {
       let options = DetectStateHelper.getTypes()
       options.unshift({value:null, text:''})
       return options
+    },
+    settingCategoryOptions() {
+      const options = this.$i18n.tnl('config.OPTIONS.SETTING_CATEGORY')
+      if(!options){
+        return [{value: null, text: ''}]
+      }
+      const ret = Object.keys(options).map(key => ({value: options[key], text: options[key]}))
+      ret.unshift({value: null, text: ''})
+      return ret
     },
     loginId() {
       return this.$store.state.loginId
@@ -591,6 +601,16 @@ export default {
         case 'zoneCategory':
           if (extra.zoneCategory && !(extra.zoneCategory === originItem.zoneCategoryId)) {
             return false
+          }
+          break
+        case 'settingCategory':
+          if (extra.settingCategory){
+            if(!originItem.categories || originItem.categories.length == 0){
+              return false
+            }
+            if(!(originItem.categories.includes(extra.settingCategory))) {
+              return false
+            }
           }
           break
         }

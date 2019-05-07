@@ -232,7 +232,7 @@ export default {
       })
 
       const param = _.cloneDeep(this.form)
-      const searchDate = moment(param.date).format('YYYY-MM-DD')
+      const searchDate = moment(param.date).format('YYYYMMDD')
       const groupName = this.searchedGroupName.length > 0? '_' + this.searchedGroupName: ''
 
       HtmlUtil.fileDL(
@@ -314,7 +314,7 @@ export default {
       const group = param.groupId? this.groups.find((val) => val.groupId == param.groupId): null
       const groupName =  group? '_' + group.groupName: ''
       HtmlUtil.fileDL(
-        moment(param.date).format('YYYY-MM') + groupName + '_stayRatio.csv',
+        moment(param.date).format('YYYYMM') + groupName + '_stayRatio.csv',
         Util.converToCsv(csvList, null, this.getCsvHeaderNames()),
         getCharSet(this.$store.state.loginId)
       )
