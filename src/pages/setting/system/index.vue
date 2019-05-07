@@ -117,6 +117,7 @@ export default {
         disableTableButtons: true,
         addFilterFields: ['title'],
         allDispFields: ['title', 'defaultVal'],
+        extraFilter: ['settingCategory'],
         formId: 'updateForm',
         tableDescription: 'settingDescription',
         initTotalRows: this.totalRows,
