@@ -6,14 +6,6 @@
 
       <b-form v-if="show" @submit.prevent="onSubmit">
         <b-form-group>
-          <b-form-row v-if="hasId">
-            <label v-t="'label.zoneId'" class="control-label" />
-          </b-form-row>
-          <b-form-row v-if="hasId">
-            <b-col sm="2">
-              <b-form-input v-model="form.zoneId" type="text" readonly="readonly" />
-            </b-col>
-          </b-form-row>
           <b-form-row>
             <label v-t="'label.zoneName'" class="control-label" />
           </b-form-row>
@@ -89,9 +81,6 @@ export default {
     }
   },
   computed: {
-    hasId (){
-      return Util.hasValue(this.form.zoneId)
-    },
     theme () {
       const theme = getButtonTheme()
       return 'outline-' + theme

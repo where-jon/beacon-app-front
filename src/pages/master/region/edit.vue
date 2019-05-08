@@ -5,10 +5,6 @@
       <alert :message="message" />
 
       <b-form v-if="show" @submit.prevent="onSubmit">
-        <b-form-group v-if="hasId">
-          <label v-t="'label.regionId'" />
-          <b-form-input v-model="form.regionId" type="text" readonly="readonly" />
-        </b-form-group>
         <b-form-group>
           <label v-t="'label.regionName'" />
           <input v-model="form.regionName" :readonly="!isEditable" type="text" maxlength="20" class="form-control" required>
@@ -16,10 +12,6 @@
         <b-form-group>
           <label v-t="'label.meshId'" />
           <input v-model="form.meshId" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control">
-        </b-form-group>
-        <b-form-group>
-          <label v-t="'label.deviceOffset'" />
-          <input v-model="form.deviceOffset" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control" required>
         </b-form-group>
         <b-form-group>
           <label v-t="'label.description'" />
@@ -61,7 +53,7 @@ export default {
       backPath: '/master/region',
       appServicePath: '/core/region',
       form: ViewHelper.extract(this.$store.state.app_service.region,
-        ['regionId', 'regionName', 'meshId', 'deviceOffset', 'description']),
+        ['regionId', 'regionName', 'meshId', 'description']),
       items: ViewHelper.createBreadCrumbItems('master', {text: 'region', href: '/master/region'}, Util.getDetailCaptionKey(this.$store.state.app_service.region.regionId)),
     }
   },
@@ -86,7 +78,6 @@ export default {
         regionId: Util.hasValue(this.form.regionId)? this.form.regionId: -1,
         regionName: this.form.regionName,
         meshId: this.form.meshId,
-        deviceOffset: this.form.deviceOffset? this.form.deviceOffset: 0,
         description: this.form.description,
       }
       return await AppServiceHelper.bulkSave(this.appServicePath, [entity])

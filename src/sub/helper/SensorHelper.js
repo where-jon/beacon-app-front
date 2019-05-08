@@ -416,11 +416,10 @@ export const getMagnetStateKey = (i18n, magnetState) => i18n.tnl(`label.${magnet
 export const getFields1 = (i18n) => {
   return addLabelByKey(i18n, [
     {key: 'sensorDt', sortable: true, label:'dt'},
-    {key: 'txName', sortable: true },
-    APP.SENSOR_WITH_DEVICE_NUM && APP.EXB_WITH_DEVICE_NUM? {key: 'deviceNum', sortable: true }: null,
+    {key: 'potName', sortable: true },
     APP.SENSOR_WITH_DEVICE_ID && APP.EXB_WITH_DEVICE_ID? {key: 'deviceId', sortable: true }: null,
     APP.SENSOR_WITH_DEVICE_IDX && APP.EXB_WITH_DEVICE_IDX? {key: 'deviceIdX', sortable: true }: null,
-    APP.SENSOR_WITH_LOCATIONNAME? {key: 'locationName', label:'locationZoneName', sortable: true,}: null,
+    APP.SENSOR_WITH_LOCATIONNAME? {key: 'locationName', label:'exbName', sortable: true,}: null,
     APP.SENSOR_WITH_POSID? {key: 'posId', label:'posId', sortable: true,}: null,
     {key: 'areaName', label:'area', sortable: true,},
     {key: 'temperature', sortable: true},
@@ -431,10 +430,9 @@ export const getFields1 = (i18n) => {
 export const getFields2 = (i18n) =>{
   return addLabelByKey(i18n, [
     {key: 'sensorDt', sortable: true, label:'dt'},
-    APP.EXB_WITH_DEVICE_NUM? {key: 'deviceNum', sortable: true }: null,
     APP.EXB_WITH_DEVICE_ID? {key: 'deviceId', sortable: true }: null,
     APP.EXB_WITH_DEVICE_IDX? {key: 'deviceIdX', sortable: true }: null,
-    {key: 'locationName', label:'locationZoneName', sortable: true,},
+    {key: 'locationName', label:'exbName', sortable: true,},
     {key: 'posId', label:'posId', sortable: true,},
     {key: 'areaName', label:'area', sortable: true,},
     {key: 'count', label:'numUsers', sortable: true},
@@ -444,7 +442,7 @@ export const getFields2 = (i18n) =>{
 export const getFields5 = (i18n) => {
   return addLabelByKey(i18n, [
     {key: 'sensorDt', sortable: true, label:'dt'},
-    {key: 'txName', sortable: true },
+    {key: 'potName', sortable: true },
     {key: 'major', sortable: true },
     {key: 'minor', sortable: true },
     {key: 'high', label:'h_blood_pressure', sortable: true},
@@ -458,7 +456,7 @@ export const getFields5 = (i18n) => {
 export const getFields6 = (i18n) => {
   return addLabelByKey(i18n, [
     {key: 'sensorDt', sortable: true, label:'dt'},
-    {key: 'txName', sortable: true },
+    {key: 'potName', sortable: true },
     {key: 'major', sortable: true },
     {key: 'minor', sortable: true },
     {key: 'state', sortable: true},
@@ -468,10 +466,9 @@ export const getFields6 = (i18n) => {
 export const getFields8 = (i18n) => {
   return addLabelByKey(i18n, [
     {key: 'sensorDt', sortable: true, label:'dt'},
-    APP.EXB_WITH_DEVICE_NUM? {key: 'deviceNum', sortable: true }: null,
     APP.EXB_WITH_DEVICE_ID? {key: 'deviceId', sortable: true }: null,
     APP.EXB_WITH_DEVICE_IDX? {key: 'deviceIdX', sortable: true }: null,
-    {key: 'locationName', label:'locationZoneName', sortable: true,},
+    {key: 'locationName', label:'exbName', sortable: true,},
     {key: 'posId', label:'posId', sortable: true,},
     {key: 'areaName', label:'area', sortable: true,},
     {key: 'pressVol', label:'pressVol', sortable: true},

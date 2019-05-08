@@ -469,7 +469,7 @@ export default {
     },
     sortCompareCustom(aData, bData, key){
       if(key == 'txIdName'){
-        return StateHelper.sortCompareArray(aData.txSortIds, bData.txSortIds)
+        return StateHelper.sortCompareArray(aData.txIdNames, bData.txIdNames)
       }
       return null
     },
@@ -498,8 +498,9 @@ export default {
         headers = _(this.params.fields).map((val) => val.key).uniqWith(_.isEqual).value()
       }
       headers = headers.filter((val) => !['style', 'thumbnail', 'actions', 'updateAction'].includes(val))
+      headers.unshift('updateKey')
       headers.push('delFlg')
-      const list = this.list.map((val) => ({...val, delFlg: 0}))
+      const list = this.list.map((val) => ({...val, updateKey: val[this.id], delFlg: 0}))
       if(this.$parent.$options.methods.customCsvData){
         list.forEach((val) => {
           this.$parent.$options.methods.customCsvData.call(this.$parent, val)
@@ -544,7 +545,8 @@ export default {
     deleteConfirm(item, index, button) {
       this.setEmptyMessage()
       this.modalInfo.title = this.$i18n.tnl('label.confirm')
-      this.modalInfo.content = this.$i18n.tnl(this.params.delFilter && item.delFlg != 0? 'message.completeDeleteConfirm': 'message.deleteConfirm', this.params.mainColumn? {target: `${this.params.mainColumn.name}:${item[this.params.mainColumn.id]}`}: {target: 'ID:' + item[this.id]})
+      const confirmName = this.params.confirmName? this.params.confirmName: Util.getValue(this.params, 'name', '') + 'Name'
+      this.modalInfo.content = this.$i18n.tnl(this.params.delFilter && item.delFlg != 0? 'message.completeDeleteConfirm': 'message.deleteConfirm', {target: `${this.$i18n.tnl('label.' + confirmName)}:${item[confirmName]}`})
       this.modalInfo.id = item[this.id]
       this.$root.$emit('bv::show::modal', 'modalInfo', button)
     },

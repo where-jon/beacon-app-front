@@ -29,10 +29,9 @@ export default {
         bulkEditPath: '/master/role/bulkedit',
         appServicePath: '/meta/role',
         csvOut: true,
-        custumCsvColumns: ['roleId', 'roleName'],
+        custumCsvColumns: ['roleName'],
         fields: ViewHelper.addLabelByKey(this.$i18n, [ 
           {key: 'roleName', sortable: true },
-          {key: 'roleId', sortable: true },
           {key: 'actions', thStyle: {width:'130px !important'} }
         ]),
         sortBy: 'roleName',
