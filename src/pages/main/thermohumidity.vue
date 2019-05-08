@@ -182,8 +182,8 @@ export default {
     createWarnMessages(){
       this.setWarnDevices()
       const ret = []
-      const exbIdName = StateHelper.getDeviceIdName({exbId: true}, {ignorePrimaryKey: true})
-      const txIdName = StateHelper.getDeviceIdName({txId: true}, {ignorePrimaryKey: true, forceSensorName: true})
+      const exbIdName = StateHelper.getDeviceIdName({exbId: true})
+      const txIdName = StateHelper.getDeviceIdName({txId: true}, {forceSensorName: true})
       const pattern = this.humidityPatternConfig.more.sort((a, b) => {
         return a.base > b.base? -1: a.base < b.base? 1: 0
       }).concat(this.humidityPatternConfig.less.sort((a, b) => {
@@ -428,7 +428,7 @@ export default {
       const pageElement = document.getElementById('bd-page')
       return {
         fontSize: Util.getFont2Size(DISP.THERMOH_TOOLTIP_FONT),
-        sensorName: DISP.THERMOH_TOOLTIP_ITEMS.TXNAME? device.txName? device.txName: device.locationName: '',
+        sensorName: DISP.THERMOH_TOOLTIP_ITEMS.POTNAME? device.potName? device.potName: device.locationName: '',
         temperature: DISP.THERMOH_TOOLTIP_ITEMS.TEMPERATURE? Util.formatTemperature(device.temperature) + this.$i18n.tnl('label.temperatureUnit'): '',
         humidity: DISP.THERMOH_TOOLTIP_ITEMS.HUMIDITY? Util.formatHumidity(device.humidity) + this.$i18n.tnl('label.humidityUnit'): '',
         description: DISP.THERMOH_TOOLTIP_ITEMS.DESCRIPTION? Util.cutOnLong(device.description, 10): '',
@@ -457,7 +457,7 @@ export default {
       this.chartTitle = this.$i18n.tnl('message.monthDayTemperature', {
         month: sensorData.month,
         day: sensorData.day,
-        name: device.txName? device.txName: device.locationName? device.locationName: '',
+        name: device.potName? device.potName: device.locationName? device.locationName: '',
         description: device.description? ` : ${Util.cutOnLong(device.description, 10)}`: ''
       })
     },

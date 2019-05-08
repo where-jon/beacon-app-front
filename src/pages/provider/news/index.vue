@@ -31,7 +31,6 @@ export default {
           {key: 'newsDt', sortable: true },
           {key: 'content', label: 'newsContent', sortable: true },
           {key: 'dispState', label: 'dispFlg', sortable: true },
-          {key: 'newsId', sortable: true },
           {key: 'actions', thStyle: {width:'130px !important'} }
         ]),
         sortBy: 'newsDt',

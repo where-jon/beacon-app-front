@@ -138,7 +138,7 @@ export default {
       })
         .map((val) => { // TODO: minor以外の表示対応
           return {
-            label: '' + this.getLabel(val) + '(' + val.txName + ')', 
+            label: '' + this.getLabel(val) + (val.potName? '(' + val.potName + ')': ''),
             value: val.txId
           }
         }).value()
@@ -191,7 +191,7 @@ export default {
       label.textAlign = 'center'
       label.textBaseline = 'middle'
       txBtn.addChild(label)
-      txBtn.txName = tx.txName
+      txBtn.potName = tx.potName
       txBtn.btxId = tx.btxId
       txBtn.minor = tx.minor
       txBtn.txId = tx.txId
@@ -314,7 +314,7 @@ export default {
         tx.x = tx.y = null
       }
       this.positionedTx = this.positionedTx.filter((tx) => (this.deleteTarget.minor && tx.minor != this.deleteTarget.minor) || tx.btxId != this.deleteTarget.btxId)
-      this.txOptions.push({label: `${this.getLabel(this.deleteTarget)}(${this.deleteTarget.txName})`, value: this.deleteTarget.txId})
+      this.txOptions.push({label: `${this.getLabel(this.deleteTarget)}${this.deleteTarget.potName? '(' + this.deleteTarget.potName + ')': ''}`, value: this.deleteTarget.txId})
       this.txCon.removeChild(this.deleteTarget)
       this.stage.update()
     },

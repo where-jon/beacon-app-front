@@ -25,23 +25,19 @@ export default {
       params: {
         name: 'tx',
         id: 'txId',
+        confirmName: APP.TX_BTX_MINOR == 'minor'? 'minor': 'btxId',
         indexPath: '/master/tx',
         editPath: '/master/tx/edit',
         bulkEditPath: '/master/tx/bulkedit',
         appServicePath: '/core/tx',
-        mainColumn: !APP.TX_WITH_TXID && APP.TX_BTX_MINOR == 'minor'? {name: this.$i18n.tnl('label.minor'), id: 'minor'}:
-          !APP.TX_WITH_TXID && APP.TX_BTX_MINOR != 'minor'? {name: this.$i18n.tnl('label.btxId'), id: 'btxId'}:
-            {name: this.$i18n.tnl('label.txId'), id: 'txId'},
         csvOut: true,
         custumCsvColumns: this.getCustumCsvColumns(),
-        fields: ViewHelper.addLabelByKey(this.$i18n, [ 
-          !APP.TX_WITH_TXID && APP.TX_BTX_MINOR == 'minor'? {key: 'minor', sortable: true, tdClass: 'action-rowdata' }: null,
-          APP.TX_WITH_TXID? {key: 'txId', sortable: true, tdClass: 'action-rowdata' }: null,
+        fields: ViewHelper.addLabelByKey(this.$i18n, [
+          APP.TX_BTX_MINOR == 'minor'? {key: 'minor', sortable: true, tdClass: 'action-rowdata' }: null,
           APP.TX_BTX_MINOR != 'minor'? {key: 'btxId', sortable: true, tdClass: 'action-rowdata' }: null,
-          {key: 'txName', sortable: true, tdClass: 'action-rowdata' },
           APP.TX_WITH_DISPLAY_NAME? {key: 'displayName', sortable: true, tdClass: 'action-rowdata' }: null,
           APP.TX_WITH_MAJOR? {key: 'major', sortable: true, tdClass: 'action-rowdata' }: null,
-          APP.TX_WITH_TXID || APP.TX_BTX_MINOR != 'btxId'? {key: 'minor', sortable: true, tdClass: 'action-rowdata' }: null,
+          APP.TX_BTX_MINOR == 'both'? {key: 'minor', sortable: true, tdClass: 'action-rowdata' }: null,
           APP.TX_WITH_CATEGORY? {key: 'categoryName', label: 'category', sortable: true, tdClass: 'action-rowdata' }: null,
           APP.TX_WITH_GROUP? {key: 'groupName', label: 'group', sortable: true, tdClass: 'action-rowdata' }: null,
           APP.TX_WITH_DESCRIPTION? {key: 'description', sortable: true, thStyle: {width: '200px !important'}, tdClass: 'action-rowdata' }: null,
@@ -49,7 +45,7 @@ export default {
           APP.TX_WITH_DISPFLG? {key: 'disp', label:'disp', sortable: false,}: null,
           {key: 'actions', thStyle: {width: '130px !important'}, tdClass: 'action-rowdata' }
         ]),
-        sortBy: APP.TX_WITH_TXID? 'txId': APP.TX_BTX_MINOR != 'minor'? 'btxId': 'minor',
+        sortBy: APP.TX_BTX_MINOR != 'minor'? 'btxId': 'minor',
         initTotalRows: this.$store.state.app_service.txs.length
       },
       items: ViewHelper.createBreadCrumbItems('master', 'tx'),
@@ -67,13 +63,11 @@ export default {
   methods: {
     getCustumCsvColumns(){
       return [
-        !APP.TX_WITH_TXID && APP.TX_BTX_MINOR == 'minor'? 'minor': null,
-        APP.TX_WITH_TXID? 'txId': null,
+        APP.TX_BTX_MINOR == 'minor'? 'minor': null,
         APP.TX_BTX_MINOR != 'minor'? 'btxId': null,
-        'txName',
         APP.TX_WITH_DISPLAY_NAME? 'displayName': null,
         APP.TX_WITH_MAJOR? 'major': null,
-        APP.TX_WITH_TXID || APP.TX_BTX_MINOR != 'btxId'? 'minor': null,
+        APP.TX_BTX_MINOR == 'both'? 'minor': null,
         APP.TX_WITH_CATEGORY? 'categoryName': null,
         APP.TX_WITH_GROUP? 'groupName': null,
         APP.TX_WITH_DESCRIPTION? 'description': null,

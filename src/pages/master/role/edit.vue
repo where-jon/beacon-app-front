@@ -5,10 +5,6 @@
       <alert :message="message" />
 
       <b-form v-if="show" @submit.prevent="onSubmit">
-        <b-form-group v-if="hasId">
-          <label v-t="'label.roleId'" />
-          <b-form-input v-model="form.roleId" type="text" readonly="readonly" />
-        </b-form-group>
         <b-form-group>
           <label v-t="'label.roleName'" />
           <input v-model="form.roleName" :readonly="!isEditable" type="text" maxlength="20" class="form-control" required>
@@ -60,9 +56,6 @@ export default {
     }
   },
   computed: {
-    hasId(){
-      return Util.hasValue(this.form.roleId)
-    },
     theme () {
       const theme = getButtonTheme()
       return 'outline-' + theme

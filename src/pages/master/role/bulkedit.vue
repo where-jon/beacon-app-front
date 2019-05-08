@@ -7,9 +7,11 @@
 
 <script>
 import { mapState } from 'vuex'
+import { BULK } from '../../../sub/constant/Constants'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import * as BulkHelper from '../../../sub/helper/BulkHelper'
 
 export default {
   components: {
@@ -32,8 +34,14 @@ export default {
   },
   methods: {
     async save(bulkSaveFunc) {
-      const MAIN_COL = 'roleId'
-      await bulkSaveFunc(MAIN_COL)
+      await bulkSaveFunc(BULK.PRIMARY_KEY, null, null, (entity, headerName, val, dummyKey) => {
+        if (BulkHelper.isPrimaryKeyHeader(headerName)){
+          BulkHelper.setPrimaryKey(entity, this.id, val, dummyKey--)
+          return dummyKey
+        }
+        entity[headerName] = val
+        return dummyKey
+      })
     },
   }
 }

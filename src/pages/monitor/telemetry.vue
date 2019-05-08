@@ -80,7 +80,6 @@ export default {
           { key: 'hour3_count' },
           { key: 'ibeacon_received' },
         ]: [
-          APP.EXB_WITH_DEVICE_NUM? { key: 'deviceNum' }: null,
           APP.EXB_WITH_DEVICE_ID? { key: 'deviceId' }: null,
           APP.EXB_WITH_DEVICE_IDX? { key: 'deviceIdX' }: null,
           { key: 'name', label: 'locationName'},
@@ -110,7 +109,6 @@ export default {
           ibeacon_received: 'ibeacon_received',
         }:
         {
-          deviceNum: APP.EXB_WITH_DEVICE_NUM ? 'deviceNum' : null,
           deviceId: APP.EXB_WITH_DEVICE_ID ? 'deviceId' : null,
           deviceIdX: APP.EXB_WITH_DEVICE_IDX ? 'deviceId(HEX)' : null,
           name: 'finalRevceivePlace',
@@ -175,12 +173,8 @@ export default {
           state: this.getStateLabel('exb', e.timestamp)
         }
 
-        const offset = this.$store.state.currentRegion.deviceOffset
         const deviceId = APP.EXSERVER ? e.deviceid : parseInt(e.deviceid, 16)
 
-        if(APP.EXB_WITH_DEVICE_NUM){
-          ret.deviceNum = deviceId - offset
-        }
         if(APP.EXB_WITH_DEVICE_ID){
           ret.deviceId = deviceId
         }
