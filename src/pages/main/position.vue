@@ -54,7 +54,7 @@
       <b-col v-if="showMeditag">
         <canvas id="map" ref="map" />
       </b-col>
-      <b-col v-if="showMeditag && isShowRight" class="rightPane">
+      <b-col v-if="showMeditag && isShowRight && hasMeditagSensors()" class="rightPane">
         <sensor :sensors="meditagSensors" :is-popup="false" class="rightPaneChild" />
       </b-col>
     </b-row>
@@ -118,7 +118,9 @@ export default {
       firstTime: true,
       message: '',
       prohibitData : null,
-      icons : [],
+      icons: {},
+      txsMap: {},
+      exbsMap: {},
       prohibitInterval:null,
       isShowRight: false
     }
@@ -173,7 +175,11 @@ export default {
     await StateHelper.load('category')
     await StateHelper.load('group')
     await StateHelper.load('prohibit')
+    await StateHelper.load('tx')
+    await StateHelper.load('exb')
     //document.addEventListener('touchstart', this.touchEnd)
+    this.txs.forEach((t) => this.txsMap[t.btxId] = t)
+    this.exbs.forEach((e) => this.exbsMap[e.posId] = e)
     await this.fetchData()
     this.startPositionAutoReload()
     this.startOtherAutoReload()
@@ -214,6 +220,9 @@ export default {
     },
     getGroupLegendElements () {
       return this.groups.map((val) => ({id: val.groupId, name: val.groupName, ...val, }))
+    },
+    hasMeditagSensors () {
+      return Util.hasValue(this.meditagSensors)
     },
     async fetchPositionData(payload) {
       await this.fetchAreaExbs(true)
@@ -285,7 +294,7 @@ export default {
       return tx && tx.pot
     },
     twinkle() {
-      this.icons.forEach((icon)=>{
+      Object.values(this.icons).forEach((icon)=>{
         icon.prohibit? icon.visible=!icon.visible : icon.visible = true
         this.stage.update()
       })
@@ -333,13 +342,10 @@ export default {
       }, disableErrorPopup)
     },
     showTxAll() {
-      this.icons = []
       if (!this.txCont) {
         return
       }
       this.txCont.removeAllChildren()
-      this.stage.update()
-      // for debug
       this.disableExbsCheck()
       this.detectedCount = 0 // 検知カウントリセット
       let position = []
@@ -351,14 +357,12 @@ export default {
         const ratio = DISP.TX_R_ABSOLUTE ? 1/this.canvasScale : 1
         position = PositionHelper.adjustPosition(this.getPositions(), ratio, this.positionedExb, this.selectedArea)
       }
-      position.forEach((pos) => {
-        this.showTx(pos)
-      })
+      position.forEach((pos) => this.showTx(pos))
       this.reShowTx(position)
     },
     showTx(pos) {
-      const tx = this.txs.find((tx) => tx.btxId == pos.btx_id)
-      const exb = this.exbs.find((exb) => exb.posId == pos.pos_id)
+      const tx = this.txsMap[pos.btx_id]
+      const exb = this.exbsMap[pos.pos_id]
       Util.debug('showTx', pos, tx && tx.sensor)
       if (!tx) {
         console.warn('tx not found. btx_id=' + pos.btx_id)
@@ -395,7 +399,18 @@ export default {
         pos.transparent = true
       }
 
-      const txBtn = this.createTxBtn(pos, display.shape, color, bgColor)
+      // 既に該当btx_idのTXアイコンが作成済みか?
+      let txBtn = this.icons[pos.btx_id]
+      if (!txBtn) {
+        // 作成されていない場合、新規作成してからiconsに登録
+        txBtn = this.createTxBtn(pos, display.shape, color, bgColor)
+        this.icons[pos.btx_id] = txBtn
+      } else {
+        // 作成済みの場合、座標値のみセットする
+        txBtn.x = pos.x
+        txBtn.y = pos.y
+      }
+
       if (this.isFixTx(tx)) {
         Util.debug('fixed location', tx)
         txBtn.x = tx.location.x
@@ -408,7 +423,6 @@ export default {
       }
       this.txCont.addChild(txBtn)
       txBtn.prohibit = this.prohibitData? this.prohibitData.some((data) => data.minor == pos.minor):false
-      this.icons.push(txBtn)
       this.stage.update()
       this.detectedCount++  // 検知数カウント増加
     },

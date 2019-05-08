@@ -11,7 +11,7 @@ export const DEV = { // 開発デバッグ関連
 }
 
 export const APP = { // 機能面に関する設定
-  VERSION: 'Version 1.1.0', // バージョン　this application version
+  VERSION: 'Version 1.2.0', // バージョン　this application version
   LOGIN_MODE: LOGIN_MODE.APP_SERVICE, // ログインモード(なし、ローカル、AppService)
   SAAS_DOMAIN: '.saas.',
 
@@ -129,6 +129,7 @@ export const APP = { // 機能面に関する設定
   POT_WITH_GROUP: false,      // グループ使用　use group on pot master
   POT_WITH_CATEGORY: true,   // カテゴリ使用　use category on pot master
   POT_WITH_USER: true,        // ユーザ使用
+  POT_WITH_DESCRIPTION: true,  // 備考使用
   POT_MULTI_TX: false,         // 複数Tx使用
 
   POT_TX_MAX: 2,   // 所持Tx最大数
@@ -182,6 +183,11 @@ export const APP = { // 機能面に関する設定
   // 禁止区域関連設定
   PROHIBIT_ALERT : true, // 禁止区域アラート設定
   PROHIBIT_GROUPS: null, // 禁止区域非許可GROUPID[1,2,3]の形
+
+  POSITION_SUMMARY_START: 10, // 位置情報csvダウンロード開始時刻（時）
+  POSITION_SUMMARY_END: 19,    // 位置情報csvダウンロード終了時刻（時）
+  POSITION_SUMMARY_INTERVAL: 10, // 位置情報csvダウンロード間隔（分）
+  POSITION_SUMMARY_RECEIVE_COUNT: 2 // 位置情報における受信回数の閾値
 }
 
 
@@ -354,7 +360,7 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
 
   TXDETAIL_SUMBNAIL_UNREGIST_DISABLE: false, // TX詳細サムネイル非表示（未登録の場合）
 
-  POSITION_HISTORY_HEADERS: ['txName', 'major', 'minor', 'deviceNum', 'locationName', 'posId', 'areaName', 'x', 'y'], // 位置表示履歴の表示カラム
+  POSITION_HISTORY_HEADERS: ['txName', 'major', 'minor', 'deviceNum', 'locationName', 'posId', 'areaName'], // 位置表示履歴の表示カラム
 
   GATEWAY: { // ゲートウエイ
     STATE_COLOR: { // 状態別色

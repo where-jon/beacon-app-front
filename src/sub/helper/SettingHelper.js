@@ -7,6 +7,18 @@ export const setApp = (pi18n) => {
   i18n = pi18n
 }
 
+export const convertCategory = (str) => {
+  if(!Util.hasValue(str)){
+    return str
+  }
+  const ret = []
+  const optionsList = i18n.tnl('config.OPTIONS.SETTING_CATEGORY')
+  str.split(',').forEach(src => {
+    ret.push(Util.getValue(optionsList, src.trim(), ''))
+  })
+  return ret.map(val => val)
+}
+
 export const convertTitle = (str) => {
   if(!Util.hasValue(str)){
     return str
@@ -49,16 +61,23 @@ export const getDefaultValue = (key) => {
   if(!Util.hasValue(defaultConfig)){
     return null
   }
+  const langDefValue = i18n.tdef('config.DEFAULT.' + key)
+  if(langDefValue != null){
+    return langDefValue
+  }
   return key.split('.').reduce((prev, cur) => prev != null && prev[cur] != null? prev[cur]: null, defaultConfig)
 }
 
 export const getDefaultValType = (key) => {
+  const type = i18n.tdef('config.TYPE.' + key)
+  if(type != null && SETTING.VALUES.includes(type)){
+    return type
+  }
   const defaultValue = getDefaultValue(key)
   if(defaultValue != null && typeof defaultValue != 'object'){
     return typeof defaultValue
   }
-  const type = i18n.tnl('config.TYPE.' + key)
-  return SETTING.VALUES.includes(type)? type: SETTING.STRING
+  return SETTING.STRING
 }
 
 export const createSetting = (setting, option) => {
@@ -82,7 +101,7 @@ export const getI18ConfigInner = (config, parentKey = '', list = []) => {
   Object.keys(config).forEach(configKey => {
     const data = config[configKey]
     const key = parentKey + configKey
-    if(/^(TYPE|OPTIONS)(\..+)*$/g.test(key)){
+    if(/^(TYPE|DEFAULT|OPTIONS)(\..+)*$/g.test(key)){
       return
     }
     if(typeof data == 'object' && !Util.isArray(data)){
@@ -91,7 +110,7 @@ export const getI18ConfigInner = (config, parentKey = '', list = []) => {
     }
     const setting = {key: key, valType: getDefaultValType(key)}
     const params = data.split('::')
-    list.push(createSetting(setting, {keyName: params[0], title: convertTitle(params[1])}))
+    list.push(createSetting(setting, {categories: convertCategory(params[0]), keyName: params[1], title: convertTitle(params[2])}))
   })
   return list
 }
@@ -115,7 +134,7 @@ export const mergeSettings = (settings) => {
     settings = settings.filter(setting => setting.key != i18Config.key)
   })
   settings.forEach(setting => {
-    i18ConfigList.push(createSetting(setting))
+    i18ConfigList.push(createSetting(setting, {categories: convertCategory('NONE')}))
   })
   return i18ConfigList
 }

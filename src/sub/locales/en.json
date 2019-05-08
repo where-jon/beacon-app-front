@@ -186,7 +186,9 @@
     "setting": "Setting",
     "settingId": "Setting ID",
     "valType": "Value type",
-    "key": "Item name",
+    "key": "Key",
+    "keyName": "Item name",
+    "defaultVal": "Default value",
     "add": "Add",
     "addForm": "Add item",
     "addSetting": "New registration",
@@ -578,6 +580,9 @@
     "stayRatioAbsent2Time": "absent2Time",
     "stayRatioAbsent1Ratio": "absent1Ratio",
     "stayRatioAbsent2Ratio": "absent2Ratio",
+
+    "positionSummary": "Position Summary",
+
     "dummy": ""
   },
   "message": {
