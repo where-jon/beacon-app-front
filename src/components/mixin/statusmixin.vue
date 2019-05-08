@@ -54,22 +54,17 @@ export default {
     getTelemetryPowerLevelClass(val, isPowerState = false) {
       const num = parseInt(val , 10)
       if (79 < num) {
-        // return 'battery-full power-safe'
         return !isPowerState ? 'battery-full' : 'power-safe'
       }
       if (59 < num) {
-        // return 'battery-three-quarters power-safe'
         return !isPowerState ? 'battery-three-quarters' : 'power-safe'
       }
       if (39 < num) {
-        // return 'battery-half power-warning'
         return  !isPowerState ? 'battery-half' : 'power-warning'
       }
       if (19 < num) {
-        // return 'battery-quarter power-empty'
         return  !isPowerState ? 'battery-quarter' : 'power-empty'
       }
-      // return 'battery-empty power-empty'
       return  !isPowerState ? 'battery-empty' : 'power-empty'
     },
   }
