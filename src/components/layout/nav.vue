@@ -33,7 +33,7 @@
               <table v-if="isTenantAdmin() || hasMultiRegion(regions)" class="region-table">
                 <tr v-if="isTenantAdmin()">
                   <td>
-                    <i class="far fa-building mr-1" style="visibility: hidden;" />
+                    <font-awesome-icon icon="building" class="mr-1" style="visibility: hidden;" />
                     <em v-t="this.$store.state.currentTenant? this.$store.state.currentTenant.tenantName: ''" class="region-em word-break" />
                   </td>
                 </tr>
@@ -303,10 +303,6 @@ export default {
 
 <style lang="scss">
 @import "../../sub/constant/config.scss";
-
-.rotate {
-  animation: fa-spin 2s infinite linear;
-}
 
 .topMenuNavbar {
   @media (max-width: 1119px) and (min-width: 768px) {

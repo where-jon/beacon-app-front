@@ -51,21 +51,26 @@ export default {
       }
       return ''
     },
-    getTelemetryPowerLevelClass(val) {
+    getTelemetryPowerLevelClass(val, isPowerState = false) {
       const num = parseInt(val , 10)
       if (79 < num) {
-        return 'fas fa-battery-full power-safe'
+        // return 'battery-full power-safe'
+        return !isPowerState ? 'battery-full' : 'power-safe'
       }
       if (59 < num) {
-        return 'fas fa-battery-three-quarters power-safe'
+        // return 'battery-three-quarters power-safe'
+        return !isPowerState ? 'battery-three-quarters' : 'power-safe'
       }
       if (39 < num) {
-        return 'fas fa-battery-half power-warning'
+        // return 'battery-half power-warning'
+        return  !isPowerState ? 'battery-half' : 'power-warning'
       }
       if (19 < num) {
-        return 'fas fa-battery-quarter power-empty'
+        // return 'battery-quarter power-empty'
+        return  !isPowerState ? 'battery-quarter' : 'power-empty'
       }
-      return 'fas fa-battery-empty power-empty'
+      // return 'battery-empty power-empty'
+      return  !isPowerState ? 'battery-empty' : 'power-empty'
     },
   }
 }

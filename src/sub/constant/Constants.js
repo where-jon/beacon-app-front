@@ -415,22 +415,22 @@ export const EXTRA_NAV = [
   {
     key: 'showPositionShort',
     path: '/main/position',
-    icon: 'fas fa-map-marker-alt',
+    icon: 'map-marker-alt',
   },
   {
     key: 'positionListShort',
     path: '/main/position-list',
-    icon: 'fas fa-list',
+    icon: 'list',
   },
   {
     key: 'positionStackShort',
     path: '/main/position-stack',
-    icon: 'far fa-building',
+    icon: 'building',
   },
   {
     key: 'positionZoneShort',
     path: '/main/position-zone',
-    icon: 'fas fa-th',
+    icon: 'th',
   },
 ]
 

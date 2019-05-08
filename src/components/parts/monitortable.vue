@@ -34,7 +34,7 @@
                 </span>
               </span>
               <span v-else-if="header.key == 'powerLevel' && type == 'telemetry'">
-                <i :class="getTelemetryPowerLevelClass(data.powerLevel)" />{{ data.powerLevel }}
+                <font-awesome-icon :icon="['fas', getTelemetryPowerLevelClass(data.powerLevel)]" :class="getTelemetryPowerLevelClass(data.powerLevel, true)" />{{ data.powerLevel }}
               </span>
               <span v-else-if="header.key == 'state' && type == 'telemetry'" :class="getStateClass('exb', data.timestamp)">
                 {{ data[header.key] }}
