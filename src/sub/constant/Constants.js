@@ -439,20 +439,20 @@ export const MENU = [
     key: 'provider',
     base: 'provider/',
     path: 'provider/tenant',
-    icon: 'fas fa-cogs',
+    icon: 'cogs',
     tenantOnly: true,
     providerOnlyForce: true,
     pages: [
       {
         key: 'tenant',
         path: 'tenant',
-        icon: 'fas fa-store-alt',
+        icon: 'store-alt',
         providerOnlyForce: true,
       },
       {
         key: 'news',
         path: 'news',
-        icon: 'far fa-newspaper',
+        icon: 'newspaper',
       },
     ]
   },
@@ -460,41 +460,41 @@ export const MENU = [
     key: 'main',
     base: 'main/',
     path: 'main/position',
-    icon: 'fas fa-home',
+    icon: 'home',
     pages: [{
       key: 'showPosition',
       path: 'position',
-      icon: 'fas fa-map-marker-alt',
+      icon: 'map-marker-alt',
     },
     {
       key: 'positionList',
       path: 'position-list',
-      icon: 'fas fa-list',
+      icon: 'list',
     },
     {
       key: 'positionStack',
       path: 'position-stack',
-      icon: 'far fa-building',
+      icon: 'building',
     },
     {
       key: 'pirMenu',
       path: 'pir',
-      icon: 'fas fa-users',
+      icon: 'users',
     },
     {
       key: 'thermohumidity',
       path: 'thermohumidity',
-      icon: 'fas fa-thermometer-half',
+      icon: 'thermometer-half',
     },
     {
       key: 'sensorList',
       path: 'sensor-list',
-      icon: 'fas fa-tablet',
+      icon: 'tablet',
     },
     {
       key: 'ledOperation',
       path: 'led',
-      icon: 'far fa-lightbulb',
+      icon: 'lightbulb',
     }
     ]
   },
@@ -502,80 +502,80 @@ export const MENU = [
     key: 'master',
     base: 'master/',
     path: 'master/area',
-    icon: 'fas fa-database',
+    icon: 'database',
     pages: [
       {
         key: 'region',
         path: 'region',
-        icon: 'far fa-building',
+        icon: 'building',
       },
       {
         key: 'area',
         path: 'area',
-        icon: 'fas fa-image',
+        icon: 'image',
       },
       {
         key: 'exb',
         path: 'exb',
-        icon: 'far fa-hdd',
+        icon: 'hdd',
       },
       {
         key: 'tx',
         path: 'tx',
         // icon: 'fal fa-location',
         // icon: 'fas fa-user-tag',
-        icon: 'fa fa-tags',
+        icon: 'tags',
       },
       {
         key: 'locationSetting',
         path: 'location',
-        icon: 'fas fa-map',
+        icon: 'map',
         // icon: 'fas fa-map-pin',
       },
       {
         key: 'txLocationSetting',
         path: 'txlocation',
-        icon: 'fas fa-map-pin',
+        icon: 'map-pin',
       },
       {
         key: 'pot',
         path: 'pot',
-        icon: 'far fa-id-card',
+        icon: 'id-card',
       },
       {
         key: 'category',
         path: 'category',
-        icon: 'fa fa-object-group',
+        icon: 'object-group',
       },
       {
         key: 'group',
         path: 'group',
-        icon: 'fas fa-sitemap',
+        icon: 'sitemap',
       },
       {
         key: 'user',
         path: 'user',
-        icon: 'fas fa-user',
+        icon: 'user',
       },
       {
         key: 'role',
         path: 'role',
-        icon: 'fas fa-chalkboard-teacher',
+        icon: 'chalkboard-teacher',
       },
       {
         key: 'zoneClass',
         path: 'zoneClass',
-        icon: 'far fa-compass',
+        icon: 'compass',
       },
       {
         key: 'zoneBlock',
         path: 'zoneBlock',
-        icon: 'fas fa-th',
+        icon: 'th',
       },
       {
         key: 'notifyTemplate',
         path: 'notifyTemplate',
-        icon: 'fas fa-envelope',
+        icon: 'envelope',
       },
     ]
   },
@@ -583,22 +583,22 @@ export const MENU = [
     key: 'monitor',
     base: 'monitor/',
     path: 'monitor/position',
-    icon: 'fas fa-tachometer-alt',
+    icon: 'tachometer-alt',
     pages: [
       {
         key: 'gateway',
         path: 'gateway',
-        icon: 'fas fa-road',
+        icon: 'road',
       },
       {
         key: 'position',
         path: 'position',
-        icon: 'fas fa-location-arrow',
+        icon: 'location-arrow',
       },
       {
         key: 'telemetry',
         path: 'telemetry',
-        icon: 'fa fa-battery-three-quarters',
+        icon: 'battery-three-quarters',
       },
     ]
   },
@@ -606,37 +606,37 @@ export const MENU = [
     key: 'sumTitle',
     base: 'sum/',
     path: 'sum/usage-situation',
-    icon: 'fas fa-chart-line',
+    icon: 'chart-line',
     pages: [
       {
         key: 'usageSituation',
         path: 'usage-situation',
-        icon: 'fas fa-chart-area'
+        icon: 'chart-area'
       },
       {
         key: 'flowlineAnalysis',
         path: 'flowlineAnalysis',
-        icon: 'fas fa-shoe-prints'
+        icon: 'shoe-prints'
       },
       {
         key: 'heatmapPosition',
         path: 'heatmap-position',
-        icon: 'fas fas fa-fire',
+        icon: 'fire',
       },
       {
         key: 'sensorGraph',
         path: 'sensorGraph',
-        icon: 'fas fa-chart-line',
+        icon: 'chart-line',
       },
       {
         key: 'stayTime',
         path: 'stayTime',
-        icon: 'fas fa-chart-bar',
+        icon: 'chart-bar',
       },
       {
         key: 'stayRatio',
         path: 'stayRatio',
-        icon: 'fas fa-clock',
+        icon: 'clock',
       },
     ]
   },
@@ -644,40 +644,40 @@ export const MENU = [
     key: 'historyTitle',
     base: 'history/',
     path: '/history/temperatureHistory',
-    icon: 'far fa-clipboard',
+    icon: 'clipboard',
     pages: [{
       key: 'thermohumidity',
       path: 'temperatureHistory',
-      icon: 'fas fa-thermometer'
+      icon: 'thermometer'
     },
     {
       key: 'positionHistory',
       path: 'positionHistory',
-      icon: 'fas fa-cube'
+      icon: 'cube'
     },
     {
       key: 'positionHistoryExc',
       label: 'positionHistory',
       path: 'positionHistoryExc',
       feature: '/history/positionHistoryExc',
-      icon: 'fa fa-cube',
+      icon: 'cube',
     },
     {
       key: 'sensorHistory',
       path: 'sensorHistory',
-      icon: 'fas fa-eye'
+      icon: 'eye'
     },
     {
       key: 'sensorHistoryExc',
       label: 'sensorHistory',
       path: 'sensorHistoryExc',
-      icon: 'fas fa-eye'
+      icon: 'eye'
     },
     {
       key: 'notifyHistory',
       path: 'notifyHistory',
       feature: '/history/notifyHistory',
-      icon: 'fa fa-history',
+      icon: 'history',
     },
     ]
   },
@@ -685,16 +685,16 @@ export const MENU = [
     key: 'setting',
     base: 'setting/',
     path: 'setting/personal',
-    icon: 'fas fa-cog',
+    icon: 'cog',
     pages: [{
       key: 'personal',
       path: 'personal',
-      icon: 'fas fa-user-cog',
+      icon: 'user-cog',
     },
     {
       key: 'system',
       path: 'system',
-      icon: 'fas fa-cogs',
+      icon: 'cogs',
     },
     ]
   },
@@ -702,33 +702,33 @@ export const MENU = [
     key: 'develop',
     base: 'develop/',
     path: 'develop/position-dev',
-    icon: 'fas fa-wrench',
+    icon: 'wrench',
     providerOnly: true,
     pages: [
       {
         key: 'gateway',
         path: 'gateway',
-        icon: 'fas fa-road',
+        icon: 'road',
       },
       {
         key: 'position',
         path: 'position',
-        icon: 'fas fa-location-arrow',
+        icon: 'location-arrow',
       },
       {
         key: 'telemetry',
         path: 'telemetry',
-        icon: 'fa fa-battery-three-quarters',
+        icon: 'battery-three-quarters',
       },
       {
         key: 'env',
         path: 'serverenv',
-        icon: 'fas fa-cog',
+        icon: 'cog',
       },
       {
         key: 'installation',
         path: 'installation',
-        icon: 'fas fa-ruler-combined',
+        icon: 'ruler-combined',
       },
     ],
   },
