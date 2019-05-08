@@ -33,7 +33,7 @@
       </div>
       <div class="col-auto reload-button-container ">
         <a v-if="reload" id="reload" href="#" @click="onClickReload">
-          <font-awesome-icon id="spinner" icon="sync-alt" :class="isLoad ? 'fa-spin' : ''"/>
+          <font-awesome-icon id="spinner" icon="sync-alt" :class="isLoad ? 'fa-spin' : ''" />
         </a>
       </div>
     </div>

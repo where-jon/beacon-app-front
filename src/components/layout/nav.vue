@@ -49,7 +49,9 @@
                       </template>
                       <b-dropdown-item v-for="region in regionOptions(regions)" :key="region.regionId" :class="navbarClasses" href="#" @click="switchRegion($event.target, region)">
                         <font-awesome-icon v-if="getStyleDropdownRegion(region.regionId)" icon="building" fixed-width />
-                        <span :style="{marginLeft: getStyleDropdownRegion(region.regionId)? '0px' : '20px'}">{{ region.regionName }}</span>
+                        <span :style="{marginLeft: getStyleDropdownRegion(region.regionId)? '0px' : '20px'}">
+                          {{ region.regionName }}
+                        </span>
                       </b-dropdown-item>
                     </b-nav-item-dropdown>
                   </td>
@@ -69,7 +71,7 @@
                     <font-awesome-icon icon="user-cog" fixed-width />&nbsp;&nbsp;{{ $t('label.personal') }}
                   </b-dropdown-item>
                   <b-dropdown-item href="#" @click="openHelp">
-                    <i class="fas fa-question-circle menu-item-icon" />&nbsp;{{ $t('label.help') }}
+                    <font-awesome-icon icon="question-circle" fixed-width />&nbsp;&nbsp;{{ $t('label.help') }}
                   </b-dropdown-item>
                   <b-dropdown-item href="#" @click="logout">
                     <font-awesome-icon icon="sign-out-alt" fixed-width />&nbsp;&nbsp;{{ $t('label.logout') }}
@@ -94,7 +96,7 @@
                   <font-awesome-icon icon="user-cog" fixed-width />&nbsp;&nbsp;{{ $t('label.personal') }}
                 </b-dropdown-item>
                 <b-dropdown-item href="#" @click="openHelp">
-                  <i class="fas fa-question-circle menu-item-icon" />&nbsp;{{ $t('label.help') }}
+                  <font-awesome-icon icon="question-circle" fixed-width />&nbsp;&nbsp;{{ $t('label.help') }}
                 </b-dropdown-item>
                 <b-dropdown-item href="#" @click="logout">
                   <font-awesome-icon icon="sign-out-alt" fixed-width />&nbsp;&nbsp;{{ $t('label.logout') }}
