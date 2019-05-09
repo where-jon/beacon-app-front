@@ -99,7 +99,7 @@
     "powerLevel": "電池レベル",
     "power-good": "良好",
     "power-warning": "減少",
-    "power-poor": "充電/交換",
+    "power-poor": "交換",
 
     "tx": "Tx",
     "txId": "TxID",
