@@ -106,8 +106,8 @@ export default {
         return
       }
 
-      const txList = this.txs.map(tx => tx.txId).sort()
-      const header = 'Time,' + txList.join(',')
+      const minorList = this.txs.filter(tx => tx.minor != null).map(tx => parseInt(tx.minor)).sort(tx => tx)
+      const header = 'Time,' + minorList.join(',')
       const searchDate = moment(param.date).format('YYYY-MM-DD')
 
       let csvList = []
@@ -115,9 +115,10 @@ export default {
         for(let m = 0; m < 60; m += APP.POSITION_SUMMARY_INTERVAL){
           let csv = []
           csv.push(h + ':' + Util.zeroPad(m, 2) )
-          txList.forEach(tx => {
+          minorList.forEach(minor => {
             const timestamp = '' + (h >= 10 ? h :  h + '0') + (m >= 10 ? m : m + '0')
-            const pos = _.find(posData, (data) => data.tx_id == tx && data.timestamp == timestamp)
+            const tx = _.find(this.txs, tx => parseInt(tx.minor) == minor)
+            const pos = _.find(posData, (data) => data.tx_id == tx.txId && data.timestamp == timestamp)
             const exb = _.find(this.exbs, exb => pos && pos.exb_id == exb.exbId)
             csv.push(exb ? exb.locationName : '')
           })
