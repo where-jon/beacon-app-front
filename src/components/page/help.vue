@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid">
     <div class="container">
-      <a id="linkTest" :href="fromPage" />
+      <a id="helpAutoLink" :href="fromPage" />
       <div id="position-list">
         <hr />
         <p class="helpLabelHeader">
