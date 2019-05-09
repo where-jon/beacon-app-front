@@ -133,8 +133,8 @@ export default {
       SJIS: this.$i18n.tnl('label.SJIS'),
       zoneBlock: this.$i18n.tnl('label.zoneBlock'),
       bulkFields: ViewHelper.addLabelByKey(this.$i18n, [
-        {key: 'error_name', sortable: true, label: this.$i18n.tnl('label.error'), thClass: 'fields', tdClass: 'items'},
-        {key: 'description', sortable: false, label: this.$i18n.tnl('label.detail'), thClass: 'fields', tdClass: 'items'},
+        {key: 'error_name', sortable: true, label: 'error', thClass: 'fields', tdClass: 'items'},
+        {key: 'description', sortable: false, label: 'detail', thClass: 'fields', tdClass: 'items'},
       ]),
       bulkItems: [
         { isActive: true, description: this.$i18n.tnl('helpDescription.bulkUniqueFailed'), error_name: this.$i18n.tnl('message.bulkUniqueFailed', {col: this.$i18n.tnl('label.linage'), value: this.$i18n.tnl('label.keyName')}) },
