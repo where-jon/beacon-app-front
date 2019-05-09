@@ -7,11 +7,11 @@
 
 <script>
 import { mapState } from 'vuex'
-import _ from 'lodash'
-import * as Util from '../../../sub/util/Util'
+import { BULK } from '../../../sub/constant/Constants'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import * as BulkHelper from '../../../sub/helper/BulkHelper'
 
 export default {
   components: {
@@ -34,14 +34,12 @@ export default {
   },
   methods: {
     async save(bulkSaveFunc) {
-      const MAIN_COL = 'userId'
-      const ROLE_COL = ['roleName']
-      const NUMBER_TYPE_LIST = ['roleId']
-      await bulkSaveFunc(MAIN_COL, NUMBER_TYPE_LIST, null, (entity, headerName, val, dummyKey) => {
-        if (headerName == MAIN_COL && !Util.hasValue(val)) {
-          val = dummyKey--
+      await bulkSaveFunc(BULK.PRIMARY_KEY, null, null, (entity, headerName, val, dummyKey) => {
+        if (BulkHelper.isPrimaryKeyHeader(headerName)){
+          BulkHelper.setPrimaryKey(entity, this.id, val, dummyKey--)
+          return dummyKey
         }
-        if (_.includes(ROLE_COL, headerName)) {
+        if (headerName == 'roleName') {
           entity.role = {roleId: dummyKey--, roleName: val}
         }
         entity[headerName] = val

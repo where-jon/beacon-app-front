@@ -54,11 +54,8 @@ export default {
   methods: {
     getCustomCsvColumns(){
       return [
-        'potId',
-        'thumbnail',
-        APP.TX_WITH_TXID? 'txId': APP.TX_BTX_MINOR == 'minor'? 'minor': 'btxId',
-        'txName',
-        APP.POT_WITH_POTCD? 'potCd': null,
+        APP.TX_BTX_MINOR == 'minor'? 'minor': 'btxId',
+        'potCd',
         'potName',
         'potType',
         APP.POT_WITH_RUBY? 'extValue.ruby': null,
@@ -67,25 +64,22 @@ export default {
         APP.POT_WITH_CATEGORY? 'categoryName': null,
         APP.POT_WITH_POST? 'extValue.post': null,
         APP.POT_WITH_TEL? 'extValue.tel': null,
-        'description',
-        'userId',
+        APP.POT_WITH_DESCRIPTION? 'description': null,
         'loginId',
         'roleName',
         'pass',
         'email',
-      ].filter((val) => val)
+      ].filter(val => val)
     },
     customCsvData(val){ // TODO:
-      const id = APP.TX_WITH_TXID? 'txId': APP.TX_BTX_MINOR == 'minor'? 'minor': 'btxId'
+      const id = APP.TX_BTX_MINOR == 'minor'? 'minor': 'btxId'
       if(Util.hasValue(val.potTxList)){
-        val[id] = val.potTxList.map((potTx) => potTx.tx? potTx.tx[id]: '').join(';')
-        val.txName = val.potTxList.map((potTx) => potTx.tx? potTx.tx.txName: '').join(';')
+        val[id] = val.potTxList.map(potTx => potTx.tx? potTx.tx[id]: '').join(';')
       }
       if(Util.hasValue(val.potUserList)){
-        val.userId = val.potUserList[0].user.userId
         val.loginId = val.potUserList[0].user.loginId
         val.email = val.potUserList[0].user.email
-        const targetRole = this.roles.find((role) => role.roleId == val.potUserList[0].user.roleId)
+        const targetRole = this.roles.find(role => role.roleId == val.potUserList[0].user.roleId)
         val.roleName = targetRole? targetRole.roleName: ''
       }
     },
@@ -94,14 +88,13 @@ export default {
         {key: 'potName', sortable: true , tdClass: 'thumb-rowdata'},
         {key: 'thumbnail', tdClass: 'thumb-rowdata' },
         {key: 'txIdName', label:'tx', sortable: true, },
-        APP.POT_WITH_POTCD? {key: 'potCd', sortable: true , tdClass: 'thumb-rowdata'}: null,
+        {key: 'potCd', sortable: true , tdClass: 'thumb-rowdata'},
         APP.POT_WITH_RUBY? {key: 'ruby', label: 'ruby', sortable: true, tdClass: 'thumb-rowdata'}: null,
         {key: 'displayName', sortable: true, tdClass: 'thumb-rowdata'},
         APP.POT_WITH_GROUP? {key: 'groupName', label: 'group', sortable: true, tdClass: 'thumb-rowdata'}: null,
         APP.POT_WITH_CATEGORY? {key: 'categoryName', label: 'category', sortable: true, tdClass: 'thumb-rowdata'}: null,
         APP.POT_WITH_POST? {key: 'extValue.post', label: 'post', tdClass: 'thumb-rowdata'}: null,
         APP.POT_WITH_TEL? {key: 'extValue.tel', label: 'tel', tdClass: 'thumb-rowdata'}: null,
-        {key: 'potId', sortable: true, tdClass: 'thumb-rowdata'},
         {key: 'actions', thStyle: {width:'130px !important'} , tdClass: 'thumb-rowdata'},
       ])
     },

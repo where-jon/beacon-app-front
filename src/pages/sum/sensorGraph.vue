@@ -279,7 +279,7 @@ export default {
     },
     getTxOptions(newVal = this.form.sensorId){
       const txs = this.txs.filter((val) => val.sensorId == newVal)
-      this.txOptions = txs? txs.map((val) => ({value: val.txId, text: val.txName})): []
+      this.txOptions = txs? txs.map((val) => ({value: val.txId, text: Util.getValue(val, 'potName', APP.TX_BTX_MINOR == 'minor'? val.minor: val.btxId)})): []
       this.form.txId = this.txOptions.length == 0? null: this.txOptions[0].value
     },
     setDeviceTypeFromSensorId(sensorId){

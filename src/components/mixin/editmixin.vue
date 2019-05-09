@@ -184,7 +184,7 @@ export default {
       })
     },
     modifyColName(col) {
-      if (col == 'TXID' && !APP.TX_WITH_TXID){
+      if (col == 'TXID'){
         return APP.TX_BTX_MINOR == 'minor'? 'minor': 'btxId'
       }
       if (col == 'btxId' && APP.TX_BTX_MINOR == 'minor') {
@@ -193,7 +193,7 @@ export default {
       return col
     },
     modifyVal(col, val) {
-      if (col == 'TXID' && !APP.TX_WITH_TXID){
+      if (col == 'TXID'){
         if(APP.TX_BTX_MINOR == 'minor' && this.minor){
           return this.minor
         }

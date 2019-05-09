@@ -11,7 +11,7 @@ export const DEV = { // 開発デバッグ関連
 }
 
 export const APP = { // 機能面に関する設定
-  VERSION: 'Version 1.1.0', // バージョン　this application version
+  VERSION: 'Version 1.2.0', // バージョン　this application version
   LOGIN_MODE: LOGIN_MODE.APP_SERVICE, // ログインモード(なし、ローカル、AppService)
   SAAS_DOMAIN: '.saas.',
 
@@ -88,11 +88,10 @@ export const APP = { // 機能面に関する設定
 
   // TX関連設定
   TX_SENSOR: [1,5,6,7], // TXのタイプに設定可能なセンサーID
-  TX_WITH_TXID: false, // 画面上TXIDを使用するか否か
-  TX_WITH_CATEGORY: true, // TX管理で個体.カテゴリを表示
+  TX_WITH_CATEGORY: false, // TX管理で個体.カテゴリを表示
   TX_WITH_GROUP: false, // TX管理で個体.グループを表示
-  TX_WITH_DISPLAY_NAME: true, // TX管理で個体.表示名を表示
-  TX_WITH_DESCRIPTION: true, // TX管理で個体.備考を表示
+  TX_WITH_DISPLAY_NAME: false, // TX管理で個体.表示名を表示
+  TX_WITH_DESCRIPTION: false, // TX管理で個体.備考を表示
   TX_WITH_MAJOR: true, // TX管理でmajorを表示
   TX_MAJOR_REQUIRED: false, // majorを必須にする ※サーバでも要設定
   TX_BTX_MINOR: 'both', // both:両方表示し、別々に設定、minor/btxId:片方のみ表示し、保存の際同一の値を設定
@@ -103,9 +102,7 @@ export const APP = { // 機能面に関する設定
 
   // EXB関連設定
   EXB_SENSOR: [1,2,3,4,8], // EXBのタイプに設定可能なセンサーID
-  EXB_WITH_EXBID: false,       // 画面上EXBIDを使用するか否か 
-  EXB_WITH_DEVICE_NUM: true,  // 画面上端末IDを使用するか否か
-  EXB_WITH_DEVICE_ID: false,   // 画面上デバイスIDを使用するか否か
+  EXB_WITH_DEVICE_ID: true,   // 画面上デバイスIDを使用するか否か
   EXB_WITH_DEVICE_IDX: false,  // 画面上デバイスID（16進数）を使用するか否か
   EXB_WITH_POSID: true,      // 画面上POSIDを使用するか否か
   EXB_WITH_ZONE: true,       // 画面上でゾーン名を使用するか否か
@@ -129,6 +126,7 @@ export const APP = { // 機能面に関する設定
   POT_WITH_GROUP: false,      // グループ使用　use group on pot master
   POT_WITH_CATEGORY: true,   // カテゴリ使用　use category on pot master
   POT_WITH_USER: true,        // ユーザ使用
+  POT_WITH_DESCRIPTION: true,  // 備考使用
   POT_MULTI_TX: false,         // 複数Tx使用
 
   POT_TX_MAX: 2,   // 所持Tx最大数
@@ -162,7 +160,6 @@ export const APP = { // 機能面に関する設定
   POSITION_SENSOR: [], // マージするセンサ情報のIDリスト
 
   SENSOR_WITH_POSID: true,       // 画面上でposIdを使用するか否か
-  SENSOR_WITH_DEVICE_NUM: true,       // 画面上でdeviceNumを使用するか否か
   SENSOR_WITH_DEVICE_ID: true,       // 画面上でdeviceIdを使用するか否か
   SENSOR_WITH_DEVICE_IDX: true,       // 画面上でdeviceIdXを使用するか否か
   SENSOR_WITH_LOCATIONNAME: true,       // 画面上でlocationNameを使用するか否か
@@ -182,6 +179,11 @@ export const APP = { // 機能面に関する設定
   // 禁止区域関連設定
   PROHIBIT_ALERT : true, // 禁止区域アラート設定
   PROHIBIT_GROUPS: null, // 禁止区域非許可GROUPID[1,2,3]の形
+
+  POSITION_SUMMARY_START: 10, // 位置情報csvダウンロード開始時刻（時）
+  POSITION_SUMMARY_END: 19,    // 位置情報csvダウンロード終了時刻（時）
+  POSITION_SUMMARY_INTERVAL: 10, // 位置情報csvダウンロード間隔（分）
+  POSITION_SUMMARY_RECEIVE_COUNT: 2 // 位置情報における受信回数の閾値
 }
 
 
@@ -248,7 +250,7 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   TX_LOC_ALPHA: 1.0, // TX配置設定のTX表示フォント
 
   THERMOH_TOOLTIP_ITEMS: { // ツールチップ内の表示要素
-    TXNAME: true,
+    POTNAME: true,
     TEMPERATURE: true,
     HUMIDITY: true,
     DESCRIPTION: true,
@@ -354,7 +356,7 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
 
   TXDETAIL_SUMBNAIL_UNREGIST_DISABLE: false, // TX詳細サムネイル非表示（未登録の場合）
 
-  POSITION_HISTORY_HEADERS: ['txName', 'major', 'minor', 'deviceNum', 'locationName', 'posId', 'areaName', 'x', 'y'], // 位置表示履歴の表示カラム
+  POSITION_HISTORY_HEADERS: ['potName', 'major', 'minor', 'deviceId', 'locationName', 'posId', 'areaName'], // 位置表示履歴の表示カラム
 
   GATEWAY: { // ゲートウエイ
     STATE_COLOR: { // 状態別色

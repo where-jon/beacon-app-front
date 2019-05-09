@@ -9,12 +9,12 @@
           <b-form-row>
             <b-form-row class="mr-2">
               <label v-t="'label.historyDateFrom'" class="mr-2 mb-2 d-flex align-items-center" />
-              <b-form-input v-if="useInputDate" type="date" required class="mb-2 inputdatefrom" @change="dateFromChange" />
+              <b-form-input v-if="useInputDate" v-model="inputDateFrom" type="date" required class="mb-2 inputdatefrom" />
               <date-picker v-else v-model="dateFrom" type="date" value-format="yyyyMMdd" class="mr-2 mb-2 inputdatefrom" />
             </b-form-row>
             <b-form-row class="mr-2">
               <label v-t="'label.historyDateTo'" class="mr-2 mb-2 d-flex align-items-center" />
-              <b-form-input v-if="useInputDate" type="date" required class="mb-2 inputdateto" @change="dateToChange" />
+              <b-form-input v-if="useInputDate" v-model="inputDateTo" type="date" required class="mb-2 inputdateto" />
               <date-picker v-else v-model="dateTo" type="date" value-format="yyyyMMdd" class="mb-2 inputdateto" />
             </b-form-row>
           </b-form-row>
@@ -95,8 +95,10 @@ export default {
       zoneCategorys: [],
       categoryId: null,
       zoneId: null,
-      dateFrom: Util.supportInputType('date')? 0: Util.getDatetime(new Date(), null, 'yyyyMMdd'),
-      dateTo: Util.supportInputType('date')? 0: Util.getDatetime(new Date(), null, 'yyyyMMdd'),
+      inputDateFrom: Util.getDatetime(new Date(), null, 'yyyy-MM-dd'),
+      inputDateTo: Util.getDatetime(new Date(), null, 'yyyy-MM-dd'),
+      dateFrom: Util.getDatetime(new Date(), null, 'yyyyMMdd'),
+      dateTo: Util.getDatetime(new Date(), null, 'yyyyMMdd'),
       historyType: 0,
       temperatureHistoryData: null,
       //
@@ -115,6 +117,14 @@ export default {
     ...mapState('monitor', [
       'temperatureHistory',
     ])
+  },
+  watch: {
+    inputDateFrom: function(newVal, oldVal) {
+      this.dateFromChange(newVal)
+    },
+    inputDateTo: function(newVal, oldVal) {
+      this.dateToChange(newVal)
+    },
   },
   async mounted() {
     HtmlUtil.importElementUI()

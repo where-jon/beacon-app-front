@@ -137,7 +137,7 @@ export default {
       useGroup: MenuHelper.useMaster('group') && APP.TX_WITH_GROUP,
       useCategory: MenuHelper.useMaster('category') && APP.TX_WITH_CATEGORY,
       modeRssi: true,
-      exbDisp: 'deviceNum',
+      exbDisp: 'deviceId',
       nearest: [],
       targetTx: null,
       exbBtns : [],
@@ -266,8 +266,6 @@ export default {
         return deviceId.toString(16).toUpperCase()
       case 'deviceId':
         return deviceId
-      case 'deviceNum':
-        return deviceId - this.$store.state.currentRegion.deviceOffset
       }
     },
     getExbPosition() {
