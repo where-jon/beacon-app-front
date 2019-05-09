@@ -1,5 +1,8 @@
 module.exports = {
   mode: 'spa',
+  modules: [
+    'nuxt-fontawesome'
+  ],
   router: {
     base: '/',
     middleware: ['reset', 'check-auth']
@@ -66,5 +69,13 @@ module.exports = {
   generate: {
     dir: 'dist'
   },
-  srcDir: 'src/'
+  srcDir: 'src/',
+  fontawesome: {
+    imports: [
+      {
+        set: '@fortawesome/free-solid-svg-icons',
+        icons: ['fas']
+      }
+    ]
+  }
 }

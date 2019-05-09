@@ -36,11 +36,11 @@
               {{ $t('label.dispRssi') }}
             </b-form-checkbox>
             <b-button class="ml-sm-4 ml-2 mr-1" :pressed.sync="isPause" :variant="getButtonTheme()">
-              <i v-if="!isPause" class="fas fa-pause" />
+              <font-awesome-icon v-if="!isPause" icon="pause" />
               <span v-if="!isPause">
                 &nbsp;{{ $t('label.reload') }}{{ $t('label.pause') }}
               </span>
-              <i v-if="isPause" class="fas fa-play" />
+              <font-awesome-icon v-if="isPause" icon="play" />
               <span v-if="isPause">
                 &nbsp;{{ $t('label.reload') }}{{ $t('label.restart') }}
               </span>
@@ -74,7 +74,6 @@ import * as StateHelper from '../../sub/helper/StateHelper'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as Util from '../../sub/util/Util'
-import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import txdetail from '../../components/parts/txdetail.vue'
 import { APP, DISP } from '../../sub/constant/config'
 import { SENSOR, EXTRA_NAV, CATEGORY, TX } from '../../sub/constant/Constants'
@@ -311,10 +310,10 @@ export default {
         if(!cPayload.disabledProgress){
           this.showProgress()
         }
-        const reloadButton = document.getElementById('reloadIcon')
+        const reloadButton = document.getElementById('spinner')
+        const spinClassName = 'fa-spin'
         if(!this.firstTime && reloadButton){
-          HtmlUtil.removeClass({target: reloadButton}, 'rotateStop')
-          HtmlUtil.addClass({target: reloadButton}, 'rotate')
+          reloadButton.classList.add(spinClassName)
         }
         await this.fetchPositionData(cPayload)
 
@@ -334,8 +333,7 @@ export default {
         this.showTxAll()
         // this.prohibitInterval = setInterval(this.twinkle,DISP.PROHIBIT_TWINKLE_TIME) TODO: Violation発生
         if(!this.firstTime && reloadButton){
-          HtmlUtil.removeClass({target: reloadButton}, 'rotate')
-          HtmlUtil.addClass({target: reloadButton}, 'rotateStop')
+          reloadButton.classList.remove(spinClassName)
         }
         this.firstTime = false
         if(!cPayload.disabledProgress){
