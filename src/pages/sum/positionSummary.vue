@@ -128,7 +128,7 @@ export default {
           let csv = []
           csv.push(h + ':' + Util.zeroPad(m, 2) )
           minorList.forEach(minor => {
-            const timestamp = '' + (h >= 10 ? h :  h + '0') + (m >= 10 ? m : m + '0')
+            const timestamp = '' + h + (m >= 10 ? m : m + '0')
             const tx = txsMap[minor]
             const pos = posMap[tx.txId + ':' + timestamp]
             if(pos){
