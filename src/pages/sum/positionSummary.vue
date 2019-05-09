@@ -97,6 +97,8 @@ export default {
         return
       }
 
+      this.showProgress()
+
       param.date = moment(param.date).format('YYYYMMDD')
       const url = '/core/positionHistory/summary/' + param.date + '/' + APP.POSITION_SUMMARY_INTERVAL + '/' + APP.POSITION_SUMMARY_RECEIVE_COUNT
       const posData = await HttpHelper.getAppService(url)
@@ -129,6 +131,8 @@ export default {
         }
       }
       const csv = header + '\n' + csvList.join('\n')
+
+      this.hideProgress()
 
       HtmlUtil.fileDL(
         'PositionSummary_' + searchDate + '.csv',
