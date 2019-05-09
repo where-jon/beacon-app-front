@@ -2,8 +2,29 @@
   <div class="container-fluid">
     <div class="container">
       <a id="helpAutoLink" :href="fromPage" />
+      
+      <div id="indexList">
+        <p class="helpLabelHeader">
+          {{ $i18n.tnl('helpDescription.indexName') }}
+        </p>
+        <a href="#position-list">
+          {{ $i18n.tnl('label.positionList') }}
+        </a><br>
+        <a href="#bulkedit">
+          {{ $i18n.tnl('label.bulkRegister') }}
+        </a><br>
+        <a href="#category">
+          {{ $i18n.tnl('label.category') }}
+        </a><br>
+        <a href="#zoneClass">
+          {{ $i18n.tnl('label.zoneClass') }}
+        </a><br>
+        <a href="#zoneBlock">
+          {{ $i18n.tnl('label.zoneBlock') }}
+        </a><br>
+      </div>
       <div id="position-list">
-        <hr />
+        <hr>
         <p class="helpLabelHeader">
           {{ $i18n.tnl('label.positionList') }}
         </p>
@@ -15,7 +36,7 @@
         </p>
       </div>
       <div id="bulkedit">
-        <hr />
+        <hr>
         <p class="helpLabelHeader">
           {{ $i18n.tnl('label.bulkRegister') }}
         </p>
@@ -64,7 +85,7 @@
         </p>
       </div>
       <div id="category">
-        <hr />
+        <hr>
         <p class="helpLabelHeader">
           {{ $i18n.tnl('label.category') }}
         </p>
@@ -89,7 +110,7 @@
         </p>
       </div>
       <div id="zoneClass">
-        <hr />
+        <hr>
         <p class="helpLabelHeader">
           {{ $i18n.tnl('label.zoneClass') }}
         </p>
@@ -102,7 +123,7 @@
         </p>
       </div>
       <div id="zoneBlock">
-        <hr />
+        <hr>
         <p class="helpLabelHeader">
           {{ $i18n.tnl('label.zoneBlock') }}
         </p>
