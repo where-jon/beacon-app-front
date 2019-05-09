@@ -53,36 +53,7 @@
         <p class="helpDetail">
           {{ $i18n.tnl('helpDescription.bulkRegister') }}
         </p>
-        <p class="helpTitle">
-          {{ $i18n.tnl('message.bulkUniqueFailed', {col: linage, value: keyName}) }}
-        </p>
-        <p class="helpDetail">
-          {{ $i18n.tnl('helpDescription.bulkUniqueFailed') }}
-        </p>
-        <p class="helpTitle">
-          {{ $i18n.tnl('message.bulkExistFailed', {col: linage, value: keyName}) }}
-        </p>
-        <p class="helpDetail">
-          {{ $i18n.tnl('helpDescription.bulkExistFailed') }}
-        </p>
-        <p class="helpTitle">
-          {{ $i18n.tnl('message.bulkAuthFailed', {col: linage, value: keyName}) }}
-        </p>
-        <p class="helpDetail">
-          {{ $i18n.tnl('helpDescription.bulkAuthFailed') }}
-        </p>
-        <p class="helpTitle">
-          {{ $i18n.tnl('message.bulkSystemUseFailed', {col: linage, value: keyName}) }}
-        </p>
-        <p class="helpDetail">
-          {{ $i18n.tnl('helpDescription.bulkSystemUseFailed') }}
-        </p>
-        <p class="helpTitle">
-          {{ $i18n.tnl('message.bulkSystemUseNameFailed', {col: linage, value: keyName}) }}
-        </p>
-        <p class="helpDetail">
-          {{ $i18n.tnl('helpDescription.bulkSystemUseNameFailed') }}
-        </p>
+        <b-table striped hover small :items="bulkItems" :fields="bulkFields" />
       </div>
       <div id="category">
         <hr>
@@ -140,6 +111,8 @@
 </template>
 
 <script>
+import * as ViewHelper from '../../sub/helper/ViewHelper'
+
 export default {
   props: {
     fromPage: {
@@ -159,6 +132,17 @@ export default {
       charSet: this.$i18n.tnl('label.charSet'),
       SJIS: this.$i18n.tnl('label.SJIS'),
       zoneBlock: this.$i18n.tnl('label.zoneBlock'),
+      bulkFields: ViewHelper.addLabelByKey(this.$i18n, [
+        {key: 'error_name', sortable: true, label: this.$i18n.tnl('label.error'), thClass: 'fields', tdClass: 'items'},
+        {key: 'description', sortable: false, label: this.$i18n.tnl('label.detail'), thClass: 'fields', tdClass: 'items'},
+      ]),
+      bulkItems: [
+        { isActive: true, description: this.$i18n.tnl('helpDescription.bulkUniqueFailed'), error_name: this.$i18n.tnl('message.bulkUniqueFailed', {col: this.$i18n.tnl('label.linage'), value: this.$i18n.tnl('label.keyName')}) },
+        { isActive: true, description: this.$i18n.tnl('helpDescription.bulkExistFailed'), error_name: this.$i18n.tnl('message.bulkExistFailed', {col: this.$i18n.tnl('label.linage'), value: this.$i18n.tnl('label.keyName')}) },
+        { isActive: true, description: this.$i18n.tnl('helpDescription.bulkAuthFailed'), error_name: this.$i18n.tnl('message.bulkAuthFailed', {col: this.$i18n.tnl('label.linage'), value: this.$i18n.tnl('label.keyName')}) },
+        { isActive: true, description: this.$i18n.tnl('helpDescription.bulkSystemUseFailed'), error_name: this.$i18n.tnl('message.bulkSystemUseFailed', {col: this.$i18n.tnl('label.linage'), value: this.$i18n.tnl('label.keyName')}) },
+        { isActive: true, description: this.$i18n.tnl('helpDescription.bulkSystemUseNameFailed'), error_name: this.$i18n.tnl('message.bulkSystemUseNameFailed', {col: this.$i18n.tnl('label.linage'), value: this.$i18n.tnl('label.keyName')}) },
+      ],
     }
   },
 }
@@ -179,10 +163,15 @@ export default {
 .helpDetail {
   font-size: 14px;
 }
-
 hr {
   border-color: black;
   border-top: double;
+}
+.fields {
+  font-size: 14px !important;
+}
+.items {
+  font-size: 14px !important;
 }
 
 </style>
