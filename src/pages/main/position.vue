@@ -54,10 +54,13 @@
       <b-col v-if="showMeditag">
         <canvas id="map" ref="map" />
       </b-col>
-      <b-col v-if="showMeditag && isShowRight && hasMeditagSensors()" class="rightPane">
+      <div v-if="showMeditag && isShowRight && hasMeditagSensors()" class="rightPane">
         <sensor :sensors="meditagSensors" :is-popup="false" class="rightPaneChild" />
-      </b-col>
+      </div>
     </b-row>
+    <div v-if="showMeditag && isShowBottom && hasMeditagSensors()" class="rightPane">
+      <sensor :sensors="meditagSensors" :is-popup="false" class="rightPaneChild" />
+    </div>
     <div v-if="selectedTx.btxId && showReady">
       <txdetail :selected-tx="selectedTx" :selected-sensor="selectedSensor" :is-show-modal="isShowModal()" @resetDetail="resetDetail" />
     </div>
@@ -123,7 +126,8 @@ export default {
       txsMap: {},
       exbsMap: {},
       prohibitInterval:null,
-      isShowRight: false
+      isShowRight: false,
+      isShowBottom: false
     }
   },
   computed: {
@@ -259,7 +263,6 @@ export default {
       }
     },
     async fetchData(payload, disableErrorPopup) {
-      this.isShowRight = false
       const disabledProgress = Util.getValue(payload, 'disabledProgress', false)
       try {
         this.reloadSelectedTx = this.reload? this.selectedTx: {}
@@ -276,9 +279,6 @@ export default {
         if (payload && payload.done) {
           payload.done()
         }
-        setTimeout( async () => {
-          this.showRight()
-        }, 100)
       }
       catch(e) {
         console.error(e)
@@ -286,9 +286,6 @@ export default {
       if(!disabledProgress){
         this.hideProgress()
       }
-    },
-    async showRight(){
-      this.isShowRight = true
     },
     async getDetail(txId) {
       let tx = await AppServiceHelper.fetch('/core/tx', txId)
@@ -342,6 +339,23 @@ export default {
           this.hideProgress()
         }
       }, disableErrorPopup)
+    },
+    onMapLoaded(size){
+      if(APP.USE_MEDITAG && this.meditagSensors){
+        const parent = document.getElementById('mapContainer')
+        const rightPaneWidth = 300
+        if(parent.clientWidth - size.width >= rightPaneWidth){
+          this.isShowRight = true
+          this.isShowBottom = false
+        }else{
+          this.isShowRight = false
+          this.isShowBottom = true
+        }
+      }
+    },
+    onReset(){
+      this.isShowRight = false
+      this.isShowBottom = false      
     },
     showTxAll() {
       if (!this.txCont) {
