@@ -185,7 +185,7 @@ export default {
     this.$root.$on('bv::modal::shown', (bvModalEvt, modalId) => {
       if(bvModalEvt.target.id == 'helpModal') {
         setTimeout(() => {
-          document.getElementById('helpAutoLink').click()
+          document.getElementById('initialize').click()
         },200)
       }
     })
