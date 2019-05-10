@@ -270,8 +270,10 @@ export default {
         if(!disabledProgress){
           this.showProgress()
         }
-        await StateHelper.load('tx', this.forceFetchTx)
-        StateHelper.setForceFetch('tx', false)
+        if (!this.selectedTx.btxId) {
+          await StateHelper.load('tx', this.forceFetchTx)
+          StateHelper.setForceFetch('tx', false)
+        }
         this.$nextTick(() => {
           this.loadLegends()
         })
@@ -313,7 +315,9 @@ export default {
           HtmlUtil.removeClass({target: reloadButton}, 'rotateStop')
           HtmlUtil.addClass({target: reloadButton}, 'rotate')
         }
-        await this.fetchPositionData(cPayload)
+        if(!this.selectedTx.btxId){
+          await this.fetchPositionData(cPayload)
+        }
 
         this.stage.on('click', (evt) => {
           this.resetDetail()
