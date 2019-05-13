@@ -25,10 +25,10 @@ export default {
       return DetectStateHelper.getState(type, updatetime) // 第一階層のupdatetimeを使用
     },
     getPositionPowerLevel(val) {
-      if (val > APP.POWER_LEVEL_GOOD) {
+      if (val > APP.TX_MON.POWER_LEVEL_GOOD) {
         return 'good'
       }
-      if (val > APP.POWER_LEVEL_WARN) {
+      if (val > APP.TX_MON.POWER_LEVEL_WARN) {
         return 'warning'
       }
       if (val != null) {

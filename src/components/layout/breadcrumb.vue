@@ -94,7 +94,7 @@ export default {
     return {
       showLegend: false,
       touchLegend: false,
-      useLegend: APP.USE_LEGEND,
+      useLegend: APP.POS.USE_LEGEND,
     }
   },
   computed: {
@@ -131,7 +131,7 @@ export default {
         const windowScroll = {x: window.pageXOffset , y: window.pageYOffset}
         this.onClickReload()
         window.scroll(windowScroll.x, windowScroll.y)
-      }, APP.AUTO_RELOAD)  
+      }, APP.COMMON.AUTO_RELOAD)  
       this.onClickReload()
     }
   },

@@ -277,13 +277,13 @@ test('convertToTime', t => {
 })
 
 test('getStayBaseSec', t => {
-  // APP.SUM_FROM, APP.SUM_TO がデフォルト前提
+  // APP.STAY_SUM.FROM, APP.STAY_SUM.TO がデフォルト前提
   let stayBaseSec = Util.getStayBaseSec()
   t.true(stayBaseSec == 86400)
 })
 
 test('getRatio', t => {
-  // APP.SUM_FROM, APP.SUM_TO がデフォルト前提
+  // APP.STAY_SUM.FROM, APP.STAY_SUM.TO がデフォルト前提
   let secTime = 21650
   let defaultResult = Util.getRatio(secTime)
   t.true(defaultResult == '25.06')

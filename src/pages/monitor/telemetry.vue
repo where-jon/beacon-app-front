@@ -80,10 +80,10 @@ export default {
           { key: 'hour3_count' },
           { key: 'ibeacon_received' },
         ]: [
-          APP.EXB_WITH_DEVICE_ID? { key: 'deviceId' }: null,
-          APP.EXB_WITH_DEVICE_IDX? { key: 'deviceIdX' }: null,
+          Util.includesIgnoreCase(APP.EXB.WITH, 'deviceId')? { key: 'deviceId' }: null,
+          Util.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')? { key: 'deviceIdX' }: null,
           { key: 'name', label: 'locationName'},
-          APP.TELEMETRY_WITH_POWER_LEVEL? { key: 'powerLevel' }: null,
+          APP.TELEMETRY.WITH_POWER_LEVEL? { key: 'powerLevel' }: null,
           { key: 'timestamp', label: 'finalReceiveTimestamp'},
           { key: 'state' },
         ].filter((val) => val))
@@ -109,8 +109,8 @@ export default {
           ibeacon_received: 'ibeacon_received',
         }:
         {
-          deviceId: APP.EXB_WITH_DEVICE_ID ? 'deviceId' : null,
-          deviceIdX: APP.EXB_WITH_DEVICE_IDX ? 'deviceId(HEX)' : null,
+          deviceId: Util.includesIgnoreCase(APP.EXB.WITH, 'deviceId') ? 'deviceId' : null,
+          deviceIdX: Util.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX') ? 'deviceId(HEX)' : null,
           name: 'finalRevceivePlace',
           powerLevel: 'powerLevel',
           timestamp: 'timestamp',
@@ -173,12 +173,12 @@ export default {
           state: this.getStateLabel('exb', e.timestamp)
         }
 
-        const deviceId = APP.EXSERVER ? e.deviceid : parseInt(e.deviceid, 16)
+        const deviceId = APP.SVC.POS.EXSERVER ? e.deviceid : parseInt(e.deviceid, 16)
 
-        if(APP.EXB_WITH_DEVICE_ID){
+        if(Util.includesIgnoreCase(APP.EXB.WITH, 'deviceId')){
           ret.deviceId = deviceId
         }
-        if(APP.EXB_WITH_DEVICE_IDX){
+        if(Util.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')){
           ret.deviceIdX= e.deviceid.toUpperCase()
         }
         return ret

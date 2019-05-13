@@ -8,6 +8,7 @@
 <script>
 import mList from '../../../components/page/list.vue'
 import { mapState } from 'vuex'
+import * as Util from '../../../sub/util/Util'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import listmixinVue from '../../../components/mixin/listmixin.vue'
@@ -32,20 +33,8 @@ export default {
         appServicePath: '/core/tx',
         csvOut: true,
         custumCsvColumns: this.getCustumCsvColumns(),
-        fields: ViewHelper.addLabelByKey(this.$i18n, [
-          APP.TX_BTX_MINOR == 'minor'? {key: 'minor', sortable: true, tdClass: 'action-rowdata' }: null,
-          APP.TX_BTX_MINOR != 'minor'? {key: 'btxId', sortable: true, tdClass: 'action-rowdata' }: null,
-          APP.TX_WITH_DISPLAY_NAME? {key: 'displayName', sortable: true, tdClass: 'action-rowdata' }: null,
-          APP.TX_WITH_MAJOR? {key: 'major', sortable: true, tdClass: 'action-rowdata' }: null,
-          APP.TX_BTX_MINOR == 'both'? {key: 'minor', sortable: true, tdClass: 'action-rowdata' }: null,
-          APP.TX_WITH_CATEGORY? {key: 'categoryName', label: 'category', sortable: true, tdClass: 'action-rowdata' }: null,
-          APP.TX_WITH_GROUP? {key: 'groupName', label: 'group', sortable: true, tdClass: 'action-rowdata' }: null,
-          APP.TX_WITH_DESCRIPTION? {key: 'description', sortable: true, thStyle: {width: '200px !important'}, tdClass: 'action-rowdata' }: null,
-          {key: 'sensor', label:'type', sortable: true,},
-          APP.TX_WITH_DISPFLG? {key: 'disp', label:'disp', sortable: false,}: null,
-          {key: 'actions', thStyle: {width: '130px !important'}, tdClass: 'action-rowdata' }
-        ]),
-        sortBy: APP.TX_BTX_MINOR != 'minor'? 'btxId': 'minor',
+        fields: this.getFields(),
+        sortBy: APP.TX.BTX_MINOR != 'minor'? 'btxId': 'minor',
         initTotalRows: this.$store.state.app_service.txs.length
       },
       items: ViewHelper.createBreadCrumbItems('master', 'tx'),
@@ -61,22 +50,50 @@ export default {
   mounted() {
   },
   methods: {
+    createCustomColumn(){
+      return APP.TX.WITH.map(val => {
+        if(['location', 'dispPir', 'dispAlways'].includes(val)){
+          return null
+        }
+        const ret = {key: val, label: val, sortable: true, tdClass: 'action-rowdata'}
+        if(['category', 'group'].includes(val)){
+          ret.key = val + 'Name'
+        }
+        if(['description'].includes(val)){
+          ret.thStyle = {width: '200px !important'}
+        }
+        if(['dispFlg'].includes(val)){
+          ret.key = ret.label = 'disp'
+          ret.sortable = false
+        }
+        return ret
+      }).filter(val => val)
+    },
     getCustumCsvColumns(){
       return [
-        APP.TX_BTX_MINOR == 'minor'? 'minor': null,
-        APP.TX_BTX_MINOR != 'minor'? 'btxId': null,
-        APP.TX_WITH_DISPLAY_NAME? 'displayName': null,
-        APP.TX_WITH_MAJOR? 'major': null,
-        APP.TX_BTX_MINOR == 'both'? 'minor': null,
-        APP.TX_WITH_CATEGORY? 'categoryName': null,
-        APP.TX_WITH_GROUP? 'groupName': null,
-        APP.TX_WITH_DESCRIPTION? 'description': null,
+        APP.TX.BTX_MINOR == 'minor'? 'minor': null,
+        APP.TX.BTX_MINOR != 'minor'? 'btxId': null,
+        APP.TX.BTX_MINOR == 'both'? 'minor': null,
         'sensor',
-        'disp',
-        APP.TX_WITH_LOCATION? 'areaName': null,
-        APP.TX_WITH_LOCATION? 'x': null,
-        APP.TX_WITH_LOCATION? 'y': null,
-      ].filter((val, idx, ary) => val && ary.indexOf(val) == idx)
+      ].concat(this.createCustomColumn().map(val => val.key)).concat([
+        Util.includesIgnoreCase(APP.TX.WITH, 'location')? 'areaName': null,
+        Util.includesIgnoreCase(APP.TX.WITH, 'location')? 'x': null,
+        Util.includesIgnoreCase(APP.TX.WITH, 'location')? 'y': null,
+      ]).filter((val, idx, ary) => val && ary.indexOf(val) == idx)
+    },
+    getFields(){
+      return ViewHelper.addLabelByKey(this.$i18n, [
+        APP.TX.BTX_MINOR == 'minor'? {key: 'minor', sortable: true, tdClass: 'action-rowdata' }: null,
+        APP.TX.BTX_MINOR != 'minor'? {key: 'btxId', sortable: true, tdClass: 'action-rowdata' }: null,
+        APP.TX.BTX_MINOR == 'both'? {key: 'minor', sortable: true, tdClass: 'action-rowdata' }: null,
+        {key: 'txName', sortable: true, tdClass: 'action-rowdata' },
+        {key: 'sensor', label:'type', sortable: true,},
+      ].concat(this.createCustomColumn())
+        .concat([
+          {key: 'actions', thStyle: {width: '130px !important'}, tdClass: 'action-rowdata' }
+        ])
+        .filter(val => val)
+      )
     },
     afterCrud(){
       StateHelper.setForceFetch('pot', true)

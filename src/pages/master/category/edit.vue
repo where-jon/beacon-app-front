@@ -70,7 +70,7 @@ export default {
       oldColor: Util.getValue(category, 'display.color', null),
       oldBgColor: Util.getValue(category, 'display.bgColor', null),
       defValue: {
-        'categoryType': APP.CATEGORY_TYPES[0],
+        'categoryType': APP.CATEGORY.TYPES[0],
       },
       items: ViewHelper.createBreadCrumbItems('master', {text: 'category', href: '/master/category'}, Util.getDetailCaptionKey(this.$store.state.app_service.category.categoryId)),
     }
@@ -84,7 +84,7 @@ export default {
       'category',
     ]),
     categoryTypes(){
-      return CATEGORY.getTypes().filter((val) => APP.CATEGORY_TYPES.includes(val.value))
+      return CATEGORY.getTypes().filter((val) => APP.CATEGORY.TYPES.includes(val.value))
     },
     shapes(){
       return SHAPE.getShapes()

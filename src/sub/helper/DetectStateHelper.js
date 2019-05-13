@@ -37,7 +37,7 @@ export const getState = (type, updatetime) => {
   let LOST_TIME
   switch(type) {
   case 'tx':
-    LOST_TIME = APP.LOST_TIME
+    LOST_TIME = APP.POS.LOST_TIME
     UNDETECT_TIME = APP.UNDETECT_TIME
     break
   case 'exb':

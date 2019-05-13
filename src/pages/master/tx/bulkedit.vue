@@ -99,7 +99,7 @@ export default {
       return dummyKey
     },
     addLocation(entity, dummyKey){
-      if(!APP.TX_WITH_LOCATION){
+      if(!Util.includesIgnoreCase(APP.TX.WITH, 'location')){
         return dummyKey
       }
       if(!entity.location){
@@ -117,7 +117,7 @@ export default {
           entity.ignoreBtxId = IGNORE.ON
         }
       }
-      else if(APP.TX_BTX_MINOR == 'btxId'){
+      else if(APP.TX.BTX_MINOR == 'btxId'){
         entity.minor = entity.btxId
         if(Util.hasValue(entity.btxIdName) || 65535 < entity.btxId){
           entity.ignoreMinor = IGNORE.ON

@@ -24,8 +24,8 @@ export const calcChartMax = (chartData, column, by, cut) => {
 }
 
 export const getThermoPatternConfig = () => {
-  if(Util.hasValue(DISP.THERMOH_PATTERN)){
-    return DISP.THERMOH_PATTERN.map((pattern) => {
+  if(Util.hasValue(DISP.THERMOH.PATTERN)){
+    return DISP.THERMOH.PATTERN.map((pattern) => {
       const patternRet = {}
       pattern.split(' ').forEach((val) => {
         const topChar = val.slice(0, 1)
@@ -36,7 +36,7 @@ export const getThermoPatternConfig = () => {
           patternRet.base = Number(val)
         }
         else if(topChar == '$'){
-          patternRet.flash = DISP[`THERMOH_FLASH_${val.slice(1)}`]
+          patternRet.flash = DISP.THERMOH.FLASH[val.slice(1)]
         }
         else if(val.toLowerCase() == 'or'){
           patternRet.or = true
@@ -52,7 +52,7 @@ export const getThermoPatternConfig = () => {
 }
 
 export const getThermohumidityIconInfo = (thermohumidityIconConfig, temperature, humidity) => {
-  const point = DISP.THERMOH_CALC == THERMOHUMIDITY.CALC.TEMPERATURE? temperature: calcDiscomfortIndex(temperature, humidity)
+  const point = DISP.THERMOH.CALC == THERMOHUMIDITY.CALC.TEMPERATURE? temperature: calcDiscomfortIndex(temperature, humidity)
   return thermohumidityIconConfig.find((conf, idx) => {
     if(thermohumidityIconConfig.length <= idx + 1){
       return true
@@ -65,9 +65,9 @@ export const getThermohumidityIconInfo = (thermohumidityIconConfig, temperature,
 }
 
 export const getHumidityPatternConfig = () => {
-  if(Util.hasValue(DISP.HUMIDITY_PATTERN)){
+  if(Util.hasValue(DISP.THERMOH.HUMIDITY_PATTERN)){
     const ret = {less: [], more: []}
-    DISP.HUMIDITY_PATTERN.map((pattern) => {
+    DISP.THERMOH.HUMIDITY_PATTERN.map((pattern) => {
       const patternRet = {}
       pattern.split(' ').forEach((val) => {
         const v = val.toLowerCase()
@@ -116,15 +116,15 @@ export const getDiscomfortColor = (temperature, humidity) => {
   let discomfort = getDiscomfort(temperature, humidity)
   switch (discomfort) {
   case DISCOMFORT.COLD:
-    return DISP.DISCOMFORT_COLD
+    return DISP.THERMOH.DISCOMFORT_COLD
   case DISCOMFORT.COMFORT:
-    return DISP.DISCOMFORT_COMFORT
+    return DISP.THERMOH.DISCOMFORT_COMFORT
   case DISCOMFORT.HOT:
-    return DISP.DISCOMFORT_HOT
+    return DISP.THERMOH.DISCOMFORT_HOT
   }
 }
 
-export const availableSensorAll = () =>  _([...APP.EXB_SENSOR, ...APP.TX_SENSOR]).sort().uniqWith(_.isEqual).value()
+export const availableSensorAll = () =>  _([...APP.EXB.SENSOR, ...APP.SENSOR.TX_SENSOR]).sort().uniqWith(_.isEqual).value()
 
 export const onlyOne = () => availableSensorAll().length == 1 && availableSensorAll()[0]
 
@@ -206,7 +206,7 @@ export const createChartPirOptions = (chartData, by, i18n, isResponsive = false)
     data:{
       labels: chartData.map((val) => val.key),
       datasets: 
-        createChartGraphDatasets('pir', i18n.tnl('label.pir'), chartData, 'count', DISP.PIR_LINE_COLOR, by, i18n)
+        createChartGraphDatasets('pir', i18n.tnl('label.pir'), chartData, 'count', DISP.PIR.LINE_COLOR, by, i18n)
     },
     options: createChartGraphOptions(
       {
@@ -278,7 +278,7 @@ export const createChartPressureOptions = (chartData, by, i18n, isResponsive = f
     data:{
       labels: chartData.map((val) => val.key),
       datasets: 
-        createChartGraphDatasets('pressure', i18n.tnl('label.pressure'), chartData, 'pressVol', DISP.PRESSURE_LINE_COLOR, by, i18n)
+        createChartGraphDatasets('pressure', i18n.tnl('label.pressure'), chartData, 'pressVol', DISP.PRESSURE.LINE_COLOR, by, i18n)
     },
     options: createChartGraphOptions(
       {
@@ -386,7 +386,7 @@ export const createChartData = (range, data) => {
 }
 
 export const showThermoHumidityChart = (id, data, i18n) => {
-  const range = Util.numberRange(APP.TEMPERATURE_LINE_HOUR_START, APP.TEMPERATURE_LINE_HOUR_END)
+  const range = Util.numberRange(APP.SENSOR.TEMPERATURE.LINE_HOUR_START, APP.SENSOR.TEMPERATURE.LINE_HOUR_END)
   const chartData = createChartData(range, data.map((val) => {return {key: val.key, immediate: {...val}}}))
   const suffix = ':00'
   chartData.forEach((val) => val.key = val.key + suffix)
@@ -401,7 +401,7 @@ export const showChartDetail = (canvasId, sensorId, dateFrom, dateTo, sensorData
 
 export const getStressBg = (stress) => {
   let idx = stress < 8? 0: stress < 20? 1: 2 
-  return DISP.STRESS_BG[idx]
+  return DISP.MEDITAG.STRESS_BG[idx]
 } 
 
 export const setStress = (positions, sensors) => {
@@ -417,10 +417,10 @@ export const getFields1 = (i18n) => {
   return addLabelByKey(i18n, [
     {key: 'sensorDt', sortable: true, label:'dt'},
     {key: 'potName', sortable: true },
-    APP.SENSOR_WITH_DEVICE_ID && APP.EXB_WITH_DEVICE_ID? {key: 'deviceId', sortable: true }: null,
-    APP.SENSOR_WITH_DEVICE_IDX && APP.EXB_WITH_DEVICE_IDX? {key: 'deviceIdX', sortable: true }: null,
-    APP.SENSOR_WITH_LOCATIONNAME? {key: 'locationName', label:'exbName', sortable: true,}: null,
-    APP.SENSOR_WITH_POSID? {key: 'posId', label:'posId', sortable: true,}: null,
+    Util.includesIgnoreCase(APP.SENSOR_LIST.WITH, 'deviceId') && Util.includesIgnoreCase(APP.EXB.WITH, 'deviceId')? {key: 'deviceId', sortable: true }: null,
+    Util.includesIgnoreCase(APP.SENSOR_LIST.WITH, 'deviceIdX') && Util.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')? {key: 'deviceIdX', sortable: true }: null,
+    {key: 'locationName', label:'locationZoneName', sortable: true,},
+    Util.includesIgnoreCase(APP.SENSOR_LIST.WITH, 'posId')? {key: 'posId', label:'posId', sortable: true,}: null,
     {key: 'areaName', label:'area', sortable: true,},
     {key: 'temperature', sortable: true},
     {key: 'humidity', sortable: true},
@@ -430,9 +430,9 @@ export const getFields1 = (i18n) => {
 export const getFields2 = (i18n) =>{
   return addLabelByKey(i18n, [
     {key: 'sensorDt', sortable: true, label:'dt'},
-    APP.EXB_WITH_DEVICE_ID? {key: 'deviceId', sortable: true }: null,
-    APP.EXB_WITH_DEVICE_IDX? {key: 'deviceIdX', sortable: true }: null,
-    {key: 'locationName', label:'exbName', sortable: true,},
+    Util.includesIgnoreCase(APP.EXB.WITH, 'deviceId')? {key: 'deviceId', sortable: true }: null,
+    Util.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')? {key: 'deviceIdX', sortable: true }: null,
+    {key: 'locationName', label:'locationZoneName', sortable: true,},
     {key: 'posId', label:'posId', sortable: true,},
     {key: 'areaName', label:'area', sortable: true,},
     {key: 'count', label:'numUsers', sortable: true},
@@ -466,9 +466,9 @@ export const getFields6 = (i18n) => {
 export const getFields8 = (i18n) => {
   return addLabelByKey(i18n, [
     {key: 'sensorDt', sortable: true, label:'dt'},
-    APP.EXB_WITH_DEVICE_ID? {key: 'deviceId', sortable: true }: null,
-    APP.EXB_WITH_DEVICE_IDX? {key: 'deviceIdX', sortable: true }: null,
-    {key: 'locationName', label:'exbName', sortable: true,},
+    Util.includesIgnoreCase(APP.EXB.WITH, 'deviceId')? {key: 'deviceId', sortable: true }: null,
+    Util.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')? {key: 'deviceIdX', sortable: true }: null,
+    {key: 'locationName', label:'locationZoneName', sortable: true,},
     {key: 'posId', label:'posId', sortable: true,},
     {key: 'areaName', label:'area', sortable: true,},
     {key: 'pressVol', label:'pressVol', sortable: true},

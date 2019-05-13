@@ -12,6 +12,7 @@ import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as MenuHelper from '../../../sub/helper/MenuHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import { APP } from '../../../sub/constant/config'
+import * as Util from '../../../sub/util/Util'
 import listmixinVue from '../../../components/mixin/listmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 
@@ -34,7 +35,7 @@ export default {
         csvOut: true,
         custumCsvColumns: this.getCustumCsvColumns(),
         fields: this.getFields(),
-        sortBy: APP.EXB_WITH_DEVICE_ID? 'deviceId': APP.EXB_WITH_DEVICE_IDX? 'deviceIdX': 'locationName',
+        sortBy: Util.includesIgnoreCase(APP.EXB.WITH, 'deviceId')? 'deviceId': Util.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')? 'deviceIdX': 'locationName',
         initTotalRows: this.$store.state.app_service.exbs.length
       },
       items: ViewHelper.createBreadCrumbItems('master', 'exb'),
@@ -50,35 +51,34 @@ export default {
   mounted() {
   },
   methods: {
+    createCustomColumn(){
+      return APP.EXB.WITH.map(val => {
+        const ret = {key: val, label: val, sortable: true}
+        if(['zone'].includes(val)){
+          if(!MenuHelper.isMenuEntry('/master/zoneClass')){
+            return null
+          }
+          ret.key = ret.label = 'zoneName'
+        }
+        return ret
+      }).filter(val => val)
+    },
     getCustumCsvColumns(){
-      return [
-        APP.EXB_WITH_DEVICE_ID? 'deviceId': null,
-        APP.EXB_WITH_DEVICE_IDX? 'deviceIdX': null,
-        'locationName',
-        'posId',
-        'areaName',
-        'x',
-        'y',
-        'enabled',
-        'sensor',
-        APP.EXB_WITH_ZONE && MenuHelper.isMenuEntry('/master/zoneClass') ? 'zoneName': null
-      ].filter((val) => val)
+      return this.createCustomColumn().map(val => val.key)
+        .concat(['locationName','areaName', 'x', 'y', 'enabled', 'sensor']).filter(val => val)
     },
     getFields(){
-      return ViewHelper.addLabelByKey(this.$i18n, [ 
-        APP.EXB_WITH_DEVICE_ID? {key: 'deviceId', sortable: true }: null,
-        APP.EXB_WITH_DEVICE_IDX? {key: 'deviceIdX', sortable: true }: null,
-        {key: 'locationName', label:'locationName', sortable: true,},
-        APP.EXB_WITH_POSID? {key: 'posId', label:'posId', sortable: true,}: null,
-        {key: 'areaName', label:'area', sortable: true,},
-        {key: 'x', label:'locationX', sortable: true,},
-        {key: 'y', label:'locationY', sortable: true,},
-        // {key: 'sensorIdName', label:'type', sortable: true,},　一旦単数で
-        {key: 'sensor', label:'type', sortable: true,},
-        APP.EXB_WITH_ZONE && MenuHelper.isMenuEntry('/master/zoneClass') ? 
-          {key: 'zoneName', label: 'zoneName', sortable: true,} : null,
-        {key: 'actions', thStyle: {width: '130px !important'} }
-      ])
+      return ViewHelper.addLabelByKey(this.$i18n, this.createCustomColumn()
+        .concat([
+          {key: 'locationName', label:'locationName', sortable: true,},
+          {key: 'areaName', label:'area', sortable: true,},
+          {key: 'x', label:'locationX', sortable: true,},
+          {key: 'y', label:'locationY', sortable: true,},
+          // {key: 'sensorIdName', label:'type', sortable: true,},　一旦単数で
+          {key: 'sensor', label:'type', sortable: true,},
+          {key: 'actions', thStyle: {width: '130px !important'} }
+        ])
+      )
     },
     customCsvData(val){
       // val.sensor = val.sensorIdNames.join(';')  単数に戻す

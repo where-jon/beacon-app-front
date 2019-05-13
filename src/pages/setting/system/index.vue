@@ -170,7 +170,7 @@ export default {
         if(!this.calee){
           await StateHelper.load('setting')
         }
-        this.settingList = SettingHelper.mergeSettings(this.callee? this.pSettingList: this.settings)
+        this.settingList = SettingHelper.createSettingList(this.callee? this.pSettingList: this.settings)
         this.initFilter()
       }
       catch(e) {
@@ -226,6 +226,9 @@ export default {
     createSaveEntities(updateSettings){
       const entity = []
       this.parse(updateSettings).forEach((setting, index) => {
+        if(setting.isParent){
+          return
+        }
         entity.push({
           ...setting,
           settingId: Util.hasValue(setting.settingId)? setting.settingId: -1 * (index + 1),

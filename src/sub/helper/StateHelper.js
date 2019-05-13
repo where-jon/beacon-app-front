@@ -74,10 +74,10 @@ export const getSensorIdNames = (exbSensorList) => {
 
 export const getDeviceIdName = (device, option = {forceSensorName: false}) => {
   if(device.exbId){
-    return APP.EXB_WITH_DEVICE_ID? 'deviceId': APP.EXB_WITH_DEVICE_IDX? 'deviceIdX': 'locationName'
+    return Util.includesIgnoreCase(APP.EXB.WITH, 'deviceId')? 'deviceId': Util.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')? 'deviceIdX': 'locationName'
   }
   if(device.txId){
-    return option.forceSensorName? 'potName': APP.TX_BTX_MINOR != 'minor'? 'btxId': 'minor'
+    return option.forceSensorName? 'potName': APP.TX.BTX_MINOR != 'minor'? 'btxId': 'minor'
   }
   return null
 }
@@ -94,7 +94,7 @@ export const getTxIdName = (tx) => {
   if(!tx){
     return null
   }
-  return APP.TX_BTX_MINOR != 'minor' && tx.btxId? tx.btxId: APP.TX_BTX_MINOR == 'minor' && tx.minor? tx.minor: null
+  return APP.TX.BTX_MINOR != 'minor' && tx.btxId? tx.btxId: APP.TX_BTX_MINOR == 'minor' && tx.minor? tx.minor: null
 }
 
 export const getTxIdNames = (txList) => {
@@ -176,7 +176,7 @@ const appStateConf = {
   },
   exbs: {
     path: '/core/exb/withLocation',
-    sort: APP.EXB_WITH_DEVICE_ID? 'deviceId': APP.EXB_WITH_DEVICE_IDX? 'deviceIdX': 'locationName',
+    sort: Util.includesIgnoreCase(APP.EXB.WITH, 'deviceId')? 'deviceId': Util.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')? 'deviceIdX': 'locationName',
     beforeCommit: (arr) => {
       return arr.map((exb) => {
         const location = exb.location
@@ -194,7 +194,7 @@ const appStateConf = {
   },
   txs: {
     path: '/core/tx/withPot',
-    sort: APP.TX_BTX_MINOR != 'minor'? 'btxId': 'minor',
+    sort: APP.TX.BTX_MINOR != 'minor'? 'btxId': 'minor',
     beforeCommit: (arr) => {
       return arr.map((tx) => {
         return {
@@ -229,7 +229,7 @@ const appStateConf = {
     beforeCommit: (arr) => {
       let potImages = arr.map((val) => ({ id: val.potId, txId: val.txId, thumbnail: val.thumbnail}))
       store.commit('app_service/replaceAS', {['potImages']:potImages})
-      const idNames = APP.TX_BTX_MINOR == 'minor'? 'minor': 'btxId'
+      const idNames = APP.TX.BTX_MINOR == 'minor'? 'minor': 'btxId'
       return arr.map((pot) => {
         return {
           ...pot,
@@ -290,7 +290,7 @@ const appStateConf = {
   },
   users: {
     path: '/meta/user',
-    sort: APP.USER_WITH_NAME? 'name': 'loginId',
+    sort: Util.includesIgnoreCase(APP.USER.WITH, 'name')? 'name': 'loginId',
     beforeCommit: (arr) => {
       return arr.map((val) => ({...val, roleName: val.role.roleName}))
     }
@@ -402,7 +402,7 @@ export const load = async (target, force) => {
       arr = beforeCommit(arr)
     }
     store.commit('app_service/replaceAS', {[target]:arr})
-    const expiredTime = (new Date()).getTime() + APP.STATE_EXPIRE_TIME
+    const expiredTime = (new Date()).getTime() + APP.SYS.STATE_EXPIRE_TIME
     store.commit('app_service/replaceAS', {[expiredKey]: expiredTime})
   }
 }
@@ -438,10 +438,10 @@ export const loadAreaImage = async (areaId, force) => {
 
 export const getProhibitData = async (position,prohibits) => {
 
-  if (!APP.PROHIBIT_ALERT || !APP.PROHIBIT_GROUPS) {
+  if (!APP.POS.PROHIBIT_ALERT || !APP.POS.PROHIBIT_GROUPS) {
     return null
   }
-  const groups = APP.PROHIBIT_GROUPS
+  const groups = APP.POS.PROHIBIT_GROUPS
   return position.filter((pos) =>
     prohibits.some((prohibitData) => {
       if (pos.exb.areaId == prohibitData.areaId
@@ -462,7 +462,7 @@ export const getProhibitData = async (position,prohibits) => {
 
 export const getProhibitMessage = async (message,prohibitData) => {
 
-  if (!APP.PROHIBIT_ALERT || !APP.PROHIBIT_GROUPS) {
+  if (!APP.POS.PROHIBIT_ALERT || !APP.POS.PROHIBIT_GROUPS) {
     return ''   // message空
   }
 
@@ -499,7 +499,7 @@ export const loadAreaImages = async () => {
  * StateHelper.getOptionsFromState('sensor', 
  *    (val) => {this.$i18n.t('label.' + val.sensorName})}, // 表示は言語ファイルから取る。
  *    {value: null, text: this.$i18n.t('label.normal')}, // センサーのnullは「通常」
- *    (val) => APP.TX_SENSOR.includes(val.senserId)) // Txのセンサーに絞り込む
+ *    (val) => APP.SENSOR.TX_SENSOR.includes(val.senserId)) // Txのセンサーに絞り込む
  */
 export const getOptionsFromState = (key, textField, notNull, filterCallback) => {
   Util.debug('getOptionsFromState')

@@ -48,7 +48,7 @@
 </template>
 
 <script>
-import { DISP } from '../../sub/constant/config'
+import { APP, DISP } from '../../sub/constant/config'
 import { FONT } from '../../sub/constant/Constants'
 import sensor from './sensor.vue'
 import txdetailmodal from './txdetailmodal.vue'
@@ -107,7 +107,7 @@ export default {
   },
   methods: {
     isDisableThumbnail() {
-      return DISP.TXDETAIL_SUMBNAIL_UNREGIST_DISABLE ? !(this.selectedTx.thumbnail.length > 0) : false
+      return APP.TXDETAIL.NO_UNREGIST_THUMB ? !(this.selectedTx.thumbnail.length > 0) : false
     },
     async setImageWidth() {
       this.imageWidth = await loadImage(this.selectedTx.thumbnail, this.imageHeight)
@@ -122,26 +122,21 @@ export default {
       return containerWidth <= this.selectedTx.orgLeft + this.meditagWidth
     },
     getDispItems () {
-      return Object.keys(DISP.TXDETAIL_ITEMS)
-        .filter((key) => DISP.TXDETAIL_ITEMS[key])
-        .map((e) => this.selectedTx[e])
+      return APP.TXDETAIL.ITEMS.map(e => this.selectedTx[e])
     },
     getLeft() {
       this.setImageWidth()
       const isOut = this.isOutOfFrame()
       const imageWidth = this.isDisableThumbnail()? 0 : this.imageWidth
       const left = !isOut ? this.selectedTx.orgLeft - DISP.TXDETAIL_DIFF : 
-        this.selectedSensor.length == 0? (this.selectedTx.orgLeft - (this.descriptionWidth + imageWidth)): this.selectedTx.orgLeft + DISP.TX_R - this.meditagWidth
+        this.selectedSensor.length == 0? (this.selectedTx.orgLeft - (this.descriptionWidth + imageWidth)): this.selectedTx.orgLeft + DISP.TX.R - this.meditagWidth
       return left + 'px'
     },
     getPopupDispItems() {
-      return Object.keys(DISP.TXDETAIL_ITEMS)
-        .filter((key) => DISP.TXDETAIL_ITEMS[key])
-        .map((e) => this.selectedTx[e])
-        .filter((elem) => elem)
+      return APP.TXDETAIL.ITEMS.map(e => this.selectedTx[e]).filter(elem => elem)
     },
     getTop() {
-      const txR = DISP.TX_R * this.selectedTx.scale
+      const txR = DISP.TX.R * this.selectedTx.scale
       let offset = 0
       if(this.selectedSensor.length > 0){
         offset = -80 // TXとMEDITAGの高さの差

@@ -15,11 +15,11 @@
               <label v-t="'label.type'" />
               <b-form-select v-model="form.sensorId" :options="sensorOptionsTx" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-3 col-4" />
             </b-form-group>
-            <b-form-group v-show="isShown('TX_WITH_CATEGORY')">
+            <b-form-group v-show="isShown('TX.WITH', 'category')">
               <label v-t="'label.category'" />
               <b-form-select v-model="form.categoryId" :options="categoryOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-3 col-4" />
             </b-form-group>
-            <b-form-group v-show="isShown('TX_WITH_GROUP')">
+            <b-form-group v-show="isShown('TX.WITH', 'group')">
               <label v-t="'label.group'" />
               <b-form-select v-model="form.groupId" :options="groupOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-3 col-4" />
             </b-form-group>
@@ -27,7 +27,7 @@
               <label v-t="'label.btxId'" />
               <input v-model="form.btxId" :required="showTx('btxId')" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control">
             </b-form-group>
-            <b-form-group v-show="isShown('TX_WITH_MAJOR')">
+            <b-form-group v-show="isShown('TX.WITH', 'major')">
               <label v-t="'label.major'" />
               <input v-model="form.major" :required="isMajorRequired" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control">
             </b-form-group>
@@ -35,11 +35,11 @@
               <label v-t="'label.minor'" />
               <input v-model="form.minor" :readonly="!isEditable" :required="requiredMinor" type="number" min="0" max="65535" class="form-control">
             </b-form-group>
-            <b-form-group v-show="isShown('TX_WITH_DISPLAY_NAME')">
+            <b-form-group v-show="isShown('TX.WITH', 'displayName')">
               <label v-t="'label.displayName'" />
               <input v-model="form.displayName" :readonly="!isEditable" type="text" maxlength="3" class="form-control">
             </b-form-group>
-            <b-form-group v-show="isShown('TX_WITH_DESCRIPTION')">
+            <b-form-group v-show="isShown('TX.WITH', 'description')">
               <label v-t="'label.description'" />
               <b-form-textarea v-model="form.description" :rows="3" :max-rows="6" :readonly="!isEditable" maxlength="1000" />
             </b-form-group>
@@ -48,12 +48,12 @@
                 <span v-text="$i18n.tnl('label.dispPos')" />
               </b-form-checkbox>
             </b-form-group>
-            <b-form-group v-if="isShown('TX_WITH_DISP_PIR')">
+            <b-form-group v-if="isShown('TX.WITH', 'dispPir')">
               <b-form-checkbox id="dispPir" v-model="form.dispPir" :value="2" :unchecked-value="0">
                 <span v-text="$i18n.tnl('label.dispPir')" />
               </b-form-checkbox>
             </b-form-group>
-            <b-form-group v-if="isShown('TX_WITH_DISP_ALWAYS')">
+            <b-form-group v-if="isShown('TX.WITH', 'dispAlways')">
               <b-form-checkbox id="dispAlways" v-model="form.dispAlways" :value="4" :unchecked-value="0">
                 <span v-text="$i18n.tnl('label.dispAlways')" />
               </b-form-checkbox>
@@ -124,7 +124,7 @@ export default {
       return 'outline-' + theme
     },
     isMajorRequired() {
-      return APP.TX_MAJOR_REQUIRED
+      return APP.TX.MAJOR_REQUIRED
     },
     sensorOptionsTx() {
       let options = this.sensorOptions('tx')
@@ -139,7 +139,7 @@ export default {
       return !this.showMinorHead
     },
     showMinorHead() {
-      return APP.TX_BTX_MINOR == 'minor'
+      return APP.TX.BTX_MINOR == 'minor'
     },
     requiredMinor() {
       return this.showTx('minor') && this.form.sensorId != SENSOR.TEMPERATURE
@@ -162,7 +162,7 @@ export default {
   },
   methods: {
     showTx(col) {
-      switch(APP.TX_BTX_MINOR) {
+      switch(APP.TX.BTX_MINOR) {
       case 'both':
         return true
       case 'minor':
@@ -177,7 +177,7 @@ export default {
     },
     async save() {
       const txId = Util.hasValue(this.form.txId)? this.form.txId: -1
-      switch(APP.TX_BTX_MINOR) {
+      switch(APP.TX.BTX_MINOR) {
       case 'minor':
         this.form.btxId = this.form.minor
         break

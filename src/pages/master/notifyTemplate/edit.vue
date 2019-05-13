@@ -86,7 +86,7 @@ export default {
       fromType:'email',
       deliveryState:NOTIFY_STATE.getOptions()[0].value,
       userMailState:NOTIFY_STATE.getOptions()[4].value,
-      notify: _.slice(NOTIFY_MIDIUM.getTypes()).filter((val) => APP.NOTIFY_MIDIUM_TYPES.includes(val.value)),
+      notify: _.slice(NOTIFY_MIDIUM.getTypes()).filter((val) => APP.NOTIFY.MIDIUM_TYPES.includes(val.value)),
       backPath: '/master/notifyTemplate',
       appServicePath: '/core/rcvexcloud',
       form: ViewHelper.extract(this.$store.state.app_service.template,
@@ -145,7 +145,7 @@ export default {
         this.form.notifyTo = ''
       }else{
         this.bNotifyTo = true
-        this.notify = _.slice(NOTIFY_MIDIUM.getTypes()).filter((val) => APP.NOTIFY_MIDIUM_TYPES.includes(val.value))
+        this.notify = _.slice(NOTIFY_MIDIUM.getTypes()).filter((val) => APP.NOTIFY.MIDIUM_TYPES.includes(val.value))
       }
       if(this.radioSelect== 0){
         this.bSubject = true

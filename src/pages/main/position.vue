@@ -107,13 +107,13 @@ export default {
       items: !this.isInstallation ? ViewHelper.createBreadCrumbItems('main', 'showPosition') : ViewHelper.createBreadCrumbItems('develop', 'installation'),
       detectedCount: 0, // 検知数
       pot: {},
-      showMeditag: APP.USE_MEDITAG && !this.isInstallation,
-      showDetected: APP.SHOW_DETECTED_COUNT,
+      showMeditag: APP.SENSOR.USE_MEDITAG && !this.isInstallation,
+      showDetected: APP.POS.SHOW_DETECTED_COUNT,
       shortName: this.$i18n.tnl('label.showPositionShort'),
       extraNavSpec: EXTRA_NAV,
       legendItems: [],
-      useGroup: MenuHelper.useMaster('group') && APP.POS_WITH_GROUP,
-      useCategory: MenuHelper.useMaster('category') && APP.POS_WITH_CATEGORY,
+      useGroup: MenuHelper.useMaster('group') && APP.POS.WITH.GROUP,
+      useCategory: MenuHelper.useMaster('category') && APP.POS.WITH.CATEGORY,
       toggleCallBack: () => this.reset(),
       noImageErrorKey: 'noMapImage',
       modeRssi: false,
@@ -193,7 +193,7 @@ export default {
   },
   methods: {
     async loadLegends () {
-      const loadCategory = DISP.DISPLAY_PRIORITY[0] == 'category'
+      const loadCategory = DISP.TX.DISPLAY_PRIORITY[0] == 'category'
       const magnetCategoryTypes = loadCategory? this.getMagnetCategoryTypes(): this.getMagnetGroupTypes()
       const legendElements = loadCategory? this.getCategoryLegendElements(): this.getGroupLegendElements()
       // console.error(loadCategory, magnetCategoryTypes, legendElements)
@@ -242,7 +242,7 @@ export default {
       if(payload.disabledOther){
         return
       }
-      if (APP.USE_MEDITAG) {
+      if (APP.SENSOR.USE_MEDITAG) {
         let meditagSensors = await EXCloudHelper.fetchSensor(SENSOR.MEDITAG)
         this.meditagSensors = _(meditagSensors)
           .filter((val) => this.txs.some((tx) => tx.btxId == val.btxid))
@@ -251,12 +251,12 @@ export default {
             let label = tx && tx.displayName? tx.displayName: val.btxid
             return {...val, label, bg: SensorHelper.getStressBg(val.stress), down: val.down?val.down:0}
           })
-          .sortBy((val) => (new Date().getTime() - val.downLatest < APP.DOWN_RED_TIME)? val.downLatest * -1: val.btxid)
+          .sortBy((val) => (new Date().getTime() - val.downLatest < APP.SENSOR.MEDITAG.DOWN_RED_TIME)? val.downLatest * -1: val.btxid)
           .value()
         Util.debug(this.meditagSensors)
       }
 
-      if (APP.USE_MAGNET) {
+      if (APP.SENSOR.USE_MAGNET) {
         this.magnetSensors = await EXCloudHelper.fetchSensor(SENSOR.MAGNET)
         Util.debug(this.magnetSensors)
       }
@@ -367,12 +367,12 @@ export default {
       this.disableExbsCheck()
       this.detectedCount = 0 // 検知カウントリセット
       let position = []
-      if(APP.USE_MULTI_POSITIONING){
+      if(APP.POS.USE_MULTI_POSITIONING){
         let area = _.find(this.$store.state.app_service.areas, (area) => area.areaId == this.selectedArea)
         let mapRatio = area.mapRatio
         position = PositionHelper.adjustMultiPosition(this.getPositions(), mapRatio)
       }else{
-        const ratio = DISP.TX_R_ABSOLUTE ? 1/this.canvasScale : 1
+        const ratio = DISP.TX.R_ABSOLUTE ? 1/this.canvasScale : 1
         position = PositionHelper.adjustPosition(this.getPositions(), ratio, this.positionedExb, this.selectedArea)
       }
       position.forEach((pos) => this.showTx(pos))

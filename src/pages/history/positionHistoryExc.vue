@@ -60,7 +60,7 @@ import * as SensorHelper from '../../sub/helper/SensorHelper'
 import * as Util from '../../sub/util/Util'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import { getTheme } from '../../sub/helper/ThemeHelper'
-import { EXCLOUD, DISP } from '../../sub/constant/config'
+import { EXCLOUD, APP } from '../../sub/constant/config'
 import { SENSOR } from '../../sub/constant/Constants'
 
 
@@ -110,7 +110,7 @@ export default {
       ]),
       message: null,
       sortBy: 'date',
-      sortDesc: DISP.HISTORY_SORT.toLowerCase() == 'desc',
+      sortDesc: APP.HISTORY_EXC.SORT.toLowerCase() == 'desc',
     }
   },
   computed: {
