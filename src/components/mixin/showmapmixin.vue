@@ -289,6 +289,12 @@ export default {
       this.stage.update() 
       this.bitmap = bitmap
       this.oldSelectedArea = this.selectedArea
+
+      if(this.onMapLoaded){
+        setTimeout(() => {
+          this.onMapLoaded(size)
+        }, 500)
+      }
     },
     async changeArea(val) {
       if (val) {
@@ -608,6 +614,9 @@ export default {
     reset() {
       this.isShownMapImage = false
       this.resetDetail()
+      if(this.onReset){
+        this.onReset()
+      }
     },
     resetDetail() {
       if (!this.showingDetailTime || new Date().getTime() - this.showingDetailTime > 100) {
