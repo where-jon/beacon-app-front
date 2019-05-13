@@ -192,6 +192,8 @@ export const SENSOR = {
   MAGNET: 6,
   BUTTON: 7,
   PRESSURE: 8,
+  OMR_ENV: 9,
+  OMR_HUMAN: 10,
   MAGNET_STATUS: {
     OFF: 0,
     ON: 4,
