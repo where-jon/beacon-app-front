@@ -34,11 +34,11 @@
         </b-form-row>
         <b-form-row class="my-1 ml-2 ml-sm-0">
           <b-button class="ml-sm-4 ml-2 mr-1" :pressed.sync="isPause" :variant="getButtonTheme()">
-            <i v-if="!isPause" class="fas fa-pause" />
+            <font-awesome-icon v-if="!isPause" icon="pause" />
             <span v-if="!isPause">
               &nbsp;{{ $t('label.reload') }}{{ $t('label.pause') }}
             </span>
-            <i v-if="isPause" class="fas fa-play" />
+            <font-awesome-icon v-if="isPause" icon="play" />
             <span v-if="isPause">
               &nbsp;{{ $t('label.reload') }}{{ $t('label.restart') }}
             </span>
@@ -138,7 +138,7 @@ export default {
       useGroup: MenuHelper.useMaster('group') && Util.includesIgnoreCase(APP.TX.WITH, 'group'),
       useCategory: MenuHelper.useMaster('category') && Util.includesIgnoreCase(APP.TX.WITH, 'category'),
       modeRssi: true,
-      exbDisp: 'deviceNum',
+      exbDisp: 'deviceId',
       nearest: [],
       targetTx: null,
       exbBtns : [],
@@ -267,8 +267,6 @@ export default {
         return deviceId.toString(16).toUpperCase()
       case 'deviceId':
         return deviceId
-      case 'deviceNum':
-        return deviceId - this.$store.state.currentRegion.deviceOffset
       }
     },
     getExbPosition() {

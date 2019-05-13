@@ -8,10 +8,6 @@
         <b-col md="8" offset-md="2">
           <b-form v-if="show" @submit.prevent="onSubmit">
             <chrome-input />
-            <b-form-group v-if="form.potId">
-              <label v-t="'label.potId'" />
-              <b-form-input v-model="form.potId" type="text" readonly="readonly" />
-            </b-form-group>
             <span v-for="(potTx, index) in form.potTxList" :key="index">
               <b-form inline @submit.prevent>
                 <b-form-group>
@@ -22,21 +18,13 @@
                       </label>
                       <b-form-select v-model="potTx.txId" :options="getTxOptions(index)" :disabled="!isEditable" :readonly="!isEditable" class="ml-3 tx-select" @change="changeTx($event, index)" />
                     </b-form-row>
-                    <b-form-row v-show="isShown('TX.WITH', 'txId')" class="mb-3 mr-3">
-                      <b-form-row>
-                        <label>
-                          {{ $i18n.tnl('label.txId') + getTxIndex(index) }}
-                        </label>
-                        <input v-model="txIds[index]" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control ml-3 tx-select">
-                      </b-form-row>
-                    </b-form-row>
-                    <b-form-row v-show="!isShown('TX.WITH', 'txId') && isShown('TX.BTX_MINOR') != 'minor'" class="mb-3 mr-3">
+                    <b-form-row v-show="isShown('TX.BTX_MINOR') != 'minor'" class="mb-3 mr-3">
                       <label>
                         {{ $i18n.tnl('label.btxId') + getTxIndex(index) }}
                       </label>
                       <input v-model="btxIds[index]" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control ml-3 tx-select">
                     </b-form-row>
-                    <b-form-row v-show="!isShown('TX.WITH', 'txId') && isShown('TX.BTX_MINOR') == 'minor'" class="mb-3 mr-3">
+                    <b-form-row v-show="isShown('TX.BTX_MINOR') == 'minor'" class="mb-3 mr-3">
                       <label>
                         {{ `Tx(${$i18n.tnl('label.minor')}${getTxIndex(index)})` }}
                       </label>
@@ -50,7 +38,7 @@
               <label v-t="'label.categoryType'" />
               <b-form-radio-group v-model="form.potType" :options="category" :disabled="!isEditable" :required="category.length > 1" />
             </b-form-group>
-            <b-form-group v-if="isShown('POT.WITH', 'potCd')">
+            <b-form-group>
               <label v-t="'label.potCd'" />
               <input v-model="form.potCd" :readonly="!isEditable" type="text" maxlength="20" class="form-control">
             </b-form-group>
@@ -185,6 +173,9 @@ export default {
     }
   },
   computed: {
+    hasId(){
+      return Util.hasValue(this.form.potId)
+    },
     theme () {
       const theme = getButtonTheme()
       return 'outline-' + theme
@@ -243,6 +234,9 @@ export default {
     ViewHelper.applyDef(this.form, this.defValue)
     if(this.form.potType == null){
       this.form.potType = this.defValue.potType
+    }
+    if(!Util.hasValue(this.form.potCd)){
+      this.form.potCd = StateHelper.createMasterCd('pot', this.pots, this.pot)
     }
     StateHelper.load('group')
     StateHelper.load('category')
@@ -336,16 +330,12 @@ export default {
         this.txIds[index] = tx? tx.txId: null
         this.btxIds[index] = tx? tx.btxId: null
         this.minors[index] = tx? tx.minor: null
-        if(this.isShown('TX.WITH', 'txId')){
-          this.watchIds(this.txIds, 'txId')
-        }
-        if(!this.isShown('TX.WITH', 'txId') && this.isShown('TX.BTX_MINOR') != 'minor'){
+        if(this.isShown('TX.BTX_MINOR') != 'minor'){
           this.watchIds(this.btxIds, 'btxId')
         }
-        if(!this.isShown('TX.WITH', 'txId') && this.isShown('TX.BTX_MINOR') == 'minor'){
+        else{
           this.watchIds(this.minors, 'minor')
         }
-
         this.showEmailCheck()
         this.$forceUpdate()
       })

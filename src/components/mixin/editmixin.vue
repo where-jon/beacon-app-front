@@ -189,8 +189,8 @@ export default {
       })
     },
     modifyColName(col) {
-      if (col == 'TXID' && !Util.includesIgnoreCase(APP.TX.WITH, 'txId')){
-        return APP.TX.BTX_MINOR == 'minor'? 'minor': 'btxId'
+      if (col == 'TXID'){
+        return APP.TX_BTX_MINOR == 'minor'? 'minor': 'btxId'
       }
       if (col == 'btxId' && APP.TX.BTX_MINOR == 'minor') {
         return 'minor'
@@ -198,8 +198,8 @@ export default {
       return col
     },
     modifyVal(col, val) {
-      if (col == 'TXID' && !Util.includesIgnoreCase(APP.TX.WITH, 'txId')){
-        if(APP.TX.BTX_MINOR == 'minor' && this.minor){
+      if (col == 'TXID'){
+        if(APP.TX_BTX_MINOR == 'minor' && this.minor){
           return this.minor
         }
         if(APP.TX.BTX_MINOR != 'minor' && this.btxId){

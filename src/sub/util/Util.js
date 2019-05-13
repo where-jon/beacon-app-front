@@ -525,3 +525,19 @@ export const compareStrNum = (a, b) => {
   const compB = !aNaN && !bNaN? Number(b): String(b)
   return compA < compB? -1: compA > compB? 1: 0
 }
+
+export const addWithPadding = (str, add) => {
+  if(!/^[0-9]+$/.test(str)){
+    return str + add
+  }
+  const strDigit = str.length
+  const srcNum = Number(str)
+  const srcDigit = srcNum.toString().length
+  const destNum = srcNum + add
+  const destDigit = destNum.toString().length
+  const ret = '0'.repeat(srcDigit + 1).concat(destNum)
+  if(srcDigit >= destDigit || strDigit >= destDigit){
+    return ret.slice(-1 * strDigit)
+  }
+  return ret.slice(-1 * (strDigit + 1))
+}

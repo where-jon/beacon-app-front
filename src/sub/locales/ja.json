@@ -99,18 +99,18 @@
     "powerLevel": "電池レベル",
     "power-good": "良好",
     "power-warning": "減少",
-    "power-poor": "交換",
+    "power-poor": "充電/交換",
 
     "tx": "Tx",
     "txId": "TxID",
-    "txName": "Tx名",
+    "txName": "名前",
     "btxId": "btxId",
     "major": "major",
     "minor": "minor",
     "minorPowerLevel": "minor(電池レベル)",
 
     "locationId": "位置ID",
-    "locationName": "名前",
+    "locationName": "EXB名",
     "locationX": "X座標",
     "locationY": "Y座標",
     "locationZ": "Z座標",
@@ -120,6 +120,7 @@
 
     "map": "マップ",
     "areaId": "エリアID",
+    "areaCd": "エリアコード",
     "areaName": "エリア名",
     "mapImage": "マップイメージ",
     "mapHeight": "マップ高さ",
@@ -302,7 +303,6 @@
     "regionId": "リージョンID",
     "regionName": "リージョン名",
     "meshId": "メッシュID",
-    "deviceOffset": "デバイスオフセット",
 
     "zoneClass": "ゾーン(分類)",
     "zoneBlock": "ゾーン(区画)",
@@ -362,6 +362,8 @@
     "stayRatioAbsent2Time": "absent2Time",
     "stayRatioAbsent1Ratio": "absent1Ratio",
     "stayRatioAbsent2Ratio": "absent2Ratio",
+
+    "positionSummary": "位置情報",
 
     "historyTitle": "履歴",
     "historyDateFrom": "期間",
@@ -566,6 +568,7 @@
     "temperatureUnit": "℃",
     "humidityUnit": "％",
     "notes": "注意事項",
+    "updateKey": "更新キー",
 
     "dummy": ""
   },
@@ -1061,14 +1064,12 @@
         "zone": "ゾーン"
       },
       "POSITION_HISTORY": {
-        "txName": "Tx名",
         "potName": "人＆物の名前",
         "major": "major",
         "minor": "minor",
-        "deviceNum": "端末ID",
         "deviceId": "デバイスID",
         "deviceIdX": "デバイスID(16進数)",
-        "locationName": "場所名",
+        "locationName": "EXB名",
         "posId": "posId",
         "areaName": "エリア名",
         "x": "X座標",

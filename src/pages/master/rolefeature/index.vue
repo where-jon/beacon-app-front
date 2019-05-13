@@ -13,7 +13,7 @@ import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as Util from '../../../sub/util/Util'
 import listmixinVue from '../../../components/mixin/listmixin.vue'
 import featuremixinVue from '../../../components/mixin/featuremixin.vue'
-import { ROLE_FEATURE, FEATURE } from '../../../sub/constant/Constants'
+import { ROLE_FEATURE, FEATURE, BULK } from '../../../sub/constant/Constants'
 
 export default {
   components: {
@@ -31,12 +31,13 @@ export default {
       params: {
         name: 'roleFeature',
         id: 'key',
+        confirmName: 'featureName',
         indexPath: '/master/role',
         editPath: '/master/rolefeature/edit',
         bulkEditPath: '/master/rolefeature/bulkedit',
         appServicePath: '/meta/roleFeature',
         csvOut: true,
-        custumCsvColumns: ['roleId', 'featureId', 'featureName', 'path', 'modeText', 'featureTypeName', 'version', 'enabledName'],
+        custumCsvColumns: ['featureName', 'path', 'modeText', 'featureTypeName', 'version', 'enabledName'],
         hideSearchBox: !Util.hasValue(this.$store.state.app_service.role.roleId),
         fields: ViewHelper.addLabelByKey(this.$i18n, [ 
           {key: 'featureName', sortable: true },
@@ -45,7 +46,6 @@ export default {
           {key: 'featureTypeName', label: 'featureType', sortable: true },
           {key: 'version', sortable: true },
           {key: 'enabledName', label: 'enabled', sortable: true },
-          {key: 'featureId', sortable: true },
           {key: 'actions', thStyle: {width:'130x !important'} }
         ]),
         sortBy: 'featureName',
@@ -119,6 +119,9 @@ export default {
         this.replaceAS({roleFeatures: []})
       }
       this.hideProgress()
+    },
+    customCsvData(val){
+      val.updateKey = val.roleId + BULK.SPLITTER + val.featureId
     },
   }
 }

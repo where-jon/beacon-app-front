@@ -182,8 +182,8 @@ export default {
     createWarnMessages(){
       this.setWarnDevices()
       const ret = []
-      const exbIdName = StateHelper.getDeviceIdName({exbId: true}, {ignorePrimaryKey: true})
-      const txIdName = StateHelper.getDeviceIdName({txId: true}, {ignorePrimaryKey: true, forceSensorName: true})
+      const exbIdName = StateHelper.getDeviceIdName({exbId: true})
+      const txIdName = StateHelper.getDeviceIdName({txId: true}, {forceSensorName: true})
       const pattern = this.humidityPatternConfig.more.sort((a, b) => {
         return a.base > b.base? -1: a.base < b.base? 1: 0
       }).concat(this.humidityPatternConfig.less.sort((a, b) => {
@@ -457,7 +457,7 @@ export default {
       this.chartTitle = this.$i18n.tnl('message.monthDayTemperature', {
         month: sensorData.month,
         day: sensorData.day,
-        name: device.txName? device.txName: device.locationName? device.locationName: '',
+        name: device.potName? device.potName: device.locationName? device.locationName: '',
         description: device.description? ` : ${Util.cutOnLong(device.description, 10)}`: ''
       })
     },

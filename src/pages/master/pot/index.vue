@@ -72,11 +72,8 @@ export default {
     },
     getCustomCsvColumns(){
       return [
-        'potId',
-        'potName',
-        'thumbnail',
-        Util.includesIgnoreCase(APP.TX.WITH, 'txId')? 'txId': APP.TX.BTX_MINOR == 'minor'? 'minor': 'btxId',
-        'txName',
+        APP.TX.BTX_MINOR == 'minor'? 'minor': 'btxId',
+        'potCd',
         'potName',
         'potType',
         'displayName',
@@ -87,14 +84,12 @@ export default {
     customCsvData(val){ // TODO:
       const id = Util.includesIgnoreCase(APP.TX.WITH, 'txId')? 'txId': APP.TX.BTX_MINOR == 'minor'? 'minor': 'btxId'
       if(Util.hasValue(val.potTxList)){
-        val[id] = val.potTxList.map((potTx) => potTx.tx? potTx.tx[id]: '').join(';')
-        val.txName = val.potTxList.map((potTx) => potTx.tx? potTx.tx.txName: '').join(';')
+        val[id] = val.potTxList.map(potTx => potTx.tx? potTx.tx[id]: '').join(';')
       }
       if(Util.hasValue(val.potUserList)){
-        val.userId = val.potUserList[0].user.userId
         val.loginId = val.potUserList[0].user.loginId
         val.email = val.potUserList[0].user.email
-        const targetRole = this.roles.find((role) => role.roleId == val.potUserList[0].user.roleId)
+        const targetRole = this.roles.find(role => role.roleId == val.potUserList[0].user.roleId)
         val.roleName = targetRole? targetRole.roleName: ''
       }
     },
@@ -103,10 +98,10 @@ export default {
         {key: 'potName', sortable: true , tdClass: 'thumb-rowdata'},
         {key: 'thumbnail', tdClass: 'thumb-rowdata' },
         {key: 'txIdName', label:'tx', sortable: true },
+        {key: 'potCd', sortable: true , tdClass: 'thumb-rowdata'},
         {key: 'displayName', sortable: true, tdClass: 'thumb-rowdata'},
       ].concat(this.createCustomColumn())
         .concat([
-          {key: 'potId', sortable: true, tdClass: 'thumb-rowdata'},
           {key: 'actions', thStyle: {width:'130px !important'} , tdClass: 'thumb-rowdata'},
         ]))
     },

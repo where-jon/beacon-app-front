@@ -44,12 +44,9 @@ export default {
           APP.POSITION_WITH_AREA? 'area' : null]).compact().value(),
         disableTableButtons: true,
         fields: ViewHelper.addLabelByKey(this.$i18n, [ 
-          !Util.includesIgnoreCase(APP.TX.WITH, 'txId') && APP.TX.BTX_MINOR == 'minor' ? 
-            {key: 'minor', label: 'minor', sortable: true, tdClass: 'action-rowdata' }: null,
-          Util.includesIgnoreCase(APP.TX.WITH, 'txId') ? {key: 'txId', label: 'txId', sortable: true, tdClass: 'action-rowdata' }: null,
+          APP.TX.BTX_MINOR == 'minor' ? {key: 'minor', label: 'minor', sortable: true, tdClass: 'action-rowdata' }: null,
           APP.TX.BTX_MINOR != 'minor' ? {key: 'btx_id', label: 'btxId', sortable: true, tdClass: 'action-rowdata' }: null,
-          Util.includesIgnoreCase(APP.TX.WITH, 'txId') || APP.TX.BTX_MINOR != 'btxId' ?
-            {key: 'minor', label:'minor', sortable: true, tdClass: 'action-rowdata' }: null,
+          APP.TX.BTX_MINOR == 'both' ? {key: 'minor', label:'minor', sortable: true, tdClass: 'action-rowdata' }: null,
           Util.includesIgnoreCase(APP.POT.WITH, 'potCd') ? {key: 'potCd', label: 'potCd', sortable: true, tdClass: 'action-rowdata'} : null,
           {key: 'potName', label: 'name', sortable: true, tdClass: 'action-rowdata'},
           Util.includesIgnoreCase(APP.POS_LIST.WITH, 'tel')? {key: 'tel', sortable: true, tdClass: 'action-rowdata' }: null,
@@ -105,7 +102,7 @@ export default {
             // powerLevel: this.getPowerLevel(pos),
             txId: Util.getValue(pos, 'tx.txId' , null),
             potCd: Util.getValue(pos, 'tx.potCd', null),
-            potName: Util.getValue(pos, 'tx.potName', Util.getValue(pos, 'tx.txName', null)),
+            potName: Util.getValue(pos, 'tx.potName', null),
             tel: Util.getValue(pos, 'tx.extValue.tel', null),
             categoryName: Util.getValue(pos, 'tx.categoryName', null),
             groupName: Util.getValue(pos, 'tx.groupName', null),

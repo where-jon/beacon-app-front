@@ -14,7 +14,7 @@ export const APP = { // 機能面に関する設定
   LOGIN_MODE: LOGIN_MODE.APP_SERVICE, // ログインモード(なし、ローカル、AppService)
   SAAS_DOMAIN: '.saas.',
   COMMON: {
-    VERSION: 'Version 1.1.0', // バージョン　this application version
+    VERSION: 'Version 1.2.0', // バージョン　this application version
     TIME_ZONE: -9, // 午前0時を決定するためのタイムゾーン(時)
     AUTO_RELOAD: 60000, // 自動リロード間隔(ミリ秒)
   },
@@ -91,7 +91,7 @@ export const APP = { // 機能面に関する設定
   },
   // TX関連設定
   TX: {
-    WITH: ['displayName', 'major', 'category', 'description', 'sensor', 'dispFlg', 'location', 'dispPir'],
+    WITH: ['major', 'sensor', 'dispFlg', 'location', 'dispPir'],
     MAJOR_REQUIRED: false, // majorを必須にする ※サーバでも要設定
     BTX_MINOR: 'both', // both:両方表示し、別々に設定、minor/btxId:片方のみ表示し、保存の際同一の値を設定
   },
@@ -147,7 +147,7 @@ export const APP = { // 機能面に関する設定
     POWER_LEVEL_WARN: 30,  // 電池レベルで減少とみなす下限値
   },
   SENSOR_LIST: {
-    WITH: ['posId', 'deviceNum', 'deviceId', 'deviceIdX', 'locationName'],
+    WITH: ['posId', 'deviceId', 'deviceIdX', 'locationName'],
   },
   SENSORGRAPH: {
     WITH_DEVICE: true,             // 画面上でデバイスを使用するか否か
@@ -179,6 +179,11 @@ export const APP = { // 機能面に関する設定
   MAX_IMAGE_SIZE: 20 * 1024 * 1024, // アップロード可能な最大イメージサイズ(Byte)
   AREA_THUMBNAIL_MAX: 200, // サムネイルリサイズ時の最大幅・高さ(エリア)
   POT_THUMBNAIL_MAX: 200, // サムネイルリサイズ時の最大幅・高さ(pot)
+
+  POSITION_SUMMARY_START: 10, // 位置情報csvダウンロード開始時刻（時）
+  POSITION_SUMMARY_END: 19,    // 位置情報csvダウンロード終了時刻（時）
+  POSITION_SUMMARY_INTERVAL: 10, // 位置情報csvダウンロード間隔（分）
+  POSITION_SUMMARY_RECEIVE_COUNT: 2 // 位置情報における受信回数の閾値
 }
 
 

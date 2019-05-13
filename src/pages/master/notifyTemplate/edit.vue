@@ -5,11 +5,6 @@
       <alert :message="message" />
 
       <b-form v-if="show" @submit.prevent="onSubmit">
-        <b-form-group v-if="form.notifyTemplateId">
-          <label v-t="'label.notifyTemplateId'" />
-          <b-form-input v-model="form.notifyTemplateId" type="text" readonly="readonly" />
-        </b-form-group>
-
         <!--種別-->
         <b-form-group :disabled="!bNotifyTemplateKey">
           <b-form-row>
@@ -118,9 +113,6 @@ export default {
     },
     notifyStateOptions() {
       return _.slice(NOTIFY_STATE.getOptions()).filter((val) => APP.NOTIFY_STATE_TYPES.includes(val.index))
-    },
-    hasId (){
-      return Util.hasValue(this.form.notifyTemplateId)
     },
     theme () {
       const theme = getButtonTheme()

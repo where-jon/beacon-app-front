@@ -40,20 +40,16 @@ import mNav from '../components/layout/nav.vue'
 
 import vSelect from 'vue-select'
 import BootstrapVue from 'bootstrap-vue'
-import Spinner from 'vue-simple-spinner'
-import '@fortawesome/fontawesome-free-webfonts/css/fontawesome.css'
-import '@fortawesome/fontawesome-free-webfonts/css/fa-solid.css'
-import '@fortawesome/fontawesome-free-webfonts/css/fa-brands.css'
-import '@fortawesome/fontawesome-free-webfonts/css/fa-regular.css'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { fas } from '@fortawesome/free-solid-svg-icons'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import * as LocaleHelper from '../sub/helper/LocaleHelper'
 import { getLangShort } from '../sub/util/HtmlUtil'
 
 Vue.use(BootstrapVue)
-Vue.component('vue-simple-spinner', Spinner)
 Vue.component('v-select', vSelect)
-
+library.add(fas)
 
 export default {
   components: {

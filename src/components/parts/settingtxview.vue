@@ -9,7 +9,7 @@
   </b-form-group>
   <div v-else>
     <b-alert :show="isDelete" variant="danger">
-      <i class="fas fa-exclamation-circle" />&nbsp;&nbsp;{{ $t('message.deleteConfirm',{target: deviceId}) }}
+      <font-awesome-icon icon="exclamation-circle" />&nbsp;&nbsp;{{ $t('message.deleteConfirm',{target: deviceId}) }}
     </b-alert>
     <b-form>
       <b-form-group>

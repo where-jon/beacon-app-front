@@ -137,8 +137,7 @@ export default {
         )
           .map(
             exb => {
-              let deviceOffset = this.$store.state.currentRegion.deviceOffset
-              return {text:(exb.deviceId - deviceOffset) + ' (0x' + exb.deviceId.toString(16) + ', ' + exb.deviceId + ')', value: exb.deviceId}
+              return {text:(exb.deviceId) + ' (0x' + exb.deviceId.toString(16) + ')', value: exb.deviceId}
             }
           )
 

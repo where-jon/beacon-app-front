@@ -7,10 +7,6 @@
       <b-row>
         <b-col md="8" offset-md="2">
           <b-form v-if="show" @submit.prevent="onSubmit">
-            <b-form-group v-if="hasId" v-show="isShown('TX.WITH', 'txId')">
-              <label v-t="'label.txId'" />
-              <b-form-input v-model="form.txId" type="text" readonly="readonly" />
-            </b-form-group>
             <b-form-group v-if="showMinorHead" v-show="showTx('minor')">
               <label v-t="'label.minor'" />
               <input v-model="form.minor" :readonly="!isEditable" :required="requiredMinor" type="number" min="0" max="65535" class="form-control">
@@ -38,10 +34,6 @@
             <b-form-group v-if="showMinorMid" v-show="showTx('minor')">
               <label v-t="'label.minor'" />
               <input v-model="form.minor" :readonly="!isEditable" :required="requiredMinor" type="number" min="0" max="65535" class="form-control">
-            </b-form-group>
-            <b-form-group>
-              <label v-t="'label.txName'" />
-              <input v-model="form.txName" :readonly="!isEditable" type="text" maxlength="20" class="form-control">
             </b-form-group>
             <b-form-group v-show="isShown('TX.WITH', 'displayName')">
               <label v-t="'label.displayName'" />
@@ -114,7 +106,7 @@ export default {
       backPath: '/master/tx',
       appServicePath: '/core/tx',
       form: ViewHelper.extract(this.$store.state.app_service.tx, [
-        'txId', 'btxId', 'major', 'minor', 'txName', 'potTxList.0.pot.displayName', 'mapImage', 'dispPos', 'dispPir', 'dispAlways',
+        'txId', 'btxId', 'major', 'minor', 'potTxList.0.pot.displayName', 'mapImage', 'dispPos', 'dispPir', 'dispAlways',
         'txSensorList.0.sensor.sensorId', 'locationId', 'location.x', 'location.y', 'location',
         'potTxList.0.pot.potId', 'potTxList.0.pot.potCd', 'potTxList.0.pot.displayName', 'potTxList.0.pot.description',
         'potTxList.0.pot.potCategoryList.0.category.categoryId',
@@ -127,9 +119,6 @@ export default {
     }
   },
   computed: {
-    hasId(){
-      return Util.hasValue(this.form.txId)
-    },
     theme () {
       const theme = getButtonTheme()
       return 'outline-' + theme
@@ -150,7 +139,7 @@ export default {
       return !this.showMinorHead
     },
     showMinorHead() {
-      return !Util.includesIgnoreCase(APP.TX.WITH, 'txId') && APP.TX.BTX_MINOR == 'minor'
+      return APP.TX.BTX_MINOR == 'minor'
     },
     requiredMinor() {
       return this.showTx('minor') && this.form.sensorId != SENSOR.TEMPERATURE
@@ -187,7 +176,7 @@ export default {
       await StateHelper.load('pot', true)
     },
     async save() {
-      let txId = Util.hasValue(this.form.txId)? this.form.txId: -1
+      const txId = Util.hasValue(this.form.txId)? this.form.txId: -1
       switch(APP.TX.BTX_MINOR) {
       case 'minor':
         this.form.btxId = this.form.minor
@@ -195,8 +184,8 @@ export default {
       case 'btxId':
         this.form.minor = this.form.btxId
       }
-      let disp = this.form.dispPos |  this.form.dispPir | this.form.dispAlways
-      let pot = await this.getRelatedPot(txId)
+      const disp = this.form.dispPos |  this.form.dispPir | this.form.dispAlways
+      const pot = await this.getRelatedPot(txId)
       if (pot) {
         pot.potTxList = null // potTx関連を削除
         pot.potUserList = null // ここではpotUser関連は登録しない
@@ -209,7 +198,7 @@ export default {
         location.x = Util.hasValue(this.form.x)? this.form.x: null
         location.y = Util.hasValue(this.form.y)? this.form.y: null
       }
-      let entity = {
+      const entity = {
         ...this.form,
         txId,
         disp,

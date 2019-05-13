@@ -7,14 +7,6 @@
       <b-row>
         <b-col md="8" offset-md="2">
           <b-form v-if="show" @submit.prevent="onSubmit">
-            <b-form-group v-if="hasId" v-show="isShown('EXB.WITH', 'exbId')">
-              <label v-t="'label.exbId'" />
-              <b-form-input v-model="form.exbId" type="text" readonly="readonly" />
-            </b-form-group>
-            <b-form-group v-show="isShown('EXB.WITH', 'deviceNum')">
-              <label v-t="'label.deviceNum'" />
-              <input v-model.lazy="deviceNum" :max="maxDeviceNum" :readonly="!isEditable" type="number" class="form-control" min="0" :required="isShown('EXB.WITH', 'deviceNum')">
-            </b-form-group>
             <b-form-group v-show="isShown('EXB.WITH', 'deviceId')">
               <label v-t="'label.deviceId'" />
               <input v-model.lazy="deviceId" :max="maxDeviceId" :readonly="!isEditable" type="number" class="form-control" min="0" :required="isShown('EXB.WITH', 'deviceId')">
@@ -133,7 +125,6 @@ export default {
       },
       deviceId: null,
       deviceIdX: null,
-      deviceNum: null,
       useZone: Util.includesIgnoreCase(APP.EXB.WITH, 'zone') && MenuHelper.isMenuEntry('/master/zoneClass'),
       items: ViewHelper.createBreadCrumbItems('master', {text: 'exb', href: '/master/exb'}, Util.getDetailCaptionKey(this.$store.state.app_service.exb.exbId)),
       txIconsDispFormat: 1,
@@ -141,13 +132,9 @@ export default {
       txIconsVertical: 5,
       TXICONS_DISPFORMAT_TILE: 5,
       maxDeviceId: 65535,
-      maxDeviceNum: 65535 - this.$store.state.currentRegion.deviceOffset,
     }
   },
   computed: {
-    hasId(){
-      return Util.hasValue(this.form.exbId)
-    },
     theme () {
       const theme = getButtonTheme()
       return 'outline-' + theme
@@ -177,7 +164,6 @@ export default {
         this.mutex = true
         this.deviceId = newVal 
         this.deviceIdX = newVal? Number(newVal).toString(16).toUpperCase(): null
-        this.deviceNum = newVal? Number(newVal) - this.$store.state.currentRegion.deviceOffset: null
         this.mutex = false
       }
     },
@@ -194,16 +180,6 @@ export default {
           }
           this.deviceIdX = newVal
           this.deviceId = parseInt(newVal, 16) 
-        }
-        this.mutex = false
-      }
-    },
-    deviceNum: function(newVal, oldVal) {
-      if (!this.mutex) {
-        this.mutex = true
-        if (newVal) {
-          this.deviceNum = newVal 
-          this.deviceId = Number(newVal) + this.$store.state.currentRegion.deviceOffset
         }
         this.mutex = false
       }
@@ -295,10 +271,10 @@ export default {
     },
     async save() {
       let dummyKey = -1
-      if(!this.zoneNames.find((zone) => zone.value == this.form.zoneId)){
+      if(!this.zoneNames.find(zone => zone.value == this.form.zoneId)){
         this.form.zoneId = null
       }
-      let entity = {
+      const entity = {
         exbId: this.form.exbId != null? this.form.exbId: dummyKey--,
         deviceId: this.deviceId,
         locationId: this.form.locationId,
@@ -342,7 +318,6 @@ export default {
       let ret = await AppServiceHelper.bulkSave(this.appServicePath, [entity])
       this.deviceId = null
       this.deviceIdX = null
-      this.deviceNum = null
       return ret
     },
   }
