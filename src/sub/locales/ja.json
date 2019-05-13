@@ -99,18 +99,18 @@
     "powerLevel": "電池レベル",
     "power-good": "良好",
     "power-warning": "減少",
-    "power-poor": "交換",
+    "power-poor": "充電/交換",
 
     "tx": "Tx",
     "txId": "TxID",
-    "txName": "Tx名",
+    "txName": "名前",
     "btxId": "btxId",
     "major": "major",
     "minor": "minor",
     "minorPowerLevel": "minor(電池レベル)",
 
     "locationId": "位置ID",
-    "locationName": "名前",
+    "locationName": "EXB名",
     "locationX": "X座標",
     "locationY": "Y座標",
     "locationZ": "Z座標",
@@ -120,6 +120,7 @@
 
     "map": "マップ",
     "areaId": "エリアID",
+    "areaCd": "エリアコード",
     "areaName": "エリア名",
     "mapImage": "マップイメージ",
     "mapHeight": "マップ高さ",
@@ -300,7 +301,6 @@
     "regionId": "リージョンID",
     "regionName": "リージョン名",
     "meshId": "メッシュID",
-    "deviceOffset": "デバイスオフセット",
 
     "zoneClass": "ゾーン(分類)",
     "zoneBlock": "ゾーン(区画)",
@@ -360,6 +360,8 @@
     "stayRatioAbsent2Time": "absent2Time",
     "stayRatioAbsent1Ratio": "absent1Ratio",
     "stayRatioAbsent2Ratio": "absent2Ratio",
+
+    "positionSummary": "位置情報",
 
     "historyTitle": "履歴",
     "historyDateFrom": "期間",
@@ -564,6 +566,7 @@
     "temperatureUnit": "℃",
     "humidityUnit": "％",
     "notes": "注意事項",
+    "updateKey": "更新キー",
 
     "dummy": ""
   },
@@ -626,11 +629,6 @@
       "USE_THERMOH_TOOLTIP": "THERMO_HUMIDITY::温湿度画面でツールチップを使用する::温湿度画面でカーソルを合わせたデバイスの情報をツールチップで表示できるようにします。",
 
       "TX_SENSOR": "TX::Txセンサの種類::Txセンサの種類を設定します。設定可能な値は次の通りです。★{SENSOR}",
-      "TX_WITH_TXID": "TX::Tx画面でTxIDを使用する::Tx画面でTxIDを使用します。",
-      "TX_WITH_CATEGORY": "TX::Tx画面でカテゴリを使用する::Tx画面でカテゴリを使用します。★",
-      "TX_WITH_GROUP": "TX::Tx画面でグループを使用する::Tx画面でグループを使用します。★",
-      "TX_WITH_DISPLAY_NAME": "TX::Tx画面で表示名を使用する::Tx画面で表示名を使用します。★",
-      "TX_WITH_DESCRIPTION": "TX::Tx画面で備考を使用する::Tx画面で備考を使用します。★",
       "TX_WITH_MAJOR": "TX::Tx画面でmajorを使用する::Tx画面でmajorを使用します。★",
       "TX_MAJOR_REQUIRED": "TX::Tx画面でmajorを必須にする::Txを登録または更新する際、majorを必須にします。",
       "TX_BTX_MINOR": "TX::Tx画面でbtxIdとminorを使用する::Tx画面でbtxIdかminorのどちらか、または両方を使用します。btxId、minor、bothのいずれかを設定します。★",
@@ -638,10 +636,8 @@
       "TX_WITH_LOCATION": "TX::Tx画面で固定位置表示を使用する::Tx画面で固定位置表示を使用します。★",
       "TX_WITH_DISP_PIR": "TX::Tx画面で空室チェックで表示を使用する::Tx画面で空室チェックで表示を使用します。★",
       "TX_WITH_DISP_ALWAYS": "TX::Tx画面で常時表示を使用する::Tx画面で常時表示を使用します。★",
-  
+
       "EXB_SENSOR": "EXB::EXBeaconセンサの種類::EXBeaconセンサの種類を設定します。設定可能な値は次の通りです。★{SENSOR}",
-      "EXB_WITH_EXBID": "EXB::EXBeacon画面でexbIdを使用する::EXB画面でexbIdを使用します。★",
-      "EXB_WITH_DEVICE_NUM": "EXB::EXBeacon画面で端末Noを使用する::EXB画面で端末Noを使用します。★",
       "EXB_WITH_DEVICE_ID": "EXB::EXBeacon画面でデバイスIDを使用する::EXB画面でデバイスIDを使用します。★",
       "EXB_WITH_DEVICE_IDX": "EXB::EXBeacon画面でデバイスID(16進数)を使用する::EXB画面でデバイスID(16進数)を使用します。★",
       "EXB_WITH_POSID": "EXB::EXBeacon画面でposIdを使用する::EXB画面でposIdを使用します。★",
@@ -773,7 +769,7 @@
       "TX_LOC_COLOR": "TX_LOCATION::Tx配置設定画面のTxアイコン文字色::Tx設定画面に表示されるTxアイコン文字色を設定します。#を含めたカラーコードで設定します。",
 
       "THERMOH_TOOLTIP_ITEMS": {
-        "TXNAME": "THERMO_HUMIDITY::温湿度画面のツールチップにTx名を表示する::温湿度画面のツールチップにTx名を表示します。",
+        "POTNAME": "THERMO_HUMIDITY::温湿度画面のツールチップに人＆物名を表示する::温湿度画面のツールチップに人＆物名を表示します。人＆物と紐づけられていない場合はEXB名が表示されます。",
         "TEMPERATURE": "THERMO_HUMIDITY::温湿度画面のツールチップに温度を表示する::温湿度画面のツールチップに温度を表示します。",
         "HUMIDITY": "THERMO_HUMIDITY::温湿度画面のツールチップに湿度を表示する::温湿度画面のツールチップに湿度を表示します。",
         "DESCRIPTION": "THERMO_HUMIDITY::温湿度画面のツールチップに備考を表示する::温湿度画面のツールチップに備考を表示します。",
@@ -818,7 +814,7 @@
       "TXDETAIL_ITEMS": {
         "minor": "POSITION::位置表示(地図)画面の詳細ポップアップにminorを表示する::位置表示(地図)画面の詳細ポップアップにminorを表示します。",
         "major": "POSITION::位置表示(地図)画面の詳細ポップアップにmajorを表示する::位置表示(地図)画面の詳細ポップアップにmajorを表示します。",
-        "name": "POSITION::位置表示(地図)画面の詳細ポップアップにTx名を表示する::位置表示(地図)画面の詳細ポップアップにTx名を表示します。",
+        "name": "POSITION::位置表示(地図)画面の詳細ポップアップに人＆物名を表示する::位置表示(地図)画面の詳細ポップアップに人＆物名を表示します。",
         "group": "POSITION::位置表示(地図)画面の詳細ポップアップにグループを表示する::位置表示(地図)画面の詳細ポップアップにグループを表示します。",
         "category": "POSITION::位置表示(地図)画面の詳細ポップアップにカテゴリを表示する::位置表示(地図)画面の詳細ポップアップにカテゴリを表示します。",
         "tel": "POSITION::位置表示(地図)画面の詳細ポップアップに電話番号を表示する::位置表示(地図)画面の詳細ポップアップに電話番号を表示します。",
@@ -1007,14 +1003,12 @@
         "zone": "ゾーン"
       },
       "POSITION_HISTORY": {
-        "txName": "Tx名",
         "potName": "人＆物の名前",
         "major": "major",
         "minor": "minor",
-        "deviceNum": "端末ID",
         "deviceId": "デバイスID",
         "deviceIdX": "デバイスID(16進数)",
-        "locationName": "場所名",
+        "locationName": "EXB名",
         "posId": "posId",
         "areaName": "エリア名",
         "x": "X座標",

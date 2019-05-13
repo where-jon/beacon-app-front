@@ -5,7 +5,7 @@
       <input v-model="userId" type="text" class="form-control" maxlength="20" placeholder="ID">
       <input v-model="password" type="password" class="form-control" maxlength="20" placeholder="PASSWORD">
       <b-button :variant="theme" class="btn-lg btn-block" type="submit">
-        <i class="fas fa-sign-in-alt" />&nbsp;&nbsp;{{ $i18n.tnl('label.login') }}
+        <font-awesome-icon icon="sign-in-alt" />&nbsp;&nbsp;{{ $i18n.tnl('label.login') }}
       </b-button>
     </div>
     <div v-if="isNews" class="container">

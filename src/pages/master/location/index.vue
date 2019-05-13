@@ -146,7 +146,6 @@ export default {
 
     const options = []
     options.push({value: 'locationName', text: this.$i18n.tnl('label.locationName')})
-    if (APP.EXB_WITH_DEVICE_NUM) options.push({value:'deviceNum', text: this.$i18n.tnl('label.deviceNum')})
     if (APP.EXB_WITH_DEVICE_IDX) options.push({value:'deviceIdX', text: this.$i18n.tnl('label.deviceIdX')})
     if (APP.EXB_WITH_DEVICE_ID) options.push({value:'deviceId', text: this.$i18n.tnl('label.deviceId')})
     this.exbDispOptions = options
@@ -222,8 +221,6 @@ export default {
         return deviceId.toString(16).toUpperCase()
       case 'deviceId':
         return deviceId
-      case 'deviceNum':
-        return deviceId - this.$store.state.currentRegion.deviceOffset
       case 'locationName': {
         const exb = this.exbs.find(val => val.deviceId == deviceId)      
         return exb? exb.locationName: ''

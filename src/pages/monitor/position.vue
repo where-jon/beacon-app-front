@@ -164,7 +164,7 @@ export default {
         const exb = this.exbs.find((exb) => exb.location.posId == e.pos_id)
         return {
           ...e,
-          name: tx != null ? tx.txName : '—',
+          name: tx != null ? tx.potName : '—',
           finalReceiveLocation: exb? exb.location.locationName  : '',
           finalReceiveTimestamp: this.getTimestamp(e.updatetime),
           powerLevel: this.getPositionPowerLevelLabel(e.power_level),
@@ -207,7 +207,7 @@ export default {
             sRet.push({
               ...sensorHistory,
               btx_id: sensorHistory.btxid,
-              name: Util.getValue(tx, 'txName', ''),
+              name: Util.getValue(tx, 'potName', ''),
               powerLevel: this.getPositionPowerLevelLabel(sensorHistory.power_level),
               finalReceiveTimestamp: this.getTimestamp(EXCloudHelper.getDispTime(sensorHistory)),
               state: this.getStateLabel('tx', EXCloudHelper.getDispTime(sensorHistory)),

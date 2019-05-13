@@ -5,10 +5,6 @@
       <alert :message="message" />
 
       <b-form v-if="show" @submit.prevent="onSubmit">
-        <b-form-group v-if="hasId">
-          <label v-t="'label.newsId'" />
-          <b-form-input v-model="form.newsId" type="text" readonly="readonly" />
-        </b-form-group>
         <b-form-group>
           <label v-t="'label.newsDt'" />
           <date-picker v-model="form.newsDate" :clearable="false" type="datetime" class="ml-2" required />
@@ -65,9 +61,6 @@ export default {
     }
   },
   computed: {
-    hasId(){
-      return Util.hasValue(this.form.newsId)
-    },
     theme () {
       const theme = getButtonTheme()
       return 'outline-' + theme

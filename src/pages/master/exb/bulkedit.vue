@@ -8,7 +8,9 @@
 <script>
 import { mapState } from 'vuex'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import * as BulkHelper from '../../../sub/helper/BulkHelper'
 import * as Util from '../../../sub/util/Util'
+import { BULK } from '../../../sub/constant/Constants'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
 import { APP } from '../../../sub/constant/config.js'
@@ -38,46 +40,16 @@ export default {
   },
   methods: {
     resetId(entity, dummyKey){
-      const targetEntity = Util.getEntityFromIds(this.exbs, entity, ['exbId', 'deviceNum', 'deviceId', 'deviceIdX'])
-      if(!entity.exbId){
-        entity.exbId = targetEntity && targetEntity.exbId? targetEntity.exbId: dummyKey--
-      }
-      if(!entity.deviceId){
-        if(entity.deviceNum && !isNaN(entity.deviceNum) && 0 <= entity.deviceNum){
-          entity.deviceId = Number(entity.deviceNum) + this.$store.state.currentRegion.deviceOffset
-        }
-        else if(entity.deviceIdX && !isNaN(`0x${entity.deviceIdX}`)){
-          entity.deviceId = parseInt(entity.deviceIdX, 16)
-        }
-      }
-      else{
-        if(isNaN(entity.deviceId) || entity.deviceId < 0){
-          delete entity.deviceId
-        }
-      }
-      if(targetEntity){
-        if(entity.location && targetEntity.location){
-          if(entity.location.locationId < 0){
-            entity.location.locationId = targetEntity.location.locationId
-          }
-          if(!entity.location.txViewType){
-            entity.location.txViewType = targetEntity.location.txViewType
-          }
-          if(entity.location.visible == null){
-            entity.location.visible = targetEntity.location.visible
-          }
-        }
+      if(APP.EXB_WITH_DEVICE_IDX && !entity.deviceId && !entity.deviceIdXName){
+        entity.deviceId = parseInt(entity.deviceIdX, 16)
       }
       return dummyKey
     },
-    setParamZone(entity, headerName, val, dummyKey){
+    setParamZone(location, headerName, val, dummyKey){
       if(!Util.hasValue(val)){
         return dummyKey
       }
-      if (!entity.location) {
-        entity.location = {locationId: dummyKey--}
-      }
-      entity.location.locationZoneList = [{
+      location.locationZoneList = [{
         locationZonePK: {
           locationId: dummyKey--,
           zoneId: dummyKey--
@@ -90,19 +62,11 @@ export default {
       }]
       return dummyKey
     },
-    setParamPosId(entity, headerName, val, dummyKey){
-      const posIdVal = Number(val)
-      if(!Util.hasValue(val) || isNaN(posIdVal)){
-        entity.location['posIdName'] = val
-      }
-      entity.location[headerName] = posIdVal
-      return dummyKey
-    },
     setParamSensor(entity, headerName, val, dummyKey){
-      const sensorNameList = val.split(';').map((val) => val.trim())
+      const sensorNameList = val.split(';').map(val => val.trim())
       const exbSensorList = []
-      sensorNameList.forEach((sensorName) => {
-        const sensor = this.sensorOptionsExb.find((option) => option.text == sensorName)
+      sensorNameList.forEach(sensorName => {
+        const sensor = this.sensorOptionsExb.find(option => option.text == sensorName)
         if(sensor && sensor.value != null){
           exbSensorList.push({exbSensorPK: {sensorId: sensor.value}, sensorName: sensorName})
         }
@@ -115,67 +79,53 @@ export default {
       }
       return dummyKey
     },
-    setParamOther(entity, headerName, val, dummyKey, mainCol, numCol){
-      let newVal = val
-      if (headerName == mainCol && !val) {
-        newVal = dummyKey--
+    setParamLocation(entity, headerName, val, dummyKey){
+      if (!entity.location) {
+        entity.location = {locationId: dummyKey--}
       }
-      if(headerName == 'enabled'){
-        const enabledVal = Util.str2booleanComplate(newVal)
-        if(typeof enabledVal != 'boolean'){
-          entity['enabledName'] = newVal
-        }
-        newVal = Util.str2boolean(newVal)
+      if (headerName == 'zoneName') {
+        return this.setParamZone(entity.location, headerName, val, dummyKey)
       }
-      const isNumCol = numCol.includes(headerName)
-      if(isNumCol && (!Util.hasValue(val) || isNaN(val))){
-        entity[`${headerName}Name`] = val
+      if(headerName == 'posId'){
+        BulkHelper.setNumberKey(entity.location, headerName, val)
+        return dummyKey
       }
-      if(headerName == 'deviceIdX' && (!Util.hasValue(val) || isNaN(`0x${val}`))){
-        entity[`${headerName}Name`] = val
+      if(Util.equalsAny(headerName, ['x', 'y'])){
+        BulkHelper.setNumberKey(entity.location, headerName, val, {isNullable: true, errorName: 'loc'+ headerName.toUpperCase() + 'Name'})
+        return dummyKey
       }
-      entity[headerName] = isNumCol? Number(newVal): newVal
+      entity.location[headerName] = val
       return dummyKey
     },
     async save(bulkSaveFunc) {
-      const MAIN_COL = APP.EXB_WITH_EXBID? 'exbId': APP.EXB_WITH_DEVICE_ID? 'deviceId': APP.EXB_WITH_DEVICE_NUM? 'deviceNum': 'deviceIdX'
-      const LOCATION = ['locationId','areaName','locationName','visible','txViewType','posId','x','y', 'zoneName']
-      const ZONE = ['zoneName']
-      const NUMBER_TYPE_LIST = ['deviceId', 'deviceNum', 'exbId', 'areaId', 'posId', 'locationId', 'x', 'y', 'z', 'txViewType']
-      const BOOL_TYPE_LIST = ['visible']
+      const LOCATION = ['areaName','locationName','visible','txViewType','posId','x','y', 'zoneName']
+      const BOOL_TYPE_LIST = ['enabled']
 
-      await bulkSaveFunc(MAIN_COL, null, BOOL_TYPE_LIST, (entity, headerName, val, dummyKey) => {
+      await bulkSaveFunc(BULK.PRIMARY_KEY, null, null, (entity, headerName, val, dummyKey) => {
+        if (BulkHelper.isPrimaryKeyHeader(headerName)){
+          BulkHelper.setPrimaryKey(entity, this.id, val, dummyKey--)
+          return dummyKey
+        }
+        if(headerName == 'deviceId'){
+          BulkHelper.setNumberKey(entity, headerName, val, {isNullable: !APP.EXB_WITH_DEVICE_ID})
+          return dummyKey
+        }
+        if(headerName == 'deviceIdX'){
+          BulkHelper.setHexKey(entity, headerName, val, {isNullable: !APP.EXB_WITH_DEVICE_IDX})
+          return dummyKey
+        }
+        if(Util.equalsAny(headerName, BOOL_TYPE_LIST)){
+          BulkHelper.setBooleanKey(entity, headerName, val)
+          return dummyKey
+        }
+
+        if (headerName == 'sensor') {
+          return this.setParamSensor(entity, headerName, val, dummyKey)
+        }
         if (Util.equalsAny(headerName, LOCATION)) {
-          if (headerName == 'locationId' && !val) {
-            val = dummyKey--          
-          }
-          if (!entity.location) {
-            entity.location = {locationId: dummyKey--}
-          }
-          if (Util.equalsAny(headerName, ZONE)) {
-            dummyKey = this.setParamZone(entity, headerName, val, dummyKey)
-          }
-          else if(headerName == 'posId'){
-            dummyKey = this.setParamPosId(entity, headerName, val, dummyKey)
-          }
-          else if(['x', 'y'].includes(headerName)){
-            if(Util.hasValue(val)){
-              if(isNaN(val)){
-                entity.location[`loc${headerName.toUpperCase()}Name`] = val
-              }
-              entity.location[headerName] = Number(val)
-            }
-          }
-          else{
-            entity.location[headerName] = val
-          }
+          return this.setParamLocation(entity, headerName, val, dummyKey)
         }
-        else if (headerName == 'sensor') {
-          dummyKey = this.setParamSensor(entity, headerName, val, dummyKey)
-        }
-        else {
-          dummyKey = this.setParamOther(entity, headerName, val, dummyKey, MAIN_COL, NUMBER_TYPE_LIST)
-        }
+        entity[headerName] = val
         return dummyKey
       },
       (entity, dummyKey) => this.resetId(entity, dummyKey)

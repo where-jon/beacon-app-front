@@ -26,19 +26,15 @@ export default {
       params: {
         name: 'exb',
         id: 'exbId',
+        confirmName: APP.EXB_WITH_DEVICE_ID? 'deviceId': APP.EXB_WITH_DEVICE_IDX? 'deviceIdX': 'locationName',
         indexPath: '/master/exb',
         editPath: '/master/exb/edit',
         bulkEditPath: '/master/exb/bulkedit',
         appServicePath: '/core/exb',
-        mainColumn: APP.EXB_WITH_EXBID? {name: this.$i18n.tnl('label.exbId'), id: 'exbId'}:
-          APP.EXB_WITH_DEVICE_NUM? {name: this.$i18n.tnl('label.deviceNum'), id: 'deviceNum'}:
-            APP.EXB_WITH_DEVICE_ID? {name: this.$i18n.tnl('label.deviceId'), id: 'deviceId'}:
-              APP.EXB_WITH_DEVICE_IDX? {name: this.$i18n.tnl('label.deviceIdX'), id: 'deviceIdX'}:
-                null,
         csvOut: true,
         custumCsvColumns: this.getCustumCsvColumns(),
         fields: this.getFields(),
-        sortBy: APP.EXB_WITH_EXBID? 'exbId': APP.EXB_WITH_DEVICE_NUM? 'deviceNum': APP.EXB_WITH_DEVICE_ID? 'deviceId': APP.EXB_WITH_DEVICE_IDX? 'deviceIdX': '',
+        sortBy: APP.EXB_WITH_DEVICE_ID? 'deviceId': APP.EXB_WITH_DEVICE_IDX? 'deviceIdX': 'locationName',
         initTotalRows: this.$store.state.app_service.exbs.length
       },
       items: ViewHelper.createBreadCrumbItems('master', 'exb'),
@@ -56,8 +52,6 @@ export default {
   methods: {
     getCustumCsvColumns(){
       return [
-        APP.EXB_WITH_EXBID? 'exbId': null,
-        APP.EXB_WITH_DEVICE_NUM? 'deviceNum': null,
         APP.EXB_WITH_DEVICE_ID? 'deviceId': null,
         APP.EXB_WITH_DEVICE_IDX? 'deviceIdX': null,
         'locationName',
@@ -72,8 +66,6 @@ export default {
     },
     getFields(){
       return ViewHelper.addLabelByKey(this.$i18n, [ 
-        APP.EXB_WITH_EXBID? {key: 'exbId', sortable: true }: null,
-        APP.EXB_WITH_DEVICE_NUM? {key: 'deviceNum', sortable: true }: null,
         APP.EXB_WITH_DEVICE_ID? {key: 'deviceId', sortable: true }: null,
         APP.EXB_WITH_DEVICE_IDX? {key: 'deviceIdX', sortable: true }: null,
         {key: 'locationName', label:'locationName', sortable: true,},
@@ -83,7 +75,7 @@ export default {
         {key: 'y', label:'locationY', sortable: true,},
         // {key: 'sensorIdName', label:'type', sortable: true,},　一旦単数で
         {key: 'sensor', label:'type', sortable: true,},
-        APP.EXB_WITH_ZONE && MenuHelper.isMenuEntry('/master/zoneClass') ?
+        APP.EXB_WITH_ZONE && MenuHelper.isMenuEntry('/master/zoneClass') ? 
           {key: 'zoneName', label: 'zoneName', sortable: true,} : null,
         {key: 'actions', thStyle: {width: '130px !important'} }
       ])

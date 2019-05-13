@@ -150,7 +150,7 @@ export default {
 
       let aTx = _.find(this.txs, (tx) => { return tx.txId == senHist.txId })
       if (senHist.txId != null && aTx) {
-        senHist.txName = aTx.txName
+        senHist.potName = aTx.potName
         senHist.major = aTx.major
         senHist.minor = aTx.minor
         senHist.locationName = aTx.locationName
@@ -160,7 +160,6 @@ export default {
 
       let aExb = _.find(this.exbs, (exb) => { return exb.exbId == senHist.exbId })
       if (aExb != null && aExb) {
-        senHist.deviceNum = aExb.deviceNum
         senHist.deviceId = aExb.deviceId
         senHist.deviceIdX = aExb.deviceIdX
         senHist.locationName = aExb.locationName

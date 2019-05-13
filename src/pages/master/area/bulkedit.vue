@@ -7,9 +7,12 @@
 
 <script>
 import { mapState } from 'vuex'
+import * as Util from '../../../sub/util/Util'
+import { BULK, PATTERN } from '../../../sub/constant/Constants'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import * as BulkHelper from '../../../sub/helper/BulkHelper'
 
 export default {
   components: {
@@ -32,9 +35,23 @@ export default {
   },
   methods: {
     async save(bulkSaveFunc) {
-      const MAIN_COL = 'areaId'
       const NUMBER_TYPE_LIST = ['areaId']
-      await bulkSaveFunc(MAIN_COL, NUMBER_TYPE_LIST)
+      await bulkSaveFunc(BULK.PRIMARY_KEY, null, null, (entity, headerName, val, dummyKey) => {
+        if (BulkHelper.isPrimaryKeyHeader(headerName)){
+          BulkHelper.setPrimaryKey(entity, this.id, val, dummyKey--)
+          return dummyKey
+        }
+        if(Util.equalsAny(headerName, NUMBER_TYPE_LIST)){
+          BulkHelper.setNumberKey(entity, headerName, val)
+          return dummyKey
+        }
+        if(headerName == 'areaCd'){
+          BulkHelper.setStringKey(entity, headerName, val, PATTERN.REGEXP.MASTER_CD)
+          return dummyKey
+        }
+        entity[headerName] = val
+        return dummyKey
+      })
     },
   }
 }

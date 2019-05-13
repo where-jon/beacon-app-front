@@ -25,13 +25,13 @@ export default {
       params: {
         name: 'user',
         id: 'userId',
+        confirmName: 'loginId',
         indexPath: '/master/user',
         editPath: '/master/user/edit',
         bulkEditPath: '/master/user/bulkedit',
         appServicePath: '/meta/user',
         csvOut: true,
         custumCsvColumns: [
-          'userId',
           'loginId',
           APP.USER_WITH_NAME? 'name': null,
           'pass',
@@ -45,7 +45,6 @@ export default {
           APP.USER_WITH_EMAIL? {key: 'email', sortable: true }: null,
           {key: 'roleName', label: 'role', sortable: true },
           {key: 'description', sortable: true },
-          {key: 'userId', sortable: true },
           {key: 'actions', thStyle: {width:'130px !important'} }
         ]),
         sortBy: 'loginId',

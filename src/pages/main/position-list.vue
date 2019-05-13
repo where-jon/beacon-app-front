@@ -44,12 +44,9 @@ export default {
           APP.POSITION_WITH_AREA ? 'area' : null]).compact().value(),
         disableTableButtons: true,
         fields: ViewHelper.addLabelByKey(this.$i18n, [ 
-          !APP.TX_WITH_TXID && APP.TX_BTX_MINOR == 'minor' ? 
-            {key: 'minor', label: 'minor', sortable: true, tdClass: 'action-rowdata' }: null,
-          APP.TX_WITH_TXID ? {key: 'txId', label: 'txId', sortable: true, tdClass: 'action-rowdata' }: null,
+          APP.TX_BTX_MINOR == 'minor' ? {key: 'minor', label: 'minor', sortable: true, tdClass: 'action-rowdata' }: null,
           APP.TX_BTX_MINOR != 'minor' ? {key: 'btx_id', label: 'btxId', sortable: true, tdClass: 'action-rowdata' }: null,
-          APP.TX_WITH_TXID || APP.TX_BTX_MINOR != 'btxId' ?
-            {key: 'minor', label:'minor', sortable: true, tdClass: 'action-rowdata' }: null,
+          APP.TX_BTX_MINOR == 'both' ? {key: 'minor', label:'minor', sortable: true, tdClass: 'action-rowdata' }: null,
           APP.POT_WITH_POTCD ? {key: 'potCd', label: 'potCd', sortable: true, tdClass: 'action-rowdata'} : null,
           {key: 'potName', label: 'name', sortable: true, tdClass: 'action-rowdata'},
           APP.POS_LIST_WITH_TEL? {key: 'tel', sortable: true, tdClass: 'action-rowdata' }: null,
@@ -105,7 +102,7 @@ export default {
             // powerLevel: this.getPowerLevel(pos),
             txId: Util.getValue(pos, 'tx.txId' , null),
             potCd: Util.getValue(pos, 'tx.potCd', null),
-            potName: Util.getValue(pos, 'tx.potName', Util.getValue(pos, 'tx.txName', null)),
+            potName: Util.getValue(pos, 'tx.potName', null),
             tel: Util.getValue(pos, 'tx.extValue.tel', null),
             categoryName: Util.getValue(pos, 'tx.categoryName', null),
             groupName: Util.getValue(pos, 'tx.groupName', null),
