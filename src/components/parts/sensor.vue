@@ -57,7 +57,7 @@ export default {
   },
   data() {
     return {
-      DOWN_RED_TIME: APP.DOWN_RED_TIME,
+      DOWN_RED_TIME: APP.SENSOR.MEDITAG.DOWN_RED_TIME,
     }
   },
   computed: {

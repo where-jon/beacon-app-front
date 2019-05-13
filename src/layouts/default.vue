@@ -62,7 +62,7 @@ export default {
   },
   data() {
     return {
-      showSidebar: DISP.SHOW_SIDEBAR,
+      showSidebar: DISP.MENU.SHOW_SIDEBAR,
     }
   },
   computed: {
@@ -76,7 +76,7 @@ export default {
       return this.$store.state.loginId
     },
     isLoginPage() {
-      return this.$route.path == APP.LOGIN_PAGE || this.$route.path == APP.LOGIN_PAGE + '/'
+      return this.$route.path == APP.MENU.LOGIN_PAGE || this.$route.path == APP.MENU.LOGIN_PAGE + '/'
     },
     ...mapState([
       'showProgress',

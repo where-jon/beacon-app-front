@@ -72,9 +72,9 @@ export default {
     sensorOptions(entity, isBlank) {
       let ids
       if (entity == 'exb') {
-        ids = APP.EXB_SENSOR
+        ids = APP.EXB.SENSOR
       } else if (entity == 'tx') {
-        ids = APP.TX_SENSOR
+        ids = APP.SENSOR.TX_SENSOR
       }
 
       return StateHelper.getOptionsFromState('sensor',
@@ -83,8 +83,13 @@ export default {
         sensor => ids.includes(sensor.sensorId)
       )
     },
-    isShown(conf) {
-      return APP[conf]
+    isShown(conf, column) {
+      const keys = conf.split('.')
+      const setting = keys.reduce((prev, cur) => prev[cur], APP)
+      if(Util.isArray(setting)){
+        return Util.includesIgnoreCase(setting, column)
+      }
+      return setting
     },
     createDummyLoginId(ids) {
       return `d${ids.join('_')}`
@@ -184,20 +189,20 @@ export default {
       })
     },
     modifyColName(col) {
-      if (col == 'TXID' && !APP.TX_WITH_TXID){
-        return APP.TX_BTX_MINOR == 'minor'? 'minor': 'btxId'
+      if (col == 'TXID' && !Util.includesIgnoreCase(APP.TX.WITH, 'txId')){
+        return APP.TX.BTX_MINOR == 'minor'? 'minor': 'btxId'
       }
-      if (col == 'btxId' && APP.TX_BTX_MINOR == 'minor') {
+      if (col == 'btxId' && APP.TX.BTX_MINOR == 'minor') {
         return 'minor'
       }
       return col
     },
     modifyVal(col, val) {
-      if (col == 'TXID' && !APP.TX_WITH_TXID){
-        if(APP.TX_BTX_MINOR == 'minor' && this.minor){
+      if (col == 'TXID' && !Util.includesIgnoreCase(APP.TX.WITH, 'txId')){
+        if(APP.TX.BTX_MINOR == 'minor' && this.minor){
           return this.minor
         }
-        if(APP.TX_BTX_MINOR != 'minor' && this.btxId){
+        if(APP.TX.BTX_MINOR != 'minor' && this.btxId){
           return this.btxId
         }
       }

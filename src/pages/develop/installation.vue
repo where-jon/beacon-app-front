@@ -9,6 +9,7 @@
 import position from '../main/position.vue'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
 import rssimap from '../../components/parts/rssimap.vue'
+import * as Util from '../../sub/util/Util'
 import { APP } from '../../sub/constant/config'
 
 export default {
@@ -18,8 +19,8 @@ export default {
   },
   data () {
     return {
-      useGroup: MenuHelper.useMaster('group') && APP.TX_WITH_GROUP,
-      useCategory: MenuHelper.useMaster('category') && APP.TX_WITH_CATEGORY,
+      useGroup: MenuHelper.useMaster('group') && Util.includesIgnoreCase(APP.TX.WITH, 'group'),
+      useCategory: MenuHelper.useMaster('category') && Util.includesIgnoreCase(APP.TX.WITH, 'category'),
       modeRssi: false,
     }
   },

@@ -52,31 +52,40 @@ export default {
     ]),
   },
   methods: {
+    createCustomColumn(){
+      return APP.POT.WITH.map(val => {
+        if(['user'].includes(val)){
+          return null
+        }
+        const ret = {key: val, label: val, tdClass: 'thumb-rowdata'}
+        if(['post', 'tel', 'ruby'].includes(val)){
+          ret.key = 'extValue.' + val
+        }
+        else{
+          ret.sortable = true
+        }
+        if(['category', 'group'].includes(val)){
+          ret.key = val + 'Name'
+        }
+        return ret
+      }).filter(val => val)
+    },
     getCustomCsvColumns(){
       return [
         'potId',
+        'potName',
         'thumbnail',
-        APP.TX_WITH_TXID? 'txId': APP.TX_BTX_MINOR == 'minor'? 'minor': 'btxId',
+        Util.includesIgnoreCase(APP.TX.WITH, 'txId')? 'txId': APP.TX.BTX_MINOR == 'minor'? 'minor': 'btxId',
         'txName',
-        APP.POT_WITH_POTCD? 'potCd': null,
         'potName',
         'potType',
-        APP.POT_WITH_RUBY? 'extValue.ruby': null,
         'displayName',
-        APP.POT_WITH_GROUP? 'groupName': null,
-        APP.POT_WITH_CATEGORY? 'categoryName': null,
-        APP.POT_WITH_POST? 'extValue.post': null,
-        APP.POT_WITH_TEL? 'extValue.tel': null,
-        APP.POT_WITH_DESCRIPTION? 'description': null,
-        'userId',
-        'loginId',
-        'roleName',
-        'pass',
-        'email',
-      ].filter((val) => val)
+      ].concat(this.createCustomColumn().map(val => val.key))
+        .concat(['userId', 'loginId', 'roleName', 'pass', 'email',])
+        .filter(val => val)
     },
     customCsvData(val){ // TODO:
-      const id = APP.TX_WITH_TXID? 'txId': APP.TX_BTX_MINOR == 'minor'? 'minor': 'btxId'
+      const id = Util.includesIgnoreCase(APP.TX.WITH, 'txId')? 'txId': APP.TX.BTX_MINOR == 'minor'? 'minor': 'btxId'
       if(Util.hasValue(val.potTxList)){
         val[id] = val.potTxList.map((potTx) => potTx.tx? potTx.tx[id]: '').join(';')
         val.txName = val.potTxList.map((potTx) => potTx.tx? potTx.tx.txName: '').join(';')
@@ -93,23 +102,19 @@ export default {
       return ViewHelper.addLabelByKey(this.$i18n, [ 
         {key: 'potName', sortable: true , tdClass: 'thumb-rowdata'},
         {key: 'thumbnail', tdClass: 'thumb-rowdata' },
-        {key: 'txIdName', label:'tx', sortable: true, },
-        APP.POT_WITH_POTCD? {key: 'potCd', sortable: true , tdClass: 'thumb-rowdata'}: null,
-        APP.POT_WITH_RUBY? {key: 'ruby', label: 'ruby', sortable: true, tdClass: 'thumb-rowdata'}: null,
+        {key: 'txIdName', label:'tx', sortable: true },
         {key: 'displayName', sortable: true, tdClass: 'thumb-rowdata'},
-        APP.POT_WITH_GROUP? {key: 'groupName', label: 'group', sortable: true, tdClass: 'thumb-rowdata'}: null,
-        APP.POT_WITH_CATEGORY? {key: 'categoryName', label: 'category', sortable: true, tdClass: 'thumb-rowdata'}: null,
-        APP.POT_WITH_POST? {key: 'extValue.post', label: 'post', tdClass: 'thumb-rowdata'}: null,
-        APP.POT_WITH_TEL? {key: 'extValue.tel', label: 'tel', tdClass: 'thumb-rowdata'}: null,
-        {key: 'potId', sortable: true, tdClass: 'thumb-rowdata'},
-        {key: 'actions', thStyle: {width:'130px !important'} , tdClass: 'thumb-rowdata'},
-      ])
+      ].concat(this.createCustomColumn())
+        .concat([
+          {key: 'potId', sortable: true, tdClass: 'thumb-rowdata'},
+          {key: 'actions', thStyle: {width:'130px !important'} , tdClass: 'thumb-rowdata'},
+        ]))
     },
     afterCrud(){
       StateHelper.setForceFetch('tx', true)
     },
     getExtraFilter(){
-      return [this.isEnabledMenu('group') && APP.POT_WITH_GROUP? 'group': null, this.isEnabledMenu('category') && APP.POT_WITH_CATEGORY? 'category': null].filter((val) => val)
+      return [this.isEnabledMenu('group') && Util.includesIgnoreCase(APP.POT.WITH, 'group')? 'group': null, this.isEnabledMenu('category') && Util.includesIgnoreCase(APP.POT.WITH, 'category')? 'category': null].filter((val) => val)
     },
     async fetchData(payload) {
       try {

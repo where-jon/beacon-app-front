@@ -118,7 +118,7 @@ export default {
       return dummyKey
     },
     addLocation(entity, targetEntity, dummyKey){
-      if(!APP.TX_WITH_LOCATION){
+      if(!Util.includesIgnoreCase(APP.TX.WITH, 'location')){
         return dummyKey
       }
       entity.location = {}
@@ -141,13 +141,13 @@ export default {
       if(!entity.txId){
         entity.txId = targetEntity? targetEntity.txId: dummyKey--
       }
-      if(APP.TX_BTX_MINOR == 'minor'){
+      if(APP.TX.BTX_MINOR == 'minor'){
         entity.btxId = entity.minor
         if(Util.hasValue(entity.minorName) || 65535 < entity.minor){
           entity.ignoreBtxId = IGNORE.ON
         }
       }
-      else if(APP.TX_BTX_MINOR == 'btxId'){
+      else if(APP.TX.BTX_MINOR == 'btxId'){
         entity.minor = entity.btxId
         if(Util.hasValue(entity.btxIdName) || 65535 < entity.btxId){
           entity.ignoreMinor = IGNORE.ON
@@ -177,7 +177,7 @@ export default {
       return dummyKey
     },
     async save(bulkSaveFunc) {
-      const MAIN_COL = APP.TX_WITH_TXID? 'txId': APP.TX_BTX_MINOR == 'minor'? 'minor': 'btxId'
+      const MAIN_COL = Util.includesIgnoreCase(APP.TX.WITH, 'txId')? 'txId': APP.TX.BTX_MINOR == 'minor'? 'minor': 'btxId'
       const POT = ['displayName','description','potCategoryList']
       const POT_CATEGORY = ['categoryId', 'categoryName']
       const POT_GROUP = ['groupId', 'groupName']

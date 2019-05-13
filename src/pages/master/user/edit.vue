@@ -97,10 +97,10 @@ export default {
       return 'outline-' + theme
     },
     showEmail() {
-      return APP.USER_WITH_EMAIL
+      return Util.includesIgnoreCase(APP.USER.WITH, 'email')
     },
     showName() {
-      return APP.USER_WITH_NAME
+      return Util.includesIgnoreCase(APP.USER.WITH, 'name')
     },
     ...mapState('app_service', [
       'user', 'roles'

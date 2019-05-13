@@ -11,26 +11,25 @@ export const DEV = { // 開発デバッグ関連
 }
 
 export const APP = { // 機能面に関する設定
-  VERSION: 'Version 1.1.0', // バージョン　this application version
   LOGIN_MODE: LOGIN_MODE.APP_SERVICE, // ログインモード(なし、ローカル、AppService)
   SAAS_DOMAIN: '.saas.',
-
-  SHOW_MENU_LINK: '',
-  SHOW_MENU_LINK_URL: '',
-
-  // ページ遷移設定
-  TOP_PAGE: '/main/position', // トップページパス　must not be / otherwise recursive infinitely
-  LOGIN_PAGE: '/login', // ログインページパス　if no login then /
-  ERROR_PAGE: '/error', // エラーページパス　if no login then /
-
-  // 時間設定
-  TIMEOUT: 60 * 60 * 1000, // session timeout(using local storage)
-  AUTO_RELOAD: 60000, // 自動リロード間隔(ミリ秒)
-  POSITION_AUTO_RELOAD: 60000, // 測位の自動リロード間隔(ミリ秒)
-
-  TRANSPARENT_TIME: 60 * 1000, // 半透明：現在時刻から経過した段階で半透明（ミリ秒）
-  LOST_TIME: 10 * 60 * 1000, // 消失とみなす時間（ミリ秒）
-  UNDETECT_TIME: 60 * 60 * 1000, // 未検知とみなす時間（ミリ秒）
+  COMMON: {
+    VERSION: 'Version 1.1.0', // バージョン　this application version
+    TIME_ZONE: -9, // 午前0時を決定するためのタイムゾーン(時)
+    AUTO_RELOAD: 60000, // 自動リロード間隔(ミリ秒)
+  },
+  SYS: {
+    TIMEOUT: 60 * 60 * 1000, // session timeout(using local storage)
+    STATE_EXPIRE_TIME: 10 * 60 * 1000, // マスタキャッシュ有効時間(ミリ秒)
+  },
+  MENU: {
+    SHOW_MENU_LINK: '',
+    SHOW_MENU_LINK_URL: '',
+    TOP_PAGE: '/main/position', // トップページパス　must not be / otherwise recursive infinitely
+    // ページ遷移設定
+    LOGIN_PAGE: '/login', // ログインページパス　if no login then /
+    ERROR_PAGE: '/error', // エラーページパス　if no login then /
+  },
   GATEWAY: {
     LOST_TIME: 30 * 60 * 1000, // 消失とみなす時間（ミリ秒）
     UNDETECT_TIME: 60 * 60 * 1000, // 未検知とみなす時間（ミリ秒）
@@ -38,35 +37,137 @@ export const APP = { // 機能面に関する設定
   TELEMETRY: {
     LOST_TIME: 30 * 60 * 1000, // 消失とみなす時間（ミリ秒）
     UNDETECT_TIME: 60 * 60 * 1000, // 未検知とみなす時間（ミリ秒）
+    WITH_POWER_LEVEL: true,         // 画面上で電池レベルを使用するか否か
+  },
+  POS: {
+    AUTO_RELOAD: 60000, // 測位の自動リロード間隔(ミリ秒)
+    TRANSPARENT_TIME: 60 * 1000, // 半透明：現在時刻から経過した段階で半透明（ミリ秒）
+    LOST_TIME: 10 * 60 * 1000, // 消失とみなす時間（ミリ秒）
+    UNDETECT_TIME: 60 * 60 * 1000, // 未検知とみなす時間（ミリ秒）
+    USE_POSITION_HISTORY: true, // 位置情報にT_POSITION_HISTORYを使う
+    TX_POS_ONE_TO_ONE: false, // 1つの場所に1TXのみ存在可能
+    RSSI_MIN: -99, // RSSI下限値
+    MOVING_AVERAGE: 5, // 5回分移動平均
+    USE_MULTI_POSITIONING: false, // ３点測位を使う
+    // 禁止区域関連設定
+    PROHIBIT_ALERT : true, // 禁止区域アラート設定
+    PROHIBIT_GROUPS: null, // 禁止区域非許可GROUPID[1,2,3]の形
+
+    USE_LEGEND: false, // 凡例を表示
+    SHOW_DETECTED_COUNT: false, // 検知数を表示
+
+    WITH: {
+      CATEGORY: true, // 位置表示(地図)にカテゴリを表示
+      GROUP: false, // 位置表示(地図)にグループを表示
+    },
+  },
+  SENSOR: {
+    TX_SENSOR: [1,5,6,7], // TXのタイプに設定可能なセンサーID
+    MEDITAG: {
+      DOWN_RED_TIME: 60000, // MEDiTAG使用時：転倒時赤枠の表示時間
+    },
+    USE_THERMOPILE: true, // サーモパイルセンサーの使用
+    USE_MEDITAG: false, // メディタグの使用
+    USE_MAGNET: false, // マグネットセンサの使用
+    USE_PRESSURE: true, // 圧力センサの使用
+    SHOW_MAGNET_ON_PIR: false, // 人感センサ画面でマグネットセンサを表示
+    MAGNET_ON_IS_USED: true, // マグネットセンサーONのとき使用中とするか
+    // 温湿度
+    USE_HUMIDITY_ALERT: true, // 湿度アラートの使用
+    USE_THERMOH_HEATMAP: true, // ヒートマップの使用
+    USE_THERMOH_TOOLTIP: false, // ツールチップを使用する
+    TEMPERATURE: {
+      LINE_HOUR_START: 0,  // 温湿度グラフの開始時間
+      LINE_HOUR_END: 24,  // 温湿度グラフの終了時間
+    },
+  },
+  // ヒートマップ
+  HEATMAP: {
+    USE_INDIVIDUAL: false, // 個人プルダウンの表示
+  },
+  // 位置表示(一覧)
+  POS_LIST: {
+    WITH: ['tel'],
+  },
+  // TX関連設定
+  TX: {
+    WITH: ['displayName', 'major', 'category', 'description', 'sensor', 'dispFlg', 'location', 'dispPir'],
+    MAJOR_REQUIRED: false, // majorを必須にする ※サーバでも要設定
+    BTX_MINOR: 'both', // both:両方表示し、別々に設定、minor/btxId:片方のみ表示し、保存の際同一の値を設定
+  },
+  // EXB関連設定
+  EXB: {
+    SENSOR: [1,2,3,4,8], // EXBのタイプに設定可能なセンサーID
+    WITH: ['deviceNum', 'posId', 'zone'],
+    MULTI_SENSOR: true,
+    SENSOR_MAX: 2,   // センサー種類最大数
+  },
+  // USER関連設定
+  USER: {
+    WITH: ['email', 'name'],
+  },
+  // 位置把握(一覧)画面
+  POSITION_WITH_AREA: true, // エリアを表示
+  // POT関連設定
+  POT: {
+    WITH: ['category', 'user', 'description'],
+    MULTI_TX: false,         // 複数Tx使用
+    TX_MAX: 2,   // 所持Tx最大数
+  },
+  // category
+  CATEGORY: {
+    TYPES: [1,2],   // 選択可能な種別（1人,2物,3ゾーン）
+  },
+  NOTIFY: {
+    // 通知媒体
+    MIDIUM_TYPES: [0,1],   // 選択可能な種別（1メール,2slack）
+    // 通知
+    STATE_TYPES: [0,1,2], // 選択可能な種別（0 TXボタン通知,1 アラート系, 2 ユーザ登録・更新 , 3 sos）
+  },
+  // 動線分析関連設定
+  ANALYSIS: {
+    DATETIME_INTERVAL: 60 * 24, // Fromを設定した場合、この設定値分未来の日付をToに自動入力する（分単位）
+  },
+  // 集計
+  STAY_SUM: {
+    LOST_LIMIT: 90 * 60,  // 滞在時間集計不在判定時間（秒）
+    ABSENT_LIMIT: 30 * 60,  // 滞在時間集計離席判定時間（秒）
+    PARSENT_DIGIT: 100, // 在席率表示時の小数点以下桁数。なしなら1、1桁なら10、2桁なら100 …
+    AXIS_FILL_GAP: 2, // 滞在時間集計の横軸で0件項目を表示(0:しない,1:する,2:月日の場合検索期間すべて表示)
+    UNIT_HOUR: 5 * 60 * 60, // 指定秒を軸単位の最大値が超えた場合、滞在時間集計の表示を時間単位で表示する
+    UNIT_MINUTE: 20 * 60,  // 指定秒を軸単位の最大値が超えた場合、滞在時間集計の表示を分単位で表示する
+    FROM: 0,  // 滞在時間集計開始時間(時分)
+    TO: 2400,  // 滞在時間集計終了時間(時分)
+  },
+  // Tx状態監視
+  TX_MON: {
+    WITH: ['btxId', 'major', 'minor', 'name', 'powerLevel', 'locationName'],
+    WITH_SENSOR: [], // マージするセンサ情報のIDリスト
+    POWER_LEVEL_GOOD: 50,  // 電池レベルで良好とみなす下限値
+    POWER_LEVEL_WARN: 30,  // 電池レベルで減少とみなす下限値
+  },
+  SENSOR_LIST: {
+    WITH: ['posId', 'deviceNum', 'deviceId', 'deviceIdX', 'locationName'],
+  },
+  SENSORGRAPH: {
+    WITH_DEVICE: true,             // 画面上でデバイスを使用するか否か
+    CSV_IMMEDIATE: false,             // csvで直近値を出力するか否か
+  },
+  HISTORY_EXC: {
+    SORT: 'desc', // 履歴情報Excの日付デフォルトソート（asc or desc）
+  },
+  TXDETAIL: {
+    // TX詳細表示項目
+    ITEMS: ['minor', 'major', 'name', 'group', 'category', 'tel', 'timestamp'],
+    NO_UNREGIST_THUMB: false, // TX詳細サムネイル非表示（未登録の場合）
+  },
+  SVC: {
+    POS: {
+      EXSERVER: false, // EXServerを使う
+    },
   },
 
-  DOWN_RED_TIME: 60000, // MEDiTAG使用時：転倒時赤枠の表示時間
-  TEMPERATURE_LINE_HOUR_START: 0,  // 温湿度グラフの開始時間
-  TEMPERATURE_LINE_HOUR_END: 24,  // 温湿度グラフの終了時間
-    
-  STATE_EXPIRE_TIME: 10 * 60 * 1000, // マスタキャッシュ有効時間(ミリ秒)
-
-  // 測位関連設定
-  USE_POSITION_HISTORY: true, // 位置情報にT_POSITION_HISTORYを使う
-  TX_POS_ONE_TO_ONE: false, // 1つの場所に1TXのみ存在可能
-  RSSI_MIN: -99, // RSSI下限値
-  MOVING_AVERAGE: 5, // 5回分移動平均
-  USE_MULTI_POSITIONING: false, // ３点測位を使う
-  EXSERVER: false, // EXServerを使う
   
-  // 機能
-  USE_THERMOPILE: true, // サーモパイルセンサーの使用
-  USE_MEDITAG: false, // メディタグの使用
-  USE_MAGNET: false, // マグネットセンサの使用
-  USE_PRESSURE: true, // 圧力センサの使用
-  USE_LEGEND: false, // 凡例を表示
-  SHOW_DETECTED_COUNT: false, // 検知数を表示
-  SHOW_MAGNET_ON_PIR: false, // 人感センサ画面でマグネットセンサを表示
-  MAGNET_ON_IS_USED: true, // マグネットセンサーONのとき使用中とするか
-
-  // ヒートマップ
-  HEATMAP_USE_INDIVIDUAL: false, // 個人プルダウンの表示
-
   // 将来実装予定項目 START
   LOG_KEEP_TIME: 30,
   PASSWORD_CHANGEABLE: true,
@@ -74,115 +175,10 @@ export const APP = { // 機能面に関する設定
   UPDATE_POSITION_EFFECT: true,
   // 将来実装予定項目 END
 
-  // 位置表示(地図)
-  POS_WITH_CATEGORY: true, // 位置表示(地図)にカテゴリを表示
-  POS_WITH_GROUP: false, // 位置表示(地図)にグループを表示
-
-  // 位置表示(一覧)
-  POS_LIST_WITH_TEL: false, // 位置表示(一覧)に電話番号を表示
-
-  // 温湿度
-  USE_HUMIDITY_ALERT: true, // 湿度アラートの使用
-  USE_THERMOH_HEATMAP: true, // ヒートマップの使用
-  USE_THERMOH_TOOLTIP: false, // ツールチップを使用する
-
-  // TX関連設定
-  TX_SENSOR: [1,5,6,7], // TXのタイプに設定可能なセンサーID
-  TX_WITH_TXID: false, // 画面上TXIDを使用するか否か
-  TX_WITH_CATEGORY: true, // TX管理で個体.カテゴリを表示
-  TX_WITH_GROUP: false, // TX管理で個体.グループを表示
-  TX_WITH_DISPLAY_NAME: true, // TX管理で個体.表示名を表示
-  TX_WITH_DESCRIPTION: true, // TX管理で個体.備考を表示
-  TX_WITH_MAJOR: true, // TX管理でmajorを表示
-  TX_MAJOR_REQUIRED: false, // majorを必須にする ※サーバでも要設定
-  TX_BTX_MINOR: 'both', // both:両方表示し、別々に設定、minor/btxId:片方のみ表示し、保存の際同一の値を設定
-  TX_WITH_DISPFLG: true, // TXを表示する
-  TX_WITH_LOCATION: true, // TXを固定位置表示する（TX管理画面に影響）
-  TX_WITH_DISP_PIR: true, // 空室チェックで表示を使用
-  TX_WITH_DISP_ALWAYS: false, // TX管理で常時表示を表示
-
-  // EXB関連設定
-  EXB_SENSOR: [1,2,3,4,8], // EXBのタイプに設定可能なセンサーID
-  EXB_WITH_EXBID: false,       // 画面上EXBIDを使用するか否か 
-  EXB_WITH_DEVICE_NUM: true,  // 画面上端末IDを使用するか否か
-  EXB_WITH_DEVICE_ID: false,   // 画面上デバイスIDを使用するか否か
-  EXB_WITH_DEVICE_IDX: false,  // 画面上デバイスID（16進数）を使用するか否か
-  EXB_WITH_POSID: true,      // 画面上POSIDを使用するか否か
-  EXB_WITH_ZONE: true,       // 画面上でゾーン名を使用するか否か
-
-  EXB_MULTI_SENSOR: true,
-  EXB_SENSOR_MAX: 2,   // センサー種類最大数
-
-  // USER関連設定
-  USER_WITH_EMAIL: true, // ユーザ設定でメールアドレスを使用する
-  USER_WITH_NAME: true, // ユーザ設定で名前を使用する
-
-  // 位置把握(一覧)画面
-  POSITION_WITH_AREA: true, // エリアを表示
-  POSITION_TIMEZONE: -9, // 午前0時を決定するためのタイムゾーン(時)
-
-  // POT関連設定
-  POT_WITH_RUBY: false,       // るび使用　use ruby on pot master
-  POT_WITH_POST: false,       // 役職使用　use post on pot master
-  POT_WITH_TEL: false,        // 電話使用　use tel on pot master
-  POT_WITH_POTCD: false,      // コード使用　use potCd on pot master
-  POT_WITH_GROUP: false,      // グループ使用　use group on pot master
-  POT_WITH_CATEGORY: true,   // カテゴリ使用　use category on pot master
-  POT_WITH_USER: true,        // ユーザ使用
-  POT_WITH_DESCRIPTION: true,  // 備考使用
-  POT_MULTI_TX: false,         // 複数Tx使用
-
-  POT_TX_MAX: 2,   // 所持Tx最大数
-
-  // category
-  CATEGORY_TYPES: [1,2],   // 選択可能な種別（1人,2物,3ゾーン）
-  // 通知媒体
-  NOTIFY_MIDIUM_TYPES: [0,1],   // 選択可能な種別（1メール,2slack）
-
-  // 通知
-  NOTIFY_STATE_TYPES: [0,1,2], // 選択可能な種別（0 TXボタン通知,1 アラート系, 2 ユーザ登録・更新 , 3 sos）
-
-  // 動線分析関連設定
-  ANALYSIS_DATETIME_INTERVAL: 60 * 24, // Fromを設定した場合、この設定値分未来の日付をToに自動入力する（分単位）
-
-  // 集計
-  SUM_AXIS_FILL_GAP: 2, // 滞在時間集計の横軸で0件項目を表示(0:しない,1:する,2:月日の場合検索期間すべて表示)
-  SUM_UNIT_HOUR: 5 * 60 * 60, // 指定秒を軸単位の最大値が超えた場合、滞在時間集計の表示を時間単位で表示する
-  SUM_UNIT_MINUTE: 20 * 60,  // 指定秒を軸単位の最大値が超えた場合、滞在時間集計の表示を分単位で表示する
-  SUM_FROM: 0,  // 滞在時間集計開始時間(時分)
-  SUM_TO: 2400,  // 滞在時間集計終了時間(時分)
-  SUM_LOST_LIMIT: 90 * 60,  // 滞在時間集計不在判定時間（秒）
-  SUM_ABSENT_LIMIT: 30 * 60,  // 滞在時間集計離席判定時間（秒）
-  SUM_PARSENT_DIGIT: 100, // 在席率表示時の小数点以下桁数。なしなら1、1桁なら10、2桁なら100 …
-
-  // Tx状態監視
-  POSITION_WITH_BTXID: true, // btxIdを表示する
-  POSITION_WITH_MAJOR: true, // majorを表示する
-  POSITION_WITH_MINOR: true, // minorを表示する
-  POSITION_WITH_LOCATIONNAME: true, // locationNameを表示する
-  POSITION_SENSOR: [], // マージするセンサ情報のIDリスト
-
-  SENSOR_WITH_POSID: true,       // 画面上でposIdを使用するか否か
-  SENSOR_WITH_DEVICE_NUM: true,       // 画面上でdeviceNumを使用するか否か
-  SENSOR_WITH_DEVICE_ID: true,       // 画面上でdeviceIdを使用するか否か
-  SENSOR_WITH_DEVICE_IDX: true,       // 画面上でdeviceIdXを使用するか否か
-  SENSOR_WITH_LOCATIONNAME: true,       // 画面上でlocationNameを使用するか否か
-
-  TELEMETRY_WITH_POWER_LEVEL: true,         // 画面上で電池レベルを使用するか否か
-
-  SENSORGRAPH_WITH_DEVICE: true,             // 画面上でデバイスを使用するか否か
-  SENSORGRAPH_CSV_IMMEDIATE: false,             // csvで直近値を出力するか否か
-
   // その他
   MAX_IMAGE_SIZE: 20 * 1024 * 1024, // アップロード可能な最大イメージサイズ(Byte)
   AREA_THUMBNAIL_MAX: 200, // サムネイルリサイズ時の最大幅・高さ(エリア)
   POT_THUMBNAIL_MAX: 200, // サムネイルリサイズ時の最大幅・高さ(pot)
-  POWER_LEVEL_GOOD: 50,  // 電池レベルで良好とみなす下限値
-  POWER_LEVEL_WARN: 30,  // 電池レベルで減少とみなす下限値
-
-  // 禁止区域関連設定
-  PROHIBIT_ALERT : true, // 禁止区域アラート設定
-  PROHIBIT_GROUPS: null, // 禁止区域非許可GROUPID[1,2,3]の形
 }
 
 
@@ -209,79 +205,129 @@ export const EXCLOUD = {
 }
 
 export const DISP = { // 表示系設定（表示・色・フォント・サイズ）
+  MENU: {
+    SHOW_NAV: false, // show nav  
+    SHOW_SIDEBAR: true, // show sidebar  
+    SHOW_LOGO: true, // show logo (or show title text)
+    THEME: 'default', // デフォルトのテーマ
+  },
   // 位置表示：TX
-  TX_R_ABSOLUTE: true, // Txの半径を画面解像度に合わせる
-  TX_R: 26, // Txの半径
-  TX_FIX_R: 26, // Txの半径(カテゴリ一覧、グループ一覧、凡例表示用)
-  ROUNDRECT_RADIUS: 13, // Tx角丸表示時のRADIUS
-  TX_BGCOLOR: '3bcddc', // Tx表示時のデフォルト背景色
-  TX_COLOR: '000000', // Tx表示時のデフォルト文字色
-  TX_STROKE_COLOR: 'cccccc', // Tx表示時のデフォルト枠線色
-  TX_STROKE_WIDTH: 1, // Tx表示時のデフォルト枠線幅
-  TX_ALPHA: 0.6, // Tx表示時(離席)のデフォルト透過値
-  TX_LOST_ALPHA: 0.1, // Tx固定表示(不在)時のデフォルト透過値
-  TX_FONT: '20px Arial', // Tx表示時のフォント
-  TX_DIV_2: 1, // Txが重なった際に２つ上下左右に並べる場合にずらす倍率
-  TX_DIV_3: 0.5, // Txが重なった際に３つ左右に並べる場合にずらす倍率
-  TX_HORIZON: 5, // TXアイコンタイル表示時の列数
-  TX_VERTICAL: 5, // TXアイコンタイル表示時の行数
+  TX: {
+    R_ABSOLUTE: true, // Txの半径を画面解像度に合わせる
+    R: 26, // Txの半径
+    FIX_R: 26, // Txの半径(カテゴリ一覧、グループ一覧、凡例表示用)
+    ROUNDRECT_RADIUS: 13, // Tx角丸表示時のRADIUS
+    BGCOLOR: '3bcddc', // Tx表示時のデフォルト背景色
+    COLOR: '000000', // Tx表示時のデフォルト文字色
+    STROKE_COLOR: 'cccccc', // Tx表示時のデフォルト枠線色
+    STROKE_WIDTH: 1, // Tx表示時のデフォルト枠線幅
+    ALPHA: 0.6, // Tx表示時(離席)のデフォルト透過値
+    LOST_ALPHA: 0.1, // Tx固定表示(不在)時のデフォルト透過値
+    // TX_FONT: '20px Arial', // Tx表示時のフォント
+    DIV_2: 1, // Txが重なった際に２つ上下左右に並べる場合にずらす倍率
+    DIV_3: 0.5, // Txが重なった際に３つ左右に並べる場合にずらす倍率
+    HORIZON: 5, // TXアイコンタイル表示時の列数
+    VERTICAL: 5, // TXアイコンタイル表示時の行数
+    DISPLAY_PRIORITY: ['category','group'], // TX表示の際に参照するdisplay方法の優先順位
+  },
+  EXB_LOC: {
+    // EXB配置設定のEXB表示サイズ
+    SIZE: {
+      W: 60,
+      H: 30
+    },
+    BGCOLOR: '#76ccf7', // EXB配置設定のEXB表示背景色
+    COLOR: '#000', // EXB配置設定のEXB表示文字色
+    FONT: 'Arial', // EXB配置設定のEXB表示フォント
+  },
+  TX_LOC: {
+    // TX配置設定のTX表示サイズ
+    SIZE: {
+      W: 60,
+      H: 30
+    },
+    BGCOLOR: '#76ccf7', // TX配置設定のTX表示背景色
+    COLOR: '#000', // TX配置設定のTX表示文字色
+    FONT: 'Arial', // TX配置設定のTX表示フォント
+    ALPHA: 1.0, // TX配置設定のTX表示フォント
+  },
+  THERMOH: {
+    // ツールチップ内の表示要素
+    TOOLTIP_ITEMS: {
+      TXNAME: true,
+      TEMPERATURE: true,
+      HUMIDITY: true,
+      DESCRIPTION: true,
+      DATE: false,
+    },
+    TOOLTIP_FONT: '12px Arial', // ツールチップフォント
+    TOOLTIP_COLOR: '#000000', // ツールチップ文字色
+    TOOLTIP_BORDERCOLOR: '#888888', // ツールチップ枠線色
+    TOOLTIP_BGCOLOR: '#FFFDE6', // ツールチップ背景色
+    TOOLTIP_ROUNDRECT: 16, // ツールチップ角丸半径
+  
+    ALERT_FIX_HEIGHT: 0, // 警告欄固定行高さ(0で無効)
+    ALERT_WEIGHT: 'bold', // 警告フォント太さ
+  
+    DISP: 'color', // icon / color
+    WITH_LABEL: true, // アイコンに温湿度を表示する
+    FONT: '12px Arial', // 温湿度表示時のフォント
+    R_SIZE: 26, // 温湿度表示時の円の半径
+    COLOR: '#ffffff', // 温湿度表示時の文字色
+    DISCOMFORT_HOT: '#fc5800', // 温湿度表示時の不快指数Hot時の背景色
+    DISCOMFORT_COMFORT: '#15db75', // 温湿度表示時の不快指数Comfort時の背景色
+    DISCOMFORT_COLD: '#7da6e8', // 温湿度表示時の不快指数Cold時の背景色
+    CALC: 2, // アイコン状態算出方法(1:不快指数 2:温度)
+    FLASH: {
+      WARN: 1000, // 警告アイコン点滅周期(ミリ秒)
+      DANGER: 500, // 危険アイコン点滅周期(ミリ秒)
+    },
+    ALPHA: 1, // アルファ値(0:透明～1:不透明)
+    PATTERN: ['19 #5b9bd5', '25 #6eb290', '26 #ffd966', '27 #ff9966', '31 #ff5050', '32 #ffd966 $WARN', '#ff2525 $DANGER'], // 温度アイコンパターン（順不同。数値：閾値。先頭が#：カラーコード。先頭が$：点滅パターン。OR：閾値に同値を含む。）
+    HUMIDITY_PATTERN: ['LESS 30', 'LESS 50', 'MORE 85'], // 湿度アラートパターン（順不同。数値：閾値。LESS：閾値以下の場合に警告。MORE：閾値以上の場合に警告）
+  
+    TEMPERATURE_MAX: 28,  // 温湿度ヒートマップ最大値
+    TEMPERATURE_MIN: 0,   // 温湿度ヒートマップ最小値
+    TEMPERATURE_RADIUS: 150,   // 温湿度ヒートマップ直径
+  },
+  PIR: {
+    R_SIZE: 26,  // PIR表示時の円の半径
+    MIN_COUNT: 0, // PIRでの存在条件の最小カウント値
+    BGCOLOR: '#FC7E82', // "#E2A6A5" // PIR表示の円の背景色
+    FGCOLOR: '#FFFFFF', // PIR表示時の文字色
+    INUSE_LABEL: 'InUse', // PIRで存在時のラベルキー
+    EMPTY_SHOW: true, // PIRで不在時に表示するか否か
+    EMPTY_BGCOLOR: '#595959', // PIRで不存時の背景色
+    EMPTY_LABEL: 'Empty', // PIRで不在時のラベルキー
+  },
+  PRESSURE: {
+    R_SIZE: 26,  // 圧力センサ表示時の円の半径
+    VOL_MIN: 1100, // 圧力センサの使用判定値(指定値以下で使用中扱い)
+    BGCOLOR: '#FC7E82', // "#E2A6A5" // 圧力センサ表示の円の背景色
+    FGCOLOR: '#FFFFFF', // 圧力センサ表示時の文字色
+    INUSE_LABEL: 'InUse', // 圧力センサで使用時のラベルキー
+    EMPTY_SHOW: true, // 圧力センサで未使用時に表示するか否か
+    EMPTY_BGCOLOR: '#595959', // 圧力センサで不存時の背景色
+    EMPTY_LABEL: 'Empty', // 圧力センサで未使用時のラベルキー
+  },
+  MEDITAG: {
+    STRESS_BG: ['#85A9D1', '#F0C864', '#F49696'], // ストレスレベルに応じた背景色
+  },
+  ANALYSIS: { // 分析
+    LINE: {
+      MAX_WEIGHT: 10,   // 動線の最大太さ
+      COLOR: '#ff0000', // 動線の色 (#xxxxxx)
+      OPACITY: 1,       // 動線の透過度 (0～1。0.5などの小数も可)
+    },
+    HEATMAP: {
+      RADIUS: 150,      // 直径
+    },
+  },
 
   FONT_ICON_ADJUST_SCALE: 0.7, // アイコン内テキストのフォントサイズ係数
 
-  SHOW_NAV: true, // show nav  
-  SHOW_SIDEBAR: true, // show sidebar  
-  SHOW_LOGO: true, // show logo (or show title text)
-  THEME: 'default', // デフォルトのテーマ
-  DISPLAY_PRIORITY: ['category','group'], // TX表示の際に参照するdisplay方法の優先順位
-
   MAP_FIT: 'both', // マップを画面表示範囲内にフィットさせるか。width or height or both
   MAP_FIT_MOBILE: 'width', // (モバイル)マップを画面表示範囲内にフィットさせるか。width or height or both
-
-  EXB_LOC_SIZE: {w: 60, h: 30}, // EXB配置設定のEXB表示サイズ
-  EXB_LOC_BGCOLOR: '#76ccf7', // EXB配置設定のEXB表示背景色
-  EXB_LOC_COLOR: '#000', // EXB配置設定のEXB表示文字色
-  EXB_LOC_FONT: 'Arial', // EXB配置設定のEXB表示フォント
-
-  TX_LOC_SIZE: {w: 60, h: 30}, // TX配置設定のTX表示サイズ
-  TX_LOC_BGCOLOR: '#76ccf7', // TX配置設定のTX表示背景色
-  TX_LOC_COLOR: '#000', // TX配置設定のTX表示文字色
-  TX_LOC_FONT: 'Arial', // TX配置設定のTX表示フォント
-  TX_LOC_ALPHA: 1.0, // TX配置設定のTX表示フォント
-
-  THERMOH_TOOLTIP_ITEMS: { // ツールチップ内の表示要素
-    TXNAME: true,
-    TEMPERATURE: true,
-    HUMIDITY: true,
-    DESCRIPTION: true,
-    DATE: false,
-  },
-  THERMOH_TOOLTIP_FONT: '12px Arial', // ツールチップフォント
-  THERMOH_TOOLTIP_COLOR: '#000000', // ツールチップ文字色
-  THERMOH_TOOLTIP_BORDERCOLOR: '#888888', // ツールチップ枠線色
-  THERMOH_TOOLTIP_BGCOLOR: '#FFFDE6', // ツールチップ背景色
-  THERMOH_TOOLTIP_ROUNDRECT: 16, // ツールチップ角丸半径
-
-  THERMOH_ALERT_FIX_HEIGHT: 0, // 警告欄固定行高さ(0で無効)
-  THERMOH_ALERT_WEIGHT: 'bold', // 警告フォント太さ
-
-  THERMOH_DISP: 'color', // icon / color
-  THERMOH_WITH_LABEL: true, // アイコンに温湿度を表示する
-  THERMOH_FONT: '12px Arial', // 温湿度表示時のフォント
-  THERMOH_R_SIZE: 26, // 温湿度表示時の円の半径
-  THERMOH_COLOR: '#ffffff', // 温湿度表示時の文字色
-  DISCOMFORT_HOT: '#fc5800', // 温湿度表示時の不快指数Hot時の背景色
-  DISCOMFORT_COMFORT: '#15db75', // 温湿度表示時の不快指数Comfort時の背景色
-  DISCOMFORT_COLD: '#7da6e8', // 温湿度表示時の不快指数Cold時の背景色
-  THERMOH_CALC: 2, // アイコン状態算出方法(1:不快指数 2:温度)
-  THERMOH_FLASH_WARN: 1000, // 警告アイコン点滅周期(ミリ秒)
-  THERMOH_FLASH_DANGER: 500, // 危険アイコン点滅周期(ミリ秒)
-  THERMOH_ALPHA: 1, // アルファ値(0:透明～1:不透明)
-  THERMOH_PATTERN: ['19 #5b9bd5', '25 #6eb290', '26 #ffd966', '27 #ff9966', '31 #ff5050', '32 #ffd966 $WARN', '#ff2525 $DANGER'], // 温度アイコンパターン（順不同。数値：閾値。先頭が#：カラーコード。先頭が$：点滅パターン。OR：閾値に同値を含む。）
-  HUMIDITY_PATTERN: ['LESS 30', 'LESS 50', 'MORE 85'], // 湿度アラートパターン（順不同。数値：閾値。LESS：閾値以下の場合に警告。MORE：閾値以上の場合に警告）
-
-  TEMPERATURE_MAX: 28,  // 温湿度ヒートマップ最大値
-  TEMPERATURE_MIN: 0,   // 温湿度ヒートマップ最小値
-  TEMPERATURE_RADIUS: 150,   // 温湿度ヒートマップ直径
 
   TEMPERATURE_LINE_COLOR: '#fc5800',// 温度グラフの線色
   HUMIDITY_LINE_COLOR: '#7da6e8',// 湿度グラフの線色
@@ -307,29 +353,9 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   DOWN_COUNT_MAX: 200,// 転倒数メモリ
   DOWN_COUNT_STEP: 25,// 転倒数メモリ間隔
 
-  PIR_R_SIZE: 26,  // PIR表示時の円の半径
-  PIR_MIN_COUNT: 0, // PIRでの存在条件の最小カウント値
-  PIR_BGCOLOR: '#FC7E82', // "#E2A6A5" // PIR表示の円の背景色
-  PIR_FGCOLOR: '#FFFFFF', // PIR表示時の文字色
-  PIR_INUSE_LABEL: 'InUse', // PIRで存在時のラベルキー
-  PIR_EMPTY_SHOW: true, // PIRで不在時に表示するか否か
-  PIR_EMPTY_BGCOLOR: '#595959', // PIRで不存時の背景色
-  PIR_EMPTY_LABEL: 'Empty', // PIRで不在時のラベルキー
-
-  PRESSURE_R_SIZE: 26,  // 圧力センサ表示時の円の半径
-  PRESSURE_VOL_MIN: 1100, // 圧力センサの使用判定値(指定値以下で使用中扱い)
-  PRESSURE_BGCOLOR: '#FC7E82', // "#E2A6A5" // 圧力センサ表示の円の背景色
-  PRESSURE_FGCOLOR: '#FFFFFF', // 圧力センサ表示時の文字色
-  PRESSURE_INUSE_LABEL: 'InUse', // 圧力センサで使用時のラベルキー
-  PRESSURE_EMPTY_SHOW: true, // 圧力センサで未使用時に表示するか否か
-  PRESSURE_EMPTY_BGCOLOR: '#595959', // 圧力センサで不存時の背景色
-  PRESSURE_EMPTY_LABEL: 'Empty', // 圧力センサで未使用時のラベルキー
-
   THERMOPILE_S_SIZE: 20, // サーモパイル円Sサイズ
   THERMOPILE_M_SIZE: 40, // サーモパイル円Mサイズ
   THERMOPILE_L_SIZE: 60, // サーモパイル円Lサイズ
-
-  STRESS_BG: ['#85A9D1', '#F0C864', '#F49696'], // ストレスレベルに応じた背景色
 
   ZONE: {
     MIN_WIDTH: 30,
@@ -341,21 +367,9 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   TXSENSOR_POPUP_SIZE: 165, // TXセンサー表示ポップアップの高さ
   TXMEDITAG_POPUP_SIZE: 236, // TXMEDITAG表示ポップアップの高さ
 
-  HISTORY_SORT: 'desc', // 履歴情報Excの日付デフォルトソート（asc or desc）
-
-  TXDETAIL_ITEMS: { // TX詳細表示項目
-    minor: true,
-    major: true,
-    name: true,
-    group: true,
-    category: true,
-    tel: true,
-    timestamp: true,
+  POSITION_HISTORY: {
+    HEADERS: ['txName', 'major', 'minor', 'deviceNum', 'locationName', 'posId', 'areaName'], // 位置表示履歴の表示カラム
   },
-
-  TXDETAIL_SUMBNAIL_UNREGIST_DISABLE: false, // TX詳細サムネイル非表示（未登録の場合）
-
-  POSITION_HISTORY_HEADERS: ['txName', 'major', 'minor', 'deviceNum', 'locationName', 'posId', 'areaName'], // 位置表示履歴の表示カラム
 
   GATEWAY: { // ゲートウエイ
     STATE_COLOR: { // 状態別色
@@ -364,17 +378,6 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
       [DETECT_STATE.UNDETECT]: '#dc3545',
       [DETECT_STATE.NONE]: '#dc3545'
     }
-  },
-
-  ANALYSIS: { // 分析
-    LINE: {
-      MAX_WEIGHT: 10,   // 動線の最大太さ
-      COLOR: '#ff0000', // 動線の色 (#xxxxxx)
-      OPACITY: 1,       // 動線の透過度 (0～1。0.5などの小数も可)
-    },
-    HEATMAP: {
-      RADIUS: 150,      // 直径
-    },
   },
 
   INSTALLATION: { // 設置支援

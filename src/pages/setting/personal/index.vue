@@ -174,10 +174,10 @@ export default {
         .reduce((prev, cur, i, a) => { return prev + cur }) > 0
     },
     showEmail() {
-      return APP.USER_WITH_EMAIL
+      return Util.includesIgnoreCase(APP.USER.WITH, 'email')
     },
     showName() {
-      return APP.USER_WITH_NAME
+      return Util.includesIgnoreCase(APP.USER.WITH, 'name')
     },
   },
   watch: {

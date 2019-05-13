@@ -36,7 +36,7 @@ export default {
     return {
       items: ViewHelper.createBreadCrumbItems('monitor', 'gateway'),
       gateways: [],
-      headers: ViewHelper.addLabelByKey(this.isDev? null: this.$i18n, APP.EXSERVER?[
+      headers: ViewHelper.addLabelByKey(this.isDev? null: this.$i18n, APP.SVC.POS.EXSERVER?[
         { key: 'deviceid', label: this.isDev? 'deviceid': 'deviceId'},
         { key: 'updated', label: this.isDev? 'updated': 'finalReceiveTimestamp'},
         { key: 'state'},
@@ -46,7 +46,7 @@ export default {
         { key: 'updated', label: this.isDev? 'updated': 'finalReceiveTimestamp'},
         { key: 'state'},
       ]),
-      csvHeaders: APP.EXSERVER ? {
+      csvHeaders: APP.SVC.POS.EXSERVER ? {
         'deviceid': 'deviceid',
         'updated': 'updated',
         'state': 'state',
@@ -85,7 +85,7 @@ export default {
           payload.done()
         }
         this.gateways = gateways.map((e) => {
-          if(APP.EXSERVER){
+          if(APP.SVC.POS.EXSERVER){
             const state = this.getStateLabel('gw', e.timestamp*1000)
             return { ...e, state: state }
           }else{

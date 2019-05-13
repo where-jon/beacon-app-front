@@ -164,15 +164,15 @@
           </span>
         </template>
         <template slot="keyName" slot-scope="row">
-          <span :title="row.item.title">
+          <span v-if="!row.item.isParent" :title="row.item.title">
             {{ row.item.keyName }}
           </span>
         </template>
         <template slot="value" slot-scope="row">
-          <settinginput :input-model="getItem(row.item.key)" input-key="value" :input-type="row.item.valType" :form-id="params.formId" />
+          <settinginput v-if="!row.item.isParent" :input-model="getItem(row.item.key)" input-key="value" :input-type="row.item.valType" :form-id="params.formId" />
         </template>
         <template slot="clear" slot-scope="row">
-          <b-button v-t="'label.clear'" :variant="theme" size="sm" @click.stop="clearAction(row.item.key)" />
+          <b-button v-if="!row.item.isParent" v-t="'label.clear'" :variant="theme" size="sm" @click.stop="clearAction(row.item.key)" />
         </template>
       </b-table>
 
@@ -388,7 +388,7 @@ export default {
       if(!options){
         return [{value: null, text: ''}]
       }
-      const ret = Object.keys(options).map(key => ({value: options[key], text: options[key]}))
+      const ret = Object.keys(options).map(key => ({value: key, text: options[key]}))
       ret.unshift({value: null, text: ''})
       return ret
     },
@@ -557,6 +557,9 @@ export default {
       if(!this.filter.reg){
         return true
       }
+      if(originItem.isParent){
+        return true
+      }
       try{
         const regExp = new RegExp('.*' + this.filter.reg + '.*', 'i')
         const param = this.params.fields.concat(this.params.addFilterFields? this.params.addFilterFields.map(field => ({key: field})): []).map((val) => Util.getValue(originItem, val.key, ''))
@@ -605,12 +608,10 @@ export default {
           break
         case 'settingCategory':
           if (extra.settingCategory){
-            if(!originItem.categories || originItem.categories.length == 0){
+            if(originItem.isParent){
               return false
             }
-            if(!(originItem.categories.includes(extra.settingCategory))) {
-              return false
-            }
+            return originItem.key.split('.').find((val, index) => index < 2 && val == extra.settingCategory)
           }
           break
         }
@@ -631,6 +632,9 @@ export default {
         return true
       }
       if(this.filter.allShow){
+        return true
+      }
+      if(originItem.isParent){
         return true
       }
       return originItem[this.id]

@@ -17,7 +17,7 @@ export default {
         'background-color': Util.colorCd4display(option.reverceColor? val.color: val.bgColor, '#FFFFFF'),
         'text-align': 'center',
         border: 'solid 1px #ccc',
-        'border-radius': val.shape == SHAPE.CIRCLE? '50%': val.shape == SHAPE.ROUND_SQUARE? DISP.ROUNDRECT_RADIUS + 'px': null,
+        'border-radius': val.shape == SHAPE.CIRCLE? '50%': val.shape == SHAPE.ROUND_SQUARE? DISP.TX.ROUNDRECT_RADIUS + 'px': null,
         'justify-content': 'center',
         'display': ['-ms-flexbox', '-webkit-flex', 'flex'],
         '-ms-flex-align': 'center',
@@ -27,16 +27,16 @@ export default {
       }
       const label = Util.getValue(val, 'label', null)
       if(option.fixSize != false){
-        const fontSize = label? Util.getInRectFontSize(label, DISP.TX_FIX_R * 2, DISP.TX_FIX_R * 2): DISP.TX_FIX_R
+        const fontSize = label? Util.getInRectFontSize(label, DISP.TX.FIX_R * 2, DISP.TX.FIX_R * 2): DISP.TX.FIX_R
         style.font = Util.getAdjustFontSize(() => fontSize * DISP.FONT_ICON_ADJUST_SCALE)
-        style.width = (DISP.TX_FIX_R * 2) + 'px'
-        style.height = (DISP.TX_FIX_R * 2) + 'px'
+        style.width = (DISP.TX.FIX_R * 2) + 'px'
+        style.height = (DISP.TX.FIX_R * 2) + 'px'
       }
       else{
-        const fontSize = label? Util.getInRectFontSize(label, DISP.TX_R * 2, DISP.TX_R * 2): DISP.TX_R
+        const fontSize = label? Util.getInRectFontSize(label, DISP.TX.R * 2, DISP.TX.R * 2): DISP.TX.R
         style.font = Util.getAdjustFontSize(() => fontSize * DISP.FONT_ICON_ADJUST_SCALE)
-        style.width = (DISP.TX_R * 2) + 'px'
-        style.height = (DISP.TX_R * 2) + 'px'
+        style.width = (DISP.TX.R * 2) + 'px'
+        style.height = (DISP.TX.R * 2) + 'px'
       }
       return style
     }
