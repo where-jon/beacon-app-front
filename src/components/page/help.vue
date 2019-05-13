@@ -191,7 +191,7 @@ export default {
     initialize() {
       this.checkMenu()
       Vue.nextTick(function () {
-        // if反映された後の描画を待ってリンクさせる
+        // if反映された後の描画を待ってページ内遷移させる
         document.getElementById('helpAutoLink').click()
       })
     },
