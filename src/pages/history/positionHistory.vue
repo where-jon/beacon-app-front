@@ -107,7 +107,7 @@ export default {
       viewList: [],
       fields: ViewHelper.addLabelByKey(this.$i18n, [
         {key: 'positionDt', sortable: true, label:'dt'},
-        ...DISP.POSITION_HISTORY_HEADERS.map(header => {
+        ...DISP.POSITION_HISTORY.HEADERS.map(header => {
           const ret = { key: header, sortable: true }
           if(header == 'areaName'){
             ret.label = 'area'
@@ -143,7 +143,7 @@ export default {
       )
     },
     enableGroup () {
-      return this.isEnabledMenu('group') && APP.POT_WITH_GROUP
+      return this.isEnabledMenu('group') && Util.includesIgnoreCase(APP.POT.WITH, 'group')
     },
     groupOptions() {
       return StateHelper.getOptionsFromState('group',

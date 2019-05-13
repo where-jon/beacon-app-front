@@ -59,28 +59,26 @@ export default {
     this.items = ViewHelper.createBreadCrumbItems('develop', 'position')
   },
   methods: {
+    convertColumnName(name){
+      if(name == 'btxId'){
+        return 'btx_id'
+      }
+      if(name == 'locationName'){
+        return 'finalReceiveLocation'
+      }
+      return name
+    },
     getHeaders(){
-      return ViewHelper.addLabelByKey(this.isDev? null: this.$i18n,
-        this.isDev? [
-          { key: 'btx_id' },
-          { key: 'device_id' },
-          { key: 'pos_id' },
-          { key: 'phase' },
-          { key: 'power_level' },
-          { key: 'updatetime' },
-          { key: 'nearest1' },
-          { key: 'nearest2' },
-          { key: 'nearest3' },
-        ]: [
-          APP.POSITION_WITH_BTXID? { key: 'btx_id' }: null,
-          APP.POSITION_WITH_MAJOR? { key: 'major' }: null,
-          APP.POSITION_WITH_MINOR? { key: 'minor' }: null,
-          { key: 'name' },
-          { key: 'powerLevel' },
-          APP.POSITION_WITH_LOCATIONNAME? { key: 'finalReceiveLocation' }: null,
-          { key: 'finalReceiveTimestamp' },
-          { key: 'state' },
-        ].filter(val => val))
+      if(this.isDev){
+        return ViewHelper.addLabelByKey(null, [
+          { key: 'btx_id' }, { key: 'device_id' }, { key: 'pos_id' }, { key: 'phase' }, { key: 'power_level' }, { key: 'updatetime' }, { key: 'nearest1' }, { key: 'nearest2' }, { key: 'nearest3' },
+        ])
+      }
+      return ViewHelper.addLabelByKey(this.$i18n, APP.TX_MON.WITH.map(val => ({
+        key: this.convertColumnName(val)
+      })).concat([
+        { key: 'finalReceiveTimestamp' }, { key: 'state' }
+      ]).filter(val => val))
     },
     getCsvHeaders(){
       if(this.isDev){
@@ -98,20 +96,9 @@ export default {
       }
 
       const ret = {}
-      if(APP.POSITION_WITH_BTXID){
-        ret['btx_id'] = 'btx_id'
-      }
-      if(APP.POSITION_WITH_MAJOR){
-        ret['major'] = 'major'
-      }
-      if(APP.POSITION_WITH_MINOR){
-        ret['minor'] = 'minor'
-      }
-      ret['name'] = 'name'
-      ret['powerLevel'] = 'powerLevel'
-      if(APP.POSITION_WITH_LOCATIONNAME){
-        ret['finalReceiveLocation'] = 'location'
-      }
+      APP.TX_MON.WITH.forEach(val => {
+        ret[this.convertColumnName(val)] = val == 'btxId'? 'btx_id': val
+      })
       ret['finalReceiveTimestamp'] = 'timestamp'
       ret['state'] = 'state'
       return ret
@@ -121,11 +108,11 @@ export default {
     },
     async fetchSensorHistory(){
       const exCloudSensors = {}
-      if(!Util.hasValue(APP.POSITION_SENSOR)){
+      if(!Util.includesIgnoreCase(APP.TX_MON.WITH_SENSOR)){
         return exCloudSensors
       }
-      for(let idx = 0; idx < APP.POSITION_SENSOR.length; idx++){
-        exCloudSensors[`${APP.POSITION_SENSOR[idx]}`] = await EXCloudHelper.fetchSensor(APP.POSITION_SENSOR[idx])
+      for(let idx = 0; idx < APP.TX_MON.WITH_SENSOR.length; idx++){
+        exCloudSensors[`${APP.TX_MON.WITH_SENSOR[idx]}`] = await EXCloudHelper.fetchSensor(APP.TX_MON.WITH_SENSOR[idx])
       }
       return exCloudSensors
     },

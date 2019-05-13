@@ -30,24 +30,8 @@ export default {
         bulkEditPath: '/master/user/bulkedit',
         appServicePath: '/meta/user',
         csvOut: true,
-        custumCsvColumns: [
-          'userId',
-          'loginId',
-          APP.USER_WITH_NAME? 'name': null,
-          'pass',
-          APP.USER_WITH_EMAIL? 'email': null,
-          'roleName',
-          'description',
-        ].filter((val) => val),
-        fields: ViewHelper.addLabelByKey(this.$i18n, [ 
-          {key: 'loginId', sortable: true  },
-          APP.USER_WITH_NAME? {key: 'name', sortable: true  }: null,
-          APP.USER_WITH_EMAIL? {key: 'email', sortable: true }: null,
-          {key: 'roleName', label: 'role', sortable: true },
-          {key: 'description', sortable: true },
-          {key: 'userId', sortable: true },
-          {key: 'actions', thStyle: {width:'130px !important'} }
-        ]),
+        custumCsvColumns: this.getCustomCsvColumns(),
+        fields: this.getFields(),
         sortBy: 'loginId',
         initTotalRows: this.$store.state.app_service.users.length
       },
@@ -61,6 +45,28 @@ export default {
     ]),
   },
   methods: {
+    createCustomColumn(){
+      return APP.USER.WITH.map(val => {
+        return {key: val, label: val, sortable: true}
+      })
+    },
+    getCustomCsvColumns(){
+      return ['userId', 'loginId', 'pass']
+        .concat(this.createCustomColumn().map(val => val.key))
+        .concat('roleName', 'description')
+        .filter(val => val)
+    },
+    getFields(){
+      return ViewHelper.addLabelByKey(this.$i18n, [ 
+        {key: 'loginId', sortable: true }
+      ].concat(this.createCustomColumn())
+        .concat([
+          {key: 'roleName', label: 'role', sortable: true },
+          {key: 'description', sortable: true },
+          {key: 'userId', sortable: true },
+          {key: 'actions', thStyle: {width:'130px !important'} }
+        ]))
+    },
     async fetchData(payload) {
       try {
         this.showProgress()

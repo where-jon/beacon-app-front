@@ -49,13 +49,13 @@ export default {
       message: '',
       tenantAction: false,
       btnClasses: {
-        'btn-primary': DISP.THEME === 'primary' || DISP.THEME === 'default',
-        'btn-secondary': DISP.THEME === 'secondary',
-        'btn-success': DISP.THEME === 'success',
-        'btn-info': DISP.THEME === 'info',
-        'btn-warning': DISP.THEME === 'warning',
-        'btn-danger': DISP.THEME === 'danger',
-        'btn-dark': DISP.THEME === 'dark',
+        'btn-primary': DISP.MENU.THEME === 'primary' || DISP.MENU.THEME === 'default',
+        'btn-secondary': DISP.MENU.THEME === 'secondary',
+        'btn-success': DISP.MENU.THEME === 'success',
+        'btn-info': DISP.MENU.THEME === 'info',
+        'btn-warning': DISP.MENU.THEME === 'warning',
+        'btn-danger': DISP.MENU.THEME === 'danger',
+        'btn-dark': DISP.MENU.THEME === 'dark',
       },
     }
   },
@@ -106,7 +106,7 @@ export default {
     onSubmit() {
       AuthHelper.setApp(this.$router, this.$store)
       AuthHelper.auth(this.userId, this.password, ()=>{
-        this.$router.push(APP.TOP_PAGE)
+        this.$router.push(APP.MENU.TOP_PAGE)
         this.message = ''
         const theme = window.localStorage.getItem(this.userId + '-theme')
         const charSet = window.localStorage.getItem(this.userId + '-charSet')

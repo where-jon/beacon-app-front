@@ -138,7 +138,7 @@ export default {
       return dummyKey
     },
     async save(bulkSaveFunc) {
-      const MAIN_COL = APP.EXB_WITH_EXBID? 'exbId': APP.EXB_WITH_DEVICE_ID? 'deviceId': APP.EXB_WITH_DEVICE_NUM? 'deviceNum': 'deviceIdX'
+      const MAIN_COL = Util.includesIgnoreCase(APP.EXB.WITH, 'exbId')? 'exbId': Util.includesIgnoreCase(APP.EXB.WITH, 'deviceId')? 'deviceId': Util.includesIgnoreCase(APP.EXB.WITH, 'deviceNum')? 'deviceNum': 'deviceIdX'
       const LOCATION = ['locationId','areaName','locationName','visible','txViewType','posId','x','y', 'zoneName']
       const ZONE = ['zoneName']
       const NUMBER_TYPE_LIST = ['deviceId', 'deviceNum', 'exbId', 'areaId', 'posId', 'locationId', 'x', 'y', 'z', 'txViewType']

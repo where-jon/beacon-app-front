@@ -140,7 +140,7 @@ export default {
   },
   computed: {
     isLoginPage() {
-      return this.$route.path == APP.LOGIN_PAGE || this.$route.path == APP.LOGIN_PAGE + '/' || this.$route.path == APP.ERROR_PAGE
+      return this.$route.path == APP.MENU.LOGIN_PAGE || this.$route.path == APP.MENU.LOGIN_PAGE + '/' || this.$route.path == APP.MENU.ERROR_PAGE
     },
     isNoLogin() {
       return APP.LOGIN_MODE == LOGIN_MODE.NO_LOGIN
@@ -149,10 +149,10 @@ export default {
       return this.$store.state.loginId
     },
     linkKey(){
-      return HtmlUtil.getResourcePath(APP.SHOW_MENU_LINK)
+      return HtmlUtil.getResourcePath(APP.MENU.SHOW_MENU_LINK)
     },
     linkUrl(){
-      return APP.SHOW_MENU_LINK_URL
+      return APP.MENU.SHOW_MENU_LINK_URL
     },
     ...mapState('app_service', [
       'pots', 'regions',
@@ -202,13 +202,13 @@ export default {
   },
   methods: {
     getVersion(){
-      return APP.VERSION
+      return APP.COMMON.VERSION
     },
     getShowLogo(){
-      return DISP.SHOW_LOGO
+      return DISP.MENU.SHOW_LOGO
     },
     getShowNav(){
-      return HtmlUtil.isMobile() || DISP.SHOW_NAV
+      return HtmlUtil.isMobile() || DISP.MENU.SHOW_NAV
     },
     logout() {
       this.$refs.collapse.show = false

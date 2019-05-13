@@ -51,10 +51,10 @@ export default {
       return this.$store.state.loginId
     },
     linkKey(){
-      return HtmlUtil.getResourcePath(APP.SHOW_MENU_LINK)
+      return HtmlUtil.getResourcePath(APP.MENU.SHOW_MENU_LINK)
     },
     linkUrl(){
-      return APP.SHOW_MENU_LINK_URL
+      return APP.MENU.SHOW_MENU_LINK_URL
     },
     menuItemClasses () {
       // use for update theme-color

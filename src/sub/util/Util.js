@@ -25,6 +25,8 @@ export const getByteLength = (str) => encodeURI(str == null? '': str).replace(/%
 
 export const numberRange = (start, end) => new Array(end - start + 1).fill().map((d, i) => {return {key: i + start}})
 
+export const includesIgnoreCase = (ary, col) => ary.find(val => val.toLowerCase() == col.toLowerCase())? true: false
+
 export const merge = (dest, src, excludeKeys) => {
   const temp = Object.assign({}, src)
   excludeKeys.forEach(key => delete temp[key])
@@ -395,7 +397,7 @@ export const getEntityFromIds = (list, entity, ids) => {
 export const getMidnightMs = () => {
   const now = new Date()
   const dayMs = 24 * 60 * 60 * 1000
-  const offset = APP.POSITION_TIMEZONE * 60 * 60 * 1000
+  const offset = APP.COMMON.TIME_ZONE * 60 * 60 * 1000
   const nowToday = Math.floor(now.getTime() / dayMs)
   const midnight = (nowToday * dayMs) + offset
   debug('calcurating midnight. now is ', now)
@@ -474,13 +476,13 @@ export const convertToTime = (secTime) => {
   return h + ':' + m + ':' + s
 }
 
-export const getRatio = (secTime, digit = APP.SUM_PARSENT_DIGIT, baseSecTime = getStayBaseSec()) => {
+export const getRatio = (secTime, digit = APP.STAY_SUM.PARSENT_DIGIT, baseSecTime = getStayBaseSec()) => {
   return (Math.round((secTime / baseSecTime) * 100 * digit) / digit).toFixed(String(digit).length-1)
 }
 
 export const getStayBaseSec = () => {
-  let from = ((Math.floor(APP.SUM_FROM / 100) * 60) + Math.floor(APP.SUM_FROM % 100)) * 60
-  let to = ((Math.floor(APP.SUM_TO / 100) * 60) + Math.floor(APP.SUM_TO % 100)) * 60
+  let from = ((Math.floor(APP.STAY_SUM.FROM / 100) * 60) + Math.floor(APP.STAY_SUM.FROM % 100)) * 60
+  let to = ((Math.floor(APP.STAY_SUM.TO / 100) * 60) + Math.floor(APP.STAY_SUM.TO % 100)) * 60
   return to - from
 }
 

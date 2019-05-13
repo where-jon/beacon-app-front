@@ -55,11 +55,11 @@ export default {
     },
     horizon: {
       type: Number,
-      default: DISP.TX_HORIZON,
+      default: DISP.TX.HORIZON,
     },
     vertical: {
       type: Number,
-      default: DISP.TX_VERTICAL,
+      default: DISP.TX.VERTICAL,
     },
   },
   data() {
@@ -67,8 +67,8 @@ export default {
       TXICONS_DISPFORMAT_TILE: 5,
       deviceId: null,
       txDispFormat: this.isModal ? null : this.dispFormat,
-      layoutHorizon: this.isModal ? DISP.TX_HORIZON : this.horizon,
-      layoutVertical: this.isModal ? DISP.TX_VERTICAL: this.vertical,
+      layoutHorizon: this.isModal ? DISP.TX.HORIZON : this.horizon,
+      layoutVertical: this.isModal ? DISP.TX.VERTICAL: this.vertical,
       isDelete: false,
     }
   },
@@ -100,7 +100,7 @@ export default {
   },
   methods: {
     getSelectElements(columnOrLine) {
-      const num = columnOrLine === 'column' ? DISP.TX_HORIZON : DISP.TX_VERTICAL
+      const num = columnOrLine === 'column' ? DISP.TX.HORIZON : DISP.TX.VERTICAL
       const label = 'label.' + columnOrLine
       return [...Array(num).keys()].map((e) => {
         const i = e + 1
@@ -109,8 +109,8 @@ export default {
     },
     onChangeDispFormat(value) {
       if (value !== this.TXICONS_DISPFORMAT_TILE) {
-        this.layoutHorizon = DISP.TX_HORIZON
-        this.layoutVertical = DISP.TX_VERTICAL
+        this.layoutHorizon = DISP.TX.HORIZON
+        this.layoutVertical = DISP.TX.VERTICAL
       }
       this.$emit('change', {
         deviceId: this.deviceId,

@@ -43,7 +43,7 @@ export const actions = { // Sample
   },
   pushOrgPositions({ commit, state }, payload) {
     let orgPositions = _.clone(state.orgPositions)
-    if (orgPositions.length >= APP.MOVING_AVERAGE) {
+    if (orgPositions.length >= APP.POS.MOVING_AVERAGE) {
       orgPositions.shift()
     }
     orgPositions.push(payload)

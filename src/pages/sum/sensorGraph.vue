@@ -140,29 +140,29 @@ export default {
       headers: {
         temperature: [
           'dt',
-          APP.SENSORGRAPH_CSV_IMMEDIATE? 'humidity(lat)': null, 'humidity(max)', 'humidity(avg)', 'humidity(min)',
-          APP.SENSORGRAPH_CSV_IMMEDIATE? 'temperature(lat)': null, 'temperature(max)', 'temperature(avg)', 'temperature(min)',
+          APP.SENSORGRAPH.CSV_IMMEDIATE? 'humidity(lat)': null, 'humidity(max)', 'humidity(avg)', 'humidity(min)',
+          APP.SENSORGRAPH.CSV_IMMEDIATE? 'temperature(lat)': null, 'temperature(max)', 'temperature(avg)', 'temperature(min)',
         ].filter(val => val),
         pir: [
           'dt',
-          APP.SENSORGRAPH_CSV_IMMEDIATE? 'count(lat)': null, 'count(max)', 'count(avg)', 'count(min)'
+          APP.SENSORGRAPH.CSV_IMMEDIATE? 'count(lat)': null, 'count(max)', 'count(avg)', 'count(min)'
         ].filter(val => val),
         thermopile: [
           'dt',
-          APP.SENSORGRAPH_CSV_IMMEDIATE? 'count(lat)': null, 'count(max)', 'count(avg)', 'count(min)'
+          APP.SENSORGRAPH.CSV_IMMEDIATE? 'count(lat)': null, 'count(max)', 'count(avg)', 'count(min)'
         ].filter(val => val),
         meditag: [
           'dt',
-          APP.SENSORGRAPH_CSV_IMMEDIATE? 'high(lat)': null, 'high(max)', 'high(avg)', 'high(min)',
-          APP.SENSORGRAPH_CSV_IMMEDIATE? 'low(lat)': null, 'low(max)', 'low(avg)', 'low(min)',
-          APP.SENSORGRAPH_CSV_IMMEDIATE? 'beat(lat)': null, 'beat(max)', 'beat(avg)', 'beat(min)',
-          APP.SENSORGRAPH_CSV_IMMEDIATE? 'step(lat)': null, 'step(max)', 'step(avg)', 'step(min)',
-          APP.SENSORGRAPH_CSV_IMMEDIATE? 'down(lat)': null, 'down(max)', 'down(avg)', 'down(min)',
+          APP.SENSORGRAPH.CSV_IMMEDIATE? 'high(lat)': null, 'high(max)', 'high(avg)', 'high(min)',
+          APP.SENSORGRAPH.CSV_IMMEDIATE? 'low(lat)': null, 'low(max)', 'low(avg)', 'low(min)',
+          APP.SENSORGRAPH.CSV_IMMEDIATE? 'beat(lat)': null, 'beat(max)', 'beat(avg)', 'beat(min)',
+          APP.SENSORGRAPH.CSV_IMMEDIATE? 'step(lat)': null, 'step(max)', 'step(avg)', 'step(min)',
+          APP.SENSORGRAPH.CSV_IMMEDIATE? 'down(lat)': null, 'down(max)', 'down(avg)', 'down(min)',
         ].filter(val => val),
         magnet: [ 'dt', 'magnet(max)', 'magnet(min)' ],
         pressure: [
           'dt',
-          APP.SENSORGRAPH_CSV_IMMEDIATE? 'pressVol(lat)': null, 'pressVol(max)', 'pressVol(avg)', 'pressVol(min)',
+          APP.SENSORGRAPH.CSV_IMMEDIATE? 'pressVol(lat)': null, 'pressVol(max)', 'pressVol(avg)', 'pressVol(min)',
         ].filter(val => val),
       },
       exbType: [SENSOR.PIR, SENSOR.THERMOPILE, SENSOR.LED],
@@ -222,7 +222,7 @@ export default {
       return Util.isAndroidOrIOS()
     },
     showDevice(){
-      return this.form.sensorId == SENSOR.TEMPERATURE && APP.SENSORGRAPH_WITH_DEVICE
+      return this.form.sensorId == SENSOR.TEMPERATURE && APP.SENSORGRAPH.WITH_DEVICE
     },
     showTx(){
       return this.deviceType == DEVICE.TX

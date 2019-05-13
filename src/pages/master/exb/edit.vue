@@ -7,21 +7,21 @@
       <b-row>
         <b-col md="8" offset-md="2">
           <b-form v-if="show" @submit.prevent="onSubmit">
-            <b-form-group v-if="hasId" v-show="isShown('EXB_WITH_EXBID')">
+            <b-form-group v-if="hasId" v-show="isShown('EXB.WITH', 'exbId')">
               <label v-t="'label.exbId'" />
               <b-form-input v-model="form.exbId" type="text" readonly="readonly" />
             </b-form-group>
-            <b-form-group v-show="isShown('EXB_WITH_DEVICE_NUM')">
+            <b-form-group v-show="isShown('EXB.WITH', 'deviceNum')">
               <label v-t="'label.deviceNum'" />
-              <input v-model.lazy="deviceNum" :max="maxDeviceNum" :readonly="!isEditable" type="number" class="form-control" min="0" :required="isShown('EXB_WITH_DEVICE_NUM')">
+              <input v-model.lazy="deviceNum" :max="maxDeviceNum" :readonly="!isEditable" type="number" class="form-control" min="0" :required="isShown('EXB.WITH', 'deviceNum')">
             </b-form-group>
-            <b-form-group v-show="isShown('EXB_WITH_DEVICE_ID')">
+            <b-form-group v-show="isShown('EXB.WITH', 'deviceId')">
               <label v-t="'label.deviceId'" />
-              <input v-model.lazy="deviceId" :max="maxDeviceId" :readonly="!isEditable" type="number" class="form-control" min="0" :required="isShown('EXB_WITH_DEVICE_ID')">
+              <input v-model.lazy="deviceId" :max="maxDeviceId" :readonly="!isEditable" type="number" class="form-control" min="0" :required="isShown('EXB.WITH', 'deviceId')">
             </b-form-group>
-            <b-form-group v-show="isShown('EXB_WITH_DEVICE_IDX')">
+            <b-form-group v-show="isShown('EXB.WITH', 'deviceIdX')">
               <label v-t="'label.deviceIdX'" />
-              <input v-model.lazy="deviceIdX" :readonly="!isEditable" type="text" class="form-control" :required="isShown('EXB_WITH_DEVICE_IDX')">
+              <input v-model.lazy="deviceIdX" :readonly="!isEditable" type="text" class="form-control" :required="isShown('EXB.WITH', 'deviceIdX')">
             </b-form-group>
             <b-form-group>
               <label v-t="'label.locationName'" />
@@ -31,9 +31,9 @@
               <label v-t="'label.area'" />
               <b-form-select v-model="form.areaId" :options="areaOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-3 col-4" />
             </b-form-group>
-            <b-form-group v-show="isShown('EXB_WITH_POSID')">
+            <b-form-group v-show="isShown('EXB.WITH', 'posId')">
               <label v-t="'label.posId'" />
-              <input v-model="form.posId" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control" :required="isShown('EXB_WITH_POSID')">
+              <input v-model="form.posId" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control" :required="isShown('EXB.WITH', 'posId')">
             </b-form-group>
             <b-form-group>
               <label v-t="'label.locationX'" />
@@ -134,7 +134,7 @@ export default {
       deviceId: null,
       deviceIdX: null,
       deviceNum: null,
-      useZone: APP.EXB_WITH_ZONE && MenuHelper.isMenuEntry('/master/zoneClass'),
+      useZone: Util.includesIgnoreCase(APP.EXB.WITH, 'zone') && MenuHelper.isMenuEntry('/master/zoneClass'),
       items: ViewHelper.createBreadCrumbItems('master', {text: 'exb', href: '/master/exb'}, Util.getDetailCaptionKey(this.$store.state.app_service.exb.exbId)),
       txIconsDispFormat: 1,
       txIconsHorizon: 5,
@@ -235,7 +235,7 @@ export default {
       if(index == 0){
         return true
       }
-      if(!APP.EXB_MULTI_SENSOR){
+      if(!APP.EXB.MULTI_SENSOR){
         return false
       }
       for(let idx = index - 1; 0 <= idx; idx--){
@@ -246,7 +246,7 @@ export default {
       return true
     },
     getSensorIndex(index){
-      return APP.EXB_MULTI_SENSOR && !this.isNormalSensor() && 1 < APP.EXB_SENSOR_MAX? `${index + 1}`: ''
+      return APP.EXB.MULTI_SENSOR && !this.isNormalSensor() && 1 < APP.EXB.SENSOR_MAX? `${index + 1}`: ''
     },
     getSensorOptionsExb(index) {
       const options = this.sensorOptions('exb', index != 0)
@@ -271,12 +271,12 @@ export default {
     },
     initExbSensorList(){
       this.form.exbSensorList = this.exb.exbSensorList? this.exb.exbSensorList.map((val, idx) => {
-        return APP.EXB_MULTI_SENSOR && idx < APP.EXB_SENSOR_MAX || !APP.EXB_MULTI_SENSOR && idx == 0? {
+        return APP.EXB.MULTI_SENSOR && idx < APP.EXB.SENSOR_MAX || !APP.EXB.MULTI_SENSOR && idx == 0? {
           exbId: null,
           sensorId: val.sensor.sensorId,
         }: null
       }).filter((val) => val): []
-      const maxSensor = APP.EXB_MULTI_SENSOR? APP.EXB_SENSOR_MAX: 1
+      const maxSensor = APP.EXB.MULTI_SENSOR? APP.EXB.SENSOR_MAX: 1
       for(let cnt = this.form.exbSensorList.length; cnt < maxSensor; cnt++){
         this.form.exbSensorList.push({
           exbId: null,

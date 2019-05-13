@@ -47,41 +47,41 @@ const getCoordinateFix = (ratio, fixPositions) => {
 const getCoordinateDefault = (exb, ratio, samePos) => {
   let baseX = exb.location.x
   let baseY = exb.location.y
-  let txR = DISP.TX_R * ratio
+  let txR = DISP.TX.R * ratio
   const ret = []
   switch (samePos.length) {
   case 1:
     ret.push({...samePos[0], x: baseX, y: baseY})
     break
   case 2:
-    ret.push({...samePos[0], x: baseX - txR / DISP.TX_DIV_2, y: baseY})
-    ret.push({...samePos[1], x: baseX + txR / DISP.TX_DIV_2, y: baseY})
+    ret.push({...samePos[0], x: baseX - txR / DISP.TX.DIV_2, y: baseY})
+    ret.push({...samePos[1], x: baseX + txR / DISP.TX.DIV_2, y: baseY})
     break
   case 3:
-    ret.push({...samePos[0], x: baseX - txR / DISP.TX_DIV_3, y: baseY})
+    ret.push({...samePos[0], x: baseX - txR / DISP.TX.DIV_3, y: baseY})
     ret.push({...samePos[1], x: baseX, y: baseY})
-    ret.push({...samePos[2], x: baseX + txR / DISP.TX_DIV_3, y: baseY})
+    ret.push({...samePos[2], x: baseX + txR / DISP.TX.DIV_3, y: baseY})
     break
   case 4:
-    ret.push({...samePos[0], x: baseX - txR / DISP.TX_DIV_2, y: baseY - txR / DISP.TX_DIV_2})
-    ret.push({...samePos[1], x: baseX + txR / DISP.TX_DIV_2, y: baseY - txR / DISP.TX_DIV_2})
-    ret.push({...samePos[2], x: baseX - txR / DISP.TX_DIV_2, y: baseY + txR / DISP.TX_DIV_2})
-    ret.push({...samePos[3], x: baseX + txR / DISP.TX_DIV_2, y: baseY + txR / DISP.TX_DIV_2})
+    ret.push({...samePos[0], x: baseX - txR / DISP.TX.DIV_2, y: baseY - txR / DISP.TX.DIV_2})
+    ret.push({...samePos[1], x: baseX + txR / DISP.TX.DIV_2, y: baseY - txR / DISP.TX.DIV_2})
+    ret.push({...samePos[2], x: baseX - txR / DISP.TX.DIV_2, y: baseY + txR / DISP.TX.DIV_2})
+    ret.push({...samePos[3], x: baseX + txR / DISP.TX.DIV_2, y: baseY + txR / DISP.TX.DIV_2})
     break
   default:
-    ret.push({...samePos[0], x: baseX - txR / DISP.TX_DIV_3, y: baseY - txR / DISP.TX_DIV_2})
-    ret.push({...samePos[1], x: baseX, y: baseY - txR / DISP.TX_DIV_2})
-    ret.push({...samePos[2], x: baseX + txR / DISP.TX_DIV_3, y: baseY - txR / DISP.TX_DIV_2})
-    ret.push({...samePos[3], x: baseX - txR / DISP.TX_DIV_3, y: baseY + txR / DISP.TX_DIV_2})
+    ret.push({...samePos[0], x: baseX - txR / DISP.TX.DIV_3, y: baseY - txR / DISP.TX.DIV_2})
+    ret.push({...samePos[1], x: baseX, y: baseY - txR / DISP.TX.DIV_2})
+    ret.push({...samePos[2], x: baseX + txR / DISP.TX.DIV_3, y: baseY - txR / DISP.TX.DIV_2})
+    ret.push({...samePos[3], x: baseX - txR / DISP.TX.DIV_3, y: baseY + txR / DISP.TX.DIV_2})
     if (samePos.length <= 6) {
-      ret.push({...samePos[4], x: baseX, y: baseY + txR / DISP.TX_DIV_2})
+      ret.push({...samePos[4], x: baseX, y: baseY + txR / DISP.TX.DIV_2})
     }
     if (samePos.length == 6) {
-      ret.push({...samePos[5], x: baseX + txR / DISP.TX_DIV_3, y: baseY + txR / DISP.TX_DIV_2})
+      ret.push({...samePos[5], x: baseX + txR / DISP.TX.DIV_3, y: baseY + txR / DISP.TX.DIV_2})
     }
     if (samePos.length > 6) { // 6超の場合、2段目を分割して重ねて表示
       for (let i=4; i < samePos.length; i++) {
-        ret.push({...samePos[i], x: baseX - txR / DISP.TX_DIV_3 + txR * 5 / (samePos.length - 3) * (i - 3), y: baseY + txR / DISP.TX_DIV_2})
+        ret.push({...samePos[i], x: baseX - txR / DISP.TX.DIV_3 + txR * 5 / (samePos.length - 3) * (i - 3), y: baseY + txR / DISP.TX.DIV_2})
       }
     }
     break
@@ -98,7 +98,7 @@ const getCoordinateDefault = (exb, ratio, samePos) => {
 const getCoordinateTile = (ratio, orgX, orgY, positions, viewType) => {
   return partitioningArray(positions, viewType.horizon).flatMap((array, i, a) => {
     return array.map((b, j, c) => {
-      return {...b, x: orgX + DISP.TX_R * 2 * ratio * j, y: orgY + DISP.TX_R * 2 * ratio * i }
+      return {...b, x: orgX + DISP.TX.R * 2 * ratio * j, y: orgY + DISP.TX.R * 2 * ratio * i }
     })
   })
 }
@@ -115,7 +115,7 @@ const getCoordinateSquare = (ratio, index, x, y, isDiamond = false) => {
   if (i < 1) {
     return {x: x, y: y}
   }
-  const r = isDiamond ? getRadiusDiamond(index, DISP.TX_R * 2) : getRadiusSquare(index, DISP.TX_R * 2)
+  const r = isDiamond ? getRadiusDiamond(index, DISP.TX.R * 2) : getRadiusSquare(index, DISP.TX.R * 2)
   const radian = angle * i * PIdiv180
   return {x: x + r * ratio * Math.cos(radian), y: y + r * ratio * Math.sin(radian)}
 }
@@ -155,7 +155,7 @@ const getCoordinate = (ratio, orgX, orgY, positions, viewType) => {
       case TX_VIEW_TYPES.DIAMOND :
         return getCoordinateSquare(ratio, i, orgX, orgY, true)
       case TX_VIEW_TYPES.SPIRAL :
-        return getCoordinateSpiral(i, orgX, orgY, 360 / positions.length * i, DISP.TX_R * 2 * ratio)
+        return getCoordinateSpiral(i, orgX, orgY, 360 / positions.length * i, DISP.TX.R * 2 * ratio)
       default :
         return {x: orgX, y: orgY}
       }
@@ -183,8 +183,8 @@ const getPositionsToOverlap = (exb, ratio, samePos) => {
   const c = partitioningArray(samePos, viewType.displayFormat !== TX_VIEW_TYPES.TILE ? iconsUnitNum : maxIcons)
   return c.flatMap((e, i, a) => {
     const coordinate = getCoordinate(ratio, baseX, baseY, e, viewType)
-    baseX += DISP.TX_R
-    baseY += DISP.TX_R
+    baseX += DISP.TX.R
+    baseY += DISP.TX.R
     return coordinate
   })
 }
@@ -260,12 +260,12 @@ export const correctNearestPositions = (orgPositions, now, showAllTime = false) 
     .uniqWith(_.isEqual) // 重複除去
     .filter((val) => {
       if (DEV.DEBUG) {
-        const method = now - val.timestamp > APP.LOST_TIME || val.rssi < APP.RSSI_MIN? 'warn': 'log'
+        const method = now - val.timestamp > APP.POS.LOST_TIME || val.rssi < APP.POS.RSSI_MIN? 'warn': 'log'
         console[method]('btxId', val.btx_id, Util.formatDate(val.timestamp), (now - val.timestamp) / 1000 + '秒前', 'RSSI: ' + Math.round(val.rssi * 100)/ 100)
       }
       return true
     })
-    .filter((val) => val.rssi >= APP.RSSI_MIN && (showAllTime || val.timestamp >= now - APP.LOST_TIME)) // RSSI値、指定時刻でフィルタ
+    .filter((val) => val.rssi >= APP.POS.RSSI_MIN && (showAllTime || val.timestamp >= now - APP.POS.LOST_TIME)) // RSSI値、指定時刻でフィルタ
     .orderBy(['btx_id', 'pos_id', 'timestamp']) // btx_id, pos_id, timestampでソート
     .value()
 }
@@ -293,9 +293,9 @@ export const correctPair = (orgPositions, now) => {
   const usedTx = []
   const usedPos = []  // １つの場所に１TXの場合
   return _.reduce(orgPositions, (result, val) => { // 回数とRSSI値の強い順にpos_idとbtx_idのペアを決めていく
-    if (!usedTx.includes(val.btx_id) && (!APP.TX_POS_ONE_TO_ONE || !usedPos.includes(val.pos_id))) {
+    if (!usedTx.includes(val.btx_id) && (!APP.POS.TX_POS_ONE_TO_ONE || !usedPos.includes(val.pos_id))) {
       usedTx.push(val.btx_id)
-      if (APP.TX_POS_ONE_TO_ONE) {
+      if (APP.POS.TX_POS_ONE_TO_ONE) {
         usedPos.push(val.pos_id)
       }
       result.push({...val, rssi:val.rssiAvg, transparent: isTransparent(val.timestamp, now), isLost: isLost(val.timestamp, now)})
@@ -309,7 +309,7 @@ export const adjustPosition = (positions, ratio, exbs = [], selectedMapId = null
     const samePos = positions.filter((pos) => {
       const isFixPosition = hasTxLocation(pos)? selectedMapId? pos.tx.location.areaId == selectedMapId: false : false
       return !isFixPosition && pos.pos_id == exb.location.posId 
-        && pos.timestamp && new Date(pos.timestamp) > new Date().getTime() - APP.LOST_TIME
+        && pos.timestamp && new Date(pos.timestamp) > new Date().getTime() - APP.POS.LOST_TIME
     })
     const same = (!samePos || samePos.length == 0) ? [] : getPositionsToOverlap(exb, ratio, samePos)
 
@@ -355,10 +355,10 @@ export const setDetectState = (positions, usePositionHistory = false) => {
 
 export const isTransparent = (timestamp, now) => {
   const date = new Date(timestamp)
-  return date.getTime() < now - APP.TRANSPARENT_TIME
+  return date.getTime() < now - APP.POS.TRANSPARENT_TIME
 }
 
 export const isLost = (timestamp, now) => {
   const date = new Date(timestamp)
-  return date.getTime() < now - APP.LOST_TIME
+  return date.getTime() < now - APP.POS.LOST_TIME
 }
