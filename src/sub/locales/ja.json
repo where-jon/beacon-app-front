@@ -566,6 +566,7 @@
     "temperatureUnit": "℃",
     "humidityUnit": "％",
     "notes": "注意事項",
+    "updateKey": "更新キー",
 
     "dummy": ""
   },
