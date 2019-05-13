@@ -96,11 +96,6 @@
             {{ $i18n.tnl('label.SensorGraph') }}
           </a><br>
         </div>
-        <div v-if="enableStayTime">
-          <a href="#stayTime">
-            {{ $i18n.tnl('label.stayTime') }}
-          </a><br>
-        </div>
         <div v-if="enableStayRatio">
           <a href="#stayRatio">
             {{ $i18n.tnl('label.stayRatio') }}
@@ -164,28 +159,52 @@
         <p class="helpLabelHeader">
           {{ $i18n.tnl('label.masterArea') }}
         </p>
-
+        <p class="helpTitle">
+          {{ $i18n.tnl('label.csvFile') }}
+        </p>
+        <p class="helpDetail">
+          {{ $i18n.tnl('helpDescription.csvDescription') }}
+        </p>
+        <b-table striped hover small :items="areaCsvItems" :fields="csvFields" />
       </div>
       <div v-if="enableExb" id="exb">
         <hr>
         <p class="helpLabelHeader">
           {{ $i18n.tnl('label.masterExb') }}
         </p>
-
+        <p class="helpTitle">
+          {{ $i18n.tnl('label.csvFile') }}
+        </p>
+        <p class="helpDetail">
+          {{ $i18n.tnl('helpDescription.csvDescription') }}
+        </p>
+        <b-table striped hover small :items="exbCsvItems" :fields="csvFields" />
       </div>
       <div v-if="enableTx" id="tx">
         <hr>
         <p class="helpLabelHeader">
           {{ $i18n.tnl('label.masterTx') }}
         </p>
-
+        <p class="helpTitle">
+          {{ $i18n.tnl('label.csvFile') }}
+        </p>
+        <p class="helpDetail">
+          {{ $i18n.tnl('helpDescription.csvDescription') }}
+        </p>
+        <b-table striped hover small :items="txCsvItems" :fields="csvFields" />
       </div>
       <div v-if="enablePot" id="pot">
         <hr>
         <p class="helpLabelHeader">
           {{ $i18n.tnl('label.masterPot') }}
         </p>
-
+        <p class="helpTitle">
+          {{ $i18n.tnl('label.csvFile') }}
+        </p>
+        <p class="helpDetail">
+          {{ $i18n.tnl('helpDescription.csvDescription') }}
+        </p>
+        <b-table striped hover small :items="potCsvItems" :fields="csvFields" />
       </div>
       <div v-if="isDisplayCategory" id="category">
         <hr>
@@ -211,27 +230,52 @@
         <p class="helpDetail">
           {{ $i18n.tnl('helpDescription.prohibit') }}
         </p>
+        <p class="helpTitle">
+          {{ $i18n.tnl('label.csvFile') }}
+        </p>
+        <p class="helpDetail">
+          {{ $i18n.tnl('helpDescription.csvDescription') }}
+        </p>
+        <b-table striped hover small :items="categoryCsvItems" :fields="csvFields" />
       </div>
       <div v-if="enableGroup" id="group">
         <hr>
         <p class="helpLabelHeader">
           {{ $i18n.tnl('label.masterGroup') }}
         </p>
-
+        <p class="helpTitle">
+          {{ $i18n.tnl('label.csvFile') }}
+        </p>
+        <p class="helpDetail">
+          {{ $i18n.tnl('helpDescription.csvDescription') }}
+        </p>
+        <b-table striped hover small :items="groupCsvItems" :fields="csvFields" />
       </div>
       <div v-if="enableUser" id="user">
         <hr>
         <p class="helpLabelHeader">
           {{ $i18n.tnl('label.masterUser') }}
         </p>
-
+        <p class="helpTitle">
+          {{ $i18n.tnl('label.csvFile') }}
+        </p>
+        <p class="helpDetail">
+          {{ $i18n.tnl('helpDescription.csvDescription') }}
+        </p>
+        <b-table striped hover small :items="userCsvItems" :fields="csvFields" />
       </div>
       <div v-if="enableRole" id="role">
         <hr>
         <p class="helpLabelHeader">
           {{ $i18n.tnl('label.masterRole') }}
         </p>
-
+        <p class="helpTitle">
+          {{ $i18n.tnl('label.csvFile') }}
+        </p>
+        <p class="helpDetail">
+          {{ $i18n.tnl('helpDescription.csvDescription') }}
+        </p>
+        <b-table striped hover small :items="roleCsvItems" :fields="csvFields" />
       </div>
       <div v-if="isDisplayZoneClass" id="zoneClass">
         <hr>
@@ -245,6 +289,13 @@
         <p class="helpDetail">
           {{ $i18n.tnl('helpDescription.zoneClass') }}
         </p>
+        <p class="helpTitle">
+          {{ $i18n.tnl('label.csvFile') }}
+        </p>
+        <p class="helpDetail">
+          {{ $i18n.tnl('helpDescription.csvDescription') }}
+        </p>
+        <b-table striped hover small :items="zoneClassCsvItems" :fields="csvFields" />
       </div>
       <div v-if="isDisplayZoneBlock" id="zoneBlock">
         <hr>
@@ -264,77 +315,130 @@
         <p class="helpLabelHeader">
           {{ $i18n.tnl('label.monitorGW') }}
         </p>
-
+        <p class="helpTitle">
+          {{ $i18n.tnl('label.csvFile') }}
+        </p>
+        <p class="helpDetail">
+          {{ $i18n.tnl('helpDescription.csvDescription') }}
+        </p>
+        <b-table striped hover small :items="GatewayCsvItems" :fields="csvFields" />
       </div>
       <div v-if="enablePosition" id="position">
         <hr>
         <p class="helpLabelHeader">
           {{ $i18n.tnl('label.monitorTX') }}
         </p>
-
+        <p class="helpTitle">
+          {{ $i18n.tnl('label.csvFile') }}
+        </p>
+        <p class="helpDetail">
+          {{ $i18n.tnl('helpDescription.csvDescription') }}
+        </p>
+        <b-table striped hover small :items="positionCsvItems" :fields="csvFields" />
       </div>
       <div v-if="enableTelemetry" id="telemetry">
         <hr>
         <p class="helpLabelHeader">
           {{ $i18n.tnl('label.monitorEXB') }}
         </p>
-
+        <p class="helpTitle">
+          {{ $i18n.tnl('label.csvFile') }}
+        </p>
+        <p class="helpDetail">
+          {{ $i18n.tnl('helpDescription.csvDescription') }}
+        </p>
+        <b-table striped hover small :items="telemetryCsvItems" :fields="csvFields" />
       </div>
       <div v-if="enableUsageSituation" id="usage-situation">
         <hr>
         <p class="helpLabelHeader">
           {{ $i18n.tnl('label.SumUtilizationRatio') }}
         </p>
-
+        <p class="helpTitle">
+          {{ $i18n.tnl('label.csvFile') }}
+        </p>
+        <p class="helpDetail">
+          {{ $i18n.tnl('helpDescription.csvDescription') }}
+        </p>
+        <b-table striped hover small :items="usageSituationCsvItems" :fields="csvFields" />
       </div>
       <div v-if="enableSensorGraph" id="sensorGraph">
         <hr>
         <p class="helpLabelHeader">
           {{ $i18n.tnl('label.SensorGraph') }}
         </p>
-
-      </div>
-      <div v-if="enableStayTime" id="stayTime">
-        <hr>
-        <p class="helpLabelHeader">
-          {{ $i18n.tnl('label.stayTime') }}
+        <p class="helpTitle">
+          {{ $i18n.tnl('label.csvFile') }}
         </p>
-
+        <p class="helpDetail">
+          {{ $i18n.tnl('helpDescription.csvDescription') }}
+        </p>
+        <b-table striped hover small :items="sensorGraphCsvItems" :fields="csvFields" />
       </div>
       <div v-if="enableStayRatio" id="stayRatio">
         <hr>
         <p class="helpLabelHeader">
           {{ $i18n.tnl('label.stayRatio') }}
         </p>
-
+        <p class="helpTitle">
+          {{ $i18n.tnl('label.csvFile') }}
+        </p>
+        <p class="helpDetail">
+          {{ $i18n.tnl('helpDescription.csvDescription') }}
+        </p>
+        <b-table striped hover small :items="stayRatioCsvItems" :fields="csvFields" />
       </div>
       <div v-if="enableTemperatureHistory" id="temperatureHistory">
         <hr>
         <p class="helpLabelHeader">
           {{ $i18n.tnl('label.temperatureHistory') }}
         </p>
-
+        <p class="helpTitle">
+          {{ $i18n.tnl('label.csvFile') }}
+        </p>
+        <p class="helpDetail">
+          {{ $i18n.tnl('helpDescription.csvDescription') }}
+        </p>
+        <b-table striped hover small :items="temperatureHistoryCsvItems" :fields="csvFields" />
       </div>
       <div v-if="enablePositionHistory" id="positionHistory">
         <hr>
         <p class="helpLabelHeader">
           {{ $i18n.tnl('label.PositionHistory') }}
         </p>
-
+        <p class="helpTitle">
+          {{ $i18n.tnl('label.csvFile') }}
+        </p>
+        <p class="helpDetail">
+          {{ $i18n.tnl('helpDescription.csvDescription') }}
+        </p>
+        <b-table striped hover small :items="positionHistoryCsvItems" :fields="csvFields" />
       </div>
       <div v-if="enableSensorHistory" id="sensorHistory">
         <hr>
         <p class="helpLabelHeader">
           {{ $i18n.tnl('label.SensorHistory') }}
         </p>
-
+        <p class="helpTitle">
+          {{ $i18n.tnl('label.csvFile') }}
+        </p>
+        <p class="helpDetail">
+          {{ $i18n.tnl('helpDescription.csvDescription') }}
+        </p>
+        <b-table striped hover small :items="sensorHistoryCsvItems" :fields="csvFields" />
       </div>
       <div v-if="enableNotifyHistory" id="notifyHistory">
         <hr>
         <p class="helpLabelHeader">
           {{ $i18n.tnl('label.notifyHistory') }}
         </p>
-
+        <p class="helpTitle">
+          {{ $i18n.tnl('label.csvFile') }}
+        </p>
+        <p class="helpDetail">
+          {{ $i18n.tnl('helpDescription.csvDescription') }}
+        </p>
+        <b-table striped hover small :items="notifyHistoryCsvItems" :fields="csvFields" />
       </div>
     </div>
   </div>
@@ -375,6 +479,272 @@ export default {
         { isActive: true, description: this.$i18n.tnl('helpDescription.bulkSystemUseFailed'), error_name: this.$i18n.tnl('message.bulkSystemUseFailed', {col: this.$i18n.tnl('label.linage'), value: this.$i18n.tnl('label.keyName')}) },
         { isActive: true, description: this.$i18n.tnl('helpDescription.bulkSystemUseNameFailed'), error_name: this.$i18n.tnl('message.bulkSystemUseNameFailed', {col: this.$i18n.tnl('label.linage'), value: this.$i18n.tnl('label.keyName')}) },
       ],
+      csvFields: ViewHelper.addLabelByKey(this.$i18n, [
+        {key: 'keyName', sortable: true, label: 'keyName', thClass: 'fields', tdClass: 'items'},
+        {key: 'displayName', sortable: false, label: 'displayName', thClass: 'fields', tdClass: 'items'},
+      ]),
+      areaCsvItems: [
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'updateKey' },
+        { isActive: true, displayName: this.$i18n.tnl('label.areaName'), keyName: 'areaName' },
+        { isActive: true, displayName: 'areaCd', keyName: 'areaCd' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'delFlg' },
+      ],
+      exbCsvItems: [
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'updateKey' },
+        { isActive: true, displayName: this.$i18n.tnl('label.deviceId'), keyName: 'deviceId' },
+        { isActive: true, displayName: this.$i18n.tnl('label.deviceIdX'), keyName: 'deviceIdX' },
+        { isActive: true, displayName: this.$i18n.tnl('label.locationName'), keyName: 'locationName' },
+        { isActive: true, displayName: this.$i18n.tnl('label.posId'), keyName: 'posId' },
+        { isActive: true, displayName: this.$i18n.tnl('label.areaName'), keyName: 'areaName' },
+        { isActive: true, displayName: 'x', keyName: 'x' },
+        { isActive: true, displayName: 'y', keyName: 'y' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'enabled' },
+        { isActive: true, displayName: this.$i18n.tnl('label.sensor'), keyName: 'sensor' },
+        { isActive: true, displayName: this.$i18n.tnl('label.zoneName'), keyName: 'zoneName' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'delFlg' },
+      ],
+      txCsvItems: [
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'updateKey' },
+        { isActive: true, displayName: this.$i18n.tnl('label.btxId'), keyName: 'btxId' },
+        { isActive: true, displayName: this.$i18n.tnl('label.major'), keyName: 'major' },
+        { isActive: true, displayName: this.$i18n.tnl('label.minor'), keyName: 'minor' },
+        { isActive: true, displayName: this.$i18n.tnl('label.sensor'), keyName: 'sensor' },
+        { isActive: true, displayName: this.$i18n.tnl('label.disp'), keyName: 'disp' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'areaName' },
+        { isActive: true, displayName: 'x', keyName: 'x' },
+        { isActive: true, displayName: 'y', keyName: 'y' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'delFlg' },
+      ],
+      potCsvItems: [
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'updateKey' },
+        { isActive: true, displayName: this.$i18n.tnl('label.btxId'), keyName: 'btxId' },
+        { isActive: true, displayName: this.$i18n.tnl('label.minor'), keyName: 'minor' },
+        { isActive: true, displayName: this.$i18n.tnl('label.potCd'), keyName: 'potCd' },
+        { isActive: true, displayName: this.$i18n.tnl('label.potName'), keyName: 'potName' },
+        { isActive: true, displayName: this.$i18n.tnl('label.potType'), keyName: 'potType' },
+        { isActive: true, displayName: this.$i18n.tnl('label.displayName'), keyName: 'displayName' },
+        { isActive: true, displayName: this.$i18n.tnl('label.categoryName'), keyName: 'categoryName' },
+        { isActive: true, displayName: this.$i18n.tnl('label.post'), keyName: 'post' },
+        { isActive: true, displayName: this.$i18n.tnl('label.tel'), keyName: 'tel' },
+        { isActive: true, displayName: this.$i18n.tnl('label.description'), keyName: 'description' },
+        { isActive: true, displayName: this.$i18n.tnl('label.loginId'), keyName: 'loginId' },
+        { isActive: true, displayName: this.$i18n.tnl('label.roleName'), keyName: 'roleName' },
+        { isActive: true, displayName: this.$i18n.tnl('label.pass'), keyName: 'pass' },
+        { isActive: true, displayName: this.$i18n.tnl('label.email'), keyName: 'email' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'delFlg' },
+      ],
+      categoryCsvItems: [
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'updateKey' },
+        { isActive: true, displayName: this.$i18n.tnl('label.categoryName'), keyName: 'categoryName' },
+        { isActive: true, displayName: this.$i18n.tnl('label.categoryType'), keyName: 'categoryTypeName' },
+        { isActive: true, displayName: this.$i18n.tnl('label.color'), keyName: 'color' },
+        { isActive: true, displayName: this.$i18n.tnl('label.bgColor'), keyName: 'bgColor' },
+        { isActive: true, displayName: this.$i18n.tnl('label.Shape'), keyName: 'Shape' },
+        { isActive: true, displayName: this.$i18n.tnl('label.description'), keyName: 'description' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'delFlg' },
+      ],
+      groupCsvItems: [
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'updateKey' },
+        { isActive: true, displayName: this.$i18n.tnl('label.groupName'), keyName: 'groupName' },
+        { isActive: true, displayName: this.$i18n.tnl('label.color'), keyName: 'color' },
+        { isActive: true, displayName: this.$i18n.tnl('label.bgColor'), keyName: 'bgColor' },
+        { isActive: true, displayName: this.$i18n.tnl('label.Shape'), keyName: 'Shape' },
+        { isActive: true, displayName: this.$i18n.tnl('label.description'), keyName: 'description' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'delFlg' },
+      ],
+      userCsvItems: [
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'updateKey' },
+        { isActive: true, displayName: this.$i18n.tnl('label.loginId'), keyName: 'loginId' },
+        { isActive: true, displayName: this.$i18n.tnl('label.name'), keyName: 'name' },
+        { isActive: true, displayName: this.$i18n.tnl('label.email'), keyName: 'email' },
+        { isActive: true, displayName: this.$i18n.tnl('label.roleName'), keyName: 'roleName' },
+        { isActive: true, displayName: this.$i18n.tnl('label.description'), keyName: 'description' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'delFlg' },
+      ],
+      roleCsvItems: [
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'updateKey' },
+        { isActive: true, displayName: this.$i18n.tnl('label.roleName'), keyName: 'roleName' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'delFlg' },
+      ],
+      zoneClassCsvItems: [
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'updateKey' },
+        { isActive: true, displayName: this.$i18n.tnl('label.zoneName'), keyName: 'zoneName' },
+        { isActive: true, displayName: this.$i18n.tnl('label.areaName'), keyName: 'areaName' },
+        { isActive: true, displayName: this.$i18n.tnl('label.categoryName'), keyName: 'categoryName' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'delFlg' },
+      ],
+      GatewayCsvItems: [
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'updateKey' },
+        { isActive: true, displayName: this.$i18n.tnl('label.num'), keyName: 'num' },
+        { isActive: true, displayName: this.$i18n.tnl('label.deviceId'), keyName: 'deviceId' },
+        { isActive: true, displayName: this.$i18n.tnl('label.updated'), keyName: 'updated' },
+        { isActive: true, displayName: this.$i18n.tnl('label.state'), keyName: 'state' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'delFlg' },
+      ],
+      positionCsvItems: [
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'updateKey' },
+        { isActive: true, displayName: this.$i18n.tnl('label.btx_id'), keyName: 'btx_id' },
+        { isActive: true, displayName: this.$i18n.tnl('label.major'), keyName: 'major' },
+        { isActive: true, displayName: this.$i18n.tnl('label.minor'), keyName: 'minor' },
+        { isActive: true, displayName: this.$i18n.tnl('label.name'), keyName: 'name' },
+        { isActive: true, displayName: this.$i18n.tnl('label.powerLevel'), keyName: 'powerLevel' },
+        { isActive: true, displayName: this.$i18n.tnl('label.location'), keyName: 'location' },
+        { isActive: true, displayName: this.$i18n.tnl('label.timestamp'), keyName: 'timestamp' },
+        { isActive: true, displayName: this.$i18n.tnl('label.state'), keyName: 'state' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'delFlg' },
+      ],
+      telemetryCsvItems: [
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'updateKey' },
+        { isActive: true, displayName: this.$i18n.tnl('label.deviceId'), keyName: 'deviceId' },
+        { isActive: true, displayName: this.$i18n.tnl('label.deviceIdX'), keyName: 'deviceIdX' },
+        { isActive: true, displayName: this.$i18n.tnl('label.finalRevceivePlace'), keyName: 'finalRevceivePlace' },
+        { isActive: true, displayName: this.$i18n.tnl('label.powerLevel'), keyName: 'powerLevel' },
+        { isActive: true, displayName: this.$i18n.tnl('label.timestamp'), keyName: 'timestamp' },
+        { isActive: true, displayName: this.$i18n.tnl('label.state'), keyName: 'state' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'delFlg' },
+      ],
+      usageSituationCsvItems: [
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'updateKey' },
+        { isActive: true, displayName: this.$i18n.tnl('label.zoneCategoryName'), keyName: 'zoneCategoryName' },
+        { isActive: true, displayName: this.$i18n.tnl('label.zoneName'), keyName: 'zoneName' },
+        { isActive: true, displayName: this.$i18n.tnl('label.rate'), keyName: 'rate' },
+        { isActive: true, displayName: this.$i18n.tnl('label.cnt'), keyName: 'cnt' },
+        { isActive: true, displayName: this.$i18n.tnl('label.numUse'), keyName: 'numUse' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'delFlg' },
+      ],
+      sensorGraphCsvItems: [
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'updateKey' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'humidity(lat)' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'humidity(max)' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'humidity(avg)' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'humidity(min)' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'temperature(lat)' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'temperature(max)' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'temperature(avg)' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'temperature(min)' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'count(lat)' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'count(max)' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'count(avg)' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'count(min)' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'step(lat)' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'step(max)' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'step(avg)' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'step(min)' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'beat(lat)' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'beat(max)' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'beat(avg)' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'beat(min)' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'low(lat)' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'low(max)' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'low(avg)' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'low(min)' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'high(lat)' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'high(max)' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'high(avg)' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'high(min)' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'down(lat)' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'down(max)' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'down(avg)' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'down(min)' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'magnet(max)' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'magnet(min)' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'pressVol(lat)' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'pressVol(max)' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'pressVol(avg)' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'pressVol(min)' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'delFlg' },
+      ],
+      stayRatioCsvItems: [
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'updateKey' },
+        { isActive: true, displayName: this.$i18n.tnl('label.date'), keyName: 'date' },
+        { isActive: true, displayName: this.$i18n.tnl('label.name'), keyName: 'name' },
+        { isActive: true, displayName: this.$i18n.tnl('label.groupName'), keyName: 'groupName' },
+        { isActive: true, displayName: this.$i18n.tnl('label.stayTime'), keyName: 'stayTime' },
+        { isActive: true, displayName: this.$i18n.tnl('label.absent1Time'), keyName: 'absent1Time' },
+        { isActive: true, displayName: this.$i18n.tnl('label.absent2Time'), keyName: 'absent2Time' },
+        { isActive: true, displayName: this.$i18n.tnl('label.lostTime'), keyName: 'lostTime' },
+        { isActive: true, displayName: this.$i18n.tnl('label.stayRatio'), keyName: 'stayRatio' },
+        { isActive: true, displayName: this.$i18n.tnl('label.absent1Ratio'), keyName: 'absent1Ratio' },
+        { isActive: true, displayName: this.$i18n.tnl('label.absent2Ratio'), keyName: 'absent2Ratio' },
+        { isActive: true, displayName: this.$i18n.tnl('label.lostRatio'), keyName: 'lostRatio' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'delFlg' },
+      ],
+      temperatureHistoryCsvItems: [
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'updateKey' },
+        { isActive: true, displayName: this.$i18n.tnl('label.sensorHistoryId'), keyName: 'sensorHistoryId' },
+        { isActive: true, displayName: this.$i18n.tnl('label.txId'), keyName: 'txId' },
+        { isActive: true, displayName: this.$i18n.tnl('label.exbId'), keyName: 'exbId' },
+        { isActive: true, displayName: this.$i18n.tnl('label.dt'), keyName: 'dt' },
+        { isActive: true, displayName: this.$i18n.tnl('label.sensorDt'), keyName: 'sensorDt' },
+        { isActive: true, displayName: this.$i18n.tnl('label.temperature'), keyName: 'temperature' },
+        { isActive: true, displayName: this.$i18n.tnl('label.humidity'), keyName: 'humidity' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'delFlg' },
+      ],
+      positionHistoryCsvItems: [
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'updateKey' },
+        { isActive: true, displayName: this.$i18n.tnl('label.positionDt'), keyName: 'positionDt' },
+        { isActive: true, displayName: this.$i18n.tnl('label.txName'), keyName: 'txName' },
+        { isActive: true, displayName: this.$i18n.tnl('label.major'), keyName: 'major' },
+        { isActive: true, displayName: this.$i18n.tnl('label.minor'), keyName: 'minor' },
+        { isActive: true, displayName: this.$i18n.tnl('label.exbId'), keyName: 'exbId' },
+        { isActive: true, displayName: this.$i18n.tnl('label.locationName'), keyName: 'locationName' },
+        { isActive: true, displayName: this.$i18n.tnl('label.posId'), keyName: 'posId' },
+        { isActive: true, displayName: this.$i18n.tnl('label.areaName'), keyName: 'areaName' },
+        { isActive: true, displayName: this.$i18n.tnl('label.x'), keyName: 'x' },
+        { isActive: true, displayName: this.$i18n.tnl('label.y'), keyName: 'y' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'delFlg' },
+      ],
+      sensorHistoryCsvItems: [
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'updateKey' },
+        { isActive: true, displayName: this.$i18n.tnl('label.sensorDt'), keyName: 'sensorDt' },
+        { isActive: true, displayName: this.$i18n.tnl('label.sensorName'), keyName: 'sensorName' },
+        { isActive: true, displayName: this.$i18n.tnl('label.deviceNum'), keyName: 'deviceNum' },
+        { isActive: true, displayName: this.$i18n.tnl('label.deviceId'), keyName: 'deviceId' },
+        { isActive: true, displayName: this.$i18n.tnl('label.deviceIdX'), keyName: 'deviceIdX' },
+        { isActive: true, displayName: this.$i18n.tnl('label.locationName'), keyName: 'locationName' },
+        { isActive: true, displayName: this.$i18n.tnl('label.posId'), keyName: 'posId' },
+        { isActive: true, displayName: this.$i18n.tnl('label.areaName'), keyName: 'areaName' },
+        { isActive: true, displayName: this.$i18n.tnl('label.temperature'), keyName: 'temperature' },
+        { isActive: true, displayName: this.$i18n.tnl('label.humidity'), keyName: 'humidity' },
+        { isActive: true, displayName: this.$i18n.tnl('label.deviceNum'), keyName: 'deviceNum' },
+        { isActive: true, displayName: this.$i18n.tnl('label.deviceId'), keyName: 'deviceId' },
+        { isActive: true, displayName: this.$i18n.tnl('label.deviceIdX'), keyName: 'deviceIdX' },
+        { isActive: true, displayName: this.$i18n.tnl('label.locationName'), keyName: 'locationName' },
+        { isActive: true, displayName: this.$i18n.tnl('label.posId'), keyName: 'posId' },
+        { isActive: true, displayName: this.$i18n.tnl('label.areaName'), keyName: 'areaName' },
+        { isActive: true, displayName: this.$i18n.tnl('label.count'), keyName: 'count' },
+        { isActive: true, displayName: this.$i18n.tnl('label.txName'), keyName: 'txName' },
+        { isActive: true, displayName: this.$i18n.tnl('label.major'), keyName: 'major' },
+        { isActive: true, displayName: this.$i18n.tnl('label.minor'), keyName: 'minor' },
+        { isActive: true, displayName: this.$i18n.tnl('label.high'), keyName: 'high' },
+        { isActive: true, displayName: this.$i18n.tnl('label.low'), keyName: 'low' },
+        { isActive: true, displayName: this.$i18n.tnl('label.beat'), keyName: 'beat' },
+        { isActive: true, displayName: this.$i18n.tnl('label.step'), keyName: 'step' },
+        { isActive: true, displayName: this.$i18n.tnl('label.down'), keyName: 'down' },
+        { isActive: true, displayName: this.$i18n.tnl('label.txName'), keyName: 'txName' },
+        { isActive: true, displayName: this.$i18n.tnl('label.major'), keyName: 'major' },
+        { isActive: true, displayName: this.$i18n.tnl('label.minor'), keyName: 'minor' },
+        { isActive: true, displayName: this.$i18n.tnl('label.state'), keyName: 'state' },
+        { isActive: true, displayName: this.$i18n.tnl('label.deviceNum'), keyName: 'deviceNum' },
+        { isActive: true, displayName: this.$i18n.tnl('label.deviceId'), keyName: 'deviceId' },
+        { isActive: true, displayName: this.$i18n.tnl('label.deviceIdX'), keyName: 'deviceIdX' },
+        { isActive: true, displayName: this.$i18n.tnl('label.locationName'), keyName: 'locationName' },
+        { isActive: true, displayName: this.$i18n.tnl('label.posId'), keyName: 'posId' },
+        { isActive: true, displayName: this.$i18n.tnl('label.areaName'), keyName: 'areaName' },
+        { isActive: true, displayName: this.$i18n.tnl('label.pressVol'), keyName: 'pressVol' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'delFlg' },
+      ],
+      notifyHistoryCsvItems: [
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'updateKey' },
+        { isActive: true, displayName: this.$i18n.tnl('label.notifyTo'), keyName: 'notifyTo' },
+        { isActive: true, displayName: this.$i18n.tnl('label.major'), keyName: 'major' },
+        { isActive: true, displayName: this.$i18n.tnl('label.minor'), keyName: 'minor' },
+        { isActive: true, displayName: this.$i18n.tnl('label.txName'), keyName: 'txName' },
+        { isActive: true, displayName: this.$i18n.tnl('label.deviceNum'), keyName: 'deviceNum' },
+        { isActive: true, displayName: this.$i18n.tnl('label.finalReceiveTime'), keyName: 'finalReceiveTime' },
+        { isActive: true, displayName: this.$i18n.tnl('label.notifyResult'), keyName: 'notifyResult' },
+        { isActive: true, displayName: this.$i18n.tnl('helpDescription.empty'), keyName: 'delFlg' },
+      ],
       isEnableHelp: false,
       isDisplayPositionList: false,
       isDisplayBulkRegister: false,
@@ -393,7 +763,6 @@ export default {
       isDisplayTelemetry: false,
       isDisplayUsageSituation: false,
       isDisplaySensorGraph: false,
-      isDisplayStayTime: false,
       isDisplayStayRatio: false,
       isDisplayTemperatureHistory: false,
       isDisplayPositionHistory: false,
@@ -455,9 +824,6 @@ export default {
     },
     enableSensorGraph() {
       return this.isDisplaySensorGraph
-    },
-    enableStayTime() {
-      return this.isDisplayStayTime
     },
     enableStayRatio() {
       return this.isDisplayStayRatio
@@ -535,9 +901,6 @@ export default {
         }
         if (!this.isDisplaySensorGraph) {
           this.isDisplaySensorGraph = parent.pages.find((val) => val.path == 'sensorGraph')? true: false
-        }
-        if (!this.isDisplayStayTime) {
-          this.isDisplayStayTime = parent.pages.find((val) => val.path == 'stayTime')? true: false
         }
         if (!this.isDisplayStayRatio) {
           this.isDisplayStayRatio = parent.pages.find((val) => val.path == 'stayRatio')? true: false
