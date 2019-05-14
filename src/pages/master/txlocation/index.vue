@@ -167,7 +167,8 @@ export default {
       })
     },
     createTxIcon(tx) {
-      const {w, h} = DISP.TX_LOC.SIZE
+      const w = DISP.TX_LOC.SIZE.W
+      const h = DISP.TX_LOC.SIZE.H
       const fromX = -w / 2
       const fromY = -h / 2
       const x = w + fromX
