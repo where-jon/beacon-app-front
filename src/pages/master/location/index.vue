@@ -265,7 +265,8 @@ export default {
       })
     },
     createExbIcon(exb) {
-      const {w, h} = DISP.EXB_LOC.SIZE
+      const w = DISP.EXB_LOC.SIZE.W
+      const h = DISP.EXB_LOC.SIZE.H
       const fromX = -w / 2
       const fromY = -h / 2
       const x = w + fromX

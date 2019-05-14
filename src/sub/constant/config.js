@@ -373,7 +373,7 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   TXMEDITAG_POPUP_SIZE: 236, // TXMEDITAG表示ポップアップの高さ
 
   POSITION_HISTORY: {
-    HEADERS: ['txName', 'major', 'minor', 'deviceNum', 'locationName', 'posId', 'areaName'], // 位置表示履歴の表示カラム
+    HEADERS: ['potName', 'major', 'minor', 'deviceNum', 'locationName', 'posId', 'areaName'], // 位置表示履歴の表示カラム
   },
 
   GATEWAY: { // ゲートウエイ
