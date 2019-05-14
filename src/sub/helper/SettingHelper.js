@@ -131,6 +131,9 @@ export const mergeSettings = (settings) => {
   const categoryObjs = i18n.tnl('config.OPTIONS.SETTING_CATEGORY')
   const ret = []
   Object.keys(categoryObjs).forEach(categoryKey => {
+    if(categoryKey == 'OTHER'){
+      return
+    }
     ret.push({key: categoryObjs[categoryKey], isParent: true, _rowVariant: 'secondary'})
     const regExp = new RegExp('^[^.]*\\.' + categoryKey + '(\\..*)?$', 'g')
     settings.forEach(setting => {
@@ -138,8 +141,12 @@ export const mergeSettings = (settings) => {
         ret.push(setting)
       }
     })
-    settings.filter(setting => !setting.key.match(regExp))
+    settings = settings.filter(setting => !setting.key.match(regExp))
   })
+  if(settings.length != 0){
+    ret.push({key: categoryObjs['OTHER'], isParent: true, _rowVariant: 'secondary'})
+    settings.forEach(setting => ret.push(setting))
+  }
   return ret
 }
 
@@ -154,7 +161,7 @@ export const createSettingList = (settings) => {
     settings = settings.filter(setting => setting.key != i18Config.key)
   })
   settings.forEach(setting => {
-    i18ConfigList.push(createSetting(setting), {isParent: false})
+    i18ConfigList.push(createSetting(setting, {isParent: false}))
   })
   return mergeSettings(i18ConfigList)
 }

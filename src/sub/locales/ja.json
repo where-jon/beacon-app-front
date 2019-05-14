@@ -987,7 +987,8 @@
         "HISTORY_EXC": "EXCloudを使用した履歴",
         "SVC": "サーバ",
         "BATCH": "バッチ",
-        "SIMULATION": "デモ用"
+        "SIMULATION": "デモ用",
+        "OTHER": "その他"
       },
       "SENSOR": {
         "1": "温湿度",
