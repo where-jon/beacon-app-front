@@ -36,7 +36,7 @@ export default {
   },
   methods: {
     search(key) {
-      const target = this.pots.find((val) => val.potId == key)
+      const target = this.pots.find(val => val.potCd == key)
       return target? {
         id: target.potId,
         name: target.potName,

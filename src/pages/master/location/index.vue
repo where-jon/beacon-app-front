@@ -111,8 +111,8 @@ export default {
       toggleCallBack: () => {
         this.keepExbPosition = true
       },
-      ICON_ARROW_WIDTH: DISP.EXB_LOC_SIZE.w/3,
-      ICON_ARROW_HEIGHT: DISP.EXB_LOC_SIZE.h/3,
+      ICON_ARROW_WIDTH: DISP.EXB_LOC.SIZE.W/3,
+      ICON_ARROW_HEIGHT: DISP.EXB_LOC.SIZE.H/3,
       DISPLAY_NAME_BYTE_LENGTH: 6,
       noImageErrorKey: 'noMapImage',
       items: ViewHelper.createBreadCrumbItems('master', 'locationSetting'),
@@ -146,9 +146,8 @@ export default {
 
     const options = []
     options.push({value: 'locationName', text: this.$i18n.tnl('label.locationName')})
-    if (APP.EXB_WITH_DEVICE_NUM) options.push({value:'deviceNum', text: this.$i18n.tnl('label.deviceNum')})
-    if (APP.EXB_WITH_DEVICE_IDX) options.push({value:'deviceIdX', text: this.$i18n.tnl('label.deviceIdX')})
-    if (APP.EXB_WITH_DEVICE_ID) options.push({value:'deviceId', text: this.$i18n.tnl('label.deviceId')})
+    if (Util.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')) options.push({value:'deviceIdX', text: this.$i18n.tnl('label.deviceIdX')})
+    if (Util.includesIgnoreCase(APP.EXB.WITH, 'deviceId')) options.push({value:'deviceId', text: this.$i18n.tnl('label.deviceId')})
     this.exbDispOptions = options
     this.exbDisp = options[0].value
   },
@@ -222,8 +221,6 @@ export default {
         return deviceId.toString(16).toUpperCase()
       case 'deviceId':
         return deviceId
-      case 'deviceNum':
-        return deviceId - this.$store.state.currentRegion.deviceOffset
       case 'locationName': {
         const exb = this.exbs.find(val => val.deviceId == deviceId)      
         return exb? exb.locationName: ''
@@ -238,7 +235,7 @@ export default {
           let text = exbBtn.getChildAt(1)
           if (text) {
             text.text = Util.cutOnLongByte(this.getExbDisp(exbBtn.deviceId), this.DISPLAY_NAME_BYTE_LENGTH)
-            text.font = Util.getInRectFontSize(text.text, DISP.EXB_LOC_SIZE.w, DISP.EXB_LOC_SIZE.h)
+            text.font = Util.getInRectFontSize(text.text, DISP.EXB_LOC.SIZE.W, DISP.EXB_LOC.SIZE.H)
           }
         }
       }
@@ -268,14 +265,15 @@ export default {
       })
     },
     createExbIcon(exb) {
-      const {w, h} = DISP.EXB_LOC_SIZE
+      const w = DISP.EXB_LOC.SIZE.W
+      const h = DISP.EXB_LOC.SIZE.H
       const fromX = -w / 2
       const fromY = -h / 2
       const x = w + fromX
       const y = h + fromY
       const exbBtn = new Container()
       const s = new Shape()
-      s.graphics.beginFill(DISP.EXB_LOC_BGCOLOR)
+      s.graphics.beginFill(DISP.EXB_LOC.BGCOLOR)
       s.graphics.moveTo(fromX, fromY)
       s.graphics.lineTo(x, fromY)
       s.graphics.lineTo(x, y)
@@ -288,7 +286,7 @@ export default {
       const text = Util.cutOnLongByte(this.getExbDisp(exb.deviceId), this.DISPLAY_NAME_BYTE_LENGTH)
       const label = new Text(text)
       label.font = Util.getInRectFontSize(text, w, h)
-      label.color = DISP.EXB_LOC_COLOR
+      label.color = DISP.EXB_LOC.COLOR
       label.textAlign = 'center'
       label.textBaseline = 'middle'
       exbBtn.addChild(label)
@@ -300,7 +298,7 @@ export default {
     },
     showExb(exb) {
       let stage = this.stage
-      const offsetY = (DISP.EXB_LOC_SIZE.h / 2) + this.ICON_ARROW_HEIGHT
+      const offsetY = (DISP.EXB_LOC.SIZE.H / 2) + this.ICON_ARROW_HEIGHT
       const exbBtn = this.createExbIcon(exb)
       exbBtn.on('pressmove', (evt) => {
         exb.delEvent = false

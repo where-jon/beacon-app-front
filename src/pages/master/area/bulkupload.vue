@@ -37,7 +37,7 @@ export default {
   },
   methods: {
     search(key) {
-      const target = this.areas.find((val) => val.areaId == key)
+      const target = this.areas.find(val => val.areaCd == key)
       return target? {id: target.areaId, name: target.areaName, ...target}: null
     },
     addLoadImage(imgInfo) {
@@ -52,7 +52,7 @@ export default {
     async save(thumbnails) {
       await Util.sleep(100)
       await AppServiceHelper.bulkSave(this.appServicePath, thumbnails)
-      thumbnails.forEach((thumbnail) => {
+      thumbnails.forEach(thumbnail => {
         StateHelper.loadAreaImage(thumbnail.id, true)
       })
     },

@@ -35,8 +35,8 @@ export default {
       meditagSensors: [],
       showingDetailTime: null,
       defaultDisplay: {
-        color: DISP.TX_COLOR,
-        bgColor: DISP.TX_BGCOLOR,
+        color: DISP.TX.COLOR,
+        bgColor: DISP.TX.BGCOLOR,
         shape: SHAPE.CIRCLE,
       },
       oldSelectedArea: null,
@@ -152,7 +152,7 @@ export default {
       return areaImage && areaImage.mapImage
     },
     getMapScale(){
-      return DISP.TX_R_ABSOLUTE ? this.canvasScale : 1
+      return DISP.TX.R_ABSOLUTE ? this.canvasScale : 1
     },
     async fetchAreaExbs(tx) {
       if (this.isFirstTime) {
@@ -289,6 +289,12 @@ export default {
       this.stage.update() 
       this.bitmap = bitmap
       this.oldSelectedArea = this.selectedArea
+
+      if(this.onMapLoaded){
+        setTimeout(() => {
+          this.onMapLoaded(size)
+        }, 500)
+      }
     },
     async changeArea(val) {
       if (val) {
@@ -380,7 +386,7 @@ export default {
     async storePositionHistory(count, allShow = false, fixSize = false){
       const pMock = DEV.USE_MOCK_EXC? mock.positions[count]: null
       let positions = []
-      if (APP.USE_POSITION_HISTORY) {
+      if (APP.POS.USE_POSITION_HISTORY) {
         // Serverで計算された位置情報を得る
         positions = await EXCloudHelper.fetchPositionHistory(this.exbs, this.txs, allShow, pMock)
         this.replaceMain({positionHistores: positions})
@@ -390,12 +396,12 @@ export default {
         this.pushOrgPositions(positions)
       }
       // 検知状態の取得
-      PositionHelper.setDetectState(positions, APP.USE_POSITION_HISTORY)
+      PositionHelper.setDetectState(positions, APP.POS.USE_POSITION_HISTORY)
       // 在席表示と同じ、表示txを取得する。
       positions = this.getShowTxPositions(positions, allShow)
       // スタイルをセット
       positions = this.setPositionStyle(positions, fixSize)
-      if (APP.USE_POSITION_HISTORY) {
+      if (APP.POS.USE_POSITION_HISTORY) {
         this.replaceMain({positionHistores: positions})
       } else {
         this.replaceMain({orgPositions: []})
@@ -405,7 +411,7 @@ export default {
     },
     getShowTxPositions(positions, allShow = false){
       const now = !DEV.USE_MOCK_EXC ? new Date().getTime(): mock.positions_conf.start + this.count++ * mock.positions_conf.interval
-      const correctPositions = APP.USE_POSITION_HISTORY? this.positionHistores: PositionHelper.correctPosId(this.orgPositions, now)
+      const correctPositions = APP.POS.USE_POSITION_HISTORY? this.positionHistores: PositionHelper.correctPosId(this.orgPositions, now)
       return _(positions)
         .filter((pos) => allShow || (pos.tx && Util.bitON(pos.tx.disp, TX.DISP.POS)))
         .map((pos) => {
@@ -425,7 +431,7 @@ export default {
         // 設定により、カテゴリとグループのどちらの設定で表示するかが変わる。
         let display
         if (pos.tx) {
-          const styleSrc = pos.tx[DISP.DISPLAY_PRIORITY[0]] || pos.tx[DISP.DISPLAY_PRIORITY[1]]
+          const styleSrc = pos.tx[DISP.TX.DISPLAY_PRIORITY[0]] || pos.tx[DISP.TX.DISPLAY_PRIORITY[1]]
           display = styleSrc && styleSrc.display
         }
         display = display || this.defaultDisplay
@@ -450,11 +456,11 @@ export default {
       }
     },
     getDisplay(tx) {
-      const catOrGr = tx[DISP.DISPLAY_PRIORITY[0]] || tx[DISP.DISPLAY_PRIORITY[1]]
+      const catOrGr = tx[DISP.TX.DISPLAY_PRIORITY[0]] || tx[DISP.TX.DISPLAY_PRIORITY[1]]
       const display = catOrGr && catOrGr.display || {}
       return {
-        color: display.color || DISP.TX_COLOR,
-        bgColor: display.bgColor || DISP.TX_BGCOLOR,
+        color: display.color || DISP.TX.COLOR,
+        bgColor: display.bgColor || DISP.TX.BGCOLOR,
         shape: display.shape || SHAPE.CIRCLE
       }
     },
@@ -472,7 +478,7 @@ export default {
     },
     getPositions(showAllTime = false) {
       let positions = []
-      if (APP.USE_POSITION_HISTORY) {
+      if (APP.POS.USE_POSITION_HISTORY) {
         positions = this.positionHistores
       } else {
         const now = !DEV.USE_MOCK_EXC? new Date().getTime(): mock.positions_conf.start + this.count++ * mock.positions_conf.interval  // for mock
@@ -480,7 +486,7 @@ export default {
           this.orgPositions.filter((pos) => Array.isArray(pos)).flatMap((pos) => pos) :
           PositionHelper.correctPosId(this.orgPositions, now)
       }
-      if (APP.USE_MEDITAG && this.meditagSensors) {
+      if (APP.SENSOR.USE_MEDITAG && this.meditagSensors) {
         positions = SensorHelper.setStress(positions, this.meditagSensors)
       }
       return showAllTime ? positions : this.positionFilter(positions, this.selectedGroup, this.selectedCategory)
@@ -497,7 +503,7 @@ export default {
       const popupHeight = this.getMeditagSensor(btxId) ? DISP.TXMEDITAG_POPUP_SIZE : DISP.TXSENSOR_POPUP_SIZE
       // isAbove === trueの場合、ポップアップを下に表示
       // 上にあるときは下向きに表示する
-      const isAbove = map.top + y < popupHeight + DISP.TX_R / this.canvasScale
+      const isAbove = map.top + y < popupHeight + DISP.TX.R / this.canvasScale
       const offsetY = isAbove ? popupHeight : 0
 
       const position = this.getPositions().find((e) => {
@@ -513,11 +519,11 @@ export default {
         orgLeft: x * this.canvasScale + offsetX,
         orgTop: y * this.canvasScale + offsetY,
         isAbove: isAbove,
-        scale: DISP.TX_R_ABSOLUTE ? 1.0 : this.canvasScale,
+        scale: DISP.TX.R_ABSOLUTE ? 1.0 : this.canvasScale,
         containerWidth: containerParent.width,
         containerHeight: containerParent.height,
         class: balloonClass,
-        name: tx.potName ? tx.potName : tx.txName? tx.txName: '',
+        name: tx.potName ? tx.potName : '',
         tel: tx.extValue ? tx.extValue.tel ? tx.extValue.tel : '': '',
         timestamp: position ? this.getFinalReceiveTime(position.timestamp) : '',
         thumbnail: tx.thumbnail ? tx.thumbnail : '',
@@ -544,27 +550,27 @@ export default {
       let fillAlpha = 1
       if (Util.bitON(pos.tx.disp, TX.DISP.ALWAYS)) {
         // 常時表示時
-        fillAlpha = pos.isLost? DISP.TX_LOST_ALPHA: pos.transparent? DISP.TX_ALPHA: fillAlpha
+        fillAlpha = pos.isLost? DISP.TX.LOST_ALPHA: pos.transparent? DISP.TX.ALPHA: fillAlpha
       } else if (pos.transparent) {
         // 通常の離席時
-        strokeAlpha = DISP.TX_ALPHA
-        fillAlpha = DISP.TX_ALPHA
+        strokeAlpha = DISP.TX.ALPHA
+        fillAlpha = DISP.TX.ALPHA
       }
       return {
         bgColor: ViewHelper.getRGBA(bgColor, fillAlpha),
-        strokeColor: ViewHelper.getRGBA(DISP.TX_STROKE_COLOR, strokeAlpha)
+        strokeColor: ViewHelper.getRGBA(DISP.TX.STROKE_COLOR, strokeAlpha)
       }
     },
     createTxIcon(pos, shape, color, bgColor){
       const rectInfo = this.createRectInfo(pos, bgColor)
       const labelInfo = this.createLabelInfo(pos, color)
-      const txRadius = DISP.TX_R / this.getMapScale()
+      const txRadius = DISP.TX.R / this.getMapScale()
       return IconHelper.createIcon(
         labelInfo.label, txRadius, txRadius, labelInfo.color, rectInfo.bgColor, {
           circle: shape == SHAPE.CIRCLE,
-          roundRect: shape == SHAPE.SQUARE? 0: DISP.ROUNDRECT_RADIUS,
+          roundRect: shape == SHAPE.SQUARE? 0: DISP.TX.ROUNDRECT_RADIUS,
           strokeColor: rectInfo.strokeColor,
-          strokeStyle: DISP.TX_STROKE_WIDTH,
+          strokeStyle: DISP.TX.STROKE_WIDTH,
           offsetY: 5,
         })
     },
@@ -608,6 +614,9 @@ export default {
     reset() {
       this.isShownMapImage = false
       this.resetDetail()
+      if(this.onReset){
+        this.onReset()
+      }
     },
     resetDetail() {
       if (!this.showingDetailTime || new Date().getTime() - this.showingDetailTime > 100) {
@@ -642,7 +651,6 @@ export default {
             areaName: exb.areaName,
             locationName: exb.locationName,
             posId: exb.posId,
-            deviceNum: exb.deviceNum,
             deviceIdX: exb.deviceIdX,
             areaId: exb.areaId,
             zoneId: exb.zoneId,
@@ -679,7 +687,7 @@ export default {
             areaName: tx.areaName,
             locationName: tx.locationName,
             posId: tx.posId,
-            txName: tx.txName,
+            potName: tx.potName,
             sensorName: tx.sensorName,
             major: tx.major,
             minor: tx.minor,

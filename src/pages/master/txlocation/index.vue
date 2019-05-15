@@ -76,8 +76,8 @@ export default {
       toggleCallBack: () => {
         this.keepTxPosition = true
       },
-      ICON_ARROW_WIDTH: DISP.TX_LOC_SIZE.w/3,
-      ICON_ARROW_HEIGHT: DISP.TX_LOC_SIZE.h/3,
+      ICON_ARROW_WIDTH: DISP.TX_LOC.SIZE.W/3,
+      ICON_ARROW_HEIGHT: DISP.TX_LOC.SIZE.H/3,
       noImageErrorKey: 'noMapImage',
       items: ViewHelper.createBreadCrumbItems('master', 'txLocationSetting'),
     }
@@ -138,7 +138,7 @@ export default {
       })
         .map((val) => { // TODO: minor以外の表示対応
           return {
-            label: '' + this.getLabel(val) + '(' + val.txName + ')', 
+            label: '' + this.getLabel(val) + (val.potName? '(' + val.potName + ')': ''),
             value: val.txId
           }
         }).value()
@@ -167,14 +167,15 @@ export default {
       })
     },
     createTxIcon(tx) {
-      const {w, h} = DISP.TX_LOC_SIZE
+      const w = DISP.TX_LOC.SIZE.W
+      const h = DISP.TX_LOC.SIZE.H
       const fromX = -w / 2
       const fromY = -h / 2
       const x = w + fromX
       const y = h + fromY
       const txBtn = new Container()
       const s = new Shape()
-      s.graphics.beginFill(ViewHelper.getRGBA(DISP.TX_LOC_BGCOLOR, DISP.TX_LOC_ALPHA))
+      s.graphics.beginFill(ViewHelper.getRGBA(DISP.TX_LOC.BGCOLOR, DISP.TX_LOC.ALPHA))
       s.graphics.moveTo(fromX, fromY)
       s.graphics.lineTo(x, fromY)
       s.graphics.lineTo(x, y)
@@ -187,11 +188,11 @@ export default {
       const text = this.getLabel(tx)
       const label = new Text(text)
       label.font = Util.getInRectFontSize(text, w, h)
-      label.color = DISP.TX_LOC_COLOR
+      label.color = DISP.TX_LOC.COLOR
       label.textAlign = 'center'
       label.textBaseline = 'middle'
       txBtn.addChild(label)
-      txBtn.txName = tx.txName
+      txBtn.potName = tx.potName
       txBtn.btxId = tx.btxId
       txBtn.minor = tx.minor
       txBtn.txId = tx.txId
@@ -201,7 +202,7 @@ export default {
     },
     showTx(tx) {
       let stage = this.stage
-      const offsetY = (DISP.TX_LOC_SIZE.h / 2) + this.ICON_ARROW_HEIGHT
+      const offsetY = (DISP.TX_LOC.SIZE.H / 2) + this.ICON_ARROW_HEIGHT
       const txBtn = this.createTxIcon(tx)
       txBtn.on('pressmove', (evt) => {
         tx.delEvent = false
@@ -314,7 +315,7 @@ export default {
         tx.x = tx.y = null
       }
       this.positionedTx = this.positionedTx.filter((tx) => (this.deleteTarget.minor && tx.minor != this.deleteTarget.minor) || tx.btxId != this.deleteTarget.btxId)
-      this.txOptions.push({label: `${this.getLabel(this.deleteTarget)}(${this.deleteTarget.txName})`, value: this.deleteTarget.txId})
+      this.txOptions.push({label: `${this.getLabel(this.deleteTarget)}${this.deleteTarget.potName? '(' + this.deleteTarget.potName + ')': ''}`, value: this.deleteTarget.txId})
       this.txCon.removeChild(this.deleteTarget)
       this.stage.update()
     },

@@ -13,8 +13,9 @@ import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import * as BulkHelper from '../../../sub/helper/BulkHelper'
 import { APP } from '../../../sub/constant/config'
-import { CATEGORY } from '../../../sub/constant/Constants'
+import { CATEGORY, BULK } from '../../../sub/constant/Constants'
 
 export default {
   components: {
@@ -27,13 +28,13 @@ export default {
       id: 'potId',
       backPath: '/master/pot',
       appServicePath: '/basic/pot',
-      category: _.slice(CATEGORY.getTypes(), 0, 2).filter((val) => APP.CATEGORY_TYPES.includes(val.value)),
+      category: _.slice(CATEGORY.getTypes(), 0, 2).filter((val) => APP.CATEGORY.TYPES.includes(val.value)),
       items: ViewHelper.createBreadCrumbItems('master', {text: 'pot', href: '/master/pot'}, 'bulkRegister'),
     }
   },
   computed: {
     ...mapState('app_service', [
-      'pot', 'potImages', 'categories', 'groups', 'txs'
+      'pot', 'pots', 'potImages', 'categories', 'groups', 'txs'
     ]),
   },
   methods: {
@@ -45,6 +46,8 @@ export default {
         entity.potTxList.forEach((potTx) => potTx.potTxPK.potId = entity.potId)
       }
       if(Util.hasValue(entity.potUserList)){
+        const oldPot = this.pots.find(pot => pot.potId == entity.potId)
+        entity.potUserList[0].user.userId = Util.getValue(oldPot, 'userId', dummyKey--)
         entity.potUserList[0].user.name = entity.potName
         if(entity.potUserList[0].user.roleName == null){
           entity.potUserList[0].user.roleName = ''
@@ -53,6 +56,7 @@ export default {
       return dummyKey
     },
     afterCrud(){
+      StateHelper.setForceFetch('pot', true)
       StateHelper.setForceFetch('tx', true)
       StateHelper.setForceFetch('user', true)
     },
@@ -95,53 +99,43 @@ export default {
         return dummyKey
       }
       if(!entity.potUserList){
-        entity.potUserList = [{potUserPK: {potId: dummyKey--, userId: dummyKey}, user: {userId: dummyKey--}}]
-      }
-      if(headerName == 'userId'){
-        const success = StateHelper.bulkErrorCheck(entity.potUserList[0].user, headerName, val, true)
-        entity.potUserList[0].potUserPK.userId = success? val: dummyKey--
-        if(!success){
-          val = dummyKey--
-        }
+        entity.potUserList = [{potUserPK: {potId: dummyKey--, userId: dummyKey--}, user: {userId: dummyKey--}}]
       }
       entity.potUserList[0].user[headerName] = val
       return dummyKey
     },
-    setOther(entity, headerName, val, dummyKey, mainCol){
-      const NULLABLE_NUMBER_COL = ['txId', 'exbId', 'zoneId', 'areaId', 'potType']
-      let newVal
-      if (mainCol === headerName && !val) {
-        newVal = dummyKey--
-      } else if (NULLABLE_NUMBER_COL.includes(headerName)) {
-        if(!Util.hasValue(val)){
-          newVal = null
-        }
-        else{
-          newVal = Number(val)
-          if(headerName == 'potType' && !isNaN(newVal) && !this.category.find((val) => val.value == newVal)){
-            entity[`${headerName}OneOf`] = this.category.map((val) => val.value)
-          }
-        }
-      } else {
-        newVal = val
+    setOther(entity, headerName, val, dummyKey){
+      const NULLABLE_NUMBER_COL = ['txId', 'exbId', 'zoneId', 'areaId']
+      if(NULLABLE_NUMBER_COL.includes(headerName)){
+        BulkHelper.setNumberKey(entity, headerName, val, {isNullable: true})
+        return dummyKey
       }
-      if(isNaN(newVal)){
-        entity[`${headerName}Name`] = val
+      if(headerName == 'potType'){
+        BulkHelper.setNumberKey(entity, headerName, val)
+        const newVal = Number(val)
+        if(!isNaN(newVal) && !this.category.find(cat => cat.value == newVal)){
+          entity[`${headerName}OneOf`] = this.category.map(cat => cat.value)
+        }
+        return dummyKey
       }
-      entity[headerName] = newVal
+      entity[headerName] = val
       return dummyKey
     },
     async save(bulkSaveFunc) {
-      const MAIN_COL = 'potId'
       const MANY_TO_MANY = ['groupId', 'categoryId']
       const extValueHeaders = ['ruby', 'post', 'tel']
       const txHeaders = ['txId', 'btxId', 'minor']
-      const userHeaders = ['userId', 'loginId', 'roleName', 'pass', 'email']
+      const userHeaders = ['loginId', 'roleName', 'pass', 'email']
+      await StateHelper.load('pot')
       await StateHelper.load('category')
       await StateHelper.load('group')
       await StateHelper.load('tx')
 
-      await bulkSaveFunc(MAIN_COL, null, null, (entity, headerName, val, dummyKey) => {
+      await bulkSaveFunc(BULK.PRIMARY_KEY, null, null, (entity, headerName, val, dummyKey) => {
+        if (BulkHelper.isPrimaryKeyHeader(headerName)){
+          BulkHelper.setPrimaryKey(entity, this.id, val, dummyKey--)
+          return dummyKey
+        }
         // relation
         if (MANY_TO_MANY.includes(headerName) && Util.hasValue(val)) {
           return this.setParamRelation(entity, headerName, val, dummyKey)
@@ -165,7 +159,7 @@ export default {
         }
 
         // other
-        return this.setOther(entity, headerName, val, dummyKey, MAIN_COL)
+        return this.setOther(entity, headerName, val, dummyKey)
       }, (entity, dummyKey) => this.resetData(entity, dummyKey))
     },
   }

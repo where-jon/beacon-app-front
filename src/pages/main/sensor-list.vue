@@ -82,9 +82,8 @@ export default {
       const d = new Date(device.updatetime)
       return {
         sensorDt: Util.formatDate(d.getTime()),
-        txName: Util.getValue(device, 'txName', ''),
+        potName: Util.getValue(device, 'potName', ''),
         deviceId: Util.getValue(device, 'deviceId', ''),
-        deviceNum: Util.getValue(device, 'deviceNum', ''),
         deviceIdX: Util.getValue(device, 'deviceIdX', ''),
         locationName: Util.getValue(device, 'locationName', ''),
         posId: Util.getValue(device, 'posId', ''),

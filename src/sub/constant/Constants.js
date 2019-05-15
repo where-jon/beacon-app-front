@@ -44,6 +44,15 @@ export const USER = {
 export const PATTERN = {
   NUMBER: '^-?[0-9]+[.]?[0-9]*$',
   NUMBER_LIST: '^(-?[0-9]+[.]?[0-9]*)+(,-?[0-9]+[.]?[0-9]*)*$',
+  MASTER_CD: '^[a-zA-Z0-9_\\-\\.]*$',
+  REGEXP: {
+    MASTER_CD: /^[a-zA-Z0-9_\-.]*$/,
+  },
+}
+
+export const BULK = {
+  PRIMARY_KEY: 'updateKey',
+  SPLITTER: ';',
 }
 
 export const BOOLEAN = {

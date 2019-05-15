@@ -8,10 +8,12 @@
 <script>
 import { mapState } from 'vuex'
 import * as Util from '../../../sub/util/Util'
+import { BULK } from '../../../sub/constant/Constants'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
 import * as AuthHelper from '../../../sub/helper/AuthHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import * as BulkHelper from '../../../sub/helper/BulkHelper'
 
 export default {
   components: {
@@ -34,20 +36,15 @@ export default {
   },
   methods: {
     async save(bulkSaveFunc) {
-      const MAIN_COL = 'regionId'
-      const NUMBER_TYPE_LIST = ['regionId', 'meshId', 'deviceOffset']
-      await bulkSaveFunc(MAIN_COL, null, null, (entity, headerName, val, dummyKey) => {
-        if(Util.equalsAny(headerName, NUMBER_TYPE_LIST)){
-          const num = Number(val)
-          if(isNaN(num)){
-            entity[`${headerName}Name`] = val
-          }
-          val = num
+      const NUMBER_TYPE_LIST = ['regionId', 'meshId']
+      await bulkSaveFunc(BULK.PRIMARY_KEY, null, null, (entity, headerName, val, dummyKey) => {
+        if (BulkHelper.isPrimaryKeyHeader(headerName)){
+          BulkHelper.setPrimaryKey(entity, this.id, val, dummyKey--)
+          return dummyKey
         }
-        if (headerName == MAIN_COL){
-          if(!val) {
-            val = dummyKey--
-          }
+        if(Util.equalsAny(headerName, NUMBER_TYPE_LIST)){
+          BulkHelper.setNumberKey(entity, headerName, val, {isNullable: headerName == 'meshId'})
+          return dummyKey
         }
         entity[headerName] = val
         return dummyKey

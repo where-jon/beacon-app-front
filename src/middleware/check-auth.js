@@ -18,14 +18,14 @@ export default function (context) {
     return
   }
 
-  if (context.route.path == APP.LOGIN_PAGE
-    ||context.route.path == APP.ERROR_PAGE) { // Login Page is always OK
+  if (context.route.path == APP.MENU.LOGIN_PAGE
+    ||context.route.path == APP.MENU.ERROR_PAGE) { // Login Page is always OK
   }else if(context.route.path == '/'){
-    context.app.router.push(APP.LOGIN_PAGE)
+    context.app.router.push(APP.MENU.LOGIN_PAGE)
   }else if (APP.LOGIN_MODE != LOGIN_MODE.NO_LOGIN && !AuthHelper.checkSession()) { // check Session
     console.warn('checkauth ng')
     context.redirect('/')
-    context.app.router.push(APP.LOGIN_PAGE)
+    context.app.router.push(APP.MENU.LOGIN_PAGE)
   }else if(context.route.path.slice(-1) == '/'){
     context.app.router.push(`${context.route.path.slice(0, -1)}${context.route.hash? '': '#'}`)
   }else { // check tenant feature
@@ -41,17 +41,17 @@ export default function (context) {
     }
     if (!isProvider && !isTenantAdmin && (!tenantFeatureList || tenantFeatureList.length == 0)) {
       console.error('No tenant feature List', context.route.path)
-      context.app.router.push(APP.ERROR_PAGE)
+      context.app.router.push(APP.MENU.ERROR_PAGE)
       return
     }
     if (!isProvider && !isTenantAdmin && tenantFeatureList && !MenuHelper.featureOk(context.route.path, tenantFeatureList)) {
-      if (MenuHelper.featureOk(APP.TOP_PAGE, tenantFeatureList)) {
-        context.app.router.push(APP.TOP_PAGE)
+      if (MenuHelper.featureOk(APP.MENU.TOP_PAGE, tenantFeatureList)) {
+        context.app.router.push(APP.MENU.TOP_PAGE)
       }
       else {
         AuthHelper.logout()
         context.redirect('/')
-        context.app.router.push(APP.LOGIN_PAGE)
+        context.app.router.push(APP.MENU.LOGIN_PAGE)
       }
     }
   }

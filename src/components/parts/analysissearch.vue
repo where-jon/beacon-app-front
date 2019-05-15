@@ -119,13 +119,13 @@ export default {
       return CATEGORY.POT_AVAILABLE
     },
     enableCategory () {
-      return this.showCategory && this.isEnabledMenu('category') && APP.POT_WITH_CATEGORY
+      return this.showCategory && this.isEnabledMenu('category') && Util.includesIgnoreCase(APP.POT.WITH, 'category')
     },
     enableGroup () {
-      return this.isEnabledMenu('group') && APP.POT_WITH_GROUP
+      return this.isEnabledMenu('group') && Util.includesIgnoreCase(APP.POT.WITH, 'group')
     },
     enableIndividual () {
-      return !this.fromHeatmap || (this.fromHeatmap && APP.HEATMAP_USE_INDIVIDUAL)
+      return !this.fromHeatmap || (this.fromHeatmap && APP.HEATMAP.USE_INDIVIDUAL)
     },
     requireCategory(){
       return !this.fromHeatmap
@@ -184,7 +184,7 @@ export default {
     },
     changeDatetimeFrom(newVal = this.form.datetimeFrom) {
       if(newVal){
-        this.form.datetimeTo = Util.getDatetime(newVal, {minutes: APP.ANALYSIS_DATETIME_INTERVAL})
+        this.form.datetimeTo = Util.getDatetime(newVal, {minutes: APP.ANALYSIS.DATETIME_INTERVAL})
       }
       else{
         this.form.datetimeTo = null

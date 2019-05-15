@@ -5,11 +5,6 @@
       <alert :message="message" />
 
       <b-form v-if="show" @submit.prevent="onSubmit">
-        <b-form-group v-if="form.notifyTemplateId">
-          <label v-t="'label.notifyTemplateId'" />
-          <b-form-input v-model="form.notifyTemplateId" type="text" readonly="readonly" />
-        </b-form-group>
-
         <!--種別-->
         <b-form-group :disabled="!bNotifyTemplateKey">
           <b-form-row>
@@ -91,7 +86,7 @@ export default {
       fromType:'email',
       deliveryState:NOTIFY_STATE.getOptions()[0].value,
       userMailState:NOTIFY_STATE.getOptions()[4].value,
-      notify: _.slice(NOTIFY_MIDIUM.getTypes()).filter((val) => APP.NOTIFY_MIDIUM_TYPES.includes(val.value)),
+      notify: _.slice(NOTIFY_MIDIUM.getTypes()).filter((val) => APP.NOTIFY.MIDIUM_TYPES.includes(val.value)),
       backPath: '/master/notifyTemplate',
       appServicePath: '/core/rcvexcloud',
       form: ViewHelper.extract(this.$store.state.app_service.template,
@@ -118,9 +113,6 @@ export default {
     },
     notifyStateOptions() {
       return _.slice(NOTIFY_STATE.getOptions()).filter((val) => APP.NOTIFY_STATE_TYPES.includes(val.index))
-    },
-    hasId (){
-      return Util.hasValue(this.form.notifyTemplateId)
     },
     theme () {
       const theme = getButtonTheme()
@@ -153,7 +145,7 @@ export default {
         this.form.notifyTo = ''
       }else{
         this.bNotifyTo = true
-        this.notify = _.slice(NOTIFY_MIDIUM.getTypes()).filter((val) => APP.NOTIFY_MIDIUM_TYPES.includes(val.value))
+        this.notify = _.slice(NOTIFY_MIDIUM.getTypes()).filter((val) => APP.NOTIFY.MIDIUM_TYPES.includes(val.value))
       }
       if(this.radioSelect== 0){
         this.bSubject = true

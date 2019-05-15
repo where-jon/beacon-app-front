@@ -8,10 +8,6 @@
         <b-col md="8" offset-md="2">
           <b-form v-if="show" @submit.prevent="onSubmit">
             <chrome-input />
-            <b-form-group v-if="form.potId">
-              <label v-t="'label.potId'" />
-              <b-form-input v-model="form.potId" type="text" readonly="readonly" />
-            </b-form-group>
             <span v-for="(potTx, index) in form.potTxList" :key="index">
               <b-form inline @submit.prevent>
                 <b-form-group>
@@ -22,21 +18,13 @@
                       </label>
                       <b-form-select v-model="potTx.txId" :options="getTxOptions(index)" :disabled="!isEditable" :readonly="!isEditable" class="ml-3 tx-select" @change="changeTx($event, index)" />
                     </b-form-row>
-                    <b-form-row v-show="isShown('TX_WITH_TXID')" class="mb-3 mr-3">
-                      <b-form-row>
-                        <label>
-                          {{ $i18n.tnl('label.txId') + getTxIndex(index) }}
-                        </label>
-                        <input v-model="txIds[index]" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control ml-3 tx-select">
-                      </b-form-row>
-                    </b-form-row>
-                    <b-form-row v-show="!isShown('TX_WITH_TXID') && isShown('TX_BTX_MINOR') != 'minor'" class="mb-3 mr-3">
+                    <b-form-row v-show="isShown('TX.BTX_MINOR') != 'minor'" class="mb-3 mr-3">
                       <label>
                         {{ $i18n.tnl('label.btxId') + getTxIndex(index) }}
                       </label>
                       <input v-model="btxIds[index]" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control ml-3 tx-select">
                     </b-form-row>
-                    <b-form-row v-show="!isShown('TX_WITH_TXID') && isShown('TX_BTX_MINOR') == 'minor'" class="mb-3 mr-3">
+                    <b-form-row v-show="isShown('TX.BTX_MINOR') == 'minor'" class="mb-3 mr-3">
                       <label>
                         {{ `Tx(${$i18n.tnl('label.minor')}${getTxIndex(index)})` }}
                       </label>
@@ -50,7 +38,7 @@
               <label v-t="'label.categoryType'" />
               <b-form-radio-group v-model="form.potType" :options="category" :disabled="!isEditable" :required="category.length > 1" />
             </b-form-group>
-            <b-form-group v-if="isShown('POT_WITH_POTCD')">
+            <b-form-group>
               <label v-t="'label.potCd'" />
               <input v-model="form.potCd" :readonly="!isEditable" type="text" maxlength="20" class="form-control">
             </b-form-group>
@@ -58,7 +46,7 @@
               <label v-t="'label.potName'" />
               <input v-model="form.potName" :readonly="!isEditable" type="text" maxlength="20" class="form-control" required>
             </b-form-group>
-            <b-form-group v-show="isShown('POT_WITH_RUBY')">
+            <b-form-group v-show="isShown('POT.WITH', 'ruby')">
               <label v-t="'label.ruby'" />
               <input v-model="form.ruby" :readonly="!isEditable" type="text" maxlength="20" class="form-control">
             </b-form-group>
@@ -66,19 +54,19 @@
               <label v-t="'label.displayName'" />
               <input v-model="form.displayName" :readonly="!isEditable" type="text" maxlength="3" class="form-control">
             </b-form-group>
-            <b-form-group v-show="isShown('POT_WITH_GROUP')">
+            <b-form-group v-show="isShown('POT.WITH', 'group')">
               <label v-t="'label.group'" />
               <b-form-select v-model="form.groupId" :options="groupOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-3 col-4" />
             </b-form-group>
-            <b-form-group v-show="isShown('POT_WITH_CATEGORY')">
+            <b-form-group v-show="isShown('POT.WITH', 'category')">
               <label v-t="'label.category'" />
               <b-form-select v-model="form.categoryId" :options="categoryOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-3 col-4" />
             </b-form-group>
-            <b-form-group v-show="isShown('POT_WITH_POST')">
+            <b-form-group v-show="isShown('POT.WITH', 'post')">
               <label v-t="'label.post'" />
               <input v-model="form.post" :readonly="!isEditable" type="text" maxlength="20" class="form-control">
             </b-form-group>
-            <b-form-group v-show="isShown('POT_WITH_TEL')">
+            <b-form-group v-show="isShown('POT.WITH', 'tel')">
               <label v-t="'label.tel'" />
               <b-form-input v-model="form.tel" :readonly="!isEditable" type="tel" maxlength="20" pattern="[-\d]*" />
             </b-form-group>
@@ -90,12 +78,12 @@
               </b-button>
               <img v-show="form.thumbnail" ref="thumbnail" :src="form.thumbnail" width="100" class="mt-1 ml-3">
             </b-form-group>
-            <b-form-group v-if="isShown('POT_WITH_DESCRIPTION')">
+            <b-form-group v-if="isShown('POT.WITH', 'description')">
               <label v-t="'label.description'" />
               <b-form-textarea v-model="form.description" :rows="3" :max-rows="6" :readonly="!isEditable" maxlength="1000" />
             </b-form-group>
 
-            <b-form-group v-if="isShown('POT_WITH_USER')">
+            <b-form-group v-if="isShown('POT.WITH', 'user')">
               <b-form-checkbox v-model="editShowUser" :value="true" :unchecked-value="false" @change="nextShowEmailCheck()">
                 <span v-text="$i18n.tnl('label.editUserInfo')" />
               </b-form-checkbox>
@@ -159,10 +147,10 @@ export default {
       id: 'potId',
       backPath: '/master/pot',
       appServicePath: '/basic/pot',
-      category: _.slice(CATEGORY.getTypes(), 0, 2).filter((val) => APP.CATEGORY_TYPES.includes(val.value)),
-      txIds: Array(APP.POT_TX_MAX),
-      btxIds: Array(APP.POT_TX_MAX),
-      minors: Array(APP.POT_TX_MAX),
+      category: _.slice(CATEGORY.getTypes(), 0, 2).filter((val) => APP.CATEGORY.TYPES.includes(val.value)),
+      txIds: Array(APP.POT.TX_MAX),
+      btxIds: Array(APP.POT.TX_MAX),
+      minors: Array(APP.POT.TX_MAX),
       showEmail: false,
       editShowUser: false,
       roleOptions: [],
@@ -179,12 +167,15 @@ export default {
         userId: null, loginId: null, pass: null, roleId: null, email: null,
       },
       defValue: {
-        'potType': APP.CATEGORY_TYPES[0] != 3? APP.CATEGORY_TYPES[0]: null,
+        'potType': APP.CATEGORY.TYPES[0] != 3? APP.CATEGORY.TYPES[0]: null,
       },
       items: ViewHelper.createBreadCrumbItems('master', {text: 'pot', href: '/master/pot'}, Util.getDetailCaptionKey(this.$store.state.app_service.pot.potId)),
     }
   },
   computed: {
+    hasId(){
+      return Util.hasValue(this.form.potId)
+    },
     theme () {
       const theme = getButtonTheme()
       return 'outline-' + theme
@@ -244,6 +235,9 @@ export default {
     if(this.form.potType == null){
       this.form.potType = this.defValue.potType
     }
+    if(!Util.hasValue(this.form.potCd)){
+      this.form.potCd = StateHelper.createMasterCd('pot', this.pots, this.pot)
+    }
     StateHelper.load('group')
     StateHelper.load('category')
     await StateHelper.load('tx')
@@ -260,7 +254,7 @@ export default {
           txId: val.potTxPK.txId,
         }
       }): []
-      const maxTx = APP.POT_MULTI_TX? APP.POT_TX_MAX: 1
+      const maxTx = APP.POT.MULTI_TX? APP.POT.TX_MAX: 1
       for(let cnt = this.form.potTxList.length; cnt < maxTx; cnt++){
         this.form.potTxList.push({
           potId: null,
@@ -269,7 +263,7 @@ export default {
       }
     },
     getTxIndex(index){
-      return APP.POT_MULTI_TX? 1 < APP.POT_TX_MAX? `${index + 1}`: '': ''
+      return APP.POT.MULTI_TX? 1 < APP.POT.TX_MAX? `${index + 1}`: '': ''
     },
     watchIds(newVal, idName){
       this.form.potTxList.forEach((potTx, idx) => {
@@ -336,16 +330,12 @@ export default {
         this.txIds[index] = tx? tx.txId: null
         this.btxIds[index] = tx? tx.btxId: null
         this.minors[index] = tx? tx.minor: null
-        if(this.isShown('TX_WITH_TXID')){
-          this.watchIds(this.txIds, 'txId')
-        }
-        if(!this.isShown('TX_WITH_TXID') && this.isShown('TX_BTX_MINOR') != 'minor'){
+        if(this.isShown('TX.BTX_MINOR') != 'minor'){
           this.watchIds(this.btxIds, 'btxId')
         }
-        if(!this.isShown('TX_WITH_TXID') && this.isShown('TX_BTX_MINOR') == 'minor'){
+        else{
           this.watchIds(this.minors, 'minor')
         }
-
         this.showEmailCheck()
         this.$forceUpdate()
       })

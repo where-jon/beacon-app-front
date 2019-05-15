@@ -39,22 +39,19 @@ export default {
         name: 'position-list',
         id: 'positionListId',
         extraFilter: _(['detectState',
-          MenuHelper.useMaster('group') && APP.POS_WITH_GROUP? 'group' : null,
-          MenuHelper.useMaster('category') && APP.POS_WITH_CATEGORY? 'category' : null,
-          APP.POSITION_WITH_AREA ? 'area' : null]).compact().value(),
+          MenuHelper.useMaster('group') && APP.POS.WITH.GROUP? 'group' : null,
+          MenuHelper.useMaster('category') && APP.POS.WITH.CATEGORY? 'category' : null,
+          APP.POSITION_WITH_AREA? 'area' : null]).compact().value(),
         disableTableButtons: true,
         fields: ViewHelper.addLabelByKey(this.$i18n, [ 
-          !APP.TX_WITH_TXID && APP.TX_BTX_MINOR == 'minor' ? 
-            {key: 'minor', label: 'minor', sortable: true, tdClass: 'action-rowdata' }: null,
-          APP.TX_WITH_TXID ? {key: 'txId', label: 'txId', sortable: true, tdClass: 'action-rowdata' }: null,
-          APP.TX_BTX_MINOR != 'minor' ? {key: 'btx_id', label: 'btxId', sortable: true, tdClass: 'action-rowdata' }: null,
-          APP.TX_WITH_TXID || APP.TX_BTX_MINOR != 'btxId' ?
-            {key: 'minor', label:'minor', sortable: true, tdClass: 'action-rowdata' }: null,
-          APP.POT_WITH_POTCD ? {key: 'potCd', label: 'potCd', sortable: true, tdClass: 'action-rowdata'} : null,
+          APP.TX.BTX_MINOR == 'minor' ? {key: 'minor', label: 'minor', sortable: true, tdClass: 'action-rowdata' }: null,
+          APP.TX.BTX_MINOR != 'minor' ? {key: 'btx_id', label: 'btxId', sortable: true, tdClass: 'action-rowdata' }: null,
+          APP.TX.BTX_MINOR == 'both' ? {key: 'minor', label:'minor', sortable: true, tdClass: 'action-rowdata' }: null,
+          Util.includesIgnoreCase(APP.POT.WITH, 'potCd') ? {key: 'potCd', label: 'potCd', sortable: true, tdClass: 'action-rowdata'} : null,
           {key: 'potName', label: 'name', sortable: true, tdClass: 'action-rowdata'},
-          APP.POS_LIST_WITH_TEL? {key: 'tel', sortable: true, tdClass: 'action-rowdata' }: null,
-          MenuHelper.useMaster('category') && APP.POS_WITH_CATEGORY ? {key: 'categoryName', label: 'category', sortable: true, tdClass: 'action-rowdata'} : null,
-          MenuHelper.useMaster('group') && APP.POS_WITH_GROUP ? {key: 'groupName', label: 'group', sortable: true, tdClass: 'action-rowdata'} : null,
+          Util.includesIgnoreCase(APP.POS_LIST.WITH, 'tel')? {key: 'tel', sortable: true, tdClass: 'action-rowdata' }: null,
+          MenuHelper.useMaster('category') && APP.POS.WITH.CATEGORY ? {key: 'categoryName', label: 'category', sortable: true, tdClass: 'action-rowdata'} : null,
+          MenuHelper.useMaster('group') && APP.POS.WITH.GROUP ? {key: 'groupName', label: 'group', sortable: true, tdClass: 'action-rowdata'} : null,
           {key: 'state', sortable: true, tdClass: 'action-rowdata'},
           APP.POSITION_WITH_AREA ? {key: 'areaName', label: 'area', sortable: true, tdClass: 'action-rowdata'} : null,
           {key: 'locationName', label: 'finalReceiveLocation', sortable: true, tdClass: 'action-rowdata'},
@@ -105,7 +102,7 @@ export default {
             // powerLevel: this.getPowerLevel(pos),
             txId: Util.getValue(pos, 'tx.txId' , null),
             potCd: Util.getValue(pos, 'tx.potCd', null),
-            potName: Util.getValue(pos, 'tx.potName', Util.getValue(pos, 'tx.txName', null)),
+            potName: Util.getValue(pos, 'tx.potName', null),
             tel: Util.getValue(pos, 'tx.extValue.tel', null),
             categoryName: Util.getValue(pos, 'tx.categoryName', null),
             groupName: Util.getValue(pos, 'tx.groupName', null),
@@ -144,7 +141,7 @@ export default {
     //   }
     // },
     async checkDetectedTx(tx) {
-      await this.fetchData()
+      //await this.fetchData()
       return _.some(this.positionList, (pos) => {
         return pos.tx && pos.tx.txId == tx.txId
             && !pos.noSelectedTx

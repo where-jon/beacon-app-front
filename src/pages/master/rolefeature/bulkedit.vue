@@ -8,11 +8,12 @@
 <script>
 import { mapState } from 'vuex'
 import * as Util from '../../../sub/util/Util'
+import { BULK, ROLE_FEATURE } from '../../../sub/constant/Constants'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
 import commonmixinVue from '../../../components/mixin/commonmixin.vue'
-import { ROLE_FEATURE } from '../../../sub/constant/Constants'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import * as BulkHelper from '../../../sub/helper/BulkHelper'
 
 export default {
   components: {
@@ -54,40 +55,35 @@ export default {
       const modeOptions = ROLE_FEATURE.getModeOptions()
       const modeTexts = pModeText.split(',')
       let modeValue = 0
-      modeTexts.forEach((modeText) => {
+      modeTexts.forEach(modeText => {
         const all = ROLE_FEATURE.getAllAuthorizationOption()
         if(all.text == modeText.trim()){
-          modeOptions.forEach((modeOption) => modeValue = modeValue | modeOption.value)
+          modeOptions.forEach(modeOption => modeValue = modeValue | modeOption.value)
           return modeValue
         }
-        const mode = modeOptions.find((modeOption) => modeOption.text == modeText.trim())
+        const mode = modeOptions.find(modeOption => modeOption.text == modeText.trim())
         modeValue = modeValue | (mode? mode.value: 0)
       })
       return modeValue
     },
     async save(bulkSaveFunc) {
-      const MAIN_COL = ['roleId', 'featureId']
-      const PRIMARY_KEYS = ['roleId', 'featureId']
-      await bulkSaveFunc(MAIN_COL, null, null, (entity, headerName, val, dummyKey) => {
-        if (Util.equalsAny(headerName, PRIMARY_KEYS)) {
-          if(!entity.roleFeaturePK){
-            entity.roleFeaturePK = Object()
+      await bulkSaveFunc(BULK.PRIMARY_KEY, null, null, (entity, headerName, val, dummyKey) => {
+        if (BulkHelper.isPrimaryKeyHeader(headerName)){
+          const keys = val.split(BULK.SPLITTER)
+          BulkHelper.setNumberKey(entity, 'roleId', Util.getValue(keys, '0', dummyKey--))
+          BulkHelper.setNumberKey(entity, 'featureId', Util.getValue(keys, '1', dummyKey--))
+          entity.updateKey = val,
+          entity.roleFeaturePK = {
+            roleId: entity.roleId,
+            featureId: entity.featureId,
           }
-          if (headerName === 'roleId' && Util.hasValue(val)) {
-            entity.roleFeaturePK.roleId = Number(val)
-            entity.roleId = Number(val)
-          }
-          else if (headerName === 'featureId' && Util.hasValue(val)) {
-            entity.roleFeaturePK.featureId = Number(val)
-            entity.featureId = Number(val)
-          }
+          return dummyKey
         }
-        else if(headerName == 'modeText') {
+        if(headerName == 'modeText') {
           entity.mode = this.getModeValue(val)
+          return dummyKey
         }
-        else {
-          entity[headerName] = val
-        }
+        entity[headerName] = val
         return dummyKey
       }, (entity, dummyKey) => entity.rootRoleId = this.role.roleId )
     },

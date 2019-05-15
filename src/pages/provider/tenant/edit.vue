@@ -106,12 +106,6 @@
             <input v-model="form.meshId" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control">
           </b-form-row>
         </div>
-        <div v-if="!hasId && show" class="form-row">
-          <b-form-row class="mb-5">
-            <label v-t="'label.deviceOffset'" class="mr-3" />
-            <input v-model="form.deviceOffset" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control" required>
-          </b-form-row>
-        </div>
 
         <b-form-row class="mb-2">
           <b-button v-t="'label.featureSetting'" :variant="theme" type="button" class="mr-2 my-1" @click="showFeatureEdit" />
@@ -180,7 +174,7 @@ export default {
       id: 'tenantId',
       backPath: '/provider/tenant',
       appServicePath: '/meta/tenant',
-      form: ViewHelper.extract(this.$store.state.app_service.tenant, ['tenantId', 'tenantCd', 'tenantName', 'sysAdminLoginId', 'sysAdminPass', 'adminLoginId', 'adminPass', 'userLoginId', 'userPass', 'regionName', 'meshId', 'deviceOffset', 'createDt', 'delFlg']),
+      form: ViewHelper.extract(this.$store.state.app_service.tenant, ['tenantId', 'tenantCd', 'tenantName', 'sysAdminLoginId', 'sysAdminPass', 'adminLoginId', 'adminPass', 'userLoginId', 'userPass', 'regionName', 'meshId', 'createDt', 'delFlg']),
       items: ViewHelper.createBreadCrumbItems('provider', {text: 'tenant', href: '/provider/tenant'}, Util.getDetailCaptionKey(this.$store.state.app_service.tenant.tenantId)),
       fields: ViewHelper.addLabelByKey(this.$i18n, [ 
         {key: 'parentCheck', label: 'dummy', thStyle: {width:'4px !important'} },
@@ -318,7 +312,7 @@ export default {
           Util.hasValue(this.form.adminLoginId)? {userId: dummyKey--, loginId: this.form.adminLoginId, pass: this.form.adminPass, role: { roleId: dummyKey--, roleName: 'ADMIN' }}: null,
           Util.hasValue(this.form.userLoginId)? {userId: dummyKey--, loginId: this.form.userLoginId, pass: this.form.userPass, role: { roleId: dummyKey--, roleName: 'USER' }}: null,
         ].filter((val) => val): null,
-        region: !Util.hasValue(this.form.tenantId)? {regionId: dummyKey--, regionName: this.form.regionName, meshId: Util.hasValue(this.form.meshId)? this.form.meshId: null, deviceOffset: this.form.deviceOffset}: null,
+        region: !Util.hasValue(this.form.tenantId)? {regionId: dummyKey--, regionName: this.form.regionName, meshId: Util.hasValue(this.form.meshId)? this.form.meshId: null}: null,
         defaultExcloudBaseUrl: defaultConfig.EXCLOUD_BASE_URL,
         excloudBaseUrl: EXCLOUD_BASE_URL,
         tenantFeatureList: this.featureList.map((val) => {

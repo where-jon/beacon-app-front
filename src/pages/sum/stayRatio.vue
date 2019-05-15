@@ -151,7 +151,7 @@ export default {
       param.date = moment(param.date).format('YYYYMMDD')
       const groupBy = param.groupId? '&groupId=' + param.groupId: ''
       const group = param.groupId? this.groups.find((val) => val.groupId == param.groupId): null
-      const url = '/office/stayTime/sumByDay/' + param.date + '/zoneCategory?from=' + APP.SUM_FROM + '&to=' + APP.SUM_TO + groupBy
+      const url = '/office/stayTime/sumByDay/' + param.date + '/zoneCategory?from=' + APP.STAY_SUM.FROM + '&to=' + APP.STAY_SUM.TO + groupBy
       const sumData = await HttpHelper.getAppService(url)
       if (_.isEmpty(sumData)) {
         this.message = this.$i18n.t('message.listEmpty')
@@ -160,7 +160,7 @@ export default {
         return
       }
 
-      this.viewList = this.getStayDataList(moment(param.date).format('YYYY-MM-DD'), sumData, APP.SUM_ABSENT_LIMIT, APP.SUM_LOST_LIMIT)
+      this.viewList = this.getStayDataList(moment(param.date).format('YYYY-MM-DD'), sumData, APP.STAY_SUM.BSENT_LIMIT, APP.STAY_SUM.LOST_LIMIT)
       
       this.totalRows = this.viewList.length
       this.searchedGroupName =  group? group.groupName: ''
@@ -173,7 +173,7 @@ export default {
     isLostData(byId) {
       return byId == -1
     },
-    getStayDataList(date, stayData, absentLimit = 0, lostLimit = APP.LOST_TIME) {
+    getStayDataList(date, stayData, absentLimit = 0, lostLimit = APP.POS.LOST_TIME) {
       return stayData.map((data) => {
         const potId = data.potId
         const pot = this.pots.find((val) => val.potId == potId)
@@ -290,7 +290,7 @@ export default {
       let day = 0
       while (day <= csvDays) {
         const searchDate = moment(param.date).startOf('months').add(day++, 'day').format('YYYYMMDD')
-        const url = '/office/stayTime/sumByDay/' + searchDate + '/zoneCategory?from=' + APP.SUM_FROM + '&to=' + APP.SUM_TO + groupBy
+        const url = '/office/stayTime/sumByDay/' + searchDate + '/zoneCategory?from=' + APP.STAY_SUM.FROM + '&to=' + APP.STAY_SUM.TO + groupBy
         const sumData = await HttpHelper.getAppService(url)
         if (_.isEmpty(sumData)) {
           console.log('searchDate: ' + searchDate)
@@ -300,7 +300,7 @@ export default {
           return
         }
 
-        let list = this.getStayDataList(moment(searchDate).format('YYYY-MM-DD'), sumData, APP.SUM_ABSENT_LIMIT, APP.SUM_LOST_LIMIT)
+        let list = this.getStayDataList(moment(searchDate).format('YYYY-MM-DD'), sumData, APP.STAY_SUM.ABSENT_LIMIT, APP.STAY_SUM.LOST_LIMIT)
         list.sort(function(a, b) {
           var nameA = a.name.toUpperCase() // 大文字、小文字を無視
           var nameB = b.name.toUpperCase() // 大文字、小文字を無視

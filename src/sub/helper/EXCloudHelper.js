@@ -96,7 +96,7 @@ export const fetchGateway = async () => {
     await HttpHelper.getExCloud(url(EXCLOUD.GATEWAY_URL) + new Date().getTime())
   return _(data)
     .map((val) => {
-      if(APP.EXSERVER){
+      if(APP.SVC.POS.EXSERVER){
         return {...val, updated: dateform(val.timestamp*1000)}
       }else{
         return {...val, updated: dateform(val.timestamp)}
@@ -111,7 +111,7 @@ export const fetchTelemetry = async () => {
   return _(data)
     // .filter((val) => EXB.some((exb) => exb.pos_id == val.pos_id))
     .map((val) => {
-      let timestamp = APP.EXSERVER ? val.timestamp*1000 : val.timestamp
+      let timestamp = APP.SVC.POS.EXSERVER ? val.timestamp*1000 : val.timestamp
       return {...val, timestamp: dateform(timestamp), ibeacon_received: dateform(val.ibeacon_received)}
     })
     .compact().value()

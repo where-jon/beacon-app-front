@@ -100,7 +100,7 @@
 
     "tx": "Tx",
     "txId": "TxID",
-    "txName": "Tx name",
+    "txName": "Name",
     "btxId": "btxId",
     "major": "Major",
     "minor": "Minor",
@@ -156,6 +156,8 @@
     "led": "LED",
     "meditag": "MEDiTAG",
     "magnet": "Magnet",
+    "omr-env": "Thermopile(env)",
+    "omr-human": "Thermopile(human)",
     "InUse": "In use",
     "Empty": "Empty",
 
@@ -297,7 +299,6 @@
     "regionId": "Region ID",
     "regionName": " Region name",
     "meshId": "Mesh ID",
-    "deviceOffset": "Device offset",
 
     "zoneClass": "Zone (Class)",
     "zoneBlock": "Zone (Division)",

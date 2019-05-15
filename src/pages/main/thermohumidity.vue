@@ -96,25 +96,25 @@ export default {
       iconInterval: 100,
       warnMessage: null,
       iconAlphaMin: 0.1,
-      fixHeight: DISP.THERMOH_ALERT_FIX_HEIGHT,
-      useHeatMap: APP.USE_THERMOH_HEATMAP,
+      fixHeight: DISP.THERMOH.ALERT_FIX_HEIGHT,
+      useHeatMap: APP.SENSOR.USE_THERMOH_HEATMAP,
       toolTipShow: false,
       toolTipLabel: '',
       toolTipStyle: {
         'left': null,
         'top': null,
-        'border-color': DISP.THERMOH_TOOLTIP_BORDERCOLOR,
-        'border-radius': '' + DISP.THERMOH_TOOLTIP_ROUNDRECT + 'px',
-        'font': DISP.THERMOH_TOOLTIP_FONT,
-        'background-color': DISP.THERMOH_TOOLTIP_BGCOLOR,
-        'color': DISP.THERMOH_TOOLTIP_COLOR,
+        'border-color': DISP.THERMOH.TOOLTIP_BORDERCOLOR,
+        'border-radius': '' + DISP.THERMOH.TOOLTIP_ROUNDRECT + 'px',
+        'font': DISP.THERMOH.TOOLTIP_FONT,
+        'background-color': DISP.THERMOH.TOOLTIP_BGCOLOR,
+        'color': DISP.THERMOH.TOOLTIP_COLOR,
       },
     }
   },
   computed: {
     alertStyle(){
       return {
-        'font-weight': DISP.THERMOH_ALERT_WEIGHT,
+        'font-weight': DISP.THERMOH.ALERT_WEIGHT,
       }
     },
   },
@@ -128,7 +128,7 @@ export default {
     heatmapData() {
       const dataList = this.positionedTx.concat(this.positionedExb)
       return HeatmapHelper.collect(dataList,
-        {max: DISP.TEMPERATURE_MAX, min: DISP.TEMPERATURE_MIN},
+        {max: DISP.THERMOH.TEMPERATURE_MAX, min: DISP.THERMOH.TEMPERATURE_MIN},
         (data) => `${data.x}-${data.y}`,
         (result, data) => data.temperature,
         (data) => {return {x: data.x * this.canvasScale, y: data.y * this.canvasScale}}
@@ -148,12 +148,12 @@ export default {
       }
     },
     iconMouseOver(event){
-      if(APP.USE_THERMOH_TOOLTIP){
+      if(APP.SENSOR.USE_THERMOH_TOOLTIP){
         this.createTooltip(event, event.target.parent)
       }
     },
     iconMouseOut(){
-      if(APP.USE_THERMOH_TOOLTIP){
+      if(APP.SENSOR.USE_THERMOH_TOOLTIP){
         this.removeTooltip()
       }
     },
@@ -182,8 +182,8 @@ export default {
     createWarnMessages(){
       this.setWarnDevices()
       const ret = []
-      const exbIdName = StateHelper.getDeviceIdName({exbId: true}, {ignorePrimaryKey: true})
-      const txIdName = StateHelper.getDeviceIdName({txId: true}, {ignorePrimaryKey: true, forceSensorName: true})
+      const exbIdName = StateHelper.getDeviceIdName({exbId: true})
+      const txIdName = StateHelper.getDeviceIdName({txId: true}, {forceSensorName: true})
       const pattern = this.humidityPatternConfig.more.sort((a, b) => {
         return a.base > b.base? -1: a.base < b.base? 1: 0
       }).concat(this.humidityPatternConfig.less.sort((a, b) => {
@@ -203,7 +203,7 @@ export default {
       return ret.join('')
     },
     addWarnMessage(){
-      if(APP.USE_HUMIDITY_ALERT){
+      if(APP.SENSOR.USE_HUMIDITY_ALERT){
         const mes = this.createWarnMessages()
         this.warnMessage = Util.hasValue(mes)? mes: null
         this.replace({showWarn: Util.hasValue(this.warnMessage)})
@@ -268,7 +268,7 @@ export default {
         HeatmapHelper.draw(
           mapElement, 
           {
-            radius: DISP.TEMPERATURE_RADIUS,
+            radius: DISP.THERMOH.TEMPERATURE_RADIUS,
             gradient: HeatmapHelper.createGradient(),
             // ヒートマップは座標系が異なるので注意
             width: this.$refs.map.width * this.canvasScale,
@@ -314,15 +314,15 @@ export default {
     },
     createButtonIcon(device, iconInfo){
       const btnicon = new Shape()
-      btnicon.graphics.beginFill(iconInfo.color).drawCircle(0, 0, DISP.THERMOH_R_SIZE / this.canvasScale, DISP.THERMOH_R_SIZE / this.canvasScale)
-      btnicon.alpha = DISP.THERMOH_ALPHA
+      btnicon.graphics.beginFill(iconInfo.color).drawCircle(0, 0, DISP.THERMOH.R_SIZE / this.canvasScale, DISP.THERMOH.R_SIZE / this.canvasScale)
+      btnicon.alpha = DISP.THERMOH.ALPHA
       return btnicon
     },
     createButtonLabel(device){
       const text = Util.formatTemperature(device.temperature) + '℃\n' + Util.formatHumidity(device.humidity) + '%'
       const label = new Text(text)
       label.font = this.getThermothFont()
-      label.color = DISP.THERMOH_COLOR
+      label.color = DISP.THERMOH.COLOR
       label.textAlign = 'center'
       label.textBaseline = 'alphabetic'
       label.y = -2
@@ -336,7 +336,7 @@ export default {
       const exbBtn = new Container()
 
       const iconInfo = SensorHelper.getThermohumidityIconInfo(this.thermoPatternConfig, exb.temperature, exb.humidity)
-      if (DISP.THERMOH_DISP == 'icon') {
+      if (DISP.THERMOH.DISP == 'icon') {
         exbBtn.addChild(this.createIcon(stage, exb))
       }
       else {
@@ -381,7 +381,7 @@ export default {
       const txBtn = new Container()
 
       const iconInfo = SensorHelper.getThermohumidityIconInfo(this.thermoPatternConfig, tx.temperature, tx.humidity)
-      if (DISP.THERMOH_DISP == 'icon') {
+      if (DISP.THERMOH.DISP == 'icon') {
         txBtn.addChild(this.createIcon(stage, tx))
       }
       else {
@@ -427,12 +427,12 @@ export default {
       const device = container.device
       const pageElement = document.getElementById('bd-page')
       return {
-        fontSize: Util.getFont2Size(DISP.THERMOH_TOOLTIP_FONT),
-        sensorName: DISP.THERMOH_TOOLTIP_ITEMS.TXNAME? device.txName? device.txName: device.locationName: '',
-        temperature: DISP.THERMOH_TOOLTIP_ITEMS.TEMPERATURE? Util.formatTemperature(device.temperature) + this.$i18n.tnl('label.temperatureUnit'): '',
-        humidity: DISP.THERMOH_TOOLTIP_ITEMS.HUMIDITY? Util.formatHumidity(device.humidity) + this.$i18n.tnl('label.humidityUnit'): '',
-        description: DISP.THERMOH_TOOLTIP_ITEMS.DESCRIPTION? Util.cutOnLong(device.description, 10): '',
-        date: DISP.THERMOH_TOOLTIP_ITEMS.DATE? Util.formatDate(device.timestamp || device.updatetime): '',
+        fontSize: Util.getFont2Size(DISP.THERMOH.TOOLTIP_FONT),
+        sensorName: DISP.THERMOH.TOOLTIP_ITEMS.TXNAME? device.txName? device.txName: device.locationName: '',
+        temperature: DISP.THERMOH.TOOLTIP_ITEMS.TEMPERATURE? Util.formatTemperature(device.temperature) + this.$i18n.tnl('label.temperatureUnit'): '',
+        humidity: DISP.THERMOH.TOOLTIP_ITEMS.HUMIDITY? Util.formatHumidity(device.humidity) + this.$i18n.tnl('label.humidityUnit'): '',
+        description: DISP.THERMOH.TOOLTIP_ITEMS.DESCRIPTION? Util.cutOnLong(device.description, 10): '',
+        date: DISP.THERMOH.TOOLTIP_ITEMS.DATE? Util.formatDate(device.timestamp || device.updatetime): '',
         baseX: window.pageXOffset + nativeEvent.clientX - Util.getValue(pageElement, 'offsetLeft', 0),
         baseY: window.pageYOffset + nativeEvent.clientY - Util.getValue(pageElement, 'offsetTop', 0),
         isDispRight: container.x * 2 <= this.stage.canvas.width,
@@ -457,11 +457,11 @@ export default {
       this.chartTitle = this.$i18n.tnl('message.monthDayTemperature', {
         month: sensorData.month,
         day: sensorData.day,
-        name: device.txName? device.txName: device.locationName? device.locationName: '',
+        name: device.potName? device.potName: device.locationName? device.locationName: '',
         description: device.description? ` : ${Util.cutOnLong(device.description, 10)}`: ''
       })
     },
-    getThermothFont(ft = DISP.THERMOH_FONT){
+    getThermothFont(ft = DISP.THERMOH.FONT){
       const font = ft.split('px')
       const fontSize = Number(font[0]) / this.canvasScale
       return Math.round(fontSize) + 'px' + font[1]
