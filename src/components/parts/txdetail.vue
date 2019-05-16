@@ -124,6 +124,11 @@ export default {
     getDispItems () {
       return APP.TXDETAIL.ITEMS.map(e => this.selectedTx[e])
     },
+    getProhibitAlertHeight () {
+      const prohibitMessageElement= document.getElementsByClassName('alert-dismissible')[0]
+      const resultHeight = prohibitMessageElement? prohibitMessageElement.offsetHeight : 0
+      return resultHeight
+    },
     getLeft() {
       this.setImageWidth()
       const isOut = this.isOutOfFrame()
@@ -147,6 +152,7 @@ export default {
       }else{
         top = this.selectedTx.orgTop - txR - 5 + offset
       }
+      top += this.getProhibitAlertHeight()
       return top + 'px'
     },
     getClass() {
