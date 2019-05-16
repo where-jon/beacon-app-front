@@ -147,6 +147,7 @@
     "gwNotify": "GW状態アラート",
     "exbNotify": "EXB状態アラート",
     "txBatteryNotify": "TX電池状態アラート",
+    "prohibitNotify": "進入禁止アラート",
     "userRegNotify": "ユーザ登録通知",
     "sosNotify": "SOSボタン押下通知",
 
@@ -1016,7 +1017,8 @@
         "0": "TXボタン通知",
         "1": "アラート系",
         "2": "ユーザ登録・更新",
-        "3": "sos"
+        "3": "sos",
+        "4": "禁止区域通知"
       },
       "SUM_AXIS_FILL_GAP": {
         "0": "しない",
