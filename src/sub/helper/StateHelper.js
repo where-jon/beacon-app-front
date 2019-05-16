@@ -408,7 +408,6 @@ export const load = async (target, force) => {
 }
 
 export const loadAreaImage = async (areaId, force) => {
-  console.log('@@@@@@@@@@@@@@ loadAreaImage')
   if (areaId == null) {
     console.log('empty areas', areaId)
     return
