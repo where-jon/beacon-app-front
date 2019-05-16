@@ -304,7 +304,6 @@ export default {
         disabledOther: Util.getValue(payload, 'disabledOther', false),
         disabledProgress: Util.getValue(payload, 'disabledProgress', false),
       }
-      clearInterval(this.prohibitInterval)
       this.showMapImageDef(async () => {
         if(!cPayload.disabledProgress){
           this.showProgress()
@@ -332,7 +331,8 @@ export default {
         this.prohibitData = await StateHelper.getProhibitData(this.getPositions(),this.prohibits)
         this.message = await StateHelper.getProhibitMessage(this.message,this.prohibitData)
         this.showTxAll()
-        // this.prohibitInterval = setInterval(this.twinkle,DISP.PROHIBIT_TWINKLE_TIME) TODO: Violation発生
+        clearInterval(this.prohibitInterval)
+        this.prohibitInterval = setInterval(this.twinkle,DISP.PROHIBIT_TWINKLE_TIME) //TODO: Violation発生
         if(!this.firstTime && reloadButton){
           reloadButton.classList.remove(spinClassName)
         }
@@ -422,6 +422,7 @@ export default {
       if (!txBtn) {
         // 作成されていない場合、新規作成してからiconsに登録
         txBtn = this.createTxBtn(pos, display.shape, color, bgColor)
+        txBtn.prohibit  = this.prohibitData ? this.prohibitData.some((data) => data.minor == pos.minor):false
         this.icons[pos.btx_id] = txBtn
       } else {
         // 作成済みの場合、座標値のみセットする
@@ -440,7 +441,6 @@ export default {
         this.showDetail(txBtn.txId, txBtn.x, txBtn.y)
       }
       this.txCont.addChild(txBtn)
-      txBtn.prohibit = this.prohibitData? this.prohibitData.some((data) => data.minor == pos.minor):false
       this.stage.update()
       this.detectedCount++  // 検知数カウント増加
     },
