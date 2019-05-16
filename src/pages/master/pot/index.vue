@@ -14,6 +14,7 @@ import { APP } from '../../../sub/constant/config.js'
 import listmixinVue from '../../../components/mixin/listmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import * as Util from '../../../sub/util/Util'
+import { APP_SERVICE, EXCLOUD } from '../../../sub/constant/config'
 
 export default {
   components: {
@@ -41,6 +42,7 @@ export default {
       name: 'pot',
       extValueDefault: {},
       items: ViewHelper.createBreadCrumbItems('master', 'pot'),
+      thumbnailUrl: APP_SERVICE.BASE_URL + EXCLOUD.POT_THUMBNAIL_URL,
     }
   },
   computed: {
@@ -127,8 +129,7 @@ export default {
       this.hideProgress()
     },
     thumbnail(row) {
-      const img = this.potImages.find((val) => val.id == row.potId)
-      return img? img.thumbnail: null
+      return this.thumbnailUrl.replace('{id}', row.potId)
     },
   }
 }
