@@ -430,7 +430,6 @@ export const loadAreaImage = async (areaId, force) => {
   else {
     areaImages.push({areaId, mapImage: base64})
   }
-  console.log(areaId, areaImages)
   store.commit('app_service/replaceAS', {areaImages})    
 
   // })
