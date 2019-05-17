@@ -10,7 +10,7 @@
             <b-form-row>
               <b-form-row class="mb-3 mr-2">
                 <label v-t="'label.minor'" class="mr-2" />
-                <v-select v-model="form.tx" :options="txOptions" class="mr-2">
+                <v-select v-model="form.tx" :options="txOptions" class="mr-2 vue-options">
                   <div slot="no-options">
                     {{ $i18n.tnl('label.vSelectNoOptions') }}
                   </div>
@@ -22,7 +22,7 @@
             <b-form-row>
               <b-form-row class="mb-3 mr-2">
                 <label v-t="'label.group'" class="mr-2" />
-                <v-select v-model="form.group" :options="groupOptions" class="mr-2">
+                <v-select v-model="form.group" :options="groupOptions" class="mr-2 vue-options">
                   <div slot="no-options">
                     {{ $i18n.tnl('label.vSelectNoOptions') }}
                   </div>
@@ -227,3 +227,7 @@ export default {
   }
 }
 </script>
+
+<style scoped lang="scss">
+@import "../../sub/constant/vue.scss";
+</style>

@@ -21,11 +21,7 @@
             <b-form-row>
               <b-form-row class="mb-3 mr-2">
                 <label v-t="'label.tx'" class="mr-2" />
-                <b-form-select v-model="form.tx" :options="txOptions" class="mr-2" @change="changeTx">
-                  <div slot="no-options">
-                    {{ $i18n.tnl('label.vSelectNoOptions') }}
-                  </div>
-                </b-form-select>
+                <v-select v-model="vueSelected.tx" :options="txOptions" class="mr-2 vue-options" />
               </b-form-row>
             </b-form-row>
           </b-form-group>
@@ -173,6 +169,9 @@ export default {
         datetimeTo: null,
         notifyState: null,
       },
+      vueSelected: {
+        tx: null,
+      },
       viewList: [],
       csvList: [],
       fields: [],
@@ -240,15 +239,23 @@ export default {
     ]),
 
     notifyStateOptions() {
-      return _.slice(NOTIFY_STATE.getOptions()).filter((val) => APP.NOTIFY_STATE_TYPES.includes(val.index))
+      return _.slice(NOTIFY_STATE.getOptions()).filter((val) => APP.NOTIFY.STATE_TYPES.includes(val.index))
     },
     txOptions() {
       let result =  StateHelper.getOptionsFromState('tx',
         tx => StateHelper.getTxIdName(tx),
         true
       )
-      result.unshift( {value: null, label: '', text: ''})
       return result
+    },
+  },
+  watch: {
+    'vueSelected.tx': {
+      handler: function(newVal, oldVal){
+        this.form.tx = Util.getValue(newVal, 'value', null)
+        this.changeTx(this.form.tx)
+      },
+      deep: true,
     },
   },
   async created() {
@@ -492,6 +499,12 @@ export default {
       HtmlUtil.fileDL('notifyHistory.csv', Util.converToCsv(records), getCharSet(this.$store.state.loginId))
 
     },
+    async fetchData(payload) {
+    },
   }
 }
 </script>
+
+<style scoped lang="scss">
+@import "../../sub/constant/vue.scss";
+</style>

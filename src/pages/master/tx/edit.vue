@@ -16,12 +16,16 @@
               <b-form-select v-model="form.sensorId" :options="sensorOptionsTx" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-3 col-4" />
             </b-form-group>
             <b-form-group v-show="isShown('TX.WITH', 'category')">
-              <label v-t="'label.category'" />
-              <b-form-select v-model="form.categoryId" :options="categoryOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-3 col-4" />
+              <b-form-row>
+                <label v-t="'label.category'" class="d-flex align-items-center" />
+                <v-select v-model="vueSelected.category" :options="categoryOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-2 vue-options" />
+              </b-form-row>
             </b-form-group>
             <b-form-group v-show="isShown('TX.WITH', 'group')">
-              <label v-t="'label.group'" />
-              <b-form-select v-model="form.groupId" :options="groupOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-3 col-4" />
+              <b-form-row>
+                <label v-t="'label.group'" class="d-flex align-items-center" />
+                <v-select v-model="vueSelected.group" :options="groupOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-2 vue-options" />
+              </b-form-row>
             </b-form-group>
             <b-form-group v-show="showTx('btxId')">
               <label v-t="'label.btxId'" />
@@ -115,6 +119,10 @@ export default {
       defValue: {
         'dispPos': 1,
       },
+      vueSelected: {
+        category: null,
+        group: null,
+      },
       items: ViewHelper.createBreadCrumbItems('master', {text: 'tx', href: '/master/tx'}, Util.getDetailCaptionKey(this.$store.state.app_service.tx.txId)),
     }
   },
@@ -131,7 +139,7 @@ export default {
       return options
     },
     categoryOptions() {
-      return StateHelper.getOptionsFromState('category', false, false, 
+      return StateHelper.getOptionsFromState('category', false, true, 
         category => CATEGORY.POT_AVAILABLE.includes(category.categoryType)
       )
     },
@@ -153,6 +161,20 @@ export default {
       'potImages',
     ]),
   },
+  watch: {
+    'vueSelected.category': {
+      handler: function(newVal, oldVal){
+        this.form.categoryId = Util.getValue(newVal, 'value', null)
+      },
+      deep: true,
+    },
+    'vueSelected.group': {
+      handler: function(newVal, oldVal){
+        this.form.groupId = Util.getValue(newVal, 'value', null)
+      },
+      deep: true,
+    },
+  },
   mounted() {
     ViewHelper.applyDef(this.form, this.defValue)
     StateHelper.load('sensor')
@@ -171,6 +193,10 @@ export default {
         return col == 'btxId'
       }
       return true
+    },
+    beforeReload(){
+      this.vueSelected.category = StateHelper.getVueSelectData(this.categoryOptions, null)
+      this.vueSelected.group = StateHelper.getVueSelectData(this.groupOptions, null)
     },
     async afterCrud(){
       await StateHelper.load('pot', true)
@@ -248,5 +274,5 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
+@import "../../../sub/constant/vue.scss";
 </style>

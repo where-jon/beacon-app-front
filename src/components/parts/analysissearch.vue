@@ -5,7 +5,7 @@
         <b-form-row>
           <b-form-row class="mb-3">
             <label v-t="'label.area'" class="mr-2 mb-2" />
-            <b-form-select v-model="form.areaId" :options="areaOptions" class="inputSelect" required />
+            <v-select v-model="vueSelected.area" :options="areaOptions" :clearable="false" class="inputSelect vue-options" />
           </b-form-row>
         </b-form-row>
       </b-form-group>          
@@ -15,19 +15,19 @@
         <b-form-group>
           <b-form-row v-if="enableCategory" class="mb-3 mr-5">
             <label v-t="'label.category'" class="mr-2" />
-            <b-form-select v-model="form.categoryId" :options="getCategoryOptions(showCategoryTypes)" class="mr-2 inputSelect" @change="changeCategory" />
+            <v-select v-model="vueSelected.category" :options="getCategoryOptions(showCategoryTypes)" class="mr-2 inputSelect vue-options" />
           </b-form-row>
         </b-form-group>
         <b-form-group>
           <b-form-row v-if="enableGroup" class="mb-3 mr-5">
             <label v-t="'label.group'" class="mr-2" />
-            <b-form-select v-model="form.groupId" :options="groupOptions" class="mr-2 inputSelect" @change="changeGroup" />
+            <v-select v-model="vueSelected.group" :options="groupOptions" class="mr-2 inputSelect vue-options" />
           </b-form-row>
         </b-form-group>
         <b-form-group>
           <b-form-row v-if="enableIndividual" class="mb-3 mr-2">
             <label v-t="'label.individual'" class="mr-2" />
-            <b-form-select v-model="form.potId" :options="potOptions" class="mr-2 inputSelect" />
+            <v-select v-model="vueSelected.pot" :options="potOptions" class="mr-2 inputSelect vue-options" />
           </b-form-row>
         </b-form-group>
       </b-form-row>
@@ -98,6 +98,12 @@ export default {
         datetimeFrom: null,
         datetimeTo: null,
       },
+      vueSelected: {
+        area: null,
+        category: null,
+        group: null,
+        pot: null,
+      },
       appServicePath: '/core/positionHistory',
       potOptions: [],
       interval: 24 * 60 * 60 * 1000,
@@ -138,9 +144,33 @@ export default {
     }
   },
   watch: {
-    'form.areaId' : function(newAreaId, oldAreaId){
-      this.changeArea(newAreaId)
-    }
+    'vueSelected.area': {
+      handler: function(newVal, oldVal){
+        this.form.areaId = Util.getValue(newVal, 'value', null)
+        this.changeArea(this.form.areaId)
+      },
+      deep: true,
+    },
+    'vueSelected.category': {
+      handler: function(newVal, oldVal){
+        this.form.categoryId = Util.getValue(newVal, 'value', null)
+        this.changeCategory()
+      },
+      deep: true,
+    },
+    'vueSelected.group': {
+      handler: function(newVal, oldVal){
+        this.form.groupId = Util.getValue(newVal, 'value', null)
+        this.changeGroup()
+      },
+      deep: true,
+    },
+    'vueSelected.pot': {
+      handler: function(newVal, oldVal){
+        this.form.potId = Util.getValue(newVal, 'value', null)
+      },
+      deep: true,
+    },
   },
   async created() {
     await StateHelper.load('area')
@@ -149,8 +179,7 @@ export default {
     await StateHelper.load('pot')
     this.changeCategory()
     this.changeGroup()
-    this.form.areaId = this.areas? this.areas[0].areaId: null
-    this.changeArea(this.form.areaId)
+    this.vueSelected.area = StateHelper.getVueSelectData(this.areaOptions, null, true)
     const date = new Date()
     this.form.datetimeFrom = Util.getDatetime(date, {hours: -1})
     this.form.datetimeTo = Util.getDatetime(date)
@@ -164,18 +193,18 @@ export default {
   },
   methods: {
     changeCategory(newVal = this.form.categoryId) {
-      this.potOptions = StateHelper.getOptionsFromState('pot', false, false, 
+      this.potOptions = StateHelper.getOptionsFromState('pot', false, true, 
         pot => pot.potType == CATEGORY.PERSON && (!newVal || pot.categoryId == newVal)
       )
-      if(!this.potOptions.find((val) => val.value == this.form.potId)){
+      if(!this.potOptions.find(val => val.value == this.form.potId)){
         this.form.potId = null
       }
     },
     changeGroup(newVal = this.form.groupId) {
-      this.potOptions = StateHelper.getOptionsFromState('pot', false, false, 
+      this.potOptions = StateHelper.getOptionsFromState('pot', false, true, 
         pot => pot.potType == CATEGORY.PERSON && (!newVal || pot.groupId == newVal)
       )
-      if(!this.potOptions.find((val) => val.value == this.form.potId)){
+      if(!this.potOptions.find(val => val.value == this.form.potId)){
         this.form.potId = null
       }
     },
@@ -200,7 +229,7 @@ export default {
         {type: 'require', names: ['historyDateFrom'], values: [this.form.datetimeTo]},
         this.form.datetimeFrom && this.form.datetimeTo? {type: 'asc', names: ['historyDateFrom'], values: [this.form.datetimeFrom.getTime(), this.form.datetimeTo.getTime()], equal: false}: null,
         this.form.datetimeFrom && this.form.datetimeTo? {type: 'less', names: ['historyDateFrom'], values: [this.form.datetimeFrom.getTime() * -1, this.form.datetimeTo.getTime()], base: this.interval, displayBase: this.intervalHours, equal: true}: null,
-      ].filter((val) => val && val.names.length >= 1))
+      ].filter(val => val && val.names.length >= 1))
       return this.formatValidateMessage(errors)
     },
     onDisplay(){
@@ -242,6 +271,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import "../../sub/constant/vue.scss";
 .inputSelect {
   min-width: 160px;
 }

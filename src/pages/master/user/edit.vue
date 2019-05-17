@@ -20,7 +20,7 @@
         </b-form-group>
         <b-form-group>
           <label v-t="'label.role'" />
-          <b-form-select v-model="role" :options="roleOptions" :disabled="!isEditable" required />
+          <v-select v-model="vueSelected.role" :options="roleOptions" :disabled="!isEditable" :clearable="false" class="mb-3 vue-options" />
         </b-form-group>
         <b-form-group>
           <label v-t="'label.description'" />
@@ -74,6 +74,7 @@ export default {
       backPath: '/master/user',
       appServicePath: '/meta/user',
       form: ViewHelper.extract(this.$store.state.app_service.user, ['userId', 'loginId', 'name', 'email', 'roleId', 'description']),
+      vueSelected: { role: null },
       roleOptions: [],
       role: null,
       pass: null,
@@ -105,10 +106,18 @@ export default {
       'showAlert'
     ]),
   },
+  watch: {
+    'vueSelected.role': {
+      handler: function(newVal, oldVal){
+        this.role = Util.getValue(newVal, 'value', null)
+      },
+      deep: true,
+    },
+  },
   async created(){
     await StateHelper.load('role')
     this.roleOptions = StateHelper.getOptionsFromState('role', false, true)
-    this.role = this.form.roleId
+    this.vueSelected.role = StateHelper.getVueSelectData(this.roleOptions, Util.getValue(this.form, 'roleId', this.roleOptions.reduce((prev, cur) => cur).value))
   },
   mounted(){
     HtmlUtil.setCustomValidationMessage()
@@ -158,6 +167,9 @@ export default {
         )
       }
     },
+    beforeReload(){
+      this.vueSelected.role = StateHelper.getVueSelectData(this.roleOptions, this.roleOptions.reduce((prev, cur) => cur).value)
+    },
     beforeSubmit(event, again){
       this.replace({showAlert: false})
       this.replace({showInfo: false})
@@ -192,5 +204,5 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
+@import "../../../sub/constant/vue.scss";
 </style>

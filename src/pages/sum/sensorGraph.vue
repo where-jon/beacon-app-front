@@ -31,7 +31,7 @@
               <span v-t="'label.exb'" class="d-flex align-items-center" />
             </b-form-row>
             <b-form-row>
-              <b-form-select v-model="form.exbId" :options="exbOptions" class="ml-2 inputSelect" required />
+              <v-select v-model="vueSelected.exb" :options="exbOptions" :clearable="false" class="ml-2 inputSelect vue-options" />
             </b-form-row>
           </b-form-row>
           <b-form-row v-if="showTx" class="mb-3">
@@ -39,7 +39,7 @@
               <span v-t="'label.tx'" class="d-flex align-items-center" />
             </b-form-row>
             <b-form-row>
-              <b-form-select v-model="form.txId" :options="txOptions" class="ml-2 inputSelect" required />
+              <v-select v-model="vueSelected.tx" :options="txOptions" :clearable="false" class="ml-2 inputSelect vue-options" />
             </b-form-row>
           </b-form-row>
         </b-form-group>
@@ -136,6 +136,10 @@ export default {
         exbId: null,
         txId: null,
       },
+      vueSelected: {
+        exb: null,
+        tx: null,
+      },
       items: ViewHelper.createBreadCrumbItems('sumTitle', 'sensorGraph'),
       headers: {
         temperature: [
@@ -231,6 +235,20 @@ export default {
       return this.deviceType == DEVICE.EXB
     },
   },
+  watch: {
+    'vueSelected.exb': {
+      handler: function(newVal, oldVal){
+        this.form.exbId = Util.getValue(newVal, 'value', null)
+      },
+      deep: true,
+    },
+    'vueSelected.tx': {
+      handler: function(newVal, oldVal){
+        this.form.txId = Util.getValue(newVal, 'value', null)
+      },
+      deep: true,
+    },
+  },
   async created() {
     await StateHelper.load('sensor')
     await StateHelper.load('tx')
@@ -272,15 +290,15 @@ export default {
       this.sumUnitOptions = options
     },
     getExbOptions(newVal = this.form.sensorId){
-      const exbs = this.exbs.filter((val) => val.sensorId == newVal)
+      const exbs = this.exbs.filter(val => val.sensorId == newVal)
       // const exbs = this.exbs.filter((val) => this.getSensorIds(val).includes(newVal)) 一旦単数に戻す
-      this.exbOptions = exbs? exbs.map((val) => ({value: val.exbId, text: val.locationName})): []
-      this.form.exbId = this.exbOptions.length == 0? null: this.exbOptions[0].value
+      this.exbOptions = exbs? exbs.map(val => ({value: val.exbId, label: val.locationName})): []
+      this.vueSelected.exb = StateHelper.getVueSelectData(this.exbOptions, null, true)
     },
     getTxOptions(newVal = this.form.sensorId){
-      const txs = this.txs.filter((val) => val.sensorId == newVal)
-      this.txOptions = txs? txs.map((val) => ({value: val.txId, text: Util.getValue(val, 'potName', APP.TX_BTX_MINOR == 'minor'? val.minor: val.btxId)})): []
-      this.form.txId = this.txOptions.length == 0? null: this.txOptions[0].value
+      const txs = this.txs.filter(val => val.sensorId == newVal)
+      this.txOptions = txs? txs.map(val => ({value: val.txId, label: Util.getValue(val, 'potName', APP.TX_BTX_MINOR == 'minor'? val.minor: val.btxId)})): []
+      this.vueSelected.tx = StateHelper.getVueSelectData(this.txOptions, null, true)
     },
     setDeviceTypeFromSensorId(sensorId){
       this.deviceType = Util.hasValue(this.deviceOptions)? this.deviceOptions[0].value: this.txType.includes(sensorId)? DEVICE.TX: DEVICE.EXB
@@ -576,6 +594,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import "../../sub/constant/vue.scss";
 .inputSelect {
   min-width: 160px;
 }
