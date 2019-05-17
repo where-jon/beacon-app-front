@@ -352,6 +352,8 @@ export default {
       'groups',
       'areas',
       'listMessage',
+      'editPage',
+      'moveEditPage',
     ]),
     ...mapState('main', [
       'selectedTx',
@@ -461,6 +463,14 @@ export default {
     this.replace({showWarn: false})
     this.replace({showAlert: this.showError})
     this.replace({showInfo: this.showMessage})
+
+    this.$nextTick(() => {
+      if(this.moveEditPage && this.editPage){
+        this.currentPage = this.editPage
+      }
+      this.replaceAS({editPage: null})
+      this.replaceAS({moveEditPage: false})
+    })
   },
   methods: {
     ...mapMutations('app_service', [
@@ -546,6 +556,7 @@ export default {
         entity = this.$parent.$options.methods.convBeforeEdit.call(this.$parent, entity)
       }
       this.replaceAS({[this.name]: entity})
+      this.replaceAS({editPage: this.currentPage})
       this.$router.push(this.editPath)
     },
     getDispCategoryName(category){
