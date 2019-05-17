@@ -240,7 +240,7 @@ export default {
     ]),
 
     notifyStateOptions() {
-      return _.slice(NOTIFY_STATE.getOptions()).filter((val) => APP.NOTIFY_STATE_TYPES.includes(val.index))
+      return _.slice(NOTIFY_STATE.getOptions()).filter((val) => APP.NOTIFY.STATE_TYPES.includes(val.index))
     },
     txOptions() {
       let result =  StateHelper.getOptionsFromState('tx',

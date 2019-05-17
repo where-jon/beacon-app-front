@@ -428,7 +428,7 @@ export default {
       const pageElement = document.getElementById('bd-page')
       return {
         fontSize: Util.getFont2Size(DISP.THERMOH.TOOLTIP_FONT),
-        sensorName: DISP.THERMOH.TOOLTIP_ITEMS.TXNAME? device.txName? device.txName: device.locationName: '',
+        sensorName: DISP.THERMOH.TOOLTIP_ITEMS.TXNAME? device.potName? device.potName: device.locationName: '',
         temperature: DISP.THERMOH.TOOLTIP_ITEMS.TEMPERATURE? Util.formatTemperature(device.temperature) + this.$i18n.tnl('label.temperatureUnit'): '',
         humidity: DISP.THERMOH.TOOLTIP_ITEMS.HUMIDITY? Util.formatHumidity(device.humidity) + this.$i18n.tnl('label.humidityUnit'): '',
         description: DISP.THERMOH.TOOLTIP_ITEMS.DESCRIPTION? Util.cutOnLong(device.description, 10): '',
