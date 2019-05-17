@@ -13,6 +13,47 @@ export const setApp = (pStore, pi18n) => {
   i18n = pi18n
 }
 
+export const createMasterCd = (masterType, masterList, masterData = null) => {
+  if(!Util.hasValue(masterList)){
+    return '1'
+  }
+  const masterIdName = masterType + 'Id'
+  const masterCdName = masterType + 'Cd'
+  if(masterData && masterData[masterIdName]){
+    return masterData[masterCdName]? masterData[masterCdName]: masterData[masterIdName]
+  }
+  const reg = /([^0-9]*)([0-9]*)/
+  const maxCd = masterList.map(master => master[masterCdName]).filter(master => master).reduce((prev, cur) => {
+    const prevAry = prev.split(reg).filter(val => val)
+    const prevLength = prevAry.length
+    const curAry = cur.split(reg).filter(val => val)
+    const curLength = curAry.length
+    for(let cnt = 0; cnt < prevLength; cnt++){
+      if(curLength <= cnt){
+        return prev
+      }
+      const comp = Util.compareStrNum(prevAry[cnt], curAry[cnt])
+      if(comp < 0){
+        return cur
+      }
+      if(comp > 0){
+        return prev
+      }
+    }
+    return prevLength < curLength? cur: prev
+  }, '')
+  if(!Util.hasValue(maxCd)){
+    return '1'
+  }
+  return maxCd.split(reg).filter(val => val).reduce((prev, cur, index, array) => {
+    const ret = '' + prev
+    if(index + 1 < array.length){
+      return ret + cur
+    }
+    return ret + (/^[0-9]+$/.test(cur)? Util.addWithPadding(cur, 1): cur.concat(1))
+  }, '')
+}
+
 export const getSensorIdName = (sensor) => {
   if(!sensor){
     return null
