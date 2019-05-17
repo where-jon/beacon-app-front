@@ -103,7 +103,22 @@
               </div>
             </span>
           </template>
+           <template slot="potNames" slot-scope="row">
+            <span v-for="(val, key) in row.item.potNames" :key="key">
+              {{ val }}<br>
+            </span>
+          </template>
+           <template slot="zoneNames" slot-scope="row">
+            <span v-for="(val, key) in row.item.zoneNames" :key="key">
+              {{ val }}<br>
+            </span>
+          </template>
 
+          <template slot="minorList" slot-scope="row">
+            <span v-for="(val, key) in row.item.minorList" :key="key">
+              {{ val }}<br>
+            </span>
+          </template>
           <template slot="deviceNums" slot-scope="row">
             <span v-for="(val, key) in row.item.deviceNums" :key="key">
               {{ val }} <br>
@@ -220,6 +235,15 @@ export default {
         {key: 'txNames', sortable: true,label:'txName' },
         {key: 'notifyResult', sortable: true,label:'notifyResult' },
       ]),
+      fields7: ViewHelper.addLabelByKey(this.$i18n, [  // ユーザ登録通知
+        {key: 'positionDt', sortable: true, label:'dt'},
+        {key: 'notifyTo', sortable: true,label:'notifyTo' },
+        {key: 'minorList', sortable: true,label:'minor' },
+        {key: 'potNames', sortable: true, label:'potName'},
+        {key: 'zoneNames', sortable: true, label:'zoneName'},
+        {key: 'lastRcvDatetimes', sortable: true,label:'finalReceiveTime' },
+        {key: 'notifyResult', sortable: true,label:'notifyResult' },
+      ]),
       currentPage: 1,
       perPage: 20,
       limitViewRows: 100,
@@ -240,7 +264,7 @@ export default {
     ]),
 
     notifyStateOptions() {
-      return _.slice(NOTIFY_STATE.getOptions()).filter((val) => APP.NOTIFY_STATE_TYPES.includes(val.index))
+      return _.slice(NOTIFY_STATE.getOptions()).filter((val) => APP.NOTIFY.STATE_TYPES.includes(val.index))
     },
     txOptions() {
       let result =  StateHelper.getOptionsFromState('tx',
@@ -269,7 +293,6 @@ export default {
     this.userState == 'ALL_REGION'? this.bTx = true: this.bTx = false
     this.userState == 'ALL_REGION'? this.bUserCheck = true: this.bUserCheck = false
     this.userState == 'ALL_REGION'? null: this.userMinor = user.minor
-
     this.fields = this.fields1
 
   },
@@ -340,9 +363,21 @@ export default {
           txNames : 'txNames',
           notifyResult : 'notifyResult',
         }
+      case 'PROHIBIT_NOTIFY':
+        return {
+          positionDt: 'notifyDatetime',
+          notifyTo : 'notifyTo',
+          minors  : 'minors',
+          minor  : 'minor',
+          potNames : 'potNames',
+          zoneNames : 'zoneNames',
+          lastRcvDatetimes : 'lastRcvDatetimes',
+          notifyResult : 'notifyResult',
+        }
+
       }
     },
-    getNotifyTo(notifyToData){
+    getNotifyBrTag(notifyToData){
       let notifysTo = notifyToData.split(',')
       let arNotify = []
       if(notifysTo){
@@ -386,6 +421,8 @@ export default {
           this.fields = this.fields5
         }else if (aNotifyState == 'USER_REG_NOTIFY') {
           this.fields = this.fields6
+        }else if (aNotifyState == 'PROHIBIT_NOTIFY') {
+          this.fields = this.fields7
         }
         this.csvHeaders = this.getCsvHeaders(aNotifyState)
         const aTxId = this.txId
@@ -405,8 +442,12 @@ export default {
           notifyData.positionDt = Util.formatDate(d.getTime())
           notifyData.notifyResult = notifyData.notifyResult == 0 ? '成功' : '失敗'
           if(this.userState == 'ALL_REGION' || aNotifyState == 'GW_ALERT' || aNotifyState == 'EXB_ALERT'){
-            let arNotifyto = this.getNotifyTo(notifyData.notifyTo)
+            let arNotifyto = this.getNotifyBrTag(notifyData.notifyTo)
             arNotifyto ? notifyData.notifyTo = arNotifyto: null
+
+            //let arPotName = this.getNotifyBrTag(notifyData.potNames.toString())
+            //arPotName ? notifyData.potNames = arPotName: null
+
             if (++count <= this.limitViewRows) {
               this.viewList.push(notifyData)
             }
@@ -420,7 +461,7 @@ export default {
             this.gPowerLevel= notifyData.powerLevels[tempIndex]
             notifyData.majors = notifyData.majors[tempIndex]
             notifyData.txNames = notifyData.txNames[tempIndex]
-            let arNotifyto = this.getNotifyTo(notifyData.notifyTo)
+            let arNotifyto = this.getNotifyBrTag(notifyData.notifyTo)
             arNotifyto ? notifyData.notifyTo = arNotifyto: null
             if (++count <= this.limitViewRows) {
               notifyData.minors == this.userMinor? this.viewList.push(notifyData) : null
@@ -459,6 +500,18 @@ export default {
         if(record.major!=null){
           let majors = record.major.toString()
           record.major = majors.replace( /,/gi, ';')
+        }
+        if(record.minor!=null){
+          let minors = record.minor.toString()
+          record.minor = minors.replace( /,/gi, ';')
+        }
+        if(record.potNames!=null){
+          let potNames = record.potNames.toString()
+          record.potNames = potNames.replace( /,/gi, ';')
+        }
+        if(record.zoneNames!=null){
+          let zoneNames = record.zoneNames.toString()
+          record.zoneNames = zoneNames.replace( /,/gi, ';')
         }
         if(record.minor!=null){
           let minors = record.minor.toString()
