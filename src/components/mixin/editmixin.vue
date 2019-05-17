@@ -61,7 +61,6 @@ export default {
     this.replace({showWarn: false})
     this.replace({showAlert: false})
     this.replace({showInfo: false})
-    this.replaceAS({moveEditPage: false})
   },
   methods: {
     register(again) {
