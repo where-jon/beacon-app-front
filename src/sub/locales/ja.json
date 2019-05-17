@@ -28,6 +28,7 @@
     "actions": "アクション",
     "download": "ダウンロード",
     "downloadMonth": "ダウンロード(月)",
+    "displaySpecified": "表示指定",
     "csvFile": "CSVファイル",
     "zipFile": "zipファイル",
     "cancel": "キャンセル",

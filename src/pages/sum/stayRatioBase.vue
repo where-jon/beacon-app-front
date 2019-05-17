@@ -1,5 +1,13 @@
 <template>
   <div>
+    <b-modal
+      id="stayRatioDisplayModal"
+      size="lg"
+      :title="$t('label.displaySpecified')"
+       ok-only
+    >
+      
+    </b-modal>
     <breadcrumb :items="items" :reload="false" />
     <div class="container">
       <alert :message="message" />
@@ -30,6 +38,7 @@
             <b-button v-t="'label.display'" type="submit" :variant="theme" @click="display" />
             <b-button v-if="!iosOrAndroid" v-t="'label.download'" :variant="theme" class="ml-2" @click="download" />
             <b-button v-if="!iosOrAndroid" v-t="'label.downloadMonth'" :variant="theme" class="ml-2" @click="downloadMonth" />
+            <b-button v-if="!iosOrAndroid" v-t="'label.displaySpecified'" :variant="theme" class="ml-2" v-b-modal.stayRatioDisplayModal />
           </b-form-row>
         </b-form-group>
       </b-form>
@@ -74,6 +83,7 @@ export default {
       form: {
         date: '',
       },
+      name: '',
       viewList: [],
       items: ViewHelper.createBreadCrumbItems('sumTitle', 'stayRatio'),
       message: '',
@@ -89,8 +99,8 @@ export default {
         fields: ViewHelper.addLabelByKey(this.$i18n, [
           {key: 'date', sortable: false, label: 'date'},
           {key: 'name', sortable: true, label: 'potName'},
-          this.enableCategory? {key: 'groupName', sortable: true, label: 'groupName'}: null,
-          this.enableGroup? {key: 'categoryName', sortable: true, label: 'categoryName'}: null,
+          {key: 'groupName', sortable: true, label: 'groupName'},
+          {key: 'categoryName', sortable: true, label: 'categoryName'},
           {key: 'graph', sortable: false, thStyle: {height: '50px !important', width:'400px !important'} },
           {key: 'stayTime', sortable: true, label: 'stayTime'},
           {key: 'lostTime', sortable: true, label: 'lostTime'},
@@ -112,15 +122,16 @@ export default {
       'pots',
       'categories',
       'zones',
+      'area',
     ]),
     iosOrAndroid() {
       return Util.isAndroidOrIOS()
     },
     enableCategory () {
-      return this.isEnabledMenu('category') && APP.POT_WITH_CATEGORY
+      return this.isEnabledMenu('category') && Util.includesIgnoreCase(APP.POT.WITH, 'category')
     },
     enableGroup () {
-      return this.isEnabledMenu('group') && APP.POT_WITH_GROUP
+      return this.isEnabledMenu('group') && Util.includesIgnoreCase(APP.POT.WITH, 'group')
     },
   },
   async created() {
