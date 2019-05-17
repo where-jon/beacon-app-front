@@ -103,12 +103,12 @@
               </div>
             </span>
           </template>
-           <template slot="potNames" slot-scope="row">
+          <template slot="potNames" slot-scope="row">
             <span v-for="(val, key) in row.item.potNames" :key="key">
               {{ val }}<br>
             </span>
           </template>
-           <template slot="zoneNames" slot-scope="row">
+          <template slot="zoneNames" slot-scope="row">
             <span v-for="(val, key) in row.item.zoneNames" :key="key">
               {{ val }}<br>
             </span>
