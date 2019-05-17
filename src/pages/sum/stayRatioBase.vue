@@ -23,12 +23,6 @@
             <b-form-select v-model="vModelCategory" :options="categoryOptionList" class="mr-2 inputSelect" @change="categoryChange" />
           </b-form-row>
         </b-form-group>
-        <b-form-group>
-          <b-form-row class="mb-3 mr-5">
-            <label v-t="'label.zone'" class="mr-2" />
-            <b-form-select v-model="vModelZone" class="mr-2 inputSelect" :options="zoneOptions" @change="zoneChange" />
-          </b-form-row>
-        </b-form-group>
       </b-form>
       <b-form inline @submit.prevent>
         <b-form-group>
@@ -90,9 +84,7 @@ export default {
       totalRows: 0,
       searchedGroupName: '',
       categoryOptionList: [],
-      zoneOptionList: [],
       vModelCategory: null,
-      vModelZone: null,
       fromToSettingDiff: 0,
       params: {
         fields: ViewHelper.addLabelByKey(this.$i18n, [
@@ -130,9 +122,6 @@ export default {
     },
     enableGroup () {
       return this.isEnabledMenu('group') && APP.POT_WITH_GROUP
-    },
-    zoneOptions() {
-      return this.zoneOptionList
     },
   },
   async created() {
@@ -363,10 +352,6 @@ export default {
 
       this.hideProgress()
     },
-    categoryChange(val) {
-      this.zoneOptionList =this.zones.filter((zone) => zone.categoryId && zone.categoryId === val)
-        .map((zone) => {return {text: zone.zoneName, value: zone.zoneId}})
-    },
     getCsvHeaderNames() {
       return [
         'date',
@@ -388,10 +373,6 @@ export default {
       } else {
         this.replace({showAlert: false})
       }
-    },
-    zoneChange(val) {
-      this.zoneId = val
-      this.vModelZone = val
     },
     setFromToSettingDiff() {
       const fromMinute = Math.floor(APP.SUM_FROM / 100) * 60 + APP.SUM_FROM % 100
