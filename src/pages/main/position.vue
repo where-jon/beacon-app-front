@@ -8,19 +8,19 @@
           <label class="ml-sm-4 ml-2 mr-1">
             {{ $t('label.area') }}
           </label>
-          <b-form-select v-model="selectedArea" :options="areaOptions" required class="ml-1 mr-2" @change="changeArea" />
+          <v-select v-model="vueSelected.area" :options="areaOptions" :clearable="false" class="ml-1 mr-2 vue-options" />
         </b-form-row>
         <b-form-row v-if="useGroup" class="my-1 ml-2 ml-sm-0">
           <label class="ml-sm-4 ml-2 mr-1">
             {{ $t('label.group') }}
           </label>
-          <b-form-select v-model="selectedGroup" :options="groupOptions" class="ml-1 mr-2" />
+          <v-select v-model="vueSelected.group" :options="groupOptions" class="ml-1 mr-2 vue-options" />
         </b-form-row>
         <b-form-row v-if="useCategory" class="my-1 ml-2 ml-sm-0">
           <label class="ml-sm-4 ml-2 mr-1">
             {{ $t('label.category') }}
           </label>
-          <b-form-select v-model="selectedCategory" :options="categoryOptionsForPot" class="ml-1 mr-2" />
+          <v-select v-model="vueSelected.category" :options="categoryOptionsForPot" class="ml-1 mr-2 vue-options" />
         </b-form-row>
         <b-form-row v-if="showDetected" class="my-1 ml-2 ml-sm-0">
           <span class="ml-sm-4 ml-2 mr-1">
@@ -144,7 +144,7 @@ export default {
       'reload',
     ]),
     categoryOptionsForPot() {
-      return StateHelper.getOptionsFromState('category', false, false,
+      return StateHelper.getOptionsFromState('category', false, true,
         category => CATEGORY.POT_AVAILABLE.includes(category.categoryType)
       )
     },
@@ -162,6 +162,25 @@ export default {
     filter() {
       this.reloadSelectedTx = {}
       this.showTxAll()
+    },
+    'vueSelected.area': {
+      handler: function(newVal, oldVal){
+        this.selectedArea = Util.getValue(newVal, 'value', null)
+        this.changeArea(this.selectedArea)
+      },
+      deep: true,
+    },
+    'vueSelected.category': {
+      handler: function(newVal, oldVal){
+        this.selectedCategory = Util.getValue(newVal, 'value', null)
+      },
+      deep: true,
+    },
+    'vueSelected.group': {
+      handler: function(newVal, oldVal){
+        this.selectedGroup = Util.getValue(newVal, 'value', null)
+      },
+      deep: true,
     },
     modeRssi: function(newVal, oldVal) {
       this.$emit('rssi', newVal)
@@ -364,6 +383,7 @@ export default {
         return
       }
       this.txCont.removeAllChildren()
+      this.stage.update()
       this.disableExbsCheck()
       this.detectedCount = 0 // 検知カウントリセット
       let position = []
@@ -409,11 +429,11 @@ export default {
       const bgColor = meditag? meditag.bg.substr(1): this.isMagnetOn(magnet)? display.color: display.bgColor
       
       // フリーアドレスTXが不在エリア検知の場合は以降処理を行わない
-      if (exb.isAbsentZone && !this.isFixTx(tx)) {
+      if (exb && exb.isAbsentZone && !this.isFixTx(tx)) {
         return
       }
 
-      if ((exb.isAbsentZone || this.isOtherFloorFixTx(tx, exb)) && this.isFixTx(tx)) {
+      if ((exb && exb.isAbsentZone || this.isOtherFloorFixTx(tx, exb)) && this.isFixTx(tx)) {
         pos.transparent = true
       }
 
@@ -451,10 +471,10 @@ export default {
       this.resetDetail()
     },
     isFixTx (tx) {
-      return tx.location && tx.location.areaId == this.selectedArea && tx.location.x * tx.location.y > 0
+      return tx && tx.location && tx.location.areaId == this.selectedArea && tx.location.x * tx.location.y > 0
     },
     isOtherFloorFixTx (tx, exb) {
-      return tx.location && tx.location.areaId != exb.location.areaId && tx.location.x * tx.location.y > 0
+      return tx && tx.location && exb && exb.location && tx.location.areaId != exb.location.areaId && tx.location.x * tx.location.y > 0
     }
   }
 }
@@ -462,6 +482,7 @@ export default {
 
 <style scoped lang="scss">
 @import "../../sub/constant/config.scss";
+@import "../../sub/constant/vue.scss";
 
 $right-pane-width-px: $right-pane-width * 1px;
 $right-pane-maxwidth-px: ($right-pane-width + 100) * 1px;

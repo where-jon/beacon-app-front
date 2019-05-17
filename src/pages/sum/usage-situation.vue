@@ -13,10 +13,16 @@
           <b-form-select v-model="vModelDay" class="col-md-1" :options="dayOptions" @change="dayChange" />
         </b-form-group>
         <b-form-group>
-          <label v-t="'label.zoneCategoryName'" class="control-label col-md-2 text-right" />
-          <b-form-select v-model="vModelCategory" class="col-md-3" :options="categoryOptionList" @change="categoryChange" />
-          <label v-t="'label.zone'" class="control-label col-md-1 text-right" />
-          <b-form-select v-model="vModelZone" class="col-md-3" :options="zoneOptions" @change="zoneChange" />
+          <b-form-row>
+            <b-form-row>
+              <label v-t="'label.zoneCategoryName'" class="control-label md-2 text-right" />
+              <v-select v-model="vueSelected.category" :options="categoryOptionList" class="md-3 ml-2 vue-options" />
+            </b-form-row>
+            <b-form-row>
+              <label v-t="'label.zone'" class="control-label md-1 text-right" />
+              <v-select v-model="vueSelected.zone" :options="zoneOptions" class="md-3 ml-2 vue-options" />
+            </b-form-row>
+          </b-form-row>
         </b-form-group>
         <b-form-group>
           <b-button v-t="'label.display'" :variant="theme" class="col-md-1" @click="display" />
@@ -64,6 +70,10 @@ export default {
         mode: null,
         selectedYearMonth: 0,
         selectedDay: 0,
+      },
+      vueSelected: {
+        category: null,
+        zone: null,
       },
       viewList: [],
       fields: [],
@@ -135,6 +145,22 @@ export default {
       return this.zoneOptionList
     },
   } /* computed end */ ,
+  watch: {
+    'vueSelected.category': {
+      handler: function(newVal, oldVal){
+        this.vModelCategory = Util.getValue(newVal, 'value', null)
+        this.categoryChange(this.vModelCategory)
+      },
+      deep: true,
+    },
+    'vueSelected.zone': {
+      handler: function(newVal, oldVal){
+        this.vModelZone = Util.getValue(newVal, 'value', null)
+        this.zoneChange(this.vModelZone)
+      },
+      deep: true,
+    },
+  },
   async created() {
     this.form.mode = 1
     this.fields = this.fields1
@@ -149,8 +175,7 @@ export default {
     }
     this.categoryOptionList = this.categories.filter((c) => c.categoryType === CATEGORY.ZONE)
       .sort((a, b) => a.categoryId < b.categoryId ? -1 : 1)
-      .map((c) => { return {text: c.categoryName, value: c.categoryId}})
-    this.categoryOptionList.unshift({text: '', value: null})
+      .map((c) => { return {label: c.categoryName, value: c.categoryId}})
     this.vModelCategory = this.categoryOptionList[0].value
     await StateHelper.load('zone')
   },
@@ -178,7 +203,7 @@ export default {
     },
     categoryChange(val) {
       this.zoneOptionList =this.zones.filter((zone) => zone.categoryId && zone.categoryId === val)
-        .map((zone) => {return {text: zone.zoneName, value: zone.zoneId}})
+        .map((zone) => {return {label: zone.zoneName, value: zone.zoneId}})
     },
     zoneChange(val) {
       this.zoneId = val
@@ -269,3 +294,7 @@ export default {
   }
 }
 </script>
+
+<style scoped lang="scss">
+@import "../../sub/constant/vue.scss";
+</style>

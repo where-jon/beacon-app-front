@@ -7,7 +7,7 @@
       <b-form-row>
         <b-form @submit.prevent="onSubmit">
           <b-form-group :label="$t('label.deviceId')">
-            <b-form-select v-model="form.deviceId" :options="deviceIds" :readonly="!isEditable" required />
+            <v-select v-model="vueSelected.deviceId" :options="deviceIds" :disable="!isEditable" :clearable="false" class="vue-options" />
           </b-form-group>
           <b-form-group :label="$t('label.ledColor')">
             <b-form-checkbox-group v-model="form.colors">
@@ -101,6 +101,9 @@ export default {
         colors: [2],
         blink: 1,
       },
+      vueSelected: {
+        deviceId: null,
+      },
       items: ViewHelper.createBreadCrumbItems('main', 'ledOperation'),
     }
   },
@@ -114,6 +117,12 @@ export default {
     ]),
   },
   watch: {
+    'vueSelected.deviceId': {
+      handler: function(newVal, oldVal){
+        this.form.deviceId = Util.getValue(newVal, 'value', null)
+      },
+      deep: true,
+    },
     'form.colors': function(newVal, oldVal) {
       // チェックの数が0にされたら値を元に戻す。
       if (newVal.length == 0) {
@@ -137,12 +146,16 @@ export default {
         )
           .map(
             exb => {
-              return {text:(exb.deviceId) + ' (0x' + exb.deviceId.toString(16) + ')', value: exb.deviceId}
+              return {
+                text:(exb.deviceId) + ' (0x' + exb.deviceId.toString(16) + ')',
+                label:(exb.deviceId) + ' (0x' + exb.deviceId.toString(16) + ')',
+                value: exb.deviceId
+              }
             }
           )
 
         if (deviceIds && deviceIds.length == 1) {
-          this.form.deviceId = deviceIds[0].value
+          this.vueSelected.deviceId = StateHelper.getVueSelectData(deviceIds, null, true)
         } else if(!Util.hasValue(deviceIds)) {
           this.noDevice = true
           this.showErrorModal({key: 'noLedDevice'})
@@ -182,6 +195,7 @@ export default {
 
 <style scoped lang="scss">
 @import "../../sub/constant/config.scss";
+@import "../../sub/constant/vue.scss";
 
 ::-webkit-scrollbar { 
   display: none; 

@@ -8,8 +8,8 @@
         <label class="mr-2 mb-2">
           {{ $t('label.area') }}
         </label>
-        <b-form-select v-model="selectedArea" :options="areaOptions" :disabled="settingStart" class="mr-2 mb-2 areaOptions" />
-        <b-button v-t="'label.load'" :variant="getButtonTheme()" :disabled="settingStart" size="sm" class="mb-2" @click="changeArea" />
+        <v-select v-model="vueSelected.area" :options="areaOptions" :disabled="settingStart" class="mr-2 mb-2 vue-options" :clearable="false" />
+        <b-button v-t="'label.load'" :variant="getButtonTheme()" :disabled="settingStart || selectedArea == null" size="sm" class="mb-2" @click="changeArea" />
       </b-form-row>
     </b-form>
     <b-form inline class="mt-2">
@@ -19,7 +19,7 @@
         </label>
         <b-form-select v-model="exbDisp" :options="exbDispOptions" :disabled="settingStart" class="mr-2 mb-2" @change="changeExbDisp" />
         <b-form-row>
-          <v-select v-model="selectedExb_" :options="exbOptions" :on-change="showExbOnMap" :disabled="settingStart" size="sm" class="mb-2 mt-mobile exbOptions">
+          <v-select v-model="selectedExb_" :options="exbOptions" :on-change="showExbOnMap" :disabled="settingStart" size="sm" class="mb-2 mt-mobile vue-options">
             <div slot="no-options">
               {{ $i18n.tnl('label.vSelectNoOptions') }}
             </div>
@@ -111,6 +111,9 @@ export default {
       toggleCallBack: () => {
         this.keepExbPosition = true
       },
+      vueSelected: {
+        area: null,
+      },
       ICON_ARROW_WIDTH: DISP.EXB_LOC.SIZE.W/3,
       ICON_ARROW_HEIGHT: DISP.EXB_LOC.SIZE.H/3,
       DISPLAY_NAME_BYTE_LENGTH: 6,
@@ -124,6 +127,12 @@ export default {
     ]),
   },
   watch: {
+    'vueSelected.area': {
+      handler: function(newVal, oldVal){
+        this.selectedArea = Util.getValue(newVal, 'value', null)
+      },
+      deep: true,
+    },
     realWidth: function(newVal, oldVal) {
       console.log({newVal, oldVal})
       this.onMapImageScale()
@@ -133,23 +142,23 @@ export default {
       this.onMapImageScale()
     }
   },
-  mounted() {
-    this.fetchData()
-    if(this.pageSendParam){
-      this.selectedArea = this.pageSendParam.areaId
-      this.changeArea()
-      this.replaceAS({pageSendParam: null})
-    }
-    else{
-      this.selectedArea = null
-    }
-
+  async mounted() {
     const options = []
     options.push({value: 'locationName', text: this.$i18n.tnl('label.locationName')})
     if (Util.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')) options.push({value:'deviceIdX', text: this.$i18n.tnl('label.deviceIdX')})
     if (Util.includesIgnoreCase(APP.EXB.WITH, 'deviceId')) options.push({value:'deviceId', text: this.$i18n.tnl('label.deviceId')})
     this.exbDispOptions = options
     this.exbDisp = options[0].value
+
+    if(this.pageSendParam){
+      this.vueSelected.area = StateHelper.getVueSelectData(this.areaOptions, this.pageSendParam.areaId)
+      this.changeArea()
+      this.replaceAS({pageSendParam: null})
+    }
+    else{
+      this.vueSelected.area = StateHelper.getVueSelectData(this.areaOptions, null, true)
+    }
+    await this.fetchData()
   },
   beforeDestroy() {
     this.selectedArea = null
@@ -547,6 +556,7 @@ export default {
 
 <style scoped lang="scss">
 @import "../../../sub/constant/config.scss";
+@import "../../../sub/constant/vue.scss";
 
 ::-webkit-scrollbar { 
   display: none; 
@@ -578,10 +588,6 @@ export default {
 
 .ratioInput {
   width: 75px;
-}
-
-.exbOptions {
-  width: 140px;
 }
 
 .blink {

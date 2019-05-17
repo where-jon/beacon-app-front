@@ -11,25 +11,11 @@
             <span v-for="(potTx, index) in form.potTxList" :key="index">
               <b-form inline @submit.prevent>
                 <b-form-group>
-                  <b-form-row>
-                    <b-form-row class="mb-3 mr-5">
-                      <label>
-                        {{ $i18n.tnl('label.tx') + getTxIndex(index) }}
-                      </label>
-                      <b-form-select v-model="potTx.txId" :options="getTxOptions(index)" :disabled="!isEditable" :readonly="!isEditable" class="ml-3 tx-select" @change="changeTx($event, index)" />
-                    </b-form-row>
-                    <b-form-row v-show="isShown('TX.BTX_MINOR') != 'minor'" class="mb-3 mr-3">
-                      <label>
-                        {{ $i18n.tnl('label.btxId') + getTxIndex(index) }}
-                      </label>
-                      <input v-model="btxIds[index]" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control ml-3 tx-select">
-                    </b-form-row>
-                    <b-form-row v-show="isShown('TX.BTX_MINOR') == 'minor'" class="mb-3 mr-3">
-                      <label>
-                        {{ `Tx(${$i18n.tnl('label.minor')}${getTxIndex(index)})` }}
-                      </label>
-                      <input v-model="minors[index]" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control ml-3 tx-select">
-                    </b-form-row>
+                  <b-form-row class="mb-3 mr-5">
+                    <label>
+                      {{ $i18n.tnl('label.tx') + getTxIndex(index) }}
+                    </label>
+                    <v-select v-model="vueSelected.txs[index]" :options="getTxOptions(index)" :disabled="!isEditable" :readonly="!isEditable" class="ml-3 vue-options" />
                   </b-form-row>
                 </b-form-group>
               </b-form>
@@ -56,11 +42,11 @@
             </b-form-group>
             <b-form-group v-show="isShown('POT.WITH', 'group')">
               <label v-t="'label.group'" />
-              <b-form-select v-model="form.groupId" :options="groupOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-3 col-4" />
+              <v-select v-model="vueSelected.group" :options="groupOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 vue-options" />
             </b-form-group>
             <b-form-group v-show="isShown('POT.WITH', 'category')">
               <label v-t="'label.category'" />
-              <b-form-select v-model="form.categoryId" :options="categoryOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-3 col-4" />
+              <v-select v-model="vueSelected.category" :options="categoryOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 vue-options" />
             </b-form-group>
             <b-form-group v-show="isShown('POT.WITH', 'post')">
               <label v-t="'label.post'" />
@@ -98,7 +84,7 @@
             </b-form-group>
             <b-form-group v-show="editShowUser">
               <label v-t="'label.role'" />
-              <b-form-select v-model="userForm.roleId" :options="roleOptions" :required="editShowUser" />
+              <v-select v-model="vueSelected.role" :options="roleOptions" :clearable="false" :required="editShowUser" class="vue-options" />
             </b-form-group>
             <b-form-group v-show="editShowUser">
               <label v-if="hasUserId" v-t="'label.passwordUpdate'" />
@@ -160,6 +146,12 @@ export default {
             'displayName', 'potGroupList.0.group.groupId', 'potCategoryList.0.category.categoryId', 'extValue.tel',
             'extValue.post', 'thumbnail', 'description'])
       },
+      vueSelected: {
+        group: null,
+        category: null,
+        role: null,
+        txs: []
+      },
       userForm: {
         userId: null, loginId: null, pass: null, roleId: null, email: null,
       },
@@ -181,7 +173,7 @@ export default {
       return 'outline-' + theme
     },
     categoryOptions() {
-      return StateHelper.getOptionsFromState('category', false, false,
+      return StateHelper.getOptionsFromState('category', false, true,
         category => category.categoryType === this.form.potType
       )
     },
@@ -197,6 +189,40 @@ export default {
     },
   },
   watch: {
+    'form.potType': function(newVal, oldVal){
+      if(newVal != oldVal){
+        this.form.selectedCategory = null
+        this.form.categoryId = null
+      }
+    },
+    'vueSelected.txs': {
+      handler: function(newVal, oldVal){
+        this.vueSelected.txs.forEach((selectedTx, idx) => {
+          if(selectedTx){
+            this.changeTx(selectedTx.value, idx)
+          }
+        })
+      },
+      deep: true,
+    },
+    'vueSelected.categpry': {
+      handler: function(newVal, oldVal){
+        this.form.categoryId = Util.getValue(newVal, 'value', null)
+      },
+      deep: true,
+    },
+    'vueSelected.group': {
+      handler: function(newVal, oldVal){
+        this.form.groupId = Util.getValue(newVal, 'value', null)
+      },
+      deep: true,
+    },
+    'vueSelected.role': {
+      handler: function(newVal, oldVal){
+        this.userForm.roleId = Util.getValue(newVal, 'value', null)
+      },
+      deep: true,
+    },
     txIds: function(newVal, oldVal) {
       this.watchIds(newVal, 'txId')
     },
@@ -223,11 +249,13 @@ export default {
       this.oldUserForm.roleId = potUser.user.roleId
       this.oldUserForm.email = potUser.user.email
       this.editShowUser = true
+      this.vueSelected.role = StateHelper.getVueSelectData(this.roleOptions, potUser.user.roleId)
     }
     else{
       this.editShowUser = false
       const maxRole = this.roleOptions.reduce((a, b) => a.value > b.value? a: b)
       this.userForm.roleId = maxRole? maxRole.value: null
+      this.vueSelected.role = StateHelper.getVueSelectData(this.roleOptions, maxRole? maxRole.value: null)
     }
   },
   async mounted() {
@@ -244,11 +272,15 @@ export default {
     this.form.potTxList.forEach((potTx, idx) => {
       this.changeTx(this.form.potTxList[idx].txId, idx)
     })
+    this.vueSelected.category = StateHelper.getVueSelectData(this.categoryOptions, this.form.categoryId)
+    this.vueSelected.group = StateHelper.getVueSelectData(this.groupOptions, this.form.groupId)
     HtmlUtil.setCustomValidationMessage()
   },
   methods: {
     initPotTxList(){
-      this.form.potTxList = this.pot.potTxList? this.pot.potTxList.map((val) => {
+      this.vueSelected.txs = []
+      this.form.potTxList = this.pot.potTxList? this.pot.potTxList.map((val, idx) => {
+        this.vueSelected.txs.push(StateHelper.getVueSelectData(this.getTxOptions(idx), val.potTxPK.txId))
         return {
           potId: val.potTxPK.potId,
           txId: val.potTxPK.txId,
@@ -256,6 +288,7 @@ export default {
       }): []
       const maxTx = APP.POT.MULTI_TX? APP.POT.TX_MAX: 1
       for(let cnt = this.form.potTxList.length; cnt < maxTx; cnt++){
+        this.vueSelected.txs.push(StateHelper.getVueSelectData(this.getTxOptions(cnt), null))
         this.form.potTxList.push({
           potId: null,
           txId: null
@@ -309,18 +342,18 @@ export default {
           return true
         }
         return idx < index
-      }).map((val) => val.txId): []
-      const selfUseTxIds = this.pot.potTxList? this.pot.potTxList.filter((val) => val.potTxPK).map((val) => val.potTxPK.txId): []
+      }).map(val => val.txId): []
+      const selfUseTxIds = this.pot.potTxList? this.pot.potTxList.filter(val => val.potTxPK).map(val => val.potTxPK.txId): []
       let useTxIds = []
-      this.pots.forEach((pot) => {
-        useTxIds.push(pot.txIds? pot.txIds.filter((val) => val): [])
+      this.pots.forEach(pot => {
+        useTxIds.push(pot.txIds? pot.txIds.filter(val => val): [])
       })
       if(useTxIds.length != 0){
-        useTxIds = useTxIds.reduce((a, b) => a.concat(b)).filter((val) => !selfUseTxIds.includes(val))
+        useTxIds = useTxIds.reduce((a, b) => a.concat(b)).filter(val => !selfUseTxIds.includes(val))
       }
       return StateHelper.getOptionsFromState('tx',
         tx => StateHelper.getTxIdName(tx),
-        false,
+        true,
         tx => !useTxIds.includes(tx.txId) && !nowTxIds.includes(tx.txId)
       )
     },
@@ -347,6 +380,15 @@ export default {
       this.txIds = this.txIds.map(() => null)
       this.btxIds = this.btxIds.map(() => null)
       this.minors = this.minors.map(() => null)
+
+      this.vueSelected.category = StateHelper.getVueSelectData(this.categoryOptions, null)
+      this.vueSelected.group = StateHelper.getVueSelectData(this.groupOptions, null)
+
+      const maxRole = this.roleOptions.reduce((a, b) => a.value > b.value? a: b)
+      this.userForm.roleId = maxRole? maxRole.value: null
+      this.vueSelected.role = StateHelper.getVueSelectData(this.roleOptions, maxRole? maxRole.value: null)
+
+      this.form.potCd = StateHelper.createMasterCd('pot', this.pots, this.pot)
       this.initPotTxList()
     },
     afterCrud(){
@@ -459,6 +501,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import "../../../sub/constant/vue.scss";
 .tx-select{
   width: 160px;
 }
