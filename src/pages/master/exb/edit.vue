@@ -119,7 +119,7 @@ export default {
         'exbId', 'deviceId', 'enabled',
         'location.locationName', 'location.areaId', 'location.locationId', 'location.posId',
         'location.x', 'location.y', 'location.visible', 'location.txViewType',
-        'exbSensorList.0.sensor.sensorId', 'location.locationZoneList.0.locationZonePK.zoneId',
+        'exbSensorList.0.exbSensorPK.sensorId', 'location.locationZoneList.0.locationZonePK.zoneId'
       ]),
       vueSelected: {
         area: null,
@@ -269,7 +269,7 @@ export default {
       this.form.exbSensorList = this.exb.exbSensorList? this.exb.exbSensorList.map((val, idx) => {
         return APP.EXB.MULTI_SENSOR && idx < APP.EXB.SENSOR_MAX || !APP.EXB.MULTI_SENSOR && idx == 0? {
           exbId: null,
-          sensorId: val.sensor.sensorId,
+          sensorId: val.exbSensorPK.sensorId,
         }: null
       }).filter((val) => val): []
       const maxSensor = APP.EXB.MULTI_SENSOR? APP.EXB.SENSOR_MAX: 1
