@@ -61,6 +61,7 @@ export default {
     this.replace({showWarn: false})
     this.replace({showAlert: false})
     this.replace({showInfo: false})
+    this.replaceAS({moveEditPage: false})
   },
   methods: {
     register(again) {
@@ -173,6 +174,7 @@ export default {
             if(this.createMessage){
               this.replaceAS({listMessage: this.message})
             }
+            this.replaceAS({moveEditPage: this.isUpdate})
             this.backToList()
           }
         }
