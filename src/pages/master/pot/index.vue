@@ -129,7 +129,7 @@ export default {
       this.hideProgress()
     },
     thumbnail(row) {
-      return this.thumbnailUrl.replace('{id}', row.potId)
+      return row.existThumbnail ? this.thumbnailUrl.replace('{id}', row.potId) : null
     },
   }
 }

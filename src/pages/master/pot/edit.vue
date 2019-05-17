@@ -76,7 +76,7 @@
               <b-button v-if="isEditable && form.thumbnail" :variant="theme" type="button" class="float-right mt-3" @click="clearImage">
                 {{ $i18n.tnl('label.clear') }}
               </b-button>
-              <img v-show="form.thumbnail" ref="thumbnail" :src="thumbnailUrl.replace('{id}', form.potId)" width="100" class="mt-1 ml-3">
+              <img v-show="form.existThumbnail" ref="thumbnail" :src="thumbnailUrl.replace('{id}', form.potId)" width="100" class="mt-1 ml-3">
             </b-form-group>
             <b-form-group v-if="isShown('POT.WITH', 'description')">
               <label v-t="'label.description'" />
@@ -158,7 +158,7 @@ export default {
         ...ViewHelper.extract(this.$store.state.app_service.pot,
           ['potId', 'potCd', 'potName', 'potType', 'extValue.ruby',
             'displayName', 'potGroupList.0.group.groupId', 'potCategoryList.0.category.categoryId', 'extValue.tel',
-            'extValue.post', 'thumbnail', 'description'])
+            'extValue.post', 'existThumbnail', 'description'])
       },
       userForm: {
         userId: null, loginId: null, pass: null, roleId: null, email: null,
