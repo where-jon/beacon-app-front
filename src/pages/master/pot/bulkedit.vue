@@ -29,15 +29,24 @@ export default {
       appServicePath: '/basic/pot',
       category: _.slice(CATEGORY.getTypes(), 0, 2).filter((val) => APP.CATEGORY.TYPES.includes(val.value)),
       items: ViewHelper.createBreadCrumbItems('master', {text: 'pot', href: '/master/pot'}, 'bulkRegister'),
+      masterCd: null,
     }
   },
   computed: {
     ...mapState('app_service', [
-      'pot', 'potImages', 'categories', 'groups', 'txs'
+      'pot', 'pots', 'potImages', 'categories', 'groups', 'txs'
     ]),
+  },
+  async created() {
+    await StateHelper.load('pot')
+    this.masterCd = StateHelper.createMasterCd('pot', this.pots, null)
   },
   methods: {
     resetData(entity, dummyKey){
+      if(!Util.hasValue(entity.potCd)){
+        entity.potCd = this.masterCd
+        this.masterCd = StateHelper.createMasterCd('pot', [{potCd: this.masterCd}], null)
+      }
       if(!Util.hasValue(entity.potType) && !Util.hasValue(entity.categoryName)){
         entity.potType = CATEGORY.PERSON
       }

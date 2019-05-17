@@ -244,6 +244,9 @@ export default {
     if(this.form.potType == null){
       this.form.potType = this.defValue.potType
     }
+    if(!Util.hasValue(this.form.potCd)){
+      this.form.potCd = StateHelper.createMasterCd('pot', this.pots, this.pot)
+    }
     StateHelper.load('group')
     StateHelper.load('category')
     await StateHelper.load('tx')
