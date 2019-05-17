@@ -226,7 +226,7 @@ export default {
       const param = _.cloneDeep(this.form)
       param.datetimeFrom = new Date(param.datetimeFrom).getTime()
       param.datetimeTo = new Date(param.datetimeTo).getTime()
-      param.fillGap = APP.SUM_AXIS_FILL_GAP
+      param.fillGap = APP.STAY_SUM.AXIS_FILL_GAP
       const url = '/office/stayTime/sum?_=' + new Date().getTime() + '&' +  HttpHelper.toParam(param, true)
       const sumData = await HttpHelper.getAppService(url)
       console.log(sumData)
@@ -281,11 +281,11 @@ export default {
       }
       let yLabel = 'unitSecond'
       let div = 1
-      if (maxPeriod > APP.SUM_UNIT_HOUR) {
+      if (maxPeriod > APP.STAY_SUM.UNIT_HOUR) {
         yLabel = 'unitHour'
         div = 60 * 60
       }
-      else if (maxPeriod > APP.SUM_UNIT_MINUTE) {
+      else if (maxPeriod > APP.STAY_SUM.UNIT_MINUTE) {
         yLabel = 'unitMinute'
         div = 60
       }

@@ -6,7 +6,7 @@
         <b-col v-if="showSidebar" id="bd-sidebar" :class="sidebarClasses" md="2" xl="2" class="d-none d-sm-none d-md-block">
           <m-sidebar />
         </b-col>
-        <b-col :md="showSidebar? 10: 12" class="pl-0 pr-0">
+        <b-col id="bd-page" :md="showSidebar? 10: 12" class="pl-0 pr-0">
           <b-container fluid>
             <b-row>
               <b-col class="pb-md-3 pl-md-5 pl-xl-5 pr-xl-5 bd-content">
@@ -40,20 +40,16 @@ import mNav from '../components/layout/nav.vue'
 
 import vSelect from 'vue-select'
 import BootstrapVue from 'bootstrap-vue'
-import Spinner from 'vue-simple-spinner'
-import '@fortawesome/fontawesome-free-webfonts/css/fontawesome.css'
-import '@fortawesome/fontawesome-free-webfonts/css/fa-solid.css'
-import '@fortawesome/fontawesome-free-webfonts/css/fa-brands.css'
-import '@fortawesome/fontawesome-free-webfonts/css/fa-regular.css'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { fas } from '@fortawesome/free-solid-svg-icons'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import * as LocaleHelper from '../sub/helper/LocaleHelper'
 import { getLangShort } from '../sub/util/HtmlUtil'
 
 Vue.use(BootstrapVue)
-Vue.component('vue-simple-spinner', Spinner)
 Vue.component('v-select', vSelect)
-
+library.add(fas)
 
 export default {
   components: {
@@ -62,7 +58,7 @@ export default {
   },
   data() {
     return {
-      showSidebar: DISP.SHOW_SIDEBAR,
+      showSidebar: DISP.MENU.SHOW_SIDEBAR,
     }
   },
   computed: {
@@ -76,7 +72,7 @@ export default {
       return this.$store.state.loginId
     },
     isLoginPage() {
-      return this.$route.path == APP.LOGIN_PAGE || this.$route.path == APP.LOGIN_PAGE + '/'
+      return this.$route.path == APP.MENU.LOGIN_PAGE || this.$route.path == APP.MENU.LOGIN_PAGE + '/'
     },
     ...mapState([
       'showProgress',

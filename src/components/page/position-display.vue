@@ -127,7 +127,7 @@ export default {
       console.log('fetchData End.')
     },
     async checkDetectedTx(tx) {
-      await this.fetchData()
+      //await this.fetchData()
       return _.some(this.positions, (pos) => {
         return pos.tx.txId == tx.txId
       })

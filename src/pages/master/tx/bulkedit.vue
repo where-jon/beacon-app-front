@@ -12,8 +12,9 @@ import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import * as BulkHelper from '../../../sub/helper/BulkHelper'
 import { APP } from '../../../sub/constant/config.js'
-import { IGNORE, CATEGORY } from '../../../sub/constant/Constants'
+import { IGNORE, CATEGORY, BULK } from '../../../sub/constant/Constants'
 
 export default {
   components: {
@@ -50,18 +51,13 @@ export default {
       if (!entity.potTxList) {
         entity.potTxList = [{potTxPK: {potId: dummyKey--, txId: dummyKey--}, pot: {}}]
       }
-      if(headerName == 'categoryName'){
-        const category = this.categories.find((category) => category.categoryName == val)
-        if(category){
-          entity.potTxList[0].pot.potType = category.categoryType
-          entity.potTxList[0].pot.potCategoryList = [{potCategoryPK: {potId: dummyKey--, categoryId: category.categoryId}}]
-        }
-        else{
-          entity.potTxList[0].pot.categoryName = val
-        }
+      const category = this.categories.find(category => category.categoryName == val)
+      if(category){
+        entity.potTxList[0].pot.potType = category.categoryType
+        entity.potTxList[0].pot.potCategoryList = [{potCategoryPK: {potId: dummyKey--, categoryId: category.categoryId}}]
       }
       else{
-        entity.potTxList[0].pot.potCategoryList = [{potCategoryPK: {potId: dummyKey--, categoryId: val}}]
+        entity.potTxList[0].pot.categoryName = val
       }
       return dummyKey
     },
@@ -69,85 +65,59 @@ export default {
       if (!entity.potTxList) {
         entity.potTxList = [{potTxPK: {potId: dummyKey--, txId: dummyKey--}, pot: {}}]
       }
-      if(headerName == 'groupName'){
-        const group = this.groups.find((group) => group.groupName == val)
-        if(group){
-          entity.potTxList[0].pot.potGroupList = [{potGroupPK: {potId: dummyKey--, groupId: group.groupId}}]
-        }
-        else{
-          entity.potTxList[0].pot.groupName = val
-        }
+      const group = this.groups.find(group => group.groupName == val)
+      if(group){
+        entity.potTxList[0].pot.potGroupList = [{potGroupPK: {potId: dummyKey--, groupId: group.groupId}}]
       }
       else{
-        entity.potTxList[0].pot.potGroupList = [{potGroupPK: {potId: dummyKey--, groupId: val}}]
+        entity.potTxList[0].pot.groupName = val
       }
       return dummyKey
     },
     setParamTxSensor(entity, headerName, val, dummyKey){
-      if(headerName == 'sensor'){
-        const sensor = this.sensorOptionsTx.find((sensor) => sensor.text == val)
-        if(sensor && sensor.value != null){
-          entity.txSensorList = [{txSensorPK: {sensorId: sensor.value}, sensorName: val}]
-        }
-        else if(!sensor){
-          entity.txSensorList = [{txSensorPK: {sensorId: dummyKey--}, sensorName: val}]
-        }
+      const sensor = this.sensorOptionsTx.find(sensor => sensor.text == val)
+      if(sensor && sensor.value != null){
+        entity.txSensorList = [{txSensorPK: {sensorId: sensor.value}, sensorName: val}]
       }
-      else{
-        entity.txSensorList = [{txSensorPK: {txId: dummyKey--, sensorId: val}}]
+      else if(!sensor){
+        entity.txSensorList = [{txSensorPK: {sensorId: dummyKey--}, sensorName: val}]
       }
       return dummyKey
     },
-    setParamOther(entity, headerName, val, dummyKey, mainCol, numberTypeList){
-      if(Util.equalsAny(headerName, numberTypeList)){
-        if(Util.hasValue(val)){
-          const num = Number(val)
-          if(isNaN(num)){
-            entity[`${headerName}Name`] = val
-          }
-          val = num
-        }
-      }
-      if (headerName == mainCol){
-        if(!val) {
-          entity[`${headerName}Name`] = ''
-          val = dummyKey--
-        }
-      }
-      entity[headerName] = val
-      return dummyKey
-    },
-    addLocation(entity, targetEntity, dummyKey){
+    setParamLocation(entity, headerName, val, dummyKey){
       if(!APP.TX_WITH_LOCATION){
         return dummyKey
       }
-      entity.location = {}
-      entity.location.locationId = Util.getValue(targetEntity, 'locationId', dummyKey--)
+      if(!entity.location){
+        entity.location = {}
+      }
+      if(Util.equalsAny(headerName, ['x', 'y'])){
+        BulkHelper.setNumberKey(entity.location, headerName, val, {isNullable: true, errorName: 'loc'+ headerName.toUpperCase() + 'Name'})
+        return dummyKey
+      }
+      entity.location[headerName] = val
+      return dummyKey
+    },
+    addLocation(entity, dummyKey){
+      if(!Util.includesIgnoreCase(APP.TX.WITH, 'location')){
+        return dummyKey
+      }
+      if(!entity.location){
+        entity.location = {}
+      }
+      entity.location.locationId = dummyKey--
       entity.location.posId = entity.btxId * -1
       entity.location.locationName = 'Loc' + (entity.btxId * -1)
-      entity.location.areaName = Util.getValue(entity, 'areaName', null)
-      const x = Util.hasValue(entity.x)? entity.x: null
-      const y = Util.hasValue(entity.y)? entity.y: null
-      if(x){
-        entity.location[isNaN(x)? 'locXName': 'x'] = x
-      }
-      if(y){
-        entity.location[isNaN(y)? 'locYName': 'y'] = y
-      }
       return dummyKey
     },
     resetId(entity, dummyKey){
-      const targetEntity = Util.getEntityFromIds(this.txs, entity, ['txId', 'btxId', 'minor'])
-      if(!entity.txId){
-        entity.txId = targetEntity? targetEntity.txId: dummyKey--
-      }
       if(APP.TX_BTX_MINOR == 'minor'){
         entity.btxId = entity.minor
         if(Util.hasValue(entity.minorName) || 65535 < entity.minor){
           entity.ignoreBtxId = IGNORE.ON
         }
       }
-      else if(APP.TX_BTX_MINOR == 'btxId'){
+      else if(APP.TX.BTX_MINOR == 'btxId'){
         entity.minor = entity.btxId
         if(Util.hasValue(entity.btxIdName) || 65535 < entity.btxId){
           entity.ignoreMinor = IGNORE.ON
@@ -165,7 +135,7 @@ export default {
         }
         const pot = this.pots.find(val => Util.hasValue(val.potTxList) && val.potTxList.find(potTx => potTx.tx.txId == entity.txId))
         if(pot){
-          const potImage = this.potImages.find((val) => val.id == pot.potId)
+          const potImage = this.potImages.find(val => val.id == pot.potId)
           entity.potTxList[0].pot.potType = pot.potType
           entity.potTxList[0].pot.thumbnail = potImage? potImage.thumbnail: null
           entity.potTxList[0].pot.extValue = pot.extValue
@@ -173,43 +143,52 @@ export default {
         entity.potTxList[0].potTxPK.potId = dummyKey--
         entity.potTxList[0].potTxPK.txId = entity.txId
       }
-      dummyKey = this.addLocation(entity, targetEntity, dummyKey)
+      dummyKey = this.addLocation(entity, dummyKey)
       return dummyKey
     },
     async save(bulkSaveFunc) {
-      const MAIN_COL = APP.TX_WITH_TXID? 'txId': APP.TX_BTX_MINOR == 'minor'? 'minor': 'btxId'
-      const POT = ['displayName','description','potCategoryList']
-      const POT_CATEGORY = ['categoryId', 'categoryName']
-      const POT_GROUP = ['groupId', 'groupName']
-      const TX_SENSOR = ['sensorId', 'sensor']
+      const POT = ['displayName', 'description']
+      const LOCATION = ['areaName', 'x', 'y']
 
-      const NUMBER_TYPE_LIST = ['deviceId', 'txId', 'btxId', 'major', 'minor', 'exbId', 'areaId', 'locationId', 'posId', 'z', 'disp', 'txViewType', 'zoneName']
-      const BOOL_TYPE_LIST = ['visible', 'enabled']
+      const NUMBER_TYPE_LIST = ['btxId', 'major', 'minor', 'disp']
       await StateHelper.load('category')
       await StateHelper.load('group')
       await StateHelper.load('pot')
 
-      await bulkSaveFunc(MAIN_COL, null, BOOL_TYPE_LIST, (entity, headerName, val, dummyKey) => {
+      await bulkSaveFunc(BULK.PRIMARY_KEY, null, null, (entity, headerName, val, dummyKey) => {
+        if (BulkHelper.isPrimaryKeyHeader(headerName)){
+          BulkHelper.setPrimaryKey(entity, this.id, val, dummyKey--)
+          return dummyKey
+        }
+        if(Util.equalsAny(headerName, NUMBER_TYPE_LIST)){
+          BulkHelper.setNumberKey(entity, headerName, val, {isNullable: !APP.TX_MAJOR_REQUIRED && headerName == 'major'})
+          return dummyKey
+        }
+
         if (Util.equalsAny(headerName, POT)) {
-          if(Util.hasValue(val)){
-            if (!entity.potTxList) {
-              entity.potTxList = [{potTxPK: {potId: dummyKey--, txId: dummyKey--}, pot: {}}]
-            }
-            entity.potTxList[0].pot[headerName] = val
+          if (!entity.potTxList) {
+            entity.potTxList = [{potTxPK: {potId: dummyKey--, txId: dummyKey--}, pot: {}}]
           }
+          entity.potTxList[0].pot[headerName] = val
+          return dummyKey
         }
-        else if (Util.equalsAny(headerName, POT_CATEGORY) && Util.hasValue(val)) {
+        if (headerName == 'categoryName' && Util.hasValue(val)) {
           dummyKey = this.setParamCategory(entity, headerName, val, dummyKey)
+          return dummyKey
         }
-        else if (Util.equalsAny(headerName, POT_GROUP) && Util.hasValue(val)) {
+        if (headerName == 'groupName' && Util.hasValue(val)) {
           dummyKey = this.setParamGroup(entity, headerName, val, dummyKey)
+          return dummyKey
         }
-        else if (Util.equalsAny(headerName, TX_SENSOR) && val) {
+        if (headerName == 'sensor' && Util.hasValue(val)) {
           dummyKey = this.setParamTxSensor(entity, headerName, val, dummyKey)
+          return dummyKey
         }
-        else {
-          dummyKey = this.setParamOther(entity, headerName, val, dummyKey, MAIN_COL, NUMBER_TYPE_LIST)
+        if (Util.equalsAny(headerName, LOCATION)) {
+          dummyKey = this.setParamLocation(entity, headerName, val, dummyKey)
+          return dummyKey
         }
+        entity[headerName] = val
         return dummyKey
       },
       (entity, dummyKey) => this.resetId(entity, dummyKey)

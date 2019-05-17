@@ -34,11 +34,11 @@
         </b-form-row>
         <b-form-row class="my-1 ml-2 ml-sm-0">
           <b-button class="ml-sm-4 ml-2 mr-1" :pressed.sync="isPause" :variant="getButtonTheme()">
-            <i v-if="!isPause" class="fas fa-pause" />
+            <font-awesome-icon v-if="!isPause" icon="pause" />
             <span v-if="!isPause">
               &nbsp;{{ $t('label.reload') }}{{ $t('label.pause') }}
             </span>
-            <i v-if="isPause" class="fas fa-play" />
+            <font-awesome-icon v-if="isPause" icon="play" />
             <span v-if="isPause">
               &nbsp;{{ $t('label.reload') }}{{ $t('label.restart') }}
             </span>
@@ -59,6 +59,7 @@ import * as MenuHelper from '../../sub/helper/MenuHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
+import * as Util from '../../sub/util/Util'
 import { APP, DISP, EXCLOUD } from '../../sub/constant/config'
 import { CATEGORY } from '../../sub/constant/Constants'
 import { Container, Shape, Text } from '@createjs/easeljs/dist/easeljs.module'
@@ -87,7 +88,7 @@ class RssiIcon {
     const label = new Text(rssi)
     this.container.addChild(s, label)
     label.set({
-      font: 20 * scale + 'px ' + DISP.EXB_LOC_FONT,
+      font: 20 * scale + 'px ' + DISP.EXB_LOC.FONT,
       color: color.text,
       textAlign: 'center',
       textBaseline: 'bottom',
@@ -134,10 +135,10 @@ export default {
           active: true
         },
       ],
-      useGroup: MenuHelper.useMaster('group') && APP.TX_WITH_GROUP,
-      useCategory: MenuHelper.useMaster('category') && APP.TX_WITH_CATEGORY,
+      useGroup: MenuHelper.useMaster('group') && Util.includesIgnoreCase(APP.TX.WITH, 'group'),
+      useCategory: MenuHelper.useMaster('category') && Util.includesIgnoreCase(APP.TX.WITH, 'category'),
       modeRssi: true,
-      exbDisp: 'deviceNum',
+      exbDisp: 'deviceId',
       nearest: [],
       targetTx: null,
       exbBtns : [],
@@ -246,11 +247,11 @@ export default {
     createExbIcon(exb) {
       const exbBtn = new Container()
       const s = new Shape()
-      s.graphics.beginFill(DISP.EXB_LOC_BGCOLOR).drawCircle(0, 0, DISP.EXB_ICON_RADIUS / this.canvasScale, DISP.EXB_ICON_RADIUS / this.canvasScale)
+      s.graphics.beginFill(DISP.EXB_LOC.BGCOLOR).drawCircle(0, 0, DISP.EXB_ICON_RADIUS / this.canvasScale, DISP.EXB_ICON_RADIUS / this.canvasScale)
       exbBtn.addChild(s)
       const label = new Text(this.getExbDisp(exb.deviceId))
-      label.font = 20 / this.canvasScale + 'px ' + DISP.EXB_LOC_FONT
-      label.color = DISP.EXB_LOC_COLOR
+      label.font = 20 / this.canvasScale + 'px ' + DISP.EXB_LOC.FONT
+      label.color = DISP.EXB_LOC.COLOR
       label.textAlign = 'center'
       label.textBaseline = 'middle'
       exbBtn.addChild(label)
@@ -266,8 +267,6 @@ export default {
         return deviceId.toString(16).toUpperCase()
       case 'deviceId':
         return deviceId
-      case 'deviceNum':
-        return deviceId - this.$store.state.currentRegion.deviceOffset
       }
     },
     getExbPosition() {

@@ -7,21 +7,13 @@
       <b-row>
         <b-col md="8" offset-md="2">
           <b-form v-if="show" @submit.prevent="onSubmit">
-            <b-form-group v-if="hasId" v-show="isShown('EXB_WITH_EXBID')">
-              <label v-t="'label.exbId'" />
-              <b-form-input v-model="form.exbId" type="text" readonly="readonly" />
-            </b-form-group>
-            <b-form-group v-show="isShown('EXB_WITH_DEVICE_NUM')">
-              <label v-t="'label.deviceNum'" />
-              <input v-model.lazy="deviceNum" :max="maxDeviceNum" :readonly="!isEditable" type="number" class="form-control" min="0" :required="isShown('EXB_WITH_DEVICE_NUM')">
-            </b-form-group>
-            <b-form-group v-show="isShown('EXB_WITH_DEVICE_ID')">
+            <b-form-group v-show="isShown('EXB.WITH', 'deviceId')">
               <label v-t="'label.deviceId'" />
-              <input v-model.lazy="deviceId" :max="maxDeviceId" :readonly="!isEditable" type="number" class="form-control" min="0" :required="isShown('EXB_WITH_DEVICE_ID')">
+              <input v-model.lazy="deviceId" :max="maxDeviceId" :readonly="!isEditable" type="number" class="form-control" min="0" :required="isShown('EXB.WITH', 'deviceId')">
             </b-form-group>
-            <b-form-group v-show="isShown('EXB_WITH_DEVICE_IDX')">
+            <b-form-group v-show="isShown('EXB.WITH', 'deviceIdX')">
               <label v-t="'label.deviceIdX'" />
-              <input v-model.lazy="deviceIdX" :readonly="!isEditable" type="text" class="form-control" :required="isShown('EXB_WITH_DEVICE_IDX')">
+              <input v-model.lazy="deviceIdX" :readonly="!isEditable" type="text" class="form-control" :required="isShown('EXB.WITH', 'deviceIdX')">
             </b-form-group>
             <b-form-group>
               <label v-t="'label.locationName'" />
@@ -31,9 +23,9 @@
               <label v-t="'label.area'" />
               <b-form-select v-model="form.areaId" :options="areaOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-3 col-4" />
             </b-form-group>
-            <b-form-group v-show="isShown('EXB_WITH_POSID')">
+            <b-form-group v-show="isShown('EXB.WITH', 'posId')">
               <label v-t="'label.posId'" />
-              <input v-model="form.posId" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control" :required="isShown('EXB_WITH_POSID')">
+              <input v-model="form.posId" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control" :required="isShown('EXB.WITH', 'posId')">
             </b-form-group>
             <b-form-group>
               <label v-t="'label.locationX'" />
@@ -133,21 +125,16 @@ export default {
       },
       deviceId: null,
       deviceIdX: null,
-      deviceNum: null,
-      useZone: APP.EXB_WITH_ZONE && MenuHelper.isMenuEntry('/master/zoneClass'),
+      useZone: Util.includesIgnoreCase(APP.EXB.WITH, 'zone') && MenuHelper.isMenuEntry('/master/zoneClass'),
       items: ViewHelper.createBreadCrumbItems('master', {text: 'exb', href: '/master/exb'}, Util.getDetailCaptionKey(this.$store.state.app_service.exb.exbId)),
       txIconsDispFormat: 1,
       txIconsHorizon: 5,
       txIconsVertical: 5,
       TXICONS_DISPFORMAT_TILE: 5,
       maxDeviceId: 65535,
-      maxDeviceNum: 65535 - this.$store.state.currentRegion.deviceOffset,
     }
   },
   computed: {
-    hasId(){
-      return Util.hasValue(this.form.exbId)
-    },
     theme () {
       const theme = getButtonTheme()
       return 'outline-' + theme
@@ -177,7 +164,6 @@ export default {
         this.mutex = true
         this.deviceId = newVal 
         this.deviceIdX = newVal? Number(newVal).toString(16).toUpperCase(): null
-        this.deviceNum = newVal? Number(newVal) - this.$store.state.currentRegion.deviceOffset: null
         this.mutex = false
       }
     },
@@ -194,16 +180,6 @@ export default {
           }
           this.deviceIdX = newVal
           this.deviceId = parseInt(newVal, 16) 
-        }
-        this.mutex = false
-      }
-    },
-    deviceNum: function(newVal, oldVal) {
-      if (!this.mutex) {
-        this.mutex = true
-        if (newVal) {
-          this.deviceNum = newVal 
-          this.deviceId = Number(newVal) + this.$store.state.currentRegion.deviceOffset
         }
         this.mutex = false
       }
@@ -235,7 +211,7 @@ export default {
       if(index == 0){
         return true
       }
-      if(!APP.EXB_MULTI_SENSOR){
+      if(!APP.EXB.MULTI_SENSOR){
         return false
       }
       for(let idx = index - 1; 0 <= idx; idx--){
@@ -246,7 +222,7 @@ export default {
       return true
     },
     getSensorIndex(index){
-      return APP.EXB_MULTI_SENSOR && !this.isNormalSensor() && 1 < APP.EXB_SENSOR_MAX? `${index + 1}`: ''
+      return APP.EXB.MULTI_SENSOR && !this.isNormalSensor() && 1 < APP.EXB.SENSOR_MAX? `${index + 1}`: ''
     },
     getSensorOptionsExb(index) {
       const options = this.sensorOptions('exb', index != 0)
@@ -271,12 +247,12 @@ export default {
     },
     initExbSensorList(){
       this.form.exbSensorList = this.exb.exbSensorList? this.exb.exbSensorList.map((val, idx) => {
-        return APP.EXB_MULTI_SENSOR && idx < APP.EXB_SENSOR_MAX || !APP.EXB_MULTI_SENSOR && idx == 0? {
+        return APP.EXB.MULTI_SENSOR && idx < APP.EXB.SENSOR_MAX || !APP.EXB.MULTI_SENSOR && idx == 0? {
           exbId: null,
           sensorId: val.sensor.sensorId,
         }: null
       }).filter((val) => val): []
-      const maxSensor = APP.EXB_MULTI_SENSOR? APP.EXB_SENSOR_MAX: 1
+      const maxSensor = APP.EXB.MULTI_SENSOR? APP.EXB.SENSOR_MAX: 1
       for(let cnt = this.form.exbSensorList.length; cnt < maxSensor; cnt++){
         this.form.exbSensorList.push({
           exbId: null,
@@ -295,10 +271,10 @@ export default {
     },
     async save() {
       let dummyKey = -1
-      if(!this.zoneNames.find((zone) => zone.value == this.form.zoneId)){
+      if(!this.zoneNames.find(zone => zone.value == this.form.zoneId)){
         this.form.zoneId = null
       }
-      let entity = {
+      const entity = {
         exbId: this.form.exbId != null? this.form.exbId: dummyKey--,
         deviceId: this.deviceId,
         locationId: this.form.locationId,
@@ -342,7 +318,6 @@ export default {
       let ret = await AppServiceHelper.bulkSave(this.appServicePath, [entity])
       this.deviceId = null
       this.deviceIdX = null
-      this.deviceNum = null
       return ret
     },
   }

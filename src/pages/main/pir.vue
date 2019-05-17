@@ -80,22 +80,22 @@ export default {
         await this.fetchAreaExbs(true)
 
         const pirSensors = await EXCloudHelper.fetchSensor(SENSOR.PIR)
-        const pressureSensors = APP.USE_PRESSURE? await EXCloudHelper.fetchSensor(SENSOR.PRESSURE): []
-        const thermopileSensors = APP.USE_THERMOPILE? await EXCloudHelper.fetchSensor(SENSOR.THERMOPILE): []
+        const pressureSensors = APP.SENSOR.USE_PRESSURE? await EXCloudHelper.fetchSensor(SENSOR.PRESSURE): []
+        const thermopileSensors = APP.SENSOR.USE_THERMOPILE? await EXCloudHelper.fetchSensor(SENSOR.THERMOPILE): []
 
         this.getPositionedExb(
           null,
           (exb) => {
-            const pir = pirSensors.find((val) => val.deviceid == exb.deviceId && val.count >= DISP.PIR_MIN_COUNT)
+            const pir = pirSensors.find((val) => val.deviceid == exb.deviceId && val.count >= DISP.PIR.MIN_COUNT)
             const pressure = pressureSensors.find((val) => val.deviceid == exb.deviceId && val.press_vol != null)
             const thermopile = thermopileSensors.find((val) => val.deviceid == exb.deviceId)
             console.log({exb, pir, pressure, thermopile, pirSensors, pressureSensors, thermopileSensors})
             return pir? {id: SENSOR.PIR, ...pir}: pressure? {id: SENSOR.PRESSURE, count: pressure.press_vol, ...pressure}: thermopile? {id: SENSOR.THERMOPILE, ...thermopile}: null
           },
-          (exb) => exb.sensorId == SENSOR.PRESSURE? exb.count <= DISP.PRESSURE_VOL_MIN || DISP.PRESSURE_EMPTY_SHOW: exb.count > 0 || DISP.PIR_EMPTY_SHOW
+          (exb) => exb.sensorId == SENSOR.PRESSURE? exb.count <= DISP.PRESSURE.VOL_MIN || DISP.PRESSURE.EMPTY_SHOW: exb.count > 0 || DISP.PIR.EMPTY_SHOW
         )
 
-        if (APP.SHOW_MAGNET_ON_PIR) {
+        if (APP.SENSOR.SHOW_MAGNET_ON_PIR) {
           await StateHelper.load('tx', this.forceFetchTx)
           StateHelper.setForceFetch('tx', false)
           await this.storePositionHistory(this.count)
@@ -117,7 +117,7 @@ export default {
       this.showMapImageDef(() => {
         this.resetExb()
 
-        if (APP.SHOW_MAGNET_ON_PIR) {
+        if (APP.SENSOR.SHOW_MAGNET_ON_PIR) {
           this.stage.on('click', (evt) => {
             this.resetDetail()
           })
@@ -128,32 +128,32 @@ export default {
     },
     createCountButton(count){
       const scale = this.getMapScale()
-      const label = IconHelper.createCircleIcon(this.$i18n.tnl('message.count', {count}), DISP.PIR_R_SIZE / scale, '#FF3222', '#FFFFFF', {bold: true, circle: false, alpha: 0, fontSize: 40 / scale})
+      const label = IconHelper.createCircleIcon(this.$i18n.tnl('message.count', {count}), DISP.PIR.R_SIZE / scale, '#FF3222', '#FFFFFF', {bold: true, circle: false, alpha: 0, fontSize: 40 / scale})
       label.cursor = ''
       return label
     },
     createShapeInfo(sensorId, count){
       if(sensorId == SENSOR.PRESSURE){
         return {
-          bgColor: (count <= DISP.PRESSURE_VOL_MIN)? DISP.PRESSURE_BGCOLOR: DISP.PRESSURE_EMPTY_BGCOLOR,
-          width: DISP.PRESSURE_R_SIZE,
+          bgColor: (count <= DISP.PRESSURE.VOL_MIN)? DISP.PRESSURE.BGCOLOR: DISP.PRESSURE.EMPTY_BGCOLOR,
+          width: DISP.PRESSURE.R_SIZE,
         }
       }
       return {
-        bgColor: (count > 0)? DISP.PIR_BGCOLOR: DISP.PIR_EMPTY_BGCOLOR,
-        width: DISP.PIR_R_SIZE,
+        bgColor: (count > 0)? DISP.PIR.BGCOLOR: DISP.PIR.EMPTY_BGCOLOR,
+        width: DISP.PIR.R_SIZE,
       }
     },
     createLabelInfo(sensorId, count){
       if(sensorId == SENSOR.PRESSURE){
         return {
-          label: this.$i18n.tnl('label.' + (count <= DISP.PRESSURE_VOL_MIN? DISP.PRESSURE_INUSE_LABEL: DISP.PRESSURE_EMPTY_LABEL)),
-          color: DISP.PRESSURE_FGCOLOR
+          label: this.$i18n.tnl('label.' + (count <= DISP.PRESSURE.VOL_MIN? DISP.PRESSURE.INUSE_LABEL: DISP.PRESSURE.EMPTY_LABEL)),
+          color: DISP.PRESSURE.FGCOLOR
         }
       }
       return {
-        label: this.$i18n.tnl('label.' + (count > 0? DISP.PIR_INUSE_LABEL: DISP.PIR_EMPTY_LABEL)),
-        color: DISP.PIR_FGCOLOR
+        label: this.$i18n.tnl('label.' + (count > 0? DISP.PIR.INUSE_LABEL: DISP.PIR.EMPTY_LABEL)),
+        color: DISP.PIR.FGCOLOR
       }
     },
     createIcon(sensorId, count){
@@ -226,7 +226,7 @@ export default {
       Util.debug('magnet', magnet)
 
       const magnetOn = (magnet.magnet == SENSOR.MAGNET_STATUS.ON)
-      const count = (APP.MAGNET_ON_IS_USED && magnetOn || !APP.MAGNET_ON_IS_USED && !magnetOn)? 1: 0
+      const count = (APP.SENSOR.MAGNET_ON_IS_USED && magnetOn || !APP.SENSOR.MAGNET_ON_IS_USED && !magnetOn)? 1: 0
       const txBtn = this.createIcon(tx.sensorId, count)
 
       txBtn.x = tx.location.x

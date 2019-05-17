@@ -25,10 +25,10 @@ export default {
       return DetectStateHelper.getState(type, updatetime) // 第一階層のupdatetimeを使用
     },
     getPositionPowerLevel(val) {
-      if (val > APP.POWER_LEVEL_GOOD) {
+      if (val > APP.TX_MON.POWER_LEVEL_GOOD) {
         return 'good'
       }
-      if (val > APP.POWER_LEVEL_WARN) {
+      if (val > APP.TX_MON.POWER_LEVEL_WARN) {
         return 'warning'
       }
       if (val != null) {
@@ -51,21 +51,21 @@ export default {
       }
       return ''
     },
-    getTelemetryPowerLevelClass(val) {
+    getTelemetryPowerLevelClass(val, isPowerState = false) {
       const num = parseInt(val , 10)
       if (79 < num) {
-        return 'fas fa-battery-full power-safe'
+        return !isPowerState ? 'battery-full' : 'power-safe'
       }
       if (59 < num) {
-        return 'fas fa-battery-three-quarters power-safe'
+        return !isPowerState ? 'battery-three-quarters' : 'power-safe'
       }
       if (39 < num) {
-        return 'fas fa-battery-half power-warning'
+        return  !isPowerState ? 'battery-half' : 'power-warning'
       }
       if (19 < num) {
-        return 'fas fa-battery-quarter power-empty'
+        return  !isPowerState ? 'battery-quarter' : 'power-empty'
       }
-      return 'fas fa-battery-empty power-empty'
+      return  !isPowerState ? 'battery-empty' : 'power-empty'
     },
   }
 }

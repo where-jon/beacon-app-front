@@ -13,6 +13,47 @@ export const setApp = (pStore, pi18n) => {
   i18n = pi18n
 }
 
+export const createMasterCd = (masterType, masterList, masterData = null) => {
+  if(!Util.hasValue(masterList)){
+    return '1'
+  }
+  const masterIdName = masterType + 'Id'
+  const masterCdName = masterType + 'Cd'
+  if(masterData && masterData[masterIdName]){
+    return masterData[masterCdName]? masterData[masterCdName]: masterData[masterIdName]
+  }
+  const reg = /([^0-9]*)([0-9]*)/
+  const maxCd = masterList.map(master => master[masterCdName]).filter(master => master).reduce((prev, cur) => {
+    const prevAry = prev.split(reg).filter(val => val)
+    const prevLength = prevAry.length
+    const curAry = cur.split(reg).filter(val => val)
+    const curLength = curAry.length
+    for(let cnt = 0; cnt < prevLength; cnt++){
+      if(curLength <= cnt){
+        return prev
+      }
+      const comp = Util.compareStrNum(prevAry[cnt], curAry[cnt])
+      if(comp < 0){
+        return cur
+      }
+      if(comp > 0){
+        return prev
+      }
+    }
+    return prevLength < curLength? cur: prev
+  }, '')
+  if(!Util.hasValue(maxCd)){
+    return '1'
+  }
+  return maxCd.split(reg).filter(val => val).reduce((prev, cur, index, array) => {
+    const ret = '' + prev
+    if(index + 1 < array.length){
+      return ret + cur
+    }
+    return ret + (/^[0-9]+$/.test(cur)? Util.addWithPadding(cur, 1): cur.concat(1))
+  }, '')
+}
+
 export const getSensorIdName = (sensor) => {
   if(!sensor){
     return null
@@ -31,12 +72,12 @@ export const getSensorIdNames = (exbSensorList) => {
   return names.map((name) => name)
 }
 
-export const getDeviceIdName = (device, option = {ignorePrimaryKey: false, forceSensorName: false}) => {
+export const getDeviceIdName = (device, option = {forceSensorName: false}) => {
   if(device.exbId){
-    return APP.EXB_WITH_EXBID && !option.ignorePrimaryKey? 'exbId': APP.EXB_WITH_DEVICE_NUM? 'deviceNum': APP.EXB_WITH_DEVICE_ID? 'deviceId': APP.EXB_WITH_DEVICE_IDX? 'deviceIdX': 'exbId'
+    return Util.includesIgnoreCase(APP.EXB.WITH, 'deviceId')? 'deviceId': Util.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')? 'deviceIdX': 'locationName'
   }
   if(device.txId){
-    return option.forceSensorName? 'txName': APP.TX_WITH_TXID && !option.ignorePrimaryKey? 'txId': APP.TX_BTX_MINOR != 'minor'? 'btxId': 'minor'
+    return option.forceSensorName? 'potName': APP.TX.BTX_MINOR != 'minor'? 'btxId': 'minor'
   }
   return null
 }
@@ -49,23 +90,20 @@ export const getDeviceId = (device) => {
   return ''
 }
 
-export const getTxIdName = (tx, idOnly = false) => {
+export const getTxIdName = (tx) => {
   if(!tx){
     return null
   }
-  const id = APP.TX_WITH_TXID && tx.txId? tx.txId:
-    APP.TX_BTX_MINOR != 'minor' && tx.btxId? tx.btxId:
-      APP.TX_BTX_MINOR == 'minor' && tx.minor? tx.minor: null
-  return idOnly? id: id? `${id}(${Util.getValue(tx, 'txName', '')})`: null
+  return APP.TX.BTX_MINOR != 'minor' && tx.btxId? tx.btxId: APP.TX_BTX_MINOR == 'minor' && tx.minor? tx.minor: null
 }
 
-export const getTxIdNames = (txList, idOnly = false) => {
+export const getTxIdNames = (txList) => {
   if(!Util.hasValue(txList)){
     return null
   }
   const names = []
   txList.forEach((tx) => {
-    names.push(getTxIdName(tx, idOnly))
+    names.push(getTxIdName(tx))
   })
   return names.map((name) => name)
 }
@@ -89,7 +127,6 @@ export const getTxParams = (txList) => {
   txList.forEach((tx) => {
     txParams.push({
       txId: tx.txId,
-      txName: tx.txName,
       btxId: tx.btxId,
       minor: tx.minor
     })
@@ -139,13 +176,12 @@ const appStateConf = {
   },
   exbs: {
     path: '/core/exb/withLocation',
-    sort: APP.EXB_WITH_EXBID? 'exbId': APP.EXB_WITH_DEVICE_NUM? 'deviceNum': APP.EXB_WITH_DEVICE_ID? 'deviceId': APP.EXB_WITH_DEVICE_IDX? 'deviceIdX': 'exbId',
+    sort: Util.includesIgnoreCase(APP.EXB.WITH, 'deviceId')? 'deviceId': Util.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')? 'deviceIdX': 'locationName',
     beforeCommit: (arr) => {
       return arr.map((exb) => {
         const location = exb.location
         return {
           ...exb,
-          deviceNum: exb.deviceId - store.state.currentRegion.deviceOffset,
           deviceIdX: exb.deviceId.toString(16).toUpperCase(),
           x: location? Math.round(location.x * 10)/10: null,
           y: location? Math.round(location.y * 10)/10: null,
@@ -158,12 +194,13 @@ const appStateConf = {
   },
   txs: {
     path: '/core/tx/withPot',
-    sort: APP.TX_WITH_TXID? 'txId': APP.TX_BTX_MINOR != 'minor'? 'btxId': 'minor',
+    sort: APP.TX.BTX_MINOR != 'minor'? 'btxId': 'minor',
     beforeCommit: (arr) => {
       return arr.map((tx) => {
         return {
           ...tx,
           sensor: i18n.tnl('label.' + Util.getValue(tx, 'sensorName', 'normal')),
+          // potName: Util.getValue(tx, 'potTxList.0.potName', ''),
           dispPos: tx.disp & 1,
           dispPir: tx.disp & 2,
           dispAlways: tx.disp & 4,
@@ -192,15 +229,13 @@ const appStateConf = {
     beforeCommit: (arr) => {
       let potImages = arr.map((val) => ({ id: val.potId, txId: val.txId, thumbnail: val.thumbnail}))
       store.commit('app_service/replaceAS', {['potImages']:potImages})
-      const idNames = APP.TX_WITH_TXID? 'txId': APP.TX_BTX_MINOR == 'minor'? 'minor': 'btxId'
+      const idNames = APP.TX.BTX_MINOR == 'minor'? 'minor': 'btxId'
       return arr.map((pot) => {
         return {
           ...pot,
           txIds: getTxIds(pot.txList),
           txIdNames: getTxIdNames(pot.txList),
-          txSortIds: getTxIdNames(pot.txList, true),
           txParams: getTxParams(pot.txList),
-          txName: pot.txName,
           btxId: pot.btxId,
           minor: pot.minor,
           ruby: pot.extValue? pot.extValue.ruby: null,
@@ -220,7 +255,7 @@ const appStateConf = {
         if(comp != 0){
           return comp
         }
-        return Util.compareArray(a.txParams.map(val => val.txName), b.txParams.map(val => val.txName))
+        return Util.compareArray(a.txParams.map(val => val.potName), b.txParams.map(val => val.potName))
       })// omit images to avoid being filtering target
     }
   },
@@ -255,7 +290,7 @@ const appStateConf = {
   },
   users: {
     path: '/meta/user',
-    sort: APP.USER_WITH_NAME? 'name': 'loginId',
+    sort: Util.includesIgnoreCase(APP.USER.WITH, 'name')? 'name': 'loginId',
     beforeCommit: (arr) => {
       return arr.map((val) => ({...val, roleName: val.role.roleName}))
     }
@@ -367,7 +402,7 @@ export const load = async (target, force) => {
       arr = beforeCommit(arr)
     }
     store.commit('app_service/replaceAS', {[target]:arr})
-    const expiredTime = (new Date()).getTime() + APP.STATE_EXPIRE_TIME
+    const expiredTime = (new Date()).getTime() + APP.SYS.STATE_EXPIRE_TIME
     store.commit('app_service/replaceAS', {[expiredKey]: expiredTime})
   }
 }
@@ -403,10 +438,10 @@ export const loadAreaImage = async (areaId, force) => {
 
 export const getProhibitData = async (position,prohibits) => {
 
-  if (!APP.PROHIBIT_ALERT || !APP.PROHIBIT_GROUPS) {
+  if (!APP.POS.PROHIBIT_ALERT || !APP.POS.PROHIBIT_GROUPS) {
     return null
   }
-  const groups = APP.PROHIBIT_GROUPS
+  const groups = APP.POS.PROHIBIT_GROUPS
   return position.filter((pos) =>
     prohibits.some((prohibitData) => {
       if (pos.exb.areaId == prohibitData.areaId
@@ -427,7 +462,7 @@ export const getProhibitData = async (position,prohibits) => {
 
 export const getProhibitMessage = async (message,prohibitData) => {
 
-  if (!APP.PROHIBIT_ALERT || !APP.PROHIBIT_GROUPS) {
+  if (!APP.POS.PROHIBIT_ALERT || !APP.POS.PROHIBIT_GROUPS) {
     return ''   // message空
   }
 
@@ -464,7 +499,7 @@ export const loadAreaImages = async () => {
  * StateHelper.getOptionsFromState('sensor', 
  *    (val) => {this.$i18n.t('label.' + val.sensorName})}, // 表示は言語ファイルから取る。
  *    {value: null, text: this.$i18n.t('label.normal')}, // センサーのnullは「通常」
- *    (val) => APP.TX_SENSOR.includes(val.senserId)) // Txのセンサーに絞り込む
+ *    (val) => APP.SENSOR.TX_SENSOR.includes(val.senserId)) // Txのセンサーに絞り込む
  */
 export const getOptionsFromState = (key, textField, notNull, filterCallback) => {
   Util.debug('getOptionsFromState')

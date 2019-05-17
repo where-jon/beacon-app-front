@@ -6,10 +6,6 @@
 
       <b-form v-if="show" @submit.prevent="onSubmit">
         <chrome-input />
-        <b-form-group v-if="hasId">
-          <label v-t="'label.userId'" />
-          <b-form-input v-model="form.userId" type="text" readonly="readonly" />
-        </b-form-group>
         <b-form-group v-show="showName">
           <label v-t="'label.name'" />
           <input v-model="form.name" :readonly="!isEditable" type="text" maxlength="20" class="form-control">
@@ -97,10 +93,10 @@ export default {
       return 'outline-' + theme
     },
     showEmail() {
-      return APP.USER_WITH_EMAIL
+      return Util.includesIgnoreCase(APP.USER.WITH, 'email')
     },
     showName() {
-      return APP.USER_WITH_NAME
+      return Util.includesIgnoreCase(APP.USER.WITH, 'name')
     },
     ...mapState('app_service', [
       'user', 'roles'

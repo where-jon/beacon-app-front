@@ -25,7 +25,7 @@ export const getTheme = () => {
       return THEME[4].name
     }
   }
-  return DISP.THEME
+  return DISP.MENU.THEME
 }
 
 export const getThemeClasses = () => {

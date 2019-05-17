@@ -107,7 +107,7 @@ export default {
       viewList: [],
       fields: ViewHelper.addLabelByKey(this.$i18n, [
         {key: 'positionDt', sortable: true, label:'dt'},
-        ...DISP.POSITION_HISTORY_HEADERS.map(header => {
+        ...DISP.POSITION_HISTORY.HEADERS.map(header => {
           const ret = { key: header, sortable: true }
           if(header == 'areaName'){
             ret.label = 'area'
@@ -143,7 +143,7 @@ export default {
       )
     },
     enableGroup () {
-      return this.isEnabledMenu('group') && APP.POT_WITH_GROUP
+      return this.isEnabledMenu('group') && Util.includesIgnoreCase(APP.POT.WITH, 'group')
     },
     groupOptions() {
       return StateHelper.getOptionsFromState('group',
@@ -190,12 +190,12 @@ export default {
         for (var posHist of fetchList) {
           const d = new Date(posHist.positionDt)
           posHist.positionDt = Util.formatDate(d.getTime())
-          let aTx = _.find(this.txs, (tx) => { return tx.txId == posHist.txId })
-          posHist.txName = Util.getValue(aTx, 'txName', '')
+          const aTx = _.find(this.txs, (tx) => { return tx.txId == posHist.txId })
           posHist.potName = Util.getValue(aTx, 'potName', '')
-          let aExb = _.find(this.exbs, (exb) => { return exb.exbId == posHist.exbId })
+          posHist.major = Util.getValue(aTx, 'major', '')
+          posHist.minor = Util.getValue(aTx, 'minor', '')
+          const aExb = _.find(this.exbs, (exb) => { return exb.exbId == posHist.exbId })
           posHist.deviceId = Util.getValue(aExb, 'deviceId', '')
-          posHist.deviceNum =  Util.getValue(aExb, 'deviceNum', 0)
           posHist.deviceIdX = Util.getValue(aExb, 'deviceIdX', 0)
           posHist.locationName = Util.getValue(aExb, 'locationName', '')
           posHist.posId = Util.getValue(aExb, 'posId', '')

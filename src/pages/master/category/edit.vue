@@ -5,10 +5,6 @@
       <alert :message="message" />
 
       <b-form v-if="show" @submit.prevent="onSubmit">
-        <b-form-group v-if="hasId">
-          <label v-t="'label.categoryId'" />
-          <b-form-input v-model="form.categoryId" type="text" class="form-control" readonly="readonly" />
-        </b-form-group>
         <b-form-group>
           <label v-t="'label.categoryName'" />
           <input v-model="form.categoryName" :readonly="!isEditable" type="text" maxlength="20" class="form-control" required>
@@ -74,15 +70,12 @@ export default {
       oldColor: Util.getValue(category, 'display.color', null),
       oldBgColor: Util.getValue(category, 'display.bgColor', null),
       defValue: {
-        'categoryType': APP.CATEGORY_TYPES[0],
+        'categoryType': APP.CATEGORY.TYPES[0],
       },
       items: ViewHelper.createBreadCrumbItems('master', {text: 'category', href: '/master/category'}, Util.getDetailCaptionKey(this.$store.state.app_service.category.categoryId)),
     }
   },
   computed: {
-    hasId(){
-      return Util.hasValue(this.form.categoryId)
-    },
     theme() {
       const theme = getButtonTheme()
       return 'outline-' + theme
@@ -91,7 +84,7 @@ export default {
       'category',
     ]),
     categoryTypes(){
-      return CATEGORY.getTypes().filter((val) => APP.CATEGORY_TYPES.includes(val.value))
+      return CATEGORY.getTypes().filter((val) => APP.CATEGORY.TYPES.includes(val.value))
     },
     shapes(){
       return SHAPE.getShapes()

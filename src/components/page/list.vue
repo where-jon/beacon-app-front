@@ -180,15 +180,15 @@
           </span>
         </template>
         <template slot="keyName" slot-scope="row">
-          <span :title="row.item.title">
+          <span v-if="!row.item.isParent" :title="row.item.title">
             {{ row.item.keyName }}
           </span>
         </template>
         <template slot="value" slot-scope="row">
-          <settinginput :input-model="getItem(row.item.key)" input-key="value" :input-type="row.item.valType" :form-id="params.formId" />
+          <settinginput v-if="!row.item.isParent" :input-model="getItem(row.item.key)" input-key="value" :input-type="row.item.valType" :form-id="params.formId" />
         </template>
         <template slot="clear" slot-scope="row">
-          <b-button v-t="'label.clear'" :variant="theme" size="sm" @click.stop="clearAction(row.item.key)" />
+          <b-button v-if="!row.item.isParent" v-t="'label.clear'" :variant="theme" size="sm" @click.stop="clearAction(row.item.key)" />
         </template>
       </b-table>
 
@@ -284,6 +284,7 @@ export default {
           zone: '',
           zoneCategory: '',
           detectState: null,
+          settingCategory: '',
         },
         del: false,
         allShow: false,
@@ -398,6 +399,15 @@ export default {
       options.unshift({value:null, text:''})
       return options
     },
+    settingCategoryOptions() {
+      const options = this.$i18n.tnl('config.OPTIONS.SETTING_CATEGORY')
+      if(!options){
+        return [{value: null, text: ''}]
+      }
+      const ret = Object.keys(options).map(key => ({value: key, text: options[key]}))
+      ret.unshift({value: null, text: ''})
+      return ret
+    },
     loginId() {
       return this.$store.state.loginId
     },
@@ -475,7 +485,7 @@ export default {
     },
     sortCompareCustom(aData, bData, key){
       if(key == 'txIdName'){
-        return StateHelper.sortCompareArray(aData.txSortIds, bData.txSortIds)
+        return StateHelper.sortCompareArray(aData.txIdNames, bData.txIdNames)
       }
       return null
     },
@@ -504,8 +514,9 @@ export default {
         headers = _(this.params.fields).map((val) => val.key).uniqWith(_.isEqual).value()
       }
       headers = headers.filter((val) => !['style', 'thumbnail', 'actions', 'updateAction'].includes(val))
+      headers.unshift('updateKey')
       headers.push('delFlg')
-      const list = this.list.map((val) => ({...val, delFlg: 0}))
+      const list = this.list.map((val) => ({...val, updateKey: val[this.id], delFlg: 0}))
       if(this.$parent.$options.methods.customCsvData){
         list.forEach((val) => {
           this.$parent.$options.methods.customCsvData.call(this.$parent, val)
@@ -550,7 +561,8 @@ export default {
     deleteConfirm(item, index, button) {
       this.setEmptyMessage()
       this.modalInfo.title = this.$i18n.tnl('label.confirm')
-      this.modalInfo.content = this.$i18n.tnl(this.params.delFilter && item.delFlg != 0? 'message.completeDeleteConfirm': 'message.deleteConfirm', this.params.mainColumn? {target: `${this.params.mainColumn.name}:${item[this.params.mainColumn.id]}`}: {target: 'ID:' + item[this.id]})
+      const confirmName = this.params.confirmName? this.params.confirmName: Util.getValue(this.params, 'name', '') + 'Name'
+      this.modalInfo.content = this.$i18n.tnl(this.params.delFilter && item.delFlg != 0? 'message.completeDeleteConfirm': 'message.deleteConfirm', {target: `${this.$i18n.tnl('label.' + confirmName)}:${item[confirmName]}`})
       this.modalInfo.id = item[this.id]
       this.$root.$emit('bv::show::modal', 'modalInfo', button)
     },
@@ -561,6 +573,9 @@ export default {
     },
     filterGridGeneral(originItem){
       if(!this.filter.reg){
+        return true
+      }
+      if(originItem.isParent){
         return true
       }
       try{
@@ -609,6 +624,14 @@ export default {
             return false
           }
           break
+        case 'settingCategory':
+          if (extra.settingCategory){
+            if(originItem.isParent){
+              return false
+            }
+            return originItem.key.split('.').find((val, index) => index < 2 && val == extra.settingCategory)
+          }
+          break
         }
       }
       return true
@@ -627,6 +650,9 @@ export default {
         return true
       }
       if(this.filter.allShow){
+        return true
+      }
+      if(originItem.isParent){
         return true
       }
       return originItem[this.id]

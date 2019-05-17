@@ -36,11 +36,11 @@
               {{ $t('label.dispRssi') }}
             </b-form-checkbox>
             <b-button class="ml-sm-4 ml-2 mr-1" :pressed.sync="isPause" :variant="getButtonTheme()">
-              <i v-if="!isPause" class="fas fa-pause" />
+              <font-awesome-icon v-if="!isPause" icon="pause" />
               <span v-if="!isPause">
                 &nbsp;{{ $t('label.reload') }}{{ $t('label.pause') }}
               </span>
-              <i v-if="isPause" class="fas fa-play" />
+              <font-awesome-icon v-if="isPause" icon="play" />
               <span v-if="isPause">
                 &nbsp;{{ $t('label.reload') }}{{ $t('label.restart') }}
               </span>
@@ -54,10 +54,13 @@
       <b-col v-if="showMeditag">
         <canvas id="map" ref="map" />
       </b-col>
-      <b-col v-if="showMeditag && isShowRight" class="rightPane">
+      <div v-if="showMeditag && isShowRight && hasMeditagSensors()" class="rightPane">
         <sensor :sensors="meditagSensors" :is-popup="false" class="rightPaneChild" />
-      </b-col>
+      </div>
     </b-row>
+    <div v-if="showMeditag && isShowBottom && hasMeditagSensors()" class="rightPane">
+      <sensor :sensors="meditagSensors" :is-popup="false" class="rightPaneChild" />
+    </div>
     <div v-if="selectedTx.btxId && showReady">
       <txdetail :selected-tx="selectedTx" :selected-sensor="selectedSensor" :is-show-modal="isShowModal()" @resetDetail="resetDetail" />
     </div>
@@ -74,7 +77,6 @@ import * as StateHelper from '../../sub/helper/StateHelper'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as Util from '../../sub/util/Util'
-import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import txdetail from '../../components/parts/txdetail.vue'
 import { APP, DISP } from '../../sub/constant/config'
 import { SENSOR, EXTRA_NAV, CATEGORY, TX } from '../../sub/constant/Constants'
@@ -105,13 +107,13 @@ export default {
       items: !this.isInstallation ? ViewHelper.createBreadCrumbItems('main', 'showPosition') : ViewHelper.createBreadCrumbItems('develop', 'installation'),
       detectedCount: 0, // 検知数
       pot: {},
-      showMeditag: APP.USE_MEDITAG && !this.isInstallation,
-      showDetected: APP.SHOW_DETECTED_COUNT,
+      showMeditag: APP.SENSOR.USE_MEDITAG && !this.isInstallation,
+      showDetected: APP.POS.SHOW_DETECTED_COUNT,
       shortName: this.$i18n.tnl('label.showPositionShort'),
       extraNavSpec: EXTRA_NAV,
       legendItems: [],
-      useGroup: MenuHelper.useMaster('group') && APP.POS_WITH_GROUP,
-      useCategory: MenuHelper.useMaster('category') && APP.POS_WITH_CATEGORY,
+      useGroup: MenuHelper.useMaster('group') && APP.POS.WITH.GROUP,
+      useCategory: MenuHelper.useMaster('category') && APP.POS.WITH.CATEGORY,
       toggleCallBack: () => this.reset(),
       noImageErrorKey: 'noMapImage',
       modeRssi: false,
@@ -119,9 +121,12 @@ export default {
       firstTime: true,
       message: '',
       prohibitData : null,
-      icons : [],
+      icons: {},
+      txsMap: {},
+      exbsMap: {},
       prohibitInterval:null,
-      isShowRight: false
+      isShowRight: false,
+      isShowBottom: false
     }
   },
   computed: {
@@ -174,7 +179,11 @@ export default {
     await StateHelper.load('category')
     await StateHelper.load('group')
     await StateHelper.load('prohibit')
+    await StateHelper.load('tx')
+    await StateHelper.load('exb')
     //document.addEventListener('touchstart', this.touchEnd)
+    this.txs.forEach((t) => this.txsMap[t.btxId] = t)
+    this.exbs.forEach((e) => this.exbsMap[e.posId] = e)
     await this.fetchData()
     this.startPositionAutoReload()
     this.startOtherAutoReload()
@@ -184,7 +193,7 @@ export default {
   },
   methods: {
     async loadLegends () {
-      const loadCategory = DISP.DISPLAY_PRIORITY[0] == 'category'
+      const loadCategory = DISP.TX.DISPLAY_PRIORITY[0] == 'category'
       const magnetCategoryTypes = loadCategory? this.getMagnetCategoryTypes(): this.getMagnetGroupTypes()
       const legendElements = loadCategory? this.getCategoryLegendElements(): this.getGroupLegendElements()
       // console.error(loadCategory, magnetCategoryTypes, legendElements)
@@ -216,6 +225,9 @@ export default {
     getGroupLegendElements () {
       return this.groups.map((val) => ({id: val.groupId, name: val.groupName, ...val, }))
     },
+    hasMeditagSensors () {
+      return Util.hasValue(this.meditagSensors)
+    },
     async fetchPositionData(payload) {
       await this.fetchAreaExbs(true)
 
@@ -230,7 +242,7 @@ export default {
       if(payload.disabledOther){
         return
       }
-      if (APP.USE_MEDITAG) {
+      if (APP.SENSOR.USE_MEDITAG) {
         let meditagSensors = await EXCloudHelper.fetchSensor(SENSOR.MEDITAG)
         this.meditagSensors = _(meditagSensors)
           .filter((val) => this.txs.some((tx) => tx.btxId == val.btxid))
@@ -239,18 +251,17 @@ export default {
             let label = tx && tx.displayName? tx.displayName: val.btxid
             return {...val, label, bg: SensorHelper.getStressBg(val.stress), down: val.down?val.down:0}
           })
-          .sortBy((val) => (new Date().getTime() - val.downLatest < APP.DOWN_RED_TIME)? val.downLatest * -1: val.btxid)
+          .sortBy((val) => (new Date().getTime() - val.downLatest < APP.SENSOR.MEDITAG.DOWN_RED_TIME)? val.downLatest * -1: val.btxid)
           .value()
         Util.debug(this.meditagSensors)
       }
 
-      if (APP.USE_MAGNET) {
+      if (APP.SENSOR.USE_MAGNET) {
         this.magnetSensors = await EXCloudHelper.fetchSensor(SENSOR.MAGNET)
         Util.debug(this.magnetSensors)
       }
     },
     async fetchData(payload, disableErrorPopup) {
-      this.isShowRight = false
       const disabledProgress = Util.getValue(payload, 'disabledProgress', false)
       try {
         this.reloadSelectedTx = this.reload? this.selectedTx: {}
@@ -258,8 +269,10 @@ export default {
         if(!disabledProgress){
           this.showProgress()
         }
-        await StateHelper.load('tx', this.forceFetchTx)
-        StateHelper.setForceFetch('tx', false)
+        if (!this.selectedTx.btxId) {
+          await StateHelper.load('tx', this.forceFetchTx)
+          StateHelper.setForceFetch('tx', false)
+        }
         this.$nextTick(() => {
           this.loadLegends()
         })
@@ -267,9 +280,6 @@ export default {
         if (payload && payload.done) {
           payload.done()
         }
-        setTimeout( async () => {
-          this.showRight()
-        }, 100)
       }
       catch(e) {
         console.error(e)
@@ -278,15 +288,12 @@ export default {
         this.hideProgress()
       }
     },
-    async showRight(){
-      this.isShowRight = true
-    },
     async getDetail(txId) {
       let tx = await AppServiceHelper.fetch('/core/tx', txId)
       return tx && tx.pot
     },
     twinkle() {
-      this.icons.forEach((icon)=>{
+      Object.values(this.icons).forEach((icon)=>{
         icon.prohibit? icon.visible=!icon.visible : icon.visible = true
         this.stage.update()
       })
@@ -302,12 +309,14 @@ export default {
         if(!cPayload.disabledProgress){
           this.showProgress()
         }
-        const reloadButton = document.getElementById('reloadIcon')
+        const reloadButton = document.getElementById('spinner')
+        const spinClassName = 'fa-spin'
         if(!this.firstTime && reloadButton){
-          HtmlUtil.removeClass({target: reloadButton}, 'rotateStop')
-          HtmlUtil.addClass({target: reloadButton}, 'rotate')
+          reloadButton.classList.add(spinClassName)
         }
-        await this.fetchPositionData(cPayload)
+        if(!this.selectedTx.btxId){
+          await this.fetchPositionData(cPayload)
+        }
 
         this.stage.on('click', (evt) => {
           this.resetDetail()
@@ -325,8 +334,7 @@ export default {
         this.showTxAll()
         // this.prohibitInterval = setInterval(this.twinkle,DISP.PROHIBIT_TWINKLE_TIME) TODO: Violation発生
         if(!this.firstTime && reloadButton){
-          HtmlUtil.removeClass({target: reloadButton}, 'rotate')
-          HtmlUtil.addClass({target: reloadButton}, 'rotateStop')
+          reloadButton.classList.remove(spinClassName)
         }
         this.firstTime = false
         if(!cPayload.disabledProgress){
@@ -334,33 +342,45 @@ export default {
         }
       }, disableErrorPopup)
     },
+    onMapLoaded(size){
+      if(APP.USE_MEDITAG && this.meditagSensors){
+        const parent = document.getElementById('mapContainer')
+        const rightPaneWidth = 300
+        if(parent.clientWidth - size.width >= rightPaneWidth){
+          this.isShowRight = true
+          this.isShowBottom = false
+        }else{
+          this.isShowRight = false
+          this.isShowBottom = true
+        }
+      }
+    },
+    onReset(){
+      this.isShowRight = false
+      this.isShowBottom = false      
+    },
     showTxAll() {
-      this.icons = []
       if (!this.txCont) {
         return
       }
       this.txCont.removeAllChildren()
-      this.stage.update()
-      // for debug
       this.disableExbsCheck()
       this.detectedCount = 0 // 検知カウントリセット
       let position = []
-      if(APP.USE_MULTI_POSITIONING){
+      if(APP.POS.USE_MULTI_POSITIONING){
         let area = _.find(this.$store.state.app_service.areas, (area) => area.areaId == this.selectedArea)
         let mapRatio = area.mapRatio
         position = PositionHelper.adjustMultiPosition(this.getPositions(), mapRatio)
       }else{
-        const ratio = DISP.TX_R_ABSOLUTE ? 1/this.canvasScale : 1
+        const ratio = DISP.TX.R_ABSOLUTE ? 1/this.canvasScale : 1
         position = PositionHelper.adjustPosition(this.getPositions(), ratio, this.positionedExb, this.selectedArea)
       }
-      position.forEach((pos) => {
-        this.showTx(pos)
-      })
+      position.forEach((pos) => this.showTx(pos))
       this.reShowTx(position)
     },
     showTx(pos) {
-      const tx = this.txs.find((tx) => tx.btxId == pos.btx_id)
-      const exb = this.exbs.find((exb) => exb.posId == pos.pos_id)
+      const tx = this.txsMap[pos.btx_id]
+      const exb = this.exbsMap[pos.pos_id]
       Util.debug('showTx', pos, tx && tx.sensor)
       if (!tx) {
         console.warn('tx not found. btx_id=' + pos.btx_id)
@@ -397,7 +417,18 @@ export default {
         pos.transparent = true
       }
 
-      const txBtn = this.createTxBtn(pos, display.shape, color, bgColor)
+      // 既に該当btx_idのTXアイコンが作成済みか?
+      let txBtn = this.icons[pos.btx_id]
+      if (!txBtn) {
+        // 作成されていない場合、新規作成してからiconsに登録
+        txBtn = this.createTxBtn(pos, display.shape, color, bgColor)
+        this.icons[pos.btx_id] = txBtn
+      } else {
+        // 作成済みの場合、座標値のみセットする
+        txBtn.x = pos.x
+        txBtn.y = pos.y
+      }
+
       if (this.isFixTx(tx)) {
         Util.debug('fixed location', tx)
         txBtn.x = tx.location.x
@@ -410,7 +441,6 @@ export default {
       }
       this.txCont.addChild(txBtn)
       txBtn.prohibit = this.prohibitData? this.prohibitData.some((data) => data.minor == pos.minor):false
-      this.icons.push(txBtn)
       this.stage.update()
       this.detectedCount++  // 検知数カウント増加
     },

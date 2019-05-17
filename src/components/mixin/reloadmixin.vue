@@ -38,7 +38,7 @@ export default {
           done() { AuthHelper.checkSession() }
         })
         window.scroll(windowScroll.x, windowScroll.y)
-      }, APP.AUTO_RELOAD)
+      }, APP.COMMON.AUTO_RELOAD)
     },
     startPositionAutoReload() {
       HtmlUtil.registerInterval(() => {
@@ -46,7 +46,7 @@ export default {
           disabledProgress: true,
           disabledOther: true,
         })
-      }, APP.POSITION_AUTO_RELOAD)
+      }, APP.POS.AUTO_RELOAD)
     },
     startAutoReload() {
       HtmlUtil.registerInterval(()=>{
@@ -54,7 +54,7 @@ export default {
         const windowScroll = {x: window.pageXOffset , y: window.pageYOffset}
         EventBus.$emit('reload', {done() { AuthHelper.checkSession() }})
         window.scroll(windowScroll.x, windowScroll.y)
-      }, APP.AUTO_RELOAD)
+      }, APP.COMMON.AUTO_RELOAD)
     },
     stopAutoReload() {
       HtmlUtil.removeInterval()

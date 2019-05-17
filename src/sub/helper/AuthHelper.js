@@ -83,7 +83,7 @@ export const resetConfig = async (isTenantAdmin, setting) => {
   ConfigHelper.initConfig()
   ConfigHelper.applyAppServiceSetting(setting)  
   if (isTenantAdmin) {
-    APP.TOP_PAGE = '/provider/tenant'
+    APP.MENU.TOP_PAGE = '/provider/tenant'
   }
 }
 
@@ -164,7 +164,7 @@ export const logout = () => {
   store.commit('app_service/clearAll')
   store.commit('main/clearAll')
   store.commit('setting/clearAll')
-  router.push(APP.LOGIN_PAGE)
+  router.push(APP.MENU.LOGIN_PAGE)
   if (APP.LOGIN_MODE == LOGIN_MODE.APP_SERVICE) {
     HttpHelper.getAppService('/logout', null, true)        
   }
@@ -174,7 +174,7 @@ export const checkSession = () => {
   const login = JSON.parse(window.localStorage.getItem('login'))
   if (login) {
     const now = new Date().getTime()
-    if (now - Number(login.dt) < APP.TIMEOUT) {
+    if (now - Number(login.dt) < APP.SYS.TIMEOUT) {
       window.localStorage.setItem('login', JSON.stringify({...login, dt: now}))
       store.commit('replace', login)
       return true

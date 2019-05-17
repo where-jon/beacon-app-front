@@ -5,17 +5,17 @@
         <ul class="menu-group-items">
           <li class="menu-item title clearfix" @click.stop="onMenuClick(i)">
             <span class="title">
-              <i :class="group.icon" />&nbsp;&nbsp;{{ $t("label." + group.key) }}
+              <font-awesome-icon :icon="iconClass(group.icon)" fixed-width />&nbsp;&nbsp;{{ $t("label." + group.key) }}
             </span>
             <span class="direction">
-              <i v-if="selectedItem !== i" class="fa fa-angle-left" />
-              <i v-if="selectedItem === i" class="fa fa-angle-down" />
+              <font-awesome-icon v-if="selectedItem !== i" icon="angle-left" fixed-width />
+              <font-awesome-icon v-if="selectedItem === i" icon="angle-down" fixed-width />
             </span>
           </li>
           <vue-slide-up-down :active="selectedItem === i">
             <li v-for="page in group.pages" :key="page.key" :class="menuItemClasses">
               <router-link :to="'/' + group.base + page.path" class="bd-toc-link">
-                <i :class="page.icon" class="ml-3 menu-item-icon" />&nbsp;{{ $t("label." + (page.label? page.label: page.key)) }}
+                <font-awesome-icon :icon="iconClass(page.icon)" fixed-width />&nbsp;{{ $t("label." + (page.label? page.label: page.key)) }}
               </router-link>
             </li>
           </vue-slide-up-down>
@@ -51,10 +51,10 @@ export default {
       return this.$store.state.loginId
     },
     linkKey(){
-      return HtmlUtil.getResourcePath(APP.SHOW_MENU_LINK)
+      return HtmlUtil.getResourcePath(APP.MENU.SHOW_MENU_LINK)
     },
     linkUrl(){
-      return APP.SHOW_MENU_LINK_URL
+      return APP.MENU.SHOW_MENU_LINK_URL
     },
     menuItemClasses () {
       // use for update theme-color
@@ -64,11 +64,14 @@ export default {
         item: true,
         ...getThemeClasses()
       }
-    }
+    },
   },
   methods: {
     onMenuClick (index) {
       this.selectedItem = index === this.selectedItem ? -1 : index
+    },
+    iconClass(icon) {
+      return icon
     },
   },
   templates: {
