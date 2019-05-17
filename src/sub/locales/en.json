@@ -215,6 +215,7 @@
     "potId": "ID",
     "potCd": "Code",
     "potName": "Name",
+    "potSearchName": "Detected name",
     "post": "Post",
     "ruby": "Pronounce",
     "tel": "Tel",

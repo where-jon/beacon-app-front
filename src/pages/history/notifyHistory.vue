@@ -239,7 +239,7 @@ export default {
         {key: 'positionDt', sortable: true, label:'dt'},
         {key: 'notifyTo', sortable: true,label:'notifyTo' },
         {key: 'minorList', sortable: true,label:'minor' },
-        {key: 'potNames', sortable: true, label:'potName'},
+        {key: 'potNames', sortable: true, label:'potSearchName'},
         {key: 'zoneNames', sortable: true, label:'zoneName'},
         {key: 'lastRcvDatetimes', sortable: true,label:'finalReceiveTime' },
         {key: 'notifyResult', sortable: true,label:'notifyResult' },
@@ -293,6 +293,7 @@ export default {
     this.userState == 'ALL_REGION'? this.bTx = true: this.bTx = false
     this.userState == 'ALL_REGION'? this.bUserCheck = true: this.bUserCheck = false
     this.userState == 'ALL_REGION'? null: this.userMinor = user.minor
+    this.userState = 'ALL_REGION'
     this.fields = this.fields1
 
   },

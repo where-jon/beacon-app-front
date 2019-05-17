@@ -219,6 +219,7 @@
     "potId": "ID",
     "potCd": "コード",
     "potName": "名前",
+    "potSearchName": "検知名",
     "post": "役職",
     "ruby": "ふりがな",
     "tel": "電話番号",
