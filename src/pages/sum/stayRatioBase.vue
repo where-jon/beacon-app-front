@@ -20,7 +20,7 @@
         <b-form-group>
           <b-form-row v-if="enableCategory" class="mb-3 mr-5">
             <label v-t="'label.category'" class="mr-2" />
-            <b-form-select v-model="vModelCategory" :options="categoryOptionList" class="mr-2 inputSelect" @change="categoryChange" />
+            <b-form-select v-model="vModelCategory" :options="categoryOptionList" class="mr-2 inputSelect" />
           </b-form-row>
         </b-form-group>
       </b-form>
@@ -141,12 +141,11 @@ export default {
     if (this.categories.length < 1) {
       return
     }
-    this.categoryOptionList = this.categories.filter((c) => c.categoryType === CATEGORY.ZONE)
+    this.categoryOptionList = this.categories.filter((c) => c.categoryType != CATEGORY.ZONE)
       .sort((a, b) => a.categoryId < b.categoryId ? -1 : 1)
       .map((c) => { return {text: c.categoryName, value: c.categoryId}})
     this.categoryOptionList.unshift({text: '', value: null})
     this.vModelCategory = this.categoryOptionList[0].value
-    await StateHelper.load('zone')
   },
   methods: {
     async fetchData(payload) {
