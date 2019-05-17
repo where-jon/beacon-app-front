@@ -7,7 +7,7 @@
       <b-form v-if="show" @submit.prevent="onSubmit">
         <b-form-group>
           <label v-t="'label.featureName'" />
-          <b-form-select v-model="featureId" :options="featureNames" :disabled="systemReadOnly" class="mb-3 ml-3 col-3" required />
+          <v-select v-model="vueSelected.feature" :options="featureNames" :disabled="systemReadOnly" :clearable="false" class="mb-3 vue-options" />
         </b-form-group>
         <b-form-group>
           <label v-t="'label.path'" />
@@ -24,10 +24,10 @@
         </b-form-group>
 
         <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
-        <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="register(false)">
+        <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" :disabled="!selectFeature" @click="register(false)">
           {{ $i18n.tnl(`label.${isUpdate? 'update': 'register'}`) }}
         </b-button>
-        <b-button v-if="isRegistable && !isUpdate" v-t="'label.registerAgain'" :variant="theme" type="submit" class="my-1" @click="register(true)" />
+        <b-button v-if="isRegistable && !isUpdate" v-t="'label.registerAgain'" :variant="theme" type="submit" class="my-1" :disabled="!selectFeature" @click="register(true)" />
       </b-form>
     </div>
   </div>
@@ -37,6 +37,7 @@
 import { mapState } from 'vuex'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
+import * as StateHelper from '../../../sub/helper/StateHelper'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
 import featuremixinVue from '../../../components/mixin/featuremixin.vue'
 import * as HtmlUtil from '../../../sub/util/HtmlUtil'
@@ -60,6 +61,9 @@ export default {
       appServicePath: '/meta/roleFeature',
       featureId: -1,
       form: ViewHelper.extract(this.$store.state.app_service.roleFeature, ['feature.featureId', 'feature.featureName', 'feature.path', 'mode']),
+      vueSelected: {
+        feature: null,
+      },
       featureNames: [],
       selectedModes: [],
       selectedAll: false,
@@ -90,8 +94,17 @@ export default {
     selectedAllText(){
       return ROLE_FEATURE.getAllAuthorizationOption().text
     },
+    selectFeature(){
+      return this.featureId && this.featureId > 0
+    },
   },
   watch: {
+    'vueSelected.feature': {
+      handler: function(newVal, oldVal){
+        this.featureId = Util.getValue(newVal, 'value', null)
+      },
+      deep: true,
+    },
     featureId: function(newVal, oldVal) {
       const feature = this.features.find((val) => val.featureId === newVal)
       this.form.path = feature != null? feature.path: ''
@@ -100,10 +113,10 @@ export default {
       this.selectedModes = newVal? [ ROLE_FEATURE.getAllAuthorizationOption().value ]: []
     },
   },
-  created() {
-    this.featureId = Util.hasValue(this.form.featureId)? this.form.featureId: -1
+  async created() {
     this.roleFeature.featureId = Util.hasValue(this.form.featureId)? this.form.featureId: null
-    this.resetFeatureNames()
+    await this.resetFeatureNames()
+    this.vueSelected.feature = StateHelper.getVueSelectData(this.featureNames, Util.getValue(this, 'form.featureId', Util.getValue(this.featureNames, '0', {}).value))
     this.selectedModes = []
     this.modes.forEach((mode) => {
       if(this.form.mode & mode.value || this.form.mode == mode.value){
@@ -134,11 +147,16 @@ export default {
         const sameFeature = this.roleFeatures.find((roleFeature) => feature.featureId === roleFeature.feature.featureId)
         return this.systemReadOnly? sameFeature: !sameFeature
       })
-      this.featureNames = featureOptions.map((val) => ({text: this.$i18n.tnl(`label.${val.featureName}`), value: val.featureId}))
+      this.featureNames = featureOptions.map(val => ({
+        text: this.$i18n.tnl(`label.${val.featureName}`),
+        label: this.$i18n.tnl(`label.${val.featureName}`),
+        value: val.featureId,
+      }))
       this.featureNames = _(this.featureNames).sortBy((val) => val.text).compact().value()
     },
-    beforeReload(){
-      this.resetFeatureNames()
+    async beforeReload(){
+      await this.resetFeatureNames()
+      this.vueSelected.feature = StateHelper.getVueSelectData(this.featureNames, null, true)
     },
     async save() {
       let entity = {
@@ -153,5 +171,5 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
+@import "../../../sub/constant/vue.scss";
 </style>

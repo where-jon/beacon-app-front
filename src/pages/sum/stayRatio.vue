@@ -14,7 +14,7 @@
         <b-form-group>
           <b-form-row class="mb-3 mr-5">
             <label v-t="'label.group'" class="mr-2" />
-            <b-form-select v-model="form.groupId" :options="groupOptions" class="mr-2 inputSelect" />
+            <v-select v-model="vueSelected.group" :options="groupOptions" class="mr-2 inputSelect vue-options" />
           </b-form-row>
         </b-form-group>
       </b-form>
@@ -70,6 +70,9 @@ export default {
       form: {
         date: '',
       },
+      vueSelected: {
+        group: null,
+      },
       viewList: [],
       items: ViewHelper.createBreadCrumbItems('sumTitle', 'stayRatio'),
       message: '',
@@ -105,6 +108,14 @@ export default {
     ]),
     iosOrAndroid() {
       return Util.isAndroidOrIOS()
+    },
+  },
+  watch: {
+    'vueSelected.group': {
+      handler: function(newVal, oldVal){
+        this.form.groupId = Util.getValue(newVal, 'value', null)
+      },
+      deep: true,
     },
   },
   async created() {
@@ -352,6 +363,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import "../../sub/constant/vue.scss";
 .inputSelect {
   min-width: 160px;
 }

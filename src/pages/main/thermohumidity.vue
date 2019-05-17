@@ -14,7 +14,7 @@
                 </span>
               </b-form-row>
               <b-form-row>
-                <b-form-select v-model="selectedArea" :options="areaOptions" required class="ml-2" @change="changeArea" />
+                <v-select v-model="vueSelected.area" :options="areaOptions" :clearable="false" class="ml-2 vue-options" />
               </b-form-row>
             </b-form-row>
           </b-form-group>
@@ -118,8 +118,17 @@ export default {
       }
     },
   },
+  watch: {
+    'vueSelected.area': {
+      handler: function(newVal, oldVal){
+        this.selectedArea = Util.getValue(newVal, 'value', null)
+        this.changeArea(this.selectedArea)
+      },
+      deep: true,
+    },
+  },
   mounted() {
-    this.fetchData()
+    // this.fetchData()
   },
   beforeDestroy(){
     this.removeTick()
@@ -283,9 +292,9 @@ export default {
     },
     showMapImage() {
       this.isLoading = true
-      this.exbIcons = []
-      this.txIcons = []
       this.showMapImageDef(() => {
+        this.exbIcons = []
+        this.txIcons = []
         this.resetExb()
         this.resetTx()
         this.isLoading = false
@@ -472,6 +481,7 @@ export default {
 
 <style scoped lang="scss">
 @import "../../sub/constant/config.scss";
+@import "../../sub/constant/vue.scss";
 
 ::-webkit-scrollbar { 
   display: none; 

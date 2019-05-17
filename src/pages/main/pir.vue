@@ -6,7 +6,7 @@
         <label class="ml-3 mr-2">
           {{ $t('label.area') }}
         </label>
-        <b-form-select v-model="selectedArea" :options="areaOptions" required class="ml-2" @change="changeArea" />
+        <v-select v-model="vueSelected.area" :options="areaOptions" :clearable="false" class="ml-1 vue-options" />
       </b-form>
     </b-row>
     <b-row class="mt-3">
@@ -63,6 +63,15 @@ export default {
     ...mapState([
       'reload',
     ]),
+  },
+  watch: {
+    'vueSelected.area': {
+      handler: function(newVal, oldVal){
+        this.selectedArea = Util.getValue(newVal, 'value', null)
+        this.changeArea(this.selectedArea)
+      },
+      deep: true,
+    },
   },
   mounted() {
     document.addEventListener('touchstart', this.touchEnd)
@@ -246,6 +255,7 @@ export default {
 
 <style scoped lang="scss">
 @import "../../sub/constant/config.scss";
+@import "../../sub/constant/vue.scss";
 
 ::-webkit-scrollbar { 
   display: none; 
