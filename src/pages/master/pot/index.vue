@@ -74,10 +74,8 @@ export default {
       return [
         'potId',
         'potName',
-        'thumbnail',
         Util.includesIgnoreCase(APP.TX.WITH, 'txId')? 'txId': APP.TX.BTX_MINOR == 'minor'? 'minor': 'btxId',
         'txName',
-        'potName',
         'potType',
         'displayName',
       ].concat(this.createCustomColumn().map(val => val.key))
