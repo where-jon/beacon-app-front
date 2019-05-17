@@ -4,9 +4,62 @@
       id="stayRatioDisplayModal"
       size="lg"
       :title="$t('label.displaySpecified')"
-       ok-only
+      ok-only
     >
+      チェック、設定された項目を表に表示します
+      <hr>
+      一覧
+      <b-form-group>
+        <b-form-checkbox-group id="checkbox-group-2" v-model="displayCheckList.stay" name="flavour-2">
+          <b-form-checkbox :value="0">
+            滞在時間（合計）
+          </b-form-checkbox><br>
+          <b-form-checkbox :value="1">
+            不在時間（合計）
+          </b-form-checkbox><br>
+        </b-form-checkbox-group>
+        <b-form-checkbox-group id="checkbox-group-2" v-model="displayCheckList.category" name="flavour-2">
+          カテゴリ
+          <div v-for="(category, index) in categoryDisplayList" :key="`category-${index}`">
+            <b-form-checkbox :value="category.categoryId">
+              {{ category.categoryName }}
+            </b-form-checkbox><br>
+          </div>
+        </b-form-checkbox-group>
+        <b-form-checkbox-group id="checkbox-group-2" v-model="displayCheckList.group" name="flavour-2">
+          グループ
+          <div v-for="(group, index) in groups" :key="`group-${index}`">
+            <b-form-checkbox :value="group.groupId">
+              {{ group.groupName }}
+            </b-form-checkbox><br>
+          </div>
+        </b-form-checkbox-group>
+        <b-form-checkbox-group id="checkbox-group-2" v-model="displayCheckList.area" name="flavour-2">
+          エリア
+          <div v-for="(area, index) in areas" :key="`area-${index}`">
+            <b-form-checkbox :value="area.areaId">
+              {{ area.areaName }}
+            </b-form-checkbox><br>
+          </div>
+        </b-form-checkbox-group>
+        <hr>
+        グラフ
+        <b-form-radio-group v-model="historyType">
+          <b-form-radio :value="0">
+            {{ $t('label.zoneCategory') }}
+          </b-form-radio>
+          <br>
+          <b-form-radio :value="1">
+            {{ $t('label.area') }}
+          </b-form-radio>
+        </b-form-radio-group>
+      </b-form-group>
+      stayDisp: {{ displayCheckList.stay }} <br>
+      categoryDisp: {{ displayCheckList.category }} <br>
+      groupDisp: {{ displayCheckList.group }} <br>
+      areaDisp: {{ displayCheckList.area }} <br>
       
+      stayCount: {{ displayCheckList.stay.length }} <br>
     </b-modal>
     <breadcrumb :items="items" :reload="false" />
     <div class="container">
@@ -38,7 +91,7 @@
             <b-button v-t="'label.display'" type="submit" :variant="theme" @click="display" />
             <b-button v-if="!iosOrAndroid" v-t="'label.download'" :variant="theme" class="ml-2" @click="download" />
             <b-button v-if="!iosOrAndroid" v-t="'label.downloadMonth'" :variant="theme" class="ml-2" @click="downloadMonth" />
-            <b-button v-if="!iosOrAndroid" v-t="'label.displaySpecified'" :variant="theme" class="ml-2" v-b-modal.stayRatioDisplayModal />
+            <b-button v-if="!iosOrAndroid" v-t="'label.displaySpecified'" v-b-modal.stayRatioDisplayModal :variant="theme" class="ml-2" />
           </b-form-row>
         </b-form-group>
       </b-form>
@@ -83,6 +136,12 @@ export default {
       form: {
         date: '',
       },
+      displayCheckList: {
+        stay: [],
+        category: [],
+        group: [],
+        area: [],
+      },
       name: '',
       viewList: [],
       items: ViewHelper.createBreadCrumbItems('sumTitle', 'stayRatio'),
@@ -94,6 +153,7 @@ export default {
       totalRows: 0,
       searchedGroupName: '',
       categoryOptionList: [],
+      categoryDisplayList: [],
       fromToSettingDiff: 0,
       params: {
         fields: ViewHelper.addLabelByKey(this.$i18n, [
@@ -111,6 +171,8 @@ export default {
         hideSearchBox: true,
         isDisplayGraph: true,
       },
+      historyType: 0,
+      selected: [],
     }
   },
   computed: {
@@ -122,7 +184,7 @@ export default {
       'pots',
       'categories',
       'zones',
-      'area',
+      'areas',
     ]),
     iosOrAndroid() {
       return Util.isAndroidOrIOS()
@@ -138,6 +200,7 @@ export default {
     await StateHelper.load('group')
     await StateHelper.load('pots')
     await StateHelper.load('categories')
+    await StateHelper.load('areas')
     this.form.date = moment().add(-1, 'days').format('YYYYMMDD')
   },
   async mounted() {
@@ -155,6 +218,9 @@ export default {
       .sort((a, b) => a.categoryId < b.categoryId ? -1 : 1)
       .map((c) => { return {text: c.categoryName, value: c.categoryId}})
     this.categoryOptionList.unshift({text: '', value: null})
+
+    this.categoryDisplayList = this.categories.filter((c) => c.categoryType === CATEGORY.ZONE)
+      .sort((a, b) => a.categoryId < b.categoryId ? -1 : 1)
   },
   methods: {
     async fetchData(payload) {
