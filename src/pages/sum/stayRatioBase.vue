@@ -20,7 +20,7 @@
         <b-form-group>
           <b-form-row v-if="enableCategory" class="mb-3 mr-5">
             <label v-t="'label.category'" class="mr-2" />
-            <b-form-select v-model="vModelCategory" :options="categoryOptionList" class="mr-2 inputSelect" />
+            <b-form-select v-model="form.categoryId" :options="categoryOptionList" class="mr-2 inputSelect" />
           </b-form-row>
         </b-form-group>
       </b-form>
@@ -84,7 +84,6 @@ export default {
       totalRows: 0,
       searchedGroupName: '',
       categoryOptionList: [],
-      vModelCategory: null,
       fromToSettingDiff: 0,
       params: {
         fields: ViewHelper.addLabelByKey(this.$i18n, [
@@ -145,7 +144,6 @@ export default {
       .sort((a, b) => a.categoryId < b.categoryId ? -1 : 1)
       .map((c) => { return {text: c.categoryName, value: c.categoryId}})
     this.categoryOptionList.unshift({text: '', value: null})
-    this.vModelCategory = this.categoryOptionList[0].value
   },
   methods: {
     async fetchData(payload) {
@@ -180,8 +178,9 @@ export default {
 
       param.date = moment(param.date).format('YYYYMMDD')
       const groupBy = param.groupId? '&groupId=' + param.groupId: ''
+      const categoryBy = param.categoryId? '&categoryId=' + param.categoryId: ''
       const group = param.groupId? this.groups.find((val) => val.groupId == param.groupId): null
-      const url = '/office/stayTime/sumByDay/' + param.date + '/zoneCategory?from=' + APP.SUM_FROM + '&to=' + APP.SUM_TO + groupBy
+      const url = '/office/stayTime/sumByDay/' + param.date + '/zoneCategory?from=' + APP.SUM_FROM + '&to=' + APP.SUM_TO + groupBy + categoryBy
       const sumData = await HttpHelper.getAppService(url)
       if (_.isEmpty(sumData)) {
         this.message = this.$i18n.t('message.listEmpty')
