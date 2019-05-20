@@ -156,9 +156,9 @@
     "led": "LED",
     "meditag": "MEDiTAG",
     "magnet": "Magnet",
-    "omr-env": "Environment",
-    "omr-tp-human": "Thermopile(human)",
-    "omr-tp-env": "Thermopile(env)",
+    "omr-env": "",
+    "omr-tp-human": "",
+    "omr-tp-env": "",
     "InUse": "In use",
     "Empty": "Empty",
 
