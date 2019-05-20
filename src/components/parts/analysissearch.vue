@@ -79,10 +79,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    showCategory: {
-      type: Boolean,
-      default: false,
-    },
     areaOptions: {
       type: Array,
       required: true,
@@ -119,7 +115,7 @@ export default {
       return CATEGORY.POT_AVAILABLE
     },
     enableCategory () {
-      return this.showCategory && this.isEnabledMenu('category') && Util.includesIgnoreCase(APP.POT.WITH, 'category')
+      return this.isEnabledMenu('category') && Util.includesIgnoreCase(APP.POT.WITH, 'category')
     },
     enableGroup () {
       return this.isEnabledMenu('group') && Util.includesIgnoreCase(APP.POT.WITH, 'group')
