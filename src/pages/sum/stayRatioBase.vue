@@ -27,14 +27,6 @@
             </b-form-checkbox><br>
           </div>
         </b-form-checkbox-group>
-        <b-form-checkbox-group id="checkbox-group-2" v-model="displayCheckList.group" name="flavour-2">
-          グループ
-          <div v-for="(group, index) in groups" :key="`group-${index}`">
-            <b-form-checkbox :value="group.groupId">
-              {{ group.groupName }} <span class="bgSquare" :style="`background-color: #${group.bgColor};`" />
-            </b-form-checkbox><br>
-          </div>
-        </b-form-checkbox-group>
         <b-form-checkbox-group id="checkbox-group-2" v-model="displayCheckList.area" name="flavour-2">
           エリア
           <div v-for="(area, index) in areas" :key="`area-${index}`">
@@ -57,7 +49,6 @@
       </b-form-group>
       stayDisp: {{ displayCheckList.stay }} <br>
       categoryDisp: {{ displayCheckList.category }} <br>
-      groupDisp: {{ displayCheckList.group }} <br>
       areaDisp: {{ displayCheckList.area }} <br>
       
       stayCount: {{ displayCheckList.stay.length }} <br>
@@ -96,25 +87,27 @@
           </b-form-row>
         </b-form-group>
       </b-form>
+      <slot />
       <b-row class="mt-3" />
       <!-- <m-list :params="params" :fields="fields" :list="viewList" :alert-force-hide="true" :per-page="perPage" /> -->
-      <b-table :items="viewList" :fields="fields" :current-page="currentPage" :per-page="perPage" :sort-by.sync="sortBy" stacked="md" striped hover outlined />
-      <template slot="graph" slot-scope="row">
-        <div class="scale-bar">
-          <div v-for="(bar, index) in row.item.graph" :key="index" :class="bar.isStay? 'stay-bar': 'lost-bar'" :style="'width:' + bar.percent + '% !important;'">
-            <span class="graph-arrow-box">
-              {{ $i18n.tnl(bar.isStay?'label.stay': 'label.lost') }}: {{ bar.time }}
-            </span>&nbsp;
+      <b-table :items="viewList" :fields="fields" :current-page="currentPage" :per-page="perPage" :sort-by.sync="sortBy" stacked="md" striped hover outlined >
+        <template slot="graph" slot-scope="row">
+          <div class="scale-bar">
+            <div v-for="(bar, index) in row.item.graph" :key="index" :class="bar.isStay? 'stay-bar': 'lost-bar'" :style="'width:' + bar.percent + '% !important;'">
+              <span class="graph-arrow-box">
+                {{ $i18n.tnl(bar.isStay?'label.stay': 'label.lost') }}: {{ bar.time }}
+              </span>&nbsp;
+            </div>
+            <br>
+            <span style="float: left;">
+              {{ row.item.graph.length > 0? row.item.graph[0].baseTimeFrom: '' }}
+            </span>
+            <span style="float: right;">
+              {{ row.item.graph.length > 0? row.item.graph[0].baseTimeTo: '' }}
+            </span>
           </div>
-          <br>
-          <span style="float: left;">
-            {{ row.item.graph.length > 0? row.item.graph[0].baseTimeFrom: '' }}
-          </span>
-          <span style="float: right;">
-            {{ row.item.graph.length > 0? row.item.graph[0].baseTimeTo: '' }}
-          </span>
-        </div>
-      </template>
+        </template>
+      </b-table>
     </div>
   </div>
 </template>
@@ -155,7 +148,6 @@ export default {
       displayCheckList: {
         stay: [],
         category: [],
-        group: [],
         area: [],
       },
       name: '',
@@ -229,15 +221,18 @@ export default {
       Vue.set(this, 'fields', this.getFields())
     },
     getFields() {
-      return ViewHelper.addLabelByKey(this.$i18n, [
+      let fields = [
         {key: 'date', sortable: false, label: 'date'},
         {key: 'name', sortable: true, label: 'potName'},
         {key: 'groupName', sortable: true, label: 'groupName'},
         {key: 'categoryName', sortable: true, label: 'categoryName'},
         {key: 'graph', sortable: false, thStyle: {height: '50px !important', width:'400px !important'} },
-        this.isDisplayStayColumn('stay')? {key: 'stayTime', sortable: true, label: 'stayTime'}: null,
-        this.isDisplayStayColumn('lost')? {key: 'lostTime', sortable: true, label: 'lostTime'}: null,
-      ]).map(val => ({ ...val, originLabel: val.label}))
+      ]
+      fields.push(this.isDisplayStayColumn('stay')? {key: 'stayTime', sortable: true, label: 'stayTime'}: null)
+      fields.push(this.isDisplayStayColumn('lost')? {key: 'lostTime', sortable: true, label: 'lostTime'}: null)
+      fields.push({key: 'zcate1', label: '作業Aゾーン', sortable: true})
+
+      return ViewHelper.addLabelByKey(this.$i18n, fields).map(val => ({ ...val, originLabel: val.label}))
     },
     isDisplayStayColumn(key) {
       if (!this.displayCheckList || !this.displayCheckList.stay || this.displayCheckList.stay.length == 0) {
