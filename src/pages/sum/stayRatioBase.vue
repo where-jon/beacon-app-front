@@ -5,16 +5,17 @@
       size="lg"
       :title="$t('label.displaySpecified')"
       ok-only
+      @ok="updateColumn"
     >
       チェック、設定された項目を表に表示します
       <hr>
       一覧
       <b-form-group>
         <b-form-checkbox-group id="checkbox-group-2" v-model="displayCheckList.stay" name="flavour-2">
-          <b-form-checkbox :value="0">
+          <b-form-checkbox :value="'stay'">
             滞在時間（合計）
           </b-form-checkbox><br>
-          <b-form-checkbox :value="1">
+          <b-form-checkbox :value="'lost'">
             不在時間（合計）
           </b-form-checkbox><br>
         </b-form-checkbox-group>
@@ -22,7 +23,7 @@
           カテゴリ
           <div v-for="(category, index) in categoryDisplayList" :key="`category-${index}`">
             <b-form-checkbox :value="category.categoryId">
-              {{ category.categoryName }}
+              {{ category.categoryName }} <span class="bgSquare" :style="`background-color: #${category.bgColor};`" />
             </b-form-checkbox><br>
           </div>
         </b-form-checkbox-group>
@@ -30,7 +31,7 @@
           グループ
           <div v-for="(group, index) in groups" :key="`group-${index}`">
             <b-form-checkbox :value="group.groupId">
-              {{ group.groupName }}
+              {{ group.groupName }} <span class="bgSquare" :style="`background-color: #${group.bgColor};`" />
             </b-form-checkbox><br>
           </div>
         </b-form-checkbox-group>
@@ -95,14 +96,31 @@
           </b-form-row>
         </b-form-group>
       </b-form>
-      <slot />
       <b-row class="mt-3" />
-      <m-list :params="params" :list="viewList" :alert-force-hide="true" :per-page="perPage" />
+      <!-- <m-list :params="params" :fields="fields" :list="viewList" :alert-force-hide="true" :per-page="perPage" /> -->
+      <b-table :items="viewList" :fields="fields" :current-page="currentPage" :per-page="perPage" :sort-by.sync="sortBy" stacked="md" striped hover outlined />
+      <template slot="graph" slot-scope="row">
+        <div class="scale-bar">
+          <div v-for="(bar, index) in row.item.graph" :key="index" :class="bar.isStay? 'stay-bar': 'lost-bar'" :style="'width:' + bar.percent + '% !important;'">
+            <span class="graph-arrow-box">
+              {{ $i18n.tnl(bar.isStay?'label.stay': 'label.lost') }}: {{ bar.time }}
+            </span>&nbsp;
+          </div>
+          <br>
+          <span style="float: left;">
+            {{ row.item.graph.length > 0? row.item.graph[0].baseTimeFrom: '' }}
+          </span>
+          <span style="float: right;">
+            {{ row.item.graph.length > 0? row.item.graph[0].baseTimeTo: '' }}
+          </span>
+        </div>
+      </template>
     </div>
   </div>
 </template>
 
 <script>
+import Vue from 'vue'
 import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
@@ -121,14 +139,12 @@ import commonmixinVue from '../../components/mixin/commonmixin.vue'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
 import { SYSTEM_ZONE_CATEGORY_NAME } from '../../sub/constant/Constants'
 import { CATEGORY } from '../../sub/constant/Constants'
-import mList from '../../components/page/list.vue'
 
 export default {
   components: {
     breadcrumb,
     alert,
     DatePicker,
-    mList,
   },
   mixins: [validatemixin, commonmixinVue],
   data () {
@@ -155,22 +171,8 @@ export default {
       categoryOptionList: [],
       categoryDisplayList: [],
       fromToSettingDiff: 0,
-      params: {
-        fields: ViewHelper.addLabelByKey(this.$i18n, [
-          {key: 'date', sortable: false, label: 'date'},
-          {key: 'name', sortable: true, label: 'potName'},
-          {key: 'groupName', sortable: true, label: 'groupName'},
-          {key: 'categoryName', sortable: true, label: 'categoryName'},
-          {key: 'graph', sortable: false, thStyle: {height: '50px !important', width:'400px !important'} },
-          {key: 'stayTime', sortable: true, label: 'stayTime'},
-          {key: 'lostTime', sortable: true, label: 'lostTime'},
-          {key: 'stayRatio', sortable: true, label: 'stayRatio'},
-        ]).map(val => ({ ...val, originLabel: val.label})),
-        sortBy: 'name',
-        initTotalRows: 0,
-        hideSearchBox: true,
-        isDisplayGraph: true,
-      },
+      fields: this.getFields(),
+      initTotalRows: 0,
       historyType: 0,
       selected: [],
     }
@@ -223,6 +225,26 @@ export default {
       .sort((a, b) => a.categoryId < b.categoryId ? -1 : 1)
   },
   methods: {
+    updateColumn() {
+      Vue.set(this, 'fields', this.getFields())
+    },
+    getFields() {
+      return ViewHelper.addLabelByKey(this.$i18n, [
+        {key: 'date', sortable: false, label: 'date'},
+        {key: 'name', sortable: true, label: 'potName'},
+        {key: 'groupName', sortable: true, label: 'groupName'},
+        {key: 'categoryName', sortable: true, label: 'categoryName'},
+        {key: 'graph', sortable: false, thStyle: {height: '50px !important', width:'400px !important'} },
+        this.isDisplayStayColumn('stay')? {key: 'stayTime', sortable: true, label: 'stayTime'}: null,
+        this.isDisplayStayColumn('lost')? {key: 'lostTime', sortable: true, label: 'lostTime'}: null,
+      ]).map(val => ({ ...val, originLabel: val.label}))
+    },
+    isDisplayStayColumn(key) {
+      if (!this.displayCheckList || !this.displayCheckList.stay || this.displayCheckList.stay.length == 0) {
+        return false
+      }
+      return _.find(this.displayCheckList.stay, (stay) => {return stay === key})? true: false
+    },
     async fetchData(payload) {
       // 何もしない
     },
@@ -348,8 +370,8 @@ export default {
       )
     },
     updateColumnName(){
-      if(Util.hasValue(this.params.fields)){
-        this.params.fields.forEach(field => {
+      if(Util.hasValue(this.fields)){
+        this.fields.forEach(field => {
           field.label = Util.isResponsiveMode(true)? field.originLabel.replace(/<br>/g, ''): field.originLabel
         })
       }
@@ -464,5 +486,47 @@ export default {
 }
 .inputdatefrom {
   width: 210px;
+}
+.bgSquare {
+  display: inline-block;
+  _display: inline;
+  width: 15px;
+  height: 15px;
+}
+.stay-bar {
+  position: relative;
+  display: inline-block;
+  background: #0f0;
+  cursor: default;
+  box-sizing:border-box;
+  /* border-top: 1px solid rgba(255, 0, 0, 0); */
+}
+.lost-bar {
+  position: relative;
+  display: inline-block;
+  background: #ccc;
+  cursor: default;
+  box-sizing:border-box;
+  /* border-top: 1px solid rgba(255, 0, 0, 0); */
+}
+.graph-arrow-box {
+  display: none;
+  position: absolute;
+  top: 100%;
+  padding: 8px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;  
+  border-radius: 5px;
+  background: #333;
+  color: #fff;
+  white-space: nowrap;
+  z-index: 5;
+}
+.stay-bar:hover, .lost-bar:hover {
+  background-color: rgb(255, 0, 0);
+  /* border: 1px solid rgba(255, 0, 0, 1); */
+}
+.stay-bar:hover .graph-arrow-box, .lost-bar:hover .graph-arrow-box {
+  display: block;
 }
 </style>

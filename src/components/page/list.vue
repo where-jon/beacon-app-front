@@ -74,22 +74,6 @@
         <template v-if="params.tableDescription" slot="table-caption">
           {{ $i18n.tnl('label.' + params.tableDescription) }}
         </template>
-        <template slot="graph" slot-scope="row">
-          <div v-if="params.isDisplayGraph" class="scale-bar">
-            <div v-for="(bar, index) in row.item.graph" :key="index" :class="bar.isStay? 'stay-bar': 'lost-bar'" :style="'width:' + bar.percent + '% !important;'">
-              <span class="graph-arrow-box">
-                {{ $i18n.tnl(bar.isStay?'label.stay': 'label.lost') }}: {{ bar.time }}
-              </span>&nbsp;
-            </div>
-            <br>
-            <span style="float: left;">
-              {{ row.item.graph.length > 0? row.item.graph[0].baseTimeFrom: '' }}
-            </span>
-            <span style="float: right;">
-              {{ row.item.graph.length > 0? row.item.graph[0].baseTimeTo: '' }}
-            </span>
-          </div>
-        </template>
         <template slot="style" slot-scope="row">
           <div :style="style(row.item)">
             A
@@ -780,45 +764,6 @@ export default {
   @keyframes blink{
       0% {opacity:0;}
       100% {opacity:1;}
-  }
-  .scale-bar {
-    
-  }
-  .stay-bar {
-    position: relative;
-    display: inline-block;
-    background: #0f0;
-    cursor: default;
-    box-sizing:border-box;
-    /* border-top: 1px solid rgba(255, 0, 0, 0); */
-  }
-  .lost-bar {
-    position: relative;
-    display: inline-block;
-    background: #ccc;
-    cursor: default;
-    box-sizing:border-box;
-    /* border-top: 1px solid rgba(255, 0, 0, 0); */
-  }
-  .graph-arrow-box {
-    display: none;
-    position: absolute;
-    top: 100%;
-    padding: 8px;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;  
-    border-radius: 5px;
-    background: #333;
-    color: #fff;
-    white-space: nowrap;
-    z-index: 5;
-  }
-  .stay-bar:hover, .lost-bar:hover {
-    background-color: rgb(255, 0, 0);
-    /* border: 1px solid rgba(255, 0, 0, 1); */
-  }
-  .stay-bar:hover .graph-arrow-box, .lost-bar:hover .graph-arrow-box {
-    display: block;
   }
 
 </style>
