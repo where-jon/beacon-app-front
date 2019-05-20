@@ -159,8 +159,9 @@
     "led": "LED",
     "meditag": "MEDiTAG",
     "magnet": "マグネット",
-    "omr-env": "サーモパイル(env)",
-    "omr-human": "サーモパイル(human)",
+    "omr-env": "環境センサ",
+    "omr-tp-human": "サーモパイルセンサ(人感)",
+    "omr-tp-env": "サーモパイルセンサ(環境)",
     "InUse": "使用",
     "Empty": "空",
 
