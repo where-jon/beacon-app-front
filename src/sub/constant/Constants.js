@@ -650,7 +650,7 @@ export const MENU = [
       {
         key: 'positionSummary',
         path: 'positionSummary',
-        icon: 'fas fa-cube',
+        icon: 'map-marked-alt',
       },
     ]
   },
