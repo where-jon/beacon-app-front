@@ -7,20 +7,20 @@
       ok-only
       @ok="updateColumn"
     >
-      チェック、設定された項目を表に表示します
+      {{ $t('message.selectDisplayColumn') }}
       <hr>
-      一覧
+      {{ $t('label.list') }}
       <b-form-group>
         <b-form-checkbox-group id="checkbox-group-2" v-model="displayCheckList.stay" name="flavour-2">
           <b-form-checkbox :value="'stay'">
-            滞在時間（合計）
+            {{ $t('label.stayTimeSumColumn') }}
           </b-form-checkbox><br>
           <b-form-checkbox :value="'lost'">
-            不在時間（合計）
+            {{ $t('label.lostTimeSumColumn') }}
           </b-form-checkbox><br>
         </b-form-checkbox-group>
         <b-form-checkbox-group id="checkbox-group-2" v-model="displayCheckList.category" name="flavour-2">
-          カテゴリ
+          {{ $t('label.category') }}
           <div v-for="(category, index) in categoryDisplayList" :key="`category-${index}`">
             <b-form-checkbox :value="category.categoryId">
               {{ category.categoryName }} <span class="bgSquare" :style="`background-color: #${category.bgColor};`" />
@@ -28,7 +28,7 @@
           </div>
         </b-form-checkbox-group>
         <b-form-checkbox-group id="checkbox-group-2" v-model="displayCheckList.area" name="flavour-2">
-          エリア
+          {{ $t('label.area') }}
           <div v-for="(area, index) in areas" :key="`area-${index}`">
             <b-form-checkbox :value="area.areaId">
               {{ area.areaName }}
@@ -36,7 +36,7 @@
           </div>
         </b-form-checkbox-group>
         <hr>
-        グラフ
+        {{ $t('label.graph') }}
         <b-form-radio-group v-model="historyType">
           <b-form-radio :value="0">
             {{ $t('label.zoneCategory') }}
@@ -89,8 +89,7 @@
       </b-form>
       <slot />
       <b-row class="mt-3" />
-      <!-- <m-list :params="params" :fields="fields" :list="viewList" :alert-force-hide="true" :per-page="perPage" /> -->
-      <b-table :items="viewList" :fields="fields" :current-page="currentPage" :per-page="perPage" :sort-by.sync="sortBy" stacked="md" striped hover outlined >
+      <b-table :items="viewList" :fields="fields" :current-page="currentPage" :per-page="perPage" :sort-by.sync="sortBy" stacked="md" striped hover outlined>
         <template slot="graph" slot-scope="row">
           <div class="scale-bar">
             <div v-for="(bar, index) in row.item.graph" :key="index" :class="bar.isStay? 'stay-bar': 'lost-bar'" :style="'width:' + bar.percent + '% !important;'">
@@ -225,13 +224,34 @@ export default {
         {key: 'date', sortable: false, label: 'date'},
         {key: 'name', sortable: true, label: 'potName'},
         {key: 'groupName', sortable: true, label: 'groupName'},
-        {key: 'categoryName', sortable: true, label: 'categoryName'},
         {key: 'graph', sortable: false, thStyle: {height: '50px !important', width:'400px !important'} },
       ]
-      fields.push(this.isDisplayStayColumn('stay')? {key: 'stayTime', sortable: true, label: 'stayTime'}: null)
-      fields.push(this.isDisplayStayColumn('lost')? {key: 'lostTime', sortable: true, label: 'lostTime'}: null)
-      fields.push({key: 'zcate1', label: '作業Aゾーン', sortable: true})
 
+      // 選択されているカテゴリを追加する
+      let selectedCategories = _.filter(this.categories, (category) => {
+        return _.find(this.displayCheckList.category, (id) => {
+          return id == category.categoryId
+        })? true: false
+      })
+      selectedCategories.forEach(function(category) {
+        fields.push({key: category.categoryName, sortable: true})
+      })
+
+      // 選択されているエリアを追加する
+      let selectedAreas = _.filter(this.areas, (area) => {
+        return _.find(this.displayCheckList.area, (id) => {
+          return id == area.areaId
+        })? true: false
+      })
+      selectedAreas.forEach(function(area) {
+        fields.push({key: area.areaName, sortable: true})
+      })
+
+      // 選択されている総合時間を追加する
+      this.isDisplayStayColumn('stay')? fields.push({key: 'stayTime', sortable: true, label: 'stayTime'}): null
+      this.isDisplayStayColumn('lost')? fields.push({key: 'lostTime', sortable: true, label: 'lostTime'}): null
+
+      console.table(fields)
       return ViewHelper.addLabelByKey(this.$i18n, fields).map(val => ({ ...val, originLabel: val.label}))
     },
     isDisplayStayColumn(key) {
