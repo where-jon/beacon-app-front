@@ -751,6 +751,10 @@ export default {
 
 <style>
   @import "../../sub/constant/vue.scss";
+  td {
+    line-height: normal !important;
+  }
+
   td.thumb-rowdata {
     padding: 5px;
     line-height: 70px;
