@@ -26,6 +26,9 @@
               {{ category.systemUse? $t('label.' + category.systemCategoryName): category.categoryName }} <span class="bgSquare" :style="`background-color: #${category.bgColor};`" />
             </b-form-checkbox><br>
           </div>
+          <b-form-checkbox :value="0">
+            {{ $t('label.other') }}
+          </b-form-checkbox><br>
         </b-form-checkbox-group>
         <b-form-checkbox-group id="checkbox-group-2" v-model="displayCheckList.area" name="flavour-2">
           {{ $t('label.area') }}
@@ -235,6 +238,14 @@ export default {
         let colorStyle = '<span style="color: #' + category.bgColor + ';">■</span>'
         fields.push({key: category.categoryName, sortable: true, label: (category.systemUse? i18n.tnl('label.' + category.systemCategoryName): category.categoryName) + colorStyle, thStyle: {width:'100px !important'}})
       })
+      
+      // カテゴリその他が選択されている場合は追加
+      let isSelectedOther = false
+      if (this.displayCheckList) {
+        isSelectedOther = _.find(this.displayCheckList.category, (id) => { return id == 0 }) == 0? true: false
+      }
+
+      isSelectedOther? fields.push({key: 'categoryOther', sortable: true, label: i18n.tnl('label.other')+i18n.tnl('label.category'), thStyle: {width:'100px !important'}}): null
 
       // 選択されているエリアを追加する
       let selectedAreas = _.filter(this.areas, (area) => {
@@ -327,6 +338,7 @@ export default {
         let areaData = []
 
         // カテゴリ用データ保持変数を初期化
+        categoryData[0] = {name: 'categoryOther', value: 0}
         this.categories.forEach((category) => {
           if (category.categoryType == CATEGORY.ZONE) categoryData[category.categoryId] = {name: category.categoryName, value: 0}
         })
@@ -352,13 +364,13 @@ export default {
             const findCategory = _.find(this.categories, (category) => {
               return category.categoryType == CATEGORY.ZONE && category.categoryId == stay.byId
             })
-            findCategory? categoryData[findCategory.categoryId].value += stay.period: null
+            findCategory? categoryData[findCategory.categoryId].value += stay.period: stay.byId == 0? categoryData[0].value += stay.period: null
 
             // エリア毎の滞在時間を加算（一致するカテゴリが存在する場合しかエリアを引けない）
             if (findCategory) {
               let zone = _.find(this.zones, (zone) => { return zone.categoryId == findCategory.categoryId})
               const findArea = _.find(this.areas, (area) => {
-                return area.areaId == zone.areaId
+                return zone? area.areaId == zone.areaId: false
               })
               findArea? areaData[findArea.areaId].value += stay.period: null
             }
