@@ -430,11 +430,6 @@ export const EXTRA_NAV = [
     path: '/main/position-stack',
     icon: 'far fa-building',
   },
-  {
-    key: 'positionZoneShort',
-    path: '/main/position-zone',
-    icon: 'fas fa-th',
-  },
 ]
 
 export const MENU = [
