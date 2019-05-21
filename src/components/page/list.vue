@@ -595,10 +595,10 @@ export default {
       this.modalInfo.id = ''
     },
     filterGridGeneral(originItem){
-      if(!this.filter.reg){
-        return true
-      }
       if(originItem.isParent){
+        return this.items.find(item => !item.isParent && item.categoryKey == originItem.categoryKey && this.filterGrid(item))? true: false
+      }
+      if(!this.filter.reg){
         return true
       }
       try{

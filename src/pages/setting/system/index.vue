@@ -170,7 +170,7 @@ export default {
         if(!this.calee){
           await StateHelper.load('setting')
         }
-        this.settingList = SettingHelper.createSettingList(this.callee? this.pSettingList: this.settings)
+        this.settingList = SettingHelper.createSettingList(this.callee? this.pSettingList: this.settings, this.callee)
         this.initFilter()
       }
       catch(e) {
