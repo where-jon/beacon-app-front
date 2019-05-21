@@ -122,7 +122,7 @@ export default {
       return containerWidth <= this.selectedTx.orgLeft + this.meditagWidth
     },
     getDispItems () {
-      return APP.TXDETAIL.ITEMS.map(e => this.selectedTx[e])
+      return APP.TXDETAIL.ITEMS.map(e => Util.cutOnLongByte(this.selectedTx[e], 38))
     },
     getLeft() {
       this.setImageWidth()

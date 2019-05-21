@@ -720,6 +720,10 @@ export default {
 </script>
 
 <style>
+  td {
+    line-height: normal !important;
+  }
+
   td.thumb-rowdata {
     padding: 5px;
     line-height: 70px;

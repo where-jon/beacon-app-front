@@ -56,7 +56,7 @@
             </b-form-group>
             <b-form-group>
               <label v-t="'label.potName'" />
-              <input v-model="form.potName" :readonly="!isEditable" type="text" maxlength="20" class="form-control" required>
+              <input v-model="form.potName" :readonly="!isEditable" type="text" maxlength="100" class="form-control" required>
             </b-form-group>
             <b-form-group v-show="isShown('POT.WITH', 'ruby')">
               <label v-t="'label.ruby'" />
