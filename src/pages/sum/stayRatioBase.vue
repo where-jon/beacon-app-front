@@ -233,9 +233,8 @@ export default {
       const i18n = this.$i18n
       selectedCategories.forEach(function(category) {
         let colorStyle = '<span style="color: #' + category.bgColor + ';">■</span>'
-        fields.push({key: category.categoryName, sortable: true, label: (category.systemUse? i18n.tnl('label.' + category.systemCategoryName): category.categoryName) + colorStyle})
+        fields.push({key: category.categoryName, sortable: true, label: (category.systemUse? i18n.tnl('label.' + category.systemCategoryName): category.categoryName) + colorStyle, thStyle: {width:'100px !important'}})
       })
-      console.table(selectedCategories)
 
       // 選択されているエリアを追加する
       let selectedAreas = _.filter(this.areas, (area) => {
@@ -245,7 +244,7 @@ export default {
       })
       selectedAreas.forEach(function(area, index) {
         let colorStyle = '<span style="color: ' + DISP.SUM_STACK_COLOR[index % DISP.SUM_STACK_COLOR.length] + ';">■</span>'
-        fields.push({key: area.areaName, sortable: true, label: area.areaName + colorStyle})
+        fields.push({key: area.areaName, sortable: true, label: area.areaName + colorStyle, thStyle: {width:'100px !important'}})
       })
 
       // 選択されている総合時間を追加する
@@ -324,6 +323,12 @@ export default {
         const potName = data.potName
         let stayTime = 0, lostTime = 0, presentRatio = 0
         let graphList = new Array()
+        let categoryData = []
+
+        // カテゴリ用データ保持変数を初期化
+        this.categories.forEach((category) => {
+          if (category.categoryType == CATEGORY.ZONE) categoryData[category.categoryId] = {name: category.categoryName, value: 0}
+        })
 
         // 各時間の集計
         data.stayList.forEach((stay) => {
@@ -345,10 +350,15 @@ export default {
             baseTimeTo: APP.SUM_TO,
             percent: Math.floor((stay.period / this.fromToSettingDiff) * 10000) / 100,
           })
+
+          const findCategory = _.find(this.categories, (category) => {
+            return category.categoryType == CATEGORY.ZONE && category.categoryId == stay.byId
+          })
+          findCategory? categoryData[findCategory.categoryId].value += stay.period: null
         })
         presentRatio = Util.getRatio(stayTime)
 
-        return {
+        let result = {
           date: date,
           name: potName, 
           groupName: groupName,
@@ -357,6 +367,12 @@ export default {
           lostTime: Util.convertToTime(lostTime) + ' (' + Util.getRatio(lostTime) + ' %)', 
           stayRatio: presentRatio + ' %',
         }
+
+        categoryData.forEach((cData) => {
+          result[cData.name] = Util.convertToTime(cData.value) + ' (' + Util.getRatio(cData.value) + ' %)'
+        })
+
+        return result
       })
     },
     async download(){
