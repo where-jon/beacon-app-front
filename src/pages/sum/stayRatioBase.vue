@@ -23,7 +23,7 @@
           {{ $t('label.category') }}
           <div v-for="(category, index) in categoryDisplayList" :key="`category-${index}`">
             <b-form-checkbox :value="category.categoryId">
-              {{ category.categoryName }} <span class="bgSquare" :style="`background-color: #${category.bgColor};`" />
+              {{ category.systemUse? $t('label.' + category.systemCategoryName): category.categoryName }} <span class="bgSquare" :style="`background-color: #${category.bgColor};`" />
             </b-form-checkbox><br>
           </div>
         </b-form-checkbox-group>
@@ -47,11 +47,6 @@
           </b-form-radio>
         </b-form-radio-group>
       </b-form-group>
-      stayDisp: {{ displayCheckList.stay }} <br>
-      categoryDisp: {{ displayCheckList.category }} <br>
-      areaDisp: {{ displayCheckList.area }} <br>
-      
-      stayCount: {{ displayCheckList.stay.length }} <br>
     </b-modal>
     <breadcrumb :items="items" :reload="false" />
     <div class="container">
@@ -125,6 +120,7 @@ import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import { APP } from '../../sub/constant/config'
+import { DISP } from '../../sub/constant/config'
 import moment from 'moment'
 import validatemixin from '../../components/mixin/validatemixin.vue'
 import commonmixinVue from '../../components/mixin/commonmixin.vue'
@@ -221,10 +217,10 @@ export default {
     },
     getFields() {
       let fields = [
-        {key: 'date', sortable: false, label: 'date'},
-        {key: 'name', sortable: true, label: 'potName'},
-        {key: 'groupName', sortable: true, label: 'groupName'},
-        {key: 'graph', sortable: false, thStyle: {height: '50px !important', width:'400px !important'} },
+        {key: 'date', sortable: false, label: this.$i18n.tnl('label.date')},
+        {key: 'name', sortable: true, label: this.$i18n.tnl('label.potName')},
+        {key: 'groupName', sortable: true, label: this.$i18n.tnl('label.groupName')},
+        {key: 'graph', sortable: false, label: this.$i18n.tnl('label.graph'), thStyle: {height: '50px !important', width:'400px !important'} },
       ]
 
       // 選択されているカテゴリを追加する
@@ -233,9 +229,13 @@ export default {
           return id == category.categoryId
         })? true: false
       })
+
+      const i18n = this.$i18n
       selectedCategories.forEach(function(category) {
-        fields.push({key: category.categoryName, sortable: true})
+        let colorStyle = '<span style="color: #' + category.bgColor + ';">■</span>'
+        fields.push({key: category.categoryName, sortable: true, label: (category.systemUse? i18n.tnl('label.' + category.systemCategoryName): category.categoryName) + colorStyle})
       })
+      console.table(selectedCategories)
 
       // 選択されているエリアを追加する
       let selectedAreas = _.filter(this.areas, (area) => {
@@ -243,16 +243,16 @@ export default {
           return id == area.areaId
         })? true: false
       })
-      selectedAreas.forEach(function(area) {
-        fields.push({key: area.areaName, sortable: true})
+      selectedAreas.forEach(function(area, index) {
+        let colorStyle = '<span style="color: ' + DISP.SUM_STACK_COLOR[index % DISP.SUM_STACK_COLOR.length] + ';">■</span>'
+        fields.push({key: area.areaName, sortable: true, label: area.areaName + colorStyle})
       })
 
       // 選択されている総合時間を追加する
-      this.isDisplayStayColumn('stay')? fields.push({key: 'stayTime', sortable: true, label: 'stayTime'}): null
-      this.isDisplayStayColumn('lost')? fields.push({key: 'lostTime', sortable: true, label: 'lostTime'}): null
+      this.isDisplayStayColumn('stay')? fields.push({key: 'stayTime', sortable: true, label: this.$i18n.tnl('label.stayTime')}): null
+      this.isDisplayStayColumn('lost')? fields.push({key: 'lostTime', sortable: true, label: this.$i18n.tnl('label.lostTime')}): null
 
-      console.table(fields)
-      return ViewHelper.addLabelByKey(this.$i18n, fields).map(val => ({ ...val, originLabel: val.label}))
+      return fields.map(val => ({ ...val, originLabel: val.label}))
     },
     isDisplayStayColumn(key) {
       if (!this.displayCheckList || !this.displayCheckList.stay || this.displayCheckList.stay.length == 0) {
