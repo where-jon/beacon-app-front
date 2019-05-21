@@ -249,8 +249,8 @@ export default {
       })
 
       // 選択されている総合時間を追加する
-      this.isDisplayStayColumn('stay')? fields.push({key: 'stayTime', sortable: true, label: this.$i18n.tnl('label.stayTime')}): null
-      this.isDisplayStayColumn('lost')? fields.push({key: 'lostTime', sortable: true, label: this.$i18n.tnl('label.lostTime')}): null
+      this.isDisplayStayColumn('stay')? fields.push({key: 'stayTime', sortable: true, label: this.$i18n.tnl('label.stayTime'), thStyle: {width:'100px !important'}}): null
+      this.isDisplayStayColumn('lost')? fields.push({key: 'lostTime', sortable: true, label: this.$i18n.tnl('label.lostTime'), thStyle: {width:'100px !important'}}): null
 
       return fields.map(val => ({ ...val, originLabel: val.label}))
     },
@@ -353,8 +353,8 @@ export default {
           name: potName, 
           groupName: groupName,
           graph: graphList,
-          stayTime: Util.convertToTime(stayTime), 
-          lostTime: Util.convertToTime(lostTime),
+          stayTime: Util.convertToTime(stayTime) + ' (' + Util.getRatio(stayTime) + ' %)', 
+          lostTime: Util.convertToTime(lostTime) + ' (' + Util.getRatio(lostTime) + ' %)', 
           stayRatio: presentRatio + ' %',
         }
       })
