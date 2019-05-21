@@ -324,10 +324,16 @@ export default {
         let stayTime = 0, lostTime = 0, presentRatio = 0
         let graphList = new Array()
         let categoryData = []
+        let areaData = []
 
         // カテゴリ用データ保持変数を初期化
         this.categories.forEach((category) => {
           if (category.categoryType == CATEGORY.ZONE) categoryData[category.categoryId] = {name: category.categoryName, value: 0}
+        })
+
+        // エリア用データ保持変数を初期化
+        this.areas.forEach((area) => {
+          areaData[area.areaId] = {name: area.areaName, value: 0}
         })
 
         // 各時間の集計
@@ -341,6 +347,21 @@ export default {
             stayTime += stay.period
             time = Util.convertToTime(stay.period)
             isStayData = true
+
+            // カテゴリ毎の滞在時間を加算
+            const findCategory = _.find(this.categories, (category) => {
+              return category.categoryType == CATEGORY.ZONE && category.categoryId == stay.byId
+            })
+            findCategory? categoryData[findCategory.categoryId].value += stay.period: null
+
+            // エリア毎の滞在時間を加算（一致するカテゴリが存在する場合しかエリアを引けない）
+            if (findCategory) {
+              let zone = _.find(this.zones, (zone) => { return zone.categoryId == findCategory.categoryId})
+              const findArea = _.find(this.areas, (area) => {
+                return area.areaId == zone.areaId
+              })
+              findArea? areaData[findArea.areaId].value += stay.period: null
+            }
           }
           graphList.push({
             isStay: isStayData,
@@ -351,10 +372,6 @@ export default {
             percent: Math.floor((stay.period / this.fromToSettingDiff) * 10000) / 100,
           })
 
-          const findCategory = _.find(this.categories, (category) => {
-            return category.categoryType == CATEGORY.ZONE && category.categoryId == stay.byId
-          })
-          findCategory? categoryData[findCategory.categoryId].value += stay.period: null
         })
         presentRatio = Util.getRatio(stayTime)
 
@@ -363,13 +380,16 @@ export default {
           name: potName, 
           groupName: groupName,
           graph: graphList,
-          stayTime: Util.convertToTime(stayTime) + ' (' + Util.getRatio(stayTime) + ' %)', 
-          lostTime: Util.convertToTime(lostTime) + ' (' + Util.getRatio(lostTime) + ' %)', 
+          stayTime: Util.convertToTime(stayTime) + ' (' + Util.getRatio(stayTime) + '%)', 
+          lostTime: Util.convertToTime(lostTime) + ' (' + Util.getRatio(lostTime) + '%)', 
           stayRatio: presentRatio + ' %',
         }
 
         categoryData.forEach((cData) => {
-          result[cData.name] = Util.convertToTime(cData.value) + ' (' + Util.getRatio(cData.value) + ' %)'
+          result[cData.name] = Util.convertToTime(cData.value) + ' (' + Util.getRatio(cData.value) + '%)'
+        })
+        areaData.forEach((aData) => {
+          result[aData.name] = Util.convertToTime(aData.value) + ' (' + Util.getRatio(aData.value) + '%)'
         })
 
         return result
