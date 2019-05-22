@@ -48,7 +48,6 @@ export default {
   computed: {
     ...mapState('app_service', [
       'pots',
-      'potImages',
       'roles',
       'forceFetchPot',
     ]),
