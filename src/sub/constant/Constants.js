@@ -199,7 +199,7 @@ export const SENSOR = {
     OFF: 0,
     ON: 4,
   },
-  STRING: ['','temperature','pir','thermopile','led','meditag','magnet','button','pressure']
+  STRING: ['','temperature','pir','thermopile','led','meditag','magnet','button','pressure','omr-env','omr-tp-human','omr-tp-env']
 }
 
 export const SUM_UNIT = {
