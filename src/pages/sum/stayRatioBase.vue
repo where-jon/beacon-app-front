@@ -84,8 +84,10 @@
         <b-form-group>
           <b-form-row class="mb-3">
             <b-button v-t="'label.display'" type="submit" :variant="theme" @click="display" />
-            <b-button v-if="!iosOrAndroid" v-t="'label.download'" :variant="theme" class="ml-2" @click="download" />
-            <b-button v-if="!iosOrAndroid" v-t="'label.downloadMonth'" :variant="theme" class="ml-2" @click="downloadMonth" />
+            <b-dropdown v-if="!iosOrAndroid" :variant="theme" :text="$t('label.download')" class="ml-2">
+              <b-dropdown-item v-t="'label.download'" @click="download" />
+              <b-dropdown-item v-t="'label.downloadMonth'" @click="downloadMonth" />
+            </b-dropdown>
             <b-button v-if="!iosOrAndroid" v-t="'label.displaySpecified'" v-b-modal.stayRatioDisplayModal :variant="theme" class="ml-2" />
           </b-form-row>
         </b-form-group>
