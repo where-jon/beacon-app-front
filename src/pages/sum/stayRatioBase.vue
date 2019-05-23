@@ -36,6 +36,11 @@
             <b-form-checkbox :value="area.areaId" :disabled="!enableCategorySelect">
               {{ area.areaName }} <span class="bgSquare" :style="`background-color: ${getRandomColor(index)};`" />
             </b-form-checkbox><br>
+            <div v-if="index == (areas.length - 1)">
+              <b-form-checkbox :value="0" :disabled="!enableCategorySelect">
+                {{ $t('label.other') }} <span class="bgSquare" :style="`background-color: ${getRandomColor(index + 1)};`" />
+              </b-form-checkbox><br>
+            </div>
           </div>
         </b-form-checkbox-group>
         <hr>
@@ -251,12 +256,12 @@ export default {
       })
       
       // カテゴリその他が選択されている場合は追加
-      let isSelectedOther = false
+      let isSelectedCategoryOther = false
       if (this.displayCheckList) {
-        isSelectedOther = _.find(this.displayCheckList.category, (id) => { return id == 0 }) == 0? true: false
+        isSelectedCategoryOther = _.find(this.displayCheckList.category, (id) => { return id == 0 }) == 0? true: false
       }
 
-      isSelectedOther? fields.push({key: 'categoryOther', sortable: true, label: i18n.tnl('label.other')+i18n.tnl('label.category'), thStyle: {width:'100px !important'}}): null
+      isSelectedCategoryOther? fields.push({key: 'categoryOther', sortable: true, label: i18n.tnl('label.other')+i18n.tnl('label.category'), thStyle: {width:'100px !important'}}): null
 
       // 選択されているエリアを追加する
       let selectedAreas = _.filter(this.areas, (area) => {
@@ -268,6 +273,14 @@ export default {
         let colorStyle = '<span style="color: ' + DISP.SUM_STACK_COLOR[index % DISP.SUM_STACK_COLOR.length] + ';">■</span>'
         fields.push({key: area.areaName, sortable: true, label: area.areaName + colorStyle, thStyle: {width:'100px !important'}})
       })
+
+      // エリアその他が選択されている場合は追加
+      let isSelectedAreaOther = false
+      if (this.displayCheckList) {
+        isSelectedAreaOther = _.find(this.displayCheckList.area, (id) => { return id == 0 }) == 0? true: false
+      }
+      isSelectedAreaOther? fields.push({key: 'areaOther', sortable: true, label: i18n.tnl('label.other')+i18n.tnl('label.area'), thStyle: {width:'100px !important'}}): null
+
 
       // 選択されている総合時間を追加する
       this.isDisplayStayColumn('stay')? fields.push({key: 'stayTime', sortable: true, label: this.$i18n.tnl('label.stayTime'), thStyle: {width:'100px !important'}}): null
@@ -355,6 +368,7 @@ export default {
         })
 
         // エリア用データ保持変数を初期化
+        areaData[0] = {name: 'areaOther', value: 0}
         this.areas.forEach((area) => {
           areaData[area.areaId] = {name: area.areaName, value: 0}
         })
@@ -383,7 +397,10 @@ export default {
               const findArea = _.find(this.areas, (area) => {
                 return zone? area.areaId == zone.areaId: false
               })
-              findArea? areaData[findArea.areaId].value += stay.period: null
+              findArea? areaData[findArea.areaId].value += stay.period: areaData[0].value += stay.period
+            } else {
+              // カテゴリ一致しない＆その他の場合
+              stay.byId == 0? areaData[0].value += stay.period: null
             }
           }
           graphList.push({
