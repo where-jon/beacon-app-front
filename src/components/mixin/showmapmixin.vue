@@ -39,6 +39,12 @@ export default {
         bgColor: DISP.TX.BGCOLOR,
         shape: SHAPE.CIRCLE,
       },
+      vueSelected: {
+        area: null,
+        group: null,
+        category: null,
+        tx: null,
+      },
       oldSelectedArea: null,
       areaOptions: [],
       loadComplete: false,
@@ -75,6 +81,7 @@ export default {
   async created() {
     await StateHelper.load('area')
     this.areaOptions = StateHelper.getOptionsFromState('area', false, true)
+    this.vueSelected.area = this.getInitAreaOption(true)
     this.selectedArea = this.getInitAreaOption()
     await StateHelper.loadAreaImage(this.selectedArea)
     this.loadComplete = true
@@ -136,7 +143,10 @@ export default {
     ...mapMutations('main', [
       'replaceMain', 
     ]),
-    getInitAreaOption(){
+    getInitAreaOption(isVueSelect){
+      if(isVueSelect){
+        return StateHelper.getVueSelectData(this.areaOptions, this.selectedArea, !Util.hasValue(this.selectedArea))
+      }
       return this.selectedArea? this.selectedArea : Util.hasValue(this.areaOptions)? this.areaOptions[0].value: null
     },
     mapImage() {
@@ -173,7 +183,7 @@ export default {
       }
       if(!this.loadComplete){
         setTimeout(() => {
-          this.showMapImage(disableErrorPopup)
+          this.showMapImage && this.showMapImage(disableErrorPopup)
         }, 200)
         return
       }

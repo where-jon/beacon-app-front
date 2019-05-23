@@ -94,7 +94,7 @@ export const getTxIdName = (tx) => {
   if(!tx){
     return null
   }
-  return APP.TX.BTX_MINOR != 'minor' && tx.btxId? tx.btxId: APP.TX_BTX_MINOR == 'minor' && tx.minor? tx.minor: null
+  return APP.TX.BTX_MINOR != 'minor'? tx.btxId? tx.btxId.toString(): '': tx.minor? tx.minor.toString(): ''
 }
 
 export const getTxIdNames = (txList) => {
@@ -579,3 +579,6 @@ export const bulkErrorCheck = (entity, headerName, val, isNumberColumn) => {
   entity[`${headerName}Name`] = val
   return false
 }
+
+export const getVueSelectData = (selectOptions, selected, isFirst) => selectOptions.find((selectOption, idx) => isFirst && idx == 0 || selectOption.value == selected)
+export const getVueSelectValue = (selectOptions, selected, isFirst) => Util.getValue(getVueSelectData(selectOptions, selected, isFirst), 'value', null)

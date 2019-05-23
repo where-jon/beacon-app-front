@@ -14,7 +14,7 @@
                 </span>
               </b-form-row>
               <b-form-row>
-                <b-form-select v-model="selectedArea" :options="areaOptions" required class="ml-2" @change="changeArea" />
+                <v-select v-model="vueSelected.area" :options="areaOptions" :clearable="false" class="ml-2 vue-options" />
               </b-form-row>
             </b-form-row>
           </b-form-group>
@@ -118,8 +118,17 @@ export default {
       }
     },
   },
+  watch: {
+    'vueSelected.area': {
+      handler: function(newVal, oldVal){
+        this.selectedArea = Util.getValue(newVal, 'value', null)
+        this.changeArea(this.selectedArea)
+      },
+      deep: true,
+    },
+  },
   mounted() {
-    this.fetchData()
+    // this.fetchData()
   },
   beforeDestroy(){
     this.removeTick()
@@ -283,9 +292,9 @@ export default {
     },
     showMapImage() {
       this.isLoading = true
-      this.exbIcons = []
-      this.txIcons = []
       this.showMapImageDef(() => {
+        this.exbIcons = []
+        this.txIcons = []
         this.resetExb()
         this.resetTx()
         this.isLoading = false
@@ -428,7 +437,7 @@ export default {
       const pageElement = document.getElementById('bd-page')
       return {
         fontSize: Util.getFont2Size(DISP.THERMOH.TOOLTIP_FONT),
-        sensorName: DISP.THERMOH.TOOLTIP_ITEMS.TXNAME? device.txName? device.txName: device.locationName: '',
+        sensorName: DISP.THERMOH.TOOLTIP_ITEMS.TXNAME? device.potName? device.potName: device.locationName: '',
         temperature: DISP.THERMOH.TOOLTIP_ITEMS.TEMPERATURE? Util.formatTemperature(device.temperature) + this.$i18n.tnl('label.temperatureUnit'): '',
         humidity: DISP.THERMOH.TOOLTIP_ITEMS.HUMIDITY? Util.formatHumidity(device.humidity) + this.$i18n.tnl('label.humidityUnit'): '',
         description: DISP.THERMOH.TOOLTIP_ITEMS.DESCRIPTION? Util.cutOnLong(device.description, 10): '',
@@ -472,6 +481,7 @@ export default {
 
 <style scoped lang="scss">
 @import "../../sub/constant/config.scss";
+@import "../../sub/constant/vue.scss";
 
 ::-webkit-scrollbar { 
   display: none; 

@@ -86,7 +86,6 @@ export default {
         APP.TX.BTX_MINOR == 'minor'? {key: 'minor', sortable: true, tdClass: 'action-rowdata' }: null,
         APP.TX.BTX_MINOR != 'minor'? {key: 'btxId', sortable: true, tdClass: 'action-rowdata' }: null,
         APP.TX.BTX_MINOR == 'both'? {key: 'minor', sortable: true, tdClass: 'action-rowdata' }: null,
-        {key: 'txName', sortable: true, tdClass: 'action-rowdata' },
         {key: 'sensor', label:'type', sortable: true,},
       ].concat(this.createCustomColumn())
         .concat([

@@ -8,8 +8,8 @@
         <label class="mr-2 mb-2">
           {{ $t('label.area') }}
         </label>
-        <b-form-select v-model="selectedArea" :options="areaOptions" class="mr-2 mb-2 areaOptions" />
-        <b-button v-t="'label.load'" :variant="getButtonTheme()" size="sm" class="mb-2" @click="changeArea" />
+        <v-select v-model="vueSelected.area" :options="areaOptions" :disabled="settingStart" class="mr-2 mb-2 vue-options" :clearable="false" />
+        <b-button v-t="'label.load'" :variant="getButtonTheme()" :disabled="selectedArea == null" size="sm" class="mb-2" @click="changeArea" />
       </b-form-row>
     </b-form>
     <b-form inline class="mt-2">
@@ -18,7 +18,7 @@
           {{ $t('label.tx') }}
         </label>
         <b-form-row>
-          <v-select v-model="selectedTx_" :options="txOptions" :on-change="showTxOnMap" size="sm" class="mb-2 mt-mobile txOptions">
+          <v-select v-model="selectedTx_" :options="txOptions" :on-change="showTxOnMap" size="sm" class="mb-2 ml-2 mt-mobile vue-options">
             <div slot="no-options">
               {{ $i18n.tnl('label.vSelectNoOptions') }}
             </div>
@@ -76,6 +76,9 @@ export default {
       toggleCallBack: () => {
         this.keepTxPosition = true
       },
+      vueSelected: {
+        area: null,
+      },
       ICON_ARROW_WIDTH: DISP.TX_LOC.SIZE.W/3,
       ICON_ARROW_HEIGHT: DISP.TX_LOC.SIZE.H/3,
       noImageErrorKey: 'noMapImage',
@@ -87,16 +90,24 @@ export default {
       'pageSendParam',
     ]),
   },
-  mounted() {
-    this.fetchData()
+  watch: {
+    'vueSelected.area': {
+      handler: function(newVal, oldVal){
+        this.selectedArea = Util.getValue(newVal, 'value', null)
+      },
+      deep: true,
+    },
+  },
+  async mounted() {
     if(this.pageSendParam){
-      this.selectedArea = this.pageSendParam.areaId
+      this.vueSelected.area = StateHelper.getVueSelectData(this.areaOptions, this.pageSendParam.areaId)
       this.changeArea()
       this.replaceAS({pageSendParam: null})
     }
     else{
-      this.selectedArea = null
+      this.vueSelected.area = StateHelper.getVueSelectData(this.areaOptions, null, true)
     }
+    await this.fetchData()
   },
   beforeDestroy() {
     this.selectedArea = null
@@ -418,6 +429,7 @@ export default {
 
 <style scoped lang="scss">
 @import "../../../sub/constant/config.scss";
+@import "../../../sub/constant/vue.scss";
 
 ::-webkit-scrollbar { 
   display: none; 
@@ -449,10 +461,6 @@ export default {
 
 .ratioInput {
   width: 75px;
-}
-
-.txOptions {
-  width: 140px;
 }
 
 .blink {

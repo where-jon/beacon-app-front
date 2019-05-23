@@ -21,7 +21,7 @@
             </b-form-group>
             <b-form-group>
               <label v-t="'label.area'" />
-              <b-form-select v-model="form.areaId" :options="areaOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-3 col-4" />
+              <v-select v-model="vueSelected.area" :options="areaOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 vue-options" />
             </b-form-group>
             <b-form-group v-show="isShown('EXB.WITH', 'posId')">
               <label v-t="'label.posId'" />
@@ -68,8 +68,10 @@
               <b-form-select v-model="form.sensorId" :options="sensorOptionsExb" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-3 col-4" />
             </b-form-group>
             <b-form-group v-show="useZone">
-              <label v-t="'label.zone'" />
-              <b-form-select v-model="form.zoneId" :options="zoneNames" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-3 col-4" />
+              <b-form-row>
+                <label v-t="'label.zone'" class="d-flex align-items-center" />
+                <v-select v-model="vueSelected.zone" :options="getZoneNames()" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-2 vue-options" />
+              </b-form-row>
             </b-form-group>
 
             <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
@@ -117,9 +119,12 @@ export default {
         'exbId', 'deviceId', 'enabled',
         'location.locationName', 'location.areaId', 'location.locationId', 'location.posId',
         'location.x', 'location.y', 'location.visible', 'location.txViewType',
-        'exbSensorList.0.sensor.sensorId', 'location.locationZoneList.0.locationZonePK.zoneId'
-      ]
-      ),
+        'exbSensorList.0.exbSensorPK.sensorId', 'location.locationZoneList.0.locationZonePK.zoneId'
+      ]),
+      vueSelected: {
+        area: null,
+        zone: null,
+      },
       defValue: {
         'enabled': true,
       },
@@ -146,11 +151,6 @@ export default {
       let options = this.sensorOptions('exb')
       return options
     },
-    zoneNames() {
-      return StateHelper.getOptionsFromState('zone', false, false, 
-        zone => zone.areaId == this.form.areaId
-      )
-    },
     ...mapState('app_service', [
       'exb',
       'areas',
@@ -159,6 +159,19 @@ export default {
     ]),
   },
   watch: {
+    'vueSelected.area': {
+      handler: function(newVal, oldVal){
+        this.form.areaId = Util.getValue(newVal, 'value', null)
+        this.vueSelected.zone = null
+      },
+      deep: true,
+    },
+    'vueSelected.zone': {
+      handler: function(newVal, oldVal){
+        this.form.zoneId = Util.getValue(newVal, 'value', null)
+      },
+      deep: true,
+    },
     deviceId: function(newVal, oldVal) {
       if (!this.mutex) {
         this.mutex = true
@@ -189,11 +202,13 @@ export default {
     this.initExbSensorList()
     this.changeSensors()
     await StateHelper.load('sensor')
-    await StateHelper.load('area')
-    await StateHelper.load('zone')
     this.$nextTick(() => HtmlUtil.setCustomValidationMessage())
   },
-  mounted() {
+  async mounted() {
+    await StateHelper.load('area')
+    await StateHelper.load('zone')
+    this.vueSelected.area = StateHelper.getVueSelectData(this.areaOptions, this.form.areaId)
+    this.$nextTick(() => this.vueSelected.zone = StateHelper.getVueSelectData(this.getZoneNames(), this.form.zoneId))
     this.deviceId = this.form.deviceId
     ViewHelper.applyDef(this.form, this.defValue)
     if (!this.form.txViewType) {
@@ -206,6 +221,11 @@ export default {
   methods: {
     isNormalSensor(index){
       return Util.getValue(this.form, `exbSensorList.${index && 0 <= index? index: 0}.sensorId`, null)? false: true
+    },
+    getZoneNames() {
+      return StateHelper.getOptionsFromState('zone', false, true, 
+        zone => zone.areaId == this.form.areaId
+      )
     },
     showSensor(index){
       if(index == 0){
@@ -249,7 +269,7 @@ export default {
       this.form.exbSensorList = this.exb.exbSensorList? this.exb.exbSensorList.map((val, idx) => {
         return APP.EXB.MULTI_SENSOR && idx < APP.EXB.SENSOR_MAX || !APP.EXB.MULTI_SENSOR && idx == 0? {
           exbId: null,
-          sensorId: val.sensor.sensorId,
+          sensorId: val.exbSensorPK.sensorId,
         }: null
       }).filter((val) => val): []
       const maxSensor = APP.EXB.MULTI_SENSOR? APP.EXB.SENSOR_MAX: 1
@@ -268,10 +288,12 @@ export default {
     beforeReload(){
       this.initExbSensorList()
       this.changeSensors()
+      this.vueSelected.area = StateHelper.getVueSelectData(this.areaOptions, null)
+      this.vueSelected.zone = StateHelper.getVueSelectData(this.getZoneNames(), null)
     },
     async save() {
       let dummyKey = -1
-      if(!this.zoneNames.find(zone => zone.value == this.form.zoneId)){
+      if(!this.getZoneNames().find(zone => zone.value == this.form.zoneId)){
         this.form.zoneId = null
       }
       const entity = {
@@ -325,6 +347,8 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import "../../../sub/constant/vue.scss";
+
 label.txicons-num {
   margin-left: 20px;
 }

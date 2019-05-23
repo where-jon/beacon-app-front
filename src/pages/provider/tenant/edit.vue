@@ -148,6 +148,8 @@ import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as SettingHelper from '../../../sub/helper/SettingHelper'
+import * as AuthHelper from '../../../sub/helper/AuthHelper'
+import * as HttpHelper from '../../../sub/helper/HttpHelper'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
 import featuremixinVue from '../../../components/mixin/featuremixin.vue'
 import * as Util from '../../../sub/util/Util'
@@ -285,14 +287,23 @@ export default {
       this.$refs.systemSetting.showNewForm(false)
       window.removeEventListener('resize', this.adjustModalRect)
     },
+    async applyConfig() {
+      await StateHelper.load('setting', true)
+      const login = JSON.parse(window.localStorage.getItem('login'))
+      const userInfo = await AuthHelper.getUserInfo(login.tenantAdmin)
+      AuthHelper.resetConfig(login.tenantAdmin, userInfo.setting)
+    },
     async afterCrud(){
       this.featureList.forEach((feature) => {
         feature.checked = false
         feature.disabled = false
       })
       const login = JSON.parse(window.localStorage.getItem('login'))
+      const tenant = await HttpHelper.getAppService('/meta/tenant/currentTenant')
+      login.currentTenant = tenant
+      window.localStorage.setItem('login', JSON.stringify(login))
       if(this.targetTenantId == login.currentTenant.tenantId){
-        await this.$refs.systemSetting.applyConfig()
+        await this.applyConfig()
       }
       this.targetTenantId = null
       this.settingList = []

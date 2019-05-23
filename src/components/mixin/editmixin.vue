@@ -173,6 +173,7 @@ export default {
             if(this.createMessage){
               this.replaceAS({listMessage: this.message})
             }
+            this.replaceAS({moveEditPage: this.isUpdate})
             this.backToList()
           }
         }
