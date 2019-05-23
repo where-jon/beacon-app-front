@@ -1,7 +1,9 @@
 <template>
   <div id="mapContainer" class="container-fluid" @click="resetDetail">
     <breadcrumb :items="items" :extra-nav-spec="extraNavSpec" :reload="true" :auto-reload="false" :short-name="shortName" :legend-items="legendItems" />
-    <prohibitAlert :messagelist="message" />
+    <b-alert v-model="showDismissibleAlert" variant="danger" dismissible>
+      {{ $t('label.detectedProhibitZone') + ' : ' }}{{ message }}
+    </b-alert>
     <b-row class="mt-2">
       <b-form inline class="mt-2" @submit.prevent>
         <b-form-row class="my-1 ml-2 ml-sm-0">
@@ -86,14 +88,11 @@ import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import listmixin from '../../components/mixin/listmixin.vue'
 import sensor from '../../components/parts/sensor.vue'
 import commonmixinVue from '../../components/mixin/commonmixin.vue'
-import prohibitAlert from '../../components/page/prohibitAlert.vue'
-
 export default {
   components: {
     'sensor': sensor,
     'txdetail': txdetail,
     breadcrumb,
-    prohibitAlert
   },
   mixins: [showmapmixin, listmixin, commonmixinVue],
   props: {
@@ -120,6 +119,7 @@ export default {
       isPause: false,
       firstTime: true,
       message: '',
+      showDismissibleAlert: false,
       prohibitData : null,
       icons: {},
       txsMap: {},
@@ -312,6 +312,7 @@ export default {
         const spinClassName = 'fa-spin'
         if(!this.firstTime && reloadButton){
           reloadButton.classList.add(spinClassName)
+          this.showDismissibleAlert = true
         }
         if(!this.selectedTx.btxId){
           await this.fetchPositionData(cPayload)
@@ -330,6 +331,7 @@ export default {
         this.setPositionedExb()
         this.prohibitData = await StateHelper.getProhibitData(this.getPositions(),this.prohibits)
         this.message = await StateHelper.getProhibitMessage(this.message,this.prohibitData)
+        this.showDismissibleAlert = this.message ? true: false
         this.showTxAll()
         clearInterval(this.prohibitInterval)
         this.prohibitInterval = setInterval(this.twinkle,DISP.PROHIBIT_TWINKLE_TIME) //TODO: Violation発生
