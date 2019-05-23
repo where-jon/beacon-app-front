@@ -22,30 +22,30 @@
         <b-form-checkbox-group id="checkbox-group-2" v-model="displayCheckList.category" name="flavour-2">
           {{ $t('label.category') }}
           <div v-for="(category, index) in categoryDisplayList" :key="`category-${index}`">
-            <b-form-checkbox :value="category.categoryId">
+            <b-form-checkbox :value="category.categoryId" :disabled="enableCategorySelect">
               {{ category.systemUse? $t('label.' + category.systemCategoryName): category.categoryName }} <span class="bgSquare" :style="`background-color: #${category.bgColor};`" />
             </b-form-checkbox><br>
           </div>
-          <b-form-checkbox :value="0">
-            {{ $t('label.other') }}
+          <b-form-checkbox :value="0" :disabled="enableCategorySelect">
+            {{ $t('label.other') }} <span class="bgSquare" :style="`background-color: ${getRandomColor(0)};`" />
           </b-form-checkbox><br>
         </b-form-checkbox-group>
         <b-form-checkbox-group id="checkbox-group-2" v-model="displayCheckList.area" name="flavour-2">
           {{ $t('label.area') }}
           <div v-for="(area, index) in areas" :key="`area-${index}`">
-            <b-form-checkbox :value="area.areaId">
-              {{ area.areaName }}
+            <b-form-checkbox :value="area.areaId" :disabled="!enableCategorySelect">
+              {{ area.areaName }} <span class="bgSquare" :style="`background-color: ${getRandomColor(index)};`" />
             </b-form-checkbox><br>
           </div>
         </b-form-checkbox-group>
         <hr>
         {{ $t('label.graph') }}
         <b-form-radio-group v-model="historyType">
-          <b-form-radio :value="0">
+          <b-form-radio :value="0" @change="setSelectedGraphCategory(false)">
             {{ $t('label.zoneCategory') }}
           </b-form-radio>
           <br>
-          <b-form-radio :value="1">
+          <b-form-radio :value="1" @change="setSelectedGraphCategory(true)">
             {{ $t('label.area') }}
           </b-form-radio>
         </b-form-radio-group>
@@ -165,6 +165,7 @@ export default {
       initTotalRows: 0,
       historyType: 0,
       selected: [],
+      isCategorySelected: false
     }
   },
   computed: {
@@ -187,6 +188,9 @@ export default {
     enableGroup () {
       return this.isEnabledMenu('group') && Util.includesIgnoreCase(APP.POT.WITH, 'group')
     },
+    enableCategorySelect() {
+      return this.isCategorySelected
+    }
   },
   async created() {
     await StateHelper.load('group')
@@ -215,6 +219,13 @@ export default {
       .sort((a, b) => a.categoryId < b.categoryId ? -1 : 1)
   },
   methods: {
+    setSelectedGraphCategory(isSelected) {
+      this.isCategorySelected? this.displayCheckList.area = []: this.displayCheckList.category = []
+      this.isCategorySelected = isSelected
+    },
+    getRandomColor(index) {
+      return DISP.SUM_STACK_COLOR[index % DISP.SUM_STACK_COLOR.length]
+    },
     updateColumn() {
       Vue.set(this, 'fields', this.getFields())
     },
