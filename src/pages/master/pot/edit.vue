@@ -6,7 +6,7 @@
 
       <b-row>
         <b-col md="8" offset-md="2">
-          <b-form v-if="show" @submit.prevent="onSubmit">
+          <b-form v-if="show" @submit.prevent="doSubmit">
             <chrome-input />
             <span v-for="(potTx, index) in form.potTxList" :key="index">
               <b-form inline @submit.prevent>
@@ -62,7 +62,7 @@
               <b-button v-if="isEditable && form.thumbnail" :variant="theme" type="button" class="float-right mt-3" @click="clearImage">
                 {{ $i18n.tnl('label.clear') }}
               </b-button>
-              <img v-show="form.existThumbnail" ref="thumbnail" :src="thumbnailUrl.replace('{id}', form.potId)" width="100" class="mt-1 ml-3">
+              <img v-show="form.existThumbnail" ref="thumbnail" :src="thumbnailUrl.replace('{id}', form.potId) + new Date().getTime()" width="100" class="mt-1 ml-3">
             </b-form-group>
             <b-form-group v-if="isShown('POT.WITH', 'description')">
               <label v-t="'label.description'" />
@@ -184,6 +184,7 @@ export default {
       'groups',
       'categories',
       'txs',
+      'updatedThumbnail',
     ]),
     hasUserId(){
       return Util.hasValue(this.userForm.userId)
@@ -497,6 +498,15 @@ export default {
         this.setFileName()
       })
     },
+    doSubmit(evt) {
+      if (this.form.thumbnail) {
+        this.replaceAS({updatedThumbnail: {
+          id: this.form.potId,
+          time: new Date().getTime()
+        }})
+      }
+      this.onSubmit(evt)
+    }
   },
 }
 </script>

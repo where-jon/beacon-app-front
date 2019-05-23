@@ -50,6 +50,7 @@ export default {
       'pots',
       'roles',
       'forceFetchPot',
+      'updatedThumbnail',
     ]),
   },
   methods: {
@@ -128,7 +129,11 @@ export default {
       this.hideProgress()
     },
     thumbnail(row) {
-      return row.existThumbnail ? this.thumbnailUrl.replace('{id}', row.potId) : null
+      let addUrlParam = ''
+      if (this.updatedThumbnail.id && this.updatedThumbnail.id === row.potId) {
+        addUrlParam = this.updatedThumbnail.time
+      }
+      return row.existThumbnail ? this.thumbnailUrl.replace('{id}', row.potId) + addUrlParam : null
     },
   }
 }
