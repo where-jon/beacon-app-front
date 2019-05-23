@@ -94,19 +94,20 @@
       <b-row class="mt-3" />
       <b-table :items="viewList" :fields="fields" :current-page="currentPage" :per-page="perPage" :sort-by.sync="sortBy" stacked="md" striped hover outlined>
         <template slot="graph" slot-scope="row">
-          <div class="scale-bar">
+          <div style="position: relative;">
             <div v-for="(bar, index) in row.item.graph" :key="index" :class="bar.isStay? 'stay-bar': 'lost-bar'" :style="`${bar.isStay? `background: `+ (historyType == 'category'? bar.categoryBgColor: bar.areaBgColor)+`;`: `` } width:${bar.percent}% !important;`">
               <span class="graph-arrow-box">
                 {{ $i18n.tnl(bar.isStay?'label.stay': 'label.lost') }}: {{ bar.time }}
               </span>&nbsp;
             </div>
             <br>
-            <span style="float: left;">
-              {{ row.item.graph.length > 0? row.item.graph[0].baseTimeFrom: '' }}
-            </span>
-            <span style="float: right;">
-              {{ row.item.graph.length > 0? row.item.graph[0].baseTimeTo: '' }}
-            </span>
+            <div style="width: 100%">
+              <div v-for="(timeData, index) in row.item.timeRatio" :key="`graph-${index}`" class="time-area" :style="`width: ${timeData.ratio}% !important;`">
+                <span v-if="index == 0" style="float: left;">{{ row.item.baseTimeFrom }}</span>
+                <span v-if="index == row.item.timeRatio.length - 1" style="float: right;">{{ row.item.baseTimeTo }}</span>
+                <span v-if="isScaleTime(timeData.time)" style="float: left;"><span style="position: relative; left: -50%;">{{ timeData.time + ':00' }}</span></span>
+              </div>
+            </div>
           </div>
         </template>
       </b-table>
@@ -127,8 +128,7 @@ import * as ViewHelper from '../../sub/helper/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
-import { APP } from '../../sub/constant/config'
-import { DISP } from '../../sub/constant/config'
+import { APP, DISP } from '../../sub/constant/config'
 import moment from 'moment'
 import validatemixin from '../../components/mixin/validatemixin.vue'
 import commonmixinVue from '../../components/mixin/commonmixin.vue'
@@ -195,7 +195,7 @@ export default {
     },
     enableCategorySelect() {
       return this.isCategorySelected
-    }
+    },
   },
   async created() {
     await StateHelper.load('group')
@@ -224,6 +224,9 @@ export default {
       .sort((a, b) => a.categoryId < b.categoryId ? -1 : 1)
   },
   methods: {
+    isScaleTime(scaleTime) {
+      return _.find(APP.STAY_SUM.SCALE_TIME, (time) => { return time == scaleTime})? true: false
+    },
     setSelectedGraphCategory(isSelected) {
       this.isCategorySelected? this.displayCheckList.area = []: this.displayCheckList.category = []
       this.isCategorySelected = isSelected
@@ -353,6 +356,7 @@ export default {
       return byId == -1
     },
     getStayDataList(date, stayData, absentLimit = 0, lostLimit = APP.LOST_TIME) {
+      const graphTimeRatio = this.getTimeRatioData()
       return stayData.map((data) => {
         const potId = data.potId
         const pot = this.pots.find((val) => val.potId == potId)
@@ -412,8 +416,6 @@ export default {
             isStay: isStayData,
             period: stay.period,
             time: time,
-            baseTimeFrom: APP.SUM_FROM,
-            baseTimeTo: APP.SUM_TO,
             percent: Math.floor((stay.period / this.fromToSettingDiff) * 10000) / 100,
             categoryBgColor: findCategory? '#' + findCategory.bgColor: this.getRandomColor(0),
             areaBgColor: findArea? this.getRandomColor(findArea.areaId): this.getRandomColor(0),
@@ -429,7 +431,10 @@ export default {
           graph: graphList,
           stayTime: Util.convertToTime(stayTime) + ' (' + Util.getRatio(stayTime) + '%)', 
           lostTime: Util.convertToTime(lostTime) + ' (' + Util.getRatio(lostTime) + '%)', 
+          baseTimeFrom: this.getDateStrFromSetting(APP.SUM_FROM),
+          baseTimeTo: this.getDateStrFromSetting(APP.SUM_TO),
           stayRatio: presentRatio + ' %',
+          timeRatio: graphTimeRatio,
         }
 
         categoryData.forEach((cData) => {
@@ -441,6 +446,31 @@ export default {
 
         return result
       })
+    },
+    getDateStrFromSetting(timeNum) {
+      return Util.convertToTime((Math.floor(timeNum / 100) * 60 + timeNum % 100) * 60).slice(0, -3)
+    },
+    getTimeRatioData() {
+      // 開始から終了までの配列を作る
+      const fromHour = Math.floor(APP.SUM_FROM / 100) // 分は切る
+      const toHour = Math.floor(APP.SUM_TO / 100)
+      const toHourMinute = toHour * 60 + APP.SUM_TO % 100
+      const total = toHourMinute - fromHour * 60
+      let times = []
+      let timesMinute = []
+      for (let i = fromHour; i <= toHour; i++) {
+        times.push(i)
+        timesMinute.push(i * 60)
+      }
+      toHourMinute > 0? timesMinute.push(toHourMinute): null
+
+      // トータル時間から導き出す
+      let result = []
+      for (let i = 0; i < timesMinute.length - 1; i++){
+        var ratio = (timesMinute[i+1] - timesMinute[i])/total
+        result.push({time: times[i], ratio: Math.floor(ratio * 10000)/100})
+      }
+      return result
     },
     async download(){
       if (this.viewList == null || this.viewList.length == 0) {
@@ -596,7 +626,6 @@ export default {
   display: inline-block;
   cursor: default;
   box-sizing:border-box;
-  /* border-top: 1px solid rgba(255, 0, 0, 0); */
 }
 .lost-bar {
   position: relative;
@@ -604,7 +633,6 @@ export default {
   background: #ccc;
   cursor: default;
   box-sizing:border-box;
-  /* border-top: 1px solid rgba(255, 0, 0, 0); */
 }
 .graph-arrow-box {
   display: none;
@@ -621,5 +649,12 @@ export default {
 }
 .stay-bar:hover .graph-arrow-box, .lost-bar:hover .graph-arrow-box {
   display: block;
+}
+.time-area {
+  overflow: visible;
+  white-space: nowrap;
+  position: relative;
+  display: inline-block;
+  box-sizing:border-box;
 }
 </style>
