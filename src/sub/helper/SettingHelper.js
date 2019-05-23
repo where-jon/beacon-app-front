@@ -67,12 +67,12 @@ export const getDefaultValue = (key, isTenant = false) => {
   return key.split('.').reduce((prev, cur) => prev != null && prev[cur] != null? prev[cur]: null, defaultConfig)
 }
 
-export const getDefaultValType = (key, isTenant) => {
+export const getDefaultValType = (key) => {
   const type = i18n.tdef('config.TYPE.' + key)
   if(type != null && SETTING.VALUES.includes(type)){
     return type
   }
-  const defaultValue = getDefaultValue(key, isTenant)
+  const defaultValue = getDefaultValue(key, true)
   if(defaultValue != null && typeof defaultValue != 'object'){
     return typeof defaultValue
   }
@@ -104,7 +104,7 @@ export const getI18ConfigInner = (config, isTenant, parentKey = '', list = []) =
       getI18ConfigInner(data, isTenant, key + '.', list)
       return
     }
-    const setting = {key: key, valType: getDefaultValType(key, isTenant)}
+    const setting = {key: key, valType: getDefaultValType(key)}
     const params = data.split('::')
     list.push(createSetting(setting, isTenant, {keyName: params[0], title: convertTitle(params[1]), isParent: false}))
   })
