@@ -34,11 +34,11 @@
           {{ $t('label.area') }}
           <div v-for="(area, index) in areas" :key="`area-${index}`">
             <b-form-checkbox :value="area.areaId" :disabled="!enableCategorySelect">
-              {{ area.areaName }} <span class="bgSquare" :style="`background-color: ${getRandomColor(index)};`" />
+              {{ area.areaName }} <span class="bgSquare" :style="`background-color: ${getRandomColor(area.areaId)};`" />
             </b-form-checkbox><br>
             <div v-if="index == (areas.length - 1)">
               <b-form-checkbox :value="0" :disabled="!enableCategorySelect">
-                {{ $t('label.other') }} <span class="bgSquare" :style="`background-color: ${getRandomColor(index + 1)};`" />
+                {{ $t('label.other') }} <span class="bgSquare" :style="`background-color: ${getRandomColor(0)};`" />
               </b-form-checkbox><br>
             </div>
           </div>
@@ -46,11 +46,11 @@
         <hr>
         {{ $t('label.graph') }}
         <b-form-radio-group v-model="historyType">
-          <b-form-radio :value="0" @change="setSelectedGraphCategory(false)">
+          <b-form-radio :value="'category'" @change="setSelectedGraphCategory(false)">
             {{ $t('label.zoneCategory') }}
           </b-form-radio>
           <br>
-          <b-form-radio :value="1" @change="setSelectedGraphCategory(true)">
+          <b-form-radio :value="'area'" @change="setSelectedGraphCategory(true)">
             {{ $t('label.area') }}
           </b-form-radio>
         </b-form-radio-group>
@@ -95,7 +95,7 @@
       <b-table :items="viewList" :fields="fields" :current-page="currentPage" :per-page="perPage" :sort-by.sync="sortBy" stacked="md" striped hover outlined>
         <template slot="graph" slot-scope="row">
           <div class="scale-bar">
-            <div v-for="(bar, index) in row.item.graph" :key="index" :class="bar.isStay? 'stay-bar': 'lost-bar'" :style="'width:' + bar.percent + '% !important;'">
+            <div v-for="(bar, index) in row.item.graph" :key="index" :class="bar.isStay? 'stay-bar': 'lost-bar'" :style="`${bar.isStay? `background: `+ (historyType == 'category'? bar.categoryBgColor: bar.areaBgColor)+`;`: `` } width:${bar.percent}% !important;`">
               <span class="graph-arrow-box">
                 {{ $i18n.tnl(bar.isStay?'label.stay': 'label.lost') }}: {{ bar.time }}
               </span>&nbsp;
@@ -168,7 +168,7 @@ export default {
       fromToSettingDiff: 0,
       fields: this.getFields(),
       initTotalRows: 0,
-      historyType: 0,
+      historyType: 'category',
       selected: [],
       isCategorySelected: false
     }
@@ -261,7 +261,8 @@ export default {
         isSelectedCategoryOther = _.find(this.displayCheckList.category, (id) => { return id == 0 }) == 0? true: false
       }
 
-      isSelectedCategoryOther? fields.push({key: 'categoryOther', sortable: true, label: i18n.tnl('label.other')+i18n.tnl('label.category'), thStyle: {width:'100px !important'}}): null
+      let colorOtherStyle = '<span style="color: ' + DISP.SUM_STACK_COLOR[0] + ';">■</span>'
+      isSelectedCategoryOther? fields.push({key: 'categoryOther', sortable: true, label: i18n.tnl('label.other')+i18n.tnl('label.category') + colorOtherStyle, thStyle: {width:'100px !important'}}): null
 
       // 選択されているエリアを追加する
       let selectedAreas = _.filter(this.areas, (area) => {
@@ -270,7 +271,7 @@ export default {
         })? true: false
       })
       selectedAreas.forEach(function(area, index) {
-        let colorStyle = '<span style="color: ' + DISP.SUM_STACK_COLOR[index % DISP.SUM_STACK_COLOR.length] + ';">■</span>'
+        let colorStyle = '<span style="color: ' + DISP.SUM_STACK_COLOR[area.areaId % DISP.SUM_STACK_COLOR.length] + ';">■</span>'
         fields.push({key: area.areaName, sortable: true, label: area.areaName + colorStyle, thStyle: {width:'100px !important'}})
       })
 
@@ -279,7 +280,8 @@ export default {
       if (this.displayCheckList) {
         isSelectedAreaOther = _.find(this.displayCheckList.area, (id) => { return id == 0 }) == 0? true: false
       }
-      isSelectedAreaOther? fields.push({key: 'areaOther', sortable: true, label: i18n.tnl('label.other')+i18n.tnl('label.area'), thStyle: {width:'100px !important'}}): null
+      colorOtherStyle = '<span style="color: ' + DISP.SUM_STACK_COLOR[0] + ';">■</span>'
+      isSelectedAreaOther? fields.push({key: 'areaOther', sortable: true, label: i18n.tnl('label.other')+i18n.tnl('label.area') + colorOtherStyle, thStyle: {width:'100px !important'}}): null
 
 
       // 選択されている総合時間を追加する
@@ -374,9 +376,11 @@ export default {
         })
 
         // 各時間の集計
-        data.stayList.forEach((stay) => {
+        data.stayList.forEach((stay, index) => {
           let isStayData = false
           let time = ''
+          let findCategory
+          let findArea
           if (this.isLostData(stay.byId) || this.isAbsentZoneData(stay.byId)) {
             lostTime += stay.period
             time = Util.convertToTime(stay.period)
@@ -386,7 +390,7 @@ export default {
             isStayData = true
 
             // カテゴリ毎の滞在時間を加算
-            const findCategory = _.find(this.categories, (category) => {
+            findCategory = _.find(this.categories, (category) => {
               return category.categoryType == CATEGORY.ZONE && category.categoryId == stay.byId
             })
             findCategory? categoryData[findCategory.categoryId].value += stay.period: stay.byId == 0? categoryData[0].value += stay.period: null
@@ -394,7 +398,7 @@ export default {
             // エリア毎の滞在時間を加算（一致するカテゴリが存在する場合しかエリアを引けない）
             if (findCategory) {
               let zone = _.find(this.zones, (zone) => { return zone.categoryId == findCategory.categoryId})
-              const findArea = _.find(this.areas, (area) => {
+              findArea = _.find(this.areas, (area) => {
                 return zone? area.areaId == zone.areaId: false
               })
               findArea? areaData[findArea.areaId].value += stay.period: areaData[0].value += stay.period
@@ -403,6 +407,7 @@ export default {
               stay.byId == 0? areaData[0].value += stay.period: null
             }
           }
+
           graphList.push({
             isStay: isStayData,
             period: stay.period,
@@ -410,6 +415,8 @@ export default {
             baseTimeFrom: APP.SUM_FROM,
             baseTimeTo: APP.SUM_TO,
             percent: Math.floor((stay.period / this.fromToSettingDiff) * 10000) / 100,
+            categoryBgColor: findCategory? '#' + findCategory.bgColor: this.getRandomColor(0),
+            areaBgColor: findArea? this.getRandomColor(findArea.areaId): this.getRandomColor(0),
           })
 
         })
@@ -587,7 +594,6 @@ export default {
 .stay-bar {
   position: relative;
   display: inline-block;
-  background: #0f0;
   cursor: default;
   box-sizing:border-box;
   /* border-top: 1px solid rgba(255, 0, 0, 0); */
@@ -612,10 +618,6 @@ export default {
   color: #fff;
   white-space: nowrap;
   z-index: 5;
-}
-.stay-bar:hover, .lost-bar:hover {
-  background-color: rgb(255, 0, 0);
-  /* border: 1px solid rgba(255, 0, 0, 1); */
 }
 .stay-bar:hover .graph-arrow-box, .lost-bar:hover .graph-arrow-box {
   display: block;
