@@ -6,7 +6,7 @@ import * as Util from '../util/Util'
 export const getTypes = (type) => {
   return DETECT_STATE.getTypes().filter((type) => {
     if (type.value === DETECT_STATE.TODAY_UNDETECT) {
-      return getTodayUndetectTime() < (type == 'tx'?  APP.UNDETECT_TIME: type == 'gw'? APP.GATEWAY.UNDETECT_TIME: APP.TELEMETRY.UNDETECT_TIME)
+      return getTodayUndetectTime() < (type == 'tx'?  APP.POS.UNDETECT_TIME: type == 'gw'? APP.GATEWAY.UNDETECT_TIME: APP.TELEMETRY.UNDETECT_TIME)
     }
     return true
   })
@@ -38,7 +38,7 @@ export const getState = (type, updatetime) => {
   switch(type) {
   case 'tx':
     LOST_TIME = APP.POS.LOST_TIME
-    UNDETECT_TIME = APP.UNDETECT_TIME
+    UNDETECT_TIME = APP.POS.UNDETECT_TIME
     break
   case 'exb':
     LOST_TIME = APP.TELEMETRY.LOST_TIME
