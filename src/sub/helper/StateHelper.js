@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import * as AppServiceHelper from './AppServiceHelper'
 import * as Util from '../util/Util'
-import { CATEGORY, SHAPE, NOTIFY_STATE, SYSTEM_ZONE_CATEGORY_NAME } from '../constant/Constants'
+import { CATEGORY, SHAPE, NOTIFY_STATE, SYSTEM_ZONE_CATEGORY_NAME, PROHIBIT_STATE, DETECT_STATE } from '../constant/Constants'
 import { APP } from '../constant/config'
 
 
@@ -436,13 +436,18 @@ export const loadAreaImage = async (areaId, force) => {
   // })
 }
 
+export const isProhibitAlert = async (prohibits) => {
+  const isScreen = APP.POS.PROHIBIT_ALERT.split(',').filter((val) => val.match(PROHIBIT_STATE.SCREEN)).length > 0 ? true :false
+  if (!isScreen || !APP.POS.PROHIBIT_GROUPS || !prohibits) {
+    return false
+  }
+}
 export const getProhibitData = async (position,prohibits) => {
-
-  if (!APP.POS.PROHIBIT_ALERT || !APP.POS.PROHIBIT_GROUPS) {
+  if (!isProhibitAlert(prohibits)) {
     return null
   }
   const groups = APP.POS.PROHIBIT_GROUPS
-  return position.filter((pos) =>
+  return position.filter((pos) => pos.detectState==DETECT_STATE.DETECTED).filter((pos) =>
     prohibits.some((prohibitData) => {
       if (pos.exb && pos.exb.areaId == prohibitData.areaId
           && pos.exb.x >= prohibitData.x && pos.exb.x <= prohibitData.w
@@ -461,15 +466,13 @@ export const getProhibitData = async (position,prohibits) => {
 }
 
 export const getProhibitMessage = async (message,prohibitData) => {
-
-  if (!APP.POS.PROHIBIT_ALERT || !APP.POS.PROHIBIT_GROUPS) {
+  if (!isProhibitAlert(prohibitData)) {
     return ''   // message空
   }
-
   const labelArea = i18n.tnl('label.Area')
-  const labelpotName = i18n.tnl('label.potName')
+  const labelPotName = i18n.tnl('label.potName')
   const labelZone =  i18n.tnl('label.zoneName')
-  return prohibitData.map((data) => `< ${labelpotName} : ${data.potName} ${labelArea} : ${data.areaName} ${labelZone} : ${data.zoneName}>`).join(' ')
+  return prohibitData.map((data) => `< ${labelPotName} : ${data.potName} ${labelArea} : ${data.areaName} ${labelZone} : ${data.zoneName}>`).join(' ')
 }
 
 export const loadAreaImages = async () => {

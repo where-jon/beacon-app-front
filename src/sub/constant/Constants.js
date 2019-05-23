@@ -310,6 +310,12 @@ export const LED_BLINK_TYPES = {
   BLINK_FAST: 4,
 }
 
+export const PROHIBIT_STATE = {
+  SCREEN: 'screen',
+  MAIL: 'mail',
+  LED: 'led',
+}
+
 export const DETECT_STATE = {
   DETECTED: 1,
   LOST: 2,
