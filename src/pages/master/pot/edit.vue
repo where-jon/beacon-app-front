@@ -6,7 +6,7 @@
 
       <b-row>
         <b-col md="8" offset-md="2">
-          <b-form v-if="show" @submit.prevent="onSubmit">
+          <b-form v-if="show" @submit.prevent="doSubmit">
             <chrome-input />
             <span v-for="(potTx, index) in form.potTxList" :key="index">
               <b-form inline @submit.prevent>
@@ -62,7 +62,7 @@
               <b-button v-if="isEditable && form.thumbnail" :variant="theme" type="button" class="float-right mt-3" @click="clearImage">
                 {{ $i18n.tnl('label.clear') }}
               </b-button>
-              <img v-show="form.thumbnail" ref="thumbnail" :src="form.thumbnail" width="100" class="mt-1 ml-3">
+              <img v-show="form.existThumbnail" ref="thumbnail" :src="thumbnailUrl.replace('{id}', form.potId) + new Date().getTime()" width="100" class="mt-1 ml-3">
             </b-form-group>
             <b-form-group v-if="isShown('POT.WITH', 'description')">
               <label v-t="'label.description'" />
@@ -118,7 +118,7 @@ import chromeInput from '../../../components/parts/chromeinput.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import { CATEGORY, SENSOR, USER } from '../../../sub/constant/Constants'
-import { APP } from '../../../sub/constant/config.js'
+import { APP, APP_SERVICE, EXCLOUD } from '../../../sub/constant/config.js'
 
 export default {
   components: {
@@ -144,7 +144,7 @@ export default {
         ...ViewHelper.extract(this.$store.state.app_service.pot,
           ['potId', 'potCd', 'potName', 'potType', 'extValue.ruby',
             'displayName', 'potGroupList.0.group.groupId', 'potCategoryList.0.category.categoryId', 'extValue.tel',
-            'extValue.post', 'thumbnail', 'description'])
+            'extValue.post', 'existThumbnail', 'description'])
       },
       vueSelected: {
         group: null,
@@ -162,6 +162,7 @@ export default {
         'potType': APP.CATEGORY.TYPES[0] != 3? APP.CATEGORY.TYPES[0]: null,
       },
       items: ViewHelper.createBreadCrumbItems('master', {text: 'pot', href: '/master/pot'}, Util.getDetailCaptionKey(this.$store.state.app_service.pot.potId)),
+      thumbnailUrl: APP_SERVICE.BASE_URL + EXCLOUD.POT_THUMBNAIL_URL,
     }
   },
   computed: {
@@ -183,6 +184,7 @@ export default {
       'groups',
       'categories',
       'txs',
+      'updatedThumbnail',
     ]),
     hasUserId(){
       return Util.hasValue(this.userForm.userId)
@@ -496,6 +498,15 @@ export default {
         this.setFileName()
       })
     },
+    doSubmit(evt) {
+      if (this.form.thumbnail) {
+        this.replaceAS({updatedThumbnail: {
+          id: this.form.potId,
+          time: new Date().getTime()
+        }})
+      }
+      this.onSubmit(evt)
+    }
   },
 }
 </script>

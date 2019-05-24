@@ -78,7 +78,8 @@ export default {
       try {
         this.showProgress()
         const map = new Image()
-        map.src = this.mapImage()
+        const url = window.URL || window.webkitURL
+        map.src = url.createObjectURL(new Blob([this.mapImage()]))
 
         this.removeHeatmap()
         let heatmap = document.getElementById('heatmap')

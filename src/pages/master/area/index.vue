@@ -13,6 +13,7 @@ import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import listmixinVue from '../../../components/mixin/listmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import * as Util from '../../../sub/util/Util'
+import { APP_SERVICE, EXCLOUD } from '../../../sub/constant/config'
 
 export default {
   components: {
@@ -23,7 +24,6 @@ export default {
   data() {
     return {
       areaList: [],
-      areaImages: [],
       params: {
         name: 'area',
         id: 'areaId',
@@ -48,6 +48,7 @@ export default {
         { name: 'location', id: 'locationList', jumpPath: '/master/location/', sendParamNames: ['areaId']}, 
       ],
       items: ViewHelper.createBreadCrumbItems('master', 'area'),
+      thumbnailUrl: APP_SERVICE.BASE_URL + EXCLOUD.AREA_THUMBNAIL_URL,
     }
   },
   computed: {
@@ -65,13 +66,10 @@ export default {
       try {
         this.showProgress()
         await StateHelper.load('area')
-        this.areaImages = this.areas.map((val) => ({ areaId: val.areaId, thumbnail: val.thumbnail}))
         this.areaList = this.areas.map((val) => ({
           ...val,
           zoneList: Util.hasValue(val.zoneList)? val.zoneList: [],
           locationList: Util.hasValue(val.locationList)? val.locationList: [],
-          mapImage: '',
-          thumbnail: ''
         })) // omit images to avoid being filtering target
         if (payload && payload.done) {
           payload.done()
@@ -83,8 +81,7 @@ export default {
       this.hideProgress()
     },
     thumbnail(row) {
-      const img = this.areaImages.find((val) => val.areaId == row.areaId)
-      return img? img.thumbnail: null
+      return this.thumbnailUrl.replace('{id}', row.areaId)
     },
   },
 }

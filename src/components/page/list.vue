@@ -686,7 +686,6 @@ export default {
       const extBool = this.filterGridExt(originItem)
       const delBool = this.filterGridDel(originItem)
       const allShowBool = this.filterAllShow(originItem)
-      //console.log("filtering table...")
       return regBool && extBool && delBool && allShowBool
     },
     onFiltered(filteredItems) {
@@ -729,8 +728,6 @@ export default {
     },
     // 位置把握(一覧)から在席表示に遷移する
     async mapDisplay(item) {
-      console.log('mapDisplay called with:')
-      console.log(item)
       const tx = item.tx
       const selectedTx = {
         btxId: tx.btxId,

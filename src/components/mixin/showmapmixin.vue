@@ -2,7 +2,7 @@
 <script>
 import { mapState, mapMutations, mapActions } from 'vuex'
 import { Stage, Bitmap, Touch } from '@createjs/easeljs/dist/easeljs.module'
-import { APP, DISP, DEV } from '../../sub/constant/config.js'
+import { APP, DISP, DEV, APP_SERVICE, EXCLOUD } from '../../sub/constant/config.js'
 import { SHAPE, SENSOR, POSITION, TX } from '../../sub/constant/Constants'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as PositionHelper from '../../sub/helper/PositionHelper'
@@ -48,6 +48,7 @@ export default {
       oldSelectedArea: null,
       areaOptions: [],
       loadComplete: false,
+      thumbnailUrl: APP_SERVICE.BASE_URL + EXCLOUD.POT_THUMBNAIL_URL,
     }
   },
   computed: {
@@ -208,9 +209,9 @@ export default {
         }
         return
       }
-
       const bg = new Image()
-      bg.src = this.mapImage()
+      const url = window.URL || window.webkitURL
+      bg.src = url.createObjectURL(new Blob([this.mapImage()]))
       bg.onload = (evt) => {
         this.drawMapImage(bg)
         if (callback) {
@@ -521,6 +522,7 @@ export default {
       })
 
       const balloonClass = !btxId ? '': 'balloon' + (isAbove ? '-b': '-u')
+
       const selectedTx = {
         btxId,
         minor: 'minor:' + btxId,
@@ -536,7 +538,7 @@ export default {
         name: tx.potName ? tx.potName : '',
         tel: tx.extValue ? tx.extValue.tel ? tx.extValue.tel : '': '',
         timestamp: position ? this.getFinalReceiveTime(position.timestamp) : '',
-        thumbnail: tx.thumbnail ? tx.thumbnail : '',
+        thumbnail: tx.existThumbnail ? this.thumbnailUrl.replace('{id}', tx.potId) : '',
         category: tx.categoryName? tx.categoryName : '',
         group: tx.groupName? tx.groupName : '',
         bgColor: '#' + display.bgColor,

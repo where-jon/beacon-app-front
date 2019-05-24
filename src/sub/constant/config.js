@@ -207,6 +207,8 @@ export const EXCLOUD = {
   DL_URL: '/core/excloud/dl/{type}/{yyyymmdd}?_=',
   LED_URL: '/core/excloud/led?_=',
   POSITION_HISTORY_FETCH_URL: '/core/positionHistory/fetch/{allFetch}?_=',
+  AREA_THUMBNAIL_URL: '/core/area/mapThumbnail/{id}?_=',
+  POT_THUMBNAIL_URL: '/basic/pot/potThumbnail/{id}?_=',
 }
 
 export const DISP = { // 表示系設定（表示・色・フォント・サイズ）
