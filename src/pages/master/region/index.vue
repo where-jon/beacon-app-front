@@ -48,6 +48,9 @@ export default {
     ]),
   },
   methods: {
+    afterCrud(){
+      StateHelper.setForceFetch('user', true)
+    },
     async fetchData(payload) {
       try {
         this.showProgress()

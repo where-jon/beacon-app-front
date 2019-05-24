@@ -23,6 +23,10 @@
           <v-select v-model="vueSelected.role" :options="roleOptions" :disabled="!isEditable" :clearable="false" class="mb-3 vue-options" />
         </b-form-group>
         <b-form-group>
+          <label v-t="'label.region'" />
+          <v-select v-model="vueSelected.regions" :options="regionOptions" :disabled="!isEditable" multiple :close-on-select="false" class="vue-options-multi" />
+        </b-form-group>
+        <b-form-group>
           <label v-t="'label.description'" />
           <b-form-textarea v-model="form.description" :rows="3" :max-rows="6" :readonly="!isEditable" maxlength="1000" />
         </b-form-group>
@@ -48,6 +52,7 @@
 
 <script>
 import { mapState } from 'vuex'
+import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AuthHelper from '../../../sub/helper/AuthHelper'
@@ -73,8 +78,11 @@ export default {
       id: 'userId',
       backPath: '/master/user',
       appServicePath: '/meta/user',
-      form: ViewHelper.extract(this.$store.state.app_service.user, ['userId', 'loginId', 'name', 'email', 'roleId', 'description']),
-      vueSelected: { role: null },
+      form: ViewHelper.extract(this.$store.state.app_service.user, ['userId', 'loginId', 'name', 'email', 'roleId', 'userRegionList', 'description']),
+      vueSelected: {
+        role: null,
+        regions: [],
+      },
       roleOptions: [],
       role: null,
       pass: null,
@@ -100,13 +108,22 @@ export default {
       return Util.includesIgnoreCase(APP.USER.WITH, 'name')
     },
     ...mapState('app_service', [
-      'user', 'roles'
+      'user', 'roles', 'regions'
     ]),
     ...mapState([
       'showAlert'
     ]),
+    regionOptions() {
+      return StateHelper.getOptionsFromState('region', false, true)
+    },
   },
   watch: {
+    'vueSelected.regions': {
+      handler: function(newVal, oldVal){
+        this.form.userRegionList = newVal.map(val => ({userRegionPK: {regionId: val.value}}))
+      },
+      deep: true,
+    },
     'vueSelected.role': {
       handler: function(newVal, oldVal){
         this.role = Util.getValue(newVal, 'value', null)
@@ -115,9 +132,13 @@ export default {
     },
   },
   async created(){
+    await StateHelper.load('region')
     await StateHelper.load('role')
     this.roleOptions = StateHelper.getOptionsFromState('role', false, true)
     this.vueSelected.role = StateHelper.getVueSelectData(this.roleOptions, Util.getValue(this.form, 'roleId', this.roleOptions.reduce((prev, cur) => cur).value))
+    if(Util.hasValue(this.form.userRegionList)){
+      this.vueSelected.regions = this.form.userRegionList.map(userRegion => StateHelper.getVueSelectData(this.regionOptions, userRegion.userRegionPK.regionId))
+    }
   },
   mounted(){
     HtmlUtil.setCustomValidationMessage()
@@ -169,6 +190,26 @@ export default {
     },
     beforeReload(){
       this.vueSelected.role = StateHelper.getVueSelectData(this.roleOptions, this.roleOptions.reduce((prev, cur) => cur).value)
+      this.vueSelected.regions = []
+    },
+    async save() {
+      let dummyKey = -1
+      const entity = {
+        userId: Util.hasValue(this.form.userId) ? this.form.userId : dummyKey--,
+        name: this.form.name,
+        loginId: this.form.loginId,
+        email: this.form.email,
+        roleId: this.role,
+        description: this.form.description,
+        pass: this.pass,
+        userRegionList: [],
+      }
+      if(Util.hasValue(this.form.userRegionList)){
+        entity.userRegionList = this.form.userRegionList.map(userRegion => ({
+          userRegionPK: {userId: dummyKey--, regionId: userRegion.userRegionPK.regionId}
+        }))
+      }
+      return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
     },
     beforeSubmit(event, again){
       this.replace({showAlert: false})
@@ -194,15 +235,16 @@ export default {
         event.preventDefault()
         return false
       }
-      this.form.userId = Util.hasValue(this.form.userId) ? String(this.form.userId) : null
-      this.form.roleId = String(this.role)
-      this.form.pass = this.pass
       this.register(again)
-    }
+    },
   },
 }
 </script>
 
 <style scoped lang="scss">
 @import "../../../sub/constant/vue.scss";
+.vue-options-multi {
+  margin-left: 0px;
+  width: 100%;
+}
 </style>

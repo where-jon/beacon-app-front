@@ -8,8 +8,8 @@
         <label class="mr-2 mb-2">
           {{ $t('label.area') }}
         </label>
-        <v-select v-model="vueSelected.area" :options="areaOptions" :disabled="settingStart" class="mr-2 mb-2 vue-options" :clearable="false" />
-        <b-button v-t="'label.load'" :variant="getButtonTheme()" :disabled="selectedArea == null" size="sm" class="mb-2" @click="changeArea" />
+        <v-select v-model="vueSelected.area" :options="areaOptions" class="mr-2 mb-2 vue-options" :clearable="false" />
+        <b-button v-t="'label.load'" :variant="getButtonTheme()" size="sm" class="mb-2" @click="changeArea" />
       </b-form-row>
     </b-form>
     <b-form inline class="mt-2">

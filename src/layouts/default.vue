@@ -40,6 +40,7 @@ import mNav from '../components/layout/nav.vue'
 
 import vSelect from 'vue-select'
 import BootstrapVue from 'bootstrap-vue'
+import 'vue-select/dist/vue-select.css'
 import Spinner from 'vue-simple-spinner'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { fas } from '@fortawesome/free-solid-svg-icons'

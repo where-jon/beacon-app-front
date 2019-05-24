@@ -12,6 +12,7 @@ import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as BulkHelper from '../../../sub/helper/BulkHelper'
+import * as Util from '../../../sub/util/Util'
 
 export default {
   components: {
@@ -33,6 +34,17 @@ export default {
     ]),
   },
   methods: {
+    addUserRegionList(entity, regionNames, dummyKey){
+      if(!Util.hasValue(regionNames)){
+        entity.userRegionList = []
+        return dummyKey
+      }
+      entity.userRegionList = regionNames.split(BULK.SPLITTER).map(regionName => ({
+        userRegionPK: {userId: dummyKey--, regionId: dummyKey--},
+        regionName: regionName,
+      }))
+      return dummyKey
+    },
     async save(bulkSaveFunc) {
       await bulkSaveFunc(BULK.PRIMARY_KEY, null, null, (entity, headerName, val, dummyKey) => {
         if (BulkHelper.isPrimaryKeyHeader(headerName)){
@@ -41,6 +53,9 @@ export default {
         }
         if (headerName == 'roleName') {
           entity.role = {roleId: dummyKey--, roleName: val}
+        }
+        if (headerName == 'regionNames') {
+          return this.addUserRegionList(entity, val, dummyKey)
         }
         entity[headerName] = val
         return dummyKey
