@@ -489,7 +489,7 @@ export default {
         return
       }
 
-      const csvList = this.getCsvSumList()
+      const csvList = this.getCsvSumList(this.viewList)
 
       csvList.sort(function(a, b) {
         var nameA = a.name.toUpperCase() // 大文字、小文字を無視
@@ -509,15 +509,15 @@ export default {
         getCharSet(this.$store.state.loginId)
       )
     },
-    getCsvSumList() {
+    getCsvSumList(sumList) {
       // フィールド設定に合わせ、出力するデータのキーリストを生成する
       const keys = []
-      this.viewList.length > 0? this.fields.forEach((field) => {
-        _.find(Object.keys(this.viewList[0]), (key) => { return key!= 'graph' && key == field.key})? keys.push(field.key): null
+      sumList.length > 0? this.fields.forEach((field) => {
+        _.find(Object.keys(sumList[0]), (key) => { return key!= 'graph' && key == field.key})? keys.push(field.key): null
       }): null
 
       // キーの一致するデータのみのリストを作成。その際、％データがある場合は分ける
-      return this.viewList.map((viewData) => {
+      return sumList.map((viewData) => {
         let objectData = {}
         keys.forEach((key) => {
           const hasRatio = viewData[key]? viewData[key].search('%') > 0: false
@@ -592,36 +592,27 @@ export default {
         }
 
         let list = this.getStayDataList(moment(searchDate).format('YYYY-MM-DD'), sumData, APP.SUM_ABSENT_LIMIT, APP.SUM_LOST_LIMIT)
-        list.sort(function(a, b) {
+        
+        const dateList = this.getCsvSumList(list)
+        dateList.sort(function(a, b) {
           var nameA = a.name.toUpperCase() // 大文字、小文字を無視
           var nameB = b.name.toUpperCase() // 大文字、小文字を無視
           if (nameA < nameB) return -1
           if (nameA > nameB) return 1
           return 0
         })
-        csvList = csvList.isEmpty? list: csvList.concat(list)
+        csvList = csvList.isEmpty? dateList: csvList.concat(dateList)
       }
 
       const group = param.groupId? this.groups.find((val) => val.groupId == param.groupId): null
       const groupName =  group? '_' + group.groupName: ''
       HtmlUtil.fileDL(
         moment(param.date).format('YYYY-MM') + groupName + '_stayRatio.csv',
-        Util.converToCsv(csvList, null, this.getCsvHeaderNames()),
+        Util.converToCsv(csvList),
         getCharSet(this.$store.state.loginId)
       )
 
       this.hideProgress()
-    },
-    getCsvHeaderNames() {
-      return [
-        'date',
-        'name',
-        'groupName',
-        'stayGraph', 
-        'stayTime', 
-        'lostTime',
-        'stayRatio' + '\n'
-      ]
     },
     pickerChanged() {
       const param = _.cloneDeep(this.form)
