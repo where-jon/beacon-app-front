@@ -515,11 +515,18 @@ export default {
         return _.find(this.fields, (field) => { return key != 'graph' && key == field.key})? true: false
       }): null
 
-      // キーの一致するデータのみのリストを作成。
+      // キーの一致するデータのみのリストを作成。その際、％データがある場合は分ける
       return this.viewList.map((viewData) => {
         let objectData = {}
         keys.forEach((key) => {
-          objectData[key] = viewData[key]
+          const hasRatio = viewData[key]? viewData[key].search('%') > 0: false
+          if (hasRatio) {
+            let splitData = viewData[key].split(' ')
+            objectData[key] = splitData[0]
+            objectData[key + 'Ratio'] = splitData[1].slice(1,-1)
+          } else {
+            objectData[key] = viewData[key]
+          }
         })
         return objectData
       })
