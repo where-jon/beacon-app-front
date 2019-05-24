@@ -511,8 +511,9 @@ export default {
     },
     getCsvSumList() {
       // フィールド設定に合わせ、出力するデータのキーリストを生成する
-      const keys = this.viewList.length > 0? _.filter(Object.keys(this.viewList[0]), (key) => {
-        return _.find(this.fields, (field) => { return key != 'graph' && key == field.key})? true: false
+      const keys = []
+      this.viewList.length > 0? this.fields.forEach((field) => {
+        _.find(Object.keys(this.viewList[0]), (key) => { return key!= 'graph' && key == field.key})? keys.push(field.key): null
       }): null
 
       // キーの一致するデータのみのリストを作成。その際、％データがある場合は分ける
