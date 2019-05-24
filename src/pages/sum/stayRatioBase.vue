@@ -85,8 +85,10 @@
           <b-form-row class="mb-3">
             <b-button v-t="'label.display'" type="submit" :variant="theme" @click="display" />
             <b-dropdown v-if="!iosOrAndroid" :variant="theme" :text="$t('label.download')" class="ml-2">
-              <b-dropdown-item v-t="'label.download'" @click="download" />
-              <b-dropdown-item v-t="'label.downloadMonth'" @click="downloadMonth" />
+              <b-dropdown-item @click="sumDownload">{{ $t('label.sum') + $t('label.download') }}</b-dropdown-item>
+              <b-dropdown-item @click="sumDownloadMonth">{{ $t('label.sum') + $t('label.downloadMonth') }}</b-dropdown-item>
+              <b-dropdown-item @click="detailDownload">{{ $t('label.detail') + $t('label.download') }}</b-dropdown-item>
+              <b-dropdown-item @click="detailDownloadMonth">{{ $t('label.detail') + $t('label.downloadMonth') }}</b-dropdown-item>
             </b-dropdown>
             <b-button v-if="!iosOrAndroid" v-t="'label.displaySpecified'" v-b-modal.stayRatioDisplayModal :variant="theme" class="ml-2" />
           </b-form-row>
@@ -482,7 +484,7 @@ export default {
       }
       return result
     },
-    async download(){
+    async sumDownload(){
       if (this.viewList == null || this.viewList.length == 0) {
         this.message = this.$i18n.tnl('message.notFound')
         this.replace({showAlert: true})
@@ -539,7 +541,7 @@ export default {
         })
       }
     },
-    async downloadMonth(){
+    async sumDownloadMonth(){
       this.replace({showAlert: false})
       this.showProgress()
 

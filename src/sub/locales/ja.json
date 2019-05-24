@@ -575,6 +575,7 @@
     "updateKey": "更新キー",
     "stayTimeSumColumn": "滞在時間（合計）",
     "lostTimeSumColumn": "不在時間（合計）",
+    "sum": "集計",
 
     "dummy": ""
   },
