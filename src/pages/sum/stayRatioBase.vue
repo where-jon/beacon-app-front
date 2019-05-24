@@ -489,7 +489,9 @@ export default {
         return
       }
 
-      this.viewList.sort(function(a, b) {
+      const csvList = this.getCsvSumList()
+
+      csvList.sort(function(a, b) {
         var nameA = a.name.toUpperCase() // 大文字、小文字を無視
         var nameB = b.name.toUpperCase() // 大文字、小文字を無視
         if (nameA < nameB) return -1
@@ -503,9 +505,24 @@ export default {
 
       HtmlUtil.fileDL(
         searchDate + groupName + '_stayRatio.csv',
-        Util.converToCsv(this.viewList, null, this.getCsvHeaderNames()),
+        Util.converToCsv(csvList),
         getCharSet(this.$store.state.loginId)
       )
+    },
+    getCsvSumList() {
+      // フィールド設定に合わせ、出力するデータのキーリストを生成する
+      const keys = this.viewList.length > 0? _.filter(Object.keys(this.viewList[0]), (key) => {
+        return _.find(this.fields, (field) => { return key != 'graph' && key == field.key})? true: false
+      }): null
+
+      // キーの一致するデータのみのリストを作成。
+      return this.viewList.map((viewData) => {
+        let objectData = {}
+        keys.forEach((key) => {
+          objectData[key] = viewData[key]
+        })
+        return objectData
+      })
     },
     updateColumnName(){
       if(Util.hasValue(this.fields)){
