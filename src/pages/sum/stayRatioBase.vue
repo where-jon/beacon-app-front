@@ -105,9 +105,17 @@
             <br>
             <div style="width: 100%">
               <div v-for="(timeData, index) in row.item.timeRatio" :key="`graph-${index}`" class="time-area" :style="`width: ${timeData.ratio}% !important;`">
-                <span v-if="index == 0" style="float: left;">{{ row.item.baseTimeFrom }}</span>
-                <span v-if="index == row.item.timeRatio.length - 1" style="float: right;">{{ row.item.baseTimeTo }}</span>
-                <span v-if="isScaleTime(timeData.time)" style="float: left;"><span style="position: relative; left: -50%;">{{ timeData.time + ':00' }}</span></span>
+                <span v-if="index == 0" style="float: left;">
+                  {{ row.item.baseTimeFrom }}
+                </span>
+                <span v-if="index == row.item.timeRatio.length - 1" style="float: right;">
+                  {{ row.item.baseTimeTo }}
+                </span>
+                <span v-if="isScaleTime(timeData.time)" style="float: left;">
+                  <span style="position: relative; left: -50%;">
+                    {{ timeData.time + ':00' }}
+                  </span>
+                </span>
               </div>
             </div>
           </div>
