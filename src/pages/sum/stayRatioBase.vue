@@ -584,7 +584,7 @@ export default {
             start: graph.start,
             end: graph.end,
             seconds: graph.period,
-            state: graph.period == this.fromToSettingDiff? this.$i18n.tnl('label.undetect'): this.$i18n.tnl('label.detected'),
+            state: graph.isStay && graph.percent != 100?  this.$i18n.tnl('label.detected'): this.$i18n.tnl('label.undetect'),
             areaName: graph.areaName,
             zoneCategory: graph.zoneCategory,
           }
