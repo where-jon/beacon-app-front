@@ -6,7 +6,7 @@
 
       <div class="mapContainer mb-5">
         <div class="container">
-          <analysis-search :from-heatmap="fromHeatmap" :area-options="areaOptions"
+          <analysis-search :from-heatmap="true" :area-options="areaOptions"
                            @changeArea="changeArea" @display="display"
           />
         </div>
@@ -27,7 +27,6 @@ import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
 import analysisSearch from '../../components/parts/analysissearch.vue'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
-import { EventBus } from '../../sub/helper/EventHelper'
 
 export default {
   components: {
@@ -63,7 +62,7 @@ export default {
           return ary
         }, [])
       positions = _.compact(positions)
-      let maxValue = _.maxBy(positions, 'value').value
+      const maxValue = _.maxBy(positions, 'value').value
       return {
         max: maxValue,
         data: positions,
@@ -71,36 +70,30 @@ export default {
     }
   },
   methods: {
-    reset() {
-      this.fetchData()
-    },
     async fetchData(payload){
       try {
         this.showProgress()
+        this.replace({showAlert: false})
         const map = new Image()
-        const url = window.URL || window.webkitURL
-        map.src = url.createObjectURL(new Blob([this.mapImage()]))
 
         this.removeHeatmap()
-        let heatmap = document.getElementById('heatmap')
+        const heatmap = document.getElementById('heatmap')
         while (heatmap.firstChild) {
           heatmap.removeChild(heatmap.firstChild)
         }
-        heatmap.appendChild(map)
         map.onload = (evt) => {
           Util.debug('in onload...')
           const size = this.calcFitSize(map, heatmap.parentElement)
           this.canvasScale = size.width / map.width // showmapmixinと同じ処理が必要
           map.width = size.width
           map.height = size.height
+          heatmap.appendChild(map)
           Util.debug(size)
         }
+        const url = window.URL || window.webkitURL
+        map.src = url.createObjectURL(new Blob([this.mapImage()]))
         if (payload && payload.done) {
           payload.done()
-        }
-
-        if(this.positionHistories.length > 0){
-          EventBus.$emit('onDisplay')
         }
       }
       catch(e) {
@@ -110,6 +103,7 @@ export default {
     },
     async display(param) {
       if(Util.hasValue(param.errorMessage)){
+        this.positionHistories = []
         this.message = param.errorMessage
         this.replace({showAlert: true})
         this.removeHeatmap()
