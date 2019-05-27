@@ -26,7 +26,7 @@ export default {
       params: {
         name: 'tx',
         id: 'txId',
-        confirmName: APP.TX_BTX_MINOR == 'minor'? 'minor': 'btxId',
+        confirmName: APP.TX.BTX_MINOR == 'minor'? 'minor': 'btxId',
         indexPath: '/master/tx',
         editPath: '/master/tx/edit',
         bulkEditPath: '/master/tx/bulkedit',
