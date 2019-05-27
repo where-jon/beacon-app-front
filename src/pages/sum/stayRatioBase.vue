@@ -700,7 +700,79 @@ export default {
       this.hideProgress()
     },
     async detailDownloadMonth(){
-      // FIXME: 実装
+      this.replace({showAlert: false})
+      this.showProgress()
+
+      const param = _.cloneDeep(this.form)
+      await StateHelper.load('zones')
+      await StateHelper.load('pots')
+      await StateHelper.load('group')
+
+      if (!param.date || param.date == '') {
+        this.message = this.$i18n.tnl('message.pleaseEnterSearchCriteria')
+        this.replace({showAlert: true})
+        this.hideProgress()
+        return
+      }
+
+      param.date = moment(param.date).format('YYYYMMDD')
+      const diff = moment().startOf('months').diff(moment(param.date).startOf('months'), 'months')
+      let startDate, endDate
+
+      // 取得する日付開始、終了日を設定する
+      if (diff == 0) {
+        startDate = moment(param.date).startOf('months')
+        endDate = moment().subtract(1, 'd')
+      } else if (diff >= 0) {
+        startDate = moment(param.date).startOf('months')
+        endDate = moment(param.date).endOf('months')
+      } else {
+        // 未来月の場合はエラーとする
+        this.message = this.$i18n.terror('message.invalid', {target: this.$i18n.tnl('label.date')})
+        this.replace({showAlert: true})
+        this.hideProgress()
+        return
+      }
+
+      let csvList = []
+      const csvDays = endDate.diff(startDate, 'days')
+      const groupBy = param.groupId? '&groupId=' + param.groupId: ''
+
+      let day = 0
+      while (day <= csvDays) {
+        const searchDate = moment(param.date).startOf('months').add(day++, 'day').format('YYYYMMDD')
+        const url = '/office/stayTime/sumByDay/' + searchDate + '/zoneCategory?from=' + APP.SUM_FROM + '&to=' + APP.SUM_TO + groupBy
+        const sumData = await HttpHelper.getAppService(url)
+        if (_.isEmpty(sumData)) {
+          console.log('searchDate: ' + searchDate)
+          this.message = this.$i18n.t('message.listEmpty')
+          this.replace({showAlert: true})
+          this.hideProgress()
+          return
+        }
+
+        let list = this.getStayDataList(moment(searchDate).format('YYYY-MM-DD'), sumData, APP.SUM_ABSENT_LIMIT, APP.SUM_LOST_LIMIT)
+        
+        const dateList = this.getCsvDetailList(list)
+        dateList.sort(function(a, b) {
+          var nameA = a.name.toUpperCase() // 大文字、小文字を無視
+          var nameB = b.name.toUpperCase() // 大文字、小文字を無視
+          if (nameA < nameB) return -1
+          if (nameA > nameB) return 1
+          return 0
+        })
+        csvList = csvList.isEmpty? dateList: csvList.concat(dateList)
+      }
+
+      const group = param.groupId? this.groups.find((val) => val.groupId == param.groupId): null
+      const groupName =  group? '_' + group.groupName: ''
+      HtmlUtil.fileDL(
+        moment(param.date).format('YYYY-MM') + groupName + '_stayRatio.csv',
+        Util.converToCsv(csvList),
+        getCharSet(this.$store.state.loginId)
+      )
+
+      this.hideProgress()
     },
     pickerChanged() {
       const param = _.cloneDeep(this.form)
