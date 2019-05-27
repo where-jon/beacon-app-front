@@ -2,14 +2,16 @@
   <div>
     <b-modal
       id="stayRatioDisplayModal"
-      size="lg"
+      size="sm"
       :title="$t('label.displaySpecified')"
       ok-only
       @ok="updateColumn"
     >
       {{ $t('message.selectDisplayColumn') }}
       <hr>
-      {{ $t('label.list') }}
+      <p class="itemHeader">
+        {{ $t('label.list') }}
+      </p>
       <b-form-group>
         <b-form-checkbox-group id="checkbox-group-2" v-model="displayCheckList.stay" name="flavour-2">
           <b-form-checkbox :value="'stay'">
@@ -20,7 +22,9 @@
           </b-form-checkbox><br>
         </b-form-checkbox-group>
         <b-form-checkbox-group id="checkbox-group-2" v-model="displayCheckList.category" name="flavour-2">
-          {{ $t('label.category') }}
+          <p class="itemTitle">
+            {{ $t('label.category') }}
+          </p>
           <div v-for="(category, index) in categoryDisplayList" :key="`category-${index}`">
             <b-form-checkbox :value="category.categoryId" :disabled="enableCategorySelect">
               {{ category.systemUse? $t('label.' + category.systemCategoryName): category.categoryName }} <span class="bgSquare" :style="`background-color: #${category.bgColor};`" />
@@ -31,7 +35,9 @@
           </b-form-checkbox><br>
         </b-form-checkbox-group>
         <b-form-checkbox-group id="checkbox-group-2" v-model="displayCheckList.area" name="flavour-2">
-          {{ $t('label.area') }}
+          <p class="itemTitle">
+            {{ $t('label.area') }}
+          </p>
           <div v-for="(area, index) in areas" :key="`area-${index}`">
             <b-form-checkbox :value="area.areaId" :disabled="!enableCategorySelect">
               {{ area.areaName }} <span class="bgSquare" :style="`background-color: ${getRandomColor(area.areaId)};`" />
@@ -44,7 +50,9 @@
           </div>
         </b-form-checkbox-group>
         <hr>
-        {{ $t('label.graph') }}
+        <p class="itemTitle">
+          {{ $t('label.graph') }}
+        </p>
         <b-form-radio-group v-model="historyType">
           <b-form-radio :value="'category'" @change="setSelectedGraphCategory(false)">
             {{ $t('label.zoneCategory') }}
@@ -733,5 +741,13 @@ export default {
   position: relative;
   display: inline-block;
   box-sizing:border-box;
+}
+.itemHeader {
+  font-weight: bold;
+  font-size: 16px;
+}
+.itemTitle {
+  font-weight: bold;
+  font-size: 14px;
 }
 </style>
