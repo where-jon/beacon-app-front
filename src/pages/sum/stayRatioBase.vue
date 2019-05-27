@@ -85,13 +85,13 @@
           <b-form-row class="mb-3">
             <b-button v-t="'label.display'" type="submit" :variant="theme" @click="display" />
             <b-dropdown v-if="!iosOrAndroid" :variant="theme" :text="$t('label.download')" class="ml-2">
-              <b-dropdown-item @click="sumDownload">
+              <b-dropdown-item @click="download('sum')">
                 {{ $t('label.sum') + $t('label.download') }}
               </b-dropdown-item>
               <b-dropdown-item @click="sumDownloadMonth">
                 {{ $t('label.sum') + $t('label.downloadMonth') }}
               </b-dropdown-item>
-              <b-dropdown-item @click="detailDownload">
+              <b-dropdown-item @click="download('detail')">
                 {{ $t('label.detail') + $t('label.download') }}
               </b-dropdown-item>
               <b-dropdown-item @click="detailDownloadMonth">
@@ -499,15 +499,14 @@ export default {
       }
       return result
     },
-    async sumDownload(){
+    async download(key){
       if (this.viewList == null || this.viewList.length == 0) {
         this.message = this.$i18n.tnl('message.notFound')
         this.replace({showAlert: true})
         return
       }
 
-      const csvList = this.getCsvSumList(this.viewList)
-
+      const csvList = (key == 'sum')? this.getCsvSumList(this.viewList): this.getCsvDetailList(this.viewList)
       csvList.sort(function(a, b) {
         var nameA = a.name.toUpperCase() // 大文字、小文字を無視
         var nameB = b.name.toUpperCase() // 大文字、小文字を無視
@@ -548,39 +547,6 @@ export default {
         })
         return objectData
       })
-    },
-    async detailDownload(){
-      if (this.viewList == null || this.viewList.length == 0) {
-        this.message = this.$i18n.tnl('message.notFound')
-        this.replace({showAlert: true})
-        return
-      }
-
-      const csvList = this.getCsvDetailList(this.viewList)
-
-      if (csvList == null || csvList.length == 0) {
-        this.message = this.$i18n.tnl('message.notFound')
-        this.replace({showAlert: true})
-        return
-      }
-
-      csvList.sort(function(a, b) {
-        var nameA = a.name.toUpperCase() // 大文字、小文字を無視
-        var nameB = b.name.toUpperCase() // 大文字、小文字を無視
-        if (nameA < nameB) return -1
-        if (nameA > nameB) return 1
-        return 0
-      })
-
-      const param = _.cloneDeep(this.form)
-      const searchDate = moment(param.date).format('YYYY-MM-DD')
-      const groupName = this.searchedGroupName.length > 0? '_' + this.searchedGroupName: ''
-
-      HtmlUtil.fileDL(
-        searchDate + groupName + '_stayRatio.csv',
-        Util.converToCsv(csvList),
-        getCharSet(this.$store.state.loginId)
-      )
     },
     getCsvDetailList(detailList) {
       const fromSeconds = (Math.floor(APP.SUM_FROM / 100) * 60 + APP.SUM_FROM % 100) * 60
