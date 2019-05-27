@@ -25,7 +25,12 @@ export const getByteLength = (str) => encodeURI(str == null? '': str).replace(/%
 
 export const numberRange = (start, end) => new Array(end - start + 1).fill().map((d, i) => {return {key: i + start}})
 
-export const includesIgnoreCase = (ary, col) => ary.find(val => val.toLowerCase() == col.toLowerCase())? true: false
+export const includesIgnoreCase = (ary, col) => {
+  if (!ary || ary.length < 1) {
+    return false
+  }
+  return ary.find(val => val.toLowerCase() == col.toLowerCase())? true: false
+}
 
 export const merge = (dest, src, excludeKeys) => {
   const temp = Object.assign({}, src)
