@@ -185,7 +185,6 @@ export default {
       viewList: [],
       items: ViewHelper.createBreadCrumbItems('sumTitle', 'stayRatio'),
       message: '',
-      showChart: true,
       currentPage: 1,
       perPage: 20,
       sortBy: 'name',
@@ -197,7 +196,6 @@ export default {
       fields: this.getFields(),
       initTotalRows: 0,
       historyType: 'category',
-      selected: [],
       isCategorySelected: false
     }
   },
