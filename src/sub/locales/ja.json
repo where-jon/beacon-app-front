@@ -356,6 +356,7 @@
     "absent2Time": "離席2",
     "lostTime": "不在時間",
     "stayRatio": "滞在率",
+    "stayRatioBase": "滞在率",
     "absent1Ratio": "離席1率",
     "absent2Ratio": "離席2率",
     "lostRatio": "不在率",

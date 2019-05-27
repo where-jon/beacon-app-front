@@ -655,7 +655,7 @@ export const MENU = [
       {
         key: 'stayRatioBase',
         path: 'stayRatioBase',
-        icon: 'fas fa-clock',
+        icon: 'clock',
       },
     ]
   },
