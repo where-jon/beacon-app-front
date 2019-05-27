@@ -67,7 +67,6 @@ import { APP } from '../../sub/constant/config.js'
 import { CATEGORY } from '../../sub/constant/Constants'
 import validatemixin from '../mixin/validatemixin.vue'
 import commonmixinVue from '../mixin/commonmixin.vue'
-import { EventBus } from '../../sub/helper/EventHelper'
 
 export default {
   components: {
@@ -179,30 +178,25 @@ export default {
     const date = new Date()
     this.form.datetimeFrom = Util.getDatetime(date, {hours: -1})
     this.form.datetimeTo = Util.getDatetime(date)
-
-    EventBus.$on('onDisplay', (payload)=>{
-      this.onDisplay()
-    })
   },
   mounted() {
     HtmlUtil.importElementUI()
   },
   methods: {
-    changeCategory(newVal = this.form.categoryId) {
+    updatePotOption(categoryId, groupId) {
       this.potOptions = StateHelper.getOptionsFromState('pot', false, true, 
-        pot => pot.potType == CATEGORY.PERSON && (!newVal || pot.categoryId == newVal)
+        pot => pot.potType == CATEGORY.PERSON && (!categoryId || pot.categoryId == categoryId) && (!groupId || pot.groupId == groupId)
       )
-      if(!this.potOptions.find(val => val.value == this.form.potId)){
-        this.form.potId = null
-      }
+    },
+    changeCategory(newVal = this.form.categoryId) {
+      this.updatePotOption(newVal, this.form.groupId)
+      const targetPot = this.potOptions.find(val => val.value == this.form.potId)
+      this.vueSelected.pot = StateHelper.getVueSelectData(this.potOptions, targetPot? targetPot.value: null, false)
     },
     changeGroup(newVal = this.form.groupId) {
-      this.potOptions = StateHelper.getOptionsFromState('pot', false, true, 
-        pot => pot.potType == CATEGORY.PERSON && (!newVal || pot.groupId == newVal)
-      )
-      if(!this.potOptions.find(val => val.value == this.form.potId)){
-        this.form.potId = null
-      }
+      this.updatePotOption(this.form.categoryId, newVal)
+      const targetPot = this.potOptions.find(val => val.value == this.form.potId)
+      this.vueSelected.pot = StateHelper.getVueSelectData(this.potOptions, targetPot? targetPot.value: null, false)
     },
     changeArea(areaId) {
       this.$emit('changeArea', areaId)
@@ -227,9 +221,6 @@ export default {
         this.form.datetimeFrom && this.form.datetimeTo? {type: 'less', names: ['historyDateFrom'], values: [this.form.datetimeFrom.getTime() * -1, this.form.datetimeTo.getTime()], base: this.interval, displayBase: this.intervalHours, equal: true}: null,
       ].filter(val => val && val.names.length >= 1))
       return this.formatValidateMessage(errors)
-    },
-    onDisplay(){
-      this.display()
     },
     async display() {
       this.replace({showAlert: false})

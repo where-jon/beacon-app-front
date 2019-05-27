@@ -315,9 +315,9 @@ export default {
           return area.areaId == val
         })
         if (this.getMapImage(area.areaId)) {
-          this.reset()
+          this.reset && this.reset()
           this.selectedArea = val
-          await this.fetchData()
+          this.fetchData && await this.fetchData()
         }
         else {
           Util.debug('No mapImage in changeArea.')
