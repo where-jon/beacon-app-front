@@ -309,6 +309,7 @@ export default {
     },
     async changeArea(val) {
       if (val) {
+        this.icons = {} // キャッシュをクリア
         await StateHelper.loadAreaImage(val)
         const area = _.find(this.areas, (area) => {
           return area.areaId == val
