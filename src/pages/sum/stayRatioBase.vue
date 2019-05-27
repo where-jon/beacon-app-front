@@ -85,10 +85,18 @@
           <b-form-row class="mb-3">
             <b-button v-t="'label.display'" type="submit" :variant="theme" @click="display" />
             <b-dropdown v-if="!iosOrAndroid" :variant="theme" :text="$t('label.download')" class="ml-2">
-              <b-dropdown-item @click="sumDownload">{{ $t('label.sum') + $t('label.download') }}</b-dropdown-item>
-              <b-dropdown-item @click="sumDownloadMonth">{{ $t('label.sum') + $t('label.downloadMonth') }}</b-dropdown-item>
-              <b-dropdown-item @click="detailDownload">{{ $t('label.detail') + $t('label.download') }}</b-dropdown-item>
-              <b-dropdown-item @click="detailDownloadMonth">{{ $t('label.detail') + $t('label.downloadMonth') }}</b-dropdown-item>
+              <b-dropdown-item @click="sumDownload">
+                {{ $t('label.sum') + $t('label.download') }}
+              </b-dropdown-item>
+              <b-dropdown-item @click="sumDownloadMonth">
+                {{ $t('label.sum') + $t('label.downloadMonth') }}
+              </b-dropdown-item>
+              <b-dropdown-item @click="detailDownload">
+                {{ $t('label.detail') + $t('label.download') }}
+              </b-dropdown-item>
+              <b-dropdown-item @click="detailDownloadMonth">
+                {{ $t('label.detail') + $t('label.downloadMonth') }}
+              </b-dropdown-item>
             </b-dropdown>
             <b-button v-if="!iosOrAndroid" v-t="'label.displaySpecified'" v-b-modal.stayRatioDisplayModal :variant="theme" class="ml-2" />
           </b-form-row>
@@ -373,6 +381,7 @@ export default {
         const potId = data.potId
         const pot = this.pots.find((val) => val.potId == potId)
         const groupName = pot? pot.groupName: ''
+        const categoryName = pot? pot.categoryName: ''
         const potName = data.potName
         let stayTime = 0, lostTime = 0, presentRatio = 0
         let graphList = new Array()
@@ -425,12 +434,17 @@ export default {
           }
 
           graphList.push({
+            state: stay.byId,
             isStay: isStayData,
             period: stay.period,
+            start: stay.start,
+            end: stay.end,
             time: time,
             percent: Math.floor((stay.period / this.fromToSettingDiff) * 10000) / 100,
             categoryBgColor: findCategory? '#' + findCategory.bgColor: this.getRandomColor(0),
             areaBgColor: findArea? this.getRandomColor(findArea.areaId): this.getRandomColor(0),
+            areaName: findArea? findArea.areaName: '',
+            zoneCategory: stay.byName,
           })
 
         })
@@ -440,6 +454,7 @@ export default {
           date: date,
           name: potName, 
           groupName: groupName,
+          categoryName: categoryName,
           graph: graphList,
           stayTime: Util.convertToTime(stayTime) + ' (' + Util.getRatio(stayTime) + '%)', 
           lostTime: Util.convertToTime(lostTime) + ' (' + Util.getRatio(lostTime) + '%)', 
@@ -534,6 +549,74 @@ export default {
         return objectData
       })
     },
+    async detailDownload(){
+      if (this.viewList == null || this.viewList.length == 0) {
+        this.message = this.$i18n.tnl('message.notFound')
+        this.replace({showAlert: true})
+        return
+      }
+
+      const csvList = this.getCsvDetailList(this.viewList)
+
+      if (csvList == null || csvList.length == 0) {
+        this.message = this.$i18n.tnl('message.notFound')
+        this.replace({showAlert: true})
+        return
+      }
+
+      csvList.sort(function(a, b) {
+        var nameA = a.name.toUpperCase() // 大文字、小文字を無視
+        var nameB = b.name.toUpperCase() // 大文字、小文字を無視
+        if (nameA < nameB) return -1
+        if (nameA > nameB) return 1
+        return 0
+      })
+
+      const param = _.cloneDeep(this.form)
+      const searchDate = moment(param.date).format('YYYY-MM-DD')
+      const groupName = this.searchedGroupName.length > 0? '_' + this.searchedGroupName: ''
+
+      HtmlUtil.fileDL(
+        searchDate + groupName + '_stayRatio.csv',
+        Util.converToCsv(csvList),
+        getCharSet(this.$store.state.loginId)
+      )
+    },
+    getCsvDetailList(detailList) {
+      const fromSeconds = (Math.floor(APP.SUM_FROM / 100) * 60 + APP.SUM_FROM % 100) * 60
+      const toSeconds = (Math.floor(APP.SUM_TO / 100) * 60 + APP.SUM_TO % 100) * 60
+      // キーの一致するデータのみのリストを作成。その際、％データがある場合は分ける
+      return detailList.map((viewData) => {
+        let graphData = []
+        this.setFromToSettingDiff()
+
+        viewData.graph.forEach((graph) => {
+          if (graph.percent == 100) {
+            graph.start = Util.convertToTime(fromSeconds)
+            graph.end = Util.convertToTime(toSeconds)
+          } else {
+            graph.start = moment(graph.end).format('HH:mm:ss')
+            graph.end = moment(graph.end).format('HH:mm:ss')
+          }
+          (graph.isStay || graph.percent == 100)? graphData.push(graph): null
+        })
+
+        return graphData.map((graph) => {
+          return {
+            date: viewData.date,
+            name: viewData.name,
+            groupName: viewData.groupName,
+            categoryName: viewData.categoryName,
+            start: graph.start,
+            end: graph.end,
+            seconds: graph.period,
+            state: graph.period == this.fromToSettingDiff? this.$i18n.tnl('label.undetect'): this.$i18n.tnl('label.detected'),
+            areaName: graph.areaName,
+            zoneCategory: graph.zoneCategory,
+          }
+        })
+      }).flat()
+    },
     updateColumnName(){
       if(Util.hasValue(this.fields)){
         this.fields.forEach(field => {
@@ -615,6 +698,9 @@ export default {
       )
 
       this.hideProgress()
+    },
+    async detailDownloadMonth(){
+      // FIXME: 実装
     },
     pickerChanged() {
       const param = _.cloneDeep(this.form)
