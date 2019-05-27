@@ -93,13 +93,13 @@
           <b-form-row class="mb-3">
             <b-button v-t="'label.display'" type="submit" :variant="theme" @click="display" />
             <b-dropdown v-if="!iosOrAndroid" :variant="theme" :text="$t('label.download')" class="ml-2">
-              <b-dropdown-item @click="download('sum')">
+              <b-dropdown-item @click="downloadDay('sum')">
                 {{ $t('label.sum') + $t('label.download') }}
               </b-dropdown-item>
               <b-dropdown-item @click="downloadMonth('sum')">
                 {{ $t('label.sum') + $t('label.downloadMonth') }}
               </b-dropdown-item>
-              <b-dropdown-item @click="download('detail')">
+              <b-dropdown-item @click="downloadDay('detail')">
                 {{ $t('label.detail') + $t('label.download') }}
               </b-dropdown-item>
               <b-dropdown-item @click="downloadMonth('detail')">
@@ -122,11 +122,11 @@
             </div>
             <br>
             <div style="width: 100%">
-              <div v-for="(timeData, index) in row.item.timeRatio" :key="`graph-${index}`" class="time-area" :style="`width: ${timeData.ratio}% !important;`">
+              <div v-for="(timeData, index) in row.item.graphTimeRatio" :key="`graph-${index}`" class="time-area" :style="`width: ${timeData.ratio}% !important;`">
                 <span v-if="index == 0" style="float: left;">
                   {{ row.item.baseTimeFrom }}
                 </span>
-                <span v-if="index == row.item.timeRatio.length - 1" style="float: right;">
+                <span v-if="index == row.item.graphTimeRatio.length - 1" style="float: right;">
                   {{ row.item.baseTimeTo }}
                 </span>
                 <span v-if="isScaleTime(timeData.time)" style="float: left;">
@@ -328,12 +328,6 @@ export default {
     async fetchData(payload) {
       // 何もしない
     },
-    validate() {
-      const errors = this.validateCheck([
-        {type: 'require', names: ['date'], values: [this.form.date]},
-      ].filter((val) => val && val.names.length >= 1))
-      return this.formatValidateMessage(errors)
-    },
     async display() {
       this.container ? this.container.removeAllChildren() : null
       await this.displayImpl()
@@ -358,7 +352,6 @@ export default {
       param.date = moment(param.date).format('YYYYMMDD')
       const groupBy = param.groupId? '&groupId=' + param.groupId: ''
       const categoryBy = param.categoryId? '&categoryId=' + param.categoryId: ''
-      const group = param.groupId? this.groups.find((val) => val.groupId == param.groupId): null
       const url = '/office/stayTime/sumByDay/' + param.date + '/zoneCategory?from=' + APP.SUM_FROM + '&to=' + APP.SUM_TO + groupBy + categoryBy
       const sumData = await HttpHelper.getAppService(url)
       if (_.isEmpty(sumData)) {
@@ -371,6 +364,7 @@ export default {
       this.viewList = this.getStayDataList(moment(param.date).format('YYYY-MM-DD'), sumData, APP.SUM_ABSENT_LIMIT, APP.SUM_LOST_LIMIT)
 
       this.totalRows = this.viewList.length
+      const group = param.groupId? this.groups.find((val) => val.groupId == param.groupId): null
       this.searchedGroupName =  group? group.groupName: ''
       this.hideProgress()
     },
@@ -384,12 +378,7 @@ export default {
     getStayDataList(date, stayData, absentLimit = 0, lostLimit = APP.LOST_TIME) {
       const graphTimeRatio = this.getTimeRatioData()
       return stayData.map((data) => {
-        const potId = data.potId
-        const pot = this.pots.find((val) => val.potId == potId)
-        const groupName = pot? pot.groupName: ''
-        const categoryName = pot? pot.categoryName: ''
-        const potName = data.potName
-        let stayTime = 0, lostTime = 0, presentRatio = 0
+        let stayTime = 0, lostTime = 0
         let graphList = new Array()
         let categoryData = []
         let areaData = []
@@ -408,7 +397,7 @@ export default {
 
         // 各時間の集計
         data.stayList.forEach((stay, index) => {
-          let isStayData = false
+          let isExistStayData = false
           let time = ''
           let findCategory
           let findArea
@@ -418,7 +407,7 @@ export default {
           } else {
             stayTime += stay.period
             time = Util.convertToTime(stay.period)
-            isStayData = true
+            isExistStayData = true
 
             // カテゴリ毎の滞在時間を加算
             findCategory = _.find(this.categories, (category) => {
@@ -440,13 +429,12 @@ export default {
           }
 
           graphList.push({
-            state: stay.byId,
-            isStay: isStayData,
+            isStay: isExistStayData,
             period: stay.period,
             start: stay.start,
             end: stay.end,
             time: time,
-            percent: Math.floor((stay.period / this.fromToSettingDiff) * 10000) / 100,
+            percent: Math.floor((stay.period / this.fromToSettingDiff) * 100 * APP.STAY_SUM.PARSENT_DIGIT) / APP.STAY_SUM.PARSENT_DIGIT,
             categoryBgColor: findCategory? '#' + findCategory.bgColor: this.getRandomColor(0),
             areaBgColor: findArea? this.getRandomColor(findArea.areaId): this.getRandomColor(0),
             areaName: findArea? findArea.areaName: '',
@@ -454,20 +442,19 @@ export default {
           })
 
         })
-        presentRatio = Util.getRatio(stayTime)
 
+        const pot = this.pots.find((val) => val.potId == data.potId)
         let result = {
           date: date,
-          name: potName, 
-          groupName: groupName,
-          categoryName: categoryName,
+          name: data.potName, 
+          groupName: pot? pot.groupName: '',
+          categoryName: pot? pot.categoryName: '',
           graph: graphList,
           stayTime: Util.convertToTime(stayTime) + ' (' + Util.getRatio(stayTime) + '%)', 
           lostTime: Util.convertToTime(lostTime) + ' (' + Util.getRatio(lostTime) + '%)', 
           baseTimeFrom: this.getDateStrFromSetting(APP.SUM_FROM),
           baseTimeTo: this.getDateStrFromSetting(APP.SUM_TO),
-          stayRatio: presentRatio + ' %',
-          timeRatio: graphTimeRatio,
+          graphTimeRatio: graphTimeRatio,
         }
 
         categoryData.forEach((cData) => {
@@ -505,7 +492,7 @@ export default {
       }
       return result
     },
-    async download(key){
+    async downloadDay(key){
       if (this.viewList == null || this.viewList.length == 0) {
         this.message = this.$i18n.tnl('message.notFound')
         this.replace({showAlert: true})
@@ -531,15 +518,15 @@ export default {
         getCharSet(this.$store.state.loginId)
       )
     },
-    getCsvSumList(sumList) {
+    getCsvSumList(viewList) {
       // フィールド設定に合わせ、出力するデータのキーリストを生成する
       const keys = []
-      sumList.length > 0? this.fields.forEach((field) => {
-        _.find(Object.keys(sumList[0]), (key) => { return key!= 'graph' && key == field.key})? keys.push(field.key): null
-      }): null
+      this.fields.forEach((field) => {
+        _.find(Object.keys(viewList[0]), (key) => { return key!= 'graph' && key == field.key})? keys.push(field.key): null
+      })
 
       // キーの一致するデータのみのリストを作成。その際、％データがある場合は分ける
-      return sumList.map((viewData) => {
+      return viewList.map((viewData) => {
         let objectData = {}
         keys.forEach((key) => {
           const hasRatio = viewData[key]? viewData[key].search('%') > 0: false
@@ -632,11 +619,9 @@ export default {
       }
 
       let csvList = []
-      const csvDays = endDate.diff(startDate, 'days')
       const groupBy = param.groupId? '&groupId=' + param.groupId: ''
-
       let day = 0
-      while (day <= csvDays) {
+      while (day <= endDate.diff(startDate, 'days')) {
         const searchDate = moment(param.date).startOf('months').add(day++, 'day').format('YYYYMMDD')
         const url = '/office/stayTime/sumByDay/' + searchDate + '/zoneCategory?from=' + APP.SUM_FROM + '&to=' + APP.SUM_TO + groupBy
         const sumData = await HttpHelper.getAppService(url)
@@ -649,7 +634,6 @@ export default {
         }
 
         let list = this.getStayDataList(moment(searchDate).format('YYYY-MM-DD'), sumData, APP.SUM_ABSENT_LIMIT, APP.SUM_LOST_LIMIT)
-        
         const dateList = (key == 'sum')? this.getCsvSumList(list): this.getCsvDetailList(list)
         dateList.sort(function(a, b) {
           var nameA = a.name.toUpperCase() // 大文字、小文字を無視
