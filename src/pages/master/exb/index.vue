@@ -27,7 +27,7 @@ export default {
       params: {
         name: 'exb',
         id: 'exbId',
-        confirmName: APP.EXB_WITH_DEVICE_ID? 'deviceId': APP.EXB_WITH_DEVICE_IDX? 'deviceIdX': 'locationName',
+        confirmName: Util.includesIgnoreCase(APP.EXB.WITH, 'deviceId')? 'deviceId': Util.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')? 'deviceIdX': 'locationName',
         indexPath: '/master/exb',
         editPath: '/master/exb/edit',
         bulkEditPath: '/master/exb/bulkedit',

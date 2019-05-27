@@ -297,7 +297,7 @@ export default {
     },
     getTxOptions(newVal = this.form.sensorId){
       const txs = this.txs.filter(val => val.sensorId == newVal)
-      this.txOptions = txs? txs.map(val => ({value: val.txId, label: Util.getValue(val, 'potName', APP.TX_BTX_MINOR == 'minor'? val.minor: val.btxId)})): []
+      this.txOptions = txs? txs.map(val => ({value: val.txId, label: Util.getValue(val, 'potName', APP.TX.BTX_MINOR == 'minor'? val.minor: val.btxId)})): []
       this.vueSelected.tx = StateHelper.getVueSelectData(this.txOptions, null, true)
     },
     setDeviceTypeFromSensorId(sensorId){
