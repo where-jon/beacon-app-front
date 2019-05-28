@@ -281,7 +281,8 @@ export default {
       const i18n = this.$i18n
       selectedCategories.forEach(function(category) {
         let colorStyle = '<span style="color: #' + category.bgColor + ';">■</span>'
-        fields.push({key: category.categoryName, sortable: true, label: (category.systemUse? i18n.tnl('label.' + category.systemCategoryName): category.categoryName) + colorStyle, thStyle: {width:'100px !important'}})
+        let categoryName = (category.systemUse? i18n.tnl('label.' + category.systemCategoryName): category.categoryName)
+        fields.push({key: categoryName, sortable: true, label: categoryName + colorStyle, thStyle: {width:'100px !important'}})
       })
       
       // カテゴリその他が選択されている場合は追加
@@ -386,7 +387,8 @@ export default {
         // カテゴリ用データ保持変数を初期化
         categoryData[0] = {name: 'categoryOther', value: 0}
         this.categories.forEach((category) => {
-          if (category.categoryType == CATEGORY.ZONE) categoryData[category.categoryId] = {name: category.categoryName, value: 0}
+          let categoryName = (category.systemUse? this.$i18n.tnl('label.' + category.systemCategoryName): category.categoryName)
+          if (category.categoryType == CATEGORY.ZONE) categoryData[category.categoryId] = {name: categoryName, value: 0}
         })
 
         // エリア用データ保持変数を初期化
