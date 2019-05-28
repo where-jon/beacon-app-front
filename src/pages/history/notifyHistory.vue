@@ -134,6 +134,7 @@ import 'element-ui/lib/theme-chalk/index.css'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
+import controlmixinVue from '../../components/mixin/controlmixin.vue'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
@@ -152,7 +153,7 @@ export default {
     alert,
     DatePicker,
   },
-  mixins: [showmapmixin ],
+  mixins: [showmapmixin, controlmixinVue],
   data () {
     return {
       name: 'notifyHistory',

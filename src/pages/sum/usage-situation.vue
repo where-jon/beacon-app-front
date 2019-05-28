@@ -16,11 +16,23 @@
           <b-form-row>
             <b-form-row>
               <label v-t="'label.zoneCategoryName'" class="control-label md-2 text-right" />
-              <v-select v-model="vueSelected.category" :options="categoryOptionList" class="md-3 ml-2 vue-options" />
+              <span :title="vueSelectTitle(vueSelected.category)">
+                <v-select v-model="vueSelected.category" :options="categoryOptionList" class="md-3 ml-2 vue-options">
+                  <template slot="selected-option" slot-scope="option">
+                    {{ vueSelectCutOn(option) }}
+                  </template>
+                </v-select>
+              </span>
             </b-form-row>
             <b-form-row>
               <label v-t="'label.zone'" class="control-label md-1 text-right" />
-              <v-select v-model="vueSelected.zone" :options="zoneOptions" class="md-3 ml-2 vue-options" />
+              <span :title="vueSelectTitle(vueSelected.zone)">
+                <v-select v-model="vueSelected.zone" :options="zoneOptions" class="md-3 ml-2 vue-options">
+                  <template slot="selected-option" slot-scope="option">
+                    {{ vueSelectCutOn(option) }}
+                  </template>
+                </v-select>
+              </span>
             </b-form-row>
           </b-form-row>
         </b-form-group>
@@ -47,6 +59,7 @@ import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import commonmixinVue from '../../components/mixin/commonmixin.vue'
+import controlmixinVue from '../../components/mixin/controlmixin.vue'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
@@ -61,7 +74,7 @@ export default {
     breadcrumb,
     alert,
   },
-  mixins: [showmapmixin, commonmixinVue ],
+  mixins: [showmapmixin, commonmixinVue, controlmixinVue],
   data () {
     return {
       name: 'usageSituation',

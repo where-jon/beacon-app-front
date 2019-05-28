@@ -135,6 +135,43 @@ export const cutOnLongByte = (val, max, addLast = true) => {
   return val
 }
 
+export const cutOnLongWidth = (val, max, addLast = true, style = {}) => {
+  if (!val || !max || typeof val != 'string') {
+    return val
+  }
+  const element = document.createElement('span')
+  element.style['white-space'] = 'nowrap'
+  element.style.visibility = 'hidden'
+  if(style){
+    Object.keys(style).forEach(key => {
+      element.style[key] = style[key]
+    })
+  }
+  document.body.appendChild(element)
+
+  element.innerHTML = val
+  if(element.offsetWidth + 1 < max){
+    document.body.removeChild(element)
+    return val
+  }
+
+  const parts = val.split('')
+  const last = addLast? '...': ''
+
+  let ret = ''
+  for(let idx = 0; idx < parts.length; idx++){
+    const str = ret + parts[idx] + last
+    element.innerHTML = str
+    const width = element.offsetWidth + 1
+    if(max <= width){
+      break
+    }
+    ret += parts[idx]
+  }
+  document.body.removeChild(element)
+  return ret + last
+}
+
 export const luminance = (hex) => {
   const num = parseInt(hex, 16)
   const r = num >> 16
