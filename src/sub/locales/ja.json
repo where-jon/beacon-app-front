@@ -877,6 +877,9 @@
           "MIDIUM_TYPES": "numberList",
           "STATE_TYPES": "numberList"
         },
+        "STAY_SUM": {
+          "SCALE_TIMES": "numberList"
+        },
         "TX_MON": {
           "WITH": "stringList",
           "WITH_SENSOR": "numberList"
