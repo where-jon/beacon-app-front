@@ -188,6 +188,8 @@ export default {
       this.message = this.$i18n.t('message.updateCompleted', { target: this.$i18n.t('label.zone') })
       this.replace({showInfo: true})
       this.isCompleteRegist = true
+      // ストア内のゾーンレコードを最新に更新する
+      await StateHelper.load('zone', true)
       return saveId
     },
     reloaded() {
