@@ -444,10 +444,6 @@ export default {
           if(this.userState == 'ALL_REGION' || aNotifyState == 'GW_ALERT' || aNotifyState == 'EXB_ALERT'){
             let arNotifyto = this.getNotifyBrTag(notifyData.notifyTo)
             arNotifyto ? notifyData.notifyTo = arNotifyto: null
-
-            //let arPotName = this.getNotifyBrTag(notifyData.potNames.toString())
-            //arPotName ? notifyData.potNames = arPotName: null
-
             if (++count <= this.limitViewRows) {
               this.viewList.push(notifyData)
             }
