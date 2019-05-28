@@ -164,6 +164,16 @@ import * as HttpHelper from '../../sub/helper/HttpHelper'
 import { SYSTEM_ZONE_CATEGORY_NAME } from '../../sub/constant/Constants'
 import { CATEGORY } from '../../sub/constant/Constants'
 
+const getDataList = (dataList) => {
+  return dataList.sort(function(a, b) {
+    var nameA = a.name.toUpperCase() // 大文字、小文字を無視
+    var nameB = b.name.toUpperCase() // 大文字、小文字を無視
+    if (nameA < nameB) return -1
+    if (nameA > nameB) return 1
+    return 0
+  })
+}
+
 export default {
   components: {
     breadcrumb,
@@ -251,6 +261,7 @@ export default {
   },
   methods: {
     isScaleTime(scaleTime) {
+      // FIXME: _.some に変更する
       return _.find(APP.STAY_SUM.SCALE_TIME, (time) => { return time == scaleTime})? true: false
     },
     setSelectedGraphCategory(isSelected) {
@@ -321,9 +332,10 @@ export default {
       return fields.map(val => ({ ...val, originLabel: val.label}))
     },
     isDisplayStayColumn(key) {
-      if (!this.displayCheckList || !this.displayCheckList.stay || this.displayCheckList.stay.length == 0) {
+      if (!this.displayCheckList || !this.displayCheckList.stay) {
         return false
       }
+      // FIXME: _.someに変更する
       return _.find(this.displayCheckList.stay, (stay) => {return stay === key})? true: false
     },
     async fetchData(payload) {
@@ -343,7 +355,7 @@ export default {
       await StateHelper.load('group')
       this.setFromToSettingDiff()
       
-      if (!param.date || param.date == '') {
+      if (!param.date || param.date.length == 0) {
         this.message = this.$i18n.tnl('message.pleaseEnterSearchCriteria')
         this.replace({showAlert: true})
         this.hideProgress()
@@ -380,7 +392,6 @@ export default {
       const graphTimeRatio = this.getTimeRatioData()
       return stayData.map((data) => {
         let stayTime = 0, lostTime = 0
-        let graphList = new Array()
         let categoryData = []
         let areaData = []
 
@@ -398,7 +409,8 @@ export default {
         })
 
         // 各時間の集計
-        data.stayList.forEach((stay, index) => {
+        
+        let graphList = data.stayList.map((stay, index) => {
           let isExistStayData = false
           let time = ''
           let findCategory
@@ -430,7 +442,7 @@ export default {
             }
           }
 
-          graphList.push({
+          return {
             isStay: isExistStayData,
             period: stay.period,
             start: stay.start,
@@ -441,12 +453,12 @@ export default {
             areaBgColor: findArea? this.getRandomColor(findArea.areaId): this.getRandomColor(0),
             areaName: findArea? findArea.areaName: '',
             zoneCategory: stay.byName,
-          })
+          }
 
         })
 
         const pot = this.pots.find((val) => val.potId == data.potId)
-        let result = {
+        const result = {
           date: date,
           name: data.potName, 
           groupName: pot? pot.groupName: '',
@@ -502,13 +514,7 @@ export default {
       }
 
       const csvList = (key == 'sum')? this.getCsvSumList(this.viewList): this.getCsvDetailList(this.viewList)
-      csvList.sort(function(a, b) {
-        var nameA = a.name.toUpperCase() // 大文字、小文字を無視
-        var nameB = b.name.toUpperCase() // 大文字、小文字を無視
-        if (nameA < nameB) return -1
-        if (nameA > nameB) return 1
-        return 0
-      })
+      getDataList(csvList)
 
       const param = _.cloneDeep(this.form)
       const searchDate = moment(param.date).format('YYYY-MM-DD')
@@ -547,20 +553,21 @@ export default {
       const fromSeconds = (Math.floor(APP.SUM_FROM / 100) * 60 + APP.SUM_FROM % 100) * 60
       const toSeconds = (Math.floor(APP.SUM_TO / 100) * 60 + APP.SUM_TO % 100) * 60
       // キーの一致するデータのみのリストを作成。その際、％データがある場合は分ける
-      return detailList.map((viewData) => {
-        let graphData = []
+      const result = detailList.map((viewData) => {
         this.setFromToSettingDiff()
 
-        viewData.graph.forEach((graph) => {
-          if (graph.percent == 100) {
-            graph.start = Util.convertToTime(fromSeconds)
-            graph.end = Util.convertToTime(toSeconds)
-          } else {
-            graph.start = moment(graph.end).format('HH:mm:ss')
-            graph.end = moment(graph.end).format('HH:mm:ss')
-          }
-          (graph.isStay || graph.percent == 100)? graphData.push(graph): null
-        })
+        let graphData = viewData.graph
+          .filter((graph) => graph.isStay || graph.percent == 100)
+          .map((graph) => {
+            if (graph.percent == 100) {
+              graph.start = Util.convertToTime(fromSeconds)
+              graph.end = Util.convertToTime(toSeconds)
+            } else {
+              graph.start = moment(graph.end).format('HH:mm:ss')
+              graph.end = moment(graph.end).format('HH:mm:ss')
+            }
+            return graph
+          })
 
         return graphData.map((graph) => {
           return {
@@ -576,7 +583,8 @@ export default {
             zoneCategory: graph.zoneCategory,
           }
         })
-      }).flat()
+      })
+      return result.flat()
     },
     updateColumnName(){
       if(Util.hasValue(this.fields)){
@@ -595,7 +603,7 @@ export default {
       await StateHelper.load('pots')
       await StateHelper.load('group')
 
-      if (!param.date || param.date == '') {
+      if (!param.date || param.date.length == 0) {
         this.message = this.$i18n.tnl('message.pleaseEnterSearchCriteria')
         this.replace({showAlert: true})
         this.hideProgress()
@@ -623,7 +631,9 @@ export default {
 
       let csvList = []
       const groupBy = param.groupId? '&groupId=' + param.groupId: ''
+      // FIXME: カテゴリの絞り込み条件漏れ
       let day = 0
+      //FIXME:  回す日数の配列を作って、mapで回すようにする
       while (day <= endDate.diff(startDate, 'days')) {
         const searchDate = moment(param.date).startOf('months').add(day++, 'day').format('YYYYMMDD')
         const url = '/office/stayTime/sumByDay/' + searchDate + '/zoneCategory?from=' + APP.SUM_FROM + '&to=' + APP.SUM_TO + groupBy
@@ -638,13 +648,7 @@ export default {
 
         let list = this.getStayDataList(moment(searchDate).format('YYYY-MM-DD'), sumData, APP.SUM_ABSENT_LIMIT, APP.SUM_LOST_LIMIT)
         const dateList = (key == 'sum')? this.getCsvSumList(list): this.getCsvDetailList(list)
-        dateList.sort(function(a, b) {
-          var nameA = a.name.toUpperCase() // 大文字、小文字を無視
-          var nameB = b.name.toUpperCase() // 大文字、小文字を無視
-          if (nameA < nameB) return -1
-          if (nameA > nameB) return 1
-          return 0
-        })
+        getDataList(dateList)
         csvList = csvList.isEmpty? dateList: csvList.concat(dateList)
       }
 
@@ -664,7 +668,6 @@ export default {
       if (isError) {
         this.message = this.$i18n.terror('message.invalid', {target: this.$i18n.tnl('label.date')})
         this.replace({showAlert: true})
-        return
       } else {
         this.replace({showAlert: false})
       }
