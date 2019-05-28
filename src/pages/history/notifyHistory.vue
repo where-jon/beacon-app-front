@@ -369,9 +369,9 @@ export default {
           notifyTo : 'notifyTo',
           minors  : 'minors',
           minor  : 'minor',
-          potNames : 'potNames',
-          zoneNames : 'zoneNames',
-          lastRcvDatetimes : 'lastRcvDatetimes',
+          potNames : 'potName',
+          zoneNames : 'zoneName',
+          lastRcvDatetimes : 'lastRcvDatetime',
           notifyResult : 'notifyResult',
         }
 
