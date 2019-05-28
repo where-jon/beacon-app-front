@@ -96,6 +96,7 @@ export default {
           clearTimeout(timer)
           return
         }
+        this.icons = {} // リサイズ時にアイコンキャッシュをクリア
         if (timer > 0) {
           clearTimeout(timer)
         } 
