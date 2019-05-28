@@ -390,7 +390,7 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     RSSI_ICON_HEIGHT: 20,
   },
   // 禁止区域関連設定
-  PROHIBIT_TWINKLE_TIME: 1500, // 点滅間隔(ミリ秒) ＸＸＸ_TIME dispに変更
+  PROHIBIT_TWINKLE_TIME: 1500, // 点滅間隔(ミリ秒)
 }
 
 // used when APP.LOGIN_MODE != APP_SERVICE with excloud old api -----------------------------------------------------

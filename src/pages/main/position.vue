@@ -312,7 +312,6 @@ export default {
         const spinClassName = 'fa-spin'
         if(!this.firstTime && reloadButton){
           reloadButton.classList.add(spinClassName)
-          this.showDismissibleAlert = true
         }
         if(!this.selectedTx.btxId){
           await this.fetchPositionData(cPayload)
@@ -333,8 +332,9 @@ export default {
         this.message = await StateHelper.getProhibitMessage(this.message,this.prohibitData)
         this.showDismissibleAlert = this.message ? true: false
         this.showTxAll()
-        clearInterval(this.prohibitInterval)
-        this.prohibitInterval = setInterval(this.twinkle,DISP.PROHIBIT_TWINKLE_TIME) //TODO: Violation発生
+        clearInterval(this.prohibitInterval)  // 点滅クリア
+        // 禁止区域に検知されたら点滅させる
+        this.showDismissibleAlert? this.prohibitInterval = setInterval(this.twinkle,DISP.PROHIBIT_TWINKLE_TIME):false
         if(!this.firstTime && reloadButton){
           reloadButton.classList.remove(spinClassName)
         }
