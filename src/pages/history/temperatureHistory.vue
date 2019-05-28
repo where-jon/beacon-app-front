@@ -73,6 +73,7 @@ import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
 import commonmixinVue from '../../components/mixin/commonmixin.vue'
 import reloadmixinVue from '../../components/mixin/reloadmixin.vue'
+import controlmixinVue from '../../components/mixin/controlmixin.vue'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 
 export default {
@@ -81,7 +82,7 @@ export default {
     alert,
     DatePicker,
   },
-  mixins: [reloadmixinVue, commonmixinVue ],
+  mixins: [reloadmixinVue, commonmixinVue, controlmixinVue],
   data () {
     return {
       items: ViewHelper.createBreadCrumbItems('historyTitle', 'thermohumidity'),

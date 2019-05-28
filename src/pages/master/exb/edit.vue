@@ -21,7 +21,7 @@
             </b-form-group>
             <b-form-group>
               <label v-t="'label.area'" />
-              <v-select v-model="vueSelected.area" :options="areaOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 vue-options" />
+              <v-select v-model="vueSelected.area" :options="areaOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 vue-options-lg" />
             </b-form-group>
             <b-form-group v-show="isShown('EXB.WITH', 'posId')">
               <label v-t="'label.posId'" />
@@ -70,7 +70,7 @@
             <b-form-group v-show="useZone">
               <b-form-row>
                 <label v-t="'label.zone'" class="d-flex align-items-center" />
-                <v-select v-model="vueSelected.zone" :options="getZoneNames()" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-2 vue-options" />
+                <v-select v-model="vueSelected.zone" :options="getZoneNames()" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-2 vue-options-lg" />
               </b-form-row>
             </b-form-group>
 
@@ -91,10 +91,12 @@ import { mapState } from 'vuex'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
+import * as ParamHelper from '../../../sub/helper/ParamHelper'
 import * as MenuHelper from '../../../sub/helper/MenuHelper'
 import * as HtmlUtil from '../../../sub/util/HtmlUtil'
 import * as Util from '../../../sub/util/Util'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
+import controlmixinVue from '../../../components/mixin/controlmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
 import settingtxview from '../../../components/parts/settingtxview.vue'
@@ -107,7 +109,7 @@ export default {
     alert,
     settingtxview,
   },
-  mixins: [editmixinVue],
+  mixins: [editmixinVue, controlmixinVue],
   data() {
     return {
       name: 'exb',
@@ -207,8 +209,8 @@ export default {
   async mounted() {
     await StateHelper.load('area')
     await StateHelper.load('zone')
-    this.vueSelected.area = StateHelper.getVueSelectData(this.areaOptions, this.form.areaId)
-    this.$nextTick(() => this.vueSelected.zone = StateHelper.getVueSelectData(this.getZoneNames(), this.form.zoneId))
+    this.vueSelected.area = ParamHelper.getVueSelectData(this.areaOptions, this.form.areaId)
+    this.$nextTick(() => this.vueSelected.zone = ParamHelper.getVueSelectData(this.getZoneNames(), this.form.zoneId))
     this.deviceId = this.form.deviceId
     ViewHelper.applyDef(this.form, this.defValue)
     if (!this.form.txViewType) {
@@ -288,8 +290,8 @@ export default {
     beforeReload(){
       this.initExbSensorList()
       this.changeSensors()
-      this.vueSelected.area = StateHelper.getVueSelectData(this.areaOptions, null)
-      this.vueSelected.zone = StateHelper.getVueSelectData(this.getZoneNames(), null)
+      this.vueSelected.area = ParamHelper.getVueSelectData(this.areaOptions, null)
+      this.vueSelected.zone = ParamHelper.getVueSelectData(this.getZoneNames(), null)
     },
     async save() {
       let dummyKey = -1

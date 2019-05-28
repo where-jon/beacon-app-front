@@ -22,7 +22,7 @@
           </b-form-row>
           <b-form-row>
             <b-col sm="5">
-              <v-select v-model="vueSelected.area" :options="areaNames" :disabled="!isEditable" :clearable="false" class="vue-options" />
+              <v-select v-model="vueSelected.area" :options="areaNames" :disabled="!isEditable" :clearable="false" class="vue-options-lg" />
             </b-col>
           </b-form-row>
           <b-form-row>
@@ -30,7 +30,7 @@
           </b-form-row>
           <b-form-row>
             <b-col sm="5">
-              <v-select v-model="vueSelected.category" :options="categoryNames" :disabled="!isEditable" class="vue-options" />
+              <v-select v-model="vueSelected.category" :options="categoryNames" :disabled="!isEditable" class="vue-options-lg" />
             </b-col>
           </b-form-row>
         </b-form-group>
@@ -48,6 +48,7 @@
 <script>
 import { mapState } from 'vuex'
 import * as StateHelper from '../../../sub/helper/StateHelper'
+import * as ParamHelper from '../../../sub/helper/ParamHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
@@ -58,13 +59,14 @@ import alert from '../../../components/parts/alert.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import { CATEGORY, ZONE } from '../../../sub/constant/Constants'
 import showmapmixin from '../../../components/mixin/showmapmixin.vue'
+import controlmixinVue from '../../../components/mixin/controlmixin.vue'
 
 export default {
   components: {
     breadcrumb,
     alert,
   },
-  mixins: [editmixinVue, showmapmixin],
+  mixins: [editmixinVue, showmapmixin, controlmixinVue],
   data() {
     return {
       name: 'zone',
@@ -110,8 +112,8 @@ export default {
   async created() {
     await this.initAreaNames()
     await this.initCategoryNames()
-    this.vueSelected.area = StateHelper.getVueSelectData(this.areaNames, this.form.areaId, !Util.hasValue(this.form.areaId))
-    this.vueSelected.category = StateHelper.getVueSelectData(this.categoryNames, this.form.categoryId)
+    this.vueSelected.area = ParamHelper.getVueSelectData(this.areaNames, this.form.areaId, !Util.hasValue(this.form.areaId))
+    this.vueSelected.category = ParamHelper.getVueSelectData(this.categoryNames, this.form.categoryId)
   },
   mounted(){
     HtmlUtil.setCustomValidationMessage()
@@ -133,8 +135,8 @@ export default {
       )
     },
     async beforeReload(){
-      this.vueSelected.area = StateHelper.getVueSelectData(this.areaNames, null, true)
-      this.vueSelected.category = StateHelper.getVueSelectData(this.categoryNames, null)
+      this.vueSelected.area = ParamHelper.getVueSelectData(this.areaNames, null, true)
+      this.vueSelected.category = ParamHelper.getVueSelectData(this.categoryNames, null)
     },
     async save() {
       const zoneId = Util.hasValue(this.form.zoneId)? this.form.zoneId: -1

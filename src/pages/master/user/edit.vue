@@ -20,7 +20,7 @@
         </b-form-group>
         <b-form-group>
           <label v-t="'label.role'" />
-          <v-select v-model="vueSelected.role" :options="roleOptions" :disabled="!isEditable" :clearable="false" class="mb-3 vue-options" />
+          <v-select v-model="vueSelected.role" :options="roleOptions" :disabled="!isEditable" :clearable="false" class="mb-3 vue-options-lg" />
         </b-form-group>
         <b-form-group>
           <label v-t="'label.region'" />
@@ -54,10 +54,12 @@
 import { mapState } from 'vuex'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
+import * as ParamHelper from '../../../sub/helper/ParamHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AuthHelper from '../../../sub/helper/AuthHelper'
 import { APP } from '../../../sub/constant/config.js'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
+import controlmixinVue from '../../../components/mixin/controlmixin.vue'
 import * as HtmlUtil from '../../../sub/util/HtmlUtil'
 import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
@@ -71,7 +73,7 @@ export default {
     alert,
     chromeInput,
   },
-  mixins: [editmixinVue],
+  mixins: [editmixinVue, controlmixinVue],
   data() {
     return {
       name: 'user',
@@ -135,9 +137,9 @@ export default {
     await StateHelper.load('region')
     await StateHelper.load('role')
     this.roleOptions = StateHelper.getOptionsFromState('role', false, true)
-    this.vueSelected.role = StateHelper.getVueSelectData(this.roleOptions, Util.getValue(this.form, 'roleId', this.roleOptions.reduce((prev, cur) => cur).value))
+    this.vueSelected.role = ParamHelper.getVueSelectData(this.roleOptions, Util.getValue(this.form, 'roleId', this.roleOptions.reduce((prev, cur) => cur).value))
     if(Util.hasValue(this.form.userRegionList)){
-      this.vueSelected.regions = this.form.userRegionList.map(userRegion => StateHelper.getVueSelectData(this.regionOptions, userRegion.userRegionPK.regionId))
+      this.vueSelected.regions = this.form.userRegionList.map(userRegion => ParamHelper.getVueSelectData(this.regionOptions, userRegion.userRegionPK.regionId))
     }
   },
   mounted(){
@@ -189,7 +191,7 @@ export default {
       }
     },
     beforeReload(){
-      this.vueSelected.role = StateHelper.getVueSelectData(this.roleOptions, this.roleOptions.reduce((prev, cur) => cur).value)
+      this.vueSelected.role = ParamHelper.getVueSelectData(this.roleOptions, this.roleOptions.reduce((prev, cur) => cur).value)
       this.vueSelected.regions = []
     },
     async save() {

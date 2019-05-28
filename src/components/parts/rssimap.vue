@@ -7,19 +7,37 @@
           <label class="ml-sm-4 ml-2 mr-1">
             {{ $t('label.area') }}
           </label>
-          <v-select v-model="vueSelected.area" :options="areaOptions" :clearable="false" class="ml-1 mr-2 vue-options" />
+          <span :title="vueSelectTitle(vueSelected.area)">
+            <v-select v-model="vueSelected.area" :options="areaOptions" :clearable="false" class="ml-1 mr-2 vue-options">
+              <template slot="selected-option" slot-scope="option">
+                {{ vueSelectCutOn(option) }}
+              </template>
+            </v-select>
+          </span>
         </b-form-row>
         <b-form-row v-if="useGroup" class="my-1 ml-2 ml-sm-0">
           <label class="ml-sm-4 ml-2 mr-1">
             {{ $t('label.group') }}
           </label>
-          <v-select v-model="vueSelected.group" :options="groupOptions" class="ml-1 mr-2 vue-options" />
+          <span :title="vueSelectTitle(vueSelected.group)">
+            <v-select v-model="vueSelected.group" :options="groupOptions" class="ml-1 mr-2 vue-options">
+              <template slot="selected-option" slot-scope="option">
+                {{ vueSelectCutOn(option) }}
+              </template>
+            </v-select>
+          </span>
         </b-form-row>
         <b-form-row v-if="useCategory" class="my-1 ml-2 ml-sm-0">
           <label class="ml-sm-4 ml-2 mr-1">
             {{ $t('label.category') }}
           </label>
-          <v-select v-model="vueSelected.category" :options="categoryOptionsForPot" class="ml-1 mr-2 vue-options" />
+          <span :title="vueSelectTitle(vueSelected.category)">
+            <v-select v-model="vueSelected.category" :options="categoryOptionsForPot" class="ml-1 mr-2 vue-options">
+              <template slot="selected-option" slot-scope="option">
+                {{ vueSelectCutOn(option) }}
+              </template>
+            </v-select>
+          </span>
         </b-form-row>
         <b-form-row>
           <b-form-checkbox v-model="modeRssi" class="ml-sm-4 ml-2 mr-1">
@@ -65,6 +83,7 @@ import { CATEGORY } from '../../sub/constant/Constants'
 import { Container, Shape, Text } from '@createjs/easeljs/dist/easeljs.module'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import commonmixinVue from '../mixin/commonmixin.vue'
+import controlmixinVue from '../mixin/controlmixin.vue'
 
 class RssiIcon {
   constructor(parent, rssi, scale, level = 3) {
@@ -122,7 +141,7 @@ export default {
   components: {
     breadcrumb,
   },
-  mixins: [showmapmixin, commonmixinVue],
+  mixins: [showmapmixin, commonmixinVue, controlmixinVue],
   data () {
     return {
       items: [

@@ -28,7 +28,13 @@
               <b-form-select v-model="form.filterKind" :options="filterKindOptions" class="ml-2 inputSelect" @change="changefilterKind" />
             </b-form-row>
             <b-form-row v-if="useVueSelect(form.filterKind)" class="ml-1">
-              <v-select v-model="vueSelected.filter" :options="filterIdOptions" class="ml-2 inputSelect vue-options" />
+              <span :title="vueSelectTitle(vueSelected.filter)">
+                <v-select v-model="vueSelected.filter" :options="filterIdOptions" class="ml-2 inputSelect vue-options">
+                  <template slot="selected-option" slot-scope="option">
+                    {{ vueSelectCutOn(option) }}
+                  </template>
+                </v-select>
+              </span>
             </b-form-row>
             <b-form-row v-else class="ml-1">
               <b-form-select v-model="form.filterId" :options="filterIdOptions" class="ml-2 inputSelect" />
@@ -92,6 +98,7 @@ import * as ChartHelper from '../../sub/helper/ChartHelper'
 // import * as mock from '../../assets/mock/mock'
 import validatemixin from '../../components/mixin/validatemixin.vue'
 import commonmixinVue from '../../components/mixin/commonmixin.vue'
+import controlmixinVue from '../../components/mixin/controlmixin.vue'
 
 export default {
   components: {
@@ -99,7 +106,7 @@ export default {
     alert,
     DatePicker,
   },
-  mixins: [validatemixin, commonmixinVue],
+  mixins: [validatemixin, commonmixinVue, controlmixinVue],
   data () {
     return {
       form: {

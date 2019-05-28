@@ -14,7 +14,13 @@
                 </span>
               </b-form-row>
               <b-form-row>
-                <v-select v-model="vueSelected.area" :options="areaOptions" :clearable="false" class="ml-2 vue-options" />
+                <span :title="vueSelectTitle(vueSelected.area)">
+                  <v-select v-model="vueSelected.area" :options="areaOptions" :clearable="false" class="ml-2 vue-options">
+                    <template slot="selected-option" slot-scope="option">
+                      {{ vueSelectCutOn(option) }}
+                    </template>
+                  </v-select>
+                </span>
               </b-form-row>
             </b-form-row>
           </b-form-group>
@@ -63,6 +69,7 @@ import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
 import ToolTip from '../../components/parts/toolTip.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
+import controlmixinVue from '../../components/mixin/controlmixin.vue'
 import cold from '../../assets/icon/cold.png'
 import hot from '../../assets/icon/hot.png'
 import comfort from '../../assets/icon/comfort.png'
@@ -73,7 +80,7 @@ export default {
     alert,
     ToolTip,
   },
-  mixins: [showmapmixin],
+  mixins: [showmapmixin, controlmixinVue],
   data() {
     return {
       items: ViewHelper.createBreadCrumbItems('main', 'thermohumidity'),

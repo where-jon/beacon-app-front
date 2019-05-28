@@ -7,7 +7,7 @@
       <b-form-row>
         <b-form @submit.prevent="onSubmit">
           <b-form-group :label="$t('label.deviceId')">
-            <v-select v-model="vueSelected.deviceId" :options="deviceIds" :disable="!isEditable" :clearable="false" class="vue-options" />
+            <v-select v-model="vueSelected.deviceId" :options="deviceIds" :disable="!isEditable" :clearable="false" class="vue-options-lg" />
           </b-form-group>
           <b-form-group :label="$t('label.ledColor')">
             <b-form-checkbox-group v-model="form.colors">
@@ -68,6 +68,7 @@
 <script>
 import { mapState } from 'vuex'
 import * as StateHelper from '../../sub/helper/StateHelper'
+import * as ParamHelper from '../../sub/helper/ParamHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
@@ -76,6 +77,7 @@ import { LED_COLORS, LED_BLINK_TYPES, SENSOR } from '../../sub/constant/Constant
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as Util from '../../sub/util/Util'
 import editmixinVue from '../../components/mixin/editmixin.vue'
+import controlmixinVue from '../../components/mixin/controlmixin.vue'
 
 export default {
   components: {
@@ -83,7 +85,7 @@ export default {
     alert,
   },
   mixins: [
-    editmixinVue,
+    editmixinVue, controlmixinVue
   ],
   data () {
     return {
@@ -155,7 +157,7 @@ export default {
           )
 
         if (deviceIds && deviceIds.length == 1) {
-          this.vueSelected.deviceId = StateHelper.getVueSelectData(deviceIds, null, true)
+          this.vueSelected.deviceId = ParamHelper.getVueSelectData(deviceIds, null, true)
         } else if(!Util.hasValue(deviceIds)) {
           this.noDevice = true
           this.showErrorModal({key: 'noLedDevice'})
