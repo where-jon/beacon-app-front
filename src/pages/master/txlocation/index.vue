@@ -18,7 +18,7 @@
           {{ $t('label.tx') }}
         </label>
         <b-form-row>
-          <v-select v-model="selectedTx_" :options="txOptions" :on-change="showTxOnMap" size="sm" class="mb-2 ml-2 mt-mobile vue-options">
+          <v-select v-model="selectedTx_" :options="txOptions" size="sm" class="mb-2 ml-2 mt-mobile vue-options" @input="showTxOnMap">
             <div slot="no-options">
               {{ $i18n.tnl('label.vSelectNoOptions') }}
             </div>

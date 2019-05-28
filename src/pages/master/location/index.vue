@@ -19,7 +19,7 @@
         </label>
         <b-form-select v-model="exbDisp" :options="exbDispOptions" :disabled="settingStart" class="mr-2 mb-2" @change="changeExbDisp" />
         <b-form-row>
-          <v-select v-model="selectedExb_" :options="exbOptions" :on-change="showExbOnMap" :disabled="settingStart" size="sm" class="mb-2 mt-mobile vue-options">
+          <v-select v-model="selectedExb_" :options="exbOptions" :disabled="settingStart" size="sm" class="mb-2 mt-mobile vue-options" @input="showExbOnMap">
             <div slot="no-options">
               {{ $i18n.tnl('label.vSelectNoOptions') }}
             </div>
