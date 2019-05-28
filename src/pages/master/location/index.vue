@@ -459,7 +459,6 @@ export default {
       this.isChangeArea = true
     },
     showExbOnMap(val, x = 50, y = 40) {
-      console.error(val)
       if (!val || val.value == null) {
         return
       }
