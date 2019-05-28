@@ -261,8 +261,7 @@ export default {
   },
   methods: {
     isScaleTime(scaleTime) {
-      // FIXME: _.some に変更する
-      return _.find(APP.STAY_SUM.SCALE_TIME, (time) => { return time == scaleTime})? true: false
+      return _.some(APP.STAY_SUM.SCALE_TIMES, (time) => { return time === scaleTime })
     },
     setSelectedGraphCategory(isSelected) {
       this.isCategorySelected? this.displayCheckList.area = []: this.displayCheckList.category = []
@@ -335,8 +334,7 @@ export default {
       if (!this.displayCheckList || !this.displayCheckList.stay) {
         return false
       }
-      // FIXME: _.someに変更する
-      return _.find(this.displayCheckList.stay, (stay) => {return stay === key})? true: false
+      return _.some(this.displayCheckList.stay, (stay) => { return stay === key })
     },
     async fetchData(payload) {
       // 何もしない
@@ -616,10 +614,8 @@ export default {
 
       // 取得する日付開始、終了日を設定する
       if (diff == 0) {
-        startDate = moment(param.date).startOf('months')
         endDate = moment().subtract(1, 'd')
       } else if (diff >= 0) {
-        startDate = moment(param.date).startOf('months')
         endDate = moment(param.date).endOf('months')
       } else {
         // 未来月の場合はエラーとする
@@ -628,15 +624,14 @@ export default {
         this.hideProgress()
         return
       }
+      startDate = moment(param.date).startOf('months')
 
       let csvList = []
       const groupBy = param.groupId? '&groupId=' + param.groupId: ''
-      // FIXME: カテゴリの絞り込み条件漏れ
-      let day = 0
-      //FIXME:  回す日数の配列を作って、mapで回すようにする
-      while (day <= endDate.diff(startDate, 'days')) {
-        const searchDate = moment(param.date).startOf('months').add(day++, 'day').format('YYYYMMDD')
-        const url = '/office/stayTime/sumByDay/' + searchDate + '/zoneCategory?from=' + APP.SUM_FROM + '&to=' + APP.SUM_TO + groupBy
+      const categoryBy = param.categoryId? '&categoryId=' + param.categoryId: ''
+      while (startDate.diff(endDate) <= 0) {
+        const searchDate = startDate.format('YYYYMMDD')
+        const url = '/office/stayTime/sumByDay/' + searchDate + '/zoneCategory?from=' + APP.SUM_FROM + '&to=' + APP.SUM_TO + groupBy + categoryBy
         const sumData = await HttpHelper.getAppService(url)
         if (_.isEmpty(sumData)) {
           console.log('searchDate: ' + searchDate)
@@ -650,6 +645,7 @@ export default {
         const dateList = (key == 'sum')? this.getCsvSumList(list): this.getCsvDetailList(list)
         getDataList(dateList)
         csvList = csvList.isEmpty? dateList: csvList.concat(dateList)
+        startDate.add(1, 'days')
       }
 
       const group = param.groupId? this.groups.find((val) => val.groupId == param.groupId): null
