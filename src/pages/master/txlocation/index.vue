@@ -25,7 +25,7 @@
         </label>
         <b-form-row>
           <span :title="vueSelectTitle(selectedTx_)">
-            <v-select v-model="selectedTx_" :options="txOptions" :on-change="showTxOnMap" size="sm" class="mb-2 ml-2 mt-mobile vue-options">
+            <v-select v-model="selectedTx_" :options="txOptions" size="sm" class="mb-2 ml-2 mt-mobile vue-options" @input="showTxOnMap">
               <template slot="selected-option" slot-scope="option">
                 {{ vueSelectCutOn(option) }}
               </template>
