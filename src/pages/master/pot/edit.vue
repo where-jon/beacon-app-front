@@ -42,11 +42,11 @@
             </b-form-group>
             <b-form-group v-show="isShown('POT.WITH', 'group')">
               <label v-t="'label.group'" />
-              <v-select v-model="vueSelected.group" :options="groupOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 vue-options" />
+              <v-select v-model="vueSelected.group" :options="groupOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 vue-options-lg" />
             </b-form-group>
             <b-form-group v-show="isShown('POT.WITH', 'category')">
               <label v-t="'label.category'" />
-              <v-select v-model="vueSelected.category" :options="categoryOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 vue-options" />
+              <v-select v-model="vueSelected.category" :options="categoryOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 vue-options-lg" />
             </b-form-group>
             <b-form-group v-show="isShown('POT.WITH', 'post')">
               <label v-t="'label.post'" />
@@ -84,7 +84,7 @@
             </b-form-group>
             <b-form-group v-show="editShowUser">
               <label v-t="'label.role'" />
-              <v-select v-model="vueSelected.role" :options="roleOptions" :clearable="false" :required="editShowUser" class="vue-options" />
+              <v-select v-model="vueSelected.role" :options="roleOptions" :clearable="false" :required="editShowUser" class="vue-options-lg" />
             </b-form-group>
             <b-form-group v-show="editShowUser">
               <label v-if="hasUserId" v-t="'label.passwordUpdate'" />
@@ -109,7 +109,9 @@ import { mapState } from 'vuex'
 import _ from 'lodash'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
+import * as ParamHelper from '../../../sub/helper/ParamHelper'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
+import controlmixinVue from '../../../components/mixin/controlmixin.vue'
 import * as HtmlUtil from '../../../sub/util/HtmlUtil'
 import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
@@ -126,7 +128,7 @@ export default {
     alert,
     chromeInput,
   },
-  mixins: [editmixinVue],
+  mixins: [editmixinVue, controlmixinVue],
   data() {
     return {
       name: 'pot',
@@ -251,13 +253,13 @@ export default {
       this.oldUserForm.roleId = potUser.user.roleId
       this.oldUserForm.email = potUser.user.email
       this.editShowUser = true
-      this.vueSelected.role = StateHelper.getVueSelectData(this.roleOptions, potUser.user.roleId)
+      this.vueSelected.role = ParamHelper.getVueSelectData(this.roleOptions, potUser.user.roleId)
     }
     else{
       this.editShowUser = false
       const maxRole = this.roleOptions.reduce((a, b) => a.value > b.value? a: b)
       this.userForm.roleId = maxRole? maxRole.value: null
-      this.vueSelected.role = StateHelper.getVueSelectData(this.roleOptions, maxRole? maxRole.value: null)
+      this.vueSelected.role = ParamHelper.getVueSelectData(this.roleOptions, maxRole? maxRole.value: null)
     }
   },
   async mounted() {
@@ -274,15 +276,15 @@ export default {
     this.form.potTxList.forEach((potTx, idx) => {
       this.changeTx(this.form.potTxList[idx].txId, idx)
     })
-    this.vueSelected.category = StateHelper.getVueSelectData(this.categoryOptions, this.form.categoryId)
-    this.vueSelected.group = StateHelper.getVueSelectData(this.groupOptions, this.form.groupId)
+    this.vueSelected.category = ParamHelper.getVueSelectData(this.categoryOptions, this.form.categoryId)
+    this.vueSelected.group = ParamHelper.getVueSelectData(this.groupOptions, this.form.groupId)
     HtmlUtil.setCustomValidationMessage()
   },
   methods: {
     initPotTxList(){
       this.vueSelected.txs = []
       this.form.potTxList = this.pot.potTxList? this.pot.potTxList.map((val, idx) => {
-        this.vueSelected.txs.push(StateHelper.getVueSelectData(this.getTxOptions(idx), val.potTxPK.txId))
+        this.vueSelected.txs.push(ParamHelper.getVueSelectData(this.getTxOptions(idx), val.potTxPK.txId))
         return {
           potId: val.potTxPK.potId,
           txId: val.potTxPK.txId,
@@ -290,7 +292,7 @@ export default {
       }): []
       const maxTx = APP.POT.MULTI_TX? APP.POT.TX_MAX: 1
       for(let cnt = this.form.potTxList.length; cnt < maxTx; cnt++){
-        this.vueSelected.txs.push(StateHelper.getVueSelectData(this.getTxOptions(cnt), null))
+        this.vueSelected.txs.push(ParamHelper.getVueSelectData(this.getTxOptions(cnt), null))
         this.form.potTxList.push({
           potId: null,
           txId: null
@@ -383,12 +385,12 @@ export default {
       this.btxIds = this.btxIds.map(() => null)
       this.minors = this.minors.map(() => null)
 
-      this.vueSelected.category = StateHelper.getVueSelectData(this.categoryOptions, null)
-      this.vueSelected.group = StateHelper.getVueSelectData(this.groupOptions, null)
+      this.vueSelected.category = ParamHelper.getVueSelectData(this.categoryOptions, null)
+      this.vueSelected.group = ParamHelper.getVueSelectData(this.groupOptions, null)
 
       const maxRole = this.roleOptions.reduce((a, b) => a.value > b.value? a: b)
       this.userForm.roleId = maxRole? maxRole.value: null
-      this.vueSelected.role = StateHelper.getVueSelectData(this.roleOptions, maxRole? maxRole.value: null)
+      this.vueSelected.role = ParamHelper.getVueSelectData(this.roleOptions, maxRole? maxRole.value: null)
 
       this.form.potCd = StateHelper.createMasterCd('pot', this.pots, this.pot)
       this.initPotTxList()

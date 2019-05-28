@@ -579,8 +579,3 @@ export const bulkErrorCheck = (entity, headerName, val, isNumberColumn) => {
   entity[`${headerName}Name`] = val
   return false
 }
-
-export const getVueSelectData = (selectOptions, selected, isFirst) => {
-  const ret = selectOptions.find((selectOption, idx) => isFirst && idx == 0 || selectOption.value == selected)
-  return ret? ret: null
-}

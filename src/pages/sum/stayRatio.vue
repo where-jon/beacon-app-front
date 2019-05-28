@@ -14,7 +14,13 @@
         <b-form-group>
           <b-form-row class="mb-3 mr-5">
             <label v-t="'label.group'" class="mr-2" />
-            <v-select v-model="vueSelected.group" :options="groupOptions" class="mr-2 inputSelect vue-options" />
+            <span :title="vueSelectTitle(vueSelected.group)">
+              <v-select v-model="vueSelected.group" :options="groupOptions" class="mr-2 inputSelect vue-options">
+                <template slot="selected-option" slot-scope="option">
+                  {{ vueSelectCutOn(option) }}
+                </template>
+              </v-select>
+            </span>
           </b-form-row>
         </b-form-group>
       </b-form>
@@ -55,6 +61,7 @@ import { APP } from '../../sub/constant/config'
 import moment from 'moment'
 import validatemixin from '../../components/mixin/validatemixin.vue'
 import commonmixinVue from '../../components/mixin/commonmixin.vue'
+import controlmixinVue from '../../components/mixin/controlmixin.vue'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
 import { SYSTEM_ZONE_CATEGORY_NAME } from '../../sub/constant/Constants'
 
@@ -64,7 +71,7 @@ export default {
     alert,
     DatePicker,
   },
-  mixins: [validatemixin, commonmixinVue],
+  mixins: [validatemixin, commonmixinVue, controlmixinVue],
   data () {
     return {
       form: {

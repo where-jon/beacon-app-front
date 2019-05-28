@@ -1,33 +1,53 @@
 <template>
   <div>
     <b-form inline @submit.prevent>
-      <b-form-group>
-        <b-form-row>
-          <b-form-row class="mb-3">
-            <label v-t="'label.area'" class="mr-2 mb-2" />
-            <v-select v-model="vueSelected.area" :options="areaOptions" :clearable="false" class="inputSelect vue-options" />
-          </b-form-row>
-        </b-form-row>
-      </b-form-group>          
-    </b-form>
-    <b-form inline @submit.prevent>
       <b-form-row>
         <b-form-group>
-          <b-form-row v-if="enableCategory" class="mb-3 mr-5">
-            <label v-t="'label.category'" class="mr-2" />
-            <v-select v-model="vueSelected.category" :options="getCategoryOptions(showCategoryTypes)" class="mr-2 inputSelect vue-options" />
+          <b-form-row class="mb-3">
+            <label v-t="'label.area'" class="mr-2 mb-2" />
+            <span :title="vueSelectTitle(vueSelected.area)">
+              <v-select v-model="vueSelected.area" :options="areaOptions" :clearable="false" class="inputSelect vue-options">
+                <template slot="selected-option" slot-scope="option">
+                  {{ vueSelectCutOn(option) }}
+                </template>
+              </v-select>
+            </span>
           </b-form-row>
         </b-form-group>
         <b-form-group>
-          <b-form-row v-if="enableGroup" class="mb-3 mr-5">
+          <b-form-row v-if="enableCategory" class="mb-3 mr-2">
+            <label v-t="'label.category'" class="mr-2" />
+            <span :title="vueSelectTitle(vueSelected.category)">
+              <v-select v-model="vueSelected.category" :options="getCategoryOptions(showCategoryTypes)" class="inputSelect vue-options">
+                <template slot="selected-option" slot-scope="option">
+                  {{ vueSelectCutOn(option) }}
+                </template>
+              </v-select>
+            </span>
+          </b-form-row>
+        </b-form-group>
+        <b-form-group>
+          <b-form-row v-if="enableGroup" class="mb-3 mr-2">
             <label v-t="'label.group'" class="mr-2" />
-            <v-select v-model="vueSelected.group" :options="groupOptions" class="mr-2 inputSelect vue-options" />
+            <span :title="vueSelectTitle(vueSelected.group)">
+              <v-select v-model="vueSelected.group" :options="groupOptions" class="inputSelect vue-options">
+                <template slot="selected-option" slot-scope="option">
+                  {{ vueSelectCutOn(option) }}
+                </template>
+              </v-select>
+            </span>
           </b-form-row>
         </b-form-group>
         <b-form-group>
           <b-form-row v-if="enableIndividual" class="mb-3 mr-2">
             <label v-t="'label.individual'" class="mr-2" />
-            <v-select v-model="vueSelected.pot" :options="potOptions" class="mr-2 inputSelect vue-options" />
+            <span :title="vueSelectTitle(vueSelected.pot)">
+              <v-select v-model="vueSelected.pot" :options="potOptions" class="inputSelect vue-options">
+                <template slot="selected-option" slot-scope="option">
+                  {{ vueSelectCutOn(option) }}
+                </template>
+              </v-select>
+            </span>
           </b-form-row>
         </b-form-group>
       </b-form-row>
@@ -62,17 +82,19 @@ import * as Util from '../../sub/util/Util'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
+import * as ParamHelper from '../../sub/helper/ParamHelper'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
 import { APP } from '../../sub/constant/config.js'
 import { CATEGORY } from '../../sub/constant/Constants'
 import validatemixin from '../mixin/validatemixin.vue'
 import commonmixinVue from '../mixin/commonmixin.vue'
+import controlmixinVue from '../mixin/controlmixin.vue'
 
 export default {
   components: {
     DatePicker,
   },
-  mixins: [validatemixin, commonmixinVue],
+  mixins: [validatemixin, commonmixinVue, controlmixinVue],
   props: {
     fromHeatmap: {
       type: Boolean,
@@ -174,7 +196,7 @@ export default {
     await StateHelper.load('pot')
     this.changeCategory()
     this.changeGroup()
-    this.vueSelected.area = StateHelper.getVueSelectData(this.areaOptions, null, true)
+    this.vueSelected.area = ParamHelper.getVueSelectData(this.areaOptions, null, true)
     const date = new Date()
     this.form.datetimeFrom = Util.getDatetime(date, {hours: -1})
     this.form.datetimeTo = Util.getDatetime(date)
@@ -191,12 +213,12 @@ export default {
     changeCategory(newVal = this.form.categoryId) {
       this.updatePotOption(newVal, this.form.groupId)
       const targetPot = this.potOptions.find(val => val.value == this.form.potId)
-      this.vueSelected.pot = StateHelper.getVueSelectData(this.potOptions, targetPot? targetPot.value: null, false)
+      this.vueSelected.pot = ParamHelper.getVueSelectData(this.potOptions, targetPot? targetPot.value: null, false)
     },
     changeGroup(newVal = this.form.groupId) {
       this.updatePotOption(this.form.categoryId, newVal)
       const targetPot = this.potOptions.find(val => val.value == this.form.potId)
-      this.vueSelected.pot = StateHelper.getVueSelectData(this.potOptions, targetPot? targetPot.value: null, false)
+      this.vueSelected.pot = ParamHelper.getVueSelectData(this.potOptions, targetPot? targetPot.value: null, false)
     },
     changeArea(areaId) {
       this.$emit('changeArea', areaId)

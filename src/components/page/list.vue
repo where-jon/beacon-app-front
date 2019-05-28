@@ -22,7 +22,13 @@
               <b-form-row v-if="item.show">
                 <label v-t="'label.' + item.key" for="item.key" class="mr-2" />
                 <b-input-group v-if="useVueSelect(item.key)">
-                  <v-select v-model="vueSelected[item.key]" :input-id="item.key" :options="item.options" class="extra-filter vue-options" />
+                  <span :title="vueSelectTitle(vueSelected[item.key])">
+                    <v-select v-model="vueSelected[item.key]" :input-id="item.key" :options="item.options" class="extra-filter vue-options">
+                      <template slot="selected-option" slot-scope="option">
+                        {{ vueSelectCutOn(option) }}
+                      </template>
+                    </v-select>
+                  </span>
                 </b-input-group>
                 <b-input-group v-else>
                   <b-form-select :id="item.key" v-model="filter.extra[item.key]" :options="item.options"
@@ -213,6 +219,7 @@ import * as Util from '../../sub/util/Util'
 import { getButtonTheme } from '../../sub/helper/ThemeHelper'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import commonmixinVue from '../mixin/commonmixin.vue'
+import controlmixinVue from '../mixin/controlmixin.vue'
 import { CATEGORY, SENSOR } from '../../sub/constant/Constants'
 import * as AuthHelper from '../../sub/helper/AuthHelper'
 import alert from '../parts/alert.vue'
@@ -223,7 +230,7 @@ export default {
     alert,
     settinginput,
   },
-  mixins: [commonmixinVue], // not work
+  mixins: [commonmixinVue, controlmixinVue], // not work
   props: {
     params: {
       type: Object,

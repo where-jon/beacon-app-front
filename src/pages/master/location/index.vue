@@ -8,7 +8,13 @@
         <label class="mr-2 mb-2">
           {{ $t('label.area') }}
         </label>
-        <v-select v-model="vueSelected.area" :options="areaOptions" :disabled="settingStart" class="mr-2 mb-2 vue-options" :clearable="false" />
+        <span :title="vueSelectTitle(vueSelected.area)">
+          <v-select v-model="vueSelected.area" :options="areaOptions" :disabled="settingStart" class="mr-2 mb-2 vue-options" :clearable="false">
+            <template slot="selected-option" slot-scope="option">
+              {{ vueSelectCutOn(option) }}
+            </template>
+          </v-select>
+        </span>
         <b-button v-t="'label.load'" :variant="getButtonTheme()" :disabled="settingStart || selectedArea == null" size="sm" class="mb-2" @click="changeArea" />
       </b-form-row>
     </b-form>
@@ -19,11 +25,16 @@
         </label>
         <b-form-select v-model="exbDisp" :options="exbDispOptions" :disabled="settingStart" class="mr-2 mb-2" @change="changeExbDisp" />
         <b-form-row>
-          <v-select v-model="selectedExb_" :options="exbOptions" :on-change="showExbOnMap" :disabled="settingStart" size="sm" class="mb-2 mt-mobile vue-options">
-            <div slot="no-options">
-              {{ $i18n.tnl('label.vSelectNoOptions') }}
-            </div>
-          </v-select>
+          <span :title="vueSelectTitle(selectedExb_)">
+            <v-select v-model="selectedExb_" :options="exbOptions" :on-change="showExbOnMap" :disabled="settingStart" size="sm" class="mb-2 mt-mobile vue-options">
+              <template slot="selected-option" slot-scope="option">
+                {{ vueSelectCutOn(option) }}
+              </template>
+              <div slot="no-options">
+                {{ $i18n.tnl('label.vSelectNoOptions') }}
+              </div>
+            </v-select>
+          </span>
           <b-button v-t="'label.bulkAdd'" :variant="getButtonTheme()" :disabled="settingStart" size="sm" class="mt-mobile mb-2" @click="bulkAdd" /> 
         </b-form-row>
       </b-form-row>
@@ -73,6 +84,7 @@ import { mapState } from 'vuex'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as HttpHelper from '../../../sub/helper/HttpHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
+import * as ParamHelper from '../../../sub/helper/ParamHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as Util from '../../../sub/util/Util'
 import { APP, DISP } from '../../../sub/constant/config'
@@ -82,13 +94,14 @@ import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
 import commonmixinVue from '../../../components/mixin/commonmixin.vue'
 import showmapmixin from '../../../components/mixin/showmapmixin.vue'
+import controlmixinVue from '../../../components/mixin/controlmixin.vue'
 
 export default {
   components: {
     breadcrumb,
     alert,
   },
-  mixins: [showmapmixin, commonmixinVue ],
+  mixins: [showmapmixin, commonmixinVue, controlmixinVue],
   data() {
     return {
       message: '',
@@ -151,12 +164,12 @@ export default {
     this.exbDisp = options[0].value
 
     if(this.pageSendParam){
-      this.vueSelected.area = StateHelper.getVueSelectData(this.areaOptions, this.pageSendParam.areaId)
+      this.vueSelected.area = ParamHelper.getVueSelectData(this.areaOptions, this.pageSendParam.areaId)
       this.changeArea()
       this.replaceAS({pageSendParam: null})
     }
     else{
-      this.vueSelected.area = StateHelper.getVueSelectData(this.areaOptions, null, true)
+      this.vueSelected.area = ParamHelper.getVueSelectData(this.areaOptions, null, true)
     }
     await this.fetchData()
   },
@@ -446,6 +459,7 @@ export default {
       this.isChangeArea = true
     },
     showExbOnMap(val, x = 50, y = 40) {
+      console.error(val)
       if (!val || val.value == null) {
         return
       }
