@@ -23,8 +23,8 @@
           </b-form-radio>
         </b-form-radio-group>
         <hr>
-        <p class="itemHeader">
-          {{ $t('label.list') }}
+        <p class="itemTitle">
+          {{ $t('label.displayColumn') }}
         </p>
         <b-form-checkbox-group id="checkbox-group-2" v-model="displayCheckList.stay" name="flavour-2">
           <b-form-checkbox :value="'stay'">
@@ -719,10 +719,6 @@ export default {
   position: relative;
   display: inline-block;
   box-sizing:border-box;
-}
-.itemHeader {
-  font-weight: bold;
-  font-size: 16px;
 }
 .itemTitle {
   font-weight: bold;
