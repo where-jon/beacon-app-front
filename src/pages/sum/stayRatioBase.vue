@@ -23,6 +23,12 @@
           </b-form-radio>
         </b-form-radio-group>
         <hr>
+        <b-form-checkbox-group id="checkbox-group-2" v-model="displayCheckList.group" name="flavour-2">
+          <b-form-checkbox :value="'groupName'">
+            {{ $t('label.groupName') }}
+          </b-form-checkbox>
+        </b-form-checkbox-group>
+        <hr>
         <p class="itemTitle">
           {{ $t('label.displayColumn') }}
         </p>
@@ -184,6 +190,7 @@ export default {
         stay: ['stay', 'lost'],
         category: [],
         area: [],
+        grou: [],
       },
       name: '',
       viewList: [],
@@ -271,9 +278,12 @@ export default {
       let fields = [
         {key: 'date', sortable: false, label: this.$i18n.tnl('label.date')},
         {key: 'name', sortable: true, label: this.$i18n.tnl('label.potName')},
-        {key: 'groupName', sortable: true, label: this.$i18n.tnl('label.groupName')},
-        {key: 'graph', sortable: false, label: this.$i18n.tnl('label.graph'), thStyle: {height: '50px !important', width:'400px !important'} },
       ]
+      // グループ名
+      this.isDisplayGroupColumn('groupName')? fields.push({key: 'groupName', sortable: true, label: this.$i18n.tnl('label.groupName')}): null
+
+      // 滞在率グラフ（表示必須）
+      fields.push({key: 'graph', sortable: false, label: this.$i18n.tnl('label.graph'), thStyle: {height: '50px !important', width:'400px !important'} })
 
       // 選択されているカテゴリを追加する
       let selectedCategories = _.filter(this.categories, (category) => {
@@ -329,6 +339,12 @@ export default {
         return false
       }
       return _.some(this.displayCheckList.stay, (stay) => { return stay === key })
+    },
+    isDisplayGroupColumn(key) {
+      if (!this.displayCheckList || !this.displayCheckList.group) {
+        return false
+      }
+      return _.some(this.displayCheckList.group, (group) => { return group === key })
     },
     async fetchData(payload) {
       // 何もしない
