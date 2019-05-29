@@ -363,7 +363,7 @@ export default {
       param.date = moment(param.date).format('YYYYMMDD')
       const groupBy = param.groupId? '&groupId=' + param.groupId: ''
       const categoryBy = param.categoryId? '&categoryId=' + param.categoryId: ''
-      const url = '/office/stayTime/sumByDay/' + param.date + '/zoneCategory?from=' + APP.SUM_FROM + '&to=' + APP.SUM_TO + groupBy + categoryBy
+      const url = '/office/stayTime/sumByDay/' + param.date + '/zoneCategory?from=' + APP.STAY_SUM.FROM + '&to=' + APP.STAY_SUM.TO + groupBy + categoryBy
       const sumData = await HttpHelper.getAppService(url)
       if (_.isEmpty(sumData)) {
         this.message = this.$i18n.t('message.listEmpty')
@@ -464,8 +464,8 @@ export default {
           graph: graphList,
           stayTime: Util.convertToTime(stayTime) + ' (' + Util.getRatio(stayTime) + '%)', 
           lostTime: Util.convertToTime(lostTime) + ' (' + Util.getRatio(lostTime) + '%)', 
-          baseTimeFrom: this.getDateStrFromSetting(APP.SUM_FROM),
-          baseTimeTo: this.getDateStrFromSetting(APP.SUM_TO),
+          baseTimeFrom: this.getDateStrFromSetting(APP.STAY_SUM.FROM),
+          baseTimeTo: this.getDateStrFromSetting(APP.STAY_SUM.TO),
           graphTimeRatio: graphTimeRatio,
         }
 
@@ -484,9 +484,9 @@ export default {
     },
     getTimeRatioData() {
       // 開始から終了までの配列を作る
-      const fromHour = Math.floor(APP.SUM_FROM / 100) // 分は切る
-      const toHour = Math.floor(APP.SUM_TO / 100)
-      const toHourMinute = toHour * 60 + APP.SUM_TO % 100
+      const fromHour = Math.floor(APP.STAY_SUM.FROM / 100) // 分は切る
+      const toHour = Math.floor(APP.STAY_SUM.TO / 100)
+      const toHourMinute = toHour * 60 + APP.STAY_SUM.TO % 100
       const total = toHourMinute - fromHour * 60
       let times = []
       let timesMinute = []
@@ -548,8 +548,8 @@ export default {
       })
     },
     getCsvDetailList(detailList) {
-      const fromSeconds = (Math.floor(APP.SUM_FROM / 100) * 60 + APP.SUM_FROM % 100) * 60
-      const toSeconds = (Math.floor(APP.SUM_TO / 100) * 60 + APP.SUM_TO % 100) * 60
+      const fromSeconds = (Math.floor(APP.STAY_SUM.FROM / 100) * 60 + APP.STAY_SUM.FROM % 100) * 60
+      const toSeconds = (Math.floor(APP.STAY_SUM.TO / 100) * 60 + APP.STAY_SUM.TO % 100) * 60
       // キーの一致するデータのみのリストを作成。その際、％データがある場合は分ける
       const result = detailList.map((viewData) => {
         this.setFromToSettingDiff()
@@ -631,7 +631,7 @@ export default {
       const categoryBy = param.categoryId? '&categoryId=' + param.categoryId: ''
       while (startDate.diff(endDate) <= 0) {
         const searchDate = startDate.format('YYYYMMDD')
-        const url = '/office/stayTime/sumByDay/' + searchDate + '/zoneCategory?from=' + APP.SUM_FROM + '&to=' + APP.SUM_TO + groupBy + categoryBy
+        const url = '/office/stayTime/sumByDay/' + searchDate + '/zoneCategory?from=' + APP.STAY_SUM.FROM + '&to=' + APP.STAY_SUM.TO + groupBy + categoryBy
         const sumData = await HttpHelper.getAppService(url)
         if (_.isEmpty(sumData)) {
           console.log('searchDate: ' + searchDate)
@@ -669,8 +669,8 @@ export default {
       }
     },
     setFromToSettingDiff() {
-      const fromMinute = Math.floor(APP.SUM_FROM / 100) * 60 + APP.SUM_FROM % 100
-      const toMinute = Math.floor(APP.SUM_TO / 100) * 60 + APP.SUM_TO % 100
+      const fromMinute = Math.floor(APP.STAY_SUM.FROM / 100) * 60 + APP.STAY_SUM.FROM % 100
+      const toMinute = Math.floor(APP.STAY_SUM.TO / 100) * 60 + APP.STAY_SUM.TO % 100
       this.fromToSettingDiff = (toMinute - fromMinute) * 60
     },
   }
