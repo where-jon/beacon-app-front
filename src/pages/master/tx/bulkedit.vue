@@ -85,7 +85,7 @@ export default {
       return dummyKey
     },
     setParamLocation(entity, headerName, val, dummyKey){
-      if(!APP.TX_WITH_LOCATION){
+      if(!Util.includesIgnoreCase(APP.TX.WITH, 'location')){
         return dummyKey
       }
       if(!entity.location){
@@ -111,7 +111,7 @@ export default {
       return dummyKey
     },
     resetId(entity, dummyKey){
-      if(APP.TX_BTX_MINOR == 'minor'){
+      if(APP.TX.BTX_MINOR == 'minor'){
         entity.btxId = entity.minor
         if(Util.hasValue(entity.minorName) || 65535 < entity.minor){
           entity.ignoreBtxId = IGNORE.ON
@@ -161,7 +161,7 @@ export default {
           return dummyKey
         }
         if(Util.equalsAny(headerName, NUMBER_TYPE_LIST)){
-          BulkHelper.setNumberKey(entity, headerName, val, {isNullable: !APP.TX_MAJOR_REQUIRED && headerName == 'major'})
+          BulkHelper.setNumberKey(entity, headerName, val, {isNullable: !APP.TX.MAJOR_REQUIRED && headerName == 'major'})
           return dummyKey
         }
 

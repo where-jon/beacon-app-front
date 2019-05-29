@@ -13,6 +13,7 @@ import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as BulkHelper from '../../../sub/helper/BulkHelper'
+import * as StateHelper from '../../../sub/helper/StateHelper'
 
 export default {
   components: {
@@ -26,6 +27,7 @@ export default {
       backPath: '/master/area',
       appServicePath: '/core/area',
       items: ViewHelper.createBreadCrumbItems('master', {text: 'area', href: '/master/area'}, 'bulkRegister'),
+      masterCd: null,
     }
   },
   computed: {
@@ -33,7 +35,18 @@ export default {
       'area', 'areas'
     ]),
   },
+  async created() {
+    await StateHelper.load('area')
+    this.masterCd = StateHelper.createMasterCd('area', this.areas, null)
+  },
   methods: {
+    resetData(entity, dummyKey){
+      if(!Util.hasValue(entity.areaCd)){
+        entity.areaCd = this.masterCd
+        this.masterCd = StateHelper.createMasterCd('area', [{areaCd: this.masterCd}], null)
+      }
+      return dummyKey
+    },
     async save(bulkSaveFunc) {
       const NUMBER_TYPE_LIST = ['areaId']
       await bulkSaveFunc(BULK.PRIMARY_KEY, null, null, (entity, headerName, val, dummyKey) => {
@@ -51,7 +64,7 @@ export default {
         }
         entity[headerName] = val
         return dummyKey
-      })
+      }, (entity, dummyKey) => this.resetData(entity, dummyKey))
     },
   }
 }

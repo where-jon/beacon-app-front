@@ -7,18 +7,6 @@ export const setApp = (pi18n) => {
   i18n = pi18n
 }
 
-// export const convertCategory = (str) => {
-//   if(!Util.hasValue(str)){
-//     return str
-//   }
-//   const ret = []
-//   const optionsList = i18n.tnl('config.OPTIONS.SETTING_CATEGORY')
-//   str.split(',').forEach(src => {
-//     ret.push(Util.getValue(optionsList, src.trim(), ''))
-//   })
-//   return ret.map(val => val)
-// }
-
 export const convertTitle = (str) => {
   if(!Util.hasValue(str)){
     return str
@@ -56,7 +44,18 @@ export const adjustValType = (valType) => {
   return SETTING.STRING
 }
 
-export const getDefaultValue = (key) => {
+export const getDefaultValue = (key, isTenant = false) => {
+  if(!isTenant){
+    const tenantSettingList = Util.getValue(
+      JSON.parse(window.localStorage.getItem('login')),
+      'currentTenant.settingList',
+      []
+    )
+    const tenantDefault = tenantSettingList.find(setting => setting.key == key)
+    if(tenantDefault){
+      return tenantDefault.value
+    }
+  }
   const defaultConfig = JSON.parse(window.localStorage.getItem('defaultConfig'))
   if(!Util.hasValue(defaultConfig)){
     return null
@@ -73,16 +72,16 @@ export const getDefaultValType = (key) => {
   if(type != null && SETTING.VALUES.includes(type)){
     return type
   }
-  const defaultValue = getDefaultValue(key)
+  const defaultValue = getDefaultValue(key, true)
   if(defaultValue != null && typeof defaultValue != 'object'){
     return typeof defaultValue
   }
   return SETTING.STRING
 }
 
-export const createSetting = (setting, option) => {
+export const createSetting = (setting, isTenant, option) => {
   const valType = adjustValType(setting.valType)
-  const defaultVal = getDefaultValue(setting.key)
+  const defaultVal = getDefaultValue(setting.key, isTenant)
   const ret = {
     ...setting,
     valType: valType,
@@ -97,22 +96,22 @@ export const createSetting = (setting, option) => {
   return ret
 }
 
-export const getI18ConfigInner = (config, parentKey = '', list = []) => {
+export const getI18ConfigInner = (config, isTenant, parentKey = '', list = []) => {
   Object.keys(config).forEach(configKey => {
     const data = config[configKey]
     const key = parentKey + configKey
     if(typeof data == 'object' && !Util.isArray(data)){
-      getI18ConfigInner(data, key + '.', list)
+      getI18ConfigInner(data, isTenant, key + '.', list)
       return
     }
     const setting = {key: key, valType: getDefaultValType(key)}
     const params = data.split('::')
-    list.push(createSetting(setting, {keyName: params[0], title: convertTitle(params[1]), isParent: false}))
+    list.push(createSetting(setting, isTenant, {keyName: params[0], title: convertTitle(params[1]), isParent: false}))
   })
   return list
 }
 
-export const getI18Config = () => {
+export const getI18Config = (isTenant) => {
   const configObjs = i18n.tnl('config')
   if(!Util.hasValue(configObjs)){
     return []
@@ -124,7 +123,7 @@ export const getI18Config = () => {
     }
     ret[configKey] = configObjs[configKey]
   })
-  return getI18ConfigInner(ret)
+  return getI18ConfigInner(ret, isTenant)
 }
 
 export const mergeSettings = (settings) => {
@@ -134,24 +133,24 @@ export const mergeSettings = (settings) => {
     if(categoryKey == 'OTHER'){
       return
     }
-    ret.push({key: categoryObjs[categoryKey], isParent: true, _rowVariant: 'secondary'})
+    ret.push({key: categoryObjs[categoryKey], isParent: true, categoryKey: categoryKey, _rowVariant: 'secondary'})
     const regExp = new RegExp('^[^.]*\\.' + categoryKey + '(\\..*)?$', 'g')
     settings.forEach(setting => {
       if(setting.key.match(regExp)){
-        ret.push(setting)
+        ret.push({...setting, categoryKey: categoryKey})
       }
     })
     settings = settings.filter(setting => !setting.key.match(regExp))
   })
   if(settings.length != 0){
-    ret.push({key: categoryObjs['OTHER'], isParent: true, _rowVariant: 'secondary'})
-    settings.forEach(setting => ret.push(setting))
+    ret.push({key: categoryObjs['OTHER'], isParent: true,  categoryKey: 'OTHER', _rowVariant: 'secondary'})
+    settings.forEach(setting => ret.push({...setting, categoryKey: 'OTHER'}))
   }
   return ret
 }
 
-export const createSettingList = (settings) => {
-  const i18ConfigList = getI18Config()
+export const createSettingList = (settings, isTenant) => {
+  const i18ConfigList = getI18Config(isTenant)
   i18ConfigList.forEach(i18Config => {
     const targetSetting = settings.find(setting => setting.key == i18Config.key)
     if(!targetSetting){
@@ -161,7 +160,7 @@ export const createSettingList = (settings) => {
     settings = settings.filter(setting => setting.key != i18Config.key)
   })
   settings.forEach(setting => {
-    i18ConfigList.push(createSetting(setting, {isParent: false}))
+    i18ConfigList.push(createSetting(setting, isTenant, {isParent: false}))
   })
   return mergeSettings(i18ConfigList)
 }

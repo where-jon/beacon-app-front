@@ -15,9 +15,9 @@ export default async (context, inject) => {
   try {
     const login = JSON.parse(window.localStorage.getItem('login'))
     HttpHelper.setApiKey(login && login.apiKey? login.apiKey: null)
-    let setting = await HttpHelper.getAppService('/meta/setting/wsByTenant/' + AuthHelper.getTenantCd('default'), {}, true)
+    let setting = await HttpHelper.getAppService('/meta/setting/wsByTenant/' + AuthHelper.getTenantCd('default') + '/' + AuthHelper.getRegionId(), {}, true)
     if (setting == null) {
-      setting = await HttpHelper.getAppServiceNoCrd('/meta/setting/byTenant/' + AuthHelper.getTenantCd('default'))
+      setting = await HttpHelper.getAppServiceNoCrd('/meta/setting/byTenant/' + AuthHelper.getTenantCd('default') + '/' + AuthHelper.getRegionId())
     }
     ConfigHelper.applyAppServiceSetting(setting)  
   }

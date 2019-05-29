@@ -2,12 +2,13 @@
 <script>
 import { mapState, mapMutations, mapActions } from 'vuex'
 import { Stage, Bitmap, Touch } from '@createjs/easeljs/dist/easeljs.module'
-import { APP, DISP, DEV } from '../../sub/constant/config.js'
+import { APP, DISP, DEV, APP_SERVICE, EXCLOUD } from '../../sub/constant/config.js'
 import { SHAPE, SENSOR, POSITION, TX } from '../../sub/constant/Constants'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as PositionHelper from '../../sub/helper/PositionHelper'
 import * as SensorHelper from '../../sub/helper/SensorHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
+import * as ParamHelper from '../../sub/helper/ParamHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as IconHelper from '../../sub/helper/IconHelper'
 import * as Util from '../../sub/util/Util'
@@ -39,9 +40,16 @@ export default {
         bgColor: DISP.TX.BGCOLOR,
         shape: SHAPE.CIRCLE,
       },
+      vueSelected: {
+        area: null,
+        group: null,
+        category: null,
+        tx: null,
+      },
       oldSelectedArea: null,
       areaOptions: [],
       loadComplete: false,
+      thumbnailUrl: APP_SERVICE.BASE_URL + EXCLOUD.POT_THUMBNAIL_URL,
     }
   },
   computed: {
@@ -74,6 +82,7 @@ export default {
   async created() {
     await StateHelper.load('area')
     this.areaOptions = StateHelper.getOptionsFromState('area', false, true)
+    this.vueSelected.area = this.getInitAreaOption(true)
     this.selectedArea = this.getInitAreaOption()
     await StateHelper.loadAreaImage(this.selectedArea)
     this.loadComplete = true
@@ -87,6 +96,7 @@ export default {
           clearTimeout(timer)
           return
         }
+        this.icons = {} // リサイズ時にアイコンキャッシュをクリア
         if (timer > 0) {
           clearTimeout(timer)
         } 
@@ -135,7 +145,10 @@ export default {
     ...mapMutations('main', [
       'replaceMain', 
     ]),
-    getInitAreaOption(){
+    getInitAreaOption(isVueSelect){
+      if(isVueSelect){
+        return ParamHelper.getVueSelectData(this.areaOptions, this.selectedArea, !Util.hasValue(this.selectedArea))
+      }
       return this.selectedArea? this.selectedArea : Util.hasValue(this.areaOptions)? this.areaOptions[0].value: null
     },
     mapImage() {
@@ -172,7 +185,7 @@ export default {
       }
       if(!this.loadComplete){
         setTimeout(() => {
-          this.showMapImage(disableErrorPopup)
+          this.showMapImage && this.showMapImage(disableErrorPopup)
         }, 200)
         return
       }
@@ -198,9 +211,9 @@ export default {
         }
         return
       }
-
       const bg = new Image()
-      bg.src = this.mapImage()
+      const url = window.URL || window.webkitURL
+      bg.src = url.createObjectURL(new Blob([this.mapImage()]))
       bg.onload = (evt) => {
         this.drawMapImage(bg)
         if (callback) {
@@ -298,14 +311,15 @@ export default {
     },
     async changeArea(val) {
       if (val) {
+        this.icons = {} // キャッシュをクリア
         await StateHelper.loadAreaImage(val)
         const area = _.find(this.areas, (area) => {
           return area.areaId == val
         })
         if (this.getMapImage(area.areaId)) {
-          this.reset()
+          this.reset && this.reset()
           this.selectedArea = val
-          await this.fetchData()
+          this.fetchData && await this.fetchData()
         }
         else {
           Util.debug('No mapImage in changeArea.')
@@ -511,6 +525,7 @@ export default {
       })
 
       const balloonClass = !btxId ? '': 'balloon' + (isAbove ? '-b': '-u')
+
       const selectedTx = {
         btxId,
         minor: 'minor:' + btxId,
@@ -526,7 +541,7 @@ export default {
         name: tx.potName ? tx.potName : '',
         tel: tx.extValue ? tx.extValue.tel ? tx.extValue.tel : '': '',
         timestamp: position ? this.getFinalReceiveTime(position.timestamp) : '',
-        thumbnail: tx.thumbnail ? tx.thumbnail : '',
+        thumbnail: tx.existThumbnail ? this.thumbnailUrl.replace('{id}', tx.potId) : '',
         category: tx.categoryName? tx.categoryName : '',
         group: tx.groupName? tx.groupName : '',
         bgColor: '#' + display.bgColor,

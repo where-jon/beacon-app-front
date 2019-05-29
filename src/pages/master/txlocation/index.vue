@@ -8,7 +8,13 @@
         <label class="mr-2 mb-2">
           {{ $t('label.area') }}
         </label>
-        <b-form-select v-model="selectedArea" :options="areaOptions" class="mr-2 mb-2 areaOptions" />
+        <span :title="vueSelectTitle(vueSelected.area)">
+          <v-select v-model="vueSelected.area" :options="areaOptions" class="mr-2 mb-2 vue-options" :clearable="false">
+            <template slot="selected-option" slot-scope="option">
+              {{ vueSelectCutOn(option) }}
+            </template>
+          </v-select>
+        </span>
         <b-button v-t="'label.load'" :variant="getButtonTheme()" size="sm" class="mb-2" @click="changeArea" />
       </b-form-row>
     </b-form>
@@ -18,11 +24,16 @@
           {{ $t('label.tx') }}
         </label>
         <b-form-row>
-          <v-select v-model="selectedTx_" :options="txOptions" :on-change="showTxOnMap" size="sm" class="mb-2 mt-mobile txOptions">
-            <div slot="no-options">
-              {{ $i18n.tnl('label.vSelectNoOptions') }}
-            </div>
-          </v-select>
+          <span :title="vueSelectTitle(selectedTx_)">
+            <v-select v-model="selectedTx_" :options="txOptions" size="sm" class="mb-2 ml-2 mt-mobile vue-options" @input="showTxOnMap">
+              <template slot="selected-option" slot-scope="option">
+                {{ vueSelectCutOn(option) }}
+              </template>
+              <div slot="no-options">
+                {{ $i18n.tnl('label.vSelectNoOptions') }}
+              </div>
+            </v-select>
+          </span>
           <b-button v-t="'label.bulkAdd'" :variant="getButtonTheme()" size="sm" class="mt-mobile mb-2" @click="bulkAdd" /> 
           <b-button v-t="'label.save'" :variant="getButtonTheme()" :disabled="!isChanged" size="sm" class="mt-mobile ml-2 mb-2" @click="save" /> 
         </b-form-row>
@@ -46,6 +57,7 @@ import { mapState } from 'vuex'
 // import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as HttpHelper from '../../../sub/helper/HttpHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
+import * as ParamHelper from '../../../sub/helper/ParamHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as Util from '../../../sub/util/Util'
 import { DISP } from '../../../sub/constant/config'
@@ -55,13 +67,14 @@ import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
 import commonmixinVue from '../../../components/mixin/commonmixin.vue'
 import showmapmixin from '../../../components/mixin/showmapmixin.vue'
+import controlmixinVue from '../../../components/mixin/controlmixin.vue'
 
 export default {
   components: {
     breadcrumb,
     alert,
   },
-  mixins: [showmapmixin, commonmixinVue ],
+  mixins: [showmapmixin, commonmixinVue, controlmixinVue],
   data() {
     return {
       message: '',
@@ -76,6 +89,9 @@ export default {
       toggleCallBack: () => {
         this.keepTxPosition = true
       },
+      vueSelected: {
+        area: null,
+      },
       ICON_ARROW_WIDTH: DISP.TX_LOC.SIZE.W/3,
       ICON_ARROW_HEIGHT: DISP.TX_LOC.SIZE.H/3,
       noImageErrorKey: 'noMapImage',
@@ -87,16 +103,24 @@ export default {
       'pageSendParam',
     ]),
   },
-  mounted() {
-    this.fetchData()
+  watch: {
+    'vueSelected.area': {
+      handler: function(newVal, oldVal){
+        this.selectedArea = Util.getValue(newVal, 'value', null)
+      },
+      deep: true,
+    },
+  },
+  async mounted() {
     if(this.pageSendParam){
-      this.selectedArea = this.pageSendParam.areaId
+      this.vueSelected.area = ParamHelper.getVueSelectData(this.areaOptions, this.pageSendParam.areaId)
       this.changeArea()
       this.replaceAS({pageSendParam: null})
     }
     else{
-      this.selectedArea = null
+      this.vueSelected.area = ParamHelper.getVueSelectData(this.areaOptions, null, true)
     }
+    await this.fetchData()
   },
   beforeDestroy() {
     this.selectedArea = null
@@ -418,6 +442,7 @@ export default {
 
 <style scoped lang="scss">
 @import "../../../sub/constant/config.scss";
+@import "../../../sub/constant/vue.scss";
 
 ::-webkit-scrollbar { 
   display: none; 
@@ -449,10 +474,6 @@ export default {
 
 .ratioInput {
   width: 75px;
-}
-
-.txOptions {
-  width: 140px;
 }
 
 .blink {

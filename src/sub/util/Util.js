@@ -25,7 +25,12 @@ export const getByteLength = (str) => encodeURI(str == null? '': str).replace(/%
 
 export const numberRange = (start, end) => new Array(end - start + 1).fill().map((d, i) => {return {key: i + start}})
 
-export const includesIgnoreCase = (ary, col) => ary.find(val => val.toLowerCase() == col.toLowerCase())? true: false
+export const includesIgnoreCase = (ary, col) => {
+  if (!ary || ary.length < 1) {
+    return false
+  }
+  return ary.find(val => val.toLowerCase() == col.toLowerCase())? true: false
+}
 
 export const merge = (dest, src, excludeKeys) => {
   const temp = Object.assign({}, src)
@@ -128,6 +133,43 @@ export const cutOnLongByte = (val, max, addLast = true) => {
     return `${val.substr(0, cnt)}${addLast? '...': ''}`
   }
   return val
+}
+
+export const cutOnLongWidth = (val, max, addLast = true, style = {}) => {
+  if (!val || !max || typeof val != 'string') {
+    return val
+  }
+  const element = document.createElement('span')
+  element.style['white-space'] = 'nowrap'
+  element.style.visibility = 'hidden'
+  if(style){
+    Object.keys(style).forEach(key => {
+      element.style[key] = style[key]
+    })
+  }
+  document.body.appendChild(element)
+
+  element.innerHTML = val
+  if(element.offsetWidth + 1 < max){
+    document.body.removeChild(element)
+    return val
+  }
+
+  const parts = val.split('')
+  const last = addLast? '...': ''
+
+  let ret = ''
+  for(let idx = 0; idx < parts.length; idx++){
+    const str = ret + parts[idx] + last
+    element.innerHTML = str
+    const width = element.offsetWidth + 1
+    if(max <= width){
+      break
+    }
+    ret += parts[idx]
+  }
+  document.body.removeChild(element)
+  return ret + last
 }
 
 export const luminance = (hex) => {

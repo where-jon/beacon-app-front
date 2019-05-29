@@ -30,7 +30,6 @@ import drawMixin from '../../components/mixin/drawmixin.vue'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import * as Util from '../../sub/util/Util'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
-import { EventBus } from '../../sub/helper/EventHelper'
 
 export default {
   components: {
@@ -64,6 +63,7 @@ export default {
     async fetchData(payload){
       try {
         this.showProgress()
+        this.replace({showAlert: false})
         this.showMapImageDef(() => {
           if (this.container) {
             this.container.removeAllChildren()
@@ -79,10 +79,6 @@ export default {
           this.stage.addChild(this.container)
           this.stage.update()
           this.forceUpdateRealWidth()
-          if (this.shownParam) {
-            this.display(this.shownParam)
-            EventBus.$emit('onDisplay')
-          }
         })
         if (payload && payload.done) {
           payload.done()

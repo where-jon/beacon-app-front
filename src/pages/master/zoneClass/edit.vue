@@ -22,7 +22,7 @@
           </b-form-row>
           <b-form-row>
             <b-col sm="5">
-              <b-form-select v-model="form.areaId" :options="areaNames" required />
+              <v-select v-model="vueSelected.area" :options="areaNames" :disabled="!isEditable" :clearable="false" class="vue-options-lg" />
             </b-col>
           </b-form-row>
           <b-form-row>
@@ -30,7 +30,7 @@
           </b-form-row>
           <b-form-row>
             <b-col sm="5">
-              <b-form-select v-model="form.categoryId" :options="categoryNames" />
+              <v-select v-model="vueSelected.category" :options="categoryNames" :disabled="!isEditable" class="vue-options-lg" />
             </b-col>
           </b-form-row>
         </b-form-group>
@@ -48,6 +48,7 @@
 <script>
 import { mapState } from 'vuex'
 import * as StateHelper from '../../../sub/helper/StateHelper'
+import * as ParamHelper from '../../../sub/helper/ParamHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
@@ -58,13 +59,14 @@ import alert from '../../../components/parts/alert.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import { CATEGORY, ZONE } from '../../../sub/constant/Constants'
 import showmapmixin from '../../../components/mixin/showmapmixin.vue'
+import controlmixinVue from '../../../components/mixin/controlmixin.vue'
 
 export default {
   components: {
     breadcrumb,
     alert,
   },
-  mixins: [editmixinVue, showmapmixin],
+  mixins: [editmixinVue, showmapmixin, controlmixinVue],
   data() {
     return {
       name: 'zone',
@@ -72,6 +74,10 @@ export default {
       backPath: '/master/zoneClass',
       appServicePath: '/core/zone',
       form: ViewHelper.extract(this.$store.state.app_service.zone, ['zoneId', 'zoneName', 'areaId', 'locationZoneList.0.locationZonePK.locationId', 'zoneCategoryList.0.zoneCategoryPK.categoryId']),
+      vueSelected: {
+        area: null,
+        category: null,
+      },
       areaNames: [],
       categoryNames: [],
       isEnableNameText: true,
@@ -89,9 +95,25 @@ export default {
       'zone',
     ]),
   },
-  created() {
-    this.initAreaNames()
-    this.initCategoryNames()
+  watch: {
+    'vueSelected.area': {
+      handler: function(newVal, oldVal){
+        this.form.areaId = Util.getValue(newVal, 'value', null)
+      },
+      deep: true,
+    },
+    'vueSelected.category': {
+      handler: function(newVal, oldVal){
+        this.form.categoryId = Util.getValue(newVal, 'value', null)
+      },
+      deep: true,
+    },
+  },
+  async created() {
+    await this.initAreaNames()
+    await this.initCategoryNames()
+    this.vueSelected.area = ParamHelper.getVueSelectData(this.areaNames, this.form.areaId, !Util.hasValue(this.form.areaId))
+    this.vueSelected.category = ParamHelper.getVueSelectData(this.categoryNames, this.form.categoryId)
   },
   mounted(){
     HtmlUtil.setCustomValidationMessage()
@@ -108,9 +130,13 @@ export default {
       await StateHelper.load('category')
       this.categoryNames = StateHelper.getOptionsFromState('category',
         category => StateHelper.getDispCategoryName(category),
-        false, 
+        true, 
         category => !CATEGORY.POT_AVAILABLE.includes(category.categoryType)
       )
+    },
+    async beforeReload(){
+      this.vueSelected.area = ParamHelper.getVueSelectData(this.areaNames, null, true)
+      this.vueSelected.category = ParamHelper.getVueSelectData(this.categoryNames, null)
     },
     async save() {
       const zoneId = Util.hasValue(this.form.zoneId)? this.form.zoneId: -1
@@ -129,7 +155,8 @@ export default {
 </script>
 
 <style scoped lang="scss">
-  label.control-label {
-    padding-top: 7px;
-  }
+@import "../../../sub/constant/vue.scss";
+label.control-label {
+  padding-top: 7px;
+}
 </style>

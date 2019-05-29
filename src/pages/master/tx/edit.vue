@@ -16,12 +16,16 @@
               <b-form-select v-model="form.sensorId" :options="sensorOptionsTx" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-3 col-4" />
             </b-form-group>
             <b-form-group v-show="isShown('TX.WITH', 'category')">
-              <label v-t="'label.category'" />
-              <b-form-select v-model="form.categoryId" :options="categoryOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-3 col-4" />
+              <b-form-row>
+                <label v-t="'label.category'" class="d-flex align-items-center" />
+                <v-select v-model="vueSelected.category" :options="categoryOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-2 vue-options-lg" />
+              </b-form-row>
             </b-form-group>
             <b-form-group v-show="isShown('TX.WITH', 'group')">
-              <label v-t="'label.group'" />
-              <b-form-select v-model="form.groupId" :options="groupOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-3 col-4" />
+              <b-form-row>
+                <label v-t="'label.group'" class="d-flex align-items-center" />
+                <v-select v-model="vueSelected.group" :options="groupOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-2 vue-options-lg" />
+              </b-form-row>
             </b-form-group>
             <b-form-group v-show="showTx('btxId')">
               <label v-t="'label.btxId'" />
@@ -85,11 +89,13 @@ import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as HtmlUtil from '../../../sub/util/HtmlUtil'
 import * as Util from '../../../sub/util/Util'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
+import controlmixinVue from '../../../components/mixin/controlmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
+import * as ParamHelper from '../../../sub/helper/ParamHelper'
 import { APP } from '../../../sub/constant/config.js'
 import { CATEGORY, SENSOR } from '../../../sub/constant/Constants'
 
@@ -98,7 +104,7 @@ export default {
     breadcrumb,
     alert,
   },
-  mixins: [editmixinVue],
+  mixins: [editmixinVue, controlmixinVue],
   data() {
     return {
       name: 'tx',
@@ -114,6 +120,10 @@ export default {
       ]),
       defValue: {
         'dispPos': 1,
+      },
+      vueSelected: {
+        category: null,
+        group: null,
       },
       items: ViewHelper.createBreadCrumbItems('master', {text: 'tx', href: '/master/tx'}, Util.getDetailCaptionKey(this.$store.state.app_service.tx.txId)),
     }
@@ -131,7 +141,7 @@ export default {
       return options
     },
     categoryOptions() {
-      return StateHelper.getOptionsFromState('category', false, false, 
+      return StateHelper.getOptionsFromState('category', false, true, 
         category => CATEGORY.POT_AVAILABLE.includes(category.categoryType)
       )
     },
@@ -153,6 +163,20 @@ export default {
       'potImages',
     ]),
   },
+  watch: {
+    'vueSelected.category': {
+      handler: function(newVal, oldVal){
+        this.form.categoryId = Util.getValue(newVal, 'value', null)
+      },
+      deep: true,
+    },
+    'vueSelected.group': {
+      handler: function(newVal, oldVal){
+        this.form.groupId = Util.getValue(newVal, 'value', null)
+      },
+      deep: true,
+    },
+  },
   mounted() {
     ViewHelper.applyDef(this.form, this.defValue)
     StateHelper.load('sensor')
@@ -171,6 +195,10 @@ export default {
         return col == 'btxId'
       }
       return true
+    },
+    beforeReload(){
+      this.vueSelected.category = ParamHelper.getVueSelectData(this.categoryOptions, null)
+      this.vueSelected.group = ParamHelper.getVueSelectData(this.groupOptions, null)
     },
     async afterCrud(){
       await StateHelper.load('pot', true)
@@ -248,5 +276,5 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
+@import "../../../sub/constant/vue.scss";
 </style>
