@@ -181,7 +181,7 @@ export default {
         date: '',
       },
       displayCheckList: {
-        stay: [],
+        stay: ['stay', 'lost'],
         category: [],
         area: [],
       },
@@ -197,7 +197,7 @@ export default {
       categoryOptionList: [],
       categoryDisplayList: [],
       fromToSettingDiff: 0,
-      fields: this.getFields(),
+      fields: this.getFields(true),
       initTotalRows: 0,
       historyType: 'category',
       isCategorySelected: true
@@ -265,9 +265,9 @@ export default {
       return DISP.SUM_STACK_COLOR[index % DISP.SUM_STACK_COLOR.length]
     },
     updateColumn() {
-      Vue.set(this, 'fields', this.getFields())
+      Vue.set(this, 'fields', this.getFields(false))
     },
-    getFields() {
+    getFields(isInit) {
       let fields = [
         {key: 'date', sortable: false, label: this.$i18n.tnl('label.date')},
         {key: 'name', sortable: true, label: this.$i18n.tnl('label.potName')},
@@ -319,8 +319,8 @@ export default {
 
 
       // 選択されている総合時間を追加する
-      this.isDisplayStayColumn('stay')? fields.push({key: 'stayTime', sortable: true, label: this.$i18n.tnl('label.stayTime'), thStyle: {width:'100px !important'}}): null
-      this.isDisplayStayColumn('lost')? fields.push({key: 'lostTime', sortable: true, label: this.$i18n.tnl('label.lostTime'), thStyle: {width:'100px !important'}}): null
+      isInit || this.isDisplayStayColumn('stay')? fields.push({key: 'stayTime', sortable: true, label: this.$i18n.tnl('label.stayTime'), thStyle: {width:'100px !important'}}): null
+      isInit || this.isDisplayStayColumn('lost')? fields.push({key: 'lostTime', sortable: true, label: this.$i18n.tnl('label.lostTime'), thStyle: {width:'100px !important'}}): null
 
       return fields.map(val => ({ ...val, originLabel: val.label}))
     },
