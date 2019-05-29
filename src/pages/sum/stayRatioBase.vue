@@ -14,11 +14,11 @@
           {{ $t('label.graph') }}
         </p>
         <b-form-radio-group v-model="historyType">
-          <b-form-radio :value="'category'" @change="setSelectedGraphCategory(false)">
+          <b-form-radio :value="'category'" @change="setSelectedGraphCategory(true)">
             {{ $t('label.zoneCategory') }}
           </b-form-radio>
           <br>
-          <b-form-radio :value="'area'" @change="setSelectedGraphCategory(true)">
+          <b-form-radio :value="'area'" @change="setSelectedGraphCategory(false)">
             {{ $t('label.area') }}
           </b-form-radio>
         </b-form-radio-group>
@@ -35,29 +35,30 @@
             {{ $t('label.lostTimeSumColumn') }}
           </b-form-checkbox><br>
         </b-form-checkbox-group>
-        <b-form-checkbox-group id="checkbox-group-2" v-model="displayCheckList.category" name="flavour-2">
+        <br>
+        <b-form-checkbox-group v-if="enableCategorySelect" id="checkbox-group-2" v-model="displayCheckList.category" name="flavour-2">
           <p class="itemTitle">
             {{ $t('label.category') }}
           </p>
           <div v-for="(category, index) in categoryDisplayList" :key="`category-${index}`">
-            <b-form-checkbox :value="category.categoryId" :disabled="enableCategorySelect">
+            <b-form-checkbox :value="category.categoryId">
               {{ category.systemUse? $t('label.' + category.systemCategoryName): category.categoryName }} <span class="bgSquare" :style="`background-color: #${category.bgColor};`" />
             </b-form-checkbox><br>
           </div>
-          <b-form-checkbox :value="0" :disabled="enableCategorySelect">
+          <b-form-checkbox :value="0">
             {{ $t('label.other') }} <span class="bgSquare" :style="`background-color: ${getRandomColor(0)};`" />
           </b-form-checkbox><br>
         </b-form-checkbox-group>
-        <b-form-checkbox-group id="checkbox-group-2" v-model="displayCheckList.area" name="flavour-2">
+        <b-form-checkbox-group v-if="!enableCategorySelect" id="checkbox-group-2" v-model="displayCheckList.area" name="flavour-2">
           <p class="itemTitle">
             {{ $t('label.area') }}
           </p>
           <div v-for="(area, index) in areas" :key="`area-${index}`">
-            <b-form-checkbox :value="area.areaId" :disabled="!enableCategorySelect">
+            <b-form-checkbox :value="area.areaId">
               {{ area.areaName }} <span class="bgSquare" :style="`background-color: ${getRandomColor(area.areaId)};`" />
             </b-form-checkbox><br>
             <div v-if="index == (areas.length - 1)">
-              <b-form-checkbox :value="0" :disabled="!enableCategorySelect">
+              <b-form-checkbox :value="0">
                 {{ $t('label.other') }} <span class="bgSquare" :style="`background-color: ${getRandomColor(0)};`" />
               </b-form-checkbox><br>
             </div>
@@ -207,7 +208,7 @@ export default {
       fields: this.getFields(),
       initTotalRows: 0,
       historyType: 'category',
-      isCategorySelected: false
+      isCategorySelected: true
     }
   },
   computed: {
@@ -265,7 +266,7 @@ export default {
       return _.some(APP.STAY_SUM.SCALE_TIMES, (time) => { return time === scaleTime })
     },
     setSelectedGraphCategory(isSelected) {
-      this.isCategorySelected? this.displayCheckList.area = []: this.displayCheckList.category = []
+      this.isCategorySelected? this.displayCheckList.category = []: this.displayCheckList.area = []
       this.isCategorySelected = isSelected
     },
     getRandomColor(index) {
