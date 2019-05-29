@@ -6,7 +6,13 @@
         <label class="ml-3 mr-2">
           {{ $t('label.area') }}
         </label>
-        <b-form-select v-model="selectedArea" :options="areaOptions" required class="ml-2" @change="changeArea" />
+        <span :title="vueSelectTitle(vueSelected.area)">
+          <v-select v-model="vueSelected.area" :options="areaOptions" :clearable="false" class="ml-1 vue-options">
+            <template slot="selected-option" slot-scope="option">
+              {{ vueSelectCutOn(option) }}
+            </template>
+          </v-select>
+        </span>
       </b-form>
     </b-row>
     <b-row class="mt-3">
@@ -31,13 +37,14 @@ import { SENSOR, TX } from '../../sub/constant/Constants'
 import { Container } from '@createjs/easeljs/dist/easeljs.module'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
+import controlmixinVue from '../../components/mixin/controlmixin.vue'
 
 export default {
   components: {
     breadcrumb,
     'txdetail': txdetail,
   },
-  mixins: [showmapmixin],
+  mixins: [showmapmixin, controlmixinVue],
   data() {
     return {
       keepExbPosition: false,
@@ -63,6 +70,15 @@ export default {
     ...mapState([
       'reload',
     ]),
+  },
+  watch: {
+    'vueSelected.area': {
+      handler: function(newVal, oldVal){
+        this.selectedArea = Util.getValue(newVal, 'value', null)
+        this.changeArea(this.selectedArea)
+      },
+      deep: true,
+    },
   },
   mounted() {
     document.addEventListener('touchstart', this.touchEnd)
@@ -246,6 +262,7 @@ export default {
 
 <style scoped lang="scss">
 @import "../../sub/constant/config.scss";
+@import "../../sub/constant/vue.scss";
 
 ::-webkit-scrollbar { 
   display: none; 

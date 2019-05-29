@@ -14,7 +14,13 @@
         <b-form-group>
           <b-form-row class="mb-3 mr-5">
             <label v-t="'label.group'" class="mr-2" />
-            <b-form-select v-model="form.groupId" :options="groupOptions" class="mr-2 inputSelect" />
+            <span :title="vueSelectTitle(vueSelected.group)">
+              <v-select v-model="vueSelected.group" :options="groupOptions" class="mr-2 inputSelect vue-options">
+                <template slot="selected-option" slot-scope="option">
+                  {{ vueSelectCutOn(option) }}
+                </template>
+              </v-select>
+            </span>
           </b-form-row>
         </b-form-group>
       </b-form>
@@ -55,6 +61,7 @@ import { APP } from '../../sub/constant/config'
 import moment from 'moment'
 import validatemixin from '../../components/mixin/validatemixin.vue'
 import commonmixinVue from '../../components/mixin/commonmixin.vue'
+import controlmixinVue from '../../components/mixin/controlmixin.vue'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
 import { SYSTEM_ZONE_CATEGORY_NAME } from '../../sub/constant/Constants'
 
@@ -64,11 +71,14 @@ export default {
     alert,
     DatePicker,
   },
-  mixins: [validatemixin, commonmixinVue],
+  mixins: [validatemixin, commonmixinVue, controlmixinVue],
   data () {
     return {
       form: {
         date: '',
+      },
+      vueSelected: {
+        group: null,
       },
       viewList: [],
       items: ViewHelper.createBreadCrumbItems('sumTitle', 'stayRatio'),
@@ -105,6 +115,14 @@ export default {
     ]),
     iosOrAndroid() {
       return Util.isAndroidOrIOS()
+    },
+  },
+  watch: {
+    'vueSelected.group': {
+      handler: function(newVal, oldVal){
+        this.form.groupId = Util.getValue(newVal, 'value', null)
+      },
+      deep: true,
     },
   },
   async created() {
@@ -352,6 +370,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import "../../sub/constant/vue.scss";
 .inputSelect {
   min-width: 160px;
 }

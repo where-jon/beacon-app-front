@@ -27,7 +27,16 @@
             <b-form-row>
               <b-form-select v-model="form.filterKind" :options="filterKindOptions" class="ml-2 inputSelect" @change="changefilterKind" />
             </b-form-row>
-            <b-form-row class="ml-1">
+            <b-form-row v-if="useVueSelect(form.filterKind)" class="ml-1">
+              <span :title="vueSelectTitle(vueSelected.filter)">
+                <v-select v-model="vueSelected.filter" :options="filterIdOptions" class="ml-2 inputSelect vue-options">
+                  <template slot="selected-option" slot-scope="option">
+                    {{ vueSelectCutOn(option) }}
+                  </template>
+                </v-select>
+              </span>
+            </b-form-row>
+            <b-form-row v-else class="ml-1">
               <b-form-select v-model="form.filterId" :options="filterIdOptions" class="ml-2 inputSelect" />
             </b-form-row>
           </b-form-row>
@@ -89,6 +98,7 @@ import * as ChartHelper from '../../sub/helper/ChartHelper'
 // import * as mock from '../../assets/mock/mock'
 import validatemixin from '../../components/mixin/validatemixin.vue'
 import commonmixinVue from '../../components/mixin/commonmixin.vue'
+import controlmixinVue from '../../components/mixin/controlmixin.vue'
 
 export default {
   components: {
@@ -96,7 +106,7 @@ export default {
     alert,
     DatePicker,
   },
-  mixins: [validatemixin, commonmixinVue],
+  mixins: [validatemixin, commonmixinVue, controlmixinVue],
   data () {
     return {
       form: {
@@ -117,6 +127,10 @@ export default {
       stacks: [],
       message: '',
       showChart: true,
+      vueSelectedKeys: ['pot', 'category', 'group', 'area', 'zone', 'zoneCategory'],
+      vueSelected: {
+        filter: null,
+      },
     }
   },
   computed: {
@@ -137,6 +151,14 @@ export default {
       return Util.isAndroidOrIOS()
     },
   },
+  watch: {
+    'vueSelected.filter': {
+      handler: function(newVal, oldVal){
+        this.form.filterId = Util.getValue(newVal, 'value', null)
+      },
+      deep: true,
+    },
+  },
   async created() {
     await StateHelper.load('pot')
     await StateHelper.load('area')
@@ -151,29 +173,33 @@ export default {
     HtmlUtil.importElementUI()
   },
   methods: {
+    useVueSelect(key){
+      return this.vueSelectedKeys.includes(key)
+    },
     changefilterKind(newVal = this.form.filterKind){
       this.form.filterKind = newVal
+      this.vueSelected.filter = null
       switch (newVal) {
       case 'potType':
         this.filterIdOptions = this.potTypeOptions()
         break
       case 'pot':
-        this.filterIdOptions = this.pots.map((e) => ({value: e.potId, text: e.potName}))
+        this.filterIdOptions = this.pots.map(e => ({value: e.potId, label: e.potName}))
         break
       case 'group':
-        this.filterIdOptions = this.groups.map((e) => ({value: e.groupId, text: e.groupName}))
+        this.filterIdOptions = this.groups.map(e => ({value: e.groupId, label: e.groupName}))
         break
       case 'category':
-        this.filterIdOptions = this.categories.filter((e) => e.categoryType == 1 || e.categoryType == 2).map((e) => ({value: e.categoryId, text: e.categoryName}))
+        this.filterIdOptions = this.categories.filter(e => e.categoryType == 1 || e.categoryType == 2).map(e => ({value: e.categoryId, label: e.categoryName}))
         break
       case 'area':
-        this.filterIdOptions = this.areas.map((e) => ({value: e.areaId, text: e.areaName}))
+        this.filterIdOptions = this.areas.map(e => ({value: e.areaId, label: e.areaName}))
         break
       case 'zone':
-        this.filterIdOptions = this.zones.map((e) => ({value: e.zoneId, text: e.zoneName}))
+        this.filterIdOptions = this.zones.map(e => ({value: e.zoneId,label: e.zoneName}))
         break
       case 'zoneCategory':
-        this.filterIdOptions = this.categories.filter((e) => e.categoryType == 3).map((e) => ({value: e.categoryId, text: e.categoryName}))
+        this.filterIdOptions = this.categories.filter(e => e.categoryType == 3).map(e => ({value: e.categoryId, label: e.categoryName}))
         break
       default:
         this.filterIdOptions = []
@@ -348,6 +374,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import "../../sub/constant/vue.scss";
 .inputSelect {
   min-width: 160px;
 }

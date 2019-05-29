@@ -40,7 +40,7 @@ export default {
   },
   methods: {
     resetId(entity, dummyKey){
-      if(APP.EXB_WITH_DEVICE_IDX && !entity.deviceId && !entity.deviceIdXName){
+      if(Util.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX') && !entity.deviceId && !entity.deviceIdXName){
         entity.deviceId = parseInt(entity.deviceIdX, 16)
       }
       return dummyKey
@@ -107,11 +107,11 @@ export default {
           return dummyKey
         }
         if(headerName == 'deviceId'){
-          BulkHelper.setNumberKey(entity, headerName, val, {isNullable: !APP.EXB_WITH_DEVICE_ID})
+          BulkHelper.setNumberKey(entity, headerName, val, {isNullable: !Util.includesIgnoreCase(APP.EXB.WITH, 'deviceId')})
           return dummyKey
         }
         if(headerName == 'deviceIdX'){
-          BulkHelper.setHexKey(entity, headerName, val, {isNullable: !APP.EXB_WITH_DEVICE_IDX})
+          BulkHelper.setHexKey(entity, headerName, val, {isNullable: !Util.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')})
           return dummyKey
         }
         if(Util.equalsAny(headerName, BOOL_TYPE_LIST)){

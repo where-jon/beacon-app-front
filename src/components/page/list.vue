@@ -21,7 +21,16 @@
             <b-form-row v-for="item of extraFilterSpec" :key="item.key" class="mr-4 mb-2">
               <b-form-row v-if="item.show">
                 <label v-t="'label.' + item.key" for="item.key" class="mr-2" />
-                <b-input-group>
+                <b-input-group v-if="useVueSelect(item.key)">
+                  <span :title="vueSelectTitle(vueSelected[item.key])">
+                    <v-select v-model="vueSelected[item.key]" :input-id="item.key" :options="item.options" class="extra-filter vue-options">
+                      <template slot="selected-option" slot-scope="option">
+                        {{ vueSelectCutOn(option) }}
+                      </template>
+                    </v-select>
+                  </span>
+                </b-input-group>
+                <b-input-group v-else>
                   <b-form-select :id="item.key" v-model="filter.extra[item.key]" :options="item.options"
                                  class="extra-filter" @change="item.change"
                   />
@@ -210,6 +219,7 @@ import * as Util from '../../sub/util/Util'
 import { getButtonTheme } from '../../sub/helper/ThemeHelper'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import commonmixinVue from '../mixin/commonmixin.vue'
+import controlmixinVue from '../mixin/controlmixin.vue'
 import { CATEGORY, SENSOR } from '../../sub/constant/Constants'
 import * as AuthHelper from '../../sub/helper/AuthHelper'
 import alert from '../parts/alert.vue'
@@ -220,7 +230,7 @@ export default {
     alert,
     settinginput,
   },
-  mixins: [commonmixinVue], // not work
+  mixins: [commonmixinVue, controlmixinVue], // not work
   props: {
     params: {
       type: Object,
@@ -272,6 +282,13 @@ export default {
         },
         del: false,
         allShow: false,
+      },
+      vueSelected: {
+        category: null,
+        group: null,
+        area: null,
+        zone: null,
+        zoneCategory: null,
       },
       emptyMessage: this.$i18n.tnl('message.listEmpty'),
       modalInfo: { title: '', content: '', id:'' },
@@ -342,13 +359,15 @@ export default {
       'groups',
       'areas',
       'listMessage',
+      'editPage',
+      'moveEditPage',
     ]),
     ...mapState('main', [
       'selectedTx',
       'selectedarea',
     ]),
     categoryOptions() {
-      return StateHelper.getOptionsFromState('category', false, false, 
+      return StateHelper.getOptionsFromState('category', false, true, 
         category => CATEGORY.POT_AVAILABLE.includes(category.categoryType)
       )
     },
@@ -363,20 +382,20 @@ export default {
       )
     },
     zoneOptions() {
-      return StateHelper.getOptionsFromState('zone')
+      return StateHelper.getOptionsFromState('zone', false, true)
     },
     zoneCategoryOptions() {
       return StateHelper.getOptionsFromState('category',
         category => StateHelper.getDispCategoryName(category),
-        false, 
+        true, 
         category => CATEGORY.ZONE_AVAILABLE.includes(category.categoryType)
       )
     },
     groupOptions() {
-      return StateHelper.getOptionsFromState('group')
+      return StateHelper.getOptionsFromState('group', false, true)
     },
     areaOptions() {
-      return StateHelper.getOptionsFromState('area')
+      return StateHelper.getOptionsFromState('area', false, true)
     },
     detectStateOptions() {
       let options = DetectStateHelper.getTypes()
@@ -415,6 +434,21 @@ export default {
       return HtmlUtil.getLangShort() == 'ja'? {width: '100px !important'}: {width: '110px !important'}
     },
   },
+  watch: {
+    'vueSelected': {
+      handler: function(newVal, oldVal){
+        Object.keys(this.vueSelected).forEach(key => {
+          const oVal = Util.getValue(oldVal[key], 'value', null)
+          const nVal = Util.getValue(newVal[key], 'value', null)
+          this.filter.extra[key] = nVal
+          if(oVal != nVal){
+            this.extraFilterSpec[key].change()
+          }
+        })
+      },
+      deep: true,
+    },
+  },
   async created() {
     this.switchReload = this.params.tenantAction? this.params.tenantAction: false
     if(this.switchReload){
@@ -436,6 +470,14 @@ export default {
     this.replace({showWarn: false})
     this.replace({showAlert: this.showError})
     this.replace({showInfo: this.showMessage})
+
+    this.$nextTick(() => {
+      if(this.moveEditPage && this.editPage){
+        this.currentPage = this.editPage
+      }
+      this.replaceAS({editPage: null})
+      this.replaceAS({moveEditPage: false})
+    })
   },
   methods: {
     ...mapMutations('app_service', [
@@ -447,6 +489,9 @@ export default {
     ...mapMutations([
       'replace', 
     ]),
+    useVueSelect(key){
+      return Object.keys(this.vueSelected).includes(key)
+    },
     thumbnail(row) {
       return this.$parent.$options.methods.thumbnail.call(this.$parent, row)
     },
@@ -518,6 +563,7 @@ export default {
         entity = this.$parent.$options.methods.convBeforeEdit.call(this.$parent, entity)
       }
       this.replaceAS({[this.name]: entity})
+      this.replaceAS({editPage: this.currentPage})
       this.$router.push(this.editPath)
     },
     getDispCategoryName(category){
@@ -556,10 +602,10 @@ export default {
       this.modalInfo.id = ''
     },
     filterGridGeneral(originItem){
-      if(!this.filter.reg){
-        return true
-      }
       if(originItem.isParent){
+        return this.items.find(item => !item.isParent && item.categoryKey == originItem.categoryKey && this.filterGrid(item))? true: false
+      }
+      if(!this.filter.reg){
         return true
       }
       try{
@@ -647,7 +693,6 @@ export default {
       const extBool = this.filterGridExt(originItem)
       const delBool = this.filterGridDel(originItem)
       const allShowBool = this.filterAllShow(originItem)
-      //console.log("filtering table...")
       return regBool && extBool && delBool && allShowBool
     },
     onFiltered(filteredItems) {
@@ -690,8 +735,6 @@ export default {
     },
     // 位置把握(一覧)から在席表示に遷移する
     async mapDisplay(item) {
-      console.log('mapDisplay called with:')
-      console.log(item)
       const tx = item.tx
       const selectedTx = {
         btxId: tx.btxId,
@@ -711,6 +754,11 @@ export default {
 </script>
 
 <style>
+  @import "../../sub/constant/vue.scss";
+  td {
+    line-height: normal !important;
+  }
+
   td.thumb-rowdata {
     padding: 5px;
     line-height: 70px;

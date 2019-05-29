@@ -2,18 +2,40 @@
   <div class="container-fluid">
     <breadcrumb :items="items" />
     <alert :message="message" />
-    <b-form v-if="show" inline @submit.prevent>
-      <label v-t="'label.areaName'" class="control-label mr-sm-2" />
-      <b-form-select v-model="areaId" :options="areaNames" class="mb-2 mr-sm-2 mb-sm-0" required />
-      <label v-t="'label.zoneName'" class="control-label mr-sm-2" />
-      <input v-model="zoneName" type="text" maxlength="20" :disabled="!isEnableNameText" class="form-control mb-2 mr-sm-2 mb-sm-0" required>
-      <label v-t="'label.categoryName'" class="control-label mr-sm-2" />
-      <b-form-select v-model="categoryId" :options="categoryNames" :disabled="!isEnableNameText" class="mb-2 mr-sm-2 mb-sm-0" />
-      <b-button v-if="isEditable || isDeleteable" v-t="'label.delete'" type="button" variant="outline-danger" :disabled="!isEnableNameText" @click="confirmDelete($event.target)" />
-      <b-button v-if="isEditable || isDeleteable" class="button-regist" :variant="theme" type="button" @click="regist()">
-        {{ label }}
-      </b-button>
-    </b-form>
+    <b-row>
+      <b-form v-if="show" inline @submit.prevent>
+        <b-form-row class="ml-2 mb-2">
+          <label v-t="'label.areaName'" class="control-label mr-sm-2" />
+          <span :title="vueSelectTitle(vueSelected.area)">
+            <v-select v-model="vueSelected.area" :options="areaNames" :clearable="false" class="mb-2 mr-sm-2 mb-sm-0 vue-options">
+              <template slot="selected-option" slot-scope="option">
+                {{ vueSelectCutOn(option) }}
+              </template>
+            </v-select>
+          </span>
+        </b-form-row>
+        <b-form-row class="ml-2 mb-2">
+          <label v-t="'label.zoneName'" class="control-label mr-sm-2" />
+          <input v-model="zoneName" type="text" maxlength="20" :disabled="!isEnableNameText" class="form-control mb-2 mr-sm-2 mb-sm-0" required>
+        </b-form-row>
+        <b-form-row class="ml-2 mb-2">
+          <label v-t="'label.categoryName'" class="control-label mr-sm-2" />
+          <span :title="vueSelectTitle(vueSelected.category)">
+            <v-select v-model="vueSelected.category" :options="categoryNames" :disabled="!isEnableNameText" :clearable="false" class="mb-2 mr-sm-2 mb-sm-0 vue-options">
+              <template slot="selected-option" slot-scope="option">
+                {{ vueSelectCutOn(option) }}
+              </template>
+            </v-select>
+          </span>
+        </b-form-row>
+        <b-form-row class="ml-2 mb-2">
+          <b-button v-if="isEditable || isDeleteable" v-t="'label.delete'" type="button" variant="outline-danger" :disabled="!isEnableNameText" @click="confirmDelete($event.target)" />
+          <b-button v-if="isEditable || isDeleteable" class="button-regist" :variant="theme" type="button" @click="regist()">
+            {{ label }}
+          </b-button>
+        </b-form-row>
+      </b-form>
+    </b-row>
     <ZoneCanvas :area-id="areaId" :zone-name="zoneName" :category-id="categoryId" :is-regist="isRegist" :is-complete-regist="isCompleteRegist" :is-delete="isDelete" :auth="{regist: isRegistable, update: isUpdatable, delete: isDeleteable}"
                 @regist="doRegist"
                 @selected="onSelected"
@@ -34,6 +56,7 @@
 import { mapState } from 'vuex'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import * as ParamHelper from '../../../sub/helper/ParamHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
 import ZoneCanvas from '../../../components/parts/zonecanvas.vue'
@@ -43,6 +66,7 @@ import alert from '../../../components/parts/alert.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import { CATEGORY } from '../../../sub/constant/Constants'
 import showmapmixin from '../../../components/mixin/showmapmixin.vue'
+import controlmixinVue from '../../../components/mixin/controlmixin.vue'
 
 export default {
   components: {
@@ -50,7 +74,7 @@ export default {
     alert,
     ZoneCanvas,
   },
-  mixins: [editmixinVue, showmapmixin],
+  mixins: [editmixinVue, showmapmixin, controlmixinVue],
   data() {
     return {
       id: -1,
@@ -72,6 +96,9 @@ export default {
         name: '',
         categoryId: -1,
       },
+      vueSelected: {
+        area: null,
+      },
       items: ViewHelper.createBreadCrumbItems('master', 'zoneBlock'),
     }
   },
@@ -91,6 +118,20 @@ export default {
       'zone', 'locations', 'areas', 'pageSendParam'
     ]),
   },
+  watch: {
+    'vueSelected.area': {
+      handler: function(newVal, oldVal){
+        this.areaId = Util.getValue(newVal, 'value', null)
+      },
+      deep: true,
+    },
+    'vueSelected.category': {
+      handler: function(newVal, oldVal){
+        this.categoryId = Util.getValue(newVal, 'value', null)
+      },
+      deep: true,
+    },
+  },
   created() {
     this.initAreaNames()
     this.initCategoryNames()
@@ -101,10 +142,12 @@ export default {
       this.areaNames = StateHelper.getOptionsFromState('area', false, true)
       if(this.pageSendParam){
         this.areaId = this.pageSendParam.areaId
+        this.vueSelected.category = ParamHelper.getVueSelectData(this.areaNames, this.pageSendParam.areaId)
         this.replaceAS({pageSendParam: null})
       }
       else{
         this.areaId = this.areaNames[0].value
+        this.vueSelected.category = ParamHelper.getVueSelectData(this.areaNames, this.areaId)
       }
     },
     async initCategoryNames() {
@@ -118,6 +161,7 @@ export default {
       this.categoryNames.unshift({label: none, text: none, value: -1})
       this.categoryId = this.categoryNames[0].value
       this.nameAndCategory.categoryId = this.categoryId
+      this.vueSelected.category = ParamHelper.getVueSelectData(this.categoryNames, this.categoryId)
     },
     confirmDelete (button) {
       this.$root.$emit('bv::show::modal', 'modalInfo', button)
@@ -126,7 +170,7 @@ export default {
       this.replace({showAlert: false})
       this.id = zoneData.id
       this.zoneName = zoneData.name
-      this.categoryId = zoneData.categoryId
+      this.vueSelected.category = ParamHelper.getVueSelectData(this.categoryNames, zoneData.categoryId)
       this.isEnableNameText = true
     },
     unSelected () {
@@ -158,6 +202,8 @@ export default {
       this.message = this.$i18n.t('message.updateCompleted', { target: this.$i18n.t('label.zone') })
       this.replace({showInfo: true})
       this.isCompleteRegist = true
+      // ストア内のゾーンレコードを最新に更新する
+      await StateHelper.load('zone', true)
       return saveId
     },
     reloaded() {
@@ -168,6 +214,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import "../../../sub/constant/vue.scss";
   form.form-inline {
     margin-bottom: 20px;
   }

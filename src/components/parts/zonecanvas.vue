@@ -412,11 +412,10 @@ export default {
     async onChangeAreaId(areaId) {
       await StateHelper.loadAreaImage(areaId, true)
       const areaImage = this.$store.state.app_service.areaImages.find((a) => { return a.areaId === areaId })
-      const base64 = areaImage ? areaImage.mapImage : ''
       this.cnt = 0
-      this.setupCanvas(base64)
+      this.setupCanvas(areaImage.mapImage)
     },
-    setupCanvas (base64) {
+    setupCanvas (mapImage) {
       const stage = this.stage
       const img = new Image()
       img.onload = () => {
@@ -442,7 +441,8 @@ export default {
         stage.add(this.layer)
         this.addZones()
       }
-      img.src = base64
+      const url = window.URL || window.webkitURL
+      img.src = url.createObjectURL(new Blob([mapImage]))
     },
     validateZoneName(id, name) {
       const duprecated = this.zones.list.find((zone) => {

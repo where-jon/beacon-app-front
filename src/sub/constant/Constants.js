@@ -436,11 +436,6 @@ export const EXTRA_NAV = [
     path: '/main/position-stack',
     icon: 'building',
   },
-  {
-    key: 'positionZoneShort',
-    path: '/main/position-zone',
-    icon: 'th',
-  },
 ]
 
 export const MENU = [
@@ -650,7 +645,7 @@ export const MENU = [
       {
         key: 'positionSummary',
         path: 'positionSummary',
-        icon: 'fas fa-cube',
+        icon: 'map-marked-alt',
       },
       {
         key: 'stayRatioBase',

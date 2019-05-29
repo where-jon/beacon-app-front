@@ -91,14 +91,14 @@ export const APP = { // 機能面に関する設定
   },
   // TX関連設定
   TX: {
-    WITH: ['major', 'sensor', 'dispFlg', 'location', 'dispPir'],
+    WITH: ['major', 'dispFlg', 'location', 'dispPir'],
     MAJOR_REQUIRED: false, // majorを必須にする ※サーバでも要設定
     BTX_MINOR: 'both', // both:両方表示し、別々に設定、minor/btxId:片方のみ表示し、保存の際同一の値を設定
   },
   // EXB関連設定
   EXB: {
     SENSOR: [1,2,3,4,8], // EXBのタイプに設定可能なセンサーID
-    WITH: ['deviceNum', 'posId', 'zone'],
+    WITH: ['deviceId', 'posId', 'zone'],
     MULTI_SENSOR: true,
     SENSOR_MAX: 2,   // センサー種類最大数
   },
@@ -148,7 +148,7 @@ export const APP = { // 機能面に関する設定
     POWER_LEVEL_WARN: 30,  // 電池レベルで減少とみなす下限値
   },
   SENSOR_LIST: {
-    WITH: ['posId', 'deviceId', 'deviceIdX', 'locationName'],
+    WITH: ['posId', 'deviceId', 'deviceIdX'],
   },
   SENSORGRAPH: {
     WITH_DEVICE: true,             // 画面上でデバイスを使用するか否か
@@ -208,6 +208,8 @@ export const EXCLOUD = {
   DL_URL: '/core/excloud/dl/{type}/{yyyymmdd}?_=',
   LED_URL: '/core/excloud/led?_=',
   POSITION_HISTORY_FETCH_URL: '/core/positionHistory/fetch/{allFetch}?_=',
+  AREA_THUMBNAIL_URL: '/core/area/mapThumbnail/{id}?_=',
+  POT_THUMBNAIL_URL: '/basic/pot/potThumbnail/{id}?_=',
 }
 
 export const DISP = { // 表示系設定（表示・色・フォント・サイズ）
@@ -245,6 +247,7 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     BGCOLOR: '#76ccf7', // EXB配置設定のEXB表示背景色
     COLOR: '#000', // EXB配置設定のEXB表示文字色
     FONT: 'Arial', // EXB配置設定のEXB表示フォント
+    RSSI_RADIUS: 0,
   },
   TX_LOC: {
     // TX配置設定のTX表示サイズ
@@ -374,7 +377,7 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   TXMEDITAG_POPUP_SIZE: 236, // TXMEDITAG表示ポップアップの高さ
 
   POSITION_HISTORY: {
-    HEADERS: ['potName', 'major', 'minor', 'deviceNum', 'locationName', 'posId', 'areaName'], // 位置表示履歴の表示カラム
+    HEADERS: ['potName', 'major', 'minor', 'deviceId', 'locationName', 'posId', 'areaName'], // 位置表示履歴の表示カラム
   },
 
   GATEWAY: { // ゲートウエイ

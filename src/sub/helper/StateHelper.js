@@ -94,7 +94,7 @@ export const getTxIdName = (tx) => {
   if(!tx){
     return null
   }
-  return APP.TX.BTX_MINOR != 'minor' && tx.btxId? tx.btxId: APP.TX_BTX_MINOR == 'minor' && tx.minor? tx.minor: null
+  return APP.TX.BTX_MINOR != 'minor'? tx.btxId? tx.btxId.toString(): '': tx.minor? tx.minor.toString(): ''
 }
 
 export const getTxIdNames = (txList) => {
@@ -224,11 +224,9 @@ const appStateConf = {
   },
 
   pots: {
-    path: '/basic/pot/withThumbnail',
+    path: '/basic/pot',
     sort: 'potName',
     beforeCommit: (arr) => {
-      let potImages = arr.map((val) => ({ id: val.potId, txId: val.txId, thumbnail: val.thumbnail}))
-      store.commit('app_service/replaceAS', {['potImages']:potImages})
       const idNames = APP.TX.BTX_MINOR == 'minor'? 'minor': 'btxId'
       return arr.map((pot) => {
         return {
@@ -430,7 +428,6 @@ export const loadAreaImage = async (areaId, force) => {
   else {
     areaImages.push({areaId, mapImage: base64})
   }
-  console.log(areaId, areaImages)
   store.commit('app_service/replaceAS', {areaImages})    
 
   // })

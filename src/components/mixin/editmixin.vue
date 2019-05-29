@@ -173,6 +173,7 @@ export default {
             if(this.createMessage){
               this.replaceAS({listMessage: this.message})
             }
+            this.replaceAS({moveEditPage: this.isUpdate})
             this.backToList()
           }
         }
@@ -190,7 +191,7 @@ export default {
     },
     modifyColName(col) {
       if (col == 'TXID'){
-        return APP.TX_BTX_MINOR == 'minor'? 'minor': 'btxId'
+        return APP.TX.BTX_MINOR == 'minor'? 'minor': 'btxId'
       }
       if (col == 'btxId' && APP.TX.BTX_MINOR == 'minor') {
         return 'minor'
@@ -199,7 +200,7 @@ export default {
     },
     modifyVal(col, val) {
       if (col == 'TXID'){
-        if(APP.TX_BTX_MINOR == 'minor' && this.minor){
+        if(APP.TX.BTX_MINOR == 'minor' && this.minor){
           return this.minor
         }
         if(APP.TX.BTX_MINOR != 'minor' && this.btxId){

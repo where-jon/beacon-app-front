@@ -13,6 +13,7 @@ import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import { APP } from '../../../sub/constant/config.js'
 import listmixinVue from '../../../components/mixin/listmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
+import * as Util from '../../../sub/util/Util'
 
 export default {
   components: {
@@ -42,8 +43,12 @@ export default {
   computed: {
     ...mapState('app_service', [
       'users',
+      'regions',
       'forceFetchUser',
     ]),
+  },
+  async created() {
+    await StateHelper.load('region')
   },
   methods: {
     createCustomColumn(){
@@ -52,10 +57,18 @@ export default {
       })
     },
     getCustomCsvColumns(){
-      return ['userId', 'loginId', 'pass']
+      return ['loginId', 'pass']
         .concat(this.createCustomColumn().map(val => val.key))
-        .concat('roleName', 'description')
+        .concat('roleName', 'regionNames', 'description')
         .filter(val => val)
+    },
+    customCsvData(val){
+      if(Util.hasValue(val.userRegionList)){
+        val.regionNames = val.userRegionList.map(userRegion => {
+          const target = this.regions.find(region => region.regionId == Util.getValue(userRegion, 'userRegionPK.regionId', ''))
+          return Util.getValue(target, 'regionName', null)
+        }).filter(val => val).join(';')
+      }
     },
     getFields(){
       return ViewHelper.addLabelByKey(this.$i18n, [ 
@@ -64,7 +77,6 @@ export default {
         .concat([
           {key: 'roleName', label: 'role', sortable: true },
           {key: 'description', sortable: true },
-          {key: 'userId', sortable: true },
           {key: 'actions', thStyle: {width:'130px !important'} }
         ]))
     },
