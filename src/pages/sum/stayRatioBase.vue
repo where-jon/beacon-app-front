@@ -8,11 +8,25 @@
       @ok="updateColumn"
     >
       {{ $t('message.selectDisplayColumn') }}
-      <hr>
-      <p class="itemHeader">
-        {{ $t('label.list') }}
-      </p>
       <b-form-group>
+        <hr>
+        <p class="itemTitle">
+          {{ $t('label.graph') }}
+        </p>
+        <b-form-radio-group v-model="historyType">
+          <b-form-radio :value="'category'" @change="setSelectedGraphCategory(false)">
+            {{ $t('label.zoneCategory') }}
+          </b-form-radio>
+          <br>
+          <b-form-radio :value="'area'" @change="setSelectedGraphCategory(true)">
+            {{ $t('label.area') }}
+          </b-form-radio>
+        </b-form-radio-group>
+        <br>
+        <hr>
+        <p class="itemHeader">
+          {{ $t('label.list') }}
+        </p>
         <b-form-checkbox-group id="checkbox-group-2" v-model="displayCheckList.stay" name="flavour-2">
           <b-form-checkbox :value="'stay'">
             {{ $t('label.stayTimeSumColumn') }}
@@ -49,19 +63,6 @@
             </div>
           </div>
         </b-form-checkbox-group>
-        <hr>
-        <p class="itemTitle">
-          {{ $t('label.graph') }}
-        </p>
-        <b-form-radio-group v-model="historyType">
-          <b-form-radio :value="'category'" @change="setSelectedGraphCategory(false)">
-            {{ $t('label.zoneCategory') }}
-          </b-form-radio>
-          <br>
-          <b-form-radio :value="'area'" @change="setSelectedGraphCategory(true)">
-            {{ $t('label.area') }}
-          </b-form-radio>
-        </b-form-radio-group>
       </b-form-group>
     </b-modal>
     <breadcrumb :items="items" :reload="false" />
