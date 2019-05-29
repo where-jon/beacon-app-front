@@ -22,7 +22,6 @@
             {{ $t('label.area') }}
           </b-form-radio>
         </b-form-radio-group>
-        <br>
         <hr>
         <p class="itemHeader">
           {{ $t('label.list') }}
@@ -35,11 +34,7 @@
             {{ $t('label.lostTimeSumColumn') }}
           </b-form-checkbox><br>
         </b-form-checkbox-group>
-        <br>
         <b-form-checkbox-group v-if="enableCategorySelect" id="checkbox-group-2" v-model="displayCheckList.category" name="flavour-2">
-          <p class="itemTitle">
-            {{ $t('label.category') }}
-          </p>
           <div v-for="(category, index) in categoryDisplayList" :key="`category-${index}`">
             <b-form-checkbox :value="category.categoryId">
               {{ category.systemUse? $t('label.' + category.systemCategoryName): category.categoryName }} <span class="bgSquare" :style="`background-color: #${category.bgColor};`" />
@@ -50,9 +45,6 @@
           </b-form-checkbox><br>
         </b-form-checkbox-group>
         <b-form-checkbox-group v-if="!enableCategorySelect" id="checkbox-group-2" v-model="displayCheckList.area" name="flavour-2">
-          <p class="itemTitle">
-            {{ $t('label.area') }}
-          </p>
           <div v-for="(area, index) in areas" :key="`area-${index}`">
             <b-form-checkbox :value="area.areaId">
               {{ area.areaName }} <span class="bgSquare" :style="`background-color: ${getRandomColor(area.areaId)};`" />
