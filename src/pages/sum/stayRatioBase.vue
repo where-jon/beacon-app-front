@@ -276,7 +276,6 @@ export default {
     },
     getFields(isInit) {
       let fields = [
-        {key: 'date', sortable: false, label: this.$i18n.tnl('label.date')},
         {key: 'name', sortable: true, label: this.$i18n.tnl('label.potName')},
       ]
       // グループ名
@@ -537,6 +536,7 @@ export default {
     getCsvSumList(viewList) {
       // フィールド設定に合わせ、出力するデータのキーリストを生成する
       const keys = []
+      keys.push('date')
       this.fields.forEach((field) => {
         _.find(Object.keys(viewList[0]), (key) => { return key!= 'graph' && key == field.key})? keys.push(field.key): null
       })
