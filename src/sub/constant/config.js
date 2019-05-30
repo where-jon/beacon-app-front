@@ -192,13 +192,13 @@ export const APP_SERVICE = { // used if APP.LOGIN_MODE == APP_SERVICE
   BASE_URL: 'http://localhost:8080'
 }
 
-export const EXCLOUD_BASE_URL = 'https://nsome8q880.execute-api.ap-northeast-1.amazonaws.com/prod' // used if APP.LOGIN_MODE != APP_SERVICE
-
 export const EXCLOUD = {
+  BASE_URL: 'https://nsome8q880.execute-api.ap-northeast-1.amazonaws.com/prod', // used if APP.LOGIN_MODE != APP_SERVICE
+
   withCredentials: true, // false if APP.LOGIN_MODE != APP_SERVICE
-  // POSITION_URL: EXCLOUD_BASE_URL + "/beacon/position-kalman?_=",
-  // GATEWAY_URL: EXCLOUD_BASE_URL + "/gateway/0?=",
-  // TELEMETRY_URL: EXCLOUD_BASE_URL + "/telemetry/0?=",
+  // POSITION_URL: EXCLOUD.BASE_URL + "/beacon/position-kalman?_=",
+  // GATEWAY_URL: EXCLOUD.BASE_URL + "/gateway/0?=",
+  // TELEMETRY_URL: EXCLOUD.BASE_URL + "/telemetry/0?=",
   POSITION_URL: '/core/excloud/position?_=',
   GATEWAY_URL: '/core/excloud/gateway?_=',
   TELEMETRY_URL: '/core/excloud/telemetry?_=',
