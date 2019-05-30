@@ -190,7 +190,7 @@ export default {
         stay: ['stay', 'lost'],
         category: [],
         area: [],
-        grou: [],
+        group: [],
       },
       name: '',
       viewList: [],
@@ -275,17 +275,16 @@ export default {
       Vue.set(this, 'fields', this.getFields(false))
     },
     getFields(isInit) {
+      const disableClassName = 'd-none'
+      const groupClassName = isInit || !this.isDisplayGroupColumn('groupName')? disableClassName: ''
       let fields = [
-        {key: 'date', sortable: false, label: this.$i18n.tnl('label.date'), thClass: 'd-none', tdClass: 'd-none'},
+        {key: 'date', sortable: false, label: this.$i18n.tnl('label.date'), thClass: disableClassName, tdClass: disableClassName},
         {key: 'name', sortable: true, label: this.$i18n.tnl('label.potName')},
+        {key: 'groupName', sortable: true, label: this.$i18n.tnl('label.groupName'), thClass: groupClassName, tdClass: groupClassName},
+        {key: 'graph', sortable: false, label: this.$i18n.tnl('label.graph'), thStyle: {height: '50px !important', width:'400px !important'} },
       ]
-      // グループ名
-      this.isDisplayGroupColumn('groupName')? fields.push({key: 'groupName', sortable: true, label: this.$i18n.tnl('label.groupName')}): null
 
-      // 滞在率グラフ（表示必須）
-      fields.push({key: 'graph', sortable: false, label: this.$i18n.tnl('label.graph'), thStyle: {height: '50px !important', width:'400px !important'} })
-
-      // 選択されているカテゴリを追加する
+      // カテゴリを追加する
       let selectedCategories = _.filter(this.categories, (category) => {
         return _.find(this.displayCheckList.category, (id) => {
           return id == category.categoryId
@@ -293,31 +292,39 @@ export default {
       })
 
       const i18n = this.$i18n
-      selectedCategories.forEach(function(category) {
-        let colorStyle = '<span style="color: #' + category.bgColor + ';">■</span>'
-        let categoryName = (category.systemUse? i18n.tnl('label.' + category.systemCategoryName): category.categoryName)
-        fields.push({key: categoryName, sortable: true, label: categoryName + colorStyle, thStyle: {width:'100px !important'}})
-      })
+      _.filter(this.categories,(c) => { return c.categoryType === CATEGORY.ZONE })
+        .forEach(function(category) {
+          const categoryClassName = _.some(selectedCategories, (data) => { return data.categoryId == category.categoryId})? '': disableClassName
+          let colorStyle = '<span style="color: #' + category.bgColor + ';">■</span>'
+          let categoryName = (category.systemUse? i18n.tnl('label.' + category.systemCategoryName): category.categoryName)
+          fields.push({key: categoryName, sortable: true, label: categoryName + colorStyle
+            , thStyle: {width:'100px !important'}, thClass: categoryClassName, tdClass: categoryClassName})
+        })
       
-      // カテゴリその他が選択されている場合は追加
+      // カテゴリその他を追加する
       let isSelectedCategoryOther = false
       if (this.displayCheckList) {
         isSelectedCategoryOther = _.find(this.displayCheckList.category, (id) => { return id == 0 }) == 0? true: false
       }
-
       let colorOtherStyle = '<span style="color: ' + DISP.SUM_STACK_COLOR[0] + ';">■</span>'
-      isSelectedCategoryOther? fields.push({key: 'categoryOther', sortable: true, label: i18n.tnl('label.other')+i18n.tnl('label.category') + colorOtherStyle, thStyle: {width:'100px !important'}}): null
+      const categoryOtherClassName = isSelectedCategoryOther? '': disableClassName
+      fields.push({key: 'categoryOther', sortable: true, label: i18n.tnl('label.other')+i18n.tnl('label.category') + colorOtherStyle
+        , thStyle: {width:'100px !important'}, thClass: categoryOtherClassName, tdClass: categoryOtherClassName})
 
-      // 選択されているエリアを追加する
+      // エリアを追加する
       let selectedAreas = _.filter(this.areas, (area) => {
         return _.find(this.displayCheckList.area, (id) => {
           return id == area.areaId
         })? true: false
       })
-      selectedAreas.forEach(function(area, index) {
-        let colorStyle = '<span style="color: ' + DISP.SUM_STACK_COLOR[area.areaId % DISP.SUM_STACK_COLOR.length] + ';">■</span>'
-        fields.push({key: area.areaName, sortable: true, label: area.areaName + colorStyle, thStyle: {width:'100px !important'}})
-      })
+      
+      _.filter(this.areas, (a) => { return true })
+        .forEach(function(area, index) {
+          const areaClassName = _.some(selectedAreas, (data) => { return data.areaId == area.areaId})? '': disableClassName
+          let colorStyle = '<span style="color: ' + DISP.SUM_STACK_COLOR[area.areaId % DISP.SUM_STACK_COLOR.length] + ';">■</span>'
+          fields.push({key: area.areaName, sortable: true, label: area.areaName + colorStyle, thStyle: {width:'100px !important'}
+            , thClass: areaClassName, tdClass: areaClassName})
+        })
 
       // エリアその他が選択されている場合は追加
       let isSelectedAreaOther = false
@@ -325,12 +332,19 @@ export default {
         isSelectedAreaOther = _.find(this.displayCheckList.area, (id) => { return id == 0 }) == 0? true: false
       }
       colorOtherStyle = '<span style="color: ' + DISP.SUM_STACK_COLOR[0] + ';">■</span>'
-      isSelectedAreaOther? fields.push({key: 'areaOther', sortable: true, label: i18n.tnl('label.other')+i18n.tnl('label.area') + colorOtherStyle, thStyle: {width:'100px !important'}}): null
-
+      const areaOtherClassName = isSelectedAreaOther? '': disableClassName
+      fields.push({key: 'areaOther', sortable: true, label: i18n.tnl('label.other')+i18n.tnl('label.area') + colorOtherStyle
+        , thStyle: {width:'100px !important'}, thClass: areaOtherClassName, tdClass: areaOtherClassName})
 
       // 選択されている総合時間を追加する
-      isInit || this.isDisplayStayColumn('stay')? fields.push({key: 'stayTime', sortable: true, label: this.$i18n.tnl('label.stayTime'), thStyle: {width:'100px !important'}}): null
-      isInit || this.isDisplayStayColumn('lost')? fields.push({key: 'lostTime', sortable: true, label: this.$i18n.tnl('label.lostTime'), thStyle: {width:'100px !important'}}): null
+      const stayClassName = isInit || this.isDisplayStayColumn('stay')? '': disableClassName
+      const lostClassName = isInit || this.isDisplayStayColumn('lost')? '': disableClassName
+      fields.push({key: 'stayTime', sortable: true, label: this.$i18n.tnl('label.stayTime'), thStyle: {width:'100px !important'}
+        , thClass: stayClassName, tdClass: stayClassName})
+      fields.push({key: 'lostTime', sortable: true, label: this.$i18n.tnl('label.lostTime'), thStyle: {width:'100px !important'}
+        , thClass: lostClassName, tdClass: lostClassName})
+
+      console.table(fields)
 
       return fields.map(val => ({ ...val, originLabel: val.label}))
     },
@@ -350,6 +364,7 @@ export default {
       // 何もしない
     },
     async display() {
+      this.updateColumn()
       this.container ? this.container.removeAllChildren() : null
       await this.displayImpl()
       this.stage ? this.stage.update() : null
@@ -515,6 +530,7 @@ export default {
       return result
     },
     async downloadDay(key){
+      this.updateColumn()
       if (this.viewList == null || this.viewList.length == 0) {
         this.message = this.$i18n.tnl('message.notFound')
         this.replace({showAlert: true})
