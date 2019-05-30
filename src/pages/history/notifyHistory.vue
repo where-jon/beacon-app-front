@@ -110,8 +110,8 @@
             </span>
           </template>
 
-          <template slot="minorList" slot-scope="row">
-            <span v-for="(val, key) in row.item.minorList" :key="key">
+          <template slot="minors" slot-scope="row">
+            <span v-for="(val, key) in row.item.minors" :key="key">
               {{ val }}<br>
             </span>
           </template>
@@ -238,7 +238,7 @@ export default {
       fields7: ViewHelper.addLabelByKey(this.$i18n, [  // ユーザ登録通知
         {key: 'positionDt', sortable: true, label:'dt'},
         {key: 'notifyTo', sortable: true,label:'notifyTo' },
-        {key: 'minorList', sortable: true,label:'minor' },
+        {key: 'minors', sortable: true,label:'minor' },
         {key: 'potNames', sortable: true, label:'potSearchName'},
         {key: 'zoneNames', sortable: true, label:'zoneName'},
         {key: 'lastRcvDatetimes', sortable: true,label:'finalReceiveTime' },
@@ -385,7 +385,11 @@ export default {
 
       }
     },
-    getNotifyBrTag(notifyToData){
+    csvColumnBrTag(csvColumn){
+      let tempNames = csvColumn.toString()
+      return tempNames.replace( /,/gi, ';')
+    },
+    getNotifyTo(notifyToData){
       let notifysTo = notifyToData.split(',')
       let arNotify = []
       if(notifysTo){
@@ -450,7 +454,7 @@ export default {
           notifyData.positionDt = Util.formatDate(d.getTime())
           notifyData.notifyResult = notifyData.notifyResult == 0 ? '成功' : '失敗'
           if(this.userState == 'ALL_REGION' || aNotifyState == 'GW_ALERT' || aNotifyState == 'EXB_ALERT'){
-            let arNotifyto = this.getNotifyBrTag(notifyData.notifyTo)
+            let arNotifyto = this.getNotifyTo(notifyData.notifyTo)
             arNotifyto ? notifyData.notifyTo = arNotifyto: null
             if (++count <= this.limitViewRows) {
               this.viewList.push(notifyData)
@@ -465,7 +469,7 @@ export default {
             this.gPowerLevel= notifyData.powerLevels[tempIndex]
             notifyData.majors = notifyData.majors[tempIndex]
             notifyData.txNames = notifyData.txNames[tempIndex]
-            let arNotifyto = this.getNotifyBrTag(notifyData.notifyTo)
+            let arNotifyto = this.getNotifyTo(notifyData.notifyTo)
             arNotifyto ? notifyData.notifyTo = arNotifyto: null
             if (++count <= this.limitViewRows) {
               notifyData.minors == this.userMinor? this.viewList.push(notifyData) : null
@@ -493,46 +497,17 @@ export default {
         return obj
       })
       records.forEach((record) => {
-        if(record.txNames!=null){
-          let txNames = record.txNames.toString()
-          record.txNames = txNames.replace( /,/gi, ';')
-        }
-        if(record.notifyTo!=null){
-          let notifyTos = record.notifyTo.toString()
-          record.notifyTo = notifyTos.replace( /,/gi, ';')
-        }
-        if(record.major!=null){
-          let majors = record.major.toString()
-          record.major = majors.replace( /,/gi, ';')
-        }
-        if(record.minor!=null){
-          let minors = record.minor.toString()
-          record.minor = minors.replace( /,/gi, ';')
-        }
-        if(record.potNames!=null){
-          let potNames = record.potNames.toString()
-          record.potNames = potNames.replace( /,/gi, ';')
-        }
-        if(record.zoneNames!=null){
-          let zoneNames = record.zoneNames.toString()
-          record.zoneNames = zoneNames.replace( /,/gi, ';')
-        }
-        if(record.minor!=null){
-          let minors = record.minor.toString()
-          record.minor = minors.replace( /,/gi, ';')
-        }
-        if(record.deviceNums!=null){
-          let deviceNums = record.deviceNums.toString()
-          record.deviceNums = deviceNums.replace( /,/gi, ';')
-        }
-        if(record.lastRcvDatetimes!=null){
-          let lastRcvDatetimes = record.lastRcvDatetimes.toString()
-          record.lastRcvDatetimes = lastRcvDatetimes.replace( /,/gi, ';')
-        }
-        if(record.powerLevels!=null){
-          let powerLevels = record.powerLevels.toString()
-          record.powerLevels = powerLevels.replace( /,/gi, ';')
-        }
+        record.txNames?record.txNames=this.csvColumnBrTag(record.txNames):false
+        record.notifyTo?record.notifyTo=this.csvColumnBrTag(record.notifyTo):false
+        record.major?record.major=this.csvColumnBrTag(record.major):false
+        record.minor?record.minor=this.csvColumnBrTag(record.minor):false
+        record.potName?record.potName=this.csvColumnBrTag(record.potName):false
+        record.zoneName?record.zoneName=this.csvColumnBrTag(record.zoneName):false
+        record.deviceNums?record.deviceNums=this.csvColumnBrTag(record.deviceNums):false
+        record.lastRcvDatetimes?record.lastRcvDatetimes= record.lastRcvDatetimes=this.csvColumnBrTag(record.lastRcvDatetimes):false
+        record.lastRcvDatetime?record.lastRcvDatetime=this.csvColumnBrTag(record.lastRcvDatetime):false
+        record.powerLevels?record.powerLevels=this.csvColumnBrTag(record.powerLevels):false
+
         if(this.form.notifyState == 'TX_BATTERY_ALERT' && record.minor && record.powerLevels){
           let minors = record.minor.split(';')
           let powerLevels = record.powerLevels.split(';')
