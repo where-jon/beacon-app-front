@@ -47,7 +47,7 @@
             </b-form-checkbox><br>
           </div>
           <b-form-checkbox :value="0">
-            {{ $t('label.other') }} <span class="bgSquare" :style="`background-color: ${getRandomColor(0)};`" />
+            {{ $t('label.other') }} <span class="bgSquare" :style="`background-color: ${getRandomColor(defaultColor)};`" />
           </b-form-checkbox><br>
         </b-form-checkbox-group>
         <b-form-checkbox-group v-if="!enableCategorySelect" id="checkbox-group-2" v-model="displayCheckList.area" name="flavour-2">
@@ -57,7 +57,7 @@
             </b-form-checkbox><br>
             <div v-if="index == (areas.length - 1)">
               <b-form-checkbox :value="0">
-                {{ $t('label.other') }} <span class="bgSquare" :style="`background-color: ${getRandomColor(0)};`" />
+                {{ $t('label.other') }} <span class="bgSquare" :style="`background-color: ${getRandomColor(defaultColor)};`" />
               </b-form-checkbox><br>
             </div>
           </div>
@@ -208,7 +208,8 @@ export default {
       fields: this.getFields(true),
       initTotalRows: 0,
       historyType: 'category',
-      isCategorySelected: true
+      isCategorySelected: true,
+      defaultColor: 0, // その他や色指定がない場合を0に設定
     }
   },
   computed: {
@@ -307,7 +308,7 @@ export default {
       if (this.displayCheckList) {
         isSelectedCategoryOther = _.find(this.displayCheckList.category, (id) => { return id == 0 }) == 0? true: false
       }
-      let colorOtherStyle = '<span style="color: ' + DISP.SUM_STACK_COLOR[0] + ';">■</span>'
+      let colorOtherStyle = '<span style="color: ' + DISP.SUM_STACK_COLOR[this.defaultColor] + ';">■</span>'
       const categoryOtherClassName = isSelectedCategoryOther? '': disableClassName
       fields.push({key: 'categoryOther', sortable: true, label: i18n.tnl('label.other')+i18n.tnl('label.category') + colorOtherStyle
         , thStyle: {width:'100px !important'}, thClass: categoryOtherClassName, tdClass: categoryOtherClassName})
@@ -332,7 +333,7 @@ export default {
       if (this.displayCheckList) {
         isSelectedAreaOther = _.find(this.displayCheckList.area, (id) => { return id == 0 }) == 0? true: false
       }
-      colorOtherStyle = '<span style="color: ' + DISP.SUM_STACK_COLOR[0] + ';">■</span>'
+      colorOtherStyle = '<span style="color: ' + DISP.SUM_STACK_COLOR[this.defaultColor] + ';">■</span>'
       const areaOtherClassName = isSelectedAreaOther? '': disableClassName
       fields.push({key: 'areaOther', sortable: true, label: i18n.tnl('label.other')+i18n.tnl('label.area') + colorOtherStyle
         , thStyle: {width:'100px !important'}, thClass: areaOtherClassName, tdClass: areaOtherClassName})
@@ -476,8 +477,8 @@ export default {
             endTime: percent == 100? Util.convertToTime(toSeconds): moment(stay.end).format('HH:mm:ss'),
             time: time,
             percent: percent,
-            categoryBgColor: findCategory? '#' + findCategory.bgColor: this.getRandomColor(0),
-            areaBgColor: findArea? this.getRandomColor(findArea.areaId): this.getRandomColor(0),
+            categoryBgColor: findCategory? '#' + findCategory.bgColor: this.getRandomColor(this.defaultColor),
+            areaBgColor: findArea? this.getRandomColor(findArea.areaId): this.getRandomColor(this.defaultColor),
             areaName: findArea? findArea.areaName: '',
             zoneCategory: stay.byName,
           }
