@@ -194,7 +194,7 @@ export default {
       },
       name: '',
       viewList: [],
-      items: ViewHelper.createBreadCrumbItems('sumTitle', 'stayRatio'),
+      items: ViewHelper.createBreadCrumbItems('sumTitle', 'stayRatioBase'),
       message: '',
       currentPage: 1,
       perPage: 20,
