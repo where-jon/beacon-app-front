@@ -594,16 +594,16 @@ export default {
 
         return graphData.map((graph) => {
           return {
-            date: viewData.date,
-            name: viewData.name,
-            groupName: viewData.groupName,
-            categoryName: viewData.categoryName,
-            start: graph.start,
-            end: graph.end,
-            seconds: graph.period,
-            state: graph.isStay && graph.percent != 100?  this.$i18n.tnl('label.detected'): this.$i18n.tnl('label.undetect'),
-            areaName: graph.areaName,
-            zoneCategory: graph.zoneCategory,
+            [this.$i18n.tnl('label.date')]: viewData.date,
+            [this.$i18n.tnl('label.name')]: viewData.name,
+            [this.$i18n.tnl('label.groupName')]: viewData.groupName,
+            [this.$i18n.tnl('label.categoryName')]: viewData.categoryName,
+            [this.$i18n.tnl('label.start')]: graph.start,
+            [this.$i18n.tnl('label.end')]: graph.end,
+            [this.$i18n.tnl('label.stayTime')]: graph.period,
+            [this.$i18n.tnl('label.state')]: graph.isStay && graph.percent != 100?  this.$i18n.tnl('label.detected'): this.$i18n.tnl('label.undetect'),
+            [this.$i18n.tnl('label.areaName')]: graph.areaName,
+            [this.$i18n.tnl('label.zoneCategory')]: graph.zoneCategory,
           }
         })
       })
