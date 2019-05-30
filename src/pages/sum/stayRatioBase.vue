@@ -558,13 +558,14 @@ export default {
       // キーの一致するデータのみのリストを作成。その際、％データがある場合は分ける
       return viewList.map((viewData) => {
         let objectData = {}
+        const ratio = this.$i18n.tnl('label.bracketStayRate')
         keys.forEach((data) => {
           const keyName = data.label.replace(/<span.*?span>/g, '')
           const hasRatio = viewData[data.key]? viewData[data.key].search('%') > 0: false
           if (hasRatio) {
             let splitData = viewData[data.key].split(' ')
             objectData[keyName] = splitData[0]
-            objectData[keyName + 'Ratio'] = splitData[1].slice(1,-1)
+            objectData[keyName + ratio] = splitData[1].slice(1,-1)
           } else {
             objectData[keyName] = viewData[data.key]
           }

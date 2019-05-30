@@ -578,6 +578,7 @@
     "lostTimeSumColumn": "不在時間（合計）",
     "sum": "集計",
     "displayColumn": "表示列",
+    "bracketStayRate": "(滞在率)",
 
     "dummy": ""
   },
