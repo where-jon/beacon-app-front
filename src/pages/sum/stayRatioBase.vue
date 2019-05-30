@@ -117,7 +117,8 @@
           <div style="position: relative;">
             <div v-for="(bar, index) in row.item.graph" :key="index" :class="bar.isStay? 'stay-bar': 'lost-bar'" :style="`${bar.isStay? `background: `+ (historyType == 'category'? bar.categoryBgColor: bar.areaBgColor)+`;`: `` } width:${bar.percent}% !important;`">
               <span class="graph-arrow-box">
-                {{ $i18n.tnl(bar.isStay?'label.stay': 'label.lost') }}: {{ bar.time }}
+                {{ $i18n.tnl(bar.isStay?'label.stay': 'label.lost') }}: {{ bar.time }} <br>
+                {{ bar.startTime }} ～ {{ bar.endTime }}
               </span>&nbsp;
             </div>
             <br>
@@ -410,6 +411,8 @@ export default {
       return byId == -1
     },
     getStayDataList(date, stayData, absentLimit = 0, lostLimit = APP.LOST_TIME) {
+      const fromSeconds = (Math.floor(APP.STAY_SUM.FROM / 100) * 60 + APP.STAY_SUM.FROM % 100) * 60
+      const toSeconds = (Math.floor(APP.STAY_SUM.TO / 100) * 60 + APP.STAY_SUM.TO % 100) * 60
       const graphTimeRatio = this.getTimeRatioData()
       return stayData.map((data) => {
         let stayTime = 0, lostTime = 0
@@ -463,13 +466,16 @@ export default {
             }
           }
 
+          const percent = Math.floor((stay.period / this.fromToSettingDiff) * 100 * APP.STAY_SUM.PARSENT_DIGIT) / APP.STAY_SUM.PARSENT_DIGIT
           return {
             isStay: isExistStayData,
             period: stay.period,
             start: stay.start,
+            startTime: percent == 100? Util.convertToTime(fromSeconds): moment(stay.start).format('HH:mm:ss'),
             end: stay.end,
+            endTime: percent == 100? Util.convertToTime(toSeconds): moment(stay.end).format('HH:mm:ss'),
             time: time,
-            percent: Math.floor((stay.period / this.fromToSettingDiff) * 100 * APP.STAY_SUM.PARSENT_DIGIT) / APP.STAY_SUM.PARSENT_DIGIT,
+            percent: percent,
             categoryBgColor: findCategory? '#' + findCategory.bgColor: this.getRandomColor(0),
             areaBgColor: findArea? this.getRandomColor(findArea.areaId): this.getRandomColor(0),
             areaName: findArea? findArea.areaName: '',
@@ -574,33 +580,17 @@ export default {
       })
     },
     getCsvDetailList(detailList) {
-      const fromSeconds = (Math.floor(APP.STAY_SUM.FROM / 100) * 60 + APP.STAY_SUM.FROM % 100) * 60
-      const toSeconds = (Math.floor(APP.STAY_SUM.TO / 100) * 60 + APP.STAY_SUM.TO % 100) * 60
       // キーの一致するデータのみのリストを作成。その際、％データがある場合は分ける
       const result = detailList.map((viewData) => {
         this.setFromToSettingDiff()
-
-        let graphData = viewData.graph
-          .filter((graph) => graph.isStay || graph.percent == 100)
-          .map((graph) => {
-            if (graph.percent == 100) {
-              graph.start = Util.convertToTime(fromSeconds)
-              graph.end = Util.convertToTime(toSeconds)
-            } else {
-              graph.start = moment(graph.end).format('HH:mm:ss')
-              graph.end = moment(graph.end).format('HH:mm:ss')
-            }
-            return graph
-          })
-
-        return graphData.map((graph) => {
+        return viewData.graph.map((graph) => {
           return {
             [this.$i18n.tnl('label.date')]: viewData.date,
             [this.$i18n.tnl('label.name')]: viewData.name,
             [this.$i18n.tnl('label.groupName')]: viewData.groupName,
             [this.$i18n.tnl('label.categoryName')]: viewData.categoryName,
-            [this.$i18n.tnl('label.start')]: graph.start,
-            [this.$i18n.tnl('label.end')]: graph.end,
+            [this.$i18n.tnl('label.start')]: graph.startTime,
+            [this.$i18n.tnl('label.end')]: graph.endTime,
             [this.$i18n.tnl('label.stayTime')]: graph.period,
             [this.$i18n.tnl('label.state')]: graph.isStay && graph.percent != 100?  this.$i18n.tnl('label.detected'): this.$i18n.tnl('label.undetect'),
             [this.$i18n.tnl('label.areaName')]: graph.areaName,
