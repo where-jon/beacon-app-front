@@ -435,7 +435,7 @@ export const loadAreaImage = async (areaId, force) => {
 
 export const isProhibitAlert = async (prohibits) => {
   // 設定値から画面に進入禁止区域アラートを表示有無、進入禁止区域滞在不可グループ、禁止区域がない場合は走らない
-  const isScreen = APP.POS.PROHIBIT_ALERT.split(',').filter((val) => val.match(PROHIBIT_STATE.SCREEN)).length > 0 ? true :false
+  const isScreen = APP.POS.PROHIBIT_ALERT.some((val) => val == PROHIBIT_STATE.SCREEN)
   if (!isScreen || !APP.POS.PROHIBIT_GROUPS || !prohibits) {
     return false
   }
@@ -447,11 +447,11 @@ export const getProhibitData = async (position,prohibits) => {
   const groups = APP.POS.PROHIBIT_GROUPS
   return position.filter((pos) => pos.detectState==DETECT_STATE.DETECTED).filter((pos) =>
     prohibits.some((prohibitData) => {
-      const groupCheck = groups.some((group) => pos.tx.group?  pos.tx.group.groupId == group : false)
-      groupCheck ? pos.zoneName = prohibitData.zoneName : null
-      if (groupCheck && pos.exb && pos.exb.areaId == prohibitData.areaId
-          && pos.exb.x >= prohibitData.x && pos.exb.x <= prohibitData.w
-          && pos.exb.y >= prohibitData.y && pos.exb.y <= prohibitData.h) {
+      const isGroup = groups.some((group) => pos.tx.group.groupId == group)
+      if (isGroup && pos.exb && pos.exb.areaId == prohibitData.areaId
+          && pos.exb.x >= prohibitData.x && pos.exb.x <= prohibitData.x + prohibitData.w
+          && pos.exb.y >= prohibitData.y && pos.exb.y <= prohibitData.y + prohibitData.h) {
+        pos.zoneName = prohibitData.zoneName
         return true
       }
     })).map((position) => {
