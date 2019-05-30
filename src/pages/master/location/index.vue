@@ -165,6 +165,7 @@ export default {
 
     if(this.pageSendParam){
       this.vueSelected.area = ParamHelper.getVueSelectData(this.areaOptions, this.pageSendParam.areaId)
+      this.selectedArea = this.pageSendParam.areaId
       this.changeArea()
       this.replaceAS({pageSendParam: null})
     }
