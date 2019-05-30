@@ -59,7 +59,7 @@
             <b-form-group>
               <label v-t="'label.thumbnail'" />
               <b-form-file v-if="isEditable" ref="inputThumbnail" v-model="form.thumbnailTemp" :placeholder="$t('message.selectFile') " accept="image/jpeg, image/png, image/gif" @change="readImage" />
-              <b-button v-if="isEditable && form.thumbnail" :variant="theme" type="button" class="float-right mt-3" @click="clearImage">
+              <b-button v-if="isEditable && form.existThumbnail" :variant="theme" type="button" class="float-right mt-3" @click="clearImage">
                 {{ $i18n.tnl('label.clear') }}
               </b-button>
               <img v-show="form.existThumbnail" ref="thumbnail" :src="thumbnailUrl.replace('{id}', form.potId) + new Date().getTime()" width="100" class="mt-1 ml-3">
