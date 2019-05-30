@@ -81,7 +81,6 @@ export default {
       this.hideProgress()
     },
     thumbnail(row) {
-      console.log(row)
       return row.existThumbnail ? this.thumbnailUrl.replace('{id}', row.areaId) : null
     },
   },
