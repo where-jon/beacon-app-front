@@ -464,13 +464,14 @@ export default {
       if (!txBtn) {
         // 作成されていない場合、新規作成してからiconsに登録
         txBtn = this.createTxBtn(pos, display.shape, color, bgColor)
-        txBtn.prohibit  = this.prohibitData ? this.prohibitData.some((data) => data.minor == pos.minor):false
         this.icons[pos.btx_id] = txBtn
       } else {
         // 作成済みの場合、座標値のみセットする
         txBtn.x = pos.x
         txBtn.y = pos.y
       }
+      // プロとするTXアイコンが進入禁止区域に入ってるかチェック
+      txBtn.prohibit  = this.prohibitData ? this.prohibitData.some((data) => data.minor == pos.minor):false
 
       if (this.isFixTx(tx)) {
         Util.debug('fixed location', tx)
