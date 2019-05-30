@@ -593,7 +593,7 @@ export default {
             [this.$i18n.tnl('label.start')]: graph.startTime,
             [this.$i18n.tnl('label.end')]: graph.endTime,
             [this.$i18n.tnl('label.stayTime')]: graph.period,
-            [this.$i18n.tnl('label.state')]: graph.isStay && graph.percent != 100?  this.$i18n.tnl('label.detected'): this.$i18n.tnl('label.undetect'),
+            [this.$i18n.tnl('label.state')]: graph.isStay?  this.$i18n.tnl('label.detected'): this.$i18n.tnl('label.undetect'),
             [this.$i18n.tnl('label.areaName')]: graph.areaName,
             [this.$i18n.tnl('label.zoneCategory')]: graph.zoneCategory,
           }
