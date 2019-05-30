@@ -78,13 +78,25 @@
         <b-form-group>
           <b-form-row v-if="enableGroup" class="mb-3 mr-5">
             <label v-t="'label.group'" class="mr-2" />
-            <b-form-select v-model="form.groupId" :options="groupOptions" class="mr-2 inputSelect" />
+            <span :title="vueSelectTitle(vueSelected.group)">
+              <v-select v-model="vueSelected.group" :options="groupOptions" class="mr-2 inputSelect vue-options">
+                <template slot="selected-option" slot-scope="option">
+                  {{ vueSelectCutOn(option) }}
+                </template>
+              </v-select>
+            </span>
           </b-form-row>
         </b-form-group>
         <b-form-group>
-          <b-form-row v-if="enableCategory" class="mb-3 mr-5">
+          <b-form-row v-if="enableCategory" class="mb-3 mr-2">
             <label v-t="'label.category'" class="mr-2" />
-            <b-form-select v-model="form.categoryId" :options="categoryOptionList" class="mr-2 inputSelect" />
+            <span :title="vueSelectTitle(vueSelected.category)">
+              <v-select v-model="vueSelected.category" :options="getCategoryOptions(showCategoryTypes)" class="inputSelect vue-options">
+                <template slot="selected-option" slot-scope="option">
+                  {{ vueSelectCutOn(option) }}
+                </template>
+              </v-select>
+            </span>
           </b-form-row>
         </b-form-group>
       </b-form>
@@ -160,6 +172,7 @@ import { getCharSet } from '../../sub/helper/CharSetHelper'
 import { APP, DISP } from '../../sub/constant/config'
 import moment from 'moment'
 import commonmixinVue from '../../components/mixin/commonmixin.vue'
+import controlmixinVue from '../../components/mixin/controlmixin.vue'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
 import { SYSTEM_ZONE_CATEGORY_NAME } from '../../sub/constant/Constants'
 import { CATEGORY } from '../../sub/constant/Constants'
@@ -180,11 +193,15 @@ export default {
     alert,
     DatePicker,
   },
-  mixins: [commonmixinVue],
+  mixins: [commonmixinVue, controlmixinVue],
   data () {
     return {
       form: {
         date: '',
+      },
+      vueSelected: {
+        group: null,
+        category: null,
       },
       displayCheckList: {
         stay: ['stay', 'lost'],
@@ -203,7 +220,6 @@ export default {
       searchedGroupName: '',
       categoryOptionList: [],
       categoryDisplayList: [],
-      fromToSettingDiff: 0,
       fields: this.getFields(true),
       initTotalRows: 0,
       historyType: 'category',
@@ -234,6 +250,23 @@ export default {
     enableCategorySelect() {
       return this.isCategorySelected
     },
+    showCategoryTypes () {
+      return CATEGORY.POT_AVAILABLE
+    },
+  },
+  watch: {
+    'vueSelected.group': {
+      handler: function(newVal, oldVal){
+        this.form.groupId = Util.getValue(newVal, 'value', null)
+      },
+      deep: true,
+    },
+    'vueSelected.category': {
+      handler: function(newVal, oldVal){
+        this.form.categoryId = Util.getValue(newVal, 'value', null)
+      },
+      deep: true,
+    },
   },
   async created() {
     await StateHelper.load('group')
@@ -253,10 +286,6 @@ export default {
     if (this.categories.length < 1) {
       return
     }
-    this.categoryOptionList = this.categories.filter((c) => c.categoryType != CATEGORY.ZONE)
-      .sort((a, b) => a.categoryId < b.categoryId ? -1 : 1)
-      .map((c) => { return {text: c.categoryName, value: c.categoryId}})
-    this.categoryOptionList.unshift({text: '', value: null})
 
     this.categoryDisplayList = this.categories.filter((c) => c.categoryType === CATEGORY.ZONE)
       .sort((a, b) => a.categoryId < b.categoryId ? -1 : 1)
@@ -375,7 +404,6 @@ export default {
       await StateHelper.load('zones')
       await StateHelper.load('pots')
       await StateHelper.load('group')
-      this.setFromToSettingDiff()
       
       if (!param.date || param.date.length == 0) {
         this.message = this.$i18n.tnl('message.pleaseEnterSearchCriteria')
@@ -414,6 +442,8 @@ export default {
       const fromSeconds = (Math.floor(APP.STAY_SUM.FROM / 100) * 60 + APP.STAY_SUM.FROM % 100) * 60
       const toSeconds = (Math.floor(APP.STAY_SUM.TO / 100) * 60 + APP.STAY_SUM.TO % 100) * 60
       const graphTimeRatio = this.getTimeRatioData()
+      const fromToSettingDiff = toSeconds - fromSeconds
+
       return stayData.map((data) => {
         let stayTime = 0, lostTime = 0
         let categoryData = []
@@ -466,7 +496,7 @@ export default {
             }
           }
 
-          const percent = Math.floor((stay.period / this.fromToSettingDiff) * 100 * APP.STAY_SUM.PARSENT_DIGIT) / APP.STAY_SUM.PARSENT_DIGIT
+          const percent = Math.floor((stay.period / fromToSettingDiff) * 100 * APP.STAY_SUM.PARSENT_DIGIT) / APP.STAY_SUM.PARSENT_DIGIT
           return {
             isStay: isExistStayData,
             period: stay.period,
@@ -582,7 +612,6 @@ export default {
     getCsvDetailList(detailList) {
       // キーの一致するデータのみのリストを作成。その際、％データがある場合は分ける
       const result = detailList.map((viewData) => {
-        this.setFromToSettingDiff()
         return viewData.graph.map((graph) => {
           return {
             [this.$i18n.tnl('label.date')]: viewData.date,
@@ -683,11 +712,6 @@ export default {
       } else {
         this.replace({showAlert: false})
       }
-    },
-    setFromToSettingDiff() {
-      const fromMinute = Math.floor(APP.STAY_SUM.FROM / 100) * 60 + APP.STAY_SUM.FROM % 100
-      const toMinute = Math.floor(APP.STAY_SUM.TO / 100) * 60 + APP.STAY_SUM.TO % 100
-      this.fromToSettingDiff = (toMinute - fromMinute) * 60
     },
   }
 }
