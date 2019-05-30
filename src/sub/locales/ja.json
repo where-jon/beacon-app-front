@@ -834,7 +834,9 @@
     "DEV": {
       "SIMULATION": "仮データを使用する::仮のデータを使用して測位などを実施します。"
     },
-    "EXCLOUD_BASE_URL": "EXCloudのURL::EXCloudのURLを設定します。",
+    "EXCLOUD": {
+      "BASE_URL": "EXCloudのURL::EXCloudのURLを設定します。"
+    },
 
     "TYPE": {
       "APP": {
