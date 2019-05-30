@@ -344,8 +344,6 @@ export default {
       fields.push({key: 'lostTime', sortable: true, label: this.$i18n.tnl('label.lostTime'), thStyle: {width:'100px !important'}
         , thClass: lostClassName, tdClass: lostClassName})
 
-      console.table(fields)
-
       return fields.map(val => ({ ...val, originLabel: val.label}))
     },
     isDisplayStayColumn(key) {
@@ -537,8 +535,8 @@ export default {
         return
       }
 
+      getDataList(this.viewList)
       const csvList = (key == 'sum')? this.getCsvSumList(this.viewList): this.getCsvDetailList(this.viewList)
-      getDataList(csvList)
 
       const param = _.cloneDeep(this.form)
       const searchDate = moment(param.date).format('YYYY-MM-DD')
@@ -554,20 +552,21 @@ export default {
       // フィールド設定に合わせ、出力するデータのキーリストを生成する
       const keys = []
       this.fields.forEach((field) => {
-        _.find(Object.keys(viewList[0]), (key) => { return key!= 'graph' && key == field.key})? keys.push(field.key): null
+        _.find(Object.keys(viewList[0]), (key) => { return key!= 'graph' && key == field.key})? keys.push(field): null
       })
 
       // キーの一致するデータのみのリストを作成。その際、％データがある場合は分ける
       return viewList.map((viewData) => {
         let objectData = {}
-        keys.forEach((key) => {
-          const hasRatio = viewData[key]? viewData[key].search('%') > 0: false
+        keys.forEach((data) => {
+          const keyName = data.label.replace(/<span.*?span>/g, '')
+          const hasRatio = viewData[data.key]? viewData[data.key].search('%') > 0: false
           if (hasRatio) {
-            let splitData = viewData[key].split(' ')
-            objectData[key] = splitData[0]
-            objectData[key + 'Ratio'] = splitData[1].slice(1,-1)
+            let splitData = viewData[data.key].split(' ')
+            objectData[keyName] = splitData[0]
+            objectData[keyName + 'Ratio'] = splitData[1].slice(1,-1)
           } else {
-            objectData[key] = viewData[key]
+            objectData[keyName] = viewData[data.key]
           }
         })
         return objectData
@@ -668,8 +667,8 @@ export default {
         }
 
         let list = this.getStayDataList(moment(searchDate).format('YYYY-MM-DD'), sumData, APP.SUM_ABSENT_LIMIT, APP.SUM_LOST_LIMIT)
+        getDataList(list)
         const dateList = (key == 'sum')? this.getCsvSumList(list): this.getCsvDetailList(list)
-        getDataList(dateList)
         csvList = csvList.isEmpty? dateList: csvList.concat(dateList)
         startDate.add(1, 'days')
       }
