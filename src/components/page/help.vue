@@ -157,6 +157,18 @@
           {{ $i18n.tnl('helpDescription.zoneBlock', {zoneBlock: zoneBlock}) }}
         </p>
       </div>
+      <div id="stayRatioBase">
+        <p class="helpLabelHeader">
+          {{ $i18n.tnl('label.stayRatioBase') }}
+        </p>
+
+        <p class="helpTitle">
+          {{ $i18n.tnl('label.download') }}
+        </p>
+        <p class="helpDetail">
+          {{ $i18n.tnl('helpDescription.stayRatioBaseDownload') }}
+        </p>
+      </div>
     </div>
   </div>
 </template>
