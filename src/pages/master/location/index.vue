@@ -222,6 +222,8 @@ export default {
     sortExbOptions() {
       this.exbOptions = _(this.workExbs).filter((val) => {
         return val.enabled && (val.location.areaId == null || !val.location.x || !val.location.y || (val.location.x && val.location.y <= 0))
+      }).filter(val => {
+        return !this.positionedExb.find(exb => exb.exbId == val.exbId)
       })
         .map((val) => {
           return {
@@ -250,7 +252,7 @@ export default {
     },
     changeExbDisp(newVal) {
       this.exbDisp = newVal
-      this.setExbPosition()
+      this.sortExbOptions()
       for (let i=0; this.exbCon && i<this.exbCon.numChildren; i++) {
         let exbBtn = this.exbCon.getChildAt(i)
         if (exbBtn) {
