@@ -1,6 +1,6 @@
 <template>
   <div>
-    <breadcrumb :items="items" :reload="false" />
+    <breadcrumb :items="items" :reload="true" @reload="fetchData" />
     <div class="container">
       <b-form inline @submit.prevent>
         <b-form-group>
@@ -31,11 +31,13 @@ import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
+import reloadmixinVue from '../../components/mixin/reloadmixin.vue'
 
 export default {
   components: {
     breadcrumb,
   },
+  mixins: [reloadmixinVue],
   data () {
     return {
       form: {
@@ -50,6 +52,9 @@ export default {
     ...mapState('app_service', [
       'pots',
     ]),
+    ...mapState([
+      'reload',
+    ]),
     categoryTypeOptions(){
       return PROCESS_SUM.getTypes()
     },
@@ -58,7 +63,7 @@ export default {
     await StateHelper.load('pots')
   },
   mounted() {
-    this.fetch()
+    this.fetchData()
   },
   methods: {
     filterGrid(originItem){
@@ -151,10 +156,16 @@ export default {
         }
       })
     },
-    async fetch(){
+    async fetchData(payload){
+      this.showProgress()
       const response = await HttpHelper.getAppService('/office/stayTime/processSum')
       this.fields = this.getFields(response)
       this.viewList = this.getData(response)
+      this.replace({reload: false})
+      if (payload && payload.done) {
+        payload.done()
+      }
+      this.hideProgress()
     }
   }
 }
