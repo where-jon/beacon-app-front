@@ -64,7 +64,7 @@
     "normal": "通常",
     "malfunction": "動作不良",
     "notReceive": "受信不良",
-    "absent": "不在",
+    "absent": "不在区域",
     "prohibit": "禁止区域",
     "charSet": "CSV文字コード",
     "null": "未指定",
