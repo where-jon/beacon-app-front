@@ -959,6 +959,11 @@
     },
     "DEFAULT": {
       "APP": {
+        "POS": {
+          "PROHIBIT": {
+            "DUPLICATE_MAIL_TIME": "180000"
+          }
+        },
         "SVC": {
           "STAY_SUM": {
             "STAY_SUM_START": "0", 
