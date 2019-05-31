@@ -209,7 +209,7 @@ export default {
       },
       deep: true,
     },
-    'vueSelected.categpry': {
+    'vueSelected.category': {
       handler: function(newVal, oldVal){
         this.form.categoryId = Util.getValue(newVal, 'value', null)
       },
