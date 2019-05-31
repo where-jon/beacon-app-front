@@ -467,6 +467,7 @@ export default {
         }
       })
       entity.potTxList = potTxList
+      entity.deleteThumbnail = this.form.deleteThumbnail
       return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
     },
     getNameByteLangth(){
@@ -495,7 +496,8 @@ export default {
     clearImage(e) {
       this.$nextTick(() => {
         this.form.thumbnailTemp = null
-        this.form.thumbnail = null
+        this.form.existThumbnail = false
+        this.form.deleteThumbnail = true
         this.$refs.inputThumbnail.reset()
         this.setFileName()
       })
