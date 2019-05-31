@@ -50,7 +50,7 @@ export const APP = { // 機能面に関する設定
     MOVING_AVERAGE: 5, // 5回分移動平均
     USE_MULTI_POSITIONING: false, // ３点測位を使う
     // 禁止区域関連設定
-    PROHIBIT_ALERT : true, // 禁止区域アラート設定
+    PROHIBIT_ALERT : null,  // 文字列リストで画面かバッチに通知するか判断["screen","mail","led"]
     PROHIBIT_GROUPS: null, // 禁止区域非許可GROUPID[1,2,3]の形
 
     USE_LEGEND: false, // 凡例を表示
@@ -122,7 +122,7 @@ export const APP = { // 機能面に関する設定
     // 通知媒体
     MIDIUM_TYPES: [0,1],   // 選択可能な種別（1メール,2slack）
     // 通知
-    STATE_TYPES: [0,1,2], // 選択可能な種別（0 TXボタン通知,1 アラート系, 2 ユーザ登録・更新 , 3 sos）
+    STATE_TYPES: [0,1,2,4], // 選択可能な種別（0 TXボタン通知,1 アラート系, 2 ユーザ登録・更新 , 3 sos）
   },
   // 動線分析関連設定
   ANALYSIS: {
@@ -393,7 +393,7 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     RSSI_ICON_HEIGHT: 20,
   },
   // 禁止区域関連設定
-  PROHIBIT_TWINKLE_TIME: 1500, // 点滅間隔(ミリ秒) ＸＸＸ_TIME dispに変更
+  PROHIBIT_TWINKLE_TIME: 1500, // 点滅間隔(ミリ秒)
 }
 
 // used when APP.LOGIN_MODE != APP_SERVICE with excloud old api -----------------------------------------------------

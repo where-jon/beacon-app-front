@@ -3,13 +3,16 @@
     <breadcrumb :items="items" :extra-nav-spec="extraNavSpec"
                 :reload="reload" :short-name="shortName" reload-emit-name="allFetch"
     />
+    <b-alert v-model="alertData.isAlert" variant="danger" dismissible>
+      {{ $t('label.detectedProhibitZone') + ' : ' }}{{ alertData.message }}
+    </b-alert>
     <b-row class="mt-2 ml-3">
       <b-form inline class="mt-2" @submit.prevent>
         <label v-t="'label.positionStackType'" class="mr-2" />
         <b-form-select v-model="positionType" :options="positionTypeOptions" />
       </b-form>
     </b-row>
-    <position-display v-show="isShow('area')" ref="areaPosition" master-name="area" />
+    <position-display v-show="isShow('area')" ref="areaPosition" master-name="area" :alert-data="alertData" />
     <position-display v-show="isShow('zone')" ref="zonePosition" master-name="zone" />
   </div>
 </template>
@@ -28,6 +31,7 @@ export default {
   },
   data() {
     return {
+      alertData: { message: null, isAlert:false},
       reload: true,
       styles: [],
       items: ViewHelper.createBreadCrumbItems('main', 'positionStack'),

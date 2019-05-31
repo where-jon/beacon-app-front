@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import * as AppServiceHelper from './AppServiceHelper'
 import * as Util from '../util/Util'
-import { CATEGORY, SHAPE, NOTIFY_STATE, SYSTEM_ZONE_CATEGORY_NAME } from '../constant/Constants'
+import { CATEGORY, SHAPE, NOTIFY_STATE, SYSTEM_ZONE_CATEGORY_NAME, PROHIBIT_STATE, DETECT_STATE } from '../constant/Constants'
 import { APP } from '../constant/config'
 
 
@@ -433,40 +433,44 @@ export const loadAreaImage = async (areaId, force) => {
   // })
 }
 
+export const isProhibitAlert = async (prohibits) => {
+  // 設定値から画面に進入禁止区域アラートを表示有無、進入禁止区域滞在不可グループ、禁止区域がない場合は走らない
+  const isScreen = APP.POS.PROHIBIT_ALERT.some((val) => val == PROHIBIT_STATE.SCREEN)
+  if (!isScreen || !APP.POS.PROHIBIT_GROUPS || !prohibits) {
+    return false
+  }
+}
 export const getProhibitData = async (position,prohibits) => {
-
-  if (!APP.POS.PROHIBIT_ALERT || !APP.POS.PROHIBIT_GROUPS) {
+  if (!isProhibitAlert(prohibits)) {
     return null
   }
   const groups = APP.POS.PROHIBIT_GROUPS
-  return position.filter((pos) =>
+  return position.filter((pos) => pos.detectState==DETECT_STATE.DETECTED).filter((pos) =>
     prohibits.some((prohibitData) => {
-      if (pos.exb.areaId == prohibitData.areaId
-          && pos.exb.x >= prohibitData.x && pos.exb.x <= prohibitData.w
-          && pos.exb.y >= prohibitData.y && pos.exb.y <= prohibitData.h) {
-        const groupCheck = groups.some((group) => pos.tx.group.groupId == group)
-        groupCheck ? pos.zoneName = prohibitData.zoneName : null
-        return groupCheck
+      const isGroup = groups.some((group) => pos.tx.group.groupId == group)
+      if (isGroup && pos.exb && pos.exb.areaId == prohibitData.areaId
+          && pos.exb.x >= prohibitData.x && pos.exb.x <= prohibitData.x + prohibitData.w
+          && pos.exb.y >= prohibitData.y && pos.exb.y <= prohibitData.y + prohibitData.h) {
+        pos.zoneName = prohibitData.zoneName
+        return true
       }
     })).map((position) => {
     return {
       minor: position.minor,
-      potName: position.tx.potTxList[0].pot.potName,
+      potName: position.tx.potName,
       areaName: position.exb.areaName,
       zoneName: position.zoneName
     }})
 }
 
 export const getProhibitMessage = async (message,prohibitData) => {
-
-  if (!APP.POS.PROHIBIT_ALERT || !APP.POS.PROHIBIT_GROUPS) {
+  if (!isProhibitAlert(prohibitData)) {
     return ''   // message空
   }
-
   const labelArea = i18n.tnl('label.Area')
-  const labelpotName = i18n.tnl('label.potName')
+  const labelPotName = i18n.tnl('label.potName')
   const labelZone =  i18n.tnl('label.zoneName')
-  return prohibitData.map((data) => `< ${labelpotName} : ${data.potName} ${labelArea} : ${data.areaName} ${labelZone} : ${data.zoneName}>`).join(' ')
+  return prohibitData.map((data) => `< ${labelPotName} : ${data.potName} ${labelArea} : ${data.areaName} ${labelZone} : ${data.zoneName}>`).join(' ')
 }
 
 export const loadAreaImages = async () => {

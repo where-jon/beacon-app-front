@@ -310,6 +310,12 @@ export const LED_BLINK_TYPES = {
   BLINK_FAST: 4,
 }
 
+export const PROHIBIT_STATE = {
+  SCREEN: 'screen',
+  MAIL: 'mail',
+  LED: 'led',
+}
+
 export const DETECT_STATE = {
   DETECTED: 1,
   LOST: 2,
@@ -347,6 +353,7 @@ export const NOTIFY_STATE = {
       {value:'TX_BATTERY_ALERT', text: i18n.t('label.txBatteryNotify'), index:1},
       {value:'USER_REG_NOTIFY', text: i18n.t('label.userRegNotify'), index:2},
       {value:'TX_SOS_ALERT', text: i18n.t('label.sosNotify'), index:3},
+      {value:'PROHIBIT_NOTIFY', text: i18n.t('label.prohibitNotify'), index:4},
     ]
   }
 }

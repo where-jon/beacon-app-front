@@ -143,6 +143,7 @@
     "gwNotify": "GW status alert",
     "exbNotify": "EXB status alert",
     "txBatteryNotify": "TX battery status alert",
+    "prohibitNotify": "Prohibited area alert",
     "userRegNotify": "User registration alert",
     "sosNotify": "SOS button press notification",
 
@@ -214,6 +215,7 @@
     "potId": "ID",
     "potCd": "Code",
     "potName": "Name",
+    "potSearchName": "Detected name",
     "post": "Post",
     "ruby": "Pronounce",
     "tel": "Tel",
