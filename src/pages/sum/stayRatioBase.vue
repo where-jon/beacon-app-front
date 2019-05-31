@@ -8,8 +8,13 @@
       no-close-on-esc
       hide-header-close
     >
-      <b-alert variant="danger" :show="getModalErrorMessage!=''">{{ getModalErrorMessage }}</b-alert>
-      {{ $t('message.selectDisplayColumn') }}<span class="text-danger">{{ $i18n.tnl('message.selectLimitDescription', {max: checkboxLimit}) }}</span>
+      <b-alert variant="danger" :show="getModalErrorMessage!=''">
+        {{ getModalErrorMessage }}
+      </b-alert>
+      {{ $t('message.selectDisplayColumn') }}
+      <span class="text-danger">
+        {{ $i18n.tnl('message.selectLimitDescription', {max: checkboxLimit}) }}
+      </span>
       <hr>
       <b-form-group ref="form">
         <b-form-checkbox-group id="checkbox-group-2" v-model="displayCheckList.group" name="flavour-2" invalid-feedback="Name is required">
