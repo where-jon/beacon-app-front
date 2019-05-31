@@ -8,7 +8,7 @@
       no-close-on-esc
       hide-header-close
     >
-      <span v-if="getModalErrorMessage!=''" class="modalErrorMessage">{{ getModalErrorMessage }} <br></span>
+      <b-alert variant="danger" :show="getModalErrorMessage!=''">{{ getModalErrorMessage }}</b-alert>
       {{ $t('message.selectDisplayColumn') }}
       <hr>
       <b-form-group ref="form">
@@ -810,8 +810,5 @@ export default {
 .itemTitle {
   font-weight: bold;
   font-size: 14px;
-}
-.modalErrorMessage {
-  color: red;
 }
 </style>
