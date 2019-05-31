@@ -13,7 +13,7 @@
       </b-form>
     </b-row>
     <position-display v-show="isShow('area')" ref="areaPosition" master-name="area" :alert-data="alertData" />
-    <position-display v-show="isShow('zone')" ref="zonePosition" master-name="zone" />
+    <position-display v-show="isShow('zone')" ref="zonePosition" master-name="zone" :alert-data="alertData" />
   </div>
 </template>
 
@@ -23,12 +23,14 @@ import positionDisplay from '../../components/page/position-display.vue'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
 import { EventBus } from '../../sub/helper/EventHelper'
 import { EXTRA_NAV, POSITION_STACK_TYPES } from '../../sub/constant/Constants'
+import listmixin from '../../components/mixin/listmixin.vue'
 
 export default {
   components: {
     breadcrumb,
     positionDisplay,
   },
+  mixins: [listmixin],
   data() {
     return {
       alertData: { message: null, isAlert:false},
