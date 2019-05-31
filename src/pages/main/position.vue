@@ -447,8 +447,8 @@ export default {
         Util.debug('meditag', meditag)
       }
       const display = this.getDisplay(tx)
-      const color = meditag? '000': this.isMagnetOn(magnet)? display.bgColor : display.color
-      const bgColor = meditag? meditag.bg.substr(1): this.isMagnetOn(magnet)? display.color: display.bgColor
+      const color = meditag? '#000': this.isMagnetOn(magnet)? display.bgColor : display.color
+      const bgColor = meditag? meditag.bg: this.isMagnetOn(magnet)? display.color: display.bgColor
       
       // フリーアドレスTXが不在エリア検知の場合は以降処理を行わない
       if (exb && exb.isAbsentZone && !this.isFixTx(tx)) {

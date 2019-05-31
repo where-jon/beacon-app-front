@@ -238,6 +238,7 @@ export const colorCdHex2Decimal = (hex) => {
   ]
 }
 
+export const addPrefix = (text, prefix) => (new RegExp(`^${prefix}.*$`, 'g')).test(text)? text: `${prefix}${text}`
 export const isArray = (obj) => Object.prototype.toString.call(obj) === '[object Array]'
 export const hasValue = (obj) => obj != null && obj.length !== 0
 export const detectEncoding = (str) => jschardet.detect(str)
