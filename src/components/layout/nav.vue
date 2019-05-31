@@ -23,7 +23,7 @@
               {{ $i18n.tnl('label.' + group.key) }}
             </em>
           </template>
-          <b-dropdown-item v-for="page in group.pages" :key="page.key" v-t="'label.' + page.key" :class="navbarClasses" href="#" @click="move('/' + group.base + page.path)" />
+          <b-dropdown-item v-for="page in group.pages" :key="page.key" v-t="'label.' + (page.label? page.label: page.key)" :class="navbarClasses" href="#" @click="move('/' + group.base + page.path)" />
         </b-nav-item-dropdown>
       </b-navbar-nav>
 
