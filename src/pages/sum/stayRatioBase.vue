@@ -366,7 +366,7 @@ export default {
       _.filter(this.categories,(c) => { return c.categoryType === CATEGORY.ZONE })
         .forEach(function(category) {
           const categoryClassName = _.some(selectedCategories, (data) => { return data.categoryId == category.categoryId})? '': disableClassName
-          let colorStyle = '<span style="color: #' + category.bgColor + ';">■</span>'
+          let colorStyle = '<span style="color: #' + category.bgColor + ';">■</span>' // TODO: リファクタリング対象。出来る人がいたらHeaderへ移動する
           let categoryName = (category.systemUse? i18n.tnl('label.' + category.systemCategoryName): category.categoryName)
           fields.push({key: categoryName, sortable: true, label: categoryName + colorStyle
             , thStyle: {width:'100px !important'}, thClass: categoryClassName, tdClass: categoryClassName})
@@ -377,7 +377,7 @@ export default {
       if (this.displayCheckList) {
         isSelectedCategoryOther = _.find(this.displayCheckList.category, (id) => { return id == 0 }) == 0? true: false
       }
-      let colorOtherStyle = '<span style="color: ' + DISP.SUM_STACK_COLOR[this.defaultColor] + ';">■</span>'
+      let colorOtherStyle = '<span style="color: ' + DISP.SUM_STACK_COLOR[this.defaultColor] + ';">■</span>' // TODO: リファクタリング対象。出来る人がいたらHeaderへ移動する
       const categoryOtherClassName = isSelectedCategoryOther? '': disableClassName
       fields.push({key: 'categoryOther', sortable: true, label: i18n.tnl('label.other')+i18n.tnl('label.category') + colorOtherStyle
         , thStyle: {width:'100px !important'}, thClass: categoryOtherClassName, tdClass: categoryOtherClassName})
@@ -392,7 +392,7 @@ export default {
       _.filter(this.areas, (a) => { return true })
         .forEach(function(area, index) {
           const areaClassName = _.some(selectedAreas, (data) => { return data.areaId == area.areaId})? '': disableClassName
-          let colorStyle = '<span style="color: ' + DISP.SUM_STACK_COLOR[area.areaId % DISP.SUM_STACK_COLOR.length] + ';">■</span>'
+          let colorStyle = '<span style="color: ' + DISP.SUM_STACK_COLOR[area.areaId % DISP.SUM_STACK_COLOR.length] + ';">■</span>' // TODO: リファクタリング対象。出来る人がいたらHeaderへ移動する
           fields.push({key: area.areaName, sortable: true, label: area.areaName + colorStyle, thStyle: {width:'100px !important'}
             , thClass: areaClassName, tdClass: areaClassName})
         })
@@ -402,7 +402,7 @@ export default {
       if (this.displayCheckList) {
         isSelectedAreaOther = _.find(this.displayCheckList.area, (id) => { return id == 0 }) == 0? true: false
       }
-      colorOtherStyle = '<span style="color: ' + DISP.SUM_STACK_COLOR[this.defaultColor] + ';">■</span>'
+      colorOtherStyle = '<span style="color: ' + DISP.SUM_STACK_COLOR[this.defaultColor] + ';">■</span>' // TODO: リファクタリング対象。出来る人がいたらHeaderへ移動する
       const areaOtherClassName = isSelectedAreaOther? '': disableClassName
       fields.push({key: 'areaOther', sortable: true, label: i18n.tnl('label.other')+i18n.tnl('label.area') + colorOtherStyle
         , thStyle: {width:'100px !important'}, thClass: areaOtherClassName, tdClass: areaOtherClassName})
