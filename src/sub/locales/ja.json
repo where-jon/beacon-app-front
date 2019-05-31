@@ -580,6 +580,7 @@
     "displayColumnCommon": "表示列-共通",
     "displayColumnIndividual": "表示列-個別",
     "bracketStayRate": "(滞在率)",
+    "ok": "OK",
 
     "dummy": ""
   },
@@ -1244,6 +1245,7 @@
     "valueMissingInput": "このフィールドを入力してください。",
     "valueMissingSelect": "リスト内の項目を選択してください。",
     "selectDisplayColumn": "設定された項目を表に表示します",
+    "tooManyCheck": "選択は{max}個以下にする必要があります。",
 
     "dummy": "" 
   },

@@ -1,19 +1,18 @@
 <template>
   <div>
     <b-modal
-      id="stayRatioDisplayModal"
+      v-model="showModal"
       size="sm"
       :title="$t('label.displaySpecified')"
       no-close-on-backdrop
       no-close-on-esc
       hide-header-close
-      ok-only
-      @ok="updateColumn"
     >
+      <span v-if="getModalErrorMessage!=''" class="modalErrorMessage">{{ getModalErrorMessage }} <br></span>
       {{ $t('message.selectDisplayColumn') }}
-      <b-form-group>
-        <hr>
-        <b-form-checkbox-group id="checkbox-group-2" v-model="displayCheckList.group" name="flavour-2">
+      <hr>
+      <b-form-group ref="form">
+        <b-form-checkbox-group id="checkbox-group-2" v-model="displayCheckList.group" name="flavour-2" invalid-feedback="Name is required">
           <b-form-checkbox :value="'groupName'">
             {{ $t('label.groupName') }}
           </b-form-checkbox>
@@ -69,6 +68,16 @@
           </div>
         </b-form-checkbox-group>
       </b-form-group>
+      <div slot="modal-footer" class="w-100">
+        <b-button
+          variant="primary"
+          size="sm"
+          class="float-right"
+          @click="handleSubmit"
+        >
+          {{ $t('label.ok') }}
+        </b-button>
+      </div>
     </b-modal>
     <breadcrumb :items="items" :reload="false" />
     <div class="container">
@@ -124,7 +133,7 @@
                 {{ $t('label.detail') + $t('label.downloadMonth') }}
               </b-dropdown-item>
             </b-dropdown>
-            <b-button v-if="!iosOrAndroid" v-t="'label.displaySpecified'" v-b-modal.stayRatioDisplayModal :variant="theme" class="ml-2" />
+            <b-button v-if="!iosOrAndroid" v-t="'label.displaySpecified'" :variant="theme" class="ml-2" @click="showModal=true" />
           </b-form-row>
         </b-form-group>
       </b-form>
@@ -219,6 +228,7 @@ export default {
       viewList: [],
       items: ViewHelper.createBreadCrumbItems('sumTitle', 'stayRatioBase'),
       message: '',
+      modalMessage: '',
       currentPage: 1,
       perPage: 20,
       sortBy: 'name',
@@ -231,6 +241,8 @@ export default {
       historyType: 'category',
       isCategorySelected: true,
       defaultColor: 0, // その他や色指定がない場合を0に設定
+      checkboxLimit: 6,
+      showModal: false,
     }
   },
   computed: {
@@ -259,6 +271,9 @@ export default {
     showCategoryTypes () {
       return CATEGORY.POT_AVAILABLE
     },
+    getModalErrorMessage() {
+      return this.modalMessage
+    }
   },
   watch: {
     'vueSelected.group': {
@@ -309,6 +324,26 @@ export default {
     },
     updateColumn() {
       Vue.set(this, 'fields', this.getFields(false))
+    },
+    handleSubmit() {
+      if (this.hasError()) {
+        this.modalMessage = this.$i18n.tnl('message.tooManyCheck', {max: this.checkboxLimit})
+        return
+      }
+      this.modalMessage = ''
+      this.$nextTick(() => {
+        this.showModal = false
+        this.updateColumn()
+      })
+    },
+    hasError() {
+      if (this.displayCheckList && this.displayCheckList.length == 0) {
+        return false
+      } else {
+        let count = 0
+        _.forEach(this.displayCheckList, (list) => { count += list.length })
+        return count <= this.checkboxLimit? false: true
+      }
     },
     getFields(isInit) {
       const disableClassName = 'd-none'
@@ -775,5 +810,8 @@ export default {
 .itemTitle {
   font-weight: bold;
   font-size: 14px;
+}
+.modalErrorMessage {
+  color: red;
 }
 </style>
