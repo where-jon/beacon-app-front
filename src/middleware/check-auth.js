@@ -46,7 +46,7 @@ export default function (context) {
     }
     if (!isProvider && !isTenantAdmin && tenantFeatureList && !MenuHelper.featureOk(context.route.path, tenantFeatureList)) {
       if (MenuHelper.featureOk(APP.MENU.TOP_PAGE, tenantFeatureList)) {
-        context.app.router.push(APP.MENU.TOP_PAGE)
+        context.redirect(APP.MENU.TOP_PAGE)
       }
       else {
         AuthHelper.logout()
