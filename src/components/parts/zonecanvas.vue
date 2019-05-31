@@ -7,6 +7,7 @@ import {ZONE} from '../../sub/constant/Constants'
 import Konva from 'konva'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
+import * as Util from '../../sub/util/Util'
 
 class Zone {
   constructor(prop) {
@@ -299,7 +300,6 @@ export default {
   data () {
     return {
       stage: null,
-      cnt: 0,
       dragging: false,
       zones: null,
       aspectRatio: 1,
@@ -362,7 +362,7 @@ export default {
       this.$emit('unselected')
       zone = new Zone({
         areaId: this.areaId,
-        name: `Zone${++this.cnt}`,
+        name: this.getNewZoneName(),
         categoryId: this.categoryId,
         startX: e.offsetX,
         startY: e.offsetY,
@@ -383,7 +383,6 @@ export default {
       })
       if (zone.w < this.MINIMUM_SIZE || zone.h < this.MINIMUM_SIZE) {
         zone.remove()
-        --this.cnt
         return
       }
       this.zones.add(zone)
@@ -398,6 +397,16 @@ export default {
     })
   },
   methods: {
+    getNewZoneName(){
+      if(!this.zones){
+        return 'Zone1'
+      }
+      const list = !Util.hasValue(this.zones.list)? []: this.zones.list.filter(zone => /^Zone[0-9]*/.test(zone.zoneName)).map(zone => ({zoneCd: zone.zoneName}))
+      if(!Util.hasValue(list)){
+        return 'Zone1'
+      }
+      return StateHelper.createMasterCd('zone', list)
+    },
     emitZone(zone) {
       this.$emit('selected', {
         id: zone.id,
@@ -412,7 +421,6 @@ export default {
     async onChangeAreaId(areaId) {
       await StateHelper.loadAreaImage(areaId, true)
       const areaImage = this.$store.state.app_service.areaImages.find((a) => { return a.areaId === areaId })
-      this.cnt = 0
       this.setupCanvas(areaImage.mapImage)
     },
     setupCanvas (mapImage) {
@@ -457,7 +465,6 @@ export default {
       this.zones.clear()
       let zoneRecs = await AppServiceHelper.fetchList(`/core/zone/area/${this.areaId}`, 'id')
       zoneRecs = _.filter(zoneRecs, (zone) => zone.zoneType ==  ZONE.COORDINATE)
-      this.cnt = zoneRecs.length > 0 ? Math.max(...zoneRecs.map((zoneRec) => zoneRec.zoneId)) + 1 : 0
       zoneRecs.forEach((zoneRec) => this.addZone(zoneRec))
       this.zones.setInActive()
     },
