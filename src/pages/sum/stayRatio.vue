@@ -81,7 +81,7 @@ export default {
         group: null,
       },
       viewList: [],
-      items: ViewHelper.createBreadCrumbItems('sumTitle', 'stayRatio'),
+      items: ViewHelper.createBreadCrumbItems('sumTitle', 'stayRatioGp'),
       message: '',
       showChart: true,
       currentPage: 1,
@@ -166,11 +166,7 @@ export default {
         return
       }
 
-      param.date = moment(param.date).format('YYYYMMDD')
-      const groupBy = param.groupId? '&groupId=' + param.groupId: ''
-      const group = param.groupId? this.groups.find((val) => val.groupId == param.groupId): null
-      const url = '/office/stayTime/sumByDay/' + param.date + '/zoneCategory?from=' + APP.STAY_SUM.FROM + '&to=' + APP.STAY_SUM.TO + groupBy
-      const sumData = await HttpHelper.getAppService(url)
+      const sumData = await HttpHelper.getAppService(this.getApiUrl(param))
       if (_.isEmpty(sumData)) {
         this.message = this.$i18n.t('message.listEmpty')
         this.replace({showAlert: true})
@@ -181,6 +177,7 @@ export default {
       this.viewList = this.getStayDataList(moment(param.date).format('YYYY-MM-DD'), sumData, APP.STAY_SUM.BSENT_LIMIT, APP.STAY_SUM.LOST_LIMIT)
       
       this.totalRows = this.viewList.length
+      const group = param.groupId? this.groups.find((val) => val.groupId == param.groupId): null
       this.searchedGroupName =  group? group.groupName: ''
       this.hideProgress()
     },
@@ -235,13 +232,25 @@ export default {
       })
     },
     async download(){
-      if (this.viewList == null || this.viewList.length == 0) {
-        this.message = this.$i18n.tnl('message.notFound')
+      let viewList
+      const param = _.cloneDeep(this.form)
+      if (!param.date || param.date.length == 0) {
+        this.message = this.$i18n.tnl('message.pleaseEnterSearchCriteria')
         this.replace({showAlert: true})
+        this.hideProgress()
         return
       }
 
-      this.viewList.sort(function(a, b) {
+      const dataList = await HttpHelper.getAppService(this.getApiUrl(param))
+      if (_.isEmpty(dataList)) {
+        this.message = this.$i18n.t('message.listEmpty')
+        this.replace({showAlert: true})
+        this.hideProgress()
+        return
+      }
+      viewList = this.getStayDataList(moment(param.date).format('YYYY-MM-DD'), dataList, APP.SUM_ABSENT_LIMIT, APP.SUM_LOST_LIMIT)
+
+      viewList.sort(function(a, b) {
         var nameA = a.name.toUpperCase() // 大文字、小文字を無視
         var nameB = b.name.toUpperCase() // 大文字、小文字を無視
         if (nameA < nameB) return -1
@@ -249,15 +258,21 @@ export default {
         return 0
       })
 
-      const param = _.cloneDeep(this.form)
-      const searchDate = moment(param.date).format('YYYYMMDD')
+      const searchDate = moment(param.date).format('YYYY-MM-DD')
       const groupName = this.searchedGroupName.length > 0? '_' + this.searchedGroupName: ''
 
       HtmlUtil.fileDL(
         searchDate + groupName + '_stayRatio.csv',
-        Util.converToCsv(this.viewList, null, this.getCsvHeaderNames()),
+        Util.converToCsv(viewList, null, this.getCsvHeaderNames()),
         getCharSet(this.$store.state.loginId)
       )
+    },
+    getApiUrl(param) {
+      param.date = moment(param.date).format('YYYYMMDD')
+      const groupBy = param.groupId? '&groupId=' + param.groupId: ''
+      const categoryBy = param.categoryId? '&categoryId=' + param.categoryId: ''
+      const url = '/office/stayTime/sumByDay/' + param.date + '/zoneCategory?from=' + APP.STAY_SUM.FROM + '&to=' + APP.STAY_SUM.TO + groupBy + categoryBy
+      return url
     },
     updateColumnName(){
       if(Util.hasValue(this.fields)){

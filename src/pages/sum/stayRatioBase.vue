@@ -453,11 +453,7 @@ export default {
         return
       }
 
-      param.date = moment(param.date).format('YYYYMMDD')
-      const groupBy = param.groupId? '&groupId=' + param.groupId: ''
-      const categoryBy = param.categoryId? '&categoryId=' + param.categoryId: ''
-      const url = '/office/stayTime/sumByDay/' + param.date + '/zoneCategory?from=' + APP.STAY_SUM.FROM + '&to=' + APP.STAY_SUM.TO + groupBy + categoryBy
-      const sumData = await HttpHelper.getAppService(url)
+      const sumData = await HttpHelper.getAppService(this.getApiUrl(param))
       if (_.isEmpty(sumData)) {
         this.message = this.$i18n.t('message.listEmpty')
         this.replace({showAlert: true})
@@ -606,16 +602,27 @@ export default {
     },
     async downloadDay(key){
       this.updateColumn()
-      if (this.viewList == null || this.viewList.length == 0) {
-        this.message = this.$i18n.tnl('message.notFound')
+      let viewList
+      const param = _.cloneDeep(this.form)
+      if (!param.date || param.date.length == 0) {
+        this.message = this.$i18n.tnl('message.pleaseEnterSearchCriteria')
         this.replace({showAlert: true})
+        this.hideProgress()
         return
       }
 
-      getDataList(this.viewList)
-      const csvList = (key == 'sum')? this.getCsvSumList(this.viewList): this.getCsvDetailList(this.viewList)
+      const dataList = await HttpHelper.getAppService(this.getApiUrl(param))
+      if (_.isEmpty(dataList)) {
+        this.message = this.$i18n.t('message.listEmpty')
+        this.replace({showAlert: true})
+        this.hideProgress()
+        return
+      }
+      viewList = this.getStayDataList(moment(param.date).format('YYYY-MM-DD'), dataList, APP.SUM_ABSENT_LIMIT, APP.SUM_LOST_LIMIT)
 
-      const param = _.cloneDeep(this.form)
+      getDataList(viewList)
+      const csvList = (key == 'sum')? this.getCsvSumList(viewList): this.getCsvDetailList(viewList)
+
       const searchDate = moment(param.date).format('YYYY-MM-DD')
       const groupName = this.searchedGroupName.length > 0? '_' + this.searchedGroupName: ''
 
@@ -624,6 +631,13 @@ export default {
         Util.converToCsv(csvList),
         getCharSet(this.$store.state.loginId)
       )
+    },
+    getApiUrl(param) {
+      param.date = moment(param.date).format('YYYYMMDD')
+      const groupBy = param.groupId? '&groupId=' + param.groupId: ''
+      const categoryBy = param.categoryId? '&categoryId=' + param.categoryId: ''
+      const url = '/office/stayTime/sumByDay/' + param.date + '/zoneCategory?from=' + APP.STAY_SUM.FROM + '&to=' + APP.STAY_SUM.TO + groupBy + categoryBy
+      return url
     },
     getCsvSumList(viewList) {
       // フィールド設定に合わせ、出力するデータのキーリストを生成する

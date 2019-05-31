@@ -638,7 +638,7 @@ export const MENU = [
         icon: 'chart-bar',
       },
       {
-        key: 'stayRatio',
+        key: 'stayRatioGp',
         path: 'stayRatio',
         icon: 'clock',
       },
