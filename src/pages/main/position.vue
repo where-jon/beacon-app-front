@@ -367,13 +367,8 @@ export default {
           this.stage.update()
         }
         this.setPositionedExb()
-        this.prohibitData = await StateHelper.getProhibitData(this.getPositions(),this.prohibits)
-        this.message = await StateHelper.getProhibitMessage(this.message,this.prohibitData)
-        this.showDismissibleAlert = this.message ? true: false
         this.showTxAll()
-        clearInterval(this.prohibitInterval)  // 点滅クリア
-        // 禁止区域に検知されたら点滅させる
-        this.showDismissibleAlert? this.prohibitInterval = setInterval(this.twinkle,DISP.PROHIBIT_TWINKLE_TIME):false
+        this.setProhibit('pos') // listmixin呼び出し
         if(!this.firstTime && reloadButton){
           reloadButton.classList.remove(spinClassName)
         }

@@ -35,6 +35,9 @@ export default {
   },
   data() {
     return {
+      prohibitData : null,
+      message: '',
+      showDismissibleAlert: false,
       params: {
         name: 'position-stack',
         id: 'position-stackId',
@@ -112,11 +115,11 @@ export default {
         // positionデータ取得
         await this.storePositionHistory(null, false, true)
         this.replaceAS({positions: this.getPositions()})
-        let prohibitData = await StateHelper.getProhibitData(this.getPositions(),this.prohibits)
-        this.alertData.message = await StateHelper.getProhibitMessage(this.message,prohibitData)
-        this.alertData.isAlert = this.alertData.message ? true: false
+        this.setProhibit('display') // listmixin呼び出し
+        this.alertData.message = this.message
+        this.alertData.isAlert = this.showDismissibleAlert ? true: false
         // 分類checkProhibitZone
-        const tempMaster = this.splitMaster(this.positions, prohibitData)
+        const tempMaster = this.splitMaster(this.positions, this.prohibitData)
         this.replaceMain({[this.eachListName]: tempMaster})
         if (payload && payload.done) {
           payload.done()

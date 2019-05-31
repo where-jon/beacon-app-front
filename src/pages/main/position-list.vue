@@ -35,6 +35,7 @@ export default {
   data() {
     return {
       message: '',
+      prohibitData : null,
       showDismissibleAlert: false,
       params: {
         name: 'position-list',
@@ -91,12 +92,10 @@ export default {
         await StateHelper.load('prohibit')
         await this.storePositionHistory(0, true)
         let positions = this.getPositions(true)
-        let prohibitData = await StateHelper.getProhibitData(this.getPositions(),this.prohibits)
-        this.message = await StateHelper.getProhibitMessage(this.message,prohibitData)
-        this.showDismissibleAlert = this.message ? true: false
+        this.setProhibit('list') // listmixin呼び出し
         Util.debug(positions)
         positions = positions.map((pos) => {
-          const prohibitCheck = prohibitData? prohibitData.some((data) => data.minor == pos.minor) : false
+          const prohibitCheck = this.prohibitData? this.prohibitData.some((data) => data.minor == pos.minor) : false
           const exb = this.exbs.find((exb) => exb.posId == pos.pos_id)
           return {
             ...pos,
