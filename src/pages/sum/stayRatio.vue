@@ -356,17 +356,17 @@ export default {
     },
     getCsvHeaderNames() {
       return [
-        'date',
-        'name',
-        'groupName',
-        'stayTime', 
-        this.$i18n.tnl('label.stayRatioAbsent1Time'), 
-        this.$i18n.tnl('label.stayRatioAbsent2Time'),
-        'lostTime',
-        'stayRatio',
-        this.$i18n.tnl('label.stayRatioAbsent1Ratio'),
-        this.$i18n.tnl('label.stayRatioAbsent2Ratio'),
-        'lostRatio' + '\n'
+        this.$i18n.tnl('label.date'),
+        this.$i18n.tnl('label.name'),
+        this.$i18n.tnl('label.groupName'),
+        this.$i18n.tnl('label.stayTime'), 
+        this.$i18n.tnl('label.absent1Time'), 
+        this.$i18n.tnl('label.absent2Time'),
+        this.$i18n.tnl('label.lostTime'),
+        this.$i18n.tnl('label.stayRatio'),
+        this.$i18n.tnl('label.absent1Ratio'),
+        this.$i18n.tnl('label.absent2Ratio'),
+        this.$i18n.tnl('label.lostRatio') + '\n'
       ]
     },
     pickerChanged() {
