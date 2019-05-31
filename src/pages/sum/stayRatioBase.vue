@@ -147,9 +147,9 @@
       <b-table :items="viewList" :fields="fields" :current-page="currentPage" :per-page="perPage" :sort-by.sync="sortBy" stacked="md" striped hover outlined>
         <template slot="graph" slot-scope="row">
           <div style="position: relative;">
-            <div v-for="(bar, index) in row.item.graph" :key="index" :class="bar.isStay? 'stay-bar': 'lost-bar'" :style="`${bar.isStay? `background: `+ (historyType == 'category'? bar.categoryBgColor: bar.areaBgColor)+`;`: `` } width:${bar.percent}% !important;`">
+            <div v-for="(bar, index) in row.item.graph" :key="index" :class="bar.isStay || bar.isAbsentZone? 'stay-bar': 'lost-bar'" :style="`${bar.isStay || bar.isAbsentZone? `background: `+ (historyType == 'category'? bar.categoryBgColor: bar.areaBgColor)+`;`: `` } width:${bar.percent}% !important;`">
               <span class="graph-arrow-box">
-                {{ $i18n.tnl(bar.isStay?'label.stay': 'label.lost') }}: {{ bar.time }} <br>
+                {{ $i18n.tnl(bar.isStay || bar.isAbsentZone? 'label.stay': 'label.lost') }}: {{ bar.time }} <br>
                 {{ bar.startTime }} ～ {{ bar.endTime }}
               </span>&nbsp;
             </div>
@@ -513,42 +513,43 @@ export default {
           let findCategory
           let findArea
           let areaIndex = 0
-          if (this.isLostData(stay.byId) || this.isAbsentZoneData(stay.byId)) {
+          const isAbsentZone = this.isAbsentZoneData(stay.byId)
+          if (this.isLostData(stay.byId) || isAbsentZone) {
             lostTime += stay.period
             time = Util.convertToTime(stay.period)
           } else {
             stayTime += stay.period
             time = Util.convertToTime(stay.period)
             isExistStayData = true
+          }
+          // カテゴリ毎の滞在時間を加算
+          findCategory = _.find(this.categories, (category) => {
+            return category.categoryType == CATEGORY.ZONE && category.categoryId == stay.byId
+          })
+          findCategory? categoryData[findCategory.categoryId].value += stay.period: stay.byId == 0? categoryData[0].value += stay.period: null
 
-            // カテゴリ毎の滞在時間を加算
-            findCategory = _.find(this.categories, (category) => {
-              return category.categoryType == CATEGORY.ZONE && category.categoryId == stay.byId
-            })
-            findCategory? categoryData[findCategory.categoryId].value += stay.period: stay.byId == 0? categoryData[0].value += stay.period: null
-
-            // エリア毎の滞在時間を加算（一致するカテゴリが存在する場合しかエリアを引けない）
-            if (findCategory) {
-              let zone = _.find(this.zones, (zone) => { return zone.categoryId == findCategory.categoryId})
-              findArea = _.find(this.areas, (area, index) => {
-                if (zone) {
-                  if (area.areaId == zone.areaId) {
-                    areaIndex = index
-                    return true
-                  }
+          // エリア毎の滞在時間を加算（一致するカテゴリが存在する場合しかエリアを引けない）
+          if (findCategory) {
+            let zone = _.find(this.zones, (zone) => { return zone.categoryId == findCategory.categoryId})
+            findArea = _.find(this.areas, (area, index) => {
+              if (zone) {
+                if (area.areaId == zone.areaId) {
+                  areaIndex = index
+                  return true
                 }
-                return false
-              })
-              findArea? areaData[findArea.areaId].value += stay.period: areaData[0].value += stay.period
-            } else {
-              // カテゴリ一致しない＆その他の場合
-              stay.byId == 0? areaData[0].value += stay.period: null
-            }
+              }
+              return false
+            })
+            findArea? areaData[findArea.areaId].value += stay.period: areaData[0].value += stay.period
+          } else {
+            // カテゴリ一致しない＆その他の場合
+            stay.byId == 0? areaData[0].value += stay.period: null
           }
 
           const percent = Math.floor((stay.period / fromToSettingDiff) * 100 * APP.STAY_SUM.PARSENT_DIGIT) / APP.STAY_SUM.PARSENT_DIGIT
           return {
             isStay: isExistStayData,
+            isAbsentZone: isAbsentZone,
             period: stay.period,
             start: stay.start,
             startTime: percent == 100? Util.convertToTime(fromSeconds): moment(stay.start).format('HH:mm:ss'),
@@ -689,7 +690,7 @@ export default {
             [this.$i18n.tnl('label.start')]: graph.startTime,
             [this.$i18n.tnl('label.end')]: graph.endTime,
             [this.$i18n.tnl('label.stayTime')]: graph.period,
-            [this.$i18n.tnl('label.state')]: graph.isStay?  this.$i18n.tnl('label.detected'): this.$i18n.tnl('label.undetect'),
+            [this.$i18n.tnl('label.state')]: graph.isStay? this.$i18n.tnl('label.detected'): this.$i18n.tnl('label.undetect'),
             [this.$i18n.tnl('label.areaName')]: graph.areaName,
             [this.$i18n.tnl('label.zoneCategory')]: graph.zoneCategory,
           }
