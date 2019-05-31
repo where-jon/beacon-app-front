@@ -134,8 +134,6 @@ export default {
         {key: 'dt', sortable: false, label: 'finalUpdateDate'},
       ]))
     },
-    getPe(response){
-    },
     getData(response){
       return Util.getValue(response, 'processSumList', []).map(processSum => {
         const periods = {}
