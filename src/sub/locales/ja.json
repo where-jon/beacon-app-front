@@ -1107,10 +1107,6 @@
         "tel": "電話番号"
       },
       "TX": {
-        "category": "カテゴリ",
-        "group": "グループ",
-        "displayName": "表示名",
-        "description": "備考",
         "major": "major",
         "dispFlg": "表示設定",
         "location": "固定位置表示",
