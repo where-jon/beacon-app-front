@@ -433,15 +433,9 @@ export const loadAreaImage = async (areaId, force) => {
   // })
 }
 
-export const isProhibitAlert = prohibits => {
-  // 設定値から画面に進入禁止区域アラートを表示有無、進入禁止区域滞在不可グループ、禁止区域がない場合は走らない
+export const getProhibitData = async (position,prohibits) => {
   const isScreen = APP.POS.PROHIBIT_ALERT? APP.POS.PROHIBIT_ALERT.some((val) => val == PROHIBIT_STATE.SCREEN):false
   if (!isScreen || !APP.POS.PROHIBIT_GROUPS || !prohibits) {
-    return false
-  }
-}
-export const getProhibitData = async (position,prohibits) => {
-  if (!isProhibitAlert(prohibits)) {
     return null
   }
   const groups = APP.POS.PROHIBIT_GROUPS
@@ -463,14 +457,15 @@ export const getProhibitData = async (position,prohibits) => {
     }})
 }
 
-export const getProhibitMessage = async (message,prohibitData) => {
-  if (!isProhibitAlert(prohibitData)) {
+export const getProhibitMessage = async (message,prohibits) => {
+  const isScreen = APP.POS.PROHIBIT_ALERT? APP.POS.PROHIBIT_ALERT.some((val) => val == PROHIBIT_STATE.SCREEN):false
+  if (!isScreen || !APP.POS.PROHIBIT_GROUPS || !prohibits) {
     return ''   // message空
   }
   const labelArea = i18n.tnl('label.Area')
   const labelPotName = i18n.tnl('label.potName')
   const labelZone =  i18n.tnl('label.zoneName')
-  return prohibitData.map((data) => `< ${labelPotName} : ${data.potName} ${labelArea} : ${data.areaName} ${labelZone} : ${data.zoneName}>`).join(' ')
+  return prohibits.map((data) => `< ${labelPotName} : ${data.potName} ${labelArea} : ${data.areaName} ${labelZone} : ${data.zoneName}>`).join(' ')
 }
 
 export const loadAreaImages = async () => {
