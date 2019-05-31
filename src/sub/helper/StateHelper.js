@@ -433,9 +433,9 @@ export const loadAreaImage = async (areaId, force) => {
   // })
 }
 
-export const isProhibitAlert = async (prohibits) => {
+export const isProhibitAlert = prohibits => {
   // 設定値から画面に進入禁止区域アラートを表示有無、進入禁止区域滞在不可グループ、禁止区域がない場合は走らない
-  const isScreen = APP.POS.PROHIBIT_ALERT.some((val) => val == PROHIBIT_STATE.SCREEN)
+  const isScreen = APP.POS.PROHIBIT_ALERT? APP.POS.PROHIBIT_ALERT.some((val) => val == PROHIBIT_STATE.SCREEN):false
   if (!isScreen || !APP.POS.PROHIBIT_GROUPS || !prohibits) {
     return false
   }
