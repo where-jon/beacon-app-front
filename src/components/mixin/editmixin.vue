@@ -121,6 +121,11 @@ export default {
       this.form = {}
       ViewHelper.applyDef(this.form, this.defValue)
       if(this.beforeReload) {
+        if(this.vueSelected && typeof this.vueSelected == 'object'){
+          Object.keys(this.vueSelected).forEach(key => {
+            this.vueSelected[key] = Util.isArray(this.vueSelected[key])? []: null
+          })
+        }
         this.beforeReload()
       }
       let customFileLabel = document.getElementsByClassName('custom-file-label')
