@@ -57,17 +57,17 @@
             </b-form-checkbox><br>
           </div>
           <b-form-checkbox :value="0">
-            {{ $t('label.other') }} <span class="bgSquare" :style="`background-color: ${getRandomColor(defaultColor)};`" />
+            {{ $t('label.other') }} <span class="bgSquare" :style="`background-color: ${getOtherColor};`" />
           </b-form-checkbox><br>
         </b-form-checkbox-group>
         <b-form-checkbox-group v-if="!enableCategorySelect" id="checkbox-group-2" v-model="displayCheckList.area" name="flavour-2">
           <div v-for="(area, index) in areas" :key="`area-${index}`">
             <b-form-checkbox :value="area.areaId">
-              {{ area.areaName }} <span class="bgSquare" :style="`background-color: ${getRandomColor(area.areaId)};`" />
+              {{ area.areaName }} <span class="bgSquare" :style="`background-color: ${getStackColor(index)};`" />
             </b-form-checkbox><br>
             <div v-if="index == (areas.length - 1)">
               <b-form-checkbox :value="0">
-                {{ $t('label.other') }} <span class="bgSquare" :style="`background-color: ${getRandomColor(defaultColor)};`" />
+                {{ $t('label.other') }} <span class="bgSquare" :style="`background-color: ${getOtherColor};`" />
               </b-form-checkbox><br>
             </div>
           </div>
@@ -245,7 +245,6 @@ export default {
       initTotalRows: 0,
       historyType: 'category',
       isCategorySelected: true,
-      defaultColor: 0, // その他や色指定がない場合を0に設定
       checkboxLimit: 6,
       showModal: false,
     }
@@ -278,7 +277,10 @@ export default {
     },
     getModalErrorMessage() {
       return this.modalMessage
-    }
+    },
+    getOtherColor() {
+      return APP.STAY_SUM.OTHER_COLOR
+    },
   },
   watch: {
     'vueSelected.group': {
@@ -324,8 +326,8 @@ export default {
       this.isCategorySelected? this.displayCheckList.category = []: this.displayCheckList.area = []
       this.isCategorySelected = isSelected
     },
-    getRandomColor(index) {
-      return DISP.SUM_STACK_COLOR[index % DISP.SUM_STACK_COLOR.length]
+    getStackColor(index) {
+      return DISP.SUM_STACK_COLOR[index]
     },
     updateColumn() {
       Vue.set(this, 'fields', this.getFields(false))
@@ -382,7 +384,7 @@ export default {
       if (this.displayCheckList) {
         isSelectedCategoryOther = _.find(this.displayCheckList.category, (id) => { return id == 0 }) == 0? true: false
       }
-      let colorOtherStyle = '<span style="color: ' + DISP.SUM_STACK_COLOR[this.defaultColor] + ';">■</span>' // TODO: リファクタリング対象。出来る人がいたらHeaderへ移動する
+      let colorOtherStyle = '<span style="color: ' + this.OtherColor + ';">■</span>' // TODO: リファクタリング対象。出来る人がいたらHeaderへ移動する
       const categoryOtherClassName = isSelectedCategoryOther? '': disableClassName
       fields.push({key: 'categoryOther', sortable: true, label: i18n.tnl('label.other')+i18n.tnl('label.category') + colorOtherStyle
         , thStyle: {width:'100px !important'}, thClass: categoryOtherClassName, tdClass: categoryOtherClassName})
@@ -396,8 +398,8 @@ export default {
       
       _.filter(this.areas, (a) => { return true })
         .forEach(function(area, index) {
-          const areaClassName = _.some(selectedAreas, (data) => { return data.areaId == area.areaId})? '': disableClassName
-          let colorStyle = '<span style="color: ' + DISP.SUM_STACK_COLOR[area.areaId % DISP.SUM_STACK_COLOR.length] + ';">■</span>' // TODO: リファクタリング対象。出来る人がいたらHeaderへ移動する
+          const areaClassName = _.some(selectedAreas, (data, index) => { return data.areaId == area.areaId})? '': disableClassName
+          let colorStyle = '<span style="color: ' + DISP.SUM_STACK_COLOR[index] + ';">■</span>' // TODO: リファクタリング対象。出来る人がいたらHeaderへ移動する
           fields.push({key: area.areaName, sortable: true, label: area.areaName + colorStyle, thStyle: {width:'100px !important'}
             , thClass: areaClassName, tdClass: areaClassName})
         })
@@ -407,7 +409,7 @@ export default {
       if (this.displayCheckList) {
         isSelectedAreaOther = _.find(this.displayCheckList.area, (id) => { return id == 0 }) == 0? true: false
       }
-      colorOtherStyle = '<span style="color: ' + DISP.SUM_STACK_COLOR[this.defaultColor] + ';">■</span>' // TODO: リファクタリング対象。出来る人がいたらHeaderへ移動する
+      colorOtherStyle = '<span style="color: ' + this.getOtherColor + ';">■</span>' // TODO: リファクタリング対象。出来る人がいたらHeaderへ移動する
       const areaOtherClassName = isSelectedAreaOther? '': disableClassName
       fields.push({key: 'areaOther', sortable: true, label: i18n.tnl('label.other')+i18n.tnl('label.area') + colorOtherStyle
         , thStyle: {width:'100px !important'}, thClass: areaOtherClassName, tdClass: areaOtherClassName})
@@ -505,12 +507,12 @@ export default {
         })
 
         // 各時間の集計
-        
         let graphList = data.stayList.map((stay, index) => {
           let isExistStayData = false
           let time = ''
           let findCategory
           let findArea
+          let areaIndex = 0
           if (this.isLostData(stay.byId) || this.isAbsentZoneData(stay.byId)) {
             lostTime += stay.period
             time = Util.convertToTime(stay.period)
@@ -528,8 +530,14 @@ export default {
             // エリア毎の滞在時間を加算（一致するカテゴリが存在する場合しかエリアを引けない）
             if (findCategory) {
               let zone = _.find(this.zones, (zone) => { return zone.categoryId == findCategory.categoryId})
-              findArea = _.find(this.areas, (area) => {
-                return zone? area.areaId == zone.areaId: false
+              findArea = _.find(this.areas, (area, index) => {
+                if (zone) {
+                  if (area.areaId == zone.areaId) {
+                    areaIndex = index
+                    return true
+                  }
+                }
+                return false
               })
               findArea? areaData[findArea.areaId].value += stay.period: areaData[0].value += stay.period
             } else {
@@ -548,8 +556,8 @@ export default {
             endTime: percent == 100? Util.convertToTime(toSeconds): moment(stay.end).format('HH:mm:ss'),
             time: time,
             percent: percent,
-            categoryBgColor: findCategory? '#' + findCategory.bgColor: this.getRandomColor(this.defaultColor),
-            areaBgColor: findArea? this.getRandomColor(findArea.areaId): this.getRandomColor(this.defaultColor),
+            categoryBgColor: findCategory? '#' + findCategory.bgColor: this.getOtherColor,
+            areaBgColor: findArea? this.getStackColor(areaIndex): this.getOtherColor,
             areaName: findArea? findArea.areaName: '',
             zoneCategory: stay.byName,
           }
