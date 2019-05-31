@@ -20,8 +20,8 @@ export default {
       const groups = APP.POS.PROHIBIT_GROUPS
       return position.filter((pos) => pos.detectState == DETECT_STATE.DETECTED).filter((pos) =>
         prohibits.some((prohibitData) => {
-          const isGroup = groups.some((group) => pos.tx.group.groupId == group)
-          if (isGroup && pos.exb && pos.exb.areaId == prohibitData.areaId
+          const isGroup = groups.some((group) => pos.tx.group.groupId ? pos.tx.group.groupId == group : false)
+          if (isGroup && pos.exb && pos.exb.areaId ? pos.exb.areaId == prohibitData.areaId : false
               && pos.exb.x >= prohibitData.x && pos.exb.x <= prohibitData.x + prohibitData.w
               && pos.exb.y >= prohibitData.y && pos.exb.y <= prohibitData.y + prohibitData.h) {
             pos.zoneName = prohibitData.zoneName
