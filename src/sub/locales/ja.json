@@ -627,8 +627,8 @@
         }
       },
       "SENSOR": {
-        "EXB_SENSOR": "センサの種類::サーバが使用するセンサIDを設定します。設定可能な値は次の通りです。★{SENSOR}",
-        "TX_SENSOR": "Txセンサの種類::Txセンサの種類を設定します。設定可能な値は次の通りです。★{SENSOR}",
+        "EXB_SENSOR": "センサの種類::サーバが使用するセンサIDを設定します。設定可能な値は次の通りです。★{SENSOR_NONE}{SENSOR}",
+        "TX_SENSOR": "Txセンサの種類::Txセンサの種類を設定します。設定可能な値は次の通りです。★{SENSOR_NONE}{SENSOR}",
         "MEDITAG": {
           "DOWN_RED_TIME": "転倒通知時間::MEDiTAG使用者が転倒した時、設定した時間だけMEDiTAGが赤枠で表示されます。ミリ秒単位で設定します。"
         },
@@ -658,7 +658,7 @@
         "BTX_MINOR": "Tx画面でbtxIdとminorを使用する::Tx画面でbtxIdかminorのどちらか、または両方を使用します。btxId、minor、bothのいずれかを設定します。★"
       },
       "EXB": {
-        "SENSOR": "EXBeaconセンサの種類::EXBeaconセンサの種類を設定します。設定可能な値は次の通りです。★{SENSOR}",
+        "SENSOR": "EXBeaconセンサの種類::EXBeaconセンサの種類を設定します。設定可能な値は次の通りです。★{SENSOR_NONE}{SENSOR}",
         "WITH": "EXBeacon画面で使用する項目::EXBeacon画面で使用する項目を設定します。設定可能な値は次の通りです。★{EXB}"
       },
       "USER": {
@@ -1018,6 +1018,9 @@
         "BATCH": "バッチ",
         "SIMULATION": "デモ用",
         "OTHER": "その他"
+      },
+      "SENSOR_NONE": {
+        "0": "使用しない"
       },
       "SENSOR": {
         "1": "温湿度",
