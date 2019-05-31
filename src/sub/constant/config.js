@@ -230,9 +230,9 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     R: 26, // Txの半径
     FIX_R: 26, // Txの半径(カテゴリ一覧、グループ一覧、凡例表示用)
     ROUNDRECT_RADIUS: 13, // Tx角丸表示時のRADIUS
-    BGCOLOR: '3bcddc', // Tx表示時のデフォルト背景色
-    COLOR: '000000', // Tx表示時のデフォルト文字色
-    STROKE_COLOR: 'cccccc', // Tx表示時のデフォルト枠線色
+    BGCOLOR: '#3bcddc', // Tx表示時のデフォルト背景色
+    COLOR: '#000000', // Tx表示時のデフォルト文字色
+    STROKE_COLOR: '#cccccc', // Tx表示時のデフォルト枠線色
     STROKE_WIDTH: 1, // Tx表示時のデフォルト枠線幅
     ALPHA: 0.6, // Tx表示時(離席)のデフォルト透過値
     LOST_ALPHA: 0.1, // Tx固定表示(不在)時のデフォルト透過値

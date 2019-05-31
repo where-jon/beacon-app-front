@@ -473,8 +473,8 @@ export default {
       const catOrGr = tx[DISP.TX.DISPLAY_PRIORITY[0]] || tx[DISP.TX.DISPLAY_PRIORITY[1]]
       const display = catOrGr && catOrGr.display || {}
       return {
-        color: display.color || DISP.TX.COLOR,
-        bgColor: display.bgColor || DISP.TX.BGCOLOR,
+        color: Util.addPrefix(display.color || DISP.TX.COLOR, '#'),
+        bgColor: Util.addPrefix(display.bgColor || DISP.TX.BGCOLOR, '#'),
         shape: display.shape || SHAPE.CIRCLE
       }
     },
@@ -544,8 +544,8 @@ export default {
         thumbnail: tx.existThumbnail ? this.thumbnailUrl.replace('{id}', tx.potId) : '',
         category: tx.categoryName? tx.categoryName : '',
         group: tx.groupName? tx.groupName : '',
-        bgColor: '#' + display.bgColor,
-        color: '#' + display.color,
+        bgColor: display.bgColor,
+        color: display.color,
         isDispRight: isDispRight,
       }
       this.replaceMain({selectedTx})
@@ -557,7 +557,7 @@ export default {
     createLabelInfo(pos, color){
       return {
         label: pos.label,
-        color: '#' + color,
+        color: color,
       }
     },
     createRectInfo(pos, bgColor){
