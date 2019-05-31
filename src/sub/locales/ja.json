@@ -618,10 +618,13 @@
         "MOVING_AVERAGE": "測位時に集約する位置情報の数::測位する場合、設定した数の位置情報を平均して算出します。",
         "MOVING_AVERAGE_TIME": "移動平均時間::サーバが位置情報を集計する時に使用する移動平均時間を設定します。",
         "USE_MULTI_POSITIONING": "3点測位を使用する::3点測位を使用します。",
-        "PROHIBIT_ALERT" : "禁止区域アラートを使用::禁止区域アラートを使用します。",
+        "PROHIBIT_ALERT" : "禁止区域アラートを使用::禁止区域アラートを通知する方法を設定します。設定可能な値は次の通りです。{PROHIBIT_ALERT}",
         "PROHIBIT_GROUPS": "禁止区域侵入不可グループ設定::禁止区域に侵入できないグループIDを設定します。",
         "USE_LEGEND": "凡例を使用する::位置表示(地図)画面で凡例を表示します。★",
-        "SHOW_DETECTED_COUNT": "検知数を表示する::位置表示(地図)画面でデバイスの検知数を表示します。★"
+        "SHOW_DETECTED_COUNT": "検知数を表示する::位置表示(地図)画面でデバイスの検知数を表示します。★",
+        "PROHIBIT": {
+          "DUPLICATE_MAIL_TIME": "重複アラート通知制限（メール）::設定した時間内に同じ内容のアラートが発信された場合、メールによる通知を行わないようにします。ミリ秒単位で設定します。"
+        }
       },
       "SENSOR": {
         "EXB_SENSOR": "センサの種類::サーバが使用するセンサIDを設定します。設定可能な値は次の通りです。★{SENSOR}",
@@ -852,7 +855,11 @@
       "APP": {
         "POS": {
           "MOVING_AVERAGE_TIME": "number",
-          "PROHIBIT_GROUPS": "numberList"
+          "PROHIBIT_GROUPS": "numberList",
+          "PROHIBIT_ALERT": "stringList",
+          "PROHIBIT": {
+            "DUPLICATE_MAIL_TIME": "number"
+          }
         },
         "SENSOR": {
           "EXB_SENSOR": "numberList",
@@ -960,6 +967,11 @@
     },
     "DEFAULT": {
       "APP": {
+        "POS": {
+          "PROHIBIT": {
+            "DUPLICATE_MAIL_TIME": "180000"
+          }
+        },
         "SVC": {
           "STAY_SUM": {
             "STAY_SUM_START": "0", 
@@ -1146,6 +1158,11 @@
         "category": "カテゴリ",
         "tel": "電話番号",
         "timestamp": "最終取得日時"
+      },
+      "PROHIBIT_ALERT": {
+        "screen": "画面上に表示",
+        "mail": "メール通知",
+        "led": "LED点滅"
       }
     }
   },
