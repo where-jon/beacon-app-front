@@ -96,6 +96,20 @@ export const isAndroidOrIOS = () => isIos() || isAndroid()
 
 export const formatDate = (timestamp, format = 'YYYY/MM/DD HH:mm:ss') => timestamp? moment(timestamp).format(format): ''
 
+export const formatTime = (time, format = 'HH:mm:ss') => {
+  if(time == null || format == null){
+    return ''
+  }
+  const hour = Math.floor(time / 3600)
+  const minute = Math.floor((time / 60) % 60)
+  const second = time % 60
+  const hourDigit = hour.toString().length
+  const hourSliceDigit = -1 * (hourDigit < 2? 2: hourDigit)
+  return format.replace(/HH/g, `00${hour}`.slice(hourSliceDigit))
+    .replace(/mm/g, `00${minute}`.slice(-2))
+    .replace(/ss/g, `00${second}`.slice(-2))
+}
+
 export const sanitize = (str) => str && str.replace? str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#x27;'): str
 
 export const zeroPad = (num, length) => ('0'.repeat(length) + num).slice(-length)
@@ -568,7 +582,7 @@ export const compareStrNum = (a, b) => {
   return compA < compB? -1: compA > compB? 1: 0
 }
 
-export const addWithPadding = (str, add) => {
+export const addWithPadding = (str, add = 0) => {
   if(!/^[0-9]+$/.test(str)){
     return str + add
   }

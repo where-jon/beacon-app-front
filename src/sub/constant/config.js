@@ -161,6 +161,12 @@ export const APP = { // 機能面に関する設定
     ITEMS: ['minor', 'major', 'name', 'group', 'category', 'tel', 'timestamp'],
     NO_UNREGIST_THUMB: false, // TX詳細サムネイル非表示（未登録の場合）
   },
+  PROCESS_SUM: {
+    TIME: {
+      SUCCESS_COMPLETE: 30, // 最終工程がn秒以上の場合、正常終了
+      LATE: 300, // 最終工程以外がn秒を上回る場合、超過エラー
+    },
+  },
   SVC: {
     POS: {
       EXSERVER: false, // EXServerを使う
