@@ -4,11 +4,20 @@
       id="stayRatioDisplayModal"
       size="sm"
       :title="$t('label.displaySpecified')"
+      no-close-on-backdrop
+      no-close-on-esc
+      hide-header-close
       ok-only
       @ok="updateColumn"
     >
       {{ $t('message.selectDisplayColumn') }}
       <b-form-group>
+        <hr>
+        <b-form-checkbox-group id="checkbox-group-2" v-model="displayCheckList.group" name="flavour-2">
+          <b-form-checkbox :value="'groupName'">
+            {{ $t('label.groupName') }}
+          </b-form-checkbox>
+        </b-form-checkbox-group>
         <hr>
         <p class="itemTitle">
           {{ $t('label.graph') }}
@@ -23,14 +32,8 @@
           </b-form-radio>
         </b-form-radio-group>
         <hr>
-        <b-form-checkbox-group id="checkbox-group-2" v-model="displayCheckList.group" name="flavour-2">
-          <b-form-checkbox :value="'groupName'">
-            {{ $t('label.groupName') }}
-          </b-form-checkbox>
-        </b-form-checkbox-group>
-        <hr>
         <p class="itemTitle">
-          {{ $t('label.displayColumn') }}
+          {{ $t('label.displayColumnCommon') }}
         </p>
         <b-form-checkbox-group id="checkbox-group-2" v-model="displayCheckList.stay" name="flavour-2">
           <b-form-checkbox :value="'stay'">
@@ -39,7 +42,10 @@
           <b-form-checkbox :value="'lost'">
             {{ $t('label.lostTimeSumColumn') }}
           </b-form-checkbox><br>
-        </b-form-checkbox-group>
+        </b-form-checkbox-group><br>
+        <p class="itemTitle">
+          {{ $t('label.displayColumnIndividual') }}
+        </p>
         <b-form-checkbox-group v-if="enableCategorySelect" id="checkbox-group-2" v-model="displayCheckList.category" name="flavour-2">
           <div v-for="(category, index) in categoryDisplayList" :key="`category-${index}`">
             <b-form-checkbox :value="category.categoryId">

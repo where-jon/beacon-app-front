@@ -577,7 +577,8 @@
     "stayTimeSumColumn": "滞在時間（合計）",
     "lostTimeSumColumn": "不在時間（合計）",
     "sum": "集計",
-    "displayColumn": "表示列",
+    "displayColumnCommon": "表示列-共通",
+    "displayColumnIndividual": "表示列-個別",
     "bracketStayRate": "(滞在率)",
 
     "dummy": ""
