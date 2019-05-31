@@ -245,3 +245,36 @@ export const sensorGraphDay = () => {
     {sensorHistoryId: 12, sensorKey:'2019/1/3 00:00', sensorDt: (new Date('2019/01/03 01:30')).getTime(), temperature:11.5, humidity:13, count: 14, step: 15, beat: 16, stress: 17, low: 18, high: 19, pressure: 20, downLatest: 21, down: 22, magnet: 4},
   ]
 }
+
+export const processSum = () => {
+  const ary = new Array(...window.crypto.getRandomValues(new Uint8Array(4))).map((val, index) => val > 250 - index * 20? 0: Math.round(val * 1.5))
+  return JSON.stringify({
+    'zoneIds': [1,2,3,4],
+    'zoneNames': ['g1-1(在席)', 'g1-2(不在)', 'g1-3(禁止区域)', 'g2-1(在席)'],
+    'processSumList': [
+      {'dt': '2019-12-31 23:59:59.5', 'period': ary.reduce((prev, cur) => prev + cur), 'stayTimeSumId': 9999, 'minor': 9999, 'processPeriods': ary, 'txId': 9999, 'potName': 'Tx9999', 'potId':  9999},
+      {'dt': '2019-05-28 21:28:27.0', 'period': 345047, 'stayTimeSumId': 13, 'minor': 601, 'processPeriods': [  6389,   0,   0, 338658], 'txId':  1, 'potName': 'Tx601', 'potId':  1},
+      {'dt': '2019-05-28 21:28:01.0', 'period': 313650, 'stayTimeSumId':  1, 'minor': 605, 'processPeriods': [111385,   0,   0, 202265], 'txId':  5, 'potName': 'Tx605', 'potId':  5},
+      {'dt': '2019-05-28 21:27:50.0', 'period': 307538, 'stayTimeSumId': 10, 'minor': 604, 'processPeriods': [ 49081,   0,   0, 258457], 'txId':  4, 'potName': 'Tx604', 'potId':  4},
+      {'dt': '2019-05-28 21:27:13.0', 'period': 332378, 'stayTimeSumId':  7, 'minor': 602, 'processPeriods': [ 20770,   0,   0, 311608], 'txId':  2, 'potName': 'Tx602', 'potId':  2},
+      {'dt': '2019-05-28 19:34:06.0', 'period': 255197, 'stayTimeSumId':  9, 'minor': 603, 'processPeriods': [153751,   0,   0, 101446], 'txId':  3, 'potName': 'Tx603', 'potId':  3},
+      {'dt': '2019-05-26 01:13:48.0', 'period': 100742, 'stayTimeSumId': 12, 'minor': 615, 'processPeriods': [    99,   0,   0, 100643], 'txId': 15, 'potName': 'Tx615', 'potId': 15},
+      {'dt': '2019-05-25 09:00:08.0', 'period':  42386, 'stayTimeSumId':  8, 'minor': 610, 'processPeriods': [    63,   0,   0,  42323], 'txId': 10, 'potName': 'Tx610', 'potId': 10},
+      {'dt': '2019-05-24 09:00:08.0', 'period':    330, 'stayTimeSumId': 80, 'minor': 800, 'processPeriods': [   100, 100, 100,     30], 'txId': 80, 'potName': 'Tx800', 'potId': 80},
+      {'dt': '2019-05-24 08:00:08.0', 'period':    310, 'stayTimeSumId': 81, 'minor': 801, 'processPeriods': [   100, 100, 100,     10], 'txId': 81, 'potName': 'Tx801', 'potId': 81},
+      {'dt': '2019-05-24 07:00:08.0', 'period':    280, 'stayTimeSumId': 82, 'minor': 802, 'processPeriods': [   100, 100,  80,      0], 'txId': 82, 'potName': 'Tx802', 'potId': 82},
+      {'dt': '2019-05-24 06:00:08.0', 'period':    180, 'stayTimeSumId': 83, 'minor': 803, 'processPeriods': [   100,  80,   0,      0], 'txId': 83, 'potName': 'Tx803', 'potId': 83},
+      {'dt': '2019-05-24 05:00:08.0', 'period':     80, 'stayTimeSumId': 84, 'minor': 804, 'processPeriods': [    80,   0,   0,      0], 'txId': 84, 'potName': 'Tx804', 'potId': 84},
+      {'dt': '2019-05-24 04:00:08.0', 'period':    230, 'stayTimeSumId': 85, 'minor': 805, 'processPeriods': [     0, 100, 100,     30], 'txId': 85, 'potName': 'Tx805', 'potId': 85},
+      {'dt': '2019-05-24 03:00:08.0', 'period':    210, 'stayTimeSumId': 86, 'minor': 806, 'processPeriods': [   100,   0, 100,     10], 'txId': 86, 'potName': 'Tx806', 'potId': 86},
+      {'dt': '2019-05-24 02:00:08.0', 'period':    280, 'stayTimeSumId': 87, 'minor': 807, 'processPeriods': [   100, 100,   0,     80], 'txId': 87, 'potName': 'Tx807', 'potId': 87},
+      {'dt': '2019-05-24 01:00:08.0', 'period':    190, 'stayTimeSumId': 88, 'minor': 808, 'processPeriods': [   100,   0,   0,     90], 'txId': 88, 'potName': 'Tx808', 'potId': 88},
+      {'dt': '2019-05-24 00:00:08.0', 'period':    210, 'stayTimeSumId': 89, 'minor': 809, 'processPeriods': [     0, 100,   0,     10], 'txId': 89, 'potName': 'Tx809', 'potId': 89},
+      {'dt': '2019-05-23 23:00:08.0', 'period':    910, 'stayTimeSumId': 90, 'minor': 900, 'processPeriods': [   300, 300, 300,     10], 'txId': 90, 'potName': 'Tx900', 'potId': 90},
+      {'dt': '2019-05-23 22:00:08.0', 'period':   1200, 'stayTimeSumId': 91, 'minor': 901, 'processPeriods': [   300, 300, 300,    300], 'txId': 91, 'potName': 'Tx901', 'potId': 91},
+      {'dt': '2019-05-23 21:00:08.0', 'period':   1203, 'stayTimeSumId': 92, 'minor': 902, 'processPeriods': [   301, 301, 301,    300], 'txId': 92, 'potName': 'Tx902', 'potId': 92},
+      {'dt': '2019-05-23 20:00:08.0', 'period':   1204, 'stayTimeSumId': 93, 'minor': 903, 'processPeriods': [   301, 301, 301,    301], 'txId': 93, 'potName': 'Tx903', 'potId': 93},
+      {'dt': '2019-05-23 19:00:08.0', 'period':   1200, 'stayTimeSumId': 94, 'minor': 904, 'processPeriods': [   400,   0, 400,    400], 'txId': 94, 'potName': 'Tx904', 'potId': 94},
+    ]
+  })
+}

@@ -367,6 +367,14 @@
 
     "positionSummary": "位置情報",
 
+    "processSum": "工程管理",
+    "totalTime": "合計時間",
+    "finalUpdateDate": "最終更新日時",
+    "successComplete": "正常終了",
+    "processing": "進行中",
+    "notSmooth": "工程不順",
+    "processLate": "超過",
+
     "historyTitle": "履歴",
     "historyDateFrom": "期間",
     "historyDateTo": "～",
