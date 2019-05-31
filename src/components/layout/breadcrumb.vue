@@ -33,7 +33,7 @@
       </div>
       <div class="col-auto reload-button-container ">
         <a v-if="reload" id="reload" href="#" @click="onClickReload">
-          <font-awesome-icon id="spinner" icon="sync-alt" :class="isLoad ? 'fa-spin' : ''" />
+          <font-awesome-icon id="spinner" icon="sync-alt" :class="state.isLoad ? 'fa-spin' : ''" />
         </a>
       </div>
     </div>
@@ -69,9 +69,9 @@ export default {
       type: Boolean,
       default: true
     },
-    isLoad: {
-      type: Boolean,
-      default: false
+    state: {
+      type: Object,
+      default: () => ({ isLoad: false })
     },
     extraNavSpec: {
       type: Array,
@@ -146,11 +146,11 @@ export default {
       this.$router.push(page)
     },
     onClickReload(e) {
-      this.isLoad = true
+      this.state.isLoad = true
       const that = this
       EventBus.$emit(this.reloadEmitName, {
         done() {
-          that.isLoad = false
+          that.state.isLoad = false
           AuthHelper.checkSession()
         }
       })
