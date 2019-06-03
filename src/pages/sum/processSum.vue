@@ -145,13 +145,14 @@ export default {
         Util.getValue(processSum, 'processPeriods', []).forEach((period, idx) => {
           periods[idx.toString()] = period? Util.formatTime(period): '-'
         })
-        const dt = Util.getValue(processSum, 'period', 0)
+        const period = Util.getValue(processSum, 'period', 0)
         const stateList = this.getState(processSum)
         return {
           ...processSum,
           ...periods,
-          totalTime: dt? Util.formatTime(dt): '-',
+          totalTime: period? Util.formatTime(period): '-',
           stateList: stateList.map(state => state.label),
+          dt: Util.formatDate(processSum.dt),
           _rowVariant: stateList.find(state => state.error)? 'danger': '',
         }
       })
