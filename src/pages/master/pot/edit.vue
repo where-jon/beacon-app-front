@@ -74,19 +74,19 @@
                 <span v-text="$i18n.tnl('label.editUserInfo')" />
               </b-form-checkbox>
             </b-form-group>
-            <b-form-group v-show="showEmail">
+            <b-form-group v-if="showEmail">
               <label v-t="'label.email'" />
               <b-form-input v-model="userForm.email" type="email" maxlength="255" />
             </b-form-group>
-            <b-form-group v-show="editShowUser">
+            <b-form-group v-if="editShowUser">
               <label v-t="'label.loginId'" />
               <input v-model="userForm.loginId" :title="$i18n.tnl('message.validationList', {validate: $i18n.tnl('message.loginValidationList')})" type="text" minlength="3" maxlength="16" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" class="form-control" :required="editShowUser">
             </b-form-group>
-            <b-form-group v-show="editShowUser">
+            <b-form-group v-if="editShowUser">
               <label v-t="'label.role'" />
               <v-select v-model="vueSelected.role" :options="roleOptions" :clearable="false" :required="editShowUser" class="vue-options-lg" />
             </b-form-group>
-            <b-form-group v-show="editShowUser">
+            <b-form-group v-if="editShowUser">
               <label v-if="hasUserId" v-t="'label.passwordUpdate'" />
               <label v-else v-t="'label.password'" />
               <input v-model="userForm.pass" type="password" :minlength="userForm.pass? 3: 0" maxlength="16" pattern="^[a-zA-Z0-9_\-\/!#\$%&@]*$" class="form-control" :required="editShowUser && !hasUserId">
