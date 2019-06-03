@@ -480,17 +480,22 @@ export default {
       file[param] = name? name: this.$refs.inputThumbnail.placeholder
     },
     readImage(e) {
-      this.form.thumbnail = this.form.thumbnailTemp
-      this.form.thumbnailTemp = null
       this.$nextTick(() => {
-        this.readImageView(e, 'thumbnail', null, null, 'thumbnail', APP.POT_THUMBNAIL_MAX)
-        this.form.thumbnailTemp = this.form.thumbnail
+        this.form.thumbnail = this.form.thumbnailTemp
+        this.form.thumbnailTemp = null
+        this.$nextTick(() => {
+          this.readImageView(e, 'thumbnail', null, null, 'thumbnail', APP.POT_THUMBNAIL_MAX)
+          this.form.thumbnailTemp = this.form.thumbnail
 
-        const inputFileName = Util.getValue(e, 'target.files.0.name', null)
-        this.setFileName(inputFileName? Util.cutOnLongByte(inputFileName, this.getNameByteLangth()): null)
-        if(!inputFileName){
-          this.clearImage(e)
-        }
+          const inputFileName = Util.getValue(e, 'target.files.0.name', null)
+          this.setFileName(inputFileName? Util.cutOnLongByte(inputFileName, this.getNameByteLangth()): null)
+          if(!inputFileName){
+            this.clearImage(e)
+          }else{
+            this.form.existThumbnail = true
+            this.form.deleteThumbnail = false
+          }
+        })
       })
     },
     clearImage(e) {
