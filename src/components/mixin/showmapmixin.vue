@@ -212,8 +212,7 @@ export default {
         return
       }
       const bg = new Image()
-      const url = window.URL || window.webkitURL
-      bg.src = url.createObjectURL(new Blob([this.mapImage()]))
+      bg.src = this.mapImage()
       bg.onload = (evt) => {
         this.drawMapImage(bg)
         if (callback) {

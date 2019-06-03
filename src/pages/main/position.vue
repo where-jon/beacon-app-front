@@ -223,7 +223,9 @@ export default {
     //document.addEventListener('touchstart', this.touchEnd)
     this.txs.forEach((t) => this.txsMap[t.btxId] = t)
     this.exbs.forEach((e) => this.exbsMap[e.posId] = e)
-    await this.fetchData()
+    // this.fetchData()は'vueSelected.area'をwatchしている箇所で実行している。
+    // 以下は二重実行を防ぐためコメントアウト
+    // await this.fetchData()
     this.startPositionAutoReload()
     this.startOtherAutoReload()
   },
