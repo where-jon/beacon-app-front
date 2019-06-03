@@ -25,7 +25,9 @@ export default {
     })
     EventBus.$off('otherReload')
     EventBus.$on('otherReload', (payload)=>{
-      this.fetchData(payload)
+      if (!payload.disabledPosition) {
+        this.fetchData(payload)
+      }
     })
   },
   methods: {
