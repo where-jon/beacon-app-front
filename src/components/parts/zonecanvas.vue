@@ -449,8 +449,7 @@ export default {
         stage.add(this.layer)
         this.addZones()
       }
-      const url = window.URL || window.webkitURL
-      img.src = url.createObjectURL(new Blob([mapImage]))
+      img.src = mapImage
     },
     validateZoneName(id, name) {
       const duprecated = this.zones.list.find((zone) => {
