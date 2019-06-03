@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" :reload="true" :is-load="isLoad" @reload="fetchData" />
-    <div v-show="!isLoad" class="container">
+    <breadcrumb :items="items" :reload="true" :state="reloadState" @reload="fetchData" />
+    <div v-show="!reloadState.isLoad" class="container">
       <monitor-table type="position" :vue-table-mode="isDev" :all-count="allCount" :headers="headers" :datas="positions" :tr-class="getClass" />
     </div>
   </div>
@@ -10,6 +10,7 @@
 <script>
 import { mapState } from 'vuex'
 import * as StateHelper from '../../sub/helper/StateHelper'
+import * as ParamHelper from '../../sub/helper/ParamHelper'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
@@ -39,7 +40,7 @@ export default {
       items: ViewHelper.createBreadCrumbItems('monitor', 'position'),
       positions: [],
       headers: this.getHeaders(),
-      isLoad: false,
+      reloadState: ParamHelper.createReloadState(),
       csvHeaders: this.getCsvHeaders(),
     }
   },

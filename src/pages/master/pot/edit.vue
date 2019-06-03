@@ -59,7 +59,7 @@
             <b-form-group>
               <label v-t="'label.thumbnail'" />
               <b-form-file v-if="isEditable" ref="inputThumbnail" v-model="form.thumbnailTemp" :placeholder="$t('message.selectFile') " accept="image/jpeg, image/png, image/gif" @change="readImage" />
-              <b-button v-if="isEditable && form.thumbnail" :variant="theme" type="button" class="float-right mt-3" @click="clearImage">
+              <b-button v-if="isEditable && form.existThumbnail" :variant="theme" type="button" class="float-right mt-3" @click="clearImage">
                 {{ $i18n.tnl('label.clear') }}
               </b-button>
               <img v-show="form.existThumbnail" ref="thumbnail" :src="thumbnailUrl.replace('{id}', form.potId) + new Date().getTime()" width="100" class="mt-1 ml-3">
@@ -209,7 +209,7 @@ export default {
       },
       deep: true,
     },
-    'vueSelected.categpry': {
+    'vueSelected.category': {
       handler: function(newVal, oldVal){
         this.form.categoryId = Util.getValue(newVal, 'value', null)
       },
@@ -467,6 +467,7 @@ export default {
         }
       })
       entity.potTxList = potTxList
+      entity.deleteThumbnail = this.form.deleteThumbnail
       return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
     },
     getNameByteLangth(){
@@ -495,7 +496,8 @@ export default {
     clearImage(e) {
       this.$nextTick(() => {
         this.form.thumbnailTemp = null
-        this.form.thumbnail = null
+        this.form.existThumbnail = false
+        this.form.deleteThumbnail = true
         this.$refs.inputThumbnail.reset()
         this.setFileName()
       })

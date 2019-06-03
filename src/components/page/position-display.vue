@@ -1,6 +1,5 @@
 <template>
   <div>
-    <prohibitAlert :messagelist="message" />
     <m-list :params="params" :list="getDataList()" />
   </div>
 </template>
@@ -8,18 +7,15 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 import mList from './list.vue'
-import prohibitAlert from '../../components/page/prohibitAlert.vue'
 import commonmixinVue from '../mixin/commonmixin.vue'
 import listmixinVue from '../mixin/listmixin.vue'
 import showmapmixin from '../mixin/showmapmixin.vue'
 import { addLabelByKey } from '../../sub/helper/ViewHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as Util from '../../sub/util/Util'
-
 export default {
   components: {
     mList,
-    prohibitAlert
   },
   mixins: [
     commonmixinVue,
@@ -31,10 +27,17 @@ export default {
       type: String,
       required: true,
     },
+    alertData: {
+      type: Object,
+      default:() => {},
+      required: true,
+    },
   },
   data() {
     return {
+      prohibitData : null,
       message: '',
+      showDismissibleAlert: false,
       params: {
         name: 'position-stack',
         id: 'position-stackId',
@@ -112,10 +115,11 @@ export default {
         // positionデータ取得
         await this.storePositionHistory(null, false, true)
         this.replaceAS({positions: this.getPositions()})
-        let prohibitData = await StateHelper.getProhibitData(this.getPositions(),this.prohibits)
-        this.message = await StateHelper.getProhibitMessage(this.message,prohibitData)
+        this.setProhibit('display') // listmixin呼び出し
+        this.alertData.message = this.message
+        this.alertData.isAlert = this.showDismissibleAlert ? true: false
         // 分類checkProhibitZone
-        const tempMaster = this.splitMaster(this.positions, prohibitData)
+        const tempMaster = this.splitMaster(this.positions, this.prohibitData)
         this.replaceMain({[this.eachListName]: tempMaster})
         if (payload && payload.done) {
           payload.done()

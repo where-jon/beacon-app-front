@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import * as AppServiceHelper from './AppServiceHelper'
 import * as Util from '../util/Util'
-import { CATEGORY, SHAPE, NOTIFY_STATE, SYSTEM_ZONE_CATEGORY_NAME } from '../constant/Constants'
+import { CATEGORY, SHAPE, NOTIFY_STATE, SYSTEM_ZONE_CATEGORY_NAME} from '../constant/Constants'
 import { APP } from '../constant/config'
 
 
@@ -431,42 +431,6 @@ export const loadAreaImage = async (areaId, force) => {
   store.commit('app_service/replaceAS', {areaImages})    
 
   // })
-}
-
-export const getProhibitData = async (position,prohibits) => {
-
-  if (!APP.POS.PROHIBIT_ALERT || !APP.POS.PROHIBIT_GROUPS) {
-    return null
-  }
-  const groups = APP.POS.PROHIBIT_GROUPS
-  return position.filter((pos) =>
-    prohibits.some((prohibitData) => {
-      if (pos.exb.areaId == prohibitData.areaId
-          && pos.exb.x >= prohibitData.x && pos.exb.x <= prohibitData.w
-          && pos.exb.y >= prohibitData.y && pos.exb.y <= prohibitData.h) {
-        const groupCheck = groups.some((group) => pos.tx.group.groupId == group)
-        groupCheck ? pos.zoneName = prohibitData.zoneName : null
-        return groupCheck
-      }
-    })).map((position) => {
-    return {
-      minor: position.minor,
-      potName: position.tx.potTxList[0].pot.potName,
-      areaName: position.exb.areaName,
-      zoneName: position.zoneName
-    }})
-}
-
-export const getProhibitMessage = async (message,prohibitData) => {
-
-  if (!APP.POS.PROHIBIT_ALERT || !APP.POS.PROHIBIT_GROUPS) {
-    return ''   // message空
-  }
-
-  const labelArea = i18n.tnl('label.Area')
-  const labelpotName = i18n.tnl('label.potName')
-  const labelZone =  i18n.tnl('label.zoneName')
-  return prohibitData.map((data) => `< ${labelpotName} : ${data.potName} ${labelArea} : ${data.areaName} ${labelZone} : ${data.zoneName}>`).join(' ')
 }
 
 export const loadAreaImages = async () => {

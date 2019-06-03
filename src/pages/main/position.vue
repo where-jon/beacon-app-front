@@ -1,7 +1,9 @@
 <template>
   <div id="mapContainer" class="container-fluid" @click="resetDetail">
     <breadcrumb :items="items" :extra-nav-spec="extraNavSpec" :reload="true" :auto-reload="false" :short-name="shortName" :legend-items="legendItems" />
-    <prohibitAlert :messagelist="message" />
+    <b-alert v-model="showDismissibleAlert" variant="danger" dismissible>
+      {{ $t('label.detectedProhibitZone') + ' : ' }}{{ message }}
+    </b-alert>
     <b-row class="mt-2">
       <b-form inline class="mt-2" @submit.prevent>
         <b-form-row class="my-1 ml-2 ml-sm-0">
@@ -105,14 +107,12 @@ import listmixin from '../../components/mixin/listmixin.vue'
 import sensor from '../../components/parts/sensor.vue'
 import commonmixinVue from '../../components/mixin/commonmixin.vue'
 import controlmixinVue from '../../components/mixin/controlmixin.vue'
-import prohibitAlert from '../../components/page/prohibitAlert.vue'
 
 export default {
   components: {
     'sensor': sensor,
     'txdetail': txdetail,
     breadcrumb,
-    prohibitAlert
   },
   mixins: [showmapmixin, listmixin, commonmixinVue, controlmixinVue],
   props: {
@@ -139,6 +139,7 @@ export default {
       isPause: false,
       firstTime: true,
       message: '',
+      showDismissibleAlert: false,
       prohibitData : null,
       icons: {},
       txsMap: {},
@@ -342,7 +343,6 @@ export default {
         disabledOther: Util.getValue(payload, 'disabledOther', false),
         disabledProgress: Util.getValue(payload, 'disabledProgress', false),
       }
-      clearInterval(this.prohibitInterval)
       this.showMapImageDef(async () => {
         if(!cPayload.disabledProgress){
           this.showProgress()
@@ -367,10 +367,8 @@ export default {
           this.stage.update()
         }
         this.setPositionedExb()
-        this.prohibitData = await StateHelper.getProhibitData(this.getPositions(),this.prohibits)
-        this.message = await StateHelper.getProhibitMessage(this.message,this.prohibitData)
         this.showTxAll()
-        // this.prohibitInterval = setInterval(this.twinkle,DISP.PROHIBIT_TWINKLE_TIME) TODO: Violation発生
+        this.setProhibit('pos') // listmixin呼び出し
         if(!this.firstTime && reloadButton){
           reloadButton.classList.remove(spinClassName)
         }
@@ -444,8 +442,8 @@ export default {
         Util.debug('meditag', meditag)
       }
       const display = this.getDisplay(tx)
-      const color = meditag? '000': this.isMagnetOn(magnet)? display.bgColor : display.color
-      const bgColor = meditag? meditag.bg.substr(1): this.isMagnetOn(magnet)? display.color: display.bgColor
+      const color = meditag? '#000': this.isMagnetOn(magnet)? display.bgColor : display.color
+      const bgColor = meditag? meditag.bg: this.isMagnetOn(magnet)? display.color: display.bgColor
       
       // フリーアドレスTXが不在エリア検知の場合は以降処理を行わない
       if (exb && exb.isAbsentZone && !this.isFixTx(tx)) {
@@ -467,6 +465,8 @@ export default {
         txBtn.x = pos.x
         txBtn.y = pos.y
       }
+      // プロとするTXアイコンが進入禁止区域に入ってるかチェック
+      txBtn.prohibit  = this.prohibitData ? this.prohibitData.some((data) => data.minor == pos.minor):false
 
       if (this.isFixTx(tx)) {
         Util.debug('fixed location', tx)
@@ -479,7 +479,6 @@ export default {
         this.showDetail(txBtn.txId, txBtn.x, txBtn.y)
       }
       this.txCont.addChild(txBtn)
-      txBtn.prohibit = this.prohibitData? this.prohibitData.some((data) => data.minor == pos.minor):false
       this.stage.update()
       this.detectedCount++  // 検知数カウント増加
     },

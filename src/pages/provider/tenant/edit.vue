@@ -159,7 +159,7 @@ import chromeInput from '../../../components/parts/chromeinput.vue'
 import featureList from '../../../components/page/featureList.vue'
 import systemSetting from '../../setting/system/index.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
-import { EXCLOUD_BASE_URL } from '../../../sub/constant/config'
+import { EXCLOUD } from '../../../sub/constant/config'
 
 export default {
   components: {
@@ -324,8 +324,8 @@ export default {
           Util.hasValue(this.form.userLoginId)? {userId: dummyKey--, loginId: this.form.userLoginId, pass: this.form.userPass, role: { roleId: dummyKey--, roleName: 'USER' }}: null,
         ].filter((val) => val): null,
         region: !Util.hasValue(this.form.tenantId)? {regionId: dummyKey--, regionName: this.form.regionName, meshId: Util.hasValue(this.form.meshId)? this.form.meshId: null}: null,
-        defaultExcloudBaseUrl: defaultConfig.EXCLOUD_BASE_URL,
-        excloudBaseUrl: EXCLOUD_BASE_URL,
+        defaultExcloudBaseUrl: defaultConfig.EXCLOUD.BASE_URL,
+        excloudBaseUrl: EXCLOUD.BASE_URL,
         tenantFeatureList: this.featureList.map((val) => {
           return !val.disabled && val.checked? {
             tenantFeaturePK:{tenantId: dummyKey--, featureId: val.featureId},

@@ -148,6 +148,7 @@
     "gwNotify": "GW状態アラート",
     "exbNotify": "EXB状態アラート",
     "txBatteryNotify": "TX電池状態アラート",
+    "prohibitNotify": "進入禁止アラート",
     "userRegNotify": "ユーザ登録通知",
     "sosNotify": "SOSボタン押下通知",
 
@@ -219,6 +220,7 @@
     "potId": "ID",
     "potCd": "コード",
     "potName": "名前",
+    "potSearchName": "検知名",
     "post": "役職",
     "ruby": "ふりがな",
     "tel": "電話番号",
@@ -366,6 +368,14 @@
     "graph": "滞在率グラフ",
 
     "positionSummary": "位置情報",
+
+    "processSum": "工程管理",
+    "totalTime": "合計時間",
+    "finalUpdateDate": "最終更新日時",
+    "successComplete": "正常終了",
+    "processing": "進行中",
+    "notSmooth": "工程不順",
+    "processLate": "超過",
 
     "historyTitle": "履歴",
     "historyDateFrom": "期間",
@@ -617,14 +627,17 @@
         "MOVING_AVERAGE": "測位時に集約する位置情報の数::測位する場合、設定した数の位置情報を平均して算出します。",
         "MOVING_AVERAGE_TIME": "移動平均時間::サーバが位置情報を集計する時に使用する移動平均時間を設定します。",
         "USE_MULTI_POSITIONING": "3点測位を使用する::3点測位を使用します。",
-        "PROHIBIT_ALERT" : "禁止区域アラートを使用::禁止区域アラートを使用します。",
+        "PROHIBIT_ALERT" : "禁止区域アラートを使用::禁止区域アラートを通知する方法を設定します。設定可能な値は次の通りです。{PROHIBIT_ALERT}",
         "PROHIBIT_GROUPS": "禁止区域侵入不可グループ設定::禁止区域に侵入できないグループIDを設定します。",
         "USE_LEGEND": "凡例を使用する::位置表示(地図)画面で凡例を表示します。★",
-        "SHOW_DETECTED_COUNT": "検知数を表示する::位置表示(地図)画面でデバイスの検知数を表示します。★"
+        "SHOW_DETECTED_COUNT": "検知数を表示する::位置表示(地図)画面でデバイスの検知数を表示します。★",
+        "PROHIBIT": {
+          "DUPLICATE_MAIL_TIME": "重複アラート通知制限（メール）::設定した時間内に同じ内容のアラートが発信された場合、メールによる通知を行わないようにします。ミリ秒単位で設定します。"
+        }
       },
       "SENSOR": {
-        "EXB_SENSOR": "センサの種類::サーバが使用するセンサIDを設定します。設定可能な値は次の通りです。★{SENSOR}",
-        "TX_SENSOR": "Txセンサの種類::Txセンサの種類を設定します。設定可能な値は次の通りです。★{SENSOR}",
+        "EXB_SENSOR": "センサの種類::サーバが使用するセンサIDを設定します。設定可能な値は次の通りです。★{SENSOR_NONE}{SENSOR}",
+        "TX_SENSOR": "Txセンサの種類::Txセンサの種類を設定します。設定可能な値は次の通りです。★{SENSOR_NONE}{SENSOR}",
         "MEDITAG": {
           "DOWN_RED_TIME": "転倒通知時間::MEDiTAG使用者が転倒した時、設定した時間だけMEDiTAGが赤枠で表示されます。ミリ秒単位で設定します。"
         },
@@ -654,7 +667,7 @@
         "BTX_MINOR": "Tx画面でbtxIdとminorを使用する::Tx画面でbtxIdかminorのどちらか、または両方を使用します。btxId、minor、bothのいずれかを設定します。★"
       },
       "EXB": {
-        "SENSOR": "EXBeaconセンサの種類::EXBeaconセンサの種類を設定します。設定可能な値は次の通りです。★{SENSOR}",
+        "SENSOR": "EXBeaconセンサの種類::EXBeaconセンサの種類を設定します。設定可能な値は次の通りです。★{SENSOR_NONE}{SENSOR}",
         "WITH": "EXBeacon画面で使用する項目::EXBeacon画面で使用する項目を設定します。設定可能な値は次の通りです。★{EXB}"
       },
       "USER": {
@@ -764,9 +777,9 @@
         "R": "Txアイコンの半径::位置表示(地図)画面で表示されるTxのサイズを設定します。★",
         "FIX_R": "Txアイコンの半径::位置表示(地図)画面の凡例アイコン、および位置表示(全体)やカテゴリ、グループ画面で表示されるTxのサイズを設定します。",
         "ROUNDRECT_RADIUS": "Txアイコンの角丸半径::角丸四角形のアイコンに設定されているTxに対して四隅の丸みを設定します。",
-        "BGCOLOR": "Txアイコンのデフォルト背景色::カテゴリ、グループどちらも所属していないTxアイコンの背景色を設定します。#を除いたカラーコードで設定します。",
-        "COLOR": "Txアイコンのデフォルト文字色::カテゴリ、グループどちらも所属していないTxアイコンの文字色を設定します。#を除いたカラーコードで設定します。",
-        "STROKE_COLOR": "Txアイコンのデフォルト枠線色::カテゴリ、グループどちらも所属していないTxアイコンの枠線色を設定します。#を除いたカラーコードで設定します。",
+        "BGCOLOR": "Txアイコンのデフォルト背景色::カテゴリ、グループどちらも所属していないTxアイコンの背景色を設定します。#を含めたカラーコードで設定します。",
+        "COLOR": "Txアイコンのデフォルト文字色::カテゴリ、グループどちらも所属していないTxアイコンの文字色を設定します。#を含めたカラーコードで設定します。",
+        "STROKE_COLOR": "Txアイコンのデフォルト枠線色::カテゴリ、グループどちらも所属していないTxアイコンの枠線色を設定します。#を含めたカラーコードで設定します。",
         "ALPHA": "離席時のTxアイコン透過値::Txの状態が離席の場合の透過値を設定します。0(透過)～1(不透過)の小数値で設定します",
         "LOST_ALPHA": "不在時のTxアイコン透過値::Txの状態が不在の場合の透過値を設定します。0(透過)～1(不透過)の小数値で設定します",
         "DISPLAY_PRIORITY": "Txアイコンの表示色優先順位::Txアイコンの表示色に適用する色を、カテゴリまたはグループで設定した表示色のどちらかから設定します。category、groupから選択できます。先頭に指定したものから適用されます。"
@@ -844,13 +857,19 @@
     "DEV": {
       "SIMULATION": "仮データを使用する::仮のデータを使用して測位などを実施します。"
     },
-    "EXCLOUD_BASE_URL": "EXCloudのURL::EXCloudのURLを設定します。",
+    "EXCLOUD": {
+      "BASE_URL": "EXCloudのURL::EXCloudのURLを設定します。"
+    },
 
     "TYPE": {
       "APP": {
         "POS": {
           "MOVING_AVERAGE_TIME": "number",
-          "PROHIBIT_GROUPS": "numberList"
+          "PROHIBIT_GROUPS": "numberList",
+          "PROHIBIT_ALERT": "stringList",
+          "PROHIBIT": {
+            "DUPLICATE_MAIL_TIME": "number"
+          }
         },
         "SENSOR": {
           "EXB_SENSOR": "numberList",
@@ -961,6 +980,11 @@
     },
     "DEFAULT": {
       "APP": {
+        "POS": {
+          "PROHIBIT": {
+            "DUPLICATE_MAIL_TIME": "180000"
+          }
+        },
         "SVC": {
           "STAY_SUM": {
             "STAY_SUM_START": "0", 
@@ -1008,6 +1032,9 @@
         "SIMULATION": "デモ用",
         "OTHER": "その他"
       },
+      "SENSOR_NONE": {
+        "0": "未設定"
+      },
       "SENSOR": {
         "1": "温湿度",
         "2": "人感センサ",
@@ -1031,7 +1058,8 @@
         "0": "TXボタン通知",
         "1": "アラート系",
         "2": "ユーザ登録・更新",
-        "3": "sos"
+        "3": "sos",
+        "4": "禁止区域通知"
       },
       "SUM_AXIS_FILL_GAP": {
         "0": "しない",
@@ -1095,10 +1123,6 @@
         "tel": "電話番号"
       },
       "TX": {
-        "category": "カテゴリ",
-        "group": "グループ",
-        "displayName": "表示名",
-        "description": "備考",
         "major": "major",
         "dispFlg": "表示設定",
         "location": "固定位置表示",
@@ -1146,6 +1170,11 @@
         "category": "カテゴリ",
         "tel": "電話番号",
         "timestamp": "最終取得日時"
+      },
+      "PROHIBIT_ALERT": {
+        "screen": "画面上に表示",
+        "mail": "メール通知",
+        "led": "LED点滅"
       }
     }
   },

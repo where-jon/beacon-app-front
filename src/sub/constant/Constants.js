@@ -158,6 +158,19 @@ export const CATEGORY = {
   ZONE_AVAILABLE: [3],
 }
 
+export const PROCESS_SUM = {
+  SUCCESS_COMPLETE: {value: 1, label: 'successComplete'},
+  PROCESSING: {value: 2, label: 'processing'},
+  NOT_SMOOTH: {value: 3, label: 'notSmooth', error: true},
+  LATE: {value: 4, label: 'processLate', error: true},
+  getTypes(){ 
+    return [
+      {value: CATEGORY.THING, text: i18n.tnl('label.thing')},
+      {value: CATEGORY.PERSON, text: i18n.tnl('label.person')},
+    ]
+  },
+}
+
 export const NOTIFY_MIDIUM = {
   getTypes(){
     return [
@@ -310,6 +323,12 @@ export const LED_BLINK_TYPES = {
   BLINK_FAST: 4,
 }
 
+export const PROHIBIT_STATE = {
+  SCREEN: 'screen',
+  MAIL: 'mail',
+  LED: 'led',
+}
+
 export const DETECT_STATE = {
   DETECTED: 1,
   LOST: 2,
@@ -347,6 +366,7 @@ export const NOTIFY_STATE = {
       {value:'TX_BATTERY_ALERT', text: i18n.t('label.txBatteryNotify'), index:1},
       {value:'USER_REG_NOTIFY', text: i18n.t('label.userRegNotify'), index:2},
       {value:'TX_SOS_ALERT', text: i18n.t('label.sosNotify'), index:3},
+      {value:'PROHIBIT_NOTIFY', text: i18n.t('label.prohibitNotify'), index:4},
     ]
   }
 }
@@ -646,6 +666,11 @@ export const MENU = [
         key: 'positionSummary',
         path: 'positionSummary',
         icon: 'map-marked-alt',
+      },
+      {
+        key: 'processSum',
+        path: 'processSum',
+        icon: 'fast-forward',
       },
       {
         key: 'stayRatioBase',

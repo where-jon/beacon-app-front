@@ -189,18 +189,18 @@ export default {
     },
     validated (message) {
       this.message = message
-      this.replace({showAlert: true})
+      this.switchMessageType('showAlert')
       window.scrollTo(0, 0)
     },
     async doRegist (zones) {
       const path = this.appServicePath
-      this.replace({showInfo: false})
+      this.switchMessageType()
       this.message = ''
       await this.deletedIds.forEach((id) => AppServiceHelper.deleteEntity(path, id))
       const saveId = await AppServiceHelper.bulkSave(this.appServicePath + '/edit', zones, 0)
       this.isRegist = false
       this.message = this.$i18n.t('message.updateCompleted', { target: this.$i18n.t('label.zone') })
-      this.replace({showInfo: true})
+      this.switchMessageType('showInfo')
       this.isCompleteRegist = true
       // ストア内のゾーンレコードを最新に更新する
       await StateHelper.load('zone', true)

@@ -3,7 +3,9 @@
     <breadcrumb :items="items" :extra-nav-spec="extraNavSpec"
                 :reload="reload" :short-name="shortName"
     />
-    <prohibitAlert :messagelist="message" />
+    <b-alert v-model="showDismissibleAlert" variant="danger" dismissible>
+      {{ $t('label.detectedProhibitZone') + ' : ' }}{{ message }}
+    </b-alert>
     <m-list :params="params" :list="positionList" />
   </div>
 </template>
@@ -11,7 +13,6 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
-import prohibitAlert from '../../components/page/prohibitAlert.vue'
 import mList from '../../components/page/list.vue'
 import listmixinVue from '../../components/mixin/listmixin.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
@@ -26,7 +27,6 @@ export default {
   components: {
     mList,
     breadcrumb,
-    prohibitAlert
   },
   mixins: [
     listmixinVue,
@@ -35,6 +35,8 @@ export default {
   data() {
     return {
       message: '',
+      prohibitData : null,
+      showDismissibleAlert: false,
       params: {
         name: 'position-list',
         id: 'positionListId',
@@ -90,12 +92,10 @@ export default {
         await StateHelper.load('prohibit')
         await this.storePositionHistory(0, true)
         let positions = this.getPositions(true)
-        let prohibitData = await StateHelper.getProhibitData(this.getPositions(),this.prohibits)
-        this.message = await StateHelper.getProhibitMessage(this.message,prohibitData)
-
+        this.setProhibit('list') // listmixin呼び出し
         Util.debug(positions)
         positions = positions.map((pos) => {
-          const prohibitCheck = prohibitData? prohibitData.some((data) => data.minor == pos.minor) : false
+          const prohibitCheck = this.prohibitData? this.prohibitData.some((data) => data.minor == pos.minor) : false
           const exb = this.exbs.find((exb) => exb.posId == pos.pos_id)
           return {
             ...pos,
