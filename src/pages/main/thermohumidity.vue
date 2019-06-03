@@ -1,6 +1,6 @@
 <template>
   <div id="mapContainer" class="container-fluid">
-    <breadcrumb :items="items" :reload="true" />
+    <breadcrumb :items="items" :reload="true" :state="reloadState" />
     <div>
       <alert :warn-message="warnMessage" :fix="fixHeight" :alert-style="alertStyle" />
 
@@ -116,6 +116,7 @@ export default {
         'background-color': DISP.THERMOH.TOOLTIP_BGCOLOR,
         'color': DISP.THERMOH.TOOLTIP_COLOR,
       },
+      reloadState: {isLoad: false},
     }
   },
   computed: {
@@ -129,7 +130,9 @@ export default {
     'vueSelected.area': {
       handler: function(newVal, oldVal){
         this.selectedArea = Util.getValue(newVal, 'value', null)
-        this.changeArea(this.selectedArea)
+        if(!this.reloadState.isLoad){
+          this.changeArea(this.selectedArea)
+        }
       },
       deep: true,
     },
