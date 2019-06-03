@@ -116,7 +116,7 @@ export default {
         'background-color': DISP.THERMOH.TOOLTIP_BGCOLOR,
         'color': DISP.THERMOH.TOOLTIP_COLOR,
       },
-      reloadState: {isLoad: false},
+      reloadState: {isLoad: false, initialize: false},
     }
   },
   computed: {
@@ -130,9 +130,7 @@ export default {
     'vueSelected.area': {
       handler: function(newVal, oldVal){
         this.selectedArea = Util.getValue(newVal, 'value', null)
-        if(!this.reloadState.isLoad){
-          this.changeArea(this.selectedArea)
-        }
+        this.changeArea(this.selectedArea)
       },
       deep: true,
     },
