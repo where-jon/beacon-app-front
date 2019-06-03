@@ -303,7 +303,6 @@ export default {
       }
     },
     async fetchData(payload, disableErrorPopup) {
-      console.log('@@ fetchData')
       const disabledProgress = Util.getValue(payload, 'disabledProgress', false)
       try {
         this.reloadSelectedTx = this.reload? this.selectedTx: {}
