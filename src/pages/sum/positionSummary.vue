@@ -105,6 +105,7 @@ export default {
       if (_.isEmpty(posData)) {
         this.message = this.$i18n.t('message.listEmpty')
         this.replace({showAlert: true})
+        this.hideProgress()
         return
       }
 
