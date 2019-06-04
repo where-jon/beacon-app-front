@@ -557,7 +557,7 @@ export default {
             endTime: percent == 100? Util.convertToTime(toSeconds): moment(stay.end).format('HH:mm:ss'),
             time: time,
             percent: percent,
-            categoryBgColor: findCategory? '#' + findCategory.bgColor: this.getOtherColor,
+            categoryBgColor: findCategory? Util.colorCd4display(findCategory.bgColor): Util.colorCd4display(this.getOtherColor),
             areaBgColor: findArea? this.getStackColor(areaIndex): this.getOtherColor,
             areaName: findArea? findArea.areaName: '',
             zoneCategory: stay.byName,

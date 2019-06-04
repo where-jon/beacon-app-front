@@ -2,7 +2,7 @@ import _ from 'lodash'
 import * as AppServiceHelper from './AppServiceHelper'
 import * as Util from '../util/Util'
 import { CATEGORY, SHAPE, NOTIFY_STATE, SYSTEM_ZONE_CATEGORY_NAME} from '../constant/Constants'
-import { APP } from '../constant/config'
+import { APP, DISP } from '../constant/config'
 
 
 let store
@@ -266,7 +266,7 @@ const appStateConf = {
         categoryName: val.categoryName,
         shape: val.display? val.display.shape: null,
         color: val.display? val.display.color: null,
-        bgColor: val.display? val.display.bgColor: null,
+        bgColor: val.systemUse == 1? getSystemUseBgColor(val): val.display? val.display.bgColor: null,
         shapeName: val.display? getShapeName(val.display.shape): null,
         categoryTypeName: getCategoryTypeName(val),
         systemCategoryName: val.systemUse != 0? val.categoryName.toLowerCase(): null,
@@ -281,7 +281,7 @@ const appStateConf = {
         ...val,
         shape: val.display? val.display.shape: null,
         color: val.display? val.display.color: null,
-        bgColor: val.display? val.display.bgColor: null,
+        bgColor: val.systemUse == 1? getSystemUseBgColor(val): val.display? val.display.bgColor: null,
         shapeName: val.display? getShapeName(val.display.shape): null,
       }))
     }
@@ -543,3 +543,15 @@ export const bulkErrorCheck = (entity, headerName, val, isNumberColumn) => {
   entity[`${headerName}Name`] = val
   return false
 }
+
+
+export const getSystemUseBgColor = (categoryData) => {
+  if(categoryData.categoryName === SYSTEM_ZONE_CATEGORY_NAME.ABSENT) {
+    return DISP.SYSTEM_USE_BG_COLOR_ABSENT
+  } else if(categoryData.categoryName === SYSTEM_ZONE_CATEGORY_NAME.PROHIBIT) {
+    return DISP.SYSTEM_USE_BG_COLOR_PROHIBIT
+  } else {
+    return categoryData.display? categoryData.display.bgColor: null
+  }
+}
+

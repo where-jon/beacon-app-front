@@ -402,6 +402,9 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   },
   // 禁止区域関連設定
   PROHIBIT_TWINKLE_TIME: 1500, // 点滅間隔(ミリ秒)
+  // システム設定カテゴリ
+  SYSTEM_USE_BG_COLOR_ABSENT: '000000', // 背景色カラーコード
+  SYSTEM_USE_BG_COLOR_PROHIBIT: '000000', // 背景色カラーコード
 }
 
 // used when APP.LOGIN_MODE != APP_SERVICE with excloud old api -----------------------------------------------------
