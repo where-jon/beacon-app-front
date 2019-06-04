@@ -6,7 +6,7 @@
           <b-form-row class="mb-3">
             <label v-t="'label.area'" class="mr-2 mb-2" />
             <span :title="vueSelectTitle(vueSelected.area)">
-              <v-select v-model="vueSelected.area" :options="areaOptions" :clearable="false" class="inputSelect vue-options">
+              <v-select v-model="vueSelected.area" :options="areaOptions" :clearable="false" class="inputSelect vue-options" :style="getVueSelectStyle()">
                 <template slot="selected-option" slot-scope="option">
                   {{ vueSelectCutOn(option) }}
                 </template>
@@ -18,7 +18,7 @@
           <b-form-row v-if="enableCategory" class="mb-3 mr-2">
             <label v-t="'label.category'" class="mr-2" />
             <span :title="vueSelectTitle(vueSelected.category)">
-              <v-select v-model="vueSelected.category" :options="getCategoryOptions(showCategoryTypes)" class="inputSelect vue-options">
+              <v-select v-model="vueSelected.category" :options="getCategoryOptions(showCategoryTypes)" class="inputSelect vue-options" :style="getVueSelectStyle()">
                 <template slot="selected-option" slot-scope="option">
                   {{ vueSelectCutOn(option) }}
                 </template>
@@ -30,7 +30,7 @@
           <b-form-row v-if="enableGroup" class="mb-3 mr-2">
             <label v-t="'label.group'" class="mr-2" />
             <span :title="vueSelectTitle(vueSelected.group)">
-              <v-select v-model="vueSelected.group" :options="groupOptions" class="inputSelect vue-options">
+              <v-select v-model="vueSelected.group" :options="groupOptions" class="inputSelect vue-options" :style="getVueSelectStyle()">
                 <template slot="selected-option" slot-scope="option">
                   {{ vueSelectCutOn(option) }}
                 </template>
@@ -42,7 +42,7 @@
           <b-form-row v-if="enableIndividual" class="mb-3 mr-2">
             <label v-t="'label.individual'" class="mr-2" />
             <span :title="vueSelectTitle(vueSelected.pot)">
-              <v-select v-model="vueSelected.pot" :options="potOptions" class="inputSelect vue-options">
+              <v-select v-model="vueSelected.pot" :options="potOptions" class="inputSelect vue-options" :style="getVueSelectStyle()">
                 <template slot="selected-option" slot-scope="option">
                   {{ vueSelectCutOn(option) }}
                 </template>

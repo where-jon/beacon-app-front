@@ -29,7 +29,7 @@
             </b-form-row>
             <b-form-row v-if="useVueSelect(form.filterKind)" class="ml-1">
               <span :title="vueSelectTitle(vueSelected.filter)">
-                <v-select v-model="vueSelected.filter" :options="filterIdOptions" class="ml-2 inputSelect vue-options">
+                <v-select v-model="vueSelected.filter" :options="filterIdOptions" class="ml-2 inputSelect vue-options" :style="getVueSelectStyle()">
                   <template slot="selected-option" slot-scope="option">
                     {{ vueSelectCutOn(option) }}
                   </template>

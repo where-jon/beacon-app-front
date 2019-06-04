@@ -17,7 +17,7 @@
             <b-form-row>
               <label v-t="'label.zoneCategoryName'" class="control-label md-2 text-right" />
               <span :title="vueSelectTitle(vueSelected.category)">
-                <v-select v-model="vueSelected.category" :options="categoryOptionList" class="md-3 ml-2 vue-options">
+                <v-select v-model="vueSelected.category" :options="categoryOptionList" class="md-3 ml-2 vue-options" :style="getVueSelectStyle()">
                   <template slot="selected-option" slot-scope="option">
                     {{ vueSelectCutOn(option) }}
                   </template>
@@ -27,7 +27,7 @@
             <b-form-row>
               <label v-t="'label.zone'" class="control-label md-1 text-right" />
               <span :title="vueSelectTitle(vueSelected.zone)">
-                <v-select v-model="vueSelected.zone" :options="zoneOptions" class="md-3 ml-2 vue-options">
+                <v-select v-model="vueSelected.zone" :options="zoneOptions" class="md-3 ml-2 vue-options" :style="getVueSelectStyle()">
                   <template slot="selected-option" slot-scope="option">
                     {{ vueSelectCutOn(option) }}
                   </template>

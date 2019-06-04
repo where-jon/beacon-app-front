@@ -11,7 +11,7 @@
             {{ $t('label.area') }}
           </label>
           <span :title="vueSelectTitle(vueSelected.area)">
-            <v-select v-model="vueSelected.area" :options="areaOptions" :clearable="false" class="ml-1 mr-2 vue-options">
+            <v-select v-model="vueSelected.area" :options="areaOptions" :clearable="false" class="ml-1 mr-2 vue-options" :style="getVueSelectStyle()">
               <template slot="selected-option" slot-scope="option">
                 {{ vueSelectCutOn(option) }}
               </template>
@@ -23,7 +23,7 @@
             {{ $t('label.group') }}
           </label>
           <span :title="vueSelectTitle(vueSelected.group)">
-            <v-select v-model="vueSelected.group" :options="groupOptions" class="ml-1 mr-2 vue-options">
+            <v-select v-model="vueSelected.group" :options="groupOptions" class="ml-1 mr-2 vue-options" :style="getVueSelectStyle()">
               <template slot="selected-option" slot-scope="option">
                 {{ vueSelectCutOn(option) }}
               </template>
@@ -35,7 +35,7 @@
             {{ $t('label.category') }}
           </label>
           <span :title="vueSelectTitle(vueSelected.category)">
-            <v-select v-model="vueSelected.category" :options="categoryOptionsForPot" class="ml-1 mr-2 vue-options">
+            <v-select v-model="vueSelected.category" :options="categoryOptionsForPot" class="ml-1 mr-2 vue-options" :style="getVueSelectStyle()">
               <template slot="selected-option" slot-scope="option">
                 {{ vueSelectCutOn(option) }}
               </template>

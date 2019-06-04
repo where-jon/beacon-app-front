@@ -7,7 +7,7 @@
         <b-form-row class="ml-2 mb-2">
           <label v-t="'label.areaName'" class="control-label mr-sm-2" />
           <span :title="vueSelectTitle(vueSelected.area)">
-            <v-select v-model="vueSelected.area" :options="areaNames" :clearable="false" class="mb-2 mr-sm-2 mb-sm-0 vue-options">
+            <v-select v-model="vueSelected.area" :options="areaNames" :clearable="false" class="mb-2 mr-sm-2 mb-sm-0 vue-options" :style="getVueSelectStyle()">
               <template slot="selected-option" slot-scope="option">
                 {{ vueSelectCutOn(option) }}
               </template>
@@ -21,7 +21,7 @@
         <b-form-row class="ml-2 mb-2">
           <label v-t="'label.categoryName'" class="control-label mr-sm-2" />
           <span :title="vueSelectTitle(vueSelected.category)">
-            <v-select v-model="vueSelected.category" :options="categoryNames" :disabled="!isEnableNameText" :clearable="false" class="mb-2 mr-sm-2 mb-sm-0 vue-options">
+            <v-select v-model="vueSelected.category" :options="categoryNames" :disabled="!isEnableNameText" :clearable="false" class="mb-2 mr-sm-2 mb-sm-0 vue-options" :style="getVueSelectStyle()">
               <template slot="selected-option" slot-scope="option">
                 {{ vueSelectCutOn(option) }}
               </template>

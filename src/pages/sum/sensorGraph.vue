@@ -32,7 +32,7 @@
             </b-form-row>
             <b-form-row>
               <span :title="vueSelectTitle(vueSelected.exb)">
-                <v-select v-model="vueSelected.exb" :options="exbOptions" :clearable="false" class="ml-2 inputSelect vue-options">
+                <v-select v-model="vueSelected.exb" :options="exbOptions" :clearable="false" class="ml-2 inputSelect vue-options" :style="getVueSelectStyle()">
                   <template slot="selected-option" slot-scope="option">
                     {{ vueSelectCutOn(option) }}
                   </template>
@@ -46,7 +46,7 @@
             </b-form-row>
             <b-form-row>
               <span :title="vueSelectTitle(vueSelected.tx)">
-                <v-select v-model="vueSelected.tx" :options="txOptions" :clearable="false" class="ml-2 inputSelect vue-options">
+                <v-select v-model="vueSelected.tx" :options="txOptions" :clearable="false" class="ml-2 inputSelect vue-options" :style="getVueSelectStyle()">
                   <template slot="selected-option" slot-scope="option">
                     {{ vueSelectCutOn(option) }}
                   </template>
