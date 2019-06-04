@@ -108,12 +108,9 @@ export default {
           } else {
             currentWidth = window.innerWidth
           }
-          //this.reset()
+          this.reset()
           if (this.stage) {
             this.stage.removeAllChildren()
-            // if (this.resetDetail) {
-            //   this.resetDetail()
-            // }
             this.stage.update()
             this.$nextTick(async () => {
               await this.fetchData(null, true)
