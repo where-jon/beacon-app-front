@@ -84,7 +84,6 @@ export default {
     this.areaOptions = StateHelper.getOptionsFromState('area', false, true)
     this.vueSelected.area = this.getInitAreaOption(true)
     this.selectedArea = this.getInitAreaOption()
-    await StateHelper.loadAreaImage(this.selectedArea)
     this.loadComplete = true
     if (this.$route.path.startsWith('/main') || this.$route.path.startsWith('/sum') || this.$route.path.startsWith('/develop/installation')) {
       let timer = 0
@@ -170,7 +169,6 @@ export default {
     async fetchAreaExbs(tx) {
       if (this.isFirstTime) {
         this.selectedArea = this.getInitAreaOption()
-        await StateHelper.loadAreaImage(this.selectedArea)
         await StateHelper.load('exb')
         if (tx) {
           await StateHelper.load('tx', this.forceFetchTx)
