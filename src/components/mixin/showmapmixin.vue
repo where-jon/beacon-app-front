@@ -309,7 +309,7 @@ export default {
           return area.areaId == val
         })
         if (this.getMapImage(area.areaId)) {
-          if(!this.selectedTx.btxId){
+          if(!Util.getValue(this, 'selectedTx.btxId', null)){
             this.reset()
           }
           this.selectedArea = val
