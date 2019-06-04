@@ -15,6 +15,14 @@ export default {
       }
       return null
     },
+    closeVueSelect(){
+      const elements = document.getElementsByClassName('vs__search')
+      if(elements){
+        for(let idx = 0; idx < elements.length; idx++){
+          elements[idx].blur()
+        }
+      }
+    },
   }
 }
 </script>

@@ -110,9 +110,6 @@ export default {
           this.reset()
           if (this.stage) {
             this.stage.removeAllChildren()
-            if (this.resetDetail) {
-              this.resetDetail()
-            }
             this.stage.update()
             this.$nextTick(async () => {
               await this.fetchData(null, true)
@@ -276,13 +273,6 @@ export default {
       canvas.style.width = String(size.width) + 'px'
       canvas.style.height = String(size.height) + 'px'
 
-      // Retina解像度対応
-      /*
-      if (devicePixelRatio > 0) {
-        canvas.style.width = String(canvas.width / devicePixelRatio) + 'px'
-        canvas.style.height = String(canvas.height / devicePixelRatio) + 'px'
-      }*/
-
       this.stage = new Stage('map')
       this.stage.canvas = canvas
       this.stage.mouseEnabled = true
@@ -314,7 +304,9 @@ export default {
           return area.areaId == val
         })
         if (this.getMapImage(area.areaId)) {
-          this.reset && this.reset()
+          if(!Util.getValue(this, 'selectedTx.btxId', null)){
+            this.reset()
+          }
           this.selectedArea = val
           this.fetchData && await this.fetchData()
         }

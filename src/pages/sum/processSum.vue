@@ -152,7 +152,7 @@ export default {
           ...periods,
           totalTime: period? Util.formatTime(period): '-',
           stateList: stateList.map(state => state.label),
-          dt: Util.formatDate(processSum.dt),
+          dt: Util.formatDate(processSum.dt + period * 1000),
           _rowVariant: stateList.find(state => state.error)? 'danger': '',
         }
       })
