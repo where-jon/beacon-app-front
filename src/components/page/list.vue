@@ -23,7 +23,7 @@
                 <label v-t="'label.' + item.key" for="item.key" class="mr-2" />
                 <b-input-group v-if="useVueSelect(item.key)">
                   <span :title="vueSelectTitle(vueSelected[item.key])">
-                    <v-select v-model="vueSelected[item.key]" :input-id="item.key" :options="item.options" class="extra-filter vue-options">
+                    <v-select v-model="vueSelected[item.key]" :input-id="item.key" :options="item.options" class="extra-filter vue-options" :style="getVueSelectStyle()">
                       <template slot="selected-option" slot-scope="option">
                         {{ vueSelectCutOn(option) }}
                       </template>
@@ -659,7 +659,7 @@ export default {
             if(originItem.isParent){
               return false
             }
-            return originItem.key.split('.').find((val, index) => index < 2 && val == extra.settingCategory)
+            return originItem.categoryKey == extra.settingCategory
           }
           break
         }
