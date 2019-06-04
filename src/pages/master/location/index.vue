@@ -156,6 +156,8 @@ export default {
     }
   },
   async mounted() {
+    await StateHelper.load('area')
+    await StateHelper.load('exb')
     const options = []
     options.push({value: 'locationName', text: this.$i18n.tnl('label.locationName')})
     if (Util.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')) options.push({value:'deviceIdX', text: this.$i18n.tnl('label.deviceIdX')})
@@ -171,6 +173,7 @@ export default {
     }
     else{
       this.vueSelected.area = ParamHelper.getVueSelectData(this.areaOptions, null, true)
+      this.selectedArea = Util.getValue(this.vueSelected.area, 'value', null)
     }
     await this.fetchData()
   },
