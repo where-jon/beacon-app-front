@@ -108,7 +108,6 @@ export const authByAppService = async (loginId, password, success, err) => {
       menu: userInfo.menu, currentRegion: userInfo.currentRegion, frontRev: revInfo.frontRev, serviceRev: revInfo.serviceRev, tenantAdmin: data.tenantAdmin,
       isProvider: userInfo.user.providerUserId != null, currentTenant: userInfo.tenant, userRegionIdList: userRegionIdList, allRegionMove: allRegionMove, apiKey: data.apiKey })
     success()
-    StateHelper.loadAreaImages()
     LocaleHelper.setLocale(LocaleHelper.getLocale())
     store.commit('setLang', LocaleHelper.getLocale(getLangShort()))
 
@@ -145,8 +144,6 @@ export const switchAppService = async () => {
     loginInfo.currentTenant = userInfo.tenant
 
     await login(loginInfo)
-    StateHelper.loadAreaImages()
-
   } catch (e) {
     console.error(e)
   }
