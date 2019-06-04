@@ -202,9 +202,7 @@ export default {
     'vueSelected.txs': {
       handler: function(newVal, oldVal){
         this.vueSelected.txs.forEach((selectedTx, idx) => {
-          if(selectedTx){
-            this.changeTx(selectedTx.value, idx)
-          }
+          this.changeTx(Util.getValue(selectedTx, 'value', null), idx)
         })
       },
       deep: true,
@@ -238,7 +236,6 @@ export default {
     }
   },
   async created(){
-    this.initPotTxList()
     await StateHelper.load('role')
     this.roleOptions = StateHelper.getOptionsFromState('role', false, true)
 
@@ -273,6 +270,7 @@ export default {
     StateHelper.load('group')
     StateHelper.load('category')
     await StateHelper.load('tx')
+    this.initPotTxList()
     this.form.potTxList.forEach((potTx, idx) => {
       this.changeTx(this.form.potTxList[idx].txId, idx)
     })
