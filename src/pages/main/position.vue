@@ -224,7 +224,6 @@ export default {
     await StateHelper.load('prohibit')
     await StateHelper.load('tx')
     await StateHelper.load('exb')
-    //document.addEventListener('touchstart', this.touchEnd)
     this.txs.forEach((t) => this.txsMap[t.btxId] = t)
     this.exbs.forEach((e) => this.exbsMap[e.posId] = e)
     // this.fetchData()は'vueSelected.area'をwatchしている箇所で実行している。
@@ -279,7 +278,8 @@ export default {
       return Util.hasValue(this.meditagSensors)
     },
     async fetchPositionData(payload) {
-      await this.fetchAreaExbs(true)
+      // await this.fetchAreaExbs(true)
+      await this.fetchAreaExbs(false)
 
       let alwaysTxs = this.txs.filter((tx) => {
         return tx.areaId == this.selectedArea && Util.bitON(tx.disp, TX.DISP.ALWAYS)
