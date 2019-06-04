@@ -107,17 +107,18 @@ export default {
     },
     analyseWeightInfos(positionInfos){
       const weightInfos = []
-      Object.values(positionInfos).forEach((positionInfo) => {
+      Object.values(positionInfos).forEach(positionInfo => {
         if(!weightInfos.includes(positionInfo.count)){
           weightInfos.push(positionInfo.count)
         }
       })
       weightInfos.sort((a, b) => a - b)
-      const max = weightInfos.length < DISP.ANALYSIS.LINE.MAX_WEIGHT? weightInfos.length: DISP.ANALYSIS.LINE.MAX_WEIGHT
-      Object.values(positionInfos).forEach((positionInfo) => {
+      const min = DISP.ANALYSIS.LINE.MIN_WEIGHT
+      const max = min + weightInfos.length - 1 < DISP.ANALYSIS.LINE.MAX_WEIGHT? min + weightInfos.length - 1: DISP.ANALYSIS.LINE.MAX_WEIGHT
+      const per = max <= min? 0: weightInfos.length <= 1? 0: (max - min) / (weightInfos.length - 1)
+      Object.values(positionInfos).forEach(positionInfo => {
         const stageIndex = weightInfos.indexOf(positionInfo.count)
-        const per = max <= 1? 0: weightInfos.length <= 1? 1: (max - 1) / (weightInfos.length - 1)
-        positionInfo.weight = 1 + stageIndex * per
+        positionInfo.weight = min + stageIndex * per
       })
       return positionInfos
     },
