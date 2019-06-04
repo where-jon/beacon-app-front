@@ -1,7 +1,7 @@
 
 <script>
 import reloadmixinVue from './reloadmixin.vue'
-import { SHAPE,DETECT_STATE,PROHIBIT_STATE } from '../../sub/constant/Constants'
+import { SHAPE,DETECT_STATE,PROHIBIT_STATE,ZONE } from '../../sub/constant/Constants'
 import { DISP } from '../../sub/constant/config.js'
 import * as Util from '../../sub/util/Util'
 import { APP } from '../../sub/constant/config'
@@ -18,22 +18,28 @@ export default {
         return null
       }
       const groups = APP.POS.PROHIBIT_GROUPS
-      return position.filter((pos) => pos.tx && pos.tx.group && pos.exb && pos.detectState == DETECT_STATE.DETECTED).filter((pos) =>
-        prohibits.some((prohibitData) => {
+      let detectList = []
+      const detectPosition  = position.filter((pos) => pos.tx && pos.tx.group && pos.exb && pos.detectState == DETECT_STATE.DETECTED)
+      prohibits.forEach((prohibitData) => {
+        detectPosition.forEach((pos) => {
           const isGroup = groups.some((group) => pos.tx.group.groupId ? pos.tx.group.groupId == group : false)
-          if (isGroup && pos.exb.areaId ? pos.exb.areaId == prohibitData.areaId : false
-              && pos.exb.x >= prohibitData.x && pos.exb.x <= prohibitData.x + prohibitData.w
-              && pos.exb.y >= prohibitData.y && pos.exb.y <= prohibitData.y + prohibitData.h) {
-            pos.zoneName = prohibitData.zoneName
-            return true
+          if(isGroup && pos.exb.areaId ? pos.exb.areaId == prohibitData.areaId : false) {
+            if((prohibitData.zoneType == ZONE.COORDINATE && pos.exb.x != null && pos.exb.y != null
+            && prohibitData.x != null && prohibitData.y != null && prohibitData.w != null && prohibitData.h != null
+            && pos.exb.x >= prohibitData.x && pos.exb.x <= prohibitData.x + prohibitData.w
+            && pos.exb.y >= prohibitData.y && pos.exb.y <= prohibitData.y + prohibitData.h
+            || prohibitData.zoneType == ZONE.NON_COORDINATE)){
+              detectList.push({
+                minor: pos.minor,
+                potName: pos.tx.potName,
+                areaName: pos.exb.areaName,
+                zoneName: prohibitData.zoneName
+              })
+            }
           }
-        })).map((position) => {
-        return {
-          minor: position.minor,
-          potName: position.tx.potName,
-          areaName: position.exb.areaName,
-          zoneName: position.zoneName
-        }})
+        })
+      })
+      return detectList.length > 0 ? detectList : null
     },
     getProhibitMessage(position,prohibits){
       const isScreen = APP.POS.PROHIBIT_ALERT? APP.POS.PROHIBIT_ALERT.some((val) => val == PROHIBIT_STATE.SCREEN):false
