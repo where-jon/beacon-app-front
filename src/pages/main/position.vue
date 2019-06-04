@@ -95,6 +95,7 @@ import * as SensorHelper from '../../sub/helper/SensorHelper'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
+import * as ParamHelper from '../../sub/helper/ParamHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as Util from '../../sub/util/Util'
 import txdetail from '../../components/parts/txdetail.vue'
@@ -226,6 +227,8 @@ export default {
     // this.fetchData()は'vueSelected.area'をwatchしている箇所で実行している。
     // 以下は二重実行を防ぐためコメントアウト
     // await this.fetchData()
+    this.vueSelected.category = ParamHelper.getVueSelectData(this.categoryOptionsForPot, this.selectedCategory, false)
+    this.vueSelected.group = ParamHelper.getVueSelectData(this.groupOptions, this.selectedGroup, false)
     this.startPositionAutoReload()
     this.startOtherAutoReload()
   },
