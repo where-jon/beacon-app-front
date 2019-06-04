@@ -58,7 +58,6 @@ import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import { CATEGORY, ZONE } from '../../../sub/constant/Constants'
-import showmapmixin from '../../../components/mixin/showmapmixin.vue'
 import controlmixinVue from '../../../components/mixin/controlmixin.vue'
 
 export default {
@@ -66,7 +65,7 @@ export default {
     breadcrumb,
     alert,
   },
-  mixins: [editmixinVue, showmapmixin, controlmixinVue],
+  mixins: [editmixinVue, controlmixinVue],
   data() {
     return {
       name: 'zone',
