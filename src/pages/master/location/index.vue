@@ -65,7 +65,7 @@
     </b-form>
     <p />
     <div class="mt-3">
-      <canvas id="map" ref="map" />
+      <canvas id="map" ref="map" @click="closeVueSelect" />
     </div>
     <b-modal id="modalInfo" :title="$t('label.mapRatioSetting')" ok-only>
       {{ $t('message.mapRatioSetting') }}

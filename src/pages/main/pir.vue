@@ -16,7 +16,7 @@
       </b-form>
     </b-row>
     <b-row class="mt-3">
-      <canvas id="map" ref="map" />
+      <canvas id="map" ref="map" @click="closeVueSelect" />
     </b-row>
     <div v-if="selectedTx.btxId && showReady">
       <txdetail :selected-tx="selectedTx" :selected-sensor="[]" :is-show-modal="isShowModal()" @resetDetail="resetDetail" />
