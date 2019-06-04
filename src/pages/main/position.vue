@@ -146,7 +146,8 @@ export default {
       exbsMap: {},
       prohibitInterval:null,
       isShowRight: false,
-      isShowBottom: false
+      isShowBottom: false,
+      isMounted: false,
     }
   },
   computed: {
@@ -186,7 +187,9 @@ export default {
     'vueSelected.area': {
       handler: function(newVal, oldVal){
         this.selectedArea = Util.getValue(newVal, 'value', null)
-        this.changeArea(this.selectedArea)
+        if(this.isMounted){
+          this.changeArea(this.selectedArea)
+        }
       },
       deep: true,
     },
@@ -228,6 +231,9 @@ export default {
     // await this.fetchData()
     this.startPositionAutoReload()
     this.startOtherAutoReload()
+
+    this.changeArea(this.selectedArea)
+    this.isMounted = true
   },
   beforeDestroy() {
     this.resetDetail()
