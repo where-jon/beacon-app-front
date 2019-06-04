@@ -70,9 +70,9 @@
       </b-form>
     </b-row>
     <b-row class="mt-3">
-      <canvas v-if="!showMeditag" id="map" ref="map" />
+      <canvas v-if="!showMeditag" id="map" ref="map" @click="closeVueSelect" />
       <b-col v-if="showMeditag">
-        <canvas id="map" ref="map" />
+        <canvas id="map" ref="map" @click="closeVueSelect" />
       </b-col>
       <div v-if="showMeditag && isShowRight && hasMeditagSensors()" class="rightPane">
         <sensor :sensors="meditagSensors" :is-popup="false" class="rightPaneChild" />
