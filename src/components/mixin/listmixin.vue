@@ -14,14 +14,14 @@ export default {
     },
     getProhibitData(position,prohibits){
       const isScreen = APP.POS.PROHIBIT_ALERT? APP.POS.PROHIBIT_ALERT.some((val) => val == PROHIBIT_STATE.SCREEN):false
-      if (!isScreen || !APP.POS.PROHIBIT_GROUPS || !prohibits) {
+      if (!isScreen || !APP.POS.PROHIBIT_GROUPS || prohibits[0] == null) {
         return null
       }
       const groups = APP.POS.PROHIBIT_GROUPS
-      return position.filter((pos) => pos.detectState == DETECT_STATE.DETECTED).filter((pos) =>
+      return position.filter((pos) => pos.tx && pos.tx.group && pos.exb && pos.detectState == DETECT_STATE.DETECTED).filter((pos) =>
         prohibits.some((prohibitData) => {
           const isGroup = groups.some((group) => pos.tx.group.groupId ? pos.tx.group.groupId == group : false)
-          if (isGroup && pos.exb && pos.exb.areaId ? pos.exb.areaId == prohibitData.areaId : false
+          if (isGroup && pos.exb.areaId ? pos.exb.areaId == prohibitData.areaId : false
               && pos.exb.x >= prohibitData.x && pos.exb.x <= prohibitData.x + prohibitData.w
               && pos.exb.y >= prohibitData.y && pos.exb.y <= prohibitData.y + prohibitData.h) {
             pos.zoneName = prohibitData.zoneName

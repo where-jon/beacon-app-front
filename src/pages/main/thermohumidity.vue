@@ -1,6 +1,6 @@
 <template>
   <div id="mapContainer" class="container-fluid">
-    <breadcrumb :items="items" :reload="true" />
+    <breadcrumb :items="items" :reload="true" :state="reloadState" />
     <div>
       <alert :warn-message="warnMessage" :fix="fixHeight" :alert-style="alertStyle" />
 
@@ -36,7 +36,7 @@
         </b-form>
       </b-row>
       <b-row class="mt-3">
-        <canvas v-show="isLoading || !isHeatmap" id="map" ref="map" />
+        <canvas v-show="isLoading || !isHeatmap" id="map" ref="map" @click="closeVueSelect" />
         <div v-show="isLoading || isHeatmap" id="heatmap" ref="heatmap" class="mx-auto" />
       </b-row>
       <b-modal v-model="isShownChart" :title="chartTitle" size="lg" header-bg-variant="light" hide-footer>
@@ -116,6 +116,7 @@ export default {
         'background-color': DISP.THERMOH.TOOLTIP_BGCOLOR,
         'color': DISP.THERMOH.TOOLTIP_COLOR,
       },
+      reloadState: {isLoad: false, initialize: false},
     }
   },
   computed: {

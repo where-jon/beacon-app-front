@@ -74,19 +74,19 @@
                 <span v-text="$i18n.tnl('label.editUserInfo')" />
               </b-form-checkbox>
             </b-form-group>
-            <b-form-group v-show="showEmail">
+            <b-form-group v-if="showEmail">
               <label v-t="'label.email'" />
               <b-form-input v-model="userForm.email" type="email" maxlength="255" />
             </b-form-group>
-            <b-form-group v-show="editShowUser">
+            <b-form-group v-if="editShowUser">
               <label v-t="'label.loginId'" />
               <input v-model="userForm.loginId" :title="$i18n.tnl('message.validationList', {validate: $i18n.tnl('message.loginValidationList')})" type="text" minlength="3" maxlength="16" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" class="form-control" :required="editShowUser">
             </b-form-group>
-            <b-form-group v-show="editShowUser">
+            <b-form-group v-if="editShowUser">
               <label v-t="'label.role'" />
               <v-select v-model="vueSelected.role" :options="roleOptions" :clearable="false" :required="editShowUser" class="vue-options-lg" />
             </b-form-group>
-            <b-form-group v-show="editShowUser">
+            <b-form-group v-if="editShowUser">
               <label v-if="hasUserId" v-t="'label.passwordUpdate'" />
               <label v-else v-t="'label.password'" />
               <input v-model="userForm.pass" type="password" :minlength="userForm.pass? 3: 0" maxlength="16" pattern="^[a-zA-Z0-9_\-\/!#\$%&@]*$" class="form-control" :required="editShowUser && !hasUserId">
@@ -202,9 +202,7 @@ export default {
     'vueSelected.txs': {
       handler: function(newVal, oldVal){
         this.vueSelected.txs.forEach((selectedTx, idx) => {
-          if(selectedTx){
-            this.changeTx(selectedTx.value, idx)
-          }
+          this.changeTx(Util.getValue(selectedTx, 'value', null), idx)
         })
       },
       deep: true,
@@ -238,7 +236,6 @@ export default {
     }
   },
   async created(){
-    this.initPotTxList()
     await StateHelper.load('role')
     this.roleOptions = StateHelper.getOptionsFromState('role', false, true)
 
@@ -273,6 +270,7 @@ export default {
     StateHelper.load('group')
     StateHelper.load('category')
     await StateHelper.load('tx')
+    this.initPotTxList()
     this.form.potTxList.forEach((potTx, idx) => {
       this.changeTx(this.form.potTxList[idx].txId, idx)
     })
@@ -480,17 +478,22 @@ export default {
       file[param] = name? name: this.$refs.inputThumbnail.placeholder
     },
     readImage(e) {
-      this.form.thumbnail = this.form.thumbnailTemp
-      this.form.thumbnailTemp = null
       this.$nextTick(() => {
-        this.readImageView(e, 'thumbnail', null, null, 'thumbnail', APP.POT_THUMBNAIL_MAX)
-        this.form.thumbnailTemp = this.form.thumbnail
+        this.form.thumbnail = this.form.thumbnailTemp
+        this.form.thumbnailTemp = null
+        this.$nextTick(() => {
+          this.readImageView(e, 'thumbnail', null, null, 'thumbnail', APP.POT_THUMBNAIL_MAX)
+          this.form.thumbnailTemp = this.form.thumbnail
 
-        const inputFileName = Util.getValue(e, 'target.files.0.name', null)
-        this.setFileName(inputFileName? Util.cutOnLongByte(inputFileName, this.getNameByteLangth()): null)
-        if(!inputFileName){
-          this.clearImage(e)
-        }
+          const inputFileName = Util.getValue(e, 'target.files.0.name', null)
+          this.setFileName(inputFileName? Util.cutOnLongByte(inputFileName, this.getNameByteLangth()): null)
+          if(!inputFileName){
+            this.clearImage(e)
+          }else{
+            this.form.existThumbnail = true
+            this.form.deleteThumbnail = false
+          }
+        })
       })
     },
     clearImage(e) {

@@ -33,8 +33,7 @@ export const create = (elementId, mapSrc = null, onLoad = null) => {
     onLoad && onLoad(evt, mapElement, map)
   }
   if(mapSrc){
-    const url = window.URL || window.webkitURL
-    map.src = url.createObjectURL(new Blob([mapSrc]))
+    map.src = mapSrc
   }
   else{
     onLoad && onLoad(null, mapElement, map)

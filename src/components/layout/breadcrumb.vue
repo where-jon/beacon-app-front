@@ -47,6 +47,7 @@
 
 import { getThemeColor, getThemeClasses } from '../../sub/helper/ThemeHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
+import * as Util from '../../sub/util/Util'
 import * as AuthHelper from '../../sub/helper/AuthHelper'
 import { EventBus } from '../../sub/helper/EventHelper'
 import { APP } from '../../sub/constant/config'
@@ -131,8 +132,10 @@ export default {
         const windowScroll = {x: window.pageXOffset , y: window.pageYOffset}
         this.onClickReload()
         window.scroll(windowScroll.x, windowScroll.y)
-      }, APP.COMMON.AUTO_RELOAD)  
-      this.onClickReload()
+      }, APP.COMMON.AUTO_RELOAD)
+      if(Util.getValue(this.state, 'initialize', true)){
+        this.onClickReload()
+      }
     }
   },
   methods: {

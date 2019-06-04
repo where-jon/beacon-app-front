@@ -41,7 +41,7 @@
     </b-form>
     <p />
     <div class="mt-3">
-      <canvas id="map" ref="map" />
+      <canvas id="map" ref="map" @click="closeVueSelect" />
     </div>
     <b-modal id="modalWarn" :title="$t('label.confirm')" @ok="setChangeArea" @hide="changeAreaDone">
       {{ $t('message.unsavedData') }}
