@@ -15,7 +15,7 @@
           <b-form-row class="mb-3 mr-5">
             <label v-t="'label.group'" class="mr-2" />
             <span :title="vueSelectTitle(vueSelected.group)">
-              <v-select v-model="vueSelected.group" :options="groupOptions" class="mr-2 inputSelect vue-options">
+              <v-select v-model="vueSelected.group" :options="groupOptions" class="mr-2 inputSelect vue-options" :style="getVueSelectStyle()">
                 <template slot="selected-option" slot-scope="option">
                   {{ vueSelectCutOn(option) }}
                 </template>

@@ -9,7 +9,7 @@
           {{ $t('label.area') }}
         </label>
         <span :title="vueSelectTitle(vueSelected.area)">
-          <v-select v-model="vueSelected.area" :options="areaOptions" :disabled="settingStart" class="mr-2 mb-2 vue-options" :clearable="false">
+          <v-select v-model="vueSelected.area" :options="areaOptions" :disabled="settingStart" class="mr-2 mb-2 vue-options" :style="getVueSelectStyle()" :clearable="false">
             <template slot="selected-option" slot-scope="option">
               {{ vueSelectCutOn(option) }}
             </template>
@@ -26,7 +26,7 @@
         <b-form-select v-model="exbDisp" :options="exbDispOptions" :disabled="settingStart" class="mr-2 mb-2" @change="changeExbDisp" />
         <b-form-row>
           <span :title="vueSelectTitle(selectedExb_)">
-            <v-select v-model="selectedExb_" :options="exbOptions" :disabled="settingStart" size="sm" class="mb-2 mt-mobile vue-options" @input="showExbOnMap">
+            <v-select v-model="selectedExb_" :options="exbOptions" :disabled="settingStart" size="sm" class="mb-2 mt-mobile vue-options" :style="getVueSelectStyle()" @input="showExbOnMap">
               <template slot="selected-option" slot-scope="option">
                 {{ vueSelectCutOn(option) }}
               </template>

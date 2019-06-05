@@ -21,7 +21,7 @@
             <b-form-row>
               <b-form-row class="mb-3 mr-2">
                 <label v-t="'label.tx'" class="mr-2" />
-                <v-select v-model="vueSelected.tx" :options="txOptions" class="mr-2 vue-options" />
+                <v-select v-model="vueSelected.tx" :options="txOptions" class="mr-2 vue-options" :style="getVueSelectStyle()" />
               </b-form-row>
             </b-form-row>
           </b-form-group>

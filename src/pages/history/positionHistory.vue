@@ -10,7 +10,7 @@
             <b-form-row>
               <b-form-row class="mb-3 mr-2">
                 <label v-t="'label.minor'" class="mr-2" />
-                <v-select v-model="form.tx" :options="txOptions" class="mr-2 vue-options">
+                <v-select v-model="form.tx" :options="txOptions" class="mr-2 vue-options" :style="getVueSelectStyle()">
                   <div slot="no-options">
                     {{ $i18n.tnl('label.vSelectNoOptions') }}
                   </div>
@@ -23,7 +23,7 @@
               <b-form-row class="mb-3 mr-2">
                 <label v-t="'label.group'" class="mr-2" />
                 <span :title="vueSelectTitle(form.group)">
-                  <v-select v-model="form.group" :options="groupOptions" class="mr-2 vue-options">
+                  <v-select v-model="form.group" :options="groupOptions" class="mr-2 vue-options" :style="getVueSelectStyle()">
                     <template slot="selected-option" slot-scope="option">
                       {{ vueSelectCutOn(option) }}
                     </template>

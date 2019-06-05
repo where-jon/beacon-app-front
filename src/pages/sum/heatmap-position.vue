@@ -90,8 +90,7 @@ export default {
           heatmap.appendChild(map)
           Util.debug(size)
         }
-        const url = window.URL || window.webkitURL
-        map.src = url.createObjectURL(new Blob([this.mapImage()]))
+        map.src = this.mapImage()
         if (payload && payload.done) {
           payload.done()
         }

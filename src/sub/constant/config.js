@@ -339,6 +339,11 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
       RADIUS: 150,      // 直径
     },
   },
+  CONTROL: {
+    COMBO_BOX: {
+      W: 165,
+    },
+  },
 
   FONT_ICON_ADJUST_SCALE: 0.7, // アイコン内テキストのフォントサイズ係数
 
