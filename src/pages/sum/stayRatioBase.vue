@@ -238,7 +238,6 @@ export default {
       perPage: 20,
       sortBy: 'name',
       totalRows: 0,
-      searchedGroupName: '',
       categoryOptionList: [],
       categoryDisplayList: [],
       fields: this.getFields(true),
@@ -297,7 +296,7 @@ export default {
     },
   },
   async created() {
-    await StateHelper.load('group')
+    await StateHelper.load('groups')
     await StateHelper.load('pots')
     await StateHelper.load('categories')
     await StateHelper.load('areas')
@@ -451,7 +450,7 @@ export default {
       const param = _.cloneDeep(this.form)
       await StateHelper.load('zones')
       await StateHelper.load('pots')
-      await StateHelper.load('group')
+      await StateHelper.load('groups')
       
       if (!param.date || param.date.length == 0) {
         this.message = this.$i18n.tnl('message.pleaseEnterSearchCriteria')
@@ -466,13 +465,13 @@ export default {
         this.replace({showAlert: true})
         this.hideProgress()
         return
+      } else {
+        this.replace({showAlert: false})
       }
 
       this.viewList = this.getStayDataList(moment(param.date).format('YYYY-MM-DD'), sumData, APP.SUM_ABSENT_LIMIT, APP.SUM_LOST_LIMIT)
 
       this.totalRows = this.viewList.length
-      const group = param.groupId? this.groups.find((val) => val.groupId == param.groupId): null
-      this.searchedGroupName =  group? group.groupName: ''
       this.hideProgress()
     },
     isAbsentZoneData(categoryId) {
@@ -638,7 +637,8 @@ export default {
       const csvList = (key == 'sum')? this.getCsvSumList(viewList): this.getCsvDetailList(viewList)
 
       const searchDate = moment(param.date).format('YYYY-MM-DD')
-      const groupName = this.searchedGroupName.length > 0? '_' + this.searchedGroupName: ''
+      const group = param.groupId? this.groups.find((val) => val.groupId == param.groupId): null
+      const groupName =  group? '_' + group.groupName: ''
 
       HtmlUtil.fileDL(
         searchDate + groupName + '_stayRatio.csv',
@@ -713,7 +713,7 @@ export default {
       const param = _.cloneDeep(this.form)
       await StateHelper.load('zones')
       await StateHelper.load('pots')
-      await StateHelper.load('group')
+      await StateHelper.load('groups')
 
       if (!param.date || param.date.length == 0) {
         this.message = this.$i18n.tnl('message.pleaseEnterSearchCriteria')
