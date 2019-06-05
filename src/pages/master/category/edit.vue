@@ -66,6 +66,7 @@ export default {
       defaultColor: '#000000',
       defaultBgColor: '#ffffff',
       form: ViewHelper.extract(category, ['categoryId', 'categoryName', 'categoryType', 'display', 'description']),
+      oldType: Util.getValue(category, 'categoryType', null),
       oldShape: Util.getValue(category, 'display.shape', null),
       oldColor: Util.getValue(category, 'display.color', null),
       oldBgColor: Util.getValue(category, 'display.bgColor', null),
@@ -100,6 +101,7 @@ export default {
   methods: {
     beforeReload(){
       if (this.form) {
+        this.form.categoryType = this.oldType? this.oldType: this.categoryTypes[0].value
         this.form.displayShape = this.oldShape? this.oldShape: this.shapes[0].value
         this.form.displayColor = Util.colorCd4display(this.oldColor? this.oldColor: null, this.defaultColor)
         this.form.displayBgColor = Util.colorCd4display(this.oldBgColor? this.oldBgColor: null, this.defaultBgColor)
@@ -121,6 +123,7 @@ export default {
           bgColor: Util.colorCd4display(this.form.displayBgColor),
         },
       }
+      this.oldType = this.form.categoryType
       this.oldShape = this.form.displayShape
       this.oldColor = this.form.displayColor
       this.oldBgColor = this.form.displayBgColor
