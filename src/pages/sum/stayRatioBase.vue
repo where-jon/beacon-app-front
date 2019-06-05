@@ -701,7 +701,7 @@ export default {
           }
         })
       })
-      return result.flat()
+      return result.flatMap((data) => data)
     },
     updateColumnName(){
       if(Util.hasValue(this.fields)){
