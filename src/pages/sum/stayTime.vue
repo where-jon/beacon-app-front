@@ -92,7 +92,7 @@ import * as ViewHelper from '../../sub/helper/ViewHelper'
 import { SUM_UNIT_STACK, SUM_UNIT_AXIS, SUM_FILTER_KIND } from '../../sub/constant/Constants'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
-import { APP } from '../../sub/constant/config'
+import { APP, DISP } from '../../sub/constant/config'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import * as ChartHelper from '../../sub/helper/ChartHelper'
 // import * as mock from '../../assets/mock/mock'
@@ -292,19 +292,27 @@ export default {
       if (axisIds.length > 200) { // 横軸が200件を超える場合エラーに
         return 'sumTooManyResults'
       }
-      const axises = axisIds.map((axisId) => sumData.find((e) => e.axisId == axisId).axis)
-      let stackIds = _(sumData).sortBy((e) => e.stack).map((e) => e.stackId).uniqWith(_.isEqual).value()
+      const maxPeriod = Math.max(...axisIds.map((axisId) => _.sumBy(sumData.filter((e) => e.axisId == axisId), (e) => e.period)))
+      if (maxPeriod == 0) { // 最大の滞在時間が0の場合エラーに
+        return 'listEmpty'
+      }
+
+      // 積上の凡例の数が指定色数より多い場合、全体の合計が上位指定色数-1まで表示し、ほかはすべてその他に加算して表示する
+      let stackIds = _(sumData).map((e) => e.stackId).uniqWith(_.isEqual).value()
+      if (stackIds.length > DISP.SUM_STACK_COLOR.length) {
+        sumData = this.reduceToOther(stackIds, sumData, axisIds)
+      }
+
+      stackIds = _(sumData).sortBy((e) => e.stack).map((e) => e.stackId).uniqWith(_.isEqual).value() // 積上凡例を名前順にソート
       if (stackIds && stackIds[0] == -1) {
         stackIds.shift()
         stackIds.push(-1)
       }
+
       const stacks = stackIds.map((stackId) => sumData.find((e) => e.stackId == stackId).stack)
+      const axises = axisIds.map((axisId) => sumData.find((e) => e.axisId == axisId).axis)
 
       // 棒グラフの最大値に合わせて目盛を秒・分・時で計算
-      const maxPeriod = Math.max(...axisIds.map((axisId) => _.sumBy(sumData.filter((e) => e.axisId == axisId), (e) => e.period)))
-      if (maxPeriod == 0) {
-        return 'listEmpty'
-      }
       let yLabel = 'unitSecond'
       let div = 1
       if (maxPeriod > APP.STAY_SUM.UNIT_HOUR) {
@@ -330,8 +338,6 @@ export default {
         this.chartData[stackIdx][axisIdx] = e.period // DL用は秒で保存
       })
 
-      console.log({axisIds, axises, stackIds, stacks, chartData})
-
       // show chart
       this.showChart = true
       const parent = document.getElementById('stayTimeChart').parentElement
@@ -351,6 +357,31 @@ export default {
       // for csv dl
       this.axises = axises
       this.stacks = stacks
+    },
+    reduceToOther(stackIds, sumData, axisIds) {
+      // 積上単位の全体の合計を出し、多い順に並べる
+      const sortedStacks = _(stackIds.map((stackId) => ({stackId, sum:_.sumBy(sumData.filter((e) => e.stackId == stackId), (e) => e.period)}))).sortBy((e) => e.sum * -1).value()
+      const upperStacks = sortedStacks.filter((e) => e.stackId != -1).slice(0, DISP.SUM_STACK_COLOR.length - 1) // その他を除く配列を抽出
+      // sumData.filter((e) => e.stackId == upperStacks[0].stackId).forEach((e) => e.stackId = -1) // for test
+
+      axisIds.forEach((axisId) => { // 軸単位に処理する
+        let period = 0
+        sumData.filter((sum) => sum.axisId == axisId).forEach((sum) => {
+          if (!_.some(upperStacks, (e) => e.stackId == sum.stackId) && sum.stackId != -1) { // 上位の積上に含まれない場合、その他に加算
+            period += sum.period
+            sum.stackId = null
+          }
+        })
+        let other = sumData.find((sum) => sum.axisId == axisId && sum.stackId == -1)
+        if (other) {
+          other.period += period
+        }
+        else { // その他がない場合はその他を作成
+          sumData.push({axisId, axis:sumData.find((e) => e.axisId == axisId).axis, stackId: -1, stack: this.$i18n.t('label.other'), period})
+        }
+      })
+
+      return sumData.filter((sum) => sum.stackId) // 集計データから先にstackId=nullをセットしたものを除去
     },
     async download(){
       if (this.chartData == null || this.chartData.length == 0) {
