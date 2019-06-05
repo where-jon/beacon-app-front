@@ -27,8 +27,8 @@ export default {
             if((prohibitData.zoneType == ZONE.COORDINATE && pos.exb.x != null && pos.exb.y != null
             && prohibitData.x != null && prohibitData.y != null && prohibitData.w != null && prohibitData.h != null
             && pos.exb.x >= prohibitData.x && pos.exb.x <= prohibitData.x + prohibitData.w
-            && pos.exb.y >= prohibitData.y && pos.exb.y <= prohibitData.y + prohibitData.h
-            || prohibitData.zoneType == ZONE.NON_COORDINATE)){
+            && pos.exb.y >= prohibitData.y && pos.exb.y <= prohibitData.y + prohibitData.h)
+            || prohibitData.zoneType == ZONE.NON_COORDINATE){
               detectList.push({
                 minor: pos.minor,
                 potName: pos.tx.potName,
