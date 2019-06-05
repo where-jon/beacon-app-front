@@ -378,8 +378,8 @@ export default {
           this.stage.update()
         }
         this.setPositionedExb()
-        this.showTxAll()
         this.setProhibit('pos') // listmixin呼び出し
+        this.showTxAll()
         if(!this.firstTime && reloadButton){
           reloadButton.classList.remove(spinClassName)
         }
