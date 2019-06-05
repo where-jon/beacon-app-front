@@ -243,6 +243,8 @@ export default {
         this.replace({showAlert: true})
         this.hideProgress()
         return
+      } else {
+        this.replace({showAlert: false})
       }
       viewList = this.getStayDataList(moment(param.date).format('YYYY-MM-DD'), dataList, APP.SUM_ABSENT_LIMIT, APP.SUM_LOST_LIMIT)
 
@@ -340,6 +342,7 @@ export default {
         })
         csvList = csvList.isEmpty? list: csvList.concat(list)
       }
+      this.replace({showAlert: false})
 
       const group = param.groupId? this.groups.find((val) => val.groupId == param.groupId): null
       const groupName =  group? '_' + group.groupName: ''
