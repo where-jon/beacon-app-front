@@ -269,8 +269,7 @@ export default {
     getApiUrl(param) {
       param.date = moment(param.date).format('YYYYMMDD')
       const groupBy = param.groupId? '&groupId=' + param.groupId: ''
-      const categoryBy = param.categoryId? '&categoryId=' + param.categoryId: ''
-      const url = '/office/stayTime/sumByDay/' + param.date + '/zoneCategory?from=' + APP.STAY_SUM.FROM + '&to=' + APP.STAY_SUM.TO + groupBy + categoryBy
+      const url = '/office/stayTime/sumByDay/' + param.date + '/zoneCategory?from=' + APP.STAY_SUM.FROM + '&to=' + APP.STAY_SUM.TO + groupBy
       return url
     },
     updateColumnName(){
