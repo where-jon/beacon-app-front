@@ -81,7 +81,7 @@ export default {
       this.hideProgress()
     },
     thumbnail(row) {
-      return row.existThumbnail ? this.thumbnailUrl.replace('{id}', row.areaId) : null
+      return row.existThumbnail ? this.thumbnailUrl.replace('{id}', row.areaId) + (new Date().getTime()) : null
     },
   },
 }
