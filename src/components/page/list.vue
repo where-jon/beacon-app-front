@@ -728,6 +728,14 @@ export default {
           })
           this.replace({showAlert: true})
         }
+        else if(Util.isArray(e.bulkError)){
+          this.error = e.bulkError.map(error => {
+            return this.$i18n.tnl('message.bulk' + error.type + 'Failed', {
+              col: this.$i18n.tnl(`label.${error.col}`),
+            })
+          })
+          this.replace({showAlert: true})
+        }
         else{
           this.error = this.$i18n.terror('message.deleteFailed', {target: this.$i18n.tnl('label.' + this.params.name), code: e.response.status})
         }
