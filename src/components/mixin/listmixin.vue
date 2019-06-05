@@ -12,28 +12,28 @@ export default {
     getStyleDisplay(entity){
       return entity.map((val) => ({entity: val, style: this.getStyleDisplay1(val)}))
     },
-    getProhibitData(position,prohibits){
+    getProhibitDetectList(position, prohibitZones){
       const isScreen = APP.POS.PROHIBIT_ALERT? APP.POS.PROHIBIT_ALERT.some((val) => val == PROHIBIT_STATE.SCREEN):false
-      if (!isScreen || !APP.POS.PROHIBIT_GROUPS || prohibits[0] == null) {
+      if (!isScreen || !APP.POS.PROHIBIT_GROUPS || prohibitZones[0] == null) {
         return null
       }
       const groups = APP.POS.PROHIBIT_GROUPS
       let detectList = []
       const detectPosition  = position.filter((pos) => pos.tx && pos.tx.group && pos.exb && pos.detectState == DETECT_STATE.DETECTED)
-      prohibits.forEach((prohibitData) => {
+      prohibitZones.forEach((prohibitZone) => {
         detectPosition.forEach((pos) => {
           const isGroup = groups.some((group) => pos.tx.group.groupId ? pos.tx.group.groupId == group : false)
-          if(isGroup && pos.exb.areaId ? pos.exb.areaId == prohibitData.areaId : false) {
-            if((prohibitData.zoneType == ZONE.COORDINATE && pos.exb.x != null && pos.exb.y != null
-            && prohibitData.x != null && prohibitData.y != null && prohibitData.w != null && prohibitData.h != null
-            && pos.exb.x >= prohibitData.x && pos.exb.x <= prohibitData.x + prohibitData.w
-            && pos.exb.y >= prohibitData.y && pos.exb.y <= prohibitData.y + prohibitData.h)
-            || prohibitData.zoneType == ZONE.NON_COORDINATE){
+          if(isGroup && pos.exb.areaId ? pos.exb.areaId == prohibitZone.areaId : false) {
+            if((prohibitZone.zoneType == ZONE.COORDINATE && pos.exb.x != null && pos.exb.y != null
+            && prohibitZone.x != null && prohibitZone.y != null && prohibitZone.w != null && prohibitZone.h != null
+            && pos.exb.x >= prohibitZone.x && pos.exb.x <= prohibitZone.x + prohibitZone.w
+            && pos.exb.y >= prohibitZone.y && pos.exb.y <= prohibitZone.y + prohibitZone.h)
+            || prohibitZone.zoneType == ZONE.NON_COORDINATE){
               detectList.push({
                 minor: pos.minor,
                 potName: pos.tx.potName,
                 areaName: pos.exb.areaName,
-                zoneName: prohibitData.zoneName
+                zoneName: prohibitZone.zoneName
               })
             }
           }
@@ -41,21 +41,21 @@ export default {
       })
       return detectList.length > 0 ? detectList : null
     },
-    getProhibitMessage(position,prohibits){
+    getProhibitMessage(prohibitDetectList){
       const isScreen = APP.POS.PROHIBIT_ALERT? APP.POS.PROHIBIT_ALERT.some((val) => val == PROHIBIT_STATE.SCREEN):false
-      if (!isScreen || !APP.POS.PROHIBIT_GROUPS || !prohibits) {
+      if (!isScreen || !APP.POS.PROHIBIT_GROUPS || prohibitDetectList.length == 0) {
         return ''   // message空
       }
       const labelArea = this.$i18n.tnl('label.Area')
       const labelPotName = this.$i18n.tnl('label.potName')
       const labelZone =  this.$i18n.tnl('label.zoneName')
-      return prohibits.map((data) => `< ${labelPotName} : ${data.potName} ${labelArea} : ${data.areaName} ${labelZone} : ${data.zoneName}>`).join(' ')
+      return prohibitDetectList.map((data) => `< ${labelPotName} : ${data.potName} ${labelArea} : ${data.areaName} ${labelZone} : ${data.zoneName}>`).join(' ')
     },
-    setProhibit(isPos){
-      this.prohibitData = this.getProhibitData(this.getPositions(),this.prohibits)
-      this.message = this.getProhibitMessage(this.message,this.prohibitData)
+    setProhibit(viewName){
+      this.prohibitDetectList = this.getProhibitDetectList(this.getPositions(),this.prohibits)
+      this.message = this.getProhibitMessage(this.prohibitDetectList)
       this.showDismissibleAlert = this.message ? true: false
-      if(isPos == 'pos'){
+      if(viewName == 'pos'){
         clearInterval(this.prohibitInterval)  // 点滅クリア
         // 禁止区域に検知されたら点滅させる
         this.showDismissibleAlert? this.prohibitInterval = setInterval(this.twinkle,DISP.PROHIBIT_TWINKLE_TIME):false
