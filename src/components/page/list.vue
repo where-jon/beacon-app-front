@@ -118,6 +118,14 @@
         <template slot="thumbnail" slot-scope="row">
           <img v-if="thumbnail(row.item)" :src="thumbnail(row.item)" height="70">
         </template>
+        <!-- リージョン名 -->
+        <template slot="regionNames" slot-scope="row">
+          <div>
+            <span v-for="(regionName, index) in getRegionNames(row.item.regionIds)" :key="index" class="row">
+              {{ regionName }}
+            </span>
+          </div>
+        </template>
         <!-- tx名 -->
         <template slot="txIdName" slot-scope="row">
           <div>
@@ -300,7 +308,6 @@ export default {
       sortDesc: false,
       sortCompare: (aData, bData, key) => this.sortCompareCustom(aData, bData, key),
       login: JSON.parse(window.localStorage.getItem('login')),
-      switchReload: false,
       ...this.params
     }
   },
@@ -358,6 +365,7 @@ export default {
       'categories',
       'groups',
       'areas',
+      'regions',
       'listMessage',
       'editPage',
       'moveEditPage',
@@ -450,11 +458,7 @@ export default {
     },
   },
   async created() {
-    this.switchReload = this.params.tenantAction? this.params.tenantAction: false
-    if(this.switchReload){
-      this.switchReload = false
-      await StateHelper.load('region')
-    }
+    await StateHelper.load('region')
   },
   mounted() {
     this.message = this.listMessage
@@ -520,7 +524,6 @@ export default {
     },
     async switchTenant(item){
       await AuthHelper.switchTenant(item.tenantId)
-      this.switchReload = true
       location.reload()
     },
     getItem(key){
@@ -565,6 +568,12 @@ export default {
       this.replaceAS({[this.name]: entity})
       this.replaceAS({editPage: this.currentPage})
       this.$router.push(this.editPath)
+    },
+    getRegionNames(regionIds){
+      return regionIds.map(regionId => {
+        const target = this.regions.find(region => region.regionId == regionId)
+        return Util.getValue(target, 'regionName', null)
+      }).filter(val => val)
     },
     getDispCategoryName(category){
       return StateHelper.getDispCategoryName(category)
