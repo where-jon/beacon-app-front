@@ -290,6 +290,7 @@ export default {
     beforeReload(){
       this.initExbSensorList()
       this.changeSensors()
+      this.form.sensorId = null
       this.vueSelected.area = ParamHelper.getVueSelectData(this.areaOptions, null)
       this.vueSelected.zone = ParamHelper.getVueSelectData(this.getZoneNames(), null)
     },
