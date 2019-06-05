@@ -1228,6 +1228,7 @@
     "bulkSystemUseFailed": "{col}（{value}）はシステムで使用する固定データの為変更できません。",
     "bulkSystemUseNameFailed": "{col}（{value}）はシステムで使用する固定名称の為使用できません。",
     "bulkInvalidUpdateLineFailed": "{col}（{value}）データは本画面で変更できません。",
+    "bulkLastFailed": "{col}は1つ以上登録されている必要があります。",
     "monthDayTemperature": "{month}月{day}日の温湿度 ({name}{description})",
     "invalidLoginId": "ログインIDは英数記号を指定してください。",
     "notFound": "検索結果が存在しませんでした。",
