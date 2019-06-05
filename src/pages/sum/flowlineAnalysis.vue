@@ -10,7 +10,7 @@
                            @display="display"
           />
           <b-row>
-            <canvas id="map" ref="map" />
+            <canvas id="map" ref="map" @click="closeVueSelect" />
           </b-row>
         </div>
       </div>
@@ -26,6 +26,7 @@ import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
 import analysisSearch from '../../components/parts/analysissearch.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
+import controlmixin from '../../components/mixin/controlmixin.vue'
 import drawMixin from '../../components/mixin/drawmixin.vue'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import * as Util from '../../sub/util/Util'
@@ -37,7 +38,7 @@ export default {
     alert,
     analysisSearch,
   },
-  mixins: [showmapmixin, drawMixin ],
+  mixins: [showmapmixin, drawMixin, controlmixin ],
   data () {
     return {
       items: ViewHelper.createBreadCrumbItems('sumTitle', 'flowlineAnalysis'),

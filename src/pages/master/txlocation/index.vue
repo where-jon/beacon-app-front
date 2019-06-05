@@ -9,7 +9,7 @@
           {{ $t('label.area') }}
         </label>
         <span :title="vueSelectTitle(vueSelected.area)">
-          <v-select v-model="vueSelected.area" :options="areaOptions" class="mr-2 mb-2 vue-options" :clearable="false">
+          <v-select v-model="vueSelected.area" :options="areaOptions" class="mr-2 mb-2 vue-options" :style="getVueSelectStyle()" :clearable="false">
             <template slot="selected-option" slot-scope="option">
               {{ vueSelectCutOn(option) }}
             </template>
@@ -25,7 +25,7 @@
         </label>
         <b-form-row>
           <span :title="vueSelectTitle(selectedTx_)">
-            <v-select v-model="selectedTx_" :options="txOptions" size="sm" class="mb-2 ml-2 mt-mobile vue-options" @input="showTxOnMap">
+            <v-select v-model="selectedTx_" :options="txOptions" size="sm" class="mb-2 ml-2 mt-mobile vue-options" :style="getVueSelectStyle()" @input="showTxOnMap">
               <template slot="selected-option" slot-scope="option">
                 {{ vueSelectCutOn(option) }}
               </template>
@@ -41,7 +41,7 @@
     </b-form>
     <p />
     <div class="mt-3">
-      <canvas id="map" ref="map" />
+      <canvas id="map" ref="map" @click="closeVueSelect" />
     </div>
     <b-modal id="modalWarn" :title="$t('label.confirm')" @ok="setChangeArea" @hide="changeAreaDone">
       {{ $t('message.unsavedData') }}

@@ -11,7 +11,7 @@
             {{ $t('label.area') }}
           </label>
           <span :title="vueSelectTitle(vueSelected.area)">
-            <v-select v-model="vueSelected.area" :options="areaOptions" :clearable="false" class="ml-1 mr-2 vue-options">
+            <v-select v-model="vueSelected.area" :options="areaOptions" :clearable="false" class="ml-1 mr-2 vue-options" :style="getVueSelectStyle()">
               <template slot="selected-option" slot-scope="option">
                 {{ vueSelectCutOn(option) }}
               </template>
@@ -23,7 +23,7 @@
             {{ $t('label.group') }}
           </label>
           <span :title="vueSelectTitle(vueSelected.group)">
-            <v-select v-model="vueSelected.group" :options="groupOptions" class="ml-1 mr-2 vue-options">
+            <v-select v-model="vueSelected.group" :options="groupOptions" class="ml-1 mr-2 vue-options" :style="getVueSelectStyle()">
               <template slot="selected-option" slot-scope="option">
                 {{ vueSelectCutOn(option) }}
               </template>
@@ -35,7 +35,7 @@
             {{ $t('label.category') }}
           </label>
           <span :title="vueSelectTitle(vueSelected.category)">
-            <v-select v-model="vueSelected.category" :options="categoryOptionsForPot" class="ml-1 mr-2 vue-options">
+            <v-select v-model="vueSelected.category" :options="categoryOptionsForPot" class="ml-1 mr-2 vue-options" :style="getVueSelectStyle()">
               <template slot="selected-option" slot-scope="option">
                 {{ vueSelectCutOn(option) }}
               </template>
@@ -70,9 +70,9 @@
       </b-form>
     </b-row>
     <b-row class="mt-3">
-      <canvas v-if="!showMeditag" id="map" ref="map" />
+      <canvas v-if="!showMeditag" id="map" ref="map" @click="closeVueSelect" />
       <b-col v-if="showMeditag">
-        <canvas id="map" ref="map" />
+        <canvas id="map" ref="map" @click="closeVueSelect" />
       </b-col>
       <div v-if="showMeditag && isShowRight && hasMeditagSensors()" class="rightPane">
         <sensor :sensors="meditagSensors" :is-popup="false" class="rightPaneChild" />
@@ -95,6 +95,7 @@ import * as SensorHelper from '../../sub/helper/SensorHelper'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
+import * as ParamHelper from '../../sub/helper/ParamHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as Util from '../../sub/util/Util'
 import txdetail from '../../components/parts/txdetail.vue'
@@ -146,7 +147,8 @@ export default {
       exbsMap: {},
       prohibitInterval:null,
       isShowRight: false,
-      isShowBottom: false
+      isShowBottom: false,
+      isMounted: false,
     }
   },
   computed: {
@@ -186,7 +188,9 @@ export default {
     'vueSelected.area': {
       handler: function(newVal, oldVal){
         this.selectedArea = Util.getValue(newVal, 'value', null)
-        this.changeArea(this.selectedArea)
+        if(this.isMounted){
+          this.changeArea(this.selectedArea)
+        }
       },
       deep: true,
     },
@@ -220,12 +224,18 @@ export default {
     await StateHelper.load('prohibit')
     await StateHelper.load('tx')
     await StateHelper.load('exb')
-    //document.addEventListener('touchstart', this.touchEnd)
     this.txs.forEach((t) => this.txsMap[t.btxId] = t)
     this.exbs.forEach((e) => this.exbsMap[e.posId] = e)
-    await this.fetchData()
+    // this.fetchData()は'vueSelected.area'をwatchしている箇所で実行している。
+    // 以下は二重実行を防ぐためコメントアウト
+    // await this.fetchData()
+    this.vueSelected.category = ParamHelper.getVueSelectData(this.categoryOptionsForPot, this.selectedCategory, false)
+    this.vueSelected.group = ParamHelper.getVueSelectData(this.groupOptions, this.selectedGroup, false)
     this.startPositionAutoReload()
     this.startOtherAutoReload()
+
+    this.changeArea(this.selectedArea)
+    this.isMounted = true
   },
   beforeDestroy() {
     this.resetDetail()
@@ -268,7 +278,8 @@ export default {
       return Util.hasValue(this.meditagSensors)
     },
     async fetchPositionData(payload) {
-      await this.fetchAreaExbs(true)
+      // await this.fetchAreaExbs(true)
+      await this.fetchAreaExbs(false)
 
       let alwaysTxs = this.txs.filter((tx) => {
         return tx.areaId == this.selectedArea && Util.bitON(tx.disp, TX.DISP.ALWAYS)

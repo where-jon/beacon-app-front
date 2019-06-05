@@ -84,7 +84,6 @@ export default {
     this.areaOptions = StateHelper.getOptionsFromState('area', false, true)
     this.vueSelected.area = this.getInitAreaOption(true)
     this.selectedArea = this.getInitAreaOption()
-    await StateHelper.loadAreaImage(this.selectedArea)
     this.loadComplete = true
     if (this.$route.path.startsWith('/main') || this.$route.path.startsWith('/sum') || this.$route.path.startsWith('/develop/installation')) {
       let timer = 0
@@ -111,9 +110,6 @@ export default {
           this.reset()
           if (this.stage) {
             this.stage.removeAllChildren()
-            if (this.resetDetail) {
-              this.resetDetail()
-            }
             this.stage.update()
             this.$nextTick(async () => {
               await this.fetchData(null, true)
@@ -170,7 +166,6 @@ export default {
     async fetchAreaExbs(tx) {
       if (this.isFirstTime) {
         this.selectedArea = this.getInitAreaOption()
-        await StateHelper.loadAreaImage(this.selectedArea)
         await StateHelper.load('exb')
         if (tx) {
           await StateHelper.load('tx', this.forceFetchTx)
@@ -212,8 +207,7 @@ export default {
         return
       }
       const bg = new Image()
-      const url = window.URL || window.webkitURL
-      bg.src = url.createObjectURL(new Blob([this.mapImage()]))
+      bg.src = this.mapImage()
       bg.onload = (evt) => {
         this.drawMapImage(bg)
         if (callback) {
@@ -279,13 +273,6 @@ export default {
       canvas.style.width = String(size.width) + 'px'
       canvas.style.height = String(size.height) + 'px'
 
-      // Retina解像度対応
-      /*
-      if (devicePixelRatio > 0) {
-        canvas.style.width = String(canvas.width / devicePixelRatio) + 'px'
-        canvas.style.height = String(canvas.height / devicePixelRatio) + 'px'
-      }*/
-
       this.stage = new Stage('map')
       this.stage.canvas = canvas
       this.stage.mouseEnabled = true
@@ -317,7 +304,9 @@ export default {
           return area.areaId == val
         })
         if (this.getMapImage(area.areaId)) {
-          this.reset && this.reset()
+          if(!Util.getValue(this, 'selectedTx.btxId', null)){
+            this.reset()
+          }
           this.selectedArea = val
           this.fetchData && await this.fetchData()
         }

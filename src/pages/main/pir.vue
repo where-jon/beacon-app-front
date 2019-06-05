@@ -7,7 +7,7 @@
           {{ $t('label.area') }}
         </label>
         <span :title="vueSelectTitle(vueSelected.area)">
-          <v-select v-model="vueSelected.area" :options="areaOptions" :clearable="false" class="ml-1 vue-options">
+          <v-select v-model="vueSelected.area" :options="areaOptions" :clearable="false" class="ml-1 vue-options" :style="getVueSelectStyle()">
             <template slot="selected-option" slot-scope="option">
               {{ vueSelectCutOn(option) }}
             </template>
@@ -16,7 +16,7 @@
       </b-form>
     </b-row>
     <b-row class="mt-3">
-      <canvas id="map" ref="map" />
+      <canvas id="map" ref="map" @click="closeVueSelect" />
     </b-row>
     <div v-if="selectedTx.btxId && showReady">
       <txdetail :selected-tx="selectedTx" :selected-sensor="[]" :is-show-modal="isShowModal()" @resetDetail="resetDetail" />
