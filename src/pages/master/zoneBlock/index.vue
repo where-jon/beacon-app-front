@@ -197,13 +197,22 @@ export default {
       this.switchMessageType()
       this.message = ''
       await this.deletedIds.forEach((id) => AppServiceHelper.deleteEntity(path, id))
-      const saveId = await AppServiceHelper.bulkSave(this.appServicePath + '/edit', zones, 0)
+      let saveId = -1
+      try {
+        saveId = await AppServiceHelper.bulkSave(this.appServicePath + '/edit', zones, 0)
+        this.isRegist = false
+        this.message = this.$i18n.t('message.updateCompleted', { target: this.$i18n.t('label.zone') })
+        this.switchMessageType('showInfo')
+        this.isCompleteRegist = true
+        // ストア内のゾーンレコードを最新に更新する
+        await StateHelper.load('zone', true)
+      } catch (e) {
+        e.bulkError = e.response.data
+        this.message = this.getSubmitErrorMessage(e)
+        this.replace({showAlert: true})
+        window.scrollTo(0, 0)
+      }
       this.isRegist = false
-      this.message = this.$i18n.t('message.updateCompleted', { target: this.$i18n.t('label.zone') })
-      this.switchMessageType('showInfo')
-      this.isCompleteRegist = true
-      // ストア内のゾーンレコードを最新に更新する
-      await StateHelper.load('zone', true)
       return saveId
     },
     reloaded() {
