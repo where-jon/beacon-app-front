@@ -266,7 +266,7 @@ const appStateConf = {
         categoryName: val.categoryName,
         shape: val.display? val.display.shape: null,
         color: val.display? val.display.color: null,
-        bgColor: val.systemUse == 1? getSystemUseBgColor(val): val.display? val.display.bgColor: null,
+        bgColor: val.systemUse == 1? getSystemUseBgColor(val): getCategoryDisplayBgColor(val),
         shapeName: val.display? getShapeName(val.display.shape): null,
         categoryTypeName: getCategoryTypeName(val),
         systemCategoryName: val.systemUse != 0? val.categoryName.toLowerCase(): null,
@@ -281,7 +281,7 @@ const appStateConf = {
         ...val,
         shape: val.display? val.display.shape: null,
         color: val.display? val.display.color: null,
-        bgColor: val.systemUse == 1? getSystemUseBgColor(val): val.display? val.display.bgColor: null,
+        bgColor: val.systemUse == 1? getSystemUseBgColor(val): getCategoryDisplayBgColor(val),
         shapeName: val.display? getShapeName(val.display.shape): null,
       }))
     }
@@ -547,11 +547,15 @@ export const bulkErrorCheck = (entity, headerName, val, isNumberColumn) => {
 
 export const getSystemUseBgColor = (categoryData) => {
   if(categoryData.categoryName === SYSTEM_ZONE_CATEGORY_NAME.ABSENT) {
-    return DISP.SYSTEM_USE_BG_COLOR_ABSENT
+    return DISP.SYSTEM_USE_BG_COLOR_ABSENT.length != 0? DISP.SYSTEM_USE_BG_COLOR_ABSENT: getCategoryDisplayBgColor(categoryData)
   } else if(categoryData.categoryName === SYSTEM_ZONE_CATEGORY_NAME.PROHIBIT) {
-    return DISP.SYSTEM_USE_BG_COLOR_PROHIBIT
+    return DISP.SYSTEM_USE_BG_COLOR_PROHIBIT.length != 0? DISP.SYSTEM_USE_BG_COLOR_PROHIBIT: getCategoryDisplayBgColor(categoryData)
   } else {
-    return categoryData.display? categoryData.display.bgColor: null
+    return getCategoryDisplayBgColor(categoryData)
   }
+}
+
+export const getCategoryDisplayBgColor = (category) => {
+  return !category? null: category.display? category.display.bgColor: null
 }
 
