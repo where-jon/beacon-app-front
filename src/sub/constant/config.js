@@ -331,6 +331,7 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   },
   ANALYSIS: { // 分析
     LINE: {
+      MIN_WEIGHT: 1,    // 動線の最小太さ
       MAX_WEIGHT: 10,   // 動線の最大太さ
       COLOR: '#ff0000', // 動線の色 (#xxxxxx)
       OPACITY: 1,       // 動線の透過度 (0～1。0.5などの小数も可)
@@ -362,7 +363,7 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   HEART_RATE_LINE_COLOR: '#7de8a6',// 湿度グラフの線色
   STEP_LINE_COLOR: '#7da6e8',// 歩数グラフの線色
   DOWN_COUNT_LINE_COLOR: '#fc5800',// 転倒数グラフの線色
-  SUM_STACK_COLOR: ['red','orange','yellow','green','purple','skyblue','blue','navy','gray','white'], // 滞在集計の色パターン
+  SUM_STACK_COLOR: ['red','orange','yellow','green','purple','skyblue','blue','navy','gray'], // 滞在集計の色パターン
   SUM_STACK_BORDER_COLOR: 'gray',
 
   BLOOD_PRESSURE_MAX: 200,// 血圧最大メモリ

@@ -846,6 +846,7 @@
       },
       "ANALYSIS": {
         "LINE": {
+          "MIN_WEIGHT": "動線分析画面で表示する動線の最小太さ::動線分析画面で表示する動線の最小太さを設定します。",
           "MAX_WEIGHT": "動線分析画面で表示する動線の最大太さ::動線分析画面で表示する動線の最大太さを設定します。",
           "COLOR": "動線分析画面で表示する動線の色::動線分析画面で表示する動線の色を設定します。"
         },
@@ -1148,7 +1149,8 @@
       },
       "USER": {
         "email": "メールアドレス",
-        "name": "名前"
+        "name": "名前",
+        "region": "担当リージョン"
       },
       "POT": {
         "ruby": "ルビ",
@@ -1246,6 +1248,7 @@
     "bulkSystemUseFailed": "{col}（{value}）はシステムで使用する固定データの為変更できません。",
     "bulkSystemUseNameFailed": "{col}（{value}）はシステムで使用する固定名称の為使用できません。",
     "bulkInvalidUpdateLineFailed": "{col}（{value}）データは本画面で変更できません。",
+    "bulkLastFailed": "{col}は1つ以上登録されている必要があります。",
     "monthDayTemperature": "{month}月{day}日の温湿度 ({name}{description})",
     "invalidLoginId": "ログインIDは英数記号を指定してください。",
     "notFound": "検索結果が存在しませんでした。",

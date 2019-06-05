@@ -62,7 +62,7 @@
               <b-button v-if="isEditable && form.existThumbnail" :variant="theme" type="button" class="float-right mt-3" @click="clearImage">
                 {{ $i18n.tnl('label.clear') }}
               </b-button>
-              <img v-show="form.existThumbnail" ref="thumbnail" :src="thumbnailUrl.replace('{id}', form.potId) + new Date().getTime()" width="100" class="mt-1 ml-3">
+              <img v-show="form.existThumbnail" ref="thumbnail" :src="thumbnailSrc" width="100" class="mt-1 ml-3">
             </b-form-group>
             <b-form-group v-if="isShown('POT.WITH', 'description')">
               <label v-t="'label.description'" />
@@ -190,6 +190,10 @@ export default {
     ]),
     hasUserId(){
       return Util.hasValue(this.userForm.userId)
+    },
+    thumbnailSrc () {
+      return this.form.existThumbnail && this.form.potId?
+        this.thumbnailUrl.replace('{id}', this.form.potId) + new Date().getTime() : ''
     },
   },
   watch: {

@@ -52,23 +52,19 @@ export default {
   },
   methods: {
     createCustomColumn(){
-      return APP.USER.WITH.map(val => {
-        return {key: val, label: val, sortable: true}
-      })
+      return APP.USER.WITH.map(val => ({key: val == 'region'? 'regionNames': val, label: val, sortable: true}))
     },
     getCustomCsvColumns(){
       return ['loginId', 'pass']
         .concat(this.createCustomColumn().map(val => val.key))
-        .concat('roleName', 'regionNames', 'description')
+        .concat('roleName', 'description')
         .filter(val => val)
     },
     customCsvData(val){
-      if(Util.hasValue(val.userRegionList)){
-        val.regionNames = val.userRegionList.map(userRegion => {
-          const target = this.regions.find(region => region.regionId == Util.getValue(userRegion, 'userRegionPK.regionId', ''))
-          return Util.getValue(target, 'regionName', null)
-        }).filter(val => val).join(';')
-      }
+      val.regionNames = val.regionIds.map(regionId => {
+        const target = this.regions.find(region => region.regionId == regionId)
+        return Util.getValue(target, 'regionName', null)
+      }).filter(val => val).join(';')
     },
     getFields(){
       return ViewHelper.addLabelByKey(this.$i18n, [ 

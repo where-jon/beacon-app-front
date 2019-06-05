@@ -1,6 +1,6 @@
 <template>
   <div id="mapContainer" class="container-fluid" @click="resetDetail">
-    <breadcrumb :items="items" :extra-nav-spec="extraNavSpec" :reload="true" :auto-reload="false" :short-name="shortName" :legend-items="legendItems" />
+    <breadcrumb :items="items" :extra-nav-spec="extraNavSpec" :reload="true" :state="reloadState" :auto-reload="false" :short-name="shortName" :legend-items="legendItems" />
     <b-alert v-model="showDismissibleAlert" variant="danger" dismissible>
       {{ $t('label.detectedProhibitZone') + ' : ' }}{{ message }}
     </b-alert>
@@ -149,6 +149,7 @@ export default {
       isShowRight: false,
       isShowBottom: false,
       isMounted: false,
+      reloadState: {isLoad: false},
     }
   },
   computed: {
@@ -359,9 +360,8 @@ export default {
           this.showProgress()
         }
         const reloadButton = document.getElementById('spinner')
-        const spinClassName = 'fa-spin'
         if(!this.firstTime && reloadButton){
-          reloadButton.classList.add(spinClassName)
+          this.reloadState.isLoad = true
         }
         if(!this.selectedTx.btxId){
           await this.fetchPositionData(cPayload)
@@ -381,7 +381,7 @@ export default {
         this.showTxAll()
         this.setProhibit('pos') // listmixin呼び出し
         if(!this.firstTime && reloadButton){
-          reloadButton.classList.remove(spinClassName)
+          this.reloadState.isLoad = false
         }
         this.firstTime = false
         if(!cPayload.disabledProgress){

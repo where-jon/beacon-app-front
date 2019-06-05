@@ -22,7 +22,7 @@
           <label v-t="'label.role'" />
           <v-select v-model="vueSelected.role" :options="roleOptions" :disabled="!isEditable" :clearable="false" class="mb-3 vue-options-lg" />
         </b-form-group>
-        <b-form-group>
+        <b-form-group v-show="showRegion">
           <label v-t="'label.region'" />
           <v-select v-model="vueSelected.regions" :options="regionOptions" :disabled="!isEditable" multiple :close-on-select="false" class="vue-options-multi" />
         </b-form-group>
@@ -108,6 +108,9 @@ export default {
     },
     showName() {
       return Util.includesIgnoreCase(APP.USER.WITH, 'name')
+    },
+    showRegion() {
+      return Util.includesIgnoreCase(APP.USER.WITH, 'region')
     },
     ...mapState('app_service', [
       'user', 'roles', 'regions'

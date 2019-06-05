@@ -290,7 +290,11 @@ const appStateConf = {
     path: '/meta/user',
     sort: Util.includesIgnoreCase(APP.USER.WITH, 'name')? 'name': 'loginId',
     beforeCommit: (arr) => {
-      return arr.map((val) => ({...val, roleName: val.role.roleName}))
+      return arr.map(val => ({
+        ...val,
+        roleName: val.role.roleName,
+        regionIds: Util.getValue(val, 'userRegionList', []).map(userRegion => Util.getValue(userRegion, 'userRegionPK.regionId', '')),
+      }))
     }
   },
   newsList: {
