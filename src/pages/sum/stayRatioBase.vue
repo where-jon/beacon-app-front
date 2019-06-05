@@ -774,7 +774,7 @@ export default {
     },
     pickerChanged() {
       const param = _.cloneDeep(this.form)
-      const isError = param.date.length == 0 ? true: moment(param.date).isAfter(moment().endOf('months'))? true: false
+      const isError = !param.date || param.date.length == 0 ? true: moment(param.date).isAfter(moment().endOf('months'))? true: false
       if (isError) {
         this.message = this.$i18n.terror('message.invalid', {target: this.$i18n.tnl('label.date')})
         this.replace({showAlert: true})
