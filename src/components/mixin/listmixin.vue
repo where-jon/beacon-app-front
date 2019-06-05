@@ -43,7 +43,7 @@ export default {
     },
     getProhibitMessage(prohibitDetectList){
       const isScreen = APP.POS.PROHIBIT_ALERT? APP.POS.PROHIBIT_ALERT.some((val) => val == PROHIBIT_STATE.SCREEN):false
-      if (!isScreen || !APP.POS.PROHIBIT_GROUPS || prohibitDetectList.length == 0) {
+      if (!isScreen || !APP.POS.PROHIBIT_GROUPS || !prohibitDetectList) {
         return ''   // message空
       }
       const labelArea = this.$i18n.tnl('label.Area')
