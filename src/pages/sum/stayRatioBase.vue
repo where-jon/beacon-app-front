@@ -17,7 +17,7 @@
       </span>
       <hr>
       <b-form-group ref="form">
-        <b-form-checkbox-group id="checkbox-group-2" v-model="displayCheckList.group" name="flavour-2" invalid-feedback="Name is required">
+        <b-form-checkbox-group id="checkbox-group-2" v-model="displayCheckList.group" name="flavour-2">
           <b-form-checkbox :value="'groupName'">
             {{ $t('label.groupName') }}
           </b-form-checkbox>
