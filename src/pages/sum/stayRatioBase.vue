@@ -172,6 +172,11 @@
           </div>
         </template>
       </b-table>
+      <b-row>
+        <b-col md="6" class="my-1">
+          <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" class="my-0" />
+        </b-col>
+      </b-row>
     </div>
   </div>
 </template>
