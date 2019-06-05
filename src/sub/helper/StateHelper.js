@@ -547,9 +547,9 @@ export const bulkErrorCheck = (entity, headerName, val, isNumberColumn) => {
 
 export const getSystemUseBgColor = (categoryData) => {
   if(categoryData.categoryName === SYSTEM_ZONE_CATEGORY_NAME.ABSENT) {
-    return DISP.SYSTEM_USE_BG_COLOR_ABSENT.length != 0? DISP.SYSTEM_USE_BG_COLOR_ABSENT: getCategoryDisplayBgColor(categoryData)
+    return DISP.SYSTEM_USE.BG_COLOR.ABSENT.length != 0? DISP.SYSTEM_USE.BG_COLOR.ABSENT: getCategoryDisplayBgColor(categoryData)
   } else if(categoryData.categoryName === SYSTEM_ZONE_CATEGORY_NAME.PROHIBIT) {
-    return DISP.SYSTEM_USE_BG_COLOR_PROHIBIT.length != 0? DISP.SYSTEM_USE_BG_COLOR_PROHIBIT: getCategoryDisplayBgColor(categoryData)
+    return DISP.SYSTEM_USE.BG_COLOR.PROHIBIT.length != 0? DISP.SYSTEM_USE.BG_COLOR.PROHIBIT: getCategoryDisplayBgColor(categoryData)
   } else {
     return getCategoryDisplayBgColor(categoryData)
   }
