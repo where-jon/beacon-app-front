@@ -197,6 +197,7 @@ export default {
       return true
     },
     beforeReload(){
+      this.form.sensorId = null
       this.vueSelected.category = ParamHelper.getVueSelectData(this.categoryOptions, null)
       this.vueSelected.group = ParamHelper.getVueSelectData(this.groupOptions, null)
     },
