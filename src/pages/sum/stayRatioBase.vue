@@ -642,9 +642,11 @@ export default {
       const searchDate = moment(param.date).format('YYYY-MM-DD')
       const group = param.groupId? this.groups.find((val) => val.groupId == param.groupId): null
       const groupName =  group? '_' + group.groupName: ''
+      const category = param.categoryId? this.categories.find((val) => val.categoryId == param.categoryId): null
+      const categoryName =  !category? '': category.systemUse == 1? category.systemCategoryName: '_' + category.categoryName
 
       HtmlUtil.fileDL(
-        searchDate + groupName + '_stayRatio.csv',
+        searchDate + groupName + categoryName + '_stayRatio.csv',
         Util.converToCsv(csvList),
         getCharSet(this.$store.state.loginId)
       )
@@ -767,8 +769,11 @@ export default {
 
       const group = param.groupId? this.groups.find((val) => val.groupId == param.groupId): null
       const groupName =  group? '_' + group.groupName: ''
+      const category = param.categoryId? this.categories.find((val) => val.categoryId == param.categoryId): null
+      const categoryName =  !category? '': category.systemUse == 1? category.systemCategoryName: '_' + category.categoryName
+
       HtmlUtil.fileDL(
-        moment(param.date).format('YYYY-MM') + groupName + '_stayRatio.csv',
+        moment(param.date).format('YYYY-MM') + groupName + categoryName + '_stayRatio.csv',
         Util.converToCsv(csvList),
         getCharSet(this.$store.state.loginId)
       )
