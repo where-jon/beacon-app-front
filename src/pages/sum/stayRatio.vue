@@ -101,7 +101,6 @@ export default {
         {key: 'absent2Ratio', sortable: true, label: 'absent2Ratio'},
         {key: 'lostRatio', sortable: true, label: 'lostRatio'},
       ]).map(val => ({ ...val, originLabel: val.label})),
-      searchedGroupName: ''
     }
   },
   computed: {
@@ -126,7 +125,7 @@ export default {
     },
   },
   async created() {
-    await StateHelper.load('group')
+    await StateHelper.load('groups')
     await StateHelper.load('pots')
     await StateHelper.load('categories')
     this.form.date = moment().add(-1, 'days').format('YYYYMMDD')
@@ -157,7 +156,7 @@ export default {
       const param = _.cloneDeep(this.form)
       await StateHelper.load('zones')
       await StateHelper.load('pots')
-      await StateHelper.load('group')
+      await StateHelper.load('groups')
       
       if (!param.date || param.date == '') {
         this.message = this.$i18n.tnl('message.pleaseEnterSearchCriteria')
@@ -175,10 +174,7 @@ export default {
       }
 
       this.viewList = this.getStayDataList(moment(param.date).format('YYYY-MM-DD'), sumData, APP.STAY_SUM.BSENT_LIMIT, APP.STAY_SUM.LOST_LIMIT)
-      
       this.totalRows = this.viewList.length
-      const group = param.groupId? this.groups.find((val) => val.groupId == param.groupId): null
-      this.searchedGroupName =  group? group.groupName: ''
       this.hideProgress()
     },
     isAbsentZoneData(categoryId) {
@@ -259,7 +255,8 @@ export default {
       })
 
       const searchDate = moment(param.date).format('YYYY-MM-DD')
-      const groupName = this.searchedGroupName.length > 0? '_' + this.searchedGroupName: ''
+      const group = param.groupId? this.groups.find((val) => val.groupId == param.groupId): null
+      const groupName =  group? '_' + group.groupName: ''
 
       HtmlUtil.fileDL(
         searchDate + groupName + '_stayRatio.csv',
@@ -288,7 +285,7 @@ export default {
       const param = _.cloneDeep(this.form)
       await StateHelper.load('zones')
       await StateHelper.load('pots')
-      await StateHelper.load('group')
+      await StateHelper.load('groups')
 
       if (!param.date || param.date == '') {
         this.message = this.$i18n.tnl('message.pleaseEnterSearchCriteria')
