@@ -343,6 +343,7 @@ export default {
       this.$nextTick(() => {
         this.showModal = false
         this.updateColumn()
+        this.updateColumnName()
       })
     },
     hasError() {
@@ -443,6 +444,7 @@ export default {
     },
     async display() {
       this.updateColumn()
+      this.updateColumnName()
       this.container ? this.container.removeAllChildren() : null
       await this.displayImpl()
       this.stage ? this.stage.update() : null
