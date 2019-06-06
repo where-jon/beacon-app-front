@@ -100,10 +100,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    areaOptions: {
-      type: Array,
-      required: true,
-    }
   },
   data () {
     return {
@@ -122,6 +118,7 @@ export default {
         pot: null,
       },
       appServicePath: '/core/positionHistory',
+      areaOptions: [],
       potOptions: [],
       interval: 24 * 60 * 60 * 1000,
       intervalHours: 24,
@@ -194,6 +191,7 @@ export default {
     await StateHelper.load('category')
     await StateHelper.load('group')
     await StateHelper.load('pot')
+    this.areaOptions = StateHelper.getOptionsFromState('area', false, true)
     this.changeCategory()
     this.changeGroup()
     this.vueSelected.area = ParamHelper.getVueSelectData(this.areaOptions, null, true)
