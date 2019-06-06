@@ -275,10 +275,11 @@ export default {
         this.changeAreaDone()
       }
     },
-    changeAreaDone() {
+    async changeAreaDone() {
       if (this.isChangeArea) {
         this.isChangeArea = false
         if (this.selectedArea) {
+          await StateHelper.loadAreaImage(this.selectedArea)
           this.reset()
           this.workTxs = _.cloneDeep(this.txs)
           this.setTxPosition()
@@ -423,6 +424,7 @@ export default {
         if (param.length > 0) {
           await HttpHelper.postAppService('/core/tx/bulk?updateOnlyNN=' + UPDATE_ONLY_NN.NULL, param)
           await StateHelper.load('tx', true)
+          StateHelper.setForceFetch('pot', true)
         }
 
         this.message = this.$i18n.tnl('message.completed', {target: this.$i18n.tnl('label.save')})

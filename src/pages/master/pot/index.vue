@@ -49,7 +49,6 @@ export default {
     ...mapState('app_service', [
       'pots',
       'roles',
-      'forceFetchPot',
       'updatedThumbnail',
     ]),
   },
@@ -109,6 +108,7 @@ export default {
     },
     afterCrud(){
       StateHelper.setForceFetch('tx', true)
+      StateHelper.setForceFetch('user', true)
     },
     getExtraFilter(){
       return [this.isEnabledMenu('group') && Util.includesIgnoreCase(APP.POT.WITH, 'group')? 'group': null, this.isEnabledMenu('category') && Util.includesIgnoreCase(APP.POT.WITH, 'category')? 'category': null].filter((val) => val)
@@ -117,8 +117,7 @@ export default {
       try {
         this.showProgress()
         await StateHelper.load('role')
-        await StateHelper.load('pot', this.forceFetchPot)
-        StateHelper.setForceFetch('pot', false)
+        await StateHelper.load('pot')
         if (payload && payload.done) {
           payload.done()
         }

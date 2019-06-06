@@ -161,7 +161,6 @@ export default {
       'groups',
       'prohibits',
       'txs',
-      'forceFetchTx',
     ]),
     ...mapState([
       'reload',
@@ -223,6 +222,7 @@ export default {
     await StateHelper.load('category')
     await StateHelper.load('group')
     await StateHelper.load('prohibit')
+    await StateHelper.load('pot')
     await StateHelper.load('tx')
     await StateHelper.load('exb')
     this.txs.forEach((t) => this.txsMap[t.btxId] = t)
@@ -321,8 +321,7 @@ export default {
           this.showProgress()
         }
         if (!this.selectedTx.btxId) {
-          await StateHelper.load('tx', this.forceFetchTx)
-          StateHelper.setForceFetch('tx', false)
+          await StateHelper.load('tx')
         }
         this.$nextTick(() => {
           this.loadLegends()

@@ -58,6 +58,8 @@ export default {
     },
     afterCrud(){
       StateHelper.setForceFetch('pot', true)
+      StateHelper.setForceFetch('tx', true)
+      StateHelper.setForceFetch('zone', true)
     },
     async save(bulkSaveFunc) {
       const DISPLAY_COL = ['shape', 'color', 'bgColor']

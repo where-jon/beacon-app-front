@@ -57,7 +57,6 @@ export default {
       'areas',
       'exbs',
       'txs',
-      'forceFetchTx',
     ]),
     ...mapState('main', [
       'orgPositions',
@@ -168,8 +167,7 @@ export default {
         this.selectedArea = this.getInitAreaOption()
         await StateHelper.load('exb')
         if (tx) {
-          await StateHelper.load('tx', this.forceFetchTx)
-          StateHelper.setForceFetch('tx', false)
+          await StateHelper.load('tx')
         }
         this.isFirstTime = false
       }

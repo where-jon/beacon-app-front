@@ -206,6 +206,8 @@ export default {
         this.isCompleteRegist = true
         // ストア内のゾーンレコードを最新に更新する
         await StateHelper.load('zone', true)
+        StateHelper.setForceFetch('tx', true)
+        StateHelper.setForceFetch('exb', true)
       } catch (e) {
         e.bulkError = e.response.data
         this.message = this.getSubmitErrorMessage(e)

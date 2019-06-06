@@ -29,6 +29,7 @@
 import { mapState } from 'vuex'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
+import * as StateHelper from '../../../sub/helper/StateHelper'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
 import * as HtmlUtil from '../../../sub/util/HtmlUtil'
 import * as Util from '../../../sub/util/Util'
@@ -80,6 +81,9 @@ export default {
     HtmlUtil.setCustomValidationMessage()
   },
   methods: {
+    afterCrud(){
+      StateHelper.setForceFetch('user', true)
+    },
     async save() {
       let entity = {
         roleId: Util.hasValue(this.form.roleId)? this.form.roleId: -1,

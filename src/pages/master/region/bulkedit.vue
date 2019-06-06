@@ -14,6 +14,7 @@ import bulkedit from '../../../components/page/bulkedit.vue'
 import * as AuthHelper from '../../../sub/helper/AuthHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as BulkHelper from '../../../sub/helper/BulkHelper'
+import * as StateHelper from '../../../sub/helper/StateHelper'
 
 export default {
   components: {
@@ -51,6 +52,7 @@ export default {
       })
     },
     async afterCrud(){
+      StateHelper.setForceFetch('user', true)
       await AuthHelper.switchAppService()
     }
   }

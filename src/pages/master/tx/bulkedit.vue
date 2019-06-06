@@ -45,7 +45,6 @@ export default {
   methods: {
     afterCrud(){
       StateHelper.setForceFetch('pot', true)
-      StateHelper.setForceFetch('tx', true)
     },
     setParamCategory(entity, headerName, val, dummyKey){
       if (!entity.potTxList) {

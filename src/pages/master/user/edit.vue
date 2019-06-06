@@ -192,6 +192,7 @@ export default {
           }
         )
       }
+      StateHelper.setForceFetch('pot', true)
     },
     beforeReload(){
       this.vueSelected.role = ParamHelper.getVueSelectData(this.roleOptions, this.roleOptions.reduce((prev, cur) => cur).value)
