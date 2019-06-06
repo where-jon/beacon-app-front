@@ -515,8 +515,9 @@ export default {
       })
 
       const balloonClass = !btxId ? '': 'balloon' + (isAbove ? '-b': '-u')
-
-      this.preloadThumbnail.onload = () => {
+      // サムネイル表示無しの設定になっているか？
+      const isNoThumbnail = APP.TXDETAIL.NO_UNREGIST_THUMB ? !tx.existThumbnail : false
+      const setupSelectedTx = (isDispThumbnail) => {
         const selectedTx = {
           btxId,
           minor: 'minor:' + btxId,
@@ -532,7 +533,7 @@ export default {
           name: tx.potName ? tx.potName : '',
           tel: tx.extValue ? tx.extValue.tel ? tx.extValue.tel : '': '',
           timestamp: position ? this.getFinalReceiveTime(position.timestamp) : '',
-          thumbnail: this.preloadThumbnail.src,
+          thumbnail: isDispThumbnail ? this.preloadThumbnail.src : '',
           category: tx.categoryName? tx.categoryName : '',
           group: tx.groupName? tx.groupName : '',
           bgColor: display.bgColor,
@@ -545,7 +546,16 @@ export default {
           this.$root.$emit('bv::show::modal', 'detailModal')
         }
       }
-      this.preloadThumbnail.src = tx.existThumbnail ? this.thumbnailUrl.replace('{id}', tx.potId) : '/default.png'
+
+      if (!isNoThumbnail) {
+        // サムネイル表示あり
+        this.preloadThumbnail.onload = () => setupSelectedTx(true)
+        this.preloadThumbnail.src = tx.existThumbnail ? this.thumbnailUrl.replace('{id}', tx.potId) : '/default.png'
+      } else {
+        // サムネイル表示無し
+        setupSelectedTx(false)
+      }
+
     },
     createLabelInfo(pos, color){
       return {
