@@ -153,6 +153,11 @@ export const getDispCategoryName = (category) => {
   return category.systemCategoryName? i18n.tnl('label.' + category.systemCategoryName): category.categoryName
 }
 
+export const getForceFetch = (name) => {
+  const storeName = `forceFetch${name.charAt(0).toUpperCase()}${name.slice(1)}`
+  return store.state.app_service[storeName]
+}
+
 export const setForceFetch = (name, force) => {
   const storeName = `forceFetch${name.charAt(0).toUpperCase()}${name.slice(1)}`
   store.commit('app_service/replaceAS', {[storeName]:force})
@@ -305,6 +310,7 @@ const appStateConf = {
         ...val,
         newsDt: Util.formatDate(val.newsDate),
         dispState: i18n.tnl(`label.${val.dispFlg == 0? 'hide': 'display'}`),
+        newsContent: Util.cutOnLong(val.content, 16),
       }))
     }
   },
@@ -387,6 +393,7 @@ const appStateConf = {
 }
 
 export const load = async (target, force) => {
+  const forceFetchTarget = target
   if (!target.endsWith('s')) {
     target = target.endsWith('y')? target.slice(0, -1) + 'ies' : target + 's'
   }else if(['news', 'topNews'].includes(target)){
@@ -398,7 +405,7 @@ export const load = async (target, force) => {
   let {path, sort, beforeCommit} = appStateConf[target]
   let arr = store.state.app_service[target]
   const expiredKey = `${target}Expired`
-  if (!arr || arr.length == 0 || force || Util.isExpired(store.state.app_service[expiredKey])) {
+  if (!arr || arr.length == 0 || force || getForceFetch(forceFetchTarget) || Util.isExpired(store.state.app_service[expiredKey])) {
     arr = await AppServiceHelper.fetchList(path, sort)
     if (beforeCommit) {
       arr = beforeCommit(arr)
@@ -406,6 +413,7 @@ export const load = async (target, force) => {
     store.commit('app_service/replaceAS', {[target]:arr})
     const expiredTime = (new Date()).getTime() + APP.SYS.STATE_EXPIRE_TIME
     store.commit('app_service/replaceAS', {[expiredKey]: expiredTime})
+    setForceFetch(forceFetchTarget, false)
   }
 }
 

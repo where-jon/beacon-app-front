@@ -1,6 +1,6 @@
 <template>
   <div id="mapContainer" class="container-fluid" @click="resetDetail">
-    <breadcrumb :items="items" :reload="true" />
+    <breadcrumb :items="items" :reload="true" :state="reloadState" />
     <b-row class="mt-2">
       <b-form inline class="mt-2" @submit.prevent>
         <label class="ml-3 mr-2">
@@ -57,6 +57,7 @@ export default {
       INUSE_FONTSIZE_RATIO: 0.9,
       FONTSIZE_RATIO_EN: 0.5,
       EMPTY_FONTSIZE_RATIO: 1.2,
+      reloadState: {isLoad: false, initialize: false},
     }
   },
   computed: {
@@ -65,7 +66,6 @@ export default {
     ]),
     ...mapState('app_service', [
       'txs',
-      'forceFetchTx',
     ]),
     ...mapState([
       'reload',
@@ -82,7 +82,7 @@ export default {
   },
   mounted() {
     document.addEventListener('touchstart', this.touchEnd)
-    this.fetchData()
+    // this.fetchData()
   },
   beforeDestroy() {
     this.resetDetail()
@@ -112,8 +112,7 @@ export default {
         )
 
         if (APP.SENSOR.SHOW_MAGNET_ON_PIR) {
-          await StateHelper.load('tx', this.forceFetchTx)
-          StateHelper.setForceFetch('tx', false)
+          await StateHelper.load('tx')
           await this.storePositionHistory(this.count)
           this.magnetSensors = await EXCloudHelper.fetchSensor(SENSOR.MAGNET)
           Util.debug(this.magnetSensors)

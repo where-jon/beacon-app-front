@@ -301,6 +301,7 @@ export default {
       const login = JSON.parse(window.localStorage.getItem('login'))
       const tenant = await HttpHelper.getAppService('/meta/tenant/currentTenant')
       login.currentTenant = tenant
+      this.$store.commit('replace', login)
       window.localStorage.setItem('login', JSON.stringify(login))
       if(this.targetTenantId == login.currentTenant.tenantId){
         await this.applyConfig()

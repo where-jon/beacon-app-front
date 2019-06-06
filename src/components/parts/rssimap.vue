@@ -168,9 +168,6 @@ export default {
     }
   },
   computed: {
-    ...mapState('app_service', [
-      'forceFetchTx',
-    ]),
     ...mapState([
       'reload',
     ]),
@@ -270,8 +267,7 @@ export default {
           this.dispRssiIcons(this.targetTx)
         }
 
-        await StateHelper.load('tx', this.forceFetchTx)
-        StateHelper.setForceFetch('tx', false)
+        await StateHelper.load('tx')
 
         if (payload && payload.done) {
           payload.done()

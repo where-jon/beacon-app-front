@@ -46,14 +46,13 @@ export default {
   computed: {
     ...mapState('app_service', [
       'templates',
-      'forceFetchZone',
     ]),
   },
   methods: {
     async fetchData(payload) {
       try {
         this.showProgress()
-        await StateHelper.load('template', this.forceFetchTemplate)
+        await StateHelper.load('template')
         if (payload && payload.done) {
           payload.done()
         }

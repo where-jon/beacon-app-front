@@ -44,7 +44,6 @@ export default {
     ...mapState('app_service', [
       'users',
       'regions',
-      'forceFetchUser',
     ]),
   },
   async created() {
@@ -76,11 +75,13 @@ export default {
           {key: 'actions', thStyle: {width:'130px !important'} }
         ]))
     },
+    afterCrud(){
+      StateHelper.setForceFetch('pot', true)
+    },
     async fetchData(payload) {
       try {
         this.showProgress()
-        await StateHelper.load('user', this.forceFetchUser)
-        StateHelper.setForceFetch('user', false)
+        await StateHelper.load('user')
         if (payload && payload.done) {
           payload.done()
         }

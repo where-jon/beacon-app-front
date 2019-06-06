@@ -63,7 +63,6 @@ export default {
     ...mapState('app_service', [
       'newsList',
       'topNewsList',
-      'forceFetchNews',
     ]),
     theme() {
       return getButtonTheme()

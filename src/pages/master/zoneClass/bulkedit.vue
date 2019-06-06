@@ -12,6 +12,7 @@ import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as BulkHelper from '../../../sub/helper/BulkHelper'
+import * as StateHelper from '../../../sub/helper/StateHelper'
 
 export default {
   components: {
@@ -33,6 +34,10 @@ export default {
     ]),
   },
   methods: {
+    afterCrud(){
+      StateHelper.setForceFetch('tx', true)
+      StateHelper.setForceFetch('exb', true)
+    },
     async save(bulkSaveFunc) {
       await bulkSaveFunc(BULK.PRIMARY_KEY, null, null, (entity, headerName, val, dummyKey) => {
         if (BulkHelper.isPrimaryKeyHeader(headerName)){

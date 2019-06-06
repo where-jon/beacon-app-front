@@ -133,6 +133,10 @@ export default {
         category => !CATEGORY.POT_AVAILABLE.includes(category.categoryType)
       )
     },
+    afterCrud(){
+      StateHelper.setForceFetch('tx', true)
+      StateHelper.setForceFetch('exb', true)
+    },
     async beforeReload(){
       this.vueSelected.area = ParamHelper.getVueSelectData(this.areaNames, null, true)
       this.vueSelected.category = ParamHelper.getVueSelectData(this.categoryNames, null)

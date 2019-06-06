@@ -447,10 +447,11 @@ export default {
         this.changeAreaDone()
       }
     },
-    changeAreaDone() {
+    async changeAreaDone() {
       if (this.isChangeArea) {
         this.isChangeArea = false
         if (this.selectedArea) {
+          await StateHelper.loadAreaImage(this.selectedArea)
           this.reset()
           this.workExbs = _.cloneDeep(this.exbs)
           this.setExbPosition()
