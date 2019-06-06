@@ -220,6 +220,7 @@ import { mapState, mapMutations } from 'vuex'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as SensorHelper from '../../sub/helper/SensorHelper'
+import * as SortHelper from '../../sub/helper/SortHelper'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
 import * as DetectStateHelper from '../../sub/helper/DetectStateHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
@@ -518,7 +519,10 @@ export default {
     },
     sortCompareCustom(aData, bData, key){
       if(key == 'txIdName'){
-        return StateHelper.sortCompareArray(aData.txIdNames, bData.txIdNames)
+        return SortHelper.sortByArray(aData.txIdNames, bData.txIdNames)
+      }
+      if(key == 'regionName'){
+        return SortHelper.sortByString(aData[key], bData[key])
       }
       return null
     },
