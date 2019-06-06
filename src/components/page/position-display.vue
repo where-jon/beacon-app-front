@@ -35,7 +35,7 @@ export default {
   },
   data() {
     return {
-      prohibitData : null,
+      prohibitDetectList : null,
       message: '',
       showDismissibleAlert: false,
       params: {
@@ -82,7 +82,7 @@ export default {
     getDataList() {
       return this[this.eachListName]
     },
-    splitMaster(positions,prohibitData){
+    splitMaster(positions,prohibitDetectList){
       const tempMaster = _.map(this[this.listName], (obj) => ({[this.id]: obj[this.id], label: obj[this.name], positions: []}))
 
       _.forEach(positions, (pos) => {
@@ -90,7 +90,7 @@ export default {
         const exb = this.exbs.find((exb) => exb.posId == pos.pos_id)
         _.forEach(tempMaster, (obj) => {
           if (posMasterId == obj[this.id] && !pos.noSelectedTx) {
-            prohibitData? prohibitData.some((data) => {
+            prohibitDetectList? prohibitDetectList.some((data) => {
               if(data.minor == pos.minor){
                 pos.blinking = 'blinking'
                 return true
@@ -119,7 +119,7 @@ export default {
         this.alertData.message = this.message
         this.alertData.isAlert = this.showDismissibleAlert ? true: false
         // 分類checkProhibitZone
-        const tempMaster = this.splitMaster(this.positions, this.prohibitData)
+        const tempMaster = this.splitMaster(this.positions, this.prohibitDetectList)
         this.replaceMain({[this.eachListName]: tempMaster})
         if (payload && payload.done) {
           payload.done()

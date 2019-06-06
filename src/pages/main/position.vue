@@ -141,7 +141,7 @@ export default {
       firstTime: true,
       message: '',
       showDismissibleAlert: false,
-      prohibitData : null,
+      prohibitDetectList : null,
       icons: {},
       txsMap: {},
       exbsMap: {},
@@ -377,8 +377,8 @@ export default {
           this.stage.update()
         }
         this.setPositionedExb()
-        this.showTxAll()
         this.setProhibit('pos') // listmixin呼び出し
+        this.showTxAll()
         if(!this.firstTime && reloadButton){
           this.reloadState.isLoad = false
         }
@@ -476,7 +476,7 @@ export default {
         txBtn.y = pos.y
       }
       // プロとするTXアイコンが進入禁止区域に入ってるかチェック
-      txBtn.prohibit  = this.prohibitData ? this.prohibitData.some((data) => data.minor == pos.minor):false
+      txBtn.prohibit  = this.prohibitDetectList ? this.prohibitDetectList.some((data) => data.minor == pos.minor):false
 
       if (this.isFixTx(tx)) {
         Util.debug('fixed location', tx)
