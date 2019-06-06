@@ -142,7 +142,7 @@ export default {
     this.roleOptions = StateHelper.getOptionsFromState('role', false, true)
     this.vueSelected.role = ParamHelper.getVueSelectData(this.roleOptions, Util.getValue(this.form, 'roleId', this.roleOptions.reduce((prev, cur) => cur).value))
     if(Util.hasValue(this.form.userRegionList)){
-      this.vueSelected.regions = this.form.userRegionList.map(userRegion => ParamHelper.getVueSelectData(this.regionOptions, userRegion.userRegionPK.regionId))
+      this.vueSelected.regions = this.form.userRegionList.map(userRegion => ParamHelper.getVueSelectData(this.regionOptions, userRegion.userRegionPK.regionId)).sort((a, b) => a.label < b.label? -1: 1)
     }
   },
   mounted(){

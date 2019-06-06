@@ -13,7 +13,6 @@ import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import { APP } from '../../../sub/constant/config.js'
 import listmixinVue from '../../../components/mixin/listmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
-import * as Util from '../../../sub/util/Util'
 
 export default {
   components: {
@@ -61,10 +60,7 @@ export default {
         .filter(val => val)
     },
     customCsvData(val){
-      val.regionNames = val.regionIds.map(regionId => {
-        const target = this.regions.find(region => region.regionId == regionId)
-        return Util.getValue(target, 'regionName', null)
-      }).filter(val => val).join(';')
+      val.regionNames = val.regionNames.join(';')
     },
     getFields(){
       return ViewHelper.addLabelByKey(this.$i18n, [ 

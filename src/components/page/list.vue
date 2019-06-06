@@ -121,7 +121,7 @@
         <!-- リージョン名 -->
         <template slot="regionNames" slot-scope="row">
           <div>
-            <span v-for="(regionName, index) in getRegionNames(row.item.regionIds)" :key="index" class="row">
+            <span v-for="(regionName, index) in row.item.regionNames" :key="index" class="row">
               {{ regionName }}
             </span>
           </div>
@@ -568,12 +568,6 @@ export default {
       this.replaceAS({[this.name]: entity})
       this.replaceAS({editPage: this.currentPage})
       this.$router.push(this.editPath)
-    },
-    getRegionNames(regionIds){
-      return regionIds.map(regionId => {
-        const target = this.regions.find(region => region.regionId == regionId)
-        return Util.getValue(target, 'regionName', null)
-      }).filter(val => val)
     },
     getDispCategoryName(category){
       return StateHelper.getDispCategoryName(category)
