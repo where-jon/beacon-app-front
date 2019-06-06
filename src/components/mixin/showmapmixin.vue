@@ -50,6 +50,7 @@ export default {
       areaOptions: [],
       loadComplete: false,
       thumbnailUrl: APP_SERVICE.BASE_URL + EXCLOUD.POT_THUMBNAIL_URL,
+      preloadThumbnail: new Image(),
     }
   },
   computed: {
@@ -515,33 +516,36 @@ export default {
 
       const balloonClass = !btxId ? '': 'balloon' + (isAbove ? '-b': '-u')
 
-      const selectedTx = {
-        btxId,
-        minor: 'minor:' + btxId,
-        major: tx.major? 'major:' + tx.major : '',
-        // TX詳細ポップアップ内部で表示座標計算する際に必要
-        orgLeft: x * this.canvasScale + offsetX,
-        orgTop: y * this.canvasScale + offsetY,
-        isAbove: isAbove,
-        scale: DISP.TX.R_ABSOLUTE ? 1.0 : this.canvasScale,
-        containerWidth: containerParent.width,
-        containerHeight: containerParent.height,
-        class: balloonClass,
-        name: tx.potName ? tx.potName : '',
-        tel: tx.extValue ? tx.extValue.tel ? tx.extValue.tel : '': '',
-        timestamp: position ? this.getFinalReceiveTime(position.timestamp) : '',
-        thumbnail: tx.existThumbnail ? this.thumbnailUrl.replace('{id}', tx.potId) : '',
-        category: tx.categoryName? tx.categoryName : '',
-        group: tx.groupName? tx.groupName : '',
-        bgColor: display.bgColor,
-        color: display.color,
-        isDispRight: isDispRight,
+      this.preloadThumbnail.onload = () => {
+        const selectedTx = {
+          btxId,
+          minor: 'minor:' + btxId,
+          major: tx.major? 'major:' + tx.major : '',
+          // TX詳細ポップアップ内部で表示座標計算する際に必要
+          orgLeft: x * this.canvasScale + offsetX,
+          orgTop: y * this.canvasScale + offsetY,
+          isAbove: isAbove,
+          scale: DISP.TX.R_ABSOLUTE ? 1.0 : this.canvasScale,
+          containerWidth: containerParent.width,
+          containerHeight: containerParent.height,
+          class: balloonClass,
+          name: tx.potName ? tx.potName : '',
+          tel: tx.extValue ? tx.extValue.tel ? tx.extValue.tel : '': '',
+          timestamp: position ? this.getFinalReceiveTime(position.timestamp) : '',
+          thumbnail: this.preloadThumbnail.src,
+          category: tx.categoryName? tx.categoryName : '',
+          group: tx.groupName? tx.groupName : '',
+          bgColor: display.bgColor,
+          color: display.color,
+          isDispRight: isDispRight,
+        }
+        this.replaceMain({selectedTx})
+        this.$nextTick(() => this.showReady = true)
+        if (this.isShowModal()) {
+          this.$root.$emit('bv::show::modal', 'detailModal')
+        }
       }
-      this.replaceMain({selectedTx})
-      this.$nextTick(() => this.showReady = true)
-      if (this.isShowModal()) {
-        this.$root.$emit('bv::show::modal', 'detailModal')
-      }
+      this.preloadThumbnail.src = tx.existThumbnail ? this.thumbnailUrl.replace('{id}', tx.potId) : '/default.png'
     },
     createLabelInfo(pos, color){
       return {
