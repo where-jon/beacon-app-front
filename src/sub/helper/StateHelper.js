@@ -298,7 +298,7 @@ const appStateConf = {
       return arr.map(val => ({
         ...val,
         roleName: val.role.roleName,
-        regionIds: Util.getValue(val, 'userRegionList', []).map(userRegion => Util.getValue(userRegion, 'userRegionPK.regionId', '')),
+        regionNames: Util.getValue(val, 'userRegionList', []).map(userRegion => Util.getValue(userRegion, 'regionName', '')).sort((a, b) => a < b? -1: 1),
       }))
     }
   },
