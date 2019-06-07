@@ -225,9 +225,24 @@ export default {
       return Util.getValue(this.form, `exbSensorList.${index && 0 <= index? index: 0}.sensorId`, null)? false: true
     },
     getZoneNames() {
+      const areaId = this.form.areaId
+      const x = this.form.x
+      const y = this.form.y
+      const isValidVal = (val) => (val || val === 0)
+      // EXBがゾーンの範囲内に位置しているか？
+      const isInRange = (zone) => {
+        if (zone.zoneType !== 0) {
+          return true
+        }
+        if (!isValidVal(zone.x) || !isValidVal(zone.y) || !isValidVal(zone.h) || !isValidVal(zone.w)) {
+          return false
+        }
+        const bottomX = zone.x + zone.w
+        const bottomY = zone.y + zone.h
+        return zone.x <= x && zone.y <= y && x <= bottomX && y <= bottomY
+      }
       return StateHelper.getOptionsFromState('zone', false, true, 
-        zone => zone.areaId == this.form.areaId
-      )
+        (zone) => zone.areaId === areaId && isInRange(zone))
     },
     showSensor(index){
       if(index == 0){
