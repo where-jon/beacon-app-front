@@ -122,6 +122,7 @@ import { LOGIN_MODE } from '../../sub/constant/Constants'
 import { getThemeClasses } from '../../sub/helper/ThemeHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
+import * as SortUtil from '../../sub/util/SortUtil'
 import commonmixinVue from '../mixin/commonmixin.vue'
 import CustomLink from '../parts/customlink.vue'
 import * as StateHelper from '../../sub/helper/StateHelper'
@@ -249,27 +250,7 @@ export default {
         Util.hasValue(login.userRegionIdList)?
           regions.filter((region) => login.userRegionIdList.includes(region.regionId)):
           regions.filter((region) => login.currentRegion? region.regionId == login.currentRegion.regionId: false)
-      return ret.sort((a, b) => this.optionSort(a, b))
-    },
-    optionSort(regionA, regionB){
-      const aSortBy = regionA.regionName
-      const bSortBy = regionB.regionName
-      if(!isNaN(aSortBy) && !isNaN(bSortBy)){
-        const aNum = Number(aSortBy)
-        const bNum = Number(bSortBy)
-        return aNum < bNum? -1: aNum > bNum? 1: 0
-      }
-      const aCodeArr = Util.getSjisCodePoint(aSortBy, 'SJIS')
-      const bCodeArr = Util.getSjisCodePoint(bSortBy, 'SJIS')
-      for(let cnt = 0; cnt < aCodeArr.length && cnt < bCodeArr.length; cnt++){
-        if(aCodeArr[cnt] < bCodeArr[cnt]){
-          return -1
-        }
-        if(aCodeArr[cnt] > bCodeArr[cnt]){
-          return 1
-        }
-      }
-      return 0
+      return ret.sort((a, b) => SortUtil.sortByString(a.regionName, b.regionName))
     },
     disableSwitchRegion(item){
       const login = JSON.parse(window.localStorage.getItem('login'))

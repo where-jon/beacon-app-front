@@ -224,6 +224,7 @@ import * as MenuHelper from '../../sub/helper/MenuHelper'
 import * as DetectStateHelper from '../../sub/helper/DetectStateHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
+import * as SortUtil from '../../sub/util/SortUtil'
 import { getButtonTheme } from '../../sub/helper/ThemeHelper'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import commonmixinVue from '../mixin/commonmixin.vue'
@@ -518,7 +519,10 @@ export default {
     },
     sortCompareCustom(aData, bData, key){
       if(key == 'txIdName'){
-        return StateHelper.sortCompareArray(aData.txIdNames, bData.txIdNames)
+        return SortUtil.sortByArray(aData.txIdNames, bData.txIdNames)
+      }
+      if(key == 'regionName'){
+        return SortUtil.sortByString(aData[key], bData[key])
       }
       return null
     },
