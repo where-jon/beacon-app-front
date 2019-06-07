@@ -122,10 +122,10 @@ import { LOGIN_MODE } from '../../sub/constant/Constants'
 import { getThemeClasses } from '../../sub/helper/ThemeHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
+import * as SortUtil from '../../sub/util/SortUtil'
 import commonmixinVue from '../mixin/commonmixin.vue'
 import CustomLink from '../parts/customlink.vue'
 import * as StateHelper from '../../sub/helper/StateHelper'
-import * as SortHelper from '../../sub/helper/SortHelper'
 import Help from '../page/help.vue'
 
 export default {
@@ -250,7 +250,7 @@ export default {
         Util.hasValue(login.userRegionIdList)?
           regions.filter((region) => login.userRegionIdList.includes(region.regionId)):
           regions.filter((region) => login.currentRegion? region.regionId == login.currentRegion.regionId: false)
-      return ret.sort((a, b) => SortHelper.sortByString(a.regionName, b.regionName))
+      return ret.sort((a, b) => SortUtil.sortByString(a.regionName, b.regionName))
     },
     disableSwitchRegion(item){
       const login = JSON.parse(window.localStorage.getItem('login'))

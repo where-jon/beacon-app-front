@@ -1,4 +1,4 @@
-import * as Util from '../util/Util'
+import * as Util from './Util'
 
 export const sortByArray = (aAry, bAry) => {
   if(!Util.hasValue(aAry) && !Util.hasValue(bAry)){
