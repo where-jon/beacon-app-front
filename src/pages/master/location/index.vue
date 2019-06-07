@@ -168,13 +168,13 @@ export default {
     if(this.pageSendParam){
       this.vueSelected.area = ParamHelper.getVueSelectData(this.areaOptions, this.pageSendParam.areaId)
       this.selectedArea = this.pageSendParam.areaId
-      this.changeArea()
       this.replaceAS({pageSendParam: null})
     }
     else{
       this.vueSelected.area = ParamHelper.getVueSelectData(this.areaOptions, null, true)
       this.selectedArea = Util.getValue(this.vueSelected.area, 'value', null)
     }
+    this.changeArea()
     await this.fetchData()
   },
   beforeDestroy() {
