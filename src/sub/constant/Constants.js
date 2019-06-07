@@ -341,6 +341,7 @@ export const NOTIFY_STATE = {
       {value:'TX_BATTERY_ALERT', text: i18n.t('label.txBatteryNotify'), index:1},
       {value:'USER_REG_NOTIFY', text: i18n.t('label.userRegNotify'), index:2},
       {value:'TX_SOS_ALERT', text: i18n.t('label.sosNotify'), index:3},
+      {value:'PROHIBIT_NOTIFY', text: i18n.t('label.prohibitNotify'), index:4},
     ]
   }
 }
