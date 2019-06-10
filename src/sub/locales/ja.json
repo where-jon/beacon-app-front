@@ -1211,6 +1211,8 @@
     "csvSameKey": "CSVファイルに重複する更新データがあります。",
     "csvInvalidLine": "CSVファイルに不正なデータがあります。",
     "csvNotFound": "選択したCSVファイルが存在しません。",
+    "csvNotMatchCharset": "CSVファイルの文字コードが異なります。",
+    "csvForMatchCharset": "「{charset}」を指定してください。",
     "csvLineStart": "［",
     "csvLineEnd": "］",
     "csvLine": "{line}行目",

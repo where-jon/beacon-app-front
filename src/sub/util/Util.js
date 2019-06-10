@@ -315,6 +315,14 @@ export const extraCheckCsvObj = (papaResult) => {
   return papaResult
 }
 
+export const analyseEncode = (str, charSet) => {
+  const strCharset = Encoding.detect(str)
+  if(!hasValue(str.split('').filter(val => getByteLength(val) > 1))){
+    return {match: true}
+  }
+  return {match: charSet == strCharset, charset: strCharset}
+}
+
 export const csv2Obj = (str, forceCharSet) => {
   str = str.replace('\xEF\xBB\xBF', '') // remove bom
   str = convert2Unicode(str, forceCharSet)
