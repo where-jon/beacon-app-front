@@ -1026,149 +1026,149 @@
         "OTHER": "その他"
       },
       "SENSOR_NONE": {
-        "0": "未設定"
+        "0": "0::未設定"
       },
       "SENSOR": {
-        "1": "温湿度",
-        "2": "人感センサ",
-        "3": "サーモパイル",
-        "4": "LED",
-        "5": "MEDiTAG",
-        "6": "マグネット",
-        "7": "ボタン",
-        "8": "圧力センサ"
+        "1": "1::温湿度",
+        "2": "2::人感センサ",
+        "3": "3::サーモパイル",
+        "4": "4::LED",
+        "5": "5::MEDiTAG",
+        "6": "6::マグネット",
+        "7": "7::ボタン",
+        "8": "8::圧力センサ"
       },
       "CATEGORY_TYPES": {
-        "1": "人",
-        "2": "物",
-        "3": "ゾーン"
+        "1": "1::人",
+        "2": "2::物",
+        "3": "3::ゾーン"
       },
       "NOTIFY_MIDIUM": {
-        "0": "メール",
-        "1": "Slack"
+        "0": "0::メール",
+        "1": "1::Slack"
       },
       "NOTIFY_STATE": {
-        "0": "TXボタン通知",
-        "1": "アラート系",
-        "2": "ユーザ登録・更新",
-        "3": "sos",
-        "4": "禁止区域通知"
+        "0": "0::TXボタン通知",
+        "1": "1::アラート系",
+        "2": "2::ユーザ登録・更新",
+        "3": "3::sos",
+        "4": "4::禁止区域通知"
       },
       "SUM_AXIS_FILL_GAP": {
-        "0": "しない",
-        "1": "する",
-        "2": "月日の場合検索期間すべて表示"
+        "0": "0::しない",
+        "1": "1::する",
+        "2": "2::月日の場合検索期間すべて表示"
       },
       "SUM_PARSENT_DIGIT": {
-        "1": "なし",
-        "10": "1桁",
-        "100":"2桁"
+        "1": "1::なし",
+        "10": "10::1桁",
+        "100":"100::2桁"
       },
       "THEME": {
-        "default": "コーポレート",
-        "earthcolor": "アースカラー",
-        "autumn": "オータム",
-        "vivid": "ビビッド",
-        "gray-scale": "グレースケール",
-        "indigo": "インディゴ",
-        "exeo": "エクシオマット"
+        "default": "default::コーポレート",
+        "earthcolor": "earthcolor::アースカラー",
+        "autumn": "autumn::オータム",
+        "vivid": "vivid::ビビッド",
+        "gray-scale": "gray-scale::グレースケール",
+        "indigo": "indigo::インディゴ",
+        "exeo": "exeo::エクシオマット"
       },
       "THERMOH_DISP": {
-        "icon": "不快指数により色が変化するアイコン",
-        "color": "温湿度表示付きアイコン"
+        "icon": "icon::不快指数により色が変化するアイコン",
+        "color": "color::温湿度表示付きアイコン"
       },
       "THERMOH_CALC": {
-        "1": "不快指数",
-        "2": "温度"
+        "1": "1::不快指数",
+        "2": "2::温度"
       },
       "THERMOH_PATTERN": {
-        "数値": "閾値。閾値未満の値はこの設定が適用。省略した場合は全ての設定が適用されなかった場合に適用。",
-        "OR": "設定した場合、閾値の判定を未満から以下に変更。",
-        "#を含めたカラーコード": "アイコン背景色。省略した場合は黒。",
-        "$を含めた文字列": "点滅パターン。WARNまたはDANGERから選択。省略した場合は点滅しない。"
+        "NUMBER": "数値::閾値。閾値未満の値はこの設定が適用。省略した場合は全ての設定が適用されなかった場合に適用。",
+        "OR": "OR::設定した場合、閾値の判定を未満から以下に変更。",
+        "COLOR": "#を含めたカラーコード::アイコン背景色。省略した場合は黒。",
+        "PATTERN": "$を含めた文字列::点滅パターン。WARNまたはDANGERから選択。省略した場合は点滅しない。"
       },
       "HUMIDITY_PATTERN": {
-        "数値": "閾値。",
-        "LESS": "閾値以下の湿度を計測した場合、警告を表示。",
-        "MORE": "閾値以上の湿度を計測した場合、警告を表示。"
+        "NUMBER": "数値::閾値。",
+        "LESS": "LESS::閾値以下の湿度を計測した場合、警告を表示。",
+        "MORE": "MORE::閾値以上の湿度を計測した場合、警告を表示。"
       },
       "SORT": {
-        "asc": "昇順",
-        "desc": "降順"
+        "asc": "asc::昇順",
+        "desc": "desc::降順"
       },
       "STAY_SUM_CALC_BY": {
-        "location": "配置場所",
-        "zone": "ゾーン"
+        "location": "location::配置場所",
+        "zone": "zone::ゾーン"
       },
       "POSITION_HISTORY": {
-        "potName": "人＆物の名前",
-        "major": "major",
-        "minor": "minor",
-        "deviceId": "デバイスID",
-        "deviceIdX": "デバイスID(16進数)",
-        "locationName": "EXB名",
-        "posId": "posId",
-        "areaName": "エリア名",
-        "x": "X座標",
-        "y": "Y座標"
+        "potName": "potName::人＆物の名前",
+        "major": "major::major",
+        "minor": "minor::minor",
+        "deviceId": "deviceId::デバイスID",
+        "deviceIdX": "deviceIdX::デバイスID(16進数)",
+        "locationName": "locationName::EXB名",
+        "posId": "posId::posId",
+        "areaName": "areaName::エリア名",
+        "x": "x::X座標",
+        "y": "y::Y座標"
       },
       "POS_LIST": {
-        "tel": "電話番号"
+        "tel": "tel::電話番号"
       },
       "TX": {
-        "major": "major",
-        "dispFlg": "表示設定",
-        "location": "固定位置表示",
-        "dispPir": "空室チェックで表示",
-        "dispAlways": "常時表示"
+        "major": "major::major",
+        "dispFlg": "dispFlg::表示設定",
+        "location": "location::固定位置表示",
+        "dispPir": "dispPir::空室チェックで表示",
+        "dispAlways": "dispAlways::常時表示"
       },
       "EXB": {
-        "deviceId": "デバイスID",
-        "deviceIdX": "デバイスID(16進数)",
-        "posId": "posId",
-        "zone": "ゾーン名"
+        "deviceId": "deviceId::デバイスID",
+        "deviceIdX": "deviceIdX::デバイスID(16進数)",
+        "posId": "posId::posId",
+        "zone": "zone::ゾーン名"
       },
       "USER": {
-        "email": "メールアドレス",
-        "name": "名前",
-        "region": "担当リージョン"
+        "email": "email::メールアドレス",
+        "name": "name::名前",
+        "region": "region::担当リージョン"
       },
       "POT": {
-        "ruby": "ルビ",
-        "post": "役職",
-        "tel": "電話番号",
-        "potCd": "コード",
-        "group": "グループ",
-        "category": "カテゴリ",
-        "description": "備考",
-        "user": "ユーザ登録機能"
+        "ruby": "ruby::ルビ",
+        "post": "post::役職",
+        "tel": "tel::電話番号",
+        "potCd": "potCd::コード",
+        "group": "group::グループ",
+        "category": "category::カテゴリ",
+        "description": "description::備考",
+        "user": "user::ユーザ登録機能"
       },
       "TX_MON": {
-        "btxId": "btxId",
-        "major": "major",
-        "minor": "minor",
-        "name": "名前",
-        "powerLevel": "電池レベル",
-        "locationName": "最終取得場所"
+        "btxId": "btxId::btxId",
+        "major": "major::major",
+        "minor": "minor::minor",
+        "name": "name::名前",
+        "powerLevel": "powerLevel::電池レベル",
+        "locationName": "locationName::最終取得場所"
       },
       "SENSOR_LIST": {
-        "posId": "posId",
-        "deviceId": "デバイスID",
-        "deviceIdX": "デバイスID(16進数)"
+        "posId": "posId::posId",
+        "deviceId": "deviceId::デバイスID",
+        "deviceIdX": "deviceIdX::デバイスID(16進数)"
       },
       "TXDETAIL": {
-        "minor": "minor",
-        "major": "major",
-        "name": "名前",
-        "group": "グループ",
-        "category": "カテゴリ",
-        "tel": "電話番号",
-        "timestamp": "最終取得日時"
+        "minor": "minor::minor",
+        "major": "major::major",
+        "name": "name::名前",
+        "group": "group::グループ",
+        "category": "category::カテゴリ",
+        "tel": "tel::電話番号",
+        "timestamp": "timestamp::最終取得日時"
       },
       "PROHIBIT_ALERT": {
-        "screen": "画面上に表示",
-        "mail": "メール通知",
-        "led": "LED点滅"
+        "screen": "screen::画面上に表示",
+        "mail": "mail::メール通知",
+        "led": "led::LED点滅"
       }
     }
   },
