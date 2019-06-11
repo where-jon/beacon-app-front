@@ -49,12 +49,8 @@ export default {
     ...mapState('app_service', [
       'pots',
       'roles',
-<<<<<<< HEAD
       'forceFetchPot',
       'updatedPotThumbnail',
-=======
-      'updatedThumbnail',
->>>>>>> develop/1.2
     ]),
   },
   methods: {
