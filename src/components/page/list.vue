@@ -116,7 +116,7 @@
           </div>
         </template>
         <template slot="thumbnail" slot-scope="row">
-          <img v-if="thumbnail(row.item)" :src="thumbnail(row.item)" height="70">
+          <img v-if="row.item.existThumbnail" :src="thumbnail(row.item)" height="70">
         </template>
         <!-- リージョン名 -->
         <template slot="regionNames" slot-scope="row">

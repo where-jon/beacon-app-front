@@ -430,23 +430,10 @@ export const loadAreaImage = async (areaId, force) => {
     console.log('FOUND ares', areaId)
     return
   }
-
   console.log('load ares', areaId)
   let base64 = await AppServiceHelper.fetchMapImage('/core/area/' + areaId + '/mapImage')
-  // let mimetype="image/png"
-  // base64 = "data:" + mimetype + ";base64," + base64
-  // HtmlUtil.toDataURL("http://localhost:8080/core/area/" + area.areaId + "/mapImage", (dataUrl) => {
-  let areaImages = _.cloneDeep(store.state.app_service.areaImages)
-  let areaImage = areaImages.find((areaImage) => areaImage.areaId == areaId)
-  if (areaImage) {
-    areaImage.mapImage = base64
-  }
-  else {
-    areaImages.push({areaId, mapImage: base64})
-  }
-  store.commit('app_service/replaceAS', {areaImages})    
-
-  // })
+  const areaImages = [{areaId, mapImage: base64}]
+  store.commit('app_service/replaceAS', {areaImages})
 }
 
 export const loadAreaImages = async () => {
