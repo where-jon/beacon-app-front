@@ -345,7 +345,7 @@ export default {
       }, disableErrorPopup)
     },
     onMapLoaded(size){
-      if(APP.USE_MEDITAG && this.meditagSensors){
+      if(APP.SENSOR.USE_MEDITAG && this.meditagSensors){
         const parent = document.getElementById('mapContainer')
         const rightPaneWidth = 300
         if(parent.clientWidth - size.width >= rightPaneWidth){
@@ -398,7 +398,7 @@ export default {
       }
       let magnet = null
       if (tx.sensorId === SENSOR.MAGNET) {
-        magnet = this.magnetSensors && this.magnetSensors.find((sensor) => sensor.btx_id == tx.btxId || sensor.btx_id == tx.btxId)
+        magnet = this.magnetSensors && this.magnetSensors.find((sensor) => sensor.btxid == tx.btxId || sensor.btx_id == tx.btxId)
         Util.debug('magnet', magnet)
       }
       let meditag = null
