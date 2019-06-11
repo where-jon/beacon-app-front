@@ -345,7 +345,7 @@ export default {
       }, disableErrorPopup)
     },
     onMapLoaded(size){
-      if(APP.USE_MEDITAG && this.meditagSensors){
+      if(APP.SENSOR.USE_MEDITAG && this.meditagSensors){
         const parent = document.getElementById('mapContainer')
         const rightPaneWidth = 300
         if(parent.clientWidth - size.width >= rightPaneWidth){
