@@ -511,10 +511,7 @@ export default {
     },
     doSubmit(evt) {
       if (this.form.thumbnail) {
-        this.replaceAS({updatedThumbnail: {
-          id: this.form.potId,
-          time: new Date().getTime()
-        }})
+        this.replaceAS({updatedPotThumbnail: this.form.potId})
       }
       this.onSubmit(evt)
     }

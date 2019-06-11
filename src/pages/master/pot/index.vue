@@ -50,7 +50,7 @@ export default {
       'pots',
       'roles',
       'forceFetchPot',
-      'updatedThumbnail',
+      'updatedPotThumbnail',
     ]),
   },
   methods: {
@@ -130,9 +130,8 @@ export default {
     },
     thumbnail(row) {
       let addUrlParam = ''
-      if (this.updatedThumbnail.id && this.updatedThumbnail.id === row.potId) {
-        addUrlParam = this.updatedThumbnail.time
-        this.replaceAS({updatedThumbnail: { id: null, time: null }})
+      if (this.updatedPotThumbnail && this.updatedPotThumbnail === row.potId) {
+        addUrlParam = new Date().getTime()
       }
       return row.existThumbnail ? this.thumbnailUrl.replace('{id}', row.potId) + addUrlParam : null
     },
