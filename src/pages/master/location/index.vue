@@ -11,7 +11,7 @@
         <span :title="vueSelectTitle(vueSelected.area)">
           <v-select v-model="vueSelected.area" :options="areaOptions" :disabled="settingStart" class="mr-2 mb-2 vue-options" :style="getVueSelectStyle()" :clearable="false">
             <template slot="selected-option" slot-scope="option">
-              {{ vueSelectCutOn(option) }}
+              {{ vueSelectCutOn(option, true) }}
             </template>
           </v-select>
         </span>
