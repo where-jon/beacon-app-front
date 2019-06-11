@@ -64,6 +64,7 @@
     "notReceive": "Poor",
     "absent": "Absent",
     "prohibit": "Prohibit",
+    "lost": "Lost",
     "charSet": "CSV character code",
     "null": "Unspecified",
     "undefined": "Undefined",
@@ -144,6 +145,7 @@
     "exbNotify": "EXB status alert",
     "txBatteryNotify": "TX battery status alert",
     "prohibitNotify": "Prohibited area alert",
+    "lostNotify": "Lost thing alert",
     "userRegNotify": "User registration alert",
     "sosNotify": "SOS button press notification",
 

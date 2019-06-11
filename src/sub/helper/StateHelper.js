@@ -374,6 +374,15 @@ const appStateConf = {
       }))
     }
   },
+  lostZones: {
+    path: '/core/zone/lostZones',
+    beforeCommit: (arr) => {
+      let result = arr.map((val) => (val? {
+        ...val,
+      }: null))
+      return result
+    }
+  },
   prohibits: {
     path: '/core/zone/prohibit',
     beforeCommit: (arr) => {

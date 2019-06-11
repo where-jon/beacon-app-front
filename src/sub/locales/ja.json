@@ -65,6 +65,7 @@
     "notReceive": "受信不良",
     "absent": "不在",
     "prohibit": "禁止区域",
+    "lost": "重要部品指定区域",
     "charSet": "CSV文字コード",
     "null": "未指定",
     "undefined": "未定義",
@@ -148,6 +149,7 @@
     "exbNotify": "EXB状態アラート",
     "txBatteryNotify": "TX電池状態アラート",
     "prohibitNotify": "進入禁止アラート",
+    "lostNotify": "重要部品持ち出しアラート",
     "userRegNotify": "ユーザ登録通知",
     "sosNotify": "SOSボタン押下通知",
 

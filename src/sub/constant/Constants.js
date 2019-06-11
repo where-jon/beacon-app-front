@@ -367,6 +367,7 @@ export const NOTIFY_STATE = {
       {value:'USER_REG_NOTIFY', text: i18n.t('label.userRegNotify'), index:2},
       {value:'TX_SOS_ALERT', text: i18n.t('label.sosNotify'), index:3},
       {value:'PROHIBIT_NOTIFY', text: i18n.t('label.prohibitNotify'), index:4},
+      {value:'LOST_NOTIFY', text: i18n.t('label.lostNotify'), index:5},
     ]
   }
 }
