@@ -84,8 +84,7 @@ export default {
     thumbnail(row) {
       let addUrlParam = ''
       if (this.updatedAreaThumbnail && this.updatedAreaThumbnail === row.areaId) {
-        addUrlParam = toString(new Date().getTime())
-        this.replaceAS({updatedAreaThumbnail: null})
+        addUrlParam = new Date().getTime()
       }
       return row.existThumbnail ? this.thumbnailUrl.replace('{id}', row.areaId) + addUrlParam : null
     },
