@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" :reload="true" :is-load="isLoad" @reload="fetchData" />
-    <div v-show="!isLoad" class="container">
+    <breadcrumb :items="items" :reload="true" :state="reloadState" @reload="fetchData" />
+    <div v-show="!reloadState.isLoad" class="container">
       <monitor-table type="position" :vue-table-mode="isDev" :all-count="allCount" :headers="headers" :datas="positions" :tr-class="getClass" />
     </div>
   </div>
@@ -10,6 +10,7 @@
 <script>
 import { mapState } from 'vuex'
 import * as StateHelper from '../../sub/helper/StateHelper'
+import * as ParamHelper from '../../sub/helper/ParamHelper'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
@@ -39,7 +40,7 @@ export default {
       items: ViewHelper.createBreadCrumbItems('monitor', 'position'),
       positions: [],
       headers: this.getHeaders(),
-      isLoad: false,
+      reloadState: ParamHelper.createReloadState(),
       csvHeaders: this.getCsvHeaders(),
     }
   },
@@ -151,7 +152,7 @@ export default {
         const exb = this.exbs.find((exb) => exb.location.posId == e.pos_id)
         return {
           ...e,
-          name: tx != null ? tx.txName : '—',
+          name: tx != null ? tx.potName : '—',
           finalReceiveLocation: exb? exb.location.locationName  : '',
           finalReceiveTimestamp: this.getTimestamp(e.updatetime),
           powerLevel: this.getPositionPowerLevelLabel(e.power_level),
@@ -194,7 +195,7 @@ export default {
             sRet.push({
               ...sensorHistory,
               btx_id: sensorHistory.btxid,
-              name: Util.getValue(tx, 'txName', ''),
+              name: Util.getValue(tx, 'potName', ''),
               powerLevel: this.getPositionPowerLevelLabel(sensorHistory.power_level),
               finalReceiveTimestamp: this.getTimestamp(EXCloudHelper.getDispTime(sensorHistory)),
               state: this.getStateLabel('tx', EXCloudHelper.getDispTime(sensorHistory)),

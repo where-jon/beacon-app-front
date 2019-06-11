@@ -1,6 +1,6 @@
 <template>
   <div id="mapContainer" class="container-fluid">
-    <breadcrumb :items="items" :reload="true" />
+    <breadcrumb :items="items" :reload="true" :state="reloadState" />
     <div>
       <alert :warn-message="warnMessage" :fix="fixHeight" :alert-style="alertStyle" />
 
@@ -14,7 +14,13 @@
                 </span>
               </b-form-row>
               <b-form-row>
-                <b-form-select v-model="selectedArea" :options="areaOptions" required class="ml-2" @change="changeArea" />
+                <span :title="vueSelectTitle(vueSelected.area)">
+                  <v-select v-model="vueSelected.area" :options="areaOptions" :clearable="false" class="ml-2 vue-options" :style="getVueSelectStyle()">
+                    <template slot="selected-option" slot-scope="option">
+                      {{ vueSelectCutOn(option) }}
+                    </template>
+                  </v-select>
+                </span>
               </b-form-row>
             </b-form-row>
           </b-form-group>
@@ -30,7 +36,7 @@
         </b-form>
       </b-row>
       <b-row class="mt-3">
-        <canvas v-show="isLoading || !isHeatmap" id="map" ref="map" />
+        <canvas v-show="isLoading || !isHeatmap" id="map" ref="map" @click="closeVueSelect" />
         <div v-show="isLoading || isHeatmap" id="heatmap" ref="heatmap" class="mx-auto" />
       </b-row>
       <b-modal v-model="isShownChart" :title="chartTitle" size="lg" header-bg-variant="light" hide-footer>
@@ -63,6 +69,7 @@ import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
 import ToolTip from '../../components/parts/toolTip.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
+import controlmixinVue from '../../components/mixin/controlmixin.vue'
 import cold from '../../assets/icon/cold.png'
 import hot from '../../assets/icon/hot.png'
 import comfort from '../../assets/icon/comfort.png'
@@ -73,7 +80,7 @@ export default {
     alert,
     ToolTip,
   },
-  mixins: [showmapmixin],
+  mixins: [showmapmixin, controlmixinVue],
   data() {
     return {
       items: ViewHelper.createBreadCrumbItems('main', 'thermohumidity'),
@@ -109,6 +116,7 @@ export default {
         'background-color': DISP.THERMOH.TOOLTIP_BGCOLOR,
         'color': DISP.THERMOH.TOOLTIP_COLOR,
       },
+      reloadState: {isLoad: false, initialize: false},
     }
   },
   computed: {
@@ -118,8 +126,17 @@ export default {
       }
     },
   },
+  watch: {
+    'vueSelected.area': {
+      handler: function(newVal, oldVal){
+        this.selectedArea = Util.getValue(newVal, 'value', null)
+        this.changeArea(this.selectedArea)
+      },
+      deep: true,
+    },
+  },
   mounted() {
-    this.fetchData()
+    // this.fetchData()
   },
   beforeDestroy(){
     this.removeTick()
@@ -182,8 +199,8 @@ export default {
     createWarnMessages(){
       this.setWarnDevices()
       const ret = []
-      const exbIdName = StateHelper.getDeviceIdName({exbId: true}, {ignorePrimaryKey: true})
-      const txIdName = StateHelper.getDeviceIdName({txId: true}, {ignorePrimaryKey: true, forceSensorName: true})
+      const exbIdName = StateHelper.getDeviceIdName({exbId: true})
+      const txIdName = StateHelper.getDeviceIdName({txId: true}, {forceSensorName: true})
       const pattern = this.humidityPatternConfig.more.sort((a, b) => {
         return a.base > b.base? -1: a.base < b.base? 1: 0
       }).concat(this.humidityPatternConfig.less.sort((a, b) => {
@@ -283,9 +300,9 @@ export default {
     },
     showMapImage() {
       this.isLoading = true
-      this.exbIcons = []
-      this.txIcons = []
       this.showMapImageDef(() => {
+        this.exbIcons = []
+        this.txIcons = []
         this.resetExb()
         this.resetTx()
         this.isLoading = false
@@ -428,7 +445,7 @@ export default {
       const pageElement = document.getElementById('bd-page')
       return {
         fontSize: Util.getFont2Size(DISP.THERMOH.TOOLTIP_FONT),
-        sensorName: DISP.THERMOH.TOOLTIP_ITEMS.TXNAME? device.txName? device.txName: device.locationName: '',
+        sensorName: DISP.THERMOH.TOOLTIP_ITEMS.TXNAME? device.potName? device.potName: device.locationName: '',
         temperature: DISP.THERMOH.TOOLTIP_ITEMS.TEMPERATURE? Util.formatTemperature(device.temperature) + this.$i18n.tnl('label.temperatureUnit'): '',
         humidity: DISP.THERMOH.TOOLTIP_ITEMS.HUMIDITY? Util.formatHumidity(device.humidity) + this.$i18n.tnl('label.humidityUnit'): '',
         description: DISP.THERMOH.TOOLTIP_ITEMS.DESCRIPTION? Util.cutOnLong(device.description, 10): '',
@@ -457,7 +474,7 @@ export default {
       this.chartTitle = this.$i18n.tnl('message.monthDayTemperature', {
         month: sensorData.month,
         day: sensorData.day,
-        name: device.txName? device.txName: device.locationName? device.locationName: '',
+        name: device.potName? device.potName: device.locationName? device.locationName: '',
         description: device.description? ` : ${Util.cutOnLong(device.description, 10)}`: ''
       })
     },
@@ -472,6 +489,7 @@ export default {
 
 <style scoped lang="scss">
 @import "../../sub/constant/config.scss";
+@import "../../sub/constant/vue.scss";
 
 ::-webkit-scrollbar { 
   display: none; 

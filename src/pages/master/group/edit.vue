@@ -5,10 +5,6 @@
       <alert :message="message" />
 
       <b-form v-if="show" @submit.prevent="onSubmit">
-        <b-form-group v-if="hasId">
-          <label v-t="'label.groupId'" />
-          <b-form-input v-model="form.groupId" type="text" readonly="readonly" />
-        </b-form-group>
         <b-form-group>
           <label v-t="'label.groupName'" />
           <input v-model="form.groupName" :readonly="!isEditable" type="text" maxlength="20" class="form-control" required>
@@ -76,9 +72,6 @@ export default {
     }
   },
   computed: {
-    hasId(){
-      return Util.hasValue(this.form.groupId)
-    },
     theme () {
       const theme = getButtonTheme()
       return 'outline-' + theme

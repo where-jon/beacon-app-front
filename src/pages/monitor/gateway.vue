@@ -1,13 +1,14 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" :reload="true" :is-load="isLoad" @reload="fetchData" />
-    <div v-show="!isLoad" class="container">
+    <breadcrumb :items="items" :reload="true" :state="reloadState" @reload="fetchData" />
+    <div v-show="!reloadState.isLoad" class="container">
       <monitor-table type="gw" :all-count="allCount" :headers="headers" :datas="gateways" :tr-class="getClass" />
     </div>
   </div>
 </template>
 
 <script>
+import * as ParamHelper from '../../sub/helper/ParamHelper'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
@@ -56,8 +57,7 @@ export default {
         'updated': 'updated',
         'state': 'state',
       },
-
-      isLoad: false,
+      reloadState: ParamHelper.createReloadState(),
     }
   },
   computed: {

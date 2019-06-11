@@ -24,6 +24,7 @@ export default {
       params: {
         name: 'template',
         id: 'notifyTemplateId',
+        confirmName: 'notifyTemplateKey',
         indexPath: '/master/notifyTemplate',
         editPath: '/master/notifyTemplate/edit',
         appServicePath: '/core/rcvexcloud',
@@ -34,7 +35,6 @@ export default {
           {key: 'notifyTo', sortable: true },
           {key: 'subject', sortable: true},
           {key: 'mailFrom', sortable: true},
-          {key: 'notifyTemplateId', sortable: true},
           {key: 'actions', thStyle: {width:'130px !important'} }
         ]),
         sortBy: 'notifyTemplateId',
@@ -46,14 +46,13 @@ export default {
   computed: {
     ...mapState('app_service', [
       'templates',
-      'forceFetchZone',
     ]),
   },
   methods: {
     async fetchData(payload) {
       try {
         this.showProgress()
-        await StateHelper.load('template', this.forceFetchTemplate)
+        await StateHelper.load('template')
         if (payload && payload.done) {
           payload.done()
         }

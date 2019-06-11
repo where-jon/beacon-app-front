@@ -2,12 +2,13 @@
 <script>
 import { mapState, mapMutations, mapActions } from 'vuex'
 import { Stage, Bitmap, Touch } from '@createjs/easeljs/dist/easeljs.module'
-import { APP, DISP, DEV } from '../../sub/constant/config.js'
+import { APP, DISP, DEV, APP_SERVICE, EXCLOUD } from '../../sub/constant/config.js'
 import { SHAPE, SENSOR, POSITION, TX } from '../../sub/constant/Constants'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as PositionHelper from '../../sub/helper/PositionHelper'
 import * as SensorHelper from '../../sub/helper/SensorHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
+import * as ParamHelper from '../../sub/helper/ParamHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as IconHelper from '../../sub/helper/IconHelper'
 import * as Util from '../../sub/util/Util'
@@ -39,9 +40,17 @@ export default {
         bgColor: DISP.TX.BGCOLOR,
         shape: SHAPE.CIRCLE,
       },
+      vueSelected: {
+        area: null,
+        group: null,
+        category: null,
+        tx: null,
+      },
       oldSelectedArea: null,
       areaOptions: [],
       loadComplete: false,
+      thumbnailUrl: APP_SERVICE.BASE_URL + EXCLOUD.POT_THUMBNAIL_URL,
+      preloadThumbnail: new Image(),
     }
   },
   computed: {
@@ -49,7 +58,6 @@ export default {
       'areas',
       'exbs',
       'txs',
-      'forceFetchTx',
     ]),
     ...mapState('main', [
       'orgPositions',
@@ -74,8 +82,8 @@ export default {
   async created() {
     await StateHelper.load('area')
     this.areaOptions = StateHelper.getOptionsFromState('area', false, true)
+    this.vueSelected.area = this.getInitAreaOption(true)
     this.selectedArea = this.getInitAreaOption()
-    await StateHelper.loadAreaImage(this.selectedArea)
     this.loadComplete = true
     if (this.$route.path.startsWith('/main') || this.$route.path.startsWith('/sum') || this.$route.path.startsWith('/develop/installation')) {
       let timer = 0
@@ -87,6 +95,7 @@ export default {
           clearTimeout(timer)
           return
         }
+        this.icons = {} // リサイズ時にアイコンキャッシュをクリア
         if (timer > 0) {
           clearTimeout(timer)
         } 
@@ -101,9 +110,6 @@ export default {
           this.reset()
           if (this.stage) {
             this.stage.removeAllChildren()
-            if (this.resetDetail) {
-              this.resetDetail()
-            }
             this.stage.update()
             this.$nextTick(async () => {
               await this.fetchData(null, true)
@@ -135,7 +141,10 @@ export default {
     ...mapMutations('main', [
       'replaceMain', 
     ]),
-    getInitAreaOption(){
+    getInitAreaOption(isVueSelect){
+      if(isVueSelect){
+        return ParamHelper.getVueSelectData(this.areaOptions, this.selectedArea, !Util.hasValue(this.selectedArea))
+      }
       return this.selectedArea? this.selectedArea : Util.hasValue(this.areaOptions)? this.areaOptions[0].value: null
     },
     mapImage() {
@@ -157,11 +166,9 @@ export default {
     async fetchAreaExbs(tx) {
       if (this.isFirstTime) {
         this.selectedArea = this.getInitAreaOption()
-        await StateHelper.loadAreaImage(this.selectedArea)
         await StateHelper.load('exb')
         if (tx) {
-          await StateHelper.load('tx', this.forceFetchTx)
-          StateHelper.setForceFetch('tx', false)
+          await StateHelper.load('tx')
         }
         this.isFirstTime = false
       }
@@ -172,7 +179,7 @@ export default {
       }
       if(!this.loadComplete){
         setTimeout(() => {
-          this.showMapImage(disableErrorPopup)
+          this.showMapImage && this.showMapImage(disableErrorPopup)
         }, 200)
         return
       }
@@ -198,7 +205,6 @@ export default {
         }
         return
       }
-
       const bg = new Image()
       bg.src = this.mapImage()
       bg.onload = (evt) => {
@@ -266,13 +272,6 @@ export default {
       canvas.style.width = String(size.width) + 'px'
       canvas.style.height = String(size.height) + 'px'
 
-      // Retina解像度対応
-      /*
-      if (devicePixelRatio > 0) {
-        canvas.style.width = String(canvas.width / devicePixelRatio) + 'px'
-        canvas.style.height = String(canvas.height / devicePixelRatio) + 'px'
-      }*/
-
       this.stage = new Stage('map')
       this.stage.canvas = canvas
       this.stage.mouseEnabled = true
@@ -298,14 +297,17 @@ export default {
     },
     async changeArea(val) {
       if (val) {
+        this.icons = {} // キャッシュをクリア
         await StateHelper.loadAreaImage(val)
         const area = _.find(this.areas, (area) => {
           return area.areaId == val
         })
         if (this.getMapImage(area.areaId)) {
-          this.reset()
+          if(!Util.getValue(this, 'selectedTx.btxId', null)){
+            this.reset()
+          }
           this.selectedArea = val
-          await this.fetchData()
+          this.fetchData && await this.fetchData()
         }
         else {
           Util.debug('No mapImage in changeArea.')
@@ -459,8 +461,8 @@ export default {
       const catOrGr = tx[DISP.TX.DISPLAY_PRIORITY[0]] || tx[DISP.TX.DISPLAY_PRIORITY[1]]
       const display = catOrGr && catOrGr.display || {}
       return {
-        color: display.color || DISP.TX.COLOR,
-        bgColor: display.bgColor || DISP.TX.BGCOLOR,
+        color: Util.addPrefix(display.color || DISP.TX.COLOR, '#'),
+        bgColor: Util.addPrefix(display.bgColor || DISP.TX.BGCOLOR, '#'),
         shape: display.shape || SHAPE.CIRCLE
       }
     },
@@ -511,38 +513,52 @@ export default {
       })
 
       const balloonClass = !btxId ? '': 'balloon' + (isAbove ? '-b': '-u')
-      const selectedTx = {
-        btxId,
-        minor: 'minor:' + btxId,
-        major: tx.major? 'major:' + tx.major : '',
-        // TX詳細ポップアップ内部で表示座標計算する際に必要
-        orgLeft: x * this.canvasScale + offsetX,
-        orgTop: y * this.canvasScale + offsetY,
-        isAbove: isAbove,
-        scale: DISP.TX.R_ABSOLUTE ? 1.0 : this.canvasScale,
-        containerWidth: containerParent.width,
-        containerHeight: containerParent.height,
-        class: balloonClass,
-        name: tx.potName ? tx.potName : tx.txName? tx.txName: '',
-        tel: tx.extValue ? tx.extValue.tel ? tx.extValue.tel : '': '',
-        timestamp: position ? this.getFinalReceiveTime(position.timestamp) : '',
-        thumbnail: tx.thumbnail ? tx.thumbnail : '',
-        category: tx.categoryName? tx.categoryName : '',
-        group: tx.groupName? tx.groupName : '',
-        bgColor: '#' + display.bgColor,
-        color: '#' + display.color,
-        isDispRight: isDispRight,
+      // サムネイル表示無しの設定になっているか？
+      const isNoThumbnail = APP.TXDETAIL.NO_UNREGIST_THUMB ? !tx.existThumbnail : false
+      const setupSelectedTx = (isDispThumbnail) => {
+        const selectedTx = {
+          btxId,
+          minor: 'minor:' + btxId,
+          major: tx.major? 'major:' + tx.major : '',
+          // TX詳細ポップアップ内部で表示座標計算する際に必要
+          orgLeft: x * this.canvasScale + offsetX,
+          orgTop: y * this.canvasScale + offsetY,
+          isAbove: isAbove,
+          scale: DISP.TX.R_ABSOLUTE ? 1.0 : this.canvasScale,
+          containerWidth: containerParent.width,
+          containerHeight: containerParent.height,
+          class: balloonClass,
+          name: tx.potName ? tx.potName : '',
+          tel: tx.extValue ? tx.extValue.tel ? tx.extValue.tel : '': '',
+          timestamp: position ? this.getFinalReceiveTime(position.timestamp) : '',
+          thumbnail: isDispThumbnail ? this.preloadThumbnail.src : '',
+          category: tx.categoryName? tx.categoryName : '',
+          group: tx.groupName? tx.groupName : '',
+          bgColor: display.bgColor,
+          color: display.color,
+          isDispRight: isDispRight,
+        }
+        this.replaceMain({selectedTx})
+        this.$nextTick(() => this.showReady = true)
+        if (this.isShowModal()) {
+          this.$root.$emit('bv::show::modal', 'detailModal')
+        }
       }
-      this.replaceMain({selectedTx})
-      this.$nextTick(() => this.showReady = true)
-      if (this.isShowModal()) {
-        this.$root.$emit('bv::show::modal', 'detailModal')
+
+      if (!isNoThumbnail) {
+        // サムネイル表示あり
+        this.preloadThumbnail.onload = () => setupSelectedTx(true)
+        this.preloadThumbnail.src = tx.existThumbnail ? this.thumbnailUrl.replace('{id}', tx.potId) : '/default.png'
+      } else {
+        // サムネイル表示無し
+        setupSelectedTx(false)
       }
+
     },
     createLabelInfo(pos, color){
       return {
         label: pos.label,
-        color: '#' + color,
+        color: color,
       }
     },
     createRectInfo(pos, bgColor){
@@ -651,7 +667,6 @@ export default {
             areaName: exb.areaName,
             locationName: exb.locationName,
             posId: exb.posId,
-            deviceNum: exb.deviceNum,
             deviceIdX: exb.deviceIdX,
             areaId: exb.areaId,
             zoneId: exb.zoneId,
@@ -688,7 +703,7 @@ export default {
             areaName: tx.areaName,
             locationName: tx.locationName,
             posId: tx.posId,
-            txName: tx.txName,
+            potName: tx.potName,
             sensorName: tx.sensorName,
             major: tx.major,
             minor: tx.minor,

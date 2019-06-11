@@ -30,13 +30,12 @@ export default {
         bulkEditPath: '/master/group/bulkedit',
         appServicePath: '/basic/group',
         csvOut: true,
-        custumCsvColumns: ['groupId', 'groupName', 'ruby', 'color', 'bgColor', 'display.shape', 'description'],
+        custumCsvColumns: ['groupName', 'ruby', 'color', 'bgColor', 'display.shape', 'description'],
         fields: ViewHelper.addLabelByKey(this.$i18n, [ 
           {key: 'groupName', sortable: true },
           {key: 'ruby', sortable: true },
           {key: 'style', label: 'display' } ,
           {key: 'description' },
-          {key: 'groupId', sortable: true },
           {key: 'actions', thStyle: {width:'130px !important'} }
         ]),
         sortBy: 'groupName',
@@ -54,6 +53,7 @@ export default {
   methods: {
     afterCrud(){
       StateHelper.setForceFetch('pot', true)
+      StateHelper.setForceFetch('tx', true)
     },
     async fetchData(payload) {
       try {

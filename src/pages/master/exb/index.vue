@@ -27,19 +27,15 @@ export default {
       params: {
         name: 'exb',
         id: 'exbId',
+        confirmName: Util.includesIgnoreCase(APP.EXB.WITH, 'deviceId')? 'deviceId': Util.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')? 'deviceIdX': 'locationName',
         indexPath: '/master/exb',
         editPath: '/master/exb/edit',
         bulkEditPath: '/master/exb/bulkedit',
         appServicePath: '/core/exb',
-        mainColumn: Util.includesIgnoreCase(APP.EXB.WITH, 'exbId')? {name: this.$i18n.tnl('label.exbId'), id: 'exbId'}:
-          Util.includesIgnoreCase(APP.EXB.WITH, 'deviceNum')? {name: this.$i18n.tnl('label.deviceNum'), id: 'deviceNum'}:
-            Util.includesIgnoreCase(APP.EXB.WITH, 'deviceId')? {name: this.$i18n.tnl('label.deviceId'), id: 'deviceId'}:
-              Util.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')? {name: this.$i18n.tnl('label.deviceIdX'), id: 'deviceIdX'}:
-                null,
         csvOut: true,
         custumCsvColumns: this.getCustumCsvColumns(),
         fields: this.getFields(),
-        sortBy: Util.includesIgnoreCase(APP.EXB.WITH, 'exbId')? 'exbId': Util.includesIgnoreCase(APP.EXB.WITH, 'deviceNum')? 'deviceNum': Util.includesIgnoreCase(APP.EXB.WITH, 'deviceId')? 'deviceId': Util.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')? 'deviceIdX': '',
+        sortBy: Util.includesIgnoreCase(APP.EXB.WITH, 'deviceId')? 'deviceId': Util.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')? 'deviceIdX': 'locationName',
         initTotalRows: this.$store.state.app_service.exbs.length
       },
       items: ViewHelper.createBreadCrumbItems('master', 'exb'),
@@ -49,7 +45,6 @@ export default {
     ...mapState('app_service', [
       'exbs',
       'exbImages',
-      'forceFetchExb',
     ]),
   },
   mounted() {
@@ -90,7 +85,7 @@ export default {
     async fetchData(payload) {
       try {
         this.showProgress()
-        await StateHelper.load('exb', this.forceFetchExb)
+        await StateHelper.load('exb')
         if (payload && payload.done) {
           payload.done()
         }

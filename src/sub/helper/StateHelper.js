@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import * as AppServiceHelper from './AppServiceHelper'
 import * as Util from '../util/Util'
-import { CATEGORY, SHAPE, NOTIFY_STATE, SYSTEM_ZONE_CATEGORY_NAME } from '../constant/Constants'
+import { CATEGORY, SHAPE, NOTIFY_STATE, SYSTEM_ZONE_CATEGORY_NAME} from '../constant/Constants'
 import { APP } from '../constant/config'
 
 
@@ -72,12 +72,12 @@ export const getSensorIdNames = (exbSensorList) => {
   return names.map((name) => name)
 }
 
-export const getDeviceIdName = (device, option = {ignorePrimaryKey: false, forceSensorName: false}) => {
+export const getDeviceIdName = (device, option = {forceSensorName: false}) => {
   if(device.exbId){
-    return Util.includesIgnoreCase(APP.EXB.WITH, 'exbId') && !option.ignorePrimaryKey? 'exbId': Util.includesIgnoreCase(APP.EXB.WITH, 'deviceNum')? 'deviceNum': Util.includesIgnoreCase(APP.EXB.WITH, 'deviceId')? 'deviceId': Util.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')? 'deviceIdX': 'exbId'
+    return Util.includesIgnoreCase(APP.EXB.WITH, 'deviceId')? 'deviceId': Util.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')? 'deviceIdX': 'locationName'
   }
   if(device.txId){
-    return option.forceSensorName? 'txName': Util.includesIgnoreCase(APP.TX.WITH, 'txId') && !option.ignorePrimaryKey? 'txId': APP.TX.BTX_MINOR != 'minor'? 'btxId': 'minor'
+    return option.forceSensorName? 'potName': APP.TX.BTX_MINOR != 'minor'? 'btxId': 'minor'
   }
   return null
 }
@@ -90,23 +90,20 @@ export const getDeviceId = (device) => {
   return ''
 }
 
-export const getTxIdName = (tx, idOnly = false) => {
+export const getTxIdName = (tx) => {
   if(!tx){
     return null
   }
-  const id = Util.includesIgnoreCase(APP.TX.WITH, 'txId') && tx.txId? tx.txId:
-    APP.TX.BTX_MINOR != 'minor' && tx.btxId? tx.btxId:
-      APP.TX.BTX_MINOR == 'minor' && tx.minor? tx.minor: null
-  return idOnly? id: id? `${id}(${Util.getValue(tx, 'txName', '')})`: null
+  return APP.TX.BTX_MINOR != 'minor'? tx.btxId? tx.btxId.toString(): '': tx.minor? tx.minor.toString(): ''
 }
 
-export const getTxIdNames = (txList, idOnly = false) => {
+export const getTxIdNames = (txList) => {
   if(!Util.hasValue(txList)){
     return null
   }
   const names = []
   txList.forEach((tx) => {
-    names.push(getTxIdName(tx, idOnly))
+    names.push(getTxIdName(tx))
   })
   return names.map((name) => name)
 }
@@ -130,7 +127,6 @@ export const getTxParams = (txList) => {
   txList.forEach((tx) => {
     txParams.push({
       txId: tx.txId,
-      txName: tx.txName,
       btxId: tx.btxId,
       minor: tx.minor
     })
@@ -157,6 +153,11 @@ export const getDispCategoryName = (category) => {
   return category.systemCategoryName? i18n.tnl('label.' + category.systemCategoryName): category.categoryName
 }
 
+export const getForceFetch = (name) => {
+  const storeName = `forceFetch${name.charAt(0).toUpperCase()}${name.slice(1)}`
+  return store.state.app_service[storeName]
+}
+
 export const setForceFetch = (name, force) => {
   const storeName = `forceFetch${name.charAt(0).toUpperCase()}${name.slice(1)}`
   store.commit('app_service/replaceAS', {[storeName]:force})
@@ -180,13 +181,12 @@ const appStateConf = {
   },
   exbs: {
     path: '/core/exb/withLocation',
-    sort: Util.includesIgnoreCase(APP.EXB.WITH, 'exbId')? 'exbId': Util.includesIgnoreCase(APP.EXB.WITH, 'deviceNum')? 'deviceNum': Util.includesIgnoreCase(APP.EXB.WITH, 'deviceId')? 'deviceId': Util.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')? 'deviceIdX': 'exbId',
+    sort: Util.includesIgnoreCase(APP.EXB.WITH, 'deviceId')? 'deviceId': Util.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')? 'deviceIdX': 'locationName',
     beforeCommit: (arr) => {
       return arr.map((exb) => {
         const location = exb.location
         return {
           ...exb,
-          deviceNum: exb.deviceId - store.state.currentRegion.deviceOffset,
           deviceIdX: exb.deviceId.toString(16).toUpperCase(),
           x: location? Math.round(location.x * 10)/10: null,
           y: location? Math.round(location.y * 10)/10: null,
@@ -199,12 +199,13 @@ const appStateConf = {
   },
   txs: {
     path: '/core/tx/withPot',
-    sort: Util.includesIgnoreCase(APP.TX.WITH, 'txId')? 'txId': APP.TX.BTX_MINOR != 'minor'? 'btxId': 'minor',
+    sort: APP.TX.BTX_MINOR != 'minor'? 'btxId': 'minor',
     beforeCommit: (arr) => {
       return arr.map((tx) => {
         return {
           ...tx,
           sensor: i18n.tnl('label.' + Util.getValue(tx, 'sensorName', 'normal')),
+          // potName: Util.getValue(tx, 'potTxList.0.potName', ''),
           dispPos: tx.disp & 1,
           dispPir: tx.disp & 2,
           dispAlways: tx.disp & 4,
@@ -228,20 +229,16 @@ const appStateConf = {
   },
 
   pots: {
-    path: '/basic/pot/withThumbnail',
+    path: '/basic/pot',
     sort: 'potName',
     beforeCommit: (arr) => {
-      let potImages = arr.map((val) => ({ id: val.potId, txId: val.txId, thumbnail: val.thumbnail}))
-      store.commit('app_service/replaceAS', {['potImages']:potImages})
-      const idNames = Util.includesIgnoreCase(APP.TX.WITH, 'txId')? 'txId': APP.TX.BTX_MINOR == 'minor'? 'minor': 'btxId'
+      const idNames = APP.TX.BTX_MINOR == 'minor'? 'minor': 'btxId'
       return arr.map((pot) => {
         return {
           ...pot,
           txIds: getTxIds(pot.txList),
           txIdNames: getTxIdNames(pot.txList),
-          txSortIds: getTxIdNames(pot.txList, true),
           txParams: getTxParams(pot.txList),
-          txName: pot.txName,
           btxId: pot.btxId,
           minor: pot.minor,
           ruby: pot.extValue? pot.extValue.ruby: null,
@@ -261,7 +258,7 @@ const appStateConf = {
         if(comp != 0){
           return comp
         }
-        return Util.compareArray(a.txParams.map(val => val.txName), b.txParams.map(val => val.txName))
+        return Util.compareArray(a.txParams.map(val => val.potName), b.txParams.map(val => val.potName))
       })// omit images to avoid being filtering target
     }
   },
@@ -298,7 +295,11 @@ const appStateConf = {
     path: '/meta/user',
     sort: Util.includesIgnoreCase(APP.USER.WITH, 'name')? 'name': 'loginId',
     beforeCommit: (arr) => {
-      return arr.map((val) => ({...val, roleName: val.role.roleName}))
+      return arr.map(val => ({
+        ...val,
+        roleName: val.role.roleName,
+        regionNames: Util.getValue(val, 'userRegionList', []).map(userRegion => Util.getValue(userRegion, 'regionName', '')).sort((a, b) => a < b? -1: 1),
+      }))
     }
   },
   newsList: {
@@ -309,6 +310,7 @@ const appStateConf = {
         ...val,
         newsDt: Util.formatDate(val.newsDate),
         dispState: i18n.tnl(`label.${val.dispFlg == 0? 'hide': 'display'}`),
+        newsContent: Util.cutOnLong(val.content, 16),
       }))
     }
   },
@@ -347,6 +349,10 @@ const appStateConf = {
           zoneId: val.zoneId,
           zoneName: val.zoneName,
           zoneType: val.zoneType,
+          x: val.x,
+          y: val.y,
+          w: val.w,
+          h: val.h,
           areaId: Util.hasValue(val.area)? val.area.areaId: null,
           areaName: Util.hasValue(val.area)? val.area.areaName: null,
           locationId: Util.hasValue(val.locationZoneList)? val.locationZoneList[0].locationZonePK.locationId: null,
@@ -391,6 +397,7 @@ const appStateConf = {
 }
 
 export const load = async (target, force) => {
+  const forceFetchTarget = target
   if (!target.endsWith('s')) {
     target = target.endsWith('y')? target.slice(0, -1) + 'ies' : target + 's'
   }else if(['news', 'topNews'].includes(target)){
@@ -402,7 +409,7 @@ export const load = async (target, force) => {
   let {path, sort, beforeCommit} = appStateConf[target]
   let arr = store.state.app_service[target]
   const expiredKey = `${target}Expired`
-  if (!arr || arr.length == 0 || force || Util.isExpired(store.state.app_service[expiredKey])) {
+  if (!arr || arr.length == 0 || force || getForceFetch(forceFetchTarget) || Util.isExpired(store.state.app_service[expiredKey])) {
     arr = await AppServiceHelper.fetchList(path, sort)
     if (beforeCommit) {
       arr = beforeCommit(arr)
@@ -410,6 +417,7 @@ export const load = async (target, force) => {
     store.commit('app_service/replaceAS', {[target]:arr})
     const expiredTime = (new Date()).getTime() + APP.SYS.STATE_EXPIRE_TIME
     store.commit('app_service/replaceAS', {[expiredKey]: expiredTime})
+    setForceFetch(forceFetchTarget, false)
   }
 }
 
@@ -436,46 +444,9 @@ export const loadAreaImage = async (areaId, force) => {
   else {
     areaImages.push({areaId, mapImage: base64})
   }
-  console.log(areaId, areaImages)
   store.commit('app_service/replaceAS', {areaImages})    
 
   // })
-}
-
-export const getProhibitData = async (position,prohibits) => {
-
-  if (!APP.POS.PROHIBIT_ALERT || !APP.POS.PROHIBIT_GROUPS) {
-    return null
-  }
-  const groups = APP.POS.PROHIBIT_GROUPS
-  return position.filter((pos) =>
-    prohibits.some((prohibitData) => {
-      if (pos.exb.areaId == prohibitData.areaId
-          && pos.exb.x >= prohibitData.x && pos.exb.x <= prohibitData.w
-          && pos.exb.y >= prohibitData.y && pos.exb.y <= prohibitData.h) {
-        const groupCheck = groups.some((group) => pos.tx.group.groupId == group)
-        groupCheck ? pos.zoneName = prohibitData.zoneName : null
-        return groupCheck
-      }
-    })).map((position) => {
-    return {
-      minor: position.minor,
-      potName: position.tx.potTxList[0].pot.potName,
-      areaName: position.exb.areaName,
-      zoneName: position.zoneName
-    }})
-}
-
-export const getProhibitMessage = async (message,prohibitData) => {
-
-  if (!APP.POS.PROHIBIT_ALERT || !APP.POS.PROHIBIT_GROUPS) {
-    return ''   // message空
-  }
-
-  const labelArea = i18n.tnl('label.Area')
-  const labelpotName = i18n.tnl('label.potName')
-  const labelZone =  i18n.tnl('label.zoneName')
-  return prohibitData.map((data) => `< ${labelpotName} : ${data.potName} ${labelArea} : ${data.areaName} ${labelZone} : ${data.zoneName}>`).join(' ')
 }
 
 export const loadAreaImages = async () => {
@@ -549,33 +520,6 @@ export const getOptionsFromState = (key, textField, notNull, filterCallback) => 
   Util.debug('empty add: ', options)
 
   return options
-}
-
-export const sortCompareArray = (aAry, bAry) => {
-  if(!Util.hasValue(aAry) && !Util.hasValue(bAry)){
-    return 0
-  }
-  if(!Util.hasValue(aAry)){
-    return -1
-  }
-  if(!Util.hasValue(bAry)){
-    return 1
-  }
-
-  const max = aAry.length < bAry.length? bAry.length: aAry.length
-  for(let idx = 0; idx < max; idx++){
-    if(aAry.length <= idx){
-      return -1
-    }
-    if(bAry.length <= idx){
-      return 1
-    }
-    if(aAry[idx] == bAry[idx]){
-      continue
-    }
-    return aAry[idx] < bAry[idx]? -1: 1
-  }
-  return 0
 }
 
 export const bulkErrorCheck = (entity, headerName, val, isNumberColumn) => {

@@ -8,7 +8,7 @@ import { getButtonTheme } from '../../sub/helper/ThemeHelper'
 export default {
   computed: {
     groupOptions() {
-      return StateHelper.getOptionsFromState('group')
+      return StateHelper.getOptionsFromState('group', false, true)
     },
   },
   methods: {
@@ -32,8 +32,15 @@ export default {
       'showProgress',
       'hideProgress',
     ]),
+    switchMessageType(showMessageType = null){
+      this.replace({showInfo: false})
+      this.replace({showAlert: false})
+      if(showMessageType){
+        this.replace({[showMessageType]: true})
+      }
+    },
     getCategoryOptions(includeTypes = []) {
-      return StateHelper.getOptionsFromState('category').filter((option) => {
+      return StateHelper.getOptionsFromState('category', false, true).filter((option) => {
         const category = this.$store.state.app_service.categories.find((cat) => cat.categoryId == option.value)
         return option.value == null || category && (!Util.hasValue(includeTypes) || includeTypes.includes(category.categoryType))
       })

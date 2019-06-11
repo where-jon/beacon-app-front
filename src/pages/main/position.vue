@@ -1,26 +1,46 @@
 <template>
   <div id="mapContainer" class="container-fluid" @click="resetDetail">
-    <breadcrumb :items="items" :extra-nav-spec="extraNavSpec" :reload="true" :auto-reload="false" :short-name="shortName" :legend-items="legendItems" />
-    <prohibitAlert :messagelist="message" />
+    <breadcrumb :items="items" :extra-nav-spec="extraNavSpec" :reload="true" :state="reloadState" :auto-reload="false" :short-name="shortName" :legend-items="legendItems" />
+    <b-alert v-model="showDismissibleAlert" variant="danger" dismissible>
+      {{ $t('label.detectedProhibitZone') + ' : ' }}{{ message }}
+    </b-alert>
     <b-row class="mt-2">
       <b-form inline class="mt-2" @submit.prevent>
         <b-form-row class="my-1 ml-2 ml-sm-0">
           <label class="ml-sm-4 ml-2 mr-1">
             {{ $t('label.area') }}
           </label>
-          <b-form-select v-model="selectedArea" :options="areaOptions" required class="ml-1 mr-2" @change="changeArea" />
+          <span :title="vueSelectTitle(vueSelected.area)">
+            <v-select v-model="vueSelected.area" :options="areaOptions" :clearable="false" class="ml-1 mr-2 vue-options" :style="getVueSelectStyle()">
+              <template slot="selected-option" slot-scope="option">
+                {{ vueSelectCutOn(option) }}
+              </template>
+            </v-select>
+          </span>
         </b-form-row>
         <b-form-row v-if="useGroup" class="my-1 ml-2 ml-sm-0">
           <label class="ml-sm-4 ml-2 mr-1">
             {{ $t('label.group') }}
           </label>
-          <b-form-select v-model="selectedGroup" :options="groupOptions" class="ml-1 mr-2" />
+          <span :title="vueSelectTitle(vueSelected.group)">
+            <v-select v-model="vueSelected.group" :options="groupOptions" class="ml-1 mr-2 vue-options" :style="getVueSelectStyle()">
+              <template slot="selected-option" slot-scope="option">
+                {{ vueSelectCutOn(option) }}
+              </template>
+            </v-select>
+          </span>
         </b-form-row>
         <b-form-row v-if="useCategory" class="my-1 ml-2 ml-sm-0">
           <label class="ml-sm-4 ml-2 mr-1">
             {{ $t('label.category') }}
           </label>
-          <b-form-select v-model="selectedCategory" :options="categoryOptionsForPot" class="ml-1 mr-2" />
+          <span :title="vueSelectTitle(vueSelected.category)">
+            <v-select v-model="vueSelected.category" :options="categoryOptionsForPot" class="ml-1 mr-2 vue-options" :style="getVueSelectStyle()">
+              <template slot="selected-option" slot-scope="option">
+                {{ vueSelectCutOn(option) }}
+              </template>
+            </v-select>
+          </span>
         </b-form-row>
         <b-form-row v-if="showDetected" class="my-1 ml-2 ml-sm-0">
           <span class="ml-sm-4 ml-2 mr-1">
@@ -36,11 +56,11 @@
               {{ $t('label.dispRssi') }}
             </b-form-checkbox>
             <b-button class="ml-sm-4 ml-2 mr-1" :pressed.sync="isPause" :variant="getButtonTheme()">
-              <i v-if="!isPause" class="fas fa-pause" />
+              <font-awesome-icon v-if="!isPause" icon="pause" />
               <span v-if="!isPause">
                 &nbsp;{{ $t('label.reload') }}{{ $t('label.pause') }}
               </span>
-              <i v-if="isPause" class="fas fa-play" />
+              <font-awesome-icon v-if="isPause" icon="play" />
               <span v-if="isPause">
                 &nbsp;{{ $t('label.reload') }}{{ $t('label.restart') }}
               </span>
@@ -50,9 +70,9 @@
       </b-form>
     </b-row>
     <b-row class="mt-3">
-      <canvas v-if="!showMeditag" id="map" ref="map" />
+      <canvas v-if="!showMeditag" id="map" ref="map" @click="closeVueSelect" />
       <b-col v-if="showMeditag">
-        <canvas id="map" ref="map" />
+        <canvas id="map" ref="map" @click="closeVueSelect" />
       </b-col>
       <div v-if="showMeditag && isShowRight && hasMeditagSensors()" class="rightPane">
         <sensor :sensors="meditagSensors" :is-popup="false" class="rightPaneChild" />
@@ -75,9 +95,9 @@ import * as SensorHelper from '../../sub/helper/SensorHelper'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
+import * as ParamHelper from '../../sub/helper/ParamHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as Util from '../../sub/util/Util'
-import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import txdetail from '../../components/parts/txdetail.vue'
 import { APP, DISP } from '../../sub/constant/config'
 import { SENSOR, EXTRA_NAV, CATEGORY, TX } from '../../sub/constant/Constants'
@@ -87,16 +107,15 @@ import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import listmixin from '../../components/mixin/listmixin.vue'
 import sensor from '../../components/parts/sensor.vue'
 import commonmixinVue from '../../components/mixin/commonmixin.vue'
-import prohibitAlert from '../../components/page/prohibitAlert.vue'
+import controlmixinVue from '../../components/mixin/controlmixin.vue'
 
 export default {
   components: {
     'sensor': sensor,
     'txdetail': txdetail,
     breadcrumb,
-    prohibitAlert
   },
-  mixins: [showmapmixin, listmixin, commonmixinVue],
+  mixins: [showmapmixin, listmixin, commonmixinVue, controlmixinVue],
   props: {
     isInstallation: {
       default: false,
@@ -121,13 +140,16 @@ export default {
       isPause: false,
       firstTime: true,
       message: '',
-      prohibitData : null,
+      showDismissibleAlert: false,
+      prohibitDetectList : null,
       icons: {},
       txsMap: {},
       exbsMap: {},
       prohibitInterval:null,
       isShowRight: false,
-      isShowBottom: false
+      isShowBottom: false,
+      isMounted: false,
+      reloadState: {isLoad: false},
     }
   },
   computed: {
@@ -139,13 +161,12 @@ export default {
       'groups',
       'prohibits',
       'txs',
-      'forceFetchTx',
     ]),
     ...mapState([
       'reload',
     ]),
     categoryOptionsForPot() {
-      return StateHelper.getOptionsFromState('category', false, false,
+      return StateHelper.getOptionsFromState('category', false, true,
         category => CATEGORY.POT_AVAILABLE.includes(category.categoryType)
       )
     },
@@ -164,6 +185,27 @@ export default {
       this.reloadSelectedTx = {}
       this.showTxAll()
     },
+    'vueSelected.area': {
+      handler: function(newVal, oldVal){
+        this.selectedArea = Util.getValue(newVal, 'value', null)
+        if(this.isMounted){
+          this.changeArea(this.selectedArea)
+        }
+      },
+      deep: true,
+    },
+    'vueSelected.category': {
+      handler: function(newVal, oldVal){
+        this.selectedCategory = Util.getValue(newVal, 'value', null)
+      },
+      deep: true,
+    },
+    'vueSelected.group': {
+      handler: function(newVal, oldVal){
+        this.selectedGroup = Util.getValue(newVal, 'value', null)
+      },
+      deep: true,
+    },
     modeRssi: function(newVal, oldVal) {
       this.$emit('rssi', newVal)
     },
@@ -180,14 +222,21 @@ export default {
     await StateHelper.load('category')
     await StateHelper.load('group')
     await StateHelper.load('prohibit')
+    await StateHelper.load('pot')
     await StateHelper.load('tx')
     await StateHelper.load('exb')
-    //document.addEventListener('touchstart', this.touchEnd)
     this.txs.forEach((t) => this.txsMap[t.btxId] = t)
     this.exbs.forEach((e) => this.exbsMap[e.posId] = e)
-    await this.fetchData()
+    // this.fetchData()は'vueSelected.area'をwatchしている箇所で実行している。
+    // 以下は二重実行を防ぐためコメントアウト
+    // await this.fetchData()
+    this.vueSelected.category = ParamHelper.getVueSelectData(this.categoryOptionsForPot, this.selectedCategory, false)
+    this.vueSelected.group = ParamHelper.getVueSelectData(this.groupOptions, this.selectedGroup, false)
     this.startPositionAutoReload()
     this.startOtherAutoReload()
+
+    this.changeArea(this.selectedArea)
+    this.isMounted = true
   },
   beforeDestroy() {
     this.resetDetail()
@@ -230,7 +279,8 @@ export default {
       return Util.hasValue(this.meditagSensors)
     },
     async fetchPositionData(payload) {
-      await this.fetchAreaExbs(true)
+      // await this.fetchAreaExbs(true)
+      await this.fetchAreaExbs(false)
 
       let alwaysTxs = this.txs.filter((tx) => {
         return tx.areaId == this.selectedArea && Util.bitON(tx.disp, TX.DISP.ALWAYS)
@@ -263,6 +313,7 @@ export default {
       }
     },
     async fetchData(payload, disableErrorPopup) {
+      this.showReady = false
       const disabledProgress = Util.getValue(payload, 'disabledProgress', false)
       try {
         this.reloadSelectedTx = this.reload? this.selectedTx: {}
@@ -271,8 +322,7 @@ export default {
           this.showProgress()
         }
         if (!this.selectedTx.btxId) {
-          await StateHelper.load('tx', this.forceFetchTx)
-          StateHelper.setForceFetch('tx', false)
+          await StateHelper.load('tx')
         }
         this.$nextTick(() => {
           this.loadLegends()
@@ -305,15 +355,13 @@ export default {
         disabledOther: Util.getValue(payload, 'disabledOther', false),
         disabledProgress: Util.getValue(payload, 'disabledProgress', false),
       }
-      clearInterval(this.prohibitInterval)
       this.showMapImageDef(async () => {
         if(!cPayload.disabledProgress){
           this.showProgress()
         }
-        const reloadButton = document.getElementById('reloadIcon')
+        const reloadButton = document.getElementById('spinner')
         if(!this.firstTime && reloadButton){
-          HtmlUtil.removeClass({target: reloadButton}, 'rotateStop')
-          HtmlUtil.addClass({target: reloadButton}, 'rotate')
+          this.reloadState.isLoad = true
         }
         if(!this.selectedTx.btxId){
           await this.fetchPositionData(cPayload)
@@ -330,13 +378,10 @@ export default {
           this.stage.update()
         }
         this.setPositionedExb()
-        this.prohibitData = await StateHelper.getProhibitData(this.getPositions(),this.prohibits)
-        this.message = await StateHelper.getProhibitMessage(this.message,this.prohibitData)
+        this.setProhibit('pos') // listmixin呼び出し
         this.showTxAll()
-        // this.prohibitInterval = setInterval(this.twinkle,DISP.PROHIBIT_TWINKLE_TIME) TODO: Violation発生
         if(!this.firstTime && reloadButton){
-          HtmlUtil.removeClass({target: reloadButton}, 'rotate')
-          HtmlUtil.addClass({target: reloadButton}, 'rotateStop')
+          this.reloadState.isLoad = false
         }
         this.firstTime = false
         if(!cPayload.disabledProgress){
@@ -345,7 +390,7 @@ export default {
       }, disableErrorPopup)
     },
     onMapLoaded(size){
-      if(APP.USE_MEDITAG && this.meditagSensors){
+      if(APP.SENSOR.USE_MEDITAG && this.meditagSensors){
         const parent = document.getElementById('mapContainer')
         const rightPaneWidth = 300
         if(parent.clientWidth - size.width >= rightPaneWidth){
@@ -366,6 +411,7 @@ export default {
         return
       }
       this.txCont.removeAllChildren()
+      this.stage.update()
       this.disableExbsCheck()
       this.detectedCount = 0 // 検知カウントリセット
       let position = []
@@ -407,15 +453,15 @@ export default {
         Util.debug('meditag', meditag)
       }
       const display = this.getDisplay(tx)
-      const color = meditag? '000': this.isMagnetOn(magnet)? display.bgColor : display.color
-      const bgColor = meditag? meditag.bg.substr(1): this.isMagnetOn(magnet)? display.color: display.bgColor
+      const color = meditag? '#000': this.isMagnetOn(magnet)? display.bgColor : display.color
+      const bgColor = meditag? meditag.bg: this.isMagnetOn(magnet)? display.color: display.bgColor
       
       // フリーアドレスTXが不在エリア検知の場合は以降処理を行わない
-      if (exb.isAbsentZone && !this.isFixTx(tx)) {
+      if (exb && exb.isAbsentZone && !this.isFixTx(tx)) {
         return
       }
 
-      if ((exb.isAbsentZone || this.isOtherFloorFixTx(tx, exb)) && this.isFixTx(tx)) {
+      if ((exb && exb.isAbsentZone || this.isOtherFloorFixTx(tx, exb)) && this.isFixTx(tx)) {
         pos.transparent = true
       }
 
@@ -430,6 +476,8 @@ export default {
         txBtn.x = pos.x
         txBtn.y = pos.y
       }
+      // プロとするTXアイコンが進入禁止区域に入ってるかチェック
+      txBtn.prohibit  = this.prohibitDetectList ? this.prohibitDetectList.some((data) => data.minor == pos.minor):false
 
       if (this.isFixTx(tx)) {
         Util.debug('fixed location', tx)
@@ -442,7 +490,6 @@ export default {
         this.showDetail(txBtn.txId, txBtn.x, txBtn.y)
       }
       this.txCont.addChild(txBtn)
-      txBtn.prohibit = this.prohibitData? this.prohibitData.some((data) => data.minor == pos.minor):false
       this.stage.update()
       this.detectedCount++  // 検知数カウント増加
     },
@@ -453,10 +500,10 @@ export default {
       this.resetDetail()
     },
     isFixTx (tx) {
-      return tx.location && tx.location.areaId == this.selectedArea && tx.location.x * tx.location.y > 0
+      return tx && tx.location && tx.location.areaId == this.selectedArea && tx.location.x * tx.location.y > 0
     },
     isOtherFloorFixTx (tx, exb) {
-      return tx.location && tx.location.areaId != exb.location.areaId && tx.location.x * tx.location.y > 0
+      return tx && tx.location && exb && exb.location && tx.location.areaId != exb.location.areaId && tx.location.x * tx.location.y > 0
     }
   }
 }
@@ -464,6 +511,7 @@ export default {
 
 <style scoped lang="scss">
 @import "../../sub/constant/config.scss";
+@import "../../sub/constant/vue.scss";
 
 $right-pane-width-px: $right-pane-width * 1px;
 $right-pane-maxwidth-px: ($right-pane-width + 100) * 1px;

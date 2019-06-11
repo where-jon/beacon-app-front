@@ -8,12 +8,12 @@
 <script>
 import { mapState } from 'vuex'
 import _ from 'lodash'
-import * as Util from '../../../sub/util/Util'
+import { BULK, CATEGORY } from '../../../sub/constant/Constants'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
-import { CATEGORY } from '../../../sub/constant/Constants'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import * as BulkHelper from '../../../sub/helper/BulkHelper'
 
 export default {
   components: {
@@ -58,29 +58,30 @@ export default {
     },
     afterCrud(){
       StateHelper.setForceFetch('pot', true)
+      StateHelper.setForceFetch('tx', true)
+      StateHelper.setForceFetch('zone', true)
     },
     async save(bulkSaveFunc) {
-      const MAIN_COL = 'categoryId'
-      const NUMBER_TYPE_LIST = ['categoryType']
       const DISPLAY_COL = ['shape', 'color', 'bgColor']
-      await bulkSaveFunc(MAIN_COL, NUMBER_TYPE_LIST, null, (entity, headerName, val, dummyKey) => {
-        if(headerName == MAIN_COL){
-          entity.categoryId = Util.hasValue(val)? Number(val): --dummyKey  
+      await bulkSaveFunc(BULK.PRIMARY_KEY, null, null, (entity, headerName, val, dummyKey) => {
+        if (BulkHelper.isPrimaryKeyHeader(headerName)){
+          BulkHelper.setPrimaryKey(entity, this.id, val, dummyKey--)
+          return dummyKey
         }
-        else if (_.includes(DISPLAY_COL, headerName)) {
+        if (_.includes(DISPLAY_COL, headerName)) {
           if (!entity.display) {
             entity.display = {}
           }
           entity.display[headerName] = val
+          return dummyKey
         }
-        else if(headerName == 'categoryTypeName'){
-          const categoryType = this.categoryTypes.find((type) => type.text == val)
+        if(headerName == 'categoryTypeName'){
+          const categoryType = this.categoryTypes.find(type => type.text == val)
           entity.categoryType = categoryType? categoryType.value: 0
           entity.categoryTypeName = val
+          return dummyKey
         }
-        else{
-          entity[headerName] = val
-        }
+        entity[headerName] = val
         return dummyKey
       }, (entity, dummyKey) => this.resetStyle(entity, dummyKey))
     },

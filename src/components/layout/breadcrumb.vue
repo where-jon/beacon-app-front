@@ -27,13 +27,13 @@
           <b-dropdown-item v-for="extraNav in availableNavSpec" :key="extraNav.key"
                            :class="extNavClasses" @click="move(extraNav.path)"
           >
-            <i :class="extraNav.icon" class="mx-1" />&nbsp;{{ $t('label.' + extraNav.key) }}
+            <font-awesome-icon :icon="['fas', extraNav.icon]" fixed-width />&nbsp;{{ $t('label.' + extraNav.key) }}
           </b-dropdown-item>
         </b-nav-item-dropdown>
       </div>
       <div class="col-auto reload-button-container ">
         <a v-if="reload" id="reload" href="#" @click="onClickReload">
-          <i id="reloadIcon" :class="classes" title="リロード" />
+          <font-awesome-icon id="spinner" icon="sync-alt" :class="state.isLoad ? 'fa-spin' : ''" />
         </a>
       </div>
     </div>
@@ -47,6 +47,7 @@
 
 import { getThemeColor, getThemeClasses } from '../../sub/helper/ThemeHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
+import * as Util from '../../sub/util/Util'
 import * as AuthHelper from '../../sub/helper/AuthHelper'
 import { EventBus } from '../../sub/helper/EventHelper'
 import { APP } from '../../sub/constant/config'
@@ -69,9 +70,9 @@ export default {
       type: Boolean,
       default: true
     },
-    isLoad: {
-      type: Boolean,
-      default: false
+    state: {
+      type: Object,
+      default: () => ({ isLoad: false })
     },
     extraNavSpec: {
       type: Array,
@@ -101,9 +102,6 @@ export default {
     loginId() {
       return this.$store.state.loginId
     },
-    classes() {
-      return 'fas fa-sync-alt'
-    },
     extNavClasses() {
       const theme = getThemeClasses()
       return _.findKey(theme, (val) => {return val})
@@ -120,7 +118,7 @@ export default {
         }
         return false
       })
-    }
+    },
   },
   mounted() {
     this.setDropdownMenuColor()
@@ -132,9 +130,12 @@ export default {
       HtmlUtil.registerInterval(()=>{
         this.$store.commit('replace', {reload: true})
         const windowScroll = {x: window.pageXOffset , y: window.pageYOffset}
-        reload.click()
+        this.onClickReload()
         window.scroll(windowScroll.x, windowScroll.y)
-      }, APP.COMMON.AUTO_RELOAD)  
+      }, APP.COMMON.AUTO_RELOAD)
+      if(Util.getValue(this.state, 'initialize', true)){
+        this.onClickReload()
+      }
     }
   },
   methods: {
@@ -148,12 +149,11 @@ export default {
       this.$router.push(page)
     },
     onClickReload(e) {
-      HtmlUtil.removeClass(e, 'rotateStop')
-      HtmlUtil.addClass(e, 'rotate')
+      this.state.isLoad = true
+      const that = this
       EventBus.$emit(this.reloadEmitName, {
         done() {
-          HtmlUtil.removeClass(e, 'rotate')
-          HtmlUtil.addClass(e, 'rotateStop')
+          that.state.isLoad = false
           AuthHelper.checkSession()
         }
       })
@@ -217,14 +217,6 @@ export default {
 
 <style lang="scss">
   @import "../../sub/constant/config.scss";
-
-  .rotate {
-    animation: fa-spin 2s infinite linear;
-  }
-
-  .rotateStop {
-    animation-name: none !important;
-  }
 
   div.breadcrumb.navigation {
     margin-top: 20px;

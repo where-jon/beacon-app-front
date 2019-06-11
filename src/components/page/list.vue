@@ -21,7 +21,16 @@
             <b-form-row v-for="item of extraFilterSpec" :key="item.key" class="mr-4 mb-2">
               <b-form-row v-if="item.show">
                 <label v-t="'label.' + item.key" for="item.key" class="mr-2" />
-                <b-input-group>
+                <b-input-group v-if="useVueSelect(item.key)">
+                  <span :title="vueSelectTitle(vueSelected[item.key])">
+                    <v-select v-model="vueSelected[item.key]" :input-id="item.key" :options="item.options" class="extra-filter vue-options" :style="getVueSelectStyle()">
+                      <template slot="selected-option" slot-scope="option">
+                        {{ vueSelectCutOn(option) }}
+                      </template>
+                    </v-select>
+                  </span>
+                </b-input-group>
+                <b-input-group v-else>
                   <b-form-select :id="item.key" v-model="filter.extra[item.key]" :options="item.options"
                                  class="extra-filter" @change="item.change"
                   />
@@ -108,6 +117,14 @@
         </template>
         <template slot="thumbnail" slot-scope="row">
           <img v-if="thumbnail(row.item)" :src="thumbnail(row.item)" height="70">
+        </template>
+        <!-- リージョン名 -->
+        <template slot="regionNames" slot-scope="row">
+          <div>
+            <span v-for="(regionName, index) in row.item.regionNames" :key="index" class="row">
+              {{ regionName }}
+            </span>
+          </div>
         </template>
         <!-- tx名 -->
         <template slot="txIdName" slot-scope="row">
@@ -207,9 +224,11 @@ import * as MenuHelper from '../../sub/helper/MenuHelper'
 import * as DetectStateHelper from '../../sub/helper/DetectStateHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
+import * as SortUtil from '../../sub/util/SortUtil'
 import { getButtonTheme } from '../../sub/helper/ThemeHelper'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import commonmixinVue from '../mixin/commonmixin.vue'
+import controlmixinVue from '../mixin/controlmixin.vue'
 import { CATEGORY, SENSOR } from '../../sub/constant/Constants'
 import * as AuthHelper from '../../sub/helper/AuthHelper'
 import alert from '../parts/alert.vue'
@@ -220,7 +239,7 @@ export default {
     alert,
     settinginput,
   },
-  mixins: [commonmixinVue], // not work
+  mixins: [commonmixinVue, controlmixinVue], // not work
   props: {
     params: {
       type: Object,
@@ -273,6 +292,13 @@ export default {
         del: false,
         allShow: false,
       },
+      vueSelected: {
+        category: null,
+        group: null,
+        area: null,
+        zone: null,
+        zoneCategory: null,
+      },
       emptyMessage: this.$i18n.tnl('message.listEmpty'),
       modalInfo: { title: '', content: '', id:'' },
       totalRows: this.params.initTotalRows,
@@ -283,7 +309,6 @@ export default {
       sortDesc: false,
       sortCompare: (aData, bData, key) => this.sortCompareCustom(aData, bData, key),
       login: JSON.parse(window.localStorage.getItem('login')),
-      switchReload: false,
       ...this.params
     }
   },
@@ -341,6 +366,7 @@ export default {
       'categories',
       'groups',
       'areas',
+      'regions',
       'listMessage',
       'editPage',
       'moveEditPage',
@@ -350,7 +376,7 @@ export default {
       'selectedarea',
     ]),
     categoryOptions() {
-      return StateHelper.getOptionsFromState('category', false, false, 
+      return StateHelper.getOptionsFromState('category', false, true, 
         category => CATEGORY.POT_AVAILABLE.includes(category.categoryType)
       )
     },
@@ -365,20 +391,20 @@ export default {
       )
     },
     zoneOptions() {
-      return StateHelper.getOptionsFromState('zone')
+      return StateHelper.getOptionsFromState('zone', false, true)
     },
     zoneCategoryOptions() {
       return StateHelper.getOptionsFromState('category',
         category => StateHelper.getDispCategoryName(category),
-        false, 
+        true, 
         category => CATEGORY.ZONE_AVAILABLE.includes(category.categoryType)
       )
     },
     groupOptions() {
-      return StateHelper.getOptionsFromState('group')
+      return StateHelper.getOptionsFromState('group', false, true)
     },
     areaOptions() {
-      return StateHelper.getOptionsFromState('area')
+      return StateHelper.getOptionsFromState('area', false, true)
     },
     detectStateOptions() {
       let options = DetectStateHelper.getTypes()
@@ -417,12 +443,23 @@ export default {
       return HtmlUtil.getLangShort() == 'ja'? {width: '100px !important'}: {width: '110px !important'}
     },
   },
+  watch: {
+    'vueSelected': {
+      handler: function(newVal, oldVal){
+        Object.keys(this.vueSelected).forEach(key => {
+          const oVal = Util.getValue(oldVal[key], 'value', null)
+          const nVal = Util.getValue(newVal[key], 'value', null)
+          this.filter.extra[key] = nVal
+          if(oVal != nVal){
+            this.extraFilterSpec[key].change()
+          }
+        })
+      },
+      deep: true,
+    },
+  },
   async created() {
-    this.switchReload = this.params.tenantAction? this.params.tenantAction: false
-    if(this.switchReload){
-      this.switchReload = false
-      await StateHelper.load('region')
-    }
+    await StateHelper.load('region')
   },
   mounted() {
     this.message = this.listMessage
@@ -457,6 +494,9 @@ export default {
     ...mapMutations([
       'replace', 
     ]),
+    useVueSelect(key){
+      return Object.keys(this.vueSelected).includes(key)
+    },
     thumbnail(row) {
       return this.$parent.$options.methods.thumbnail.call(this.$parent, row)
     },
@@ -479,13 +519,15 @@ export default {
     },
     sortCompareCustom(aData, bData, key){
       if(key == 'txIdName'){
-        return StateHelper.sortCompareArray(aData.txSortIds, bData.txSortIds)
+        return SortUtil.sortByArray(aData.txIdNames, bData.txIdNames)
+      }
+      if(key == 'regionName'){
+        return SortUtil.sortByString(aData[key], bData[key])
       }
       return null
     },
     async switchTenant(item){
       await AuthHelper.switchTenant(item.tenantId)
-      this.switchReload = true
       location.reload()
     },
     getItem(key){
@@ -508,8 +550,9 @@ export default {
         headers = _(this.params.fields).map((val) => val.key).uniqWith(_.isEqual).value()
       }
       headers = headers.filter((val) => !['style', 'thumbnail', 'actions', 'updateAction'].includes(val))
+      headers.unshift('updateKey')
       headers.push('delFlg')
-      const list = this.list.map((val) => ({...val, delFlg: 0}))
+      const list = this.list.map((val) => ({...val, updateKey: val[this.id], delFlg: 0}))
       if(this.$parent.$options.methods.customCsvData){
         list.forEach((val) => {
           this.$parent.$options.methods.customCsvData.call(this.$parent, val)
@@ -555,7 +598,8 @@ export default {
     deleteConfirm(item, index, button) {
       this.setEmptyMessage()
       this.modalInfo.title = this.$i18n.tnl('label.confirm')
-      this.modalInfo.content = this.$i18n.tnl(this.params.delFilter && item.delFlg != 0? 'message.completeDeleteConfirm': 'message.deleteConfirm', this.params.mainColumn? {target: `${this.params.mainColumn.name}:${item[this.params.mainColumn.id]}`}: {target: 'ID:' + item[this.id]})
+      const confirmName = this.params.confirmName? this.params.confirmName: Util.getValue(this.params, 'name', '') + 'Name'
+      this.modalInfo.content = this.$i18n.tnl(this.params.delFilter && item.delFlg != 0? 'message.completeDeleteConfirm': 'message.deleteConfirm', {target: `${this.$i18n.tnl('label.' + confirmName)}:${item[confirmName]}`})
       this.modalInfo.id = item[this.id]
       this.$root.$emit('bv::show::modal', 'modalInfo', button)
     },
@@ -565,10 +609,10 @@ export default {
       this.modalInfo.id = ''
     },
     filterGridGeneral(originItem){
-      if(!this.filter.reg){
-        return true
-      }
       if(originItem.isParent){
+        return this.items.find(item => !item.isParent && item.categoryKey == originItem.categoryKey && this.filterGrid(item))? true: false
+      }
+      if(!this.filter.reg){
         return true
       }
       try{
@@ -622,7 +666,7 @@ export default {
             if(originItem.isParent){
               return false
             }
-            return originItem.key.split('.').find((val, index) => index < 2 && val == extra.settingCategory)
+            return originItem.categoryKey == extra.settingCategory
           }
           break
         }
@@ -656,7 +700,6 @@ export default {
       const extBool = this.filterGridExt(originItem)
       const delBool = this.filterGridDel(originItem)
       const allShowBool = this.filterAllShow(originItem)
-      //console.log("filtering table...")
       return regBool && extBool && delBool && allShowBool
     },
     onFiltered(filteredItems) {
@@ -692,6 +735,14 @@ export default {
           })
           this.replace({showAlert: true})
         }
+        else if(Util.isArray(e.bulkError)){
+          this.error = e.bulkError.map(error => {
+            return this.$i18n.tnl('message.bulk' + error.type + 'Failed', {
+              col: this.$i18n.tnl(`label.${error.col}`),
+            })
+          })
+          this.replace({showAlert: true})
+        }
         else{
           this.error = this.$i18n.terror('message.deleteFailed', {target: this.$i18n.tnl('label.' + this.params.name), code: e.response.status})
         }
@@ -699,8 +750,6 @@ export default {
     },
     // 位置把握(一覧)から在席表示に遷移する
     async mapDisplay(item) {
-      console.log('mapDisplay called with:')
-      console.log(item)
       const tx = item.tx
       const selectedTx = {
         btxId: tx.btxId,
@@ -720,6 +769,7 @@ export default {
 </script>
 
 <style>
+  @import "../../sub/constant/vue.scss";
   td {
     line-height: normal !important;
   }

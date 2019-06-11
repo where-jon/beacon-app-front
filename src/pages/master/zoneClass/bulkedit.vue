@@ -7,12 +7,12 @@
 
 <script>
 import { mapState } from 'vuex'
-import * as Util from '../../../sub/util/Util'
+import { ZONE, BULK } from '../../../sub/constant/Constants'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
-import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
-import { ZONE } from '../../../sub/constant/Constants'
+import * as BulkHelper from '../../../sub/helper/BulkHelper'
+import * as StateHelper from '../../../sub/helper/StateHelper'
 
 export default {
   components: {
@@ -31,54 +31,26 @@ export default {
   computed: {
     ...mapState('app_service', [
       'zone',
-      'categories',
     ]),
   },
   methods: {
+    afterCrud(){
+      StateHelper.setForceFetch('tx', true)
+      StateHelper.setForceFetch('exb', true)
+    },
     async save(bulkSaveFunc) {
-      const MAIN_COL = 'zoneId'
-      const LOCATION_ZONE_COL = ['zoneId', 'locationId']
-      const ZONE_CATEGORY_COL = ['zoneId', 'categoryId', 'categoryName']
-      const NUMBER_TYPE_LIST = ['locationId', 'categoryId', 'areaId']
-      let locationId = null
-      let categoryId = null
-      await StateHelper.load('category')
-      await bulkSaveFunc(MAIN_COL, NUMBER_TYPE_LIST, null, (entity, headerName, val, dummyKey) => {
-        if(headerName === 'zoneId'){
-          entity.zoneId = Util.hasValue(val)? Number(val): --dummyKey  
+      await bulkSaveFunc(BULK.PRIMARY_KEY, null, null, (entity, headerName, val, dummyKey) => {
+        if (BulkHelper.isPrimaryKeyHeader(headerName)){
+          BulkHelper.setPrimaryKey(entity, this.id, val, dummyKey--)
           entity.zoneType = ZONE.NON_COORDINATE
-        }
-        else if(headerName === 'locationId'){
-          locationId = val
-        }
-        else if(headerName === 'categoryId'){
-          categoryId = val
+          return dummyKey
         }
         if(headerName == 'areaName') {
           entity.area = {areaId: dummyKey--, areaName: val}
+          entity.areaName = val
+          return dummyKey
         }
-        if(headerName == 'categoryName') {
-          entity.categoryName = val
-        }
-        if(LOCATION_ZONE_COL.includes(headerName) && entity.zoneId != null && locationId != null){
-          entity.locationZoneList = [{
-            locationZonePK: {
-              zoneId: entity.zoneId < 0? --dummyKey: entity.zoneId,
-              locationId: locationId
-            }
-          }]
-        }
-        if(ZONE_CATEGORY_COL.includes(headerName) && entity.zoneId != null && categoryId != null){
-          entity.zoneCategoryList = [{
-            zoneCategoryPK: {
-              zoneId: entity.zoneId < 0? --dummyKey: entity.zoneId,
-              categoryId: categoryId
-            }
-          }]
-        }
-        if(!entity[headerName]){
-          entity[headerName] = val
-        }
+        entity[headerName] = val
         return dummyKey
       })
     },

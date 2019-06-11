@@ -416,8 +416,7 @@ export const getMagnetStateKey = (i18n, magnetState) => i18n.tnl(`label.${magnet
 export const getFields1 = (i18n) => {
   return addLabelByKey(i18n, [
     {key: 'sensorDt', sortable: true, label:'dt'},
-    {key: 'txName', sortable: true },
-    Util.includesIgnoreCase(APP.SENSOR_LIST.WITH, 'deviceNum') && Util.includesIgnoreCase(APP.EXB.WITH, 'deviceNum')? {key: 'deviceNum', sortable: true }: null,
+    {key: 'potName', sortable: true },
     Util.includesIgnoreCase(APP.SENSOR_LIST.WITH, 'deviceId') && Util.includesIgnoreCase(APP.EXB.WITH, 'deviceId')? {key: 'deviceId', sortable: true }: null,
     Util.includesIgnoreCase(APP.SENSOR_LIST.WITH, 'deviceIdX') && Util.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')? {key: 'deviceIdX', sortable: true }: null,
     {key: 'locationName', label:'locationZoneName', sortable: true,},
@@ -431,7 +430,6 @@ export const getFields1 = (i18n) => {
 export const getFields2 = (i18n) =>{
   return addLabelByKey(i18n, [
     {key: 'sensorDt', sortable: true, label:'dt'},
-    Util.includesIgnoreCase(APP.EXB.WITH, 'deviceNum')? {key: 'deviceNum', sortable: true }: null,
     Util.includesIgnoreCase(APP.EXB.WITH, 'deviceId')? {key: 'deviceId', sortable: true }: null,
     Util.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')? {key: 'deviceIdX', sortable: true }: null,
     {key: 'locationName', label:'locationZoneName', sortable: true,},
@@ -444,7 +442,7 @@ export const getFields2 = (i18n) =>{
 export const getFields5 = (i18n) => {
   return addLabelByKey(i18n, [
     {key: 'sensorDt', sortable: true, label:'dt'},
-    {key: 'txName', sortable: true },
+    {key: 'potName', sortable: true },
     {key: 'major', sortable: true },
     {key: 'minor', sortable: true },
     {key: 'high', label:'h_blood_pressure', sortable: true},
@@ -458,7 +456,7 @@ export const getFields5 = (i18n) => {
 export const getFields6 = (i18n) => {
   return addLabelByKey(i18n, [
     {key: 'sensorDt', sortable: true, label:'dt'},
-    {key: 'txName', sortable: true },
+    {key: 'potName', sortable: true },
     {key: 'major', sortable: true },
     {key: 'minor', sortable: true },
     {key: 'state', sortable: true},
@@ -468,7 +466,6 @@ export const getFields6 = (i18n) => {
 export const getFields8 = (i18n) => {
   return addLabelByKey(i18n, [
     {key: 'sensorDt', sortable: true, label:'dt'},
-    Util.includesIgnoreCase(APP.EXB.WITH, 'deviceNum')? {key: 'deviceNum', sortable: true }: null,
     Util.includesIgnoreCase(APP.EXB.WITH, 'deviceId')? {key: 'deviceId', sortable: true }: null,
     Util.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')? {key: 'deviceIdX', sortable: true }: null,
     {key: 'locationName', label:'locationZoneName', sortable: true,},

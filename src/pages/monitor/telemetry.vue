@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" :reload="true" :is-load="isLoad" @reload="fetchData" />
-    <div v-show="!isLoad" class="container">
+    <breadcrumb :items="items" :reload="true" :state="reloadState" @reload="fetchData" />
+    <div v-show="!reloadState.isLoad" class="container">
       <monitor-table type="telemetry" :vue-table-mode="isDev" :all-count="allCount" :headers="headers" :datas="telemetrys" :tr-class="getClass" :td-class="getTdClass" />
     </div>
   </div>
@@ -10,6 +10,7 @@
 <script>
 import { mapState } from 'vuex'
 import * as StateHelper from '../../sub/helper/StateHelper'
+import * as ParamHelper from '../../sub/helper/ParamHelper'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
@@ -40,7 +41,7 @@ export default {
       items: ViewHelper.createBreadCrumbItems('monitor', 'telemetry'),
       headers: this.getHeaders(),
       telemetrys: [],
-      isLoad: false,
+      reloadState: ParamHelper.createReloadState(),
       csvHeaders: this.getCsvHeaders(),
     }
   },
@@ -80,7 +81,6 @@ export default {
           { key: 'hour3_count' },
           { key: 'ibeacon_received' },
         ]: [
-          Util.includesIgnoreCase(APP.EXB.WITH, 'deviceNum')? { key: 'deviceNum' }: null,
           Util.includesIgnoreCase(APP.EXB.WITH, 'deviceId')? { key: 'deviceId' }: null,
           Util.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')? { key: 'deviceIdX' }: null,
           { key: 'name', label: 'locationName'},
@@ -110,7 +110,6 @@ export default {
           ibeacon_received: 'ibeacon_received',
         }:
         {
-          deviceNum: Util.includesIgnoreCase(APP.EXB.WITH, 'deviceNum') ? 'deviceNum' : null,
           deviceId: Util.includesIgnoreCase(APP.EXB.WITH, 'deviceId') ? 'deviceId' : null,
           deviceIdX: Util.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX') ? 'deviceId(HEX)' : null,
           name: 'finalRevceivePlace',
@@ -176,12 +175,8 @@ export default {
           state: this.getStateLabel('exb', e.timestamp)
         }
 
-        const offset = this.$store.state.currentRegion.deviceOffset
         const deviceId = APP.SVC.POS.EXSERVER ? e.deviceid : parseInt(e.deviceid, 16)
 
-        if(Util.includesIgnoreCase(APP.EXB.WITH, 'deviceNum')){
-          ret.deviceNum = deviceId - offset
-        }
         if(Util.includesIgnoreCase(APP.EXB.WITH, 'deviceId')){
           ret.deviceId = deviceId
         }

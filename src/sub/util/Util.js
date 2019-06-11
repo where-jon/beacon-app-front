@@ -25,7 +25,12 @@ export const getByteLength = (str) => encodeURI(str == null? '': str).replace(/%
 
 export const numberRange = (start, end) => new Array(end - start + 1).fill().map((d, i) => {return {key: i + start}})
 
-export const includesIgnoreCase = (ary, col) => ary.find(val => val.toLowerCase() == col.toLowerCase())? true: false
+export const includesIgnoreCase = (ary, col) => {
+  if (!ary || ary.length < 1) {
+    return false
+  }
+  return ary.find(val => val.toLowerCase() == col.toLowerCase())? true: false
+}
 
 export const merge = (dest, src, excludeKeys) => {
   const temp = Object.assign({}, src)
@@ -91,6 +96,20 @@ export const isAndroidOrIOS = () => isIos() || isAndroid()
 
 export const formatDate = (timestamp, format = 'YYYY/MM/DD HH:mm:ss') => timestamp? moment(timestamp).format(format): ''
 
+export const formatTime = (time, format = 'HH:mm:ss') => {
+  if(time == null || format == null){
+    return ''
+  }
+  const hour = Math.floor(time / 3600)
+  const minute = Math.floor((time / 60) % 60)
+  const second = time % 60
+  const hourDigit = hour.toString().length
+  const hourSliceDigit = -1 * (hourDigit < 2? 2: hourDigit)
+  return format.replace(/HH/g, `00${hour}`.slice(hourSliceDigit))
+    .replace(/mm/g, `00${minute}`.slice(-2))
+    .replace(/ss/g, `00${second}`.slice(-2))
+}
+
 export const sanitize = (str) => str && str.replace? str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#x27;'): str
 
 export const zeroPad = (num, length) => ('0'.repeat(length) + num).slice(-length)
@@ -128,6 +147,43 @@ export const cutOnLongByte = (val, max, addLast = true) => {
     return `${val.substr(0, cnt)}${addLast? '...': ''}`
   }
   return val
+}
+
+export const cutOnLongWidth = (val, max, addLast = true, style = {}) => {
+  if (!val || !max || typeof val != 'string') {
+    return val
+  }
+  const element = document.createElement('span')
+  element.style['white-space'] = 'nowrap'
+  element.style.visibility = 'hidden'
+  if(style){
+    Object.keys(style).forEach(key => {
+      element.style[key] = style[key]
+    })
+  }
+  document.body.appendChild(element)
+
+  element.innerHTML = val
+  if(element.offsetWidth + 1 < max){
+    document.body.removeChild(element)
+    return val
+  }
+
+  const parts = val.split('')
+  const last = addLast? '...': ''
+
+  let ret = ''
+  for(let idx = 0; idx < parts.length; idx++){
+    const str = ret + parts[idx] + last
+    element.innerHTML = str
+    const width = element.offsetWidth + 1
+    if(max <= width){
+      break
+    }
+    ret += parts[idx]
+  }
+  document.body.removeChild(element)
+  return ret + last
 }
 
 export const luminance = (hex) => {
@@ -182,6 +238,7 @@ export const colorCdHex2Decimal = (hex) => {
   ]
 }
 
+export const addPrefix = (text, prefix) => (new RegExp(`^${prefix}.*$`, 'g')).test(text)? text: `${prefix}${text}`
 export const isArray = (obj) => Object.prototype.toString.call(obj) === '[object Array]'
 export const hasValue = (obj) => obj != null && obj.length !== 0
 export const detectEncoding = (str) => jschardet.detect(str)
@@ -526,7 +583,7 @@ export const compareStrNum = (a, b) => {
   return compA < compB? -1: compA > compB? 1: 0
 }
 
-export const addWithPadding = (str, add) => {
+export const addWithPadding = (str, add = 0) => {
   if(!/^[0-9]+$/.test(str)){
     return str + add
   }

@@ -7,13 +7,13 @@
       <b-row>
         <b-col md="8" offset-md="2">
           <b-form v-if="show" @submit.prevent="onSubmit">
-            <b-form-group v-if="hasId">
-              <label v-t="'label.areaId'" />
-              <input v-model="form.areaId" type="text" class="form-control" readonly="readonly">
-            </b-form-group>
             <b-form-group>
               <label v-t="'label.areaName'" />
               <input v-model="form.areaName" :readonly="!isEditable" type="text" maxlength="20" class="form-control" required>
+            </b-form-group>
+            <b-form-group>
+              <label v-t="'label.areaCd'" />
+              <input v-model="form.areaCd" :readonly="!isEditable" type="text" maxlength="16" class="form-control" :pattern="cdPattern" required>
             </b-form-group>
             <b-form-group>
               <label v-t="'label.map'" />
@@ -51,7 +51,7 @@ import editmixinVue from '../../../components/mixin/editmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
 import { APP } from '../../../sub/constant/config'
-import { UPDATE_ONLY_NN } from '../../../sub/constant/Constants'
+import { UPDATE_ONLY_NN, PATTERN } from '../../../sub/constant/Constants'
 
 export default {
   components: {
@@ -66,10 +66,11 @@ export default {
       backPath: '/master/area',
       appServicePath: '/core/area',
       updateOnlyNN: UPDATE_ONLY_NN.NULL,
-      form: ViewHelper.extract(this.$store.state.app_service.area, ['areaId', 'areaName', 'mapImage']),
+      form: ViewHelper.extract(this.$store.state.app_service.area, ['areaId', 'areaCd', 'areaName', 'mapImage']),
       items: ViewHelper.createBreadCrumbItems('master', {text: 'area', href: '/master/area'}, Util.getDetailCaptionKey(this.$store.state.app_service.area.areaId)),
       mapUpdate: false,
       oldMap: null,
+      cdPattern: PATTERN.MASTER_CD,
     }
   },
   computed: {
@@ -77,6 +78,7 @@ export default {
       return Util.hasValue(this.form.areaId)
     },
     ...mapState('app_service', [
+      'areas',
       'area',
     ]),
     mapConfigTypes(){
@@ -92,6 +94,9 @@ export default {
     this.oldMap = this.hasId && this.form.mapImage? {width: this.$refs.mapImage.naturalWidth, height: this.$refs.mapImage.naturalHeight}: null
     HtmlUtil.setCustomValidationMessage()
     this.oldMap = this.hasId && this.form.mapImage? {width: this.$refs.mapImage.naturalWidth, height: this.$refs.mapImage.naturalHeight}: null
+    if(!Util.hasValue(this.form.areaCd)){
+      this.form.areaCd = StateHelper.createMasterCd('area', this.areas, this.area)
+    }
   },
   methods: {
     getNameByteLangth(){
@@ -140,9 +145,13 @@ export default {
         }
       })
     },
-    async afterCrud(again){
-      await StateHelper.load('tx', true)
-      await StateHelper.load('exb', true)
+    beforeReload(){
+      this.form.areaCd = StateHelper.createMasterCd('area', this.areas, this.area)
+    },
+    afterCrud(){
+      StateHelper.setForceFetch('tx', true)
+      StateHelper.setForceFetch('exb', true)
+      StateHelper.setForceFetch('zone', true)
     },
     beforeSubmit(again){
       if(this.mapUpdate){

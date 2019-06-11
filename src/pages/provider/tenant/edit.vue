@@ -106,12 +106,6 @@
             <input v-model="form.meshId" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control">
           </b-form-row>
         </div>
-        <div v-if="!hasId && show" class="form-row">
-          <b-form-row class="mb-5">
-            <label v-t="'label.deviceOffset'" class="mr-3" />
-            <input v-model="form.deviceOffset" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control" required>
-          </b-form-row>
-        </div>
 
         <b-form-row class="mb-2">
           <b-button v-t="'label.featureSetting'" :variant="theme" type="button" class="mr-2 my-1" @click="showFeatureEdit" />
@@ -154,6 +148,8 @@ import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as SettingHelper from '../../../sub/helper/SettingHelper'
+import * as AuthHelper from '../../../sub/helper/AuthHelper'
+import * as HttpHelper from '../../../sub/helper/HttpHelper'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
 import featuremixinVue from '../../../components/mixin/featuremixin.vue'
 import * as Util from '../../../sub/util/Util'
@@ -163,7 +159,7 @@ import chromeInput from '../../../components/parts/chromeinput.vue'
 import featureList from '../../../components/page/featureList.vue'
 import systemSetting from '../../setting/system/index.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
-import { EXCLOUD_BASE_URL } from '../../../sub/constant/config'
+import { EXCLOUD } from '../../../sub/constant/config'
 
 export default {
   components: {
@@ -180,7 +176,7 @@ export default {
       id: 'tenantId',
       backPath: '/provider/tenant',
       appServicePath: '/meta/tenant',
-      form: ViewHelper.extract(this.$store.state.app_service.tenant, ['tenantId', 'tenantCd', 'tenantName', 'sysAdminLoginId', 'sysAdminPass', 'adminLoginId', 'adminPass', 'userLoginId', 'userPass', 'regionName', 'meshId', 'deviceOffset', 'createDt', 'delFlg']),
+      form: ViewHelper.extract(this.$store.state.app_service.tenant, ['tenantId', 'tenantCd', 'tenantName', 'sysAdminLoginId', 'sysAdminPass', 'adminLoginId', 'adminPass', 'userLoginId', 'userPass', 'regionName', 'meshId', 'createDt', 'delFlg']),
       items: ViewHelper.createBreadCrumbItems('provider', {text: 'tenant', href: '/provider/tenant'}, Util.getDetailCaptionKey(this.$store.state.app_service.tenant.tenantId)),
       fields: ViewHelper.addLabelByKey(this.$i18n, [ 
         {key: 'parentCheck', label: 'dummy', thStyle: {width:'4px !important'} },
@@ -291,14 +287,24 @@ export default {
       this.$refs.systemSetting.showNewForm(false)
       window.removeEventListener('resize', this.adjustModalRect)
     },
+    async applyConfig() {
+      await StateHelper.load('setting', true)
+      const login = JSON.parse(window.localStorage.getItem('login'))
+      const userInfo = await AuthHelper.getUserInfo(login.tenantAdmin)
+      AuthHelper.resetConfig(login.tenantAdmin, userInfo.setting)
+    },
     async afterCrud(){
       this.featureList.forEach((feature) => {
         feature.checked = false
         feature.disabled = false
       })
       const login = JSON.parse(window.localStorage.getItem('login'))
+      const tenant = await HttpHelper.getAppService('/meta/tenant/currentTenant')
+      login.currentTenant = tenant
+      this.$store.commit('replace', login)
+      window.localStorage.setItem('login', JSON.stringify(login))
       if(this.targetTenantId == login.currentTenant.tenantId){
-        await this.$refs.systemSetting.applyConfig()
+        await this.applyConfig()
       }
       this.targetTenantId = null
       this.settingList = []
@@ -318,9 +324,9 @@ export default {
           Util.hasValue(this.form.adminLoginId)? {userId: dummyKey--, loginId: this.form.adminLoginId, pass: this.form.adminPass, role: { roleId: dummyKey--, roleName: 'ADMIN' }}: null,
           Util.hasValue(this.form.userLoginId)? {userId: dummyKey--, loginId: this.form.userLoginId, pass: this.form.userPass, role: { roleId: dummyKey--, roleName: 'USER' }}: null,
         ].filter((val) => val): null,
-        region: !Util.hasValue(this.form.tenantId)? {regionId: dummyKey--, regionName: this.form.regionName, meshId: Util.hasValue(this.form.meshId)? this.form.meshId: null, deviceOffset: this.form.deviceOffset}: null,
-        defaultExcloudBaseUrl: defaultConfig.EXCLOUD_BASE_URL,
-        excloudBaseUrl: EXCLOUD_BASE_URL,
+        region: !Util.hasValue(this.form.tenantId)? {regionId: dummyKey--, regionName: this.form.regionName, meshId: Util.hasValue(this.form.meshId)? this.form.meshId: null}: null,
+        defaultExcloudBaseUrl: defaultConfig.EXCLOUD.BASE_URL,
+        excloudBaseUrl: EXCLOUD.BASE_URL,
         tenantFeatureList: this.featureList.map((val) => {
           return !val.disabled && val.checked? {
             tenantFeaturePK:{tenantId: dummyKey--, featureId: val.featureId},

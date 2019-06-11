@@ -1,16 +1,22 @@
 <template>
   <div id="mapContainer" class="container-fluid" @click="resetDetail">
-    <breadcrumb :items="items" :reload="true" />
+    <breadcrumb :items="items" :reload="true" :state="reloadState" />
     <b-row class="mt-2">
       <b-form inline class="mt-2" @submit.prevent>
         <label class="ml-3 mr-2">
           {{ $t('label.area') }}
         </label>
-        <b-form-select v-model="selectedArea" :options="areaOptions" required class="ml-2" @change="changeArea" />
+        <span :title="vueSelectTitle(vueSelected.area)">
+          <v-select v-model="vueSelected.area" :options="areaOptions" :clearable="false" class="ml-1 vue-options" :style="getVueSelectStyle()">
+            <template slot="selected-option" slot-scope="option">
+              {{ vueSelectCutOn(option) }}
+            </template>
+          </v-select>
+        </span>
       </b-form>
     </b-row>
     <b-row class="mt-3">
-      <canvas id="map" ref="map" />
+      <canvas id="map" ref="map" @click="closeVueSelect" />
     </b-row>
     <div v-if="selectedTx.btxId && showReady">
       <txdetail :selected-tx="selectedTx" :selected-sensor="[]" :is-show-modal="isShowModal()" @resetDetail="resetDetail" />
@@ -31,13 +37,14 @@ import { SENSOR, TX } from '../../sub/constant/Constants'
 import { Container } from '@createjs/easeljs/dist/easeljs.module'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
+import controlmixinVue from '../../components/mixin/controlmixin.vue'
 
 export default {
   components: {
     breadcrumb,
     'txdetail': txdetail,
   },
-  mixins: [showmapmixin],
+  mixins: [showmapmixin, controlmixinVue],
   data() {
     return {
       keepExbPosition: false,
@@ -50,6 +57,7 @@ export default {
       INUSE_FONTSIZE_RATIO: 0.9,
       FONTSIZE_RATIO_EN: 0.5,
       EMPTY_FONTSIZE_RATIO: 1.2,
+      reloadState: {isLoad: false, initialize: false},
     }
   },
   computed: {
@@ -58,15 +66,23 @@ export default {
     ]),
     ...mapState('app_service', [
       'txs',
-      'forceFetchTx',
     ]),
     ...mapState([
       'reload',
     ]),
   },
+  watch: {
+    'vueSelected.area': {
+      handler: function(newVal, oldVal){
+        this.selectedArea = Util.getValue(newVal, 'value', null)
+        this.changeArea(this.selectedArea)
+      },
+      deep: true,
+    },
+  },
   mounted() {
     document.addEventListener('touchstart', this.touchEnd)
-    this.fetchData()
+    // this.fetchData()
   },
   beforeDestroy() {
     this.resetDetail()
@@ -96,8 +112,7 @@ export default {
         )
 
         if (APP.SENSOR.SHOW_MAGNET_ON_PIR) {
-          await StateHelper.load('tx', this.forceFetchTx)
-          StateHelper.setForceFetch('tx', false)
+          await StateHelper.load('tx')
           await this.storePositionHistory(this.count)
           this.magnetSensors = await EXCloudHelper.fetchSensor(SENSOR.MAGNET)
           Util.debug(this.magnetSensors)
@@ -246,6 +261,7 @@ export default {
 
 <style scoped lang="scss">
 @import "../../sub/constant/config.scss";
+@import "../../sub/constant/vue.scss";
 
 ::-webkit-scrollbar { 
   display: none; 

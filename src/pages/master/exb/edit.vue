@@ -7,14 +7,6 @@
       <b-row>
         <b-col md="8" offset-md="2">
           <b-form v-if="show" @submit.prevent="onSubmit">
-            <b-form-group v-if="hasId" v-show="isShown('EXB.WITH', 'exbId')">
-              <label v-t="'label.exbId'" />
-              <b-form-input v-model="form.exbId" type="text" readonly="readonly" />
-            </b-form-group>
-            <b-form-group v-show="isShown('EXB.WITH', 'deviceNum')">
-              <label v-t="'label.deviceNum'" />
-              <input v-model.lazy="deviceNum" :max="maxDeviceNum" :readonly="!isEditable" type="number" class="form-control" min="0" :required="isShown('EXB.WITH', 'deviceNum')">
-            </b-form-group>
             <b-form-group v-show="isShown('EXB.WITH', 'deviceId')">
               <label v-t="'label.deviceId'" />
               <input v-model.lazy="deviceId" :max="maxDeviceId" :readonly="!isEditable" type="number" class="form-control" min="0" :required="isShown('EXB.WITH', 'deviceId')">
@@ -29,7 +21,7 @@
             </b-form-group>
             <b-form-group>
               <label v-t="'label.area'" />
-              <b-form-select v-model="form.areaId" :options="areaOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-3 col-4" />
+              <v-select v-model="vueSelected.area" :options="areaOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 vue-options-lg" />
             </b-form-group>
             <b-form-group v-show="isShown('EXB.WITH', 'posId')">
               <label v-t="'label.posId'" />
@@ -76,8 +68,10 @@
               <b-form-select v-model="form.sensorId" :options="sensorOptionsExb" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-3 col-4" />
             </b-form-group>
             <b-form-group v-show="useZone">
-              <label v-t="'label.zone'" />
-              <b-form-select v-model="form.zoneId" :options="zoneNames" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-3 col-4" />
+              <b-form-row>
+                <label v-t="'label.zone'" class="d-flex align-items-center" />
+                <v-select v-model="vueSelected.zone" :options="getZoneNames()" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-2 vue-options-lg" />
+              </b-form-row>
             </b-form-group>
 
             <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
@@ -97,10 +91,12 @@ import { mapState } from 'vuex'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
+import * as ParamHelper from '../../../sub/helper/ParamHelper'
 import * as MenuHelper from '../../../sub/helper/MenuHelper'
 import * as HtmlUtil from '../../../sub/util/HtmlUtil'
 import * as Util from '../../../sub/util/Util'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
+import controlmixinVue from '../../../components/mixin/controlmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
 import settingtxview from '../../../components/parts/settingtxview.vue'
@@ -113,7 +109,7 @@ export default {
     alert,
     settingtxview,
   },
-  mixins: [editmixinVue],
+  mixins: [editmixinVue, controlmixinVue],
   data() {
     return {
       name: 'exb',
@@ -126,14 +122,16 @@ export default {
         'location.locationName', 'location.areaId', 'location.locationId', 'location.posId',
         'location.x', 'location.y', 'location.visible', 'location.txViewType',
         'exbSensorList.0.exbSensorPK.sensorId', 'location.locationZoneList.0.locationZonePK.zoneId'
-      ]
-      ),
+      ]),
+      vueSelected: {
+        area: null,
+        zone: null,
+      },
       defValue: {
         'enabled': true,
       },
       deviceId: null,
       deviceIdX: null,
-      deviceNum: null,
       useZone: Util.includesIgnoreCase(APP.EXB.WITH, 'zone') && MenuHelper.isMenuEntry('/master/zoneClass'),
       items: ViewHelper.createBreadCrumbItems('master', {text: 'exb', href: '/master/exb'}, Util.getDetailCaptionKey(this.$store.state.app_service.exb.exbId)),
       txIconsDispFormat: 1,
@@ -141,13 +139,9 @@ export default {
       txIconsVertical: 5,
       TXICONS_DISPFORMAT_TILE: 5,
       maxDeviceId: 65535,
-      maxDeviceNum: 65535 - this.$store.state.currentRegion.deviceOffset,
     }
   },
   computed: {
-    hasId(){
-      return Util.hasValue(this.form.exbId)
-    },
     theme () {
       const theme = getButtonTheme()
       return 'outline-' + theme
@@ -159,11 +153,6 @@ export default {
       let options = this.sensorOptions('exb')
       return options
     },
-    zoneNames() {
-      return StateHelper.getOptionsFromState('zone', false, false, 
-        zone => zone.areaId == this.form.areaId
-      )
-    },
     ...mapState('app_service', [
       'exb',
       'areas',
@@ -172,12 +161,24 @@ export default {
     ]),
   },
   watch: {
+    'vueSelected.area': {
+      handler: function(newVal, oldVal){
+        this.form.areaId = Util.getValue(newVal, 'value', null)
+        this.vueSelected.zone = null
+      },
+      deep: true,
+    },
+    'vueSelected.zone': {
+      handler: function(newVal, oldVal){
+        this.form.zoneId = Util.getValue(newVal, 'value', null)
+      },
+      deep: true,
+    },
     deviceId: function(newVal, oldVal) {
       if (!this.mutex) {
         this.mutex = true
         this.deviceId = newVal 
         this.deviceIdX = newVal? Number(newVal).toString(16).toUpperCase(): null
-        this.deviceNum = newVal? Number(newVal) - this.$store.state.currentRegion.deviceOffset: null
         this.mutex = false
       }
     },
@@ -198,26 +199,18 @@ export default {
         this.mutex = false
       }
     },
-    deviceNum: function(newVal, oldVal) {
-      if (!this.mutex) {
-        this.mutex = true
-        if (newVal) {
-          this.deviceNum = newVal 
-          this.deviceId = Number(newVal) + this.$store.state.currentRegion.deviceOffset
-        }
-        this.mutex = false
-      }
-    },
   },
   async created() {
     this.initExbSensorList()
     this.changeSensors()
     await StateHelper.load('sensor')
-    await StateHelper.load('area')
-    await StateHelper.load('zone')
     this.$nextTick(() => HtmlUtil.setCustomValidationMessage())
   },
-  mounted() {
+  async mounted() {
+    await StateHelper.load('area')
+    await StateHelper.load('zone')
+    this.vueSelected.area = ParamHelper.getVueSelectData(this.areaOptions, this.form.areaId)
+    this.$nextTick(() => this.vueSelected.zone = ParamHelper.getVueSelectData(this.getZoneNames(), this.form.zoneId))
     this.deviceId = this.form.deviceId
     ViewHelper.applyDef(this.form, this.defValue)
     if (!this.form.txViewType) {
@@ -230,6 +223,26 @@ export default {
   methods: {
     isNormalSensor(index){
       return Util.getValue(this.form, `exbSensorList.${index && 0 <= index? index: 0}.sensorId`, null)? false: true
+    },
+    getZoneNames() {
+      const areaId = this.form.areaId
+      const x = this.form.x
+      const y = this.form.y
+      const isValidVal = (val) => (val || val === 0)
+      // EXBがゾーンの範囲内に位置しているか？
+      const isInRange = (zone) => {
+        if (zone.zoneType !== 0) {
+          return true
+        }
+        if (!isValidVal(zone.x) || !isValidVal(zone.y) || !isValidVal(zone.h) || !isValidVal(zone.w)) {
+          return false
+        }
+        const bottomX = zone.x + zone.w
+        const bottomY = zone.y + zone.h
+        return zone.x <= x && zone.y <= y && x <= bottomX && y <= bottomY
+      }
+      return StateHelper.getOptionsFromState('zone', false, true, 
+        (zone) => zone.areaId === areaId && isInRange(zone))
     },
     showSensor(index){
       if(index == 0){
@@ -292,13 +305,16 @@ export default {
     beforeReload(){
       this.initExbSensorList()
       this.changeSensors()
+      this.form.sensorId = null
+      this.vueSelected.area = ParamHelper.getVueSelectData(this.areaOptions, null)
+      this.vueSelected.zone = ParamHelper.getVueSelectData(this.getZoneNames(), null)
     },
     async save() {
       let dummyKey = -1
-      if(!this.zoneNames.find((zone) => zone.value == this.form.zoneId)){
+      if(!this.getZoneNames().find(zone => zone.value == this.form.zoneId)){
         this.form.zoneId = null
       }
-      let entity = {
+      const entity = {
         exbId: this.form.exbId != null? this.form.exbId: dummyKey--,
         deviceId: this.deviceId,
         locationId: this.form.locationId,
@@ -342,7 +358,6 @@ export default {
       let ret = await AppServiceHelper.bulkSave(this.appServicePath, [entity])
       this.deviceId = null
       this.deviceIdX = null
-      this.deviceNum = null
       return ret
     },
   }
@@ -350,6 +365,8 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import "../../../sub/constant/vue.scss";
+
 label.txicons-num {
   margin-left: 20px;
 }

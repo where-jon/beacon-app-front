@@ -14,6 +14,7 @@ import { APP } from '../../../sub/constant/config.js'
 import listmixinVue from '../../../components/mixin/listmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import * as Util from '../../../sub/util/Util'
+import { APP_SERVICE, EXCLOUD } from '../../../sub/constant/config'
 
 export default {
   components: {
@@ -41,14 +42,14 @@ export default {
       name: 'pot',
       extValueDefault: {},
       items: ViewHelper.createBreadCrumbItems('master', 'pot'),
+      thumbnailUrl: APP_SERVICE.BASE_URL + EXCLOUD.POT_THUMBNAIL_URL,
     }
   },
   computed: {
     ...mapState('app_service', [
       'pots',
-      'potImages',
       'roles',
-      'forceFetchPot',
+      'updatedThumbnail',
     ]),
   },
   methods: {
@@ -72,10 +73,9 @@ export default {
     },
     getCustomCsvColumns(){
       return [
-        'potId',
+        APP.TX.BTX_MINOR == 'minor'? 'minor': 'btxId',
+        'potCd',
         'potName',
-        Util.includesIgnoreCase(APP.TX.WITH, 'txId')? 'txId': APP.TX.BTX_MINOR == 'minor'? 'minor': 'btxId',
-        'txName',
         'potType',
         'displayName',
       ].concat(this.createCustomColumn().map(val => val.key))
@@ -85,14 +85,12 @@ export default {
     customCsvData(val){ // TODO:
       const id = Util.includesIgnoreCase(APP.TX.WITH, 'txId')? 'txId': APP.TX.BTX_MINOR == 'minor'? 'minor': 'btxId'
       if(Util.hasValue(val.potTxList)){
-        val[id] = val.potTxList.map((potTx) => potTx.tx? potTx.tx[id]: '').join(';')
-        val.txName = val.potTxList.map((potTx) => potTx.tx? potTx.tx.txName: '').join(';')
+        val[id] = val.potTxList.map(potTx => potTx.tx? potTx.tx[id]: '').join(';')
       }
       if(Util.hasValue(val.potUserList)){
-        val.userId = val.potUserList[0].user.userId
         val.loginId = val.potUserList[0].user.loginId
         val.email = val.potUserList[0].user.email
-        const targetRole = this.roles.find((role) => role.roleId == val.potUserList[0].user.roleId)
+        const targetRole = this.roles.find(role => role.roleId == val.potUserList[0].user.roleId)
         val.roleName = targetRole? targetRole.roleName: ''
       }
     },
@@ -101,15 +99,16 @@ export default {
         {key: 'potName', sortable: true , tdClass: 'thumb-rowdata'},
         {key: 'thumbnail', tdClass: 'thumb-rowdata' },
         {key: 'txIdName', label:'tx', sortable: true },
+        {key: 'potCd', sortable: true , tdClass: 'thumb-rowdata'},
         {key: 'displayName', sortable: true, tdClass: 'thumb-rowdata'},
       ].concat(this.createCustomColumn())
         .concat([
-          {key: 'potId', sortable: true, tdClass: 'thumb-rowdata'},
           {key: 'actions', thStyle: {width:'130px !important'} , tdClass: 'thumb-rowdata'},
         ]))
     },
     afterCrud(){
       StateHelper.setForceFetch('tx', true)
+      StateHelper.setForceFetch('user', true)
     },
     getExtraFilter(){
       return [this.isEnabledMenu('group') && Util.includesIgnoreCase(APP.POT.WITH, 'group')? 'group': null, this.isEnabledMenu('category') && Util.includesIgnoreCase(APP.POT.WITH, 'category')? 'category': null].filter((val) => val)
@@ -118,8 +117,7 @@ export default {
       try {
         this.showProgress()
         await StateHelper.load('role')
-        await StateHelper.load('pot', this.forceFetchPot)
-        StateHelper.setForceFetch('pot', false)
+        await StateHelper.load('pot')
         if (payload && payload.done) {
           payload.done()
         }
@@ -130,8 +128,11 @@ export default {
       this.hideProgress()
     },
     thumbnail(row) {
-      const img = this.potImages.find((val) => val.id == row.potId)
-      return img? img.thumbnail: null
+      let addUrlParam = ''
+      if (this.updatedThumbnail.id && this.updatedThumbnail.id === row.potId) {
+        addUrlParam = this.updatedThumbnail.time
+      }
+      return row.existThumbnail ? this.thumbnailUrl.replace('{id}', row.potId) + addUrlParam : null
     },
   }
 }

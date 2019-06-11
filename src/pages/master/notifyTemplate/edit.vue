@@ -5,11 +5,6 @@
       <alert :message="message" />
 
       <b-form v-if="show" @submit.prevent="onSubmit">
-        <b-form-group v-if="form.notifyTemplateId">
-          <label v-t="'label.notifyTemplateId'" />
-          <b-form-input v-model="form.notifyTemplateId" type="text" readonly="readonly" />
-        </b-form-group>
-
         <!--種別-->
         <b-form-group :disabled="!bNotifyTemplateKey">
           <b-form-row>
@@ -89,8 +84,9 @@ export default {
       id: 'notifyTemplateId',
       radioSelect:-1,
       fromType:'email',
-      deliveryState:NOTIFY_STATE.getOptions()[0].value,
-      userMailState:NOTIFY_STATE.getOptions()[4].value,
+      deliveryState:NOTIFY_STATE.getOptions().filter((val) => val.value == 'TX_DELIVERY_NOTIFY')[0].value,
+      userMailState:NOTIFY_STATE.getOptions().filter((val) => val.value == 'USER_REG_NOTIFY')[0].value,
+      prohibitState:NOTIFY_STATE.getOptions().filter((val) => val.value == 'PROHIBIT_NOTIFY')[0].value,
       notify: _.slice(NOTIFY_MIDIUM.getTypes()).filter((val) => APP.NOTIFY.MIDIUM_TYPES.includes(val.value)),
       backPath: '/master/notifyTemplate',
       appServicePath: '/core/rcvexcloud',
@@ -119,9 +115,6 @@ export default {
     notifyStateOptions() {
       return _.slice(NOTIFY_STATE.getOptions()).filter((val) => APP.NOTIFY.STATE_TYPES.includes(val.index))
     },
-    hasId (){
-      return Util.hasValue(this.form.notifyTemplateId)
-    },
     theme () {
       const theme = getButtonTheme()
       return 'outline-' + theme
@@ -134,7 +127,8 @@ export default {
     this.form.notifyMedium == 1 ?this.bSubject = false: this.bSubject = true
     this.form.notifyTemplateKey== this.deliveryState? this.bNotifyTo=false : this.bNotifyTo=true
     this.form.notifyTemplateKey== this.userMailState? this.bNotifyTo=false : this.bNotifyTo=true
-    this.form.notifyTemplateKey== this.deliveryState || this.form.notifyTemplateKey==this.userMailState? this.notify = _.slice(NOTIFY_MIDIUM.getTypes()).filter((val) => [0].includes(val.value)) : this.notify
+    this.form.notifyTemplateKey== this.prohibitState? this.bNotifyTo=true : this.bNotifyTo=false
+    this.form.notifyTemplateKey== this.deliveryState || this.form.notifyTemplateKey==this.userMailState || this.form.notifyTemplateKey==this.prohibitState? this.notify = _.slice(NOTIFY_MIDIUM.getTypes()).filter((val) => [0].includes(val.value)) : this.notify
     let labelUpdate = Util.getDetailCaptionKey(this.$store.state.app_service.template.notifyTemplateId)
     labelUpdate == 'label.update' ? this.bNotifyTemplateKey = false: this.bNotifyTemplateKey = true
   },
@@ -145,9 +139,9 @@ export default {
     reset () {
     },
     async signalChange(evt) {
-      if (evt == this.deliveryState || evt == this.userMailState ) {
+      if (evt == this.deliveryState || evt == this.userMailState || evt == this.prohibitState ) {
         this.notify = _.slice(NOTIFY_MIDIUM.getTypes()).filter((val) => [0].includes(val.value))
-        this.bNotifyTo = false
+        this.bNotifyTo = evt == this.prohibitState ? true: false
         this.form.notifyMedium = 0
         this.bSubject = true
         this.form.notifyTo = ''
@@ -172,7 +166,7 @@ export default {
     notifyToValidationCheck(){
       let result = false
       if(this.form.notifyMedium == 0
-          && ( this.form.notifyTemplateKey != this.deliveryState && this.form.notifyTemplateKey != this.userMailState )){
+          && ( this.form.notifyTemplateKey != this.deliveryState && this.form.notifyTemplateKey != this.userMailState && this.form.notifyTemplateKey != this.prohibitState )){
         let re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i
         let emailList = this.form.notifyTo.split(',')
         if(emailList.length > 1){

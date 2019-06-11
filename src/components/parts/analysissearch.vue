@@ -1,33 +1,53 @@
 <template>
   <div>
     <b-form inline @submit.prevent>
-      <b-form-group>
-        <b-form-row>
-          <b-form-row class="mb-3">
-            <label v-t="'label.area'" class="mr-2 mb-2" />
-            <b-form-select v-model="form.areaId" :options="areaOptions" class="inputSelect" required />
-          </b-form-row>
-        </b-form-row>
-      </b-form-group>          
-    </b-form>
-    <b-form inline @submit.prevent>
       <b-form-row>
         <b-form-group>
-          <b-form-row v-if="enableCategory" class="mb-3 mr-5">
-            <label v-t="'label.category'" class="mr-2" />
-            <b-form-select v-model="form.categoryId" :options="getCategoryOptions(showCategoryTypes)" class="mr-2 inputSelect" @change="changeCategory" />
+          <b-form-row class="mb-3">
+            <label v-t="'label.area'" class="mr-2 mb-2" />
+            <span :title="vueSelectTitle(vueSelected.area)">
+              <v-select v-model="vueSelected.area" :options="areaOptions" :clearable="false" class="inputSelect vue-options" :style="getVueSelectStyle()">
+                <template slot="selected-option" slot-scope="option">
+                  {{ vueSelectCutOn(option) }}
+                </template>
+              </v-select>
+            </span>
           </b-form-row>
         </b-form-group>
         <b-form-group>
-          <b-form-row v-if="enableGroup" class="mb-3 mr-5">
+          <b-form-row v-if="enableCategory" class="mb-3 mr-2">
+            <label v-t="'label.category'" class="mr-2" />
+            <span :title="vueSelectTitle(vueSelected.category)">
+              <v-select v-model="vueSelected.category" :options="getCategoryOptions(showCategoryTypes)" class="inputSelect vue-options" :style="getVueSelectStyle()">
+                <template slot="selected-option" slot-scope="option">
+                  {{ vueSelectCutOn(option) }}
+                </template>
+              </v-select>
+            </span>
+          </b-form-row>
+        </b-form-group>
+        <b-form-group>
+          <b-form-row v-if="enableGroup" class="mb-3 mr-2">
             <label v-t="'label.group'" class="mr-2" />
-            <b-form-select v-model="form.groupId" :options="groupOptions" class="mr-2 inputSelect" @change="changeGroup" />
+            <span :title="vueSelectTitle(vueSelected.group)">
+              <v-select v-model="vueSelected.group" :options="groupOptions" class="inputSelect vue-options" :style="getVueSelectStyle()">
+                <template slot="selected-option" slot-scope="option">
+                  {{ vueSelectCutOn(option) }}
+                </template>
+              </v-select>
+            </span>
           </b-form-row>
         </b-form-group>
         <b-form-group>
           <b-form-row v-if="enableIndividual" class="mb-3 mr-2">
             <label v-t="'label.individual'" class="mr-2" />
-            <b-form-select v-model="form.potId" :options="potOptions" class="mr-2 inputSelect" />
+            <span :title="vueSelectTitle(vueSelected.pot)">
+              <v-select v-model="vueSelected.pot" :options="potOptions" class="inputSelect vue-options" :style="getVueSelectStyle()">
+                <template slot="selected-option" slot-scope="option">
+                  {{ vueSelectCutOn(option) }}
+                </template>
+              </v-select>
+            </span>
           </b-form-row>
         </b-form-group>
       </b-form-row>
@@ -62,27 +82,24 @@ import * as Util from '../../sub/util/Util'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
+import * as ParamHelper from '../../sub/helper/ParamHelper'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
 import { APP } from '../../sub/constant/config.js'
 import { CATEGORY } from '../../sub/constant/Constants'
 import validatemixin from '../mixin/validatemixin.vue'
 import commonmixinVue from '../mixin/commonmixin.vue'
-import { EventBus } from '../../sub/helper/EventHelper'
+import controlmixinVue from '../mixin/controlmixin.vue'
 
 export default {
   components: {
     DatePicker,
   },
-  mixins: [validatemixin, commonmixinVue],
+  mixins: [validatemixin, commonmixinVue, controlmixinVue],
   props: {
     fromHeatmap: {
       type: Boolean,
       default: false,
     },
-    areaOptions: {
-      type: Array,
-      required: true,
-    }
   },
   data () {
     return {
@@ -94,7 +111,14 @@ export default {
         datetimeFrom: null,
         datetimeTo: null,
       },
+      vueSelected: {
+        area: null,
+        category: null,
+        group: null,
+        pot: null,
+      },
       appServicePath: '/core/positionHistory',
+      areaOptions: [],
       potOptions: [],
       interval: 24 * 60 * 60 * 1000,
       intervalHours: 24,
@@ -134,46 +158,65 @@ export default {
     }
   },
   watch: {
-    'form.areaId' : function(newAreaId, oldAreaId){
-      this.changeArea(newAreaId)
-    }
+    'vueSelected.area': {
+      handler: function(newVal, oldVal){
+        this.form.areaId = Util.getValue(newVal, 'value', null)
+        this.changeArea(this.form.areaId)
+      },
+      deep: true,
+    },
+    'vueSelected.category': {
+      handler: function(newVal, oldVal){
+        this.form.categoryId = Util.getValue(newVal, 'value', null)
+        this.changeCategory()
+      },
+      deep: true,
+    },
+    'vueSelected.group': {
+      handler: function(newVal, oldVal){
+        this.form.groupId = Util.getValue(newVal, 'value', null)
+        this.changeGroup()
+      },
+      deep: true,
+    },
+    'vueSelected.pot': {
+      handler: function(newVal, oldVal){
+        this.form.potId = Util.getValue(newVal, 'value', null)
+      },
+      deep: true,
+    },
   },
   async created() {
     await StateHelper.load('area')
     await StateHelper.load('category')
     await StateHelper.load('group')
     await StateHelper.load('pot')
+    this.areaOptions = StateHelper.getOptionsFromState('area', false, true)
     this.changeCategory()
     this.changeGroup()
-    this.form.areaId = this.areas? this.areas[0].areaId: null
-    this.changeArea(this.form.areaId)
+    this.vueSelected.area = ParamHelper.getVueSelectData(this.areaOptions, null, true)
     const date = new Date()
     this.form.datetimeFrom = Util.getDatetime(date, {hours: -1})
     this.form.datetimeTo = Util.getDatetime(date)
-
-    EventBus.$on('onDisplay', (payload)=>{
-      this.onDisplay()
-    })
   },
   mounted() {
     HtmlUtil.importElementUI()
   },
   methods: {
-    changeCategory(newVal = this.form.categoryId) {
-      this.potOptions = StateHelper.getOptionsFromState('pot', false, false, 
-        pot => pot.potType == CATEGORY.PERSON && (!newVal || pot.categoryId == newVal)
+    updatePotOption(categoryId, groupId) {
+      this.potOptions = StateHelper.getOptionsFromState('pot', false, true, 
+        pot => pot.potType == CATEGORY.PERSON && (!categoryId || pot.categoryId == categoryId) && (!groupId || pot.groupId == groupId)
       )
-      if(!this.potOptions.find((val) => val.value == this.form.potId)){
-        this.form.potId = null
-      }
+    },
+    changeCategory(newVal = this.form.categoryId) {
+      this.updatePotOption(newVal, this.form.groupId)
+      const targetPot = this.potOptions.find(val => val.value == this.form.potId)
+      this.vueSelected.pot = ParamHelper.getVueSelectData(this.potOptions, targetPot? targetPot.value: null, false)
     },
     changeGroup(newVal = this.form.groupId) {
-      this.potOptions = StateHelper.getOptionsFromState('pot', false, false, 
-        pot => pot.potType == CATEGORY.PERSON && (!newVal || pot.groupId == newVal)
-      )
-      if(!this.potOptions.find((val) => val.value == this.form.potId)){
-        this.form.potId = null
-      }
+      this.updatePotOption(this.form.categoryId, newVal)
+      const targetPot = this.potOptions.find(val => val.value == this.form.potId)
+      this.vueSelected.pot = ParamHelper.getVueSelectData(this.potOptions, targetPot? targetPot.value: null, false)
     },
     changeArea(areaId) {
       this.$emit('changeArea', areaId)
@@ -196,11 +239,8 @@ export default {
         {type: 'require', names: ['historyDateFrom'], values: [this.form.datetimeTo]},
         this.form.datetimeFrom && this.form.datetimeTo? {type: 'asc', names: ['historyDateFrom'], values: [this.form.datetimeFrom.getTime(), this.form.datetimeTo.getTime()], equal: false}: null,
         this.form.datetimeFrom && this.form.datetimeTo? {type: 'less', names: ['historyDateFrom'], values: [this.form.datetimeFrom.getTime() * -1, this.form.datetimeTo.getTime()], base: this.interval, displayBase: this.intervalHours, equal: true}: null,
-      ].filter((val) => val && val.names.length >= 1))
+      ].filter(val => val && val.names.length >= 1))
       return this.formatValidateMessage(errors)
-    },
-    onDisplay(){
-      this.display()
     },
     async display() {
       this.replace({showAlert: false})
@@ -238,6 +278,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import "../../sub/constant/vue.scss";
 .inputSelect {
   min-width: 160px;
 }

@@ -12,6 +12,7 @@ import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkupload from '../../../components/page/bulkupload.vue'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as HtmlUtil from '../../../sub/util/HtmlUtil'
 import { APP } from '../../../sub/constant/config'
 
@@ -35,8 +36,12 @@ export default {
     ]),
   },
   methods: {
+    afterCrud(){
+      StateHelper.setForceFetch('tx', true)
+      StateHelper.setForceFetch('user', true)
+    },
     search(key) {
-      const target = this.pots.find((val) => val.potId == key)
+      const target = this.pots.find(val => val.potCd == key)
       return target? {
         id: target.potId,
         name: target.potName,

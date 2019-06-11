@@ -21,11 +21,7 @@
             <b-form-row>
               <b-form-row class="mb-3 mr-2">
                 <label v-t="'label.tx'" class="mr-2" />
-                <b-form-select v-model="form.tx" :options="txOptions" class="mr-2" @change="changeTx">
-                  <div slot="no-options">
-                    {{ $i18n.tnl('label.vSelectNoOptions') }}
-                  </div>
-                </b-form-select>
+                <v-select v-model="vueSelected.tx" :options="txOptions" class="mr-2 vue-options" :style="getVueSelectStyle()" />
               </b-form-row>
             </b-form-row>
           </b-form-group>
@@ -103,7 +99,22 @@
               </div>
             </span>
           </template>
+          <template slot="potNames" slot-scope="row">
+            <span v-for="(val, key) in row.item.potNames" :key="key">
+              {{ val }}<br>
+            </span>
+          </template>
+          <template slot="zoneNames" slot-scope="row">
+            <span v-for="(val, key) in row.item.zoneNames" :key="key">
+              {{ val }}<br>
+            </span>
+          </template>
 
+          <template slot="minors" slot-scope="row">
+            <span v-for="(val, key) in row.item.minors" :key="key">
+              {{ val }}<br>
+            </span>
+          </template>
           <template slot="deviceNums" slot-scope="row">
             <span v-for="(val, key) in row.item.deviceNums" :key="key">
               {{ val }} <br>
@@ -138,6 +149,7 @@ import 'element-ui/lib/theme-chalk/index.css'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
+import controlmixinVue from '../../components/mixin/controlmixin.vue'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
@@ -156,7 +168,7 @@ export default {
     alert,
     DatePicker,
   },
-  mixins: [showmapmixin ],
+  mixins: [showmapmixin, controlmixinVue],
   data () {
     return {
       name: 'notifyHistory',
@@ -172,6 +184,9 @@ export default {
         datetimeFrom: null,
         datetimeTo: null,
         notifyState: null,
+      },
+      vueSelected: {
+        tx: null,
       },
       viewList: [],
       csvList: [],
@@ -220,6 +235,15 @@ export default {
         {key: 'txNames', sortable: true,label:'txName' },
         {key: 'notifyResult', sortable: true,label:'notifyResult' },
       ]),
+      fields7: ViewHelper.addLabelByKey(this.$i18n, [  // ユーザ登録通知
+        {key: 'positionDt', sortable: true, label:'dt'},
+        {key: 'notifyTo', sortable: true,label:'notifyTo' },
+        {key: 'minors', sortable: true,label:'minor' },
+        {key: 'potNames', sortable: true, label:'potSearchName'},
+        {key: 'zoneNames', sortable: true, label:'zoneName'},
+        {key: 'lastRcvDatetimes', sortable: true,label:'finalReceiveTime' },
+        {key: 'notifyResult', sortable: true,label:'notifyResult' },
+      ]),
       currentPage: 1,
       perPage: 20,
       limitViewRows: 100,
@@ -247,8 +271,16 @@ export default {
         tx => StateHelper.getTxIdName(tx),
         true
       )
-      result.unshift( {value: null, label: '', text: ''})
       return result
+    },
+  },
+  watch: {
+    'vueSelected.tx': {
+      handler: function(newVal, oldVal){
+        this.form.tx = Util.getValue(newVal, 'value', null)
+        this.changeTx(this.form.tx)
+      },
+      deep: true,
     },
   },
   async created() {
@@ -269,7 +301,6 @@ export default {
     this.userState == 'ALL_REGION'? this.bTx = true: this.bTx = false
     this.userState == 'ALL_REGION'? this.bUserCheck = true: this.bUserCheck = false
     this.userState == 'ALL_REGION'? null: this.userMinor = user.minor
-
     this.fields = this.fields1
 
   },
@@ -340,7 +371,23 @@ export default {
           txNames : 'txNames',
           notifyResult : 'notifyResult',
         }
+      case 'PROHIBIT_NOTIFY':
+        return {
+          positionDt: 'notifyDatetime',
+          notifyTo : 'notifyTo',
+          minors  : 'minors',
+          minor  : 'minor',
+          potNames : 'potName',
+          zoneNames : 'zoneName',
+          lastRcvDatetimes : 'lastRcvDatetime',
+          notifyResult : 'notifyResult',
+        }
+
       }
+    },
+    csvColumnBrTag(csvColumn){
+      let tempNames = csvColumn.toString()
+      return tempNames.replace( /,/gi, ';')
     },
     getNotifyTo(notifyToData){
       let notifysTo = notifyToData.split(',')
@@ -386,6 +433,8 @@ export default {
           this.fields = this.fields5
         }else if (aNotifyState == 'USER_REG_NOTIFY') {
           this.fields = this.fields6
+        }else if (aNotifyState == 'PROHIBIT_NOTIFY') {
+          this.fields = this.fields7
         }
         this.csvHeaders = this.getCsvHeaders(aNotifyState)
         const aTxId = this.txId
@@ -448,34 +497,17 @@ export default {
         return obj
       })
       records.forEach((record) => {
-        if(record.txNames!=null){
-          let txNames = record.txNames.toString()
-          record.txNames = txNames.replace( /,/gi, ';')
-        }
-        if(record.notifyTo!=null){
-          let notifyTos = record.notifyTo.toString()
-          record.notifyTo = notifyTos.replace( /,/gi, ';')
-        }
-        if(record.major!=null){
-          let majors = record.major.toString()
-          record.major = majors.replace( /,/gi, ';')
-        }
-        if(record.minor!=null){
-          let minors = record.minor.toString()
-          record.minor = minors.replace( /,/gi, ';')
-        }
-        if(record.deviceNums!=null){
-          let deviceNums = record.deviceNums.toString()
-          record.deviceNums = deviceNums.replace( /,/gi, ';')
-        }
-        if(record.lastRcvDatetimes!=null){
-          let lastRcvDatetimes = record.lastRcvDatetimes.toString()
-          record.lastRcvDatetimes = lastRcvDatetimes.replace( /,/gi, ';')
-        }
-        if(record.powerLevels!=null){
-          let powerLevels = record.powerLevels.toString()
-          record.powerLevels = powerLevels.replace( /,/gi, ';')
-        }
+        record.txNames?record.txNames=this.csvColumnBrTag(record.txNames):false
+        record.notifyTo?record.notifyTo=this.csvColumnBrTag(record.notifyTo):false
+        record.major?record.major=this.csvColumnBrTag(record.major):false
+        record.minor?record.minor=this.csvColumnBrTag(record.minor):false
+        record.potName?record.potName=this.csvColumnBrTag(record.potName):false
+        record.zoneName?record.zoneName=this.csvColumnBrTag(record.zoneName):false
+        record.deviceNums?record.deviceNums=this.csvColumnBrTag(record.deviceNums):false
+        record.lastRcvDatetimes?record.lastRcvDatetimes= record.lastRcvDatetimes=this.csvColumnBrTag(record.lastRcvDatetimes):false
+        record.lastRcvDatetime?record.lastRcvDatetime=this.csvColumnBrTag(record.lastRcvDatetime):false
+        record.powerLevels?record.powerLevels=this.csvColumnBrTag(record.powerLevels):false
+
         if(this.form.notifyState == 'TX_BATTERY_ALERT' && record.minor && record.powerLevels){
           let minors = record.minor.split(';')
           let powerLevels = record.powerLevels.split(';')
@@ -492,6 +524,12 @@ export default {
       HtmlUtil.fileDL('notifyHistory.csv', Util.converToCsv(records), getCharSet(this.$store.state.loginId))
 
     },
+    async fetchData(payload) {
+    },
   }
 }
 </script>
+
+<style scoped lang="scss">
+@import "../../sub/constant/vue.scss";
+</style>

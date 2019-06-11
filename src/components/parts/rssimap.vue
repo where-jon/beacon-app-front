@@ -7,19 +7,37 @@
           <label class="ml-sm-4 ml-2 mr-1">
             {{ $t('label.area') }}
           </label>
-          <b-form-select v-model="selectedArea" :options="areaOptions" required class="ml-1 mr-2" @change="changeArea" />
+          <span :title="vueSelectTitle(vueSelected.area)">
+            <v-select v-model="vueSelected.area" :options="areaOptions" :clearable="false" class="ml-1 mr-2 vue-options" :style="getVueSelectStyle()">
+              <template slot="selected-option" slot-scope="option">
+                {{ vueSelectCutOn(option) }}
+              </template>
+            </v-select>
+          </span>
         </b-form-row>
         <b-form-row v-if="useGroup" class="my-1 ml-2 ml-sm-0">
           <label class="ml-sm-4 ml-2 mr-1">
             {{ $t('label.group') }}
           </label>
-          <b-form-select v-model="selectedGroup" :options="groupOptions" class="ml-1 mr-2" />
+          <span :title="vueSelectTitle(vueSelected.group)">
+            <v-select v-model="vueSelected.group" :options="groupOptions" class="ml-1 mr-2 vue-options" :style="getVueSelectStyle()">
+              <template slot="selected-option" slot-scope="option">
+                {{ vueSelectCutOn(option) }}
+              </template>
+            </v-select>
+          </span>
         </b-form-row>
         <b-form-row v-if="useCategory" class="my-1 ml-2 ml-sm-0">
           <label class="ml-sm-4 ml-2 mr-1">
             {{ $t('label.category') }}
           </label>
-          <b-form-select v-model="selectedCategory" :options="categoryOptionsForPot" class="ml-1 mr-2" />
+          <span :title="vueSelectTitle(vueSelected.category)">
+            <v-select v-model="vueSelected.category" :options="categoryOptionsForPot" class="ml-1 mr-2 vue-options" :style="getVueSelectStyle()">
+              <template slot="selected-option" slot-scope="option">
+                {{ vueSelectCutOn(option) }}
+              </template>
+            </v-select>
+          </span>
         </b-form-row>
         <b-form-row>
           <b-form-checkbox v-model="modeRssi" class="ml-sm-4 ml-2 mr-1">
@@ -30,15 +48,15 @@
           <label class="ml-sm-4 ml-2 mr-1">
             {{ $t('label.tx') }}
           </label>
-          <b-form-select v-model="targetTx" :options="txRecords" class="ml-1 mr-2" />
+          <v-select v-model="vueSelected.tx" :options="txRecords" class="ml-1 mr-2 vue-options" :style="getVueSelectStyle()" />
         </b-form-row>
         <b-form-row class="my-1 ml-2 ml-sm-0">
           <b-button class="ml-sm-4 ml-2 mr-1" :pressed.sync="isPause" :variant="getButtonTheme()">
-            <i v-if="!isPause" class="fas fa-pause" />
+            <font-awesome-icon v-if="!isPause" icon="pause" />
             <span v-if="!isPause">
               &nbsp;{{ $t('label.reload') }}{{ $t('label.pause') }}
             </span>
-            <i v-if="isPause" class="fas fa-play" />
+            <font-awesome-icon v-if="isPause" icon="play" />
             <span v-if="isPause">
               &nbsp;{{ $t('label.reload') }}{{ $t('label.restart') }}
             </span>
@@ -65,6 +83,7 @@ import { CATEGORY } from '../../sub/constant/Constants'
 import { Container, Shape, Text } from '@createjs/easeljs/dist/easeljs.module'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import commonmixinVue from '../mixin/commonmixin.vue'
+import controlmixinVue from '../mixin/controlmixin.vue'
 
 class RssiIcon {
   constructor(parent, rssi, scale, level = 3) {
@@ -122,7 +141,7 @@ export default {
   components: {
     breadcrumb,
   },
-  mixins: [showmapmixin, commonmixinVue],
+  mixins: [showmapmixin, commonmixinVue, controlmixinVue],
   data () {
     return {
       items: [
@@ -138,7 +157,7 @@ export default {
       useGroup: MenuHelper.useMaster('group') && Util.includesIgnoreCase(APP.TX.WITH, 'group'),
       useCategory: MenuHelper.useMaster('category') && Util.includesIgnoreCase(APP.TX.WITH, 'category'),
       modeRssi: true,
-      exbDisp: 'deviceNum',
+      exbDisp: 'deviceId',
       nearest: [],
       targetTx: null,
       exbBtns : [],
@@ -149,41 +168,27 @@ export default {
     }
   },
   computed: {
-    ...mapState('app_service', [
-      'forceFetchTx',
-    ]),
     ...mapState([
       'reload',
     ]),
     categoryOptionsForPot() {
-      return StateHelper.getOptionsFromState('category', false, false,
+      return StateHelper.getOptionsFromState('category', false, true,
         category => CATEGORY.POT_AVAILABLE.includes(category.categoryType)
       )
     },
     txRecords() {
-      const btxs = this.nearest.map((n) => n.btx_id)
+      const btxs = this.nearest.map(n => ({label: n.btx_id, value: n.btx_id}))
       if (!this.selectedGroup && !this.selectedCategory) {
         return btxs
       }
-      const target = this.txs.filter((tx) => isMatchId(this.selectedGroup, tx.group, 'groupId') &&
+      const target = this.txs.filter(tx => isMatchId(this.selectedGroup, tx.group, 'groupId') &&
       isMatchId(this.selectedCategory, tx.category, 'categoryId'))
-      return target.length > 0 ? btxs.filter((btx) => target.some((t) => btx === t.btxId)) : []
+      return target.length > 0 ? btxs.filter(btx => target.some(t => btx.value === t.btxId)) : []
     },
   },
   watch: {
     modeRssi: function(newVal, oldVal) {
       this.$emit('rssi', newVal)
-    },
-    targetTx: function(newVal, oldVal) {
-      this.dispRssiIcons(newVal)
-    },
-    selectedGroup: function(newVal, oldVal) {
-      this.targetTx = null
-      this.dispRssiIcons(null)
-    },
-    selectedCategory: function(newVal, oldVal) {
-      this.targetTx = null
-      this.dispRssiIcons(null)
     },
     isPause: function(newVal, oldVal) {
       // リロード一時停止
@@ -193,6 +198,34 @@ export default {
       }
       // リロード再開
       this.startAutoReload()
+    },
+    'vueSelected.area': {
+      handler: function(newVal, oldVal){
+        this.selectedArea = Util.getValue(newVal, 'value', null)
+        this.changeArea(this.selectedArea)
+      },
+      deep: true,
+    },
+    'vueSelected.category': {
+      handler: function(newVal, oldVal){
+        this.selectedCategory = Util.getValue(newVal, 'value', null)
+        this.vueSelected.tx = null
+      },
+      deep: true,
+    },
+    'vueSelected.group': {
+      handler: function(newVal, oldVal){
+        this.selectedGroup = Util.getValue(newVal, 'value', null)
+        this.vueSelected.tx = null
+      },
+      deep: true,
+    },
+    'vueSelected.tx': {
+      handler: function(newVal, oldVal){
+        this.targetTx = Util.getValue(newVal, 'value', null)
+        this.dispRssiIcons(this.targetTx)
+      },
+      deep: true,
     },
   },
   async mounted() {
@@ -234,8 +267,7 @@ export default {
           this.dispRssiIcons(this.targetTx)
         }
 
-        await StateHelper.load('tx', this.forceFetchTx)
-        StateHelper.setForceFetch('tx', false)
+        await StateHelper.load('tx')
 
         if (payload && payload.done) {
           payload.done()
@@ -247,7 +279,7 @@ export default {
     createExbIcon(exb) {
       const exbBtn = new Container()
       const s = new Shape()
-      s.graphics.beginFill(DISP.EXB_LOC.BGCOLOR).drawCircle(0, 0, DISP.EXB_ICON_RADIUS / this.canvasScale, DISP.EXB_ICON_RADIUS / this.canvasScale)
+      s.graphics.beginFill(DISP.EXB_LOC.BGCOLOR).drawCircle(0, 0, DISP.EXB_LOC.RSSI_RADIUS / this.canvasScale, DISP.EXB_LOC.RSSI_RADIUS / this.canvasScale)
       exbBtn.addChild(s)
       const label = new Text(this.getExbDisp(exb.deviceId))
       label.font = 20 / this.canvasScale + 'px ' + DISP.EXB_LOC.FONT
@@ -267,8 +299,6 @@ export default {
         return deviceId.toString(16).toUpperCase()
       case 'deviceId':
         return deviceId
-      case 'deviceNum':
-        return deviceId - this.$store.state.currentRegion.deviceOffset
       }
     },
     getExbPosition() {
@@ -326,3 +356,7 @@ export default {
   },
 }
 </script>
+
+<style scoped lang="scss">
+@import "../../sub/constant/vue.scss";
+</style>

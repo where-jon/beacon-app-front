@@ -1,7 +1,7 @@
 import * as MenuHelper from '../sub/helper/MenuHelper'
 import * as ConfigHelper from '../sub/helper/ConfigHelper'
 import * as HttpHelper from '../sub/helper/HttpHelper'
-import * as StateHelper from '../sub/helper/StateHelper'
+// import * as StateHelper from '../sub/helper/StateHelper'
 import * as AuthHelper from '../sub/helper/AuthHelper'
 import * as config from '../sub/constant/config'
 import _ from 'lodash'
@@ -15,9 +15,9 @@ export default async (context, inject) => {
   try {
     const login = JSON.parse(window.localStorage.getItem('login'))
     HttpHelper.setApiKey(login && login.apiKey? login.apiKey: null)
-    let setting = await HttpHelper.getAppService('/meta/setting/wsByTenant/' + AuthHelper.getTenantCd('default'), {}, true)
+    let setting = await HttpHelper.getAppService('/meta/setting/wsByTenant/' + AuthHelper.getTenantCd('default') + '/' + AuthHelper.getRegionId(), {}, true)
     if (setting == null) {
-      setting = await HttpHelper.getAppServiceNoCrd('/meta/setting/byTenant/' + AuthHelper.getTenantCd('default'))
+      setting = await HttpHelper.getAppServiceNoCrd('/meta/setting/byTenant/' + AuthHelper.getTenantCd('default') + '/' + AuthHelper.getRegionId())
     }
     ConfigHelper.applyAppServiceSetting(setting)  
   }
@@ -27,9 +27,7 @@ export default async (context, inject) => {
 
   // load map image
   setTimeout(() => {
-    if (AuthHelper.checkSession()) {
-      StateHelper.loadAreaImages()
-    }
+    AuthHelper.checkSession()
   }, 500)
 
   // loading chunk failed対策 Loading chunk 6 failed.

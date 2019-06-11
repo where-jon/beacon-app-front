@@ -7,10 +7,6 @@
       <b-row>
         <b-col md="8" offset-md="2">
           <b-form v-if="show" @submit.prevent="onSubmit">
-            <b-form-group v-if="hasId" v-show="isShown('TX.WITH', 'txId')">
-              <label v-t="'label.txId'" />
-              <b-form-input v-model="form.txId" type="text" readonly="readonly" />
-            </b-form-group>
             <b-form-group v-if="showMinorHead" v-show="showTx('minor')">
               <label v-t="'label.minor'" />
               <input v-model="form.minor" :readonly="!isEditable" :required="requiredMinor" type="number" min="0" max="65535" class="form-control">
@@ -20,12 +16,16 @@
               <b-form-select v-model="form.sensorId" :options="sensorOptionsTx" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-3 col-4" />
             </b-form-group>
             <b-form-group v-show="isShown('TX.WITH', 'category')">
-              <label v-t="'label.category'" />
-              <b-form-select v-model="form.categoryId" :options="categoryOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-3 col-4" />
+              <b-form-row>
+                <label v-t="'label.category'" class="d-flex align-items-center" />
+                <v-select v-model="vueSelected.category" :options="categoryOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-2 vue-options-lg" />
+              </b-form-row>
             </b-form-group>
             <b-form-group v-show="isShown('TX.WITH', 'group')">
-              <label v-t="'label.group'" />
-              <b-form-select v-model="form.groupId" :options="groupOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-3 col-4" />
+              <b-form-row>
+                <label v-t="'label.group'" class="d-flex align-items-center" />
+                <v-select v-model="vueSelected.group" :options="groupOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-2 vue-options-lg" />
+              </b-form-row>
             </b-form-group>
             <b-form-group v-show="showTx('btxId')">
               <label v-t="'label.btxId'" />
@@ -38,10 +38,6 @@
             <b-form-group v-if="showMinorMid" v-show="showTx('minor')">
               <label v-t="'label.minor'" />
               <input v-model="form.minor" :readonly="!isEditable" :required="requiredMinor" type="number" min="0" max="65535" class="form-control">
-            </b-form-group>
-            <b-form-group>
-              <label v-t="'label.txName'" />
-              <input v-model="form.txName" :readonly="!isEditable" type="text" maxlength="20" class="form-control">
             </b-form-group>
             <b-form-group v-show="isShown('TX.WITH', 'displayName')">
               <label v-t="'label.displayName'" />
@@ -93,11 +89,13 @@ import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as HtmlUtil from '../../../sub/util/HtmlUtil'
 import * as Util from '../../../sub/util/Util'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
+import controlmixinVue from '../../../components/mixin/controlmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
+import * as ParamHelper from '../../../sub/helper/ParamHelper'
 import { APP } from '../../../sub/constant/config.js'
 import { CATEGORY, SENSOR } from '../../../sub/constant/Constants'
 
@@ -106,7 +104,7 @@ export default {
     breadcrumb,
     alert,
   },
-  mixins: [editmixinVue],
+  mixins: [editmixinVue, controlmixinVue],
   data() {
     return {
       name: 'tx',
@@ -114,7 +112,7 @@ export default {
       backPath: '/master/tx',
       appServicePath: '/core/tx',
       form: ViewHelper.extract(this.$store.state.app_service.tx, [
-        'txId', 'btxId', 'major', 'minor', 'txName', 'potTxList.0.pot.displayName', 'mapImage', 'dispPos', 'dispPir', 'dispAlways',
+        'txId', 'btxId', 'major', 'minor', 'potTxList.0.pot.displayName', 'mapImage', 'dispPos', 'dispPir', 'dispAlways',
         'txSensorList.0.sensor.sensorId', 'locationId', 'location.x', 'location.y', 'location',
         'potTxList.0.pot.potId', 'potTxList.0.pot.potCd', 'potTxList.0.pot.displayName', 'potTxList.0.pot.description',
         'potTxList.0.pot.potCategoryList.0.category.categoryId',
@@ -123,13 +121,14 @@ export default {
       defValue: {
         'dispPos': 1,
       },
+      vueSelected: {
+        category: null,
+        group: null,
+      },
       items: ViewHelper.createBreadCrumbItems('master', {text: 'tx', href: '/master/tx'}, Util.getDetailCaptionKey(this.$store.state.app_service.tx.txId)),
     }
   },
   computed: {
-    hasId(){
-      return Util.hasValue(this.form.txId)
-    },
     theme () {
       const theme = getButtonTheme()
       return 'outline-' + theme
@@ -142,7 +141,7 @@ export default {
       return options
     },
     categoryOptions() {
-      return StateHelper.getOptionsFromState('category', false, false, 
+      return StateHelper.getOptionsFromState('category', false, true, 
         category => CATEGORY.POT_AVAILABLE.includes(category.categoryType)
       )
     },
@@ -150,7 +149,7 @@ export default {
       return !this.showMinorHead
     },
     showMinorHead() {
-      return !Util.includesIgnoreCase(APP.TX.WITH, 'txId') && APP.TX.BTX_MINOR == 'minor'
+      return APP.TX.BTX_MINOR == 'minor'
     },
     requiredMinor() {
       return this.showTx('minor') && this.form.sensorId != SENSOR.TEMPERATURE
@@ -163,6 +162,20 @@ export default {
       'pots',
       'potImages',
     ]),
+  },
+  watch: {
+    'vueSelected.category': {
+      handler: function(newVal, oldVal){
+        this.form.categoryId = Util.getValue(newVal, 'value', null)
+      },
+      deep: true,
+    },
+    'vueSelected.group': {
+      handler: function(newVal, oldVal){
+        this.form.groupId = Util.getValue(newVal, 'value', null)
+      },
+      deep: true,
+    },
   },
   mounted() {
     ViewHelper.applyDef(this.form, this.defValue)
@@ -183,11 +196,16 @@ export default {
       }
       return true
     },
-    async afterCrud(){
-      await StateHelper.load('pot', true)
+    beforeReload(){
+      this.form.sensorId = null
+      this.vueSelected.category = ParamHelper.getVueSelectData(this.categoryOptions, null)
+      this.vueSelected.group = ParamHelper.getVueSelectData(this.groupOptions, null)
+    },
+    afterCrud(){
+      StateHelper.setForceFetch('pot', true)
     },
     async save() {
-      let txId = Util.hasValue(this.form.txId)? this.form.txId: -1
+      const txId = Util.hasValue(this.form.txId)? this.form.txId: -1
       switch(APP.TX.BTX_MINOR) {
       case 'minor':
         this.form.btxId = this.form.minor
@@ -195,8 +213,8 @@ export default {
       case 'btxId':
         this.form.minor = this.form.btxId
       }
-      let disp = this.form.dispPos |  this.form.dispPir | this.form.dispAlways
-      let pot = await this.getRelatedPot(txId)
+      const disp = this.form.dispPos |  this.form.dispPir | this.form.dispAlways
+      const pot = await this.getRelatedPot(txId)
       if (pot) {
         pot.potTxList = null // potTx関連を削除
         pot.potUserList = null // ここではpotUser関連は登録しない
@@ -209,7 +227,7 @@ export default {
         location.x = Util.hasValue(this.form.x)? this.form.x: null
         location.y = Util.hasValue(this.form.y)? this.form.y: null
       }
-      let entity = {
+      const entity = {
         ...this.form,
         txId,
         disp,
@@ -240,7 +258,6 @@ export default {
         }
       } else {
         newPot = _.cloneDeep(relatedPot)
-        newPot.thumbnail = _.find(this.potImages, (pi) => pi.id == newPot.potId).thumbnail
       }
       newPot.potCd = this.form.potCd || newPot.potCd
       newPot.displayName = this.form.displayName || newPot.displayName
@@ -259,5 +276,5 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
+@import "../../../sub/constant/vue.scss";
 </style>

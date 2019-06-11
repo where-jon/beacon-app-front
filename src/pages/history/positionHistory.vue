@@ -10,7 +10,7 @@
             <b-form-row>
               <b-form-row class="mb-3 mr-2">
                 <label v-t="'label.minor'" class="mr-2" />
-                <v-select v-model="form.tx" :options="txOptions" class="mr-2">
+                <v-select v-model="form.tx" :options="txOptions" class="mr-2 vue-options" :style="getVueSelectStyle()">
                   <div slot="no-options">
                     {{ $i18n.tnl('label.vSelectNoOptions') }}
                   </div>
@@ -22,11 +22,16 @@
             <b-form-row>
               <b-form-row class="mb-3 mr-2">
                 <label v-t="'label.group'" class="mr-2" />
-                <v-select v-model="form.group" :options="groupOptions" class="mr-2">
-                  <div slot="no-options">
-                    {{ $i18n.tnl('label.vSelectNoOptions') }}
-                  </div>
-                </v-select>
+                <span :title="vueSelectTitle(form.group)">
+                  <v-select v-model="form.group" :options="groupOptions" class="mr-2 vue-options" :style="getVueSelectStyle()">
+                    <template slot="selected-option" slot-scope="option">
+                      {{ vueSelectCutOn(option) }}
+                    </template>
+                    <div slot="no-options">
+                      {{ $i18n.tnl('label.vSelectNoOptions') }}
+                    </div>
+                  </v-select>
+                </span>
               </b-form-row>
             </b-form-row>
           </b-form-group>
@@ -76,6 +81,7 @@ import 'element-ui/lib/theme-chalk/index.css'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
+import controlmixinVue from '../../components/mixin/controlmixin.vue'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
@@ -93,7 +99,7 @@ export default {
     alert,
     DatePicker,
   },
-  mixins: [showmapmixin ],
+  mixins: [showmapmixin, controlmixinVue],
   data () {
     return {
       name: 'positionHistory',
@@ -152,7 +158,7 @@ export default {
       )
     },
   },
-  async created() {
+  created() {
     StateHelper.load('group')
     const date = new Date()
     this.form.datetimeFrom = Util.getDatetime(date, {hours: -1})
@@ -190,12 +196,12 @@ export default {
         for (var posHist of fetchList) {
           const d = new Date(posHist.positionDt)
           posHist.positionDt = Util.formatDate(d.getTime())
-          let aTx = _.find(this.txs, (tx) => { return tx.txId == posHist.txId })
-          posHist.txName = Util.getValue(aTx, 'txName', '')
+          const aTx = _.find(this.txs, (tx) => { return tx.txId == posHist.txId })
           posHist.potName = Util.getValue(aTx, 'potName', '')
-          let aExb = _.find(this.exbs, (exb) => { return exb.exbId == posHist.exbId })
+          posHist.major = Util.getValue(aTx, 'major', '')
+          posHist.minor = Util.getValue(aTx, 'minor', '')
+          const aExb = _.find(this.exbs, (exb) => { return exb.exbId == posHist.exbId })
           posHist.deviceId = Util.getValue(aExb, 'deviceId', '')
-          posHist.deviceNum =  Util.getValue(aExb, 'deviceNum', 0)
           posHist.deviceIdX = Util.getValue(aExb, 'deviceIdX', 0)
           posHist.locationName = Util.getValue(aExb, 'locationName', '')
           posHist.posId = Util.getValue(aExb, 'posId', '')
@@ -227,3 +233,7 @@ export default {
   }
 }
 </script>
+
+<style scoped lang="scss">
+@import "../../sub/constant/vue.scss";
+</style>

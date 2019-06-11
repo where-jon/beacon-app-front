@@ -6,11 +6,9 @@
 
       <div class="mapContainer mb-5">
         <div class="container">
-          <analysis-search :area-options="areaOptions" @changeArea="changeArea"
-                           @display="display"
-          />
+          <analysis-search @changeArea="changeArea" @display="display" />
           <b-row>
-            <canvas id="map" ref="map" />
+            <canvas id="map" ref="map" @click="closeVueSelect" />
           </b-row>
         </div>
       </div>
@@ -26,11 +24,11 @@ import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
 import analysisSearch from '../../components/parts/analysissearch.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
+import controlmixin from '../../components/mixin/controlmixin.vue'
 import drawMixin from '../../components/mixin/drawmixin.vue'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import * as Util from '../../sub/util/Util'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
-import { EventBus } from '../../sub/helper/EventHelper'
 
 export default {
   components: {
@@ -38,7 +36,7 @@ export default {
     alert,
     analysisSearch,
   },
-  mixins: [showmapmixin, drawMixin ],
+  mixins: [showmapmixin, drawMixin, controlmixin ],
   data () {
     return {
       items: ViewHelper.createBreadCrumbItems('sumTitle', 'flowlineAnalysis'),
@@ -64,6 +62,7 @@ export default {
     async fetchData(payload){
       try {
         this.showProgress()
+        this.replace({showAlert: false})
         this.showMapImageDef(() => {
           if (this.container) {
             this.container.removeAllChildren()
@@ -79,10 +78,6 @@ export default {
           this.stage.addChild(this.container)
           this.stage.update()
           this.forceUpdateRealWidth()
-          if (this.shownParam) {
-            this.display(this.shownParam)
-            EventBus.$emit('onDisplay')
-          }
         })
         if (payload && payload.done) {
           payload.done()
@@ -110,17 +105,18 @@ export default {
     },
     analyseWeightInfos(positionInfos){
       const weightInfos = []
-      Object.values(positionInfos).forEach((positionInfo) => {
+      Object.values(positionInfos).forEach(positionInfo => {
         if(!weightInfos.includes(positionInfo.count)){
           weightInfos.push(positionInfo.count)
         }
       })
       weightInfos.sort((a, b) => a - b)
-      const max = weightInfos.length < DISP.ANALYSIS.LINE.MAX_WEIGHT? weightInfos.length: DISP.ANALYSIS.LINE.MAX_WEIGHT
-      Object.values(positionInfos).forEach((positionInfo) => {
+      const min = DISP.ANALYSIS.LINE.MIN_WEIGHT
+      const max = min + weightInfos.length - 1 < DISP.ANALYSIS.LINE.MAX_WEIGHT? min + weightInfos.length - 1: DISP.ANALYSIS.LINE.MAX_WEIGHT
+      const per = max <= min? 0: weightInfos.length <= 1? 0: (max - min) / (weightInfos.length - 1)
+      Object.values(positionInfos).forEach(positionInfo => {
         const stageIndex = weightInfos.indexOf(positionInfo.count)
-        const per = max <= 1? 0: weightInfos.length <= 1? 1: (max - 1) / (weightInfos.length - 1)
-        positionInfo.weight = 1 + stageIndex * per
+        positionInfo.weight = min + stageIndex * per
       })
       return positionInfos
     },

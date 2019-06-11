@@ -31,12 +31,11 @@ export default {
         bulkEditPath: '/master/zoneClass/bulkedit',
         appServicePath: '/core/zone',
         csvOut: true,
-        custumCsvColumns: ['zoneId', 'zoneName', 'areaName', 'categoryName'],
+        custumCsvColumns: ['zoneName', 'areaName', 'categoryName'],
         fields: ViewHelper.addLabelByKey(this.$i18n, [ 
           {key: 'zoneName', sortable: true },
           {key: 'areaName', sortable: true},
           {key: 'dispCategoryName', label: 'categoryName', sortable: true},
-          {key: 'zoneId', sortable: true },
           {key: 'actions', thStyle: {width:'130px !important'} }
         ]),
         sortBy: 'zoneName',
@@ -55,14 +54,17 @@ export default {
     },
     ...mapState('app_service', [
       'zones',
-      'forceFetchZone',
     ]),
   },
   methods: {
+    afterCrud(){
+      StateHelper.setForceFetch('tx', true)
+      StateHelper.setForceFetch('exb', true)
+    },
     async fetchData(payload) {
       try {
         this.showProgress()
-        await StateHelper.load('zone', this.forceFetchZone)
+        await StateHelper.load('zone')
         if (payload && payload.done) {
           payload.done()
         }

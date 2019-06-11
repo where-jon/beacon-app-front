@@ -14,7 +14,7 @@ export const APP = { // 機能面に関する設定
   LOGIN_MODE: LOGIN_MODE.APP_SERVICE, // ログインモード(なし、ローカル、AppService)
   SAAS_DOMAIN: '.saas.',
   COMMON: {
-    VERSION: 'Version 1.1.0', // バージョン　this application version
+    VERSION: 'Version 1.2.0', // バージョン　this application version
     TIME_ZONE: -9, // 午前0時を決定するためのタイムゾーン(時)
     AUTO_RELOAD: 60000, // 自動リロード間隔(ミリ秒)
   },
@@ -50,7 +50,7 @@ export const APP = { // 機能面に関する設定
     MOVING_AVERAGE: 5, // 5回分移動平均
     USE_MULTI_POSITIONING: false, // ３点測位を使う
     // 禁止区域関連設定
-    PROHIBIT_ALERT : true, // 禁止区域アラート設定
+    PROHIBIT_ALERT : null,  // 文字列リストで画面かバッチに通知するか判断["screen","mail","led"]
     PROHIBIT_GROUPS: null, // 禁止区域非許可GROUPID[1,2,3]の形
 
     USE_LEGEND: false, // 凡例を表示
@@ -91,14 +91,14 @@ export const APP = { // 機能面に関する設定
   },
   // TX関連設定
   TX: {
-    WITH: ['displayName', 'major', 'category', 'description', 'sensor', 'dispFlg', 'location', 'dispPir'],
+    WITH: ['major', 'dispFlg', 'location', 'dispPir'],
     MAJOR_REQUIRED: false, // majorを必須にする ※サーバでも要設定
     BTX_MINOR: 'both', // both:両方表示し、別々に設定、minor/btxId:片方のみ表示し、保存の際同一の値を設定
   },
   // EXB関連設定
   EXB: {
     SENSOR: [1,2,3,4,8], // EXBのタイプに設定可能なセンサーID
-    WITH: ['deviceNum', 'posId', 'zone'],
+    WITH: ['deviceId', 'posId', 'zone'],
     MULTI_SENSOR: true,
     SENSOR_MAX: 2,   // センサー種類最大数
   },
@@ -122,7 +122,7 @@ export const APP = { // 機能面に関する設定
     // 通知媒体
     MIDIUM_TYPES: [0,1],   // 選択可能な種別（1メール,2slack）
     // 通知
-    STATE_TYPES: [0,1,2], // 選択可能な種別（0 TXボタン通知,1 アラート系, 2 ユーザ登録・更新 , 3 sos）
+    STATE_TYPES: [0,1,2,4], // 選択可能な種別（0 TXボタン通知,1 アラート系, 2 ユーザ登録・更新 , 3 sos）
   },
   // 動線分析関連設定
   ANALYSIS: {
@@ -147,7 +147,7 @@ export const APP = { // 機能面に関する設定
     POWER_LEVEL_WARN: 30,  // 電池レベルで減少とみなす下限値
   },
   SENSOR_LIST: {
-    WITH: ['posId', 'deviceNum', 'deviceId', 'deviceIdX', 'locationName'],
+    WITH: ['posId', 'deviceId', 'deviceIdX'],
   },
   SENSORGRAPH: {
     WITH_DEVICE: true,             // 画面上でデバイスを使用するか否か
@@ -160,6 +160,12 @@ export const APP = { // 機能面に関する設定
     // TX詳細表示項目
     ITEMS: ['minor', 'major', 'name', 'group', 'category', 'tel', 'timestamp'],
     NO_UNREGIST_THUMB: false, // TX詳細サムネイル非表示（未登録の場合）
+  },
+  PROCESS_SUM: {
+    TIME: {
+      SUCCESS_COMPLETE: 30, // 最終工程がn秒以上の場合、正常終了
+      LATE: 300, // 最終工程以外がn秒を上回る場合、超過エラー
+    },
   },
   SVC: {
     POS: {
@@ -179,6 +185,11 @@ export const APP = { // 機能面に関する設定
   MAX_IMAGE_SIZE: 20 * 1024 * 1024, // アップロード可能な最大イメージサイズ(Byte)
   AREA_THUMBNAIL_MAX: 200, // サムネイルリサイズ時の最大幅・高さ(エリア)
   POT_THUMBNAIL_MAX: 200, // サムネイルリサイズ時の最大幅・高さ(pot)
+
+  POSITION_SUMMARY_START: 10, // 位置情報csvダウンロード開始時刻（時）
+  POSITION_SUMMARY_END: 19,    // 位置情報csvダウンロード終了時刻（時）
+  POSITION_SUMMARY_INTERVAL: 10, // 位置情報csvダウンロード間隔（分）
+  POSITION_SUMMARY_RECEIVE_COUNT: 2 // 位置情報における受信回数の閾値
 }
 
 
@@ -187,13 +198,13 @@ export const APP_SERVICE = { // used if APP.LOGIN_MODE == APP_SERVICE
   BASE_URL: 'http://localhost:8080'
 }
 
-export const EXCLOUD_BASE_URL = 'https://nsome8q880.execute-api.ap-northeast-1.amazonaws.com/prod' // used if APP.LOGIN_MODE != APP_SERVICE
-
 export const EXCLOUD = {
+  BASE_URL: 'https://nsome8q880.execute-api.ap-northeast-1.amazonaws.com/prod', // used if APP.LOGIN_MODE != APP_SERVICE
+
   withCredentials: true, // false if APP.LOGIN_MODE != APP_SERVICE
-  // POSITION_URL: EXCLOUD_BASE_URL + "/beacon/position-kalman?_=",
-  // GATEWAY_URL: EXCLOUD_BASE_URL + "/gateway/0?=",
-  // TELEMETRY_URL: EXCLOUD_BASE_URL + "/telemetry/0?=",
+  // POSITION_URL: EXCLOUD.BASE_URL + "/beacon/position-kalman?_=",
+  // GATEWAY_URL: EXCLOUD.BASE_URL + "/gateway/0?=",
+  // TELEMETRY_URL: EXCLOUD.BASE_URL + "/telemetry/0?=",
   POSITION_URL: '/core/excloud/position?_=',
   GATEWAY_URL: '/core/excloud/gateway?_=',
   TELEMETRY_URL: '/core/excloud/telemetry?_=',
@@ -202,6 +213,8 @@ export const EXCLOUD = {
   DL_URL: '/core/excloud/dl/{type}/{yyyymmdd}?_=',
   LED_URL: '/core/excloud/led?_=',
   POSITION_HISTORY_FETCH_URL: '/core/positionHistory/fetch/{allFetch}?_=',
+  AREA_THUMBNAIL_URL: '/core/area/mapThumbnail/{id}?_=',
+  POT_THUMBNAIL_URL: '/basic/pot/potThumbnail/{id}?_=',
 }
 
 export const DISP = { // 表示系設定（表示・色・フォント・サイズ）
@@ -217,9 +230,9 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     R: 26, // Txの半径
     FIX_R: 26, // Txの半径(カテゴリ一覧、グループ一覧、凡例表示用)
     ROUNDRECT_RADIUS: 13, // Tx角丸表示時のRADIUS
-    BGCOLOR: '3bcddc', // Tx表示時のデフォルト背景色
-    COLOR: '000000', // Tx表示時のデフォルト文字色
-    STROKE_COLOR: 'cccccc', // Tx表示時のデフォルト枠線色
+    BGCOLOR: '#3bcddc', // Tx表示時のデフォルト背景色
+    COLOR: '#000000', // Tx表示時のデフォルト文字色
+    STROKE_COLOR: '#cccccc', // Tx表示時のデフォルト枠線色
     STROKE_WIDTH: 1, // Tx表示時のデフォルト枠線幅
     ALPHA: 0.6, // Tx表示時(離席)のデフォルト透過値
     LOST_ALPHA: 0.1, // Tx固定表示(不在)時のデフォルト透過値
@@ -239,6 +252,7 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     BGCOLOR: '#76ccf7', // EXB配置設定のEXB表示背景色
     COLOR: '#000', // EXB配置設定のEXB表示文字色
     FONT: 'Arial', // EXB配置設定のEXB表示フォント
+    RSSI_RADIUS: 0,
   },
   TX_LOC: {
     // TX配置設定のTX表示サイズ
@@ -315,12 +329,18 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   },
   ANALYSIS: { // 分析
     LINE: {
+      MIN_WEIGHT: 1,    // 動線の最小太さ
       MAX_WEIGHT: 10,   // 動線の最大太さ
       COLOR: '#ff0000', // 動線の色 (#xxxxxx)
       OPACITY: 1,       // 動線の透過度 (0～1。0.5などの小数も可)
     },
     HEATMAP: {
       RADIUS: 150,      // 直径
+    },
+  },
+  CONTROL: {
+    COMBO_BOX: {
+      W: 165,
     },
   },
 
@@ -341,7 +361,7 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   HEART_RATE_LINE_COLOR: '#7de8a6',// 湿度グラフの線色
   STEP_LINE_COLOR: '#7da6e8',// 歩数グラフの線色
   DOWN_COUNT_LINE_COLOR: '#fc5800',// 転倒数グラフの線色
-  SUM_STACK_COLOR: ['red','orange','yellow','green','purple','skyblue','blue','navy','gray','white'], // 滞在集計の色パターン
+  SUM_STACK_COLOR: ['red','orange','yellow','green','purple','skyblue','blue','navy','gray'], // 滞在集計の色パターン
   SUM_STACK_BORDER_COLOR: 'gray',
 
   BLOOD_PRESSURE_MAX: 200,// 血圧最大メモリ
@@ -368,7 +388,7 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   TXMEDITAG_POPUP_SIZE: 236, // TXMEDITAG表示ポップアップの高さ
 
   POSITION_HISTORY: {
-    HEADERS: ['potName', 'major', 'minor', 'deviceNum', 'locationName', 'posId', 'areaName'], // 位置表示履歴の表示カラム
+    HEADERS: ['potName', 'major', 'minor', 'deviceId', 'locationName', 'posId', 'areaName'], // 位置表示履歴の表示カラム
   },
 
   GATEWAY: { // ゲートウエイ
@@ -385,7 +405,7 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     RSSI_ICON_HEIGHT: 20,
   },
   // 禁止区域関連設定
-  PROHIBIT_TWINKLE_TIME: 1500, // 点滅間隔(ミリ秒) ＸＸＸ_TIME dispに変更
+  PROHIBIT_TWINKLE_TIME: 1500, // 点滅間隔(ミリ秒)
 }
 
 // used when APP.LOGIN_MODE != APP_SERVICE with excloud old api -----------------------------------------------------

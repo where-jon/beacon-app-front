@@ -8,8 +8,14 @@
         <label class="mr-2 mb-2">
           {{ $t('label.area') }}
         </label>
-        <b-form-select v-model="selectedArea" :options="areaOptions" :disabled="settingStart" class="mr-2 mb-2 areaOptions" />
-        <b-button v-t="'label.load'" :variant="getButtonTheme()" :disabled="settingStart" size="sm" class="mb-2" @click="changeArea" />
+        <span :title="vueSelectTitle(vueSelected.area)">
+          <v-select v-model="vueSelected.area" :options="areaOptions" :disabled="settingStart" class="mr-2 mb-2 vue-options" :style="getVueSelectStyle()" :clearable="false">
+            <template slot="selected-option" slot-scope="option">
+              {{ vueSelectCutOn(option) }}
+            </template>
+          </v-select>
+        </span>
+        <b-button v-t="'label.load'" :variant="getButtonTheme()" :disabled="settingStart || selectedArea == null" size="sm" class="mb-2" @click="changeArea" />
       </b-form-row>
     </b-form>
     <b-form inline class="mt-2">
@@ -19,11 +25,16 @@
         </label>
         <b-form-select v-model="exbDisp" :options="exbDispOptions" :disabled="settingStart" class="mr-2 mb-2" @change="changeExbDisp" />
         <b-form-row>
-          <v-select v-model="selectedExb_" :options="exbOptions" :on-change="showExbOnMap" :disabled="settingStart" size="sm" class="mb-2 mt-mobile exbOptions">
-            <div slot="no-options">
-              {{ $i18n.tnl('label.vSelectNoOptions') }}
-            </div>
-          </v-select>
+          <span :title="vueSelectTitle(selectedExb_)">
+            <v-select v-model="selectedExb_" :options="exbOptions" :disabled="settingStart" size="sm" class="mb-2 mt-mobile vue-options" :style="getVueSelectStyle()" @input="showExbOnMap">
+              <template slot="selected-option" slot-scope="option">
+                {{ vueSelectCutOn(option) }}
+              </template>
+              <div slot="no-options">
+                {{ $i18n.tnl('label.vSelectNoOptions') }}
+              </div>
+            </v-select>
+          </span>
           <b-button v-t="'label.bulkAdd'" :variant="getButtonTheme()" :disabled="settingStart" size="sm" class="mt-mobile mb-2" @click="bulkAdd" /> 
         </b-form-row>
       </b-form-row>
@@ -54,7 +65,7 @@
     </b-form>
     <p />
     <div class="mt-3">
-      <canvas id="map" ref="map" />
+      <canvas id="map" ref="map" @click="closeVueSelect" />
     </div>
     <b-modal id="modalInfo" :title="$t('label.mapRatioSetting')" ok-only>
       {{ $t('message.mapRatioSetting') }}
@@ -73,6 +84,7 @@ import { mapState } from 'vuex'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as HttpHelper from '../../../sub/helper/HttpHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
+import * as ParamHelper from '../../../sub/helper/ParamHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as Util from '../../../sub/util/Util'
 import { APP, DISP } from '../../../sub/constant/config'
@@ -82,13 +94,14 @@ import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
 import commonmixinVue from '../../../components/mixin/commonmixin.vue'
 import showmapmixin from '../../../components/mixin/showmapmixin.vue'
+import controlmixinVue from '../../../components/mixin/controlmixin.vue'
 
 export default {
   components: {
     breadcrumb,
     alert,
   },
-  mixins: [showmapmixin, commonmixinVue ],
+  mixins: [showmapmixin, commonmixinVue, controlmixinVue],
   data() {
     return {
       message: '',
@@ -111,6 +124,9 @@ export default {
       toggleCallBack: () => {
         this.keepExbPosition = true
       },
+      vueSelected: {
+        area: null,
+      },
       ICON_ARROW_WIDTH: DISP.EXB_LOC.SIZE.W/3,
       ICON_ARROW_HEIGHT: DISP.EXB_LOC.SIZE.H/3,
       DISPLAY_NAME_BYTE_LENGTH: 6,
@@ -124,6 +140,12 @@ export default {
     ]),
   },
   watch: {
+    'vueSelected.area': {
+      handler: function(newVal, oldVal){
+        this.selectedArea = Util.getValue(newVal, 'value', null)
+      },
+      deep: true,
+    },
     realWidth: function(newVal, oldVal) {
       console.log({newVal, oldVal})
       this.onMapImageScale()
@@ -133,24 +155,27 @@ export default {
       this.onMapImageScale()
     }
   },
-  mounted() {
-    this.fetchData()
-    if(this.pageSendParam){
-      this.selectedArea = this.pageSendParam.areaId
-      this.changeArea()
-      this.replaceAS({pageSendParam: null})
-    }
-    else{
-      this.selectedArea = null
-    }
-
+  async mounted() {
+    await StateHelper.load('area')
+    await StateHelper.load('exb')
     const options = []
     options.push({value: 'locationName', text: this.$i18n.tnl('label.locationName')})
-    if (Util.includesIgnoreCase(APP.EXB.WITH, 'deviceNum')) options.push({value:'deviceNum', text: this.$i18n.tnl('label.deviceNum')})
     if (Util.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')) options.push({value:'deviceIdX', text: this.$i18n.tnl('label.deviceIdX')})
     if (Util.includesIgnoreCase(APP.EXB.WITH, 'deviceId')) options.push({value:'deviceId', text: this.$i18n.tnl('label.deviceId')})
     this.exbDispOptions = options
     this.exbDisp = options[0].value
+
+    if(this.pageSendParam){
+      this.vueSelected.area = ParamHelper.getVueSelectData(this.areaOptions, this.pageSendParam.areaId)
+      this.selectedArea = this.pageSendParam.areaId
+      this.replaceAS({pageSendParam: null})
+    }
+    else{
+      this.vueSelected.area = ParamHelper.getVueSelectData(this.areaOptions, null, true)
+      this.selectedArea = Util.getValue(this.vueSelected.area, 'value', null)
+    }
+    this.changeArea()
+    await this.fetchData()
   },
   beforeDestroy() {
     this.selectedArea = null
@@ -201,6 +226,8 @@ export default {
     sortExbOptions() {
       this.exbOptions = _(this.workExbs).filter((val) => {
         return val.enabled && (val.location.areaId == null || !val.location.x || !val.location.y || (val.location.x && val.location.y <= 0))
+      }).filter(val => {
+        return !this.positionedExb.find(exb => exb.exbId == val.exbId)
       })
         .map((val) => {
           return {
@@ -222,8 +249,6 @@ export default {
         return deviceId.toString(16).toUpperCase()
       case 'deviceId':
         return deviceId
-      case 'deviceNum':
-        return deviceId - this.$store.state.currentRegion.deviceOffset
       case 'locationName': {
         const exb = this.exbs.find(val => val.deviceId == deviceId)      
         return exb? exb.locationName: ''
@@ -231,7 +256,7 @@ export default {
     },
     changeExbDisp(newVal) {
       this.exbDisp = newVal
-      this.setExbPosition()
+      this.sortExbOptions()
       for (let i=0; this.exbCon && i<this.exbCon.numChildren; i++) {
         let exbBtn = this.exbCon.getChildAt(i)
         if (exbBtn) {
@@ -422,10 +447,11 @@ export default {
         this.changeAreaDone()
       }
     },
-    changeAreaDone() {
+    async changeAreaDone() {
       if (this.isChangeArea) {
         this.isChangeArea = false
         if (this.selectedArea) {
+          await StateHelper.loadAreaImage(this.selectedArea)
           this.reset()
           this.workExbs = _.cloneDeep(this.exbs)
           this.setExbPosition()
@@ -550,6 +576,7 @@ export default {
 
 <style scoped lang="scss">
 @import "../../../sub/constant/config.scss";
+@import "../../../sub/constant/vue.scss";
 
 ::-webkit-scrollbar { 
   display: none; 
@@ -581,10 +608,6 @@ export default {
 
 .ratioInput {
   width: 75px;
-}
-
-.exbOptions {
-  width: 140px;
 }
 
 .blink {

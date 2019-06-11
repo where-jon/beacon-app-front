@@ -26,17 +26,15 @@ export default {
       params: {
         name: 'tx',
         id: 'txId',
+        confirmName: APP.TX.BTX_MINOR == 'minor'? 'minor': 'btxId',
         indexPath: '/master/tx',
         editPath: '/master/tx/edit',
         bulkEditPath: '/master/tx/bulkedit',
         appServicePath: '/core/tx',
-        mainColumn: !Util.includesIgnoreCase(APP.TX.WITH, 'txId') && APP.TX.BTX_MINOR == 'minor'? {name: this.$i18n.tnl('label.minor'), id: 'minor'}:
-          !Util.includesIgnoreCase(APP.TX.WITH, 'txId') && APP.TX.BTX_MINOR != 'minor'? {name: this.$i18n.tnl('label.btxId'), id: 'btxId'}:
-            {name: this.$i18n.tnl('label.txId'), id: 'txId'},
         csvOut: true,
         custumCsvColumns: this.getCustumCsvColumns(),
         fields: this.getFields(),
-        sortBy: Util.includesIgnoreCase(APP.TX.WITH, 'txId')? 'txId': APP.TX.BTX_MINOR != 'minor'? 'btxId': 'minor',
+        sortBy: APP.TX.BTX_MINOR != 'minor'? 'btxId': 'minor',
         initTotalRows: this.$store.state.app_service.txs.length
       },
       items: ViewHelper.createBreadCrumbItems('master', 'tx'),
@@ -46,7 +44,6 @@ export default {
     ...mapState('app_service', [
       'txs',
       'txImages',
-      'forceFetchTx',
     ]),
   },
   mounted() {
@@ -76,7 +73,6 @@ export default {
         APP.TX.BTX_MINOR == 'minor'? 'minor': null,
         APP.TX.BTX_MINOR != 'minor'? 'btxId': null,
         APP.TX.BTX_MINOR == 'both'? 'minor': null,
-        'txName',
         'sensor',
       ].concat(this.createCustomColumn().map(val => val.key)).concat([
         Util.includesIgnoreCase(APP.TX.WITH, 'location')? 'areaName': null,
@@ -89,7 +85,6 @@ export default {
         APP.TX.BTX_MINOR == 'minor'? {key: 'minor', sortable: true, tdClass: 'action-rowdata' }: null,
         APP.TX.BTX_MINOR != 'minor'? {key: 'btxId', sortable: true, tdClass: 'action-rowdata' }: null,
         APP.TX.BTX_MINOR == 'both'? {key: 'minor', sortable: true, tdClass: 'action-rowdata' }: null,
-        {key: 'txName', sortable: true, tdClass: 'action-rowdata' },
         {key: 'sensor', label:'type', sortable: true,},
       ].concat(this.createCustomColumn())
         .concat([
@@ -118,8 +113,7 @@ export default {
     async fetchData(payload) {
       try {
         this.showProgress()
-        await StateHelper.load('tx', this.forceFetchTx)
-        StateHelper.setForceFetch('tx', false)
+        await StateHelper.load('tx')
         if (payload && payload.done) {
           payload.done()
         }

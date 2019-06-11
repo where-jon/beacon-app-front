@@ -21,9 +21,8 @@ export const fetch = async (target, id) => {
 }
 
 export const fetchMapImage = async (path) => {
-  return await HttpHelper.getAppService(path + '?_=' + new Date().getTime())
-  // let data = await HttpHelper.getAppService(path + "?_=" + new Date().getTime(), {responseType: 'arraybuffer'})
-  // return new Buffer(data, 'binary').toString('base64')
+  const data = await HttpHelper.getAppService(path + '?_=' + new Date().getTime(), {responseType: 'arraybuffer'})
+  return new Buffer(data, 'binary')
 }
 
 export const getCurrentUser = async () => {

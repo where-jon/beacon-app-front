@@ -8,7 +8,13 @@
         <label class="mr-2 mb-2">
           {{ $t('label.area') }}
         </label>
-        <b-form-select v-model="selectedArea" :options="areaOptions" class="mr-2 mb-2 areaOptions" />
+        <span :title="vueSelectTitle(vueSelected.area)">
+          <v-select v-model="vueSelected.area" :options="areaOptions" class="mr-2 mb-2 vue-options" :style="getVueSelectStyle()" :clearable="false">
+            <template slot="selected-option" slot-scope="option">
+              {{ vueSelectCutOn(option) }}
+            </template>
+          </v-select>
+        </span>
         <b-button v-t="'label.load'" :variant="getButtonTheme()" size="sm" class="mb-2" @click="changeArea" />
       </b-form-row>
     </b-form>
@@ -18,11 +24,16 @@
           {{ $t('label.tx') }}
         </label>
         <b-form-row>
-          <v-select v-model="selectedTx_" :options="txOptions" :on-change="showTxOnMap" size="sm" class="mb-2 mt-mobile txOptions">
-            <div slot="no-options">
-              {{ $i18n.tnl('label.vSelectNoOptions') }}
-            </div>
-          </v-select>
+          <span :title="vueSelectTitle(selectedTx_)">
+            <v-select v-model="selectedTx_" :options="txOptions" size="sm" class="mb-2 ml-2 mt-mobile vue-options" :style="getVueSelectStyle()" @input="showTxOnMap">
+              <template slot="selected-option" slot-scope="option">
+                {{ vueSelectCutOn(option) }}
+              </template>
+              <div slot="no-options">
+                {{ $i18n.tnl('label.vSelectNoOptions') }}
+              </div>
+            </v-select>
+          </span>
           <b-button v-t="'label.bulkAdd'" :variant="getButtonTheme()" size="sm" class="mt-mobile mb-2" @click="bulkAdd" /> 
           <b-button v-t="'label.save'" :variant="getButtonTheme()" :disabled="!isChanged" size="sm" class="mt-mobile ml-2 mb-2" @click="save" /> 
         </b-form-row>
@@ -30,7 +41,7 @@
     </b-form>
     <p />
     <div class="mt-3">
-      <canvas id="map" ref="map" />
+      <canvas id="map" ref="map" @click="closeVueSelect" />
     </div>
     <b-modal id="modalWarn" :title="$t('label.confirm')" @ok="setChangeArea" @hide="changeAreaDone">
       {{ $t('message.unsavedData') }}
@@ -46,6 +57,7 @@ import { mapState } from 'vuex'
 // import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as HttpHelper from '../../../sub/helper/HttpHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
+import * as ParamHelper from '../../../sub/helper/ParamHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as Util from '../../../sub/util/Util'
 import { DISP } from '../../../sub/constant/config'
@@ -55,13 +67,14 @@ import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
 import commonmixinVue from '../../../components/mixin/commonmixin.vue'
 import showmapmixin from '../../../components/mixin/showmapmixin.vue'
+import controlmixinVue from '../../../components/mixin/controlmixin.vue'
 
 export default {
   components: {
     breadcrumb,
     alert,
   },
-  mixins: [showmapmixin, commonmixinVue ],
+  mixins: [showmapmixin, commonmixinVue, controlmixinVue],
   data() {
     return {
       message: '',
@@ -76,6 +89,9 @@ export default {
       toggleCallBack: () => {
         this.keepTxPosition = true
       },
+      vueSelected: {
+        area: null,
+      },
       ICON_ARROW_WIDTH: DISP.TX_LOC.SIZE.W/3,
       ICON_ARROW_HEIGHT: DISP.TX_LOC.SIZE.H/3,
       noImageErrorKey: 'noMapImage',
@@ -87,16 +103,28 @@ export default {
       'pageSendParam',
     ]),
   },
-  mounted() {
-    this.fetchData()
+  watch: {
+    'vueSelected.area': {
+      handler: function(newVal, oldVal){
+        this.selectedArea = Util.getValue(newVal, 'value', null)
+      },
+      deep: true,
+    },
+  },
+  async mounted() {
+    await StateHelper.load('area')
+    await StateHelper.load('tx')
     if(this.pageSendParam){
+      this.vueSelected.area = ParamHelper.getVueSelectData(this.areaOptions, this.pageSendParam.areaId)
       this.selectedArea = this.pageSendParam.areaId
-      this.changeArea()
       this.replaceAS({pageSendParam: null})
     }
     else{
-      this.selectedArea = null
+      this.vueSelected.area = ParamHelper.getVueSelectData(this.areaOptions, null, true)
+      this.selectedArea = Util.getValue(this.vueSelected.area, 'value', null)
     }
+    this.changeArea()
+    await this.fetchData()
   },
   beforeDestroy() {
     this.selectedArea = null
@@ -138,7 +166,7 @@ export default {
       })
         .map((val) => { // TODO: minor以外の表示対応
           return {
-            label: '' + this.getLabel(val) + '(' + val.txName + ')', 
+            label: '' + this.getLabel(val) + (val.potName? '(' + val.potName + ')': ''),
             value: val.txId
           }
         }).value()
@@ -192,7 +220,7 @@ export default {
       label.textAlign = 'center'
       label.textBaseline = 'middle'
       txBtn.addChild(label)
-      txBtn.txName = tx.txName
+      txBtn.potName = tx.potName
       txBtn.btxId = tx.btxId
       txBtn.minor = tx.minor
       txBtn.txId = tx.txId
@@ -251,10 +279,11 @@ export default {
         this.changeAreaDone()
       }
     },
-    changeAreaDone() {
+    async changeAreaDone() {
       if (this.isChangeArea) {
         this.isChangeArea = false
         if (this.selectedArea) {
+          await StateHelper.loadAreaImage(this.selectedArea)
           this.reset()
           this.workTxs = _.cloneDeep(this.txs)
           this.setTxPosition()
@@ -315,7 +344,7 @@ export default {
         tx.x = tx.y = null
       }
       this.positionedTx = this.positionedTx.filter((tx) => (this.deleteTarget.minor && tx.minor != this.deleteTarget.minor) || tx.btxId != this.deleteTarget.btxId)
-      this.txOptions.push({label: `${this.getLabel(this.deleteTarget)}(${this.deleteTarget.txName})`, value: this.deleteTarget.txId})
+      this.txOptions.push({label: `${this.getLabel(this.deleteTarget)}${this.deleteTarget.potName? '(' + this.deleteTarget.potName + ')': ''}`, value: this.deleteTarget.txId})
       this.txCon.removeChild(this.deleteTarget)
       this.stage.update()
     },
@@ -399,6 +428,7 @@ export default {
         if (param.length > 0) {
           await HttpHelper.postAppService('/core/tx/bulk?updateOnlyNN=' + UPDATE_ONLY_NN.NULL, param)
           await StateHelper.load('tx', true)
+          StateHelper.setForceFetch('pot', true)
         }
 
         this.message = this.$i18n.tnl('message.completed', {target: this.$i18n.tnl('label.save')})
@@ -418,6 +448,7 @@ export default {
 
 <style scoped lang="scss">
 @import "../../../sub/constant/config.scss";
+@import "../../../sub/constant/vue.scss";
 
 ::-webkit-scrollbar { 
   display: none; 
@@ -449,10 +480,6 @@ export default {
 
 .ratioInput {
   width: 75px;
-}
-
-.txOptions {
-  width: 140px;
 }
 
 .blink {

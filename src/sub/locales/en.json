@@ -100,7 +100,7 @@
 
     "tx": "Tx",
     "txId": "TxID",
-    "txName": "Tx name",
+    "txName": "Name",
     "btxId": "btxId",
     "major": "Major",
     "minor": "Minor",
@@ -143,6 +143,7 @@
     "gwNotify": "GW status alert",
     "exbNotify": "EXB status alert",
     "txBatteryNotify": "TX battery status alert",
+    "prohibitNotify": "Prohibited area alert",
     "userRegNotify": "User registration alert",
     "sosNotify": "SOS button press notification",
 
@@ -215,6 +216,7 @@
     "potId": "ID",
     "potCd": "Code",
     "potName": "Name",
+    "potSearchName": "Detected name",
     "post": "Post",
     "ruby": "Pronounce",
     "tel": "Tel",
@@ -300,7 +302,6 @@
     "regionId": "Region ID",
     "regionName": " Region name",
     "meshId": "Mesh ID",
-    "deviceOffset": "Device offset",
 
     "zoneClass": "Zone (Class)",
     "zoneBlock": "Zone (Division)",
@@ -583,6 +584,9 @@
     "stayRatioAbsent2Time": "absent2Time",
     "stayRatioAbsent1Ratio": "absent1Ratio",
     "stayRatioAbsent2Ratio": "absent2Ratio",
+
+    "positionSummary": "Position Summary",
+
     "dummy": ""
   },
   "message": {

@@ -121,6 +121,11 @@ export default {
       this.form = {}
       ViewHelper.applyDef(this.form, this.defValue)
       if(this.beforeReload) {
+        if(this.vueSelected && typeof this.vueSelected == 'object'){
+          Object.keys(this.vueSelected).forEach(key => {
+            this.vueSelected[key] = Util.isArray(this.vueSelected[key])? []: null
+          })
+        }
         this.beforeReload()
       }
       let customFileLabel = document.getElementsByClassName('custom-file-label')
@@ -190,7 +195,7 @@ export default {
       })
     },
     modifyColName(col) {
-      if (col == 'TXID' && !Util.includesIgnoreCase(APP.TX.WITH, 'txId')){
+      if (col == 'TXID'){
         return APP.TX.BTX_MINOR == 'minor'? 'minor': 'btxId'
       }
       if (col == 'btxId' && APP.TX.BTX_MINOR == 'minor') {
@@ -199,7 +204,7 @@ export default {
       return col
     },
     modifyVal(col, val) {
-      if (col == 'TXID' && !Util.includesIgnoreCase(APP.TX.WITH, 'txId')){
+      if (col == 'TXID'){
         if(APP.TX.BTX_MINOR == 'minor' && this.minor){
           return this.minor
         }

@@ -5,10 +5,6 @@
       <alert :message="message" />
 
       <b-form v-if="show" @submit.prevent="onSubmit">
-        <b-form-group v-if="hasId">
-          <label v-t="'label.roleId'" />
-          <b-form-input v-model="form.roleId" type="text" readonly="readonly" />
-        </b-form-group>
         <b-form-group>
           <label v-t="'label.roleName'" />
           <input v-model="form.roleName" :readonly="!isEditable" type="text" maxlength="20" class="form-control" required>
@@ -33,6 +29,7 @@
 import { mapState } from 'vuex'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
+import * as StateHelper from '../../../sub/helper/StateHelper'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
 import * as HtmlUtil from '../../../sub/util/HtmlUtil'
 import * as Util from '../../../sub/util/Util'
@@ -60,9 +57,6 @@ export default {
     }
   },
   computed: {
-    hasId(){
-      return Util.hasValue(this.form.roleId)
-    },
     theme () {
       const theme = getButtonTheme()
       return 'outline-' + theme
@@ -87,6 +81,9 @@ export default {
     HtmlUtil.setCustomValidationMessage()
   },
   methods: {
+    afterCrud(){
+      StateHelper.setForceFetch('user', true)
+    },
     async save() {
       let entity = {
         roleId: Util.hasValue(this.form.roleId)? this.form.roleId: -1,

@@ -5,10 +5,6 @@
       <alert :message="message" />
 
       <b-form v-if="show" @submit.prevent="onSubmit">
-        <b-form-group v-if="hasId">
-          <label v-t="'label.categoryId'" />
-          <b-form-input v-model="form.categoryId" type="text" class="form-control" readonly="readonly" />
-        </b-form-group>
         <b-form-group>
           <label v-t="'label.categoryName'" />
           <input v-model="form.categoryName" :readonly="!isEditable" type="text" maxlength="20" class="form-control" required>
@@ -70,6 +66,7 @@ export default {
       defaultColor: '#000000',
       defaultBgColor: '#ffffff',
       form: ViewHelper.extract(category, ['categoryId', 'categoryName', 'categoryType', 'display', 'description']),
+      oldType: Util.getValue(category, 'categoryType', null),
       oldShape: Util.getValue(category, 'display.shape', null),
       oldColor: Util.getValue(category, 'display.color', null),
       oldBgColor: Util.getValue(category, 'display.bgColor', null),
@@ -80,9 +77,6 @@ export default {
     }
   },
   computed: {
-    hasId(){
-      return Util.hasValue(this.form.categoryId)
-    },
     theme() {
       const theme = getButtonTheme()
       return 'outline-' + theme
@@ -107,6 +101,7 @@ export default {
   methods: {
     beforeReload(){
       if (this.form) {
+        this.form.categoryType = this.oldType? this.oldType: this.categoryTypes[0].value
         this.form.displayShape = this.oldShape? this.oldShape: this.shapes[0].value
         this.form.displayColor = Util.colorCd4display(this.oldColor? this.oldColor: null, this.defaultColor)
         this.form.displayBgColor = Util.colorCd4display(this.oldBgColor? this.oldBgColor: null, this.defaultBgColor)
@@ -115,6 +110,7 @@ export default {
     afterCrud(){
       StateHelper.setForceFetch('pot', true)
       StateHelper.setForceFetch('tx', true)
+      StateHelper.setForceFetch('zone', true)
     },
     async save() {
       const entity = {
@@ -128,6 +124,7 @@ export default {
           bgColor: Util.colorCd4display(this.form.displayBgColor),
         },
       }
+      this.oldType = this.form.categoryType
       this.oldShape = this.form.displayShape
       this.oldColor = this.form.displayColor
       this.oldBgColor = this.form.displayBgColor

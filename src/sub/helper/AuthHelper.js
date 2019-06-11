@@ -75,7 +75,7 @@ export const getUserInfo = async (tenantAdmin) => {
   await StateHelper.load('region', true)
 
   // get setting (again in case failed on init or reload)
-  const setting = await HttpHelper.getAppService('/meta/setting/wsByTenant/' + getTenantCd('default'))
+  const setting = await HttpHelper.getAppService('/meta/setting/wsByTenant/' + getTenantCd('default') + '/' + getRegionId(currentRegion.regionId))
   return {tenant, tenantFeatureList, user, featureList, menu, currentRegion, setting}
 }
 
@@ -108,7 +108,6 @@ export const authByAppService = async (loginId, password, success, err) => {
       menu: userInfo.menu, currentRegion: userInfo.currentRegion, frontRev: revInfo.frontRev, serviceRev: revInfo.serviceRev, tenantAdmin: data.tenantAdmin,
       isProvider: userInfo.user.providerUserId != null, currentTenant: userInfo.tenant, userRegionIdList: userRegionIdList, allRegionMove: allRegionMove, apiKey: data.apiKey })
     success()
-    StateHelper.loadAreaImages()
     LocaleHelper.setLocale(LocaleHelper.getLocale())
     store.commit('setLang', LocaleHelper.getLocale(getLangShort()))
 
@@ -145,8 +144,6 @@ export const switchAppService = async () => {
     loginInfo.currentTenant = userInfo.tenant
 
     await login(loginInfo)
-    StateHelper.loadAreaImages()
-
   } catch (e) {
     console.error(e)
   }
@@ -194,5 +191,10 @@ export const getTenantCd = (def, providerOk) => { // xxx.saas.ドメインの場
     tenantCd = Util.getValue(login, 'currentTenant.tenantCd', null)
   }
   return tenantCd || def
+}
+
+export const getRegionId = (def = 0) => {
+  const login = JSON.parse(window.localStorage.getItem('login'))
+  return Util.getValue(login, 'currentRegion.regionId', def)
 }
 

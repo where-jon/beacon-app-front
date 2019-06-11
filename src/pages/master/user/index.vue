@@ -25,6 +25,7 @@ export default {
       params: {
         name: 'user',
         id: 'userId',
+        confirmName: 'loginId',
         indexPath: '/master/user',
         editPath: '/master/user/edit',
         bulkEditPath: '/master/user/bulkedit',
@@ -41,20 +42,24 @@ export default {
   computed: {
     ...mapState('app_service', [
       'users',
-      'forceFetchUser',
+      'regions',
     ]),
+  },
+  async created() {
+    await StateHelper.load('region')
   },
   methods: {
     createCustomColumn(){
-      return APP.USER.WITH.map(val => {
-        return {key: val, label: val, sortable: true}
-      })
+      return APP.USER.WITH.map(val => ({key: val == 'region'? 'regionNames': val, label: val, sortable: true}))
     },
     getCustomCsvColumns(){
-      return ['userId', 'loginId', 'pass']
+      return ['loginId', 'pass']
         .concat(this.createCustomColumn().map(val => val.key))
         .concat('roleName', 'description')
         .filter(val => val)
+    },
+    customCsvData(val){
+      val.regionNames = val.regionNames.join(';')
     },
     getFields(){
       return ViewHelper.addLabelByKey(this.$i18n, [ 
@@ -63,15 +68,16 @@ export default {
         .concat([
           {key: 'roleName', label: 'role', sortable: true },
           {key: 'description', sortable: true },
-          {key: 'userId', sortable: true },
           {key: 'actions', thStyle: {width:'130px !important'} }
         ]))
+    },
+    afterCrud(){
+      StateHelper.setForceFetch('pot', true)
     },
     async fetchData(payload) {
       try {
         this.showProgress()
-        await StateHelper.load('user', this.forceFetchUser)
-        StateHelper.setForceFetch('user', false)
+        await StateHelper.load('user')
         if (payload && payload.done) {
           payload.done()
         }
