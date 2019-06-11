@@ -10,8 +10,9 @@ export default {
     isVueSelectCutOn(selected){
       return this.vueSelectCutOn(selected) != Util.getValue(selected, 'label', null)
     },
-    vueSelectCutOn(selected){
-      return selected? Util.cutOnLongWidth(selected.label, DISP.CONTROL.COMBO_BOX.W * 0.9, true, {padding: '1.4em'}): null
+    vueSelectCutOn(selected, required = false){
+      const style = {padding: required? '1.4em': '2em'}
+      return selected? Util.cutOnLongWidth(selected.label, DISP.CONTROL.COMBO_BOX.W * 0.9, true, style): null
     },
     vueSelectTitle(selected){
       if(this.isVueSelectCutOn(selected)){

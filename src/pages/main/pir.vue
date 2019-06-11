@@ -9,7 +9,7 @@
         <span :title="vueSelectTitle(vueSelected.area)">
           <v-select v-model="vueSelected.area" :options="areaOptions" :clearable="false" class="ml-1 vue-options" :style="getVueSelectStyle()">
             <template slot="selected-option" slot-scope="option">
-              {{ vueSelectCutOn(option) }}
+              {{ vueSelectCutOn(option, true) }}
             </template>
           </v-select>
         </span>
