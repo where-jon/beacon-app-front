@@ -132,6 +132,7 @@ export default {
       let addUrlParam = ''
       if (this.updatedThumbnail.id && this.updatedThumbnail.id === row.potId) {
         addUrlParam = this.updatedThumbnail.time
+        this.replaceAS({updatedThumbnail: { id: null, time: null }})
       }
       return row.existThumbnail ? this.thumbnailUrl.replace('{id}', row.potId) + addUrlParam : null
     },

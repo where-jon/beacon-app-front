@@ -54,6 +54,7 @@ export default {
   computed: {
     ...mapState('app_service', [
       'areas',
+      'updatedAreaThumbnail',
     ]),
   },
   methods: {
@@ -81,7 +82,12 @@ export default {
       this.hideProgress()
     },
     thumbnail(row) {
-      return row.existThumbnail ? this.thumbnailUrl.replace('{id}', row.areaId) : null
+      let addUrlParam = ''
+      if (this.updatedAreaThumbnail && this.updatedAreaThumbnail === row.areaId) {
+        addUrlParam = toString(new Date().getTime())
+        this.replaceAS({updatedAreaThumbnail: null})
+      }
+      return row.existThumbnail ? this.thumbnailUrl.replace('{id}', row.areaId) + addUrlParam : null
     },
   },
 }
