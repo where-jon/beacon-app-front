@@ -148,9 +148,10 @@ export default {
     beforeReload(){
       this.form.areaCd = StateHelper.createMasterCd('area', this.areas, this.area)
     },
-    async afterCrud(again){
-      await StateHelper.load('tx', true)
-      await StateHelper.load('exb', true)
+    afterCrud(){
+      StateHelper.setForceFetch('tx', true)
+      StateHelper.setForceFetch('exb', true)
+      StateHelper.setForceFetch('zone', true)
     },
     beforeSubmit(again){
       if(this.mapUpdate){

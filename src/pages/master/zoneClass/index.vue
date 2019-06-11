@@ -54,14 +54,17 @@ export default {
     },
     ...mapState('app_service', [
       'zones',
-      'forceFetchZone',
     ]),
   },
   methods: {
+    afterCrud(){
+      StateHelper.setForceFetch('tx', true)
+      StateHelper.setForceFetch('exb', true)
+    },
     async fetchData(payload) {
       try {
         this.showProgress()
-        await StateHelper.load('zone', this.forceFetchZone)
+        await StateHelper.load('zone')
         if (payload && payload.done) {
           payload.done()
         }

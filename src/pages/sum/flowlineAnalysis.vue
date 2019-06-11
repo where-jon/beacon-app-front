@@ -6,9 +6,7 @@
 
       <div class="mapContainer mb-5">
         <div class="container">
-          <analysis-search :area-options="areaOptions" @changeArea="changeArea"
-                           @display="display"
-          />
+          <analysis-search @changeArea="changeArea" @display="display" />
           <b-row>
             <canvas id="map" ref="map" @click="closeVueSelect" />
           </b-row>

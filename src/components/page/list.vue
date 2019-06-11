@@ -121,7 +121,7 @@
         <!-- リージョン名 -->
         <template slot="regionNames" slot-scope="row">
           <div>
-            <span v-for="(regionName, index) in getRegionNames(row.item.regionIds)" :key="index" class="row">
+            <span v-for="(regionName, index) in row.item.regionNames" :key="index" class="row">
               {{ regionName }}
             </span>
           </div>
@@ -224,6 +224,7 @@ import * as MenuHelper from '../../sub/helper/MenuHelper'
 import * as DetectStateHelper from '../../sub/helper/DetectStateHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
+import * as SortUtil from '../../sub/util/SortUtil'
 import { getButtonTheme } from '../../sub/helper/ThemeHelper'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import commonmixinVue from '../mixin/commonmixin.vue'
@@ -518,7 +519,10 @@ export default {
     },
     sortCompareCustom(aData, bData, key){
       if(key == 'txIdName'){
-        return StateHelper.sortCompareArray(aData.txIdNames, bData.txIdNames)
+        return SortUtil.sortByArray(aData.txIdNames, bData.txIdNames)
+      }
+      if(key == 'regionName'){
+        return SortUtil.sortByString(aData[key], bData[key])
       }
       return null
     },
@@ -568,12 +572,6 @@ export default {
       this.replaceAS({[this.name]: entity})
       this.replaceAS({editPage: this.currentPage})
       this.$router.push(this.editPath)
-    },
-    getRegionNames(regionIds){
-      return regionIds.map(regionId => {
-        const target = this.regions.find(region => region.regionId == regionId)
-        return Util.getValue(target, 'regionName', null)
-      }).filter(val => val)
     },
     getDispCategoryName(category){
       return StateHelper.getDispCategoryName(category)

@@ -44,7 +44,6 @@ export default {
     ...mapState('app_service', [
       'txs',
       'txImages',
-      'forceFetchTx',
     ]),
   },
   mounted() {
@@ -114,8 +113,7 @@ export default {
     async fetchData(payload) {
       try {
         this.showProgress()
-        await StateHelper.load('tx', this.forceFetchTx)
-        StateHelper.setForceFetch('tx', false)
+        await StateHelper.load('tx')
         if (payload && payload.done) {
           payload.done()
         }

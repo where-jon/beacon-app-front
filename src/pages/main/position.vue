@@ -141,7 +141,7 @@ export default {
       firstTime: true,
       message: '',
       showDismissibleAlert: false,
-      prohibitData : null,
+      prohibitDetectList : null,
       icons: {},
       txsMap: {},
       exbsMap: {},
@@ -161,7 +161,6 @@ export default {
       'groups',
       'prohibits',
       'txs',
-      'forceFetchTx',
     ]),
     ...mapState([
       'reload',
@@ -223,6 +222,7 @@ export default {
     await StateHelper.load('category')
     await StateHelper.load('group')
     await StateHelper.load('prohibit')
+    await StateHelper.load('pot')
     await StateHelper.load('tx')
     await StateHelper.load('exb')
     this.txs.forEach((t) => this.txsMap[t.btxId] = t)
@@ -322,8 +322,7 @@ export default {
           this.showProgress()
         }
         if (!this.selectedTx.btxId) {
-          await StateHelper.load('tx', this.forceFetchTx)
-          StateHelper.setForceFetch('tx', false)
+          await StateHelper.load('tx')
         }
         this.$nextTick(() => {
           this.loadLegends()
@@ -379,8 +378,8 @@ export default {
           this.stage.update()
         }
         this.setPositionedExb()
-        this.showTxAll()
         this.setProhibit('pos') // listmixin呼び出し
+        this.showTxAll()
         if(!this.firstTime && reloadButton){
           this.reloadState.isLoad = false
         }
@@ -478,7 +477,7 @@ export default {
         txBtn.y = pos.y
       }
       // プロとするTXアイコンが進入禁止区域に入ってるかチェック
-      txBtn.prohibit  = this.prohibitData ? this.prohibitData.some((data) => data.minor == pos.minor):false
+      txBtn.prohibit  = this.prohibitDetectList ? this.prohibitDetectList.some((data) => data.minor == pos.minor):false
 
       if (this.isFixTx(tx)) {
         Util.debug('fixed location', tx)

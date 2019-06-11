@@ -82,11 +82,15 @@ export default {
       this.hideProgress()
     },
     thumbnail(row) {
+<<<<<<< HEAD
       let addUrlParam = ''
       if (this.updatedAreaThumbnail && this.updatedAreaThumbnail === row.areaId) {
         addUrlParam = new Date().getTime()
       }
       return row.existThumbnail ? this.thumbnailUrl.replace('{id}', row.areaId) + addUrlParam : null
+=======
+      return row.existThumbnail ? this.thumbnailUrl.replace('{id}', row.areaId) + (new Date().getTime()) : null
+>>>>>>> develop/1.2
     },
   },
 }

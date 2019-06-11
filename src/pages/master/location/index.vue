@@ -168,13 +168,13 @@ export default {
     if(this.pageSendParam){
       this.vueSelected.area = ParamHelper.getVueSelectData(this.areaOptions, this.pageSendParam.areaId)
       this.selectedArea = this.pageSendParam.areaId
-      this.changeArea()
       this.replaceAS({pageSendParam: null})
     }
     else{
       this.vueSelected.area = ParamHelper.getVueSelectData(this.areaOptions, null, true)
       this.selectedArea = Util.getValue(this.vueSelected.area, 'value', null)
     }
+    this.changeArea()
     await this.fetchData()
   },
   beforeDestroy() {
@@ -447,10 +447,11 @@ export default {
         this.changeAreaDone()
       }
     },
-    changeAreaDone() {
+    async changeAreaDone() {
       if (this.isChangeArea) {
         this.isChangeArea = false
         if (this.selectedArea) {
+          await StateHelper.loadAreaImage(this.selectedArea)
           this.reset()
           this.workExbs = _.cloneDeep(this.exbs)
           this.setExbPosition()

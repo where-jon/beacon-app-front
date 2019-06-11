@@ -35,7 +35,7 @@ export default {
   data() {
     return {
       message: '',
-      prohibitData : null,
+      prohibitDetectList : null,
       showDismissibleAlert: false,
       params: {
         name: 'position-list',
@@ -95,7 +95,7 @@ export default {
         this.setProhibit('list') // listmixin呼び出し
         Util.debug(positions)
         positions = positions.map((pos) => {
-          const prohibitCheck = this.prohibitData? this.prohibitData.some((data) => data.minor == pos.minor) : false
+          const prohibitCheck = this.prohibitDetectList? this.prohibitDetectList.some((data) => data.minor == pos.minor) : false
           const exb = this.exbs.find((exb) => exb.posId == pos.pos_id)
           return {
             ...pos,

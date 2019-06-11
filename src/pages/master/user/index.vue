@@ -13,7 +13,6 @@ import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import { APP } from '../../../sub/constant/config.js'
 import listmixinVue from '../../../components/mixin/listmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
-import * as Util from '../../../sub/util/Util'
 
 export default {
   components: {
@@ -44,7 +43,6 @@ export default {
     ...mapState('app_service', [
       'users',
       'regions',
-      'forceFetchUser',
     ]),
   },
   async created() {
@@ -61,10 +59,7 @@ export default {
         .filter(val => val)
     },
     customCsvData(val){
-      val.regionNames = val.regionIds.map(regionId => {
-        const target = this.regions.find(region => region.regionId == regionId)
-        return Util.getValue(target, 'regionName', null)
-      }).filter(val => val).join(';')
+      val.regionNames = val.regionNames.join(';')
     },
     getFields(){
       return ViewHelper.addLabelByKey(this.$i18n, [ 
@@ -76,11 +71,13 @@ export default {
           {key: 'actions', thStyle: {width:'130px !important'} }
         ]))
     },
+    afterCrud(){
+      StateHelper.setForceFetch('pot', true)
+    },
     async fetchData(payload) {
       try {
         this.showProgress()
-        await StateHelper.load('user', this.forceFetchUser)
-        StateHelper.setForceFetch('user', false)
+        await StateHelper.load('user')
         if (payload && payload.done) {
           payload.done()
         }

@@ -33,7 +33,7 @@
 import Vue from 'vue'
 import { mapState, mapMutations } from 'vuex'
 import { getThemeColor, getThemeClasses } from '../sub/helper/ThemeHelper'
-import { APP, DISP } from '../sub/constant/config'
+import { APP, DISP, DEV, EXCLOUD } from '../sub/constant/config'
 
 import mSidebar from '../components/layout/sidebar.vue'
 import mNav from '../components/layout/nav.vue'
@@ -62,6 +62,12 @@ export default {
   data() {
     return {
       showSidebar: DISP.MENU.SHOW_SIDEBAR,
+      conf: {
+        app: APP,
+        disp: DISP,
+        dev: DEV,
+        excloud: EXCLOUD,
+      },
     }
   },
   computed: {

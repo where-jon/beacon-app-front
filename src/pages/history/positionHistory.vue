@@ -158,7 +158,7 @@ export default {
       )
     },
   },
-  async created() {
+  created() {
     StateHelper.load('group')
     const date = new Date()
     this.form.datetimeFrom = Util.getDatetime(date, {hours: -1})

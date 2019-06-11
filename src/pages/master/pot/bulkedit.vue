@@ -65,7 +65,6 @@ export default {
       return dummyKey
     },
     afterCrud(){
-      StateHelper.setForceFetch('pot', true)
       StateHelper.setForceFetch('tx', true)
       StateHelper.setForceFetch('user', true)
     },

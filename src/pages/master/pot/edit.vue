@@ -192,8 +192,11 @@ export default {
       return Util.hasValue(this.userForm.userId)
     },
     thumbnailSrc () {
-      return this.form.existThumbnail && this.form.potId?
-        this.thumbnailUrl.replace('{id}', this.form.potId) + new Date().getTime() : ''
+      return this.form.existThumbnail && this.form.potId && (!this.form.thumbnail) ?
+        // 登録済みのサムネイルを表示する場合(画像取得APIのURLを指定)
+        this.thumbnailUrl.replace('{id}', this.form.potId) + new Date().getTime() :
+        // サムネイル欄から画像ファイル選択で表示する場合(base64を指定)
+        (this.form.thumbnail ? this.form.thumbnail : '')
     },
   },
   watch: {
@@ -237,7 +240,7 @@ export default {
     },
     minors: function(newVal, oldVal) {
       this.watchIds(newVal, 'minor')
-    }
+    },
   },
   async created(){
     await StateHelper.load('role')
