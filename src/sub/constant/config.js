@@ -342,6 +342,9 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     COMBO_BOX: {
       W: 165,
     },
+    MAP: {
+      MIN_HEIGHT: 32,
+    },
   },
 
   FONT_ICON_ADJUST_SCALE: 0.7, // アイコン内テキストのフォントサイズ係数

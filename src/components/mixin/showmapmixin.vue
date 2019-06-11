@@ -215,7 +215,10 @@ export default {
       }
     },
     calcFitSize(target, parent, top = 82) {
-      const parentHeight = document.documentElement.clientHeight - parent.offsetTop - top
+      let parentHeight = document.documentElement.clientHeight - parent.offsetTop - top
+      if(parentHeight < DISP.CONTROL.MAP.MIN_HEIGHT){
+        parentHeight = DISP.CONTROL.MAP.MIN_HEIGHT
+      }
       const isMapWidthLarger = parentHeight / parent.clientWidth > target.height / target.width
       let fitWidth
       if (HtmlUtil.isMobile()) {
