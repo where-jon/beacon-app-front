@@ -5,7 +5,7 @@ import * as HttpHelper from '../sub/helper/HttpHelper'
 import * as ViewHelper from '../sub/helper/ViewHelper'
 import * as SettingHelper from '../sub/helper/SettingHelper'
 import { APP } from '../sub/constant/config'
-import { LOGIN_MODE, FORCE_PUSH_MENU } from '../sub/constant/Constants'
+import { LOGIN_MODE, FORCE_PUSH_MENU, ROLE_FEATURE } from '../sub/constant/Constants'
 
 export default function (context) {
   console.debug('checkAuth')
@@ -50,7 +50,11 @@ export default function (context) {
     context.app.router.push(APP.MENU.ERROR_PAGE)
     return
   }
-  if (!isProvider && !isTenantAdmin && tenantFeatureList && !MenuHelper.featureOk(context.route.path, tenantFeatureList)) {
+  const roleFeatureList = context.store.state.featureList
+  const isUser = !isProvider && !isTenantAdmin
+  const notAuthTenantFeature = tenantFeatureList && !MenuHelper.featureOk(context.route.path, tenantFeatureList)
+  const notAuthRoleFeature = roleFeatureList && !MenuHelper.getMode(context.route.path, roleFeatureList) & ROLE_FEATURE.MODE.SYS_ALL
+  if (isUser && (notAuthTenantFeature || notAuthRoleFeature)) {
     if (MenuHelper.featureOk(APP.MENU.TOP_PAGE, tenantFeatureList)) {
       context.redirect(APP.MENU.TOP_PAGE)
     }
