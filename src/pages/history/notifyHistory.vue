@@ -316,7 +316,6 @@ export default {
     this.userState == 'ALL_REGION'? this.bTx = true: this.bTx = false
     this.userState == 'ALL_REGION'? this.bUserCheck = true: this.bUserCheck = false
     this.userState == 'ALL_REGION'? null: this.userMinor = user.minor
-    this.userState = 'ALL_REGION'
     this.fields = this.fields1
 
   },
