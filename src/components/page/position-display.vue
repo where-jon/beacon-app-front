@@ -63,7 +63,8 @@ export default {
       'zones',
       'exbs',
       'positions',
-      'prohibits'
+      'prohibits',
+      'lostZones',
     ]),
     ...mapState('main', [
       'orgPositions',
@@ -112,10 +113,11 @@ export default {
         await StateHelper.load('tx')
         await StateHelper.load('exb')
         await StateHelper.load('prohibit')
+        await StateHelper.load('lostZones')
         // positionデータ取得
         await this.storePositionHistory(null, false, true)
         this.replaceAS({positions: this.getPositions()})
-        this.setProhibit('display') // listmixin呼び出し
+        this.setProhibitDetect('display') // listmixin呼び出し
         this.alertData.message = this.message
         this.alertData.isAlert = this.showDismissibleAlert ? true: false
         // 分類checkProhibitZone

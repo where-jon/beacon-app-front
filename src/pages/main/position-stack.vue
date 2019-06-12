@@ -4,7 +4,7 @@
                 :reload="reload" :short-name="shortName" reload-emit-name="allFetch"
     />
     <b-alert v-model="alertData.isAlert" variant="danger" dismissible>
-      {{ $t('label.detectedProhibitZone') + ' : ' }}{{ alertData.message }}
+      {{ alertData.message }}
     </b-alert>
     <b-row class="mt-2 ml-3">
       <b-form inline class="mt-2" @submit.prevent>
