@@ -125,6 +125,11 @@
               {{ val }} <br>
             </span>
           </template>
+          <template slot="lastRcvPosNames" slot-scope="row">
+            <span v-for="(val, key) in row.item.lastRcvPosNames" :key="key">
+              {{ val }} <br>
+            </span>
+          </template>
         </b-table>
 
         <b-row>
@@ -235,12 +240,22 @@ export default {
         {key: 'txNames', sortable: true,label:'txName' },
         {key: 'notifyResult', sortable: true,label:'notifyResult' },
       ]),
-      fields7: ViewHelper.addLabelByKey(this.$i18n, [  // ユーザ登録通知
+      fields7: ViewHelper.addLabelByKey(this.$i18n, [  // 進入禁止通知
         {key: 'positionDt', sortable: true, label:'dt'},
         {key: 'notifyTo', sortable: true,label:'notifyTo' },
         {key: 'minors', sortable: true,label:'minor' },
         {key: 'potNames', sortable: true, label:'potSearchName'},
         {key: 'zoneNames', sortable: true, label:'zoneName'},
+        {key: 'lastRcvDatetimes', sortable: true,label:'finalReceiveTime' },
+        {key: 'notifyResult', sortable: true,label:'notifyResult' },
+      ]),
+      fields8: ViewHelper.addLabelByKey(this.$i18n, [  // 重要部品持ち出しアラート
+        {key: 'positionDt', sortable: true, label:'dt'},
+        {key: 'notifyTo', sortable: true,label:'notifyTo' },
+        {key: 'minors', sortable: true,label:'minor' },
+        {key: 'potNames', sortable: true, label:'potSearchName'},
+        {key: 'zoneNames', sortable: true, label:'zoneName'},
+        {key: 'lastRcvPosNames', sortable: true,label:'finalReceiveLocation' },
         {key: 'lastRcvDatetimes', sortable: true,label:'finalReceiveTime' },
         {key: 'notifyResult', sortable: true,label:'notifyResult' },
       ]),
@@ -301,6 +316,7 @@ export default {
     this.userState == 'ALL_REGION'? this.bTx = true: this.bTx = false
     this.userState == 'ALL_REGION'? this.bUserCheck = true: this.bUserCheck = false
     this.userState == 'ALL_REGION'? null: this.userMinor = user.minor
+    this.userState = 'ALL_REGION'
     this.fields = this.fields1
 
   },
@@ -382,7 +398,18 @@ export default {
           lastRcvDatetimes : 'lastRcvDatetime',
           notifyResult : 'notifyResult',
         }
-
+      case 'LOST_NOTIFY':
+        return {
+          positionDt: 'notifyDatetime',
+          notifyTo : 'notifyTo',
+          minors  : 'minors',
+          minor  : 'minor',
+          potNames : 'potName',
+          zoneNames : 'zoneName',
+          lastRcvPosNames: 'lastRcvPosName',
+          lastRcvDatetimes : 'lastRcvDatetime',
+          notifyResult : 'notifyResult',
+        }
       }
     },
     csvColumnBrTag(csvColumn){
@@ -435,6 +462,8 @@ export default {
           this.fields = this.fields6
         }else if (aNotifyState == 'PROHIBIT_NOTIFY') {
           this.fields = this.fields7
+        }else if (aNotifyState == 'LOST_NOTIFY') {
+          this.fields = this.fields8
         }
         this.csvHeaders = this.getCsvHeaders(aNotifyState)
         const aTxId = this.txId
@@ -503,6 +532,7 @@ export default {
         record.minor?record.minor=this.csvColumnBrTag(record.minor):false
         record.potName?record.potName=this.csvColumnBrTag(record.potName):false
         record.zoneName?record.zoneName=this.csvColumnBrTag(record.zoneName):false
+        record.lastRcvPosName?record.lastRcvPosName=this.csvColumnBrTag(record.lastRcvPosName):false
         record.deviceNums?record.deviceNums=this.csvColumnBrTag(record.deviceNums):false
         record.lastRcvDatetimes?record.lastRcvDatetimes= record.lastRcvDatetimes=this.csvColumnBrTag(record.lastRcvDatetimes):false
         record.lastRcvDatetime?record.lastRcvDatetime=this.csvColumnBrTag(record.lastRcvDatetime):false
