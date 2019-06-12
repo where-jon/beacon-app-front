@@ -378,7 +378,7 @@ export default {
           this.stage.update()
         }
         this.setPositionedExb()
-        this.setProhibit('pos') // listmixin呼び出し
+        this.$nextTick(() => this.setProhibit('pos')) // listmixin呼び出し
         this.showTxAll()
         if(!this.firstTime && reloadButton){
           this.reloadState.isLoad = false
