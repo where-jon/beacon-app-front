@@ -147,12 +147,6 @@ export default {
     enableIndividual () {
       return !this.fromHeatmap || (this.fromHeatmap && APP.HEATMAP.USE_INDIVIDUAL)
     },
-    requireCategory(){
-      return !this.fromHeatmap
-    },
-    requireGroup(){
-      return !this.fromHeatmap
-    },
     requirePerson(){
       return !this.fromHeatmap
     }
@@ -233,8 +227,8 @@ export default {
       const errors = this.validateCheck([
         {type: 'require', names: ['area'], values: [this.form.areaId]},
         {type: 'require', 
-          names: [(this.enableCategory && this.requireCategory)? 'category': null, (this.enableGroup && this.requireGroup)? 'group': null, this.requirePerson? 'individual': null].filter((val) => val),
-          values: [this.enableCategory? this.form.categoryId: null, this.enableGroup? this.form.groupId: null, this.requirePerson? this.form.potId: null].filter((val) => val)},
+          names: [this.enableCategory? 'category': null, this.enableGroup? 'group': null, this.requirePerson? 'individual': null].filter(val => val),
+          values: [this.enableCategory? this.form.categoryId: null, this.enableGroup? this.form.groupId: null, this.requirePerson? this.form.potId: null].filter(val => val)},
         {type: 'require', names: ['historyDateFrom'], values: [this.form.datetimeFrom]},
         {type: 'require', names: ['historyDateFrom'], values: [this.form.datetimeTo]},
         this.form.datetimeFrom && this.form.datetimeTo? {type: 'asc', names: ['historyDateFrom'], values: [this.form.datetimeFrom.getTime(), this.form.datetimeTo.getTime()], equal: false}: null,
