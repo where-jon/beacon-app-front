@@ -339,7 +339,6 @@ export default {
     },
     isShowSumTarget(){
       if(this.form.sensorId == SENSOR.MAGNET){
-        this.form.sumTarget = SUM_TARGET.AVERAGE
         return false
       }
       if(this.form.sumUnit == SUM_UNIT.getOptions()[2].value){
