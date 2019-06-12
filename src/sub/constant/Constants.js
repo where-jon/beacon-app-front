@@ -232,6 +232,10 @@ export const SUM_UNIT = {
 }
 
 export const SUM_TARGET = {
+  IMMEDIATE: 1,
+  AVERAGE: 2,
+  MAX: 3,
+  MIN: 4,
   getOptions(){
     return [
       {value:1, text: i18n.t('label.immediate')},
