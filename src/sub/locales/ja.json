@@ -90,6 +90,7 @@
     "develop": "開発用",
     "env": "環境変数",
     "detectedProhibitZone": "進入検知",
+    "detectedLostZone": "持ち出し検知",
 
     "exbId": "EXB ID",
     "exbName": "EXB名",

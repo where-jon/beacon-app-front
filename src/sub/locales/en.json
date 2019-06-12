@@ -87,6 +87,7 @@
     "develop": "Developer",
     "env": "Environment Variables",
     "detectedProhibitZone": "Detected ProhibitZone",
+    "detectedLostZone": "Detected LostZone",
 
     "exbId": "EXB ID",
     "exbName": "EXB name",
