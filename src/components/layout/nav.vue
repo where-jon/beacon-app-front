@@ -171,6 +171,7 @@ export default {
       if(this.getShowNav() && HtmlUtil.getLangShort() != 'ja'){
         classes['topMenuNavbar'] = true
       }
+      classes['word-break'] = true
       return classes
     },
     regionTdClasses() {
@@ -394,6 +395,7 @@ div.navbar-brand {
 
 .word-break {
   word-break: break-all !important;
+  word-wrap: break-all !important;
 }
 
 .mobile-region {
