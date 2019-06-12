@@ -147,12 +147,6 @@ export default {
     enableIndividual () {
       return !this.fromHeatmap || (this.fromHeatmap && APP.HEATMAP.USE_INDIVIDUAL)
     },
-    requireCategory(){
-      return !this.fromHeatmap
-    },
-    requireGroup(){
-      return !this.fromHeatmap
-    },
     requirePerson(){
       return !this.fromHeatmap
     }
