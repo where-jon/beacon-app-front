@@ -10,7 +10,7 @@
           {{ $i18n.tnl('label.state') }}
         </p>
         <p class="helpDetail">
-          {{ $i18n.tnl('helpDescription.state', {detected: getDetected(), temporaryUndetect: getTemporaryUndetect(), undetect: getUndetect(), none: getNone()}) }}
+          {{ $i18n.tnl('helpDescription.state', getParam()) }}
         </p>
       </div>
       <div id="bulkedit">
@@ -22,7 +22,7 @@
           {{ $i18n.tnl('label.notes') }}
         </p>
         <p class="helpDetail">
-          {{ $i18n.tnl('helpDescription.bulkNotes', {personal: getPersonal(), charSet: getCharSet(), SJIS: getSJIS()}) }}
+          {{ $i18n.tnl('helpDescription.bulkNotes', getParam()) }}
         </p>
         <p class="helpTitle">
           {{ $i18n.tnl('label.register') }}
@@ -31,79 +31,79 @@
           {{ $i18n.tnl('helpDescription.bulkRegister') }}
         </p>
         <p class="helpTitle">
-          {{ $i18n.tnl('message.bulkUniqueFailed', {col: getLinage(), value: getKeyName()}) }}
+          {{ $i18n.tnl('message.bulkUniqueFailed', getParam()) }}
         </p>
         <p class="helpDetail">
           {{ $i18n.tnl('helpDescription.bulkUniqueFailed') }}
         </p>
         <p class="helpTitle">
-          {{ $i18n.tnl('message.bulkOneOfFailed', {col: getLinage(), value: getKeyName(), candidates: getCandidates()}) }}
+          {{ $i18n.tnl('message.bulkOneOfFailed', getParam()) }}
         </p>
         <p class="helpDetail">
           {{ $i18n.tnl('helpDescription.bulkOneOfFailed') }}
         </p>
         <p class="helpTitle">
-          {{ $i18n.tnl('message.bulkRangeFailed', {col: getLinage(), value: getKeyName(), min: getMin(), max: getMax()}) }}
+          {{ $i18n.tnl('message.bulkRangeFailed', getParam()) }}
         </p>
         <p class="helpDetail">
           {{ $i18n.tnl('helpDescription.bulkRangeFailed') }}
         </p>
         <p class="helpTitle">
-          {{ $i18n.tnl('message.bulkSizeFailed', {col: getLinage(), value: getKeyName(), min: getMin(), max: getMax()}) }}
+          {{ $i18n.tnl('message.bulkSizeFailed', getParam()) }}
         </p>
         <p class="helpDetail">
           {{ $i18n.tnl('helpDescription.bulkSizeFailed') }}
         </p>
         <p class="helpTitle">
-          {{ $i18n.tnl('message.bulkSizeSameFailed', {col: getLinage(), value: getKeyName(), min: getNumber()}) }}
+          {{ $i18n.tnl('message.bulkSizeSameFailed', getParam({min: $i18n.tnl('label.number')})) }}
         </p>
         <p class="helpDetail">
           {{ $i18n.tnl('helpDescription.bulkSizeSameFailed') }}
         </p>
         <p class="helpTitle">
-          {{ $i18n.tnl('message.bulkNotNullFailed', {col: getKeyName()}) }}
+          {{ $i18n.tnl('message.bulkNotNullFailed', getParam({col: $i18n.tnl('label.keyName')})) }}
         </p>
         <p class="helpDetail">
           {{ $i18n.tnl('helpDescription.bulkNotNullFailed') }}
         </p>
         <p class="helpTitle">
-          {{ $i18n.tnl('message.bulkExistFailed', {col: getLinage(), value: getKeyName()}) }}
+          {{ $i18n.tnl('message.bulkExistFailed', getParam()) }}
         </p>
         <p class="helpDetail">
           {{ $i18n.tnl('helpDescription.bulkExistFailed') }}
         </p>
         <p class="helpTitle">
-          {{ $i18n.tnl('message.bulkInvalidFailed', {col: getLinage(), value: getKeyName()}) }}
+          {{ $i18n.tnl('message.bulkInvalidFailed', getParam()) }}
         </p>
         <p class="helpDetail">
           {{ $i18n.tnl('helpDescription.bulkInvalidFailed') }}
         </p>
         <p class="helpTitle">
-          {{ $i18n.tnl('message.bulkAuthFailed', {col: getLinage(), value: getKeyName()}) }}
+          {{ $i18n.tnl('message.bulkAuthFailed', getParam()) }}
         </p>
         <p class="helpDetail">
           {{ $i18n.tnl('helpDescription.bulkAuthFailed') }}
         </p>
         <p class="helpTitle">
-          {{ $i18n.tnl('message.bulkUseFailed', {col: getLinage(), value: getKeyName(), num: getMax(), unit: getUnit(), target: getTarget()}) }}
+          {{ $i18n.tnl('message.bulkUseFailed', getParam()) }}
         </p>
         <p class="helpDetail">
           {{ $i18n.tnl('helpDescription.bulkUseFailed') }}
         </p>
         <p class="helpTitle">
-          {{ $i18n.tnl('message.bulkSystemUseFailed', {col: getLinage(), value: getKeyName()}) }}
+          {{ $i18n.tnl('message.bulkSystemUseFailed', getParam()) }}
         </p>
         <p class="helpDetail">
           {{ $i18n.tnl('helpDescription.bulkSystemUseFailed') }}
         </p>
         <p class="helpTitle">
-          {{ $i18n.tnl('message.bulkSystemUseNameFailed', {col: getLinage(), value: getKeyName()}) }}
+          {{ $i18n.tnl('message.bulkSystemUseNameFailed', getParam()) }}
         </p>
         <p class="helpDetail">
           {{ $i18n.tnl('helpDescription.bulkSystemUseNameFailed') }}
         </p>
         <p class="helpTitle">
-          {{ $i18n.tnl('message.bulkInvalidUpdateLineFailed', {col: getLinage(), value: getKeyName()}) }}
+          {{ $i18n.tnl('message.bulkInvalidUpdateLineFailed', getParam()) }}
         </p>
         <p class="helpDetail">
           {{ $i18n.tnl('helpDescription.bulkInvalidUpdateLineFailed') }}
@@ -154,7 +154,7 @@
           {{ $i18n.tnl('label.setting') }}
         </p>
         <p class="helpDetail">
-          {{ $i18n.tnl('helpDescription.zoneBlock', {zoneBlock: getZoneBlock()}) }}
+          {{ $i18n.tnl('helpDescription.zoneBlock', getParam()) }}
         </p>
       </div>
     </div>
@@ -170,53 +170,28 @@ export default {
     },
   },
   methods: {
-    getLinage(){
-      return this.$i18n.tnl('label.linage')
-    },
-    getKeyName(){
-      return this.$i18n.tnl('label.keyName')
-    },
-    getCandidates(){
-      return this.$i18n.tnl('label.value')
-    },
-    getMin(){
-      return this.$i18n.tnl('label.min')
-    },
-    getMax(){
-      return this.$i18n.tnl('label.max')
-    },
-    getNumber(){
-      return this.$i18n.tnl('label.number')
-    },
-    getUnit(){
-      return this.$i18n.tnl('label.keyName')
-    },
-    getTarget(){
-      return this.$i18n.tnl('label.keyName')
-    },
-    getDetected(){
-      return this.$i18n.tnl('label.detected')
-    },
-    getTemporaryUndetect(){
-      return this.$i18n.tnl('label.temporaryUndetect')
-    },
-    getUndetect(){
-      return this.$i18n.tnl('label.undetect')
-    },
-    getNone(){
-      return this.$i18n.tnl('label.none')
-    },
-    getPersonal(){
-      return this.$i18n.tnl('label.personal')
-    },
-    getCharSet(){
-      return this.$i18n.tnl('label.charSet')
-    },
-    getSJIS(){
-      return this.$i18n.tnl('label.SJIS')
-    },
-    getZoneBlock(){
-      return this.$i18n.tnl('label.zoneBlock')
+    getParam(addParam = {}){
+      const ret = {
+        col: this.$i18n.tnl('label.linage'),
+        value: this.$i18n.tnl('label.keyName'),
+        candidates: this.$i18n.tnl('label.value'),
+        min: this.$i18n.tnl('label.min'),
+        max: this.$i18n.tnl('label.max'),
+        number: this.$i18n.tnl('label.number'),
+        unit: this.$i18n.tnl('label.keyName'),
+        target: this.$i18n.tnl('label.keyName'),
+        detected: this.$i18n.tnl('label.detected'),
+        temporaryUndetect: this.$i18n.tnl('label.temporaryUndetect'),
+        undetect: this.$i18n.tnl('label.undetect'),
+        none: this.$i18n.tnl('label.none'),
+        personal: this.$i18n.tnl('label.personal'),
+        charSet: this.$i18n.tnl('label.charSet'),
+        SJIS: this.$i18n.tnl('label.SJIS'),
+        zoneBlock: this.$i18n.tnl('label.zoneBlock'),
+        num: this.$i18n.tnl('label.max'),
+      }
+      Object.keys(addParam).forEach(key => ret[key] = addParam[key])
+      return ret
     },
   }
 }
