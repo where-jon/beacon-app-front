@@ -24,7 +24,7 @@ export default {
         detectPosition.forEach((pos) => {
           const isGroup = groups.some((group) => pos.tx.group.groupId ? pos.tx.group.groupId == group : false)
           if(isGroup && pos.exb.areaId) {
-            if( pos.exb.areaId != lostZone.areaId   // 検知エリアが違う
+            if( pos.pos_id == -1 || pos.exb.areaId != lostZone.areaId   // 検知エリアが違う
             || ( pos.exb.areaId == lostZone.areaId && lostZone.zoneType == ZONE.COORDINATE && pos.exb.x != null && pos.exb.y != null  // 検知エリア同一で座標設定の場合
             && lostZone.x != null && lostZone.y != null && lostZone.w != null && lostZone.h != null
             && !(pos.exb.x >= lostZone.x && pos.exb.x <= lostZone.x + lostZone.w
@@ -33,7 +33,7 @@ export default {
                 isLost: true,
                 minor: pos.minor,
                 potName: pos.tx.potName,
-                areaName: pos.exb.areaName,
+                areaName: pos.exb.locationName,
                 zoneName: lostZone.zoneName,
                 lastDetectedTime: pos.timestamp
               })
