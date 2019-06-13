@@ -462,7 +462,8 @@ export default {
     await StateHelper.load('region')
   },
   mounted() {
-    this.message = this.listMessage
+    const strageMessage = Util.popLocalStorage('listMessage')
+    this.message = Util.hasValue(strageMessage)? strageMessage: this.listMessage
     this.replaceAS({listMessage: null})
     this.$parent.$options.methods.fetchData.apply(this.$parent)
     if (this.params.extraFilter) {
@@ -713,7 +714,7 @@ export default {
         await StateHelper.load(this.params.name, true)
         this.message = this.$i18n.tnl('message.deleteCompleted', {target: this.$i18n.tnl('label.' + this.params.name)})
         if(this.$parent.$options.methods.afterCrud){
-          this.$parent.$options.methods.afterCrud.apply(this.$parent)
+          this.$parent.$options.methods.afterCrud.call(this.$parent, {message: this.message})
         }
         this.replace({showInfo: true})
         await this.$parent.$options.methods.fetchData.apply(this.$parent)        

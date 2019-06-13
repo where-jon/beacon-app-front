@@ -15,6 +15,7 @@ import * as AuthHelper from '../../../sub/helper/AuthHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as BulkHelper from '../../../sub/helper/BulkHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
+import * as RegionHelper from '../../../sub/helper/RegionHelper'
 
 export default {
   components: {
@@ -33,6 +34,7 @@ export default {
   computed: {
     ...mapState('app_service', [
       'region',
+      'regions',
     ]),
   },
   methods: {
@@ -51,9 +53,16 @@ export default {
         return dummyKey
       })
     },
-    async afterCrud(){
+    async afterCrud(bulkSaveFunc, param){
       StateHelper.setForceFetch('user', true)
-      await AuthHelper.switchAppService()
+      const result = await RegionHelper.autoSwitchRegion(this.regions)
+      if(result){
+        window.localStorage.setItem('bulkMessage', param.message)
+        location.reload()
+      }
+      else{
+        await AuthHelper.switchAppService()
+      }
     }
   }
 }
