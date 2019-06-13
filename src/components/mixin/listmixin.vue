@@ -87,7 +87,9 @@ export default {
       const labelFinalLocation = this.$i18n.tnl('label.finalReceiveLocation')
       const labelZone =  this.$i18n.tnl('label.zoneName')
 
-      return prohibitDetectList.map((data) => data.isLost ? `<${lostTitle} : ${labelPotName} : ${data.potName} ${labelFinalLocation} : ${data.areaName} ${labelTime} : ${data.lastDetectedTime}>`:`<${prohibitTitle} : ${labelPotName} : ${data.potName} ${labelArea} : ${data.areaName} ${labelZone} : ${data.zoneName}>` ).join(' ')
+      return prohibitDetectList.map((data) => data.isLost
+        ? `<${lostTitle} : ${labelPotName} : ${data.potName} ${labelFinalLocation} : ${data.areaName} ${labelTime} : ${data.lastDetectedTime}>`
+        :`<${prohibitTitle} : ${labelPotName} : ${data.potName} ${labelArea} : ${data.areaName} ${labelZone} : ${data.zoneName}>` ).join(' ')
     },
     setProhibitDetect(viewName){
       const prohibitDetectList = this.getProhibitDetectList(this.getPositions(),this.prohibits)
