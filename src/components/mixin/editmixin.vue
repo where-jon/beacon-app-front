@@ -162,15 +162,15 @@ export default {
         this.showProgress()
         try {
           await this.save()
-          if(this.afterCrud) {
-            this.afterCrud()
-          }
           await StateHelper.load(this.name, true)
           if (this.name == 'area') {
             await this.loadImageArea()
           }
           this.message = this.$i18n.tnl('message.' + this.crud + 'Completed', {target: this.$i18n.tnl('label.' + this.name)})
           this.replace({showInfo: true})
+          if(this.afterCrud) {
+            this.afterCrud()
+          }
           if (this.again) {
             this.editAgain()
           }

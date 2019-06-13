@@ -8,6 +8,12 @@ import { FONT } from '../constant/Constants'
 
 export const getLogin = () => JSON.parse(window.localStorage.getItem('login'))
 
+export const popLocalStorage = key => {
+  const ret = window.localStorage.getItem(key)
+  window.localStorage.removeItem(key)
+  return ret
+}
+
 // sleep (for test)
 export const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 
