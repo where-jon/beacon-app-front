@@ -33,9 +33,9 @@ export default {
                 isLost: true,
                 minor: pos.minor,
                 potName: pos.tx.potName,
-                areaName: pos.exb.locationName ? pos.exb.locationName : '未検知',
+                areaName: pos.exb.locationName,
                 zoneName: lostZone.zoneName,
-                lastDetectedTime: pos.timestamp ? pos.timestamp : '未検知'
+                lastDetectedTime: pos.timestamp
               })
             }
           }
