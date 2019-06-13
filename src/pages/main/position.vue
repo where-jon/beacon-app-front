@@ -13,7 +13,7 @@
           <span :title="vueSelectTitle(vueSelected.area)">
             <v-select v-model="vueSelected.area" :options="areaOptions" :clearable="false" class="ml-1 mr-2 vue-options" :style="getVueSelectStyle()">
               <template slot="selected-option" slot-scope="option">
-                {{ vueSelectCutOn(option) }}
+                {{ vueSelectCutOn(option, true) }}
               </template>
             </v-select>
           </span>
@@ -353,12 +353,6 @@ export default {
         this.stage.update()
       })
     },
-    twinkle2() {
-      Object.values(this.icons).forEach((icon)=>{
-        icon.lost? icon.visible=!icon.visible : icon.visible = true
-        this.stage.update()
-      })
-    },
     showMapImage(disableErrorPopup, payload) {
       const cPayload = {
         disabledPosition: Util.getValue(payload, 'disabledPosition', false),
@@ -388,8 +382,7 @@ export default {
           this.stage.update()
         }
         this.setPositionedExb()
-        this.setProhibitDetect('pos') // listmixin呼び出し
-        console.log(this.prohibitDetectList)
+        this.$nextTick(() => this.setProhibitDetect('pos')) // listmixin呼び出し
         this.showTxAll()
         if(!this.firstTime && reloadButton){
           this.reloadState.isLoad = false

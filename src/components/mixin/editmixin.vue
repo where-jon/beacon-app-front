@@ -8,7 +8,7 @@ import * as MenuHelper from '../../sub/helper/MenuHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as CharSetHelper from '../../sub/helper/CharSetHelper'
 import { APP } from '../../sub/constant/config.js'
-import { UPDATE_ONLY_NN, IGNORE, USER } from '../../sub/constant/Constants'
+import { UPDATE_ONLY_NN, IGNORE, USER, CHAR_SET } from '../../sub/constant/Constants'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
 import commonmixinVue from './commonmixin.vue'
@@ -318,7 +318,20 @@ export default {
     setReaderOnload(reader, readerParam, mainCol, intTypeList, boolTypeList, callback, idSetCallback){
       reader.onload = () => {
         try {
-          const csv = Util.csv2Obj(Util.arrayBuffer2str(reader.result), CharSetHelper.detectBulkCharSet(this.$store.state.loginId))
+          const csvString = Util.arrayBuffer2str(reader.result)
+          const bulkCharSet = CharSetHelper.detectBulkCharSet(this.$store.state.loginId)
+          const charsetResult = Util.analyseEncode(csvString, bulkCharSet)
+          if(!charsetResult.match){
+            const charset = CHAR_SET.find(val => val.name == charsetResult.charset)
+            throw new Error(
+              this.$i18n.tnl('message.csvNotMatchCharset') + (
+                charset? this.$i18n.tnl('message.csvForMatchCharset', {
+                  charset: this.$i18n.tnl('label.' + charset.name)
+                }): ''
+              )
+            )
+          }
+          const csv = Util.csv2Obj(csvString, bulkCharSet)
           if (!csv || !csv.data || csv.errors && csv.errors.length > 0) {
             console.error(csv.errors)
             readerParam.error = this.createCsvErrorMessage(csv.errors)

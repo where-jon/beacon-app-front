@@ -349,6 +349,10 @@ const appStateConf = {
           zoneId: val.zoneId,
           zoneName: val.zoneName,
           zoneType: val.zoneType,
+          x: val.x,
+          y: val.y,
+          w: val.w,
+          h: val.h,
           areaId: Util.hasValue(val.area)? val.area.areaId: null,
           areaName: Util.hasValue(val.area)? val.area.areaName: null,
           locationId: Util.hasValue(val.locationZoneList)? val.locationZoneList[0].locationZonePK.locationId: null,
@@ -435,23 +439,10 @@ export const loadAreaImage = async (areaId, force) => {
     console.log('FOUND ares', areaId)
     return
   }
-
   console.log('load ares', areaId)
   let base64 = await AppServiceHelper.fetchMapImage('/core/area/' + areaId + '/mapImage')
-  // let mimetype="image/png"
-  // base64 = "data:" + mimetype + ";base64," + base64
-  // HtmlUtil.toDataURL("http://localhost:8080/core/area/" + area.areaId + "/mapImage", (dataUrl) => {
-  let areaImages = _.cloneDeep(store.state.app_service.areaImages)
-  let areaImage = areaImages.find((areaImage) => areaImage.areaId == areaId)
-  if (areaImage) {
-    areaImage.mapImage = base64
-  }
-  else {
-    areaImages.push({areaId, mapImage: base64})
-  }
-  store.commit('app_service/replaceAS', {areaImages})    
-
-  // })
+  const areaImages = [{areaId, mapImage: base64}]
+  store.commit('app_service/replaceAS', {areaImages})
 }
 
 export const loadAreaImages = async () => {
@@ -525,33 +516,6 @@ export const getOptionsFromState = (key, textField, notNull, filterCallback) => 
   Util.debug('empty add: ', options)
 
   return options
-}
-
-export const sortCompareArray = (aAry, bAry) => {
-  if(!Util.hasValue(aAry) && !Util.hasValue(bAry)){
-    return 0
-  }
-  if(!Util.hasValue(aAry)){
-    return -1
-  }
-  if(!Util.hasValue(bAry)){
-    return 1
-  }
-
-  const max = aAry.length < bAry.length? bAry.length: aAry.length
-  for(let idx = 0; idx < max; idx++){
-    if(aAry.length <= idx){
-      return -1
-    }
-    if(bAry.length <= idx){
-      return 1
-    }
-    if(aAry[idx] == bAry[idx]){
-      continue
-    }
-    return aAry[idx] < bAry[idx]? -1: 1
-  }
-  return 0
 }
 
 export const bulkErrorCheck = (entity, headerName, val, isNumberColumn) => {

@@ -49,7 +49,8 @@ export default {
     ...mapState('app_service', [
       'pots',
       'roles',
-      'updatedThumbnail',
+      'forceFetchPot',
+      'updatedPotThumbnail',
     ]),
   },
   methods: {
@@ -129,8 +130,8 @@ export default {
     },
     thumbnail(row) {
       let addUrlParam = ''
-      if (this.updatedThumbnail.id && this.updatedThumbnail.id === row.potId) {
-        addUrlParam = this.updatedThumbnail.time
+      if (this.updatedPotThumbnail && this.updatedPotThumbnail === row.potId) {
+        addUrlParam = new Date().getTime()
       }
       return row.existThumbnail ? this.thumbnailUrl.replace('{id}', row.potId) + addUrlParam : null
     },

@@ -27,6 +27,7 @@
     "search": "Search",
     "actions": "Action",
     "download": "Download",
+    "downloadMonth": "Download(Month)",
     "csvFile": "CSV file",
     "zipFile": "Zip file",
     "cancel": "Cancel",
@@ -70,6 +71,8 @@
     "undefined": "Undefined",
     "column": "Col: {column}",
     "line": "Line: {line}",
+    "linage": "Lineage",
+    "help": "Help",
 
     "---------------- App exbeacon ---------------":"",
 
@@ -119,6 +122,7 @@
 
     "map": "Map",
     "areaId": "Area ID",
+    "areaCd": "Area code",
     "areaName": "Area name",
     "mapImage": "Map image",
     "mapHeight": "Map height",
@@ -352,6 +356,20 @@
     "month": "Month",
     "date": "Date",
     "sumDay": "Specified date",
+    "absent1Time": "Absent1 Time",
+    "absent2Time": "Absent2 Time",
+    "lostTime": "Absent(90min-)",
+    "stayRatio": "Stay ratio",
+    "absent1Ratio": "Absent1 Ratio",
+    "absent2Ratio": "Absent2 Ratio",
+    "lostRatio": "Absent Ratio(90min-)",
+    "stayRatioAbsent1Time": "absent1Time",
+    "stayRatioAbsent2Time": "absent2Time",
+    "stayRatioAbsent1Ratio": "absent1Ratio",
+    "stayRatioAbsent2Ratio": "absent2Ratio",
+
+    "positionSummary": "Position Summary",
+
 
 
 
@@ -420,26 +438,13 @@
     "numberList": "Number list",
     "boolean": "Boolean value",
 
-    "---------------- Config key name ---------------":"",
-
-    "APP.LOG_KEEP_TIME": "Long retention period",
-    "APP.MONITOR_REFESH_TIME": "Monitoring update interval",
-    "APP.PASSWORD_CHANGEABLE": "password change function",
-    "APP.PASSWORD_CHECK": "Password strength check",
-    "APP.UPDATE_POSITION_EFFECT": "Position change effect",
-    "APP.TIME_ZONE": "Time zone",
-    "APP.SLACK_WEBHOOC": "Slack Webhook registration",
-    "APP.MAIL_ADDRESS": " Email address to notify",
-    "APP.IP_ADDRESS_FILTER": "IP address filter",
-
-    "APP.SERVICE_BASE_URL": "API settings & End point",
-    "APP.SERVICE_UP_TM": " API settings & update interval ",
-
-    "APP.LOST_TIME": "Unreceived state judgment time",
-
     "---------------- Added at 1.1 ---------------":"",
 
     "delFilter": "Show deleted",
+    "settingDescription": "* A description will be displayed if you move the cursor to the key and item name.",
+    "allShowFilter": "Show all items",
+    "settingCategory": "Category",
+    "favoriteMark": "★",
     "provider": "Provider",
     "locale": "Language",
     "ja": "Japanese",
@@ -575,21 +580,600 @@
     "device": "Device",
     "temperatureUnit": " ºC",
     "humidityUnit": " %",
-    "absent1Time": "Absent1 Time",
-    "absent2Time": "Absent2 Time",
-    "lostTime": "Absent(90min-)",
-    "stayRatio": "Stay ratio",
-    "absent1Ratio": "Absent1 Ratio",
-    "absent2Ratio": "Absent2 Ratio",
-    "lostRatio": "Absent Ratio(90min-)",
-    "stayRatioAbsent1Time": "absent1Time",
-    "stayRatioAbsent2Time": "absent2Time",
-    "stayRatioAbsent1Ratio": "absent1Ratio",
-    "stayRatioAbsent2Ratio": "absent2Ratio",
-
-    "positionSummary": "Position Summary",
+    "notes": "Notes",
+    "updateKey": "Update key",
 
     "dummy": ""
+  },
+  "config": {
+    "APP": {
+      "COMMON": {
+        "VERSION": "Version information::Set up the version information.",
+        "TIME_ZONE": "Timezone::Set up the timezone for determining midnight at the time difference unit.",
+        "AUTO_RELOAD": "Automatic reload interval::Set up the automatic reload interval in milliseconds.★"
+      },
+      "SYS": {
+        "TIMEOUT": "Timeout::Set up the time of session timeout in milliseconds.",
+        "STATE_EXPIRE_TIME": "Cache expire time:: Set up the expire time of master date acquired from the server in milliseconds."
+      },
+      "MENU": {
+        "SHOW_MENU_LINK": "Menu link::Add a link to the menu. If an image file is specified, the link will be an image file link.",
+        "SHOW_MENU_LINK_URL": "Menu link URL::Set up the link URL that was set in the Menu link.",
+        "TOP_PAGE": "Top page::Set up the Top screen to be display after log in."
+      },
+      "GATEWAY": {
+        "LOST_TIME": "Not received status decision time(Gateway):: Devices which have passed the set time from the last received time will be lost.Set up in milliseconds.",
+        "UNDETECT_TIME": "Undetected status decision time(Gateway):: Devices which have passed the time set from the last reception time will be undetected.Set up in milliseconds."
+      },
+      "TELEMETRY": {
+        "LOST_TIME": "Not received status decision time(EXB status monitorEXB status monitor) :: Devices that have passed the time set from the last received time will be lost status.Set up in milliseconds.",
+        "UNDETECT_TIME": "Undetected status decision time (EXB status monitoring):: Devices that have passed the time set from the last reception time will be undetected.Set up in milliseconds.",
+        "WITH_POWER_LEVEL": "Use battery level in EXB status monitoring screen::Display battery level in EXB status monitoring screen.★"
+      },
+      "POS": {
+        "AUTO_RELOAD": "Position history automatic reload interval::Set the interval for performing automatic reloading of position history in the position (map) screen in milliseconds. ★",
+        "TRANSPARENT_TIME": "Semi-transparent status decision time::The device which has passed the set up time from the last reception time will become semi-transparent.Set up in milliseconds.",
+        "LOST_TIME": "Not received time decision time::Tx which has passed the set time or more from the last reception time will be lost state. Set up in milliseconds.",
+        "UNDETECT_TIME": "Undetected status decision time::Tx which has passed more than the time set from the last reception time will be undetected. Set up in milliseconds.",
+        "USE_POSITION_HISTORY": "Use location history::Use location history, when acquiring location information.",
+        "TX_POS_ONE_TO_ONE": "Display only one Tx Tag in one place.::Only display one Tx in one place",
+
+        "MOVING_AVERAGE": "Number of position history to be aggregated at positioning:: When positioning, it will be calculated by averaging the set number of position history.",
+        "MOVING_AVERAGE_TIME": "Moving average::Set up the moving average time that the server uses when aggregating location information.",
+        "USE_MULTI_POSITIONING": "Use 3point Positioning::Use 3-point Positioning",
+        "PROHIBIT_ALERT": "Use prohibited area::Use prohibited alert area",
+        "PROHIBIT_GROUPS": "Prohibited area inaccessible group setting::Set up the group ID that can not enter in the prohibited area.",
+        "USE_LEGEND": "Use legend::Display the legend on the position (map) screen.★",
+        "SHOW_DETECTED_COUNT": "Display the number of detections::Display the number of detected device on the position(map)screen.★"
+
+
+
+      },
+      "SENSOR": {
+        "EXB_SENSOR": "Sensor type::Set up the sensor ID used by the server.Possible to set up value are as follows.★{SENSOR}",
+        "TX_SENSOR": "Tx sensor type::Set up the type of Tx sesor. Possible to set up value are as follows.★{SENSOR}",
+        "MEDITAG" :{
+          "DOWN_RED_TIME": "Falls notice time::When a MEDiTAG user falls over, the MEDiTAG will be displayed in a red frame for a set up time only. Set up in milliseconds."
+        },
+        "USE_THERMOPILE": "Use Thermopile sensor::Use Thermopile sensor.★",
+        "USE_MEDITAG": "Use MEDiTAG::Use MEDiTAG★",
+        "USE_MAGNET": "Use magnet sensor::Use magnet sensor.★",
+        "USE_PRESSURE": "Use pressure sensor:: Use pressure sensor.★",
+        "SHOW_MAGNET_ON_PIR": "Use magnet sensor on PIR screen::Use magnet sensor on PIR screen",
+        "MAGNET_ON_IS_USED": "Display setting of magnet sensor::If set up to TRUE, [USE] is displayed when the sensor is ON.If set up to FALSE,[USE] is display with the sensor OFF.",
+        "USE_HUMIDITY_ALERT": "Usehumidity alerts on Temperature & Humidity screen::Use Humidity alerts on Temperature & Humidity screen.",
+        "USE_THERMOH_HEATMAP": "Use Heatmap on Temperature & Humidity::Heatmap can be switched on Temperature & Humidity screen.",
+        "USE_THERMOH_TOOLTIP": "Use Tooltip on Temperature & Humidity::Allow Tooltips to display inforamation of device on which the cursor is placed on the Temperature & Humidity.",
+        "TEMPERATURE": {
+          "LINE_HOUR_START": "Temperature & Humidity graph start time::Set up the start time of Temperature& Humidity graph.Set up from 0 to 24(hour)",
+          "LINE_HOUR_END": "Temperature & Humidity graph end time::Set up the end time of Temperature & Humidity graph.Set up from 0 to 24(hour)"
+        }
+      },
+      "HEATMAP": {
+        "USE_INDIVIDUAL": "Specify an individual on the Heatmap screen::Specify and individuals for display on the heat map screen"
+      },
+      "POS_LIST": {
+        "WITH": "Item to be displayed on position display (list)::Set the display item to position display (list). The possible to set up values are as follows.★{POS_LIST}"
+      },
+      "TX": {
+        "WITH": "Item used on Tx screen::Set up the item used on Tx screen. The possible values are as follows.★{TX}",
+        "MAJOR_REQUIRED": "Require major on Tx screen::Make major required when registering or updating Tx.",
+        "BTX_MINOR": "Use btxId and minor on Tx screen::Use either btxId or minor, or both on Tx screen. Set up either btxId, minor, or both.★"
+      },
+      "EXB": {
+        "SENSOR": "Type of EXBeacon sensor::Set up the type of EXBeacon sensor.The possible to set up values are as follows. ★{SENSOR}",
+        "WITH": "Item used on EXBeacon screen::Set up the item used on EXBeacon screen. The possible to setup values are as follows.★{EXB}"
+      },
+      "USER": {
+        "WITH": "Items used on the user screen::Set up the items used on the user screen. The possible to set up values are as follows. ★{USER}"
+      },
+      "POT": {
+        "WITH": "Item used in person & thing screen::Set up the items used in person & thing screen. The possible to set up values are as follows.★{POT}"
+      },
+      "CATEGORY": {
+        "TYPES": "Types that can be selected on the category screen::Set up the types that can be selected on the category screen. The possible to set up values are as follows.{CATEGORY_TYPES}"
+      },
+      "NOTIFY": {
+        "MIDIUM_TYPES": "Selectable notification media on notification template screen::Set up the types that can be selected on the category screen. The possible to set up values are as follows.{NOTIFY_MIDIUM}",
+        "STATE_TYPES": "Selectable notification media on notification template screen::Set up the selectable notification media on notification template screen. The possible to set up values are as follows.{NOTIFY_STATE}"
+      },
+      "ANALYSIS": {
+        "DATETIME_INTERVAL": "Flow line analysis, heat map screen period interval ::Flow line analysis, when period From is selected on the heat map screen, the future date for the time set in the period To is automatically entered.Set up in unit."
+      },
+      "STAY_SUM": {
+        "LOST_LIMIT": "Staying time count lost decision time::Set up lost decision time when counting stay time in seconds",
+        "ABSENT_LIMIT": "Staying time count absent decision time::Set up absent decision time when counting stay time in seconds。",
+        "PARSENT_DIGIT": "Number of decimal places when showing presence ratio::Set up the number of decimal places when showing presence ratio.The possible to set up values are as follows.{SUM_PARSENT_DIGIT}\n※ If you set the power of 10, it will be the digit of the exponent.",
+        "AXIS_FILL_GAP": "Display 0 items on the horizontal axis of stay time summary::Display 0 items on the horizontal axis of stay time summary.The possible to set up values are as follows.{SUM_AXIS_FILL_GAP}",
+        "UNIT_HOUR": "Display setting for stay time summary (hour)::If the maximum value in axis units exceeds the set second, the display of stay time total is displayed in time units.",
+        "UNIT_MINUTE": "Display setting for stay time summary (minute)::If the maximum value in axis units exceeds the set second, the display of stay time total is displayed in time units.",
+        "FROM": "Start time of staying time summary(hour and minute)::Set up the start of staying time summary. Setting value is「hour × 100 + minute × 1」.",
+        "TO": "End time of staying time summary(hour and minute)::Set up the end time of staying time summary. Setting value is「hour × 100 + minute × 1」."
+      },
+      "TX_MON": {
+        "WITH": "Item used Tx monitoring screen:: Set up the item used Tx monitor screen. The possible to set up values are as follows.★{TX_MON}",
+        "WITH_SENSOR": "Merge the sensor information with the data of Tx monitor screen.::Include the sensor information in the information displayd in the Tx status monitor screen. Included data is battery level and last acquired time. Possible to set up values are as follows.{SENSOR}",
+        "POWER_LEVEL_GOOD": "Battery level setting(good)::Make the battery level above the set values is good. ",
+        "POWER_LEVEL_WARN": "Battery level setting(down)::Decrease the battery level above the set value and below the battery level."
+      },
+      "SENSOR_LIST": {
+        "WITH": "Item use with sensor history and sensor currentlist screen::Set up the item use with sensor history and sensor currentlist screen. The possible to set up values are as follows. ★{SENSOR_LIST}"
+      },
+      "SENSORGRAPH":{
+        "WITH_DEVICE": "Using selection devices in the sensor grap::Using the selection device in sensor graph. ",
+        "CSV_IMMEDIATE": "Output latest value to csv of sensor graph screen::Include the latest value information to csv downloaded on the sensor graph screen."
+      },
+      "HISTORY_EXC": {
+        "SORT": "Sort the date of history screen used ::Sort the date of location information (Exc) and sensor information (Exc).The possible to set up values are as follows.{SORT}"
+      },
+      "TXDETAIL": {
+        "ITEMS": "Item to be displayed deatail pop-up of the position(map)screen.::Set up the item to be displayed deatail pop-up of the positioning(map)screen.The possible to set up values are as follows.★{TXDETAIL}",
+        "NO_UNREGIST_THUMB": "Does not show unregistered thumbnails in the details popup of the position (map) screen::When the thumbnail is not registered in the selected Tx on the position (map) screen, set the thumbnail to not be displayed in the details pop-up."
+      },
+      "SVC": {
+        "SLACK_CHANNEL": "Slack Channel name::Set up the Slack channel name for sending notification information.",
+        "SLACK_TOKEN": "Slack API Token::Set up the token to use the Slack API.",
+        "STAY_SUM": {
+          "START": "Start time of stay time summary batch::Set up the start time of stay time summary batch. Setting value is「Hour × 100 + Minute × 1」",
+          "END": "End time of stay time summary batch::Set up the end time of stay time summary batch. Setting value is「Hour × 100 + Minute × 1」",
+          "INTERVAL": "Time to consider stay time summary batch as stay::Set up the threshold of time to be judged as stay data in stay time summary batch in seconds. When staying for a set time or more,it will be judged as stay data.",
+          "CALC_BY": "Summary unit of stay time summary batch::Set up the unit of data to be summarized in staying time summary batch. The possible to set up values are as follows.{STAY_SUM_CALC_BY}",
+          "ADJUST_TIME": "Maximum time to be corrected for stay-time summary batch::Set up the data in seconds not to be corrected in stay-time summary batch. Stay time data exceeding this number will not be corrected.",
+          "REAL_TIME": "Update stay time real time::Calculate stay time after positioning process in real time. If this setting is TRUE, periodic batch process is basically turned off."
+        },
+        "POS": {
+          "EXSERVER": "Use EXServer::Use EXServer.",
+          "CACHE_TIME": "Server cache effective time::Set up the effective time of cache data accumulated by the server in milliseconds."
+        }
+      },
+      "BATCH": {
+        "POSITION": {
+          "INTERVAL": "Execution interval of position batch::Set up execution interval of position batch in milliseconds."
+        },
+        "SENSOR_1": {
+          "INTERVAL": "Execution interval of Temperature & Humidity batch::Set up execution interval of Temperature & Humidity batch in milliseconds."
+        },
+        "SENSOR_2": {
+          "INTERVAL": "Execution interval of PIR::Set up execution interval of PIR in milliseconds."
+        },
+        "SENSOR_3": {
+          "INTERVAL": "Execution interval of Thermopile batch::Set up execution interval of Thermopile batch in milliseconds."
+        },
+        "SENSOR_5": {
+          "INTERVAL": "Execution interval of MEDiTAG batch:: Set up execution interval of MEDiTAG batch in milliseconds."
+        },
+        "SENSOR_6": {
+          "INTERVAL": "Execution interval of Magnet sensor batch::Set up execution interval of Magnet sensor batch in milliseconds"
+        },
+        "SENSOR_8": {
+          "INTERVAL": "Execution interval of pressure sensor::Set up execution interval of pressure sensor in milliseconds."
+        },
+        "MONITOR": {
+          "INTERVAL": "Execution interval of monitor batch::Set up execution interval of monitor batch in milliseconds."
+        },
+        "UTILIZATION": {
+          "CRON": "The time for Cron to calculates usage information::Set up the time for Cron to aggregate usage information. Set up it in Cron format."
+        },
+        "STAY_SUM": {
+          "CRON": "The time for Cron calculates stay time::Set up the time for Cron calculates stay time. Set up it in Cron format."
+        }
+      }
+    },
+    "DISP": {
+      "MENU": {
+        "SHOW_NAV": "Display Top menu::Display menu at the top of the screen.",
+        "SHOW_SIDEBAR": "Display side menu.:: Display menu on the left of the screen.",
+        "SHOW_LOGO": "Display Logo::Display logo on the upper left of the screen. If false, display application name.",
+        "THEME": "Default theme::Set up the default theme color. The possible to set up values are as follows.{THEME}"
+      },
+      "TX": {
+        "R": "Radius of Tx icon:: Set up the size of Tx displayed on the position(map) screen.★",
+        "FIX_R": "Radius of Tx icon::Set up the size of Tx displayed on the position (map) screen legend icon, position display (overall), category, and group screen.",
+        "ROUNDRECT_RADIUS": "Round radius of Tx icon::Set up the roundness of the four corners to Tx set to the rounded square icon.",
+        "BGCOLOR": "Default background color for Tx icons::Set up the background color for Tx icons that do not belong to either category or group. Set up with a color code other than #.",
+        "COLOR": "Default text color of Tx icon::Set up the text color of the Tx icon to which neither category nor group belongs. Set up with a color code other than #.",
+        "STROKE_COLOR": "Default border color for Tx icons::Set up the border color for Tx icons to which neither category nor group belongs. Set up with a color code other than #.",
+        "ALPHA": "Absent time Tx Icon Transmissive Value::Set up the transmit value when Tx is absence.Set up as a decimal value from 0 (transparent) to 1 (opaque).",
+        "LOST_ALPHA": "Absent Tx Icon Transmissive Value::Set up the transmit value when Tx is absent. Set up it as a decimal value from 0 (transparent) to 1 (opaque).",
+        "DISPLAY_PRIORITY": "Display color priority of Tx icon::Set up the color to be applied to the display color of Tx icon from either the category or the display color set in the group. It can select from category or group and applied from the one specified at the beginning."
+      },
+      "EXB_LOC": {
+        "SIZE": {
+          "W": "EXB icon size (width) of EXB layout setting screen::Set up the width of EXB icon displayed on EXB setting screen.",
+          "H": "EXB icon size (height) of EXB layout setting screen::Set up the height of EXB icon displayed on EXB setting screen"
+        },
+        "BGCOLOR": "EXB icon background color of EXB layout setting screen::Set up the background color of EXB icon displayed on the EXB setting screen. Set up with a color code including #.",
+        "COLOR": "EXB icon text color of EXB layout setting screen::Set up the EXB icon color displayed EXB setting screen. Set up with color code including #."
+      },
+      "TX_LOC": {
+        "SIZE": {
+          "W": "Tx icon size(width) of Tx layout setting::Set up the width of Tx icon displayed on Tx setting screen.",
+          "H": "Tx icon size(height) of Tx layout setting::Set up the height of Tx icon displayed on Tx setting screen."
+        },
+        "BGCOLOR": "Tx icon background color of Tx layout setting screen::Set up the background color of Tx icon displayed on the Tx setting screen. Set up with a color code including #",
+        "COLOR": "Tx icon text color of Tx layout setting screen::Set up the Tx icon text color displayed Tx setting screen. Set up with color code including."
+      },
+      "THERMOH": {
+        "TOOLTIP_ITEMS": {
+          "TXNAME": "Display name on tooltip of Temperature & Humidity screen::Display name on tooltip for Temperature & Humidity screen",
+          "TEMPERATURE": "Display temperature on tooltip of Temperature & Humidity screen::Display temperature on tooltip for Temperature and Humidity screen。",
+          "HUMIDITY": "Display humidity on tooltip of  Temperature & Humidity screen::Display humidity on tooltip for Temperature & Humidity screen",
+          "DESCRIPTION": "Display description on tooltip of Temperature & Humidity screen::Display description on tooltip for Temperature & Humidity screen",
+          "DATE": "Display measurement date and time on tooltip of Temperature & Humidity screen::Display measurement of date and time on tooltip for Temperature & Humidity screen"
+        },
+        "TOOLTIP_COLOR": "Tooltip text color of Temperature & Humidity screen::Set up the text color of the tooltip displayed on the Temperature & Humidity screen. Set up it with a color code including #.",
+        "TOOLTIP_BORDERCOLOR": "Tooltip border color for Temperature & Humidity screen::Set up the border color for tooltips displayed on the Temperature & Humidity screen. Set up with a color code including #",
+        "TOOLTIP_BGCOLOR": "Tooltip background color for Temperature & Humidity screen::Set up the background color of the tooltip displayed on the Temperature & Humidity screen. Set up with a color code including #",
+        "TOOLTIP_ROUNDRECT": "Tooltip rounded radius for Temperature & Humidity screen::Set up the four corners of the tool tip to be displayed on the temperature and humidity screen.",
+        "ALERT_FIX_HEIGHT": "Humidity alert fixed number of lines for Temperature & Humidity screenr::Set up the height to display fixed Temperature & Humidity screen humidity alert. If set to 0, this function is disabled.",
+        "ALERT_WEIGHT": "Humidity alert character size for Temperature & Humidity screen::Set up the thickness of the humidity alert character displayed on the Temperature & Humidity screen. The setting value is a multiple of 100 (100 to 900). If you specify normal, it will be 400; if you specify bold, it will be 700. ",
+        "DISP": "Display Temperature & Humidity Screen Icon::Display Temperature & Humidity Screen Icon Set up the icon to display on the Temperature & Humidity screen. The possible to set up values are{THERMOH_DISP}",
+        "WITH_LABEL": "Display Temperature & Humidity on Temperature & Humidity screen icon::Display Temperature & Humidity on icon displayed on Temperature & Humidity screen. Valid when DISP.THERMOH.DISP is color",
+        "FONT": "Temperature and humidity screen icon character font::Set up the font of the icon to be displayed on the Temperature & Humidity screen. Set up the character size and font type.",
+        "R_SIZE": "The radius of the Temperature and Humidity Screen Icon::Set up the size of the icon displayed on the Temperature & Humidity screen. This is valid when DISP.THERMOH.DISP is color.",
+        "COLOR": "Temperature & Humidity screen icon text color::Set up the text color of the icon displayed on the Temperature & Humidity screen. Set up with a color code including #", 
+        "CALC": "How to calculate icon state of Temperature & Humidity screen::For the icon displayed on the Temperature & Humidity screen, of the discomfort index or the temperature, which numerical value is used to determine the display color is set. Valid when THERMOH_DISP is color.The possible to set up values are as follows. {THERMOH_CALC}",
+        "PATTERN": "Icon display pattern of Temperature and Humidity Screen::Set up the display pattern of the icon displayed on the Temperature & Humidity screen. Valid when DISP.THERMOH.DISP is color.The possible to set up  value are as follows.{THERMOH_PATTERN}",
+        "HUMIDITY_PATTERN": "Humidity alert pattern on Temperature & Humidity screen::Set the humidity alert warning pattern to be displayed on the Temperature & Humidity screen. The possible to set up values are as follows.{HUMIDITY_PATTERN}"
+      },
+      "PIR": {
+        "R_SIZE": "Icon radius of the human sensor screen::Set up the size of the icon displayed on the human sensor screen.★",
+        "BGCOLOR": "Icon background color of the PIR screen::Set the background color of the icon displayed on the PIR screen. Set up the color code including #.",
+        "FGCOLOR": "Icon character color of the PIR screen::Set the character color of the icon displayed on the PIR screen. Set the color code including #。",
+        "EMPTY_SHOW": "Display an absent icon on the PIR screen::Display an absent icon on the PIR screen",
+        "EMPTY_BGCOLOR": "Absent icon background for motion sensor screen::Set up the background color of the absent icon displayed on the motion sensor screen. Set up the color code including #."
+      },
+      "PRESSURE": {
+        "R_SIZE": "Pressure sensor icon radius of the PIR screen::Set up the size of the pressure sensor displayed on the PIR screen.★",
+        "VOL_MIN": "Pressure sensor use decision threshold of PIR screen::Set up the pressure sensor use decision value displayed on the human sensor screen. Decide that the value below the set value is in use.When 1200 is pressureless and the pressure is applied, the value decreases.. ",
+        "BGCOLOR": "Pressure sensor icon background for PIR screen background color::Set the background color of the pressure sensor icon displayed on the PIR screen. Set up the color code including #.",
+        "FGCOLOR": "Pressure sensor icon character color of PIR screen::Color of pressure sensor icon displayed on PIR screen. Set up color code including #",
+        "EMPTY_SHOW": "Display pressure sensor icon not used in PIR screen::Display unused pressure sensor icon in PIR screen.",
+        "EMPTY_BGCOLOR": "Pressure sensor icon not used for the PIR screen background color::Set up the background color of the unused pressure sensor icon on the PIR screen. Set up the color code including #. "
+      },
+      "MEDITAG": {
+        "STRESS_BG": "MEDiTAG background color of position (map) screen::Set up the background color of MEDiTAG used in position (map) screen in three steps according to the stress level. Set up the color code including #."
+      },
+      "POSITION_HISTORY": {
+        "HEADERS": "Item to be displayed on position history screen::Set up the items to be displayed on position display history screen. The possible to set up values are as follows.{POSITION_HISTORY}"
+      },
+      "ANALYSIS": {
+        "LINE": {
+
+          "MAX_WEIGHT": "Maximum thickness of flow line displayed on flow line analysis screen::Set up the maximum thickness of flow line displayed on flow line analysis screen.",
+          "COLOR": "Color of flow line to be displayed on flow line analysis screen::Set up the color of flow line to be displayed on flow line analysis screen"
+        },
+        "HEATMAP": {
+          "RADIUS": "The diameter of the heatmap displayed on the heatmap (position) screen::Set up the size of the heatmap displayed on the heatmap (position) screen"
+        }
+      }
+
+
+
+
+
+    },
+    "DEV": {
+      "SIMULATION": "Use temporary data::Perform position using temporary data."
+    },
+    "EXCLOUD": {
+      "BASE_URL": "EXCloud URL::Set up EXCloud URL."
+    },
+
+    "TYPE": {
+      "APP": {
+        "POS": {
+          "MOVING_AVERAGE_TIME": "number",
+          "PROHIBIT_GROUPS": "numberList"
+
+
+
+
+        },
+        "SENSOR": {
+          "EXB_SENSOR": "numberList",
+          "TX_SENSOR": "numberList"
+        },
+        "POS_LIST": {
+          "WITH": "stringList"
+        },
+        "TX": {
+          "WITH": "stringList"
+        },
+        "EXB": {
+          "SENSOR": "numberList",
+          "WITH": "stringList"
+        },
+        "USER": {
+          "WITH": "stringList"
+        },
+        "POT": {
+          "WITH": "stringList"
+        },
+        "CATEGORY": {
+          "TYPES": "numberList"
+        },
+        "NOTIFY": {
+          "MIDIUM_TYPES": "numberList",
+          "STATE_TYPES": "numberList"
+        },
+        "TX_MON": {
+          "WITH": "stringList",
+          "WITH_SENSOR": "numberList"
+        },
+        "SENSOR_LIST": {
+          "WITH": "stringList"
+        },
+        "TXDETAIL": {
+          "ITEMS": "stringList"
+        },
+        "SVC": {
+          "SLACK_CHANNEL": "string",
+          "SLACK_TOKEN": "string",
+          "STAY_SUM": {
+            "START": "number",
+            "END": "number",
+            "INTERVAL": "number",
+            "CALC_BY": "string",
+            "ADJUST_TIME": "number",
+            "REAL_TIME": "boolean"
+          },
+          "POS": {
+            "CACHE_TIME": "number"
+          }
+        },
+        "BATCH": {
+          "POSITION": {
+            "INTERVAL": "number"
+          },
+          "SENSOR_1": {
+            "INTERVAL": "number"
+          },
+          "SENSOR_2": {
+            "INTERVAL": "number"
+          },
+          "SENSOR_3": {
+            "INTERVAL": "number"
+          },
+          "SENSOR_5": {
+            "INTERVAL": "number"
+          },
+          "SENSOR_6": {
+            "INTERVAL": "number"
+          },
+          "SENSOR_8": {
+            "INTERVAL": "number"
+          },
+          "MONITOR": {
+            "INTERVAL": "number"
+          },
+          "UTILIZATION": {
+            "CRON": "string"
+          },
+          "STAY_SUM": {
+            "CRON": "string"
+          }
+        }
+      },
+      "DISP": {
+        "TX": {
+          "DISPLAY_PRIORITY": "stringList"
+        },
+        "THERMOH": {
+          "PATTERN": "stringList",
+          "HUMIDITY_PATTERN": "stringList"
+        },
+        "POSITION_HISTORY": {
+          "HEADERS": "stringList"
+        },
+        "MEDITAG": {
+          "STRESS_BG": "stringList"
+        }
+      },
+      "DEV": {
+        "SIMULATION": "boolean"
+      }
+    },
+    "DEFAULT": {
+      "APP": {
+
+
+
+
+
+        "SVC": {
+          "STAY_SUM": {
+            "STAY_SUM_START": "0",
+            "STAY_SUM_END": "2400",
+            "STAY_SUM_INTERVAL": "5",
+            "STAY_SUM_CALC_BY": "location",
+            "STAY_SUM_ADJUST_TIME": "4"
+          }
+        }
+      }
+    },
+    "OPTIONS": {
+      "SETTING_CATEGORY": {
+        "COMMON": "Common",
+        "SYS": "System",
+        "MENU": "Menu",
+        "POS": "Position",
+        "POS_LIST": "Position List",
+        "SENSOR": "Sensor",
+        "THERMOH": "ThermoHumidity",
+        "PIR": "PIR",
+        "PRESSURE": "Pressure",
+        "MEDITAG": "MEDiTAG",
+        "SENSOR_LIST": "Sensor List",
+        "TX": "Tx",
+        "TXDETAIL": "Tx Deatils",
+        "TX_LOC": "Tx Location icon",
+        "EXB": "EXB",
+        "EXB_LOC": "EXB Location icon",
+        "USER": "User",
+        "POT": "People or Things",
+        "CATEGORY": "Category",
+        "NOTIFY": "Notification",
+        "GATEWAY": "Gateway",
+        "TX_MON": "Monitor Tx",
+        "TELEMETRY": "Monitor EXB",
+        "ANALYSIS": "Analyze",
+        "HEATMAP": "Heatmap",
+        "POSITION_HISTORY": "Position History",
+        "SENSORGRAPH": "Sensor Graph",
+        "STAY_SUM": "Stay time summary",
+        "HISTORY_EXC": "History of EXCloud",
+        "SVC": "Server",
+        "BATCH": "Batch",
+        "SIMULATION": "For Demostration",
+        "OTHER": "Others"
+      },
+
+
+
+      "SENSOR": {
+        "1": "1::ThermoHumidity",
+        "2": "2::PIR",
+        "3": "3::Thermopile",
+        "4": "4::LED",
+        "5": "5::MEDiTAG",
+        "6": "6::Magnet",
+        "7": "7::Button",
+        "8": "8::Pressure"
+      },
+      "CATEGORY_TYPES": {
+        "1": "1::People",
+        "2": "2::Things",
+        "3": "3::Zone"
+      },
+      "NOTIFY_MIDIUM": {
+        "0": "0::Mail",
+        "1": "1::Slack"
+      },
+      "NOTIFY_STATE": {
+        "0": "0::TX button notification",
+        "1": "1::Alert",
+        "2": "2::User registration and update",
+        "3": "3::sos"
+
+      },
+      "SUM_AXIS_FILL_GAP": {
+        "0": "0::Do not do it",
+        "1": "1::Do it",
+        "2": "2::Show all search periods for month and day"
+      },
+      "SUM_PARSENT_DIGIT": {
+        "1": "1::None",
+        "10": "10::1 digit",
+        "100": "100::2 digit"
+      },
+      "THEME": {
+        "default": "default::Corporate",
+        "earthcolor": "earthcolor::Earth color",
+        "autumn": "autumn::Autumn",
+        "vivid": "vivid::Vivid",
+        "gray-scale": "gray-scale::Gray scale",
+        "indigo": "indigo::Indigo",
+        "exeo": "exeo::EXEO"
+      },
+      "THERMOH_DISP": {
+        "icon": "icon::Icon that color changes by discomfort index",
+        "color": "color::Thermohumidity indicator icon"
+      },
+      "THERMOH_CALC": {
+        "1": "1::Discomfort index",
+        "2": "2::Temperature"
+      },
+      "THERMOH_PATTERN": {
+        "NUMBER": "Numerics::Threshold. This setting applies to values below the threshold. When omitted, it applies when all settings are not applied.",
+        "OR": "OR::If set, change the threshold decision from less to less.",
+        "COLOR": "Color code including #::Icon background color. Black when omitted.",
+        "PATTERN": "String including $::Flashing pattern. Choose WARN or DANGER. Does not flash if omitted."
+      },
+      "HUMIDITY_PATTERN": {
+        "NUMBER": "Numerics::Threshold。",
+        "LESS": "LESS::Display a warining when you measure humidity under the threshold.",
+        "MORE": "MORE::Display a warining when you measure humidity above the threshold."
+      },
+      "SORT": {
+        "asc": "asc::Ascending order",
+        "desc": "desc::Descending order"
+      },
+      "STAY_SUM_CALC_BY": {
+        "location": "location::EXB Location",
+        "zone": "zone::Zone"
+      },
+      "POSITION_HISTORY": {
+        "potName": "potName::Name of preson and things",
+        "major": "major::major",
+        "minor": "minor::minor",
+        "deviceId": "deviceId::Device ID",
+        "deviceIdX": "deviceIdX::Device ID(Hex)",
+        "locationName": "locationName::EXB name",
+        "posId": "posId::posId",
+        "areaName": "areaName::Area name",
+        "x": "x::X",
+        "y": "y::Y"
+      },
+      "POS_LIST": {
+        "tel": "tel::Tel"
+      },
+      "TX": {
+        "major": "major::major",
+        "dispFlg": "dispFlg::Display setting",
+        "location": "location::Show fixed position",
+        "dispPir": "dispPir::Show on pir",
+        "dispAlways": "dispAlways::Show always"
+      },
+      "EXB": {
+        "deviceId": "deviceId::Device ID",
+        "deviceIdX": "deviceIdX::Device ID(Hex)",
+        "posId": "posId::posId",
+        "zone": "zone::Zone name"
+      },
+      "USER": {
+        "email": "email::Email",
+        "name": "name::Name"
+
+      },
+      "POT": {
+        "ruby": "ruby::Ruby",
+        "post": "post::Post",
+        "tel": "tel::Tel",
+        "potCd": "potCd::Code",
+        "group": "group::Group",
+        "category": "category::Category",
+        "description": "description::Description",
+        "user": "user::User registration features"
+      },
+      "TX_MON": {
+        "btxId": "btxId::btxId",
+        "major": "major::major",
+        "minor": "minor::minor",
+        "name": "name::Name",
+        "powerLevel": "powerLevel::Battery level",
+        "locationName": "locationName::Last position"
+      },
+      "SENSOR_LIST": {
+        "posId": "posId::posId",
+        "deviceId": "deviceId::Device ID",
+        "deviceIdX": "deviceIdX::Device ID(Hex)"
+      },
+      "TXDETAIL": {
+        "minor": "minor::minor",
+        "major": "major::major",
+        "name": "name::Name",
+        "group": "group::Group",
+        "category": "category::Category",
+        "tel": "tel::Tel",
+        "timestamp": "timestamp::Last date and time"
+      }
+
+
+
+
+
+    }
   },
   "message": {
     "error": "An error occurred.",
@@ -648,6 +1232,7 @@
     "bulkSystemUseFailed": "{col}（{value}）cannot be changed because it is used by system defined name.",
     "bulkSystemUseNameFailed": "{col}（{value}） is already used by system defined name.",
     "bulkInvalidUpdateLineFailed": "{col}（{value}）cannot be modified on this page.",
+
     "monthDayTemperature": "{month}/{day} Temperature and humidity ({name}{description})",
     "invalidLoginId": "Login ID must be alphanumeric character.",
     "notFound": "No results found.",
@@ -686,6 +1271,29 @@
 
     "dummy": "" 
   },
-  "system": {
+  "helpDescription": {
+    "bulkRegister": "Formats and registers data using the downloaded file as a template. It can not change the ID of a master that has been issued uniquely and already linked by batch registration. In case of new registration, please empty the ID and do batch registration. ",
+    "bulkUniqueFailed": "Target item name is a non-duplication item. It is already used in another line.",
+    "bulkOneOfFailed": "Tareget item name must be specified with one of multiple settings.",
+    "bulkRangeFailed": "Target item name must be in the specified range.",
+    "bulkSizeFailed": "Target item name must be specified in the specified number of characters",
+    "bulkSizeSameFailed": "Target item name must be exactly the number of characters specified.",
+    "bulkNotNullFailed": "Target item name is mandatory. It can not be exclude and must be entered.",
+    "bulkExistFailed": "Target item name does not exist. It may have been deleted by another use.",
+    "bulkInvalidFailed": "Target item name has a invalid format. It is necessary to register the format.",
+    "bulkAuthFailed": "Target item name can not be used because it is already used internally.",
+    "bulkUseFailed": "The target item name is the maximum number of item names in use.",
+    "bulkSystemUseFailed": "The target item name can not be changed because it is a fixed data used in the system. To continue registration, the target data needs to be deleted from the CSV.",
+    "bulkSystemUseNameFailed": "The target item name can not be used because it is a fixed name used in the system. It needs to be registered with a different name.",
+    "bulkInvalidUpdateLineFailed": "Target item name data can not be changed on this screen",
+    "bulkNotes": "If unreadable characters are displayed, it may be garbled. If you use Excel for CSV editing, set up {charSet} of {personal} to {SJIS}.",
+    "state": "The state is defined as follows. {detected}: Indicates a well-detected state. When the absence time is set, it will be displayed in this status even in the absence indication. {TemporaryUndetect}: It is detected on the current day but it has been undetected for more than the specified time. {Undetect}: Indicates that it has not been detected for a long time beyond the specified time{none}: Indicates that it has not been detected even once after installation.",
+    "systemCategory": "This category has been set up since the system was built. It is assumed to be used by setting it to a zone.",
+    "absent": "The configured zone is the absence determination zone, and if it is set to EXBeacon, the TX detected by the target EXBeacon is treated as being away from the seat.",
+    "prohibit": "Feature not provided ver1.1",
+    "zoneClass": "Create and edit zones that include multiple EXBeacon. The created zones are used for grouping and summary by setting them on the EXBeacon screen. As it can set the category to the zone, it can also classify the zone itself. Refer to the category help for the categories set in the system to utilize in the zone.",
+    "zoneBlock": "{ZoneBlock} can be created by dragging and selecting on the displayed area. EXBeacon in the created zone will be automatically set the zone at the time of registration. ",
+
+    "dummy": ""
   }
 }
