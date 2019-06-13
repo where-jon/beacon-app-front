@@ -2,7 +2,7 @@
   <div id="mapContainer" class="container-fluid" @click="resetDetail">
     <breadcrumb :items="items" :extra-nav-spec="extraNavSpec" :reload="true" :state="reloadState" :auto-reload="false" :short-name="shortName" :legend-items="legendItems" />
     <b-alert v-model="showDismissibleAlert" variant="danger" dismissible>
-      {{ $t('label.detectedProhibitZone') + ' : ' }}{{ message }}
+      {{ message }}
     </b-alert>
     <b-row class="mt-2">
       <b-form inline class="mt-2" @submit.prevent>
@@ -13,7 +13,7 @@
           <span :title="vueSelectTitle(vueSelected.area)">
             <v-select v-model="vueSelected.area" :options="areaOptions" :clearable="false" class="ml-1 mr-2 vue-options" :style="getVueSelectStyle()">
               <template slot="selected-option" slot-scope="option">
-                {{ vueSelectCutOn(option) }}
+                {{ vueSelectCutOn(option, true) }}
               </template>
             </v-select>
           </span>
@@ -142,10 +142,12 @@ export default {
       message: '',
       showDismissibleAlert: false,
       prohibitDetectList : null,
+      lostUnDetectList : null,
       icons: {},
       txsMap: {},
       exbsMap: {},
       prohibitInterval:null,
+      lostInterval:null,
       isShowRight: false,
       isShowBottom: false,
       isMounted: false,
@@ -160,6 +162,7 @@ export default {
       'categories',
       'groups',
       'prohibits',
+      'lostZones',
       'txs',
     ]),
     ...mapState([
@@ -222,6 +225,7 @@ export default {
     await StateHelper.load('category')
     await StateHelper.load('group')
     await StateHelper.load('prohibit')
+    await StateHelper.load('lostZones')
     await StateHelper.load('pot')
     await StateHelper.load('tx')
     await StateHelper.load('exb')
@@ -378,7 +382,7 @@ export default {
           this.stage.update()
         }
         this.setPositionedExb()
-        this.setProhibit('pos') // listmixin呼び出し
+        this.$nextTick(() => this.setProhibitDetect('pos')) // listmixin呼び出し
         this.showTxAll()
         if(!this.firstTime && reloadButton){
           this.reloadState.isLoad = false

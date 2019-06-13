@@ -10,6 +10,7 @@ import mList from '../../../components/page/list.vue'
 import { mapState } from 'vuex'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import * as RegionHelper from '../../../sub/helper/RegionHelper'
 import listmixinVue from '../../../components/mixin/listmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 
@@ -48,8 +49,13 @@ export default {
     ]),
   },
   methods: {
-    afterCrud(){
+    async afterCrud(param){
       StateHelper.setForceFetch('user', true)
+      const result = await RegionHelper.autoSwitchRegion(this.regions)
+      if(result){
+        window.localStorage.setItem('listMessage', param.message)
+        location.reload()
+      }
     },
     async fetchData(payload) {
       try {

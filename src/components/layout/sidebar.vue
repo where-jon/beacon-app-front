@@ -1,7 +1,7 @@
 <template>
   <div>
     <ul class="menu-groups">
-      <li v-for="(group, i) in nav" :key="group.path" :to="'/' + group.base" class="menu-group" active-class="active">
+      <li v-for="(group, i) in this.$store.state.menu" :key="group.path" :to="'/' + group.base" class="menu-group" active-class="active">
         <ul class="menu-group-items">
           <li class="menu-item title clearfix" @click.stop="onMenuClick(i)">
             <span class="title">
