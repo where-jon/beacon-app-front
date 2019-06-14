@@ -153,19 +153,18 @@ export default {
     async displayImpl(){
       this.replace({showAlert: false})
       this.showProgress()
-      const param = _.cloneDeep(this.form)
       await StateHelper.load('zones')
       await StateHelper.load('pots')
       await StateHelper.load('groups')
       
-      if (!param.date || param.date == '') {
+      if (!this.form.date || this.form.date == '') {
         this.message = this.$i18n.tnl('message.pleaseEnterSearchCriteria')
         this.replace({showAlert: true})
         this.hideProgress()
         return
       }
 
-      const sumData = await HttpHelper.getAppService(this.getApiUrl(param))
+      const sumData = await HttpHelper.getAppService(this.getApiUrl(this.form))
       if (_.isEmpty(sumData)) {
         this.message = this.$i18n.t('message.listEmpty')
         this.replace({showAlert: true})
@@ -173,7 +172,7 @@ export default {
         return
       }
 
-      this.viewList = this.getStayDataList(moment(param.date).format('YYYY-MM-DD'), sumData, APP.STAY_SUM.BSENT_LIMIT, APP.STAY_SUM.LOST_LIMIT)
+      this.viewList = this.getStayDataList(moment(this.form.date).format('YYYY-MM-DD'), sumData, APP.STAY_SUM.BSENT_LIMIT, APP.STAY_SUM.LOST_LIMIT)
       this.totalRows = this.viewList.length
       this.hideProgress()
     },
@@ -228,15 +227,14 @@ export default {
       })
     },
     async download(){
-      const param = _.cloneDeep(this.form)
-      if (!param.date || param.date.length == 0) {
+      if (!this.form.date || this.form.date.length == 0) {
         this.message = this.$i18n.tnl('message.pleaseEnterSearchCriteria')
         this.replace({showAlert: true})
         this.hideProgress()
         return
       }
 
-      const dataList = await HttpHelper.getAppService(this.getApiUrl(param))
+      const dataList = await HttpHelper.getAppService(this.getApiUrl(this.form))
       if (_.isEmpty(dataList)) {
         this.message = this.$i18n.t('message.listEmpty')
         this.replace({showAlert: true})
@@ -245,7 +243,7 @@ export default {
       } else {
         this.replace({showAlert: false})
       }
-      let viewList = this.getStayDataList(moment(param.date).format('YYYY-MM-DD'), dataList, APP.SUM_ABSENT_LIMIT, APP.SUM_LOST_LIMIT)
+      let viewList = this.getStayDataList(moment(this.form.date).format('YYYY-MM-DD'), dataList, APP.SUM_ABSENT_LIMIT, APP.SUM_LOST_LIMIT)
 
       viewList.sort(function(a, b) {
         var nameA = a.name.toUpperCase() // 大文字、小文字を無視
@@ -255,8 +253,8 @@ export default {
         return 0
       })
 
-      const searchDate = moment(param.date).format('YYYY-MM-DD')
-      const group = param.groupId? this.groups.find((val) => val.groupId == param.groupId): null
+      const searchDate = moment(this.form.date).format('YYYY-MM-DD')
+      const group = this.form.groupId? this.groups.find((val) => val.groupId == this.form.groupId): null
       const groupName =  group? '_' + group.groupName: ''
 
       HtmlUtil.fileDL(
@@ -266,9 +264,9 @@ export default {
       )
     },
     getApiUrl(param) {
-      param.date = moment(param.date).format('YYYYMMDD')
+      const targetDate = moment(param.date).format('YYYYMMDD')
       const groupBy = param.groupId? '&groupId=' + param.groupId: ''
-      const url = '/office/stayTime/sumByDay/' + param.date + '/zoneCategory?from=' + APP.STAY_SUM.FROM + '&to=' + APP.STAY_SUM.TO + groupBy
+      const url = '/office/stayTime/sumByDay/' + targetDate + '/zoneCategory?from=' + APP.STAY_SUM.FROM + '&to=' + APP.STAY_SUM.TO + groupBy
       return url
     },
     updateColumnName(){
@@ -282,29 +280,27 @@ export default {
       this.replace({showAlert: false})
       this.showProgress()
 
-      const param = _.cloneDeep(this.form)
       await StateHelper.load('zones')
       await StateHelper.load('pots')
       await StateHelper.load('groups')
 
-      if (!param.date || param.date == '') {
+      if (!this.form.date || this.form.date == '') {
         this.message = this.$i18n.tnl('message.pleaseEnterSearchCriteria')
         this.replace({showAlert: true})
         this.hideProgress()
         return
       }
 
-      param.date = moment(param.date).format('YYYYMMDD')
-      const diff = moment().startOf('months').diff(moment(param.date).startOf('months'), 'months')
+      const diff = moment().startOf('months').diff(moment(this.form.date).startOf('months'), 'months')
       let startDate, endDate
 
       // 取得する日付開始、終了日を設定する
       if (diff == 0) {
-        startDate = moment(param.date).startOf('months')
+        startDate = moment(this.form.date).startOf('months')
         endDate = moment().subtract(1, 'd')
       } else if (diff >= 0) {
-        startDate = moment(param.date).startOf('months')
-        endDate = moment(param.date).endOf('months')
+        startDate = moment(this.form.date).startOf('months')
+        endDate = moment(this.form.date).endOf('months')
       } else {
         // 未来月の場合はエラーとする
         this.message = this.$i18n.terror('message.invalid', {target: this.$i18n.tnl('label.date')})
@@ -315,11 +311,11 @@ export default {
 
       let csvList = new Array()
       const csvDays = endDate.diff(startDate, 'days')
-      const groupBy = param.groupId? '&groupId=' + param.groupId: ''
+      const groupBy = this.form.groupId? '&groupId=' + this.form.groupId: ''
 
       let day = 0
       while (day <= csvDays) {
-        const searchDate = moment(param.date).startOf('months').add(day++, 'day').format('YYYYMMDD')
+        const searchDate = moment(this.form.date).startOf('months').add(day++, 'day').format('YYYYMMDD')
         const url = '/office/stayTime/sumByDay/' + searchDate + '/zoneCategory?from=' + APP.STAY_SUM.FROM + '&to=' + APP.STAY_SUM.TO + groupBy
         const sumData = await HttpHelper.getAppService(url)
         if (_.isEmpty(sumData)) {
@@ -342,10 +338,10 @@ export default {
       }
       this.replace({showAlert: false})
 
-      const group = param.groupId? this.groups.find((val) => val.groupId == param.groupId): null
+      const group = this.form.groupId? this.groups.find((val) => val.groupId == this.form.groupId): null
       const groupName =  group? '_' + group.groupName: ''
       HtmlUtil.fileDL(
-        moment(param.date).format('YYYYMM') + groupName + '_stayRatio.csv',
+        moment(this.form.date).format('YYYYMM') + groupName + '_stayRatio.csv',
         Util.converToCsv(csvList, null, this.getCsvHeaderNames()),
         getCharSet(this.$store.state.loginId)
       )
@@ -368,8 +364,7 @@ export default {
       ]
     },
     pickerChanged() {
-      const param = _.cloneDeep(this.form)
-      const isError = !param.date || param.date.length == 0 ? true: moment(param.date).isAfter(moment().endOf('months'))? true: false
+      const isError = !this.form.date || this.form.date.length == 0 ? true: moment(this.form.date).isAfter(moment().endOf('months'))? true: false
       if (isError) {
         this.message = this.$i18n.terror('message.invalid', {target: this.$i18n.tnl('label.date')})
         this.replace({showAlert: true})

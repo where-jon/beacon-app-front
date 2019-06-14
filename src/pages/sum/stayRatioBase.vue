@@ -452,19 +452,18 @@ export default {
     async displayImpl(){
       this.replace({showAlert: false})
       this.showProgress()
-      const param = _.cloneDeep(this.form)
       await StateHelper.load('zones')
       await StateHelper.load('pots')
       await StateHelper.load('groups')
       
-      if (!param.date || param.date.length == 0) {
+      if (!this.form.date || this.form.date.length == 0) {
         this.message = this.$i18n.tnl('message.pleaseEnterSearchCriteria')
         this.replace({showAlert: true})
         this.hideProgress()
         return
       }
 
-      const sumData = await HttpHelper.getAppService(this.getApiUrl(param))
+      const sumData = await HttpHelper.getAppService(this.getApiUrl(this.form))
       if (_.isEmpty(sumData)) {
         this.message = this.$i18n.t('message.listEmpty')
         this.replace({showAlert: true})
@@ -474,7 +473,7 @@ export default {
         this.replace({showAlert: false})
       }
 
-      this.viewList = this.getStayDataList(moment(param.date).format('YYYY-MM-DD'), sumData, APP.SUM_ABSENT_LIMIT, APP.SUM_LOST_LIMIT)
+      this.viewList = this.getStayDataList(moment(this.form.date).format('YYYY-MM-DD'), sumData, APP.SUM_ABSENT_LIMIT, APP.SUM_LOST_LIMIT)
 
       this.totalRows = this.viewList.length
       this.hideProgress()
@@ -621,30 +620,29 @@ export default {
     async downloadDay(key){
       this.updateColumn()
       let viewList
-      const param = _.cloneDeep(this.form)
-      if (!param.date || param.date.length == 0) {
+      if (!this.form.date || this.form.date.length == 0) {
         this.message = this.$i18n.tnl('message.pleaseEnterSearchCriteria')
         this.replace({showAlert: true})
         this.hideProgress()
         return
       }
 
-      const dataList = await HttpHelper.getAppService(this.getApiUrl(param))
+      const dataList = await HttpHelper.getAppService(this.getApiUrl(this.form))
       if (_.isEmpty(dataList)) {
         this.message = this.$i18n.t('message.listEmpty')
         this.replace({showAlert: true})
         this.hideProgress()
         return
       }
-      viewList = this.getStayDataList(moment(param.date).format('YYYY-MM-DD'), dataList, APP.SUM_ABSENT_LIMIT, APP.SUM_LOST_LIMIT)
+      viewList = this.getStayDataList(moment(this.form.date).format('YYYY-MM-DD'), dataList, APP.SUM_ABSENT_LIMIT, APP.SUM_LOST_LIMIT)
 
       getDataList(viewList)
       const csvList = (key == 'sum')? this.getCsvSumList(viewList): this.getCsvDetailList(viewList)
 
-      const searchDate = moment(param.date).format('YYYY-MM-DD')
-      const group = param.groupId? this.groups.find((val) => val.groupId == param.groupId): null
+      const searchDate = moment(this.form.date).format('YYYY-MM-DD')
+      const group = this.form.groupId? this.groups.find((val) => val.groupId == this.form.groupId): null
       const groupName =  group? '_' + group.groupName: ''
-      const category = param.categoryId? this.categories.find((val) => val.categoryId == param.categoryId): null
+      const category = this.form.categoryId? this.categories.find((val) => val.categoryId == this.form.categoryId): null
       const categoryName =  !category? '': category.systemUse == 1? category.systemCategoryName: '_' + category.categoryName
 
       HtmlUtil.fileDL(
@@ -654,10 +652,10 @@ export default {
       )
     },
     getApiUrl(param) {
-      param.date = moment(param.date).format('YYYYMMDD')
+      const targetDate = moment(param.date).format('YYYYMMDD')
       const groupBy = param.groupId? '&groupId=' + param.groupId: ''
       const categoryBy = param.categoryId? '&categoryId=' + param.categoryId: ''
-      const url = '/office/stayTime/sumByDay/' + param.date + '/zoneCategory?from=' + APP.STAY_SUM.FROM + '&to=' + APP.STAY_SUM.TO + groupBy + categoryBy
+      const url = '/office/stayTime/sumByDay/' + targetDate + '/zoneCategory?from=' + APP.STAY_SUM.FROM + '&to=' + APP.STAY_SUM.TO + groupBy + categoryBy
       return url
     },
     getCsvSumList(viewList) {
@@ -717,27 +715,26 @@ export default {
       this.replace({showAlert: false})
       this.showProgress()
 
-      const param = _.cloneDeep(this.form)
       await StateHelper.load('zones')
       await StateHelper.load('pots')
       await StateHelper.load('groups')
 
-      if (!param.date || param.date.length == 0) {
+      if (!this.form.date || this.form.date.length == 0) {
         this.message = this.$i18n.tnl('message.pleaseEnterSearchCriteria')
         this.replace({showAlert: true})
         this.hideProgress()
         return
       }
 
-      param.date = moment(param.date).format('YYYYMMDD')
-      const diff = moment().startOf('months').diff(moment(param.date).startOf('months'), 'months')
+      this.form.date = moment(this.form.date).format('YYYYMMDD')
+      const diff = moment().startOf('months').diff(moment(this.form.date).startOf('months'), 'months')
       let startDate, endDate
 
       // 取得する日付開始、終了日を設定する
       if (diff == 0) {
         endDate = moment().subtract(1, 'd')
       } else if (diff >= 0) {
-        endDate = moment(param.date).endOf('months')
+        endDate = moment(this.form.date).endOf('months')
       } else {
         // 未来月の場合はエラーとする
         this.message = this.$i18n.terror('message.invalid', {target: this.$i18n.tnl('label.date')})
@@ -745,11 +742,11 @@ export default {
         this.hideProgress()
         return
       }
-      startDate = moment(param.date).startOf('months')
+      startDate = moment(this.form.date).startOf('months')
 
       let csvList = []
-      const groupBy = param.groupId? '&groupId=' + param.groupId: ''
-      const categoryBy = param.categoryId? '&categoryId=' + param.categoryId: ''
+      const groupBy = this.form.groupId? '&groupId=' + this.form.groupId: ''
+      const categoryBy = this.form.categoryId? '&categoryId=' + this.form.categoryId: ''
       while (startDate.diff(endDate) <= 0) {
         const searchDate = startDate.format('YYYYMMDD')
         const url = '/office/stayTime/sumByDay/' + searchDate + '/zoneCategory?from=' + APP.STAY_SUM.FROM + '&to=' + APP.STAY_SUM.TO + groupBy + categoryBy
@@ -769,13 +766,13 @@ export default {
         startDate.add(1, 'days')
       }
 
-      const group = param.groupId? this.groups.find((val) => val.groupId == param.groupId): null
+      const group = this.form.groupId? this.groups.find((val) => val.groupId == this.form.groupId): null
       const groupName =  group? '_' + group.groupName: ''
-      const category = param.categoryId? this.categories.find((val) => val.categoryId == param.categoryId): null
+      const category = this.form.categoryId? this.categories.find((val) => val.categoryId == this.form.categoryId): null
       const categoryName =  !category? '': category.systemUse == 1? category.systemCategoryName: '_' + category.categoryName
 
       HtmlUtil.fileDL(
-        moment(param.date).format('YYYY-MM') + groupName + categoryName + '_stayRatio.csv',
+        moment(this.form.date).format('YYYY-MM') + groupName + categoryName + '_stayRatio.csv',
         Util.converToCsv(csvList),
         getCharSet(this.$store.state.loginId)
       )
@@ -783,8 +780,7 @@ export default {
       this.hideProgress()
     },
     pickerChanged() {
-      const param = _.cloneDeep(this.form)
-      const isError = !param.date || param.date.length == 0 ? true: moment(param.date).isAfter(moment().endOf('months'))? true: false
+      const isError = !this.form.date || this.form.date.length == 0 ? true: moment(this.form.date).isAfter(moment().endOf('months'))? true: false
       if (isError) {
         this.message = this.$i18n.terror('message.invalid', {target: this.$i18n.tnl('label.date')})
         this.replace({showAlert: true})
