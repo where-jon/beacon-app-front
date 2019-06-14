@@ -15,7 +15,7 @@
         </b-form-group>
         <b-form-group>
           <label v-t="'label.meshId'" />
-          <input v-model="form.meshId" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control">
+          <input v-model="form.meshId" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control" required>
         </b-form-group>
         <b-form-group>
           <label v-t="'label.deviceOffset'" />

@@ -39,10 +39,12 @@ export default {
       await bulkSaveFunc(MAIN_COL, null, null, (entity, headerName, val, dummyKey) => {
         if(Util.equalsAny(headerName, NUMBER_TYPE_LIST)){
           const num = Number(val)
-          if(isNaN(num)){
+          if(!Util.hasValue(val) || isNaN(num)){
             entity[`${headerName}Name`] = val
           }
-          val = num
+          else{
+            val = num
+          }
         }
         if (headerName == MAIN_COL){
           if(!val) {

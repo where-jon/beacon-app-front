@@ -525,7 +525,7 @@ export default {
         class: balloonClass,
         name: tx.potName ? tx.potName : tx.txName? tx.txName: '',
         tel: tx.extValue ? tx.extValue.tel ? tx.extValue.tel : '': '',
-        timestamp: position ? this.getFinalReceiveTime(position.timestamp) : '',
+        timestamp: position ? this.getFinalReceiveTime(new Date(position.timestamp)) : '',
         thumbnail: tx.thumbnail ? tx.thumbnail : '',
         category: tx.categoryName? tx.categoryName : '',
         group: tx.groupName? tx.groupName : '',
