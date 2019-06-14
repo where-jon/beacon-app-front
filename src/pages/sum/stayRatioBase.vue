@@ -328,7 +328,7 @@ export default {
       Vue.set(this, 'fields', this.getFields(false))
     },
     handleSubmit() {
-      if (this.hasError()) {
+      if (this.isTooManyCheck()) {
         this.modalMessage = this.$i18n.tnl('message.tooManyCheck', {max: this.checkboxLimit})
         return
       }
@@ -339,14 +339,13 @@ export default {
         this.updateColumnName()
       })
     },
-    hasError() {
-      if (this.displayCheckList && this.displayCheckList.length == 0) {
+    isTooManyCheck() {
+      if (!Util.hasValue(this.displayCheckList)) {
         return false
-      } else {
-        let count = 0
-        _.forEach(this.displayCheckList, (list) => { count += list.length })
-        return count <= this.checkboxLimit? false: true
       }
+      let count = 0
+      _.forEach(this.displayCheckList, (list) => { count += list.length })
+      return count > this.checkboxLimit
     },
     getFields(isInit) {
       const disableClassName = 'd-none'
