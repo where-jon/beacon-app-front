@@ -227,6 +227,7 @@ export default {
       })
     },
     async download(){
+      this.replace({showAlert: false})
       if (!this.form.date || this.form.date.length == 0) {
         this.message = this.$i18n.tnl('message.pleaseEnterSearchCriteria')
         this.replace({showAlert: true})
@@ -240,8 +241,6 @@ export default {
         this.replace({showAlert: true})
         this.hideProgress()
         return
-      } else {
-        this.replace({showAlert: false})
       }
       let viewList = this.getStayDataList(moment(this.form.date).format('YYYY-MM-DD'), dataList, APP.SUM_ABSENT_LIMIT, APP.SUM_LOST_LIMIT)
 
@@ -336,7 +335,6 @@ export default {
         })
         csvList = csvList.isEmpty? list: csvList.concat(list)
       }
-      this.replace({showAlert: false})
 
       const group = this.form.groupId? this.groups.find((val) => val.groupId == this.form.groupId): null
       const groupName =  group? '_' + group.groupName: ''

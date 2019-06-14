@@ -469,8 +469,6 @@ export default {
         this.replace({showAlert: true})
         this.hideProgress()
         return
-      } else {
-        this.replace({showAlert: false})
       }
 
       this.viewList = this.getStayDataList(moment(this.form.date).format('YYYY-MM-DD'), sumData, APP.SUM_ABSENT_LIMIT, APP.SUM_LOST_LIMIT)
@@ -618,6 +616,7 @@ export default {
       return result
     },
     async downloadDay(key){
+      this.replace({showAlert: false})
       this.updateColumn()
       let viewList
       if (!this.form.date || this.form.date.length == 0) {
