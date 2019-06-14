@@ -7,3 +7,17 @@
   margin-left: 0px;
   width: 100% !important;
 }
+
+.tooltip > .tooltip-inner {
+  max-width: 100%;
+  background-color: #FFFFE0 !important;
+  color: #000000 !important;
+  text-align: left !important;
+  border: solid 1px  #808080 !important;
+  opacity: 1.0 !important;
+  filter: drop-shadow(4px 4px 4px rgba(0, 0, 0, 0.5)) !important;
+}
+
+.tooltip > .arrow {
+  display: none !important;
+}
