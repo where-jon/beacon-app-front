@@ -99,7 +99,7 @@ export default {
       return ViewHelper.addLabelByKey(this.$i18n, [ 
         {key: 'potName', sortable: true , tdClass: 'thumb-rowdata'},
         {key: 'thumbnail', tdClass: 'thumb-rowdata' },
-        {key: 'txIdName', label:'tx', sortable: true },
+        {key: 'txIdName', label:'tx', sortable: true, tdClass: 'thumb-rowdata' },
         {key: 'potCd', sortable: true , tdClass: 'thumb-rowdata'},
         {key: 'displayName', sortable: true, tdClass: 'thumb-rowdata'},
       ].concat(this.createCustomColumn())
