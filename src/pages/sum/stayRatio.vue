@@ -228,7 +228,6 @@ export default {
       })
     },
     async download(){
-      let viewList
       const param = _.cloneDeep(this.form)
       if (!param.date || param.date.length == 0) {
         this.message = this.$i18n.tnl('message.pleaseEnterSearchCriteria')
@@ -246,7 +245,7 @@ export default {
       } else {
         this.replace({showAlert: false})
       }
-      viewList = this.getStayDataList(moment(param.date).format('YYYY-MM-DD'), dataList, APP.SUM_ABSENT_LIMIT, APP.SUM_LOST_LIMIT)
+      let viewList = this.getStayDataList(moment(param.date).format('YYYY-MM-DD'), dataList, APP.SUM_ABSENT_LIMIT, APP.SUM_LOST_LIMIT)
 
       viewList.sort(function(a, b) {
         var nameA = a.name.toUpperCase() // 大文字、小文字を無視
