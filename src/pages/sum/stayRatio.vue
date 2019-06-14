@@ -362,8 +362,7 @@ export default {
       ]
     },
     pickerChanged() {
-      const isError = !this.form.date || this.form.date.length == 0 ? true: moment(this.form.date).isAfter(moment().endOf('months'))? true: false
-      if (isError) {
+      if (!Util.hasValue(this.form.date) || Util.isAfterNextMonth(this.form.date)) {
         this.message = this.$i18n.terror('message.invalid', {target: this.$i18n.tnl('label.date')})
         this.replace({showAlert: true})
         return

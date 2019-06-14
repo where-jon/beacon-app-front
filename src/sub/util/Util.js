@@ -598,3 +598,6 @@ export const addWithPadding = (str, add = 0) => {
   }
   return ret.slice(-1 * (strDigit + 1))
 }
+
+export const isAfterNextMonth = (date) => hasValue(date) && moment(date).isAfter(moment().endOf('months'))
+
