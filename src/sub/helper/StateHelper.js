@@ -549,17 +549,18 @@ export const bulkErrorCheck = (entity, headerName, val, isNumberColumn) => {
 }
 
 
-export const getSystemUseBgColor = (categoryData) => {
-  if(categoryData.categoryName === SYSTEM_ZONE_CATEGORY_NAME.ABSENT) {
-    return DISP.SYSTEM_USE.BG_COLOR.ABSENT.length != 0? DISP.SYSTEM_USE.BG_COLOR.ABSENT: getCategoryDisplayBgColor(categoryData)
-  } else if(categoryData.categoryName === SYSTEM_ZONE_CATEGORY_NAME.PROHIBIT) {
-    return DISP.SYSTEM_USE.BG_COLOR.PROHIBIT.length != 0? DISP.SYSTEM_USE.BG_COLOR.PROHIBIT: getCategoryDisplayBgColor(categoryData)
-  } else {
-    return getCategoryDisplayBgColor(categoryData)
+export const getSystemUseBgColor = (category) => {
+  switch(category.categoryName) {
+  case SYSTEM_ZONE_CATEGORY_NAME.ABSENT:
+    return DISP.SYSTEM_USE.BG_COLOR.ABSENT || getCategoryDisplayBgColor(category)
+  case SYSTEM_ZONE_CATEGORY_NAME.PROHIBIT:
+    return DISP.SYSTEM_USE.BG_COLOR.PROHIBIT || getCategoryDisplayBgColor(category)
+  default:
+    return getCategoryDisplayBgColor(category)
   }
 }
 
 export const getCategoryDisplayBgColor = (category) => {
-  return !category? null: category.display? category.display.bgColor: null
+  return Util.hasValue(category.display)? category.display.bgColor: null
 }
 
