@@ -366,7 +366,7 @@ export default {
 
       const i18n = this.$i18n
       _.filter(this.categories,(c) => { return c.categoryType === CATEGORY.ZONE })
-        .forEach(function(category) {
+        .forEach((category) => {
           const categoryClassName = _.some(selectedCategories, (data) => { return data.categoryId == category.categoryId})? '': disableClassName
           let colorStyle = '<span style="color: #' + category.bgColor + ';">■</span>' // TODO: リファクタリング対象。出来る人がいたらHeaderへ移動する
           let categoryName = (category.systemUse? i18n.tnl('label.' + category.systemCategoryName): category.categoryName)
@@ -392,7 +392,7 @@ export default {
       })
       
       _.filter(this.areas, (a) => { return true })
-        .forEach(function(area, index) {
+        .forEach((area, index) => {
           const areaClassName = _.some(selectedAreas, (data, index) => { return data.areaId == area.areaId})? '': disableClassName
           let colorStyle = '<span style="color: ' + DISP.SUM_STACK_COLOR[index] + ';">■</span>' // TODO: リファクタリング対象。出来る人がいたらHeaderへ移動する
           fields.push({key: area.areaName, sortable: true, label: area.areaName + colorStyle, thStyle: {width:'100px !important'}
