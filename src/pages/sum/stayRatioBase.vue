@@ -202,16 +202,6 @@ import * as HttpHelper from '../../sub/helper/HttpHelper'
 import { SYSTEM_ZONE_CATEGORY_NAME } from '../../sub/constant/Constants'
 import { CATEGORY } from '../../sub/constant/Constants'
 
-const getDataList = (dataList) => {
-  return dataList.sort(function(a, b) {
-    var nameA = a.name.toUpperCase() // 大文字、小文字を無視
-    var nameB = b.name.toUpperCase() // 大文字、小文字を無視
-    if (nameA < nameB) return -1
-    if (nameA > nameB) return 1
-    return 0
-  })
-}
-
 export default {
   components: {
     breadcrumb,
@@ -632,7 +622,7 @@ export default {
       }
       viewList = this.getStayDataList(moment(this.form.date).format('YYYY-MM-DD'), dataList, APP.SUM_ABSENT_LIMIT, APP.SUM_LOST_LIMIT)
 
-      getDataList(viewList)
+      Util.sortIgnoreCase(viewList, 'name')
       const csvList = (key == 'sum')? this.getCsvSumList(viewList): this.getCsvDetailList(viewList)
 
       const searchDate = moment(this.form.date).format('YYYY-MM-DD')
@@ -756,7 +746,7 @@ export default {
         }
 
         let list = this.getStayDataList(moment(searchDate).format('YYYY-MM-DD'), sumData, APP.SUM_ABSENT_LIMIT, APP.SUM_LOST_LIMIT)
-        getDataList(list)
+        Util.sortIgnoreCase(list, 'name')
         const dateList = (key == 'sum')? this.getCsvSumList(list): this.getCsvDetailList(list)
         csvList = csvList.isEmpty? dateList: csvList.concat(dateList)
         startDate.add(1, 'days')

@@ -243,14 +243,7 @@ export default {
         return
       }
       let viewList = this.getStayDataList(moment(this.form.date).format('YYYY-MM-DD'), dataList, APP.SUM_ABSENT_LIMIT, APP.SUM_LOST_LIMIT)
-
-      viewList.sort(function(a, b) {
-        var nameA = a.name.toUpperCase() // 大文字、小文字を無視
-        var nameB = b.name.toUpperCase() // 大文字、小文字を無視
-        if (nameA < nameB) return -1
-        if (nameA > nameB) return 1
-        return 0
-      })
+      Util.sortIgnoreCase(viewList, 'name')
 
       const searchDate = moment(this.form.date).format('YYYY-MM-DD')
       const group = this.form.groupId? this.groups.find((val) => val.groupId == this.form.groupId): null
@@ -326,13 +319,7 @@ export default {
         }
 
         let list = this.getStayDataList(moment(searchDate).format('YYYY-MM-DD'), sumData, APP.STAY_SUM.ABSENT_LIMIT, APP.STAY_SUM.LOST_LIMIT)
-        list.sort(function(a, b) {
-          var nameA = a.name.toUpperCase() // 大文字、小文字を無視
-          var nameB = b.name.toUpperCase() // 大文字、小文字を無視
-          if (nameA < nameB) return -1
-          if (nameA > nameB) return 1
-          return 0
-        })
+        Util.sortIgnoreCase(list, 'name')
         csvList = csvList.isEmpty? list: csvList.concat(list)
       }
 

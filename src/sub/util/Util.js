@@ -601,3 +601,21 @@ export const addWithPadding = (str, add = 0) => {
 
 export const isAfterNextMonth = (date) => hasValue(date) && moment(date).isAfter(moment().endOf('months'))
 
+/**
+ * 受け取ったリストを、受け取った対象を比較して並べ替える
+ * ※厳密には b-table でのソート指定と異なるので注意※
+ * @param {*} list 文字列のリスト
+ * @param {*} by 並び替え対象
+ */
+export const sortIgnoreCase = (list, by) => {
+  list.sort((a, b) => {
+    const byA = a[by].toUpperCase() // 大文字、小文字を無視
+    const byB = b[by].toUpperCase() // 大文字、小文字を無視
+    if (byA < byB) {
+      return -1
+    } else if (byA > byB) {
+      return 1
+    }
+    return 0
+  })
+}
