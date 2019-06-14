@@ -8,8 +8,8 @@
       no-close-on-esc
       hide-header-close
     >
-      <b-alert variant="danger" :show="getModalErrorMessage!=''">
-        {{ getModalErrorMessage }}
+      <b-alert variant="danger" :show="modalErrorMessage!=''">
+        {{ modalErrorMessage }}
       </b-alert>
       {{ $t('message.selectDisplayColumn') }}
       <span class="text-danger">
@@ -50,24 +50,24 @@
         <p class="itemTitle">
           {{ $t('label.displayColumnIndividual') }}
         </p>
-        <b-form-checkbox-group v-if="enableCategorySelect" id="checkbox-group-2" v-model="displayCheckList.category" name="flavour-2">
+        <b-form-checkbox-group v-if="isCategorySelected" id="checkbox-group-2" v-model="displayCheckList.category" name="flavour-2">
           <div v-for="(category, index) in categoryDisplayList" :key="`category-${index}`">
             <b-form-checkbox :value="category.categoryId">
               {{ category.systemUse? $t('label.' + category.systemCategoryName): category.categoryName }} <span class="bgSquare" :style="`background-color: #${category.bgColor};`" />
             </b-form-checkbox><br>
           </div>
           <b-form-checkbox :value="0">
-            {{ $t('label.other') }} <span class="bgSquare" :style="`background-color: ${getOtherColor};`" />
+            {{ $t('label.other') }} <span class="bgSquare" :style="`background-color: ${otherColor};`" />
           </b-form-checkbox><br>
         </b-form-checkbox-group>
-        <b-form-checkbox-group v-if="!enableCategorySelect" id="checkbox-group-2" v-model="displayCheckList.area" name="flavour-2">
+        <b-form-checkbox-group v-if="!isCategorySelected" id="checkbox-group-2" v-model="displayCheckList.area" name="flavour-2">
           <div v-for="(area, index) in areas" :key="`area-${index}`">
             <b-form-checkbox :value="area.areaId">
               {{ area.areaName }} <span class="bgSquare" :style="`background-color: ${getStackColor(index)};`" />
             </b-form-checkbox><br>
             <div v-if="index == (areas.length - 1)">
               <b-form-checkbox :value="0">
-                {{ $t('label.other') }} <span class="bgSquare" :style="`background-color: ${getOtherColor};`" />
+                {{ $t('label.other') }} <span class="bgSquare" :style="`background-color: ${otherColor};`" />
               </b-form-checkbox><br>
             </div>
           </div>
@@ -96,7 +96,7 @@
           </b-form-row>
         </b-form-group>
         <b-form-group>
-          <b-form-row v-if="enableGroup" class="mb-3 mr-5">
+          <b-form-row v-if="isGroupEnabled" class="mb-3 mr-5">
             <label v-t="'label.group'" class="mr-2" />
             <span :title="vueSelectTitle(vueSelected.group)">
               <v-select v-model="vueSelected.group" :options="groupOptions" class="mr-2 inputSelect vue-options">
@@ -108,10 +108,10 @@
           </b-form-row>
         </b-form-group>
         <b-form-group>
-          <b-form-row v-if="enableCategory" class="mb-3 mr-2">
+          <b-form-row v-if="isCategoryEnabled" class="mb-3 mr-2">
             <label v-t="'label.category'" class="mr-2" />
             <span :title="vueSelectTitle(vueSelected.category)">
-              <v-select v-model="vueSelected.category" :options="getCategoryOptions(showCategoryTypes)" class="inputSelect vue-options">
+              <v-select v-model="vueSelected.category" :options="getCategoryOptions(categoryTypes)" class="inputSelect vue-options">
                 <template slot="selected-option" slot-scope="option">
                   {{ vueSelectCutOn(option) }}
                 </template>
@@ -124,7 +124,7 @@
         <b-form-group>
           <b-form-row class="mb-3">
             <b-button v-t="'label.display'" type="submit" :variant="theme" @click="display" />
-            <b-dropdown v-if="!iosOrAndroid" :variant="theme" :text="$t('label.download')" class="ml-2">
+            <b-dropdown v-if="!isIosOrAndroid" :variant="theme" :text="$t('label.download')" class="ml-2">
               <b-dropdown-item @click="downloadDay('sum')">
                 {{ $t('label.sum') + $t('label.download') }}
               </b-dropdown-item>
@@ -138,7 +138,7 @@
                 {{ $t('label.detail') + $t('label.downloadMonth') }}
               </b-dropdown-item>
             </b-dropdown>
-            <b-button v-if="!iosOrAndroid" v-t="'label.displaySpecified'" :variant="theme" class="ml-2" @click="showModal=true" />
+            <b-button v-if="!isIosOrAndroid" v-t="'label.displaySpecified'" :variant="theme" class="ml-2" @click="showModal=true" />
           </b-form-row>
         </b-form-group>
       </b-form>
@@ -262,25 +262,22 @@ export default {
       'zones',
       'areas',
     ]),
-    iosOrAndroid() {
+    isIosOrAndroid() {
       return Util.isAndroidOrIOS()
     },
-    enableCategory () {
+    isCategoryEnabled () {
       return this.isEnabledMenu('category') && Util.includesIgnoreCase(APP.POT.WITH, 'category')
     },
-    enableGroup () {
+    isGroupEnabled () {
       return this.isEnabledMenu('group') && Util.includesIgnoreCase(APP.POT.WITH, 'group')
     },
-    enableCategorySelect() {
-      return this.isCategorySelected
-    },
-    showCategoryTypes () {
+    categoryTypes () {
       return CATEGORY.POT_AVAILABLE
     },
-    getModalErrorMessage() {
+    modalErrorMessage() {
       return this.modalMessage
     },
-    getOtherColor() {
+    otherColor() {
       return APP.STAY_SUM.OTHER_COLOR
     },
   },
@@ -412,7 +409,7 @@ export default {
       if (this.displayCheckList) {
         isSelectedAreaOther = _.find(this.displayCheckList.area, (id) => { return id == 0 }) == 0? true: false
       }
-      colorOtherStyle = '<span style="color: ' + this.getOtherColor + ';">■</span>' // TODO: リファクタリング対象。出来る人がいたらHeaderへ移動する
+      colorOtherStyle = '<span style="color: ' + this.otherColor + ';">■</span>' // TODO: リファクタリング対象。出来る人がいたらHeaderへ移動する
       const areaOtherClassName = isSelectedAreaOther? '': disableClassName
       fields.push({key: 'areaOther', sortable: true, label: i18n.tnl('label.other')+i18n.tnl('label.area') + colorOtherStyle
         , thStyle: {width:'100px !important'}, thClass: areaOtherClassName, tdClass: areaOtherClassName})
@@ -558,8 +555,8 @@ export default {
             endTime: percent == 100? Util.convertToTime(toSeconds): moment(stay.end).format('HH:mm:ss'),
             time: time,
             percent: percent,
-            categoryBgColor: findCategory? Util.colorCd4display(findCategory.bgColor): Util.colorCd4display(this.getOtherColor),
-            areaBgColor: findArea? this.getStackColor(areaIndex): this.getOtherColor,
+            categoryBgColor: findCategory? Util.colorCd4display(findCategory.bgColor): Util.colorCd4display(this.otherColor),
+            areaBgColor: findArea? this.getStackColor(areaIndex): this.otherColor,
             areaName: findArea? findArea.areaName: '',
             zoneCategory: stay.byName,
           }
