@@ -312,7 +312,12 @@ export default {
       return _.some(APP.STAY_SUM.SCALE_TIMES, (time) => { return time === scaleTime })
     },
     setSelectedGraphCategory(isSelected) {
-      this.isCategorySelected? this.displayCheckList.category = []: this.displayCheckList.area = []
+      // 表示を切り替える前に、前カテゴリ/エリアの選択データを初期化する
+      if (this.isCategorySelected) {
+        this.displayCheckList.category = []
+      } else {
+        this.displayCheckList.area = []
+      }
       this.isCategorySelected = isSelected
     },
     getStackColor(index) {
