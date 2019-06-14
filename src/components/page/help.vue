@@ -4,157 +4,157 @@
       <a id="linkTest" :href="fromPage" />
       <div id="position-list">
         <p class="helpLabelHeader">
-          {{ $i18n.tnl('label.positionList') }}
+          {{ getLabel('positionList') }}
         </p>
         <p class="helpTitle">
-          {{ $i18n.tnl('label.state') }}
+          {{ getLabel('state') }}
         </p>
         <p class="helpDetail">
-          {{ $i18n.tnl('helpDescription.state', {detected: detected, temporaryUndetect: temporaryUndetect, undetect: undetect, none: none}) }}
+          {{ getHelpDescription('state', {detected: getLabel('detected'), temporaryUndetect: getLabel('temporaryUndetect'), undetect: getLabel('undetect'), none: getLabel('none')}) }}
         </p>
       </div>
       <div id="bulkedit">
         <p class="helpLabelHeader">
-          {{ $i18n.tnl('label.bulkRegister') }}
+          {{ getLabel('bulkRegister') }}
         </p>
         
         <p class="helpTitle">
-          {{ $i18n.tnl('label.notes') }}
+          {{ getLabel('notes') }}
         </p>
         <p class="helpDetail">
-          {{ $i18n.tnl('helpDescription.bulkNotes', {personal: personal, charSet: charSet, SJIS: SJIS}) }}
+          {{ getHelpDescription('bulkNotes', {personal: getLabel('personal'), charSet: getLabel('charSet'), SJIS: getLabel('SJIS')}) }}
         </p>
         <p class="helpTitle">
-          {{ $i18n.tnl('label.register') }}
+          {{ getLabel('register') }}
         </p>
         <p class="helpDetail">
-          {{ $i18n.tnl('helpDescription.bulkRegister') }}
+          {{ getHelpDescription('bulkRegister') }}
         </p>
         <p class="helpTitle">
-          {{ $i18n.tnl('message.bulkUniqueFailed', {col: linage, value: keyName}) }}
+          {{ getMessage('bulkUniqueFailed', {col: getLabel('linage'), value: getLabel('keyName')}) }}
         </p>
         <p class="helpDetail">
-          {{ $i18n.tnl('helpDescription.bulkUniqueFailed') }}
+          {{ getHelpDescription('bulkUniqueFailed') }}
         </p>
         <p class="helpTitle">
-          {{ $i18n.tnl('message.bulkOneOfFailed', {col: linage, value: keyName, candidates: candidates}) }}
+          {{ getMessage('bulkOneOfFailed', {col: getLabel('linage'), value: getLabel('keyName'), candidates: getLabel('value')}) }}
         </p>
         <p class="helpDetail">
-          {{ $i18n.tnl('helpDescription.bulkOneOfFailed') }}
+          {{ getHelpDescription('bulkOneOfFailed') }}
         </p>
         <p class="helpTitle">
-          {{ $i18n.tnl('message.bulkRangeFailed', {col: linage, value: keyName, min: min, max: max}) }}
+          {{ getMessage('bulkRangeFailed', {col: getLabel('linage'), value: getLabel('keyName'), min: getLabel('min'), max: getLabel('max')}) }}
         </p>
         <p class="helpDetail">
-          {{ $i18n.tnl('helpDescription.bulkRangeFailed') }}
+          {{ getHelpDescription('bulkRangeFailed') }}
         </p>
         <p class="helpTitle">
-          {{ $i18n.tnl('message.bulkSizeFailed', {col: linage, value: keyName, min: min, max: max}) }}
+          {{ getMessage('bulkSizeFailed', {col: getLabel('linage'), value: getLabel('keyName'), min: getLabel('min'), max: getLabel('max')}) }}
         </p>
         <p class="helpDetail">
-          {{ $i18n.tnl('helpDescription.bulkSizeFailed') }}
+          {{ getHelpDescription('bulkSizeFailed') }}
         </p>
         <p class="helpTitle">
-          {{ $i18n.tnl('message.bulkSizeSameFailed', {col: linage, value: keyName, min: number}) }}
+          {{ getMessage('bulkSizeSameFailed', {col: getLabel('linage'), value: getLabel('keyName'), min: getLabel('number')}) }}
         </p>
         <p class="helpDetail">
-          {{ $i18n.tnl('helpDescription.bulkSizeSameFailed') }}
+          {{ getHelpDescription('bulkSizeSameFailed') }}
         </p>
         <p class="helpTitle">
-          {{ $i18n.tnl('message.bulkNotNullFailed', {col: keyName}) }}
+          {{ getMessage('bulkNotNullFailed', {col: getLabel('keyName')}) }}
         </p>
         <p class="helpDetail">
-          {{ $i18n.tnl('helpDescription.bulkNotNullFailed') }}
+          {{ getHelpDescription('bulkNotNullFailed') }}
         </p>
         <p class="helpTitle">
-          {{ $i18n.tnl('message.bulkExistFailed', {col: linage, value: keyName}) }}
+          {{ getMessage('bulkExistFailed', {col: getLabel('linage'), value: getLabel('keyName')}) }}
         </p>
         <p class="helpDetail">
-          {{ $i18n.tnl('helpDescription.bulkExistFailed') }}
+          {{ getHelpDescription('bulkExistFailed') }}
         </p>
         <p class="helpTitle">
-          {{ $i18n.tnl('message.bulkInvalidFailed', {col: linage, value: keyName}) }}
+          {{ getMessage('bulkInvalidFailed', {col: getLabel('linage'), value: getLabel('keyName')}) }}
         </p>
         <p class="helpDetail">
-          {{ $i18n.tnl('helpDescription.bulkInvalidFailed') }}
+          {{ getHelpDescription('bulkInvalidFailed') }}
         </p>
         <p class="helpTitle">
-          {{ $i18n.tnl('message.bulkAuthFailed', {col: linage, value: keyName}) }}
+          {{ getMessage('bulkAuthFailed', {col: getLabel('linage'), value: getLabel('keyName')}) }}
         </p>
         <p class="helpDetail">
-          {{ $i18n.tnl('helpDescription.bulkAuthFailed') }}
+          {{ getHelpDescription('bulkAuthFailed') }}
         </p>
         <p class="helpTitle">
-          {{ $i18n.tnl('message.bulkUseFailed', {col: linage, value: keyName, num: max, unit: unit, target: target}) }}
+          {{ getMessage('bulkUseFailed', {col: getLabel('linage'), value: getLabel('keyName'), num: getLabel('max'), unit: getLabel('keyName'), target: getLabel('keyName')}) }}
         </p>
         <p class="helpDetail">
-          {{ $i18n.tnl('helpDescription.bulkUseFailed') }}
+          {{ getHelpDescription('bulkUseFailed') }}
         </p>
         <p class="helpTitle">
-          {{ $i18n.tnl('message.bulkSystemUseFailed', {col: linage, value: keyName}) }}
+          {{ getMessage('bulkSystemUseFailed', {col: getLabel('linage'), value: getLabel('keyName')}) }}
         </p>
         <p class="helpDetail">
-          {{ $i18n.tnl('helpDescription.bulkSystemUseFailed') }}
+          {{ getHelpDescription('bulkSystemUseFailed') }}
         </p>
         <p class="helpTitle">
-          {{ $i18n.tnl('message.bulkSystemUseNameFailed', {col: linage, value: keyName}) }}
+          {{ getMessage('bulkSystemUseNameFailed', {col: getLabel('linage'), value: getLabel('keyName')}) }}
         </p>
         <p class="helpDetail">
-          {{ $i18n.tnl('helpDescription.bulkSystemUseNameFailed') }}
+          {{ getHelpDescription('bulkSystemUseNameFailed') }}
         </p>
         <p class="helpTitle">
-          {{ $i18n.tnl('message.bulkInvalidUpdateLineFailed', {col: linage, value: keyName}) }}
+          {{ getMessage('bulkInvalidUpdateLineFailed', {col: getLabel('linage'), value: getLabel('keyName')}) }}
         </p>
         <p class="helpDetail">
-          {{ $i18n.tnl('helpDescription.bulkInvalidUpdateLineFailed') }}
+          {{ getHelpDescription('bulkInvalidUpdateLineFailed') }}
         </p>
       </div>
       <div id="category">
         <p class="helpLabelHeader">
-          {{ $i18n.tnl('label.category') }}
+          {{ getLabel('category') }}
         </p>
 
         <p class="helpTitle">
-          {{ $i18n.tnl('label.system') + $i18n.tnl('label.category') }}
+          {{ getLabel('system') + getLabel('category') }}
         </p>
         <p class="helpDetail">
-          {{ $i18n.tnl('helpDescription.systemCategory') }}
+          {{ getHelpDescription('systemCategory') }}
         </p>
         <p class="helpTitle">
-          {{ $i18n.tnl('label.absent') }}
+          {{ getLabel('absent') }}
         </p>
         <p class="helpDetail">
-          {{ $i18n.tnl('helpDescription.absent') }}
+          {{ getHelpDescription('absent') }}
         </p>
         <p class="helpTitle">
-          {{ $i18n.tnl('label.prohibit') }}
+          {{ getLabel('prohibit') }}
         </p>
         <p class="helpDetail">
-          {{ $i18n.tnl('helpDescription.prohibit') }}
+          {{ getHelpDescription('prohibit') }}
         </p>
       </div>
       <div id="zoneClass">
         <p class="helpLabelHeader">
-          {{ $i18n.tnl('label.zoneClass') }}
+          {{ getLabel('zoneClass') }}
         </p>
 
         <p class="helpTitle">
-          {{ $i18n.tnl('label.zone') }}
+          {{ getLabel('zone') }}
         </p>
         <p class="helpDetail">
-          {{ $i18n.tnl('helpDescription.zoneClass') }}
+          {{ getHelpDescription('zoneClass') }}
         </p>
       </div>
       <div id="zoneBlock">
         <p class="helpLabelHeader">
-          {{ $i18n.tnl('label.zoneBlock') }}
+          {{ getLabel('zoneBlock') }}
         </p>
 
         <p class="helpTitle">
-          {{ $i18n.tnl('label.setting') }}
+          {{ getLabel('setting') }}
         </p>
         <p class="helpDetail">
-          {{ $i18n.tnl('helpDescription.zoneBlock', {zoneBlock: zoneBlock}) }}
+          {{ getHelpDescription('zoneBlock', {zoneBlock: getLabel('zoneBlock')}) }}
         </p>
       </div>
     </div>
@@ -169,28 +169,18 @@ export default {
       default: '',
     },
   },
-  data () {
-    return {
-      linage: this.$i18n.tnl('label.linage'),
-      keyName: this.$i18n.tnl('label.keyName'),
-      candidates: this.$i18n.tnl('label.value'),
-      min: this.$i18n.tnl('label.min'),
-      max: this.$i18n.tnl('label.max'),
-      number: this.$i18n.tnl('label.number'),
-      unit: this.$i18n.tnl('label.keyName'),
-      target: this.$i18n.tnl('label.keyName'),
-      detected: this.$i18n.tnl('label.detected'),
-      temporaryUndetect: this.$i18n.tnl('label.temporaryUndetect'),
-      undetect: this.$i18n.tnl('label.undetect'),
-      none: this.$i18n.tnl('label.none'),
-      personal: this.$i18n.tnl('label.personal'),
-      charSet: this.$i18n.tnl('label.charSet'),
-      SJIS: this.$i18n.tnl('label.SJIS'),
-      zoneBlock: this.$i18n.tnl('label.zoneBlock'),
-    }
+  methods: {
+    getLabel(key, option){
+      return this.$i18n.tnl('label.' + key, option)
+    },
+    getMessage(key, option){
+      return this.$i18n.tnl('message.' + key, option)
+    },
+    getHelpDescription(key, option){
+      return this.$i18n.tnl('helpDescription.' + key, option)
+    },
   },
 }
-
 </script>
 
 <style lang="scss">
