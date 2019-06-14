@@ -321,7 +321,8 @@ export default {
       this.isCategorySelected = isSelected
     },
     getStackColor(index) {
-      return DISP.SUM_STACK_COLOR[index]
+      // 設定が6色以上ある事が前提
+      return DISP.SUM_STACK_COLOR[index % DISP.SUM_STACK_COLOR.length]
     },
     updateColumn() {
       Vue.set(this, 'fields', this.getFields(false))
