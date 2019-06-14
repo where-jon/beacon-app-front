@@ -75,7 +75,7 @@
       <slot />
 
       <b-row class="mt-3" />
-    
+
       <!-- table -->
       <b-table :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" :filter="filterGrid" :bordered="params.bordered" :sort-by.sync="sortBy" :sort-compare="sortCompare" :sort-desc.sync="sortDesc" :empty-filtered-text="emptyMessage" show-empty
                stacked="md" striped hover outlined caption-top @filtered="onFiltered"
@@ -176,14 +176,18 @@
         </template>
         <!-- 設定用 -->
         <template slot="key" slot-scope="row">
-          <span :title="row.item.title">
-            {{ row.item.key }}
-          </span>
+          <div v-b-tooltip="getTooltipInfo(row.item)">
+            <span>
+              {{ row.item.key }}
+            </span>
+          </div>
         </template>
         <template slot="keyName" slot-scope="row">
-          <span v-if="!row.item.isParent" :title="row.item.title">
-            {{ row.item.keyName }}
-          </span>
+          <div v-b-tooltip="getTooltipInfo(row.item)">
+            <span>
+              {{ row.item.keyName }}
+            </span>
+          </div>
         </template>
         <template slot="value" slot-scope="row">
           <settinginput v-if="!row.item.isParent" :input-model="getItem(row.item.key)" input-key="value" :input-type="row.item.valType" :form-id="params.formId" />
@@ -536,6 +540,21 @@ export default {
         return this.$parent.$options.methods.getItem.call(this.$parent, key)
       }
       return {}
+    },
+    getTooltipInfo(item){
+      const ret = {
+        placement: 'bottom',
+        trigger: 'hover',
+        html: true,
+        delay: {
+          show: 500,
+          hide: 0,
+        },
+      }
+      if(Util.hasValue(item.title)){
+        ret.title = item.title
+      }
+      return ret
     },
     clearAction(key){
       if(this.$parent.$options.methods.clearAction){
