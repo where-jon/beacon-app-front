@@ -359,9 +359,7 @@ export default {
 
       // カテゴリを追加する
       let selectedCategories = _.filter(this.categories, (category) => {
-        return _.find(this.displayCheckList.category, (id) => {
-          return id == category.categoryId
-        })? true: false
+        return _.some(this.displayCheckList.category, (id) => { return id == category.categoryId })
       })
 
       const i18n = this.$i18n
@@ -377,7 +375,7 @@ export default {
       // カテゴリその他を追加する
       let isSelectedCategoryOther = false
       if (this.displayCheckList) {
-        isSelectedCategoryOther = _.find(this.displayCheckList.category, (id) => { return id == 0 }) == 0? true: false
+        isSelectedCategoryOther = _.find(this.displayCheckList.category, (id) => { return id == 0 }) == 0
       }
       let colorOtherStyle = '<span style="color: ' + this.OtherColor + ';">■</span>' // TODO: リファクタリング対象。出来る人がいたらHeaderへ移動する
       const categoryOtherClassName = isSelectedCategoryOther? '': disableClassName
@@ -386,9 +384,7 @@ export default {
 
       // エリアを追加する
       let selectedAreas = _.filter(this.areas, (area) => {
-        return _.find(this.displayCheckList.area, (id) => {
-          return id == area.areaId
-        })? true: false
+        return _.find(this.displayCheckList.area, (id) => { return id == area.areaId })
       })
       
       _.filter(this.areas, (a) => { return true })
@@ -402,7 +398,7 @@ export default {
       // エリアその他が選択されている場合は追加
       let isSelectedAreaOther = false
       if (this.displayCheckList) {
-        isSelectedAreaOther = _.find(this.displayCheckList.area, (id) => { return id == 0 }) == 0? true: false
+        isSelectedAreaOther = _.find(this.displayCheckList.area, (id) => { return id == 0 }) == 0
       }
       colorOtherStyle = '<span style="color: ' + this.otherColor + ';">■</span>' // TODO: リファクタリング対象。出来る人がいたらHeaderへ移動する
       const areaOtherClassName = isSelectedAreaOther? '': disableClassName
