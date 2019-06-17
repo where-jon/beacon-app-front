@@ -642,7 +642,7 @@ export default {
 
       HtmlUtil.fileDL(
         searchDate + groupName + categoryName + '_stayRatio.csv',
-        Util.converToCsv(csvList),
+        key == 'sum'? Util.converToCsv(csvList) :Util.converToCsv(csvList, null, this.getCsvDetailHeaderList()),
         getCharSet(this.$store.state.loginId)
       )
     },
@@ -685,20 +685,34 @@ export default {
       const result = detailList.map((viewData) => {
         return viewData.graph.map((graph) => {
           return {
-            [this.$i18n.tnl('label.date')]: viewData.date,
-            [this.$i18n.tnl('label.name')]: viewData.name,
-            [this.$i18n.tnl('label.groupName')]: viewData.groupName,
-            [this.$i18n.tnl('label.categoryName')]: viewData.categoryName,
-            [this.$i18n.tnl('label.start')]: graph.startTime,
-            [this.$i18n.tnl('label.end')]: graph.endTime,
-            [this.$i18n.tnl('label.stayTime')]: graph.period,
-            [this.$i18n.tnl('label.state')]: graph.isStay? this.$i18n.tnl('label.detected'): this.$i18n.tnl('label.undetect'),
-            [this.$i18n.tnl('label.areaName')]: graph.areaName,
-            [this.$i18n.tnl('label.zoneCategory')]: graph.zoneCategory,
+            date: viewData.date,
+            name: viewData.name,
+            groupName: viewData.groupName,
+            categoryName: viewData.categoryName,
+            start: graph.startTime,
+            end: graph.endTime,
+            stayTime: graph.period,
+            state: graph.isStay? this.$i18n.tnl('label.detected'): this.$i18n.tnl('label.undetect'),
+            areaName: graph.areaName,
+            zoneCategory: graph.zoneCategory,
           }
         })
       })
       return result.flatMap((data) => data)
+    },
+    getCsvDetailHeaderList() {
+      return [
+        this.$i18n.tnl('label.date'),
+        this.$i18n.tnl('label.name'),
+        this.$i18n.tnl('label.groupName'),
+        this.$i18n.tnl('label.categoryName'),
+        this.$i18n.tnl('label.start'),
+        this.$i18n.tnl('label.end'),
+        this.$i18n.tnl('label.stayTime'),
+        this.$i18n.tnl('label.state'),
+        this.$i18n.tnl('label.areaName'),
+        this.$i18n.tnl('label.zoneCategory') + '\n'
+      ]
     },
     updateColumnName(){
       if(Util.hasValue(this.fields)){
@@ -770,7 +784,7 @@ export default {
 
       HtmlUtil.fileDL(
         moment(this.form.date).format('YYYY-MM') + groupName + categoryName + '_stayRatio.csv',
-        Util.converToCsv(csvList),
+        key == 'sum'? Util.converToCsv(csvList) :Util.converToCsv(csvList, null, this.getCsvDetailHeaderList()),
         getCharSet(this.$store.state.loginId)
       )
 
