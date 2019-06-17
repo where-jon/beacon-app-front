@@ -149,7 +149,7 @@
           <div style="position: relative;">
             <div v-for="(bar, index) in row.item.graph" :key="index" :class="bar.isStay || bar.isAbsentZone? 'stay-bar': 'lost-bar'" :style="`${bar.isStay || bar.isAbsentZone? `background: `+ (historyType == 'category'? bar.categoryBgColor: bar.areaBgColor)+`;`: `` } width:${bar.percent}% !important;`">
               <span class="graph-arrow-box">
-                {{ $i18n.tnl(bar.isStay || bar.isAbsentZone? 'label.stay': 'label.lost') }}: {{ bar.time }} <br>
+                {{ $i18n.tnl(bar.isStay || bar.isAbsentZone? 'label.stay': 'label.absence') }}: {{ bar.time }} <br>
                 {{ bar.startTime }} ～ {{ bar.endTime }}
               </span>&nbsp;
             </div>

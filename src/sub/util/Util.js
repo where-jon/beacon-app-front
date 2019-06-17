@@ -8,6 +8,12 @@ import { FONT } from '../constant/Constants'
 
 export const getLogin = () => JSON.parse(window.localStorage.getItem('login'))
 
+export const popLocalStorage = key => {
+  const ret = window.localStorage.getItem(key)
+  window.localStorage.removeItem(key)
+  return ret
+}
+
 // sleep (for test)
 export const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 
@@ -313,6 +319,14 @@ export const extraCheckCsvObj = (papaResult) => {
     }
   }
   return papaResult
+}
+
+export const analyseEncode = (str, charSet) => {
+  const strCharset = Encoding.detect(str)
+  if(!hasValue(str.split('').filter(val => getByteLength(val) > 1))){
+    return {match: true}
+  }
+  return {match: charSet == strCharset, charset: strCharset}
 }
 
 export const csv2Obj = (str, forceCharSet) => {

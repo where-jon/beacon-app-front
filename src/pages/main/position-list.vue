@@ -4,7 +4,7 @@
                 :reload="reload" :short-name="shortName"
     />
     <b-alert v-model="showDismissibleAlert" variant="danger" dismissible>
-      {{ $t('label.detectedProhibitZone') + ' : ' }}{{ message }}
+      {{ message }}
     </b-alert>
     <m-list :params="params" :list="positionList" />
   </div>
@@ -35,7 +35,7 @@ export default {
   data() {
     return {
       message: '',
-      prohibitData : null,
+      prohibitDetectList : null,
       showDismissibleAlert: false,
       params: {
         name: 'position-list',
@@ -77,6 +77,7 @@ export default {
       'exbs',
       'positionList',
       'prohibits',
+      'lostZones',
     ]),
   },
   methods: {
@@ -90,12 +91,13 @@ export default {
         await StateHelper.load('tx')
         await StateHelper.load('exb')
         await StateHelper.load('prohibit')
+        await StateHelper.load('lostZones')
         await this.storePositionHistory(0, true)
         let positions = this.getPositions(true)
-        this.setProhibit('list') // listmixin呼び出し
+        this.setProhibitDetect('list') // listmixin呼び出し
         Util.debug(positions)
         positions = positions.map((pos) => {
-          const prohibitCheck = this.prohibitData? this.prohibitData.some((data) => data.minor == pos.minor) : false
+          const prohibitCheck = this.prohibitDetectList? this.prohibitDetectList.some((data) => data.minor == pos.minor) : false
           const exb = this.exbs.find((exb) => exb.posId == pos.pos_id)
           return {
             ...pos,

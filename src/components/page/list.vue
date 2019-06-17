@@ -75,7 +75,7 @@
       <slot />
 
       <b-row class="mt-3" />
-    
+
       <!-- table -->
       <b-table :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" :filter="filterGrid" :bordered="params.bordered" :sort-by.sync="sortBy" :sort-compare="sortCompare" :sort-desc.sync="sortDesc" :empty-filtered-text="emptyMessage" show-empty
                stacked="md" striped hover outlined caption-top @filtered="onFiltered"
@@ -116,12 +116,12 @@
           </div>
         </template>
         <template slot="thumbnail" slot-scope="row">
-          <img v-if="thumbnail(row.item)" :src="thumbnail(row.item)" height="70">
+          <img v-if="row.item.existThumbnail" :src="thumbnail(row.item)" height="70">
         </template>
         <!-- リージョン名 -->
         <template slot="regionNames" slot-scope="row">
           <div>
-            <span v-for="(regionName, index) in getRegionNames(row.item.regionIds)" :key="index" class="row">
+            <span v-for="(regionName, index) in row.item.regionNames" :key="index" class="row">
               {{ regionName }}
             </span>
           </div>
@@ -176,14 +176,18 @@
         </template>
         <!-- 設定用 -->
         <template slot="key" slot-scope="row">
-          <span :title="row.item.title">
-            {{ row.item.key }}
-          </span>
+          <div v-b-tooltip="getTooltipInfo(row.item)">
+            <span>
+              {{ row.item.key }}
+            </span>
+          </div>
         </template>
         <template slot="keyName" slot-scope="row">
-          <span v-if="!row.item.isParent" :title="row.item.title">
-            {{ row.item.keyName }}
-          </span>
+          <div v-b-tooltip="getTooltipInfo(row.item)">
+            <span>
+              {{ row.item.keyName }}
+            </span>
+          </div>
         </template>
         <template slot="value" slot-scope="row">
           <settinginput v-if="!row.item.isParent" :input-model="getItem(row.item.key)" input-key="value" :input-type="row.item.valType" :form-id="params.formId" />
@@ -224,6 +228,7 @@ import * as MenuHelper from '../../sub/helper/MenuHelper'
 import * as DetectStateHelper from '../../sub/helper/DetectStateHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
+import * as SortUtil from '../../sub/util/SortUtil'
 import { getButtonTheme } from '../../sub/helper/ThemeHelper'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import commonmixinVue from '../mixin/commonmixin.vue'
@@ -461,7 +466,8 @@ export default {
     await StateHelper.load('region')
   },
   mounted() {
-    this.message = this.listMessage
+    const strageMessage = Util.popLocalStorage('listMessage')
+    this.message = Util.hasValue(strageMessage)? strageMessage: this.listMessage
     this.replaceAS({listMessage: null})
     this.$parent.$options.methods.fetchData.apply(this.$parent)
     if (this.params.extraFilter) {
@@ -518,7 +524,10 @@ export default {
     },
     sortCompareCustom(aData, bData, key){
       if(key == 'txIdName'){
-        return StateHelper.sortCompareArray(aData.txIdNames, bData.txIdNames)
+        return SortUtil.sortByArray(aData.txIdNames, bData.txIdNames)
+      }
+      if(key == 'regionName'){
+        return SortUtil.sortByString(aData[key], bData[key])
       }
       return null
     },
@@ -531,6 +540,21 @@ export default {
         return this.$parent.$options.methods.getItem.call(this.$parent, key)
       }
       return {}
+    },
+    getTooltipInfo(item){
+      const ret = {
+        placement: 'bottom',
+        trigger: 'hover',
+        html: true,
+        delay: {
+          show: 500,
+          hide: 0,
+        },
+      }
+      if(Util.hasValue(item.title)){
+        ret.title = item.title
+      }
+      return ret
     },
     clearAction(key){
       if(this.$parent.$options.methods.clearAction){
@@ -568,12 +592,6 @@ export default {
       this.replaceAS({[this.name]: entity})
       this.replaceAS({editPage: this.currentPage})
       this.$router.push(this.editPath)
-    },
-    getRegionNames(regionIds){
-      return regionIds.map(regionId => {
-        const target = this.regions.find(region => region.regionId == regionId)
-        return Util.getValue(target, 'regionName', null)
-      }).filter(val => val)
     },
     getDispCategoryName(category){
       return StateHelper.getDispCategoryName(category)
@@ -715,7 +733,7 @@ export default {
         await StateHelper.load(this.params.name, true)
         this.message = this.$i18n.tnl('message.deleteCompleted', {target: this.$i18n.tnl('label.' + this.params.name)})
         if(this.$parent.$options.methods.afterCrud){
-          this.$parent.$options.methods.afterCrud.apply(this.$parent)
+          this.$parent.$options.methods.afterCrud.call(this.$parent, {message: this.message})
         }
         this.replace({showInfo: true})
         await this.$parent.$options.methods.fetchData.apply(this.$parent)        

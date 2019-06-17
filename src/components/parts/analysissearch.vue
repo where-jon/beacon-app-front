@@ -8,7 +8,7 @@
             <span :title="vueSelectTitle(vueSelected.area)">
               <v-select v-model="vueSelected.area" :options="areaOptions" :clearable="false" class="inputSelect vue-options" :style="getVueSelectStyle()">
                 <template slot="selected-option" slot-scope="option">
-                  {{ vueSelectCutOn(option) }}
+                  {{ vueSelectCutOn(option, true) }}
                 </template>
               </v-select>
             </span>
@@ -100,10 +100,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    areaOptions: {
-      type: Array,
-      required: true,
-    }
   },
   data () {
     return {
@@ -122,6 +118,7 @@ export default {
         pot: null,
       },
       appServicePath: '/core/positionHistory',
+      areaOptions: [],
       potOptions: [],
       interval: 24 * 60 * 60 * 1000,
       intervalHours: 24,
@@ -149,12 +146,6 @@ export default {
     },
     enableIndividual () {
       return !this.fromHeatmap || (this.fromHeatmap && APP.HEATMAP.USE_INDIVIDUAL)
-    },
-    requireCategory(){
-      return !this.fromHeatmap
-    },
-    requireGroup(){
-      return !this.fromHeatmap
     },
     requirePerson(){
       return !this.fromHeatmap
@@ -194,6 +185,7 @@ export default {
     await StateHelper.load('category')
     await StateHelper.load('group')
     await StateHelper.load('pot')
+    this.areaOptions = StateHelper.getOptionsFromState('area', false, true)
     this.changeCategory()
     this.changeGroup()
     this.vueSelected.area = ParamHelper.getVueSelectData(this.areaOptions, null, true)
@@ -235,8 +227,8 @@ export default {
       const errors = this.validateCheck([
         {type: 'require', names: ['area'], values: [this.form.areaId]},
         {type: 'require', 
-          names: [(this.enableCategory && this.requireCategory)? 'category': null, (this.enableGroup && this.requireGroup)? 'group': null, this.requirePerson? 'individual': null].filter((val) => val),
-          values: [this.enableCategory? this.form.categoryId: null, this.enableGroup? this.form.groupId: null, this.requirePerson? this.form.potId: null].filter((val) => val)},
+          names: [this.enableCategory? 'category': null, this.enableGroup? 'group': null, this.requirePerson? 'individual': null].filter(val => val),
+          values: [this.enableCategory? this.form.categoryId: null, this.enableGroup? this.form.groupId: null, this.requirePerson? this.form.potId: null].filter(val => val)},
         {type: 'require', names: ['historyDateFrom'], values: [this.form.datetimeFrom]},
         {type: 'require', names: ['historyDateFrom'], values: [this.form.datetimeTo]},
         this.form.datetimeFrom && this.form.datetimeTo? {type: 'asc', names: ['historyDateFrom'], values: [this.form.datetimeFrom.getTime(), this.form.datetimeTo.getTime()], equal: false}: null,

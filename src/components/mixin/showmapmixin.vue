@@ -50,6 +50,7 @@ export default {
       areaOptions: [],
       loadComplete: false,
       thumbnailUrl: APP_SERVICE.BASE_URL + EXCLOUD.POT_THUMBNAIL_URL,
+      preloadThumbnail: new Image(),
     }
   },
   computed: {
@@ -57,7 +58,6 @@ export default {
       'areas',
       'exbs',
       'txs',
-      'forceFetchTx',
     ]),
     ...mapState('main', [
       'orgPositions',
@@ -168,8 +168,7 @@ export default {
         this.selectedArea = this.getInitAreaOption()
         await StateHelper.load('exb')
         if (tx) {
-          await StateHelper.load('tx', this.forceFetchTx)
-          StateHelper.setForceFetch('tx', false)
+          await StateHelper.load('tx')
         }
         this.isFirstTime = false
       }
@@ -216,7 +215,10 @@ export default {
       }
     },
     calcFitSize(target, parent, top = 82) {
-      const parentHeight = document.documentElement.clientHeight - parent.offsetTop - top
+      let parentHeight = document.documentElement.clientHeight - parent.offsetTop - top
+      if(parentHeight < DISP.CONTROL.MAP.MIN_HEIGHT){
+        parentHeight = DISP.CONTROL.MAP.MIN_HEIGHT
+      }
       const isMapWidthLarger = parentHeight / parent.clientWidth > target.height / target.width
       let fitWidth
       if (HtmlUtil.isMobile()) {
@@ -514,34 +516,47 @@ export default {
       })
 
       const balloonClass = !btxId ? '': 'balloon' + (isAbove ? '-b': '-u')
+      // サムネイル表示無しの設定になっているか？
+      const isNoThumbnail = APP.TXDETAIL.NO_UNREGIST_THUMB ? !tx.existThumbnail : false
+      const setupSelectedTx = (isDispThumbnail) => {
+        const selectedTx = {
+          btxId,
+          minor: 'minor:' + btxId,
+          major: tx.major? 'major:' + tx.major : '',
+          // TX詳細ポップアップ内部で表示座標計算する際に必要
+          orgLeft: x * this.canvasScale + offsetX,
+          orgTop: y * this.canvasScale + offsetY,
+          isAbove: isAbove,
+          scale: DISP.TX.R_ABSOLUTE ? 1.0 : this.canvasScale,
+          containerWidth: containerParent.width,
+          containerHeight: containerParent.height,
+          class: balloonClass,
+          name: tx.potName ? tx.potName : '',
+          tel: tx.extValue ? tx.extValue.tel ? tx.extValue.tel : '': '',
+          timestamp: position ? this.getFinalReceiveTime(position.timestamp) : '',
+          thumbnail: isDispThumbnail ? this.preloadThumbnail.src : '',
+          category: tx.categoryName? tx.categoryName : '',
+          group: tx.groupName? tx.groupName : '',
+          bgColor: display.bgColor,
+          color: display.color,
+          isDispRight: isDispRight,
+        }
+        this.replaceMain({selectedTx})
+        this.$nextTick(() => this.showReady = true)
+        if (this.isShowModal()) {
+          this.$root.$emit('bv::show::modal', 'detailModal')
+        }
+      }
 
-      const selectedTx = {
-        btxId,
-        minor: 'minor:' + btxId,
-        major: tx.major? 'major:' + tx.major : '',
-        // TX詳細ポップアップ内部で表示座標計算する際に必要
-        orgLeft: x * this.canvasScale + offsetX,
-        orgTop: y * this.canvasScale + offsetY,
-        isAbove: isAbove,
-        scale: DISP.TX.R_ABSOLUTE ? 1.0 : this.canvasScale,
-        containerWidth: containerParent.width,
-        containerHeight: containerParent.height,
-        class: balloonClass,
-        name: tx.potName ? tx.potName : '',
-        tel: tx.extValue ? tx.extValue.tel ? tx.extValue.tel : '': '',
-        timestamp: position ? this.getFinalReceiveTime(position.timestamp) : '',
-        thumbnail: tx.existThumbnail ? this.thumbnailUrl.replace('{id}', tx.potId) : '',
-        category: tx.categoryName? tx.categoryName : '',
-        group: tx.groupName? tx.groupName : '',
-        bgColor: display.bgColor,
-        color: display.color,
-        isDispRight: isDispRight,
+      if (!isNoThumbnail) {
+        // サムネイル表示あり
+        this.preloadThumbnail.onload = () => setupSelectedTx(true)
+        this.preloadThumbnail.src = tx.existThumbnail ? this.thumbnailUrl.replace('{id}', tx.potId) : '/default.png'
+      } else {
+        // サムネイル表示無し
+        setupSelectedTx(false)
       }
-      this.replaceMain({selectedTx})
-      this.$nextTick(() => this.showReady = true)
-      if (this.isShowModal()) {
-        this.$root.$emit('bv::show::modal', 'detailModal')
-      }
+
     },
     createLabelInfo(pos, color){
       return {

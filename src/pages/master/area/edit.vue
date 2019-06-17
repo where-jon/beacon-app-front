@@ -6,7 +6,7 @@
 
       <b-row>
         <b-col md="8" offset-md="2">
-          <b-form v-if="show" @submit.prevent="onSubmit">
+          <b-form v-if="show" @submit.prevent="doSubmit">
             <b-form-group>
               <label v-t="'label.areaName'" />
               <input v-model="form.areaName" :readonly="!isEditable" type="text" maxlength="20" class="form-control" required>
@@ -148,9 +148,10 @@ export default {
     beforeReload(){
       this.form.areaCd = StateHelper.createMasterCd('area', this.areas, this.area)
     },
-    async afterCrud(again){
-      await StateHelper.load('tx', true)
-      await StateHelper.load('exb', true)
+    afterCrud(){
+      StateHelper.setForceFetch('tx', true)
+      StateHelper.setForceFetch('exb', true)
+      StateHelper.setForceFetch('zone', true)
     },
     beforeSubmit(again){
       if(this.mapUpdate){
@@ -161,6 +162,12 @@ export default {
           this.form.mapConfig == mapConfigs[1].value? Math.round(this.$refs.mapImage.naturalHeight * 100 / this.oldMap.height) / 100: 0}`
       }
       this.register(again)
+    },
+    doSubmit(evt) {
+      if (this.form.thumbnail) {
+        this.replaceAS({updatedAreaThumbnail: this.form.areaId})
+      }
+      this.onSubmit(evt)
     },
   }
 }

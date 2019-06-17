@@ -1,5 +1,5 @@
 <template>
-  <div id="stage" />
+  <div id="stage" class="stage" />
 </template>
 
 <script>
@@ -325,11 +325,6 @@ export default {
     zoneName: function(newVal, oldVal) {
       const activeZone = this.zones.activeZone
       if (!activeZone) return
-      const message = this.validateZoneName(activeZone.id, newVal)
-      if (message) {
-        this.$emit('validated', message)
-        return
-      }
       activeZone.rename(newVal)
     },
     isRegist: function(newVal, oldVal) {
@@ -391,6 +386,10 @@ export default {
     })
 
     window.addEventListener('keydown', (e) => {
+      const className = e.target.className
+      if (className && className.length > 0) {
+        return
+      }
       if (e.key === 'Delete' && this.zones.activeZone ) {
         this.$emit('pressDelKey')
       }

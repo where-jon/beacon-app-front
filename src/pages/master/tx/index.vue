@@ -44,7 +44,6 @@ export default {
     ...mapState('app_service', [
       'txs',
       'txImages',
-      'forceFetchTx',
     ]),
   },
   mounted() {
@@ -86,7 +85,7 @@ export default {
         APP.TX.BTX_MINOR == 'minor'? {key: 'minor', sortable: true, tdClass: 'action-rowdata' }: null,
         APP.TX.BTX_MINOR != 'minor'? {key: 'btxId', sortable: true, tdClass: 'action-rowdata' }: null,
         APP.TX.BTX_MINOR == 'both'? {key: 'minor', sortable: true, tdClass: 'action-rowdata' }: null,
-        {key: 'sensor', label:'type', sortable: true,},
+        {key: 'sensor', label:'type', sortable: true, tdClass: 'action-rowdata'},
       ].concat(this.createCustomColumn())
         .concat([
           {key: 'actions', thStyle: {width: '130px !important'}, tdClass: 'action-rowdata' }
@@ -114,8 +113,7 @@ export default {
     async fetchData(payload) {
       try {
         this.showProgress()
-        await StateHelper.load('tx', this.forceFetchTx)
-        StateHelper.setForceFetch('tx', false)
+        await StateHelper.load('tx')
         if (payload && payload.done) {
           payload.done()
         }

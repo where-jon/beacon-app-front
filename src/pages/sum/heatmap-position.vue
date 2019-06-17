@@ -6,9 +6,7 @@
 
       <div class="mapContainer mb-5">
         <div class="container">
-          <analysis-search :from-heatmap="true" :area-options="areaOptions"
-                           @changeArea="changeArea" @display="display"
-          />
+          <analysis-search :from-heatmap="true" @changeArea="changeArea" @display="display" />
         </div>
         <b-row>
           <div id="heatmap" ref="heatmap" class="mx-auto" />

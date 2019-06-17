@@ -153,6 +153,11 @@ export const getDispCategoryName = (category) => {
   return category.systemCategoryName? i18n.tnl('label.' + category.systemCategoryName): category.categoryName
 }
 
+export const getForceFetch = (name) => {
+  const storeName = `forceFetch${name.charAt(0).toUpperCase()}${name.slice(1)}`
+  return store.state.app_service[storeName]
+}
+
 export const setForceFetch = (name, force) => {
   const storeName = `forceFetch${name.charAt(0).toUpperCase()}${name.slice(1)}`
   store.commit('app_service/replaceAS', {[storeName]:force})
@@ -293,7 +298,7 @@ const appStateConf = {
       return arr.map(val => ({
         ...val,
         roleName: val.role.roleName,
-        regionIds: Util.getValue(val, 'userRegionList', []).map(userRegion => Util.getValue(userRegion, 'userRegionPK.regionId', '')),
+        regionNames: Util.getValue(val, 'userRegionList', []).map(userRegion => Util.getValue(userRegion, 'regionName', '')).sort((a, b) => a < b? -1: 1),
       }))
     }
   },
@@ -305,6 +310,7 @@ const appStateConf = {
         ...val,
         newsDt: Util.formatDate(val.newsDate),
         dispState: i18n.tnl(`label.${val.dispFlg == 0? 'hide': 'display'}`),
+        newsContent: Util.cutOnLong(val.content, 16),
       }))
     }
   },
@@ -343,6 +349,10 @@ const appStateConf = {
           zoneId: val.zoneId,
           zoneName: val.zoneName,
           zoneType: val.zoneType,
+          x: val.x,
+          y: val.y,
+          w: val.w,
+          h: val.h,
           areaId: Util.hasValue(val.area)? val.area.areaId: null,
           areaName: Util.hasValue(val.area)? val.area.areaName: null,
           locationId: Util.hasValue(val.locationZoneList)? val.locationZoneList[0].locationZonePK.locationId: null,
@@ -368,6 +378,15 @@ const appStateConf = {
       }))
     }
   },
+  lostZones: {
+    path: '/core/zone/lostZones',
+    beforeCommit: (arr) => {
+      let result = arr.map((val) => (val? {
+        ...val,
+      }: null))
+      return result
+    }
+  },
   prohibits: {
     path: '/core/zone/prohibit',
     beforeCommit: (arr) => {
@@ -387,6 +406,7 @@ const appStateConf = {
 }
 
 export const load = async (target, force) => {
+  const forceFetchTarget = target
   if (!target.endsWith('s')) {
     target = target.endsWith('y')? target.slice(0, -1) + 'ies' : target + 's'
   }else if(['news', 'topNews'].includes(target)){
@@ -398,7 +418,7 @@ export const load = async (target, force) => {
   let {path, sort, beforeCommit} = appStateConf[target]
   let arr = store.state.app_service[target]
   const expiredKey = `${target}Expired`
-  if (!arr || arr.length == 0 || force || Util.isExpired(store.state.app_service[expiredKey])) {
+  if (!arr || arr.length == 0 || force || getForceFetch(forceFetchTarget) || Util.isExpired(store.state.app_service[expiredKey])) {
     arr = await AppServiceHelper.fetchList(path, sort)
     if (beforeCommit) {
       arr = beforeCommit(arr)
@@ -406,6 +426,7 @@ export const load = async (target, force) => {
     store.commit('app_service/replaceAS', {[target]:arr})
     const expiredTime = (new Date()).getTime() + APP.SYS.STATE_EXPIRE_TIME
     store.commit('app_service/replaceAS', {[expiredKey]: expiredTime})
+    setForceFetch(forceFetchTarget, false)
   }
 }
 
@@ -418,23 +439,10 @@ export const loadAreaImage = async (areaId, force) => {
     console.log('FOUND ares', areaId)
     return
   }
-
   console.log('load ares', areaId)
   let base64 = await AppServiceHelper.fetchMapImage('/core/area/' + areaId + '/mapImage')
-  // let mimetype="image/png"
-  // base64 = "data:" + mimetype + ";base64," + base64
-  // HtmlUtil.toDataURL("http://localhost:8080/core/area/" + area.areaId + "/mapImage", (dataUrl) => {
-  let areaImages = _.cloneDeep(store.state.app_service.areaImages)
-  let areaImage = areaImages.find((areaImage) => areaImage.areaId == areaId)
-  if (areaImage) {
-    areaImage.mapImage = base64
-  }
-  else {
-    areaImages.push({areaId, mapImage: base64})
-  }
-  store.commit('app_service/replaceAS', {areaImages})    
-
-  // })
+  const areaImages = [{areaId, mapImage: base64}]
+  store.commit('app_service/replaceAS', {areaImages})
 }
 
 export const loadAreaImages = async () => {
@@ -508,33 +516,6 @@ export const getOptionsFromState = (key, textField, notNull, filterCallback) => 
   Util.debug('empty add: ', options)
 
   return options
-}
-
-export const sortCompareArray = (aAry, bAry) => {
-  if(!Util.hasValue(aAry) && !Util.hasValue(bAry)){
-    return 0
-  }
-  if(!Util.hasValue(aAry)){
-    return -1
-  }
-  if(!Util.hasValue(bAry)){
-    return 1
-  }
-
-  const max = aAry.length < bAry.length? bAry.length: aAry.length
-  for(let idx = 0; idx < max; idx++){
-    if(aAry.length <= idx){
-      return -1
-    }
-    if(bAry.length <= idx){
-      return 1
-    }
-    if(aAry[idx] == bAry[idx]){
-      continue
-    }
-    return aAry[idx] < bAry[idx]? -1: 1
-  }
-  return 0
 }
 
 export const bulkErrorCheck = (entity, headerName, val, isNumberColumn) => {

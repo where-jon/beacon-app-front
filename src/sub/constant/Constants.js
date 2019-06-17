@@ -232,6 +232,10 @@ export const SUM_UNIT = {
 }
 
 export const SUM_TARGET = {
+  IMMEDIATE: 1,
+  AVERAGE: 2,
+  MAX: 3,
+  MIN: 4,
   getOptions(){
     return [
       {value:1, text: i18n.t('label.immediate')},
@@ -323,7 +327,7 @@ export const LED_BLINK_TYPES = {
   BLINK_FAST: 4,
 }
 
-export const PROHIBIT_STATE = {
+export const ALERT_STATE = {
   SCREEN: 'screen',
   MAIL: 'mail',
   LED: 'led',
@@ -367,6 +371,7 @@ export const NOTIFY_STATE = {
       {value:'USER_REG_NOTIFY', text: i18n.t('label.userRegNotify'), index:2},
       {value:'TX_SOS_ALERT', text: i18n.t('label.sosNotify'), index:3},
       {value:'PROHIBIT_NOTIFY', text: i18n.t('label.prohibitNotify'), index:4},
+      {value:'LOST_NOTIFY', text: i18n.t('label.lostNotify'), index:5},
     ]
   }
 }

@@ -29,6 +29,7 @@ import * as CharSetHelper from '../../sub/helper/CharSetHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import { CHAR_SET } from '../../sub/constant/Constants'
 import alert from '../parts/alert.vue'
+import * as Util from '../../sub/util/Util'
 
 export default {
   components: {
@@ -73,6 +74,11 @@ export default {
     }
   },
   mounted() {
+    const message = Util.popLocalStorage('bulkMessage')
+    if(message){
+      this.message = message
+      this.replace({showInfo: true})
+    }
     StateHelper.load('sensor')
   },
   methods: {
@@ -90,7 +96,7 @@ export default {
     },
     async afterCrud() {
       if(this.$parent.$options.methods.afterCrud){
-        this.$parent.$options.methods.afterCrud.call(this.$parent, this.bulkSave)
+        this.$parent.$options.methods.afterCrud.call(this.$parent, this.bulkSave, {message: this.message})
       }
     },
     async save() {

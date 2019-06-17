@@ -11,7 +11,7 @@
         </b-form-group>
         <b-form-group>
           <label v-t="'label.meshId'" />
-          <input v-model="form.meshId" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control">
+          <input v-model="form.meshId" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control" required>
         </b-form-group>
         <b-form-group>
           <label v-t="'label.description'" />
@@ -33,6 +33,7 @@ import { mapState } from 'vuex'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as AuthHelper from '../../../sub/helper/AuthHelper'
+import * as StateHelper from '../../../sub/helper/StateHelper'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
 import * as HtmlUtil from '../../../sub/util/HtmlUtil'
 import * as Util from '../../../sub/util/Util'
@@ -83,6 +84,7 @@ export default {
       return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
     },
     async afterCrud(){
+      StateHelper.setForceFetch('user', true)
       await AuthHelper.switchAppService()
     }
   }

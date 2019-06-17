@@ -50,7 +50,7 @@ export default {
       'pots',
       'roles',
       'forceFetchPot',
-      'updatedThumbnail',
+      'updatedPotThumbnail',
     ]),
   },
   methods: {
@@ -99,7 +99,7 @@ export default {
       return ViewHelper.addLabelByKey(this.$i18n, [ 
         {key: 'potName', sortable: true , tdClass: 'thumb-rowdata'},
         {key: 'thumbnail', tdClass: 'thumb-rowdata' },
-        {key: 'txIdName', label:'tx', sortable: true },
+        {key: 'txIdName', label:'tx', sortable: true, tdClass: 'thumb-rowdata' },
         {key: 'potCd', sortable: true , tdClass: 'thumb-rowdata'},
         {key: 'displayName', sortable: true, tdClass: 'thumb-rowdata'},
       ].concat(this.createCustomColumn())
@@ -109,6 +109,7 @@ export default {
     },
     afterCrud(){
       StateHelper.setForceFetch('tx', true)
+      StateHelper.setForceFetch('user', true)
     },
     getExtraFilter(){
       return [this.isEnabledMenu('group') && Util.includesIgnoreCase(APP.POT.WITH, 'group')? 'group': null, this.isEnabledMenu('category') && Util.includesIgnoreCase(APP.POT.WITH, 'category')? 'category': null].filter((val) => val)
@@ -117,8 +118,7 @@ export default {
       try {
         this.showProgress()
         await StateHelper.load('role')
-        await StateHelper.load('pot', this.forceFetchPot)
-        StateHelper.setForceFetch('pot', false)
+        await StateHelper.load('pot')
         if (payload && payload.done) {
           payload.done()
         }
@@ -130,8 +130,8 @@ export default {
     },
     thumbnail(row) {
       let addUrlParam = ''
-      if (this.updatedThumbnail.id && this.updatedThumbnail.id === row.potId) {
-        addUrlParam = this.updatedThumbnail.time
+      if (this.updatedPotThumbnail && this.updatedPotThumbnail === row.potId) {
+        addUrlParam = new Date().getTime()
       }
       return row.existThumbnail ? this.thumbnailUrl.replace('{id}', row.potId) + addUrlParam : null
     },

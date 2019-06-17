@@ -34,7 +34,7 @@
               <span :title="vueSelectTitle(vueSelected.exb)">
                 <v-select v-model="vueSelected.exb" :options="exbOptions" :clearable="false" class="ml-2 inputSelect vue-options" :style="getVueSelectStyle()">
                   <template slot="selected-option" slot-scope="option">
-                    {{ vueSelectCutOn(option) }}
+                    {{ vueSelectCutOn(option, true) }}
                   </template>
                 </v-select>
               </span>
@@ -48,7 +48,7 @@
               <span :title="vueSelectTitle(vueSelected.tx)">
                 <v-select v-model="vueSelected.tx" :options="txOptions" :clearable="false" class="ml-2 inputSelect vue-options" :style="getVueSelectStyle()">
                   <template slot="selected-option" slot-scope="option">
-                    {{ vueSelectCutOn(option) }}
+                    {{ vueSelectCutOn(option, true) }}
                   </template>
                 </v-select>
               </span>
@@ -269,7 +269,7 @@ export default {
     await StateHelper.load('exb')
     this.form.sensorId = SENSOR.TEMPERATURE
     this.form.sumUnit = SUM_UNIT.getOptions()[1].value
-    this.form.sumTarget = this.sumTargetOptions[1].value
+    this.form.sumTarget = SUM_TARGET.AVERAGE
     this.changeSensorId()
     const date = new Date()
     this.form.datetimeFrom = Util.getDatetime(date, {date: -1})
@@ -339,11 +339,10 @@ export default {
     },
     isShowSumTarget(){
       if(this.form.sensorId == SENSOR.MAGNET){
-        this.form.sumTarget = this.sumTargetOptions[0].value
         return false
       }
       if(this.form.sumUnit == SUM_UNIT.getOptions()[2].value){
-        this.form.sumTarget = this.sumTargetOptions[1].value
+        this.form.sumTarget = SUM_TARGET.AVERAGE
         return false
       }
       return true
@@ -501,6 +500,12 @@ export default {
       const sumUnitOption = SUM_UNIT.getOptions()
       return this.form.sumUnit == sumUnitOption[0].value? minuteFunc(): this.form.sumUnit == sumUnitOption[1].value? hourFunc(): dayFunc()
     },
+    convertSumTarget(){
+      if(this.form.sensorId == SENSOR.MAGNET){
+        return SUM_TARGET.IMMEDIATE
+      }
+      return this.form.sumTarget
+    },
     async fetch(by){
       const id = `${this.showExb? `1/${this.form.exbId}`: `0/${this.form.txId}`}`
       const time = `${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}`
@@ -527,24 +532,25 @@ export default {
         sensorEditData[key].push(val)
       })
       const sumUnitOption = SUM_UNIT.getOptions()
+      const sumTarget = this.convertSumTarget()
       return Object.keys(sensorEditData).map((keyVal) => {
         const key = keyVal
         const immediate = sensorEditData[key].reduce((a, b) => this.compare(a.sensorDt, b.sensorDt) > 0? a: b)
         const average = this.createAverageDataList(key, sensorEditData[key])
         const max = this.createMaxDataList(key, sensorEditData[key])
         const min = this.createMinDataList(key, sensorEditData[key])
-        const data = this.form.sumTarget == this.sumTargetOptions[0].value? immediate:
-          this.form.sumTarget == this.sumTargetOptions[1].value? average:
-            this.form.sumTarget == this.sumTargetOptions[2].value? max:
-              this.form.sumTarget == this.sumTargetOptions[3].value? min: {}
+        const data = sumTarget == SUM_TARGET.IMMEDIATE? immediate:
+          sumTarget == SUM_TARGET.AVERAGE? average:
+            sumTarget == SUM_TARGET.MAX? max:
+              sumTarget == SUM_TARGET.MIN? min: {}
         return {
           key: key,
           data: data,
           csvData: this.createCsvData(key, immediate, average, max, min),
-          immediate: this.form.sumTarget == this.sumTargetOptions[0].value ? immediate: null,
-          average: this.form.sumTarget == this.sumTargetOptions[1].value || (this.form.sumUnit == sumUnitOption[2].value && this.form.sensorId != SENSOR.MAGNET)? average: null,
-          max: this.form.sumTarget == this.sumTargetOptions[2].value || this.form.sumUnit == sumUnitOption[2].value? max: null,
-          min: this.form.sumTarget == this.sumTargetOptions[3].value || this.form.sumUnit == sumUnitOption[2].value? min: null,
+          immediate: sumTarget == SUM_TARGET.IMMEDIATE? immediate: null,
+          average: sumTarget == SUM_TARGET.AVERAGE || (this.form.sumUnit == sumUnitOption[2].value && this.form.sensorId != SENSOR.MAGNET)? average: null,
+          max: sumTarget == SUM_TARGET.MAX || this.form.sumUnit == sumUnitOption[2].value? max: null,
+          min: sumTarget == SUM_TARGET.MIN || this.form.sumUnit == sumUnitOption[2].value? min: null,
         }
       })
     },

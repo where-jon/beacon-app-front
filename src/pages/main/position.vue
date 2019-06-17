@@ -2,7 +2,7 @@
   <div id="mapContainer" class="container-fluid" @click="resetDetail">
     <breadcrumb :items="items" :extra-nav-spec="extraNavSpec" :reload="true" :state="reloadState" :auto-reload="false" :short-name="shortName" :legend-items="legendItems" />
     <b-alert v-model="showDismissibleAlert" variant="danger" dismissible>
-      {{ $t('label.detectedProhibitZone') + ' : ' }}{{ message }}
+      {{ message }}
     </b-alert>
     <b-row class="mt-2">
       <b-form inline class="mt-2" @submit.prevent>
@@ -13,7 +13,7 @@
           <span :title="vueSelectTitle(vueSelected.area)">
             <v-select v-model="vueSelected.area" :options="areaOptions" :clearable="false" class="ml-1 mr-2 vue-options" :style="getVueSelectStyle()">
               <template slot="selected-option" slot-scope="option">
-                {{ vueSelectCutOn(option) }}
+                {{ vueSelectCutOn(option, true) }}
               </template>
             </v-select>
           </span>
@@ -141,11 +141,13 @@ export default {
       firstTime: true,
       message: '',
       showDismissibleAlert: false,
-      prohibitData : null,
+      prohibitDetectList : null,
+      lostUnDetectList : null,
       icons: {},
       txsMap: {},
       exbsMap: {},
       prohibitInterval:null,
+      lostInterval:null,
       isShowRight: false,
       isShowBottom: false,
       isMounted: false,
@@ -160,8 +162,8 @@ export default {
       'categories',
       'groups',
       'prohibits',
+      'lostZones',
       'txs',
-      'forceFetchTx',
     ]),
     ...mapState([
       'reload',
@@ -223,6 +225,8 @@ export default {
     await StateHelper.load('category')
     await StateHelper.load('group')
     await StateHelper.load('prohibit')
+    await StateHelper.load('lostZones')
+    await StateHelper.load('pot')
     await StateHelper.load('tx')
     await StateHelper.load('exb')
     this.txs.forEach((t) => this.txsMap[t.btxId] = t)
@@ -313,6 +317,7 @@ export default {
       }
     },
     async fetchData(payload, disableErrorPopup) {
+      this.showReady = false
       const disabledProgress = Util.getValue(payload, 'disabledProgress', false)
       try {
         this.reloadSelectedTx = this.reload? this.selectedTx: {}
@@ -321,8 +326,7 @@ export default {
           this.showProgress()
         }
         if (!this.selectedTx.btxId) {
-          await StateHelper.load('tx', this.forceFetchTx)
-          StateHelper.setForceFetch('tx', false)
+          await StateHelper.load('tx')
         }
         this.$nextTick(() => {
           this.loadLegends()
@@ -378,8 +382,8 @@ export default {
           this.stage.update()
         }
         this.setPositionedExb()
+        this.$nextTick(() => this.setProhibitDetect('pos')) // listmixin呼び出し
         this.showTxAll()
-        this.setProhibit('pos') // listmixin呼び出し
         if(!this.firstTime && reloadButton){
           this.reloadState.isLoad = false
         }
@@ -477,7 +481,7 @@ export default {
         txBtn.y = pos.y
       }
       // プロとするTXアイコンが進入禁止区域に入ってるかチェック
-      txBtn.prohibit  = this.prohibitData ? this.prohibitData.some((data) => data.minor == pos.minor):false
+      txBtn.prohibit  = this.prohibitDetectList ? this.prohibitDetectList.some((data) => data.minor == pos.minor):false
 
       if (this.isFixTx(tx)) {
         Util.debug('fixed location', tx)

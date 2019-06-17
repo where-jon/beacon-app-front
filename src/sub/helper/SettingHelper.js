@@ -18,7 +18,10 @@ export const convertTitle = (str) => {
   const optionsList = i18n.tnl('config.OPTIONS')
   srcList.forEach(src => {
     const optionsJson = Util.getValue(optionsList, src.replace(/[{}]/g, ''), {})
-    const option = Object.keys(optionsJson).reduce((prev, cur) => prev + '\n' + cur + ' : ' + optionsJson[cur], '')
+    const option = Object.keys(optionsJson).reduce((prev, cur) => {
+      const elem = optionsJson[cur].split('::')
+      return prev + '<br>' + elem[0] + ' : ' + elem[1]
+    }, '')
     str = str.replace(new RegExp(src, 'g'), option)
   })
   return str

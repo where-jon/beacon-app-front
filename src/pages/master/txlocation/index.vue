@@ -11,7 +11,7 @@
         <span :title="vueSelectTitle(vueSelected.area)">
           <v-select v-model="vueSelected.area" :options="areaOptions" class="mr-2 mb-2 vue-options" :style="getVueSelectStyle()" :clearable="false">
             <template slot="selected-option" slot-scope="option">
-              {{ vueSelectCutOn(option) }}
+              {{ vueSelectCutOn(option, true) }}
             </template>
           </v-select>
         </span>
@@ -112,14 +112,18 @@ export default {
     },
   },
   async mounted() {
+    await StateHelper.load('area')
+    await StateHelper.load('tx')
     if(this.pageSendParam){
       this.vueSelected.area = ParamHelper.getVueSelectData(this.areaOptions, this.pageSendParam.areaId)
-      this.changeArea()
+      this.selectedArea = this.pageSendParam.areaId
       this.replaceAS({pageSendParam: null})
     }
     else{
       this.vueSelected.area = ParamHelper.getVueSelectData(this.areaOptions, null, true)
+      this.selectedArea = Util.getValue(this.vueSelected.area, 'value', null)
     }
+    this.changeArea()
     await this.fetchData()
   },
   beforeDestroy() {
@@ -275,10 +279,11 @@ export default {
         this.changeAreaDone()
       }
     },
-    changeAreaDone() {
+    async changeAreaDone() {
       if (this.isChangeArea) {
         this.isChangeArea = false
         if (this.selectedArea) {
+          await StateHelper.loadAreaImage(this.selectedArea)
           this.reset()
           this.workTxs = _.cloneDeep(this.txs)
           this.setTxPosition()
@@ -423,6 +428,7 @@ export default {
         if (param.length > 0) {
           await HttpHelper.postAppService('/core/tx/bulk?updateOnlyNN=' + UPDATE_ONLY_NN.NULL, param)
           await StateHelper.load('tx', true)
+          StateHelper.setForceFetch('pot', true)
         }
 
         this.message = this.$i18n.tnl('message.completed', {target: this.$i18n.tnl('label.save')})

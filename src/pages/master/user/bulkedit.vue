@@ -12,6 +12,7 @@ import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as BulkHelper from '../../../sub/helper/BulkHelper'
+import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as Util from '../../../sub/util/Util'
 
 export default {
@@ -34,6 +35,9 @@ export default {
     ]),
   },
   methods: {
+    afterCrud(){
+      StateHelper.setForceFetch('pot', true)
+    },
     addUserRegionList(entity, regionNames, dummyKey){
       if(!Util.hasValue(regionNames)){
         entity.userRegionList = []

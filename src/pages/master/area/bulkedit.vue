@@ -40,6 +40,11 @@ export default {
     this.masterCd = StateHelper.createMasterCd('area', this.areas, null)
   },
   methods: {
+    afterCrud(){
+      StateHelper.setForceFetch('tx', true)
+      StateHelper.setForceFetch('exb', true)
+      StateHelper.setForceFetch('zone', true)
+    },
     resetData(entity, dummyKey){
       if(!Util.hasValue(entity.areaCd)){
         entity.areaCd = this.masterCd

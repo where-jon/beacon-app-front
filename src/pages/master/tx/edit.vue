@@ -201,8 +201,8 @@ export default {
       this.vueSelected.category = ParamHelper.getVueSelectData(this.categoryOptions, null)
       this.vueSelected.group = ParamHelper.getVueSelectData(this.groupOptions, null)
     },
-    async afterCrud(){
-      await StateHelper.load('pot', true)
+    afterCrud(){
+      StateHelper.setForceFetch('pot', true)
     },
     async save() {
       const txId = Util.hasValue(this.form.txId)? this.form.txId: -1

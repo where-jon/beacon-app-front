@@ -24,6 +24,7 @@ export default {
       params: {
         name: 'news',
         id: 'newsId',
+        confirmName: 'newsContent',
         indexPath: '/provider/news',
         editPath: '/provider/news/edit',
         appServicePath: '/news',

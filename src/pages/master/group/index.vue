@@ -53,6 +53,7 @@ export default {
   methods: {
     afterCrud(){
       StateHelper.setForceFetch('pot', true)
+      StateHelper.setForceFetch('tx', true)
     },
     async fetchData(payload) {
       try {

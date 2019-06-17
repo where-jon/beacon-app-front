@@ -87,6 +87,7 @@ export default {
       deliveryState:NOTIFY_STATE.getOptions().filter((val) => val.value == 'TX_DELIVERY_NOTIFY')[0].value,
       userMailState:NOTIFY_STATE.getOptions().filter((val) => val.value == 'USER_REG_NOTIFY')[0].value,
       prohibitState:NOTIFY_STATE.getOptions().filter((val) => val.value == 'PROHIBIT_NOTIFY')[0].value,
+      lostState:NOTIFY_STATE.getOptions().filter((val) => val.value == 'LOST_NOTIFY')[0].value,
       notify: _.slice(NOTIFY_MIDIUM.getTypes()).filter((val) => APP.NOTIFY.MIDIUM_TYPES.includes(val.value)),
       backPath: '/master/notifyTemplate',
       appServicePath: '/core/rcvexcloud',
@@ -128,7 +129,8 @@ export default {
     this.form.notifyTemplateKey== this.deliveryState? this.bNotifyTo=false : this.bNotifyTo=true
     this.form.notifyTemplateKey== this.userMailState? this.bNotifyTo=false : this.bNotifyTo=true
     this.form.notifyTemplateKey== this.prohibitState? this.bNotifyTo=true : this.bNotifyTo=false
-    this.form.notifyTemplateKey== this.deliveryState || this.form.notifyTemplateKey==this.userMailState || this.form.notifyTemplateKey==this.prohibitState? this.notify = _.slice(NOTIFY_MIDIUM.getTypes()).filter((val) => [0].includes(val.value)) : this.notify
+    this.form.notifyTemplateKey== this.lostState? this.bNotifyTo=true : this.bNotifyTo=false
+    this.form.notifyTemplateKey== this.deliveryState || this.form.notifyTemplateKey==this.userMailState || this.form.notifyTemplateKey==this.prohibitState || this.form.notifyTemplateKey==this.lostState? this.notify = _.slice(NOTIFY_MIDIUM.getTypes()).filter((val) => [0].includes(val.value)) : this.notify
     let labelUpdate = Util.getDetailCaptionKey(this.$store.state.app_service.template.notifyTemplateId)
     labelUpdate == 'label.update' ? this.bNotifyTemplateKey = false: this.bNotifyTemplateKey = true
   },
@@ -139,9 +141,9 @@ export default {
     reset () {
     },
     async signalChange(evt) {
-      if (evt == this.deliveryState || evt == this.userMailState || evt == this.prohibitState ) {
+      if (evt == this.deliveryState || evt == this.userMailState || evt == this.prohibitState || evt == this.lostState) {
         this.notify = _.slice(NOTIFY_MIDIUM.getTypes()).filter((val) => [0].includes(val.value))
-        this.bNotifyTo = evt == this.prohibitState ? true: false
+        this.bNotifyTo = evt == this.prohibitState || evt == this.lostState ? true : false
         this.form.notifyMedium = 0
         this.bSubject = true
         this.form.notifyTo = ''
@@ -166,7 +168,7 @@ export default {
     notifyToValidationCheck(){
       let result = false
       if(this.form.notifyMedium == 0
-          && ( this.form.notifyTemplateKey != this.deliveryState && this.form.notifyTemplateKey != this.userMailState && this.form.notifyTemplateKey != this.prohibitState )){
+          && ( this.form.notifyTemplateKey != this.deliveryState && this.form.notifyTemplateKey != this.userMailState && this.form.notifyTemplateKey != this.prohibitState && this.form.notifyTemplateKey != this.lostState )){
         let re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i
         let emailList = this.form.notifyTo.split(',')
         if(emailList.length > 1){
