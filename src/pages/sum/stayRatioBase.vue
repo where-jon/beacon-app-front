@@ -668,7 +668,7 @@ export default {
         const ratio = this.$i18n.tnl('label.bracketStayRate')
         keys.forEach((data) => {
           const keyName = data.label.replace(/<span.*?span>/g, '')
-          const hasRatio = viewData[data.key]? viewData[data.key].search('%') > 0: false
+          const hasRatio = viewData[data.key] && viewData[data.key].search('%') > 0
           if (hasRatio) {
             let splitData = viewData[data.key].split(' ')
             objectData[keyName] = splitData[0]
