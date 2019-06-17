@@ -343,9 +343,7 @@ export default {
       if (!Util.hasValue(this.displayCheckList)) {
         return false
       }
-      let count = 0
-      _.forEach(this.displayCheckList, (list) => { count += list.length })
-      return count > this.checkboxLimit
+      return _.sumBy(Object.keys(this.displayCheckList), (key) => this.displayCheckList[key].length) > this.checkboxLimit
     },
     getFields(isInit) {
       const disableClassName = 'd-none'
