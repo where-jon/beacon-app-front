@@ -515,7 +515,11 @@ export default {
           findCategory = _.find(this.categories, (category) => {
             return category.categoryType == CATEGORY.ZONE && category.categoryId == stay.byId
           })
-          findCategory? categoryData[findCategory.categoryId].value += stay.period: stay.byId == 0? categoryData[0].value += stay.period: null
+          if (findCategory) {
+            categoryData[findCategory.categoryId].value += stay.period
+          } else if (stay.byId == 0) {
+            categoryData[0].value += stay.period
+          }
 
           // エリア毎の滞在時間を加算（一致するカテゴリが存在する場合しかエリアを引けない）
           if (findCategory) {
@@ -529,7 +533,11 @@ export default {
               }
               return false
             })
-            findArea? areaData[findArea.areaId].value += stay.period: areaData[0].value += stay.period
+            if (findArea) {
+              areaData[findArea.areaId].value += stay.period
+            } else {
+              areaData[0].value += stay.period
+            }
           } else {
             // カテゴリ一致しない＆その他の場合
             stay.byId == 0? areaData[0].value += stay.period: null
@@ -646,11 +654,14 @@ export default {
       return url
     },
     getCsvSumList(viewList) {
-      // フィールド設定に合わせ、出力するデータのキーリストを生成する
       const keys = []
-      this.fields.forEach((field) => {
-        _.find(Object.keys(viewList[0]), (key) => { return key!= 'graph' && key == field.key})? keys.push(field): null
-      })
+
+      // フィールド設定に合わせ、出力するデータのキーリストを生成する
+      _.filter(this.fields, (field) => {
+        return _.some(Object.keys(viewList[0]), (key) => { 
+          return key!= 'graph' && key === field.key
+        })
+      }).forEach((field) => { keys.push(field) })
 
       // キーの一致するデータのみのリストを作成。その際、％データがある場合は分ける
       return viewList.map((viewData) => {
