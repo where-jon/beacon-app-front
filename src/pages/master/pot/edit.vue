@@ -340,11 +340,14 @@ export default {
       return this.showEmail
     },
     getTxOptions(index) {
-      const nowTxIds = this.form.potTxList? this.form.potTxList.filter((val, idx) => {
+      const nowTxIds = this.form.potTxList? this.form.potTxList.filter((val, idx, ary) => {
         if(!val.txId){
           return false
         }
         if(idx == index){
+          return false
+        }
+        if(ary.length <= index){
           return false
         }
         if(this.form.potTxList[idx].txId != this.form.potTxList[index].txId){
