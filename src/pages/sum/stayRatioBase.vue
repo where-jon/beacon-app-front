@@ -472,10 +472,10 @@ export default {
       return byId == -1
     },
     getStayDataList(date, stayData, absentLimit = 0, lostLimit = APP.LOST_TIME) {
-      const fromSeconds = (Math.floor(APP.STAY_SUM.FROM / 100) * 60 + APP.STAY_SUM.FROM % 100) * 60
-      const toSeconds = (Math.floor(APP.STAY_SUM.TO / 100) * 60 + APP.STAY_SUM.TO % 100) * 60
+      const fromSecond = (Math.floor(APP.STAY_SUM.FROM / 100) * 60 + APP.STAY_SUM.FROM % 100) * 60
+      const toSecond = (Math.floor(APP.STAY_SUM.TO / 100) * 60 + APP.STAY_SUM.TO % 100) * 60
       const graphTimeRatio = this.getTimeRatioData()
-      const fromToSettingDiff = toSeconds - fromSeconds
+      const fromToSettingDiff = toSecond - fromSecond
 
       return stayData.map((data) => {
         let stayTime = 0, lostTime = 0
@@ -549,9 +549,9 @@ export default {
             isAbsentZone: isAbsentZone,
             period: stay.period,
             start: stay.start,
-            startTime: percent == 100? Util.convertToTime(fromSeconds): moment(stay.start).format('HH:mm:ss'),
+            startTime: percent == 100? Util.convertToTime(fromSecond): moment(stay.start).format('HH:mm:ss'),
             end: stay.end,
-            endTime: percent == 100? Util.convertToTime(toSeconds): moment(stay.end).format('HH:mm:ss'),
+            endTime: percent == 100? Util.convertToTime(toSecond): moment(stay.end).format('HH:mm:ss'),
             time: time,
             percent: percent,
             categoryBgColor: findCategory? Util.colorCd4display(findCategory.bgColor): Util.colorCd4display(this.otherColor),
