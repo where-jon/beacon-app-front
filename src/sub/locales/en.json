@@ -28,6 +28,7 @@
     "actions": "Action",
     "download": "Download",
     "downloadMonth": "Download(Month)",
+
     "csvFile": "CSV file",
     "zipFile": "Zip file",
     "cancel": "Cancel",
@@ -233,8 +234,8 @@
     "detectState": "State",
     "detected": "Detecting",
     "temporaryUndetect": "Lost",
-    "todayUndetect": "Today UND",
     "undetect": "UND",
+    "todayUndetect": "Today UND",
     "none": "None",
     "power-null": "‐",
     "finalReceiveLocation": "Last position",
@@ -361,11 +362,24 @@
     "absent2Time": "Absent2 Time",
     "lostTime": "Absent(90min-)",
     "stayRatio": "Stay ratio",
+
+
     "absent1Ratio": "Absent1 Ratio",
     "absent2Ratio": "Absent2 Ratio",
     "lostRatio": "Absent Ratio(90min-)",
 
+
+
+
     "positionSummary": "Position Summary",
+
+    "processSum": "Process management",
+    "totalTime": "Total time",
+    "finalUpdateDate": "Final update date and time",
+    "successComplete": "Successful termination",
+    "processing": "Processing",
+    "notSmooth": "Process abnormal",
+    "processLate": "Excess",
 
     "historyTitle": "History",
     "historyDateFrom": "Period",
@@ -572,6 +586,13 @@
     "notes": "Notes",
     "updateKey": "Update key",
 
+
+
+
+
+
+
+
     "dummy": ""
   },
   "config": {
@@ -606,22 +627,22 @@
         "UNDETECT_TIME": "Undetected status decision time::Tx which has passed more than the time set from the last reception time will be undetected. Set up in milliseconds.",
         "USE_POSITION_HISTORY": "Use location history::Use location history, when acquiring location information.",
         "TX_POS_ONE_TO_ONE": "Display only one Tx Tag in one place.::Only display one Tx in one place",
-
+        "RSSI_MIN": "RSSI lower limit::Set up the lower limit of RSSI.",
         "MOVING_AVERAGE": "Number of position history to be aggregated at positioning:: When positioning, it will be calculated by averaging the set number of position history.",
         "MOVING_AVERAGE_TIME": "Moving average::Set up the moving average time that the server uses when aggregating location information.",
         "USE_MULTI_POSITIONING": "Use 3point Positioning::Use 3-point Positioning",
         "PROHIBIT_ALERT": "Use prohibited area::Use prohibited alert area",
         "PROHIBIT_GROUPS": "Prohibited area inaccessible group setting::Set up the group ID that can not enter in the prohibited area.",
         "USE_LEGEND": "Use legend::Display the legend on the position (map) screen.★",
-        "SHOW_DETECTED_COUNT": "Display the number of detections::Display the number of detected device on the position(map)screen.★"
-
-
-
+        "SHOW_DETECTED_COUNT": "Display the number of detections::Display the number of detected device on the position(map)screen.★",
+        "PROHIBIT": {
+          "DUPLICATE_MAIL_TIME": "Duplicate alert notification limit (E-mail)::Prevents notification by e-mail when an alert with the same content is sent within the set up time. Set up in milliseconds."
+        }
       },
       "SENSOR": {
         "EXB_SENSOR": "Sensor type::Set up the sensor ID used by the server.Possible to set up value are as follows.★{SENSOR}",
         "TX_SENSOR": "Tx sensor type::Set up the type of Tx sesor. Possible to set up value are as follows.★{SENSOR}",
-        "MEDITAG" :{
+        "MEDITAG": {
           "DOWN_RED_TIME": "Falls notice time::When a MEDiTAG user falls over, the MEDiTAG will be displayed in a red frame for a set up time only. Set up in milliseconds."
         },
         "USE_THERMOPILE": "Use Thermopile sensor::Use Thermopile sensor.★",
@@ -678,6 +699,7 @@
         "UNIT_MINUTE": "Display setting for stay time summary (minute)::If the maximum value in axis units exceeds the set second, the display of stay time total is displayed in time units.",
         "FROM": "Start time of staying time summary(hour and minute)::Set up the start of staying time summary. Setting value is「hour × 100 + minute × 1」.",
         "TO": "End time of staying time summary(hour and minute)::Set up the end time of staying time summary. Setting value is「hour × 100 + minute × 1」."
+
       },
       "TX_MON": {
         "WITH": "Item used Tx monitoring screen:: Set up the item used Tx monitor screen. The possible to set up values are as follows.★{TX_MON}",
@@ -688,7 +710,7 @@
       "SENSOR_LIST": {
         "WITH": "Item use with sensor history and sensor currentlist screen::Set up the item use with sensor history and sensor currentlist screen. The possible to set up values are as follows. ★{SENSOR_LIST}"
       },
-      "SENSORGRAPH":{
+      "SENSORGRAPH": {
         "WITH_DEVICE": "Using selection devices in the sensor grap::Using the selection device in sensor graph. ",
         "CSV_IMMEDIATE": "Output latest value to csv of sensor graph screen::Include the latest value information to csv downloaded on the sensor graph screen."
       },
@@ -828,14 +850,20 @@
       },
       "ANALYSIS": {
         "LINE": {
-
+          "MIN_WEIGHT": "Minimum thickness of flow line displayed on the flow line analysis screen::Set up the minimum thickness of flow line displayed on the flow line analysis screen.",
           "MAX_WEIGHT": "Maximum thickness of flow line displayed on flow line analysis screen::Set up the maximum thickness of flow line displayed on flow line analysis screen.",
           "COLOR": "Color of flow line to be displayed on flow line analysis screen::Set up the color of flow line to be displayed on flow line analysis screen"
         },
         "HEATMAP": {
           "RADIUS": "The diameter of the heatmap displayed on the heatmap (position) screen::Set up the size of the heatmap displayed on the heatmap (position) screen"
         }
+      },
+      "CONTROL": {
+        "COMBO_BOX": {
+          "W": "Combo Box Width::Set up the width of the combo box in pixels."
+        }
       }
+
 
 
 
@@ -853,11 +881,11 @@
       "APP": {
         "POS": {
           "MOVING_AVERAGE_TIME": "number",
-          "PROHIBIT_GROUPS": "numberList"
-
-
-
-
+          "PROHIBIT_GROUPS": "numberList",
+          "PROHIBIT_ALERT": "stringList",
+          "PROHIBIT": {
+            "DUPLICATE_MAIL_TIME": "number"
+          }
         },
         "SENSOR": {
           "EXB_SENSOR": "numberList",
@@ -886,6 +914,9 @@
           "MIDIUM_TYPES": "numberList",
           "STATE_TYPES": "numberList"
         },
+
+
+
         "TX_MON": {
           "WITH": "stringList",
           "WITH_SENSOR": "numberList"
@@ -965,11 +996,11 @@
     },
     "DEFAULT": {
       "APP": {
-
-
-
-
-
+        "POS": {
+          "PROHIBIT": {
+            "DUPLICATE_MAIL_TIME": "180000"
+          }
+        },
         "SVC": {
           "STAY_SUM": {
             "STAY_SUM_START": "0",
@@ -1017,9 +1048,9 @@
         "SIMULATION": "For Demostration",
         "OTHER": "Others"
       },
-
-
-
+      "SENSOR_NONE": {
+        "0": "0::Not set"
+      },
       "SENSOR": {
         "1": "1::ThermoHumidity",
         "2": "2::PIR",
@@ -1043,8 +1074,8 @@
         "0": "0::TX button notification",
         "1": "1::Alert",
         "2": "2::User registration and update",
-        "3": "3::sos"
-
+        "3": "3::sos",
+        "4": "4::Prohibit area notification"
       },
       "SUM_AXIS_FILL_GAP": {
         "0": "0::Do not do it",
@@ -1122,8 +1153,8 @@
       },
       "USER": {
         "email": "email::Email",
-        "name": "name::Name"
-
+        "name": "name::Name",
+        "region": "region::User region"
       },
       "POT": {
         "ruby": "ruby::Ruby",
@@ -1156,12 +1187,12 @@
         "category": "category::Category",
         "tel": "tel::Tel",
         "timestamp": "timestamp::Last date and time"
+      },
+      "PROHIBIT_ALERT": {
+        "screen": "screen::Display on the screen",
+        "mail": "mail::E-mail Notification",
+        "led": "led::LED Blink"
       }
-
-
-
-
-
     }
   },
   "message": {
@@ -1203,6 +1234,8 @@
     "csvSameKey": "Duplicate update data in the CSV file.",
     "csvInvalidLine": "Invalid data in CSV file.",
     "csvNotFound": "The selected CSV file does not exist.",
+    "csvNotMatchCharset": "Character code of CSV file is different.",
+    "csvForMatchCharset": "Specified the「{charset}」",
     "csvLineStart": "［",
     "csvLineEnd": "］",
     "csvLine": "{line} Line",
@@ -1221,7 +1254,7 @@
     "bulkSystemUseFailed": "{col}（{value}）cannot be changed because it is used by system defined name.",
     "bulkSystemUseNameFailed": "{col}（{value}） is already used by system defined name.",
     "bulkInvalidUpdateLineFailed": "{col}（{value}）cannot be modified on this page.",
-
+    "bulkLastFailed": "{col}must be registered one or more.",
     "monthDayTemperature": "{month}/{day} Temperature and humidity ({name}{description})",
     "invalidLoginId": "Login ID must be alphanumeric character.",
     "notFound": "No results found.",
@@ -1258,9 +1291,21 @@
     "valueMissingInput": "valueMissingInput",
     "valueMissingSelect": "valueMissingSelect",
 
+
+
+
     "dummy": "" 
   },
   "helpDescription": {
+
+
+
+
+
+
+
+
+
     "bulkRegister": "Formats and registers data using the downloaded file as a template. It can not change the ID of a master that has been issued uniquely and already linked by batch registration. In case of new registration, please empty the ID and do batch registration. ",
     "bulkUniqueFailed": "Target item name is a non-duplication item. It is already used in another line.",
     "bulkOneOfFailed": "Tareget item name must be specified with one of multiple settings.",
@@ -1282,6 +1327,7 @@
     "prohibit": "Feature not provided ver1.1",
     "zoneClass": "Create and edit zones that include multiple EXBeacon. The created zones are used for grouping and summary by setting them on the EXBeacon screen. As it can set the category to the zone, it can also classify the zone itself. Refer to the category help for the categories set in the system to utilize in the zone.",
     "zoneBlock": "{ZoneBlock} can be created by dragging and selecting on the displayed area. EXBeacon in the created zone will be automatically set the zone at the time of registration. ",
+
 
     "dummy": ""
   }
