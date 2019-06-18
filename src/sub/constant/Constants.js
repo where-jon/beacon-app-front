@@ -663,7 +663,7 @@ export const MENU = [
         icon: 'chart-bar',
       },
       {
-        key: 'stayRatio',
+        key: 'stayRatioGp',
         path: 'stayRatio',
         icon: 'clock',
       },
@@ -676,6 +676,11 @@ export const MENU = [
         key: 'processSum',
         path: 'processSum',
         icon: 'fast-forward',
+      },
+      {
+        key: 'stayRatioBase',
+        path: 'stayRatioBase',
+        icon: 'clock',
       },
     ]
   },
@@ -775,4 +780,5 @@ export const MENU = [
 
 export const SYSTEM_ZONE_CATEGORY_NAME = {
   ABSENT: 'ABSENT',
+  PROHIBIT: 'PROHIBIT',
 }

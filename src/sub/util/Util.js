@@ -612,3 +612,32 @@ export const addWithPadding = (str, add = 0) => {
   }
   return ret.slice(-1 * (strDigit + 1))
 }
+
+export const isAfterNextMonth = (date) => hasValue(date) && moment(date).isAfter(moment().endOf('months'))
+
+/**
+ * 受け取ったリストを、受け取った対象を比較して並べ替える
+ * @param {*} list リスト
+ * @param {*} by 並び替え対象
+ */
+export const sortIgnoreCase = (list, by) => {
+  list.sort((a, b) => {
+    const byA = a[by].toUpperCase()
+    const byB = b[by].toUpperCase()
+    if ((isDate(byA) && isDate(byB)) || (isNumber(byA) && isNumber(byB))) {
+      if (byA < byB) {
+        return -1
+      } else if (byA > byB) {
+        return 1
+      } else {
+        return 0
+      }
+    } else {
+      // 文字列ソート時は b-table でのソート（数値優先）に合わせている
+      return byA.localeCompare(byB, undefined, { numeric: true })
+    }
+  })
+}
+
+export const isDate = val => val instanceof Date
+export const isNumber = val => typeof val === 'number'
