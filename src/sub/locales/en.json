@@ -364,20 +364,8 @@
     "absent1Ratio": "Absent1 Ratio",
     "absent2Ratio": "Absent2 Ratio",
     "lostRatio": "Absent Ratio(90min-)",
-    "stayRatioAbsent1Time": "absent1Time",
-    "stayRatioAbsent2Time": "absent2Time",
-    "stayRatioAbsent1Ratio": "absent1Ratio",
-    "stayRatioAbsent2Ratio": "absent2Ratio",
 
     "positionSummary": "Position Summary",
-
-
-
-
-
-
-
-
 
     "historyTitle": "History",
     "historyDateFrom": "Period",

@@ -28,6 +28,7 @@
     "actions": "アクション",
     "download": "ダウンロード",
     "downloadMonth": "ダウンロード(月)",
+    "displaySpecified": "表示指定",
     "csvFile": "CSVファイル",
     "zipFile": "zipファイル",
     "cancel": "キャンセル",
@@ -63,7 +64,7 @@
     "normal": "通常",
     "malfunction": "動作不良",
     "notReceive": "受信不良",
-    "absent": "不在",
+    "absent": "不在区域",
     "prohibit": "禁止区域",
     "lost": "重要部品指定区域",
     "charSet": "CSV文字コード",
@@ -361,13 +362,14 @@
     "absent2Time": "離席2",
     "lostTime": "不在時間",
     "stayRatio": "滞在率",
+    "stayRatioGp": "日単位滞在分析(GP)",
+    "stayRatioBase": "日単位滞在分析",
     "absent1Ratio": "離席1率",
     "absent2Ratio": "離席2率",
     "lostRatio": "不在率",
-    "stayRatioAbsent1Time": "absent1Time",
-    "stayRatioAbsent2Time": "absent2Time",
-    "stayRatioAbsent1Ratio": "absent1Ratio",
-    "stayRatioAbsent2Ratio": "absent2Ratio",
+    "stay": "滞在",
+    "absence": "不在",
+    "graph": "滞在率グラフ",
 
     "positionSummary": "位置情報",
 
@@ -583,6 +585,13 @@
     "humidityUnit": "％",
     "notes": "注意事項",
     "updateKey": "更新キー",
+    "stayTimeSumColumn": "滞在時間（合計）",
+    "lostTimeSumColumn": "不在時間（合計）",
+    "sum": "集計",
+    "displayColumnCommon": "表示列-共通",
+    "displayColumnIndividual": "表示列-個別",
+    "bracketStayRate": "(滞在率)",
+    "ok": "OK",
 
     "dummy": ""
   },
@@ -689,7 +698,8 @@
         "UNIT_HOUR": "滞在時間集計の表示設定(時間)::設定した秒を軸単位の最大値が超えた場合、滞在時間集計の表示を時間単位で表示します。",
         "UNIT_MINUTE": "滞在時間集計の表示設定(分)::設定した秒を軸単位の最大値が超えた場合、滞在時間集計の表示を分単位で表示します。",
         "FROM": "滞在時間集計開始時間(時分)::滞在時間集計開始時間を設定します。設定値は「時 × 100 + 分 × 1」です。",
-        "TO": "滞在時間集計終了時間(時分)::滞在時間集計終了時間を設定します。設定値は「時 × 100 + 分 × 1」です。"
+        "TO": "滞在時間集計終了時間(時分)::滞在時間集計終了時間を設定します。設定値は「時 × 100 + 分 × 1」です。",
+        "SCALE_TIMES": "滞滞在率画面グラフ目盛り時刻(時)::在率画面グラフ目盛りに表示する時刻(時)を設定する（一致しない場合無視します）。"
       },
       "TX_MON": {
         "WITH": "Tx状態監視画面で使用する項目::Tx状態監視画面で使用する項目を設定します。設定可能な値は次の通りです。★{TX_MON}",
@@ -852,6 +862,12 @@
         "COMBO_BOX": {
           "W": "コンボボックスの幅::コンボボックスの幅をピクセル単位で設定します。"
         }
+      },
+      "SYSTEM_USE": {
+        "BG_COLOR": {
+          "ABSENT": "背景色(不在区域)カラーコード::システム設定カテゴリ(不在区域)の背景色を設定します。",
+          "PROHIBIT": "背景色(危険区域)カラーコード::システム設定カテゴリ(危険区域)の背景色を設定します。"
+        }
       }
     },
     "DEV": {
@@ -897,6 +913,9 @@
         "NOTIFY": {
           "MIDIUM_TYPES": "numberList",
           "STATE_TYPES": "numberList"
+        },
+        "STAY_SUM": {
+          "SCALE_TIMES": "numberList"
         },
         "TX_MON": {
           "WITH": "stringList",
@@ -1271,6 +1290,9 @@
     "valueMissing": "",
     "valueMissingInput": "このフィールドを入力してください。",
     "valueMissingSelect": "リスト内の項目を選択してください。",
+    "selectDisplayColumn": "設定された項目を表に表示します。",
+    "selectLimitDescription": "設定できる項目は{max}個までです。",
+    "tooManyCheck": "選択は{max}個以下にする必要があります。",
 
     "dummy": "" 
   },
@@ -1297,6 +1319,7 @@
     "prohibit": "ver1.1 では未提供の機能です。",
     "zoneClass": "複数のEXBeaconを包括するゾーンを作成・編集します。作成したゾーンはEXBeacon画面で設定することによってグルーピングや集計に活用します。また、ゾーンへカテゴリの設定が行える為、ゾーン自体の分類も可能です。ゾーンで活用する為にシステムで設定されているカテゴリについては、カテゴリのヘルプを参照してください。",
     "zoneBlock": "表示しているエリア上をドラッグして選択することで、{zoneBlock}を作成する事ができます。作成した区画内のEXBeaconは、登録時に自動的にゾーンが設定されます。",
+    "stayRatioBaseDownload": "ダウンロードには二種類あり「集計」と「滞在」で異なるデータをダウンロードできます。「集計」では、グラフを除いた全ての滞在列情報がダウンロードできます。「滞在」では、基本データと各時間ごとの滞在詳細情報がダウンロードできます。",
 
     "dummy": "" 
   }

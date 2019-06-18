@@ -47,7 +47,7 @@ export default {
 
         }
         if(Util.equalsAny(headerName, NUMBER_TYPE_LIST)){
-          BulkHelper.setNumberKey(entity, headerName, val, {isNullable: headerName == 'meshId'})
+          BulkHelper.setNumberKey(entity, headerName, val)
           return dummyKey
         }
         entity[headerName] = val

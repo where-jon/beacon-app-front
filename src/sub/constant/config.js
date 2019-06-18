@@ -140,6 +140,8 @@ export const APP = { // 機能面に関する設定
     UNIT_MINUTE: 20 * 60,  // 指定秒を軸単位の最大値が超えた場合、滞在時間集計の表示を分単位で表示する
     FROM: 0,  // 滞在時間集計開始時間(時分)
     TO: 2400,  // 滞在時間集計終了時間(時分)
+    SCALE_TIMES: [5, 12, 18], // 滞在率画面グラフ目盛り時刻(時)
+    OTHER_COLOR: '#404040', // 滞在率その他の色
   },
   // Tx状態監視
   TX_MON: {
@@ -411,6 +413,13 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   },
   // 禁止区域関連設定
   PROHIBIT_TWINKLE_TIME: 1500, // 点滅間隔(ミリ秒)
+  // システム設定カテゴリ
+  SYSTEM_USE: {
+    BG_COLOR: {
+      ABSENT: '', // 背景色カラーコード
+      PROHIBIT: '', // 背景色カラーコード  
+    }
+  }
 }
 
 // used when APP.LOGIN_MODE != APP_SERVICE with excloud old api -----------------------------------------------------
