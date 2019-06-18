@@ -382,7 +382,7 @@ export default {
 
       // エリアを追加する
       let selectedAreas = _.filter(this.areas, (area) => {
-        return _.find(this.displayCheckList.area, (id) => { return id == area.areaId })
+        return _.some(this.displayCheckList.area, (id) => { return id == area.areaId })
       })
       
       _.filter(this.areas, (a) => { return true })
@@ -630,7 +630,7 @@ export default {
       viewList = this.getStayDataList(moment(this.form.date).format('YYYY-MM-DD'), dataList, APP.SUM_ABSENT_LIMIT, APP.SUM_LOST_LIMIT)
 
       Util.sortIgnoreCase(viewList, 'name')
-      const csvList = (key == 'sum')? this.getCsvSumList(viewList): this.getCsvDetailList(viewList)
+      const csvList = this.getCsvList(key, viewList)
 
       const searchDate = moment(this.form.date).format('YYYY-MM-DD')
       const group = this.form.groupId? this.groups.find((val) => val.groupId == this.form.groupId): null
@@ -638,9 +638,10 @@ export default {
       const category = this.form.categoryId? this.categories.find((val) => val.categoryId == this.form.categoryId): null
       const categoryName =  !category? '': category.systemUse == 1? category.systemCategoryName: '_' + category.categoryName
 
+      const convertedCsvData = this.convertCsvData(key, csvList)
       HtmlUtil.fileDL(
         searchDate + groupName + categoryName + '_stayRatio.csv',
-        key == 'sum'? Util.converToCsv(csvList) :Util.converToCsv(csvList, null, this.getCsvDetailHeaderList()),
+        convertedCsvData,
         getCharSet(this.$store.state.loginId)
       )
     },
@@ -770,7 +771,7 @@ export default {
 
         let list = this.getStayDataList(moment(searchDate).format('YYYY-MM-DD'), sumData, APP.SUM_ABSENT_LIMIT, APP.SUM_LOST_LIMIT)
         Util.sortIgnoreCase(list, 'name')
-        const dateList = (key == 'sum')? this.getCsvSumList(list): this.getCsvDetailList(list)
+        const dateList = this.getCsvList(key, list)
         csvList = csvList.isEmpty? dateList: csvList.concat(dateList)
         startDate.add(1, 'days')
       }
@@ -780,9 +781,10 @@ export default {
       const category = this.form.categoryId? this.categories.find((val) => val.categoryId == this.form.categoryId): null
       const categoryName =  !category? '': category.systemUse == 1? category.systemCategoryName: '_' + category.categoryName
 
+      const convertedCsvData = this.convertCsvData(key, csvList)
       HtmlUtil.fileDL(
         moment(this.form.date).format('YYYY-MM') + groupName + categoryName + '_stayRatio.csv',
-        key == 'sum'? Util.converToCsv(csvList) :Util.converToCsv(csvList, null, this.getCsvDetailHeaderList()),
+        convertedCsvData,
         getCharSet(this.$store.state.loginId)
       )
 
@@ -796,6 +798,26 @@ export default {
         this.replace({showAlert: false})
       }
     },
+    getCsvList(key, list) {
+      switch(key) {
+      case 'sum':
+        return this.getCsvSumList(list)
+      case 'detail':
+        return this.getCsvDetailList(list)
+      default:
+        // 何もしない
+      }
+    },
+    convertCsvData(key, list) {
+      switch(key) {
+      case 'sum':
+        return Util.converToCsv(list)
+      case 'detail':
+        return Util.converToCsv(list, null, this.getCsvDetailHeaderList())
+      default:
+        // 何もしない
+      }
+    }
   }
 }
 </script>

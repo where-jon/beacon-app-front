@@ -617,14 +617,13 @@ export const isAfterNextMonth = (date) => hasValue(date) && moment(date).isAfter
 
 /**
  * 受け取ったリストを、受け取った対象を比較して並べ替える
- * ※文字列ソート時は b-table でのソートに合わせている※
- * @param {*} list 文字列のリスト
+ * @param {*} list リスト
  * @param {*} by 並び替え対象
  */
 export const sortIgnoreCase = (list, by) => {
   list.sort((a, b) => {
-    const byA = a[by].toUpperCase() // 大文字、小文字を無視
-    const byB = b[by].toUpperCase() // 大文字、小文字を無視
+    const byA = a[by].toUpperCase()
+    const byB = b[by].toUpperCase()
     if ((isDate(byA) && isDate(byB)) || (isNumber(byA) && isNumber(byB))) {
       if (byA < byB) {
         return -1
@@ -634,6 +633,7 @@ export const sortIgnoreCase = (list, by) => {
         return 0
       }
     } else {
+      // 文字列ソート時は b-table でのソート（数値優先）に合わせている
       return byA.localeCompare(byB, undefined, { numeric: true })
     }
   })
