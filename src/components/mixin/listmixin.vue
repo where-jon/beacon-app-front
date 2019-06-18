@@ -96,7 +96,7 @@ export default {
       this.prohibitDetectList = prohibitDetectList ? prohibitDetectList : null
       const lostUnDetectList = this.getLostUnDetectList(this.getPositions(),this.lostZones)
       if(this.prohibitDetectList){
-        this.prohibitDetectList = lostUnDetectList? prohibitDetectList.concat(lostUnDetectList) : null
+        this.prohibitDetectList = lostUnDetectList? prohibitDetectList.concat(lostUnDetectList) : this.prohibitDetectList
       }else{
         this.prohibitDetectList =lostUnDetectList ? lostUnDetectList : null
       }
