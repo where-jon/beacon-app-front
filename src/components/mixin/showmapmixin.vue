@@ -477,7 +477,7 @@ export default {
     },
     getMeditagSensor(btxId) {
       if (this.meditagSensors) {
-        return this.meditagSensors.find((val) => btxId == val.btxid)
+        return this.meditagSensors.find((val) => btxId == val.btx_id)
       }
       return null
     },
@@ -533,7 +533,7 @@ export default {
           class: balloonClass,
           name: tx.potName ? tx.potName : '',
           tel: tx.extValue ? tx.extValue.tel ? tx.extValue.tel : '': '',
-          timestamp: position ? this.getFinalReceiveTime(position.timestamp) : '',
+          timestamp: position ? this.getFinalReceiveTime(new Date(position.timestamp)) : '',
           thumbnail: isDispThumbnail ? this.preloadThumbnail.src : '',
           category: tx.categoryName? tx.categoryName : '',
           group: tx.groupName? tx.groupName : '',

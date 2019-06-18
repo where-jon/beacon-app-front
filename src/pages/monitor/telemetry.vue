@@ -162,7 +162,8 @@ export default {
       await StateHelper.load('exb')
       const map = {}
       this.exbs.forEach((e) => {
-        map[e.deviceId.toString(16)] = e.location.locationName
+        const deviceId = APP.SVC.POS.EXSERVER ? e.deviceId.toString() : e.deviceId.toString(16)
+        map[deviceId] = e.location.locationName
       })
 
       return telemetrys.map((e) => {

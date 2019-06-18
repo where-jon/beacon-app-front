@@ -272,6 +272,9 @@ export default {
   font-weight: bold;
   padding-left: 10px;
   overflow-y: scroll;
+  word-wrap: break-word;
+  word-break: break-all;
+  -ms-overflow-style: none;
 }
 .descriptionSensor {
   float: left;

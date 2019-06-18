@@ -406,7 +406,7 @@ export const getStressBg = (stress) => {
 
 export const setStress = (positions, sensors) => {
   return positions.map((position) => {
-    let sensor = sensors.find((sensor) => sensor.id == position.btxId)
+    let sensor = sensors.find((sensor) => sensor.btx_id == position.btx_id)
     return sensor? {...position, bg: getStressBg(sensor.stress)}: position
   })
 }

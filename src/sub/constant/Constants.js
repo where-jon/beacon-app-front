@@ -214,11 +214,14 @@ export const SENSOR = {
   MAGNET: 6,
   BUTTON: 7,
   PRESSURE: 8,
+  OMR_ENV: 9,
+  OMR_TP_HUMAN: 10,
+  OMR_TP_ENV: 11,
   MAGNET_STATUS: {
     OFF: 0,
     ON: 4,
   },
-  STRING: ['','temperature','pir','thermopile','led','meditag','magnet','button','pressure']
+  STRING: ['','temperature','pir','thermopile','led','meditag','magnet','button','pressure','omr-env','omr-tp-human','omr-tp-env']
 }
 
 export const SUM_UNIT = {

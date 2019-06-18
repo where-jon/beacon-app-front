@@ -300,13 +300,13 @@ export default {
       if (APP.SENSOR.USE_MEDITAG) {
         let meditagSensors = await EXCloudHelper.fetchSensor(SENSOR.MEDITAG)
         this.meditagSensors = _(meditagSensors)
-          .filter((val) => this.txs.some((tx) => tx.btxId == val.btxid))
+          .filter((val) => this.txs.some((tx) => tx.btxId == val.btx_id))
           .map((val) => {
-            let tx = this.txs.find((tx) => tx.btxId == val.btxid)
-            let label = tx && tx.displayName? tx.displayName: val.btxid
+            let tx = this.txs.find((tx) => tx.btxId == val.btx_id)
+            let label = tx && tx.displayName? tx.displayName: val.btx_id
             return {...val, label, bg: SensorHelper.getStressBg(val.stress), down: val.down?val.down:0}
           })
-          .sortBy((val) => (new Date().getTime() - val.downLatest < APP.SENSOR.MEDITAG.DOWN_RED_TIME)? val.downLatest * -1: val.btxid)
+          .sortBy((val) => (new Date().getTime() - val.downLatest < APP.SENSOR.MEDITAG.DOWN_RED_TIME)? val.downLatest * -1: val.btx_id)
           .value()
         Util.debug(this.meditagSensors)
       }
