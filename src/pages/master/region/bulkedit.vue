@@ -44,6 +44,7 @@ export default {
         if (BulkHelper.isPrimaryKeyHeader(headerName)){
           BulkHelper.setPrimaryKey(entity, this.id, val, dummyKey--)
           return dummyKey
+
         }
         if(Util.equalsAny(headerName, NUMBER_TYPE_LIST)){
           BulkHelper.setNumberKey(entity, headerName, val, {isNullable: headerName == 'meshId'})
