@@ -243,6 +243,7 @@ export default {
     this.isMounted = true
   },
   beforeDestroy() {
+    clearInterval(this.prohibitInterval)  // 点滅クリア
     this.resetDetail()
   },
   methods: {
@@ -349,7 +350,7 @@ export default {
     },
     twinkle() {
       Object.values(this.icons).forEach((icon)=>{
-        icon.prohibit? icon.visible=!icon.visible : icon.visible = true
+        this.prohibitDetectList.some((tx) => tx.minor == icon.txId) ? icon.visible = !icon.visible : icon.visible = true
         this.stage.update()
       })
     },
@@ -480,9 +481,6 @@ export default {
         txBtn.x = pos.x
         txBtn.y = pos.y
       }
-      // プロとするTXアイコンが進入禁止区域に入ってるかチェック
-      txBtn.prohibit  = this.prohibitDetectList ? this.prohibitDetectList.some((data) => data.minor == pos.minor):false
-
       if (this.isFixTx(tx)) {
         Util.debug('fixed location', tx)
         txBtn.x = tx.location.x
