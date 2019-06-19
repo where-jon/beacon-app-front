@@ -163,7 +163,7 @@ export default {
         try {
           await this.save()
           await StateHelper.load(this.name, true)
-          if (this.name == 'area') {
+          if (this.name == 'area' && this.form.mapImage) {
             await this.loadImageArea()
           }
           this.message = this.$i18n.tnl('message.' + this.crud + 'Completed', {target: this.$i18n.tnl('label.' + this.name)})
