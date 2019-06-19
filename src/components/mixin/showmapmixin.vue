@@ -301,23 +301,30 @@ export default {
     async changeArea(val) {
       if (val) {
         this.icons = {} // キャッシュをクリア
-        await StateHelper.loadAreaImage(val)
-        const area = _.find(this.areas, (area) => {
-          return area.areaId == val
-        })
-        if (this.getMapImage(area.areaId)) {
-          if(!Util.getValue(this, 'selectedTx.btxId', null)){
-            this.reset()
-          }
-          this.selectedArea = val
-          this.fetchData && await this.fetchData()
-        }
-        else {
-          Util.debug('No mapImage in changeArea.')
-          this.noImageErrorKey && this.showErrorModal({key: this.noImageErrorKey})
-          this.$nextTick(() => {
-            this.selectedArea = this.oldSelectedArea
+        try {
+          await StateHelper.loadAreaImage(val)
+          const area = _.find(this.areas, (area) => {
+            return area.areaId == val
           })
+          if (this.getMapImage(area.areaId)) {
+            if(!Util.getValue(this, 'selectedTx.btxId', null)){
+              this.reset()
+            }
+            this.selectedArea = val
+            this.fetchData && await this.fetchData()
+          }
+          else {
+            Util.debug('No mapImage in changeArea.')
+            this.noImageErrorKey && this.showErrorModal({key: this.noImageErrorKey})
+            this.$nextTick(() => {
+              this.selectedArea = this.oldSelectedArea
+            })
+          }
+        } catch (e) {
+          // マップ画像が見つからなかった(status 404)
+          if (e.message.indexOf('404') > -1) {
+            this.showErrorModal({key: this.noImageErrorKey})
+          }
         }
       }      
     },
