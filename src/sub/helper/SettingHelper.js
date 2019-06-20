@@ -1,5 +1,6 @@
 import { SETTING, PATTERN } from '../constant/Constants'
 import * as Util from '../util/Util'
+import * as ArrayUtil from '../util/ArrayUtil'
 
 let i18n
 
@@ -103,7 +104,7 @@ export const getI18ConfigInner = (config, isTenant, parentKey = '', list = []) =
   Object.keys(config).forEach(configKey => {
     const data = config[configKey]
     const key = parentKey + configKey
-    if(typeof data == 'object' && !Util.isArray(data)){
+    if(typeof data == 'object' && !ArrayUtil.isArray(data)){
       getI18ConfigInner(data, isTenant, key + '.', list)
       return
     }

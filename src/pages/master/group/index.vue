@@ -12,7 +12,7 @@ import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import listmixinVue from '../../../components/mixin/listmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
-import * as Util from '../../../sub/util/Util'
+import * as ColorUtil from '../../../sub/util/ColorUtil'
 
 export default {
   components: {
@@ -74,8 +74,8 @@ export default {
       return groupStyle? groupStyle.style: null
     },
     customCsvData(val){
-      val.color = Util.colorCd4display(val.display.color)
-      val.bgColor = Util.colorCd4display(val.display.bgColor)
+      val.color = ColorUtil.colorCd4display(val.display.color)
+      val.bgColor = ColorUtil.colorCd4display(val.display.bgColor)
     },
   }
 }

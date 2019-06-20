@@ -12,7 +12,7 @@ import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as MenuHelper from '../../../sub/helper/MenuHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import { APP } from '../../../sub/constant/config'
-import * as Util from '../../../sub/util/Util'
+import * as ArrayUtil from '../../../sub/util/ArrayUtil'
 import listmixinVue from '../../../components/mixin/listmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 
@@ -27,7 +27,7 @@ export default {
       params: {
         name: 'exb',
         id: 'exbId',
-        confirmName: Util.includesIgnoreCase(APP.EXB.WITH, 'deviceId')? 'deviceId': Util.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')? 'deviceIdX': 'locationName',
+        confirmName: ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceId')? 'deviceId': ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')? 'deviceIdX': 'locationName',
         indexPath: '/master/exb',
         editPath: '/master/exb/edit',
         bulkEditPath: '/master/exb/bulkedit',
@@ -35,7 +35,7 @@ export default {
         csvOut: true,
         custumCsvColumns: this.getCustumCsvColumns(),
         fields: this.getFields(),
-        sortBy: Util.includesIgnoreCase(APP.EXB.WITH, 'deviceId')? 'deviceId': Util.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')? 'deviceIdX': 'locationName',
+        sortBy: ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceId')? 'deviceId': ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')? 'deviceIdX': 'locationName',
         initTotalRows: this.$store.state.app_service.exbs.length
       },
       items: ViewHelper.createBreadCrumbItems('master', 'exb'),

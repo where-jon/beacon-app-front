@@ -87,6 +87,10 @@ import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ParamHelper from '../../../sub/helper/ParamHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as Util from '../../../sub/util/Util'
+import * as HtmlUtil from '../../../sub/util/HtmlUtil'
+import * as StringUtil from '../../../sub/util/StringUtil'
+import * as ArrayUtil from '../../../sub/util/ArrayUtil'
+import * as StyleUtil from '../../../sub/util/StyleUtil'
 import { APP, DISP } from '../../../sub/constant/config'
 import { UPDATE_ONLY_NN } from '../../../sub/constant/Constants'
 import { Shape, Container, Text } from '@createjs/easeljs/dist/easeljs.module'
@@ -160,8 +164,8 @@ export default {
     await StateHelper.load('exb')
     const options = []
     options.push({value: 'locationName', text: this.$i18n.tnl('label.locationName')})
-    if (Util.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')) options.push({value:'deviceIdX', text: this.$i18n.tnl('label.deviceIdX')})
-    if (Util.includesIgnoreCase(APP.EXB.WITH, 'deviceId')) options.push({value:'deviceId', text: this.$i18n.tnl('label.deviceId')})
+    if (ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')) options.push({value:'deviceIdX', text: this.$i18n.tnl('label.deviceIdX')})
+    if (ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceId')) options.push({value:'deviceId', text: this.$i18n.tnl('label.deviceId')})
     this.exbDispOptions = options
     this.exbDisp = options[0].value
 
@@ -235,7 +239,7 @@ export default {
             value: val.exbId
           }
         })
-        .sort((a, b) => Util.compareStrNum(a.label, b.label)).value()
+        .sort((a, b) => StringUtil.compareStrNum(a.label, b.label)).value()
     },
     setExbPosition() {
       this.positionedExb = _.filter(this.workExbs, (exb) => {
@@ -262,8 +266,8 @@ export default {
         if (exbBtn) {
           let text = exbBtn.getChildAt(1)
           if (text) {
-            text.text = Util.cutOnLongByte(this.getExbDisp(exbBtn.deviceId), this.DISPLAY_NAME_BYTE_LENGTH)
-            text.font = Util.getInRectFontSize(text.text, DISP.EXB_LOC.SIZE.W, DISP.EXB_LOC.SIZE.H)
+            text.text = StringUtil.cutOnLongByte(this.getExbDisp(exbBtn.deviceId), this.DISPLAY_NAME_BYTE_LENGTH)
+            text.font = StyleUtil.getInRectFontSize(text.text, DISP.EXB_LOC.SIZE.W, DISP.EXB_LOC.SIZE.H)
           }
         }
       }
@@ -311,9 +315,9 @@ export default {
       s.graphics.lineTo(fromX, y)
       s.graphics.lineTo(fromX, fromY)
       exbBtn.addChild(s)
-      const text = Util.cutOnLongByte(this.getExbDisp(exb.deviceId), this.DISPLAY_NAME_BYTE_LENGTH)
+      const text = StringUtil.cutOnLongByte(this.getExbDisp(exb.deviceId), this.DISPLAY_NAME_BYTE_LENGTH)
       const label = new Text(text)
-      label.font = Util.getInRectFontSize(text, w, h)
+      label.font = StyleUtil.getInRectFontSize(text, w, h)
       label.color = DISP.EXB_LOC.COLOR
       label.textAlign = 'center'
       label.textBaseline = 'middle'
@@ -348,7 +352,7 @@ export default {
         this.deleteTarget = exbBtn
         this.showDeletConfirm()
       })
-      if(Util.isAndroidOrIOS()){
+      if(HtmlUtil.isAndroidOrIOS()){
         exbBtn.on('mousedown', (evt) => {
           exb.delEvent = true
         })
@@ -516,7 +520,7 @@ export default {
     },
     createErrorMessage(e){
       if (e.key) {
-        return this.$i18n.tnl('message.' + e.type, {key: this.$i18n.tnl('label.' + Util.snake2camel(e.key)), val: e.val})
+        return this.$i18n.tnl('message.' + e.type, {key: this.$i18n.tnl('label.' + StringUtil.snake2camel(e.key)), val: e.val})
       }
       return this.$i18n.tnl('message.failed', {target: this.$i18n.tnl('label.save'), code: e.message})
     },

@@ -2,6 +2,7 @@ import { APP, DISP, DEV } from '../constant/config'
 import { TX_VIEW_TYPES, DETECT_STATE } from '../constant/Constants'
 import * as DetectStateHelper from '../helper/DetectStateHelper'
 import * as Util from '../util/Util'
+import * as DateUtil from '../util/DateUtil'
 import * as mock from '../../assets/mock/mock.js'
 
 const iconsUnitNum = 9
@@ -261,7 +262,7 @@ export const correctNearestPositions = (orgPositions, now, showAllTime = false) 
     .filter((val) => {
       if (DEV.DEBUG) {
         const method = now - val.timestamp > APP.POS.LOST_TIME || val.rssi < APP.POS.RSSI_MIN? 'warn': 'log'
-        console[method]('btxId', val.btx_id, Util.formatDate(val.timestamp), (now - val.timestamp) / 1000 + '秒前', 'RSSI: ' + Math.round(val.rssi * 100)/ 100)
+        console[method]('btxId', val.btx_id, DateUtil.formatDate(val.timestamp), (now - val.timestamp) / 1000 + '秒前', 'RSSI: ' + Math.round(val.rssi * 100)/ 100)
       }
       return true
     })

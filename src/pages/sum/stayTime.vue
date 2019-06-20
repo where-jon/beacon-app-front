@@ -83,8 +83,9 @@
 import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
+import * as HtmlUtil from '../../sub/util/HtmlUtil'
+import * as DateUtil from '../../sub/util/DateUtil'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
@@ -95,7 +96,6 @@ import alert from '../../components/parts/alert.vue'
 import { APP, DISP } from '../../sub/constant/config'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import * as ChartHelper from '../../sub/helper/ChartHelper'
-// import * as mock from '../../assets/mock/mock'
 import validatemixin from '../../components/mixin/validatemixin.vue'
 import commonmixinVue from '../../components/mixin/commonmixin.vue'
 import controlmixinVue from '../../components/mixin/controlmixin.vue'
@@ -148,7 +148,7 @@ export default {
       'showAlert',
     ]),
     iosOrAndroid() {
-      return Util.isAndroidOrIOS()
+      return HtmlUtil.isAndroidOrIOS()
     },
   },
   watch: {
@@ -166,8 +166,8 @@ export default {
     await StateHelper.load('category')
     await StateHelper.load('group')
     const date = new Date()
-    this.form.datetimeFrom = Util.getDatetime(date, {date: -3})
-    this.form.datetimeTo = Util.getDatetime(date)
+    this.form.datetimeFrom = DateUtil.getDatetime(date, {date: -3})
+    this.form.datetimeTo = DateUtil.getDatetime(date)
   },
   async mounted() {
     HtmlUtil.importElementUI()
@@ -343,7 +343,7 @@ export default {
       const parent = document.getElementById('stayTimeChart').parentElement
       const canvas = this.$refs.stayTimeChart
       canvas.width = parent.clientWidth
-      if (Util.isAndroidOrIOS()) {
+      if (HtmlUtil.isAndroidOrIOS()) {
         canvas.height = 250
       }
       else {

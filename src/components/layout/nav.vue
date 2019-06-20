@@ -121,7 +121,6 @@ import { DISP, APP } from '../../sub/constant/config'
 import { LOGIN_MODE } from '../../sub/constant/Constants'
 import { getThemeClasses } from '../../sub/helper/ThemeHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
-import * as Util from '../../sub/util/Util'
 import commonmixinVue from '../mixin/commonmixin.vue'
 import CustomLink from '../parts/customlink.vue'
 import * as StateHelper from '../../sub/helper/StateHelper'
@@ -176,7 +175,7 @@ export default {
     },
     regionTdClasses() {
       const classes = {region: true}
-      if(Util.isIos()){
+      if(HtmlUtil.isIos()){
         classes['mobile-region'] = true
       }
       return classes
@@ -231,7 +230,7 @@ export default {
       return regions && regions.length > 1
     },
     isResponsiveMenu(){
-      return Util.isResponsiveMode()
+      return HtmlUtil.isResponsiveMode()
     },
     getStyleDropdownRegion(regionId) {
       const login = JSON.parse(window.localStorage.getItem('login'))

@@ -1,6 +1,9 @@
 import _ from 'lodash'
 import * as AppServiceHelper from './AppServiceHelper'
 import * as Util from '../util/Util'
+import * as StringUtil from '../util/StringUtil'
+import * as ArrayUtil from '../util/ArrayUtil'
+import * as DateUtil from '../util/DateUtil'
 import { CATEGORY, SHAPE, NOTIFY_STATE, SYSTEM_ZONE_CATEGORY_NAME} from '../constant/Constants'
 import { APP, DISP } from '../constant/config'
 
@@ -32,7 +35,7 @@ export const createMasterCd = (masterType, masterList, masterData = null) => {
       if(curLength <= cnt){
         return prev
       }
-      const comp = Util.compareStrNum(prevAry[cnt], curAry[cnt])
+      const comp = StringUtil.compareStrNum(prevAry[cnt], curAry[cnt])
       if(comp < 0){
         return cur
       }
@@ -50,7 +53,7 @@ export const createMasterCd = (masterType, masterList, masterData = null) => {
     if(index + 1 < array.length){
       return ret + cur
     }
-    return ret + (/^[0-9]+$/.test(cur)? Util.addWithPadding(cur, 1): cur.concat(1))
+    return ret + (/^[0-9]+$/.test(cur)? StringUtil.addWithPadding(cur, 1): cur.concat(1))
   }, '')
 }
 
@@ -74,7 +77,7 @@ export const getSensorIdNames = (exbSensorList) => {
 
 export const getDeviceIdName = (device, option = {forceSensorName: false}) => {
   if(device.exbId){
-    return Util.includesIgnoreCase(APP.EXB.WITH, 'deviceId')? 'deviceId': Util.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')? 'deviceIdX': 'locationName'
+    return ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceId')? 'deviceId': ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')? 'deviceIdX': 'locationName'
   }
   if(device.txId){
     return option.forceSensorName? 'potName': APP.TX.BTX_MINOR != 'minor'? 'btxId': 'minor'
@@ -181,7 +184,7 @@ const appStateConf = {
   },
   exbs: {
     path: '/core/exb/withLocation',
-    sort: Util.includesIgnoreCase(APP.EXB.WITH, 'deviceId')? 'deviceId': Util.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')? 'deviceIdX': 'locationName',
+    sort: ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceId')? 'deviceId': ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')? 'deviceIdX': 'locationName',
     beforeCommit: (arr) => {
       return arr.map((exb) => {
         const location = exb.location
@@ -254,11 +257,11 @@ const appStateConf = {
         if(!b.txParams){
           return -1
         }
-        const comp = Util.compareArray(a.txParams.map(val => val[idNames]), b.txParams.map(val => val[idNames]))
+        const comp = ArrayUtil.compareArray(a.txParams.map(val => val[idNames]), b.txParams.map(val => val[idNames]))
         if(comp != 0){
           return comp
         }
-        return Util.compareArray(a.txParams.map(val => val.potName), b.txParams.map(val => val.potName))
+        return ArrayUtil.compareArray(a.txParams.map(val => val.potName), b.txParams.map(val => val.potName))
       })// omit images to avoid being filtering target
     }
   },
@@ -293,7 +296,7 @@ const appStateConf = {
   },
   users: {
     path: '/meta/user',
-    sort: Util.includesIgnoreCase(APP.USER.WITH, 'name')? 'name': 'loginId',
+    sort: ArrayUtil.includesIgnoreCase(APP.USER.WITH, 'name')? 'name': 'loginId',
     beforeCommit: (arr) => {
       return arr.map(val => ({
         ...val,
@@ -308,9 +311,9 @@ const appStateConf = {
     beforeCommit: (arr) => {
       return arr.map((val) => ({
         ...val,
-        newsDt: Util.formatDate(val.newsDate),
+        newsDt: DateUtil.formatDate(val.newsDate),
         dispState: i18n.tnl(`label.${val.dispFlg == 0? 'hide': 'display'}`),
-        newsContent: Util.cutOnLong(val.content, 16),
+        newsContent: StringUtil.cutOnLong(val.content, 16),
       }))
     }
   },
@@ -331,7 +334,7 @@ const appStateConf = {
     beforeCommit: (arr) => {
       return  arr.map((val) => ({
         ...val,
-        featureName: val.featureType == 0? Util.toLowerCaseTop(val.featureName): val.featureName,
+        featureName: val.featureType == 0? StringUtil.toLowerCaseTop(val.featureName): val.featureName,
       }))
     }
   },
@@ -374,7 +377,7 @@ const appStateConf = {
     beforeCommit: (arr) => {
       return  arr.map((val) => ({
         ...val,
-        createDt: Util.formatDate(val.createDt),
+        createDt: DateUtil.formatDate(val.createDt),
       }))
     }
   },
@@ -418,7 +421,7 @@ export const load = async (target, force) => {
   let {path, sort, beforeCommit} = appStateConf[target]
   let arr = store.state.app_service[target]
   const expiredKey = `${target}Expired`
-  if (!arr || arr.length == 0 || force || getForceFetch(forceFetchTarget) || Util.isExpired(store.state.app_service[expiredKey])) {
+  if (!arr || arr.length == 0 || force || getForceFetch(forceFetchTarget) || DateUtil.isExpired(store.state.app_service[expiredKey])) {
     arr = await AppServiceHelper.fetchList(path, sort)
     if (beforeCommit) {
       arr = beforeCommit(arr)
@@ -456,12 +459,12 @@ export const loadAreaImages = async () => {
 
 /**
  * stateからプルダウン等のオプションを取得する。
- * @param key stateのkey。obj[key + 'Id']の形でid項目を取得するのにも使う
- * @param textField 省略可。偽の場合、obj[key + 'Name']をtext:の値に使用する。文字列の場合、obj[textField]の形でtext項目を取得する。<br />
+ * @param {*} key stateのkey。obj[key + 'Id']の形でid項目を取得するのにも使う
+ * @param {*} textField 省略可。偽の場合、obj[key + 'Name']をtext:の値に使用する。文字列の場合、obj[textField]の形でtext項目を取得する。<br />
  * 関数の場合、第一引数にobjを渡して、戻り値をtext項目に使用する。
- * @param notNull 省略可。偽の場合、戻り値に{value: null, text: ''}を追加する。同様の形式のオブジェクトの場合、それを追加する。<br />
+ * @param {*} notNull 省略可。偽の場合、戻り値に{value: null, text: ''}を追加する。同様の形式のオブジェクトの場合、それを追加する。<br />
  * その他の場合、何もしない。下のフィルタ適用の後に行う。
- * @param filterCallback 省略可。オプションに適用するフィルタ。_.filter(ary, filterCallback)の処理を行う。
+ * @param {*} filterCallback 省略可。オプションに適用するフィルタ。_.filter(ary, filterCallback)の処理を行う。
  * aryはstateの内容。オプションではない。
  * 
  * @example

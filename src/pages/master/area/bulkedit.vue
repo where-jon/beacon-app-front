@@ -8,6 +8,7 @@
 <script>
 import { mapState } from 'vuex'
 import * as Util from '../../../sub/util/Util'
+import * as ArrayUtil from '../../../sub/util/ArrayUtil'
 import { BULK, PATTERN } from '../../../sub/constant/Constants'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
@@ -59,7 +60,7 @@ export default {
           BulkHelper.setPrimaryKey(entity, this.id, val, dummyKey--)
           return dummyKey
         }
-        if(Util.equalsAny(headerName, NUMBER_TYPE_LIST)){
+        if(ArrayUtil.equalsAny(headerName, NUMBER_TYPE_LIST)){
           BulkHelper.setNumberKey(entity, headerName, val)
           return dummyKey
         }

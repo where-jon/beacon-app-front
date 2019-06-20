@@ -13,8 +13,9 @@ import * as StateHelper from '../../sub/helper/StateHelper'
 import * as ParamHelper from '../../sub/helper/ParamHelper'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
-import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
+import * as HtmlUtil from '../../sub/util/HtmlUtil'
+import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import { APP } from '../../sub/constant/config'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import * as DetectStateHelper from '../../sub/helper/DetectStateHelper'
@@ -81,8 +82,8 @@ export default {
           { key: 'hour3_count' },
           { key: 'ibeacon_received' },
         ]: [
-          Util.includesIgnoreCase(APP.EXB.WITH, 'deviceId')? { key: 'deviceId' }: null,
-          Util.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')? { key: 'deviceIdX' }: null,
+          ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceId')? { key: 'deviceId' }: null,
+          ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')? { key: 'deviceIdX' }: null,
           { key: 'name', label: 'locationName'},
           APP.TELEMETRY.WITH_POWER_LEVEL? { key: 'powerLevel' }: null,
           { key: 'timestamp', label: 'finalReceiveTimestamp'},
@@ -110,8 +111,8 @@ export default {
           ibeacon_received: 'ibeacon_received',
         }:
         {
-          deviceId: Util.includesIgnoreCase(APP.EXB.WITH, 'deviceId') ? 'deviceId' : null,
-          deviceIdX: Util.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX') ? 'deviceId(HEX)' : null,
+          deviceId: ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceId') ? 'deviceId' : null,
+          deviceIdX: ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX') ? 'deviceId(HEX)' : null,
           name: 'finalRevceivePlace',
           powerLevel: 'powerLevel',
           timestamp: 'timestamp',
@@ -177,10 +178,10 @@ export default {
 
         const deviceId = APP.SVC.POS.EXSERVER ? e.deviceid : parseInt(e.deviceid, 16)
 
-        if(Util.includesIgnoreCase(APP.EXB.WITH, 'deviceId')){
+        if(ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceId')){
           ret.deviceId = deviceId
         }
-        if(Util.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')){
+        if(ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')){
           ret.deviceIdX= e.deviceid.toUpperCase()
         }
         return ret

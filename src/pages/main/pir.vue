@@ -31,6 +31,8 @@ import * as StateHelper from '../../sub/helper/StateHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as IconHelper from '../../sub/helper/IconHelper'
 import * as Util from '../../sub/util/Util'
+import * as NumberUtil from '../../sub/util/NumberUtil'
+import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import txdetail from '../../components/parts/txdetail.vue'
 import { DISP, APP } from '../../sub/constant/config'
 import { SENSOR, TX } from '../../sub/constant/Constants'
@@ -178,7 +180,7 @@ export default {
       return IconHelper.createCircleIcon(labelInfo.label, shapeInfo.width / scale, labelInfo.color, shapeInfo.bgColor, {bold: false})
     },
     showExb(exb) {
-      if (!Util.equalsAny(exb.sensorId, [SENSOR.PIR, SENSOR.PRESSURE, SENSOR.THERMOPILE])) {
+      if (!ArrayUtil.equalsAny(exb.sensorId, [SENSOR.PIR, SENSOR.PRESSURE, SENSOR.THERMOPILE])) {
         return
       }
 
@@ -230,7 +232,7 @@ export default {
 
       //　表示条件：マグネットセンサ、固定位置登録＆同一エリア、PIR画面表示設定
       _(this.txs).filter((tx) => tx.sensorId == SENSOR.MAGNET && tx.location && tx.location.x * tx.location.y > 0 
-        && tx.location.areaId == this.selectedArea && Util.bitON(tx.disp, TX.DISP.PIR))
+        && tx.location.areaId == this.selectedArea && NumberUtil.bitON(tx.disp, TX.DISP.PIR))
         .forEach((tx) => {
           this.showTx(tx)
         })

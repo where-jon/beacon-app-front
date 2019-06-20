@@ -13,8 +13,10 @@ import * as StateHelper from '../../sub/helper/StateHelper'
 import * as ParamHelper from '../../sub/helper/ParamHelper'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
-import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
+import * as HtmlUtil from '../../sub/util/HtmlUtil'
+import * as ArrayUtil from '../../sub/util/ArrayUtil'
+import * as DateUtil from '../../sub/util/DateUtil'
 import { APP } from '../../sub/constant/config'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import commonmixinVue from '../../components/mixin/commonmixin.vue'
@@ -109,7 +111,7 @@ export default {
     },
     async fetchSensorHistory(){
       const exCloudSensors = {}
-      if(!Util.includesIgnoreCase(APP.TX_MON.WITH_SENSOR)){
+      if(!ArrayUtil.includesIgnoreCase(APP.TX_MON.WITH_SENSOR)){
         return exCloudSensors
       }
       for(let idx = 0; idx < APP.TX_MON.WITH_SENSOR.length; idx++){
@@ -209,7 +211,7 @@ export default {
     getTimestamp(timestamp) {
       if (timestamp) {
         try {
-          return Util.formatDate(timestamp)
+          return DateUtil.formatDate(timestamp)
         } catch (e) {}
       }
       return this.$i18n.tnl('label.undetect')

@@ -105,8 +105,9 @@ import * as LocaleHelper from '../../../sub/helper/LocaleHelper'
 import * as AuthHelper from '../../../sub/helper/AuthHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
-import * as ValidateUtil from '../../../sub/util/ValidateUtil'
+import * as ValidateHelper from '../../../sub/helper/ValidateHelper'
 import * as Util from '../../../sub/util/Util'
+import * as ArrayUtil from '../../../sub/util/ArrayUtil'
 import { getLangShort } from '../../../sub/util/HtmlUtil'
 import commonmixinVue from '../../../components/mixin/commonmixin.vue'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
@@ -174,10 +175,10 @@ export default {
         .reduce((prev, cur, i, a) => { return prev + cur }) > 0
     },
     showEmail() {
-      return Util.includesIgnoreCase(APP.USER.WITH, 'email')
+      return ArrayUtil.includesIgnoreCase(APP.USER.WITH, 'email')
     },
     showName() {
-      return Util.includesIgnoreCase(APP.USER.WITH, 'name')
+      return ArrayUtil.includesIgnoreCase(APP.USER.WITH, 'name')
     },
   },
   watch: {
@@ -265,7 +266,7 @@ export default {
         return false
       }
 
-      const result = ValidateUtil.validatePattern(value, /^[a-zA-Z0-9_\-/!#$%&@]*$/, this.$i18n.tnl('message.invalidPassword'))
+      const result = ValidateHelper.validatePattern(value, /^[a-zA-Z0-9_\-/!#$%&@]*$/, this.$i18n.tnl('message.invalidPassword'))
       if (result !== null) {
         this.passErrorMessage = result
         this.errorMessages.general.push(this.passErrorMessage)
@@ -352,12 +353,12 @@ export default {
       if (required.length > 0) {
         return required
       }
-      const pattern = ValidateUtil.validatePattern(value, /^[a-zA-Z0-9_\-/!#$%&@]*$/, invalidPatternMessage)
+      const pattern = ValidateHelper.validatePattern(value, /^[a-zA-Z0-9_\-/!#$%&@]*$/, invalidPatternMessage)
       return pattern ? [pattern] : []
     },
     validateRequire (val, label) {
       const target = label
-      const result = ValidateUtil.validateRequire(val, this.$i18n.tnl('message.required', { target }))
+      const result = ValidateHelper.validateRequire(val, this.$i18n.tnl('message.required', { target }))
       return result ? [result] : []
     },
     async setLoginUser () {

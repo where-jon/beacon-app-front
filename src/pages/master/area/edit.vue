@@ -44,8 +44,9 @@
 import { mapState } from 'vuex'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
-import * as HtmlUtil from '../../../sub/util/HtmlUtil'
 import * as Util from '../../../sub/util/Util'
+import * as HtmlUtil from '../../../sub/util/HtmlUtil'
+import * as StringUtil from '../../../sub/util/StringUtil'
 import commonmixinVue from '../../../components/mixin/commonmixin.vue'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
@@ -119,7 +120,7 @@ export default {
           this.mapUpdate = true
         }
         const inputFileName = Util.getValue(e, 'target.files.0.name', null)
-        this.setFileName(inputFileName? Util.cutOnLongByte(inputFileName, this.getNameByteLangth()): null)
+        this.setFileName(inputFileName? StringUtil.cutOnLongByte(inputFileName, this.getNameByteLangth()): null)
         if(!inputFileName){
           this.clearImage(e)
         }

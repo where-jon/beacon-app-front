@@ -85,8 +85,10 @@ import controlmixinVue from '../../components/mixin/controlmixin.vue'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
-import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
+import * as HtmlUtil from '../../sub/util/HtmlUtil'
+import * as ArrayUtil from '../../sub/util/ArrayUtil'
+import * as DateUtil from '../../sub/util/DateUtil'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import { APP, DISP } from '../../sub/constant/config.js'
@@ -149,7 +151,7 @@ export default {
       )
     },
     enableGroup () {
-      return this.isEnabledMenu('group') && Util.includesIgnoreCase(APP.POT.WITH, 'group')
+      return this.isEnabledMenu('group') && ArrayUtil.includesIgnoreCase(APP.POT.WITH, 'group')
     },
     groupOptions() {
       return StateHelper.getOptionsFromState('group',
@@ -161,8 +163,8 @@ export default {
   created() {
     StateHelper.load('group')
     const date = new Date()
-    this.form.datetimeFrom = Util.getDatetime(date, {hours: -1})
-    this.form.datetimeTo = Util.getDatetime(date)
+    this.form.datetimeFrom = DateUtil.getDatetime(date, {hours: -1})
+    this.form.datetimeTo = DateUtil.getDatetime(date)
   },
   mounted() {
     HtmlUtil.importElementUI()
@@ -195,7 +197,7 @@ export default {
         }
         for (var posHist of fetchList) {
           const d = new Date(posHist.positionDt)
-          posHist.positionDt = Util.formatDate(d.getTime())
+          posHist.positionDt = DateUtil.formatDate(d.getTime())
           const aTx = _.find(this.txs, (tx) => { return tx.txId == posHist.txId })
           posHist.potName = Util.getValue(aTx, 'potName', '')
           posHist.major = Util.getValue(aTx, 'major', '')

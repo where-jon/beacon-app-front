@@ -60,6 +60,9 @@ import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ParamHelper from '../../../sub/helper/ParamHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as Util from '../../../sub/util/Util'
+import * as HtmlUtil from '../../../sub/util/HtmlUtil'
+import * as StringUtil from '../../../sub/util/StringUtil'
+import * as StyleUtil from '../../../sub/util/StyleUtil'
 import { DISP } from '../../../sub/constant/config'
 import { UPDATE_ONLY_NN } from '../../../sub/constant/Constants'
 import { Shape, Container, Text } from '@createjs/easeljs/dist/easeljs.module'
@@ -215,7 +218,7 @@ export default {
       txBtn.addChild(s)
       const text = this.getLabel(tx)
       const label = new Text(text)
-      label.font = Util.getInRectFontSize(text, w, h)
+      label.font = StyleUtil.getInRectFontSize(text, w, h)
       label.color = DISP.TX_LOC.COLOR
       label.textAlign = 'center'
       label.textBaseline = 'middle'
@@ -252,7 +255,7 @@ export default {
         this.deleteTarget = txBtn
         this.showDeletConfirm()
       })
-      if(Util.isAndroidOrIOS()){
+      if(HtmlUtil.isAndroidOrIOS()){
         txBtn.on('mousedown', (evt) => {
           tx.delEvent = true
         })
@@ -350,7 +353,7 @@ export default {
     },
     createErrorMessage(e){
       if (e.key) {
-        return this.$i18n.tnl('message.' + e.type, {key: this.$i18n.tnl('label.' + Util.snake2camel(e.key)), val: e.val})
+        return this.$i18n.tnl('message.' + e.type, {key: this.$i18n.tnl('label.' + StringUtil.snake2camel(e.key)), val: e.val})
       }
       return this.$i18n.tnl('message.failed', {target: this.$i18n.tnl('label.save'), code: e.message})
     },

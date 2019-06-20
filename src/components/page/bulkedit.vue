@@ -29,7 +29,7 @@ import * as CharSetHelper from '../../sub/helper/CharSetHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import { CHAR_SET } from '../../sub/constant/Constants'
 import alert from '../parts/alert.vue'
-import * as Util from '../../sub/util/Util'
+import * as HtmlUtil from '../../sub/util/HtmlUtil'
 
 export default {
   components: {
@@ -74,7 +74,7 @@ export default {
     }
   },
   mounted() {
-    const message = Util.popLocalStorage('bulkMessage')
+    const message = HtmlUtil.popLocalStorage('bulkMessage')
     if(message){
       this.message = message
       this.replace({showInfo: true})

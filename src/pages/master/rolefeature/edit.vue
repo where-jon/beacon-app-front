@@ -41,8 +41,9 @@ import * as ParamHelper from '../../../sub/helper/ParamHelper'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
 import featuremixinVue from '../../../components/mixin/featuremixin.vue'
 import controlmixinVue from '../../../components/mixin/controlmixin.vue'
-import * as HtmlUtil from '../../../sub/util/HtmlUtil'
 import * as Util from '../../../sub/util/Util'
+import * as HtmlUtil from '../../../sub/util/HtmlUtil'
+import * as ArrayUtil from '../../../sub/util/ArrayUtil'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
@@ -131,7 +132,7 @@ export default {
   methods: {
     async resetFeatureNames(){
       let roleFeatures = await AppServiceHelper.fetchList(`/meta/roleFeature/${this.role.roleId}`)
-      if(!Util.isArray(roleFeatures)){
+      if(!ArrayUtil.isArray(roleFeatures)){
         roleFeatures = []
       }
       this.replaceAS({roleFeatures})

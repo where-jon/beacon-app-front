@@ -1,4 +1,5 @@
 import * as Util from '../util/Util'
+import * as StringUtil from '../util/StringUtil'
 import { BULK } from '../constant/Constants'
 
 export const isPrimaryKeyHeader = (headerName) => headerName == BULK.PRIMARY_KEY
@@ -24,7 +25,7 @@ export const setBooleanKey = (entity, headerName, val, option = {isNullable: fal
     return Util.getValue(option, 'isNullable', false)? entity: addInvalid(entity, headerName, val, Util.getValue(option, 'errorName', null))
   }
   if(['true', 'false'].includes(val.toLowerCase())){
-    entity[headerName] = Util.str2boolean(val)
+    entity[headerName] = StringUtil.str2boolean(val)
     return entity
   }
   return addInvalid(entity, headerName, val, Util.getValue(option, 'errorName', null))

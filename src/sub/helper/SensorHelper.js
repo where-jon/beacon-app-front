@@ -1,6 +1,8 @@
 import { DISCOMFORT, SENSOR, THERMOHUMIDITY } from '../constant/Constants'
 import { APP, DISP } from '../constant/config'
 import * as Util from '../util/Util'
+import * as ArrayUtil from '../util/ArrayUtil'
+import * as DateUtil from '../util/DateUtil'
 import * as ChartHelper from './ChartHelper'
 import { addLabelByKey } from './ViewHelper'
 import Chart from 'chart.js'
@@ -386,7 +388,7 @@ export const createChartData = (range, data) => {
 }
 
 export const showThermoHumidityChart = (id, data, i18n) => {
-  const range = Util.numberRange(APP.SENSOR.TEMPERATURE.LINE_HOUR_START, APP.SENSOR.TEMPERATURE.LINE_HOUR_END)
+  const range = ArrayUtil.numberRange(APP.SENSOR.TEMPERATURE.LINE_HOUR_START, APP.SENSOR.TEMPERATURE.LINE_HOUR_END)
   const chartData = createChartData(range, data.map((val) => {return {key: val.key, immediate: {...val}}}))
   const suffix = ':00'
   chartData.forEach((val) => val.key = val.key + suffix)
@@ -394,7 +396,7 @@ export const showThermoHumidityChart = (id, data, i18n) => {
 }
 
 export const showChartDetail = (canvasId, sensorId, dateFrom, dateTo, sensorData, by, i18n) => {
-  const range = Util.dateRange(dateFrom, dateTo, by)
+  const range = DateUtil.dateRange(dateFrom, dateTo, by)
   const chartData = createChartData(range, sensorData)
   return createChartGraph(canvasId, sensorId, chartData, by, i18n, true)
 }
@@ -417,10 +419,10 @@ export const getFields1 = (i18n) => {
   return addLabelByKey(i18n, [
     {key: 'sensorDt', sortable: true, label:'dt'},
     {key: 'potName', sortable: true },
-    Util.includesIgnoreCase(APP.SENSOR_LIST.WITH, 'deviceId') && Util.includesIgnoreCase(APP.EXB.WITH, 'deviceId')? {key: 'deviceId', sortable: true }: null,
-    Util.includesIgnoreCase(APP.SENSOR_LIST.WITH, 'deviceIdX') && Util.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')? {key: 'deviceIdX', sortable: true }: null,
+    ArrayUtil.includesIgnoreCase(APP.SENSOR_LIST.WITH, 'deviceId') && ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceId')? {key: 'deviceId', sortable: true }: null,
+    ArrayUtil.includesIgnoreCase(APP.SENSOR_LIST.WITH, 'deviceIdX') && ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')? {key: 'deviceIdX', sortable: true }: null,
     {key: 'locationName', label:'locationZoneName', sortable: true,},
-    Util.includesIgnoreCase(APP.SENSOR_LIST.WITH, 'posId')? {key: 'posId', label:'posId', sortable: true,}: null,
+    ArrayUtil.includesIgnoreCase(APP.SENSOR_LIST.WITH, 'posId')? {key: 'posId', label:'posId', sortable: true,}: null,
     {key: 'areaName', label:'area', sortable: true,},
     {key: 'temperature', sortable: true},
     {key: 'humidity', sortable: true},
@@ -430,8 +432,8 @@ export const getFields1 = (i18n) => {
 export const getFields2 = (i18n) =>{
   return addLabelByKey(i18n, [
     {key: 'sensorDt', sortable: true, label:'dt'},
-    Util.includesIgnoreCase(APP.EXB.WITH, 'deviceId')? {key: 'deviceId', sortable: true }: null,
-    Util.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')? {key: 'deviceIdX', sortable: true }: null,
+    ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceId')? {key: 'deviceId', sortable: true }: null,
+    ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')? {key: 'deviceIdX', sortable: true }: null,
     {key: 'locationName', label:'locationZoneName', sortable: true,},
     {key: 'posId', label:'posId', sortable: true,},
     {key: 'areaName', label:'area', sortable: true,},
@@ -466,8 +468,8 @@ export const getFields6 = (i18n) => {
 export const getFields8 = (i18n) => {
   return addLabelByKey(i18n, [
     {key: 'sensorDt', sortable: true, label:'dt'},
-    Util.includesIgnoreCase(APP.EXB.WITH, 'deviceId')? {key: 'deviceId', sortable: true }: null,
-    Util.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')? {key: 'deviceIdX', sortable: true }: null,
+    ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceId')? {key: 'deviceId', sortable: true }: null,
+    ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')? {key: 'deviceIdX', sortable: true }: null,
     {key: 'locationName', label:'locationZoneName', sortable: true,},
     {key: 'posId', label:'posId', sortable: true,},
     {key: 'areaName', label:'area', sortable: true,},

@@ -9,8 +9,10 @@ import * as StateHelper from '../../sub/helper/StateHelper'
 import * as CharSetHelper from '../../sub/helper/CharSetHelper'
 import { APP } from '../../sub/constant/config.js'
 import { UPDATE_ONLY_NN, IGNORE, USER, CHAR_SET } from '../../sub/constant/Constants'
-import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
+import * as HtmlUtil from '../../sub/util/HtmlUtil'
+import * as StringUtil from '../../sub/util/StringUtil'
+import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import commonmixinVue from './commonmixin.vue'
 
 export default {
@@ -86,8 +88,8 @@ export default {
     isShown(conf, column) {
       const keys = conf.split('.')
       const setting = keys.reduce((prev, cur) => prev[cur], APP)
-      if(Util.isArray(setting)){
-        return Util.includesIgnoreCase(setting, column)
+      if(ArrayUtil.isArray(setting)){
+        return ArrayUtil.includesIgnoreCase(setting, column)
       }
       return setting
     },
@@ -123,7 +125,7 @@ export default {
       if(this.beforeReload) {
         if(this.vueSelected && typeof this.vueSelected == 'object'){
           Object.keys(this.vueSelected).forEach(key => {
-            this.vueSelected[key] = Util.isArray(this.vueSelected[key])? []: null
+            this.vueSelected[key] = ArrayUtil.isArray(this.vueSelected[key])? []: null
           })
         }
         this.beforeReload()
@@ -136,7 +138,7 @@ export default {
     },
     getSubmitErrorMessage(e){
       if (e.key) {
-        return this.$i18n.tnl('message.' + e.type, {key: this.$i18n.tnl('label.' + this.modifyColName(Util.snake2camel(e.key))), val: this.modifyVal(Util.snake2camel(e.key), e.val)})
+        return this.$i18n.tnl('message.' + e.type, {key: this.$i18n.tnl('label.' + this.modifyColName(StringUtil.snake2camel(e.key))), val: this.modifyVal(StringUtil.snake2camel(e.key), e.val)})
       }
       if(e.col){
         return this.$i18n.tnl('message.' + e.type, {col: this.$i18n.tnl(`label.${e.col}`), value: e.val})
@@ -145,7 +147,7 @@ export default {
         return _.map(_.orderBy(e.bulkError, ['line'], ['asc']), (err) => {
           let col = this.modifyColName(err.col.trim())
           return this.$i18n.tline('message.bulk' + err.type + 'Failed', 
-            {line: err.line, col: this.$i18n.tnl(`label.${col}`), value: Util.sanitize(err.value), min: err.min, max: err.max, candidates: err.candidates, num: err.num, unit: err.unit? this.$i18n.tnl(`label.${err.unit}Unit`): '', target: err.target? this.$i18n.tnl(`label.${err.target}`): ''},
+            {line: err.line, col: this.$i18n.tnl(`label.${col}`), value: StringUtil.sanitize(err.value), min: err.min, max: err.max, candidates: err.candidates, num: err.num, unit: err.unit? this.$i18n.tnl(`label.${err.unit}Unit`): '', target: err.target? this.$i18n.tnl(`label.${err.target}`): ''},
             this.showLine)
         }).filter((val, idx, arr) => arr.indexOf(val) == idx)
       }
@@ -257,7 +259,7 @@ export default {
       return null
     },
     csvHeaderCheck(mainCol, header){
-      if(Util.isArray(mainCol)){
+      if(ArrayUtil.isArray(mainCol)){
         let hasHeader = true
         mainCol.forEach((val) => hasHeader = header.includes(val)? hasHeader: false)
         if (!hasHeader) {
@@ -269,16 +271,16 @@ export default {
       }
     },
     convertCsvParamType(headerName, val, intTypeList, boolTypeList){
-      if (Util.equalsAny(headerName, boolTypeList)) { // Boolean type
-        return Util.str2boolean(val)
+      if (ArrayUtil.equalsAny(headerName, boolTypeList)) { // Boolean type
+        return StringUtil.str2boolean(val)
       }
-      else if (Util.equalsAny(headerName, intTypeList)) { // Number type
+      else if (ArrayUtil.equalsAny(headerName, intTypeList)) { // Number type
         return Number(val)
       }
       return val
     },
     createSameEntity(entities, entity, mainCol){
-      return Util.isArray(mainCol)?
+      return ArrayUtil.isArray(mainCol)?
         entities.find((val) => {
           for(let idx = 0; idx < mainCol.length; idx++){
             const col = mainCol[idx]
@@ -318,9 +320,9 @@ export default {
     setReaderOnload(reader, readerParam, mainCol, intTypeList, boolTypeList, callback, idSetCallback){
       reader.onload = () => {
         try {
-          const csvString = Util.arrayBuffer2str(reader.result)
+          const csvString = ArrayUtil.arrayBuffer2str(reader.result)
           const bulkCharSet = CharSetHelper.detectBulkCharSet(this.$store.state.loginId)
-          const charsetResult = Util.analyseEncode(csvString, bulkCharSet)
+          const charsetResult = StringUtil.analyseEncode(csvString, bulkCharSet)
           if(!charsetResult.match){
             const charset = CHAR_SET.find(val => val.name == charsetResult.charset)
             throw new Error(
@@ -390,7 +392,7 @@ export default {
       if(this.afterCrud) {
         this.afterCrud()
       }
-      if(Util.isArray(mainCol)){
+      if(ArrayUtil.isArray(mainCol)){
         let col = null
         mainCol.forEach((val, idx) => {
           col = idx == 0? val.slice(0, -2): `${col}${val.charAt(0).toUpperCase()}${val.slice(1, -2)}`

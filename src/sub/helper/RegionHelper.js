@@ -1,9 +1,10 @@
 import * as Util from '../util/Util'
-import * as SortUtil from '../util/SortUtil'
+import * as HtmlUtil from '../util/HtmlUtil'
+import * as StringUtil from '../util/StringUtil'
 import * as AuthHelper from './AuthHelper'
 
 export const autoSwitchRegion = async (regions) => {
-  const currentRegionId = Util.getValue(Util.getLogin(), 'currentRegion.regionId', null)
+  const currentRegionId = Util.getValue(HtmlUtil.getLogin(), 'currentRegion.regionId', null)
   if(regions.find(region => region.regionId == currentRegionId)){
     return false
   }
@@ -21,7 +22,7 @@ export const autoSwitchRegion = async (regions) => {
 }
 
 export const enableRegionOptions = regions => {
-  const login = Util.getLogin()
+  const login = HtmlUtil.getLogin()
   if(!login){
     return []
   }
@@ -30,5 +31,5 @@ export const enableRegionOptions = regions => {
     Util.hasValue(login.userRegionIdList)?
       regions.filter(region => login.userRegionIdList.includes(region.regionId)):
       regions.filter(region => login.currentRegion? region.regionId == login.currentRegion.regionId: false)
-  return ret.sort((a, b) => SortUtil.sortByString(a.regionName, b.regionName))
+  return ret.sort((a, b) => StringUtil.sortByString(a.regionName, b.regionName))
 }

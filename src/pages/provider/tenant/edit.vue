@@ -153,6 +153,7 @@ import * as HttpHelper from '../../../sub/helper/HttpHelper'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
 import featuremixinVue from '../../../components/mixin/featuremixin.vue'
 import * as Util from '../../../sub/util/Util'
+import * as DateUtil from '../../../sub/util/DateUtil'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
 import chromeInput from '../../../components/parts/chromeinput.vue'
@@ -212,7 +213,7 @@ export default {
       'tenant', 'features', 'settings'
     ]),
     createDt(){
-      return Util.formatDate(this.form.createDt)
+      return DateUtil.formatDate(this.form.createDt)
     }
   },
   async created(){

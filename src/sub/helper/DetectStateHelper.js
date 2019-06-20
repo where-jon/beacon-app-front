@@ -1,7 +1,7 @@
 import { APP, DEV } from '../constant/config.js'
 import { DETECT_STATE } from '../constant/Constants'
 import * as mock from '../../assets/mock/mock'
-import * as Util from '../util/Util'
+import * as ArrayUtil from '../util/ArrayUtil'
 
 export const getTypes = (type) => {
   return DETECT_STATE.getTypes().filter((type) => {
@@ -21,7 +21,7 @@ export const getClass = (state) => {
 }
 
 export const isUndetect = (state) => {
-  return !Util.equalsAny(state, [DETECT_STATE.DETECTED, DETECT_STATE.LOST])
+  return !ArrayUtil.equalsAny(state, [DETECT_STATE.DETECTED, DETECT_STATE.LOST])
 }
 
 const getTodayUndetectTime = () => {

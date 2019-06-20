@@ -80,6 +80,8 @@ import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import * as Util from '../../sub/util/Util'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
+import * as ArrayUtil from '../../sub/util/ArrayUtil'
+import * as DateUtil from '../../sub/util/DateUtil'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as ParamHelper from '../../sub/helper/ParamHelper'
@@ -139,10 +141,10 @@ export default {
       return CATEGORY.POT_AVAILABLE
     },
     enableCategory () {
-      return this.isEnabledMenu('category') && Util.includesIgnoreCase(APP.POT.WITH, 'category')
+      return this.isEnabledMenu('category') && ArrayUtil.includesIgnoreCase(APP.POT.WITH, 'category')
     },
     enableGroup () {
-      return this.isEnabledMenu('group') && Util.includesIgnoreCase(APP.POT.WITH, 'group')
+      return this.isEnabledMenu('group') && ArrayUtil.includesIgnoreCase(APP.POT.WITH, 'group')
     },
     enableIndividual () {
       return !this.fromHeatmap || (this.fromHeatmap && APP.HEATMAP.USE_INDIVIDUAL)
@@ -190,8 +192,8 @@ export default {
     this.changeGroup()
     this.vueSelected.area = ParamHelper.getVueSelectData(this.areaOptions, null, true)
     const date = new Date()
-    this.form.datetimeFrom = Util.getDatetime(date, {hours: -1})
-    this.form.datetimeTo = Util.getDatetime(date)
+    this.form.datetimeFrom = DateUtil.getDatetime(date, {hours: -1})
+    this.form.datetimeTo = DateUtil.getDatetime(date)
   },
   mounted() {
     HtmlUtil.importElementUI()
@@ -217,7 +219,7 @@ export default {
     },
     changeDatetimeFrom(newVal = this.form.datetimeFrom) {
       if(newVal){
-        this.form.datetimeTo = Util.getDatetime(newVal, {minutes: APP.ANALYSIS.DATETIME_INTERVAL})
+        this.form.datetimeTo = DateUtil.getDatetime(newVal, {minutes: APP.ANALYSIS.DATETIME_INTERVAL})
       }
       else{
         this.form.datetimeTo = null

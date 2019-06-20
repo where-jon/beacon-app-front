@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import * as Util from '../sub/util/Util'
+import * as DateUtil from '../sub/util/DateUtil'
 import { mapState } from 'vuex'
 import * as ViewHelper from '../sub/helper/ViewHelper'
 import * as StateHelper from '../sub/helper/StateHelper'
@@ -70,7 +70,7 @@ export default {
     newsList() {
       return this.topNewsList.map((val) => ({
         ...val,
-        newsDate: Util.formatDate(val.newsDate),
+        newsDate: DateUtil.formatDate(val.newsDate),
         content: val.content,
       }))
     },
