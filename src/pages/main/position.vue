@@ -379,8 +379,11 @@ export default {
           this.stage.addChild(this.txCont)
           this.stage.update()
         }
+
         this.setPositionedExb()
-        this.setProhibitDetect('pos')
+        if (APP.POS.PROHIBIT_ALERT) {
+          this.setProhibitDetect('pos')
+        }
         this.showTxAll()
         if(!this.firstTime && reloadButton){
           this.reloadState.isLoad = false
@@ -413,7 +416,6 @@ export default {
         return
       }
       this.txCont.removeAllChildren()
-      this.stage.update()
       this.disableExbsCheck()
       this.detectedCount = 0 // 検知カウントリセット
       let position = []
@@ -426,6 +428,7 @@ export default {
         position = PositionHelper.adjustPosition(this.getPositions(), ratio, this.positionedExb, this.selectedArea)
       }
       position.forEach((pos) => this.showTx(pos))
+      this.stage.update()
       this.reShowTx(position)
     },
     showTx(pos) {
@@ -454,6 +457,7 @@ export default {
         meditag = this.getMeditagSensor(tx.btxId)
         Util.debug('meditag', meditag)
       }
+
       const display = this.getDisplay(tx)
       const color = meditag? '#000': this.isMagnetOn(magnet)? display.bgColor : display.color
       const bgColor = meditag? meditag.bg: this.isMagnetOn(magnet)? display.color: display.bgColor
@@ -463,9 +467,7 @@ export default {
         return
       }
 
-      if ((exb && exb.isAbsentZone || this.isOtherFloorFixTx(tx, exb)) && this.isFixTx(tx)) {
-        pos.transparent = true
-      }
+      pos.transparent = ((exb && exb.isAbsentZone || this.isOtherFloorFixTx(tx, exb)) && this.isFixTx(tx))
 
       // 既に該当btx_idのTXアイコンが作成済みか?
       let txBtn = this.icons[pos.btx_id]
@@ -489,7 +491,6 @@ export default {
         this.showDetail(txBtn.txId, txBtn.x, txBtn.y)
       }
       this.txCont.addChild(txBtn)
-      this.stage.update()
       this.detectedCount++  // 検知数カウント増加
     },
     touchEnd (evt) {
