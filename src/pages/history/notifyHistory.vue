@@ -158,8 +158,9 @@ import controlmixinVue from '../../components/mixin/controlmixin.vue'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
-import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
+import * as HtmlUtil from '../../sub/util/HtmlUtil'
+import * as DateUtil from '../../sub/util/DateUtil'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import { NOTIFY_STATE } from '../../sub/constant/Constants'
@@ -300,8 +301,8 @@ export default {
   },
   async created() {
     const date = new Date()
-    this.form.datetimeFrom = Util.getDatetime(date, {hours: -1})
-    this.form.datetimeTo = Util.getDatetime(date)
+    this.form.datetimeFrom = DateUtil.getDatetime(date, {hours: -1})
+    this.form.datetimeTo = DateUtil.getDatetime(date)
     this.form.notifyState = this.notifyStateOptions[0].value
     const user = await AppServiceHelper.getCurrentUser()
     const isProvider = JSON.parse(window.localStorage.getItem('login')).isProvider
@@ -479,7 +480,7 @@ export default {
         let count = 0
         fetchList.forEach((notifyData) => {
           const d = new Date(notifyData.notifyDatetime)
-          notifyData.positionDt = Util.formatDate(d.getTime())
+          notifyData.positionDt = DateUtil.formatDate(d.getTime())
           notifyData.notifyResult = notifyData.notifyResult == 0 ? '成功' : '失敗'
           if(this.userState == 'ALL_REGION' || aNotifyState == 'GW_ALERT' || aNotifyState == 'EXB_ALERT'){
             let arNotifyto = this.getNotifyTo(notifyData.notifyTo)

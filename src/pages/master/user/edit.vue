@@ -60,8 +60,9 @@ import * as AuthHelper from '../../../sub/helper/AuthHelper'
 import { APP } from '../../../sub/constant/config.js'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
 import controlmixinVue from '../../../components/mixin/controlmixin.vue'
-import * as HtmlUtil from '../../../sub/util/HtmlUtil'
 import * as Util from '../../../sub/util/Util'
+import * as HtmlUtil from '../../../sub/util/HtmlUtil'
+import * as ArrayUtil from '../../../sub/util/ArrayUtil'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
 import chromeInput from '../../../components/parts/chromeinput.vue'
@@ -104,13 +105,13 @@ export default {
       return 'outline-' + theme
     },
     showEmail() {
-      return Util.includesIgnoreCase(APP.USER.WITH, 'email')
+      return ArrayUtil.includesIgnoreCase(APP.USER.WITH, 'email')
     },
     showName() {
-      return Util.includesIgnoreCase(APP.USER.WITH, 'name')
+      return ArrayUtil.includesIgnoreCase(APP.USER.WITH, 'name')
     },
     showRegion() {
-      return Util.includesIgnoreCase(APP.USER.WITH, 'region')
+      return ArrayUtil.includesIgnoreCase(APP.USER.WITH, 'region')
     },
     ...mapState('app_service', [
       'user', 'roles', 'regions'

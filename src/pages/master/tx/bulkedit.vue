@@ -8,6 +8,7 @@
 <script>
 import { mapState } from 'vuex'
 import * as Util from '../../../sub/util/Util'
+import * as ArrayUtil from '../../../sub/util/ArrayUtil'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
 import * as StateHelper from '../../../sub/helper/StateHelper'
@@ -84,13 +85,13 @@ export default {
       return dummyKey
     },
     setParamLocation(entity, headerName, val, dummyKey){
-      if(!Util.includesIgnoreCase(APP.TX.WITH, 'location')){
+      if(!ArrayUtil.includesIgnoreCase(APP.TX.WITH, 'location')){
         return dummyKey
       }
       if(!entity.location){
         entity.location = {}
       }
-      if(Util.equalsAny(headerName, ['x', 'y'])){
+      if(ArrayUtil.equalsAny(headerName, ['x', 'y'])){
         BulkHelper.setNumberKey(entity.location, headerName, val, {isNullable: true, errorName: 'loc'+ headerName.toUpperCase() + 'Name'})
         return dummyKey
       }
@@ -98,7 +99,7 @@ export default {
       return dummyKey
     },
     addLocation(entity, dummyKey){
-      if(!Util.includesIgnoreCase(APP.TX.WITH, 'location')){
+      if(!ArrayUtil.includesIgnoreCase(APP.TX.WITH, 'location')){
         return dummyKey
       }
       if(!entity.location){
@@ -159,12 +160,12 @@ export default {
           BulkHelper.setPrimaryKey(entity, this.id, val, dummyKey--)
           return dummyKey
         }
-        if(Util.equalsAny(headerName, NUMBER_TYPE_LIST)){
+        if(ArrayUtil.equalsAny(headerName, NUMBER_TYPE_LIST)){
           BulkHelper.setNumberKey(entity, headerName, val, {isNullable: !APP.TX.MAJOR_REQUIRED && headerName == 'major'})
           return dummyKey
         }
 
-        if (Util.equalsAny(headerName, POT)) {
+        if (ArrayUtil.equalsAny(headerName, POT)) {
           if (!entity.potTxList) {
             entity.potTxList = [{potTxPK: {potId: dummyKey--, txId: dummyKey--}, pot: {}}]
           }
@@ -183,7 +184,7 @@ export default {
           dummyKey = this.setParamTxSensor(entity, headerName, val, dummyKey)
           return dummyKey
         }
-        if (Util.equalsAny(headerName, LOCATION)) {
+        if (ArrayUtil.equalsAny(headerName, LOCATION)) {
           dummyKey = this.setParamLocation(entity, headerName, val, dummyKey)
           return dummyKey
         }

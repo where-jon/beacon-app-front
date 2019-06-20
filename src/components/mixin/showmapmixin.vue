@@ -13,6 +13,9 @@ import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as IconHelper from '../../sub/helper/IconHelper'
 import * as Util from '../../sub/util/Util'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
+import * as StringUtil from '../../sub/util/StringUtil'
+import * as NumberUtil from '../../sub/util/NumberUtil'
+import * as DateUtil from '../../sub/util/DateUtil'
 import reloadmixinVue from './reloadmixin.vue'
 import listmixinVue from './listmixin.vue'
 import * as mock from '../../assets/mock/mock'
@@ -100,7 +103,7 @@ export default {
           clearTimeout(timer)
         } 
         timer = setTimeout( async () => {
-          if (currentWidth === window.innerWidth && Util.isAndroidOrIOS()) {
+          if (currentWidth === window.innerWidth && HtmlUtil.isAndroidOrIOS()) {
             // モバイル端末だと表示の直後にリサイズイベントが発生してしまうため、
             // 画面横幅が変わっていなければ処理をキャンセル
             return
@@ -418,7 +421,7 @@ export default {
       const now = !DEV.USE_MOCK_EXC ? new Date().getTime(): mock.positions_conf.start + this.count++ * mock.positions_conf.interval
       const correctPositions = APP.POS.USE_POSITION_HISTORY? this.positionHistores: PositionHelper.correctPosId(this.orgPositions, now)
       return _(positions)
-        .filter((pos) => allShow || (pos.tx && Util.bitON(pos.tx.disp, TX.DISP.POS)))
+        .filter((pos) => allShow || (pos.tx && NumberUtil.bitON(pos.tx.disp, TX.DISP.POS)))
         .map((pos) => {
           let cPos = _.find(correctPositions, (cPos) => pos.btx_id == cPos.btx_id)
           if (cPos || allShow) {
@@ -464,13 +467,13 @@ export default {
       const catOrGr = tx[DISP.TX.DISPLAY_PRIORITY[0]] || tx[DISP.TX.DISPLAY_PRIORITY[1]]
       const display = catOrGr && catOrGr.display || {}
       return {
-        color: Util.addPrefix(display.color || DISP.TX.COLOR, '#'),
-        bgColor: Util.addPrefix(display.bgColor || DISP.TX.BGCOLOR, '#'),
+        color: StringUtil.addPrefix(display.color || DISP.TX.COLOR, '#'),
+        bgColor: StringUtil.addPrefix(display.bgColor || DISP.TX.BGCOLOR, '#'),
         shape: display.shape || SHAPE.CIRCLE
       }
     },
     getFinalReceiveTime (time) {
-      return Util.formatDate(time)
+      return DateUtil.formatDate(time)
     },
     isShowModal() {
       return window.innerWidth < this.showIconMinWidth
@@ -567,7 +570,7 @@ export default {
     createRectInfo(pos, bgColor){
       let strokeAlpha = 1
       let fillAlpha = 1
-      if (Util.bitON(pos.tx.disp, TX.DISP.ALWAYS)) {
+      if (NumberUtil.bitON(pos.tx.disp, TX.DISP.ALWAYS)) {
         // 常時表示時
         fillAlpha = pos.isLost? DISP.TX.LOST_ALPHA: pos.transparent? DISP.TX.ALPHA: fillAlpha
       } else if (pos.transparent) {

@@ -57,8 +57,9 @@ import { addLabelByKey } from '../../sub/helper/ViewHelper'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as SensorHelper from '../../sub/helper/SensorHelper'
-import * as Util from '../../sub/util/Util'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
+import * as StringUtil from '../../sub/util/StringUtil'
+import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import { EXCLOUD, APP } from '../../sub/constant/config'
 import { SENSOR } from '../../sub/constant/Constants'
@@ -100,9 +101,9 @@ export default {
       type: this.ptype? this.ptype: 'location',
       sensorId: this.ptype? SensorHelper.onlyOne(): null,
       year: new Date().getFullYear(),
-      month: Util.zeroPad(new Date().getMonth() + 1, 2),
-      years: Util.range(2019, new Date().getFullYear()).map(e => ({label: '' + e, value: e})),
-      months: Array(12).fill().map((_, i) => ({label: '' + ++i, value: Util.zeroPad(i, 2)})),
+      month: StringUtil.zeroPad(new Date().getMonth() + 1, 2),
+      years: ArrayUtil.range(2019, new Date().getFullYear()).map(e => ({label: '' + e, value: e})),
+      months: Array(12).fill().map((_, i) => ({label: '' + ++i, value: StringUtil.zeroPad(i, 2)})),
       viewList: [],
       fields: addLabelByKey(this.$i18n, [
         {key: 'date', sortable: true, label:'date'},

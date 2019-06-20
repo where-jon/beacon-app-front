@@ -10,6 +10,7 @@ import { mapState } from 'vuex'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as BulkHelper from '../../../sub/helper/BulkHelper'
 import * as Util from '../../../sub/util/Util'
+import * as ArrayUtil from '../../../sub/util/ArrayUtil'
 import { BULK } from '../../../sub/constant/Constants'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
@@ -40,7 +41,7 @@ export default {
   },
   methods: {
     resetId(entity, dummyKey){
-      if(Util.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX') && !entity.deviceId && !entity.deviceIdXName){
+      if(ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX') && !entity.deviceId && !entity.deviceIdXName){
         entity.deviceId = parseInt(entity.deviceIdX, 16)
       }
       return dummyKey
@@ -90,7 +91,7 @@ export default {
         BulkHelper.setNumberKey(entity.location, headerName, val)
         return dummyKey
       }
-      if(Util.equalsAny(headerName, ['x', 'y'])){
+      if(ArrayUtil.equalsAny(headerName, ['x', 'y'])){
         BulkHelper.setNumberKey(entity.location, headerName, val, {isNullable: true, errorName: 'loc'+ headerName.toUpperCase() + 'Name'})
         return dummyKey
       }
@@ -107,14 +108,14 @@ export default {
           return dummyKey
         }
         if(headerName == 'deviceId'){
-          BulkHelper.setNumberKey(entity, headerName, val, {isNullable: !Util.includesIgnoreCase(APP.EXB.WITH, 'deviceId')})
+          BulkHelper.setNumberKey(entity, headerName, val, {isNullable: !ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceId')})
           return dummyKey
         }
         if(headerName == 'deviceIdX'){
-          BulkHelper.setHexKey(entity, headerName, val, {isNullable: !Util.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')})
+          BulkHelper.setHexKey(entity, headerName, val, {isNullable: !ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')})
           return dummyKey
         }
-        if(Util.equalsAny(headerName, BOOL_TYPE_LIST)){
+        if(ArrayUtil.equalsAny(headerName, BOOL_TYPE_LIST)){
           BulkHelper.setBooleanKey(entity, headerName, val)
           return dummyKey
         }
@@ -122,7 +123,7 @@ export default {
         if (headerName == 'sensor') {
           return this.setParamSensor(entity, headerName, val, dummyKey)
         }
-        if (Util.equalsAny(headerName, LOCATION)) {
+        if (ArrayUtil.equalsAny(headerName, LOCATION)) {
           return this.setParamLocation(entity, headerName, val, dummyKey)
         }
         entity[headerName] = val

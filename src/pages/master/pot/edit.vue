@@ -112,8 +112,9 @@ import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ParamHelper from '../../../sub/helper/ParamHelper'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
 import controlmixinVue from '../../../components/mixin/controlmixin.vue'
-import * as HtmlUtil from '../../../sub/util/HtmlUtil'
 import * as Util from '../../../sub/util/Util'
+import * as HtmlUtil from '../../../sub/util/HtmlUtil'
+import * as StringUtil from '../../../sub/util/StringUtil'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
 import chromeInput from '../../../components/parts/chromeinput.vue'
@@ -496,7 +497,7 @@ export default {
           this.form.thumbnailTemp = this.form.thumbnail
 
           const inputFileName = Util.getValue(e, 'target.files.0.name', null)
-          this.setFileName(inputFileName? Util.cutOnLongByte(inputFileName, this.getNameByteLangth()): null)
+          this.setFileName(inputFileName? StringUtil.cutOnLongByte(inputFileName, this.getNameByteLangth()): null)
           if(!inputFileName){
             this.clearImage(e)
           }else{

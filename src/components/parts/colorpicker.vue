@@ -16,7 +16,8 @@
 
 <script>
 import { Chrome } from 'vue-color'
-import * as Util from '../../sub/util/Util'
+import * as NumberUtil from '../../sub/util/NumberUtil'
+import * as ColorUtil from '../../sub/util/ColorUtil'
 import { getButtonTheme } from '../../sub/helper/ThemeHelper'
 
 export default {
@@ -71,8 +72,8 @@ export default {
       return style
     },
     changeColor(color){
-      this.colorValue = Util.colorCd4display(color)
-      this.colorText = Util.luminance(Util.colorCd4db(color)) <= 128? '#FFFFFF': '#000000'
+      this.colorValue = ColorUtil.colorCd4display(color)
+      this.colorText = NumberUtil.luminance(ColorUtil.colorCd4db(color)) <= 128? '#FFFFFF': '#000000'
     },
     switchEditMode(){
       if(this.$parent.isEditable){

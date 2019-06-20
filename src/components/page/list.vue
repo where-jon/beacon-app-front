@@ -226,9 +226,10 @@ import * as StateHelper from '../../sub/helper/StateHelper'
 import * as SensorHelper from '../../sub/helper/SensorHelper'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
 import * as DetectStateHelper from '../../sub/helper/DetectStateHelper'
-import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
-import * as SortUtil from '../../sub/util/SortUtil'
+import * as HtmlUtil from '../../sub/util/HtmlUtil'
+import * as StringUtil from '../../sub/util/StringUtil'
+import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import { getButtonTheme } from '../../sub/helper/ThemeHelper'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import commonmixinVue from '../mixin/commonmixin.vue'
@@ -321,7 +322,7 @@ export default {
       return this.list.map((item) => {
         return _.reduce(item, (result, val, key) => {
           const isAllDisp = Util.hasValue(this.params.allDispFields) && this.params.allDispFields.includes(key)
-          result[key] = isAllDisp? val: Util.cutOnLong(val, 50)
+          result[key] = isAllDisp? val: StringUtil.cutOnLong(val, 50)
           return result
         }, {})
       })
@@ -348,7 +349,7 @@ export default {
       return MenuHelper.isEditable(this.indexPath)
     },
     iosOrAndroid() {
-      return Util.isAndroidOrIOS()
+      return HtmlUtil.isAndroidOrIOS()
     },
     extraFilterSpec() {
       if (!this.params.extraFilter) {
@@ -466,7 +467,7 @@ export default {
     await StateHelper.load('region')
   },
   mounted() {
-    const strageMessage = Util.popLocalStorage('listMessage')
+    const strageMessage = HtmlUtil.popLocalStorage('listMessage')
     this.message = Util.hasValue(strageMessage)? strageMessage: this.listMessage
     this.replaceAS({listMessage: null})
     this.$parent.$options.methods.fetchData.apply(this.$parent)
@@ -524,10 +525,10 @@ export default {
     },
     sortCompareCustom(aData, bData, key){
       if(key == 'txIdName'){
-        return SortUtil.sortByArray(aData.txIdNames, bData.txIdNames)
+        return ArrayUtil.sortByArray(aData.txIdNames, bData.txIdNames)
       }
       if(key == 'regionName'){
-        return SortUtil.sortByString(aData[key], bData[key])
+        return StringUtil.sortByString(aData[key], bData[key])
       }
       return null
     },
@@ -739,7 +740,7 @@ export default {
         await this.$parent.$options.methods.fetchData.apply(this.$parent)        
       } catch (e) {
         this.message = null
-        if(e && e.response && e.response.data && Util.isArray(e.response.data.errorList)){
+        if(e && e.response && e.response.data && ArrayUtil.isArray(e.response.data.errorList)){
           const errorList = e.response.data.errorList
           this.error = []
           errorList.forEach((error) => {
@@ -755,7 +756,7 @@ export default {
           })
           this.replace({showAlert: true})
         }
-        else if(Util.isArray(e.bulkError)){
+        else if(ArrayUtil.isArray(e.bulkError)){
           this.error = e.bulkError.map(error => {
             return this.$i18n.tnl('message.bulk' + error.type + 'Failed', {
               col: this.$i18n.tnl(`label.${error.col}`),

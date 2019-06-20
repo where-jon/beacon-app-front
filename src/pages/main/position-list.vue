@@ -21,6 +21,7 @@ import * as MenuHelper from '../../sub/helper/MenuHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
 import { EXTRA_NAV } from '../../sub/constant/Constants'
 import * as Util from '../../sub/util/Util'
+import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import { APP } from '../../sub/constant/config.js'
 
 export default {
@@ -49,9 +50,9 @@ export default {
           APP.TX.BTX_MINOR == 'minor' ? {key: 'minor', label: 'minor', sortable: true, tdClass: 'action-rowdata' }: null,
           APP.TX.BTX_MINOR != 'minor' ? {key: 'btx_id', label: 'btxId', sortable: true, tdClass: 'action-rowdata' }: null,
           APP.TX.BTX_MINOR == 'both' ? {key: 'minor', label:'minor', sortable: true, tdClass: 'action-rowdata' }: null,
-          Util.includesIgnoreCase(APP.POT.WITH, 'potCd') ? {key: 'potCd', label: 'potCd', sortable: true, tdClass: 'action-rowdata'} : null,
+          ArrayUtil.includesIgnoreCase(APP.POT.WITH, 'potCd') ? {key: 'potCd', label: 'potCd', sortable: true, tdClass: 'action-rowdata'} : null,
           {key: 'potName', label: 'name', sortable: true, tdClass: 'action-rowdata'},
-          Util.includesIgnoreCase(APP.POS_LIST.WITH, 'tel')? {key: 'tel', sortable: true, tdClass: 'action-rowdata' }: null,
+          ArrayUtil.includesIgnoreCase(APP.POS_LIST.WITH, 'tel')? {key: 'tel', sortable: true, tdClass: 'action-rowdata' }: null,
           MenuHelper.useMaster('category') && APP.POS.WITH.CATEGORY ? {key: 'categoryName', label: 'category', sortable: true, tdClass: 'action-rowdata'} : null,
           MenuHelper.useMaster('group') && APP.POS.WITH.GROUP ? {key: 'groupName', label: 'group', sortable: true, tdClass: 'action-rowdata'} : null,
           {key: 'state', sortable: true, tdClass: 'action-rowdata'},

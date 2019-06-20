@@ -49,8 +49,10 @@
 import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
+import * as HtmlUtil from '../../sub/util/HtmlUtil'
+import * as ArrayUtil from '../../sub/util/ArrayUtil'
+import * as DateUtil from '../../sub/util/DateUtil'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
@@ -113,7 +115,7 @@ export default {
       'categories',
     ]),
     iosOrAndroid() {
-      return Util.isAndroidOrIOS()
+      return HtmlUtil.isAndroidOrIOS()
     },
   },
   watch: {
@@ -215,10 +217,10 @@ export default {
           date: date,
           name: potName, 
           groupName: groupName,
-          stayTime: Util.convertToTime(stayTime), 
-          absent1Time: Util.convertToTime(under30minAbsentTime), 
-          absent2Time: Util.convertToTime(over30to90minAbsentTime),
-          lostTime: Util.convertToTime(lostTime),
+          stayTime: DateUtil.convertToTime(stayTime), 
+          absent1Time: DateUtil.convertToTime(under30minAbsentTime), 
+          absent2Time: DateUtil.convertToTime(over30to90minAbsentTime),
+          lostTime: DateUtil.convertToTime(lostTime),
           stayRatio: presentRatio + ' %',
           absent1Ratio: absentRatio + ' %',
           absent2Ratio: absentRatioSub + ' %',
@@ -243,7 +245,7 @@ export default {
         return
       }
       let viewList = this.getStayDataList(moment(this.form.date).format('YYYY-MM-DD'), dataList, APP.SUM_ABSENT_LIMIT, APP.SUM_LOST_LIMIT)
-      Util.sortIgnoreCase(viewList, 'name')
+      ArrayUtil.sortIgnoreCase(viewList, 'name')
 
       const searchDate = moment(this.form.date).format('YYYY-MM-DD')
       const group = this.form.groupId? this.groups.find((val) => val.groupId == this.form.groupId): null
@@ -264,7 +266,7 @@ export default {
     updateColumnName(){
       if(Util.hasValue(this.fields)){
         this.fields.forEach(field => {
-          field.label = Util.isResponsiveMode(true)? field.originLabel.replace(/<br>/g, ''): field.originLabel
+          field.label = HtmlUtil.isResponsiveMode(true)? field.originLabel.replace(/<br>/g, ''): field.originLabel
         })
       }
     },
@@ -319,7 +321,7 @@ export default {
         }
 
         let list = this.getStayDataList(moment(searchDate).format('YYYY-MM-DD'), sumData, APP.STAY_SUM.ABSENT_LIMIT, APP.STAY_SUM.LOST_LIMIT)
-        Util.sortIgnoreCase(list, 'name')
+        ArrayUtil.sortIgnoreCase(list, 'name')
         csvList = csvList.isEmpty? list: csvList.concat(list)
       }
 
@@ -349,7 +351,7 @@ export default {
       ]
     },
     pickerChanged() {
-      if (!Util.hasValue(this.form.date) || Util.isAfterNextMonth(this.form.date)) {
+      if (!Util.hasValue(this.form.date) || DateUtil.isAfterNextMonth(this.form.date)) {
         this.message = this.$i18n.terror('message.invalid', {target: this.$i18n.tnl('label.date')})
         this.replace({showAlert: true})
         return

@@ -67,8 +67,10 @@ import 'element-ui/lib/theme-chalk/index.css'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
-import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
+import * as HtmlUtil from '../../sub/util/HtmlUtil'
+import * as NumberUtil from '../../sub/util/NumberUtil'
+import * as DateUtil from '../../sub/util/DateUtil'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
 import commonmixinVue from '../../components/mixin/commonmixin.vue'
@@ -96,16 +98,16 @@ export default {
       zoneCategorys: [],
       categoryId: null,
       zoneId: null,
-      inputDateFrom: Util.getDatetime(new Date(), null, 'yyyy-MM-dd'),
-      inputDateTo: Util.getDatetime(new Date(), null, 'yyyy-MM-dd'),
-      dateFrom: Util.getDatetime(new Date(), null, 'yyyyMMdd'),
-      dateTo: Util.getDatetime(new Date(), null, 'yyyyMMdd'),
+      inputDateFrom: DateUtil.getDatetime(new Date(), null, 'yyyy-MM-dd'),
+      inputDateTo: DateUtil.getDatetime(new Date(), null, 'yyyy-MM-dd'),
+      dateFrom: DateUtil.getDatetime(new Date(), null, 'yyyyMMdd'),
+      dateTo: DateUtil.getDatetime(new Date(), null, 'yyyyMMdd'),
       historyType: 0,
       temperatureHistoryData: null,
       //
       message: '',
       //
-      useInputDate: Util.supportInputType('date'),
+      useInputDate: HtmlUtil.supportInputType('date'),
     }
   },
   computed: {
@@ -215,13 +217,13 @@ export default {
         }
         list.forEach(data => {
           if(data.temperature){
-            data.temperature = Util.formatTemperature(data.temperature)
+            data.temperature = NumberUtil.formatTemperature(data.temperature)
           }
           if(data.humidity){
-            data.humidity = Util.formatHumidity(data.humidity)
+            data.humidity = NumberUtil.formatHumidity(data.humidity)
           }
           if(data.dt){
-            data.dt = Util.formatDate(new Date(data.dt))
+            data.dt = DateUtil.formatDate(new Date(data.dt))
           }
           delete data['sensorHistoryId']
           delete data['sensorDt']

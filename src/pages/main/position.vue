@@ -98,6 +98,7 @@ import * as MenuHelper from '../../sub/helper/MenuHelper'
 import * as ParamHelper from '../../sub/helper/ParamHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as Util from '../../sub/util/Util'
+import * as NumberUtil from '../../sub/util/NumberUtil'
 import txdetail from '../../components/parts/txdetail.vue'
 import { APP, DISP } from '../../sub/constant/config'
 import { SENSOR, EXTRA_NAV, CATEGORY, TX } from '../../sub/constant/Constants'
@@ -288,7 +289,7 @@ export default {
       await this.fetchAreaExbs(false)
 
       let alwaysTxs = this.txs.filter((tx) => {
-        return tx.areaId == this.selectedArea && Util.bitON(tx.disp, TX.DISP.ALWAYS)
+        return tx.areaId == this.selectedArea && NumberUtil.bitON(tx.disp, TX.DISP.ALWAYS)
       })
       let isAllfetch = alwaysTxs? true: false
       if(!payload.disabledPosition){
@@ -439,7 +440,7 @@ export default {
         console.warn('tx not found. btx_id=' + pos.btx_id)
         return
       }
-      if (!Util.bitON(tx.disp, TX.DISP.POS)) {
+      if (!NumberUtil.bitON(tx.disp, TX.DISP.POS)) {
         Util.debug('tx is not allowed to show', tx)
         return
       }

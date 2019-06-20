@@ -114,8 +114,10 @@
 import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
+import * as HtmlUtil from '../../sub/util/HtmlUtil'
+import * as NumberUtil from '../../sub/util/NumberUtil'
+import * as DateUtil from '../../sub/util/DateUtil'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as SensorHelper from '../../sub/helper/SensorHelper'
@@ -237,7 +239,7 @@ export default {
       })
     },
     iosOrAndroid() {
-      return Util.isAndroidOrIOS()
+      return HtmlUtil.isAndroidOrIOS()
     },
     showDevice(){
       return this.form.sensorId == SENSOR.TEMPERATURE && APP.SENSORGRAPH.WITH_DEVICE
@@ -272,8 +274,8 @@ export default {
     this.form.sumTarget = SUM_TARGET.AVERAGE
     this.changeSensorId()
     const date = new Date()
-    this.form.datetimeFrom = Util.getDatetime(date, {date: -1})
-    this.form.datetimeTo = Util.getDatetime(date)
+    this.form.datetimeFrom = DateUtil.getDatetime(date, {date: -1})
+    this.form.datetimeTo = DateUtil.getDatetime(date)
     this.getSumUnitOptions()
     this.changeSumUnit()
   },
@@ -283,7 +285,7 @@ export default {
   methods: {
     getSumUnitOptions(newDatetimeFrom = this.form.datetimeFrom, newDatetimeTo = this.form.datetimeTo) {
       const sumUnitOptions = SUM_UNIT.getOptions()
-      const subDatetime = Util.getSubDatetime(newDatetimeFrom, newDatetimeTo)
+      const subDatetime = DateUtil.getSubDatetime(newDatetimeFrom, newDatetimeTo)
       const options = [sumUnitOptions[2]]
       if(subDatetime.date >= this.dateOver){
         this.form.sumUnit = sumUnitOptions[2].value
@@ -519,15 +521,15 @@ export default {
       }
       const sensorEditData = {}
       sensorData.data.forEach((val) => {
-        const key = Util.formatDate(val.sensorDt, this.unitFunc(() => 'YYYY/MM/DD [00]:[00]', () => 'YYYY/MM/DD HH:[00]', () => 'YYYY/MM/DD HH:mm'))
+        const key = DateUtil.formatDate(val.sensorDt, this.unitFunc(() => 'YYYY/MM/DD [00]:[00]', () => 'YYYY/MM/DD HH:[00]', () => 'YYYY/MM/DD HH:mm'))
         if(!sensorEditData[key]){
           sensorEditData[key] = []
         }
         if(val.humidity){
-          val.humidity = Util.formatHumidity(val.humidity)
+          val.humidity = NumberUtil.formatHumidity(val.humidity)
         }
         if(val.temperature){
-          val.temperature = Util.formatTemperature(val.temperature)
+          val.temperature = NumberUtil.formatTemperature(val.temperature)
         }
         sensorEditData[key].push(val)
       })

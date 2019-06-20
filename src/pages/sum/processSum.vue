@@ -25,6 +25,7 @@
 <script>
 import { mapState } from 'vuex'
 import * as Util from '../../sub/util/Util'
+import * as DateUtil from '../../sub/util/DateUtil'
 import { CATEGORY, PROCESS_SUM } from '../../sub/constant/Constants'
 import { APP } from '../../sub/constant/config'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
@@ -143,16 +144,16 @@ export default {
       return Util.getValue(response, 'processSumList', []).map(processSum => {
         const periods = {}
         Util.getValue(processSum, 'processPeriods', []).forEach((period, idx) => {
-          periods[idx.toString()] = period? Util.formatTime(period): '-'
+          periods[idx.toString()] = period? DateUtil.formatTime(period): '-'
         })
         const period = Util.getValue(processSum, 'period', 0)
         const stateList = this.getState(processSum)
         return {
           ...processSum,
           ...periods,
-          totalTime: period? Util.formatTime(period): '-',
+          totalTime: period? DateUtil.formatTime(period): '-',
           stateList: stateList.map(state => state.label),
-          dt: Util.formatDate(processSum.dt + period * 1000),
+          dt: DateUtil.formatDate(processSum.dt + period * 1000),
           _rowVariant: stateList.find(state => state.error)? 'danger': '',
         }
       })

@@ -64,8 +64,10 @@ import * as StateHelper from '../../sub/helper/StateHelper'
 import * as SensorHelper from '../../sub/helper/SensorHelper'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
-import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
+import * as HtmlUtil from '../../sub/util/HtmlUtil'
+import * as NumberUtil from '../../sub/util/NumberUtil'
+import * as DateUtil from '../../sub/util/DateUtil'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import { SENSOR } from '../../sub/constant/Constants'
@@ -130,8 +132,8 @@ export default {
     await StateHelper.load('exb')
     this.form.sensorId = Util.hasValue(this.sensorOptions)? this.sensorOptions[0].value: null
     const date = new Date()
-    this.form.datetimeFrom = Util.getDatetime(date, {hours: -1})
-    this.form.datetimeTo = Util.getDatetime(date)
+    this.form.datetimeFrom = DateUtil.getDatetime(date, {hours: -1})
+    this.form.datetimeTo = DateUtil.getDatetime(date)
     this.fields = this.fields1
   },
   mounted() {
@@ -146,7 +148,7 @@ export default {
     },
     editSensorHistoryData(senHist){
       const d = new Date(senHist.sensorDt)
-      senHist.sensorDt = Util.formatDate(d.getTime())
+      senHist.sensorDt = DateUtil.formatDate(d.getTime())
 
       let aTx = _.find(this.txs, (tx) => { return tx.txId == senHist.txId })
       if (senHist.txId != null && aTx) {
@@ -168,8 +170,8 @@ export default {
       }
 
       if (senHist.sensorId == SENSOR.TEMPERATURE) {
-        senHist.humidity = isNaN(senHist.value.humidity)? '': Util.formatHumidity(Number(senHist.value.humidity))
-        senHist.temperature = isNaN(senHist.value.temperature)? '': Util.formatTemperature(Number(senHist.value.temperature))
+        senHist.humidity = isNaN(senHist.value.humidity)? '': NumberUtil.formatHumidity(Number(senHist.value.humidity))
+        senHist.temperature = isNaN(senHist.value.temperature)? '': NumberUtil.formatTemperature(Number(senHist.value.temperature))
       }
       if (senHist.sensorId == SENSOR.PIR || senHist.sensorId == SENSOR.THERMOPILE) {
         senHist.count = senHist.value.count

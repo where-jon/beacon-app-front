@@ -14,6 +14,7 @@ import { APP } from '../../../sub/constant/config.js'
 import listmixinVue from '../../../components/mixin/listmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import * as Util from '../../../sub/util/Util'
+import * as ArrayUtil from '../../../sub/util/ArrayUtil'
 import { APP_SERVICE, EXCLOUD } from '../../../sub/constant/config'
 
 export default {
@@ -84,7 +85,7 @@ export default {
         .filter(val => val)
     },
     customCsvData(val){ // TODO:
-      const id = Util.includesIgnoreCase(APP.TX.WITH, 'txId')? 'txId': APP.TX.BTX_MINOR == 'minor'? 'minor': 'btxId'
+      const id = ArrayUtil.includesIgnoreCase(APP.TX.WITH, 'txId')? 'txId': APP.TX.BTX_MINOR == 'minor'? 'minor': 'btxId'
       if(Util.hasValue(val.potTxList)){
         val[id] = val.potTxList.map(potTx => potTx.tx? potTx.tx[id]: '').join(';')
       }
@@ -112,7 +113,7 @@ export default {
       StateHelper.setForceFetch('user', true)
     },
     getExtraFilter(){
-      return [this.isEnabledMenu('group') && Util.includesIgnoreCase(APP.POT.WITH, 'group')? 'group': null, this.isEnabledMenu('category') && Util.includesIgnoreCase(APP.POT.WITH, 'category')? 'category': null].filter((val) => val)
+      return [this.isEnabledMenu('group') && ArrayUtil.includesIgnoreCase(APP.POT.WITH, 'group')? 'group': null, this.isEnabledMenu('category') && ArrayUtil.includesIgnoreCase(APP.POT.WITH, 'category')? 'category': null].filter((val) => val)
     },
     async fetchData(payload) {
       try {

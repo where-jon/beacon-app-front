@@ -22,6 +22,7 @@
 <script>
 
 import * as Util from '../../sub/util/Util'
+import * as HtmlUtil from '../../sub/util/HtmlUtil'
 
 export default {
   props: {
@@ -79,7 +80,7 @@ export default {
       if(!linkText || !sideBar){
         return ret
       }
-      if(!Util.isResponsiveMode()){
+      if(!HtmlUtil.isResponsiveMode()){
         ret.left = `${(sideBar.clientWidth - linkText.offsetWidth) / 2}px`
       }
       else{
@@ -93,7 +94,7 @@ export default {
       if(!linkLogo || !sideBar){
         return
       }
-      if(!Util.isResponsiveMode()){
+      if(!HtmlUtil.isResponsiveMode()){
         const sideBarWidth = sideBar.clientWidth - this.margin
         const widthRatio = sideBarWidth / linkLogo.naturalWidth
         linkLogo.width = Math.ceil(linkLogo.naturalWidth * widthRatio)

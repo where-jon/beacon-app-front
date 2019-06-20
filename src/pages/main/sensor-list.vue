@@ -16,6 +16,8 @@ import * as SensorHelper from '../../sub/helper/SensorHelper'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import { SENSOR } from '../../sub/constant/Constants'
 import * as Util from '../../sub/util/Util'
+import * as NumberUtil from '../../sub/util/NumberUtil'
+import * as DateUtil from '../../sub/util/DateUtil'
 
 export default {
   components: {
@@ -81,7 +83,7 @@ export default {
     createDeviceInfo(device){
       const d = new Date(device.updatetime)
       return {
-        sensorDt: Util.formatDate(d.getTime()),
+        sensorDt: DateUtil.formatDate(d.getTime()),
         potName: Util.getValue(device, 'potName', ''),
         deviceId: Util.getValue(device, 'deviceId', ''),
         deviceIdX: Util.getValue(device, 'deviceIdX', ''),
@@ -90,8 +92,8 @@ export default {
         areaName: Util.getValue(device, 'areaName', ''),
         major: Util.getValue(device, 'major', ''),
         minor: Util.getValue(device, 'minor', ''),
-        temperature: Util.formatTemperature(Util.getValue(device, 'temperature', '')),
-        humidity: Util.formatHumidity(Util.getValue(device, 'humidity', '')),
+        temperature: NumberUtil.formatTemperature(Util.getValue(device, 'temperature', '')),
+        humidity: NumberUtil.formatHumidity(Util.getValue(device, 'humidity', '')),
         count: Util.getValue(device, 'count', ''),
         high: Util.getValue(device, 'high', ''),
         low: Util.getValue(device, 'low', ''),

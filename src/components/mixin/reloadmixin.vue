@@ -3,7 +3,6 @@
 import { EventBus } from '../../sub/helper/EventHelper'
 import * as AuthHelper from '../../sub/helper/AuthHelper'
 import commonmixinVue from './commonmixin.vue'
-import * as Util from '../../sub/util/Util'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import { APP } from '../../sub/constant/config'
 
@@ -11,7 +10,7 @@ export default {
   mixins: [commonmixinVue],
   computed: {
     iosOrAndroid() {
-      return Util.isAndroidOrIOS()
+      return HtmlUtil.isAndroidOrIOS()
     },
   },  
   created(){

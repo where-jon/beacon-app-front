@@ -52,7 +52,9 @@ import { APP, DISP } from '../../sub/constant/config'
 import { FONT } from '../../sub/constant/Constants'
 import sensor from './sensor.vue'
 import txdetailmodal from './txdetailmodal.vue'
-import * as Util from '../../sub/util/Util'
+import * as StringUtil from '../../sub/util/StringUtil'
+import * as NumberUtil from '../../sub/util/NumberUtil'
+import * as ColorUtil from '../../sub/util/ColorUtil'
 
 const loadImage = (src, fixHeight) => {
   if(!src){
@@ -122,7 +124,7 @@ export default {
       return containerWidth <= this.selectedTx.orgLeft + this.meditagWidth
     },
     getDispItems () {
-      return APP.TXDETAIL.ITEMS.map(e => Util.cutOnLongByte(this.selectedTx[e], 38))
+      return APP.TXDETAIL.ITEMS.map(e => StringUtil.cutOnLongByte(this.selectedTx[e], 38))
     },
     getProhibitAlertHeight () {
       const prohibitMessageElement= document.getElementsByClassName('alert-dismissible')[0]
@@ -166,7 +168,7 @@ export default {
       return this.selectedSensor.length == 0 ? DISP.TXSENSOR_POPUP_SIZE : DISP.TXDETAIL_POPUP_SIZE
     },
     drawShadow(color){
-      return Util.luminance(Util.colorCd4db(color)) > 240
+      return NumberUtil.luminance(ColorUtil.colorCd4db(color)) > 240
     },
   },
 }

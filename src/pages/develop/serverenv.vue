@@ -23,7 +23,7 @@
 <script>
 import * as HttpHelper from '../../sub/helper/HttpHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
-import * as Util from '../../sub/util/Util'
+import * as ArrayUtil from '../../sub/util/ArrayUtil'
 
 export default {
   components: {
@@ -79,7 +79,7 @@ export default {
       }
     },
     isArray(val) {
-      return Util.isArray(val)
+      return ArrayUtil.isArray(val)
     },
     getLine(line){
       return line.trim()

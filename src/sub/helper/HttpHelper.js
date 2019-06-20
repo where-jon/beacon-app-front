@@ -1,8 +1,8 @@
 import axios from 'axios'
 import { EXCLOUD, APP_SERVICE } from '../constant/config'
 import * as AuthHelper from './AuthHelper'
-import * as Util from '../util/Util'
 import * as HtmlUtil from '../util/HtmlUtil'
+import * as StringUtil from '../util/StringUtil'
 import md5 from 'md5'
 
 let i18n
@@ -137,7 +137,7 @@ const convertDuplicateErrorInfo = (e) => {
   let newVals = ''
 
   for(let idx = 0; idx < keys.length; idx++){
-    const key = Util.snake2camel(keys[idx].trim())
+    const key = StringUtil.snake2camel(keys[idx].trim())
     if(key == 'tenantId'){
       continue
     }

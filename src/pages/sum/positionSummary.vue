@@ -29,7 +29,7 @@ import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
-import * as Util from '../../sub/util/Util'
+import * as StringUtil from '../../sub/util/StringUtil'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
@@ -67,7 +67,7 @@ export default {
       'exbs',
     ]),
     iosOrAndroid() {
-      return Util.isAndroidOrIOS()
+      return HtmlUtil.isAndroidOrIOS()
     },
   },
   async created() {
@@ -127,7 +127,7 @@ export default {
       for(let h = APP.POSITION_SUMMARY_START; h <= APP.POSITION_SUMMARY_END; h++){
         for(let m = 0; m < 60; m += APP.POSITION_SUMMARY_INTERVAL){
           let csv = []
-          csv.push(h + ':' + Util.zeroPad(m, 2) )
+          csv.push(h + ':' + StringUtil.zeroPad(m, 2) )
           minorList.forEach(minor => {
             const timestamp = '' + h + (m >= 10 ? m : m + '0')
             const tx = txsMap[minor]

@@ -11,6 +11,7 @@ import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as Util from '../../../sub/util/Util'
+import * as ArrayUtil from '../../../sub/util/ArrayUtil'
 import listmixinVue from '../../../components/mixin/listmixin.vue'
 import featuremixinVue from '../../../components/mixin/featuremixin.vue'
 import { ROLE_FEATURE, FEATURE, BULK } from '../../../sub/constant/Constants'
@@ -105,7 +106,7 @@ export default {
       await StateHelper.load('feature')
       if(Util.hasValue(this.role.roleId)){
         let roleFeatures = await AppServiceHelper.fetchList(`/meta/roleFeature/${this.role.roleId}`)
-        if(Util.hasValue(roleFeatures) && Util.isArray(roleFeatures)){
+        if(Util.hasValue(roleFeatures) && ArrayUtil.isArray(roleFeatures)){
           roleFeatures = this.getFilterRoleFeatureList(roleFeatures)
           roleFeatures = roleFeatures.map((val) => (this.getFeatureInfo(this.features, val)))
           roleFeatures = _(roleFeatures).sortBy((val) => val.featureName).compact().value()

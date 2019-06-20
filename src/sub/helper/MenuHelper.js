@@ -1,5 +1,5 @@
 import { ROLE_FEATURE, MENU } from '../constant/Constants'
-import * as Util from '../util/Util'
+import * as StringUtil from '../util/StringUtil'
 
 let store
 
@@ -37,12 +37,12 @@ export const fetchNav = (masterFeatureList, tenantFeatureList, featureList, isPr
 }
 
 export const featureOk = (target, featurePathList) => {
-  return featurePathList.find((path) => Util.pathMatch(target, path)) != null
+  return featurePathList.find((path) => StringUtil.pathMatch(target, path)) != null
 }
 
 export const getMode = (path, featureList = store.state.featureList) => {
   let feature = _.find(featureList, (feature) => {
-    if (Util.pathMatch(path, feature.path)) {
+    if (StringUtil.pathMatch(path, feature.path)) {
       return true
     }
   })

@@ -4,6 +4,8 @@ import reloadmixinVue from './reloadmixin.vue'
 import { SHAPE,DETECT_STATE,ALERT_STATE,ZONE } from '../../sub/constant/Constants'
 import { DISP } from '../../sub/constant/config.js'
 import * as Util from '../../sub/util/Util'
+import * as ColorUtil from '../../sub/util/ColorUtil'
+import * as StyleUtil from '../../sub/util/StyleUtil'
 import { APP } from '../../sub/constant/config'
 
 export default {
@@ -110,8 +112,8 @@ export default {
     },
     getStyleDisplay1(val, option = {reverceColor: false, fixSize: true}) {
       const style = {
-        'color': Util.colorCd4display(option.reverceColor? val.bgColor: val.color),
-        'background-color': Util.colorCd4display(option.reverceColor? val.color: val.bgColor, '#FFFFFF'),
+        'color': ColorUtil.colorCd4display(option.reverceColor? val.bgColor: val.color),
+        'background-color': ColorUtil.colorCd4display(option.reverceColor? val.color: val.bgColor, '#FFFFFF'),
         'text-align': 'center',
         border: 'solid 1px #ccc',
         'border-radius': val.shape == SHAPE.CIRCLE? '50%': val.shape == SHAPE.ROUND_SQUARE? DISP.TX.ROUNDRECT_RADIUS + 'px': null,
@@ -124,14 +126,14 @@ export default {
       }
       const label = Util.getValue(val, 'label', null)
       if(option.fixSize != false){
-        const fontSize = label? Util.getInRectFontSize(label, DISP.TX.FIX_R * 2, DISP.TX.FIX_R * 2): DISP.TX.FIX_R
-        style.font = Util.getAdjustFontSize(() => fontSize * DISP.FONT_ICON_ADJUST_SCALE)
+        const fontSize = label? StyleUtil.getInRectFontSize(label, DISP.TX.FIX_R * 2, DISP.TX.FIX_R * 2): DISP.TX.FIX_R
+        style.font = StyleUtil.getAdjustFontSize(() => fontSize * DISP.FONT_ICON_ADJUST_SCALE)
         style.width = (DISP.TX.FIX_R * 2) + 'px'
         style.height = (DISP.TX.FIX_R * 2) + 'px'
       }
       else{
-        const fontSize = label? Util.getInRectFontSize(label, DISP.TX.R * 2, DISP.TX.R * 2): DISP.TX.R
-        style.font = Util.getAdjustFontSize(() => fontSize * DISP.FONT_ICON_ADJUST_SCALE)
+        const fontSize = label? StyleUtil.getInRectFontSize(label, DISP.TX.R * 2, DISP.TX.R * 2): DISP.TX.R
+        style.font = StyleUtil.getAdjustFontSize(() => fontSize * DISP.FONT_ICON_ADJUST_SCALE)
         style.width = (DISP.TX.R * 2) + 'px'
         style.height = (DISP.TX.R * 2) + 'px'
       }

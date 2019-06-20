@@ -186,8 +186,11 @@ import Vue from 'vue'
 import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
+import * as HtmlUtil from '../../sub/util/HtmlUtil'
+import * as ArrayUtil from '../../sub/util/ArrayUtil'
+import * as DateUtil from '../../sub/util/DateUtil'
+import * as ColorUtil from '../../sub/util/ColorUtil'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
@@ -253,13 +256,13 @@ export default {
       'areas',
     ]),
     isIosOrAndroid() {
-      return Util.isAndroidOrIOS()
+      return HtmlUtil.isAndroidOrIOS()
     },
     isCategoryEnabled () {
-      return this.isEnabledMenu('category') && Util.includesIgnoreCase(APP.POT.WITH, 'category')
+      return this.isEnabledMenu('category') && ArrayUtil.includesIgnoreCase(APP.POT.WITH, 'category')
     },
     isGroupEnabled () {
-      return this.isEnabledMenu('group') && Util.includesIgnoreCase(APP.POT.WITH, 'group')
+      return this.isEnabledMenu('group') && ArrayUtil.includesIgnoreCase(APP.POT.WITH, 'group')
     },
     categoryTypes () {
       return CATEGORY.POT_AVAILABLE
@@ -503,10 +506,10 @@ export default {
           const isAbsentZone = this.isAbsentZoneData(stay.byId)
           if (this.isLostData(stay.byId) || isAbsentZone) {
             lostTime += stay.period
-            time = Util.convertToTime(stay.period)
+            time = DateUtil.convertToTime(stay.period)
           } else {
             stayTime += stay.period
-            time = Util.convertToTime(stay.period)
+            time = DateUtil.convertToTime(stay.period)
             isExistStayData = true
           }
           // カテゴリ毎の滞在時間を加算
@@ -547,12 +550,12 @@ export default {
             isAbsentZone: isAbsentZone,
             period: stay.period,
             start: stay.start,
-            startTime: percent == 100? Util.convertToTime(fromSecond): moment(stay.start).format('HH:mm:ss'),
+            startTime: percent == 100? DateUtil.convertToTime(fromSecond): moment(stay.start).format('HH:mm:ss'),
             end: stay.end,
-            endTime: percent == 100? Util.convertToTime(toSecond): moment(stay.end).format('HH:mm:ss'),
+            endTime: percent == 100? DateUtil.convertToTime(toSecond): moment(stay.end).format('HH:mm:ss'),
             time: time,
             percent: percent,
-            categoryBgColor: findCategory? Util.colorCd4display(findCategory.bgColor): Util.colorCd4display(this.otherColor),
+            categoryBgColor: findCategory? ColorUtil.colorCd4display(findCategory.bgColor): ColorUtil.colorCd4display(this.otherColor),
             areaBgColor: findArea? this.getStackColor(areaIndex): this.otherColor,
             areaName: findArea? findArea.areaName: '',
             zoneCategory: stay.byName,
@@ -567,25 +570,25 @@ export default {
           groupName: pot? pot.groupName: '',
           categoryName: pot? pot.categoryName: '',
           graph: graphList,
-          stayTime: Util.convertToTime(stayTime) + ' (' + Util.getRatio(stayTime) + '%)', 
-          lostTime: Util.convertToTime(lostTime) + ' (' + Util.getRatio(lostTime) + '%)', 
+          stayTime: DateUtil.convertToTime(stayTime) + ' (' + Util.getRatio(stayTime) + '%)', 
+          lostTime: DateUtil.convertToTime(lostTime) + ' (' + Util.getRatio(lostTime) + '%)', 
           baseTimeFrom: this.getDateStrFromSetting(APP.STAY_SUM.FROM),
           baseTimeTo: this.getDateStrFromSetting(APP.STAY_SUM.TO),
           graphTimeRatio: graphTimeRatio,
         }
 
         categoryData.forEach((cData) => {
-          result[cData.name] = Util.convertToTime(cData.value) + ' (' + Util.getRatio(cData.value) + '%)'
+          result[cData.name] = DateUtil.convertToTime(cData.value) + ' (' + Util.getRatio(cData.value) + '%)'
         })
         areaData.forEach((aData) => {
-          result[aData.name] = Util.convertToTime(aData.value) + ' (' + Util.getRatio(aData.value) + '%)'
+          result[aData.name] = DateUtil.convertToTime(aData.value) + ' (' + Util.getRatio(aData.value) + '%)'
         })
 
         return result
       })
     },
     getDateStrFromSetting(timeNum) {
-      return Util.convertToTime((Math.floor(timeNum / 100) * 60 + timeNum % 100) * 60).slice(0, -3)
+      return DateUtil.convertToTime((Math.floor(timeNum / 100) * 60 + timeNum % 100) * 60).slice(0, -3)
     },
     getTimeRatioData() {
       // 開始から終了までの配列を作る
@@ -629,7 +632,7 @@ export default {
       }
       viewList = this.getStayDataList(moment(this.form.date).format('YYYY-MM-DD'), dataList, APP.SUM_ABSENT_LIMIT, APP.SUM_LOST_LIMIT)
 
-      Util.sortIgnoreCase(viewList, 'name')
+      ArrayUtil.sortIgnoreCase(viewList, 'name')
       const csvList = this.getCsvList(key, viewList)
 
       const searchDate = moment(this.form.date).format('YYYY-MM-DD')
@@ -716,8 +719,8 @@ export default {
     updateColumnName(){
       if(Util.hasValue(this.fields)){
         this.fields.forEach(field => {
-          field.label = Util.isResponsiveMode(true)? field.originLabel.replace(/<br>/g, ''): field.originLabel
-          field.label = Util.isResponsiveMode(true)? field.originLabel.replace(/<span.*?span>/g, ''): field.originLabel
+          field.label = HtmlUtil.isResponsiveMode(true)? field.originLabel.replace(/<br>/g, ''): field.originLabel
+          field.label = HtmlUtil.isResponsiveMode(true)? field.originLabel.replace(/<span.*?span>/g, ''): field.originLabel
         })
       }
     },
@@ -770,7 +773,7 @@ export default {
         }
 
         let list = this.getStayDataList(moment(searchDate).format('YYYY-MM-DD'), sumData, APP.SUM_ABSENT_LIMIT, APP.SUM_LOST_LIMIT)
-        Util.sortIgnoreCase(list, 'name')
+        ArrayUtil.sortIgnoreCase(list, 'name')
         const dateList = this.getCsvList(key, list)
         csvList = csvList.isEmpty? dateList: csvList.concat(dateList)
         startDate.add(1, 'days')
@@ -791,7 +794,7 @@ export default {
       this.hideProgress()
     },
     pickerChanged() {
-      if (!Util.hasValue(this.form.date) || Util.isAfterNextMonth(this.form.date)) {
+      if (!Util.hasValue(this.form.date) || DateUtil.isAfterNextMonth(this.form.date)) {
         this.message = this.$i18n.terror('message.invalid', {target: this.$i18n.tnl('label.date')})
         this.replace({showAlert: true})
       } else {

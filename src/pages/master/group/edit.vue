@@ -38,8 +38,9 @@
 import { mapState } from 'vuex'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
-import * as HtmlUtil from '../../../sub/util/HtmlUtil'
 import * as Util from '../../../sub/util/Util'
+import * as HtmlUtil from '../../../sub/util/HtmlUtil'
+import * as ColorUtil from '../../../sub/util/ColorUtil'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
@@ -93,8 +94,8 @@ export default {
     beforeReload(){
       if(this.form){
         this.form.displayShape = this.oldShape? this.oldShape: this.shapes[0].value
-        this.form.displayColor = Util.colorCd4display(this.oldColor? this.oldColor: null, this.defaultColor)
-        this.form.displayBgColor = Util.colorCd4display(this.oldBgColor? this.oldBgColor: null, this.defaultBgColor)
+        this.form.displayColor = ColorUtil.colorCd4display(this.oldColor? this.oldColor: null, this.defaultColor)
+        this.form.displayBgColor = ColorUtil.colorCd4display(this.oldBgColor? this.oldBgColor: null, this.defaultBgColor)
       }
     },
     afterCrud(){
@@ -109,8 +110,8 @@ export default {
         description: this.form.description,
         display: {
           shape: `${this.form.displayShape}`,
-          color: Util.colorCd4display(this.form.displayColor),
-          bgColor: Util.colorCd4display(this.form.displayBgColor),
+          color: ColorUtil.colorCd4display(this.form.displayColor),
+          bgColor: ColorUtil.colorCd4display(this.form.displayBgColor),
         },
       }
       this.oldShape = this.form.displayShape

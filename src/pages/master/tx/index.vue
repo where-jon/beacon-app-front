@@ -8,7 +8,7 @@
 <script>
 import mList from '../../../components/page/list.vue'
 import { mapState } from 'vuex'
-import * as Util from '../../../sub/util/Util'
+import * as ArrayUtil from '../../../sub/util/ArrayUtil'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import listmixinVue from '../../../components/mixin/listmixin.vue'
@@ -75,9 +75,9 @@ export default {
         APP.TX.BTX_MINOR == 'both'? 'minor': null,
         'sensor',
       ].concat(this.createCustomColumn().map(val => val.key)).concat([
-        Util.includesIgnoreCase(APP.TX.WITH, 'location')? 'areaName': null,
-        Util.includesIgnoreCase(APP.TX.WITH, 'location')? 'x': null,
-        Util.includesIgnoreCase(APP.TX.WITH, 'location')? 'y': null,
+        ArrayUtil.includesIgnoreCase(APP.TX.WITH, 'location')? 'areaName': null,
+        ArrayUtil.includesIgnoreCase(APP.TX.WITH, 'location')? 'x': null,
+        ArrayUtil.includesIgnoreCase(APP.TX.WITH, 'location')? 'y': null,
       ]).filter((val, idx, ary) => val && ary.indexOf(val) == idx)
     },
     getFields(){

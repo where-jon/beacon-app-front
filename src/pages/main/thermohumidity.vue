@@ -61,6 +61,10 @@ import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as HeatmapHelper from '../../sub/helper/HeatmapHelper'
 import * as Util from '../../sub/util/Util'
+import * as StringUtil from '../../sub/util/StringUtil'
+import * as NumberUtil from '../../sub/util/NumberUtil'
+import * as DateUtil from '../../sub/util/DateUtil'
+import * as StyleUtil from '../../sub/util/StyleUtil'
 import { DEV, APP, DISP } from '../../sub/constant/config'
 import * as mock from '../../assets/mock/mock'
 import { SENSOR, DISCOMFORT } from '../../sub/constant/Constants'
@@ -336,7 +340,7 @@ export default {
       return btnicon
     },
     createButtonLabel(device){
-      const text = Util.formatTemperature(device.temperature) + '℃\n' + Util.formatHumidity(device.humidity) + '%'
+      const text = NumberUtil.formatTemperature(device.temperature) + '℃\n' + NumberUtil.formatHumidity(device.humidity) + '%'
       const label = new Text(text)
       label.font = this.getThermothFont()
       label.color = DISP.THERMOH.COLOR
@@ -373,10 +377,10 @@ export default {
         const sensorData = await AppServiceHelper.fetchList('/basic/sensorHistory/1/1/' + exb.exbId + '/today/hour', null, pMock)
         sensorData.data = sensorData.data.map(val => {
           if(val.temperature){
-            val.temperature = Util.formatTemperature(val.temperature)
+            val.temperature = NumberUtil.formatTemperature(val.temperature)
           }
           if(val.humidity){
-            val.humidity = Util.formatHumidity(val.humidity)
+            val.humidity = NumberUtil.formatHumidity(val.humidity)
           }
           return val
         })
@@ -416,12 +420,12 @@ export default {
         const pMock = DEV.USE_MOCK_EXC? mock['basic_sensorHistory_1_1_today_hour']: null
         const sensorData = await AppServiceHelper.fetchList('/basic/sensorHistory/1/0/' + tx.txId + '/today/hour', null, pMock)
         sensorData.data = sensorData.data.map(val => {
-          val.key = Util.formatDate(val.sensor_dt, 'HH')
+          val.key = DateUtil.formatDate(val.sensor_dt, 'HH')
           if(val.temperature){
-            val.temperature = Util.formatTemperature(val.temperature)
+            val.temperature = NumberUtil.formatTemperature(val.temperature)
           }
           if(val.humidity){
-            val.humidity = Util.formatHumidity(val.humidity)
+            val.humidity = NumberUtil.formatHumidity(val.humidity)
           }
           return val
         })
@@ -444,12 +448,12 @@ export default {
       const device = container.device
       const pageElement = document.getElementById('bd-page')
       return {
-        fontSize: Util.getFont2Size(DISP.THERMOH.TOOLTIP_FONT),
+        fontSize: StyleUtil.getFont2Size(DISP.THERMOH.TOOLTIP_FONT),
         sensorName: DISP.THERMOH.TOOLTIP_ITEMS.TXNAME? device.potName? device.potName: device.locationName: '',
-        temperature: DISP.THERMOH.TOOLTIP_ITEMS.TEMPERATURE? Util.formatTemperature(device.temperature) + this.$i18n.tnl('label.temperatureUnit'): '',
-        humidity: DISP.THERMOH.TOOLTIP_ITEMS.HUMIDITY? Util.formatHumidity(device.humidity) + this.$i18n.tnl('label.humidityUnit'): '',
-        description: DISP.THERMOH.TOOLTIP_ITEMS.DESCRIPTION? Util.cutOnLong(device.description, 10): '',
-        date: DISP.THERMOH.TOOLTIP_ITEMS.DATE? Util.formatDate(device.timestamp || device.updatetime): '',
+        temperature: DISP.THERMOH.TOOLTIP_ITEMS.TEMPERATURE? NumberUtil.formatTemperature(device.temperature) + this.$i18n.tnl('label.temperatureUnit'): '',
+        humidity: DISP.THERMOH.TOOLTIP_ITEMS.HUMIDITY? NumberUtil.formatHumidity(device.humidity) + this.$i18n.tnl('label.humidityUnit'): '',
+        description: DISP.THERMOH.TOOLTIP_ITEMS.DESCRIPTION? StringUtil.cutOnLong(device.description, 10): '',
+        date: DISP.THERMOH.TOOLTIP_ITEMS.DATE? DateUtil.formatDate(device.timestamp || device.updatetime): '',
         baseX: window.pageXOffset + nativeEvent.clientX - Util.getValue(pageElement, 'offsetLeft', 0),
         baseY: window.pageYOffset + nativeEvent.clientY - Util.getValue(pageElement, 'offsetTop', 0),
         isDispRight: container.x * 2 <= this.stage.canvas.width,
@@ -475,7 +479,7 @@ export default {
         month: sensorData.month,
         day: sensorData.day,
         name: device.potName? device.potName: device.locationName? device.locationName: '',
-        description: device.description? ` : ${Util.cutOnLong(device.description, 10)}`: ''
+        description: device.description? ` : ${StringUtil.cutOnLong(device.description, 10)}`: ''
       })
     },
     getThermothFont(ft = DISP.THERMOH.FONT){

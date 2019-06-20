@@ -1,7 +1,7 @@
 
 <script>
 import { Shape, Container, Text } from '@createjs/easeljs/dist/easeljs.module'
-import * as Util from '../../sub/util/Util'
+import * as ColorUtil from '../../sub/util/ColorUtil'
 
 export default {
   methods: {
@@ -30,7 +30,7 @@ export default {
       container.addChild(dot)
     },
     getRGBA(colorCd, alpha){
-      const cds = Util.colorCdHex2Decimal(colorCd)
+      const cds = ColorUtil.colorCdHex2Decimal(colorCd)
       return `rgba(${cds.toString()},${alpha})`
     },
   }

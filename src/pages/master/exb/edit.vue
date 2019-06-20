@@ -93,8 +93,9 @@ import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ParamHelper from '../../../sub/helper/ParamHelper'
 import * as MenuHelper from '../../../sub/helper/MenuHelper'
-import * as HtmlUtil from '../../../sub/util/HtmlUtil'
 import * as Util from '../../../sub/util/Util'
+import * as HtmlUtil from '../../../sub/util/HtmlUtil'
+import * as ArrayUtil from '../../../sub/util/ArrayUtil'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
 import controlmixinVue from '../../../components/mixin/controlmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
@@ -132,7 +133,7 @@ export default {
       },
       deviceId: null,
       deviceIdX: null,
-      useZone: Util.includesIgnoreCase(APP.EXB.WITH, 'zone') && MenuHelper.isMenuEntry('/master/zoneClass'),
+      useZone: ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'zone') && MenuHelper.isMenuEntry('/master/zoneClass'),
       items: ViewHelper.createBreadCrumbItems('master', {text: 'exb', href: '/master/exb'}, Util.getDetailCaptionKey(this.$store.state.app_service.exb.exbId)),
       txIconsDispFormat: 1,
       txIconsHorizon: 5,

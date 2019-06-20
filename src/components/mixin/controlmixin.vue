@@ -1,5 +1,6 @@
 <script>
 import * as Util from '../../sub/util/Util'
+import * as StringUtil from '../../sub/util/StringUtil'
 import { DISP } from '../../sub/constant/config.js'
 
 export default {
@@ -12,7 +13,7 @@ export default {
     },
     vueSelectCutOn(selected, required = false){
       const style = {padding: required? '1.4em': '2em'}
-      return selected? Util.cutOnLongWidth(selected.label, DISP.CONTROL.COMBO_BOX.W * 0.9, true, style): null
+      return selected? StringUtil.cutOnLongWidth(selected.label, DISP.CONTROL.COMBO_BOX.W * 0.9, true, style): null
     },
     vueSelectTitle(selected){
       if(this.isVueSelectCutOn(selected)){

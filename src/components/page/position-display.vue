@@ -13,6 +13,8 @@ import showmapmixin from '../mixin/showmapmixin.vue'
 import { addLabelByKey } from '../../sub/helper/ViewHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as Util from '../../sub/util/Util'
+import * as StringUtil from '../../sub/util/StringUtil'
+
 export default {
   components: {
     mList,
@@ -45,13 +47,13 @@ export default {
           {key: 'label', label: this.masterName, tdClass: 'icon-rowdata'},
           {key: 'icons', label: 'tx', tdClass: 'icon-rowdata align-top'},
         ]),
-        initTotalRows: this.$store.state.main[Util.concatCamel('each', Util.single2multi(this.masterName))].length,
+        initTotalRows: this.$store.state.main[StringUtil.concatCamel('each', StringUtil.single2multi(this.masterName))].length,
         disableTableButtons: true,
         hideSearchBox: true,
         bordered: true,
       },
-      listName: Util.single2multi(this.masterName),
-      eachListName: Util.concatCamel('each', Util.single2multi(this.masterName)),
+      listName: StringUtil.single2multi(this.masterName),
+      eachListName: StringUtil.concatCamel('each', StringUtil.single2multi(this.masterName)),
       id: this.masterName + 'Id',
       name: this.masterName + 'Name',
     }
