@@ -152,6 +152,7 @@ export default {
       isShowBottom: false,
       isMounted: false,
       reloadState: {isLoad: false},
+      loadStates: ['category','group','lostZones','tx','exb'],
     }
   },
   computed: {
@@ -222,13 +223,10 @@ export default {
     },
   },
   async mounted() {
-    await StateHelper.load('category')
-    await StateHelper.load('group')
-    await StateHelper.load('prohibit')
-    await StateHelper.load('lostZones')
-    await StateHelper.load('pot')
-    await StateHelper.load('tx')
-    await StateHelper.load('exb')
+    if (APP.POS.PROHIBIT_ALERT) {
+      this.loadStates.push('prohibit')
+    }
+    await Promise.all(this.loadStates.map(StateHelper.load))
     this.txs.forEach((t) => this.txsMap[t.btxId] = t)
     this.exbs.forEach((e) => this.exbsMap[e.posId] = e)
     // this.fetchData()は'vueSelected.area'をwatchしている箇所で実行している。
@@ -238,7 +236,6 @@ export default {
     this.vueSelected.group = ParamHelper.getVueSelectData(this.groupOptions, this.selectedGroup, false)
     this.startPositionAutoReload()
     this.startOtherAutoReload()
-
     this.changeArea(this.selectedArea)
     this.isMounted = true
   },
