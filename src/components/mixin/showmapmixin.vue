@@ -51,6 +51,7 @@ export default {
       loadComplete: false,
       thumbnailUrl: APP_SERVICE.BASE_URL + EXCLOUD.POT_THUMBNAIL_URL,
       preloadThumbnail: new Image(),
+      btxMap: {},
     }
   },
   computed: {
@@ -377,19 +378,17 @@ export default {
       map && map.addEventListener('touchstart', (evt) => listener(evt))
     },
     positionFilter(positions, groupId, categoryId) {
+      const txsMap = {}
+      this.txs.forEach((tx) => txsMap[tx.btxId] = tx)
       return _(positions).filter((pos) => {
-        const tx = _.find(this.txs, tx => tx.btxId == pos.btx_id)
-        let grpHit
-        let catHit
+        const tx = txsMap[pos.btx_id]
+        let grpHit = true
+        let catHit = true
         if (groupId) {
           grpHit = groupId == tx.groupId
-        } else {
-          grpHit = true
         }
         if (categoryId) {
           catHit = categoryId == tx.categoryId
-        } else {
-          catHit = true
         }
         return grpHit && catHit
       }).value()
@@ -426,10 +425,12 @@ export default {
     getShowTxPositions(positions, allShow = false){
       const now = !DEV.USE_MOCK_EXC ? new Date().getTime(): mock.positions_conf.start + this.count++ * mock.positions_conf.interval
       const correctPositions = APP.POS.USE_POSITION_HISTORY? this.positionHistores: PositionHelper.correctPosId(this.orgPositions, now)
+      const cPosMap = {}
+      correctPositions.forEach(c => cPosMap[c.btx_id] = c)
       return _(positions)
         .filter((pos) => allShow || (pos.tx && Util.bitON(pos.tx.disp, TX.DISP.POS)))
         .map((pos) => {
-          let cPos = _.find(correctPositions, (cPos) => pos.btx_id == cPos.btx_id)
+          let cPos = cPosMap[pos.btx_id]
           if (cPos || allShow) {
             return {
               ...pos,
@@ -619,9 +620,10 @@ export default {
     },
     disableExbsCheck(){
       // for debug
-      const disabledExbs = _.filter(this.exbs, (exb) => !exb.enabled || !exb.location.x || exb.location.y <= 0)
+      const disabledExbs = {}
+      _.filter(this.exbs, (exb) => !exb.enabled || !exb.location.x || exb.location.y <= 0).forEach(e => disabledExbs[e.posId] = e)
       this.getPositions().forEach((pos) => {
-        const exb = disabledExbs.find((exb) => exb.posId == pos.pos_id)
+        const exb = disabledExbs[pos.pos_id]
         if (exb) {
           console.debug('Found at disabled exb', pos, exb)
         }

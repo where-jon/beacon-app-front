@@ -123,18 +123,16 @@ export default {
         'white-space': 'nowrap',
       }
       const label = Util.getValue(val, 'label', null)
+      let fontSize
       if(option.fixSize != false){
-        const fontSize = label? Util.getInRectFontSize(label, DISP.TX.FIX_R * 2, DISP.TX.FIX_R * 2): DISP.TX.FIX_R
-        style.font = Util.getAdjustFontSize(() => fontSize * DISP.FONT_ICON_ADJUST_SCALE)
-        style.width = (DISP.TX.FIX_R * 2) + 'px'
-        style.height = (DISP.TX.FIX_R * 2) + 'px'
+        fontSize = label? Util.getInRectFontSize(label, DISP.TX.FIX_R * 2, DISP.TX.FIX_R * 2): DISP.TX.FIX_R
       }
       else{
-        const fontSize = label? Util.getInRectFontSize(label, DISP.TX.R * 2, DISP.TX.R * 2): DISP.TX.R
-        style.font = Util.getAdjustFontSize(() => fontSize * DISP.FONT_ICON_ADJUST_SCALE)
-        style.width = (DISP.TX.R * 2) + 'px'
-        style.height = (DISP.TX.R * 2) + 'px'
+        fontSize = label? Util.getInRectFontSize(label, DISP.TX.R * 2, DISP.TX.R * 2): DISP.TX.R
       }
+      style.font = Util.getAdjustFontSize(() => fontSize * DISP.FONT_ICON_ADJUST_SCALE)
+      style.width = (DISP.TX.FIX_R * 2) + 'px'
+      style.height = (DISP.TX.FIX_R * 2) + 'px'
       return style
     }
   }

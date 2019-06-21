@@ -281,12 +281,11 @@ export default {
       return Util.hasValue(this.meditagSensors)
     },
     async fetchPositionData(payload) {
-      // await this.fetchAreaExbs(true)
-      await this.fetchAreaExbs(false)
 
       let alwaysTxs = this.txs.filter((tx) => {
         return tx.areaId == this.selectedArea && Util.bitON(tx.disp, TX.DISP.ALWAYS)
       })
+
       let isAllfetch = alwaysTxs? true: false
       if(!payload.disabledPosition){
         await this.storePositionHistory(this.count, isAllfetch)
@@ -295,6 +294,7 @@ export default {
       if(payload.disabledOther){
         return
       }
+
       if (APP.SENSOR.USE_MEDITAG) {
         let meditagSensors = await EXCloudHelper.fetchSensor(SENSOR.MEDITAG)
         this.meditagSensors = _(meditagSensors)
@@ -323,9 +323,10 @@ export default {
         if(!disabledProgress){
           this.showProgress()
         }
-        if (!this.selectedTx.btxId) {
-          await StateHelper.load('tx')
-        }
+        // mounted()でtxsのloadは実行済みのためコメントアウト
+        // if (!this.selectedTx.btxId) {
+        //   await StateHelper.load('tx')
+        // }
         this.$nextTick(() => {
           this.loadLegends()
         })
@@ -365,6 +366,7 @@ export default {
         if(!this.firstTime && reloadButton){
           this.reloadState.isLoad = true
         }
+
         if(!this.selectedTx.btxId){
           await this.fetchPositionData(cPayload)
         }
@@ -372,19 +374,21 @@ export default {
         this.stage.on('click', (evt) => {
           this.resetDetail()
         })
+
         if (!this.txCont) {
           this.txCont = new Container()
           this.txCont.width = this.bitmap.width
           this.txCont.height = this.bitmap.height
           this.stage.addChild(this.txCont)
-          this.stage.update()
         }
-
         this.setPositionedExb()
+
         if (APP.POS.PROHIBIT_ALERT) {
           this.setProhibitDetect('pos')
         }
+
         this.showTxAll()
+
         if(!this.firstTime && reloadButton){
           this.reloadState.isLoad = false
         }
@@ -412,21 +416,25 @@ export default {
       this.isShowBottom = false      
     },
     showTxAll() {
+
       if (!this.txCont) {
         return
       }
+
       this.txCont.removeAllChildren()
       this.disableExbsCheck()
       this.detectedCount = 0 // 検知カウントリセット
       let position = []
-      if(APP.POS.USE_MULTI_POSITIONING){
+
+      if(!APP.POS.USE_MULTI_POSITIONING){
+        const ratio = DISP.TX.R_ABSOLUTE ? 1/this.canvasScale : 1
+        position = PositionHelper.adjustPosition(this.getPositions(), ratio, this.positionedExb, this.selectedArea)
+      }else{
         let area = _.find(this.$store.state.app_service.areas, (area) => area.areaId == this.selectedArea)
         let mapRatio = area.mapRatio
         position = PositionHelper.adjustMultiPosition(this.getPositions(), mapRatio)
-      }else{
-        const ratio = DISP.TX.R_ABSOLUTE ? 1/this.canvasScale : 1
-        position = PositionHelper.adjustPosition(this.getPositions(), ratio, this.positionedExb, this.selectedArea)
       }
+
       position.forEach((pos) => this.showTx(pos))
       this.stage.update()
       this.reShowTx(position)

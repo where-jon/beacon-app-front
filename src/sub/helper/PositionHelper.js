@@ -306,24 +306,31 @@ export const correctPair = (orgPositions, now) => {
 
 export const adjustPosition = (positions, ratio, exbs = [], selectedMapId = null) => {
   return exbs.map((exb) => {
-    const samePos = positions.filter((pos) => {
-      const isFixPosition = hasTxLocation(pos)? selectedMapId? pos.tx.location.areaId == selectedMapId: false : false
-      return !isFixPosition && pos.pos_id == exb.location.posId 
-        && pos.timestamp && new Date(pos.timestamp) > new Date().getTime() - APP.POS.LOST_TIME
-    })
-    const same = (!samePos || samePos.length == 0) ? [] : getPositionsToOverlap(exb, ratio, samePos)
 
-    const fixPos = positions.filter((pos) => {
-      return hasTxLocation(pos)? selectedMapId? pos.tx.location.areaId == selectedMapId: false : false
+    const samePos = []
+    const fixPos = []
+
+    positions.forEach((pos) => {
+      const isFixPosition = hasTxLocation(pos) && selectedMapId && pos.tx.location.areaId == selectedMapId
+      if (!isFixPosition) {
+        if (pos.pos_id == exb.location.posId && pos.timestamp
+          &&(new Date(pos.timestamp) > new Date().getTime() - APP.POS.LOST_TIME)) {
+          samePos.push(pos)
+        }
+      } else {
+        fixPos.push(pos)
+      }
     })
+
+    const same = (!samePos || samePos.length == 0) ? [] : getPositionsToOverlap(exb, ratio, samePos)
     const fix = (!fixPos || fixPos.length == 0) ? [] : getCoordinateFix(ratio, fixPos)
-    return same.concat(fix)
-  }).filter(e => e).flatMap(e => e)
-    .filter(function (x, i, self) {
-      return (self.findIndex(function(val) {
-        return (x.btx_id === val.btx_id)
-      }) === i)
-    })
+
+    return [...same, ...fix]
+  }).filter(e => e).flatMap(e => e).filter(function (x, i, self) {
+    return (self.findIndex(function(val) {
+      return (x.btx_id === val.btx_id)
+    }) === i)
+  })
 }
 
 export const adjustMultiPosition = (positions, ratio) => {
