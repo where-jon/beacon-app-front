@@ -166,7 +166,9 @@ export default {
     async fetchAreaExbs(tx) {
       if (this.isFirstTime) {
         this.selectedArea = this.getInitAreaOption()
-        await StateHelper.load('exb')
+        if (!this.exbs || this.exbs.length < 1) {
+          await StateHelper.load('exb')
+        }
         if (tx) {
           await StateHelper.load('tx')
         }
