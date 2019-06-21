@@ -95,7 +95,7 @@ import alert from '../../../components/parts/alert.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
-import * as ParamHelper from '../../../sub/helper/ParamHelper'
+import * as VueSelectHelper from '../../../sub/helper/VueSelectHelper'
 import { APP } from '../../../sub/constant/config.js'
 import { CATEGORY, SENSOR } from '../../../sub/constant/Constants'
 
@@ -198,8 +198,8 @@ export default {
     },
     beforeReload(){
       this.form.sensorId = null
-      this.vueSelected.category = ParamHelper.getVueSelectData(this.categoryOptions, null)
-      this.vueSelected.group = ParamHelper.getVueSelectData(this.groupOptions, null)
+      this.vueSelected.category = VueSelectHelper.getVueSelectData(this.categoryOptions, null)
+      this.vueSelected.group = VueSelectHelper.getVueSelectData(this.groupOptions, null)
     },
     afterCrud(){
       StateHelper.setForceFetch('pot', true)

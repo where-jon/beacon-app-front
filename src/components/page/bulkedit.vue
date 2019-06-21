@@ -27,9 +27,9 @@ import commonmixinVue from '../mixin/commonmixin.vue'
 import editmixinVue from '../mixin/editmixin.vue'
 import * as CharSetHelper from '../../sub/helper/CharSetHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
+import * as LocalStorageHelper from '../../sub/helper/LocalStorageHelper'
 import { CHAR_SET } from '../../sub/constant/Constants'
 import alert from '../parts/alert.vue'
-import * as HtmlUtil from '../../sub/util/HtmlUtil'
 
 export default {
   components: {
@@ -74,7 +74,7 @@ export default {
     }
   },
   mounted() {
-    const message = HtmlUtil.popLocalStorage('bulkMessage')
+    const message = LocalStorageHelper.popLocalStorage('bulkMessage')
     if(message){
       this.message = message
       this.replace({showInfo: true})

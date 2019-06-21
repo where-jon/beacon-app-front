@@ -37,7 +37,7 @@
 import { mapState } from 'vuex'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
-import * as ParamHelper from '../../../sub/helper/ParamHelper'
+import * as VueSelectHelper from '../../../sub/helper/VueSelectHelper'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
 import featuremixinVue from '../../../components/mixin/featuremixin.vue'
 import controlmixinVue from '../../../components/mixin/controlmixin.vue'
@@ -118,7 +118,7 @@ export default {
   async created() {
     this.roleFeature.featureId = Util.hasValue(this.form.featureId)? this.form.featureId: null
     await this.resetFeatureNames()
-    this.vueSelected.feature = ParamHelper.getVueSelectData(this.featureNames, Util.getValue(this, 'form.featureId', Util.getValue(this.featureNames, '0', {}).value))
+    this.vueSelected.feature = VueSelectHelper.getVueSelectData(this.featureNames, Util.getValue(this, 'form.featureId', Util.getValue(this.featureNames, '0', {}).value))
     this.selectedModes = []
     this.modes.forEach((mode) => {
       if(this.form.mode & mode.value || this.form.mode == mode.value){
@@ -158,7 +158,7 @@ export default {
     },
     async beforeReload(){
       await this.resetFeatureNames()
-      this.vueSelected.feature = ParamHelper.getVueSelectData(this.featureNames, null, true)
+      this.vueSelected.feature = VueSelectHelper.getVueSelectData(this.featureNames, null, true)
     },
     async save() {
       let entity = {

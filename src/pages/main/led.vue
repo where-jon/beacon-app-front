@@ -68,7 +68,7 @@
 <script>
 import { mapState } from 'vuex'
 import * as StateHelper from '../../sub/helper/StateHelper'
-import * as ParamHelper from '../../sub/helper/ParamHelper'
+import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
@@ -157,7 +157,7 @@ export default {
           )
 
         if (deviceIds && deviceIds.length == 1) {
-          this.vueSelected.deviceId = ParamHelper.getVueSelectData(deviceIds, null, true)
+          this.vueSelected.deviceId = VueSelectHelper.getVueSelectData(deviceIds, null, true)
         } else if(!Util.hasValue(deviceIds)) {
           this.noDevice = true
           this.showErrorModal({key: 'noLedDevice'})

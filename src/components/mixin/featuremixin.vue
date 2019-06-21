@@ -1,9 +1,11 @@
 
 <script>
+import * as LocalStorageHelper from '../../sub/helper/LocalStorageHelper'
+
 export default {
   methods: {
     getTenantFeatureList() {
-      return JSON.parse(window.localStorage.getItem('login')).currentTenant.tenantFeatureList
+      return LocalStorageHelper.getLogin().currentTenant.tenantFeatureList
     },
     isShowFeature(feature) {
       return feature.featureType == 0 && this.getTenantFeatureList().find((tenantFeature) => tenantFeature.feature.featureId == feature.featureId)

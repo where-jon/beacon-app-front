@@ -150,6 +150,7 @@ import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as SettingHelper from '../../../sub/helper/SettingHelper'
 import * as AuthHelper from '../../../sub/helper/AuthHelper'
 import * as HttpHelper from '../../../sub/helper/HttpHelper'
+import * as LocalStorageHelper from '../../../sub/helper/LocalStorageHelper'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
 import featuremixinVue from '../../../components/mixin/featuremixin.vue'
 import * as Util from '../../../sub/util/Util'
@@ -290,7 +291,7 @@ export default {
     },
     async applyConfig() {
       await StateHelper.load('setting', true)
-      const login = JSON.parse(window.localStorage.getItem('login'))
+      const login = LocalStorageHelper.getLogin()
       const userInfo = await AuthHelper.getUserInfo(login.tenantAdmin)
       AuthHelper.resetConfig(login.tenantAdmin, userInfo.setting)
     },
@@ -299,11 +300,11 @@ export default {
         feature.checked = false
         feature.disabled = false
       })
-      const login = JSON.parse(window.localStorage.getItem('login'))
+      const login = LocalStorageHelper.getLogin()
       const tenant = await HttpHelper.getAppService('/meta/tenant/currentTenant')
       login.currentTenant = tenant
       this.$store.commit('replace', login)
-      window.localStorage.setItem('login', JSON.stringify(login))
+      LocalStorageHelper.setLocalStorage('login', JSON.stringify(login))
       if(this.targetTenantId == login.currentTenant.tenantId){
         await this.applyConfig()
       }
@@ -314,7 +315,7 @@ export default {
       let dummyKey = -1
       const settingEntities = this.$refs.systemSetting.createSaveEntities(this.settingList)
       this.targetTenantId = Util.hasValue(this.form.tenantId)? this.form.tenantId: dummyKey--
-      const defaultConfig = JSON.parse(window.localStorage.getItem('defaultConfig'))
+      const defaultConfig = LocalStorageHelper.getLocalStorage('defaultConfig')
       const entity = {
         tenantId: this.targetTenantId,
         tenantCd: this.form.tenantCd,

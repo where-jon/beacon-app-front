@@ -84,7 +84,7 @@ import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as DateUtil from '../../sub/util/DateUtil'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
-import * as ParamHelper from '../../sub/helper/ParamHelper'
+import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
 import { APP } from '../../sub/constant/config.js'
 import { CATEGORY } from '../../sub/constant/Constants'
@@ -190,7 +190,7 @@ export default {
     this.areaOptions = StateHelper.getOptionsFromState('area', false, true)
     this.changeCategory()
     this.changeGroup()
-    this.vueSelected.area = ParamHelper.getVueSelectData(this.areaOptions, null, true)
+    this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions, null, true)
     const date = new Date()
     this.form.datetimeFrom = DateUtil.getDatetime(date, {hours: -1})
     this.form.datetimeTo = DateUtil.getDatetime(date)
@@ -207,12 +207,12 @@ export default {
     changeCategory(newVal = this.form.categoryId) {
       this.updatePotOption(newVal, this.form.groupId)
       const targetPot = this.potOptions.find(val => val.value == this.form.potId)
-      this.vueSelected.pot = ParamHelper.getVueSelectData(this.potOptions, targetPot? targetPot.value: null, false)
+      this.vueSelected.pot = VueSelectHelper.getVueSelectData(this.potOptions, targetPot? targetPot.value: null, false)
     },
     changeGroup(newVal = this.form.groupId) {
       this.updatePotOption(this.form.categoryId, newVal)
       const targetPot = this.potOptions.find(val => val.value == this.form.potId)
-      this.vueSelected.pot = ParamHelper.getVueSelectData(this.potOptions, targetPot? targetPot.value: null, false)
+      this.vueSelected.pot = VueSelectHelper.getVueSelectData(this.potOptions, targetPot? targetPot.value: null, false)
     },
     changeArea(areaId) {
       this.$emit('changeArea', areaId)

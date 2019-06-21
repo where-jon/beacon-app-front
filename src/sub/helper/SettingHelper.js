@@ -1,14 +1,26 @@
 import { SETTING, PATTERN } from '../constant/Constants'
 import * as Util from '../util/Util'
 import * as ArrayUtil from '../util/ArrayUtil'
+import * as LocalStorageHelper from './LocalStorageHelper'
 
 let i18n
 
-export const setApp = (pi18n) => {
+/**
+ * vue.jsで使用するオブジェクトを設定する。
+ * @method
+ * @param {Object} pi18n
+ */
+export const setApp = pi18n => {
   i18n = pi18n
 }
 
-export const convertTitle = (str) => {
+/**
+ * ツールチップに表示する文言を作成する。
+ * @method
+ * @param {String} str 
+ * @return {String}
+ */
+export const convertTitle = str => {
   if(!Util.hasValue(str)){
     return str
   }
@@ -28,7 +40,13 @@ export const convertTitle = (str) => {
   return str
 }
 
-export const adjustValType = (valType) => {
+/**
+ * 型表記を統一する。旧表記に対する対応。
+ * @method
+ * @param {String} valType 
+ * @return {String}
+ */
+export const adjustValType = valType => {
   const type = valType.toLowerCase()
   if(['number', 'int'].includes(type)){
     return SETTING.NUMBER
@@ -48,10 +66,17 @@ export const adjustValType = (valType) => {
   return SETTING.STRING
 }
 
+/**
+ * 指定した設定項目のデフォルト値を取得する。
+ * @method
+ * @param {String} key 
+ * @param {Boolean} [isTenant = false]
+ * @return {String|Number}
+ */
 export const getDefaultValue = (key, isTenant = false) => {
   if(!isTenant){
     const tenantSettingList = Util.getValue(
-      JSON.parse(window.localStorage.getItem('login')),
+      LocalStorageHelper.getLogin(),
       'currentTenant.settingList',
       []
     )
@@ -60,7 +85,7 @@ export const getDefaultValue = (key, isTenant = false) => {
       return tenantDefault.value
     }
   }
-  const defaultConfig = JSON.parse(window.localStorage.getItem('defaultConfig'))
+  const defaultConfig = LocalStorageHelper.getLocalStorage('defaultConfig')
   if(!Util.hasValue(defaultConfig)){
     return null
   }
@@ -71,7 +96,13 @@ export const getDefaultValue = (key, isTenant = false) => {
   return key.split('.').reduce((prev, cur) => prev != null && prev[cur] != null? prev[cur]: null, defaultConfig)
 }
 
-export const getDefaultValType = (key) => {
+/**
+ * 指定した設定項目のデフォルト型を取得する。
+ * @method
+ * @param {String} key 
+ * @return {String}
+ */
+export const getDefaultValType = key => {
   const type = i18n.tdef('config.TYPE.' + key)
   if(type != null && SETTING.VALUES.includes(type)){
     return type
@@ -83,6 +114,14 @@ export const getDefaultValType = (key) => {
   return SETTING.STRING
 }
 
+/**
+ * 設定項目を作成する。
+ * @method
+ * @param {Object} setting 
+ * @param {Boolean} isTenant 
+ * @param {Object} option 設定項目情報に追加する情報
+ * @return {Object}
+ */
 export const createSetting = (setting, isTenant, option) => {
   const valType = adjustValType(setting.valType)
   const defaultVal = getDefaultValue(setting.key, isTenant)
@@ -100,6 +139,15 @@ export const createSetting = (setting, isTenant, option) => {
   return ret
 }
 
+/**
+ * 言語ファイルで定義している設定項目リストを作成するインナーメソッド。
+ * @method
+ * @param {Object} config 
+ * @param {Boolean} isTenant 
+ * @param {String} [parentKey = ''] 再帰処理用：親キー名
+ * @param {Object[]} [list = []] 再帰処理用：設定項目のリスト
+ * @return {Object[]}
+ */
 export const getI18ConfigInner = (config, isTenant, parentKey = '', list = []) => {
   Object.keys(config).forEach(configKey => {
     const data = config[configKey]
@@ -115,7 +163,13 @@ export const getI18ConfigInner = (config, isTenant, parentKey = '', list = []) =
   return list
 }
 
-export const getI18Config = (isTenant) => {
+/**
+ * 言語ファイルで定義している設定項目リストを作成する。
+ * @method
+ * @param {Boolean} isTenant 
+ * @return {Object[]}
+ */
+export const getI18Config = isTenant => {
   const configObjs = i18n.tnl('config')
   if(!Util.hasValue(configObjs)){
     return []
@@ -130,7 +184,13 @@ export const getI18Config = (isTenant) => {
   return getI18ConfigInner(ret, isTenant)
 }
 
-export const mergeSettings = (settings) => {
+/**
+ * 設定項目リストをカテゴリごとに固める。ヘッダデータも付与する。
+ * @method
+ * @param {Object[]} settings 
+ * @return {Object[]}
+ */
+export const mergeSettings = settings => {
   const categoryObjs = i18n.tnl('config.OPTIONS.SETTING_CATEGORY')
   const ret = []
   Object.keys(categoryObjs).forEach(categoryKey => {
@@ -153,6 +213,13 @@ export const mergeSettings = (settings) => {
   return ret
 }
 
+/**
+ * 設定項目リストを作成する。
+ * @method
+ * @param {Object[]} settings m_settingに登録されている設定項目リスト
+ * @param {Boolean} isTenant 
+ * @return {Object[]}
+ */
 export const createSettingList = (settings, isTenant) => {
   const i18ConfigList = getI18Config(isTenant)
   i18ConfigList.forEach(i18Config => {
@@ -169,7 +236,13 @@ export const createSettingList = (settings, isTenant) => {
   return mergeSettings(i18ConfigList)
 }
 
-export const validation = (settings) => {
+/**
+ * 設定項目リストの検証を行う
+ * @method
+ * @param {Object[]} settings 
+ * @return {Boolean}
+ */
+export const validation = settings => {
   return settings.filter(setting => {
     if(!Util.hasValue(setting.value)){
       return false

@@ -1,10 +1,17 @@
 import * as Util from '../util/Util'
-import * as HtmlUtil from '../util/HtmlUtil'
 import * as StringUtil from '../util/StringUtil'
 import * as AuthHelper from './AuthHelper'
+import * as LocalStorageHelper from './LocalStorageHelper'
 
+/**
+ * 現在のリージョンが存在しない場合、デフォルトのリージョンに切り替える。
+ * @method
+ * @async
+ * @param {Object[]} regions 
+ * @return {Boolean} リージョンを切り替えた
+ */
 export const autoSwitchRegion = async (regions) => {
-  const currentRegionId = Util.getValue(HtmlUtil.getLogin(), 'currentRegion.regionId', null)
+  const currentRegionId = Util.getValue(LocalStorageHelper.getLogin(), 'currentRegion.regionId', null)
   if(regions.find(region => region.regionId == currentRegionId)){
     return false
   }
@@ -21,8 +28,14 @@ export const autoSwitchRegion = async (regions) => {
   return false
 }
 
+/**
+ * 切替可能なリージョンを取得する。
+ * @method
+ * @param {Object[]} regions 
+ * @return {Object[]}
+ */
 export const enableRegionOptions = regions => {
-  const login = HtmlUtil.getLogin()
+  const login = LocalStorageHelper.getLogin()
   if(!login){
     return []
   }

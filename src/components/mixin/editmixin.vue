@@ -7,6 +7,7 @@ import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as CharSetHelper from '../../sub/helper/CharSetHelper'
+import * as LocalStorageHelper from '../../sub/helper/LocalStorageHelper'
 import { APP } from '../../sub/constant/config.js'
 import { UPDATE_ONLY_NN, IGNORE, USER, CHAR_SET } from '../../sub/constant/Constants'
 import * as Util from '../../sub/util/Util'
@@ -49,7 +50,7 @@ export default {
       return this.isRegistable || this.isUpdatable
     },
     isProvider(){
-      const loginInfo = JSON.parse(window.localStorage.getItem('login'))
+      const loginInfo = LocalStorageHelper.getLogin()
       return loginInfo.isProvider
     },
     ...mapState('app_service', [

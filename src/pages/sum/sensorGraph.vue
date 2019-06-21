@@ -122,7 +122,7 @@ import { getTheme } from '../../sub/helper/ThemeHelper'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as SensorHelper from '../../sub/helper/SensorHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
-import * as ParamHelper from '../../sub/helper/ParamHelper'
+import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
 import { SENSOR, SUM_UNIT, SUM_TARGET, DEVICE } from '../../sub/constant/Constants'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
@@ -309,12 +309,12 @@ export default {
       const exbs = this.exbs.filter(val => val.sensorId == newVal)
       // const exbs = this.exbs.filter((val) => this.getSensorIds(val).includes(newVal)) 一旦単数に戻す
       this.exbOptions = exbs? exbs.map(val => ({value: val.exbId, label: val.locationName})): []
-      this.vueSelected.exb = ParamHelper.getVueSelectData(this.exbOptions, null, true)
+      this.vueSelected.exb = VueSelectHelper.getVueSelectData(this.exbOptions, null, true)
     },
     getTxOptions(newVal = this.form.sensorId){
       const txs = this.txs.filter(val => val.sensorId == newVal)
       this.txOptions = txs? txs.map(val => ({value: val.txId, label: Util.getValue(val, 'potName', APP.TX.BTX_MINOR == 'minor'? val.minor: val.btxId)})): []
-      this.vueSelected.tx = ParamHelper.getVueSelectData(this.txOptions, null, true)
+      this.vueSelected.tx = VueSelectHelper.getVueSelectData(this.txOptions, null, true)
     },
     setDeviceTypeFromSensorId(sensorId){
       this.deviceType = Util.hasValue(this.deviceOptions)? this.deviceOptions[0].value: this.txType.includes(sensorId)? DEVICE.TX: DEVICE.EXB

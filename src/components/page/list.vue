@@ -226,6 +226,7 @@ import * as StateHelper from '../../sub/helper/StateHelper'
 import * as SensorHelper from '../../sub/helper/SensorHelper'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
 import * as DetectStateHelper from '../../sub/helper/DetectStateHelper'
+import * as LocalStorageHelper from '../../sub/helper/LocalStorageHelper'
 import * as Util from '../../sub/util/Util'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as StringUtil from '../../sub/util/StringUtil'
@@ -313,7 +314,7 @@ export default {
       sortBy: null,
       sortDesc: false,
       sortCompare: (aData, bData, key) => this.sortCompareCustom(aData, bData, key),
-      login: JSON.parse(window.localStorage.getItem('login')),
+      login: LocalStorageHelper.getLogin(),
       ...this.params
     }
   },
@@ -467,7 +468,7 @@ export default {
     await StateHelper.load('region')
   },
   mounted() {
-    const strageMessage = HtmlUtil.popLocalStorage('listMessage')
+    const strageMessage = LocalStorageHelper.popLocalStorage('listMessage')
     this.message = Util.hasValue(strageMessage)? strageMessage: this.listMessage
     this.replaceAS({listMessage: null})
     this.$parent.$options.methods.fetchData.apply(this.$parent)

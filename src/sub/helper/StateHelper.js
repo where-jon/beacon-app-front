@@ -11,11 +11,25 @@ import { APP, DISP } from '../constant/config'
 let store
 let i18n
 
+/**
+ * vue.jsで使用するオブジェクトを設定する。
+ * @method
+ * @param {Object} pStore
+ * @param {Object} pi18n
+ */
 export const setApp = (pStore, pi18n) => {
   store = pStore
   i18n = pi18n
 }
 
+/**
+ * マスタコードを作成する。
+ * @method
+ * @param {String} masterType マスタ種類
+ * @param {Object[]} masterList マスタ種類に属するデータリスト
+ * @param {Object} [masterData = null] データを更新する場合に使用。更新対象のマスタデータ
+ * @return {String}
+ */
 export const createMasterCd = (masterType, masterList, masterData = null) => {
   if(!Util.hasValue(masterList)){
     return '1'
@@ -57,24 +71,43 @@ export const createMasterCd = (masterType, masterList, masterData = null) => {
   }, '')
 }
 
-export const getSensorIdName = (sensor) => {
+/**
+ * センサ名を取得する。
+ * @method
+ * @param {Object} sensor 
+ * @return {String}
+ */
+export const getSensorIdName = sensor => {
   if(!sensor){
     return null
   }
   return Util.getValue(sensor, 'sensorName', '')
 }
 
-export const getSensorIdNames = (exbSensorList) => {
+/**
+ * 複数センサの名称を取得する。
+ * @method
+ * @param {Object[]} exbSensorList 
+ * @return {String[]}
+ */
+export const getSensorIdNames = exbSensorList => {
   if(!Util.hasValue(exbSensorList)){
     return [i18n.tnl('label.normal')]
   }
   const names = []
-  exbSensorList.forEach((exbSensor) => {
+  exbSensorList.forEach(exbSensor => {
     names.push(i18n.tnl(`label.${getSensorIdName(exbSensor.sensor)}`))
   })
   return names.map((name) => name)
 }
 
+/**
+ * TxまたはEXBの名称を示すプロパティ名を取得する。
+ * @method
+ * @param {Object} device TxまたはEXB
+ * @param {{forceSensorName: Boolean}} [option = {forceSensorName: false}] 強制的にpotNameを参照させる
+ * @return {String}
+ */
 export const getDeviceIdName = (device, option = {forceSensorName: false}) => {
   if(device.exbId){
     return ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceId')? 'deviceId': ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')? 'deviceIdX': 'locationName'
@@ -85,7 +118,13 @@ export const getDeviceIdName = (device, option = {forceSensorName: false}) => {
   return null
 }
 
-export const getDeviceId = (device) => {
+/**
+ * TxまたはEXBの名称を取得する。
+ * @method
+ * @param {Object} device TxまたはEXB
+ * @return {Any}
+ */
+export const getDeviceId = device => {
   const id = getDeviceIdName(device)
   if(id){
     return device[id]
@@ -93,41 +132,65 @@ export const getDeviceId = (device) => {
   return ''
 }
 
-export const getTxIdName = (tx) => {
+/**
+ * 設定により、TxのbtxIdまたはminor値を取得する。
+ * @method
+ * @param {Object} tx 
+ * @return {String}
+ */
+export const getTxIdName = tx => {
   if(!tx){
     return null
   }
   return APP.TX.BTX_MINOR != 'minor'? tx.btxId? tx.btxId.toString(): '': tx.minor? tx.minor.toString(): ''
 }
 
-export const getTxIdNames = (txList) => {
+/**
+ * 設定により、複数TxのbtxIdまたはminor値を取得する。
+ * @method
+ * @param {Object[]} txList 
+ * @return {String[]}
+ */
+export const getTxIdNames = txList => {
   if(!Util.hasValue(txList)){
     return null
   }
   const names = []
-  txList.forEach((tx) => {
+  txList.forEach(tx => {
     names.push(getTxIdName(tx))
   })
-  return names.map((name) => name)
+  return names.map(name => name)
 }
 
-export const getTxIds = (txList) => {
+/**
+ * 複数TxのIdを取得する。
+ * @method
+ * @param {Object[]} txList 
+ * @return {Number[]}
+ */
+export const getTxIds = txList => {
   if(!Util.hasValue(txList)){
     return null
   }
   const ids = []
-  txList.forEach((tx) => {
+  txList.forEach(tx => {
     ids.push(tx.txId)
   })
-  return ids.map((name) => name)
+  return ids.map(name => name)
 }
 
-export const getTxParams = (txList) => {
+/**
+ * 複数Txの主要プロパティを取得する。
+ * @method
+ * @param {Object[]} txList 
+ * @return {Object[]} txId、btxIs、minorを含む
+ */
+export const getTxParams = txList => {
   if(!Util.hasValue(txList)){
     return null
   }
   const txParams = []
-  txList.forEach((tx) => {
+  txList.forEach(tx => {
     txParams.push({
       txId: tx.txId,
       btxId: tx.btxId,
@@ -137,30 +200,66 @@ export const getTxParams = (txList) => {
   return txParams
 }
 
-export const getCategoryTypeName = (category) => {
-  const categoryTypeName = CATEGORY.getTypes().find((tval) => tval.value === category.categoryType)
+/**
+ * 指定したカテゴリの種類を取得する。
+ * @method
+ * @param {Object} category 
+ * @return {String}
+ */
+export const getCategoryTypeName = category => {
+  const categoryTypeName = CATEGORY.getTypes().find(tval => tval.value === category.categoryType)
   return categoryTypeName != null? categoryTypeName.text: null
 }
 
-export const getShapeName = (shape) => {
-  const shapeName = SHAPE.getShapes().find((tval) => tval.value === shape)
+/**
+ * 指定した形IDの名称を取得する。
+ * @method
+ * @param {Number} shape 
+ * @return {String}
+ */
+export const getShapeName = shape => {
+  const shapeName = SHAPE.getShapes().find(tval => tval.value === shape)
   return shapeName != null? shapeName.text: null
 }
 
-export const getTemplateKeyName = (templateKey) => {
-  const templateKeyName = NOTIFY_STATE.getOptions().find((tval) => tval.value === templateKey)
+/**
+ * 指定したキーを持つ通知状態名称を取得する。
+ * @method
+ * @param {String} templateKey 
+ * @return {String}
+ */
+export const getTemplateKeyName = templateKey => {
+  const templateKeyName = NOTIFY_STATE.getOptions().find(tval => tval.value === templateKey)
   return templateKeyName != null? templateKeyName.text: null
 }
 
-export const getDispCategoryName = (category) => {
+/**
+ * 指定したカテゴリの名称を取得する。ただし、システムカテゴリに属する場合は既定の名称となる。
+ * @method
+ * @param {Object} category 
+ * @return {String}
+ */
+export const getDispCategoryName = category => {
   return category.systemCategoryName? i18n.tnl('label.' + category.systemCategoryName): category.categoryName
 }
 
-export const getForceFetch = (name) => {
+/**
+ * マスタデータの強制更新フラグを取得する。
+ * @method
+ * @param {String} name マスタ名称
+ * @return {Boolean}
+ */
+export const getForceFetch = name => {
   const storeName = `forceFetch${name.charAt(0).toUpperCase()}${name.slice(1)}`
   return store.state.app_service[storeName]
 }
 
+/**
+ * マスタデータの強制更新フラグを設定する。
+ * @method
+ * @param {String} name 
+ * @param {Boolean} force 
+ */
 export const setForceFetch = (name, force) => {
   const storeName = `forceFetch${name.charAt(0).toUpperCase()}${name.slice(1)}`
   store.commit('app_service/replaceAS', {[storeName]:force})
@@ -185,8 +284,8 @@ const appStateConf = {
   exbs: {
     path: '/core/exb/withLocation',
     sort: ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceId')? 'deviceId': ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')? 'deviceIdX': 'locationName',
-    beforeCommit: (arr) => {
-      return arr.map((exb) => {
+    beforeCommit: arr => {
+      return arr.map(exb => {
         const location = exb.location
         return {
           ...exb,
@@ -203,8 +302,8 @@ const appStateConf = {
   txs: {
     path: '/core/tx/withPot',
     sort: APP.TX.BTX_MINOR != 'minor'? 'btxId': 'minor',
-    beforeCommit: (arr) => {
-      return arr.map((tx) => {
+    beforeCommit: arr => {
+      return arr.map(tx => {
         return {
           ...tx,
           sensor: i18n.tnl('label.' + Util.getValue(tx, 'sensorName', 'normal')),
@@ -220,12 +319,12 @@ const appStateConf = {
   templates: {
     path: '/core/rcvexcloud/template/list',
     sort: 'notifyTemplateId',
-    beforeCommit: (arr) => {
-      return arr.map((template) => {
+    beforeCommit: arr => {
+      return arr.map(template => {
         return {
           ...template,
           notifyTemplateKey: template.notifyTemplateKey? getTemplateKeyName(template.notifyTemplateKey): null,
-          notifyMedium: template.notifyMedium==0? i18n.tnl('label.email'):i18n.tnl('label.slack'),
+          notifyMedium: template.notifyMedium == 0? i18n.tnl('label.email'): i18n.tnl('label.slack'),
         }
       })
     }
@@ -234,9 +333,9 @@ const appStateConf = {
   pots: {
     path: '/basic/pot',
     sort: 'potName',
-    beforeCommit: (arr) => {
+    beforeCommit: arr => {
       const idNames = APP.TX.BTX_MINOR == 'minor'? 'minor': 'btxId'
-      return arr.map((pot) => {
+      return arr.map(pot => {
         return {
           ...pot,
           txIds: getTxIds(pot.txList),
@@ -245,7 +344,7 @@ const appStateConf = {
           btxId: pot.btxId,
           minor: pot.minor,
           ruby: pot.extValue? pot.extValue.ruby: null,
-          extValue: pot.extValue ? pot.extValue : this.extValueDefault,
+          extValue: pot.extValue? pot.extValue: this.extValueDefault,
         }
       }).sort((a, b) => {
         if(!a.txParams && !b.txParams){
@@ -268,8 +367,8 @@ const appStateConf = {
   categories: {
     path: '/basic/category',
     sort: 'categoryName',
-    beforeCommit: (arr) => {
-      return arr.map((val) => ({
+    beforeCommit: arr => {
+      return arr.map(val => ({
         ...val,
         categoryName: val.categoryName,
         shape: val.display? val.display.shape: null,
@@ -284,8 +383,8 @@ const appStateConf = {
   groups: {
     path: '/basic/group',
     sort: 'groupName',
-    beforeCommit: (arr) => {
-      return arr.map((val) => ({
+    beforeCommit: arr => {
+      return arr.map(val => ({
         ...val,
         shape: val.display? val.display.shape: null,
         color: val.display? val.display.color: null,
@@ -297,7 +396,7 @@ const appStateConf = {
   users: {
     path: '/meta/user',
     sort: ArrayUtil.includesIgnoreCase(APP.USER.WITH, 'name')? 'name': 'loginId',
-    beforeCommit: (arr) => {
+    beforeCommit: arr => {
       return arr.map(val => ({
         ...val,
         roleName: val.role.roleName,
@@ -308,8 +407,8 @@ const appStateConf = {
   newsList: {
     path: '/news',
     sort: 'newsDate',
-    beforeCommit: (arr) => {
-      return arr.map((val) => ({
+    beforeCommit: arr => {
+      return arr.map(val => ({
         ...val,
         newsDt: DateUtil.formatDate(val.newsDate),
         dispState: i18n.tnl(`label.${val.dispFlg == 0? 'hide': 'display'}`),
@@ -320,7 +419,7 @@ const appStateConf = {
   topNewsList: {
     path: '/news/disp',
     sort: 'newsDate',
-    beforeCommit: (arr) => {
+    beforeCommit: arr => {
       return _.orderBy(arr, ['newsDate'], ['desc'])
     }
   },
@@ -331,8 +430,8 @@ const appStateConf = {
   features: {
     path: '/meta/feature',
     sort: 'featureName',
-    beforeCommit: (arr) => {
-      return  arr.map((val) => ({
+    beforeCommit: arr => {
+      return  arr.map(val => ({
         ...val,
         featureName: val.featureType == 0? StringUtil.toLowerCaseTop(val.featureName): val.featureName,
       }))
@@ -345,8 +444,8 @@ const appStateConf = {
   zones: {
     path: '/core/zone',
     sort: 'zoneName',
-    beforeCommit: (arr) => {
-      return  arr.map((val) => {
+    beforeCommit: arr => {
+      return  arr.map(val => {
         const category = Util.getValue(val, 'zoneCategoryList.0.category', null)
         return {
           zoneId: val.zoneId,
@@ -374,8 +473,8 @@ const appStateConf = {
   tenants: {
     path: '/meta/tenant',
     sort: 'tenantId',
-    beforeCommit: (arr) => {
-      return  arr.map((val) => ({
+    beforeCommit: arr => {
+      return  arr.map(val => ({
         ...val,
         createDt: DateUtil.formatDate(val.createDt),
       }))
@@ -383,8 +482,8 @@ const appStateConf = {
   },
   lostZones: {
     path: '/core/zone/lostZones',
-    beforeCommit: (arr) => {
-      let result = arr.map((val) => (val? {
+    beforeCommit: arr => {
+      let result = arr.map(val => (val? {
         ...val,
       }: null))
       return result
@@ -392,8 +491,8 @@ const appStateConf = {
   },
   prohibits: {
     path: '/core/zone/prohibit',
-    beforeCommit: (arr) => {
-      let result = arr.map((val) => (val? { // TODO: valがundefinedになる
+    beforeCommit: arr => {
+      let result = arr.map(val => (val? { // TODO: valがundefinedになる
         ...val,
         zoneId: val.zoneId,
         zoneName:val.zoneName,
@@ -408,6 +507,13 @@ const appStateConf = {
   },
 }
 
+/**
+ * マスタデータをサーバから取得する。
+ * @method
+ * @async
+ * @param {String} target マスタ種類
+ * @param {Boolean} force 強制取得する
+ */
 export const load = async (target, force) => {
   const forceFetchTarget = target
   if (!target.endsWith('s')) {
@@ -433,12 +539,19 @@ export const load = async (target, force) => {
   }
 }
 
+/**
+ * エリア画像をサーバから取得する。
+ * @method
+ * @async
+ * @param {Number} areaId 
+ * @param {Boolean} force 強制取得する
+ */
 export const loadAreaImage = async (areaId, force) => {
   if (areaId == null) {
     console.log('empty areas', areaId)
     return
   }
-  if (store.state.app_service.areaImages.find((areaImage) => areaImage.areaId == areaId) && !force) {
+  if (store.state.app_service.areaImages.find(areaImage => areaImage.areaId == areaId) && !force) {
     console.log('FOUND ares', areaId)
     return
   }
@@ -448,6 +561,11 @@ export const loadAreaImage = async (areaId, force) => {
   store.commit('app_service/replaceAS', {areaImages})
 }
 
+/**
+ * すべてのエリア画像をサーバから取得する。
+ * @method
+ * @async
+ */
 export const loadAreaImages = async () => {
   if (store.state.app_service.areas.length == 0) {
     await load('area')
@@ -473,9 +591,9 @@ export const loadAreaImages = async () => {
  * 
  * txのセンサー名一覧のオプション
  * StateHelper.getOptionsFromState('sensor', 
- *    (val) => {this.$i18n.t('label.' + val.sensorName})}, // 表示は言語ファイルから取る。
+ *    val => {this.$i18n.t('label.' + val.sensorName})}, // 表示は言語ファイルから取る。
  *    {value: null, text: this.$i18n.t('label.normal')}, // センサーのnullは「通常」
- *    (val) => APP.SENSOR.TX_SENSOR.includes(val.senserId)) // Txのセンサーに絞り込む
+ *    val => APP.SENSOR.TX_SENSOR.includes(val.senserId)) // Txのセンサーに絞り込む
  */
 export const getOptionsFromState = (key, textField, notNull, filterCallback) => {
   Util.debug('getOptionsFromState')
@@ -521,6 +639,15 @@ export const getOptionsFromState = (key, textField, notNull, filterCallback) => 
   return options
 }
 
+/**
+ * 一括登録時のエラーチェック
+ * @method
+ * @param {Object} entity 
+ * @param {String} headerName 
+ * @param {Any} val 
+ * @param {Boolean} isNumberColumn 
+ * @return {Boolean}
+ */
 export const bulkErrorCheck = (entity, headerName, val, isNumberColumn) => {
   if(!isNumberColumn){
     return true
@@ -532,7 +659,12 @@ export const bulkErrorCheck = (entity, headerName, val, isNumberColumn) => {
   return false
 }
 
-
+/**
+ * 指定したシステムカテゴリの背景色を取得する。
+ * @method
+ * @param {Object} category 
+ * @return {String}
+ */
 export const getSystemUseBgColor = (category) => {
   switch(category.categoryName) {
   case SYSTEM_ZONE_CATEGORY_NAME.ABSENT:
@@ -544,6 +676,12 @@ export const getSystemUseBgColor = (category) => {
   }
 }
 
+/**
+ * 指定したカテゴリの背景色を取得する。
+ * @method
+ * @param {Object} category 
+ * @return {String}
+ */
 export const getCategoryDisplayBgColor = (category) => {
   return Util.hasValue(category.display)? category.display.bgColor: null
 }

@@ -19,6 +19,7 @@ import * as DateUtil from '../sub/util/DateUtil'
 import { mapState } from 'vuex'
 import * as ViewHelper from '../sub/helper/ViewHelper'
 import * as StateHelper from '../sub/helper/StateHelper'
+import * as LocalStorageHelper from '../sub/helper/LocalStorageHelper'
 import { mapMutations } from 'vuex'
 import * as AuthHelper from '../sub/helper/AuthHelper'
 import { getButtonTheme } from '../sub/helper/ThemeHelper'
@@ -107,8 +108,8 @@ export default {
       AuthHelper.auth(this.userId, this.password, ()=>{
         this.$router.push(APP.MENU.TOP_PAGE)
         this.message = ''
-        const theme = window.localStorage.getItem(this.userId + '-theme')
-        const charSet = window.localStorage.getItem(this.userId + '-charSet')
+        const theme = LocalStorageHelper.getLocalStorage(this.userId + '-theme')
+        const charSet = LocalStorageHelper.getLocalStorage(this.userId + '-charSet')
         this.replace({pass: this.password})
         this.replaceSetting({theme, charSet})
       },

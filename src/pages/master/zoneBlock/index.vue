@@ -56,7 +56,7 @@
 import { mapState } from 'vuex'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
-import * as ParamHelper from '../../../sub/helper/ParamHelper'
+import * as VueSelectHelper from '../../../sub/helper/VueSelectHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
 import ZoneCanvas from '../../../components/parts/zonecanvas.vue'
@@ -142,12 +142,12 @@ export default {
       this.areaNames = StateHelper.getOptionsFromState('area', false, true)
       if(this.pageSendParam){
         this.areaId = this.pageSendParam.areaId
-        this.vueSelected.category = ParamHelper.getVueSelectData(this.areaNames, this.pageSendParam.areaId)
+        this.vueSelected.category = VueSelectHelper.getVueSelectData(this.areaNames, this.pageSendParam.areaId)
         this.replaceAS({pageSendParam: null})
       }
       else{
         this.areaId = this.areaNames[0].value
-        this.vueSelected.category = ParamHelper.getVueSelectData(this.areaNames, this.areaId)
+        this.vueSelected.category = VueSelectHelper.getVueSelectData(this.areaNames, this.areaId)
       }
     },
     async initCategoryNames() {
@@ -161,7 +161,7 @@ export default {
       this.categoryNames.unshift({label: none, text: none, value: -1})
       this.categoryId = this.categoryNames[0].value
       this.nameAndCategory.categoryId = this.categoryId
-      this.vueSelected.category = ParamHelper.getVueSelectData(this.categoryNames, this.categoryId)
+      this.vueSelected.category = VueSelectHelper.getVueSelectData(this.categoryNames, this.categoryId)
     },
     confirmDelete (button) {
       this.$root.$emit('bv::show::modal', 'modalInfo', button)
@@ -170,7 +170,7 @@ export default {
       this.replace({showAlert: false})
       this.id = zoneData.id
       this.zoneName = zoneData.name
-      this.vueSelected.category = ParamHelper.getVueSelectData(this.categoryNames, zoneData.categoryId)
+      this.vueSelected.category = VueSelectHelper.getVueSelectData(this.categoryNames, zoneData.categoryId)
       this.isEnableNameText = true
     },
     unSelected () {

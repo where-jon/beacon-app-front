@@ -16,6 +16,7 @@ import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as BulkHelper from '../../../sub/helper/BulkHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as RegionHelper from '../../../sub/helper/RegionHelper'
+import * as LocalStorageHelper from '../../../sub/helper/LocalStorageHelper'
 
 export default {
   components: {
@@ -58,7 +59,7 @@ export default {
       StateHelper.setForceFetch('user', true)
       const result = await RegionHelper.autoSwitchRegion(this.regions)
       if(result){
-        window.localStorage.setItem('bulkMessage', param.message)
+        LocalStorageHelper.setLocalStorage('bulkMessage', param.message)
         location.reload()
       }
       else{

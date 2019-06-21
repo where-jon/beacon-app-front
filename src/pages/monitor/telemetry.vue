@@ -10,7 +10,6 @@
 <script>
 import { mapState } from 'vuex'
 import * as StateHelper from '../../sub/helper/StateHelper'
-import * as ParamHelper from '../../sub/helper/ParamHelper'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as Util from '../../sub/util/Util'
@@ -42,7 +41,7 @@ export default {
       items: ViewHelper.createBreadCrumbItems('monitor', 'telemetry'),
       headers: this.getHeaders(),
       telemetrys: [],
-      reloadState: ParamHelper.createReloadState(),
+      reloadState: { isLoad: false },
       csvHeaders: this.getCsvHeaders(),
     }
   },

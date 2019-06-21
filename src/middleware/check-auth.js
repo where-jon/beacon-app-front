@@ -4,6 +4,7 @@ import * as StateHelper from '../sub/helper/StateHelper'
 import * as HttpHelper from '../sub/helper/HttpHelper'
 import * as ViewHelper from '../sub/helper/ViewHelper'
 import * as SettingHelper from '../sub/helper/SettingHelper'
+import * as LocalStorageHelper from '../sub/helper/LocalStorageHelper'
 import { APP } from '../sub/constant/config'
 import { LOGIN_MODE, FORCE_PUSH_MENU, ROLE_FEATURE } from '../sub/constant/Constants'
 
@@ -36,7 +37,7 @@ export default function (context) {
   }
   // check tenant feature
   let tenantFeatureList = context.store.state.tenantFeatureList
-  const loginInfo = JSON.parse(window.localStorage.getItem('login'))
+  const loginInfo = LocalStorageHelper.getLogin()
   const isTenantAdmin = loginInfo.tenantAdmin
   const isProvider = loginInfo.isProvider
 
