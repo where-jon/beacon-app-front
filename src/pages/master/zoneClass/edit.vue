@@ -48,7 +48,7 @@
 <script>
 import { mapState } from 'vuex'
 import * as StateHelper from '../../../sub/helper/StateHelper'
-import * as ParamHelper from '../../../sub/helper/ParamHelper'
+import * as VueSelectHelper from '../../../sub/helper/VueSelectHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
@@ -111,8 +111,8 @@ export default {
   async created() {
     await this.initAreaNames()
     await this.initCategoryNames()
-    this.vueSelected.area = ParamHelper.getVueSelectData(this.areaNames, this.form.areaId, !Util.hasValue(this.form.areaId))
-    this.vueSelected.category = ParamHelper.getVueSelectData(this.categoryNames, this.form.categoryId)
+    this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaNames, this.form.areaId, !Util.hasValue(this.form.areaId))
+    this.vueSelected.category = VueSelectHelper.getVueSelectData(this.categoryNames, this.form.categoryId)
   },
   mounted(){
     HtmlUtil.setCustomValidationMessage()
@@ -138,8 +138,8 @@ export default {
       StateHelper.setForceFetch('exb', true)
     },
     async beforeReload(){
-      this.vueSelected.area = ParamHelper.getVueSelectData(this.areaNames, null, true)
-      this.vueSelected.category = ParamHelper.getVueSelectData(this.categoryNames, null)
+      this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaNames, null, true)
+      this.vueSelected.category = VueSelectHelper.getVueSelectData(this.categoryNames, null)
     },
     async save() {
       const zoneId = Util.hasValue(this.form.zoneId)? this.form.zoneId: -1

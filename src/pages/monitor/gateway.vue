@@ -8,7 +8,6 @@
 </template>
 
 <script>
-import * as ParamHelper from '../../sub/helper/ParamHelper'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
@@ -57,7 +56,7 @@ export default {
         'updated': 'updated',
         'state': 'state',
       },
-      reloadState: ParamHelper.createReloadState(),
+      reloadState: { isLoad: false },
     }
   },
   computed: {

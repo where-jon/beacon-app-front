@@ -8,7 +8,7 @@ import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as PositionHelper from '../../sub/helper/PositionHelper'
 import * as SensorHelper from '../../sub/helper/SensorHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
-import * as ParamHelper from '../../sub/helper/ParamHelper'
+import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as IconHelper from '../../sub/helper/IconHelper'
 import * as Util from '../../sub/util/Util'
@@ -146,7 +146,7 @@ export default {
     ]),
     getInitAreaOption(isVueSelect){
       if(isVueSelect){
-        return ParamHelper.getVueSelectData(this.areaOptions, this.selectedArea, !Util.hasValue(this.selectedArea))
+        return VueSelectHelper.getVueSelectData(this.areaOptions, this.selectedArea, !Util.hasValue(this.selectedArea))
       }
       return this.selectedArea? this.selectedArea : Util.hasValue(this.areaOptions)? this.areaOptions[0].value: null
     },

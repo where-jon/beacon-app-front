@@ -125,6 +125,7 @@ import commonmixinVue from '../mixin/commonmixin.vue'
 import CustomLink from '../parts/customlink.vue'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as RegionHelper from '../../sub/helper/RegionHelper'
+import * as LocalStorageHelper from '../../sub/helper/LocalStorageHelper'
 import Help from '../page/help.vue'
 
 export default {
@@ -198,7 +199,7 @@ export default {
       this.adjustLogoOffsetX()
       this.$forceUpdate()
     })
-    if(window.localStorage.getItem('login') != null){
+    if(LocalStorageHelper.existLocalStorage('login')){
       await StateHelper.load('region', true)
       this.$forceUpdate()
     }
@@ -223,7 +224,7 @@ export default {
       this.$root.$emit('bv::show::modal', 'helpModal')
     },
     isTenantAdmin() {
-      const login = JSON.parse(window.localStorage.getItem('login'))
+      const login = LocalStorageHelper.getLogin()
       return login? login.tenantAdmin: false
     },
     hasMultiRegion(regions){
@@ -233,7 +234,7 @@ export default {
       return HtmlUtil.isResponsiveMode()
     },
     getStyleDropdownRegion(regionId) {
-      const login = JSON.parse(window.localStorage.getItem('login'))
+      const login = LocalStorageHelper.getLogin()
       const currentRegionId = login && login.currentRegion? login.currentRegion.regionId: null
       return currentRegionId === regionId
     },
@@ -244,7 +245,7 @@ export default {
       return RegionHelper.enableRegionOptions(regions)
     },
     disableSwitchRegion(item){
-      const login = JSON.parse(window.localStorage.getItem('login'))
+      const login = LocalStorageHelper.getLogin()
       if(!login || !login.currentRegion){
         return true
       }

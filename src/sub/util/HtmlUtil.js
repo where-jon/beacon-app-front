@@ -27,25 +27,6 @@ export const importElementUI = () => {
 }
 
 /**
- * ローカルストレージからログイン情報を取得する。
- * @method
- * @return {Object}
- */
-export const getLogin = () => JSON.parse(window.localStorage.getItem('login'))
-
-/**
- * ローカルストレージの情報を取得する。取得した情報はストレージから削除される。
- * @method
- * @param {String} key
- * @return {String}
- */
-export const popLocalStorage = key => {
-  const ret = window.localStorage.getItem(key)
-  window.localStorage.removeItem(key)
-  return ret
-}
-
-/**
  * ios端末か判定する。
  * @method
  * @return {Boolean}

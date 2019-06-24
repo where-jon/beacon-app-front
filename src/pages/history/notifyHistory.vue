@@ -158,6 +158,7 @@ import controlmixinVue from '../../components/mixin/controlmixin.vue'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
+import * as LocalStorageHelper from '../../sub/helper/LocalStorageHelper'
 import * as Util from '../../sub/util/Util'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as DateUtil from '../../sub/util/DateUtil'
@@ -305,7 +306,7 @@ export default {
     this.form.datetimeTo = DateUtil.getDatetime(date)
     this.form.notifyState = this.notifyStateOptions[0].value
     const user = await AppServiceHelper.getCurrentUser()
-    const isProvider = JSON.parse(window.localStorage.getItem('login')).isProvider
+    const isProvider = LocalStorageHelper.getLogin().isProvider
     if(user.role.roleFeatureList){
       user.role.roleFeatureList.find((tval) =>
         tval.feature.featureName == 'ALL_REGION'? this.userState = 'ALL_REGION':this.userState = null

@@ -109,7 +109,8 @@ import { mapState } from 'vuex'
 import _ from 'lodash'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
-import * as ParamHelper from '../../../sub/helper/ParamHelper'
+import * as VueSelectHelper from '../../../sub/helper/VueSelectHelper'
+import * as LocalStorageHelper from '../../../sub/helper/LocalStorageHelper'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
 import controlmixinVue from '../../../components/mixin/controlmixin.vue'
 import * as Util from '../../../sub/util/Util'
@@ -258,13 +259,13 @@ export default {
       this.oldUserForm.roleId = potUser.user.roleId
       this.oldUserForm.email = potUser.user.email
       this.editShowUser = true
-      this.vueSelected.role = ParamHelper.getVueSelectData(this.roleOptions, potUser.user.roleId)
+      this.vueSelected.role = VueSelectHelper.getVueSelectData(this.roleOptions, potUser.user.roleId)
     }
     else{
       this.editShowUser = false
       const maxRole = this.roleOptions.reduce((a, b) => a.value > b.value? a: b)
       this.userForm.roleId = maxRole? maxRole.value: null
-      this.vueSelected.role = ParamHelper.getVueSelectData(this.roleOptions, maxRole? maxRole.value: null)
+      this.vueSelected.role = VueSelectHelper.getVueSelectData(this.roleOptions, maxRole? maxRole.value: null)
     }
   },
   async mounted() {
@@ -282,15 +283,15 @@ export default {
     this.form.potTxList.forEach((potTx, idx) => {
       this.changeTx(this.form.potTxList[idx].txId, idx)
     })
-    this.vueSelected.category = ParamHelper.getVueSelectData(this.categoryOptions, this.form.categoryId)
-    this.vueSelected.group = ParamHelper.getVueSelectData(this.groupOptions, this.form.groupId)
+    this.vueSelected.category = VueSelectHelper.getVueSelectData(this.categoryOptions, this.form.categoryId)
+    this.vueSelected.group = VueSelectHelper.getVueSelectData(this.groupOptions, this.form.groupId)
     HtmlUtil.setCustomValidationMessage()
   },
   methods: {
     initPotTxList(){
       this.vueSelected.txs = []
       this.form.potTxList = this.pot.potTxList? this.pot.potTxList.map((val, idx) => {
-        this.vueSelected.txs.push(ParamHelper.getVueSelectData(this.getTxOptions(idx), val.potTxPK.txId))
+        this.vueSelected.txs.push(VueSelectHelper.getVueSelectData(this.getTxOptions(idx), val.potTxPK.txId))
         return {
           potId: val.potTxPK.potId,
           txId: val.potTxPK.txId,
@@ -298,7 +299,7 @@ export default {
       }): []
       const maxTx = APP.POT.MULTI_TX? APP.POT.TX_MAX: 1
       for(let cnt = this.form.potTxList.length; cnt < maxTx; cnt++){
-        this.vueSelected.txs.push(ParamHelper.getVueSelectData(this.getTxOptions(cnt), null))
+        this.vueSelected.txs.push(VueSelectHelper.getVueSelectData(this.getTxOptions(cnt), null))
         this.form.potTxList.push({
           potId: null,
           txId: null
@@ -394,12 +395,12 @@ export default {
       this.btxIds = this.btxIds.map(() => null)
       this.minors = this.minors.map(() => null)
 
-      this.vueSelected.category = ParamHelper.getVueSelectData(this.categoryOptions, null)
-      this.vueSelected.group = ParamHelper.getVueSelectData(this.groupOptions, null)
+      this.vueSelected.category = VueSelectHelper.getVueSelectData(this.categoryOptions, null)
+      this.vueSelected.group = VueSelectHelper.getVueSelectData(this.groupOptions, null)
 
       const maxRole = this.roleOptions.reduce((a, b) => a.value > b.value? a: b)
       this.userForm.roleId = maxRole? maxRole.value: null
-      this.vueSelected.role = ParamHelper.getVueSelectData(this.roleOptions, maxRole? maxRole.value: null)
+      this.vueSelected.role = VueSelectHelper.getVueSelectData(this.roleOptions, maxRole? maxRole.value: null)
 
       this.form.potCd = StateHelper.createMasterCd('pot', this.pots, this.pot)
       this.initPotTxList()
@@ -416,7 +417,7 @@ export default {
         return null
       }
 
-      const login = JSON.parse(window.localStorage.getItem('login'))
+      const login = LocalStorageHelper.getLogin()
       const dummyLoginId = this.createDummyLoginId([
         login.currentRegion.regionId,
         ...this.form.potTxList.map((potTx) => potTx.txId? potTx.txId: 0)

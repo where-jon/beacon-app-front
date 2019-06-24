@@ -1,7 +1,15 @@
 import _ from 'lodash'
 import axios from 'axios'
 import * as config from '../constant/config'
+import * as LocalStorageHelper from './LocalStorageHelper'
 
+/**
+ * 設定値を指定した型で保存できるように変換する。
+ * @method
+ * @param {String} str 設定値
+ * @param {String} type 型
+ * @return {String|Number|String[]|Number[]}
+ */
 export const convertValue = (str, type) => {
   if(!/^.*(list|array)$/.test(type.toLowerCase())){
     switch(type) {
@@ -15,7 +23,7 @@ export const convertValue = (str, type) => {
     }
     return str
   }
-  return str.split(',').filter((val) => val.length != 0).map((val) => {
+  return str.split(',').filter(val => val.length != 0).map(val => {
     val.trim()
     if(/^number.*$/.test(type)){
       val = Number(val)
@@ -24,6 +32,11 @@ export const convertValue = (str, type) => {
   })
 }
 
+/**
+ * config.jsonに記載されている設定を適用する。
+ * @method
+ * @async
+ */
 export const loadConfigJson = async () => {
   let configJson = await axios.get('/config.json')
   if (configJson.data) {
@@ -35,8 +48,9 @@ export const loadConfigJson = async () => {
  * update config with AppService's m_setting
  * key: category + "." + key (if category is not empty)
  * val: value according to valType(int, array or other(string))
- * 
- * @param {*} settingArr 
+ * @method
+ * @param {Object[]} settingArr 
+ * @param {Object} [defaultConfig = null]
  */
 export const applyAppServiceSetting = (settingArr, defaultConfig = null) => {
   console.log(settingArr)
@@ -55,6 +69,12 @@ export const applyAppServiceSetting = (settingArr, defaultConfig = null) => {
   updateConfig(updateData, defaultConfig)
 }
 
+/**
+ * 設定値を更新する。
+ * @method
+ * @param {Object} updateData 
+ * @param {Object} [defaultConfig = null]
+ */
 export const updateConfig = (updateData, defaultConfig = null) => {
   _(updateData).forEach((val, propKey) => {
     let curKey = config
@@ -83,8 +103,12 @@ export const updateConfig = (updateData, defaultConfig = null) => {
   console.debug({config})
 }
 
+/**
+ * 設定値を初期化する
+ * @method
+ */
 export const initConfig = () => {
-  const defaultConfig = JSON.parse(window.localStorage.getItem('defaultConfig'))
+  const defaultConfig = LocalStorageHelper.getLocalStorage('defaultConfig')
   const toString = Object.prototype.toString
   _(defaultConfig).forEach((defaultConfigVal, propKey) => {
     if(['EXCLOUD', 'DEV', 'APP', 'DISP'].includes(propKey) && toString.call(defaultConfigVal) == '[object Object]'){

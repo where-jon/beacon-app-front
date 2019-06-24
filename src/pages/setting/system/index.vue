@@ -65,6 +65,7 @@ import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as AuthHelper from '../../../sub/helper/AuthHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as SettingHelper from '../../../sub/helper/SettingHelper'
+import * as LocalStorageHelper from '../../../sub/helper/LocalStorageHelper'
 import mList from '../../../components/page/list.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
@@ -206,7 +207,7 @@ export default {
     },
     async applyConfig() {
       await StateHelper.load('setting', true)
-      const login = JSON.parse(window.localStorage.getItem('login'))
+      const login = LocalStorageHelper.getLogin()
       const userInfo = await AuthHelper.getUserInfo(login.tenantAdmin)
       AuthHelper.resetConfig(login.tenantAdmin, userInfo.setting)
     },

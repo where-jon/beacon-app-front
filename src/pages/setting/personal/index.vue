@@ -106,6 +106,7 @@ import * as AuthHelper from '../../../sub/helper/AuthHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as ValidateHelper from '../../../sub/helper/ValidateHelper'
+import * as LocalStorageHelper from '../../../sub/helper/LocalStorageHelper'
 import * as Util from '../../../sub/util/Util'
 import * as ArrayUtil from '../../../sub/util/ArrayUtil'
 import { getLangShort } from '../../../sub/util/HtmlUtil'
@@ -228,7 +229,7 @@ export default {
       // storeにテーマをセット。navbar,sidebar,menu-itemのcomputedプロパティにて
       // storeを参照しているため、テーマの変更を検知する
       this.replaceSetting({theme})
-      window.localStorage.setItem(document.domain + '-theme', theme)
+      LocalStorageHelper.setLocalStorage(document.domain + '-theme', theme)
     },
     charSetSelected (selected) {
       const cs = CHAR_SET.find((e) => {
@@ -236,7 +237,7 @@ export default {
       })
       const charSet = cs != null ? cs.name : CHAR_SET[0].name
       this.replaceSetting({charSet})
-      window.localStorage.setItem(this.$store.state.loginId + '-charSet', charSet)
+      LocalStorageHelper.setLocalStorage(this.$store.state.loginId + '-charSet', charSet)
     },
     localeSelected (selected) {
       const lc = LOCALE.find((e) => e.id === selected)

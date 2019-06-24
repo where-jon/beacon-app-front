@@ -54,7 +54,7 @@
 import { mapState } from 'vuex'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
-import * as ParamHelper from '../../../sub/helper/ParamHelper'
+import * as VueSelectHelper from '../../../sub/helper/VueSelectHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AuthHelper from '../../../sub/helper/AuthHelper'
 import { APP } from '../../../sub/constant/config.js'
@@ -141,9 +141,9 @@ export default {
     await StateHelper.load('region')
     await StateHelper.load('role')
     this.roleOptions = StateHelper.getOptionsFromState('role', false, true)
-    this.vueSelected.role = ParamHelper.getVueSelectData(this.roleOptions, Util.getValue(this.form, 'roleId', this.roleOptions.reduce((prev, cur) => cur).value))
+    this.vueSelected.role = VueSelectHelper.getVueSelectData(this.roleOptions, Util.getValue(this.form, 'roleId', this.roleOptions.reduce((prev, cur) => cur).value))
     if(Util.hasValue(this.form.userRegionList)){
-      this.vueSelected.regions = this.form.userRegionList.map(userRegion => ParamHelper.getVueSelectData(this.regionOptions, userRegion.userRegionPK.regionId)).sort((a, b) => a.label < b.label? -1: 1)
+      this.vueSelected.regions = this.form.userRegionList.map(userRegion => VueSelectHelper.getVueSelectData(this.regionOptions, userRegion.userRegionPK.regionId)).sort((a, b) => a.label < b.label? -1: 1)
     }
   },
   mounted(){
@@ -196,7 +196,7 @@ export default {
       StateHelper.setForceFetch('pot', true)
     },
     beforeReload(){
-      this.vueSelected.role = ParamHelper.getVueSelectData(this.roleOptions, this.roleOptions.reduce((prev, cur) => cur).value)
+      this.vueSelected.role = VueSelectHelper.getVueSelectData(this.roleOptions, this.roleOptions.reduce((prev, cur) => cur).value)
       this.vueSelected.regions = []
     },
     async save() {

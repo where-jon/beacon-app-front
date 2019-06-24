@@ -7,19 +7,35 @@ import * as StateHelper from './StateHelper'
 import * as MenuHelper from './MenuHelper'
 import * as ConfigHelper from './ConfigHelper'
 import * as LocaleHelper from './LocaleHelper'
+import * as LocalStorageHelper from './LocalStorageHelper'
 import { APP, LOCAL_LOGIN } from '../constant/config'
 import { LOGIN_MODE, FEATURE } from '../constant/Constants'
-import { getLangShort } from '../util/HtmlUtil'
 import * as Util from '../util/Util'
+import * as HtmlUtil from '../util/HtmlUtil'
 
 let router
 let store
 
+/**
+ * vue.jsで使用するオブジェクトを設定する。
+ * @method
+ * @param {Object} pRouter
+ * @param {Object} pStore
+ */
 export const setApp = (pRouter, pStore) => {
   router = pRouter
   store = pStore
 }
 
+/**
+ * ログイン認証を行う。
+ * @method
+ * @async
+ * @param {String} loginId 
+ * @param {String} password 
+ * @param {Function} success 認証成功時に実行するメソッド
+ * @param {Function} err 認証失敗時に実行するメソッド
+ */
 export const auth = async (loginId, password, success, err) => {
   switch(APP.LOGIN_MODE) {
   case LOGIN_MODE.APP_SERVICE:
@@ -34,6 +50,15 @@ export const auth = async (loginId, password, success, err) => {
   }
 }
 
+/**
+ * ローカルログインの認証を行う。
+ * @method
+ * @async
+ * @param {String} loginId 
+ * @param {String} password 
+ * @param {Function} success 認証成功時に実行するメソッド
+ * @param {Function} err 認証失敗時に実行するメソッド
+ */
 export const authByLocal = async (loginId, password, success, err) => {
   // console.log(md5(loginId + ":" + password)) // for create
   if (_.includes(LOCAL_LOGIN.ID_PASS, md5(loginId + ':' + password))) {
@@ -45,6 +70,12 @@ export const authByLocal = async (loginId, password, success, err) => {
   }
 }
 
+/**
+ * 改訂情報を取得する。
+ * @method
+ * @async
+ * @return {{frontRev: String, serviceRev: String}}
+ */
 export const getRevInfo = async () => {
   const frontRev = (await axios.get('/head.txt')).data
   const apsIndex = await HttpHelper.getAppServiceNoCrd('/', false) // pre network check
@@ -52,22 +83,29 @@ export const getRevInfo = async () => {
   return {frontRev: frontRev, serviceRev: serviceRev && serviceRev[1]}
 }
 
+/**
+ * ユーザ情報を取得する。
+ * @method
+ * @async
+ * @param {Boolean} tenantAdmin 
+ * @return {{tenant: Object, tenantFeatureList: Object[], user: Object, featureList: Object[], menu: Object[], currentRegion: Object, setting: Object[]}}
+ */
 export const getUserInfo = async (tenantAdmin) => {
   // get feature list
   const master = await HttpHelper.getAppService('/meta/feature')
-  const masterFeatureList = master.map((m) => m.path)
+  const masterFeatureList = master.map(m => m.path)
 
   // get tenant feature list
   const tenant = await HttpHelper.getAppService('/meta/tenant/currentTenant')
-  const tenantFeatureList = tenant.tenantFeatureList.map((tenantFeature) => tenantFeature.feature.path)
+  const tenantFeatureList = tenant.tenantFeatureList.map(tenantFeature => tenantFeature.feature.path)
   console.log({tenantFeatureList})
 
   // get role feature list
   const user = await AppServiceHelper.getCurrentUser()
   console.log(user)
-  const featureList = _(user.role.roleFeatureList).map((roleFeature) => {
+  const featureList = _(user.role.roleFeatureList).map(roleFeature => {
     return {path: roleFeature.feature.path, mode: roleFeature.mode}
-  }).sortBy((val) => val.path.length * -1).value()
+  }).sortBy(val => val.path.length * -1).value()
   const menu = MenuHelper.fetchNav(masterFeatureList, tenantFeatureList, featureList, user.providerUserId != null, tenantAdmin)
 
   // get region
@@ -79,6 +117,13 @@ export const getUserInfo = async (tenantAdmin) => {
   return {tenant, tenantFeatureList, user, featureList, menu, currentRegion, setting}
 }
 
+/**
+ * 設定情報をリセットする。
+ * @method
+ * @async
+ * @param {Boolean} isTenantAdmin 
+ * @param {Object[]} setting 
+ */
 export const resetConfig = async (isTenantAdmin, setting) => {
   ConfigHelper.initConfig()
   ConfigHelper.applyAppServiceSetting(setting)  
@@ -87,6 +132,15 @@ export const resetConfig = async (isTenantAdmin, setting) => {
   }
 }
 
+/**
+ * サービス側でログイン認証を行う。
+ * @method
+ * @async
+ * @param {String} loginId 
+ * @param {String} password 
+ * @param {Function} success 認証成功時に実行するメソッド
+ * @param {Function} err 認証失敗時に実行するメソッド
+ */
 export const authByAppService = async (loginId, password, success, err) => {
   try {
     const revInfo = await getRevInfo()
@@ -109,7 +163,7 @@ export const authByAppService = async (loginId, password, success, err) => {
       isProvider: userInfo.user.providerUserId != null, currentTenant: userInfo.tenant, userRegionIdList: userRegionIdList, allRegionMove: allRegionMove, apiKey: data.apiKey })
     success()
     LocaleHelper.setLocale(LocaleHelper.getLocale())
-    store.commit('setLang', LocaleHelper.getLocale(getLangShort()))
+    store.commit('setLang', LocaleHelper.getLocale(HtmlUtil.getLangShort()))
 
   } catch (e) {
     console.error(e)
@@ -117,19 +171,36 @@ export const authByAppService = async (loginId, password, success, err) => {
   }
 }
 
+/**
+ * テナントを切り替える
+ * @method
+ * @async
+ * @param {Number} tenantId 
+ */
 export const switchTenant = async (tenantId) => {
   await HttpHelper.putAppService(`/meta/tenant/current/${tenantId}`)
   await switchAppService()
 }
 
+/**
+ * リージョンを切り替える
+ * @method
+ * @async
+ * @param {Number} regionId 
+ */
 export const switchRegion = async (regionId) => {
   await HttpHelper.putAppService(`/core/region/current/${regionId}`)
   await switchAppService()
 }
 
+/**
+ * ログイン情報を再取得する。
+ * @method
+ * @async
+ */
 export const switchAppService = async () => {
   try {
-    const loginInfo = JSON.parse(window.localStorage.getItem('login'))
+    const loginInfo = LocalStorageHelper.getLogin()
 
     const revInfo = await getRevInfo()
     const userInfo = await getUserInfo(loginInfo.tenantAdmin)
@@ -149,14 +220,25 @@ export const switchAppService = async () => {
   }
 }
 
+/**
+ * ログイン情報を各ストレージに保存する
+ * @method
+ * @async
+ * @param {Object} login ログイン情報
+ */
 export const login = async (login) => {
   console.log({login})
   store.commit('replace', login)
-  window.localStorage.setItem('login', JSON.stringify({...login, dt: new Date().getTime()}))
+  LocalStorageHelper.setLocalStorage('login', JSON.stringify({...login, dt: new Date().getTime()}))
 }
 
+/**
+ * 各ストレージからログイン情報を削除する。
+ * @method
+ * @async
+ */
 export const logout = () => {
-  window.localStorage.removeItem('login')
+  LocalStorageHelper.removeLocalStorage('login')
   store.commit('clearAll')
   store.commit('app_service/clearAll')
   store.commit('main/clearAll')
@@ -167,12 +249,17 @@ export const logout = () => {
   }
 }
 
+/**
+ * セッションの有効期限を確認する。タイムアウトした場合はログアウトする。
+ * @method
+ * @return {Boolean} 有効期限が更新された
+ */
 export const checkSession = () => {
-  const login = JSON.parse(window.localStorage.getItem('login'))
+  const login = LocalStorageHelper.getLogin()
   if (login) {
     const now = new Date().getTime()
     if (now - Number(login.dt) < APP.SYS.TIMEOUT) {
-      window.localStorage.setItem('login', JSON.stringify({...login, dt: now}))
+      LocalStorageHelper.setLocalStorage('login', JSON.stringify({...login, dt: now}))
       store.commit('replace', login)
       return true
     }
@@ -181,20 +268,31 @@ export const checkSession = () => {
   return false
 }
 
+/**
+ * テナントCdを取得する。
+ * @method
+ * @param {String} def 現在のテナントCdが取得できなかった場合に適用されるテナントCd
+ * @param {Boolean} providerOk プロバイダユーザを考慮する
+ * @return {String}
+ */
 export const getTenantCd = (def, providerOk) => { // xxx.saas.ドメインの場合、先頭がtenantCdとなる。
   let tenantCd
   if (location.host.includes(APP.SAAS_DOMAIN)) {
     tenantCd = location.host.split('.')[0]
   }
   if (!providerOk && tenantCd == 'provider') {
-    const login = JSON.parse(window.localStorage.getItem('login'))
+    const login = LocalStorageHelper.getLogin()
     tenantCd = Util.getValue(login, 'currentTenant.tenantCd', null)
   }
   return tenantCd || def
 }
 
+/**
+ * リージョンIDを取得する。
+ * @param {Number} [def = 0] 現在のリージョンIDが取得できなかった場合に適用されるリージョンID
+ */
 export const getRegionId = (def = 0) => {
-  const login = JSON.parse(window.localStorage.getItem('login'))
+  const login = LocalStorageHelper.getLogin()
   return Util.getValue(login, 'currentRegion.regionId', def)
 }
 

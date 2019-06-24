@@ -1,5 +1,7 @@
 // Various constants or types come here. Basically constants does not change by environment. 
 
+import * as LocalStorageHelper from '../helper/LocalStorageHelper'
+
 let i18n
 
 export const setI18n = (pI18n) => i18n = pI18n
@@ -87,11 +89,11 @@ export const ROLE_FEATURE = {
     ALL: 0x01FC,
   },
   getAllAuthorizationOption(){
-    const isProvider = JSON.parse(window.localStorage.getItem('login')).isProvider
+    const isProvider = LocalStorageHelper.getLogin().isProvider
     return {text: i18n.tnl('label.allAuthorization'), value: isProvider? ROLE_FEATURE.MODE.SYS_ALL: ROLE_FEATURE.MODE.ALL}
   },
   getModeOptions(){
-    const isProvider = JSON.parse(window.localStorage.getItem('login')).isProvider
+    const isProvider = LocalStorageHelper.getLogin().isProvider
     return [
       isProvider? {text: i18n.tnl('label.refer'), value: ROLE_FEATURE.MODE.SYS_REFERENCE}: null,
       isProvider? {text: i18n.tnl('label.update'), value: ROLE_FEATURE.MODE.SYS_UPDATE}: null,
@@ -442,7 +444,7 @@ export const FORCE_PUSH_MENU = [
     parent: '/provider/tenant',
     path: '/provider/tenant/tenantFeature',
     isPush: () => {
-      const login = JSON.parse(window.localStorage.getItem('login'))
+      const login = LocalStorageHelper.getLogin()
       return !login || !login.tenantAdmin && login.isProvider
     } ,
   },

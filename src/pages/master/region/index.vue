@@ -11,6 +11,7 @@ import { mapState } from 'vuex'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as RegionHelper from '../../../sub/helper/RegionHelper'
+import * as LocalStorageHelper from '../../../sub/helper/LocalStorageHelper'
 import listmixinVue from '../../../components/mixin/listmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 
@@ -53,7 +54,7 @@ export default {
       StateHelper.setForceFetch('user', true)
       const result = await RegionHelper.autoSwitchRegion(this.regions)
       if(result){
-        window.localStorage.setItem('listMessage', param.message)
+        LocalStorageHelper.setLocalStorage('listMessage', param.message)
         location.reload()
       }
     },

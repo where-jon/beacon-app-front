@@ -23,10 +23,10 @@ import * as AuthHelper from '../../../sub/helper/AuthHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
+import * as LocalStorageHelper from '../../../sub/helper/LocalStorageHelper'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
 import featuremixinVue from '../../../components/mixin/featuremixin.vue'
 import * as Util from '../../../sub/util/Util'
-import * as HtmlUtil from '../../../sub/util/HtmlUtil'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
 import featureList from '../../../components/page/featureList.vue'
@@ -64,7 +64,7 @@ export default {
     ]),
   },
   async created(){
-    const currentTenant = HtmlUtil.getLogin().currentTenant
+    const currentTenant = LocalStorageHelper.getLogin().currentTenant
     const currentFeatureList = currentTenant && currentTenant.tenantFeatureList? currentTenant.tenantFeatureList: []
     await StateHelper.load('feature')
     this.featureList = this.createFeatureTable(this.features, currentFeatureList)
@@ -79,7 +79,7 @@ export default {
       await AuthHelper.switchAppService()
     },
     async save() {
-      const currentTenant = HtmlUtil.getLogin().currentTenant
+      const currentTenant = LocalStorageHelper.getLogin().currentTenant
       const entities = this.featureList.filter(feature => !feature.disabled && feature.checked).map(feature => {
         return {
           tenantFeaturePK: {tenantId: currentTenant.tenantId, featureId: feature.featureId},

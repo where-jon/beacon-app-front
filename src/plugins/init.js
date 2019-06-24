@@ -1,19 +1,19 @@
 import * as MenuHelper from '../sub/helper/MenuHelper'
 import * as ConfigHelper from '../sub/helper/ConfigHelper'
 import * as HttpHelper from '../sub/helper/HttpHelper'
-// import * as StateHelper from '../sub/helper/StateHelper'
+import * as LocalStorageHelper from '../sub/helper/LocalStorageHelper'
 import * as AuthHelper from '../sub/helper/AuthHelper'
 import * as config from '../sub/constant/config'
 import _ from 'lodash'
 
 export default async (context, inject) => {
   console.log('App Init') // If you need common initialize procedure, write here.
-  window.localStorage.setItem('defaultConfig', JSON.stringify(_.cloneDeep(config)))
+  LocalStorageHelper.setLocalStorage('defaultConfig', JSON.stringify(_.cloneDeep(config)))
   MenuHelper.setStore(context.store)
   HttpHelper.setApp(context)
   await ConfigHelper.loadConfigJson()
   try {
-    const login = JSON.parse(window.localStorage.getItem('login'))
+    const login = LocalStorageHelper.getLogin()
     HttpHelper.setApiKey(login && login.apiKey? login.apiKey: null)
     let setting = await HttpHelper.getAppService('/meta/setting/wsByTenant/' + AuthHelper.getTenantCd('default') + '/' + AuthHelper.getRegionId(), {}, true)
     if (setting == null) {

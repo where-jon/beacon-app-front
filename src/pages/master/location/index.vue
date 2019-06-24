@@ -84,7 +84,7 @@ import { mapState } from 'vuex'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as HttpHelper from '../../../sub/helper/HttpHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
-import * as ParamHelper from '../../../sub/helper/ParamHelper'
+import * as VueSelectHelper from '../../../sub/helper/VueSelectHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as Util from '../../../sub/util/Util'
 import * as HtmlUtil from '../../../sub/util/HtmlUtil'
@@ -170,12 +170,12 @@ export default {
     this.exbDisp = options[0].value
 
     if(this.pageSendParam){
-      this.vueSelected.area = ParamHelper.getVueSelectData(this.areaOptions, this.pageSendParam.areaId)
+      this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions, this.pageSendParam.areaId)
       this.selectedArea = this.pageSendParam.areaId
       this.replaceAS({pageSendParam: null})
     }
     else{
-      this.vueSelected.area = ParamHelper.getVueSelectData(this.areaOptions, null, true)
+      this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions, null, true)
       this.selectedArea = Util.getValue(this.vueSelected.area, 'value', null)
     }
     this.changeArea()

@@ -91,7 +91,7 @@ import { mapState } from 'vuex'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
-import * as ParamHelper from '../../../sub/helper/ParamHelper'
+import * as VueSelectHelper from '../../../sub/helper/VueSelectHelper'
 import * as MenuHelper from '../../../sub/helper/MenuHelper'
 import * as Util from '../../../sub/util/Util'
 import * as HtmlUtil from '../../../sub/util/HtmlUtil'
@@ -210,8 +210,8 @@ export default {
   async mounted() {
     await StateHelper.load('area')
     await StateHelper.load('zone')
-    this.vueSelected.area = ParamHelper.getVueSelectData(this.areaOptions, this.form.areaId)
-    this.$nextTick(() => this.vueSelected.zone = ParamHelper.getVueSelectData(this.getZoneNames(), this.form.zoneId))
+    this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions, this.form.areaId)
+    this.$nextTick(() => this.vueSelected.zone = VueSelectHelper.getVueSelectData(this.getZoneNames(), this.form.zoneId))
     this.deviceId = this.form.deviceId
     ViewHelper.applyDef(this.form, this.defValue)
     if (!this.form.txViewType) {
@@ -307,8 +307,8 @@ export default {
       this.initExbSensorList()
       this.changeSensors()
       this.form.sensorId = null
-      this.vueSelected.area = ParamHelper.getVueSelectData(this.areaOptions, null)
-      this.vueSelected.zone = ParamHelper.getVueSelectData(this.getZoneNames(), null)
+      this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions, null)
+      this.vueSelected.zone = VueSelectHelper.getVueSelectData(this.getZoneNames(), null)
     },
     async save() {
       let dummyKey = -1
