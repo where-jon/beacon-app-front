@@ -55,6 +55,19 @@ export const PATTERN = {
 export const BULK = {
   PRIMARY_KEY: 'updateKey',
   SPLITTER: ';',
+  REQUIRE: {
+    REGION: { ALLOW: ['regionId', 'regionName', 'meshId'] },
+    AREA: { ALLOW: ['areaId', 'areaName', 'areaCd'], DISALLOW: ['deviceId', 'deviceIdX', 'zoneName'] },
+    EXB: { ALLOW: ['exbId', 'locationName', 'deviceId'] },
+    TX: { ALLOW: ['txId', 'btxId', 'minor'] },
+    POT: { ALLOW: ['potId', 'potName', 'potCd'] },
+    CATEGORY: { ALLOW: ['categoryId', 'categoryName', 'display'] },
+    GROUP: { ALLOW: ['groupId', 'groupName', 'display'] },
+    USER: { ALLOW: ['userId', 'loginId', 'roleName'], DISALLOW: ['potName'] },
+    ROLE: { ALLOW: ['roleId', 'roleName'], DISALLOW: ['loginId'] },
+    ROLE_FEATURE: { ALLOW: ['roleId', 'featureId', 'mode'] },
+    ZONE: { ALLOW: ['zoneId', 'zoneName'] },
+  }
 }
 
 export const BOOLEAN = {

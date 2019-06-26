@@ -289,7 +289,9 @@ export const getTenantCd = (def, providerOk) => { // xxx.saas.ドメインの場
 
 /**
  * リージョンIDを取得する。
+ * @method
  * @param {Number} [def = 0] 現在のリージョンIDが取得できなかった場合に適用されるリージョンID
+ * @return {Number}
  */
 export const getRegionId = (def = 0) => {
   const login = LocalStorageHelper.getLogin()

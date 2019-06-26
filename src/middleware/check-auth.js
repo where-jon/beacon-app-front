@@ -3,6 +3,8 @@ import * as MenuHelper from '../sub/helper/MenuHelper'
 import * as StateHelper from '../sub/helper/StateHelper'
 import * as HttpHelper from '../sub/helper/HttpHelper'
 import * as ViewHelper from '../sub/helper/ViewHelper'
+import * as BulkHelper from '../sub/helper/BulkHelper'
+import * as MasterHelper from '../sub/helper/MasterHelper'
 import * as SettingHelper from '../sub/helper/SettingHelper'
 import * as LocalStorageHelper from '../sub/helper/LocalStorageHelper'
 import { APP } from '../sub/constant/config'
@@ -15,6 +17,8 @@ export default function (context) {
   ViewHelper.setApp(context.app.i18n)
   HttpHelper.setApp(context)
   SettingHelper.setApp(context.app.i18n)
+  BulkHelper.setApp(context.app.i18n)
+  MasterHelper.setApp(context.app.i18n)
   if (!process.browser) {
     return
   }

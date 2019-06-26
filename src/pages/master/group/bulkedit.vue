@@ -1,19 +1,17 @@
 <template>
   <div class="container-fluid">
     <breadcrumb :items="items" />
-    <bulkedit :id="id" :name="name" :back-path="backPath" :app-service-path="appServicePath" />
+    <bulkedit :id="id" ref="bulkEdit" :name="name" :back-path="backPath" :app-service-path="appServicePath" />
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
-import _ from 'lodash'
-import { BULK } from '../../../sub/constant/Constants'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
+import * as Util from '../../../sub/util/Util'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
-import * as BulkHelper from '../../../sub/helper/BulkHelper'
 
 export default {
   components: {
@@ -35,45 +33,20 @@ export default {
     ]),
   },
   methods: {
-    resetStyle(entity, dummyKey){
-      const updateData = this.groups.find((val) => val.groupId == entity.groupId)
-      if(updateData && updateData.display){
-        if (!entity.display) {
-          entity.display = {}
-        }
-        if(entity.display.color == null){
-          entity.display.color = updateData.display.color
-        }
-        if(entity.display.bgColor == null){
-          entity.display.bgColor = updateData.display.bgColor
-        }
-        if(entity.display.shape == null){
-          entity.display.shape = updateData.display.shape
-        }
+    async save() {
+      await this.$refs.bulkEdit.bulkSave()
+    },
+    restruct(entity, dummyKey){
+      if(Util.hasValueAny(entity.shape, entity.color, entity.bgColor)){
+        Util.setValue(entity, 'display.shape', entity.shape)
+        Util.setValue(entity, 'display.color', entity.color)
+        Util.setValue(entity, 'display.bgColor', entity.bgColor)
       }
       return dummyKey
     },
     afterCrud(){
       StateHelper.setForceFetch('pot', true)
       StateHelper.setForceFetch('tx', true)
-    },
-    async save(bulkSaveFunc) {
-      const DISPLAY_COL = ['shape', 'color', 'bgColor']
-      await bulkSaveFunc(BULK.PRIMARY_KEY, null, null, (entity, headerName, val, dummyKey) => {
-        if (BulkHelper.isPrimaryKeyHeader(headerName)){
-          BulkHelper.setPrimaryKey(entity, this.id, val, dummyKey--)
-          return dummyKey
-        }
-        if (_.includes(DISPLAY_COL, headerName)) {
-          if (!entity.display) {
-            entity.display = {}
-          }
-          entity.display[headerName] = val
-          return dummyKey
-        }
-        entity[headerName] = val
-        return dummyKey
-      }, (entity, dummyKey) => this.resetStyle(entity, dummyKey))
     },
   }
 }

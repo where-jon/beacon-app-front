@@ -75,11 +75,11 @@
         <canvas id="map" ref="map" @click="closeVueSelect" />
       </b-col>
       <div v-if="showMeditag && isShowRight && hasMeditagSensors()" class="rightPane">
-        <sensor :sensors="meditagSensors" :is-popup="false" class="rightPaneChild" />
+        <meditag :sensors="meditagSensors" :is-popup="false" class="rightPaneChild" />
       </div>
     </b-row>
     <div v-if="showMeditag && isShowBottom && hasMeditagSensors()" class="rightPane">
-      <sensor :sensors="meditagSensors" :is-popup="false" class="rightPaneChild" />
+      <meditag :sensors="meditagSensors" :is-popup="false" class="rightPaneChild" />
     </div>
     <div v-if="selectedTx.btxId && showReady">
       <txdetail :selected-tx="selectedTx" :selected-sensor="selectedSensor" :is-show-modal="isShowModal()" @resetDetail="resetDetail" />
@@ -106,13 +106,13 @@ import { Container } from '@createjs/easeljs/dist/easeljs.module'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import listmixin from '../../components/mixin/listmixin.vue'
-import sensor from '../../components/parts/sensor.vue'
+import meditag from '../../components/parts/meditag.vue'
 import commonmixinVue from '../../components/mixin/commonmixin.vue'
 import controlmixinVue from '../../components/mixin/controlmixin.vue'
 
 export default {
   components: {
-    'sensor': sensor,
+    meditag,
     'txdetail': txdetail,
     breadcrumb,
   },

@@ -1,15 +1,14 @@
 <template>
   <div class="container-fluid">
     <breadcrumb :items="items" />
-    <bulkedit :id="id" :name="name" :back-path="backPath" :app-service-path="appServicePath" />
+    <bulkedit :id="id" ref="bulkEdit" :name="name" :back-path="backPath" :app-service-path="appServicePath" />
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
 import * as Util from '../../../sub/util/Util'
-import * as ArrayUtil from '../../../sub/util/ArrayUtil'
-import { BULK, PATTERN } from '../../../sub/constant/Constants'
+import { PATTERN } from '../../../sub/constant/Constants'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
@@ -41,36 +40,23 @@ export default {
     this.masterCd = StateHelper.createMasterCd('area', this.areas, null)
   },
   methods: {
-    afterCrud(){
-      StateHelper.setForceFetch('tx', true)
-      StateHelper.setForceFetch('exb', true)
-      StateHelper.setForceFetch('zone', true)
+    async save() {
+      await this.$refs.bulkEdit.bulkSave()
     },
-    resetData(entity, dummyKey){
-      if(!Util.hasValue(entity.areaCd)){
+    restruct(entity, dummyKey){
+      if(Util.hasValue(entity.areaCd)){
+        BulkHelper.setStringKey(entity, 'areaCd', entity.areaCd, PATTERN.REGEXP.MASTER_CD)
+      }
+      else{
         entity.areaCd = this.masterCd
         this.masterCd = StateHelper.createMasterCd('area', [{areaCd: this.masterCd}], null)
       }
       return dummyKey
     },
-    async save(bulkSaveFunc) {
-      const NUMBER_TYPE_LIST = ['areaId']
-      await bulkSaveFunc(BULK.PRIMARY_KEY, null, null, (entity, headerName, val, dummyKey) => {
-        if (BulkHelper.isPrimaryKeyHeader(headerName)){
-          BulkHelper.setPrimaryKey(entity, this.id, val, dummyKey--)
-          return dummyKey
-        }
-        if(ArrayUtil.equalsAny(headerName, NUMBER_TYPE_LIST)){
-          BulkHelper.setNumberKey(entity, headerName, val)
-          return dummyKey
-        }
-        if(headerName == 'areaCd'){
-          BulkHelper.setStringKey(entity, headerName, val, PATTERN.REGEXP.MASTER_CD)
-          return dummyKey
-        }
-        entity[headerName] = val
-        return dummyKey
-      }, (entity, dummyKey) => this.resetData(entity, dummyKey))
+    afterCrud(){
+      StateHelper.setForceFetch('tx', true)
+      StateHelper.setForceFetch('exb', true)
+      StateHelper.setForceFetch('zone', true)
     },
   }
 }
