@@ -1,19 +1,16 @@
 <template>
   <div class="container-fluid">
     <breadcrumb :items="items" />
-    <bulkedit :id="id" :name="name" :back-path="backPath" :app-service-path="appServicePath" />
+    <bulkedit :id="id" ref="bulkEdit" :name="name" :back-path="backPath" :app-service-path="appServicePath" />
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
-import * as ArrayUtil from '../../../sub/util/ArrayUtil'
-import { BULK } from '../../../sub/constant/Constants'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
 import * as AuthHelper from '../../../sub/helper/AuthHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
-import * as BulkHelper from '../../../sub/helper/BulkHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as RegionHelper from '../../../sub/helper/RegionHelper'
 import * as LocalStorageHelper from '../../../sub/helper/LocalStorageHelper'
@@ -39,21 +36,8 @@ export default {
     ]),
   },
   methods: {
-    async save(bulkSaveFunc) {
-      const NUMBER_TYPE_LIST = ['regionId', 'meshId']
-      await bulkSaveFunc(BULK.PRIMARY_KEY, null, null, (entity, headerName, val, dummyKey) => {
-        if (BulkHelper.isPrimaryKeyHeader(headerName)){
-          BulkHelper.setPrimaryKey(entity, this.id, val, dummyKey--)
-          return dummyKey
-
-        }
-        if(ArrayUtil.equalsAny(headerName, NUMBER_TYPE_LIST)){
-          BulkHelper.setNumberKey(entity, headerName, val)
-          return dummyKey
-        }
-        entity[headerName] = val
-        return dummyKey
-      })
+    async save() {
+      await this.$refs.bulkEdit.bulkSave({numberList: ['regionId', 'meshId']})
     },
     async afterCrud(bulkSaveFunc, param){
       StateHelper.setForceFetch('user', true)

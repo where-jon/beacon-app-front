@@ -53,7 +53,7 @@ export const sortByString = (a, b) => {
 export const single2multi = str => str.endsWith('y')? str.slice(0, -1) + 'ies' : str + 's'
 
 /**
- * 先頭文字のみ大文字にした文字列を取得する。
+ * 先頭文字のみ子文字にした文字列を取得する。
  * @method
  * @param {String} str
  * @return {String}
@@ -75,6 +75,14 @@ export const concatCamel = (...strs) => strs.map((str, idx) => idx == 0? str: `$
  * @return {String}
  */
 export const snake2camel = str => str.replace(/_./g, (s) => s.charAt(1).toUpperCase())
+
+/**
+ * スネークケースにした文字列を取得する。
+ * @method
+ * @param {String} str キャメルケースの文字列
+ * @return {String}
+ */
+export const camel2snake = str => str.replace(/[A-Z]/g, s => '_' + s.toLowerCase())
 
 /**
  * バイトサイズを取得する。

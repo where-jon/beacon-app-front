@@ -177,11 +177,13 @@ export default {
       deep: true,
     },
   },
-  mounted() {
+  async mounted() {
     ViewHelper.applyDef(this.form, this.defValue)
     StateHelper.load('sensor')
-    StateHelper.load('category')
-    StateHelper.load('group')
+    await StateHelper.load('category')
+    await StateHelper.load('group')
+    this.vueSelected.category = VueSelectHelper.getVueSelectData(this.categoryOptions, this.form.categoryId)
+    this.vueSelected.group = VueSelectHelper.getVueSelectData(this.groupOptions, this.form.groupId)
     HtmlUtil.setCustomValidationMessage()
   },
   methods: {

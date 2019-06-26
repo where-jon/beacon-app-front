@@ -686,3 +686,10 @@ export const getCategoryDisplayBgColor = (category) => {
   return Util.hasValue(category.display)? category.display.bgColor: null
 }
 
+/**
+ * メッセージ表示フラグをすべて初期化する。
+ * @method
+ */
+export const initShowMessage = () => {
+  store.commit('replace', {showInfo: false, showWarn: false, showAlert: false})
+}

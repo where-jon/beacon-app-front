@@ -63,6 +63,14 @@ export const debug = function(log) {
 export const hasValue = obj => obj != null && obj.length !== 0
 
 /**
+ * 引数候補のうち、少なくとも1つに文字列、または要素が存在するかチェックする。
+ * @method
+ * @param {String|Array} obj lengthプロパティが存在するオブジェクト全般
+ * @return {Boolean}
+ */
+export const hasValueAny = (...obj) => obj.some(val => hasValue(val))
+
+/**
  * オプジェクトから階層を辿って値を取得する。
  * @method
  * @param {Object} obj 
@@ -81,6 +89,30 @@ export const getValue = (obj, path, def) => {
     return val != null? val: def
   }
   return {val, lastKey}
+}
+
+/**
+ * オプジェクトから階層を辿って値を設定する。
+ * @method
+ * @param {Object} obj 
+ * @param {String} path オブジェクトのメンバー以下を.でつなげる。配列は添字を使う。
+ * @param {*} val
+ */
+export const setValue = (obj, path, val) => {
+  if(obj == null || val == null){
+    return
+  }
+  let target = obj
+  path.split('.').forEach((p, idx, ary) => {
+    if(idx == ary.length - 1){
+      target[p] = val
+      return
+    }
+    if(target[p] == null){
+      target[p] = !isNaN(p)? []: {}
+    }
+    target = target[p]
+  })
 }
 
 /**

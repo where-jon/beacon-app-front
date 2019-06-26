@@ -32,7 +32,7 @@
         </b-nav-item-dropdown>
       </div>
       <div class="col-auto reload-button-container ">
-        <a v-if="reload" id="reload" href="#" @click="onClickReload">
+        <a v-if="reload" id="reload" href="#" @click="clickReload">
           <font-awesome-icon id="spinner" icon="sync-alt" :class="state.isLoad ? 'fa-spin' : ''" />
         </a>
       </div>
@@ -86,10 +86,6 @@ export default {
       type: Array,
       default: null
     },
-    reloadEmitName: {
-      type: String,
-      default: 'reload',
-    },
   },
   data () {
     return {
@@ -130,11 +126,11 @@ export default {
       HtmlUtil.registerInterval(()=>{
         this.$store.commit('replace', {reload: true})
         const windowScroll = {x: window.pageXOffset , y: window.pageYOffset}
-        this.onClickReload()
+        this.clickReload()
         window.scroll(windowScroll.x, windowScroll.y)
       }, APP.COMMON.AUTO_RELOAD)
       if(Util.getValue(this.state, 'initialize', true)){
-        this.onClickReload()
+        this.clickReload()
       }
     }
   },
@@ -148,10 +144,10 @@ export default {
     move(page) {
       this.$router.push(page)
     },
-    onClickReload(e) {
+    clickReload(e) {
       this.state.isLoad = true
       const that = this
-      EventBus.$emit(this.reloadEmitName, {
+      EventBus.$emit('reload', {
         done() {
           that.state.isLoad = false
           AuthHelper.checkSession()

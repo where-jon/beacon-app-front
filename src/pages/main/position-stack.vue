@@ -21,7 +21,6 @@
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import positionDisplay from '../../components/page/position-display.vue'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
-import { EventBus } from '../../sub/helper/EventHelper'
 import { EXTRA_NAV, POSITION_STACK_TYPES } from '../../sub/constant/Constants'
 import listmixin from '../../components/mixin/listmixin.vue'
 
@@ -47,16 +46,13 @@ export default {
       return POSITION_STACK_TYPES.getTypes()
     },
   },
-  created(){
-    EventBus.$off('allFetch')
-    EventBus.$on('allFetch', (payload)=>{
-      this.$refs.areaPosition.fetchData(payload)
-      this.$refs.zonePosition.fetchData(payload)
-    })
-  },
   methods: {
     isShow(type){
       return this.positionType == POSITION_STACK_TYPES[type.toUpperCase()]
+    },
+    fetchData(payload){
+      this.$refs.areaPosition.fetchData(payload)
+      this.$refs.zonePosition.fetchData(payload)
     },
   },
 }

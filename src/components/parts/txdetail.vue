@@ -24,7 +24,7 @@
           </div>
         </div>
       </div>
-      <sensor :sensors="selectedSensor" :is-popup="true" />
+      <meditag :sensors="selectedSensor" :is-popup="true" />
     </div>
     <txdetailmodal
       v-else
@@ -42,7 +42,7 @@
           </div>
         </div>
       </div>
-      <sensor v-else :sensors="selectedSensor" :is-popup="true" />
+      <meditag v-else :sensors="selectedSensor" :is-popup="true" />
     </txdetailmodal>
   </div>
 </template>
@@ -50,7 +50,7 @@
 <script>
 import { APP, DISP } from '../../sub/constant/config'
 import { FONT } from '../../sub/constant/Constants'
-import sensor from './sensor.vue'
+import meditag from './meditag.vue'
 import txdetailmodal from './txdetailmodal.vue'
 import * as StringUtil from '../../sub/util/StringUtil'
 import * as NumberUtil from '../../sub/util/NumberUtil'
@@ -69,7 +69,7 @@ const loadImage = (src, fixHeight) => {
 
 export default {
   components: {
-    'sensor': sensor,
+    meditag,
     txdetailmodal,
   },
   props: {
