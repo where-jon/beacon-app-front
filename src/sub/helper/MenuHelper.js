@@ -215,3 +215,20 @@ export const isMenuEntry = path => {
 
   return _.some(pathList, pth => pth === path)
 }
+
+/**
+ * 指定したキーに相当するメニューが有効か
+ * @method
+ * @param {String} key 
+ * @return {Boolean}
+ */
+export const isEnabledMenu = key => {
+  for(let group of store.state.menu){
+    for(let page of group.pages){
+      if(page.key == key){
+        return true
+      }
+    }
+  }
+  return false
+}

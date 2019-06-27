@@ -4,7 +4,7 @@
     <div class="container">
       <alert :message="message" />
 
-      <b-form v-if="show" @submit.prevent="onSubmit">
+      <b-form v-if="show" @submit.prevent="save">
         <b-form-group>
           <b-form-row>
             <label v-t="'label.zoneName'" class="control-label" />
@@ -36,10 +36,10 @@
         </b-form-group>
 
         <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
-        <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="register(false)">
+        <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="doBeforeSubmit(false)">
           {{ $i18n.tnl(`label.${isUpdate? 'update': 'register'}`) }}
         </b-button>
-        <b-button v-if="isRegistable && !isUpdate" v-t="'label.registerAgain'" :variant="theme" type="submit" class="my-1" @click="register(true)" />
+        <b-button v-if="isRegistable && !isUpdate" v-t="'label.registerAgain'" :variant="theme" type="submit" class="my-1" @click="doBeforeSubmit(true)" />
       </b-form>
     </div>
   </div>
@@ -58,14 +58,13 @@ import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import { CATEGORY, ZONE } from '../../../sub/constant/Constants'
-import controlmixinVue from '../../../components/mixin/controlmixin.vue'
 
 export default {
   components: {
     breadcrumb,
     alert,
   },
-  mixins: [editmixinVue, controlmixinVue],
+  mixins: [editmixinVue],
   data() {
     return {
       name: 'zone',
@@ -87,8 +86,7 @@ export default {
   },
   computed: {
     theme () {
-      const theme = getButtonTheme()
-      return 'outline-' + theme
+      return getButtonTheme()
     },
     ...mapState('app_service', [
       'zone',
@@ -133,15 +131,15 @@ export default {
         category => !CATEGORY.POT_AVAILABLE.includes(category.categoryType)
       )
     },
-    afterCrud(){
+    onSaved(){
       StateHelper.setForceFetch('tx', true)
       StateHelper.setForceFetch('exb', true)
     },
-    async beforeReload(){
+    async onBeforeReload(){
       this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaNames, null, true)
       this.vueSelected.category = VueSelectHelper.getVueSelectData(this.categoryNames, null)
     },
-    async save() {
+    async onSaving() {
       const zoneId = Util.hasValue(this.form.zoneId)? this.form.zoneId: -1
       const entity = {
         zoneId: zoneId,

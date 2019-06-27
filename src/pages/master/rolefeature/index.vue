@@ -10,17 +10,17 @@ import { mapState, mapActions } from 'vuex'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import * as FeatureHelper from '../../../sub/helper/FeatureHelper'
 import * as Util from '../../../sub/util/Util'
 import * as ArrayUtil from '../../../sub/util/ArrayUtil'
-import listmixinVue from '../../../components/mixin/listmixin.vue'
-import featuremixinVue from '../../../components/mixin/featuremixin.vue'
+import reloadmixin from '../../../components/mixin/reloadmixin.vue'
 import { ROLE_FEATURE, FEATURE, BULK } from '../../../sub/constant/Constants'
 
 export default {
   components: {
     mList, 
   },
-  mixins: [listmixinVue, featuremixinVue],
+  mixins: [reloadmixin],
   props: {
     messageParams: {
       type: [Object],
@@ -96,7 +96,7 @@ export default {
         enabledName: this.getEnableName(feature),
       }
     },
-    afterCrud(){
+    onSaved(){
       if(this.$refs.ref.message){
         this.messageParams.message = this.$refs.ref.message
       }
@@ -107,7 +107,7 @@ export default {
       if(Util.hasValue(this.role.roleId)){
         let roleFeatures = await AppServiceHelper.fetchList(`/meta/roleFeature/${this.role.roleId}`)
         if(Util.hasValue(roleFeatures) && ArrayUtil.isArray(roleFeatures)){
-          roleFeatures = this.getFilterRoleFeatureList(roleFeatures)
+          roleFeatures = FeatureHelper.getFilterRoleFeatureList(roleFeatures)
           roleFeatures = roleFeatures.map((val) => (this.getFeatureInfo(this.features, val)))
           roleFeatures = _(roleFeatures).sortBy((val) => val.featureName).compact().value()
         }

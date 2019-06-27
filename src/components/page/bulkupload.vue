@@ -3,12 +3,12 @@
     <div class="container">
       <alert :message="message" :warn-message="warnMessage" :warn-thumbnails="form.warnThumbnails" />
 
-      <b-form v-if="show" @submit.prevent="onSubmit">
+      <b-form v-if="show" @submit.prevent="save">
         <b-form-group>
           <label v-t="'label.zipFile'" />
           <b-form-file :key="formKey" v-model="form.zipFile" :placeholder="$t('message.selectFile') " :disabled="loading" accept=".zip" @change="loadThumbnail" />
         </b-form-group>
-        <b-button :variant="getButtonTheme()" :disabled="!submittable" type="submit" @click="register(true)">
+        <b-button :variant="theme" :disabled="!submittable" type="submit" @click="doBeforeSubmit(true)">
           {{ label }}
         </b-button>
         <b-button v-t="'label.back'" type="button" variant="outline-danger" class="ml-2" @click="backToList" />
@@ -18,6 +18,7 @@
 </template>
 
 <script>
+import { getButtonTheme } from '../../sub/helper/ThemeHelper'
 import commonmixinVue from '../mixin/commonmixin.vue'
 import editmixinVue from '../mixin/editmixin.vue'
 import alert from '../parts/alert.vue'
@@ -64,6 +65,11 @@ export default {
         warnThumbnails: [],
       },
     }
+  },
+  computed: {
+    theme () {
+      return getButtonTheme()
+    },
   },
   mounted() {
     this.loading = false
@@ -142,7 +148,7 @@ export default {
       this.replace({showAlert: !hasUploadThumbnails || Util.hasValue(this.errorThumbnails)})
       this.replace({showInfo: hasUploadThumbnails})
     },
-    beforeReload(){
+    onBeforeReload(){
       this.formKey++
       this.form.zipFile = null
       this.form.thumbnails = []
@@ -172,7 +178,7 @@ export default {
         this.uploadMessage()
       }
     },
-    async save() {
+    async onSaving() {
       if (!Util.hasValue(this.form.thumbnails)) {
         throw new Error(this.$t('message.uploadNoData'))
       }

@@ -12,7 +12,7 @@ import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as RegionHelper from '../../../sub/helper/RegionHelper'
 import * as LocalStorageHelper from '../../../sub/helper/LocalStorageHelper'
-import listmixinVue from '../../../components/mixin/listmixin.vue'
+import reloadmixin from '../../../components/mixin/reloadmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 
 export default {
@@ -20,7 +20,7 @@ export default {
     mList, 
     breadcrumb,
   },
-  mixins: [listmixinVue],
+  mixins: [reloadmixin],
   data() {
     return {
       params: {
@@ -50,7 +50,7 @@ export default {
     ]),
   },
   methods: {
-    async afterCrud(param){
+    async onSaved(param){
       StateHelper.setForceFetch('user', true)
       const result = await RegionHelper.autoSwitchRegion(this.regions)
       if(result){

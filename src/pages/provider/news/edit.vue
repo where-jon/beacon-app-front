@@ -4,7 +4,7 @@
     <div class="container">
       <alert :message="message" />
 
-      <b-form v-if="show" @submit.prevent="onSubmit">
+      <b-form v-if="show" @submit.prevent="save">
         <b-form-group>
           <label v-t="'label.newsDt'" />
           <date-picker v-model="form.newsDate" :clearable="false" type="datetime" class="ml-2" required />
@@ -20,10 +20,10 @@
         </b-form-group>
 
         <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
-        <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="register(false)">
+        <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="doBeforeSubmit(false)">
           {{ $i18n.tnl(`label.${isUpdate? 'update': 'register'}`) }}
         </b-button>
-        <b-button v-if="isRegistable && !isUpdate" v-t="'label.registerAgain'" :variant="theme" type="submit" class="my-1" @click="register(true)" />
+        <b-button v-if="isRegistable && !isUpdate" v-t="'label.registerAgain'" :variant="theme" type="submit" class="my-1" @click="doBeforeSubmit(true)" />
       </b-form>
     </div>
   </div>
@@ -62,8 +62,7 @@ export default {
   },
   computed: {
     theme () {
-      const theme = getButtonTheme()
-      return 'outline-' + theme
+      return getButtonTheme()
     },
     ...mapState('app_service', [
       'news',
@@ -76,10 +75,10 @@ export default {
     }
   },
   methods: {
-    beforeReload(){
+    onBeforeReload(){
       this.form.newsDate = (new Date()).getTime()
     },
-    async save() {
+    async onSaving() {
       let dummyKey = -1
       const entity = {
         newsId: Util.hasValue(this.form.newsId)? this.form.newsId: dummyKey--,

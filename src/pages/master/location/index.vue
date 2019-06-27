@@ -15,7 +15,7 @@
             </template>
           </v-select>
         </span>
-        <b-button v-t="'label.load'" :variant="getButtonTheme()" :disabled="settingStart || selectedArea == null" size="sm" class="mb-2" @click="changeArea" />
+        <b-button v-t="'label.load'" :variant="theme" :disabled="settingStart || selectedArea == null" size="sm" class="mb-2" @click="changeArea" />
       </b-form-row>
     </b-form>
     <b-form inline class="mt-2">
@@ -35,7 +35,7 @@
               </div>
             </v-select>
           </span>
-          <b-button v-t="'label.bulkAdd'" :variant="getButtonTheme()" :disabled="settingStart" size="sm" class="mt-mobile mb-2" @click="bulkAdd" /> 
+          <b-button v-t="'label.bulkAdd'" :variant="theme" :disabled="settingStart" size="sm" class="mt-mobile mb-2" @click="bulkAdd" /> 
         </b-form-row>
       </b-form-row>
     </b-form>
@@ -59,8 +59,8 @@
         <input v-model="pixelWidth" :readonly="true" size="sm" type="number" class="ratioInput form-control">
       </b-form-row>
       <b-form-row class="mb-3 ml-1">
-        <b-button v-t="settingStart?'label.settingNow':'label.settingStart'" :variant="getButtonTheme()" :class="{'mt-mobile':true, 'mt-mobile-button': true, 'mr-2':true, blink:settingStart}" size="sm" @click="ratioSettingStart" /> 
-        <b-button v-t="'label.save'" :variant="getButtonTheme()" :disabled="!isChanged" size="sm" @click="save" /> 
+        <b-button v-t="settingStart?'label.settingNow':'label.settingStart'" :variant="theme" :class="{'mt-mobile':true, 'mt-mobile-button': true, 'mr-2':true, blink:settingStart}" size="sm" @click="ratioSettingStart" /> 
+        <b-button v-t="'label.save'" :variant="theme" :disabled="!isChanged" size="sm" @click="save" /> 
       </b-form-row>
     </b-form>
     <p />
@@ -86,6 +86,7 @@ import * as HttpHelper from '../../../sub/helper/HttpHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as VueSelectHelper from '../../../sub/helper/VueSelectHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import * as Util from '../../../sub/util/Util'
 import * as HtmlUtil from '../../../sub/util/HtmlUtil'
 import * as StringUtil from '../../../sub/util/StringUtil'
@@ -98,14 +99,13 @@ import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
 import commonmixinVue from '../../../components/mixin/commonmixin.vue'
 import showmapmixin from '../../../components/mixin/showmapmixin.vue'
-import controlmixinVue from '../../../components/mixin/controlmixin.vue'
 
 export default {
   components: {
     breadcrumb,
     alert,
   },
-  mixins: [showmapmixin, commonmixinVue, controlmixinVue],
+  mixins: [showmapmixin, commonmixinVue],
   data() {
     return {
       message: '',
@@ -142,6 +142,9 @@ export default {
     ...mapState('app_service', [
       'pageSendParam',
     ]),
+    theme() {
+      return getButtonTheme()
+    },
   },
   watch: {
     'vueSelected.area': {
@@ -185,6 +188,18 @@ export default {
     this.selectedArea = null
   },
   methods: {
+    getVueSelectStyle(){
+      return VueSelectHelper.getVueSelectStyle()
+    },
+    vueSelectTitle(selected){
+      return VueSelectHelper.vueSelectTitle(selected)
+    },
+    vueSelectCutOn(option, required){
+      return VueSelectHelper.vueSelectCutOn(option, required)
+    },
+    closeVueSelect(){
+      return VueSelectHelper.closeVueSelect()
+    },
     reset() {
       this.replace({showAlert: false})
       this.replace({showInfo: false})

@@ -7,9 +7,10 @@ import * as LocalStorageHelper from '../helper/LocalStorageHelper'
  * @method
  * @return {String}
  */
-export const getButtonTheme = () => {
+export const getButtonTheme = (isOutline = true) => {
   const theme = getTheme()
-  return theme !== 'default' ? theme : 'buttonDefault'
+  const prefix = isOutline? 'outline-': ''
+  return prefix + (theme !== 'default' ? theme : 'buttonDefault')
 }
 
 /**

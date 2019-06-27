@@ -6,7 +6,7 @@
 
       <b-row>
         <b-col md="8" offset-md="2">
-          <b-form v-if="show" @submit.prevent="onSubmit">
+          <b-form v-if="show" @submit.prevent="save">
             <b-form-group v-if="showMinorHead" v-show="showTx('minor')">
               <label v-t="'label.minor'" />
               <input v-model="form.minor" :readonly="!isEditable" :required="requiredMinor" type="number" min="0" max="65535" class="form-control">
@@ -71,10 +71,10 @@
               <input v-model="form.y" :readonly="!isEditable" type="number" min="0" class="form-control">
             </b-form-group>
             <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
-            <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="register(false)">
+            <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="doBeforeSubmit(false)">
               {{ $i18n.tnl(`label.${isUpdate? 'update': 'register'}`) }}
             </b-button>
-            <b-button v-if="isRegistable && !isUpdate" v-t="'label.registerAgain'" :variant="theme" type="submit" class="my-1" @click="register(true)" />
+            <b-button v-if="isRegistable && !isUpdate" v-t="'label.registerAgain'" :variant="theme" type="submit" class="my-1" @click="doBeforeSubmit(true)" />
           </b-form>
         </b-col>
       </b-row>
@@ -89,13 +89,13 @@ import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as HtmlUtil from '../../../sub/util/HtmlUtil'
 import * as Util from '../../../sub/util/Util'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
-import controlmixinVue from '../../../components/mixin/controlmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
 import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as VueSelectHelper from '../../../sub/helper/VueSelectHelper'
+import * as OptionHelper from '../../../sub/helper/OptionHelper'
 import { APP } from '../../../sub/constant/config.js'
 import { CATEGORY, SENSOR } from '../../../sub/constant/Constants'
 
@@ -104,7 +104,7 @@ export default {
     breadcrumb,
     alert,
   },
-  mixins: [editmixinVue, controlmixinVue],
+  mixins: [editmixinVue],
   data() {
     return {
       name: 'tx',
@@ -130,14 +130,13 @@ export default {
   },
   computed: {
     theme () {
-      const theme = getButtonTheme()
-      return 'outline-' + theme
+      return getButtonTheme()
     },
     isMajorRequired() {
       return APP.TX.MAJOR_REQUIRED
     },
     sensorOptionsTx() {
-      let options = this.sensorOptions('tx')
+      let options = OptionHelper.getSensorOptions('tx')
       return options
     },
     categoryOptions() {
@@ -198,15 +197,15 @@ export default {
       }
       return true
     },
-    beforeReload(){
+    onBeforeReload(){
       this.form.sensorId = null
       this.vueSelected.category = VueSelectHelper.getVueSelectData(this.categoryOptions, null)
       this.vueSelected.group = VueSelectHelper.getVueSelectData(this.groupOptions, null)
     },
-    afterCrud(){
+    onSaved(){
       StateHelper.setForceFetch('pot', true)
     },
-    async save() {
+    async onSaving() {
       const txId = Util.hasValue(this.form.txId)? this.form.txId: -1
       switch(APP.TX.BTX_MINOR) {
       case 'minor':

@@ -111,7 +111,7 @@
           <b-form-row v-if="isCategoryEnabled" class="mb-3 mr-2">
             <label v-t="'label.category'" class="mr-2" />
             <span :title="vueSelectTitle(vueSelected.category)">
-              <v-select v-model="vueSelected.category" :options="getCategoryOptions(categoryTypes)" class="inputSelect vue-options">
+              <v-select v-model="vueSelected.category" :options="categoryOptions" class="inputSelect vue-options">
                 <template slot="selected-option" slot-scope="option">
                   {{ vueSelectCutOn(option) }}
                 </template>
@@ -194,13 +194,14 @@ import * as ColorUtil from '../../sub/util/ColorUtil'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
+import * as MenuHelper from '../../sub/helper/MenuHelper'
+import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import { APP, DISP } from '../../sub/constant/config'
 import moment from 'moment'
 import commonmixinVue from '../../components/mixin/commonmixin.vue'
-import controlmixinVue from '../../components/mixin/controlmixin.vue'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
 import { SYSTEM_ZONE_CATEGORY_NAME } from '../../sub/constant/Constants'
 import { CATEGORY } from '../../sub/constant/Constants'
@@ -211,7 +212,7 @@ export default {
     alert,
     DatePicker,
   },
-  mixins: [commonmixinVue, controlmixinVue],
+  mixins: [commonmixinVue],
   data () {
     return {
       form: {
@@ -259,13 +260,10 @@ export default {
       return HtmlUtil.isAndroidOrIOS()
     },
     isCategoryEnabled () {
-      return this.isEnabledMenu('category') && ArrayUtil.includesIgnoreCase(APP.POT.WITH, 'category')
+      return MenuHelper.isEnabledMenu('category') && ArrayUtil.includesIgnoreCase(APP.POT.WITH, 'category')
     },
     isGroupEnabled () {
-      return this.isEnabledMenu('group') && ArrayUtil.includesIgnoreCase(APP.POT.WITH, 'group')
-    },
-    categoryTypes () {
-      return CATEGORY.POT_AVAILABLE
+      return MenuHelper.isEnabledMenu('group') && ArrayUtil.includesIgnoreCase(APP.POT.WITH, 'group')
     },
     modalErrorMessage() {
       return this.modalMessage
@@ -311,6 +309,12 @@ export default {
       .sort((a, b) => a.categoryId < b.categoryId ? -1 : 1)
   },
   methods: {
+    vueSelectTitle(selected){
+      return VueSelectHelper.vueSelectTitle(selected)
+    },
+    vueSelectCutOn(option, required){
+      return VueSelectHelper.vueSelectCutOn(option, required)
+    },
     isScaleTime(scaleTime) {
       return _.some(APP.STAY_SUM.SCALE_TIMES, (time) => { return time === scaleTime })
     },

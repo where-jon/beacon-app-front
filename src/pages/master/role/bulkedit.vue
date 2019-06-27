@@ -32,10 +32,10 @@ export default {
     ]),
   },
   methods: {
-    async save() {
+    async onSaving() {
       await this.$refs.bulkEdit.bulkSave()
     },
-    afterCrud(){
+    onSaved(){
       StateHelper.setForceFetch('user', true)
     },
   }

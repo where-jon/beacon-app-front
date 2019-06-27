@@ -1,8 +1,8 @@
 
 <script>
-import { APP } from '../../sub/constant/config'
 import commonmixinVue from './commonmixin.vue'
 import * as DetectStateHelper from '../../sub/helper/DetectStateHelper'
+import * as TelemetryHelper from '../../sub/helper/TelemetryHelper'
 
 export default {
   mixins: [commonmixinVue],  
@@ -12,32 +12,14 @@ export default {
     }
   },
   methods: {
-    isUndetect(type, updatetime) {
-      return DetectStateHelper.isUndetect(this.getState(type, updatetime))
-    },
     getStateClass(type, updatetime) {
-      return this.badgeClassPrefix + DetectStateHelper.getClass(this.getState(type, updatetime))
+      return this.badgeClassPrefix + DetectStateHelper.getClass(DetectStateHelper.getStateFromDetail(type, updatetime))
     },
     getStateLabel(type, updatetime) {
-      return DetectStateHelper.getLabel(this.getState(type, updatetime))
-    },
-    getState(type, updatetime) {
-      return DetectStateHelper.getState(type, updatetime) // 第一階層のupdatetimeを使用
-    },
-    getPositionPowerLevel(val) {
-      if (val > APP.TX_MON.POWER_LEVEL_GOOD) {
-        return 'good'
-      }
-      if (val > APP.TX_MON.POWER_LEVEL_WARN) {
-        return 'warning'
-      }
-      if (val != null) {
-        return 'poor'
-      }
-      return null
+      return DetectStateHelper.getLabel(DetectStateHelper.getStateFromDetail(type, updatetime))
     },
     getPositionPowerLevelLabel(val) {
-      const powerLevel = this.getPositionPowerLevel(val)
+      const powerLevel = TelemetryHelper.getPositionPowerLevel(val)
       if (powerLevel) {
         return this.$i18n.tnl('label.power-' + powerLevel)
       }
@@ -45,27 +27,11 @@ export default {
     },
     getPositionPowerLevelClass(val) {
       const LEVEL_CLASS_MAP = {good:'success', warning:'warning', poor:'danger'}
-      const powerLevel = this.getPositionPowerLevel(val)
+      const powerLevel = TelemetryHelper.getPositionPowerLevel(val)
       if (powerLevel) {
         return this.badgeClassPrefix + LEVEL_CLASS_MAP[powerLevel]
       }
       return ''
-    },
-    getTelemetryPowerLevelClass(val, isPowerState = false) {
-      const num = parseInt(val , 10)
-      if (79 < num) {
-        return !isPowerState ? 'battery-full' : 'power-safe'
-      }
-      if (59 < num) {
-        return !isPowerState ? 'battery-three-quarters' : 'power-safe'
-      }
-      if (39 < num) {
-        return  !isPowerState ? 'battery-half' : 'power-warning'
-      }
-      if (19 < num) {
-        return  !isPowerState ? 'battery-quarter' : 'power-empty'
-      }
-      return  !isPowerState ? 'battery-empty' : 'power-empty'
     },
   }
 }

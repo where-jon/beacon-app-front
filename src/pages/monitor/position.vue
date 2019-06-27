@@ -12,24 +12,25 @@ import { mapState } from 'vuex'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
+import * as DetectStateHelper from '../../sub/helper/DetectStateHelper'
 import * as Util from '../../sub/util/Util'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as DateUtil from '../../sub/util/DateUtil'
 import { APP } from '../../sub/constant/config'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
-import commonmixinVue from '../../components/mixin/commonmixin.vue'
-import reloadmixinVue from '../../components/mixin/reloadmixin.vue'
+import commonmixin from '../../components/mixin/commonmixin.vue'
+import reloadmixin from '../../components/mixin/reloadmixin.vue'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import monitorTable from '../../components/parts/monitortable.vue'
-import statusmixinVue from '../../components/mixin/statusmixin.vue'
+import statusmixin from '../../components/mixin/statusmixin.vue'
 
 export default {
   components: {
     breadcrumb,
     monitorTable,
   },
-  mixins: [reloadmixinVue, commonmixinVue, statusmixinVue],
+  mixins: [reloadmixin, commonmixin, statusmixin],
   props: {
     isDev: {
       type: Boolean,
@@ -106,7 +107,7 @@ export default {
       return ret
     },
     getClass(position){
-      return {undetect: this.isUndetect('tx', position.updatetime)}
+      return {undetect: DetectStateHelper.isUndetectFromDetail('tx', position.updatetime)}
     },
     async fetchSensorHistory(){
       const exCloudSensors = {}

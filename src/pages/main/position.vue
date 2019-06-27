@@ -55,7 +55,7 @@
             <b-form-checkbox v-model="modeRssi" class="ml-sm-4 ml-2 mr-1">
               {{ $t('label.dispRssi') }}
             </b-form-checkbox>
-            <b-button class="ml-sm-4 ml-2 mr-1" :pressed.sync="isPause" :variant="getButtonTheme()">
+            <b-button class="ml-sm-4 ml-2 mr-1" :pressed.sync="isPause" :variant="theme">
               <font-awesome-icon v-if="!isPause" icon="pause" />
               <span v-if="!isPause">
                 &nbsp;{{ $t('label.reload') }}{{ $t('label.pause') }}
@@ -97,6 +97,9 @@ import * as StateHelper from '../../sub/helper/StateHelper'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
 import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
+import * as StyleHelper from '../../sub/helper/StyleHelper'
+import * as ProhibitHelper from '../../sub/helper/ProhibitHelper'
+import { getButtonTheme } from '../../sub/helper/ThemeHelper'
 import * as Util from '../../sub/util/Util'
 import * as NumberUtil from '../../sub/util/NumberUtil'
 import txdetail from '../../components/parts/txdetail.vue'
@@ -105,10 +108,9 @@ import { SENSOR, EXTRA_NAV, CATEGORY, TX } from '../../sub/constant/Constants'
 import { Container } from '@createjs/easeljs/dist/easeljs.module'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
-import listmixin from '../../components/mixin/listmixin.vue'
+import reloadmixin from '../../components/mixin/reloadmixin.vue'
 import meditag from '../../components/parts/meditag.vue'
 import commonmixinVue from '../../components/mixin/commonmixin.vue'
-import controlmixinVue from '../../components/mixin/controlmixin.vue'
 
 export default {
   components: {
@@ -116,7 +118,7 @@ export default {
     'txdetail': txdetail,
     breadcrumb,
   },
-  mixins: [showmapmixin, listmixin, commonmixinVue, controlmixinVue],
+  mixins: [showmapmixin, reloadmixin, commonmixinVue],
   props: {
     isInstallation: {
       default: false,
@@ -169,6 +171,9 @@ export default {
     ...mapState([
       'reload',
     ]),
+    theme() {
+      return getButtonTheme()
+    },
     categoryOptionsForPot() {
       return StateHelper.getOptionsFromState('category', false, true,
         category => CATEGORY.POT_AVAILABLE.includes(category.categoryType)
@@ -248,6 +253,18 @@ export default {
     this.resetDetail()
   },
   methods: {
+    getVueSelectStyle(){
+      return VueSelectHelper.getVueSelectStyle()
+    },
+    vueSelectTitle(selected){
+      return VueSelectHelper.vueSelectTitle(selected)
+    },
+    vueSelectCutOn(option, required){
+      return VueSelectHelper.vueSelectCutOn(option, required)
+    },
+    closeVueSelect(){
+      return VueSelectHelper.closeVueSelect()
+    },
     async loadLegends () {
       const loadCategory = DISP.TX.DISPLAY_PRIORITY[0] == 'category'
       const magnetCategoryTypes = loadCategory? this.getMagnetCategoryTypes(): this.getMagnetGroupTypes()
@@ -257,12 +274,12 @@ export default {
       this.legendItems = legendElements.map((legendElement) => ({
         id: legendElement.id,
         items: magnetCategoryTypes.includes(legendElement.id)? [
-          { id: 1, text: 'A', style: this.getStyleDisplay1(legendElement) },
+          { id: 1, text: 'A', style: StyleHelper.getStyleDisplay1(legendElement) },
           { id: 2, text: `${legendElement.name} : ${this.$i18n.tnl('label.using')}`, style: null },
-          { id: 3, text: 'A', style: this.getStyleDisplay1(legendElement, {reverceColor: true, fixSize: true}) },
+          { id: 3, text: 'A', style: StyleHelper.getStyleDisplay1(legendElement, {reverceColor: true, fixSize: true}) },
           { id: 4, text: `${this.$i18n.tnl('label.notUse')}`, style: {} },
         ]: [
-          { id: 1, text: 'A', style: this.getStyleDisplay1(legendElement) },
+          { id: 1, text: 'A', style: StyleHelper.getStyleDisplay1(legendElement) },
           { id: 2, text: legendElement.name, style: {} },
         ]
       }))
@@ -384,7 +401,7 @@ export default {
           this.stage.update()
         }
         this.setPositionedExb()
-        this.setProhibitDetect('pos')
+        ProhibitHelper.setProhibitDetect('pos', this)
         this.showTxAll()
         if(!this.firstTime && reloadButton){
           this.reloadState.isLoad = false

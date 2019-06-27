@@ -15,6 +15,7 @@ import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as BulkHelper from '../../../sub/helper/BulkHelper'
 import * as MasterHelper from '../../../sub/helper/MasterHelper'
+import * as OptionHelper from '../../../sub/helper/OptionHelper'
 import { APP } from '../../../sub/constant/config.js'
 import { IGNORE, CATEGORY } from '../../../sub/constant/Constants'
 
@@ -37,14 +38,14 @@ export default {
       'tx', 'txs', 'categories', 'groups', 'pots', 'potImages'
     ]),
     sensorOptionsTx() {
-      return MasterHelper.getTxOptions()
+      return OptionHelper.getTxOptions()
     },
   },
   async mounted() {
     await StateHelper.load('tx')
   },
   methods: {
-    async save() {
+    async onSaving() {
       await StateHelper.load('category')
       await StateHelper.load('group')
       await StateHelper.load('pot')
@@ -93,13 +94,16 @@ export default {
         Util.setValue(entity, 'potTxList.0.pot.thumbnail', potImage? potImage.thumbnail: null)
       }
 
-      dummyKey = this.restructCategory(entity, dummyKey)
-      dummyKey = this.restructGroup(entity, dummyKey)
+      dummyKey = this.restructCategory(entity, dummyKey, pot)
+      dummyKey = this.restructGroup(entity, dummyKey, pot)
       return dummyKey
     },
-    restructCategory(entity, dummyKey){
+    restructCategory(entity, dummyKey, pot){
       if(!Util.hasValue(entity.categoryName)){
-        return dummyKey
+        if(!Util.hasValue(Util.getValue(pot, 'categoryName', null))){
+          return dummyKey
+        }
+        entity.categoryName = pot.categoryName
       }
       const category = this.categories.find(category => category.categoryName == entity.categoryName)
       if(category){
@@ -113,9 +117,12 @@ export default {
       }
       return dummyKey
     },
-    restructGroup(entity, dummyKey){
+    restructGroup(entity, dummyKey, pot){
       if(!Util.hasValue(entity.groupName)){
-        return dummyKey
+        if(!Util.hasValue(Util.getValue(pot, 'groupName', null))){
+          return dummyKey
+        }
+        entity.groupName = pot.groupName
       }
       const group = this.groups.find(group => group.groupName == entity.groupName)
       if(group){
@@ -152,7 +159,7 @@ export default {
       dummyKey = this.restructLocation(entity, dummyKey)
       return dummyKey
     },
-    afterCrud(){
+    onSaved(){
       StateHelper.setForceFetch('pot', true)
     },
   }

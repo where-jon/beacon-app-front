@@ -10,7 +10,7 @@ import mList from '../../../components/page/list.vue'
 import { mapState } from 'vuex'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
-import listmixinVue from '../../../components/mixin/listmixin.vue'
+import reloadmixin from '../../../components/mixin/reloadmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 
 export default {
@@ -18,7 +18,7 @@ export default {
     mList, 
     breadcrumb,
   },
-  mixins: [listmixinVue],
+  mixins: [reloadmixin],
   data() {
     return {
       params: {

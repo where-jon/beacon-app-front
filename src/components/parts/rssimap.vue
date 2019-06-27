@@ -51,7 +51,7 @@
           <v-select v-model="vueSelected.tx" :options="txRecords" class="ml-1 mr-2 vue-options" :style="getVueSelectStyle()" />
         </b-form-row>
         <b-form-row class="my-1 ml-2 ml-sm-0">
-          <b-button class="ml-sm-4 ml-2 mr-1" :pressed.sync="isPause" :variant="getButtonTheme()">
+          <b-button class="ml-sm-4 ml-2 mr-1" :pressed.sync="isPause" :variant="theme">
             <font-awesome-icon v-if="!isPause" icon="pause" />
             <span v-if="!isPause">
               &nbsp;{{ $t('label.reload') }}{{ $t('label.pause') }}
@@ -77,14 +77,15 @@ import * as MenuHelper from '../../sub/helper/MenuHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
+import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
 import * as Util from '../../sub/util/Util'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
+import { getButtonTheme } from '../../sub/helper/ThemeHelper'
 import { APP, DISP, EXCLOUD } from '../../sub/constant/config'
 import { CATEGORY } from '../../sub/constant/Constants'
 import { Container, Shape, Text } from '@createjs/easeljs/dist/easeljs.module'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import commonmixinVue from '../mixin/commonmixin.vue'
-import controlmixinVue from '../mixin/controlmixin.vue'
 
 class RssiIcon {
   constructor(parent, rssi, scale, level = 3) {
@@ -142,7 +143,7 @@ export default {
   components: {
     breadcrumb,
   },
-  mixins: [showmapmixin, commonmixinVue, controlmixinVue],
+  mixins: [showmapmixin, commonmixinVue],
   data () {
     return {
       items: [
@@ -172,6 +173,9 @@ export default {
     ...mapState([
       'reload',
     ]),
+    theme () {
+      return getButtonTheme()
+    },
     categoryOptionsForPot() {
       return StateHelper.getOptionsFromState('category', false, true,
         category => CATEGORY.POT_AVAILABLE.includes(category.categoryType)
@@ -235,6 +239,15 @@ export default {
     this.fetchData()
   },
   methods: {
+    getVueSelectStyle(){
+      return VueSelectHelper.getVueSelectStyle()
+    },
+    vueSelectTitle(selected){
+      return VueSelectHelper.vueSelectTitle(selected)
+    },
+    vueSelectCutOn(option, required){
+      return VueSelectHelper.vueSelectCutOn(option, required)
+    },
     async fetchData(payload, disableErrorPopup) {
       this.showMapImageDef(async () => {
         this.showProgress()

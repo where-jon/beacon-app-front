@@ -10,7 +10,8 @@ import mList from '../../../components/page/list.vue'
 import { mapState } from 'vuex'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
-import listmixinVue from '../../../components/mixin/listmixin.vue'
+import * as StyleHelper from '../../../sub/helper/StyleHelper'
+import reloadmixin from '../../../components/mixin/reloadmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import * as ColorUtil from '../../../sub/util/ColorUtil'
 
@@ -19,7 +20,7 @@ export default {
     mList, 
     breadcrumb,
   },
-  mixins: [listmixinVue],
+  mixins: [reloadmixin],
   data() {
     return {
       params: {
@@ -57,7 +58,7 @@ export default {
     ]),
   },
   methods: {
-    afterCrud(){
+    onSaved(){
       StateHelper.setForceFetch('pot', true)
       StateHelper.setForceFetch('tx', true)
       StateHelper.setForceFetch('zone', true)
@@ -66,7 +67,7 @@ export default {
       try {
         this.showProgress()
         await StateHelper.load('category')
-        this.categoryStyles = this.getStyleDisplay(this.categories)
+        this.categoryStyles = StyleHelper.getStyleDisplay(this.categories)
         if (payload && payload.done) {
           payload.done()
         }

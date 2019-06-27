@@ -2,7 +2,7 @@ import _ from 'lodash'
 import * as Util from '../util/Util'
 import * as StringUtil from '../util/StringUtil'
 import * as ArrayUtil from '../util/ArrayUtil'
-import * as MasterHelper from './MasterHelper'
+import * as OptionHelper from './OptionHelper'
 import * as CharSetHelper from './CharSetHelper'
 import { BULK, ROLE_FEATURE, CHAR_SET } from '../constant/Constants'
 
@@ -440,7 +440,7 @@ export const createParamSensor = (masterType, sensorNames, dummyKey) => {
   const sensorNameList = sensorNames.split(';').map(val => val.trim())
   const sensorList = []
   sensorNameList.forEach(sensorName => {
-    const sensor = MasterHelper[StringUtil.concatCamel('get', masterType, 'Options')]().find(option => option.text == sensorName)
+    const sensor = OptionHelper.getSensorOptions(masterType).find(option => option.text == sensorName)
     if(sensor && sensor.value != null){
       sensorList.push({[masterType + 'SensorPK']: {sensorId: sensor.value}, sensorName: sensorName})
     }

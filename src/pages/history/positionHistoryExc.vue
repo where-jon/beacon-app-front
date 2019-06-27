@@ -57,6 +57,7 @@ import { addLabelByKey } from '../../sub/helper/ViewHelper'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as SensorHelper from '../../sub/helper/SensorHelper'
+import * as OptionHelper from '../../sub/helper/OptionHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as StringUtil from '../../sub/util/StringUtil'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
@@ -120,14 +121,7 @@ export default {
       return 'outline-' + theme
     },
     sensorOptions() { // TODO: refactoring duplicate 
-      return StateHelper.getOptionsFromState('sensor', 
-        sensor => this.$i18n.tnl('label.' + sensor.sensorName),
-        true,
-        sensor => {
-          return SensorHelper.availableSensorAll().includes(sensor.sensorId) 
-            && sensor.sensorId != SENSOR.LED && sensor.sensorId != SENSOR.BUTTON
-        }
-      )
+      return OptionHelper.getAllSensorOptions()
     },
   },
   watch: {

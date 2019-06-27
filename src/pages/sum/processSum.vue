@@ -32,13 +32,13 @@ import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
-import reloadmixinVue from '../../components/mixin/reloadmixin.vue'
+import reloadmixin from '../../components/mixin/reloadmixin.vue'
 
 export default {
   components: {
     breadcrumb,
   },
-  mixins: [reloadmixinVue],
+  mixins: [reloadmixin],
   data () {
     return {
       form: {

@@ -4,7 +4,7 @@
     <div class="container">
       <alert :message="message" />
 
-      <b-form v-if="show" @submit.prevent="onSubmit">
+      <b-form v-if="show" @submit.prevent="save">
         <!--種別-->
         <b-form-group :disabled="!bNotifyTemplateKey">
           <b-form-row>
@@ -117,8 +117,7 @@ export default {
       return _.slice(NOTIFY_STATE.getOptions()).filter((val) => APP.NOTIFY.STATE_TYPES.includes(val.index))
     },
     theme () {
-      const theme = getButtonTheme()
-      return 'outline-' + theme
+      return getButtonTheme()
     },
     ...mapState('app_service', [
       'template',
@@ -197,9 +196,9 @@ export default {
           return false
         }
       }
-      this.register(again)
+      this.doBeforeSubmit(again)
     },
-    async save() {
+    async onSaving() {
       const notifyTemplateId = Util.hasValue(this.form.notifyTemplateId)? this.form.notifyTemplateId: -1
       const aNotifyState = (this.form.notifyTemplateKey != null)?this.form.notifyTemplateKey:0
       const entity = {

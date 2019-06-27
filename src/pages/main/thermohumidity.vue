@@ -60,6 +60,7 @@ import * as SensorHelper from '../../sub/helper/SensorHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as HeatmapHelper from '../../sub/helper/HeatmapHelper'
+import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
 import * as Util from '../../sub/util/Util'
 import * as StringUtil from '../../sub/util/StringUtil'
 import * as NumberUtil from '../../sub/util/NumberUtil'
@@ -73,7 +74,6 @@ import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
 import ToolTip from '../../components/parts/toolTip.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
-import controlmixinVue from '../../components/mixin/controlmixin.vue'
 import cold from '../../assets/icon/cold.png'
 import hot from '../../assets/icon/hot.png'
 import comfort from '../../assets/icon/comfort.png'
@@ -84,7 +84,7 @@ export default {
     alert,
     ToolTip,
   },
-  mixins: [showmapmixin, controlmixinVue],
+  mixins: [showmapmixin],
   data() {
     return {
       items: ViewHelper.createBreadCrumbItems('main', 'thermohumidity'),
@@ -146,6 +146,18 @@ export default {
     this.removeTick()
   },
   methods: {
+    getVueSelectStyle(){
+      return VueSelectHelper.getVueSelectStyle()
+    },
+    vueSelectTitle(selected){
+      return VueSelectHelper.vueSelectTitle(selected)
+    },
+    vueSelectCutOn(option, required){
+      return VueSelectHelper.vueSelectCutOn(option, required)
+    },
+    closeVueSelect(){
+      return VueSelectHelper.closeVueSelect()
+    },
     heatmapData() {
       const dataList = this.positionedTx.concat(this.positionedExb)
       return HeatmapHelper.collect(dataList,
@@ -261,7 +273,7 @@ export default {
         
         this.getPositionedExb(
           (exb) => exb.sensorId == SENSOR.TEMPERATURE,
-          // (exb) => this.getSensorIds(exb).includes(SENSOR.TEMPERATURE),　 一旦単数に戻す
+          // (exb) => SensorHelper.getSensorIds(exb).includes(SENSOR.TEMPERATURE),　 一旦単数に戻す
           (exb) => {return {id: SENSOR.TEMPERATURE, ...sensors.find((sensor) => sensor.deviceid == exb.deviceId && (sensor.timestamp || sensor.updatetime))}},
           (exb) => exb.temperature != null
         )

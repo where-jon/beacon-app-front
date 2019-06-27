@@ -43,3 +43,14 @@ export const colorCdHex2Decimal = hex => {
   ]
 }
 
+/**
+ * RGBS値を取得するcss値を取得する。
+ * @method
+ * @param {String} colorCd 
+ * @param {Number} alpha 
+ * @return {String}
+ */
+export const getRGBA = (colorCd, alpha) => {
+  const cds = colorCdHex2Decimal(colorCd)
+  return `rgba(${cds.toString()},${alpha})`
+}

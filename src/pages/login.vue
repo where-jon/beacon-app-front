@@ -66,7 +66,7 @@ export default {
       'topNewsList',
     ]),
     theme() {
-      return getButtonTheme()
+      return getButtonTheme(false)
     },
     newsList() {
       return this.topNewsList.map((val) => ({

@@ -6,7 +6,7 @@
 
       <b-row>
         <b-col md="8" offset-md="2">
-          <b-form v-if="show" @submit.prevent="onSubmit">
+          <b-form v-if="show" @submit.prevent="save">
             <b-form-group v-show="isShown('EXB.WITH', 'deviceId')">
               <label v-t="'label.deviceId'" />
               <input v-model.lazy="deviceId" :max="maxDeviceId" :readonly="!isEditable" type="number" class="form-control" min="0" :required="isShown('EXB.WITH', 'deviceId')">
@@ -75,10 +75,10 @@
             </b-form-group>
 
             <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
-            <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="register(false)">
+            <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="doBeforeSubmit(false)">
               {{ $i18n.tnl(`label.${isUpdate? 'update': 'register'}`) }}
             </b-button>
-            <b-button v-if="isRegistable && !isUpdate" v-t="'label.registerAgain'" :variant="theme" type="submit" class="my-1" @click="register(true)" />
+            <b-button v-if="isRegistable && !isUpdate" v-t="'label.registerAgain'" :variant="theme" type="submit" class="my-1" @click="doBeforeSubmit(true)" />
           </b-form>
         </b-col>
       </b-row>
@@ -93,11 +93,11 @@ import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as VueSelectHelper from '../../../sub/helper/VueSelectHelper'
 import * as MenuHelper from '../../../sub/helper/MenuHelper'
+import * as OptionHelper from '../../../sub/helper/OptionHelper'
 import * as Util from '../../../sub/util/Util'
 import * as HtmlUtil from '../../../sub/util/HtmlUtil'
 import * as ArrayUtil from '../../../sub/util/ArrayUtil'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
-import controlmixinVue from '../../../components/mixin/controlmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
 import settingtxview from '../../../components/parts/settingtxview.vue'
@@ -110,7 +110,7 @@ export default {
     alert,
     settingtxview,
   },
-  mixins: [editmixinVue, controlmixinVue],
+  mixins: [editmixinVue],
   data() {
     return {
       name: 'exb',
@@ -144,14 +144,13 @@ export default {
   },
   computed: {
     theme () {
-      const theme = getButtonTheme()
-      return 'outline-' + theme
+      return getButtonTheme()
     },
     areaOptions() {
       return StateHelper.getOptionsFromState('area', false, true)
     },
     sensorOptionsExb() {
-      let options = this.sensorOptions('exb')
+      let options = OptionHelper.getSensorOptions('exb')
       return options
     },
     ...mapState('app_service', [
@@ -263,7 +262,7 @@ export default {
       return APP.EXB.MULTI_SENSOR && !this.isNormalSensor() && 1 < APP.EXB.SENSOR_MAX? `${index + 1}`: ''
     },
     getSensorOptionsExb(index) {
-      const options = this.sensorOptions('exb', index != 0)
+      const options = OptionHelper.getSensorOptions('exb', index != 0)
       return Util.hasValue(this.form.exbSensorList)? options.filter((val) => {
         for(let cnt = 0; cnt < this.form.exbSensorList.length; cnt++){
           if(index != cnt && val.value != null && val.value == this.form.exbSensorList[cnt].sensorId){
@@ -303,14 +302,14 @@ export default {
       this.txIconsHorizon = param.horizon
       this.txIconsVertical = param.vertical
     },
-    beforeReload(){
+    onBeforeReload(){
       this.initExbSensorList()
       this.changeSensors()
       this.form.sensorId = null
       this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions, null)
       this.vueSelected.zone = VueSelectHelper.getVueSelectData(this.getZoneNames(), null)
     },
-    async save() {
+    async onSaving() {
       let dummyKey = -1
       if(!this.getZoneNames().find(zone => zone.value == this.form.zoneId)){
         this.form.zoneId = null

@@ -10,8 +10,9 @@ import mList from '../../../components/page/list.vue'
 import { mapState } from 'vuex'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import * as MenuHelper from '../../../sub/helper/MenuHelper'
 import { APP } from '../../../sub/constant/config.js'
-import listmixinVue from '../../../components/mixin/listmixin.vue'
+import reloadmixin from '../../../components/mixin/reloadmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import * as Util from '../../../sub/util/Util'
 import * as ArrayUtil from '../../../sub/util/ArrayUtil'
@@ -22,7 +23,7 @@ export default {
     mList,
     breadcrumb,
   },
-  mixins: [listmixinVue],
+  mixins: [reloadmixin],
   data() {
     return {
       params: {
@@ -108,12 +109,12 @@ export default {
           {key: 'actions', thStyle: {width:'130px !important'} , tdClass: 'thumb-rowdata'},
         ]))
     },
-    afterCrud(){
+    onSaved(){
       StateHelper.setForceFetch('tx', true)
       StateHelper.setForceFetch('user', true)
     },
     getExtraFilter(){
-      return [this.isEnabledMenu('group') && ArrayUtil.includesIgnoreCase(APP.POT.WITH, 'group')? 'group': null, this.isEnabledMenu('category') && ArrayUtil.includesIgnoreCase(APP.POT.WITH, 'category')? 'category': null].filter((val) => val)
+      return [MenuHelper.isEnabledMenu('group') && ArrayUtil.includesIgnoreCase(APP.POT.WITH, 'group')? 'group': null, MenuHelper.isEnabledMenu('category') && ArrayUtil.includesIgnoreCase(APP.POT.WITH, 'category')? 'category': null].filter((val) => val)
     },
     async fetchData(payload) {
       try {

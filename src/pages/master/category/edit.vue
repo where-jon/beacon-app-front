@@ -4,7 +4,7 @@
     <div class="container">
       <alert :message="message" />
 
-      <b-form v-if="show" @submit.prevent="onSubmit">
+      <b-form v-if="show" @submit.prevent="save">
         <b-form-group>
           <label v-t="'label.categoryName'" />
           <input v-model="form.categoryName" :readonly="!isEditable" type="text" maxlength="20" class="form-control" required>
@@ -25,10 +25,10 @@
         </b-form-group>
 
         <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
-        <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="register(false)">
+        <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="doBeforeSubmit(false)">
           {{ $i18n.tnl(`label.${isUpdate? 'update': 'register'}`) }}
         </b-button>
-        <b-button v-if="isRegistable && !isUpdate" v-t="'label.registerAgain'" :variant="theme" type="submit" class="my-1" @click="register(true)" />
+        <b-button v-if="isRegistable && !isUpdate" v-t="'label.registerAgain'" :variant="theme" type="submit" class="my-1" @click="doBeforeSubmit(true)" />
       </b-form>
     </div>
   </div>
@@ -79,8 +79,7 @@ export default {
   },
   computed: {
     theme() {
-      const theme = getButtonTheme()
-      return 'outline-' + theme
+      return getButtonTheme()
     },
     ...mapState('app_service', [
       'category',
@@ -93,14 +92,14 @@ export default {
     },
   },
   created() {
-    this.beforeReload()
+    this.onBeforeReload()
   },
   async mounted() {
     ViewHelper.applyDef(this.form, this.defValue)
     HtmlUtil.setCustomValidationMessage()
   },
   methods: {
-    beforeReload(){
+    onBeforeReload(){
       if (this.form) {
         this.form.categoryType = this.oldType? this.oldType: this.categoryTypes[0].value
         this.form.displayShape = this.oldShape? this.oldShape: this.shapes[0].value
@@ -108,12 +107,12 @@ export default {
         this.form.displayBgColor = ColorUtil.colorCd4display(this.oldBgColor? this.oldBgColor: null, this.defaultBgColor)
       }
     },
-    afterCrud(){
+    onSaved(){
       StateHelper.setForceFetch('pot', true)
       StateHelper.setForceFetch('tx', true)
       StateHelper.setForceFetch('zone', true)
     },
-    async save() {
+    async onSaving() {
       const entity = {
         categoryId: this.form.categoryId || -1,
         categoryName: this.form.categoryName,

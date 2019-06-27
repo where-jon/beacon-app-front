@@ -9,7 +9,7 @@
 import { mapState } from 'vuex'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as BulkHelper from '../../../sub/helper/BulkHelper'
-import * as MasterHelper from '../../../sub/helper/MasterHelper'
+import * as OptionHelper from '../../../sub/helper/OptionHelper'
 import * as Util from '../../../sub/util/Util'
 import * as ArrayUtil from '../../../sub/util/ArrayUtil'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
@@ -35,11 +35,11 @@ export default {
       'exb', 'exbs',
     ]),
     sensorOptionsExb() {
-      return MasterHelper.getExbOptions()
+      return OptionHelper.getExbOptions()
     },
   },
   methods: {
-    async save() {
+    async onSaving() {
       await this.$refs.bulkEdit.bulkSave({numberList: ['deviceId', 'posId', 'x', 'y'], hexList: ['deviceIdX'], booleanList: ['enabled']})
     },
     restruct(entity, dummyKey){

@@ -3,7 +3,7 @@
     <b-row align-h="end">
       <all-count :count="allCount" />
       <b-col md="2" class="mb-3 mr-3">
-        <b-button v-if="!iosOrAndroid" v-t="'label.download'" :variant="getButtonTheme()" @click="download()" />
+        <b-button v-if="!iosOrAndroid" v-t="'label.download'" :variant="theme" @click="download()" />
       </b-col>
     </b-row>
     <div class="table-area">
@@ -73,17 +73,19 @@
 
 <script>
 import VueScrollingTable from 'vue-scrolling-table'
+import { getButtonTheme } from '../../sub/helper/ThemeHelper'
+import * as TelemetryHelper from '../../sub/helper/TelemetryHelper'
 import allCount from './allcount.vue'
-import reloadmixinVue from '../mixin/reloadmixin.vue'
-import commonmixinVue from '../mixin/commonmixin.vue'
-import statusmixinVue from '../mixin/statusmixin.vue'
+import reloadmixin from '../mixin/reloadmixin.vue'
+import commonmixin from '../mixin/commonmixin.vue'
+import statusmixin from '../mixin/statusmixin.vue'
 
 export default {
   components: {
     allCount,
     VueScrollingTable,
   },
-  mixins: [reloadmixinVue, commonmixinVue, statusmixinVue],
+  mixins: [reloadmixin, commonmixin, statusmixin],
   props: {
     isDev: {
       type: Boolean,
@@ -122,7 +124,15 @@ export default {
     return {
     }
   },
+  computed: {
+    theme () {
+      return getButtonTheme()
+    },
+  },
   methods: {
+    getTelemetryPowerLevelClass(val, isPowerState = false){
+      TelemetryHelper.getTelemetryPowerLevelClass(val, isPowerState)
+    },
     async fetchData(payload) {
       if(this.$parent.$options.methods.fetchData){
         await this.$parent.$options.methods.fetchData.call(this.$parent, payload)

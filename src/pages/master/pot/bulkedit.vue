@@ -42,7 +42,7 @@ export default {
     this.masterCd = StateHelper.createMasterCd('pot', this.pots, null)
   },
   methods: {
-    async save() {
+    async onSaving() {
       await StateHelper.load('pot')
       await StateHelper.load('category')
       await StateHelper.load('group')
@@ -110,7 +110,7 @@ export default {
       dummyKey = this.restructUser(entity, dummyKey)
       return dummyKey
     },
-    afterCrud(){
+    onSaved(){
       StateHelper.setForceFetch('tx', true)
       StateHelper.setForceFetch('user', true)
     },

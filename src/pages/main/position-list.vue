@@ -14,11 +14,12 @@
 import { mapState, mapActions } from 'vuex'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import mList from '../../components/page/list.vue'
-import listmixinVue from '../../components/mixin/listmixin.vue'
+import reloadmixin from '../../components/mixin/reloadmixin.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
+import * as ProhibitHelper from '../../sub/helper/ProhibitHelper'
 import { EXTRA_NAV } from '../../sub/constant/Constants'
 import * as Util from '../../sub/util/Util'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
@@ -30,7 +31,7 @@ export default {
     breadcrumb,
   },
   mixins: [
-    listmixinVue,
+    reloadmixin,
     showmapmixin,
   ],
   data() {
@@ -95,7 +96,7 @@ export default {
         await StateHelper.load('lostZones')
         await this.storePositionHistory(0, true)
         let positions = this.getPositions(true)
-        this.setProhibitDetect('list') // listmixin呼び出し
+        ProhibitHelper.setProhibitDetect('list', this)
         Util.debug(positions)
         positions = positions.map((pos) => {
           const prohibitCheck = this.prohibitDetectList? this.prohibitDetectList.some((data) => data.minor == pos.minor) : false
