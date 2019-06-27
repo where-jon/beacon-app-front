@@ -11,7 +11,7 @@
             {{ $t('label.area') }}
           </label>
           <span :title="vueSelectTitle(vueSelected.area)">
-            <v-select v-model="vueSelected.area" :options="areaOptions" :clearable="false" class="ml-1 mr-2 vue-options" :style="getVueSelectStyle()">
+            <v-select v-model="vueSelected.area" :options="areaOptions" :clearable="false" class="ml-1 mr-2 vue-options" :style="vueSelectStyle">
               <template slot="selected-option" slot-scope="option">
                 {{ vueSelectCutOn(option, true) }}
               </template>
@@ -23,7 +23,7 @@
             {{ $t('label.group') }}
           </label>
           <span :title="vueSelectTitle(vueSelected.group)">
-            <v-select v-model="vueSelected.group" :options="groupOptions" class="ml-1 mr-2 vue-options" :style="getVueSelectStyle()">
+            <v-select v-model="vueSelected.group" :options="groupOptions" class="ml-1 mr-2 vue-options" :style="vueSelectStyle">
               <template slot="selected-option" slot-scope="option">
                 {{ vueSelectCutOn(option) }}
               </template>
@@ -35,7 +35,7 @@
             {{ $t('label.category') }}
           </label>
           <span :title="vueSelectTitle(vueSelected.category)">
-            <v-select v-model="vueSelected.category" :options="categoryOptionsForPot" class="ml-1 mr-2 vue-options" :style="getVueSelectStyle()">
+            <v-select v-model="vueSelected.category" :options="categoryOptionsForPot" class="ml-1 mr-2 vue-options" :style="vueSelectStyle">
               <template slot="selected-option" slot-scope="option">
                 {{ vueSelectCutOn(option) }}
               </template>
@@ -99,7 +99,6 @@ import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as StyleHelper from '../../sub/helper/StyleHelper'
 import * as ProhibitHelper from '../../sub/helper/ProhibitHelper'
-import { getButtonTheme } from '../../sub/helper/ThemeHelper'
 import * as Util from '../../sub/util/Util'
 import * as NumberUtil from '../../sub/util/NumberUtil'
 import txdetail from '../../components/parts/txdetail.vue'
@@ -171,9 +170,6 @@ export default {
     ...mapState([
       'reload',
     ]),
-    theme() {
-      return getButtonTheme()
-    },
     categoryOptionsForPot() {
       return StateHelper.getOptionsFromState('category', false, true,
         category => CATEGORY.POT_AVAILABLE.includes(category.categoryType)
@@ -253,18 +249,6 @@ export default {
     this.resetDetail()
   },
   methods: {
-    getVueSelectStyle(){
-      return VueSelectHelper.getVueSelectStyle()
-    },
-    vueSelectTitle(selected){
-      return VueSelectHelper.vueSelectTitle(selected)
-    },
-    vueSelectCutOn(option, required){
-      return VueSelectHelper.vueSelectCutOn(option, required)
-    },
-    closeVueSelect(){
-      return VueSelectHelper.closeVueSelect()
-    },
     async loadLegends () {
       const loadCategory = DISP.TX.DISPLAY_PRIORITY[0] == 'category'
       const magnetCategoryTypes = loadCategory? this.getMagnetCategoryTypes(): this.getMagnetGroupTypes()

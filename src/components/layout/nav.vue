@@ -120,12 +120,14 @@ import * as AuthHelper from '../../sub/helper/AuthHelper'
 import { DISP, APP } from '../../sub/constant/config'
 import { LOGIN_MODE } from '../../sub/constant/Constants'
 import { getThemeClasses } from '../../sub/helper/ThemeHelper'
-import * as HtmlUtil from '../../sub/util/HtmlUtil'
+import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import commonmixinVue from '../mixin/commonmixin.vue'
 import CustomLink from '../parts/customlink.vue'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as RegionHelper from '../../sub/helper/RegionHelper'
 import * as LocalStorageHelper from '../../sub/helper/LocalStorageHelper'
+import * as ImageHelper from '../../sub/helper/ImageHelper'
+import * as HttpHelper from '../../sub/helper/HttpHelper'
 import Help from '../page/help.vue'
 
 export default {
@@ -152,7 +154,7 @@ export default {
       return this.$store.state.loginId
     },
     linkKey(){
-      return HtmlUtil.getResourcePath(APP.MENU.SHOW_MENU_LINK)
+      return HttpHelper.getResourcePath(APP.MENU.SHOW_MENU_LINK)
     },
     linkUrl(){
       return APP.MENU.SHOW_MENU_LINK_URL
@@ -168,7 +170,7 @@ export default {
     topNavBarClasses() {
       let classes = {}
       Object.assign(classes , this.navbarClasses)
-      if(this.getShowNav() && HtmlUtil.getLangShort() != 'ja'){
+      if(this.getShowNav() && BrowserUtil.getLangShort() != 'ja'){
         classes['topMenuNavbar'] = true
       }
       classes['word-break'] = true
@@ -176,14 +178,14 @@ export default {
     },
     regionTdClasses() {
       const classes = {region: true}
-      if(HtmlUtil.isIos()){
+      if(BrowserUtil.isIos()){
         classes['mobile-region'] = true
       }
       return classes
     },
   },
   async created() {
-    HtmlUtil.getLogoData(`${HtmlUtil.getDomainCd()}.png`, (result, success) => {
+    ImageHelper.getLogoData(`${BrowserUtil.getDomainCd()}.png`, (result, success) => {
       this.logoSrc = success? result: '/toplogo.png'
     })
     this.$root.$on('bv::modal::shown', (bvModalEvt, modalId) => {
@@ -212,7 +214,7 @@ export default {
       return DISP.MENU.SHOW_LOGO
     },
     getShowNav(){
-      return HtmlUtil.isMobile() || DISP.MENU.SHOW_NAV
+      return BrowserUtil.isMobile() || DISP.MENU.SHOW_NAV
     },
     logout() {
       this.$refs.collapse.show = false
@@ -231,7 +233,7 @@ export default {
       return regions && regions.length > 1
     },
     isResponsiveMenu(){
-      return HtmlUtil.isResponsiveMode()
+      return BrowserUtil.isResponsiveMode()
     },
     getStyleDropdownRegion(regionId) {
       const login = LocalStorageHelper.getLogin()

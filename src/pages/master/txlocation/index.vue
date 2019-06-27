@@ -9,7 +9,7 @@
           {{ $t('label.area') }}
         </label>
         <span :title="vueSelectTitle(vueSelected.area)">
-          <v-select v-model="vueSelected.area" :options="areaOptions" class="mr-2 mb-2 vue-options" :style="getVueSelectStyle()" :clearable="false">
+          <v-select v-model="vueSelected.area" :options="areaOptions" class="mr-2 mb-2 vue-options" :style="vueSelectStyle" :clearable="false">
             <template slot="selected-option" slot-scope="option">
               {{ vueSelectCutOn(option, true) }}
             </template>
@@ -25,7 +25,7 @@
         </label>
         <b-form-row>
           <span :title="vueSelectTitle(selectedTx_)">
-            <v-select v-model="selectedTx_" :options="txOptions" size="sm" class="mb-2 ml-2 mt-mobile vue-options" :style="getVueSelectStyle()" @input="showTxOnMap">
+            <v-select v-model="selectedTx_" :options="txOptions" size="sm" class="mb-2 ml-2 mt-mobile vue-options" :style="vueSelectStyle" @input="showTxOnMap">
               <template slot="selected-option" slot-scope="option">
                 {{ vueSelectCutOn(option) }}
               </template>
@@ -59,17 +59,17 @@ import * as HttpHelper from '../../../sub/helper/HttpHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as VueSelectHelper from '../../../sub/helper/VueSelectHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
-import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
+import * as StyleHelper from '../../../sub/helper/StyleHelper'
 import * as Util from '../../../sub/util/Util'
-import * as HtmlUtil from '../../../sub/util/HtmlUtil'
+import * as BrowserUtil from '../../../sub/util/BrowserUtil'
 import * as StringUtil from '../../../sub/util/StringUtil'
-import * as StyleUtil from '../../../sub/util/StyleUtil'
+import * as ColorUtil from '../../../sub/util/ColorUtil'
 import { DISP } from '../../../sub/constant/config'
 import { UPDATE_ONLY_NN } from '../../../sub/constant/Constants'
 import { Shape, Container, Text } from '@createjs/easeljs/dist/easeljs.module'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
-import commonmixinVue from '../../../components/mixin/commonmixin.vue'
+import commonmixin from '../../../components/mixin/commonmixin.vue'
 import showmapmixin from '../../../components/mixin/showmapmixin.vue'
 
 export default {
@@ -77,7 +77,7 @@ export default {
     breadcrumb,
     alert,
   },
-  mixins: [showmapmixin, commonmixinVue],
+  mixins: [showmapmixin, commonmixin],
   data() {
     return {
       message: '',
@@ -105,9 +105,6 @@ export default {
     ...mapState('app_service', [
       'pageSendParam',
     ]),
-    theme() {
-      return getButtonTheme()
-    },
   },
   watch: {
     'vueSelected.area': {
@@ -136,18 +133,6 @@ export default {
     this.selectedArea = null
   },
   methods: {
-    getVueSelectStyle(){
-      return VueSelectHelper.getVueSelectStyle()
-    },
-    vueSelectTitle(selected){
-      return VueSelectHelper.vueSelectTitle(selected)
-    },
-    vueSelectCutOn(option, required){
-      return VueSelectHelper.vueSelectCutOn(option, required)
-    },
-    closeVueSelect(){
-      return VueSelectHelper.closeVueSelect()
-    },
     reset() {
       this.replace({showAlert: false})
       this.replace({showInfo: false})
@@ -221,7 +206,7 @@ export default {
       const y = h + fromY
       const txBtn = new Container()
       const s = new Shape()
-      s.graphics.beginFill(ViewHelper.getRGBA(DISP.TX_LOC.BGCOLOR, DISP.TX_LOC.ALPHA))
+      s.graphics.beginFill(ColorUtil.getRGBA(DISP.TX_LOC.BGCOLOR, DISP.TX_LOC.ALPHA))
       s.graphics.moveTo(fromX, fromY)
       s.graphics.lineTo(x, fromY)
       s.graphics.lineTo(x, y)
@@ -233,7 +218,7 @@ export default {
       txBtn.addChild(s)
       const text = this.getLabel(tx)
       const label = new Text(text)
-      label.font = StyleUtil.getInRectFontSize(text, w, h)
+      label.font = StyleHelper.getInRectFontSize(text, w, h)
       label.color = DISP.TX_LOC.COLOR
       label.textAlign = 'center'
       label.textBaseline = 'middle'
@@ -270,7 +255,7 @@ export default {
         this.deleteTarget = txBtn
         this.showDeletConfirm()
       })
-      if(HtmlUtil.isAndroidOrIOS()){
+      if(BrowserUtil.isAndroidOrIOS()){
         txBtn.on('mousedown', (evt) => {
           tx.delEvent = true
         })

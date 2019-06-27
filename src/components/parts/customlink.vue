@@ -21,8 +21,8 @@
 
 <script>
 
-import * as Util from '../../sub/util/Util'
-import * as HtmlUtil from '../../sub/util/HtmlUtil'
+import * as BrowserUtil from '../../sub/util/BrowserUtil'
+import * as ImageHelper from '../../sub/helper/ImageHelper'
 
 export default {
   props: {
@@ -49,7 +49,7 @@ export default {
       return `linkText-${this._uid}`
     },
     isImage(){
-      return Util.isImageFile(this.linkKey)
+      return ImageHelper.isImageFile(this.linkKey)
     }
   },
   mounted(){
@@ -80,7 +80,7 @@ export default {
       if(!linkText || !sideBar){
         return ret
       }
-      if(!HtmlUtil.isResponsiveMode()){
+      if(!BrowserUtil.isResponsiveMode()){
         ret.left = `${(sideBar.clientWidth - linkText.offsetWidth) / 2}px`
       }
       else{
@@ -94,7 +94,7 @@ export default {
       if(!linkLogo || !sideBar){
         return
       }
-      if(!HtmlUtil.isResponsiveMode()){
+      if(!BrowserUtil.isResponsiveMode()){
         const sideBarWidth = sideBar.clientWidth - this.margin
         const widthRatio = sideBarWidth / linkLogo.naturalWidth
         linkLogo.width = Math.ceil(linkLogo.naturalWidth * widthRatio)

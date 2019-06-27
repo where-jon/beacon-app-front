@@ -113,14 +113,14 @@ import * as VueSelectHelper from '../../../sub/helper/VueSelectHelper'
 import * as LocalStorageHelper from '../../../sub/helper/LocalStorageHelper'
 import * as MasterHelper from '../../../sub/helper/MasterHelper'
 import * as ImageHelper from '../../../sub/helper/ImageHelper'
-import editmixinVue from '../../../components/mixin/editmixin.vue'
+import * as ValidateHelper from '../../../sub/helper/ValidateHelper'
+import editmixin from '../../../components/mixin/editmixin.vue'
+import commonmixin from '../../../components/mixin/commonmixin.vue'
 import * as Util from '../../../sub/util/Util'
-import * as HtmlUtil from '../../../sub/util/HtmlUtil'
 import * as StringUtil from '../../../sub/util/StringUtil'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
 import chromeInput from '../../../components/parts/chromeinput.vue'
-import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import { CATEGORY, SENSOR, USER } from '../../../sub/constant/Constants'
 import { APP, APP_SERVICE, EXCLOUD } from '../../../sub/constant/config.js'
@@ -131,7 +131,7 @@ export default {
     alert,
     chromeInput,
   },
-  mixins: [editmixinVue],
+  mixins: [editmixin, commonmixin],
   data() {
     return {
       name: 'pot',
@@ -146,7 +146,7 @@ export default {
       editShowUser: false,
       roleOptions: [],
       form: {
-        ...ViewHelper.extract(this.$store.state.app_service.pot,
+        ...Util.extract(this.$store.state.app_service.pot,
           ['potId', 'potCd', 'potName', 'potType', 'extValue.ruby',
             'displayName', 'potGroupList.0.group.groupId', 'potCategoryList.0.category.categoryId', 'extValue.tel',
             'extValue.post', 'existThumbnail', 'description'])
@@ -166,16 +166,13 @@ export default {
       defValue: {
         'potType': APP.CATEGORY.TYPES[0] != 3? APP.CATEGORY.TYPES[0]: null,
       },
-      items: ViewHelper.createBreadCrumbItems('master', {text: 'pot', href: '/master/pot'}, Util.getDetailCaptionKey(this.$store.state.app_service.pot.potId)),
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'pot', href: '/master/pot'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.pot.potId)),
       thumbnailUrl: APP_SERVICE.BASE_URL + EXCLOUD.POT_THUMBNAIL_URL,
     }
   },
   computed: {
     hasId(){
       return Util.hasValue(this.form.potId)
-    },
-    theme () {
-      return getButtonTheme()
     },
     categoryOptions() {
       return StateHelper.getOptionsFromState('category', false, true,
@@ -270,7 +267,7 @@ export default {
     }
   },
   async mounted() {
-    ViewHelper.applyDef(this.form, this.defValue)
+    Util.applyDef(this.form, this.defValue)
     if(this.form.potType == null){
       this.form.potType = this.defValue.potType
     }
@@ -286,7 +283,7 @@ export default {
     })
     this.vueSelected.category = VueSelectHelper.getVueSelectData(this.categoryOptions, this.form.categoryId)
     this.vueSelected.group = VueSelectHelper.getVueSelectData(this.groupOptions, this.form.groupId)
-    HtmlUtil.setCustomValidationMessage()
+    ValidateHelper.setCustomValidationMessage()
   },
   methods: {
     initPotTxList(){

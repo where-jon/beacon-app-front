@@ -40,10 +40,7 @@ export default {
     this.masterCd = StateHelper.createMasterCd('area', this.areas, null)
   },
   methods: {
-    async onSaving() {
-      await this.$refs.bulkEdit.bulkSave()
-    },
-    restruct(entity, dummyKey){
+    onRestruct(entity, dummyKey){
       if(Util.hasValue(entity.areaCd)){
         BulkHelper.setStringKey(entity, 'areaCd', entity.areaCd, PATTERN.REGEXP.MASTER_CD)
       }

@@ -47,7 +47,7 @@ import { fas } from '@fortawesome/free-solid-svg-icons'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import * as LocaleHelper from '../sub/helper/LocaleHelper'
-import { getLangShort } from '../sub/util/HtmlUtil'
+import { getLangShort } from '../sub/util/BrowserUtil'
 
 Vue.use(BootstrapVue)
 Vue.component('vue-simple-spinner', Spinner)

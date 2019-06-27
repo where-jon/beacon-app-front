@@ -62,14 +62,14 @@
 import { mapState } from 'vuex'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
-import editmixinVue from '../../../components/mixin/editmixin.vue'
-import * as HtmlUtil from '../../../sub/util/HtmlUtil'
+import * as ValidateHelper from '../../../sub/helper/ValidateHelper'
+import editmixin from '../../../components/mixin/editmixin.vue'
 import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
-import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import { NOTIFY_STATE,NOTIFY_MIDIUM } from '../../../sub/constant/Constants'
 import showmapmixin from '../../../components/mixin/showmapmixin.vue'
+import commonmixin from '../../../components/mixin/commonmixin.vue'
 import { APP } from '../../../sub/constant/config.js'
 
 export default {
@@ -77,7 +77,7 @@ export default {
     breadcrumb,
     alert,
   },
-  mixins: [editmixinVue, showmapmixin],
+  mixins: [editmixin, showmapmixin, commonmixin],
   data() {
     return {
       name: 'template',
@@ -91,7 +91,7 @@ export default {
       notify: _.slice(NOTIFY_MIDIUM.getTypes()).filter((val) => APP.NOTIFY.MIDIUM_TYPES.includes(val.value)),
       backPath: '/master/notifyTemplate',
       appServicePath: '/core/rcvexcloud',
-      form: ViewHelper.extract(this.$store.state.app_service.template,
+      form: Util.extract(this.$store.state.app_service.template,
         ['notifyTemplateId', 'notifyTemplateKey' , 'notifyMedium', 'notifyTo', 'subject', 'mailFrom', 'template' ]),
       areaNames: [],
       categoryNames: [],
@@ -103,7 +103,7 @@ export default {
       errorMessages: {
         email: [],
       },
-      items: ViewHelper.createBreadCrumbItems('master', {text: 'notifyTemplate', href: '/master/notifyTemplate'}, Util.getDetailCaptionKey(this.$store.state.app_service.template.notifyTemplateId)),
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'notifyTemplate', href: '/master/notifyTemplate'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.template.notifyTemplateId)),
     }
   },
   computed: {
@@ -116,9 +116,6 @@ export default {
     notifyStateOptions() {
       return _.slice(NOTIFY_STATE.getOptions()).filter((val) => APP.NOTIFY.STATE_TYPES.includes(val.index))
     },
-    theme () {
-      return getButtonTheme()
-    },
     ...mapState('app_service', [
       'template',
     ]),
@@ -130,11 +127,11 @@ export default {
     this.form.notifyTemplateKey== this.prohibitState? this.bNotifyTo=true : this.bNotifyTo=false
     this.form.notifyTemplateKey== this.lostState? this.bNotifyTo=true : this.bNotifyTo=false
     this.form.notifyTemplateKey== this.deliveryState || this.form.notifyTemplateKey==this.userMailState || this.form.notifyTemplateKey==this.prohibitState || this.form.notifyTemplateKey==this.lostState? this.notify = _.slice(NOTIFY_MIDIUM.getTypes()).filter((val) => [0].includes(val.value)) : this.notify
-    let labelUpdate = Util.getDetailCaptionKey(this.$store.state.app_service.template.notifyTemplateId)
+    let labelUpdate = ViewHelper.getDetailCaptionKey(this.$store.state.app_service.template.notifyTemplateId)
     labelUpdate == 'label.update' ? this.bNotifyTemplateKey = false: this.bNotifyTemplateKey = true
   },
   mounted(){
-    HtmlUtil.setCustomValidationMessage()
+    ValidateHelper.setCustomValidationMessage()
   },
   methods: {
     reset () {

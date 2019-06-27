@@ -39,13 +39,13 @@ import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as VueSelectHelper from '../../../sub/helper/VueSelectHelper'
 import * as FeatureHelper from '../../../sub/helper/FeatureHelper'
-import editmixinVue from '../../../components/mixin/editmixin.vue'
+import * as ValidateHelper from '../../../sub/helper/ValidateHelper'
+import editmixin from '../../../components/mixin/editmixin.vue'
+import commonmixin from '../../../components/mixin/commonmixin.vue'
 import * as Util from '../../../sub/util/Util'
-import * as HtmlUtil from '../../../sub/util/HtmlUtil'
 import * as ArrayUtil from '../../../sub/util/ArrayUtil'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
-import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import { ROLE_FEATURE } from '../../../sub/constant/Constants'
 
 export default {
@@ -53,7 +53,7 @@ export default {
     breadcrumb,
     alert,
   },
-  mixins: [editmixinVue],
+  mixins: [editmixin, commonmixin],
   data() {
     return {
       name: 'roleFeature',
@@ -61,7 +61,7 @@ export default {
       backPath: '/master/role/edit',
       appServicePath: '/meta/roleFeature',
       featureId: -1,
-      form: ViewHelper.extract(this.$store.state.app_service.roleFeature, ['feature.featureId', 'feature.featureName', 'feature.path', 'mode']),
+      form: Util.extract(this.$store.state.app_service.roleFeature, ['feature.featureId', 'feature.featureName', 'feature.path', 'mode']),
       vueSelected: {
         feature: null,
       },
@@ -74,14 +74,11 @@ export default {
         {text: 'role', href: '/master/role'},
         {text: 'update', href: '/master/role/edit'},
         'feature',
-        Util.getDetailCaptionKey(this.$store.state.app_service.roleFeature.feature? this.$store.state.app_service.roleFeature.feature.featureId: null)
+        ViewHelper.getDetailCaptionKey(this.$store.state.app_service.roleFeature.feature? this.$store.state.app_service.roleFeature.feature.featureId: null)
       ),
     }
   },
   computed: {
-    theme () {
-      return getButtonTheme()
-    },
     ...mapState('app_service', [
       'role', 'features', 'roleFeatures', 'roleFeature'
     ]),
@@ -125,7 +122,7 @@ export default {
     })
   },
   mounted(){
-    HtmlUtil.setCustomValidationMessage()
+    ValidateHelper.setCustomValidationMessage()
   },
   methods: {
     async resetFeatureNames(){

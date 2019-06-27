@@ -1,15 +1,15 @@
 
 <script>
 import { mapState } from 'vuex'
-import _ from 'lodash'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
-import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as LocalStorageHelper from '../../sub/helper/LocalStorageHelper'
 import * as ImageHelper from '../../sub/helper/ImageHelper'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
+import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
 import { APP } from '../../sub/constant/config'
-import * as StringUtil from '../../sub/util/StringUtil'
+import * as Util from '../../sub/util/Util'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import commonmixinVue from './commonmixin.vue'
 
@@ -81,46 +81,9 @@ export default {
     async onSaving() {
       return await AppServiceHelper.save(this.appServicePath, this.form, this.updateOnlyNN)
     },
-    editAgain(){
-      this.form = {}
-      ViewHelper.applyDef(this.form, this.defValue)
-      if(this.onBeforeReload) {
-        if(this.vueSelected && typeof this.vueSelected == 'object'){
-          Object.keys(this.vueSelected).forEach(key => {
-            this.vueSelected[key] = ArrayUtil.isArray(this.vueSelected[key])? []: null
-          })
-        }
-        this.onBeforeReload()
-      }
-      let customFileLabel = document.getElementsByClassName('custom-file-label')
-      if (customFileLabel && customFileLabel[0]) {
-        customFileLabel[0].innerText =''
-      }
-      window.scrollTo(0, 0)
-    },
-    getSubmitErrorMessage(e){
-      if (e.key) {
-        return this.$i18n.tnl('message.' + e.type, {key: this.$i18n.tnl('label.' + this.modifyColName(StringUtil.snake2camel(e.key))), val: this.modifyVal(StringUtil.snake2camel(e.key), e.val)})
-      }
-      if(e.col){
-        return this.$i18n.tnl('message.' + e.type, {col: this.$i18n.tnl(`label.${e.col}`), value: e.val})
-      }
-      if(e.bulkError) {
-        return _.map(_.orderBy(e.bulkError, ['line'], ['asc']), (err) => {
-          let col = this.modifyColName(err.col.trim())
-          return this.$i18n.tline('message.bulk' + err.type + 'Failed', 
-            {line: err.line, col: this.$i18n.tnl(`label.${col}`), value: StringUtil.sanitize(err.value), min: err.min, max: err.max, candidates: err.candidates, num: err.num, unit: err.unit? this.$i18n.tnl(`label.${err.unit}Unit`): '', target: err.target? this.$i18n.tnl(`label.${err.target}`): ''},
-            this.showLine)
-        }).filter((val, idx, arr) => arr.indexOf(val) == idx)
-      }
-      return this.message = this.$i18n.terror('message.' + this.crud + 'Failed', {target: this.$i18n.tnl('label.' + this.name), code: e.message})
-    },
     async save(evt) {
-      this.message = ''
-      this.warnMessage = ''
-      this.replace({showWarn: false})
-      this.replace({showAlert: false})
-      this.replace({showInfo: false})
+      this.message = this.warnMessage = ''
+      StateHelper.initShowMessage()
       evt.preventDefault()
       this.$nextTick(async () => {
         this.showProgress()
@@ -136,7 +99,14 @@ export default {
             this.onSaved()
           }
           if (this.again) {
-            this.editAgain()
+            this.form = {}
+            Util.applyDef(this.form, this.defValue)
+            if(this.onBeforeReload) {
+              VueSelectHelper.clearVueSelect(this.vueSelected)
+              this.onBeforeReload()
+            }
+            ViewHelper.clearFileComponentAll()
+            window.scrollTo(0, 0)
           }
           else {
             if(this.createMessage){
@@ -148,7 +118,7 @@ export default {
         }
         catch(e) {
           console.error(e)
-          this.message = this.getSubmitErrorMessage(e)
+          this.message = ViewHelper.getSubmitErrorMessage(e, this.showLine, this.crud, this.name)
           this.replace({showAlert: true})
           window.scrollTo(0, 0)
         }
@@ -157,26 +127,6 @@ export default {
         }
         this.hideProgress()
       })
-    },
-    modifyColName(col) {
-      if (col == 'TXID'){
-        return APP.TX.BTX_MINOR == 'minor'? 'minor': 'btxId'
-      }
-      if (col == 'btxId' && APP.TX.BTX_MINOR == 'minor') {
-        return 'minor'
-      }
-      return col
-    },
-    modifyVal(col, val) {
-      if (col == 'TXID'){
-        if(APP.TX.BTX_MINOR == 'minor' && this.minor){
-          return this.minor
-        }
-        if(APP.TX.BTX_MINOR != 'minor' && this.btxId){
-          return this.btxId
-        }
-      }
-      return val
     },
   }
 }

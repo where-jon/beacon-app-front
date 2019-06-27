@@ -51,12 +51,12 @@ import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as VueSelectHelper from '../../../sub/helper/VueSelectHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
-import editmixinVue from '../../../components/mixin/editmixin.vue'
-import * as HtmlUtil from '../../../sub/util/HtmlUtil'
+import * as ValidateHelper from '../../../sub/helper/ValidateHelper'
+import editmixin from '../../../components/mixin/editmixin.vue'
+import commonmixin from '../../../components/mixin/commonmixin.vue'
 import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
-import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import { CATEGORY, ZONE } from '../../../sub/constant/Constants'
 
 export default {
@@ -64,14 +64,14 @@ export default {
     breadcrumb,
     alert,
   },
-  mixins: [editmixinVue],
+  mixins: [editmixin, commonmixin],
   data() {
     return {
       name: 'zone',
       id: 'zoneId',
       backPath: '/master/zoneClass',
       appServicePath: '/core/zone',
-      form: ViewHelper.extract(this.$store.state.app_service.zone, ['zoneId', 'zoneName', 'areaId', 'locationZoneList.0.locationZonePK.locationId', 'zoneCategoryList.0.zoneCategoryPK.categoryId']),
+      form: Util.extract(this.$store.state.app_service.zone, ['zoneId', 'zoneName', 'areaId', 'locationZoneList.0.locationZonePK.locationId', 'zoneCategoryList.0.zoneCategoryPK.categoryId']),
       vueSelected: {
         area: null,
         category: null,
@@ -81,13 +81,10 @@ export default {
       isEnableNameText: true,
       zones: [],
       isRegist: false,
-      items: ViewHelper.createBreadCrumbItems('master', {text: 'zoneClass', href: '/master/zoneClass'}, Util.getDetailCaptionKey(this.$store.state.app_service.zone.zoneId)),
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'zoneClass', href: '/master/zoneClass'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.zone.zoneId)),
     }
   },
   computed: {
-    theme () {
-      return getButtonTheme()
-    },
     ...mapState('app_service', [
       'zone',
     ]),
@@ -113,7 +110,7 @@ export default {
     this.vueSelected.category = VueSelectHelper.getVueSelectData(this.categoryNames, this.form.categoryId)
   },
   mounted(){
-    HtmlUtil.setCustomValidationMessage()
+    ValidateHelper.setCustomValidationMessage()
   },
   methods: {
     reset () {

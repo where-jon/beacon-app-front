@@ -7,7 +7,7 @@
           {{ $t('label.area') }}
         </label>
         <span :title="vueSelectTitle(vueSelected.area)">
-          <v-select v-model="vueSelected.area" :options="areaOptions" :clearable="false" class="ml-1 vue-options" :style="getVueSelectStyle()">
+          <v-select v-model="vueSelected.area" :options="areaOptions" :clearable="false" class="ml-1 vue-options" :style="vueSelectStyle">
             <template slot="selected-option" slot-scope="option">
               {{ vueSelectCutOn(option, true) }}
             </template>
@@ -30,7 +30,6 @@ import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as IconHelper from '../../sub/helper/IconHelper'
-import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
 import * as Util from '../../sub/util/Util'
 import * as NumberUtil from '../../sub/util/NumberUtil'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
@@ -40,13 +39,14 @@ import { SENSOR, TX } from '../../sub/constant/Constants'
 import { Container } from '@createjs/easeljs/dist/easeljs.module'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
+import commonmixin from '../../components/mixin/commonmixin.vue'
 
 export default {
   components: {
     breadcrumb,
     'txdetail': txdetail,
   },
-  mixins: [showmapmixin],
+  mixins: [showmapmixin, commonmixin],
   data() {
     return {
       keepExbPosition: false,
@@ -90,18 +90,6 @@ export default {
     this.resetDetail()
   },
   methods: {
-    getVueSelectStyle(){
-      return VueSelectHelper.getVueSelectStyle()
-    },
-    vueSelectTitle(selected){
-      return VueSelectHelper.vueSelectTitle(selected)
-    },
-    vueSelectCutOn(option, required){
-      return VueSelectHelper.vueSelectCutOn(option, required)
-    },
-    closeVueSelect(){
-      return VueSelectHelper.closeVueSelect()
-    },
     async fetchData(payload) {
       try {
         this.reloadSelectedTx = this.reload? this.selectedTx: {}

@@ -45,12 +45,11 @@ import { mapState } from 'vuex'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as ImageHelper from '../../../sub/helper/ImageHelper'
-import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
+import * as ValidateHelper from '../../../sub/helper/ValidateHelper'
 import * as Util from '../../../sub/util/Util'
-import * as HtmlUtil from '../../../sub/util/HtmlUtil'
 import * as StringUtil from '../../../sub/util/StringUtil'
-import commonmixinVue from '../../../components/mixin/commonmixin.vue'
-import editmixinVue from '../../../components/mixin/editmixin.vue'
+import commonmixin from '../../../components/mixin/commonmixin.vue'
+import editmixin from '../../../components/mixin/editmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
 import { APP } from '../../../sub/constant/config'
@@ -61,7 +60,7 @@ export default {
     breadcrumb,
     alert,
   },
-  mixins: [editmixinVue, commonmixinVue],
+  mixins: [editmixin, commonmixin],
   data() {
     return {
       name: 'area',
@@ -69,8 +68,8 @@ export default {
       backPath: '/master/area',
       appServicePath: '/core/area',
       updateOnlyNN: UPDATE_ONLY_NN.NULL,
-      form: ViewHelper.extract(this.$store.state.app_service.area, ['areaId', 'areaCd', 'areaName', 'mapImage']),
-      items: ViewHelper.createBreadCrumbItems('master', {text: 'area', href: '/master/area'}, Util.getDetailCaptionKey(this.$store.state.app_service.area.areaId)),
+      form: Util.extract(this.$store.state.app_service.area, ['areaId', 'areaCd', 'areaName', 'mapImage']),
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'area', href: '/master/area'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.area.areaId)),
       mapUpdate: false,
       oldMap: null,
       cdPattern: PATTERN.MASTER_CD,
@@ -84,9 +83,6 @@ export default {
       'areas',
       'area',
     ]),
-    theme() {
-      return getButtonTheme()
-    },
     mapConfigTypes(){
       return [
         {text: this.$i18n.tnl('label.keepPosition'), value: 1},
@@ -98,7 +94,7 @@ export default {
   mounted() {
     this.form.mapConfig = this.mapConfigTypes[0].value
     this.oldMap = this.hasId && this.form.mapImage? {width: this.$refs.mapImage.naturalWidth, height: this.$refs.mapImage.naturalHeight}: null
-    HtmlUtil.setCustomValidationMessage()
+    ValidateHelper.setCustomValidationMessage()
     this.oldMap = this.hasId && this.form.mapImage? {width: this.$refs.mapImage.naturalWidth, height: this.$refs.mapImage.naturalHeight}: null
     if(!Util.hasValue(this.form.areaCd)){
       this.form.areaCd = StateHelper.createMasterCd('area', this.areas, this.area)

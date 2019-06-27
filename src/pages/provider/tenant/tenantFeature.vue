@@ -25,12 +25,12 @@ import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as LocalStorageHelper from '../../../sub/helper/LocalStorageHelper'
 import * as FeatureHelper from '../../../sub/helper/FeatureHelper'
-import editmixinVue from '../../../components/mixin/editmixin.vue'
+import editmixin from '../../../components/mixin/editmixin.vue'
+import commonmixin from '../../../components/mixin/commonmixin.vue'
 import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
 import featureList from '../../../components/page/featureList.vue'
-import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 
 export default {
   components: {
@@ -38,7 +38,7 @@ export default {
     alert,
     featureList,
   },
-  mixins: [editmixinVue],
+  mixins: [editmixin, commonmixin],
   data() {
     return {
       name: 'tenant',
@@ -55,9 +55,6 @@ export default {
     }
   },
   computed: {
-    theme () {
-      return getButtonTheme()
-    },
     ...mapState('app_service', [
       'features',
     ]),

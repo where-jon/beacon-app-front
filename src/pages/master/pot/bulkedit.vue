@@ -88,7 +88,7 @@ export default {
       }])
       return dummyKey
     },
-    restruct(entity, dummyKey){
+    onRestruct(entity, dummyKey){
       if(Util.hasValueAny(entity.post, entity.tel, entity.ruby)){
         Util.setValue(entity, 'extValue.post', entity.post)
         Util.setValue(entity, 'extValue.tel', entity.tel)

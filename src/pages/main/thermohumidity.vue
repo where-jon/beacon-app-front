@@ -15,7 +15,7 @@
               </b-form-row>
               <b-form-row>
                 <span :title="vueSelectTitle(vueSelected.area)">
-                  <v-select v-model="vueSelected.area" :options="areaOptions" :clearable="false" class="ml-2 vue-options" :style="getVueSelectStyle()">
+                  <v-select v-model="vueSelected.area" :options="areaOptions" :clearable="false" class="ml-2 vue-options" :style="vueSelectStyle">
                     <template slot="selected-option" slot-scope="option">
                       {{ vueSelectCutOn(option, true) }}
                     </template>
@@ -59,13 +59,12 @@ import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as SensorHelper from '../../sub/helper/SensorHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
+import * as StyleHelper from '../../sub/helper/StyleHelper'
 import * as HeatmapHelper from '../../sub/helper/HeatmapHelper'
-import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
 import * as Util from '../../sub/util/Util'
 import * as StringUtil from '../../sub/util/StringUtil'
 import * as NumberUtil from '../../sub/util/NumberUtil'
 import * as DateUtil from '../../sub/util/DateUtil'
-import * as StyleUtil from '../../sub/util/StyleUtil'
 import { DEV, APP, DISP } from '../../sub/constant/config'
 import * as mock from '../../assets/mock/mock'
 import { SENSOR, DISCOMFORT } from '../../sub/constant/Constants'
@@ -74,6 +73,7 @@ import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
 import ToolTip from '../../components/parts/toolTip.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
+import commonmixin from '../../components/mixin/commonmixin.vue'
 import cold from '../../assets/icon/cold.png'
 import hot from '../../assets/icon/hot.png'
 import comfort from '../../assets/icon/comfort.png'
@@ -84,7 +84,7 @@ export default {
     alert,
     ToolTip,
   },
-  mixins: [showmapmixin],
+  mixins: [showmapmixin, commonmixin],
   data() {
     return {
       items: ViewHelper.createBreadCrumbItems('main', 'thermohumidity'),
@@ -146,18 +146,6 @@ export default {
     this.removeTick()
   },
   methods: {
-    getVueSelectStyle(){
-      return VueSelectHelper.getVueSelectStyle()
-    },
-    vueSelectTitle(selected){
-      return VueSelectHelper.vueSelectTitle(selected)
-    },
-    vueSelectCutOn(option, required){
-      return VueSelectHelper.vueSelectCutOn(option, required)
-    },
-    closeVueSelect(){
-      return VueSelectHelper.closeVueSelect()
-    },
     heatmapData() {
       const dataList = this.positionedTx.concat(this.positionedExb)
       return HeatmapHelper.collect(dataList,
@@ -460,7 +448,7 @@ export default {
       const device = container.device
       const pageElement = document.getElementById('bd-page')
       return {
-        fontSize: StyleUtil.getFont2Size(DISP.THERMOH.TOOLTIP_FONT),
+        fontSize: StyleHelper.getFont2Size(DISP.THERMOH.TOOLTIP_FONT),
         sensorName: DISP.THERMOH.TOOLTIP_ITEMS.TXNAME? device.potName? device.potName: device.locationName: '',
         temperature: DISP.THERMOH.TOOLTIP_ITEMS.TEMPERATURE? NumberUtil.formatTemperature(device.temperature) + this.$i18n.tnl('label.temperatureUnit'): '',
         humidity: DISP.THERMOH.TOOLTIP_ITEMS.HUMIDITY? NumberUtil.formatHumidity(device.humidity) + this.$i18n.tnl('label.humidityUnit'): '',

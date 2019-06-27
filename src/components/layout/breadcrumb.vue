@@ -46,7 +46,6 @@
 <script>
 
 import { getThemeColor, getThemeClasses } from '../../sub/helper/ThemeHelper'
-import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
 import * as AuthHelper from '../../sub/helper/AuthHelper'
 import { EventBus } from '../../sub/helper/EventHelper'
@@ -123,7 +122,7 @@ export default {
     }
     let reload = document.getElementById('reload')
     if (reload) {
-      HtmlUtil.registerInterval(()=>{
+      Util.registerInterval(()=>{
         this.$store.commit('replace', {reload: true})
         const windowScroll = {x: window.pageXOffset , y: window.pageYOffset}
         this.clickReload()

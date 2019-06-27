@@ -32,7 +32,7 @@
             </b-form-row>
             <b-form-row>
               <span :title="vueSelectTitle(vueSelected.exb)">
-                <v-select v-model="vueSelected.exb" :options="exbOptions" :clearable="false" class="ml-2 inputSelect vue-options" :style="getVueSelectStyle()">
+                <v-select v-model="vueSelected.exb" :options="exbOptions" :clearable="false" class="ml-2 inputSelect vue-options" :style="vueSelectStyle">
                   <template slot="selected-option" slot-scope="option">
                     {{ vueSelectCutOn(option, true) }}
                   </template>
@@ -46,7 +46,7 @@
             </b-form-row>
             <b-form-row>
               <span :title="vueSelectTitle(vueSelected.tx)">
-                <v-select v-model="vueSelected.tx" :options="txOptions" :clearable="false" class="ml-2 inputSelect vue-options" :style="getVueSelectStyle()">
+                <v-select v-model="vueSelected.tx" :options="txOptions" :clearable="false" class="ml-2 inputSelect vue-options" :style="vueSelectStyle">
                   <template slot="selected-option" slot-scope="option">
                     {{ vueSelectCutOn(option, true) }}
                   </template>
@@ -115,16 +115,15 @@ import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import * as Util from '../../sub/util/Util'
-import * as HtmlUtil from '../../sub/util/HtmlUtil'
+import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as NumberUtil from '../../sub/util/NumberUtil'
 import * as DateUtil from '../../sub/util/DateUtil'
-import { getTheme } from '../../sub/helper/ThemeHelper'
+import * as CsvUtil from '../../sub/util/CsvUtil'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as SensorHelper from '../../sub/helper/SensorHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
-import * as OptionHelper from '../../sub/helper/OptionHelper'
 import * as ValidateHelper from '../../sub/helper/ValidateHelper'
 import { SENSOR, SUM_UNIT, SUM_TARGET, DEVICE } from '../../sub/constant/Constants'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
@@ -132,7 +131,7 @@ import alert from '../../components/parts/alert.vue'
 import { DEV, APP } from '../../sub/constant/config'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import * as mock from '../../assets/mock/mock'
-import commonmixinVue from '../../components/mixin/commonmixin.vue'
+import commonmixin from '../../components/mixin/commonmixin.vue'
 
 export default {
   components: {
@@ -140,7 +139,7 @@ export default {
     alert,
     DatePicker,
   },
-  mixins: [commonmixinVue],
+  mixins: [commonmixin],
   data () {
     return {
       form: {
@@ -202,10 +201,6 @@ export default {
     }
   },
   computed: {
-    theme () {
-      const theme = getTheme()
-      return 'outline-' + theme
-    },
     ...mapState('app_service', [
       'exbs',
       'txs',
@@ -214,9 +209,6 @@ export default {
     ...mapState([
       'showAlert',
     ]),
-    sensorOptions() {
-      return OptionHelper.getAllSensorOptions()
-    },
     sumTargetOptions() {
       return SUM_TARGET.getOptions()
     },
@@ -232,7 +224,7 @@ export default {
       })
     },
     iosOrAndroid() {
-      return HtmlUtil.isAndroidOrIOS()
+      return BrowserUtil.isAndroidOrIOS()
     },
     showDevice(){
       return this.form.sensorId == SENSOR.TEMPERATURE && APP.SENSORGRAPH.WITH_DEVICE
@@ -273,18 +265,9 @@ export default {
     this.changeSumUnit()
   },
   async mounted() {
-    HtmlUtil.importElementUI()
+    ViewHelper.importElementUI()
   },
   methods: {
-    getVueSelectStyle(){
-      return VueSelectHelper.getVueSelectStyle()
-    },
-    vueSelectTitle(selected){
-      return VueSelectHelper.vueSelectTitle(selected)
-    },
-    vueSelectCutOn(option, required){
-      return VueSelectHelper.vueSelectCutOn(option, required)
-    },
     getSumUnitOptions(newDatetimeFrom = this.form.datetimeFrom, newDatetimeTo = this.form.datetimeTo) {
       const sumUnitOptions = SUM_UNIT.getOptions()
       const subDatetime = DateUtil.getSubDatetime(newDatetimeFrom, newDatetimeTo)
@@ -607,9 +590,9 @@ export default {
             this.dataSensorId == SENSOR.MEDITAG? this.headers.meditag: 
               this.dataSensorId == SENSOR.MAGNET? this.headers.magnet: 
                 this.dataSensorId == SENSOR.PRESSURE? this.headers.pressure: null
-      HtmlUtil.fileDL(
+      BrowserUtil.fileDL(
         'sensorGraph.csv',
-        Util.converToCsv(this.dataList, header),
+        CsvUtil.converToCsv(this.dataList, header),
         getCharSet(this.$store.state.loginId)
       )
     }

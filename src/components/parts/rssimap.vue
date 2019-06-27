@@ -8,7 +8,7 @@
             {{ $t('label.area') }}
           </label>
           <span :title="vueSelectTitle(vueSelected.area)">
-            <v-select v-model="vueSelected.area" :options="areaOptions" :clearable="false" class="ml-1 mr-2 vue-options" :style="getVueSelectStyle()">
+            <v-select v-model="vueSelected.area" :options="areaOptions" :clearable="false" class="ml-1 mr-2 vue-options" :style="vueSelectStyle">
               <template slot="selected-option" slot-scope="option">
                 {{ vueSelectCutOn(option, true) }}
               </template>
@@ -20,7 +20,7 @@
             {{ $t('label.group') }}
           </label>
           <span :title="vueSelectTitle(vueSelected.group)">
-            <v-select v-model="vueSelected.group" :options="groupOptions" class="ml-1 mr-2 vue-options" :style="getVueSelectStyle()">
+            <v-select v-model="vueSelected.group" :options="groupOptions" class="ml-1 mr-2 vue-options" :style="vueSelectStyle">
               <template slot="selected-option" slot-scope="option">
                 {{ vueSelectCutOn(option) }}
               </template>
@@ -32,7 +32,7 @@
             {{ $t('label.category') }}
           </label>
           <span :title="vueSelectTitle(vueSelected.category)">
-            <v-select v-model="vueSelected.category" :options="categoryOptionsForPot" class="ml-1 mr-2 vue-options" :style="getVueSelectStyle()">
+            <v-select v-model="vueSelected.category" :options="categoryOptionsForPot" class="ml-1 mr-2 vue-options" :style="vueSelectStyle">
               <template slot="selected-option" slot-scope="option">
                 {{ vueSelectCutOn(option) }}
               </template>
@@ -48,7 +48,7 @@
           <label class="ml-sm-4 ml-2 mr-1">
             {{ $t('label.tx') }}
           </label>
-          <v-select v-model="vueSelected.tx" :options="txRecords" class="ml-1 mr-2 vue-options" :style="getVueSelectStyle()" />
+          <v-select v-model="vueSelected.tx" :options="txRecords" class="ml-1 mr-2 vue-options" :style="vueSelectStyle" />
         </b-form-row>
         <b-form-row class="my-1 ml-2 ml-sm-0">
           <b-button class="ml-sm-4 ml-2 mr-1" :pressed.sync="isPause" :variant="theme">
@@ -77,15 +77,13 @@ import * as MenuHelper from '../../sub/helper/MenuHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
-import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
 import * as Util from '../../sub/util/Util'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
-import { getButtonTheme } from '../../sub/helper/ThemeHelper'
 import { APP, DISP, EXCLOUD } from '../../sub/constant/config'
 import { CATEGORY } from '../../sub/constant/Constants'
 import { Container, Shape, Text } from '@createjs/easeljs/dist/easeljs.module'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
-import commonmixinVue from '../mixin/commonmixin.vue'
+import commonmixin from '../mixin/commonmixin.vue'
 
 class RssiIcon {
   constructor(parent, rssi, scale, level = 3) {
@@ -143,7 +141,7 @@ export default {
   components: {
     breadcrumb,
   },
-  mixins: [showmapmixin, commonmixinVue],
+  mixins: [showmapmixin, commonmixin],
   data () {
     return {
       items: [
@@ -173,9 +171,6 @@ export default {
     ...mapState([
       'reload',
     ]),
-    theme () {
-      return getButtonTheme()
-    },
     categoryOptionsForPot() {
       return StateHelper.getOptionsFromState('category', false, true,
         category => CATEGORY.POT_AVAILABLE.includes(category.categoryType)
@@ -239,15 +234,6 @@ export default {
     this.fetchData()
   },
   methods: {
-    getVueSelectStyle(){
-      return VueSelectHelper.getVueSelectStyle()
-    },
-    vueSelectTitle(selected){
-      return VueSelectHelper.vueSelectTitle(selected)
-    },
-    vueSelectCutOn(option, required){
-      return VueSelectHelper.vueSelectCutOn(option, required)
-    },
     async fetchData(payload, disableErrorPopup) {
       this.showMapImageDef(async () => {
         this.showProgress()

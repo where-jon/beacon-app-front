@@ -37,15 +37,15 @@
 <script>
 import { mapState } from 'vuex'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
-import editmixinVue from '../../../components/mixin/editmixin.vue'
+import editmixin from '../../../components/mixin/editmixin.vue'
+import commonmixin from '../../../components/mixin/commonmixin.vue'
 import * as Util from '../../../sub/util/Util'
-import * as HtmlUtil from '../../../sub/util/HtmlUtil'
 import * as ColorUtil from '../../../sub/util/ColorUtil'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
+import * as ValidateHelper from '../../../sub/helper/ValidateHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
-import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import { CATEGORY, SHAPE } from '../../../sub/constant/Constants'
 import colorPicker from '../../../components/parts/colorpicker'
 import { APP } from '../../../sub/constant/config'
@@ -56,7 +56,7 @@ export default {
     alert,
     colorPicker,
   },
-  mixins: [editmixinVue],
+  mixins: [editmixin, commonmixin],
   data() {
     let category = this.$store.state.app_service.category
     return {
@@ -66,7 +66,7 @@ export default {
       appServicePath: '/basic/category',
       defaultColor: '#000000',
       defaultBgColor: '#ffffff',
-      form: ViewHelper.extract(category, ['categoryId', 'categoryName', 'categoryType', 'display', 'description']),
+      form: Util.extract(category, ['categoryId', 'categoryName', 'categoryType', 'display', 'description']),
       oldType: Util.getValue(category, 'categoryType', null),
       oldShape: Util.getValue(category, 'display.shape', null),
       oldColor: Util.getValue(category, 'display.color', null),
@@ -74,13 +74,10 @@ export default {
       defValue: {
         'categoryType': APP.CATEGORY.TYPES[0],
       },
-      items: ViewHelper.createBreadCrumbItems('master', {text: 'category', href: '/master/category'}, Util.getDetailCaptionKey(this.$store.state.app_service.category.categoryId)),
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'category', href: '/master/category'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.category.categoryId)),
     }
   },
   computed: {
-    theme() {
-      return getButtonTheme()
-    },
     ...mapState('app_service', [
       'category',
     ]),
@@ -95,8 +92,8 @@ export default {
     this.onBeforeReload()
   },
   async mounted() {
-    ViewHelper.applyDef(this.form, this.defValue)
-    HtmlUtil.setCustomValidationMessage()
+    Util.applyDef(this.form, this.defValue)
+    ValidateHelper.setCustomValidationMessage()
   },
   methods: {
     onBeforeReload(){

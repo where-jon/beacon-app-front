@@ -15,7 +15,6 @@ import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as BulkHelper from '../../../sub/helper/BulkHelper'
 import * as MasterHelper from '../../../sub/helper/MasterHelper'
-import * as OptionHelper from '../../../sub/helper/OptionHelper'
 import { APP } from '../../../sub/constant/config.js'
 import { IGNORE, CATEGORY } from '../../../sub/constant/Constants'
 
@@ -37,9 +36,6 @@ export default {
     ...mapState('app_service', [
       'tx', 'txs', 'categories', 'groups', 'pots', 'potImages'
     ]),
-    sensorOptionsTx() {
-      return OptionHelper.getTxOptions()
-    },
   },
   async mounted() {
     await StateHelper.load('tx')
@@ -87,8 +83,8 @@ export default {
           extValue: Util.getValue(pot, 'extValue', null),
         }
       }])
-      Util.setValue(entity, 'potTxList.0.pot.displayName', entity.displayName)
-      Util.setValue(entity, 'potTxList.0.pot.description', entity.description)
+      Util.setValue(entity, 'potTxList.0.pot.displayName', Util.getValue(entity, 'displayName', Util.getValue(pot, 'displayName', null)))
+      Util.setValue(entity, 'potTxList.0.pot.description', Util.getValue(entity, 'description', Util.getValue(pot, 'description', null)))
       if(pot){
         const potImage = this.potImages.find(val => val.id == pot.potId)
         Util.setValue(entity, 'potTxList.0.pot.thumbnail', potImage? potImage.thumbnail: null)
@@ -99,7 +95,7 @@ export default {
       return dummyKey
     },
     restructCategory(entity, dummyKey, pot){
-      if(!Util.hasValue(entity.categoryName)){
+      if(entity.categoryName == null){
         if(!Util.hasValue(Util.getValue(pot, 'categoryName', null))){
           return dummyKey
         }
@@ -118,7 +114,7 @@ export default {
       return dummyKey
     },
     restructGroup(entity, dummyKey, pot){
-      if(!Util.hasValue(entity.groupName)){
+      if(entity.groupName == null){
         if(!Util.hasValue(Util.getValue(pot, 'groupName', null))){
           return dummyKey
         }
@@ -146,7 +142,7 @@ export default {
       entity.location = param.location
       return param.dummyKey
     },
-    restruct(entity, dummyKey){
+    onRestruct(entity, dummyKey){
       dummyKey = this.restructTx(entity, dummyKey)
       dummyKey = this.restructPot(entity, dummyKey)
       if(Util.hasValue(entity.sensor)){

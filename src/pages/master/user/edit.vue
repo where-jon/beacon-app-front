@@ -57,15 +57,15 @@ import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as VueSelectHelper from '../../../sub/helper/VueSelectHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AuthHelper from '../../../sub/helper/AuthHelper'
+import * as ValidateHelper from '../../../sub/helper/ValidateHelper'
 import { APP } from '../../../sub/constant/config.js'
-import editmixinVue from '../../../components/mixin/editmixin.vue'
+import editmixin from '../../../components/mixin/editmixin.vue'
+import commonmixin from '../../../components/mixin/commonmixin.vue'
 import * as Util from '../../../sub/util/Util'
-import * as HtmlUtil from '../../../sub/util/HtmlUtil'
 import * as ArrayUtil from '../../../sub/util/ArrayUtil'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
 import chromeInput from '../../../components/parts/chromeinput.vue'
-import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 
 export default {
   components: {
@@ -73,14 +73,14 @@ export default {
     alert,
     chromeInput,
   },
-  mixins: [editmixinVue],
+  mixins: [editmixin, commonmixin],
   data() {
     return {
       name: 'user',
       id: 'userId',
       backPath: '/master/user',
       appServicePath: '/meta/user',
-      form: ViewHelper.extract(this.$store.state.app_service.user, ['userId', 'loginId', 'name', 'email', 'roleId', 'userRegionList', 'description']),
+      form: Util.extract(this.$store.state.app_service.user, ['userId', 'loginId', 'name', 'email', 'roleId', 'userRegionList', 'description']),
       vueSelected: {
         role: null,
         regions: [],
@@ -92,15 +92,12 @@ export default {
       passMinLength: 3,
       passMaxLength: 16,
       selfUpdate: this.$store.state.loginId == this.$store.state.app_service.user.loginId,
-      items: ViewHelper.createBreadCrumbItems('master', {text: 'user', href: '/master/user'}, Util.getDetailCaptionKey(this.$store.state.app_service.user.userId)),
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'user', href: '/master/user'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.user.userId)),
     }
   },
   computed: {
     hasId(){
       return Util.hasValue(this.form.userId)
-    },
-    theme () {
-      return getButtonTheme()
     },
     showEmail() {
       return ArrayUtil.includesIgnoreCase(APP.USER.WITH, 'email')
@@ -145,7 +142,7 @@ export default {
     }
   },
   mounted(){
-    HtmlUtil.setCustomValidationMessage()
+    ValidateHelper.setCustomValidationMessage()
   },
   methods: {
     isErrorPasswordRequired(){

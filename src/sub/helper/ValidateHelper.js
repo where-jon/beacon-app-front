@@ -1,3 +1,5 @@
+import * as Util from '../util/Util'
+
 let i18n
 
 /**
@@ -137,4 +139,83 @@ export const validateCheck = params => {
 export const formatValidateMessage = errors => {
   const errorMessages = errors.map(error => error.message)
   return errorMessages.filter((errorMessage, index) => errorMessages.indexOf(errorMessage) == index).map(errorMessage => errorMessage)
+}
+
+/**
+ * 検証失敗時の文字列をカスタマイズするためのキー値を取得する。
+ * @method
+ * @param {Element} target htmlのinput要素を示すオブジェクト
+ * @return {String} 検証に成功した場合はnullを返す
+ */
+export const createCustomValidationKey = target => {
+  const key = ['badInput', 'patternMismatch', 'rangeOverflow', 'rangeUnderflow', 'stepMismatch', 'tooLong', 'tooShort', 'typeMismatch', 'valueMissing'].find(key => target.validity[key])
+  if(!key){
+    return null
+  }
+  const baseKey = `message.${key}`
+  if(key == 'badInput'){
+    const type = target.type.toLowerCase()
+    return ['number'].includes(type)? `${baseKey}${type.charAt(0).toUpperCase()}${type.slice(1)}`: baseKey
+  }
+  if(key == 'typeMismatch'){
+    const type = target.type.toLowerCase()
+    return ['email'].includes(type)? `${baseKey}${type.charAt(0).toUpperCase()}${type.slice(1)}`: baseKey
+  }
+  if(key == 'valueMissing'){
+    const tag = target.tagName.toLowerCase()
+    return ['input', 'select'].includes(tag)? `${baseKey}${tag.charAt(0).toUpperCase()}${tag.slice(1)}`: baseKey
+  }
+  return baseKey
+}
+
+/**
+ * 検証失敗時のメッセージをカスタマイズする。
+ * @method
+ * @param {Event} e 入力時発火イベント
+ */
+export const customValidation = e => {
+  const target = e.target
+  const validity = target.validity
+  if(validity == null){
+    return
+  }
+  const key = createCustomValidationKey(target)
+  if(!key){
+    target.setCustomValidity('')
+    return
+  }
+  const step = Util.hasValue(target.step) && isNaN(target.step)? Number(target.step): 1
+  target.setCustomValidity(`${i18n.tnl(key, {
+    minLength: target.minLength,
+    maxLength: target.maxLength,
+    min: target.min,
+    max: target.max,
+    length: target.value? target.value.length: 0,
+    value: target.value,
+    stepLow: Math.floor(target.valueAsNumber / step) * step,
+    stepHigh: Math.floor(target.valueAsNumber / step) * step + step,
+  })}${validity.patternMismatch && target.title? target.title: ''}`)
+  return
+}
+
+/**
+ * すべてのinput要素およびselect要素にカスタムバリデーションを設定する。
+ * @method
+ */
+export const setCustomValidationMessage = () => {
+  const inputElements = document.getElementsByTagName('input')
+  if(inputElements != null){
+    for(let idx = 0; idx < inputElements.length; idx++){
+      inputElements[idx].addEventListener('input', e => customValidation(e))
+      inputElements[idx].addEventListener('invalid', e => customValidation(e))
+    }
+  }
+
+  const selectElements = document.getElementsByTagName('select')
+  if(selectElements != null){
+    for(let idx = 0; idx < selectElements.length; idx++){
+      selectElements[idx].addEventListener('change', e => customValidation(e))
+      selectElements[idx].addEventListener('invalid', e => customValidation(e))
+    }
+  }
 }

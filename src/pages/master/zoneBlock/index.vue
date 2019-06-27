@@ -7,7 +7,7 @@
         <b-form-row class="ml-2 mb-2">
           <label v-t="'label.areaName'" class="control-label mr-sm-2" />
           <span :title="vueSelectTitle(vueSelected.area)">
-            <v-select v-model="vueSelected.area" :options="areaNames" :clearable="false" class="mb-2 mr-sm-2 mb-sm-0 vue-options" :style="getVueSelectStyle()">
+            <v-select v-model="vueSelected.area" :options="areaNames" :clearable="false" class="mb-2 mr-sm-2 mb-sm-0 vue-options" :style="vueSelectStyle">
               <template slot="selected-option" slot-scope="option">
                 {{ vueSelectCutOn(option, true) }}
               </template>
@@ -21,7 +21,7 @@
         <b-form-row class="ml-2 mb-2">
           <label v-t="'label.categoryName'" class="control-label mr-sm-2" />
           <span :title="vueSelectTitle(vueSelected.category)">
-            <v-select v-model="vueSelected.category" :options="categoryNames" :disabled="!isEnableNameText" :clearable="false" class="mb-2 mr-sm-2 mb-sm-0 vue-options" :style="getVueSelectStyle()">
+            <v-select v-model="vueSelected.category" :options="categoryNames" :disabled="!isEnableNameText" :clearable="false" class="mb-2 mr-sm-2 mb-sm-0 vue-options" :style="vueSelectStyle">
               <template slot="selected-option" slot-scope="option">
                 {{ vueSelectCutOn(option) }}
               </template>
@@ -58,14 +58,14 @@ import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as VueSelectHelper from '../../../sub/helper/VueSelectHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
-import editmixinVue from '../../../components/mixin/editmixin.vue'
+import editmixin from '../../../components/mixin/editmixin.vue'
 import ZoneCanvas from '../../../components/parts/zonecanvas.vue'
 import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
-import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import { CATEGORY } from '../../../sub/constant/Constants'
 import showmapmixin from '../../../components/mixin/showmapmixin.vue'
+import commonmixin from '../../../components/mixin/commonmixin.vue'
 
 export default {
   components: {
@@ -73,14 +73,14 @@ export default {
     alert,
     ZoneCanvas,
   },
-  mixins: [editmixinVue, showmapmixin],
+  mixins: [editmixin, showmapmixin, commonmixin],
   data() {
     return {
       id: -1,
       zoneClassPath: '/master/zoneClass',
       backPath: '/master/zoneBlock',
       appServicePath: '/core/zone',
-      form: ViewHelper.extract(this.$store.state.app_service.zone, ['zoneId', 'zoneName', 'areaId', 'locationZoneList.0.locationZonePK.locationId', 'zoneCategoryList.0.zoneCategoryPK.categoryId']),
+      form: Util.extract(this.$store.state.app_service.zone, ['zoneId', 'zoneName', 'areaId', 'locationZoneList.0.locationZonePK.locationId', 'zoneCategoryList.0.zoneCategoryPK.categoryId']),
       areaNames: [],
       areaId: null,
       categoryNames: [],
@@ -109,9 +109,6 @@ export default {
     hasId (){
       return Util.hasValue(this.form.zoneId)
     },
-    theme () {
-      return getButtonTheme()
-    },
     ...mapState('app_service', [
       'zone', 'locations', 'areas', 'pageSendParam'
     ]),
@@ -135,15 +132,6 @@ export default {
     this.initCategoryNames()
   },
   methods: {
-    getVueSelectStyle(){
-      return VueSelectHelper.getVueSelectStyle()
-    },
-    vueSelectTitle(selected){
-      return VueSelectHelper.vueSelectTitle(selected)
-    },
-    vueSelectCutOn(option, required){
-      return VueSelectHelper.vueSelectCutOn(option, required)
-    },
     async initAreaNames() {
       await StateHelper.load('area')
       this.areaNames = StateHelper.getOptionsFromState('area', false, true)
@@ -224,7 +212,7 @@ export default {
         StateHelper.setForceFetch('exb', true)
       } catch (e) {
         e.bulkError = e.response.data
-        this.message = this.getSubmitErrorMessage(e)
+        this.message = ViewHelper.getSubmitErrorMessage(e, this.showLine, this.crud, this.name)
         this.replace({showAlert: true})
         window.scrollTo(0, 0)
       }

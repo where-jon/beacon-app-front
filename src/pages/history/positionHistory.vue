@@ -10,7 +10,7 @@
             <b-form-row>
               <b-form-row class="mb-3 mr-2">
                 <label v-t="'label.minor'" class="mr-2" />
-                <v-select v-model="form.tx" :options="txOptions" class="mr-2 vue-options" :style="getVueSelectStyle()">
+                <v-select v-model="form.tx" :options="txOptions" class="mr-2 vue-options" :style="vueSelectStyle">
                   <div slot="no-options">
                     {{ $i18n.tnl('label.vSelectNoOptions') }}
                   </div>
@@ -23,7 +23,7 @@
               <b-form-row class="mb-3 mr-2">
                 <label v-t="'label.group'" class="mr-2" />
                 <span :title="vueSelectTitle(form.group)">
-                  <v-select v-model="form.group" :options="groupOptions" class="mr-2 vue-options" :style="getVueSelectStyle()">
+                  <v-select v-model="form.group" :options="groupOptions" class="mr-2 vue-options" :style="vueSelectStyle">
                     <template slot="selected-option" slot-scope="option">
                       {{ vueSelectCutOn(option) }}
                     </template>
@@ -81,16 +81,15 @@ import 'element-ui/lib/theme-chalk/index.css'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
+import commonmixin from '../../components/mixin/commonmixin.vue'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
-import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
 import * as Util from '../../sub/util/Util'
-import * as HtmlUtil from '../../sub/util/HtmlUtil'
+import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as DateUtil from '../../sub/util/DateUtil'
-import { getTheme } from '../../sub/helper/ThemeHelper'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import { APP, DISP } from '../../sub/constant/config.js'
 import { APP_SERVICE } from '../../sub/constant/config'
@@ -102,7 +101,7 @@ export default {
     alert,
     DatePicker,
   },
-  mixins: [showmapmixin],
+  mixins: [showmapmixin, commonmixin],
   data () {
     return {
       name: 'positionHistory',
@@ -138,10 +137,6 @@ export default {
     }
   },
   computed: {
-    theme () {
-      const theme = getTheme(this.$store.state.loginId)
-      return 'outline-' + theme
-    },
     ...mapState('app_service', [
       'txs', 'exbs'
     ]),
@@ -168,21 +163,12 @@ export default {
     this.form.datetimeTo = DateUtil.getDatetime(date)
   },
   mounted() {
-    HtmlUtil.importElementUI()
+    ViewHelper.importElementUI()
     StateHelper.load('tx')
     StateHelper.load('exb')
     this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.viewList.length, maxRows: this.limitViewRows})}`
   },
   methods: {
-    getVueSelectStyle(){
-      return VueSelectHelper.getVueSelectStyle()
-    },
-    vueSelectTitle(selected){
-      return VueSelectHelper.vueSelectTitle(selected)
-    },
-    vueSelectCutOn(option, required){
-      return VueSelectHelper.vueSelectCutOn(option, required)
-    },
     async display() {
       this.container ? this.container.removeAllChildren() : null
       await this.displayImpl()
@@ -236,7 +222,7 @@ export default {
     async exportCsv() {
       const aTxId = (this.form.tx != null && this.form.tx.value != null)?this.form.tx.value:0
       const aGroupId = (this.form.group != null && this.form.group.value != null)? this.form.group.value: 0
-      HtmlUtil.executeFileDL(
+      BrowserUtil.executeFileDL(
         APP_SERVICE.BASE_URL
         + `/core/positionHistory/csvdownload/${aGroupId}/${aTxId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/` 
         + getCharSet(this.$store.state.loginId)

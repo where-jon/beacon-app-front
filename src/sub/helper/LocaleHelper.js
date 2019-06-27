@@ -1,4 +1,5 @@
 import * as LocalStorageHelper from './LocalStorageHelper'
+import * as HttpHelper from './HttpHelper'
 
 /**
  * 言語情報を取得する。
@@ -19,3 +20,18 @@ export const getLocale = (defaultLocale = '') => {
 export const setLocale = locale => {
   LocalStorageHelper.setLocalStorage(`${document.domain}-locale`, locale)
 }
+
+/**
+ * 言語ファイルを取得する。
+ * @method
+ * @param {String} lang 言語種類を示す文字列
+ * @return {String}
+ */
+export const getMessageData = async (lang) => {
+  const fileName = lang + '.json'
+  if(!await HttpHelper.existServerFile(fileName)){
+    return ''
+  }
+  return await HttpHelper.getFronServerFile('/' + fileName)
+}
+

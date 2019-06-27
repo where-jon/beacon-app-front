@@ -86,16 +86,15 @@
 import { mapState } from 'vuex'
 import _ from 'lodash'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
-import * as HtmlUtil from '../../../sub/util/HtmlUtil'
+import * as ValidateHelper from '../../../sub/helper/ValidateHelper'
 import * as Util from '../../../sub/util/Util'
-import editmixinVue from '../../../components/mixin/editmixin.vue'
+import editmixin from '../../../components/mixin/editmixin.vue'
+import commonmixin from '../../../components/mixin/commonmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
-import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as VueSelectHelper from '../../../sub/helper/VueSelectHelper'
-import * as OptionHelper from '../../../sub/helper/OptionHelper'
 import { APP } from '../../../sub/constant/config.js'
 import { CATEGORY, SENSOR } from '../../../sub/constant/Constants'
 
@@ -104,14 +103,14 @@ export default {
     breadcrumb,
     alert,
   },
-  mixins: [editmixinVue],
+  mixins: [editmixin, commonmixin],
   data() {
     return {
       name: 'tx',
       id: 'txId',
       backPath: '/master/tx',
       appServicePath: '/core/tx',
-      form: ViewHelper.extract(this.$store.state.app_service.tx, [
+      form: Util.extract(this.$store.state.app_service.tx, [
         'txId', 'btxId', 'major', 'minor', 'potTxList.0.pot.displayName', 'mapImage', 'dispPos', 'dispPir', 'dispAlways',
         'txSensorList.0.sensor.sensorId', 'locationId', 'location.x', 'location.y', 'location',
         'potTxList.0.pot.potId', 'potTxList.0.pot.potCd', 'potTxList.0.pot.displayName', 'potTxList.0.pot.description',
@@ -125,19 +124,12 @@ export default {
         category: null,
         group: null,
       },
-      items: ViewHelper.createBreadCrumbItems('master', {text: 'tx', href: '/master/tx'}, Util.getDetailCaptionKey(this.$store.state.app_service.tx.txId)),
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'tx', href: '/master/tx'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.tx.txId)),
     }
   },
   computed: {
-    theme () {
-      return getButtonTheme()
-    },
     isMajorRequired() {
       return APP.TX.MAJOR_REQUIRED
-    },
-    sensorOptionsTx() {
-      let options = OptionHelper.getSensorOptions('tx')
-      return options
     },
     categoryOptions() {
       return StateHelper.getOptionsFromState('category', false, true, 
@@ -177,13 +169,13 @@ export default {
     },
   },
   async mounted() {
-    ViewHelper.applyDef(this.form, this.defValue)
+    Util.applyDef(this.form, this.defValue)
     StateHelper.load('sensor')
     await StateHelper.load('category')
     await StateHelper.load('group')
     this.vueSelected.category = VueSelectHelper.getVueSelectData(this.categoryOptions, this.form.categoryId)
     this.vueSelected.group = VueSelectHelper.getVueSelectData(this.groupOptions, this.form.groupId)
-    HtmlUtil.setCustomValidationMessage()
+    ValidateHelper.setCustomValidationMessage()
   },
   methods: {
     showTx(col) {

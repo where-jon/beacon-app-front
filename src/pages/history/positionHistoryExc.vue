@@ -53,15 +53,14 @@ import 'element-ui/lib/theme-chalk/index.css'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
+import commonmixin from '../../components/mixin/commonmixin.vue'
 import { addLabelByKey } from '../../sub/helper/ViewHelper'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as SensorHelper from '../../sub/helper/SensorHelper'
-import * as OptionHelper from '../../sub/helper/OptionHelper'
-import * as HtmlUtil from '../../sub/util/HtmlUtil'
+import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as StringUtil from '../../sub/util/StringUtil'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
-import { getTheme } from '../../sub/helper/ThemeHelper'
 import { EXCLOUD, APP } from '../../sub/constant/config'
 import { SENSOR } from '../../sub/constant/Constants'
 
@@ -71,7 +70,7 @@ export default {
     breadcrumb,
     alert,
   },
-  mixins: [showmapmixin],
+  mixins: [showmapmixin, commonmixin],
   props: {
     pitems: {
       type: Array,
@@ -115,15 +114,6 @@ export default {
       sortDesc: APP.HISTORY_EXC.SORT.toLowerCase() == 'desc',
     }
   },
-  computed: {
-    theme () {
-      const theme = getTheme(this.$store.state.loginId)
-      return 'outline-' + theme
-    },
-    sensorOptions() { // TODO: refactoring duplicate 
-      return OptionHelper.getAllSensorOptions()
-    },
-  },
   watch: {
     month: function(newVal, oldVal) {
       this.loadDate()
@@ -162,7 +152,7 @@ export default {
     },
     async download(item) {
       let url = EXCloudHelper.url(EXCLOUD.DL_URL).replace('{type}', this.type).replace('{yyyymmdd}', item.date.split('/').join('')) + new Date().getTime()
-      HtmlUtil.executeFileDL(url)
+      BrowserUtil.executeFileDL(url)
     },
   }
 }

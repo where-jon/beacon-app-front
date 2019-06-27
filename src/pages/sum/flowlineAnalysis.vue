@@ -24,12 +24,11 @@ import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
 import analysisSearch from '../../components/parts/analysissearch.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
-import { getTheme } from '../../sub/helper/ThemeHelper'
+import commonmixin from '../../components/mixin/commonmixin.vue'
 import * as Util from '../../sub/util/Util'
 import * as ColorUtil from '../../sub/util/ColorUtil'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as FlowLineHelper from '../../sub/helper/FlowLineHelper'
-import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
 
 export default {
   components: {
@@ -37,7 +36,7 @@ export default {
     alert,
     analysisSearch,
   },
-  mixins: [showmapmixin],
+  mixins: [showmapmixin, commonmixin],
   data () {
     return {
       items: ViewHelper.createBreadCrumbItems('sumTitle', 'flowlineAnalysis'),
@@ -50,18 +49,9 @@ export default {
       noImageErrorKey: 'noMapImage',
     }
   },
-  computed: {
-    theme () {
-      const theme = getTheme()
-      return 'outline-' + theme
-    },
-  },
   methods: {
     reset() {
       this.isShownMapImage = false
-    },
-    closeVueSelect(){
-      return VueSelectHelper.closeVueSelect()
     },
     async fetchData(payload){
       try {

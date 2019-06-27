@@ -50,10 +50,7 @@ export default {
     await StateHelper.load('feature')
   },
   methods: {
-    async onSaving() {
-      await this.$refs.bulkEdit.bulkSave()
-    },
-    restruct(entity, dummyKey){
+    onRestruct(entity, dummyKey){
       let keys = null
       if(Util.hasValue(entity.updateKey) && entity.updateKey.split){
         keys = entity.updateKey.split(BULK.SPLITTER)

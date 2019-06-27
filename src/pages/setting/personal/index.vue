@@ -99,7 +99,7 @@ import alert from '../../../components/parts/alert.vue'
 import pagetitle from '../../../components/layout/pagetitle.vue'
 import { APP } from '../../../sub/constant/config'
 import { THEME, CHAR_SET, LOCALE } from '../../../sub/constant/Constants'
-import { getTheme, getButtonTheme } from '../../../sub/helper/ThemeHelper'
+import { getTheme } from '../../../sub/helper/ThemeHelper'
 import { getCharSet } from '../../../sub/helper/CharSetHelper'
 import * as LocaleHelper from '../../../sub/helper/LocaleHelper'
 import * as AuthHelper from '../../../sub/helper/AuthHelper'
@@ -109,9 +109,9 @@ import * as ValidateHelper from '../../../sub/helper/ValidateHelper'
 import * as LocalStorageHelper from '../../../sub/helper/LocalStorageHelper'
 import * as Util from '../../../sub/util/Util'
 import * as ArrayUtil from '../../../sub/util/ArrayUtil'
-import { getLangShort } from '../../../sub/util/HtmlUtil'
-import commonmixinVue from '../../../components/mixin/commonmixin.vue'
-import editmixinVue from '../../../components/mixin/editmixin.vue'
+import { getLangShort } from '../../../sub/util/BrowserUtil'
+import commonmixin from '../../../components/mixin/commonmixin.vue'
+import editmixin from '../../../components/mixin/editmixin.vue'
 
 export default {
   components: {
@@ -119,7 +119,7 @@ export default {
     alert,
     pagetitle,
   },
-  mixins: [commonmixinVue, editmixinVue],
+  mixins: [commonmixin, editmixin],
   data () {
     return {
       name: 'setting',
@@ -165,9 +165,6 @@ export default {
       'showInfo',
       'showAlert',
     ]),
-    theme () {
-      return getButtonTheme()
-    },
     hasError() {
       return Object.keys(this.errorMessages)
         .map((key) => {
@@ -230,6 +227,7 @@ export default {
       // storeを参照しているため、テーマの変更を検知する
       this.replaceSetting({theme})
       LocalStorageHelper.setLocalStorage(document.domain + '-theme', theme)
+      // update theme
       this.theme
     },
     charSetSelected (selected) {
@@ -339,7 +337,7 @@ export default {
       }
     },
     async save() {
-      const param = ViewHelper.extract(this.loginUser, ['userId', 'loginId', 'name', 'email', 'minor', 'roleId', 'description'])
+      const param = Util.extract(this.loginUser, ['userId', 'loginId', 'name', 'email', 'minor', 'roleId', 'description'])
       if (this.loginUser.passwordConfirm !== null) {
         param['pass'] = this.loginUser.passwordConfirm
       }

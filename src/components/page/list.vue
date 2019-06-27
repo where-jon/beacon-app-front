@@ -23,7 +23,7 @@
                 <label v-t="'label.' + item.key" for="item.key" class="mr-2" />
                 <b-input-group v-if="useVueSelect(item.key)">
                   <span :title="vueSelectTitle(vueSelected[item.key])">
-                    <v-select v-model="vueSelected[item.key]" :input-id="item.key" :options="item.options" class="extra-filter vue-options" :style="getVueSelectStyle()">
+                    <v-select v-model="vueSelected[item.key]" :input-id="item.key" :options="item.options" class="extra-filter vue-options" :style="vueSelectStyle">
                       <template slot="selected-option" slot-scope="option">
                         {{ vueSelectCutOn(option) }}
                       </template>
@@ -223,18 +223,16 @@
 import { mapState, mapMutations } from 'vuex'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
-import * as OptionHelper from '../../sub/helper/OptionHelper'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
 import * as DetectStateHelper from '../../sub/helper/DetectStateHelper'
 import * as LocalStorageHelper from '../../sub/helper/LocalStorageHelper'
-import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
 import * as Util from '../../sub/util/Util'
-import * as HtmlUtil from '../../sub/util/HtmlUtil'
+import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as StringUtil from '../../sub/util/StringUtil'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
-import { getButtonTheme } from '../../sub/helper/ThemeHelper'
+import * as CsvUtil from '../../sub/util/CsvUtil'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
-import commonmixinVue from '../mixin/commonmixin.vue'
+import commonmixin from '../mixin/commonmixin.vue'
 import { CATEGORY, SENSOR } from '../../sub/constant/Constants'
 import * as AuthHelper from '../../sub/helper/AuthHelper'
 import alert from '../parts/alert.vue'
@@ -245,7 +243,7 @@ export default {
     alert,
     settinginput,
   },
-  mixins: [commonmixinVue], // not work
+  mixins: [commonmixin],
   props: {
     params: {
       type: Object,
@@ -350,7 +348,7 @@ export default {
       return MenuHelper.isEditable(this.indexPath)
     },
     iosOrAndroid() {
-      return HtmlUtil.isAndroidOrIOS()
+      return BrowserUtil.isAndroidOrIOS()
     },
     extraFilterSpec() {
       if (!this.params.extraFilter) {
@@ -385,9 +383,6 @@ export default {
       return StateHelper.getOptionsFromState('category', false, true, 
         category => CATEGORY.POT_AVAILABLE.includes(category.categoryType)
       )
-    },
-    sensorOptions() {
-      return OptionHelper.getAllSensorOptions()
     },
     zoneOptions() {
       return StateHelper.getOptionsFromState('zone', false, true)
@@ -425,9 +420,6 @@ export default {
     isTenantAdmin() {
       return this.login.tenantAdmin
     },
-    theme () {
-      return getButtonTheme()
-    },
     showMessage(){
       return Util.hasValue(this.message)
     },
@@ -435,10 +427,10 @@ export default {
       return Util.hasValue(this.error)
     },
     actionButtonStyle(){
-      return HtmlUtil.getLangShort() == 'ja'? {}: {width: '110px !important'}
+      return BrowserUtil.getLangShort() == 'ja'? {}: {width: '110px !important'}
     },
     anotherActionButtonStyle(){
-      return HtmlUtil.getLangShort() == 'ja'? {width: '100px !important'}: {width: '110px !important'}
+      return BrowserUtil.getLangShort() == 'ja'? {width: '100px !important'}: {width: '110px !important'}
     },
   },
   watch: {
@@ -498,15 +490,6 @@ export default {
     },
     thumbnail(row) {
       return this.$parent.$options.methods.thumbnail.call(this.$parent, row)
-    },
-    getVueSelectStyle(){
-      return VueSelectHelper.getVueSelectStyle()
-    },
-    vueSelectTitle(selected){
-      return VueSelectHelper.vueSelectTitle(selected)
-    },
-    vueSelectCutOn(option, required){
-      return VueSelectHelper.vueSelectCutOn(option, required)
     },
     setEmptyMessage(){
       this.message = null
@@ -581,7 +564,7 @@ export default {
           this.$parent.$options.methods.customCsvData.call(this.$parent, val)
         })
       }
-      HtmlUtil.fileDL(this.params.name + '.csv', Util.converToCsv(list, headers), getCharSet(this.loginId))
+      BrowserUtil.fileDL(this.params.name + '.csv', CsvUtil.converToCsv(list, headers), getCharSet(this.loginId))
     },
     style(index) {
       return this.$parent.$options.methods.style.call(this.$parent, index)

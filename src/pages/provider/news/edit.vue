@@ -35,12 +35,11 @@ import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
-import editmixinVue from '../../../components/mixin/editmixin.vue'
-import * as HtmlUtil from '../../../sub/util/HtmlUtil'
+import editmixin from '../../../components/mixin/editmixin.vue'
+import commonmixin from '../../../components/mixin/commonmixin.vue'
 import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
-import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 
 export default {
   components: {
@@ -48,28 +47,25 @@ export default {
     alert,
     DatePicker,
   },
-  mixins: [editmixinVue],
+  mixins: [editmixin, commonmixin],
   data() {
     return {
       name: 'news',
       id: 'newsId',
       backPath: '/provider/news',
       appServicePath: '/news',
-      form: ViewHelper.extract(this.$store.state.app_service.news,
+      form: Util.extract(this.$store.state.app_service.news,
         ['newsId', 'newsDate', 'content', 'dispFlg']),
-      items: ViewHelper.createBreadCrumbItems('provider', {text: 'news', href: '/provider/news'}, Util.getDetailCaptionKey(this.$store.state.app_service.news.newsId)),
+      items: ViewHelper.createBreadCrumbItems('provider', {text: 'news', href: '/provider/news'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.news.newsId)),
     }
   },
   computed: {
-    theme () {
-      return getButtonTheme()
-    },
     ...mapState('app_service', [
       'news',
     ]),
   },
   async mounted() {
-    HtmlUtil.importElementUI()
+    ViewHelper.importElementUI()
     if(this.form.newsDate == null){
       this.form.newsDate = (new Date()).getTime()
     }
