@@ -3,7 +3,7 @@
 import { EventBus } from '../../sub/helper/EventHelper'
 import * as AuthHelper from '../../sub/helper/AuthHelper'
 import commonmixinVue from './commonmixin.vue'
-import * as HtmlUtil from '../../sub/util/HtmlUtil'
+import * as Util from '../../sub/util/Util'
 import { APP } from '../../sub/constant/config'
 
 export default {
@@ -26,7 +26,7 @@ export default {
   },
   methods: {
     startOtherAutoReload() {
-      HtmlUtil.registerInterval(() => {
+      Util.registerInterval(() => {
         this.$store.commit('replace', {reload: true})
         const windowScroll = {x: window.pageXOffset , y: window.pageYOffset}
         EventBus.$emit('otherReload', {
@@ -37,7 +37,7 @@ export default {
       }, APP.COMMON.AUTO_RELOAD)
     },
     startPositionAutoReload() {
-      HtmlUtil.registerInterval(() => {
+      Util.registerInterval(() => {
         EventBus.$emit('positionReload', {
           disabledProgress: true,
           disabledOther: true,
@@ -45,7 +45,7 @@ export default {
       }, APP.POS.AUTO_RELOAD)
     },
     startAutoReload() {
-      HtmlUtil.registerInterval(()=>{
+      Util.registerInterval(()=>{
         this.$store.commit('replace', {reload: true})
         const windowScroll = {x: window.pageXOffset , y: window.pageYOffset}
         EventBus.$emit('reload', {done() { AuthHelper.checkSession() }})
@@ -53,7 +53,7 @@ export default {
       }, APP.COMMON.AUTO_RELOAD)
     },
     stopAutoReload() {
-      HtmlUtil.removeInterval()
+      Util.removeInterval()
     },
   },
 }

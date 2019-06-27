@@ -34,9 +34,6 @@ export default {
     ]),
   },
   methods: {
-    async onSaving() {
-      await this.$refs.bulkEdit.bulkSave()
-    },
     restructRegion(entity, dummyKey){
       if(!Util.hasValue(entity.regionNames)){
         entity.userRegionList = []
@@ -48,7 +45,7 @@ export default {
       }))
       return dummyKey
     },
-    restruct(entity, dummyKey){
+    onRestruct(entity, dummyKey){
       if(Util.hasValue(entity.roleName)) {
         entity.role = {roleId: dummyKey--, roleName: entity.roleName}
       }

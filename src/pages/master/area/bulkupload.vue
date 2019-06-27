@@ -13,7 +13,8 @@ import bulkupload from '../../../components/page/bulkupload.vue'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
-import * as HtmlUtil from '../../../sub/util/HtmlUtil'
+import * as ImageHelper from '../../../sub/helper/ImageHelper'
+import * as BrowserUtil from '../../../sub/util/BrowserUtil'
 import { APP } from '../../../sub/constant/config.js'
 
 export default {
@@ -46,8 +47,8 @@ export default {
       return target? {id: target.areaId, name: target.areaName, ...target}: null
     },
     addLoadImage(imgInfo) {
-      const blob = Util.base64ToBlob(imgInfo.thumbnail)
-      HtmlUtil.readImage({target: {files: [blob]}}, (evt, width, height, thumbnail) => {
+      const blob = ImageHelper.base64ToBlob(imgInfo.thumbnail)
+      BrowserUtil.readImage({target: {files: [blob]}}, (evt, width, height, thumbnail) => {
         imgInfo.mapImage = imgInfo.thumbnail
         imgInfo.mapWidth = width
         imgInfo.mapHeight = height

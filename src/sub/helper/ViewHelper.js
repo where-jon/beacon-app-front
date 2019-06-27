@@ -1,5 +1,8 @@
 import _ from 'lodash'
+import elementLocale from 'element-ui/lib/locale'
+import { APP } from '../constant/config'
 import * as Util from '../util/Util'
+import * as StringUtil from '../util/StringUtil'
 
 let i18n
 
@@ -10,6 +13,14 @@ let i18n
  */
 export const setApp = pi18n => {
   i18n = pi18n
+}
+
+/**
+ * Element-UIをインポートする。
+ * @method
+ */
+export const importElementUI = () => {
+  import(`element-ui/lib/locale/lang/${i18n.locale}`).then(mojule => elementLocale.use(mojule.default))
 }
 
 /**
@@ -24,43 +35,6 @@ export const addLabelByKey = (i18n, objArr) => {
     return val? {...val, label: i18n? i18n.tnl('label.' + (val.label || val.key)): val.label || val.key}: null
   })
     .filter(val => val != null).value()
-}
-
-/**
- * オブジェクトの要素をマージする。
- * @method
- * @param {Object} obj マージ先
- * @param {Object} def マージ元
- * @return {Object} 失敗した場合にobjを返す。正常終了時はnull
- */
-export const applyDef = (obj, def) => {
-  if (!obj || !def) return obj
-
-  _.forEach(def, (val, key) => {
-    if (obj[key] === undefined) {
-      obj[key] = val
-    }
-  })
-}
-
-/**
- * オブジェクトから指定した要素のみ取り出す。
- * @method
- * @param {Object} obj 
- * @param {String[]} fields 
- * @return {Object} 失敗した場合はobjを返す。正常終了時は成果物を返す。
- */
-export const extract = (obj, fields) => {
-  if (!obj || !fields) return obj
-
-  let ret = {}
-  _.forEach(fields, field => {
-    let {val, lastKey} = Util.getValue(obj, field)
-    ret[lastKey] = val
-  })
-
-  console.log('extract', {ret})
-  return ret
 }
 
 /**
@@ -88,33 +62,84 @@ export const createBreadCrumbItems = (...columns) => {
 }
 
 /**
- * 3桁 もしくは 6桁のHEXをRGBAに変換する
+ * 編集画面の状態を示す文字列を取得する。
  * @method
- * @param {String} colorCode 
- * @param {Number} opacity 
+ * @param {Number} id
+ * @return {String} 更新の場合は'update'。新規作成の場合は'addSetting'
+ */
+export const getDetailCaptionKey = id => {
+  return `${Util.hasValue(id)? 'update': 'addSetting'}`
+}
+
+/**
+ * 実際の主キー名を、表示上の主キー名に変換する。
+ * @method
+ * @param {String} col 
  * @return {String}
  */
-export const getRGBA = (colorCode, opacity) => {
-  if (colorCode.substring(0,1) == '#') {
-    colorCode = colorCode.slice(1)
+export const modifyColName = col => {
+  if (col == 'TXID'){
+    return APP.TX.BTX_MINOR == 'minor'? 'minor': 'btxId'
   }
+  if (col == 'btxId' && APP.TX.BTX_MINOR == 'minor') {
+    return 'minor'
+  }
+  return col
+}
 
-  if (colorCode && colorCode.length < 6) {
-    if (colorCode.length == 3) {
-      let red   = parseInt(colorCode.substring(0,1) + colorCode.substring(0,1), 16)
-      let green = parseInt(colorCode.substring(1,2) + colorCode.substring(1,2), 16)
-      let blue  = parseInt(colorCode.substring(2,3) + colorCode.substring(2,3), 16)
-      let alpha = opacity? opacity: 1
-      return 'rgba(' + red + ',' + green + ',' + blue + ',' + alpha + ')'
-    } else {
-      console.log('getRGBA-FormatError', {colorCode})
-      return ''
+/**
+ * 実際の主キー名に応じて、表示上の主キー名が保有する値を取得する。
+ * @method
+ * @param {String} col 
+ * @param {Any} val 
+ * @return {Any}
+ */
+export const modifyVal = (col, val) => {
+  if (col == 'TXID'){
+    if(APP.TX.BTX_MINOR == 'minor' && this.minor){
+      return this.minor
     }
-  } else {
-    let red   = parseInt(colorCode.substring(0,2), 16)
-    let green = parseInt(colorCode.substring(2,4), 16)
-    let blue  = parseInt(colorCode.substring(4,6), 16)
-    let alpha = opacity? opacity: 1
-    return 'rgba(' + red + ',' + green + ',' + blue + ',' + alpha + ')'
+    if(APP.TX.BTX_MINOR != 'minor' && this.btxId){
+      return this.btxId
+    }
+  }
+  return val
+}
+
+/**
+ * サブミット時にエラーが発生した場合のメッセージを作成する。
+ * @method
+ * @param {Exception} e 
+ * @param {Number} showLine 
+ * @param {String} crud 
+ * @param {String} masterIdName 
+ * @return {String}
+ */
+export const getSubmitErrorMessage = (e, showLine, crud, masterIdName) => {
+  if (e.key) {
+    return i18n.tnl('message.' + e.type, {key: i18n.tnl('label.' + modifyColName(StringUtil.snake2camel(e.key))), val: modifyVal(StringUtil.snake2camel(e.key), e.val)})
+  }
+  if(e.col){
+    return i18n.tnl('message.' + e.type, {col: i18n.tnl(`label.${e.col}`), value: e.val})
+  }
+  if(e.bulkError) {
+    return _.map(_.orderBy(e.bulkError, ['line'], ['asc']), err => {
+      let col = modifyColName(err.col.trim())
+      return i18n.tline('message.bulk' + err.type + 'Failed', 
+        {line: err.line, col: i18n.tnl(`label.${col}`), value: StringUtil.sanitize(err.value), min: err.min, max: err.max, candidates: err.candidates, num: err.num, unit: err.unit? i18n.tnl(`label.${err.unit}Unit`): '', target: err.target? i18n.tnl(`label.${err.target}`): ''},
+        showLine)
+    }).filter((val, idx, arr) => arr.indexOf(val) == idx)
+  }
+  return i18n.terror('message.' + crud + 'Failed', {target: i18n.tnl('label.' + masterIdName), code: e.message})
+}
+
+/**
+ * ファイル選択コントロールの選択値を初期化する。
+ * @method
+ */
+export const clearFileComponentAll = () => {
+  const customFileLabel = document.getElementsByClassName('custom-file-label')
+  if (customFileLabel && customFileLabel[0]) {
+    customFileLabel[0].innerText =''
   }
 }

@@ -7,13 +7,13 @@
 
 <script>
 import { mapState } from 'vuex'
-import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkupload from '../../../components/page/bulkupload.vue'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
-import * as HtmlUtil from '../../../sub/util/HtmlUtil'
+import * as ImageHelper from '../../../sub/helper/ImageHelper'
+import * as BrowserUtil from '../../../sub/util/BrowserUtil'
 import { APP } from '../../../sub/constant/config'
 
 export default {
@@ -59,8 +59,8 @@ export default {
       }: null
     },
     addLoadImage(imgInfo) {
-      const blob = Util.base64ToBlob(imgInfo.thumbnail)
-      HtmlUtil.readImage({target: {files: [blob]}}, (evt, width, height, thumbnail) => {
+      const blob = ImageHelper.base64ToBlob(imgInfo.thumbnail)
+      BrowserUtil.readImage({target: {files: [blob]}}, (evt, width, height, thumbnail) => {
         imgInfo.thumbnail = thumbnail
       }, APP.POT_THUMBNAIL_MAX)
     },

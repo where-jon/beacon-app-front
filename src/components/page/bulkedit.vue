@@ -23,14 +23,13 @@
 
 <script>
 import { mapState } from 'vuex'
-import commonmixinVue from '../mixin/commonmixin.vue'
+import commonmixin from '../mixin/commonmixin.vue'
 import * as Util from '../../sub/util/Util'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as CharSetHelper from '../../sub/helper/CharSetHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as BulkHelper from '../../sub/helper/BulkHelper'
 import * as LocalStorageHelper from '../../sub/helper/LocalStorageHelper'
-import { getButtonTheme } from '../../sub/helper/ThemeHelper'
 import { CHAR_SET, UPDATE_ONLY_NN, IGNORE } from '../../sub/constant/Constants'
 import alert from '../parts/alert.vue'
 
@@ -38,7 +37,7 @@ export default {
   components: {
     alert,
   },
-  mixins: [ commonmixinVue ],
+  mixins: [commonmixin],
   props: {
     name: {
       type: String,
@@ -73,9 +72,6 @@ export default {
     ...mapState('app_service', [
       'sensors',
     ]),
-    theme () {
-      return getButtonTheme()
-    },
     charSets(){
       return CHAR_SET.map(e => ({ value: e.id, text: this.$i18n.tnl('label.' + e.name) }))
     }
@@ -106,7 +102,12 @@ export default {
       this.$nextTick(async () => {
         this.showProgress()
         try {
-          await this.$parent.$options.methods.onSaving.call(this.$parent)
+          if(this.$parent.$options.methods.onSaving){
+            await this.$parent.$options.methods.onSaving.call(this.$parent)
+          }
+          else{
+            await this.bulkSave()
+          }
           await StateHelper.load(this.name, true)
           this.message = this.$i18n.tnl('message.bulkRegisterCompleted', {target: this.$i18n.tnl('label.' + this.name)})
           this.replace({showInfo: true})

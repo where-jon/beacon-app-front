@@ -9,14 +9,16 @@ import * as PositionHelper from '../../sub/helper/PositionHelper'
 import * as SensorHelper from '../../sub/helper/SensorHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
-import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as IconHelper from '../../sub/helper/IconHelper'
 import * as StyleHelper from '../../sub/helper/StyleHelper'
 import * as Util from '../../sub/util/Util'
-import * as HtmlUtil from '../../sub/util/HtmlUtil'
+import * as BrowserUtil from '../../sub/util/BrowserUtil'
+import * as VueUtil from '../../sub/util/VueUtil'
+import * as DomUtil from '../../sub/util/DomUtil'
 import * as StringUtil from '../../sub/util/StringUtil'
 import * as NumberUtil from '../../sub/util/NumberUtil'
 import * as DateUtil from '../../sub/util/DateUtil'
+import * as ColorUtil from '../../sub/util/ColorUtil'
 import reloadmixin from './reloadmixin.vue'
 import * as mock from '../../assets/mock/mock'
 
@@ -103,7 +105,7 @@ export default {
           clearTimeout(timer)
         } 
         timer = setTimeout( async () => {
-          if (currentWidth === window.innerWidth && HtmlUtil.isAndroidOrIOS()) {
+          if (currentWidth === window.innerWidth && BrowserUtil.isAndroidOrIOS()) {
             // モバイル端末だと表示の直後にリサイズイベントが発生してしまうため、
             // 画面横幅が変わっていなければ処理をキャンセル
             return
@@ -177,7 +179,7 @@ export default {
       }
     },
     showMapImageDef(callback, disableErrorPopup) {
-      if(HtmlUtil.endsWithSlashUrl(this)){
+      if(VueUtil.endsWithSlashUrl(this)){
         return
       }
       if(!this.loadComplete){
@@ -224,7 +226,7 @@ export default {
       }
       const isMapWidthLarger = parentHeight / parent.clientWidth > target.height / target.width
       let fitWidth
-      if (HtmlUtil.isMobile()) {
+      if (BrowserUtil.isMobile()) {
         fitWidth = (this.tempMapFitMobile == 'both' && isMapWidthLarger) || this.tempMapFitMobile == 'width'
       } else {
         fitWidth = (DISP.MAP_FIT == 'both' && isMapWidthLarger) || DISP.MAP_FIT == 'width'
@@ -503,8 +505,8 @@ export default {
       //const tipOffsetY = 15
       const tx = this.txs.find((tx) => tx.btxId == btxId)
       const display = this.getDisplay(tx)
-      const map = HtmlUtil.getRect('#map')
-      const containerParent = HtmlUtil.getRect('#mapContainer', 'parentNode')
+      const map = DomUtil.getRect('#map')
+      const containerParent = DomUtil.getRect('#mapContainer', 'parentNode')
       const offsetX = map.left - containerParent.left + (!this.isInstallation ? 0 : 48)
       //const offsetY = map.top - containerParent.top + (!this.isInstallation ? 0 : 20)
       const isDispRight = x + offsetX + 100 < window.innerWidth
@@ -579,8 +581,8 @@ export default {
         fillAlpha = DISP.TX.ALPHA
       }
       return {
-        bgColor: ViewHelper.getRGBA(bgColor, fillAlpha),
-        strokeColor: ViewHelper.getRGBA(DISP.TX.STROKE_COLOR, strokeAlpha)
+        bgColor: ColorUtil.getRGBA(bgColor, fillAlpha),
+        strokeColor: ColorUtil.getRGBA(DISP.TX.STROKE_COLOR, strokeAlpha)
       }
     },
     createTxIcon(pos, shape, color, bgColor){

@@ -33,3 +33,11 @@ test('equalsAny', t => {
   t.true(!ArrayUtil.equalsAny('r', ['a','b','c']))
 })
 
+test('getEntityFromIds', t => {
+  t.true(ArrayUtil.getEntityFromIds(
+    [ {id: 12, val: 120}, {id: 13, val: 130}, {id: 14, val: 140} ],
+    {id: 13, val: 130},
+    ['id']
+  )? true: false)
+})
+

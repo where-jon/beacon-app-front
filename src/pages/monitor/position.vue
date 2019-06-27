@@ -2,7 +2,7 @@
   <div class="container-fluid">
     <breadcrumb :items="items" :reload="true" :state="reloadState" @reload="fetchData" />
     <div v-show="!reloadState.isLoad" class="container">
-      <monitor-table type="position" :vue-table-mode="isDev" :all-count="allCount" :headers="headers" :datas="positions" :tr-class="getClass" />
+      <monitor-table ref="monitorTable" type="position" :vue-table-mode="isDev" :all-count="allCount" :headers="headers" :datas="positions" :tr-class="getClass" />
     </div>
   </div>
 </template>
@@ -14,23 +14,23 @@ import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as DetectStateHelper from '../../sub/helper/DetectStateHelper'
 import * as Util from '../../sub/util/Util'
-import * as HtmlUtil from '../../sub/util/HtmlUtil'
+import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as DateUtil from '../../sub/util/DateUtil'
+import * as CsvUtil from '../../sub/util/CsvUtil'
 import { APP } from '../../sub/constant/config'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import commonmixin from '../../components/mixin/commonmixin.vue'
 import reloadmixin from '../../components/mixin/reloadmixin.vue'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import monitorTable from '../../components/parts/monitortable.vue'
-import statusmixin from '../../components/mixin/statusmixin.vue'
 
 export default {
   components: {
     breadcrumb,
     monitorTable,
   },
-  mixins: [reloadmixin, commonmixin, statusmixin],
+  mixins: [reloadmixin, commonmixin],
   props: {
     isDev: {
       type: Boolean,
@@ -157,8 +157,8 @@ export default {
           name: tx != null ? tx.potName : '—',
           finalReceiveLocation: exb? exb.location.locationName  : '',
           finalReceiveTimestamp: this.getTimestamp(e.updatetime),
-          powerLevel: this.getPositionPowerLevelLabel(e.power_level),
-          state: this.getStateLabel('tx', e.updatetime),
+          powerLevel: this.$refs.monitorTable.getPositionPowerLevelLabel(e.power_level),
+          state: this.$refs.monitorTable.getStateLabel('tx', e.updatetime),
           sensorIds: Util.getValue(tx, 'txSensorList', []).map(txSensor => txSensor.sensor.sensorId),
         }
       })
@@ -184,7 +184,7 @@ export default {
           return position
         }
         const target = sensorDataList.reduce((prev, cur) => EXCloudHelper.getDispTime(prev) > EXCloudHelper.getDispTime(cur)? prev: cur)
-        position.powerLevel = this.getPositionPowerLevelLabel(target.power_level),
+        position.powerLevel = this.$refs.monitorTable.getPositionPowerLevelLabel(target.power_level),
         position.power_level = target.power_level
         position.finalReceiveTimestamp = this.getTimestamp(EXCloudHelper.getDispTime(target))
         return position
@@ -198,9 +198,9 @@ export default {
               ...sensorHistory,
               btx_id: sensorHistory.btxid,
               name: Util.getValue(tx, 'potName', ''),
-              powerLevel: this.getPositionPowerLevelLabel(sensorHistory.power_level),
+              powerLevel: this.$refs.monitorTable.getPositionPowerLevelLabel(sensorHistory.power_level),
               finalReceiveTimestamp: this.getTimestamp(EXCloudHelper.getDispTime(sensorHistory)),
-              state: this.getStateLabel('tx', EXCloudHelper.getDispTime(sensorHistory)),
+              state: this.$refs.monitorTable.getStateLabel('tx', EXCloudHelper.getDispTime(sensorHistory)),
             })
           })
         })
@@ -224,7 +224,7 @@ export default {
         })
         return obj
       })
-      HtmlUtil.fileDL('position.csv', Util.converToCsv(dldata), getCharSet(this.$store.state.loginId))
+      BrowserUtil.fileDL('position.csv', CsvUtil.converToCsv(dldata), getCharSet(this.$store.state.loginId))
     },
   }
 }

@@ -187,21 +187,21 @@ import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import * as Util from '../../sub/util/Util'
-import * as HtmlUtil from '../../sub/util/HtmlUtil'
+import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as DateUtil from '../../sub/util/DateUtil'
 import * as ColorUtil from '../../sub/util/ColorUtil'
-import { getTheme } from '../../sub/helper/ThemeHelper'
+import * as CsvUtil from '../../sub/util/CsvUtil'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
-import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
+import * as StayTimeHelper from '../../sub/helper/StayTimeHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import { APP, DISP } from '../../sub/constant/config'
 import moment from 'moment'
-import commonmixinVue from '../../components/mixin/commonmixin.vue'
+import commonmixin from '../../components/mixin/commonmixin.vue'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
 import { SYSTEM_ZONE_CATEGORY_NAME } from '../../sub/constant/Constants'
 import { CATEGORY } from '../../sub/constant/Constants'
@@ -212,7 +212,7 @@ export default {
     alert,
     DatePicker,
   },
-  mixins: [commonmixinVue],
+  mixins: [commonmixin],
   data () {
     return {
       form: {
@@ -246,9 +246,6 @@ export default {
     }
   },
   computed: {
-    theme () {
-      return 'outline-' + getTheme()
-    },
     ...mapState('app_service', [
       'groups',
       'pots',
@@ -257,7 +254,7 @@ export default {
       'areas',
     ]),
     isIosOrAndroid() {
-      return HtmlUtil.isAndroidOrIOS()
+      return BrowserUtil.isAndroidOrIOS()
     },
     isCategoryEnabled () {
       return MenuHelper.isEnabledMenu('category') && ArrayUtil.includesIgnoreCase(APP.POT.WITH, 'category')
@@ -294,7 +291,7 @@ export default {
     this.form.date = moment().add(-1, 'days').format('YYYYMMDD')
   },
   async mounted() {
-    HtmlUtil.importElementUI()
+    ViewHelper.importElementUI()
     window.addEventListener('resize', () => {
       this.updateColumnName()
       this.$forceUpdate()
@@ -309,12 +306,6 @@ export default {
       .sort((a, b) => a.categoryId < b.categoryId ? -1 : 1)
   },
   methods: {
-    vueSelectTitle(selected){
-      return VueSelectHelper.vueSelectTitle(selected)
-    },
-    vueSelectCutOn(option, required){
-      return VueSelectHelper.vueSelectCutOn(option, required)
-    },
     isScaleTime(scaleTime) {
       return _.some(APP.STAY_SUM.SCALE_TIMES, (time) => { return time === scaleTime })
     },
@@ -574,18 +565,18 @@ export default {
           groupName: pot? pot.groupName: '',
           categoryName: pot? pot.categoryName: '',
           graph: graphList,
-          stayTime: DateUtil.convertToTime(stayTime) + ' (' + Util.getRatio(stayTime) + '%)', 
-          lostTime: DateUtil.convertToTime(lostTime) + ' (' + Util.getRatio(lostTime) + '%)', 
+          stayTime: DateUtil.convertToTime(stayTime) + ' (' + StayTimeHelper.getRatio(stayTime) + '%)', 
+          lostTime: DateUtil.convertToTime(lostTime) + ' (' + StayTimeHelper.getRatio(lostTime) + '%)', 
           baseTimeFrom: this.getDateStrFromSetting(APP.STAY_SUM.FROM),
           baseTimeTo: this.getDateStrFromSetting(APP.STAY_SUM.TO),
           graphTimeRatio: graphTimeRatio,
         }
 
         categoryData.forEach((cData) => {
-          result[cData.name] = DateUtil.convertToTime(cData.value) + ' (' + Util.getRatio(cData.value) + '%)'
+          result[cData.name] = DateUtil.convertToTime(cData.value) + ' (' + StayTimeHelper.getRatio(cData.value) + '%)'
         })
         areaData.forEach((aData) => {
-          result[aData.name] = DateUtil.convertToTime(aData.value) + ' (' + Util.getRatio(aData.value) + '%)'
+          result[aData.name] = DateUtil.convertToTime(aData.value) + ' (' + StayTimeHelper.getRatio(aData.value) + '%)'
         })
 
         return result
@@ -646,7 +637,7 @@ export default {
       const categoryName =  !category? '': category.systemUse == 1? category.systemCategoryName: '_' + category.categoryName
 
       const convertedCsvData = this.convertCsvData(key, csvList)
-      HtmlUtil.fileDL(
+      BrowserUtil.fileDL(
         searchDate + groupName + categoryName + '_stayRatio.csv',
         convertedCsvData,
         getCharSet(this.$store.state.loginId)
@@ -723,8 +714,8 @@ export default {
     updateColumnName(){
       if(Util.hasValue(this.fields)){
         this.fields.forEach(field => {
-          field.label = HtmlUtil.isResponsiveMode(true)? field.originLabel.replace(/<br>/g, ''): field.originLabel
-          field.label = HtmlUtil.isResponsiveMode(true)? field.originLabel.replace(/<span.*?span>/g, ''): field.originLabel
+          field.label = BrowserUtil.isResponsiveMode(true)? field.originLabel.replace(/<br>/g, ''): field.originLabel
+          field.label = BrowserUtil.isResponsiveMode(true)? field.originLabel.replace(/<span.*?span>/g, ''): field.originLabel
         })
       }
     },
@@ -789,7 +780,7 @@ export default {
       const categoryName =  !category? '': category.systemUse == 1? category.systemCategoryName: '_' + category.categoryName
 
       const convertedCsvData = this.convertCsvData(key, csvList)
-      HtmlUtil.fileDL(
+      BrowserUtil.fileDL(
         moment(this.form.date).format('YYYY-MM') + groupName + categoryName + '_stayRatio.csv',
         convertedCsvData,
         getCharSet(this.$store.state.loginId)
@@ -818,9 +809,9 @@ export default {
     convertCsvData(key, list) {
       switch(key) {
       case 'sum':
-        return Util.converToCsv(list)
+        return CsvUtil.converToCsv(list)
       case 'detail':
-        return Util.converToCsv(list, null, this.getCsvDetailHeaderList())
+        return CsvUtil.converToCsv(list, null, this.getCsvDetailHeaderList())
       default:
         // 何もしない
       }

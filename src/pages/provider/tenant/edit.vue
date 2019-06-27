@@ -152,7 +152,8 @@ import * as AuthHelper from '../../../sub/helper/AuthHelper'
 import * as HttpHelper from '../../../sub/helper/HttpHelper'
 import * as LocalStorageHelper from '../../../sub/helper/LocalStorageHelper'
 import * as FeatureHelper from '../../../sub/helper/FeatureHelper'
-import editmixinVue from '../../../components/mixin/editmixin.vue'
+import editmixin from '../../../components/mixin/editmixin.vue'
+import commonmixin from '../../../components/mixin/commonmixin.vue'
 import * as Util from '../../../sub/util/Util'
 import * as DateUtil from '../../../sub/util/DateUtil'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
@@ -160,7 +161,6 @@ import alert from '../../../components/parts/alert.vue'
 import chromeInput from '../../../components/parts/chromeinput.vue'
 import featureList from '../../../components/page/featureList.vue'
 import systemSetting from '../../setting/system/index.vue'
-import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import { EXCLOUD } from '../../../sub/constant/config'
 
 export default {
@@ -171,15 +171,15 @@ export default {
     featureList,
     systemSetting,
   },
-  mixins: [editmixinVue],
+  mixins: [editmixin, commonmixin],
   data() {
     return {
       name: 'tenant',
       id: 'tenantId',
       backPath: '/provider/tenant',
       appServicePath: '/meta/tenant',
-      form: ViewHelper.extract(this.$store.state.app_service.tenant, ['tenantId', 'tenantCd', 'tenantName', 'sysAdminLoginId', 'sysAdminPass', 'adminLoginId', 'adminPass', 'userLoginId', 'userPass', 'regionName', 'meshId', 'createDt', 'delFlg']),
-      items: ViewHelper.createBreadCrumbItems('provider', {text: 'tenant', href: '/provider/tenant'}, Util.getDetailCaptionKey(this.$store.state.app_service.tenant.tenantId)),
+      form: Util.extract(this.$store.state.app_service.tenant, ['tenantId', 'tenantCd', 'tenantName', 'sysAdminLoginId', 'sysAdminPass', 'adminLoginId', 'adminPass', 'userLoginId', 'userPass', 'regionName', 'meshId', 'createDt', 'delFlg']),
+      items: ViewHelper.createBreadCrumbItems('provider', {text: 'tenant', href: '/provider/tenant'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.tenant.tenantId)),
       fields: ViewHelper.addLabelByKey(this.$i18n, [ 
         {key: 'parentCheck', label: 'dummy', thStyle: {width:'4px !important'} },
         {key: 'subCheck', label: 'dummy', thStyle: {width:'4px !important'} },
@@ -205,9 +205,6 @@ export default {
   computed: {
     hasId (){
       return Util.hasValue(this.form.tenantId)
-    },
-    theme () {
-      return getButtonTheme()
     },
     ...mapState('app_service', [
       'tenant', 'features', 'settings'

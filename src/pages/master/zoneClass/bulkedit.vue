@@ -34,10 +34,7 @@ export default {
     ]),
   },
   methods: {
-    async onSaving() {
-      await this.$refs.bulkEdit.bulkSave()
-    },
-    restruct(entity, dummyKey){
+    onRestruct(entity, dummyKey){
       entity.zoneType = ZONE.NON_COORDINATE
       if(Util.hasValue(entity.areaName)) {
         entity.area = {areaId: dummyKey--, areaName: entity.areaName}

@@ -2,6 +2,7 @@ import _ from 'lodash'
 import * as Util from '../util/Util'
 import * as StringUtil from '../util/StringUtil'
 import * as ArrayUtil from '../util/ArrayUtil'
+import * as CsvUtil from '../util/CsvUtil'
 import * as OptionHelper from './OptionHelper'
 import * as CharSetHelper from './CharSetHelper'
 import { BULK, ROLE_FEATURE, CHAR_SET } from '../constant/Constants'
@@ -294,7 +295,7 @@ export const convertBulkCsvObj = (loginId, arrayBuffer) => {
     const csvString = ArrayUtil.arrayBuffer2str(arrayBuffer)
     const bulkCharset = CharSetHelper.detectBulkCharSet(loginId)
     csvCharsetCheck(csvString, bulkCharset)
-    return Util.csv2Obj(csvString, bulkCharset)
+    return CsvUtil.csv2Obj(csvString, bulkCharset)
   }
   catch(e){
     throw e
@@ -364,8 +365,8 @@ export const setCsvParamList = (vueComponent, masterIdName, readerParam, csvLine
       }
       const entity = {}
       dummyKey = setCsvParam(masterIdName, header, csvLine, dummyKey, entity, option)
-      if(vueComponent.$parent.$options.methods.restruct) {
-        dummyKey = vueComponent.$parent.$options.methods.restruct.call(vueComponent.$parent, entity, dummyKey)
+      if(vueComponent.$parent.$options.methods.onRestruct) {
+        dummyKey = vueComponent.$parent.$options.methods.onRestruct.call(vueComponent.$parent, entity, dummyKey)
       }
       sameDataCheck(readerParam.sameLine, lineIdx, readerParam.entities, entity)
       readerParam.entities.push(entity)

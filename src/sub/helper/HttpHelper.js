@@ -1,7 +1,8 @@
 import axios from 'axios'
 import { EXCLOUD, APP_SERVICE } from '../constant/config'
 import * as AuthHelper from './AuthHelper'
-import * as HtmlUtil from '../util/HtmlUtil'
+import * as ImageHelper from './ImageHelper'
+import * as Util from '../util/Util'
 import * as StringUtil from '../util/StringUtil'
 import md5 from 'md5'
 
@@ -81,7 +82,7 @@ const addApiKey = (config = {}) => {
  */
 export const getAppServiceNoCrd = async (path, config, ignoreError) => {
   try {
-    let res = await axiosNoCrd.get(APP_SERVICE.BASE_URL + HtmlUtil.addTimeToPath(path), addApiKey(config))
+    let res = await axiosNoCrd.get(APP_SERVICE.BASE_URL + addTimeToPath(path), addApiKey(config))
     return res.data
   } catch (e) {
     if (!ignoreError) {
@@ -101,7 +102,7 @@ export const getAppServiceNoCrd = async (path, config, ignoreError) => {
  */
 export const getAppService = async (path, config, ignoreError) => {
   try {
-    let res = await apServiceClient.get(APP_SERVICE.BASE_URL + HtmlUtil.addTimeToPath(path), addApiKey(config))
+    let res = await apServiceClient.get(APP_SERVICE.BASE_URL + addTimeToPath(path), addApiKey(config))
     return res.data
   } catch (e) {
     if (!ignoreError) {
@@ -319,4 +320,27 @@ export const existServerFile = async (fileName) => {
     return true
   }
   return indexData.split(/\r?\n/g).includes(fileName)
+}
+
+/**
+ * リソースのパスを取得する。
+ * @method
+ * @param {String} path
+ * @return {String} 先頭に'.'または'/'が付与されていない場合、'/'が付与される
+ */
+export const getResourcePath = path => Util.hasValue(path) && ImageHelper.isImageFile(path)? path.indexOf(0) == /^[\\./]/.test(path)? path: `/${path}`: path
+
+/**
+ * URLに現在時刻情報を付与する。既に付与されている場合は何もしない。
+ * @method
+ * @param {String} path
+ * @return {String}
+ * @example
+ * addTimeToPath('XXX') => 'XXX?_=1234567890'
+ */
+export const addTimeToPath = path => {
+  if (path.includes('?_=') || path.includes('&_=')) {
+    return path
+  }
+  return path + (path.includes('?')? '&': '?') + '_=' + new Date().getTime()
 }

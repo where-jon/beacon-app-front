@@ -37,15 +37,15 @@
 <script>
 import { mapState } from 'vuex'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
-import editmixinVue from '../../../components/mixin/editmixin.vue'
+import * as ValidateHelper from '../../../sub/helper/ValidateHelper'
+import editmixin from '../../../components/mixin/editmixin.vue'
+import commonmixin from '../../../components/mixin/commonmixin.vue'
 import * as Util from '../../../sub/util/Util'
-import * as HtmlUtil from '../../../sub/util/HtmlUtil'
 import * as ColorUtil from '../../../sub/util/ColorUtil'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
-import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import { SHAPE } from '../../../sub/constant/Constants'
 import colorPicker from '../../../components/parts/colorpicker.vue'
 
@@ -55,7 +55,7 @@ export default {
     alert,
     colorPicker,
   },
-  mixins: [editmixinVue],
+  mixins: [editmixin, commonmixin],
   data() {
     let group = this.$store.state.app_service.group
     return {
@@ -65,17 +65,14 @@ export default {
       appServicePath: '/basic/group',
       defaultColor: '#000000',
       defaultBgColor: '#ffffff',
-      form: ViewHelper.extract(this.$store.state.app_service.group, ['groupId', 'groupName', 'ruby', 'display', 'description']),
+      form: Util.extract(this.$store.state.app_service.group, ['groupId', 'groupName', 'ruby', 'display', 'description']),
       oldShape: Util.getValue(group, 'display.shape', null),
       oldColor: Util.getValue(group, 'display.color', null),
       oldBgColor: Util.getValue(group, 'display.bgColor', null),
-      items: ViewHelper.createBreadCrumbItems('master', {text: 'group', href: '/master/group'}, Util.getDetailCaptionKey(this.$store.state.app_service.group.groupId)),
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'group', href: '/master/group'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.group.groupId)),
     }
   },
   computed: {
-    theme () {
-      return getButtonTheme()
-    },
     ...mapState('app_service', [
       'group',
     ]),
@@ -87,7 +84,7 @@ export default {
     this.onBeforeReload()
   },
   mounted(){
-    HtmlUtil.setCustomValidationMessage()
+    ValidateHelper.setCustomValidationMessage()
   },
   methods: {
     onBeforeReload(){

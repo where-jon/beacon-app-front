@@ -9,7 +9,7 @@
           {{ $t('label.area') }}
         </label>
         <span :title="vueSelectTitle(vueSelected.area)">
-          <v-select v-model="vueSelected.area" :options="areaOptions" :disabled="settingStart" class="mr-2 mb-2 vue-options" :style="getVueSelectStyle()" :clearable="false">
+          <v-select v-model="vueSelected.area" :options="areaOptions" :disabled="settingStart" class="mr-2 mb-2 vue-options" :style="vueSelectStyle" :clearable="false">
             <template slot="selected-option" slot-scope="option">
               {{ vueSelectCutOn(option, true) }}
             </template>
@@ -26,7 +26,7 @@
         <b-form-select v-model="exbDisp" :options="exbDispOptions" :disabled="settingStart" class="mr-2 mb-2" @change="changeExbDisp" />
         <b-form-row>
           <span :title="vueSelectTitle(selectedExb_)">
-            <v-select v-model="selectedExb_" :options="exbOptions" :disabled="settingStart" size="sm" class="mb-2 mt-mobile vue-options" :style="getVueSelectStyle()" @input="showExbOnMap">
+            <v-select v-model="selectedExb_" :options="exbOptions" :disabled="settingStart" size="sm" class="mb-2 mt-mobile vue-options" :style="vueSelectStyle" @input="showExbOnMap">
               <template slot="selected-option" slot-scope="option">
                 {{ vueSelectCutOn(option) }}
               </template>
@@ -86,18 +86,17 @@ import * as HttpHelper from '../../../sub/helper/HttpHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as VueSelectHelper from '../../../sub/helper/VueSelectHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
-import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
+import * as StyleHelper from '../../../sub/helper/StyleHelper'
 import * as Util from '../../../sub/util/Util'
-import * as HtmlUtil from '../../../sub/util/HtmlUtil'
+import * as BrowserUtil from '../../../sub/util/BrowserUtil'
 import * as StringUtil from '../../../sub/util/StringUtil'
 import * as ArrayUtil from '../../../sub/util/ArrayUtil'
-import * as StyleUtil from '../../../sub/util/StyleUtil'
 import { APP, DISP } from '../../../sub/constant/config'
 import { UPDATE_ONLY_NN } from '../../../sub/constant/Constants'
 import { Shape, Container, Text } from '@createjs/easeljs/dist/easeljs.module'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
-import commonmixinVue from '../../../components/mixin/commonmixin.vue'
+import commonmixin from '../../../components/mixin/commonmixin.vue'
 import showmapmixin from '../../../components/mixin/showmapmixin.vue'
 
 export default {
@@ -105,7 +104,7 @@ export default {
     breadcrumb,
     alert,
   },
-  mixins: [showmapmixin, commonmixinVue],
+  mixins: [showmapmixin, commonmixin],
   data() {
     return {
       message: '',
@@ -142,9 +141,6 @@ export default {
     ...mapState('app_service', [
       'pageSendParam',
     ]),
-    theme() {
-      return getButtonTheme()
-    },
   },
   watch: {
     'vueSelected.area': {
@@ -188,18 +184,6 @@ export default {
     this.selectedArea = null
   },
   methods: {
-    getVueSelectStyle(){
-      return VueSelectHelper.getVueSelectStyle()
-    },
-    vueSelectTitle(selected){
-      return VueSelectHelper.vueSelectTitle(selected)
-    },
-    vueSelectCutOn(option, required){
-      return VueSelectHelper.vueSelectCutOn(option, required)
-    },
-    closeVueSelect(){
-      return VueSelectHelper.closeVueSelect()
-    },
     reset() {
       this.replace({showAlert: false})
       this.replace({showInfo: false})
@@ -282,7 +266,7 @@ export default {
           let text = exbBtn.getChildAt(1)
           if (text) {
             text.text = StringUtil.cutOnLongByte(this.getExbDisp(exbBtn.deviceId), this.DISPLAY_NAME_BYTE_LENGTH)
-            text.font = StyleUtil.getInRectFontSize(text.text, DISP.EXB_LOC.SIZE.W, DISP.EXB_LOC.SIZE.H)
+            text.font = StyleHelper.getInRectFontSize(text.text, DISP.EXB_LOC.SIZE.W, DISP.EXB_LOC.SIZE.H)
           }
         }
       }
@@ -332,7 +316,7 @@ export default {
       exbBtn.addChild(s)
       const text = StringUtil.cutOnLongByte(this.getExbDisp(exb.deviceId), this.DISPLAY_NAME_BYTE_LENGTH)
       const label = new Text(text)
-      label.font = StyleUtil.getInRectFontSize(text, w, h)
+      label.font = StyleHelper.getInRectFontSize(text, w, h)
       label.color = DISP.EXB_LOC.COLOR
       label.textAlign = 'center'
       label.textBaseline = 'middle'
@@ -367,7 +351,7 @@ export default {
         this.deleteTarget = exbBtn
         this.showDeletConfirm()
       })
-      if(HtmlUtil.isAndroidOrIOS()){
+      if(BrowserUtil.isAndroidOrIOS()){
         exbBtn.on('mousedown', (evt) => {
           exb.delEvent = true
         })

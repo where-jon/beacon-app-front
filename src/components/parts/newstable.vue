@@ -53,13 +53,12 @@
 import VueScrollingTable from 'vue-scrolling-table'
 import reloadmixin from '../mixin/reloadmixin.vue'
 import commonmixin from '../mixin/commonmixin.vue'
-import statusmixin from '../mixin/statusmixin.vue'
 
 export default {
   components: {
     VueScrollingTable,
   },
-  mixins: [reloadmixin, commonmixin, statusmixin],
+  mixins: [reloadmixin, commonmixin],
   props: {
     isDev: {
       type: Boolean,

@@ -158,3 +158,24 @@ export const equalsAny = (target, arr) => {
   return arr.includes(target)
 }
 
+/**
+ * listからentityに相当するデータを検索する。
+ * @method
+ * @param {Object[]} list 検索対象
+ * @param {Object} entity 検索項目
+ * @param {String[]} ids 検索キー
+ * @return {Object}
+ */
+export const getEntityFromIds = (list, entity, ids) => {
+  for(let index = 0; index < ids.length; index++){
+    const id = ids[index]
+    if(entity[id]){
+      const matchEntity = list.find((val) => val[id] == entity[id])
+      if(matchEntity){
+        return matchEntity
+      }
+    }
+  }
+  return null
+}
+

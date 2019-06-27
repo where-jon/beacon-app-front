@@ -66,15 +66,15 @@ import * as AuthHelper from '../../../sub/helper/AuthHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as SettingHelper from '../../../sub/helper/SettingHelper'
 import * as LocalStorageHelper from '../../../sub/helper/LocalStorageHelper'
-import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
+import * as ValidateHelper from '../../../sub/helper/ValidateHelper'
 import mList from '../../../components/page/list.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
 import settinginput from '../../../components/parts/settinginput.vue'
-import * as HtmlUtil from '../../../sub/util/HtmlUtil'
 import * as Util from '../../../sub/util/Util'
 import { SETTING, BOOLEAN } from '../../../sub/constant/Constants'
-import editmixinVue from '../../../components/mixin/editmixin.vue'
+import editmixin from '../../../components/mixin/editmixin.vue'
+import commonmixin from '../../../components/mixin/commonmixin.vue'
 
 export default {
   components: {
@@ -83,7 +83,7 @@ export default {
     alert,
     settinginput,
   },
-  mixins: [editmixinVue],
+  mixins: [editmixin, commonmixin],
   props: {
     pSettingList: {
       type: Array,
@@ -131,9 +131,6 @@ export default {
     ...mapState('app_service', [
       'settings',
     ]),
-    theme() {
-      return getButtonTheme()
-    },
     totalRows(){
       return this.settingList.length
     },
@@ -149,7 +146,7 @@ export default {
   },
   mounted(){
     this.initNewForm(true)
-    HtmlUtil.setCustomValidationMessage()
+    ValidateHelper.setCustomValidationMessage()
   },
   methods: {
     add(setting){

@@ -34,43 +34,40 @@ import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as AuthHelper from '../../../sub/helper/AuthHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
-import editmixinVue from '../../../components/mixin/editmixin.vue'
-import * as HtmlUtil from '../../../sub/util/HtmlUtil'
+import * as ValidateHelper from '../../../sub/helper/ValidateHelper'
+import editmixin from '../../../components/mixin/editmixin.vue'
+import commonmixin from '../../../components/mixin/commonmixin.vue'
 import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
-import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 
 export default {
   components: {
     breadcrumb,
     alert,
   },
-  mixins: [editmixinVue],
+  mixins: [editmixin, commonmixin],
   data() {
     return {
       name: 'region',
       id: 'regionId',
       backPath: '/master/region',
       appServicePath: '/core/region',
-      form: ViewHelper.extract(this.$store.state.app_service.region,
+      form: Util.extract(this.$store.state.app_service.region,
         ['regionId', 'regionName', 'meshId', 'description']),
-      items: ViewHelper.createBreadCrumbItems('master', {text: 'region', href: '/master/region'}, Util.getDetailCaptionKey(this.$store.state.app_service.region.regionId)),
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'region', href: '/master/region'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.region.regionId)),
     }
   },
   computed: {
     hasId(){
       return Util.hasValue(this.form.regionId)
     },
-    theme () {
-      return getButtonTheme()
-    },
     ...mapState('app_service', [
       'region',
     ]),
   },
   mounted(){
-    HtmlUtil.setCustomValidationMessage()
+    ValidateHelper.setCustomValidationMessage()
   },
   methods: {
     async onSaving() {

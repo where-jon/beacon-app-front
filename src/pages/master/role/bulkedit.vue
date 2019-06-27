@@ -32,9 +32,6 @@ export default {
     ]),
   },
   methods: {
-    async onSaving() {
-      await this.$refs.bulkEdit.bulkSave()
-    },
     onSaved(){
       StateHelper.setForceFetch('user', true)
     },

@@ -18,9 +18,8 @@
 </template>
 
 <script>
-import { getButtonTheme } from '../../sub/helper/ThemeHelper'
-import commonmixinVue from '../mixin/commonmixin.vue'
-import editmixinVue from '../mixin/editmixin.vue'
+import commonmixin from '../mixin/commonmixin.vue'
+import editmixin from '../mixin/editmixin.vue'
 import alert from '../parts/alert.vue'
 import { APP } from '../../sub/constant/config.js'
 import * as Util from '../../sub/util/Util'
@@ -32,7 +31,7 @@ export default {
   components: {
     alert,
   },
-  mixins: [ editmixinVue, commonmixinVue ],
+  mixins: [editmixin, commonmixin],
   props: {
     name: {
       type: String,
@@ -65,11 +64,6 @@ export default {
         warnThumbnails: [],
       },
     }
-  },
-  computed: {
-    theme () {
-      return getButtonTheme()
-    },
   },
   mounted() {
     this.loading = false

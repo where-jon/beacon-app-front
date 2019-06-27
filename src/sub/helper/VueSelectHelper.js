@@ -1,5 +1,6 @@
 import * as Util from '../util/Util'
 import * as StringUtil from '../util/StringUtil'
+import * as ArrayUtil from '../util/ArrayUtil'
 import { DISP } from '../constant/config'
 
 /**
@@ -71,3 +72,15 @@ export const closeVueSelect = () => {
     }
   }
 }
+
+/**
+ * v-selectの選択値をすべて初期化する。
+ * @method
+ * @param {Object} vueSelected 
+ */
+export const clearVueSelect = vueSelected => {
+  if(vueSelected && typeof vueSelected == 'object'){
+    Object.keys(vueSelected).forEach(key => vueSelected[key] = ArrayUtil.isArray(vueSelected[key])? []: null)
+  }
+}
+

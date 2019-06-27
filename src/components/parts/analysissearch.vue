@@ -6,7 +6,7 @@
           <b-form-row class="mb-3">
             <label v-t="'label.area'" class="mr-2 mb-2" />
             <span :title="vueSelectTitle(vueSelected.area)">
-              <v-select v-model="vueSelected.area" :options="areaOptions" :clearable="false" class="inputSelect vue-options" :style="getVueSelectStyle()">
+              <v-select v-model="vueSelected.area" :options="areaOptions" :clearable="false" class="inputSelect vue-options" :style="vueSelectStyle">
                 <template slot="selected-option" slot-scope="option">
                   {{ vueSelectCutOn(option, true) }}
                 </template>
@@ -18,7 +18,7 @@
           <b-form-row v-if="enableCategory" class="mb-3 mr-2">
             <label v-t="'label.category'" class="mr-2" />
             <span :title="vueSelectTitle(vueSelected.category)">
-              <v-select v-model="vueSelected.category" :options="categoryOptions" class="inputSelect vue-options" :style="getVueSelectStyle()">
+              <v-select v-model="vueSelected.category" :options="categoryOptions" class="inputSelect vue-options" :style="vueSelectStyle">
                 <template slot="selected-option" slot-scope="option">
                   {{ vueSelectCutOn(option) }}
                 </template>
@@ -30,7 +30,7 @@
           <b-form-row v-if="enableGroup" class="mb-3 mr-2">
             <label v-t="'label.group'" class="mr-2" />
             <span :title="vueSelectTitle(vueSelected.group)">
-              <v-select v-model="vueSelected.group" :options="groupOptions" class="inputSelect vue-options" :style="getVueSelectStyle()">
+              <v-select v-model="vueSelected.group" :options="groupOptions" class="inputSelect vue-options" :style="vueSelectStyle">
                 <template slot="selected-option" slot-scope="option">
                   {{ vueSelectCutOn(option) }}
                 </template>
@@ -42,7 +42,7 @@
           <b-form-row v-if="enableIndividual" class="mb-3 mr-2">
             <label v-t="'label.individual'" class="mr-2" />
             <span :title="vueSelectTitle(vueSelected.pot)">
-              <v-select v-model="vueSelected.pot" :options="potOptions" class="inputSelect vue-options" :style="getVueSelectStyle()">
+              <v-select v-model="vueSelected.pot" :options="potOptions" class="inputSelect vue-options" :style="vueSelectStyle">
                 <template slot="selected-option" slot-scope="option">
                   {{ vueSelectCutOn(option) }}
                 </template>
@@ -79,24 +79,23 @@ import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import * as Util from '../../sub/util/Util'
-import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as DateUtil from '../../sub/util/DateUtil'
-import { getTheme } from '../../sub/helper/ThemeHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
 import * as ValidateHelper from '../../sub/helper/ValidateHelper'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
 import { APP } from '../../sub/constant/config.js'
 import { CATEGORY } from '../../sub/constant/Constants'
-import commonmixinVue from '../mixin/commonmixin.vue'
+import commonmixin from '../mixin/commonmixin.vue'
 
 export default {
   components: {
     DatePicker,
   },
-  mixins: [commonmixinVue],
+  mixins: [commonmixin],
   props: {
     fromHeatmap: {
       type: Boolean,
@@ -127,10 +126,6 @@ export default {
     }
   },
   computed: {
-    theme () {
-      const theme = getTheme()
-      return 'outline-' + theme
-    },
     ...mapState('app_service', [
       'areas',
       'categories',
@@ -193,18 +188,9 @@ export default {
     this.form.datetimeTo = DateUtil.getDatetime(date)
   },
   mounted() {
-    HtmlUtil.importElementUI()
+    ViewHelper.importElementUI()
   },
   methods: {
-    getVueSelectStyle(){
-      return VueSelectHelper.getVueSelectStyle()
-    },
-    vueSelectTitle(selected){
-      return VueSelectHelper.vueSelectTitle(selected)
-    },
-    vueSelectCutOn(option, required){
-      return VueSelectHelper.vueSelectCutOn(option, required)
-    },
     updatePotOption(categoryId, groupId) {
       this.potOptions = StateHelper.getOptionsFromState('pot', false, true, 
         pot => pot.potType == CATEGORY.PERSON && (!categoryId || pot.categoryId == categoryId) && (!groupId || pot.groupId == groupId)

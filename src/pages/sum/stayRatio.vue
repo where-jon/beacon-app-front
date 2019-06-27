@@ -15,7 +15,7 @@
           <b-form-row class="mb-3 mr-5">
             <label v-t="'label.group'" class="mr-2" />
             <span :title="vueSelectTitle(vueSelected.group)">
-              <v-select v-model="vueSelected.group" :options="groupOptions" class="mr-2 inputSelect vue-options" :style="getVueSelectStyle()">
+              <v-select v-model="vueSelected.group" :options="groupOptions" class="mr-2 inputSelect vue-options" :style="vueSelectStyle">
                 <template slot="selected-option" slot-scope="option">
                   {{ vueSelectCutOn(option) }}
                 </template>
@@ -50,20 +50,20 @@ import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import * as Util from '../../sub/util/Util'
-import * as HtmlUtil from '../../sub/util/HtmlUtil'
+import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as DateUtil from '../../sub/util/DateUtil'
-import { getTheme } from '../../sub/helper/ThemeHelper'
+import * as CsvUtil from '../../sub/util/CsvUtil'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
-import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
 import * as ValidateHelper from '../../sub/helper/ValidateHelper'
+import * as StayTimeHelper from '../../sub/helper/StayTimeHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import { APP } from '../../sub/constant/config'
 import moment from 'moment'
-import commonmixinVue from '../../components/mixin/commonmixin.vue'
+import commonmixin from '../../components/mixin/commonmixin.vue'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
 import { SYSTEM_ZONE_CATEGORY_NAME } from '../../sub/constant/Constants'
 
@@ -73,7 +73,7 @@ export default {
     alert,
     DatePicker,
   },
-  mixins: [commonmixinVue],
+  mixins: [commonmixin],
   data () {
     return {
       form: {
@@ -106,16 +106,13 @@ export default {
     }
   },
   computed: {
-    theme () {
-      return 'outline-' + getTheme()
-    },
     ...mapState('app_service', [
       'groups',
       'pots',
       'categories',
     ]),
     iosOrAndroid() {
-      return HtmlUtil.isAndroidOrIOS()
+      return BrowserUtil.isAndroidOrIOS()
     },
   },
   watch: {
@@ -133,7 +130,7 @@ export default {
     this.form.date = moment().add(-1, 'days').format('YYYYMMDD')
   },
   async mounted() {
-    HtmlUtil.importElementUI()
+    ViewHelper.importElementUI()
     window.addEventListener('resize', () => {
       this.updateColumnName()
       this.$forceUpdate()
@@ -141,15 +138,6 @@ export default {
     this.updateColumnName()
   },
   methods: {
-    getVueSelectStyle(){
-      return VueSelectHelper.getVueSelectStyle()
-    },
-    vueSelectTitle(selected){
-      return VueSelectHelper.vueSelectTitle(selected)
-    },
-    vueSelectCutOn(option, required){
-      return VueSelectHelper.vueSelectCutOn(option, required)
-    },
     validate() {
       const errors = ValidateHelper.validateCheck([
         {type: 'require', names: ['date'], values: [this.form.date]},
@@ -217,10 +205,10 @@ export default {
             stayTime += stay.period
           }
         })
-        presentRatio = Util.getRatio(stayTime)
-        absentRatio = Util.getRatio(under30minAbsentTime)
-        absentRatioSub = Util.getRatio(over30to90minAbsentTime)
-        lostRatio = Util.getRatio(lostTime)
+        presentRatio = StayTimeHelper.getRatio(stayTime)
+        absentRatio = StayTimeHelper.getRatio(under30minAbsentTime)
+        absentRatioSub = StayTimeHelper.getRatio(over30to90minAbsentTime)
+        lostRatio = StayTimeHelper.getRatio(lostTime)
 
         return {
           date: date,
@@ -260,9 +248,9 @@ export default {
       const group = this.form.groupId? this.groups.find((val) => val.groupId == this.form.groupId): null
       const groupName =  group? '_' + group.groupName: ''
 
-      HtmlUtil.fileDL(
+      BrowserUtil.fileDL(
         searchDate + groupName + '_stayRatio.csv',
-        Util.converToCsv(viewList, null, this.getCsvHeaderNames()),
+        CsvUtil.converToCsv(viewList, null, this.getCsvHeaderNames()),
         getCharSet(this.$store.state.loginId)
       )
     },
@@ -275,7 +263,7 @@ export default {
     updateColumnName(){
       if(Util.hasValue(this.fields)){
         this.fields.forEach(field => {
-          field.label = HtmlUtil.isResponsiveMode(true)? field.originLabel.replace(/<br>/g, ''): field.originLabel
+          field.label = BrowserUtil.isResponsiveMode(true)? field.originLabel.replace(/<br>/g, ''): field.originLabel
         })
       }
     },
@@ -336,9 +324,9 @@ export default {
 
       const group = this.form.groupId? this.groups.find((val) => val.groupId == this.form.groupId): null
       const groupName =  group? '_' + group.groupName: ''
-      HtmlUtil.fileDL(
+      BrowserUtil.fileDL(
         moment(this.form.date).format('YYYYMM') + groupName + '_stayRatio.csv',
-        Util.converToCsv(csvList, null, this.getCsvHeaderNames()),
+        CsvUtil.converToCsv(csvList, null, this.getCsvHeaderNames()),
         getCharSet(this.$store.state.loginId)
       )
 

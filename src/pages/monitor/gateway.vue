@@ -2,7 +2,7 @@
   <div class="container-fluid">
     <breadcrumb :items="items" :reload="true" :state="reloadState" @reload="fetchData" />
     <div v-show="!reloadState.isLoad" class="container">
-      <monitor-table type="gw" :all-count="allCount" :headers="headers" :datas="gateways" :tr-class="getClass" />
+      <monitor-table ref="monitorTable" type="gw" :all-count="allCount" :headers="headers" :datas="gateways" :tr-class="getClass" />
     </div>
   </div>
 </template>
@@ -11,14 +11,13 @@
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as DetectStateHelper from '../../sub/helper/DetectStateHelper'
-import * as HtmlUtil from '../../sub/util/HtmlUtil'
-import * as Util from '../../sub/util/Util'
+import * as BrowserUtil from '../../sub/util/BrowserUtil'
+import * as CsvUtil from '../../sub/util/CsvUtil'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import commonmixin from '../../components/mixin/commonmixin.vue'
 import reloadmixin from '../../components/mixin/reloadmixin.vue'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import monitorTable from '../../components/parts/monitortable.vue'
-import statusmixin from '../../components/mixin/statusmixin.vue'
 import { APP } from '../../sub/constant/config.js'
 
 export default {
@@ -26,7 +25,7 @@ export default {
     breadcrumb,
     monitorTable,
   },
-  mixins: [reloadmixin, commonmixin, statusmixin],
+  mixins: [reloadmixin, commonmixin],
   props: {
     isDev: {
       type: Boolean,
@@ -86,10 +85,10 @@ export default {
         }
         this.gateways = gateways.map((e) => {
           if(APP.SVC.POS.EXSERVER){
-            const state = this.getStateLabel('gw', e.timestamp*1000)
+            const state = this.$refs.monitorTable.getStateLabel('gw', e.timestamp*1000)
             return { ...e, state: state }
           }else{
-            const state = this.getStateLabel('gw', e.timestamp)
+            const state = this.$refs.monitorTable.getStateLabel('gw', e.timestamp)
             return { ...e, state: state }
           }
         })
@@ -108,7 +107,7 @@ export default {
         })
         return obj
       })
-      HtmlUtil.fileDL('gateway.csv', Util.converToCsv(dldata), getCharSet(this.$store.state.loginId))
+      BrowserUtil.fileDL('gateway.csv', CsvUtil.converToCsv(dldata), getCharSet(this.$store.state.loginId))
     },
   }
 }

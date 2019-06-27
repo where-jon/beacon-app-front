@@ -17,7 +17,7 @@
             <b-form-row>
               <label v-t="'label.zoneCategoryName'" class="control-label md-2 text-right" />
               <span :title="vueSelectTitle(vueSelected.category)">
-                <v-select v-model="vueSelected.category" :options="categoryOptionList" class="md-3 ml-2 vue-options" :style="getVueSelectStyle()">
+                <v-select v-model="vueSelected.category" :options="categoryOptionList" class="md-3 ml-2 vue-options" :style="vueSelectStyle">
                   <template slot="selected-option" slot-scope="option">
                     {{ vueSelectCutOn(option) }}
                   </template>
@@ -27,7 +27,7 @@
             <b-form-row>
               <label v-t="'label.zone'" class="control-label md-1 text-right" />
               <span :title="vueSelectTitle(vueSelected.zone)">
-                <v-select v-model="vueSelected.zone" :options="zoneOptions" class="md-3 ml-2 vue-options" :style="getVueSelectStyle()">
+                <v-select v-model="vueSelected.zone" :options="zoneOptions" class="md-3 ml-2 vue-options" :style="vueSelectStyle">
                   <template slot="selected-option" slot-scope="option">
                     {{ vueSelectCutOn(option) }}
                   </template>
@@ -62,10 +62,9 @@ import commonmixinVue from '../../components/mixin/commonmixin.vue'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
-import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
-import * as HtmlUtil from '../../sub/util/HtmlUtil'
+import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as Util from '../../sub/util/Util'
-import { getTheme } from '../../sub/helper/ThemeHelper'
+import * as CsvUtil from '../../sub/util/CsvUtil'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import { CATEGORY } from '../../sub/constant/Constants'
 
@@ -120,10 +119,6 @@ export default {
     }
   },
   computed: {
-    theme () {
-      const theme = getTheme(this.$store.state.loginId)
-      return 'outline-' + theme
-    },
     ...mapState('app_service', [
       'categories',
       'zones',
@@ -179,7 +174,7 @@ export default {
     this.fields = this.fields1
   },
   async mounted() {
-    HtmlUtil.importElementUI()
+    ViewHelper.importElementUI()
     this.vModelYearMonth = this.yearMonthOptions[0].value
     this.yearMonthChange(this.vModelYearMonth)
     await StateHelper.load('category')
@@ -193,15 +188,6 @@ export default {
     await StateHelper.load('zone')
   },
   methods: {
-    getVueSelectStyle(){
-      return VueSelectHelper.getVueSelectStyle()
-    },
-    vueSelectTitle(selected){
-      return VueSelectHelper.vueSelectTitle(selected)
-    },
-    vueSelectCutOn(option, required){
-      return VueSelectHelper.vueSelectCutOn(option, required)
-    },
     yearMonthChange(val) {
       if (val == null) {
         this.form.selectedYearMonth = 0
@@ -307,9 +293,9 @@ export default {
         this.replace({showAlert: true})
         return
       }
-      HtmlUtil.fileDL(
+      BrowserUtil.fileDL(
         'usage-situation.csv',
-        Util.converToCsv(this.viewList),
+        CsvUtil.converToCsv(this.viewList),
         getCharSet(this.$store.state.loginId)
       )
     },

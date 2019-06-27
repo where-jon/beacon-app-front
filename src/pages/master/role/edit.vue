@@ -30,12 +30,12 @@ import { mapState } from 'vuex'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
-import editmixinVue from '../../../components/mixin/editmixin.vue'
-import * as HtmlUtil from '../../../sub/util/HtmlUtil'
+import * as ValidateHelper from '../../../sub/helper/ValidateHelper'
+import editmixin from '../../../components/mixin/editmixin.vue'
+import commonmixin from '../../../components/mixin/commonmixin.vue'
 import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
-import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import rolefeatureIndex from '../rolefeature/index.vue'
 
 export default {
@@ -44,22 +44,19 @@ export default {
     alert,
     rolefeatureIndex, 
   },
-  mixins: [editmixinVue],
+  mixins: [editmixin, commonmixin],
   data() {
     return {
       name: 'role',
       id: 'roleId',
       backPath: '/master/role',
       appServicePath: '/meta/role',
-      form: ViewHelper.extract(this.$store.state.app_service.role, ['roleId', 'roleName']),
-      items: ViewHelper.createBreadCrumbItems('master', {text: 'role', href: '/master/role'}, Util.getDetailCaptionKey(this.$store.state.app_service.role.roleId)),
+      form: Util.extract(this.$store.state.app_service.role, ['roleId', 'roleName']),
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'role', href: '/master/role'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.role.roleId)),
       roleFeatureMessages: {message: ''},
     }
   },
   computed: {
-    theme () {
-      return getButtonTheme()
-    },
     ...mapState('app_service', [
       'role',
     ]),
@@ -77,7 +74,7 @@ export default {
     if(Util.hasValue(this.message)){
       this.replace({showInfo: true})
     }
-    HtmlUtil.setCustomValidationMessage()
+    ValidateHelper.setCustomValidationMessage()
   },
   methods: {
     onSaved(){

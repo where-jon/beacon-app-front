@@ -9,7 +9,6 @@
 import { mapState } from 'vuex'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as BulkHelper from '../../../sub/helper/BulkHelper'
-import * as OptionHelper from '../../../sub/helper/OptionHelper'
 import * as Util from '../../../sub/util/Util'
 import * as ArrayUtil from '../../../sub/util/ArrayUtil'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
@@ -34,15 +33,12 @@ export default {
     ...mapState('app_service', [
       'exb', 'exbs',
     ]),
-    sensorOptionsExb() {
-      return OptionHelper.getExbOptions()
-    },
   },
   methods: {
     async onSaving() {
       await this.$refs.bulkEdit.bulkSave({numberList: ['deviceId', 'posId', 'x', 'y'], hexList: ['deviceIdX'], booleanList: ['enabled']})
     },
-    restruct(entity, dummyKey){
+    onRestruct(entity, dummyKey){
       if(Util.hasValue(entity.deviceId) || Util.hasValue(entity.deviceIdX)){
         if(ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX') && !ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceId') && !entity.deviceIdXName){
           entity.deviceId = parseInt(entity.deviceIdX, 16)

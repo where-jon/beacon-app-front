@@ -72,18 +72,18 @@ import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
-import { getButtonTheme } from '../../sub/helper/ThemeHelper'
 import { LED_COLORS, LED_BLINK_TYPES, SENSOR } from '../../sub/constant/Constants'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as Util from '../../sub/util/Util'
-import editmixinVue from '../../components/mixin/editmixin.vue'
+import editmixin from '../../components/mixin/editmixin.vue'
+import commonmixin from '../../components/mixin/commonmixin.vue'
 
 export default {
   components: {
     breadcrumb,
     alert,
   },
-  mixins: [editmixinVue],
+  mixins: [editmixin, commonmixin],
   data () {
     return {
       name: 'led',
@@ -107,9 +107,6 @@ export default {
     }
   },
   computed: {
-    theme() {
-      return getButtonTheme()
-    },
     ...mapState('app_service', [
       'exbs',
     ]),

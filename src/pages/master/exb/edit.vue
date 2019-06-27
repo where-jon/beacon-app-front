@@ -94,14 +94,14 @@ import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as VueSelectHelper from '../../../sub/helper/VueSelectHelper'
 import * as MenuHelper from '../../../sub/helper/MenuHelper'
 import * as OptionHelper from '../../../sub/helper/OptionHelper'
+import * as ValidateHelper from '../../../sub/helper/ValidateHelper'
 import * as Util from '../../../sub/util/Util'
-import * as HtmlUtil from '../../../sub/util/HtmlUtil'
 import * as ArrayUtil from '../../../sub/util/ArrayUtil'
-import editmixinVue from '../../../components/mixin/editmixin.vue'
+import editmixin from '../../../components/mixin/editmixin.vue'
+import commonmixin from '../../../components/mixin/commonmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
 import settingtxview from '../../../components/parts/settingtxview.vue'
-import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import { APP } from '../../../sub/constant/config'
 
 export default {
@@ -110,7 +110,7 @@ export default {
     alert,
     settingtxview,
   },
-  mixins: [editmixinVue],
+  mixins: [editmixin, commonmixin],
   data() {
     return {
       name: 'exb',
@@ -118,7 +118,7 @@ export default {
       backPath: '/master/exb',
       appServicePath: '/core/exb',
       mutex: false,
-      form: ViewHelper.extract(this.$store.state.app_service.exb, [
+      form: Util.extract(this.$store.state.app_service.exb, [
         'exbId', 'deviceId', 'enabled',
         'location.locationName', 'location.areaId', 'location.locationId', 'location.posId',
         'location.x', 'location.y', 'location.visible', 'location.txViewType',
@@ -134,7 +134,7 @@ export default {
       deviceId: null,
       deviceIdX: null,
       useZone: ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'zone') && MenuHelper.isMenuEntry('/master/zoneClass'),
-      items: ViewHelper.createBreadCrumbItems('master', {text: 'exb', href: '/master/exb'}, Util.getDetailCaptionKey(this.$store.state.app_service.exb.exbId)),
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'exb', href: '/master/exb'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.exb.exbId)),
       txIconsDispFormat: 1,
       txIconsHorizon: 5,
       txIconsVertical: 5,
@@ -143,15 +143,8 @@ export default {
     }
   },
   computed: {
-    theme () {
-      return getButtonTheme()
-    },
     areaOptions() {
       return StateHelper.getOptionsFromState('area', false, true)
-    },
-    sensorOptionsExb() {
-      let options = OptionHelper.getSensorOptions('exb')
-      return options
     },
     ...mapState('app_service', [
       'exb',
@@ -204,7 +197,7 @@ export default {
     this.initExbSensorList()
     this.changeSensors()
     await StateHelper.load('sensor')
-    this.$nextTick(() => HtmlUtil.setCustomValidationMessage())
+    this.$nextTick(() => ValidateHelper.setCustomValidationMessage())
   },
   async mounted() {
     await StateHelper.load('area')
@@ -212,7 +205,7 @@ export default {
     this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions, this.form.areaId)
     this.$nextTick(() => this.vueSelected.zone = VueSelectHelper.getVueSelectData(this.getZoneNames(), this.form.zoneId))
     this.deviceId = this.form.deviceId
-    ViewHelper.applyDef(this.form, this.defValue)
+    Util.applyDef(this.form, this.defValue)
     if (!this.form.txViewType) {
       return
     }

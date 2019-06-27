@@ -1,6 +1,6 @@
 import { Container, Shape, Text } from '@createjs/easeljs/dist/easeljs.module'
 import * as Util from '../util/Util'
-import * as StyleUtil from '../util/StyleUtil'
+import * as StyleHelper from '../helper/StyleHelper'
 import { DISP } from '../constant/config'
 
 export const createShape = (radius, color, option = {}) => {
@@ -26,7 +26,7 @@ export const createRect = (width, height, color, option = {}) => {
 
 export const createText = (text, font, color, option = {}) => {
   const label = new Text(text)
-  label.font = StyleUtil.getAdjustFontSize(()=> Util.getValue(option, 'fontSize', StyleUtil.getFont2Size(font)) * DISP.FONT_ICON_ADJUST_SCALE, Util.getValue(option, 'bold', false))
+  label.font = StyleHelper.getAdjustFontSize(()=> Util.getValue(option, 'fontSize', StyleHelper.getFont2Size(font)) * DISP.FONT_ICON_ADJUST_SCALE, Util.getValue(option, 'bold', false))
   label.color = color
   label.textAlign = Util.getValue(option, 'textAlign', 'center')
   label.textBaseline = Util.getValue(option, 'textBaseline', 'middle')
@@ -37,14 +37,14 @@ export const createText = (text, font, color, option = {}) => {
 export const createCircleIcon = (text, radius, color, bgColor, option = {}) => {
   const icon = new Container()
   icon.addChild(createShape(radius, bgColor, option))
-  icon.addChild(createText(text, StyleUtil.getInRectFontSize(text, radius * 2, radius * 2), color, option))
+  icon.addChild(createText(text, StyleHelper.getInRectFontSize(text, radius * 2, radius * 2), color, option))
   return icon
 }
 
 export const createRectIcon = (text, width, height, color, bgColor, option = {}) => {
   const icon = new Container()
   icon.addChild(createRect(width, height, bgColor, option))
-  icon.addChild(createText(text, StyleUtil.getInRectFontSize(text, width * 2, height * 2), color, option))
+  icon.addChild(createText(text, StyleHelper.getInRectFontSize(text, width * 2, height * 2), color, option))
   return icon
 }
 

@@ -73,19 +73,18 @@
 
 <script>
 import VueScrollingTable from 'vue-scrolling-table'
-import { getButtonTheme } from '../../sub/helper/ThemeHelper'
 import * as TelemetryHelper from '../../sub/helper/TelemetryHelper'
+import * as DetectStateHelper from '../../sub/helper/DetectStateHelper'
 import allCount from './allcount.vue'
 import reloadmixin from '../mixin/reloadmixin.vue'
 import commonmixin from '../mixin/commonmixin.vue'
-import statusmixin from '../mixin/statusmixin.vue'
 
 export default {
   components: {
     allCount,
     VueScrollingTable,
   },
-  mixins: [reloadmixin, commonmixin, statusmixin],
+  mixins: [reloadmixin, commonmixin],
   props: {
     isDev: {
       type: Boolean,
@@ -122,16 +121,33 @@ export default {
   },
   data () {
     return {
+      badgeClassPrefix: 'badge badge-pill badge-',
     }
-  },
-  computed: {
-    theme () {
-      return getButtonTheme()
-    },
   },
   methods: {
     getTelemetryPowerLevelClass(val, isPowerState = false){
       TelemetryHelper.getTelemetryPowerLevelClass(val, isPowerState)
+    },
+    getStateClass(type, updatetime) {
+      return this.badgeClassPrefix + DetectStateHelper.getClass(DetectStateHelper.getStateFromDetail(type, updatetime))
+    },
+    getStateLabel(type, updatetime) {
+      return DetectStateHelper.getLabel(DetectStateHelper.getStateFromDetail(type, updatetime))
+    },
+    getPositionPowerLevelLabel(val) {
+      const powerLevel = TelemetryHelper.getPositionPowerLevel(val)
+      if (powerLevel) {
+        return this.$i18n.tnl('label.power-' + powerLevel)
+      }
+      return '-'
+    },
+    getPositionPowerLevelClass(val) {
+      const LEVEL_CLASS_MAP = {good:'success', warning:'warning', poor:'danger'}
+      const powerLevel = TelemetryHelper.getPositionPowerLevel(val)
+      if (powerLevel) {
+        return this.badgeClassPrefix + LEVEL_CLASS_MAP[powerLevel]
+      }
+      return ''
     },
     async fetchData(payload) {
       if(this.$parent.$options.methods.fetchData){

@@ -29,7 +29,7 @@
             </b-form-row>
             <b-form-row v-if="useVueSelect(form.filterKind)" class="ml-1">
               <span :title="vueSelectTitle(vueSelected.filter)">
-                <v-select v-model="vueSelected.filter" :options="filterIdOptions" class="ml-2 inputSelect vue-options" :style="getVueSelectStyle()">
+                <v-select v-model="vueSelected.filter" :options="filterIdOptions" class="ml-2 inputSelect vue-options" :style="vueSelectStyle">
                   <template slot="selected-option" slot-scope="option">
                     {{ vueSelectCutOn(option) }}
                   </template>
@@ -84,13 +84,11 @@ import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import * as Util from '../../sub/util/Util'
-import * as HtmlUtil from '../../sub/util/HtmlUtil'
+import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as DateUtil from '../../sub/util/DateUtil'
-import { getTheme } from '../../sub/helper/ThemeHelper'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
-import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
 import * as ValidateHelper from '../../sub/helper/ValidateHelper'
 import { SUM_UNIT_STACK, SUM_UNIT_AXIS, SUM_FILTER_KIND } from '../../sub/constant/Constants'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
@@ -98,7 +96,7 @@ import alert from '../../components/parts/alert.vue'
 import { APP, DISP } from '../../sub/constant/config'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import * as ChartHelper from '../../sub/helper/ChartHelper'
-import commonmixinVue from '../../components/mixin/commonmixin.vue'
+import commonmixin from '../../components/mixin/commonmixin.vue'
 
 export default {
   components: {
@@ -106,7 +104,7 @@ export default {
     alert,
     DatePicker,
   },
-  mixins: [commonmixinVue],
+  mixins: [commonmixin],
   data () {
     return {
       form: {
@@ -134,9 +132,6 @@ export default {
     }
   },
   computed: {
-    theme () {
-      return 'outline-' + getTheme()
-    },
     ...mapState('app_service', [
       'pots',
       'areas',
@@ -148,7 +143,7 @@ export default {
       'showAlert',
     ]),
     iosOrAndroid() {
-      return HtmlUtil.isAndroidOrIOS()
+      return BrowserUtil.isAndroidOrIOS()
     },
   },
   watch: {
@@ -170,18 +165,9 @@ export default {
     this.form.datetimeTo = DateUtil.getDatetime(date)
   },
   async mounted() {
-    HtmlUtil.importElementUI()
+    ViewHelper.importElementUI()
   },
   methods: {
-    getVueSelectStyle(){
-      return VueSelectHelper.getVueSelectStyle()
-    },
-    vueSelectTitle(selected){
-      return VueSelectHelper.vueSelectTitle(selected)
-    },
-    vueSelectCutOn(option, required){
-      return VueSelectHelper.vueSelectCutOn(option, required)
-    },
     useVueSelect(key){
       return this.vueSelectedKeys.includes(key)
     },
@@ -352,7 +338,7 @@ export default {
       const parent = document.getElementById('stayTimeChart').parentElement
       const canvas = this.$refs.stayTimeChart
       canvas.width = parent.clientWidth
-      if (HtmlUtil.isAndroidOrIOS()) {
+      if (BrowserUtil.isAndroidOrIOS()) {
         canvas.height = 250
       }
       else {
@@ -403,7 +389,7 @@ export default {
       this.chartData.forEach((e, idx)=>{
         rows.push('"' + this.stacks[idx] + '",' + e.join(','))
       })
-      HtmlUtil.fileDL(
+      BrowserUtil.fileDL(
         'stayTime.csv',
         rows.join('\n'),
         getCharSet(this.$store.state.loginId)

@@ -28,9 +28,8 @@
 import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import * as HtmlUtil from '../../sub/util/HtmlUtil'
+import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as StringUtil from '../../sub/util/StringUtil'
-import { getTheme } from '../../sub/helper/ThemeHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as ValidateHelper from '../../sub/helper/ValidateHelper'
@@ -38,7 +37,7 @@ import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import moment from 'moment'
-import commonmixinVue from '../../components/mixin/commonmixin.vue'
+import commonmixin from '../../components/mixin/commonmixin.vue'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
 import { APP } from '../../sub/constant/config'
 
@@ -48,7 +47,7 @@ export default {
     alert,
     DatePicker,
   },
-  mixins: [commonmixinVue],
+  mixins: [commonmixin],
   data () {
     return {
       form: {
@@ -59,15 +58,12 @@ export default {
     }
   },
   computed: {
-    theme () {
-      return 'outline-' + getTheme()
-    },
     ...mapState('app_service', [
       'txs',
       'exbs',
     ]),
     iosOrAndroid() {
-      return HtmlUtil.isAndroidOrIOS()
+      return BrowserUtil.isAndroidOrIOS()
     },
   },
   async created() {
@@ -76,7 +72,7 @@ export default {
     this.form.date = moment().add(-1, 'days').format('YYYYMMDD')
   },
   async mounted() {
-    HtmlUtil.importElementUI()
+    ViewHelper.importElementUI()
     window.addEventListener('resize', () => {
       this.$forceUpdate()
     })
@@ -149,7 +145,7 @@ export default {
 
       this.hideProgress()
 
-      HtmlUtil.fileDL(
+      BrowserUtil.fileDL(
         'PositionSummary_' + searchDate + '.csv',
         csv,
         getCharSet(this.$store.state.loginId)

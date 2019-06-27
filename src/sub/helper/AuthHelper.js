@@ -11,7 +11,7 @@ import * as LocalStorageHelper from './LocalStorageHelper'
 import { APP, LOCAL_LOGIN } from '../constant/config'
 import { LOGIN_MODE, FEATURE } from '../constant/Constants'
 import * as Util from '../util/Util'
-import * as HtmlUtil from '../util/HtmlUtil'
+import * as BrowserUtil from '../util/BrowserUtil'
 
 let router
 let store
@@ -163,7 +163,7 @@ export const authByAppService = async (loginId, password, success, err) => {
       isProvider: userInfo.user.providerUserId != null, currentTenant: userInfo.tenant, userRegionIdList: userRegionIdList, allRegionMove: allRegionMove, apiKey: data.apiKey })
     success()
     LocaleHelper.setLocale(LocaleHelper.getLocale())
-    store.commit('setLang', LocaleHelper.getLocale(HtmlUtil.getLangShort()))
+    store.commit('setLang', LocaleHelper.getLocale(BrowserUtil.getLangShort()))
 
   } catch (e) {
     console.error(e)

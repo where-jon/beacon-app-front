@@ -23,7 +23,7 @@
           <b-form-row>
             <b-form-row class="mr-2 mb-3">
               <label v-t="'label.zoneCategoryName'" class="mr-2 mb-2 d-flex align-items-center" />
-              <v-select v-model="vModelCategory" :options="categoryOptions" :on-change="categoryChange" required class="ml-2 mb-2 vue-options" :style="getVueSelectStyle()">
+              <v-select v-model="vModelCategory" :options="categoryOptions" :on-change="categoryChange" required class="ml-2 mb-2 vue-options" :style="vueSelectStyle">
                 <div slot="no-options">
                   {{ $i18n.tnl('label.vSelectNoOptions') }}
                 </div>
@@ -31,7 +31,7 @@
             </b-form-row>
             <b-form-row class="mb-2">
               <label v-t="'label.zone'" class="mr-2 mb-2 d-flex align-items-center" />
-              <v-select v-model="vModelZone" :options="zoneOptions" :on-change="zoneChange" required class="ml-2 mb-2 vue-options" :style="getVueSelectStyle()">
+              <v-select v-model="vModelZone" :options="zoneOptions" :on-change="zoneChange" required class="ml-2 mb-2 vue-options" :style="vueSelectStyle">
                 <div slot="no-options">
                   {{ $i18n.tnl('label.vSelectNoOptions') }}
                 </div>
@@ -68,12 +68,12 @@ import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as OptionHelper from '../../sub/helper/OptionHelper'
-import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
-import { getButtonTheme } from '../../sub/helper/ThemeHelper'
 import * as Util from '../../sub/util/Util'
-import * as HtmlUtil from '../../sub/util/HtmlUtil'
+import * as BrowserUtil from '../../sub/util/BrowserUtil'
+import * as DomUtil from '../../sub/util/DomUtil'
 import * as NumberUtil from '../../sub/util/NumberUtil'
 import * as DateUtil from '../../sub/util/DateUtil'
+import * as CsvUtil from '../../sub/util/CsvUtil'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
 import commonmixin from '../../components/mixin/commonmixin.vue'
@@ -109,7 +109,7 @@ export default {
       //
       message: '',
       //
-      useInputDate: HtmlUtil.supportInputType('date'),
+      useInputDate: DomUtil.supportInputType('date'),
     }
   },
   computed: {
@@ -122,9 +122,6 @@ export default {
     ...mapState('monitor', [
       'temperatureHistory',
     ]),
-    theme () {
-      return getButtonTheme()
-    },
   },
   watch: {
     inputDateFrom: function(newVal, oldVal) {
@@ -135,14 +132,11 @@ export default {
     },
   },
   async mounted() {
-    HtmlUtil.importElementUI()
+    ViewHelper.importElementUI()
     await StateHelper.load('category')
     this.fetchPrev()
   },
   methods: {
-    getVueSelectStyle(){
-      return VueSelectHelper.getVueSelectStyle()
-    },
     async fetchZoneCategoryList() {
       try {
         this.zoneCategorys = await AppServiceHelper.fetch(
@@ -256,9 +250,9 @@ export default {
         this.replace({showAlert: true})
         return
       }
-      HtmlUtil.fileDL(
+      BrowserUtil.fileDL(
         'temperatureHistory.csv',
-        Util.converToCsv(this.temperatureHistoryData),
+        CsvUtil.converToCsv(this.temperatureHistoryData),
         getCharSet(this.$store.state.loginId)
       )
     },

@@ -60,16 +60,15 @@ import 'element-ui/lib/theme-chalk/index.css'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
+import commonmixin from '../../components/mixin/commonmixin.vue'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as SensorHelper from '../../sub/helper/SensorHelper'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
-import * as OptionHelper from '../../sub/helper/OptionHelper'
 import * as Util from '../../sub/util/Util'
-import * as HtmlUtil from '../../sub/util/HtmlUtil'
+import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as NumberUtil from '../../sub/util/NumberUtil'
 import * as DateUtil from '../../sub/util/DateUtil'
-import { getTheme } from '../../sub/helper/ThemeHelper'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import { SENSOR } from '../../sub/constant/Constants'
 import { APP_SERVICE } from '../../sub/constant/config.js'
@@ -81,7 +80,7 @@ export default {
     alert,
     DatePicker,
   },
-  mixins: [showmapmixin ],
+  mixins: [showmapmixin, commonmixin],
   data () {
     return {
       name: 'sensorHistory',
@@ -109,16 +108,9 @@ export default {
     }
   },
   computed: {
-    theme () {
-      const theme = getTheme(this.$store.state.loginId)
-      return 'outline-' + theme
-    },
     ...mapState('app_service', [
       'sensors'
     ]),
-    sensorOptions() { // TODO: refactoring duplicate 
-      return OptionHelper.getAllSensorOptions()
-    },
   },
   async created() {
     await StateHelper.load('sensor')
@@ -131,7 +123,7 @@ export default {
     this.fields = this.fields1
   },
   mounted() {
-    HtmlUtil.importElementUI()
+    ViewHelper.importElementUI()
     this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.fetchRows, maxRows: this.limitViewRows})}`
   },
   methods: {
@@ -235,7 +227,7 @@ export default {
     },
     async exportCsv() {
       const aSensorId = (this.form.sensorId != null)?this.form.sensorId:0
-      HtmlUtil.executeFileDL(
+      BrowserUtil.executeFileDL(
         APP_SERVICE.BASE_URL
         + `/basic/sensorHistory/csvdownload/${aSensorId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/`
         + getCharSet(this.$store.state.loginId)

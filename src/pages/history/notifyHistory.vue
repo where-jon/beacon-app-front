@@ -21,7 +21,7 @@
             <b-form-row>
               <b-form-row class="mb-3 mr-2">
                 <label v-t="'label.tx'" class="mr-2" />
-                <v-select v-model="vueSelected.tx" :options="txOptions" class="mr-2 vue-options" :style="getVueSelectStyle()" />
+                <v-select v-model="vueSelected.tx" :options="txOptions" class="mr-2 vue-options" :style="vueSelectStyle" />
               </b-form-row>
             </b-form-row>
           </b-form-group>
@@ -154,15 +154,15 @@ import 'element-ui/lib/theme-chalk/index.css'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
+import commonmixin from '../../components/mixin/commonmixin.vue'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as LocalStorageHelper from '../../sub/helper/LocalStorageHelper'
-import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
 import * as Util from '../../sub/util/Util'
-import * as HtmlUtil from '../../sub/util/HtmlUtil'
+import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as DateUtil from '../../sub/util/DateUtil'
-import { getTheme } from '../../sub/helper/ThemeHelper'
+import * as CsvUtil from '../../sub/util/CsvUtil'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import { NOTIFY_STATE } from '../../sub/constant/Constants'
 import { APP } from '../../sub/constant/config.js'
@@ -175,7 +175,7 @@ export default {
     alert,
     DatePicker,
   },
-  mixins: [showmapmixin],
+  mixins: [showmapmixin, commonmixin],
   data () {
     return {
       name: 'notifyHistory',
@@ -272,10 +272,6 @@ export default {
     }
   },
   computed: {
-    theme () {
-      const theme = getTheme(this.$store.state.loginId)
-      return 'outline-' + theme
-    },
     ...mapState('app_service', [
       'txs'
     ]),
@@ -322,15 +318,12 @@ export default {
 
   },
   mounted() {
-    HtmlUtil.importElementUI()
+    ViewHelper.importElementUI()
     StateHelper.load('tx')
     this.changeTx(this.form.txId)
     this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.viewList.length, maxRows: this.limitViewRows})}`
   },
   methods: {
-    getVueSelectStyle(){
-      return VueSelectHelper.getVueSelectStyle()
-    },
     getCsvHeaders(num){
       switch(num) {
       case 'TX_DELIVERY_NOTIFY':
@@ -555,7 +548,7 @@ export default {
           delete record.powerLevels
         }
       })
-      HtmlUtil.fileDL('notifyHistory.csv', Util.converToCsv(records), getCharSet(this.$store.state.loginId))
+      BrowserUtil.fileDL('notifyHistory.csv', CsvUtil.converToCsv(records), getCharSet(this.$store.state.loginId))
 
     },
     async fetchData(payload) {

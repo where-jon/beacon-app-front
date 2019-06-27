@@ -2,7 +2,7 @@
   <div class="container-fluid">
     <breadcrumb :items="items" :reload="true" :state="reloadState" @reload="fetchData" />
     <div v-show="!reloadState.isLoad" class="container">
-      <monitor-table type="telemetry" :vue-table-mode="isDev" :all-count="allCount" :headers="headers" :datas="telemetrys" :tr-class="getClass" :td-class="getTdClass" />
+      <monitor-table ref="monitorTable" type="telemetry" :vue-table-mode="isDev" :all-count="allCount" :headers="headers" :datas="telemetrys" :tr-class="getClass" :td-class="getTdClass" />
     </div>
   </div>
 </template>
@@ -12,9 +12,9 @@ import { mapState } from 'vuex'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
-import * as Util from '../../sub/util/Util'
-import * as HtmlUtil from '../../sub/util/HtmlUtil'
+import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
+import * as CsvUtil from '../../sub/util/CsvUtil'
 import { APP } from '../../sub/constant/config'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import * as DetectStateHelper from '../../sub/helper/DetectStateHelper'
@@ -22,14 +22,13 @@ import commonmixin from '../../components/mixin/commonmixin.vue'
 import reloadmixin from '../../components/mixin/reloadmixin.vue'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import monitorTable from '../../components/parts/monitortable.vue'
-import statusmixin from '../../components/mixin/statusmixin.vue'
 
 export default {
   components: {
     breadcrumb,
     monitorTable,
   },
-  mixins: [reloadmixin, commonmixin, statusmixin ],
+  mixins: [reloadmixin, commonmixin],
   props: {
     isDev: {
       type: Boolean,
@@ -153,7 +152,7 @@ export default {
           .forEach(csvHeader => obj[this.csvHeaders[csvHeader]] = e[csvHeader])
         return obj
       })
-      HtmlUtil.fileDL('telemetry.csv', Util.converToCsv(records), getCharSet(this.$store.state.loginId))
+      BrowserUtil.fileDL('telemetry.csv', CsvUtil.converToCsv(records), getCharSet(this.$store.state.loginId))
     },
     async makeTelemetryRecords(telemetrys) {
       if (this.isDev) {
@@ -172,7 +171,7 @@ export default {
           name: name != null ? name : 'ー',
           powerLevel:e.power_level * 2,
           timestamp: e.timestamp,
-          state: this.getStateLabel('exb', e.timestamp)
+          state: this.$refs.monitorTable.getStateLabel('exb', e.timestamp)
         }
 
         const deviceId = APP.SVC.POS.EXSERVER ? e.deviceid : parseInt(e.deviceid, 16)
