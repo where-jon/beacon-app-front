@@ -402,11 +402,9 @@ export default {
       if (APP.POS.USE_POSITION_HISTORY) {
         // Serverで計算された位置情報を得る
         positions = await EXCloudHelper.fetchPositionHistory(this.exbs, this.txs, allShow, pMock)
-        this.replaceMain({positionHistores: positions})
       } else {
         // 移動平均数分のポジションデータを保持する
         positions = await EXCloudHelper.fetchPosition(this.exbs, this.txs, pMock, allShow)
-        this.pushOrgPositions(positions)
       }
       // 検知状態の取得
       PositionHelper.setDetectState(positions, APP.POS.USE_POSITION_HISTORY)
