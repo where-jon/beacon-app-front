@@ -81,10 +81,11 @@ import 'element-ui/lib/theme-chalk/index.css'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
-import controlmixinVue from '../../components/mixin/controlmixin.vue'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
+import * as MenuHelper from '../../sub/helper/MenuHelper'
+import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
 import * as Util from '../../sub/util/Util'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
@@ -101,7 +102,7 @@ export default {
     alert,
     DatePicker,
   },
-  mixins: [showmapmixin, controlmixinVue],
+  mixins: [showmapmixin],
   data () {
     return {
       name: 'positionHistory',
@@ -151,7 +152,7 @@ export default {
       )
     },
     enableGroup () {
-      return this.isEnabledMenu('group') && ArrayUtil.includesIgnoreCase(APP.POT.WITH, 'group')
+      return MenuHelper.isEnabledMenu('group') && ArrayUtil.includesIgnoreCase(APP.POT.WITH, 'group')
     },
     groupOptions() {
       return StateHelper.getOptionsFromState('group',
@@ -173,6 +174,15 @@ export default {
     this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.viewList.length, maxRows: this.limitViewRows})}`
   },
   methods: {
+    getVueSelectStyle(){
+      return VueSelectHelper.getVueSelectStyle()
+    },
+    vueSelectTitle(selected){
+      return VueSelectHelper.vueSelectTitle(selected)
+    },
+    vueSelectCutOn(option, required){
+      return VueSelectHelper.vueSelectCutOn(option, required)
+    },
     async display() {
       this.container ? this.container.removeAllChildren() : null
       await this.displayImpl()

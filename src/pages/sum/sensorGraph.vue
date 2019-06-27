@@ -124,15 +124,15 @@ import * as SensorHelper from '../../sub/helper/SensorHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
+import * as OptionHelper from '../../sub/helper/OptionHelper'
+import * as ValidateHelper from '../../sub/helper/ValidateHelper'
 import { SENSOR, SUM_UNIT, SUM_TARGET, DEVICE } from '../../sub/constant/Constants'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
 import { DEV, APP } from '../../sub/constant/config'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import * as mock from '../../assets/mock/mock'
-import validatemixin from '../../components/mixin/validatemixin.vue'
 import commonmixinVue from '../../components/mixin/commonmixin.vue'
-import controlmixinVue from '../../components/mixin/controlmixin.vue'
 
 export default {
   components: {
@@ -140,7 +140,7 @@ export default {
     alert,
     DatePicker,
   },
-  mixins: [validatemixin, commonmixinVue, controlmixinVue],
+  mixins: [commonmixinVue],
   data () {
     return {
       form: {
@@ -215,14 +215,7 @@ export default {
       'showAlert',
     ]),
     sensorOptions() {
-      return StateHelper.getOptionsFromState('sensor', 
-        sensor => this.$i18n.tnl('label.' + sensor.sensorName),
-        true,
-        sensor => {
-          return SensorHelper.availableSensorAll().includes(sensor.sensorId) 
-            && sensor.sensorId != SENSOR.LED && sensor.sensorId != SENSOR.BUTTON
-        }
-      )
+      return OptionHelper.getAllSensorOptions()
     },
     sumTargetOptions() {
       return SUM_TARGET.getOptions()
@@ -283,6 +276,15 @@ export default {
     HtmlUtil.importElementUI()
   },
   methods: {
+    getVueSelectStyle(){
+      return VueSelectHelper.getVueSelectStyle()
+    },
+    vueSelectTitle(selected){
+      return VueSelectHelper.vueSelectTitle(selected)
+    },
+    vueSelectCutOn(option, required){
+      return VueSelectHelper.vueSelectCutOn(option, required)
+    },
     getSumUnitOptions(newDatetimeFrom = this.form.datetimeFrom, newDatetimeTo = this.form.datetimeTo) {
       const sumUnitOptions = SUM_UNIT.getOptions()
       const subDatetime = DateUtil.getSubDatetime(newDatetimeFrom, newDatetimeTo)
@@ -307,7 +309,7 @@ export default {
     },
     getExbOptions(newVal = this.form.sensorId){
       const exbs = this.exbs.filter(val => val.sensorId == newVal)
-      // const exbs = this.exbs.filter((val) => this.getSensorIds(val).includes(newVal)) 一旦単数に戻す
+      // const exbs = this.exbs.filter((val) => SensorHelper.getSensorIds(val).includes(newVal)) 一旦単数に戻す
       this.exbOptions = exbs? exbs.map(val => ({value: val.exbId, label: val.locationName})): []
       this.vueSelected.exb = VueSelectHelper.getVueSelectData(this.exbOptions, null, true)
     },
@@ -557,7 +559,7 @@ export default {
       })
     },
     validate() {
-      const errors = this.validateCheck([
+      const errors = ValidateHelper.validateCheck([
         {type: 'require', 
           names: [this.showExb? 'exbId': null, this.showTx? 'tx': null].filter((val) => val),
           values: [this.showExb? this.form.exbId: null, this.showTx? this.form.txId: null].filter((val) => val)},
@@ -565,7 +567,7 @@ export default {
         {type: 'require', names: ['historyDateFrom'], values: [this.form.datetimeTo]},
         this.form.datetimeFrom && this.form.datetimeTo? {type: 'asc', names: ['historyDateFrom'], values: [this.form.datetimeFrom.getTime(), this.form.datetimeTo.getTime()], equal: false}: null,
       ].filter((val) => val && val.names.length >= 1))
-      return this.formatValidateMessage(errors)
+      return ValidateHelper.formatValidateMessage(errors)
     },
     async display() {
       this.replace({showAlert: false})

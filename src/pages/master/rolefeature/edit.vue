@@ -4,7 +4,7 @@
     <div class="container">
       <alert :message="message" />
 
-      <b-form v-if="show" @submit.prevent="onSubmit">
+      <b-form v-if="show" @submit.prevent="save">
         <b-form-group>
           <label v-t="'label.featureName'" />
           <v-select v-model="vueSelected.feature" :options="featureNames" :disabled="systemReadOnly" :clearable="false" class="mb-3 vue-options-lg" />
@@ -24,10 +24,10 @@
         </b-form-group>
 
         <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
-        <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" :disabled="!selectFeature" @click="register(false)">
+        <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" :disabled="!selectFeature" @click="doBeforeSubmit(false)">
           {{ $i18n.tnl(`label.${isUpdate? 'update': 'register'}`) }}
         </b-button>
-        <b-button v-if="isRegistable && !isUpdate" v-t="'label.registerAgain'" :variant="theme" type="submit" class="my-1" :disabled="!selectFeature" @click="register(true)" />
+        <b-button v-if="isRegistable && !isUpdate" v-t="'label.registerAgain'" :variant="theme" type="submit" class="my-1" :disabled="!selectFeature" @click="doBeforeSubmit(true)" />
       </b-form>
     </div>
   </div>
@@ -38,9 +38,8 @@ import { mapState } from 'vuex'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as VueSelectHelper from '../../../sub/helper/VueSelectHelper'
+import * as FeatureHelper from '../../../sub/helper/FeatureHelper'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
-import featuremixinVue from '../../../components/mixin/featuremixin.vue'
-import controlmixinVue from '../../../components/mixin/controlmixin.vue'
 import * as Util from '../../../sub/util/Util'
 import * as HtmlUtil from '../../../sub/util/HtmlUtil'
 import * as ArrayUtil from '../../../sub/util/ArrayUtil'
@@ -54,7 +53,7 @@ export default {
     breadcrumb,
     alert,
   },
-  mixins: [editmixinVue, featuremixinVue, controlmixinVue],
+  mixins: [editmixinVue],
   data() {
     return {
       name: 'roleFeature',
@@ -81,8 +80,7 @@ export default {
   },
   computed: {
     theme () {
-      const theme = getButtonTheme()
-      return 'outline-' + theme
+      return getButtonTheme()
     },
     ...mapState('app_service', [
       'role', 'features', 'roleFeatures', 'roleFeature'
@@ -137,10 +135,10 @@ export default {
       }
       this.replaceAS({roleFeatures})
       const featureOptions = this.features.filter((feature) => {
-        if(this.isSystemFeature(feature)){
+        if(FeatureHelper.isSystemFeature(feature)){
           return true
         }
-        if(!this.isShowRelationFeature(feature)){
+        if(!FeatureHelper.isShowRelationFeature(feature)){
           return false
         }
         if(!Util.hasValue(this.roleFeatures)){
@@ -156,11 +154,11 @@ export default {
       }))
       this.featureNames = _(this.featureNames).sortBy((val) => val.text).compact().value()
     },
-    async beforeReload(){
+    async onBeforeReload(){
       await this.resetFeatureNames()
       this.vueSelected.feature = VueSelectHelper.getVueSelectData(this.featureNames, null, true)
     },
-    async save() {
+    async onSaving() {
       let entity = {
         roleFeaturePK:{roleId: this.role.roleId, featureId: this.featureId},
         mode: Util.hasValue(this.selectedModes)? this.selectedModes.reduce((a, b) => a | b): 0

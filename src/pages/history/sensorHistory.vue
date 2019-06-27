@@ -64,6 +64,7 @@ import * as StateHelper from '../../sub/helper/StateHelper'
 import * as SensorHelper from '../../sub/helper/SensorHelper'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
+import * as OptionHelper from '../../sub/helper/OptionHelper'
 import * as Util from '../../sub/util/Util'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as NumberUtil from '../../sub/util/NumberUtil'
@@ -116,14 +117,7 @@ export default {
       'sensors'
     ]),
     sensorOptions() { // TODO: refactoring duplicate 
-      return StateHelper.getOptionsFromState('sensor', 
-        sensor => this.$i18n.tnl('label.' + sensor.sensorName),
-        true,
-        sensor => {
-          return SensorHelper.availableSensorAll().includes(sensor.sensorId) 
-            && sensor.sensorId != SENSOR.LED && sensor.sensorId != SENSOR.BUTTON
-        }
-      )
+      return OptionHelper.getAllSensorOptions()
     },
   },
   async created() {

@@ -34,7 +34,7 @@ export default {
     ]),
   },
   methods: {
-    async save() {
+    async onSaving() {
       await this.$refs.bulkEdit.bulkSave()
     },
     restruct(entity, dummyKey){
@@ -44,7 +44,7 @@ export default {
       }
       return dummyKey
     },
-    afterCrud(){
+    onSaved(){
       StateHelper.setForceFetch('tx', true)
       StateHelper.setForceFetch('exb', true)
     },

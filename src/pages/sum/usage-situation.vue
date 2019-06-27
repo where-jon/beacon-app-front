@@ -59,10 +59,10 @@ import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import commonmixinVue from '../../components/mixin/commonmixin.vue'
-import controlmixinVue from '../../components/mixin/controlmixin.vue'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
+import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
 import { getTheme } from '../../sub/helper/ThemeHelper'
@@ -74,7 +74,7 @@ export default {
     breadcrumb,
     alert,
   },
-  mixins: [showmapmixin, commonmixinVue, controlmixinVue],
+  mixins: [showmapmixin, commonmixinVue],
   data () {
     return {
       name: 'usageSituation',
@@ -193,6 +193,15 @@ export default {
     await StateHelper.load('zone')
   },
   methods: {
+    getVueSelectStyle(){
+      return VueSelectHelper.getVueSelectStyle()
+    },
+    vueSelectTitle(selected){
+      return VueSelectHelper.vueSelectTitle(selected)
+    },
+    vueSelectCutOn(option, required){
+      return VueSelectHelper.vueSelectCutOn(option, required)
+    },
     yearMonthChange(val) {
       if (val == null) {
         this.form.selectedYearMonth = 0

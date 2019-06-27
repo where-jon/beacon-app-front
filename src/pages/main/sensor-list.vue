@@ -9,7 +9,7 @@
 import { mapState } from 'vuex'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import mList from '../../components/page/list.vue'
-import listmixinVue from '../../components/mixin/listmixin.vue'
+import reloadmixin from '../../components/mixin/reloadmixin.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as SensorHelper from '../../sub/helper/SensorHelper'
@@ -25,7 +25,7 @@ export default {
     breadcrumb,
   },
   mixins: [
-    listmixinVue,
+    reloadmixin,
     showmapmixin,
   ],
   data() {

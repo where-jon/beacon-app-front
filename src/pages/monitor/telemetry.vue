@@ -18,18 +18,18 @@ import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import { APP } from '../../sub/constant/config'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import * as DetectStateHelper from '../../sub/helper/DetectStateHelper'
-import commonmixinVue from '../../components/mixin/commonmixin.vue'
-import reloadmixinVue from '../../components/mixin/reloadmixin.vue'
+import commonmixin from '../../components/mixin/commonmixin.vue'
+import reloadmixin from '../../components/mixin/reloadmixin.vue'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import monitorTable from '../../components/parts/monitortable.vue'
-import statusmixinVue from '../../components/mixin/statusmixin.vue'
+import statusmixin from '../../components/mixin/statusmixin.vue'
 
 export default {
   components: {
     breadcrumb,
     monitorTable,
   },
-  mixins: [reloadmixinVue, commonmixinVue, statusmixinVue ],
+  mixins: [reloadmixin, commonmixin, statusmixin ],
   props: {
     isDev: {
       type: Boolean,

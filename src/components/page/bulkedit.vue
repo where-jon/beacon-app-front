@@ -3,7 +3,7 @@
     <div class="container">
       <alert :message="message" />
 
-      <b-form @submit.prevent="onSubmit">
+      <b-form @submit.prevent="save">
         <b-form-group>
           <label v-t="'label.csvFile'" />
           <b-form-file :key="formKey" ref="csvFile" v-model="form.csvFile" :placeholder="$t('message.selectFile') " accept=".csv" />
@@ -12,7 +12,7 @@
           <label v-t="'label.charSet'" />
           <b-form-select v-model="csvCharSet" :options="charSets" @change="charSetSelected" />
         </b-form-group>
-        <b-button :variant="getButtonTheme()" type="submit">
+        <b-button :variant="theme" type="submit">
           {{ $i18n.tnl('label.bulkRegister') }}
         </b-button>
         <b-button v-t="'label.back'" type="button" variant="outline-danger" class="ml-2" @click="backToList" />
@@ -30,6 +30,7 @@ import * as CharSetHelper from '../../sub/helper/CharSetHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as BulkHelper from '../../sub/helper/BulkHelper'
 import * as LocalStorageHelper from '../../sub/helper/LocalStorageHelper'
+import { getButtonTheme } from '../../sub/helper/ThemeHelper'
 import { CHAR_SET, UPDATE_ONLY_NN, IGNORE } from '../../sub/constant/Constants'
 import alert from '../parts/alert.vue'
 
@@ -72,6 +73,9 @@ export default {
     ...mapState('app_service', [
       'sensors',
     ]),
+    theme () {
+      return getButtonTheme()
+    },
     charSets(){
       return CHAR_SET.map(e => ({ value: e.id, text: this.$i18n.tnl('label.' + e.name) }))
     }
@@ -91,23 +95,23 @@ export default {
     charSetSelected (selected) {
       CharSetHelper.setBulkCharSet(this.$store.state.loginId, selected)
     },
-    beforeReload(){
+    onBeforeReload(){
       this.formKey++
       this.form.csvFile = null
     },
-    async onSubmit(evt) {
+    async save(evt) {
       this.message = ''
       StateHelper.initShowMessage()
       evt.preventDefault()
       this.$nextTick(async () => {
         this.showProgress()
         try {
-          await this.$parent.$options.methods.save.call(this.$parent)
+          await this.$parent.$options.methods.onSaving.call(this.$parent)
           await StateHelper.load(this.name, true)
           this.message = this.$i18n.tnl('message.bulkRegisterCompleted', {target: this.$i18n.tnl('label.' + this.name)})
           this.replace({showInfo: true})
-          if(this.$parent.$options.methods.afterCrud) {
-            this.$parent.$options.methods.afterCrud.call(this.$parent)
+          if(this.$parent.$options.methods.onSaved) {
+            this.$parent.$options.methods.onSaved.call(this.$parent)
           }
           this.editAgain()
         }
@@ -150,8 +154,8 @@ export default {
       this.replaceAS({showLine: true})
       BulkHelper.entityKeyCheck(this.name, readerParam.entities)
       await AppServiceHelper.bulkSave(this.appServicePath, readerParam.entities, UPDATE_ONLY_NN.NONE, IGNORE.ON)
-      if(this.$parent.$options.methods.afterCrud) {
-        this.$parent.$options.methods.afterCrud.call(this.$parent)
+      if(this.$parent.$options.methods.onSaved) {
+        this.$parent.$options.methods.onSaved.call(this.$parent)
       }
     },
     setReaderOnload(reader, readerParam, option){

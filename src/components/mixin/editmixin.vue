@@ -7,9 +7,8 @@ import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as LocalStorageHelper from '../../sub/helper/LocalStorageHelper'
-import { APP } from '../../sub/constant/config.js'
-import { USER } from '../../sub/constant/Constants'
-import * as HtmlUtil from '../../sub/util/HtmlUtil'
+import * as ImageHelper from '../../sub/helper/ImageHelper'
+import { APP } from '../../sub/constant/config'
 import * as StringUtil from '../../sub/util/StringUtil'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import commonmixinVue from './commonmixin.vue'
@@ -64,25 +63,12 @@ export default {
     this.replace({showInfo: false})
   },
   methods: {
-    register(again) {
+    doBeforeSubmit(again) {
       this.again = again
+      return true
     },
     backToList(event, path) {
       this.$router.push(path? path: this.backPath)
-    },
-    sensorOptions(entity, isBlank) {
-      let ids
-      if (entity == 'exb') {
-        ids = APP.EXB.SENSOR
-      } else if (entity == 'tx') {
-        ids = APP.SENSOR.TX_SENSOR
-      }
-
-      return StateHelper.getOptionsFromState('sensor',
-        sensor => this.$i18n.tnl('label.' + sensor.sensorName),
-        {value:null, text:isBlank? this.$i18n.tnl('label.null'): this.$i18n.tnl('label.normal')},
-        sensor => ids.includes(sensor.sensorId)
-      )
     },
     isShown(conf, column) {
       const keys = conf.split('.')
@@ -92,42 +78,19 @@ export default {
       }
       return setting
     },
-    createDummyLoginId(ids) {
-      return `d${ids.join('_')}`
-    },
-    async createDummyUser(dummyLoginId, noEncrypt = USER.ENCRYPT.ON) {
-      await StateHelper.load('role')
-      return {
-        userId: -1,
-        loginId: dummyLoginId,
-        pass: USER.DUMMY.PASS,
-        name: null,
-        roleId: this.roles.reduce((a, b) => a.roleId > b.roleId? a: b).roleId,
-        email: null,
-        noEncrypt: noEncrypt,
-      }
-    },
-    async save() {
+    async onSaving() {
       return await AppServiceHelper.save(this.appServicePath, this.form, this.updateOnlyNN)
-    },
-    async loadImageArea(){
-      if (this.form.areaId) {
-        await StateHelper.loadAreaImage(this.form.areaId, true)
-      }
-      else {
-        await StateHelper.loadAreaImages()
-      }
     },
     editAgain(){
       this.form = {}
       ViewHelper.applyDef(this.form, this.defValue)
-      if(this.beforeReload) {
+      if(this.onBeforeReload) {
         if(this.vueSelected && typeof this.vueSelected == 'object'){
           Object.keys(this.vueSelected).forEach(key => {
             this.vueSelected[key] = ArrayUtil.isArray(this.vueSelected[key])? []: null
           })
         }
-        this.beforeReload()
+        this.onBeforeReload()
       }
       let customFileLabel = document.getElementsByClassName('custom-file-label')
       if (customFileLabel && customFileLabel[0]) {
@@ -152,7 +115,7 @@ export default {
       }
       return this.message = this.$i18n.terror('message.' + this.crud + 'Failed', {target: this.$i18n.tnl('label.' + this.name), code: e.message})
     },
-    async onSubmit(evt) {
+    async save(evt) {
       this.message = ''
       this.warnMessage = ''
       this.replace({showWarn: false})
@@ -162,15 +125,15 @@ export default {
       this.$nextTick(async () => {
         this.showProgress()
         try {
-          await this.save()
+          await this.onSaving()
           await StateHelper.load(this.name, true)
           if (this.name == 'area') {
-            await this.loadImageArea()
+            await ImageHelper.loadImageArea(this.form.areaId)
           }
           this.message = this.$i18n.tnl('message.' + this.crud + 'Completed', {target: this.$i18n.tnl('label.' + this.name)})
           this.replace({showInfo: true})
-          if(this.afterCrud) {
-            this.afterCrud()
+          if(this.onSaved) {
+            this.onSaved()
           }
           if (this.again) {
             this.editAgain()
@@ -214,24 +177,6 @@ export default {
         }
       }
       return val
-    },
-    readImageView(e, imgViewName, imgWidthName, imgHeightName, thumbnailName, resize) {
-      HtmlUtil.readImage(e, (evt, width, height, thumbnail) => {
-        this.$refs[imgViewName].src = evt.target.result
-        this.form[imgViewName] = evt.target.result
-        if (imgWidthName) this.form[imgWidthName] = width
-        if (imgHeightName) this.form[imgHeightName] = height
-        if (thumbnailName) this.form[thumbnailName] = thumbnail
-      }, resize, (size) => {
-        this.message = this.$i18n.tnl('message.uploadMax', {target: Math.floor(APP.MAX_IMAGE_SIZE/1024/1024)})
-        this.replace({showAlert: true})
-        if (this.clearImage) {
-          this.clearImage()
-        }
-        setTimeout(()=> {
-          window.scrollTo(0, 0)
-        }, 0)
-      })
     },
   }
 }

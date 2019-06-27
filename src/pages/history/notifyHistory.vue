@@ -154,11 +154,11 @@ import 'element-ui/lib/theme-chalk/index.css'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
-import controlmixinVue from '../../components/mixin/controlmixin.vue'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as LocalStorageHelper from '../../sub/helper/LocalStorageHelper'
+import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
 import * as Util from '../../sub/util/Util'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as DateUtil from '../../sub/util/DateUtil'
@@ -175,7 +175,7 @@ export default {
     alert,
     DatePicker,
   },
-  mixins: [showmapmixin, controlmixinVue],
+  mixins: [showmapmixin],
   data () {
     return {
       name: 'notifyHistory',
@@ -328,6 +328,9 @@ export default {
     this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.viewList.length, maxRows: this.limitViewRows})}`
   },
   methods: {
+    getVueSelectStyle(){
+      return VueSelectHelper.getVueSelectStyle()
+    },
     getCsvHeaders(num){
       switch(num) {
       case 'TX_DELIVERY_NOTIFY':

@@ -24,11 +24,12 @@ import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
 import analysisSearch from '../../components/parts/analysissearch.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
-import controlmixin from '../../components/mixin/controlmixin.vue'
-import drawMixin from '../../components/mixin/drawmixin.vue'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import * as Util from '../../sub/util/Util'
+import * as ColorUtil from '../../sub/util/ColorUtil'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
+import * as FlowLineHelper from '../../sub/helper/FlowLineHelper'
+import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
 
 export default {
   components: {
@@ -36,7 +37,7 @@ export default {
     alert,
     analysisSearch,
   },
-  mixins: [showmapmixin, drawMixin, controlmixin ],
+  mixins: [showmapmixin],
   data () {
     return {
       items: ViewHelper.createBreadCrumbItems('sumTitle', 'flowlineAnalysis'),
@@ -58,6 +59,9 @@ export default {
   methods: {
     reset() {
       this.isShownMapImage = false
+    },
+    closeVueSelect(){
+      return VueSelectHelper.closeVueSelect()
     },
     async fetchData(payload){
       try {
@@ -147,7 +151,7 @@ export default {
     },
     drawFlowline(param, positionInfos){
       const line = new Shape()
-      line.graphics.beginStroke(this.getRGBA(DISP.ANALYSIS.LINE.COLOR, DISP.ANALYSIS.LINE.OPACITY))
+      line.graphics.beginStroke(ColorUtil.getRGBA(DISP.ANALYSIS.LINE.COLOR, DISP.ANALYSIS.LINE.OPACITY))
       Object.entries(positionInfos).forEach(([key, positionInfo]) => {
         line.graphics.setStrokeStyle(positionInfo.weight)
         line.graphics.moveTo(positionInfo.start.x * param.mapScale, positionInfo.start.y * param.mapScale)
@@ -158,13 +162,13 @@ export default {
     drawStartEnd(param, potInfos, potId){
       if(param.form.potId){
         const potInfo = potInfos[potId]
-        this.drawArrowPoint(param.view, {...potInfo[0], mapScale: param.mapScale}, this.startInfo.color, this.startInfo.caption)
-        this.drawArrowPoint(param.view, {...potInfo[potInfo.length - 1], mapScale: param.mapScale}, this.endInfo.color, this.endInfo.caption)
+        FlowLineHelper.drawArrowPoint(param.view, {...potInfo[0], mapScale: param.mapScale}, this.startInfo.color, this.startInfo.caption)
+        FlowLineHelper.drawArrowPoint(param.view, {...potInfo[potInfo.length - 1], mapScale: param.mapScale}, this.endInfo.color, this.endInfo.caption)
       }
       else{
         Object.values(potInfos).forEach((potInfo) => {
-          this.drawDotPoint(param.view, {...potInfo[0], mapScale: param.mapScale}, this.startInfo.color, this.dotRadius)
-          this.drawDotPoint(param.view, {...potInfo[potInfo.length - 1], mapScale: param.mapScale}, this.endInfo.color, this.dotRadius)
+          FlowLineHelper.drawDotPoint(param.view, {...potInfo[0], mapScale: param.mapScale}, this.startInfo.color, this.dotRadius)
+          FlowLineHelper.drawDotPoint(param.view, {...potInfo[potInfo.length - 1], mapScale: param.mapScale}, this.endInfo.color, this.dotRadius)
         })
       }
     },

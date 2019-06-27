@@ -22,14 +22,14 @@ import breadcrumb from '../../components/layout/breadcrumb.vue'
 import positionDisplay from '../../components/page/position-display.vue'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
 import { EXTRA_NAV, POSITION_STACK_TYPES } from '../../sub/constant/Constants'
-import listmixin from '../../components/mixin/listmixin.vue'
+import reloadmixin from '../../components/mixin/reloadmixin.vue'
 
 export default {
   components: {
     breadcrumb,
     positionDisplay,
   },
-  mixins: [listmixin],
+  mixins: [reloadmixin],
   data() {
     return {
       alertData: { message: null, isAlert:false},

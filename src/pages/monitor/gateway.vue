@@ -10,14 +10,15 @@
 <script>
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
+import * as DetectStateHelper from '../../sub/helper/DetectStateHelper'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as Util from '../../sub/util/Util'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
-import commonmixinVue from '../../components/mixin/commonmixin.vue'
-import reloadmixinVue from '../../components/mixin/reloadmixin.vue'
+import commonmixin from '../../components/mixin/commonmixin.vue'
+import reloadmixin from '../../components/mixin/reloadmixin.vue'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import monitorTable from '../../components/parts/monitortable.vue'
-import statusmixinVue from '../../components/mixin/statusmixin.vue'
+import statusmixin from '../../components/mixin/statusmixin.vue'
 import { APP } from '../../sub/constant/config.js'
 
 export default {
@@ -25,7 +26,7 @@ export default {
     breadcrumb,
     monitorTable,
   },
-  mixins: [reloadmixinVue, commonmixinVue, statusmixinVue],
+  mixins: [reloadmixin, commonmixin, statusmixin],
   props: {
     isDev: {
       type: Boolean,
@@ -73,7 +74,7 @@ export default {
   },
   methods: {
     getClass(gateway){
-      return {undetect: this.isUndetect('gw', gateway.updated)}
+      return {undetect: DetectStateHelper.isUndetectFromDetail('gw', gateway.updated)}
     },
     async fetchData(payload) {
       this.showProgress()

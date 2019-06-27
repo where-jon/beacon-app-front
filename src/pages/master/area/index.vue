@@ -10,7 +10,7 @@ import mList from '../../../components/page/list.vue'
 import { mapState } from 'vuex'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
-import listmixinVue from '../../../components/mixin/listmixin.vue'
+import reloadmixin from '../../../components/mixin/reloadmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import * as Util from '../../../sub/util/Util'
 import { APP_SERVICE, EXCLOUD } from '../../../sub/constant/config'
@@ -20,7 +20,7 @@ export default {
     mList, 
     breadcrumb,
   },
-  mixins: [listmixinVue],
+  mixins: [reloadmixin],
   data() {
     return {
       areaList: [],
@@ -58,7 +58,7 @@ export default {
     ]),
   },
   methods: {
-    afterCrud(){
+    onSaved(){
       StateHelper.setForceFetch('tx', true)
       StateHelper.setForceFetch('exb', true)
       StateHelper.setForceFetch('zone', true)

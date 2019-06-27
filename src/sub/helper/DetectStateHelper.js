@@ -60,3 +60,11 @@ export const getState = (type, updatetime) => {
   // console.debug(updatetime, time, state)
   return state
 }
+
+export const getStateFromDetail = (type, updatetime) => {
+  return getState(type, updatetime) // 第一階層のupdatetimeを使用
+}
+
+export const isUndetectFromDetail = (type, updatetime) => {
+  return isUndetect(getStateFromDetail(type, updatetime))
+}

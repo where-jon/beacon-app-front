@@ -223,10 +223,11 @@
 import { mapState, mapMutations } from 'vuex'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
-import * as SensorHelper from '../../sub/helper/SensorHelper'
+import * as OptionHelper from '../../sub/helper/OptionHelper'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
 import * as DetectStateHelper from '../../sub/helper/DetectStateHelper'
 import * as LocalStorageHelper from '../../sub/helper/LocalStorageHelper'
+import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
 import * as Util from '../../sub/util/Util'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as StringUtil from '../../sub/util/StringUtil'
@@ -234,7 +235,6 @@ import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import { getButtonTheme } from '../../sub/helper/ThemeHelper'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import commonmixinVue from '../mixin/commonmixin.vue'
-import controlmixinVue from '../mixin/controlmixin.vue'
 import { CATEGORY, SENSOR } from '../../sub/constant/Constants'
 import * as AuthHelper from '../../sub/helper/AuthHelper'
 import alert from '../parts/alert.vue'
@@ -245,7 +245,7 @@ export default {
     alert,
     settinginput,
   },
-  mixins: [commonmixinVue, controlmixinVue], // not work
+  mixins: [commonmixinVue], // not work
   props: {
     params: {
       type: Object,
@@ -387,14 +387,7 @@ export default {
       )
     },
     sensorOptions() {
-      return StateHelper.getOptionsFromState('sensor', 
-        sensor => this.$i18n.tnl('label.' + sensor.sensorName),
-        true,
-        sensor => {
-          return SensorHelper.availableSensorAll().includes(sensor.sensorId) 
-            && sensor.sensorId != SENSOR.LED && sensor.sensorId != SENSOR.BUTTON
-        }
-      )
+      return OptionHelper.getAllSensorOptions()
     },
     zoneOptions() {
       return StateHelper.getOptionsFromState('zone', false, true)
@@ -433,8 +426,7 @@ export default {
       return this.login.tenantAdmin
     },
     theme () {
-      const theme = getButtonTheme(this.loginId)
-      return 'outline-' + theme
+      return getButtonTheme()
     },
     showMessage(){
       return Util.hasValue(this.message)
@@ -506,6 +498,15 @@ export default {
     },
     thumbnail(row) {
       return this.$parent.$options.methods.thumbnail.call(this.$parent, row)
+    },
+    getVueSelectStyle(){
+      return VueSelectHelper.getVueSelectStyle()
+    },
+    vueSelectTitle(selected){
+      return VueSelectHelper.vueSelectTitle(selected)
+    },
+    vueSelectCutOn(option, required){
+      return VueSelectHelper.vueSelectCutOn(option, required)
     },
     setEmptyMessage(){
       this.message = null
@@ -734,8 +735,8 @@ export default {
         await AppServiceHelper.deleteEntity(this.appServicePath, id)
         await StateHelper.load(this.params.name, true)
         this.message = this.$i18n.tnl('message.deleteCompleted', {target: this.$i18n.tnl('label.' + this.params.name)})
-        if(this.$parent.$options.methods.afterCrud){
-          this.$parent.$options.methods.afterCrud.call(this.$parent, {message: this.message})
+        if(this.$parent.$options.methods.onSaved){
+          this.$parent.$options.methods.onSaved.call(this.$parent, {message: this.message})
         }
         this.replace({showInfo: true})
         await this.$parent.$options.methods.fetchData.apply(this.$parent)        

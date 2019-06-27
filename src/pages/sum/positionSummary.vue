@@ -33,11 +33,11 @@ import * as StringUtil from '../../sub/util/StringUtil'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
+import * as ValidateHelper from '../../sub/helper/ValidateHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import moment from 'moment'
-import validatemixin from '../../components/mixin/validatemixin.vue'
 import commonmixinVue from '../../components/mixin/commonmixin.vue'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
 import { APP } from '../../sub/constant/config'
@@ -48,7 +48,7 @@ export default {
     alert,
     DatePicker,
   },
-  mixins: [validatemixin, commonmixinVue],
+  mixins: [commonmixinVue],
   data () {
     return {
       form: {
@@ -83,10 +83,10 @@ export default {
   },
   methods: {
     validate() {
-      const errors = this.validateCheck([
+      const errors = ValidateHelper.validateCheck([
         {type: 'require', names: ['date'], values: [this.form.date]},
       ].filter((val) => val && val.names.length >= 1))
-      return this.formatValidateMessage(errors)
+      return ValidateHelper.formatValidateMessage(errors)
     },
     async download(){
       const param = _.cloneDeep(this.form)

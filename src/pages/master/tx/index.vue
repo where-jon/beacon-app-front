@@ -11,7 +11,7 @@ import { mapState } from 'vuex'
 import * as ArrayUtil from '../../../sub/util/ArrayUtil'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
-import listmixinVue from '../../../components/mixin/listmixin.vue'
+import reloadmixin from '../../../components/mixin/reloadmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import { APP } from '../../../sub/constant/config.js'
 
@@ -20,7 +20,7 @@ export default {
     mList, 
     breadcrumb,
   },
-  mixins: [listmixinVue],
+  mixins: [reloadmixin],
   data() {
     return {
       params: {
@@ -93,7 +93,7 @@ export default {
         .filter(val => val)
       )
     },
-    afterCrud(){
+    onSaved(){
       StateHelper.setForceFetch('pot', true)
     },
     convBeforeEdit(tx) {

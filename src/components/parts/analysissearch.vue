@@ -18,7 +18,7 @@
           <b-form-row v-if="enableCategory" class="mb-3 mr-2">
             <label v-t="'label.category'" class="mr-2" />
             <span :title="vueSelectTitle(vueSelected.category)">
-              <v-select v-model="vueSelected.category" :options="getCategoryOptions(showCategoryTypes)" class="inputSelect vue-options" :style="getVueSelectStyle()">
+              <v-select v-model="vueSelected.category" :options="categoryOptions" class="inputSelect vue-options" :style="getVueSelectStyle()">
                 <template slot="selected-option" slot-scope="option">
                   {{ vueSelectCutOn(option) }}
                 </template>
@@ -86,17 +86,17 @@ import { getTheme } from '../../sub/helper/ThemeHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
+import * as MenuHelper from '../../sub/helper/MenuHelper'
+import * as ValidateHelper from '../../sub/helper/ValidateHelper'
 import { APP } from '../../sub/constant/config.js'
 import { CATEGORY } from '../../sub/constant/Constants'
-import validatemixin from '../mixin/validatemixin.vue'
 import commonmixinVue from '../mixin/commonmixin.vue'
-import controlmixinVue from '../mixin/controlmixin.vue'
 
 export default {
   components: {
     DatePicker,
   },
-  mixins: [validatemixin, commonmixinVue, controlmixinVue],
+  mixins: [commonmixinVue],
   props: {
     fromHeatmap: {
       type: Boolean,
@@ -137,14 +137,11 @@ export default {
       'groups',
       'pots',
     ]),
-    showCategoryTypes () {
-      return CATEGORY.POT_AVAILABLE
-    },
     enableCategory () {
-      return this.isEnabledMenu('category') && ArrayUtil.includesIgnoreCase(APP.POT.WITH, 'category')
+      return MenuHelper.isEnabledMenu('category') && ArrayUtil.includesIgnoreCase(APP.POT.WITH, 'category')
     },
     enableGroup () {
-      return this.isEnabledMenu('group') && ArrayUtil.includesIgnoreCase(APP.POT.WITH, 'group')
+      return MenuHelper.isEnabledMenu('group') && ArrayUtil.includesIgnoreCase(APP.POT.WITH, 'group')
     },
     enableIndividual () {
       return !this.fromHeatmap || (this.fromHeatmap && APP.HEATMAP.USE_INDIVIDUAL)
@@ -199,6 +196,15 @@ export default {
     HtmlUtil.importElementUI()
   },
   methods: {
+    getVueSelectStyle(){
+      return VueSelectHelper.getVueSelectStyle()
+    },
+    vueSelectTitle(selected){
+      return VueSelectHelper.vueSelectTitle(selected)
+    },
+    vueSelectCutOn(option, required){
+      return VueSelectHelper.vueSelectCutOn(option, required)
+    },
     updatePotOption(categoryId, groupId) {
       this.potOptions = StateHelper.getOptionsFromState('pot', false, true, 
         pot => pot.potType == CATEGORY.PERSON && (!categoryId || pot.categoryId == categoryId) && (!groupId || pot.groupId == groupId)
@@ -226,7 +232,7 @@ export default {
       }
     },
     validate() {
-      const errors = this.validateCheck([
+      const errors = ValidateHelper.validateCheck([
         {type: 'require', names: ['area'], values: [this.form.areaId]},
         {type: 'require', 
           names: [this.enableCategory? 'category': null, this.enableGroup? 'group': null, this.requirePerson? 'individual': null].filter(val => val),
@@ -236,7 +242,7 @@ export default {
         this.form.datetimeFrom && this.form.datetimeTo? {type: 'asc', names: ['historyDateFrom'], values: [this.form.datetimeFrom.getTime(), this.form.datetimeTo.getTime()], equal: false}: null,
         this.form.datetimeFrom && this.form.datetimeTo? {type: 'less', names: ['historyDateFrom'], values: [this.form.datetimeFrom.getTime() * -1, this.form.datetimeTo.getTime()], base: this.interval, displayBase: this.intervalHours, equal: true}: null,
       ].filter(val => val && val.names.length >= 1))
-      return this.formatValidateMessage(errors)
+      return ValidateHelper.formatValidateMessage(errors)
     },
     async display() {
       this.replace({showAlert: false})

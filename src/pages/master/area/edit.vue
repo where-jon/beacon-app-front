@@ -18,7 +18,7 @@
             <b-form-group>
               <label v-t="'label.map'" />
               <b-form-file v-if="isEditable" ref="inputThumbnail" v-model="form.mapImageTemp" :placeholder="$t('message.selectFile') " accept="image/jpeg, image/png, image/gif" @change="readImage" />
-              <b-button v-if="isEditable && form.mapImage" :variant="getButtonTheme()" type="button" class="float-right mt-3" @click="clearImage">
+              <b-button v-if="isEditable && form.mapImage" :variant="theme" type="button" class="float-right mt-3" @click="clearImage">
                 {{ $i18n.tnl('label.clear') }}
               </b-button>
               <img v-show="form.mapImage" ref="mapImage" :src="form.mapImage" width="100" class="mt-1 ml-3">
@@ -29,10 +29,10 @@
             </b-form-group>
 
             <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
-            <b-button v-if="isEditable" :variant="getButtonTheme()" type="submit" class="mr-2 my-1" @click="beforeSubmit(false)">
+            <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="beforeSubmit(false)">
               {{ $i18n.tnl(`label.${isUpdate? 'update': 'register'}`) }}
             </b-button>
-            <b-button v-if="isRegistable && !isUpdate" v-t="'label.registerAgain'" :variant="getButtonTheme()" type="submit" class="my-1" @click="beforeSubmit(true)" />
+            <b-button v-if="isRegistable && !isUpdate" v-t="'label.registerAgain'" :variant="theme" type="submit" class="my-1" @click="beforeSubmit(true)" />
           </b-form>
         </b-col>
       </b-row>
@@ -44,6 +44,8 @@
 import { mapState } from 'vuex'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import * as ImageHelper from '../../../sub/helper/ImageHelper'
+import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import * as Util from '../../../sub/util/Util'
 import * as HtmlUtil from '../../../sub/util/HtmlUtil'
 import * as StringUtil from '../../../sub/util/StringUtil'
@@ -82,6 +84,9 @@ export default {
       'areas',
       'area',
     ]),
+    theme() {
+      return getButtonTheme()
+    },
     mapConfigTypes(){
       return [
         {text: this.$i18n.tnl('label.keepPosition'), value: 1},
@@ -113,7 +118,7 @@ export default {
       this.form.mapImage = this.form.mapImageTemp
       this.form.mapImageTemp = null
       this.$nextTick(() => {
-        this.readImageView(e, 'mapImage', 'mapWidth', 'mapHeight', 'thumbnail', APP.AREA_THUMBNAIL_MAX)
+        ImageHelper.readImageView(this, e, 'mapImage', 'mapWidth', 'mapHeight', 'thumbnail', APP.AREA_THUMBNAIL_MAX)
         this.form.mapImageTemp = this.form.mapImage
 
         if(this.oldMap){
@@ -146,10 +151,10 @@ export default {
         }
       })
     },
-    beforeReload(){
+    onBeforeReload(){
       this.form.areaCd = StateHelper.createMasterCd('area', this.areas, this.area)
     },
-    afterCrud(){
+    onSaved(){
       StateHelper.setForceFetch('tx', true)
       StateHelper.setForceFetch('exb', true)
       StateHelper.setForceFetch('zone', true)
@@ -162,13 +167,13 @@ export default {
         this.form.scaleY = `${this.form.mapConfig == mapConfigs[0].value? 1:
           this.form.mapConfig == mapConfigs[1].value? Math.round(this.$refs.mapImage.naturalHeight * 100 / this.oldMap.height) / 100: 0}`
       }
-      this.register(again)
+      this.doBeforeSubmit(again)
     },
     doSubmit(evt) {
       if (this.form.thumbnail) {
         this.replaceAS({updatedAreaThumbnail: this.form.areaId})
       }
-      this.onSubmit(evt)
+      this.save(evt)
     },
   }
 }

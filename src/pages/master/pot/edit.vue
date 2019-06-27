@@ -93,10 +93,10 @@
             </b-form-group>
 
             <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
-            <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="register(false)">
+            <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="doBeforeSubmit(false)">
               {{ $i18n.tnl(`label.${isUpdate? 'update': 'register'}`) }}
             </b-button>
-            <b-button v-if="isRegistable && !isUpdate" v-t="'label.registerAgain'" :variant="theme" type="submit" class="my-1" @click="register(true)" />
+            <b-button v-if="isRegistable && !isUpdate" v-t="'label.registerAgain'" :variant="theme" type="submit" class="my-1" @click="doBeforeSubmit(true)" />
           </b-form>
         </b-col>
       </b-row>
@@ -111,8 +111,9 @@ import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as VueSelectHelper from '../../../sub/helper/VueSelectHelper'
 import * as LocalStorageHelper from '../../../sub/helper/LocalStorageHelper'
+import * as MasterHelper from '../../../sub/helper/MasterHelper'
+import * as ImageHelper from '../../../sub/helper/ImageHelper'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
-import controlmixinVue from '../../../components/mixin/controlmixin.vue'
 import * as Util from '../../../sub/util/Util'
 import * as HtmlUtil from '../../../sub/util/HtmlUtil'
 import * as StringUtil from '../../../sub/util/StringUtil'
@@ -130,7 +131,7 @@ export default {
     alert,
     chromeInput,
   },
-  mixins: [editmixinVue, controlmixinVue],
+  mixins: [editmixinVue],
   data() {
     return {
       name: 'pot',
@@ -174,8 +175,7 @@ export default {
       return Util.hasValue(this.form.potId)
     },
     theme () {
-      const theme = getButtonTheme()
-      return 'outline-' + theme
+      return getButtonTheme()
     },
     categoryOptions() {
       return StateHelper.getOptionsFromState('category', false, true,
@@ -186,6 +186,7 @@ export default {
       'pot',
       'pots',
       'groups',
+      'roles',
       'categories',
       'txs',
       'updatedThumbnail',
@@ -388,9 +389,9 @@ export default {
       })
     },
     beforeSubmit(again){
-      this.register(again)
+      this.doBeforeSubmit(again)
     },
-    beforeReload(){
+    onBeforeReload(){
       this.txIds = this.txIds.map(() => null)
       this.btxIds = this.btxIds.map(() => null)
       this.minors = this.minors.map(() => null)
@@ -405,7 +406,7 @@ export default {
       this.form.potCd = StateHelper.createMasterCd('pot', this.pots, this.pot)
       this.initPotTxList()
     },
-    afterCrud(){
+    onSaved(){
       StateHelper.setForceFetch('tx', true)
       StateHelper.setForceFetch('user', true)
     },
@@ -418,11 +419,11 @@ export default {
       }
 
       const login = LocalStorageHelper.getLogin()
-      const dummyLoginId = this.createDummyLoginId([
+      const dummyLoginId = MasterHelper.createDummyLoginId([
         login.currentRegion.regionId,
         ...this.form.potTxList.map((potTx) => potTx.txId? potTx.txId: 0)
       ])
-      const dummyUser = await this.createDummyUser(dummyLoginId)
+      const dummyUser = await MasterHelper.createDummyUser(dummyLoginId, this.roles)
 
       dummyUser.userId = this.userForm.userId? this.userForm.userId: dummyParam.dummyKey--
       dummyUser.name = this.form.potName
@@ -435,7 +436,7 @@ export default {
       }
       return dummyUser
     },
-    async save() {
+    async onSaving() {
       let dummyParam = {dummyKey: -1}
       const entity = {
         potId: this.form.potId || dummyParam.dummyKey--,
@@ -494,7 +495,7 @@ export default {
         this.form.thumbnail = this.form.thumbnailTemp
         this.form.thumbnailTemp = null
         this.$nextTick(() => {
-          this.readImageView(e, 'thumbnail', null, null, 'thumbnail', APP.POT_THUMBNAIL_MAX)
+          ImageHelper.readImageView(this, e, 'thumbnail', null, null, 'thumbnail', APP.POT_THUMBNAIL_MAX)
           this.form.thumbnailTemp = this.form.thumbnail
 
           const inputFileName = Util.getValue(e, 'target.files.0.name', null)
@@ -521,7 +522,7 @@ export default {
       if (this.form.thumbnail) {
         this.replaceAS({updatedPotThumbnail: this.form.potId})
       }
-      this.onSubmit(evt)
+      this.save(evt)
     }
   },
 }

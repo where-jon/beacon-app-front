@@ -8,11 +8,6 @@ import { APP } from '../../sub/constant/config'
 
 export default {
   mixins: [commonmixinVue],
-  computed: {
-    iosOrAndroid() {
-      return HtmlUtil.isAndroidOrIOS()
-    },
-  },  
   created(){
     EventBus.$off('reload')
     EventBus.$on('reload', (payload)=>{

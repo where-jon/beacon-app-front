@@ -56,14 +56,14 @@ import * as DateUtil from '../../sub/util/DateUtil'
 import { getTheme } from '../../sub/helper/ThemeHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
+import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
+import * as ValidateHelper from '../../sub/helper/ValidateHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import { APP } from '../../sub/constant/config'
 import moment from 'moment'
-import validatemixin from '../../components/mixin/validatemixin.vue'
 import commonmixinVue from '../../components/mixin/commonmixin.vue'
-import controlmixinVue from '../../components/mixin/controlmixin.vue'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
 import { SYSTEM_ZONE_CATEGORY_NAME } from '../../sub/constant/Constants'
 
@@ -73,7 +73,7 @@ export default {
     alert,
     DatePicker,
   },
-  mixins: [validatemixin, commonmixinVue, controlmixinVue],
+  mixins: [commonmixinVue],
   data () {
     return {
       form: {
@@ -141,11 +141,20 @@ export default {
     this.updateColumnName()
   },
   methods: {
+    getVueSelectStyle(){
+      return VueSelectHelper.getVueSelectStyle()
+    },
+    vueSelectTitle(selected){
+      return VueSelectHelper.vueSelectTitle(selected)
+    },
+    vueSelectCutOn(option, required){
+      return VueSelectHelper.vueSelectCutOn(option, required)
+    },
     validate() {
-      const errors = this.validateCheck([
+      const errors = ValidateHelper.validateCheck([
         {type: 'require', names: ['date'], values: [this.form.date]},
       ].filter((val) => val && val.names.length >= 1))
-      return this.formatValidateMessage(errors)
+      return ValidateHelper.formatValidateMessage(errors)
     },
     async display() {
       this.container ? this.container.removeAllChildren() : null

@@ -166,7 +166,7 @@ export default {
       'showAlert',
     ]),
     theme () {
-      return 'outline-' + getButtonTheme()
+      return getButtonTheme()
     },
     hasError() {
       return Object.keys(this.errorMessages)
@@ -230,6 +230,7 @@ export default {
       // storeを参照しているため、テーマの変更を検知する
       this.replaceSetting({theme})
       LocalStorageHelper.setLocalStorage(document.domain + '-theme', theme)
+      this.theme
     },
     charSetSelected (selected) {
       const cs = CHAR_SET.find((e) => {

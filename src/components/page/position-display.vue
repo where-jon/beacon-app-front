@@ -7,11 +7,12 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 import mList from './list.vue'
-import commonmixinVue from '../mixin/commonmixin.vue'
-import listmixinVue from '../mixin/listmixin.vue'
+import commonmixin from '../mixin/commonmixin.vue'
+import reloadmixin from '../mixin/reloadmixin.vue'
 import showmapmixin from '../mixin/showmapmixin.vue'
 import { addLabelByKey } from '../../sub/helper/ViewHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
+import * as ProhibitHelper from '../../sub/helper/ProhibitHelper'
 import * as Util from '../../sub/util/Util'
 import * as StringUtil from '../../sub/util/StringUtil'
 
@@ -19,11 +20,7 @@ export default {
   components: {
     mList,
   },
-  mixins: [
-    commonmixinVue,
-    listmixinVue,
-    showmapmixin,
-  ],
+  mixins: [commonmixin, reloadmixin, showmapmixin],
   props: {
     masterName: {
       type: String,
@@ -119,7 +116,7 @@ export default {
         // positionデータ取得
         await this.storePositionHistory(null, false, true)
         this.replaceAS({positions: this.getPositions()})
-        this.setProhibitDetect('display') // listmixin呼び出し
+        ProhibitHelper.setProhibitDetect('display', this)
         this.alertData.message = this.message
         this.alertData.isAlert = this.showDismissibleAlert ? true: false
         // 分類checkProhibitZone

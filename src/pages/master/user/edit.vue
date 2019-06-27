@@ -4,7 +4,7 @@
     <div class="container">
       <alert :message="message" />
 
-      <b-form v-if="show" @submit.prevent="onSubmit">
+      <b-form v-if="show" @submit.prevent="save">
         <chrome-input />
         <b-form-group v-show="showName">
           <label v-t="'label.name'" />
@@ -59,7 +59,6 @@ import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AuthHelper from '../../../sub/helper/AuthHelper'
 import { APP } from '../../../sub/constant/config.js'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
-import controlmixinVue from '../../../components/mixin/controlmixin.vue'
 import * as Util from '../../../sub/util/Util'
 import * as HtmlUtil from '../../../sub/util/HtmlUtil'
 import * as ArrayUtil from '../../../sub/util/ArrayUtil'
@@ -74,7 +73,7 @@ export default {
     alert,
     chromeInput,
   },
-  mixins: [editmixinVue, controlmixinVue],
+  mixins: [editmixinVue],
   data() {
     return {
       name: 'user',
@@ -101,8 +100,7 @@ export default {
       return Util.hasValue(this.form.userId)
     },
     theme () {
-      const theme = getButtonTheme()
-      return 'outline-' + theme
+      return getButtonTheme()
     },
     showEmail() {
       return ArrayUtil.includesIgnoreCase(APP.USER.WITH, 'email')
@@ -179,7 +177,7 @@ export default {
       }
       return true
     },
-    async afterCrud(){
+    async onSaved(){
       this.role = null
       this.pass = null
       this.passConfirm = null
@@ -195,11 +193,11 @@ export default {
       }
       StateHelper.setForceFetch('pot', true)
     },
-    beforeReload(){
+    onBeforeReload(){
       this.vueSelected.role = VueSelectHelper.getVueSelectData(this.roleOptions, this.roleOptions.reduce((prev, cur) => cur).value)
       this.vueSelected.regions = []
     },
-    async save() {
+    async onSaving() {
       let dummyKey = -1
       const entity = {
         userId: Util.hasValue(this.form.userId) ? this.form.userId : dummyKey--,
@@ -242,7 +240,7 @@ export default {
         event.preventDefault()
         return false
       }
-      this.register(again)
+      this.doBeforeSubmit(again)
     },
   },
 }

@@ -4,9 +4,11 @@ import * as StateHelper from '../sub/helper/StateHelper'
 import * as HttpHelper from '../sub/helper/HttpHelper'
 import * as ViewHelper from '../sub/helper/ViewHelper'
 import * as BulkHelper from '../sub/helper/BulkHelper'
-import * as MasterHelper from '../sub/helper/MasterHelper'
+import * as OptionHelper from '../sub/helper/OptionHelper'
 import * as SettingHelper from '../sub/helper/SettingHelper'
 import * as LocalStorageHelper from '../sub/helper/LocalStorageHelper'
+import * as ProhibitHelper from '../sub/helper/ProhibitHelper'
+import * as ValidateHelper from '../sub/helper/ValidateHelper'
 import { APP } from '../sub/constant/config'
 import { LOGIN_MODE, FORCE_PUSH_MENU, ROLE_FEATURE } from '../sub/constant/Constants'
 
@@ -18,7 +20,9 @@ export default function (context) {
   HttpHelper.setApp(context)
   SettingHelper.setApp(context.app.i18n)
   BulkHelper.setApp(context.app.i18n)
-  MasterHelper.setApp(context.app.i18n)
+  OptionHelper.setApp(context.app.i18n)
+  ProhibitHelper.setApp(context.app.i18n)
+  ValidateHelper.setApp(context.app.i18n)
   if (!process.browser) {
     return
   }

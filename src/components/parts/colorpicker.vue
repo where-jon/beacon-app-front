@@ -18,7 +18,6 @@
 import { Chrome } from 'vue-color'
 import * as NumberUtil from '../../sub/util/NumberUtil'
 import * as ColorUtil from '../../sub/util/ColorUtil'
-import { getButtonTheme } from '../../sub/helper/ThemeHelper'
 
 export default {
   components: {
@@ -42,12 +41,6 @@ export default {
       colorText: null,
       touchColorPicker: false,
     }
-  },
-  computed: {
-    theme(){
-      const theme = getButtonTheme()
-      return 'outline-' + theme
-    },
   },
   created(){
     this.changeColor(this.$parent.form[this.name])

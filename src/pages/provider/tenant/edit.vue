@@ -4,7 +4,7 @@
     <div class="container">
       <alert :message="message" />
 
-      <b-form v-if="show" @submit.prevent="onSubmit">
+      <b-form v-if="show" @submit.prevent="save">
         <b-form-group>
           <b-form-row v-if="hasId">
             <label v-t="'label.tenantId'" class="control-label" />
@@ -120,10 +120,10 @@
         </b-form-row>
 
         <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
-        <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="register(false)">
+        <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="doBeforeSubmit(false)">
           {{ label }}
         </b-button>
-        <b-button v-if="isEditable && !isUpdate" v-t="'label.registerAgain'" :variant="theme" type="submit" class="my-1" @click="register(true)" />
+        <b-button v-if="isEditable && !isUpdate" v-t="'label.registerAgain'" :variant="theme" type="submit" class="my-1" @click="doBeforeSubmit(true)" />
       </b-form>
     </div>
 
@@ -151,8 +151,8 @@ import * as SettingHelper from '../../../sub/helper/SettingHelper'
 import * as AuthHelper from '../../../sub/helper/AuthHelper'
 import * as HttpHelper from '../../../sub/helper/HttpHelper'
 import * as LocalStorageHelper from '../../../sub/helper/LocalStorageHelper'
+import * as FeatureHelper from '../../../sub/helper/FeatureHelper'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
-import featuremixinVue from '../../../components/mixin/featuremixin.vue'
 import * as Util from '../../../sub/util/Util'
 import * as DateUtil from '../../../sub/util/DateUtil'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
@@ -171,7 +171,7 @@ export default {
     featureList,
     systemSetting,
   },
-  mixins: [editmixinVue, featuremixinVue],
+  mixins: [editmixinVue],
   data() {
     return {
       name: 'tenant',
@@ -207,8 +207,7 @@ export default {
       return Util.hasValue(this.form.tenantId)
     },
     theme () {
-      const theme = getButtonTheme()
-      return 'outline-' + theme
+      return getButtonTheme()
     },
     ...mapState('app_service', [
       'tenant', 'features', 'settings'
@@ -220,7 +219,7 @@ export default {
   async created(){
     const currentFeatureList = this.tenant && this.tenant.tenantFeatureList? this.tenant.tenantFeatureList: []
     await StateHelper.load('feature')
-    this.featureList = this.createFeatureTable(this.features, currentFeatureList, this.hasId, this.defaultCheckFeatureNames)
+    this.featureList = FeatureHelper.createFeatureTable(this.features, currentFeatureList, this.hasId, this.defaultCheckFeatureNames)
     this.settingList = this.tenant && this.tenant.settingList? this.tenant.settingList: []
     if(!this.hasId){
       this.form.sysAdminLoginId = 'sysadmin'
@@ -295,7 +294,7 @@ export default {
       const userInfo = await AuthHelper.getUserInfo(login.tenantAdmin)
       AuthHelper.resetConfig(login.tenantAdmin, userInfo.setting)
     },
-    async afterCrud(){
+    async onSaved(){
       this.featureList.forEach((feature) => {
         feature.checked = false
         feature.disabled = false
@@ -311,7 +310,7 @@ export default {
       this.targetTenantId = null
       this.settingList = []
     },
-    async save() {
+    async onSaving() {
       let dummyKey = -1
       const settingEntities = this.$refs.systemSetting.createSaveEntities(this.settingList)
       this.targetTenantId = Util.hasValue(this.form.tenantId)? this.form.tenantId: dummyKey--

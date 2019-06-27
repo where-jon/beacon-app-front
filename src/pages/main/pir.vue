@@ -30,6 +30,7 @@ import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as IconHelper from '../../sub/helper/IconHelper'
+import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
 import * as Util from '../../sub/util/Util'
 import * as NumberUtil from '../../sub/util/NumberUtil'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
@@ -39,14 +40,13 @@ import { SENSOR, TX } from '../../sub/constant/Constants'
 import { Container } from '@createjs/easeljs/dist/easeljs.module'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
-import controlmixinVue from '../../components/mixin/controlmixin.vue'
 
 export default {
   components: {
     breadcrumb,
     'txdetail': txdetail,
   },
-  mixins: [showmapmixin, controlmixinVue],
+  mixins: [showmapmixin],
   data() {
     return {
       keepExbPosition: false,
@@ -90,6 +90,18 @@ export default {
     this.resetDetail()
   },
   methods: {
+    getVueSelectStyle(){
+      return VueSelectHelper.getVueSelectStyle()
+    },
+    vueSelectTitle(selected){
+      return VueSelectHelper.vueSelectTitle(selected)
+    },
+    vueSelectCutOn(option, required){
+      return VueSelectHelper.vueSelectCutOn(option, required)
+    },
+    closeVueSelect(){
+      return VueSelectHelper.closeVueSelect()
+    },
     async fetchData(payload) {
       try {
         this.reloadSelectedTx = this.reload? this.selectedTx: {}

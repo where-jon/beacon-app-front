@@ -34,7 +34,7 @@ export default {
     ]),
   },
   methods: {
-    async save() {
+    async onSaving() {
       await this.$refs.bulkEdit.bulkSave()
     },
     restructRegion(entity, dummyKey){
@@ -63,7 +63,7 @@ export default {
       }
       return dummyKey
     },
-    afterCrud(){
+    onSaved(){
       StateHelper.setForceFetch('pot', true)
     },
   }

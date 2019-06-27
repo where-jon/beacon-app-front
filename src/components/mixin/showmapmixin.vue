@@ -11,17 +11,17 @@ import * as StateHelper from '../../sub/helper/StateHelper'
 import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as IconHelper from '../../sub/helper/IconHelper'
+import * as StyleHelper from '../../sub/helper/StyleHelper'
 import * as Util from '../../sub/util/Util'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as StringUtil from '../../sub/util/StringUtil'
 import * as NumberUtil from '../../sub/util/NumberUtil'
 import * as DateUtil from '../../sub/util/DateUtil'
-import reloadmixinVue from './reloadmixin.vue'
-import listmixinVue from './listmixin.vue'
+import reloadmixin from './reloadmixin.vue'
 import * as mock from '../../assets/mock/mock'
 
 export default {
-  mixins: [reloadmixinVue, listmixinVue],
+  mixins: [reloadmixin],
   data() {
     return {
       isShownMapImage: false,
@@ -443,7 +443,7 @@ export default {
           display = styleSrc && styleSrc.display
         }
         display = display || this.defaultDisplay
-        display = this.getStyleDisplay1({...display, label: pos.label}, {fixSize: fixSize})        
+        display = StyleHelper.getStyleDisplay1({...display, label: pos.label}, {fixSize: fixSize})        
         if (pos.transparent) {
           display.opacity = 0.6
         }

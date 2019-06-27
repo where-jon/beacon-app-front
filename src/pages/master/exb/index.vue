@@ -13,7 +13,7 @@ import * as MenuHelper from '../../../sub/helper/MenuHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import { APP } from '../../../sub/constant/config'
 import * as ArrayUtil from '../../../sub/util/ArrayUtil'
-import listmixinVue from '../../../components/mixin/listmixin.vue'
+import reloadmixin from '../../../components/mixin/reloadmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 
 export default {
@@ -21,7 +21,7 @@ export default {
     mList, 
     breadcrumb,
   },
-  mixins: [listmixinVue],
+  mixins: [reloadmixin],
   data() {
     return {
       params: {

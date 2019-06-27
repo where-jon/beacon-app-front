@@ -6,8 +6,8 @@
     <div class="container">
       <m-list ref="mList" :params="params" :list="settingList" :per-page="settingList.length" :use-pagenation="false" :alert-force-hide="true" max-filter-length="40" />
       <b-form id="updateForm" @submit.prevent="onUpdateSubmit">
-        <b-button v-if="!callee && !isShowNewForm" v-t="'label.update'" :variant="getButtonTheme()" type="submit" class="ml-2" @click="register(true)" />
-        <b-button v-if="isRegistable && !isShowNewForm" v-t="'label.addForm'" :variant="getButtonTheme()" type="button" class="float-right" @click="showNewForm(true)" />
+        <b-button v-if="!callee && !isShowNewForm" v-t="'label.update'" :variant="theme" type="submit" class="ml-2" @click="doBeforeSubmit(true)" />
+        <b-button v-if="isRegistable && !isShowNewForm" v-t="'label.addForm'" :variant="theme" type="button" class="float-right" @click="showNewForm(true)" />
       </b-form>
       <!-- new form -->
       <div v-if="isShowNewForm"> 
@@ -47,7 +47,7 @@
             </b-form-row>
             <b-form id="registForm" class="mt-3" @submit.prevent="onRegistSubmit">
               <b-form-row class="float-right mt-3">
-                <b-button v-t="'label.add'" :variant="getButtonTheme()" type="submit" :disabled="hasSameKey()" @click="register(true)" />
+                <b-button v-t="'label.add'" :variant="theme" type="submit" :disabled="hasSameKey()" @click="doBeforeSubmit(true)" />
                 <b-button v-t="'label.cancel'" type="button" variant="outline-danger" class="ml-2" @click="showNewForm(false)" />
               </b-form-row>
             </b-form>
@@ -66,6 +66,7 @@ import * as AuthHelper from '../../../sub/helper/AuthHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as SettingHelper from '../../../sub/helper/SettingHelper'
 import * as LocalStorageHelper from '../../../sub/helper/LocalStorageHelper'
+import { getButtonTheme } from '../../../sub/helper/ThemeHelper'
 import mList from '../../../components/page/list.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
@@ -130,6 +131,9 @@ export default {
     ...mapState('app_service', [
       'settings',
     ]),
+    theme() {
+      return getButtonTheme()
+    },
     totalRows(){
       return this.settingList.length
     },
@@ -211,16 +215,16 @@ export default {
       const userInfo = await AuthHelper.getUserInfo(login.tenantAdmin)
       AuthHelper.resetConfig(login.tenantAdmin, userInfo.setting)
     },
-    async afterCrud() {
+    async onSaved() {
       await this.applyConfig()
       this.showNewForm(false)
     },
-    async beforeReload(){
+    async onBeforeReload(){
       await this.fetchData()
     },
     onUpdateSubmit(evt){
       if(!this.callee){
-        this.onSubmit(evt)
+        this.save(evt)
         return
       }
     },
@@ -239,7 +243,7 @@ export default {
       })
       return entity
     },
-    async save() {
+    async onSaving() {
       const registEntity = this.createRegistEntity()
       if(registEntity){
         return await AppServiceHelper.bulkSave(this.appServicePath, [registEntity])
@@ -283,7 +287,7 @@ export default {
     },
     onRegistSubmit(evt){
       if(!this.callee){
-        this.onSubmit(evt)
+        this.save(evt)
         return
       }
       if(this.registFunc){

@@ -5,7 +5,7 @@
       <alert :message="message" :force-hide="true" />
 
       <b-form-row>
-        <b-form @submit.prevent="onSubmit">
+        <b-form @submit.prevent="save">
           <b-form-group :label="$t('label.deviceId')">
             <v-select v-model="vueSelected.deviceId" :options="deviceIds" :disable="!isEditable" :clearable="false" class="vue-options-lg" />
           </b-form-group>
@@ -77,16 +77,13 @@ import { LED_COLORS, LED_BLINK_TYPES, SENSOR } from '../../sub/constant/Constant
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as Util from '../../sub/util/Util'
 import editmixinVue from '../../components/mixin/editmixin.vue'
-import controlmixinVue from '../../components/mixin/controlmixin.vue'
 
 export default {
   components: {
     breadcrumb,
     alert,
   },
-  mixins: [
-    editmixinVue, controlmixinVue
-  ],
+  mixins: [editmixinVue],
   data () {
     return {
       name: 'led',
@@ -111,8 +108,7 @@ export default {
   },
   computed: {
     theme() {
-      const theme = getButtonTheme()
-      return 'outline-' + theme
+      return getButtonTheme()
     },
     ...mapState('app_service', [
       'exbs',
@@ -144,7 +140,7 @@ export default {
         await StateHelper.load('exb')
         let deviceIds = _.filter(this.exbs,
           exb => exb.enabled && exb.sensorId == SENSOR.LED
-          // exb => exb.enabled && this.getSensorIds(exb).includes(SENSOR.LED) 一旦単数に戻す
+          // exb => exb.enabled && SensorHelper.getSensorIds(exb).includes(SENSOR.LED) 一旦単数に戻す
         )
           .map(
             exb => {
@@ -172,7 +168,7 @@ export default {
       }
       this.hideProgress()
     },
-    async save() {
+    async onSaving() {
       var rgb = 0
       for (var i of this.form.colors) {
         rgb += i

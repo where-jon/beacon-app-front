@@ -4,12 +4,12 @@
     <div class="container">
       <alert :message="message" />
 
-      <b-form v-show="isShow()" @submit.prevent="onSubmit">
+      <b-form v-show="isShow()" @submit.prevent="save">
         <b-form-row class="mb-2 feature">
           <feature-list :list="featureList" :fields="fields" />
         </b-form-row>
 
-        <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="register(true)">
+        <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="doBeforeSubmit(true)">
           {{ label }}
         </b-button>
       </b-form>
@@ -24,8 +24,8 @@ import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as LocalStorageHelper from '../../../sub/helper/LocalStorageHelper'
+import * as FeatureHelper from '../../../sub/helper/FeatureHelper'
 import editmixinVue from '../../../components/mixin/editmixin.vue'
-import featuremixinVue from '../../../components/mixin/featuremixin.vue'
 import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import alert from '../../../components/parts/alert.vue'
@@ -38,7 +38,7 @@ export default {
     alert,
     featureList,
   },
-  mixins: [editmixinVue, featuremixinVue],
+  mixins: [editmixinVue],
   data() {
     return {
       name: 'tenant',
@@ -56,8 +56,7 @@ export default {
   },
   computed: {
     theme () {
-      const theme = getButtonTheme()
-      return 'outline-' + theme
+      return getButtonTheme()
     },
     ...mapState('app_service', [
       'features',
@@ -67,7 +66,7 @@ export default {
     const currentTenant = LocalStorageHelper.getLogin().currentTenant
     const currentFeatureList = currentTenant && currentTenant.tenantFeatureList? currentTenant.tenantFeatureList: []
     await StateHelper.load('feature')
-    this.featureList = this.createFeatureTable(this.features, currentFeatureList)
+    this.featureList = FeatureHelper.createFeatureTable(this.features, currentFeatureList)
       .filter((val) => val.featureType == 0)
       .map((val) => {return {...val}})
   },
@@ -75,10 +74,10 @@ export default {
     isShow(){
       return Util.hasValue(this.featureList)
     },
-    async afterCrud(){
+    async onSaved(){
       await AuthHelper.switchAppService()
     },
-    async save() {
+    async onSaving() {
       const currentTenant = LocalStorageHelper.getLogin().currentTenant
       const entities = this.featureList.filter(feature => !feature.disabled && feature.checked).map(feature => {
         return {

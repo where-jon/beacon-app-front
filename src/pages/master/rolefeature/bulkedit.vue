@@ -50,7 +50,7 @@ export default {
     await StateHelper.load('feature')
   },
   methods: {
-    async save() {
+    async onSaving() {
       await this.$refs.bulkEdit.bulkSave()
     },
     restruct(entity, dummyKey){

@@ -36,10 +36,10 @@ export default {
     ]),
   },
   methods: {
-    async save() {
+    async onSaving() {
       await this.$refs.bulkEdit.bulkSave({numberList: ['regionId', 'meshId']})
     },
-    async afterCrud(bulkSaveFunc, param){
+    async onSaved(bulkSaveFunc, param){
       StateHelper.setForceFetch('user', true)
       const result = await RegionHelper.autoSwitchRegion(this.regions)
       if(result){

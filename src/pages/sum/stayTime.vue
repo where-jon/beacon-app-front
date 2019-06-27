@@ -90,15 +90,15 @@ import { getTheme } from '../../sub/helper/ThemeHelper'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
+import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
+import * as ValidateHelper from '../../sub/helper/ValidateHelper'
 import { SUM_UNIT_STACK, SUM_UNIT_AXIS, SUM_FILTER_KIND } from '../../sub/constant/Constants'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
 import { APP, DISP } from '../../sub/constant/config'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import * as ChartHelper from '../../sub/helper/ChartHelper'
-import validatemixin from '../../components/mixin/validatemixin.vue'
 import commonmixinVue from '../../components/mixin/commonmixin.vue'
-import controlmixinVue from '../../components/mixin/controlmixin.vue'
 
 export default {
   components: {
@@ -106,7 +106,7 @@ export default {
     alert,
     DatePicker,
   },
-  mixins: [validatemixin, commonmixinVue, controlmixinVue],
+  mixins: [commonmixinVue],
   data () {
     return {
       form: {
@@ -173,6 +173,15 @@ export default {
     HtmlUtil.importElementUI()
   },
   methods: {
+    getVueSelectStyle(){
+      return VueSelectHelper.getVueSelectStyle()
+    },
+    vueSelectTitle(selected){
+      return VueSelectHelper.vueSelectTitle(selected)
+    },
+    vueSelectCutOn(option, required){
+      return VueSelectHelper.vueSelectCutOn(option, required)
+    },
     useVueSelect(key){
       return this.vueSelectedKeys.includes(key)
     },
@@ -225,14 +234,14 @@ export default {
       }
     },
     validate() {
-      const errors = this.validateCheck([
+      const errors = ValidateHelper.validateCheck([
         {type: 'require', names: ['historyDateFrom'], values: [this.form.datetimeFrom]},
         {type: 'require', names: ['historyDateFrom'], values: [this.form.datetimeTo]},
         {type: 'require', names: ['sumUnitAxis'], values: [this.form.axis]},
         {type: 'require', names: ['sumUnitStack'], values: [this.form.stack]},
         this.form.datetimeFrom && this.form.datetimeTo? {type: 'asc', names: ['historyDateFrom'], values: [new Date(this.form.datetimeFrom).getTime(), new Date(this.form.datetimeTo).getTime()], equal: false}: null,
       ].filter((val) => val && val.names.length >= 1))
-      return this.formatValidateMessage(errors)
+      return ValidateHelper.formatValidateMessage(errors)
     },
     async display() {
       this.replace({showAlert: false})

@@ -53,7 +53,7 @@
       <p />
       <b-row>
         <b-col md="10" offset-md="2">
-          <b-button v-if="!iosOrAndroid" v-t="'label.download'" :variant="getButtonTheme()" @click="download()" />
+          <b-button v-if="!iosOrAndroid" v-t="'label.download'" :variant="theme" @click="download()" />
         </b-col>
       </b-row>
     </div>
@@ -67,15 +67,17 @@ import 'element-ui/lib/theme-chalk/index.css'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
+import * as OptionHelper from '../../sub/helper/OptionHelper'
+import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
+import { getButtonTheme } from '../../sub/helper/ThemeHelper'
 import * as Util from '../../sub/util/Util'
 import * as HtmlUtil from '../../sub/util/HtmlUtil'
 import * as NumberUtil from '../../sub/util/NumberUtil'
 import * as DateUtil from '../../sub/util/DateUtil'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
-import commonmixinVue from '../../components/mixin/commonmixin.vue'
-import reloadmixinVue from '../../components/mixin/reloadmixin.vue'
-import controlmixinVue from '../../components/mixin/controlmixin.vue'
+import commonmixin from '../../components/mixin/commonmixin.vue'
+import reloadmixin from '../../components/mixin/reloadmixin.vue'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 
 export default {
@@ -84,7 +86,7 @@ export default {
     alert,
     DatePicker,
   },
-  mixins: [reloadmixinVue, commonmixinVue, controlmixinVue],
+  mixins: [reloadmixin, commonmixin],
   data () {
     return {
       items: ViewHelper.createBreadCrumbItems('historyTitle', 'thermohumidity'),
@@ -119,7 +121,10 @@ export default {
     },
     ...mapState('monitor', [
       'temperatureHistory',
-    ])
+    ]),
+    theme () {
+      return getButtonTheme()
+    },
   },
   watch: {
     inputDateFrom: function(newVal, oldVal) {
@@ -135,6 +140,9 @@ export default {
     this.fetchPrev()
   },
   methods: {
+    getVueSelectStyle(){
+      return VueSelectHelper.getVueSelectStyle()
+    },
     async fetchZoneCategoryList() {
       try {
         this.zoneCategorys = await AppServiceHelper.fetch(
@@ -142,7 +150,7 @@ export default {
           ''
         )
         console.log(this.zoneCategorys)
-        this.categoryOptionList = this.getZoneCategoryOptions(this.zoneCategorys)
+        this.categoryOptionList = OptionHelper.getZoneCategoryOptions(this.zoneCategorys)
       } catch(e) {
         console.error(e)
       }
@@ -152,7 +160,7 @@ export default {
       this.categoryChange(null)
     },
     categoryChange(val) {
-      this.zoneOptionList = this.getZoneOptions(this.zoneCategorys, val)
+      this.zoneOptionList = OptionHelper.getZoneOptions(this.zoneCategorys, val)
       if (val == null) {
         this.categoryId = null
         this.vModelCategory = null
