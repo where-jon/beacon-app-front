@@ -154,6 +154,7 @@ export default {
       isShowBottom: false,
       isMounted: false,
       reloadState: {isLoad: false},
+      loadStates: ['category','group','lostZones','tx','exb'],
     }
   },
   computed: {
@@ -224,13 +225,10 @@ export default {
     },
   },
   async mounted() {
-    await StateHelper.load('category')
-    await StateHelper.load('group')
-    await StateHelper.load('prohibit')
-    await StateHelper.load('lostZones')
-    await StateHelper.load('pot')
-    await StateHelper.load('tx')
-    await StateHelper.load('exb')
+    if (APP.POS.PROHIBIT_ALERT) {
+      this.loadStates.push('prohibit')
+    }
+    await Promise.all(this.loadStates.map(StateHelper.load))
     this.txs.forEach((t) => this.txsMap[t.btxId] = t)
     this.exbs.forEach((e) => this.exbsMap[e.posId] = e)
     // this.fetchData()は'vueSelected.area'をwatchしている箇所で実行している。
@@ -240,7 +238,6 @@ export default {
     this.vueSelected.group = VueSelectHelper.getVueSelectData(this.groupOptions, this.selectedGroup, false)
     this.startPositionAutoReload()
     this.startOtherAutoReload()
-
     this.changeArea(this.selectedArea)
     this.isMounted = true
   },
@@ -286,12 +283,11 @@ export default {
       return Util.hasValue(this.meditagSensors)
     },
     async fetchPositionData(payload) {
-      // await this.fetchAreaExbs(true)
-      await this.fetchAreaExbs(false)
 
       let alwaysTxs = this.txs.filter((tx) => {
         return tx.areaId == this.selectedArea && NumberUtil.bitON(tx.disp, TX.DISP.ALWAYS)
       })
+
       let isAllfetch = alwaysTxs? true: false
       if(!payload.disabledPosition){
         await this.storePositionHistory(this.count, isAllfetch)
@@ -300,6 +296,7 @@ export default {
       if(payload.disabledOther){
         return
       }
+
       if (APP.SENSOR.USE_MEDITAG) {
         let meditagSensors = await EXCloudHelper.fetchSensor(SENSOR.MEDITAG)
         this.meditagSensors = _(meditagSensors)
@@ -328,9 +325,10 @@ export default {
         if(!disabledProgress){
           this.showProgress()
         }
-        if (!this.selectedTx.btxId) {
-          await StateHelper.load('tx')
-        }
+        // mounted()でtxsのloadは実行済みのためコメントアウト
+        // if (!this.selectedTx.btxId) {
+        //   await StateHelper.load('tx')
+        // }
         this.$nextTick(() => {
           this.loadLegends()
         })
@@ -370,6 +368,7 @@ export default {
         if(!this.firstTime && reloadButton){
           this.reloadState.isLoad = true
         }
+
         if(!this.selectedTx.btxId){
           await this.fetchPositionData(cPayload)
         }
@@ -377,16 +376,21 @@ export default {
         this.stage.on('click', (evt) => {
           this.resetDetail()
         })
+
         if (!this.txCont) {
           this.txCont = new Container()
           this.txCont.width = this.bitmap.width
           this.txCont.height = this.bitmap.height
           this.stage.addChild(this.txCont)
-          this.stage.update()
         }
         this.setPositionedExb()
-        ProhibitHelper.setProhibitDetect('pos', this)
+
+        if (APP.POS.PROHIBIT_ALERT) {
+          this.setProhibitDetect('pos')
+        }
+
         this.showTxAll()
+
         if(!this.firstTime && reloadButton){
           this.reloadState.isLoad = false
         }
@@ -414,23 +418,27 @@ export default {
       this.isShowBottom = false      
     },
     showTxAll() {
+
       if (!this.txCont) {
         return
       }
+
       this.txCont.removeAllChildren()
-      this.stage.update()
       this.disableExbsCheck()
       this.detectedCount = 0 // 検知カウントリセット
       let position = []
-      if(APP.POS.USE_MULTI_POSITIONING){
+
+      if(!APP.POS.USE_MULTI_POSITIONING){
+        const ratio = DISP.TX.R_ABSOLUTE ? 1/this.canvasScale : 1
+        position = PositionHelper.adjustPosition(this.getPositions(), ratio, this.positionedExb, this.selectedArea)
+      }else{
         let area = _.find(this.$store.state.app_service.areas, (area) => area.areaId == this.selectedArea)
         let mapRatio = area.mapRatio
         position = PositionHelper.adjustMultiPosition(this.getPositions(), mapRatio)
-      }else{
-        const ratio = DISP.TX.R_ABSOLUTE ? 1/this.canvasScale : 1
-        position = PositionHelper.adjustPosition(this.getPositions(), ratio, this.positionedExb, this.selectedArea)
       }
+
       position.forEach((pos) => this.showTx(pos))
+      this.stage.update()
       this.reShowTx(position)
     },
     showTx(pos) {
@@ -459,6 +467,7 @@ export default {
         meditag = this.getMeditagSensor(tx.btxId)
         Util.debug('meditag', meditag)
       }
+
       const display = this.getDisplay(tx)
       const color = meditag? '#000': this.isMagnetOn(magnet)? display.bgColor : display.color
       const bgColor = meditag? meditag.bg: this.isMagnetOn(magnet)? display.color: display.bgColor
@@ -468,9 +477,7 @@ export default {
         return
       }
 
-      if ((exb && exb.isAbsentZone || this.isOtherFloorFixTx(tx, exb)) && this.isFixTx(tx)) {
-        pos.transparent = true
-      }
+      pos.transparent = ((exb && exb.isAbsentZone || this.isOtherFloorFixTx(tx, exb)) && this.isFixTx(tx))
 
       // 既に該当btx_idのTXアイコンが作成済みか?
       let txBtn = this.icons[pos.btx_id]
@@ -494,7 +501,6 @@ export default {
         this.showDetail(txBtn.txId, txBtn.x, txBtn.y)
       }
       this.txCont.addChild(txBtn)
-      this.stage.update()
       this.detectedCount++  // 検知数カウント増加
     },
     touchEnd (evt) {

@@ -45,18 +45,24 @@ export const fetchPosition = async (exbs, txs, pMock, isAll = false) => {
 export const fetchPositionHistory = async (exbs, txs, allShow, pMock) => {
   let data = pMock? pMock: DEV.USE_MOCK_EXC? mock.position:
     await HttpHelper.getExCloud(url(EXCLOUD.POSITION_HISTORY_FETCH_URL.replace('{allFetch}', allShow? '1': '0')) + new Date().getTime())
-  return _(data)
-    .filter((val) => allShow || DEV.NOT_FILTER_TX || txs && txs.some((tx) => tx.txId == val.txId))
-    .filter((val) => allShow || exbs && exbs.some((exb) => exb.location.locationId == val.locationId))
+  const txIdMap = {}
+  txs.forEach(t => txIdMap[t.txId] = t)
+  const exbIdMap = {}
+  const locationIdMap = {}
+  exbs.forEach(e => {
+    exbIdMap[e.exbId] = e
+    locationIdMap[e.location.locationId] = e
+  })
+  return _(data).filter((val) => allShow || DEV.NOT_FILTER_TX || txs && txIdMap[val.txId])
+    .filter((val) => allShow || exbs && locationIdMap[val.locationId])
     .map((val) => {
-      let tx = _.find(txs, (tx) => tx.txId == val.txId)
-      let exb = _.find(exbs, (exb) => exb.exbId == val.exbId)
+      let tx = txIdMap[val.txId]
+      let exb = exbIdMap[val.exbId]
       let label = tx? tx.displayName? tx.displayName: tx.btxId: ''
       return { btx_id: tx? tx.btxId: '',  minor: val.minor, pos_id: exb ? exb.posId : -1, tx_id: val.txId,
         x: val.x, y: val.y,
         label, exb, tx, updatetime: dateform(val.positionDt), timestamp:dateform(val.positionDt)}
-    })
-    .compact().value()
+    }).compact().value()
 }
 
 export const fetchPositionList = async (exbs, txs) => {
