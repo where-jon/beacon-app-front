@@ -91,7 +91,7 @@ export default {
           await this.onSaving()
           await StateHelper.load(this.name, true)
           if (this.name == 'area' && this.form.mapImage) {
-            await ImageHelper.loadImageArea()
+            await ImageHelper.loadImageArea(this.form.areaId)
           }
           this.message = this.$i18n.tnl('message.' + this.crud + 'Completed', {target: this.$i18n.tnl('label.' + this.name)})
           this.replace({showInfo: true})
