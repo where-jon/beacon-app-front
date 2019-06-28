@@ -386,7 +386,7 @@ export default {
         this.setPositionedExb()
 
         if (APP.POS.PROHIBIT_ALERT) {
-          this.setProhibitDetect('pos')
+          ProhibitHelper.setProhibitDetect('pos', this)
         }
 
         this.showTxAll()
