@@ -307,7 +307,7 @@ export default {
       if (val) {
         this.icons = {} // キャッシュをクリア
         try {
-          await StateHelper.loadAreaImage(val)
+          await StateHelper.loadAreaImage(val, true)
           const area = _.find(this.areas, (area) => {
             return area.areaId == val
           })
