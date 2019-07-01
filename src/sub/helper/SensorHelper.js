@@ -746,7 +746,7 @@ export const getFields = (sensorId, i18n) => {
  * 指定したEXBに紐づいているセンサのIDを取得する
  * @method
  * @param {Object} exb 
- * @return
+ * @return {Object[]}
  */
 export const getSensorIds = exb => {
   const exbSensorList = Util.getValue(exb, 'exbSensorList', null) // TODO: FIX
