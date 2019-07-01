@@ -222,7 +222,7 @@ export default {
     },
     openHelp() {
       const path = _.filter(this.$route.path.split('/'), (path) => Boolean(path))
-      this.fromPageUrl = path? '#' + path[path.length - 1]: ''
+      this.fromPageUrl = path? '#' + path[path.length - 2] + '_' + path[path.length - 1]: ''
       this.$root.$emit('bv::show::modal', 'helpModal')
     },
     isTenantAdmin() {

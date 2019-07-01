@@ -12,7 +12,7 @@
           {{ getHelpDescription('helpNone') }}
         </p>
         <div v-if="enablePositionList">
-          <a href="#position-list">
+          <a href="#main_position-list">
             {{ $i18n.tnl('label.positionList') }}
           </a><br>
         </div>
@@ -22,117 +22,117 @@
           </a><br>
         </div>
         <div v-if="enableRegion">
-          <a href="#region">
+          <a href="#master_region">
             {{ $i18n.tnl('label.masterRegion') }}
           </a><br>
         </div>
         <div v-if="enableArea">
-          <a href="#area">
+          <a href="#master_area">
             {{ $i18n.tnl('label.masterArea') }}
           </a><br>
         </div>
         <div v-if="enableExb">
-          <a href="#exb">
+          <a href="#master_exb">
             {{ $i18n.tnl('label.masterExb') }}
           </a><br>
         </div>
         <div v-if="enableTx">
-          <a href="#tx">
+          <a href="#master_tx">
             {{ $i18n.tnl('label.masterTx') }}
           </a><br>
         </div>
         <div v-if="enablePot">
-          <a href="#pot">
+          <a href="#master_pot">
             {{ $i18n.tnl('label.masterPot') }}
           </a><br>
         </div>
         <div v-if="isDisplayCategory">
-          <a href="#category">
+          <a href="#master_category">
             {{ $i18n.tnl('label.masterCategory') }}
           </a><br>
         </div>
         <div v-if="enableGroup">
-          <a href="#group">
+          <a href="#master_group">
             {{ $i18n.tnl('label.masterGroup') }}
           </a><br>
         </div>
         <div v-if="enableUser">
-          <a href="#user">
+          <a href="#master_user">
             {{ $i18n.tnl('label.masterUser') }}
           </a><br>
         </div>
         <div v-if="enableRole">
-          <a href="#role">
+          <a href="#master_role">
             {{ $i18n.tnl('label.masterRole') }}
           </a><br>
         </div>
         <div v-if="isDisplayZoneClass">
-          <a href="#zoneClass">
+          <a href="#master_zoneClass">
             {{ $i18n.tnl('label.zoneClass') }}
           </a><br>
         </div>
         <div v-if="isDisplayZoneBlock">
-          <a href="#zoneBlock">
+          <a href="#master_zoneBlock">
             {{ $i18n.tnl('label.zoneBlock') }}
           </a><br>
         </div>
         <div v-if="enableGateway">
-          <a href="#gateway">
+          <a href="#monitor_gateway">
             {{ $i18n.tnl('label.monitorGW') }}
           </a><br>
         </div>
-        <div v-if="enablePosition">
-          <a href="#position">
+        <div v-if="enableMonitorTX">
+          <a href="#monitor_position">
             {{ $i18n.tnl('label.monitorTX') }}
           </a><br>
         </div>
         <div v-if="enableTelemetry">
-          <a href="#telemetry">
+          <a href="#monitor_telemetry">
             {{ $i18n.tnl('label.monitorEXB') }}
           </a><br>
         </div>
         <div v-if="enableUsageSituation">
-          <a href="#usage-situation">
+          <a href="#sum_usage-situation">
             {{ $i18n.tnl('label.SumUtilizationRatio') }}
           </a><br>
         </div>
         <div v-if="enableSensorGraph">
-          <a href="#sensorGraph">
+          <a href="#sum_sensorGraph">
             {{ $i18n.tnl('label.SensorGraph') }}
           </a><br>
         </div>
         <div v-if="enableStayRatio">
-          <a href="#stayRatio">
+          <a href="#sum_stayRatio">
             {{ $i18n.tnl('label.stayRatio') }}
           </a><br>
         </div>
         <div v-if="enableTemperatureHistory">
-          <a href="#temperatureHistory">
+          <a href="#history_temperatureHistory">
             {{ $i18n.tnl('label.temperatureHistory') }}
           </a><br>
         </div>
         <div v-if="enablePositionHistory">
-          <a href="#positionHistory">
+          <a href="#history_positionHistory">
             {{ $i18n.tnl('label.PositionHistory') }}
           </a><br>
         </div>
         <div v-if="enableSensorHistory">
-          <a href="#sensorHistory">
+          <a href="#history_sensorHistory">
             {{ $i18n.tnl('label.SensorHistory') }}
           </a><br>
         </div>
         <div v-if="enableNotifyHistory">
-          <a href="#notifyHistory">
+          <a href="#history_notifyHistory">
             {{ $i18n.tnl('label.notifyHistory') }}
           </a><br>
         </div>
         <div v-if="enableStayRatioBase">
-          <a href="#stayRatioBase">
+          <a href="#sum_stayRatioBase">
             {{ $i18n.tnl('label.stayRatioBase') }}
           </a><br>
         </div>
       </div>
-      <div v-if="enablePositionList" id="position-list">
+      <div v-if="enablePositionList" id="main_position-list">
         <hr>
         <p class="helpLabelHeader">
           {{ getLabel('positionList') }}
@@ -164,7 +164,7 @@
         </p>
         <b-table striped hover small :items="bulkItems()" :fields="bulkFields" />
       </div>
-      <div v-if="enableRegion" id="region">
+      <div v-if="enableRegion" id="master_region">
         <hr>
         <p class="helpLabelHeader">
           {{ getLabel('masterRegion') }}
@@ -177,7 +177,7 @@
         </p>
         <b-table striped hover small :items="regionCsvItems()" :fields="csvFields" />
       </div>
-      <div v-if="enableArea" id="area">
+      <div v-if="enableArea" id="master_area">
         <hr>
         <p class="helpLabelHeader">
           {{ getLabel('masterArea') }}
@@ -190,7 +190,7 @@
         </p>
         <b-table striped hover small :items="areaCsvItems()" :fields="csvFields" />
       </div>
-      <div v-if="enableExb" id="exb">
+      <div v-if="enableExb" id="master_exb">
         <hr>
         <p class="helpLabelHeader">
           {{ getLabel('masterExb') }}
@@ -203,7 +203,7 @@
         </p>
         <b-table striped hover small :items="exbCsvItems()" :fields="csvFields" />
       </div>
-      <div v-if="enableTx" id="tx">
+      <div v-if="enableTx" id="master_tx">
         <hr>
         <p class="helpLabelHeader">
           {{ getLabel('masterTx') }}
@@ -216,7 +216,7 @@
         </p>
         <b-table striped hover small :items="txCsvItems()" :fields="csvFields" />
       </div>
-      <div v-if="enablePot" id="pot">
+      <div v-if="enablePot" id="master_pot">
         <hr>
         <p class="helpLabelHeader">
           {{ getLabel('masterPot') }}
@@ -229,7 +229,7 @@
         </p>
         <b-table striped hover small :items="potCsvItems()" :fields="csvFields" />
       </div>
-      <div v-if="isDisplayCategory" id="category">
+      <div v-if="isDisplayCategory" id="master_category">
         <hr>
         <p class="helpLabelHeader">
           {{ getLabel('category') }}
@@ -261,7 +261,7 @@
         </p>
         <b-table striped hover small :items="categoryCsvItems()" :fields="csvFields" />
       </div>
-      <div v-if="enableGroup" id="group">
+      <div v-if="enableGroup" id="master_group">
         <hr>
         <p class="helpLabelHeader">
           {{ getLabel('masterGroup') }}
@@ -274,7 +274,7 @@
         </p>
         <b-table striped hover small :items="groupCsvItems()" :fields="csvFields" />
       </div>
-      <div v-if="enableUser" id="user">
+      <div v-if="enableUser" id="master_user">
         <hr>
         <p class="helpLabelHeader">
           {{ getLabel('masterUser') }}
@@ -287,7 +287,7 @@
         </p>
         <b-table striped hover small :items="userCsvItems()" :fields="csvFields" />
       </div>
-      <div v-if="enableRole" id="role">
+      <div v-if="enableRole" id="master_role">
         <hr>
         <p class="helpLabelHeader">
           {{ getLabel('masterRole') }}
@@ -300,7 +300,7 @@
         </p>
         <b-table striped hover small :items="roleCsvItems()" :fields="csvFields" />
       </div>
-      <div v-if="isDisplayZoneClass" id="zoneClass">
+      <div v-if="isDisplayZoneClass" id="master_zoneClass">
         <hr>
         <p class="helpLabelHeader">
           {{ getLabel('zoneClass') }}
@@ -320,7 +320,7 @@
         </p>
         <b-table striped hover small :items="zoneClassCsvItems()" :fields="csvFields" />
       </div>
-      <div v-if="isDisplayZoneBlock" id="zoneBlock">
+      <div v-if="isDisplayZoneBlock" id="master_zoneBlock">
         <hr>
         <p class="helpLabelHeader">
           {{ getLabel('zoneBlock') }}
@@ -333,7 +333,7 @@
           {{ getHelpDescription('zoneBlock', {zoneBlock: getLabel('zoneBlock')}) }}
         </p>
       </div>
-      <div v-if="enableGateway" id="gateway">
+      <div v-if="enableGateway" id="monitor_gateway">
         <hr>
         <p class="helpLabelHeader">
           {{ getLabel('monitorGW') }}
@@ -346,7 +346,7 @@
         </p>
         <b-table striped hover small :items="GatewayCsvItems()" :fields="csvFields" />
       </div>
-      <div v-if="enablePosition" id="position">
+      <div v-if="enableMonitorTX" id="monitor_position">
         <hr>
         <p class="helpLabelHeader">
           {{ getLabel('monitorTX') }}
@@ -359,7 +359,7 @@
         </p>
         <b-table striped hover small :items="positionCsvItems()" :fields="csvFields" />
       </div>
-      <div v-if="enableTelemetry" id="telemetry">
+      <div v-if="enableTelemetry" id="monitor_telemetry">
         <hr>
         <p class="helpLabelHeader">
           {{ getLabel('monitorEXB') }}
@@ -372,7 +372,7 @@
         </p>
         <b-table striped hover small :items="telemetryCsvItems()" :fields="csvFields" />
       </div>
-      <div v-if="enableUsageSituation" id="usage-situation">
+      <div v-if="enableUsageSituation" id="sum_usage-situation">
         <hr>
         <p class="helpLabelHeader">
           {{ getLabel('SumUtilizationRatio') }}
@@ -385,7 +385,7 @@
         </p>
         <b-table striped hover small :items="usageSituationCsvItems()" :fields="csvFields" />
       </div>
-      <div v-if="enableSensorGraph" id="sensorGraph">
+      <div v-if="enableSensorGraph" id="sum_sensorGraph">
         <hr>
         <p class="helpLabelHeader">
           {{ getLabel('SensorGraph') }}
@@ -398,7 +398,7 @@
         </p>
         <b-table striped hover small :items="sensorGraphCsvItems()" :fields="csvFields" />
       </div>
-      <div v-if="enableStayRatio" id="stayRatio">
+      <div v-if="enableStayRatio" id="sum_stayRatio">
         <hr>
         <p class="helpLabelHeader">
           {{ getLabel('stayRatio') }}
@@ -411,7 +411,7 @@
         </p>
         <b-table striped hover small :items="stayRatioCsvItems()" :fields="csvFields" />
       </div>
-      <div v-if="enableTemperatureHistory" id="temperatureHistory">
+      <div v-if="enableTemperatureHistory" id="history_temperatureHistory">
         <hr>
         <p class="helpLabelHeader">
           {{ getLabel('temperatureHistory') }}
@@ -424,7 +424,7 @@
         </p>
         <b-table striped hover small :items="temperatureHistoryCsvItems()" :fields="csvFields" />
       </div>
-      <div v-if="enablePositionHistory" id="positionHistory">
+      <div v-if="enablePositionHistory" id="history_positionHistory">
         <hr>
         <p class="helpLabelHeader">
           {{ getLabel('PositionHistory') }}
@@ -437,7 +437,7 @@
         </p>
         <b-table striped hover small :items="positionHistoryCsvItems()" :fields="csvFields" />
       </div>
-      <div v-if="enableSensorHistory" id="sensorHistory">
+      <div v-if="enableSensorHistory" id="history_sensorHistory">
         <hr>
         <p class="helpLabelHeader">
           {{ getLabel('SensorHistory') }}
@@ -450,7 +450,7 @@
         </p>
         <b-table striped hover small :items="sensorHistoryCsvItems()" :fields="csvFields" />
       </div>
-      <div v-if="enableNotifyHistory" id="notifyHistory">
+      <div v-if="enableNotifyHistory" id="history_notifyHistory">
         <hr>
         <p class="helpLabelHeader">
           {{ getLabel('notifyHistory') }}
@@ -463,7 +463,7 @@
         </p>
         <b-table striped hover small :items="notifyHistoryCsvItems()" :fields="csvFields" />
       </div>
-      <div v-if="enableStayRatioBase" id="stayRatioBase">
+      <div v-if="enableStayRatioBase" id="sum_stayRatioBase">
         <hr>
         <p class="helpLabelHeader">
           {{ getLabel('stayRatioBase') }}
@@ -509,7 +509,7 @@ export default {
       isDisplayZoneClass: false,
       isDisplayZoneBlock: false,
       isDisplayGateway: false,
-      isDisplayPosition: false,
+      isDisplayMonitorTX: false,
       isDisplayTelemetry: false,
       isDisplayUsageSituation: false,
       isDisplaySensorGraph: false,
@@ -575,8 +575,8 @@ export default {
     enableGateway() {
       return this.isDisplayGateway
     },
-    enablePosition() {
-      return this.isDisplayPosition
+    enableMonitorTX() {
+      return this.isDisplayMonitorTX
     },
     enableTelemetry() {
       return this.isDisplayTelemetry
@@ -658,8 +658,8 @@ export default {
         if (!this.isDisplayGateway) {
           this.isDisplayGateway = parent.pages.find((val) => val.path == 'gateway')? true: false
         }
-        if (!this.isDisplayPosition) {
-          this.isDisplayPosition = parent.pages.find((val) => val.path == 'position')? true: false
+        if (parent.key == 'monitor' && !this.isDisplayMonitorTX) {
+          this.isDisplayMonitorTX = parent.pages.find((val) => val.path == 'position')? true: false
         }
         if (!this.isDisplayTelemetry) {
           this.isDisplayTelemetry = parent.pages.find((val) => val.path == 'telemetry')? true: false
@@ -704,7 +704,7 @@ export default {
         this.isDisplayZoneClass || 
         this.isDisplayZoneBlock || 
         this.isDisplayGateway || 
-        this.isDisplayPosition || 
+        this.isDisplayMonitorTX || 
         this.isDisplayTelemetry || 
         this.isDisplayUsageSituation || 
         this.isDisplaySensorGraph || 
