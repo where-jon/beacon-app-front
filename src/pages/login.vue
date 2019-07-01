@@ -105,7 +105,7 @@ export default {
     ]),
     onSubmit() {
       AuthHelper.setApp(this.$router, this.$store)
-      AuthHelper.auth(this.userId, this.password, ()=>{
+      AuthHelper.auth(this.userId, this.password, async ()=>{
         this.$router.push(APP.MENU.TOP_PAGE)
         this.message = ''
         const theme = LocalStorageHelper.getLocalStorage(this.userId + '-theme')
