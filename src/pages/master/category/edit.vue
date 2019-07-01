@@ -36,19 +36,19 @@
 
 <script>
 import { mapState } from 'vuex'
-import * as ViewHelper from '../../../sub/helper/ViewHelper'
-import editmixin from '../../../components/mixin/editmixin.vue'
-import commonmixin from '../../../components/mixin/commonmixin.vue'
-import * as Util from '../../../sub/util/Util'
+import { APP } from '../../../sub/constant/config'
+import { CATEGORY, SHAPE } from '../../../sub/constant/Constants'
 import * as ColorUtil from '../../../sub/util/ColorUtil'
+import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ValidateHelper from '../../../sub/helper/ValidateHelper'
+import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
+import commonmixin from '../../../components/mixin/commonmixin.vue'
+import editmixin from '../../../components/mixin/editmixin.vue'
 import alert from '../../../components/parts/alert.vue'
-import { CATEGORY, SHAPE } from '../../../sub/constant/Constants'
 import colorPicker from '../../../components/parts/colorpicker'
-import { APP } from '../../../sub/constant/config'
 
 export default {
   components: {
@@ -56,7 +56,7 @@ export default {
     alert,
     colorPicker,
   },
-  mixins: [editmixin, commonmixin],
+  mixins: [commonmixin, editmixin],
   data() {
     let category = this.$store.state.app_service.category
     return {

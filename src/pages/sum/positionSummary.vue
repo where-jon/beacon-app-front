@@ -28,24 +28,24 @@
 import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+import moment from 'moment'
+import { APP } from '../../sub/constant/config'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as StringUtil from '../../sub/util/StringUtil'
-import * as StateHelper from '../../sub/helper/StateHelper'
-import * as ViewHelper from '../../sub/helper/ViewHelper'
-import * as ValidateHelper from '../../sub/helper/ValidateHelper'
-import breadcrumb from '../../components/layout/breadcrumb.vue'
-import alert from '../../components/parts/alert.vue'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
-import moment from 'moment'
-import commonmixin from '../../components/mixin/commonmixin.vue'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
-import { APP } from '../../sub/constant/config'
+import * as StateHelper from '../../sub/helper/StateHelper'
+import * as ValidateHelper from '../../sub/helper/ValidateHelper'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
+import breadcrumb from '../../components/layout/breadcrumb.vue'
+import commonmixin from '../../components/mixin/commonmixin.vue'
+import alert from '../../components/parts/alert.vue'
 
 export default {
   components: {
+    DatePicker,
     breadcrumb,
     alert,
-    DatePicker,
   },
   mixins: [commonmixin],
   data () {

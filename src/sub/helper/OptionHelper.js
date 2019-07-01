@@ -1,8 +1,8 @@
 import { APP } from '../constant/config'
 import { SENSOR } from '../constant/Constants'
 import * as Util from '../util/Util'
-import * as StateHelper from './StateHelper'
 import * as SensorHelper from './SensorHelper'
+import * as StateHelper from './StateHelper'
 
 let i18n
 

@@ -1,12 +1,12 @@
-import { DISCOMFORT, SENSOR, THERMOHUMIDITY } from '../constant/Constants'
-import { APP, DISP } from '../constant/config'
-import * as Util from '../util/Util'
-import * as ArrayUtil from '../util/ArrayUtil'
-import * as DateUtil from '../util/DateUtil'
-import * as ChartHelper from './ChartHelper'
-import { addLabelByKey } from './ViewHelper'
 import Chart from 'chart.js'
 import _ from 'lodash'
+import { APP, DISP } from '../constant/config'
+import { DISCOMFORT, SENSOR, THERMOHUMIDITY } from '../constant/Constants'
+import * as ArrayUtil from '../util/ArrayUtil'
+import * as DateUtil from '../util/DateUtil'
+import * as Util from '../util/Util'
+import * as ChartHelper from './ChartHelper'
+import { addLabelByKey } from './ViewHelper'
 
 let chart = null
 let subChart = null

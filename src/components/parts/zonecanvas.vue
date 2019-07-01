@@ -3,11 +3,11 @@
 </template>
 
 <script>
-import {ZONE} from '../../sub/constant/Constants'
 import Konva from 'konva'
+import { ZONE } from '../../sub/constant/Constants'
+import * as Util from '../../sub/util/Util'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
-import * as Util from '../../sub/util/Util'
 
 class Zone {
   constructor(prop) {

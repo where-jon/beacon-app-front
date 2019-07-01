@@ -12,28 +12,25 @@
 
 <script>
 import { mapState, mapActions } from 'vuex'
+import { APP } from '../../sub/constant/config'
+import { EXTRA_NAV } from '../../sub/constant/Constants'
+import * as ArrayUtil from '../../sub/util/ArrayUtil'
+import * as Util from '../../sub/util/Util'
+import * as MenuHelper from '../../sub/helper/MenuHelper'
+import * as ProhibitHelper from '../../sub/helper/ProhibitHelper'
+import * as StateHelper from '../../sub/helper/StateHelper'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
-import mList from '../../components/page/list.vue'
 import reloadmixin from '../../components/mixin/reloadmixin.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
-import * as StateHelper from '../../sub/helper/StateHelper'
-import * as MenuHelper from '../../sub/helper/MenuHelper'
-import * as ViewHelper from '../../sub/helper/ViewHelper'
-import * as ProhibitHelper from '../../sub/helper/ProhibitHelper'
-import { EXTRA_NAV } from '../../sub/constant/Constants'
-import * as Util from '../../sub/util/Util'
-import * as ArrayUtil from '../../sub/util/ArrayUtil'
-import { APP } from '../../sub/constant/config.js'
+import mList from '../../components/page/list.vue'
 
 export default {
   components: {
-    mList,
     breadcrumb,
+    mList,
   },
-  mixins: [
-    reloadmixin,
-    showmapmixin,
-  ],
+  mixins: [reloadmixin, showmapmixin],
   data() {
     return {
       message: '',

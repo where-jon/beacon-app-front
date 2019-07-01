@@ -6,19 +6,19 @@
 </template>
 
 <script>
-import mList from '../../../components/page/list.vue'
 import { mapState } from 'vuex'
+import * as LocalStorageHelper from '../../../sub/helper/LocalStorageHelper'
+import * as RegionHelper from '../../../sub/helper/RegionHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
-import * as RegionHelper from '../../../sub/helper/RegionHelper'
-import * as LocalStorageHelper from '../../../sub/helper/LocalStorageHelper'
-import reloadmixin from '../../../components/mixin/reloadmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
+import reloadmixin from '../../../components/mixin/reloadmixin.vue'
+import mList from '../../../components/page/list.vue'
 
 export default {
   components: {
-    mList, 
     breadcrumb,
+    mList, 
   },
   mixins: [reloadmixin],
   data() {

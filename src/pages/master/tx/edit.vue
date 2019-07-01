@@ -85,25 +85,25 @@
 <script>
 import { mapState } from 'vuex'
 import _ from 'lodash'
-import * as ViewHelper from '../../../sub/helper/ViewHelper'
-import * as ValidateHelper from '../../../sub/helper/ValidateHelper'
+import { APP } from '../../../sub/constant/config'
+import { CATEGORY, SENSOR } from '../../../sub/constant/Constants'
 import * as Util from '../../../sub/util/Util'
-import editmixin from '../../../components/mixin/editmixin.vue'
-import commonmixin from '../../../components/mixin/commonmixin.vue'
-import breadcrumb from '../../../components/layout/breadcrumb.vue'
-import alert from '../../../components/parts/alert.vue'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
+import * as ValidateHelper from '../../../sub/helper/ValidateHelper'
+import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as VueSelectHelper from '../../../sub/helper/VueSelectHelper'
-import { APP } from '../../../sub/constant/config.js'
-import { CATEGORY, SENSOR } from '../../../sub/constant/Constants'
+import breadcrumb from '../../../components/layout/breadcrumb.vue'
+import commonmixin from '../../../components/mixin/commonmixin.vue'
+import editmixin from '../../../components/mixin/editmixin.vue'
+import alert from '../../../components/parts/alert.vue'
 
 export default {
   components: {
     breadcrumb,
     alert,
   },
-  mixins: [editmixin, commonmixin],
+  mixins: [commonmixin, editmixin],
   data() {
     return {
       name: 'tx',

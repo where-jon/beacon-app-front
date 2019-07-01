@@ -151,31 +151,31 @@
 import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+import { APP } from '../../sub/constant/config'
+import { NOTIFY_STATE } from '../../sub/constant/Constants'
+import * as BrowserUtil from '../../sub/util/BrowserUtil'
+import * as CsvUtil from '../../sub/util/CsvUtil'
+import * as DateUtil from '../../sub/util/DateUtil'
+import * as Util from '../../sub/util/Util'
+import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
+import { getCharSet } from '../../sub/helper/CharSetHelper'
+import * as HttpHelper from '../../sub/helper/HttpHelper'
+import * as LocalStorageHelper from '../../sub/helper/LocalStorageHelper'
+import * as StateHelper from '../../sub/helper/StateHelper'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
+import commonmixin from '../../components/mixin/commonmixin.vue'
+import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
-import showmapmixin from '../../components/mixin/showmapmixin.vue'
-import commonmixin from '../../components/mixin/commonmixin.vue'
-import * as StateHelper from '../../sub/helper/StateHelper'
-import * as HttpHelper from '../../sub/helper/HttpHelper'
-import * as ViewHelper from '../../sub/helper/ViewHelper'
-import * as LocalStorageHelper from '../../sub/helper/LocalStorageHelper'
-import * as Util from '../../sub/util/Util'
-import * as BrowserUtil from '../../sub/util/BrowserUtil'
-import * as DateUtil from '../../sub/util/DateUtil'
-import * as CsvUtil from '../../sub/util/CsvUtil'
-import { getCharSet } from '../../sub/helper/CharSetHelper'
-import { NOTIFY_STATE } from '../../sub/constant/Constants'
-import { APP } from '../../sub/constant/config.js'
-import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 
 
 export default {
   components: {
+    DatePicker,
     breadcrumb,
     alert,
-    DatePicker,
   },
-  mixins: [showmapmixin, commonmixin],
+  mixins: [commonmixin, showmapmixin],
   data () {
     return {
       name: 'notifyHistory',

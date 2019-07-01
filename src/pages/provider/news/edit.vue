@@ -33,21 +33,21 @@
 import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
-import editmixin from '../../../components/mixin/editmixin.vue'
-import commonmixin from '../../../components/mixin/commonmixin.vue'
-import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
+import commonmixin from '../../../components/mixin/commonmixin.vue'
+import editmixin from '../../../components/mixin/editmixin.vue'
 import alert from '../../../components/parts/alert.vue'
 
 export default {
   components: {
+    DatePicker,
     breadcrumb,
     alert,
-    DatePicker,
   },
-  mixins: [editmixin, commonmixin],
+  mixins: [commonmixin, editmixin],
   data() {
     return {
       name: 'news',

@@ -88,21 +88,21 @@
 
 <script>
 import { mapState } from 'vuex'
-import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import { APP } from '../../../sub/constant/config'
+import * as ArrayUtil from '../../../sub/util/ArrayUtil'
+import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
-import * as StateHelper from '../../../sub/helper/StateHelper'
-import * as VueSelectHelper from '../../../sub/helper/VueSelectHelper'
 import * as MenuHelper from '../../../sub/helper/MenuHelper'
 import * as OptionHelper from '../../../sub/helper/OptionHelper'
+import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ValidateHelper from '../../../sub/helper/ValidateHelper'
-import * as Util from '../../../sub/util/Util'
-import * as ArrayUtil from '../../../sub/util/ArrayUtil'
-import editmixin from '../../../components/mixin/editmixin.vue'
-import commonmixin from '../../../components/mixin/commonmixin.vue'
+import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import * as VueSelectHelper from '../../../sub/helper/VueSelectHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
+import commonmixin from '../../../components/mixin/commonmixin.vue'
+import editmixin from '../../../components/mixin/editmixin.vue'
 import alert from '../../../components/parts/alert.vue'
 import settingtxview from '../../../components/parts/settingtxview.vue'
-import { APP } from '../../../sub/constant/config'
 
 export default {
   components: {
@@ -110,7 +110,7 @@ export default {
     alert,
     settingtxview,
   },
-  mixins: [editmixin, commonmixin],
+  mixins: [commonmixin, editmixin],
   data() {
     return {
       name: 'exb',

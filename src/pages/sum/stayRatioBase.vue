@@ -186,31 +186,30 @@ import Vue from 'vue'
 import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import * as Util from '../../sub/util/Util'
-import * as BrowserUtil from '../../sub/util/BrowserUtil'
+import moment from 'moment'
+import { APP, DISP } from '../../sub/constant/config'
+import { CATEGORY, SYSTEM_ZONE_CATEGORY_NAME } from '../../sub/constant/Constants'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
-import * as DateUtil from '../../sub/util/DateUtil'
+import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as ColorUtil from '../../sub/util/ColorUtil'
 import * as CsvUtil from '../../sub/util/CsvUtil'
-import * as StateHelper from '../../sub/helper/StateHelper'
-import * as ViewHelper from '../../sub/helper/ViewHelper'
-import * as MenuHelper from '../../sub/helper/MenuHelper'
-import * as StayTimeHelper from '../../sub/helper/StayTimeHelper'
-import breadcrumb from '../../components/layout/breadcrumb.vue'
-import alert from '../../components/parts/alert.vue'
+import * as DateUtil from '../../sub/util/DateUtil'
+import * as Util from '../../sub/util/Util'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
-import { APP, DISP } from '../../sub/constant/config'
-import moment from 'moment'
-import commonmixin from '../../components/mixin/commonmixin.vue'
+import * as MenuHelper from '../../sub/helper/MenuHelper'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
-import { SYSTEM_ZONE_CATEGORY_NAME } from '../../sub/constant/Constants'
-import { CATEGORY } from '../../sub/constant/Constants'
+import * as StateHelper from '../../sub/helper/StateHelper'
+import * as StayTimeHelper from '../../sub/helper/StayTimeHelper'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
+import breadcrumb from '../../components/layout/breadcrumb.vue'
+import commonmixin from '../../components/mixin/commonmixin.vue'
+import alert from '../../components/parts/alert.vue'
 
 export default {
   components: {
+    DatePicker,
     breadcrumb,
     alert,
-    DatePicker,
   },
   mixins: [commonmixin],
   data () {

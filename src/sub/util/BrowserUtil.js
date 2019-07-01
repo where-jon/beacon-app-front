@@ -1,6 +1,6 @@
 import Encoding from 'encoding-japanese'
-import { str2Array } from './StringUtil'
 import { APP } from '../constant/config'
+import { str2Array } from './StringUtil'
 
 let locale
 

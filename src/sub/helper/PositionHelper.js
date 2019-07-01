@@ -1,9 +1,9 @@
+import * as mock from '../../assets/mock/mock'
 import { APP, DISP, DEV } from '../constant/config'
 import { TX_VIEW_TYPES, DETECT_STATE } from '../constant/Constants'
-import * as DetectStateHelper from '../helper/DetectStateHelper'
-import * as Util from '../util/Util'
 import * as DateUtil from '../util/DateUtil'
-import * as mock from '../../assets/mock/mock.js'
+import * as Util from '../util/Util'
+import * as DetectStateHelper from '../helper/DetectStateHelper'
 
 const iconsUnitNum = 9
 const tileLayoutIconsNum = 5

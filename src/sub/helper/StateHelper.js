@@ -1,11 +1,11 @@
 import _ from 'lodash'
-import * as AppServiceHelper from './AppServiceHelper'
-import * as Util from '../util/Util'
-import * as StringUtil from '../util/StringUtil'
+import { APP, DISP } from '../constant/config'
+import { CATEGORY, SHAPE, NOTIFY_STATE, SYSTEM_ZONE_CATEGORY_NAME} from '../constant/Constants'
 import * as ArrayUtil from '../util/ArrayUtil'
 import * as DateUtil from '../util/DateUtil'
-import { CATEGORY, SHAPE, NOTIFY_STATE, SYSTEM_ZONE_CATEGORY_NAME} from '../constant/Constants'
-import { APP, DISP } from '../constant/config'
+import * as StringUtil from '../util/StringUtil'
+import * as Util from '../util/Util'
+import * as AppServiceHelper from './AppServiceHelper'
 
 
 let store

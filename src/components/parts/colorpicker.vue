@@ -16,8 +16,8 @@
 
 <script>
 import { Chrome } from 'vue-color'
-import * as NumberUtil from '../../sub/util/NumberUtil'
 import * as ColorUtil from '../../sub/util/ColorUtil'
+import * as NumberUtil from '../../sub/util/NumberUtil'
 
 export default {
   components: {

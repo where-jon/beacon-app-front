@@ -89,35 +89,35 @@
 
 <script>
 import { mapState } from 'vuex'
-import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
-import * as PositionHelper from '../../sub/helper/PositionHelper'
-import * as SensorHelper from '../../sub/helper/SensorHelper'
-import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
-import * as StateHelper from '../../sub/helper/StateHelper'
-import * as MenuHelper from '../../sub/helper/MenuHelper'
-import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
-import * as ViewHelper from '../../sub/helper/ViewHelper'
-import * as StyleHelper from '../../sub/helper/StyleHelper'
-import * as ProhibitHelper from '../../sub/helper/ProhibitHelper'
-import * as Util from '../../sub/util/Util'
-import * as NumberUtil from '../../sub/util/NumberUtil'
-import txdetail from '../../components/parts/txdetail.vue'
+import { Container } from '@createjs/easeljs/dist/easeljs.module'
 import { APP, DISP } from '../../sub/constant/config'
 import { SENSOR, EXTRA_NAV, CATEGORY, TX } from '../../sub/constant/Constants'
-import { Container } from '@createjs/easeljs/dist/easeljs.module'
+import * as NumberUtil from '../../sub/util/NumberUtil'
+import * as Util from '../../sub/util/Util'
+import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
+import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
+import * as MenuHelper from '../../sub/helper/MenuHelper'
+import * as PositionHelper from '../../sub/helper/PositionHelper'
+import * as ProhibitHelper from '../../sub/helper/ProhibitHelper'
+import * as SensorHelper from '../../sub/helper/SensorHelper'
+import * as StateHelper from '../../sub/helper/StateHelper'
+import * as StyleHelper from '../../sub/helper/StyleHelper'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
+import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
-import showmapmixin from '../../components/mixin/showmapmixin.vue'
+import commonmixin from '../../components/mixin/commonmixin.vue'
 import reloadmixin from '../../components/mixin/reloadmixin.vue'
+import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import meditag from '../../components/parts/meditag.vue'
-import commonmixinVue from '../../components/mixin/commonmixin.vue'
+import txdetail from '../../components/parts/txdetail.vue'
 
 export default {
   components: {
+    breadcrumb,
     meditag,
     'txdetail': txdetail,
-    breadcrumb,
   },
-  mixins: [showmapmixin, reloadmixin, commonmixinVue],
+  mixins: [commonmixin, reloadmixin, showmapmixin],
   props: {
     isInstallation: {
       default: false,

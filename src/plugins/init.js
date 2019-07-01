@@ -1,10 +1,10 @@
-import * as MenuHelper from '../sub/helper/MenuHelper'
+import _ from 'lodash'
+import * as config from '../sub/constant/config'
+import * as AuthHelper from '../sub/helper/AuthHelper'
 import * as ConfigHelper from '../sub/helper/ConfigHelper'
 import * as HttpHelper from '../sub/helper/HttpHelper'
 import * as LocalStorageHelper from '../sub/helper/LocalStorageHelper'
-import * as AuthHelper from '../sub/helper/AuthHelper'
-import * as config from '../sub/constant/config'
-import _ from 'lodash'
+import * as MenuHelper from '../sub/helper/MenuHelper'
 
 export default async (context, inject) => {
   console.log('App Init') // If you need common initialize procedure, write here.

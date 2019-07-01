@@ -54,30 +54,29 @@
 
 <script>
 import { mapState } from 'vuex'
-// import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
-import * as HttpHelper from '../../../sub/helper/HttpHelper'
-import * as StateHelper from '../../../sub/helper/StateHelper'
-import * as VueSelectHelper from '../../../sub/helper/VueSelectHelper'
-import * as ViewHelper from '../../../sub/helper/ViewHelper'
-import * as StyleHelper from '../../../sub/helper/StyleHelper'
-import * as Util from '../../../sub/util/Util'
-import * as BrowserUtil from '../../../sub/util/BrowserUtil'
-import * as StringUtil from '../../../sub/util/StringUtil'
-import * as ColorUtil from '../../../sub/util/ColorUtil'
+import { Shape, Container, Text } from '@createjs/easeljs/dist/easeljs.module'
 import { DISP } from '../../../sub/constant/config'
 import { UPDATE_ONLY_NN } from '../../../sub/constant/Constants'
-import { Shape, Container, Text } from '@createjs/easeljs/dist/easeljs.module'
+import * as BrowserUtil from '../../../sub/util/BrowserUtil'
+import * as ColorUtil from '../../../sub/util/ColorUtil'
+import * as StringUtil from '../../../sub/util/StringUtil'
+import * as Util from '../../../sub/util/Util'
+import * as HttpHelper from '../../../sub/helper/HttpHelper'
+import * as StateHelper from '../../../sub/helper/StateHelper'
+import * as StyleHelper from '../../../sub/helper/StyleHelper'
+import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import * as VueSelectHelper from '../../../sub/helper/VueSelectHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
-import alert from '../../../components/parts/alert.vue'
 import commonmixin from '../../../components/mixin/commonmixin.vue'
 import showmapmixin from '../../../components/mixin/showmapmixin.vue'
+import alert from '../../../components/parts/alert.vue'
 
 export default {
   components: {
     breadcrumb,
     alert,
   },
-  mixins: [showmapmixin, commonmixin],
+  mixins: [commonmixin, showmapmixin],
   data() {
     return {
       message: '',

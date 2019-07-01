@@ -60,30 +60,30 @@
 
 <script>
 import { mapState } from 'vuex'
-import * as StateHelper from '../../../sub/helper/StateHelper'
+import { SETTING, BOOLEAN } from '../../../sub/constant/Constants'
+import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as AuthHelper from '../../../sub/helper/AuthHelper'
-import * as ViewHelper from '../../../sub/helper/ViewHelper'
-import * as SettingHelper from '../../../sub/helper/SettingHelper'
 import * as LocalStorageHelper from '../../../sub/helper/LocalStorageHelper'
+import * as SettingHelper from '../../../sub/helper/SettingHelper'
+import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ValidateHelper from '../../../sub/helper/ValidateHelper'
-import mList from '../../../components/page/list.vue'
+import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
+import commonmixin from '../../../components/mixin/commonmixin.vue'
+import editmixin from '../../../components/mixin/editmixin.vue'
+import mList from '../../../components/page/list.vue'
 import alert from '../../../components/parts/alert.vue'
 import settinginput from '../../../components/parts/settinginput.vue'
-import * as Util from '../../../sub/util/Util'
-import { SETTING, BOOLEAN } from '../../../sub/constant/Constants'
-import editmixin from '../../../components/mixin/editmixin.vue'
-import commonmixin from '../../../components/mixin/commonmixin.vue'
 
 export default {
   components: {
-    mList, 
     breadcrumb,
+    mList, 
     alert,
     settinginput,
   },
-  mixins: [editmixin, commonmixin],
+  mixins: [commonmixin, editmixin],
   props: {
     pSettingList: {
       type: Array,

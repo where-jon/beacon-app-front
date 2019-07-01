@@ -1,20 +1,20 @@
 
 <script>
 import { mapState } from 'vuex'
+import { APP } from '../../sub/constant/config'
+import * as ArrayUtil from '../../sub/util/ArrayUtil'
+import * as Util from '../../sub/util/Util'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
+import * as ImageHelper from '../../sub/helper/ImageHelper'
+import * as LocalStorageHelper from '../../sub/helper/LocalStorageHelper'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
-import * as LocalStorageHelper from '../../sub/helper/LocalStorageHelper'
-import * as ImageHelper from '../../sub/helper/ImageHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
-import { APP } from '../../sub/constant/config'
-import * as Util from '../../sub/util/Util'
-import * as ArrayUtil from '../../sub/util/ArrayUtil'
-import commonmixinVue from './commonmixin.vue'
+import commonmixin from './commonmixin.vue'
 
 export default {
-  mixins: [commonmixinVue],  
+  mixins: [commonmixin],
   data() {
     return {
       show: true,

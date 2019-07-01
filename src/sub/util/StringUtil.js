@@ -1,6 +1,6 @@
-import _ from 'lodash'
-import jschardet from 'jschardet'
 import Encoding from 'encoding-japanese'
+import jschardet from 'jschardet'
+import _ from 'lodash'
 import { hasValue } from './Util'
 
 /**

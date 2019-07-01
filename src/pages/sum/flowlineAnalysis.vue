@@ -17,18 +17,17 @@
 </template>
 
 <script>
-import { Shape } from '@createjs/easeljs/dist/easeljs.module'
+import { Container, Shape } from '@createjs/easeljs/dist/easeljs.module'
 import { DISP } from '../../sub/constant/config'
-import { Container } from '@createjs/easeljs/dist/easeljs.module'
+import * as ColorUtil from '../../sub/util/ColorUtil'
+import * as Util from '../../sub/util/Util'
+import * as FlowLineHelper from '../../sub/helper/FlowLineHelper'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
+import commonmixin from '../../components/mixin/commonmixin.vue'
+import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import alert from '../../components/parts/alert.vue'
 import analysisSearch from '../../components/parts/analysissearch.vue'
-import showmapmixin from '../../components/mixin/showmapmixin.vue'
-import commonmixin from '../../components/mixin/commonmixin.vue'
-import * as Util from '../../sub/util/Util'
-import * as ColorUtil from '../../sub/util/ColorUtil'
-import * as ViewHelper from '../../sub/helper/ViewHelper'
-import * as FlowLineHelper from '../../sub/helper/FlowLineHelper'
 
 export default {
   components: {
@@ -36,7 +35,7 @@ export default {
     alert,
     analysisSearch,
   },
-  mixins: [showmapmixin, commonmixin],
+  mixins: [commonmixin, showmapmixin],
   data () {
     return {
       items: ViewHelper.createBreadCrumbItems('sumTitle', 'flowlineAnalysis'),

@@ -1,5 +1,5 @@
-import * as LocalStorageHelper from './LocalStorageHelper'
 import * as HttpHelper from './HttpHelper'
+import * as LocalStorageHelper from './LocalStorageHelper'
 
 /**
  * 言語情報を取得する。

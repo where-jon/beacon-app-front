@@ -64,29 +64,29 @@
 import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
-import * as StateHelper from '../../sub/helper/StateHelper'
-import * as ViewHelper from '../../sub/helper/ViewHelper'
-import * as OptionHelper from '../../sub/helper/OptionHelper'
-import * as Util from '../../sub/util/Util'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
+import * as CsvUtil from '../../sub/util/CsvUtil'
+import * as DateUtil from '../../sub/util/DateUtil'
 import * as DomUtil from '../../sub/util/DomUtil'
 import * as NumberUtil from '../../sub/util/NumberUtil'
-import * as DateUtil from '../../sub/util/DateUtil'
-import * as CsvUtil from '../../sub/util/CsvUtil'
+import * as Util from '../../sub/util/Util'
+import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
+import { getCharSet } from '../../sub/helper/CharSetHelper'
+import * as OptionHelper from '../../sub/helper/OptionHelper'
+import * as StateHelper from '../../sub/helper/StateHelper'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
-import alert from '../../components/parts/alert.vue'
 import commonmixin from '../../components/mixin/commonmixin.vue'
 import reloadmixin from '../../components/mixin/reloadmixin.vue'
-import { getCharSet } from '../../sub/helper/CharSetHelper'
+import alert from '../../components/parts/alert.vue'
 
 export default {
   components: {
+    DatePicker,
     breadcrumb,
     alert,
-    DatePicker,
   },
-  mixins: [reloadmixin, commonmixin],
+  mixins: [commonmixin, reloadmixin],
   data () {
     return {
       items: ViewHelper.createBreadCrumbItems('historyTitle', 'thermohumidity'),

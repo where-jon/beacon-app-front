@@ -54,18 +54,18 @@
 
 <script>
 import { mapState } from 'vuex'
+import { CATEGORY } from '../../../sub/constant/Constants'
+import * as Util from '../../../sub/util/Util'
+import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as VueSelectHelper from '../../../sub/helper/VueSelectHelper'
-import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
-import editmixin from '../../../components/mixin/editmixin.vue'
-import ZoneCanvas from '../../../components/parts/zonecanvas.vue'
-import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
-import alert from '../../../components/parts/alert.vue'
-import { CATEGORY } from '../../../sub/constant/Constants'
-import showmapmixin from '../../../components/mixin/showmapmixin.vue'
 import commonmixin from '../../../components/mixin/commonmixin.vue'
+import editmixin from '../../../components/mixin/editmixin.vue'
+import showmapmixin from '../../../components/mixin/showmapmixin.vue'
+import alert from '../../../components/parts/alert.vue'
+import ZoneCanvas from '../../../components/parts/zonecanvas.vue'
 
 export default {
   components: {
@@ -73,7 +73,7 @@ export default {
     alert,
     ZoneCanvas,
   },
-  mixins: [editmixin, showmapmixin, commonmixin],
+  mixins: [commonmixin, editmixin, showmapmixin],
   data() {
     return {
       id: -1,

@@ -6,19 +6,19 @@
 </template>
 
 <script>
-import mList from '../../../components/page/list.vue'
 import { mapState } from 'vuex'
-import * as StateHelper from '../../../sub/helper/StateHelper'
-import * as ViewHelper from '../../../sub/helper/ViewHelper'
-import * as StyleHelper from '../../../sub/helper/StyleHelper'
-import reloadmixin from '../../../components/mixin/reloadmixin.vue'
-import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import * as ColorUtil from '../../../sub/util/ColorUtil'
+import * as StateHelper from '../../../sub/helper/StateHelper'
+import * as StyleHelper from '../../../sub/helper/StyleHelper'
+import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import breadcrumb from '../../../components/layout/breadcrumb.vue'
+import reloadmixin from '../../../components/mixin/reloadmixin.vue'
+import mList from '../../../components/page/list.vue'
 
 export default {
   components: {
-    mList, 
     breadcrumb,
+    mList, 
   },
   mixins: [reloadmixin],
   data() {

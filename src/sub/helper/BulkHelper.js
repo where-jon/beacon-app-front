@@ -1,11 +1,11 @@
 import _ from 'lodash'
-import * as Util from '../util/Util'
-import * as StringUtil from '../util/StringUtil'
+import { BULK, ROLE_FEATURE, CHAR_SET } from '../constant/Constants'
 import * as ArrayUtil from '../util/ArrayUtil'
 import * as CsvUtil from '../util/CsvUtil'
-import * as OptionHelper from './OptionHelper'
+import * as StringUtil from '../util/StringUtil'
+import * as Util from '../util/Util'
 import * as CharSetHelper from './CharSetHelper'
-import { BULK, ROLE_FEATURE, CHAR_SET } from '../constant/Constants'
+import * as OptionHelper from './OptionHelper'
 
 let i18n
 

@@ -1,6 +1,6 @@
 import { SETTING, PATTERN } from '../constant/Constants'
-import * as Util from '../util/Util'
 import * as ArrayUtil from '../util/ArrayUtil'
+import * as Util from '../util/Util'
 import * as LocalStorageHelper from './LocalStorageHelper'
 
 let i18n

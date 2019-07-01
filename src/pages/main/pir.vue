@@ -26,27 +26,27 @@
 
 <script>
 import { mapState } from 'vuex'
+import { Container } from '@createjs/easeljs/dist/easeljs.module'
+import { APP, DISP } from '../../sub/constant/config'
+import { SENSOR, TX } from '../../sub/constant/Constants'
+import * as ArrayUtil from '../../sub/util/ArrayUtil'
+import * as NumberUtil from '../../sub/util/NumberUtil'
+import * as Util from '../../sub/util/Util'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
+import * as IconHelper from '../../sub/helper/IconHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
-import * as IconHelper from '../../sub/helper/IconHelper'
-import * as Util from '../../sub/util/Util'
-import * as NumberUtil from '../../sub/util/NumberUtil'
-import * as ArrayUtil from '../../sub/util/ArrayUtil'
-import txdetail from '../../components/parts/txdetail.vue'
-import { DISP, APP } from '../../sub/constant/config'
-import { SENSOR, TX } from '../../sub/constant/Constants'
-import { Container } from '@createjs/easeljs/dist/easeljs.module'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
-import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import commonmixin from '../../components/mixin/commonmixin.vue'
+import showmapmixin from '../../components/mixin/showmapmixin.vue'
+import txdetail from '../../components/parts/txdetail.vue'
 
 export default {
   components: {
     breadcrumb,
     'txdetail': txdetail,
   },
-  mixins: [showmapmixin, commonmixin],
+  mixins: [commonmixin, showmapmixin],
   data() {
     return {
       keepExbPosition: false,

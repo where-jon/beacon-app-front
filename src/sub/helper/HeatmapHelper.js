@@ -1,5 +1,5 @@
-import _ from 'lodash'
 import h337 from 'heatmap.js'
+import _ from 'lodash'
 import * as Util from '../util/Util'
 
 export const getCanvasElements = (mapElement) => {

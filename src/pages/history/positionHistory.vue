@@ -78,30 +78,29 @@
 import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import breadcrumb from '../../components/layout/breadcrumb.vue'
-import alert from '../../components/parts/alert.vue'
-import showmapmixin from '../../components/mixin/showmapmixin.vue'
-import commonmixin from '../../components/mixin/commonmixin.vue'
-import * as StateHelper from '../../sub/helper/StateHelper'
-import * as HttpHelper from '../../sub/helper/HttpHelper'
-import * as ViewHelper from '../../sub/helper/ViewHelper'
-import * as MenuHelper from '../../sub/helper/MenuHelper'
-import * as Util from '../../sub/util/Util'
-import * as BrowserUtil from '../../sub/util/BrowserUtil'
+import { APP, DISP, APP_SERVICE } from '../../sub/constant/config'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
+import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as DateUtil from '../../sub/util/DateUtil'
+import * as Util from '../../sub/util/Util'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
-import { APP, DISP } from '../../sub/constant/config.js'
-import { APP_SERVICE } from '../../sub/constant/config'
+import * as HttpHelper from '../../sub/helper/HttpHelper'
+import * as MenuHelper from '../../sub/helper/MenuHelper'
+import * as StateHelper from '../../sub/helper/StateHelper'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
+import breadcrumb from '../../components/layout/breadcrumb.vue'
+import commonmixin from '../../components/mixin/commonmixin.vue'
+import showmapmixin from '../../components/mixin/showmapmixin.vue'
+import alert from '../../components/parts/alert.vue'
 
 
 export default {
   components: {
+    DatePicker,
     breadcrumb,
     alert,
-    DatePicker,
   },
-  mixins: [showmapmixin, commonmixin],
+  mixins: [commonmixin, showmapmixin],
   data () {
     return {
       name: 'positionHistory',

@@ -42,25 +42,25 @@
 
 <script>
 import { mapState } from 'vuex'
-import * as StateHelper from '../../../sub/helper/StateHelper'
-import * as ViewHelper from '../../../sub/helper/ViewHelper'
-import * as ImageHelper from '../../../sub/helper/ImageHelper'
-import * as ValidateHelper from '../../../sub/helper/ValidateHelper'
-import * as Util from '../../../sub/util/Util'
-import * as StringUtil from '../../../sub/util/StringUtil'
-import commonmixin from '../../../components/mixin/commonmixin.vue'
-import editmixin from '../../../components/mixin/editmixin.vue'
-import breadcrumb from '../../../components/layout/breadcrumb.vue'
-import alert from '../../../components/parts/alert.vue'
 import { APP } from '../../../sub/constant/config'
 import { UPDATE_ONLY_NN, PATTERN } from '../../../sub/constant/Constants'
+import * as StringUtil from '../../../sub/util/StringUtil'
+import * as Util from '../../../sub/util/Util'
+import * as ImageHelper from '../../../sub/helper/ImageHelper'
+import * as StateHelper from '../../../sub/helper/StateHelper'
+import * as ValidateHelper from '../../../sub/helper/ValidateHelper'
+import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import breadcrumb from '../../../components/layout/breadcrumb.vue'
+import commonmixin from '../../../components/mixin/commonmixin.vue'
+import editmixin from '../../../components/mixin/editmixin.vue'
+import alert from '../../../components/parts/alert.vue'
 
 export default {
   components: {
     breadcrumb,
     alert,
   },
-  mixins: [editmixin, commonmixin],
+  mixins: [commonmixin, editmixin],
   data() {
     return {
       name: 'area',

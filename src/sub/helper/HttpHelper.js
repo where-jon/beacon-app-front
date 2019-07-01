@@ -1,10 +1,10 @@
 import axios from 'axios'
+import md5 from 'md5'
 import { EXCLOUD, APP_SERVICE } from '../constant/config'
+import * as StringUtil from '../util/StringUtil'
+import * as Util from '../util/Util'
 import * as AuthHelper from './AuthHelper'
 import * as ImageHelper from './ImageHelper'
-import * as Util from '../util/Util'
-import * as StringUtil from '../util/StringUtil'
-import md5 from 'md5'
 
 let i18n
 let context
