@@ -107,23 +107,23 @@
 <script>
 import { mapState } from 'vuex'
 import _ from 'lodash'
-import * as ViewHelper from '../../../sub/helper/ViewHelper'
-import * as StateHelper from '../../../sub/helper/StateHelper'
-import * as VueSelectHelper from '../../../sub/helper/VueSelectHelper'
+import { APP, EXCLOUD, APP_SERVICE } from '../../../sub/constant/config'
+import { CATEGORY, SENSOR, USER } from '../../../sub/constant/Constants'
+import * as StringUtil from '../../../sub/util/StringUtil'
+import * as Util from '../../../sub/util/Util'
+import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
+import * as ImageHelper from '../../../sub/helper/ImageHelper'
 import * as LocalStorageHelper from '../../../sub/helper/LocalStorageHelper'
 import * as MasterHelper from '../../../sub/helper/MasterHelper'
-import * as ImageHelper from '../../../sub/helper/ImageHelper'
+import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ValidateHelper from '../../../sub/helper/ValidateHelper'
-import editmixin from '../../../components/mixin/editmixin.vue'
-import commonmixin from '../../../components/mixin/commonmixin.vue'
-import * as Util from '../../../sub/util/Util'
-import * as StringUtil from '../../../sub/util/StringUtil'
+import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import * as VueSelectHelper from '../../../sub/helper/VueSelectHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
+import commonmixin from '../../../components/mixin/commonmixin.vue'
+import editmixin from '../../../components/mixin/editmixin.vue'
 import alert from '../../../components/parts/alert.vue'
 import chromeInput from '../../../components/parts/chromeinput.vue'
-import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
-import { CATEGORY, SENSOR, USER } from '../../../sub/constant/Constants'
-import { APP, APP_SERVICE, EXCLOUD } from '../../../sub/constant/config.js'
 
 export default {
   components: {
@@ -131,7 +131,7 @@ export default {
     alert,
     chromeInput,
   },
-  mixins: [editmixin, commonmixin],
+  mixins: [commonmixin, editmixin],
   data() {
     return {
       name: 'pot',

@@ -1,7 +1,7 @@
-import * as Util from '../util/Util'
-import * as StringUtil from '../util/StringUtil'
-import * as ArrayUtil from '../util/ArrayUtil'
 import { DISP } from '../constant/config'
+import * as ArrayUtil from '../util/ArrayUtil'
+import * as StringUtil from '../util/StringUtil'
+import * as Util from '../util/Util'
 
 /**
  * v-select選択肢情報を取得する

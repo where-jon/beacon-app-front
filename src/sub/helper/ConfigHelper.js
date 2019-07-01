@@ -1,5 +1,5 @@
-import _ from 'lodash'
 import axios from 'axios'
+import _ from 'lodash'
 import * as config from '../constant/config'
 import * as LocalStorageHelper from './LocalStorageHelper'
 

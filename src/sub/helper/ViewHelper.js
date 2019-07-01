@@ -1,8 +1,8 @@
-import _ from 'lodash'
 import elementLocale from 'element-ui/lib/locale'
+import _ from 'lodash'
 import { APP } from '../constant/config'
-import * as Util from '../util/Util'
 import * as StringUtil from '../util/StringUtil'
+import * as Util from '../util/Util'
 
 let i18n
 

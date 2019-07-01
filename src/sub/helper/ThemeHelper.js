@@ -1,5 +1,5 @@
-import { THEME } from '../constant/Constants'
 import { DISP } from '../constant/config'
+import { THEME } from '../constant/Constants'
 import * as LocalStorageHelper from '../helper/LocalStorageHelper'
 
 /**

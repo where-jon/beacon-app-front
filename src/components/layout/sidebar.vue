@@ -28,11 +28,11 @@
 
 <script>
 
-import CustomLink from '../parts/customlink.vue'
+import VueSlideUpDown from 'vue-slide-up-down'
 import { APP } from '../../sub/constant/config'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
 import { getThemeClasses } from '../../sub/helper/ThemeHelper'
-import VueSlideUpDown from 'vue-slide-up-down'
+import CustomLink from '../parts/customlink.vue'
 
 export default {
   components: {

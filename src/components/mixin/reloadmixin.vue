@@ -1,13 +1,13 @@
 
 <script>
-import { EventBus } from '../../sub/helper/EventHelper'
-import * as AuthHelper from '../../sub/helper/AuthHelper'
-import commonmixinVue from './commonmixin.vue'
-import * as Util from '../../sub/util/Util'
 import { APP } from '../../sub/constant/config'
+import * as Util from '../../sub/util/Util'
+import * as AuthHelper from '../../sub/helper/AuthHelper'
+import { EventBus } from '../../sub/helper/EventHelper'
+import commonmixin from './commonmixin.vue'
 
 export default {
-  mixins: [commonmixinVue],
+  mixins: [commonmixin],
   created(){
     EventBus.$off('reload')
     EventBus.$on('reload', (payload)=>{

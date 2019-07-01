@@ -67,23 +67,23 @@
 
 <script>
 import { mapState } from 'vuex'
-import * as StateHelper from '../../sub/helper/StateHelper'
-import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
-import * as ViewHelper from '../../sub/helper/ViewHelper'
-import breadcrumb from '../../components/layout/breadcrumb.vue'
-import alert from '../../components/parts/alert.vue'
 import { LED_COLORS, LED_BLINK_TYPES, SENSOR } from '../../sub/constant/Constants'
-import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as Util from '../../sub/util/Util'
-import editmixin from '../../components/mixin/editmixin.vue'
+import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
+import * as StateHelper from '../../sub/helper/StateHelper'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
+import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
+import breadcrumb from '../../components/layout/breadcrumb.vue'
 import commonmixin from '../../components/mixin/commonmixin.vue'
+import editmixin from '../../components/mixin/editmixin.vue'
+import alert from '../../components/parts/alert.vue'
 
 export default {
   components: {
     breadcrumb,
     alert,
   },
-  mixins: [editmixin, commonmixin],
+  mixins: [commonmixin, editmixin],
   data () {
     return {
       name: 'led',

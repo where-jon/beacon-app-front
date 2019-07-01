@@ -1,5 +1,5 @@
-import * as Util from '../util/Util'
 import * as StringUtil from '../util/StringUtil'
+import * as Util from '../util/Util'
 import * as AuthHelper from './AuthHelper'
 import * as LocalStorageHelper from './LocalStorageHelper'
 

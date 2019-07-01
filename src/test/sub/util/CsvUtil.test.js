@@ -1,6 +1,6 @@
 import test from 'ava'
-import * as Util from '../../../sub/util/Util'
 import * as CsvUtil from '../../../sub/util/CsvUtil'
+import * as Util from '../../../sub/util/Util'
 
 test('extraCheckCsvObj', t => {
   t.true(!Util.hasValue(CsvUtil.extraCheckCsvObj({data: [ [47,48],[12,13] ]}).errors))

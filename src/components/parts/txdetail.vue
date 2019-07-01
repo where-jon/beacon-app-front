@@ -50,11 +50,11 @@
 <script>
 import { APP, DISP } from '../../sub/constant/config'
 import { FONT } from '../../sub/constant/Constants'
+import * as ColorUtil from '../../sub/util/ColorUtil'
+import * as NumberUtil from '../../sub/util/NumberUtil'
+import * as StringUtil from '../../sub/util/StringUtil'
 import meditag from './meditag.vue'
 import txdetailmodal from './txdetailmodal.vue'
-import * as StringUtil from '../../sub/util/StringUtil'
-import * as NumberUtil from '../../sub/util/NumberUtil'
-import * as ColorUtil from '../../sub/util/ColorUtil'
 
 const loadImage = (src, fixHeight) => {
   if(!src){

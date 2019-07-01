@@ -1,6 +1,5 @@
-import { DISP } from '../constant/config'
 import Chart from 'chart.js'
-// import _ from 'lodash'
+import { DISP } from '../constant/config'
 
 let chart = null
 

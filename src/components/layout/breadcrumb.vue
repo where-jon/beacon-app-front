@@ -45,11 +45,11 @@
 
 <script>
 
-import { getThemeColor, getThemeClasses } from '../../sub/helper/ThemeHelper'
+import { APP } from '../../sub/constant/config'
 import * as Util from '../../sub/util/Util'
 import * as AuthHelper from '../../sub/helper/AuthHelper'
 import { EventBus } from '../../sub/helper/EventHelper'
-import { APP } from '../../sub/constant/config'
+import { getThemeColor, getThemeClasses } from '../../sub/helper/ThemeHelper'
 import LegendItem from '../parts/legend.vue'
 
 export default {

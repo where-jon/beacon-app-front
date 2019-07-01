@@ -32,22 +32,23 @@
 
 import Vue from 'vue'
 import { mapState, mapMutations } from 'vuex'
-import { getThemeColor, getThemeClasses } from '../sub/helper/ThemeHelper'
-import { APP, DISP, DEV, EXCLOUD } from '../sub/constant/config'
-
-import mSidebar from '../components/layout/sidebar.vue'
-import mNav from '../components/layout/nav.vue'
-
 import vSelect from 'vue-select'
-import BootstrapVue from 'bootstrap-vue'
 import 'vue-select/dist/vue-select.css'
 import Spinner from 'vue-simple-spinner'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { fas } from '@fortawesome/free-solid-svg-icons'
+
+import BootstrapVue from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
-import * as LocaleHelper from '../sub/helper/LocaleHelper'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { fas } from '@fortawesome/free-solid-svg-icons'
+
+import { APP, DISP, DEV, EXCLOUD } from '../sub/constant/config'
 import { getLangShort } from '../sub/util/BrowserUtil'
+import * as LocaleHelper from '../sub/helper/LocaleHelper'
+import { getThemeColor, getThemeClasses } from '../sub/helper/ThemeHelper'
+
+import mNav from '../components/layout/nav.vue'
+import mSidebar from '../components/layout/sidebar.vue'
 
 Vue.use(BootstrapVue)
 Vue.component('vue-simple-spinner', Spinner)
@@ -56,8 +57,8 @@ library.add(fas)
 
 export default {
   components: {
+    mNav,
     mSidebar, 
-    mNav
   },
   data() {
     return {

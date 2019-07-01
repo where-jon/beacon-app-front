@@ -7,13 +7,13 @@
 
 <script>
 import { mapState } from 'vuex'
-import * as ViewHelper from '../../../sub/helper/ViewHelper'
-import * as BulkHelper from '../../../sub/helper/BulkHelper'
-import * as Util from '../../../sub/util/Util'
+import { APP } from '../../../sub/constant/config'
 import * as ArrayUtil from '../../../sub/util/ArrayUtil'
+import * as Util from '../../../sub/util/Util'
+import * as BulkHelper from '../../../sub/helper/BulkHelper'
+import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
-import { APP } from '../../../sub/constant/config.js'
 
 export default {
   components: {

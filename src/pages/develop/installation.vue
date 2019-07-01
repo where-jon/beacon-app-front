@@ -6,11 +6,11 @@
 </template>
 
 <script>
-import position from '../main/position.vue'
+import { APP } from '../../sub/constant/config'
+import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
 import rssimap from '../../components/parts/rssimap.vue'
-import * as ArrayUtil from '../../sub/util/ArrayUtil'
-import { APP } from '../../sub/constant/config'
+import position from '../main/position.vue'
 
 export default {
   components: {

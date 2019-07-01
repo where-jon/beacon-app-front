@@ -54,29 +54,29 @@
 </template>
 
 <script>
-import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
+import { Shape, Container, Bitmap, Text } from '@createjs/easeljs/dist/easeljs.module'
+import cold from '../../assets/icon/cold.png'
+import comfort from '../../assets/icon/comfort.png'
+import hot from '../../assets/icon/hot.png'
+import * as mock from '../../assets/mock/mock'
+import { DEV, APP, DISP } from '../../sub/constant/config'
+import { SENSOR, DISCOMFORT } from '../../sub/constant/Constants'
+import * as DateUtil from '../../sub/util/DateUtil'
+import * as NumberUtil from '../../sub/util/NumberUtil'
+import * as StringUtil from '../../sub/util/StringUtil'
+import * as Util from '../../sub/util/Util'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
+import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
+import * as HeatmapHelper from '../../sub/helper/HeatmapHelper'
 import * as SensorHelper from '../../sub/helper/SensorHelper'
-import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as StyleHelper from '../../sub/helper/StyleHelper'
-import * as HeatmapHelper from '../../sub/helper/HeatmapHelper'
-import * as Util from '../../sub/util/Util'
-import * as StringUtil from '../../sub/util/StringUtil'
-import * as NumberUtil from '../../sub/util/NumberUtil'
-import * as DateUtil from '../../sub/util/DateUtil'
-import { DEV, APP, DISP } from '../../sub/constant/config'
-import * as mock from '../../assets/mock/mock'
-import { SENSOR, DISCOMFORT } from '../../sub/constant/Constants'
-import { Shape, Container, Bitmap, Text } from '@createjs/easeljs/dist/easeljs.module'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
+import commonmixin from '../../components/mixin/commonmixin.vue'
+import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import alert from '../../components/parts/alert.vue'
 import ToolTip from '../../components/parts/toolTip.vue'
-import showmapmixin from '../../components/mixin/showmapmixin.vue'
-import commonmixin from '../../components/mixin/commonmixin.vue'
-import cold from '../../assets/icon/cold.png'
-import hot from '../../assets/icon/hot.png'
-import comfort from '../../assets/icon/comfort.png'
 
 export default {
   components: {
@@ -84,7 +84,7 @@ export default {
     alert,
     ToolTip,
   },
-  mixins: [showmapmixin, commonmixin],
+  mixins: [commonmixin, showmapmixin],
   data() {
     return {
       items: ViewHelper.createBreadCrumbItems('main', 'thermohumidity'),

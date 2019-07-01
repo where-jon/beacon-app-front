@@ -1,7 +1,7 @@
 import _ from 'lodash'
-import { EXCLOUD, APP_SERVICE, DEV, APP } from '../constant/config'
-import * as mock from '../../assets/mock/mock'
 import moment from 'moment'
+import * as mock from '../../assets/mock/mock'
+import { DEV, APP, EXCLOUD, APP_SERVICE } from '../constant/config'
 import * as HttpHelper from './HttpHelper'
 
 export const dateform = (time) => time? moment(time).format('YYYY/MM/DD HH:mm:ss'): ''

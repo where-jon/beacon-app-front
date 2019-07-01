@@ -21,9 +21,9 @@
 </template>
 
 <script>
+import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
-import * as ArrayUtil from '../../sub/util/ArrayUtil'
 
 export default {
   components: {

@@ -50,19 +50,19 @@
 
 <script>
 import 'element-ui/lib/theme-chalk/index.css'
-import breadcrumb from '../../components/layout/breadcrumb.vue'
-import alert from '../../components/parts/alert.vue'
-import showmapmixin from '../../components/mixin/showmapmixin.vue'
-import commonmixin from '../../components/mixin/commonmixin.vue'
-import { addLabelByKey } from '../../sub/helper/ViewHelper'
-import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
-import * as StateHelper from '../../sub/helper/StateHelper'
-import * as SensorHelper from '../../sub/helper/SensorHelper'
+import { APP, EXCLOUD } from '../../sub/constant/config'
+import { SENSOR } from '../../sub/constant/Constants'
+import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as StringUtil from '../../sub/util/StringUtil'
-import * as ArrayUtil from '../../sub/util/ArrayUtil'
-import { EXCLOUD, APP } from '../../sub/constant/config'
-import { SENSOR } from '../../sub/constant/Constants'
+import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
+import * as SensorHelper from '../../sub/helper/SensorHelper'
+import * as StateHelper from '../../sub/helper/StateHelper'
+import { addLabelByKey } from '../../sub/helper/ViewHelper'
+import breadcrumb from '../../components/layout/breadcrumb.vue'
+import commonmixin from '../../components/mixin/commonmixin.vue'
+import showmapmixin from '../../components/mixin/showmapmixin.vue'
+import alert from '../../components/parts/alert.vue'
 
 
 export default {
@@ -70,7 +70,7 @@ export default {
     breadcrumb,
     alert,
   },
-  mixins: [showmapmixin, commonmixin],
+  mixins: [commonmixin, showmapmixin],
   props: {
     pitems: {
       type: Array,

@@ -116,26 +116,26 @@
 
 <script>
 import { mapState } from 'vuex'
-import * as AuthHelper from '../../sub/helper/AuthHelper'
-import { DISP, APP } from '../../sub/constant/config'
+import { APP, DISP } from '../../sub/constant/config'
 import { LOGIN_MODE } from '../../sub/constant/Constants'
-import { getThemeClasses } from '../../sub/helper/ThemeHelper'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
-import commonmixinVue from '../mixin/commonmixin.vue'
-import CustomLink from '../parts/customlink.vue'
-import * as StateHelper from '../../sub/helper/StateHelper'
-import * as RegionHelper from '../../sub/helper/RegionHelper'
-import * as LocalStorageHelper from '../../sub/helper/LocalStorageHelper'
-import * as ImageHelper from '../../sub/helper/ImageHelper'
+import * as AuthHelper from '../../sub/helper/AuthHelper'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
+import * as ImageHelper from '../../sub/helper/ImageHelper'
+import * as LocalStorageHelper from '../../sub/helper/LocalStorageHelper'
+import * as RegionHelper from '../../sub/helper/RegionHelper'
+import * as StateHelper from '../../sub/helper/StateHelper'
+import { getThemeClasses } from '../../sub/helper/ThemeHelper'
+import commonmixin from '../mixin/commonmixin.vue'
 import Help from '../page/help.vue'
+import CustomLink from '../parts/customlink.vue'
 
 export default {
   components: {
-    CustomLink,
     Help,
+    CustomLink,
   },
-  mixins: [commonmixinVue],
+  mixins: [commonmixin],
   data() {
     return {
       nav : this.$store.state.menu,

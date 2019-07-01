@@ -72,18 +72,18 @@
 
 <script>
 import { mapState } from 'vuex'
-import breadcrumb from '../../components/layout/breadcrumb.vue'
-import * as MenuHelper from '../../sub/helper/MenuHelper'
-import * as StateHelper from '../../sub/helper/StateHelper'
-import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
-import * as HttpHelper from '../../sub/helper/HttpHelper'
-import * as Util from '../../sub/util/Util'
-import * as ArrayUtil from '../../sub/util/ArrayUtil'
+import { Container, Shape, Text } from '@createjs/easeljs/dist/easeljs.module'
 import { APP, DISP, EXCLOUD } from '../../sub/constant/config'
 import { CATEGORY } from '../../sub/constant/Constants'
-import { Container, Shape, Text } from '@createjs/easeljs/dist/easeljs.module'
-import showmapmixin from '../../components/mixin/showmapmixin.vue'
+import * as ArrayUtil from '../../sub/util/ArrayUtil'
+import * as Util from '../../sub/util/Util'
+import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
+import * as HttpHelper from '../../sub/helper/HttpHelper'
+import * as MenuHelper from '../../sub/helper/MenuHelper'
+import * as StateHelper from '../../sub/helper/StateHelper'
+import breadcrumb from '../../components/layout/breadcrumb.vue'
 import commonmixin from '../mixin/commonmixin.vue'
+import showmapmixin from '../../components/mixin/showmapmixin.vue'
 
 class RssiIcon {
   constructor(parent, rssi, scale, level = 3) {
@@ -141,7 +141,7 @@ export default {
   components: {
     breadcrumb,
   },
-  mixins: [showmapmixin, commonmixin],
+  mixins: [commonmixin, showmapmixin],
   data () {
     return {
       items: [

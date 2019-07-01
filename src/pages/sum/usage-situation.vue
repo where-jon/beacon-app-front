@@ -55,25 +55,25 @@
 <script>
 import { mapState } from 'vuex'
 import 'element-ui/lib/theme-chalk/index.css'
-import breadcrumb from '../../components/layout/breadcrumb.vue'
-import alert from '../../components/parts/alert.vue'
-import showmapmixin from '../../components/mixin/showmapmixin.vue'
-import commonmixinVue from '../../components/mixin/commonmixin.vue'
+import { CATEGORY } from '../../sub/constant/Constants'
+import * as BrowserUtil from '../../sub/util/BrowserUtil'
+import * as CsvUtil from '../../sub/util/CsvUtil'
+import * as Util from '../../sub/util/Util'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
+import { getCharSet } from '../../sub/helper/CharSetHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
-import * as BrowserUtil from '../../sub/util/BrowserUtil'
-import * as Util from '../../sub/util/Util'
-import * as CsvUtil from '../../sub/util/CsvUtil'
-import { getCharSet } from '../../sub/helper/CharSetHelper'
-import { CATEGORY } from '../../sub/constant/Constants'
+import breadcrumb from '../../components/layout/breadcrumb.vue'
+import commonmixin from '../../components/mixin/commonmixin.vue'
+import showmapmixin from '../../components/mixin/showmapmixin.vue'
+import alert from '../../components/parts/alert.vue'
 
 export default {
   components: {
     breadcrumb,
     alert,
   },
-  mixins: [showmapmixin, commonmixinVue],
+  mixins: [commonmixin, showmapmixin],
   data () {
     return {
       name: 'usageSituation',

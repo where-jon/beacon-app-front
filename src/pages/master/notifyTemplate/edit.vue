@@ -60,24 +60,24 @@
 
 <script>
 import { mapState } from 'vuex'
-import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import { APP } from '../../../sub/constant/config'
+import { NOTIFY_STATE, NOTIFY_MIDIUM } from '../../../sub/constant/Constants'
+import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as ValidateHelper from '../../../sub/helper/ValidateHelper'
-import editmixin from '../../../components/mixin/editmixin.vue'
-import * as Util from '../../../sub/util/Util'
+import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
-import alert from '../../../components/parts/alert.vue'
-import { NOTIFY_STATE,NOTIFY_MIDIUM } from '../../../sub/constant/Constants'
-import showmapmixin from '../../../components/mixin/showmapmixin.vue'
 import commonmixin from '../../../components/mixin/commonmixin.vue'
-import { APP } from '../../../sub/constant/config.js'
+import editmixin from '../../../components/mixin/editmixin.vue'
+import showmapmixin from '../../../components/mixin/showmapmixin.vue'
+import alert from '../../../components/parts/alert.vue'
 
 export default {
   components: {
     breadcrumb,
     alert,
   },
-  mixins: [editmixin, showmapmixin, commonmixin],
+  mixins: [commonmixin, editmixin, showmapmixin],
   data() {
     return {
       name: 'template',
