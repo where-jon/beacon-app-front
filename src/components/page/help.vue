@@ -494,7 +494,7 @@ export default {
   },
   data () {
     return {
-      isEnableHelp: false,
+      isEnableHelp: true,
       isDisplayPositionList: false,
       isDisplayBulkRegister: false,
       isDisplayRegion: false,
@@ -690,10 +690,31 @@ export default {
         }
       }.bind(this))
 
-      this.isEnableHelp = this.isDisplayPositionList || this.isDisplayBulkRegister || 
-      this.isDisplayArea || this.isDisplayExb || this.isDisplayTx || this.isDisplayPot || 
-      this.isDisplayCategory || this.isDisplayGroup || this.isDisplayUser || this.isDisplayRole || 
-      this.isDisplayZoneClass || this.isDisplayZoneBlock
+      this.isEnableHelp = this.isDisplayPositionList || 
+        this.isDisplayBulkRegister || 
+        this.isDisplayRegion || 
+        this.isDisplayArea || 
+        this.isDisplayExb || 
+        this.isDisplayTx || 
+        this.isDisplayPot || 
+        this.isDisplayCategory || 
+        this.isDisplayGroup || 
+        this.isDisplayUser || 
+        this.isDisplayRole || 
+        this.isDisplayZoneClass || 
+        this.isDisplayZoneBlock || 
+        this.isDisplayGateway || 
+        this.isDisplayPosition || 
+        this.isDisplayTelemetry || 
+        this.isDisplayUsageSituation || 
+        this.isDisplaySensorGraph || 
+        this.isDisplayStayRatio || 
+        this.isDisplayTemperatureHistory || 
+        this.isDisplayPositionHistory || 
+        this.isDisplaySensorHistory || 
+        this.isDisplayNotifyHistory || 
+        this.isDisplayStayRatioBase
+
     },
     getLabel(key, option){
       return this.$i18n.tnl('label.' + key, option)
