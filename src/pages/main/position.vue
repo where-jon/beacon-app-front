@@ -430,6 +430,12 @@ export default {
         const ratio = DISP.TX.R_ABSOLUTE ? 1/this.canvasScale : 1
         position = PositionHelper.adjustPosition(this.getPositions(), ratio, this.positionedExb, this.selectedArea)
       }
+      // TODO: ゾーン表示を作成する
+      if (PositionHelper.hasZoneDisplay()) {
+      // TODO: ゾーン表示での影響（ステータス）を反映する
+      // TODO: ゾーンTX描画処理を呼び出す
+      }
+
       position.forEach((pos) => this.showTx(pos))
       this.reShowTx(position)
     },

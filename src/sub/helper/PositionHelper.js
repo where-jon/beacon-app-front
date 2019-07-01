@@ -363,3 +363,7 @@ export const isLost = (timestamp, now) => {
   const date = new Date(timestamp)
   return date.getTime() < now - APP.POS.LOST_TIME
 }
+
+export const hasZoneDisplay = () => {
+  return false
+}
