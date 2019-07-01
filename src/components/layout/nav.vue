@@ -222,8 +222,16 @@ export default {
     },
     openHelp() {
       const path = _.filter(this.$route.path.split('/'), (path) => Boolean(path))
-      this.fromPageUrl = path? '#' + path[path.length - 2] + '_' + path[path.length - 1]: ''
+      const lastPath = path? path[path.length - 1]: ''
+      if (path && this.useLastUrl(lastPath)) {
+        this.fromPageUrl = '#' + lastPath
+      } else {
+        this.fromPageUrl = path? '#' + path[path.length - 2] + '_' + lastPath: ''
+      }
       this.$root.$emit('bv::show::modal', 'helpModal')
+    },
+    useLastUrl(lastPath) {
+      return lastPath == 'bulkedit'
     },
     isTenantAdmin() {
       const login = LocalStorageHelper.getLogin()
