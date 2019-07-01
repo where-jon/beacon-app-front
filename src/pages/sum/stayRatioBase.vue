@@ -61,7 +61,7 @@
           </b-form-checkbox><br>
         </b-form-checkbox-group>
         <b-form-checkbox-group v-if="!isCategorySelected" id="checkbox-group-2" v-model="displayCheckList.area" name="flavour-2">
-          <div v-for="(area, index) in areas" :key="`area-${index}`">
+          <div v-for="(area, index) in getAreaArray()" :key="`area-${index}`">
             <b-form-checkbox :value="area.areaId">
               {{ area.areaName }} <span class="bgSquare" :style="`background-color: ${getStackColor(index)};`" />
             </b-form-checkbox><br>
@@ -242,6 +242,7 @@ export default {
       isCategorySelected: true,
       checkboxLimit: 6,
       showModal: false,
+      areaArray: [],
     }
   },
   computed: {
@@ -288,6 +289,9 @@ export default {
     await StateHelper.load('categories')
     await StateHelper.load('areas')
     this.form.date = moment().add(-1, 'days').format('YYYYMMDD')
+    let sortedArea = _.cloneDeep(this.areas)
+    ArrayUtil.sortIgnoreCase(sortedArea, 'areaName')
+    this.areaArray = sortedArea
   },
   async mounted() {
     ViewHelper.importElementUI()
@@ -305,6 +309,9 @@ export default {
       .sort((a, b) => a.categoryId < b.categoryId ? -1 : 1)
   },
   methods: {
+    getAreaArray() {
+      return this.areaArray
+    },
     isScaleTime(scaleTime) {
       return _.some(APP.STAY_SUM.SCALE_TIMES, (time) => { return time === scaleTime })
     },
@@ -378,11 +385,11 @@ export default {
         , thStyle: {width:'100px !important'}, thClass: categoryOtherClassName, tdClass: categoryOtherClassName})
 
       // エリアを追加する
-      let selectedAreas = _.filter(this.areas, (area) => {
+      let selectedAreas = _.filter(this.areaArray, (area) => {
         return _.some(this.displayCheckList.area, (id) => { return id == area.areaId })
       })
       
-      _.filter(this.areas, (a) => { return true })
+      _.filter(this.areaArray, (a) => { return true })
         .forEach((area, index) => {
           const areaClassName = _.some(selectedAreas, (data, index) => { return data.areaId == area.areaId})? '': disableClassName
           let colorStyle = '<span style="color: ' + DISP.SUM_STACK_COLOR[index % DISP.SUM_STACK_COLOR.length] + ';">■</span>' // TODO: リファクタリング対象。出来る人がいたらHeaderへ移動する
@@ -486,7 +493,7 @@ export default {
 
         // エリア用データ保持変数を初期化
         areaData[0] = {name: 'areaOther', value: 0}
-        this.areas.forEach((area) => {
+        this.areaArray.forEach((area) => {
           areaData[area.areaId] = {name: area.areaName, value: 0}
         })
 
@@ -519,7 +526,7 @@ export default {
           // エリア毎の滞在時間を加算（一致するカテゴリが存在する場合しかエリアを引けない）
           if (findCategory) {
             let zone = _.find(this.zones, (zone) => { return zone.categoryId == findCategory.categoryId})
-            findArea = _.find(this.areas, (area, index) => {
+            findArea = _.find(this.areaArray, (area, index) => {
               if (zone) {
                 if (area.areaId == zone.areaId) {
                   areaIndex = index
