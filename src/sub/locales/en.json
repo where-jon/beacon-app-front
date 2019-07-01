@@ -360,13 +360,13 @@
     "sumDay": "Specified date",
     "absent1Time": "Absent1 Time",
     "absent2Time": "Absent2 Time",
-    "lostTime": "Absent(90min-)",
+    "lostTime": "Absent",
     "stayRatio": "Stay ratio",
 
 
     "absent1Ratio": "Absent1 Ratio",
     "absent2Ratio": "Absent2 Ratio",
-    "lostRatio": "Absent Ratio(90min-)",
+    "lostRatio": "Absent Ratio",
 
 
 
