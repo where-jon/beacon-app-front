@@ -154,7 +154,7 @@
               </span>&nbsp;
             </div>
             <br>
-            <div style="width: 100%">
+            <div class="timeDisplay" style="width: 100%">
               <div v-for="(timeData, index) in row.item.graphTimeRatio" :key="`graph-${index}`" class="time-area" :style="`width: ${timeData.ratio}% !important;`">
                 <span v-if="index == 0" style="float: left;">
                   {{ row.item.baseTimeFrom }}
@@ -294,6 +294,7 @@ export default {
     window.addEventListener('resize', () => {
       this.updateColumnName()
       this.$forceUpdate()
+      this.setGraphTimeDisplay()
     })
     this.updateColumnName()
     await StateHelper.load('category')
@@ -305,6 +306,9 @@ export default {
       .sort((a, b) => a.categoryId < b.categoryId ? -1 : 1)
   },
   methods: {
+    getThClassName() {
+      return 'tableHeader'
+    },
     isScaleTime(scaleTime) {
       return _.some(APP.STAY_SUM.SCALE_TIMES, (time) => { return time === scaleTime })
     },
@@ -346,9 +350,9 @@ export default {
       const disableClassName = 'd-none'
       const groupClassName = isInit || !this.isDisplayGroupColumn('groupName')? disableClassName: ''
       let fields = [
-        {key: 'date', sortable: false, label: this.$i18n.tnl('label.date'), thClass: disableClassName, tdClass: disableClassName},
+        {key: 'date', sortable: false, label: this.$i18n.tnl('label.date'), thClass: this.getThClassName() + ' ' + disableClassName, tdClass: disableClassName},
         {key: 'name', sortable: true, label: this.$i18n.tnl('label.potName')},
-        {key: 'groupName', sortable: true, label: this.$i18n.tnl('label.groupName'), thClass: groupClassName, tdClass: groupClassName},
+        {key: 'groupName', sortable: true, label: this.$i18n.tnl('label.groupName'), thClass: this.getThClassName() + ' ' + groupClassName, tdClass: groupClassName},
         {key: 'graph', sortable: false, label: this.$i18n.tnl('label.graph'), thStyle: {height: '50px !important', width:'400px !important'} },
       ]
 
@@ -364,7 +368,7 @@ export default {
           let colorStyle = '<span style="color: #' + category.bgColor + ';">■</span>' // TODO: リファクタリング対象。出来る人がいたらHeaderへ移動する
           let categoryName = (category.systemUse? i18n.tnl('label.' + category.systemCategoryName): category.categoryName)
           fields.push({key: categoryName, sortable: true, label: categoryName + colorStyle
-            , thStyle: {width:'100px !important'}, thClass: categoryClassName, tdClass: categoryClassName})
+            , thStyle: {width:'100px !important'}, thClass: this.getThClassName() + ' ' + categoryClassName, tdClass: categoryClassName})
         })
       
       // カテゴリその他を追加する
@@ -375,7 +379,7 @@ export default {
       let colorOtherStyle = '<span style="color: ' + this.OtherColor + ';">■</span>' // TODO: リファクタリング対象。出来る人がいたらHeaderへ移動する
       const categoryOtherClassName = isSelectedCategoryOther? '': disableClassName
       fields.push({key: 'categoryOther', sortable: true, label: i18n.tnl('label.other')+i18n.tnl('label.category') + colorOtherStyle
-        , thStyle: {width:'100px !important'}, thClass: categoryOtherClassName, tdClass: categoryOtherClassName})
+        , thStyle: {width:'100px !important'}, thClass: this.getThClassName() + ' ' + categoryOtherClassName, tdClass: categoryOtherClassName})
 
       // エリアを追加する
       let selectedAreas = _.filter(this.areas, (area) => {
@@ -387,7 +391,7 @@ export default {
           const areaClassName = _.some(selectedAreas, (data, index) => { return data.areaId == area.areaId})? '': disableClassName
           let colorStyle = '<span style="color: ' + DISP.SUM_STACK_COLOR[index % DISP.SUM_STACK_COLOR.length] + ';">■</span>' // TODO: リファクタリング対象。出来る人がいたらHeaderへ移動する
           fields.push({key: area.areaName, sortable: true, label: area.areaName + colorStyle, thStyle: {width:'100px !important'}
-            , thClass: areaClassName, tdClass: areaClassName})
+            , thClass: this.getThClassName() + ' ' + areaClassName, tdClass: areaClassName})
         })
 
       // エリアその他が選択されている場合は追加
@@ -398,15 +402,15 @@ export default {
       colorOtherStyle = '<span style="color: ' + this.otherColor + ';">■</span>' // TODO: リファクタリング対象。出来る人がいたらHeaderへ移動する
       const areaOtherClassName = isSelectedAreaOther? '': disableClassName
       fields.push({key: 'areaOther', sortable: true, label: i18n.tnl('label.other')+i18n.tnl('label.area') + colorOtherStyle
-        , thStyle: {width:'100px !important'}, thClass: areaOtherClassName, tdClass: areaOtherClassName})
+        , thStyle: {width:'100px !important'}, thClass: this.getThClassName() + ' ' + areaOtherClassName, tdClass: areaOtherClassName})
 
       // 選択されている総合時間を追加する
       const stayClassName = isInit || this.isDisplayStayColumn('stay')? '': disableClassName
       const lostClassName = isInit || this.isDisplayStayColumn('lost')? '': disableClassName
       fields.push({key: 'stayTime', sortable: true, label: this.$i18n.tnl('label.stayTime'), thStyle: {width:'100px !important'}
-        , thClass: stayClassName, tdClass: stayClassName})
+        , thClass: this.getThClassName() + ' ' + stayClassName, tdClass: stayClassName})
       fields.push({key: 'lostTime', sortable: true, label: this.$i18n.tnl('label.lostTime'), thStyle: {width:'100px !important'}
-        , thClass: lostClassName, tdClass: lostClassName})
+        , thClass: this.getThClassName() + ' ' + lostClassName, tdClass: lostClassName})
 
       return fields.map(val => ({ ...val, originLabel: val.label}))
     },
@@ -814,12 +818,26 @@ export default {
       default:
         // 何もしない
       }
+    },
+    setGraphTimeDisplay() {
+      const timeDisplay = document.getElementsByClassName('timeDisplay')
+      _.forEach(timeDisplay, (td) => {
+        if (td.offsetWidth <= 100) {
+          td.style.visibility = 'hidden'
+        } else {
+          td.style.visibility = ''
+        }
+      })
     }
   }
 }
 </script>
 
 <style scoped lang="scss">
+.tableHeader {
+  word-break:break-all;
+}
+
 .inputSelect {
   min-width: 160px;
 }
