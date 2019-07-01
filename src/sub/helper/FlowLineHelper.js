@@ -7,7 +7,6 @@ import { Shape, Container, Text } from '@createjs/easeljs/dist/easeljs.module'
  * @param {Object} pos 
  * @param {String} triangleColor 
  * @param {String} caption 
- * @return
  */
 export const drawArrowPoint = (container, pos, triangleColor, caption) => {
   const triangle = new Shape()
@@ -36,7 +35,6 @@ export const drawArrowPoint = (container, pos, triangleColor, caption) => {
  * @param {Object} pos 
  * @param {String} color 
  * @param {Number} radius 
- * @return
  */
 export const drawDotPoint = (container, pos, color, radius) => {
   const dot = new Shape()
