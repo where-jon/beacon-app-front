@@ -1220,7 +1220,7 @@
     "required": "Please enter {target}.",
     "requiredMore": "Please enter one {target}.",
     "invalid": "{target} is invalid.",
-    "invalidLessHours": "Please enter {target} within {max} hours.",
+    "invalidLessDates": "Please enter {target} within {max} dates.",
     "notFoundData": "There is no data for {target}.",
     "notMatchCureentPassword": "The password is incorrect.",
     "invalidPassword": "Invalid password format.",

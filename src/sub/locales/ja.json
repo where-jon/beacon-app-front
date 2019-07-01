@@ -688,6 +688,9 @@
         "STATE_TYPES": "通知テンプレート画面で選択可能な種別::通知テンプレート画面で選択可能な種別を設定します。設定可能な値は次の通りです。{NOTIFY_STATE}"
       },
       "ANALYSIS": {
+        "DATETIME_DEFAULT": "動線分析、ヒートマップ画面の初期期間From::動線分析、ヒートマップ画面に表示されている期間Fromの初期値は、現在日付から設定した時間分の過去日付になります。単位は「動線分析、ヒートマップ画面の初期期間Fromの単位」で設定します。",
+        "DATETIME_DEFAULT_UNIT": "動線分析、ヒートマップ画面の初期期間Fromの単位::「動線分析、ヒートマップ画面の初期期間From」の単位を設定します。設定可能な値は次の通りです。{ANALYSIS_UNIT}",
+        "DATETIME_LIMIT": "動線分析、ヒートマップ画面の期間間隔上限::動線分析、ヒートマップ画面で表示可能な期間の上限日数を設定します。",
         "DATETIME_INTERVAL": "動線分析、ヒートマップ画面の期間間隔::動線分析、ヒートマップ画面で期間Fromを選択した時、期間Toに設定した時間分の未来日付を自動入力します。分単位で設定します。"
       },
       "STAY_SUM": {
@@ -1192,6 +1195,11 @@
         "screen": "screen::画面上に表示",
         "mail": "mail::メール通知",
         "led": "led::LED点滅"
+      },
+      "ANALYSIS_UNIT": {
+        "year": "year::年単位",
+        "month": "month::月単位",
+        "hours": "hours::時間単位"
       }
     }
   },
@@ -1220,7 +1228,7 @@
     "required": "{target}を入力してください。",
     "requiredMore": "{target}のいずれかを入力してください。",
     "invalid": "{target}が不正です。",
-    "invalidLessHours": "{target}は{max}時間以内になるように入力してください。",
+    "invalidLessDates": "{target}は{max}日以内になるように入力してください。",
     "notFoundData": "{target}のデータがありません。",
     "notMatchCureentPassword": "パスワードが違います。",
     "invalidPassword": "パスワードの形式が不正です。",

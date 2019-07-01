@@ -146,6 +146,7 @@ export const getDatetime = (baseDatetime, controlData, format) => {
     return format? formatDatetime(datetime, format): datetime
   }
   datetime.setFullYear(datetime.getFullYear() + (controlData.year? controlData.year: 0))
+  datetime.setMonth(datetime.getMonth() + (controlData.month? controlData.month: 0))
   datetime.setDate(datetime.getDate() + (controlData.date? controlData.date: 0))
   datetime.setHours(datetime.getHours() + (controlData.hours? controlData.hours: 0))
   datetime.setMinutes(datetime.getMinutes() + (controlData.minutes? controlData.minutes: 0))
