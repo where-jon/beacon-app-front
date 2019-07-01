@@ -386,7 +386,7 @@ export default {
       _.filter(this.areas, (a) => { return true })
         .forEach((area, index) => {
           const areaClassName = _.some(selectedAreas, (data, index) => { return data.areaId == area.areaId})? '': disableClassName
-          let colorStyle = '<span style="color: ' + DISP.SUM_STACK_COLOR[index] + ';">■</span>' // TODO: リファクタリング対象。出来る人がいたらHeaderへ移動する
+          let colorStyle = '<span style="color: ' + DISP.SUM_STACK_COLOR[index % DISP.SUM_STACK_COLOR.length] + ';">■</span>' // TODO: リファクタリング対象。出来る人がいたらHeaderへ移動する
           fields.push({key: area.areaName, sortable: true, label: area.areaName + colorStyle, thStyle: {width:'100px !important'}
             , thClass: areaClassName, tdClass: areaClassName})
         })
