@@ -128,6 +128,9 @@ export const APP = { // 機能面に関する設定
   },
   // 動線分析関連設定
   ANALYSIS: {
+    DATETIME_DEFAULT: 1, // デフォルトの期間Fromに現在時刻から設定値分過去の日時を自動入力する
+    DATETIME_DEFAULT_UNIT: 'month', // デフォルトの期間Fromに現在時刻から設定値分過去の日時を自動入力する（単位）
+    DATETIME_LIMIT: 366, // 分析期間の上限
     DATETIME_INTERVAL: 60 * 24, // Fromを設定した場合、この設定値分未来の日付をToに自動入力する（分単位）
   },
   // 集計

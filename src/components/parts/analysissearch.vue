@@ -121,8 +121,6 @@ export default {
       appServicePath: '/core/positionHistory',
       areaOptions: [],
       potOptions: [],
-      interval: 24 * 60 * 60 * 1000,
-      intervalHours: 24,
     }
   },
   computed: {
@@ -184,7 +182,9 @@ export default {
     this.changeGroup()
     this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions, null, true)
     const date = new Date()
-    this.form.datetimeFrom = DateUtil.getDatetime(date, {hours: -1})
+    this.form.datetimeFrom = DateUtil.getDatetime(date, {
+      [APP.ANALYSIS.DATETIME_DEFAULT_UNIT]: -1 * APP.ANALYSIS.DATETIME_DEFAULT
+    })
     this.form.datetimeTo = DateUtil.getDatetime(date)
   },
   mounted() {
@@ -218,6 +218,7 @@ export default {
       }
     },
     validate() {
+      const limitMs = APP.ANALYSIS.DATETIME_LIMIT * 24 * 60 * 60 * 1000
       const errors = ValidateHelper.validateCheck([
         {type: 'require', names: ['area'], values: [this.form.areaId]},
         {type: 'require', 
@@ -226,7 +227,7 @@ export default {
         {type: 'require', names: ['historyDateFrom'], values: [this.form.datetimeFrom]},
         {type: 'require', names: ['historyDateFrom'], values: [this.form.datetimeTo]},
         this.form.datetimeFrom && this.form.datetimeTo? {type: 'asc', names: ['historyDateFrom'], values: [this.form.datetimeFrom.getTime(), this.form.datetimeTo.getTime()], equal: false}: null,
-        this.form.datetimeFrom && this.form.datetimeTo? {type: 'less', names: ['historyDateFrom'], values: [this.form.datetimeFrom.getTime() * -1, this.form.datetimeTo.getTime()], base: this.interval, displayBase: this.intervalHours, equal: true}: null,
+        this.form.datetimeFrom && this.form.datetimeTo? {type: 'less', names: ['historyDateFrom'], values: [this.form.datetimeFrom.getTime() * -1, this.form.datetimeTo.getTime()], base: limitMs, displayBase: APP.ANALYSIS.DATETIME_LIMIT, equal: true}: null,
       ].filter(val => val && val.names.length >= 1))
       return ValidateHelper.formatValidateMessage(errors)
     },

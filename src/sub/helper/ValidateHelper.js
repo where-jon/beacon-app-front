@@ -98,7 +98,7 @@ export const validateLess = param => {
     total += param.values[idx]
   }
   if(total > param.base || (!param.equal && total == param.base)){
-    param.message = i18n.tnl('message.invalidLessHours', {target: concatNames(param.names), max: param.displayBase? param.displayBase: param.base})
+    param.message = i18n.tnl('message.invalidLessDates', {target: concatNames(param.names), max: param.displayBase? param.displayBase: param.base})
     return param
   }
   return null
