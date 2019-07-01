@@ -368,10 +368,7 @@ export default {
         if(!this.firstTime && reloadButton){
           this.reloadState.isLoad = true
         }
-
-        if(!this.selectedTx.btxId){
-          await this.fetchPositionData(cPayload)
-        }
+        await this.fetchPositionData(cPayload)
 
         this.stage.on('click', (evt) => {
           this.resetDetail()
