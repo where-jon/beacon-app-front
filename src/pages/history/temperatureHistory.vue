@@ -90,6 +90,7 @@ export default {
   data () {
     return {
       items: ViewHelper.createBreadCrumbItems('historyTitle', 'thermohumidity'),
+      message: '',
       vModelCategory: null,
       vModelZone: null,
       vModelYearMonth: null,
@@ -106,8 +107,6 @@ export default {
       dateTo: DateUtil.getDatetime(new Date(), null, 'yyyyMMdd'),
       historyType: 0,
       temperatureHistoryData: null,
-      //
-      message: '',
       //
       useInputDate: DomUtil.supportInputType('date'),
     }

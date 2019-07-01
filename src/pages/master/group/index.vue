@@ -42,8 +42,8 @@ export default {
         sortBy: 'groupName',
         initTotalRows: this.$store.state.app_service.groups.length
       },
-      groupStyles: [],
       items: ViewHelper.createBreadCrumbItems('master', 'group'),
+      groupStyles: [],
     }
   },
   computed: {

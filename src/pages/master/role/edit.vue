@@ -51,8 +51,8 @@ export default {
       id: 'roleId',
       backPath: '/master/role',
       appServicePath: '/meta/role',
-      form: Util.extract(this.$store.state.app_service.role, ['roleId', 'roleName']),
       items: ViewHelper.createBreadCrumbItems('master', {text: 'role', href: '/master/role'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.role.roleId)),
+      form: Util.extract(this.$store.state.app_service.role, ['roleId', 'roleName']),
       roleFeatureMessages: {message: ''},
     }
   },

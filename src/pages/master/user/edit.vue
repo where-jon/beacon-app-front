@@ -80,6 +80,7 @@ export default {
       id: 'userId',
       backPath: '/master/user',
       appServicePath: '/meta/user',
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'user', href: '/master/user'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.user.userId)),
       form: Util.extract(this.$store.state.app_service.user, ['userId', 'loginId', 'name', 'email', 'roleId', 'userRegionList', 'description']),
       vueSelected: {
         role: null,
@@ -92,7 +93,6 @@ export default {
       passMinLength: 3,
       passMaxLength: 16,
       selfUpdate: this.$store.state.loginId == this.$store.state.app_service.user.loginId,
-      items: ViewHelper.createBreadCrumbItems('master', {text: 'user', href: '/master/user'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.user.userId)),
     }
   },
   computed: {

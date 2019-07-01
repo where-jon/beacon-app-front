@@ -52,17 +52,17 @@ export default {
   },
   data() {
     return {
+      form: {
+        zipFile: null,
+        thumbnails: [],
+        warnThumbnails: [],
+      },
       mutex: false,
       bulkUpload: true,
       formKey: 0,
       fileCount: 0,
       loading: false,
       submittable: false,
-      form: {
-        zipFile: null,
-        thumbnails: [],
-        warnThumbnails: [],
-      },
     }
   },
   mounted() {

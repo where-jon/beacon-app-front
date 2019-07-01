@@ -78,16 +78,6 @@ export default {
     return {
       name: 'usageSituation',
       items: ViewHelper.createBreadCrumbItems('sumTitle', 'usageSituation'),
-      form: {
-        mode: null,
-        selectedYearMonth: 0,
-        selectedDay: 0,
-      },
-      vueSelected: {
-        category: null,
-        zone: null,
-      },
-      viewList: [],
       fields: [],
       fields1: ViewHelper.addLabelByKey(this.$i18n, [
         {key: 'zoneCategoryName', sortable: true},
@@ -100,13 +90,19 @@ export default {
         {key: 'zoneName', sortable: true },
         {key: 'numUse', label: 'numOfUsers', sortable: true,},
       ]),
-      currentPage: 1,
-      perPage: 20,
-      totalRows: 0,
-      sortBy: null,
+      form: {
+        mode: null,
+        selectedYearMonth: 0,
+        selectedDay: 0,
+      },
+      vueSelected: {
+        category: null,
+        zone: null,
+      },
       //
       message: '',
       //
+      viewList: [],
       dayOptionList: [],
       categoryOptionList: [],
       zoneOptionList: [],
@@ -116,6 +112,10 @@ export default {
       vModelYearMonth: null,
       vModelDay: null,
       MONTHS: 6,
+      currentPage: 1,
+      perPage: 20,
+      totalRows: 0,
+      sortBy: null,
     }
   },
   computed: {

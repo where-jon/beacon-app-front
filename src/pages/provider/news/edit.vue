@@ -54,9 +54,9 @@ export default {
       id: 'newsId',
       backPath: '/provider/news',
       appServicePath: '/news',
+      items: ViewHelper.createBreadCrumbItems('provider', {text: 'news', href: '/provider/news'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.news.newsId)),
       form: Util.extract(this.$store.state.app_service.news,
         ['newsId', 'newsDate', 'content', 'dispFlg']),
-      items: ViewHelper.createBreadCrumbItems('provider', {text: 'news', href: '/provider/news'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.news.newsId)),
     }
   },
   computed: {

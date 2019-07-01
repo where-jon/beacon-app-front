@@ -77,17 +77,21 @@ export default {
   data() {
     return {
       id: -1,
-      zoneClassPath: '/master/zoneClass',
       backPath: '/master/zoneBlock',
       appServicePath: '/core/zone',
+      zoneClassPath: '/master/zoneClass',
+      items: ViewHelper.createBreadCrumbItems('master', 'zoneBlock'),
       form: Util.extract(this.$store.state.app_service.zone, ['zoneId', 'zoneName', 'areaId', 'locationZoneList.0.locationZonePK.locationId', 'zoneCategoryList.0.zoneCategoryPK.categoryId']),
+      vueSelected: {
+        area: null,
+      },
       areaNames: [],
       areaId: null,
       categoryNames: [],
       categoryId: null,
+      deletedIds: [],
       isEnableNameText: false,
       zoneName: null,
-      deletedIds: [],
       isRegist: false,
       isDelete: false,
       isCompleteRegist: false,
@@ -95,10 +99,6 @@ export default {
         name: '',
         categoryId: -1,
       },
-      vueSelected: {
-        area: null,
-      },
-      items: ViewHelper.createBreadCrumbItems('master', 'zoneBlock'),
     }
   },
   computed: {

@@ -63,13 +63,13 @@ export default {
       id: 'groupId',
       backPath: '/master/group',
       appServicePath: '/basic/group',
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'group', href: '/master/group'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.group.groupId)),
+      form: Util.extract(this.$store.state.app_service.group, ['groupId', 'groupName', 'ruby', 'display', 'description']),
       defaultColor: '#000000',
       defaultBgColor: '#ffffff',
-      form: Util.extract(this.$store.state.app_service.group, ['groupId', 'groupName', 'ruby', 'display', 'description']),
       oldShape: Util.getValue(group, 'display.shape', null),
       oldColor: Util.getValue(group, 'display.color', null),
       oldBgColor: Util.getValue(group, 'display.bgColor', null),
-      items: ViewHelper.createBreadCrumbItems('master', {text: 'group', href: '/master/group'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.group.groupId)),
     }
   },
   computed: {

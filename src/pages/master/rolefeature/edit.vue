@@ -60,15 +60,6 @@ export default {
       id: 'featureId',
       backPath: '/master/role/edit',
       appServicePath: '/meta/roleFeature',
-      featureId: -1,
-      form: Util.extract(this.$store.state.app_service.roleFeature, ['feature.featureId', 'feature.featureName', 'feature.path', 'mode']),
-      vueSelected: {
-        feature: null,
-      },
-      featureNames: [],
-      selectedModes: [],
-      selectedAll: false,
-      modeOptions: ROLE_FEATURE.getModeOptions(),
       items: ViewHelper.createBreadCrumbItems(
         'master',
         {text: 'role', href: '/master/role'},
@@ -76,6 +67,15 @@ export default {
         'feature',
         ViewHelper.getDetailCaptionKey(this.$store.state.app_service.roleFeature.feature? this.$store.state.app_service.roleFeature.feature.featureId: null)
       ),
+      form: Util.extract(this.$store.state.app_service.roleFeature, ['feature.featureId', 'feature.featureName', 'feature.path', 'mode']),
+      vueSelected: {
+        feature: null,
+      },
+      featureNames: [],
+      featureId: -1,
+      selectedModes: [],
+      selectedAll: false,
+      modeOptions: ROLE_FEATURE.getModeOptions(),
     }
   },
   computed: {

@@ -89,12 +89,6 @@ export default {
       name: 'led',
       id: 'ledId',
       appServicePath: '/core/excloud/led',
-      deviceIds: [],
-      ledColors: LED_COLORS,
-      ledBlinkTypes: LED_BLINK_TYPES,
-      lightOnCandidate: false,
-      noDevice: false,
-      again: false,
       form: {
         deviceId: '',
         colors: [2],
@@ -104,6 +98,12 @@ export default {
         deviceId: null,
       },
       items: ViewHelper.createBreadCrumbItems('main', 'ledOperation'),
+      deviceIds: [],
+      ledColors: LED_COLORS,
+      ledBlinkTypes: LED_BLINK_TYPES,
+      lightOnCandidate: false,
+      noDevice: false,
+      again: false,
     }
   },
   computed: {

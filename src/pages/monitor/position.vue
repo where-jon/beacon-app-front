@@ -40,8 +40,8 @@ export default {
   data () {
     return {
       items: ViewHelper.createBreadCrumbItems('monitor', 'position'),
-      positions: [],
       headers: this.getHeaders(),
+      positions: [],
       reloadState: { isLoad: false },
       csvHeaders: this.getCsvHeaders(),
     }

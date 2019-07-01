@@ -34,9 +34,6 @@ export default {
   },
   data() {
     return {
-      prohibitDetectList : null,
-      message: '',
-      showDismissibleAlert: false,
       params: {
         name: 'position-stack',
         id: 'position-stackId',
@@ -44,15 +41,18 @@ export default {
           {key: 'label', label: this.masterName, tdClass: 'icon-rowdata'},
           {key: 'icons', label: 'tx', tdClass: 'icon-rowdata align-top'},
         ]),
+        hideSearchBox: true,
         initTotalRows: this.$store.state.main[StringUtil.concatCamel('each', StringUtil.single2multi(this.masterName))].length,
         disableTableButtons: true,
-        hideSearchBox: true,
         bordered: true,
       },
+      name: this.masterName + 'Name',
+      id: this.masterName + 'Id',
+      message: '',
       listName: StringUtil.single2multi(this.masterName),
       eachListName: StringUtil.concatCamel('each', StringUtil.single2multi(this.masterName)),
-      id: this.masterName + 'Id',
-      name: this.masterName + 'Name',
+      prohibitDetectList : null,
+      showDismissibleAlert: false,
     }
   },
   computed: {

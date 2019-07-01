@@ -42,8 +42,8 @@ export default {
         sortBy: 'categoryName',
         initTotalRows: this.categoryLength
       },
-      categoryStyles: [],
       items: ViewHelper.createBreadCrumbItems('master', 'category'),
+      categoryStyles: [],
     }
   },
   computed: {

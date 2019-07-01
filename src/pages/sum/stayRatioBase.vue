@@ -214,6 +214,8 @@ export default {
   mixins: [commonmixin],
   data () {
     return {
+      items: ViewHelper.createBreadCrumbItems('sumTitle', 'stayRatioBase'),
+      fields: this.getFields(true),
       form: {
         date: '',
       },
@@ -227,22 +229,20 @@ export default {
         area: [],
         group: [],
       },
-      name: '',
-      viewList: [],
-      items: ViewHelper.createBreadCrumbItems('sumTitle', 'stayRatioBase'),
       message: '',
       modalMessage: '',
+      viewList: [],
+      areaArray: [],
+      categoryDisplayList: [],
+      name: '',
       currentPage: 1,
       perPage: 20,
       sortBy: 'name',
       totalRows: 0,
-      categoryDisplayList: [],
-      fields: this.getFields(true),
       historyType: 'category',
       isCategorySelected: true,
       checkboxLimit: 6,
       showModal: false,
-      areaArray: [],
     }
   },
   computed: {

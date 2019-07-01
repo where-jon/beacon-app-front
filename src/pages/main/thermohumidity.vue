@@ -88,22 +88,18 @@ export default {
   data() {
     return {
       items: ViewHelper.createBreadCrumbItems('main', 'thermohumidity'),
+      exbIcons: [],
+      txIcons: [],
       isShownChart: false,
       chartTitle: '',
       keepExbPosition: false,
       keepTxPosition: false,
-      toggleCallBack: () => {
-        this.keepExbPosition = true
-        this.keepTxPosition = true
-      },
       noImageErrorKey: 'noMapImage',
       isHeatmap: false,
       isLoading: false,
       iconTicker: null,
       thermoPatternConfig: SensorHelper.getThermoPatternConfig(),
       humidityPatternConfig: SensorHelper.getHumidityPatternConfig(),
-      exbIcons: [],
-      txIcons: [],
       iconInterval: 100,
       warnMessage: null,
       iconAlphaMin: 0.1,
@@ -121,6 +117,10 @@ export default {
         'color': DISP.THERMOH.TOOLTIP_COLOR,
       },
       reloadState: {isLoad: false, initialize: false},
+      toggleCallBack: () => {
+        this.keepExbPosition = true
+        this.keepTxPosition = true
+      },
     }
   },
   computed: {

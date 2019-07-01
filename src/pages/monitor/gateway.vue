@@ -35,7 +35,6 @@ export default {
   data () {
     return {
       items: ViewHelper.createBreadCrumbItems('monitor', 'gateway'),
-      gateways: [],
       headers: ViewHelper.addLabelByKey(this.isDev? null: this.$i18n, APP.SVC.POS.EXSERVER?[
         { key: 'deviceid', label: this.isDev? 'deviceid': 'deviceId'},
         { key: 'updated', label: this.isDev? 'updated': 'finalReceiveTimestamp'},
@@ -46,6 +45,7 @@ export default {
         { key: 'updated', label: this.isDev? 'updated': 'finalReceiveTimestamp'},
         { key: 'state'},
       ]),
+      gateways: [],
       csvHeaders: APP.SVC.POS.EXSERVER ? {
         'deviceid': 'deviceid',
         'updated': 'updated',

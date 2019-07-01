@@ -127,21 +127,20 @@ export default {
   data() {
     return {
       items: !this.isInstallation ? ViewHelper.createBreadCrumbItems('main', 'showPosition') : ViewHelper.createBreadCrumbItems('develop', 'installation'),
+      useGroup: MenuHelper.useMaster('group') && APP.POS.WITH.GROUP,
+      useCategory: MenuHelper.useMaster('category') && APP.POS.WITH.CATEGORY,
+      message: '',
+      extraNavSpec: EXTRA_NAV,
       detectedCount: 0, // 検知数
       pot: {},
       showMeditag: APP.SENSOR.USE_MEDITAG && !this.isInstallation,
       showDetected: APP.POS.SHOW_DETECTED_COUNT,
       shortName: this.$i18n.tnl('label.showPositionShort'),
-      extraNavSpec: EXTRA_NAV,
       legendItems: [],
-      useGroup: MenuHelper.useMaster('group') && APP.POS.WITH.GROUP,
-      useCategory: MenuHelper.useMaster('category') && APP.POS.WITH.CATEGORY,
-      toggleCallBack: () => this.reset(),
       noImageErrorKey: 'noMapImage',
       modeRssi: false,
       isPause: false,
       firstTime: true,
-      message: '',
       showDismissibleAlert: false,
       prohibitDetectList : null,
       lostUnDetectList : null,
@@ -155,6 +154,7 @@ export default {
       isMounted: false,
       reloadState: {isLoad: false},
       loadStates: ['category','group','lostZones','tx','exb'],
+      toggleCallBack: () => this.reset(),
     }
   },
   computed: {

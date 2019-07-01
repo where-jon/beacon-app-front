@@ -81,6 +81,7 @@ import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import commonmixin from '../mixin/commonmixin.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
@@ -144,16 +145,7 @@ export default {
   mixins: [commonmixin, showmapmixin],
   data () {
     return {
-      items: [
-        {
-          text: this.$i18n.tnl('label.develop'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.installation'),
-          active: true
-        },
-      ],
+      items: ViewHelper.createBreadCrumbItems('develop', 'installation'),
       useGroup: MenuHelper.useMaster('group') && ArrayUtil.includesIgnoreCase(APP.TX.WITH, 'group'),
       useCategory: MenuHelper.useMaster('category') && ArrayUtil.includesIgnoreCase(APP.TX.WITH, 'category'),
       modeRssi: true,

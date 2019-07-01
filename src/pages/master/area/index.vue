@@ -23,7 +23,6 @@ export default {
   mixins: [reloadmixin],
   data() {
     return {
-      areaList: [],
       params: {
         name: 'area',
         id: 'areaId',
@@ -48,6 +47,7 @@ export default {
         { name: 'location', id: 'locationList', jumpPath: '/master/location/', sendParamNames: ['areaId']}, 
       ],
       items: ViewHelper.createBreadCrumbItems('master', 'area'),
+      areaList: [],
       thumbnailUrl: APP_SERVICE.BASE_URL + EXCLOUD.AREA_THUMBNAIL_URL,
     }
   },

@@ -79,25 +79,25 @@ export default {
   mixins: [commonmixin, showmapmixin],
   data() {
     return {
-      message: '',
-      selectedTx_: null,
-      isChangeArea: false,
-      isChanged: false,
-      workTxs: [],
-      txOptions: [],
-      deleteTarget: null,
-      keepTxPosition: false,
-      ICON_FONTSIZE_RATIO: 1.3,
-      toggleCallBack: () => {
-        this.keepTxPosition = true
-      },
+      items: ViewHelper.createBreadCrumbItems('master', 'txLocationSetting'),
       vueSelected: {
         area: null,
       },
+      message: '',
+      workTxs: [],
+      txOptions: [],
+      selectedTx_: null,
+      isChangeArea: false,
+      isChanged: false,
+      deleteTarget: null,
+      keepTxPosition: false,
+      ICON_FONTSIZE_RATIO: 1.3,
       ICON_ARROW_WIDTH: DISP.TX_LOC.SIZE.W/3,
       ICON_ARROW_HEIGHT: DISP.TX_LOC.SIZE.H/3,
       noImageErrorKey: 'noMapImage',
-      items: ViewHelper.createBreadCrumbItems('master', 'txLocationSetting'),
+      toggleCallBack: () => {
+        this.keepTxPosition = true
+      },
     }
   },
   computed: {

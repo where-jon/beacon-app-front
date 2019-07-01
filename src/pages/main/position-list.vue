@@ -33,17 +33,9 @@ export default {
   mixins: [reloadmixin, showmapmixin],
   data() {
     return {
-      message: '',
-      prohibitDetectList : null,
-      showDismissibleAlert: false,
       params: {
         name: 'position-list',
         id: 'positionListId',
-        extraFilter: _(['detectState',
-          MenuHelper.useMaster('group') && APP.POS.WITH.GROUP? 'group' : null,
-          MenuHelper.useMaster('category') && APP.POS.WITH.CATEGORY? 'category' : null,
-          APP.POSITION_WITH_AREA? 'area' : null]).compact().value(),
-        disableTableButtons: true,
         fields: ViewHelper.addLabelByKey(this.$i18n, [ 
           APP.TX.BTX_MINOR == 'minor' ? {key: 'minor', label: 'minor', sortable: true, tdClass: 'action-rowdata' }: null,
           APP.TX.BTX_MINOR != 'minor' ? {key: 'btx_id', label: 'btxId', sortable: true, tdClass: 'action-rowdata' }: null,
@@ -60,13 +52,21 @@ export default {
           // {key: 'powerLevel', label: 'powerLevel', tdClass: 'action-rowdata', 'class': 'text-md-center'},
           {key: 'mapDisplay', tdClass: 'action-rowdata'},
         ]),
+        extraFilter: _(['detectState',
+          MenuHelper.useMaster('group') && APP.POS.WITH.GROUP? 'group' : null,
+          MenuHelper.useMaster('category') && APP.POS.WITH.CATEGORY? 'category' : null,
+          APP.POSITION_WITH_AREA? 'area' : null]).compact().value(),
         initTotalRows: this.$store.state.app_service.positionList.length,
+        disableTableButtons: true,
       },
-      count: 0, // mockテスト用
       items: ViewHelper.createBreadCrumbItems('main', 'positionList'),
-      reload: true,
-      shortName: this.$i18n.t('label.positionListShort'),
+      message: '',
       extraNavSpec: EXTRA_NAV,
+      shortName: this.$i18n.t('label.positionListShort'),
+      reload: true,
+      prohibitDetectList : null,
+      showDismissibleAlert: false,
+      count: 0, // mockテスト用
     }
   },
   computed: {
