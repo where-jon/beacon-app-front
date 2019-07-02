@@ -142,6 +142,7 @@ export default {
   mixins: [commonmixin],
   data () {
     return {
+      items: ViewHelper.createBreadCrumbItems('sumTitle', 'sensorGraph'),
       form: {
         sensorId: null,
         datetimeFrom: null,
@@ -155,7 +156,20 @@ export default {
         exb: null,
         tx: null,
       },
-      items: ViewHelper.createBreadCrumbItems('sumTitle', 'sensorGraph'),
+      message: '',
+      sumUnitOptions: [],
+      exbOptions: [],
+      txOptions: [],
+      exbType: [SENSOR.PIR, SENSOR.THERMOPILE, SENSOR.LED],
+      txType: [SENSOR.MEDITAG, SENSOR.MAGNET],
+      deviceType: DEVICE.EXB,
+      showSumTarget: true,
+      hourOver: 4,
+      dateOver: 3,
+      dataSensorId: null,
+      dataList: [],
+      showChart: false,
+      showSubChart: false,
       headers: {
         temperature: [
           'dt',
@@ -184,20 +198,6 @@ export default {
           APP.SENSORGRAPH.CSV_IMMEDIATE? 'pressVol(lat)': null, 'pressVol(max)', 'pressVol(avg)', 'pressVol(min)',
         ].filter(val => val),
       },
-      exbType: [SENSOR.PIR, SENSOR.THERMOPILE, SENSOR.LED],
-      txType: [SENSOR.MEDITAG, SENSOR.MAGNET],
-      sumUnitOptions: [],
-      exbOptions: [],
-      txOptions: [],
-      deviceType: DEVICE.EXB,
-      showSumTarget: true,
-      hourOver: 4,
-      dateOver: 3,
-      dataSensorId: null,
-      dataList: [],
-      message: '',
-      showChart: false,
-      showSubChart: false,
     }
   },
   computed: {

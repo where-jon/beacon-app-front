@@ -105,13 +105,6 @@ export default {
     return {
       name: 'positionHistory',
       items: ViewHelper.createBreadCrumbItems('historyTitle', 'positionHistory'),
-      form: {
-        tx: null,
-        group: null,
-        datetimeFrom: null,
-        datetimeTo: null,
-      },
-      viewList: [],
       fields: ViewHelper.addLabelByKey(this.$i18n, [
         {key: 'positionDt', sortable: true, label:'dt'},
         ...DISP.POSITION_HISTORY.HEADERS.map(header => {
@@ -125,14 +118,21 @@ export default {
           return ret
         })
       ]),
+      form: {
+        tx: null,
+        group: null,
+        datetimeFrom: null,
+        datetimeTo: null,
+      },
+      message: '',
+      footerMessage: '',
+      //
+      viewList: [],
       currentPage: 1,
       perPage: 20,
       limitViewRows: 100,
       totalRows: 0,
       sortBy: null,
-      //
-      message: '',
-      footerMessage: '',
     }
   },
   computed: {

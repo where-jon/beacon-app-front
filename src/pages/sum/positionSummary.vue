@@ -50,10 +50,10 @@ export default {
   mixins: [commonmixin],
   data () {
     return {
+      items: ViewHelper.createBreadCrumbItems('sumTitle', 'positionSummary'),
       form: {
         date: '',
       },
-      items: ViewHelper.createBreadCrumbItems('sumTitle', 'positionSummary'),
       message: '',
     }
   },

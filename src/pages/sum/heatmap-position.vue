@@ -35,12 +35,12 @@ export default {
   mixins: [showmapmixin],
   data() {
     return {
+      items: ViewHelper.createBreadCrumbItems('sumTitle', 'heatmapPosition'),
+      message: '',
       positionHistories: [],
       heatmap: null,
       fromHeatmap: true,
-      message: '',
       noImageErrorKey: 'noMapImage',
-      items: ViewHelper.createBreadCrumbItems('sumTitle', 'heatmapPosition'),
     }
   },
   computed: {

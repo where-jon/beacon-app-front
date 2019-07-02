@@ -28,9 +28,6 @@ export default {
       id: 'roleId',
       backPath: '/master/role/edit',
       appServicePath: '/meta/roleFeature',
-      roleFeature:{
-        roleId: this.$store.state.app_service.role.roleId
-      },
       items: ViewHelper.createBreadCrumbItems(
         'master',
         {text: 'role', href: '/master/role'},
@@ -38,6 +35,9 @@ export default {
         'feature',
         'bulkRegister'
       ),
+      roleFeature:{
+        roleId: this.$store.state.app_service.role.roleId
+      },
     }
   },
   computed: {

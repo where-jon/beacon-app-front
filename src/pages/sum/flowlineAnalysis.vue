@@ -39,12 +39,12 @@ export default {
   data () {
     return {
       items: ViewHelper.createBreadCrumbItems('sumTitle', 'flowlineAnalysis'),
+      message: '',
       dotRadius: 3,
       startInfo: {caption: 'start', color: '#2299cc'},
       endInfo: {caption: 'end', color: '#ee0033'},
       container: null,
       shownParam: null,
-      message: '',
       noImageErrorKey: 'noMapImage',
     }
   },

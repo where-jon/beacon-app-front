@@ -117,7 +117,8 @@ export default {
       id: 'exbId',
       backPath: '/master/exb',
       appServicePath: '/core/exb',
-      mutex: false,
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'exb', href: '/master/exb'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.exb.exbId)),
+      useZone: ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'zone') && MenuHelper.isMenuEntry('/master/zoneClass'),
       form: Util.extract(this.$store.state.app_service.exb, [
         'exbId', 'deviceId', 'enabled',
         'location.locationName', 'location.areaId', 'location.locationId', 'location.posId',
@@ -131,10 +132,9 @@ export default {
       defValue: {
         'enabled': true,
       },
+      mutex: false,
       deviceId: null,
       deviceIdX: null,
-      useZone: ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'zone') && MenuHelper.isMenuEntry('/master/zoneClass'),
-      items: ViewHelper.createBreadCrumbItems('master', {text: 'exb', href: '/master/exb'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.exb.exbId)),
       txIconsDispFormat: 1,
       txIconsHorizon: 5,
       txIconsVertical: 5,

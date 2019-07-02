@@ -71,6 +71,7 @@ export default {
       id: 'zoneId',
       backPath: '/master/zoneClass',
       appServicePath: '/core/zone',
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'zoneClass', href: '/master/zoneClass'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.zone.zoneId)),
       form: Util.extract(this.$store.state.app_service.zone, ['zoneId', 'zoneName', 'areaId', 'locationZoneList.0.locationZonePK.locationId', 'zoneCategoryList.0.zoneCategoryPK.categoryId']),
       vueSelected: {
         area: null,
@@ -78,10 +79,9 @@ export default {
       },
       areaNames: [],
       categoryNames: [],
-      isEnableNameText: true,
       zones: [],
+      isEnableNameText: true,
       isRegist: false,
-      items: ViewHelper.createBreadCrumbItems('master', {text: 'zoneClass', href: '/master/zoneClass'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.zone.zoneId)),
     }
   },
   computed: {

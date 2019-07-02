@@ -311,8 +311,8 @@ export default {
       error: null,
       sortBy: null,
       sortDesc: false,
-      sortCompare: (aData, bData, key) => this.sortCompareCustom(aData, bData, key),
       login: LocalStorageHelper.getLogin(),
+      sortCompare: (aData, bData, key) => this.sortCompareCustom(aData, bData, key),
       ...this.params
     }
   },

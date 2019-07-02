@@ -64,17 +64,17 @@ export default {
       id: 'categoryId',
       backPath: '/master/category',
       appServicePath: '/basic/category',
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'category', href: '/master/category'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.category.categoryId)),
+      form: Util.extract(category, ['categoryId', 'categoryName', 'categoryType', 'display', 'description']),
+      defValue: {
+        'categoryType': APP.CATEGORY.TYPES[0],
+      },
       defaultColor: '#000000',
       defaultBgColor: '#ffffff',
-      form: Util.extract(category, ['categoryId', 'categoryName', 'categoryType', 'display', 'description']),
       oldType: Util.getValue(category, 'categoryType', null),
       oldShape: Util.getValue(category, 'display.shape', null),
       oldColor: Util.getValue(category, 'display.color', null),
       oldBgColor: Util.getValue(category, 'display.bgColor', null),
-      defValue: {
-        'categoryType': APP.CATEGORY.TYPES[0],
-      },
-      items: ViewHelper.createBreadCrumbItems('master', {text: 'category', href: '/master/category'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.category.categoryId)),
     }
   },
   computed: {

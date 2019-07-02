@@ -76,20 +76,7 @@ export default {
   mixins: [commonmixin],
   data () {
     return {
-      form: {
-        date: '',
-      },
-      vueSelected: {
-        group: null,
-      },
-      viewList: [],
       items: ViewHelper.createBreadCrumbItems('sumTitle', 'stayRatioGp'),
-      message: '',
-      showChart: true,
-      currentPage: 1,
-      perPage: 20,
-      sortBy: 'name',
-      totalRows: 0,
       fields: ViewHelper.addLabelByKey(this.$i18n, [
         {key: 'date', sortable: false, label: 'date'},
         {key: 'name', sortable: true, label: 'potName'},
@@ -103,6 +90,19 @@ export default {
         {key: 'absent2Ratio', sortable: true, label: 'absent2Ratio'},
         {key: 'lostRatio', sortable: true, label: 'lostRatio'},
       ]).map(val => ({ ...val, originLabel: val.label})),
+      form: {
+        date: '',
+      },
+      vueSelected: {
+        group: null,
+      },
+      message: '',
+      viewList: [],
+      showChart: true,
+      currentPage: 1,
+      perPage: 20,
+      sortBy: 'name',
+      totalRows: 0,
     }
   },
   computed: {

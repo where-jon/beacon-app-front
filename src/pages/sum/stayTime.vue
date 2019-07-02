@@ -107,6 +107,7 @@ export default {
   mixins: [commonmixin],
   data () {
     return {
+      items: ViewHelper.createBreadCrumbItems('sumTitle', 'stayTime'),
       form: {
         datetimeFrom: '2019-02-11',
         datetimeTo: '2019-02-22',
@@ -115,7 +116,11 @@ export default {
         stack: 'area',
         axis: 'day',
       },
-      items: ViewHelper.createBreadCrumbItems('sumTitle', 'stayTime'),
+      vueSelectedKeys: ['pot', 'category', 'group', 'area', 'zone', 'zoneCategory'],
+      vueSelected: {
+        filter: null,
+      },
+      message: '',
       filterIdOptions: [],
       filterKindOptions: SUM_FILTER_KIND.getOptions(),
       stackOptions: SUM_UNIT_STACK.getOptions(),
@@ -123,12 +128,7 @@ export default {
       chartData: [],
       axises: [],
       stacks: [],
-      message: '',
       showChart: true,
-      vueSelectedKeys: ['pot', 'category', 'group', 'area', 'zone', 'zoneCategory'],
-      vueSelected: {
-        filter: null,
-      },
     }
   },
   computed: {

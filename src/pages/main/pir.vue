@@ -49,17 +49,17 @@ export default {
   mixins: [commonmixin, showmapmixin],
   data() {
     return {
-      keepExbPosition: false,
-      toggleCallBack: () => {
-        this.keepExbPosition = true
-        this.reset()
-      },
-      noImageErrorKey: 'noMapImage',
       items: ViewHelper.createBreadCrumbItems('main', 'pirMenu'),
+      keepExbPosition: false,
+      noImageErrorKey: 'noMapImage',
       INUSE_FONTSIZE_RATIO: 0.9,
       FONTSIZE_RATIO_EN: 0.5,
       EMPTY_FONTSIZE_RATIO: 1.2,
       reloadState: {isLoad: false, initialize: false},
+      toggleCallBack: () => {
+        this.keepExbPosition = true
+        this.reset()
+      },
     }
   },
   computed: {

@@ -41,12 +41,12 @@ export default {
   mixins: [reloadmixin],
   data () {
     return {
+      items: ViewHelper.createBreadCrumbItems('sumTitle', 'processSum'),
+      fields: [],
       form: {
         categoryType: CATEGORY.THING,
       },
-      fields: [],
       viewList: [],
-      items: ViewHelper.createBreadCrumbItems('sumTitle', 'processSum'),
     }
   },
   computed: {

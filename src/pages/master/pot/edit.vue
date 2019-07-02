@@ -138,24 +138,14 @@ export default {
       id: 'potId',
       backPath: '/master/pot',
       appServicePath: '/basic/pot',
-      category: _.slice(CATEGORY.getTypes(), 0, 2).filter((val) => APP.CATEGORY.TYPES.includes(val.value)),
-      txIds: Array(APP.POT.TX_MAX),
-      btxIds: Array(APP.POT.TX_MAX),
-      minors: Array(APP.POT.TX_MAX),
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'pot', href: '/master/pot'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.pot.potId)),
       showEmail: false,
       editShowUser: false,
-      roleOptions: [],
       form: {
         ...Util.extract(this.$store.state.app_service.pot,
           ['potId', 'potCd', 'potName', 'potType', 'extValue.ruby',
             'displayName', 'potGroupList.0.group.groupId', 'potCategoryList.0.category.categoryId', 'extValue.tel',
             'extValue.post', 'existThumbnail', 'description'])
-      },
-      vueSelected: {
-        group: null,
-        category: null,
-        role: null,
-        txs: []
       },
       userForm: {
         userId: null, loginId: null, pass: null, roleId: null, email: null,
@@ -163,10 +153,20 @@ export default {
       oldUserForm: {
         userId: null, loginId: null, pass: null, roleId: null, email: null,
       },
+      vueSelected: {
+        group: null,
+        category: null,
+        role: null,
+        txs: []
+      },
       defValue: {
         'potType': APP.CATEGORY.TYPES[0] != 3? APP.CATEGORY.TYPES[0]: null,
       },
-      items: ViewHelper.createBreadCrumbItems('master', {text: 'pot', href: '/master/pot'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.pot.potId)),
+      roleOptions: [],
+      category: _.slice(CATEGORY.getTypes(), 0, 2).filter((val) => APP.CATEGORY.TYPES.includes(val.value)),
+      txIds: Array(APP.POT.TX_MAX),
+      btxIds: Array(APP.POT.TX_MAX),
+      minors: Array(APP.POT.TX_MAX),
       thumbnailUrl: APP_SERVICE.BASE_URL + EXCLOUD.POT_THUMBNAIL_URL,
     }
   },

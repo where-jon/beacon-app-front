@@ -107,34 +107,34 @@ export default {
   mixins: [commonmixin, showmapmixin],
   data() {
     return {
+      items: ViewHelper.createBreadCrumbItems('master', 'locationSetting'),
+      vueSelected: {
+        area: null,
+      },
       message: '',
+      workExbs: [],
+      exbOptions: [],
+      exbDispOptions: [],
+      exbDisp: 'deviceIdX',
       selectedExb_: null,
       pixelWidth: null,
       mapRatioChanged: false,
       isChangeArea: false,
       settingStart: false,
       isChanged: false,
-      workExbs: [],
-      exbOptions: [],
-      exbDisp: 'deviceIdX',
-      exbDispOptions: [],
       deleteTarget: null,
       keepExbPosition: false,
       ICON_FONTSIZE_RATIO: 1.3,
       mapRatio: null,
       revTrgCnt: [],
       lineCnt: null,
-      toggleCallBack: () => {
-        this.keepExbPosition = true
-      },
-      vueSelected: {
-        area: null,
-      },
       ICON_ARROW_WIDTH: DISP.EXB_LOC.SIZE.W/3,
       ICON_ARROW_HEIGHT: DISP.EXB_LOC.SIZE.H/3,
       DISPLAY_NAME_BYTE_LENGTH: 6,
       noImageErrorKey: 'noMapImage',
-      items: ViewHelper.createBreadCrumbItems('master', 'locationSetting'),
+      toggleCallBack: () => {
+        this.keepExbPosition = true
+      },
     }
   },
   computed: {

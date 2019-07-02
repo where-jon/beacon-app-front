@@ -58,14 +58,14 @@ export default {
   },
   data() {
     return {
-      mutex: false,
-      bulkRegister: true,
-      formKey: 0,
       form: {
         csvFile: null,
       },
-      csvCharSet: BulkHelper.getInitCharSets(this.$store.state.loginId),
       message: '',
+      mutex: false,
+      bulkRegister: true,
+      formKey: 0,
+      csvCharSet: BulkHelper.getInitCharSets(this.$store.state.loginId),
     }
   },
   computed: {

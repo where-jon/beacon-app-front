@@ -32,12 +32,12 @@ export default {
   mixins: [reloadmixin],
   data() {
     return {
-      alertData: { message: null, isAlert:false},
-      reload: true,
-      styles: [],
       items: ViewHelper.createBreadCrumbItems('main', 'positionStack'),
-      shortName: this.$i18n.t('label.positionStackShort'),
       extraNavSpec: EXTRA_NAV,
+      shortName: this.$i18n.t('label.positionStackShort'),
+      reload: true,
+      alertData: { message: null, isAlert:false},
+      styles: [],
       positionType: POSITION_STACK_TYPES.AREA,
     }
   },

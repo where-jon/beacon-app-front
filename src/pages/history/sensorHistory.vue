@@ -90,6 +90,9 @@ export default {
         datetimeFrom: null,
         datetimeTo: null,
       },
+      message: '',
+      footerMessage: '',
+      //
       viewList: [],
       fields: [],
       fields1: SensorHelper.getFields1(this.$i18n),
@@ -102,9 +105,6 @@ export default {
       limitViewRows: 100,
       fetchRows: 0,
       sortBy: null,
-      //
-      message: '',
-      footerMessage: '',
     }
   },
   computed: {

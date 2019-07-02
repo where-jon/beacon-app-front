@@ -96,16 +96,8 @@ export default {
   },
   data () {
     return {
-      name: 'setting',
-      id: 'settingId',
-      setting: {settingId: 1},
-      appServicePath: '/meta/setting',
-      featurePath: '/setting/system',
-      backPath: '/setting/system',
-      settingList: [],
-      isShowNewForm: false,
-      newForm: {key: '', valType: null, value: null},
       params: {
+        id: 'settingId',
         fields: ViewHelper.addLabelByKey(this.$i18n, [ 
           {key: 'key' },
           {key: 'keyName' },
@@ -114,17 +106,25 @@ export default {
           {key: 'value' },
           {key: 'clear', label: 'actions', thStyle: {width:'80px !important'} }
         ]),
-        id: 'settingId',
+        initTotalRows: this.totalRows,
+        formId: 'updateForm',
         allShowFilter: true,
         disableTableButtons: true,
         addFilterFields: ['title'],
         allDispFields: ['title', 'defaultVal'],
         extraFilter: ['settingCategory'],
-        formId: 'updateForm',
         tableDescription: 'settingDescription',
-        initTotalRows: this.totalRows,
       },
+      name: 'setting',
+      id: 'settingId',
+      appServicePath: '/meta/setting',
+      backPath: '/setting/system',
+      featurePath: '/setting/system',
       items: ViewHelper.createBreadCrumbItems('setting', 'system'),
+      newForm: {key: '', valType: null, value: null},
+      settingList: [],
+      isShowNewForm: false,
+      setting: {settingId: 1},
     }
   },
   computed: {

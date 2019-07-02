@@ -58,7 +58,7 @@ import * as StringUtil from '../../sub/util/StringUtil'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as SensorHelper from '../../sub/helper/SensorHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
-import { addLabelByKey } from '../../sub/helper/ViewHelper'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import commonmixin from '../../components/mixin/commonmixin.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
@@ -88,30 +88,21 @@ export default {
   data () {
     return {
       name: this.pname? this.pname: 'positionHistory',
-      items: this.pitems? this.pitems: [
-        {
-          text: this.$i18n.tnl('label.historyTitle'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.positionHistory'),
-          active: true
-        }
-      ],
+      items: this.pitems? this.pitems: ViewHelper.createBreadCrumbItems('historyTitle', 'positionHistory'),
+      fields: ViewHelper.addLabelByKey(this.$i18n, [
+        {key: 'date', sortable: true, label:'date'},
+        {key: 'actions', thStyle: {width: '130px !important'}, tdClass: 'action-rowdata' }
+      ]),
+      message: null,
+      viewList: [],
+      sortBy: 'date',
+      sortDesc: APP.HISTORY_EXC.SORT.toLowerCase() == 'desc',
       type: this.ptype? this.ptype: 'location',
       sensorId: this.ptype? SensorHelper.onlyOne(): null,
       year: new Date().getFullYear(),
       month: StringUtil.zeroPad(new Date().getMonth() + 1, 2),
       years: ArrayUtil.range(2019, new Date().getFullYear()).map(e => ({label: '' + e, value: e})),
       months: Array(12).fill().map((_, i) => ({label: '' + ++i, value: StringUtil.zeroPad(i, 2)})),
-      viewList: [],
-      fields: addLabelByKey(this.$i18n, [
-        {key: 'date', sortable: true, label:'date'},
-        {key: 'actions', thStyle: {width: '130px !important'}, tdClass: 'action-rowdata' }
-      ]),
-      message: null,
-      sortBy: 'date',
-      sortDesc: APP.HISTORY_EXC.SORT.toLowerCase() == 'desc',
     }
   },
   watch: {

@@ -110,6 +110,7 @@ export default {
       id: 'txId',
       backPath: '/master/tx',
       appServicePath: '/core/tx',
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'tx', href: '/master/tx'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.tx.txId)),
       form: Util.extract(this.$store.state.app_service.tx, [
         'txId', 'btxId', 'major', 'minor', 'potTxList.0.pot.displayName', 'mapImage', 'dispPos', 'dispPir', 'dispAlways',
         'txSensorList.0.sensor.sensorId', 'locationId', 'location.x', 'location.y', 'location',
@@ -117,14 +118,13 @@ export default {
         'potTxList.0.pot.potCategoryList.0.category.categoryId',
         'potTxList.0.pot.potGroupList.0.group.groupId',
       ]),
-      defValue: {
-        'dispPos': 1,
-      },
       vueSelected: {
         category: null,
         group: null,
       },
-      items: ViewHelper.createBreadCrumbItems('master', {text: 'tx', href: '/master/tx'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.tx.txId)),
+      defValue: {
+        'dispPos': 1,
+      },
     }
   },
   computed: {

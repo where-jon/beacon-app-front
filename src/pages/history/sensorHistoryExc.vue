@@ -3,6 +3,7 @@
 </template>
 
 <script>
+import * as ViewHelper from '../../sub/helper/ViewHelper'
 import positionHistoryExc from './positionHistoryExc.vue'
 
 export default {
@@ -12,16 +13,7 @@ export default {
   data () {
     return {
       name: 'sensorHistory',
-      items: [
-        {
-          text: this.$i18n.tnl('label.historyTitle'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.sensorHistory'),
-          active: true
-        }
-      ],
+      items: ViewHelper.createBreadCrumbItems('historyTitle', 'sensorHistory'),
       type: 'sensor',
     }
   }

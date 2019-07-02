@@ -39,7 +39,6 @@ export default {
         appServicePath: '/meta/roleFeature',
         csvOut: true,
         custumCsvColumns: ['featureName', 'path', 'modeText', 'featureTypeName', 'version', 'enabledName'],
-        hideSearchBox: !Util.hasValue(this.$store.state.app_service.role.roleId),
         fields: ViewHelper.addLabelByKey(this.$i18n, [ 
           {key: 'featureName', sortable: true },
           {key: 'path', sortable: true },
@@ -49,6 +48,7 @@ export default {
           {key: 'enabledName', label: 'enabled', sortable: true },
           {key: 'actions', thStyle: {width:'130x !important'} }
         ]),
+        hideSearchBox: !Util.hasValue(this.$store.state.app_service.role.roleId),
         sortBy: 'featureName',
         initTotalRows: this.$store.state.app_service.roleFeatures.length,
       },

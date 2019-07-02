@@ -50,8 +50,8 @@ export default {
         {key: 'subCheck', label: 'dummy', thStyle: {width:'4px !important'} },
         {key: 'featureName', label: 'dummy'},
       ]),
-      tenant: {tenantId: true},
       featureList: [],
+      tenant: {tenantId: true},
     }
   },
   computed: {
