@@ -169,9 +169,9 @@ export default {
             readerParam.readFin = true
             return
           }
-          console.debug(csv)
+          Util.debug(csv)
           BulkHelper.setCsvParamList(this, this.id, readerParam, csv.data, option)
-          console.debug(readerParam.entities)
+          Util.debug(readerParam.entities)
         } catch (e) {
           console.error(e)
           readerParam.error = e.message

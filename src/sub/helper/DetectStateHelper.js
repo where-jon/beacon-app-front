@@ -57,7 +57,6 @@ export const getState = (type, updatetime) => {
       time > LOST_TIME? DETECT_STATE.LOST:
         DETECT_STATE.DETECTED
 
-  // console.debug(updatetime, time, state)
   return state
 }
 

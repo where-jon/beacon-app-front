@@ -628,7 +628,7 @@ export default {
       this.getPositions().forEach((pos) => {
         const exb = disabledExbs[pos.pos_id]
         if (exb) {
-          console.debug('Found at disabled exb', pos, exb)
+          Util.debug('Found at disabled exb', pos, exb)
         }
       })
     },

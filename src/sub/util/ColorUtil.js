@@ -63,7 +63,7 @@ export const getRGBA = (colorCode, opacity) => {
       let alpha = opacity? opacity: 1
       return 'rgba(' + red + ',' + green + ',' + blue + ',' + alpha + ')'
     } else {
-      console.log('getRGBA-FormatError', {colorCode})
+      console.error('getRGBA-FormatError', {colorCode})
       return ''
     }
   } else {

@@ -1,5 +1,6 @@
 
 import Vue from 'vue'
+import * as Util from '../sub/util/Util'
 
 export const state = () => ({
   locales: ['en', 'ja'],
@@ -25,7 +26,7 @@ const initState = state()
 
 export const mutations = {
   replace(state, obj) {
-    console.debug('replace')
+    Util.debug('replace')
     if (obj) {
       for (let key in obj) {
         Vue.set(state, key, obj[key])
@@ -53,7 +54,7 @@ export const actions = {
     commit('replace', {showProgress: false})
   },
   showErrorModal({commit}, payload) {
-    console.debug('modalRootError')
+    Util.debug('modalRootError')
     commit('replace', {error: payload})
     this.$router.app.$root.$emit('bv::show::modal', 'modalRootError')
   },

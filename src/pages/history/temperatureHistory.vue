@@ -142,7 +142,7 @@ export default {
           '/core/zone/categoryList',
           ''
         )
-        console.log(this.zoneCategorys)
+        Util.debug(this.zoneCategorys)
         this.categoryOptionList = OptionHelper.getZoneCategoryOptions(this.zoneCategorys)
       } catch(e) {
         console.error(e)
@@ -230,7 +230,7 @@ export default {
           delete data['sensorDt']
         })
       } catch (e) {
-        console.log(e)
+        console.error(e)
         list = []
       }
       return list

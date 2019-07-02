@@ -552,10 +552,10 @@ export const loadAreaImage = async (areaId, force) => {
     return
   }
   if (store.state.app_service.areaImages.find(areaImage => areaImage.areaId == areaId) && !force) {
-    console.log('FOUND ares', areaId)
+    console.log('FOUND areas', areaId)
     return
   }
-  console.log('load ares', areaId)
+  console.log('load areas', areaId)
   let base64 = await AppServiceHelper.fetchMapImage('/core/area/' + areaId + '/mapImage')
   const areaImages = [{areaId, mapImage: base64}]
   store.commit('app_service/replaceAS', {areaImages})
