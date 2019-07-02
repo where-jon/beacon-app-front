@@ -13,6 +13,9 @@
             <template slot="selected-option" slot-scope="option">
               {{ vueSelectCutOn(option, true) }}
             </template>
+            <template slot="no-options">
+              {{ vueSelectNoMatchingOptions }}
+            </template>
           </v-select>
         </span>
         <b-button v-t="'label.load'" :variant="theme" :disabled="settingStart || selectedArea == null" size="sm" class="mb-2" @click="changeArea" />
@@ -30,9 +33,9 @@
               <template slot="selected-option" slot-scope="option">
                 {{ vueSelectCutOn(option) }}
               </template>
-              <div slot="no-options">
-                {{ $i18n.tnl('label.vSelectNoOptions') }}
-              </div>
+              <template slot="no-options">
+                {{ vueSelectNoMatchingOptions }}
+              </template>
             </v-select>
           </span>
           <b-button v-t="'label.bulkAdd'" :variant="theme" :disabled="settingStart" size="sm" class="mt-mobile mb-2" @click="bulkAdd" /> 

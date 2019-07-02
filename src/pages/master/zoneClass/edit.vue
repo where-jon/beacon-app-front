@@ -22,7 +22,11 @@
           </b-form-row>
           <b-form-row>
             <b-col sm="5">
-              <v-select v-model="vueSelected.area" :options="areaNames" :disabled="!isEditable" :clearable="false" class="vue-options-lg" />
+              <v-select v-model="vueSelected.area" :options="areaNames" :disabled="!isEditable" :clearable="false" class="vue-options-lg">
+                <template slot="no-options">
+                  {{ vueSelectNoMatchingOptions }}
+                </template>
+              </v-select>
             </b-col>
           </b-form-row>
           <b-form-row>
@@ -30,7 +34,11 @@
           </b-form-row>
           <b-form-row>
             <b-col sm="5">
-              <v-select v-model="vueSelected.category" :options="categoryNames" :disabled="!isEditable" class="vue-options-lg" />
+              <v-select v-model="vueSelected.category" :options="categoryNames" :disabled="!isEditable" class="vue-options-lg">
+                <template slot="no-options">
+                  {{ vueSelectNoMatchingOptions }}
+                </template>
+              </v-select>
             </b-col>
           </b-form-row>
         </b-form-group>

@@ -18,13 +18,21 @@
             <b-form-group v-show="isShown('TX.WITH', 'category')">
               <b-form-row>
                 <label v-t="'label.category'" class="d-flex align-items-center" />
-                <v-select v-model="vueSelected.category" :options="categoryOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-2 vue-options-lg" />
+                <v-select v-model="vueSelected.category" :options="categoryOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-2 vue-options-lg">
+                  <template slot="no-options">
+                    {{ vueSelectNoMatchingOptions }}
+                  </template>
+                </v-select>
               </b-form-row>
             </b-form-group>
             <b-form-group v-show="isShown('TX.WITH', 'group')">
               <b-form-row>
                 <label v-t="'label.group'" class="d-flex align-items-center" />
-                <v-select v-model="vueSelected.group" :options="groupOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-2 vue-options-lg" />
+                <v-select v-model="vueSelected.group" :options="groupOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-2 vue-options-lg">
+                  <template slot="no-options">
+                    {{ vueSelectNoMatchingOptions }}
+                  </template>
+                </v-select>
               </b-form-row>
             </b-form-group>
             <b-form-group v-show="showTx('btxId')">

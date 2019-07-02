@@ -15,7 +15,11 @@
                     <label>
                       {{ $i18n.tnl('label.tx') + getTxIndex(index) }}
                     </label>
-                    <v-select v-model="vueSelected.txs[index]" :options="getTxOptions(index)" :disabled="!isEditable" :readonly="!isEditable" class="ml-3 vue-options" />
+                    <v-select v-model="vueSelected.txs[index]" :options="getTxOptions(index)" :disabled="!isEditable" :readonly="!isEditable" class="ml-3 vue-options">
+                      <template slot="no-options">
+                        {{ vueSelectNoMatchingOptions }}
+                      </template>
+                    </v-select>
                   </b-form-row>
                 </b-form-group>
               </b-form>
@@ -42,11 +46,19 @@
             </b-form-group>
             <b-form-group v-show="isShown('POT.WITH', 'group')">
               <label v-t="'label.group'" />
-              <v-select v-model="vueSelected.group" :options="groupOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 vue-options-lg" />
+              <v-select v-model="vueSelected.group" :options="groupOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 vue-options-lg">
+                <template slot="no-options">
+                  {{ vueSelectNoMatchingOptions }}
+                </template>
+              </v-select>
             </b-form-group>
             <b-form-group v-show="isShown('POT.WITH', 'category')">
               <label v-t="'label.category'" />
-              <v-select v-model="vueSelected.category" :options="categoryOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 vue-options-lg" />
+              <v-select v-model="vueSelected.category" :options="categoryOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 vue-options-lg">
+                <template slot="no-options">
+                  {{ vueSelectNoMatchingOptions }}
+                </template>
+              </v-select>
             </b-form-group>
             <b-form-group v-show="isShown('POT.WITH', 'post')">
               <label v-t="'label.post'" />
@@ -84,7 +96,11 @@
             </b-form-group>
             <b-form-group v-if="editShowUser">
               <label v-t="'label.role'" />
-              <v-select v-model="vueSelected.role" :options="roleOptions" :clearable="false" :required="editShowUser" class="vue-options-lg" />
+              <v-select v-model="vueSelected.role" :options="roleOptions" :clearable="false" :required="editShowUser" class="vue-options-lg">
+                <template slot="no-options">
+                  {{ vueSelectNoMatchingOptions }}
+                </template>
+              </v-select>
             </b-form-group>
             <b-form-group v-if="editShowUser">
               <label v-if="hasUserId" v-t="'label.passwordUpdate'" />

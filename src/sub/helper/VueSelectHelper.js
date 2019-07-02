@@ -3,6 +3,17 @@ import * as ArrayUtil from '../util/ArrayUtil'
 import * as StringUtil from '../util/StringUtil'
 import * as Util from '../util/Util'
 
+let i18n
+
+/**
+ * vue.jsで使用するオブジェクトを設定する。
+ * @method
+ * @param {Object} pi18n
+ */
+export const setApp = pi18n => {
+  i18n = pi18n
+}
+
 /**
  * v-select選択肢情報を取得する
  * @method
@@ -24,6 +35,13 @@ export const getVueSelectData = (selectOptions, selected, isFirst) => {
 export const getVueSelectStyle = () => {
   return { width: DISP.CONTROL.COMBO_BOX.W + 'px !important' }
 }
+
+/**
+ * v-selectの選択肢が存在しない場合に表示する文字列を取得する。
+ * @method
+ * @return {String}
+ */
+export const vueSelectNoMatchingOptions = () => i18n.tnl('label.noMatchingOptions')
 
 /**
  * v-selectの選択中文字の表記を省略した場合の文字列を取得する。

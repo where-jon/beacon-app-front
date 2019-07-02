@@ -11,9 +11,9 @@
               <b-form-row class="mb-3 mr-2">
                 <label v-t="'label.minor'" class="mr-2" />
                 <v-select v-model="form.tx" :options="txOptions" class="mr-2 vue-options" :style="vueSelectStyle">
-                  <div slot="no-options">
-                    {{ $i18n.tnl('label.vSelectNoOptions') }}
-                  </div>
+                  <template slot="no-options">
+                    {{ vueSelectNoMatchingOptions }}
+                  </template>
                 </v-select>
               </b-form-row>
             </b-form-row>
@@ -27,9 +27,9 @@
                     <template slot="selected-option" slot-scope="option">
                       {{ vueSelectCutOn(option) }}
                     </template>
-                    <div slot="no-options">
-                      {{ $i18n.tnl('label.vSelectNoOptions') }}
-                    </div>
+                    <template slot="no-options">
+                      {{ vueSelectNoMatchingOptions }}
+                    </template>
                   </v-select>
                 </span>
               </b-form-row>
