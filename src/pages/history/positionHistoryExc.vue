@@ -21,17 +21,17 @@
               <b-form-row class="mr-2">
                 <label v-t="'label.year'" class="mr-2 d-flex align-items-center" />
                 <v-select v-model="year" :options="years" :clearable="false" class="mr-2">
-                  <div slot="no-options">
-                    {{ $i18n.tnl('label.vSelectNoOptions') }}
-                  </div>
+                  <template slot="no-options">
+                    {{ vueSelectNoMatchingOptions }}
+                  </template>
                 </v-select>
               </b-form-row>
               <b-form-row class="mr-2">
                 <label v-t="'label.month'" class="mr-2 d-flex align-items-center" />
                 <v-select v-model="month" :options="months" :clearable="false" class="mr-2">
-                  <div slot="no-options">
-                    {{ $i18n.tnl('label.vSelectNoOptions') }}
-                  </div>
+                  <template slot="no-options">
+                    {{ vueSelectNoMatchingOptions }}
+                  </template>
                 </v-select>
               </b-form-row>
             </b-form-row>

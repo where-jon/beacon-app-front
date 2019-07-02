@@ -103,6 +103,9 @@
                 <template slot="selected-option" slot-scope="option">
                   {{ vueSelectCutOn(option) }}
                 </template>
+                <template slot="no-options">
+                  {{ vueSelectNoMatchingOptions }}
+                </template>
               </v-select>
             </span>
           </b-form-row>
@@ -114,6 +117,9 @@
               <v-select v-model="vueSelected.category" :options="categoryOptions" class="inputSelect vue-options">
                 <template slot="selected-option" slot-scope="option">
                   {{ vueSelectCutOn(option) }}
+                </template>
+                <template slot="no-options">
+                  {{ vueSelectNoMatchingOptions }}
                 </template>
               </v-select>
             </span>

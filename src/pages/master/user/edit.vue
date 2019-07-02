@@ -20,11 +20,19 @@
         </b-form-group>
         <b-form-group>
           <label v-t="'label.role'" />
-          <v-select v-model="vueSelected.role" :options="roleOptions" :disabled="!isEditable" :clearable="false" class="mb-3 vue-options-lg" />
+          <v-select v-model="vueSelected.role" :options="roleOptions" :disabled="!isEditable" :clearable="false" class="mb-3 vue-options-lg">
+            <template slot="no-options">
+              {{ vueSelectNoMatchingOptions }}
+            </template>
+          </v-select>
         </b-form-group>
         <b-form-group v-show="showRegion">
           <label v-t="'label.region'" />
-          <v-select v-model="vueSelected.regions" :options="regionOptions" :disabled="!isEditable" multiple :close-on-select="false" class="vue-options-multi" />
+          <v-select v-model="vueSelected.regions" :options="regionOptions" :disabled="!isEditable" multiple :close-on-select="false" class="vue-options-multi">
+            <template slot="no-options">
+              {{ vueSelectNoMatchingOptions }}
+            </template>
+          </v-select>
         </b-form-group>
         <b-form-group>
           <label v-t="'label.description'" />

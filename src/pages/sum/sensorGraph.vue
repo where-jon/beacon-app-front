@@ -36,6 +36,9 @@
                   <template slot="selected-option" slot-scope="option">
                     {{ vueSelectCutOn(option, true) }}
                   </template>
+                  <template slot="no-options">
+                    {{ vueSelectNoMatchingOptions }}
+                  </template>
                 </v-select>
               </span>
             </b-form-row>
@@ -49,6 +52,9 @@
                 <v-select v-model="vueSelected.tx" :options="txOptions" :clearable="false" class="ml-2 inputSelect vue-options" :style="vueSelectStyle">
                   <template slot="selected-option" slot-scope="option">
                     {{ vueSelectCutOn(option, true) }}
+                  </template>
+                  <template slot="no-options">
+                    {{ vueSelectNoMatchingOptions }}
                   </template>
                 </v-select>
               </span>

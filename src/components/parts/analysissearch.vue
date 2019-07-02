@@ -10,6 +10,9 @@
                 <template slot="selected-option" slot-scope="option">
                   {{ vueSelectCutOn(option, true) }}
                 </template>
+                <template slot="no-options">
+                  {{ vueSelectNoMatchingOptions }}
+                </template>
               </v-select>
             </span>
           </b-form-row>
@@ -21,6 +24,9 @@
               <v-select v-model="vueSelected.category" :options="categoryOptions" class="inputSelect vue-options" :style="vueSelectStyle">
                 <template slot="selected-option" slot-scope="option">
                   {{ vueSelectCutOn(option) }}
+                </template>
+                <template slot="no-options">
+                  {{ vueSelectNoMatchingOptions }}
                 </template>
               </v-select>
             </span>
@@ -34,6 +40,9 @@
                 <template slot="selected-option" slot-scope="option">
                   {{ vueSelectCutOn(option) }}
                 </template>
+                <template slot="no-options">
+                  {{ vueSelectNoMatchingOptions }}
+                </template>
               </v-select>
             </span>
           </b-form-row>
@@ -45,6 +54,9 @@
               <v-select v-model="vueSelected.pot" :options="potOptions" class="inputSelect vue-options" :style="vueSelectStyle">
                 <template slot="selected-option" slot-scope="option">
                   {{ vueSelectCutOn(option) }}
+                </template>
+                <template slot="no-options">
+                  {{ vueSelectNoMatchingOptions }}
                 </template>
               </v-select>
             </span>

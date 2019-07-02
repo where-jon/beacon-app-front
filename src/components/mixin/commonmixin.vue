@@ -33,6 +33,9 @@ export default {
     sensorOptionsTx() {
       return OptionHelper.getTxOptions()
     },
+    vueSelectNoMatchingOptions(){
+      return VueSelectHelper.vueSelectNoMatchingOptions()
+    },
   },
   methods: {
     ...mapMutations('app_service', [

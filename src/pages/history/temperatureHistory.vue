@@ -24,17 +24,17 @@
             <b-form-row class="mr-2 mb-3">
               <label v-t="'label.zoneCategoryName'" class="mr-2 mb-2 d-flex align-items-center" />
               <v-select v-model="vModelCategory" :options="categoryOptions" :on-change="categoryChange" required class="ml-2 mb-2 vue-options" :style="vueSelectStyle">
-                <div slot="no-options">
-                  {{ $i18n.tnl('label.vSelectNoOptions') }}
-                </div>
+                <template slot="no-options">
+                  {{ vueSelectNoMatchingOptions }}
+                </template>
               </v-select>
             </b-form-row>
             <b-form-row class="mb-2">
               <label v-t="'label.zone'" class="mr-2 mb-2 d-flex align-items-center" />
               <v-select v-model="vModelZone" :options="zoneOptions" :on-change="zoneChange" required class="ml-2 mb-2 vue-options" :style="vueSelectStyle">
-                <div slot="no-options">
-                  {{ $i18n.tnl('label.vSelectNoOptions') }}
-                </div>
+                <template slot="no-options">
+                  {{ vueSelectNoMatchingOptions }}
+                </template>
               </v-select>
             </b-form-row>
           </b-form-row>

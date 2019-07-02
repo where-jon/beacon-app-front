@@ -7,7 +7,11 @@
       <b-form v-if="show" @submit.prevent="save">
         <b-form-group>
           <label v-t="'label.featureName'" />
-          <v-select v-model="vueSelected.feature" :options="featureNames" :disabled="systemReadOnly" :clearable="false" class="mb-3 vue-options-lg" />
+          <v-select v-model="vueSelected.feature" :options="featureNames" :disabled="systemReadOnly" :clearable="false" class="mb-3 vue-options-lg">
+            <template slot="no-options">
+              {{ vueSelectNoMatchingOptions }}
+            </template>
+          </v-select>
         </b-form-group>
         <b-form-group>
           <label v-t="'label.path'" />

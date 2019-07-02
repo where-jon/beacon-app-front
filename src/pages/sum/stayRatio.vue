@@ -19,6 +19,9 @@
                 <template slot="selected-option" slot-scope="option">
                   {{ vueSelectCutOn(option) }}
                 </template>
+                <template slot="no-options">
+                  {{ vueSelectNoMatchingOptions }}
+                </template>
               </v-select>
             </span>
           </b-form-row>

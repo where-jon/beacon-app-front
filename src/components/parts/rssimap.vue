@@ -12,6 +12,9 @@
               <template slot="selected-option" slot-scope="option">
                 {{ vueSelectCutOn(option, true) }}
               </template>
+              <template slot="no-options">
+                {{ vueSelectNoMatchingOptions }}
+              </template>
             </v-select>
           </span>
         </b-form-row>
@@ -23,6 +26,9 @@
             <v-select v-model="vueSelected.group" :options="groupOptions" class="ml-1 mr-2 vue-options" :style="vueSelectStyle">
               <template slot="selected-option" slot-scope="option">
                 {{ vueSelectCutOn(option) }}
+              </template>
+              <template slot="no-options">
+                {{ vueSelectNoMatchingOptions }}
               </template>
             </v-select>
           </span>
@@ -36,6 +42,9 @@
               <template slot="selected-option" slot-scope="option">
                 {{ vueSelectCutOn(option) }}
               </template>
+              <template slot="no-options">
+                {{ vueSelectNoMatchingOptions }}
+              </template>
             </v-select>
           </span>
         </b-form-row>
@@ -48,7 +57,11 @@
           <label class="ml-sm-4 ml-2 mr-1">
             {{ $t('label.tx') }}
           </label>
-          <v-select v-model="vueSelected.tx" :options="txRecords" class="ml-1 mr-2 vue-options" :style="vueSelectStyle" />
+          <v-select v-model="vueSelected.tx" :options="txRecords" class="ml-1 mr-2 vue-options" :style="vueSelectStyle">
+            <template slot="no-options">
+              {{ vueSelectNoMatchingOptions }}
+            </template>
+          </v-select>
         </b-form-row>
         <b-form-row class="my-1 ml-2 ml-sm-0">
           <b-button class="ml-sm-4 ml-2 mr-1" :pressed.sync="isPause" :variant="theme">

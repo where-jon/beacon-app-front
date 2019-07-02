@@ -21,7 +21,11 @@
             </b-form-group>
             <b-form-group>
               <label v-t="'label.area'" />
-              <v-select v-model="vueSelected.area" :options="areaOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 vue-options-lg" />
+              <v-select v-model="vueSelected.area" :options="areaOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 vue-options-lg">
+                <template slot="no-options">
+                  {{ vueSelectNoMatchingOptions }}
+                </template>
+              </v-select>
             </b-form-group>
             <b-form-group v-show="isShown('EXB.WITH', 'posId')">
               <label v-t="'label.posId'" />
@@ -70,7 +74,11 @@
             <b-form-group v-show="useZone">
               <b-form-row>
                 <label v-t="'label.zone'" class="d-flex align-items-center" />
-                <v-select v-model="vueSelected.zone" :options="getZoneNames()" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-2 vue-options-lg" />
+                <v-select v-model="vueSelected.zone" :options="getZoneNames()" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-2 vue-options-lg">
+                  <template slot="no-options">
+                    {{ vueSelectNoMatchingOptions }}
+                  </template>
+                </v-select>
               </b-form-row>
             </b-form-group>
 

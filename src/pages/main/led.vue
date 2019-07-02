@@ -7,7 +7,11 @@
       <b-form-row>
         <b-form @submit.prevent="save">
           <b-form-group :label="$t('label.deviceId')">
-            <v-select v-model="vueSelected.deviceId" :options="deviceIds" :disable="!isEditable" :clearable="false" class="vue-options-lg" />
+            <v-select v-model="vueSelected.deviceId" :options="deviceIds" :disable="!isEditable" :clearable="false" class="vue-options-lg">
+              <template slot="no-options">
+                {{ vueSelectNoMatchingOptions }}
+              </template>
+            </v-select>
           </b-form-group>
           <b-form-group :label="$t('label.ledColor')">
             <b-form-checkbox-group v-model="form.colors">

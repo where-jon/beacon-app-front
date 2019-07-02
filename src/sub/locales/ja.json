@@ -422,6 +422,7 @@
     "down_count": "転倒数",
 
     "vSelectNoOptions": "",
+    "noMatchingOptions": "選択可能な項目がありません。",
 
     "legend": "凡例",
     "using": "使用中",
