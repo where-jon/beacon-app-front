@@ -311,7 +311,7 @@ export const createChartPirOptions = (chartData, by, i18n, isResponsive = false)
     data:{
       labels: chartData.map(val => val.key),
       datasets: 
-        createChartGraphDatasets('pir', i18n.tnl('label.pir'), chartData, 'count', DISP.PIR.LINE_COLOR, by, i18n)
+        createChartGraphDatasets('pir', i18n.tnl('label.pir'), chartData, 'count', DISP.PIR_LINE_COLOR, by, i18n)
     },
     options: createChartGraphOptions(
       {
@@ -410,7 +410,7 @@ export const createChartPressureOptions = (chartData, by, i18n, isResponsive = f
     data:{
       labels: chartData.map(val => val.key),
       datasets: 
-        createChartGraphDatasets('pressure', i18n.tnl('label.pressure'), chartData, 'pressVol', DISP.PRESSURE.LINE_COLOR, by, i18n)
+        createChartGraphDatasets('pressure', i18n.tnl('label.pressure'), chartData, 'pressVol', DISP.PRESSURE_LINE_COLOR, by, i18n)
     },
     options: createChartGraphOptions(
       {
