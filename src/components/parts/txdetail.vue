@@ -176,6 +176,7 @@ export default {
 
 <style scoped lang="scss">
 @import "../../sub/constant/config.scss";
+@import "../../sub/constant/browser.scss";
 
 .balloon {
   position: absolute;
@@ -285,9 +286,6 @@ export default {
   font-weight: bold;
   padding-left: 10px;
   overflow-y: scroll;
-}
-::-webkit-scrollbar { 
-  display: none; 
 }
 
 .thumbnail {

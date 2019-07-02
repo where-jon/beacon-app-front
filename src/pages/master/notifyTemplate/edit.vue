@@ -216,10 +216,5 @@ export default {
 </script>
 
 <style scoped lang="scss">
-  label.control-label {
-    padding-top: 7px;
-  }
-   p.error {
-    color: #dc3545;
-  }
+@import "../../../sub/constant/label.scss";
 </style>

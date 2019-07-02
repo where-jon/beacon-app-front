@@ -260,11 +260,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import "../../sub/constant/input.scss";
 @import "../../sub/constant/vue.scss";
-.inputdatefrom {
-  width: 180px;
-}
-.inputdateto {
-  width: 180px;
-}
 </style>

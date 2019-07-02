@@ -167,10 +167,5 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.inputSelect {
-  min-width: 160px;
-}
-.inputdatefrom {
-  width: 210px;
-}
+@import "../../sub/constant/input.scss";
 </style>

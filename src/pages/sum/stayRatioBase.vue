@@ -841,16 +841,11 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import "../../sub/constant/input.scss";
 .tableHeader {
   word-break:break-all;
 }
 
-.inputSelect {
-  min-width: 160px;
-}
-.inputdatefrom {
-  width: 210px;
-}
 .bgSquare {
   display: inline-block;
   _display: inline;

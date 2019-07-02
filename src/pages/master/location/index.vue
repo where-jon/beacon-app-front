@@ -579,11 +579,8 @@ export default {
 
 <style scoped lang="scss">
 @import "../../../sub/constant/config.scss";
+@import "../../../sub/constant/browser.scss";
 @import "../../../sub/constant/vue.scss";
-
-::-webkit-scrollbar { 
-  display: none; 
-}
 
 @media screen and (max-width: 1050px) {
   .w-le-sm-100 {

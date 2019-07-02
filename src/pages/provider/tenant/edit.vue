@@ -341,7 +341,5 @@ export default {
 </script>
 
 <style scoped lang="scss">
-  label.control-label {
-    padding-top: 7px;
-  }
+@import "../../../sub/constant/label.scss";
 </style>

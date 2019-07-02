@@ -383,6 +383,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import "../../../sub/constant/label.scss";
   h3.loginuser-profile {
     font-size: 1.2em;
     font-weight: bold;
@@ -393,9 +394,5 @@ export default {
   .input-btn {
     text-align: center;
     width: 104px;
-  }
-
-  p.error {
-    color: #dc3545;
   }
 </style>

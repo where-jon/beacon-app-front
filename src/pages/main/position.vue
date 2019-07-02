@@ -518,15 +518,12 @@ export default {
 
 <style scoped lang="scss">
 @import "../../sub/constant/config.scss";
+@import "../../sub/constant/browser.scss";
 @import "../../sub/constant/vue.scss";
 
 $right-pane-width-px: $right-pane-width * 1px;
 $right-pane-maxwidth-px: ($right-pane-width + 100) * 1px;
 $right-pane-left-px: $right-pane-left * 1px;
-
-::-webkit-scrollbar { 
-  display: none; 
-}
 
 .rightPane {
   max-width: $right-pane-maxwidth-px;
