@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import * as Util from '../sub/util/Util'
 
 export const state = () => ({
   pots: [],
@@ -54,7 +55,7 @@ const initState = state()
 
 export const mutations = {
   replaceAS(state, obj) {
-    console.debug('replaceAS')
+    Util.debug('replaceAS')
     if (obj) {
       for (let key in obj) {
         Vue.set(state, key, obj[key])
@@ -62,7 +63,7 @@ export const mutations = {
     }
   },
   clear(state, obj) {
-    console.debug('clear', obj)
+    Util.debug('clear', obj)
     if (obj) {
       for (let key in obj) {
         Vue.set(state, key, {})

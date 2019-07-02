@@ -118,7 +118,6 @@ export default {
     async initAreaNames() {
       await StateHelper.load('area')
       this.areaNames = StateHelper.getOptionsFromState('area', false, true)
-      console.log(this.areaNames )
     },
     async initCategoryNames() {
       await StateHelper.load('category')

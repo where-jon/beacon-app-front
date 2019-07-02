@@ -250,7 +250,7 @@ export default {
       param.fillGap = APP.STAY_SUM.AXIS_FILL_GAP
       const url = '/office/stayTime/sum?_=' + new Date().getTime() + '&' +  HttpHelper.toParam(param, true)
       const sumData = await HttpHelper.getAppService(url)
-      console.log(sumData)
+      Util.debug(sumData)
       if (_.isEmpty(sumData)) {
         this.message = this.$i18n.t('message.listEmpty')
         this.replace({showAlert: true})

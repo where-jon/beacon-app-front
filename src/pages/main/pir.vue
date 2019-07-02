@@ -107,7 +107,7 @@ export default {
             const pir = pirSensors.find((val) => val.deviceid == exb.deviceId && val.count >= DISP.PIR.MIN_COUNT)
             const pressure = pressureSensors.find((val) => val.deviceid == exb.deviceId && val.press_vol != null)
             const thermopile = thermopileSensors.find((val) => val.deviceid == exb.deviceId)
-            console.log({exb, pir, pressure, thermopile, pirSensors, pressureSensors, thermopileSensors})
+            Util.debug({exb, pir, pressure, thermopile, pirSensors, pressureSensors, thermopileSensors})
             return pir? {id: SENSOR.PIR, ...pir}: pressure? {id: SENSOR.PRESSURE, count: pressure.press_vol, ...pressure}: thermopile? {id: SENSOR.THERMOPILE, ...thermopile}: null
           },
           (exb) => exb.sensorId == SENSOR.PRESSURE? exb.count <= DISP.PRESSURE.VOL_MIN || DISP.PRESSURE.EMPTY_SHOW: exb.count > 0 || DISP.PIR.EMPTY_SHOW

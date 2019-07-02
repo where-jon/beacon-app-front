@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import * as config from '../sub/constant/config'
+import * as Util from '../sub/util/Util'
 import * as AuthHelper from '../sub/helper/AuthHelper'
 import * as ConfigHelper from '../sub/helper/ConfigHelper'
 import * as HttpHelper from '../sub/helper/HttpHelper'
@@ -32,7 +33,7 @@ export default async (context, inject) => {
 
   // loading chunk failed対策 Loading chunk 6 failed.
   setInterval(() => {
-    console.debug('check chunk')
+    Util.debug('check chunk')
     let error = document.querySelector('.__nuxt-error-page .error .title')
     if (error && error.innerText && error.innerText.match(/Loading chunk (\d)+ failed/g)) {
       location.reload()

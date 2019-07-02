@@ -770,7 +770,7 @@ export default {
         const url = '/office/stayTime/sumByDay/' + searchDate + '/zoneCategory?from=' + APP.STAY_SUM.FROM + '&to=' + APP.STAY_SUM.TO + groupBy + categoryBy
         const sumData = await HttpHelper.getAppService(url)
         if (_.isEmpty(sumData)) {
-          console.log('searchDate: ' + searchDate)
+          Util.debug('searchDate: ' + searchDate)
           this.message = this.$i18n.t('message.listEmpty')
           this.replace({showAlert: true})
           this.hideProgress()

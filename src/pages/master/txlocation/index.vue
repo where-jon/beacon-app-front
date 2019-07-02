@@ -437,7 +437,7 @@ export default {
         this.replace({showInfo: true})
         this.isChanged = false
       } catch (e) {
-        console.log(e)
+        console.error(e)
         this.message = this.createErrorMessage(e)
         this.replace({showAlert: true})
         window.scrollTo(0, 0)

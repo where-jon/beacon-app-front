@@ -180,7 +180,6 @@ export default {
       this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.viewList.length, maxRows: this.limitViewRows})}`
       try {
         const aTxId = (this.form.tx != null && this.form.tx.value != null)?this.form.tx.value:0
-        console.log(aTxId)
         const aGroupId = (this.form.group != null && this.form.group.value != null)? this.form.group.value: 0
         var fetchList = await HttpHelper.getAppService(
           `/core/positionHistory/find/${aGroupId}/${aTxId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/${this.limitViewRows}`
