@@ -55,16 +55,25 @@ export default {
     ]),
   },
   methods: {
-    createCustomColumn(){
+    createCustomColumn(isCsv){
       return APP.POT.WITH.map(val => {
         if(['user'].includes(val)){
           return null
         }
-        const ret = {key: val, label: val, tdClass: 'thumb-rowdata'}
-        if(['post', 'tel', 'ruby'].includes(val)){
-          ret.key = 'extValue.' + val
+        const ext = _.find(APP.POT.EXT_DEF, e => e.key == val)
+        if (ext && !ext.showlist && !isCsv) {
+          return null
         }
-        else{
+        const ret = {key: val, label: val, tdClass: 'thumb-rowdata'}
+        if (val == 'ruby'){
+          ret.key = 'extValue.' + val
+          ret.sortable = true
+        }
+        else if (ext) {
+          ret.key = 'extValue.' + ext.key
+          ret.sortable = ext.sort // TODO: なぜかソートできない。要調査
+        }
+        else {
           ret.sortable = true
         }
         if(['category', 'group'].includes(val)){
@@ -80,7 +89,7 @@ export default {
         'potName',
         'potType',
         'displayName',
-      ].concat(this.createCustomColumn().map(val => val.key))
+      ].concat(this.createCustomColumn(true).map(val => val.key))
         .concat(['userId', 'loginId', 'roleName', 'pass', 'email',])
         .filter(val => val)
     },

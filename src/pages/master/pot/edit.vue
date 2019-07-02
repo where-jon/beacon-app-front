@@ -60,13 +60,12 @@
                 </template>
               </v-select>
             </b-form-group>
-            <b-form-group v-show="isShown('POT.WITH', 'post')">
-              <label v-t="'label.post'" />
-              <input v-model="form.post" :readonly="!isEditable" type="text" maxlength="20" class="form-control">
-            </b-form-group>
-            <b-form-group v-show="isShown('POT.WITH', 'tel')">
-              <label v-t="'label.tel'" />
-              <b-form-input v-model="form.tel" :readonly="!isEditable" type="tel" maxlength="20" pattern="[-\d]*" />
+            <b-form-group v-for="(ext, index) in extList" :key="'ext' + index">
+              <label v-t="'label.' + ext.key" />
+              <b-form-select v-if="ext.type=='list'" v-model="form[ext.key]" :options="ext.options" :disabled="!isEditable" :readonly="!isEditable" :required="ext.required" class="mb-3 vue-options-lg" />
+              <b-form-checkbox v-else-if="ext.type=='boolean'" v-model="form[ext.key]" :value="ext.checked" :unchecked-value="ext.unchecked" class="ml-3 pt-2" />
+              <b-form-input v-else-if="ext.type=='tel'" v-model="form[ext.key]" :readonly="!isEditable" type="text" maxlength="20" :pattern="ext.format" :required="ext.required" />
+              <b-form-input v-else v-model="form[ext.key]" :readonly="!isEditable" type="text" maxlength="20" :pattern="ext.format" :required="ext.required" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.thumbnail'" />
@@ -121,6 +120,7 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import { mapState } from 'vuex'
 import _ from 'lodash'
 import { APP, EXCLOUD, APP_SERVICE } from '../../../sub/constant/config'
@@ -160,8 +160,8 @@ export default {
       form: {
         ...Util.extract(this.$store.state.app_service.pot,
           ['potId', 'potCd', 'potName', 'potType', 'extValue.ruby',
-            'displayName', 'potGroupList.0.group.groupId', 'potCategoryList.0.category.categoryId', 'extValue.tel',
-            'extValue.post', 'existThumbnail', 'description'])
+            'displayName', 'potGroupList.0.group.groupId', 'potCategoryList.0.category.categoryId',
+            'existThumbnail', 'description', ...MasterHelper.getPotExtKeys(true)])
       },
       userForm: {
         userId: null, loginId: null, pass: null, roleId: null, email: null,
@@ -187,6 +187,29 @@ export default {
     }
   },
   computed: {
+    extList() {
+      const ret = MasterHelper.getPotExt()
+      ret.forEach(e => {
+        if (!e.format) {
+          if (e.type == 'int') {
+            e.format = '[-]?[0-9]*'
+          }
+          else if (e.type == 'float') {
+            e.format = '[-]?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)'
+          }
+          else if (e.type == 'tel') {
+            e.format = '[-\\d]*'
+          }
+        }
+        if (e.type == 'list') {
+          e.options = e.format.split('|').map(e => ({label: e, text: e, value: e}))
+        }
+        if (e.default && !this.form[e.key] && !this.isUpdate) {
+          Vue.set(this.form, e.key, e.default)
+        }
+      })
+      return ret
+    }, 
     hasId(){
       return Util.hasValue(this.form.potId)
     },
@@ -458,8 +481,6 @@ export default {
         potType: this.form.potType,
         extValue: {
           ruby: this.form.ruby,
-          tel: this.form.tel,
-          post: this.form.post,
         },
         displayName: this.form.displayName,
         potGroupList: this.form.groupId ? [{
@@ -479,6 +500,9 @@ export default {
         thumbnail: this.form.thumbnail,
         description: this.form.description,
       }
+      MasterHelper.getPotExtKeys().forEach(key => {
+        entity.extValue[key] = this.form[key]
+      })
       const potTxList = []
       this.form.potTxList.forEach((potTx) => {
         if(potTx.txId){
