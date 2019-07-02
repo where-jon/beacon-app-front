@@ -400,14 +400,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import "../../sub/constant/input.scss";
 @import "../../sub/constant/vue.scss";
-.inputSelect {
-  min-width: 160px;
-}
-.inputdatefrom {
-  width: 210px;
-}
-.inputdateto {
-  width: 210px;
-}
 </style>

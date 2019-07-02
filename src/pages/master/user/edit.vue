@@ -245,8 +245,4 @@ export default {
 
 <style scoped lang="scss">
 @import "../../../sub/constant/vue.scss";
-.vue-options-multi {
-  margin-left: 0px;
-  width: 100%;
-}
 </style>

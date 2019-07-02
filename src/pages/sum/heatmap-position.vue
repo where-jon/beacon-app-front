@@ -131,10 +131,8 @@ export default {
 
 <style scoped lang="scss">
 @import "../../sub/constant/config.scss";
+@import "../../sub/constant/browser.scss";
 
-::-webkit-scrollbar { 
-  display: none; 
-}
 div#heatmap {
   display: inline-block;
 }

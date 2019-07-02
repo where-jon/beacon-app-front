@@ -174,7 +174,5 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.inputSelect {
-  min-width: 160px;
-}
+@import "../../sub/constant/input.scss";
 </style>

@@ -153,8 +153,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import "../../../sub/constant/label.scss";
 @import "../../../sub/constant/vue.scss";
-label.control-label {
-  padding-top: 7px;
-}
 </style>

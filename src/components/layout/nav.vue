@@ -312,6 +312,7 @@ export default {
 
 <style lang="scss">
 @import "../../sub/constant/config.scss";
+@import "../../sub/constant/label.scss";
 
 .topMenuNavbar {
   @media (max-width: 1119px) and (min-width: 768px) {
@@ -392,11 +393,6 @@ a.dropdown-item.exeo:focus {
 
 div.navbar-brand {
   margin: 0 auto;
-}
-
-.word-break {
-  word-break: break-all !important;
-  word-wrap: break-all !important;
 }
 
 .mobile-region {

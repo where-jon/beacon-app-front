@@ -493,10 +493,6 @@ export default {
 
 <style scoped lang="scss">
 @import "../../sub/constant/config.scss";
+@import "../../sub/constant/browser.scss";
 @import "../../sub/constant/vue.scss";
-
-::-webkit-scrollbar { 
-  display: none; 
-}
-
 </style>
