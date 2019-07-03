@@ -123,6 +123,7 @@ export default {
       items: ViewHelper.createBreadCrumbItems('setting', 'system'),
       newForm: {key: '', valType: null, value: null},
       settingList: [],
+      oldSettingEntities: [],
       isShowNewForm: false,
       setting: {settingId: 1},
     }
@@ -172,6 +173,7 @@ export default {
         if(!this.calee){
           await StateHelper.load('setting')
         }
+        this.oldSettingEntities = this.callee? this.pSettingList: this.settings
         this.settingList = SettingHelper.createSettingList(this.callee? this.pSettingList: this.settings, this.callee)
         this.initFilter()
       }
@@ -238,7 +240,7 @@ export default {
           delFlg: Util.hasValue(setting.value)? 0: 1
         })
       })
-      return entity
+      return SettingHelper.getDiffSettingList(this.oldSettingEntities, entity)
     },
     async onSaving() {
       const registEntity = this.createRegistEntity()
