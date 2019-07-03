@@ -4,7 +4,7 @@
       <label v-t="'label.' + ext.key" />
       <b-form-select v-if="ext.type=='list'" v-model="form[ext.key]" :options="ext.options" :disabled="!isEditable" :readonly="!isEditable" :required="ext.required" class="mb-3 vue-options-lg" />
       <b-form-checkbox v-else-if="ext.type=='boolean'" v-model="form[ext.key]" :value="ext.checked" :unchecked-value="ext.unchecked" class="ml-3 pt-2" />
-      <b-form-input v-else v-model="form[ext.key]" :readonly="!isEditable" :type="ext.itype" maxlength="20" :min="ext.min" :max="ext.max" :pattern="ext.format" :required="ext.required" />
+      <b-form-input v-else v-model="form[ext.key]" :readonly="!isEditable" :type="ext.itype" :maxlength="ext.length" :min="ext.min" :max="ext.max" :pattern="ext.format" :required="ext.required" />
     </b-form-group>
   </div>
 </template>
@@ -61,6 +61,10 @@ export default {
           break
         default:
           e.itype = e.type
+        }
+
+        if (!e.length) {
+          e.length = 20
         }
       })
       Vue.set(this, 'firstShow', false)
