@@ -63,6 +63,9 @@ export const adjustValType = valType => {
   if(['boolean'].includes(type)){
     return SETTING.BOOLEAN
   }
+  if(['json'].includes(type)){
+    return SETTING.JSON
+  }
   return SETTING.STRING
 }
 
@@ -93,7 +96,11 @@ export const getDefaultValue = (key, isTenant = false) => {
   if(langDefValue != null){
     return langDefValue
   }
-  return key.split('.').reduce((prev, cur) => prev != null && prev[cur] != null? prev[cur]: null, defaultConfig)
+  const val = key.split('.').reduce((prev, cur) => prev != null && prev[cur] != null? prev[cur]: null, defaultConfig)
+  if (val && val.toString().includes('[object Object]')) {
+    return JSON.stringify(val)
+  }
+  return val
 }
 
 /**
@@ -272,6 +279,14 @@ export const validation = settings => {
     }
     if(setting.valType == SETTING.NUMBER_LIST){
       return !setting.value.match(PATTERN.NUMBER_LIST)
+    }
+    if(setting.valType == SETTING.JSON){
+      try {
+        JSON.parse(setting.value)
+        return true
+      }
+      catch (e) {}
+      return false
     }
     return false
   })

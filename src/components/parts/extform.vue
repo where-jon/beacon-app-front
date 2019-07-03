@@ -4,8 +4,7 @@
       <label v-t="'label.' + ext.key" />
       <b-form-select v-if="ext.type=='list'" v-model="form[ext.key]" :options="ext.options" :disabled="!isEditable" :readonly="!isEditable" :required="ext.required" class="mb-3 vue-options-lg" />
       <b-form-checkbox v-else-if="ext.type=='boolean'" v-model="form[ext.key]" :value="ext.checked" :unchecked-value="ext.unchecked" class="ml-3 pt-2" />
-      <b-form-input v-else-if="ext.type=='tel'" v-model="form[ext.key]" :readonly="!isEditable" type="text" maxlength="20" :pattern="ext.format" :required="ext.required" />
-      <b-form-input v-else v-model="form[ext.key]" :readonly="!isEditable" type="text" maxlength="20" :pattern="ext.format" :required="ext.required" />
+      <b-form-input v-else v-model="form[ext.key]" :readonly="!isEditable" :type="ext.itype" maxlength="20" :min="ext.min" :max="ext.max" :pattern="ext.format" :required="ext.required" />
     </b-form-group>
   </div>
 </template>
@@ -25,6 +24,11 @@ export default {
       required: true,
     },
   },
+  data () {
+    return {
+      firstShow: true,
+    }
+  },
   computed: {
     extList() {
       const ret = PotHelper.getPotExt()
@@ -43,10 +47,23 @@ export default {
         if (e.type == 'list') {
           e.options = e.format.split('|').map(e => ({label: e, text: e, value: e}))
         }
-        if (e.default && !this.form[e.key] && !this.isUpdate) {
+        if (e.default && !this.form[e.key] && !this.isUpdate && this.firstShow) {
           Vue.set(this.form, e.key, e.default)
         }
+
+        switch (e.type) {
+        case 'string':
+          e.itype = 'text'
+          break
+        case 'int':
+        case 'float':
+          e.itype = 'number'
+          break
+        default:
+          e.itype = e.type
+        }
       })
+      Vue.set(this, 'firstShow', false)
       return ret
     }, 
   }

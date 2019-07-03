@@ -243,6 +243,7 @@ export default {
       return SettingHelper.getDiffSettingList(this.oldSettingEntities, entity)
     },
     async onSaving() {
+      // TODO: SettingHelper.validation
       const registEntity = this.createRegistEntity()
       if(registEntity){
         return await AppServiceHelper.bulkSave(this.appServicePath, [registEntity])

@@ -35,13 +35,14 @@ export const createCustomColumn = (isCsv) => {
       return null
     }
     const ret = {key: val, label: val, tdClass: 'thumb-rowdata'}
+    // extValue.rubyなど.を含むとソートできないため.は抜きにする
     if (val == 'ruby'){
-      ret.key = 'extValue.' + val
+      ret.key = 'extValue' + val
       ret.sortable = true
     }
     else if (ext) {
-      ret.key = 'extValue.' + ext.key
-      ret.sortable = ext.sort // TODO: なぜかソートできない。要調査
+      ret.key = 'extValue' + ext.key
+      ret.sortable = ext.sort
     }
     else {
       ret.sortable = true

@@ -112,17 +112,19 @@ export const APP = { // 機能面に関する設定
   POSITION_WITH_AREA: true, // エリアを表示
   // POT関連設定
   POT: {
-    WITH: ['category', 'user', 'ruby', 'description', 'tel', 'mobile', 'post', 'sex', 'address', 'salary'], // TODO: 開発終了後要修正
+    WITH: ['category', 'user', 'ruby', 'description'],
     MULTI_TX: false,         // 複数Tx使用
     TX_MAX: 2,   // 所持Tx最大数
+    // 拡張項目定義（サンプル）
     EXT_DEF: [{key: 'sex', type: 'list', required: true, format: 'male|female', showlist: true, sort: true}, 
-      {key: 'post', type: 'string', showlist: true, sort: false},
+      {key: 'post', type: 'string', showlist: true, sort: true},
       {key: 'address', type: 'string', default:'Tokyo', required: true, length:10, format: '[a-zA-Z]+', showlist: false, sort: false},
       {key: 'manager', type: 'boolean', default: 'はい', checked:'はい', unchecked:' ', showlist: true, sort: false},
-      {key: 'salary', type: 'int', min: 0, max: 10000000, showlist: false, sort: false},
+      {key: 'salary', type: 'int', min: 0, max: 1200000, showlist: false, sort: false},
       {key: 'tel', type: 'tel', showlist: true, sort: true},
       {key: 'mobile', type: 'tel', showlist: false, sort: false},
-      {key: 'score', type: 'float', default: 100, min: -1000, max: 1000, showlist: false, sort: false}
+      {key: 'entrydate', type: 'date', showlist: true, sort: false},
+      {key: 'score', type: 'float', default: 50, min: -100, max: 100, showlist: false, sort: false}
     ],
   },
   // category

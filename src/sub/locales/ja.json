@@ -594,6 +594,15 @@
     "bracketStayRate": "(滞在率)",
     "ok": "OK",
 
+    "---------------- Pot Extension sample ---------------":"",
+    "sex": "性別",
+    "address": "住所",
+    "salary": "月給",
+    "manager": "管理職",
+    "mobile": "携帯電話",
+    "entrydate": "入社日",
+    "score": "点数",
+
     "dummy": ""
   },
   "config": {
@@ -685,7 +694,8 @@
       "POT": {
         "WITH": "人＆物画面で使用する項目::人＆物画面で使用する項目を設定します。設定可能な値は次の通りです。★{POT}",
         "MULTI_TX": "人＆物に複数のTxを登録する::人＆物画面で複数のTxを登録可能にします。",
-        "TX_MAX": "人＆物に登録するTxの最大数::人＆物画面で登録可能なTxの最大数を設定します。"
+        "TX_MAX": "人＆物に登録するTxの最大数::人＆物画面で登録可能なTxの最大数を設定します。",
+        "EXT_DEF": "人＆物拡張項目::人＆物に設定可能な拡張項目をJSON形式で定義します。"
       },
       "CATEGORY": {
         "TYPES": "カテゴリ画面で選択可能な種別::カテゴリ画面で選択可能な種別を設定します。設定可能な値は次の通りです。{CATEGORY_TYPES}"
@@ -915,7 +925,8 @@
           "WITH": "stringList"
         }, 
         "POT": {
-          "WITH": "stringList"
+          "WITH": "stringList",
+          "EXT_DEF": "json"
         }, 
         "CATEGORY": {
           "TYPES": "numberList"
