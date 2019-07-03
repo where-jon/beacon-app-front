@@ -237,6 +237,23 @@ export const createSettingList = (settings, isTenant) => {
 }
 
 /**
+ * 設定項目リストから変更差分のみ抽出する。
+ * @method
+ * @param {Object[]} oldSettings 更新前のリスト
+ * @param {Object[]} settings 更新予定リスト
+ * @return {Object[]}
+ */
+export const getDiffSettingList = (oldSettings, settings) => {
+  return settings.filter(setting => {
+    const oldTarget = oldSettings.find(oldSetting => oldSetting.key == setting.key)
+    if(oldTarget == null){
+      return true
+    }
+    return setting.value != oldTarget.value
+  })
+}
+
+/**
  * 設定項目リストの検証を行う
  * @method
  * @param {Object[]} settings 
