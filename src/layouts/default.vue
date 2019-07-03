@@ -3,10 +3,10 @@
     <m-nav />
     <b-container fluid>
       <b-row v-if="!isLoginPage" class="flex-xl-nowrap2">
-        <b-col v-if="showSidebar" id="bd-sidebar" :class="sidebarClasses" md="2" xl="2" class="d-none d-sm-none d-md-block">
+        <b-col v-if="getShowSideBar()" id="bd-sidebar" :class="sidebarClasses" md="2" xl="2" class="d-none d-sm-none d-md-block">
           <m-sidebar />
         </b-col>
-        <b-col id="bd-page" :md="showSidebar? 10: 12" class="pl-0 pr-0">
+        <b-col id="bd-page" :md="getShowSideBar()? 10: 12" class="pl-0 pr-0">
           <b-container fluid>
             <b-row>
               <b-col class="pb-md-3 pl-md-5 pl-xl-5 pr-xl-5 bd-content">
@@ -62,7 +62,6 @@ export default {
   },
   data() {
     return {
-      showSidebar: DISP.MENU.SHOW_SIDEBAR,
       conf: {
         app: APP,
         disp: DISP,
@@ -120,7 +119,10 @@ export default {
       const color = getThemeColor()
       this.setColor('dropdown-menu', color)
       this.setColor('dropdown-item', color)
-    }
+    },
+    getShowSideBar(){
+      return this.conf.disp.MENU.SHOW_SIDEBAR
+    },
   },
   head() { // browser tab title
     return {
