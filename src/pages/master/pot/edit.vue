@@ -60,13 +60,7 @@
                 </template>
               </v-select>
             </b-form-group>
-            <b-form-group v-for="(ext, index) in extList" :key="'ext' + index">
-              <label v-t="'label.' + ext.key" />
-              <b-form-select v-if="ext.type=='list'" v-model="form[ext.key]" :options="ext.options" :disabled="!isEditable" :readonly="!isEditable" :required="ext.required" class="mb-3 vue-options-lg" />
-              <b-form-checkbox v-else-if="ext.type=='boolean'" v-model="form[ext.key]" :value="ext.checked" :unchecked-value="ext.unchecked" class="ml-3 pt-2" />
-              <b-form-input v-else-if="ext.type=='tel'" v-model="form[ext.key]" :readonly="!isEditable" type="text" maxlength="20" :pattern="ext.format" :required="ext.required" />
-              <b-form-input v-else v-model="form[ext.key]" :readonly="!isEditable" type="text" maxlength="20" :pattern="ext.format" :required="ext.required" />
-            </b-form-group>
+            <extform :is-editable="isEditable" :form="form" />
             <b-form-group>
               <label v-t="'label.thumbnail'" />
               <b-form-file v-if="isEditable" ref="inputThumbnail" v-model="form.thumbnailTemp" :placeholder="$t('message.selectFile') " accept="image/jpeg, image/png, image/gif" @change="readImage" />
@@ -120,7 +114,6 @@
 </template>
 
 <script>
-import Vue from 'vue'
 import { mapState } from 'vuex'
 import _ from 'lodash'
 import { APP, EXCLOUD, APP_SERVICE } from '../../../sub/constant/config'
@@ -131,6 +124,7 @@ import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as ImageHelper from '../../../sub/helper/ImageHelper'
 import * as LocalStorageHelper from '../../../sub/helper/LocalStorageHelper'
 import * as MasterHelper from '../../../sub/helper/MasterHelper'
+import * as PotHelper from '../../../sub/helper/domain/PotHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ValidateHelper from '../../../sub/helper/ValidateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
@@ -140,12 +134,14 @@ import commonmixin from '../../../components/mixin/commonmixin.vue'
 import editmixin from '../../../components/mixin/editmixin.vue'
 import alert from '../../../components/parts/alert.vue'
 import chromeInput from '../../../components/parts/chromeinput.vue'
+import extform from '../../../components/parts/extform.vue'
 
 export default {
   components: {
     breadcrumb,
     alert,
     chromeInput,
+    extform,
   },
   mixins: [commonmixin, editmixin],
   data() {
@@ -161,7 +157,7 @@ export default {
         ...Util.extract(this.$store.state.app_service.pot,
           ['potId', 'potCd', 'potName', 'potType', 'extValue.ruby',
             'displayName', 'potGroupList.0.group.groupId', 'potCategoryList.0.category.categoryId',
-            'existThumbnail', 'description', ...MasterHelper.getPotExtKeys(true)])
+            'existThumbnail', 'description', ...PotHelper.getPotExtKeys(true)])
       },
       userForm: {
         userId: null, loginId: null, pass: null, roleId: null, email: null,
@@ -187,29 +183,6 @@ export default {
     }
   },
   computed: {
-    extList() {
-      const ret = MasterHelper.getPotExt()
-      ret.forEach(e => {
-        if (!e.format) {
-          if (e.type == 'int') {
-            e.format = '[-]?[0-9]*'
-          }
-          else if (e.type == 'float') {
-            e.format = '[-]?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)'
-          }
-          else if (e.type == 'tel') {
-            e.format = '[-\\d]*'
-          }
-        }
-        if (e.type == 'list') {
-          e.options = e.format.split('|').map(e => ({label: e, text: e, value: e}))
-        }
-        if (e.default && !this.form[e.key] && !this.isUpdate) {
-          Vue.set(this.form, e.key, e.default)
-        }
-      })
-      return ret
-    }, 
     hasId(){
       return Util.hasValue(this.form.potId)
     },
@@ -500,7 +473,7 @@ export default {
         thumbnail: this.form.thumbnail,
         description: this.form.description,
       }
-      MasterHelper.getPotExtKeys().forEach(key => {
+      PotHelper.getPotExtKeys().forEach(key => {
         entity.extValue[key] = this.form[key]
       })
       const potTxList = []

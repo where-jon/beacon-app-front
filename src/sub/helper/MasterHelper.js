@@ -1,5 +1,4 @@
 import { USER } from '../constant/Constants'
-import { APP } from '../../sub/constant/config'
 import * as StateHelper from '../helper/StateHelper'
 
 /**
@@ -41,22 +40,3 @@ export const createDummyUser = async (dummyLoginId, roles, noEncrypt = USER.ENCR
     noEncrypt: noEncrypt,
   }
 }
-
-/**
- * POT拡張項目配列を返す。
- * @method
- * @return {[]}
- */
-export const getPotExt = () => {
-  return APP.POT.WITH.filter(e => _.some(APP.POT.EXT_DEF, ext => ext.key == e)).map(e => APP.POT.EXT_DEF.find(ext => ext.key == e))
-}
-
-/**
- * POT拡張項目のキー配列を返す。
- * @method
- * @return {[]}
- */
-export const getPotExtKeys = (addPrefix) => {
-  return getPotExt().map(e => (addPrefix? 'extValue.': '') + e.key)
-}
-

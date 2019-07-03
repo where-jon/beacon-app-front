@@ -13,7 +13,7 @@ import { CATEGORY } from '../../../sub/constant/Constants'
 import * as Util from '../../../sub/util/Util'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
-import * as MasterHelper from '../../../sub/helper/MasterHelper'
+import * as PotHelper from '../../../sub/helper/domain/PotHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
 
@@ -93,7 +93,7 @@ export default {
       if(Util.hasValue(entity.ruby)){
         Util.setValue(entity, 'extValue.ruby', entity.ruby)
       }
-      MasterHelper.getPotExtKeys().forEach(ext => {
+      PotHelper.getPotExtKeys().forEach(ext => {
         Util.setValue(entity, 'extValue.' + ext, entity[ext])
       })
 
