@@ -60,14 +60,7 @@
                 </template>
               </v-select>
             </b-form-group>
-            <b-form-group v-show="isShown('POT.WITH', 'post')">
-              <label v-t="'label.post'" />
-              <input v-model="form.post" :readonly="!isEditable" type="text" maxlength="20" class="form-control">
-            </b-form-group>
-            <b-form-group v-show="isShown('POT.WITH', 'tel')">
-              <label v-t="'label.tel'" />
-              <b-form-input v-model="form.tel" :readonly="!isEditable" type="tel" maxlength="20" pattern="[-\d]*" />
-            </b-form-group>
+            <extform :is-editable="isEditable" :form="form" />
             <b-form-group>
               <label v-t="'label.thumbnail'" />
               <b-form-file v-if="isEditable" ref="inputThumbnail" v-model="form.thumbnailTemp" :placeholder="$t('message.selectFile') " accept="image/jpeg, image/png, image/gif" @change="readImage" />
@@ -131,6 +124,7 @@ import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as ImageHelper from '../../../sub/helper/ImageHelper'
 import * as LocalStorageHelper from '../../../sub/helper/LocalStorageHelper'
 import * as MasterHelper from '../../../sub/helper/MasterHelper'
+import * as PotHelper from '../../../sub/helper/domain/PotHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ValidateHelper from '../../../sub/helper/ValidateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
@@ -140,12 +134,14 @@ import commonmixin from '../../../components/mixin/commonmixin.vue'
 import editmixin from '../../../components/mixin/editmixin.vue'
 import alert from '../../../components/parts/alert.vue'
 import chromeInput from '../../../components/parts/chromeinput.vue'
+import extform from '../../../components/parts/extform.vue'
 
 export default {
   components: {
     breadcrumb,
     alert,
     chromeInput,
+    extform,
   },
   mixins: [commonmixin, editmixin],
   data() {
@@ -160,8 +156,8 @@ export default {
       form: {
         ...Util.extract(this.$store.state.app_service.pot,
           ['potId', 'potCd', 'potName', 'potType', 'extValue.ruby',
-            'displayName', 'potGroupList.0.group.groupId', 'potCategoryList.0.category.categoryId', 'extValue.tel',
-            'extValue.post', 'existThumbnail', 'description'])
+            'displayName', 'potGroupList.0.group.groupId', 'potCategoryList.0.category.categoryId',
+            'existThumbnail', 'description', ...PotHelper.getPotExtKeys(true)])
       },
       userForm: {
         userId: null, loginId: null, pass: null, roleId: null, email: null,
@@ -458,8 +454,6 @@ export default {
         potType: this.form.potType,
         extValue: {
           ruby: this.form.ruby,
-          tel: this.form.tel,
-          post: this.form.post,
         },
         displayName: this.form.displayName,
         potGroupList: this.form.groupId ? [{
@@ -479,6 +473,9 @@ export default {
         thumbnail: this.form.thumbnail,
         description: this.form.description,
       }
+      PotHelper.getPotExtKeys().forEach(key => {
+        entity.extValue[key] = this.form[key]
+      })
       const potTxList = []
       this.form.potTxList.forEach((potTx) => {
         if(potTx.txId){
