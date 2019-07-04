@@ -22,11 +22,11 @@
 
 <script>
 
-import commonmixinVue from '../mixin/commonmixin.vue'
 import * as StringUtil from '../../sub/util/StringUtil'
+import commonmixin from '../mixin/commonmixin.vue'
 
 export default {
-  mixins: [commonmixinVue], 
+  mixins: [commonmixin],
   props: {
     list: {
       type: Array,

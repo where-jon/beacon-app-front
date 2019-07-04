@@ -7,7 +7,11 @@
       <b-form-row>
         <b-form @submit.prevent="save">
           <b-form-group :label="$t('label.deviceId')">
-            <v-select v-model="vueSelected.deviceId" :options="deviceIds" :disable="!isEditable" :clearable="false" class="vue-options-lg" />
+            <v-select v-model="vueSelected.deviceId" :options="deviceIds" :disable="!isEditable" :clearable="false" class="vue-options-lg">
+              <template slot="no-options">
+                {{ vueSelectNoMatchingOptions }}
+              </template>
+            </v-select>
           </b-form-group>
           <b-form-group :label="$t('label.ledColor')">
             <b-form-checkbox-group v-model="form.colors">
@@ -67,34 +71,28 @@
 
 <script>
 import { mapState } from 'vuex'
-import * as StateHelper from '../../sub/helper/StateHelper'
-import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
-import * as ViewHelper from '../../sub/helper/ViewHelper'
-import breadcrumb from '../../components/layout/breadcrumb.vue'
-import alert from '../../components/parts/alert.vue'
 import { LED_COLORS, LED_BLINK_TYPES, SENSOR } from '../../sub/constant/Constants'
-import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as Util from '../../sub/util/Util'
-import editmixin from '../../components/mixin/editmixin.vue'
+import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
+import * as StateHelper from '../../sub/helper/StateHelper'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
+import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
+import breadcrumb from '../../components/layout/breadcrumb.vue'
 import commonmixin from '../../components/mixin/commonmixin.vue'
+import editmixin from '../../components/mixin/editmixin.vue'
+import alert from '../../components/parts/alert.vue'
 
 export default {
   components: {
     breadcrumb,
     alert,
   },
-  mixins: [editmixin, commonmixin],
+  mixins: [commonmixin, editmixin],
   data () {
     return {
       name: 'led',
       id: 'ledId',
       appServicePath: '/core/excloud/led',
-      deviceIds: [],
-      ledColors: LED_COLORS,
-      ledBlinkTypes: LED_BLINK_TYPES,
-      lightOnCandidate: false,
-      noDevice: false,
-      again: false,
       form: {
         deviceId: '',
         colors: [2],
@@ -104,6 +102,12 @@ export default {
         deviceId: null,
       },
       items: ViewHelper.createBreadCrumbItems('main', 'ledOperation'),
+      deviceIds: [],
+      ledColors: LED_COLORS,
+      ledBlinkTypes: LED_BLINK_TYPES,
+      lightOnCandidate: false,
+      noDevice: false,
+      again: false,
     }
   },
   computed: {
@@ -190,11 +194,8 @@ export default {
 
 <style scoped lang="scss">
 @import "../../sub/constant/config.scss";
+@import "../../sub/constant/browser.scss";
 @import "../../sub/constant/vue.scss";
-
-::-webkit-scrollbar { 
-  display: none; 
-}
 
 div[class^="check"] {
   padding-right: 16px;

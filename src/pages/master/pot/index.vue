@@ -6,22 +6,21 @@
 </template>
 
 <script>
-import mList from '../../../components/page/list.vue'
 import { mapState } from 'vuex'
+import { APP, EXCLOUD, APP_SERVICE } from '../../../sub/constant/config'
+import * as ArrayUtil from '../../../sub/util/ArrayUtil'
+import * as Util from '../../../sub/util/Util'
+import * as MenuHelper from '../../../sub/helper/MenuHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
-import * as MenuHelper from '../../../sub/helper/MenuHelper'
-import { APP } from '../../../sub/constant/config.js'
-import reloadmixin from '../../../components/mixin/reloadmixin.vue'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
-import * as Util from '../../../sub/util/Util'
-import * as ArrayUtil from '../../../sub/util/ArrayUtil'
-import { APP_SERVICE, EXCLOUD } from '../../../sub/constant/config'
+import reloadmixin from '../../../components/mixin/reloadmixin.vue'
+import mList from '../../../components/page/list.vue'
 
 export default {
   components: {
-    mList,
     breadcrumb,
+    mList,
   },
   mixins: [reloadmixin],
   data() {
@@ -35,15 +34,15 @@ export default {
         bulkEditPath: '/master/pot/bulkEdit',
         bulkUploadPath: '/master/pot/bulkUpload',
         csvOut: true,
-        extraFilter: this.getExtraFilter(),
         custumCsvColumns: this.getCustomCsvColumns(),
         fields: this.getFields(),
+        extraFilter: this.getExtraFilter(),
         sortBy: 'potName',
         initTotalRows: this.$store.state.app_service.pots.length,
       },
       name: 'pot',
-      extValueDefault: {},
       items: ViewHelper.createBreadCrumbItems('master', 'pot'),
+      extValueDefault: {},
       thumbnailUrl: APP_SERVICE.BASE_URL + EXCLOUD.POT_THUMBNAIL_URL,
     }
   },

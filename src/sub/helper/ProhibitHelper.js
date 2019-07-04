@@ -1,5 +1,5 @@
-import { DETECT_STATE, ALERT_STATE, ZONE } from '../constant/Constants'
 import { APP, DISP } from '../constant/config'
+import { DETECT_STATE, ALERT_STATE, ZONE } from '../constant/Constants'
 
 let i18n
 

@@ -21,9 +21,10 @@
 </template>
 
 <script>
-import * as HttpHelper from '../../sub/helper/HttpHelper'
-import breadcrumb from '../../components/layout/breadcrumb.vue'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
+import * as HttpHelper from '../../sub/helper/HttpHelper'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
+import breadcrumb from '../../components/layout/breadcrumb.vue'
 
 export default {
   components: {
@@ -31,17 +32,8 @@ export default {
   },
   data () {
     return {
+      items: ViewHelper.createBreadCrumbItems('develop', 'env'),
       envs: [],
-      items: [
-        {
-          text: this.$i18n.t('label.develop'),
-          active: true
-        },
-        {
-          text: this.$i18n.t('label.env'),
-          active: true
-        }
-      ],
     }
   },
   mounted() {

@@ -1,11 +1,11 @@
 import _ from 'lodash'
-import * as AppServiceHelper from './AppServiceHelper'
-import * as Util from '../util/Util'
-import * as StringUtil from '../util/StringUtil'
+import { APP, DISP } from '../constant/config'
+import { CATEGORY, SHAPE, NOTIFY_STATE, SYSTEM_ZONE_CATEGORY_NAME} from '../constant/Constants'
 import * as ArrayUtil from '../util/ArrayUtil'
 import * as DateUtil from '../util/DateUtil'
-import { CATEGORY, SHAPE, NOTIFY_STATE, SYSTEM_ZONE_CATEGORY_NAME} from '../constant/Constants'
-import { APP, DISP } from '../constant/config'
+import * as StringUtil from '../util/StringUtil'
+import * as Util from '../util/Util'
+import * as AppServiceHelper from './AppServiceHelper'
 
 
 let store
@@ -552,10 +552,10 @@ export const loadAreaImage = async (areaId, force) => {
     return
   }
   if (store.state.app_service.areaImages.find(areaImage => areaImage.areaId == areaId) && !force) {
-    console.log('FOUND ares', areaId)
+    console.log('FOUND areas', areaId)
     return
   }
-  console.log('load ares', areaId)
+  console.log('load areas', areaId)
   let base64 = await AppServiceHelper.fetchMapImage('/core/area/' + areaId + '/mapImage')
   const areaImages = [{areaId, mapImage: base64}]
   store.commit('app_service/replaceAS', {areaImages})

@@ -11,6 +11,9 @@
             <template slot="selected-option" slot-scope="option">
               {{ vueSelectCutOn(option, true) }}
             </template>
+            <template slot="no-options">
+              {{ vueSelectNoMatchingOptions }}
+            </template>
           </v-select>
         </span>
       </b-form>
@@ -26,40 +29,40 @@
 
 <script>
 import { mapState } from 'vuex'
+import { Container } from '@createjs/easeljs/dist/easeljs.module'
+import { APP, DISP } from '../../sub/constant/config'
+import { SENSOR, TX } from '../../sub/constant/Constants'
+import * as ArrayUtil from '../../sub/util/ArrayUtil'
+import * as NumberUtil from '../../sub/util/NumberUtil'
+import * as Util from '../../sub/util/Util'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
+import * as IconHelper from '../../sub/helper/IconHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
-import * as IconHelper from '../../sub/helper/IconHelper'
-import * as Util from '../../sub/util/Util'
-import * as NumberUtil from '../../sub/util/NumberUtil'
-import * as ArrayUtil from '../../sub/util/ArrayUtil'
-import txdetail from '../../components/parts/txdetail.vue'
-import { DISP, APP } from '../../sub/constant/config'
-import { SENSOR, TX } from '../../sub/constant/Constants'
-import { Container } from '@createjs/easeljs/dist/easeljs.module'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
-import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import commonmixin from '../../components/mixin/commonmixin.vue'
+import showmapmixin from '../../components/mixin/showmapmixin.vue'
+import txdetail from '../../components/parts/txdetail.vue'
 
 export default {
   components: {
     breadcrumb,
     'txdetail': txdetail,
   },
-  mixins: [showmapmixin, commonmixin],
+  mixins: [commonmixin, showmapmixin],
   data() {
     return {
-      keepExbPosition: false,
-      toggleCallBack: () => {
-        this.keepExbPosition = true
-        this.reset()
-      },
-      noImageErrorKey: 'noMapImage',
       items: ViewHelper.createBreadCrumbItems('main', 'pirMenu'),
+      keepExbPosition: false,
+      noImageErrorKey: 'noMapImage',
       INUSE_FONTSIZE_RATIO: 0.9,
       FONTSIZE_RATIO_EN: 0.5,
       EMPTY_FONTSIZE_RATIO: 1.2,
       reloadState: {isLoad: false, initialize: false},
+      toggleCallBack: () => {
+        this.keepExbPosition = true
+        this.reset()
+      },
     }
   },
   computed: {
@@ -107,7 +110,7 @@ export default {
             const pir = pirSensors.find((val) => val.deviceid == exb.deviceId && val.count >= DISP.PIR.MIN_COUNT)
             const pressure = pressureSensors.find((val) => val.deviceid == exb.deviceId && val.press_vol != null)
             const thermopile = thermopileSensors.find((val) => val.deviceid == exb.deviceId)
-            console.log({exb, pir, pressure, thermopile, pirSensors, pressureSensors, thermopileSensors})
+            Util.debug({exb, pir, pressure, thermopile, pirSensors, pressureSensors, thermopileSensors})
             return pir? {id: SENSOR.PIR, ...pir}: pressure? {id: SENSOR.PRESSURE, count: pressure.press_vol, ...pressure}: thermopile? {id: SENSOR.THERMOPILE, ...thermopile}: null
           },
           (exb) => exb.sensorId == SENSOR.PRESSURE? exb.count <= DISP.PRESSURE.VOL_MIN || DISP.PRESSURE.EMPTY_SHOW: exb.count > 0 || DISP.PIR.EMPTY_SHOW
@@ -263,11 +266,6 @@ export default {
 
 <style scoped lang="scss">
 @import "../../sub/constant/config.scss";
+@import "../../sub/constant/browser.scss";
 @import "../../sub/constant/vue.scss";
-
-::-webkit-scrollbar { 
-  display: none; 
-}
-
-
 </style>

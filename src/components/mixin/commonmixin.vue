@@ -3,8 +3,8 @@
 import { mapMutations, mapActions } from 'vuex'
 import { CATEGORY } from '../../sub/constant/Constants'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
-import * as ThemeHelper from '../../sub/helper/ThemeHelper'
 import * as OptionHelper from '../../sub/helper/OptionHelper'
+import * as ThemeHelper from '../../sub/helper/ThemeHelper'
 import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
 
 export default {
@@ -32,6 +32,9 @@ export default {
     },
     sensorOptionsTx() {
       return OptionHelper.getTxOptions()
+    },
+    vueSelectNoMatchingOptions(){
+      return VueSelectHelper.vueSelectNoMatchingOptions()
     },
   },
   methods: {

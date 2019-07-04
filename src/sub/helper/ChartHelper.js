@@ -1,6 +1,6 @@
-import { DISP } from '../constant/config'
 import Chart from 'chart.js'
-// import _ from 'lodash'
+import { DISP } from '../constant/config'
+import * as Util from '../util/Util'
 
 let chart = null
 
@@ -26,7 +26,7 @@ export const showBarChart = (canvasId, labels, stackLabels, chartData, labelStri
       backgroundColor: DISP.SUM_STACK_COLOR[idx % DISP.SUM_STACK_COLOR.length],
     }
   })
-  console.log(datasets)
+  Util.debug(datasets)
 
   chart = new Chart(canvasId, {
     type:'bar', 

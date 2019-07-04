@@ -18,13 +18,21 @@
             <b-form-group v-show="isShown('TX.WITH', 'category')">
               <b-form-row>
                 <label v-t="'label.category'" class="d-flex align-items-center" />
-                <v-select v-model="vueSelected.category" :options="categoryOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-2 vue-options-lg" />
+                <v-select v-model="vueSelected.category" :options="categoryOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-2 vue-options-lg">
+                  <template slot="no-options">
+                    {{ vueSelectNoMatchingOptions }}
+                  </template>
+                </v-select>
               </b-form-row>
             </b-form-group>
             <b-form-group v-show="isShown('TX.WITH', 'group')">
               <b-form-row>
                 <label v-t="'label.group'" class="d-flex align-items-center" />
-                <v-select v-model="vueSelected.group" :options="groupOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-2 vue-options-lg" />
+                <v-select v-model="vueSelected.group" :options="groupOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-2 vue-options-lg">
+                  <template slot="no-options">
+                    {{ vueSelectNoMatchingOptions }}
+                  </template>
+                </v-select>
               </b-form-row>
             </b-form-group>
             <b-form-group v-show="showTx('btxId')">
@@ -85,31 +93,32 @@
 <script>
 import { mapState } from 'vuex'
 import _ from 'lodash'
-import * as ViewHelper from '../../../sub/helper/ViewHelper'
-import * as ValidateHelper from '../../../sub/helper/ValidateHelper'
+import { APP } from '../../../sub/constant/config'
+import { CATEGORY, SENSOR } from '../../../sub/constant/Constants'
 import * as Util from '../../../sub/util/Util'
-import editmixin from '../../../components/mixin/editmixin.vue'
-import commonmixin from '../../../components/mixin/commonmixin.vue'
-import breadcrumb from '../../../components/layout/breadcrumb.vue'
-import alert from '../../../components/parts/alert.vue'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
+import * as ValidateHelper from '../../../sub/helper/ValidateHelper'
+import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as VueSelectHelper from '../../../sub/helper/VueSelectHelper'
-import { APP } from '../../../sub/constant/config.js'
-import { CATEGORY, SENSOR } from '../../../sub/constant/Constants'
+import breadcrumb from '../../../components/layout/breadcrumb.vue'
+import commonmixin from '../../../components/mixin/commonmixin.vue'
+import editmixin from '../../../components/mixin/editmixin.vue'
+import alert from '../../../components/parts/alert.vue'
 
 export default {
   components: {
     breadcrumb,
     alert,
   },
-  mixins: [editmixin, commonmixin],
+  mixins: [commonmixin, editmixin],
   data() {
     return {
       name: 'tx',
       id: 'txId',
       backPath: '/master/tx',
       appServicePath: '/core/tx',
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'tx', href: '/master/tx'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.tx.txId)),
       form: Util.extract(this.$store.state.app_service.tx, [
         'txId', 'btxId', 'major', 'minor', 'potTxList.0.pot.displayName', 'mapImage', 'dispPos', 'dispPir', 'dispAlways',
         'txSensorList.0.sensor.sensorId', 'locationId', 'location.x', 'location.y', 'location',
@@ -117,14 +126,13 @@ export default {
         'potTxList.0.pot.potCategoryList.0.category.categoryId',
         'potTxList.0.pot.potGroupList.0.group.groupId',
       ]),
-      defValue: {
-        'dispPos': 1,
-      },
       vueSelected: {
         category: null,
         group: null,
       },
-      items: ViewHelper.createBreadCrumbItems('master', {text: 'tx', href: '/master/tx'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.tx.txId)),
+      defValue: {
+        'dispPos': 1,
+      },
     }
   },
   computed: {

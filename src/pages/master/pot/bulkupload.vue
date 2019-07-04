@@ -7,14 +7,14 @@
 
 <script>
 import { mapState } from 'vuex'
+import { APP } from '../../../sub/constant/config'
+import * as BrowserUtil from '../../../sub/util/BrowserUtil'
+import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
+import * as ImageHelper from '../../../sub/helper/ImageHelper'
+import * as StateHelper from '../../../sub/helper/StateHelper'
+import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkupload from '../../../components/page/bulkupload.vue'
-import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
-import * as ViewHelper from '../../../sub/helper/ViewHelper'
-import * as StateHelper from '../../../sub/helper/StateHelper'
-import * as ImageHelper from '../../../sub/helper/ImageHelper'
-import * as BrowserUtil from '../../../sub/util/BrowserUtil'
-import { APP } from '../../../sub/constant/config'
 
 export default {
   components: {

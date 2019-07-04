@@ -1,12 +1,12 @@
-import { DISCOMFORT, SENSOR, THERMOHUMIDITY } from '../constant/Constants'
-import { APP, DISP } from '../constant/config'
-import * as Util from '../util/Util'
-import * as ArrayUtil from '../util/ArrayUtil'
-import * as DateUtil from '../util/DateUtil'
-import * as ChartHelper from './ChartHelper'
-import { addLabelByKey } from './ViewHelper'
 import Chart from 'chart.js'
 import _ from 'lodash'
+import { APP, DISP } from '../constant/config'
+import { DISCOMFORT, SENSOR, THERMOHUMIDITY } from '../constant/Constants'
+import * as ArrayUtil from '../util/ArrayUtil'
+import * as DateUtil from '../util/DateUtil'
+import * as Util from '../util/Util'
+import * as ChartHelper from './ChartHelper'
+import { addLabelByKey } from './ViewHelper'
 
 let chart = null
 let subChart = null
@@ -311,7 +311,7 @@ export const createChartPirOptions = (chartData, by, i18n, isResponsive = false)
     data:{
       labels: chartData.map(val => val.key),
       datasets: 
-        createChartGraphDatasets('pir', i18n.tnl('label.pir'), chartData, 'count', DISP.PIR.LINE_COLOR, by, i18n)
+        createChartGraphDatasets('pir', i18n.tnl('label.pir'), chartData, 'count', DISP.PIR_LINE_COLOR, by, i18n)
     },
     options: createChartGraphOptions(
       {
@@ -410,7 +410,7 @@ export const createChartPressureOptions = (chartData, by, i18n, isResponsive = f
     data:{
       labels: chartData.map(val => val.key),
       datasets: 
-        createChartGraphDatasets('pressure', i18n.tnl('label.pressure'), chartData, 'pressVol', DISP.PRESSURE.LINE_COLOR, by, i18n)
+        createChartGraphDatasets('pressure', i18n.tnl('label.pressure'), chartData, 'pressVol', DISP.PRESSURE_LINE_COLOR, by, i18n)
     },
     options: createChartGraphOptions(
       {
@@ -746,7 +746,7 @@ export const getFields = (sensorId, i18n) => {
  * 指定したEXBに紐づいているセンサのIDを取得する
  * @method
  * @param {Object} exb 
- * @return
+ * @return {Object[]}
  */
 export const getSensorIds = exb => {
   const exbSensorList = Util.getValue(exb, 'exbSensorList', null) // TODO: FIX

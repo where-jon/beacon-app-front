@@ -61,7 +61,7 @@
           </b-form-checkbox><br>
         </b-form-checkbox-group>
         <b-form-checkbox-group v-if="!isCategorySelected" id="checkbox-group-2" v-model="displayCheckList.area" name="flavour-2">
-          <div v-for="(area, index) in areas" :key="`area-${index}`">
+          <div v-for="(area, index) in getAreaArray()" :key="`area-${index}`">
             <b-form-checkbox :value="area.areaId">
               {{ area.areaName }} <span class="bgSquare" :style="`background-color: ${getStackColor(index)};`" />
             </b-form-checkbox><br>
@@ -103,6 +103,9 @@
                 <template slot="selected-option" slot-scope="option">
                   {{ vueSelectCutOn(option) }}
                 </template>
+                <template slot="no-options">
+                  {{ vueSelectNoMatchingOptions }}
+                </template>
               </v-select>
             </span>
           </b-form-row>
@@ -114,6 +117,9 @@
               <v-select v-model="vueSelected.category" :options="categoryOptions" class="inputSelect vue-options">
                 <template slot="selected-option" slot-scope="option">
                   {{ vueSelectCutOn(option) }}
+                </template>
+                <template slot="no-options">
+                  {{ vueSelectNoMatchingOptions }}
                 </template>
               </v-select>
             </span>
@@ -154,7 +160,7 @@
               </span>&nbsp;
             </div>
             <br>
-            <div style="width: 100%">
+            <div class="timeDisplay" style="width: 100%">
               <div v-for="(timeData, index) in row.item.graphTimeRatio" :key="`graph-${index}`" class="time-area" :style="`width: ${timeData.ratio}% !important;`">
                 <span v-if="index == 0" style="float: left;">
                   {{ row.item.baseTimeFrom }}
@@ -186,35 +192,36 @@ import Vue from 'vue'
 import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import * as Util from '../../sub/util/Util'
-import * as BrowserUtil from '../../sub/util/BrowserUtil'
+import moment from 'moment'
+import { APP, DISP } from '../../sub/constant/config'
+import { CATEGORY, SYSTEM_ZONE_CATEGORY_NAME } from '../../sub/constant/Constants'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
-import * as DateUtil from '../../sub/util/DateUtil'
+import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as ColorUtil from '../../sub/util/ColorUtil'
 import * as CsvUtil from '../../sub/util/CsvUtil'
-import * as StateHelper from '../../sub/helper/StateHelper'
-import * as ViewHelper from '../../sub/helper/ViewHelper'
-import * as MenuHelper from '../../sub/helper/MenuHelper'
-import * as StayTimeHelper from '../../sub/helper/StayTimeHelper'
-import breadcrumb from '../../components/layout/breadcrumb.vue'
-import alert from '../../components/parts/alert.vue'
+import * as DateUtil from '../../sub/util/DateUtil'
+import * as Util from '../../sub/util/Util'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
-import { APP, DISP } from '../../sub/constant/config'
-import moment from 'moment'
-import commonmixin from '../../components/mixin/commonmixin.vue'
+import * as MenuHelper from '../../sub/helper/MenuHelper'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
-import { SYSTEM_ZONE_CATEGORY_NAME } from '../../sub/constant/Constants'
-import { CATEGORY } from '../../sub/constant/Constants'
+import * as StateHelper from '../../sub/helper/StateHelper'
+import * as StayTimeHelper from '../../sub/helper/StayTimeHelper'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
+import breadcrumb from '../../components/layout/breadcrumb.vue'
+import commonmixin from '../../components/mixin/commonmixin.vue'
+import alert from '../../components/parts/alert.vue'
 
 export default {
   components: {
+    DatePicker,
     breadcrumb,
     alert,
-    DatePicker,
   },
   mixins: [commonmixin],
   data () {
     return {
+      items: ViewHelper.createBreadCrumbItems('sumTitle', 'stayRatioBase'),
+      fields: this.getFields(true),
       form: {
         date: '',
       },
@@ -228,17 +235,16 @@ export default {
         area: [],
         group: [],
       },
-      name: '',
-      viewList: [],
-      items: ViewHelper.createBreadCrumbItems('sumTitle', 'stayRatioBase'),
       message: '',
       modalMessage: '',
+      viewList: [],
+      areaArray: [],
+      categoryDisplayList: [],
+      name: '',
       currentPage: 1,
       perPage: 20,
       sortBy: 'name',
       totalRows: 0,
-      categoryDisplayList: [],
-      fields: this.getFields(true),
       historyType: 'category',
       isCategorySelected: true,
       checkboxLimit: 6,
@@ -289,12 +295,16 @@ export default {
     await StateHelper.load('categories')
     await StateHelper.load('areas')
     this.form.date = moment().add(-1, 'days').format('YYYYMMDD')
+    let sortedArea = _.cloneDeep(this.areas)
+    ArrayUtil.sortIgnoreCase(sortedArea, 'areaName')
+    this.areaArray = sortedArea
   },
   async mounted() {
     ViewHelper.importElementUI()
     window.addEventListener('resize', () => {
       this.updateColumnName()
       this.$forceUpdate()
+      this.setGraphTimeDisplay()
     })
     this.updateColumnName()
     await StateHelper.load('category')
@@ -306,6 +316,12 @@ export default {
       .sort((a, b) => a.categoryId < b.categoryId ? -1 : 1)
   },
   methods: {
+    getThClassName() {
+      return 'tableHeader'
+    },
+    getAreaArray() {
+      return this.areaArray
+    },
     isScaleTime(scaleTime) {
       return _.some(APP.STAY_SUM.SCALE_TIMES, (time) => { return time === scaleTime })
     },
@@ -347,9 +363,9 @@ export default {
       const disableClassName = 'd-none'
       const groupClassName = isInit || !this.isDisplayGroupColumn('groupName')? disableClassName: ''
       let fields = [
-        {key: 'date', sortable: false, label: this.$i18n.tnl('label.date'), thClass: disableClassName, tdClass: disableClassName},
+        {key: 'date', sortable: false, label: this.$i18n.tnl('label.date'), thClass: this.getThClassName() + ' ' + disableClassName, tdClass: disableClassName},
         {key: 'name', sortable: true, label: this.$i18n.tnl('label.potName')},
-        {key: 'groupName', sortable: true, label: this.$i18n.tnl('label.groupName'), thClass: groupClassName, tdClass: groupClassName},
+        {key: 'groupName', sortable: true, label: this.$i18n.tnl('label.groupName'), thClass: this.getThClassName() + ' ' + groupClassName, tdClass: groupClassName},
         {key: 'graph', sortable: false, label: this.$i18n.tnl('label.graph'), thStyle: {height: '50px !important', width:'400px !important'} },
       ]
 
@@ -365,7 +381,7 @@ export default {
           let colorStyle = '<span style="color: #' + category.bgColor + ';">■</span>' // TODO: リファクタリング対象。出来る人がいたらHeaderへ移動する
           let categoryName = (category.systemUse? i18n.tnl('label.' + category.systemCategoryName): category.categoryName)
           fields.push({key: categoryName, sortable: true, label: categoryName + colorStyle
-            , thStyle: {width:'100px !important'}, thClass: categoryClassName, tdClass: categoryClassName})
+            , thStyle: {width:'100px !important'}, thClass: this.getThClassName() + ' ' + categoryClassName, tdClass: categoryClassName})
         })
       
       // カテゴリその他を追加する
@@ -376,19 +392,19 @@ export default {
       let colorOtherStyle = '<span style="color: ' + this.OtherColor + ';">■</span>' // TODO: リファクタリング対象。出来る人がいたらHeaderへ移動する
       const categoryOtherClassName = isSelectedCategoryOther? '': disableClassName
       fields.push({key: 'categoryOther', sortable: true, label: i18n.tnl('label.other')+i18n.tnl('label.category') + colorOtherStyle
-        , thStyle: {width:'100px !important'}, thClass: categoryOtherClassName, tdClass: categoryOtherClassName})
+        , thStyle: {width:'100px !important'}, thClass: this.getThClassName() + ' ' + categoryOtherClassName, tdClass: categoryOtherClassName})
 
       // エリアを追加する
-      let selectedAreas = _.filter(this.areas, (area) => {
+      let selectedAreas = _.filter(this.areaArray, (area) => {
         return _.some(this.displayCheckList.area, (id) => { return id == area.areaId })
       })
       
-      _.filter(this.areas, (a) => { return true })
+      _.filter(this.areaArray, (a) => { return true })
         .forEach((area, index) => {
           const areaClassName = _.some(selectedAreas, (data, index) => { return data.areaId == area.areaId})? '': disableClassName
-          let colorStyle = '<span style="color: ' + DISP.SUM_STACK_COLOR[index] + ';">■</span>' // TODO: リファクタリング対象。出来る人がいたらHeaderへ移動する
+          let colorStyle = '<span style="color: ' + DISP.SUM_STACK_COLOR[index % DISP.SUM_STACK_COLOR.length] + ';">■</span>' // TODO: リファクタリング対象。出来る人がいたらHeaderへ移動する
           fields.push({key: area.areaName, sortable: true, label: area.areaName + colorStyle, thStyle: {width:'100px !important'}
-            , thClass: areaClassName, tdClass: areaClassName})
+            , thClass: this.getThClassName() + ' ' + areaClassName, tdClass: areaClassName})
         })
 
       // エリアその他が選択されている場合は追加
@@ -399,15 +415,15 @@ export default {
       colorOtherStyle = '<span style="color: ' + this.otherColor + ';">■</span>' // TODO: リファクタリング対象。出来る人がいたらHeaderへ移動する
       const areaOtherClassName = isSelectedAreaOther? '': disableClassName
       fields.push({key: 'areaOther', sortable: true, label: i18n.tnl('label.other')+i18n.tnl('label.area') + colorOtherStyle
-        , thStyle: {width:'100px !important'}, thClass: areaOtherClassName, tdClass: areaOtherClassName})
+        , thStyle: {width:'100px !important'}, thClass: this.getThClassName() + ' ' + areaOtherClassName, tdClass: areaOtherClassName})
 
       // 選択されている総合時間を追加する
       const stayClassName = isInit || this.isDisplayStayColumn('stay')? '': disableClassName
       const lostClassName = isInit || this.isDisplayStayColumn('lost')? '': disableClassName
       fields.push({key: 'stayTime', sortable: true, label: this.$i18n.tnl('label.stayTime'), thStyle: {width:'100px !important'}
-        , thClass: stayClassName, tdClass: stayClassName})
+        , thClass: this.getThClassName() + ' ' + stayClassName, tdClass: stayClassName})
       fields.push({key: 'lostTime', sortable: true, label: this.$i18n.tnl('label.lostTime'), thStyle: {width:'100px !important'}
-        , thClass: lostClassName, tdClass: lostClassName})
+        , thClass: this.getThClassName() + ' ' + lostClassName, tdClass: lostClassName})
 
       return fields.map(val => ({ ...val, originLabel: val.label}))
     },
@@ -487,7 +503,7 @@ export default {
 
         // エリア用データ保持変数を初期化
         areaData[0] = {name: 'areaOther', value: 0}
-        this.areas.forEach((area) => {
+        this.areaArray.forEach((area) => {
           areaData[area.areaId] = {name: area.areaName, value: 0}
         })
 
@@ -520,7 +536,7 @@ export default {
           // エリア毎の滞在時間を加算（一致するカテゴリが存在する場合しかエリアを引けない）
           if (findCategory) {
             let zone = _.find(this.zones, (zone) => { return zone.categoryId == findCategory.categoryId})
-            findArea = _.find(this.areas, (area, index) => {
+            findArea = _.find(this.areaArray, (area, index) => {
               if (zone) {
                 if (area.areaId == zone.areaId) {
                   areaIndex = index
@@ -760,7 +776,7 @@ export default {
         const url = '/office/stayTime/sumByDay/' + searchDate + '/zoneCategory?from=' + APP.STAY_SUM.FROM + '&to=' + APP.STAY_SUM.TO + groupBy + categoryBy
         const sumData = await HttpHelper.getAppService(url)
         if (_.isEmpty(sumData)) {
-          console.log('searchDate: ' + searchDate)
+          Util.debug('searchDate: ' + searchDate)
           this.message = this.$i18n.t('message.listEmpty')
           this.replace({showAlert: true})
           this.hideProgress()
@@ -815,18 +831,27 @@ export default {
       default:
         // 何もしない
       }
+    },
+    setGraphTimeDisplay() {
+      const timeDisplay = document.getElementsByClassName('timeDisplay')
+      _.forEach(timeDisplay, (td) => {
+        if (td.offsetWidth <= 100) {
+          td.style.visibility = 'hidden'
+        } else {
+          td.style.visibility = ''
+        }
+      })
     }
   }
 }
 </script>
 
 <style scoped lang="scss">
-.inputSelect {
-  min-width: 160px;
+@import "../../sub/constant/input.scss";
+.tableHeader {
+  word-break:break-all;
 }
-.inputdatefrom {
-  width: 210px;
-}
+
 .bgSquare {
   display: inline-block;
   _display: inline;

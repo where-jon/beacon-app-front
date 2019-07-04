@@ -116,26 +116,26 @@
 
 <script>
 import { mapState } from 'vuex'
-import * as AuthHelper from '../../sub/helper/AuthHelper'
-import { DISP, APP } from '../../sub/constant/config'
+import { APP, DISP } from '../../sub/constant/config'
 import { LOGIN_MODE } from '../../sub/constant/Constants'
-import { getThemeClasses } from '../../sub/helper/ThemeHelper'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
-import commonmixinVue from '../mixin/commonmixin.vue'
-import CustomLink from '../parts/customlink.vue'
-import * as StateHelper from '../../sub/helper/StateHelper'
-import * as RegionHelper from '../../sub/helper/RegionHelper'
-import * as LocalStorageHelper from '../../sub/helper/LocalStorageHelper'
-import * as ImageHelper from '../../sub/helper/ImageHelper'
+import * as AuthHelper from '../../sub/helper/AuthHelper'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
+import * as ImageHelper from '../../sub/helper/ImageHelper'
+import * as LocalStorageHelper from '../../sub/helper/LocalStorageHelper'
+import * as RegionHelper from '../../sub/helper/RegionHelper'
+import * as StateHelper from '../../sub/helper/StateHelper'
+import { getThemeClasses } from '../../sub/helper/ThemeHelper'
+import commonmixin from '../mixin/commonmixin.vue'
 import Help from '../page/help.vue'
+import CustomLink from '../parts/customlink.vue'
 
 export default {
   components: {
-    CustomLink,
     Help,
+    CustomLink,
   },
-  mixins: [commonmixinVue],
+  mixins: [commonmixin],
   data() {
     return {
       nav : this.$store.state.menu,
@@ -222,8 +222,16 @@ export default {
     },
     openHelp() {
       const path = _.filter(this.$route.path.split('/'), (path) => Boolean(path))
-      this.fromPageUrl = path? '#' + path[path.length - 1]: ''
+      const lastPath = path? path[path.length - 1]: ''
+      if (path && this.useLastUrl(lastPath)) {
+        this.fromPageUrl = '#' + lastPath
+      } else {
+        this.fromPageUrl = path? '#' + path[path.length - 2] + '_' + lastPath: ''
+      }
       this.$root.$emit('bv::show::modal', 'helpModal')
+    },
+    useLastUrl(lastPath) {
+      return lastPath == 'bulkedit'
     },
     isTenantAdmin() {
       const login = LocalStorageHelper.getLogin()
@@ -304,6 +312,7 @@ export default {
 
 <style lang="scss">
 @import "../../sub/constant/config.scss";
+@import "../../sub/constant/label.scss";
 
 .topMenuNavbar {
   @media (max-width: 1119px) and (min-width: 768px) {
@@ -384,11 +393,6 @@ a.dropdown-item.exeo:focus {
 
 div.navbar-brand {
   margin: 0 auto;
-}
-
-.word-break {
-  word-break: break-all !important;
-  word-wrap: break-all !important;
 }
 
 .mobile-region {

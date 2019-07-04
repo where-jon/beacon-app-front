@@ -9,18 +9,18 @@
 
 <script>
 import { mapState } from 'vuex'
-import * as StateHelper from '../../sub/helper/StateHelper'
-import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
-import * as ViewHelper from '../../sub/helper/ViewHelper'
-import * as BrowserUtil from '../../sub/util/BrowserUtil'
-import * as ArrayUtil from '../../sub/util/ArrayUtil'
-import * as CsvUtil from '../../sub/util/CsvUtil'
 import { APP } from '../../sub/constant/config'
-import breadcrumb from '../../components/layout/breadcrumb.vue'
+import * as ArrayUtil from '../../sub/util/ArrayUtil'
+import * as BrowserUtil from '../../sub/util/BrowserUtil'
+import * as CsvUtil from '../../sub/util/CsvUtil'
+import { getCharSet } from '../../sub/helper/CharSetHelper'
 import * as DetectStateHelper from '../../sub/helper/DetectStateHelper'
+import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
+import * as StateHelper from '../../sub/helper/StateHelper'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
+import breadcrumb from '../../components/layout/breadcrumb.vue'
 import commonmixin from '../../components/mixin/commonmixin.vue'
 import reloadmixin from '../../components/mixin/reloadmixin.vue'
-import { getCharSet } from '../../sub/helper/CharSetHelper'
 import monitorTable from '../../components/parts/monitortable.vue'
 
 export default {
@@ -28,7 +28,7 @@ export default {
     breadcrumb,
     monitorTable,
   },
-  mixins: [reloadmixin, commonmixin],
+  mixins: [commonmixin, reloadmixin],
   props: {
     isDev: {
       type: Boolean,

@@ -18,12 +18,12 @@
 </template>
 
 <script>
+import JsZip from 'jszip'
+import { APP } from '../../sub/constant/config'
+import * as Util from '../../sub/util/Util'
 import commonmixin from '../mixin/commonmixin.vue'
 import editmixin from '../mixin/editmixin.vue'
 import alert from '../parts/alert.vue'
-import { APP } from '../../sub/constant/config.js'
-import * as Util from '../../sub/util/Util'
-import JsZip from 'jszip'
 
 let fileReader
 
@@ -31,7 +31,7 @@ export default {
   components: {
     alert,
   },
-  mixins: [editmixin, commonmixin],
+  mixins: [commonmixin, editmixin],
   props: {
     name: {
       type: String,
@@ -52,17 +52,17 @@ export default {
   },
   data() {
     return {
+      form: {
+        zipFile: null,
+        thumbnails: [],
+        warnThumbnails: [],
+      },
       mutex: false,
       bulkUpload: true,
       formKey: 0,
       fileCount: 0,
       loading: false,
       submittable: false,
-      form: {
-        zipFile: null,
-        thumbnails: [],
-        warnThumbnails: [],
-      },
     }
   },
   mounted() {

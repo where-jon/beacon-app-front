@@ -1,19 +1,21 @@
-import * as AuthHelper from '../sub/helper/AuthHelper'
-import * as MenuHelper from '../sub/helper/MenuHelper'
-import * as StateHelper from '../sub/helper/StateHelper'
-import * as HttpHelper from '../sub/helper/HttpHelper'
-import * as ViewHelper from '../sub/helper/ViewHelper'
-import * as BulkHelper from '../sub/helper/BulkHelper'
-import * as OptionHelper from '../sub/helper/OptionHelper'
-import * as SettingHelper from '../sub/helper/SettingHelper'
-import * as LocalStorageHelper from '../sub/helper/LocalStorageHelper'
-import * as ProhibitHelper from '../sub/helper/ProhibitHelper'
-import * as ValidateHelper from '../sub/helper/ValidateHelper'
 import { APP } from '../sub/constant/config'
 import { LOGIN_MODE, FORCE_PUSH_MENU, ROLE_FEATURE } from '../sub/constant/Constants'
+import * as Util from '../sub/util/Util'
+import * as AuthHelper from '../sub/helper/AuthHelper'
+import * as BulkHelper from '../sub/helper/BulkHelper'
+import * as HttpHelper from '../sub/helper/HttpHelper'
+import * as LocalStorageHelper from '../sub/helper/LocalStorageHelper'
+import * as MenuHelper from '../sub/helper/MenuHelper'
+import * as OptionHelper from '../sub/helper/OptionHelper'
+import * as ProhibitHelper from '../sub/helper/ProhibitHelper'
+import * as SettingHelper from '../sub/helper/SettingHelper'
+import * as StateHelper from '../sub/helper/StateHelper'
+import * as ValidateHelper from '../sub/helper/ValidateHelper'
+import * as ViewHelper from '../sub/helper/ViewHelper'
+import * as VueSelectHelper from '../sub/helper/VueSelectHelper'
 
 export default function (context) {
-  console.debug('checkAuth')
+  Util.debug('checkAuth')
   AuthHelper.setApp(context.app.router, context.app.store)
   StateHelper.setApp(context.app.store, context.app.i18n)
   ViewHelper.setApp(context.app.i18n)
@@ -23,6 +25,7 @@ export default function (context) {
   OptionHelper.setApp(context.app.i18n)
   ProhibitHelper.setApp(context.app.i18n)
   ValidateHelper.setApp(context.app.i18n)
+  VueSelectHelper.setApp(context.app.i18n)
   if (!process.browser) {
     return
   }

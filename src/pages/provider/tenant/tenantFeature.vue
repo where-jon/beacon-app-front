@@ -19,26 +19,26 @@
 
 <script>
 import { mapState } from 'vuex'
+import * as Util from '../../../sub/util/Util'
+import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as AuthHelper from '../../../sub/helper/AuthHelper'
+import * as FeatureHelper from '../../../sub/helper/FeatureHelper'
+import * as LocalStorageHelper from '../../../sub/helper/LocalStorageHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
-import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
-import * as LocalStorageHelper from '../../../sub/helper/LocalStorageHelper'
-import * as FeatureHelper from '../../../sub/helper/FeatureHelper'
-import editmixin from '../../../components/mixin/editmixin.vue'
-import commonmixin from '../../../components/mixin/commonmixin.vue'
-import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
-import alert from '../../../components/parts/alert.vue'
+import commonmixin from '../../../components/mixin/commonmixin.vue'
+import editmixin from '../../../components/mixin/editmixin.vue'
 import featureList from '../../../components/page/featureList.vue'
+import alert from '../../../components/parts/alert.vue'
 
 export default {
   components: {
     breadcrumb,
-    alert,
     featureList,
+    alert,
   },
-  mixins: [editmixin, commonmixin],
+  mixins: [commonmixin, editmixin],
   data() {
     return {
       name: 'tenant',
@@ -50,8 +50,8 @@ export default {
         {key: 'subCheck', label: 'dummy', thStyle: {width:'4px !important'} },
         {key: 'featureName', label: 'dummy'},
       ]),
-      tenant: {tenantId: true},
       featureList: [],
+      tenant: {tenantId: true},
     }
   },
   computed: {

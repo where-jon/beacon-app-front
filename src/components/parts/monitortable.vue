@@ -73,18 +73,18 @@
 
 <script>
 import VueScrollingTable from 'vue-scrolling-table'
-import * as TelemetryHelper from '../../sub/helper/TelemetryHelper'
 import * as DetectStateHelper from '../../sub/helper/DetectStateHelper'
-import allCount from './allcount.vue'
-import reloadmixin from '../mixin/reloadmixin.vue'
+import * as TelemetryHelper from '../../sub/helper/TelemetryHelper'
 import commonmixin from '../mixin/commonmixin.vue'
+import reloadmixin from '../mixin/reloadmixin.vue'
+import allCount from './allcount.vue'
 
 export default {
   components: {
-    allCount,
     VueScrollingTable,
+    allCount,
   },
-  mixins: [reloadmixin, commonmixin],
+  mixins: [commonmixin, reloadmixin],
   props: {
     isDev: {
       type: Boolean,

@@ -22,7 +22,11 @@
           </b-form-row>
           <b-form-row>
             <b-col sm="5">
-              <v-select v-model="vueSelected.area" :options="areaNames" :disabled="!isEditable" :clearable="false" class="vue-options-lg" />
+              <v-select v-model="vueSelected.area" :options="areaNames" :disabled="!isEditable" :clearable="false" class="vue-options-lg">
+                <template slot="no-options">
+                  {{ vueSelectNoMatchingOptions }}
+                </template>
+              </v-select>
             </b-col>
           </b-form-row>
           <b-form-row>
@@ -30,7 +34,11 @@
           </b-form-row>
           <b-form-row>
             <b-col sm="5">
-              <v-select v-model="vueSelected.category" :options="categoryNames" :disabled="!isEditable" class="vue-options-lg" />
+              <v-select v-model="vueSelected.category" :options="categoryNames" :disabled="!isEditable" class="vue-options-lg">
+                <template slot="no-options">
+                  {{ vueSelectNoMatchingOptions }}
+                </template>
+              </v-select>
             </b-col>
           </b-form-row>
         </b-form-group>
@@ -47,30 +55,31 @@
 
 <script>
 import { mapState } from 'vuex'
-import * as StateHelper from '../../../sub/helper/StateHelper'
-import * as VueSelectHelper from '../../../sub/helper/VueSelectHelper'
-import * as ViewHelper from '../../../sub/helper/ViewHelper'
-import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
-import * as ValidateHelper from '../../../sub/helper/ValidateHelper'
-import editmixin from '../../../components/mixin/editmixin.vue'
-import commonmixin from '../../../components/mixin/commonmixin.vue'
-import * as Util from '../../../sub/util/Util'
-import breadcrumb from '../../../components/layout/breadcrumb.vue'
-import alert from '../../../components/parts/alert.vue'
 import { CATEGORY, ZONE } from '../../../sub/constant/Constants'
+import * as Util from '../../../sub/util/Util'
+import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
+import * as StateHelper from '../../../sub/helper/StateHelper'
+import * as ValidateHelper from '../../../sub/helper/ValidateHelper'
+import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import * as VueSelectHelper from '../../../sub/helper/VueSelectHelper'
+import breadcrumb from '../../../components/layout/breadcrumb.vue'
+import commonmixin from '../../../components/mixin/commonmixin.vue'
+import editmixin from '../../../components/mixin/editmixin.vue'
+import alert from '../../../components/parts/alert.vue'
 
 export default {
   components: {
     breadcrumb,
     alert,
   },
-  mixins: [editmixin, commonmixin],
+  mixins: [commonmixin, editmixin],
   data() {
     return {
       name: 'zone',
       id: 'zoneId',
       backPath: '/master/zoneClass',
       appServicePath: '/core/zone',
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'zoneClass', href: '/master/zoneClass'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.zone.zoneId)),
       form: Util.extract(this.$store.state.app_service.zone, ['zoneId', 'zoneName', 'areaId', 'locationZoneList.0.locationZonePK.locationId', 'zoneCategoryList.0.zoneCategoryPK.categoryId']),
       vueSelected: {
         area: null,
@@ -78,10 +87,9 @@ export default {
       },
       areaNames: [],
       categoryNames: [],
-      isEnableNameText: true,
       zones: [],
+      isEnableNameText: true,
       isRegist: false,
-      items: ViewHelper.createBreadCrumbItems('master', {text: 'zoneClass', href: '/master/zoneClass'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.zone.zoneId)),
     }
   },
   computed: {
@@ -118,7 +126,6 @@ export default {
     async initAreaNames() {
       await StateHelper.load('area')
       this.areaNames = StateHelper.getOptionsFromState('area', false, true)
-      console.log(this.areaNames )
     },
     async initCategoryNames() {
       await StateHelper.load('category')
@@ -153,8 +160,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import "../../../sub/constant/label.scss";
 @import "../../../sub/constant/vue.scss";
-label.control-label {
-  padding-top: 7px;
-}
 </style>

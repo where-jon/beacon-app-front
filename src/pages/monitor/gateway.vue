@@ -8,24 +8,24 @@
 </template>
 
 <script>
-import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
-import * as ViewHelper from '../../sub/helper/ViewHelper'
-import * as DetectStateHelper from '../../sub/helper/DetectStateHelper'
+import { APP } from '../../sub/constant/config'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as CsvUtil from '../../sub/util/CsvUtil'
+import { getCharSet } from '../../sub/helper/CharSetHelper'
+import * as DetectStateHelper from '../../sub/helper/DetectStateHelper'
+import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import commonmixin from '../../components/mixin/commonmixin.vue'
 import reloadmixin from '../../components/mixin/reloadmixin.vue'
-import { getCharSet } from '../../sub/helper/CharSetHelper'
 import monitorTable from '../../components/parts/monitortable.vue'
-import { APP } from '../../sub/constant/config.js'
 
 export default {
   components: {
     breadcrumb,
     monitorTable,
   },
-  mixins: [reloadmixin, commonmixin],
+  mixins: [commonmixin, reloadmixin],
   props: {
     isDev: {
       type: Boolean,
@@ -35,7 +35,6 @@ export default {
   data () {
     return {
       items: ViewHelper.createBreadCrumbItems('monitor', 'gateway'),
-      gateways: [],
       headers: ViewHelper.addLabelByKey(this.isDev? null: this.$i18n, APP.SVC.POS.EXSERVER?[
         { key: 'deviceid', label: this.isDev? 'deviceid': 'deviceId'},
         { key: 'updated', label: this.isDev? 'updated': 'finalReceiveTimestamp'},
@@ -46,6 +45,7 @@ export default {
         { key: 'updated', label: this.isDev? 'updated': 'finalReceiveTimestamp'},
         { key: 'state'},
       ]),
+      gateways: [],
       csvHeaders: APP.SVC.POS.EXSERVER ? {
         'deviceid': 'deviceid',
         'updated': 'updated',

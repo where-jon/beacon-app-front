@@ -27,6 +27,9 @@
                       <template slot="selected-option" slot-scope="option">
                         {{ vueSelectCutOn(option) }}
                       </template>
+                      <template slot="no-options">
+                        {{ vueSelectNoMatchingOptions }}
+                      </template>
                     </v-select>
                   </span>
                 </b-input-group>
@@ -221,20 +224,20 @@
 <script>
 
 import { mapState, mapMutations } from 'vuex'
+import { CATEGORY, SENSOR } from '../../sub/constant/Constants'
+import * as ArrayUtil from '../../sub/util/ArrayUtil'
+import * as BrowserUtil from '../../sub/util/BrowserUtil'
+import * as CsvUtil from '../../sub/util/CsvUtil'
+import * as StringUtil from '../../sub/util/StringUtil'
+import * as Util from '../../sub/util/Util'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
-import * as StateHelper from '../../sub/helper/StateHelper'
-import * as MenuHelper from '../../sub/helper/MenuHelper'
+import * as AuthHelper from '../../sub/helper/AuthHelper'
+import { getCharSet } from '../../sub/helper/CharSetHelper'
 import * as DetectStateHelper from '../../sub/helper/DetectStateHelper'
 import * as LocalStorageHelper from '../../sub/helper/LocalStorageHelper'
-import * as Util from '../../sub/util/Util'
-import * as BrowserUtil from '../../sub/util/BrowserUtil'
-import * as StringUtil from '../../sub/util/StringUtil'
-import * as ArrayUtil from '../../sub/util/ArrayUtil'
-import * as CsvUtil from '../../sub/util/CsvUtil'
-import { getCharSet } from '../../sub/helper/CharSetHelper'
+import * as MenuHelper from '../../sub/helper/MenuHelper'
+import * as StateHelper from '../../sub/helper/StateHelper'
 import commonmixin from '../mixin/commonmixin.vue'
-import { CATEGORY, SENSOR } from '../../sub/constant/Constants'
-import * as AuthHelper from '../../sub/helper/AuthHelper'
 import alert from '../parts/alert.vue'
 import settinginput from '../parts/settinginput.vue'
 
@@ -311,8 +314,8 @@ export default {
       error: null,
       sortBy: null,
       sortDesc: false,
-      sortCompare: (aData, bData, key) => this.sortCompareCustom(aData, bData, key),
       login: LocalStorageHelper.getLogin(),
+      sortCompare: (aData, bData, key) => this.sortCompareCustom(aData, bData, key),
       ...this.params
     }
   },

@@ -36,8 +36,8 @@
 </template>
 
 <script>
-import { TX_VIEW_TYPES } from '../../sub/constant/Constants'
 import { DISP } from '../../sub/constant/config'
+import { TX_VIEW_TYPES } from '../../sub/constant/Constants'
 
 export default {
   props: {

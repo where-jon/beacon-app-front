@@ -20,11 +20,19 @@
         </b-form-group>
         <b-form-group>
           <label v-t="'label.role'" />
-          <v-select v-model="vueSelected.role" :options="roleOptions" :disabled="!isEditable" :clearable="false" class="mb-3 vue-options-lg" />
+          <v-select v-model="vueSelected.role" :options="roleOptions" :disabled="!isEditable" :clearable="false" class="mb-3 vue-options-lg">
+            <template slot="no-options">
+              {{ vueSelectNoMatchingOptions }}
+            </template>
+          </v-select>
         </b-form-group>
         <b-form-group v-show="showRegion">
           <label v-t="'label.region'" />
-          <v-select v-model="vueSelected.regions" :options="regionOptions" :disabled="!isEditable" multiple :close-on-select="false" class="vue-options-multi" />
+          <v-select v-model="vueSelected.regions" :options="regionOptions" :disabled="!isEditable" multiple :close-on-select="false" class="vue-options-multi">
+            <template slot="no-options">
+              {{ vueSelectNoMatchingOptions }}
+            </template>
+          </v-select>
         </b-form-group>
         <b-form-group>
           <label v-t="'label.description'" />
@@ -52,18 +60,18 @@
 
 <script>
 import { mapState } from 'vuex'
-import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
-import * as StateHelper from '../../../sub/helper/StateHelper'
-import * as VueSelectHelper from '../../../sub/helper/VueSelectHelper'
-import * as ViewHelper from '../../../sub/helper/ViewHelper'
-import * as AuthHelper from '../../../sub/helper/AuthHelper'
-import * as ValidateHelper from '../../../sub/helper/ValidateHelper'
-import { APP } from '../../../sub/constant/config.js'
-import editmixin from '../../../components/mixin/editmixin.vue'
-import commonmixin from '../../../components/mixin/commonmixin.vue'
-import * as Util from '../../../sub/util/Util'
+import { APP } from '../../../sub/constant/config'
 import * as ArrayUtil from '../../../sub/util/ArrayUtil'
+import * as Util from '../../../sub/util/Util'
+import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
+import * as AuthHelper from '../../../sub/helper/AuthHelper'
+import * as StateHelper from '../../../sub/helper/StateHelper'
+import * as ValidateHelper from '../../../sub/helper/ValidateHelper'
+import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import * as VueSelectHelper from '../../../sub/helper/VueSelectHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
+import commonmixin from '../../../components/mixin/commonmixin.vue'
+import editmixin from '../../../components/mixin/editmixin.vue'
 import alert from '../../../components/parts/alert.vue'
 import chromeInput from '../../../components/parts/chromeinput.vue'
 
@@ -73,13 +81,14 @@ export default {
     alert,
     chromeInput,
   },
-  mixins: [editmixin, commonmixin],
+  mixins: [commonmixin, editmixin],
   data() {
     return {
       name: 'user',
       id: 'userId',
       backPath: '/master/user',
       appServicePath: '/meta/user',
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'user', href: '/master/user'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.user.userId)),
       form: Util.extract(this.$store.state.app_service.user, ['userId', 'loginId', 'name', 'email', 'roleId', 'userRegionList', 'description']),
       vueSelected: {
         role: null,
@@ -92,7 +101,6 @@ export default {
       passMinLength: 3,
       passMaxLength: 16,
       selfUpdate: this.$store.state.loginId == this.$store.state.app_service.user.loginId,
-      items: ViewHelper.createBreadCrumbItems('master', {text: 'user', href: '/master/user'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.user.userId)),
     }
   },
   computed: {
@@ -245,8 +253,4 @@ export default {
 
 <style scoped lang="scss">
 @import "../../../sub/constant/vue.scss";
-.vue-options-multi {
-  margin-left: 0px;
-  width: 100%;
-}
 </style>

@@ -1,7 +1,7 @@
 import { DISP } from '../constant/config'
 import { SHAPE, FONT } from '../constant/Constants'
-import * as Util from '../util/Util'
 import * as ColorUtil from '../util/ColorUtil'
+import * as Util from '../util/Util'
 
 
 /**

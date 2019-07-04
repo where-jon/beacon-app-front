@@ -7,30 +7,27 @@
 
 <script>
 import { mapState } from 'vuex'
-import * as Util from '../../../sub/util/Util'
 import { BULK } from '../../../sub/constant/Constants'
-import breadcrumb from '../../../components/layout/breadcrumb.vue'
-import bulkedit from '../../../components/page/bulkedit.vue'
-import commonmixinVue from '../../../components/mixin/commonmixin.vue'
-import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import * as Util from '../../../sub/util/Util'
 import * as BulkHelper from '../../../sub/helper/BulkHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
+import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import breadcrumb from '../../../components/layout/breadcrumb.vue'
+import commonmixin from '../../../components/mixin/commonmixin.vue'
+import bulkedit from '../../../components/page/bulkedit.vue'
 
 export default {
   components: {
     breadcrumb,
     bulkedit,
   },
-  mixins: [commonmixinVue],  
+  mixins: [commonmixin],  
   data() {
     return {
       name: 'roleFeature',
       id: 'roleId',
       backPath: '/master/role/edit',
       appServicePath: '/meta/roleFeature',
-      roleFeature:{
-        roleId: this.$store.state.app_service.role.roleId
-      },
       items: ViewHelper.createBreadCrumbItems(
         'master',
         {text: 'role', href: '/master/role'},
@@ -38,6 +35,9 @@ export default {
         'feature',
         'bulkRegister'
       ),
+      roleFeature:{
+        roleId: this.$store.state.app_service.role.roleId
+      },
     }
   },
   computed: {

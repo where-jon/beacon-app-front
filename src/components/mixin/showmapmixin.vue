@@ -2,60 +2,61 @@
 <script>
 import { mapState, mapMutations, mapActions } from 'vuex'
 import { Stage, Bitmap, Touch } from '@createjs/easeljs/dist/easeljs.module'
-import { APP, DISP, DEV, APP_SERVICE, EXCLOUD } from '../../sub/constant/config.js'
+import * as mock from '../../assets/mock/mock'
+import { APP, DISP, DEV, APP_SERVICE, EXCLOUD } from '../../sub/constant/config'
 import { SHAPE, SENSOR, POSITION, TX } from '../../sub/constant/Constants'
+import * as BrowserUtil from '../../sub/util/BrowserUtil'
+import * as ColorUtil from '../../sub/util/ColorUtil'
+import * as DateUtil from '../../sub/util/DateUtil'
+import * as DomUtil from '../../sub/util/DomUtil'
+import * as NumberUtil from '../../sub/util/NumberUtil'
+import * as StringUtil from '../../sub/util/StringUtil'
+import * as Util from '../../sub/util/Util'
+import * as VueUtil from '../../sub/util/VueUtil'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
+import * as IconHelper from '../../sub/helper/IconHelper'
 import * as PositionHelper from '../../sub/helper/PositionHelper'
 import * as SensorHelper from '../../sub/helper/SensorHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
-import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
-import * as IconHelper from '../../sub/helper/IconHelper'
 import * as StyleHelper from '../../sub/helper/StyleHelper'
-import * as Util from '../../sub/util/Util'
-import * as BrowserUtil from '../../sub/util/BrowserUtil'
-import * as VueUtil from '../../sub/util/VueUtil'
-import * as DomUtil from '../../sub/util/DomUtil'
-import * as StringUtil from '../../sub/util/StringUtil'
-import * as NumberUtil from '../../sub/util/NumberUtil'
-import * as DateUtil from '../../sub/util/DateUtil'
-import * as ColorUtil from '../../sub/util/ColorUtil'
+import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
 import reloadmixin from './reloadmixin.vue'
-import * as mock from '../../assets/mock/mock'
 
 export default {
   mixins: [reloadmixin],
   data() {
     return {
-      isShownMapImage: false,
-      positionedExb: [],
-      positionedTx: [],
-      realWidth: null,
-      isFirstTime: true,
-      showTryCount: 0,
-      tempMapFitMobile: DISP.MAP_FIT_MOBILE,
-      canvasScale: 1,
-      showIconMinWidth: POSITION.SHOW_ICON_MIN_WIDTH,
-      reloadSelectedTx: {},
-      showReady: false,
-      count: 0, // for mock test
-      meditagSensors: [],
-      showingDetailTime: null,
-      defaultDisplay: {
-        color: DISP.TX.COLOR,
-        bgColor: DISP.TX.BGCOLOR,
-        shape: SHAPE.CIRCLE,
-      },
       vueSelected: {
         area: null,
         group: null,
         category: null,
         tx: null,
       },
-      oldSelectedArea: null,
       areaOptions: [],
+      positionedExb: [],
+      positionedTx: [],
+      meditagSensors: [],
+      oldSelectedArea: null,
+      reloadSelectedTx: {},
+      isShownMapImage: false,
+      realWidth: null,
+      isFirstTime: true,
+      showTryCount: 0,
+      tempMapFitMobile: DISP.MAP_FIT_MOBILE,
+      canvasScale: 1,
+      showIconMinWidth: POSITION.SHOW_ICON_MIN_WIDTH,
+      showReady: false,
+      count: 0, // for mock test
+      showingDetailTime: null,
+      defaultDisplay: {
+        color: DISP.TX.COLOR,
+        bgColor: DISP.TX.BGCOLOR,
+        shape: SHAPE.CIRCLE,
+      },
       loadComplete: false,
       thumbnailUrl: APP_SERVICE.BASE_URL + EXCLOUD.POT_THUMBNAIL_URL,
       preloadThumbnail: new Image(),
+      btxMap: {},
     }
   },
   computed: {
@@ -171,7 +172,9 @@ export default {
     async fetchAreaExbs(tx) {
       if (this.isFirstTime) {
         this.selectedArea = this.getInitAreaOption()
-        await StateHelper.load('exb')
+        if (!this.exbs || this.exbs.length < 1) {
+          await StateHelper.load('exb')
+        }
         if (tx) {
           await StateHelper.load('tx')
         }
@@ -380,19 +383,17 @@ export default {
       map && map.addEventListener('touchstart', (evt) => listener(evt))
     },
     positionFilter(positions, groupId, categoryId) {
+      const txsMap = {}
+      this.txs.forEach((tx) => txsMap[tx.btxId] = tx)
       return _(positions).filter((pos) => {
-        const tx = _.find(this.txs, tx => tx.btxId == pos.btx_id)
-        let grpHit
-        let catHit
+        const tx = txsMap[pos.btx_id]
+        let grpHit = true
+        let catHit = true
         if (groupId) {
           grpHit = groupId == tx.groupId
-        } else {
-          grpHit = true
         }
         if (categoryId) {
           catHit = categoryId == tx.categoryId
-        } else {
-          catHit = true
         }
         return grpHit && catHit
       }).value()
@@ -406,11 +407,9 @@ export default {
       if (APP.POS.USE_POSITION_HISTORY) {
         // Serverで計算された位置情報を得る
         positions = await EXCloudHelper.fetchPositionHistory(this.exbs, this.txs, allShow, pMock)
-        this.replaceMain({positionHistores: positions})
       } else {
         // 移動平均数分のポジションデータを保持する
         positions = await EXCloudHelper.fetchPosition(this.exbs, this.txs, pMock, allShow)
-        this.pushOrgPositions(positions)
       }
       // 検知状態の取得
       PositionHelper.setDetectState(positions, APP.POS.USE_POSITION_HISTORY)
@@ -429,10 +428,12 @@ export default {
     getShowTxPositions(positions, allShow = false){
       const now = !DEV.USE_MOCK_EXC ? new Date().getTime(): mock.positions_conf.start + this.count++ * mock.positions_conf.interval
       const correctPositions = APP.POS.USE_POSITION_HISTORY? this.positionHistores: PositionHelper.correctPosId(this.orgPositions, now)
+      const cPosMap = {}
+      correctPositions.forEach(c => cPosMap[c.btx_id] = c)
       return _(positions)
         .filter((pos) => allShow || (pos.tx && NumberUtil.bitON(pos.tx.disp, TX.DISP.POS)))
         .map((pos) => {
-          let cPos = _.find(correctPositions, (cPos) => pos.btx_id == cPos.btx_id)
+          let cPos = cPosMap[pos.btx_id]
           if (cPos || allShow) {
             return {
               ...pos,
@@ -622,11 +623,12 @@ export default {
     },
     disableExbsCheck(){
       // for debug
-      const disabledExbs = _.filter(this.exbs, (exb) => !exb.enabled || !exb.location.x || exb.location.y <= 0)
+      const disabledExbs = {}
+      _.filter(this.exbs, (exb) => !exb.enabled || !exb.location.x || exb.location.y <= 0).forEach(e => disabledExbs[e.posId] = e)
       this.getPositions().forEach((pos) => {
-        const exb = disabledExbs.find((exb) => exb.posId == pos.pos_id)
+        const exb = disabledExbs[pos.pos_id]
         if (exb) {
-          console.debug('Found at disabled exb', pos, exb)
+          Util.debug('Found at disabled exb', pos, exb)
         }
       })
     },

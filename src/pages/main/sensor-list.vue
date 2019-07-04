@@ -7,52 +7,41 @@
 
 <script>
 import { mapState } from 'vuex'
+import { SENSOR } from '../../sub/constant/Constants'
+import * as DateUtil from '../../sub/util/DateUtil'
+import * as NumberUtil from '../../sub/util/NumberUtil'
+import * as Util from '../../sub/util/Util'
+import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
+import * as SensorHelper from '../../sub/helper/SensorHelper'
+import * as StateHelper from '../../sub/helper/StateHelper'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
-import mList from '../../components/page/list.vue'
 import reloadmixin from '../../components/mixin/reloadmixin.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
-import * as StateHelper from '../../sub/helper/StateHelper'
-import * as SensorHelper from '../../sub/helper/SensorHelper'
-import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
-import { SENSOR } from '../../sub/constant/Constants'
-import * as Util from '../../sub/util/Util'
-import * as NumberUtil from '../../sub/util/NumberUtil'
-import * as DateUtil from '../../sub/util/DateUtil'
+import mList from '../../components/page/list.vue'
 
 export default {
   components: {
-    mList,
     breadcrumb,
+    mList,
   },
-  mixins: [
-    reloadmixin,
-    showmapmixin,
-  ],
+  mixins: [reloadmixin, showmapmixin],
   data() {
     return {
       params: {
         name: 'position-list',
         id: 'positionListId',
         extraFilter: ['sensor', 'area', 'zone', 'zoneCategory'],
+        initTotalRows: 0,
         sensorChange: newVal => this.sensorChange(newVal),
         showOnlyHas: ['zone', 'zoneCategory'],
         disableTableButtons: true,
         hideNormalSearchBox: true,
         fields: [],
-        initTotalRows: 0,
       },
-      items: [
-        {
-          text: this.$i18n.t('label.main'),
-          active: true
-        },
-        {
-          text: this.$i18n.t('label.sensorList'),
-          active: true
-        }
-      ],
-      selectedSensor: SENSOR.TEMPERATURE,
+      items: ViewHelper.createBreadCrumbItems('main', 'sensorList'),
       sensorList: [],
+      selectedSensor: SENSOR.TEMPERATURE,
     }
   },
   computed: {

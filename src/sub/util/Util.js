@@ -41,7 +41,7 @@ export const extract = (obj, fields) => {
     ret[lastKey] = val
   })
 
-  console.log('extract', {ret})
+  debug('extract', {ret})
   return ret
 }
 

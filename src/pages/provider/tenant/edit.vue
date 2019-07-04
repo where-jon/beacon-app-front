@@ -144,47 +144,47 @@
 
 <script>
 import { mapState } from 'vuex'
-import * as StateHelper from '../../../sub/helper/StateHelper'
-import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import { EXCLOUD } from '../../../sub/constant/config'
+import * as DateUtil from '../../../sub/util/DateUtil'
+import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
-import * as SettingHelper from '../../../sub/helper/SettingHelper'
 import * as AuthHelper from '../../../sub/helper/AuthHelper'
+import * as FeatureHelper from '../../../sub/helper/FeatureHelper'
 import * as HttpHelper from '../../../sub/helper/HttpHelper'
 import * as LocalStorageHelper from '../../../sub/helper/LocalStorageHelper'
-import * as FeatureHelper from '../../../sub/helper/FeatureHelper'
-import editmixin from '../../../components/mixin/editmixin.vue'
-import commonmixin from '../../../components/mixin/commonmixin.vue'
-import * as Util from '../../../sub/util/Util'
-import * as DateUtil from '../../../sub/util/DateUtil'
+import * as SettingHelper from '../../../sub/helper/SettingHelper'
+import * as StateHelper from '../../../sub/helper/StateHelper'
+import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
+import commonmixin from '../../../components/mixin/commonmixin.vue'
+import editmixin from '../../../components/mixin/editmixin.vue'
+import featureList from '../../../components/page/featureList.vue'
 import alert from '../../../components/parts/alert.vue'
 import chromeInput from '../../../components/parts/chromeinput.vue'
-import featureList from '../../../components/page/featureList.vue'
 import systemSetting from '../../setting/system/index.vue'
-import { EXCLOUD } from '../../../sub/constant/config'
 
 export default {
   components: {
     breadcrumb,
+    featureList,
     alert,
     chromeInput,
-    featureList,
     systemSetting,
   },
-  mixins: [editmixin, commonmixin],
+  mixins: [commonmixin, editmixin],
   data() {
     return {
       name: 'tenant',
       id: 'tenantId',
       backPath: '/provider/tenant',
       appServicePath: '/meta/tenant',
-      form: Util.extract(this.$store.state.app_service.tenant, ['tenantId', 'tenantCd', 'tenantName', 'sysAdminLoginId', 'sysAdminPass', 'adminLoginId', 'adminPass', 'userLoginId', 'userPass', 'regionName', 'meshId', 'createDt', 'delFlg']),
       items: ViewHelper.createBreadCrumbItems('provider', {text: 'tenant', href: '/provider/tenant'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.tenant.tenantId)),
       fields: ViewHelper.addLabelByKey(this.$i18n, [ 
         {key: 'parentCheck', label: 'dummy', thStyle: {width:'4px !important'} },
         {key: 'subCheck', label: 'dummy', thStyle: {width:'4px !important'} },
         {key: 'featureName', label: 'dummy'},
       ]),
+      form: Util.extract(this.$store.state.app_service.tenant, ['tenantId', 'tenantCd', 'tenantName', 'sysAdminLoginId', 'sysAdminPass', 'adminLoginId', 'adminPass', 'userLoginId', 'userPass', 'regionName', 'meshId', 'createDt', 'delFlg']),
       settingParams: {
         name: 'setting',
         fields: [ 
@@ -341,7 +341,5 @@ export default {
 </script>
 
 <style scoped lang="scss">
-  label.control-label {
-    padding-top: 7px;
-  }
+@import "../../../sub/constant/label.scss";
 </style>

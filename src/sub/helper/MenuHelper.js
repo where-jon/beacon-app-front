@@ -1,5 +1,6 @@
 import { ROLE_FEATURE, MENU } from '../constant/Constants'
 import * as StringUtil from '../util/StringUtil'
+import * as Util from '../util/Util'
 import * as LocalStorageHelper from '../helper/LocalStorageHelper'
 
 let store
@@ -76,7 +77,7 @@ export const getMode = (path, featureList = store.state.featureList) => {
       return true
     }
   })
-  console.debug('feature.mode', path, feature && feature.mode)
+  Util.debug('feature.mode', path, feature && feature.mode)
 
   let ret = feature && feature.mode
   return ret != null? ret: ROLE_FEATURE.MODE.SYS_ALL

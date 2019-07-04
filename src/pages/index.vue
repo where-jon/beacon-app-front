@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { APP } from '../sub/constant/config.js'
+import { APP } from '../sub/constant/config'
 
 export default {
   mounted() {

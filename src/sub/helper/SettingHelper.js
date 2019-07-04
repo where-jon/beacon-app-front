@@ -1,6 +1,6 @@
 import { SETTING, PATTERN } from '../constant/Constants'
-import * as Util from '../util/Util'
 import * as ArrayUtil from '../util/ArrayUtil'
+import * as Util from '../util/Util'
 import * as LocalStorageHelper from './LocalStorageHelper'
 
 let i18n
@@ -234,6 +234,23 @@ export const createSettingList = (settings, isTenant) => {
     i18ConfigList.push(createSetting(setting, isTenant, {isParent: false}))
   })
   return mergeSettings(i18ConfigList)
+}
+
+/**
+ * 設定項目リストから変更差分のみ抽出する。
+ * @method
+ * @param {Object[]} oldSettings 更新前のリスト
+ * @param {Object[]} settings 更新予定リスト
+ * @return {Object[]}
+ */
+export const getDiffSettingList = (oldSettings, settings) => {
+  return settings.filter(setting => {
+    const oldTarget = oldSettings.find(oldSetting => oldSetting.key == setting.key)
+    if(oldTarget == null){
+      return true
+    }
+    return setting.value != oldTarget.value
+  })
 }
 
 /**

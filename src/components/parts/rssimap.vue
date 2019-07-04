@@ -12,6 +12,9 @@
               <template slot="selected-option" slot-scope="option">
                 {{ vueSelectCutOn(option, true) }}
               </template>
+              <template slot="no-options">
+                {{ vueSelectNoMatchingOptions }}
+              </template>
             </v-select>
           </span>
         </b-form-row>
@@ -23,6 +26,9 @@
             <v-select v-model="vueSelected.group" :options="groupOptions" class="ml-1 mr-2 vue-options" :style="vueSelectStyle">
               <template slot="selected-option" slot-scope="option">
                 {{ vueSelectCutOn(option) }}
+              </template>
+              <template slot="no-options">
+                {{ vueSelectNoMatchingOptions }}
               </template>
             </v-select>
           </span>
@@ -36,6 +42,9 @@
               <template slot="selected-option" slot-scope="option">
                 {{ vueSelectCutOn(option) }}
               </template>
+              <template slot="no-options">
+                {{ vueSelectNoMatchingOptions }}
+              </template>
             </v-select>
           </span>
         </b-form-row>
@@ -48,7 +57,11 @@
           <label class="ml-sm-4 ml-2 mr-1">
             {{ $t('label.tx') }}
           </label>
-          <v-select v-model="vueSelected.tx" :options="txRecords" class="ml-1 mr-2 vue-options" :style="vueSelectStyle" />
+          <v-select v-model="vueSelected.tx" :options="txRecords" class="ml-1 mr-2 vue-options" :style="vueSelectStyle">
+            <template slot="no-options">
+              {{ vueSelectNoMatchingOptions }}
+            </template>
+          </v-select>
         </b-form-row>
         <b-form-row class="my-1 ml-2 ml-sm-0">
           <b-button class="ml-sm-4 ml-2 mr-1" :pressed.sync="isPause" :variant="theme">
@@ -72,18 +85,19 @@
 
 <script>
 import { mapState } from 'vuex'
-import breadcrumb from '../../components/layout/breadcrumb.vue'
-import * as MenuHelper from '../../sub/helper/MenuHelper'
-import * as StateHelper from '../../sub/helper/StateHelper'
-import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
-import * as HttpHelper from '../../sub/helper/HttpHelper'
-import * as Util from '../../sub/util/Util'
-import * as ArrayUtil from '../../sub/util/ArrayUtil'
+import { Container, Shape, Text } from '@createjs/easeljs/dist/easeljs.module'
 import { APP, DISP, EXCLOUD } from '../../sub/constant/config'
 import { CATEGORY } from '../../sub/constant/Constants'
-import { Container, Shape, Text } from '@createjs/easeljs/dist/easeljs.module'
-import showmapmixin from '../../components/mixin/showmapmixin.vue'
+import * as ArrayUtil from '../../sub/util/ArrayUtil'
+import * as Util from '../../sub/util/Util'
+import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
+import * as HttpHelper from '../../sub/helper/HttpHelper'
+import * as MenuHelper from '../../sub/helper/MenuHelper'
+import * as StateHelper from '../../sub/helper/StateHelper'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
+import breadcrumb from '../../components/layout/breadcrumb.vue'
 import commonmixin from '../mixin/commonmixin.vue'
+import showmapmixin from '../../components/mixin/showmapmixin.vue'
 
 class RssiIcon {
   constructor(parent, rssi, scale, level = 3) {
@@ -141,19 +155,10 @@ export default {
   components: {
     breadcrumb,
   },
-  mixins: [showmapmixin, commonmixin],
+  mixins: [commonmixin, showmapmixin],
   data () {
     return {
-      items: [
-        {
-          text: this.$i18n.tnl('label.develop'),
-          active: true
-        },
-        {
-          text: this.$i18n.tnl('label.installation'),
-          active: true
-        },
-      ],
+      items: ViewHelper.createBreadCrumbItems('develop', 'installation'),
       useGroup: MenuHelper.useMaster('group') && ArrayUtil.includesIgnoreCase(APP.TX.WITH, 'group'),
       useCategory: MenuHelper.useMaster('category') && ArrayUtil.includesIgnoreCase(APP.TX.WITH, 'category'),
       modeRssi: true,

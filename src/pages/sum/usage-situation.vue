@@ -21,6 +21,9 @@
                   <template slot="selected-option" slot-scope="option">
                     {{ vueSelectCutOn(option) }}
                   </template>
+                  <template slot="no-options">
+                    {{ vueSelectNoMatchingOptions }}
+                  </template>
                 </v-select>
               </span>
             </b-form-row>
@@ -30,6 +33,9 @@
                 <v-select v-model="vueSelected.zone" :options="zoneOptions" class="md-3 ml-2 vue-options" :style="vueSelectStyle">
                   <template slot="selected-option" slot-scope="option">
                     {{ vueSelectCutOn(option) }}
+                  </template>
+                  <template slot="no-options">
+                    {{ vueSelectNoMatchingOptions }}
                   </template>
                 </v-select>
               </span>
@@ -55,39 +61,29 @@
 <script>
 import { mapState } from 'vuex'
 import 'element-ui/lib/theme-chalk/index.css'
-import breadcrumb from '../../components/layout/breadcrumb.vue'
-import alert from '../../components/parts/alert.vue'
-import showmapmixin from '../../components/mixin/showmapmixin.vue'
-import commonmixinVue from '../../components/mixin/commonmixin.vue'
+import { CATEGORY } from '../../sub/constant/Constants'
+import * as BrowserUtil from '../../sub/util/BrowserUtil'
+import * as CsvUtil from '../../sub/util/CsvUtil'
+import * as Util from '../../sub/util/Util'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
+import { getCharSet } from '../../sub/helper/CharSetHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
-import * as BrowserUtil from '../../sub/util/BrowserUtil'
-import * as Util from '../../sub/util/Util'
-import * as CsvUtil from '../../sub/util/CsvUtil'
-import { getCharSet } from '../../sub/helper/CharSetHelper'
-import { CATEGORY } from '../../sub/constant/Constants'
+import breadcrumb from '../../components/layout/breadcrumb.vue'
+import commonmixin from '../../components/mixin/commonmixin.vue'
+import showmapmixin from '../../components/mixin/showmapmixin.vue'
+import alert from '../../components/parts/alert.vue'
 
 export default {
   components: {
     breadcrumb,
     alert,
   },
-  mixins: [showmapmixin, commonmixinVue],
+  mixins: [commonmixin, showmapmixin],
   data () {
     return {
       name: 'usageSituation',
       items: ViewHelper.createBreadCrumbItems('sumTitle', 'usageSituation'),
-      form: {
-        mode: null,
-        selectedYearMonth: 0,
-        selectedDay: 0,
-      },
-      vueSelected: {
-        category: null,
-        zone: null,
-      },
-      viewList: [],
       fields: [],
       fields1: ViewHelper.addLabelByKey(this.$i18n, [
         {key: 'zoneCategoryName', sortable: true},
@@ -100,13 +96,19 @@ export default {
         {key: 'zoneName', sortable: true },
         {key: 'numUse', label: 'numOfUsers', sortable: true,},
       ]),
-      currentPage: 1,
-      perPage: 20,
-      totalRows: 0,
-      sortBy: null,
+      form: {
+        mode: null,
+        selectedYearMonth: 0,
+        selectedDay: 0,
+      },
+      vueSelected: {
+        category: null,
+        zone: null,
+      },
       //
       message: '',
       //
+      viewList: [],
       dayOptionList: [],
       categoryOptionList: [],
       zoneOptionList: [],
@@ -116,6 +118,10 @@ export default {
       vModelYearMonth: null,
       vModelDay: null,
       MONTHS: 6,
+      currentPage: 1,
+      perPage: 20,
+      totalRows: 0,
+      sortBy: null,
     }
   },
   computed: {

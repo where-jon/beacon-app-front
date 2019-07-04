@@ -1,17 +1,17 @@
-import md5 from 'md5'
-import _ from 'lodash'
 import axios from 'axios'
-import * as HttpHelper from './HttpHelper'
-import * as AppServiceHelper from './AppServiceHelper'
-import * as StateHelper from './StateHelper'
-import * as MenuHelper from './MenuHelper'
-import * as ConfigHelper from './ConfigHelper'
-import * as LocaleHelper from './LocaleHelper'
-import * as LocalStorageHelper from './LocalStorageHelper'
+import _ from 'lodash'
+import md5 from 'md5'
 import { APP, LOCAL_LOGIN } from '../constant/config'
 import { LOGIN_MODE, FEATURE } from '../constant/Constants'
-import * as Util from '../util/Util'
 import * as BrowserUtil from '../util/BrowserUtil'
+import * as Util from '../util/Util'
+import * as AppServiceHelper from './AppServiceHelper'
+import * as ConfigHelper from './ConfigHelper'
+import * as HttpHelper from './HttpHelper'
+import * as LocaleHelper from './LocaleHelper'
+import * as LocalStorageHelper from './LocalStorageHelper'
+import * as MenuHelper from './MenuHelper'
+import * as StateHelper from './StateHelper'
 
 let router
 let store
@@ -60,7 +60,7 @@ export const auth = async (loginId, password, success, err) => {
  * @param {Function} err 認証失敗時に実行するメソッド
  */
 export const authByLocal = async (loginId, password, success, err) => {
-  // console.log(md5(loginId + ":" + password)) // for create
+  // Util.debug(md5(loginId + ":" + password)) // for create
   if (_.includes(LOCAL_LOGIN.ID_PASS, md5(loginId + ':' + password))) {
     await login(loginId)
     success()
@@ -98,11 +98,11 @@ export const getUserInfo = async (tenantAdmin) => {
   // get tenant feature list
   const tenant = await HttpHelper.getAppService('/meta/tenant/currentTenant')
   const tenantFeatureList = tenant.tenantFeatureList.map(tenantFeature => tenantFeature.feature.path)
-  console.log({tenantFeatureList})
+  Util.debug({tenantFeatureList})
 
   // get role feature list
   const user = await AppServiceHelper.getCurrentUser()
-  console.log(user)
+  Util.debug(user)
   const featureList = _(user.role.roleFeatureList).map(roleFeature => {
     return {path: roleFeature.feature.path, mode: roleFeature.mode}
   }).sortBy(val => val.path.length * -1).value()
@@ -227,7 +227,7 @@ export const switchAppService = async () => {
  * @param {Object} login ログイン情報
  */
 export const login = async (login) => {
-  console.log({login})
+  Util.debug({login})
   store.commit('replace', login)
   LocalStorageHelper.setLocalStorage('login', JSON.stringify({...login, dt: new Date().getTime()}))
 }

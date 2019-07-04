@@ -6,15 +6,15 @@
 
 <script>
 import { mapState, mapActions } from 'vuex'
-import mList from './list.vue'
+import * as StringUtil from '../../sub/util/StringUtil'
+import * as Util from '../../sub/util/Util'
+import * as ProhibitHelper from '../../sub/helper/ProhibitHelper'
+import * as StateHelper from '../../sub/helper/StateHelper'
+import { addLabelByKey } from '../../sub/helper/ViewHelper'
 import commonmixin from '../mixin/commonmixin.vue'
 import reloadmixin from '../mixin/reloadmixin.vue'
 import showmapmixin from '../mixin/showmapmixin.vue'
-import { addLabelByKey } from '../../sub/helper/ViewHelper'
-import * as StateHelper from '../../sub/helper/StateHelper'
-import * as ProhibitHelper from '../../sub/helper/ProhibitHelper'
-import * as Util from '../../sub/util/Util'
-import * as StringUtil from '../../sub/util/StringUtil'
+import mList from './list.vue'
 
 export default {
   components: {
@@ -34,9 +34,6 @@ export default {
   },
   data() {
     return {
-      prohibitDetectList : null,
-      message: '',
-      showDismissibleAlert: false,
       params: {
         name: 'position-stack',
         id: 'position-stackId',
@@ -44,15 +41,18 @@ export default {
           {key: 'label', label: this.masterName, tdClass: 'icon-rowdata'},
           {key: 'icons', label: 'tx', tdClass: 'icon-rowdata align-top'},
         ]),
+        hideSearchBox: true,
         initTotalRows: this.$store.state.main[StringUtil.concatCamel('each', StringUtil.single2multi(this.masterName))].length,
         disableTableButtons: true,
-        hideSearchBox: true,
         bordered: true,
       },
+      name: this.masterName + 'Name',
+      id: this.masterName + 'Id',
+      message: '',
       listName: StringUtil.single2multi(this.masterName),
       eachListName: StringUtil.concatCamel('each', StringUtil.single2multi(this.masterName)),
-      id: this.masterName + 'Id',
-      name: this.masterName + 'Name',
+      prohibitDetectList : null,
+      showDismissibleAlert: false,
     }
   },
   computed: {

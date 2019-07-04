@@ -9,20 +9,20 @@
 
 <script>
 import { mapState } from 'vuex'
-import * as StateHelper from '../../sub/helper/StateHelper'
-import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
-import * as ViewHelper from '../../sub/helper/ViewHelper'
-import * as DetectStateHelper from '../../sub/helper/DetectStateHelper'
-import * as Util from '../../sub/util/Util'
-import * as BrowserUtil from '../../sub/util/BrowserUtil'
-import * as ArrayUtil from '../../sub/util/ArrayUtil'
-import * as DateUtil from '../../sub/util/DateUtil'
-import * as CsvUtil from '../../sub/util/CsvUtil'
 import { APP } from '../../sub/constant/config'
+import * as ArrayUtil from '../../sub/util/ArrayUtil'
+import * as BrowserUtil from '../../sub/util/BrowserUtil'
+import * as CsvUtil from '../../sub/util/CsvUtil'
+import * as DateUtil from '../../sub/util/DateUtil'
+import * as Util from '../../sub/util/Util'
+import { getCharSet } from '../../sub/helper/CharSetHelper'
+import * as DetectStateHelper from '../../sub/helper/DetectStateHelper'
+import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
+import * as StateHelper from '../../sub/helper/StateHelper'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import commonmixin from '../../components/mixin/commonmixin.vue'
 import reloadmixin from '../../components/mixin/reloadmixin.vue'
-import { getCharSet } from '../../sub/helper/CharSetHelper'
 import monitorTable from '../../components/parts/monitortable.vue'
 
 export default {
@@ -30,7 +30,7 @@ export default {
     breadcrumb,
     monitorTable,
   },
-  mixins: [reloadmixin, commonmixin],
+  mixins: [commonmixin, reloadmixin],
   props: {
     isDev: {
       type: Boolean,
@@ -40,8 +40,8 @@ export default {
   data () {
     return {
       items: ViewHelper.createBreadCrumbItems('monitor', 'position'),
-      positions: [],
       headers: this.getHeaders(),
+      positions: [],
       reloadState: { isLoad: false },
       csvHeaders: this.getCsvHeaders(),
     }

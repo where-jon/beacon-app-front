@@ -33,6 +33,9 @@
                   <template slot="selected-option" slot-scope="option">
                     {{ vueSelectCutOn(option) }}
                   </template>
+                  <template slot="no-options">
+                    {{ vueSelectNoMatchingOptions }}
+                  </template>
                 </v-select>
               </span>
             </b-form-row>
@@ -83,30 +86,31 @@
 import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import * as Util from '../../sub/util/Util'
+import { APP, DISP } from '../../sub/constant/config'
+import { SUM_UNIT_STACK, SUM_UNIT_AXIS, SUM_FILTER_KIND } from '../../sub/constant/Constants'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as DateUtil from '../../sub/util/DateUtil'
-import * as HttpHelper from '../../sub/helper/HttpHelper'
-import * as StateHelper from '../../sub/helper/StateHelper'
-import * as ViewHelper from '../../sub/helper/ViewHelper'
-import * as ValidateHelper from '../../sub/helper/ValidateHelper'
-import { SUM_UNIT_STACK, SUM_UNIT_AXIS, SUM_FILTER_KIND } from '../../sub/constant/Constants'
-import breadcrumb from '../../components/layout/breadcrumb.vue'
-import alert from '../../components/parts/alert.vue'
-import { APP, DISP } from '../../sub/constant/config'
+import * as Util from '../../sub/util/Util'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
 import * as ChartHelper from '../../sub/helper/ChartHelper'
+import * as HttpHelper from '../../sub/helper/HttpHelper'
+import * as StateHelper from '../../sub/helper/StateHelper'
+import * as ValidateHelper from '../../sub/helper/ValidateHelper'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
+import breadcrumb from '../../components/layout/breadcrumb.vue'
 import commonmixin from '../../components/mixin/commonmixin.vue'
+import alert from '../../components/parts/alert.vue'
 
 export default {
   components: {
+    DatePicker,
     breadcrumb,
     alert,
-    DatePicker,
   },
   mixins: [commonmixin],
   data () {
     return {
+      items: ViewHelper.createBreadCrumbItems('sumTitle', 'stayTime'),
       form: {
         datetimeFrom: '2019-02-11',
         datetimeTo: '2019-02-22',
@@ -115,7 +119,11 @@ export default {
         stack: 'area',
         axis: 'day',
       },
-      items: ViewHelper.createBreadCrumbItems('sumTitle', 'stayTime'),
+      vueSelectedKeys: ['pot', 'category', 'group', 'area', 'zone', 'zoneCategory'],
+      vueSelected: {
+        filter: null,
+      },
+      message: '',
       filterIdOptions: [],
       filterKindOptions: SUM_FILTER_KIND.getOptions(),
       stackOptions: SUM_UNIT_STACK.getOptions(),
@@ -123,12 +131,7 @@ export default {
       chartData: [],
       axises: [],
       stacks: [],
-      message: '',
       showChart: true,
-      vueSelectedKeys: ['pot', 'category', 'group', 'area', 'zone', 'zoneCategory'],
-      vueSelected: {
-        filter: null,
-      },
     }
   },
   computed: {
@@ -250,7 +253,7 @@ export default {
       param.fillGap = APP.STAY_SUM.AXIS_FILL_GAP
       const url = '/office/stayTime/sum?_=' + new Date().getTime() + '&' +  HttpHelper.toParam(param, true)
       const sumData = await HttpHelper.getAppService(url)
-      console.log(sumData)
+      Util.debug(sumData)
       if (_.isEmpty(sumData)) {
         this.message = this.$i18n.t('message.listEmpty')
         this.replace({showAlert: true})
@@ -400,14 +403,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import "../../sub/constant/input.scss";
 @import "../../sub/constant/vue.scss";
-.inputSelect {
-  min-width: 160px;
-}
-.inputdatefrom {
-  width: 210px;
-}
-.inputdateto {
-  width: 210px;
-}
 </style>

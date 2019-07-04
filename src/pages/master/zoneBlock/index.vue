@@ -11,6 +11,9 @@
               <template slot="selected-option" slot-scope="option">
                 {{ vueSelectCutOn(option, true) }}
               </template>
+              <template slot="no-options">
+                {{ vueSelectNoMatchingOptions }}
+              </template>
             </v-select>
           </span>
         </b-form-row>
@@ -24,6 +27,9 @@
             <v-select v-model="vueSelected.category" :options="categoryNames" :disabled="!isEnableNameText" :clearable="false" class="mb-2 mr-sm-2 mb-sm-0 vue-options" :style="vueSelectStyle">
               <template slot="selected-option" slot-scope="option">
                 {{ vueSelectCutOn(option) }}
+              </template>
+              <template slot="no-options">
+                {{ vueSelectNoMatchingOptions }}
               </template>
             </v-select>
           </span>
@@ -54,18 +60,18 @@
 
 <script>
 import { mapState } from 'vuex'
+import { CATEGORY } from '../../../sub/constant/Constants'
+import * as Util from '../../../sub/util/Util'
+import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as VueSelectHelper from '../../../sub/helper/VueSelectHelper'
-import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
-import editmixin from '../../../components/mixin/editmixin.vue'
-import ZoneCanvas from '../../../components/parts/zonecanvas.vue'
-import * as Util from '../../../sub/util/Util'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
-import alert from '../../../components/parts/alert.vue'
-import { CATEGORY } from '../../../sub/constant/Constants'
-import showmapmixin from '../../../components/mixin/showmapmixin.vue'
 import commonmixin from '../../../components/mixin/commonmixin.vue'
+import editmixin from '../../../components/mixin/editmixin.vue'
+import showmapmixin from '../../../components/mixin/showmapmixin.vue'
+import alert from '../../../components/parts/alert.vue'
+import ZoneCanvas from '../../../components/parts/zonecanvas.vue'
 
 export default {
   components: {
@@ -73,21 +79,25 @@ export default {
     alert,
     ZoneCanvas,
   },
-  mixins: [editmixin, showmapmixin, commonmixin],
+  mixins: [commonmixin, editmixin, showmapmixin],
   data() {
     return {
       id: -1,
-      zoneClassPath: '/master/zoneClass',
       backPath: '/master/zoneBlock',
       appServicePath: '/core/zone',
+      zoneClassPath: '/master/zoneClass',
+      items: ViewHelper.createBreadCrumbItems('master', 'zoneBlock'),
       form: Util.extract(this.$store.state.app_service.zone, ['zoneId', 'zoneName', 'areaId', 'locationZoneList.0.locationZonePK.locationId', 'zoneCategoryList.0.zoneCategoryPK.categoryId']),
+      vueSelected: {
+        area: null,
+      },
       areaNames: [],
       areaId: null,
       categoryNames: [],
       categoryId: null,
+      deletedIds: [],
       isEnableNameText: false,
       zoneName: null,
-      deletedIds: [],
       isRegist: false,
       isDelete: false,
       isCompleteRegist: false,
@@ -95,10 +105,6 @@ export default {
         name: '',
         categoryId: -1,
       },
-      vueSelected: {
-        area: null,
-      },
-      items: ViewHelper.createBreadCrumbItems('master', 'zoneBlock'),
     }
   },
   computed: {

@@ -5,16 +5,16 @@
 </template>
 
 <script>
-import mList from '../../../components/page/list.vue'
 import { mapState, mapActions } from 'vuex'
-import * as StateHelper from '../../../sub/helper/StateHelper'
-import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
-import * as ViewHelper from '../../../sub/helper/ViewHelper'
-import * as FeatureHelper from '../../../sub/helper/FeatureHelper'
-import * as Util from '../../../sub/util/Util'
-import * as ArrayUtil from '../../../sub/util/ArrayUtil'
-import reloadmixin from '../../../components/mixin/reloadmixin.vue'
 import { ROLE_FEATURE, FEATURE, BULK } from '../../../sub/constant/Constants'
+import * as ArrayUtil from '../../../sub/util/ArrayUtil'
+import * as Util from '../../../sub/util/Util'
+import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
+import * as FeatureHelper from '../../../sub/helper/FeatureHelper'
+import * as StateHelper from '../../../sub/helper/StateHelper'
+import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import reloadmixin from '../../../components/mixin/reloadmixin.vue'
+import mList from '../../../components/page/list.vue'
 
 export default {
   components: {
@@ -39,7 +39,6 @@ export default {
         appServicePath: '/meta/roleFeature',
         csvOut: true,
         custumCsvColumns: ['featureName', 'path', 'modeText', 'featureTypeName', 'version', 'enabledName'],
-        hideSearchBox: !Util.hasValue(this.$store.state.app_service.role.roleId),
         fields: ViewHelper.addLabelByKey(this.$i18n, [ 
           {key: 'featureName', sortable: true },
           {key: 'path', sortable: true },
@@ -49,6 +48,7 @@ export default {
           {key: 'enabledName', label: 'enabled', sortable: true },
           {key: 'actions', thStyle: {width:'130x !important'} }
         ]),
+        hideSearchBox: !Util.hasValue(this.$store.state.app_service.role.roleId),
         sortBy: 'featureName',
         initTotalRows: this.$store.state.app_service.roleFeatures.length,
       },

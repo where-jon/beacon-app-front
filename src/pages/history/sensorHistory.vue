@@ -57,30 +57,30 @@
 import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+import _ from 'lodash'
+import { APP_SERVICE } from '../../sub/constant/config'
+import { SENSOR } from '../../sub/constant/Constants'
+import * as BrowserUtil from '../../sub/util/BrowserUtil'
+import * as DateUtil from '../../sub/util/DateUtil'
+import * as NumberUtil from '../../sub/util/NumberUtil'
+import * as Util from '../../sub/util/Util'
+import { getCharSet } from '../../sub/helper/CharSetHelper'
+import * as HttpHelper from '../../sub/helper/HttpHelper'
+import * as SensorHelper from '../../sub/helper/SensorHelper'
+import * as StateHelper from '../../sub/helper/StateHelper'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
-import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import commonmixin from '../../components/mixin/commonmixin.vue'
-import * as StateHelper from '../../sub/helper/StateHelper'
-import * as SensorHelper from '../../sub/helper/SensorHelper'
-import * as HttpHelper from '../../sub/helper/HttpHelper'
-import * as ViewHelper from '../../sub/helper/ViewHelper'
-import * as Util from '../../sub/util/Util'
-import * as BrowserUtil from '../../sub/util/BrowserUtil'
-import * as NumberUtil from '../../sub/util/NumberUtil'
-import * as DateUtil from '../../sub/util/DateUtil'
-import { getCharSet } from '../../sub/helper/CharSetHelper'
-import { SENSOR } from '../../sub/constant/Constants'
-import { APP_SERVICE } from '../../sub/constant/config.js'
-import _ from 'lodash'
+import showmapmixin from '../../components/mixin/showmapmixin.vue'
 
 export default {
   components: {
+    DatePicker,
     breadcrumb,
     alert,
-    DatePicker,
   },
-  mixins: [showmapmixin, commonmixin],
+  mixins: [commonmixin, showmapmixin],
   data () {
     return {
       name: 'sensorHistory',
@@ -90,6 +90,9 @@ export default {
         datetimeFrom: null,
         datetimeTo: null,
       },
+      message: '',
+      footerMessage: '',
+      //
       viewList: [],
       fields: [],
       fields1: SensorHelper.getFields1(this.$i18n),
@@ -102,9 +105,6 @@ export default {
       limitViewRows: 100,
       fetchRows: 0,
       sortBy: null,
-      //
-      message: '',
-      footerMessage: '',
     }
   },
   computed: {

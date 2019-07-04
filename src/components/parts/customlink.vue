@@ -115,7 +115,5 @@ export default {
 </script>
 
 <style>
-.word-break {
-  word-break: break-all !important;
-}
+@import "../../sub/constant/label.scss";
 </style>

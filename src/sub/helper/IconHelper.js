@@ -1,7 +1,7 @@
 import { Container, Shape, Text } from '@createjs/easeljs/dist/easeljs.module'
+import { DISP } from '../constant/config'
 import * as Util from '../util/Util'
 import * as StyleHelper from '../helper/StyleHelper'
-import { DISP } from '../constant/config'
 
 export const createShape = (radius, color, option = {}) => {
   const icon = new Shape()

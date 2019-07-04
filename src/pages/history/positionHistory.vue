@@ -11,9 +11,9 @@
               <b-form-row class="mb-3 mr-2">
                 <label v-t="'label.minor'" class="mr-2" />
                 <v-select v-model="form.tx" :options="txOptions" class="mr-2 vue-options" :style="vueSelectStyle">
-                  <div slot="no-options">
-                    {{ $i18n.tnl('label.vSelectNoOptions') }}
-                  </div>
+                  <template slot="no-options">
+                    {{ vueSelectNoMatchingOptions }}
+                  </template>
                 </v-select>
               </b-form-row>
             </b-form-row>
@@ -27,9 +27,9 @@
                     <template slot="selected-option" slot-scope="option">
                       {{ vueSelectCutOn(option) }}
                     </template>
-                    <div slot="no-options">
-                      {{ $i18n.tnl('label.vSelectNoOptions') }}
-                    </div>
+                    <template slot="no-options">
+                      {{ vueSelectNoMatchingOptions }}
+                    </template>
                   </v-select>
                 </span>
               </b-form-row>
@@ -78,41 +78,33 @@
 import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import breadcrumb from '../../components/layout/breadcrumb.vue'
-import alert from '../../components/parts/alert.vue'
-import showmapmixin from '../../components/mixin/showmapmixin.vue'
-import commonmixin from '../../components/mixin/commonmixin.vue'
-import * as StateHelper from '../../sub/helper/StateHelper'
-import * as HttpHelper from '../../sub/helper/HttpHelper'
-import * as ViewHelper from '../../sub/helper/ViewHelper'
-import * as MenuHelper from '../../sub/helper/MenuHelper'
-import * as Util from '../../sub/util/Util'
-import * as BrowserUtil from '../../sub/util/BrowserUtil'
+import { APP, DISP, APP_SERVICE } from '../../sub/constant/config'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
+import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as DateUtil from '../../sub/util/DateUtil'
+import * as Util from '../../sub/util/Util'
 import { getCharSet } from '../../sub/helper/CharSetHelper'
-import { APP, DISP } from '../../sub/constant/config.js'
-import { APP_SERVICE } from '../../sub/constant/config'
+import * as HttpHelper from '../../sub/helper/HttpHelper'
+import * as MenuHelper from '../../sub/helper/MenuHelper'
+import * as StateHelper from '../../sub/helper/StateHelper'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
+import breadcrumb from '../../components/layout/breadcrumb.vue'
+import commonmixin from '../../components/mixin/commonmixin.vue'
+import showmapmixin from '../../components/mixin/showmapmixin.vue'
+import alert from '../../components/parts/alert.vue'
 
 
 export default {
   components: {
+    DatePicker,
     breadcrumb,
     alert,
-    DatePicker,
   },
-  mixins: [showmapmixin, commonmixin],
+  mixins: [commonmixin, showmapmixin],
   data () {
     return {
       name: 'positionHistory',
       items: ViewHelper.createBreadCrumbItems('historyTitle', 'positionHistory'),
-      form: {
-        tx: null,
-        group: null,
-        datetimeFrom: null,
-        datetimeTo: null,
-      },
-      viewList: [],
       fields: ViewHelper.addLabelByKey(this.$i18n, [
         {key: 'positionDt', sortable: true, label:'dt'},
         ...DISP.POSITION_HISTORY.HEADERS.map(header => {
@@ -126,14 +118,21 @@ export default {
           return ret
         })
       ]),
+      form: {
+        tx: null,
+        group: null,
+        datetimeFrom: null,
+        datetimeTo: null,
+      },
+      message: '',
+      footerMessage: '',
+      //
+      viewList: [],
       currentPage: 1,
       perPage: 20,
       limitViewRows: 100,
       totalRows: 0,
       sortBy: null,
-      //
-      message: '',
-      footerMessage: '',
     }
   },
   computed: {
@@ -181,7 +180,6 @@ export default {
       this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.viewList.length, maxRows: this.limitViewRows})}`
       try {
         const aTxId = (this.form.tx != null && this.form.tx.value != null)?this.form.tx.value:0
-        console.log(aTxId)
         const aGroupId = (this.form.group != null && this.form.group.value != null)? this.form.group.value: 0
         var fetchList = await HttpHelper.getAppService(
           `/core/positionHistory/find/${aGroupId}/${aTxId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/${this.limitViewRows}`

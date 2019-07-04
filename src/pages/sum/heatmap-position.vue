@@ -20,11 +20,11 @@
 import h337 from 'heatmap.js'
 import { DISP } from '../../sub/constant/config'
 import * as Util from '../../sub/util/Util'
-import showmapmixin from '../../components/mixin/showmapmixin.vue'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
+import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import alert from '../../components/parts/alert.vue'
 import analysisSearch from '../../components/parts/analysissearch.vue'
-import * as ViewHelper from '../../sub/helper/ViewHelper'
 
 export default {
   components: {
@@ -35,12 +35,12 @@ export default {
   mixins: [showmapmixin],
   data() {
     return {
+      items: ViewHelper.createBreadCrumbItems('sumTitle', 'heatmapPosition'),
+      message: '',
       positionHistories: [],
       heatmap: null,
       fromHeatmap: true,
-      message: '',
       noImageErrorKey: 'noMapImage',
-      items: ViewHelper.createBreadCrumbItems('sumTitle', 'heatmapPosition'),
     }
   },
   computed: {
@@ -131,10 +131,8 @@ export default {
 
 <style scoped lang="scss">
 @import "../../sub/constant/config.scss";
+@import "../../sub/constant/browser.scss";
 
-::-webkit-scrollbar { 
-  display: none; 
-}
 div#heatmap {
   display: inline-block;
 }

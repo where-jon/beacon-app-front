@@ -60,28 +60,38 @@
 
 <script>
 import { mapState } from 'vuex'
-import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import { APP } from '../../../sub/constant/config'
+import { NOTIFY_STATE, NOTIFY_MIDIUM } from '../../../sub/constant/Constants'
+import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as ValidateHelper from '../../../sub/helper/ValidateHelper'
-import editmixin from '../../../components/mixin/editmixin.vue'
-import * as Util from '../../../sub/util/Util'
+import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
-import alert from '../../../components/parts/alert.vue'
-import { NOTIFY_STATE,NOTIFY_MIDIUM } from '../../../sub/constant/Constants'
-import showmapmixin from '../../../components/mixin/showmapmixin.vue'
 import commonmixin from '../../../components/mixin/commonmixin.vue'
-import { APP } from '../../../sub/constant/config.js'
+import editmixin from '../../../components/mixin/editmixin.vue'
+import showmapmixin from '../../../components/mixin/showmapmixin.vue'
+import alert from '../../../components/parts/alert.vue'
 
 export default {
   components: {
     breadcrumb,
     alert,
   },
-  mixins: [editmixin, showmapmixin, commonmixin],
+  mixins: [commonmixin, editmixin, showmapmixin],
   data() {
     return {
       name: 'template',
       id: 'notifyTemplateId',
+      backPath: '/master/notifyTemplate',
+      appServicePath: '/core/rcvexcloud',
+      form: Util.extract(this.$store.state.app_service.template,
+        ['notifyTemplateId', 'notifyTemplateKey' , 'notifyMedium', 'notifyTo', 'subject', 'mailFrom', 'template' ]),
+      errorMessages: {
+        email: [],
+      },
+      areaNames: [],
+      categoryNames: [],
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'notifyTemplate', href: '/master/notifyTemplate'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.template.notifyTemplateId)),
       radioSelect:-1,
       fromType:'email',
       deliveryState:NOTIFY_STATE.getOptions().filter((val) => val.value == 'TX_DELIVERY_NOTIFY')[0].value,
@@ -89,21 +99,11 @@ export default {
       prohibitState:NOTIFY_STATE.getOptions().filter((val) => val.value == 'PROHIBIT_NOTIFY')[0].value,
       lostState:NOTIFY_STATE.getOptions().filter((val) => val.value == 'LOST_NOTIFY')[0].value,
       notify: _.slice(NOTIFY_MIDIUM.getTypes()).filter((val) => APP.NOTIFY.MIDIUM_TYPES.includes(val.value)),
-      backPath: '/master/notifyTemplate',
-      appServicePath: '/core/rcvexcloud',
-      form: Util.extract(this.$store.state.app_service.template,
-        ['notifyTemplateId', 'notifyTemplateKey' , 'notifyMedium', 'notifyTo', 'subject', 'mailFrom', 'template' ]),
-      areaNames: [],
-      categoryNames: [],
       isEnableNameText: true,
       isRegist: false,
       bNotifyTo:true,
       bSubject:true,
       bNotifyTemplateKey:true,
-      errorMessages: {
-        email: [],
-      },
-      items: ViewHelper.createBreadCrumbItems('master', {text: 'notifyTemplate', href: '/master/notifyTemplate'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.template.notifyTemplateId)),
     }
   },
   computed: {
@@ -216,10 +216,5 @@ export default {
 </script>
 
 <style scoped lang="scss">
-  label.control-label {
-    padding-top: 7px;
-  }
-   p.error {
-    color: #dc3545;
-  }
+@import "../../../sub/constant/label.scss";
 </style>

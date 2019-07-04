@@ -19,6 +19,9 @@
                 <template slot="selected-option" slot-scope="option">
                   {{ vueSelectCutOn(option) }}
                 </template>
+                <template slot="no-options">
+                  {{ vueSelectNoMatchingOptions }}
+                </template>
               </v-select>
             </span>
           </b-form-row>
@@ -49,47 +52,34 @@
 import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import * as Util from '../../sub/util/Util'
-import * as BrowserUtil from '../../sub/util/BrowserUtil'
-import * as ArrayUtil from '../../sub/util/ArrayUtil'
-import * as DateUtil from '../../sub/util/DateUtil'
-import * as CsvUtil from '../../sub/util/CsvUtil'
-import * as StateHelper from '../../sub/helper/StateHelper'
-import * as ViewHelper from '../../sub/helper/ViewHelper'
-import * as ValidateHelper from '../../sub/helper/ValidateHelper'
-import * as StayTimeHelper from '../../sub/helper/StayTimeHelper'
-import breadcrumb from '../../components/layout/breadcrumb.vue'
-import alert from '../../components/parts/alert.vue'
-import { getCharSet } from '../../sub/helper/CharSetHelper'
-import { APP } from '../../sub/constant/config'
 import moment from 'moment'
-import commonmixin from '../../components/mixin/commonmixin.vue'
-import * as HttpHelper from '../../sub/helper/HttpHelper'
+import { APP } from '../../sub/constant/config'
 import { SYSTEM_ZONE_CATEGORY_NAME } from '../../sub/constant/Constants'
+import * as ArrayUtil from '../../sub/util/ArrayUtil'
+import * as BrowserUtil from '../../sub/util/BrowserUtil'
+import * as CsvUtil from '../../sub/util/CsvUtil'
+import * as DateUtil from '../../sub/util/DateUtil'
+import * as Util from '../../sub/util/Util'
+import { getCharSet } from '../../sub/helper/CharSetHelper'
+import * as HttpHelper from '../../sub/helper/HttpHelper'
+import * as StateHelper from '../../sub/helper/StateHelper'
+import * as StayTimeHelper from '../../sub/helper/StayTimeHelper'
+import * as ValidateHelper from '../../sub/helper/ValidateHelper'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
+import breadcrumb from '../../components/layout/breadcrumb.vue'
+import commonmixin from '../../components/mixin/commonmixin.vue'
+import alert from '../../components/parts/alert.vue'
 
 export default {
   components: {
+    DatePicker,
     breadcrumb,
     alert,
-    DatePicker,
   },
   mixins: [commonmixin],
   data () {
     return {
-      form: {
-        date: '',
-      },
-      vueSelected: {
-        group: null,
-      },
-      viewList: [],
       items: ViewHelper.createBreadCrumbItems('sumTitle', 'stayRatioGp'),
-      message: '',
-      showChart: true,
-      currentPage: 1,
-      perPage: 20,
-      sortBy: 'name',
-      totalRows: 0,
       fields: ViewHelper.addLabelByKey(this.$i18n, [
         {key: 'date', sortable: false, label: 'date'},
         {key: 'name', sortable: true, label: 'potName'},
@@ -103,6 +93,19 @@ export default {
         {key: 'absent2Ratio', sortable: true, label: 'absent2Ratio'},
         {key: 'lostRatio', sortable: true, label: 'lostRatio'},
       ]).map(val => ({ ...val, originLabel: val.label})),
+      form: {
+        date: '',
+      },
+      vueSelected: {
+        group: null,
+      },
+      message: '',
+      viewList: [],
+      showChart: true,
+      currentPage: 1,
+      perPage: 20,
+      sortBy: 'name',
+      totalRows: 0,
     }
   },
   computed: {
@@ -310,7 +313,7 @@ export default {
         const url = '/office/stayTime/sumByDay/' + searchDate + '/zoneCategory?from=' + APP.STAY_SUM.FROM + '&to=' + APP.STAY_SUM.TO + groupBy
         const sumData = await HttpHelper.getAppService(url)
         if (_.isEmpty(sumData)) {
-          console.log('searchDate: ' + searchDate)
+          Util.debug('searchDate: ' + searchDate)
           this.message = this.$i18n.t('message.listEmpty')
           this.replace({showAlert: true})
           this.hideProgress()
@@ -361,11 +364,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import "../../sub/constant/input.scss";
 @import "../../sub/constant/vue.scss";
-.inputSelect {
-  min-width: 160px;
-}
-.inputdatefrom {
-  width: 210px;
-}
 </style>

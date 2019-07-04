@@ -21,7 +21,11 @@
             <b-form-row>
               <b-form-row class="mb-3 mr-2">
                 <label v-t="'label.tx'" class="mr-2" />
-                <v-select v-model="vueSelected.tx" :options="txOptions" class="mr-2 vue-options" :style="vueSelectStyle" />
+                <v-select v-model="vueSelected.tx" :options="txOptions" class="mr-2 vue-options" :style="vueSelectStyle">
+                  <template slot="no-options">
+                    {{ vueSelectNoMatchingOptions }}
+                  </template>
+                </v-select>
               </b-form-row>
             </b-form-row>
           </b-form-group>
@@ -151,52 +155,35 @@
 import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+import { APP } from '../../sub/constant/config'
+import { NOTIFY_STATE } from '../../sub/constant/Constants'
+import * as BrowserUtil from '../../sub/util/BrowserUtil'
+import * as CsvUtil from '../../sub/util/CsvUtil'
+import * as DateUtil from '../../sub/util/DateUtil'
+import * as Util from '../../sub/util/Util'
+import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
+import { getCharSet } from '../../sub/helper/CharSetHelper'
+import * as HttpHelper from '../../sub/helper/HttpHelper'
+import * as LocalStorageHelper from '../../sub/helper/LocalStorageHelper'
+import * as StateHelper from '../../sub/helper/StateHelper'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
+import commonmixin from '../../components/mixin/commonmixin.vue'
+import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
-import showmapmixin from '../../components/mixin/showmapmixin.vue'
-import commonmixin from '../../components/mixin/commonmixin.vue'
-import * as StateHelper from '../../sub/helper/StateHelper'
-import * as HttpHelper from '../../sub/helper/HttpHelper'
-import * as ViewHelper from '../../sub/helper/ViewHelper'
-import * as LocalStorageHelper from '../../sub/helper/LocalStorageHelper'
-import * as Util from '../../sub/util/Util'
-import * as BrowserUtil from '../../sub/util/BrowserUtil'
-import * as DateUtil from '../../sub/util/DateUtil'
-import * as CsvUtil from '../../sub/util/CsvUtil'
-import { getCharSet } from '../../sub/helper/CharSetHelper'
-import { NOTIFY_STATE } from '../../sub/constant/Constants'
-import { APP } from '../../sub/constant/config.js'
-import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 
 
 export default {
   components: {
+    DatePicker,
     breadcrumb,
     alert,
-    DatePicker,
   },
-  mixins: [showmapmixin, commonmixin],
+  mixins: [commonmixin, showmapmixin],
   data () {
     return {
       name: 'notifyHistory',
-      txId: null,
-      userState:null,
-      bUserCheck:false,
-      userMinor:null,
-      gPowerLevel:null,
-      bTx:false,
       items: ViewHelper.createBreadCrumbItems('historyTitle', 'notifyHistory'),
-      form: {
-        tx: null,
-        datetimeFrom: null,
-        datetimeTo: null,
-        notifyState: null,
-      },
-      vueSelected: {
-        tx: null,
-      },
-      viewList: [],
-      csvList: [],
       fields: [],
       fields1: ViewHelper.addLabelByKey(this.$i18n, [  // TXボタン押下通知
         {key: 'positionDt', sortable: true, label:'dt'},
@@ -261,13 +248,30 @@ export default {
         {key: 'lastRcvDatetimes', sortable: true,label:'finalReceiveTime' },
         {key: 'notifyResult', sortable: true,label:'notifyResult' },
       ]),
+      form: {
+        tx: null,
+        datetimeFrom: null,
+        datetimeTo: null,
+        notifyState: null,
+      },
+      vueSelected: {
+        tx: null,
+      },
+      message: '',
+      footerMessage: '',
+      viewList: [],
+      csvList: [],
+      txId: null,
+      userState:null,
+      bUserCheck:false,
+      userMinor:null,
+      gPowerLevel:null,
+      bTx:false,
       currentPage: 1,
       perPage: 20,
       limitViewRows: 100,
       totalRows: 0,
       sortBy: null,
-      message: '',
-      footerMessage: '',
       csvHeaders: this.getCsvHeaders('TX_DELIVERY_NOTIFY'),
     }
   },

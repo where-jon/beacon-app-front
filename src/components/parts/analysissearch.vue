@@ -10,6 +10,9 @@
                 <template slot="selected-option" slot-scope="option">
                   {{ vueSelectCutOn(option, true) }}
                 </template>
+                <template slot="no-options">
+                  {{ vueSelectNoMatchingOptions }}
+                </template>
               </v-select>
             </span>
           </b-form-row>
@@ -21,6 +24,9 @@
               <v-select v-model="vueSelected.category" :options="categoryOptions" class="inputSelect vue-options" :style="vueSelectStyle">
                 <template slot="selected-option" slot-scope="option">
                   {{ vueSelectCutOn(option) }}
+                </template>
+                <template slot="no-options">
+                  {{ vueSelectNoMatchingOptions }}
                 </template>
               </v-select>
             </span>
@@ -34,6 +40,9 @@
                 <template slot="selected-option" slot-scope="option">
                   {{ vueSelectCutOn(option) }}
                 </template>
+                <template slot="no-options">
+                  {{ vueSelectNoMatchingOptions }}
+                </template>
               </v-select>
             </span>
           </b-form-row>
@@ -45,6 +54,9 @@
               <v-select v-model="vueSelected.pot" :options="potOptions" class="inputSelect vue-options" :style="vueSelectStyle">
                 <template slot="selected-option" slot-scope="option">
                   {{ vueSelectCutOn(option) }}
+                </template>
+                <template slot="no-options">
+                  {{ vueSelectNoMatchingOptions }}
                 </template>
               </v-select>
             </span>
@@ -78,17 +90,17 @@
 import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import * as Util from '../../sub/util/Util'
+import { APP } from '../../sub/constant/config'
+import { CATEGORY } from '../../sub/constant/Constants'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as DateUtil from '../../sub/util/DateUtil'
-import * as StateHelper from '../../sub/helper/StateHelper'
-import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
+import * as Util from '../../sub/util/Util'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
+import * as StateHelper from '../../sub/helper/StateHelper'
 import * as ValidateHelper from '../../sub/helper/ValidateHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
-import { APP } from '../../sub/constant/config.js'
-import { CATEGORY } from '../../sub/constant/Constants'
+import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
 import commonmixin from '../mixin/commonmixin.vue'
 
 export default {
@@ -121,8 +133,6 @@ export default {
       appServicePath: '/core/positionHistory',
       areaOptions: [],
       potOptions: [],
-      interval: 24 * 60 * 60 * 1000,
-      intervalHours: 24,
     }
   },
   computed: {
@@ -184,7 +194,9 @@ export default {
     this.changeGroup()
     this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions, null, true)
     const date = new Date()
-    this.form.datetimeFrom = DateUtil.getDatetime(date, {hours: -1})
+    this.form.datetimeFrom = DateUtil.getDatetime(date, {
+      [APP.ANALYSIS.DATETIME_DEFAULT_UNIT]: -1 * APP.ANALYSIS.DATETIME_DEFAULT
+    })
     this.form.datetimeTo = DateUtil.getDatetime(date)
   },
   mounted() {
@@ -218,6 +230,7 @@ export default {
       }
     },
     validate() {
+      const limitMs = APP.ANALYSIS.DATETIME_LIMIT * 24 * 60 * 60 * 1000
       const errors = ValidateHelper.validateCheck([
         {type: 'require', names: ['area'], values: [this.form.areaId]},
         {type: 'require', 
@@ -226,7 +239,7 @@ export default {
         {type: 'require', names: ['historyDateFrom'], values: [this.form.datetimeFrom]},
         {type: 'require', names: ['historyDateFrom'], values: [this.form.datetimeTo]},
         this.form.datetimeFrom && this.form.datetimeTo? {type: 'asc', names: ['historyDateFrom'], values: [this.form.datetimeFrom.getTime(), this.form.datetimeTo.getTime()], equal: false}: null,
-        this.form.datetimeFrom && this.form.datetimeTo? {type: 'less', names: ['historyDateFrom'], values: [this.form.datetimeFrom.getTime() * -1, this.form.datetimeTo.getTime()], base: this.interval, displayBase: this.intervalHours, equal: true}: null,
+        this.form.datetimeFrom && this.form.datetimeTo? {type: 'less', names: ['historyDateFrom'], values: [this.form.datetimeFrom.getTime() * -1, this.form.datetimeTo.getTime()], base: limitMs, displayBase: APP.ANALYSIS.DATETIME_LIMIT, equal: true}: null,
       ].filter(val => val && val.names.length >= 1))
       return ValidateHelper.formatValidateMessage(errors)
     },
@@ -266,14 +279,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import "../../sub/constant/input.scss";
 @import "../../sub/constant/vue.scss";
-.inputSelect {
-  min-width: 160px;
-}
-.inputdatefrom {
-  width: 200px;
-}
-.inputdateto {
-  width: 200px;
-}
 </style>

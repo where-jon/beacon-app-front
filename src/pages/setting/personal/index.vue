@@ -94,30 +94,30 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex'
-import breadcrumb from '../../../components/layout/breadcrumb.vue'
-import alert from '../../../components/parts/alert.vue'
-import pagetitle from '../../../components/layout/pagetitle.vue'
 import { APP } from '../../../sub/constant/config'
 import { THEME, CHAR_SET, LOCALE } from '../../../sub/constant/Constants'
-import { getTheme } from '../../../sub/helper/ThemeHelper'
-import { getCharSet } from '../../../sub/helper/CharSetHelper'
-import * as LocaleHelper from '../../../sub/helper/LocaleHelper'
-import * as AuthHelper from '../../../sub/helper/AuthHelper'
-import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
-import * as ViewHelper from '../../../sub/helper/ViewHelper'
-import * as ValidateHelper from '../../../sub/helper/ValidateHelper'
-import * as LocalStorageHelper from '../../../sub/helper/LocalStorageHelper'
-import * as Util from '../../../sub/util/Util'
 import * as ArrayUtil from '../../../sub/util/ArrayUtil'
 import { getLangShort } from '../../../sub/util/BrowserUtil'
+import * as Util from '../../../sub/util/Util'
+import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
+import * as AuthHelper from '../../../sub/helper/AuthHelper'
+import { getCharSet } from '../../../sub/helper/CharSetHelper'
+import * as LocaleHelper from '../../../sub/helper/LocaleHelper'
+import * as LocalStorageHelper from '../../../sub/helper/LocalStorageHelper'
+import { getTheme } from '../../../sub/helper/ThemeHelper'
+import * as ValidateHelper from '../../../sub/helper/ValidateHelper'
+import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import breadcrumb from '../../../components/layout/breadcrumb.vue'
+import pagetitle from '../../../components/layout/pagetitle.vue'
 import commonmixin from '../../../components/mixin/commonmixin.vue'
 import editmixin from '../../../components/mixin/editmixin.vue'
+import alert from '../../../components/parts/alert.vue'
 
 export default {
   components: {
     breadcrumb,
-    alert,
     pagetitle,
+    alert,
   },
   mixins: [commonmixin, editmixin],
   data () {
@@ -126,6 +126,17 @@ export default {
       id: 'settingId',
       backPath: '/setting/personal',
       appServicePath: '/meta/user/currentUser',
+      errorMessages: {
+        loginId: [],
+        name: [],
+        email: [],
+        minor: [],
+        password: [],
+        general: [],
+      },
+      passErrorMessage: null,
+      passMinLength: 3,
+      passMaxLength: 16,
       items: [],
       themes: [],
       selectedTheme: null,
@@ -146,18 +157,7 @@ export default {
         passwordUpdate: '',
         passwordConfirm: '',
       },
-      errorMessages: {
-        loginId: [],
-        name: [],
-        email: [],
-        minor: [],
-        password: [],
-        general: [],
-      },
       isChange: false,
-      passMinLength: 3,
-      passMaxLength: 16,
-      passErrorMessage: null,
     }
   },
   computed: {
@@ -383,6 +383,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import "../../../sub/constant/label.scss";
   h3.loginuser-profile {
     font-size: 1.2em;
     font-weight: bold;
@@ -393,9 +394,5 @@ export default {
   .input-btn {
     text-align: center;
     width: 104px;
-  }
-
-  p.error {
-    color: #dc3545;
   }
 </style>

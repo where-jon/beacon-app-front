@@ -36,19 +36,19 @@
 
 <script>
 import { mapState } from 'vuex'
-import * as ViewHelper from '../../../sub/helper/ViewHelper'
-import editmixin from '../../../components/mixin/editmixin.vue'
-import commonmixin from '../../../components/mixin/commonmixin.vue'
-import * as Util from '../../../sub/util/Util'
+import { APP } from '../../../sub/constant/config'
+import { CATEGORY, SHAPE } from '../../../sub/constant/Constants'
 import * as ColorUtil from '../../../sub/util/ColorUtil'
+import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ValidateHelper from '../../../sub/helper/ValidateHelper'
+import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
+import commonmixin from '../../../components/mixin/commonmixin.vue'
+import editmixin from '../../../components/mixin/editmixin.vue'
 import alert from '../../../components/parts/alert.vue'
-import { CATEGORY, SHAPE } from '../../../sub/constant/Constants'
 import colorPicker from '../../../components/parts/colorpicker'
-import { APP } from '../../../sub/constant/config'
 
 export default {
   components: {
@@ -56,7 +56,7 @@ export default {
     alert,
     colorPicker,
   },
-  mixins: [editmixin, commonmixin],
+  mixins: [commonmixin, editmixin],
   data() {
     let category = this.$store.state.app_service.category
     return {
@@ -64,17 +64,17 @@ export default {
       id: 'categoryId',
       backPath: '/master/category',
       appServicePath: '/basic/category',
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'category', href: '/master/category'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.category.categoryId)),
+      form: Util.extract(category, ['categoryId', 'categoryName', 'categoryType', 'display', 'description']),
+      defValue: {
+        'categoryType': APP.CATEGORY.TYPES[0],
+      },
       defaultColor: '#000000',
       defaultBgColor: '#ffffff',
-      form: Util.extract(category, ['categoryId', 'categoryName', 'categoryType', 'display', 'description']),
       oldType: Util.getValue(category, 'categoryType', null),
       oldShape: Util.getValue(category, 'display.shape', null),
       oldColor: Util.getValue(category, 'display.color', null),
       oldBgColor: Util.getValue(category, 'display.bgColor', null),
-      defValue: {
-        'categoryType': APP.CATEGORY.TYPES[0],
-      },
-      items: ViewHelper.createBreadCrumbItems('master', {text: 'category', href: '/master/category'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.category.categoryId)),
     }
   },
   computed: {

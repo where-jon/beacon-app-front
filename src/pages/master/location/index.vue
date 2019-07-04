@@ -13,6 +13,9 @@
             <template slot="selected-option" slot-scope="option">
               {{ vueSelectCutOn(option, true) }}
             </template>
+            <template slot="no-options">
+              {{ vueSelectNoMatchingOptions }}
+            </template>
           </v-select>
         </span>
         <b-button v-t="'label.load'" :variant="theme" :disabled="settingStart || selectedArea == null" size="sm" class="mb-2" @click="changeArea" />
@@ -30,9 +33,9 @@
               <template slot="selected-option" slot-scope="option">
                 {{ vueSelectCutOn(option) }}
               </template>
-              <div slot="no-options">
-                {{ $i18n.tnl('label.vSelectNoOptions') }}
-              </div>
+              <template slot="no-options">
+                {{ vueSelectNoMatchingOptions }}
+              </template>
             </v-select>
           </span>
           <b-button v-t="'label.bulkAdd'" :variant="theme" :disabled="settingStart" size="sm" class="mt-mobile mb-2" @click="bulkAdd" /> 
@@ -81,60 +84,60 @@
 
 <script>
 import { mapState } from 'vuex'
+import { Shape, Container, Text } from '@createjs/easeljs/dist/easeljs.module'
+import { APP, DISP } from '../../../sub/constant/config'
+import { UPDATE_ONLY_NN } from '../../../sub/constant/Constants'
+import * as ArrayUtil from '../../../sub/util/ArrayUtil'
+import * as BrowserUtil from '../../../sub/util/BrowserUtil'
+import * as StringUtil from '../../../sub/util/StringUtil'
+import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as HttpHelper from '../../../sub/helper/HttpHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
-import * as VueSelectHelper from '../../../sub/helper/VueSelectHelper'
-import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import * as StyleHelper from '../../../sub/helper/StyleHelper'
-import * as Util from '../../../sub/util/Util'
-import * as BrowserUtil from '../../../sub/util/BrowserUtil'
-import * as StringUtil from '../../../sub/util/StringUtil'
-import * as ArrayUtil from '../../../sub/util/ArrayUtil'
-import { APP, DISP } from '../../../sub/constant/config'
-import { UPDATE_ONLY_NN } from '../../../sub/constant/Constants'
-import { Shape, Container, Text } from '@createjs/easeljs/dist/easeljs.module'
+import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import * as VueSelectHelper from '../../../sub/helper/VueSelectHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
-import alert from '../../../components/parts/alert.vue'
 import commonmixin from '../../../components/mixin/commonmixin.vue'
 import showmapmixin from '../../../components/mixin/showmapmixin.vue'
+import alert from '../../../components/parts/alert.vue'
 
 export default {
   components: {
     breadcrumb,
     alert,
   },
-  mixins: [showmapmixin, commonmixin],
+  mixins: [commonmixin, showmapmixin],
   data() {
     return {
+      items: ViewHelper.createBreadCrumbItems('master', 'locationSetting'),
+      vueSelected: {
+        area: null,
+      },
       message: '',
+      workExbs: [],
+      exbOptions: [],
+      exbDispOptions: [],
+      exbDisp: 'deviceIdX',
       selectedExb_: null,
       pixelWidth: null,
       mapRatioChanged: false,
       isChangeArea: false,
       settingStart: false,
       isChanged: false,
-      workExbs: [],
-      exbOptions: [],
-      exbDisp: 'deviceIdX',
-      exbDispOptions: [],
       deleteTarget: null,
       keepExbPosition: false,
       ICON_FONTSIZE_RATIO: 1.3,
       mapRatio: null,
       revTrgCnt: [],
       lineCnt: null,
-      toggleCallBack: () => {
-        this.keepExbPosition = true
-      },
-      vueSelected: {
-        area: null,
-      },
       ICON_ARROW_WIDTH: DISP.EXB_LOC.SIZE.W/3,
       ICON_ARROW_HEIGHT: DISP.EXB_LOC.SIZE.H/3,
       DISPLAY_NAME_BYTE_LENGTH: 6,
       noImageErrorKey: 'noMapImage',
-      items: ViewHelper.createBreadCrumbItems('master', 'locationSetting'),
+      toggleCallBack: () => {
+        this.keepExbPosition = true
+      },
     }
   },
   computed: {
@@ -150,11 +153,11 @@ export default {
       deep: true,
     },
     realWidth: function(newVal, oldVal) {
-      console.log({newVal, oldVal})
+      Util.debug({newVal, oldVal})
       this.onMapImageScale()
     },
     pixelWidth: function(newVal, oldVal) {
-      console.log({newVal, oldVal})
+      Util.debug({newVal, oldVal})
       this.onMapImageScale()
     }
   },
@@ -566,7 +569,7 @@ export default {
         this.replace({showInfo: true})
         this.isChanged = false
       } catch (e) {
-        console.log(e)
+        console.error(e)
         this.message = this.createErrorMessage(e)
         this.replace({showAlert: true})
         window.scrollTo(0, 0)
@@ -579,11 +582,8 @@ export default {
 
 <style scoped lang="scss">
 @import "../../../sub/constant/config.scss";
+@import "../../../sub/constant/browser.scss";
 @import "../../../sub/constant/vue.scss";
-
-::-webkit-scrollbar { 
-  display: none; 
-}
 
 @media screen and (max-width: 1050px) {
   .w-le-sm-100 {

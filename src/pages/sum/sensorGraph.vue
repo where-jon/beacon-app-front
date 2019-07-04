@@ -36,6 +36,9 @@
                   <template slot="selected-option" slot-scope="option">
                     {{ vueSelectCutOn(option, true) }}
                   </template>
+                  <template slot="no-options">
+                    {{ vueSelectNoMatchingOptions }}
+                  </template>
                 </v-select>
               </span>
             </b-form-row>
@@ -49,6 +52,9 @@
                 <v-select v-model="vueSelected.tx" :options="txOptions" :clearable="false" class="ml-2 inputSelect vue-options" :style="vueSelectStyle">
                   <template slot="selected-option" slot-scope="option">
                     {{ vueSelectCutOn(option, true) }}
+                  </template>
+                  <template slot="no-options">
+                    {{ vueSelectNoMatchingOptions }}
                   </template>
                 </v-select>
               </span>
@@ -114,34 +120,35 @@
 import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import * as Util from '../../sub/util/Util'
+import * as mock from '../../assets/mock/mock'
+import { DEV, APP } from '../../sub/constant/config'
+import { SENSOR, SUM_UNIT, SUM_TARGET, DEVICE } from '../../sub/constant/Constants'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
-import * as NumberUtil from '../../sub/util/NumberUtil'
-import * as DateUtil from '../../sub/util/DateUtil'
 import * as CsvUtil from '../../sub/util/CsvUtil'
+import * as DateUtil from '../../sub/util/DateUtil'
+import * as NumberUtil from '../../sub/util/NumberUtil'
+import * as Util from '../../sub/util/Util'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
+import { getCharSet } from '../../sub/helper/CharSetHelper'
 import * as SensorHelper from '../../sub/helper/SensorHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
-import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
-import * as ViewHelper from '../../sub/helper/ViewHelper'
 import * as ValidateHelper from '../../sub/helper/ValidateHelper'
-import { SENSOR, SUM_UNIT, SUM_TARGET, DEVICE } from '../../sub/constant/Constants'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
+import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
-import alert from '../../components/parts/alert.vue'
-import { DEV, APP } from '../../sub/constant/config'
-import { getCharSet } from '../../sub/helper/CharSetHelper'
-import * as mock from '../../assets/mock/mock'
 import commonmixin from '../../components/mixin/commonmixin.vue'
+import alert from '../../components/parts/alert.vue'
 
 export default {
   components: {
+    DatePicker,
     breadcrumb,
     alert,
-    DatePicker,
   },
   mixins: [commonmixin],
   data () {
     return {
+      items: ViewHelper.createBreadCrumbItems('sumTitle', 'sensorGraph'),
       form: {
         sensorId: null,
         datetimeFrom: null,
@@ -155,7 +162,20 @@ export default {
         exb: null,
         tx: null,
       },
-      items: ViewHelper.createBreadCrumbItems('sumTitle', 'sensorGraph'),
+      message: '',
+      sumUnitOptions: [],
+      exbOptions: [],
+      txOptions: [],
+      exbType: [SENSOR.PIR, SENSOR.THERMOPILE, SENSOR.LED],
+      txType: [SENSOR.MEDITAG, SENSOR.MAGNET],
+      deviceType: DEVICE.EXB,
+      showSumTarget: true,
+      hourOver: 4,
+      dateOver: 3,
+      dataSensorId: null,
+      dataList: [],
+      showChart: false,
+      showSubChart: false,
       headers: {
         temperature: [
           'dt',
@@ -184,20 +204,6 @@ export default {
           APP.SENSORGRAPH.CSV_IMMEDIATE? 'pressVol(lat)': null, 'pressVol(max)', 'pressVol(avg)', 'pressVol(min)',
         ].filter(val => val),
       },
-      exbType: [SENSOR.PIR, SENSOR.THERMOPILE, SENSOR.LED],
-      txType: [SENSOR.MEDITAG, SENSOR.MAGNET],
-      sumUnitOptions: [],
-      exbOptions: [],
-      txOptions: [],
-      deviceType: DEVICE.EXB,
-      showSumTarget: true,
-      hourOver: 4,
-      dateOver: 3,
-      dataSensorId: null,
-      dataList: [],
-      message: '',
-      showChart: false,
-      showSubChart: false,
     }
   },
   computed: {
@@ -601,14 +607,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import "../../sub/constant/input.scss";
 @import "../../sub/constant/vue.scss";
-.inputSelect {
-  min-width: 160px;
-}
-.inputdatefrom {
-  width: 200px;
-}
-.inputdateto {
-  width: 200px;
-}
 </style>

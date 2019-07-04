@@ -15,7 +15,11 @@
                     <label>
                       {{ $i18n.tnl('label.tx') + getTxIndex(index) }}
                     </label>
-                    <v-select v-model="vueSelected.txs[index]" :options="getTxOptions(index)" :disabled="!isEditable" :readonly="!isEditable" class="ml-3 vue-options" />
+                    <v-select v-model="vueSelected.txs[index]" :options="getTxOptions(index)" :disabled="!isEditable" :readonly="!isEditable" class="ml-3 vue-options">
+                      <template slot="no-options">
+                        {{ vueSelectNoMatchingOptions }}
+                      </template>
+                    </v-select>
                   </b-form-row>
                 </b-form-group>
               </b-form>
@@ -42,11 +46,19 @@
             </b-form-group>
             <b-form-group v-show="isShown('POT.WITH', 'group')">
               <label v-t="'label.group'" />
-              <v-select v-model="vueSelected.group" :options="groupOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 vue-options-lg" />
+              <v-select v-model="vueSelected.group" :options="groupOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 vue-options-lg">
+                <template slot="no-options">
+                  {{ vueSelectNoMatchingOptions }}
+                </template>
+              </v-select>
             </b-form-group>
             <b-form-group v-show="isShown('POT.WITH', 'category')">
               <label v-t="'label.category'" />
-              <v-select v-model="vueSelected.category" :options="categoryOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 vue-options-lg" />
+              <v-select v-model="vueSelected.category" :options="categoryOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 vue-options-lg">
+                <template slot="no-options">
+                  {{ vueSelectNoMatchingOptions }}
+                </template>
+              </v-select>
             </b-form-group>
             <b-form-group v-show="isShown('POT.WITH', 'post')">
               <label v-t="'label.post'" />
@@ -84,7 +96,11 @@
             </b-form-group>
             <b-form-group v-if="editShowUser">
               <label v-t="'label.role'" />
-              <v-select v-model="vueSelected.role" :options="roleOptions" :clearable="false" :required="editShowUser" class="vue-options-lg" />
+              <v-select v-model="vueSelected.role" :options="roleOptions" :clearable="false" :required="editShowUser" class="vue-options-lg">
+                <template slot="no-options">
+                  {{ vueSelectNoMatchingOptions }}
+                </template>
+              </v-select>
             </b-form-group>
             <b-form-group v-if="editShowUser">
               <label v-if="hasUserId" v-t="'label.passwordUpdate'" />
@@ -107,23 +123,23 @@
 <script>
 import { mapState } from 'vuex'
 import _ from 'lodash'
-import * as ViewHelper from '../../../sub/helper/ViewHelper'
-import * as StateHelper from '../../../sub/helper/StateHelper'
-import * as VueSelectHelper from '../../../sub/helper/VueSelectHelper'
+import { APP, EXCLOUD, APP_SERVICE } from '../../../sub/constant/config'
+import { CATEGORY, SENSOR, USER } from '../../../sub/constant/Constants'
+import * as StringUtil from '../../../sub/util/StringUtil'
+import * as Util from '../../../sub/util/Util'
+import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
+import * as ImageHelper from '../../../sub/helper/ImageHelper'
 import * as LocalStorageHelper from '../../../sub/helper/LocalStorageHelper'
 import * as MasterHelper from '../../../sub/helper/MasterHelper'
-import * as ImageHelper from '../../../sub/helper/ImageHelper'
+import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ValidateHelper from '../../../sub/helper/ValidateHelper'
-import editmixin from '../../../components/mixin/editmixin.vue'
-import commonmixin from '../../../components/mixin/commonmixin.vue'
-import * as Util from '../../../sub/util/Util'
-import * as StringUtil from '../../../sub/util/StringUtil'
+import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import * as VueSelectHelper from '../../../sub/helper/VueSelectHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
+import commonmixin from '../../../components/mixin/commonmixin.vue'
+import editmixin from '../../../components/mixin/editmixin.vue'
 import alert from '../../../components/parts/alert.vue'
 import chromeInput from '../../../components/parts/chromeinput.vue'
-import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
-import { CATEGORY, SENSOR, USER } from '../../../sub/constant/Constants'
-import { APP, APP_SERVICE, EXCLOUD } from '../../../sub/constant/config.js'
 
 export default {
   components: {
@@ -131,31 +147,21 @@ export default {
     alert,
     chromeInput,
   },
-  mixins: [editmixin, commonmixin],
+  mixins: [commonmixin, editmixin],
   data() {
     return {
       name: 'pot',
       id: 'potId',
       backPath: '/master/pot',
       appServicePath: '/basic/pot',
-      category: _.slice(CATEGORY.getTypes(), 0, 2).filter((val) => APP.CATEGORY.TYPES.includes(val.value)),
-      txIds: Array(APP.POT.TX_MAX),
-      btxIds: Array(APP.POT.TX_MAX),
-      minors: Array(APP.POT.TX_MAX),
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'pot', href: '/master/pot'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.pot.potId)),
       showEmail: false,
       editShowUser: false,
-      roleOptions: [],
       form: {
         ...Util.extract(this.$store.state.app_service.pot,
           ['potId', 'potCd', 'potName', 'potType', 'extValue.ruby',
             'displayName', 'potGroupList.0.group.groupId', 'potCategoryList.0.category.categoryId', 'extValue.tel',
             'extValue.post', 'existThumbnail', 'description'])
-      },
-      vueSelected: {
-        group: null,
-        category: null,
-        role: null,
-        txs: []
       },
       userForm: {
         userId: null, loginId: null, pass: null, roleId: null, email: null,
@@ -163,10 +169,20 @@ export default {
       oldUserForm: {
         userId: null, loginId: null, pass: null, roleId: null, email: null,
       },
+      vueSelected: {
+        group: null,
+        category: null,
+        role: null,
+        txs: []
+      },
       defValue: {
         'potType': APP.CATEGORY.TYPES[0] != 3? APP.CATEGORY.TYPES[0]: null,
       },
-      items: ViewHelper.createBreadCrumbItems('master', {text: 'pot', href: '/master/pot'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.pot.potId)),
+      roleOptions: [],
+      category: _.slice(CATEGORY.getTypes(), 0, 2).filter((val) => APP.CATEGORY.TYPES.includes(val.value)),
+      txIds: Array(APP.POT.TX_MAX),
+      btxIds: Array(APP.POT.TX_MAX),
+      minors: Array(APP.POT.TX_MAX),
       thumbnailUrl: APP_SERVICE.BASE_URL + EXCLOUD.POT_THUMBNAIL_URL,
     }
   },

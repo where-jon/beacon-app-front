@@ -24,17 +24,17 @@
             <b-form-row class="mr-2 mb-3">
               <label v-t="'label.zoneCategoryName'" class="mr-2 mb-2 d-flex align-items-center" />
               <v-select v-model="vModelCategory" :options="categoryOptions" :on-change="categoryChange" required class="ml-2 mb-2 vue-options" :style="vueSelectStyle">
-                <div slot="no-options">
-                  {{ $i18n.tnl('label.vSelectNoOptions') }}
-                </div>
+                <template slot="no-options">
+                  {{ vueSelectNoMatchingOptions }}
+                </template>
               </v-select>
             </b-form-row>
             <b-form-row class="mb-2">
               <label v-t="'label.zone'" class="mr-2 mb-2 d-flex align-items-center" />
               <v-select v-model="vModelZone" :options="zoneOptions" :on-change="zoneChange" required class="ml-2 mb-2 vue-options" :style="vueSelectStyle">
-                <div slot="no-options">
-                  {{ $i18n.tnl('label.vSelectNoOptions') }}
-                </div>
+                <template slot="no-options">
+                  {{ vueSelectNoMatchingOptions }}
+                </template>
               </v-select>
             </b-form-row>
           </b-form-row>
@@ -64,32 +64,33 @@
 import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
-import * as StateHelper from '../../sub/helper/StateHelper'
-import * as ViewHelper from '../../sub/helper/ViewHelper'
-import * as OptionHelper from '../../sub/helper/OptionHelper'
-import * as Util from '../../sub/util/Util'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
+import * as CsvUtil from '../../sub/util/CsvUtil'
+import * as DateUtil from '../../sub/util/DateUtil'
 import * as DomUtil from '../../sub/util/DomUtil'
 import * as NumberUtil from '../../sub/util/NumberUtil'
-import * as DateUtil from '../../sub/util/DateUtil'
-import * as CsvUtil from '../../sub/util/CsvUtil'
+import * as Util from '../../sub/util/Util'
+import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
+import { getCharSet } from '../../sub/helper/CharSetHelper'
+import * as OptionHelper from '../../sub/helper/OptionHelper'
+import * as StateHelper from '../../sub/helper/StateHelper'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
-import alert from '../../components/parts/alert.vue'
 import commonmixin from '../../components/mixin/commonmixin.vue'
 import reloadmixin from '../../components/mixin/reloadmixin.vue'
-import { getCharSet } from '../../sub/helper/CharSetHelper'
+import alert from '../../components/parts/alert.vue'
 
 export default {
   components: {
+    DatePicker,
     breadcrumb,
     alert,
-    DatePicker,
   },
-  mixins: [reloadmixin, commonmixin],
+  mixins: [commonmixin, reloadmixin],
   data () {
     return {
       items: ViewHelper.createBreadCrumbItems('historyTitle', 'thermohumidity'),
+      message: '',
       vModelCategory: null,
       vModelZone: null,
       vModelYearMonth: null,
@@ -106,8 +107,6 @@ export default {
       dateTo: DateUtil.getDatetime(new Date(), null, 'yyyyMMdd'),
       historyType: 0,
       temperatureHistoryData: null,
-      //
-      message: '',
       //
       useInputDate: DomUtil.supportInputType('date'),
     }
@@ -143,7 +142,7 @@ export default {
           '/core/zone/categoryList',
           ''
         )
-        console.log(this.zoneCategorys)
+        Util.debug(this.zoneCategorys)
         this.categoryOptionList = OptionHelper.getZoneCategoryOptions(this.zoneCategorys)
       } catch(e) {
         console.error(e)
@@ -231,7 +230,7 @@ export default {
           delete data['sensorDt']
         })
       } catch (e) {
-        console.log(e)
+        console.error(e)
         list = []
       }
       return list
@@ -261,11 +260,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import "../../sub/constant/input.scss";
 @import "../../sub/constant/vue.scss";
-.inputdatefrom {
-  width: 180px;
-}
-.inputdateto {
-  width: 180px;
-}
 </style>

@@ -1,9 +1,9 @@
 import { APP } from '../constant/config'
-import * as Util from '../util/Util'
-import * as StringUtil from '../util/StringUtil'
 import * as BrowserUtil from '../util/BrowserUtil'
-import * as StateHelper from '../helper/StateHelper'
+import * as StringUtil from '../util/StringUtil'
+import * as Util from '../util/Util'
 import * as HttpHelper from './HttpHelper'
+import * as StateHelper from '../helper/StateHelper'
 
 /**
  * 指定したエリア画像をロードする。指定しない場合は全てロードする。

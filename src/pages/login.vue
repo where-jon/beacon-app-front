@@ -15,15 +15,14 @@
 </template>
 
 <script>
+import { mapState, mapMutations } from 'vuex'
+import { APP, DISP } from '../sub/constant/config'
 import * as DateUtil from '../sub/util/DateUtil'
-import { mapState } from 'vuex'
-import * as ViewHelper from '../sub/helper/ViewHelper'
-import * as StateHelper from '../sub/helper/StateHelper'
-import * as LocalStorageHelper from '../sub/helper/LocalStorageHelper'
-import { mapMutations } from 'vuex'
 import * as AuthHelper from '../sub/helper/AuthHelper'
+import * as LocalStorageHelper from '../sub/helper/LocalStorageHelper'
+import * as StateHelper from '../sub/helper/StateHelper'
 import { getButtonTheme } from '../sub/helper/ThemeHelper'
-import { APP,DISP } from '../sub/constant/config'
+import * as ViewHelper from '../sub/helper/ViewHelper'
 import commonmixinVue from '../components/mixin/commonmixin.vue'
 import newsTable from '../components/parts/newstable.vue'
 
@@ -105,7 +104,7 @@ export default {
     ]),
     onSubmit() {
       AuthHelper.setApp(this.$router, this.$store)
-      AuthHelper.auth(this.userId, this.password, ()=>{
+      AuthHelper.auth(this.userId, this.password, async ()=>{
         this.$router.push(APP.MENU.TOP_PAGE)
         this.message = ''
         const theme = LocalStorageHelper.getLocalStorage(this.userId + '-theme')

@@ -60,30 +60,30 @@
 
 <script>
 import { mapState } from 'vuex'
-import * as StateHelper from '../../../sub/helper/StateHelper'
+import { SETTING, BOOLEAN } from '../../../sub/constant/Constants'
+import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as AuthHelper from '../../../sub/helper/AuthHelper'
-import * as ViewHelper from '../../../sub/helper/ViewHelper'
-import * as SettingHelper from '../../../sub/helper/SettingHelper'
 import * as LocalStorageHelper from '../../../sub/helper/LocalStorageHelper'
+import * as SettingHelper from '../../../sub/helper/SettingHelper'
+import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ValidateHelper from '../../../sub/helper/ValidateHelper'
-import mList from '../../../components/page/list.vue'
+import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
+import commonmixin from '../../../components/mixin/commonmixin.vue'
+import editmixin from '../../../components/mixin/editmixin.vue'
+import mList from '../../../components/page/list.vue'
 import alert from '../../../components/parts/alert.vue'
 import settinginput from '../../../components/parts/settinginput.vue'
-import * as Util from '../../../sub/util/Util'
-import { SETTING, BOOLEAN } from '../../../sub/constant/Constants'
-import editmixin from '../../../components/mixin/editmixin.vue'
-import commonmixin from '../../../components/mixin/commonmixin.vue'
 
 export default {
   components: {
-    mList, 
     breadcrumb,
+    mList, 
     alert,
     settinginput,
   },
-  mixins: [editmixin, commonmixin],
+  mixins: [commonmixin, editmixin],
   props: {
     pSettingList: {
       type: Array,
@@ -96,16 +96,8 @@ export default {
   },
   data () {
     return {
-      name: 'setting',
-      id: 'settingId',
-      setting: {settingId: 1},
-      appServicePath: '/meta/setting',
-      featurePath: '/setting/system',
-      backPath: '/setting/system',
-      settingList: [],
-      isShowNewForm: false,
-      newForm: {key: '', valType: null, value: null},
       params: {
+        id: 'settingId',
         fields: ViewHelper.addLabelByKey(this.$i18n, [ 
           {key: 'key' },
           {key: 'keyName' },
@@ -114,17 +106,26 @@ export default {
           {key: 'value' },
           {key: 'clear', label: 'actions', thStyle: {width:'80px !important'} }
         ]),
-        id: 'settingId',
+        initTotalRows: this.totalRows,
+        formId: 'updateForm',
         allShowFilter: true,
         disableTableButtons: true,
         addFilterFields: ['title'],
         allDispFields: ['title', 'defaultVal'],
         extraFilter: ['settingCategory'],
-        formId: 'updateForm',
         tableDescription: 'settingDescription',
-        initTotalRows: this.totalRows,
       },
+      name: 'setting',
+      id: 'settingId',
+      appServicePath: '/meta/setting',
+      backPath: '/setting/system',
+      featurePath: '/setting/system',
       items: ViewHelper.createBreadCrumbItems('setting', 'system'),
+      newForm: {key: '', valType: null, value: null},
+      settingList: [],
+      oldSettingEntities: [],
+      isShowNewForm: false,
+      setting: {settingId: 1},
     }
   },
   computed: {
@@ -172,6 +173,7 @@ export default {
         if(!this.calee){
           await StateHelper.load('setting')
         }
+        this.oldSettingEntities = this.callee? this.pSettingList: this.settings
         this.settingList = SettingHelper.createSettingList(this.callee? this.pSettingList: this.settings, this.callee)
         this.initFilter()
       }
@@ -238,7 +240,7 @@ export default {
           delFlg: Util.hasValue(setting.value)? 0: 1
         })
       })
-      return entity
+      return SettingHelper.getDiffSettingList(this.oldSettingEntities, entity)
     },
     async onSaving() {
       const registEntity = this.createRegistEntity()

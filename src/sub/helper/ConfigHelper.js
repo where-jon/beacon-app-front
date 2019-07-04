@@ -1,6 +1,7 @@
-import _ from 'lodash'
 import axios from 'axios'
+import _ from 'lodash'
 import * as config from '../constant/config'
+import * as Util from '../util/Util'
 import * as LocalStorageHelper from './LocalStorageHelper'
 
 /**
@@ -53,7 +54,6 @@ export const loadConfigJson = async () => {
  * @param {Object} [defaultConfig = null]
  */
 export const applyAppServiceSetting = (settingArr, defaultConfig = null) => {
-  console.log(settingArr)
   if (!settingArr) return
 
   let updateData = _.reduce(settingArr, (result, setting) => {
@@ -100,7 +100,7 @@ export const updateConfig = (updateData, defaultConfig = null) => {
       }
     })
   })
-  console.debug({config})
+  Util.debug({config})
 }
 
 /**

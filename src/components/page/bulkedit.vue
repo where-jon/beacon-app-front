@@ -23,14 +23,14 @@
 
 <script>
 import { mapState } from 'vuex'
-import commonmixin from '../mixin/commonmixin.vue'
+import { CHAR_SET, UPDATE_ONLY_NN, IGNORE } from '../../sub/constant/Constants'
 import * as Util from '../../sub/util/Util'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
-import * as CharSetHelper from '../../sub/helper/CharSetHelper'
-import * as StateHelper from '../../sub/helper/StateHelper'
 import * as BulkHelper from '../../sub/helper/BulkHelper'
+import * as CharSetHelper from '../../sub/helper/CharSetHelper'
 import * as LocalStorageHelper from '../../sub/helper/LocalStorageHelper'
-import { CHAR_SET, UPDATE_ONLY_NN, IGNORE } from '../../sub/constant/Constants'
+import * as StateHelper from '../../sub/helper/StateHelper'
+import commonmixin from '../mixin/commonmixin.vue'
 import alert from '../parts/alert.vue'
 
 export default {
@@ -58,14 +58,14 @@ export default {
   },
   data() {
     return {
-      mutex: false,
-      bulkRegister: true,
-      formKey: 0,
       form: {
         csvFile: null,
       },
-      csvCharSet: BulkHelper.getInitCharSets(this.$store.state.loginId),
       message: '',
+      mutex: false,
+      bulkRegister: true,
+      formKey: 0,
+      csvCharSet: BulkHelper.getInitCharSets(this.$store.state.loginId),
     }
   },
   computed: {
@@ -169,9 +169,9 @@ export default {
             readerParam.readFin = true
             return
           }
-          console.debug(csv)
+          Util.debug(csv)
           BulkHelper.setCsvParamList(this, this.id, readerParam, csv.data, option)
-          console.debug(readerParam.entities)
+          Util.debug(readerParam.entities)
         } catch (e) {
           console.error(e)
           readerParam.error = e.message

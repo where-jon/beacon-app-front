@@ -3,10 +3,10 @@
     <m-nav />
     <b-container fluid>
       <b-row v-if="!isLoginPage" class="flex-xl-nowrap2">
-        <b-col v-if="showSidebar" id="bd-sidebar" :class="sidebarClasses" md="2" xl="2" class="d-none d-sm-none d-md-block">
+        <b-col v-if="getShowSideBar()" id="bd-sidebar" :class="sidebarClasses" md="2" xl="2" class="d-none d-sm-none d-md-block">
           <m-sidebar />
         </b-col>
-        <b-col id="bd-page" :md="showSidebar? 10: 12" class="pl-0 pr-0">
+        <b-col id="bd-page" :md="getShowSideBar()? 10: 12" class="pl-0 pr-0">
           <b-container fluid>
             <b-row>
               <b-col class="pb-md-3 pl-md-5 pl-xl-5 pr-xl-5 bd-content">
@@ -32,22 +32,23 @@
 
 import Vue from 'vue'
 import { mapState, mapMutations } from 'vuex'
-import { getThemeColor, getThemeClasses } from '../sub/helper/ThemeHelper'
-import { APP, DISP, DEV, EXCLOUD } from '../sub/constant/config'
-
-import mSidebar from '../components/layout/sidebar.vue'
-import mNav from '../components/layout/nav.vue'
-
 import vSelect from 'vue-select'
-import BootstrapVue from 'bootstrap-vue'
 import 'vue-select/dist/vue-select.css'
 import Spinner from 'vue-simple-spinner'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { fas } from '@fortawesome/free-solid-svg-icons'
+
+import BootstrapVue from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
-import * as LocaleHelper from '../sub/helper/LocaleHelper'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { fas } from '@fortawesome/free-solid-svg-icons'
+
+import { APP, DISP, DEV, EXCLOUD } from '../sub/constant/config'
 import { getLangShort } from '../sub/util/BrowserUtil'
+import * as LocaleHelper from '../sub/helper/LocaleHelper'
+import { getThemeColor, getThemeClasses } from '../sub/helper/ThemeHelper'
+
+import mNav from '../components/layout/nav.vue'
+import mSidebar from '../components/layout/sidebar.vue'
 
 Vue.use(BootstrapVue)
 Vue.component('vue-simple-spinner', Spinner)
@@ -56,12 +57,11 @@ library.add(fas)
 
 export default {
   components: {
+    mNav,
     mSidebar, 
-    mNav
   },
   data() {
     return {
-      showSidebar: DISP.MENU.SHOW_SIDEBAR,
       conf: {
         app: APP,
         disp: DISP,
@@ -119,7 +119,10 @@ export default {
       const color = getThemeColor()
       this.setColor('dropdown-menu', color)
       this.setColor('dropdown-item', color)
-    }
+    },
+    getShowSideBar(){
+      return this.conf.disp.MENU.SHOW_SIDEBAR
+    },
   },
   head() { // browser tab title
     return {
@@ -157,8 +160,7 @@ html {
 }
 
 .dropdown-item:hover,
-.dropdown-item:focus, 
-{
+.dropdown-item:focus {
   color:aliceblue;
   background-color: $menu-bg-hover;
 }

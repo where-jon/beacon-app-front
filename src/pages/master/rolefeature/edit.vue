@@ -7,7 +7,11 @@
       <b-form v-if="show" @submit.prevent="save">
         <b-form-group>
           <label v-t="'label.featureName'" />
-          <v-select v-model="vueSelected.feature" :options="featureNames" :disabled="systemReadOnly" :clearable="false" class="mb-3 vue-options-lg" />
+          <v-select v-model="vueSelected.feature" :options="featureNames" :disabled="systemReadOnly" :clearable="false" class="mb-3 vue-options-lg">
+            <template slot="no-options">
+              {{ vueSelectNoMatchingOptions }}
+            </template>
+          </v-select>
         </b-form-group>
         <b-form-group>
           <label v-t="'label.path'" />
@@ -35,40 +39,31 @@
 
 <script>
 import { mapState } from 'vuex'
-import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import { ROLE_FEATURE } from '../../../sub/constant/Constants'
+import * as ArrayUtil from '../../../sub/util/ArrayUtil'
+import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
-import * as VueSelectHelper from '../../../sub/helper/VueSelectHelper'
 import * as FeatureHelper from '../../../sub/helper/FeatureHelper'
 import * as ValidateHelper from '../../../sub/helper/ValidateHelper'
-import editmixin from '../../../components/mixin/editmixin.vue'
-import commonmixin from '../../../components/mixin/commonmixin.vue'
-import * as Util from '../../../sub/util/Util'
-import * as ArrayUtil from '../../../sub/util/ArrayUtil'
+import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import * as VueSelectHelper from '../../../sub/helper/VueSelectHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
+import commonmixin from '../../../components/mixin/commonmixin.vue'
+import editmixin from '../../../components/mixin/editmixin.vue'
 import alert from '../../../components/parts/alert.vue'
-import { ROLE_FEATURE } from '../../../sub/constant/Constants'
 
 export default {
   components: {
     breadcrumb,
     alert,
   },
-  mixins: [editmixin, commonmixin],
+  mixins: [commonmixin, editmixin],
   data() {
     return {
       name: 'roleFeature',
       id: 'featureId',
       backPath: '/master/role/edit',
       appServicePath: '/meta/roleFeature',
-      featureId: -1,
-      form: Util.extract(this.$store.state.app_service.roleFeature, ['feature.featureId', 'feature.featureName', 'feature.path', 'mode']),
-      vueSelected: {
-        feature: null,
-      },
-      featureNames: [],
-      selectedModes: [],
-      selectedAll: false,
-      modeOptions: ROLE_FEATURE.getModeOptions(),
       items: ViewHelper.createBreadCrumbItems(
         'master',
         {text: 'role', href: '/master/role'},
@@ -76,6 +71,15 @@ export default {
         'feature',
         ViewHelper.getDetailCaptionKey(this.$store.state.app_service.roleFeature.feature? this.$store.state.app_service.roleFeature.feature.featureId: null)
       ),
+      form: Util.extract(this.$store.state.app_service.roleFeature, ['feature.featureId', 'feature.featureName', 'feature.path', 'mode']),
+      vueSelected: {
+        feature: null,
+      },
+      featureNames: [],
+      featureId: -1,
+      selectedModes: [],
+      selectedAll: false,
+      modeOptions: ROLE_FEATURE.getModeOptions(),
     }
   },
   computed: {

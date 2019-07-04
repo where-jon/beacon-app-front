@@ -13,6 +13,9 @@
             <template slot="selected-option" slot-scope="option">
               {{ vueSelectCutOn(option, true) }}
             </template>
+            <template slot="no-options">
+              {{ vueSelectNoMatchingOptions }}
+            </template>
           </v-select>
         </span>
         <b-button v-t="'label.load'" :variant="theme" size="sm" class="mb-2" @click="changeArea" />
@@ -29,9 +32,9 @@
               <template slot="selected-option" slot-scope="option">
                 {{ vueSelectCutOn(option) }}
               </template>
-              <div slot="no-options">
-                {{ $i18n.tnl('label.vSelectNoOptions') }}
-              </div>
+              <template slot="no-options">
+                {{ vueSelectNoMatchingOptions }}
+              </template>
             </v-select>
           </span>
           <b-button v-t="'label.bulkAdd'" :variant="theme" size="sm" class="mt-mobile mb-2" @click="bulkAdd" /> 
@@ -54,51 +57,50 @@
 
 <script>
 import { mapState } from 'vuex'
-// import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
-import * as HttpHelper from '../../../sub/helper/HttpHelper'
-import * as StateHelper from '../../../sub/helper/StateHelper'
-import * as VueSelectHelper from '../../../sub/helper/VueSelectHelper'
-import * as ViewHelper from '../../../sub/helper/ViewHelper'
-import * as StyleHelper from '../../../sub/helper/StyleHelper'
-import * as Util from '../../../sub/util/Util'
-import * as BrowserUtil from '../../../sub/util/BrowserUtil'
-import * as StringUtil from '../../../sub/util/StringUtil'
-import * as ColorUtil from '../../../sub/util/ColorUtil'
+import { Shape, Container, Text } from '@createjs/easeljs/dist/easeljs.module'
 import { DISP } from '../../../sub/constant/config'
 import { UPDATE_ONLY_NN } from '../../../sub/constant/Constants'
-import { Shape, Container, Text } from '@createjs/easeljs/dist/easeljs.module'
+import * as BrowserUtil from '../../../sub/util/BrowserUtil'
+import * as ColorUtil from '../../../sub/util/ColorUtil'
+import * as StringUtil from '../../../sub/util/StringUtil'
+import * as Util from '../../../sub/util/Util'
+import * as HttpHelper from '../../../sub/helper/HttpHelper'
+import * as StateHelper from '../../../sub/helper/StateHelper'
+import * as StyleHelper from '../../../sub/helper/StyleHelper'
+import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import * as VueSelectHelper from '../../../sub/helper/VueSelectHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
-import alert from '../../../components/parts/alert.vue'
 import commonmixin from '../../../components/mixin/commonmixin.vue'
 import showmapmixin from '../../../components/mixin/showmapmixin.vue'
+import alert from '../../../components/parts/alert.vue'
 
 export default {
   components: {
     breadcrumb,
     alert,
   },
-  mixins: [showmapmixin, commonmixin],
+  mixins: [commonmixin, showmapmixin],
   data() {
     return {
-      message: '',
-      selectedTx_: null,
-      isChangeArea: false,
-      isChanged: false,
-      workTxs: [],
-      txOptions: [],
-      deleteTarget: null,
-      keepTxPosition: false,
-      ICON_FONTSIZE_RATIO: 1.3,
-      toggleCallBack: () => {
-        this.keepTxPosition = true
-      },
+      items: ViewHelper.createBreadCrumbItems('master', 'txLocationSetting'),
       vueSelected: {
         area: null,
       },
+      message: '',
+      workTxs: [],
+      txOptions: [],
+      selectedTx_: null,
+      isChangeArea: false,
+      isChanged: false,
+      deleteTarget: null,
+      keepTxPosition: false,
+      ICON_FONTSIZE_RATIO: 1.3,
       ICON_ARROW_WIDTH: DISP.TX_LOC.SIZE.W/3,
       ICON_ARROW_HEIGHT: DISP.TX_LOC.SIZE.H/3,
       noImageErrorKey: 'noMapImage',
-      items: ViewHelper.createBreadCrumbItems('master', 'txLocationSetting'),
+      toggleCallBack: () => {
+        this.keepTxPosition = true
+      },
     }
   },
   computed: {
@@ -438,7 +440,7 @@ export default {
         this.replace({showInfo: true})
         this.isChanged = false
       } catch (e) {
-        console.log(e)
+        console.error(e)
         this.message = this.createErrorMessage(e)
         this.replace({showAlert: true})
         window.scrollTo(0, 0)
@@ -451,11 +453,8 @@ export default {
 
 <style scoped lang="scss">
 @import "../../../sub/constant/config.scss";
+@import "../../../sub/constant/browser.scss";
 @import "../../../sub/constant/vue.scss";
-
-::-webkit-scrollbar { 
-  display: none; 
-}
 
 @media screen and (max-width: 1050px) {
   .w-le-sm-100 {

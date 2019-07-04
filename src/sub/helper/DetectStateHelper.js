@@ -1,6 +1,6 @@
-import { APP, DEV } from '../constant/config.js'
-import { DETECT_STATE } from '../constant/Constants'
 import * as mock from '../../assets/mock/mock'
+import { DEV, APP } from '../constant/config'
+import { DETECT_STATE } from '../constant/Constants'
 import * as ArrayUtil from '../util/ArrayUtil'
 
 export const getTypes = (type) => {
@@ -57,7 +57,6 @@ export const getState = (type, updatetime) => {
       time > LOST_TIME? DETECT_STATE.LOST:
         DETECT_STATE.DETECTED
 
-  // console.debug(updatetime, time, state)
   return state
 }
 

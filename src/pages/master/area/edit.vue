@@ -42,34 +42,34 @@
 
 <script>
 import { mapState } from 'vuex'
-import * as StateHelper from '../../../sub/helper/StateHelper'
-import * as ViewHelper from '../../../sub/helper/ViewHelper'
-import * as ImageHelper from '../../../sub/helper/ImageHelper'
-import * as ValidateHelper from '../../../sub/helper/ValidateHelper'
-import * as Util from '../../../sub/util/Util'
-import * as StringUtil from '../../../sub/util/StringUtil'
-import commonmixin from '../../../components/mixin/commonmixin.vue'
-import editmixin from '../../../components/mixin/editmixin.vue'
-import breadcrumb from '../../../components/layout/breadcrumb.vue'
-import alert from '../../../components/parts/alert.vue'
 import { APP } from '../../../sub/constant/config'
 import { UPDATE_ONLY_NN, PATTERN } from '../../../sub/constant/Constants'
+import * as StringUtil from '../../../sub/util/StringUtil'
+import * as Util from '../../../sub/util/Util'
+import * as ImageHelper from '../../../sub/helper/ImageHelper'
+import * as StateHelper from '../../../sub/helper/StateHelper'
+import * as ValidateHelper from '../../../sub/helper/ValidateHelper'
+import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import breadcrumb from '../../../components/layout/breadcrumb.vue'
+import commonmixin from '../../../components/mixin/commonmixin.vue'
+import editmixin from '../../../components/mixin/editmixin.vue'
+import alert from '../../../components/parts/alert.vue'
 
 export default {
   components: {
     breadcrumb,
     alert,
   },
-  mixins: [editmixin, commonmixin],
+  mixins: [commonmixin, editmixin],
   data() {
     return {
       name: 'area',
       id: 'areaId',
       backPath: '/master/area',
       appServicePath: '/core/area',
-      updateOnlyNN: UPDATE_ONLY_NN.NULL,
-      form: Util.extract(this.$store.state.app_service.area, ['areaId', 'areaCd', 'areaName', 'mapImage']),
       items: ViewHelper.createBreadCrumbItems('master', {text: 'area', href: '/master/area'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.area.areaId)),
+      form: Util.extract(this.$store.state.app_service.area, ['areaId', 'areaCd', 'areaName', 'mapImage']),
+      updateOnlyNN: UPDATE_ONLY_NN.NULL,
       mapUpdate: false,
       oldMap: null,
       cdPattern: PATTERN.MASTER_CD,
