@@ -4,16 +4,24 @@
       <label v-t="'label.' + ext.key" />
       <b-form-select v-if="ext.type=='list'" v-model="form[ext.key]" :options="ext.options" :disabled="!isEditable" :readonly="!isEditable" :required="ext.required" class="mb-3 vue-options-lg" />
       <b-form-checkbox v-else-if="ext.type=='boolean'" v-model="form[ext.key]" :value="ext.checked" :unchecked-value="ext.unchecked" class="ml-3 pt-2" />
-      <b-form-input v-else v-model="form[ext.key]" :readonly="!isEditable" :type="ext.itype" :maxlength="ext.length" :min="ext.min" :max="ext.max" :pattern="ext.format" :required="ext.required" />
+      <date-picker v-else-if="ext.type=='date'" v-model="form[ext.key]" :clearable="!ext.required" type="date" value-format="yyyy-MM-dd" class="ml-3 pt-2 inputdateto" :required="ext.required" />
+      <b-form-input v-else v-model="form[ext.key]" :readonly="!isEditable" :type="ext.itype" :maxlength="ext.length" :min="ext.min" :max="ext.max" :pattern="ext.format" :required="ext.required" :step="ext.type == 'float'? 0.1: 1" />
     </b-form-group>
   </div>
 </template>
 
 <script>
 import Vue from 'vue'
+import { DatePicker } from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
+import * as Util from '../../sub/util/Util'
 import * as PotHelper from '../../sub/helper/domain/PotHelper'
+import * as ViewHelper from '../../sub/helper/ViewHelper'
 
 export default {
+  components: {
+    DatePicker,
+  },
   props: {
     form: {
       type: Object,
@@ -47,7 +55,7 @@ export default {
         if (e.type == 'list') {
           e.options = e.format.split('|').map(e => ({label: e, text: e, value: e}))
         }
-        if (e.default && !this.form[e.key] && !this.isUpdate && this.firstShow) {
+        if (e.default && !this.form[e.key] && !Util.hasValue(this.form.potId) && this.firstShow) {
           Vue.set(this.form, e.key, e.default)
         }
 
@@ -70,7 +78,10 @@ export default {
       Vue.set(this, 'firstShow', false)
       return ret
     }, 
-  }
+  },
+  mounted() {
+    ViewHelper.importElementUI()
+  },
 }
 </script>
 

@@ -78,6 +78,9 @@ export default {
         const targetRole = this.roles.find(role => role.roleId == val.potUserList[0].user.roleId)
         val.roleName = targetRole? targetRole.roleName: ''
       }
+      Object.keys(val).filter(key => /^extValue.+$/.test(key)).forEach(key => {
+        val[key.replace(/^extValue/, '')] = val[key]
+      })
     },
     getFields(){
       return ViewHelper.addLabelByKey(this.$i18n, [ 
