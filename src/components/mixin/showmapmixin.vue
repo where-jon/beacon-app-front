@@ -510,6 +510,9 @@ export default {
       return showAllTime ? positions : this.positionFilter(positions, this.selectedGroup, this.selectedCategory)
     },
     showDetail(btxId, x, y) {
+      if (PositionHelper.isDoubleTx(btxId)) {
+        btxId = PositionHelper.getDoubleDefaultTxId(btxId)
+      }
       //const tipOffsetY = 15
       const tx = this.txs.find((tx) => tx.btxId == btxId)
       const display = this.getDisplay(tx)

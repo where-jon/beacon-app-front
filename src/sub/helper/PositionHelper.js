@@ -21,6 +21,14 @@ export const zoneLastTxData = () => {
   return { btx_id: zoneLastTxId(), pos_id: 0, label: '・・・', isLost: false, }
 }
 
+export const isDoubleTx = (btxId) => {
+  return btxId >= zoneBtxIdAddNumber
+}
+
+export const getDoubleDefaultTxId = (btxId) => {
+  return btxId - zoneBtxIdAddNumber
+}
+
 /**
  * 配列をnumで指定された要素数で区切る
  * @param {*} array パーティショニング元配列
