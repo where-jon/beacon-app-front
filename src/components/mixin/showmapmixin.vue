@@ -494,7 +494,7 @@ export default {
       }
       return null
     },
-    getPositions(showAllTime = false) {
+    getPositions(showAllTime = false, notFilterByTimestamp = false) {
       let positions = []
       if (APP.POS.USE_POSITION_HISTORY) {
         positions = this.positionHistores
@@ -502,7 +502,7 @@ export default {
         const now = !DEV.USE_MOCK_EXC? new Date().getTime(): mock.positions_conf.start + this.count++ * mock.positions_conf.interval  // for mock
         positions = showAllTime ?
           this.orgPositions.filter((pos) => Array.isArray(pos)).flatMap((pos) => pos) :
-          PositionHelper.correctPosId(this.orgPositions, now)
+          PositionHelper.correctPosId(this.orgPositions, now, notFilterByTimestamp)
       }
       if (APP.SENSOR.USE_MEDITAG && this.meditagSensors) {
         positions = SensorHelper.setStress(positions, this.meditagSensors)
@@ -606,10 +606,15 @@ export default {
           offsetY: 5,
         })
     },
-    createTxBtn(pos, shape, color, bgColor){
-      const txBtn = this.createTxIcon(pos, shape, color, bgColor)
-
+    createTxBtn(pos, shape, color, bgColor, isAbsent = false){
+      let txBtn = this.createTxIcon(pos, shape, color, bgColor)
       txBtn.txId = pos.btx_id
+
+      if (isAbsent) {
+        txBtn = this.createAbsentTxIcon(pos, shape, color, bgColor)
+        txBtn.txId = PositionHelper.zoneBtxIdAddNumber + pos.btx_id
+      }
+
       txBtn.x = pos.x
       txBtn.y = pos.y
       txBtn.on('click', (evt) => {
@@ -620,6 +625,18 @@ export default {
         this.showDetail(txBtn.txId, txBtn.x, txBtn.y)
       })
       return txBtn
+    },
+    createAbsentTxIcon(pos, shape, color, bgColor){
+      const labelInfo = this.createLabelInfo(pos, color)
+      const txRadius = DISP.TX.R / this.getMapScale()
+      return IconHelper.createIcon(
+        labelInfo.label, txRadius, txRadius, labelInfo.color, ColorUtil.getRGBA(bgColor, 1), {
+          circle: shape == SHAPE.CIRCLE,
+          roundRect: shape == SHAPE.SQUARE? 0: DISP.TX.ROUNDRECT_RADIUS,
+          strokeColor: ColorUtil.getRGBA(DISP.TX.STROKE_COLOR, 1),
+          strokeStyle: DISP.TX.STROKE_WIDTH,
+          offsetY: 5,
+        })
     },
     disableExbsCheck(){
       // for debug

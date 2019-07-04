@@ -10,6 +10,17 @@ const tileLayoutIconsNum = 5
 const PIdiv180 = Math.PI / 180
 const angle = 45
 
+export const zoneBtxIdAddNumber = 10000
+
+// ゾーンエリアに表示できる最後のTX位置で省略を表示する際に使用する
+export const zoneLastTxId = () => {
+  return 100000001
+}
+
+export const zoneLastTxData = () => {
+  return { btx_id: zoneLastTxId(), pos_id: 0, label: '・・・', isLost: false, }
+}
+
 /**
  * 配列をnumで指定された要素数で区切る
  * @param {*} array パーティショニング元配列
@@ -206,6 +217,35 @@ const getTxViewType = (txViewType) => {
 }
 
 /**
+ * 指定ゾーン上のTXアイコン配置座標の配列を取得する
+ * 範囲ぴったりの場合は全て表示、超える場合は・・・用データを挿入し、その後のTXは返却しない
+ * @param {*} absentDisplayZone 不在表示ゾーンオブジェクト
+ * @param {*} ratio ウインドウ縮小割合
+ * @param {*} samePos 同じEXBの位置に配置するTXオブジェクトの配列
+ */
+const getCoordinateZone = (absentDisplayZone, ratio, samePos) => {
+  const txSize = DISP.TX.R * 2
+  // ゾーン開始位置が１つ目のTX中央にくるのでずらしておく
+  const orgX = absentDisplayZone.x + (DISP.TX.R * ratio)
+  const orgY = absentDisplayZone.y + (DISP.TX.R * ratio)
+  const widthNum = Math.floor((absentDisplayZone.w + DISP.TX.R) / (txSize * ratio))
+  const heightNum = Math.floor((absentDisplayZone.h + DISP.TX.R) / (txSize * ratio))
+  const hasOverTx = samePos.length > (widthNum * heightNum)
+
+  return partitioningArray(samePos, widthNum).flatMap((array, i, a) => {
+    return array.map((b, j, c) => {
+      const isLast = i == heightNum -1 && j == widthNum -1
+      const isOver = hasOverTx && isLast || i >= heightNum
+      if (hasOverTx && isLast) {
+        return {...zoneLastTxData(), x: orgX + txSize * ratio * j, y: orgY + txSize * ratio * i, isOver: false }
+      } else {
+        return {...b, x: orgX + txSize * ratio * j, y: orgY + txSize * ratio * i, isOver: isOver }
+      }
+    }).filter((b) => { return !b.isOver })
+  })
+}
+
+/**
  * 過去の位置データの移動平均、RSSIによるフィルタリング、時間によるフィルタリングで位置を決定
  * 
  * @param {*} orgPositions 
@@ -340,6 +380,67 @@ export const adjustMultiPosition = (positions, ratio) => {
     ret.push( {...pos, x: pos.x * ratio, y: pos.y * ratio} )
   })
   return ret
+}
+
+export const adjustZonePosition = (positions, ratio, exbs = [], absentDisplayZone) => {
+  return exbs.map((exb) => {
+    const samePos = getAbsentDisplayPos(positions, Util.hasValue(absentDisplayZone))
+    console.table(samePos)
+
+    const same = (!samePos || samePos.length == 0) ? [] : getCoordinateZone(absentDisplayZone, ratio, samePos)
+
+    return [...same]
+  }).filter(e => e).flatMap(e => e).filter(function (x, i, self) {
+    return (self.findIndex(function(val) {
+      return (x.btx_id === val.btx_id)
+    }) === i)
+  })
+}
+
+/**
+ * 不在表示用ゾーンへ表示するTXを返却する
+ * @param {*} positions 
+ * @param {*} isAbsentDsplayZone 
+ */
+export const getAbsentDisplayPos = (positions, hasAbsentDsplayZone = false) => {
+  let absentDisplayPositions = new Array()
+  if (!hasAbsentDsplayZone) {
+    return absentDisplayPositions
+  }
+
+  if (hasDisplayType('lost')) {
+    _.filter(positions, (position) => {
+      return position.detectState == DETECT_STATE.LOST
+    }).forEach((position) => {
+      absentDisplayPositions.push(position)
+    })
+  }
+
+  if (hasDisplayType('absent')) {
+    _.filter(positions, (position) => {
+      return position.exb? position.exb.isAbsentZone: false
+    }).forEach((position) => {
+      absentDisplayPositions.push(position)
+    })
+  }
+
+  if (hasDisplayType('undetected')) {
+    _.filter(positions, (position) => {
+      return DetectStateHelper.isUndetect(position.detectState)
+    }).forEach((position) => {
+      absentDisplayPositions.push(position)
+    })
+  }
+
+  return absentDisplayPositions.filter(function (x, i, self) {
+    return (self.findIndex(function(val) {
+      return (x.btx_id === val.btx_id)
+    }) === i)
+  })
+}
+
+export const hasDisplayType = (typeKey) => {
+  return _.some(DISP.TX.ABSENT_ZONE_DISPLAY_TYPES, (type) => { return type == typeKey})
 }
 
 export const setDetectState = (positions, usePositionHistory = false) => {

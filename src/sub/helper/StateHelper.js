@@ -480,6 +480,15 @@ const appStateConf = {
       }))
     }
   },
+  absentDisplayZones: {
+    path: '/core/zone/absentDisplayZones',
+    beforeCommit: (arr) => {
+      let result = arr.map((val) => (val? {
+        ...val,
+      }: null))
+      return result
+    }
+  },
   lostZones: {
     path: '/core/zone/lostZones',
     beforeCommit: arr => {
