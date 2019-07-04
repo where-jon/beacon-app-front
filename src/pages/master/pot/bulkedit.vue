@@ -13,6 +13,7 @@ import { CATEGORY } from '../../../sub/constant/Constants'
 import * as Util from '../../../sub/util/Util'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import * as PotHelper from '../../../sub/helper/domain/PotHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
 
@@ -89,11 +90,12 @@ export default {
       return dummyKey
     },
     onRestruct(entity, dummyKey){
-      if(Util.hasValueAny(entity.post, entity.tel, entity.ruby)){
-        Util.setValue(entity, 'extValue.post', entity.post)
-        Util.setValue(entity, 'extValue.tel', entity.tel)
+      if(Util.hasValue(entity.ruby)){
         Util.setValue(entity, 'extValue.ruby', entity.ruby)
       }
+      PotHelper.getPotExtKeys().forEach(ext => {
+        Util.setValue(entity, 'extValue.' + ext, entity[ext])
+      })
 
       if(!isNaN(entity.potType) && !this.category.find(cat => cat.value == entity.potType)){
         entity['potTypeOneOf'] = this.category.map(cat => cat.value)

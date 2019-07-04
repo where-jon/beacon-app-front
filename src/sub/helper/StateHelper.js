@@ -336,6 +336,12 @@ const appStateConf = {
     beforeCommit: arr => {
       const idNames = APP.TX.BTX_MINOR == 'minor'? 'minor': 'btxId'
       return arr.map(pot => {
+        if (pot.extValue) { // extValue.rubyといった.を含む値をキーにするとb-tableでソートができないのでオブジェクト直下にextValuerubyなどのキーを追加する。
+          var extValues = _.reduce(pot.extValue, (obj, val, key) => {
+            obj['extValue' + key] = val
+            return obj
+          }, {})
+        }
         return {
           ...pot,
           txIds: getTxIds(pot.txList),
@@ -345,6 +351,7 @@ const appStateConf = {
           minor: pot.minor,
           ruby: pot.extValue? pot.extValue.ruby: null,
           extValue: pot.extValue? pot.extValue: this.extValueDefault,
+          ...extValues
         }
       }).sort((a, b) => {
         if(!a.txParams && !b.txParams){

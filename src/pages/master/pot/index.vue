@@ -13,6 +13,7 @@ import * as Util from '../../../sub/util/Util'
 import * as MenuHelper from '../../../sub/helper/MenuHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import * as PotHelper from '../../../sub/helper/domain/PotHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import reloadmixin from '../../../components/mixin/reloadmixin.vue'
 import mList from '../../../components/page/list.vue'
@@ -55,24 +56,6 @@ export default {
     ]),
   },
   methods: {
-    createCustomColumn(){
-      return APP.POT.WITH.map(val => {
-        if(['user'].includes(val)){
-          return null
-        }
-        const ret = {key: val, label: val, tdClass: 'thumb-rowdata'}
-        if(['post', 'tel', 'ruby'].includes(val)){
-          ret.key = 'extValue.' + val
-        }
-        else{
-          ret.sortable = true
-        }
-        if(['category', 'group'].includes(val)){
-          ret.key = val + 'Name'
-        }
-        return ret
-      }).filter(val => val)
-    },
     getCustomCsvColumns(){
       return [
         APP.TX.BTX_MINOR == 'minor'? 'minor': 'btxId',
@@ -80,7 +63,7 @@ export default {
         'potName',
         'potType',
         'displayName',
-      ].concat(this.createCustomColumn().map(val => val.key))
+      ].concat(PotHelper.createCustomColumn(true).map(val => val.key))
         .concat(['userId', 'loginId', 'roleName', 'pass', 'email',])
         .filter(val => val)
     },
@@ -95,6 +78,9 @@ export default {
         const targetRole = this.roles.find(role => role.roleId == val.potUserList[0].user.roleId)
         val.roleName = targetRole? targetRole.roleName: ''
       }
+      Object.keys(val).filter(key => /^extValue.+$/.test(key)).forEach(key => {
+        val[key.replace(/^extValue/, '')] = val[key]
+      })
     },
     getFields(){
       return ViewHelper.addLabelByKey(this.$i18n, [ 
@@ -103,7 +89,7 @@ export default {
         {key: 'txIdName', label:'tx', sortable: true, tdClass: 'thumb-rowdata' },
         {key: 'potCd', sortable: true , tdClass: 'thumb-rowdata'},
         {key: 'displayName', sortable: true, tdClass: 'thumb-rowdata'},
-      ].concat(this.createCustomColumn())
+      ].concat(PotHelper.createCustomColumn())
         .concat([
           {key: 'actions', thStyle: {width:'130px !important'} , tdClass: 'thumb-rowdata'},
         ]))

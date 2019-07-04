@@ -21,6 +21,8 @@ export const convertValue = (str, type) => {
       return Number(str)
     case 'boolean':
       return str == 'true'
+    case 'json':
+      return JSON.parse(str)
     }
     return str
   }

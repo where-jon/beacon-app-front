@@ -112,9 +112,18 @@ export const str2boolean = str => hasValue(str) && str.toLowerCase() != 'false'
  * サニタイジングの結果を取得する。
  * @method
  * @param {String} str
+ * @param {Boolean} [light = false] <>のみサニタイジングする
  * @return {String}
  */
-export const sanitize = str => str && str.replace? str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#x27;'): str
+export const sanitize = (str, light = false) => {
+  if(!str || !str.replace){
+    return str
+  }
+  if(light){
+    return str.replace(/</g, '&lt;').replace(/>/g, '&gt;')
+  }
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#x27;')
+}
 
 /**
  * ゼロ埋めを行った結果を取得する。
