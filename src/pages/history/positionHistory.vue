@@ -211,9 +211,6 @@ export default {
         console.error(e)
       }
     },
-    reset() {
-      this.isShownMapImage = false
-    },
     async fetchData(payload) {
     },
     async exportCsv() {

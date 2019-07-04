@@ -24,7 +24,6 @@ import * as Util from '../../sub/util/Util'
 import * as FlowLineHelper from '../../sub/helper/FlowLineHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
-import commonmixin from '../../components/mixin/commonmixin.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import alert from '../../components/parts/alert.vue'
 import analysisSearch from '../../components/parts/analysissearch.vue'
@@ -35,7 +34,7 @@ export default {
     alert,
     analysisSearch,
   },
-  mixins: [commonmixin, showmapmixin],
+  mixins: [showmapmixin],
   data () {
     return {
       items: ViewHelper.createBreadCrumbItems('sumTitle', 'flowlineAnalysis'),
@@ -49,9 +48,6 @@ export default {
     }
   },
   methods: {
-    reset() {
-      this.isShownMapImage = false
-    },
     async fetchData(payload){
       try {
         this.showProgress()
@@ -70,7 +66,6 @@ export default {
           this.container.height = this.bitmap.height
           this.stage.addChild(this.container)
           this.stage.update()
-          this.forceUpdateRealWidth()
         })
         if (payload && payload.done) {
           payload.done()

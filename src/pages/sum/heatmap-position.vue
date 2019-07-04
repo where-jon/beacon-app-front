@@ -21,6 +21,8 @@ import h337 from 'heatmap.js'
 import { DISP } from '../../sub/constant/config'
 import * as Util from '../../sub/util/Util'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
+import * as StateHelper from '../../sub/helper/StateHelper'
+import * as AreaMapHelper from '../../sub/helper/domain/AreaMapHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import alert from '../../components/parts/alert.vue'
@@ -81,14 +83,14 @@ export default {
         }
         map.onload = (evt) => {
           Util.debug('in onload...')
-          const size = this.calcFitSize(map, heatmap.parentElement)
+          const size = AreaMapHelper.calcFitSize(map, heatmap.parentElement, this.tempMapFitMobile, this.onMapImageScale)
           this.canvasScale = size.width / map.width // showmapmixinと同じ処理が必要
           map.width = size.width
           map.height = size.height
           heatmap.appendChild(map)
           Util.debug(size)
         }
-        map.src = this.mapImage()
+        map.src = StateHelper.getMapImage(this.getInitAreaOption())
         if (payload && payload.done) {
           payload.done()
         }

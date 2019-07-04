@@ -71,6 +71,7 @@ import * as Util from '../../sub/util/Util'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as HeatmapHelper from '../../sub/helper/HeatmapHelper'
+import * as PositionHelper from '../../sub/helper/PositionHelper'
 import * as SensorHelper from '../../sub/helper/SensorHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as StyleHelper from '../../sub/helper/StyleHelper'
@@ -93,6 +94,7 @@ export default {
       items: ViewHelper.createBreadCrumbItems('main', 'thermohumidity'),
       exbIcons: [],
       txIcons: [],
+      positionedTx: [],
       isShownChart: false,
       chartTitle: '',
       keepExbPosition: false,
@@ -157,9 +159,6 @@ export default {
         (result, data) => data.temperature,
         (data) => {return {x: data.x * this.canvasScale, y: data.y * this.canvasScale}}
       )
-    },
-    reset() {
-      this.isShownMapImage = false
     },
     addTick(){
       this.removeTick()
@@ -258,18 +257,17 @@ export default {
         this.removeTick()
         this.replace({showWarn: false})
         this.showProgress()
-        await this.fetchAreaExbs(true)
 
         const sensors = await EXCloudHelper.fetchSensor(SENSOR.TEMPERATURE)
         
-        this.getPositionedExb(
+        this.positionedExb = PositionHelper.getPositionedExbWithSensor(this.selectedArea,
           (exb) => exb.sensorId == SENSOR.TEMPERATURE,
           // (exb) => SensorHelper.getSensorIds(exb).includes(SENSOR.TEMPERATURE),　 一旦単数に戻す
           (exb) => {return {id: SENSOR.TEMPERATURE, ...sensors.find((sensor) => sensor.deviceid == exb.deviceId && (sensor.timestamp || sensor.updatetime))}},
           (exb) => exb.temperature != null
         )
 
-        this.getPositionedTx(
+        this.positionedTx = PositionHelper.getPositionedTx(this.selectedArea,
           (tx) => tx.sensorId == SENSOR.TEMPERATURE,
           (tx) => {return {id: SENSOR.TEMPERATURE, ...sensors.find((sensor) => (sensor.btxid == tx.btxId || sensor.btx_id == tx.btxId) && (sensor.timestamp || sensor.updatetime))}},
           (tx) => tx.temperature != null
@@ -286,7 +284,8 @@ export default {
       this.hideProgress()
     },
     createHeatmap(onLoad){
-      HeatmapHelper.create('heatmap', this.mapImage(), (evt, mapElement, map) => {
+      let mapImage = StateHelper.getMapImage(this.getInitAreaOption())
+      HeatmapHelper.create('heatmap', mapImage, (evt, mapElement, map) => {
         map.width = this.$refs.map.width
         map.height = this.$refs.map.height
         HeatmapHelper.draw(
@@ -441,6 +440,15 @@ export default {
       this.txCon.addChild(txBtn)
       stage.addChild(this.txCon)
       stage.update()
+    },
+    resetTx() { // thermohumidity
+      if (this.txCon) {
+        this.txCon.removeAllChildren()
+      }
+      this.positionedTx.forEach((tx) => {
+        this.showTx(tx)
+      })
+      this.keepTxPosition = false
     },
     removeTooltip() {
       this.toolTipShow = false

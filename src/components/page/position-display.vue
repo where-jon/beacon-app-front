@@ -5,22 +5,22 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState } from 'vuex'
 import * as StringUtil from '../../sub/util/StringUtil'
 import * as Util from '../../sub/util/Util'
+import * as PositionHelper from '../../sub/helper/PositionHelper'
 import * as ProhibitHelper from '../../sub/helper/ProhibitHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import { addLabelByKey } from '../../sub/helper/ViewHelper'
 import commonmixin from '../mixin/commonmixin.vue'
 import reloadmixin from '../mixin/reloadmixin.vue'
-import showmapmixin from '../mixin/showmapmixin.vue'
 import mList from './list.vue'
 
 export default {
   components: {
     mList,
   },
-  mixins: [commonmixin, reloadmixin, showmapmixin],
+  mixins: [commonmixin, reloadmixin],
   props: {
     masterName: {
       type: String,
@@ -66,8 +66,6 @@ export default {
       'lostZones',
     ]),
     ...mapState('main', [
-      'orgPositions',
-      'positionHistores',
       'eachAreas',
       'eachZones',
     ]),
@@ -76,9 +74,6 @@ export default {
     this.replaceAS({positions: []})
   },
   methods: {
-    ...mapActions('main', [
-      'pushOrgPositions',
-    ]),
     getDataList() {
       return this[this.eachListName]
     },
@@ -114,8 +109,8 @@ export default {
         await StateHelper.load('prohibit')
         await StateHelper.load('lostZones')
         // positionデータ取得
-        await this.storePositionHistory(null, false, true)
-        this.replaceAS({positions: this.getPositions()})
+        await PositionHelper.storePositionHistory(null, false, true)
+        this.replaceAS({positions: PositionHelper.getPositions()})
         ProhibitHelper.setProhibitDetect('display', this)
         this.alertData.message = this.message
         this.alertData.isAlert = this.showDismissibleAlert ? true: false

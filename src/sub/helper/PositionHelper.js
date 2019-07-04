@@ -1,14 +1,242 @@
 import * as mock from '../../assets/mock/mock'
 import { APP, DISP, DEV } from '../constant/config'
-import { TX_VIEW_TYPES, DETECT_STATE } from '../constant/Constants'
+import { TX_VIEW_TYPES, DETECT_STATE, SHAPE, TX } from '../constant/Constants'
 import * as DateUtil from '../util/DateUtil'
+import * as NumberUtil from '../util/NumberUtil'
 import * as Util from '../util/Util'
+import * as EXCloudHelper from '../helper/EXCloudHelper'
 import * as DetectStateHelper from '../helper/DetectStateHelper'
+import * as StyleHelper from '../helper/StyleHelper'
 
 const iconsUnitNum = 9
 const tileLayoutIconsNum = 5
 const PIdiv180 = Math.PI / 180
 const angle = 45
+
+const defaultDisplay = {
+  color: DISP.TX.COLOR,
+  bgColor: DISP.TX.BGCOLOR,
+  shape: SHAPE.CIRCLE,
+}
+
+let count = 0
+let store // TODO: ここでstoreに直接アクセスするのは望ましくないのでStateHelper経由にする。
+
+/**
+ * vue.jsで使用するオブジェクトを設定する。
+ * @method
+ * @param {Object} pStore
+ */
+export const setApp = (pStore) => {
+  store = pStore
+}
+
+export const getPositions = (showAllTime = false) => { // p, position-display, rssimap, position-list, position, ProhibitHelper
+  const positionHistores = store.state.main.positionHistores
+  const orgPositions = store.state.main.orgPositions
+  const selectedGroup = store.state.main.selectedGroup
+  const selectedCategory = store.state.main.selectedCategory
+
+  let positions = []
+  if (APP.POS.USE_POSITION_HISTORY) {
+    positions = positionHistores
+  } else {
+    const now = !DEV.USE_MOCK_EXC? new Date().getTime(): mock.positions_conf.start + count++ * mock.positions_conf.interval  // for mock
+    positions = showAllTime ?
+      orgPositions.filter((pos) => Array.isArray(pos)).flatMap((pos) => pos) :
+      correctPosId(orgPositions, now)
+  }
+  return showAllTime ? positions : positionFilter(positions, selectedGroup, selectedCategory)
+}
+
+const positionFilter = (positions, groupId, categoryId) => { //p 
+  const txs = store.state.app_service.txs
+
+  const txsMap = {}
+  txs.forEach((tx) => txsMap[tx.btxId] = tx)
+  return _(positions).filter((pos) => {
+    const tx = txsMap[pos.btx_id]
+    let grpHit = true
+    let catHit = true
+    if (tx) {
+      if (groupId) {
+        grpHit = groupId == tx.groupId
+      }
+      if (categoryId) {
+        catHit = categoryId == tx.categoryId
+      }  
+    }
+    return grpHit && catHit
+  }).value()
+}
+
+export const storePositionHistory = async (count, allShow = false, fixSize = false) => { // position-display, pir, position-list, position, sensor-list
+  const pMock = DEV.USE_MOCK_EXC? mock.positions[count]: null
+
+  const exbs = store.state.app_service.exbs
+  const txs = store.state.app_service.txs
+  const positionHistores = store.state.main.positionHistores
+  const orgPositions = store.state.main.orgPositions
+
+  let positions = []
+  if (APP.POS.USE_POSITION_HISTORY) {
+    // Serverで計算された位置情報を得る
+    positions = await EXCloudHelper.fetchPositionHistory(exbs, txs, allShow, pMock)
+  } else {
+    // 移動平均数分のポジションデータを保持する
+    positions = await EXCloudHelper.fetchPosition(exbs, txs, pMock, allShow)
+  }
+  // 検知状態の取得
+  setDetectState(positions, APP.POS.USE_POSITION_HISTORY)
+  // 在席表示と同じ、表示txを取得する。
+  positions = getShowTxPositions(positionHistores, orgPositions, positions, allShow)
+  // スタイルをセット
+  positions = setPositionStyle(positions, fixSize)
+  if (APP.POS.USE_POSITION_HISTORY) {
+    // this.replaceMain({positionHistores: positions})
+    store.commit('main/replaceMain', {positionHistores: positions})
+  } else {
+    // this.replaceMain({orgPositions: []})
+    store.commit('main/replaceMain', {orgPositions: []})
+    pushOrgPositions(orgPositions, positions)
+  }
+  return positions
+}
+
+const pushOrgPositions = (pOrgPositions, positions) => {
+  let orgPositions = _.clone(pOrgPositions)
+  if (orgPositions.length >= APP.POS.MOVING_AVERAGE) {
+    orgPositions.shift()
+  }
+  orgPositions.push(positions)
+  store.commit('main/replaceMain', {orgPositions})
+}
+
+const setPositionStyle = (positions, fixSize = false) => { // p
+  return _.map(positions, pos => {
+    // 設定により、カテゴリとグループのどちらの設定で表示するかが変わる。
+    let display
+    if (pos.tx) {
+      const styleSrc = pos.tx[DISP.TX.DISPLAY_PRIORITY[0]] || pos.tx[DISP.TX.DISPLAY_PRIORITY[1]]
+      display = styleSrc && styleSrc.display
+    }
+    display = display || defaultDisplay
+    display = StyleHelper.getStyleDisplay1({...display, label: pos.label}, {fixSize: fixSize})        
+    if (pos.transparent) {
+      display.opacity = 0.6
+    }
+    return {
+      ...pos,
+      display,
+    }
+  })
+}
+
+
+const getShowTxPositions = (positionHistores, orgPositions, positions, allShow = false) => { // p
+  const now = !DEV.USE_MOCK_EXC ? new Date().getTime(): mock.positions_conf.start + count++ * mock.positions_conf.interval
+  const correctPositions = APP.POS.USE_POSITION_HISTORY? positionHistores: correctPosId(orgPositions, now)
+  const cPosMap = {}
+  correctPositions.forEach(c => cPosMap[c.btx_id] = c)
+  return _(positions)
+    .filter((pos) => allShow || (pos.tx && NumberUtil.bitON(pos.tx.disp, TX.DISP.POS)))
+    .map((pos) => {
+      let cPos = cPosMap[pos.btx_id]
+      if (cPos || allShow) {
+        return {
+          ...pos,
+          transparent: !cPos? true: cPos.transparent? cPos.transparent: isTransparent(cPos.timestamp, now),
+          isLost: !cPos? true: isLost(cPos.timestamp, now)
+        }
+      }
+      return null
+    }).compact().value()
+}
+
+export const getPositionedExb = (selectedArea) => { // pir, position
+  const exbs = store.state.app_service.exbs
+
+  Util.debug('Raw exb', exbs, selectedArea)
+  let positionedExb = _(_.cloneDeep(exbs)).filter((exb) => {
+    return exb.enabled && exb.location.areaId == selectedArea && exb.location.x && exb.location.y > 0
+  }).value()
+  Util.debug('positionedExb', positionedExb)
+  if (positionedExb.length == 0) {
+    console.warn('positionedExb is empty. check if exbs are enabled')
+  }
+
+  return positionedExb
+}
+
+export const getPositionedExbWithSensor = (selectedArea, sensorFilterFunc, findSensorFunc, showSensorFunc, allArea) => { // pir, sensor-list, thermohumidity
+  const exbs = store.state.app_service.exbs
+
+  return _(exbs).filter((exb) => {
+    return exb.location && (allArea || exb.location.areaId == selectedArea) && exb.location.x && exb.location.y > 0
+  })
+    .filter((exb) => sensorFilterFunc? sensorFilterFunc(exb): true)
+    .map((exb) => {
+      const sensor = findSensorFunc? findSensorFunc(exb): null
+      return {
+        exbId: exb.exbId, deviceId: exb.deviceId, x: exb.location.x, y: exb.location.y,
+        humidity: sensor? sensor.humidity: null,
+        temperature: sensor? sensor.temperature: null,
+        count: sensor? sensor.count: 0,
+        pressVol: sensor? sensor.press_vol: 0,
+        sensorId: sensor? sensor.id: null,
+        updatetime: sensor? sensor.updatetime? sensor.updatetime: sensor.timestamp: null,
+        areaName: exb.areaName,
+        locationName: exb.locationName,
+        posId: exb.posId,
+        deviceIdX: exb.deviceIdX,
+        areaId: exb.areaId,
+        zoneId: exb.zoneId,
+        zoneCategoryId: exb.zoneCategoryId,
+        description: exb.description? exb.description: '',
+      }
+    })
+    .filter((exb) => showSensorFunc? showSensorFunc(exb): true)
+    .value()
+}
+
+export const getPositionedTx = (selectedArea, sensorFilterFunc, findSensorFunc, showSensorFunc, allArea, allPosition) => { // sensor-list, thermohumidity
+  const txs = store.state.app_service.txs
+
+  return _(txs).filter((tx) => {
+    return allPosition? true: tx.location && (allArea || tx.location.areaId == selectedArea) && tx.location.x && tx.location.y > 0
+  })
+    .filter((tx) => sensorFilterFunc? sensorFilterFunc(tx): true)
+    .map((tx) => {
+      const sensor = findSensorFunc? findSensorFunc(tx): null
+      return {
+        txId: tx.txId, btxId: tx.btxId,
+        x: tx.location? tx.location.x: null, y: tx.location? tx.location.y: null,
+        humidity: sensor? sensor.humidity: null,
+        temperature: sensor? sensor.temperature: null,
+        sensorId: sensor? sensor.id: null,
+        updatetime: sensor? sensor.updatetime? sensor.updatetime: sensor.timestamp: null,
+        areaName: tx.areaName,
+        locationName: tx.locationName,
+        posId: tx.posId,
+        potName: tx.potName,
+        sensorName: tx.sensorName,
+        major: tx.major,
+        minor: tx.minor,
+        description: tx.description? tx.description: '',
+        high: sensor? sensor.high: null,
+        low: sensor? sensor.low: null,
+        beat: sensor? sensor.beat: null,
+        step: sensor? sensor.step: null,
+        down: sensor? sensor.down: null,
+        magnet: sensor? sensor.magnet: null,
+        areaId: allPosition && sensor? sensor.areaId: tx.areaId,
+        zoneId: allPosition && sensor? sensor.zoneId: tx.zoneId,
+        zoneCategoryId: allPosition && sensor? sensor.zoneCategoryId: tx.zoneCategoryId,
+      }
+    })
+    .filter((tx) => showSensorFunc? showSensorFunc(tx): true)
+    .value()
+}
 
 /**
  * 配列をnumで指定された要素数で区切る

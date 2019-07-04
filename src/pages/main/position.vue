@@ -99,12 +99,17 @@
 <script>
 import { mapState } from 'vuex'
 import { Container } from '@createjs/easeljs/dist/easeljs.module'
-import { APP, DISP } from '../../sub/constant/config'
-import { SENSOR, EXTRA_NAV, CATEGORY, TX } from '../../sub/constant/Constants'
+import { APP, DISP, APP_SERVICE, EXCLOUD } from '../../sub/constant/config'
+import { SHAPE, SENSOR, EXTRA_NAV, CATEGORY, TX } from '../../sub/constant/Constants'
 import * as NumberUtil from '../../sub/util/NumberUtil'
 import * as Util from '../../sub/util/Util'
+import * as ColorUtil from '../../sub/util/ColorUtil'
+import * as DateUtil from '../../sub/util/DateUtil'
+import * as DomUtil from '../../sub/util/DomUtil'
+import * as StringUtil from '../../sub/util/StringUtil'
 import * as AppServiceHelper from '../../sub/helper/AppServiceHelper'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
+import * as IconHelper from '../../sub/helper/IconHelper'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
 import * as PositionHelper from '../../sub/helper/PositionHelper'
 import * as ProhibitHelper from '../../sub/helper/ProhibitHelper'
@@ -145,6 +150,7 @@ export default {
       showMeditag: APP.SENSOR.USE_MEDITAG && !this.isInstallation,
       showDetected: APP.POS.SHOW_DETECTED_COUNT,
       shortName: this.$i18n.tnl('label.showPositionShort'),
+      meditagSensors: [],
       legendItems: [],
       noImageErrorKey: 'noMapImage',
       modeRssi: false,
@@ -164,6 +170,8 @@ export default {
       reloadState: {isLoad: false},
       loadStates: ['category','group','lostZones','tx','exb'],
       toggleCallBack: () => this.reset(),
+      thumbnailUrl: APP_SERVICE.BASE_URL + EXCLOUD.POT_THUMBNAIL_URL,
+      preloadThumbnail: new Image(),
     }
   },
   computed: {
@@ -274,6 +282,9 @@ export default {
         ]
       }))
     },
+    isShowModal() { // pir, position
+      return window.innerWidth < this.showIconMinWidth
+    },
     getMagnetCategoryTypes () {
       return this.txs.filter((val) => val.categoryId && val.sensorId == SENSOR.MAGNET)
         .map((val) => val.categoryId)
@@ -299,7 +310,7 @@ export default {
 
       let isAllfetch = alwaysTxs? true: false
       if(!payload.disabledPosition){
-        await this.storePositionHistory(this.count, isAllfetch)
+        await PositionHelper.storePositionHistory(this.count, isAllfetch)
       }
 
       if(payload.disabledOther){
@@ -389,7 +400,7 @@ export default {
           this.txCont.height = this.bitmap.height
           this.stage.addChild(this.txCont)
         }
-        this.setPositionedExb()
+        this.positionedExb = PositionHelper.getPositionedExb(this.selectedArea)
 
         if (APP.POS.PROHIBIT_ALERT) {
           ProhibitHelper.setProhibitDetect('pos', this)
@@ -436,11 +447,14 @@ export default {
 
       if(!APP.POS.USE_MULTI_POSITIONING){
         const ratio = DISP.TX.R_ABSOLUTE ? 1/this.canvasScale : 1
-        position = PositionHelper.adjustPosition(this.getPositions(), ratio, this.positionedExb, this.selectedArea)
+        position = PositionHelper.adjustPosition(PositionHelper.getPositions(), ratio, this.positionedExb, this.selectedArea)
       }else{
         let area = _.find(this.$store.state.app_service.areas, (area) => area.areaId == this.selectedArea)
         let mapRatio = area.mapRatio
-        position = PositionHelper.adjustMultiPosition(this.getPositions(), mapRatio)
+        position = PositionHelper.adjustMultiPosition(PositionHelper.getPositions(), mapRatio)
+      }
+      if (APP.SENSOR.USE_MEDITAG && this.meditagSensors) { // TODO: 場所OK???
+        position = SensorHelper.setStress(position, this.meditagSensors)
       }
 
       position.forEach((pos) => this.showTx(pos))
@@ -508,6 +522,155 @@ export default {
       }
       this.txCont.addChild(txBtn)
       this.detectedCount++  // 検知数カウント増加
+    },
+    createTxBtn(pos, shape, color, bgColor){ // position
+      const txBtn = this.createTxIcon(pos, shape, color, bgColor)
+
+      txBtn.txId = pos.btx_id
+      txBtn.x = pos.x
+      txBtn.y = pos.y
+      txBtn.on('click', (evt) => {
+        evt.stopPropagation()
+        this.showReady = false
+        this.showingDetailTime = new Date().getTime()
+        const txBtn = evt.currentTarget
+        this.showDetail(txBtn.txId, txBtn.x, txBtn.y)
+      })
+      return txBtn
+    },
+    createRectInfo(pos, bgColor){ // p
+      let strokeAlpha = 1
+      let fillAlpha = 1
+      if (NumberUtil.bitON(pos.tx.disp, TX.DISP.ALWAYS)) {
+        // 常時表示時
+        fillAlpha = pos.isLost? DISP.TX.LOST_ALPHA: pos.transparent? DISP.TX.ALPHA: fillAlpha
+      } else if (pos.transparent) {
+        // 通常の離席時
+        strokeAlpha = DISP.TX.ALPHA
+        fillAlpha = DISP.TX.ALPHA
+      }
+      return {
+        bgColor: ColorUtil.getRGBA(bgColor, fillAlpha),
+        strokeColor: ColorUtil.getRGBA(DISP.TX.STROKE_COLOR, strokeAlpha)
+      }
+    },
+    createTxIcon(pos, shape, color, bgColor){ // position
+      const rectInfo = this.createRectInfo(pos, bgColor)
+      const txRadius = DISP.TX.R / this.getMapScale()
+      return IconHelper.createIcon(
+        pos.label, txRadius, txRadius, color, rectInfo.bgColor, {
+          circle: shape == SHAPE.CIRCLE,
+          roundRect: shape == SHAPE.SQUARE? 0: DISP.TX.ROUNDRECT_RADIUS,
+          strokeColor: rectInfo.strokeColor,
+          strokeStyle: DISP.TX.STROKE_WIDTH,
+          offsetY: 5,
+        })
+    },
+    disableExbsCheck(){ // position
+      // for debug
+      const disabledExbs = {}
+      _.filter(this.exbs, (exb) => !exb.enabled || !exb.location.x || exb.location.y <= 0).forEach(e => disabledExbs[e.posId] = e)
+      PositionHelper.getPositions().forEach((pos) => {
+        const exb = disabledExbs[pos.pos_id]
+        if (exb) {
+          Util.debug('Found at disabled exb', pos, exb)
+        }
+      })
+    },
+    reShowTx(position){ // position
+      if (this.selectedTx.btxId) {
+        const tx = this.selectedTx
+        const selectedTxPosition = position.find((pos) => pos.btx_id == tx.btxId)
+        if (selectedTxPosition) {
+          const location = selectedTxPosition.tx? selectedTxPosition.tx.location: null
+          const x = location && location.x != null? location.x : selectedTxPosition.x
+          const y = location && location.y != null? location.y : selectedTxPosition.y
+          this.showDetail(tx.btxId, x, y)
+        }
+      }
+    },
+    showDetail(btxId, x, y) { // (p,) position
+      //const tipOffsetY = 15
+      const tx = this.txs.find((tx) => tx.btxId == btxId)
+      const display = this.getDisplay(tx)
+      const map = DomUtil.getRect('#map')
+      const containerParent = DomUtil.getRect('#mapContainer', 'parentNode')
+      const offsetX = map.left - containerParent.left + (!this.isInstallation ? 0 : 48)
+      //const offsetY = map.top - containerParent.top + (!this.isInstallation ? 0 : 20)
+      const isDispRight = x + offsetX + 100 < window.innerWidth
+      const popupHeight = this.getMeditagSensor(btxId) ? DISP.TXMEDITAG_POPUP_SIZE : DISP.TXSENSOR_POPUP_SIZE
+      // isAbove === trueの場合、ポップアップを下に表示
+      // 上にあるときは下向きに表示する
+      const isAbove = map.top + y < popupHeight + DISP.TX.R / this.canvasScale
+      const offsetY = isAbove ? popupHeight : 0
+
+      const position = PositionHelper.getPositions().find((e) => {
+        return e.btx_id === btxId
+      })
+
+      const balloonClass = !btxId ? '': 'balloon' + (isAbove ? '-b': '-u')
+      // サムネイル表示無しの設定になっているか？
+      const isNoThumbnail = APP.TXDETAIL.NO_UNREGIST_THUMB ? !tx.existThumbnail : false
+      const setupSelectedTx = (isDispThumbnail) => {
+        const selectedTx = {
+          btxId,
+          minor: 'minor:' + btxId,
+          major: tx.major? 'major:' + tx.major : '',
+          // TX詳細ポップアップ内部で表示座標計算する際に必要
+          orgLeft: x * this.canvasScale + offsetX,
+          orgTop: y * this.canvasScale + offsetY,
+          isAbove: isAbove,
+          scale: DISP.TX.R_ABSOLUTE ? 1.0 : this.canvasScale,
+          containerWidth: containerParent.width,
+          containerHeight: containerParent.height,
+          class: balloonClass,
+          name: tx.potName ? tx.potName : '',
+          tel: tx.extValue ? tx.extValue.tel ? tx.extValue.tel : '': '',
+          timestamp: position ? this.getFinalReceiveTime(new Date(position.timestamp)) : '',
+          thumbnail: isDispThumbnail ? this.preloadThumbnail.src : '',
+          category: tx.categoryName? tx.categoryName : '',
+          group: tx.groupName? tx.groupName : '',
+          bgColor: display.bgColor,
+          color: display.color,
+          isDispRight: isDispRight,
+        }
+        this.replaceMain({selectedTx})
+        this.$nextTick(() => this.showReady = true)
+        if (this.isShowModal()) {
+          this.$root.$emit('bv::show::modal', 'detailModal')
+        }
+      }
+
+      if (!isNoThumbnail) {
+        // サムネイル表示あり
+        this.preloadThumbnail.onload = () => setupSelectedTx(true)
+        this.preloadThumbnail.src = tx.existThumbnail ? this.thumbnailUrl.replace('{id}', tx.potId) : '/default.png'
+      } else {
+        // サムネイル表示無し
+        setupSelectedTx(false)
+      }
+
+    },
+    getFinalReceiveTime (time) { // position
+      return DateUtil.formatDate(time)
+    },
+    getDisplay(tx) { // (p,) position
+      const catOrGr = tx[DISP.TX.DISPLAY_PRIORITY[0]] || tx[DISP.TX.DISPLAY_PRIORITY[1]]
+      const display = catOrGr && catOrGr.display || {}
+      return {
+        color: StringUtil.addPrefix(display.color || DISP.TX.COLOR, '#'),
+        bgColor: StringUtil.addPrefix(display.bgColor || DISP.TX.BGCOLOR, '#'),
+        shape: display.shape || SHAPE.CIRCLE
+      }
+    },
+    getMeditagSensor(btxId) { // (p,) position
+      if (this.meditagSensors) {
+        return this.meditagSensors.find((val) => btxId == val.btx_id)
+      }
+      return null
+    },
+    isMagnetOn(magnet) { // position
+      return magnet && magnet.magnet === SENSOR.MAGNET_STATUS.ON
     },
     touchEnd (evt) {
       if (evt.target.id === 'map') {

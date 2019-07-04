@@ -11,12 +11,13 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState } from 'vuex'
 import { APP } from '../../sub/constant/config'
 import { EXTRA_NAV } from '../../sub/constant/Constants'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as Util from '../../sub/util/Util'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
+import * as PositionHelper from '../../sub/helper/PositionHelper'
 import * as ProhibitHelper from '../../sub/helper/ProhibitHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
@@ -79,9 +80,6 @@ export default {
     ]),
   },
   methods: {
-    ...mapActions('main', [
-      'pushOrgPositions',
-    ]),
     async fetchData(payload) {
       try {
         this.showProgress()
@@ -90,8 +88,8 @@ export default {
         await StateHelper.load('exb')
         await StateHelper.load('prohibit')
         await StateHelper.load('lostZones')
-        await this.storePositionHistory(0, true)
-        let positions = this.getPositions(true)
+        await PositionHelper.storePositionHistory(0, true)
+        let positions = PositionHelper.getPositions(true)
         ProhibitHelper.setProhibitDetect('list', this)
         Util.debug(positions)
         positions = positions.map((pos) => {

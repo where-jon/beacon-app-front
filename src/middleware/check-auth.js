@@ -8,6 +8,7 @@ import * as LocalStorageHelper from '../sub/helper/LocalStorageHelper'
 import * as MenuHelper from '../sub/helper/MenuHelper'
 import * as OptionHelper from '../sub/helper/OptionHelper'
 import * as ProhibitHelper from '../sub/helper/ProhibitHelper'
+import * as PositionHelper from '../sub/helper/PositionHelper'
 import * as SettingHelper from '../sub/helper/SettingHelper'
 import * as StateHelper from '../sub/helper/StateHelper'
 import * as ValidateHelper from '../sub/helper/ValidateHelper'
@@ -18,6 +19,7 @@ export default function (context) {
   Util.debug('checkAuth')
   AuthHelper.setApp(context.app.router, context.app.store)
   StateHelper.setApp(context.app.store, context.app.i18n)
+  PositionHelper.setApp(context.app.store)
   ViewHelper.setApp(context.app.i18n)
   HttpHelper.setApp(context)
   SettingHelper.setApp(context.app.i18n)

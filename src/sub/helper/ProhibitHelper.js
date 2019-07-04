@@ -1,5 +1,6 @@
 import { APP, DISP } from '../constant/config'
 import { DETECT_STATE, ALERT_STATE, ZONE } from '../constant/Constants'
+import * as PositionHelper from './PositionHelper'
 
 let i18n
 
@@ -95,9 +96,9 @@ export const getProhibitDetectList = (position, prohibitZones) => {
 }
 
 export const setProhibitDetect = (viewName, vueComponent) => {
-  const prohibitDetectList = getProhibitDetectList(vueComponent.getPositions(),vueComponent.prohibits)
+  const prohibitDetectList = getProhibitDetectList(PositionHelper.getPositions(),vueComponent.prohibits)
   vueComponent.prohibitDetectList = prohibitDetectList ? prohibitDetectList : null
-  const lostUnDetectList = getLostUnDetectList(vueComponent.getPositions(),vueComponent.lostZones)
+  const lostUnDetectList = getLostUnDetectList(PositionHelper.getPositions(),vueComponent.lostZones)
   if(vueComponent.prohibitDetectList){
     vueComponent.prohibitDetectList = lostUnDetectList? prohibitDetectList.concat(lostUnDetectList) : vueComponent.prohibitDetectList
   }else{

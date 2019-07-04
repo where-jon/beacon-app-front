@@ -88,6 +88,7 @@ export default {
       },
       message: '',
       workTxs: [],
+      positionedTx: [],
       txOptions: [],
       selectedTx_: null,
       isChangeArea: false,
@@ -147,7 +148,6 @@ export default {
     },
     async fetchData(payload) {
       try {
-        await this.fetchAreaExbs(true)
         if (payload && payload.done) {
           payload.done()
         }
@@ -186,17 +186,16 @@ export default {
         }
 
         this.positionedTx.forEach((tx) => {
-          this.replaceTx(tx, (tx) => {
+          if (!this.keepTxPosition) {
             tx.x = tx.location.x
             tx.y = tx.location.y
-          })
+          }
           this.showTx(tx)
         })
         this.keepTxPosition = false
 
         this.stage.addChild(this.txCon)
         this.stage.update()
-        this.forceUpdateRealWidth()
       })
     },
     createTxIcon(tx) {

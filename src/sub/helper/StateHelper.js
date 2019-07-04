@@ -693,3 +693,16 @@ export const getCategoryDisplayBgColor = (category) => {
 export const initShowMessage = () => {
   store.commit('replace', {showInfo: false, showWarn: false, showAlert: false})
 }
+
+/**
+ * エリアのマップイメージを返す。
+ * 
+ * @param {*} areaId 
+ */
+export const getMapImage = (areaId) => {
+  const areaImage = _.find(store.state.app_service.areaImages, (areaImage) => {
+    return areaImage.areaId == areaId
+  })
+  return areaImage && areaImage.mapImage
+
+}
