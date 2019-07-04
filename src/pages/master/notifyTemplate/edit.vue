@@ -69,7 +69,6 @@ import * as ViewHelper from '../../../sub/helper/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import commonmixin from '../../../components/mixin/commonmixin.vue'
 import editmixin from '../../../components/mixin/editmixin.vue'
-import showmapmixin from '../../../components/mixin/showmapmixin.vue'
 import alert from '../../../components/parts/alert.vue'
 
 export default {
@@ -77,7 +76,7 @@ export default {
     breadcrumb,
     alert,
   },
-  mixins: [commonmixin, editmixin, showmapmixin],
+  mixins: [commonmixin, editmixin],
   data() {
     return {
       name: 'template',

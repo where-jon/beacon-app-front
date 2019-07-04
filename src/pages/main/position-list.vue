@@ -22,7 +22,6 @@ import * as StateHelper from '../../sub/helper/StateHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import reloadmixin from '../../components/mixin/reloadmixin.vue'
-import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import mList from '../../components/page/list.vue'
 
 export default {
@@ -30,7 +29,7 @@ export default {
     breadcrumb,
     mList,
   },
-  mixins: [reloadmixin, showmapmixin],
+  mixins: [reloadmixin],
   data() {
     return {
       params: {

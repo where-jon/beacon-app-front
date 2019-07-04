@@ -72,7 +72,6 @@ import * as ViewHelper from '../../sub/helper/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
 import commonmixin from '../../components/mixin/commonmixin.vue'
-import showmapmixin from '../../components/mixin/showmapmixin.vue'
 
 export default {
   components: {
@@ -80,7 +79,7 @@ export default {
     breadcrumb,
     alert,
   },
-  mixins: [commonmixin, showmapmixin],
+  mixins: [commonmixin],
   data () {
     return {
       name: 'sensorHistory',
