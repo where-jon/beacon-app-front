@@ -451,8 +451,11 @@ export default {
       this.reShowTx(position)
     },
     setAbsentZoneTx() {
-      // ゾーン上表示するものは全てここで処理する
       const absentDisplayZone = _.find(this.absentDisplayZones, (zone) => { return zone.areaId == this.selectedArea })
+      if (!Util.hasValue(absentDisplayZone)) {
+        // 不在表示用ゾーンが存在しない場合は何もしない
+        return
+      }
       const ratio = DISP.TX.R_ABSOLUTE ? 1/this.canvasScale : 1
       let zonePositions = PositionHelper.adjustZonePosition(this.getPositions(false, true), ratio, this.positionedExb, absentDisplayZone)
       console.log('---------zonePositions')
