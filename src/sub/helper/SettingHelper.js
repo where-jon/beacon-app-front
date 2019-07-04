@@ -283,10 +283,10 @@ export const validation = settings => {
     if(setting.valType == SETTING.JSON){
       try {
         JSON.parse(setting.value)
-        return true
+        return false
       }
       catch (e) {}
-      return false
+      return true
     }
     return false
   })

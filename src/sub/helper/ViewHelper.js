@@ -126,7 +126,7 @@ export const getSubmitErrorMessage = (e, showLine, crud, masterIdName) => {
     return _.map(_.orderBy(e.bulkError, ['line'], ['asc']), err => {
       let col = modifyColName(err.col.trim())
       return i18n.tline('message.bulk' + err.type + 'Failed', 
-        {line: err.line, col: i18n.tnl(`label.${col}`), value: StringUtil.sanitize(err.value), min: err.min, max: err.max, candidates: err.candidates, num: err.num, unit: err.unit? i18n.tnl(`label.${err.unit}Unit`): '', target: err.target? i18n.tnl(`label.${err.target}`): ''},
+        {line: err.line, col: i18n.tnl(`label.${col}`), value: StringUtil.sanitize(err.value, true), min: err.min, max: err.max, candidates: err.candidates, num: err.num, unit: err.unit? i18n.tnl(`label.${err.unit}Unit`): '', target: err.target? i18n.tnl(`label.${err.target}`): ''},
         showLine)
     }).filter((val, idx, arr) => arr.indexOf(val) == idx)
   }

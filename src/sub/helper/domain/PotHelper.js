@@ -34,6 +34,9 @@ export const createCustomColumn = (isCsv) => {
     if (ext && !ext.showlist && !isCsv) {
       return null
     }
+    if ((ext || val == 'ruby') && isCsv) {
+      return {key: val}
+    }
     const ret = {key: val, label: val, tdClass: 'thumb-rowdata'}
     // extValue.rubyなど.を含むとソートできないため.は抜きにする
     if (val == 'ruby'){
