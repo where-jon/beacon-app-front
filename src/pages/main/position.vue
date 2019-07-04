@@ -459,22 +459,12 @@ export default {
       console.table(zonePositions)
 
       zonePositions.forEach((pos) => this.showAbsentZoneTx(pos))
-      this.stage.update()
-      this.reShowTx(zonePositions)
     },
     showAbsentZoneTx(pos) {
       const tx = this.txsMap[pos.btx_id]
       Util.debug('showTx', pos, tx && tx.sensor)
       if (!tx) {
         console.warn('tx not found. btx_id=' + pos.btx_id)
-        return
-      }
-      if (!NumberUtil.bitON(tx.disp, TX.DISP.POS)) {
-        Util.debug('tx is not allowed to show', tx)
-        return
-      }
-      if (pos.noSelectedTx && !this.isFixTx(tx)) {
-        Util.debug('tx is not allowed to show', tx)
         return
       }
       let magnet = null
@@ -503,11 +493,6 @@ export default {
         // 作成済みの場合、座標値のみセットする
         txBtn.x = pos.x
         txBtn.y = pos.y
-      }
-      if (this.isFixTx(tx)) {
-        Util.debug('fixed location', tx)
-        txBtn.x = tx.location.x
-        txBtn.y = tx.location.y
       }
 
       if(this.reloadSelectedTx.btxId == zoneBtx_id){

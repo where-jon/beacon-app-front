@@ -436,7 +436,7 @@ export const getAbsentDisplayPos = (positions, hasAbsentDsplayZone = false) => {
     return (self.findIndex(function(val) {
       return (x.btx_id === val.btx_id)
     }) === i)
-  })
+  }).sort((a, b) => a.btx_id < b.btx_id ? -1 : 1)
 }
 
 export const hasDisplayType = (typeKey) => {
