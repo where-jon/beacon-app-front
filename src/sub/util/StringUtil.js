@@ -377,3 +377,17 @@ export const addWithPadding = (str, add = 0) => {
   return ret.slice(-1 * (strDigit + 1))
 }
 
+/**
+ * 指定した値が、いずれかの値で始まっているか否か
+ * 
+ * @method
+ * @param {String} 
+ * @param {Array} 
+ * @return {Boolean}
+ */
+export const startsWithAny = (target, arr) => {
+  if (!target || !arr) {
+    return false
+  }
+  return arr.some(e => target.startsWith(e))
+}

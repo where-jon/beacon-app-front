@@ -6,6 +6,7 @@ import { POSITION } from '../../sub/constant/Constants'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as Util from '../../sub/util/Util'
 import * as VueUtil from '../../sub/util/VueUtil'
+import * as StringUtil from '../../sub/util/StringUtil'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as AreaMapHelper from '../../sub/helper/domain/AreaMapHelper'
 import * as VueSelectHelper from '../../sub/helper/VueSelectHelper'
@@ -40,43 +41,10 @@ export default {
   },
   async created() {
     await StateHelper.load('area')
-    this.vueSelected.area = this.getInitAreaOption(true)
+    this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions, this.selectedArea, !Util.hasValue(this.selectedArea))
     this.selectedArea = this.getInitAreaOption()
     this.loadComplete = true
-    if (this.$route.path.startsWith('/main') || this.$route.path.startsWith('/sum') || this.$route.path.startsWith('/develop/installation')) {
-      let timer = 0
-      const path = this.$route.path
-      let currentWidth = window.innerWidth
-      const onResize = () => {
-        if (path != this.$route.path) {
-          window.removeEventListener('resize', onResize)
-          clearTimeout(timer)
-          return
-        }
-        this.icons = {} // リサイズ時にアイコンキャッシュをクリア
-        if (timer > 0) {
-          clearTimeout(timer)
-        } 
-        timer = setTimeout( async () => {
-          if (currentWidth === window.innerWidth && BrowserUtil.isAndroidOrIOS()) {
-            // モバイル端末だと表示の直後にリサイズイベントが発生してしまうため、
-            // 画面横幅が変わっていなければ処理をキャンセル
-            return
-          } else {
-            currentWidth = window.innerWidth
-          }
-          this.reset()
-          if (this.stage) {
-            this.stage.removeAllChildren()
-            this.stage.update()
-            this.$nextTick(async () => {
-              await this.fetchData(null, true)
-            })
-          }
-        }, 200)
-      }
-      window.addEventListener('resize', onResize)
-    }
+    this.defineResizeEvent(this.$route.path)
   },
   mounted() {
     this.oldSelectedArea = this.getInitAreaOption()
@@ -93,10 +61,42 @@ export default {
     this.tempMapFitMobile = DISP.MAP_FIT_MOBILE
   },
   methods: {
-    getInitAreaOption(isVueSelect){ // p
-      if(isVueSelect){
-        return VueSelectHelper.getVueSelectData(this.areaOptions, this.selectedArea, !Util.hasValue(this.selectedArea))
+    defineResizeEvent(path) {
+      if (StringUtil.startsWithAny(path, ['/main','/sum','/develop/installation'])) {
+        let timer = 0
+        let currentWidth = window.innerWidth
+        const onResize = () => {
+          if (path != this.$route.path) {
+            window.removeEventListener('resize', onResize)
+            clearTimeout(timer)
+            return
+          }
+          this.icons = {} // リサイズ時にアイコンキャッシュをクリア
+          if (timer > 0) {
+            clearTimeout(timer)
+          } 
+          timer = setTimeout( async () => {
+            if (currentWidth === window.innerWidth && BrowserUtil.isAndroidOrIOS()) {
+              // モバイル端末だと表示の直後にリサイズイベントが発生してしまうため、
+              // 画面横幅が変わっていなければ処理をキャンセル
+              return
+            } else {
+              currentWidth = window.innerWidth
+            }
+            this.reset()
+            if (this.stage) {
+              this.stage.removeAllChildren()
+              this.stage.update()
+              this.$nextTick(async () => {
+                await this.fetchData(null, true)
+              })
+            }
+          }, 200)
+        }
+        window.addEventListener('resize', onResize)
       }
+    },
+    getInitAreaOption(){ // p
       return this.selectedArea? this.selectedArea : Util.hasValue(this.areaOptions)? this.areaOptions[0].value: null
     },
     getMapScale(){ // p, pir
