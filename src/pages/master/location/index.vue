@@ -298,21 +298,23 @@ export default {
       })
     },
     createExbIcon(exb) {
-      const w = DISP.EXB_LOC.SIZE.W
-      const h = DISP.EXB_LOC.SIZE.H
+      const w = DISP.EXB_LOC.SIZE.W / this.canvasScale
+      const h = DISP.EXB_LOC.SIZE.H / this.canvasScale
       const fromX = -w / 2
       const fromY = -h / 2
       const x = w + fromX
       const y = h + fromY
       const exbBtn = new Container()
       const s = new Shape()
+      const iconArrowWidth = this.ICON_ARROW_WIDTH / this.canvasScale
+      const iconArrowHeight = this.ICON_ARROW_HEIGHT / this.canvasScale
       s.graphics.beginFill(DISP.EXB_LOC.BGCOLOR)
       s.graphics.moveTo(fromX, fromY)
       s.graphics.lineTo(x, fromY)
       s.graphics.lineTo(x, y)
-      s.graphics.lineTo(x - this.ICON_ARROW_WIDTH, y)
-      s.graphics.lineTo(x - this.ICON_ARROW_WIDTH - this.ICON_ARROW_WIDTH / 2, y + this.ICON_ARROW_HEIGHT)
-      s.graphics.lineTo(x - this.ICON_ARROW_WIDTH - this.ICON_ARROW_WIDTH, y)
+      s.graphics.lineTo(x - iconArrowWidth, y)
+      s.graphics.lineTo(x - iconArrowWidth - iconArrowWidth / 2, y + iconArrowHeight)
+      s.graphics.lineTo(x - iconArrowWidth - iconArrowWidth, y)
       s.graphics.lineTo(fromX, y)
       s.graphics.lineTo(fromX, fromY)
       exbBtn.addChild(s)
@@ -326,12 +328,12 @@ export default {
       exbBtn.deviceId = exb.deviceId
       exbBtn.exbId = exb.exbId
       exbBtn.x = exb.x
-      exbBtn.y = exb.y - (h / 2 + this.ICON_ARROW_HEIGHT)
+      exbBtn.y = exb.y - (h / 2 + iconArrowHeight)
       return exbBtn
     },
     showExb(exb) {
       let stage = this.stage
-      const offsetY = (DISP.EXB_LOC.SIZE.H / 2) + this.ICON_ARROW_HEIGHT
+      const offsetY = (DISP.EXB_LOC.SIZE.H / 2) + this.ICON_ARROW_HEIGHT / this.canvasScale
       const exbBtn = this.createExbIcon(exb)
       exbBtn.on('pressmove', (evt) => {
         exb.delEvent = false
