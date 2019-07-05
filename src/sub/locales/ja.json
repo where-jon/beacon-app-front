@@ -67,6 +67,7 @@
     "absent": "不在区域",
     "prohibit": "禁止区域",
     "lost": "重要部品指定区域",
+    "absent_display": "不在表示用区域",
     "charSet": "CSV文字コード",
     "null": "未指定",
     "undefined": "未定義",
