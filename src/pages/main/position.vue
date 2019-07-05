@@ -240,6 +240,8 @@ export default {
     }
     await Promise.all(this.loadStates.map(StateHelper.load))
     this.txs.forEach((t) => this.txsMap[t.btxId] = t)
+    // ゾーン表示時「・・・」用TXを追加しておく
+    this.txsMap[PositionHelper.zoneLastTxId()] = { txId: PositionHelper.zoneLastTxId(), disp: 1, tx: {disp:1}, }
     this.exbs.forEach((e) => this.exbsMap[e.posId] = e)
     // this.fetchData()は'vueSelected.area'をwatchしている箇所で実行している。
     // 以下は二重実行を防ぐためコメントアウト
@@ -458,8 +460,6 @@ export default {
       }
       const ratio = DISP.TX.R_ABSOLUTE ? 1/this.canvasScale : 1
       let zonePositions = PositionHelper.adjustZonePosition(this.getPositions(false, true), ratio, this.positionedExb, absentDisplayZone)
-      console.log('---------zonePositions')
-      console.table(zonePositions)
 
       zonePositions.forEach((pos) => this.showAbsentZoneTx(pos))
     },
@@ -490,7 +490,11 @@ export default {
       let txBtn = this.icons[zoneBtx_id]
       if (!txBtn) {
         // 作成されていない場合、新規作成してからiconsに登録
-        txBtn = this.createTxBtn(pos, display.shape, color, bgColor, true)
+        if (pos.btx_id == PositionHelper.zoneLastTxId()) {
+          txBtn = this.createLastSystemTx(pos, display.shape, color, bgColor)
+        } else {
+          txBtn = this.createTxBtn(pos, display.shape, color, bgColor, true)
+        }
         this.icons[zoneBtx_id] = txBtn
       } else {
         // 作成済みの場合、座標値のみセットする

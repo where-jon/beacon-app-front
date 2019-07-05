@@ -629,6 +629,22 @@ export default {
       })
       return txBtn
     },
+    createLastSystemTx(pos, shape, color, bgColor){
+      const txRadius = DISP.TX.R / this.getMapScale()
+      const bgAlpha = 0.01
+      const txBtn = IconHelper.createIcon(
+        pos.label, txRadius, txRadius, '#000000', ColorUtil.getRGBA('#FFFFFF', bgAlpha), {
+          circle: true,
+          roundRect: DISP.TX.ROUNDRECT_RADIUS,
+          strokeColor: ColorUtil.getRGBA(DISP.TX.STROKE_COLOR, bgAlpha),
+          strokeStyle: DISP.TX.STROKE_WIDTH,
+          offsetY: 5,
+        })
+      txBtn.txId = pos.btx_id
+      txBtn.x = pos.x
+      txBtn.y = pos.y
+      return txBtn
+    },
     createAbsentTxIcon(pos, shape, color, bgColor){
       const labelInfo = this.createLabelInfo(pos, color)
       const txRadius = DISP.TX.R / this.getMapScale()

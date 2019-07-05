@@ -17,6 +17,10 @@ export const zoneLastTxId = () => {
   return 100000001
 }
 
+export const isZoneLastTxId = (btxId) => {
+  return btxId == zoneLastTxId
+}
+
 export const zoneLastTxData = () => {
   return { btx_id: zoneLastTxId(), pos_id: 0, label: '・・・', isLost: false, }
 }
