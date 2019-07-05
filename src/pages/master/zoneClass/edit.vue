@@ -55,7 +55,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import { CATEGORY, ZONE } from '../../../sub/constant/Constants'
+import { CATEGORY, ZONE, SYSTEM_ZONE_CATEGORY_NAME } from '../../../sub/constant/Constants'
 import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
 import * as StateHelper from '../../../sub/helper/StateHelper'
@@ -132,7 +132,7 @@ export default {
       this.categoryNames = StateHelper.getOptionsFromState('category',
         category => StateHelper.getDispCategoryName(category),
         true, 
-        category => !CATEGORY.POT_AVAILABLE.includes(category.categoryType)
+        category => !CATEGORY.POT_AVAILABLE.includes(category.categoryType) && category.categoryName != SYSTEM_ZONE_CATEGORY_NAME.ABSENT_DISPLAY
       )
     },
     onSaved(){
