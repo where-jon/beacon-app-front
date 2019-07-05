@@ -436,8 +436,14 @@ export default {
       this.disableExbsCheck()
       this.detectedCount = 0 // 検知カウントリセット
 
-      this.setAbsentZoneTx()
+      const absentZonePosition = this.setAbsentZoneTx()
+      const position = this.setNomalTx()
 
+      this.stage.update()
+      this.reShowTx(position)
+      this.reShowTx(absentZonePosition)
+    },
+    setNomalTx() {
       let position = []
       if(!APP.POS.USE_MULTI_POSITIONING){
         const ratio = DISP.TX.R_ABSOLUTE ? 1/this.canvasScale : 1
@@ -449,64 +455,7 @@ export default {
       }
 
       position.forEach((pos) => this.showTx(pos))
-      this.stage.update()
-      this.reShowTx(position)
-    },
-    setAbsentZoneTx() {
-      const absentDisplayZone = _.find(this.absentDisplayZones, (zone) => { return zone.areaId == this.selectedArea })
-      if (!Util.hasValue(absentDisplayZone)) {
-        // 不在表示用ゾーンが存在しない場合は何もしない
-        return
-      }
-      const ratio = DISP.TX.R_ABSOLUTE ? 1/this.canvasScale : 1
-      let zonePositions = PositionHelper.adjustZonePosition(this.getPositions(false, true), ratio, this.positionedExb, absentDisplayZone)
-
-      zonePositions.forEach((pos) => this.showAbsentZoneTx(pos))
-    },
-    showAbsentZoneTx(pos) {
-      const tx = this.txsMap[pos.btx_id]
-      Util.debug('showTx', pos, tx && tx.sensor)
-      if (!tx) {
-        console.warn('tx not found. btx_id=' + pos.btx_id)
-        return
-      }
-      let magnet = null
-      if (tx.sensorId === SENSOR.MAGNET) {
-        magnet = this.magnetSensors && this.magnetSensors.find((sensor) => sensor.btxid == tx.btxId || sensor.btx_id == tx.btxId)
-        Util.debug('magnet', magnet)
-      }
-      let meditag = null
-      if (tx.sensorId === SENSOR.MEDITAG) {
-        meditag = this.getMeditagSensor(tx.btxId)
-        Util.debug('meditag', meditag)
-      }
-
-      const display = this.getDisplay(tx)
-      const color = meditag? '#000': this.isMagnetOn(magnet)? display.bgColor : display.color
-      const bgColor = meditag? meditag.bg: this.isMagnetOn(magnet)? display.color: display.bgColor
-
-      // 既に該当btx_idのTXアイコンが作成済みか?
-      const zoneBtx_id = PositionHelper.zoneBtxIdAddNumber + pos.btx_id
-      let txBtn = this.icons[zoneBtx_id]
-      if (!txBtn) {
-        // 作成されていない場合、新規作成してからiconsに登録
-        if (pos.btx_id == PositionHelper.zoneLastTxId()) {
-          txBtn = this.createLastSystemTx(pos, display.shape, color, bgColor)
-        } else {
-          txBtn = this.createTxBtn(pos, display.shape, color, bgColor, true)
-        }
-        this.icons[zoneBtx_id] = txBtn
-      } else {
-        // 作成済みの場合、座標値のみセットする
-        txBtn.x = pos.x
-        txBtn.y = pos.y
-      }
-
-      if(this.reloadSelectedTx.btxId == zoneBtx_id){
-        this.showingDetailTime = new Date().getTime()
-        this.showDetail(txBtn.txId, txBtn.x, txBtn.y)
-      }
-      this.txCont.addChild(txBtn)
+      return position
     },
     showTx(pos) {
       const tx = this.txsMap[pos.btx_id]
@@ -569,6 +518,63 @@ export default {
       }
       this.txCont.addChild(txBtn)
       this.detectedCount++  // 検知数カウント増加
+    },
+    setAbsentZoneTx() {
+      const absentDisplayZone = _.find(this.absentDisplayZones, (zone) => { return zone.areaId == this.selectedArea })
+      if (!Util.hasValue(absentDisplayZone)) {
+        // 不在表示用ゾーンが存在しない場合は何もしない
+        return
+      }
+      const ratio = DISP.TX.R_ABSOLUTE ? 1/this.canvasScale : 1
+      let absentZonePositions = PositionHelper.adjustZonePosition(this.getPositions(false, true), ratio, this.positionedExb, absentDisplayZone)
+
+      absentZonePositions.forEach((pos) => this.showAbsentZoneTx(pos))
+      return absentZonePositions
+    },
+    showAbsentZoneTx(pos) {
+      const tx = this.txsMap[pos.btx_id]
+      Util.debug('showTx', pos, tx && tx.sensor)
+      if (!tx) {
+        console.warn('tx not found. btx_id=' + pos.btx_id)
+        return
+      }
+      let magnet = null
+      if (tx.sensorId === SENSOR.MAGNET) {
+        magnet = this.magnetSensors && this.magnetSensors.find((sensor) => sensor.btxid == tx.btxId || sensor.btx_id == tx.btxId)
+        Util.debug('magnet', magnet)
+      }
+      let meditag = null
+      if (tx.sensorId === SENSOR.MEDITAG) {
+        meditag = this.getMeditagSensor(tx.btxId)
+        Util.debug('meditag', meditag)
+      }
+
+      const display = this.getDisplay(tx)
+      const color = meditag? '#000': this.isMagnetOn(magnet)? display.bgColor : display.color
+      const bgColor = meditag? meditag.bg: this.isMagnetOn(magnet)? display.color: display.bgColor
+
+      // 既に該当btx_idのTXアイコンが作成済みか?
+      const zoneBtx_id = PositionHelper.zoneBtxIdAddNumber + pos.btx_id
+      let txBtn = this.icons[zoneBtx_id]
+      if (!txBtn) {
+        // 作成されていない場合、新規作成してからiconsに登録
+        if (pos.btx_id == PositionHelper.zoneLastTxId()) {
+          txBtn = this.createLastSystemTx(pos, display.shape, color, bgColor)
+        } else {
+          txBtn = this.createTxBtn(pos, display.shape, color, bgColor, true)
+        }
+        this.icons[zoneBtx_id] = txBtn
+      } else {
+        // 作成済みの場合、座標値のみセットする
+        txBtn.x = pos.x
+        txBtn.y = pos.y
+      }
+
+      if(this.reloadSelectedTx.btxId == zoneBtx_id){
+        this.showingDetailTime = new Date().getTime()
+        this.showDetail(txBtn.txId, txBtn.x, txBtn.y)
+      }
+      this.txCont.addChild(txBtn)
     },
     touchEnd (evt) {
       if (evt.target.id === 'map') {

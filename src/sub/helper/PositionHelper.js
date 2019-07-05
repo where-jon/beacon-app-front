@@ -397,10 +397,7 @@ export const adjustMultiPosition = (positions, ratio) => {
 export const adjustZonePosition = (positions, ratio, exbs = [], absentDisplayZone) => {
   return exbs.map((exb) => {
     const samePos = getAbsentDisplayPos(positions, Util.hasValue(absentDisplayZone))
-    console.table(samePos)
-
     const same = (!samePos || samePos.length == 0) ? [] : getCoordinateZone(absentDisplayZone, ratio, samePos)
-
     return [...same]
   }).filter(e => e).flatMap(e => e).filter(function (x, i, self) {
     return (self.findIndex(function(val) {
