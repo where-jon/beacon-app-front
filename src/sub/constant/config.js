@@ -404,9 +404,9 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   },
   
   TXDETAIL_DIFF: 25, // TX詳細の表示位置差分（ポップアップ左端から吹き出しの中央までの距離）
-  TXDETAIL_POPUP_SIZE: 211, // TX詳細表示ポップアップの高さ
+  TXDETAIL_POPUP_SIZE: 150, // TX詳細表示ポップアップの高さ
   TXSENSOR_POPUP_SIZE: 165, // TXセンサー表示ポップアップの高さ
-  TXMEDITAG_POPUP_SIZE: 236, // TXMEDITAG表示ポップアップの高さ
+  TXMEDITAG_POPUP_SIZE: 230, // TXMEDITAG表示ポップアップの高さ
 
   POSITION_HISTORY: {
     HEADERS: ['potName', 'major', 'minor', 'deviceId', 'locationName', 'posId', 'areaName'], // 位置表示履歴の表示カラム

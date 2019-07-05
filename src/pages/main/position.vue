@@ -590,19 +590,17 @@ export default {
       }
     },
     showDetail(btxId, x, y) { // (p,) position
-      //const tipOffsetY = 15
       const tx = this.txs.find((tx) => tx.btxId == btxId)
       const display = this.getDisplay(tx)
       const map = DomUtil.getRect('#map')
       const containerParent = DomUtil.getRect('#mapContainer', 'parentNode')
       const offsetX = map.left - containerParent.left + (!this.isInstallation ? 0 : 48)
-      //const offsetY = map.top - containerParent.top + (!this.isInstallation ? 0 : 20)
       const isDispRight = x + offsetX + 100 < window.innerWidth
       const popupHeight = this.getMeditagSensor(btxId) ? DISP.TXMEDITAG_POPUP_SIZE : DISP.TXSENSOR_POPUP_SIZE
       // isAbove === trueの場合、ポップアップを下に表示
-      // 上にあるときは下向きに表示する
       const isAbove = map.top + y < popupHeight + DISP.TX.R / this.canvasScale
-      const offsetY = isAbove ? popupHeight : 0
+      const navbarY = 62
+      const offsetY = map.top - navbarY + (!this.isInstallation ? 0 : 20) + (isAbove ? popupHeight : 0)
 
       const position = PositionHelper.getPositions().find((e) => {
         return e.btx_id === btxId
@@ -619,7 +617,6 @@ export default {
           // TX詳細ポップアップ内部で表示座標計算する際に必要
           orgLeft: x * this.canvasScale + offsetX,
           orgTop: y * this.canvasScale + offsetY,
-          isAbove: isAbove,
           scale: DISP.TX.R_ABSOLUTE ? 1.0 : this.canvasScale,
           containerWidth: containerParent.width,
           containerHeight: containerParent.height,

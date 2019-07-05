@@ -144,17 +144,9 @@ export default {
     },
     getTop() {
       const txR = DISP.TX.R * this.selectedTx.scale
-      let offset = 0
-      if(this.selectedSensor.length > 0){
-        offset = -80 // TXとMEDITAGの高さの差
-      }
-      let top = 0
-      if(this.selectedTx.isAbove){
-        top = this.selectedTx.orgTop + txR + 5 + offset
-      }else{
-        top = this.selectedTx.orgTop - txR - 5 + offset
-      }
-      top += this.getProhibitAlertHeight()
+      const height = this.getPopupHeight() // ポップアップの高さ
+      let top = this.selectedTx.orgTop - height - txR
+      //top += this.getProhibitAlertHeight()
       return top + 'px'
     },
     getClass() {
@@ -165,7 +157,7 @@ export default {
       return !isOut ? 'balloon-u' : 'balloon-ur'
     },
     getPopupHeight() {
-      return this.selectedSensor.length == 0 ? DISP.TXSENSOR_POPUP_SIZE : DISP.TXDETAIL_POPUP_SIZE
+      return this.selectedSensor.length == 0 ? DISP.TXDETAIL_POPUP_SIZE : DISP.TXSENSOR_POPUP_SIZE
     },
     drawShadow(color){
       return NumberUtil.luminance(ColorUtil.colorCd4db(color)) > 240
