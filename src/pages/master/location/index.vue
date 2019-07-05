@@ -119,6 +119,7 @@ export default {
       exbOptions: [],
       exbDispOptions: [],
       exbDisp: 'deviceIdX',
+      realWidth: null,
       selectedExb_: null,
       pixelWidth: null,
       mapRatioChanged: false,
@@ -206,7 +207,6 @@ export default {
     },
     async fetchData(payload) {
       try {
-        await this.fetchAreaExbs()
         if (payload && payload.done) {
           payload.done()
         }
@@ -285,17 +285,16 @@ export default {
         }
 
         this.positionedExb.forEach((exb) => {
-          this.replaceExb(exb, (exb) => {
+          if (!this.keepExbPosition) {
             exb.x = exb.location.x
             exb.y = exb.location.y
-          })
+          }
           this.showExb(exb)
         })
         this.keepExbPosition = false
 
         this.stage.addChild(this.exbCon)
         this.stage.update()
-        this.forceUpdateRealWidth()
       })
     },
     createExbIcon(exb) {

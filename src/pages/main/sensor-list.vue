@@ -12,12 +12,12 @@ import * as DateUtil from '../../sub/util/DateUtil'
 import * as NumberUtil from '../../sub/util/NumberUtil'
 import * as Util from '../../sub/util/Util'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
+import * as PositionHelper from '../../sub/helper/PositionHelper'
 import * as SensorHelper from '../../sub/helper/SensorHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import reloadmixin from '../../components/mixin/reloadmixin.vue'
-import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import mList from '../../components/page/list.vue'
 
 export default {
@@ -25,7 +25,7 @@ export default {
     breadcrumb,
     mList,
   },
-  mixins: [reloadmixin, showmapmixin],
+  mixins: [reloadmixin],
   data() {
     return {
       params: {
@@ -103,13 +103,13 @@ export default {
         this.showProgress()
 
         const exCluodSensors = await EXCloudHelper.fetchSensor(this.selectedSensor)
-        const positionHistory = await this.storePositionHistory()
-        this.getPositionedExb(
+        const positionHistory = await PositionHelper.storePositionHistory()
+        const positionedExb = PositionHelper.getPositionedExbWithSensor(this.selectedArea,
           (exb) => exb.sensorId == this.selectedSensor,
           (exb) => {return {id: this.selectedSensor, ...exCluodSensors.find((sensor) => sensor.deviceid == exb.deviceId && (sensor.timestamp || sensor.updatetime))}},
           null, true
         )
-        this.getPositionedTx(
+        let positionedTx = PositionHelper.getPositionedTx(this.selectedArea,
           (tx) => tx.sensorId == this.selectedSensor,
           (tx) => {
             const ret = {
@@ -133,7 +133,7 @@ export default {
           null, true, this.selectedSensor == SENSOR.MEDITAG
         )
 
-        this.sensorList = this.positionedExb.concat(this.positionedTx).map((device) => {
+        this.sensorList = positionedExb.concat(positionedTx).map((device) => {
           return this.createDeviceInfo(device)
         }).filter((device) => device)
         this.params.initTotalRows = this.sensorList.length

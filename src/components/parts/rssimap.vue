@@ -93,6 +93,7 @@ import * as Util from '../../sub/util/Util'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as HttpHelper from '../../sub/helper/HttpHelper'
 import * as MenuHelper from '../../sub/helper/MenuHelper'
+import * as PositionHelper from '../../sub/helper/PositionHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
@@ -242,7 +243,6 @@ export default {
     async fetchData(payload, disableErrorPopup) {
       this.showMapImageDef(async () => {
         this.showProgress()
-        await this.fetchAreaExbs()
 
         this.positionedExb = this.getExbPosition()
         if (this.exbCon && this.exbCon !== null) {
@@ -251,23 +251,22 @@ export default {
         this.exbCon = new Container()
         this.exbBtns = this.positionedExb.map((exb) => {
           const clone = Object.assign({}, exb)
-          this.replaceExb(exb, (exb) => {
+          if (!this.keepExbPosition) {
             clone.x = exb.location.x
             clone.y = exb.location.y
-          })
+          }
           const exbBtn = this.createExbIcon(clone)
           this.exbCon.addChild(exbBtn)
           return exbBtn
         })
 
-        let positions = this.getPositions(false)
+        let positions = PositionHelper.getPositions(false)
         this.nearest = await this.getNearest(this.exbBtns)
         this.nearest = this.nearest.filter((n) => positions.some((pos) => pos.btx_id === n.btx_id))
 
         this.stage.addChild(this.exbCon)
         this.stage.setChildIndex(this.exbCon, this.stage.numChildren-1)
         this.stage.update()
-        this.forceUpdateRealWidth()
         if (this.targetTx) {
           this.dispRssiIcons(this.targetTx)
         }

@@ -131,7 +131,6 @@ export default {
         pot: null,
       },
       appServicePath: '/core/positionHistory',
-      areaOptions: [],
       potOptions: [],
     }
   },
@@ -189,7 +188,6 @@ export default {
     await StateHelper.load('category')
     await StateHelper.load('group')
     await StateHelper.load('pot')
-    this.areaOptions = StateHelper.getOptionsFromState('area', false, true)
     this.changeCategory()
     this.changeGroup()
     this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions, null, true)

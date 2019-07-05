@@ -112,9 +112,18 @@ export const str2boolean = str => hasValue(str) && str.toLowerCase() != 'false'
  * サニタイジングの結果を取得する。
  * @method
  * @param {String} str
+ * @param {Boolean} [light = false] <>のみサニタイジングする
  * @return {String}
  */
-export const sanitize = str => str && str.replace? str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#x27;'): str
+export const sanitize = (str, light = false) => {
+  if(!str || !str.replace){
+    return str
+  }
+  if(light){
+    return str.replace(/</g, '&lt;').replace(/>/g, '&gt;')
+  }
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#x27;')
+}
 
 /**
  * ゼロ埋めを行った結果を取得する。
@@ -368,3 +377,17 @@ export const addWithPadding = (str, add = 0) => {
   return ret.slice(-1 * (strDigit + 1))
 }
 
+/**
+ * 指定した値が、いずれかの値で始まっているか否か
+ * 
+ * @method
+ * @param {String} 
+ * @param {Array} 
+ * @return {Boolean}
+ */
+export const startsWithAny = (target, arr) => {
+  if (!target || !arr) {
+    return false
+  }
+  return arr.some(e => target.startsWith(e))
+}

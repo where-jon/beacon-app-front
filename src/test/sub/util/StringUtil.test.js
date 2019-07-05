@@ -72,3 +72,8 @@ test('getMaxTextLength', t => {
   t.true(StringUtil.getMaxTextLength(['zxc','qwertyuiop','asdfg']) == 10)
 })
 
+test('startsWithAny', t => {
+  t.true(StringUtil.startsWithAny('abc', ['abc','bbb']))
+  t.true(!StringUtil.startsWithAny('abc', ['bbc','bbb']))
+})
+

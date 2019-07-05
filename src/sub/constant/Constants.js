@@ -434,12 +434,13 @@ export const FONT = {
 }
 
 export const SETTING = {
-  VALUES: ['string', 'stringList', 'number', 'numberList', 'boolean'],
+  VALUES: ['string', 'stringList', 'number', 'numberList', 'boolean', 'json'],
   STRING: 'string',
   STRING_LIST: 'stringList',
   NUMBER: 'number',
   NUMBER_LIST: 'numberList',
   BOOLEAN: 'boolean',
+  JSON: 'json',
   SELECT: 'select',
   getOptions(){
     return [
@@ -448,6 +449,7 @@ export const SETTING = {
       {text: i18n.tnl('label.number'), value: 'number'},
       {text: i18n.tnl('label.numberList'), value: 'numberList'},
       {text: i18n.tnl('label.boolean'), value: 'boolean'},
+      {text: 'json', value: 'json'},
     ]
   },
 }

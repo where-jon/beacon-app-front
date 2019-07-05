@@ -242,12 +242,20 @@ export default {
       })
       return SettingHelper.getDiffSettingList(this.oldSettingEntities, entity)
     },
+    typeValidation(entities){
+      const validation = SettingHelper.validation(entities)
+      if(validation.length != 0){
+        throw { bulkError: validation.map(val => ({ type: 'Invalid', col: val.key, value: val.value })) }
+      }
+    },
     async onSaving() {
       const registEntity = this.createRegistEntity()
       if(registEntity){
+        this.typeValidation([registEntity])
         return await AppServiceHelper.bulkSave(this.appServicePath, [registEntity])
       }
       const entity = this.createSaveEntities(this.settingList)
+      this.typeValidation(this.settingList)
       return await AppServiceHelper.bulkSave(this.appServicePath, entity)
     },
     initNewForm(allInit){

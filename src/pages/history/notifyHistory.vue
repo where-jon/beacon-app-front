@@ -168,7 +168,6 @@ import * as LocalStorageHelper from '../../sub/helper/LocalStorageHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
 import commonmixin from '../../components/mixin/commonmixin.vue'
-import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
 
@@ -179,7 +178,7 @@ export default {
     breadcrumb,
     alert,
   },
-  mixins: [commonmixin, showmapmixin],
+  mixins: [commonmixin],
   data () {
     return {
       name: 'notifyHistory',

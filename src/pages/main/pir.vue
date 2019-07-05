@@ -37,6 +37,7 @@ import * as NumberUtil from '../../sub/util/NumberUtil'
 import * as Util from '../../sub/util/Util'
 import * as EXCloudHelper from '../../sub/helper/EXCloudHelper'
 import * as IconHelper from '../../sub/helper/IconHelper'
+import * as PositionHelper from '../../sub/helper/PositionHelper'
 import * as StateHelper from '../../sub/helper/StateHelper'
 import * as ViewHelper from '../../sub/helper/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
@@ -98,13 +99,12 @@ export default {
         this.reloadSelectedTx = this.reload? this.selectedTx: {}
         this.replace({reload: false})
         this.showProgress()
-        await this.fetchAreaExbs(true)
 
         const pirSensors = await EXCloudHelper.fetchSensor(SENSOR.PIR)
         const pressureSensors = APP.SENSOR.USE_PRESSURE? await EXCloudHelper.fetchSensor(SENSOR.PRESSURE): []
         const thermopileSensors = APP.SENSOR.USE_THERMOPILE? await EXCloudHelper.fetchSensor(SENSOR.THERMOPILE): []
 
-        this.getPositionedExb(
+        this.positionedExb = PositionHelper.getPositionedExbWithSensor(this.selectedArea,
           null,
           (exb) => {
             const pir = pirSensors.find((val) => val.deviceid == exb.deviceId && val.count >= DISP.PIR.MIN_COUNT)
@@ -118,7 +118,7 @@ export default {
 
         if (APP.SENSOR.SHOW_MAGNET_ON_PIR) {
           await StateHelper.load('tx')
-          await this.storePositionHistory(this.count)
+          await PositionHelper.storePositionHistory(this.count)
           this.magnetSensors = await EXCloudHelper.fetchSensor(SENSOR.MAGNET)
           Util.debug(this.magnetSensors)
         }
@@ -141,7 +141,7 @@ export default {
           this.stage.on('click', (evt) => {
             this.resetDetail()
           })
-          this.setPositionedExb()
+          this.positionedExb = PositionHelper.getPositionedExb(this.selectedArea)
           this.showTxAll()
         }
       })
@@ -181,6 +181,9 @@ export default {
       const shapeInfo = this.createShapeInfo(sensorId, count)
       const labelInfo = this.createLabelInfo(sensorId, count)
       return IconHelper.createCircleIcon(labelInfo.label, shapeInfo.width / scale, labelInfo.color, shapeInfo.bgColor, {bold: false})
+    },
+    isShowModal() { // pir, position
+      return window.innerWidth < this.showIconMinWidth
     },
     showExb(exb) {
       if (!ArrayUtil.equalsAny(exb.sensorId, [SENSOR.PIR, SENSOR.PRESSURE, SENSOR.THERMOPILE])) {
