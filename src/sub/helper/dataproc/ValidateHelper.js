@@ -1,6 +1,6 @@
 /**
  * 検証に関するヘルパーモジュール
- * @module helper/dataprocess/ValidateHelper
+ * @module helper/dataproc/ValidateHelper
  */
 
 import * as Util from '../../util/Util'

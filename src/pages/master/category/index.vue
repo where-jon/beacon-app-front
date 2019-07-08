@@ -8,7 +8,7 @@
 <script>
 import { mapState } from 'vuex'
 import * as ColorUtil from '../../../sub/util/ColorUtil'
-import * as StateHelper from '../../../sub/helper/dataprocess/StateHelper'
+import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as StyleHelper from '../../../sub/helper/ui/StyleHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'

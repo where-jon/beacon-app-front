@@ -1,6 +1,6 @@
 /**
  * vueステートに関するヘルパーモジュール
- * @module helper/dataprocess/StateHelper
+ * @module helper/dataproc/StateHelper
  */
 
 import _ from 'lodash'

@@ -10,13 +10,13 @@ import { APP, LOCAL_LOGIN } from '../../constant/config'
 import { LOGIN_MODE, FEATURE } from '../../constant/Constants'
 import * as BrowserUtil from '../../util/BrowserUtil'
 import * as Util from '../../util/Util'
-import * as AppServiceHelper from '../dataprocess/AppServiceHelper'
-import * as ConfigHelper from '../dataprocess/ConfigHelper'
+import * as AppServiceHelper from '../dataproc/AppServiceHelper'
+import * as ConfigHelper from '../dataproc/ConfigHelper'
 import * as HttpHelper from './HttpHelper'
 import * as LocaleHelper from './LocaleHelper'
 import * as LocalStorageHelper from './LocalStorageHelper'
-import * as MenuHelper from '../dataprocess/MenuHelper'
-import * as StateHelper from '../dataprocess/StateHelper'
+import * as MenuHelper from '../dataproc/MenuHelper'
+import * as StateHelper from '../dataproc/StateHelper'
 
 let router
 let store

@@ -1,6 +1,6 @@
 /**
  * app-serviceと通信を行うヘルパーモジュール
- * @module helper/dataprocess/AppServiceHelper
+ * @module helper/dataproc/AppServiceHelper
  */
 
 import _ from 'lodash'

@@ -2,10 +2,10 @@ import _ from 'lodash'
 import * as config from '../sub/constant/config'
 import * as Util from '../sub/util/Util'
 import * as AuthHelper from '../sub/helper/base/AuthHelper'
-import * as ConfigHelper from '../sub/helper/dataprocess/ConfigHelper'
+import * as ConfigHelper from '../sub/helper/dataproc/ConfigHelper'
 import * as HttpHelper from '../sub/helper/base/HttpHelper'
 import * as LocalStorageHelper from '../sub/helper/base/LocalStorageHelper'
-import * as MenuHelper from '../sub/helper/dataprocess/MenuHelper'
+import * as MenuHelper from '../sub/helper/dataproc/MenuHelper'
 
 export default async (context, inject) => {
   console.log('App Init') // If you need common initialize procedure, write here.

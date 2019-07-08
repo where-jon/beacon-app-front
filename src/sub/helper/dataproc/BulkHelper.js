@@ -1,6 +1,6 @@
 /**
  * 一括登録に関するヘルパーモジュール
- * @module helper/dataprocess/BulkHelper
+ * @module helper/dataproc/BulkHelper
  */
 
 import _ from 'lodash'

@@ -1,6 +1,6 @@
 /**
  * EXCloudに関するヘルパーモジュール
- * @module helper/dataprocess/EXCloudHelper
+ * @module helper/dataproc/EXCloudHelper
  */
 
 import _ from 'lodash'

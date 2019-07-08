@@ -9,7 +9,7 @@
 import { mapState } from 'vuex'
 import * as LocalStorageHelper from '../../../sub/helper/base/LocalStorageHelper'
 import * as RegionHelper from '../../../sub/helper/domain/RegionHelper'
-import * as StateHelper from '../../../sub/helper/dataprocess/StateHelper'
+import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import reloadmixin from '../../../components/mixin/reloadmixin.vue'

@@ -1,6 +1,6 @@
 /**
  * システム設定に関するヘルパーモジュール
- * @module helper/dataprocess/ConfigHelper
+ * @module helper/dataproc/ConfigHelper
  */
 
 import axios from 'axios'

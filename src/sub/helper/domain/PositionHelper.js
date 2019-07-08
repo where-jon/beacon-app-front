@@ -9,7 +9,7 @@ import { TX_VIEW_TYPES, DETECT_STATE, SHAPE, TX } from '../../constant/Constants
 import * as DateUtil from '../../util/DateUtil'
 import * as NumberUtil from '../../util/NumberUtil'
 import * as Util from '../../util/Util'
-import * as EXCloudHelper from '../dataprocess/EXCloudHelper'
+import * as EXCloudHelper from '../dataproc/EXCloudHelper'
 import * as DetectStateHelper from './DetectStateHelper'
 import * as StyleHelper from '../ui/StyleHelper'
 

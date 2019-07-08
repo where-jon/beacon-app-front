@@ -20,11 +20,11 @@
 <script>
 import { mapState } from 'vuex'
 import * as Util from '../../../sub/util/Util'
-import * as AppServiceHelper from '../../../sub/helper/dataprocess/AppServiceHelper'
+import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
 import * as AuthHelper from '../../../sub/helper/base/AuthHelper'
 import * as FeatureHelper from '../../../sub/helper/domain/FeatureHelper'
 import * as LocalStorageHelper from '../../../sub/helper/base/LocalStorageHelper'
-import * as StateHelper from '../../../sub/helper/dataprocess/StateHelper'
+import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import commonmixin from '../../../components/mixin/commonmixin.vue'

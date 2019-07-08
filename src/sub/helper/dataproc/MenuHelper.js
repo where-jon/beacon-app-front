@@ -1,6 +1,6 @@
 /**
  * メニューに関するヘルパーモジュール
- * @module helper/dataprocess/MenuHelper
+ * @module helper/dataproc/MenuHelper
  */
 
 import { ROLE_FEATURE, MENU } from '../../constant/Constants'

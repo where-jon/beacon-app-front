@@ -1,6 +1,6 @@
 /**
  * 選択肢に関するヘルパーモジュール
- * @module helper/dataprocess/OptionHelper
+ * @module helper/dataproc/OptionHelper
  */
 
 import { APP } from '../../constant/config'

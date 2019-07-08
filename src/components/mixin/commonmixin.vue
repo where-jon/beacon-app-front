@@ -3,10 +3,10 @@
 import { mapState, mapMutations, mapActions } from 'vuex'
 import { CATEGORY } from '../../sub/constant/Constants'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
-import * as OptionHelper from '../../sub/helper/dataprocess/OptionHelper'
+import * as OptionHelper from '../../sub/helper/dataproc/OptionHelper'
 import * as ThemeHelper from '../../sub/helper/ui/ThemeHelper'
 import * as VueSelectHelper from '../../sub/helper/ui/VueSelectHelper'
-import * as StateHelper from '../../sub/helper/dataprocess/StateHelper'
+import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 
 export default {
   computed: {

@@ -28,9 +28,9 @@
 <script>
 import { mapState } from 'vuex'
 import * as Util from '../../../sub/util/Util'
-import * as AppServiceHelper from '../../../sub/helper/dataprocess/AppServiceHelper'
-import * as StateHelper from '../../../sub/helper/dataprocess/StateHelper'
-import * as ValidateHelper from '../../../sub/helper/dataprocess/ValidateHelper'
+import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
+import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
+import * as ValidateHelper from '../../../sub/helper/dataproc/ValidateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import commonmixin from '../../../components/mixin/commonmixin.vue'
