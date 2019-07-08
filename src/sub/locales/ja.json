@@ -1181,7 +1181,6 @@
         "ruby": "ruby::ルビ",
         "post": "post::役職",
         "tel": "tel::電話番号",
-        "potCd": "potCd::コード",
         "group": "group::グループ",
         "category": "category::カテゴリ",
         "description": "description::備考",
