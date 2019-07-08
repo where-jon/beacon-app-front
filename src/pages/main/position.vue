@@ -451,8 +451,7 @@ export default {
       const position = this.setNomalTx()
 
       this.stage.update()
-      this.reShowTxDetail(position)
-      this.reShowTxDetail(absentZonePosition)
+      this.reShowTxDetail(position, absentZonePosition)
     },
     setNomalTx() {
       let position = []
@@ -676,14 +675,25 @@ export default {
         }
       })
     },
-    reShowTxDetail(position){ // position
-      if (this.selectedTx.btxId) {
-        const tx = this.selectedTx
+    reShowTxDetail(position, absentPositions){ // position
+      if (!this.selectedTx.btxId) {
+        return
+      }
+
+      const tx = this.selectedTx
+      const selectedAbsentTxPosition = absentPositions.find((pos) => pos.btx_id == tx.btxId)
+      // 不在表示用ゾーンに表示されている方を優先して表示する
+      if (selectedAbsentTxPosition) {
+        this.showDetail(tx.btxId, selectedAbsentTxPosition.x, selectedAbsentTxPosition.y)
+      } else {
         const selectedTxPosition = position.find((pos) => pos.btx_id == tx.btxId)
         if (selectedTxPosition) {
-          const location = selectedTxPosition.tx? selectedTxPosition.tx.location: null
-          const x = location && location.x != null? location.x : selectedTxPosition.x
-          const y = location && location.y != null? location.y : selectedTxPosition.y
+          if (!selectedTxPosition.tx) {
+            return
+          }
+          const location = this.isFixTx(selectedTxPosition.tx)? selectedTxPosition.tx.location: null
+          const x = location? location.x : selectedTxPosition.x
+          const y = location? location.y : selectedTxPosition.y
           this.showDetail(tx.btxId, x, y)
         }
       }
