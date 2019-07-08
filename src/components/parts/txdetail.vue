@@ -157,7 +157,7 @@ export default {
       return !isOut ? 'balloon-u' : 'balloon-ur'
     },
     getPopupHeight() {
-      return this.selectedSensor.length == 0 ? DISP.TXDETAIL_POPUP_SIZE : DISP.TXSENSOR_POPUP_SIZE
+      return this.selectedSensor.length == 0 ? DISP.TXDETAIL_POPUP_SIZE : DISP.TXMEDITAG_POPUP_SIZE
     },
     drawShadow(color){
       return NumberUtil.luminance(ColorUtil.colorCd4db(color)) > 240
