@@ -1,3 +1,8 @@
+/**
+ * 配列に関するユーティリティモジュール
+ * @module util/ArrayUtil
+ */
+
 import { hasValue } from './Util'
 
 /**

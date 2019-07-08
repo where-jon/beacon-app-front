@@ -1,3 +1,8 @@
+/**
+ * ブラウザに関するユーティリティモジュール
+ * @module util/BrowserUtil
+ */
+
 import Encoding from 'encoding-japanese'
 import { APP } from '../constant/config'
 import { str2Array } from './StringUtil'

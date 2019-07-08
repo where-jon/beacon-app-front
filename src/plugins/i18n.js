@@ -2,7 +2,7 @@ import Vue from 'vue'
 import VueI18n from 'vue-i18n'
 import { setI18n as setI18nConstants } from '../sub/constant/Constants'
 import { getLangShort, getDomainCd } from '../sub/util/BrowserUtil'
-import * as LocaleHelper from '../sub/helper/LocaleHelper'
+import * as LocaleHelper from '../sub/helper/base/LocaleHelper'
 
 Vue.use(VueI18n)
 

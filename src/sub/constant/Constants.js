@@ -1,6 +1,6 @@
 // Various constants or types come here. Basically constants does not change by environment. 
 
-import * as LocalStorageHelper from '../helper/LocalStorageHelper'
+import * as LocalStorageHelper from '../helper/base/LocalStorageHelper'
 
 let i18n
 

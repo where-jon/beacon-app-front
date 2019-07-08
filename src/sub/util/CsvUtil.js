@@ -1,3 +1,8 @@
+/**
+ * csvに関するユーティリティモジュール
+ * @module util/CsvUtil
+ */
+
 import _ from 'lodash'
 import Papa from 'papaparse'
 import { isArray } from './ArrayUtil'

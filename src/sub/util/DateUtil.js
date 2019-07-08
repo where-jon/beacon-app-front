@@ -1,3 +1,8 @@
+/**
+ * 日時に関するユーティリティモジュール
+ * @module util/DateUtil
+ */
+
 import moment from 'moment'
 import { APP } from '../constant/config'
 import { hasValue, debug } from './Util'

@@ -1,3 +1,8 @@
+/**
+ * 文字列に関するユーティリティモジュール
+ * @module util/StringUtil
+ */
+
 import Encoding from 'encoding-japanese'
 import jschardet from 'jschardet'
 import _ from 'lodash'
