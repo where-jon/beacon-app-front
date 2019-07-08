@@ -1160,7 +1160,6 @@
         "ruby": "ruby::Ruby",
         "post": "post::Post",
         "tel": "tel::Tel",
-        "potCd": "potCd::Code",
         "group": "group::Group",
         "category": "category::Category",
         "description": "description::Description",
