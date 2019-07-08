@@ -596,17 +596,14 @@ export default {
       const containerParent = DomUtil.getRect('#mapContainer', 'parentNode')
       const offsetX = map.left - containerParent.left + (!this.isInstallation ? 0 : 48)
       const isDispRight = x + offsetX + 100 < window.innerWidth
-      const popupHeight = this.getMeditagSensor(btxId) ? DISP.TXMEDITAG_POPUP_SIZE : DISP.TXSENSOR_POPUP_SIZE
-      // isAbove === trueの場合、ポップアップを下に表示
-      const isAbove = map.top + y < popupHeight + DISP.TX.R / this.canvasScale
       const navbarY = 62
-      const offsetY = map.top - navbarY + (!this.isInstallation ? 0 : 20) + (isAbove ? popupHeight : 0)
+      const offsetY = map.top - navbarY + (!this.isInstallation ? 0 : 20)
 
       const position = PositionHelper.getPositions().find((e) => {
         return e.btx_id === btxId
       })
 
-      const balloonClass = !btxId ? '': 'balloon' + (isAbove ? '-b': '-u')
+      const balloonClass = !btxId ? '': 'balloon-u' // 上表示のみに固定
       // サムネイル表示無しの設定になっているか？
       const isNoThumbnail = APP.TXDETAIL.NO_UNREGIST_THUMB ? !tx.existThumbnail : false
       const setupSelectedTx = (isDispThumbnail) => {
