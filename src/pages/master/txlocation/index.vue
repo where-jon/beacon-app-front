@@ -199,21 +199,23 @@ export default {
       })
     },
     createTxIcon(tx) {
-      const w = DISP.TX_LOC.SIZE.W
-      const h = DISP.TX_LOC.SIZE.H
+      const w = DISP.TX_LOC.SIZE.W / this.canvasScale
+      const h = DISP.TX_LOC.SIZE.H / this.canvasScale
       const fromX = -w / 2
       const fromY = -h / 2
       const x = w + fromX
       const y = h + fromY
       const txBtn = new Container()
       const s = new Shape()
+      const iconArrowWidth = this.ICON_ARROW_WIDTH / this.canvasScale
+      const iconArrowHeight = this.ICON_ARROW_HEIGHT / this.canvasScale
       s.graphics.beginFill(ColorUtil.getRGBA(DISP.TX_LOC.BGCOLOR, DISP.TX_LOC.ALPHA))
       s.graphics.moveTo(fromX, fromY)
       s.graphics.lineTo(x, fromY)
       s.graphics.lineTo(x, y)
-      s.graphics.lineTo(x - this.ICON_ARROW_WIDTH, y)
-      s.graphics.lineTo(x - this.ICON_ARROW_WIDTH - this.ICON_ARROW_WIDTH / 2, y + this.ICON_ARROW_HEIGHT)
-      s.graphics.lineTo(x - this.ICON_ARROW_WIDTH - this.ICON_ARROW_WIDTH, y)
+      s.graphics.lineTo(x - iconArrowWidth, y)
+      s.graphics.lineTo(x - iconArrowWidth - iconArrowWidth / 2, y + iconArrowHeight)
+      s.graphics.lineTo(x - iconArrowWidth - iconArrowWidth, y)
       s.graphics.lineTo(fromX, y)
       s.graphics.lineTo(fromX, fromY)
       txBtn.addChild(s)
@@ -229,12 +231,12 @@ export default {
       txBtn.minor = tx.minor
       txBtn.txId = tx.txId
       txBtn.x = tx.x
-      txBtn.y = tx.y - (h / 2 + this.ICON_ARROW_HEIGHT)
+      txBtn.y = tx.y - (h / 2 + iconArrowHeight)
       return txBtn
     },
     showTx(tx) {
       let stage = this.stage
-      const offsetY = (DISP.TX_LOC.SIZE.H / 2) + this.ICON_ARROW_HEIGHT
+      const offsetY = (DISP.TX_LOC.SIZE.H / 2 + this.ICON_ARROW_HEIGHT) / this.canvasScale
       const txBtn = this.createTxIcon(tx)
       txBtn.on('pressmove', (evt) => {
         tx.delEvent = false

@@ -333,7 +333,7 @@ export default {
     },
     showExb(exb) {
       let stage = this.stage
-      const offsetY = (DISP.EXB_LOC.SIZE.H / 2) + this.ICON_ARROW_HEIGHT / this.canvasScale
+      const offsetY = (DISP.EXB_LOC.SIZE.H / 2 + this.ICON_ARROW_HEIGHT) / this.canvasScale
       const exbBtn = this.createExbIcon(exb)
       exbBtn.on('pressmove', (evt) => {
         exb.delEvent = false
