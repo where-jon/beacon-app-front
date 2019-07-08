@@ -787,11 +787,12 @@ export const adjustMultiPosition = (positions, ratio) => {
 export const adjustZonePosition = (positions, ratio, exbs = [], absentDisplayZone) => {
   return exbs.map((exb) => {
     // 不在表示用ゾーンへ表示するTXを抽出する
-    const samePos = _.filter(positions, (position) => {
-      return (hasDisplayType('lost') && position.detectState == DETECT_STATE.LOST) ||
-      (hasDisplayType('absent') && position.exb && position.exb.isAbsentZone) ||
-      (hasDisplayType('undetected') && DetectStateHelper.isUndetect(position.detectState))
-    }).sort((a, b) => a.btx_id < b.btx_id ? -1 : 1)
+    const samePos = _.sortBy(positions, (position) => { return position.btx_id })
+      .filter((position) => {
+        return (hasDisplayType('lost') && position.detectState == DETECT_STATE.LOST) ||
+        (hasDisplayType('absent') && position.exb && position.exb.isAbsentZone) ||
+        (hasDisplayType('undetected') && DetectStateHelper.isUndetect(position.detectState))
+      })
 
     const same = (!samePos || samePos.length == 0) ? [] : getCoordinateZone(absentDisplayZone, ratio, samePos)
     return [...same]
