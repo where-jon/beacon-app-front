@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import * as ViewHelper from '../../sub/helper/ViewHelper'
+import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import positionHistoryExc from './positionHistoryExc.vue'
 
 export default {

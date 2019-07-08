@@ -22,8 +22,8 @@
 
 <script>
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
-import * as HttpHelper from '../../sub/helper/HttpHelper'
-import * as ViewHelper from '../../sub/helper/ViewHelper'
+import * as HttpHelper from '../../sub/helper/base/HttpHelper'
+import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 
 export default {

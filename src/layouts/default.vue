@@ -44,8 +44,8 @@ import { fas } from '@fortawesome/free-solid-svg-icons'
 
 import { APP, DISP, DEV, EXCLOUD } from '../sub/constant/config'
 import { getLangShort } from '../sub/util/BrowserUtil'
-import * as LocaleHelper from '../sub/helper/LocaleHelper'
-import { getThemeColor, getThemeClasses } from '../sub/helper/ThemeHelper'
+import * as LocaleHelper from '../sub/helper/base/LocaleHelper'
+import { getThemeColor, getThemeClasses } from '../sub/helper/ui/ThemeHelper'
 
 import mNav from '../components/layout/nav.vue'
 import mSidebar from '../components/layout/sidebar.vue'

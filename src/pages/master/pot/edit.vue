@@ -120,15 +120,14 @@ import { APP, EXCLOUD, APP_SERVICE } from '../../../sub/constant/config'
 import { CATEGORY, SENSOR, USER } from '../../../sub/constant/Constants'
 import * as StringUtil from '../../../sub/util/StringUtil'
 import * as Util from '../../../sub/util/Util'
-import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
-import * as ImageHelper from '../../../sub/helper/ImageHelper'
-import * as LocalStorageHelper from '../../../sub/helper/LocalStorageHelper'
-import * as MasterHelper from '../../../sub/helper/MasterHelper'
+import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
+import * as ImageHelper from '../../../sub/helper/base/ImageHelper'
+import * as LocalStorageHelper from '../../../sub/helper/base/LocalStorageHelper'
 import * as PotHelper from '../../../sub/helper/domain/PotHelper'
-import * as StateHelper from '../../../sub/helper/StateHelper'
-import * as ValidateHelper from '../../../sub/helper/ValidateHelper'
-import * as ViewHelper from '../../../sub/helper/ViewHelper'
-import * as VueSelectHelper from '../../../sub/helper/VueSelectHelper'
+import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
+import * as ValidateHelper from '../../../sub/helper/dataproc/ValidateHelper'
+import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
+import * as VueSelectHelper from '../../../sub/helper/ui/VueSelectHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import commonmixin from '../../../components/mixin/commonmixin.vue'
 import editmixin from '../../../components/mixin/editmixin.vue'
@@ -397,6 +396,21 @@ export default {
         this.$forceUpdate()
       })
     },
+    createDummyLoginId(ids){
+      return `d${ids.join('_')}`
+    },
+    async createDummyUser(dummyLoginId, roles, noEncrypt = USER.ENCRYPT.ON){
+      await StateHelper.load('role')
+      return {
+        userId: -1,
+        loginId: dummyLoginId,
+        pass: USER.DUMMY.PASS,
+        name: null,
+        roleId: roles.reduce((a, b) => a.roleId > b.roleId? a: b).roleId,
+        email: null,
+        noEncrypt: noEncrypt,
+      }
+    },
     beforeSubmit(again){
       this.doBeforeSubmit(again)
     },
@@ -428,11 +442,11 @@ export default {
       }
 
       const login = LocalStorageHelper.getLogin()
-      const dummyLoginId = MasterHelper.createDummyLoginId([
+      const dummyLoginId = this.createDummyLoginId([
         login.currentRegion.regionId,
         ...this.form.potTxList.map((potTx) => potTx.txId? potTx.txId: 0)
       ])
-      const dummyUser = await MasterHelper.createDummyUser(dummyLoginId, this.roles)
+      const dummyUser = await this.createDummyUser(dummyLoginId, this.roles)
 
       dummyUser.userId = this.userForm.userId? this.userForm.userId: dummyParam.dummyKey--
       dummyUser.name = this.form.potName

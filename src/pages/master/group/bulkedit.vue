@@ -8,8 +8,8 @@
 <script>
 import { mapState } from 'vuex'
 import * as Util from '../../../sub/util/Util'
-import * as StateHelper from '../../../sub/helper/StateHelper'
-import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
+import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
 

@@ -116,15 +116,15 @@ export const APP = { // 機能面に関する設定
     MULTI_TX: false,         // 複数Tx使用
     TX_MAX: 2,   // 所持Tx最大数
     // 拡張項目定義（サンプル）
-    EXT_DEF: [{key: 'sex', type: 'list', required: true, format: 'male|female', showlist: true, sort: true}, 
+    EXT_DEF: [
       {key: 'post', type: 'string', showlist: true, sort: true},
-      {key: 'address', type: 'string', default:'Tokyo', required: true, length:10, format: '[a-zA-Z]+', showlist: false, sort: false},
-      {key: 'manager', type: 'boolean', default: 'はい', checked:'はい', unchecked:' ', showlist: true, sort: false},
-      {key: 'salary', type: 'int', min: 0, max: 1200000, showlist: false, sort: false},
       {key: 'tel', type: 'tel', showlist: true, sort: true},
       {key: 'mobile', type: 'tel', showlist: false, sort: false},
       {key: 'entrydate', type: 'date', showlist: true, sort: false},
-      {key: 'score', type: 'float', default: 50, min: -100, max: 100, showlist: false, sort: false}
+      {key: 'salary', type: 'int', min: 0, max: 1200000, showlist: false, sort: false},
+      {key: 'score', type: 'float', default: 50, min: -100, max: 100, showlist: false, sort: false},
+      {key: 'manager', type: 'boolean', default: 'はい', checked:'はい', unchecked:' ', showlist: true, sort: false},
+      {key: 'address', type: 'string', default:'Tokyo', required: true, length:10, format: '[a-zA-Z]+', showlist: false, sort: false},
     ],
   },
   // category
@@ -405,9 +405,9 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   },
   
   TXDETAIL_DIFF: 25, // TX詳細の表示位置差分（ポップアップ左端から吹き出しの中央までの距離）
-  TXDETAIL_POPUP_SIZE: 211, // TX詳細表示ポップアップの高さ
+  TXDETAIL_POPUP_SIZE: 150, // TX詳細表示ポップアップの高さ
   TXSENSOR_POPUP_SIZE: 165, // TXセンサー表示ポップアップの高さ
-  TXMEDITAG_POPUP_SIZE: 236, // TXMEDITAG表示ポップアップの高さ
+  TXMEDITAG_POPUP_SIZE: 230, // TXMEDITAG表示ポップアップの高さ
 
   POSITION_HISTORY: {
     HEADERS: ['potName', 'major', 'minor', 'deviceId', 'locationName', 'posId', 'areaName'], // 位置表示履歴の表示カラム

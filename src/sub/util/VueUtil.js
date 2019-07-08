@@ -1,4 +1,9 @@
 /**
+ * vue.jsに関するユーティリティモジュール
+ * @module util/VueUtil
+ */
+
+/**
  * 現在のURL文字列の末尾が'/'かチェック。
  * @method
  * @param {Object} vueComponent

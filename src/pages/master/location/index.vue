@@ -91,12 +91,12 @@ import * as ArrayUtil from '../../../sub/util/ArrayUtil'
 import * as BrowserUtil from '../../../sub/util/BrowserUtil'
 import * as StringUtil from '../../../sub/util/StringUtil'
 import * as Util from '../../../sub/util/Util'
-import * as AppServiceHelper from '../../../sub/helper/AppServiceHelper'
-import * as HttpHelper from '../../../sub/helper/HttpHelper'
-import * as StateHelper from '../../../sub/helper/StateHelper'
-import * as StyleHelper from '../../../sub/helper/StyleHelper'
-import * as ViewHelper from '../../../sub/helper/ViewHelper'
-import * as VueSelectHelper from '../../../sub/helper/VueSelectHelper'
+import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
+import * as HttpHelper from '../../../sub/helper/base/HttpHelper'
+import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
+import * as StyleHelper from '../../../sub/helper/ui/StyleHelper'
+import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
+import * as VueSelectHelper from '../../../sub/helper/ui/VueSelectHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import commonmixin from '../../../components/mixin/commonmixin.vue'
 import showmapmixin from '../../../components/mixin/showmapmixin.vue'
@@ -298,21 +298,23 @@ export default {
       })
     },
     createExbIcon(exb) {
-      const w = DISP.EXB_LOC.SIZE.W
-      const h = DISP.EXB_LOC.SIZE.H
+      const w = DISP.EXB_LOC.SIZE.W / this.canvasScale
+      const h = DISP.EXB_LOC.SIZE.H / this.canvasScale
       const fromX = -w / 2
       const fromY = -h / 2
       const x = w + fromX
       const y = h + fromY
       const exbBtn = new Container()
       const s = new Shape()
+      const iconArrowWidth = this.ICON_ARROW_WIDTH / this.canvasScale
+      const iconArrowHeight = this.ICON_ARROW_HEIGHT / this.canvasScale
       s.graphics.beginFill(DISP.EXB_LOC.BGCOLOR)
       s.graphics.moveTo(fromX, fromY)
       s.graphics.lineTo(x, fromY)
       s.graphics.lineTo(x, y)
-      s.graphics.lineTo(x - this.ICON_ARROW_WIDTH, y)
-      s.graphics.lineTo(x - this.ICON_ARROW_WIDTH - this.ICON_ARROW_WIDTH / 2, y + this.ICON_ARROW_HEIGHT)
-      s.graphics.lineTo(x - this.ICON_ARROW_WIDTH - this.ICON_ARROW_WIDTH, y)
+      s.graphics.lineTo(x - iconArrowWidth, y)
+      s.graphics.lineTo(x - iconArrowWidth - iconArrowWidth / 2, y + iconArrowHeight)
+      s.graphics.lineTo(x - iconArrowWidth - iconArrowWidth, y)
       s.graphics.lineTo(fromX, y)
       s.graphics.lineTo(fromX, fromY)
       exbBtn.addChild(s)
@@ -326,12 +328,12 @@ export default {
       exbBtn.deviceId = exb.deviceId
       exbBtn.exbId = exb.exbId
       exbBtn.x = exb.x
-      exbBtn.y = exb.y - (h / 2 + this.ICON_ARROW_HEIGHT)
+      exbBtn.y = exb.y - (h / 2 + iconArrowHeight)
       return exbBtn
     },
     showExb(exb) {
       let stage = this.stage
-      const offsetY = (DISP.EXB_LOC.SIZE.H / 2) + this.ICON_ARROW_HEIGHT
+      const offsetY = (DISP.EXB_LOC.SIZE.H / 2 + this.ICON_ARROW_HEIGHT) / this.canvasScale
       const exbBtn = this.createExbIcon(exb)
       exbBtn.on('pressmove', (evt) => {
         exb.delEvent = false

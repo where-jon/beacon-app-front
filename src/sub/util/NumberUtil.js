@@ -1,4 +1,9 @@
 /**
+ * 数値に関するユーティリティモジュール
+ * @module util/NumberUtil
+ */
+
+/**
  * 指定した小数位で切り捨てた数値を取得する。
  * @method
  * @param {Number} val

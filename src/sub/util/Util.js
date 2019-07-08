@@ -1,3 +1,8 @@
+/**
+ * 汎用的なユーティリティモジュール
+ * @module util/Util
+ */
+
 import _ from 'lodash'
 import { DEV } from '../constant/config'
 

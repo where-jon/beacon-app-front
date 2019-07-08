@@ -22,7 +22,7 @@
 <script>
 
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
-import * as ImageHelper from '../../sub/helper/ImageHelper'
+import * as ImageHelper from '../../sub/helper/base/ImageHelper'
 
 export default {
   props: {
