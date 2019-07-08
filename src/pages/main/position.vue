@@ -527,7 +527,7 @@ export default {
 
       if(this.reloadSelectedTx.btxId == pos.btx_id){
         this.showingDetailTime = new Date().getTime()
-        this.showDetail(txBtn.txId, txBtn.x, txBtn.y)
+        this.showDetail(txBtn.btxId, txBtn.x, txBtn.y)
       }
       this.txCont.addChild(txBtn)
       this.detectedCount++  // 検知数カウント増加
@@ -591,11 +591,11 @@ export default {
     },
     createTxBtn(pos, shape, color, bgColor, isAbsent = false){ // position
       let txBtn = this.createTxIcon(pos, shape, color, bgColor)
-      txBtn.txId = pos.btx_id
+      txBtn.btxId = pos.btx_id
 
       if (isAbsent) {
         txBtn = this.createAbsentTxIcon(pos, shape, color, bgColor)
-        txBtn.txId = PositionHelper.zoneBtxIdAddNumber + pos.btx_id
+        txBtn.btxId = PositionHelper.zoneBtxIdAddNumber + pos.btx_id
       }
 
       txBtn.x = pos.x
@@ -605,7 +605,7 @@ export default {
         this.showReady = false
         this.showingDetailTime = new Date().getTime()
         const txBtn = evt.currentTarget
-        this.showDetail(txBtn.txId, txBtn.x, txBtn.y)
+        this.showDetail(txBtn.btxId, txBtn.x, txBtn.y)
       })
       return txBtn
     },
