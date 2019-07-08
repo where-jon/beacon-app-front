@@ -19,7 +19,7 @@
 
 <script>
 import { EXTRA_NAV, POSITION_STACK_TYPES } from '../../sub/constant/Constants'
-import * as ViewHelper from '../../sub/helper/ViewHelper'
+import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import reloadmixin from '../../components/mixin/reloadmixin.vue'
 import positionDisplay from '../../components/page/position-display.vue'

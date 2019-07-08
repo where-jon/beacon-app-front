@@ -11,10 +11,9 @@ import { APP } from '../../../sub/constant/config'
 import { IGNORE, CATEGORY } from '../../../sub/constant/Constants'
 import * as ArrayUtil from '../../../sub/util/ArrayUtil'
 import * as Util from '../../../sub/util/Util'
-import * as BulkHelper from '../../../sub/helper/BulkHelper'
-import * as MasterHelper from '../../../sub/helper/MasterHelper'
-import * as StateHelper from '../../../sub/helper/StateHelper'
-import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import * as BulkHelper from '../../../sub/helper/dataprocess/BulkHelper'
+import * as StateHelper from '../../../sub/helper/dataprocess/StateHelper'
+import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
 
@@ -41,6 +40,9 @@ export default {
     await StateHelper.load('tx')
   },
   methods: {
+    createDefaultName(prefix){
+      return prefix + '_' + (new Date().getTime() % 10000)
+    },
     async onSaving() {
       await StateHelper.load('category')
       await StateHelper.load('group')
@@ -77,8 +79,8 @@ export default {
         potTxPK: { potId: pot? pot.potId: dummyKey--, txId: entity.txId },
         pot: {
           potId: Util.getValue(pot, 'potId', dummyKey),
-          potCd: Util.getValue(pot, 'potCd', MasterHelper.createDefaultName(dummyKey)),
-          potName: Util.getValue(pot, 'potName', MasterHelper.createDefaultName(dummyKey--)),
+          potCd: Util.getValue(pot, 'potCd', this.createDefaultName(dummyKey)),
+          potName: Util.getValue(pot, 'potName', this.createDefaultName(dummyKey--)),
           potType: Util.getValue(pot, 'potType', CATEGORY.getTypes()[0].value),
           extValue: Util.getValue(pot, 'extValue', null),
         }

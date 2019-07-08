@@ -16,7 +16,7 @@ import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import * as Util from '../../sub/util/Util'
 import * as PotHelper from '../../sub/helper/domain/PotHelper'
-import * as ViewHelper from '../../sub/helper/ViewHelper'
+import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 
 export default {
   components: {

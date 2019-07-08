@@ -7,11 +7,11 @@
 
 <script>
 import { mapState } from 'vuex'
-import * as AuthHelper from '../../../sub/helper/AuthHelper'
-import * as LocalStorageHelper from '../../../sub/helper/LocalStorageHelper'
-import * as RegionHelper from '../../../sub/helper/RegionHelper'
-import * as StateHelper from '../../../sub/helper/StateHelper'
-import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import * as AuthHelper from '../../../sub/helper/base/AuthHelper'
+import * as LocalStorageHelper from '../../../sub/helper/base/LocalStorageHelper'
+import * as RegionHelper from '../../../sub/helper/domain/RegionHelper'
+import * as StateHelper from '../../../sub/helper/dataprocess/StateHelper'
+import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
 

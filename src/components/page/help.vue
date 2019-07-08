@@ -483,7 +483,7 @@
 <script>
 import Vue from 'vue'
 import { mapState } from 'vuex'
-import * as ViewHelper from '../../sub/helper/ViewHelper'
+import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 
 export default {
   props: {

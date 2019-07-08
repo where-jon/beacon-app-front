@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import * as HttpHelper from '../../../sub/helper/HttpHelper'
+import * as HttpHelper from '../../../sub/helper/base/HttpHelper'
 
 export default {
   methods: {

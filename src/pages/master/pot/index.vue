@@ -10,9 +10,9 @@ import { mapState } from 'vuex'
 import { APP, EXCLOUD, APP_SERVICE } from '../../../sub/constant/config'
 import * as ArrayUtil from '../../../sub/util/ArrayUtil'
 import * as Util from '../../../sub/util/Util'
-import * as MenuHelper from '../../../sub/helper/MenuHelper'
-import * as StateHelper from '../../../sub/helper/StateHelper'
-import * as ViewHelper from '../../../sub/helper/ViewHelper'
+import * as MenuHelper from '../../../sub/helper/dataprocess/MenuHelper'
+import * as StateHelper from '../../../sub/helper/dataprocess/StateHelper'
+import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import * as PotHelper from '../../../sub/helper/domain/PotHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import reloadmixin from '../../../components/mixin/reloadmixin.vue'
@@ -67,7 +67,7 @@ export default {
         .concat(['userId', 'loginId', 'roleName', 'pass', 'email',])
         .filter(val => val)
     },
-    customCsvData(val){ // TODO:
+    customCsvData(val){
       const id = ArrayUtil.includesIgnoreCase(APP.TX.WITH, 'txId')? 'txId': APP.TX.BTX_MINOR == 'minor'? 'minor': 'btxId'
       if(Util.hasValue(val.potTxList)){
         val[id] = val.potTxList.map(potTx => potTx.tx? potTx.tx[id]: '').join(';')

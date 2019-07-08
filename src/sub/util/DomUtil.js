@@ -1,4 +1,9 @@
 /**
+ * DOMに関するユーティリティモジュール
+ * @module util/DomUtil
+ */
+
+/**
  * inputタグでサポートされているtypeかチェックする。
  * @method
  * @param {String} type
