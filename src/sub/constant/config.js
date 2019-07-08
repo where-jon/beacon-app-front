@@ -115,8 +115,17 @@ export const APP = { // 機能面に関する設定
     WITH: ['category', 'user', 'ruby', 'description'],
     MULTI_TX: false,         // 複数Tx使用
     TX_MAX: 2,   // 所持Tx最大数
-    // 拡張項目定義
-    EXT_DEF: [],
+    // 拡張項目定義（サンプル）
+    EXT_DEF: [
+      {key: 'post', type: 'string', showlist: true, sort: true},
+      {key: 'tel', type: 'tel', showlist: true, sort: true},
+      {key: 'mobile', type: 'tel', showlist: false, sort: false},
+      {key: 'entrydate', type: 'date', showlist: true, sort: false},
+      {key: 'salary', type: 'int', min: 0, max: 1200000, showlist: false, sort: false},
+      {key: 'score', type: 'float', default: 50, min: -100, max: 100, showlist: false, sort: false},
+      {key: 'manager', type: 'boolean', default: 'はい', checked:'はい', unchecked:' ', showlist: true, sort: false},
+      {key: 'address', type: 'string', default:'Tokyo', required: true, length:10, format: '[a-zA-Z]+', showlist: false, sort: false},
+    ],
   },
   // category
   CATEGORY: {
