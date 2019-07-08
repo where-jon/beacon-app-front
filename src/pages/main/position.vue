@@ -590,10 +590,15 @@ export default {
       }
       this.txCont.addChild(txBtn)
     },
-    createTxBtn(pos, shape, color, bgColor){ // position
-      const txBtn = this.createTxIcon(pos, shape, color, bgColor)
-
+    createTxBtn(pos, shape, color, bgColor, isAbsent = false){ // position
+      let txBtn = this.createTxIcon(pos, shape, color, bgColor)
       txBtn.txId = pos.btx_id
+
+      if (isAbsent) {
+        txBtn = this.createAbsentTxIcon(pos, shape, color, bgColor)
+        txBtn.txId = PositionHelper.zoneBtxIdAddNumber + pos.btx_id
+      }
+
       txBtn.x = pos.x
       txBtn.y = pos.y
       txBtn.on('click', (evt) => {
@@ -684,6 +689,10 @@ export default {
       }
     },
     showDetail(btxId, x, y) { // (p,) position
+      // 地図エリアとゾーン表示で重複しているTXIDの場合、元のTXIDを取得する
+      if (PositionHelper.isDoubleTx(btxId)) {
+        btxId = PositionHelper.getDoubleDefaultTxId(btxId)
+      }
       //const tipOffsetY = 15
       const tx = this.txs.find((tx) => tx.btxId == btxId)
       const display = this.getDisplay(tx)

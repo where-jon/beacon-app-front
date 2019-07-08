@@ -13,6 +13,7 @@ const tileLayoutIconsNum = 5
 const PIdiv180 = Math.PI / 180
 const angle = 45
 
+// ゾーンエリアに表示するTXIDに付加する数値
 export const zoneBtxIdAddNumber = 10000
 
 // ゾーンエリアに表示できる最後のTX位置で省略を表示する際に使用する
@@ -54,7 +55,7 @@ export const setApp = (pStore) => {
   store = pStore
 }
 
-export const getPositions = (showAllTime = false) => { // p, position-display, rssimap, position-list, position, ProhibitHelper
+export const getPositions = (showAllTime = false, notFilterByTimestamp = false) => { // p, position-display, rssimap, position-list, position, ProhibitHelper
   const positionHistores = store.state.main.positionHistores
   const orgPositions = store.state.main.orgPositions
   const selectedGroup = store.state.main.selectedGroup
@@ -67,7 +68,7 @@ export const getPositions = (showAllTime = false) => { // p, position-display, r
     const now = !DEV.USE_MOCK_EXC? new Date().getTime(): mock.positions_conf.start + count++ * mock.positions_conf.interval  // for mock
     positions = showAllTime ?
       orgPositions.filter((pos) => Array.isArray(pos)).flatMap((pos) => pos) :
-      correctPosId(orgPositions, now)
+      correctPosId(orgPositions, now, notFilterByTimestamp)
   }
   return showAllTime ? positions : positionFilter(positions, selectedGroup, selectedCategory)
 }
@@ -475,13 +476,13 @@ const getCoordinateZone = (absentDisplayZone, ratio, samePos) => {
   return partitioningArray(samePos, widthNum).flatMap((array, i, a) => {
     return array.map((b, j, c) => {
       const isLast = i == heightNum -1 && j == widthNum -1
-      const isOver = hasOverTx && isLast || i >= heightNum
+      const isOver = (hasOverTx && isLast) || i >= heightNum
       if (hasOverTx && isLast) {
         return {...zoneLastTxData(), x: orgX + txSize * ratio * j, y: orgY + txSize * ratio * i, isOver: false }
       } else {
-        return {...b, x: orgX + txSize * ratio * j, y: orgY + txSize * ratio * i, isOver: isOver }
+        return {...b, x: orgX + txSize * ratio * j, y: orgY + txSize * ratio * i, isOver }
       }
-    }).filter((b) => { return !b.isOver })
+    }).filter((b) => !b.isOver )
   })
 }
 
@@ -624,7 +625,13 @@ export const adjustMultiPosition = (positions, ratio) => {
 
 export const adjustZonePosition = (positions, ratio, exbs = [], absentDisplayZone) => {
   return exbs.map((exb) => {
-    const samePos = getAbsentDisplayPos(positions, Util.hasValue(absentDisplayZone))
+    // 不在表示用ゾーンへ表示するTXを抽出する
+    const samePos = _.filter(positions, (position) => {
+      return (hasDisplayType('lost') && position.detectState == DETECT_STATE.LOST) ||
+      (hasDisplayType('absent') && position.exb && position.exb.isAbsentZone) ||
+      (hasDisplayType('undetected') && DetectStateHelper.isUndetect(position.detectState))
+    }).sort((a, b) => a.btx_id < b.btx_id ? -1 : 1)
+
     const same = (!samePos || samePos.length == 0) ? [] : getCoordinateZone(absentDisplayZone, ratio, samePos)
     return [...same]
   }).filter(e => e).flatMap(e => e).filter(function (x, i, self) {
@@ -632,48 +639,6 @@ export const adjustZonePosition = (positions, ratio, exbs = [], absentDisplayZon
       return (x.btx_id === val.btx_id)
     }) === i)
   })
-}
-
-/**
- * 不在表示用ゾーンへ表示するTXを返却する
- * @param {*} positions 
- * @param {*} isAbsentDsplayZone 
- */
-export const getAbsentDisplayPos = (positions, hasAbsentDsplayZone = false) => {
-  let absentDisplayPositions = new Array()
-  if (!hasAbsentDsplayZone) {
-    return absentDisplayPositions
-  }
-
-  if (hasDisplayType('lost')) {
-    _.filter(positions, (position) => {
-      return position.detectState == DETECT_STATE.LOST
-    }).forEach((position) => {
-      absentDisplayPositions.push(position)
-    })
-  }
-
-  if (hasDisplayType('absent')) {
-    _.filter(positions, (position) => {
-      return position.exb? position.exb.isAbsentZone: false
-    }).forEach((position) => {
-      absentDisplayPositions.push(position)
-    })
-  }
-
-  if (hasDisplayType('undetected')) {
-    _.filter(positions, (position) => {
-      return DetectStateHelper.isUndetect(position.detectState)
-    }).forEach((position) => {
-      absentDisplayPositions.push(position)
-    })
-  }
-
-  return absentDisplayPositions.filter(function (x, i, self) {
-    return (self.findIndex(function(val) {
-      return (x.btx_id === val.btx_id)
-    }) === i)
-  }).sort((a, b) => a.btx_id < b.btx_id ? -1 : 1)
 }
 
 export const hasDisplayType = (typeKey) => {
@@ -707,8 +672,4 @@ export const isTransparent = (timestamp, now) => {
 export const isLost = (timestamp, now) => {
   const date = new Date(timestamp)
   return date.getTime() < now - APP.POS.LOST_TIME
-}
-
-export const hasZoneDisplay = () => {
-  return false
 }
