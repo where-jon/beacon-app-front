@@ -451,8 +451,8 @@ export default {
       const position = this.setNomalTx()
 
       this.stage.update()
-      this.reShowTx(position)
-      this.reShowTx(absentZonePosition)
+      this.reShowTxDetail(position)
+      this.reShowTxDetail(absentZonePosition)
     },
     setNomalTx() {
       let position = []
@@ -676,7 +676,7 @@ export default {
         }
       })
     },
-    reShowTx(position){ // position
+    reShowTxDetail(position){ // position
       if (this.selectedTx.btxId) {
         const tx = this.selectedTx
         const selectedTxPosition = position.find((pos) => pos.btx_id == tx.btxId)
