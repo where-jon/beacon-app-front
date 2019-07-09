@@ -86,8 +86,8 @@ export default {
 .bd-sidebar {
   order: 0;
   border-bottom: 1px solid rgba(0, 0, 0, .1);
-  padding-left: 0px;
-  padding-right: 0px;
+  padding-left: 0px !important;
+  padding-right: 0px !important;
   min-height: calc(100vh - 62px);
 
   @media (min-width: 768px) {
