@@ -168,7 +168,7 @@ export default {
       isShowBottom: false,
       isMounted: false,
       reloadState: {isLoad: false},
-      loadStates: ['category','group','lostZones','tx','exb'],
+      loadStates: ['category','group','lostZones','tx','exb','absentDisplayZones'],
       toggleCallBack: () => this.reset(),
       thumbnailUrl: APP_SERVICE.BASE_URL + EXCLOUD.POT_THUMBNAIL_URL,
       preloadThumbnail: new Image(),
@@ -183,6 +183,7 @@ export default {
       'groups',
       'prohibits',
       'lostZones',
+      'absentDisplayZones',
       'txs',
     ]),
     ...mapState([
@@ -247,6 +248,8 @@ export default {
     }
     await Promise.all(this.loadStates.map(StateHelper.load))
     this.txs.forEach((t) => this.txsMap[t.btxId] = t)
+    // ゾーン表示時「・・・」用TXを追加しておく
+    this.txsMap[PositionHelper.zoneLastTxId()] = { txId: PositionHelper.zoneLastTxId(), disp: 1, tx: {disp:1}, }
     this.exbs.forEach((e) => this.exbsMap[e.posId] = e)
     // this.fetchData()は'vueSelected.area'をwatchしている箇所で実行している。
     // 以下は二重実行を防ぐためコメントアウト
@@ -443,8 +446,15 @@ export default {
       this.txCont.removeAllChildren()
       this.disableExbsCheck()
       this.detectedCount = 0 // 検知カウントリセット
-      let position = []
 
+      const absentZonePosition = this.setAbsentZoneTx()
+      const position = this.setNomalTx()
+
+      this.stage.update()
+      this.reShowTxDetail(position, absentZonePosition)
+    },
+    setNomalTx() {
+      let position = []
       if(!APP.POS.USE_MULTI_POSITIONING){
         const ratio = DISP.TX.R_ABSOLUTE ? 1/this.canvasScale : 1
         position = PositionHelper.adjustPosition(PositionHelper.getPositions(), ratio, this.positionedExb, this.selectedArea)
@@ -458,8 +468,7 @@ export default {
       }
 
       position.forEach((pos) => this.showTx(pos))
-      this.stage.update()
-      this.reShowTx(position)
+      return position
     },
     showTx(pos) {
       const tx = this.txsMap[pos.btx_id]
@@ -518,15 +527,77 @@ export default {
 
       if(this.reloadSelectedTx.btxId == pos.btx_id){
         this.showingDetailTime = new Date().getTime()
-        this.showDetail(txBtn.txId, txBtn.x, txBtn.y)
+        this.showDetail(txBtn.btxId, txBtn.x, txBtn.y)
       }
       this.txCont.addChild(txBtn)
       this.detectedCount++  // 検知数カウント増加
     },
-    createTxBtn(pos, shape, color, bgColor){ // position
-      const txBtn = this.createTxIcon(pos, shape, color, bgColor)
+    setAbsentZoneTx() {
+      const absentDisplayZone = _.find(this.absentDisplayZones, (zone) => { return zone.areaId == this.selectedArea })
+      if (!Util.hasValue(absentDisplayZone)) {
+        // 不在表示用ゾーンが存在しない場合は何もしない
+        return
+      }
+      const ratio = DISP.TX.R_ABSOLUTE ? 1/this.canvasScale : 1
+      let absentZonePositions = PositionHelper.adjustZonePosition(PositionHelper.getPositions(false, true), ratio, this.positionedExb, absentDisplayZone)
 
-      txBtn.txId = pos.btx_id
+      absentZonePositions.forEach((pos) => this.showAbsentZoneTx(pos))
+      return absentZonePositions
+    },
+    showAbsentZoneTx(pos) {
+      const tx = this.txsMap[pos.btx_id]
+      Util.debug('showTx', pos, tx && tx.sensor)
+      if (!tx) {
+        console.warn('tx not found. btx_id=' + pos.btx_id)
+        return
+      }
+      let magnet = null
+      if (tx.sensorId === SENSOR.MAGNET) {
+        magnet = this.magnetSensors && this.magnetSensors.find((sensor) => sensor.btxid == tx.btxId || sensor.btx_id == tx.btxId)
+        Util.debug('magnet', magnet)
+      }
+      let meditag = null
+      if (tx.sensorId === SENSOR.MEDITAG) {
+        meditag = this.getMeditagSensor(tx.btxId)
+        Util.debug('meditag', meditag)
+      }
+
+      const display = this.getDisplay(tx)
+      const color = meditag? '#000': this.isMagnetOn(magnet)? display.bgColor : display.color
+      const bgColor = meditag? meditag.bg: this.isMagnetOn(magnet)? display.color: display.bgColor
+
+      // 既に該当btx_idのTXアイコンが作成済みか?
+      const zoneBtx_id = PositionHelper.zoneBtxIdAddNumber + pos.btx_id
+      let txBtn = this.icons[zoneBtx_id]
+      if (!txBtn) {
+        // 作成されていない場合、新規作成してからiconsに登録
+        if (pos.btx_id == PositionHelper.zoneLastTxId()) {
+          txBtn = this.createLastSystemTx(pos, display.shape, color, bgColor)
+        } else {
+          txBtn = this.createTxBtn(pos, display.shape, color, bgColor, true)
+        }
+        this.icons[zoneBtx_id] = txBtn
+      } else {
+        // 作成済みの場合、座標値のみセットする
+        txBtn.x = pos.x
+        txBtn.y = pos.y
+      }
+
+      if(this.reloadSelectedTx.btxId == zoneBtx_id){
+        this.showingDetailTime = new Date().getTime()
+        this.showDetail(txBtn.txId, txBtn.x, txBtn.y)
+      }
+      this.txCont.addChild(txBtn)
+    },
+    createTxBtn(pos, shape, color, bgColor, isAbsent = false){ // position
+      let txBtn = this.createTxIcon(pos, shape, color, bgColor)
+      txBtn.btxId = pos.btx_id
+
+      if (isAbsent) {
+        txBtn = this.createAbsentTxIcon(pos, shape, color, bgColor)
+        txBtn.btxId = PositionHelper.zoneBtxIdAddNumber + pos.btx_id
+      }
+
       txBtn.x = pos.x
       txBtn.y = pos.y
       txBtn.on('click', (evt) => {
@@ -534,8 +605,24 @@ export default {
         this.showReady = false
         this.showingDetailTime = new Date().getTime()
         const txBtn = evt.currentTarget
-        this.showDetail(txBtn.txId, txBtn.x, txBtn.y)
+        this.showDetail(txBtn.btxId, txBtn.x, txBtn.y)
       })
+      return txBtn
+    },
+    createLastSystemTx(pos, shape, color, bgColor){
+      const txRadius = DISP.TX.R / this.getMapScale()
+      const bgAlpha = 0.01
+      const txBtn = IconHelper.createIcon(
+        pos.label, txRadius, txRadius, '#000000', ColorUtil.getRGBA('#FFFFFF', bgAlpha), {
+          circle: true,
+          roundRect: DISP.TX.ROUNDRECT_RADIUS,
+          strokeColor: ColorUtil.getRGBA(DISP.TX.STROKE_COLOR, bgAlpha),
+          strokeStyle: DISP.TX.STROKE_WIDTH,
+          offsetY: 5,
+        })
+      txBtn.txId = pos.btx_id
+      txBtn.x = pos.x
+      txBtn.y = pos.y
       return txBtn
     },
     createRectInfo(pos, bgColor){ // p
@@ -566,6 +653,17 @@ export default {
           offsetY: 5,
         })
     },
+    createAbsentTxIcon(pos, shape, color, bgColor){
+      const txRadius = DISP.TX.R / this.getMapScale()
+      return IconHelper.createIcon(
+        pos.label, txRadius, txRadius, color, ColorUtil.getRGBA(bgColor, 1), {
+          circle: shape == SHAPE.CIRCLE,
+          roundRect: shape == SHAPE.SQUARE? 0: DISP.TX.ROUNDRECT_RADIUS,
+          strokeColor: ColorUtil.getRGBA(DISP.TX.STROKE_COLOR, 1),
+          strokeStyle: DISP.TX.STROKE_WIDTH,
+          offsetY: 5,
+        })
+    },
     disableExbsCheck(){ // position
       // for debug
       const disabledExbs = {}
@@ -577,19 +675,34 @@ export default {
         }
       })
     },
-    reShowTx(position){ // position
-      if (this.selectedTx.btxId) {
-        const tx = this.selectedTx
+    reShowTxDetail(position, absentPositions){ // position
+      if (!this.selectedTx.btxId) {
+        return
+      }
+
+      const tx = this.selectedTx
+      const selectedAbsentTxPosition = absentPositions.find((pos) => pos.btx_id == tx.btxId)
+      // 不在表示用ゾーンに表示されている方を優先して表示する
+      if (selectedAbsentTxPosition) {
+        this.showDetail(tx.btxId, selectedAbsentTxPosition.x, selectedAbsentTxPosition.y)
+      } else {
         const selectedTxPosition = position.find((pos) => pos.btx_id == tx.btxId)
         if (selectedTxPosition) {
-          const location = selectedTxPosition.tx? selectedTxPosition.tx.location: null
-          const x = location && location.x != null? location.x : selectedTxPosition.x
-          const y = location && location.y != null? location.y : selectedTxPosition.y
+          if (!selectedTxPosition.tx) {
+            return
+          }
+          const location = this.isFixTx(selectedTxPosition.tx)? selectedTxPosition.tx.location: null
+          const x = location? location.x : selectedTxPosition.x
+          const y = location? location.y : selectedTxPosition.y
           this.showDetail(tx.btxId, x, y)
         }
       }
     },
     showDetail(btxId, x, y) { // (p,) position
+      // 地図エリアとゾーン表示で重複しているTXIDの場合、元のTXIDを取得する
+      if (PositionHelper.isDoubleTx(btxId)) {
+        btxId = PositionHelper.getDoubleDefaultTxId(btxId)
+      }
       const tx = this.txs.find((tx) => tx.btxId == btxId)
       const display = this.getDisplay(tx)
       const map = DomUtil.getRect('#map')

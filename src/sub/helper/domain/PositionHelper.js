@@ -18,6 +18,22 @@ const tileLayoutIconsNum = 5
 const PIdiv180 = Math.PI / 180
 const angle = 45
 
+// ゾーンエリアに表示するTXIDに付加する数値
+export const zoneBtxIdAddNumber = 10000
+
+// ゾーンエリアに表示できる最後のTX位置で省略を表示する際に使用する
+export const zoneLastTxId = () => { return 100000001 }
+
+export const isZoneLastTxId = (btxId) => { return btxId == zoneLastTxId }
+
+export const zoneLastTxData = () => {
+  return { btx_id: zoneLastTxId(), pos_id: 0, label: '・・・', isLost: false, }
+}
+
+export const isDoubleTx = (btxId) => { return btxId >= zoneBtxIdAddNumber }
+
+export const getDoubleDefaultTxId = (btxId) => { return btxId - zoneBtxIdAddNumber }
+
 const defaultDisplay = {
   color: DISP.TX.COLOR,
   bgColor: DISP.TX.BGCOLOR,
@@ -40,9 +56,10 @@ export const setApp = pStore => {
  * 位置情報を取得する。
  * @method
  * @param {Boolean} [showAllTime = false] 検知されていないデバイスの情報も取得する
+ * @param {Boolean} [notFilterByTimestamp = false] 時間による排他制御をされていない情報を取得する
  * @return {Object[]}
  */
-export const getPositions = (showAllTime = false) => { // p, position-display, rssimap, position-list, position, ProhibitHelper
+export const getPositions = (showAllTime = false, notFilterByTimestamp = false) => { // p, position-display, rssimap, position-list, position, ProhibitHelper
   const positionHistores = store.state.main.positionHistores
   const orgPositions = store.state.main.orgPositions
   const selectedGroup = store.state.main.selectedGroup
@@ -55,7 +72,7 @@ export const getPositions = (showAllTime = false) => { // p, position-display, r
     const now = !DEV.USE_MOCK_EXC? new Date().getTime(): mock.positions_conf.start + count++ * mock.positions_conf.interval  // for mock
     positions = showAllTime ?
       orgPositions.filter(pos => Array.isArray(pos)).flatMap(pos => pos) :
-      correctPosId(orgPositions, now)
+      correctPosId(orgPositions, now, notFilterByTimestamp)
   }
   return showAllTime ? positions : positionFilter(positions, selectedGroup, selectedCategory)
 }
@@ -556,6 +573,35 @@ const getTxViewType = txViewType => {
 }
 
 /**
+ * 指定ゾーン上のTXアイコン配置座標の配列を取得する
+ * 範囲ぴったりの場合は全て表示、超える場合は・・・用データを挿入し、その後のTXは返却しない
+ * @param {*} absentDisplayZone 不在表示ゾーンオブジェクト
+ * @param {*} ratio ウインドウ縮小割合
+ * @param {*} samePos 同じEXBの位置に配置するTXオブジェクトの配列
+ */
+const getCoordinateZone = (absentDisplayZone, ratio, samePos) => {
+  const txSize = DISP.TX.R * 2
+  // ゾーン開始位置が１つ目のTX中央にくるのでずらしておく
+  const orgX = absentDisplayZone.x + (DISP.TX.R * ratio)
+  const orgY = absentDisplayZone.y + (DISP.TX.R * ratio)
+  const widthNum = Math.floor((absentDisplayZone.w + DISP.TX.R) / (txSize * ratio))
+  const heightNum = Math.floor((absentDisplayZone.h + DISP.TX.R) / (txSize * ratio))
+  const hasOverTx = samePos.length > (widthNum * heightNum)
+
+  return partitioningArray(samePos, widthNum).flatMap((array, i, a) => {
+    return array.map((b, j, c) => {
+      const isLast = i == heightNum -1 && j == widthNum -1
+      const isOver = (hasOverTx && isLast) || i >= heightNum
+      if (hasOverTx && isLast) {
+        return {...zoneLastTxData(), x: orgX + txSize * ratio * j, y: orgY + txSize * ratio * i, isOver: false }
+      } else {
+        return {...b, x: orgX + txSize * ratio * j, y: orgY + txSize * ratio * i, isOver }
+      }
+    }).filter((b) => !b.isOver )
+  })
+}
+
+/**
  * 過去の位置データの移動平均、RSSIによるフィルタリング、時間によるフィルタリングで位置を決定
  * @method
  * @param {Object[]} orgPositions 
@@ -728,6 +774,30 @@ export const adjustMultiPosition = (positions, ratio) => {
     ret.push( {...pos, x: pos.x * ratio, y: pos.y * ratio} )
   })
   return ret
+}
+
+export const adjustZonePosition = (positions, ratio, exbs = [], absentDisplayZone) => {
+  return exbs.map((exb) => {
+    // 不在表示用ゾーンへ表示するTXを抽出する
+    console.table(positions)
+    const samePos = _.sortBy(positions, (position) => { return position.label })
+      .filter((position) => {
+        return (hasDisplayType('lost') && position.detectState == DETECT_STATE.LOST) ||
+        (hasDisplayType('absent') && position.exb && position.exb.isAbsentZone) ||
+        (hasDisplayType('undetected') && DetectStateHelper.isUndetect(position.detectState))
+      })
+
+    const same = (!samePos || samePos.length == 0) ? [] : getCoordinateZone(absentDisplayZone, ratio, samePos)
+    return [...same]
+  }).filter(e => e).flatMap(e => e).filter(function (x, i, self) {
+    return (self.findIndex(function(val) {
+      return (x.btx_id === val.btx_id)
+    }) === i)
+  })
+}
+
+export const hasDisplayType = (typeKey) => {
+  return _.some(DISP.TX.ABSENT_ZONE_DISPLAY_TYPES, (type) => { return type == typeKey})
 }
 
 /**
