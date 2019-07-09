@@ -780,7 +780,7 @@ export const adjustZonePosition = (positions, ratio, exbs = [], absentDisplayZon
   return exbs.map((exb) => {
     // 不在表示用ゾーンへ表示するTXを抽出する
     console.table(positions)
-    const samePos = _.sortBy(positions, (position) => { return position.label })
+    const samePos = _.sortBy(positions, position => position.label)
       .filter((position) => {
         return (hasDisplayType('lost') && position.detectState == DETECT_STATE.LOST) ||
         (hasDisplayType('absent') && position.exb && position.exb.isAbsentZone) ||
@@ -797,7 +797,7 @@ export const adjustZonePosition = (positions, ratio, exbs = [], absentDisplayZon
 }
 
 export const hasDisplayType = (typeKey) => {
-  return _.some(DISP.TX.ABSENT_ZONE_DISPLAY_TYPES, (type) => { return type == typeKey})
+  return _.some(DISP.TX.ABSENT_ZONE_DISPLAY_TYPES, type => type == typeKey)
 }
 
 /**
