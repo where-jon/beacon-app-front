@@ -98,7 +98,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import { Container } from '@createjs/easeljs/dist/easeljs.module'
+import { Container } from 'createjs-module'
 import { APP, DISP, APP_SERVICE, EXCLOUD } from '../../sub/constant/config'
 import { SHAPE, SENSOR, EXTRA_NAV, CATEGORY, TX } from '../../sub/constant/Constants'
 import * as NumberUtil from '../../sub/util/NumberUtil'

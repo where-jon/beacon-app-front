@@ -3,7 +3,7 @@
  * @module helper/ui/IconHelper
  */
 
-import { Container, Shape, Text } from '@createjs/easeljs/dist/easeljs.module'
+import { Container, Shape, Text } from 'createjs-module'
 import { DISP } from '../../constant/config'
 import * as Util from '../../util/Util'
 import * as StyleHelper from './StyleHelper'

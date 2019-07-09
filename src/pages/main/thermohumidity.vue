@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import { Shape, Container, Bitmap, Text } from '@createjs/easeljs/dist/easeljs.module'
+import { Shape, Container, Bitmap, Text } from 'createjs-module'
 import cold from '../../assets/icon/cold.png'
 import comfort from '../../assets/icon/comfort.png'
 import hot from '../../assets/icon/hot.png'

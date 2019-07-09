@@ -29,7 +29,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import { Container } from '@createjs/easeljs/dist/easeljs.module'
+import { Container } from 'createjs-module'
 import { APP, DISP } from '../../sub/constant/config'
 import { SENSOR, TX } from '../../sub/constant/Constants'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'

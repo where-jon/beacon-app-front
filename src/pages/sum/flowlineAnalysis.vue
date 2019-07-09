@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import { Container, Shape } from '@createjs/easeljs/dist/easeljs.module'
+import { Container, Shape } from 'createjs-module'
 import { DISP } from '../../sub/constant/config'
 import * as ColorUtil from '../../sub/util/ColorUtil'
 import * as Util from '../../sub/util/Util'

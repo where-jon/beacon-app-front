@@ -85,7 +85,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import { Container, Shape, Text } from '@createjs/easeljs/dist/easeljs.module'
+import { Container, Shape, Text } from 'createjs-module'
 import { APP, DISP, EXCLOUD } from '../../sub/constant/config'
 import { CATEGORY } from '../../sub/constant/Constants'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
