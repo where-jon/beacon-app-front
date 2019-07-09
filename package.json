@@ -1,7 +1,7 @@
 {
-  "name": "exbeacon-app-front",
+  "name": "exbeaconproject",
   "version": "1.0.0",
-  "description": "My funkadelic Nuxt.js project",
+  "description": "Nuxt.js project",
   "author": "",
   "private": true,
   "scripts": {
