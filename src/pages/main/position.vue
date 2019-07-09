@@ -681,12 +681,12 @@ export default {
       }
 
       const tx = this.selectedTx
-      const selectedAbsentTxPosition = absentPositions.find((pos) => pos.btx_id == tx.btxId)
+      const selectedAbsentTxPosition = absentPositions.find(pos => pos.btx_id == tx.btxId)
       // 不在表示用ゾーンに表示されている方を優先して表示する
       if (selectedAbsentTxPosition) {
         this.showDetail(tx.btxId, selectedAbsentTxPosition.x, selectedAbsentTxPosition.y)
       } else {
-        const selectedTxPosition = position.find((pos) => pos.btx_id == tx.btxId)
+        const selectedTxPosition = position.find(pos => pos.btx_id == tx.btxId)
         if (selectedTxPosition) {
           if (!selectedTxPosition.tx) {
             return
