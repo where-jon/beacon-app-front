@@ -779,7 +779,6 @@ export const adjustMultiPosition = (positions, ratio) => {
 export const adjustZonePosition = (positions, ratio, exbs = [], absentDisplayZone) => {
   return exbs.map((exb) => {
     // 不在表示用ゾーンへ表示するTXを抽出する
-    console.table(positions)
     const samePos = _.sortBy(positions, position => position.label)
       .filter((position) => {
         return (hasDisplayType('lost') && position.detectState == DETECT_STATE.LOST) ||
