@@ -22,25 +22,17 @@ const angle = 45
 export const zoneBtxIdAddNumber = 10000
 
 // ゾーンエリアに表示できる最後のTX位置で省略を表示する際に使用する
-export const zoneLastTxId = () => {
-  return 100000001
-}
+export const zoneLastTxId = () => { return 100000001 }
 
-export const isZoneLastTxId = (btxId) => {
-  return btxId == zoneLastTxId
-}
+export const isZoneLastTxId = (btxId) => { return btxId == zoneLastTxId }
 
 export const zoneLastTxData = () => {
   return { btx_id: zoneLastTxId(), pos_id: 0, label: '・・・', isLost: false, }
 }
 
-export const isDoubleTx = (btxId) => {
-  return btxId >= zoneBtxIdAddNumber
-}
+export const isDoubleTx = (btxId) => { return btxId >= zoneBtxIdAddNumber }
 
-export const getDoubleDefaultTxId = (btxId) => {
-  return btxId - zoneBtxIdAddNumber
-}
+export const getDoubleDefaultTxId = (btxId) => { return btxId - zoneBtxIdAddNumber }
 
 const defaultDisplay = {
   color: DISP.TX.COLOR,
