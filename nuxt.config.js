@@ -1,5 +1,39 @@
-module.exports = {
+
+export default {
   mode: 'spa',
+  /*
+  ** Headers of the page
+  */
+  head: {
+    title: process.env.npm_package_name || '',
+    meta: [
+      { charset: 'utf-8' },
+      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+      { hid: 'description', name: 'description', content: process.env.npm_package_description || '' }
+    ],
+    link: [
+      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+    ]
+  },
+  /*
+  ** Customize the progress-bar color
+  */
+  loading: { color: '#3B8070' },
+  /*
+  ** Global CSS
+  */
+  css: [
+  ],
+  /*
+  ** Plugins to load before mounting the App
+  */
+  plugins: [
+    '~/plugins/init',
+    '~/plugins/i18n'
+  ],
+  /*
+  ** Nuxt.js modules
+  */
   modules: [
     'nuxt-fontawesome'
   ],
@@ -7,57 +41,11 @@ module.exports = {
     base: '/',
     middleware: ['reset', 'check-auth']
   },
-  plugins: [
-    '~/plugins/init',
-    '~/plugins/i18n'
-  ],
-  /*
-  ** Headers of the page
-  */
-  head: {
-    title: 'EXBeacon Project',
-    meta: [
-      { charset: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: 'EXBeacon Project' }
-    ],
-    link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
-    ]
-  },
-  /*
-  ** Customize the progress bar color
-  */
-  loading: { color: '#3B8070' },
   /*
   ** Build configuration
   */
   build: {
-    babel: {
-      presets: [
-        [
-          'vue-app',
-          {
-            targets:  { ie: 11 },
-            useBuiltIns: true
-          }
-        ]
-      ]
-    },
-    vendor: [ 'babel-polyfill', 'url-search-params-polyfill' ],
-
-    /*
-    ** Run ESLint on save
-    */
     extend (config, { isDev, isClient }) {
-      if (isDev && isClient) {
-        config.module.rules.push({
-          enforce: 'pre',
-          test: /\.(js|vue)$/,
-          loader: 'eslint-loader',
-          exclude: /(node_modules)/
-        })
-      }
       config.module.rules.forEach((val) => {
         if (val.loader == 'babel-loader') {
           val.exclude = /node_modules\/(?!@createjs\/).*/
@@ -77,5 +65,5 @@ module.exports = {
         icons: ['fas']
       }
     ]
-  }
+  },
 }
