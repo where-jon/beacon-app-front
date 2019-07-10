@@ -260,6 +260,7 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     HORIZON: 5, // TXアイコンタイル表示時の列数
     VERTICAL: 5, // TXアイコンタイル表示時の行数
     DISPLAY_PRIORITY: ['category','group'], // TX表示の際に参照するdisplay方法の優先順位
+    ABSENT_ZONE_DISPLAY_TYPES: ['undetected','lost','absent'],   // undetected:未検知, lost:消失, absent:不在ゾーン）
   },
   EXB_LOC: {
     // EXB配置設定のEXB表示サイズ
