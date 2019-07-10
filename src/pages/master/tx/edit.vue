@@ -70,6 +70,10 @@
                 <span v-text="$i18n.tnl('label.dispAlways')" />
               </b-form-checkbox>
             </b-form-group>
+            <b-form-group v-if="form.x != null || form.y != null">
+              <label v-t="'label.locationZoneName'" />
+              <input v-model="form.locationName" :readonly="!isEditable" type="text" maxlength="20" class="form-control" :required="form.x != null || form.y != null">
+            </b-form-group>
             <b-form-group v-if="form.x != null">
               <label v-t="'label.locationX'" />
               <input v-model="form.x" :readonly="!isEditable" type="number" min="0" class="form-control">
@@ -97,6 +101,7 @@ import { APP } from '../../../sub/constant/config'
 import { CATEGORY, SENSOR } from '../../../sub/constant/Constants'
 import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
+import * as SensorHelper from '../../../sub/helper/domain/SensorHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as ValidateHelper from '../../../sub/helper/dataproc/ValidateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
@@ -121,7 +126,7 @@ export default {
       items: ViewHelper.createBreadCrumbItems('master', {text: 'tx', href: '/master/tx'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.tx.txId)),
       form: Util.extract(this.$store.state.app_service.tx, [
         'txId', 'btxId', 'major', 'minor', 'potTxList.0.pot.displayName', 'mapImage', 'dispPos', 'dispPir', 'dispAlways',
-        'txSensorList.0.sensor.sensorId', 'locationId', 'location.x', 'location.y', 'location',
+        'txSensorList.0.sensor.sensorId', 'locationId', 'location.locationName', 'location.x', 'location.y', 'location',
         'potTxList.0.pot.potId', 'potTxList.0.pot.potCd', 'potTxList.0.pot.displayName', 'potTxList.0.pot.description',
         'potTxList.0.pot.potCategoryList.0.category.categoryId',
         'potTxList.0.pot.potGroupList.0.group.groupId',
@@ -223,7 +228,7 @@ export default {
       }
       if (this.form.location) {
         var location = _.cloneDeep(this.form.location)
-        location.locationName = 'Loc' + (this.form.btxId * -1)
+        location.locationName = Util.getValue(this.form, 'locationName', SensorHelper.createTxLocationDummyName(this.form))
         location.posId = this.form.btxId * -1
         location.x = Util.hasValue(this.form.x)? this.form.x: null
         location.y = Util.hasValue(this.form.y)? this.form.y: null

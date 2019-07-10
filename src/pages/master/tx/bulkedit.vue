@@ -12,6 +12,7 @@ import { IGNORE, CATEGORY } from '../../../sub/constant/Constants'
 import * as ArrayUtil from '../../../sub/util/ArrayUtil'
 import * as Util from '../../../sub/util/Util'
 import * as BulkHelper from '../../../sub/helper/dataproc/BulkHelper'
+import * as SensorHelper from '../../../sub/helper/domain/SensorHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
@@ -47,7 +48,7 @@ export default {
       await StateHelper.load('category')
       await StateHelper.load('group')
       await StateHelper.load('pot')
-      await this.$refs.bulkEdit.bulkSave({numberList: ['btxId', 'major', 'minor', 'disp', 'x', 'y'], nullableList: ['x', 'y']})
+      await this.$refs.bulkEdit.bulkSave({numberList: ['btxId', 'major', 'minor', 'disp', 'x', 'y'], nullableList: ['locationName', 'x', 'y']})
     },
     restructTx(entity, dummyKey){
       if(APP.TX.BTX_MINOR == 'minor'){
@@ -138,7 +139,7 @@ export default {
         return dummyKey
       }
       const param = BulkHelper.createParamLocation(
-        {...entity, posId: entity.btxId * -1, locationName: 'Loc' + (entity.btxId * -1)},
+        {...entity, posId: entity.btxId * -1, locationName: Util.hasValue(entity.locationName)? entity.locationName: SensorHelper.createTxLocationDummyName(entity)},
         dummyKey
       )
       entity.location = param.location
