@@ -709,7 +709,7 @@ export default {
       const containerParent = DomUtil.getRect('#mapContainer', 'parentNode')
       const offsetX = map.left - containerParent.left + (!this.isInstallation ? 0 : 48)
       const isDispRight = x + offsetX + 100 < window.innerWidth
-      const navbarY = 62
+      const navbarY = containerParent.top
       const offsetY = map.top - navbarY + (!this.isInstallation ? 0 : 20)
 
       const position = PositionHelper.getPositions().find((e) => {
