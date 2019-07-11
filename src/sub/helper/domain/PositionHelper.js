@@ -585,9 +585,14 @@ const getCoordinateZone = (absentDisplayZone, ratio, samePos) => {
   const orgX = absentDisplayZone.x + (DISP.TX.R * ratio)
   const orgY = absentDisplayZone.y + (DISP.TX.R * ratio)
   const widthNum = Math.floor((absentDisplayZone.w + DISP.TX.R) / (txSize * ratio))
+  
+  if (widthNum == 0) {
+    return [{...zoneLastTxData(), x: orgX, y: orgY}]
+  }
+
   const heightNum = Math.floor((absentDisplayZone.h + DISP.TX.R) / (txSize * ratio))
   const hasOverTx = samePos.length > (widthNum * heightNum)
-  const hasNotEnoughArea = widthNum <= 0 || heightNum <= 0
+  const hasNotEnoughArea = heightNum <= 0
 
   return partitioningArray(samePos, widthNum).flatMap((array, i, a) => {
     return array.map((b, j, c) => {
@@ -786,7 +791,6 @@ export const adjustZonePosition = (positions, ratio, exbs = [], absentDisplayZon
         (hasDisplayType('absent') && position.exb && position.exb.isAbsentZone) ||
         (hasDisplayType('undetected') && DetectStateHelper.isUndetect(position.detectState))
       })
-
     const same = (!samePos || samePos.length == 0) ? [] : getCoordinateZone(absentDisplayZone, ratio, samePos)
     return [...same]
   }).filter(e => e).flatMap(e => e).filter(function (x, i, self) {
