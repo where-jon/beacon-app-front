@@ -593,7 +593,7 @@ const getCoordinateZone = (absentDisplayZone, ratio, samePos) => {
     return array.map((b, j, c) => {
       const isLast = i == heightNum -1 && j == widthNum -1
       const isOver = (hasOverTx && isLast) || i >= heightNum
-      if (hasNotEnoughArea || hasOverTx && isLast) {
+      if (hasNotEnoughArea || (hasOverTx && isLast)) {
         return {...zoneLastTxData(), x: orgX + txSize * ratio * j, y: orgY + txSize * ratio * i, isOver: false }
       } else {
         return {...b, x: orgX + txSize * ratio * j, y: orgY + txSize * ratio * i, isOver }
