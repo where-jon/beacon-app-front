@@ -263,6 +263,7 @@ export default {
           this.replace({showAlert: true})
           return
         }
+        this.showProgress()
         const paramCategoryId = this.vModelCategory ? this.vModelCategory : -1
         const paramZoneId = this.vModelZone ? this.vModelZone : -1
         const paramDate = this.getParamDate()
@@ -279,10 +280,12 @@ export default {
         if (fetchList == null || !fetchList.length) {
           this.message = this.$i18n.tnl('message.notFoundData', {target: this.$i18n.tnl('label.usageSituation')})
           this.replace({showAlert: true})
+          this.hideProgress()
           return
         }
         this.viewList = this.createViewList(aModeId, fetchList)
         this.totalRows = this.viewList.length
+        this.hideProgress()
       } catch(e) {
         console.error(e)
       }
