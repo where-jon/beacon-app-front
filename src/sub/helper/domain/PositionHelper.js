@@ -587,12 +587,13 @@ const getCoordinateZone = (absentDisplayZone, ratio, samePos) => {
   const widthNum = Math.floor((absentDisplayZone.w + DISP.TX.R) / (txSize * ratio))
   const heightNum = Math.floor((absentDisplayZone.h + DISP.TX.R) / (txSize * ratio))
   const hasOverTx = samePos.length > (widthNum * heightNum)
+  const hasNotEnoughArea = widthNum <= 0 || heightNum <= 0
 
   return partitioningArray(samePos, widthNum).flatMap((array, i, a) => {
     return array.map((b, j, c) => {
       const isLast = i == heightNum -1 && j == widthNum -1
       const isOver = (hasOverTx && isLast) || i >= heightNum
-      if (hasOverTx && isLast) {
+      if (hasNotEnoughArea || (hasOverTx && isLast)) {
         return {...zoneLastTxData(), x: orgX + txSize * ratio * j, y: orgY + txSize * ratio * i, isOver: false }
       } else {
         return {...b, x: orgX + txSize * ratio * j, y: orgY + txSize * ratio * i, isOver }
