@@ -108,6 +108,9 @@ export default {
       }
       if(!this.loadComplete){
         setTimeout(() => {
+          if(!VueUtil.isAuthVuePage(this)){
+            return
+          }
           this.showMapImage && this.showMapImage(disableErrorPopup)
         }, 200)
         return
@@ -115,14 +118,19 @@ export default {
       this.showTryCount++
       if (this.isShownMapImage) {
         if (callback) {
-          setTimeout(() => callback(), 0)
+          setTimeout(() => {
+            if(!VueUtil.isAuthVuePage(this)){
+              return
+            }
+            callback()
+          }, 0)
         }
         return
       }
       
       if (!StateHelper.getMapImage(this.getInitAreaOption())) {
         if (this.showTryCount < 10) {
-          this.$nextTick(() => {
+          VueUtil.nextTickEx(this, () => {
             console.warn('again because no image')
             this.showMapImage(disableErrorPopup)
           })
@@ -140,7 +148,12 @@ export default {
       bg.onload = (evt) => {
         this.drawMapImage(bg)
         if (callback) {
-          setTimeout(() => callback(), 0)
+          setTimeout(() => {
+            if(!VueUtil.isAuthVuePage(this)){
+              return
+            }
+            callback()
+          }, 0)
         }
       }
     },
@@ -197,6 +210,9 @@ export default {
 
       if(this.onMapLoaded){
         setTimeout(() => {
+          if(!VueUtil.isAuthVuePage(this)){
+            return
+          }
           this.onMapLoaded(size)
         }, 500)
       }

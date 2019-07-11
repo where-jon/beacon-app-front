@@ -107,6 +107,7 @@ import * as ColorUtil from '../../sub/util/ColorUtil'
 import * as DateUtil from '../../sub/util/DateUtil'
 import * as DomUtil from '../../sub/util/DomUtil'
 import * as StringUtil from '../../sub/util/StringUtil'
+import * as VueUtil from '../../sub/util/VueUtil'
 import * as AppServiceHelper from '../../sub/helper/dataproc/AppServiceHelper'
 import * as EXCloudHelper from '../../sub/helper/dataproc/EXCloudHelper'
 import * as IconHelper from '../../sub/helper/ui/IconHelper'
@@ -266,7 +267,7 @@ export default {
     this.resetDetail()
   },
   methods: {
-    async loadLegends () {
+    loadLegends () {
       const loadCategory = DISP.TX.DISPLAY_PRIORITY[0] == 'category'
       const magnetCategoryTypes = loadCategory? this.getMagnetCategoryTypes(): this.getMagnetGroupTypes()
       const legendElements = loadCategory? this.getCategoryLegendElements(): this.getGroupLegendElements()
@@ -352,9 +353,7 @@ export default {
         // if (!this.selectedTx.btxId) {
         //   await StateHelper.load('tx')
         // }
-        this.$nextTick(() => {
-          this.loadLegends()
-        })
+        VueUtil.nextTickEx(this, () => this.loadLegends())
         this.showMapImage(disableErrorPopup, payload)
         if (payload && payload.done) {
           payload.done()

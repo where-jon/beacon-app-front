@@ -6,6 +6,7 @@
 import h337 from 'heatmap.js'
 import _ from 'lodash'
 import * as Util from '../../util/Util'
+import * as VueUtil from '../../util/VueUtil'
 
 /**
  * ヒートマップのキャンバス要素を全て取得する。
@@ -47,13 +48,16 @@ export const removeHeatmap = mapElement => {
  * @param {Function} [onLoad = null] 
  * @return {Element}
  */
-export const create = (elementId, mapSrc = null, onLoad = null) => {
+export const create = (vueComponent, elementId, mapSrc = null, onLoad = null) => {
   const mapElement = document.getElementById(elementId)
-  while (mapElement.firstChild) {
+  while (mapElement && mapElement.firstChild) {
     mapElement.removeChild(mapElement.firstChild)
   }
   const map = new Image()
   map.onload = evt => {
+    if(!VueUtil.isAuthVuePage(vueComponent)){
+      return
+    }
     mapElement.appendChild(map)
     onLoad && onLoad(evt, mapElement, map)
   }

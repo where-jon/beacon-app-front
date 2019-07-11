@@ -285,7 +285,7 @@ export default {
     },
     createHeatmap(onLoad){
       let mapImage = StateHelper.getMapImage(this.getInitAreaOption())
-      HeatmapHelper.create('heatmap', mapImage, (evt, mapElement, map) => {
+      HeatmapHelper.create(this, 'heatmap', mapImage, (evt, mapElement, map) => {
         map.width = this.$refs.map.width
         map.height = this.$refs.map.height
         HeatmapHelper.draw(
@@ -484,7 +484,7 @@ export default {
       })
     },
     showChart(device, sensorData) {
-      SensorHelper.showThermoHumidityChart('dayChart', sensorData.data, this.$i18n)
+      SensorHelper.showThermoHumidityChart('dayChart', sensorData.data)
       this.isShownChart = true
       this.chartTitle = this.$i18n.tnl('message.monthDayTemperature', {
         month: sensorData.month,
