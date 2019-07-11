@@ -702,6 +702,11 @@ export const MENU = [
         path: 'stayRatioBase',
         icon: 'clock',
       },
+      {
+        key: 'proximityGraph',
+        path: 'proximityGraph',
+        icon: 'chart-bar',
+      },
     ]
   },
   {
