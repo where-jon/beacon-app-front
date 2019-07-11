@@ -16,6 +16,17 @@ import { addLabelByKey } from '../ui/ViewHelper'
 let chart = null
 let subChart = null
 
+let i18n
+
+/**
+ * vue.jsで使用するオブジェクトを設定する。
+ * @method
+ * @param {Object} pi18n
+ */
+export const setApp = pi18n => {
+  i18n = pi18n
+}
+
 /**
  * プロットされたデータのうち、最大値を取得する。
  * @method
@@ -224,10 +235,9 @@ export const calcDiscomfortIndex = (temperature, humidity) => 0.81 * temperature
  * @param {String} targetId センサ情報から値を取得するプロパティ名
  * @param {String} borderColor 線の色
  * @param {String} by 'minute'：1分間隔 or 'hour'：1時間間隔 or 'day'：1日間隔
- * @param {Object} i18n 
  * @return {Object[]}
  */
-export const createChartGraphDatasets = (yAxisID, label, chartData, targetId, borderColor, by, i18n) => {
+export const createChartGraphDatasets = (yAxisID, label, chartData, targetId, borderColor, by) => {
   const immediate = chartData.find(val => val.immediate)? true: false
   const average = chartData.find(val => val.average)? true: false
   const max = chartData.find(val => val.max)? true: false
@@ -273,18 +283,17 @@ export const createChartGraphOptions = (left, right, isResponsive = false) => {
  * @method
  * @param {Object[]} chartData createChartData()で作成したデータ
  * @param {String} by 'minute'：1分間隔 or 'hour'：1時間間隔 or 'day'：1日間隔
- * @param {Object} i18n 
  * @param {Boolean} [isResponsive = false] モバイル用
  * @return {Object} チャートグラフの描画情報
  */
-export const createChartThermohumidityOptions = (chartData, by, i18n, isResponsive = false) => {
+export const createChartThermohumidityOptions = (chartData, by, isResponsive = false) => {
   return {
     type:'line', 
     data:{
       labels: chartData.map(val => val.key),
       datasets: 
-        createChartGraphDatasets('temperature', i18n.tnl('label.temperature'), chartData, 'temperature', DISP.TEMPERATURE_LINE_COLOR, by, i18n)
-          .concat(createChartGraphDatasets('humidity', i18n.tnl('label.humidity'), chartData, 'humidity', DISP.HUMIDITY_LINE_COLOR, by, i18n))
+        createChartGraphDatasets('temperature', i18n.tnl('label.temperature'), chartData, 'temperature', DISP.TEMPERATURE_LINE_COLOR, by)
+          .concat(createChartGraphDatasets('humidity', i18n.tnl('label.humidity'), chartData, 'humidity', DISP.HUMIDITY_LINE_COLOR, by))
     },
     options: createChartGraphOptions(
       {
@@ -306,17 +315,16 @@ export const createChartThermohumidityOptions = (chartData, by, i18n, isResponsi
  * @method
  * @param {Object[]} chartData createChartData()で作成したデータ
  * @param {String} by 'minute'：1分間隔 or 'hour'：1時間間隔 or 'day'：1日間隔
- * @param {Object} i18n 
  * @param {Boolean} [isResponsive = false] モバイル用
  * @return {Object} チャートグラフの描画情報
  */
-export const createChartPirOptions = (chartData, by, i18n, isResponsive = false) => {
+export const createChartPirOptions = (chartData, by, isResponsive = false) => {
   return {
     type:'line', 
     data:{
       labels: chartData.map(val => val.key),
       datasets: 
-        createChartGraphDatasets('pir', i18n.tnl('label.pir'), chartData, 'count', DISP.PIR_LINE_COLOR, by, i18n)
+        createChartGraphDatasets('pir', i18n.tnl('label.pir'), chartData, 'count', DISP.PIR_LINE_COLOR, by)
     },
     options: createChartGraphOptions(
       {
@@ -338,17 +346,16 @@ export const createChartPirOptions = (chartData, by, i18n, isResponsive = false)
  * @method
  * @param {Object[]} chartData createChartData()で作成したデータ
  * @param {String} by 'minute'：1分間隔 or 'hour'：1時間間隔 or 'day'：1日間隔
- * @param {Object} i18n 
  * @param {Boolean} [isResponsive = false] モバイル用
  * @return {Object} チャートグラフの描画情報
  */
-export const createChartThermopileOptions = (chartData, by, i18n, isResponsive = false) => {
+export const createChartThermopileOptions = (chartData, by, isResponsive = false) => {
   return {
     type:'line', 
     data:{
       labels: chartData.map(val => val.key),
       datasets: 
-        createChartGraphDatasets('thermopile', i18n.tnl('label.thermopile'), chartData, 'count', DISP.THERMOPILE_LINE_COLOR, by, i18n)
+        createChartGraphDatasets('thermopile', i18n.tnl('label.thermopile'), chartData, 'count', DISP.THERMOPILE_LINE_COLOR, by)
     },
     options: createChartGraphOptions(
       {
@@ -370,17 +377,16 @@ export const createChartThermopileOptions = (chartData, by, i18n, isResponsive =
  * @method
  * @param {Object[]} chartData createChartData()で作成したデータ
  * @param {String} by 'minute'：1分間隔 or 'hour'：1時間間隔 or 'day'：1日間隔
- * @param {Object} i18n 
  * @param {Boolean} [isResponsive = false] モバイル用
  * @return {Object} チャートグラフの描画情報
  */
-export const createChartMagnetOptions = (chartData, by, i18n, isResponsive = false) => {
+export const createChartMagnetOptions = (chartData, by, isResponsive = false) => {
   return {
     type:'line', 
     data:{
       labels: chartData.map(val => val.key),
       datasets: 
-        createChartGraphDatasets('magnet', i18n.tnl('label.magnet'), chartData, 'magnet', DISP.MAGNET_LINE_COLOR, by, i18n)
+        createChartGraphDatasets('magnet', i18n.tnl('label.magnet'), chartData, 'magnet', DISP.MAGNET_LINE_COLOR, by)
     },
     options: createChartGraphOptions(
       {
@@ -405,17 +411,16 @@ export const createChartMagnetOptions = (chartData, by, i18n, isResponsive = fal
  * @method
  * @param {Object[]} chartData createChartData()で作成したデータ
  * @param {String} by 'minute'：1分間隔 or 'hour'：1時間間隔 or 'day'：1日間隔
- * @param {Object} i18n 
  * @param {Boolean} [isResponsive = false] モバイル用
  * @return {Object} チャートグラフの描画情報
  */
-export const createChartPressureOptions = (chartData, by, i18n, isResponsive = false) => {
+export const createChartPressureOptions = (chartData, by, isResponsive = false) => {
   return {
     type:'line', 
     data:{
       labels: chartData.map(val => val.key),
       datasets: 
-        createChartGraphDatasets('pressure', i18n.tnl('label.pressure'), chartData, 'pressVol', DISP.PRESSURE_LINE_COLOR, by, i18n)
+        createChartGraphDatasets('pressure', i18n.tnl('label.pressure'), chartData, 'pressVol', DISP.PRESSURE_LINE_COLOR, by)
     },
     options: createChartGraphOptions(
       {
@@ -437,19 +442,18 @@ export const createChartPressureOptions = (chartData, by, i18n, isResponsive = f
  * @method
  * @param {Object[]} chartData createChartData()で作成したデータ
  * @param {String} by 'minute'：1分間隔 or 'hour'：1時間間隔 or 'day'：1日間隔
- * @param {Object} i18n 
  * @param {Boolean} [isResponsive = false] モバイル用
  * @return {Object} チャートグラフの描画情報
  */
-export const createChartMeditagOptions = (chartData, by, i18n, isResponsive = false) => {
+export const createChartMeditagOptions = (chartData, by, isResponsive = false) => {
   return {
     type:'line', 
     data:{
       labels: chartData.map(val => val.key),
       datasets: 
-        createChartGraphDatasets('blood_pressure', i18n.tnl('label.h_blood_pressure'), chartData, 'high', DISP.H_BLOOD_PRESSURE_LINE_COLOR, by, i18n)
-          .concat(createChartGraphDatasets('blood_pressure', i18n.tnl('label.l_blood_pressure'), chartData, 'low', DISP.L_BLOOD_PRESSURE_LINE_COLOR, by, i18n))
-          .concat(createChartGraphDatasets('heart_rate', i18n.tnl('label.heart_rate'), chartData, 'beat', DISP.HEART_RATE_LINE_COLOR, by, i18n))
+        createChartGraphDatasets('blood_pressure', i18n.tnl('label.h_blood_pressure'), chartData, 'high', DISP.H_BLOOD_PRESSURE_LINE_COLOR, by)
+          .concat(createChartGraphDatasets('blood_pressure', i18n.tnl('label.l_blood_pressure'), chartData, 'low', DISP.L_BLOOD_PRESSURE_LINE_COLOR, by))
+          .concat(createChartGraphDatasets('heart_rate', i18n.tnl('label.heart_rate'), chartData, 'beat', DISP.HEART_RATE_LINE_COLOR, by))
     },
     options: createChartGraphOptions(
       {
@@ -471,18 +475,17 @@ export const createChartMeditagOptions = (chartData, by, i18n, isResponsive = fa
  * @method
  * @param {Object[]} chartData createChartData()で作成したデータ
  * @param {String} by 'minute'：1分間隔 or 'hour'：1時間間隔 or 'day'：1日間隔
- * @param {Object} i18n 
  * @param {Boolean} [isResponsive = false] モバイル用
  * @return {Object} チャートグラフの描画情報
  */
-export const createChartSubMeditagOptions = (chartData, by, i18n, isResponsive = false) => {
+export const createChartSubMeditagOptions = (chartData, by, isResponsive = false) => {
   return {
     type:'line', 
     data:{
       labels: chartData.map(val => val.key),
       datasets: 
-        createChartGraphDatasets('step', i18n.tnl('label.step'), chartData, 'step', DISP.STEP_LINE_COLOR, by, i18n)
-          .concat(createChartGraphDatasets('down_count', i18n.tnl('label.down_count'), chartData, 'down', DISP.DOWN_COUNT_LINE_COLOR, by, i18n))
+        createChartGraphDatasets('step', i18n.tnl('label.step'), chartData, 'step', DISP.STEP_LINE_COLOR, by)
+          .concat(createChartGraphDatasets('down_count', i18n.tnl('label.down_count'), chartData, 'down', DISP.DOWN_COUNT_LINE_COLOR, by))
     },
     options: createChartGraphOptions(
       {
@@ -506,11 +509,10 @@ export const createChartSubMeditagOptions = (chartData, by, i18n, isResponsive =
  * @param {Number} sensorId 
  * @param {Object[]} chartData createChartData()で作成したデータ
  * @param {String} by 'minute'：1分間隔 or 'hour'：1時間間隔 or 'day'：1日間隔
- * @param {Object} i18n 
  * @param {Boolean} [isResponsive = false] モバイル用
  * @return {Object} チャートグラフの情報
  */
-export const createChartGraph = (canvasId, sensorId, chartData, by, i18n, isResponsive = false) => {
+export const createChartGraph = (canvasId, sensorId, chartData, by, isResponsive = false) => {
   if(chart){
     chart.destroy()
   }
@@ -518,17 +520,17 @@ export const createChartGraph = (canvasId, sensorId, chartData, by, i18n, isResp
     subChart.destroy()
   }
   chart = new Chart(canvasId, 
-    sensorId == SENSOR.PIR? createChartPirOptions(chartData, by, i18n, isResponsive):
-      sensorId == SENSOR.THERMOPILE? createChartThermopileOptions(chartData, by, i18n, isResponsive):
-        sensorId == SENSOR.MAGNET? createChartMagnetOptions(chartData, by, i18n, isResponsive):
-          sensorId == SENSOR.MEDITAG? createChartMeditagOptions(chartData, by, i18n, isResponsive):
-            sensorId == SENSOR.PRESSURE? createChartPressureOptions(chartData, by, i18n, isResponsive):
-              createChartThermohumidityOptions(chartData, by, i18n, isResponsive)
+    sensorId == SENSOR.PIR? createChartPirOptions(chartData, by, isResponsive):
+      sensorId == SENSOR.THERMOPILE? createChartThermopileOptions(chartData, by, isResponsive):
+        sensorId == SENSOR.MAGNET? createChartMagnetOptions(chartData, by, isResponsive):
+          sensorId == SENSOR.MEDITAG? createChartMeditagOptions(chartData, by, isResponsive):
+            sensorId == SENSOR.PRESSURE? createChartPressureOptions(chartData, by, isResponsive):
+              createChartThermohumidityOptions(chartData, by, isResponsive)
   )
   chart.update()
   if(sensorId == SENSOR.MEDITAG){
     subChart = new Chart(`${canvasId}Sub`, 
-      createChartSubMeditagOptions(chartData, by, i18n, isResponsive)
+      createChartSubMeditagOptions(chartData, by, isResponsive)
     )
     subChart.update()
   }
@@ -563,15 +565,14 @@ export const createChartData = (range, data) => {
  * @method
  * @param {String} id canvas要素のid
  * @param {Object[]} data 温湿度情報リスト
- * @param {Object} i18n 
  * @return {Object} チャートグラフの情報
  */
-export const showThermoHumidityChart = (id, data, i18n) => {
+export const showThermoHumidityChart = (id, data) => {
   const range = ArrayUtil.numberRange(APP.SENSOR.TEMPERATURE.LINE_HOUR_START, APP.SENSOR.TEMPERATURE.LINE_HOUR_END)
   const chartData = createChartData(range, data.map(val => {return {key: val.key, immediate: {...val}}}))
   const suffix = ':00'
   chartData.forEach(val => val.key = val.key + suffix)
-  return createChartGraph(id, SENSOR.TEMPERATURE, chartData, 'hour', i18n)
+  return createChartGraph(id, SENSOR.TEMPERATURE, chartData, 'hour')
 }
 
 /**
@@ -583,13 +584,12 @@ export const showThermoHumidityChart = (id, data, i18n) => {
  * @param {Date} dateTo 
  * @param {Object[]} sensorData 
  * @param {String} by 'minute'：1分間隔 or 'hour'：1時間間隔 or 'day'：1日間隔
- * @param {Object} i18n 
  * @return {Object} チャートグラフの情報
  */
-export const showChartDetail = (canvasId, sensorId, dateFrom, dateTo, sensorData, by, i18n) => {
+export const showChartDetail = (canvasId, sensorId, dateFrom, dateTo, sensorData, by) => {
   const range = DateUtil.dateRange(dateFrom, dateTo, by)
   const chartData = createChartData(range, sensorData)
-  return createChartGraph(canvasId, sensorId, chartData, by, i18n, true)
+  return createChartGraph(canvasId, sensorId, chartData, by, true)
 }
 
 /**
@@ -620,19 +620,17 @@ export const setStress = (positions, sensors) => {
 /**
  * マグネットセンサの状態を言語化する。
  * @method
- * @param {Object} i18n 
  * @param {Number} magnetState 
  * @return {String}
  */
-export const getMagnetStateKey = (i18n, magnetState) => i18n.tnl(`label.${magnetState === SENSOR.MAGNET_STATUS.ON? 'using': 'notUse'}`)
+export const getMagnetStateKey = (magnetState) => i18n.tnl(`label.${magnetState === SENSOR.MAGNET_STATUS.ON? 'using': 'notUse'}`)
 
 /**
  * 温湿度センサの一覧表示で使用するテーブルの項目を取得する。
  * @method
- * @param {Object} i18n 
  * @return {Object[]}
  */
-export const getFields1 = i18n => {
+export const getFields1 = () => {
   return addLabelByKey(i18n, [
     {key: 'sensorDt', sortable: true, label:'dt'},
     {key: 'potName', sortable: true },
@@ -649,10 +647,9 @@ export const getFields1 = i18n => {
 /**
  * 人感センサの一覧表示で使用するテーブルの項目を取得する。
  * @method
- * @param {Object} i18n 
  * @return {Object[]}
  */
-export const getFields2 = i18n =>{
+export const getFields2 = () =>{
   return addLabelByKey(i18n, [
     {key: 'sensorDt', sortable: true, label:'dt'},
     ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceId')? {key: 'deviceId', sortable: true }: null,
@@ -667,10 +664,9 @@ export const getFields2 = i18n =>{
 /**
  * MEDiTAGの一覧表示で使用するテーブルの項目を取得する。
  * @method
- * @param {Object} i18n 
  * @return {Object[]}
  */
-export const getFields5 = i18n => {
+export const getFields5 = () => {
   return addLabelByKey(i18n, [
     {key: 'sensorDt', sortable: true, label:'dt'},
     {key: 'potName', sortable: true },
@@ -687,10 +683,9 @@ export const getFields5 = i18n => {
 /**
  * マグネットセンサの一覧表示で使用するテーブルの項目を取得する。
  * @method
- * @param {Object} i18n 
  * @return {Object[]}
  */
-export const getFields6 = i18n => {
+export const getFields6 = () => {
   return addLabelByKey(i18n, [
     {key: 'sensorDt', sortable: true, label:'dt'},
     {key: 'potName', sortable: true },
@@ -703,10 +698,9 @@ export const getFields6 = i18n => {
 /**
  * 圧力センサの一覧表示で使用するテーブルの項目を取得する。
  * @method
- * @param {Object} i18n 
  * @return {Object[]}
  */
-export const getFields8 = i18n => {
+export const getFields8 = () => {
   return addLabelByKey(i18n, [
     {key: 'sensorDt', sortable: true, label:'dt'},
     ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceId')? {key: 'deviceId', sortable: true }: null,
@@ -722,29 +716,28 @@ export const getFields8 = i18n => {
  * 指定したセンサで使用するテーブルの項目を取得する。
  * @method
  * @param {Number} sensorId 
- * @param {Object} i18n 
  * @return {Object[]} 規定値がない場合は温湿度と同値
  */
-export const getFields = (sensorId, i18n) => {
+export const getFields = (sensorId) => {
   if(sensorId == SENSOR.TEMPERATURE){
-    return getFields1(i18n)
+    return getFields1()
   }
   if(sensorId == SENSOR.PIR){
-    return getFields2(i18n)
+    return getFields2()
   }
   if(sensorId == SENSOR.THERMOPILE){
-    return getFields2(i18n)
+    return getFields2()
   }
   if(sensorId == SENSOR.MEDITAG){
-    return getFields5(i18n)
+    return getFields5()
   }
   if(sensorId == SENSOR.MAGNET){
-    return getFields6(i18n)
+    return getFields6()
   }
   if(sensorId == SENSOR.PRESSURE){
-    return getFields8(i18n)
+    return getFields8()
   }
-  return getFields1(i18n)
+  return getFields1()
 }
 
 /**

@@ -581,7 +581,7 @@ export default {
       this.showChart = true
       this.showSubChart = this.form.sensorId == SENSOR.MEDITAG
       this.$nextTick(() => {
-        SensorHelper.showChartDetail('dayChart', this.form.sensorId, this.form.datetimeFrom, this.form.datetimeTo, sensorData, by, this.$i18n)
+        SensorHelper.showChartDetail('dayChart', this.form.sensorId, this.form.datetimeFrom, this.form.datetimeTo, sensorData, by)
       })
     },
     async download(){

@@ -10,7 +10,6 @@
 <script>
 import { mapState } from 'vuex'
 import { APP } from '../../sub/constant/config'
-import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as CsvUtil from '../../sub/util/CsvUtil'
 import * as DateUtil from '../../sub/util/DateUtil'
@@ -111,7 +110,7 @@ export default {
     },
     async fetchSensorHistory(){
       const exCloudSensors = {}
-      if(!ArrayUtil.includesIgnoreCase(APP.TX_MON.WITH_SENSOR)){
+      if(!Util.hasValue(APP.TX_MON.WITH_SENSOR)){
         return exCloudSensors
       }
       for(let idx = 0; idx < APP.TX_MON.WITH_SENSOR.length; idx++){

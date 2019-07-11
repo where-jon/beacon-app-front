@@ -65,7 +65,7 @@ export default {
   methods: {
     async sensorChange(sensorId){
       this.params.fields.length = 0
-      SensorHelper.getFields(sensorId, this.$i18n).forEach((val) => this.params.fields.push(val))
+      SensorHelper.getFields(sensorId).forEach((val) => this.params.fields.push(val))
       this.selectedSensor = sensorId
       await this.fetchData()
     },
@@ -90,7 +90,7 @@ export default {
         step: Util.getValue(device, 'step', ''),
         down: Util.getValue(device, 'down', ''),
         pressVol: Util.getValue(device, 'pressVol', ''),
-        state: SensorHelper.getMagnetStateKey(this.$i18n, Util.getValue(device, 'magnet', '')),
+        state: SensorHelper.getMagnetStateKey(Util.getValue(device, 'magnet', '')),
         areaId: Util.getValue(device, 'areaId', ''),
         zoneId: Util.getValue(device, 'zoneId', ''),
         zoneCategoryId: Util.getValue(device, 'zoneCategoryId', ''),

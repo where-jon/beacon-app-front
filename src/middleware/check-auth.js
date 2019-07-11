@@ -9,6 +9,7 @@ import * as MenuHelper from '../sub/helper/dataproc/MenuHelper'
 import * as OptionHelper from '../sub/helper/dataproc/OptionHelper'
 import * as ProhibitHelper from '../sub/helper/domain/ProhibitHelper'
 import * as PositionHelper from '../sub/helper/domain/PositionHelper'
+import * as SensorHelper from '../sub/helper/domain/SensorHelper'
 import * as SettingHelper from '../sub/helper/domain/SettingHelper'
 import * as StateHelper from '../sub/helper/dataproc/StateHelper'
 import * as ValidateHelper from '../sub/helper/dataproc/ValidateHelper'
@@ -27,6 +28,7 @@ export default function (context) {
   OptionHelper.setApp(context.app.i18n)
   ProhibitHelper.setApp(context.app.i18n)
   ValidateHelper.setApp(context.app.i18n)
+  SensorHelper.setApp(context.app.i18n)
   VueSelectHelper.setApp(context.app.i18n)
   if (!process.browser) {
     return
