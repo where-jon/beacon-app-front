@@ -32,56 +32,50 @@
         <!-- region -->
         <table>
           <tr>
-            <td>
-              <table v-if="isTenantAdmin() || hasMultiRegion(regions)" class="region-table">
-                <tr v-if="isTenantAdmin()">
-                  <td>
-                    <font-awesome-icon icon="building" class="mr-1" style="visibility: hidden;" />
-                    <em v-t="this.$store.state.currentTenant? this.$store.state.currentTenant.tenantName: ''" class="region-em word-break" />
-                  </td>
-                </tr>
-                <tr v-if="hasMultiRegion(regions)">
-                  <td :class="regionTdClasses">
-                    <b-nav-item-dropdown :class="navbarClasses" size="sm" right>
-                      <template slot="button-content">
-                        <font-awesome-icon icon="building" class="mr-1" />
-                        <span>{{ this.$store.state.currentRegion? this.$store.state.currentRegion.regionName: '' }}</span>
-                      </template>
-                      <b-dropdown-item v-for="region in regionOptions(regions)" :key="region.regionId" :class="navbarClasses" href="#" @click="switchRegion($event.target, region)">
-                        <font-awesome-icon v-if="getStyleDropdownRegion(region.regionId)" icon="building" fixed-width />
-                        <span :style="{marginLeft: getStyleDropdownRegion(region.regionId)? '0px' : '20px'}">
-                          {{ region.regionName }}
-                        </span>
-                      </b-dropdown-item>
-                    </b-nav-item-dropdown>
-                  </td>
-                </tr>
-              </table>
-              <div v-show="getShowNav() && isResponsiveMenu()">
-                <custom-link :link-key="linkKey" :link-url="linkUrl" />
-                <!-- user & logout -->
-                <b-nav-item-dropdown right>
+            <td v-if="isTenantAdmin()" class="region-table pr-3">
+              <font-awesome-icon icon="building" class="mr-1" style="visibility: hidden;" />
+              <em v-t="this.$store.state.currentTenant? this.$store.state.currentTenant.tenantName: ''" class="region-em word-break" />
+            </td>
+            <td v-if="hasMultiRegion(regions)" class="region-table pr-3">
+              <div :class="regionTdClasses">
+                <b-nav-item-dropdown :class="navbarClasses" size="sm" right>
                   <template slot="button-content">
-                    <font-awesome-icon icon="user" />&nbsp;
-                    <em class="word-break">
-                      {{ loginId }}
-                    </em>
+                    <font-awesome-icon icon="building" class="mr-1" />
+                    <span>{{ this.$store.state.currentRegion? this.$store.state.currentRegion.regionName: '' }}</span>
                   </template>
-                  <b-dropdown-item href="#" @click="move('/setting/personal')">
-                    <font-awesome-icon icon="user-cog" fixed-width />&nbsp;&nbsp;{{ $t('label.personal') }}
-                  </b-dropdown-item>
-                  <b-dropdown-item href="#" @click="openHelp">
-                    <font-awesome-icon icon="question-circle" fixed-width />&nbsp;&nbsp;{{ $t('label.help') }}
-                  </b-dropdown-item>
-                  <b-dropdown-item href="#" @click="logout">
-                    <font-awesome-icon icon="sign-out-alt" fixed-width />&nbsp;&nbsp;{{ $t('label.logout') }}
-                  </b-dropdown-item>
-                  <b-dropdown-divider />
-                  <b-dropdown-item @click="versionClick">
-                    {{ getVersion() }}
+                  <b-dropdown-item v-for="region in regionOptions(regions)" :key="region.regionId" :class="navbarClasses" href="#" @click="switchRegion($event.target, region)">
+                    <font-awesome-icon v-if="getStyleDropdownRegion(region.regionId)" icon="building" fixed-width />
+                    <span :style="{marginLeft: getStyleDropdownRegion(region.regionId)? '0px' : '20px'}">
+                      {{ region.regionName }}
+                    </span>
                   </b-dropdown-item>
                 </b-nav-item-dropdown>
               </div>
+            </td>
+            <td v-show="getShowNav() && isResponsiveMenu()">
+              <custom-link :link-key="linkKey" :link-url="linkUrl" />
+              <!-- user & logout -->
+              <b-nav-item-dropdown right>
+                <template slot="button-content">
+                  <font-awesome-icon icon="user" />&nbsp;
+                  <em class="word-break">
+                    {{ loginId }}
+                  </em>
+                </template>
+                <b-dropdown-item href="#" @click="move('/setting/personal')">
+                  <font-awesome-icon icon="user-cog" fixed-width />&nbsp;&nbsp;{{ $t('label.personal') }}
+                </b-dropdown-item>
+                <b-dropdown-item href="#" @click="openHelp">
+                  <font-awesome-icon icon="question-circle" fixed-width />&nbsp;&nbsp;{{ $t('label.help') }}
+                </b-dropdown-item>
+                <b-dropdown-item href="#" @click="logout">
+                  <font-awesome-icon icon="sign-out-alt" fixed-width />&nbsp;&nbsp;{{ $t('label.logout') }}
+                </b-dropdown-item>
+                <b-dropdown-divider />
+                <b-dropdown-item @click="versionClick">
+                  {{ getVersion() }}
+                </b-dropdown-item>
+              </b-nav-item-dropdown>
             </td>
             <td v-show="!(getShowNav() && isResponsiveMenu())">
               <!-- user & logout -->
@@ -413,6 +407,7 @@ em:not(:hover) {
 }
 
 .region-table {
+  max-width: 100%;
   margin-bottom: auto;
   margin-top: auto;
   margin-right: 2px;
