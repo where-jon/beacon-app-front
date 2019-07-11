@@ -23,13 +23,13 @@
     }
   },
   "dependencies": {
-    "@createjs/easeljs": "2.0.0-beta.2",
-    "@createjs/tweenjs": "^2.0.0-beta.1",
+    "@createjs/easeljs": "2.0.0-beta.4",
+    "@createjs/tweenjs": "^2.0.0-beta.4",
     "@fortawesome/fontawesome-svg-core": "^1.2.19",
     "@fortawesome/free-solid-svg-icons": "^5.9.0",
     "@fortawesome/vue-fontawesome": "^0.1.6",
     "axios": "^0.19.0",
-    "bootstrap-vue": "^2.0.0-rc.25",
+    "bootstrap-vue": "^2.0.0-rc.26",
     "chart.js": "^2.8.0",
     "createjs-module": "^0.8.3",
     "element-ui": "^2.10.1",
