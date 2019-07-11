@@ -860,17 +860,14 @@ export default {
     },
     GatewayCsvItems() {
       return [
-        { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
         { isActive: true, displayName: this.getLabel('no'), keyName: 'num' },
         { isActive: true, displayName: this.getLabel('deviceId'), keyName: 'deviceId' },
         { isActive: true, displayName: this.getLabel('finalReceiveTimestamp'), keyName: 'updated' },
         { isActive: true, displayName: this.getLabel('state'), keyName: 'state' },
-        { isActive: true, displayName: this.getHelpDescription('delFlg'), keyName: 'delFlg' },
       ]
     },
     positionCsvItems() {
       return [
-        { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
         { isActive: true, displayName: this.getLabel('btx_id'), keyName: 'btx_id' },
         { isActive: true, displayName: this.getLabel('major'), keyName: 'major' },
         { isActive: true, displayName: this.getLabel('minor'), keyName: 'minor' },
@@ -879,35 +876,29 @@ export default {
         { isActive: true, displayName: this.getLabel('finalReceiveLocation'), keyName: 'location' },
         { isActive: true, displayName: this.getLabel('finalReceiveTimestamp'), keyName: 'timestamp' },
         { isActive: true, displayName: this.getLabel('state'), keyName: 'state' },
-        { isActive: true, displayName: this.getHelpDescription('delFlg'), keyName: 'delFlg' },
       ]
     },
     telemetryCsvItems() {
       return [
-        { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
         { isActive: true, displayName: this.getLabel('deviceId'), keyName: 'deviceId' },
         { isActive: true, displayName: this.getLabel('deviceIdX'), keyName: 'deviceIdX' },
         { isActive: true, displayName: this.getLabel('exbName'), keyName: 'finalRevceivePlace' },
         { isActive: true, displayName: this.getLabel('powerLevel'), keyName: 'powerLevel' },
         { isActive: true, displayName: this.getLabel('finalReceiveTimestamp'), keyName: 'timestamp' },
         { isActive: true, displayName: this.getLabel('state'), keyName: 'state' },
-        { isActive: true, displayName: this.getHelpDescription('delFlg'), keyName: 'delFlg' },
       ]
     },
     usageSituationCsvItems() {
       return [
-        { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
         { isActive: true, displayName: this.getLabel('zoneCategoryName'), keyName: 'zoneCategoryName' },
         { isActive: true, displayName: this.getLabel('zoneName'), keyName: 'zoneName' },
         { isActive: true, displayName: this.getLabel('utilizationRatioP'), keyName: 'rate' },
         { isActive: true, displayName: this.getLabel('utilizationTime'), keyName: 'cnt' },
         { isActive: true, displayName: this.getLabel('numOfUsers'), keyName: 'numUse' },
-        { isActive: true, displayName: this.getHelpDescription('delFlg'), keyName: 'delFlg' },
       ]
     },
     sensorGraphCsvItems() {
       return [
-        { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
         { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'humidity(lat)' },
         { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'humidity(max)' },
         { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'humidity(avg)' },
@@ -946,12 +937,10 @@ export default {
         { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'pressVol(max)' },
         { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'pressVol(avg)' },
         { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'pressVol(min)' },
-        { isActive: true, displayName: this.getHelpDescription('delFlg'), keyName: 'delFlg' },
       ]
     },
     stayRatioCsvItems() {
       return [
-        { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
         { isActive: true, displayName: this.getLabel('date'), keyName: 'date' },
         { isActive: true, displayName: this.getLabel('name'), keyName: 'name' },
         { isActive: true, displayName: this.getLabel('groupName'), keyName: 'groupName' },
@@ -963,12 +952,10 @@ export default {
         { isActive: true, displayName: this.getLabel('absent1Ratio'), keyName: this.getLabel('stayRatioAbsent1Ratio') },
         { isActive: true, displayName: this.getLabel('absent2Ratio'), keyName: this.getLabel('stayRatioAbsent2Ratio') },
         { isActive: true, displayName: this.getLabel('lostRatio'), keyName: 'lostRatio' },
-        { isActive: true, displayName: this.getHelpDescription('delFlg'), keyName: 'delFlg' },
       ]
     },
     temperatureHistoryCsvItems() {
       return [
-        { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
         { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'sensorHistoryId' },
         { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'txId' },
         { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'exbId' },
@@ -976,12 +963,10 @@ export default {
         { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'sensorDt' },
         { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'temperature' },
         { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'humidity' },
-        { isActive: true, displayName: this.getHelpDescription('delFlg'), keyName: 'delFlg' },
       ]
     },
     positionHistoryCsvItems() {
       return [
-        { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
         { isActive: true, displayName: this.getLabel('dt'), keyName: 'positionDt' },
         { isActive: true, displayName: this.getConfig('OPTIONS.POSITION_HISTORY.txName'), keyName: 'txName' },
         { isActive: true, displayName: this.getConfig('OPTIONS.POSITION_HISTORY.major'), keyName: 'major' },
@@ -992,12 +977,10 @@ export default {
         { isActive: true, displayName: this.getLabel('area'), keyName: 'areaName' },
         { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'x' },
         { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'y' },
-        { isActive: true, displayName: this.getHelpDescription('delFlg'), keyName: 'delFlg' },
       ]
     },
     sensorHistoryCsvItems() {
       return [
-        { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
         { isActive: true, displayName: this.getLabel('dt'), keyName: 'sensorDt' },
         { isActive: true, displayName: this.getLabel('sensorName'), keyName: 'sensorName' },
         { isActive: true, displayName: this.getLabel('deviceNum'), keyName: 'deviceNum' },
@@ -1019,12 +1002,10 @@ export default {
         { isActive: true, displayName: this.getLabel('down_count'), keyName: 'down' },
         { isActive: true, displayName: this.getLabel('state'), keyName: 'state' },
         { isActive: true, displayName: this.getLabel('pressVol'), keyName: 'pressVol' },
-        { isActive: true, displayName: this.getHelpDescription('delFlg'), keyName: 'delFlg' },
       ]
     },
     notifyHistoryCsvItems() {
       return [
-        { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
         { isActive: true, displayName: this.getLabel('dt'), keyName: 'positionDt' },
         { isActive: true, displayName: this.getLabel('notifyTo'), keyName: 'notifyTo' },
         { isActive: true, displayName: this.getLabel('major'), keyName: 'majors' },
@@ -1034,7 +1015,6 @@ export default {
         { isActive: true, displayName: this.getLabel('deviceNum'), keyName: 'deviceNum' },
         { isActive: true, displayName: this.getLabel('finalReceiveTime'), keyName: 'finalReceiveTime' },
         { isActive: true, displayName: this.getLabel('notifyResult'), keyName: 'notifyResult' },
-        { isActive: true, displayName: this.getHelpDescription('delFlg'), keyName: 'delFlg' },
       ]
     }
   }
