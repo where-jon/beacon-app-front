@@ -65,6 +65,7 @@ import * as ColorUtil from '../../../sub/util/ColorUtil'
 import * as StringUtil from '../../../sub/util/StringUtil'
 import * as Util from '../../../sub/util/Util'
 import * as HttpHelper from '../../../sub/helper/base/HttpHelper'
+import * as SensorHelper from '../../../sub/helper/domain/SensorHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as StyleHelper from '../../../sub/helper/ui/StyleHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
@@ -380,7 +381,7 @@ export default {
       if (!tx.location.locationId) {
         tx.location.locationId = tx.btxId * -1
         tx.location.posId = tx.btxId * -1
-        tx.location.locationName = 'Loc' + (tx.btxId * -1)
+        tx.location.locationName = Util.getValue(tx, 'location.locationName', SensorHelper.createTxLocationDummyName(tx))
       }
       if (reset) {
         tx.location = {...tx.location, areaId: null, x: null, y: null, area: null}

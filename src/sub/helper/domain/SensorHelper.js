@@ -762,3 +762,11 @@ export const getSensorIds = exb => {
   }
   return [null]
 }
+
+/**
+ * Txの場所名を自動作成する。
+ * @method
+ * @param {Object} tx 
+ * @return {String}
+ */
+export const createTxLocationDummyName = tx => 'tx' + (APP.TX.BTX_MINOR == 'minor'? tx.minor * -1: tx.btxId * -1)
