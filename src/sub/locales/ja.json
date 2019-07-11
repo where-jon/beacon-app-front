@@ -280,6 +280,8 @@
     "proximityId": "交流ID",
     "proximityGraph": "交流分析",
     "grouping": "グルーピング",
+    "age": "年代",
+
     "attendance": "出退勤:",
     "attendanceId": "出退勤ID",
     "workday": "日にち",

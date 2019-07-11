@@ -279,6 +279,8 @@
     "proximityId": "Interaction ID",
     "proximityGraph": "",
     "grouping": "",
+    "age": "",
+
     "attendance": "Attendance (clock-in and clock-out):",
     "attendanceId": " Attendance ID",
     "workday": "Work day",

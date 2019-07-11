@@ -314,6 +314,18 @@ export const SUM_UNIT_AXIS = {
   }
 }
 
+export const PROXIMITY_STACK = {
+  getOptions(){
+    return [
+      {value:'group', text: i18n.t('label.group')},
+      {value:'category', text: i18n.t('label.category')},
+      {value:'age', text: i18n.t('label.age')},
+      {value:'zone', text: i18n.t('label.zone')},
+      {value:'zoneCategory', text: i18n.t('label.zoneCategory')},
+    ]
+  }
+}
+
 export const THERMOHUMIDITY = {
   CALC: {
     DISCOMFORT: 1,

@@ -66,7 +66,7 @@
         </b-form-group>
       </b-form>
       <div>
-        <canvas v-show="!showAlert && showChart" id="stayTimeChart" ref="stayTimeChart" />
+        <canvas v-show="!showAlert && showChart" id="proximityChart" ref="proximityChart" />
       </div>
     </div>
   </div>
@@ -77,7 +77,7 @@ import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import { APP, DISP } from '../../sub/constant/config'
-import { SUM_UNIT_STACK, SUM_UNIT_AXIS, SUM_FILTER_KIND } from '../../sub/constant/Constants'
+import { PROXIMITY_STACK, SUM_FILTER_KIND } from '../../sub/constant/Constants'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as DateUtil from '../../sub/util/DateUtil'
 import * as Util from '../../sub/util/Util'
@@ -116,8 +116,7 @@ export default {
       message: '',
       filterIdOptions: [],
       filterKindOptions: SUM_FILTER_KIND.getOptions(),
-      stackOptions: SUM_UNIT_STACK.getOptions(),
-      axisOptions: SUM_UNIT_AXIS.getOptions(),
+      stackOptions: PROXIMITY_STACK.getOptions(),
       chartData: [],
       axises: [],
       stacks: [],
@@ -200,12 +199,6 @@ export default {
         {value:2, text: this.$i18n.t('label.thing')}
       ]
     },
-    changeAxis(newVal) {
-      this.form.axis = newVal
-      if (this.form.axis == this.form.stack) { // 軸と積上げは同じにしない
-        this.form.stack = null
-      }
-    },
     changeStack(newVal) {
       this.form.stack = newVal
       if (this.form.axis == this.form.stack) { // 軸と積上げは同じにしない
@@ -239,7 +232,6 @@ export default {
       const param = _.cloneDeep(this.form)
       param.datetimeFrom = new Date(param.datetimeFrom).getTime()
       param.datetimeTo = new Date(param.datetimeTo).getTime()
-      param.fillGap = APP.STAY_SUM.AXIS_FILL_GAP
       const url = '/office/proximity/sum?_=' + new Date().getTime() + '&' +  HttpHelper.toParam(param, true)
       const sumData = await HttpHelper.getAppService(url)
       Util.debug(sumData)
@@ -251,14 +243,14 @@ export default {
       }
 
       // show Chart
-      let err = this.showStayTimeChart(sumData)
+      let err = this.showProximityChart(sumData)
       if (err) {
         this.message = this.$i18n.t('message.' + err)
         this.replace({showAlert: true})
         this.hideProgress()
       }
     },
-    showStayTimeChart(sumData) {
+    showProximityChart(sumData) {
       // convert data for chart
       sumData.forEach((e) => {
         if (e.stackId == null) {
@@ -302,11 +294,11 @@ export default {
       // 棒グラフの最大値に合わせて目盛を秒・分・時で計算
       let yLabel = 'unitSecond'
       let div = 1
-      if (maxPeriod > APP.STAY_SUM.UNIT_HOUR) {
+      if (maxPeriod > APP.PROXIMITY.UNIT_HOUR) {
         yLabel = 'unitHour'
         div = 60 * 60
       }
-      else if (maxPeriod > APP.STAY_SUM.UNIT_MINUTE) {
+      else if (maxPeriod > APP.PROXIMITY.UNIT_MINUTE) {
         yLabel = 'unitMinute'
         div = 60
       }
@@ -327,8 +319,8 @@ export default {
 
       // show chart
       this.showChart = true
-      const parent = document.getElementById('stayTimeChart').parentElement
-      const canvas = this.$refs.stayTimeChart
+      const parent = document.getElementById('proximityChart').parentElement
+      const canvas = this.$refs.proximityChart
       canvas.width = parent.clientWidth
       if (BrowserUtil.isAndroidOrIOS()) {
         canvas.height = 250
@@ -337,7 +329,7 @@ export default {
         canvas.height = document.documentElement.clientHeight - parent.offsetTop - 80
       }
       this.$nextTick(() => {
-        ChartHelper.showBarChart('stayTimeChart', axises, stacks, chartData, yLabelString)
+        ChartHelper.showBarChart('proximityChart', axises, stacks, chartData, yLabelString)
         this.hideProgress()
       })
 
@@ -382,7 +374,7 @@ export default {
         rows.push('"' + this.stacks[idx] + '",' + e.join(','))
       })
       BrowserUtil.fileDL(
-        'stayTime.csv',
+        'proximity.csv',
         rows.join('\n'),
         getCharSet(this.$store.state.loginId)
       )
