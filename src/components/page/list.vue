@@ -202,7 +202,7 @@
 
       <!-- pager -->
       <b-row>
-        <b-col v-if="usePagenation" md="6" class="my-1">
+        <b-col v-if="usePagenation" md="6" class="mt-1 mb-3">
           <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" class="my-0" />
         </b-col>
         <!-- bulk upload button -->

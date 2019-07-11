@@ -44,7 +44,7 @@
           </b-col>
         </b-row>
         <b-row>
-          <b-col md="6" class="my-1">
+          <b-col md="6" class="mt-1 mb-3">
             <b-pagination v-model="currentPage" :total-rows="fetchRows" :per-page="perPage" class="my-0" />
           </b-col>
         </b-row>
