@@ -806,7 +806,6 @@ $right-pane-left-px: $right-pane-left * 1px;
 
 .rightPane {
   max-width: $right-pane-maxwidth-px;
-  margin: 10px;
   padding: 3px;
   width: $right-pane-width-px;
   min-width: $right-pane-width-px;
@@ -814,21 +813,31 @@ $right-pane-left-px: $right-pane-left * 1px;
   overflow-y: scroll;
   -ms-overflow-x: auto;
   -ms-overflow-y: auto;
+  -ms-overflow-style:none;
   @media (min-width: 769px) {
-    height: calc(100vh - 100px);
+    height: calc(80vh - 100px);
   }
   @media (max-width: 768px) {
     height: calc(70vh - 100px);
   }
 }
+.rightPane::-webkit-scrollbar {
+  display: none;
+}
 
 .rightPaneChild {
   @extend .rightPane;
+  -ms-overflow-x: hidden;
 }
 
 @media all and (-ms-high-contrast: none){
   .rightPaneChild {
-    height: calc(100vh - 140px);
+    @media (min-width: 769px) {
+      height: calc(80vh - 100px);
+    }
+    @media (max-width: 768px) {
+      height: calc(70vh - 100px);
+    }
   }
 }
 
