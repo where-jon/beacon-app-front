@@ -832,11 +832,11 @@ export default {
     userCsvItems() {
       return [
         { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'userId' },
         { isActive: true, displayName: this.getLabel('loginId'), keyName: 'loginId' },
-        { isActive: true, displayName: this.getLabel('name'), keyName: 'name' },
         { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'pass' },
         { isActive: true, displayName: this.getLabel('email'), keyName: 'email' },
+        { isActive: true, displayName: this.getLabel('name'), keyName: 'name' },
+        { isActive: true, displayName: this.getLabel('regionName'), keyName: 'regionName' },
         { isActive: true, displayName: this.getLabel('role'), keyName: 'roleName' },
         { isActive: true, displayName: this.getLabel('description'), keyName: 'description' },
         { isActive: true, displayName: this.getHelpDescription('delFlg'), keyName: 'delFlg' },
