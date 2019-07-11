@@ -326,6 +326,20 @@ export const PROXIMITY_STACK = {
   }
 }
 
+export const PROXIMITY_FILTER_KIND = {
+  getOptions(){
+    return [
+      {value:null, text: ''},
+      {value:'pot', text: i18n.t('label.pot')},
+      {value:'area', text: i18n.t('label.area')},
+      {value:'category', text: i18n.t('label.category')},
+      {value:'group', text: i18n.t('label.group')},
+      {value:'zone', text: i18n.t('label.zone')},
+      {value:'zoneCategory', text: i18n.t('label.zoneCategory')},
+    ]
+  }
+}
+
 export const THERMOHUMIDITY = {
   CALC: {
     DISCOMFORT: 1,

@@ -77,7 +77,7 @@ import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import { APP, DISP } from '../../sub/constant/config'
-import { PROXIMITY_STACK, SUM_FILTER_KIND } from '../../sub/constant/Constants'
+import { PROXIMITY_STACK, PROXIMITY_FILTER_KIND } from '../../sub/constant/Constants'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as DateUtil from '../../sub/util/DateUtil'
 import * as Util from '../../sub/util/Util'
@@ -106,7 +106,7 @@ export default {
         datetimeTo: '2019-02-22',
         filterKind: null,
         filterId: null,
-        stack: 'area',
+        stack: 'zone',
         axis: 'day',
       },
       vueSelectedKeys: ['pot', 'category', 'group', 'area', 'zone', 'zoneCategory'],
@@ -115,7 +115,7 @@ export default {
       },
       message: '',
       filterIdOptions: [],
-      filterKindOptions: SUM_FILTER_KIND.getOptions(),
+      filterKindOptions: PROXIMITY_FILTER_KIND.getOptions(),
       stackOptions: PROXIMITY_STACK.getOptions(),
       chartData: [],
       axises: [],
@@ -167,20 +167,17 @@ export default {
       this.form.filterKind = newVal
       this.vueSelected.filter = null
       switch (newVal) {
-      case 'potType':
-        this.filterIdOptions = this.potTypeOptions()
-        break
       case 'pot':
         this.filterIdOptions = this.pots.map(e => ({value: e.potId, label: e.potName}))
+        break
+      case 'area':
+        this.filterIdOptions = this.areas.map(e => ({value: e.areaId, label: e.areaName}))
         break
       case 'group':
         this.filterIdOptions = this.groups.map(e => ({value: e.groupId, label: e.groupName}))
         break
       case 'category':
         this.filterIdOptions = this.categories.filter(e => e.categoryType == 1 || e.categoryType == 2).map(e => ({value: e.categoryId, label: e.categoryName}))
-        break
-      case 'area':
-        this.filterIdOptions = this.areas.map(e => ({value: e.areaId, label: e.areaName}))
         break
       case 'zone':
         this.filterIdOptions = this.zones.map(e => ({value: e.zoneId,label: e.zoneName}))
@@ -192,12 +189,6 @@ export default {
         this.filterIdOptions = []
         break
       }
-    },
-    potTypeOptions() {
-      return [
-        {value:1, text: this.$i18n.t('label.person')},
-        {value:2, text: this.$i18n.t('label.thing')}
-      ]
     },
     changeStack(newVal) {
       this.form.stack = newVal
