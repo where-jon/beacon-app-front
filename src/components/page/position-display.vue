@@ -52,6 +52,7 @@ export default {
       listName: StringUtil.single2multi(this.masterName),
       eachListName: StringUtil.concatCamel('each', StringUtil.single2multi(this.masterName)),
       prohibitDetectList : null,
+      loadStates: ['area', 'zone', 'tx', 'exb', 'lostZones','prohibit'],
       showDismissibleAlert: false,
     }
   },
@@ -103,13 +104,9 @@ export default {
       try {
         this.showProgress()
         console.log('fetchData Started.')
-        await StateHelper.load(this.masterName)
-        await StateHelper.load('tx')
-        await StateHelper.load('exb')
-        await StateHelper.load('prohibit')
-        await StateHelper.load('lostZones')
+        await Promise.all(this.loadStates.map(StateHelper.load))
         // positionデータ取得
-        await PositionHelper.storePositionHistory(null, false, true)
+        await PositionHelper.storePositionHistory(null, true, true)
         this.replaceAS({positions: PositionHelper.getPositions()})
         ProhibitHelper.setProhibitDetect('display', this)
         this.alertData.message = this.message
