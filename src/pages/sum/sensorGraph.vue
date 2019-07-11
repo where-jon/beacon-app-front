@@ -386,7 +386,7 @@ export default {
         low: 0, high: 0, pressure: 0, downLatest: 0, down: 0, magnet: 0, pressVol: 0,
       }
       dataList.forEach((data) => {
-        Object.keys(data).forEach((key) => {
+        Object.keys(data).forEach(key => {
           if(data[key] != null){
             count[key]++
           }
@@ -526,7 +526,7 @@ export default {
       })
       const sumUnitOption = SUM_UNIT.getOptions()
       const sumTarget = this.convertSumTarget()
-      return Object.keys(sensorEditData).map((keyVal) => {
+      return Object.keys(sensorEditData).map(keyVal => {
         const key = keyVal
         const immediate = sensorEditData[key].reduce((a, b) => this.compare(a.sensorDt, b.sensorDt) > 0? a: b)
         const average = this.createAverageDataList(key, sensorEditData[key])
@@ -550,12 +550,12 @@ export default {
     validate() {
       const errors = ValidateHelper.validateCheck([
         {type: 'require', 
-          names: [this.showExb? 'exbId': null, this.showTx? 'tx': null].filter((val) => val),
-          values: [this.showExb? this.form.exbId: null, this.showTx? this.form.txId: null].filter((val) => val)},
+          names: [this.showExb? 'exbId': null, this.showTx? 'tx': null].filter(val => val),
+          values: [this.showExb? this.form.exbId: null, this.showTx? this.form.txId: null].filter(val => val)},
         {type: 'require', names: ['historyDateFrom'], values: [this.form.datetimeFrom]},
         {type: 'require', names: ['historyDateFrom'], values: [this.form.datetimeTo]},
         this.form.datetimeFrom && this.form.datetimeTo? {type: 'asc', names: ['historyDateFrom'], values: [this.form.datetimeFrom.getTime(), this.form.datetimeTo.getTime()], equal: false}: null,
-      ].filter((val) => val && val.names.length >= 1))
+      ].filter(val => val && val.names.length >= 1))
       return ValidateHelper.formatValidateMessage(errors)
     },
     async display() {
@@ -569,12 +569,14 @@ export default {
         this.replace({showAlert: true})
         return
       }
-      const by = SUM_UNIT.getOptions().find((val) => val.value == this.form.sumUnit).param
+      const by = SUM_UNIT.getOptions().find(val => val.value == this.form.sumUnit).param
+      this.showProgress()
       const sensorData = await this.fetch(by)
-      this.dataList = sensorData.map((val) => val.csvData)
+      this.dataList = sensorData.map(val => val.csvData)
       if (sensorData.length == 0) {
         this.message = this.$i18n.tnl('message.notFound')
         this.replace({showAlert: true})
+        this.hideProgress()
         return
       }
       this.dataSensorId = this.form.sensorId
@@ -582,6 +584,7 @@ export default {
       this.showSubChart = this.form.sensorId == SENSOR.MEDITAG
       this.$nextTick(() => {
         SensorHelper.showChartDetail('dayChart', this.form.sensorId, this.form.datetimeFrom, this.form.datetimeTo, sensorData, by)
+        this.hideProgress()
       })
     },
     async download(){

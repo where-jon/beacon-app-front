@@ -141,7 +141,7 @@ export default {
         senHist.major = aTx.major
         senHist.minor = aTx.minor
         senHist.locationName = aTx.locationName
-        senHist.posId = aTx.posId
+        senHist.posId = null
         senHist.areaName = aTx.areaName
       }
 

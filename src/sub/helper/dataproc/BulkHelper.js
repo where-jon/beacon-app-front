@@ -202,6 +202,20 @@ export const createCsvErrorMessage = csvErrors => {
 }
 
 /**
+ * エラーが発生した項目の名称を編集する。
+ * @method
+ * @param {String} name 
+ * @param {String} col 
+ * @return {String}
+ */
+export const getErrorColumnName = (name, col) => {
+  if(name == 'tx' && col == 'locationName'){
+    return 'locationZoneName'
+  }
+  return col
+}
+
+/**
  * 一括登録時に発生したエラーメッセージを整形する。
  * @method
  * @param {Error} e
@@ -215,7 +229,7 @@ export const getBulkErrorMessage = (e, name, showLine) => {
       const col = err.col.trim()
       return i18n.tline('message.bulk' + err.type + 'Failed', {
         line: err.line,
-        col: i18n.tnl(`label.${col}`),
+        col: i18n.tnl(`label.${getErrorColumnName(name, col)}`),
         value: StringUtil.sanitize(err.value),
         min: err.min,
         max: err.max,

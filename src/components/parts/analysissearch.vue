@@ -242,6 +242,7 @@ export default {
       return ValidateHelper.formatValidateMessage(errors)
     },
     async display() {
+      this.showProgress()
       this.replace({showAlert: false})
       let errorMessage = this.validate()
       if (Util.hasValue(errorMessage)) {
@@ -271,6 +272,7 @@ export default {
           console.error(e)
         }
       }
+      this.hideProgress()
     },
   }
 }
