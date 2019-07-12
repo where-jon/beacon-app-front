@@ -9,7 +9,7 @@
         <b-col id="bd-page" :md="getShowSideBar()? 10: 12" class="pl-0 pr-0">
           <b-container fluid>
             <b-row>
-              <b-col class="pb-md-3 pl-md-5 pl-xl-5 pr-xl-5 bd-content">
+              <b-col class="pl-md-5 pl-xl-5 pr-xl-5 bd-content">
                 <nuxt />
                 <div v-if="showProgress" class="spinner-parent">
                   <vue-simple-spinner size="large" line-fg-color="#a09e9e" line-bg-color="#dee2e6" />

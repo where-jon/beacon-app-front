@@ -3,7 +3,7 @@
     <breadcrumb :items="items" :reload="true" @reload="fetchData" />
     <div v-for="(env, index) in envs" :key="index">
       <div>{{ env.key }}</div>
-      <table>
+      <table class="mb-3">
         <tr v-for="(cenv, cindex) in env.val" :key="cindex">
           <td>{{ cenv.key }}</td>
           <td v-if="!isArray(cenv.val)">
