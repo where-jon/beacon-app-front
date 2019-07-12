@@ -278,6 +278,14 @@
     
     "proximity": "交流",
     "proximityId": "交流ID",
+    "proximityGraph": "交流分析",
+    "grouping": "グルーピング",
+    "age": "年代",
+    "target": "対象",
+    "proximityTime": "時間",
+    "proximityCount": "回数",
+    "proximityTotal": "合計(時間)",
+
     "attendance": "出退勤:",
     "attendanceId": "出退勤ID",
     "workday": "日にち",
@@ -580,6 +588,7 @@
     "unitSecond": "単位(秒)",
     "unitMinute": "単位(分)",
     "unitHour": "単位(時)",
+    "unitCount": "単位(回)",
     "showHeatmap":"ヒートマップを表示",
     "sensorList": "センサ現在情報一覧",
     "device": "デバイス",

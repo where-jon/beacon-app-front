@@ -46,23 +46,25 @@
         </b-form-group>
       </b-form>
       <b-form inline @submit.prevent>
-        <b-form-group class="mr-4">
-          <b-form-row class="mb-3 mr-1">
-            <b-form-row class="mr-1">
-              <span v-t="'label.sumUnitAxis'" class="d-flex align-items-center" />
-            </b-form-row>
-            <b-form-row>
-              <b-form-select v-model="form.axis" :options="axisOptions" class="ml-2 inputSelect" required @change="changeAxis" />
-            </b-form-row>
-          </b-form-row>
-        </b-form-group>
         <b-form-group>
           <b-form-row class="mb-3">
             <b-form-row class="mr-1">
-              <span v-t="'label.sumUnitStack'" class="d-flex align-items-center" />
+              <span v-t="'label.grouping'" class="d-flex align-items-center" />
             </b-form-row>
             <b-form-row>
               <b-form-select v-model="form.stack" :options="stackOptions" class="ml-2 inputSelect" required @change="changeStack" />
+            </b-form-row>
+          </b-form-row>
+        </b-form-group>
+      </b-form>
+      <b-form inline @submit.prevent>
+        <b-form-group>
+          <b-form-row class="mb-3">
+            <b-form-row class="mr-1">
+              <span v-t="'label.target'" class="d-flex align-items-center" />
+            </b-form-row>
+            <b-form-row>
+              <b-form-select v-model="form.target" :options="targetOptions" class="ml-2 inputSelect" required @change="changeTarget" />
             </b-form-row>
           </b-form-row>
         </b-form-group>
@@ -83,12 +85,9 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import { APP } from '../../sub/constant/config'
-import { SUM_UNIT_STACK, SUM_UNIT_AXIS, SUM_FILTER_KIND } from '../../sub/constant/Constants'
-import * as BrowserUtil from '../../sub/util/BrowserUtil'
+import { PROXIMITY_STACK, PROXIMITY_FILTER_KIND, PROXIMITY_TARGET } from '../../sub/constant/Constants'
 import * as DateUtil from '../../sub/util/DateUtil'
 import * as Util from '../../sub/util/Util'
 import * as HttpHelper from '../../sub/helper/base/HttpHelper'
@@ -109,14 +108,15 @@ export default {
   mixins: [commonmixin],
   data () {
     return {
-      items: ViewHelper.createBreadCrumbItems('sumTitle', 'stayTime'),
+      items: ViewHelper.createBreadCrumbItems('sumTitle', 'proximityGraph'),
       form: {
         datetimeFrom: '2019-02-11',
         datetimeTo: '2019-02-22',
         filterKind: null,
         filterId: null,
-        stack: 'area',
+        stack: 'zone',
         axis: 'day',
+        target: 'time',
       },
       vueSelectedKeys: ['pot', 'category', 'group', 'area', 'zone', 'zoneCategory'],
       vueSelected: {
@@ -124,29 +124,14 @@ export default {
       },
       message: '',
       filterIdOptions: [],
-      filterKindOptions: SUM_FILTER_KIND.getOptions(),
-      stackOptions: SUM_UNIT_STACK.getOptions(),
-      axisOptions: SUM_UNIT_AXIS.getOptions(),
+      filterKindOptions: PROXIMITY_FILTER_KIND.getOptions(),
+      stackOptions: PROXIMITY_STACK.getOptions(),
+      targetOptions: PROXIMITY_TARGET.getOptions(),
       chartData: [],
       axises: [],
       stacks: [],
       showChart: true,
     }
-  },
-  computed: {
-    ...mapState('app_service', [
-      'pots',
-      'areas',
-      'zones',
-      'categories',
-      'groups',
-    ]),
-    ...mapState([
-      'showAlert',
-    ]),
-    iosOrAndroid() {
-      return BrowserUtil.isAndroidOrIOS()
-    },
   },
   watch: {
     'vueSelected.filter': {
@@ -157,11 +142,9 @@ export default {
     },
   },
   async created() {
-    await StateHelper.load('pot')
-    await StateHelper.load('area')
-    await StateHelper.load('zone')
-    await StateHelper.load('category')
-    await StateHelper.load('group')
+    const loadStates = ['pot','area','zone','category','group']
+    await Promise.all(loadStates.map(StateHelper.load))
+
     const date = new Date()
     this.form.datetimeFrom = DateUtil.getDatetime(date, {date: -3})
     this.form.datetimeTo = DateUtil.getDatetime(date)
@@ -177,20 +160,17 @@ export default {
       this.form.filterKind = newVal
       this.vueSelected.filter = null
       switch (newVal) {
-      case 'potType':
-        this.filterIdOptions = this.potTypeOptions()
-        break
       case 'pot':
         this.filterIdOptions = this.pots.map(e => ({value: e.potId, label: e.potName}))
+        break
+      case 'area':
+        this.filterIdOptions = this.areas.map(e => ({value: e.areaId, label: e.areaName}))
         break
       case 'group':
         this.filterIdOptions = this.groups.map(e => ({value: e.groupId, label: e.groupName}))
         break
       case 'category':
         this.filterIdOptions = this.categories.filter(e => e.categoryType == 1 || e.categoryType == 2).map(e => ({value: e.categoryId, label: e.categoryName}))
-        break
-      case 'area':
-        this.filterIdOptions = this.areas.map(e => ({value: e.areaId, label: e.areaName}))
         break
       case 'zone':
         this.filterIdOptions = this.zones.map(e => ({value: e.zoneId,label: e.zoneName}))
@@ -203,29 +183,19 @@ export default {
         break
       }
     },
-    potTypeOptions() {
-      return [
-        {value:1, text: this.$i18n.t('label.person')},
-        {value:2, text: this.$i18n.t('label.thing')}
-      ]
-    },
-    changeAxis(newVal) {
-      this.form.axis = newVal
-      if (this.form.axis == this.form.stack) { // 軸と積上げは同じにしない
-        this.form.stack = null
-      }
-    },
     changeStack(newVal) {
       this.form.stack = newVal
       if (this.form.axis == this.form.stack) { // 軸と積上げは同じにしない
         this.form.axis = null
       }
     },
+    changeTarget(newVal) {
+      this.form.target = newVal
+    },
     validate() {
       const errors = ValidateHelper.validateCheck([
         {type: 'require', names: ['historyDateFrom'], values: [this.form.datetimeFrom]},
         {type: 'require', names: ['historyDateFrom'], values: [this.form.datetimeTo]},
-        {type: 'require', names: ['sumUnitAxis'], values: [this.form.axis]},
         {type: 'require', names: ['sumUnitStack'], values: [this.form.stack]},
         this.form.datetimeFrom && this.form.datetimeTo? {type: 'asc', names: ['historyDateFrom'], values: [new Date(this.form.datetimeFrom).getTime(), new Date(this.form.datetimeTo).getTime()], equal: false}: null,
       ].filter((val) => val && val.names.length >= 1))
@@ -249,8 +219,7 @@ export default {
       const param = _.cloneDeep(this.form)
       param.datetimeFrom = new Date(param.datetimeFrom).getTime()
       param.datetimeTo = new Date(param.datetimeTo).getTime()
-      param.fillGap = APP.STAY_SUM.AXIS_FILL_GAP
-      const url = '/office/stayTime/sum?_=' + new Date().getTime() + '&' +  HttpHelper.toParam(param, true)
+      const url = '/office/proximity/sum?_=' + new Date().getTime() + '&' +  HttpHelper.toParam(param, true)
       const sumData = await HttpHelper.getAppService(url)
       Util.debug(sumData)
       if (_.isEmpty(sumData)) {
@@ -269,7 +238,7 @@ export default {
       }
     },
     async download(){
-      StayTimeHelper.download(this, 'stayTime.csv')
+      StayTimeHelper.download(this, 'proximity.csv')
     }
   }
 }

@@ -157,6 +157,11 @@ export const APP = { // 機能面に関する設定
     SCALE_TIMES: [5, 12, 18], // 滞在率画面グラフ目盛り時刻(時)
     OTHER_COLOR: '#404040', // 滞在率その他の色
   },
+  // 交流分析
+  PROXIMITY: {
+    UNIT_HOUR: 5 * 60 * 60, // 指定秒を軸単位の最大値が超えた場合、滞在時間集計の表示を時間単位で表示する
+    UNIT_MINUTE: 20 * 60,  // 指定秒を軸単位の最大値が超えた場合、滞在時間集計の表示を分単位で表示する
+  },
   // Tx状態監視
   TX_MON: {
     WITH: ['btxId', 'major', 'minor', 'name', 'powerLevel', 'locationName'],

@@ -314,6 +314,42 @@ export const SUM_UNIT_AXIS = {
   }
 }
 
+export const PROXIMITY_STACK = {
+  getOptions(){
+    return [
+      {value:'group', text: i18n.t('label.group')},
+      {value:'category', text: i18n.t('label.category')},
+      {value:'age', text: i18n.t('label.age')},
+      {value:'zone', text: i18n.t('label.zone')},
+      {value:'zoneCategory', text: i18n.t('label.zoneCategory')},
+    ]
+  }
+}
+
+export const PROXIMITY_FILTER_KIND = {
+  getOptions(){
+    return [
+      {value:null, text: ''},
+      {value:'pot', text: i18n.t('label.pot')},
+      {value:'area', text: i18n.t('label.area')},
+      {value:'category', text: i18n.t('label.category')},
+      {value:'group', text: i18n.t('label.group')},
+      {value:'zone', text: i18n.t('label.zone')},
+      {value:'zoneCategory', text: i18n.t('label.zoneCategory')},
+    ]
+  }
+}
+
+export const PROXIMITY_TARGET = {
+  getOptions(){
+    return [
+      {value:'time', text: i18n.t('label.proximityTime')},
+      {value:'count', text: i18n.t('label.proximityCount')},
+      {value:'total', text: i18n.t('label.proximityTotal')},
+    ]
+  }
+}
+
 export const THERMOHUMIDITY = {
   CALC: {
     DISCOMFORT: 1,
@@ -701,6 +737,11 @@ export const MENU = [
         key: 'stayRatioBase',
         path: 'stayRatioBase',
         icon: 'clock',
+      },
+      {
+        key: 'proximityGraph',
+        path: 'proximityGraph',
+        icon: 'chart-bar',
       },
     ]
   },

@@ -11,11 +11,16 @@ import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 export default {
   computed: {
     ...mapState('app_service', [
-      'areas',
       'exbs',
       'txs',
+      'pots',
+      'areas',
+      'zones',
+      'categories',
+      'groups',
     ]),
     ...mapState([
+      'showAlert',
       'loginId'
     ]),
     iosOrAndroid() {
