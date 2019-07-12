@@ -70,8 +70,9 @@ const getTodayUndetectTime = () => {
  * @param {Number|Date} updatetime 
  * @return {Number}
  */
-export const getState = (type, updatetime) => {
+export const getState = (type, updatetime, rssi = null) => {
   if (!updatetime) return DETECT_STATE.NONE
+  if (rssi != null && rssi < APP.POS.RSSI_MIN) return DETECT_STATE.UNDETECT
 
   let UNDETECT_TIME
   let TODAY_UNDETECT_TIME = getTodayUndetectTime()

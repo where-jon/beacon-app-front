@@ -814,15 +814,17 @@ export const setDetectState = (positions, usePositionHistory = false) => {
 
   _.forEach(positions, position => {
     let updatetime = null
+    let rssi = null
     if (Util.hasValue(position.nearest)) {
-      updatetime = _(position.nearest)
-        .map(val => val.timestamp)
-        .sort().last()
+      const nearest = _(position.nearest).map(val => ({timestamp: val.timestamp, rssi: val.rssi}))
+        .sort((a, b) => a.timestamp < b.timestamp? -1: a.timestamp > b.timestamp? 1: 0).last()
+      updatetime = nearest.timestamp
+      rssi = nearest.rssi
     }else if(usePositionHistory){
       updatetime = position.timestamp
     }
 
-    position.detectState = DetectStateHelper.getState('tx', updatetime) // nearestのtimestampを使用
+    position.detectState = DetectStateHelper.getState('tx', updatetime, rssi) // nearestのtimestampを使用
     position.state = DetectStateHelper.getLabel(position.detectState)
     position.noSelectedTx = (position.detectState != DETECT_STATE.DETECTED)
   })
