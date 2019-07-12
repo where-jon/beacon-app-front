@@ -280,6 +280,10 @@
     "proximityGraph": "",
     "grouping": "",
     "age": "",
+    "target": "",
+    "proximityTime": "",
+    "proximityCount": "",
+    "proximityTotal": "合計(時間)",
 
     "attendance": "Attendance (clock-in and clock-out):",
     "attendanceId": " Attendance ID",
@@ -582,6 +586,7 @@
     "unitSecond": "Unit(sec)",
     "unitMinute": "Unit(min)",
     "unitHour": "Unit(hour)",
+    "unitCount": "",
     "showHeatmap": "Show Heatmap",
     "sensorList": "Current Sensor List",
     "device": "Device",

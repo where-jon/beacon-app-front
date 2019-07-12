@@ -60,6 +60,18 @@
       <b-form inline @submit.prevent>
         <b-form-group>
           <b-form-row class="mb-3">
+            <b-form-row class="mr-1">
+              <span v-t="'label.target'" class="d-flex align-items-center" />
+            </b-form-row>
+            <b-form-row>
+              <b-form-select v-model="form.target" :options="targetOptions" class="ml-2 inputSelect" required @change="changeTarget" />
+            </b-form-row>
+          </b-form-row>
+        </b-form-group>
+      </b-form>
+      <b-form inline @submit.prevent>
+        <b-form-group>
+          <b-form-row class="mb-3">
             <b-button v-t="'label.display'" type="submit" :variant="theme" @click="display" />
             <b-button v-if="!iosOrAndroid" v-t="'label.download'" :variant="theme" :disabled="!chartData || chartData.length == 0" class="ml-2" @click="download" />
           </b-form-row>
@@ -77,7 +89,7 @@ import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import { APP, DISP } from '../../sub/constant/config'
-import { PROXIMITY_STACK, PROXIMITY_FILTER_KIND } from '../../sub/constant/Constants'
+import { PROXIMITY_STACK, PROXIMITY_FILTER_KIND, PROXIMITY_TARGET } from '../../sub/constant/Constants'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as DateUtil from '../../sub/util/DateUtil'
 import * as Util from '../../sub/util/Util'
@@ -108,6 +120,7 @@ export default {
         filterId: null,
         stack: 'zone',
         axis: 'day',
+        target: 'time',
       },
       vueSelectedKeys: ['pot', 'category', 'group', 'area', 'zone', 'zoneCategory'],
       vueSelected: {
@@ -117,6 +130,7 @@ export default {
       filterIdOptions: [],
       filterKindOptions: PROXIMITY_FILTER_KIND.getOptions(),
       stackOptions: PROXIMITY_STACK.getOptions(),
+      targetOptions: PROXIMITY_TARGET.getOptions(),
       chartData: [],
       axises: [],
       stacks: [],
@@ -195,6 +209,9 @@ export default {
       if (this.form.axis == this.form.stack) { // 軸と積上げは同じにしない
         this.form.axis = null
       }
+    },
+    changeTarget(newVal) {
+      this.form.target = newVal
     },
     validate() {
       const errors = ValidateHelper.validateCheck([
@@ -283,15 +300,21 @@ export default {
       const axises = axisIds.map((axisId) => sumData.find((e) => e.axisId == axisId).axis)
 
       // 棒グラフの最大値に合わせて目盛を秒・分・時で計算
-      let yLabel = 'unitSecond'
+      let yLabel = ''
       let div = 1
-      if (maxPeriod > APP.PROXIMITY.UNIT_HOUR) {
-        yLabel = 'unitHour'
-        div = 60 * 60
-      }
-      else if (maxPeriod > APP.PROXIMITY.UNIT_MINUTE) {
-        yLabel = 'unitMinute'
-        div = 60
+      if(this.form.target == 'time'){
+        if (maxPeriod > APP.PROXIMITY.UNIT_HOUR) {
+          yLabel = 'unitHour'
+          div = 60 * 60
+        }
+        else if (maxPeriod > APP.PROXIMITY.UNIT_MINUTE) {
+          yLabel = 'unitMinute'
+          div = 60
+        }else{
+          yLabel = 'unitSecond'
+        }
+      }else if(this.form.target == 'count'){
+        yLabel = 'unitCount'
       }
       const yLabelString = this.$i18n.t('label.' + yLabel)
 

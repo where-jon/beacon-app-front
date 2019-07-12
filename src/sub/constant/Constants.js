@@ -340,6 +340,16 @@ export const PROXIMITY_FILTER_KIND = {
   }
 }
 
+export const PROXIMITY_TARGET = {
+  getOptions(){
+    return [
+      {value:'time', text: i18n.t('label.proximityTime')},
+      {value:'count', text: i18n.t('label.proximityCount')},
+      {value:'total', text: i18n.t('label.proximityTotal')},
+    ]
+  }
+}
+
 export const THERMOHUMIDITY = {
   CALC: {
     DISCOMFORT: 1,
