@@ -390,14 +390,12 @@ export const ALERT_STATE = {
 export const DETECT_STATE = {
   DETECTED: 1,
   LOST: 2,
-  TODAY_UNDETECT: 3,
   UNDETECT: 4,
   NONE: 0,
   getTypes() {
     return [
       {value: this.DETECTED, text: i18n.t('label.detected')},
       {value: this.LOST, text: i18n.t('label.temporaryUndetect')},
-      {value: this.TODAY_UNDETECT, text: i18n.t('label.todayUndetect')},
       {value: this.UNDETECT, text: i18n.t('label.undetect')},
       {value: this.NONE, text: i18n.t('label.none')}
     ]
