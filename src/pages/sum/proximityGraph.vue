@@ -302,7 +302,7 @@ export default {
       // 棒グラフの最大値に合わせて目盛を秒・分・時で計算
       let yLabel = ''
       let div = 1
-      if(this.form.target == 'time'){
+      if(this.form.target == 'time' || this.form.target == 'total'){
         if (maxPeriod > APP.PROXIMITY.UNIT_HOUR) {
           yLabel = 'unitHour'
           div = 60 * 60
