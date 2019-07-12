@@ -17,9 +17,14 @@
       </span>
       <hr>
       <b-form-group ref="form">
-        <b-form-checkbox-group id="checkbox-group-2" v-model="displayCheckList.group" name="flavour-2">
+        <b-form-checkbox-group id="checkbox-group-2" v-model="displayCheckList.filter" name="flavour-2">
           <b-form-checkbox :value="'groupName'">
             {{ $t('label.groupName') }}
+          </b-form-checkbox>
+        </b-form-checkbox-group>
+        <b-form-checkbox-group id="checkbox-group-2" v-model="displayCheckList.filter" name="flavour-2">
+          <b-form-checkbox :value="'categoryName'">
+            {{ $t('label.categoryName') }}
           </b-form-checkbox>
         </b-form-checkbox-group>
         <hr>
@@ -233,7 +238,7 @@ export default {
         stay: ['stay', 'lost'],
         category: [],
         area: [],
-        group: [],
+        filter: [],
       },
       message: '',
       modalMessage: '',
@@ -361,11 +366,13 @@ export default {
     },
     getFields(isInit) {
       const disableClassName = 'd-none'
-      const groupClassName = isInit || !this.isDisplayGroupColumn('groupName')? disableClassName: ''
+      const groupClassName = isInit || !this.isDisplayFilterColumn('groupName')? disableClassName: ''
+      const categoryClassName = isInit || !this.isDisplayFilterColumn('categoryName')? disableClassName: ''
       let fields = [
         {key: 'date', sortable: false, label: this.$i18n.tnl('label.date'), thClass: this.getThClassName() + ' ' + disableClassName, tdClass: disableClassName},
         {key: 'name', sortable: true, label: this.$i18n.tnl('label.potName')},
         {key: 'groupName', sortable: true, label: this.$i18n.tnl('label.groupName'), thClass: this.getThClassName() + ' ' + groupClassName, tdClass: groupClassName},
+        {key: 'categoryName', sortable: true, label: this.$i18n.tnl('label.categoryName'), thClass: this.getThClassName() + ' ' + categoryClassName, tdClass: categoryClassName},
         {key: 'graph', sortable: false, label: this.$i18n.tnl('label.graph'), thStyle: {height: '50px !important', width:'400px !important'} },
       ]
 
@@ -433,11 +440,11 @@ export default {
       }
       return _.some(this.displayCheckList.stay, (stay) => { return stay === key })
     },
-    isDisplayGroupColumn(key) {
-      if (!this.displayCheckList || !this.displayCheckList.group) {
+    isDisplayFilterColumn(key) {
+      if (!this.displayCheckList || !this.displayCheckList.filter) {
         return false
       }
-      return _.some(this.displayCheckList.group, (group) => { return group === key })
+      return _.some(this.displayCheckList.filter, (specified) => { return specified === key })
     },
     async fetchData(payload) {
       // 何もしない
