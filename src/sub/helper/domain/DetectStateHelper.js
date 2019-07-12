@@ -11,16 +11,10 @@ import * as ArrayUtil from '../../util/ArrayUtil'
 /**
  * 検知状態リストを取得する。
  * @method
- * @param {*} type 未使用
  * @return {{value: Number, text: String}}
  */
-export const getTypes = type => {
-  return DETECT_STATE.getTypes().filter(type => {
-    if (type.value === DETECT_STATE.TODAY_UNDETECT) {
-      return getTodayUndetectTime() < (type == 'tx'?  APP.POS.UNDETECT_TIME: type == 'gw'? APP.GATEWAY.UNDETECT_TIME: APP.TELEMETRY.UNDETECT_TIME)
-    }
-    return true
-  })
+export const getTypes = () => {
+  return DETECT_STATE.getTypes()
 }
 
 /**
@@ -54,16 +48,6 @@ export const isUndetect = state => {
 }
 
 /**
- * 本日未検知状態になる時間の閾値を取得する。
- * @method
- * @return {Number} ミリ秒
- */
-const getTodayUndetectTime = () => {
-  const today = new Date()
-  return (today.getHours() * 60 * 60 + today.getMinutes() * 60 + today.getSeconds()) * 1000
-}
-
-/**
  * 指定した種類の検知状態を取得する。
  * @method
  * @param {String} type 'tx' or 'exb' or 'gw'
@@ -74,7 +58,6 @@ export const getState = (type, updatetime) => {
   if (!updatetime) return DETECT_STATE.NONE
 
   let UNDETECT_TIME
-  let TODAY_UNDETECT_TIME = getTodayUndetectTime()
   let LOST_TIME
   switch(type) {
   case 'tx':
@@ -94,9 +77,8 @@ export const getState = (type, updatetime) => {
   const now = !DEV.USE_MOCK_EXC? new Date().getTime(): mock.positions_conf.start
   const time = now - new Date(updatetime).getTime()
   let state = time > UNDETECT_TIME? DETECT_STATE.UNDETECT:
-    time > TODAY_UNDETECT_TIME? DETECT_STATE.TODAY_UNDETECT:
-      time > LOST_TIME? DETECT_STATE.LOST:
-        DETECT_STATE.DETECTED
+    time > LOST_TIME? DETECT_STATE.LOST:
+      DETECT_STATE.DETECTED
 
   return state
 }
