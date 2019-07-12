@@ -161,7 +161,7 @@ export const APP = { // 機能面に関する設定
   TX_MON: {
     WITH: ['btxId', 'major', 'minor', 'name', 'powerLevel', 'locationName'],
     WITH_SENSOR: [], // マージするセンサ情報のIDリスト
-    POWER_LEVEL_GOOD: 50,  // 電池レベルで良好とみなす下限値
+    POWER_LEVEL_GOOD: 80,  // 電池レベルで良好とみなす下限値
     POWER_LEVEL_WARN: 30,  // 電池レベルで減少とみなす下限値
   },
   SENSOR_LIST: {
