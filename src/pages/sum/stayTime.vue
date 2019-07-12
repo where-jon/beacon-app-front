@@ -86,17 +86,16 @@
 import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import { APP, DISP } from '../../sub/constant/config'
+import { APP } from '../../sub/constant/config'
 import { SUM_UNIT_STACK, SUM_UNIT_AXIS, SUM_FILTER_KIND } from '../../sub/constant/Constants'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as DateUtil from '../../sub/util/DateUtil'
 import * as Util from '../../sub/util/Util'
-import { getCharSet } from '../../sub/helper/base/CharSetHelper'
-import * as ChartHelper from '../../sub/helper/ui/ChartHelper'
 import * as HttpHelper from '../../sub/helper/base/HttpHelper'
 import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import * as ValidateHelper from '../../sub/helper/dataproc/ValidateHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
+import * as StayTimeHelper from '../../sub/helper/domain/StayTimeHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import commonmixin from '../../components/mixin/commonmixin.vue'
 import alert from '../../components/parts/alert.vue'
@@ -262,141 +261,15 @@ export default {
       }
 
       // show Chart
-      let err = this.showStayTimeChart(sumData)
+      let err = StayTimeHelper.showChart(this, sumData)
       if (err) {
         this.message = this.$i18n.t('message.' + err)
         this.replace({showAlert: true})
         this.hideProgress()
       }
     },
-    showStayTimeChart(sumData) {
-      // convert data for chart
-      sumData.forEach((e) => {
-        if (e.stackId == null) {
-          e.stackId = -1
-        }
-        if (e.stack == null) {
-          e.stack = this.$i18n.t('label.other')
-        }
-        if (e.axisId == null) {
-          e.axisId = -1
-        }
-        if (e.axis == null) {
-          e.axis = this.$i18n.t('label.other')
-        }
-      })
-
-      const axisIds = _(sumData).map((e) => e.axisId).uniqWith(_.isEqual).value()
-      if (axisIds.length > 200) { // 横軸が200件を超える場合エラーに
-        return 'sumTooManyResults'
-      }
-      const maxPeriod = Math.max(...axisIds.map((axisId) => _.sumBy(sumData.filter((e) => e.axisId == axisId), (e) => e.period)))
-      if (maxPeriod == 0) { // 最大の滞在時間が0の場合エラーに
-        return 'listEmpty'
-      }
-
-      // 積上の凡例の数が指定色数より多い場合、全体の合計が上位指定色数-1まで表示し、ほかはすべてその他に加算して表示する
-      let stackIds = _(sumData).map((e) => e.stackId).uniqWith(_.isEqual).value()
-      if (stackIds.length > DISP.SUM_STACK_COLOR.length) {
-        sumData = this.reduceToOther(stackIds, sumData, axisIds)
-      }
-
-      stackIds = _(sumData).sortBy((e) => e.stack).map((e) => e.stackId).uniqWith(_.isEqual).value() // 積上凡例を名前順にソート
-      if (stackIds && stackIds[0] == -1) {
-        stackIds.shift()
-        stackIds.push(-1)
-      }
-
-      const stacks = stackIds.map((stackId) => sumData.find((e) => e.stackId == stackId).stack)
-      const axises = axisIds.map((axisId) => sumData.find((e) => e.axisId == axisId).axis)
-
-      // 棒グラフの最大値に合わせて目盛を秒・分・時で計算
-      let yLabel = 'unitSecond'
-      let div = 1
-      if (maxPeriod > APP.STAY_SUM.UNIT_HOUR) {
-        yLabel = 'unitHour'
-        div = 60 * 60
-      }
-      else if (maxPeriod > APP.STAY_SUM.UNIT_MINUTE) {
-        yLabel = 'unitMinute'
-        div = 60
-      }
-      const yLabelString = this.$i18n.t('label.' + yLabel)
-
-      // チャート用のデータを作成　縦軸ｘ横軸の２次元配列で作成
-      const chartData = new Array(stackIds.length)
-      for(let y = 0; y < chartData.length; y++) {
-        chartData[y] = new Array(axisIds.length).fill(0)
-      }
-      this.chartData = _.cloneDeep(chartData) // for DL
-      sumData.forEach((e) => {
-        let axisIdx = _.findIndex(axisIds, (axisId) => axisId == e.axisId)
-        let stackIdx = _.findIndex(stackIds, (stackId) => stackId == e.stackId)
-        chartData[stackIdx][axisIdx] = Math.floor(e.period / div * 100) / 100
-        this.chartData[stackIdx][axisIdx] = e.period // DL用は秒で保存
-      })
-
-      // show chart
-      this.showChart = true
-      const parent = document.getElementById('stayTimeChart').parentElement
-      const canvas = this.$refs.stayTimeChart
-      canvas.width = parent.clientWidth
-      if (BrowserUtil.isAndroidOrIOS()) {
-        canvas.height = 250
-      }
-      else {
-        canvas.height = document.documentElement.clientHeight - parent.offsetTop - 80
-      }
-      this.$nextTick(() => {
-        ChartHelper.showBarChart('stayTimeChart', axises, stacks, chartData, yLabelString)
-        this.hideProgress()
-      })
-
-      // for csv dl
-      this.axises = axises
-      this.stacks = stacks
-    },
-    reduceToOther(stackIds, sumData, axisIds) {
-      // 積上単位の全体の合計を出し、多い順に並べる
-      const sortedStacks = _(stackIds.map((stackId) => ({stackId, sum:_.sumBy(sumData.filter((e) => e.stackId == stackId), (e) => e.period)}))).sortBy((e) => e.sum * -1).value()
-      const upperStacks = sortedStacks.filter((e) => e.stackId != -1).slice(0, DISP.SUM_STACK_COLOR.length - 1) // その他を除く配列を抽出
-      // sumData.filter((e) => e.stackId == upperStacks[0].stackId).forEach((e) => e.stackId = -1) // for test
-
-      axisIds.forEach((axisId) => { // 軸単位に処理する
-        let period = 0
-        sumData.filter((sum) => sum.axisId == axisId).forEach((sum) => {
-          if (!_.some(upperStacks, (e) => e.stackId == sum.stackId) && sum.stackId != -1) { // 上位の積上に含まれない場合、その他に加算
-            period += sum.period
-            sum.stackId = null
-          }
-        })
-        let other = sumData.find((sum) => sum.axisId == axisId && sum.stackId == -1)
-        if (other) {
-          other.period += period
-        }
-        else { // その他がない場合はその他を作成
-          sumData.push({axisId, axis:sumData.find((e) => e.axisId == axisId).axis, stackId: -1, stack: this.$i18n.t('label.other'), period})
-        }
-      })
-
-      return sumData.filter((sum) => sum.stackId) // 集計データから先にstackId=nullをセットしたものを除去
-    },
     async download(){
-      if (this.chartData == null || this.chartData.length == 0) {
-        this.message = this.$i18n.tnl('message.notFound')
-        this.replace({showAlert: true})
-        return
-      }
-      const rows = []
-      rows.push('"","' + this.axises.join('","') + '"')
-      this.chartData.forEach((e, idx)=>{
-        rows.push('"' + this.stacks[idx] + '",' + e.join(','))
-      })
-      BrowserUtil.fileDL(
-        'stayTime.csv',
-        rows.join('\n'),
-        getCharSet(this.$store.state.loginId)
-      )
+      StayTimeHelper.download(this, 'stayTime.csv')
     }
   }
 }
