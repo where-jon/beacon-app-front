@@ -28,7 +28,7 @@
     "actions": "Action",
     "download": "Download",
     "downloadMonth": "Download(Month)",
-
+    "displaySpecified": "Display specified",
     "csvFile": "CSV file",
     "zipFile": "Zip file",
     "cancel": "Cancel",
@@ -67,6 +67,7 @@
     "absent": "Absent",
     "prohibit": "Prohibit",
     "lost": "Lost",
+    "absent_display": "Area for absence display",
     "charSet": "CSV character code",
     "null": "Unspecified",
     "undefined": "Undefined",
@@ -369,15 +370,15 @@
     "absent2Time": "Absent2 Time",
     "lostTime": "Absent",
     "stayRatio": "Stay ratio",
-
-
+    "stayRatioGp": "Daily Stay Analysis(GP)",
+    "stayRatioBase": "Daily Stay Analysis",
     "absent1Ratio": "Absent1 Ratio",
     "absent2Ratio": "Absent2 Ratio",
     "lostRatio": "Absent Ratio",
-
-
-
-
+    "stay": "Stay",
+    "absence": "Absence",
+    "graph": "Stay rate graph",
+    
     "positionSummary": "Position Summary",
 
     "processSum": "Process management",
@@ -429,6 +430,7 @@
     "down_count": "Number of falls",
 
     "vSelectNoOptions": "",
+    "noMatchingOptions": "There is no selectable item",
 
     "legend": "Legend",
     "using": "In use",
@@ -593,13 +595,22 @@
     "humidityUnit": " %",
     "notes": "Notes",
     "updateKey": "Update key",
+    "stayTimeSumColumn": "Stay time（total）",
+    "lostTimeSumColumn": "Absence time（total）",
+    "sum": "Sum",
+    "displayColumnCommon": "Display column-Common",
+    "displayColumnIndividual": "Display column-Individual",
+    "bracketStayRate": "(Stay rate)",
+    "ok": "OK",
 
-
-
-
-
-
-
+    "---------------- Pot Extension sample ---------------": "",
+    "sex": "Sex",
+    "address": "Address",
+    "salary": "Monthly salary",
+    "manager": "Manager",
+    "mobile": "Mobile",
+    "entrydate": "Entry date",
+    "score": "Score",
 
     "dummy": ""
   },
@@ -641,8 +652,14 @@
         "USE_MULTI_POSITIONING": "Use 3point Positioning::Use 3-point Positioning",
         "PROHIBIT_ALERT": "Use prohibited area::Use prohibited alert area",
         "PROHIBIT_GROUPS": "Prohibited area inaccessible group setting::Set up the group ID that can not enter in the prohibited area.",
+
+
         "USE_LEGEND": "Use legend::Display the legend on the position (map) screen.★",
         "SHOW_DETECTED_COUNT": "Display the number of detections::Display the number of detected device on the position(map)screen.★",
+        "WITH": {
+          "CATEGORY": "Use category in position (map) screen::Display category in position (map) screen",
+          "GROUP": "Use group in position (map) screen::Display group in position (map) screen"
+        },
         "PROHIBIT": {
           "DUPLICATE_MAIL_TIME": "Duplicate alert notification limit (E-mail)::Prevents notification by e-mail when an alert with the same content is sent within the set up time. Set up in milliseconds."
         }
@@ -686,7 +703,10 @@
         "WITH": "Items used on the user screen::Set up the items used on the user screen. The possible to set up values are as follows. ★{USER}"
       },
       "POT": {
-        "WITH": "Item used in person & thing screen::Set up the items used in person & thing screen. The possible to set up values are as follows.★{POT}"
+        "WITH": "Item used in person & thing screen::Set up the items used in person & thing screen. The possible to set up values are as follows.★{POT}",
+        "MULTI_TX": "Register multiple Tx to person & thing::Enable registration of multiple Tx on person & thing screen.",
+        "TX_MAX": "Maximum number of Tx to be registered in person & thing::Enable registration of multiple Tx on person & thing screen.",
+        "EXT_DEF": "Person & thing extension item::Define extension items that can be set to people & thing in JSON format."
       },
       "CATEGORY": {
         "TYPES": "Types that can be selected on the category screen::Set up the types that can be selected on the category screen. The possible to set up values are as follows.{CATEGORY_TYPES}"
@@ -696,6 +716,9 @@
         "STATE_TYPES": "Selectable notification media on notification template screen::Set up the selectable notification media on notification template screen. The possible to set up values are as follows.{NOTIFY_STATE}"
       },
       "ANALYSIS": {
+        "DATETIME_DEFAULT": "Flow line analysis, initial period of heat map screen From::The default value of the period From displayed on the flow analysis, heat map screen is the past date of the time set from the current date. The unit is set in unit of initial period From of flow line analysis, heat map screen",
+        "DATETIME_DEFAULT_UNIT": "Unit of flow line analysis, initial period of heat map screen From::Flow line analysis, unit of initial period From heat map screen:Set the unit of flow line analysis, initial period from heat map screen From. The possible values are:{ANALYSIS_UNIT}",
+        "DATETIME_LIMIT": "Flowing line analysis, upper limit of interval interval of heat map screen::Set up the upper limit of number of days that can be displayed on moving line analysis, heat map screen",
         "DATETIME_INTERVAL": "Flow line analysis, heat map screen period interval ::Flow line analysis, when period From is selected on the heat map screen, the future date for the time set in the period To is automatically entered.Set up in unit."
       },
       "STAY_SUM": {
@@ -706,8 +729,8 @@
         "UNIT_HOUR": "Display setting for stay time summary (hour)::If the maximum value in axis units exceeds the set second, the display of stay time total is displayed in time units.",
         "UNIT_MINUTE": "Display setting for stay time summary (minute)::If the maximum value in axis units exceeds the set second, the display of stay time total is displayed in time units.",
         "FROM": "Start time of staying time summary(hour and minute)::Set up the start of staying time summary. Setting value is「hour × 100 + minute × 1」.",
-        "TO": "End time of staying time summary(hour and minute)::Set up the end time of staying time summary. Setting value is「hour × 100 + minute × 1」."
-
+        "TO": "End time of staying time summary(hour and minute)::Set up the end time of staying time summary. Setting value is「hour × 100 + minute × 1」.",
+        "SCALE_TIMES": "Stay rate screen graph scale time (hours)::Set up time (hours) to be displayed on stay rate screen graph scale (ignore if not match)."
       },
       "TX_MON": {
         "WITH": "Item used Tx monitoring screen:: Set up the item used Tx monitor screen. The possible to set up values are as follows.★{TX_MON}",
@@ -794,7 +817,8 @@
         "STROKE_COLOR": "Default border color for Tx icons::Set up the border color for Tx icons to which neither category nor group belongs. Set up with a color code other than #.",
         "ALPHA": "Absent time Tx Icon Transmissive Value::Set up the transmit value when Tx is absence.Set up as a decimal value from 0 (transparent) to 1 (opaque).",
         "LOST_ALPHA": "Absent Tx Icon Transmissive Value::Set up the transmit value when Tx is absent. Set up it as a decimal value from 0 (transparent) to 1 (opaque).",
-        "DISPLAY_PRIORITY": "Display color priority of Tx icon::Set up the color to be applied to the display color of Tx icon from either the category or the display color set in the group. It can select from category or group and applied from the one specified at the beginning."
+        "DISPLAY_PRIORITY": "Display color priority of Tx icon::Set up the color to be applied to the display color of Tx icon from either the category or the display color set in the group. It can select from category or group and applied from the one specified at the beginning.",
+        "ABSENT_ZONE_DISPLAY_TYPES": "Type of Tx icon to be displayed for absence display zone::undetected: undetected, lost:lost, absent:absent zone"
       },
       "EXB_LOC": {
         "SIZE": {
@@ -870,13 +894,13 @@
         "COMBO_BOX": {
           "W": "Combo Box Width::Set up the width of the combo box in pixels."
         }
+      },
+      "SYSTEM_USE": {
+        "BG_COLOR": {
+          "ABSENT": "Background color (absent area) color code::Set up the background color of the system setting category (absent area)",
+          "PROHIBIT": "Background color (prohibit area) color code:: Sets up the background color of the system setting category (prohibit area)."
+        }
       }
-
-
-
-
-
-
     },
     "DEV": {
       "SIMULATION": "Use temporary data::Perform position using temporary data."
@@ -891,6 +915,8 @@
           "MOVING_AVERAGE_TIME": "number",
           "PROHIBIT_GROUPS": "numberList",
           "PROHIBIT_ALERT": "stringList",
+
+
           "PROHIBIT": {
             "DUPLICATE_MAIL_TIME": "number"
           }
@@ -913,7 +939,8 @@
           "WITH": "stringList"
         },
         "POT": {
-          "WITH": "stringList"
+          "WITH": "stringList",
+          "EXT_DEF": "json"
         },
         "CATEGORY": {
           "TYPES": "numberList"
@@ -922,9 +949,9 @@
           "MIDIUM_TYPES": "numberList",
           "STATE_TYPES": "numberList"
         },
-
-
-
+        "STAY_SUM": {
+          "SCALE_TIMES": "numberList"
+        },
         "TX_MON": {
           "WITH": "stringList",
           "WITH_SENSOR": "numberList"
@@ -985,7 +1012,8 @@
       },
       "DISP": {
         "TX": {
-          "DISPLAY_PRIORITY": "stringList"
+          "DISPLAY_PRIORITY": "stringList",
+          "ABSENT_ZONE_DISPLAY_TYPES": "stringList"
         },
         "THERMOH": {
           "PATTERN": "stringList",
@@ -1199,6 +1227,15 @@
         "screen": "screen::Display on the screen",
         "mail": "mail::E-mail Notification",
         "led": "led::LED Blink"
+      },
+
+
+
+
+      "ANALYSIS_UNIT": {
+        "year": "year::Yearly",
+        "month": "month::Monthly",
+        "hours": "hours::Hourly"
       }
     }
   },
@@ -1262,6 +1299,8 @@
     "bulkSystemUseNameFailed": "{col}（{value}） is already used by system defined name.",
     "bulkInvalidUpdateLineFailed": "{col}（{value}）cannot be modified on this page.",
     "bulkLastFailed": "{col}must be registered one or more.",
+    "bulkCoordinatesOnlyFailed": "{col}（{value}）can only registered in zones (partitions)",
+    "bulkSystemUniqueFailed": "The system category set up in {col}（{value}）can not be used redundantly in the same area",
     "monthDayTemperature": "{month}/{day} Temperature and humidity ({name}{description})",
     "invalidLoginId": "Login ID must be alphanumeric character.",
     "notFound": "No results found.",
@@ -1297,36 +1336,28 @@
     "valueMissing": "valueMissing",
     "valueMissingInput": "valueMissingInput",
     "valueMissingSelect": "valueMissingSelect",
-
-
-
+    "selectDisplayColumn": "Display the set up item in the table.",
+    "selectLimitDescription": "It can set up to{max}items.",
+    "tooManyCheck": "Selection must be less than{max}",
 
     "dummy": "" 
   },
   "helpDescription": {
-
-
-
-
-
-
-
-
-
+    "empty": "Not displayed",
+    "updateKey": "Not displayed. When updating data, it is used to link with registered information. It can not be changed",
+    "delFlg": "Not displayed. Use when deleting data when updating data. Set up to 1 ",
+    "enabled": "Not displayed. It shows Indicates enabled (1) / disabled (0) status",
+    "txXY": "Not displayed. If the setting that uses fixed seat, it shows the location information for the area",
+    "txAreaName": "Not displayed. If the setting that uses fixed seat, it shows the target area name",
+    "helpNone": "No help available",
+    "indexName": "Index",
+    "csvDescription": "CSV items may not be displayed even if they are in the following items depending on the contents and options provided",
     "bulkRegister": "Formats and registers data using the downloaded file as a template. It can not change the ID of a master that has been issued uniquely and already linked by batch registration. In case of new registration, please empty the ID and do batch registration. ",
     "bulkUniqueFailed": "Target item name is a non-duplication item. It is already used in another line.",
-    "bulkOneOfFailed": "Tareget item name must be specified with one of multiple settings.",
-    "bulkRangeFailed": "Target item name must be in the specified range.",
-    "bulkSizeFailed": "Target item name must be specified in the specified number of characters",
-    "bulkSizeSameFailed": "Target item name must be exactly the number of characters specified.",
-    "bulkNotNullFailed": "Target item name is mandatory. It can not be exclude and must be entered.",
     "bulkExistFailed": "Target item name does not exist. It may have been deleted by another use.",
-    "bulkInvalidFailed": "Target item name has a invalid format. It is necessary to register the format.",
     "bulkAuthFailed": "Target item name can not be used because it is already used internally.",
-    "bulkUseFailed": "The target item name is the maximum number of item names in use.",
     "bulkSystemUseFailed": "The target item name can not be changed because it is a fixed data used in the system. To continue registration, the target data needs to be deleted from the CSV.",
     "bulkSystemUseNameFailed": "The target item name can not be used because it is a fixed name used in the system. It needs to be registered with a different name.",
-    "bulkInvalidUpdateLineFailed": "Target item name data can not be changed on this screen",
     "bulkNotes": "If unreadable characters are displayed, it may be garbled. If you use Excel for CSV editing, set up {charSet} of {personal} to {SJIS}.",
     "state": "The state is defined as follows. {detected}: Indicates a well-detected state. When the absence time is set, it will be displayed in this status even in the absence indication. {TemporaryUndetect}: It is detected on the current day but it has been undetected for more than the specified time. {Undetect}: Indicates that it has not been detected for a long time beyond the specified time{none}: Indicates that it has not been detected even once after installation.",
     "systemCategory": "This category has been set up since the system was built. It is assumed to be used by setting it to a zone.",
@@ -1334,6 +1365,15 @@
     "prohibit": "Feature not provided ver1.1",
     "zoneClass": "Create and edit zones that include multiple EXBeacon. The created zones are used for grouping and summary by setting them on the EXBeacon screen. As it can set the category to the zone, it can also classify the zone itself. Refer to the category help for the categories set in the system to utilize in the zone.",
     "zoneBlock": "{ZoneBlock} can be created by dragging and selecting on the displayed area. EXBeacon in the created zone will be automatically set the zone at the time of registration. ",
+    "stayRatioBaseDownload": "There are two types of download. You can download different data by Total and Stay. In Total, you can download all stay column information except the graph. In Stay, you can download basic data and detailed stay information for each hour.",
+    "bulkOneOfFailed": "Tareget item name must be specified with one of multiple settings.",
+    "bulkRangeFailed": "Target item name must be in the specified range.",
+    "bulkSizeFailed": "Target item name must be specified in the specified number of characters",
+    "bulkSizeSameFailed": "Target item name must be exactly the number of characters specified.",
+    "bulkNotNullFailed": "Target item name is mandatory. It can not be exclude and must be entered.",
+    "bulkInvalidFailed": "Target item name has a invalid format. It is necessary to register the format.",
+    "bulkUseFailed": "The target item name is the maximum number of item names in use.",
+    "bulkInvalidUpdateLineFailed": "Target item name data can not be changed on this screen",
 
 
     "dummy": ""
