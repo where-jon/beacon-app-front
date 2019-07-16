@@ -3,7 +3,7 @@
  * @module helper/ui/FlowLineHelper
  */
 
-import { Shape, Container, Text } from '@createjs/easeljs/dist/easeljs.module'
+import { Shape, Container, Text } from 'createjs-module'
 
 /**
  * 指定した座標を示す逆三角形を描画する。

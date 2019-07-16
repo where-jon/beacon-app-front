@@ -355,7 +355,9 @@ const appStateConf = {
           btxId: pot.btxId,
           minor: pot.minor,
           ruby: pot.extValue? pot.extValue.ruby: null,
-          extValue: pot.extValue? pot.extValue: this.extValueDefault,
+          // 以下、nuxt2.8.1にアップグレードした場合、thisがundefinedとなり、エラーが発生するためコメントアウト
+          // extValue: pot.extValue? pot.extValue: this.extValueDefault,
+          extValue: pot.extValue? pot.extValue: '',
           ...extValues
         }
       }).sort((a, b) => {

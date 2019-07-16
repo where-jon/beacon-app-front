@@ -1,6 +1,6 @@
 
 <script>
-import { Stage, Bitmap, Touch } from '@createjs/easeljs/dist/easeljs.module'
+import { Stage,Touch,Bitmap } from 'createjs-module'
 import { DISP } from '../../sub/constant/config'
 import { POSITION } from '../../sub/constant/Constants'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
@@ -12,6 +12,7 @@ import * as AreaMapHelper from '../../sub/helper/domain/AreaMapHelper'
 import * as VueSelectHelper from '../../sub/helper/ui/VueSelectHelper'
 import reloadmixin from './reloadmixin.vue'
 import commonmixin from './commonmixin.vue'
+
 
 export default {
   mixins: [reloadmixin, commonmixin],
