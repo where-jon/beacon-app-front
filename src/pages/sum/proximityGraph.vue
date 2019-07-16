@@ -20,8 +20,8 @@
       </b-form>
       <b-form inline @submit.prevent>
         <b-form-group class="mr-4">
-          <b-form-row class="mb-3 mr-1">
-            <b-form-row class="mr-1">
+          <b-form-row class="mb-3 mr-3">
+            <b-form-row class="mr-3">
               <span v-t="'label.filter'" class="d-flex align-items-center" />
             </b-form-row>
             <b-form-row>
@@ -45,30 +45,26 @@
           </b-form-row>
         </b-form-group>
       </b-form>
-      <b-form inline @submit.prevent>
-        <b-form-group>
-          <b-form-row class="mb-3">
-            <b-form-row class="mr-1">
-              <span v-t="'label.grouping'" class="d-flex align-items-center" />
+      <b-row>
+        <b-form inline @submit.prevent>
+          <b-form-group>
+            <b-form-row class="mb-3">
+              <b-form-row class="ml-2">
+                <span v-t="'label.grouping'" class="d-flex align-items-center" />
+              </b-form-row>
+              <b-form-row class="ml-2">
+                <b-form-select v-model="form.stack" :options="stackOptions" class="ml-2 inputSelect" required @change="changeStack" />
+              </b-form-row>
+              <b-form-row class="ml-3">
+                <span v-t="'label.target'" class="d-flex align-items-center" />
+              </b-form-row>
+              <b-form-row class="ml-2">
+                <b-form-select v-model="form.target" :options="targetOptions" class="ml-2 inputSelect" required @change="changeTarget" />
+              </b-form-row>
             </b-form-row>
-            <b-form-row>
-              <b-form-select v-model="form.stack" :options="stackOptions" class="ml-2 inputSelect" required @change="changeStack" />
-            </b-form-row>
-          </b-form-row>
-        </b-form-group>
-      </b-form>
-      <b-form inline @submit.prevent>
-        <b-form-group>
-          <b-form-row class="mb-3">
-            <b-form-row class="mr-1">
-              <span v-t="'label.target'" class="d-flex align-items-center" />
-            </b-form-row>
-            <b-form-row>
-              <b-form-select v-model="form.target" :options="targetOptions" class="ml-2 inputSelect" required @change="changeTarget" />
-            </b-form-row>
-          </b-form-row>
-        </b-form-group>
-      </b-form>
+          </b-form-group>
+        </b-form>
+      </b-row>
       <b-form inline @submit.prevent>
         <b-form-group>
           <b-form-row class="mb-3">
