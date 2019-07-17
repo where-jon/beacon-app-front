@@ -699,7 +699,13 @@ export default {
         }
       }
     },
-    showDetail(btxId, x, y) { // (p,) position
+    showDetail(btxId, x, y) {
+      // アラート表示でずれるので遅延実行を行う
+      this.$nextTick(async () => {
+        this.showDetailImp(btxId, x, y)
+      })
+    },
+    showDetailImp(btxId, x, y) { // (p,) position
       // 地図エリアとゾーン表示で重複しているTXIDの場合、元のTXIDを取得する
       if (PositionHelper.isDoubleTx(btxId)) {
         btxId = PositionHelper.getDoubleDefaultTxId(btxId)
