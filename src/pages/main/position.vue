@@ -570,13 +570,15 @@ export default {
       // 既に該当btx_idのTXアイコンが作成済みか?
       const zoneBtx_id = PositionHelper.zoneBtxIdAddNumber + pos.btx_id
       let txBtn = this.icons[zoneBtx_id]
-      if (!txBtn) {
+      if (!txBtn || txBtn.color != color || txBtn.bgColor != bgColor) {
         // 作成されていない場合、新規作成してからiconsに登録
         if (pos.btx_id == PositionHelper.zoneLastTxId()) {
           txBtn = this.createLastSystemTx(pos, display.shape, color, bgColor)
         } else {
           txBtn = this.createTxBtn(pos, display.shape, color, bgColor, true)
         }
+        txBtn.color = color
+        txBtn.bgColor = bgColor
         this.icons[zoneBtx_id] = txBtn
       } else {
         // 作成済みの場合、座標値のみセットする
