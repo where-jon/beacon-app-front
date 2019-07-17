@@ -41,7 +41,9 @@
                 <b-nav-item-dropdown :class="navbarClasses" size="sm" right>
                   <template slot="button-content">
                     <font-awesome-icon icon="building" class="mr-1" />
-                    <span>{{ this.$store.state.currentRegion? this.$store.state.currentRegion.regionName: '' }}</span>
+                    <em class="word-break">
+                      {{ this.$store.state.currentRegion? this.$store.state.currentRegion.regionName: '' }}
+                    </em>
                   </template>
                   <b-dropdown-item v-for="region in regionOptions(regions)" :key="region.regionId" :class="navbarClasses" href="#" @click="switchRegion($event.target, region)">
                     <font-awesome-icon v-if="getStyleDropdownRegion(region.regionId)" icon="building" fixed-width />
@@ -425,4 +427,9 @@ em:not(:hover) {
 i.menu-item-icon {
   width: 20px;
 }
+
+.dropdown-toggle{
+  white-space: normal !important;
+}
+
 </style>
