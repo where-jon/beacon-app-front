@@ -1,4 +1,3 @@
-
 export default {
   mode: 'spa',
   /*
@@ -45,6 +44,18 @@ export default {
   ** Build configuration
   */
   build: {
+    babel: {
+      presets: [
+         [
+           '@babel/preset-env',
+           {
+             targets: [">0.25% in JP", "not ie <= 10", "not op_mini all"],
+             useBuiltIns: 'usage',
+             corejs: 3
+           }
+         ]
+      ]
+    },
     extend (config, { isDev, isClient }) {
       config.module.rules.forEach((val) => {
         if (val.loader == 'babel-loader') {
