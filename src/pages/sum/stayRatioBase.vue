@@ -157,7 +157,7 @@
       <b-row class="mt-3" />
       <b-table :items="viewList" :fields="fields" :current-page="currentPage" :per-page="perPage" :sort-by.sync="sortBy" stacked="md" striped hover outlined>
         <template v-for="field in fields" slot-scope="data" :slot="`HEAD_${field.key}`">
-          <span v-html="data.label" :key="field.key"></span>
+          <span v-html="data.label" :key="field.key"></span><span v-if="field.bgColor" :style="`color: ${field.bgColor};`" :key="field.key">■</span>
         </template>
         <template slot="graph" slot-scope="row">
           <div style="position: relative;">
@@ -388,9 +388,8 @@ export default {
       _.filter(this.categories,(c) => { return c.categoryType === CATEGORY.ZONE })
         .forEach((category) => {
           const categoryClassName = _.some(selectedCategories, (data) => { return data.categoryId == category.categoryId})? '': disableClassName
-          let colorStyle = '<span style="color: #' + category.bgColor + ';">■</span>' // TODO: リファクタリング対象。出来る人がいたらHeaderへ移動する
           let categoryName = (category.systemUse? i18n.tnl('label.' + category.systemCategoryName): category.categoryName)
-          fields.push({key: categoryName, sortable: true, label: categoryName + colorStyle
+          fields.push({key: categoryName, sortable: true, label: categoryName, bgColor: '#' + category.bgColor
             , thStyle: {width:'100px !important'}, thClass: this.getThClassName() + ' ' + categoryClassName, tdClass: categoryClassName})
         })
       
@@ -399,9 +398,8 @@ export default {
       if (this.displayCheckList) {
         isSelectedCategoryOther = _.find(this.displayCheckList.category, (id) => { return id == 0 }) == 0
       }
-      let colorOtherStyle = '<span style="color: ' + this.OtherColor + ';">■</span>' // TODO: リファクタリング対象。出来る人がいたらHeaderへ移動する
       const categoryOtherClassName = isSelectedCategoryOther? '': disableClassName
-      fields.push({key: 'categoryOther', sortable: true, label: i18n.tnl('label.other')+i18n.tnl('label.category') + colorOtherStyle
+      fields.push({key: 'categoryOther', sortable: true, label: i18n.tnl('label.other')+i18n.tnl('label.category'), bgColor: this.otherColor
         , thStyle: {width:'100px !important'}, thClass: this.getThClassName() + ' ' + categoryOtherClassName, tdClass: categoryOtherClassName})
 
       // エリアを追加する
@@ -412,8 +410,8 @@ export default {
       _.filter(this.areaArray, (a) => { return true })
         .forEach((area, index) => {
           const areaClassName = _.some(selectedAreas, (data, index) => { return data.areaId == area.areaId})? '': disableClassName
-          let colorStyle = '<span style="color: ' + DISP.SUM_STACK_COLOR[index % DISP.SUM_STACK_COLOR.length] + ';">■</span>' // TODO: リファクタリング対象。出来る人がいたらHeaderへ移動する
-          fields.push({key: area.areaName, sortable: true, label: area.areaName + colorStyle, thStyle: {width:'100px !important'}
+          let bgColor = DISP.SUM_STACK_COLOR[index % DISP.SUM_STACK_COLOR.length]
+          fields.push({key: area.areaName, sortable: true, label: area.areaName, bgColor: bgColor, thStyle: {width:'100px !important'}
             , thClass: this.getThClassName() + ' ' + areaClassName, tdClass: areaClassName})
         })
 
@@ -422,9 +420,8 @@ export default {
       if (this.displayCheckList) {
         isSelectedAreaOther = _.find(this.displayCheckList.area, (id) => { return id == 0 }) == 0
       }
-      colorOtherStyle = '<span style="color: ' + this.otherColor + ';">■</span>' // TODO: リファクタリング対象。出来る人がいたらHeaderへ移動する
       const areaOtherClassName = isSelectedAreaOther? '': disableClassName
-      fields.push({key: 'areaOther', sortable: true, label: i18n.tnl('label.other')+i18n.tnl('label.area') + colorOtherStyle
+      fields.push({key: 'areaOther', sortable: true, label: i18n.tnl('label.other')+i18n.tnl('label.area'), bgColor: this.otherColor
         , thStyle: {width:'100px !important'}, thClass: this.getThClassName() + ' ' + areaOtherClassName, tdClass: areaOtherClassName})
 
       // 選択されている総合時間を追加する
