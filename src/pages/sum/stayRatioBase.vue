@@ -156,6 +156,9 @@
       <slot />
       <b-row class="mt-3" />
       <b-table :items="viewList" :fields="fields" :current-page="currentPage" :per-page="perPage" :sort-by.sync="sortBy" stacked="md" striped hover outlined>
+        <template v-for="field in fields" slot-scope="data" :slot="`HEAD_${field.key}`">
+          <span v-html="data.label" :key="field.key"></span>
+        </template>
         <template slot="graph" slot-scope="row">
           <div style="position: relative;">
             <div v-for="(bar, index) in row.item.graph" :key="index" :class="bar.isStay || bar.isAbsentZone? 'stay-bar': 'lost-bar'" :style="`${bar.isStay || bar.isAbsentZone? `background: `+ (historyType == 'category'? bar.categoryBgColor: bar.areaBgColor)+`;`: `` } width:${bar.percent}% !important;`">
