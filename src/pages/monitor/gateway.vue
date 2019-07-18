@@ -107,8 +107,26 @@ export default {
         })
         return obj
       })
-      BrowserUtil.fileDL('gateway.csv', CsvUtil.converToCsv(dldata), getCharSet(this.$store.state.loginId))
+      BrowserUtil.fileDL(
+        'gateway.csv', 
+        CsvUtil.converToCsv(dldata, null, this.getCsvHeaderList()), 
+        getCharSet(this.$store.state.loginId)
+      )
     },
+    getCsvHeaderList() {
+      return APP.SVC.POS.EXSERVER ? [
+        this.$i18n.tnl('label.deviceId'),
+        this.$i18n.tnl('label.finalReceiveTimestamp'),
+        this.$i18n.tnl('label.state'),
+        '\n'
+      ]: [
+        this.$i18n.tnl('label.no'),
+        this.$i18n.tnl('label.deviceId'),
+        this.$i18n.tnl('label.finalReceiveTimestamp'),
+        this.$i18n.tnl('label.state'),
+        '\n'
+      ]
+    }
   }
 }
 </script>

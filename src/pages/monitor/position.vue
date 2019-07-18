@@ -223,8 +223,41 @@ export default {
         })
         return obj
       })
-      BrowserUtil.fileDL('position.csv', CsvUtil.converToCsv(dldata), getCharSet(this.$store.state.loginId))
+      BrowserUtil.fileDL(
+        'position.csv', 
+        CsvUtil.converToCsv(dldata, null, this.getCsvHeaderList()), 
+        getCharSet(this.$store.state.loginId)
+      )
     },
+    getCsvHeaderList() {
+      if(this.isDev){
+        return [
+          'btx_id',
+          'device_id',
+          'pos_id',
+          'phase',
+          'power_level',
+          'updatetime',
+          'nearest1',
+          'nearest2',
+          'nearest3',
+          '\n'
+        ]
+      }
+      
+      const ret = []
+      APP.TX_MON.WITH.forEach((key) => {
+        if (key == 'locationName') {
+          ret.push(this.$i18n.tnl('label.finalReceiveLocation'))
+        } else {
+          ret.push(this.$i18n.tnl('label.' + key))
+        }
+      })
+      ret.push(this.$i18n.tnl('label.finalReceiveTimestamp'))
+      ret.push(this.$i18n.tnl('label.state'))
+      ret.push('\n')
+      return ret
+    }
   }
 }
 </script>
