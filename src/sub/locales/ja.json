@@ -474,6 +474,7 @@
     "minute": "分",
     "hour": "時間",
     "day": "日",
+    "time": "時間",
     "immediate": "直近値",
     "average": "平均値",
     "avg": "平均値",

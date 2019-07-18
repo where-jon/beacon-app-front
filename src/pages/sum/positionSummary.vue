@@ -116,7 +116,7 @@ export default {
       this.exbs.forEach((e) => exbsMap[e.exbId] = e)
 
       const minorList = txsFiltered.map(tx => parseInt(tx.minor)).sort(tx => tx)
-      const header = 'Time,' + minorList.join(',')
+      const header = this.$i18n.tnl('label.time') + ',' + minorList.join(',')
       const searchDate = moment(param.date).format('YYYY-MM-DD')
 
       let csvList = []
