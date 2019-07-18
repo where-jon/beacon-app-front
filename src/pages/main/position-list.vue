@@ -80,8 +80,6 @@ export default {
       'lostZones',
     ]),
   },
-  async mounted() {
-  },
   methods: {
     async fetchData(payload) {
       try {
