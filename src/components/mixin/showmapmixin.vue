@@ -36,6 +36,8 @@ export default {
 
       showTryCount: 0, // p
       loadComplete: false, // p
+
+      onResize: null,
     }
   },
   computed: {
@@ -60,15 +62,18 @@ export default {
   },
   beforeDestroy() {
     this.tempMapFitMobile = DISP.MAP_FIT_MOBILE
+    if(this.onResize){
+      window.removeEventListener('resize', this.onResize)
+    }
   },
   methods: {
     defineResizeEvent(path) {
       if (StringUtil.startsWithAny(path, ['/main','/sum','/develop/installation'])) {
         let timer = 0
         let currentWidth = window.innerWidth
-        const onResize = () => {
+        this.onResize = () => {
           if (path != this.$route.path) {
-            window.removeEventListener('resize', onResize)
+            window.removeEventListener('resize', this.onResize)
             clearTimeout(timer)
             return
           }
@@ -94,7 +99,7 @@ export default {
             }
           }, 200)
         }
-        window.addEventListener('resize', onResize)
+        window.addEventListener('resize', this.onResize)
       }
     },
     getInitAreaOption(){ // p
