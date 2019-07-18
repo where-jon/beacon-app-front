@@ -251,10 +251,17 @@ export default {
       }
       BrowserUtil.fileDL(
         'temperatureHistory.csv',
-        CsvUtil.converToCsv(this.temperatureHistoryData),
+        CsvUtil.converToCsv(this.temperatureHistoryData, null, this.getCsvHeaderList()),
         getCharSet(this.$store.state.loginId)
       )
     },
+    getCsvHeaderList() {
+      const headers = Object.keys(this.temperatureHistoryData[0]).map((data) => {
+        return this.$i18n.tnl('label.' + data)
+      })
+      headers.push('\n')
+      return headers
+    }
   }
 }
 </script>
