@@ -65,7 +65,7 @@ export const showChart = (obj, sumData) => {
   // 積上の凡例の数が指定色数より多い場合、全体の合計が上位指定色数-1まで表示し、ほかはすべてその他に加算して表示する
   let stackIds = _(sumData).map((e) => e.stackId).uniqWith(_.isEqual).value()
   if (stackIds.length > DISP.SUM_STACK_COLOR.length) {
-    sumData = obj.reduceToOther(obj, stackIds, sumData, axisIds)
+    sumData = reduceToOther(obj, stackIds, sumData, axisIds)
   }
 
   stackIds = _(sumData).sortBy((e) => e.stack).map((e) => e.stackId).uniqWith(_.isEqual).value() // 積上凡例を名前順にソート
@@ -149,7 +149,7 @@ export const reduceToOther = (obj, stackIds, sumData, axisIds) => {
       other.period += period
     }
     else { // その他がない場合はその他を作成
-      sumData.push({axisId, axis:sumData.find((e) => e.axisId == axisId).axis, stackId: -1, stack: this.$i18n.t('label.other'), period})
+      sumData.push({axisId, axis:sumData.find((e) => e.axisId == axisId).axis, stackId: -1, stack: obj.$i18n.t('label.other'), period})
     }
   })
 
