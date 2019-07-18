@@ -144,7 +144,11 @@ export default {
       deep: true,
     },
   },
-  mounted() {
+  async created() {
+    const loadStates = ['exb','tx']
+    await Promise.all(loadStates.map(StateHelper.load))
+  },
+  async mounted() {
     // this.fetchData()
   },
   beforeDestroy(){
