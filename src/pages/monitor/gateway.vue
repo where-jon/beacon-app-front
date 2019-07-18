@@ -48,12 +48,12 @@ export default {
       gateways: [],
       csvHeaders: APP.SVC.POS.EXSERVER ? {
         'deviceid': 'deviceid',
-        'updated': 'updated',
+        'updated': this.isDev? 'updated': 'timestamp',
         'state': 'state',
       } : {
         'num': 'num',
         'deviceid': 'deviceid',
-        'updated': 'updated',
+        'updated': this.isDev? 'updated': 'timestamp',
         'state': 'state',
       },
       reloadState: { isLoad: false },
@@ -83,7 +83,7 @@ export default {
         if (payload && payload.done) {
           payload.done()
         }
-        this.gateways = gateways.map((e) => {
+        this.gateways = gateways.map(e => {
           if(APP.SVC.POS.EXSERVER){
             const state = this.$refs.monitorTable.getStateLabel('gw', e.timestamp*1000)
             return { ...e, state: state }
@@ -100,7 +100,7 @@ export default {
       this.isLoad = false
     },
     download() {
-      const dldata = this.gateways.map((gw) => {
+      const dldata = this.gateways.map(gw => {
         const obj = {}
         Object.keys(this.csvHeaders).forEach(csvHeader => {
           obj[this.csvHeaders[csvHeader]] = gw[csvHeader]
