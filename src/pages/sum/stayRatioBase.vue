@@ -149,7 +149,7 @@
                 {{ $t('label.detail') + $t('label.downloadMonth') }}
               </b-dropdown-item>
             </b-dropdown>
-            <b-button v-if="!isIosOrAndroid" v-t="'label.displaySpecified'" :variant="theme" class="ml-2" @click="showModal=true" />
+            <b-button v-t="'label.displaySpecified'" :variant="theme" class="ml-2" @click="showModal=true" />
           </b-form-row>
         </b-form-group>
       </b-form>
