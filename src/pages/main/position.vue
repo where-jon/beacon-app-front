@@ -169,7 +169,7 @@ export default {
       isShowBottom: false,
       isMounted: false,
       reloadState: {isLoad: false},
-      loadStates: ['category','group','lostZones','tx','exb','absentDisplayZones'],
+      loadStates: ['category','group','tx','exb','absentDisplayZones'],
       toggleCallBack: () => this.reset(),
       thumbnailUrl: APP_SERVICE.BASE_URL + EXCLOUD.POT_THUMBNAIL_URL,
       preloadThumbnail: new Image(),
@@ -247,6 +247,11 @@ export default {
     if (APP.POS.PROHIBIT_ALERT) {
       this.loadStates.push('prohibit')
     }
+
+    if (APP.POS.LOST_ALERT) {
+      this.loadStates.push('lostZones')
+    }
+
     await Promise.all(this.loadStates.map(StateHelper.load))
     this.txs.forEach((t) => this.txsMap[t.btxId] = t)
     // ゾーン表示時「・・・」用TXを追加しておく
