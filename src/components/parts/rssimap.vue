@@ -235,8 +235,7 @@ export default {
     },
   },
   async mounted() {
-    await StateHelper.load('category')
-    await StateHelper.load('group')
+    await Promise.all(['category', 'group'].map(StateHelper.load))
     this.fetchData()
   },
   methods: {
