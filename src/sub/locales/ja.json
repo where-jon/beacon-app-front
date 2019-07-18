@@ -425,9 +425,14 @@
 
     "h_blood_pressure": "最高血圧",
     "l_blood_pressure": "最低血圧",
+    "high": "最高血圧",
+    "low": "最低血圧",
     "heart_rate": "心拍数",
+    "beat": "心拍数",
     "step": "歩",
     "down_count": "転倒数",
+    "down": "転倒数",
+    "count": "回数",
 
     "vSelectNoOptions": "",
     "noMatchingOptions": "選択可能な項目がありません。",
@@ -471,6 +476,7 @@
     "day": "日",
     "immediate": "直近値",
     "average": "平均値",
+    "avg": "平均値",
     "max": "最大値",
     "min": "最小値",
     "blood_pressure": "血圧",
