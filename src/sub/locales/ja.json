@@ -58,6 +58,7 @@
     "color": "文字色",
     "textColor": "文字色",
     "dt": "日時",
+    "positionDt": "日時",
     "no": "No.",
     "theme": "テーマ",
     "state": "状態",
