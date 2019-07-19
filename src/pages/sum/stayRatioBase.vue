@@ -298,10 +298,7 @@ export default {
     },
   },
   async created() {
-    await StateHelper.load('groups')
-    await StateHelper.load('pots')
-    await StateHelper.load('categories')
-    await StateHelper.load('areas')
+    await Promise.all(['groups','pots','categories','areas'].map(StateHelper.load))
     this.form.date = moment().add(-1, 'days').format('YYYYMMDD')
     let sortedArea = _.cloneDeep(this.areas)
     ArrayUtil.sortIgnoreCase(sortedArea, 'areaName')
@@ -459,9 +456,7 @@ export default {
     async displayImpl(){
       this.replace({showAlert: false})
       this.showProgress()
-      await StateHelper.load('zones')
-      await StateHelper.load('pots')
-      await StateHelper.load('groups')
+      await Promise.all(['zones','pots','groups'].map(StateHelper.load))
       
       if (!this.form.date || this.form.date.length == 0) {
         this.message = this.$i18n.tnl('message.pleaseEnterSearchCriteria')
@@ -743,10 +738,7 @@ export default {
     async downloadMonth(key){
       this.replace({showAlert: false})
       this.showProgress()
-
-      await StateHelper.load('zones')
-      await StateHelper.load('pots')
-      await StateHelper.load('groups')
+      await Promise.all(['zones', 'pots', 'groups'].map(StateHelper.load))
 
       if (!this.form.date || this.form.date.length == 0) {
         this.message = this.$i18n.tnl('message.pleaseEnterSearchCriteria')
