@@ -538,21 +538,21 @@ export default {
       BrowserUtil.fileDL('notifyHistory.csv', CsvUtil.converToCsv(records, null, this.getCsvHeaderList()), getCharSet(this.$store.state.loginId))
     },
     getFields(aNotifyState) {
-      if (aNotifyState == 'TX_DELIVERY_NOTIFY') {
+      if (aNotifyState == NOTIFY_STATE.TX_DELIVERY_NOTIFY) {
         return this.fields1
-      }else if (aNotifyState == 'GW_ALERT') {
+      }else if (aNotifyState == NOTIFY_STATE.GW_ALERT) {
         return this.fields2
-      }else if (aNotifyState == 'EXB_ALERT') {
+      }else if (aNotifyState == NOTIFY_STATE.EXB_ALERT) {
         return this.fields3
-      }else if (aNotifyState == 'TX_BATTERY_ALERT') {
+      }else if (aNotifyState == NOTIFY_STATE.TX_BATTERY_ALERT) {
         return this.fields4
-      }else if (aNotifyState == 'TX_SOS_ALERT') {
+      }else if (aNotifyState == NOTIFY_STATE.TX_SOS_ALERT) {
         return this.fields5
-      }else if (aNotifyState == 'USER_REG_NOTIFY') {
+      }else if (aNotifyState == NOTIFY_STATE.USER_REG_NOTIFY) {
         return this.fields6
-      }else if (aNotifyState == 'PROHIBIT_NOTIFY') {
+      }else if (aNotifyState == NOTIFY_STATE.PROHIBIT_NOTIFY) {
         return this.fields7
-      }else if (aNotifyState == 'LOST_NOTIFY') {
+      }else if (aNotifyState == NOTIFY_STATE.LOST_NOTIFY) {
         return this.fields8
       }
     },
