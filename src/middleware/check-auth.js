@@ -69,9 +69,9 @@ export default function (context) {
   const roleFeatureList = context.store.state.featureList
   const isUser = !isProvider && !isTenantAdmin
   const notAuthTenantFeature = tenantFeatureList && !MenuHelper.featureOk(context.route.path, tenantFeatureList)
-  const notAuthRoleFeature = roleFeatureList && !MenuHelper.getMode(context.route.path, roleFeatureList) & ROLE_FEATURE.MODE.SYS_ALL
+  const notAuthRoleFeature = roleFeatureList && (MenuHelper.getMode(context.route.path, roleFeatureList) & ROLE_FEATURE.MODE.SYS_ALL) == 0
   if (isUser && (notAuthTenantFeature || notAuthRoleFeature)) {
-    if (MenuHelper.featureOk(APP.MENU.TOP_PAGE, tenantFeatureList)) {
+    if (MenuHelper.featureOk(APP.MENU.TOP_PAGE, tenantFeatureList) && (MenuHelper.getMode(APP.MENU.TOP_PAGE, roleFeatureList) & ROLE_FEATURE.MODE.SYS_ALL) != 0) {
       context.redirect(APP.MENU.TOP_PAGE)
     }
     else {
