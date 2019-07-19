@@ -67,6 +67,7 @@ export default {
       prohibitDetectList : null,
       showDismissibleAlert: false,
       count: 0, // mockテスト用
+      loadStates: ['tx', 'exb', 'area'],
     }
   },
   computed: {
@@ -83,18 +84,30 @@ export default {
     async fetchData(payload) {
       try {
         this.showProgress()
-        await StateHelper.load('area')
-        await StateHelper.load('tx')
-        await StateHelper.load('exb')
-        await StateHelper.load('prohibit')
-        await StateHelper.load('lostZones')
+        if (APP.POS.PROHIBIT_ALERT) {
+          this.loadStates.push('prohibit')
+        }
+        if (APP.POS.LOST_ALERT) {
+          this.loadStates.push('lostZones')
+        }
+        await Promise.all(this.loadStates.map(StateHelper.load))
         await PositionHelper.storePositionHistory(0, true)
         let positions = PositionHelper.getPositions(true)
         ProhibitHelper.setProhibitDetect('list', this)
         Util.debug(positions)
+
+        let prohibitCheck = false
+        const minorMap = {}
+        if (APP.POS.PROHIBIT_ALERT) {
+          this.prohibitDetectList.forEach((p) => minorMap[p.minor] = p)
+        }
+
+        const exbMap = {}
+        this.exbs.forEach((e) => exbMap[e.posId] = e)
+
         positions = positions.map((pos) => {
-          const prohibitCheck = this.prohibitDetectList? this.prohibitDetectList.some((data) => data.minor == pos.minor) : false
-          const exb = this.exbs.find((exb) => exb.posId == pos.pos_id)
+          prohibitCheck = minorMap[pos.minor] !== null
+          const exb = exbMap[pos.pos_id]
           return {
             ...pos,
             // powerLevel: this.getPowerLevel(pos),

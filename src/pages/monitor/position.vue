@@ -146,8 +146,7 @@ export default {
           }
         })
       }
-      await StateHelper.load('exb')
-      await StateHelper.load('tx')
+      await Promise.all(['exb','tx'].map(StateHelper.load))
       return positions.map((e) => {
         const tx = this.txs.find((tx) => tx.btxId == e.btx_id)
         const exb = this.exbs.find((exb) => exb.location.posId == e.pos_id)

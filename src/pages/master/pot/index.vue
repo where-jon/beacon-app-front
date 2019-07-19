@@ -104,8 +104,7 @@ export default {
     async fetchData(payload) {
       try {
         this.showProgress()
-        await StateHelper.load('role')
-        await StateHelper.load('pot')
+        await Promise.all(['role', 'pot'].map(StateHelper.load))
         if (payload && payload.done) {
           payload.done()
         }

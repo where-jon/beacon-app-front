@@ -112,9 +112,7 @@ export default {
     ]),
   },
   async created() {
-    await StateHelper.load('sensor')
-    await StateHelper.load('tx')
-    await StateHelper.load('exb')
+    await Promise.all(['sensor', 'tx', 'exb'].map(StateHelper.load))
     this.form.sensorId = Util.hasValue(this.sensorOptions)? this.sensorOptions[0].value: null
     const date = new Date()
     this.form.datetimeFrom = DateUtil.getDatetime(date, {hours: -1})

@@ -208,8 +208,7 @@ export default {
     this.$nextTick(() => ValidateHelper.setCustomValidationMessage())
   },
   async mounted() {
-    await StateHelper.load('area')
-    await StateHelper.load('zone')
+    await Promise.all(['area', 'zone'].map(StateHelper.load))
     this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions, this.form.areaId)
     this.$nextTick(() => this.vueSelected.zone = VueSelectHelper.getVueSelectData(this.getZoneNames(), this.form.zoneId))
     this.deviceId = this.form.deviceId

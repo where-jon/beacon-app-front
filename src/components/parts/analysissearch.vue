@@ -184,10 +184,7 @@ export default {
     },
   },
   async created() {
-    await StateHelper.load('area')
-    await StateHelper.load('category')
-    await StateHelper.load('group')
-    await StateHelper.load('pot')
+    await Promise.all(['area', 'category', 'group', 'pot'].map(StateHelper.load))
     this.changeCategory()
     this.changeGroup()
     this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions, null, true)

@@ -67,8 +67,7 @@ export default {
     },
   },
   async created() {
-    await StateHelper.load('txs')
-    await StateHelper.load('exbs')
+    await Promise.all(['txs', 'exbs'].map(StateHelper.load))
     this.form.date = moment().add(-1, 'days').format('YYYYMMDD')
   },
   async mounted() {

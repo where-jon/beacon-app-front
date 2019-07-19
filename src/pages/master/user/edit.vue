@@ -141,8 +141,7 @@ export default {
     },
   },
   async created(){
-    await StateHelper.load('region')
-    await StateHelper.load('role')
+    await Promise.all(['region', 'role'].map(StateHelper.load))
     this.roleOptions = StateHelper.getOptionsFromState('role', false, true)
     this.vueSelected.role = VueSelectHelper.getVueSelectData(this.roleOptions, Util.getValue(this.form, 'roleId', this.roleOptions.reduce((prev, cur) => cur).value))
     if(Util.hasValue(this.form.userRegionList)){

@@ -157,11 +157,7 @@ export default {
     },
   },
   async created() {
-    await StateHelper.load('pot')
-    await StateHelper.load('area')
-    await StateHelper.load('zone')
-    await StateHelper.load('category')
-    await StateHelper.load('group')
+    await Promise.all(['pot','area','zone','category','group'].map(StateHelper.load))
     const date = new Date()
     this.form.datetimeFrom = DateUtil.getDatetime(date, {date: -3})
     this.form.datetimeTo = DateUtil.getDatetime(date)

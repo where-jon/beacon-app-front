@@ -44,11 +44,7 @@ export default {
   },
   methods: {
     async onSaving() {
-      await StateHelper.load('pot')
-      await StateHelper.load('category')
-      await StateHelper.load('group')
-      await StateHelper.load('tx')
-
+      await Promise.all(['pot', 'category', 'group', 'tx'].map(StateHelper.load))
       await this.$refs.bulkEdit.bulkSave({numberList: 'potType'})
     },
     restructTx(entity, dummyKey){
