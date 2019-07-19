@@ -163,8 +163,7 @@ export default {
     }
   },
   async mounted() {
-    await StateHelper.load('area')
-    await StateHelper.load('exb')
+    await Promise.all(['area', 'exb'].map(StateHelper.load))
     const options = []
     options.push({value: 'locationName', text: this.$i18n.tnl('label.locationName')})
     if (ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')) options.push({value:'deviceIdX', text: this.$i18n.tnl('label.deviceIdX')})
