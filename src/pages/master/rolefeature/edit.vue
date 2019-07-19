@@ -107,7 +107,7 @@ export default {
       deep: true,
     },
     featureId: function(newVal, oldVal) {
-      const feature = this.features.find((val) => val.featureId === newVal)
+      const feature = this.features.find(val => val.featureId === newVal)
       this.form.path = feature != null? feature.path: ''
     },
     selectedAll: function(newVal, oldVal) {
@@ -119,7 +119,7 @@ export default {
     await this.resetFeatureNames()
     this.vueSelected.feature = VueSelectHelper.getVueSelectData(this.featureNames, Util.getValue(this, 'form.featureId', Util.getValue(this.featureNames, '0', {}).value))
     this.selectedModes = []
-    this.modes.forEach((mode) => {
+    this.modes.forEach(mode => {
       if(this.form.mode & mode.value || this.form.mode == mode.value){
         this.selectedModes.push(mode.value)
       }
@@ -135,9 +135,13 @@ export default {
         roleFeatures = []
       }
       this.replaceAS({roleFeatures})
-      const featureOptions = this.features.filter((feature) => {
+      const featureOptions = this.features.filter(feature => {
         if(FeatureHelper.isSystemFeature(feature)){
-          return true
+          if(!Util.hasValue(this.roleFeatures)){
+            return true
+          }
+          const sameFeature = this.roleFeatures.find(roleFeature => feature.featureId === roleFeature.feature.featureId)
+          return sameFeature? false: true
         }
         if(!FeatureHelper.isShowRelationFeature(feature)){
           return false
@@ -145,7 +149,7 @@ export default {
         if(!Util.hasValue(this.roleFeatures)){
           return true
         }
-        const sameFeature = this.roleFeatures.find((roleFeature) => feature.featureId === roleFeature.feature.featureId)
+        const sameFeature = this.roleFeatures.find(roleFeature => feature.featureId === roleFeature.feature.featureId)
         return this.systemReadOnly? sameFeature: !sameFeature
       })
       this.featureNames = featureOptions.map(val => ({
@@ -153,7 +157,7 @@ export default {
         label: this.$i18n.tnl(`label.${val.featureName}`),
         value: val.featureId,
       }))
-      this.featureNames = _(this.featureNames).sortBy((val) => val.text).compact().value()
+      this.featureNames = _(this.featureNames).sortBy(val => val.text).compact().value()
     },
     async onBeforeReload(){
       await this.resetFeatureNames()
