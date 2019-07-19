@@ -119,8 +119,7 @@ export default {
     },
   },
   async mounted() {
-    await StateHelper.load('area')
-    await StateHelper.load('tx')
+    await Promise.all(['area', 'tx'].map(StateHelper.load))
     if(this.pageSendParam){
       this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions, this.pageSendParam.areaId)
       this.selectedArea = this.pageSendParam.areaId
