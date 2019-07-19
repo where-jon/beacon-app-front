@@ -597,11 +597,28 @@ export default {
             this.dataSensorId == SENSOR.MEDITAG? this.headers.meditag: 
               this.dataSensorId == SENSOR.MAGNET? this.headers.magnet: 
                 this.dataSensorId == SENSOR.PRESSURE? this.headers.pressure: null
+      
       BrowserUtil.fileDL(
         'sensorGraph.csv',
-        CsvUtil.converToCsv(this.dataList, header),
+        CsvUtil.converToCsv(this.dataList, header, this.getCsvHeaderList(header)),
         getCharSet(this.$store.state.loginId)
       )
+    },
+    getCsvHeaderList(header) {
+      var regex = /\(/g;
+      const ret = []
+      header.forEach((head) => {
+        const hasSet = head && head.search(regex) > 0
+        if (hasSet) {
+          let splitData = head.split(regex)
+          ret.push(this.$i18n.tnl('label.' + splitData[0]) 
+          + '(' + this.$i18n.tnl('label.' + splitData[1].slice(0,-1)) + ')')
+        } else {
+          ret.push(this.$i18n.tnl('label.' + head))
+        }
+      })
+      ret.push('\n')
+      return ret
     }
   }
 }

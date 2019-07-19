@@ -414,16 +414,24 @@ export const BATTERY_STATE = {
 }
 
 export const NOTIFY_STATE = {
+  TX_DELIVERY_NOTIFY: 'TX_DELIVERY_NOTIFY',
+  GW_ALERT: 'GW_ALERT',
+  EXB_ALERT: 'EXB_ALERT',
+  TX_BATTERY_ALERT: 'TX_BATTERY_ALERT',
+  USER_REG_NOTIFY: 'USER_REG_NOTIFY',
+  TX_SOS_ALERT: 'TX_SOS_ALERT',
+  PROHIBIT_NOTIFY: 'PROHIBIT_NOTIFY',
+  LOST_NOTIFY: 'LOST_NOTIFY',
   getOptions(){
     return [
-      {value:'TX_DELIVERY_NOTIFY', text: i18n.t('label.txBtnNotify'), index:0},
-      {value:'GW_ALERT', text: i18n.t('label.gwNotify'), index:1},
-      {value:'EXB_ALERT', text: i18n.t('label.exbNotify'), index:1},
-      {value:'TX_BATTERY_ALERT', text: i18n.t('label.txBatteryNotify'), index:1},
-      {value:'USER_REG_NOTIFY', text: i18n.t('label.userRegNotify'), index:2},
-      {value:'TX_SOS_ALERT', text: i18n.t('label.sosNotify'), index:3},
-      {value:'PROHIBIT_NOTIFY', text: i18n.t('label.prohibitNotify'), index:4},
-      {value:'LOST_NOTIFY', text: i18n.t('label.lostNotify'), index:5},
+      {value: this.TX_DELIVERY_NOTIFY, text: i18n.t('label.txBtnNotify'), index:0},
+      {value:this.GW_ALERT, text: i18n.t('label.gwNotify'), index:1},
+      {value:this.EXB_ALERT, text: i18n.t('label.exbNotify'), index:1},
+      {value:this.TX_BATTERY_ALERT, text: i18n.t('label.txBatteryNotify'), index:1},
+      {value:this.USER_REG_NOTIFY, text: i18n.t('label.userRegNotify'), index:2},
+      {value:this.TX_SOS_ALERT, text: i18n.t('label.sosNotify'), index:3},
+      {value:this.PROHIBIT_NOTIFY, text: i18n.t('label.prohibitNotify'), index:4},
+      {value:this.LOST_NOTIFY, text: i18n.t('label.lostNotify'), index:5},
     ]
   }
 }

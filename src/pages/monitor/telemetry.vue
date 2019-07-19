@@ -152,7 +152,44 @@ export default {
           .forEach(csvHeader => obj[this.csvHeaders[csvHeader]] = e[csvHeader])
         return obj
       })
-      BrowserUtil.fileDL('telemetry.csv', CsvUtil.converToCsv(records), getCharSet(this.$store.state.loginId))
+      BrowserUtil.fileDL('telemetry.csv', CsvUtil.converToCsv(records, null, this.getCsvHeaderList()), getCharSet(this.$store.state.loginId))
+    },
+    getCsvHeaderList(){
+      if (this.isDev) {
+        return [
+          'meshid_deviceid',
+          'deviceid',
+          'description',
+          'timestamp',
+          'firm_ver',
+          'power_level',
+          'ibeacon_major',
+          'ibeacon_minor',
+          'ibeacon_txpower',
+          'ibeacon_interval',
+          'hour168_count',
+          'hour24_count',
+          'hour12_count',
+          'hour6_count',
+          'hour3_count',
+          'ibeacon_received',
+        ]
+      }
+      const ret = []
+      if (ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceId')) {
+        ret.push(this.$i18n.tnl('label.deviceId'))
+      }
+      if (ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')) {
+        ret.push(this.$i18n.tnl('label.deviceIdX'))
+      }
+      ret.push(this.$i18n.tnl('label.locationName'))
+      if (APP.TELEMETRY.WITH_POWER_LEVEL) {
+        ret.push(this.$i18n.tnl('label.powerLevel'))
+      }
+      ret.push(this.$i18n.tnl('label.finalReceiveTimestamp'))
+      ret.push(this.$i18n.tnl('label.state'))
+      ret.push('\n')
+      return ret
     },
     async makeTelemetryRecords(telemetrys) {
       if (this.isDev) {

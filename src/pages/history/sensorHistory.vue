@@ -181,21 +181,7 @@ export default {
       this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.fetchRows, maxRows: this.limitViewRows})}`
       try {
         const aSensorId = (this.form.sensorId != null)?this.form.sensorId:0
-        if (aSensorId == 1) {
-          this.fields = this.fields1
-        }
-        if (aSensorId == 2 || aSensorId == 3) {
-          this.fields = this.fields2
-        }
-        if (aSensorId == 5) {
-          this.fields = this.fields5
-        }
-        if (aSensorId == 6) {
-          this.fields = this.fields6
-        }
-        if (aSensorId == SENSOR.PRESSURE) {
-          this.fields = this.fields8
-        }
+        this.fields = this.getFields(aSensorId)
         var fetchList = await HttpHelper.getAppService(
           `/basic/sensorHistory/findsensor/${aSensorId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/${this.limitViewRows}`
         )
@@ -217,15 +203,40 @@ export default {
         console.error(e)
       }
     },
+    getFields(aSensorId) {
+      if (aSensorId == SENSOR.TEMPERATURE) {
+        return this.fields1
+      }
+      if (aSensorId == SENSOR.PIR || aSensorId == SENSOR.THERMOPILE) {
+        return this.fields2
+      }
+      if (aSensorId == SENSOR.MEDITAG) {
+        return this.fields5
+      }
+      if (aSensorId == SENSOR.MAGNET) {
+        return this.fields6
+      }
+      if (aSensorId == SENSOR.PRESSURE) {
+        return this.fields8
+      }
+      return this.fields1
+    },
     async fetchData(payload) {
     },
     async exportCsv() {
       const aSensorId = (this.form.sensorId != null)?this.form.sensorId:0
+      const headerLabels = this.getCsvHeaderList(aSensorId)
       BrowserUtil.executeFileDL(
         APP_SERVICE.BASE_URL
-        + `/basic/sensorHistory/csvdownload/${aSensorId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/`
+        + `/basic/sensorHistory/csvdownload/${headerLabels}/${aSensorId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/`
         + getCharSet(this.$store.state.loginId)
       )
+    },
+    getCsvHeaderList(aSensorId) {
+      let fields = this.getFields(aSensorId)
+      return fields.map((field) => {
+        return field.label
+      }).join(',')
     },
   }
 }

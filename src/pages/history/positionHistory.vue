@@ -216,12 +216,20 @@ export default {
     async exportCsv() {
       const aTxId = (this.form.tx != null && this.form.tx.value != null)?this.form.tx.value:0
       const aGroupId = (this.form.group != null && this.form.group.value != null)? this.form.group.value: 0
+      const headerLabels = this.getCsvHeaderList()
       BrowserUtil.executeFileDL(
         APP_SERVICE.BASE_URL
-        + `/core/positionHistory/csvdownload/${aGroupId}/${aTxId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/` 
+        + `/core/positionHistory/csvdownload/${headerLabels}/${aGroupId}/${aTxId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/` 
         + getCharSet(this.$store.state.loginId)
       )
     },
+    getCsvHeaderList() {
+      const historyHeaders = DISP.POSITION_HISTORY.HEADERS.slice()
+      historyHeaders.unshift('positionDt')
+      return historyHeaders.map((header) => {
+        return  header == 'locationName'? this.$i18n.tnl('label.locationZoneName'): this.$i18n.tnl('label.' + header)
+      }).join(',')
+    }
   }
 }
 </script>
