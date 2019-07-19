@@ -284,6 +284,7 @@ export default {
   data() {
     return {
       currentPage: 1,
+      totalRows: 0,
       filter: {
         reg: '',
         extra: {
@@ -319,9 +320,6 @@ export default {
     }
   },
   computed: {
-    totalRows() {
-      return this.list ? this.list.length : 0
-    },
     items() {
       return this.list.map((item) => {
         return _.reduce(item, (result, val, key) => {
@@ -714,6 +712,7 @@ export default {
       return regBool && extBool && delBool && allShowBool
     },
     onFiltered(filteredItems) {
+      this.totalRows = filteredItems.length
       this.currentPage = 1
     },
     async execDelete(id) {
