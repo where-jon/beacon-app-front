@@ -127,9 +127,7 @@ export default {
     },
   },
   async created() {
-    await StateHelper.load('groups')
-    await StateHelper.load('pots')
-    await StateHelper.load('categories')
+    await Promise.all(['groups','pots','categories'].map(StateHelper.load))
     this.form.date = moment().add(-1, 'days').format('YYYYMMDD')
   },
   async mounted() {
@@ -155,9 +153,7 @@ export default {
     async displayImpl(){
       this.replace({showAlert: false})
       this.showProgress()
-      await StateHelper.load('zones')
-      await StateHelper.load('pots')
-      await StateHelper.load('groups')
+      await Promise.all(['zones','pots','groups'].map(StateHelper.load))
       
       if (!this.form.date || this.form.date == '') {
         this.message = this.$i18n.tnl('message.pleaseEnterSearchCriteria')
@@ -274,9 +270,7 @@ export default {
       this.replace({showAlert: false})
       this.showProgress()
 
-      await StateHelper.load('zones')
-      await StateHelper.load('pots')
-      await StateHelper.load('groups')
+      await Promise.all(['zones','pots','groups'].map(StateHelper.load))
 
       if (!this.form.date || this.form.date == '') {
         this.message = this.$i18n.tnl('message.pleaseEnterSearchCriteria')
