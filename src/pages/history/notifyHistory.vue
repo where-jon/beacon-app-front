@@ -224,6 +224,7 @@ export default {
       fields6: ViewHelper.addLabelByKey(this.$i18n, [  // ユーザ登録通知
         {key: 'positionDt', sortable: true, label:'dt'},
         {key: 'notifyTo', sortable: true,label:'notifyTo' },
+        {key: 'majors', sortable: true,label:'major', thClass: 'd-none', tdClass: 'd-none'},
         {key: 'minor', sortable: true,label:'minor' },
         {key: 'txNames', sortable: true,label:'txName' },
         {key: 'notifyResult', sortable: true,label:'notifyResult' },
