@@ -448,23 +448,7 @@ export default {
 
       try {
         const aNotifyState = (this.form.notifyState != null)?this.form.notifyState:0
-        if (aNotifyState == 'TX_DELIVERY_NOTIFY') {
-          this.fields = this.fields1
-        }else if (aNotifyState == 'GW_ALERT') {
-          this.fields = this.fields2
-        }else if (aNotifyState == 'EXB_ALERT') {
-          this.fields = this.fields3
-        }else if (aNotifyState == 'TX_BATTERY_ALERT') {
-          this.fields = this.fields4
-        }else if (aNotifyState == 'TX_SOS_ALERT') {
-          this.fields = this.fields5
-        }else if (aNotifyState == 'USER_REG_NOTIFY') {
-          this.fields = this.fields6
-        }else if (aNotifyState == 'PROHIBIT_NOTIFY') {
-          this.fields = this.fields7
-        }else if (aNotifyState == 'LOST_NOTIFY') {
-          this.fields = this.fields8
-        }
+        this.fields = this.getFields(aNotifyState)
         this.csvHeaders = this.getCsvHeaders(aNotifyState)
         const aTxId = this.txId
         const fetchList = await HttpHelper.getAppService(
@@ -551,11 +535,34 @@ export default {
           delete record.powerLevels
         }
       })
-      BrowserUtil.fileDL('notifyHistory.csv', CsvUtil.converToCsv(records), getCharSet(this.$store.state.loginId))
-
+      BrowserUtil.fileDL('notifyHistory.csv', CsvUtil.converToCsv(records, null, this.getCsvHeaderList()), getCharSet(this.$store.state.loginId))
+    },
+    getFields(aNotifyState) {
+      if (aNotifyState == 'TX_DELIVERY_NOTIFY') {
+        return this.fields1
+      }else if (aNotifyState == 'GW_ALERT') {
+        return this.fields2
+      }else if (aNotifyState == 'EXB_ALERT') {
+        return this.fields3
+      }else if (aNotifyState == 'TX_BATTERY_ALERT') {
+        return this.fields4
+      }else if (aNotifyState == 'TX_SOS_ALERT') {
+        return this.fields5
+      }else if (aNotifyState == 'USER_REG_NOTIFY') {
+        return this.fields6
+      }else if (aNotifyState == 'PROHIBIT_NOTIFY') {
+        return this.fields7
+      }else if (aNotifyState == 'LOST_NOTIFY') {
+        return this.fields8
+      }
     },
     async fetchData(payload) {
     },
+    getCsvHeaderList() {
+      return  this.getFields(this.form.notifyState).map((record) => {
+        return record.label
+      }).join(',') + '\n'
+    }
   }
 }
 </script>
