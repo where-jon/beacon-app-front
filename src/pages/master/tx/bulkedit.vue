@@ -45,9 +45,7 @@ export default {
       return prefix + '_' + (new Date().getTime() % 10000)
     },
     async onSaving() {
-      await StateHelper.load('category')
-      await StateHelper.load('group')
-      await StateHelper.load('pot')
+      await Promise.all(['category', 'group', 'pot'].map(StateHelper.load))
       await this.$refs.bulkEdit.bulkSave({numberList: ['btxId', 'major', 'minor', 'disp', 'x', 'y'], nullableList: ['locationName', 'x', 'y']})
     },
     restructTx(entity, dummyKey){
