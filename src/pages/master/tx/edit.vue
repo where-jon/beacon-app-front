@@ -184,8 +184,7 @@ export default {
   async mounted() {
     Util.applyDef(this.form, this.defValue)
     StateHelper.load('sensor')
-    await StateHelper.load('category')
-    await StateHelper.load('group')
+    await Promise.all(['category', 'group'].map(StateHelper.load))
     this.vueSelected.category = VueSelectHelper.getVueSelectData(this.categoryOptions, this.form.categoryId)
     this.vueSelected.group = VueSelectHelper.getVueSelectData(this.groupOptions, this.form.groupId)
     ValidateHelper.setCustomValidationMessage()
