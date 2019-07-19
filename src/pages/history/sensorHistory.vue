@@ -206,16 +206,16 @@ export default {
       }
     },
     getFields(aSensorId) {
-      if (aSensorId == 1) {
+      if (aSensorId == SENSOR.TEMPERATURE) {
         return this.fields1
       }
-      if (aSensorId == 2 || aSensorId == 3) {
+      if (aSensorId == SENSOR.PIR || aSensorId == SENSOR.THERMOPILE) {
         return this.fields2
       }
-      if (aSensorId == 5) {
+      if (aSensorId == SENSOR.MEDITAG) {
         return this.fields5
       }
-      if (aSensorId == 6) {
+      if (aSensorId == SENSOR.MAGNET) {
         return this.fields6
       }
       if (aSensorId == SENSOR.PRESSURE) {
