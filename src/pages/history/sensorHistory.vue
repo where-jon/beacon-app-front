@@ -230,9 +230,10 @@ export default {
       const headerLabels = this.getCsvHeaderList(aSensorId)
       BrowserUtil.executeFileDL(
         APP_SERVICE.BASE_URL
-        + `/basic/sensorHistory/csvdownload/${headerLabels}/${aSensorId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/`
+        + `/basic/sensorHistory/csvdownload/${aSensorId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/`
         + getCharSet(this.$store.state.loginId)
-      )
+        + `?headerLabels=${headerLabels}`
+     )
     },
     getCsvHeaderList(aSensorId) {
       let fields = this.getFields(aSensorId)

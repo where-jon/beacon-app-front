@@ -219,8 +219,9 @@ export default {
       const headerLabels = this.getCsvHeaderList()
       BrowserUtil.executeFileDL(
         APP_SERVICE.BASE_URL
-        + `/core/positionHistory/csvdownload/${headerLabels}/${aGroupId}/${aTxId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/` 
+        + `/core/positionHistory/csvdownload/${aGroupId}/${aTxId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/` 
         + getCharSet(this.$store.state.loginId)
+        + `?headerLabels=${headerLabels}`
       )
     },
     getCsvHeaderList() {
