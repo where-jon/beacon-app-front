@@ -765,6 +765,7 @@ export default {
       if (!isNoThumbnail) {
         // サムネイル表示あり
         this.preloadThumbnail.onload = () => setupSelectedTx(true)
+        this.preloadThumbnail.src = null // iOSでonloadが一度しか呼ばれないので対策
         this.preloadThumbnail.src = tx.existThumbnail ? this.thumbnailUrl.replace('{id}', tx.potId) : '/default.png'
       } else {
         // サムネイル表示無し
