@@ -63,7 +63,9 @@ export default function (context) {
   }
   if (!isProvider && !isTenantAdmin && (!tenantFeatureList || tenantFeatureList.length == 0)) {
     console.error('No tenant feature List', context.route.path)
-    context.app.router.push(APP.MENU.ERROR_PAGE)
+    AuthHelper.logout()
+    context.redirect('/')
+    context.app.router.push(APP.MENU.LOGIN_PAGE)
     return
   }
   const roleFeatureList = context.store.state.featureList
