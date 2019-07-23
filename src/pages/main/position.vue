@@ -514,11 +514,12 @@ export default {
 
       // 既に該当btx_idのTXアイコンが作成済みか?
       let txBtn = this.icons[pos.btx_id]
-      if (!txBtn || txBtn.color != color || txBtn.bgColor != bgColor) {
+      if (!txBtn || txBtn.color != color || txBtn.bgColor != bgColor || txBtn.transparent != pos.transparent) {
         // 作成されていない場合、新規作成してからiconsに登録
         txBtn = this.createTxBtn(pos, display.shape, color, bgColor)
         txBtn.color = color
         txBtn.bgColor = bgColor
+        txBtn.transparent
         this.icons[pos.btx_id] = txBtn
       } else {
         // 作成済みの場合、座標値のみセットする
