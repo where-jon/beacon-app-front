@@ -70,9 +70,7 @@ export const getPositions = (showAllTime = false, notFilterByTimestamp = false) 
     positions = positionHistores
   } else {
     const now = !DEV.USE_MOCK_EXC? new Date().getTime(): mock.positions_conf.start + count++ * mock.positions_conf.interval  // for mock
-    positions = showAllTime ?
-      orgPositions.filter(pos => Array.isArray(pos)).flatMap(pos => pos) :
-      correctPosId(orgPositions, now, notFilterByTimestamp)
+    positions = correctPosId(orgPositions, now, notFilterByTimestamp)
   }
   return showAllTime ? positions : positionFilter(positions, selectedGroup, selectedCategory)
 }
