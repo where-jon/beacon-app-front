@@ -36,7 +36,7 @@ export default {
       params: {
         name: 'position-list',
         id: 'positionListId',
-        fields: ViewHelper.addLabelByKey(this.$i18n, [ 
+        fields: ViewHelper.addLabelByKey(this.$i18n, [
           APP.TX.BTX_MINOR == 'minor' ? {key: 'minor', label: 'minor', sortable: true, tdClass: 'action-rowdata' }: null,
           APP.TX.BTX_MINOR != 'minor' ? {key: 'btx_id', label: 'btxId', sortable: true, tdClass: 'action-rowdata' }: null,
           APP.TX.BTX_MINOR == 'both' ? {key: 'minor', label:'minor', sortable: true, tdClass: 'action-rowdata' }: null,
@@ -98,15 +98,15 @@ export default {
 
         let prohibitCheck = false
         const minorMap = {}
-        if (APP.POS.PROHIBIT_ALERT && this.prohibitDetectList) {
-          this.prohibitDetectList.forEach((p) => minorMap[p.minor] = p)
-        }
+
+        this.prohibitDetectList? this.prohibitDetectList.forEach((p) => minorMap[p.minor] = p) : null
 
         const exbMap = {}
         this.exbs.forEach((e) => exbMap[e.posId] = e)
 
         positions = positions.map((pos) => {
-          prohibitCheck = minorMap[pos.minor] !== null
+          prohibitCheck = minorMap[pos.minor] != null
+
           const exb = exbMap[pos.pos_id]
           return {
             ...pos,
