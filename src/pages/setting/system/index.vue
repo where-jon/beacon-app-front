@@ -107,7 +107,7 @@ export default {
           {key: 'valTypeDisp', label: 'valType' },
           {key: 'defaultVal' },
           {key: 'value' },
-          {key: 'clear', label: 'actions', thStyle: {width:'80px !important'} }
+          {key: 'clear', label: 'actions', thStyle: {width:'105px !important'} }
         ]),
         initTotalRows: this.totalRows,
         formId: 'updateForm',

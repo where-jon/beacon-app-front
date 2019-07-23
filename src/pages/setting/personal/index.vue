@@ -393,6 +393,6 @@ export default {
 
   .input-btn {
     text-align: center;
-    width: 104px;
+    width: 110px;
   }
 </style>
