@@ -200,6 +200,7 @@ export default {
       dummyKey: -1,
       targetTenantId: null,
       defaultCheckFeatureNames: ['positionmap', 'positionlist', 'positionstack'],
+      isFirst: true,
     }
   },
   computed: {
@@ -255,7 +256,8 @@ export default {
       this.editSettingList = _.cloneDeep(this.settingList)
       this.$forceUpdate()
       this.$nextTick(async () => {
-        await this.$refs.systemSetting.fetchData()
+        await this.$refs.systemSetting.fetchData(this.isFirst)
+        this.isFirst = false
         this.$root.$emit('bv::show::modal', 'modalSettingInfo', null)
         this.$nextTick(() => {
           window.addEventListener('resize', this.adjustModalRect)
@@ -306,6 +308,7 @@ export default {
       }
       this.targetTenantId = null
       this.settingList = []
+      this.isFirst = true
     },
     async onSaving() {
       let dummyKey = -1
