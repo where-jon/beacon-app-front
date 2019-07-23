@@ -105,7 +105,8 @@ export default {
         this.exbs.forEach((e) => exbMap[e.posId] = e)
 
         positions = positions.map((pos) => {
-          prohibitCheck = minorMap[pos.minor] != null ? true : false
+          prohibitCheck = minorMap[pos.minor] != null
+
           const exb = exbMap[pos.pos_id]
           return {
             ...pos,
