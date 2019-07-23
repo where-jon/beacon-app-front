@@ -98,7 +98,7 @@ export default {
 
         let prohibitCheck = false
         const minorMap = {}
-        this.prohibitDetectList.forEach((p) => minorMap[p.minor] = p)
+        this.prohibitDetectList? this.prohibitDetectList.forEach((p) => minorMap[p.minor] = p) : null
 
         const exbMap = {}
         this.exbs.forEach((e) => exbMap[e.posId] = e)
