@@ -519,14 +519,8 @@ export default {
       isDisplaySensorHistory: false,
       isDisplayNotifyHistory: false,
       isDisplayStayRatioBase: false,
-      csvFields: ViewHelper.addLabelByKey(this.$i18n, [
-        {key: 'keyName', sortable: true, label: 'keyName', thClass: 'fields', tdClass: 'items'},
-        {key: 'displayName', sortable: false, label: 'displayName', thClass: 'fields', tdClass: 'items'},
-      ]),
-      bulkFields: ViewHelper.addLabelByKey(this.$i18n, [
-        {key: 'error_name', sortable: true, label: 'error', thClass: 'fields', tdClass: 'items'},
-        {key: 'description', sortable: false, label: 'detail', thClass: 'fields', tdClass: 'items'},
-      ]),
+      csvFields: [],
+      bulkFields: [],
     }
   },
   computed: {
@@ -608,11 +602,22 @@ export default {
   },
   methods: {
     initialize() {
+      this.createLabel()
       this.checkMenu()
       Vue.nextTick(function () {
         // if反映された後の描画を待ってページ内遷移させる
         document.getElementById('helpAutoLink').click()
       })
+    },
+    createLabel(){
+      this.csvFields = ViewHelper.addLabelByKey(this.$i18n, [
+        {key: 'keyName', sortable: true, label: 'keyName', thClass: 'fields', tdClass: 'items'},
+        {key: 'displayName', sortable: false, label: 'displayName', thClass: 'fields', tdClass: 'items'},
+      ])
+      this.bulkFields = ViewHelper.addLabelByKey(this.$i18n, [
+        {key: 'error_name', sortable: true, label: 'error', thClass: 'fields', tdClass: 'items'},
+        {key: 'description', sortable: false, label: 'detail', thClass: 'fields', tdClass: 'items'},
+      ])
     },
     checkMenu() {
       this.menu.forEach(function(parent) {
