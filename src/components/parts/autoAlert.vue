@@ -41,7 +41,7 @@ export default {
     },
     createMessage(){
       const messageList = []
-      if(this.browserSize && BrowserUtil.isResponsiveMode()){
+      if(this.browserSize && BrowserUtil.isResponsiveMode(true)){
         messageList.push(this.$i18n.tnl('message.browserSizeWarn'))
       }
       this.show = Util.hasValue(messageList)
