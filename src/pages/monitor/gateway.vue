@@ -115,15 +115,15 @@ export default {
     },
     getCsvHeaderList() {
       return APP.SVC.POS.EXSERVER ? [
-        this.$i18n.tnl('label.deviceId'),
-        this.$i18n.tnl('label.finalReceiveTimestamp'),
-        this.$i18n.tnl('label.state'),
+        this.isDev? 'deviceid': this.$i18n.tnl('label.deviceId'),
+        this.isDev? 'updated': this.$i18n.tnl('label.finalReceiveTimestamp'),
+        this.isDev? 'state': this.$i18n.tnl('label.state'),
         '\n'
       ]: [
-        this.$i18n.tnl('label.no'),
-        this.$i18n.tnl('label.deviceId'),
-        this.$i18n.tnl('label.finalReceiveTimestamp'),
-        this.$i18n.tnl('label.state'),
+        this.isDev? 'no': this.$i18n.tnl('label.no'),
+        this.isDev? 'deviceid': this.$i18n.tnl('label.deviceId'),
+        this.isDev? 'updated': this.$i18n.tnl('label.finalReceiveTimestamp'),
+        this.isDev? 'state': this.$i18n.tnl('label.state'),
         '\n'
       ]
     }
