@@ -2,6 +2,7 @@
 <template>
   <div class="container-fluid">
     <breadcrumb v-if="!callee" :items="items" />
+    <auto-alert browser-size />
     <alert v-if="!callee" :message="message" />
     <div class="container">
       <m-list ref="mList" :params="params" :list="settingList" :per-page="settingList.length" :use-pagenation="false" :alert-force-hide="true" max-filter-length="40" />
@@ -74,6 +75,7 @@ import commonmixin from '../../../components/mixin/commonmixin.vue'
 import editmixin from '../../../components/mixin/editmixin.vue'
 import mList from '../../../components/page/list.vue'
 import alert from '../../../components/parts/alert.vue'
+import autoAlert from '../../../components/parts/autoAlert.vue'
 import settinginput from '../../../components/parts/settinginput.vue'
 
 export default {
@@ -81,6 +83,7 @@ export default {
     breadcrumb,
     mList, 
     alert,
+    autoAlert,
     settinginput,
   },
   mixins: [commonmixin, editmixin],

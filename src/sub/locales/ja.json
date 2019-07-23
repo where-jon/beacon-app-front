@@ -1348,6 +1348,8 @@
     "selectLimitDescription": "設定できる項目は{max}個までです。",
     "tooManyCheck": "選択は{max}個以下にする必要があります。",
 
+    "browserSizeWarn": "ブラウザサイズが適していません。PCで設定を行うか、PCの場合はブラウザサイズを横に拡げて下さい。",
+
     "dummy": "" 
   },
   "helpDescription": {
