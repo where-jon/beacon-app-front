@@ -766,6 +766,13 @@
         "POS": {
           "EXSERVER": "Use EXServer::Use EXServer.",
           "CACHE_TIME": "Server cache effective time::Set up the effective time of cache data accumulated by the server in milliseconds."
+        },
+        "PROXIMITY":{
+          "USE_TXAIR": "",
+          "USE_MEETING_ROOM": "",
+          "EXCLOUD_RAWLOG_DIR": "",
+          "BLANK_RANGE": "",
+          "MIN_RANGE": ""
         }
       },
       "BATCH": {
@@ -798,6 +805,9 @@
         },
         "STAY_SUM": {
           "CRON": "The time for Cron calculates stay time::Set up the time for Cron calculates stay time. Set up it in Cron format."
+        },
+        "PROXIMITY": {
+          "CRON": ""
         }
       }
     },
@@ -975,6 +985,13 @@
           },
           "POS": {
             "CACHE_TIME": "number"
+          },
+          "PROXIMITY":{
+            "USE_TXAIR": "boolean",
+            "USE_MEETING_ROOM": "boolean",
+            "EXCLOUD_RAWLOG_DIR": "string",
+            "BLANK_RANGE": "number",
+            "MIN_RANGE": "number"
           }
         },
         "BATCH": {
@@ -1006,6 +1023,9 @@
             "CRON": "string"
           },
           "STAY_SUM": {
+            "CRON": "string"
+          },
+          "PROXIMITY": {
             "CRON": "string"
           }
         }

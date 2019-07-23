@@ -774,6 +774,13 @@
         "POS": {
           "EXSERVER": "EXServerを使用する::EXServerを使用します。",
           "CACHE_TIME": "サーバキャッシュ有効時間::サーバが蓄積しているキャッシュデータの有効時間をミリ秒単位で設定します。"
+        },
+        "PROXIMITY":{
+          "USE_TXAIR": "TXAirの交流分析::TXAirの交流分析を行うか設定します。",
+          "USE_MEETING_ROOM": "会議室単位での交流分析::会議室単位での交流分析を行うか設定します。",
+          "EXCLOUD_RAWLOG_DIR": "syslogのファイルパス::マウントしたsyslogへのファイルパスを設定します。",
+          "BLANK_RANGE": "継続交流時間",
+          "MIN_RANGE": "最小交流時間"
         }
       },
       "BATCH": {
@@ -806,6 +813,9 @@
         },
         "STAY_SUM": {
           "CRON": "Cronが滞在時間の集計を行う時間::Cronが滞在時間の集計を行う時間を設定します。Cron形式の時間で設定します。"
+        },
+        "PROXIMITY": {
+          "CRON": "Cronが交流分析を行う時間::Cronが交流分析を行う時間を設定します。Cron形式の時間で設定します。"
         }
       }
     },
@@ -983,6 +993,13 @@
           },
           "POS": {
             "CACHE_TIME": "number"
+          },
+          "PROXIMITY":{
+            "USE_TXAIR": "boolean",
+            "USE_MEETING_ROOM": "boolean",
+            "EXCLOUD_RAWLOG_DIR": "string",
+            "BLANK_RANGE": "number",
+            "MIN_RANGE": "number"
           }
         },
         "BATCH": {
@@ -1014,6 +1031,9 @@
             "CRON": "string"
           },
           "STAY_SUM": {
+            "CRON": "string"
+          },
+          "PROXIMITY": {
             "CRON": "string"
           }
         }
@@ -1347,6 +1367,8 @@
     "selectDisplayColumn": "設定された項目を表に表示します。",
     "selectLimitDescription": "設定できる項目は{max}個までです。",
     "tooManyCheck": "選択は{max}個以下にする必要があります。",
+
+    "browserSizeWarn": "ブラウザサイズが適していません。PCで設定を行うか、PCの場合はブラウザサイズを横に拡げて下さい。",
 
     "dummy": "" 
   },
