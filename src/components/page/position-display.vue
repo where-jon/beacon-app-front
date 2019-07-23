@@ -103,7 +103,6 @@ export default {
     async fetchData(payload) {
       try {
         this.showProgress()
-        console.log('fetchData Started.')
         await Promise.all(this.loadStates.map(StateHelper.load))
         // positionデータ取得
         await PositionHelper.storePositionHistory(null, true, true)
@@ -121,7 +120,6 @@ export default {
         console.error(e)
       }
       this.hideProgress()
-      console.log('fetchData End.')
     },
     async checkDetectedTx(tx) {
       //await this.fetchData()

@@ -201,7 +201,8 @@ const setPositionStyle = (positions, fixSize = false) => { // p
  */
 const getShowTxPositions = (positionHistores, orgPositions, positions, allShow = false) => { // p
   const now = !DEV.USE_MOCK_EXC ? new Date().getTime(): mock.positions_conf.start + count++ * mock.positions_conf.interval
-  const correctPositions = APP.POS.USE_POSITION_HISTORY? positionHistores: correctPosId(orgPositions, now)
+  //const correctPositions = APP.POS.USE_POSITION_HISTORY? positionHistores: correctPosId(orgPositions, now)
+  const correctPositions = positions // ここでpositionHistoresを使う必要はない
   const cPosMap = {}
   correctPositions.forEach(c => cPosMap[c.btx_id] = c)
   return _(positions)
