@@ -123,26 +123,20 @@
         </template>
         <!-- リージョン名 -->
         <template slot="regionNames" slot-scope="row">
-          <div>
-            <span v-for="(regionName, index) in row.item.regionNames" :key="index" class="row">
-              {{ regionName }}
-            </span>
+          <div v-for="(regionName, index) in row.item.regionNames" :key="index">
+            {{ regionName }}
           </div>
         </template>
         <!-- tx名 -->
         <template slot="txIdName" slot-scope="row">
-          <div>
-            <span v-for="(txIdName, index) in row.item.txIdNames" :key="index" class="row">
-              {{ txIdName }}
-            </span>
+          <div v-for="(txIdName, index) in row.item.txIdNames" :key="index">
+            {{ txIdName }}
           </div>
         </template>
         <!-- センサ名 -->
         <template slot="sensorIdName" slot-scope="row">
-          <div>
-            <span v-for="(sensorIdName, index) in row.item.sensorIdNames" :key="index" class="row">
-              {{ sensorIdName }}
-            </span>
+          <div v-for="(sensorIdName, index) in row.item.sensorIdNames" :key="index">
+            {{ sensorIdName }}
           </div>
         </template>
         <!-- センサ名 -->
