@@ -103,7 +103,7 @@
         <div v-if="!hasId && show" class="form-row">
           <b-form-row class="mb-3">
             <label v-t="'label.meshId'" class="mr-3" />
-            <input v-model="form.meshId" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control">
+            <input v-model="form.meshId" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control" required>
           </b-form-row>
         </div>
 
