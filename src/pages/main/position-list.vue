@@ -98,7 +98,7 @@ export default {
 
         let prohibitCheck = false
         const minorMap = {}
-        if (APP.POS.PROHIBIT_ALERT) {
+        if (APP.POS.PROHIBIT_ALERT && this.prohibitDetectList) {
           this.prohibitDetectList.forEach((p) => minorMap[p.minor] = p)
         }
 
