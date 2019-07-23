@@ -93,9 +93,9 @@
         </template>
         <template slot="actions" slot-scope="row">
           <!-- 参照ボタン -->
-          <b-button v-if="isDetailReferenceable" v-t="'label.refer'" :variant="theme" :style="actionButtonStyle" size="sm" class="mr-2 my-1" @click.stop="edit(row.item, row.index, $event.target)" />
+          <b-button v-if="isDetailReferenceable" v-t="'label.refer'" :variant="theme" :style="actionButtonStyle" size="sm" class="mr-1 my-1" @click.stop="edit(row.item, row.index, $event.target)" />
           <!-- 更新ボタン -->
-          <b-button v-if="isUpdatable" v-t="'label.update'" :variant="theme" :style="actionButtonStyle" size="sm" class="mr-2 my-1" :disabled="disabledTenantButton(row.item)" @click.stop="edit(row.item, row.index, $event.target)" />
+          <b-button v-if="isUpdatable" v-t="'label.update'" :variant="theme" :style="actionButtonStyle" size="sm" class="mr-1 my-1" :disabled="disabledTenantButton(row.item)" @click.stop="edit(row.item, row.index, $event.target)" />
           <!-- 削除ボタン -->
           <b-button v-if="isDeleteable" v-t="'label.delete'" :style="actionButtonStyle" size="sm" variant="outline-danger" class="mr-1 my-1" @click.stop="deleteConfirm(row.item, row.index, $event.target)" />
           <!-- jump another master page -->
@@ -190,7 +190,7 @@
           <settinginput v-if="!row.item.isParent" :input-model="getItem(row.item)" input-key="value" :input-type="row.item.valType" :form-id="params.formId" />
         </template>
         <template slot="clear" slot-scope="row">
-          <b-button v-if="!row.item.isParent" v-t="'label.clear'" :variant="theme" size="sm" @click.stop="clearAction(row.item)" />
+          <b-button v-if="!row.item.isParent" v-t="'label.clear'" :variant="theme" size="sm" class="ml-2" @click.stop="clearAction(row.item)" />
         </template>
       </b-table>
 

@@ -5,9 +5,9 @@
     <b-row>
       <b-form v-if="show" inline @submit.prevent>
         <b-form-row class="ml-2 mb-2">
-          <label v-t="'label.areaName'" class="control-label mr-sm-2" />
+          <label v-t="'label.areaName'" class="control-label mr-2" />
           <span :title="vueSelectTitle(vueSelected.area)">
-            <v-select v-model="vueSelected.area" :options="areaNames" :clearable="false" class="mb-2 mr-sm-2 mb-sm-0 vue-options" :style="vueSelectStyle">
+            <v-select v-model="vueSelected.area" :options="areaNames" :clearable="false" class="mt-2 mr-2 vue-options" :style="vueSelectStyle">
               <template slot="selected-option" slot-scope="option">
                 {{ vueSelectCutOn(option, true) }}
               </template>
@@ -18,13 +18,13 @@
           </span>
         </b-form-row>
         <b-form-row class="ml-2 mb-2">
-          <label v-t="'label.zoneName'" class="control-label mr-sm-2" />
-          <input v-model="zoneName" type="text" maxlength="20" :disabled="!isEnableNameText" class="form-control mb-2 mr-sm-2 mb-sm-0" required>
+          <label v-t="'label.zoneName'" class="control-label mr-2" />
+          <input v-model="zoneName" type="text" maxlength="20" :disabled="!isEnableNameText" class="mt-2 mr-2 form-control" required>
         </b-form-row>
         <b-form-row class="ml-2 mb-2">
-          <label v-t="'label.categoryName'" class="control-label mr-sm-2" />
+          <label v-t="'label.categoryName'" class="control-label mr-2" />
           <span :title="vueSelectTitle(vueSelected.category)">
-            <v-select v-model="vueSelected.category" :options="categoryNames" :disabled="!isEnableNameText" :clearable="false" class="mb-2 mr-sm-2 mb-sm-0 vue-options" :style="vueSelectStyle">
+            <v-select v-model="vueSelected.category" :options="categoryNames" :disabled="!isEnableNameText" :clearable="false" class="mt-2 mr-2 vue-options" :style="vueSelectStyle">
               <template slot="selected-option" slot-scope="option">
                 {{ vueSelectCutOn(option) }}
               </template>
@@ -34,7 +34,7 @@
             </v-select>
           </span>
         </b-form-row>
-        <b-form-row class="ml-2 mb-2">
+        <b-form-row class="ml-2">
           <b-button v-if="isEditable || isDeleteable" v-t="'label.delete'" type="button" variant="outline-danger" :disabled="!isEnableNameText" @click="confirmDelete($event.target)" />
           <b-button v-if="isEditable || isDeleteable" class="button-regist" :variant="theme" type="button" @click="regist()">
             {{ label }}

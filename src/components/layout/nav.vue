@@ -320,6 +320,14 @@ export default {
   color: white;
 }
 
+.nav-link:hover {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.nav-link{
+  color: rgba(255, 255, 255, 1.0) !important;
+}
+
 div.appTitle {
   min-width: calc(15vw);
 }
