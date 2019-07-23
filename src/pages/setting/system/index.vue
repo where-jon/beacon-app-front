@@ -110,7 +110,7 @@ export default {
         formId: 'updateForm',
         allShowFilter: true,
         disableTableButtons: true,
-        addFilterFields: ['title'],
+        addFilterFields: ['title', 'inputData'],
         allDispFields: ['title', 'defaultVal'],
         extraFilter: ['settingCategory'],
         tableDescription: 'settingDescription',
@@ -151,13 +151,22 @@ export default {
   },
   methods: {
     add(setting){
-      return this.settingList.push(setting)
+      return this.settingList.push(this.addInputData(setting))
     },
     parse(){
+      this.settingList.forEach(setting => this.mergeInputData(setting))
       return this.settingList.filter(setting => Util.hasValue(setting.settingId) || Util.hasValue(setting.value))
     },
     hasSameKey(){
       return this.settingList.find(val => val.key == this.newForm.key)? true: false
+    },
+    addInputData(setting){
+      setting.inputData = {value: setting.value}
+      return setting
+    },
+    mergeInputData(setting){
+      setting.value = Util.getValue(setting, 'inputData.value', null)
+      return setting
     },
     getDuplicationMessage(){
       return this.$i18n.tnl('message.bulkUniqueFailed', {col: this.$i18n.tnl('label.key'), value: this.newForm.key})
@@ -167,14 +176,17 @@ export default {
         this.newForm.key = this.newForm.key.replace(/\s/g, '')
       }
     },
-    async fetchData() {
+    async fetchData(updateOldSettings = true) {
       try {
         this.showProgress()
         if(!this.calee){
           await StateHelper.load('setting')
         }
-        this.oldSettingEntities = this.callee? this.pSettingList: this.settings
+        if(updateOldSettings){
+          this.oldSettingEntities = this.callee? _.cloneDeep(this.pSettingList): this.settings
+        }
         this.settingList = SettingHelper.createSettingList(this.callee? this.pSettingList: this.settings, this.callee)
+        this.settingList.forEach(setting => this.addInputData(setting))
         this.initFilter()
       }
       catch(e) {
@@ -233,6 +245,7 @@ export default {
         if(setting.isParent){
           return
         }
+        this.mergeInputData(setting)
         entity.push({
           ...setting,
           settingId: Util.hasValue(setting.settingId)? setting.settingId: -1 * (index + 1),
@@ -270,12 +283,11 @@ export default {
       this.isShowNewForm = show
       this.initNewForm(true)
     },
-    getItem(key){
-      const target = this.settingList.find(setting => setting.key == key)
-      return target? target: {}
+    getItem(item){
+      return item.inputData
     },
-    clearAction(key){
-      this.getItem(key).value = null
+    clearAction(item){
+      this.getItem(item).value = null
     },
     changeValType(event){
       this.newForm.valType = event

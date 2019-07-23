@@ -193,10 +193,10 @@
           </div>
         </template>
         <template slot="value" slot-scope="row">
-          <settinginput v-if="!row.item.isParent" :input-model="getItem(row.item.key)" input-key="value" :input-type="row.item.valType" :form-id="params.formId" />
+          <settinginput v-if="!row.item.isParent" :input-model="getItem(row.item)" input-key="value" :input-type="row.item.valType" :form-id="params.formId" />
         </template>
         <template slot="clear" slot-scope="row">
-          <b-button v-if="!row.item.isParent" v-t="'label.clear'" :variant="theme" size="sm" @click.stop="clearAction(row.item.key)" />
+          <b-button v-if="!row.item.isParent" v-t="'label.clear'" :variant="theme" size="sm" @click.stop="clearAction(row.item)" />
         </template>
       </b-table>
 
