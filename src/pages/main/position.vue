@@ -409,9 +409,7 @@ export default {
         }
         this.positionedExb = PositionHelper.getPositionedExb(this.selectedArea)
 
-        if (APP.POS.PROHIBIT_ALERT) {
-          ProhibitHelper.setProhibitDetect('pos', this)
-        }
+        ProhibitHelper.setProhibitDetect('pos', this)
 
         this.showTxAll()
 

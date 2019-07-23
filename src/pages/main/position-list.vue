@@ -98,15 +98,13 @@ export default {
 
         let prohibitCheck = false
         const minorMap = {}
-        if (APP.POS.PROHIBIT_ALERT) {
-          this.prohibitDetectList.forEach((p) => minorMap[p.minor] = p)
-        }
+        this.prohibitDetectList.forEach((p) => minorMap[p.minor] = p)
 
         const exbMap = {}
         this.exbs.forEach((e) => exbMap[e.posId] = e)
 
         positions = positions.map((pos) => {
-          prohibitCheck = minorMap[pos.minor] !== null
+          prohibitCheck = minorMap[pos.minor] != null ? true : false
           const exb = exbMap[pos.pos_id]
           return {
             ...pos,
