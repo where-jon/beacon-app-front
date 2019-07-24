@@ -47,7 +47,7 @@
               <b-form-select v-model="selectedLocale" :options="locales" class="mb-3" @change="localeSelected" />
             </b-form-group>
             <!-- プロフィール・パスワードを変更するボタン -->
-            <b-form-group>
+            <b-form-group v-if="isEditable">
               <b-button v-show="!isChange" v-t="'label.changeProfilePassword'" :variant="theme" 
                         type="button" class="btn-block" @click="isChange = true"
               />

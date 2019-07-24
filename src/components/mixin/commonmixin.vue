@@ -3,6 +3,7 @@
 import { mapState, mapMutations, mapActions } from 'vuex'
 import { CATEGORY } from '../../sub/constant/Constants'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
+import * as MenuHelper from '../../sub/helper/dataproc/MenuHelper'
 import * as OptionHelper from '../../sub/helper/dataproc/OptionHelper'
 import * as ThemeHelper from '../../sub/helper/ui/ThemeHelper'
 import * as VueSelectHelper from '../../sub/helper/ui/VueSelectHelper'
@@ -25,6 +26,12 @@ export default {
     ]),
     iosOrAndroid() {
       return BrowserUtil.isAndroidOrIOS()
+    },
+    editable(){
+      return MenuHelper.isEditable(this.$route.path)
+    },
+    bulkReferenceable() {
+      return MenuHelper.isBulkReferenceable(this.$route.path)
     },
     theme() {
       return ThemeHelper.getButtonTheme()

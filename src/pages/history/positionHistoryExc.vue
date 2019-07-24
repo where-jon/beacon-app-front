@@ -40,7 +40,7 @@
         <b-row class="mt-4" />
         <b-table :items="viewList" :fields="fields" :sort-by.sync="sortBy" :sort-desc.sync="sortDesc" striped hover outlined>
           <template slot="actions" slot-scope="row">
-            <b-button v-t="'label.download'" :variant="theme" size="sm" @click.stop="download(row.item)" />
+            <b-button v-if="bulkReferenceable" v-t="'label.download'" :variant="theme" size="sm" @click.stop="download(row.item)" />
           </template>
         </b-table>
       </div>

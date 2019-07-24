@@ -63,7 +63,7 @@
       </b-form-row>
       <b-form-row class="mb-3 ml-1">
         <b-button v-t="settingStart?'label.settingNow':'label.settingStart'" :variant="theme" :class="{'mt-mobile':true, 'mt-mobile-button': true, 'mr-2':true, blink:settingStart}" size="sm" @click="ratioSettingStart" /> 
-        <b-button v-t="'label.save'" :variant="theme" :disabled="!isChanged" size="sm" @click="save" /> 
+        <b-button v-if="editable" v-t="'label.save'" :variant="theme" :disabled="!isChanged" size="sm" @click="save" /> 
       </b-form-row>
     </b-form>
     <p />

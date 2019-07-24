@@ -2,7 +2,7 @@
   <div>
     <b-row align-h="end">
       <all-count :count="allCount" />
-      <b-col md="2" class="mb-3 mr-3">
+      <b-col v-if="bulkReferenceable" md="2" class="mb-3 mr-3">
         <b-button v-if="!iosOrAndroid" v-t="'label.download'" :variant="theme" @click="download()" />
       </b-col>
     </b-row>

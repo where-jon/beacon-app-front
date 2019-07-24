@@ -38,7 +38,7 @@
             </v-select>
           </span>
           <b-button v-t="'label.bulkAdd'" :variant="theme" size="sm" class="mt-mobile mb-2" @click="bulkAdd" /> 
-          <b-button v-t="'label.save'" :variant="theme" :disabled="!isChanged" size="sm" class="mt-mobile ml-2 mb-2" @click="save" /> 
+          <b-button v-if="editable" v-t="'label.save'" :variant="theme" :disabled="!isChanged" size="sm" class="mt-mobile ml-2 mb-2" @click="save" /> 
         </b-form-row>
       </b-form-row>
     </b-form>
