@@ -1064,6 +1064,10 @@
             "STAY_SUM_INTERVAL": "5",
             "STAY_SUM_CALC_BY": "location",
             "STAY_SUM_ADJUST_TIME": "4"
+          },
+          "PROXIMITY":{
+            "BLANK_RANGE": "60000",
+            "MIN_RANGE": "60000"
           }
         }
       }
