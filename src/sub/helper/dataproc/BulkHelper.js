@@ -266,7 +266,7 @@ export const entityKeyCheck = (masterName, entities) => {
   const requireNames = StringUtil.camel2snake(masterName).toUpperCase()
   entities.forEach(entity => {
     BULK.REQUIRE[requireNames].ALLOW.forEach(allowName => {
-      if(!Util.hasValue(entity[allowName])) {
+      if(typeof entity[allowName] === 'undefined') {
         throw Error(i18n.tnl('message.invalidFile'))
       }
     })
@@ -274,7 +274,7 @@ export const entityKeyCheck = (masterName, entities) => {
       return
     }
     BULK.REQUIRE[requireNames].DISALLOW.forEach(disAllowName => {
-      if(Util.hasValue(entity[disAllowName])) {
+      if(typeof entity[disAllowName] !== 'undefined') {
         throw Error(i18n.tnl('message.invalidFile'))
       }
     })
