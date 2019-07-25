@@ -79,26 +79,32 @@ export default {
       return this[this.eachListName]
     },
     splitMaster(positions,prohibitDetectList){
-      const tempMaster = _.map(this[this.listName], (obj) => ({[this.id]: obj[this.id], label: obj[this.name], positions: []}))
+      const tempMasterMap = {}
+      this[this.listName].forEach(obj => tempMasterMap[obj[this.id]] = {[this.id]: obj[this.id], label: obj[this.name], positions: []})
+      const tempMasterExt = {[this.id]: -1, label: this.$i18n.tnl('label.other'), positions: []}
+      const exbMap = {}
+      this.exbs.forEach(exb => exbMap[exb.posId] = exb)
 
-      _.forEach(positions, (pos) => {
-        const posMasterId = Util.getValue(pos, 'exb.' + this.id, null)
-        const exb = this.exbs.find((exb) => exb.posId == pos.pos_id)
-        _.forEach(tempMaster, (obj) => {
-          if (posMasterId == obj[this.id] && !pos.noSelectedTx) {
-            prohibitDetectList? prohibitDetectList.some((data) => {
-              if(data.minor == pos.minor){
-                pos.blinking = 'blinking'
-                return true
-              }
-            }): false
-            pos.isDisableArea = exb? exb.isAbsentZone: false
-            exb? exb.isAbsentZone? false: obj.positions.push(pos): obj.positions.push(pos)
+      _.forEach(positions, pos => {
+        const exb = exbMap[pos.pos_id]
+        prohibitDetectList? prohibitDetectList.some(data => {
+          if(data.minor == pos.minor){
+            pos.blinking = 'blinking'
+            return true
           }
-          
-        })
+        }): false
+        pos.isDisableArea = exb? exb.isAbsentZone: false
+        const posMasterId = Util.getValue(pos, 'exb.' + this.id, null)
+        const obj = posMasterId? tempMasterMap[posMasterId]: tempMasterExt
+        if(!pos.noSelectedTx && !Util.getValue(exb, 'isAbsentZone', false)){
+          obj.positions.push(pos)
+        }
       })
-      return tempMaster
+      const ret = _.sortBy(tempMasterMap, tmm => tmm.label)
+      if(Util.hasValue(tempMasterExt.positions)){
+        ret.push(tempMasterExt)
+      }
+      return ret
     },
     async fetchData(payload) {
       try {
@@ -123,9 +129,7 @@ export default {
     },
     async checkDetectedTx(tx) {
       //await this.fetchData()
-      return _.some(this.positions, (pos) => {
-        return pos.tx.txId == tx.txId
-      })
+      return _.some(this.positions, pos => pos.tx.txId == tx.txId)
     }
   }
 }
