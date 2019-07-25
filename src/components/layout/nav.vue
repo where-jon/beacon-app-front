@@ -17,7 +17,7 @@
     <b-collapse v-show="!isLoginPage && getShowNav()" id="nav_collapse" ref="collapse" is-nav>
       <!-- left (navi dropdown menu) -->
       <b-navbar-nav v-show="!isLoginPage && getShowNav()">
-        <b-nav-item-dropdown v-for="group in this.$store.state.menu" :key="group.path">
+        <b-nav-item-dropdown v-for="group in this.$store.state.menu" :key="group.path" class="white-dropdown">
           <template slot="button-content">
             <em class="word-break">
               {{ $i18n.tnl('label.' + group.key) }}
@@ -81,7 +81,7 @@
             </td>
             <td v-show="!(getShowNav() && isResponsiveMenu())">
               <!-- user & logout -->
-              <b-nav-item-dropdown right>
+              <b-nav-item-dropdown right class="white-dropdown">
                 <template slot="button-content">
                   <font-awesome-icon icon="user" />&nbsp;
                   <em class="word-break">
@@ -161,7 +161,9 @@ export default {
     navbarClasses() {
       // use for update theme-color
       this.$store.state.setting.theme
-      return getThemeClasses()
+      const ret = getThemeClasses()
+      ret['white-dropdown'] = true
+      return ret
     },
     topNavBarClasses() {
       let classes = {}
@@ -320,11 +322,11 @@ export default {
   color: white;
 }
 
-.nav-link:hover {
+.white-dropdown > .nav-link:hover {
   color: rgba(255, 255, 255, 0.5) !important;
 }
 
-.nav-link{
+.white-dropdown > .nav-link{
   color: rgba(255, 255, 255, 1.0) !important;
 }
 

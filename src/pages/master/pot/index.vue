@@ -91,7 +91,7 @@ export default {
         {key: 'displayName', sortable: true, tdClass: 'thumb-rowdata'},
       ].concat(PotHelper.createCustomColumn())
         .concat([
-          {key: 'actions', thStyle: {width:'130px !important'} , tdClass: 'thumb-rowdata'},
+          {key: 'actions', thStyle: {'min-width':'130px !important'} , tdClass: 'thumb-rowdata'},
         ]))
     },
     onSaved(){

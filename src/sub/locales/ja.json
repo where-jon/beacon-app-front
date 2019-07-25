@@ -779,8 +779,8 @@
           "USE_TXAIR": "TXAirの交流分析::TXAirの交流分析を行うか設定します。",
           "USE_MEETING_ROOM": "会議室単位での交流分析::会議室単位での交流分析を行うか設定します。",
           "EXCLOUD_RAWLOG_DIR": "syslogのファイルパス::マウントしたsyslogへのファイルパスを設定します。",
-          "BLANK_RANGE": "継続交流時間",
-          "MIN_RANGE": "最小交流時間"
+          "BLANK_RANGE": "継続交流時間::交流分析バッチの継続交流時間をミリ秒単位で設定します。",
+          "MIN_RANGE": "最小交流時間::交流分析バッチの最小交流時間をミリ秒単位で設定します。"
         }
       },
       "BATCH": {
@@ -1072,6 +1072,10 @@
             "STAY_SUM_INTERVAL": "5", 
             "STAY_SUM_CALC_BY": "location",
             "STAY_SUM_ADJUST_TIME": "4"
+          },
+          "PROXIMITY":{
+            "BLANK_RANGE": "60000",
+            "MIN_RANGE": "60000"
           }
         }
       }

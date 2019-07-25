@@ -508,7 +508,7 @@ export default {
         return
       }
 
-      pos.transparent = ((exb && exb.isAbsentZone || this.isOtherFloorFixTx(tx, exb)) && this.isFixTx(tx))
+      pos.transparent = pos.transparent || ((exb && exb.isAbsentZone || this.isOtherFloorFixTx(tx, exb)) && this.isFixTx(tx))
 
       // 既に該当btx_idのTXアイコンが作成済みか?
       let txBtn = this.icons[pos.btx_id]
