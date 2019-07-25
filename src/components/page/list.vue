@@ -804,6 +804,7 @@ export default {
     width: 0px;
     height: 60px;
     vertical-align: top;
+    float: left;
   }
 
   .page-link {
