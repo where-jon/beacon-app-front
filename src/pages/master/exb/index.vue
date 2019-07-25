@@ -9,6 +9,7 @@
 import { mapState } from 'vuex'
 import { APP } from '../../../sub/constant/config'
 import * as ArrayUtil from '../../../sub/util/ArrayUtil'
+import * as ConfigHelper from '../../../sub/helper/dataproc/ConfigHelper'
 import * as MenuHelper from '../../../sub/helper/dataproc/MenuHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
@@ -27,7 +28,7 @@ export default {
       params: {
         name: 'exb',
         id: 'exbId',
-        confirmName: ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceId')? 'deviceId': ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')? 'deviceIdX': 'locationName',
+        confirmName: ConfigHelper.includesDeviceType('deviceId')? 'deviceId': ConfigHelper.includesDeviceType('deviceIdX')? 'deviceIdX': 'locationName',
         indexPath: '/master/exb',
         editPath: '/master/exb/edit',
         bulkEditPath: '/master/exb/bulkedit',
@@ -35,7 +36,7 @@ export default {
         csvOut: true,
         custumCsvColumns: this.getCustumCsvColumns(),
         fields: this.getFields(),
-        sortBy: ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceId')? 'deviceId': ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')? 'deviceIdX': 'locationName',
+        sortBy: ConfigHelper.includesDeviceType('deviceId')? 'deviceId': ConfigHelper.includesDeviceType('deviceIdX')? 'deviceIdX': 'locationName',
         initTotalRows: this.$store.state.app_service.exbs.length
       },
       items: ViewHelper.createBreadCrumbItems('master', 'exb'),
@@ -50,6 +51,10 @@ export default {
   mounted() {
   },
   methods: {
+    createIdColumn(){
+      return ['deviceId', 'deviceIdX'].filter(val => ConfigHelper.includesDeviceType(val))
+        .map(val => ({key: val, label: val, sortable: true}))
+    },
     createCustomColumn(){
       return APP.EXB.WITH.map(val => {
         const ret = {key: val, label: val, sortable: true}
@@ -63,11 +68,11 @@ export default {
       }).filter(val => val)
     },
     getCustumCsvColumns(){
-      return this.createCustomColumn().map(val => val.key)
+      return this.createIdColumn().concat(this.createCustomColumn()).map(val => val.key)
         .concat(['locationName','areaName', 'x', 'y', 'enabled', 'sensor']).filter(val => val)
     },
     getFields(){
-      return ViewHelper.addLabelByKey(this.$i18n, this.createCustomColumn()
+      return ViewHelper.addLabelByKey(this.$i18n, this.createIdColumn().concat(this.createCustomColumn())
         .concat([
           {key: 'locationName', label:'locationName', sortable: true,},
           {key: 'areaName', label:'area', sortable: true,},

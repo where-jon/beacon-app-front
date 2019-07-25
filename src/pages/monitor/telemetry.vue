@@ -14,6 +14,7 @@ import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as CsvUtil from '../../sub/util/CsvUtil'
 import { getCharSet } from '../../sub/helper/base/CharSetHelper'
+import * as ConfigHelper from '../../sub/helper/dataproc/ConfigHelper'
 import * as DetectStateHelper from '../../sub/helper/domain/DetectStateHelper'
 import * as EXCloudHelper from '../../sub/helper/dataproc/EXCloudHelper'
 import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
@@ -80,8 +81,8 @@ export default {
           { key: 'hour3_count' },
           { key: 'ibeacon_received' },
         ]: [
-          ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceId')? { key: 'deviceId' }: null,
-          ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')? { key: 'deviceIdX' }: null,
+          ConfigHelper.includesDeviceType('deviceId')? { key: 'deviceId' }: null,
+          ConfigHelper.includesDeviceType('deviceIdX')? { key: 'deviceIdX' }: null,
           { key: 'name', label: 'locationName'},
           APP.TELEMETRY.WITH_POWER_LEVEL? { key: 'powerLevel' }: null,
           { key: 'timestamp', label: 'finalReceiveTimestamp'},
@@ -109,8 +110,8 @@ export default {
           ibeacon_received: 'ibeacon_received',
         }:
         {
-          deviceId: ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceId') ? 'deviceId' : null,
-          deviceIdX: ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX') ? 'deviceId(HEX)' : null,
+          deviceId: ConfigHelper.includesDeviceType('deviceId')? 'deviceId': null,
+          deviceIdX: ConfigHelper.includesDeviceType('deviceIdX')? 'deviceId(HEX)': null,
           name: 'finalRevceivePlace',
           powerLevel: 'powerLevel',
           timestamp: 'timestamp',
@@ -176,10 +177,10 @@ export default {
         ]
       }
       const ret = []
-      if (ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceId')) {
+      if (ConfigHelper.includesDeviceType('deviceId')) {
         ret.push(this.$i18n.tnl('label.deviceId'))
       }
-      if (ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')) {
+      if (ConfigHelper.includesDeviceType('deviceIdX')) {
         ret.push(this.$i18n.tnl('label.deviceIdX'))
       }
       ret.push(this.$i18n.tnl('label.locationName'))
@@ -213,10 +214,10 @@ export default {
 
         const deviceId = APP.SVC.POS.EXSERVER ? e.deviceid : parseInt(e.deviceid, 16)
 
-        if(ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceId')){
+        if(ConfigHelper.includesDeviceType('deviceId')){
           ret.deviceId = deviceId
         }
-        if(ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')){
+        if(ConfigHelper.includesDeviceType('deviceIdX')){
           ret.deviceIdX= e.deviceid.toUpperCase()
         }
         return ret

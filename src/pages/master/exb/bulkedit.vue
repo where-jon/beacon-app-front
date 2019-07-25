@@ -11,6 +11,7 @@ import { APP } from '../../../sub/constant/config'
 import * as ArrayUtil from '../../../sub/util/ArrayUtil'
 import * as Util from '../../../sub/util/Util'
 import * as BulkHelper from '../../../sub/helper/dataproc/BulkHelper'
+import * as ConfigHelper from '../../../sub/helper/dataproc/ConfigHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
@@ -40,13 +41,13 @@ export default {
     },
     onRestruct(entity, dummyKey){
       if(Util.hasValue(entity.deviceId) || Util.hasValue(entity.deviceIdX)){
-        if(ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX') && !ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceId') && !entity.deviceIdXName){
+        if(ConfigHelper.includesDeviceType('deviceIdX') && !ConfigHelper.includesDeviceType('deviceId') && !entity.deviceIdXName){
           entity.deviceId = parseInt(entity.deviceIdX, 16)
         }
-        if(!ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceId')){
+        if(!ConfigHelper.includesDeviceType('deviceId')){
           BulkHelper.removeInvalid(entity, 'deviceId')
         }
-        if(!ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')){
+        if(!ConfigHelper.includesDeviceType('deviceIdX')){
           BulkHelper.removeInvalid(entity, 'deviceIdX')
         }
       }

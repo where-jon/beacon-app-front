@@ -7,13 +7,13 @@
       <b-row>
         <b-col md="8" offset-md="2">
           <b-form v-if="show" @submit.prevent="save">
-            <b-form-group v-show="isShown('EXB.WITH', 'deviceId')">
+            <b-form-group v-show="includesDeviceType('deviceId')">
               <label v-t="'label.deviceId'" />
-              <input v-model.lazy="deviceId" :max="maxDeviceId" :readonly="!isEditable" type="number" class="form-control" min="0" :required="isShown('EXB.WITH', 'deviceId')">
+              <input v-model.lazy="deviceId" :max="maxDeviceId" :readonly="!isEditable" type="number" class="form-control" min="0" :required="includesDeviceType('deviceId')">
             </b-form-group>
-            <b-form-group v-show="isShown('EXB.WITH', 'deviceIdX')">
+            <b-form-group v-show="includesDeviceType('deviceIdX')">
               <label v-t="'label.deviceIdX'" />
-              <input v-model.lazy="deviceIdX" :readonly="!isEditable" type="text" class="form-control" :required="isShown('EXB.WITH', 'deviceIdX')">
+              <input v-model.lazy="deviceIdX" :readonly="!isEditable" type="text" class="form-control" :required="includesDeviceType('deviceIdX')">
             </b-form-group>
             <b-form-group>
               <label v-t="'label.locationName'" />
@@ -100,6 +100,7 @@ import { APP } from '../../../sub/constant/config'
 import * as ArrayUtil from '../../../sub/util/ArrayUtil'
 import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
+import * as ConfigHelper from '../../../sub/helper/dataproc/ConfigHelper'
 import * as MenuHelper from '../../../sub/helper/dataproc/MenuHelper'
 import * as OptionHelper from '../../../sub/helper/dataproc/OptionHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
@@ -223,6 +224,9 @@ export default {
   methods: {
     isNormalSensor(index){
       return Util.getValue(this.form, `exbSensorList.${index && 0 <= index? index: 0}.sensorId`, null)? false: true
+    },
+    includesDeviceType(name){
+      return ConfigHelper.includesDeviceType(name)
     },
     getZoneNames() {
       const areaId = this.form.areaId

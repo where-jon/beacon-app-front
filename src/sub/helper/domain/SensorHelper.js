@@ -11,6 +11,7 @@ import * as ArrayUtil from '../../util/ArrayUtil'
 import * as DateUtil from '../../util/DateUtil'
 import * as Util from '../../util/Util'
 import * as ChartHelper from '../ui/ChartHelper'
+import * as ConfigHelper from '../dataproc/ConfigHelper'
 import { addLabelByKey } from '../ui/ViewHelper'
 
 let chart = null
@@ -634,8 +635,8 @@ export const getFields1 = () => {
   return addLabelByKey(i18n, [
     {key: 'sensorDt', sortable: true, label:'dt'},
     {key: 'potName', sortable: true },
-    ArrayUtil.includesIgnoreCase(APP.SENSOR_LIST.WITH, 'deviceId') && ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceId')? {key: 'deviceId', sortable: true }: null,
-    ArrayUtil.includesIgnoreCase(APP.SENSOR_LIST.WITH, 'deviceIdX') && ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')? {key: 'deviceIdX', sortable: true }: null,
+    ArrayUtil.includesIgnoreCase(APP.SENSOR_LIST.WITH, 'deviceId') && ConfigHelper.includesDeviceType('deviceId')? {key: 'deviceId', sortable: true }: null,
+    ArrayUtil.includesIgnoreCase(APP.SENSOR_LIST.WITH, 'deviceIdX') && ConfigHelper.includesDeviceType('deviceIdX')? {key: 'deviceIdX', sortable: true }: null,
     {key: 'locationName', label:'locationZoneName', sortable: true,},
     ArrayUtil.includesIgnoreCase(APP.SENSOR_LIST.WITH, 'posId')? {key: 'posId', label:'posId', sortable: true,}: null,
     {key: 'areaName', label:'area', sortable: true,},
@@ -652,8 +653,8 @@ export const getFields1 = () => {
 export const getFields2 = () =>{
   return addLabelByKey(i18n, [
     {key: 'sensorDt', sortable: true, label:'dt'},
-    ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceId')? {key: 'deviceId', sortable: true }: null,
-    ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')? {key: 'deviceIdX', sortable: true }: null,
+    ConfigHelper.includesDeviceType('deviceId')? {key: 'deviceId', sortable: true }: null,
+    ConfigHelper.includesDeviceType('deviceIdX')? {key: 'deviceIdX', sortable: true }: null,
     {key: 'locationName', label:'locationZoneName', sortable: true,},
     {key: 'posId', label:'posId', sortable: true,},
     {key: 'areaName', label:'area', sortable: true,},
@@ -703,8 +704,8 @@ export const getFields6 = () => {
 export const getFields8 = () => {
   return addLabelByKey(i18n, [
     {key: 'sensorDt', sortable: true, label:'dt'},
-    ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceId')? {key: 'deviceId', sortable: true }: null,
-    ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')? {key: 'deviceIdX', sortable: true }: null,
+    ConfigHelper.includesDeviceType('deviceId')? {key: 'deviceId', sortable: true }: null,
+    ConfigHelper.includesDeviceType('deviceIdX')? {key: 'deviceIdX', sortable: true }: null,
     {key: 'locationName', label:'locationZoneName', sortable: true,},
     {key: 'posId', label:'posId', sortable: true,},
     {key: 'areaName', label:'area', sortable: true,},
