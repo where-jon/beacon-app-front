@@ -377,7 +377,7 @@ export default {
     },
     twinkle() {
       Object.values(this.icons).forEach((icon)=>{
-        this.prohibitDetectList.some((tx) => tx.minor == icon.btxId) ? icon.visible = !icon.visible : icon.visible = true
+        this.prohibitDetectList.some((tx) => tx.btxId == icon.btxId) ? icon.visible = !icon.visible : icon.visible = true
         this.stage.update()
       })
     },
