@@ -44,7 +44,7 @@
         </b-form-group>
         <b-form-group>
           <b-button v-t="'label.display'" :variant="theme" class="col-md-1" @click="display" />
-          <b-button v-if="!iosOrAndroid" v-t="'label.download'" :variant="theme" :disabled="!viewList || viewList.length == 0" class="mx-1" @click="exportCsv" />
+          <b-button v-if="!iosOrAndroid && bulkReferenceable" v-t="'label.download'" :variant="theme" :disabled="!viewList || viewList.length == 0" class="mx-1" @click="exportCsv" />
         </b-form-group>
       </b-form>
 
