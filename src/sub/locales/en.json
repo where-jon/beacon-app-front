@@ -650,6 +650,7 @@
         "MOVING_AVERAGE": "Number of position history to be aggregated at positioning:: When positioning, it will be calculated by averaging the set number of position history.",
         "MOVING_AVERAGE_TIME": "Moving average::Set up the moving average time that the server uses when aggregating location information.",
         "USE_MULTI_POSITIONING": "Use 3point Positioning::Use 3-point Positioning",
+        "MULTI_POSITIONING_NUM": "",
         "PROHIBIT_ALERT": "Use prohibited area::Use prohibited alert area",
         "PROHIBIT_GROUPS": "Prohibited area inaccessible group setting::Set up the group ID that can not enter in the prohibited area.",
 

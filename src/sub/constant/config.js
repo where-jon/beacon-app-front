@@ -48,7 +48,8 @@ export const APP = { // 機能面に関する設定
     TX_POS_ONE_TO_ONE: false, // 1つの場所に1TXのみ存在可能
     RSSI_MIN: -99, // RSSI下限値
     MOVING_AVERAGE: 5, // 5回分移動平均
-    USE_MULTI_POSITIONING: false, // ３点測位を使う
+    USE_MULTI_POSITIONING: false, // 多点測位を使う
+    MULTI_POSITIONING_NUM: 3,     // 多点測位の点数
     // 禁止区域関連設定
     PROHIBIT_ALERT : null,  // 文字列リストで画面かバッチに通知するか判断["screen","mail","led"]
     PROHIBIT_GROUPS: null, // 禁止区域非許可GROUPID[1,2,3]の形

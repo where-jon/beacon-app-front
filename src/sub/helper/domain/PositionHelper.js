@@ -773,10 +773,10 @@ export const adjustPosition = (positions, ratio, exbs = [], selectedMapId = null
  * @param {Number} ratio 
  * @return {Object[]}
  */
-export const adjustMultiPosition = (positions, ratio) => {
+export const adjustMultiPosition = (positions) => {
   const ret = []
   positions.map(pos => {
-    ret.push( {...pos, x: pos.x * ratio, y: pos.y * ratio} )
+    ret.push( {...pos, x: pos.x, y: pos.y} )
   })
   return ret
 }
