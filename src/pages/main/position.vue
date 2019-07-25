@@ -459,7 +459,7 @@ export default {
       let position = []
       if(APP.POS.USE_MULTI_POSITIONING){
         // ３点測位はUSE_POSITION_HISTORYには非対応
-        position = PositionHelper.adjustMultiPosition(PositionHelper.getPositions())
+        position = PositionHelper.adjustMultiPosition(PositionHelper.getPositions(), this.selectedArea)
       }else{
         const ratio = 1 / this.canvasScale
         position = PositionHelper.adjustPosition(PositionHelper.getPositions(), ratio, this.positionedExb, this.selectedArea)
