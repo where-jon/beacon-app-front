@@ -3,7 +3,7 @@
     <b-row align-h="end">
       <all-count :count="allCount" />
       <b-col md="2" class="mb-3 mr-3">
-        <b-button v-if="!iosOrAndroid" v-t="'label.download'" :variant="theme" @click="download()" />
+        <b-button v-if="!iosOrAndroid" v-t="'label.download'" :variant="theme" @click="download()" class="download-button" />
       </b-col>
     </b-row>
     <div class="table-area">
@@ -211,4 +211,7 @@ thead {
   color: #f17777;
 }
 
+.download-button{
+  width: 128px;
+}
 </style>
