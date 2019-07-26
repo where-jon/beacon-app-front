@@ -430,6 +430,7 @@ export default {
       return arNotify
     },
     async categoryChange(evt) {
+      this.vueSelected.tx = null
       this.bTx = ((evt == 'TX_DELIVERY_NOTIFY' || evt == 'TX_BATTERY_ALERT' || evt == 'USER_REG_NOTIFY') && this.userState == 'ALL_REGION') ? true: false
     },
     async changeTx(newVal){
