@@ -457,13 +457,12 @@ export default {
     },
     setNomalTx() {
       let position = []
-      if(!APP.POS.USE_MULTI_POSITIONING){
-        const ratio = DISP.TX.R_ABSOLUTE ? 1/this.canvasScale : 1
-        position = PositionHelper.adjustPosition(PositionHelper.getPositions(), ratio, this.positionedExb, this.selectedArea)
+      if(APP.POS.USE_MULTI_POSITIONING){
+        // ３点測位はUSE_POSITION_HISTORYには非対応
+        position = PositionHelper.adjustMultiPosition(PositionHelper.getPositions(), this.selectedArea)
       }else{
-        let area = _.find(this.$store.state.app_service.areas, (area) => area.areaId == this.selectedArea)
-        let mapRatio = area.mapRatio
-        position = PositionHelper.adjustMultiPosition(PositionHelper.getPositions(), mapRatio)
+        const ratio = 1 / this.canvasScale
+        position = PositionHelper.adjustPosition(PositionHelper.getPositions(), ratio, this.positionedExb, this.selectedArea)
       }
       if (APP.SENSOR.USE_MEDITAG && this.meditagSensors) { // TODO: 場所OK???
         position = SensorHelper.setStress(position, this.meditagSensors)
