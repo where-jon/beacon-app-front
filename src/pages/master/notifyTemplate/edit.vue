@@ -121,11 +121,9 @@ export default {
   },
   created() {
     this.form.notifyMedium == 1 ?this.bSubject = false: this.bSubject = true
-    this.form.notifyTemplateKey== this.deliveryState? this.bNotifyTo=false : this.bNotifyTo=true
-    this.form.notifyTemplateKey== this.userMailState? this.bNotifyTo=false : this.bNotifyTo=true
-    this.form.notifyTemplateKey== this.prohibitState? this.bNotifyTo=true : this.bNotifyTo=false
-    this.form.notifyTemplateKey== this.lostState? this.bNotifyTo=true : this.bNotifyTo=false
-    this.form.notifyTemplateKey== this.deliveryState || this.form.notifyTemplateKey==this.userMailState || this.form.notifyTemplateKey==this.prohibitState || this.form.notifyTemplateKey==this.lostState? this.notify = _.slice(NOTIFY_MIDIUM.getTypes()).filter((val) => [0].includes(val.value)) : this.notify
+    if(this.form.notifyTemplateKey == this.userMailState || this.form.notifyTemplateKey == this.deliveryState) {
+      this.bNotifyTo = false
+    }
     let labelUpdate = ViewHelper.getDetailCaptionKey(this.$store.state.app_service.template.notifyTemplateId)
     labelUpdate == 'label.update' ? this.bNotifyTemplateKey = false: this.bNotifyTemplateKey = true
   },
