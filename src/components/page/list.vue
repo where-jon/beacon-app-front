@@ -742,6 +742,10 @@ export default {
           this.error = e.bulkError.map(error => {
             return this.$i18n.tnl('message.bulk' + error.type + 'Failed', {
               col: this.$i18n.tnl(`label.${error.col}`),
+              value: error.value,
+              num: error.num,
+              unit: this.$i18n.tnl(`label.${error.unit}Unit`),
+              target: this.$i18n.tnl(`label.${error.target}`)
             })
           })
           this.replace({showAlert: true})
