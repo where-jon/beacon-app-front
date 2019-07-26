@@ -11,6 +11,7 @@ import * as DateUtil from '../../util/DateUtil'
 import * as StringUtil from '../../util/StringUtil'
 import * as Util from '../../util/Util'
 import * as AppServiceHelper from './AppServiceHelper'
+import * as ConfigHelper from './ConfigHelper'
 
 
 let store
@@ -115,7 +116,7 @@ export const getSensorIdNames = exbSensorList => {
  */
 export const getDeviceIdName = (device, option = {forceSensorName: false}) => {
   if(device.exbId){
-    return ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceId')? 'deviceId': ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')? 'deviceIdX': 'locationName'
+    return ConfigHelper.includesDeviceType('deviceId')? 'deviceId': ConfigHelper.includesDeviceType('deviceIdX')? 'deviceIdX': 'locationName'
   }
   if(device.txId){
     return option.forceSensorName? 'potName': APP.TX.BTX_MINOR != 'minor'? 'btxId': 'minor'
@@ -288,7 +289,7 @@ const appStateConf = {
   },
   exbs: {
     path: '/core/exb/withLocation',
-    sort: ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceId')? 'deviceId': ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')? 'deviceIdX': 'locationName',
+    sort: ConfigHelper.includesDeviceType('deviceId')? 'deviceId': ConfigHelper.includesDeviceType('deviceIdX')? 'deviceIdX': 'locationName',
     beforeCommit: arr => {
       return arr.map(exb => {
         const location = exb.location

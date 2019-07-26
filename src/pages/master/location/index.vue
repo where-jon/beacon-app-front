@@ -92,6 +92,7 @@ import * as BrowserUtil from '../../../sub/util/BrowserUtil'
 import * as StringUtil from '../../../sub/util/StringUtil'
 import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
+import * as ConfigHelper from '../../../sub/helper/dataproc/ConfigHelper'
 import * as HttpHelper from '../../../sub/helper/base/HttpHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as StyleHelper from '../../../sub/helper/ui/StyleHelper'
@@ -166,8 +167,8 @@ export default {
     await Promise.all(['area', 'exb'].map(StateHelper.load))
     const options = []
     options.push({value: 'locationName', text: this.$i18n.tnl('label.locationName')})
-    if (ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceIdX')) options.push({value:'deviceIdX', text: this.$i18n.tnl('label.deviceIdX')})
-    if (ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'deviceId')) options.push({value:'deviceId', text: this.$i18n.tnl('label.deviceId')})
+    if (ConfigHelper.includesDeviceType('deviceIdX')) options.push({value:'deviceIdX', text: this.$i18n.tnl('label.deviceIdX')})
+    if (ConfigHelper.includesDeviceType('deviceId')) options.push({value:'deviceId', text: this.$i18n.tnl('label.deviceId')})
     this.exbDispOptions = options
     this.exbDisp = options[0].value
 

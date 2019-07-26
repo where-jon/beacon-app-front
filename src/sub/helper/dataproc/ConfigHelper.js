@@ -125,3 +125,11 @@ export const initConfig = () => {
     }
   })
 }
+
+/**
+ * 指定した設定がdeviceId表示設定に含まれているか確認する。
+ * @method
+ * @param {String} deviceType 
+ * @return {Boolean}
+ */
+export const includesDeviceType = deviceType => [deviceType, 'both'].includes(config.APP.EXB.DEVICEID_TYPE)

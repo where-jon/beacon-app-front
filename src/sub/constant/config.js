@@ -100,7 +100,8 @@ export const APP = { // 機能面に関する設定
   // EXB関連設定
   EXB: {
     SENSOR: [1,2,3,4,8], // EXBのタイプに設定可能なセンサーID
-    WITH: ['deviceId', 'posId', 'zone'],
+    WITH: ['posId', 'zone'],
+    DEVICEID_TYPE: 'deviceId',
     MULTI_SENSOR: true,
     SENSOR_MAX: 2,   // センサー種類最大数
   },
