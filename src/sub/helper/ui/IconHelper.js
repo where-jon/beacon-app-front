@@ -42,7 +42,7 @@ export const createRect = (width, height, color, option = {}) => {
     icon.graphics.drawRect(-1 * width, -1 * height, width * 2, height * 2)
     return icon
   }
-  icon.graphics.drawRoundRect(-width, -height, width * 2, height * 2, r * 1.75)
+  icon.graphics.drawRoundRect(-width, -height, width * 2, height * 2, r)
   return icon
 }
 
