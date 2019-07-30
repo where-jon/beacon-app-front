@@ -4,7 +4,7 @@
  */
 
 import moment from 'moment'
-import { APP } from '../constant/config'
+import { APP, DEV } from '../constant/config'
 import { hasValue, debug } from './Util'
 
 /**
@@ -202,3 +202,4 @@ export const convertToTime = secTime => {
  */
 export const isAfterNextMonth = date => hasValue(date) && moment(date).isAfter(moment().endOf('months'))
 
+export const getDefaultDate = () => DEV.DEFAULT_DATE == '' ? new Date() : new Date(DEV.DEFAULT_DATE)

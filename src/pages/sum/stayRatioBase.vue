@@ -201,7 +201,7 @@ import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import moment from 'moment'
-import { APP, DISP } from '../../sub/constant/config'
+import { APP, DISP, DEV } from '../../sub/constant/config'
 import { CATEGORY, SYSTEM_ZONE_CATEGORY_NAME } from '../../sub/constant/Constants'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
@@ -299,7 +299,7 @@ export default {
   },
   async created() {
     await Promise.all(['groups','pots','categories','areas'].map(StateHelper.load))
-    this.form.date = moment().add(-1, 'days').format('YYYYMMDD')
+    this.form.date = DEV.DEFAULT_DATE != '' ? new Date(DEV.DEFAULT_DATE) : moment().add(-1, 'days').format('YYYYMMDD')
     let sortedArea = _.cloneDeep(this.areas)
     ArrayUtil.sortIgnoreCase(sortedArea, 'areaName')
     this.areaArray = sortedArea

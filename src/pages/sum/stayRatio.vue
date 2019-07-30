@@ -53,7 +53,7 @@ import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import moment from 'moment'
-import { APP } from '../../sub/constant/config'
+import { APP, DEV } from '../../sub/constant/config'
 import { SYSTEM_ZONE_CATEGORY_NAME } from '../../sub/constant/Constants'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
@@ -128,7 +128,7 @@ export default {
   },
   async created() {
     await Promise.all(['groups','pots','categories'].map(StateHelper.load))
-    this.form.date = moment().add(-1, 'days').format('YYYYMMDD')
+    this.form.date = DEV.DEFAULT_DATE != '' ? new Date(DEV.DEFAULT_DATE) : moment().add(-1, 'days').format('YYYYMMDD')
   },
   async mounted() {
     ViewHelper.importElementUI()

@@ -64,6 +64,7 @@ import 'element-ui/lib/theme-chalk/index.css'
 import { CATEGORY } from '../../sub/constant/Constants'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as CsvUtil from '../../sub/util/CsvUtil'
+import * as DateUtil from '../../sub/util/DateUtil'
 import * as Util from '../../sub/util/Util'
 import * as AppServiceHelper from '../../sub/helper/dataproc/AppServiceHelper'
 import { getCharSet } from '../../sub/helper/base/CharSetHelper'
@@ -135,7 +136,7 @@ export default {
       return modeOp
     },
     yearMonthOptions() {
-      const date = new Date()
+      const date = DateUtil.getDefaultDate()
       const months = []
       let year = 0
       let month = 0

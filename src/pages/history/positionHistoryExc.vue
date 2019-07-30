@@ -55,6 +55,7 @@ import { SENSOR } from '../../sub/constant/Constants'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as StringUtil from '../../sub/util/StringUtil'
+import * as DateUtil from '../../sub/util/DateUtil'
 import * as EXCloudHelper from '../../sub/helper/dataproc/EXCloudHelper'
 import * as SensorHelper from '../../sub/helper/domain/SensorHelper'
 import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
@@ -98,9 +99,9 @@ export default {
       sortDesc: APP.HISTORY_EXC.SORT.toLowerCase() == 'desc',
       type: this.ptype? this.ptype: 'location',
       sensorId: this.ptype? SensorHelper.onlyOne(): null,
-      year: new Date().getFullYear(),
-      month: StringUtil.zeroPad(new Date().getMonth() + 1, 2),
-      years: ArrayUtil.range(2019, new Date().getFullYear()).map(e => ({label: '' + e, value: e})),
+      year: DateUtil.getDefaultDate().getFullYear(),
+      month: StringUtil.zeroPad(DateUtil.getDefaultDate().getMonth() + 1, 2),
+      years: ArrayUtil.range(2019, DateUtil.getDefaultDate().getFullYear()).map(e => ({label: '' + e, value: e})),
       months: Array(12).fill().map((_, i) => ({label: '' + ++i, value: StringUtil.zeroPad(i, 2)})),
     }
   },
