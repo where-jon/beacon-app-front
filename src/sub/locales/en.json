@@ -1339,6 +1339,8 @@
     "totalRowsMessage": "Total: {row} (Only latest {maxRows} are displayed)",
     "listEmpty": "There are no records matching your request.",
     "uploadMax": "Upload file size is limited to {target}Mbytes.",
+    "outExb": "",
+    "outTx": "",
     "validationList": "Valid characters are {validate}.",
     "loginValidationList": "half alphanumberic, underscore( _ ), hyphen(-), at sign(@), dot(.).",
     "notMatchedEmail": "It is not a mail format. (In case of addition, comma separated)",

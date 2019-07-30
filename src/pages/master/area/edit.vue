@@ -25,11 +25,11 @@
             </b-form-group>
             <b-form-group v-if="isEditable && hasId && mapUpdate && form.mapImage">
               <label v-t="'label.mapConfig'" />
-              <b-form-select v-model="form.mapConfig" :options="mapConfigTypes" required />
+              <b-form-select v-model="form.mapConfig" :options="mapConfigTypes" @change="checkAlert" required />
             </b-form-group>
 
             <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
-            <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="beforeSubmit(false)">
+            <b-button v-if="isEditable" :variant="theme" :disabled="disabled" type="submit" class="mr-2 my-1" @click="beforeSubmit(false)">
               {{ $i18n.tnl(`label.${isUpdate? 'update': 'register'}`) }}
             </b-button>
             <b-button v-if="isRegistable && !isUpdate" v-t="'label.registerAgain'" :variant="theme" type="submit" class="my-1" @click="beforeSubmit(true)" />
@@ -73,6 +73,10 @@ export default {
       mapUpdate: false,
       oldMap: null,
       cdPattern: PATTERN.MASTER_CD,
+      posError: false,
+      uploadError: false,
+      disabled: false,
+      selectedType: 1,
     }
   },
   computed: {
@@ -82,6 +86,8 @@ export default {
     ...mapState('app_service', [
       'areas',
       'area',
+      'exbs',
+      'txs'
     ]),
     mapConfigTypes(){
       return [
@@ -90,6 +96,9 @@ export default {
         {text: this.$i18n.tnl('label.initPosition'), value: 3},
       ]
     }
+  },
+  async created() {
+    Promise.all(['ares','area','exbs','txs'].map(StateHelper.load))
   },
   mounted() {
     this.form.mapConfig = this.mapConfigTypes[0].value
@@ -171,6 +180,52 @@ export default {
       }
       this.save(evt)
     },
+    checkSize(width, height){
+      const exbError = _.some(this.exbs, exb => {
+        return exb.x >= width || exb.y >= height
+      })
+      const txError = _.some(this.txs, tx => {
+        return tx.x >= width || tx.y >= height
+      })
+      this.posError = exbError || txError
+      this.uploadError = false
+
+      if(this.selectedType != 1){
+        this.replace({showAlert: false})
+        this.disabled = false
+        return
+      }
+      if(exbError){
+        this.message = this.$i18n.tnl('message.outExb')
+        this.replace({showAlert: true})
+        this.disabled = true
+        return
+      }
+      if(txError){
+        this.message = this.$i18n.tnl('message.outTx')
+        this.replace({showAlert: true})
+        this.disabled = true
+        return
+      }
+      this.replace({showAlert: false})
+      this.disabled = false
+    },
+    onUploadError(){
+      this.uploadError = true
+      this.disabled = true
+    },
+    checkAlert(value){
+      this.selectedType = value
+      if(this.uploadError){
+        this.disabled = true
+      }else if(value==1 && this.posError){
+        this.replace({showAlert: true})
+        this.disabled = true
+      }else{
+        this.replace({showAlert: false})
+        this.disabled = false
+      }
+    }
   }
 }
 </script>
