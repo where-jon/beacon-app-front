@@ -210,7 +210,8 @@ export default {
       this.setWarnDevices()
       const ret = []
       const exbIdName = StateHelper.getDeviceIdName({exbId: true})
-      const txIdName = StateHelper.getDeviceIdName({txId: true}, {forceSensorName: true})
+      const txIdPotName = StateHelper.getDeviceIdName({txId: true}, {forceSensorName: true})
+      const txIdName = StateHelper.getDeviceIdName({txId: true})
       const pattern = this.humidityPatternConfig.more.sort((a, b) => {
         return a.base > b.base? -1: a.base < b.base? 1: 0
       }).concat(this.humidityPatternConfig.less.sort((a, b) => {
@@ -221,7 +222,7 @@ export default {
           return
         }
         const exbAlert = conf.exbs.length == 0? '': `${conf.exbs.map(exb => exb[exbIdName]).filter(val => val).join(this.$i18n.tnl('message.readingPoint'))}`
-        const txAlert = conf.txs.length == 0? '': `${conf.txs.map(tx => tx[txIdName]).filter(val => val).join(this.$i18n.tnl('message.readingPoint'))}`
+        const txAlert = conf.txs.length == 0? '': `${conf.txs.map(tx => Util.hasValue(tx[txIdPotName])? tx[txIdPotName]: tx[txIdName]).filter(val => val).join(this.$i18n.tnl('message.readingPoint'))}`
         ret.push(this.$i18n.tnl(`message.${conf.label}AlertHumidity`, {
           sensors: `${exbAlert}${exbAlert && txAlert? `${this.$i18n.tnl('message.readingPoint')}`: ''}${txAlert}`,
           humidity: conf.base,
