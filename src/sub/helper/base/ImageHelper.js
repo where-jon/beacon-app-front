@@ -44,27 +44,15 @@ export const readImageView = (vueComponent, e, imgViewName, imgWidthName, imgHei
     if (imgHeightName) vueComponent.form[imgHeightName] = height
     if (thumbnailName) vueComponent.form[thumbnailName] = thumbnail
 
-    // exbとtxの一覧を取得し、座標が画像に含まれているか確認する
-    const exbError = _.some(vueComponent.exbs, exb => {
-      return exb.x >= width || exb.y >= height
-    })
-    const txError = _.some(vueComponent.txs, tx => {
-      return tx.x >= width || tx.y >= height
-    })
-    if(exbError){
-      vueComponent.message = vueComponent.$i18n.tnl('message.outExb')
-      vueComponent.replace({showAlert: true})
-    }else if(txError){
-      vueComponent.message = vueComponent.$i18n.tnl('message.outTx')
-      vueComponent.replace({showAlert: true})
-    }else{
-      vueComponent.replace({showAlert: false})
+    if(vueComponent.checkSize){
+      vueComponent.checkSize(width, height)
     }
-    vueComponent.isError = exbError || txError
   }, resize, size => {
     vueComponent.message = vueComponent.$i18n.tnl('message.uploadMax', {target: Math.floor(APP.MAX_IMAGE_SIZE/1024/1024)})
     vueComponent.replace({showAlert: true})
-    vueComponent.isError = true
+    if(vueComponent.onUploadError){
+      vueComponent.onUploadError()
+    }
     if (vueComponent.clearImage) {
       vueComponent.clearImage()
     }
