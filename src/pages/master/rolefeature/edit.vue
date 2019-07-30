@@ -136,20 +136,13 @@ export default {
       }
       this.replaceAS({roleFeatures})
       const featureOptions = this.features.filter(feature => {
-        if(FeatureHelper.isSystemFeature(feature)){
-          if(!Util.hasValue(this.roleFeatures)){
-            return true
-          }
-          const sameFeature = this.roleFeatures.find(roleFeature => feature.featureId === roleFeature.feature.featureId)
-          return sameFeature? false: true
-        }
-        if(!FeatureHelper.isShowRelationFeature(feature)){
+        if(!FeatureHelper.isSystemFeature(feature) && !FeatureHelper.isShowRelationFeature(feature)){
           return false
         }
         if(!Util.hasValue(this.roleFeatures)){
           return true
         }
-        const sameFeature = this.roleFeatures.find(roleFeature => feature.featureId === roleFeature.feature.featureId)
+        const sameFeature = this.roleFeatures.some(roleFeature => feature.featureId === roleFeature.feature.featureId)
         return this.systemReadOnly? sameFeature: !sameFeature
       })
       this.featureNames = featureOptions.map(val => ({
