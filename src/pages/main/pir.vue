@@ -60,6 +60,7 @@ export default {
       FONTSIZE_RATIO_EN: 0.5,
       EMPTY_FONTSIZE_RATIO: 1.2,
       reloadState: {isLoad: false, initialize: false},
+      loadStates: ['tx','exb'],
       toggleCallBack: () => {
         this.keepExbPosition = true
         this.reset()
@@ -86,8 +87,9 @@ export default {
       deep: true,
     },
   },
-  mounted() {
+  async mounted() {
     document.addEventListener('touchstart', this.touchEnd)
+    await Promise.all(this.loadStates.map(StateHelper.load))
     // this.fetchData()
   },
   beforeDestroy() {
