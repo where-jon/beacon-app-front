@@ -3,7 +3,7 @@
     <breadcrumb :items="items" />
     <alert :message="message" />
 
-    <b-form inline class="mt-2">
+    <b-form inline class="mt-2" @submit.prevent>
       <b-form-row class="ml-1">
         <label class="mr-2 mb-2">
           {{ $t('label.area') }}
@@ -21,7 +21,7 @@
         <b-button v-t="'label.load'" :variant="theme" size="sm" class="mb-2" @click="changeArea" />
       </b-form-row>
     </b-form>
-    <b-form inline class="mt-2">
+    <b-form inline class="mt-2" @submit.prevent>
       <b-form-row class="ml-1">
         <label class="mt-mobile mr-2 mb-2">
           {{ $t('label.tx') }}
