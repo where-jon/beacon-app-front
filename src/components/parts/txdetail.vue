@@ -33,7 +33,7 @@
     >
       <div v-if="selectedSensor.length == 0" :style="{backgroundColor: selectedTx.bgColor}" class="clearfix">
         <div v-if="enableThumbnail" class="thumbnail">
-          <img v-if="selectedTx.thumbnail.length > 0" :src="selectedTx.thumbnail" width="auto" height="125">
+          <img v-if="selectedTx.thumbnail.length > 0" :src="selectedTx.thumbnail" width="160" height="auto">
           <img v-else src="/default.png" width="auto" height="116">
         </div>
         <div class="descriptionSensor">
