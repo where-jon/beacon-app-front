@@ -1,6 +1,6 @@
 <template>
   <div id="mapContainer" class="container-fluid">
-    <breadcrumb :items="items" :reload="true" />
+    <breadcrumb :items="items" :reload="true" :state="reloadState" />
     <b-row class="mt-2">
       <b-form inline class="mt-2" @submit.prevent>
         <b-form-row class="my-1 ml-2 ml-sm-0">
@@ -171,6 +171,8 @@ export default {
       RSSI_ICON_WIDTH: DISP.INSTALLATION.RSSI_ICON_WIDTH,
       RSSI_ICON_HEIGHT: DISP.INSTALLATION.RSSI_ICON_HEIGHT,
       isPause: false,
+      firstTime: true,
+      reloadState: {isLoad: false},
     }
   },
   computed: {
@@ -243,6 +245,11 @@ export default {
       this.showMapImageDef(async () => {
         this.showProgress()
 
+        const reloadButton = document.getElementById('spinner')
+        if(!this.firstTime && reloadButton){
+          this.reloadState.isLoad = true
+        }
+
         this.positionedExb = this.getExbPosition()
         if (this.exbCon && this.exbCon !== null) {
           this.stage.removeChild(this.exbCon)
@@ -275,6 +282,11 @@ export default {
         if (payload && payload.done) {
           payload.done()
         }
+
+        if(!this.firstTime && reloadButton){
+          this.reloadState.isLoad = false
+        }
+        this.firstTime = false
 
         this.hideProgress()
       }, disableErrorPopup)
