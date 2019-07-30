@@ -83,7 +83,13 @@ export default {
       this[this.listName].forEach(obj => tempMasterMap[obj[this.id]] = {[this.id]: obj[this.id], label: obj[this.name], positions: []})
       const tempMasterExt = {[this.id]: -1, label: this.$i18n.tnl('label.other'), positions: []}
       const exbMap = {}
-      this.exbs.forEach(exb => exbMap[exb.posId] = exb)
+      let showExt = false
+      this.exbs.forEach(exb => {
+        exbMap[exb.posId] = exb
+        if(this.masterName == 'zone' && !Util.hasValue(exb.zoneId)){
+          showExt = true
+        }
+      })
 
       _.forEach(positions, pos => {
         const exb = exbMap[pos.pos_id]
@@ -101,7 +107,7 @@ export default {
         }
       })
       const ret = _.sortBy(tempMasterMap, tmm => tmm.label)
-      if(Util.hasValue(tempMasterExt.positions)){
+      if(showExt){
         ret.push(tempMasterExt)
       }
       return ret
