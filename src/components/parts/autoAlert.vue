@@ -14,7 +14,15 @@ import * as Util from '../../sub/util/Util'
 
 export default {
   props: {
+    pName: {
+      type: String,
+      default: '',
+    },
     browserSize: {
+      type: Boolean,
+      default: false,
+    },
+    mobile: {
       type: Boolean,
       default: false,
     },
@@ -26,7 +34,7 @@ export default {
   },
   computed: {
     display(){
-      return this.browserSize
+      return this.browserSize || this.mobile
     },
   },
   created(){
@@ -43,6 +51,9 @@ export default {
       const messageList = []
       if(this.browserSize && BrowserUtil.isResponsiveMode(true)){
         messageList.push(this.$i18n.tnl('message.browserSizeWarn'))
+      }
+      if(this.mobile && BrowserUtil.isAndroidOrIOS()){
+        messageList.push(this.$i18n.tnl('message.mobileWarn', {name: this.$i18n.tnl('label.' + this.pName)}))
       }
       this.show = Util.hasValue(messageList)
       return messageList

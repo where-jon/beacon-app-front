@@ -1,6 +1,7 @@
 <template>
   <div class="container-fluid">
     <breadcrumb :items="items" />
+    <auto-alert mobile p-name="zoneBlock" />
     <alert :message="message" />
     <b-row>
       <b-form v-if="show" inline @submit.prevent>
@@ -71,12 +72,14 @@ import commonmixin from '../../../components/mixin/commonmixin.vue'
 import editmixin from '../../../components/mixin/editmixin.vue'
 import showmapmixin from '../../../components/mixin/showmapmixin.vue'
 import alert from '../../../components/parts/alert.vue'
+import autoAlert from '../../../components/parts/autoAlert.vue'
 import ZoneCanvas from '../../../components/parts/zonecanvas.vue'
 
 export default {
   components: {
     breadcrumb,
     alert,
+    autoAlert,
     ZoneCanvas,
   },
   mixins: [commonmixin, editmixin, showmapmixin],
