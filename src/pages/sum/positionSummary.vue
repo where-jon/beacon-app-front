@@ -29,7 +29,7 @@ import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import moment from 'moment'
-import { APP } from '../../sub/constant/config'
+import { APP, DEV } from '../../sub/constant/config'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as StringUtil from '../../sub/util/StringUtil'
 import { getCharSet } from '../../sub/helper/base/CharSetHelper'
@@ -68,7 +68,7 @@ export default {
   },
   async created() {
     await Promise.all(['txs', 'exbs'].map(StateHelper.load))
-    this.form.date = moment().add(-1, 'days').format('YYYYMMDD')
+    this.form.date = DEV.DEFAULT_DATE != '' ? new Date(DEV.DEFAULT_DATE) : moment().add(-1, 'days').format('YYYYMMDD')
   },
   async mounted() {
     ViewHelper.importElementUI()

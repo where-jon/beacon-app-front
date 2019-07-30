@@ -141,7 +141,7 @@ export default {
     const loadStates = ['pot','area','zone','category','group']
     await Promise.all(loadStates.map(StateHelper.load))
 
-    const date = new Date()
+    const date = DateUtil.getDefaultDate()
     this.form.datetimeFrom = DateUtil.getDatetime(date, {date: -3})
     this.form.datetimeTo = DateUtil.getDatetime(date)
   },
