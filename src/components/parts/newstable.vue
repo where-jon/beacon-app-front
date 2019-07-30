@@ -17,7 +17,14 @@
             <tbody>
               <tr v-for="(data, dataIndex) in datas" :key="dataIndex" :class="trClass(data, dataIndex)">
                 <td v-for="(header, headerIndex) in headers" :key="headerIndex" :class="tdClass(header.key)">
-                  {{ data[header.key] }}
+                  <div v-if="isArray(data[header.key])">
+                    <div v-for="(line, lineIndex) in data[header.key]" :key="lineIndex" class="newsLine"> 
+                      {{ line }}
+                    </div>
+                  </div>
+                  <div v-else>
+                    {{ data[header.key] }}
+                  </div>
                 </td>
               </tr>
             </tbody>
@@ -51,6 +58,8 @@
 
 <script>
 import VueScrollingTable from 'vue-scrolling-table'
+import * as ArrayUtil from '../../sub/util/ArrayUtil'
+import * as Util from '../../sub/util/Util'
 import commonmixin from '../mixin/commonmixin.vue'
 import reloadmixin from '../mixin/reloadmixin.vue'
 
@@ -92,6 +101,11 @@ export default {
   data () {
     return {
     }
+  },
+  methods: {
+    isArray(data){
+      return ArrayUtil.isArray(data)
+    },
   },
 }
 </script>
@@ -135,4 +149,7 @@ thead {
   width: calc( 100% - 1em )
 }
 
+div.newsLine {
+  min-height: 1em;
+}
 </style>
