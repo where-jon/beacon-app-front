@@ -29,10 +29,10 @@
             </b-form-group>
 
             <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
-            <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="beforeSubmit(false)">
+            <b-button v-if="isEditable" :variant="theme" :disabled="isError" type="submit" class="mr-2 my-1" @click="beforeSubmit(false)">
               {{ $i18n.tnl(`label.${isUpdate? 'update': 'register'}`) }}
             </b-button>
-            <b-button v-if="isRegistable && !isUpdate" v-t="'label.registerAgain'" :variant="theme" type="submit" class="my-1" @click="beforeSubmit(true)" />
+            <b-button v-if="isRegistable && !isUpdate" v-t="'label.registerAgain'" :variant="theme" :disabled="isError" type="submit" class="my-1" @click="beforeSubmit(true)" />
           </b-form>
         </b-col>
       </b-row>
@@ -73,6 +73,7 @@ export default {
       mapUpdate: false,
       oldMap: null,
       cdPattern: PATTERN.MASTER_CD,
+      isError: false,
     }
   },
   computed: {
@@ -82,6 +83,8 @@ export default {
     ...mapState('app_service', [
       'areas',
       'area',
+      'exbs',
+      'txs'
     ]),
     mapConfigTypes(){
       return [
@@ -90,6 +93,9 @@ export default {
         {text: this.$i18n.tnl('label.initPosition'), value: 3},
       ]
     }
+  },
+  async created() {
+    Promise.all(['ares','area','exbs','txs'].map(StateHelper.load))
   },
   mounted() {
     this.form.mapConfig = this.mapConfigTypes[0].value
