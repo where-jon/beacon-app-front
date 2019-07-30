@@ -43,9 +43,16 @@ export const readImageView = (vueComponent, e, imgViewName, imgWidthName, imgHei
     if (imgWidthName) vueComponent.form[imgWidthName] = width
     if (imgHeightName) vueComponent.form[imgHeightName] = height
     if (thumbnailName) vueComponent.form[thumbnailName] = thumbnail
+
+    if(vueComponent.checkSize){
+      vueComponent.checkSize(width, height)
+    }
   }, resize, size => {
     vueComponent.message = vueComponent.$i18n.tnl('message.uploadMax', {target: Math.floor(APP.MAX_IMAGE_SIZE/1024/1024)})
     vueComponent.replace({showAlert: true})
+    if(vueComponent.onUploadError){
+      vueComponent.onUploadError()
+    }
     if (vueComponent.clearImage) {
       vueComponent.clearImage()
     }

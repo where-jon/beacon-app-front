@@ -90,7 +90,7 @@
 import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import { APP } from '../../sub/constant/config'
+import { APP, DEV } from '../../sub/constant/config'
 import { CATEGORY } from '../../sub/constant/Constants'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as DateUtil from '../../sub/util/DateUtil'
@@ -188,7 +188,7 @@ export default {
     this.changeCategory()
     this.changeGroup()
     this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions, null, true)
-    const date = new Date()
+    const date = DateUtil.getDefaultDate()
     this.form.datetimeFrom = DateUtil.getDatetime(date, {
       [APP.ANALYSIS.DATETIME_DEFAULT_UNIT]: -1 * APP.ANALYSIS.DATETIME_DEFAULT
     })

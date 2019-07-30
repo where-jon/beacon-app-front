@@ -8,6 +8,7 @@ export const DEV = { // 開発デバッグ関連
   USE_MOCK_APS: false || location.search.indexOf('mockAps') != -1, // AppService API結果の代わりにモックデータを使用する
   USE_MOCK_EXC: false || location.search.indexOf('mockExc') != -1, // Excloud API結果の代わりにモックデータを使用する
   NOT_FILTER_TX: true,
+  DEFAULT_DATE: '', // yyyy/MM/dd hh:mm:ss
 }
 
 export const APP = { // 機能面に関する設定

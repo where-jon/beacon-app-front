@@ -301,7 +301,7 @@ export default {
     },
   },
   async created() {
-    const date = new Date()
+    const date = DateUtil.getDefaultDate()
     this.form.datetimeFrom = DateUtil.getDatetime(date, {hours: -1})
     this.form.datetimeTo = DateUtil.getDatetime(date)
     this.form.notifyState = this.notifyStateOptions[0].value

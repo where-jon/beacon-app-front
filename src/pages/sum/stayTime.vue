@@ -158,7 +158,7 @@ export default {
   },
   async created() {
     await Promise.all(['pot','area','zone','category','group'].map(StateHelper.load))
-    const date = new Date()
+    const date = DateUtil.getDefaultDate()
     this.form.datetimeFrom = DateUtil.getDatetime(date, {date: -3})
     this.form.datetimeTo = DateUtil.getDatetime(date)
   },

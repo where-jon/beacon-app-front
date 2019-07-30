@@ -1,9 +1,11 @@
 import { APP } from '../sub/constant/config'
 import { LOGIN_MODE, FORCE_PUSH_MENU, ROLE_FEATURE } from '../sub/constant/Constants'
+import * as BrowserUtil from '../sub/util/BrowserUtil'
 import * as Util from '../sub/util/Util'
 import * as AuthHelper from '../sub/helper/base/AuthHelper'
 import * as BulkHelper from '../sub/helper/dataproc/BulkHelper'
 import * as HttpHelper from '../sub/helper/base/HttpHelper'
+import * as LocaleHelper from '../sub/helper/base/LocaleHelper'
 import * as LocalStorageHelper from '../sub/helper/base/LocalStorageHelper'
 import * as MenuHelper from '../sub/helper/dataproc/MenuHelper'
 import * as OptionHelper from '../sub/helper/dataproc/OptionHelper'
@@ -18,6 +20,9 @@ import * as VueSelectHelper from '../sub/helper/ui/VueSelectHelper'
 
 export default function (context) {
   Util.debug('checkAuth')
+  const lang = LocaleHelper.getLocale(process.browser? BrowserUtil.getLangShort(): 'ja')
+  context.app.i18n.locale = context.app.i18n.messages[lang]? lang: 'en'
+
   AuthHelper.setApp(context.app.router, context.app.store)
   StateHelper.setApp(context.app.store, context.app.i18n)
   PositionHelper.setApp(context.app.store)

@@ -18,6 +18,7 @@
 import { mapState, mapMutations } from 'vuex'
 import { APP, DISP } from '../sub/constant/config'
 import * as DateUtil from '../sub/util/DateUtil'
+import * as Util from '../sub/util/Util'
 import * as AuthHelper from '../sub/helper/base/AuthHelper'
 import * as LocalStorageHelper from '../sub/helper/base/LocalStorageHelper'
 import * as StateHelper from '../sub/helper/dataproc/StateHelper'
@@ -68,10 +69,10 @@ export default {
       return getButtonTheme(false)
     },
     newsList() {
-      return this.topNewsList.map((val) => ({
+      return this.topNewsList.map(val => ({
         ...val,
         newsDate: DateUtil.formatDate(val.newsDate),
-        content: val.content,
+        content: Util.getValue(val, 'content', '').split('\n'),
       }))
     },
   },
@@ -86,7 +87,7 @@ export default {
       try {
         this.showProgress()
         await StateHelper.load('topNews')
-        this.topNewsList.length > 0 ?this.isNews = true: this.isNews = false
+        this.isNews = this.topNewsList.length > 0
         if (payload && payload.done) {
           payload.done()
         }

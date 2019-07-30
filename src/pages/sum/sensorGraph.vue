@@ -262,7 +262,7 @@ export default {
     this.form.sumUnit = SUM_UNIT.getOptions()[1].value
     this.form.sumTarget = SUM_TARGET.AVERAGE
     this.changeSensorId()
-    const date = new Date()
+    const date = DateUtil.getDefaultDate()
     this.form.datetimeFrom = DateUtil.getDatetime(date, {date: -1})
     this.form.datetimeTo = DateUtil.getDatetime(date)
     this.getSumUnitOptions()

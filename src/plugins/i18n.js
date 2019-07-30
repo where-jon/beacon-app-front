@@ -6,7 +6,7 @@ import * as LocaleHelper from '../sub/helper/base/LocaleHelper'
 
 Vue.use(VueI18n)
 
-const lang = process.browser? getLangShort(): 'ja'
+const lang = LocaleHelper.getLocale(process.browser? getLangShort(): 'ja')
 
 export default async ({ app, store }, inject) => {
   app.i18n = new VueI18n({
