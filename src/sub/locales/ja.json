@@ -1376,6 +1376,7 @@
     "tooManyCheck": "選択は{max}個以下にする必要があります。",
 
     "browserSizeWarn": "ブラウザサイズが適していません。PCで設定を行うか、PCの場合はブラウザサイズを横に拡げて下さい。",
+    "mobileWarn": "{name}の登録・編集はPCからご利用ください。",
 
     "dummy": "" 
   },
