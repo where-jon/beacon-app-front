@@ -106,11 +106,6 @@
             {{ $i18n.tnl('label.stayRatio') }}
           </a><br>
         </div>
-        <div v-if="enableTemperatureHistory">
-          <a href="#history_temperatureHistory">
-            {{ $i18n.tnl('label.temperatureHistory') }}
-          </a><br>
-        </div>
         <div v-if="enablePositionHistory">
           <a href="#history_positionHistory">
             {{ $i18n.tnl('label.PositionHistory') }}
@@ -411,19 +406,6 @@
         </p>
         <b-table striped hover small :items="stayRatioCsvItems()" :fields="csvFields" />
       </div>
-      <div v-if="enableTemperatureHistory" id="history_temperatureHistory">
-        <hr>
-        <p class="helpLabelHeader">
-          {{ getLabel('temperatureHistory') }}
-        </p>
-        <p class="helpTitle">
-          {{ getLabel('csvFile') }}
-        </p>
-        <p class="helpDetail">
-          {{ getHelpDescription('csvDescription') }}
-        </p>
-        <b-table striped hover small :items="temperatureHistoryCsvItems()" :fields="csvFields" />
-      </div>
       <div v-if="enablePositionHistory" id="history_positionHistory">
         <hr>
         <p class="helpLabelHeader">
@@ -514,7 +496,6 @@ export default {
       isDisplayUsageSituation: false,
       isDisplaySensorGraph: false,
       isDisplayStayRatio: false,
-      isDisplayTemperatureHistory: false,
       isDisplayPositionHistory: false,
       isDisplaySensorHistory: false,
       isDisplayNotifyHistory: false,
@@ -583,9 +564,6 @@ export default {
     },
     enableStayRatio() {
       return this.isDisplayStayRatio
-    },
-    enableTemperatureHistory() {
-      return this.isDisplayTemperatureHistory
     },
     enablePositionHistory() {
       return this.isDisplayPositionHistory
@@ -678,9 +656,6 @@ export default {
         if (!this.isDisplayStayRatio) {
           this.isDisplayStayRatio = parent.pages.find((val) => val.path == 'stayRatio')? true: false
         }
-        if (!this.isDisplayTemperatureHistory) {
-          this.isDisplayTemperatureHistory = parent.pages.find((val) => val.path == 'temperatureHistory')? true: false
-        }
         if (!this.isDisplayPositionHistory) {
           this.isDisplayPositionHistory = parent.pages.find((val) => val.path == 'positionHistory')? true: false
         }
@@ -714,7 +689,6 @@ export default {
         this.isDisplayUsageSituation || 
         this.isDisplaySensorGraph || 
         this.isDisplayStayRatio || 
-        this.isDisplayTemperatureHistory || 
         this.isDisplayPositionHistory || 
         this.isDisplaySensorHistory || 
         this.isDisplayNotifyHistory || 
@@ -957,17 +931,6 @@ export default {
         { isActive: true, displayName: this.getLabel('absent1Ratio'), keyName: this.getLabel('stayRatioAbsent1Ratio') },
         { isActive: true, displayName: this.getLabel('absent2Ratio'), keyName: this.getLabel('stayRatioAbsent2Ratio') },
         { isActive: true, displayName: this.getLabel('lostRatio'), keyName: 'lostRatio' },
-      ]
-    },
-    temperatureHistoryCsvItems() {
-      return [
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'sensorHistoryId' },
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'txId' },
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'exbId' },
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'dt' },
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'sensorDt' },
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'temperature' },
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'humidity' },
       ]
     },
     positionHistoryCsvItems() {

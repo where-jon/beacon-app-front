@@ -754,14 +754,9 @@ export const MENU = [
   {
     key: 'historyTitle',
     base: 'history/',
-    path: '/history/temperatureHistory',
+    path: '/history/positionHistory',
     icon: 'clipboard',
     pages: [{
-      key: 'thermohumidity',
-      path: 'temperatureHistory',
-      icon: 'thermometer'
-    },
-    {
       key: 'positionHistory',
       path: 'positionHistory',
       icon: 'cube'
