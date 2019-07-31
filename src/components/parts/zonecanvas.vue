@@ -110,7 +110,6 @@ class Zone {
       mousedownListener(this)
       this.active()
     })
-    this.group.on('mouseup', (e) => { e.evt.stopImmediatePropagation() })
     this.group.on('mouseenter', () => { this.stage.container().style.cursor = 'move' })
     this.group.on('mouseleave', () => { this.stage.container().style.cursor = 'default' })
     this.group.on('transformend', (e) => { e.evt.stopImmediatePropagation() })
@@ -371,6 +370,9 @@ export default {
     })
 
     drawArea.addEventListener('mouseup', (e) => {
+      if (!zone) {
+        return
+      }
       zone.fix((fixedZone) => {
         this.dragging = false
         this.emitZone(fixedZone)
