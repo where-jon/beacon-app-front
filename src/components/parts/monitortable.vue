@@ -126,7 +126,7 @@ export default {
   },
   methods: {
     getTelemetryPowerLevelClass(val, isPowerState = false){
-      TelemetryHelper.getTelemetryPowerLevelClass(val, isPowerState)
+      return TelemetryHelper.getTelemetryPowerLevelClass(val, isPowerState)
     },
     getStateClass(type, updatetime) {
       return this.badgeClassPrefix + DetectStateHelper.getClass(DetectStateHelper.getStateFromDetail(type, updatetime))
