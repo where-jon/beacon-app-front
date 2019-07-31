@@ -43,7 +43,9 @@ import { ROLE_FEATURE } from '../../../sub/constant/Constants'
 import * as ArrayUtil from '../../../sub/util/ArrayUtil'
 import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
+import * as AuthHelper from '../../../sub/helper/base/AuthHelper'
 import * as FeatureHelper from '../../../sub/helper/domain/FeatureHelper'
+import * as LocalStorageHelper from '../../../sub/helper/base/LocalStorageHelper'
 import * as ValidateHelper from '../../../sub/helper/dataproc/ValidateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import * as VueSelectHelper from '../../../sub/helper/ui/VueSelectHelper'
@@ -164,6 +166,12 @@ export default {
       const saveId = await AppServiceHelper.bulkSave(this.appServicePath, [entity])
       return saveId
     },
+    async onSaved(){
+      const login = LocalStorageHelper.getLogin()
+      if(Util.getValue(login, 'role.roleId', null) == this.role.roleId){
+        await AuthHelper.switchAppService()
+      }
+    }
   }
 }
 </script>
