@@ -393,8 +393,6 @@
     "historyTitle": "履歴",
     "historyDateFrom": "期間",
     "historyDateTo": "～",
-    "temperatureHistoryType0": "すべての温湿度",
-    "temperatureHistoryType1": "時間毎の温湿度",
 
     "analysis": "分析",
     "flowlineAnalysis": "動線分析",
@@ -526,7 +524,6 @@
     "FlowlineAnalysis": "動線分析",
     "HeatmapPosition": "ヒートマップ(測位)",
     "history": "履歴",
-    "temperatureHistory": "温湿度(履歴)",
     "PositionHistory": "位置情報",
     "PositionHistoryExc": "位置情報",
     "SensorHistory": "センサ情報",
@@ -1376,6 +1373,7 @@
     "tooManyCheck": "選択は{max}個以下にする必要があります。",
 
     "browserSizeWarn": "ブラウザサイズが適していません。PCで設定を行うか、PCの場合はブラウザサイズを横に拡げて下さい。",
+    "mobileWarn": "{name}の登録・編集はPCからご利用ください。",
 
     "dummy": "" 
   },

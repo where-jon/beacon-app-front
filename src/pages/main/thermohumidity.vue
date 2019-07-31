@@ -332,7 +332,7 @@ export default {
       icon.image.onload = () => {
         icon.x = 0
         icon.y = 0
-        icon.scaleX = 40 / icon.image.width
+        icon.scaleX = 25 / icon.image.width / this.canvasScale
         icon.scaleY = icon.scaleX 
         icon.regX = icon.image.width / 2
         icon.regY = icon.image.height / 2
@@ -383,6 +383,7 @@ export default {
         const pMock = DEV.USE_MOCK_EXC? mock['basic_sensorHistory_1_1_today_hour']: null
         const sensorData = await AppServiceHelper.fetchList('/basic/sensorHistory/1/1/' + exb.exbId + '/today/hour', null, pMock)
         sensorData.data = sensorData.data.map(val => {
+          val.key = DateUtil.formatDate(val.sensor_dt, 'HH')
           if(val.temperature){
             val.temperature = NumberUtil.formatTemperature(val.temperature)
           }

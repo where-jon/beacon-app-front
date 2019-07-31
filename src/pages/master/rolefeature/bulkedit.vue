@@ -9,7 +9,9 @@
 import { mapState } from 'vuex'
 import { BULK } from '../../../sub/constant/Constants'
 import * as Util from '../../../sub/util/Util'
+import * as AuthHelper from '../../../sub/helper/base/AuthHelper'
 import * as BulkHelper from '../../../sub/helper/dataproc/BulkHelper'
+import * as LocalStorageHelper from '../../../sub/helper/base/LocalStorageHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
@@ -71,6 +73,12 @@ export default {
       entity.rootRoleId = this.role.roleId
       return dummyKey
     },
+    async onSaved(){
+      const login = LocalStorageHelper.getLogin()
+      if(Util.getValue(login, 'role.roleId', null) == this.roleFeature.roleId){
+        await AuthHelper.switchAppService()
+      }
+    }
   }
 }
 </script>

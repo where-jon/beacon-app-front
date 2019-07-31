@@ -392,8 +392,6 @@
     "historyTitle": "History",
     "historyDateFrom": "Period",
     "historyDateTo": "-",
-    "temperatureHistoryType0": "All temp. & humidity",
-    "temperatureHistoryType1": "Temp. & humidity by time",
 
     "analysis": "Analysis",
     "flowlineAnalysis": "Route analysis",
@@ -518,7 +516,6 @@
     "FlowlineAnalysis": "Flowline",
     "HeatmapPosition": "Heatmap(Position)",
     "history": "History",
-    "temperatureHistory": "Thermohumidity(History)",
     "PositionHistory": "Position History",
     "PositionHistoryExc": "Position History",
     "SensorHistory": "Sensor History",

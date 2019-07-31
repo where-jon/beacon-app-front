@@ -653,7 +653,7 @@ export default {
       return IconHelper.createIcon(
         pos.label, txRadius, txRadius, color, rectInfo.bgColor, {
           circle: shape == SHAPE.CIRCLE,
-          roundRect: shape == SHAPE.SQUARE? 0: DISP.TX.ROUNDRECT_RADIUS,
+          roundRect: shape == SHAPE.SQUARE? 0: DISP.TX.ROUNDRECT_RADIUS / this.getMapScale(),
           strokeColor: rectInfo.strokeColor,
           strokeStyle: DISP.TX.STROKE_WIDTH,
           offsetY: 5,
