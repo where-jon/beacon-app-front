@@ -332,7 +332,7 @@ export default {
       icon.image.onload = () => {
         icon.x = 0
         icon.y = 0
-        icon.scaleX = 40 / icon.image.width
+        icon.scaleX = 25 / icon.image.width / this.canvasScale
         icon.scaleY = icon.scaleX 
         icon.regX = icon.image.width / 2
         icon.regY = icon.image.height / 2
