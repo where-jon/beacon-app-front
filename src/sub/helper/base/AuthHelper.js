@@ -218,6 +218,8 @@ export const switchAppService = async () => {
     loginInfo.frontRev = revInfo.frontRev
     loginInfo.serviceRev = revInfo.serviceRev
     loginInfo.currentTenant = userInfo.tenant
+    loginInfo.role = userInfo.user.role
+    loginInfo.featureList = userInfo.featureList
 
     await login(loginInfo)
   } catch (e) {
