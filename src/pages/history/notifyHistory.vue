@@ -65,9 +65,9 @@
             </span>
           </template>
           <template slot="notifyTo" slot-scope="row">
-            <span v-for="(val, key) in row.item.notifyTo" :key="key">
+            <div v-for="(val, key) in row.item.notifyTo" :key="key" class="word-break">
               {{ val }} <br>
-            </span>
+            </div>
           </template>
           <template slot="majors" slot-scope="row">
             <span v-if="!bUserCheck">
@@ -570,5 +570,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import "../../sub/constant/label.scss";
 @import "../../sub/constant/vue.scss";
 </style>
