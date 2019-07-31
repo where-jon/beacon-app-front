@@ -32,8 +32,8 @@
       :color="selectedSensor.length == 0? selectedTx.color: blackColor"
     >
       <div v-if="selectedSensor.length == 0" :style="{backgroundColor: selectedTx.bgColor}" class="clearfix">
-        <div v-if="enableThumbnail" class="thumbnail">
-          <img v-if="selectedTx.thumbnail.length > 0" :src="selectedTx.thumbnail" width="160" height="auto">
+        <div v-if="enableThumbnail" class="thumbnail thumbnail-modal">
+          <img v-if="selectedTx.thumbnail.length > 0" :src="selectedTx.thumbnail" width="100%" height="auto">
           <img v-else src="/default.png" width="auto" height="116">
         </div>
         <div class="descriptionSensor">
@@ -273,7 +273,7 @@ export default {
 }
 .descriptionSensor {
   float: left;
-  width: 160px;
+  width: 50%;
   height: 150px;
   font-weight: bold;
   padding-left: 10px;
@@ -283,5 +283,9 @@ export default {
 .thumbnail {
   float: left;
   vertical-align: middle;
+}
+
+.thumbnail-modal {
+  width: 50%;
 }
 </style>
