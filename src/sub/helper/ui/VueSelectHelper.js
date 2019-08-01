@@ -4,6 +4,7 @@
  */
 
 import { DISP } from '../../constant/config'
+import { KEYCODE } from '../../constant/Constants'
 import * as ArrayUtil from '../../util/ArrayUtil'
 import * as StringUtil from '../../util/StringUtil'
 import * as Util from '../../util/Util'
@@ -104,6 +105,18 @@ export const closeVueSelect = () => {
 export const clearVueSelect = vueSelected => {
   if(vueSelected && typeof vueSelected == 'object'){
     Object.keys(vueSelected).forEach(key => vueSelected[key] = ArrayUtil.isArray(vueSelected[key])? []: null)
+  }
+}
+
+/**
+ * v-selectのsubmitを無効化する
+ * @method
+ */
+export const disabledAllSubmit = () => {
+  const vueSelectComponentList = document.getElementsByClassName('vs__search')
+  const length = vueSelectComponentList.length
+  for(let idx = 0; idx < length; idx++){
+    vueSelectComponentList[idx].onkeypress = () => window.event.keyCode != KEYCODE.ENTER
   }
 }
 

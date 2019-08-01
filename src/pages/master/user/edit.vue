@@ -150,6 +150,7 @@ export default {
   },
   mounted(){
     ValidateHelper.setCustomValidationMessage()
+    VueSelectHelper.disabledAllSubmit()
   },
   methods: {
     isErrorPasswordRequired(){
