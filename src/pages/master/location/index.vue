@@ -269,7 +269,7 @@ export default {
           let text = exbBtn.getChildAt(1)
           if (text) {
             text.text = StringUtil.cutOnLongByte(this.getExbDisp(exbBtn.deviceId), this.DISPLAY_NAME_BYTE_LENGTH)
-            text.font = StyleHelper.getInRectFontSize(text.text, DISP.EXB_LOC.SIZE.W, DISP.EXB_LOC.SIZE.H)
+            text.font = StyleHelper.getInRectFontSize(text.text, DISP.EXB_LOC.SIZE.W / this.canvasScale, DISP.EXB_LOC.SIZE.H / this.canvasScale)
           }
         }
       }
