@@ -3,6 +3,7 @@
     <breadcrumb :items="items" />
     <div class="container">
       <alert :message="message" />
+      <auto-alert :custom="showAreaWarn" :p-custom-message="areaWarnMessage" />
 
       <b-row>
         <b-col md="8" offset-md="2">
@@ -111,12 +112,14 @@ import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import commonmixin from '../../../components/mixin/commonmixin.vue'
 import editmixin from '../../../components/mixin/editmixin.vue'
 import alert from '../../../components/parts/alert.vue'
+import autoAlert from '../../../components/parts/autoAlert.vue'
 import settingtxview from '../../../components/parts/settingtxview.vue'
 
 export default {
   components: {
     breadcrumb,
     alert,
+    autoAlert,
     settingtxview,
   },
   mixins: [commonmixin, editmixin],
@@ -149,6 +152,8 @@ export default {
       txIconsVertical: 5,
       TXICONS_DISPFORMAT_TILE: 5,
       maxDeviceId: 65535,
+      checkWarn: false,
+      showAreaWarn: false,
     }
   },
   computed: {
@@ -161,18 +166,30 @@ export default {
       'sensors',
       'zones',
     ]),
+    areaWarnMessage(){
+      return this.$i18n.tnl('message.resetFromTo', {
+        from: this.$i18n.tnl('label.area'),
+        to: this.$i18n.tnl('label.zone'),
+      })
+    },
   },
   watch: {
     'vueSelected.area': {
       handler: function(newVal, oldVal){
         this.form.areaId = Util.getValue(newVal, 'value', null)
         this.vueSelected.zone = null
+        if(this.checkWarn && Util.hasValue(this.form.zoneId) && Util.getValue(oldVal, 'value', null) != null){
+          this.showAreaWarn = true
+        }
       },
       deep: true,
     },
     'vueSelected.zone': {
       handler: function(newVal, oldVal){
         this.form.zoneId = Util.getValue(newVal, 'value', null)
+        if(this.showAreaWarn && Util.hasValue(this.form.zoneId)){
+          this.showAreaWarn = false
+        }
       },
       deep: true,
     },
@@ -209,6 +226,7 @@ export default {
     this.$nextTick(() => ValidateHelper.setCustomValidationMessage())
   },
   async mounted() {
+    this.checkWarnOn()
     await Promise.all(['area', 'zone'].map(StateHelper.load))
     this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions, this.form.areaId)
     this.$nextTick(() => this.vueSelected.zone = VueSelectHelper.getVueSelectData(this.getZoneNames(), this.form.zoneId))
@@ -227,6 +245,13 @@ export default {
     },
     includesDeviceType(name){
       return ConfigHelper.includesDeviceType(name)
+    },
+    checkWarnOn(){
+      this.checkWarn = false
+      this.$nextTick(() => {
+        this.checkWarn = true
+        this.showAreaWarn = false
+      })
     },
     getZoneNames() {
       const areaId = this.form.areaId
@@ -312,6 +337,7 @@ export default {
       this.form.sensorId = null
       this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions, null)
       this.vueSelected.zone = VueSelectHelper.getVueSelectData(this.getZoneNames(), null)
+      this.checkWarnOn()
     },
     async onSaving() {
       let dummyKey = -1
