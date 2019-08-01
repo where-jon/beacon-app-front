@@ -1045,7 +1045,7 @@
         }
       },
       "DEV": {
-        "SIMULATION": "boolean"
+        "SIMULATION": "number"
       }
     },
     "DEFAULT": {
