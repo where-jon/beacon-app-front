@@ -39,11 +39,6 @@
               <label v-t="'label.locationY'" />
               <input v-model="form.y" :readonly="!isEditable" type="number" min="0" max="99999" class="form-control">
             </b-form-group>
-            <b-form-group>
-              <b-form-checkbox v-model="form.enabled" :disabled="!isEditable" :readonly="!isEditable" value="true" unchecked-value="false">
-                {{ $t('label.enabled') }}
-              </b-form-checkbox>
-            </b-form-group>
             <!-- ver0.9 リリースのため、表示フラグ欄とTX表示形式欄を非表示とする -->
             <!--
             <b-form-group>
@@ -129,7 +124,7 @@ export default {
       items: ViewHelper.createBreadCrumbItems('master', {text: 'exb', href: '/master/exb'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.exb.exbId)),
       useZone: ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'zone') && MenuHelper.isMenuEntry('/master/zoneClass'),
       form: Util.extract(this.$store.state.app_service.exb, [
-        'exbId', 'deviceId', 'enabled',
+        'exbId', 'deviceId',
         'location.locationName', 'location.areaId', 'location.locationId', 'location.posId',
         'location.x', 'location.y', 'location.visible', 'location.txViewType',
         'exbSensorList.0.exbSensorPK.sensorId', 'location.locationZoneList.0.locationZonePK.zoneId'
@@ -137,9 +132,6 @@ export default {
       vueSelected: {
         area: null,
         zone: null,
-      },
-      defValue: {
-        'enabled': true,
       },
       mutex: false,
       deviceId: null,
@@ -322,7 +314,6 @@ export default {
         exbId: this.form.exbId != null? this.form.exbId: dummyKey--,
         deviceId: this.deviceId,
         locationId: this.form.locationId,
-        enabled: this.form.enabled,
         location: {
           locationId: this.form.locationId? this.form.locationId: dummyKey--,
           areaId: this.form.areaId,

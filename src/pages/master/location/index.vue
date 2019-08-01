@@ -231,7 +231,7 @@ export default {
     },
     sortExbOptions() {
       this.exbOptions = _(this.workExbs).filter((val) => {
-        return val.enabled && (val.location.areaId == null || !val.location.x || !val.location.y || (val.location.x && val.location.y <= 0))
+        return val.location.areaId == null || !val.location.x || !val.location.y || (val.location.x && val.location.y <= 0)
       }).filter(val => {
         return !this.positionedExb.find(exb => exb.exbId == val.exbId)
       })
