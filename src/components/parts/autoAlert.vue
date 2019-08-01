@@ -1,6 +1,6 @@
 <template>
   <b-container>
-    <b-alert v-if="display" :show="show" variant="warning" :dismissible="false">
+    <b-alert v-if="display()" :show="show" variant="warning" :dismissible="false">
       <span v-for="(line, index) in createMessage()" :key="index">
         {{ line }} <br>
       </span>
@@ -18,11 +18,19 @@ export default {
       type: String,
       default: '',
     },
+    pCustomMessage: {
+      type: String,
+      default: '',
+    },
     browserSize: {
       type: Boolean,
       default: false,
     },
     mobile: {
+      type: Boolean,
+      default: false,
+    },
+    custom: {
       type: Boolean,
       default: false,
     },
@@ -32,11 +40,6 @@ export default {
       show: false,
     }
   },
-  computed: {
-    display(){
-      return this.browserSize || this.mobile
-    },
-  },
   created(){
     window.addEventListener('resize', this.resizeFunc)
   },
@@ -44,6 +47,9 @@ export default {
     window.removeEventListener('resize', this.resizeFunc)
   },
   methods: {
+    display(){
+      return this.browserSize || this.mobile || this.custom
+    },
     resizeFunc(){
       this.$forceUpdate()
     },
@@ -54,6 +60,9 @@ export default {
       }
       if(this.mobile && BrowserUtil.isAndroidOrIOS()){
         messageList.push(this.$i18n.tnl('message.mobileWarn', {name: this.$i18n.tnl('label.' + this.pName)}))
+      }
+      if(this.custom){
+        messageList.push(this.pCustomMessage)
       }
       this.show = Util.hasValue(messageList)
       return messageList
