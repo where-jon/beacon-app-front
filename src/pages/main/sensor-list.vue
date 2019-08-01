@@ -11,6 +11,7 @@ import { SENSOR } from '../../sub/constant/Constants'
 import * as DateUtil from '../../sub/util/DateUtil'
 import * as NumberUtil from '../../sub/util/NumberUtil'
 import * as Util from '../../sub/util/Util'
+import * as ConfigHelper from '../../sub/helper/dataproc/ConfigHelper'
 import * as EXCloudHelper from '../../sub/helper/dataproc/EXCloudHelper'
 import * as PositionHelper from '../../sub/helper/domain/PositionHelper'
 import * as SensorHelper from '../../sub/helper/domain/SensorHelper'
@@ -61,7 +62,7 @@ export default {
   methods: {
     async sensorChange(sensorId){
       this.params.fields.length = 0
-      SensorHelper.getFields(sensorId).forEach((val) => this.params.fields.push(val))
+      SensorHelper.getFields(sensorId).forEach(val => this.params.fields.push(val))
       this.selectedSensor = sensorId
       await this.fetchData()
     },
@@ -69,7 +70,7 @@ export default {
       const d = new Date(device.updatetime)
       return {
         sensorDt: DateUtil.formatDate(d.getTime()),
-        potName: Util.getValue(device, 'potName', ''),
+        potName: Util.getValue(device, 'potName', Util.getValue(device, ConfigHelper.includesBtxMinor('btxId')? 'btxId': 'minor', '')),
         deviceId: Util.getValue(device, 'deviceId', ''),
         deviceIdX: Util.getValue(device, 'deviceIdX', ''),
         locationName: Util.getValue(device, 'locationName', ''),
@@ -101,19 +102,19 @@ export default {
         const exCluodSensors = await EXCloudHelper.fetchSensor(this.selectedSensor)
         const positionHistory = await PositionHelper.storePositionHistory()
         const positionedExb = PositionHelper.getPositionedExbWithSensor(this.selectedArea,
-          (exb) => exb.sensorId == this.selectedSensor,
-          (exb) => {return {id: this.selectedSensor, ...exCluodSensors.find((sensor) => sensor.deviceid == exb.deviceId && (sensor.timestamp || sensor.updatetime))}},
+          exb => exb.sensorId == this.selectedSensor,
+          exb => ({id: this.selectedSensor, ...exCluodSensors.find(sensor => sensor.deviceid == exb.deviceId && (sensor.timestamp || sensor.updatetime))}),
           null, true
         )
         let positionedTx = PositionHelper.getPositionedTx(this.selectedArea,
-          (tx) => tx.sensorId == this.selectedSensor,
-          (tx) => {
+          tx => tx.sensorId == this.selectedSensor,
+          tx => {
             const ret = {
               id: this.selectedSensor,
-              ...exCluodSensors.find((sensor) => (sensor.btxid == tx.btxId || sensor.btx_id == tx.btxId) && (sensor.timestamp || sensor.updatetime)),
+              ...exCluodSensors.find(sensor => (sensor.btxid == tx.btxId || sensor.btx_id == tx.btxId) && (sensor.timestamp || sensor.updatetime)),
             }
             if(this.selectedSensor == SENSOR.MEDITAG){
-              const pos = positionHistory.find((position) => position.txId == tx.txId || position.btx_id == tx.btxId)
+              const pos = positionHistory.find(position => position.txId == tx.txId || position.btx_id == tx.btxId)
               if(!ret.areaId){
                 ret.areaId = pos && pos.exb? pos.exb.areaId: null
               }
@@ -129,9 +130,9 @@ export default {
           null, true, this.selectedSensor == SENSOR.MEDITAG
         )
 
-        this.sensorList = positionedExb.concat(positionedTx).map((device) => {
-          return this.createDeviceInfo(device)
-        }).filter((device) => device)
+        this.sensorList = positionedExb.concat(positionedTx)
+          .map(device => this.createDeviceInfo(device))
+          .filter(device => device)
         this.params.initTotalRows = this.sensorList.length
 
         if (payload && payload.done) {

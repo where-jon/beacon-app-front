@@ -127,9 +127,26 @@ export const initConfig = () => {
 }
 
 /**
+ * 指定した設定値が、指定した設定項目に含まれているか確認する。
+ * @method
+ * @param {String} selectType 
+ * @param {String} target 
+ * @return {Boolean} targetの設定値が「both」の場合は必ずtrue
+ */
+export const includesOrBoth = (selectType, target) => [selectType, 'both'].includes(target)
+
+/**
  * 指定した設定がdeviceId表示設定に含まれているか確認する。
  * @method
  * @param {String} deviceType 
  * @return {Boolean}
  */
-export const includesDeviceType = deviceType => [deviceType, 'both'].includes(config.APP.EXB.DEVICEID_TYPE)
+export const includesDeviceType = deviceType => includesOrBoth(deviceType, config.APP.EXB.DEVICEID_TYPE)
+
+/**
+ * 指定した設定がbtxId表示設定に含まれているか確認する。
+ * @method
+ * @param {String} btxMinor 
+ * @return {Boolean}
+ */
+export const includesBtxMinor = btxMinor => includesOrBoth(btxMinor, config.APP.TX.BTX_MINOR)
