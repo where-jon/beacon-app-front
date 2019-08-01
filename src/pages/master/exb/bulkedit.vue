@@ -37,7 +37,7 @@ export default {
   },
   methods: {
     async onSaving() {
-      await this.$refs.bulkEdit.bulkSave({numberList: ['deviceId', 'posId', 'x', 'y'], hexList: ['deviceIdX'], booleanList: ['enabled']})
+      await this.$refs.bulkEdit.bulkSave({numberList: ['deviceId', 'posId', 'x', 'y'], hexList: ['deviceIdX']})
     },
     onRestruct(entity, dummyKey){
       if(Util.hasValue(entity.deviceId) || Util.hasValue(entity.deviceIdX)){

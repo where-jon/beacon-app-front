@@ -69,7 +69,7 @@ export default {
     },
     getCustumCsvColumns(){
       return this.createIdColumn().concat(this.createCustomColumn()).map(val => val.key)
-        .concat(['locationName','areaName', 'x', 'y', 'enabled', 'sensor']).filter(val => val)
+        .concat(['locationName','areaName', 'x', 'y', 'sensor']).filter(val => val)
     },
     getFields(){
       return ViewHelper.addLabelByKey(this.$i18n, this.createIdColumn().concat(this.createCustomColumn())

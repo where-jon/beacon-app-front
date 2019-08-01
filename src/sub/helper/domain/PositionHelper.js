@@ -229,7 +229,7 @@ export const getPositionedExb = selectedArea => { // pir, position
 
   Util.debug('Raw exb', exbs, selectedArea)
   let positionedExb = _(_.cloneDeep(exbs)).filter(exb => {
-    return exb.enabled && exb.location.areaId == selectedArea && exb.location.x && exb.location.y > 0
+    return exb.location.areaId == selectedArea && exb.location.x && exb.location.y > 0
   }).value()
   Util.debug('positionedExb', positionedExb)
   if (positionedExb.length == 0) {

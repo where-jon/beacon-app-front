@@ -122,7 +122,7 @@ export const fetchPositionList = async (exbs, txs) => {
       let tx = _.find(txs, tx => tx.btxId == val.btx_id)
       if (!DEV.NOT_FILTER_TX || !tx) { return null}
       let exb = _.find(exbs, exb => exb.location.posId == val.pos_id)
-      if (!exb || !exb.enabled) { return null}
+      if (!exb) { return null}
       let label = tx && tx.displayName? tx.displayName: val.btx_id
       return {...val, tx: tx, exb: exb, label, updatetime: dateform(val.updatetime)}
     }).compact().value()
