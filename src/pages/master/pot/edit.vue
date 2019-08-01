@@ -295,6 +295,7 @@ export default {
     this.vueSelected.category = VueSelectHelper.getVueSelectData(this.categoryOptions, this.form.categoryId)
     this.vueSelected.group = VueSelectHelper.getVueSelectData(this.groupOptions, this.form.groupId)
     ValidateHelper.setCustomValidationMessage()
+    VueSelectHelper.disabledAllSubmit()
   },
   methods: {
     initPotTxList(){

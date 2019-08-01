@@ -87,7 +87,6 @@ export default {
       },
       areaNames: [],
       categoryNames: [],
-      zones: [],
       isEnableNameText: true,
       isRegist: false,
     }
@@ -119,6 +118,7 @@ export default {
   },
   mounted(){
     ValidateHelper.setCustomValidationMessage()
+    VueSelectHelper.disabledAllSubmit()
   },
   methods: {
     reset () {

@@ -206,7 +206,10 @@ export default {
     this.initExbSensorList()
     this.changeSensors()
     await StateHelper.load('sensor')
-    this.$nextTick(() => ValidateHelper.setCustomValidationMessage())
+    this.$nextTick(() => {
+      ValidateHelper.setCustomValidationMessage()
+      VueSelectHelper.disabledAllSubmit()
+    })
   },
   async mounted() {
     await Promise.all(['area', 'zone'].map(StateHelper.load))
