@@ -126,6 +126,7 @@ export const ROLE_FEATURE = {
 }
 
 export const FEATURE = {
+  HIDE_LIST: ['MasterTenant'],
   NAME: {
     ALL_REGION: 'ALL_REGION'
   },

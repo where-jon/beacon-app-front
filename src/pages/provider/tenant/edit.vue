@@ -248,7 +248,7 @@ export default {
       return Util.hasValue(param)
     },
     showFeatureEdit() {
-      this.editFeatureList = this.featureList.filter((val) => val.featureType == 0).map((val) => {return {...val}})
+      this.editFeatureList = this.featureList.filter(val => val.featureType == 0).map(val => {return {...val}})
       this.$root.$emit('bv::show::modal', 'modalFeatureInfo', null)
     },
     showSettingEdit() {
@@ -266,7 +266,7 @@ export default {
       })
     },
     storeFeatureInfo() {
-      this.featureList = this.editFeatureList.map((val) => {return {...val}})
+      this.featureList = this.editFeatureList.map(val => {return {...val}})
     },
     storeSettingInfo(event) {
       const parseList = this.$refs.systemSetting.parse()
@@ -287,6 +287,25 @@ export default {
       this.$refs.systemSetting.showNewForm(false)
       window.removeEventListener('resize', this.adjustModalRect)
     },
+    convertSendParam(){
+      const curTenantFeatureMap = {}
+      Util.getValue(this, 'tenant.tenantFeatureList', []).forEach(tenantFeature => {
+        const key = Util.getValue(tenantFeature, 'feature.featureId', -1)
+        if(0 <= key){
+          curTenantFeatureMap[key] = true
+        }
+      })
+      return this.featureList.filter(feature => {
+        const check = feature.checked && !feature.disabled
+        if(!curTenantFeatureMap[feature.featureId] && check){
+          return true
+        }
+        if(curTenantFeatureMap[feature.featureId] && !check){
+          return true
+        }
+        return false
+      })
+    },
     async applyConfig() {
       await StateHelper.load('setting', true)
       const login = LocalStorageHelper.getLogin()
@@ -294,7 +313,7 @@ export default {
       AuthHelper.resetConfig(login.tenantAdmin, userInfo.setting)
     },
     async onSaved(){
-      this.featureList.forEach((feature) => {
+      this.featureList.forEach(feature => {
         feature.checked = false
         feature.disabled = false
       })
@@ -324,15 +343,16 @@ export default {
           Util.hasValue(this.form.sysAdminLoginId)? {userId: dummyKey--, loginId: this.form.sysAdminLoginId, pass: this.form.sysAdminPass, role: { roleId: dummyKey--, roleName: 'SYS_ADMIN' }}: null,
           Util.hasValue(this.form.adminLoginId)? {userId: dummyKey--, loginId: this.form.adminLoginId, pass: this.form.adminPass, role: { roleId: dummyKey--, roleName: 'ADMIN' }}: null,
           Util.hasValue(this.form.userLoginId)? {userId: dummyKey--, loginId: this.form.userLoginId, pass: this.form.userPass, role: { roleId: dummyKey--, roleName: 'USER' }}: null,
-        ].filter((val) => val): null,
+        ].filter(val => val): null,
         region: !Util.hasValue(this.form.tenantId)? {regionId: dummyKey--, regionName: this.form.regionName, meshId: Util.hasValue(this.form.meshId)? this.form.meshId: null}: null,
         defaultExcloudBaseUrl: defaultConfig.EXCLOUD.BASE_URL,
         excloudBaseUrl: EXCLOUD.BASE_URL,
-        tenantFeatureList: this.featureList.map((val) => {
-          return !val.disabled && val.checked? {
+        tenantFeatureList: this.convertSendParam().map(val => {
+          return {
             tenantFeaturePK:{tenantId: dummyKey--, featureId: val.featureId},
-          }: null
-        }).filter((val) => val),
+            delFlg: (val.checked && !val.disabled)? 0: 1,
+          }
+        }),
       }
       if(settingEntities.length != 0){
         entity.settingList = settingEntities.map(val => ({...val, settingId: val.settingId <= 0? dummyKey--: val.settingId}))

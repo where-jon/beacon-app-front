@@ -71,14 +71,34 @@ export default {
     isShow(){
       return Util.hasValue(this.featureList)
     },
+    convertSendParam(){
+      const curTenantFeatureMap = {}
+      Util.getValue(LocalStorageHelper.getLogin(), 'currentTenant.tenantFeatureList', []).forEach(tenantFeature => {
+        const key = Util.getValue(tenantFeature, 'feature.featureId', -1)
+        if(0 <= key){
+          curTenantFeatureMap[key] = true
+        }
+      })
+      return this.featureList.filter(feature => {
+        const check = feature.checked && !feature.disabled
+        if(!curTenantFeatureMap[feature.featureId] && check){
+          return true
+        }
+        if(curTenantFeatureMap[feature.featureId] && !check){
+          return true
+        }
+        return false
+      })
+    },
     async onSaved(){
       await AuthHelper.switchAppService()
     },
     async onSaving() {
       const currentTenant = LocalStorageHelper.getLogin().currentTenant
-      const entities = this.featureList.filter(feature => !feature.disabled && feature.checked).map(feature => {
+      const entities = this.convertSendParam().map(feature => {
         return {
           tenantFeaturePK: {tenantId: currentTenant.tenantId, featureId: feature.featureId},
+          delFlg: (feature.checked && !feature.disabled)? 0: 1,
           param: ''
         }
       })
