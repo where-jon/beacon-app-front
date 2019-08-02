@@ -182,10 +182,10 @@ export default {
     },
     checkSize(width, height){
       const exbError = _.some(this.exbs, exb => {
-        return exb.x >= width || exb.y >= height
+        return this.area.areaId == exb.areaId && (exb.x >= width || exb.y >= height)
       })
       const txError = _.some(this.txs, tx => {
-        return tx.x >= width || tx.y >= height
+        return tx.areaId && tx.x && tx.y && tx.areaId == this.area.areaId && (tx.x >= width || tx.y >= height)
       })
       this.posError = exbError || txError
       this.uploadError = false
