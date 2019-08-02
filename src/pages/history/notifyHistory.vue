@@ -224,9 +224,8 @@ export default {
       fields6: ViewHelper.addLabelByKey(this.$i18n, [  // ユーザ登録通知
         {key: 'positionDt', sortable: true, label:'dt'},
         {key: 'notifyTo', sortable: true,label:'notifyTo' },
-        {key: 'majors', sortable: true,label:'major'},
         {key: 'minor', sortable: true,label:'minor' },
-        {key: 'txNames', sortable: true,label:'txName' },
+        {key: 'userName', sortable: true,label:'txName' },
         {key: 'notifyResult', sortable: true,label:'notifyResult' },
       ]),
       fields7: ViewHelper.addLabelByKey(this.$i18n, [  // 進入禁止通知
