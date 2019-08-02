@@ -267,7 +267,7 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     DIV_3: 0.5, // Txが重なった際に３つ左右に並べる場合にずらす倍率
     HORIZON: 5, // TXアイコンタイル表示時の列数
     VERTICAL: 5, // TXアイコンタイル表示時の行数
-    DISPLAY_PRIORITY: ['category','group'], // TX表示の際に参照するdisplay方法の優先順位
+    DISPLAY_PRIORITY: 'category', // TX表示の際に参照するdisplay方法
     ABSENT_ZONE_DISPLAY_TYPES: ['undetected','lost','absent'],   // undetected:未検知, lost:消失, absent:不在ゾーン）
   },
   EXB_LOC: {

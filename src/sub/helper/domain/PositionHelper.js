@@ -173,8 +173,7 @@ const setPositionStyle = (positions, fixSize = false) => { // p
     // 設定により、カテゴリとグループのどちらの設定で表示するかが変わる。
     let display
     if (pos.tx) {
-      const styleSrc = pos.tx[DISP.TX.DISPLAY_PRIORITY[0]] || pos.tx[DISP.TX.DISPLAY_PRIORITY[1]]
-      display = styleSrc && styleSrc.display
+      display = Util.getValue(pos.tx, DISP.TX.DISPLAY_PRIORITY + '.display', null)
     }
     display = display || defaultDisplay
     display = StyleHelper.getStyleDisplay1({...display, label: pos.label}, {fixSize: fixSize})        

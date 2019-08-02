@@ -825,7 +825,7 @@
         "STROKE_COLOR": "Default border color for Tx icons::Set up the border color for Tx icons to which neither category nor group belongs. Set up with a color code other than #.",
         "ALPHA": "Absent time Tx Icon Transmissive Value::Set up the transmit value when Tx is absence.Set up as a decimal value from 0 (transparent) to 1 (opaque).",
         "LOST_ALPHA": "Absent Tx Icon Transmissive Value::Set up the transmit value when Tx is absent. Set up it as a decimal value from 0 (transparent) to 1 (opaque).",
-        "DISPLAY_PRIORITY": "Display color priority of Tx icon::Set up the color to be applied to the display color of Tx icon from either the category or the display color set in the group. It can select from category or group and applied from the one specified at the beginning.",
+
         "ABSENT_ZONE_DISPLAY_TYPES": "Type of Tx icon to be displayed for absence display zone::undetected: undetected, lost:lost, absent:absent zone"
       },
       "EXB_LOC": {
@@ -1030,7 +1030,6 @@
       },
       "DISP": {
         "TX": {
-          "DISPLAY_PRIORITY": "stringList",
           "ABSENT_ZONE_DISPLAY_TYPES": "stringList"
         },
         "THERMOH": {
