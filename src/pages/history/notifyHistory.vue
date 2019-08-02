@@ -195,14 +195,14 @@ export default {
       fields2: ViewHelper.addLabelByKey(this.$i18n, [  // GW状態アラート
         {key: 'positionDt', sortable: true, label:'dt'},
         {key: 'notifyTo', sortable: true,label:'notifyTo' },
-        {key: 'deviceNums', sortable: true,label:'deviceNum' },
+        {key: 'deviceIds', sortable: true,label:'deviceId' },
         {key: 'lastRcvDatetimes', sortable: true,label:'finalReceiveTime' },
         {key: 'notifyResult', sortable: true,label:'notifyResult' },
       ]),
       fields3: ViewHelper.addLabelByKey(this.$i18n, [  // EXB状態アラート
         {key: 'positionDt', sortable: true, label:'dt'},
         {key: 'notifyTo', sortable: true,label:'notifyTo' },
-        {key: 'deviceNums', sortable: true,label:'deviceNum' },
+        {key: 'deviceIds', sortable: true,label:'deviceId' },
         {key: 'lastRcvDatetimes', sortable: true,label:'finalReceiveTime' },
         {key: 'notifyResult', sortable: true,label:'notifyResult' },
       ]),
@@ -224,9 +224,8 @@ export default {
       fields6: ViewHelper.addLabelByKey(this.$i18n, [  // ユーザ登録通知
         {key: 'positionDt', sortable: true, label:'dt'},
         {key: 'notifyTo', sortable: true,label:'notifyTo' },
-        {key: 'majors', sortable: true,label:'major', thClass: 'd-none', tdClass: 'd-none'},
         {key: 'minor', sortable: true,label:'minor' },
-        {key: 'txNames', sortable: true,label:'txName' },
+        {key: 'userName', sortable: true,label:'txName' },
         {key: 'notifyResult', sortable: true,label:'notifyResult' },
       ]),
       fields7: ViewHelper.addLabelByKey(this.$i18n, [  // 進入禁止通知
