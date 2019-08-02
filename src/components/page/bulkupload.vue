@@ -21,6 +21,7 @@
 import JsZip from 'jszip'
 import { APP } from '../../sub/constant/config'
 import * as Util from '../../sub/util/Util'
+import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import commonmixin from '../mixin/commonmixin.vue'
 import editmixin from '../mixin/editmixin.vue'
 import alert from '../parts/alert.vue'
@@ -65,12 +66,13 @@ export default {
       submittable: false,
     }
   },
-  mounted() {
+  async mounted() {
+    await StateHelper.load('area')
     this.loading = false
     this.submittable = false
     fileReader = new FileReader()
     fileReader.onload = () =>{
-      JsZip.loadAsync(fileReader.result, {base64: true}).then((zip) => {
+      JsZip.loadAsync(fileReader.result, {base64: true}).then(zip => {
         this.countFile(zip)
         this.uploadMessage()
         for(let key in zip.files){
@@ -78,7 +80,7 @@ export default {
             const id = this.getFileName(key)
             const target = this.$parent.$options.methods.search.call(this.$parent, id)
             if(target){
-              zip.file(key).async('base64').then((val) =>{
+              zip.file(key).async('base64').then(val =>{
                 let imgInfo = {
                   ...target,
                   type: key.slice(key.lastIndexOf('.') + 1),
@@ -151,6 +153,7 @@ export default {
       this.submittable = false
     },
     async loadThumbnail(e) {
+      StateHelper.initShowMessage()
       this.form.thumbnails = []
       this.form.warnThumbnails = []
       this.submittable = false
