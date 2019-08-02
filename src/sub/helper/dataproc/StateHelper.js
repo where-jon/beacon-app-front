@@ -5,7 +5,7 @@
 
 import _ from 'lodash'
 import { APP, DISP } from '../../constant/config'
-import { CATEGORY, SHAPE, NOTIFY_STATE, SYSTEM_ZONE_CATEGORY_NAME} from '../../constant/Constants'
+import { CATEGORY, SHAPE, FEATURE, NOTIFY_STATE, SYSTEM_ZONE_CATEGORY_NAME} from '../../constant/Constants'
 import * as ArrayUtil from '../../util/ArrayUtil'
 import * as DateUtil from '../../util/DateUtil'
 import * as StringUtil from '../../util/StringUtil'
@@ -446,7 +446,7 @@ const appStateConf = {
     path: '/meta/feature',
     sort: 'featureName',
     beforeCommit: arr => {
-      return  arr.map(val => ({
+      return arr.filter(val => !FEATURE.HIDE_LIST.includes(val.featureName)).map(val => ({
         ...val,
         featureName: val.featureType == 0? StringUtil.toLowerCaseTop(val.featureName): val.featureName,
       }))

@@ -3,6 +3,8 @@
  * @module helper/domain/FeatureHelper
  */
 
+import { FEATURE } from '../../constant/Constants'
+import * as Util from '../../util/Util'
 import * as LocalStorageHelper from '../base/LocalStorageHelper'
 
 /**
@@ -79,6 +81,9 @@ export const isShowRelationFeature = feature => {
  */
 export const getFilterRoleFeatureList = roleFeatureList => {
   const ret = roleFeatureList.filter(roleFeature => {
+    if(FEATURE.HIDE_LIST.includes(Util.getValue(roleFeature, 'feature.featureName', ''))){
+      return false
+    }
     return isSystemFeature(roleFeature.feature) || isShowRelationFeature(roleFeature.feature)
   })
   return ret? ret: []

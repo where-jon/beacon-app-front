@@ -356,7 +356,7 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   },
   ANALYSIS: { // 分析
     LINE: {
-      MIN_WEIGHT: 1,    // 動線の最小太さ
+      MIN_WEIGHT: 3,    // 動線の最小太さ
       MAX_WEIGHT: 10,   // 動線の最大太さ
       COLOR: '#ff0000', // 動線の色 (#xxxxxx)
       OPACITY: 1,       // 動線の透過度 (0～1。0.5などの小数も可)
