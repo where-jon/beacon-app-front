@@ -65,6 +65,7 @@ import * as DateUtil from '../../sub/util/DateUtil'
 import * as NumberUtil from '../../sub/util/NumberUtil'
 import * as Util from '../../sub/util/Util'
 import { getCharSet } from '../../sub/helper/base/CharSetHelper'
+import * as ConfigHelper from '../../sub/helper/dataproc/ConfigHelper'
 import * as HttpHelper from '../../sub/helper/base/HttpHelper'
 import * as SensorHelper from '../../sub/helper/domain/SensorHelper'
 import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
@@ -133,9 +134,9 @@ export default {
       const d = new Date(senHist.sensorDt)
       senHist.sensorDt = DateUtil.formatDate(d.getTime())
 
-      let aTx = _.find(this.txs, (tx) => { return tx.txId == senHist.txId })
+      let aTx = _.find(this.txs, tx => { return tx.txId == senHist.txId })
       if (senHist.txId != null && aTx) {
-        senHist.potName = aTx.potName
+        senHist.potName = Util.getValue(aTx, 'potName', Util.getValue(aTx, ConfigHelper.includesBtxMinor('btxId')? 'btxId': 'minor', ''))
         senHist.major = aTx.major
         senHist.minor = aTx.minor
         senHist.locationName = aTx.locationName
@@ -143,7 +144,7 @@ export default {
         senHist.areaName = aTx.areaName
       }
 
-      let aExb = _.find(this.exbs, (exb) => { return exb.exbId == senHist.exbId })
+      let aExb = _.find(this.exbs, exb => { return exb.exbId == senHist.exbId })
       if (aExb != null && aExb) {
         senHist.deviceId = aExb.deviceId
         senHist.deviceIdX = aExb.deviceIdX
