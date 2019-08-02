@@ -834,7 +834,7 @@
         "STROKE_COLOR": "Txアイコンのデフォルト枠線色::カテゴリ、グループどちらも所属していないTxアイコンの枠線色を設定します。#を含めたカラーコードで設定します。",
         "ALPHA": "離席時のTxアイコン透過値::Txの状態が離席の場合の透過値を設定します。0(透過)～1(不透過)の小数値で設定します",
         "LOST_ALPHA": "不在時のTxアイコン透過値::Txの状態が不在の場合の透過値を設定します。0(透過)～1(不透過)の小数値で設定します",
-        "DISPLAY_PRIORITY": "Txアイコンの表示色優先順位::Txアイコンの表示色に適用する色を、カテゴリまたはグループで設定した表示色のどちらかから設定します。category、groupから選択できます。先頭に指定したものから適用されます。",
+        "DISPLAY_PRIORITY": "Txアイコンの表示色::Txアイコンの表示色に適用する色を、カテゴリまたはグループで設定した表示色のどちらかから設定します。設定可能な値は次の通りです。{COLOR_TYPE}",
         "ABSENT_ZONE_DISPLAY_TYPES": "不在表示用ゾーン位置へ表示するTxアイコンの種別::undetected:未検知, lost:消失, absent:不在ゾーン。"
       },
       "EXB_LOC": {
@@ -1039,7 +1039,6 @@
       },
       "DISP": {
         "TX": {
-          "DISPLAY_PRIORITY": "stringList",
           "ABSENT_ZONE_DISPLAY_TYPES": "stringList"
         },
         "THERMOH": {
@@ -1266,6 +1265,10 @@
         "year": "year::年単位",
         "month": "month::月単位",
         "hours": "hours::時間単位"
+      },
+      "COLOR_TYPE": {
+        "category": "category::カテゴリ",
+        "group": "group::グループ"
       }
     }
   },

@@ -273,7 +273,10 @@ export default {
   },
   methods: {
     loadLegends () {
-      const loadCategory = DISP.TX.DISPLAY_PRIORITY[0] == 'category'
+      if(!['category', 'group'].includes(DISP.TX.DISPLAY_PRIORITY)){
+        return
+      }
+      const loadCategory = DISP.TX.DISPLAY_PRIORITY == 'category'
       const magnetCategoryTypes = loadCategory? this.getMagnetCategoryTypes(): this.getMagnetGroupTypes()
       const legendElements = loadCategory? this.getCategoryLegendElements(): this.getGroupLegendElements()
       // console.error(loadCategory, magnetCategoryTypes, legendElements)
@@ -775,8 +778,7 @@ export default {
       return DateUtil.formatDate(time)
     },
     getDisplay(tx) { // (p,) position
-      const catOrGr = tx[DISP.TX.DISPLAY_PRIORITY[0]] || tx[DISP.TX.DISPLAY_PRIORITY[1]]
-      const display = catOrGr && catOrGr.display || {}
+      const display = Util.getValue(tx, DISP.TX.DISPLAY_PRIORITY + '.display', {})
       return {
         color: StringUtil.addPrefix(display.color || DISP.TX.COLOR, '#'),
         bgColor: StringUtil.addPrefix(display.bgColor || DISP.TX.BGCOLOR, '#'),
