@@ -267,6 +267,7 @@ export default {
       } else {
         this.tempMapFitMobile = 'both'
       }
+      if(this.icons)this.icons = []
       Util.debug('tempMapFitMobile: ' + this.tempMapFitMobile)
     },
     reset() { // p, pir, position
