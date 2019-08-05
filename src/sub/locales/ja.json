@@ -1332,6 +1332,7 @@
     "bulkSystemUseNameFailed": "{col}（{value}）はシステムで使用する固定名称の為使用できません。",
     "bulkInvalidUpdateLineFailed": "{col}（{value}）データは本画面で変更できません。",
     "bulkLastFailed": "{col}は1つ以上登録されている必要があります。",
+    "bulkNoTemplateFailed": "「{target}」に{col}が登録されていません。",
     "bulkCoordinatesOnlyFailed": "{col}（{value}）はゾーン（区画）でのみ登録できます。",
     "bulkSystemUniqueFailed": "{col}（{value}）で設定されているシステムカテゴリは、同一エリアでの重複使用はできません。",
     "monthDayTemperature": "{month}月{day}日の温湿度 ({name}{description})",

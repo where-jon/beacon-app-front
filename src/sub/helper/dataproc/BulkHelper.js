@@ -230,7 +230,7 @@ export const getBulkErrorMessage = (e, name, showLine) => {
       return i18n.tline('message.bulk' + err.type + 'Failed', {
         line: err.line,
         col: i18n.tnl(`label.${getErrorColumnName(name, col)}`),
-        value: StringUtil.sanitize(err.value),
+        value: Util.hasValue(err.value)? StringUtil.sanitize(err.value): err.value,
         min: err.min,
         max: err.max,
         candidates: err.candidates,
