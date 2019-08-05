@@ -373,6 +373,9 @@ export default {
       if (!zone) {
         return
       }
+      if (!zone.rectLayer) {
+        return
+      }
       zone.fix((fixedZone) => {
         this.dragging = false
         this.emitZone(fixedZone)
