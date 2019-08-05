@@ -115,7 +115,7 @@ export default {
           if(potInfo[idx - 1].posId == potInfo[idx].posId){
             continue
           }
-          const positionInfoKey = potInfo[idx - 1].posId < potInfo[idx].posId? `${potInfo[idx - 1].posId}-${potInfo[idx].posId}`: `${potInfo[idx].posId}-${potInfo[idx - 1].posId}`
+          const positionInfoKey = potInfo[idx - 1].x < potInfo[idx].x ? `${potInfo[idx - 1].x},${potInfo[idx - 1].y}-${potInfo[idx].x},${potInfo[idx].y}` : `${potInfo[idx].x},${potInfo[idx].y}-${potInfo[idx - 1].x},${potInfo[idx - 1].y}`
           if(!positionInfos[positionInfoKey]){
             positionInfos[positionInfoKey] = {
               start: potInfo[idx - 1],
