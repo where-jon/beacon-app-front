@@ -146,8 +146,8 @@ export default {
     drawStartEnd(param, potInfos, potId){
       if(param.form.potId){
         const potInfo = potInfos[potId]
-        FlowLineHelper.drawArrowPoint(param.view, {...potInfo[0], mapScale: param.mapScale}, this.startInfo.color, this.startInfo.caption)
-        FlowLineHelper.drawArrowPoint(param.view, {...potInfo[potInfo.length - 1], mapScale: param.mapScale}, this.endInfo.color, this.endInfo.caption)
+        FlowLineHelper.drawArrowPoint(param.view, {...potInfo[0], mapScale: param.mapScale}, this.startInfo.color, this.startInfo.caption, this.canvasScale)
+        FlowLineHelper.drawArrowPoint(param.view, {...potInfo[potInfo.length - 1], mapScale: param.mapScale}, this.endInfo.color, this.endInfo.caption, this.canvasScale)
       }
       else{
         Object.values(potInfos).forEach((potInfo) => {
