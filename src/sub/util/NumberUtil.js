@@ -4,6 +4,23 @@
  */
 
 /**
+ * 小数点以下が0で終わる場合、それらを取り除く。
+ * @method
+ * @param {Number} val
+ * @return {Number}
+ * @example
+ * 10203.405060 => 10203.40506
+ */
+export const trim = val => {
+  const str = val.toString()
+  if(typeof val != 'number' || !str.match(/\./)){
+    return val
+  }
+  const ret = str.match(/^.*[1-9]/g)
+  return ret && ret[0] != null? parseFloat(ret): val
+}
+
+/**
  * 指定した小数位で切り捨てた数値を取得する。
  * @method
  * @param {Number} val

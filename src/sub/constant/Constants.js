@@ -441,6 +441,11 @@ export const NOTIFY_STATE = {
   }
 }
 
+export const ERROR_STATE = {
+  NOT_REGIST: 'foreignKey',
+  OVER_SIZE: 'uploadImgMax'
+}
+
 export const BATTERY_BOUNDARY = {
   GOOD: 31,
   WARNING: 21,
