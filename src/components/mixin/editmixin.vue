@@ -82,6 +82,7 @@ export default {
       return await AppServiceHelper.save(this.appServicePath, this.form, this.updateOnlyNN)
     },
     async save(evt) {
+      ViewHelper.disabledButtons(true)
       this.message = this.warnMessage = ''
       StateHelper.initShowMessage()
       evt.preventDefault()
@@ -105,6 +106,7 @@ export default {
               VueSelectHelper.clearVueSelect(this.vueSelected)
               this.onBeforeReload()
             }
+            ViewHelper.disabledButtons(false)
             ViewHelper.clearFileComponentAll()
             window.scrollTo(0, 0)
           }
@@ -121,6 +123,7 @@ export default {
           this.message = ViewHelper.getSubmitErrorMessage(e, this.showLine, this.crud, this.name)
           this.replace({showAlert: true})
           window.scrollTo(0, 0)
+          this.disabledButtons(false)
         }
         finally{
           this.replaceAS({showLine: false})
