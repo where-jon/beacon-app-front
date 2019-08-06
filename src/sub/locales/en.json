@@ -911,7 +911,8 @@
       }
     },
     "DEV": {
-      "SIMULATION": "Use temporary data::Perform position using temporary data."
+      "SIMULATION": "Use temporary data::Perform position using temporary data.",
+      "SIMULATION_MOVE_PERCENT": ""
     },
     "EXCLOUD": {
       "BASE_URL": "EXCloud URL::Set up EXCloud URL."
@@ -1044,7 +1045,8 @@
         }
       },
       "DEV": {
-        "SIMULATION": "number"
+        "SIMULATION": "number",
+        "SIMULATION_MOVE_PERCENT": "number"
       }
     },
     "DEFAULT": {

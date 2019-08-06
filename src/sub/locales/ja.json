@@ -920,7 +920,8 @@
       }
     },
     "DEV": {
-      "SIMULATION": "仮データを使用する::仮のデータを使用して測位などを実施します。(0:無効 1:ランダム 2:移動)"
+      "SIMULATION": "仮データを使用する::仮のデータを使用して測位などを実施します。(0:無効 1:ランダム 2:移動)",
+      "SIMULATION_MOVE_PERCENT": "移動確率::移動確率をパーセントで設定します。"
     },
     "EXCLOUD": {
       "BASE_URL": "EXCloudのURL::EXCloudのURLを設定します。"
@@ -1053,7 +1054,8 @@
         }
       },
       "DEV": {
-        "SIMULATION": "number"
+        "SIMULATION": "number",
+        "SIMULATION_MOVE_PERCENT": "number"
       }
     },
     "DEFAULT": {
