@@ -6,7 +6,7 @@
     <b-alert :show="showWarn && !forceHide" variant="warning" :dismissible="!fixAlert" :style="getAlertStyle()">
       {{ warnMessage }}
       <div v-for="warnThumbnail in warnThumbnails" :key="warnThumbnail.id">
-        ID:{{ warnThumbnail.id }}
+        {{ $i18n.tnl('message.' + warnThumbnail.type, {key: 'ID', val: warnThumbnail.id, target: warnThumbnail.target}) }}
       </div>
     </b-alert>
     <b-alert :show="showAlert && !forceHide" variant="danger" :dismissible="!fixAlert" :style="getAlertStyle()">

@@ -208,7 +208,8 @@ export const APP = { // 機能面に関する設定
   // 将来実装予定項目 END
 
   // その他
-  MAX_IMAGE_SIZE: 20 * 1024 * 1024, // アップロード可能な最大イメージサイズ(Byte)
+  MAX_IMAGE_SIZE: 1.5 * 1024 * 1024, // アップロード可能な最大イメージサイズ(Byte)
+  MAX_IMAGE_ZIP_SIZE: 100 * 1024 * 1024, // アップロード可能な最大イメージzipサイズ(Byte)
   AREA_THUMBNAIL_MAX: 200, // サムネイルリサイズ時の最大幅・高さ(エリア)
   POT_THUMBNAIL_MAX: 200, // サムネイルリサイズ時の最大幅・高さ(pot)
 
@@ -239,6 +240,7 @@ export const EXCLOUD = {
   DL_URL: '/core/excloud/dl/{type}/{yyyymmdd}?_=',
   LED_URL: '/core/excloud/led?_=',
   POSITION_HISTORY_FETCH_URL: '/core/positionHistory/fetch/{allFetch}?_=',
+  AREA_MAPIMAGE_URL: '/core/area/{id}/mapImage?_=',
   AREA_THUMBNAIL_URL: '/core/area/mapThumbnail/{id}?_=',
   POT_THUMBNAIL_URL: '/basic/pot/potThumbnail/{id}?_=',
 }

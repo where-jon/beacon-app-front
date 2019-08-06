@@ -1328,13 +1328,14 @@
     "pleaseEnterSearchCriteria": "Please enter your search criteria.",
     "uploadData": "{val} data can be registered.",
     "uploadNoData": "No registerable data.",
-    "uploadWarnData": "{val} data does not exist, so it cannot be registered.",
+
     "loadingFile": "Loading file. ({now} / {all})",
     "networkError": "Unable to connect to the server.",
     "noLedDevice": "There are no LED devices to operate.",
     "totalRowsMessage": "Total: {row} (Only latest {maxRows} are displayed)",
     "listEmpty": "There are no records matching your request.",
     "uploadMax": "Upload file size is limited to {target}Mbytes.",
+
     "outExb": "",
     "outTx": "",
     "validationList": "Valid characters are {validate}.",

@@ -20,6 +20,8 @@
 <script>
 import JsZip from 'jszip'
 import { APP } from '../../sub/constant/config'
+import { ERROR_STATE } from '../../sub/constant/Constants'
+import * as NumberUtil from '../../sub/util/NumberUtil'
 import * as Util from '../../sub/util/Util'
 import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import commonmixin from '../mixin/commonmixin.vue'
@@ -75,9 +77,23 @@ export default {
       JsZip.loadAsync(fileReader.result, {base64: true}).then(zip => {
         this.countFile(zip)
         this.uploadMessage()
-        for(let key in zip.files){
-          if(this.isImageFile(key)){
+        Object.keys(zip.files).forEach(key => {
+          zip.file(key).async("array").then(val => {
+            if(!this.isImageFile(key)){
+              return
+            }
+
             const id = this.getFileName(key)
+            if (val.length > APP.MAX_IMAGE_SIZE) {
+              this.form.warnThumbnails.push({
+                id: id,
+                type: ERROR_STATE.OVER_SIZE,
+                target: NumberUtil.trim(NumberUtil.floorVal(APP.MAX_IMAGE_SIZE / 1024 / 1024, 1))
+              })
+              this.afterLoadFile()
+              return
+            }
+
             const target = this.$parent.$options.methods.search.call(this.$parent, id)
             if(target){
               zip.file(key).async('base64').then(val =>{
@@ -93,11 +109,11 @@ export default {
                 this.afterLoadFile()
               })
             }else{
-              this.form.warnThumbnails.push({ id: id })
+              this.form.warnThumbnails.push({ id: id, type: ERROR_STATE.NOT_REGIST })
               this.afterLoadFile()
             }
-          }
-        }
+          })
+        })
       })
     }
   },
@@ -159,8 +175,10 @@ export default {
       this.submittable = false
       if(Util.hasValue(e.target.files)){
         const file = e.target.files[0]
-        if (file.size > APP.MAX_IMAGE_SIZE) {
-          this.message = this.$i18n.tnl('message.uploadMax', {target: Math.floor(APP.MAX_IMAGE_SIZE/1024/1024)})
+        if (file.size > APP.MAX_IMAGE_ZIP_SIZE) {
+          this.message = this.$i18n.tnl('message.uploadMax', {
+            target: NumberUtil.trim(NumberUtil.floorVal(APP.MAX_IMAGE_ZIP_SIZE / 1024 / 1024, 1))
+          })
           this.replace({showAlert: true})
           window.scrollTo(0, 0)
           return

@@ -5,6 +5,7 @@
 
 import { APP } from '../../constant/config'
 import * as BrowserUtil from '../../util/BrowserUtil'
+import * as NumberUtil from '../../util/NumberUtil'
 import * as StringUtil from '../../util/StringUtil'
 import * as Util from '../../util/Util'
 import * as HttpHelper from './HttpHelper'
@@ -48,7 +49,9 @@ export const readImageView = (vueComponent, e, imgViewName, imgWidthName, imgHei
       vueComponent.checkSize(width, height)
     }
   }, resize, size => {
-    vueComponent.message = vueComponent.$i18n.tnl('message.uploadMax', {target: Math.floor(APP.MAX_IMAGE_SIZE/1024/1024)})
+    vueComponent.message = vueComponent.$i18n.tnl('message.uploadMax', {
+      target: NumberUtil.trim(NumberUtil.floorVal(APP.MAX_IMAGE_SIZE / 1024 / 1024, 1))
+    })
     vueComponent.replace({showAlert: true})
     if(vueComponent.onUploadError){
       vueComponent.onUploadError()
