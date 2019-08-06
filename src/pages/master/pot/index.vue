@@ -69,8 +69,8 @@ export default {
     },
     customCsvData(val){
       const id = ArrayUtil.includesIgnoreCase(APP.TX.WITH, 'txId')? 'txId': APP.TX.BTX_MINOR == 'minor'? 'minor': 'btxId'
-      if(Util.hasValue(val.potTxList)){
-        val[id] = val.potTxList.map(potTx => potTx.tx? potTx.tx[id]: '').join(';')
+      if(Util.hasValue(val.txList)){
+        val[id] = val.txList.map(tx => tx[id]).join(';')
       }
       if(Util.hasValue(val.potUserList)){
         val.loginId = val.potUserList[0].user.loginId
