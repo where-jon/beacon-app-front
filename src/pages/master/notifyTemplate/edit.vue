@@ -12,7 +12,7 @@
           </b-form-row>
           <b-form-row>
             <b-col sm="5">
-              <b-form-select v-model="form.notifyTemplateKey" :options="notifyStateOptions" class="mr-2" @change="signalChange" />
+              <b-form-select v-model="form.notifyTemplateKey" :options="notifyStateOptions" class="mr-2" @change="signalChange" required />
             </b-col>
           </b-form-row>
         </b-form-group>
@@ -26,7 +26,7 @@
         <!--通知先-->
         <b-form-group v-if="bNotifyTo && form.notifyTemplateKey!='TX_DELIVERY_NOTIFY'">
           <label v-t="'label.notifyTo'" />
-          <b-form-textarea v-model="form.notifyTo" :rows="3" :max-rows="6" maxlength="2000" :state="errorMessages.email.length > 0 ? false : null" />
+          <b-form-textarea v-model="form.notifyTo" :rows="3" :max-rows="6" maxlength="2000" :state="errorMessages.email.length > 0 ? false : null" required />
           <p v-for="(val, key) in errorMessages.email" :key="key" v-t="val" class="error" />
         </b-form-group>
 
@@ -194,7 +194,7 @@ export default {
     },
     async onSaving() {
       const notifyTemplateId = Util.hasValue(this.form.notifyTemplateId)? this.form.notifyTemplateId: -1
-      const aNotifyState = (this.form.notifyTemplateKey != null)?this.form.notifyTemplateKey:0
+      const aNotifyState = (this.form.notifyTemplateKey != null)?this.form.notifyTemplateKey:""
       const entity = {
         notifyTemplateId: notifyTemplateId,
         notifyTemplateKey: aNotifyState,
