@@ -136,6 +136,7 @@ export default {
 
 <style lang="scss">
 @import "../sub/constant/config.scss";
+@import "../sub/constant/vue.scss";
 @import "~bootstrap/scss/bootstrap"; 
 
 html {
