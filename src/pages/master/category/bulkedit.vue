@@ -26,6 +26,7 @@ export default {
       backPath: '/master/category',
       appServicePath: '/basic/category',
       items: ViewHelper.createBreadCrumbItems('master', {text: 'category', href: '/master/category'}, 'bulkRegister'),
+      masterCd: null,
     }
   },
   computed: {
@@ -35,6 +36,10 @@ export default {
     categoryTypes(){
       return CATEGORY.getTypes()
     },
+  },
+  async created() {
+    await StateHelper.load('category')
+    this.masterCd = StateHelper.createMasterCd('category', this.categories, null)
   },
   methods: {
     onRestruct(entity, dummyKey){
@@ -46,6 +51,10 @@ export default {
       if(Util.hasValue(entity.categoryTypeName)){
         const categoryType = this.categoryTypes.find(type => type.text == entity.categoryTypeName)
         entity.categoryType = categoryType? categoryType.value: 0
+      }
+      if(!Util.hasValue(entity.categoryCd)){
+        entity.categoryCd = this.masterCd
+        this.masterCd = StateHelper.createMasterCd('category', [{categoryCd: this.masterCd}], null)
       }
       return dummyKey
     },

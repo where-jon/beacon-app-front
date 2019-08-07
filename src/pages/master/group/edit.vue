@@ -6,6 +6,10 @@
 
       <b-form v-if="show" @submit.prevent="save">
         <b-form-group>
+          <label v-t="'label.groupCd'" />
+          <input v-model="form.groupCd" :readonly="!isEditable" type="text" maxlength="20" class="form-control">
+        </b-form-group>
+        <b-form-group>
           <label v-t="'label.groupName'" />
           <input v-model="form.groupName" :readonly="!isEditable" type="text" maxlength="20" class="form-control" required>
         </b-form-group>
@@ -57,14 +61,14 @@ export default {
   },
   mixins: [commonmixin, editmixin],
   data() {
-    let group = this.$store.state.app_service.group
+    const group = this.$store.state.app_service.group
     return {
       name: 'group',
       id: 'groupId',
       backPath: '/master/group',
       appServicePath: '/basic/group',
       items: ViewHelper.createBreadCrumbItems('master', {text: 'group', href: '/master/group'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.group.groupId)),
-      form: Util.extract(this.$store.state.app_service.group, ['groupId', 'groupName', 'ruby', 'display', 'description']),
+      form: Util.extract(this.$store.state.app_service.group, ['groupId', 'groupCd', 'groupName', 'ruby', 'display', 'description']),
       defaultColor: '#000000',
       defaultBgColor: '#ffffff',
       oldShape: Util.getValue(group, 'display.shape', null),
@@ -74,7 +78,7 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'group',
+      'group', 'groups',
     ]),
     shapes(){
       return SHAPE.getShapes()
@@ -84,6 +88,9 @@ export default {
     this.onBeforeReload()
   },
   mounted(){
+    if(!Util.hasValue(this.form.groupCd)){
+      this.form.groupCd = StateHelper.createMasterCd('group', this.groups, this.group)
+    }
     ValidateHelper.setCustomValidationMessage()
   },
   methods: {
@@ -92,6 +99,7 @@ export default {
         this.form.displayShape = this.oldShape? this.oldShape: this.shapes[0].value
         this.form.displayColor = ColorUtil.colorCd4display(this.oldColor? this.oldColor: null, this.defaultColor)
         this.form.displayBgColor = ColorUtil.colorCd4display(this.oldBgColor? this.oldBgColor: null, this.defaultBgColor)
+        this.form.groupCd = StateHelper.createMasterCd('group', this.groups, this.group)
       }
     },
     onSaved(){
@@ -101,6 +109,7 @@ export default {
     async onSaving() {
       const entity = {
         groupId: this.form.groupId || -1,
+        groupCd: this.form.groupCd,
         groupName: this.form.groupName,
         ruby: this.form.ruby,
         description: this.form.description,
