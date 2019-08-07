@@ -255,6 +255,7 @@
 
     "category": "カテゴリ",
     "categoryId": "カテゴリID",
+    "categoryCd": "カテゴリコード",
     "categoryName": "カテゴリ名",
     "categoryType": "種別",
     "parentCategoryId": "親カテゴリID",
@@ -263,6 +264,7 @@
 
     "group": "グループ",
     "groupId": "グループID",
+    "groupCd": "グループコード",
     "groupName": "グループ名",
     "parentGroupId": "親グループID",
     
@@ -985,7 +987,7 @@
           "SLACK_TOKEN": "string",
           "STAY_SUM": {
             "START": "number", 
-            "END":  "number", 
+            "END": "number", 
             "INTERVAL": "number", 
             "CALC_BY": "string",
             "ADJUST_TIME": "number",
@@ -1068,7 +1070,7 @@
         "SVC": {
           "STAY_SUM": {
             "STAY_SUM_START": "0", 
-            "STAY_SUM_END":  "2400", 
+            "STAY_SUM_END": "2400", 
             "STAY_SUM_INTERVAL": "5", 
             "STAY_SUM_CALC_BY": "location",
             "STAY_SUM_ADJUST_TIME": "4"

@@ -25,6 +25,7 @@ export default {
       backPath: '/master/group',
       appServicePath: '/basic/group',
       items: ViewHelper.createBreadCrumbItems('master', {text: 'group', href: '/master/group'}, 'bulkRegister'),
+      masterCd: null,
     }
   },
   computed: {
@@ -32,12 +33,20 @@ export default {
       'group', 'groups'
     ]),
   },
+  async created() {
+    await StateHelper.load('group')
+    this.masterCd = StateHelper.createMasterCd('group', this.groups, null)
+  },
   methods: {
     onRestruct(entity, dummyKey){
       if(Util.hasValueAny(entity.shape, entity.color, entity.bgColor)){
         Util.setValue(entity, 'display.shape', entity.shape)
         Util.setValue(entity, 'display.color', entity.color)
         Util.setValue(entity, 'display.bgColor', entity.bgColor)
+      }
+      if(!Util.hasValue(entity.groupCd)){
+        entity.groupCd = this.masterCd
+        this.masterCd = StateHelper.createMasterCd('group', [{groupCd: this.masterCd}], null)
       }
       return dummyKey
     },

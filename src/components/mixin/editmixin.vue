@@ -123,7 +123,7 @@ export default {
           this.message = ViewHelper.getSubmitErrorMessage(e, this.showLine, this.crud, this.name)
           this.replace({showAlert: true})
           window.scrollTo(0, 0)
-          this.disabledButtons(false)
+          ViewHelper.disabledButtons(false)
         }
         finally{
           this.replaceAS({showLine: false})

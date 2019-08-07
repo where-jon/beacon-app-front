@@ -6,6 +6,10 @@
 
       <b-form v-if="show" @submit.prevent="save">
         <b-form-group>
+          <label v-t="'label.categoryCd'" />
+          <input v-model="form.categoryCd" :readonly="!isEditable" type="text" maxlength="20" class="form-control">
+        </b-form-group>
+        <b-form-group>
           <label v-t="'label.categoryName'" />
           <input v-model="form.categoryName" :readonly="!isEditable" type="text" maxlength="20" class="form-control" required>
         </b-form-group>
@@ -58,14 +62,14 @@ export default {
   },
   mixins: [commonmixin, editmixin],
   data() {
-    let category = this.$store.state.app_service.category
+    const category = this.$store.state.app_service.category
     return {
       name: 'category',
       id: 'categoryId',
       backPath: '/master/category',
       appServicePath: '/basic/category',
       items: ViewHelper.createBreadCrumbItems('master', {text: 'category', href: '/master/category'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.category.categoryId)),
-      form: Util.extract(category, ['categoryId', 'categoryName', 'categoryType', 'display', 'description']),
+      form: Util.extract(category, ['categoryId', 'categoryCd', 'categoryName', 'categoryType', 'display', 'description']),
       defValue: {
         'categoryType': APP.CATEGORY.TYPES[0],
       },
@@ -79,10 +83,10 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'category',
+      'category', 'categories',
     ]),
     categoryTypes(){
-      return CATEGORY.getTypes().filter((val) => APP.CATEGORY.TYPES.includes(val.value))
+      return CATEGORY.getTypes().filter(val => APP.CATEGORY.TYPES.includes(val.value))
     },
     shapes(){
       return SHAPE.getShapes()
@@ -93,6 +97,10 @@ export default {
   },
   async mounted() {
     Util.applyDef(this.form, this.defValue)
+    if(!Util.hasValue(this.form.categoryCd)){
+      const categoryList = this.categories.filter(category => category.systemUse == 0)
+      this.form.categoryCd = StateHelper.createMasterCd('category', categoryList, this.category)
+    }
     ValidateHelper.setCustomValidationMessage()
   },
   methods: {
@@ -102,6 +110,8 @@ export default {
         this.form.displayShape = this.oldShape? this.oldShape: this.shapes[0].value
         this.form.displayColor = ColorUtil.colorCd4display(this.oldColor? this.oldColor: null, this.defaultColor)
         this.form.displayBgColor = ColorUtil.colorCd4display(this.oldBgColor? this.oldBgColor: null, this.defaultBgColor)
+        const categoryList = this.categories.filter(category => category.systemUse == 0)
+        this.form.categoryCd = StateHelper.createMasterCd('category', categoryList, this.category)
       }
     },
     onSaved(){
@@ -112,6 +122,7 @@ export default {
     async onSaving() {
       const entity = {
         categoryId: this.form.categoryId || -1,
+        categoryCd: this.form.categoryCd,
         categoryName: this.form.categoryName,
         categoryType: this.form.categoryType,
         description: this.form.description,
