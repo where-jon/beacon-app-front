@@ -91,18 +91,18 @@ export default {
       areaNames: [],
       categoryNames: [],
       items: ViewHelper.createBreadCrumbItems('master', {text: 'notifyTemplate', href: '/master/notifyTemplate'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.template.notifyTemplateId)),
-      radioSelect:-1,
-      fromType:'email',
-      deliveryState:NOTIFY_STATE.getOptions().filter((val) => val.value == 'TX_DELIVERY_NOTIFY')[0].value,
-      userMailState:NOTIFY_STATE.getOptions().filter((val) => val.value == 'USER_REG_NOTIFY')[0].value,
-      prohibitState:NOTIFY_STATE.getOptions().filter((val) => val.value == 'PROHIBIT_NOTIFY')[0].value,
-      lostState:NOTIFY_STATE.getOptions().filter((val) => val.value == 'LOST_NOTIFY')[0].value,
-      notify: _.slice(NOTIFY_MIDIUM.getTypes()).filter((val) => APP.NOTIFY.MIDIUM_TYPES.includes(val.value)),
+      radioSelect: -1,
+      fromType: 'email',
+      deliveryState: NOTIFY_STATE.getOptions().filter(val => val.value == 'TX_DELIVERY_NOTIFY')[0].value,
+      userMailState: NOTIFY_STATE.getOptions().filter(val => val.value == 'USER_REG_NOTIFY')[0].value,
+      prohibitState: NOTIFY_STATE.getOptions().filter(val => val.value == 'PROHIBIT_NOTIFY')[0].value,
+      lostState: NOTIFY_STATE.getOptions().filter(val => val.value == 'LOST_NOTIFY')[0].value,
+      notify: _.slice(NOTIFY_MIDIUM.getTypes()).filter(val => APP.NOTIFY.MIDIUM_TYPES.includes(val.value)),
       isEnableNameText: true,
       isRegist: false,
-      bNotifyTo:true,
-      bSubject:true,
-      bNotifyTemplateKey:true,
+      bNotifyTo: true,
+      bSubject: true,
+      bNotifyTemplateKey: true,
     }
   },
   computed: {
@@ -110,22 +110,23 @@ export default {
       'showAlert',
     ]),
     notifOptions() {
-      return _.slice(NOTIFY_STATE.getOptions()).filter((val) => APP.NOTIFY.STATE_TYPES.includes(val.index))
+      return _.slice(NOTIFY_STATE.getOptions()).filter(val => APP.NOTIFY.STATE_TYPES.includes(val.index))
     },
     notifyStateOptions() {
-      return _.slice(NOTIFY_STATE.getOptions()).filter((val) => APP.NOTIFY.STATE_TYPES.includes(val.index))
+      return _.slice(NOTIFY_STATE.getOptions()).filter(val => APP.NOTIFY.STATE_TYPES.includes(val.index))
     },
     ...mapState('app_service', [
       'template',
     ]),
   },
   created() {
-    this.form.notifyMedium == 1 ?this.bSubject = false: this.bSubject = true
+    this.form.notifyMedium == 1? this.bSubject = false: this.bSubject = true
     if(this.form.notifyTemplateKey == this.userMailState || this.form.notifyTemplateKey == this.deliveryState) {
       this.bNotifyTo = false
     }
     let labelUpdate = ViewHelper.getDetailCaptionKey(this.$store.state.app_service.template.notifyTemplateId)
-    labelUpdate == 'label.update' ? this.bNotifyTemplateKey = false: this.bNotifyTemplateKey = true
+    labelUpdate == 'label.update'? this.bNotifyTemplateKey = false: this.bNotifyTemplateKey = true
+    this.signalChange()
   },
   mounted(){
     ValidateHelper.setCustomValidationMessage()
@@ -133,18 +134,20 @@ export default {
   methods: {
     reset () {
     },
-    async signalChange(evt) {
+    async signalChange(evt = this.form.notifyTemplateKey) {
       if (evt == this.deliveryState || evt == this.userMailState || evt == this.prohibitState || evt == this.lostState) {
-        this.notify = _.slice(NOTIFY_MIDIUM.getTypes()).filter((val) => [0].includes(val.value))
-        this.bNotifyTo = evt == this.prohibitState || evt == this.lostState ? true : false
-        this.form.notifyMedium = 0
+        this.notify = _.slice(NOTIFY_MIDIUM.getTypes()).filter(val => [0].includes(val.value))
+        this.bNotifyTo = evt == this.prohibitState || evt == this.lostState? true: false
         this.bSubject = true
-        this.form.notifyTo = ''
+        if(evt != this.form.notifyTemplateKey){
+          this.form.notifyMedium = 0
+          this.form.notifyTo = ''
+        }
       }else{
         this.bNotifyTo = true
-        this.notify = _.slice(NOTIFY_MIDIUM.getTypes()).filter((val) => APP.NOTIFY.MIDIUM_TYPES.includes(val.value))
+        this.notify = _.slice(NOTIFY_MIDIUM.getTypes()).filter(val => APP.NOTIFY.MIDIUM_TYPES.includes(val.value))
       }
-      if(this.radioSelect== 0){
+      if(this.radioSelect == 0){
         this.bSubject = true
       }
     },
@@ -165,8 +168,8 @@ export default {
         let re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i
         let emailList = this.form.notifyTo.split(',')
         if(emailList.length > 1){
-          emailList.some((email) => {
-            result = re.test(email) ? true:false
+          emailList.some(email => {
+            result = re.test(email)? true: false
             if(!result) return true
           })
         }else{
@@ -194,15 +197,15 @@ export default {
     },
     async onSaving() {
       const notifyTemplateId = Util.hasValue(this.form.notifyTemplateId)? this.form.notifyTemplateId: -1
-      const aNotifyState = (this.form.notifyTemplateKey != null)?this.form.notifyTemplateKey:""
+      const aNotifyState = (this.form.notifyTemplateKey != null)? this.form.notifyTemplateKey: ""
       const entity = {
         notifyTemplateId: notifyTemplateId,
         notifyTemplateKey: aNotifyState,
-        notifyMedium: this.form.notifyMedium ? this.form.notifyMedium : '' ,
-        notifyTo: this.form.notifyTo? this.form.notifyTo:'',
-        subject: this.form.subject? this.form.subject:'',
-        mailFrom: this.form.mailFrom? this.form.mailFrom:'',
-        template: this.form.template? this.form.template:'',
+        notifyMedium: this.form.notifyMedium? this.form.notifyMedium: '' ,
+        notifyTo: this.form.notifyTo? this.form.notifyTo: '',
+        subject: this.form.subject? this.form.subject: '',
+        mailFrom: this.form.mailFrom? this.form.mailFrom: '',
+        template: this.form.template? this.form.template: '',
       }
       this.errorMessages.email = []
       this.replace({showAlert: false})
