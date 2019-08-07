@@ -13,16 +13,16 @@ import { Shape, Container, Text } from 'createjs-module'
  * @param {String} triangleColor 
  * @param {String} caption 
  */
-export const drawArrowPoint = (container, pos, triangleColor, caption) => {
+export const drawArrowPoint = (container, pos, triangleColor, caption, canvasScale) => {
   const triangle = new Shape()
-  triangle.graphics.beginFill(triangleColor).drawPolyStar(0, -20, 20, 3, 0, 90)
+  triangle.graphics.beginFill(triangleColor).drawPolyStar(0, -20 / canvasScale, 20 / canvasScale, 3, 0, 90)
 
   const label = new Text(caption)
-  label.font = '16px Arial'
+  label.font = parseInt(16 / canvasScale) + 'px Arial'
   label.color = '#000'
   label.textAlign = 'center'
   label.textBaseline = 'middle'
-  label.y = -40
+  label.y = -40 / canvasScale
 
   const arrowContainer = new Container()
   arrowContainer.x = pos.x * pos.mapScale
