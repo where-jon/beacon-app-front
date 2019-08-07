@@ -127,6 +127,7 @@ export default {
         }
         finally{
           this.replaceAS({showLine: false})
+          this.hideProgress()
         }
         this.hideProgress()
       })
