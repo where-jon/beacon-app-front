@@ -535,26 +535,26 @@ export default {
             categoryData[0].value += stay.period
           }
 
-          // エリア毎の滞在時間を加算（一致するカテゴリが存在する場合しかエリアを引けない）
-          if (findCategory) {
-            let zone = _.find(this.zones, (zone) => { return zone.categoryId == findCategory.categoryId})
-            findArea = _.find(this.areaArray, (area, index) => {
-              if (zone) {
-                if (area.areaId == zone.areaId) {
-                  areaIndex = index
-                  return true
-                }
+          // エリア毎の滞在時間を加算
+          let zone = findCategory? _.find(this.zones, (zone) => { return zone.categoryId == findCategory.categoryId}): null
+          findArea = _.find(this.areaArray, (area, index) => {
+            if (zone) {
+              if (area.areaId == zone.areaId) {
+                areaIndex = index
+                return true
               }
-              return false
-            })
-            if (findArea) {
-              areaData[findArea.areaId].value += stay.period
             } else {
-              areaData[0].value += stay.period
+              if (area.areaId == stay.areaId) {
+                areaIndex = index
+                return true
+              }
             }
+            return false
+          })
+          if (findArea) {
+            areaData[findArea.areaId].value += stay.period
           } else {
-            // カテゴリ一致しない＆その他の場合
-            stay.byId == 0? areaData[0].value += stay.period: null
+            areaData[0].value += stay.period
           }
 
           const percent = Math.floor((stay.period / fromToSettingDiff) * 100 * APP.STAY_SUM.PARSENT_DIGIT) / APP.STAY_SUM.PARSENT_DIGIT
