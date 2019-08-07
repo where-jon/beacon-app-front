@@ -73,7 +73,7 @@ class Zone {
       dragBoundFunc: (pos) => {
         const group = this.group
         return {
-          x: Math.max(0, Math.min(this.parentWidth - group.scaleX() * group.width() , pos.x)),
+          x: Math.max(0, Math.min(this.parentWidth - group.scaleX() * group.width(), pos.x)),
           y: Math.max(0, Math.min(this.parentHeight - group.scaleY() * group.height(), pos.y))
         }
       }
@@ -85,21 +85,32 @@ class Zone {
       fill: 'rgba(0, 0, 209, 0.5)',
       stroke : 'rgba(32, 16, 64)',
     })
-    this.text = new Konva.Text({
+
+    const textAttr = {
       text: this.name,
       fontSize: 18,
       fontFamily: 'Calibri',
       fill: 'white',
-      width: this.w,
+      width: Math.abs(this.w),
       align: 'center'
-    })
+    }
+
+    if (w < 0) {
+      textAttr.x = w
+    }
+
+    if (h < 0) {
+      textAttr.y = h
+    }
+
+    this.text = new Konva.Text(textAttr)
     this.group.add(rect)
     this.group.add(this.text)
     this.rectLayer.add(this.group)
     this.rectLayer.draw()
   }
 
-  fix(mousedownListener) {
+  fix(mousedownListener, mouseupListener) {
     if (!this.group) {
       return
     }
@@ -110,9 +121,13 @@ class Zone {
       mousedownListener(this)
       this.active()
     })
-    this.group.on('mouseup', (e) => { e.evt.stopImmediatePropagation() })
-    this.group.on('mouseenter', () => { this.stage.container().style.cursor = 'move' })
-    this.group.on('mouseleave', () => { this.stage.container().style.cursor = 'default' })
+    this.group.on('mouseup', (e) => {
+      mouseupListener()
+      e.evt.stopImmediatePropagation()
+    })
+    const container = this.stage.container()
+    this.group.on('mouseenter', () => { container.style.cursor = 'move' })
+    this.group.on('mouseleave', () => { container.style.cursor = 'default' })
     this.group.on('transformend', (e) => { e.evt.stopImmediatePropagation() })
     this.active()
   }
@@ -245,15 +260,19 @@ class Zones {
 
   getEntities(aspectRatio) {
     return this.zones.map((zone, index, array) => {
+      const width = zone.w
+      const height = zone.h
+      const x = width > -1 ? zone.x : zone.x + width
+      const y = height > -1 ? zone.y : zone.y + height
       return {
         zoneId: zone.id && zone.id > 0 ? zone.id : -1 * (index + 1),
         zoneName: zone.zoneName,
         zoneType: zone.zoneType,
         areaId: zone.areaId,
-        x: zone.x / aspectRatio,
-        y: zone.y / aspectRatio,
-        w: zone.w / aspectRatio,
-        h: zone.h / aspectRatio,
+        x: x / aspectRatio,
+        y: y / aspectRatio,
+        w: Math.abs(width) / aspectRatio,
+        h: Math.abs(height) / aspectRatio,
         zoneCategoryList: zone.categoryId > 0 ? [{
           zoneCategoryPK: {
             zoneId: zone.zoneId,
@@ -306,6 +325,9 @@ export default {
       MINIMUM_SIZE: 50,
       MAP_WIDTH: 741,
       MAP_HEIGHT: 573,
+      drawingZone: null,
+      zoneFixMouseDown: null,
+      drawAreaMouseUp: null,
     }
   },
   computed: {
@@ -349,13 +371,12 @@ export default {
       height: 0
     })
     this.zones = new Zones()
-    let zone = null
 
     drawArea.addEventListener('mousedown', (e) => {
       this.dragging = true
       this.zones.setAllInActive()
       this.$emit('unselected')
-      zone = new Zone({
+      this.drawingZone = new Zone({
         areaId: this.areaId,
         name: this.getNewZoneName(),
         categoryId: this.categoryId,
@@ -367,30 +388,35 @@ export default {
 
     drawArea.addEventListener('mousemove', (e) => {
       if (!this.dragging) return
-      zone.drawingRect(e.offsetX, e.offsetY)
+      this.drawingZone.drawingRect(e.offsetX, e.offsetY)
     })
 
-    drawArea.addEventListener('mouseup', (e) => {
-      if (!zone) {
+    this.zoneFixMouseDown = (fixedZone) => {
+      this.dragging = false
+      this.emitZone(fixedZone)
+      this.zones.setInActive()
+    }
+
+    this.drawAreaMouseUp = (e) => {
+      if (!this.drawingZone) {
         return
       }
-      if (!zone.rectLayer) {
+      if (!this.drawingZone.rectLayer) {
         this.dragging = false
         return
       }
-      zone.fix((fixedZone) => {
-        this.dragging = false
-        this.emitZone(fixedZone)
-        this.zones.setInActive()
-      })
-      if (zone.w < this.MINIMUM_SIZE || zone.h < this.MINIMUM_SIZE) {
-        zone.remove()
+      this.drawingZone.fix(this.zoneFixMouseDown, this.drawAreaMouseUp)
+      if (Math.abs(this.drawingZone.w) < this.MINIMUM_SIZE || Math.abs(this.drawingZone.h) < this.MINIMUM_SIZE) {
+        this.drawingZone.remove()
         return
       }
-      this.zones.add(zone)
-      this.emitZone(zone)
+      this.zones.add(this.drawingZone)
+      this.emitZone(this.drawingZone)
       this.dragging = false 
-    })
+      this.drawingZone = null
+    }
+
+    drawArea.addEventListener('mouseup', this.drawAreaMouseUp)
 
     window.addEventListener('keydown', (e) => {
       const className = e.target.className
@@ -486,11 +512,7 @@ export default {
         stage: this.stage,
       })
       zone.drawingRect(zone.startX + zoneRec.w * this.aspectRatio, zone.startY + zoneRec.h * this.aspectRatio)
-      zone.fix((fixedZone) => {
-        this.dragging = false
-        this.emitZone(fixedZone)
-        this.zones.setInActive()
-      })
+      zone.fix(this.zoneFixMouseDown, this.drawAreaMouseUp)
       this.zones.add(zone)
     },
   }
