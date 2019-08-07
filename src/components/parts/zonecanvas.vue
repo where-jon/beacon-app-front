@@ -73,7 +73,7 @@ class Zone {
       dragBoundFunc: (pos) => {
         const group = this.group
         return {
-          x: Math.max(0, Math.min(this.parentWidth - group.scaleX() * group.width() , pos.x)),
+          x: Math.max(0, Math.min(this.parentWidth - group.scaleX() * group.width(), pos.x)),
           y: Math.max(0, Math.min(this.parentHeight - group.scaleY() * group.height(), pos.y))
         }
       }
@@ -85,14 +85,25 @@ class Zone {
       fill: 'rgba(0, 0, 209, 0.5)',
       stroke : 'rgba(32, 16, 64)',
     })
-    this.text = new Konva.Text({
+
+    const textAttr = {
       text: this.name,
       fontSize: 18,
       fontFamily: 'Calibri',
       fill: 'white',
-      width: this.w,
+      width: Math.abs(this.w),
       align: 'center'
-    })
+    }
+
+    if (w < 0) {
+      textAttr.x = w
+    }
+
+    if (h < 0) {
+      textAttr.y = h
+    }
+
+    this.text = new Konva.Text(textAttr)
     this.group.add(rect)
     this.group.add(this.text)
     this.rectLayer.add(this.group)
@@ -114,8 +125,9 @@ class Zone {
       mouseupListener()
       e.evt.stopImmediatePropagation()
     })
-    this.group.on('mouseenter', () => { this.stage.container().style.cursor = 'move' })
-    this.group.on('mouseleave', () => { this.stage.container().style.cursor = 'default' })
+    const container = this.stage.container()
+    this.group.on('mouseenter', () => { container.style.cursor = 'move' })
+    this.group.on('mouseleave', () => { container.style.cursor = 'default' })
     this.group.on('transformend', (e) => { e.evt.stopImmediatePropagation() })
     this.active()
   }
@@ -248,15 +260,19 @@ class Zones {
 
   getEntities(aspectRatio) {
     return this.zones.map((zone, index, array) => {
+      const width = zone.w
+      const height = zone.h
+      const x = width > -1 ? zone.x : zone.x + width
+      const y = height > -1 ? zone.y : zone.y + height
       return {
         zoneId: zone.id && zone.id > 0 ? zone.id : -1 * (index + 1),
         zoneName: zone.zoneName,
         zoneType: zone.zoneType,
         areaId: zone.areaId,
-        x: zone.x / aspectRatio,
-        y: zone.y / aspectRatio,
-        w: zone.w / aspectRatio,
-        h: zone.h / aspectRatio,
+        x: x / aspectRatio,
+        y: y / aspectRatio,
+        w: Math.abs(width) / aspectRatio,
+        h: Math.abs(height) / aspectRatio,
         zoneCategoryList: zone.categoryId > 0 ? [{
           zoneCategoryPK: {
             zoneId: zone.zoneId,
@@ -390,7 +406,7 @@ export default {
         return
       }
       this.drawingZone.fix(this.zoneFixMouseDown, this.drawAreaMouseUp)
-      if (this.drawingZone.w < this.MINIMUM_SIZE || this.drawingZone.h < this.MINIMUM_SIZE) {
+      if (Math.abs(this.drawingZone.w) < this.MINIMUM_SIZE || Math.abs(this.drawingZone.h) < this.MINIMUM_SIZE) {
         this.drawingZone.remove()
         return
       }
