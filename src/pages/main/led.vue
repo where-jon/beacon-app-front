@@ -187,7 +187,9 @@ export default {
     buttonClick(bool) {
       this.lightOnCandidate = bool
     },
-    backToList() {}, // editMixinのメソッドを無効化
+    backToList() {
+      ViewHelper.disabledButtons(false)
+    }, // editMixinのメソッドを無効化
   }
 }
 </script>

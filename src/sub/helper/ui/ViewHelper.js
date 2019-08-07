@@ -148,3 +148,18 @@ export const clearFileComponentAll = () => {
     customFileLabel[0].innerText =''
   }
 }
+
+/**
+ * 全てのbuttonタグを有効化/無効化する。
+ * @method
+ * @param {Boolean} disabled 
+ * @return {Boolean}
+ */
+export const disabledButtons = disabled => {
+  const buttonList = document.getElementsByTagName('button')
+  const buttonLength = buttonList.length
+  for(let idx = 0; idx < buttonLength; idx++){
+    buttonList[idx].disabled = disabled
+  }
+  return disabled
+}

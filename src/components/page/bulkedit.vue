@@ -30,6 +30,7 @@ import * as BulkHelper from '../../sub/helper/dataproc/BulkHelper'
 import * as CharSetHelper from '../../sub/helper/base/CharSetHelper'
 import * as LocalStorageHelper from '../../sub/helper/base/LocalStorageHelper'
 import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
+import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import commonmixin from '../mixin/commonmixin.vue'
 import alert from '../parts/alert.vue'
 
@@ -96,6 +97,7 @@ export default {
       this.form.csvFile = null
     },
     async save(evt) {
+      ViewHelper.disabledButtons(true)
       this.message = ''
       StateHelper.initShowMessage()
       evt.preventDefault()
@@ -126,6 +128,7 @@ export default {
           this.replaceAS({showLine: false})
         }
         this.hideProgress()
+        ViewHelper.disabledButtons(false)
       })
     },
     editAgain(){
