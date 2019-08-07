@@ -38,7 +38,7 @@ export default {
         custumCsvColumns: this.getCustomCsvColumns(),
         fields: this.getFields(),
         extraFilter: this.getExtraFilter(),
-        sortBy: 'potName',
+        sortBy: 'potCd',
         initTotalRows: this.$store.state.app_service.pots.length,
       },
       name: 'pot',
@@ -58,8 +58,8 @@ export default {
   methods: {
     getCustomCsvColumns(){
       return [
-        APP.TX.BTX_MINOR == 'minor'? 'minor': 'btxId',
         'potCd',
+        APP.TX.BTX_MINOR == 'minor'? 'minor': 'btxId',
         'potName',
         'potType',
         'displayName',
@@ -84,10 +84,10 @@ export default {
     },
     getFields(){
       return ViewHelper.addLabelByKey(this.$i18n, [ 
+        {key: 'potCd', sortable: true , tdClass: 'thumb-rowdata'},
         {key: 'potName', sortable: true , tdClass: 'thumb-rowdata'},
         {key: 'thumbnail', tdClass: 'thumb-rowdata' },
         {key: 'txIdName', label:'tx', sortable: true, tdClass: 'thumb-rowdata' },
-        {key: 'potCd', sortable: true , tdClass: 'thumb-rowdata'},
         {key: 'displayName', sortable: true, tdClass: 'thumb-rowdata'},
       ].concat(PotHelper.createCustomColumn())
         .concat([
