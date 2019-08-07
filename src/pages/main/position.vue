@@ -737,8 +737,8 @@ export default {
       const setupSelectedTx = (isDispThumbnail) => {
         const selectedTx = {
           btxId,
-          minor: 'minor:' + btxId,
-          major: tx.major? 'major:' + tx.major : '',
+          minor: this.$i18n.tnl('label.minor') + ':' + btxId,
+          major: tx.major? this.$i18n.tnl('label.major') + ':' + tx.major : '',
           // TX詳細ポップアップ内部で表示座標計算する際に必要
           orgLeft: x * this.canvasScale + offsetX,
           orgTop: y * this.canvasScale + offsetY,
