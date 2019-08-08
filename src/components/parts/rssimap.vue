@@ -90,6 +90,7 @@ import { APP, DISP, EXCLOUD } from '../../sub/constant/config'
 import { CATEGORY } from '../../sub/constant/Constants'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as Util from '../../sub/util/Util'
+import * as VueUtil from '../../sub/util/VueUtil'
 import * as EXCloudHelper from '../../sub/helper/dataproc/EXCloudHelper'
 import * as HttpHelper from '../../sub/helper/base/HttpHelper'
 import * as MenuHelper from '../../sub/helper/dataproc/MenuHelper'
@@ -173,6 +174,7 @@ export default {
       isPause: false,
       firstTime: true,
       reloadState: {isLoad: false},
+      noImageErrorKey: 'noMapImage',
     }
   },
   computed: {
@@ -237,59 +239,91 @@ export default {
     },
   },
   async mounted() {
+    this.reloadState.isLoad = false
     await Promise.all(['category', 'group'].map(StateHelper.load))
-    this.fetchData()
   },
   methods: {
-    async fetchData(payload, disableErrorPopup) {
+    initMap() {
+      if (this.rssiCon) {
+        this.rssiCon.removeAllChildren()
+      }
+      if (this.exbCon && this.exbCon !== null) {
+        this.stage.removeChild(this.exbCon)
+      }
+      this.stage.update()
+    },
+    showMapImage(disableErrorPopup, payload) {
       this.showMapImageDef(async () => {
-        this.showProgress()
-
-        const reloadButton = document.getElementById('spinner')
-        if(!this.firstTime && reloadButton){
-          this.reloadState.isLoad = true
-        }
-
-        this.positionedExb = this.getExbPosition()
-        if (this.exbCon && this.exbCon !== null) {
-          this.stage.removeChild(this.exbCon)
-        }
-        this.exbCon = new Container()
-        this.exbBtns = this.positionedExb.map((exb) => {
-          const clone = Object.assign({}, exb)
-          if (!this.keepExbPosition) {
-            clone.x = exb.location.x
-            clone.y = exb.location.y
+        try {
+          this.showProgress()
+          this.initMap()
+          const reloadButton = document.getElementById('spinner')
+          if(!this.firstTime && reloadButton){
+            this.reloadState.isLoad = true
           }
-          const exbBtn = this.createExbIcon(clone)
-          this.exbCon.addChild(exbBtn)
-          return exbBtn
-        })
 
-        let positions = PositionHelper.getPositions(false)
-        this.nearest = await this.getNearest(this.exbBtns)
-        this.nearest = this.nearest.filter((n) => positions.some((pos) => pos.btx_id === n.btx_id))
+          this.positionedExb = this.getExbPosition()
+          this.exbCon = new Container()
+          this.exbBtns = this.positionedExb.map((exb) => {
+            const clone = Object.assign({}, exb)
+            if (!this.keepExbPosition) {
+              clone.x = exb.location.x
+              clone.y = exb.location.y
+            }
+            const exbBtn = this.createExbIcon(clone)
+            this.exbCon.addChild(exbBtn)
+            return exbBtn
+          })
 
-        this.stage.addChild(this.exbCon)
-        this.stage.setChildIndex(this.exbCon, this.stage.numChildren-1)
-        this.stage.update()
-        if (this.targetTx) {
-          this.dispRssiIcons(this.targetTx)
+          let positions = PositionHelper.getPositions(false)
+          this.nearest = await this.getNearest(this.exbBtns)
+          this.nearest = this.nearest.filter((n) => positions.some((pos) => pos.btx_id === n.btx_id))
+
+          this.stage.addChild(this.exbCon)
+          this.stage.setChildIndex(this.exbCon, this.stage.numChildren-1)
+          this.stage.update()
+          if (this.targetTx) {
+            this.dispRssiIcons(this.targetTx)
+          }
+
+          await StateHelper.load('tx')
+
+          if (payload && payload.done) {
+            payload.done()
+          }
+
+          if(!this.firstTime && reloadButton){
+            this.reloadState.isLoad = false
+          }
+          this.firstTime = false
+        } catch (e) {
+          console.error(e)
+        } finally {
+          this.reloadState.isLoad = false
+          this.hideProgress()
         }
-
-        await StateHelper.load('tx')
-
+      }, disableErrorPopup)
+    },
+    async fetchData(payload, disableErrorPopup) {
+      this.showReady = false
+      const disabledProgress = Util.getValue(payload, 'disabledProgress', false)
+      try {
+        this.reloadSelectedTx = this.reload? this.selectedTx: {}
+        this.replace({reload: false})
+        if(!disabledProgress){
+          this.showProgress()
+        }
+        this.showMapImage(disableErrorPopup, payload)
         if (payload && payload.done) {
           payload.done()
         }
-
-        if(!this.firstTime && reloadButton){
-          this.reloadState.isLoad = false
-        }
-        this.firstTime = false
-
+      }
+      catch(e) {
+        console.error(e)
+      }
+      if(!disabledProgress){
         this.hideProgress()
-      }, disableErrorPopup)
+      }
     },
     createExbIcon(exb) {
       const exbBtn = new Container()

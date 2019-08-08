@@ -249,6 +249,9 @@ export default {
           // マップ画像が見つからなかった(status 404)
           if (e.message.indexOf('404') > -1) {
             this.showErrorModal({key: this.noImageErrorKey})
+            if (this.initMap) {
+              this.initMap()
+            }
           }
         }
       }      
