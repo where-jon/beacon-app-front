@@ -224,7 +224,7 @@
         
     "pot": "人＆物",
     "potId": "ID",
-    "potCd": "コード",
+    "potCd": "ID",
     "potName": "名前",
     "potSearchName": "検知名",
     "post": "役職",
