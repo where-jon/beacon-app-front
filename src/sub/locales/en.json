@@ -223,7 +223,7 @@
         
     "pot": "People or Things",
     "potId": "ID",
-    "potCd": "Code",
+    "potCd": "ID",
     "potName": "Name",
     "potSearchName": "Detected name",
     "post": "Post",
