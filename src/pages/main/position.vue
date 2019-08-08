@@ -293,6 +293,12 @@ export default {
           { id: 2, text: legendElement.name, style: {} },
         ]
       }))
+      // デフォルトは常に表示
+      const defaultStyle = { shape:SHAPE.CIRCLE, bgColor:DISP.TX.BGCOLOR, color:DISP.TX.COLOR }
+      this.legendItems.push({id:0, items:[
+        { id: 5, text: 'A', style: StyleHelper.getStyleDisplay1(defaultStyle) },
+        { id: 6, text: this.$i18n.tnl('label.defaultOther'), style: {} },
+      ]})
     },
     isShowModal() { // pir, position
       return window.innerWidth < this.showIconMinWidth
