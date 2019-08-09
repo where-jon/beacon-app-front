@@ -33,8 +33,8 @@ export default {
         csvOut: true,
         custumCsvColumns: ['groupCd', 'groupName', 'ruby', 'color', 'bgColor', 'display.shape', 'description'],
         fields: ViewHelper.addLabelByKey(this.$i18n, [ 
+          {key: 'groupCd', label: 'id', sortable: true },
           {key: 'groupName', sortable: true },
-          {key: 'groupCd', sortable: true },
           {key: 'ruby', sortable: true },
           {key: 'style', label: 'display' } ,
           {key: 'description' },
