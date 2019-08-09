@@ -133,6 +133,17 @@
             {{ txIdName }}
           </div>
         </template>
+        <!-- ゾーン名 -->
+        <template slot="zoneClass" slot-scope="row">
+          <div v-for="(zoneName, index) in row.item.zoneClass" :key="index">
+            {{ zoneName }}
+          </div>
+        </template>
+        <template slot="zoneBlock" slot-scope="row">
+          <div v-for="(zoneName, index) in row.item.zoneBlock" :key="index">
+            {{ zoneName }}
+          </div>
+        </template>
         <!-- センサ名 -->
         <template slot="sensorIdName" slot-scope="row">
           <div v-for="(sensorIdName, index) in row.item.sensorIdNames" :key="index">
@@ -655,12 +666,12 @@ export default {
           }
           break
         case 'zone':
-          if (extra.zone && !(extra.zone === originItem.zoneId)) {
+          if (extra.zone && originItem.zoneIdList && !originItem.zoneIdList.includes(extra.zone)) {
             return false
           }
           break
         case 'zoneCategory':
-          if (extra.zoneCategory && !(extra.zoneCategory === originItem.zoneCategoryId)) {
+          if (extra.zoneCategory && originItem.zoneCategoryIdList && !originItem.zoneCategoryIdList.includes(extra.zoneCategory)) {
             return false
           }
           break

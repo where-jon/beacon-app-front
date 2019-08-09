@@ -5,7 +5,7 @@
 
 import _ from 'lodash'
 import { APP, DISP } from '../../constant/config'
-import { CATEGORY, SHAPE, FEATURE, NOTIFY_STATE, SYSTEM_ZONE_CATEGORY_NAME} from '../../constant/Constants'
+import { CATEGORY, ZONE, SHAPE, FEATURE, NOTIFY_STATE, SYSTEM_ZONE_CATEGORY_NAME} from '../../constant/Constants'
 import * as ArrayUtil from '../../util/ArrayUtil'
 import * as DateUtil from '../../util/DateUtil'
 import * as StringUtil from '../../util/StringUtil'
@@ -293,6 +293,7 @@ const appStateConf = {
     beforeCommit: arr => {
       return arr.map(exb => {
         const location = exb.location
+        const locationZoneList = Util.getValue(exb, 'location.locationZoneList', [])
         return {
           ...exb,
           deviceIdX: exb.deviceId.toString(16).toUpperCase(),
@@ -301,6 +302,10 @@ const appStateConf = {
           sensor: i18n.tnl('label.' + Util.getValue(exb, 'sensorName', 'normal')),
           isAbsentZone: exb.zoneCategoryName === SYSTEM_ZONE_CATEGORY_NAME.ABSENT,
           // sensorIdNames: getSensorIdNames(exb.exbSensorList), // 一旦単数に戻す
+          zoneIdList: locationZoneList.map(val => Util.getValue(val, 'locationZonePK.zoneId', null)).filter(val => val),
+          zoneCategoryIdList: locationZoneList.map(val => Util.getValue(val, 'categoryId', null)).filter(val => val),
+          zoneClass: Util.getValue(location, 'locationZoneList', []).filter(val => val.zoneType == ZONE.NON_COORDINATE).map(val => val.zoneName),
+          zoneBlock: Util.getValue(location, 'locationZoneList', []).filter(val => val.zoneType == ZONE.COORDINATE).map(val => val.zoneName),
         }
       })
     }

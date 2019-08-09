@@ -69,12 +69,16 @@
             </b-form-group>
             <b-form-group v-show="useZone">
               <b-form-row>
-                <label v-t="'label.zone'" class="d-flex align-items-center" />
-                <v-select v-model="vueSelected.zone" :options="getZoneNames()" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-2 vue-options-lg">
+                <label v-t="'label.zoneClass'" class="d-flex align-items-center" />
+                <v-select v-model="vueSelected.zone" :options="getZoneClassOptions()" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-2 vue-options-lg">
                   <template slot="no-options">
                     {{ vueSelectNoMatchingOptions }}
                   </template>
                 </v-select>
+              </b-form-row>
+              <b-form-row>
+                <label v-t="'label.zoneBlock'" class="d-flex align-items-center" />
+                <v-select :value="getZoneBlockItems()" :options="zoneBlockOptions" disabled multiple class="vue-options-multi" />
               </b-form-row>
             </b-form-group>
 
@@ -93,7 +97,9 @@
 <script>
 import { mapState } from 'vuex'
 import { APP } from '../../../sub/constant/config'
+import { ZONE } from '../../../sub/constant/Constants'
 import * as ArrayUtil from '../../../sub/util/ArrayUtil'
+import * as NumberUtil from '../../../sub/util/NumberUtil'
 import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
 import * as ConfigHelper from '../../../sub/helper/dataproc/ConfigHelper'
@@ -130,7 +136,8 @@ export default {
         'exbId', 'deviceId',
         'location.locationName', 'location.areaId', 'location.locationId', 'location.posId',
         'location.x', 'location.y', 'location.visible', 'location.txViewType',
-        'exbSensorList.0.exbSensorPK.sensorId', 'location.locationZoneList.0.locationZonePK.zoneId'
+        'exbSensorList.0.exbSensorPK.sensorId',
+        'location.locationZoneList'
       ]),
       vueSelected: {
         area: null,
@@ -151,6 +158,9 @@ export default {
   computed: {
     areaOptions() {
       return StateHelper.getOptionsFromState('area', false, true)
+    },
+    zoneBlockOptions(){
+      return StateHelper.getOptionsFromState('zone', false, true, zone => zone.zoneType == ZONE.COORDINATE)
     },
     ...mapState('app_service', [
       'exb',
@@ -224,8 +234,22 @@ export default {
     this.checkWarnOn()
     await Promise.all(['area', 'zone'].map(StateHelper.load))
     this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions, this.form.areaId)
-    this.$nextTick(() => this.vueSelected.zone = VueSelectHelper.getVueSelectData(this.getZoneNames(), this.form.zoneId))
     this.deviceId = this.form.deviceId
+
+    this.$nextTick(() => {
+      const locationZoneList = this.form.locationZoneList
+      if(Util.hasValue(locationZoneList)){
+        const zoneMap = {}
+        this.zones.forEach(zone => {
+          if(zone.zoneType == ZONE.NON_COORDINATE){
+            zoneMap[zone.zoneId] = zone
+          }
+        })
+        const target = locationZoneList.find(locationZone => zoneMap[Util.getValue(locationZone, 'locationZonePK.zoneId', -1)])
+        this.vueSelected.zone = VueSelectHelper.getVueSelectData(this.getZoneClassOptions(), Util.getValue(target, 'locationZonePK.zoneId', null))
+      }
+    })
+
     Util.applyDef(this.form, this.defValue)
     if (!this.form.txViewType) {
       return
@@ -248,25 +272,13 @@ export default {
         this.showAreaWarn = false
       })
     },
-    getZoneNames() {
-      const areaId = this.form.areaId
-      const x = this.form.x
-      const y = this.form.y
-      const isValidVal = (val) => (val || val === 0)
-      // EXBがゾーンの範囲内に位置しているか？
-      const isInRange = (zone) => {
-        if (zone.zoneType !== 0) {
-          return true
-        }
-        if (!isValidVal(zone.x) || !isValidVal(zone.y) || !isValidVal(zone.h) || !isValidVal(zone.w)) {
-          return false
-        }
-        const bottomX = zone.x + zone.w
-        const bottomY = zone.y + zone.h
-        return zone.x <= x && zone.y <= y && x <= bottomX && y <= bottomY
-      }
+    getZoneClassOptions(){
       return StateHelper.getOptionsFromState('zone', false, true, 
-        (zone) => zone.areaId === areaId && isInRange(zone))
+        zone => zone.zoneType == ZONE.NON_COORDINATE && zone.areaId === this.form.areaId)
+    },
+    getZoneBlockItems(){
+      return StateHelper.getOptionsFromState('zone', false, true, 
+        zone => zone.zoneType == ZONE.COORDINATE && zone.areaId === this.form.areaId && NumberUtil.inRange(zone, this.form))
     },
     showSensor(index){
       if(index == 0){
@@ -331,14 +343,11 @@ export default {
       this.changeSensors()
       this.form.sensorId = null
       this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions, null)
-      this.vueSelected.zone = VueSelectHelper.getVueSelectData(this.getZoneNames(), null)
+      this.vueSelected.zone = VueSelectHelper.getVueSelectData(this.getZoneClassOptions(), null)
       this.checkWarnOn()
     },
     async onSaving() {
       let dummyKey = -1
-      if(!this.getZoneNames().find(zone => zone.value == this.form.zoneId)){
-        this.form.zoneId = null
-      }
       const entity = {
         exbId: this.form.exbId != null? this.form.exbId: dummyKey--,
         deviceId: this.deviceId,
@@ -356,12 +365,6 @@ export default {
           posId: this.form.posId,
           x: this.form.x,
           y: this.form.y,
-          locationZoneList: this.form.zoneId? [{
-            locationZonePK: {
-              locationId: this.form.locationId? this.form.locationId: dummyKey--,
-              zoneId: this.form.zoneId
-            }
-          }]: null
         },
         exbSensorList: this.form.sensorId? [
           {exbSensorPK: {sensorId: this.form.sensorId}}
@@ -378,8 +381,16 @@ export default {
       //     })
       //   }
       // })
-      // entity.exbSensorList = exbSensorList
-      let ret = await AppServiceHelper.bulkSave(this.appServicePath, [entity])
+
+      const zoneIds = [this.form.zoneId].filter(val => val)
+      entity.location.locationZoneList = zoneIds.map(zoneId => ({
+        locationZonePK: {
+          locationId: this.form.locationId? this.form.locationId: dummyKey--,
+          zoneId: zoneId
+        }
+      }))
+
+      const ret = await AppServiceHelper.bulkSave(this.appServicePath, [entity])
       this.deviceId = null
       this.deviceIdX = null
       return ret

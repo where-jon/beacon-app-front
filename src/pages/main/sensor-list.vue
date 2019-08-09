@@ -89,8 +89,8 @@ export default {
         pressVol: Util.getValue(device, 'pressVol', ''),
         state: SensorHelper.getMagnetStateKey(Util.getValue(device, 'magnet', '')),
         areaId: Util.getValue(device, 'areaId', ''),
-        zoneId: Util.getValue(device, 'zoneId', ''),
-        zoneCategoryId: Util.getValue(device, 'zoneCategoryId', ''),
+        zoneIdList: Util.getValue(device, 'zoneIdList', []),
+        zoneCategoryIdList: Util.getValue(device, 'zoneCategoryIdList', []),
       }
     },
     async fetchData(payload) {

@@ -270,8 +270,8 @@ export const getPositionedExbWithSensor = (selectedArea, sensorFilterFunc, findS
         posId: exb.posId,
         deviceIdX: exb.deviceIdX,
         areaId: exb.areaId,
-        zoneId: exb.zoneId,
-        zoneCategoryId: exb.zoneCategoryId,
+        zoneIdList: exb.zoneIdList,
+        zoneCategoryIdList: exb.zoneCategoryIdList,
         description: exb.description? exb.description: '',
       }
     })
