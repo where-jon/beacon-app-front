@@ -33,8 +33,8 @@ export default {
         csvOut: true,
         custumCsvColumns: ['categoryCd', 'categoryName', 'categoryTypeName', 'color', 'bgColor', 'display.shape', 'description'],
         fields: ViewHelper.addLabelByKey(this.$i18n, [ 
+          {key: 'categoryCd', label: 'id', sortable: true },
           {key: 'categoryName', sortable: true },
-          {key: 'categoryCd', sortable: true },
           {key: 'categoryTypeName', label: 'categoryType', sortable: true },
           {key: 'style', label: 'display' },
           {key: 'description' },

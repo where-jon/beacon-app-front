@@ -8,12 +8,12 @@
         <b-col md="8" offset-md="2">
           <b-form v-if="show" @submit.prevent="doSubmit">
             <b-form-group>
-              <label v-t="'label.areaName'" />
-              <input v-model="form.areaName" :readonly="!isEditable" type="text" maxlength="20" class="form-control" required>
+              <label v-t="'label.id'" />
+              <input v-model="form.areaCd" :readonly="!isEditable" type="text" maxlength="16" class="form-control" :pattern="cdPattern" required>
             </b-form-group>
             <b-form-group>
-              <label v-t="'label.areaCd'" />
-              <input v-model="form.areaCd" :readonly="!isEditable" type="text" maxlength="16" class="form-control" :pattern="cdPattern" required>
+              <label v-t="'label.areaName'" />
+              <input v-model="form.areaName" :readonly="!isEditable" type="text" maxlength="20" class="form-control" required>
             </b-form-group>
             <b-form-group>
               <label v-t="'label.map'" />

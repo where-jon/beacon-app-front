@@ -212,6 +212,9 @@ export const getErrorColumnName = (name, col) => {
   if(name == 'tx' && col == 'locationName'){
     return 'locationZoneName'
   }
+  if(['areaCd', 'categoryCd', 'groupCd'].includes(col)){
+    return 'id'
+  }
   return col
 }
 

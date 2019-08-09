@@ -6,7 +6,7 @@
 
       <b-form v-if="show" @submit.prevent="save">
         <b-form-group>
-          <label v-t="'label.categoryCd'" />
+          <label v-t="'label.id'" />
           <input v-model="form.categoryCd" :readonly="!isEditable" type="text" maxlength="20" class="form-control">
         </b-form-group>
         <b-form-group>
