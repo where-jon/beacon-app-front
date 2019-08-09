@@ -70,6 +70,9 @@ export default {
       'eachAreas',
       'eachZones',
     ]),
+    displayZone(){
+      return this.masterName == 'zone'
+    }
   },
   beforeDestroy() {
     this.replaceAS({positions: []})
@@ -78,7 +81,7 @@ export default {
     getDataList() {
       return this[this.eachListName]
     },
-    splitMaster(positions,prohibitDetectList){
+    splitMaster(positions, prohibitDetectList){
       const tempMasterMap = {}
       this[this.listName].forEach(obj => tempMasterMap[obj[this.id]] = {[this.id]: obj[this.id], label: obj[this.name], positions: []})
       const tempMasterExt = {[this.id]: -1, label: this.$i18n.tnl('label.other'), positions: []}
@@ -86,7 +89,7 @@ export default {
       let showExt = false
       this.exbs.forEach(exb => {
         exbMap[exb.posId] = exb
-        if(this.masterName == 'zone' && !Util.hasValue(exb.zoneId)){
+        if(this.displayZone && !Util.hasValue(exb.zoneIdList)){
           showExt = true
         }
       })
@@ -100,11 +103,13 @@ export default {
           }
         }): false
         pos.isDisableArea = exb? exb.isAbsentZone: false
-        const posMasterId = Util.getValue(pos, 'exb.' + this.id, null)
-        const obj = posMasterId? tempMasterMap[posMasterId]: tempMasterExt
-        if(!pos.noSelectedTx && !Util.getValue(exb, 'isAbsentZone', false)){
-          obj.positions.push(pos)
-        }
+        const posMasterIds = this.displayZone? Util.getValue(pos, 'exb.' + this.id + 'List', [null]): [Util.getValue(pos, 'exb.' + this.id, null)]
+        posMasterIds.forEach(posMasterId => {
+          const obj = Util.hasValue(posMasterId)? tempMasterMap[posMasterId]: tempMasterExt
+          if(!pos.noSelectedTx && !Util.getValue(exb, 'isAbsentZone', false)){
+            obj.positions.push(pos)
+          }
+        })
       })
       const ret = _.sortBy(tempMasterMap, tmm => tmm.label)
       if(showExt){

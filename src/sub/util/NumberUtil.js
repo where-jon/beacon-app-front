@@ -1,3 +1,5 @@
+import { hasValue } from './Util'
+
 /**
  * 数値に関するユーティリティモジュール
  * @module util/NumberUtil
@@ -73,3 +75,18 @@ export const formatTemperature = temperature => typeof temperature == 'number'? 
  */
 export const formatHumidity = humidity => typeof humidity == 'number'? floorVal(humidity, 0): ''
 
+/**
+ * 指定した座標が範囲内に存在するか確認する。
+ * @method
+ * @param {{x: Number, y: Number, w: Number, h: Number}} range 
+ * @param {{x: Number, y: Number}} pos 
+ * @return {Boolean}
+ */
+export const inRange = (range, pos) => {
+  if (!hasValue(range.x) || !hasValue(range.y) || !hasValue(range.h) || !hasValue(range.w)) {
+    return false
+  }
+  const right = range.x + range.w
+  const bottom = range.y + range.h
+  return range.x <= pos.x && pos.x <= right && range.y <= pos.y && pos.y <= bottom
+}
