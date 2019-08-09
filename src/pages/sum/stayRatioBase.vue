@@ -557,7 +557,7 @@ export default {
             areaData[0].value += stay.period
           }
 
-          const percent = Math.floor((stay.period / fromToSettingDiff) * 100 * APP.STAY_SUM.PARSENT_DIGIT) / APP.STAY_SUM.PARSENT_DIGIT
+          const percent = (stay.period / fromToSettingDiff) * 100
           return {
             isStay: isExistStayData,
             isAbsentZone: isAbsentZone,
