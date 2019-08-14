@@ -68,7 +68,7 @@ export const showChart = (obj, sumData) => {
     sumData = reduceToOther(obj, stackIds, sumData, axisIds)
   }
 
-  stackIds = _(sumData).sortBy((e) => e.stack).map((e) => e.stackId).uniqWith(_.isEqual).value() // 積上凡例を名前順にソート
+  stackIds = _(sumData).map((e) => e.stackId).uniqWith(_.isEqual).value()
   if (stackIds && stackIds[0] == -1) {
     stackIds.shift()
     stackIds.push(-1)
