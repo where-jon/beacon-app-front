@@ -34,14 +34,17 @@ export default {
     isUpdate() {
       return this[this.name] && this[this.name][this.id] != null
     },
+    isButtonShow() {
+      return this.isUpdate && this.isUpdatable || !this.isUpdate && this.isRegistable
+    },
     isUpdatable() {
-      return MenuHelper.isUpdatable(this.backPath)
+      return MenuHelper.isUpdatable(this.authPath? this.authPath: this.backPath)
     },
     isRegistable() {
-      return MenuHelper.isRegistable(this.backPath)
+      return MenuHelper.isRegistable(this.authPath? this.authPath: this.backPath)
     },
     isDeleteable() {
-      return MenuHelper.isDeleteable(this.backPath)
+      return MenuHelper.isDeleteable(this.authPath? this.authPath: this.backPath)
     },
     isEditable() {
       return this.isRegistable || this.isUpdatable

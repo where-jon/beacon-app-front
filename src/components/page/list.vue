@@ -335,24 +335,45 @@ export default {
       })
     },
     isDetailReferenceable() {
+      if(this.$parent.$options.computed.isDetailReferenceable){
+        return this.$parent.$options.computed.isDetailReferenceable.call(this.$parent)
+      }
       return MenuHelper.isDetailReferenceable(this.indexPath)
     },
     isUpdatable() {
+      if(this.$parent.$options.computed.isUpdatable){
+        return this.$parent.$options.computed.isUpdatable.call(this.$parent)
+      }
       return MenuHelper.isUpdatable(this.indexPath)
     },
     isDeleteable() {
+      if(this.$parent.$options.computed.isDeleteable){
+        return this.$parent.$options.computed.isDeleteable.call(this.$parent)
+      }
       return MenuHelper.isDeleteable(this.indexPath)
     },
     isRegistable() {
+      if(this.$parent.$options.computed.isRegistable){
+        return this.$parent.$options.computed.isRegistable.call(this.$parent)
+      }
       return MenuHelper.isRegistable(this.indexPath)
     },
     isBulkRegistable() {
+      if(this.$parent.$options.computed.isBulkRegistable){
+        return this.$parent.$options.computed.isBulkRegistable.call(this.$parent)
+      }
       return MenuHelper.isBulkRegistable(this.indexPath)
     },
     isBulkReferenceable() {
+      if(this.$parent.$options.computed.isBulkReferenceable){
+        return this.$parent.$options.computed.isBulkReferenceable.call(this.$parent)
+      }
       return MenuHelper.isBulkReferenceable(this.indexPath)
     },
     isEditable() {
+      if(this.$parent.$options.computed.isEditable){
+        return this.$parent.$options.computed.isEditable.call(this.$parent)
+      }
       return MenuHelper.isEditable(this.indexPath)
     },
     iosOrAndroid() {

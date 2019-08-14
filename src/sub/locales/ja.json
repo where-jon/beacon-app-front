@@ -516,6 +516,7 @@
     "masterZoneClass": "ゾーン(分類)",
     "masterZoneBlock": "ゾーン(区画)",
     "masterTenant": "テナント",
+    "masterRoleFeature": "機能",
     "UsageSituation": "利用状況",
     "Monitor": "モニタ",
     "monitorGW": "ゲートウェイ",
