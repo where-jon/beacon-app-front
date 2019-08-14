@@ -68,6 +68,16 @@ export const isMobile = () => {
 }
 
 /**
+ * IEかチェックする。
+ * @method
+ * @return {Boolean}
+ */
+export const isIe = () => {
+  var userAgent = window.navigator.userAgent.toLowerCase()
+  return ['msie', 'trident'].some(val => userAgent.indexOf(val) != -1)
+}
+
+/**
  * ブラウザの言語設定を取得する。
  * @method
  * @return {String}
