@@ -55,9 +55,41 @@ export default {
         imgInfo.thumbnail = thumbnail
       }, APP.AREA_THUMBNAIL_MAX)
     },
+    packThumbnail(areas, per = APP.SPLIT_UPLOAD_SIZE) {
+      if(!Util.hasValue(areas)){
+        return []
+      }
+      const ret = [[]]
+      let size = 0
+      areas.forEach(area => {
+        const thumbnailSize = area.size
+        if(per < size + thumbnailSize){
+          size = 0
+          ret.push([])
+        }
+        ret[ret.length - 1].push(area)
+        size += thumbnailSize
+      })
+      return ret
+    },
+    async getSavePromise(areas){
+      await AppServiceHelper.bulkSave(this.appServicePath, areas)
+      areas.forEach(area => area.thumbnail = area.mapImage = null)
+    },
+    async saveForIe(thumbnails) {
+      const packAreas = this.packThumbnail(thumbnails, APP.SPLIT_UPLOAD_SIZE_IE)
+      const length = packAreas.length
+      for(let idx = 0; idx < length; idx++){
+        await this.getSavePromise(packAreas[idx])
+      }
+    },
     async save(thumbnails) {
-      await Util.sleep(100)
-      await AppServiceHelper.bulkSave(this.appServicePath, thumbnails)
+      if(BrowserUtil.isIe()){
+        await this.saveForIe(thumbnails)
+      }
+      else{
+        await Promise.all(this.packThumbnail(thumbnails).map(this.getSavePromise))
+      }
       thumbnails.forEach(thumbnail => {
         StateHelper.loadAreaImage(thumbnail.id, true)
       })

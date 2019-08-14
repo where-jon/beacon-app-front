@@ -78,7 +78,7 @@ export default {
         this.countFile(zip)
         this.uploadMessage()
         Object.keys(zip.files).forEach(key => {
-          zip.file(key).async("array").then(val => {
+          zip.file(key).internalStream('arraybuffer').accumulate(() => {}).then(val => {
             if(!this.isImageFile(key)){
               return
             }
@@ -96,11 +96,12 @@ export default {
 
             const target = this.$parent.$options.methods.search.call(this.$parent, id)
             if(target){
-              zip.file(key).async('base64').then(val =>{
-                let imgInfo = {
+              zip.file(key).async('base64').then(bVal =>{
+                const imgInfo = {
                   ...target,
                   type: key.slice(key.lastIndexOf('.') + 1),
-                  thumbnail: `data:image/${key.slice(key.lastIndexOf('.') + 1)};base64,${val}`
+                  thumbnail: `data:image/${key.slice(key.lastIndexOf('.') + 1)};base64,${bVal}`,
+                  size: bVal.length,
                 }
                 if(this.$parent.$options.methods.addLoadImage){
                   this.$parent.$options.methods.addLoadImage.call(this.$parent, imgInfo)
@@ -116,6 +117,9 @@ export default {
         })
       })
     }
+  },
+  beforeDestroy() {
+    this.form.thumbnails = []
   },
   methods: {
     countFile(zipObject){

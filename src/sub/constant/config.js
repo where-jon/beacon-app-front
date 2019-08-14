@@ -208,6 +208,8 @@ export const APP = { // 機能面に関する設定
   // 将来実装予定項目 END
 
   // その他
+  SPLIT_UPLOAD_SIZE: 50 * 1024 * 1024, // 分割アップロードのサイズ閾値（Byte）
+  SPLIT_UPLOAD_SIZE_IE: 10 * 1024 * 1024, // 分割アップロードのサイズ閾値（Byte）（for IE）
   MAX_IMAGE_SIZE: 1.5 * 1024 * 1024, // アップロード可能な最大イメージサイズ(Byte)
   MAX_IMAGE_ZIP_SIZE: 100 * 1024 * 1024, // アップロード可能な最大イメージzipサイズ(Byte)
   AREA_THUMBNAIL_MAX: 200, // サムネイルリサイズ時の最大幅・高さ(エリア)
