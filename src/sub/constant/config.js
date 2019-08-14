@@ -399,10 +399,6 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   BLOOD_PRESSURE_STEP: 25,// 血圧メモリ間隔
   HEART_RATE_MAX: 200,// 心拍最大メモリ
   HEART_RATE_STEP: 25,// 心拍メモリ間隔
-  STEP_MAX: 200,// 歩数最大メモリ
-  STEP_STEP: 25,// 歩数メモリ間隔
-  DOWN_COUNT_MAX: 200,// 転倒数メモリ
-  DOWN_COUNT_STEP: 25,// 転倒数メモリ間隔
 
   THERMOPILE_S_SIZE: 20, // サーモパイル円Sサイズ
   THERMOPILE_M_SIZE: 40, // サーモパイル円Mサイズ
