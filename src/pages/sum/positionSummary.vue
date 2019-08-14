@@ -1,7 +1,7 @@
 <template>
   <div>
     <breadcrumb :items="items" :reload="false" />
-    <div class="container">
+    <div>
       <alert :message="message" />
 
       <b-form inline @submit.prevent>

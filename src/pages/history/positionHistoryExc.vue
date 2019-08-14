@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid">
     <breadcrumb :items="items" :reload="false" />
-    <div class="container">
+    <div>
       <alert :message="message" />
 
       <div class="mb-5">
