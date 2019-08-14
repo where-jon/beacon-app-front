@@ -78,6 +78,8 @@ export const getProhibitMessage = prohibitDetectList => {
   const labelFinalLocation = i18n.tnl('label.finalReceiveLocation')
   const labelZone =  i18n.tnl('label.zoneName')
 
+  console.log(prohibitDetectList)
+
   return prohibitDetectList.map(data => data.isLost
     ? `<${lostTitle} : ${labelPotName} : ${data.potName} ${labelFinalLocation} : ${data.areaName} ${labelTime} : ${data.lastDetectedTime}>`
     :`<${prohibitTitle} : ${labelPotName} : ${data.potName} ${labelArea} : ${data.areaName} ${labelZone} : ${data.zoneName}>` ).join(' ')
@@ -97,16 +99,43 @@ export const getProhibitDetectList = (position, prohibitZones) => {
   }
   const groups = APP.POS.PROHIBIT_GROUPS
   let detectList = []
+  const isContainZoneBlock = (posX, posY, zone) => {
+    if (!posX || !posY) {
+      return false
+    }
+
+    if (!zone.x || !zone.y || !zone.w || !zone.h) {
+      return false
+    }
+
+    return posX >= zone.x && posX <= zone.x + zone.w &&
+    posY >= zone.y && posY <= zone.y + zone.h
+  }
+
+  const isMatchZoneClassify = (posX, posY, zone) => {
+    if (!posX || !posY || !zone.x || !zone.y) {
+      return false
+    }
+    return posX === zone.x && posY === zone.y
+  }
+
   const detectPosition  = position.filter(pos => pos.tx && pos.tx.group && pos.exb && pos.detectState == DETECT_STATE.DETECTED)
   prohibitZones.forEach(prohibitZone => {
     detectPosition.forEach(pos => {
       const isGroup = groups.some(group => pos.tx.group.groupId ? pos.tx.group.groupId == group : false)
-      if(isGroup && pos.exb.areaId ? pos.exb.areaId == prohibitZone.areaId : false) {
-        if((prohibitZone.zoneType == ZONE.COORDINATE && pos.exb.x != null && pos.exb.y != null
+      const a = (prohibitZone.zoneType == ZONE.COORDINATE && pos.exb.x != null && pos.exb.y != null
         && prohibitZone.x != null && prohibitZone.y != null && prohibitZone.w != null && prohibitZone.h != null
         && pos.exb.x >= prohibitZone.x && pos.exb.x <= prohibitZone.x + prohibitZone.w
         && pos.exb.y >= prohibitZone.y && pos.exb.y <= prohibitZone.y + prohibitZone.h)
-        || prohibitZone.zoneType == ZONE.NON_COORDINATE){
+      if(isGroup && pos.exb.areaId ? pos.exb.areaId == prohibitZone.areaId : false) {
+
+        const isProhibit = prohibitZone.zoneType === ZONE.COORDINATE ?
+        // ゾーン(区画)内に位置情報のx,yが含まれているか?
+        isContainZoneBlock(pos.exb.x, pos.exb.y, prohibitZone) :
+        // ゾーン(分類)のx,yとEXBのx,yが一致するか？
+        isMatchZoneClassify(pos.exb.x, pos.exb.y, prohibitZone)
+
+        if (isProhibit) {
           detectList.push({
             btxId: pos.btx_id,
             minor: pos.minor,
@@ -128,8 +157,10 @@ export const getProhibitDetectList = (position, prohibitZones) => {
  * @param {String} viewName 
  * @param {VueComponent} vueComponent 
  */
-export const setProhibitDetect = (viewName, vueComponent) => {
-  const prohibitDetectList = getProhibitDetectList(PositionHelper.getPositions(),vueComponent.prohibits)
+export const setProhibitDetect = (viewName, vueComponent, positions = []) => {
+  const prohibitDetectList = getProhibitDetectList(
+    positions.length > 0 ? positions : PositionHelper.getPositions(), vueComponent.prohibits
+  )
   vueComponent.prohibitDetectList = prohibitDetectList ? prohibitDetectList : null
   const lostUnDetectList = getLostUnDetectList(PositionHelper.getPositions(),vueComponent.lostZones)
   if(vueComponent.prohibitDetectList){

@@ -739,7 +739,7 @@ export const correctPair = (orgPositions, now) => {
  * @return {Object[]}
  */
 export const adjustPosition = (positions, ratio, exbs = [], selectedMapId = null) => {
-  return exbs.map(exb => {
+  const records = exbs.map(exb => {
     const samePos = []
     const fixPos = []
 
@@ -757,13 +757,14 @@ export const adjustPosition = (positions, ratio, exbs = [], selectedMapId = null
 
     const same = (!samePos || samePos.length == 0) ? [] : getPositionsToOverlap(exb, ratio, samePos)
     const fix = (!fixPos || fixPos.length == 0) ? [] : getCoordinateFix(ratio, fixPos)
-
     return [...same, ...fix]
-  }).filter(e => e).flatMap(e => e).filter(function (x, i, self) {
+  })
+
+  return records.filter(e => e).flatMap(e => e).filter(function (x, i, self) {
     return (self.findIndex(function(val) {
       return (x.btx_id === val.btx_id)
     }) === i)
-  })
+  }).filter(e => selectedMapId === null || e.exb.areaId == selectedMapId)
 }
 
 /**

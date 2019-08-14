@@ -174,6 +174,7 @@ export default {
       toggleCallBack: () => this.reset(),
       thumbnailUrl: APP_SERVICE.BASE_URL + EXCLOUD.POT_THUMBNAIL_URL,
       preloadThumbnail: new Image(),
+      positions: [],
     }
   },
   computed: {
@@ -424,10 +425,9 @@ export default {
           this.stage.addChild(this.txCont)
         }
         this.positionedExb = PositionHelper.getPositionedExb(this.selectedArea)
-
-        ProhibitHelper.setProhibitDetect('pos', this)
-
         this.showTxAll()
+
+        ProhibitHelper.setProhibitDetect('pos', this, this.positions)
 
         if(!this.firstTime && reloadButton){
           this.reloadState.isLoad = false
@@ -467,23 +467,23 @@ export default {
 
       const absentZonePosition = this.setAbsentZoneTx()
       const position = this.setNomalTx()
+      this.positions = position
 
       this.stage.update()
       this.reShowTxDetail(position, absentZonePosition)
     },
     setNomalTx() {
-      let position = []
+      let position = PositionHelper.getPositions()
       if(APP.POS.USE_MULTI_POSITIONING){
         // ３点測位はUSE_POSITION_HISTORYには非対応
-        position = PositionHelper.adjustMultiPosition(PositionHelper.getPositions(), this.selectedArea)
+        position = PositionHelper.adjustMultiPosition(position, this.selectedArea)
       }else{
         const ratio = 1 / this.canvasScale
-        position = PositionHelper.adjustPosition(PositionHelper.getPositions(), ratio, this.positionedExb, this.selectedArea)
+        position = PositionHelper.adjustPosition(position, ratio, this.positionedExb, this.selectedArea)
       }
       if (APP.SENSOR.USE_MEDITAG && this.meditagSensors) { // TODO: 場所OK???
         position = SensorHelper.setStress(position, this.meditagSensors)
       }
-
       position.forEach((pos) => this.showTx(pos))
       return position
     },
