@@ -481,6 +481,7 @@ const appStateConf = {
           locationName: Util.hasValue(val.locationZoneList)? val.locationZoneList[0].location.locationName: null,
           categoryId: Util.hasValue(val.zoneCategoryList)? val.zoneCategoryList[0].zoneCategoryPK.categoryId: null,
           categoryName: category? category.categoryName: null,
+          zoneCategoryIdList: Util.getValue(val, 'zoneCategoryList', []).map(val => Util.getValue(val, 'zoneCategoryPK.categoryId', null)).filter(val => val),
           systemCategoryName: category? category.systemUse != 0? category.categoryName.toLowerCase(): null: null,
         }
       })

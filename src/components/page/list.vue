@@ -708,13 +708,23 @@ export default {
       }
       return originItem[this.id]
     },
+    filterParent(originItem) {
+      const parentFilter = Util.getValue(this.params, 'parentFilter', {})
+      if(parentFilter.zoneCategory){
+        if (originItem.zoneCategoryIdList && !originItem.zoneCategoryIdList.includes(parentFilter.zoneCategory)) {
+          return false
+        }
+      }
+      return true
+    },
     filterGrid(originItem) {
       const regBool = this.filterGridGeneral(originItem)
       // 追加フィルタ
       const extBool = this.filterGridExt(originItem)
       const delBool = this.filterGridDel(originItem)
       const allShowBool = this.filterAllShow(originItem)
-      return regBool && extBool && delBool && allShowBool
+      const parentBool = this.filterParent(originItem)
+      return regBool && extBool && delBool && allShowBool && parentBool
     },
     onFiltered(filteredItems) {
       this.totalRows = filteredItems.length

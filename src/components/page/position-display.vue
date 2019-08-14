@@ -28,9 +28,13 @@ export default {
     },
     alertData: {
       type: Object,
-      default:() => {},
+      default: () => {},
       required: true,
     },
+    form: {
+      type: Object,
+      default: () => {},
+    }
   },
   data() {
     return {
@@ -45,6 +49,7 @@ export default {
         initTotalRows: this.$store.state.main[StringUtil.concatCamel('each', StringUtil.single2multi(this.masterName))].length,
         disableTableButtons: true,
         bordered: true,
+        parentFilter: this.form,
       },
       name: this.masterName + 'Name',
       id: this.masterName + 'Id',
@@ -83,7 +88,7 @@ export default {
     },
     splitMaster(positions, prohibitDetectList){
       const tempMasterMap = {}
-      this[this.listName].forEach(obj => tempMasterMap[obj[this.id]] = {[this.id]: obj[this.id], label: obj[this.name], positions: []})
+      this[this.listName].forEach(obj => tempMasterMap[obj[this.id]] = {...obj, [this.id]: obj[this.id], label: obj[this.name], positions: []})
       const tempMasterExt = {[this.id]: -1, label: this.$i18n.tnl('label.other'), positions: []}
       const exbMap = {}
       let showExt = false
