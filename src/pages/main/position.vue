@@ -1,7 +1,7 @@
 <template>
   <div id="mapContainer" class="container-fluid" @click="resetDetail">
     <breadcrumb :items="items" :extra-nav-spec="extraNavSpec" :reload="true" :state="reloadState" :auto-reload="false" :short-name="shortName" :legend-items="legendItems" />
-    <b-alert v-model="showDismissibleAlert" variant="danger" dismissible>
+    <b-alert v-model="showDismissibleAlert" variant="danger" :style="alertStyle()" dismissible>
       {{ message }}
     </b-alert>
     <b-row class="mt-2">
@@ -141,6 +141,7 @@ export default {
   },
   data() {
     return {
+      fix: DISP.THERMOH.ALERT_FIX_HEIGHT,
       items: !this.isInstallation ? ViewHelper.createBreadCrumbItems('main', 'showPosition') : ViewHelper.createBreadCrumbItems('develop', 'installation'),
       useGroup: MenuHelper.useMaster('group') && APP.POS.WITH.GROUP,
       useCategory: MenuHelper.useMaster('category') && APP.POS.WITH.CATEGORY,
@@ -190,6 +191,9 @@ export default {
     ...mapState([
       'reload',
     ]),
+    fixAlert(){
+      return this.fix > 0
+    },
     categoryOptionsForPot() {
       return StateHelper.getOptionsFromState('category', false, true,
         category => CATEGORY.POT_AVAILABLE.includes(category.categoryType)
@@ -272,6 +276,9 @@ export default {
     this.resetDetail()
   },
   methods: {
+    alertStyle(){
+      return  this.fixAlert ? {height: `${25 * (this.fix + 1)}px`, 'overflow-y': 'auto','font-weight': DISP.THERMOH.ALERT_WEIGHT}:{}
+    },
     loadLegends () {
       if(!['category', 'group'].includes(DISP.TX.DISPLAY_PRIORITY)){
         return
