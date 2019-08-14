@@ -559,7 +559,7 @@ export default {
         return
       }
       const ratio = DISP.TX.R_ABSOLUTE ? 1/this.canvasScale : 1
-      let absentZonePositions = PositionHelper.adjustZonePosition(PositionHelper.getPositions(false, true), ratio, this.positionedExb, absentDisplayZone)
+      let absentZonePositions = PositionHelper.adjustZonePosition(PositionHelper.getPositions(false, true), ratio, this.exbs, absentDisplayZone)
 
       absentZonePositions.forEach((pos) => this.showAbsentZoneTx(pos))
       return absentZonePositions
