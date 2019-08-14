@@ -19,17 +19,17 @@
 }
 
 @media screen\0 {	
-  .vue-options > .vs__dropdown-toggle > .vs__selected-options {
+  .vs__dropdown-toggle > .vs__selected-options {
     min-height: 32px;
     max-height: 32px;
   }
-  .vue-options > .vs__dropdown-toggle > .vs__actions {
+  .vs__dropdown-toggle > .vs__actions {
     margin-left: auto;
   }
-  .vue-options > .vs__dropdown-toggle > .vs__actions > .vs__open-indicator {
+  .vs__dropdown-toggle > .vs__actions > .vs__open-indicator {
     min-width: 14px;
   }
-  .vue-options > .vs__dropdown-toggle > .vs__actions > .vs__clear {
+  .vs__dropdown-toggle > .vs__actions > .vs__clear {
     min-width: 10px;
   }
 }
