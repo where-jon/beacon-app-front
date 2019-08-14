@@ -13,6 +13,11 @@
   width: 100%;
 }
 
+.v-select > .vs__dropdown-menu > .vs__dropdown-option {
+  display: inline-block;
+  min-width: 100%;
+}
+
 @media screen\0 {	
   .vue-options > .vs__dropdown-toggle > .vs__selected-options {
     min-height: 32px;
