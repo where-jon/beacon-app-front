@@ -81,11 +81,11 @@
     <b-row class="mt-3">
       <canvas v-if="!showMeditag" id="map" ref="map" @click="closeVueSelect" />
       <b-col v-if="showMeditag">
-        <canvas id="map" ref="map" @click="closeVueSelect" />
+        <canvas id="map" ref="map" @click="closeVueSelect" class="floatLeft mr-5" />
+        <div v-if="isShowRight && hasMeditagSensors()" class="rightPane">
+          <meditag :sensors="meditagSensors" :is-popup="false" class="rightPaneChild" />
+        </div>
       </b-col>
-      <div v-if="showMeditag && isShowRight && hasMeditagSensors()" class="rightPane">
-        <meditag :sensors="meditagSensors" :is-popup="false" class="rightPaneChild" />
-      </div>
     </b-row>
     <div v-if="showMeditag && isShowBottom && hasMeditagSensors()" class="rightPane">
       <meditag :sensors="meditagSensors" :is-popup="false" class="rightPaneChild" />
@@ -849,6 +849,10 @@ $right-pane-left-px: $right-pane-left * 1px;
 .rightPaneChild {
   @extend .rightPane;
   -ms-overflow-x: hidden;
+}
+
+.floatLeft {
+  float: left;
 }
 
 @media all and (-ms-high-contrast: none){
