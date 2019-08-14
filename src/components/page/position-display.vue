@@ -123,7 +123,7 @@ export default {
         await Promise.all(this.loadStates.map(StateHelper.load))
         // positionデータ取得
         await PositionHelper.storePositionHistory(null, true, true)
-        this.replaceAS({positions: PositionHelper.getPositions()})
+        this.replaceAS({positions: PositionHelper.getPositions(false, false, null, null)})
         ProhibitHelper.setProhibitDetect('display', this)
         this.alertData.message = this.message
         this.alertData.isAlert = this.showDismissibleAlert ? true: false

@@ -57,13 +57,14 @@ export const setApp = pStore => {
  * @method
  * @param {Boolean} [showAllTime = false] 検知されていないデバイスの情報も取得する
  * @param {Boolean} [notFilterByTimestamp = false] 時間による排他制御をされていない情報を取得する
+ * @param {Number} [selectedCategory]
+ * @param {Number} [selectedGroup]
  * @return {Object[]}
  */
-export const getPositions = (showAllTime = false, notFilterByTimestamp = false) => { // p, position-display, rssimap, position-list, position, ProhibitHelper
+export const getPositions = (showAllTime = false, notFilterByTimestamp = false, 
+    selectedCategory = store.state.main.selectedCategory, selectedGroup = store.state.main.selectedGroup) => { // p, position-display, rssimap, position-list, position, ProhibitHelper
   const positionHistores = store.state.main.positionHistores
   const orgPositions = store.state.main.orgPositions
-  const selectedGroup = store.state.main.selectedGroup
-  const selectedCategory = store.state.main.selectedCategory
 
   let positions = []
   if (APP.POS.USE_POSITION_HISTORY) {
