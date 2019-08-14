@@ -3,7 +3,7 @@
     <breadcrumb :items="items" :extra-nav-spec="extraNavSpec"
                 :reload="reload" :short-name="shortName"
     />
-    <b-alert v-model="showDismissibleAlert" variant="danger" dismissible>
+    <b-alert v-model="showDismissibleAlert" variant="danger" :style="alertStyle()" dismissible>
       {{ message }}
     </b-alert>
     <m-list :params="params" :list="positionList" />
@@ -12,7 +12,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import { APP } from '../../sub/constant/config'
+import { APP, DISP } from '../../sub/constant/config'
 import { EXTRA_NAV } from '../../sub/constant/Constants'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as Util from '../../sub/util/Util'
@@ -33,6 +33,7 @@ export default {
   mixins: [reloadmixin],
   data() {
     return {
+      fix: DISP.THERMOH.ALERT_FIX_HEIGHT,
       params: {
         name: 'position-list',
         id: 'positionListId',
@@ -79,8 +80,14 @@ export default {
       'prohibits',
       'lostZones',
     ]),
+    fixAlert(){
+      return this.fix > 0
+    },
   },
   methods: {
+    alertStyle(){
+      return  this.fixAlert ? {height: `${25 * (this.fix + 1)}px`, 'overflow-y': 'auto','font-weight': DISP.THERMOH.ALERT_WEIGHT}:{}
+    },
     async fetchData(payload) {
       try {
         this.showProgress()
