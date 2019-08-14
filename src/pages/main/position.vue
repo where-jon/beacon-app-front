@@ -672,7 +672,7 @@ export default {
           roundRect: shape == SHAPE.SQUARE? 0: DISP.TX.ROUNDRECT_RADIUS / this.getMapScale(),
           strokeColor: rectInfo.strokeColor,
           strokeStyle: DISP.TX.STROKE_WIDTH,
-          offsetY: 5,
+          offsetY: 3,
         })
     },
     createAbsentTxIcon(pos, shape, color, bgColor){
