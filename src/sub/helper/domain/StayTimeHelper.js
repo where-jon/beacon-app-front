@@ -68,9 +68,9 @@ export const showChart = (obj, sumData) => {
     sumData = reduceToOther(obj, stackIds, sumData, axisIds)
   }
 
-  stackIds = _(sumData).map((e) => e.stackId).uniqWith(_.isEqual).value()
-  if (stackIds && stackIds[0] == -1) {
-    stackIds.shift()
+  // その他を必ず最後に表示する
+  stackIds = _(sumData).filter(e => e.stackId != -1).map((e) => e.stackId).uniqWith(_.isEqual).value()
+  if(_(sumData).some(e => e.stackId == -1)){
     stackIds.push(-1)
   }
 
