@@ -11,6 +11,7 @@ import * as ArrayUtil from '../../../sub/util/ArrayUtil'
 import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
 import * as FeatureHelper from '../../../sub/helper/domain/FeatureHelper'
+import * as MenuHelper from '../../../sub/helper/dataproc/MenuHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import reloadmixin from '../../../components/mixin/reloadmixin.vue'
@@ -33,6 +34,7 @@ export default {
         name: 'roleFeature',
         id: 'key',
         confirmName: 'featureName',
+        authIndexPath: '/master/rolefeature',
         indexPath: '/master/role',
         editPath: '/master/rolefeature/edit',
         bulkEditPath: '/master/rolefeature/bulkedit',
@@ -58,6 +60,30 @@ export default {
     ...mapState('app_service', [
       'role', 'features', 'roleFeatures',
     ]),
+    hasTenantFeature(){
+      return MenuHelper.useMaster('rolefeature')
+    },
+    isDetailReferenceable() {
+      return this.hasTenantFeature && MenuHelper.isDetailReferenceable(this.params.authIndexPath)
+    },
+    isUpdatable() {
+      return this.hasTenantFeature && MenuHelper.isUpdatable(this.params.authIndexPath)
+    },
+    isDeleteable() {
+      return this.hasTenantFeature && MenuHelper.isDeleteable(this.params.authIndexPath)
+    },
+    isRegistable() {
+      return this.hasTenantFeature && MenuHelper.isRegistable(this.params.authIndexPath)
+    },
+    isBulkRegistable() {
+      return this.hasTenantFeature && MenuHelper.isBulkRegistable(this.params.authIndexPath)
+    },
+    isBulkReferenceable() {
+      return this.hasTenantFeature && MenuHelper.isBulkReferenceable(this.params.authIndexPath)
+    },
+    isEditable() {
+      return this.hasTenantFeature && MenuHelper.isEditable(this.params.authIndexPath)
+    },
   },
   methods: {
     ...mapActions([
