@@ -1,7 +1,7 @@
 <template>
   <div id="mapContainer" class="container-fluid" @click="resetDetail">
     <breadcrumb :items="items" :extra-nav-spec="extraNavSpec" :reload="true" :state="reloadState" :auto-reload="false" :short-name="shortName" :legend-items="legendItems" />
-    <b-alert v-model="showDismissibleAlert" variant="danger" dismissible>
+    <b-alert v-model="showDismissibleAlert" variant="danger" :style="alertStyle()" dismissible>
       {{ message }}
     </b-alert>
     <b-row class="mt-2">
@@ -81,11 +81,11 @@
     <b-row class="mt-3">
       <canvas v-if="!showMeditag" id="map" ref="map" @click="closeVueSelect" />
       <b-col v-if="showMeditag">
-        <canvas id="map" ref="map" @click="closeVueSelect" />
+        <canvas id="map" ref="map" @click="closeVueSelect" class="floatLeft mr-5" />
+        <div v-if="isShowRight && hasMeditagSensors()" class="rightPane">
+          <meditag :sensors="meditagSensors" :is-popup="false" class="rightPaneChild" />
+        </div>
       </b-col>
-      <div v-if="showMeditag && isShowRight && hasMeditagSensors()" class="rightPane">
-        <meditag :sensors="meditagSensors" :is-popup="false" class="rightPaneChild" />
-      </div>
     </b-row>
     <div v-if="showMeditag && isShowBottom && hasMeditagSensors()" class="rightPane">
       <meditag :sensors="meditagSensors" :is-popup="false" class="rightPaneChild" />
@@ -141,6 +141,7 @@ export default {
   },
   data() {
     return {
+      fix: DISP.THERMOH.ALERT_FIX_HEIGHT,
       items: !this.isInstallation ? ViewHelper.createBreadCrumbItems('main', 'showPosition') : ViewHelper.createBreadCrumbItems('develop', 'installation'),
       useGroup: MenuHelper.useMaster('group') && APP.POS.WITH.GROUP,
       useCategory: MenuHelper.useMaster('category') && APP.POS.WITH.CATEGORY,
@@ -190,6 +191,9 @@ export default {
     ...mapState([
       'reload',
     ]),
+    fixAlert(){
+      return this.fix > 0
+    },
     categoryOptionsForPot() {
       return StateHelper.getOptionsFromState('category', false, true,
         category => CATEGORY.POT_AVAILABLE.includes(category.categoryType)
@@ -272,6 +276,9 @@ export default {
     this.resetDetail()
   },
   methods: {
+    alertStyle(){
+      return  this.fixAlert ? {height: `${25 * (this.fix + 1)}px`, 'overflow-y': 'auto','font-weight': DISP.THERMOH.ALERT_WEIGHT}:{}
+    },
     loadLegends () {
       if(!['category', 'group'].includes(DISP.TX.DISPLAY_PRIORITY)){
         return
@@ -552,7 +559,7 @@ export default {
         return
       }
       const ratio = DISP.TX.R_ABSOLUTE ? 1/this.canvasScale : 1
-      let absentZonePositions = PositionHelper.adjustZonePosition(PositionHelper.getPositions(false, true), ratio, this.positionedExb, absentDisplayZone)
+      let absentZonePositions = PositionHelper.adjustZonePosition(PositionHelper.getPositions(false, true), ratio, this.exbs, absentDisplayZone)
 
       absentZonePositions.forEach((pos) => this.showAbsentZoneTx(pos))
       return absentZonePositions
@@ -665,7 +672,7 @@ export default {
           roundRect: shape == SHAPE.SQUARE? 0: DISP.TX.ROUNDRECT_RADIUS / this.getMapScale(),
           strokeColor: rectInfo.strokeColor,
           strokeStyle: DISP.TX.STROKE_WIDTH,
-          offsetY: 5,
+          offsetY: 3,
         })
     },
     createAbsentTxIcon(pos, shape, color, bgColor){
@@ -849,6 +856,10 @@ $right-pane-left-px: $right-pane-left * 1px;
 .rightPaneChild {
   @extend .rightPane;
   -ms-overflow-x: hidden;
+}
+
+.floatLeft {
+  float: left;
 }
 
 @media all and (-ms-high-contrast: none){

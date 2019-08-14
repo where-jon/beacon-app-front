@@ -480,6 +480,8 @@ export const createChartMeditagOptions = (chartData, by, isResponsive = false) =
  * @return {Object} チャートグラフの描画情報
  */
 export const createChartSubMeditagOptions = (chartData, by, isResponsive = false) => {
+  const stepMax = calcChartMax(chartData, 'step', by, 2)
+  const downMax = calcChartMax(chartData, 'down', by, 2)
   return {
     type:'line', 
     data:{
@@ -492,11 +494,11 @@ export const createChartSubMeditagOptions = (chartData, by, isResponsive = false
       {
         id: 'step',
         label: i18n.tnl('label.step'),
-        ticks: { min: 0, max: DISP.STEP_MAX, stepSize: DISP.STEP_STEP },
+        ticks: { min: 0, max: stepMax },
       }, {
         id: 'down_count',
         label: i18n.tnl('label.down_count'),
-        ticks: { min: 0, max: DISP.DOWN_COUNT_MAX, stepSize: DISP.DOWN_COUNT_STEP },
+        ticks: { min: 0, max: downMax },
       },
       isResponsive
     )

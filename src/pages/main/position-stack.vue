@@ -3,7 +3,7 @@
     <breadcrumb :items="items" :extra-nav-spec="extraNavSpec"
                 :reload="reload" :short-name="shortName" reload-emit-name="allFetch"
     />
-    <b-alert v-model="alertData.isAlert" variant="danger" dismissible>
+    <b-alert v-model="alertData.isAlert" variant="danger" :style="alertStyle()" dismissible>
       {{ alertData.message }}
     </b-alert>
     <b-row class="mt-2 ml-3">
@@ -42,6 +42,7 @@ import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import reloadmixin from '../../components/mixin/reloadmixin.vue'
 import positionDisplay from '../../components/page/position-display.vue'
+import { DISP } from '../../sub/constant/config'
 
 export default {
   components: {
@@ -51,6 +52,7 @@ export default {
   mixins: [reloadmixin],
   data() {
     return {
+      fix: DISP.THERMOH.ALERT_FIX_HEIGHT,
       items: ViewHelper.createBreadCrumbItems('main', 'positionStack'),
       extraNavSpec: EXTRA_NAV,
       shortName: this.$i18n.t('label.positionStackShort'),
@@ -69,6 +71,9 @@ export default {
   computed: {
     positionTypeOptions(){
       return POSITION_STACK_TYPES.getTypes()
+    },
+    fixAlert(){
+      return this.fix > 0
     },
     zoneCategoryOptions() {
       return StateHelper.getOptionsFromState('category',
@@ -92,6 +97,9 @@ export default {
   methods: {
     isShow(type){
       return this.positionType == POSITION_STACK_TYPES[type.toUpperCase()]
+    },
+    alertStyle(){
+      return  this.fixAlert ? {height: `${25 * (this.fix + 1)}px`, 'overflow-y': 'auto','font-weight': DISP.THERMOH.ALERT_WEIGHT}:{}
     },
     fetchData(payload){
       this.$refs.areaPosition.fetchData(payload)
