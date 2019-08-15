@@ -377,7 +377,8 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     },
   },
 
-  FONT_ICON_ADJUST_SCALE: 0.7, // アイコン内テキストのフォントサイズ係数
+  FONT_ICON_ADJUST_SCALE: 1.0, // アイコン内テキストのフォントサイズ係数
+  DUMMY_ICON_TEXT: 'あああ',
 
   MAP_FIT: 'both', // マップを画面表示範囲内にフィットさせるか。width or height or both
   MAP_FIT_MOBILE: 'width', // (モバイル)マップを画面表示範囲内にフィットさせるか。width or height or both

@@ -134,10 +134,10 @@ export default {
   methods: {
     reset () {
     },
-    async signalChange(evt = this.form.notifyTemplateKey) {
+    signalChange(evt = this.form.notifyTemplateKey) {
       if (evt == this.deliveryState || evt == this.userMailState || evt == this.prohibitState || evt == this.lostState) {
         this.notify = _.slice(NOTIFY_MIDIUM.getTypes()).filter(val => [0].includes(val.value))
-        this.bNotifyTo = evt == this.prohibitState || evt == this.lostState? true: false
+        this.bNotifyTo = true
         this.bSubject = true
         if(evt != this.form.notifyTemplateKey){
           this.form.notifyMedium = 0
@@ -151,7 +151,7 @@ export default {
         this.bSubject = true
       }
     },
-    async radioChange(evt) {
+    radioChange(evt) {
       this.radioSelect = evt
       if (evt == 1) {
         this.bSubject = false

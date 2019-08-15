@@ -428,8 +428,11 @@ export default {
         this.positionedExb = PositionHelper.getPositionedExb(this.selectedArea)
         this.showTxAll()
 
-        ProhibitHelper.setProhibitDetect('pos', this, this.positions)
-        this.replace({showAlert: this.showDismissibleAlert})
+        if (APP.POS.PROHIBIT_ALERT && APP.POS.PROHIBIT_GROUPS &&
+          APP.POS.PROHIBIT_ALERT.length > 0 && APP.POS.PROHIBIT_GROUPS.length > 0) {
+          ProhibitHelper.setProhibitDetect('pos', this, this.positions)
+          this.replace({showAlert: this.showDismissibleAlert})
+        }
 
         if(!this.firstTime && reloadButton){
           this.reloadState.isLoad = false
@@ -642,7 +645,6 @@ export default {
           roundRect: DISP.TX.ROUNDRECT_RADIUS,
           strokeColor: ColorUtil.getRGBA(DISP.TX.STROKE_COLOR, bgAlpha),
           strokeStyle: DISP.TX.STROKE_WIDTH,
-          offsetY: 5,
         })
       txBtn.txId = pos.btx_id
       txBtn.x = pos.x
@@ -674,7 +676,6 @@ export default {
           roundRect: shape == SHAPE.SQUARE? 0: DISP.TX.ROUNDRECT_RADIUS / this.getMapScale(),
           strokeColor: rectInfo.strokeColor,
           strokeStyle: DISP.TX.STROKE_WIDTH,
-          offsetY: 3,
         })
     },
     createAbsentTxIcon(pos, shape, color, bgColor){
@@ -685,7 +686,6 @@ export default {
           roundRect: shape == SHAPE.SQUARE? 0: DISP.TX.ROUNDRECT_RADIUS,
           strokeColor: ColorUtil.getRGBA(DISP.TX.STROKE_COLOR, 1),
           strokeStyle: DISP.TX.STROKE_WIDTH,
-          offsetY: 5,
         })
     },
     disableExbsCheck(){ // position

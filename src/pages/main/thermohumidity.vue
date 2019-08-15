@@ -264,10 +264,9 @@ export default {
         this.showProgress()
 
         const sensors = await EXCloudHelper.fetchSensor(SENSOR.TEMPERATURE)
-        
+
         this.positionedExb = PositionHelper.getPositionedExbWithSensor(this.selectedArea,
-          (exb) => exb.sensorId == SENSOR.TEMPERATURE,
-          // (exb) => SensorHelper.getSensorIds(exb).includes(SENSOR.TEMPERATURE),　 一旦単数に戻す
+          (exb) => exb.sensorIds.includes(SENSOR.TEMPERATURE),
           (exb) => {return {id: SENSOR.TEMPERATURE, ...sensors.find((sensor) => sensor.deviceid == exb.deviceId && (sensor.timestamp || sensor.updatetime))}},
           (exb) => exb.temperature != null
         )
