@@ -105,8 +105,7 @@ export default {
         let prohibitCheck = false
         const minorMap = {}
 
-        if (APP.POS.PROHIBIT_ALERT && APP.POS.PROHIBIT_GROUPS &&
-          APP.POS.PROHIBIT_ALERT.length > 0 && APP.POS.PROHIBIT_GROUPS.length > 0) {
+        if (Util.hasValue(APP.POS.PROHIBIT_ALERT) && Util.hasValue(APP.POS.PROHIBIT_GROUPS)) {
           ProhibitHelper.setProhibitDetect('list', this)
           this.prohibitDetectList? this.prohibitDetectList.forEach((p) => minorMap[p.minor] = p) : null
         }
