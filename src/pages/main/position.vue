@@ -427,7 +427,10 @@ export default {
         this.positionedExb = PositionHelper.getPositionedExb(this.selectedArea)
         this.showTxAll()
 
-        ProhibitHelper.setProhibitDetect('pos', this, this.positions)
+        if (APP.POS.PROHIBIT_ALERT && APP.POS.PROHIBIT_GROUPS &&
+          APP.POS.PROHIBIT_ALERT.length > 0 && APP.POS.PROHIBIT_GROUPS.length > 0) {
+          ProhibitHelper.setProhibitDetect('pos', this, this.positions)
+        }
 
         if(!this.firstTime && reloadButton){
           this.reloadState.isLoad = false

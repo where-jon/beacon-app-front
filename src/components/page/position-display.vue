@@ -5,6 +5,7 @@
 </template>
 
 <script>
+import { APP } from '../../sub/constant/config'
 import { mapState } from 'vuex'
 import * as StringUtil from '../../sub/util/StringUtil'
 import * as Util from '../../sub/util/Util'
@@ -129,7 +130,12 @@ export default {
         // positionデータ取得
         await PositionHelper.storePositionHistory(null, true, true)
         this.replaceAS({positions: PositionHelper.getPositions(false, false, null, null)})
-        ProhibitHelper.setProhibitDetect('display', this)
+
+        if (APP.POS.PROHIBIT_ALERT && APP.POS.PROHIBIT_GROUPS &&
+          APP.POS.PROHIBIT_ALERT.length > 0 && APP.POS.PROHIBIT_GROUPS.length > 0) {
+          ProhibitHelper.setProhibitDetect('display', this)
+        }
+
         this.alertData.message = this.message
         this.alertData.isAlert = this.showDismissibleAlert ? true: false
         // 分類checkProhibitZone
