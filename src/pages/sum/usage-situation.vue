@@ -3,19 +3,52 @@
     <breadcrumb :items="items" :reload="false" />
     <div class="container">
       <alert :message="message" />
-      <b-form class="form-horizontal">
-        <b-form-group>
-          <label v-t="'label.mode'" class="control-label col-md-2 text-right" />
-          <b-form-select v-model="form.mode" :options="modeOptions" class="col-md-2" />
-          <label v-t="'label.sumYearMonth'" class="control-label col-md-1 text-right" />
-          <b-form-select v-model="vModelYearMonth" class="col-md-2" :options="yearMonthOptions" @change="yearMonthChange" />
-          <label v-t="'label.sumDay'" class="control-label col-md-1 text-right" />
-          <b-form-select v-model="vModelDay" class="col-md-1" :options="dayOptions" @change="dayChange" />
-        </b-form-group>
-        <b-form-group>
-          <b-form-row>
+      <b-form inline @submit.prevent>
+        <b-form-group class="mr-4">
+          <b-form-row class="mb-3 mr-1">
+            <b-form-row class="mr-1">
+              <span v-t="'label.mode'" class="d-flex align-items-center" />
+            </b-form-row>
             <b-form-row>
-              <label v-t="'label.zoneCategoryName'" class="control-label md-2 text-right" />
+              <b-form-select v-model="form.mode" :options="modeOptions" class="ml-2 inputSelect" />
+            </b-form-row>
+          </b-form-row>
+        </b-form-group>
+        <b-form-group class="mr-4">
+          <b-form-row class="mb-3 mr-1">
+            <b-form-row class="mr-1">
+              <span v-t="'label.sumYearMonth'" class="d-flex align-items-center" />
+            </b-form-row>
+            <b-form-row>
+              <b-form-select v-model="vModelYearMonth" :options="yearMonthOptions" class="ml-2 inputSelect" @change="yearMonthChange" />
+            </b-form-row>
+          </b-form-row>
+        </b-form-group>
+        <b-form-group class="mr-4">
+          <b-form-row class="mb-3 mr-1">
+            <b-form-row class="mr-1">
+              <span v-t="'label.sumDay'" class="d-flex align-items-center" />
+            </b-form-row>
+            <b-form-row>
+              <b-form-select v-model="vModelDay" :options="dayOptions" class="ml-2 inputSelect" @change="dayChange" />
+            </b-form-row>
+          </b-form-row>
+        </b-form-group>
+      </b-form>
+
+
+
+
+
+
+
+      <b-form inline @submit.prevent>
+        <b-form-group class="mr-4">
+          <b-form-row class="mb-3 mr-1">
+            <b-form-row class="mr-1">
+              <span v-t="'label.zoneCategoryName'" class="d-flex align-items-center" />
+            </b-form-row>
+            <b-form-row>
               <span :title="vueSelectTitle(vueSelected.category)">
                 <v-select v-model="vueSelected.category" :options="categoryOptionList" class="md-3 ml-2 vue-options" :style="vueSelectStyle">
                   <template slot="selected-option" slot-scope="option">
@@ -27,8 +60,14 @@
                 </v-select>
               </span>
             </b-form-row>
+          </b-form-row>
+        </b-form-group>
+        <b-form-group class="mr-4">
+          <b-form-row class="mb-3 mr-1">
+            <b-form-row class="mr-1">
+              <span v-t="'label.zone'" class="d-flex align-items-center" />
+            </b-form-row>
             <b-form-row>
-              <label v-t="'label.zone'" class="control-label md-1 text-right" />
               <span :title="vueSelectTitle(vueSelected.zone)">
                 <v-select v-model="vueSelected.zone" :options="zoneOptions" class="md-3 ml-2 vue-options" :style="vueSelectStyle">
                   <template slot="selected-option" slot-scope="option">
@@ -42,9 +81,13 @@
             </b-form-row>
           </b-form-row>
         </b-form-group>
+      </b-form>
+      <b-form inline @submit.prevent>
         <b-form-group>
-          <b-button v-t="'label.display'" :variant="theme" class="col-md-1" @click="display" />
-          <b-button v-if="!iosOrAndroid && bulkReferenceable" v-t="'label.download'" :variant="theme" :disabled="!viewList || viewList.length == 0" class="mx-1" @click="exportCsv" />
+          <b-form-row class="mb-3">
+            <b-button v-t="'label.display'" :variant="theme" @click="display" />
+            <b-button v-if="!iosOrAndroid && bulkReferenceable" v-t="'label.download'" :variant="theme" :disabled="!viewList || viewList.length == 0" class="ml-2" @click="exportCsv" />
+          </b-form-row>
         </b-form-group>
       </b-form>
 
