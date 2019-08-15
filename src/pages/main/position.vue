@@ -750,7 +750,7 @@ export default {
       // サムネイル表示無しの設定になっているか？
       const isNoThumbnail = APP.TXDETAIL.NO_UNREGIST_THUMB ? !tx.existThumbnail : false
       const setupSelectedTx = (isDispThumbnail) => {
-        const selectedTx = {
+        let selectedTx = {
           btxId,
           minor: this.$i18n.tnl('label.minor') + ':' + btxId,
           major: tx.major? this.$i18n.tnl('label.major') + ':' + tx.major : '',
@@ -770,6 +770,9 @@ export default {
           bgColor: display.bgColor,
           color: display.color,
           isDispRight: isDispRight,
+        }
+        if(tx.extValue){
+          Object.keys(tx.extValue).forEach( key => { selectedTx[key] = tx.extValue[key] } )
         }
         this.replaceMain({selectedTx})
         this.$nextTick(() => this.showReady = true)
