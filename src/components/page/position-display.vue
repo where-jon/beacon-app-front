@@ -78,7 +78,10 @@ export default {
     ]),
     displayZone(){
       return this.masterName == 'zone'
-    }
+    },
+    displayArea(){
+      return this.masterName == 'area'
+    },
   },
   beforeDestroy() {
     this.replaceAS({positions: []})
@@ -117,7 +120,7 @@ export default {
           }
         })
       })
-      const ret = _.sortBy(tempMasterMap, tmm => tmm.label)
+      const ret = _.sortBy(tempMasterMap, tmm => this.displayArea? tmm.areaCd : tmm.label)
       if(showExt){
         ret.push(tempMasterExt)
       }

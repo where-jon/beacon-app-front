@@ -40,7 +40,7 @@ export default {
           {key: 'description' },
           {key: 'actions', thStyle: {width:'130px !important'} }
         ]),
-        sortBy: 'categoryName',
+        sortBy: 'categoryCd',
         initTotalRows: this.categoryLength
       },
       items: ViewHelper.createBreadCrumbItems('master', 'category'),
