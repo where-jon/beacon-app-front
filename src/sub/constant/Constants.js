@@ -482,7 +482,7 @@ export const FONT = {
   SIZE: {
     MIN: 6,
   },
-  TYPE: 'px Arial',
+  TYPE: 'px sans-serif',
 }
 
 export const SETTING = {

@@ -640,7 +640,6 @@ export default {
           roundRect: DISP.TX.ROUNDRECT_RADIUS,
           strokeColor: ColorUtil.getRGBA(DISP.TX.STROKE_COLOR, bgAlpha),
           strokeStyle: DISP.TX.STROKE_WIDTH,
-          offsetY: 5,
         })
       txBtn.txId = pos.btx_id
       txBtn.x = pos.x
@@ -672,7 +671,6 @@ export default {
           roundRect: shape == SHAPE.SQUARE? 0: DISP.TX.ROUNDRECT_RADIUS / this.getMapScale(),
           strokeColor: rectInfo.strokeColor,
           strokeStyle: DISP.TX.STROKE_WIDTH,
-          offsetY: 3,
         })
     },
     createAbsentTxIcon(pos, shape, color, bgColor){
@@ -683,7 +681,6 @@ export default {
           roundRect: shape == SHAPE.SQUARE? 0: DISP.TX.ROUNDRECT_RADIUS,
           strokeColor: ColorUtil.getRGBA(DISP.TX.STROKE_COLOR, 1),
           strokeStyle: DISP.TX.STROKE_WIDTH,
-          offsetY: 5,
         })
     },
     disableExbsCheck(){ // position
