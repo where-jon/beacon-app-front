@@ -49,6 +49,7 @@ export const state = () => ({
   showLine: false,
   pageSendParam: null,
   updatedThumbnail: {},
+  thumbnailUrls: {},
 })
 
 const initState = state()

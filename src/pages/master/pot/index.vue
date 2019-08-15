@@ -45,6 +45,7 @@ export default {
       items: ViewHelper.createBreadCrumbItems('master', 'pot'),
       extValueDefault: {},
       thumbnailUrl: APP_SERVICE.BASE_URL + EXCLOUD.POT_THUMBNAIL_URL,
+      thumbnailUrlMap: {}
     }
   },
   computed: {
@@ -53,7 +54,29 @@ export default {
       'roles',
       'forceFetchPot',
       'updatedPotThumbnail',
+      'thumbnailUrls',
     ]),
+  },
+  async created() {
+      await Promise.all(['pots'].map(StateHelper.load))
+
+      const urls = this.pots.map( pot => {
+        let url = ""
+        if (this.updatedPotThumbnail && this.updatedPotThumbnail === pot.potId) {
+          const addUrlParam = new Date().getTime()
+          url = pot.existThumbnail ? this.thumbnailUrl.replace('{id}', pot.potId) + addUrlParam : null
+        }else{
+          url =  this.thumbnailUrls[pot.potId]
+          if(!url){
+            url = pot.existThumbnail ? this.thumbnailUrl.replace('{id}', pot.potId) : null
+          }
+        }
+        return { potId : pot.potId, url }
+      })
+      this.thumbnailUrlMap = {}
+      urls.forEach(url => this.thumbnailUrlMap[url.potId] = url.url)
+      this.replaceAS({thumbnailUrls: this.thumbnailUrlMap})
+
   },
   methods: {
     getCustomCsvColumns(){
@@ -115,11 +138,7 @@ export default {
       this.hideProgress()
     },
     thumbnail(row) {
-      let addUrlParam = ''
-      if (this.updatedPotThumbnail && this.updatedPotThumbnail === row.potId) {
-        addUrlParam = new Date().getTime()
-      }
-      return row.existThumbnail ? this.thumbnailUrl.replace('{id}', row.potId) + addUrlParam : null
+      return this.thumbnailUrlMap[row.potId]
     },
   }
 }
