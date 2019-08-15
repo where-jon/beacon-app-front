@@ -3,10 +3,8 @@
     <breadcrumb :items="items" :extra-nav-spec="extraNavSpec"
                 :reload="reload" :short-name="shortName"
     />
-    <b-alert v-model="showDismissibleAlert" variant="danger" :style="alertStyle()" dismissible>
-      {{ message }}
-    </b-alert>
-    <m-list :params="params" :list="positionList" />
+    <alert v-model="showDismissibleAlert" :message="message" :fix="fixHeight" :prohibit=true :alert-style="alertStyle" />
+    <m-list :params="params" :list="positionList" :alert-force-hide=true />
   </div>
 </template>
 
@@ -24,16 +22,19 @@ import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import reloadmixin from '../../components/mixin/reloadmixin.vue'
 import mList from '../../components/page/list.vue'
+import alert from '../../components/parts/alert.vue'
 
 export default {
   components: {
     breadcrumb,
     mList,
+    alert,
   },
   mixins: [reloadmixin],
   data() {
     return {
-      fix: DISP.THERMOH.ALERT_FIX_HEIGHT,
+      fixHeight: DISP.THERMOH.ALERT_FIX_HEIGHT,
+      alertForceHide:true,
       params: {
         name: 'position-list',
         id: 'positionListId',
@@ -80,16 +81,16 @@ export default {
       'prohibits',
       'lostZones',
     ]),
-    fixAlert(){
-      return this.fix > 0
+    alertStyle(){
+      return {
+        'font-weight': DISP.THERMOH.ALERT_WEIGHT,
+      }
     },
   },
   methods: {
-    alertStyle(){
-      return  this.fixAlert ? {height: `${25 * (this.fix + 1)}px`, 'overflow-y': 'auto','font-weight': DISP.THERMOH.ALERT_WEIGHT}:{}
-    },
     async fetchData(payload) {
       try {
+        this.replace({showAlert: false})
         this.showProgress()
         if (APP.POS.PROHIBIT_ALERT) {
           this.loadStates.push('prohibit')
@@ -101,6 +102,7 @@ export default {
         await PositionHelper.storePositionHistory(0, true)
         let positions = PositionHelper.getPositions(true)
         ProhibitHelper.setProhibitDetect('list', this)
+        this.replace({showAlert: true})
         Util.debug(positions)
 
         let prohibitCheck = false
