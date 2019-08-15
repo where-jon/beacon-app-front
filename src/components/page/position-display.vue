@@ -1,6 +1,6 @@
 <template>
   <div>
-    <m-list :params="params" :list="getDataList()" />
+    <m-list :params="params" :list="getDataList()" :alert-force-hide=true />
   </div>
 </template>
 
@@ -125,6 +125,7 @@ export default {
     },
     async fetchData(payload) {
       try {
+        this.replace({showAlert:false})
         this.showProgress()
         await Promise.all(this.loadStates.map(StateHelper.load))
         // positionデータ取得
@@ -138,6 +139,7 @@ export default {
 
         this.alertData.message = this.message
         this.alertData.isAlert = this.showDismissibleAlert ? true: false
+        this.replace({showAlert: this.alertData.isAlert})
         // 分類checkProhibitZone
         const tempMaster = this.splitMaster(this.positions, this.prohibitDetectList)
         this.replaceMain({[this.eachListName]: tempMaster})

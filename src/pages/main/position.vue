@@ -1,9 +1,7 @@
 <template>
   <div id="mapContainer" class="container-fluid" @click="resetDetail">
     <breadcrumb :items="items" :extra-nav-spec="extraNavSpec" :reload="true" :state="reloadState" :auto-reload="false" :short-name="shortName" :legend-items="legendItems" />
-    <b-alert v-model="showDismissibleAlert" variant="danger" :style="alertStyle()" dismissible>
-      {{ message }}
-    </b-alert>
+    <alert v-model="showDismissibleAlert" :message="message" :fix="fixHeight" :prohibit=showDismissibleAlert :prohibit-view="isProhibitView" :alert-style="alertStyle" />
     <b-row class="mt-2">
       <b-form inline class="mt-2" @submit.prevent>
         <b-form-row class="my-1 ml-2 ml-sm-0">
@@ -125,12 +123,14 @@ import reloadmixin from '../../components/mixin/reloadmixin.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
 import meditag from '../../components/parts/meditag.vue'
 import txdetail from '../../components/parts/txdetail.vue'
+import alert from '../../components/parts/alert.vue'
 
 export default {
   components: {
     breadcrumb,
     meditag,
     'txdetail': txdetail,
+    alert,
   },
   mixins: [commonmixin, reloadmixin, showmapmixin],
   props: {
@@ -141,7 +141,8 @@ export default {
   },
   data() {
     return {
-      fix: DISP.THERMOH.ALERT_FIX_HEIGHT,
+      fixHeight: DISP.THERMOH.ALERT_FIX_HEIGHT,
+      isProhibitView: true,
       items: !this.isInstallation ? ViewHelper.createBreadCrumbItems('main', 'showPosition') : ViewHelper.createBreadCrumbItems('develop', 'installation'),
       useGroup: MenuHelper.useMaster('group') && APP.POS.WITH.GROUP,
       useCategory: MenuHelper.useMaster('category') && APP.POS.WITH.CATEGORY,
@@ -192,9 +193,6 @@ export default {
     ...mapState([
       'reload',
     ]),
-    fixAlert(){
-      return this.fix > 0
-    },
     categoryOptionsForPot() {
       return StateHelper.getOptionsFromState('category', false, true,
         category => CATEGORY.POT_AVAILABLE.includes(category.categoryType)
@@ -208,6 +206,11 @@ export default {
     },
     filter() {
       return [this.selectedGroup, this.selectedCategory]
+    },
+    alertStyle(){
+      return {
+        'font-weight': DISP.THERMOH.ALERT_WEIGHT,
+      }
     },
   },
   watch: {
@@ -277,9 +280,6 @@ export default {
     this.resetDetail()
   },
   methods: {
-    alertStyle(){
-      return  this.fixAlert ? {height: `${25 * (this.fix + 1)}px`, 'overflow-y': 'auto','font-weight': DISP.THERMOH.ALERT_WEIGHT}:{}
-    },
     loadLegends () {
       if(!['category', 'group'].includes(DISP.TX.DISPLAY_PRIORITY)){
         return
@@ -366,6 +366,7 @@ export default {
       this.showReady = false
       const disabledProgress = Util.getValue(payload, 'disabledProgress', false)
       try {
+        this.replace({showAlert: false})
         this.reloadSelectedTx = this.reload? this.selectedTx: {}
         this.replace({reload: false})
         if(!disabledProgress){
@@ -430,6 +431,7 @@ export default {
         if (APP.POS.PROHIBIT_ALERT && APP.POS.PROHIBIT_GROUPS &&
           APP.POS.PROHIBIT_ALERT.length > 0 && APP.POS.PROHIBIT_GROUPS.length > 0) {
           ProhibitHelper.setProhibitDetect('pos', this, this.positions)
+          this.replace({showAlert: this.showDismissibleAlert})
         }
 
         if(!this.firstTime && reloadButton){
