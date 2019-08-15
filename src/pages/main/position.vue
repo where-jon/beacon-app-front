@@ -429,7 +429,6 @@ export default {
 
         if (APP.POS.PROHIBIT_ALERT && APP.POS.PROHIBIT_GROUPS &&
           APP.POS.PROHIBIT_ALERT.length > 0 && APP.POS.PROHIBIT_GROUPS.length > 0) {
-          console.log('@@@@@@@@@@@@@@@@@@@@@@@@@ ProhibitHelper.setProhibitDetect')
           ProhibitHelper.setProhibitDetect('pos', this, this.positions)
         }
 
