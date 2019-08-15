@@ -27,6 +27,10 @@
               <label v-t="'label.mapConfig'" />
               <b-form-select v-model="form.mapConfig" :options="mapConfigTypes" @change="checkAlert" required />
             </b-form-group>
+            <b-form-group v-if="isEditable && hasId && mapUpdate && form.mapImage">
+              <label v-t="'label.zoneConfig'" />
+              <b-form-select v-model="form.zoneConfig" :options="zoneConfigTypes" @change="checkAlert" required />
+            </b-form-group>
 
             <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
             <b-button v-if="isEditable" :variant="theme" :disabled="disabled" type="submit" class="mr-2 my-1" @click="beforeSubmit(false)">
@@ -95,6 +99,12 @@ export default {
         {text: this.$i18n.tnl('label.adjustPosition'), value: 2},
         {text: this.$i18n.tnl('label.initPosition'), value: 3},
       ]
+    },
+    zoneConfigTypes(){
+      return [
+        {text: this.$i18n.tnl('label.zoneKeepPosition'), value: 1},
+        {text: this.$i18n.tnl('label.zoneAdjustPosition'), value: 2},
+      ]
     }
   },
   async created() {
@@ -102,6 +112,7 @@ export default {
   },
   mounted() {
     this.form.mapConfig = this.mapConfigTypes[0].value
+    this.form.zoneConfig = this.zoneConfigTypes[0].value
     this.oldMap = this.hasId && this.form.mapImage? {width: this.$refs.mapImage.naturalWidth, height: this.$refs.mapImage.naturalHeight}: null
     ValidateHelper.setCustomValidationMessage()
     this.oldMap = this.hasId && this.form.mapImage? {width: this.$refs.mapImage.naturalWidth, height: this.$refs.mapImage.naturalHeight}: null
@@ -167,10 +178,15 @@ export default {
     beforeSubmit(again){
       if(this.mapUpdate){
         const mapConfigs = this.mapConfigTypes
+        const zoneConfigs = this.zoneConfigTypes
         this.form.scaleX = `${this.form.mapConfig == mapConfigs[0].value? 1:
           this.form.mapConfig == mapConfigs[1].value? Math.round(this.$refs.mapImage.naturalWidth * 100 / this.oldMap.width) / 100: 0}`
         this.form.scaleY = `${this.form.mapConfig == mapConfigs[0].value? 1:
           this.form.mapConfig == mapConfigs[1].value? Math.round(this.$refs.mapImage.naturalHeight * 100 / this.oldMap.height) / 100: 0}`
+        this.form.zoneScaleX = `${this.form.zoneConfig == zoneConfigs[0].value? 1:
+          this.form.zoneConfig == zoneConfigs[1].value? Math.round(this.$refs.mapImage.naturalWidth * 100 / this.oldMap.width) / 100: 0}`
+        this.form.zoneScaleY = `${this.form.zoneConfig == zoneConfigs[0].value? 1:
+          this.form.zoneConfig == zoneConfigs[1].value? Math.round(this.$refs.mapImage.naturalHeight * 100 / this.oldMap.height) / 100: 0}`
       }
       this.doBeforeSubmit(again)
     },
