@@ -119,8 +119,8 @@
               {{ val }}<br>
             </span>
           </template>
-          <template slot="deviceNums" slot-scope="row">
-            <span v-for="(val, key) in row.item.deviceNums" :key="key">
+          <template slot="deviceIds" slot-scope="row">
+            <span v-for="(val, key) in row.item.deviceIds" :key="key">
               {{ val }} <br>
             </span>
           </template>
@@ -344,7 +344,7 @@ export default {
         return {
           positionDt: 'notifyDatetime',
           notifyTo : 'notifyTo',
-          deviceNums  : 'deviceNums',
+          deviceIds  : 'deviceIds',
           lastRcvDatetimes : 'lastRcvDatetimes',
           notifyResult : 'notifyResult',
         }
@@ -352,7 +352,7 @@ export default {
         return {
           positionDt: 'notifyDatetime',
           notifyTo : 'notifyTo',
-          deviceNums  : 'deviceNums',
+          deviceIds  : 'deviceIds',
           lastRcvDatetimes : 'lastRcvDatetimes',
           notifyResult : 'notifyResult',
         }
@@ -380,11 +380,9 @@ export default {
         return {
           positionDt: 'notifyDatetime',
           notifyTo : 'notifyTo',
-          majors : 'majors',
           minors  : 'minors',
-          major : 'major',
           minor  : 'minor',
-          txNames : 'txNames',
+          userName : 'userName',
           notifyResult : 'notifyResult',
         }
       case 'PROHIBIT_NOTIFY':
@@ -463,6 +461,7 @@ export default {
           return
         }
         let count = 0
+        this.csvList = []
         fetchList.forEach((notifyData) => {
           const d = new Date(notifyData.notifyDatetime)
           notifyData.positionDt = DateUtil.formatDate(d.getTime())
@@ -512,13 +511,14 @@ export default {
       })
       records.forEach((record) => {
         record.txNames?record.txNames=this.csvColumnBrTag(record.txNames):false
+        record.userName?record.userName=this.csvColumnBrTag(record.userName):false
         record.notifyTo?record.notifyTo=this.csvColumnBrTag(record.notifyTo):false
         record.major?record.major=this.csvColumnBrTag(record.major):false
         record.minor?record.minor=this.csvColumnBrTag(record.minor):false
         record.potName?record.potName=this.csvColumnBrTag(record.potName):false
         record.zoneName?record.zoneName=this.csvColumnBrTag(record.zoneName):false
         record.lastRcvPosName?record.lastRcvPosName=this.csvColumnBrTag(record.lastRcvPosName):false
-        record.deviceNums?record.deviceNums=this.csvColumnBrTag(record.deviceNums):false
+        record.deviceIds?record.deviceIds=this.csvColumnBrTag(record.deviceIds):false
         record.lastRcvDatetimes?record.lastRcvDatetimes= record.lastRcvDatetimes=this.csvColumnBrTag(record.lastRcvDatetimes):false
         record.lastRcvDatetime?record.lastRcvDatetime=this.csvColumnBrTag(record.lastRcvDatetime):false
         record.powerLevels?record.powerLevels=this.csvColumnBrTag(record.powerLevels):false

@@ -102,7 +102,7 @@ export default {
         const exCluodSensors = await EXCloudHelper.fetchSensor(this.selectedSensor)
         const positionHistory = await PositionHelper.storePositionHistory()
         const positionedExb = PositionHelper.getPositionedExbWithSensor(this.selectedArea,
-          exb => exb.sensorId == this.selectedSensor,
+          exb => exb.sensorIds.includes(this.selectedSensor),
           exb => ({id: this.selectedSensor, ...exCluodSensors.find(sensor => sensor.deviceid == exb.deviceId && (sensor.timestamp || sensor.updatetime))}),
           null, true
         )

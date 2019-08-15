@@ -70,7 +70,7 @@ export const getInRectFontSize = (text, width, height) => {
   const canvas = document.createElement('canvas')
   const context = canvas.getContext('2d')
   context.font = `${dummyFontSize}${FONT.TYPE}`
-  const metrix = context.measureText(text)
+  const metrix = context.measureText(DISP.DUMMY_ICON_TEXT)
   const w = Math.floor(dummyFontSize * width / metrix.width)
   const h = Math.floor(dummyFontSize * height / dummyFontSize) - 5
   return getAdjustFontSize(() => (w > h? h: w) - 1)

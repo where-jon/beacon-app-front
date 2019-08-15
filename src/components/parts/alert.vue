@@ -9,7 +9,7 @@
         {{ $i18n.tnl('message.' + warnThumbnail.type, {key: 'ID', val: warnThumbnail.id, target: warnThumbnail.target}) }}
       </div>
     </b-alert>
-    <b-alert :show="showAlert && !forceHide" variant="danger" :dismissible="!fixAlert" :style="getAlertStyle()">
+    <b-alert :show="showAlert && !forceHide" variant="danger" :dismissible="prohibitAlert ? true: !fixAlert" :style="getAlertStyle()">
       <template v-if="Array.isArray(message)">
         <span v-for="line in message" :key="line">
           {{ line }} <br>
@@ -19,7 +19,7 @@
         {{ message }}
       </span>
     </b-alert>
-    <b-alert :show="fixAlert && !showInfo && !showWarn && !showAlert" variant="light" :style="getAlertBlankStyle()" />
+    <b-alert :show="fixAlert && !showInfo && !showWarn && !showAlert && !prohibitView " variant="light" :style="getAlertBlankStyle()" />
   </b-container>
 </template>
 
@@ -49,6 +49,14 @@ export default {
       type: Number,
       default: 0,
     },
+    prohibit: {
+      type: Boolean,
+      default: false,
+    },
+    prohibitView: {
+      type: Boolean,
+      default: false,
+    },
     alertStyle: {
       type: Object,
       default: () => {},
@@ -62,6 +70,9 @@ export default {
     ]),
     tempFor(){
       return 0 < this.fixAlert? new Array(this.fix): []
+    },
+    prohibitAlert(){
+      return this.prohibit
     },
     fixAlert(){
       return this.fix > 0

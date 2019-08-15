@@ -40,7 +40,7 @@ export default {
           {key: 'description' },
           {key: 'actions', thStyle: {width:'130px !important'} }
         ]),
-        sortBy: 'groupName',
+        sortBy: 'groupCd',
         initTotalRows: this.$store.state.app_service.groups.length
       },
       items: ViewHelper.createBreadCrumbItems('master', 'group'),

@@ -257,7 +257,7 @@ export default {
     },
   },
   async created() {
-    await Promise.all(['sensor', 'tx','exb'].map(StateHelper.load))
+    await Promise.all(['sensor', 'tx', 'exb'].map(StateHelper.load))
     this.form.sensorId = SENSOR.TEMPERATURE
     this.form.sumUnit = SUM_UNIT.getOptions()[1].value
     this.form.sumTarget = SUM_TARGET.AVERAGE
@@ -295,8 +295,7 @@ export default {
       this.sumUnitOptions = options
     },
     getExbOptions(newVal = this.form.sensorId){
-      const exbs = this.exbs.filter(val => val.sensorId == newVal)
-      // const exbs = this.exbs.filter((val) => SensorHelper.getSensorIds(val).includes(newVal)) 一旦単数に戻す
+      const exbs = this.exbs.filter(exb => exb.sensorIds.includes(newVal))
       this.exbOptions = exbs? exbs.map(val => ({value: val.exbId, label: val.locationName})): []
       this.vueSelected.exb = VueSelectHelper.getVueSelectData(this.exbOptions, null, true)
     },
@@ -597,7 +596,7 @@ export default {
             this.dataSensorId == SENSOR.MEDITAG? this.headers.meditag: 
               this.dataSensorId == SENSOR.MAGNET? this.headers.magnet: 
                 this.dataSensorId == SENSOR.PRESSURE? this.headers.pressure: null
-      
+
       BrowserUtil.fileDL(
         'sensorGraph.csv',
         CsvUtil.converToCsv(this.dataList, header, this.getCsvHeaderList(header)),

@@ -77,7 +77,7 @@ export default {
         .concat(['locationName','areaName', 'x', 'y', 'sensor']).filter(val => val)
     },
     customCsvData(val){
-      // val.sensor = val.sensorIdNames.join(';')  単数に戻す
+      val.sensor = val.sensorIdNames.map(name => this.$i18n.tnl('label.' + name)).join(';')
       if(ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'zone')){
         const classZoneList = Util.getValue(val, 'location.locationZoneList', []).filter(lz => lz.zoneType == ZONE.NON_COORDINATE)
         val.zoneClass = classZoneList.map(classZone => classZone.zoneName).join(';')
@@ -90,8 +90,7 @@ export default {
           {key: 'areaName', label:'area', sortable: true,},
           {key: 'x', label:'locationX', sortable: true,},
           {key: 'y', label:'locationY', sortable: true,},
-          // {key: 'sensorIdName', label:'type', sortable: true,},　一旦単数で
-          {key: 'sensor', label:'type', sortable: true,},
+          {key: 'sensorIdName', label:'type', sortable: true,},
           {key: 'actions', thStyle: {width: '130px !important'} }
         ])
       )
