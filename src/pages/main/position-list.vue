@@ -100,13 +100,16 @@ export default {
         await Promise.all(this.loadStates.map(StateHelper.load))
         await PositionHelper.storePositionHistory(0, true)
         let positions = PositionHelper.getPositions(true)
-        ProhibitHelper.setProhibitDetect('list', this)
         Util.debug(positions)
 
         let prohibitCheck = false
         const minorMap = {}
 
-        this.prohibitDetectList? this.prohibitDetectList.forEach((p) => minorMap[p.minor] = p) : null
+        if (APP.POS.PROHIBIT_ALERT && APP.POS.PROHIBIT_GROUPS &&
+          APP.POS.PROHIBIT_ALERT.length > 0 && APP.POS.PROHIBIT_GROUPS.length > 0) {
+          ProhibitHelper.setProhibitDetect('list', this)
+          this.prohibitDetectList? this.prohibitDetectList.forEach((p) => minorMap[p.minor] = p) : null
+        }
 
         const exbMap = {}
         this.exbs.forEach((e) => exbMap[e.posId] = e)
