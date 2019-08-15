@@ -428,8 +428,7 @@ export default {
         this.positionedExb = PositionHelper.getPositionedExb(this.selectedArea)
         this.showTxAll()
 
-        if (APP.POS.PROHIBIT_ALERT && APP.POS.PROHIBIT_GROUPS &&
-          APP.POS.PROHIBIT_ALERT.length > 0 && APP.POS.PROHIBIT_GROUPS.length > 0) {
+        if (Util.hasValue(APP.POS.PROHIBIT_ALERT) && Util.hasValue(APP.POS.PROHIBIT_GROUPS)) {
           ProhibitHelper.setProhibitDetect('pos', this, this.positions)
           this.replace({showAlert: this.showDismissibleAlert})
         }
