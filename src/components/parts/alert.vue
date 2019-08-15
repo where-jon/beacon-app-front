@@ -19,7 +19,7 @@
         {{ message }}
       </span>
     </b-alert>
-    <b-alert :show="fixAlert && !showInfo && !showWarn && !showAlert" variant="light" :style="getAlertBlankStyle()" />
+    <b-alert :show="fixAlert && !showInfo && !showWarn && !showAlert && !prohibitView " variant="light" :style="getAlertBlankStyle()" />
   </b-container>
 </template>
 
@@ -50,6 +50,10 @@ export default {
       default: 0,
     },
     prohibit: {
+      type: Boolean,
+      default: false,
+    },
+    prohibitView: {
       type: Boolean,
       default: false,
     },
