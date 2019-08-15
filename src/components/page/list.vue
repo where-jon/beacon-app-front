@@ -147,7 +147,7 @@
         <!-- センサ名 -->
         <template slot="sensorIdName" slot-scope="row">
           <div v-for="(sensorIdName, index) in row.item.sensorIdNames" :key="index">
-            {{ sensorIdName }}
+            {{ $i18n.tnl('label.' + sensorIdName) }}
           </div>
         </template>
         <!-- センサ名 -->
@@ -761,7 +761,7 @@ export default {
           this.$parent.$options.methods.onSaved.call(this.$parent, {message: this.message})
         }
         this.replace({showInfo: true})
-        await this.$parent.$options.methods.fetchData.apply(this.$parent)        
+        await this.$parent.$options.methods.fetchData.apply(this.$parent)
       } catch (e) {
         this.message = null
         if(e && e.response && e.response.data && ArrayUtil.isArray(e.response.data.errorList)){
@@ -832,7 +832,7 @@ export default {
     padding: 5px;
     line-height: 35px;
   }
-  
+
   select.extra-filter {
     max-width: 10em;
   }

@@ -12,6 +12,7 @@ import * as StringUtil from '../../util/StringUtil'
 import * as Util from '../../util/Util'
 import * as AppServiceHelper from './AppServiceHelper'
 import * as ConfigHelper from './ConfigHelper'
+import * as SensorHelper from '../domain/SensorHelper'
 
 
 let store
@@ -88,23 +89,6 @@ export const getSensorIdName = sensor => {
     return null
   }
   return Util.getValue(sensor, 'sensorName', '')
-}
-
-/**
- * 複数センサの名称を取得する。
- * @method
- * @param {Object[]} exbSensorList 
- * @return {String[]}
- */
-export const getSensorIdNames = exbSensorList => {
-  if(!Util.hasValue(exbSensorList)){
-    return [i18n.tnl('label.normal')]
-  }
-  const names = []
-  exbSensorList.forEach(exbSensor => {
-    names.push(i18n.tnl(`label.${getSensorIdName(exbSensor.sensor)}`))
-  })
-  return names.map((name) => name)
 }
 
 /**
@@ -294,6 +278,7 @@ const appStateConf = {
       return arr.map(exb => {
         const location = exb.location
         const locationZoneList = Util.getValue(exb, 'location.locationZoneList', [])
+        const sensors = SensorHelper.getSensors(exb.exbSensorList)
         return {
           ...exb,
           deviceIdX: exb.deviceId.toString(16).toUpperCase(),
@@ -301,7 +286,8 @@ const appStateConf = {
           y: location? Math.round(location.y * 10)/10: null,
           sensor: i18n.tnl('label.' + Util.getValue(exb, 'sensorName', 'normal')),
           isAbsentZone: exb.zoneCategoryName === SYSTEM_ZONE_CATEGORY_NAME.ABSENT,
-          // sensorIdNames: getSensorIdNames(exb.exbSensorList), // 一旦単数に戻す
+          sensorIds: sensors.map(val => val.sensorId),
+          sensorIdNames: sensors.map(val => val.sensorName),
           zoneIdList: locationZoneList.map(val => Util.getValue(val, 'locationZonePK.zoneId', null)).filter(val => val),
           zoneCategoryIdList: locationZoneList.map(val => Util.getValue(val, 'categoryId', null)).filter(val => val),
           zoneClass: Util.getValue(location, 'locationZoneList', []).filter(val => val.zoneType == ZONE.NON_COORDINATE).map(val => val.zoneName),
@@ -628,7 +614,7 @@ export const getOptionsFromState = (key, textField, notNull, filterCallback) => 
     keys = key.endsWith('y')? key.slice(0, -1) + 'ies' : key + 's'
   }
   const masterList = store.state.app_service[keys]
-  
+
   Util.debug('masterList:', masterList)
   Util.debug('typeof textField: ', typeof textField)
   const keyId = key + 'Id'
@@ -656,7 +642,7 @@ export const getOptionsFromState = (key, textField, notNull, filterCallback) => 
     .map(obj => ({text: getText(obj), label: getText(obj), value: obj[keyId]}))
     .value()
   Util.debug('filtered: ', options)
-  
+
   if (emptyOption) {
     options.unshift(emptyOption)
   }

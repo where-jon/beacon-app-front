@@ -744,17 +744,31 @@ export const getFields = (sensorId) => {
 }
 
 /**
+ * 複数センサの情報を取得する。
+ * @method
+ * @param {Object[]} exbSensorList 
+ * @return {String[]}
+ */
+export const getSensors = exbSensorList => {
+  if(!Util.hasValue(exbSensorList)){
+    return [{ sensorId: null, sensorName: 'normal' }]
+  }
+  return exbSensorList.map(exbSensor => ({
+    sensorId: Util.getValue(exbSensor, 'exbSensorPK.sensorId', null),
+    sensorName: Util.getValue(exbSensor, 'sensorName', null),
+  })).filter(val => val.sensorId)
+}
+
+/**
  * 指定したEXBに紐づいているセンサのIDを取得する
  * @method
  * @param {Object} exb 
  * @return {Object[]}
  */
 export const getSensorIds = exb => {
-  const exbSensorList = Util.getValue(exb, 'exbSensorList', null) // TODO: FIX
+  const exbSensorList = Util.getValue(exb, 'exbSensorList', []) // TODO: FIX
   if(Util.hasValue(exbSensorList)){
-    const ret = []
-    exbSensorList.forEach(exbSensor => ret.push(Util.getValue(exbSensor, 'sensor.sensorId', null)))
-    return ret
+    return exbSensorList.map(exbSensor => Util.getValue(exbSensor, 'sensor.sensorId', null)).filter(val => val)
   }
   return [null]
 }
