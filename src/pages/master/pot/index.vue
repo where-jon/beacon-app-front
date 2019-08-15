@@ -66,14 +66,12 @@ export default {
           const addUrlParam = new Date().getTime()
           url = pot.existThumbnail ? this.thumbnailUrl.replace('{id}', pot.potId) + addUrlParam : null
         }else{
-          const cachedUrl =  this.thumbnailUrls[pot.potId]
-          if(cachedUrl){
-            url = cachedUrl
-          }else{
+          url =  this.thumbnailUrls[pot.potId]
+          if(!url){
             url = pot.existThumbnail ? this.thumbnailUrl.replace('{id}', pot.potId) : null
           }
         }
-        return { potId : pot.potId, url : url}
+        return { potId : pot.potId, url }
       })
       this.thumbnailUrlMap = {}
       urls.forEach(url => this.thumbnailUrlMap[url.potId] = url.url)
@@ -140,8 +138,7 @@ export default {
       this.hideProgress()
     },
     thumbnail(row) {
-      const url = this.thumbnailUrlMap[row.potId]
-      return url
+      return this.thumbnailUrlMap[row.potId]
     },
   }
 }
