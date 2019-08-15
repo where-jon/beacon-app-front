@@ -39,7 +39,7 @@ export default {
           {key: 'thumbnail', tdClass: 'action-rowdata' },
           {key: 'actions', thStyle: {width: '130px !important'}, tdClass: 'action-rowdata' }
         ]),
-        sortBy: 'areaName',
+        sortBy: 'areaCd',
         initTotalRows: this.$store.state.app_service.areas.length
       },
       anotherPageParams: [

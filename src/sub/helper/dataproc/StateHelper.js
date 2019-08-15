@@ -269,7 +269,7 @@ const appStateConf = {
   },
   areas: {
     path: '/core/area',
-    sort: 'areaName',
+    sort: 'areaCd',
   },
   exbs: {
     path: '/core/exb/withLocation',
@@ -329,9 +329,8 @@ const appStateConf = {
 
   pots: {
     path: '/basic/pot',
-    sort: 'potName',
+    sort: 'potCd',
     beforeCommit: arr => {
-      const idNames = APP.TX.BTX_MINOR == 'minor'? 'minor': 'btxId'
       return arr.map(pot => {
         if (pot.extValue) { // extValue.rubyといった.を含む値をキーにするとb-tableでソートができないのでオブジェクト直下にextValuerubyなどのキーを追加する。
           var extValues = _.reduce(pot.extValue, (obj, val, key) => {
@@ -352,27 +351,12 @@ const appStateConf = {
           extValue: pot.extValue? pot.extValue: '',
           ...extValues
         }
-      }).sort((a, b) => {
-        if(!a.txParams && !b.txParams){
-          return 0
-        }
-        if(!a.txParams){
-          return 1
-        }
-        if(!b.txParams){
-          return -1
-        }
-        const comp = ArrayUtil.compareArray(a.txParams.map(val => val[idNames]), b.txParams.map(val => val[idNames]))
-        if(comp != 0){
-          return comp
-        }
-        return ArrayUtil.compareArray(a.txParams.map(val => val.potName), b.txParams.map(val => val.potName))
       })// omit images to avoid being filtering target
     }
   },
   categories: {
     path: '/basic/category',
-    sort: 'categoryName',
+    sort: 'categoryCd',
     beforeCommit: arr => {
       return arr.map(val => ({
         ...val,
@@ -388,7 +372,7 @@ const appStateConf = {
   },
   groups: {
     path: '/basic/group',
-    sort: 'groupName',
+    sort: 'groupCd',
     beforeCommit: arr => {
       return arr.map(val => ({
         ...val,
