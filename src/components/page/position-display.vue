@@ -133,7 +133,7 @@ export default {
         ProhibitHelper.setProhibitDetect('display', this)
         this.alertData.message = this.message
         this.alertData.isAlert = this.showDismissibleAlert ? true: false
-        this.replace({showAlert: true})
+        this.replace({showAlert: this.alertData.isAlert})
         // 分類checkProhibitZone
         const tempMaster = this.splitMaster(this.positions, this.prohibitDetectList)
         this.replaceMain({[this.eachListName]: tempMaster})

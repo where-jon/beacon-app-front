@@ -3,7 +3,7 @@
     <breadcrumb :items="items" :extra-nav-spec="extraNavSpec"
                 :reload="reload" :short-name="shortName"
     />
-    <alert v-model="showDismissibleAlert" :message="message" :fix="fixHeight" :prohibit=true :alert-style="alertStyle" />
+    <alert v-model="showDismissibleAlert" :message="message" :fix="fixHeight" :prohibit=showDismissibleAlert :prohibit-view="isProhibitView" :alert-style="alertStyle" />
     <m-list :params="params" :list="positionList" :alert-force-hide=true />
   </div>
 </template>
@@ -34,6 +34,7 @@ export default {
   data() {
     return {
       fixHeight: DISP.THERMOH.ALERT_FIX_HEIGHT,
+      isProhibitView:true,
       alertForceHide:true,
       params: {
         name: 'position-list',
@@ -102,7 +103,7 @@ export default {
         await PositionHelper.storePositionHistory(0, true)
         let positions = PositionHelper.getPositions(true)
         ProhibitHelper.setProhibitDetect('list', this)
-        this.replace({showAlert: true})
+        this.replace({showAlert: this.showDismissibleAlert})
         Util.debug(positions)
 
         let prohibitCheck = false

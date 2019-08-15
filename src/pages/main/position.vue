@@ -1,7 +1,7 @@
 <template>
   <div id="mapContainer" class="container-fluid" @click="resetDetail">
     <breadcrumb :items="items" :extra-nav-spec="extraNavSpec" :reload="true" :state="reloadState" :auto-reload="false" :short-name="shortName" :legend-items="legendItems" />
-    <alert v-model="showDismissibleAlert" :message="message" :fix="fixHeight" :prohibit=true :alert-style="alertStyle" />
+    <alert v-model="showDismissibleAlert" :message="message" :fix="fixHeight" :prohibit=showDismissibleAlert :prohibit-view="isProhibitView" :alert-style="alertStyle" />
     <b-row class="mt-2">
       <b-form inline class="mt-2" @submit.prevent>
         <b-form-row class="my-1 ml-2 ml-sm-0">
@@ -142,6 +142,7 @@ export default {
   data() {
     return {
       fixHeight: DISP.THERMOH.ALERT_FIX_HEIGHT,
+      isProhibitView: true,
       items: !this.isInstallation ? ViewHelper.createBreadCrumbItems('main', 'showPosition') : ViewHelper.createBreadCrumbItems('develop', 'installation'),
       useGroup: MenuHelper.useMaster('group') && APP.POS.WITH.GROUP,
       useCategory: MenuHelper.useMaster('category') && APP.POS.WITH.CATEGORY,
@@ -428,7 +429,7 @@ export default {
         this.showTxAll()
 
         ProhibitHelper.setProhibitDetect('pos', this, this.positions)
-        this.replace({showAlert: true})
+        this.replace({showAlert: this.showDismissibleAlert})
 
         if(!this.firstTime && reloadButton){
           this.reloadState.isLoad = false

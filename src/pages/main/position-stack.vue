@@ -3,7 +3,7 @@
     <breadcrumb :items="items" :extra-nav-spec="extraNavSpec"
                 :reload="reload" :short-name="shortName" reload-emit-name="allFetch"
     />
-    <alert v-model="alertData.isAlert" :message="alertData.message" :fix="fixHeight" :prohibit=true :alert-style="alertStyle" />
+    <alert v-model="alertData.isAlert" :message="alertData.message" :fix="fixHeight" :prohibit="alertData.isAlert" :prohibit-view="isProhibitView" :alert-style="alertStyle" />
     <b-row class="mt-2 ml-3">
       <b-form inline class="mt-2" @submit.prevent>
         <b-form-row class="my-1 ml-2 ml-sm-0">
@@ -53,7 +53,7 @@ export default {
   data() {
     return {
       fixHeight: DISP.THERMOH.ALERT_FIX_HEIGHT,
-      fix: DISP.THERMOH.ALERT_FIX_HEIGHT,
+      isProhibitView:true,
       items: ViewHelper.createBreadCrumbItems('main', 'positionStack'),
       extraNavSpec: EXTRA_NAV,
       shortName: this.$i18n.t('label.positionStackShort'),
