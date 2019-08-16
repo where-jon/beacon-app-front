@@ -27,6 +27,10 @@
               <label v-t="'label.mapConfig'" />
               <b-form-select v-model="form.mapConfig" :options="mapConfigTypes" @change="checkAlert" required />
             </b-form-group>
+            <b-form-group v-if="isEditable && hasId && mapUpdate && form.mapImage">
+              <label v-t="'label.zoneConfig'" />
+              <b-form-select v-model="form.zoneConfig" :options="zoneConfigTypes" @change="checkAlert" required />
+            </b-form-group>
 
             <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
             <b-button v-if="isEditable" :variant="theme" :disabled="disabled" type="submit" class="mr-2 my-1" @click="beforeSubmit(false)">
@@ -87,7 +91,8 @@ export default {
       'areas',
       'area',
       'exbs',
-      'txs'
+      'txs',
+      'zones',
     ]),
     mapConfigTypes(){
       return [
@@ -95,13 +100,20 @@ export default {
         {text: this.$i18n.tnl('label.adjustPosition'), value: 2},
         {text: this.$i18n.tnl('label.initPosition'), value: 3},
       ]
+    },
+    zoneConfigTypes(){
+      return [
+        {text: this.$i18n.tnl('label.zoneKeepPosition'), value: 1},
+        {text: this.$i18n.tnl('label.zoneAdjustPosition'), value: 2},
+      ]
     }
   },
   async created() {
-    Promise.all(['ares','area','exbs','txs'].map(StateHelper.load))
+    Promise.all(['areas','area','exbs','txs','zones'].map(StateHelper.load))
   },
   mounted() {
     this.form.mapConfig = this.mapConfigTypes[0].value
+    this.form.zoneConfig = this.zoneConfigTypes[0].value
     this.oldMap = this.hasId && this.form.mapImage? {width: this.$refs.mapImage.naturalWidth, height: this.$refs.mapImage.naturalHeight}: null
     ValidateHelper.setCustomValidationMessage()
     this.oldMap = this.hasId && this.form.mapImage? {width: this.$refs.mapImage.naturalWidth, height: this.$refs.mapImage.naturalHeight}: null
@@ -167,10 +179,15 @@ export default {
     beforeSubmit(again){
       if(this.mapUpdate){
         const mapConfigs = this.mapConfigTypes
+        const zoneConfigs = this.zoneConfigTypes
         this.form.scaleX = `${this.form.mapConfig == mapConfigs[0].value? 1:
           this.form.mapConfig == mapConfigs[1].value? Math.round(this.$refs.mapImage.naturalWidth * 100 / this.oldMap.width) / 100: 0}`
         this.form.scaleY = `${this.form.mapConfig == mapConfigs[0].value? 1:
           this.form.mapConfig == mapConfigs[1].value? Math.round(this.$refs.mapImage.naturalHeight * 100 / this.oldMap.height) / 100: 0}`
+        this.form.zoneScaleX = `${this.form.zoneConfig == zoneConfigs[0].value? 1:
+          this.form.zoneConfig == zoneConfigs[1].value? Math.round(this.$refs.mapImage.naturalWidth * 100 / this.oldMap.width) / 100: 0}`
+        this.form.zoneScaleY = `${this.form.zoneConfig == zoneConfigs[0].value? 1:
+          this.form.zoneConfig == zoneConfigs[1].value? Math.round(this.$refs.mapImage.naturalHeight * 100 / this.oldMap.height) / 100: 0}`
       }
       this.doBeforeSubmit(again)
     },
@@ -181,13 +198,21 @@ export default {
       this.save(evt)
     },
     checkSize(width, height){
+      const areaId = this.area.areaId
       const exbError = _.some(this.exbs, exb => {
-        return this.area.areaId == exb.areaId && (exb.x >= width || exb.y >= height)
+        return areaId == exb.areaId && (exb.x >= width || exb.y >= height)
       })
       const txError = _.some(this.txs, tx => {
-        return tx.areaId && tx.x && tx.y && tx.areaId == this.area.areaId && (tx.x >= width || tx.y >= height)
+        return tx.areaId && tx.x && tx.y && tx.areaId == areaId && (tx.x >= width || tx.y >= height)
       })
-      this.posError = exbError || txError
+      const zoneErrors = _.filter(this.zones, zone => {
+        return zone.areaId && zone.x && zone.y && zone.areaId == areaId && (zone.x >= width || zone.y >= height)
+      })
+      const zoneSizeErrors = _.filter(this.zones, zone => {
+        return zone.areaId && zone.x && zone.y && zone.areaId == areaId && ((zone.x + zone.w) >= width || (zone.y + zone.h) >= height)
+      })
+
+      this.posError = exbError || txError || Util.hasValue(zoneErrors) || Util.hasValue(zoneSizeErrors)
       this.uploadError = false
 
       if(this.selectedType != 1){
@@ -203,6 +228,18 @@ export default {
       }
       if(txError){
         this.message = this.$i18n.tnl('message.outTx')
+        this.replace({showAlert: true})
+        this.disabled = true
+        return
+      }
+      if(Util.hasValue(zoneErrors)){
+        this.message = this.$i18n.tnl('message.outZone', {zone : zoneErrors.map(z => z.zoneName).join(',')})
+        this.replace({showAlert: true})
+        this.disabled = true
+        return
+      }
+      if(Util.hasValue(zoneSizeErrors)){
+        this.message = this.$i18n.tnl('message.overSizeZone', {zone : zoneSizeErrors.map(z => z.zoneName).join(',')})
         this.replace({showAlert: true})
         this.disabled = true
         return
