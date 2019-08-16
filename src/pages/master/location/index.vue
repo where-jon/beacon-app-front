@@ -42,7 +42,7 @@
         </b-form-row>
       </b-form-row>
     </b-form>
-    <b-form inline class="mt-2" @submit.prevent>
+    <b-form v-if="showMapRatio" inline class="mt-2" @submit.prevent>
       <b-form-row class="mr-3 mb-3 ml-1">
         <label class="mr-2">
           {{ $t('label.mapRatio') }}
@@ -136,6 +136,7 @@ export default {
       ICON_ARROW_WIDTH: DISP.EXB_LOC.SIZE.W/3,
       ICON_ARROW_HEIGHT: DISP.EXB_LOC.SIZE.H/3,
       DISPLAY_NAME_BYTE_LENGTH: 6,
+      showMapRatio: DISP.SHOW_MAP_RATIO,
       noImageErrorKey: 'noMapImage',
       toggleCallBack: () => {
         this.keepExbPosition = true
