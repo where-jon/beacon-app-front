@@ -227,9 +227,9 @@ export default {
     getCsvHeaderList() {
       const historyHeaders = DISP.POSITION_HISTORY.HEADERS.slice()
       historyHeaders.unshift('positionDt')
-      return historyHeaders.map((header) => {
-        return  header == 'locationName'? this.$i18n.tnl('label.locationZoneName'): this.$i18n.tnl('label.' + header)
-      }).join(',')
+      return encodeURI(historyHeaders.map(header => {
+        return header == 'locationName'? this.$i18n.tnl('label.locationZoneName'): this.$i18n.tnl('label.' + header)
+      }).join(','))
     }
   }
 }
