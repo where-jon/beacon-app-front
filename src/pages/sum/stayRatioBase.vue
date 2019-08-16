@@ -495,6 +495,8 @@ export default {
         let stayTime = 0, lostTime = 0
         let categoryData = []
         let areaData = []
+        let stayPercentSum = 0
+        let graphListId = 0
 
         // カテゴリ用データ保持変数を初期化
         categoryData[0] = {name: 'categoryOther', value: 0}
@@ -556,9 +558,13 @@ export default {
           } else {
             areaData[0].value += stay.period
           }
+          //グラフ表示欠け対応のため、小数点1桁まで固定
+          const parcentDigit = 10
+          const percent = Math.round((stay.period / fromToSettingDiff) * 100 * parcentDigit) / parcentDigit
+          stayPercentSum += percent
 
-          const percent = (stay.period / fromToSettingDiff) * 100
           return {
+            index: graphListId++,
             isStay: isExistStayData,
             isAbsentZone: isAbsentZone,
             period: stay.period,
@@ -597,6 +603,33 @@ export default {
           result[aData.name] = DateUtil.convertToTime(aData.value) + ' (' + StayTimeHelper.getRatio(aData.value) + '%)'
         })
 
+        // グラフのズレ対応。100%と実際のpercentとの差分を全体に分配する
+        const perDiff = 100 - stayPercentSum
+        var graphTemp = result.graph.slice();
+        graphTemp.sort((a, b) => {
+          if (a.percent > b.percent) {
+            return 1;
+          } else {
+            return -1;
+          }
+        })
+        const baseCount = 10 //配分するグラフデータ数制限
+        if (result.graph.length > baseCount) {
+          const diffs = perDiff / baseCount
+          graphTemp.slice(0, baseCount).forEach((val, num) => {
+            const addGraph = _.find(result.graph, (graphVal) => {
+              return val.index == graphVal.index
+            })
+            if (addGraph) {
+              addGraph.percent = addGraph.percent + diffs
+            }
+          })
+        } else {
+          const diffs = perDiff / result.graph.length
+          result.graph.forEach((val) => {
+            val.percent = val.percent + diffs
+          })
+        }
         return result
       })
     },
