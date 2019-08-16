@@ -541,7 +541,7 @@ export default {
       if(key == 'txIdName'){
         return ArrayUtil.sortByArray(aData.txIdNames, bData.txIdNames)
       }
-      if(key == 'regionName'){
+      if(['regionName', 'areaCd', 'potCd', 'categoryCd', 'groupCd'].includes(key)){
         return StringUtil.sortByString(aData[key], bData[key])
       }
       return null

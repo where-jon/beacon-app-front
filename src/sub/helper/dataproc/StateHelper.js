@@ -270,6 +270,7 @@ const appStateConf = {
   areas: {
     path: '/core/area',
     sort: 'areaCd',
+    beforeCommit: arr => arr.sort((a, b) => StringUtil.sortByString(a.areaCd, b.areaCd))
   },
   exbs: {
     path: '/core/exb/withLocation',
@@ -351,7 +352,8 @@ const appStateConf = {
           extValue: pot.extValue? pot.extValue: '',
           ...extValues
         }
-      })// omit images to avoid being filtering target
+      }).sort((a, b) => StringUtil.sortByString(a.potCd, b.potCd))
+      // omit images to avoid being filtering target
     }
   },
   categories: {
@@ -367,7 +369,7 @@ const appStateConf = {
         shapeName: val.display? getShapeName(val.display.shape): null,
         categoryTypeName: getCategoryTypeName(val),
         systemCategoryName: val.systemUse != 0? val.categoryName.toLowerCase(): null,
-      }))
+      })).sort((a, b) => StringUtil.sortByString(a.categoryCd, b.categoryCd))
     }
   },
   groups: {
@@ -380,7 +382,7 @@ const appStateConf = {
         color: val.display? val.display.color: null,
         bgColor: val.systemUse == 1? getSystemUseBgColor(val): getCategoryDisplayBgColor(val),
         shapeName: val.display? getShapeName(val.display.shape): null,
-      }))
+      })).sort((a, b) => StringUtil.sortByString(a.groupCd, b.groupCd))
     }
   },
   users: {
