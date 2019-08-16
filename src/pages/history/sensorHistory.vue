@@ -235,10 +235,7 @@ export default {
      )
     },
     getCsvHeaderList(aSensorId) {
-      let fields = this.getFields(aSensorId)
-      return fields.map((field) => {
-        return field.label
-      }).join(',')
+      return encodeURI(this.getFields(aSensorId).map(field => field.label).join(','))
     },
   }
 }

@@ -20,11 +20,11 @@
         <!--通知媒体-->
         <b-form-group v-show="notify.length > 0">
           <label v-t="'label.notifyMedium'" />
-          <b-form-radio-group v-model="form.notifyMedium" :options="notify" :disabled="!bNotifyTo" @change="radioChange" />
+          <b-form-radio-group v-model="form.notifyMedium" :options="notify" :disabled="!bNotifyTo" @change="radioChange" required/>
         </b-form-group>
 
         <!--通知先-->
-        <b-form-group v-if="bNotifyTo && form.notifyTemplateKey!='TX_DELIVERY_NOTIFY'">
+        <b-form-group v-if="bNotifyTo">
           <label v-t="'label.notifyTo'" />
           <b-form-textarea v-model="form.notifyTo" :rows="3" :max-rows="6" maxlength="2000" :state="errorMessages.email.length > 0 ? false : null" required />
           <p v-for="(val, key) in errorMessages.email" :key="key" v-t="val" class="error" />
@@ -135,9 +135,10 @@ export default {
     reset () {
     },
     signalChange(evt = this.form.notifyTemplateKey) {
+      this.form.notifyMedium == undefined ? this.form.notifyMedium = 0:null
       if (evt == this.deliveryState || evt == this.userMailState || evt == this.prohibitState || evt == this.lostState) {
         this.notify = _.slice(NOTIFY_MIDIUM.getTypes()).filter(val => [0].includes(val.value))
-        this.bNotifyTo = true
+        this.bNotifyTo = evt == this.userMailState || evt == this.deliveryState ?  false: true
         this.bSubject = true
         if(evt != this.form.notifyTemplateKey){
           this.form.notifyMedium = 0
@@ -164,7 +165,7 @@ export default {
     notifyToValidationCheck(){
       let result = false
       if(this.form.notifyMedium == 0
-          && ( this.form.notifyTemplateKey != this.deliveryState && this.form.notifyTemplateKey != this.userMailState && this.form.notifyTemplateKey != this.prohibitState && this.form.notifyTemplateKey != this.lostState )){
+          && ( this.form.notifyTemplateKey != this.deliveryState && this.form.notifyTemplateKey != this.userMailState )){
         let re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i
         let emailList = this.form.notifyTo.split(',')
         if(emailList.length > 1){
