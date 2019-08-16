@@ -91,7 +91,8 @@ export default {
       'areas',
       'area',
       'exbs',
-      'txs'
+      'txs',
+      'zones',
     ]),
     mapConfigTypes(){
       return [
@@ -108,7 +109,7 @@ export default {
     }
   },
   async created() {
-    Promise.all(['ares','area','exbs','txs'].map(StateHelper.load))
+    Promise.all(['areas','area','exbs','txs','zones'].map(StateHelper.load))
   },
   mounted() {
     this.form.mapConfig = this.mapConfigTypes[0].value
@@ -197,13 +198,21 @@ export default {
       this.save(evt)
     },
     checkSize(width, height){
+      const areaId = this.area.areaId
       const exbError = _.some(this.exbs, exb => {
-        return this.area.areaId == exb.areaId && (exb.x >= width || exb.y >= height)
+        return areaId == exb.areaId && (exb.x >= width || exb.y >= height)
       })
       const txError = _.some(this.txs, tx => {
-        return tx.areaId && tx.x && tx.y && tx.areaId == this.area.areaId && (tx.x >= width || tx.y >= height)
+        return tx.areaId && tx.x && tx.y && tx.areaId == areaId && (tx.x >= width || tx.y >= height)
       })
-      this.posError = exbError || txError
+      const zoneErrors = _.filter(this.zones, zone => {
+        return zone.areaId && zone.x && zone.y && zone.areaId == areaId && (zone.x >= width || zone.y >= height)
+      })
+      const zoneSizeErrors = _.filter(this.zones, zone => {
+        return zone.areaId && zone.x && zone.y && zone.areaId == areaId && ((zone.x + zone.w) >= width || (zone.y + zone.h) >= height)
+      })
+
+      this.posError = exbError || txError || Util.hasValue(zoneErrors) || Util.hasValue(zoneSizeErrors)
       this.uploadError = false
 
       if(this.selectedType != 1){
@@ -219,6 +228,18 @@ export default {
       }
       if(txError){
         this.message = this.$i18n.tnl('message.outTx')
+        this.replace({showAlert: true})
+        this.disabled = true
+        return
+      }
+      if(Util.hasValue(zoneErrors)){
+        this.message = this.$i18n.tnl('message.outZone', {zone : zoneErrors.map(z => z.zoneName).join(',')})
+        this.replace({showAlert: true})
+        this.disabled = true
+        return
+      }
+      if(Util.hasValue(zoneSizeErrors)){
+        this.message = this.$i18n.tnl('message.overSizeZone', {zone : zoneSizeErrors.map(z => z.zoneName).join(',')})
         this.replace({showAlert: true})
         this.disabled = true
         return
