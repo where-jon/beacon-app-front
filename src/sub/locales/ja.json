@@ -820,7 +820,7 @@
           "CRON": "Cronが滞在時間の集計を行う時間::Cronが滞在時間の集計を行う時間を設定します。Cron形式の時間で設定します。"
         },
         "PROXIMITY": {
-          "CRON": "Cronが交流分析を行う時間::Cronが交流分析を行う時間を設定します。Cron形式の時間で設定します。"
+          "CRON": "Cronが交流分析を行う時間::Cronが交流分析を行う時間を設定します。Cron形式の時間で設定します。<br>APP.SVC.STAY_SUM.REAL_TIME：交流分析を使用する場合は併用できません。<br>APP.BATCH.PROXIMITY.CRON：設定する際は、滞在時間の定期バッチ処理をオフにします。"
         }
       }
     },
