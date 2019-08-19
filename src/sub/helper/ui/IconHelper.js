@@ -77,7 +77,7 @@ export const createText = (text, font, color, option = {}) => {
 export const createCircleIcon = (text, radius, color, bgColor, option = {}) => {
   const icon = new Container()
   icon.addChild(createShape(radius, bgColor, option))
-  icon.addChild(createText(text, StyleHelper.getInRectFontSize(DISP.DUMMY_ICON_TEXT, radius * 2, radius * 2), color, option))
+  icon.addChild(createText(text, StyleHelper.getInRectFontSize(DISP.IS_SCALE_ICON_TEXT ? text : DISP.DUMMY_ICON_TEXT, radius * 2, radius * 2), color, option))
   return icon
 }
 
@@ -95,7 +95,7 @@ export const createCircleIcon = (text, radius, color, bgColor, option = {}) => {
 export const createRectIcon = (text, width, height, color, bgColor, option = {}) => {
   const icon = new Container()
   icon.addChild(createRect(width, height, bgColor, option))
-  icon.addChild(createText(text, StyleHelper.getInRectFontSize(DISP.DUMMY_ICON_TEXT, width * 2, height * 2), color, option))
+  icon.addChild(createText(text, StyleHelper.getInRectFontSize(DISP.IS_SCALE_ICON_TEXT ? text : DISP.DUMMY_ICON_TEXT, width * 2, height * 2), color, option))
   return icon
 }
 
