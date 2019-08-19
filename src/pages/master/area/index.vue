@@ -32,7 +32,7 @@ export default {
         bulkUploadPath: '/master/area/bulkUpload',
         appServicePath: '/core/area',
         csvOut: true,
-        custumCsvColumns: ['areaCd', 'areaName'],
+        custumCsvColumns: ['ID', 'areaName'],
         fields: ViewHelper.addLabelByKey(this.$i18n, [ 
           {key: 'areaCd', label: 'id', sortable: true, tdClass: 'action-rowdata'},
           {key: 'areaName', sortable: true, tdClass: 'action-rowdata'},
@@ -87,6 +87,9 @@ export default {
         addUrlParam = new Date().getTime()
       }
       return row.existThumbnail ? this.thumbnailUrl.replace('{id}', row.areaId) + addUrlParam : null
+    },
+    customCsvData(val){
+      val.ID = val.areaCd
     },
   },
 }

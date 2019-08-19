@@ -31,7 +31,7 @@ export default {
         bulkEditPath: '/master/group/bulkedit',
         appServicePath: '/basic/group',
         csvOut: true,
-        custumCsvColumns: ['groupCd', 'groupName', 'ruby', 'color', 'bgColor', 'display.shape', 'description'],
+        custumCsvColumns: ['ID', 'groupName', 'ruby', 'color', 'bgColor', 'display.shape', 'description'],
         fields: ViewHelper.addLabelByKey(this.$i18n, [ 
           {key: 'groupCd', label: 'id', sortable: true },
           {key: 'groupName', sortable: true },
@@ -76,6 +76,7 @@ export default {
       return groupStyle? groupStyle.style: null
     },
     customCsvData(val){
+      val.ID = val.groupCd
       val.color = ColorUtil.colorCd4display(val.display.color)
       val.bgColor = ColorUtil.colorCd4display(val.display.bgColor)
     },

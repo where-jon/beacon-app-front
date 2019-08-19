@@ -44,9 +44,11 @@ export default {
         Util.setValue(entity, 'display.color', entity.color)
         Util.setValue(entity, 'display.bgColor', entity.bgColor)
       }
-      if(!Util.hasValue(entity.groupCd)){
+      if(!Util.hasValue(entity.ID)){
         entity.groupCd = this.masterCd
         this.masterCd = StateHelper.createMasterCd('group', [{groupCd: this.masterCd}], null)
+      }else{
+        entity.groupCd = entity.ID
       }
       return dummyKey
     },

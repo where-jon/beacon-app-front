@@ -31,7 +31,7 @@ export default {
         bulkEditPath: '/master/category/bulkedit',
         appServicePath: '/basic/category',
         csvOut: true,
-        custumCsvColumns: ['categoryCd', 'categoryName', 'categoryTypeName', 'color', 'bgColor', 'display.shape', 'description'],
+        custumCsvColumns: ['ID', 'categoryName', 'categoryTypeName', 'color', 'bgColor', 'display.shape', 'description'],
         fields: ViewHelper.addLabelByKey(this.$i18n, [ 
           {key: 'categoryCd', label: 'id', sortable: true },
           {key: 'categoryName', sortable: true },
@@ -83,6 +83,7 @@ export default {
       return categoryStyle? categoryStyle.style: null
     },
     customCsvData(val){
+      val.ID = val.categoryCd
       val.color = ColorUtil.colorCd4display(val.display.color)
       val.bgColor = ColorUtil.colorCd4display(val.display.bgColor)
     },

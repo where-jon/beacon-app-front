@@ -38,7 +38,7 @@ export default {
         custumCsvColumns: this.getCustomCsvColumns(),
         fields: this.getFields(),
         extraFilter: this.getExtraFilter(),
-        sortBy: 'potCd',
+        sortBy: 'ID',
         initTotalRows: this.$store.state.app_service.pots.length,
       },
       name: 'pot',
@@ -81,7 +81,7 @@ export default {
   methods: {
     getCustomCsvColumns(){
       return [
-        'potCd',
+        'ID',
         APP.TX.BTX_MINOR == 'minor'? 'minor': 'btxId',
         'potName',
         'potType',
@@ -91,6 +91,7 @@ export default {
         .filter(val => val)
     },
     customCsvData(val){
+      val.ID = val.potCd
       const id = ArrayUtil.includesIgnoreCase(APP.TX.WITH, 'txId')? 'txId': APP.TX.BTX_MINOR == 'minor'? 'minor': 'btxId'
       if(Util.hasValue(val.txList)){
         val[id] = val.txList.map(tx => tx[id]).join(';')
