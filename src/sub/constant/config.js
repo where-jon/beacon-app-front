@@ -397,7 +397,7 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   HEART_RATE_LINE_COLOR: '#7de8a6',// 湿度グラフの線色
   STEP_LINE_COLOR: '#7da6e8',// 歩数グラフの線色
   DOWN_COUNT_LINE_COLOR: '#fc5800',// 転倒数グラフの線色
-  SUM_STACK_COLOR: ['red','orange','yellow','green','purple','skyblue','blue','navy','gray'], // 滞在集計の色パターン
+  SUM_STACK_COLOR: ['#F78D7C','#AC787C','#95A4DE','#9DC3E6','#A9D18E','#FFD966','#D9D9D9','#A6A6A6','#7F7F7F'], // 滞在集計の色パターン
   SUM_STACK_BORDER_COLOR: 'gray',
 
   BLOOD_PRESSURE_MAX: 200,// 血圧最大メモリ
