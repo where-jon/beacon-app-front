@@ -99,10 +99,13 @@ export default {
       if(!Util.hasValue(entity.potType) && !Util.hasValue(entity.categoryName)){
         entity.potType = CATEGORY.PERSON
       }
-      if(!Util.hasValue(entity.potCd)){
+      if(!Util.hasValue(entity.ID)){
         entity.potCd = this.masterCd
         this.masterCd = StateHelper.createMasterCd('pot', [{potCd: this.masterCd}], null)
+      }else{
+        entity.potCd = entity.ID
       }
+
 
       dummyKey = this.restructTx(entity, dummyKey)
       dummyKey = this.restructUser(entity, dummyKey)

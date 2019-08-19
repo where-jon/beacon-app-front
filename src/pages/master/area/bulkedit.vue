@@ -41,8 +41,8 @@ export default {
   },
   methods: {
     onRestruct(entity, dummyKey){
-      if(Util.hasValue(entity.areaCd)){
-        BulkHelper.setStringKey(entity, 'areaCd', entity.areaCd, PATTERN.REGEXP.MASTER_CD)
+      if(Util.hasValue(entity.ID)){
+        BulkHelper.setStringKey(entity, 'areaCd', entity.ID, PATTERN.REGEXP.MASTER_CD)
       }
       else{
         entity.areaCd = this.masterCd
