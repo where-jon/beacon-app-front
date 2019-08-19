@@ -771,7 +771,7 @@ export default {
           isDispRight: isDispRight,
         }
         if(tx.extValue){
-          Object.keys(tx.extValue).forEach( key => { selectedTx[key] = tx.extValue[key] } )
+          Object.keys(tx.extValue).forEach( key => { selectedTx[key] = this.$i18n.tnl('label.' + key) + ':' + tx.extValue[key] } )
         }
         this.replaceMain({selectedTx})
         this.$nextTick(() => this.showReady = true)
