@@ -1393,6 +1393,8 @@
     "browserSizeWarn": "ブラウザサイズが適していません。PCで設定を行うか、PCの場合はブラウザサイズを横に拡げて下さい。",
     "mobileWarn": "{name}の登録・編集はPCからご利用ください。",
     "resetFromTo": "{from}が変更されたため、{to}が未選択状態になりました。",
+    "underDegree": "℃未満",
+    "overDegree": "℃以上",
 
     "dummy": "" 
   },

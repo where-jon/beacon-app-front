@@ -1,6 +1,6 @@
 <template>
   <div id="mapContainer" class="container-fluid">
-    <breadcrumb :items="items" :reload="true" :state="reloadState" />
+    <breadcrumb :items="items" :reload="true" :state="reloadState" :legend-items="legendItems" />
     <div>
       <alert :warn-message="warnMessage" :fix="fixHeight" :alert-style="alertStyle" />
 
@@ -63,7 +63,7 @@ import comfort from '../../assets/icon/comfort.png'
 import hot from '../../assets/icon/hot.png'
 import * as mock from '../../assets/mock/mock'
 import { DEV, APP, DISP } from '../../sub/constant/config'
-import { SENSOR, DISCOMFORT } from '../../sub/constant/Constants'
+import { SENSOR, DISCOMFORT, SHAPE } from '../../sub/constant/Constants'
 import * as DateUtil from '../../sub/util/DateUtil'
 import * as NumberUtil from '../../sub/util/NumberUtil'
 import * as StringUtil from '../../sub/util/StringUtil'
@@ -110,6 +110,7 @@ export default {
       iconAlphaMin: 0.1,
       fixHeight: DISP.THERMOH.ALERT_FIX_HEIGHT,
       useHeatMap: APP.SENSOR.USE_THERMOH_HEATMAP,
+      legendItems: [],
       toolTipShow: false,
       toolTipLabel: '',
       toolTipStyle: {
@@ -205,6 +206,7 @@ export default {
           alertInfo.txs.push(txIcon.device)
         }
       })
+      this.setLegends()
     },
     createWarnMessages(){
       this.setWarnDevices()
@@ -502,6 +504,22 @@ export default {
       const font = ft.split('px')
       const fontSize = Number(font[0]) / this.canvasScale
       return Math.round(fontSize) + 'px' + font[1]
+    },
+    setLegends(){
+      console.log(this.thermoPatternConfig)
+      console.log(this.humidityPatternConfig)
+
+      var index = 1
+      var lastBase = null
+      this.legendItems = _.map(this.thermoPatternConfig, config => {
+        const style = { shape:SHAPE.CIRCLE, bgColor:config.color, color:DISP.TX.COLOR }
+        const msg = config.base ? config.base + this.$i18n.tnl('message.underDegree') : lastBase + this.$i18n.tnl('message.overDegree')
+        lastBase = config.base
+        return {id: index++, items:[
+          { id: 1, text: '', style: StyleHelper.getStyleDisplay1(style) },
+          { id: 2, text: msg, style: {} },
+        ]}
+      })
     },
   }
 }
