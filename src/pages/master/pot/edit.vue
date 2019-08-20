@@ -469,6 +469,9 @@ export default {
         potType: this.form.potType,
         extValue: {
           ruby: this.form.ruby,
+          description: this.form.description,
+          minors: this.minors,
+          potNames: [this.form.potName],
         },
         displayName: this.form.displayName,
         potGroupList: this.form.groupId ? [{
@@ -491,6 +494,9 @@ export default {
       PotHelper.getPotExtKeys().forEach(key => {
         entity.extValue[key] = this.form[key]
       })
+
+      const minorsMap = {}
+      this.txs.forEach(t => minorsMap[t.txId] = t.minor)
       const potTxList = []
       this.form.potTxList.forEach((potTx) => {
         if(potTx.txId){
@@ -498,7 +504,8 @@ export default {
             potTxPK: {
               potId: this.form.potId || dummyParam.dummyKey--,
               txId: potTx.txId
-            }
+            },
+            minor: minorsMap[potTx.txId]
           })
         }
       })
