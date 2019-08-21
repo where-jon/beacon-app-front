@@ -675,6 +675,9 @@
         },
         "PROHIBIT": {
           "DUPLICATE_MAIL_TIME": "重複アラート通知制限（メール）::設定した時間内に同じ内容のアラートが発信された場合、メールによる通知を行わないようにします。ミリ秒単位で設定します。"
+        },
+        "LOST": {
+          "DUPLICATE_MAIL_TIME": "重複アラート通知制限（メール）::設定した時間内に同じ内容のアラートが発信された場合、メールによる通知を行わないようにします。ミリ秒単位で設定します。"
         }
       },
       "SENSOR": {
@@ -946,6 +949,9 @@
           "LOST_GROUPS": "numberList",
           "PROHIBIT": {
             "DUPLICATE_MAIL_TIME": "number"
+          },
+          "LOST": {
+            "DUPLICATE_MAIL_TIME": "number"
           }
         },
         "SENSOR": {
@@ -1071,6 +1077,9 @@
       "APP": {
         "POS": {
           "PROHIBIT": {
+            "DUPLICATE_MAIL_TIME": "180000"
+          },
+          "LOST": {
             "DUPLICATE_MAIL_TIME": "180000"
           }
         },
