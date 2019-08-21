@@ -506,9 +506,6 @@ export default {
       return Math.round(fontSize) + 'px' + font[1]
     },
     setLegends(){
-      console.log(this.thermoPatternConfig)
-      console.log(this.humidityPatternConfig)
-
       var index = 1
       var lastBase = null
       this.legendItems = _.map(this.thermoPatternConfig, config => {
