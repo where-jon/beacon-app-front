@@ -124,7 +124,7 @@
 
     "map": "Map",
     "areaId": "Area ID",
-    "areaCd": "Area code",
+    "areaCd": "ID",
     "areaName": "Area name",
     "mapImage": "Map image",
     "mapHeight": "Map height",

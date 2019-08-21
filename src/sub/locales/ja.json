@@ -125,7 +125,7 @@
 
     "map": "マップ",
     "areaId": "エリアID",
-    "areaCd": "エリアコード",
+    "areaCd": "ID",
     "areaName": "エリア名",
     "mapImage": "マップイメージ",
     "mapHeight": "マップ高さ",
@@ -256,7 +256,7 @@
 
     "category": "カテゴリ",
     "categoryId": "カテゴリID",
-    "categoryCd": "カテゴリコード",
+    "categoryCd": "ID",
     "categoryName": "カテゴリ名",
     "categoryType": "種別",
     "parentCategoryId": "親カテゴリID",
@@ -265,7 +265,7 @@
 
     "group": "グループ",
     "groupId": "グループID",
-    "groupCd": "グループコード",
+    "groupCd": "ID",
     "groupName": "グループ名",
     "parentGroupId": "親グループID",
     
@@ -1338,6 +1338,7 @@
     "csvLine": "{line}行目",
     "mapRatioSetting": "実際の距離（mm単位）とマップイメージのサイズ（px単位）との比率を設定します。まず実際の距離がわかっている箇所に該当するマップ上の２点を順にクリックし、ついで「実際の幅」の欄にmm単位で値を設定し、「設定中」となっているボタンを押してください。",
     "unsavedData": "保存されていないデータは全て破棄されますがよろしいですか？",
+    "bulkUniqueWarn": "{col}を交換する場合には、一度別の{col}で登録し、再度正しい{col}で登録をしてください。",
     "bulkUniqueFailed": "{col}（{value}）はすでに使用されています。",
     "bulkOneOfFailed": "{col}（{value}）は[{candidates}]のいずれかの値である必要があります。",
     "bulkRangeFailed": "{col}（{value}）は{min}から{max}の間である必要があります。",
