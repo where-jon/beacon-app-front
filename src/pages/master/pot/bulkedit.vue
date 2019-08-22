@@ -30,7 +30,6 @@ export default {
       appServicePath: '/basic/pot',
       items: ViewHelper.createBreadCrumbItems('master', {text: 'pot', href: '/master/pot'}, 'bulkRegister'),
       category: _.slice(CATEGORY.getTypes(), 0, 2).filter((val) => APP.CATEGORY.TYPES.includes(val.value)),
-      masterCd: null,
     }
   },
   computed: {
@@ -40,7 +39,6 @@ export default {
   },
   async created() {
     await StateHelper.load('pot')
-    this.masterCd = StateHelper.createMasterCd('pot', this.pots, null)
   },
   methods: {
     async onSaving() {
@@ -99,13 +97,7 @@ export default {
       if(!Util.hasValue(entity.potType) && !Util.hasValue(entity.categoryName)){
         entity.potType = CATEGORY.PERSON
       }
-      if(!Util.hasValue(entity.ID)){
-        entity.potCd = this.masterCd
-        this.masterCd = StateHelper.createMasterCd('pot', [{potCd: this.masterCd}], null)
-      }else{
-        entity.potCd = entity.ID
-      }
-
+      entity.potCd = entity.ID
 
       dummyKey = this.restructTx(entity, dummyKey)
       dummyKey = this.restructUser(entity, dummyKey)

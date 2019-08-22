@@ -61,7 +61,7 @@ export const BULK = {
   SPLITTER: ';',
   REQUIRE: {
     REGION: { ALLOW: ['regionId', 'regionName', 'meshId'] },
-    AREA: { ALLOW: ['areaId', 'areaName', 'areaCd'], DISALLOW: ['deviceId', 'deviceIdX', 'zoneName'] },
+    AREA: { ALLOW: ['areaId', 'areaName', 'ID'], DISALLOW: ['deviceId', 'deviceIdX', 'zoneName'] },
     EXB: { ALLOW: ['exbId', 'locationName', 'deviceId'] },
     TX: { ALLOW: ['txId', 'btxId', 'minor'] },
     POT: { ALLOW: ['potId', 'potName', 'potCd'] },
