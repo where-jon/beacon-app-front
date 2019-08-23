@@ -1,15 +1,15 @@
 <template>
   <b-container>
-    <b-alert :show="showInfo && !forceHide" variant="info" :dismissible="!fixAlert" :style="getAlertStyle()">
+    <b-alert :show="showInfo && !forceHide" variant="info" :dismissible="!forceNoClose && !fixAlert" :style="getAlertStyle()">
       {{ message }}
     </b-alert>
-    <b-alert :show="showWarn && !forceHide" variant="warning" :dismissible="!fixAlert" :style="getAlertStyle()">
+    <b-alert :show="showWarn && !forceHide" variant="warning" :dismissible="!forceNoClose && !fixAlert" :style="getAlertStyle()">
       {{ warnMessage }}
       <div v-for="warnThumbnail in warnThumbnails" :key="warnThumbnail.id">
         {{ $i18n.tnl('message.' + warnThumbnail.type, {key: 'ID', val: warnThumbnail.id, target: warnThumbnail.target}) }}
       </div>
     </b-alert>
-    <b-alert :show="showAlert && !forceHide" variant="danger" :dismissible="prohibitAlert ? true: !fixAlert" :style="getAlertStyle()">
+    <b-alert :show="showAlert && !forceHide" variant="danger" :dismissible="prohibitAlert ? true: !forceNoClose && !fixAlert" :style="getAlertStyle()">
       <template v-if="Array.isArray(message)">
         <span v-for="line in message" :key="line">
           {{ line }} <br>
@@ -42,6 +42,10 @@ export default {
       default: () => [],
     },
     forceHide: {
+      type: Boolean,
+      default: false,
+    },
+    forceNoClose: {
       type: Boolean,
       default: false,
     },

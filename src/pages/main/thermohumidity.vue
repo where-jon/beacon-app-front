@@ -2,7 +2,7 @@
   <div id="mapContainer" class="container-fluid">
     <breadcrumb :items="items" :reload="true" :state="reloadState" :legend-items="legendItems" />
     <div>
-      <alert :warn-message="warnMessage" :fix="fixHeight" :alert-style="alertStyle" />
+      <alert :warn-message="warnMessage" :fix="fixHeight" force-no-close :alert-style="alertStyle" />
 
       <b-row class="mt-2">
         <b-form inline class="ml-3 mt-2" @submit.prevent>
