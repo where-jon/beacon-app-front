@@ -18,14 +18,18 @@ const compare = (lang1, lang2, keys = [], result = []) => {
     if(value2 == null){
       result.push('"' + keys.join('.') + '": "' + value1 + '",')
     }
+    else if(value1 != '' && value2 == ''){
+      result.push('"' + keys.join('.') + '": "' + value1 + '",')
+    }
     keys.pop()
   })
   return result
 }
 
 test('compare', async t => {
+  console.log('\n> ----- compare start -----\n')
   const result = compare(ja, en)
   result.forEach(val => console.log(val))
+  console.log('\n> ----- compare success -----\n')
   t.true(true)
 })
-

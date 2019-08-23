@@ -615,6 +615,9 @@
     "bracketStayRate": "(滞在率)",
     "ok": "OK",
 
+    "success": "成功",
+    "failed": "失敗",
+
     "---------------- Pot Extension sample ---------------":"",
     "sex": "性別",
     "address": "住所",
