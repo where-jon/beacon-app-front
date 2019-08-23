@@ -607,7 +607,7 @@ export default {
         const perDiff = 100 - stayPercentSum
         var graphTemp = result.graph.slice();
         graphTemp.sort((a, b) => {
-          if (a.percent > b.percent) {
+          if (a.percent < b.percent) {
             return 1;
           } else {
             return -1;
