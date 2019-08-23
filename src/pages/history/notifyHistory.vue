@@ -465,7 +465,7 @@ export default {
         fetchList.forEach((notifyData) => {
           const d = new Date(notifyData.notifyDatetime)
           notifyData.positionDt = DateUtil.formatDate(d.getTime())
-          notifyData.notifyResult = notifyData.notifyResult == 0 ? '成功' : '失敗'
+          notifyData.notifyResult = this.$i18n.tnl('label.' + (notifyData.notifyResult == 0? 'success': 'failed'))
           if(this.userState == 'ALL_REGION' || aNotifyState == 'GW_ALERT' || aNotifyState == 'EXB_ALERT'){
             let arNotifyto = this.getNotifyTo(notifyData.notifyTo)
             arNotifyto ? notifyData.notifyTo = arNotifyto: null

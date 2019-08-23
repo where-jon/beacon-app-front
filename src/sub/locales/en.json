@@ -58,6 +58,7 @@
     "color": "Color",
     "textColor": "Text color",
     "dt": "Date and time",
+    "positionDt": "Date and time",
     "no": "No.",
     "theme": "Theme",
     "state": "State",
@@ -166,9 +167,9 @@
     "led": "LED",
     "meditag": "MEDiTAG",
     "magnet": "Magnet",
-    "omr-env": "",
-    "omr-tp-human": "",
-    "omr-tp-env": "",
+    "omr-env": "Environmental sensor",
+    "omr-tp-human": "Thermopile sensor(human detection)",
+    "omr-tp-env": "Thermopile sensor(Environment)",
     "InUse": "In use",
     "Empty": "Empty",
 
@@ -202,7 +203,7 @@
     "key": "Key",
     "keyName": "Item name",
     "defaultVal": "Default value",
-    "defaultOther": "",
+    "defaultOther": "Default(other)",
     "add": "Add",
     "addForm": "Add item",
     "addSetting": "New registration",
@@ -255,6 +256,7 @@
 
     "category": "Category",
     "categoryId": "Category ID",
+    "categoryCd": "ID",
     "categoryName": "Category name",
     "categoryType": "Category type",
     "parentCategoryId": " Parent category ID ",
@@ -263,6 +265,7 @@
 
     "group": "Group",
     "groupId": "Group ID",
+    "groupCd": "ID",
     "groupName": "Group name",
     "parentGroupId": "Parent group ID",
     
@@ -278,12 +281,12 @@
     
     "proximity": "Interactions",
     "proximityId": "Interaction ID",
-    "proximityGraph": "",
-    "grouping": "",
-    "age": "",
-    "target": "",
-    "proximityTime": "",
-    "proximityCount": "",
+    "proximityGraph": "Transactional analysis",
+    "grouping": "Grouping",
+    "age": "Age",
+    "target": "Target",
+    "proximityTime": "Time",
+    "proximityCount": "Count",
     "proximityTotal": "合計(時間)",
 
     "attendance": "Attendance (clock-in and clock-out):",
@@ -424,10 +427,15 @@
 
     "h_blood_pressure": "Max. blood pressure",
     "l_blood_pressure": "Min. blood pressure",
+    "high": "Max.blood pressure",
+    "low": "Min.blood pressure",
     "heart_rate": "Heart rate",
+    "beat": "Heart rate",
     "step": "Step",
     "down_count": "Number of falls",
-
+    "down": "Number of falling down",
+    "count": "Count",
+    
     "vSelectNoOptions": "",
     "noMatchingOptions": "There is no selectable item",
 
@@ -468,8 +476,10 @@
     "minute": "minute",
     "hour": "hour",
     "day": "day",
+    "time": "Time",
     "immediate": "Nearest",
     "average": "Average",
+    "avg": "Average",
     "max": "Max",
     "min": "Min",
     "blood_pressure": "Blood Pressure",
@@ -506,6 +516,7 @@
     "masterZoneClass": "Zone(Class)",
     "masterZoneBlock": "Zone(Block)",
     "masterTenant": "Tenant",
+    "masterRoleFeature": "Feature",
     "UsageSituation": "Utilization",
     "Monitor": "Monitor",
     "monitorGW": "Monitor Gateway",
@@ -571,6 +582,9 @@
     "mapConfig": "Configure device position",
     "keepPosition": "Keep positions",
     "adjustPosition": "Ajust positions by old-new ratio",
+    "zoneConfig": "Configure zone position and size",
+    "zoneKeepPosition": "Maintain position and size",
+    "zoneAdjustPosition": "Adjust position and size to the new map ratio",
     "initPosition": "Reset position",
     "topNews": "News",
     "dispFlg": "Display",
@@ -585,7 +599,7 @@
     "unitSecond": "Unit(sec)",
     "unitMinute": "Unit(min)",
     "unitHour": "Unit(hour)",
-    "unitCount": "",
+    "unitCount": "Unit(times)",
     "showHeatmap": "Show Heatmap",
     "sensorList": "Current Sensor List",
     "device": "Device",
@@ -601,6 +615,9 @@
     "bracketStayRate": "(Stay rate)",
     "ok": "OK",
 
+    "success": "Success",
+    "failed": "Failed",
+    
     "---------------- Pot Extension sample ---------------": "",
     "sex": "Sex",
     "address": "Address",
@@ -648,11 +665,11 @@
         "MOVING_AVERAGE": "Number of position history to be aggregated at positioning:: When positioning, it will be calculated by averaging the set number of position history.",
         "MOVING_AVERAGE_TIME": "Moving average::Set up the moving average time that the server uses when aggregating location information.",
         "USE_MULTI_POSITIONING": "Use 3point Positioning::Use 3-point Positioning",
-        "MULTI_POSITIONING_NUM": "",
+        "MULTI_POSITIONING_NUM": "Multipoint positioning::Set up the number of multipoint positioning",
         "PROHIBIT_ALERT": "Use prohibited area::Use prohibited alert area",
         "PROHIBIT_GROUPS": "Prohibited area inaccessible group setting::Set up the group ID that can not enter in the prohibited area.",
-
-
+        "LOST_ALERT": "Use critical parts carrying out detection alert::Set up the method for notifying the critical parts carrying out detection alert. Possible to set up values are{LOST_ALERT}",
+        "LOST_GROUPS": "Critical parts group setting::Set up the group ID to be handled a critical parts.",
         "USE_LEGEND": "Use legend::Display the legend on the position (map) screen.★",
         "SHOW_DETECTED_COUNT": "Display the number of detections::Display the number of detected device on the position(map)screen.★",
         "WITH": {
@@ -699,7 +716,10 @@
       },
       "EXB": {
         "SENSOR": "Type of EXBeacon sensor::Set up the type of EXBeacon sensor.The possible to set up values are as follows. ★{SENSOR}",
-        "WITH": "Item used on EXBeacon screen::Set up the item used on EXBeacon screen. The possible to setup values are as follows.★{EXB}"
+        "WITH": "Item used on EXBeacon screen::Set up the item used on EXBeacon screen. The possible to setup values are as follows.★{EXB}",
+        "DEVICEID_TYPE": "Use device ID and device ID (hexadecimal) on EXBeacon screen::Use device ID, device ID (hexadecimal) or both on EXBeacon screen. Set up deviceId, deviceIdX, or both",
+        "MULTI_SENSOR": "Set up multiple sensors in EXBeacon::Multiple sensors can be set on the EXBeacon screen.",
+        "SENSOR_MAX": "Maximum number of sensors set in EXBeacon::Set up the maximum number of sensors that can be set on the EXBeacon screen."
       },
       "USER": {
         "WITH": "Items used on the user screen::Set up the items used on the user screen. The possible to set up values are as follows. ★{USER}"
@@ -770,11 +790,11 @@
           "CACHE_TIME": "Server cache effective time::Set up the effective time of cache data accumulated by the server in milliseconds."
         },
         "PROXIMITY":{
-          "USE_TXAIR": "",
-          "USE_MEETING_ROOM": "",
-          "EXCLOUD_RAWLOG_DIR": "",
-          "BLANK_RANGE": "",
-          "MIN_RANGE": ""
+          "USE_TXAIR": "TXAir transactional analysis::Set up whether to do TXAir transactional analysis.",
+          "USE_MEETING_ROOM": "Transactional analysis per conference room ::Set up whether to do exchange analysis per conference room",
+          "EXCLOUD_RAWLOG_DIR": "File path syslog:: Set up the file path to the mounted syslog.",
+          "BLANK_RANGE": "Continues transaction time::Set up the transaction time of the transactional analysis batch in milliseconds",
+          "MIN_RANGE": "Minimum transcation time::Set up the minimum transaction time of the transactional analysis batch in milliseconds."
         }
       },
       "BATCH": {
@@ -809,7 +829,7 @@
           "CRON": "The time for Cron calculates stay time::Set up the time for Cron calculates stay time. Set up it in Cron format."
         },
         "PROXIMITY": {
-          "CRON": ""
+          "CRON": "Time for Cron to do transactional analysis::Set up the time for Cron to do transcational analysis. Set in time Cron format time.<br>APP.SVC.STAY_SUM.REAL_TIME：Can not be used togthere with transactional analysis<br>APP.BATCH.PROXIMITY.CRON：When setting, turn off regular batch processing of stay time."
         }
       }
     },
@@ -829,7 +849,7 @@
         "STROKE_COLOR": "Default border color for Tx icons::Set up the border color for Tx icons to which neither category nor group belongs. Set up with a color code other than #.",
         "ALPHA": "Absent time Tx Icon Transmissive Value::Set up the transmit value when Tx is absence.Set up as a decimal value from 0 (transparent) to 1 (opaque).",
         "LOST_ALPHA": "Absent Tx Icon Transmissive Value::Set up the transmit value when Tx is absent. Set up it as a decimal value from 0 (transparent) to 1 (opaque).",
-
+        "DISPLAY_PRIORITY": "Tx icon display color::Set up the color to be applied to the Tx icon display color from the display color set in the category or group. Possible to set up values are {COLOR_TYPE}",
         "ABSENT_ZONE_DISPLAY_TYPES": "Type of Tx icon to be displayed for absence display zone::undetected: undetected, lost:lost, absent:absent zone"
       },
       "EXB_LOC": {
@@ -916,8 +936,8 @@
     },
     "DEV": {
       "SIMULATION": "Use temporary data::Perform position using temporary data.",
-      "SIMULATION_MOVE_PERCENT": "",
-      "SIMULATION_MOVE_AREA_PERCENT": ""
+      "SIMULATION_MOVE_PERCENT": "Move probability::Set up the move probability as a percentage.",
+      "SIMULATION_MOVE_AREA_PERCENT": "Area move probability::Set up the move probability to ignore the area as a percentage. "
     },
     "EXCLOUD": {
       "BASE_URL": "EXCloud URL::Set up EXCloud URL."
@@ -929,8 +949,8 @@
           "MOVING_AVERAGE_TIME": "number",
           "PROHIBIT_GROUPS": "numberList",
           "PROHIBIT_ALERT": "stringList",
-
-
+          "LOST_ALERT": "stringList",
+          "LOST_GROUPS": "numberList",
           "PROHIBIT": {
             "DUPLICATE_MAIL_TIME": "number"
           },
@@ -1146,7 +1166,8 @@
         "1": "1::Alert",
         "2": "2::User registration and update",
         "3": "3::sos",
-        "4": "4::Prohibit area notification"
+        "4": "4::Prohibit area notification",
+        "5": "5::Critical parts designated area"
       },
       "SUM_AXIS_FILL_GAP": {
         "0": "0::Do not do it",
@@ -1217,8 +1238,6 @@
         "dispAlways": "dispAlways::Show always"
       },
       "EXB": {
-        "deviceId": "deviceId::Device ID",
-        "deviceIdX": "deviceIdX::Device ID(Hex)",
         "posId": "posId::posId",
         "zone": "zone::Zone name"
       },
@@ -1263,14 +1282,18 @@
         "mail": "mail::E-mail Notification",
         "led": "led::LED Blink"
       },
-
-
-
-
+      "LOST_ALERT": {
+        "screen": "screen::Display on screen",
+        "mail": "mail::Mail notification"
+      },
       "ANALYSIS_UNIT": {
         "year": "year::Yearly",
         "month": "month::Monthly",
         "hours": "hours::Hourly"
+      },
+      "COLOR_TYPE": {
+        "category": "category::Category",
+        "group": "group::Group"
       }
     }
   },
@@ -1320,6 +1343,7 @@
     "csvLine": "{line} Line",
     "mapRatioSetting": "Sets the ratio of the actual distance (in millimeters) to the size of the map image (in px). First, click in order the two points on the map where you know the actual distance, then set the value in mm in the field of actual width, and press the setting button.",
     "unsavedData": " OK to discard all unsaved data?",
+    "bulkUniqueWarn": "When exchanging{col}, registered with another{col} and registered again with the correct{col}",
     "bulkUniqueFailed": "{col} ({value}) is already in use.",
     "bulkOneOfFailed": "{col} ({value}) must be one of the values of [{candidates}].",
     "bulkRangeFailed": "{col} ({value}) must be between {min} and {max}.",
@@ -1334,6 +1358,7 @@
     "bulkSystemUseNameFailed": "{col}（{value}） is already used by system defined name.",
     "bulkInvalidUpdateLineFailed": "{col}（{value}）cannot be modified on this page.",
     "bulkLastFailed": "{col}must be registered one or more.",
+    "bulkNoTemplateFailed": "{col} is not registered in {target}",
     "bulkCoordinatesOnlyFailed": "{col}（{value}）can only registered in zones (partitions)",
     "bulkSystemUniqueFailed": "The system category set up in {col}（{value}）can not be used redundantly in the same area",
     "monthDayTemperature": "{month}/{day} Temperature and humidity ({name}{description})",
@@ -1342,16 +1367,18 @@
     "pleaseEnterSearchCriteria": "Please enter your search criteria.",
     "uploadData": "{val} data can be registered.",
     "uploadNoData": "No registerable data.",
-
+    "uploadWarnData": "{val}data cannot be registered",
     "loadingFile": "Loading file. ({now} / {all})",
     "networkError": "Unable to connect to the server.",
     "noLedDevice": "There are no LED devices to operate.",
     "totalRowsMessage": "Total: {row} (Only latest {maxRows} are displayed)",
     "listEmpty": "There are no records matching your request.",
     "uploadMax": "Upload file size is limited to {target}Mbytes.",
-
-    "outExb": "",
-    "outTx": "",
+    "uploadImgMax": "The file size of {key} ({val}) exceeds {target} M bytes.",
+    "outExb": "EXB is located outside the map. Please select the configure device position appropriately",
+    "outTx": "TX is located outside the map. Please select the configure device position appropriately",
+    "outZone": "Zone ({zone}) is located outside the map. Locate the zone at the appropriate coordinates.",
+    "overSizeZone": "The size of Zone ({zone}) exceeds the size of the map. Set up the zone to an appropriate size.",
     "validationList": "Valid characters are {validate}.",
     "loginValidationList": "half alphanumberic, underscore( _ ), hyphen(-), at sign(@), dot(.).",
     "notMatchedEmail": "It is not a mail format. (In case of addition, comma separated)",
@@ -1377,6 +1404,12 @@
     "selectDisplayColumn": "Display the set up item in the table.",
     "selectLimitDescription": "It can set up to{max}items.",
     "tooManyCheck": "Selection must be less than{max}",
+
+    "browserSizeWarn": "The browser size is not fit. Set it up on the PC, or in the case of a PC, expand the browser size horizontally.",
+    "mobileWarn": "Use PC to register and edit {name}.",
+    "resetFromTo": "Because{from}has changed,{to}is now unselected",
+    "underDegree": "under ℃",
+    "overDegree": "over ℃",
 
     "dummy": "" 
   },
@@ -1404,15 +1437,7 @@
     "zoneClass": "Create and edit zones that include multiple EXBeacon. The created zones are used for grouping and summary by setting them on the EXBeacon screen. As it can set the category to the zone, it can also classify the zone itself. Refer to the category help for the categories set in the system to utilize in the zone.",
     "zoneBlock": "{ZoneBlock} can be created by dragging and selecting on the displayed area. EXBeacon in the created zone will be automatically set the zone at the time of registration. ",
     "stayRatioBaseDownload": "There are two types of download. You can download different data by Total and Stay. In Total, you can download all stay column information except the graph. In Stay, you can download basic data and detailed stay information for each hour.",
-    "bulkOneOfFailed": "Tareget item name must be specified with one of multiple settings.",
-    "bulkRangeFailed": "Target item name must be in the specified range.",
-    "bulkSizeFailed": "Target item name must be specified in the specified number of characters",
-    "bulkSizeSameFailed": "Target item name must be exactly the number of characters specified.",
-    "bulkNotNullFailed": "Target item name is mandatory. It can not be exclude and must be entered.",
-    "bulkInvalidFailed": "Target item name has a invalid format. It is necessary to register the format.",
-    "bulkUseFailed": "The target item name is the maximum number of item names in use.",
-    "bulkInvalidUpdateLineFailed": "Target item name data can not be changed on this screen",
-
+    "regionName": "Region name where the target user can log in",
 
     "dummy": ""
   }
