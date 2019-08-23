@@ -560,7 +560,10 @@ export default {
           }
           //グラフ表示欠け対応のため、小数点1桁まで固定
           const parcentDigit = 10
-          const percent = Math.round((stay.period / fromToSettingDiff) * 100 * parcentDigit) / parcentDigit
+          let percent = Math.round((stay.period / fromToSettingDiff) * 100 * parcentDigit) / parcentDigit
+          if (APP.STAY_SUM.GRAPH_LIMIT > percent) {
+            percent = 0
+          }
           stayPercentSum += percent
 
           return {
@@ -580,7 +583,7 @@ export default {
             zoneCategory: stay.byName,
           }
 
-        })
+        }).filter(data => { return data.percent != 0})
 
         const pot = this.pots.find((val) => val.potId == data.potId)
         const result = {
@@ -607,7 +610,7 @@ export default {
         const perDiff = 100 - stayPercentSum
         var graphTemp = result.graph.slice();
         graphTemp.sort((a, b) => {
-          if (a.percent > b.percent) {
+          if (a.percent < b.percent) {
             return 1;
           } else {
             return -1;
