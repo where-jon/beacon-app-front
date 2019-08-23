@@ -163,7 +163,8 @@
           <div style="position: relative;">
             <div v-for="(bar, index) in row.item.graph" :key="index" :class="bar.isStay || bar.isAbsentZone? 'stay-bar': 'lost-bar'" :style="`${bar.isStay || bar.isAbsentZone? `background: `+ (historyType == 'category'? bar.categoryBgColor: bar.areaBgColor)+`;`: `` } width:${bar.percent}% !important;`">
               <span class="graph-arrow-box">
-                {{ $i18n.tnl(bar.isStay || bar.isAbsentZone? 'label.stay': 'label.absence') }}: {{ bar.time }} <br>
+                {{ bar.isStay || bar.isAbsentZone? (historyType == 'category'? bar.categoryName: bar.areaName): $i18n.tnl('label.absence') }} <br>
+                {{ bar.time }} <br>
                 {{ bar.startTime }} ～ {{ bar.endTime }}
               </span>&nbsp;
             </div>
@@ -577,9 +578,10 @@ export default {
             endTime: percent == 100? DateUtil.convertToTime(toSecond): moment(stay.end).format('HH:mm:ss'),
             time: time,
             percent: percent,
+            categoryName: findCategory? findCategory.categoryName: this.$i18n.tnl('label.other'),
             categoryBgColor: findCategory? ColorUtil.colorCd4display(findCategory.bgColor): ColorUtil.colorCd4display(this.otherColor),
             areaBgColor: findArea? this.getStackColor(areaIndex): this.otherColor,
-            areaName: findArea? findArea.areaName: '',
+            areaName: findArea? findArea.areaName: this.$i18n.tnl('label.other'),
             zoneCategory: stay.byName,
           }
 
