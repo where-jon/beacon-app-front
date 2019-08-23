@@ -556,7 +556,7 @@ export default {
           if (findArea) {
             areaData[findArea.areaId].value += stay.period
           } else {
-            areaData[0].value += stay.period
+            if (isExistStayData) areaData[0].value += stay.period
           }
           //グラフ表示欠け対応のため、小数点1桁まで固定
           const parcentDigit = 10
