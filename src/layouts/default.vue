@@ -177,8 +177,8 @@ html {
 }
 
 .spinner-parent {
-  top: 45%;
-  position: absolute;
+  top: 45vh;
+  position: fixed;
   left: 0;
   right: 0;
   z-index: 100;
