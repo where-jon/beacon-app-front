@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+  <title>Title</title>
+</head>
+<body>
+  <div>
+    <img src="./tomonosama.jpg" />
+  </div>
+  <div id="app">{{ testVal }}</div>
+</body>
+
+<script>
+  const app = new Vue({
+    el: '#app',
+    data: {
+      testVal: '偉大なる首領 友野様'
+    }
+  })
+</script>
+</html>

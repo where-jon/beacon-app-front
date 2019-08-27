@@ -1,0 +1,26 @@
+[
+  {
+    "key": "test",
+    "icon": "angry",
+    "order": 3,
+    "pages": [
+      {
+        "key": "great-tomono",
+        "path": "index.html",
+        "icon": "angry"
+      }
+    ]
+  },
+  {
+    "key": "recordsTest",
+    "icon": "list-ul",
+    "order": 6,
+    "pages": [
+      {
+        "key": "hitoMono",
+        "path": "test/records.html",
+        "icon": "list-ul"
+      }
+    ]
+  }
+]

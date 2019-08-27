@@ -111,7 +111,7 @@ export const getUserInfo = async (tenantAdmin) => {
   const featureList = _(user.role.roleFeatureList).map(roleFeature => {
     return {path: roleFeature.feature.path, mode: roleFeature.mode}
   }).sortBy(val => val.path.length * -1).value()
-  const menu = MenuHelper.fetchNav(masterFeatureList, tenantFeatureList, featureList, user.providerUserId != null, tenantAdmin)
+  const menu = await MenuHelper.fetchNav(masterFeatureList, tenantFeatureList, featureList, user.providerUserId != null, tenantAdmin)
 
   // get region
   const currentRegion = await HttpHelper.getAppService('/core/region/current')
@@ -283,15 +283,16 @@ export const checkSession = () => {
  * @return {String}
  */
 export const getTenantCd = (def, providerOk) => { // xxx.saas.ドメインの場合、先頭がtenantCdとなる。
-  let tenantCd
-  if (location.host.includes(APP.SAAS_DOMAIN)) {
-    tenantCd = location.host.split('.')[0]
-  }
-  if (!providerOk && tenantCd == 'provider') {
-    const login = LocalStorageHelper.getLogin()
-    tenantCd = Util.getValue(login, 'currentTenant.tenantCd', null)
-  }
-  return tenantCd || def
+  // let tenantCd
+  // if (location.host.includes(APP.SAAS_DOMAIN)) {
+  //   tenantCd = location.host.split('.')[0]
+  // }
+  // if (!providerOk && tenantCd == 'provider') {
+  //   const login = LocalStorageHelper.getLogin()
+  //   tenantCd = Util.getValue(login, 'currentTenant.tenantCd', null)
+  // }
+  // return tenantCd || def
+  return "provider"
 }
 
 /**
