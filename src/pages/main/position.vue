@@ -141,6 +141,7 @@ export default {
   },
   data() {
     return {
+      isHandleScroll:false,
       fixHeight: DISP.THERMOH.ALERT_FIX_HEIGHT,
       isProhibitView: true,
       items: !this.isInstallation ? ViewHelper.createBreadCrumbItems('main', 'showPosition') : ViewHelper.createBreadCrumbItems('develop', 'installation'),
@@ -274,22 +275,22 @@ export default {
     this.startOtherAutoReload()
     this.changeArea(this.selectedArea)
     this.isMounted = true
-    window.addEventListener('touchend',this.touchEvent)
+    window.addEventListener('touchmove',this.handleScroll)
+    window.addEventListener('touchend',this.handleEnd)
   },
   beforeDestroy() {
     clearInterval(this.prohibitInterval)  // 点滅クリア
     this.resetDetail()
   },
   methods: {
-    touchEvent: function(){
-      const vThis = this
-      let isRedraw = false
-      document.getElementsByClassName('row mt-2')[0].addEventListener('touchend', function(e) {
-        if(!isRedraw){
-          vThis.showMapImage()
-          isRedraw = true
-        }
-      })
+    handleScroll(){
+      this.isHandleScroll = true
+    },
+    handleEnd(){
+      if(this.isHandleScroll){
+        this.showMapImage()
+      }
+      this.isHandleScroll = false
     },
     loadLegends () {
       if(!['category', 'group'].includes(DISP.TX.DISPLAY_PRIORITY)){
