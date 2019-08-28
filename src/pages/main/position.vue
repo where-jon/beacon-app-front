@@ -274,12 +274,23 @@ export default {
     this.startOtherAutoReload()
     this.changeArea(this.selectedArea)
     this.isMounted = true
+    window.addEventListener('touchend',this.touchEvent)
   },
   beforeDestroy() {
     clearInterval(this.prohibitInterval)  // 点滅クリア
     this.resetDetail()
   },
   methods: {
+    touchEvent: function(){
+      const vThis = this
+      let isRedraw = false
+      document.getElementsByClassName('row mt-2')[0].addEventListener('touchend', function(e) {
+        if(!isRedraw){
+          vThis.showMapImage()
+          isRedraw = true
+        }
+      })
+    },
     loadLegends () {
       if(!['category', 'group'].includes(DISP.TX.DISPLAY_PRIORITY)){
         return
