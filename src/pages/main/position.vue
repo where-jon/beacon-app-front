@@ -141,6 +141,7 @@ export default {
   },
   data() {
     return {
+      isHandleScroll:false,
       fixHeight: DISP.THERMOH.ALERT_FIX_HEIGHT,
       isProhibitView: true,
       items: !this.isInstallation ? ViewHelper.createBreadCrumbItems('main', 'showPosition') : ViewHelper.createBreadCrumbItems('develop', 'installation'),
@@ -274,12 +275,23 @@ export default {
     this.startOtherAutoReload()
     this.changeArea(this.selectedArea)
     this.isMounted = true
+    window.addEventListener('touchmove',this.handleScroll)
+    window.addEventListener('touchend',this.handleEnd)
   },
   beforeDestroy() {
     clearInterval(this.prohibitInterval)  // 点滅クリア
     this.resetDetail()
   },
   methods: {
+    handleScroll(){
+      this.isHandleScroll = true
+    },
+    handleEnd(){
+      if(this.isHandleScroll){
+        this.showMapImage()
+      }
+      this.isHandleScroll = false
+    },
     loadLegends () {
       if(!['category', 'group'].includes(DISP.TX.DISPLAY_PRIORITY)){
         return
