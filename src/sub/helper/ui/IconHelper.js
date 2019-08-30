@@ -3,8 +3,11 @@
  * @module helper/ui/IconHelper
  */
 
+import _ from 'lodash'
 import { Container, Shape, Text } from 'createjs-module'
 import { DISP } from '../../constant/config'
+import * as NumberUtil from '../../util/NumberUtil'
+import * as StringUtil from '../../util/StringUtil'
 import * as Util from '../../util/Util'
 import * as StyleHelper from './StyleHelper'
 
@@ -115,4 +118,47 @@ export const createIcon = (text, width, height, color, bgColor, option = {}) => 
     return createCircleIcon(text, width, color, bgColor, option)
   }
   return createRectIcon(text, width, height, color, bgColor, option)
+}
+
+/**
+ * 位置アイコンを作成する。
+ * @method
+ * @param {Object} location 
+ * @param {Object} locationInfo 
+ * @param {Number} maxLength 
+ * @param {Object} locationInfo 設定値「DISP.**_LOC」を使用する
+ * @param {Number} mapScale 
+ * @return {Object}
+ */
+export const createLocationIcon = (location, key, maxLength, locationInfo, mapScale) => {
+  const rect = NumberUtil.getRectInfoFromCenterPos(0, 0, locationInfo.SIZE.W / mapScale, locationInfo.SIZE.H / mapScale)
+  const iconArrowWidth = locationInfo.SIZE.W / 3 / mapScale
+  const iconArrowHeight = locationInfo.SIZE.H / 3 / mapScale
+
+  const icon = new Shape()
+  icon.graphics.beginFill(locationInfo.BGCOLOR)
+  icon.graphics.moveTo(rect.left, rect.top)
+  icon.graphics.lineTo(rect.right, rect.top)
+  icon.graphics.lineTo(rect.right, rect.bottom)
+  icon.graphics.lineTo(rect.right - iconArrowWidth, rect.bottom)
+  icon.graphics.lineTo(rect.right - iconArrowWidth - iconArrowWidth / 2, rect.bottom + iconArrowHeight)
+  icon.graphics.lineTo(rect.right - iconArrowWidth - iconArrowWidth, rect.bottom)
+  icon.graphics.lineTo(rect.left, rect.bottom)
+  icon.graphics.lineTo(rect.left, rect.top)
+
+  const text = StringUtil.cutOnLongByte(location[key], maxLength)
+  const label = new Text(text)
+  label.font = StyleHelper.getInRectFontSize(text, rect.width, rect.height)
+  label.color = locationInfo.COLOR
+  label.textAlign = 'center'
+  label.textBaseline = 'middle'
+
+  const button = new Container()
+  button.addChild(icon)
+  button.addChild(label)
+
+  button.location = location
+  button.x = location.x
+  button.y = location.y - (rect.height / 2 + iconArrowHeight)
+  return button
 }

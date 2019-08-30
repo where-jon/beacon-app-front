@@ -4,8 +4,9 @@
  */
 
 import { APP } from '../../constant/config'
-import { SENSOR } from '../../constant/Constants'
+import { SENSOR, LOCATION } from '../../constant/Constants'
 import * as Util from '../../util/Util'
+import * as ConfigHelper from './ConfigHelper'
 import * as SensorHelper from '../domain/SensorHelper'
 import * as StateHelper from './StateHelper'
 
@@ -141,4 +142,69 @@ export const getSensorOptions = (entity, isBlank) => {
     {value: null, text: isBlank? i18n.tnl('label.null'): i18n.tnl('label.normal')},
     sensor => ids.includes(sensor.sensorId)
   )
+}
+
+/**
+ * 場所種類選択の選択肢を取得する。
+ * @method
+ * @return {Object[]}
+ */
+export const getLocationDispOptions = () => {
+  return [
+    { text: i18n.tnl('label.locationName'), value: 'locationName' },
+    { text: i18n.tnl('label.locationCd'), value: 'locationCd' },
+    ConfigHelper.includesDeviceType('deviceId')? { text: i18n.tnl('label.deviceId'), value: 'deviceId' }: null,
+    ConfigHelper.includesDeviceType('deviceIdX')? { text: i18n.tnl('label.deviceIdX'), value: 'deviceIdX' }: null,
+  ].filter(val => val)
+}
+
+/**
+ * 場所選択（場所）の選択肢を取得する。
+ * @method
+ * @param {Object[]} workLocationList 
+ * @param {String} column 
+ * @return {Object[]}
+ */
+export const getLocationOptions = (workLocationList, column) => {
+  return StateHelper.getOptionsFromState('location',
+    column,
+    {value: '', text: i18n.tnl('label.emptyLocation'), label: i18n.tnl('label.emptyLocation')},
+    location => {
+      const target = workLocationList.find(val => val.locationId == location.locationId)
+      return target? !Util.hasValue(target.areaId): false
+    }
+  )
+}
+
+/**
+ * 場所選択（EXB）の選択肢を取得する。
+ * @method
+ * @param {Object[]} workExbList 
+ * @param {String} column 
+ * @return {Object[]}
+ */
+export const getLocationExbOptions = (workExbList, column) => {
+  return StateHelper.getOptionsFromState('exb',
+    column,
+    true,
+    exb => {
+      const target = workExbList.find(val => val.exbId == exb.exbId)
+      return target? !Util.hasValue(target.locationId): false
+    }
+  )
+}
+
+/**
+ * 場所タイプの選択肢を取得する。
+ * @method
+ * @return {Object[]}
+ */
+export const getLocationTypeOptions = () => {
+  const ret = [{ value: 0, text: '', param: ''}]
+  const addOptions = APP.LOCATION.TYPE.WITH.map(val => {
+    const values = val.trim().split(':')
+    const value = Util.getValue(values, '0', 0)
+    return { value: isNaN(value)? 0: value, text: i18n.tnl('label.' + Util.getValue(values, '1', '')) }
+  })
+  return ret.concat(addOptions)
 }

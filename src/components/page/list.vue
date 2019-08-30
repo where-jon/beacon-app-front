@@ -144,6 +144,18 @@
             {{ zoneName }}
           </div>
         </template>
+        <!-- EXBタイプ名 -->
+        <template slot="exbTypeName" slot-scope="row">
+          <div>
+            {{ getDispExbType(row.item) }}
+          </div>
+        </template>
+        <!-- タイプ名 -->
+        <template slot="locationTypeName" slot-scope="row">
+          <div>
+            {{ getDispLocationType(row.item) }}
+          </div>
+        </template>
         <!-- センサ名 -->
         <template slot="sensorIdName" slot-scope="row">
           <div v-for="(sensorIdName, index) in row.item.sensorIdNames" :key="index">
@@ -229,7 +241,7 @@
 <script>
 
 import { mapState, mapMutations } from 'vuex'
-import { CATEGORY, SENSOR } from '../../sub/constant/Constants'
+import { CATEGORY, SENSOR, EXB } from '../../sub/constant/Constants'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as CsvUtil from '../../sub/util/CsvUtil'
@@ -241,6 +253,7 @@ import { getCharSet } from '../../sub/helper/base/CharSetHelper'
 import * as DetectStateHelper from '../../sub/helper/domain/DetectStateHelper'
 import * as LocalStorageHelper from '../../sub/helper/base/LocalStorageHelper'
 import * as MenuHelper from '../../sub/helper/dataproc/MenuHelper'
+import * as OptionHelper from '../../sub/helper/dataproc/OptionHelper'
 import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import commonmixin from '../mixin/commonmixin.vue'
 import alert from '../parts/alert.vue'
@@ -429,6 +442,9 @@ export default {
     areaOptions() {
       return StateHelper.getOptionsFromState('area', false, true)
     },
+    locationTypeOptions() {
+      return OptionHelper.getLocationTypeOptions()
+    },
     detectStateOptions() {
       let options = DetectStateHelper.getTypes()
       options.unshift({value:null, text:''})
@@ -610,6 +626,12 @@ export default {
     },
     getDispCategoryName(category){
       return StateHelper.getDispCategoryName(category)
+    },
+    getDispExbType(exb){
+      return Util.getValue(EXB.getTypes().find(val => val.value == exb.exbType), 'text', '')
+    },
+    getDispLocationType(location){
+      return Util.getValue(this.locationTypeOptions.find(val => val.value == location.locationType), 'text', '')
     },
     getAnotherPageParam(name, item) {
       const pageParam = this.anotherPageParams.find((val) => val.name == name)

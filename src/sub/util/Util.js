@@ -58,7 +58,7 @@ export const extract = (obj, fields) => {
  * @param {String[]} excludeKeys マージ対象から除外するプロパティ名
  * @return {Object}
  */
-export const merge = (dest, src, excludeKeys) => {
+export const merge = (dest, src, excludeKeys = []) => {
   const temp = Object.assign({}, src)
   excludeKeys.forEach(key => delete temp[key])
   return Object.assign(dest, temp)

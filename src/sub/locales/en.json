@@ -89,12 +89,10 @@
     "area": "Area",
     "exb": "EXBeacon",
     "location": "EXB Location",
-    "locationSetting": "EXB Location",
     "develop": "Developer",
     "env": "Environment Variables",
     "detectedProhibitZone": "Detected ProhibitZone",
     "detectedLostZone": "Detected LostZone",
-
     "exbId": "EXB ID",
     "exbName": "EXB name",
     "deviceId": "Device ID",
@@ -507,7 +505,6 @@
     "masterArea": "Area",
     "masterExb": "EXB",
     "masterTx": "Tx",
-    "masterLocation": "EXB Location",
     "masterPot": "Person or Thing",
     "masterCategory": "Category",
     "masterGroup": "Group",
@@ -854,11 +851,7 @@
       },
       "EXB_LOC": {
         "SIZE": {
-          "W": "EXB icon size (width) of EXB layout setting screen::Set up the width of EXB icon displayed on EXB setting screen.",
-          "H": "EXB icon size (height) of EXB layout setting screen::Set up the height of EXB icon displayed on EXB setting screen"
-        },
-        "BGCOLOR": "EXB icon background color of EXB layout setting screen::Set up the background color of EXB icon displayed on the EXB setting screen. Set up with a color code including #.",
-        "COLOR": "EXB icon text color of EXB layout setting screen::Set up the EXB icon color displayed EXB setting screen. Set up with color code including #."
+        }
       },
       "TX_LOC": {
         "SIZE": {
@@ -1120,7 +1113,6 @@
         "TXDETAIL": "Tx Deatils",
         "TX_LOC": "Tx Location icon",
         "EXB": "EXB",
-        "EXB_LOC": "EXB Location icon",
         "USER": "User",
         "POT": "People or Things",
         "CATEGORY": "Category",
@@ -1221,7 +1213,6 @@
         "minor": "minor::minor",
         "deviceId": "deviceId::Device ID",
         "deviceIdX": "deviceIdX::Device ID(Hex)",
-        "locationName": "locationName::EXB name",
         "posId": "posId::posId",
         "areaName": "areaName::Area name",
         "x": "x::X",
@@ -1237,7 +1228,7 @@
         "dispPir": "dispPir::Show on pir",
         "dispAlways": "dispAlways::Show always"
       },
-      "EXB": {
+      "LOCATION": {
         "posId": "posId::posId",
         "zone": "zone::Zone name"
       },

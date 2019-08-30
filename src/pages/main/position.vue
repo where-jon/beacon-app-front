@@ -690,7 +690,7 @@ export default {
     disableExbsCheck(){ // position
       // for debug
       const disabledExbs = {}
-      _.filter(this.exbs, (exb) => !exb.location.x || exb.location.y <= 0).forEach(e => disabledExbs[e.posId] = e)
+      _.filter(this.exbs, (exb) => Util.hasValue(exb.location) && (!exb.location.x || exb.location.y <= 0)).forEach(e => disabledExbs[e.posId] = e)
       PositionHelper.getPositions().forEach((pos) => {
         const exb = disabledExbs[pos.pos_id]
         if (exb) {

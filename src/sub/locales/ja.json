@@ -89,14 +89,19 @@
     "area": "エリア",
     "exb": "EXBeacon",
     "location": "配置場所",
-    "locationSetting": "EXB配置設定",
+    "locationSetting": "場所配置設定",
+    "locationList": "場所設定",
     "develop": "開発用",
     "env": "環境変数",
     "detectedProhibitZone": "進入検知",
     "detectedLostZone": "持ち出し検知",
-
     "exbId": "EXB ID",
     "exbName": "EXB名",
+    "exbType": "指向性",
+    "threshold1": "閾値1",
+    "threshold2": "閾値2",
+    "adjust1": "調整値1",
+    "adjust2": "調整値2",
     "deviceId": "デバイスID",
     "deviceIdX": "デバイスID(16進数)",
     "deviceNum": "端末ID",
@@ -105,6 +110,8 @@
     "power-good": "良好",
     "power-warning": "減少",
     "power-poor": "充電/交換",
+    "noneDirect": "非指向性",
+    "direct": "指向性",
 
     "tx": "Tx",
     "txId": "TxID",
@@ -115,10 +122,20 @@
     "minorPowerLevel": "minor(電池レベル)",
 
     "locationId": "位置ID",
-    "locationName": "EXB名",
+    "locationCd": "ID",
+    "locationName": "場所名",
     "locationX": "X座標",
     "locationY": "Y座標",
     "locationZ": "Z座標",
+    "locationType": "タイプ",
+    "work": "作業",
+    "wip": "仕掛品",
+    "qa": "検査",
+    "storage": "保管",
+    "selectLocationDisp": "種類選択",
+    "selectLocationPlace": "場所選択",
+    "emptyLocation": "空の場所",
+    "initLocation": "場所",
     "txViewType": "Tx表示形式",
     "txIconColumns": "横",
     "txIconLines": "縦",
@@ -507,7 +524,7 @@
     "masterArea": "エリア",
     "masterExb": "EXB",
     "masterTx": "Tx",
-    "masterLocation": "EXB配置設定",
+    "masterLocation": "場所設定",
     "masterPot": "人＆物",
     "masterCategory": "カテゴリ",
     "masterGroup": "グループ",
@@ -716,10 +733,15 @@
       },
       "EXB": {
         "SENSOR": "EXBeaconセンサの種類::EXBeaconセンサの種類を設定します。設定可能な値は次の通りです。★{SENSOR_NONE}{SENSOR}",
-        "WITH": "EXBeacon画面で使用する項目::EXBeacon画面で使用する項目を設定します。設定可能な値は次の通りです。★{EXB}",
         "DEVICEID_TYPE": "EXBeacon画面でデバイスIDとデバイスID(16進数)を使用する::EXBeacon画面でデバイスIDかデバイスID(16進数)のどちらか、または両方を使用します。deviceId、deviceIdX、bothのいずれかを設定します。",
         "MULTI_SENSOR": "EXBeaconに複数のセンサを設定する::EXBeacon画面で複数のセンサを設定可能にします。",
         "SENSOR_MAX": "EXBeaconに設定するセンサの最大数::EXBeacon画面で設定可能なセンサの最大数を設定します。"
+      },
+      "LOCATION": {
+        "WITH": "場所配置画面で使用する項目::場所配置画面で使用する項目を設定します。設定可能な値は次の通りです。★{LOCATION}",
+        "TYPE": {
+          "WITH": "場所の種類::場所の種類を設定します。設定可能な値は次の通りです。{LOCATION_TYPE}"
+        }
       },
       "USER": {
         "WITH": "ユーザ画面で使用する項目::ユーザ画面で使用する項目を設定します。設定可能な値は次の通りです。★{USER}"
@@ -855,11 +877,11 @@
       },
       "EXB_LOC": {
         "SIZE": {
-          "W": "EXB配置設定画面のEXBアイコンサイズ(幅)::EXB設定画面に表示されるEXBアイコンの幅を設定します。",
-          "H": "EXB配置設定画面のEXBアイコンサイズ(高さ)::EXB設定画面に表示されるEXBアイコンの高さを設定します。"
+          "W": "場所配置設定画面のアイコンサイズ(幅)::場所設定画面に表示されるアイコンの幅を設定します。",
+          "H": "場所配置設定画面のアイコンサイズ(高さ)::場所設定画面に表示されるアイコンの高さを設定します。"
         },
-        "BGCOLOR": "EXB配置設定画面のEXBアイコン背景色::EXB設定画面に表示されるEXBアイコンの背景色を設定します。#を含めたカラーコードで設定します。",
-        "COLOR": "EXB配置設定画面のEXBアイコン文字色::EXB設定画面に表示されるEXBアイコンの文字色を設定します。#を含めたカラーコードで設定します。"
+        "BGCOLOR": "場所配置設定画面のアイコン背景色::場所設定画面に表示されるアイコンの背景色を設定します。#を含めたカラーコードで設定します。",
+        "COLOR": "場所配置設定画面のアイコン文字色::場所設定画面に表示されるアイコンの文字色を設定します。#を含めたカラーコードで設定します。"
       },
       "TX_LOC": {
         "SIZE": {
@@ -970,9 +992,14 @@
           "WITH": "stringList"
         }, 
         "EXB": {
-          "SENSOR": "numberList",
-          "WITH": "stringList"
+          "SENSOR": "numberList"
         }, 
+        "LOCATION": {
+          "WITH": "stringList",
+          "TYPE": {
+            "WITH": "stringList"
+          }
+        },
         "USER": {
           "WITH": "stringList"
         }, 
@@ -1121,7 +1148,8 @@
         "TXDETAIL": "Tx詳細情報",
         "TX_LOC": "Tx配置設定アイコン",
         "EXB": "EXB",
-        "EXB_LOC": "EXB配置設定アイコン",
+        "EXB_LOC": "場所配置設定アイコン",
+        "LOCATION": "場所",
         "USER": "ユーザ",
         "POT": "人＆物",
         "CATEGORY": "カテゴリ",
@@ -1222,7 +1250,7 @@
         "minor": "minor::minor",
         "deviceId": "deviceId::デバイスID",
         "deviceIdX": "deviceIdX::デバイスID(16進数)",
-        "locationName": "locationName::EXB名",
+        "locationName": "locationName::場所名",
         "posId": "posId::posId",
         "areaName": "areaName::エリア名",
         "x": "x::X座標",
@@ -1238,9 +1266,13 @@
         "dispPir": "dispPir::空室チェックで表示",
         "dispAlways": "dispAlways::常時表示"
       },
-      "EXB": {
+      "LOCATION": {
         "posId": "posId::posId",
         "zone": "zone::ゾーン名"
+      },
+      "LOCATION_TYPE": {
+        "number": "数値::設定値",
+        "string": "文字列::表示文字列のキー"
       },
       "USER": {
         "email": "email::メールアドレス",
