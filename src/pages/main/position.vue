@@ -287,7 +287,7 @@ export default {
       this.isHandleScroll = true
     },
     handleEnd(){
-      if(this.isHandleScroll){
+      if(this.isHandleScroll && this.showDismissibleAlert){
         this.showMapImage()
       }
       this.isHandleScroll = false
@@ -469,7 +469,7 @@ export default {
     },
     onReset(){
       this.isShowRight = false
-      this.isShowBottom = false      
+      this.isShowBottom = false
     },
     showTxAll() {
 
@@ -533,7 +533,7 @@ export default {
       const display = this.getDisplay(tx)
       const color = meditag? '#000': this.isMagnetOn(magnet)? display.bgColor : display.color
       const bgColor = meditag? meditag.bg: this.isMagnetOn(magnet)? display.color: display.bgColor
-      
+
       // フリーアドレスTXが不在エリア検知の場合は以降処理を行わない
       if (exb && exb.isAbsentZone && !this.isFixTx(tx)) {
         return
