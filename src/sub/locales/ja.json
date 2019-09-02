@@ -831,6 +831,12 @@
         },
         "PROXIMITY": {
           "CRON": "Cronが交流分析を行う時間::Cronが交流分析を行う時間を設定します。Cron形式の時間で設定します。<br>APP.SVC.STAY_SUM.REAL_TIME：交流分析を使用する場合は併用できません。<br>APP.BATCH.PROXIMITY.CRON：設定する際は、滞在時間の定期バッチ処理をオフにします。"
+        },
+        "LOST_ZONE": {
+          "INTERVAL": "重要部品持ち出し検知アラートバッチの実行間隔::重要部品持ち出し検知アラートバッチの実行間隔をミリ秒単位で設定します。"
+        },
+        "PROHIBIT_ZONE": {
+          "INTERVAL": "禁止区域アラートバッチの実行間隔::禁止区域アラートバッチの実行間隔をミリ秒単位で設定します。"
         }
       }
     },
@@ -1055,6 +1061,12 @@
           },
           "PROXIMITY": {
             "CRON": "string"
+          },
+          "LOST_ZONE": {
+            "INTERVAL": "number"
+          },
+          "PROHIBIT_ZONE": {
+            "INTERVAL": "number"
           }
         }
       },
