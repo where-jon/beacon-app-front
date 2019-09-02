@@ -432,6 +432,23 @@ const appStateConf = {
   locations: {
     path: '/core/location',
     sort: 'locationId',
+    beforeCommit: arr => {
+      return arr.map(location => {
+        const zoneTypeMap = {}
+        Util.getValue(location, 'locationZoneList', []).forEach(locationZone => {
+          const key = '' + locationZone.zoneType
+          if(!zoneTypeMap[key]){
+            zoneTypeMap[key] = []
+          }
+          zoneTypeMap[key].push(locationZone.zoneName)
+        })
+        return {
+          ...location,
+          zoneClass: zoneTypeMap['' + ZONE.NON_COORDINATE],
+          zoneBlock: zoneTypeMap['' + ZONE.COORDINATE],
+        }
+      })
+    }
   },
   zones: {
     path: '/core/zone',

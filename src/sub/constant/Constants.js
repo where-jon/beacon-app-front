@@ -51,8 +51,10 @@ export const PATTERN = {
   NUMBER: '^-?[0-9]+[.]?[0-9]*$',
   NUMBER_LIST: '^(-?[0-9]+[.]?[0-9]*)+(,-?[0-9]+[.]?[0-9]*)*$',
   MASTER_CD: '^[a-zA-Z0-9_\\-\\.]*$',
+  LOCATION_CD: '^[a-zA-Z0-9_\\-]*$',
   REGEXP: {
     MASTER_CD: /^[a-zA-Z0-9_\-.]*$/,
+    LOCATION_CD: /^[a-zA-Z0-9_\\-]*$/,
   },
 }
 
@@ -64,6 +66,7 @@ export const BULK = {
     AREA: { ALLOW: ['areaId', 'areaName', 'ID'], DISALLOW: ['deviceId', 'deviceIdX', 'zoneName'] },
     EXB: { ALLOW: ['exbId', 'locationName', 'deviceId'] },
     TX: { ALLOW: ['txId', 'btxId', 'minor'] },
+    LOCATION: { ALLOW: ['locationId', 'locationCd', 'locationName'] },
     POT: { ALLOW: ['potId', 'potName', 'potCd'] },
     CATEGORY: { ALLOW: ['categoryId', 'categoryName', 'display'] },
     GROUP: { ALLOW: ['groupId', 'groupName', 'display'] },
@@ -163,6 +166,20 @@ export const txViewTypes = [
   {value: 3, text: 'pattern3'},
 ]
 
+export const EXB = {
+  TYPE: {
+    NONE_DIRECT: 0,
+    DIRECT: 1,
+  },
+  getTypes() {
+    return [
+      { value: null, text: '' },
+      { value: 0, text: i18n.tnl('label.noneDirect') },
+      { value: 1, text: i18n.tnl('label.direct') },
+    ]
+  }
+}
+
 export const CATEGORY = {
   PERSON: 1,
   THING: 2,
@@ -210,6 +227,18 @@ export const SHAPE = {
       {value: 2, text: i18n.tnl('label.square')},
       {value: 3, text: i18n.tnl('label.roundedSquare')},
     ]}
+}
+
+export const LOCATION = {
+  getTypes(){
+    return [
+      { value: 0, text: '', param: ''},
+      { value: 1, text: i18n.tnl('label.work'), param: 'work' },
+      { value: 2, text: i18n.tnl('label.wip'), param: 'wip' },
+      { value: 3, text: i18n.tnl('label.qa'), param: 'qa' },
+      { value: 4, text: i18n.tnl('label.storage'), param: 'storage' },
+    ]
+  }
 }
 
 export const ZONE = {
@@ -628,10 +657,14 @@ export const MENU = [
         icon: 'tags',
       },
       {
-        key: 'locationSetting',
+        key: 'locationList',
         path: 'location',
+        icon: 'location-arrow',
+      },
+      {
+        key: 'locationSetting',
+        path: 'location/position',
         icon: 'map',
-        // icon: 'fas fa-map-pin',
       },
       {
         key: 'txLocationSetting',

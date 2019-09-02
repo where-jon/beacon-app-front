@@ -1,580 +1,113 @@
 <template>
-  <div id="locationSetting" class="container-fluid">
+  <div class="container-fluid">
     <breadcrumb :items="items" />
-    <alert :message="message" />
-
-    <b-form inline class="mt-2" @submit.prevent>
-      <b-form-row class="ml-1">
-        <label class="mr-2 mb-2">
-          {{ $t('label.area') }}
-        </label>
-        <span :title="vueSelectTitle(vueSelected.area)">
-          <v-select v-model="vueSelected.area" :options="areaOptions" :disabled="settingStart" class="mr-2 mb-2 vue-options" :style="vueSelectStyle" :clearable="false">
-            <template slot="selected-option" slot-scope="option">
-              {{ vueSelectCutOn(option, true) }}
-            </template>
-            <template slot="no-options">
-              {{ vueSelectNoMatchingOptions }}
-            </template>
-          </v-select>
-        </span>
-        <b-button v-t="'label.load'" :variant="theme" :disabled="settingStart || selectedArea == null" size="sm" class="mb-2" @click="changeArea" />
-      </b-form-row>
-    </b-form>
-    <b-form inline class="mt-2" @submit.prevent>
-      <b-form-row class="ml-1">
-        <label class="mt-mobile mr-2 mb-2">
-          {{ $t('label.exb') }}
-        </label>
-        <b-form-select v-model="exbDisp" :options="exbDispOptions" :disabled="settingStart" class="mr-2 mb-2" @change="changeExbDisp" />
-        <b-form-row>
-          <span :title="vueSelectTitle(selectedExb_)">
-            <v-select v-model="selectedExb_" :options="exbOptions" :disabled="settingStart" size="sm" class="mb-2 mt-mobile vue-options" :style="vueSelectStyle" @input="showExbOnMap">
-              <template slot="selected-option" slot-scope="option">
-                {{ vueSelectCutOn(option) }}
-              </template>
-              <template slot="no-options">
-                {{ vueSelectNoMatchingOptions }}
-              </template>
-            </v-select>
-          </span>
-          <b-button v-t="'label.bulkAdd'" :variant="theme" :disabled="settingStart" size="sm" class="mt-mobile mb-2" @click="bulkAdd" /> 
-        </b-form-row>
-      </b-form-row>
-    </b-form>
-    <b-form v-if="showMapRatio" inline class="mt-2" @submit.prevent>
-      <b-form-row class="mr-3 mb-3 ml-1">
-        <label class="mr-2">
-          {{ $t('label.mapRatio') }}
-        </label>
-        <input :value="mapRatio" :readonly="true" size="sm" type="number" class="ratioInput form-control">
-      </b-form-row>
-      <b-form-row class="mr-3 mb-3 ml-1">
-        <label class="mr-2 mt-mobile">
-          {{ "= "+ $t('label.realWidth') }}
-        </label>
-        <input v-model="realWidth" size="sm" type="number" class="mt-mobile ratioInput form-control">
-      </b-form-row>
-      <b-form-row class="mr-3 mb-3 ml-1">
-        <label class="mr-2">
-          {{ "/ "+ $t('label.pixelWidth') }}
-        </label>
-        <input v-model="pixelWidth" :readonly="true" size="sm" type="number" class="ratioInput form-control">
-      </b-form-row>
-      <b-form-row class="mb-3 ml-1">
-        <b-button v-t="settingStart?'label.settingNow':'label.settingStart'" :variant="theme" :class="{'mt-mobile':true, 'mt-mobile-button': true, 'mr-2':true, blink:settingStart}" size="sm" @click="ratioSettingStart" /> 
-        <b-button v-if="editable" v-t="'label.save'" :variant="theme" :disabled="!isChanged" size="sm" @click="save" /> 
-      </b-form-row>
-    </b-form>
-    <p />
-    <div class="mt-3">
-      <canvas id="map" ref="map" @click="closeVueSelect" />
-    </div>
-    <b-modal id="modalInfo" :title="$t('label.mapRatioSetting')" ok-only>
-      {{ $t('message.mapRatioSetting') }}
-    </b-modal>
-    <b-modal id="modalWarn" :title="$t('label.confirm')" @ok="setChangeArea" @hide="changeAreaDone">
-      {{ $t('message.unsavedData') }}
-    </b-modal>
-    <b-modal id="modalDeleteConfirm" :title="$t('label.confirm')" @ok="deleteExbDone">
-      {{ $t('message.deleteConfirm', {target: deleteTarget? getExbDisp(deleteTarget.deviceId): null}) }}
-    </b-modal>
+    <m-list :params="params" :list="locations" />
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
-import { Shape, Container, Text } from 'createjs-module'
-import { APP, DISP } from '../../../sub/constant/config'
-import { UPDATE_ONLY_NN } from '../../../sub/constant/Constants'
-import * as ArrayUtil from '../../../sub/util/ArrayUtil'
-import * as BrowserUtil from '../../../sub/util/BrowserUtil'
-import * as StringUtil from '../../../sub/util/StringUtil'
+import { APP } from '../../../sub/constant/config'
+import { LOCATION, BULK } from '../../../sub/constant/Constants'
 import * as Util from '../../../sub/util/Util'
-import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
 import * as ConfigHelper from '../../../sub/helper/dataproc/ConfigHelper'
-import * as HttpHelper from '../../../sub/helper/base/HttpHelper'
+import * as MenuHelper from '../../../sub/helper/dataproc/MenuHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
-import * as StyleHelper from '../../../sub/helper/ui/StyleHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
-import * as VueSelectHelper from '../../../sub/helper/ui/VueSelectHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
-import commonmixin from '../../../components/mixin/commonmixin.vue'
-import showmapmixin from '../../../components/mixin/showmapmixin.vue'
-import alert from '../../../components/parts/alert.vue'
+import reloadmixin from '../../../components/mixin/reloadmixin.vue'
+import mList from '../../../components/page/list.vue'
 
 export default {
   components: {
     breadcrumb,
-    alert,
+    mList, 
   },
-  mixins: [commonmixin, showmapmixin],
+  mixins: [reloadmixin],
   data() {
     return {
-      items: ViewHelper.createBreadCrumbItems('master', 'locationSetting'),
-      vueSelected: {
-        area: null,
+      params: {
+        name: 'location',
+        id: 'locationId',
+        indexPath: '/master/location',
+        editPath: '/master/location/edit',
+        bulkEditPath: '/master/location/bulkedit',
+        appServicePath: '/core/location',
+        csvOut: true,
+        custumCsvColumns: this.getCustumCsvColumns(),
+        fields: this.getFields(),
+        sortBy: 'locationCd',
+        initTotalRows: this.$store.state.app_service.locations.length,
       },
-      message: '',
-      workExbs: [],
-      exbOptions: [],
-      exbDispOptions: [],
-      exbDisp: 'deviceIdX',
-      realWidth: null,
-      selectedExb_: null,
-      pixelWidth: null,
-      mapRatioChanged: false,
-      isChangeArea: false,
-      settingStart: false,
-      isChanged: false,
-      deleteTarget: null,
-      keepExbPosition: false,
-      ICON_FONTSIZE_RATIO: 1.3,
-      mapRatio: null,
-      revTrgCnt: [],
-      lineCnt: null,
-      ICON_ARROW_WIDTH: DISP.EXB_LOC.SIZE.W/3,
-      ICON_ARROW_HEIGHT: DISP.EXB_LOC.SIZE.H/3,
-      DISPLAY_NAME_BYTE_LENGTH: 6,
-      showMapRatio: DISP.SHOW_MAP_RATIO,
-      noImageErrorKey: 'noMapImage',
-      toggleCallBack: () => {
-        this.keepExbPosition = true
-      },
+      items: ViewHelper.createBreadCrumbItems('master', 'locationList'),
     }
   },
   computed: {
     ...mapState('app_service', [
-      'pageSendParam',
+      'locations', 'exbs'
     ]),
   },
-  watch: {
-    'vueSelected.area': {
-      handler: function(newVal, oldVal){
-        this.selectedArea = Util.getValue(newVal, 'value', null)
-      },
-      deep: true,
-    },
-    realWidth: function(newVal, oldVal) {
-      Util.debug({newVal, oldVal})
-      this.onMapImageScale()
-    },
-    pixelWidth: function(newVal, oldVal) {
-      Util.debug({newVal, oldVal})
-      this.onMapImageScale()
-    }
-  },
-  async mounted() {
-    await Promise.all(['area', 'exb'].map(StateHelper.load))
-    const options = []
-    options.push({value: 'locationName', text: this.$i18n.tnl('label.locationName')})
-    if (ConfigHelper.includesDeviceType('deviceIdX')) options.push({value:'deviceIdX', text: this.$i18n.tnl('label.deviceIdX')})
-    if (ConfigHelper.includesDeviceType('deviceId')) options.push({value:'deviceId', text: this.$i18n.tnl('label.deviceId')})
-    this.exbDispOptions = options
-    this.exbDisp = options[0].value
-
-    if(this.pageSendParam){
-      this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions, this.pageSendParam.areaId)
-      this.selectedArea = this.pageSendParam.areaId
-      this.replaceAS({pageSendParam: null})
-    }
-    else{
-      this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions, null, true)
-      this.selectedArea = Util.getValue(this.vueSelected.area, 'value', null)
-    }
-    this.changeArea()
-    await this.fetchData()
-  },
-  beforeDestroy() {
-    this.selectedArea = null
-  },
   methods: {
-    reset() {
-      this.replace({showAlert: false})
-      this.replace({showInfo: false})
-      this.selectedExb_ = null
-      this.pixelWidth = null
-      this.realWidth = null
-      this.mapRatioChanged = false
-      this.settingStart = false
-      this.isChanged = false
-      this.isShownMapImage = false
-      this.isChangeArea = false
-      this.positionedExb = []
-      this.exbOptions = []
-      this.mapRatio = null
-      this.revTrgCnt = []
-      this.lineCnt = null
+    getFields(){
+      return ViewHelper.addLabelByKey(this.$i18n, [ 
+        {key: 'locationCd', label: 'id', sortable: true },
+        {key: 'locationName', sortable: true },
+        {key: 'locationTypeName', label: 'locationType', sortable: true },
+        {key: 'areaName', label:'area', sortable: true },
+        {key: 'x', label:'locationX', sortable: true },
+        {key: 'y', label:'locationY', sortable: true }
+      ].concat(this.createCustomColumn())
+        .concat([ {key: 'actions', thStyle: {width:'130px !important'} } ])
+        .filter(val => val))
+    },
+    createCustomColumn(isDownload){
+      const ret = []
+      APP.LOCATION.WITH.forEach(val => {
+        const column = {key: val, label: val, sortable: true}
+        if(['zone'].includes(val)){
+          if(MenuHelper.isMenuEntry('/master/zoneClass')){
+            ret.push(Object.assign({}, column, {key: 'zoneClass', label: 'zoneClass'}))
+          }
+          if(!isDownload && MenuHelper.isMenuEntry('/master/zoneBlock')){
+            ret.push(Object.assign({}, column, {key: 'zoneBlock', label: 'zoneBlock'}))
+          }
+          return
+        }
+        ret.push(column)
+      })
+      return ret
+    },
+    getCustumCsvColumns(){
+      return ['ID', 'locationName', 'locationTypeName', 'areaName', 'x', 'y', 'txViewType', 'visible']
+        .concat(this.createCustomColumn(true).map(val => val.key))
+        .concat(['deviceId', 'deviceIdX'].filter(val => ConfigHelper.includesDeviceType(val)))
+        .filter(val => val)
+    },
+    customCsvData(val){
+      val.ID = val.locationCd
+      val.locationTypeName = Util.getValue(LOCATION.getTypes().find(v => v.value == val.locationType), 'text', null)
+      val.zoneClass = Util.getValue(val, 'zoneClass', []).join(';')
+      if(Util.hasValue(val.txViewType)){
+        val.txViewType = JSON.stringify(val.txViewType)
+      }
+      const deviceIdList = this.exbs.filter(exb => exb.locationId == val.locationId).map(val => val.deviceId)
+      if(ConfigHelper.includesDeviceType('deviceId')){
+        val.deviceId = deviceIdList.join(BULK.SPLITTER)
+      }
+      if(ConfigHelper.includesDeviceType('deviceIdX')){
+        val.deviceIdX = deviceIdList.map(val => val.toString(16)).join(BULK.SPLITTER)
+      }
     },
     async fetchData(payload) {
       try {
+        this.showProgress()
+        await Promise.all(['location', 'exb'].map(StateHelper.load))
         if (payload && payload.done) {
           payload.done()
         }
-        this.workExbs = _.cloneDeep(this.exbs)
-        this.setExbPosition()
-        this.showMapImage()
       }
       catch(e) {
         console.error(e)
-      }
-    },
-    onMapImageScale() {
-      if (this.pixelWidth && this.realWidth) {
-        this.mapRatio = Math.floor(this.realWidth / this.pixelWidth)
-      }
-      else if (this.selectedArea) {
-        let area = _.find(this.$store.state.app_service.areas, (area) => area.areaId == this.selectedArea)
-        if (area && area.mapRatio) {
-          this.mapRatio = area.mapRatio
-        }
-      }
-    },
-    sortExbOptions() {
-      this.exbOptions = _(this.workExbs).filter((val) => {
-        return val.location.areaId == null || !val.location.x || !val.location.y || (val.location.x && val.location.y <= 0)
-      }).filter(val => {
-        return !this.positionedExb.find(exb => exb.exbId == val.exbId)
-      })
-        .map((val) => {
-          return {
-            label: '' + this.getExbDisp(val.deviceId), 
-            value: val.exbId
-          }
-        })
-        .sort((a, b) => StringUtil.compareStrNum(a.label, b.label)).value()
-    },
-    setExbPosition() {
-      this.positionedExb = _.filter(this.workExbs, (exb) => {
-        return exb.location.areaId == this.selectedArea && exb.location.x && exb.location.y > 0
-      })
-      this.sortExbOptions()
-    },
-    getExbDisp(deviceId) {
-      switch(this.exbDisp) {
-      case 'deviceIdX':
-        return deviceId.toString(16).toUpperCase()
-      case 'deviceId':
-        return deviceId
-      case 'locationName': {
-        const exb = this.exbs.find(val => val.deviceId == deviceId)      
-        return exb? exb.locationName: ''
-      }}
-    },
-    changeExbDisp(newVal) {
-      this.exbDisp = newVal
-      this.sortExbOptions()
-      for (let i=0; this.exbCon && i<this.exbCon.numChildren; i++) {
-        let exbBtn = this.exbCon.getChildAt(i)
-        if (exbBtn) {
-          let text = exbBtn.getChildAt(1)
-          if (text) {
-            text.text = StringUtil.cutOnLongByte(this.getExbDisp(exbBtn.deviceId), this.DISPLAY_NAME_BYTE_LENGTH)
-            text.font = StyleHelper.getInRectFontSize(text.text, DISP.EXB_LOC.SIZE.W / this.canvasScale, DISP.EXB_LOC.SIZE.H / this.canvasScale)
-          }
-        }
-      }
-      this.stage.update()
-    },
-    showMapImage() {
-      this.showMapImageDef(() => {
-        if (this.exbCon) {
-          this.exbCon.removeAllChildren()
-        }
-        else {
-          this.exbCon = new Container()
-        }
-
-        this.positionedExb.forEach((exb) => {
-          if (!this.keepExbPosition) {
-            exb.x = exb.location.x
-            exb.y = exb.location.y
-          }
-          this.showExb(exb)
-        })
-        this.keepExbPosition = false
-
-        this.stage.addChild(this.exbCon)
-        this.stage.update()
-      })
-    },
-    createExbIcon(exb) {
-      const w = DISP.EXB_LOC.SIZE.W / this.canvasScale
-      const h = DISP.EXB_LOC.SIZE.H / this.canvasScale
-      const fromX = -w / 2
-      const fromY = -h / 2
-      const x = w + fromX
-      const y = h + fromY
-      const exbBtn = new Container()
-      const s = new Shape()
-      const iconArrowWidth = this.ICON_ARROW_WIDTH / this.canvasScale
-      const iconArrowHeight = this.ICON_ARROW_HEIGHT / this.canvasScale
-      s.graphics.beginFill(DISP.EXB_LOC.BGCOLOR)
-      s.graphics.moveTo(fromX, fromY)
-      s.graphics.lineTo(x, fromY)
-      s.graphics.lineTo(x, y)
-      s.graphics.lineTo(x - iconArrowWidth, y)
-      s.graphics.lineTo(x - iconArrowWidth - iconArrowWidth / 2, y + iconArrowHeight)
-      s.graphics.lineTo(x - iconArrowWidth - iconArrowWidth, y)
-      s.graphics.lineTo(fromX, y)
-      s.graphics.lineTo(fromX, fromY)
-      exbBtn.addChild(s)
-      const text = StringUtil.cutOnLongByte(this.getExbDisp(exb.deviceId), this.DISPLAY_NAME_BYTE_LENGTH)
-      const label = new Text(text)
-      label.font = StyleHelper.getInRectFontSize(text, w, h)
-      label.color = DISP.EXB_LOC.COLOR
-      label.textAlign = 'center'
-      label.textBaseline = 'middle'
-      exbBtn.addChild(label)
-      exbBtn.deviceId = exb.deviceId
-      exbBtn.exbId = exb.exbId
-      exbBtn.x = exb.x
-      exbBtn.y = exb.y - (h / 2 + iconArrowHeight)
-      return exbBtn
-    },
-    showExb(exb) {
-      let stage = this.stage
-      const offsetY = (DISP.EXB_LOC.SIZE.H / 2 + this.ICON_ARROW_HEIGHT) / this.canvasScale
-      const exbBtn = this.createExbIcon(exb)
-      exbBtn.on('pressmove', (evt) => {
-        exb.delEvent = false
-        evt.currentTarget.set({
-          x: evt.stageX,
-          y: evt.stageY
-        })
-        stage.update()
-      })
-
-      exbBtn.on('pressup', (evt) => {
-        exb.x = evt.stageX
-        exb.y = evt.stageY + offsetY
-        this.isChanged = true
-        exb.isChanged = true
-      })
-
-      exbBtn.on('dblclick', (evt) => {
-        this.deleteTarget = exbBtn
-        this.showDeletConfirm()
-      })
-      if(BrowserUtil.isAndroidOrIOS()){
-        exbBtn.on('mousedown', (evt) => {
-          exb.delEvent = true
-        })
-
-        exbBtn.addEventListener('click', (evt) => {
-          if(exb.delEvent){
-            this.deleteTarget = exbBtn
-            this.showDeletConfirm()
-          }
-        })
-      }
-      this.exbCon.addChild(exbBtn)
-    },
-    showDeletConfirm(){
-      this.$root.$emit('bv::show::modal', 'modalDeleteConfirm')
-    },
-    ratioSettingStart() {
-      this.settingStart = !this.settingStart
-      if (!this.settingStart) {
-        return
-      }
-      this.clearPrevious()
-      this.$root.$emit('bv::show::modal', 'modalInfo')
-
-      let messureCount = 0
-      let start
-      let stage = this.stage
-      this.stage.addEventListener('stagemousedown', (evt) => {
-        if (messureCount == 2) {
-          return
-        }
-        let current = {x:evt.stageX, y:evt.stageY}
-        let revTrgCnt = this.createTriangle(messureCount, current) 
-        stage.addChild(revTrgCnt)
-        this.revTrgCnt[messureCount] = revTrgCnt
-        if (messureCount == 0) {
-          start = current
-        }
-        else {
-          let line = new Shape()
-          line.graphics.beginStroke('#ff2244')
-          line.graphics.setStrokeStyle(1)
-          line.graphics.moveTo(start.x, start.y)
-          line.graphics.lineTo(current.x, current.y)
-          this.lineCnt = new Container()
-          this.lineCnt.addChild(line)
-          stage.addChild(this.lineCnt)
-          this.pixelWidth = Math.floor(Math.sqrt(Math.pow(current.x-start.x, 2) + Math.pow(current.y-start.y, 2)))
-          this.mapRatioChanged = true
-          this.isChanged = true
-        }
-        messureCount++
-
-        stage.update()
-      })
-    },
-    clearPrevious() {
-      if (this.revTrgCnt[0]) {
-        this.revTrgCnt[0].removeAllChildren()
-      }
-      if (this.revTrgCnt[1]) {
-        this.revTrgCnt[1].removeAllChildren()
-      }
-      if (this.lineCnt) {
-        this.lineCnt.removeAllChildren()
-      }
-      this.stage.update()
-    },
-    createTriangle(messureCount, current) {
-      let revTrgCnt = new Container()
-      let revTrg = new Shape()
-      let color = messureCount == 0? '#2299cc': '#ee0033'
-      revTrg.graphics.beginFill(color).drawPolyStar(0, -20, 20, 3, 0, 90)
-
-      let label = new Text(messureCount == 0? 'start': 'end')
-      label.font = '16px Arial'
-      label.color = '#000'
-      label.textAlign = 'center'
-      label.textBaseline = 'middle'
-      label.y = -40
-
-      revTrgCnt.x = current.x
-      revTrgCnt.y = current.y
-      revTrgCnt.addChild(label)
-      revTrgCnt.addChild(revTrg)
-
-      return revTrgCnt
-    },
-    changeArea() {
-      this.tempMapFitMobile = DISP.MAP_FIT_MOBILE
-      if (this.isChanged) {
-        this.$root.$emit('bv::show::modal', 'modalWarn')
-      }
-      else {
-        this.isChangeArea = true
-        this.changeAreaDone()
-      }
-    },
-    async changeAreaDone() {
-      if (this.isChangeArea) {
-        this.isChangeArea = false
-        if (this.selectedArea) {
-          await StateHelper.loadAreaImage(this.selectedArea)
-          this.reset()
-          this.workExbs = _.cloneDeep(this.exbs)
-          this.setExbPosition()
-          this.showMapImage()
-        }
-      }
-      else {
-        this.selectedArea = this.oldSelectedArea
-      }
-    },
-    setChangeArea() {
-      this.isChangeArea = true
-    },
-    showExbOnMap(val, x = 50, y = 40) {
-      if (!val || val.value == null) {
-        return
-      }
-      let exb = _(this.workExbs).find((exb) => exb.exbId == val.value)
-      if (!exb) return
-
-      let loc = exb.location
-      if (loc.x <= 0) {
-        loc.x = x
-      }
-      if (loc.y <= 0) {
-        loc.y = y
-      }
-      exb.x = loc.x
-      exb.y = loc.y
-      exb.isChanged = true
-      this.isChanged = true
-      this.positionedExb.push(exb)
-      this.exbOptions = this.exbOptions.filter((val) => val.value != exb.exbId)
-      this.showExb(exb)
-      this.stage.update()
-    },
-    bulkAdd() {
-      let counter = 0
-      let y = 40
-      const mapMaxPosX = this.mapWidth
-      this.exbOptions.forEach((val) => {
-        let x = 30 + counter++ * 60
-        if (x > mapMaxPosX) {
-          x = 30
-          counter = 1
-          y += 20
-        }
-        this.showExbOnMap(val, x, y)
-      })
-    },
-    deleteExbDone(evt) {
-      let exb = this.positionedExb.find((exb) => exb.deviceId == this.deleteTarget.deviceId)
-      if (exb && exb.location) {
-        exb.location.x = exb.location.y = null
-        exb.x = exb.y = null
-      }
-      this.positionedExb = this.positionedExb.filter((exb) => exb.deviceId != this.deleteTarget.deviceId)
-      this.exbOptions.push({label: '' + this.getExbDisp(this.deleteTarget.deviceId), value: this.deleteTarget.exbId})
-      this.sortExbOptions()
-      this.exbCon.removeChild(this.deleteTarget)
-      this.stage.update()
-    },
-    createErrorMessage(e){
-      if (e.key) {
-        return this.$i18n.tnl('message.' + e.type, {key: this.$i18n.tnl('label.' + StringUtil.snake2camel(e.key)), val: e.val})
-      }
-      return this.$i18n.tnl('message.failed', {target: this.$i18n.tnl('label.save'), code: e.message})
-    },
-    pushPositionedLocation(param){
-      this.positionedExb.forEach((exb) => {
-        if (exb.isChanged) {
-          exb.location = {locationId: exb.location.locationId, areaId: this.selectedArea, x: Math.round(exb.x), y: Math.round(exb.y)}
-          param.push(exb.location)
-          exb.isChanged = false
-        }
-      })
-    },
-    pushWorkLocation(param){
-      this.workExbs.forEach((exb) => { // deleted
-        if (exb.location.areaId == this.selectedArea) {
-          if (!this.positionedExb.find((pExb) => pExb.exbId == exb.exbId)) {
-            exb.location = {locationId: exb.location.locationId, areaId: null, x: null, y: null}
-            exb.isChanged = false
-            param.push(exb.location)
-          }
-        }
-      })
-    },
-    async save() {
-      this.showProgress()
-      this.message = ''
-      this.replace({showAlert: false})
-      this.replace({showInfo: false})
-      try {
-        const param = []
-        this.pushPositionedLocation(param)
-        this.pushWorkLocation(param)
-
-        if (param.length > 0) {
-          await HttpHelper.postAppService('/core/location/updateLocation', param)
-          await StateHelper.load('exb', true)
-        }
-
-        if (this.mapRatioChanged && this.mapRatio != null) {
-          await AppServiceHelper.save('/core/area', {areaId: this.selectedArea, mapRatio: this.mapRatio}, UPDATE_ONLY_NN.EMPTY_ZERO)
-          await StateHelper.load('area', true)
-        }
-        this.message = this.$i18n.tnl('message.completed', {target: this.$i18n.tnl('label.save')})
-        this.replace({showInfo: true})
-        this.isChanged = false
-      } catch (e) {
-        console.error(e)
-        this.message = this.createErrorMessage(e)
-        this.replace({showAlert: true})
-        window.scrollTo(0, 0)
       }
       this.hideProgress()
     },
@@ -583,44 +116,5 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import "../../../sub/constant/config.scss";
-@import "../../../sub/constant/browser.scss";
-@import "../../../sub/constant/vue.scss";
 
-@media screen and (max-width: 1050px) {
-  .w-le-sm-100 {
-    width: 100% !important;
-  }
-}
-
-.pos {
-  border: 1px #ddd solid;
-  border-radius: 1.0vmin;
-  background-color: #76ccf7;
-  justify-content: center;
-  text-align: center;
-  cursor: pointer;
-}
-
-.vdr.active:before {
-  content: none;
-}
-
-@media screen and (max-width: 575px) {
-  .mt-mobile {margin-top:5px;}
-  .mt-mobile-button {margin-bottom:4px;}
-}
-
-.ratioInput {
-  width: 75px;
-}
-
-.blink {
-  animation: blink 0.8s infinite alternate;
-}
-
-@keyframes blink {
-  from { background-color: white; }
-  to { background-color: #ffc107; }
-}
 </style>

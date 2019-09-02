@@ -19,6 +19,7 @@ export default {
       'zones',
       'categories',
       'groups',
+      'locations',
     ]),
     ...mapState([
       'showAlert',

@@ -13,6 +13,8 @@ export const state = () => ({
   area: {},
   exbs: [],
   exb: {},
+  locations: [],
+  location: {},
   txs: [],
   tx: {},
   categories: [],

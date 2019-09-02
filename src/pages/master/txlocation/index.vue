@@ -379,6 +379,7 @@ export default {
     setLocation(tx, param, reset) {
       if (!tx.location.locationId) {
         tx.location.locationId = tx.btxId * -1
+        tx.location.locationCd = tx.btxId * -1
         tx.location.posId = tx.btxId * -1
         tx.location.locationName = Util.getValue(tx, 'location.locationName', SensorHelper.createTxLocationDummyName(tx))
       }

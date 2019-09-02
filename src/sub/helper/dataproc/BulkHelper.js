@@ -123,7 +123,7 @@ export const setStringKey = (entity, headerName, val, regExp = null, nullable = 
     return nullable? entity: addInvalid(entity, headerName, val)
   }
   entity[headerName] = val
-  return regExp && !regExp.test(val)? addInvalid(entity, headerName): entity
+  return regExp && !regExp.test(val)? addInvalid(entity, headerName, val): entity
 }
 
 /**
@@ -254,7 +254,7 @@ export const getBulkErrorMessage = (e, name, showLine) => {
       return i18n.tline('message.bulk' + err.type + 'Failed', {
         line: err.line,
         col: i18n.tnl(`label.${getErrorColumnName(name, col)}`),
-        value: Util.hasValue(err.value)? StringUtil.sanitize(err.value): err.value,
+        value: Util.hasValue(err.value)? StringUtil.sanitize(err.value, true): err.value,
         min: err.min,
         max: err.max,
         candidates: err.candidates,
@@ -506,6 +506,7 @@ export const createParamSensor = (masterType, sensorNames, dummyKey) => {
 export const createParamLocation = (entity, dummyKey) => {
   const ret = {}
   Util.setValue(ret, 'locationId', dummyKey--)
+  Util.setValue(ret, 'locationCd', entity.locationCd)
   Util.setValue(ret, 'areaName', entity.areaName)
   Util.setValue(ret, 'locationName', entity.locationName)
   Util.setValue(ret, 'visible', entity.visible)

@@ -137,7 +137,7 @@ export default {
         return dummyKey
       }
       const param = BulkHelper.createParamLocation(
-        {...entity, posId: entity.btxId * -1, locationName: Util.hasValue(entity.locationName)? entity.locationName: SensorHelper.createTxLocationDummyName(entity)},
+        {...entity, posId: entity.btxId * -1, locationCd: entity.btxId * -1, locationName: Util.hasValue(entity.locationName)? entity.locationName: SensorHelper.createTxLocationDummyName(entity)},
         dummyKey
       )
       entity.location = param.location
