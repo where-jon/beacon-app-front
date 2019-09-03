@@ -152,9 +152,9 @@ export const getSensorOptions = (entity, isBlank) => {
 export const getLocationDispOptions = () => {
   return [
     { text: i18n.tnl('label.locationName'), value: 'locationName' },
-    { text: i18n.tnl('label.locationCd'), value: 'locationCd' },
-    ConfigHelper.includesDeviceType('deviceId')? { text: i18n.tnl('label.deviceId'), value: 'deviceId' }: null,
-    ConfigHelper.includesDeviceType('deviceIdX')? { text: i18n.tnl('label.deviceIdX'), value: 'deviceIdX' }: null,
+    { text: i18n.tnl('label.locationCdComp'), value: 'locationCd' },
+    ConfigHelper.includesDeviceType('deviceId')? { text: i18n.tnl('label.EXBeacon'), value: 'deviceId' }: null,
+    ConfigHelper.includesDeviceType('deviceIdX')? { text: i18n.tnl('label.EXBeaconX'), value: 'deviceIdX' }: null,
   ].filter(val => val)
 }
 
@@ -171,7 +171,7 @@ export const getLocationOptions = (workLocationList, column) => {
     {value: '', text: i18n.tnl('label.emptyLocation'), label: i18n.tnl('label.emptyLocation')},
     location => {
       const target = workLocationList.find(val => val.locationId == location.locationId)
-      return target? !Util.hasValue(target.areaId): false
+      return target? !Util.hasValue(target.areaId) || !Util.hasValue(target.x) || !Util.hasValue(target.y): false
     }
   )
 }

@@ -12,6 +12,7 @@ import { LOCATION, BULK } from '../../../sub/constant/Constants'
 import * as Util from '../../../sub/util/Util'
 import * as ConfigHelper from '../../../sub/helper/dataproc/ConfigHelper'
 import * as MenuHelper from '../../../sub/helper/dataproc/MenuHelper'
+import * as OptionHelper from '../../../sub/helper/dataproc/OptionHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
@@ -48,11 +49,14 @@ export default {
     ]),
   },
   methods: {
+    isShowLocationType(){
+      return 0 < APP.LOCATION.TYPE.WITH.length
+    },
     getFields(){
       return ViewHelper.addLabelByKey(this.$i18n, [ 
         {key: 'locationCd', label: 'id', sortable: true },
         {key: 'locationName', sortable: true },
-        {key: 'locationTypeName', label: 'locationType', sortable: true },
+        this.isShowLocationType()? {key: 'locationTypeName', label: 'locationType', sortable: true }: null,
         {key: 'areaName', label:'area', sortable: true },
         {key: 'x', label:'locationX', sortable: true },
         {key: 'y', label:'locationY', sortable: true }
@@ -78,14 +82,14 @@ export default {
       return ret
     },
     getCustumCsvColumns(){
-      return ['ID', 'locationName', 'locationTypeName', 'areaName', 'x', 'y', 'txViewType', 'visible']
+      return ['ID', 'locationName', this.isShowLocationType()? 'locationTypeName': null, 'areaName', 'x', 'y', 'txViewType', 'visible']
         .concat(this.createCustomColumn(true).map(val => val.key))
         .concat(['deviceId', 'deviceIdX'].filter(val => ConfigHelper.includesDeviceType(val)))
         .filter(val => val)
     },
     customCsvData(val){
       val.ID = val.locationCd
-      val.locationTypeName = Util.getValue(LOCATION.getTypes().find(v => v.value == val.locationType), 'text', null)
+      val.locationTypeName = Util.getValue(OptionHelper.getLocationTypeOptions().find(v => v.value == val.locationType), 'text', null)
       val.zoneClass = Util.getValue(val, 'zoneClass', []).join(';')
       if(Util.hasValue(val.txViewType)){
         val.txViewType = JSON.stringify(val.txViewType)

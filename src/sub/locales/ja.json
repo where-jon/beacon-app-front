@@ -89,8 +89,8 @@
     "area": "エリア",
     "exb": "EXBeacon",
     "location": "配置場所",
-    "locationSetting": "場所配置設定",
-    "locationList": "場所設定",
+    "locationSetting": "場所定義",
+    "locationList": "場所一覧",
     "develop": "開発用",
     "env": "環境変数",
     "detectedProhibitZone": "進入検知",
@@ -123,6 +123,7 @@
 
     "locationId": "位置ID",
     "locationCd": "ID",
+    "locationCdComp": "場所ID",
     "locationName": "場所名",
     "locationX": "X座標",
     "locationY": "Y座標",
@@ -134,7 +135,7 @@
     "storage": "保管",
     "selectLocationDisp": "種類選択",
     "selectLocationPlace": "場所選択",
-    "emptyLocation": "空の場所",
+    "emptyLocation": "新規の場所",
     "initLocation": "場所",
     "txViewType": "Tx表示形式",
     "txIconColumns": "横",
@@ -564,6 +565,7 @@
     "Core": "コア",
     "Zone": "ゾーン",
     "EXBeacon": "EXB",
+    "EXBeaconX": "EXB(16進)",
     "ExCloud": "ExCloud",
     "Area": "エリア",
     "Location": "EXB配置位置",
@@ -741,7 +743,7 @@
       "LOCATION": {
         "WITH": "場所配置画面で使用する項目::場所配置画面で使用する項目を設定します。設定可能な値は次の通りです。★{LOCATION}",
         "TYPE": {
-          "WITH": "場所の種類::場所の種類を設定します。設定可能な値は次の通りです。{LOCATION_TYPE}"
+          "WITH": "場所タイプの選択肢::場所タイプの選択肢を設定します。「1:work,2:storage」のように、数値と文字列をコロン区切りで設定してください。設定値に関する説明は次の通りです。{LOCATION_TYPE}"
         }
       },
       "USER": {
@@ -1284,7 +1286,7 @@
         "zone": "zone::ゾーン名"
       },
       "LOCATION_TYPE": {
-        "number": "数値::設定値",
+        "number": "数値::DBに登録される値",
         "string": "文字列::表示文字列のキー"
       },
       "USER": {

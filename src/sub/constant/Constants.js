@@ -229,18 +229,6 @@ export const SHAPE = {
     ]}
 }
 
-export const LOCATION = {
-  getTypes(){
-    return [
-      { value: 0, text: '', param: ''},
-      { value: 1, text: i18n.tnl('label.work'), param: 'work' },
-      { value: 2, text: i18n.tnl('label.wip'), param: 'wip' },
-      { value: 3, text: i18n.tnl('label.qa'), param: 'qa' },
-      { value: 4, text: i18n.tnl('label.storage'), param: 'storage' },
-    ]
-  }
-}
-
 export const ZONE = {
   COORDINATE: 0,
   NON_COORDINATE: 1,
@@ -657,18 +645,18 @@ export const MENU = [
         icon: 'tags',
       },
       {
-        key: 'locationList',
-        path: 'location',
-        icon: 'location-arrow',
-      },
-      {
         key: 'locationSetting',
         path: 'location/position',
         icon: 'map',
       },
       {
+        key: 'locationList',
+        path: 'location',
+        icon: 'location-arrow',
+      },
+      {
         key: 'txLocationSetting',
-        path: 'txlocation',
+        path: 'txlocation/position',
         icon: 'map-pin',
       },
       {

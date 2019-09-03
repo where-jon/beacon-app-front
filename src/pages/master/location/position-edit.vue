@@ -99,6 +99,7 @@ export default {
       return !Util.hasValue(this.messageList)
     },
     setParam(location, vLocationList, vExbList){
+      this.messageList = []
       this.validationParam.locationList = vLocationList
       this.validationParam.exbList = vExbList
       this.form.locationId = location.locationId
@@ -117,10 +118,10 @@ export default {
         }
       })
       if(locCdMap[this.form.locationCd]){
-        this.messageList.push(this.$i18n.tnl('message.bulkUniqueFailed', { col: this.$i18n.tnl('locationCd'), value: this.form.locationCd }))
+        this.messageList.push(this.$i18n.tnl('message.bulkUniqueFailed', { col: this.$i18n.tnl('label.locationCd'), value: this.form.locationCd }))
       }
       if(locNameMap[this.form.locationName]){
-        this.messageList.push(this.$i18n.tnl('message.bulkUniqueFailed', { col: this.$i18n.tnl('locationName'), value: this.form.locationName }))
+        this.messageList.push(this.$i18n.tnl('message.bulkUniqueFailed', { col: this.$i18n.tnl('label.locationName'), value: this.form.locationName }))
       }
       return this.successUpdate()
     },
