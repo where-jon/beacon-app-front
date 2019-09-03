@@ -67,7 +67,7 @@
     <div class="mt-3">
       <canvas id="map" ref="map" @click="closeVueSelect" />
     </div>
-    <b-modal id="modalEdit" size="lg" hide-footer @update="onUpdate" @delete="onDelete">
+    <b-modal id="modalEdit" :title="$t('label.masterLocation')" size="lg" hide-footer @update="onUpdate" @delete="onDelete">
       <location-edit ref="locationEdit" />
     </b-modal>
     <b-modal id="modalInfo" :title="$t('label.mapRatioSetting')" ok-only>
@@ -80,6 +80,7 @@
       {{ $t('message.deleteConfirm', { target: form.location? form.location.locationName: null }) }}
     </b-modal>
 
+    <tool-tip id="toolTip" :tool-tip-show="toolTipShow" :tool-tip-label="toolTipLabel" :tool-tip-style="toolTipStyle" />
   </div>
 </template>
 
@@ -105,12 +106,14 @@ import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import commonmixin from '../../../components/mixin/commonmixin.vue'
 import showmapmixin from '../../../components/mixin/showmapmixin.vue'
 import alert from '../../../components/parts/alert.vue'
+import ToolTip from '../../../components/parts/toolTip.vue'
 import locationEdit from './position-edit.vue'
 
 export default {
   components: {
     breadcrumb,
     alert,
+    ToolTip,
     locationEdit,
   },
   mixins: [commonmixin, showmapmixin],
@@ -151,6 +154,18 @@ export default {
       DISPLAY_NAME_BYTE_LENGTH: 6,
       showMapRatio: DISP.SHOW_MAP_RATIO,
       noImageErrorKey: 'noMapImage',
+
+      toolTipShow: false,
+      toolTipLabel: '',
+      toolTipStyle: {
+        'left': null,
+        'top': null,
+        'border-color': DISP.THERMOH.TOOLTIP_BORDERCOLOR,
+        'border-radius': '' + DISP.THERMOH.TOOLTIP_ROUNDRECT + 'px',
+        'font': DISP.THERMOH.TOOLTIP_FONT,
+        'background-color': DISP.THERMOH.TOOLTIP_BGCOLOR,
+        'color': DISP.THERMOH.TOOLTIP_COLOR,
+      },
     }
   },
   computed: {
@@ -273,8 +288,8 @@ export default {
         const exbList = locationMap[location.locationId]? locationMap[location.locationId]: []
         const exbNum = exbList.length
         location.exbList = exbList
-        location.deviceId = Util.getValue(exbList, '0.deviceId', '') + (1 < exbNum? ';': '')
-        location.deviceIdX = Util.getValue(exbList, '0.deviceIdX', '') + (1 < exbNum? ';': '')
+        location.deviceId = Util.getValue(exbList, '0.deviceId', '') + (1 < exbNum? '+': '')
+        location.deviceIdX = Util.getValue(exbList, '0.deviceIdX', '') + (1 < exbNum? '+': '')
       })
       this.changeLocationDisp(this.form.locationDisp)
     },
@@ -301,6 +316,7 @@ export default {
         this.getPositionedLocationList().forEach(location => this.showLocation(location))
         this.stage.addChild(this.locationCon)
         this.stage.update()
+        this.stage.enableMouseOver()
       })
     },
     onMapImageScale() {
@@ -367,6 +383,9 @@ export default {
           }
         })
       }
+      locationButton.on('mouseover', evt => this.createTooltip(evt, evt.target.parent))
+      locationButton.on('mouseout', evt => this.removeTooltip())
+
       this.locationCon.addChild(locationButton)
     },
     createEmptyLocation(x, y){
@@ -600,6 +619,38 @@ export default {
         window.scrollTo(0, 0)
       }
       this.hideProgress()
+    },
+    removeTooltip() {
+      this.toolTipShow = false
+      this.toolTipStyle.left = null
+      this.toolTipStyle.top = null
+    },
+    createTooltipInfo(nativeEvent, container){
+      const location = container.location
+      const pageElement = document.getElementById('bd-page')
+      const keyObj = ConfigHelper.includesDeviceType('deviceId')? { labelKey: 'EXBeacon', valKey: 'deviceId' }: { labelKey: 'EXBeaconX', valKey: 'deviceIdX' }
+      return {
+        fontSize: StyleHelper.getFont2Size(DISP.THERMOH.TOOLTIP_FONT),
+        locationCdLabel: this.$i18n.tnl('label.locationCdComp') + ':' + location.locationCd,
+        locationNameLabel: this.$i18n.tnl('label.locationName') + ':' + location.locationName,
+        deviceIdLabel: this.$i18n.tnl('label.' + keyObj.labelKey) + ':' + location.exbList.map(exb => exb[keyObj.valKey]).join(', '),
+        baseX: window.pageXOffset + nativeEvent.clientX - Util.getValue(pageElement, 'offsetLeft', 0),
+        baseY: window.pageYOffset + nativeEvent.clientY - Util.getValue(pageElement, 'offsetTop', 0),
+        isDispRight: container.x * 2 <= this.stage.canvas.width,
+      }
+    },
+    createTooltip(event, container) {
+      const tooltipInfo = this.createTooltipInfo(event.nativeEvent, container)
+
+      this.toolTipLabel = [tooltipInfo.locationCdLabel, tooltipInfo.locationNameLabel, tooltipInfo.deviceIdLabel].filter(val => val)
+      this.toolTipShow = true
+      this.$nextTick(() => {
+        const toolTipElement = document.getElementById('toolTipComponent')
+        const left = tooltipInfo.baseX + (tooltipInfo.isDispRight? 8: -1 * Util.getValue(toolTipElement, 'clientWidth', 0) - 4)
+        const top = tooltipInfo.baseY - Util.getValue(toolTipElement, 'clientHeight', 0) - 4
+        this.toolTipStyle.left = '' + left + 'px'
+        this.toolTipStyle.top = '' + top + 'px'
+      })
     },
   }
 }

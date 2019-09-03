@@ -110,7 +110,7 @@ export const APP = { // 機能面に関する設定
   LOCATION: {
     WITH: ['posId', 'zone'],
     TYPE: {
-      WITH: ['1:work', '2:wip', '3:qa', '4:storage'],
+      WITH: [],
     },
   },
   // USER関連設定

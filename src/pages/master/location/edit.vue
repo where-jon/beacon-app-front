@@ -16,9 +16,9 @@
               <label v-t="'label.locationName'" />
               <input v-model="form.locationName" :readonly="!isEditable" type="text" maxlength="40" class="form-control" required>
             </b-form-group>
-            <b-form-group>
+            <b-form-group v-if="showLocationTypeOptions">
               <label v-t="'label.locationType'" />
-              <b-form-select v-model="form.locationType" :options="locationTypeOptions" :disabled="!isEditable" :readonly="!isEditable" required />
+              <b-form-select v-model="form.locationType" :options="locationTypeOptions" :disabled="!isEditable" :readonly="!isEditable" :required="showLocationTypeOptions" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.area'" />
@@ -135,6 +135,9 @@ export default {
   computed: {
     areaOptions() {
       return StateHelper.getOptionsFromState('area', false, true)
+    },
+    showLocationTypeOptions(){
+      return 0 < APP.LOCATION.TYPE.WITH.length
     },
     locationTypeOptions(){
       return OptionHelper.getLocationTypeOptions()
