@@ -39,7 +39,7 @@ export default {
           {key: 'dispCategoryName', label: 'categoryName', sortable: true},
           {key: 'actions', thStyle: {width:'130px !important'} }
         ]),
-        sortBy: 'zoneName',
+        sortBy: 'zoneCd',
         initTotalRows: this.zoneLength
       },
       items: ViewHelper.createBreadCrumbItems('master', 'zoneClass'),
