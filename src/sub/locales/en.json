@@ -655,6 +655,7 @@
         "WITH_POWER_LEVEL": "Use battery level in EXB status monitoring screen::Display battery level in EXB status monitoring screen.★"
       },
        "MAIL": {
+          "TYPE": "TYPE for mail setting",
           "ID": "ID for mail setting",
           "PASSWORD": "PASSWORD for email settings",
           "SMTP_HOST": "Mail setting HOST",
@@ -954,6 +955,7 @@
     "TYPE": {
       "APP": {
        "MAIL": {
+          "TYPE": "string",
           "ID": "string",
           "PASSWORD": "string",
           "SMTP_HOST": "string",
@@ -1097,6 +1099,7 @@
     "DEFAULT": {
       "APP": {
         "MAIL": {
+          "TYPE": "type",
           "ID": "id",
           "PASSWORD": "password",
           "SMTP_HOST": "host",

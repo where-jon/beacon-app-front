@@ -655,6 +655,7 @@
         "WITH_POWER_LEVEL": "EXB状態監視画面で電池レベルを使用する::EXB状態監視画面で電池レベルを表示します。★"
       },
       "MAIL": {
+        "TYPE": "メール設定用TYPE",
         "ID": "メール設定用ID",
         "PASSWORD": "メール設定用PASSWORD",
         "SMTP_HOST": "メール設定用HOST",
@@ -955,6 +956,7 @@
     "TYPE": {
       "APP": {
         "MAIL": {
+          "TYPE": "string",
           "ID": "string",
           "PASSWORD": "string",
           "SMTP_HOST": "string",
@@ -1098,6 +1100,7 @@
     "DEFAULT": {
       "APP": {
         "MAIL": {
+          "TYPE": "type",
           "ID": "id",
           "PASSWORD": "password",
           "SMTP_HOST": "host",
