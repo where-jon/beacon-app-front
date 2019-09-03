@@ -191,6 +191,7 @@
     "Empty": "空",
 
     "zoneId": "ゾーンID",
+    "zoneCd": "ID",
     "zoneName": "ゾーン名",
     "zoneType": "ゾーンタイプ",
 

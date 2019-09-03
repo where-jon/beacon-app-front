@@ -19,6 +19,10 @@
           </span>
         </b-form-row>
         <b-form-row class="ml-2 mb-2">
+          <label v-t="'label.id'" class="control-label mr-2" />
+          <input v-model="zoneCd" type="text" maxlength="20" :disabled="!isEnableNameText" class="mt-2 mr-2 form-control" :pattern="cdPattern" required>
+        </b-form-row>
+        <b-form-row class="ml-2 mb-2">
           <label v-t="'label.zoneName'" class="control-label mr-2" />
           <input v-model="zoneName" type="text" maxlength="20" :disabled="!isEnableNameText" class="mt-2 mr-2 form-control" required>
         </b-form-row>
@@ -43,7 +47,7 @@
         </b-form-row>
       </b-form>
     </b-row>
-    <ZoneCanvas :area-id="areaId" :zone-name="zoneName" :category-id="categoryId" :is-regist="isRegist" :is-complete-regist="isCompleteRegist" :is-delete="isDelete" :auth="{regist: isRegistable, update: isUpdatable, delete: isDeleteable}"
+    <ZoneCanvas :area-id="areaId" :zone-cd="zoneCd" :zone-name="zoneName" :category-id="categoryId" :is-regist="isRegist" :is-complete-regist="isCompleteRegist" :is-delete="isDelete" :auth="{regist: isRegistable, update: isUpdatable, delete: isDeleteable}"
                 @regist="doRegist"
                 @selected="onSelected"
                 @unselected="unSelected"
@@ -61,7 +65,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import { CATEGORY } from '../../../sub/constant/Constants'
+import { CATEGORY, PATTERN } from '../../../sub/constant/Constants'
 import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
@@ -90,7 +94,7 @@ export default {
       appServicePath: '/core/zone',
       zoneClassPath: '/master/zoneClass',
       items: ViewHelper.createBreadCrumbItems('master', 'zoneBlock'),
-      form: Util.extract(this.$store.state.app_service.zone, ['zoneId', 'zoneName', 'areaId', 'locationZoneList.0.locationZonePK.locationId', 'zoneCategoryList.0.zoneCategoryPK.categoryId']),
+      form: Util.extract(this.$store.state.app_service.zone, ['zoneId', 'zoneCd', 'zoneName', 'areaId', 'locationZoneList.0.locationZonePK.locationId', 'zoneCategoryList.0.zoneCategoryPK.categoryId']),
       vueSelected: {
         area: null,
       },
@@ -100,6 +104,7 @@ export default {
       categoryId: null,
       deletedIds: [],
       isEnableNameText: false,
+      zoneCd: null,
       zoneName: null,
       isRegist: false,
       isDelete: false,
@@ -108,6 +113,7 @@ export default {
         name: '',
         categoryId: -1,
       },
+      cdPattern: PATTERN.MASTER_CD,
     }
   },
   computed: {
@@ -174,12 +180,14 @@ export default {
       this.replace({showAlert: false})
       this.id = zoneData.id
       this.zoneName = zoneData.name
+      this.zoneCd = zoneData.cd
       this.vueSelected.category = VueSelectHelper.getVueSelectData(this.categoryNames, zoneData.categoryId)
       this.isEnableNameText = true
     },
     unSelected () {
       this.isEnableNameText = false
       this.zoneName = ''
+      this.zoneCd = ''
     },
     onDeleted (id) {
       if (id > -1) {
