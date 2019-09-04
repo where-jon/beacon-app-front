@@ -283,16 +283,15 @@ export const checkSession = () => {
  * @return {String}
  */
 export const getTenantCd = (def, providerOk) => { // xxx.saas.ドメインの場合、先頭がtenantCdとなる。
-  // let tenantCd
-  // if (location.host.includes(APP.SAAS_DOMAIN)) {
-  //   tenantCd = location.host.split('.')[0]
-  // }
-  // if (!providerOk && tenantCd == 'provider') {
-  //   const login = LocalStorageHelper.getLogin()
-  //   tenantCd = Util.getValue(login, 'currentTenant.tenantCd', null)
-  // }
-  // return tenantCd || def
-  return "provider"
+  let tenantCd
+  if (location.host.includes(APP.SAAS_DOMAIN)) {
+    tenantCd = location.host.split('.')[0]
+  }
+  if (!providerOk && tenantCd == 'provider') {
+    const login = LocalStorageHelper.getLogin()
+    tenantCd = Util.getValue(login, 'currentTenant.tenantCd', null)
+  }
+  return tenantCd || def
 }
 
 /**
