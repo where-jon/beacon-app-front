@@ -51,8 +51,10 @@ export const PATTERN = {
   NUMBER: '^-?[0-9]+[.]?[0-9]*$',
   NUMBER_LIST: '^(-?[0-9]+[.]?[0-9]*)+(,-?[0-9]+[.]?[0-9]*)*$',
   MASTER_CD: '^[a-zA-Z0-9_\\-\\.]*$',
+  LOCATION_CD: '^[a-zA-Z0-9_\\-]*$',
   REGEXP: {
     MASTER_CD: /^[a-zA-Z0-9_\-.]*$/,
+    LOCATION_CD: /^[a-zA-Z0-9_\\-]*$/,
   },
 }
 
@@ -61,9 +63,10 @@ export const BULK = {
   SPLITTER: ';',
   REQUIRE: {
     REGION: { ALLOW: ['regionId', 'regionName', 'meshId'] },
-    AREA: { ALLOW: ['areaId', 'areaName', 'areaCd'], DISALLOW: ['deviceId', 'deviceIdX', 'zoneName'] },
+    AREA: { ALLOW: ['areaId', 'areaName', 'ID'], DISALLOW: ['deviceId', 'deviceIdX', 'zoneName'] },
     EXB: { ALLOW: ['exbId', 'locationName', 'deviceId'] },
     TX: { ALLOW: ['txId', 'btxId', 'minor'] },
+    LOCATION: { ALLOW: ['locationId', 'locationCd', 'locationName'] },
     POT: { ALLOW: ['potId', 'potName', 'potCd'] },
     CATEGORY: { ALLOW: ['categoryId', 'categoryName', 'display'] },
     GROUP: { ALLOW: ['groupId', 'groupName', 'display'] },
@@ -162,6 +165,20 @@ export const txViewTypes = [
   {value: 2, text: 'pattern2'},
   {value: 3, text: 'pattern3'},
 ]
+
+export const EXB = {
+  TYPE: {
+    NONE_DIRECT: 0,
+    DIRECT: 1,
+  },
+  getTypes() {
+    return [
+      { value: null, text: '' },
+      { value: 0, text: i18n.tnl('label.noneDirect') },
+      { value: 1, text: i18n.tnl('label.direct') },
+    ]
+  }
+}
 
 export const CATEGORY = {
   PERSON: 1,
@@ -629,13 +646,17 @@ export const MENU = [
       },
       {
         key: 'locationSetting',
-        path: 'location',
+        path: 'location/position',
         icon: 'map',
-        // icon: 'fas fa-map-pin',
+      },
+      {
+        key: 'locationList',
+        path: 'location',
+        icon: 'location-arrow',
       },
       {
         key: 'txLocationSetting',
-        path: 'txlocation',
+        path: 'txlocation/position',
         icon: 'map-pin',
       },
       {

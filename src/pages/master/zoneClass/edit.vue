@@ -7,6 +7,16 @@
       <b-form v-if="show" @submit.prevent="save">
         <b-form-group>
           <b-form-row>
+            <label v-t="'label.id'" />
+          </b-form-row>
+          <b-form-row>
+            <b-col sm="5">
+              <input v-model="form.zoneCd" :readonly="!isEditable" type="text" maxlength="20" class="form-control" :pattern="cdPattern" required>
+            </b-col>
+          </b-form-row>
+        </b-form-group>
+        <b-form-group>
+          <b-form-row>
             <label v-t="'label.zoneName'" class="control-label" />
           </b-form-row>
           <b-form-row>
@@ -55,7 +65,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import { CATEGORY, ZONE, SYSTEM_ZONE_CATEGORY_NAME } from '../../../sub/constant/Constants'
+import { CATEGORY, ZONE, SYSTEM_ZONE_CATEGORY_NAME, PATTERN } from '../../../sub/constant/Constants'
 import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
@@ -80,13 +90,14 @@ export default {
       backPath: '/master/zoneClass',
       appServicePath: '/core/zone',
       items: ViewHelper.createBreadCrumbItems('master', {text: 'zoneClass', href: '/master/zoneClass'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.zone.zoneId)),
-      form: Util.extract(this.$store.state.app_service.zone, ['zoneId', 'zoneName', 'areaId', 'locationZoneList.0.locationZonePK.locationId', 'zoneCategoryList.0.zoneCategoryPK.categoryId']),
+      form: Util.extract(this.$store.state.app_service.zone, ['zoneId', 'zoneCd', 'zoneName', 'areaId', 'locationZoneList.0.locationZonePK.locationId', 'zoneCategoryList.0.zoneCategoryPK.categoryId']),
       vueSelected: {
         area: null,
         category: null,
       },
       areaNames: [],
       categoryNames: [],
+      cdPattern: PATTERN.MASTER_CD,
       isEnableNameText: true,
       isRegist: false,
     }
@@ -119,6 +130,9 @@ export default {
   mounted(){
     ValidateHelper.setCustomValidationMessage()
     VueSelectHelper.disabledAllSubmit()
+    if(!Util.hasValue(this.form.zoneCd)){
+      this.form.zoneCd = StateHelper.createMasterCd('zone', this.zones, this.zone)
+    }
   },
   methods: {
     reset () {
@@ -142,11 +156,13 @@ export default {
     async onBeforeReload(){
       this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaNames, null, true)
       this.vueSelected.category = VueSelectHelper.getVueSelectData(this.categoryNames, null)
+      this.form.zoneCd = StateHelper.createMasterCd('zone', this.zones, this.zone)
     },
     async onSaving() {
       const zoneId = Util.hasValue(this.form.zoneId)? this.form.zoneId: -1
       const entity = {
         zoneId: zoneId,
+        zoneCd: this.form.zoneCd,
         zoneName: this.form.zoneName,
         zoneType: ZONE.NON_COORDINATE,
         areaId: this.form.areaId,

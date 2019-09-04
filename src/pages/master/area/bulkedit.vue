@@ -27,7 +27,6 @@ export default {
       backPath: '/master/area',
       appServicePath: '/core/area',
       items: ViewHelper.createBreadCrumbItems('master', {text: 'area', href: '/master/area'}, 'bulkRegister'),
-      masterCd: null,
     }
   },
   computed: {
@@ -37,16 +36,11 @@ export default {
   },
   async created() {
     await StateHelper.load('area')
-    this.masterCd = StateHelper.createMasterCd('area', this.areas, null)
   },
   methods: {
     onRestruct(entity, dummyKey){
       if(Util.hasValue(entity.ID)){
         BulkHelper.setStringKey(entity, 'areaCd', entity.ID, PATTERN.REGEXP.MASTER_CD)
-      }
-      else{
-        entity.areaCd = this.masterCd
-        this.masterCd = StateHelper.createMasterCd('area', [{areaCd: this.masterCd}], null)
       }
       return dummyKey
     },

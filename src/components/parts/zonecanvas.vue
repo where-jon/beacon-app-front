@@ -4,7 +4,7 @@
 
 <script>
 import Konva from 'konva'
-import { ZONE } from '../../sub/constant/Constants'
+import { ZONE, PATTERN } from '../../sub/constant/Constants'
 import * as Util from '../../sub/util/Util'
 import * as AppServiceHelper from '../../sub/helper/dataproc/AppServiceHelper'
 import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
@@ -14,6 +14,7 @@ class Zone {
     this._areaId = prop.areaId
     this.id = prop.id ? prop.id : -1
     this.categoryId = prop.categoryId ? prop.categoryId : -1
+    this.cd = prop.cd
     this.name = prop.name
     this.startX = prop.startX
     this.startY = prop.startY
@@ -266,6 +267,8 @@ class Zones {
       const y = height > -1 ? zone.y : zone.y + height
       return {
         zoneId: zone.id && zone.id > 0 ? zone.id : -1 * (index + 1),
+        zoneCd: zone.cd,
+        zoneCdName: PATTERN.REGEXP.MASTER_CD.test(zone.cd)? null: zone.cd,
         zoneName: zone.zoneName,
         zoneType: zone.zoneType,
         areaId: zone.areaId,
@@ -290,6 +293,10 @@ export default {
     areaId: {
       default: -1,
       type: Number 
+    },
+    zoneCd: {
+      default: null,
+      type: String
     },
     zoneName: {
       default: null,
@@ -344,6 +351,11 @@ export default {
       if (!activeZone) return
       activeZone.categoryId = newVal
     },
+    zoneCd: function(newVal, oldVal) {
+      const activeZone = this.zones.activeZone
+      if (!activeZone) return
+      activeZone.cd = newVal
+    },
     zoneName: function(newVal, oldVal) {
       const activeZone = this.zones.activeZone
       if (!activeZone) return
@@ -364,6 +376,7 @@ export default {
     }
   },
   mounted () {
+    StateHelper.load('zone')
     const drawArea = document.getElementById('stage')
     this.stage = new Konva.Stage({
       container: 'stage',
@@ -378,6 +391,7 @@ export default {
       this.$emit('unselected')
       this.drawingZone = new Zone({
         areaId: this.areaId,
+        cd: this.getNewZoneCd(),
         name: this.getNewZoneName(),
         categoryId: this.categoryId,
         startX: e.offsetX,
@@ -429,6 +443,11 @@ export default {
     })
   },
   methods: {
+    getNewZoneCd(){
+      const zones = this.$store.state.app_service.zones
+      const dispZones = zones.concat(this.zones.list.map(zone => ({zoneCd: zone.cd})))
+      return StateHelper.createMasterCd('zone', dispZones)
+    },
     getNewZoneName(){
       if(!this.zones){
         return 'Zone1'
@@ -442,6 +461,7 @@ export default {
     emitZone(zone) {
       this.$emit('selected', {
         id: zone.id,
+        cd: zone.cd,
         name: zone.name,
         top: zone.y,
         left: zone.x,
@@ -505,6 +525,7 @@ export default {
       const zone = new Zone({
         id: zoneRec.zoneId,
         areaId: this.areaId,
+        cd: zoneRec.zoneCd,
         name: zoneRec.zoneName,
         categoryId: categoryId,
         startX: zoneRec.x * this.aspectRatio,

@@ -7,6 +7,7 @@ import _ from 'lodash'
 import moment from 'moment'
 import * as mock from '../../../assets/mock/mock'
 import { DEV, APP, EXCLOUD, APP_SERVICE } from '../../constant/config'
+import * as Util from '../../util/Util'
 import * as HttpHelper from '../base/HttpHelper'
 
 /**
@@ -92,10 +93,12 @@ export const fetchPositionHistory = async (exbs, txs, allShow, pMock) => {
   const locationIdMap = {}
   exbs.forEach(e => {
     exbIdMap[e.exbId] = e
-    locationIdMap[e.location.locationId] = e
+    if(Util.getValue(e, 'location.locationId', null)){
+      locationIdMap[e.location.locationId] = e
+    }
   })
   return _(data).filter(val => allShow || DEV.NOT_FILTER_TX || txs && txIdMap[val.txId])
-    .filter(val => allShow || exbs && locationIdMap[val.locationId])
+    .filter(val => allShow || exbs && Util.hasValue(val.locationId) && locationIdMap[val.locationId])
     .map(val => {
       let tx = txIdMap[val.txId]
       let exb = exbIdMap[val.exbId]

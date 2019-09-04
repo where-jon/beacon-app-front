@@ -19,7 +19,8 @@
     "lintfix": "eslint --ext .js,.vue . --fix",
     "precommit": "npm run lint",
     "heroku-postbuild": "npm run build",
-    "compareLocale": "npm run test src/test/sub/locales/Compare.test.js"
+    "compareLocale": "npm run test src/test/sub/locales/Compare.test.js",
+    "doc": "jsdoc -c .jsdoc-conf.json"
   },
   "config": {
     "nuxt": {
@@ -71,9 +72,12 @@
     "eslint-friendly-formatter": "^4.0.1",
     "eslint-loader": "^2.1.2",
     "eslint-plugin-vue": "^5.2.3",
+    "jsdoc": "^3.6.2",
+    "jsdoc-vuejs": "^3.0.0",
     "jsdom": "^15.1.1",
     "nodemon": "^1.18.9",
-    "url-search-params-polyfill": "^7.0.0"
+    "url-search-params-polyfill": "^7.0.0",
+    "vue-template-compiler": "^2.5.16"
   },
   "ava": {
     "require": [

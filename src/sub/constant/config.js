@@ -102,10 +102,16 @@ export const APP = { // 機能面に関する設定
   // EXB関連設定
   EXB: {
     SENSOR: [1,2,3,4,8], // EXBのタイプに設定可能なセンサーID
-    WITH: ['posId', 'zone'],
     DEVICEID_TYPE: 'deviceId',
     MULTI_SENSOR: true,
     SENSOR_MAX: 2,   // センサー種類最大数
+  },
+  // 場所関連設定
+  LOCATION: {
+    WITH: ['posId', 'zone'],
+    TYPE: {
+      WITH: [],
+    },
   },
   // USER関連設定
   USER: {
@@ -159,6 +165,7 @@ export const APP = { // 機能面に関する設定
     TO: 2400,  // 滞在時間集計終了時間(時分)
     SCALE_TIMES: [5, 12, 18], // 滞在率画面グラフ目盛り時刻(時)
     OTHER_COLOR: '#404040', // 滞在率その他の色
+    GRAPH_LIMIT: 0.3, // 日単位滞在分析グラフの足切り％
   },
   // 交流分析
   PROXIMITY: {

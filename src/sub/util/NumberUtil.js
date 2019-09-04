@@ -6,6 +6,14 @@ import { hasValue } from './Util'
  */
 
 /**
+ * 16進数値か確認する。
+ * @method
+ * @param {String} val 
+ * @return {Boolean}
+ */
+export const isHex = val => /^[0-9a-fA-F]*$/.test(val)
+
+/**
  * 小数点以下が0で終わる場合、それらを取り除く。
  * @method
  * @param {Number} val
@@ -89,4 +97,24 @@ export const inRange = (range, pos) => {
   const right = range.x + range.w
   const bottom = range.y + range.h
   return range.x <= pos.x && pos.x <= right && range.y <= pos.y && pos.y <= bottom
+}
+
+/**
+ * 中心座標と幅高さから矩形の頂点座標を取得する。
+ * @method
+ * @param {Number} x 
+ * @param {Number} y 
+ * @param {Number} width 
+ * @param {Number} height 
+ * @return {Object}
+ */
+export const getRectInfoFromCenterPos = (x, y, width, height) => {
+  const left = -width / 2
+  const top = -height / 2
+  return {
+    left: x + left, right: x + left + width,
+    top: y + top, bottom: y + top + height,
+    width: width, height: height,
+    centerX: x, centerY: y,
+  }
 }

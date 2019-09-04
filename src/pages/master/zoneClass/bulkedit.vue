@@ -7,8 +7,9 @@
 
 <script>
 import { mapState } from 'vuex'
-import { ZONE } from '../../../sub/constant/Constants'
+import { ZONE, PATTERN } from '../../../sub/constant/Constants'
 import * as Util from '../../../sub/util/Util'
+import * as BulkHelper from '../../../sub/helper/dataproc/BulkHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
@@ -38,6 +39,9 @@ export default {
       entity.zoneType = ZONE.NON_COORDINATE
       if(Util.hasValue(entity.areaName)) {
         entity.area = {areaId: dummyKey--, areaName: entity.areaName}
+      }
+      if(Util.hasValue(entity.ID)){
+        BulkHelper.setStringKey(entity, 'zoneCd', entity.ID, PATTERN.REGEXP.MASTER_CD)
       }
       return dummyKey
     },

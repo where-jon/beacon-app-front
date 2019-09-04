@@ -432,6 +432,23 @@ const appStateConf = {
   locations: {
     path: '/core/location',
     sort: 'locationId',
+    beforeCommit: arr => {
+      return arr.map(location => {
+        const zoneTypeMap = {}
+        Util.getValue(location, 'locationZoneList', []).forEach(locationZone => {
+          const key = '' + locationZone.zoneType
+          if(!zoneTypeMap[key]){
+            zoneTypeMap[key] = []
+          }
+          zoneTypeMap[key].push(locationZone.zoneName)
+        })
+        return {
+          ...location,
+          zoneClass: zoneTypeMap['' + ZONE.NON_COORDINATE],
+          zoneBlock: zoneTypeMap['' + ZONE.COORDINATE],
+        }
+      })
+    }
   },
   zones: {
     path: '/core/zone',
@@ -440,13 +457,7 @@ const appStateConf = {
       return  arr.map(val => {
         const category = Util.getValue(val, 'zoneCategoryList.0.category', null)
         return {
-          zoneId: val.zoneId,
-          zoneName: val.zoneName,
-          zoneType: val.zoneType,
-          x: val.x,
-          y: val.y,
-          w: val.w,
-          h: val.h,
+          ...val,
           areaId: Util.hasValue(val.area)? val.area.areaId: null,
           areaName: Util.hasValue(val.area)? val.area.areaName: null,
           locationId: Util.hasValue(val.locationZoneList)? val.locationZoneList[0].locationZonePK.locationId: null,

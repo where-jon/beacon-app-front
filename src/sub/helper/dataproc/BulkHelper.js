@@ -123,7 +123,7 @@ export const setStringKey = (entity, headerName, val, regExp = null, nullable = 
     return nullable? entity: addInvalid(entity, headerName, val)
   }
   entity[headerName] = val
-  return regExp && !regExp.test(val)? addInvalid(entity, headerName): entity
+  return regExp && !regExp.test(val)? addInvalid(entity, headerName, val): entity
 }
 
 /**
@@ -219,6 +219,26 @@ export const getErrorColumnName = (name, col) => {
 }
 
 /**
+ * 一括登録時に発生した警告メッセージを整形する。
+ * @method
+ * @param {Object[]} bulkErrorList
+ * @return {String[]}
+ */
+export const craeteBulkWarnMessage = bulkErrorList => {
+  if(!Util.hasValue(bulkErrorList)){
+    return []
+  }
+  const retList = []
+  bulkErrorList.filter(bulkError => bulkError.type == 'Unique')
+    .forEach(bulkError => {
+      if(!retList.some(ret => ret.type == bulkError.type && ret.col == bulkError.col)){
+        retList.push({type: bulkError.type, col: bulkError.col})
+      }
+    })
+  return retList.map(ret => i18n.tnl('message.bulk' + ret.type + 'Warn', {col: i18n.tnl('label.' + ret.col)}))
+}
+
+/**
  * 一括登録時に発生したエラーメッセージを整形する。
  * @method
  * @param {Error} e
@@ -228,12 +248,13 @@ export const getErrorColumnName = (name, col) => {
  */
 export const getBulkErrorMessage = (e, name, showLine) => {
   if(e.bulkError) {
-    return _.map(_.orderBy(e.bulkError, ['line'], ['asc']), err => {
+    const warnMessageList = craeteBulkWarnMessage(e.bulkError)
+    const errorMessageList = _.map(_.orderBy(e.bulkError, ['line'], ['asc']), err => {
       const col = err.col.trim()
       return i18n.tline('message.bulk' + err.type + 'Failed', {
         line: err.line,
         col: i18n.tnl(`label.${getErrorColumnName(name, col)}`),
-        value: Util.hasValue(err.value)? StringUtil.sanitize(err.value): err.value,
+        value: Util.hasValue(err.value)? StringUtil.sanitize(err.value, true): err.value,
         min: err.min,
         max: err.max,
         candidates: err.candidates,
@@ -242,6 +263,7 @@ export const getBulkErrorMessage = (e, name, showLine) => {
         target: err.target? i18n.tnl(`label.${err.target}`): ''
       }, showLine)
     }).filter((val, idx, arr) => arr.indexOf(val) == idx)
+    return warnMessageList.concat(errorMessageList)
   }
   return i18n.terror('message.bulkRegisterFailed', {target: i18n.tnl('label.' + name), code: e.message})
 }
@@ -484,6 +506,7 @@ export const createParamSensor = (masterType, sensorNames, dummyKey) => {
 export const createParamLocation = (entity, dummyKey) => {
   const ret = {}
   Util.setValue(ret, 'locationId', dummyKey--)
+  Util.setValue(ret, 'locationCd', entity.locationCd)
   Util.setValue(ret, 'areaName', entity.areaName)
   Util.setValue(ret, 'locationName', entity.locationName)
   Util.setValue(ret, 'visible', entity.visible)

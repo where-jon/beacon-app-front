@@ -8,7 +8,7 @@
 <script>
 import { mapState } from 'vuex'
 import { APP } from '../../../sub/constant/config'
-import { ZONE } from '../../../sub/constant/Constants'
+import { EXB } from '../../../sub/constant/Constants'
 import * as ArrayUtil from '../../../sub/util/ArrayUtil'
 import * as Util from '../../../sub/util/Util'
 import * as BulkHelper from '../../../sub/helper/dataproc/BulkHelper'
@@ -34,44 +34,16 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'exb', 'exbs', 'zones'
+      'exb', 'exbs'
     ]),
-    zoneMap(){
-      const ret = {}
-      this.zones.forEach(zone => ret[zone.zoneName] = zone)
-      return ret
-    }
-  },
-  async created() {
-    await StateHelper.load('zone')
   },
   methods: {
     async onSaving() {
-      await this.$refs.bulkEdit.bulkSave({numberList: ['deviceId', 'posId', 'x', 'y'], hexList: ['deviceIdX']})
-    },
-    restructZone(entity, dummyKey){
-      if(!Util.hasValue(entity.zoneClass) || !Util.hasValue(entity.location)){
-        return dummyKey
-      }
-      const nameList = entity.zoneClass.split(';').map(name => name.trim())
-      const locationZoneList = []
-      nameList.forEach((name, idx) => {
-        const zone = this.zoneMap[name]
-        const locationZone = {
-          locationZonePK: {
-            locationId: dummyKey--,
-            zoneId: Util.getValue(zone, 'zoneId', dummyKey--),
-          },
-          zone: {
-            zoneId: Util.getValue(zone, 'zoneId', dummyKey--),
-            zoneName: name,
-            zoneType: ZONE.NON_COORDINATE,
-          }
-        }
-        locationZoneList.push(locationZone)
+      await this.$refs.bulkEdit.bulkSave({
+        numberList: ['deviceId', 'threshold1', 'threshold2', 'adjust1', 'adjust2'],
+        hexList: ['deviceIdX'],
+        nullableList: ['threshold1', 'threshold2', 'adjust1', 'adjust2']
       })
-      entity.location.locationZoneList = locationZoneList
-      return dummyKey
     },
     onRestruct(entity, dummyKey){
       if(Util.hasValue(entity.deviceId) || Util.hasValue(entity.deviceIdX)){
@@ -86,6 +58,16 @@ export default {
         }
       }
 
+      if(Util.hasValue(entity.exbType)) {
+        const target = EXB.getTypes().find(val => val.text == entity.exbType)
+        if(target){
+          entity.exbType = target.value
+        }
+        else{
+          entity.exbTypeName = entity.exbType
+          entity.exbType = null
+        }
+      }
       if(Util.hasValue(entity.sensor)) {
         const param = BulkHelper.createParamSensor('exb', entity.sensor, dummyKey)
         if(param.sensorList.length != 0){
@@ -93,12 +75,6 @@ export default {
         }
         dummyKey = param.dummyKey
       }
-      if (Util.hasValueAny(entity.areaName, entity.locationName, entity.visible, entity.txViewType, entity.posId, entity.x, entity.y, entity.zoneName)) {
-        const param = BulkHelper.createParamLocation(entity, dummyKey)
-        entity.location = param.location
-        dummyKey = param.dummyKey
-      }
-      dummyKey = this.restructZone(entity, dummyKey)
       return dummyKey
     },
   }
