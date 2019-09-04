@@ -2,21 +2,87 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <script src="https://cdn.jsdelivr.net/npm/vue"></script>
-  <title>test</title>
+  <meta name="viewport" content="width=device-with, initial-scale=1, shrink-to-fit=no">
+  <meta http-equiv="content-type" content="text/html; charset = UTF-8">
+  <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
+  <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.css" />
+  <style>
+    #app {
+      margin-top: 20px;
+    }
+  </style>
+  <title>人・物レコード表示テスト</title>
 </head>
 <body>
-  test
+  <div id="app">
+    <b-breadcrumb :items="breadcrumbItems"></b-breadcrumb>
+    <b-container fluid>
+      <b-row>
+        <b-table :items="items" :fields="fields" striped hover>
+          <template slot="thumbnail" slot-scope="row">
+            <img v-if="row.item.existThumbnail" :src="thumbnail(row.item)" height="70">
+          </template>
+        </b-table>
+      </b-row>
+    </b-container>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.js"></script>
+  <script>
+    const URL_BASE = 'http://localhost:8080/plugin/'
+    const THUMBNAIL_URL = "http:/basic/pot/"
+    const app = new Vue({
+      el: '#app',
+      data() {
+        return {
+          fields: [
+            {
+              key: 'potId',
+              label: 'POT ID',
+            },
+            {
+              key: 'thumbnail',
+              label: 'Thumbnail',
+            },
+            {
+              key: 'name',
+              label: 'POT Name',
+            },
+            {
+              key: 'group',
+              label: 'Group',
+            },
+            {
+              key: 'category',
+              label: 'Category'
+            }
+          ],
+          items: [],
+          breadcrumbItems: [
+            {
+              text: 'プラグイン',
+              href: '#'
+            },
+            {
+              text: 'POTテスト表示',
+              href: 'active'
+            }
+          ]
+        }
+      },
+      async mounted() {
+        const pots = await axios.get(URL_BASE + 'pot')
+        this.items = pots.data.map((pot) => {
+          return {potId: pot.potId, name: pot.potName, group: pot.groupName, category: pot.categoryName, existThumbnail: pot.existThumbnail}
+        })
+      },
+      methods: {
+        thumbnail(row) {
+          return URL_BASE + 'potThumbnail/' + row.potId
+        }
+      },
+    })
+  </script>
 </body>
-
-<script>
-  import Axios from 'axios'
-
-  const app = new Vue({
-    el: '#app',
-    data: {
-      records: []
-    }
-  })
-</script>
 </html>
