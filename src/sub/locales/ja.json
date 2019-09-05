@@ -315,7 +315,7 @@
     "personal": "個人設定",
     "changeProfilePassword": "パスワードを変更する",
     "changePassword": "パスワードを変更する",
-  
+
     "system": "システム設定",
 
     "region": "リージョン",
@@ -654,6 +654,15 @@
         "UNDETECT_TIME": "未検知状態判定時間(EXB状態監視)::最終受信時刻から設定した時間以上経過したデバイスは未検知状態になります。ミリ秒単位で設定します。",
         "WITH_POWER_LEVEL": "EXB状態監視画面で電池レベルを使用する::EXB状態監視画面で電池レベルを表示します。★"
       },
+      "MAIL": {
+        "TYPE": "メール設定用TYPE",
+        "ID": "メール設定用ID",
+        "PASSWORD": "メール設定用PASSWORD",
+        "SMTP_HOST": "メール設定用HOST",
+        "SMTP_PORT": "メール設定用ポート",
+        "SMTP_AUTH": "メール設定用認証",
+        "SMTP_STARTTLS": "メール設定用TLS"
+      },
       "POS": {
         "AUTO_RELOAD": "位置情報自動リロード間隔::位置表示(地図)画面で位置情報の自動リロードを行う間隔をミリ秒単位で設定します。★",
         "TRANSPARENT_TIME": "半透明状態判定時間::最終受信時刻から設定した時間以上経過したデバイスは半透明になります。ミリ秒単位で設定します。",
@@ -946,6 +955,15 @@
 
     "TYPE": {
       "APP": {
+        "MAIL": {
+          "TYPE": "string",
+          "ID": "string",
+          "PASSWORD": "string",
+          "SMTP_HOST": "string",
+          "SMTP_PORT": "number",
+          "SMTP_AUTH": "boolean",
+          "SMTP_STARTTLS": "boolean"
+        },
         "POS": {
           "MOVING_AVERAGE_TIME": "number",
           "PROHIBIT_GROUPS": "numberList",
@@ -1081,6 +1099,15 @@
     },
     "DEFAULT": {
       "APP": {
+        "MAIL": {
+          "TYPE": "type",
+          "ID": "id",
+          "PASSWORD": "password",
+          "SMTP_HOST": "host",
+          "SMTP_PORT": "port",
+          "SMTP_AUTH": "auth",
+          "SMTP_STARTTLS": "tls"
+        },
         "POS": {
           "PROHIBIT": {
             "DUPLICATE_MAIL_TIME": "180000"
@@ -1138,7 +1165,8 @@
         "SVC": "サーバ",
         "BATCH": "バッチ",
         "SIMULATION": "デモ用",
-        "OTHER": "その他"
+        "OTHER": "その他",
+        "MAIL": "メール"
       },
       "SENSOR_NONE": {
         "0": "0::未設定"
