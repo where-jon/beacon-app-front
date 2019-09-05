@@ -31,9 +31,6 @@
     </b-container>
   </div>
   <script>
-    // iframe側からパラメータで渡す
-    const URL_BASE = 'http://localhost:8080/plugin/'
-
     const app = new Vue({
       el: '#app',
       data() {
@@ -76,7 +73,8 @@
       async mounted() {
         // ローカルストレージからapi keyを取り出し、axios利用時に指定する。
         // 共通のjsに実装する
-        const pots = await axios.get(URL_BASE + 'pot')
+        const urlBase = decodeURI(window.location.search.split('=')[1])
+        const pots = await axios.get(urlBase + '/plugin/pot')
         this.items = pots.data.map((pot) => {
           return {potId: pot.potId, name: pot.potName, group: pot.groupName, category: pot.categoryName, existThumbnail: pot.existThumbnail}
         })

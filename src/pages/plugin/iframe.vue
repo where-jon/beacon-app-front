@@ -8,6 +8,7 @@
 
 <script>
 import * as Util from '../../sub/util/Util'
+import { APP_SERVICE } from '../../sub/constant/config'
 
 const VIEW_URL_PREFIX = '/plugin/'
 
@@ -36,7 +37,7 @@ export default {
     if (Util.hasValue(window.location.search)) {
       const path = window.location.search.split('=')[1]
       if (Util.hasValue(path)) {
-        this.url = VIEW_URL_PREFIX + path
+        this.url = VIEW_URL_PREFIX + path + `?base=${encodeURI(APP_SERVICE.BASE_URL)}`
       }
     }
   },
