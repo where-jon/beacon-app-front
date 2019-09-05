@@ -646,11 +646,9 @@
     "mobile": "携帯電話",
     "entrydate": "入社日",
     "score": "点数",
-    "dummy": "",
-    "test": "友野様",
-    "great-tomono": "偉大なる首領友野様",
     "recordsTest": "レコード表示テスト",
-    "hitoMono": "人・物レコード"
+    "hitoMono": "人・物レコード",
+    "dummy": ""
   },
   "config": {
     "APP": {
