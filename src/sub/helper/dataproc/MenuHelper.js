@@ -57,12 +57,14 @@ export const fetchNav = async (masterFeatureList, tenantFeatureList, featureList
     return group.pages.length > 0
   })
 
-  return await axios.get('/menu.json').then(res => {
+  const IFRAME_BASE_DIR = 'plugin/'
+
+  return await axios.get(IFRAME_BASE_DIR + 'menu.json').then(res => {
     const length = retNav.length
     const splice = Array.prototype.splice
     res.data
     .map((d) => {
-      d.base = 'test/'
+      d.base = IFRAME_BASE_DIR
       d.pages.forEach(p => {
         if (p.path && p.path.length > 0) {
           p.path = `iframe?path=${p.path}`
@@ -74,6 +76,10 @@ export const fetchNav = async (masterFeatureList, tenantFeatureList, featureList
     .forEach((d) => splice.apply(retNav, [d.order,0].concat([d])))
     const nonOrders = res.data.filter((d) => d.order === null || d.order === undefined || d.order >= length)
     return retNav.concat(nonOrders)
+  })
+  .catch(error => {
+    console.error(error)
+    return retNav
   })
 }
 
