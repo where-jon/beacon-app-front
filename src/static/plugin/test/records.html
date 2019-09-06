@@ -11,10 +11,11 @@
       margin-top: 20px;
     }
   </style>
-  <!-- 相対参照で指定する -->
   <script src="/plugin/js/vue.min.js"></script>
   <script src="/plugin/js/axios.min.js"></script>
   <script src="/plugin/js/bootstrap-vue.min.js"></script>
+  <script src="/plugin/js/md5.min.js"></script>
+  <script src="/plugin/js/common.js"></script>
   <title>人・物レコード表示テスト</title>
 </head>
 <body>
@@ -67,21 +68,25 @@
               text: 'POTテスト表示',
               href: 'active'
             }
-          ]
+          ],
+          urlBase: null
         }
       },
       async mounted() {
-        // ローカルストレージからapi keyを取り出し、axios利用時に指定する。
-        // 共通のjsに実装する
-        const urlBase = decodeURI(window.location.search.split('=')[1])
-        const pots = await axios.get(urlBase + '/plugin/pot')
+        this.urlBase = decodeURI(window.location.search.split('=')[1])
+        const config = {
+          headers: {
+            apiKey: Common.getApiKey()
+          }
+        }
+        const pots = await axios.get(this.urlBase + '/plugin/pot', config)
         this.items = pots.data.map((pot) => {
           return {potId: pot.potId, name: pot.potName, group: pot.groupName, category: pot.categoryName, existThumbnail: pot.existThumbnail}
         })
       },
       methods: {
         thumbnail(row) {
-          return URL_BASE + 'potThumbnail/' + row.potId
+          return this.urlBase + '/plugin/potThumbnail/' + row.potId
         }
       },
     })
