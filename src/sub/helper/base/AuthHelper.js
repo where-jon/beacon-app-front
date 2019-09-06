@@ -305,3 +305,9 @@ export const getRegionId = (def = 0) => {
   return Util.getValue(login, 'currentRegion.regionId', def)
 }
 
+/**
+ * シングルテナントか確認する。
+ * @method
+ * @return {Boolean}
+ */
+export const isSingleTenant = () => getTenantCd()? false: true
