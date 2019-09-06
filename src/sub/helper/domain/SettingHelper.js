@@ -97,7 +97,7 @@ export const getDefaultValue = (key, isTenant = false) => {
   if(!Util.hasValue(defaultConfig)){
     return null
   }
-  const langDefValue = i18n.tdef('config.DEFAULT.' + key)
+  const langDefValue = Util.getValue(SETTING.getDefault(), key, null)
   if(langDefValue != null){
     return langDefValue
   }
@@ -115,7 +115,7 @@ export const getDefaultValue = (key, isTenant = false) => {
  * @return {String}
  */
 export const getDefaultValType = key => {
-  const type = i18n.tdef('config.TYPE.' + key)
+  const type = Util.getValue(SETTING.getType(), key, null)
   if(type != null && SETTING.VALUES.includes(type)){
     return type
   }
@@ -188,7 +188,7 @@ export const getI18Config = isTenant => {
   }
   const ret = {}
   Object.keys(configObjs).forEach(configKey => {
-    if(/^(TYPE|DEFAULT|OPTIONS)(\..+)*$/g.test(configKey)){
+    if(/^(OPTIONS)(\..+)*$/g.test(configKey)){
       return
     }
     ret[configKey] = configObjs[configKey]

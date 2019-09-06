@@ -521,6 +521,181 @@ export const SETTING = {
       {text: 'json', value: 'json'},
     ]
   },
+  getType() {
+    return {
+      APP: {
+        POS: {
+          MOVING_AVERAGE_TIME: SETTING.NUMBER,
+          PROHIBIT_GROUPS: SETTING.NUMBER_LIST,
+          PROHIBIT_ALERT: SETTING.STRING_LIST,
+          LOST_ALERT: SETTING.STRING_LIST,
+          LOST_GROUPS: SETTING.NUMBER_LIST,
+          PROHIBIT: {
+            DUPLICATE_MAIL_TIME: SETTING.NUMBER,
+          },
+          LOST: {
+            DUPLICATE_MAIL_TIME: SETTING.NUMBER,
+          },
+        },
+        SENSOR: {
+          EXB_SENSOR: SETTING.NUMBER_LIST,
+          TX_SENSOR: SETTING.NUMBER_LIST,
+        },
+        POS_LIST: {
+          WITH: SETTING.STRING_LIST,
+        }, 
+        TX: {
+          WITH: SETTING.STRING_LIST,
+        }, 
+        EXB: {
+          SENSOR: SETTING.NUMBER_LIST,
+        }, 
+        LOCATION: {
+          WITH: SETTING.STRING_LIST,
+          TYPE: {
+            WITH: SETTING.STRING_LIST,
+          },
+        },
+        USER: {
+          WITH: SETTING.STRING_LIST,
+        }, 
+        POT: {
+          WITH: SETTING.STRING_LIST,
+          EXT_DEF: SETTING.JSON,
+        }, 
+        CATEGORY: {
+          TYPES: SETTING.NUMBER_LIST,
+        },
+        NOTIFY: {
+          MIDIUM_TYPES: SETTING.NUMBER_LIST,
+          STATE_TYPES: SETTING.NUMBER_LIST,
+        },
+        STAY_SUM: {
+          SCALE_TIMES: SETTING.NUMBER_LIST,
+        },
+        TX_MON: {
+          WITH: SETTING.STRING_LIST,
+          WITH_SENSOR: SETTING.NUMBER_LIST,
+        },
+        SENSOR_LIST: {
+          WITH: SETTING.STRING_LIST,
+        },
+        TXDETAIL: {
+          ITEMS: SETTING.STRING_LIST,
+        },
+        SVC: {
+          SLACK_CHANNEL: SETTING.STRING,
+          SLACK_TOKEN: SETTING.STRING,
+          STAY_SUM: {
+            START: SETTING.NUMBER,
+            END: SETTING.NUMBER, 
+            INTERVAL: SETTING.NUMBER, 
+            CALC_BY: SETTING.STRING,
+            ADJUST_TIME: SETTING.NUMBER,
+            REAL_TIME: SETTING.BOOLEAN,
+          },
+          POS: {
+            CACHE_TIME: SETTING.NUMBER,
+          },
+          PROXIMITY: {
+            USE_TXAIR: SETTING.BOOLEAN,
+            USE_MEETING_ROOM: SETTING.BOOLEAN,
+            EXCLOUD_RAWLOG_DIR: SETTING.STRING,
+            BLANK_RANGE: SETTING.NUMBER,
+            MIN_RANGE: SETTING.NUMBER,
+          },
+        },
+        BATCH: {
+          POSITION: {
+            INTERVAL: SETTING.NUMBER,
+          },
+          SENSOR_1: {
+            INTERVAL: SETTING.NUMBER,
+          },
+          SENSOR_2: {
+            INTERVAL: SETTING.NUMBER,
+          },
+          SENSOR_3: {
+            INTERVAL: SETTING.NUMBER,
+          },
+          SENSOR_5: {
+            INTERVAL: SETTING.NUMBER,
+          },
+          SENSOR_6: {
+            INTERVAL: SETTING.NUMBER,
+          },
+          SENSOR_8: {
+            INTERVAL: SETTING.NUMBER,
+          },
+          MONITOR: {
+            INTERVAL: SETTING.NUMBER,
+          },
+          UTILIZATION: {
+            CRON: SETTING.STRING,
+          },
+          STAY_SUM: {
+            CRON: SETTING.STRING,
+          },
+          PROXIMITY: {
+            CRON: SETTING.STRING,
+          },
+          LOST_ZONE: {
+            INTERVAL: SETTING.NUMBER,
+          },
+          PROHIBIT_ZONE: {
+            INTERVAL: SETTING.NUMBER,
+          },
+        },
+      },
+      DISP: {
+        TX: {
+          ABSENT_ZONE_DISPLAY_TYPES: SETTING.STRING_LIST,
+        },
+        THERMOH: {
+          PATTERN: SETTING.STRING_LIST,
+          HUMIDITY_PATTERN: SETTING.STRING_LIST,
+        },
+        POSITION_HISTORY: {
+          HEADERS: SETTING.STRING_LIST,
+        },
+        MEDITAG: {
+          STRESS_BG: SETTING.STRING_LIST,
+        },
+      },
+      DEV: {
+        SIMULATION: SETTING.NUMBER,
+        SIMULATION_MOVE_PERCENT: SETTING.NUMBER,
+        SIMULATION_MOVE_AREA_PERCENT: SETTING.NUMBER,
+      },
+    }
+  },
+  getDefault() {
+    return {
+      APP: {
+        POS: {
+          PROHIBIT: {
+            DUPLICATE_MAIL_TIME: 180000
+          },
+          LOST: {
+            DUPLICATE_MAIL_TIME: 180000
+          }
+        },
+        SVC: {
+          STAY_SUM: {
+            STAY_SUM_START: 0, 
+            STAY_SUM_END: 2400, 
+            STAY_SUM_INTERVAL: 5, 
+            STAY_SUM_CALC_BY: "location",
+            STAY_SUM_ADJUST_TIME: 4,
+          },
+          PROXIMITY:{
+            BLANK_RANGE: 60000,
+            MIN_RANGE: 60000,
+          },
+        },
+      },
+    }
+  },  
 }
 
 export const FORCE_PUSH_MENU = [
