@@ -41,6 +41,9 @@
               </b-form-row>
             </b-form-row>
           </template>
+          <b-form-row v-if="useDetailFilter" class="mr-4 mb-2">
+            <detail-filter @detailFilter="onDetailFilter" />
+          </b-form-row>
           <div v-if="params.extraFilter" class="w-100 mb-2 " />
         </b-form-row>
         <b-form-row v-if="params.delFilter" class="mb-2">
@@ -256,11 +259,13 @@ import * as MenuHelper from '../../sub/helper/dataproc/MenuHelper'
 import * as OptionHelper from '../../sub/helper/dataproc/OptionHelper'
 import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import commonmixin from '../mixin/commonmixin.vue'
+import detailFilter from '../../components/parts/detailFilter.vue'
 import alert from '../parts/alert.vue'
 import settinginput from '../parts/settinginput.vue'
 
 export default {
   components: {
+    detailFilter,
     alert,
     settinginput,
   },
@@ -297,7 +302,11 @@ export default {
     maxFilterLength: {
       type: [String, Number],
       default: 20,
-    }
+    },
+    useDetailFilter: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -315,6 +324,7 @@ export default {
           detectState: null,
           settingCategory: '',
         },
+        detail: null,
         del: false,
         allShow: false,
       },
@@ -760,6 +770,12 @@ export default {
       }
       return true
     },
+    filterDetail(originItem){
+      if(this.filter.detail == null){
+        return true
+      }
+      return this.filter.detail.some(id => id == originItem.txId)
+    },
     filterGrid(originItem) {
       const regBool = this.filterGridGeneral(originItem)
       // 追加フィルタ
@@ -767,7 +783,8 @@ export default {
       const delBool = this.filterGridDel(originItem)
       const allShowBool = this.filterAllShow(originItem)
       const parentBool = this.filterParent(originItem)
-      return regBool && extBool && delBool && allShowBool && parentBool
+      const detailBool = this.filterDetail(originItem)
+      return regBool && extBool && delBool && allShowBool && parentBool && detailBool
     },
     onFiltered(filteredItems) {
       this.totalRows = filteredItems.length
@@ -833,7 +850,10 @@ export default {
       }
       this.replaceMain({selectedArea})
       this.$router.push('/main/position')
-    }
+    },
+    onDetailFilter(list){
+      this.filter.detail = list
+    },
   }
 }
 
