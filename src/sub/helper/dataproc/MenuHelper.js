@@ -6,6 +6,7 @@
 import { ROLE_FEATURE, MENU } from '../../constant/Constants'
 import * as StringUtil from '../../util/StringUtil'
 import * as Util from '../../util/Util'
+import * as AuthHelper from '../base/AuthHelper'
 import * as LocalStorageHelper from '../base/LocalStorageHelper'
 
 let store
@@ -36,6 +37,9 @@ export const fetchNav = (masterFeatureList, tenantFeatureList, featureList, isPr
         return true
       }
       if (isProvider && group.providerOnlyForce && page.providerOnlyForce) {
+        return true
+      }
+      if (AuthHelper.isSingleTenant() && isProvider && group.singleOnlyForce && page.singleOnlyForce) {
         return true
       }
       if(!featureOk('/' + group.base + page.path, masterFeatureList)){
