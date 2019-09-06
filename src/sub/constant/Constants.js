@@ -543,6 +543,7 @@ export const MENU = [
     icon: 'cogs',
     tenantOnly: true,
     providerOnlyForce: true,
+    singleOnlyForce: true,
     pages: [
       {
         key: 'tenant',
@@ -554,6 +555,7 @@ export const MENU = [
         key: 'news',
         path: 'news',
         icon: 'newspaper',
+        singleOnlyForce: true,
       },
     ]
   },
