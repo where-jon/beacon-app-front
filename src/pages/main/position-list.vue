@@ -4,7 +4,7 @@
                 :reload="reload" :short-name="shortName"
     />
     <alert v-model="showDismissibleAlert" :message="message" :fix="fixHeight" :prohibit=showDismissibleAlert :prohibit-view="isProhibitView" :alert-style="alertStyle" />
-    <m-list :params="params" :list="positionList" :alert-force-hide=true />
+    <m-list :params="params" :list="positionList" :alert-force-hide=true :use-detail-filter="useDetailFilter" />
   </div>
 </template>
 
@@ -86,6 +86,9 @@ export default {
       return {
         'font-weight': DISP.THERMOH.ALERT_WEIGHT,
       }
+    },
+    useDetailFilter(){
+      return APP.POS.PLUGIN.FILTER
     },
   },
   methods: {

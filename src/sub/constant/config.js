@@ -64,6 +64,10 @@ export const APP = { // 機能面に関する設定
       CATEGORY: true, // 位置表示(地図)にカテゴリを表示
       GROUP: false, // 位置表示(地図)にグループを表示
     },
+
+    PLUGIN: {
+      FILTER: false,
+    },
   },
   SENSOR: {
     TX_SENSOR: [1,5,6,7], // TXのタイプに設定可能なセンサーID
