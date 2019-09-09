@@ -3,10 +3,11 @@
     "key": "recordsTest",
     "icon": "list-ul",
     "order": 0,
+    "base": "test/",
     "pages": [
       {
         "key": "hitoMono",
-        "path": "test/records.html",
+        "path": "records.html",
         "icon": "list-ul"
       }
     ]

@@ -64,14 +64,19 @@ export const fetchNav = async (masterFeatureList, tenantFeatureList, featureList
   const iframeBaseDir = PLUGIN_CONSTANTS.IFRAME_BASE_DIR
   const pluginKeyPrefix = PLUGIN_CONSTANTS.PLUGIN_KEY_PREFIX
   const pluginPathPrefix = PLUGIN_CONSTANTS.VIEW_URL_PREFIX
+  const splice = Array.prototype.splice
 
   return await axios.get(iframeBaseDir + 'menu.json').then(res => {
     const length = retNav.length
-    const splice = Array.prototype.splice
-    res.data.map((d) => {
+    res.data
+    // 先にbaseを参照してRoleによるメニュー項目表示/非表示を判定するfilterを実行する
+    // その後にmap
+    .map((d) => {
+      const orgBase = d.base
       d.base = iframeBaseDir
       d.pages.forEach((p, index, array) => {
         if (p.path && p.path.length > 0) {
+          p.path = orgBase + p.path
           LocalStorageHelper.setLocalStorage(pluginKeyPrefix + '-' + index, pluginPathPrefix  + p.path)
           p.path = `iframe?${pluginKeyPrefix}=${index}`
         }
