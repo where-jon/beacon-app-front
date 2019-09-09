@@ -1,7 +1,14 @@
 <template>
   <div>
-    <b-button type="button" :variant="theme" v-t="'label.detailFilter'" size="sm" class="ml-sm-4 ml-2 mr-1" @click="displayDetailFilter" />
-    <b-modal id="modalDetailFilter" :title="$t('label.detailFilter')" :ok-title="$t('label.search')" :cancel-title="$t('label.cancel')" @show="execInit" @ok="execOk" @hidden="execHide" >
+    <b-form inline @submit.prevent>
+      <b-form-row class="my-1">
+        <b-button type="button" :variant="theme" v-t="'label.filter'" size="sm" class="ml-sm-4 ml-2 mr-1" @click="displayDetailFilter" />
+      </b-form-row>
+      <b-form-row class="my-1 ml-2">
+        <label v-if="filter" v-t="'label.enabled'" />
+      </b-form-row>
+    </b-form>
+    <b-modal id="modalDetailFilter" :title="$t('label.filter')" :ok-title="$t('label.filter')" :cancel-title="$t('label.close')" @show="execInit" @ok="execOk" @hidden="execHide" >
       <div v-if="pluginHtml" id="pluginHtml" v-html="pluginHtml" />
 
       <span v-if="pluginJson" id="pluginJson">
@@ -62,6 +69,7 @@ export default {
       pluginHtml: null,
       pluginJson: [],
       pluginRequest: '',
+      filter: false,
     }
   },
   computed: {
@@ -89,6 +97,14 @@ export default {
     useTextBox(plugin){
       return PluginHelper.isTextboxTag(plugin)
     },
+    hasFilterValue(){
+      return this.pluginJson.some(plugin => {
+        if(this.useSelect(plugin) || this.useTextBox(plugin)){
+          return Util.hasValue(plugin.value)
+        }
+        return Util.hasValue(Util.getValue(plugin.value, 'value', null))
+      })
+    },
     getPluginOptions(plugin){
       const optionKey = Util.getValue(plugin, 'option', plugin.name)
       if(Util.hasValue(this[optionKey + 'Options'])){
@@ -115,16 +131,29 @@ export default {
       }, result => this.finalizePlugin(JSON.parse(result)))
     },
     execInit(){
-      this.pluginJson.forEach(val => val.oldValue = _.cloneDeep(val.value))
+      this.pluginJson.forEach(val => {
+        if(this.useSelect(val) || this.useTextBox(val)){
+          this.$set(val, 'oldValue', val.value)
+          return
+        }
+        this.$set(val, 'oldValue', Util.hasValue(val.value)? { ...val.value }: null)
+      })
     },
     execHide(){
       if(!this.isOk){
-        this.pluginJson.forEach(val => val.value = _.cloneDeep(val.oldValue))
+        this.pluginJson.forEach(val => {
+          if(this.useSelect(val) || this.useTextBox(val)){
+            this.$set(val, 'value', val.oldValue)
+            return
+          }
+          this.$set(val, 'value', Util.hasValue(val.oldValue)? { ...val.oldValue }: null)
+        })
       }
       this.isOk = false
     },
     async execOk(){
       this.isOk = true
+      this.filter = this.hasFilterValue()
       if(!Util.hasValue(this.pluginRequest)){
         return
       }
