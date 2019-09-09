@@ -73,17 +73,14 @@
         }
       },
       async mounted() {
-        this.urlBase = decodeURI(window.location.search.split('=')[1])
-        const apServiceClient = axios.create({
-          xsrfHeaderName: 'X-CSRF-Token',
-          withCredentials: true
-        })
+        this.urlBase = window.localStorage.getItem('api-base-url')
+        const common = new Common()
         const config = {
           headers: {
-            apiKey: Common.getApiKey()
+            apiKey: common.getApiKey()
           }
         }
-        const pots = await apServiceClient.get(this.urlBase + '/plugin/pot', config)
+        const pots = await common.apServiceClient.get(this.urlBase + '/plugin/pot', config)
         this.items = pots.data.map((pot) => {
           return {potId: pot.potId, name: pot.potName, group: pot.groupName, category: pot.categoryName, existThumbnail: pot.existThumbnail}
         })

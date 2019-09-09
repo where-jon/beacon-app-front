@@ -9,8 +9,8 @@
 <script>
 import * as Util from '../../sub/util/Util'
 import { APP_SERVICE } from '../../sub/constant/config'
-
-const VIEW_URL_PREFIX = '/plugin/'
+import { PLUGIN_CONSTANTS } from '../../sub/constant/Constants'
+import * as LocalStorageHelper from '../../sub/helper/base/LocalStorageHelper'
 
 export default {
   data() {
@@ -30,14 +30,16 @@ export default {
   },
   watch: {
     '$route' (to, from) {
-      this.url = VIEW_URL_PREFIX + decodeURI(to.fullPath.split('=')[1])
+      this.url = this.VIEW_URL_PREFIX + decodeURI(to.fullPath.split('=')[1])
     }
   },
   mounted() {
+    LocalStorageHelper.setLocalStorage('api-base-url', APP_SERVICE.BASE_URL)
     if (Util.hasValue(window.location.search)) {
-      const path = window.location.search.split('=')[1]
-      if (Util.hasValue(path)) {
-        this.url = VIEW_URL_PREFIX + path + `?base=${encodeURI(APP_SERVICE.BASE_URL)}`
+      const index = window.location.search.split('=')[1]
+      if (Util.hasValue(index)) {
+        const path = LocalStorageHelper.getLocalStorage(PLUGIN_CONSTANTS.PLUGIN_KEY_PREFIX + '-' + index)
+        this.url = path
       }
     }
   },
@@ -53,7 +55,7 @@ export default {
 
 .iframeWrap{
     height: 0;
-    padding-bottom: 62.5%;
+    padding-bottom: 65%;
 }
 
 iframe {
