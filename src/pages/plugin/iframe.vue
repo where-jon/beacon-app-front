@@ -34,15 +34,20 @@ export default {
     }
   },
   mounted() {
+    const query = PLUGIN_CONSTANTS.PLUGIN_KEY_PREFIX + '='
     LocalStorageHelper.setLocalStorage('api-base-url', APP_SERVICE.BASE_URL)
-    if (Util.hasValue(window.location.search)) {
-      const index = window.location.search.split('=')[1]
-      if (Util.hasValue(index)) {
-        const path = LocalStorageHelper.getLocalStorage(PLUGIN_CONSTANTS.PLUGIN_KEY_PREFIX + '-' + index)
-        this.url = path
-      }
-    }
+    this.url = this.getPluginIndex()
   },
+  methods: {
+    getPluginIndex() {
+      const query = PLUGIN_CONSTANTS.PLUGIN_KEY_PREFIX + '='
+      if (!Util.hasValue(window.location.search) || window.location.search.indexOf(query) < 0) {
+        return null
+      }
+      const index = window.location.search.split('=')[1]
+      return Util.hasValue(index) ? LocalStorageHelper.getLocalStorage(PLUGIN_CONSTANTS.PLUGIN_KEY_PREFIX + '-' + index) : null
+    }
+  }
 }
 </script>
 
