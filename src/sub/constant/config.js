@@ -235,7 +235,7 @@ export const APP = { // 機能面に関する設定
 
 // URL関連設定
 export const APP_SERVICE = { // used if APP.LOGIN_MODE == APP_SERVICE
-  BASE_URL: 'http://localhost:8080'
+  BASE_URL: 'http://localhost:8080',
 }
 
 export const EXCLOUD = {

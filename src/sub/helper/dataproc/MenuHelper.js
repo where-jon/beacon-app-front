@@ -8,6 +8,7 @@ import * as StringUtil from '../../util/StringUtil'
 import * as Util from '../../util/Util'
 import * as AuthHelper from '../base/AuthHelper'
 import * as LocalStorageHelper from '../base/LocalStorageHelper'
+import axios from 'axios'
 
 let store
 
@@ -30,7 +31,7 @@ export const setStore = pStore => {
  * @param {Boolean} isTenantAdmin 
  * @return {Object[]}
  */
-export const fetchNav = (masterFeatureList, tenantFeatureList, featureList, isProvider, isTenantAdmin) => {
+export const fetchNav = async (masterFeatureList, tenantFeatureList, featureList, isProvider, isTenantAdmin) => {
   let retNav = _.map(MENU, group => {
     let pages = _.filter(group.pages, page => {
       if (isTenantAdmin && group.tenantOnly) {
@@ -59,7 +60,31 @@ export const fetchNav = (masterFeatureList, tenantFeatureList, featureList, isPr
   retNav = _.filter(retNav, group => {
     return group.pages.length > 0
   })
-  return retNav
+
+  const IFRAME_BASE_DIR = 'plugin/'
+
+  return await axios.get(IFRAME_BASE_DIR + 'menu.json').then(res => {
+    const length = retNav.length
+    const splice = Array.prototype.splice
+    res.data
+    .map((d) => {
+      d.base = IFRAME_BASE_DIR
+      d.pages.forEach(p => {
+        if (p.path && p.path.length > 0) {
+          p.path = `iframe?path=${p.path}`
+        }
+      })
+      return d
+    })
+    .filter((d) => d.order !== null && d.order !== undefined && d.order < length)
+    .forEach((d) => splice.apply(retNav, [d.order,0].concat([d])))
+    const nonOrders = res.data.filter((d) => d.order === null || d.order === undefined || d.order >= length)
+    return retNav.concat(nonOrders)
+  })
+  .catch(error => {
+    console.error(error)
+    return retNav
+  })
 }
 
 /**

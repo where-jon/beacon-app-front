@@ -648,7 +648,8 @@
     "mobile": "携帯電話",
     "entrydate": "入社日",
     "score": "点数",
-
+    "recordsTest": "レコード表示テスト",
+    "hitoMono": "人・物レコード",
     "sample": "サンプル",
     "dummy": ""
   },
