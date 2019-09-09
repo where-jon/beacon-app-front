@@ -1053,3 +1053,9 @@ export const SYSTEM_ZONE_CATEGORY_NAME = {
   PROHIBIT: 'PROHIBIT',
   ABSENT_DISPLAY: 'ABSENT_DISPLAY',
 }
+
+export const PLUGIN_CONSTANTS = {
+  IFRAME_BASE_DIR: 'plugin/',
+  PLUGIN_KEY_PREFIX: 'plugin-index',
+  VIEW_URL_PREFIX: '/plugin/'
+}

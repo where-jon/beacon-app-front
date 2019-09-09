@@ -3,7 +3,7 @@
  * @module helper/dataproc/MenuHelper
  */
 
-import { ROLE_FEATURE, MENU } from '../../constant/Constants'
+import { ROLE_FEATURE, MENU, PLUGIN_CONSTANTS } from '../../constant/Constants'
 import * as StringUtil from '../../util/StringUtil'
 import * as Util from '../../util/Util'
 import * as AuthHelper from '../base/AuthHelper'
@@ -61,17 +61,19 @@ export const fetchNav = async (masterFeatureList, tenantFeatureList, featureList
     return group.pages.length > 0
   })
 
-  const IFRAME_BASE_DIR = 'plugin/'
+  const iframeBaseDir = PLUGIN_CONSTANTS.IFRAME_BASE_DIR
+  const pluginKeyPrefix = PLUGIN_CONSTANTS.PLUGIN_KEY_PREFIX
+  const pluginPathPrefix = PLUGIN_CONSTANTS.VIEW_URL_PREFIX
 
-  return await axios.get(IFRAME_BASE_DIR + 'menu.json').then(res => {
+  return await axios.get(iframeBaseDir + 'menu.json').then(res => {
     const length = retNav.length
     const splice = Array.prototype.splice
-    res.data
-    .map((d) => {
-      d.base = IFRAME_BASE_DIR
-      d.pages.forEach(p => {
+    res.data.map((d) => {
+      d.base = iframeBaseDir
+      d.pages.forEach((p, index, array) => {
         if (p.path && p.path.length > 0) {
-          p.path = `iframe?path=${p.path}`
+          LocalStorageHelper.setLocalStorage(pluginKeyPrefix + '-' + index, pluginPathPrefix  + p.path)
+          p.path = `iframe?${pluginKeyPrefix}=${index}`
         }
       })
       return d

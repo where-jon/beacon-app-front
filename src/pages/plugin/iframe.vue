@@ -9,8 +9,8 @@
 <script>
 import * as Util from '../../sub/util/Util'
 import { APP_SERVICE } from '../../sub/constant/config'
-
-const VIEW_URL_PREFIX = '/plugin/'
+import { PLUGIN_CONSTANTS } from '../../sub/constant/Constants'
+import * as LocalStorageHelper from '../../sub/helper/base/LocalStorageHelper'
 
 export default {
   data() {
@@ -30,17 +30,24 @@ export default {
   },
   watch: {
     '$route' (to, from) {
-      this.url = VIEW_URL_PREFIX + decodeURI(to.fullPath.split('=')[1])
+      this.url = this.VIEW_URL_PREFIX + decodeURI(to.fullPath.split('=')[1])
     }
   },
   mounted() {
-    if (Util.hasValue(window.location.search)) {
-      const path = window.location.search.split('=')[1]
-      if (Util.hasValue(path)) {
-        this.url = VIEW_URL_PREFIX + path + `?base=${encodeURI(APP_SERVICE.BASE_URL)}`
-      }
-    }
+    const query = PLUGIN_CONSTANTS.PLUGIN_KEY_PREFIX + '='
+    LocalStorageHelper.setLocalStorage('api-base-url', APP_SERVICE.BASE_URL)
+    this.url = this.getPluginIndex()
   },
+  methods: {
+    getPluginIndex() {
+      const query = PLUGIN_CONSTANTS.PLUGIN_KEY_PREFIX + '='
+      if (!Util.hasValue(window.location.search) || window.location.search.indexOf(query) < 0) {
+        return null
+      }
+      const index = window.location.search.split('=')[1]
+      return Util.hasValue(index) ? LocalStorageHelper.getLocalStorage(PLUGIN_CONSTANTS.PLUGIN_KEY_PREFIX + '-' + index) : null
+    }
+  }
 }
 </script>
 
@@ -53,7 +60,7 @@ export default {
 
 .iframeWrap{
     height: 0;
-    padding-bottom: 62.5%;
+    padding-bottom: 65%;
 }
 
 iframe {
