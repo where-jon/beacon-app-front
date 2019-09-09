@@ -49,6 +49,9 @@
             </v-select>
           </span>
         </b-form-row>
+        <b-form-row v-if="useDetailFilter" class="my-1 ml-2 ml-sm-0">
+          <detail-filter @detailFilter="onDetailFilter" />
+        </b-form-row>
         <b-form-row v-if="showDetected" class="my-1 ml-2 ml-sm-0">
           <span class="ml-sm-4 ml-2 mr-1">
             {{ $t('label.detectedCount') + ' : ' }}
@@ -121,6 +124,7 @@ import breadcrumb from '../../components/layout/breadcrumb.vue'
 import commonmixin from '../../components/mixin/commonmixin.vue'
 import reloadmixin from '../../components/mixin/reloadmixin.vue'
 import showmapmixin from '../../components/mixin/showmapmixin.vue'
+import detailFilter from '../../components/parts/detailFilter.vue'
 import meditag from '../../components/parts/meditag.vue'
 import txdetail from '../../components/parts/txdetail.vue'
 import alert from '../../components/parts/alert.vue'
@@ -128,6 +132,7 @@ import alert from '../../components/parts/alert.vue'
 export default {
   components: {
     breadcrumb,
+    detailFilter,
     meditag,
     'txdetail': txdetail,
     alert,
@@ -205,12 +210,15 @@ export default {
       return ret? [ret]: []
     },
     filter() {
-      return [this.selectedGroup, this.selectedCategory]
+      return [this.selectedGroup, this.selectedCategory, this.selectedDetail]
     },
     alertStyle(){
       return {
         'font-weight': DISP.THERMOH.ALERT_WEIGHT,
       }
+    },
+    useDetailFilter(){
+      return APP.POS.PLUGIN.FILTER
     },
   },
   watch: {
@@ -822,7 +830,10 @@ export default {
     },
     isOtherFloorFixTx (tx, exb) {
       return tx && tx.location && exb && exb.location && tx.location.areaId != exb.location.areaId && tx.location.x * tx.location.y > 0
-    }
+    },
+    onDetailFilter(list){
+      this.selectedDetail = list
+    },
   }
 }
 </script>

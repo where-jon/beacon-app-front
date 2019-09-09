@@ -6,6 +6,7 @@
 import { ROLE_FEATURE, MENU } from '../../constant/Constants'
 import * as StringUtil from '../../util/StringUtil'
 import * as Util from '../../util/Util'
+import * as AuthHelper from '../base/AuthHelper'
 import * as LocalStorageHelper from '../base/LocalStorageHelper'
 import axios from 'axios'
 
@@ -37,6 +38,9 @@ export const fetchNav = async (masterFeatureList, tenantFeatureList, featureList
         return true
       }
       if (isProvider && group.providerOnlyForce && page.providerOnlyForce) {
+        return true
+      }
+      if (AuthHelper.isSingleTenant() && isProvider && group.singleOnlyForce && page.singleOnlyForce) {
         return true
       }
       if(!featureOk('/' + group.base + page.path, masterFeatureList)){

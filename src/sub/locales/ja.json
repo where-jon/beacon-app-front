@@ -638,6 +638,8 @@
     "success": "成功",
     "failed": "失敗",
 
+    "detailFilter": "詳細フィルター",
+
     "---------------- Pot Extension sample ---------------":"",
     "sex": "性別",
     "address": "住所",
@@ -648,6 +650,7 @@
     "score": "点数",
     "recordsTest": "レコード表示テスト",
     "hitoMono": "人・物レコード",
+    "sample": "サンプル",
     "dummy": ""
   },
   "config": {
@@ -702,6 +705,9 @@
         },
         "LOST": {
           "DUPLICATE_MAIL_TIME": "重複アラート通知制限（メール）::設定した時間内に同じ内容のアラートが発信された場合、メールによる通知を行わないようにします。ミリ秒単位で設定します。"
+        },
+        "PLUGIN": {
+          "FILTER": "位置表示画面で詳細フィルターを使用する::プラグインを使用し、位置表示画面で詳細フィルターを表示します。"
         }
       },
       "SENSOR": {
@@ -976,177 +982,6 @@
       "BASE_URL": "EXCloudのURL::EXCloudのURLを設定します。"
     },
 
-    "TYPE": {
-      "APP": {
-        "POS": {
-          "MOVING_AVERAGE_TIME": "number",
-          "PROHIBIT_GROUPS": "numberList",
-          "PROHIBIT_ALERT": "stringList",
-          "LOST_ALERT": "stringList",
-          "LOST_GROUPS": "numberList",
-          "PROHIBIT": {
-            "DUPLICATE_MAIL_TIME": "number"
-          },
-          "LOST": {
-            "DUPLICATE_MAIL_TIME": "number"
-          }
-        },
-        "SENSOR": {
-          "EXB_SENSOR": "numberList",
-          "TX_SENSOR": "numberList"
-        },
-        "POS_LIST": {
-          "WITH": "stringList"
-        }, 
-        "TX": {
-          "WITH": "stringList"
-        }, 
-        "EXB": {
-          "SENSOR": "numberList"
-        }, 
-        "LOCATION": {
-          "WITH": "stringList",
-          "TYPE": {
-            "WITH": "stringList"
-          }
-        },
-        "USER": {
-          "WITH": "stringList"
-        }, 
-        "POT": {
-          "WITH": "stringList",
-          "EXT_DEF": "json"
-        }, 
-        "CATEGORY": {
-          "TYPES": "numberList"
-        },
-        "NOTIFY": {
-          "MIDIUM_TYPES": "numberList",
-          "STATE_TYPES": "numberList"
-        },
-        "STAY_SUM": {
-          "SCALE_TIMES": "numberList"
-        },
-        "TX_MON": {
-          "WITH": "stringList",
-          "WITH_SENSOR": "numberList"
-        },
-        "SENSOR_LIST": {
-          "WITH": "stringList"
-        },
-        "TXDETAIL": {
-          "ITEMS": "stringList"
-        },
-        "SVC": {
-          "SLACK_CHANNEL": "string",
-          "SLACK_TOKEN": "string",
-          "STAY_SUM": {
-            "START": "number", 
-            "END": "number", 
-            "INTERVAL": "number", 
-            "CALC_BY": "string",
-            "ADJUST_TIME": "number",
-            "REAL_TIME": "boolean"
-          },
-          "POS": {
-            "CACHE_TIME": "number"
-          },
-          "PROXIMITY":{
-            "USE_TXAIR": "boolean",
-            "USE_MEETING_ROOM": "boolean",
-            "EXCLOUD_RAWLOG_DIR": "string",
-            "BLANK_RANGE": "number",
-            "MIN_RANGE": "number"
-          }
-        },
-        "BATCH": {
-          "POSITION": {
-            "INTERVAL": "number"
-          },
-          "SENSOR_1": {
-            "INTERVAL": "number"
-          },
-          "SENSOR_2": {
-            "INTERVAL": "number"
-          },
-          "SENSOR_3": {
-            "INTERVAL": "number"
-          },
-          "SENSOR_5": {
-            "INTERVAL": "number"
-          },
-          "SENSOR_6": {
-            "INTERVAL": "number"
-          },
-          "SENSOR_8": {
-            "INTERVAL": "number"
-          },
-          "MONITOR": {
-            "INTERVAL": "number"
-          },
-          "UTILIZATION": {
-            "CRON": "string"
-          },
-          "STAY_SUM": {
-            "CRON": "string"
-          },
-          "PROXIMITY": {
-            "CRON": "string"
-          },
-          "LOST_ZONE": {
-            "INTERVAL": "number"
-          },
-          "PROHIBIT_ZONE": {
-            "INTERVAL": "number"
-          }
-        }
-      },
-      "DISP": {
-        "TX": {
-          "ABSENT_ZONE_DISPLAY_TYPES": "stringList"
-        },
-        "THERMOH": {
-          "PATTERN": "stringList",
-          "HUMIDITY_PATTERN": "stringList"
-        },
-        "POSITION_HISTORY": {
-          "HEADERS": "stringList"
-        },
-        "MEDITAG": {
-          "STRESS_BG": "stringList"
-        }
-      },
-      "DEV": {
-        "SIMULATION": "number",
-        "SIMULATION_MOVE_PERCENT": "number",
-        "SIMULATION_MOVE_AREA_PERCENT": "number"
-      }
-    },
-    "DEFAULT": {
-      "APP": {
-        "POS": {
-          "PROHIBIT": {
-            "DUPLICATE_MAIL_TIME": "180000"
-          },
-          "LOST": {
-            "DUPLICATE_MAIL_TIME": "180000"
-          }
-        },
-        "SVC": {
-          "STAY_SUM": {
-            "STAY_SUM_START": "0", 
-            "STAY_SUM_END": "2400", 
-            "STAY_SUM_INTERVAL": "5", 
-            "STAY_SUM_CALC_BY": "location",
-            "STAY_SUM_ADJUST_TIME": "4"
-          },
-          "PROXIMITY":{
-            "BLANK_RANGE": "60000",
-            "MIN_RANGE": "60000"
-          }
-        }
-      }
-    },  
     "OPTIONS": {
       "SETTING_CATEGORY": {
         "COMMON": "共通",
