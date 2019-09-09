@@ -74,12 +74,16 @@
       },
       async mounted() {
         this.urlBase = decodeURI(window.location.search.split('=')[1])
+        const apServiceClient = axios.create({
+          xsrfHeaderName: 'X-CSRF-Token',
+          withCredentials: true
+        })
         const config = {
           headers: {
             apiKey: Common.getApiKey()
           }
         }
-        const pots = await axios.get(this.urlBase + '/plugin/pot', config)
+        const pots = await apServiceClient.get(this.urlBase + '/plugin/pot', config)
         this.items = pots.data.map((pot) => {
           return {potId: pot.potId, name: pot.potName, group: pot.groupName, category: pot.categoryName, existThumbnail: pot.existThumbnail}
         })
