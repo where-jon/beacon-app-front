@@ -9,7 +9,7 @@
           </li>
         </ol>
       </div>
-      <div v-if="useLegend && legendItems" ref="legendButton" class="col-auto px-0">
+      <div v-if="useLegend && legendItems" ref="legendButton" class="col-auto px-1">
         <b-button v-if="showLegend" class="legend-button-active" @click="switchLegend">
           {{ $i18n.tnl('label.legend') }}
         </b-button>
