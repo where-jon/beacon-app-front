@@ -61,36 +61,49 @@ export const fetchNav = async (masterFeatureList, tenantFeatureList, featureList
     return group.pages.length > 0
   })
 
+  // プラグインメニュー項目をmenu.jsonからロードする
+  return await loadPluginMenuItems(retNav, masterFeatureList, tenantFeatureList, featureList, isProvider, isTenantAdmin)
+}
+
+const loadPluginMenuItems = async (orgMenuItems, masterFeatureList, tenantFeatureList, featureList, isProvider, isTenantAdmin) => {
+
   const iframeBaseDir = PLUGIN_CONSTANTS.IFRAME_BASE_DIR
   const pluginKeyPrefix = PLUGIN_CONSTANTS.PLUGIN_KEY_PREFIX
   const pluginPathPrefix = PLUGIN_CONSTANTS.VIEW_URL_PREFIX
   const splice = Array.prototype.splice
 
   return await axios.get(iframeBaseDir + 'menu.json').then(res => {
-    const length = retNav.length
+    const length = orgMenuItems.length
     res.data
-    // 先にbaseを参照してRoleによるメニュー項目表示/非表示を判定するfilterを実行する
-    // その後にmap
+    .filter((d) => {
+      if (isTenantAdmin || isProvider) {
+        return true
+      }
+      const path = pluginPathPrefix + d.base
+      return featureOk(path, tenantFeatureList) && getMode(path, featureList) & ROLE_FEATURE.MODE.SYS_ALL
+    })
     .map((d) => {
       const orgBase = d.base
       d.base = iframeBaseDir
+      d.pages = d.pages.filter((p) => featureOk(pluginPathPrefix + orgBase + p.path, masterFeatureList))
       d.pages.forEach((p, index, array) => {
         if (p.path && p.path.length > 0) {
           p.path = orgBase + p.path
           LocalStorageHelper.setLocalStorage(pluginKeyPrefix + '-' + index, pluginPathPrefix  + p.path)
+          // iframeページ経由でpluginページにアクセスするため、パスのベースをiframeページパスに置き換える
           p.path = `iframe?${pluginKeyPrefix}=${index}`
         }
       })
       return d
     })
-    .filter((d) => d.order !== null && d.order !== undefined && d.order < length)
-    .forEach((d) => splice.apply(retNav, [d.order,0].concat([d])))
+    .filter((d) => d.order !== null && d.order !== undefined && d.order < length && d.pages.length > 0)
+    .forEach((d) => splice.apply(orgMenuItems, [d.order,0].concat([d])))
     const nonOrders = res.data.filter((d) => d.order === null || d.order === undefined || d.order >= length)
-    return retNav.concat(nonOrders)
+    return orgMenuItems.concat(nonOrders)
   })
   .catch(error => {
     console.error(error)
-    return retNav
+    return orgMenuItems
   })
 }
 
