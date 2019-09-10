@@ -291,8 +291,7 @@ export const getTenantCd = (def, providerOk) => { // xxx.saas.ドメインの場
     const login = LocalStorageHelper.getLogin()
     tenantCd = Util.getValue(login, 'currentTenant.tenantCd', null)
   }
-  return 'provider'
-  // return tenantCd || def
+  return tenantCd || def
 }
 
 /**
