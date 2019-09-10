@@ -434,6 +434,7 @@ const appStateConf = {
     sort: 'locationId',
     beforeCommit: arr => {
       return arr.map(location => {
+        const locationZoneList = Util.getValue(location, 'locationZoneList', [])
         const zoneTypeMap = {}
         Util.getValue(location, 'locationZoneList', []).forEach(locationZone => {
           const key = '' + locationZone.zoneType
@@ -446,6 +447,9 @@ const appStateConf = {
           ...location,
           zoneClass: zoneTypeMap['' + ZONE.NON_COORDINATE],
           zoneBlock: zoneTypeMap['' + ZONE.COORDINATE],
+          isAbsentZone: location.categoryName === SYSTEM_ZONE_CATEGORY_NAME.ABSENT,
+          zoneIdList: locationZoneList.map(val => Util.getValue(val, 'locationZonePK.zoneId', null)).filter(val => val),
+          zoneCategoryIdList: locationZoneList.map(val => Util.getValue(val, 'categoryId', null)).filter(val => val),
         }
       })
     }

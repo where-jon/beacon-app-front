@@ -169,14 +169,14 @@ export default {
       lostUnDetectList : null,
       icons: {},
       txsMap: {},
-      exbsMap: {},
+      locationsMap: {},
       prohibitInterval:null,
       lostInterval:null,
       isShowRight: false,
       isShowBottom: false,
       isMounted: false,
       reloadState: {isLoad: false},
-      loadStates: ['category','group','tx','exb','absentDisplayZones'],
+      loadStates: ['category','group','tx', 'exb', 'location', 'absentDisplayZones'],
       toggleCallBack: () => this.reset(),
       thumbnailUrl: APP_SERVICE.BASE_URL + EXCLOUD.POT_THUMBNAIL_URL,
       preloadThumbnail: new Image(),
@@ -272,7 +272,11 @@ export default {
     this.txs.forEach((t) => this.txsMap[t.btxId] = t)
     // ゾーン表示時「・・・」用TXを追加しておく
     this.txsMap[PositionHelper.zoneLastTxId()] = { txId: PositionHelper.zoneLastTxId(), disp: 1, tx: {disp:1}, }
-    this.exbs.forEach((e) => this.exbsMap[e.posId] = e)
+    this.locations.forEach(l => {
+      if(Util.hasValue(l.posId)){
+        this.locationsMap[l.posId] = l
+      }
+    })
     // this.fetchData()は'vueSelected.area'をwatchしている箇所で実行している。
     // 以下は二重実行を防ぐためコメントアウト
     // await this.fetchData()
@@ -433,7 +437,6 @@ export default {
           this.txCont.height = this.bitmap.height
           this.stage.addChild(this.txCont)
         }
-        this.positionedExb = PositionHelper.getPositionedExb(this.selectedArea)
         this.showTxAll()
 
         if (Util.hasValue(APP.POS.PROHIBIT_ALERT) && Util.hasValue(APP.POS.PROHIBIT_GROUPS)) {
@@ -474,7 +477,7 @@ export default {
       }
 
       this.txCont.removeAllChildren()
-      this.disableExbsCheck()
+      this.disableLocationsCheck()
       this.detectedCount = 0 // 検知カウントリセット
 
       const absentZonePosition = this.setAbsentZoneTx()
@@ -491,7 +494,7 @@ export default {
         position = PositionHelper.adjustMultiPosition(position, this.selectedArea)
       }else{
         const ratio = 1 / this.canvasScale
-        position = PositionHelper.adjustPosition(position, ratio, this.positionedExb, this.selectedArea)
+        position = PositionHelper.adjustPosition(position, ratio, this.locations, this.selectedArea)
       }
       if (APP.SENSOR.USE_MEDITAG && this.meditagSensors) { // TODO: 場所OK???
         position = SensorHelper.setStress(position, this.meditagSensors)
@@ -501,7 +504,6 @@ export default {
     },
     showTx(pos) {
       const tx = this.txsMap[pos.btx_id]
-      const exb = this.exbsMap[pos.pos_id]
       Util.debug('showTx', pos, tx && tx.sensor)
       if (!tx) {
         console.warn('tx not found. btx_id=' + pos.btx_id)
@@ -531,11 +533,12 @@ export default {
       const bgColor = meditag? meditag.bg: this.isMagnetOn(magnet)? display.color: display.bgColor
       
       // フリーアドレスTXが不在エリア検知の場合は以降処理を行わない
-      if (exb && exb.isAbsentZone && !this.isFixTx(tx)) {
+      const isAbsentZone = Util.getValue(pos, 'location.isAbsentZone', false)
+      if (isAbsentZone && !this.isFixTx(tx)) {
         return
       }
 
-      pos.transparent = pos.transparent || ((exb && exb.isAbsentZone || this.isOtherFloorFixTx(tx, exb)) && this.isFixTx(tx))
+      pos.transparent = pos.transparent || ((isAbsentZone || this.isOtherFloorFixTx(tx, pos.location)) && this.isFixTx(tx))
 
       // 既に該当btx_idのTXアイコンが作成済みか?
       let txBtn = this.icons[pos.btx_id]
@@ -571,7 +574,7 @@ export default {
         return
       }
       const ratio = DISP.TX.R_ABSOLUTE ? 1/this.canvasScale : 1
-      let absentZonePositions = PositionHelper.adjustZonePosition(PositionHelper.getPositions(false, true), ratio, this.exbs, absentDisplayZone)
+      let absentZonePositions = PositionHelper.adjustZonePosition(PositionHelper.getPositions(false, true), ratio, this.locations, absentDisplayZone)
 
       absentZonePositions.forEach((pos) => this.showAbsentZoneTx(pos))
       return absentZonePositions
@@ -695,14 +698,14 @@ export default {
           strokeStyle: DISP.TX.STROKE_WIDTH,
         })
     },
-    disableExbsCheck(){ // position
+    disableLocationsCheck(){ // position
       // for debug
-      const disabledExbs = {}
-      _.filter(this.exbs, (exb) => Util.hasValue(exb.location) && (!exb.location.x || exb.location.y <= 0)).forEach(e => disabledExbs[e.posId] = e)
+      const disabledLocations = {}
+      _.filter(this.locations, location => Util.hasValue(location.posId) && (!location.x || location.y <= 0)).forEach(e => disabledLocations[e.posId] = e)
       PositionHelper.getPositions().forEach((pos) => {
-        const exb = disabledExbs[pos.pos_id]
-        if (exb) {
-          Util.debug('Found at disabled exb', pos, exb)
+        const location = disabledLocations[pos.pos_id]
+        if (location) {
+          Util.debug('Found at disabled location', pos, location)
         }
       })
     },
@@ -828,8 +831,8 @@ export default {
     isFixTx (tx) {
       return tx && tx.location && tx.location.areaId == this.selectedArea && tx.location.x * tx.location.y > 0
     },
-    isOtherFloorFixTx (tx, exb) {
-      return tx && tx.location && exb && exb.location && tx.location.areaId != exb.location.areaId && tx.location.x * tx.location.y > 0
+    isOtherFloorFixTx (tx, location) {
+      return tx && tx.location && location && tx.location.areaId != location.areaId && tx.location.x * tx.location.y > 0
     },
     onDetailFilter(list){
       this.selectedDetail = list
