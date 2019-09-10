@@ -28,7 +28,7 @@
         </label>
         <b-form-row>
           <span :title="vueSelectTitle(selectedTx_)">
-            <v-select v-model="selectedTx_" :options="txOptions" size="sm" class="mb-2 ml-2 mt-mobile vue-options" :style="vueSelectStyle" @input="showTxOnMap">
+            <v-select v-model="selectedTx_" :options="noLocTxOptions" size="sm" class="mb-2 ml-2 mt-mobile vue-options" :style="vueSelectStyle" @input="showTxOnMap">
               <template slot="selected-option" slot-scope="option">
                 {{ vueSelectCutOn(option) }}
               </template>
@@ -90,7 +90,7 @@ export default {
       message: '',
       workTxs: [],
       positionedTx: [],
-      txOptions: [],
+      noLocTxOptions: [],
       selectedTx_: null,
       isChangeArea: false,
       isChanged: false,
@@ -144,7 +144,7 @@ export default {
       this.isShownMapImage = false
       this.isChangeArea = false
       this.positionedTx = []
-      this.txOptions = []
+      this.noLocTxOptions = []
     },
     async fetchData(payload) {
       try {
@@ -166,7 +166,7 @@ export default {
       this.positionedTx = _.filter(this.workTxs, (tx) => {
         return tx.location && tx.location.areaId == this.selectedArea && tx.location.x && tx.location.y > 0
       })
-      this.txOptions = _(this.workTxs).filter((val) => {
+      this.noLocTxOptions = _(this.workTxs).filter((val) => {
         return !val.location || (!val.location.x || !val.location.y || (val.location.x && val.location.y <= 0))
       })
         .map((val) => { // TODO: minor以外の表示対応
@@ -325,7 +325,7 @@ export default {
       tx.isChanged = true
       this.isChanged = true
       this.positionedTx.push(tx)
-      this.txOptions = this.txOptions.filter((val) => val.value != tx.txId)
+      this.noLocTxOptions = this.noLocTxOptions.filter((val) => val.value != tx.txId)
       this.showTx(tx)
       this.stage.update()
     },
@@ -333,7 +333,7 @@ export default {
       let counter = 0
       let y = 40
       const mapMaxPosX = this.mapWidth
-      this.txOptions.forEach((val) => {
+      this.noLocTxOptions.forEach((val) => {
         let x = 30 + counter++ * 60
         if (x > mapMaxPosX) {
           x = 30
@@ -350,7 +350,7 @@ export default {
         tx.x = tx.y = null
       }
       this.positionedTx = this.positionedTx.filter((tx) => (this.deleteTarget.minor && tx.minor != this.deleteTarget.minor) || tx.btxId != this.deleteTarget.btxId)
-      this.txOptions.push({label: `${this.getLabel(this.deleteTarget)}${this.deleteTarget.potName? '(' + this.deleteTarget.potName + ')': ''}`, value: this.deleteTarget.txId})
+      this.noLocTxOptions.push({label: `${this.getLabel(this.deleteTarget)}${this.deleteTarget.potName? '(' + this.deleteTarget.potName + ')': ''}`, value: this.deleteTarget.txId})
       this.txCon.removeChild(this.deleteTarget)
       this.stage.update()
     },

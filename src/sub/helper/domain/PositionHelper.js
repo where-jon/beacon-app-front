@@ -122,6 +122,7 @@ const positionFilter = (positions, groupId, categoryId, txIdList) => { //p
 export const storePositionHistory = async (count, allShow = false, fixSize = false) => { // position-display, pir, position-list, position, sensor-list
   const pMock = DEV.USE_MOCK_EXC? mock.positions[count]: null
 
+  const locations = store.state.app_service.locations
   const exbs = store.state.app_service.exbs
   const txs = store.state.app_service.txs
   const positionHistores = store.state.main.positionHistores
@@ -130,10 +131,10 @@ export const storePositionHistory = async (count, allShow = false, fixSize = fal
   let positions = []
   if (APP.POS.USE_POSITION_HISTORY) {
     // Serverで計算された位置情報を得る
-    positions = await EXCloudHelper.fetchPositionHistory(exbs, txs, allShow, pMock)
+    positions = await EXCloudHelper.fetchPositionHistory(locations, exbs, txs, allShow, pMock)
   } else {
     // 移動平均数分のポジションデータを保持する
-    positions = await EXCloudHelper.fetchPosition(exbs, txs, pMock, allShow)
+    positions = await EXCloudHelper.fetchPosition(locations, exbs, txs, pMock, allShow)
   }
   // 検知状態の取得
   setDetectState(positions, APP.POS.USE_POSITION_HISTORY)
@@ -395,14 +396,14 @@ const getCoordinateFix = (ratio, fixPositions) => {
 /**
  * デフォルトレイアウトのTXアイコン配置座標の配列を取得する
  * @method
- * @param {Object} exb EXBオブジェクト
+ * @param {Object} location 場所オブジェクト
  * @param {Number} ratio ウインドウ縮小割合
- * @param {Object[]} samePos 同じEXBの位置に配置するTXオブジェクトの配列
+ * @param {Object[]} samePos 同じ場所に配置するTXオブジェクトの配列
  * @return {Object[]}
  */
-const getCoordinateDefault = (exb, ratio, samePos) => {
-  let baseX = exb.location.x
-  let baseY = exb.location.y
+const getCoordinateDefault = (location, ratio, samePos) => {
+  let baseX = location.x
+  let baseY = location.y
   let txR = DISP.TX.R * ratio
   const ret = []
   switch (samePos.length) {
@@ -450,7 +451,7 @@ const getCoordinateDefault = (exb, ratio, samePos) => {
  * @method
  * @param {Number} orgX アイコン配置開始X座標値
  * @param {Number} orgY アイコン配置開始Y座標値
- * @param {Object[]} positions EXBの配置座標配列
+ * @param {Object[]} positions 場所の配置座標配列
  * @return {Object[]}
  */
 const getCoordinateTile = (ratio, orgX, orgY, positions, viewType) => {
@@ -465,8 +466,8 @@ const getCoordinateTile = (ratio, orgX, orgY, positions, viewType) => {
  * TXアイコン長方形配置時、個々のTXアイコン配置座標を取得する
  * @method
  * @param {Number} index インデックス
- * @param {Number} x EXB X座標値
- * @param {Number} y EXB Y座標値
+ * @param {Number} x X座標値
+ * @param {Number} y Y座標値
  * @param {Boolean} [isDiamond = false] trueの場合、ひし形に配置
  * @return {{x: Number, y: Number}}
  */
@@ -484,8 +485,8 @@ const getCoordinateSquare = (ratio, index, x, y, isDiamond = false) => {
  * TXアイコンをスパイラル状に配置時、個々のTXアイコン配置座標を取得する
  * @method
  * @param {Number} index インデックス
- * @param {Number} x  EXB X座標値
- * @param {Number} y  EXB Y座標値
+ * @param {Number} x X座標値
+ * @param {Number} y Y座標値
  * @param {Number} theta 原点からのアイコン配置角
  * @param {Number} radius 原点からのアイコン配置距離(半径)
  * @return {{x: Number, y: Number}}
@@ -503,7 +504,7 @@ const getCoordinateSpiral = (index, x, y, theta, radius) => {
  * @method
  * @param {Number} orgX アイコン配置開始X座標値
  * @param {Number} orgY アイコン配置開始Y座標値
- * @param {Object[]} positions EXBの配置座標配列
+ * @param {Object[]} positions 配置座標配列
  * @param {Object} viewType アイコン配置タイプ
  * @return {Object|Object[]}
  */
@@ -529,23 +530,23 @@ const getCoordinate = (ratio, orgX, orgY, positions, viewType) => {
 }
 
 /**
- * 複数TXアイコンが同じEXBの位置に重複する場合の
+ * 複数TXアイコンが同じ場所に重複する場合の
  * 配置座標を取得する
  * @method
- * @param {Object} exb EXBオブジェクト 
+ * @param {Object} location 場所オブジェクト 
  * @param {Number} ratio ブラウザウインドウ縮小割合
  * @param {Object[]} samePos TXアイコン座標配列
  * @return {Object[]}
  */
-const getPositionsToOverlap = (exb, ratio, samePos) => {
-  const viewType = getTxViewType(exb.location.txViewType)
+const getPositionsToOverlap = (location, ratio, samePos) => {
+  const viewType = getTxViewType(location.txViewType)
   if (viewType.displayFormat === TX_VIEW_TYPES.DEFAULT ||
     !Object.keys(TX_VIEW_TYPES).find(key => viewType.displayFormat === TX_VIEW_TYPES[key])) {
-    return getCoordinateDefault(exb, ratio, samePos)
+    return getCoordinateDefault(location, ratio, samePos)
   }
   const maxIcons = viewType.horizon * viewType.vertical
-  let baseX = exb.location.x
-  let baseY = exb.location.y
+  let baseX = location.x
+  let baseY = location.y
   const c = partitioningArray(samePos, viewType.displayFormat !== TX_VIEW_TYPES.TILE ? iconsUnitNum : maxIcons)
   return c.flatMap((e, i, a) => {
     const coordinate = getCoordinate(ratio, baseX, baseY, e, viewType)
@@ -581,7 +582,7 @@ const getTxViewType = txViewType => {
  * 範囲ぴったりの場合は全て表示、超える場合は・・・用データを挿入し、その後のTXは返却しない
  * @param {*} absentDisplayZone 不在表示ゾーンオブジェクト
  * @param {*} ratio ウインドウ縮小割合
- * @param {*} samePos 同じEXBの位置に配置するTXオブジェクトの配列
+ * @param {*} samePos 同じ場所に配置するTXオブジェクトの配列
  */
 const getCoordinateZone = (absentDisplayZone, ratio, samePos) => {
   const txSize = DISP.TX.R * 2
@@ -739,19 +740,19 @@ export const correctPair = (orgPositions, now) => {
  * @method
  * @param {Object[]} positions 
  * @param {Number} ratio 
- * @param {Object[]} [exbs = []] 
+ * @param {Object[]} [locations = []] 
  * @param {Number} [selectedMapId = null]
  * @return {Object[]}
  */
-export const adjustPosition = (positions, ratio, exbs = [], selectedMapId = null) => {
-  const records = exbs.map(exb => {
+export const adjustPosition = (positions, ratio, locations = [], selectedMapId = null) => {
+  const records = locations.filter(location => location.areaId != null && (selectedMapId == null || selectedMapId == location.areaId)).map(location => {
     const samePos = []
     const fixPos = []
 
     positions.forEach(pos => {
       const isFixPosition = hasTxLocation(pos) && selectedMapId && pos.tx.location.areaId == selectedMapId
       if (!isFixPosition) {
-        if (pos.pos_id == exb.location.posId && pos.timestamp
+        if (pos.pos_id == location.posId && pos.timestamp
           &&(new Date(pos.timestamp) > new Date().getTime() - APP.POS.LOST_TIME)) {
           samePos.push(pos)
         }
@@ -760,7 +761,7 @@ export const adjustPosition = (positions, ratio, exbs = [], selectedMapId = null
       }
     })
 
-    const same = (!samePos || samePos.length == 0) ? [] : getPositionsToOverlap(exb, ratio, samePos)
+    const same = (!samePos || samePos.length == 0) ? [] : getPositionsToOverlap(location, ratio, samePos)
     const fix = (!fixPos || fixPos.length == 0) ? [] : getCoordinateFix(ratio, fixPos)
     return [...same, ...fix]
   })
@@ -769,7 +770,7 @@ export const adjustPosition = (positions, ratio, exbs = [], selectedMapId = null
     return (self.findIndex(function(val) {
       return (x.btx_id === val.btx_id)
     }) === i)
-  }).filter(e => selectedMapId === null || e.exb.areaId == selectedMapId)
+  }).filter(e => selectedMapId === null || e.location.areaId == selectedMapId)
 }
 
 /**
@@ -781,19 +782,19 @@ export const adjustPosition = (positions, ratio, exbs = [], selectedMapId = null
  */
 export const adjustMultiPosition = (positions, selectedArea) => {
   const ret = []
-  positions.filter(pos => {return pos.exb && pos.exb.areaId == selectedArea}).map(pos => {
+  positions.filter(pos => pos.location && pos.location.areaId == selectedArea).map(pos => {
     ret.push( {...pos, x: pos.x, y: pos.y} )
   })
   return ret
 }
 
-export const adjustZonePosition = (positions, ratio, exbs = [], absentDisplayZone) => {
-  return exbs.map((exb) => {
+export const adjustZonePosition = (positions, ratio, locations = [], absentDisplayZone) => {
+  return locations.map(location => {
     // 不在表示用ゾーンへ表示するTXを抽出する
     const samePos = _.sortBy(positions, position => position.label)
-      .filter((position) => {
+      .filter(position => {
         return (hasDisplayType('lost') && position.detectState == DETECT_STATE.LOST) ||
-        (hasDisplayType('absent') && position.exb && position.exb.isAbsentZone) ||
+        (hasDisplayType('absent') && position.location && position.location.isAbsentZone) ||
         (hasDisplayType('undetected') && DetectStateHelper.isUndetect(position.detectState))
       })
     const same = (!samePos || samePos.length == 0) ? [] : getCoordinateZone(absentDisplayZone, ratio, samePos)

@@ -70,14 +70,14 @@ export default {
       prohibitDetectList : null,
       showDismissibleAlert: false,
       count: 0, // mockテスト用
-      loadStates: ['tx', 'exb', 'area'],
+      loadStates: ['tx', 'exb', 'location', 'area'],
     }
   },
   computed: {
     ...mapState('app_service', [
       'txs',
       'areas',
-      'exbs',
+      'locations',
       'positionList',
       'prohibits',
       'lostZones',
@@ -116,13 +116,17 @@ export default {
           this.prohibitDetectList? this.prohibitDetectList.forEach((p) => minorMap[p.minor] = p) : null
         }
 
-        const exbMap = {}
-        this.exbs.forEach((e) => exbMap[e.posId] = e)
+        const locationMap = {}
+        this.locations.forEach(l => {
+          if(Util.hasValue(l.posId)){
+            locationMap[l.posId] = l
+          }
+        })
 
-        positions = positions.map((pos) => {
+        positions = positions.map(pos => {
           prohibitCheck = minorMap[pos.minor] != null
 
-          const exb = exbMap[pos.pos_id]
+          const location = locationMap[pos.pos_id]
           return {
             ...pos,
             // powerLevel: this.getPowerLevel(pos),
@@ -132,14 +136,14 @@ export default {
             tel: Util.getValue(pos, 'tx.extValue.tel', null),
             categoryName: Util.getValue(pos, 'tx.categoryName', null),
             groupName: Util.getValue(pos, 'tx.groupName', null),
-            areaName: Util.getValue(pos, 'exb.areaName', null),
-            locationName: Util.getValue(pos, 'exb.locationName', null),
+            areaName: Util.getValue(pos, 'location.areaName', null),
+            locationName: Util.getValue(pos, 'location.locationName', null),
             // 追加フィルタ用
             groupId: Util.getValue(pos, 'tx.groupId').val,
             categoryId: Util.getValue(pos, 'tx.categoryId').val,
-            areaId: Util.getValue(pos, 'exb.areaId').val,
+            areaId: Util.getValue(pos, 'location.areaId').val,
             blinking : prohibitCheck? 'blinking' : null,
-            isDisableArea: exb? exb.isAbsentZone: false,
+            isDisableArea: Util.getValue(location, 'isAbsentZone', false),
           }
         })
         Util.debug(positions)
