@@ -163,7 +163,7 @@ export default {
       this.setColor('dropdown-menu', color)
       this.setColor('dropdown-item', color)
     },
-    switchLegend(){
+    switchLegend(e){
       this.showLegend = !this.showLegend
       if(this.showLegend){
         document.addEventListener('mousedown', this.touchStart)
@@ -173,6 +173,7 @@ export default {
         document.addEventListener('touchend', this.touchEnd)
       }
       else{
+        e.target.blur()
         document.removeEventListener('mousedown', this.touchStart)
         document.removeEventListener('mouseup', this.touchEnd)
         document.removeEventListener('touchstart', this.touchStart)
