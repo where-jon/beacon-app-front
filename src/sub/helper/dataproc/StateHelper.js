@@ -524,8 +524,9 @@ const appStateConf = {
  * @async
  * @param {String} target マスタ種類
  * @param {Boolean} force 強制取得する
+ * @param {Object} option 追加設定
  */
-export const load = async (target, force) => {
+export const load = async (target, force, option) => {
   const forceFetchTarget = target
   if (!target.endsWith('s')) {
     target = target.endsWith('y')? target.slice(0, -1) + 'ies' : target + 's'
@@ -539,7 +540,7 @@ export const load = async (target, force) => {
   let arr = store.state.app_service[target]
   const expiredKey = `${target}Expired`
   if (!arr || arr.length == 0 || force || getForceFetch(forceFetchTarget) || DateUtil.isExpired(store.state.app_service[expiredKey])) {
-    arr = await AppServiceHelper.fetchList(path, sort)
+    arr = await AppServiceHelper.fetchList(path, sort, option)
     if (beforeCommit) {
       arr = beforeCommit(arr)
     }
