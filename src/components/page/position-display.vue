@@ -58,7 +58,7 @@ export default {
       listName: StringUtil.single2multi(this.masterName),
       eachListName: StringUtil.concatCamel('each', StringUtil.single2multi(this.masterName)),
       prohibitDetectList : null,
-      loadStates: ['area', 'zone', 'tx', 'exb', 'lostZones','prohibit'],
+      loadStates: ['area', 'zone', 'tx', 'location', 'lostZones','prohibit'],
       showDismissibleAlert: false,
     }
   },
@@ -67,7 +67,7 @@ export default {
       'txs',
       'areas',
       'zones',
-      'exbs',
+      'locations',
       'positions',
       'prohibits',
       'lostZones',
@@ -94,28 +94,30 @@ export default {
       const tempMasterMap = {}
       this[this.listName].forEach(obj => tempMasterMap[obj[this.id]] = {...obj, [this.id]: obj[this.id], label: obj[this.name], positions: []})
       const tempMasterExt = {[this.id]: -1, label: this.$i18n.tnl('label.other'), positions: []}
-      const exbMap = {}
       let showExt = false
-      this.exbs.forEach(exb => {
-        exbMap[exb.posId] = exb
-        if(this.displayZone && !Util.hasValue(exb.zoneIdList)){
+      const locationMap = {}
+      this.locations.forEach(location => {
+        if(Util.hasValue(location.posId)){
+          locationMap[location.posId] = location
+        }
+        if(this.displayZone && !Util.hasValue(location.zoneIdList)){
           showExt = true
         }
       })
 
       _.forEach(positions, pos => {
-        const exb = exbMap[pos.pos_id]
+        const location = locationMap[pos.pos_id]
         prohibitDetectList? prohibitDetectList.some(data => {
           if(data.minor == pos.minor){
             pos.blinking = 'blinking'
             return true
           }
         }): false
-        pos.isDisableArea = exb? exb.isAbsentZone: false
-        const posMasterIds = this.displayZone? Util.getValue(pos, 'exb.' + this.id + 'List', [null]): [Util.getValue(pos, 'exb.' + this.id, null)]
+        pos.isDisableArea = Util.getValue(location, 'isAbsentZone', false)
+        const posMasterIds = this.displayZone? Util.getValue(pos, 'location.' + this.id + 'List', [null]): [Util.getValue(pos, 'location.' + this.id, null)]
         posMasterIds.forEach(posMasterId => {
           const obj = Util.hasValue(posMasterId)? tempMasterMap[posMasterId]: tempMasterExt
-          if(!pos.noSelectedTx && !Util.getValue(exb, 'isAbsentZone', false)){
+          if(!pos.noSelectedTx && !Util.getValue(location, 'isAbsentZone', false)){
             obj.positions.push(pos)
           }
         })
