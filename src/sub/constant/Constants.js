@@ -876,6 +876,12 @@ export const MENU = [
         path: 'notifyTemplate',
         icon: 'envelope',
       },
+      {
+        key: 'gateway',
+        path: 'gateway',
+        icon: 'road',
+        exserver: true,
+      },
     ]
   },
   {

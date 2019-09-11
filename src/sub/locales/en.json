@@ -514,6 +514,7 @@
     "masterZoneBlock": "Zone(Block)",
     "masterTenant": "Tenant",
     "masterRoleFeature": "Feature",
+    "masterGateway": "Gateway",
     "UsageSituation": "Utilization",
     "Monitor": "Monitor",
     "monitorGW": "Monitor Gateway",
