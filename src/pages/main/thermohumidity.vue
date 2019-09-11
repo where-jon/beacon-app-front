@@ -382,7 +382,7 @@ export default {
 
       exbBtn.on('click', async (evt) =>{
         const pMock = DEV.USE_MOCK_EXC? mock['basic_sensorHistory_1_1_today_hour']: null
-        const sensorData = await AppServiceHelper.fetchList('/basic/sensorHistory/1/1/' + exb.exbId + '/today/hour', null, pMock)
+        const sensorData = await AppServiceHelper.fetchList('/basic/sensorHistory/1/1/' + exb.exbId + '/today/hour', null, null, pMock)
         sensorData.data = sensorData.data.map(val => {
           val.key = DateUtil.formatDate(val.sensor_dt, 'HH')
           if(val.temperature){
@@ -427,7 +427,7 @@ export default {
 
       txBtn.on('click', async (evt) =>{
         const pMock = DEV.USE_MOCK_EXC? mock['basic_sensorHistory_1_1_today_hour']: null
-        const sensorData = await AppServiceHelper.fetchList('/basic/sensorHistory/1/0/' + tx.txId + '/today/hour', null, pMock)
+        const sensorData = await AppServiceHelper.fetchList('/basic/sensorHistory/1/0/' + tx.txId + '/today/hour', null, null, pMock)
         sensorData.data = sensorData.data.map(val => {
           val.key = DateUtil.formatDate(val.sensor_dt, 'HH')
           if(val.temperature){

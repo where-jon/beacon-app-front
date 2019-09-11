@@ -86,7 +86,7 @@ export default {
     async fetchData(payload) {
       try {
         this.showProgress()
-        await StateHelper.load('topNews')
+        await StateHelper.load('topNews', false, { noApiKey: true })
         this.isNews = this.topNewsList.length > 0
         if (payload && payload.done) {
           payload.done()
