@@ -68,12 +68,15 @@ export default {
     },
     createDeviceInfo(device){
       const d = new Date(device.updatetime)
+      const potName = Util.getValue(device, 'potName', Util.getValue(device, ConfigHelper.includesBtxMinor('btxId')? 'btxId': 'minor', ''))
+      const locationName = Util.getValue(device, 'locationName', '')
       return {
         sensorDt: DateUtil.formatDate(d.getTime()),
-        potName: Util.getValue(device, 'potName', Util.getValue(device, ConfigHelper.includesBtxMinor('btxId')? 'btxId': 'minor', '')),
+        potName: potName,
+        locationPotName: potName? potName: locationName,
         deviceId: Util.getValue(device, 'deviceId', ''),
         deviceIdX: Util.getValue(device, 'deviceIdX', ''),
-        locationName: Util.getValue(device, 'locationName', ''),
+        locationName: locationName,
         posId: Util.getValue(device, 'posId', ''),
         areaName: Util.getValue(device, 'areaName', ''),
         major: Util.getValue(device, 'major', ''),

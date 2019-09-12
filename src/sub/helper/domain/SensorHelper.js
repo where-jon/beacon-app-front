@@ -636,11 +636,9 @@ export const getMagnetStateKey = (magnetState) => i18n.tnl(`label.${magnetState 
 export const getFields1 = () => {
   return addLabelByKey(i18n, [
     {key: 'sensorDt', sortable: true, label:'dt'},
-    {key: 'potName', sortable: true },
+    {key: 'locationPotName', sortable: true, label:'potName'},
     ArrayUtil.includesIgnoreCase(APP.SENSOR_LIST.WITH, 'deviceId') && ConfigHelper.includesDeviceType('deviceId')? {key: 'deviceId', sortable: true }: null,
     ArrayUtil.includesIgnoreCase(APP.SENSOR_LIST.WITH, 'deviceIdX') && ConfigHelper.includesDeviceType('deviceIdX')? {key: 'deviceIdX', sortable: true }: null,
-    {key: 'locationName', label:'locationZoneName', sortable: true,},
-    ArrayUtil.includesIgnoreCase(APP.SENSOR_LIST.WITH, 'posId')? {key: 'posId', label:'posId', sortable: true,}: null,
     {key: 'areaName', label:'area', sortable: true,},
     {key: 'temperature', sortable: true},
     {key: 'humidity', sortable: true},
@@ -658,7 +656,6 @@ export const getFields2 = () =>{
     ConfigHelper.includesDeviceType('deviceId')? {key: 'deviceId', sortable: true }: null,
     ConfigHelper.includesDeviceType('deviceIdX')? {key: 'deviceIdX', sortable: true }: null,
     {key: 'locationName', label:'locationZoneName', sortable: true,},
-    {key: 'posId', label:'posId', sortable: true,},
     {key: 'areaName', label:'area', sortable: true,},
     {key: 'count', label:'numUsers', sortable: true},
   ])
@@ -709,7 +706,6 @@ export const getFields8 = () => {
     ConfigHelper.includesDeviceType('deviceId')? {key: 'deviceId', sortable: true }: null,
     ConfigHelper.includesDeviceType('deviceIdX')? {key: 'deviceIdX', sortable: true }: null,
     {key: 'locationName', label:'locationZoneName', sortable: true,},
-    {key: 'posId', label:'posId', sortable: true,},
     {key: 'areaName', label:'area', sortable: true,},
     {key: 'pressVol', label:'pressVol', sortable: true},
   ])
