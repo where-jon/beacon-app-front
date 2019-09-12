@@ -29,14 +29,14 @@ export default {
     return {
       params: {
         name: 'gateway',
-        id: 'deviceId',
-        confirmName: 'deviceId',
+        id: 'deviceid',
+        confirmName: 'deviceid',
         indexPath: '/master/gateway',
         editPath: '/master/gateway/edit',
-        appServicePath: '/core/gateway',
+        appServicePath: '/core/excloud/gwlist',
         csvOut: false,
         fields: this.getFields(),
-        sortBy: 'deviceId',
+        sortBy: 'deviceid',
         initTotalRows: 0
       },
       items: ViewHelper.createBreadCrumbItems('master', 'gateway'),
@@ -51,31 +51,21 @@ export default {
     },
   },
   methods: {
-    createIdColumn(){
-      return ['deviceId'].filter(val => ConfigHelper.includesDeviceType(val))
-        .map(val => ({key: val, label: val, sortable: true}))
-    },
     getFields(){
-      return ViewHelper.addLabelByKey(this.$i18n, this.createIdColumn()
-        .concat([
-          {key: 'meshId', label:'meshId', sortable: true,},
+      return [
+          {key: 'deviceid', label:'deviceId', sortable: true,},
+          {key: 'meshid', label:'meshId', sortable: true,},
           {key: 'actions', thStyle: {width: '130px !important'} }
-        ])
-      )
+      ]
     },
     async fetchData(payload) {
       try {
         this.showProgress()
 
-        console.log('fetchData')
-
         let reqParam = [
           '/core/excloud/gwlist',
         ].join('/')
-        //const results = await HttpHelper.getAppService(reqParam)
-        //console.log(results)
-        
-        this.gateways = [{deviceId:10, meshId:0}]
+        this.gateways = await HttpHelper.getAppService(reqParam)
 
         if (payload && payload.done) {
           payload.done()

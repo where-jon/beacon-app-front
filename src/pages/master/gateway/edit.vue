@@ -59,7 +59,7 @@ export default {
       name: 'gateway',
       id: 'deviceid',
       backPath: '/master/gateway',
-      appServicePath: '/core/gwlist',
+      appServicePath: '/core/excloud/gwlist',
       items: ViewHelper.createBreadCrumbItems('master', {text: 'gateway', href: '/master/gateway'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.exb.exbId)),
       form: {'deviceId':null, 'meshId':null},
       mutex: false,
@@ -95,8 +95,8 @@ export default {
     },
     async onSaving() {
       const entity = {
-        deviceId: this.deviceId,
-        meshId: this.meshId
+        deviceid: this.deviceId,
+        meshid: this.meshId
       }
       let ret = await AppServiceHelper.bulkSave(this.appServicePath, [entity])
       this.deviceId = null
