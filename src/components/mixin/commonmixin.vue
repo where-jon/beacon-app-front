@@ -94,6 +94,10 @@ export default {
       get() { return this.$store.state.main.selectedDetail},
       set(val) { this.replaceMain({'selectedDetail': val})},
     },
+    selectedDetailFilter: {
+      get() { return this.$store.state.main.selectedDetailFilter},
+      set(val) { this.replaceMain({'selectedDetailFilter': val})},
+    },
   },
   methods: {
     ...mapMutations('app_service', [
