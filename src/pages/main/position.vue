@@ -50,7 +50,7 @@
           </span>
         </b-form-row>
         <b-form-row v-if="useDetailFilter" class="my-1 ml-2 ml-sm-0">
-          <detail-filter @detailFilter="onDetailFilter" />
+          <detail-filter save-filter @detailFilter="onDetailFilter" />
         </b-form-row>
         <b-form-row v-if="showDetected" class="my-1 ml-2 ml-sm-0">
           <span class="ml-sm-4 ml-2 mr-1">

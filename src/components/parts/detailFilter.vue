@@ -63,6 +63,10 @@ export default {
       type: String,
       default: '/plugin/filter',
     },
+    saveFilter: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -83,16 +87,25 @@ export default {
   async mounted() {
     await Promise.all(this.loadStates.map(StateHelper.load))
     this.fetchPlugin()
+    this.filter = this.saveFilter && Util.hasValue(this.selectedDetailFilter) && this.selectedDetailFilter.some(val => Util.hasValue(val))
+  },
+  beforeDestroy() {
+    if(this.saveFilter){
+      this.selectedDetailFilter = this.pluginJson.map(plugin => plugin.value)
+    }
   },
   methods: {
+    getOptionName(plugin){
+      return Util.getValue(plugin, 'option', plugin.name)
+    },
     displayDetailFilter(){
       this.$root.$emit('bv::show::modal', 'modalDetailFilter')
     },
     useVueSelect(plugin){
-      return PluginHelper.isSelectTag(plugin) && this.vueSelected.some(key => key == plugin.name)
+      return PluginHelper.isSelectTag(plugin) && this.vueSelected.some(key => key == this.getOptionName(plugin))
     },
     useSelect(plugin){
-      return PluginHelper.isSelectTag(plugin) && !this.vueSelected.some(key => key == plugin.name)
+      return PluginHelper.isSelectTag(plugin) && !this.vueSelected.some(key => key == this.getOptionName(plugin))
     },
     useTextBox(plugin){
       return PluginHelper.isTextboxTag(plugin)
@@ -105,19 +118,25 @@ export default {
         return Util.hasValue(Util.getValue(plugin.value, 'value', null))
       })
     },
-    getPluginOptions(plugin){
-      const optionKey = Util.getValue(plugin, 'option', plugin.name)
-      if(Util.hasValue(this[optionKey + 'Options'])){
-        return this[optionKey + 'Options']
+    async getPluginOptions(plugin){
+      const optionKey = this.getOptionName(plugin)
+      const options = this[optionKey + 'Options']
+
+      const ret = Util.hasValue(options)? options: await AppServiceHelper.fetchList(`/${this.pluginRequest}/option/${optionKey}`)
+      if(this.useSelect(plugin) && !ret.some(r => r.value == null)){
+        ret.unshift({ value: null, text: '', label: '' })
       }
-      return AppServiceHelper.fetchList(`/${this.pluginRequest}/option/${optionKey}`)
+      return ret
     },
     finalizePlugin(resultObj){
       this.pluginRequest = Util.getValue(resultObj, 'request', '')
       this.pluginJson = Util.getValue(resultObj, 'ui', [])
-      this.pluginJson.forEach(async val => {
+      this.pluginJson.forEach(async (val, index) => {
         if(this.useVueSelect(val) || this.useSelect(val)){
           this.$set(val, 'options', await this.getPluginOptions(val))
+        }
+        if(this.saveFilter && Util.hasValue(Util.getValue(this, 'selectedDetailFilter.' + index, null))){
+          this.$set(val, 'value', this.selectedDetailFilter[index])
         }
       })
     },

@@ -59,6 +59,7 @@ export const setApp = pStore => {
  * @param {Boolean} [notFilterByTimestamp = false] 時間による排他制御をされていない情報を取得する
  * @param {Number} [selectedCategory]
  * @param {Number} [selectedGroup]
+ * @param {Number} [selectedDetail]
  * @return {Object[]}
  */
 export const getPositions = (showAllTime = false, notFilterByTimestamp = false, 
