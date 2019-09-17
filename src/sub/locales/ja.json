@@ -522,6 +522,7 @@
     "monitorGW": "ゲートウェイ",
     "monitorTX": "Tx状態監視",
     "monitorEXB": "EXB状態監視",
+    "monitorInstallation": "設置支援",
     "summary": "集計・分析",
     "SumUtilizationRatio": "利用率",
     "SumNumUsers": "利用人数",

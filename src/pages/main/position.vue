@@ -143,7 +143,7 @@ export default {
     return {
       fixHeight: DISP.THERMOH.ALERT_FIX_HEIGHT,
       isProhibitView: true,
-      items: !this.isInstallation ? ViewHelper.createBreadCrumbItems('main', 'showPosition') : ViewHelper.createBreadCrumbItems('develop', 'installation'),
+      items: !this.isInstallation ? ViewHelper.createBreadCrumbItems('main', 'showPosition') : ViewHelper.createBreadCrumbItems('monitor', 'installation'),
       useGroup: MenuHelper.useMaster('group') && APP.POS.WITH.GROUP,
       useCategory: MenuHelper.useMaster('category') && APP.POS.WITH.CATEGORY,
       message: '',
