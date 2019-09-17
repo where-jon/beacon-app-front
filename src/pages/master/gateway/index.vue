@@ -52,11 +52,11 @@ export default {
   },
   methods: {
     getFields(){
-      return [
+      return ViewHelper.addLabelByKey(this.$i18n, [
           {key: 'deviceid', label:'deviceId', sortable: true,},
           {key: 'meshid', label:'meshId', sortable: true,},
           {key: 'actions', thStyle: {width: '130px !important'} }
-      ]
+      ])
     },
     async fetchData(payload) {
       try {
