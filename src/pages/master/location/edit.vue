@@ -146,7 +146,7 @@ export default {
       return StateHelper.getOptionsFromState('zone', false, true, zone => zone.zoneType == ZONE.COORDINATE)
     },
     ...mapState('app_service', [
-      'areas', 'zones', 'location',, 'locations',
+      'areas', 'zones', 'exbs', 'location', 'locations',
     ]),
     areaWarnMessage(){
       return this.$i18n.tnl('message.resetFromTo', {
@@ -187,7 +187,7 @@ export default {
   },
   async mounted() {
     this.checkWarnOn()
-    await Promise.all(['area', 'zone'].map(StateHelper.load))
+    await Promise.all(['area', 'zone', 'exb'].map(StateHelper.load))
     this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions, this.form.areaId)
     if(!Util.hasValue(this.form.locationType)){
       this.form.locationType = Util.getValue(this.locationTypeOptions, '0.value', null)
@@ -227,11 +227,11 @@ export default {
       })
     },
     getZoneClassOptions(){
-      return StateHelper.getOptionsFromState('zone', false, true, 
+      return StateHelper.getOptionsFromState('zone', false, true,
         zone => zone.zoneType == ZONE.NON_COORDINATE && zone.areaId === this.form.areaId)
     },
     getZoneBlockItems(){
-      return StateHelper.getOptionsFromState('zone', false, true, 
+      return StateHelper.getOptionsFromState('zone', false, true,
         zone => zone.zoneType == ZONE.COORDINATE && zone.areaId === this.form.areaId && NumberUtil.inRange(zone, this.form))
     },
     onChangeTxSetting(param) {
@@ -264,6 +264,7 @@ export default {
         y: this.form.y,
       }
 
+      entity.deviceIdList = this.exbs.filter(exb => exb.locationId == entity.locationId).map(exb => exb.deviceId)
       entity.locationZoneList = [this.form.zoneId].filter(val => val).map(zoneId => ({
         locationZonePK: {
           locationId: this.form.locationId? this.form.locationId: dummyKey--,
