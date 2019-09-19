@@ -20,7 +20,7 @@
             <span v-if="useVueSelect(plugin)" :title="vueSelectTitle(plugin.value)">
               <v-select v-model="plugin.value" :options="plugin.options" class="ml-1 mr-2 vue-options" :style="vueSelectStyle">
                 <template slot="selected-option" slot-scope="option">
-                  {{ vueSelectCutOn(option, true) }}
+                  {{ vueSelectCutOn(option, false) }}
                 </template>
                 <template slot="no-options">
                   {{ vueSelectNoMatchingOptions }}
@@ -85,7 +85,7 @@ export default {
     },
   },
   async mounted() {
-    await Promise.all(this.loadStates.map(StateHelper.load))
+    await Promise.all(this.loadStates.map(state => StateHelper.load(state)))
     this.fetchPlugin()
     this.filter = this.saveFilter && Util.hasValue(this.selectedDetailFilter) && this.selectedDetailFilter.some(val => Util.hasValue(val))
   },
@@ -102,10 +102,10 @@ export default {
       this.$root.$emit('bv::show::modal', 'modalDetailFilter')
     },
     useVueSelect(plugin){
-      return PluginHelper.isSelectTag(plugin) && this.vueSelected.some(key => key == this.getOptionName(plugin))
+      return PluginHelper.isSelectTag(plugin) && (this.vueSelected.some(key => key == this.getOptionName(plugin)) || plugin.combobox != null)
     },
     useSelect(plugin){
-      return PluginHelper.isSelectTag(plugin) && !this.vueSelected.some(key => key == this.getOptionName(plugin))
+      return PluginHelper.isSelectTag(plugin) && !this.vueSelected.some(key => key == this.getOptionName(plugin)) && plugin.combobox == null
     },
     useTextBox(plugin){
       return PluginHelper.isTextboxTag(plugin)
