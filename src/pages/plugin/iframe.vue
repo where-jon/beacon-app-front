@@ -16,6 +16,7 @@ export default {
   data() {
     return {
       url: null,
+      VIEW_URL_PREFIX: '/plugin/'
     }
   },
   computed: {
@@ -30,7 +31,7 @@ export default {
   },
   watch: {
     '$route' (to, from) {
-      this.url = this.VIEW_URL_PREFIX + decodeURI(to.fullPath.split('=')[1])
+      this.url = LocalStorageHelper.getLocalStorage(PLUGIN_CONSTANTS.PLUGIN_KEY_PREFIX + '-' + to.fullPath.split('=')[1])
     }
   },
   mounted() {
@@ -55,7 +56,7 @@ export default {
 .movieWraper {
     position: relative;
     width: calc(100% - 10px);
-    margin: 0 auto;
+    margin: 0 0 0 0;
 }
 
 .iframeWrap{
