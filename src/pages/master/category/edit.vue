@@ -11,7 +11,7 @@
         </b-form-group>
         <b-form-group>
           <label v-t="'label.categoryName'" />
-          <input v-model="form.categoryName" :readonly="!isEditable" type="text" maxlength="20" class="form-control" required>
+          <input v-model="form.categoryName" :readonly="!isEditable" type="text" maxlength="40" class="form-control" required>
         </b-form-group>
         <b-form-group>
           <label v-t="'label.categoryType'" />
