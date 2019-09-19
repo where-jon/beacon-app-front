@@ -8,7 +8,7 @@ import * as Util from '../../util/Util'
 /**
  * デフォルトhtmlファイルか確認する
  * @method
- * @param {String} src 
+ * @param {String} src
  * @return {Boolean}
  */
 export const isDefaultHtml = src => {
@@ -18,9 +18,8 @@ export const isDefaultHtml = src => {
 /**
  * プラグインを読み込む
  * @method
- * @param {String} url 
- * @param {Function} callback 
- * @return
+ * @param {String} url
+ * @param {Function} callback
  */
 export const loadInner = (url, callback) => {
   const xhr = new XMLHttpRequest()
@@ -34,10 +33,9 @@ export const loadInner = (url, callback) => {
 /**
  * プラグインを読み込む
  * @method
- * @param {String} fileName 
- * @param {Function} callbackHtml 
- * @param {Function} callbackJson 
- * @return
+ * @param {String} fileName
+ * @param {Function} callbackHtml
+ * @param {Function} callbackJson
  */
 export const load = (filePath, callbackHtml, callbackJson) => {
   loadInner(filePath + '.html', result => {
@@ -69,7 +67,7 @@ export const isSelectTag = plugin => plugin.tag.toLowerCase() == 'p-select'
  * htmlのプラグイン部分をjsonに変換する
  * @method
  * @param {Object[]} ret
- * @param {Object} children 
+ * @param {Object} children
  * @return {Object[]}
  */
 export const convertInner = (ret, children) => {
