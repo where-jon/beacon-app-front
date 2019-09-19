@@ -268,7 +268,7 @@ export default {
       this.loadStates.push('lostZones')
     }
 
-    await Promise.all(this.loadStates.map(StateHelper.load))
+    await Promise.all(this.loadStates.map(state => StateHelper.load(state)))
     this.txs.forEach((t) => this.txsMap[t.btxId] = t)
     // ゾーン表示時「・・・」用TXを追加しておく
     this.txsMap[PositionHelper.zoneLastTxId()] = { txId: PositionHelper.zoneLastTxId(), disp: 1, tx: {disp:1}, }
