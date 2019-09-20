@@ -144,6 +144,9 @@ export default {
       this.$router.push(page)
     },
     clickReload(e) {
+      if(this.state.prevent){
+        return
+      }
       this.state.isLoad = true
       const that = this
       EventBus.$emit('reload', {

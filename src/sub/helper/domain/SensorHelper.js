@@ -5,13 +5,20 @@
 
 import Chart from 'chart.js'
 import _ from 'lodash'
-import { APP, DISP } from '../../constant/config'
-import { DISCOMFORT, SENSOR, THERMOHUMIDITY } from '../../constant/Constants'
+import * as mock from '../../../assets/mock/mock'
+import { APP, DISP, DEV } from '../../constant/config'
+import { DISCOMFORT, SENSOR, THERMOHUMIDITY, SHAPE } from '../../constant/Constants'
 import * as ArrayUtil from '../../util/ArrayUtil'
 import * as DateUtil from '../../util/DateUtil'
+import * as NumberUtil from '../../util/NumberUtil'
 import * as Util from '../../util/Util'
+import * as AppServiceHelper from '../dataproc/AppServiceHelper'
 import * as ChartHelper from '../ui/ChartHelper'
 import * as ConfigHelper from '../dataproc/ConfigHelper'
+import * as EXCloudHelper from '../dataproc/EXCloudHelper'
+import * as HeatmapHelper from '../ui/HeatmapHelper'
+import * as StateHelper from '../dataproc/StateHelper'
+import * as StyleHelper from '../ui/StyleHelper'
 import { addLabelByKey } from '../ui/ViewHelper'
 
 let chart = null
@@ -31,7 +38,7 @@ export const setApp = pi18n => {
 /**
  * プロットされたデータのうち、最大値を取得する。
  * @method
- * @param {Object} chartData 
+ * @param {Object} chartData
  * @param {String} column プロパティ名
  * @param {String} by 'minute'：1分間隔 or 'hour'：1時間間隔 or 'day'：1日間隔
  * @param {Number} cut 累乗の指数値
@@ -87,9 +94,9 @@ export const getThermoPatternConfig = () => {
 /**
  * 指定した温湿度からアイコンパターン情報を取得する。
  * @method
- * @param {Object[]} thermohumidityIconConfig 
- * @param {Number} temperature 
- * @param {Number} humidity 
+ * @param {Object[]} thermohumidityIconConfig
+ * @param {Number} temperature
+ * @param {Number} humidity
  * @return {Object}
  */
 export const getThermohumidityIconInfo = (thermohumidityIconConfig, temperature, humidity) => {
@@ -143,8 +150,8 @@ export const getHumidityPatternConfig = () => {
 /**
  * 指定した湿度の警告情報を取得する。
  * @method
- * @param {Object} humidityPatternConfig 
- * @param {Number} humidity 
+ * @param {Object} humidityPatternConfig
+ * @param {Number} humidity
  * @return {Object}
  */
 export const getHumidityInfo = (humidityPatternConfig, humidity) => {
@@ -168,8 +175,8 @@ export const getHumidityInfo = (humidityPatternConfig, humidity) => {
 /**
  * 不快指数に応じたカラーコードを取得する。
  * @method
- * @param {Number} temperature 
- * @param {Number} humidity 
+ * @param {Number} temperature
+ * @param {Number} humidity
  * @return {String}
  */
 export const getDiscomfortColor = (temperature, humidity) => {
@@ -201,8 +208,8 @@ export const onlyOne = () => availableSensorAll().length == 1 && availableSensor
 /**
  * 不快指数の状態を示す文字列を取得する。
  * @method
- * @param {Number} temperature 
- * @param {Number} humidity 
+ * @param {Number} temperature
+ * @param {Number} humidity
  * @return {String}
  */
 export const getDiscomfort = (temperature, humidity) => {
@@ -221,8 +228,8 @@ export const getDiscomfort = (temperature, humidity) => {
 /**
  * 不快指数を算出する。
  * @method
- * @param {Number} temperature 
- * @param {Number} humidity 
+ * @param {Number} temperature
+ * @param {Number} humidity
  * @return {Number}
  */
 export const calcDiscomfortIndex = (temperature, humidity) => 0.81 * temperature + 0.01 * humidity * (0.99 * temperature - 14.3) + 46.3
@@ -289,10 +296,10 @@ export const createChartGraphOptions = (left, right, isResponsive = false) => {
  */
 export const createChartThermohumidityOptions = (chartData, by, isResponsive = false) => {
   return {
-    type:'line', 
+    type:'line',
     data:{
       labels: chartData.map(val => val.key),
-      datasets: 
+      datasets:
         createChartGraphDatasets('temperature', i18n.tnl('label.temperature'), chartData, 'temperature', DISP.TEMPERATURE_LINE_COLOR, by)
           .concat(createChartGraphDatasets('humidity', i18n.tnl('label.humidity'), chartData, 'humidity', DISP.HUMIDITY_LINE_COLOR, by))
     },
@@ -321,10 +328,10 @@ export const createChartThermohumidityOptions = (chartData, by, isResponsive = f
  */
 export const createChartPirOptions = (chartData, by, isResponsive = false) => {
   return {
-    type:'line', 
+    type:'line',
     data:{
       labels: chartData.map(val => val.key),
-      datasets: 
+      datasets:
         createChartGraphDatasets('pir', i18n.tnl('label.pir'), chartData, 'count', DISP.PIR_LINE_COLOR, by)
     },
     options: createChartGraphOptions(
@@ -352,10 +359,10 @@ export const createChartPirOptions = (chartData, by, isResponsive = false) => {
  */
 export const createChartThermopileOptions = (chartData, by, isResponsive = false) => {
   return {
-    type:'line', 
+    type:'line',
     data:{
       labels: chartData.map(val => val.key),
-      datasets: 
+      datasets:
         createChartGraphDatasets('thermopile', i18n.tnl('label.thermopile'), chartData, 'count', DISP.THERMOPILE_LINE_COLOR, by)
     },
     options: createChartGraphOptions(
@@ -383,10 +390,10 @@ export const createChartThermopileOptions = (chartData, by, isResponsive = false
  */
 export const createChartMagnetOptions = (chartData, by, isResponsive = false) => {
   return {
-    type:'line', 
+    type:'line',
     data:{
       labels: chartData.map(val => val.key),
-      datasets: 
+      datasets:
         createChartGraphDatasets('magnet', i18n.tnl('label.magnet'), chartData, 'magnet', DISP.MAGNET_LINE_COLOR, by)
     },
     options: createChartGraphOptions(
@@ -417,10 +424,10 @@ export const createChartMagnetOptions = (chartData, by, isResponsive = false) =>
  */
 export const createChartPressureOptions = (chartData, by, isResponsive = false) => {
   return {
-    type:'line', 
+    type:'line',
     data:{
       labels: chartData.map(val => val.key),
-      datasets: 
+      datasets:
         createChartGraphDatasets('pressure', i18n.tnl('label.pressure'), chartData, 'pressVol', DISP.PRESSURE_LINE_COLOR, by)
     },
     options: createChartGraphOptions(
@@ -448,10 +455,10 @@ export const createChartPressureOptions = (chartData, by, isResponsive = false) 
  */
 export const createChartMeditagOptions = (chartData, by, isResponsive = false) => {
   return {
-    type:'line', 
+    type:'line',
     data:{
       labels: chartData.map(val => val.key),
-      datasets: 
+      datasets:
         createChartGraphDatasets('blood_pressure', i18n.tnl('label.h_blood_pressure'), chartData, 'high', DISP.H_BLOOD_PRESSURE_LINE_COLOR, by)
           .concat(createChartGraphDatasets('blood_pressure', i18n.tnl('label.l_blood_pressure'), chartData, 'low', DISP.L_BLOOD_PRESSURE_LINE_COLOR, by))
           .concat(createChartGraphDatasets('heart_rate', i18n.tnl('label.heart_rate'), chartData, 'beat', DISP.HEART_RATE_LINE_COLOR, by))
@@ -483,10 +490,10 @@ export const createChartSubMeditagOptions = (chartData, by, isResponsive = false
   const stepMax = calcChartMax(chartData, 'step', by, 2)
   const downMax = calcChartMax(chartData, 'down', by, 2)
   return {
-    type:'line', 
+    type:'line',
     data:{
       labels: chartData.map(val => val.key),
-      datasets: 
+      datasets:
         createChartGraphDatasets('step', i18n.tnl('label.step'), chartData, 'step', DISP.STEP_LINE_COLOR, by)
           .concat(createChartGraphDatasets('down_count', i18n.tnl('label.down_count'), chartData, 'down', DISP.DOWN_COUNT_LINE_COLOR, by))
     },
@@ -509,7 +516,7 @@ export const createChartSubMeditagOptions = (chartData, by, isResponsive = false
  * 指定したcanvas要素にチャートグラフを描画する。
  * @method
  * @param {String} canvasId canvas要素のid
- * @param {Number} sensorId 
+ * @param {Number} sensorId
  * @param {Object[]} chartData createChartData()で作成したデータ
  * @param {String} by 'minute'：1分間隔 or 'hour'：1時間間隔 or 'day'：1日間隔
  * @param {Boolean} [isResponsive = false] モバイル用
@@ -522,7 +529,7 @@ export const createChartGraph = (canvasId, sensorId, chartData, by, isResponsive
   if(subChart){
     subChart.destroy()
   }
-  chart = new Chart(canvasId, 
+  chart = new Chart(canvasId,
     sensorId == SENSOR.PIR? createChartPirOptions(chartData, by, isResponsive):
       sensorId == SENSOR.THERMOPILE? createChartThermopileOptions(chartData, by, isResponsive):
         sensorId == SENSOR.MAGNET? createChartMagnetOptions(chartData, by, isResponsive):
@@ -532,7 +539,7 @@ export const createChartGraph = (canvasId, sensorId, chartData, by, isResponsive
   )
   chart.update()
   if(sensorId == SENSOR.MEDITAG){
-    subChart = new Chart(`${canvasId}Sub`, 
+    subChart = new Chart(`${canvasId}Sub`,
       createChartSubMeditagOptions(chartData, by, isResponsive)
     )
     subChart.update()
@@ -582,10 +589,10 @@ export const showThermoHumidityChart = (id, data) => {
  * 指定したcanvas要素にチャートグラフを描画する
  * @method
  * @param {String} canvasId canvas要素のid
- * @param {Number} sensorId 
- * @param {Date} dateFrom 
- * @param {Date} dateTo 
- * @param {Object[]} sensorData 
+ * @param {Number} sensorId
+ * @param {Date} dateFrom
+ * @param {Date} dateTo
+ * @param {Object[]} sensorData
  * @param {String} by 'minute'：1分間隔 or 'hour'：1時間間隔 or 'day'：1日間隔
  * @return {Object} チャートグラフの情報
  */
@@ -598,19 +605,19 @@ export const showChartDetail = (canvasId, sensorId, dateFrom, dateTo, sensorData
 /**
  * 指定したストレスレベルに応じた背景色を取得する。
  * @method
- * @param {Number} stress 
+ * @param {Number} stress
  * @return {String}
  */
 export const getStressBg = stress => {
-  let idx = stress < 8? 0: stress < 20? 1: 2 
+  let idx = stress < 8? 0: stress < 20? 1: 2
   return DISP.MEDITAG.STRESS_BG[idx]
-} 
+}
 
 /**
  * ストレスレベルに応じた背景色を設定する。
  * @method
- * @param {Object[]} positions 
- * @param {Object[]} sensors 
+ * @param {Object[]} positions
+ * @param {Object[]} sensors
  * @return {Object[]}
  */
 export const setStress = (positions, sensors) => {
@@ -623,7 +630,7 @@ export const setStress = (positions, sensors) => {
 /**
  * マグネットセンサの状態を言語化する。
  * @method
- * @param {Number} magnetState 
+ * @param {Number} magnetState
  * @return {String}
  */
 export const getMagnetStateKey = (magnetState) => i18n.tnl(`label.${magnetState === SENSOR.MAGNET_STATUS.ON? 'using': 'notUse'}`)
@@ -718,7 +725,7 @@ export const getFields8 = () => {
 /**
  * 指定したセンサで使用するテーブルの項目を取得する。
  * @method
- * @param {Number} sensorId 
+ * @param {Number} sensorId
  * @return {Object[]} 規定値がない場合は温湿度と同値
  */
 export const getFields = (sensorId) => {
@@ -746,7 +753,7 @@ export const getFields = (sensorId) => {
 /**
  * 複数センサの情報を取得する。
  * @method
- * @param {Object[]} exbSensorList 
+ * @param {Object[]} exbSensorList
  * @return {String[]}
  */
 export const getSensors = exbSensorList => {
@@ -762,7 +769,7 @@ export const getSensors = exbSensorList => {
 /**
  * 指定したEXBに紐づいているセンサのIDを取得する
  * @method
- * @param {Object} exb 
+ * @param {Object} exb
  * @return {Object[]}
  */
 export const getSensorIds = exb => {
@@ -776,7 +783,251 @@ export const getSensorIds = exb => {
 /**
  * Txの場所名を自動作成する。
  * @method
- * @param {Object} tx 
+ * @param {Object} tx
  * @return {String}
  */
 export const createTxLocationDummyName = tx => 'tx' + (APP.TX.BTX_MINOR == 'minor'? tx.minor * -1: tx.btxId * -1)
+
+/**
+ * 指定したbtxIdを持つセンサの情報を取得する。
+ * @method
+ * @param {String} type
+ * @param {Object[]} meditagSensorList
+ * @param {Number} btxId
+ * @return {Object}
+ */
+export const getSensorFromBtxId = (type, sensorList, btxId) => {
+  const sensor = sensorList? sensorList.find(sensor => sensor.btxId == btxId || sensor.btxid == btxId || sensor.btx_id == btxId): null
+  Util.debug(type, sensor)
+  return sensor
+}
+
+/**
+ * マグネットセンサがONの状態になっているか確認する。
+ * @method
+ * @param {Object} magnet
+ * @return {Boolean}
+ */
+export const isMagnetOn = magnet => magnet && magnet.magnet === SENSOR.MAGNET_STATUS.ON
+
+/**
+ * マグネットセンサが属しているカテゴリ一覧を取得する。
+ * @method
+ * @param {Object[]} txList
+ * @return {Number[]}
+ */
+export const getMagnetCategoryTypes = txList => txList.filter(val => val.categoryId && val.sensorId == SENSOR.MAGNET).map(val => val.categoryId)
+
+/**
+ * マグネットセンサが属しているグループ一覧を取得する。
+ * @method
+ * @param {Object[]} txList
+ * @return {Number[]}
+ */
+export const getMagnetGroupTypes = txList => txList.filter(val => val.groupId && val.sensorId == SENSOR.MAGNET).map(val => val.groupId)
+
+/**
+ * カテゴリの汎用を表示するための情報を取得する。
+ * @method
+ * @param {Object[]} categoryList
+ * @return {Object[]}
+ */
+export const getCategoryLegendElements = categoryList => categoryList.filter(category => !category.systemUse).map(val => ({ id: val.categoryId, name: StateHelper.getDispCategoryName(val), ...val,}))
+
+/**
+ * グループの汎用を表示するための情報を取得する。
+ * @method
+ * @param {Object[]} groupList
+ * @return {Object[]}
+ */
+export const getGroupLegendElements = groupList => groupList.map(val => ({id: val.groupId, name: val.groupName, ...val, }))
+
+/**
+ * 凡例データを作成する。
+ * @method
+ * @param {Object[]} txList
+ * @param {Object[]} categoryList
+ * @param {IObject[]} groupList
+ * @return {Object[]}
+ */
+export const createTxLegends = (txList, categoryList, groupList) => {
+  const loadCategory = DISP.TX.DISPLAY_PRIORITY == 'category'
+  const magnetCategoryTypes = loadCategory? getMagnetCategoryTypes(txList): getMagnetGroupTypes(txList)
+  const legendElements = loadCategory? getCategoryLegendElements(categoryList): getGroupLegendElements(groupList)
+
+  const ret = legendElements.map(legendElement => ({
+    id: legendElement.id,
+    items: magnetCategoryTypes.includes(legendElement.id)? [
+      { id: 1, text: 'A', style: StyleHelper.getStyleDisplay1(legendElement) },
+      { id: 2, text: `${legendElement.name} : ${i18n.tnl('label.using')}`, style: null },
+      { id: 3, text: 'A', style: StyleHelper.getStyleDisplay1(legendElement, {reverceColor: true, fixSize: true}) },
+      { id: 4, text: `${i18n.tnl('label.notUse')}`, style: {} },
+    ]: [
+      { id: 1, text: 'A', style: StyleHelper.getStyleDisplay1(legendElement) },
+      { id: 2, text: legendElement.name, style: {} },
+    ]
+  }))
+  // デフォルトは常に表示
+  const defaultStyle = { shape: SHAPE.CIRCLE, bgColor: DISP.TX.BGCOLOR, color: DISP.TX.COLOR }
+  ret.push({
+    id: 0,
+    items: [
+      { id: 5, text: 'A', style: StyleHelper.getStyleDisplay1(defaultStyle) },
+      { id: 6, text: i18n.tnl('label.defaultOther'), style: {} },
+    ]
+  })
+  return ret
+}
+
+/**
+ * 指定したセンサIDを含むか確認する。undefinedとnullは通常として扱う
+ * @method
+ * @param {Number[]} sensorIdList
+ * @param {Number} targetSensorId
+ * @return {Boolean}
+ */
+export const includesSensorId = (sensorIdList, targetSensorId) => sensorIdList.some(sensorId => sensorId == targetSensorId)
+
+/**
+ * サーバからセンサ情報を取得する。
+ * @async
+ * @method
+ * @param {Object} sensorInfo
+ * @return {Object[]}
+ */
+export const fetchSensor = async sensorInfo => sensorInfo.data = sensorInfo.enable? await EXCloudHelper.fetchSensor(sensorInfo.id): []
+
+/**
+ * 指定したセンサ情報をサーバから取得する。
+ * @async
+ * @method
+ * @param {Number[]} sensorIds
+ * @return {Object[]}
+ */
+export const fetchAllSensor = async (sensorIds) => {
+  const ret = [
+    { id: SENSOR.TEMPERATURE, name: SENSOR.STRING[SENSOR.TEMPERATURE], enable: sensorIds.includes(SENSOR.TEMPERATURE) },
+    { id: SENSOR.PIR, name: SENSOR.STRING[SENSOR.PIR], enable: sensorIds.includes(SENSOR.PIR) },
+    { id: SENSOR.THERMOPILE, name: SENSOR.STRING[SENSOR.THERMOPILE], enable: sensorIds.includes(SENSOR.THERMOPILE) && APP.SENSOR.USE_THERMOPILE },
+    { id: SENSOR.MEDITAG, name: SENSOR.STRING[SENSOR.MEDITAG], enable: sensorIds.includes(SENSOR.MEDITAG) && APP.SENSOR.USE_MEDITAG },
+    { id: SENSOR.MAGNET, name: SENSOR.STRING[SENSOR.MAGNET], enable: sensorIds.includes(SENSOR.MAGNET) && APP.SENSOR.USE_MAGNET },
+    { id: SENSOR.PRESSURE, name: SENSOR.STRING[SENSOR.PRESSURE], enable: sensorIds.includes(SENSOR.PRESSURE) && APP.SENSOR.USE_PRESSURE }
+  ]
+  await Promise.all(ret.map(fetchSensor))
+  return ret
+}
+
+/**
+ * 優先順位の高いセンサ情報を取得する。
+ * @method
+ * @param {Object} sensorDataMap
+ * @param {Number[]} primarySensorList
+ * @return {Object}
+ */
+export const getPrimarySensor = (sensorDataMap, primarySensorList) => {
+  const primaryLength = primarySensorList.length
+  for(let idx = 0; idx < primaryLength; idx++){
+    const sensorId = primarySensorList[idx]
+    const sensorType = SENSOR.STRING[sensorId]
+    if(sensorDataMap[sensorType]){
+      return { id: sensorId, ...sensorDataMap[sensorType] }
+    }
+  }
+  return null
+}
+
+/**
+ * ヒートマップで使用するデータを作成する。
+ * @method
+ * @param {Number} areaId
+ * @param {Object[]} temperatureList
+ * @param {Number} mapScale
+ * @return {Object}
+ */
+export const createHeatmapData = (areaId, temperatureList, mapScale) => {
+  const dataList = temperatureList.filter(data => data.areaId == areaId && Util.hasValue(data.x) && Util.hasValue(data.y))
+  return HeatmapHelper.collect(dataList,
+    { max: DISP.THERMOH.TEMPERATURE_MAX, min: DISP.THERMOH.TEMPERATURE_MIN },
+    data => `${data.x}-${data.y}`,
+    (result, data) => data.temperature,
+    data => ({x: data.x * mapScale, y: data.y * mapScale})
+  )
+}
+
+/**
+ * ヒートマップを作成描画する。
+ * @method
+ * @param {Object} vueComponent
+ * @param {Object} mapInfo
+ * @param {Object[]} temperatureList
+ * @param {Function} onLoad
+ * @return {Object}
+ */
+export const createHeatmap = (vueComponent, mapInfo, temperatureList, onLoad, onFinally) => {
+  let ret = null
+  HeatmapHelper.create(vueComponent, 'heatmap', mapInfo.src, (evt, mapElement, map) => {
+    map.width = mapInfo.element.width
+    map.height = mapInfo.element.height
+    HeatmapHelper.draw(
+      mapElement,
+      {
+        radius: DISP.THERMOH.TEMPERATURE_RADIUS,
+        gradient: HeatmapHelper.createGradient(),
+        // ヒートマップは座標系が異なるので注意
+        width: mapInfo.element.width * mapInfo.scale,
+        height: mapInfo.element.height * mapInfo.scale,
+      },
+      createHeatmapData(mapInfo.areaId, temperatureList, mapInfo.scale)
+    )
+    map.style.width = String(mapInfo.element.width * mapInfo.scale) + 'px'
+    map.style.height = String(mapInfo.element.height * mapInfo.scale) + 'px'
+    onLoad && onLoad()
+    ret = mapElement
+  }, onFinally)
+  return ret
+}
+
+/**
+ * 温湿度の凡例を作成する。
+ * @method
+ * @return {Object[]}
+ */
+export const createThermoLegends = () => {
+  const thermoPatternConfig = getThermoPatternConfig()
+  var index = 1
+  var lastBase = null
+  return _.map(thermoPatternConfig, config => {
+    const style = { shape: SHAPE.CIRCLE, bgColor: config.color, color: DISP.TX.COLOR }
+    const msg = config.base? config.base + i18n.tnl('message.underDegree'): lastBase + i18n.tnl('message.overDegree')
+    lastBase = config.base
+    return {
+      id: index++,
+      items: [
+        { id: 1, text: '', style: StyleHelper.getStyleDisplay1(style) },
+        { id: 2, text: msg, style: {} },
+      ]
+    }
+  })
+}
+
+/**
+ * 本日の温湿度情報を取得する。
+ * @method
+ * @param {Number} id
+ * @param {Boolean} isExb
+ * @return {Object}
+ */
+export const getTodayThermoHumidityInfo = async (id, isExb) => {
+  const pMock = DEV.USE_MOCK_EXC? mock['basic_sensorHistory_1_1_today_hour']: null
+  const sensorData = await AppServiceHelper.fetchList(`/basic/sensorHistory/1/${isExb? 1: 0}/${id}/today/hour`, null, null, pMock)
+  sensorData.data.forEach(val => {
+    val.key = DateUtil.formatDate(val.sensor_dt, 'HH')
+    if(val.temperature){
+      val.temperature = NumberUtil.formatTemperature(val.temperature)
+    }
+    if(val.humidity){
+      val.humidity = NumberUtil.formatHumidity(val.humidity)
+    }
+  })
+  return sensorData
+}

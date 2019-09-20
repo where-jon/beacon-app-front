@@ -101,20 +101,20 @@ export default {
   },
   methods: {
     ...mapMutations('app_service', [
-      'replaceAS', 
-      'clear', 
+      'replaceAS',
+      'clear',
     ]),
     ...mapMutations([
-      'replace', 
+      'replace',
     ]),
     ...mapActions([
       'showErrorModal'
     ]),
     ...mapMutations('main', [
-      'replaceMain', 
+      'replaceMain',
     ]),
     ...mapMutations('setting', [
-      'replaceSetting', 
+      'replaceSetting',
     ]),
     ...mapActions([
       'showProgress',
@@ -128,6 +128,11 @@ export default {
     },
     closeVueSelect(){
       VueSelectHelper.closeVueSelect()
+    },
+    getIndividualOptions(categoryId, groupId) {
+      return StateHelper.getOptionsFromState('pot', false, true,
+        pot => pot.potType == CATEGORY.PERSON && (!categoryId || pot.categoryId == categoryId) && (!groupId || pot.groupId == groupId)
+      )
     },
   }
 }
