@@ -284,6 +284,28 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     DISPLAY_PRIORITY: 'category', // TX表示の際に参照するdisplay方法
     ABSENT_ZONE_DISPLAY_TYPES: ['undetected','lost','absent'],   // undetected:未検知, lost:消失, absent:不在ゾーン）
   },
+  // 位置表示(数量)：TX
+  TX_NUM: {
+    R: 35, // Txの半径
+    ROUNDRECT_RADIUS: 13, // Tx角丸表示時のRADIUS
+    BGCOLOR: '#ff7f50', // Tx表示時のデフォルト背景色
+    COLOR: '#000000', // Tx表示時のデフォルト文字色
+    STROKE_COLOR: '#cccccc', // Tx表示時のデフォルト枠線色
+    STROKE_WIDTH: 1, // Tx表示時のデフォルト枠線幅
+    TX_FONT: '20px Arial', // Tx表示時のフォント
+    TEXT_BASELINE: 'alphabetic',// Tx表示時のフォントの表示位置
+
+    // ツールチップ内の表示要素
+    TOOLTIP_ITEMS: {
+      TX_LOCATION_NAME: true, // 場所名
+      TX_LOCATION_TYPE: true, // 場所タイプ
+    },
+    TOOLTIP_FONT: '12px Arial', // ツールチップフォント
+    TOOLTIP_COLOR: '#000000', // ツールチップ文字色
+    TOOLTIP_BORDERCOLOR: '#888888', // ツールチップ枠線色
+    TOOLTIP_BGCOLOR: '#FFFDE6', // ツールチップ背景色
+    TOOLTIP_ROUNDRECT: 16, // ツールチップ角丸半径
+  },
   EXB_LOC: {
     // EXB配置設定のEXB表示サイズ
     SIZE: {
