@@ -633,16 +633,20 @@ export const getMagnetStateKey = (magnetState) => i18n.tnl(`label.${magnetState 
  * @method
  * @return {Object[]}
  */
-export const getFields1 = () => {
+export const getFields1 = (addColumnList = []) => {
   return addLabelByKey(i18n, [
     {key: 'sensorDt', sortable: true, label:'dt'},
     {key: 'locationPotName', sortable: true, label:'potName'},
     ArrayUtil.includesIgnoreCase(APP.SENSOR_LIST.WITH, 'deviceId') && ConfigHelper.includesDeviceType('deviceId')? {key: 'deviceId', sortable: true }: null,
     ArrayUtil.includesIgnoreCase(APP.SENSOR_LIST.WITH, 'deviceIdX') && ConfigHelper.includesDeviceType('deviceIdX')? {key: 'deviceIdX', sortable: true }: null,
+  ].concat(addColumnList.map(column => {
+    const isShow = Util.getValue(column, 'forceShow', false) || ArrayUtil.includesIgnoreCase(APP.SENSOR_LIST.WITH, column)
+    return isShow? { key: Util.getValue(column, 'key', column), sortable: true }: null
+  })).concat([
     {key: 'areaName', label:'area', sortable: true,},
     {key: 'temperature', sortable: true},
     {key: 'humidity', sortable: true},
-  ])
+  ]))
 }
 
 /**
