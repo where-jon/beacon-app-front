@@ -82,9 +82,13 @@
     <b-row class="mt-2">
       <b-form>
         <b-form-row class="ml-sm-4 ml-2 mr-1">
-          <b-button-group>
-            <b-button v-t="'label.objectCount'" :variant="theme"  class="mt-mobile mb-2" @click="changeIconsIndividual"/> 
-            <b-button v-t="'label.quantity'" :variant="theme" class="mt-mobile mb-2" @click="changeIconsQuantity" /> 
+          <b-button-group v-if="objectCountButtonFlg">
+            <b-button v-t="'label.objectCount'" :variant="theme"  class="mb-2 legend-button-active" @click="changeIconsIndividual"/>
+            <b-button v-t="'label.quantity'" :variant="theme" class="mb-2" @click="changeIconsQuantity" /> 
+          </b-button-group>
+          <b-button-group v-if="quantitytButtonFlg">
+            <b-button v-t="'label.objectCount'" :variant="theme"  class="mb-2" @click="changeIconsIndividual"/> 
+            <b-button v-t="'label.quantity'" :variant="theme" class="mb-2 legend-button-active" @click="changeIconsQuantity" /> 
           </b-button-group>
         </b-form-row>
       </b-form>
@@ -215,6 +219,8 @@ export default {
         'background-color': DISP.TX_NUM.TOOLTIP_BGCOLOR,
         'color': DISP.TX_NUM.TOOLTIP_COLOR,
       },
+      objectCountButtonFlg: true,
+      quantitytButtonFlg: false,
     }
   },
   computed: {
@@ -979,7 +985,6 @@ export default {
           this.yLocationlist[locationKye] = tx.location.y
         }
 
-
         if (this.locationIdList.indexOf(locationKye) == -1) {
           this.locationIdList.push(locationKye)
         }
@@ -1054,15 +1059,23 @@ export default {
           textBaseline: DISP.TX_NUM.TEXT_BASELINE
         })
     },
-    changeIconsQuantity() {// 数量ボタン押下時の処理
+    changeIconsQuantity(e) {// 数量ボタン押下時の処理
+      e.target.blur()
+      this.objectCountButtonFlg = false
+      this.quantitytButtonFlg = true
+      this.changeIconsFlg = true
+
       this.locationPersonList = {}
       this.locationObjectList = {}
       this.locationOtherList = {}
-      this.changeIconsFlg = true
       this.showTxAll()
     },
-    changeIconsIndividual() {
+    changeIconsIndividual(e) {// 個別ボタン押下時の処理
+      e.target.blur()
+      this.objectCountButtonFlg = true
+      this.quantitytButtonFlg = false
       this.changeIconsFlg = false
+      
       this.showTxAll()
     },
     iconMouseOver(event){
@@ -1156,6 +1169,13 @@ $right-pane-left-px: $right-pane-left * 1px;
       height: calc(70vh - 100px);
     }
   }
+}
+
+.legend-button-active {
+  border: none;
+  color: #fff;
+  background-color: #6c757d !important;
+  line-height: 1 !important;
 }
 
 </style>
