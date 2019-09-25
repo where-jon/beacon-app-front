@@ -140,6 +140,7 @@ import meditag from '../../components/parts/meditag.vue'
 import txdetail from '../../components/parts/txdetail.vue'
 import alert from '../../components/parts/alert.vue'
 import ToolTip from '../../components/parts/toolTip.vue'
+import * as OptionHelper from '../../sub/helper/dataproc/OptionHelper'
 
 export default {
   components: {
@@ -200,6 +201,8 @@ export default {
       locationOtherList: {},
       xLocationlist: {},
       yLocationlist: {},
+      locationNameList: {},
+      locationTypeNameList: {},
       changeIconsFlg: false,
       toolTipShow: false,
       toolTipLabel: '',
@@ -250,6 +253,9 @@ export default {
     },
     useDetailFilter(){
       return APP.POS.PLUGIN.FILTER
+    },
+    locationTypeOptions() {
+      return OptionHelper.getLocationTypeOptions()
     },
   },
   watch: {
@@ -512,7 +518,7 @@ export default {
       this.detectedCount = 0 // 検知カウントリセット
 
       const absentZonePosition = this.setAbsentZoneTx()
-      
+
       // 数量ボタン押下時
       if (this.changeIconsFlg){
         const position = this.setQuantityTx()
@@ -882,6 +888,7 @@ export default {
     onDetailFilter(list){
       this.selectedDetail = list
     },
+
     setQuantityTx() {
       let position = PositionHelper.getPositions()
       const ratio = 1 / this.canvasScale
@@ -951,8 +958,27 @@ export default {
           }
         }
 
+        if (Util.isUndefined(tx.locationName)) {
+          this.locationNameList[locationKye] = ''
+        } else {
+          this.locationNameList[locationKye] = tx.locationName
+        }
+
+        if (Util.isUndefined(tx.locationType)) {
+          this.locationTypeNameList[locationKye]  = ''
+        } else {
+          this.locationTypeNameList[locationKye] = this.getLocationTypeOptions(tx.locationType)
+        }
+
         this.xLocationlist[locationKye] = pos.x
         this.yLocationlist[locationKye] = pos.y
+        
+        if (this.isFixTx(tx)) {
+          Util.debug('fixed location', tx)
+          this.xLocationlist[locationKye] = tx.location.x
+          this.yLocationlist[locationKye] = tx.location.y
+        }
+
 
         if (this.locationIdList.indexOf(locationKye) == -1) {
           this.locationIdList.push(locationKye)
@@ -969,21 +995,6 @@ export default {
         txBtn.transparent
 
         txBtn.cursor = 'pointer'
-        txBtn.device = null
-        // txBtn.on('mouseover', evt => this.createTooltip(evt, evt.target.parent))
-        // txBtn.on('mouseout', evt => this.removeTooltip())
-        // txBtn.on('mouseover', this.iconMouseOver)
-        txBtn.on('mouseout', this.iconMouseOut)
-        // txBtn.on('click', (evt) => {
-        txBtn.on('mouseover', (evt) => {
-          this.iconMouseOver(null)
-        })
-        
-        this.icons[locationId] = txBtn
-        // this.icons[locationId] = ({button: txBtn, device: null, sign: -1})
-
-        txBtn.x = this.xLocationlist[locationId]
-        txBtn.y = this.yLocationlist[locationId]
 
       this.txCont.addChild(txBtn)
       })
@@ -994,12 +1005,18 @@ export default {
       let txBtn = this.createQuantityTxIcon(locationId, shape, color, bgColor)
       txBtn.btxId = locationId
 
+      // ツールチップ作成
+      // 場所名
+      txBtn.locationName = this.locationNameList[locationId]
+      // 場所タイプ
+      txBtn.locationTypeName = this.locationTypeNameList[locationId]
+      txBtn.on('mouseover', this.iconMouseOver)
+      txBtn.on('mouseout', this.iconMouseOut)
+      
+      this.icons[locationId] = txBtn
+
       txBtn.x = this.xLocationlist[locationId]
       txBtn.y = this.yLocationlist[locationId]
-
-      // ツールチップ作成　温湿度参照
-      // txBtn.on('mouseover', this.iconMouseOver)
-      // txBtn.on('mouseout', this.iconMouseOut)
 
       return txBtn
     },
@@ -1008,19 +1025,19 @@ export default {
 
       // 人数
       var locationPerson = this.locationPersonList[locationId]
-      if (!this.isNumber(locationPerson)) {
+      if (!NumberUtil.isNumber(locationPerson)) {
         locationPerson = 0
       }
       locationPerson = locationPerson + this.$i18n.tnl('label.peopleNum')
       // 品数
       var locationObject = this.locationObjectList[locationId]
-      if (!this.isNumber(locationObject)) {
+      if (!NumberUtil.isNumber(locationObject)) {
         locationObject = 0
       }
       locationObject = locationObject + this.$i18n.tnl('label.objectNum')
       // その他
       var locationOther = this.locationOtherList[locationId]
-      if (!this.isNumber(locationOther)) {
+      if (!NumberUtil.isNumber(locationOther)) {
         locationOther = 0
       }
       locationOther = this.$i18n.tnl('label.other') + ":" + locationOther
@@ -1031,15 +1048,11 @@ export default {
         label, txRadius, txRadius, color, bgColor, {
           circle: shape == SHAPE.CIRCLE,
           roundRect: shape == SHAPE.SQUARE,
-          strokeColor: ColorUtil.getRGBA(DISP.TX_NUM.STROKE_COLOR, 1),
+          strokeColor: ColorUtil.getRGBA(DISP.TX_NUM.STROKE_COLOR, 4),
           strokeStyle: DISP.TX_NUM.STROKE_WIDTH,
           fontSize: DISP.TX_NUM.TX_FONT,
           textBaseline: DISP.TX_NUM.TEXT_BASELINE
         })
-    },
-    isNumber(num) {
-      var numberFormat = new RegExp(/^[0-9]+$/);
-      return numberFormat.test(num);
     },
     changeIconsQuantity() {// 数量ボタン押下時の処理
       this.locationPersonList = {}
@@ -1059,12 +1072,11 @@ export default {
       this.removeTooltip()
     },
     createTooltipInfo(nativeEvent, container){
-      const device = container.device
       const pageElement = document.getElementById('bd-page')
       return {
         fontSize: StyleHelper.getFont2Size(DISP.TX_NUM.TOOLTIP_FONT),
-        locationName: this.$i18n.tnl('label.locationName') + ':' + DISP.TX_NUM.TOOLTIP_ITEMS.TX_LOCATION_NAME? device.potName? device.potName: device.locationName: '',
-        locationTypeName: this.$i18n.tnl('label.locationTypeName') + ':' + DISP.TX_NUM.TOOLTIP_ITEMS.TX_LOCATION_TYPE? device.potType? device.potName: device.locationName: '',
+        locationName: this.$i18n.tnl('label.locationName') + ':' + container.locationName,
+        locationTypeName: this.$i18n.tnl('label.locationTypeName') + ':' + container.locationTypeName,
 
         baseX: window.pageXOffset + nativeEvent.clientX - Util.getValue(pageElement, 'offsetLeft', 0),
         baseY: window.pageYOffset + nativeEvent.clientY - Util.getValue(pageElement, 'offsetTop', 0),
@@ -1088,6 +1100,9 @@ export default {
       this.toolTipShow = false
       this.toolTipStyle.left = null
       this.toolTipStyle.top = null
+    },
+    getLocationTypeOptions(locationType) {
+      return Util.getValue(this.locationTypeOptions.find(val => val.value == locationType), 'text', '')
     },
   }
 }
