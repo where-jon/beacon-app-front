@@ -82,11 +82,11 @@
     <b-row class="mt-2">
       <b-form>
         <b-form-row class="ml-sm-4 ml-2 mr-1">
-          <b-button-group v-if="objectCountButtonFlg">
+          <b-button-group v-if="isObjectCountButton">
             <b-button v-t="'label.objectCount'" :variant="theme"  class="mb-2 legend-button-active" @click="changeIconsIndividual"/>
             <b-button v-t="'label.quantity'" :variant="theme" class="mb-2" @click="changeIconsQuantity" /> 
           </b-button-group>
-          <b-button-group v-if="quantitytButtonFlg">
+          <b-button-group v-else>
             <b-button v-t="'label.objectCount'" :variant="theme"  class="mb-2" @click="changeIconsIndividual"/> 
             <b-button v-t="'label.quantity'" :variant="theme" class="mb-2 legend-button-active" @click="changeIconsQuantity" /> 
           </b-button-group>
@@ -207,7 +207,7 @@ export default {
       yLocationlist: {},
       locationNameList: {},
       locationTypeNameList: {},
-      changeIconsFlg: false,
+      isChangeIcons: false,
       toolTipShow: false,
       toolTipLabel: '',
       toolTipStyle: {
@@ -219,8 +219,7 @@ export default {
         'background-color': DISP.TX_NUM.TOOLTIP_BGCOLOR,
         'color': DISP.TX_NUM.TOOLTIP_COLOR,
       },
-      objectCountButtonFlg: true,
-      quantitytButtonFlg: false,
+      isObjectCountButton: true,
     }
   },
   computed: {
@@ -259,9 +258,6 @@ export default {
     },
     useDetailFilter(){
       return APP.POS.PLUGIN.FILTER
-    },
-    locationTypeOptions() {
-      return OptionHelper.getLocationTypeOptions()
     },
   },
   watch: {
@@ -526,7 +522,7 @@ export default {
       const absentZonePosition = this.setAbsentZoneTx()
 
       // 数量ボタン押下時
-      if (this.changeIconsFlg){
+      if (this.isChangeIcons){
         const position = this.setQuantityTx()
         this.positions = position
         this.stage.update()
@@ -562,18 +558,10 @@ export default {
     showTx(pos) {
       const tx = this.txsMap[pos.btx_id]
       Util.debug('showTx', pos, tx && tx.sensor)
-      if (!tx) {
-        console.warn('tx not found. btx_id=' + pos.btx_id)
+      if (!this.isShowTx(tx, pos)) {
         return
       }
-      if (!NumberUtil.bitON(tx.disp, TX.DISP.POS)) {
-        Util.debug('tx is not allowed to show', tx)
-        return
-      }
-      if (pos.noSelectedTx && !this.isFixTx(tx)) {
-        Util.debug('tx is not allowed to show', tx)
-        return
-      }
+
       let magnet = null
       if (tx.sensorId === SENSOR.MAGNET) {
         magnet = this.magnetSensors && this.magnetSensors.find((sensor) => sensor.btxid == tx.btxId || sensor.btx_id == tx.btxId)
@@ -899,101 +887,69 @@ export default {
       let position = PositionHelper.getPositions()
       const ratio = 1 / this.canvasScale
       position = PositionHelper.adjustPosition(position, ratio, this.locations, this.selectedArea)
-      
-      if (APP.SENSOR.USE_MEDITAG && this.meditagSensors) { // TODO: 場所OK???
-        position = SensorHelper.setStress(position, this.meditagSensors)
-      }
 
       position.forEach((pos) => {
         
         const tx = this.txsMap[pos.btx_id]
-        let locationKye = tx.locationId
+        let locationKey = tx.locationId
 
         Util.debug('showTx', pos, tx && tx.sensor)
-        if (!tx) {
-          console.warn('tx not found. btx_id=' + pos.btx_id)
+        if (!this.isShowTx(tx, pos)) {
           return
-        }
-        if (!NumberUtil.bitON(tx.disp, TX.DISP.POS)) {
-          Util.debug('tx is not allowed to show', tx)
-          return
-        }
-        if (pos.noSelectedTx && !this.isFixTx(tx)) {
-          Util.debug('tx is not allowed to show', tx)
-          return
-        }
-        let magnet = null
-        if (tx.sensorId === SENSOR.MAGNET) {
-          magnet = this.magnetSensors && this.magnetSensors.find((sensor) => sensor.btxid == tx.btxId || sensor.btx_id == tx.btxId)
-          Util.debug('magnet', magnet)
-        }
-        let meditag = null
-        if (tx.sensorId === SENSOR.MEDITAG) {
-          meditag = this.getMeditagSensor(tx.btxId)
-          Util.debug('meditag', meditag)
         }
         
-        // フリーアドレスTXが不在エリア検知の場合は以降処理を行わない
-        const isAbsentZone = Util.getValue(pos, 'location.isAbsentZone', false)
-        if (isAbsentZone && !this.isFixTx(tx)) {
-          return
-        }
-
-        pos.transparent = pos.transparent || ((isAbsentZone || this.isOtherFloorFixTx(tx, pos.location)) && this.isFixTx(tx))
-
-        if (tx.potType == 1) {
-          let locationVal = this.locationPersonList[locationKye]
+        if (tx.potType == CATEGORY.PERSON) {
+          let locationVal = this.locationPersonList[locationKey]
           if (!Util.hasValue(locationVal)) {
-            this.locationPersonList[locationKye] = 1
+            this.locationPersonList[locationKey] = 1
           } else {
-            this.locationPersonList[locationKye]++
+            this.locationPersonList[locationKey]++
           }
-        } else if (tx.potType == 2) {
-          let locationVal = this.locationObjectList[locationKye]
+        } else if (tx.potType == CATEGORY.THING) {
+          let locationVal = this.locationObjectList[locationKey]
           if (!Util.hasValue(locationVal)) {
-            this.locationObjectList[locationKye] = 1
+            this.locationObjectList[locationKey] = 1
           } else {
-            this.locationObjectList[locationKye]++
+            this.locationObjectList[locationKey]++
           }
         } else {
-          let locationVal = this.locationOtherList[locationKye]
+          let locationVal = this.locationOtherList[locationKey]
           if (!Util.hasValue(locationVal)) {
-            this.locationOtherList[locationKye] = 1
+            this.locationOtherList[locationKey] = 1
           } else {
-            this.locationOtherList[locationKye]++
+            this.locationOtherList[locationKey]++
           }
         }
 
         if (Util.isUndefined(tx.locationName)) {
-          this.locationNameList[locationKye] = ''
+          this.locationNameList[locationKey] = ''
         } else {
-          this.locationNameList[locationKye] = tx.locationName
+          this.locationNameList[locationKey] = tx.locationName
         }
 
         if (Util.isUndefined(tx.locationType)) {
-          this.locationTypeNameList[locationKye]  = ''
+          this.locationTypeNameList[locationKey]  = ''
         } else {
-          this.locationTypeNameList[locationKye] = this.getLocationTypeOptions(tx.locationType)
+          this.locationTypeNameList[locationKey] = this.getLocationTypeOptions(tx.locationType)
         }
 
-        this.xLocationlist[locationKye] = pos.x
-        this.yLocationlist[locationKye] = pos.y
+        this.xLocationlist[locationKey] = pos.x
+        this.yLocationlist[locationKey] = pos.y
         
         if (this.isFixTx(tx)) {
           Util.debug('fixed location', tx)
-          this.xLocationlist[locationKye] = tx.location.x
-          this.yLocationlist[locationKye] = tx.location.y
+          this.xLocationlist[locationKey] = tx.location.x
+          this.yLocationlist[locationKey] = tx.location.y
         }
 
-        if (this.locationIdList.indexOf(locationKye) == -1) {
-          this.locationIdList.push(locationKye)
+        if (this.locationIdList.indexOf(locationKey) == -1) {
+          this.locationIdList.push(locationKey)
         }
         this.detectedCount++  // 検知数カウント増加
       })
 
       this.locationIdList.forEach((locationId) => {
         let txBtn = this.icons[locationId]
-        //新規作成してからiconsに登録
         txBtn = this.createQuantityTxBtn(locationId, SHAPE.SQUARE, DISP.TX_NUM.COLOR, DISP.TX_NUM.BGCOLOR)
         txBtn.color = DISP.TX_NUM.COLOR
         txBtn.bgColor = DISP.TX_NUM.BGCOLOR
@@ -1061,9 +1017,8 @@ export default {
     },
     changeIconsQuantity(e) {// 数量ボタン押下時の処理
       e.target.blur()
-      this.objectCountButtonFlg = false
-      this.quantitytButtonFlg = true
-      this.changeIconsFlg = true
+      this.isObjectCountButton = false
+      this.isChangeIcons = true
 
       this.locationPersonList = {}
       this.locationObjectList = {}
@@ -1072,9 +1027,8 @@ export default {
     },
     changeIconsIndividual(e) {// 個別ボタン押下時の処理
       e.target.blur()
-      this.objectCountButtonFlg = true
-      this.quantitytButtonFlg = false
-      this.changeIconsFlg = false
+      this.isObjectCountButton = true
+      this.isChangeIcons = false
       
       this.showTxAll()
     },
@@ -1115,8 +1069,23 @@ export default {
       this.toolTipStyle.top = null
     },
     getLocationTypeOptions(locationType) {
-      return Util.getValue(this.locationTypeOptions.find(val => val.value == locationType), 'text', '')
+      return Util.getValue(OptionHelper.getLocationTypeOptions().find(val => val.value == locationType), 'text', '')
     },
+    isShowTx(tx, pos) {
+      if (!tx) {
+        console.warn('tx not found. btx_id=' + pos.btx_id)
+        return false
+      }
+      if (!NumberUtil.bitON(tx.disp, TX.DISP.POS)) {
+        Util.debug('tx is not allowed to show', tx)
+        return false
+      }
+      if (pos.noSelectedTx && !this.isFixTx(tx)) {
+        Util.debug('tx is not allowed to show', tx)
+        return false
+      }
+      return true
+    }
   }
 }
 </script>
