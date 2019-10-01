@@ -82,13 +82,9 @@
     <b-row class="mt-2">
       <b-form>
         <b-form-row class="ml-sm-4 ml-2 mr-1">
-          <b-button-group v-if="isObjectCountButton">
-            <b-button v-t="'label.objectCount'" :variant="theme"  class="mb-2 legend-button-active" @click="changeIconsIndividual"/>
-            <b-button v-t="'label.quantity'" :variant="theme" class="mb-2" @click="changeIconsQuantity" /> 
-          </b-button-group>
-          <b-button-group v-else>
-            <b-button v-t="'label.objectCount'" :variant="theme"  class="mb-2" @click="changeIconsIndividual"/> 
-            <b-button v-t="'label.quantity'" :variant="theme" class="mb-2 legend-button-active" @click="changeIconsQuantity" /> 
+          <b-button-group>
+            <b-button v-t="'label.individualTx'" :variant="theme" :class="isQuantity? 'mb-2': 'mb-2 legend-button-active'" @click="changeIconsIndividual"/> 
+            <b-button v-t="'label.quantity'" :variant="theme" :class="isQuantity? 'mb-2 legend-button-active': 'mb-2'" @click="changeIconsQuantity" /> 
           </b-button-group>
         </b-form-row>
       </b-form>
@@ -199,15 +195,10 @@ export default {
       thumbnailUrl: APP_SERVICE.BASE_URL + EXCLOUD.POT_THUMBNAIL_URL,
       preloadThumbnail: new Image(),
       positions: [],
-      locationIdList: [],
       locationPersonList: {},
       locationObjectList: {},
       locationOtherList: {},
-      xLocationlist: {},
-      yLocationlist: {},
-      locationNameList: {},
-      locationTypeNameList: {},
-      isChangeIcons: false,
+      isQuantity: false,
       toolTipShow: false,
       toolTipLabel: '',
       toolTipStyle: {
@@ -219,7 +210,6 @@ export default {
         'background-color': DISP.TX_NUM.TOOLTIP_BGCOLOR,
         'color': DISP.TX_NUM.TOOLTIP_COLOR,
       },
-      isObjectCountButton: true,
     }
   },
   computed: {
@@ -522,7 +512,7 @@ export default {
       const absentZonePosition = this.setAbsentZoneTx()
 
       // 数量ボタン押下時
-      if (this.isChangeIcons){
+      if (this.isQuantity){
         const position = this.setQuantityTx()
         this.positions = position
         this.stage.update()
@@ -889,13 +879,17 @@ export default {
       position = PositionHelper.adjustPosition(position, ratio, this.locations, this.selectedArea)
 
       position.forEach((pos) => {
-        
         const tx = this.txsMap[pos.btx_id]
-        let locationKey = tx.locationId
+        let locationKey = pos.location.locationId
 
         Util.debug('showTx', pos, tx && tx.sensor)
         if (!this.isShowTx(tx, pos)) {
           return
+        }
+        
+        // 固定座席の場合、TXが保持している位置に集計する
+        if (this.isFixTx(tx)) {
+          locationKey = pos.tx.location.locationId
         }
         
         if (tx.potType == CATEGORY.PERSON) {
@@ -921,36 +915,12 @@ export default {
           }
         }
 
-        if (Util.isUndefined(tx.locationName)) {
-          this.locationNameList[locationKey] = ''
-        } else {
-          this.locationNameList[locationKey] = tx.locationName
-        }
-
-        if (Util.isUndefined(tx.locationType)) {
-          this.locationTypeNameList[locationKey]  = ''
-        } else {
-          this.locationTypeNameList[locationKey] = this.getLocationTypeOptions(tx.locationType)
-        }
-
-        this.xLocationlist[locationKey] = pos.x
-        this.yLocationlist[locationKey] = pos.y
-        
-        if (this.isFixTx(tx)) {
-          Util.debug('fixed location', tx)
-          this.xLocationlist[locationKey] = tx.location.x
-          this.yLocationlist[locationKey] = tx.location.y
-        }
-
-        if (this.locationIdList.indexOf(locationKey) == -1) {
-          this.locationIdList.push(locationKey)
-        }
         this.detectedCount++  // 検知数カウント増加
       })
 
-      this.locationIdList.forEach((locationId) => {
-        let txBtn = this.icons[locationId]
-        txBtn = this.createQuantityTxBtn(locationId, SHAPE.SQUARE, DISP.TX_NUM.COLOR, DISP.TX_NUM.BGCOLOR)
+      this.locations.forEach((location) => {
+        let txBtn = this.icons['loc_' + location.locationId]
+        txBtn = this.createQuantityTxBtn(location, SHAPE.SQUARE, DISP.TX_NUM.COLOR, DISP.TX_NUM.BGCOLOR)
         txBtn.color = DISP.TX_NUM.COLOR
         txBtn.bgColor = DISP.TX_NUM.BGCOLOR
         txBtn.transparent
@@ -962,22 +932,22 @@ export default {
 
       return position
     },
-    createQuantityTxBtn(locationId, shape, color, bgColor, isAbsent = false){ // position
-      let txBtn = this.createQuantityTxIcon(locationId, shape, color, bgColor)
-      txBtn.btxId = locationId
+    createQuantityTxBtn(location, shape, color, bgColor, isAbsent = false){ // position
+      let txBtn = this.createQuantityTxIcon(location.locationId, shape, color, bgColor)
+      txBtn.btxId = location.locationId
 
       // ツールチップ作成
       // 場所名
-      txBtn.locationName = this.locationNameList[locationId]
+      txBtn.locationName = location.locationName
       // 場所タイプ
-      txBtn.locationTypeName = this.locationTypeNameList[locationId]
+      txBtn.locationTypeName = this.getLocationTypeOptions(location.locationType)
       txBtn.on('mouseover', this.iconMouseOver)
       txBtn.on('mouseout', this.iconMouseOut)
       
-      this.icons[locationId] = txBtn
+      this.icons['loc_' + location.locationId] = txBtn
 
-      txBtn.x = this.xLocationlist[locationId]
-      txBtn.y = this.yLocationlist[locationId]
+      txBtn.x = location.x
+      txBtn.y = location.y
 
       return txBtn
     },
@@ -1017,20 +987,22 @@ export default {
     },
     changeIconsQuantity(e) {// 数量ボタン押下時の処理
       e.target.blur()
-      this.isObjectCountButton = false
-      this.isChangeIcons = true
+      if (!this.isQuantity) {
+        this.isQuantity = true
 
-      this.locationPersonList = {}
-      this.locationObjectList = {}
-      this.locationOtherList = {}
-      this.showTxAll()
+        this.locationPersonList = {}
+        this.locationObjectList = {}
+        this.locationOtherList = {}
+        this.showTxAll()
+      }
     },
     changeIconsIndividual(e) {// 個別ボタン押下時の処理
       e.target.blur()
-      this.isObjectCountButton = true
-      this.isChangeIcons = false
-      
-      this.showTxAll()
+      if (this.isQuantity) {
+        this.isQuantity = false
+        
+        this.showTxAll()
+      }
     },
     iconMouseOver(event){
       this.createTooltip(event, event.target.parent)
