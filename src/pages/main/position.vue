@@ -79,6 +79,16 @@
         </div>
       </b-form>
     </b-row>
+    <b-row class="mt-2">
+      <b-form>
+        <b-form-row class="ml-sm-4 ml-2 mr-1">
+          <b-button-group>
+            <b-button v-t="'label.individualTx'" :variant="theme" :class="isQuantity? 'mb-2': 'mb-2 legend-button-active'" @click="changeIconsIndividual"/> 
+            <b-button v-t="'label.quantity'" :variant="theme" :class="isQuantity? 'mb-2 legend-button-active': 'mb-2'" @click="changeIconsQuantity" /> 
+          </b-button-group>
+        </b-form-row>
+      </b-form>
+    </b-row>
     <b-row class="mt-3">
       <canvas v-if="!showMeditag" id="map" ref="map" @click="closeVueSelect" />
       <b-col v-if="showMeditag">
@@ -94,6 +104,7 @@
     <div v-if="selectedTx.btxId && showReady">
       <txdetail :selected-tx="selectedTx" :selected-sensor="selectedSensor" :is-show-modal="isShowModal()" @resetDetail="resetDetail" />
     </div>
+    <tool-tip id="toolTip" :tool-tip-show="toolTipShow" :tool-tip-label="toolTipLabel" :tool-tip-style="toolTipStyle" />
   </div>
 </template>
 
@@ -128,6 +139,8 @@ import detailFilter from '../../components/parts/detailFilter.vue'
 import meditag from '../../components/parts/meditag.vue'
 import txdetail from '../../components/parts/txdetail.vue'
 import alert from '../../components/parts/alert.vue'
+import ToolTip from '../../components/parts/toolTip.vue'
+import * as OptionHelper from '../../sub/helper/dataproc/OptionHelper'
 
 export default {
   components: {
@@ -136,6 +149,7 @@ export default {
     meditag,
     'txdetail': txdetail,
     alert,
+    ToolTip,
   },
   mixins: [commonmixin, reloadmixin, showmapmixin],
   props: {
@@ -181,6 +195,21 @@ export default {
       thumbnailUrl: APP_SERVICE.BASE_URL + EXCLOUD.POT_THUMBNAIL_URL,
       preloadThumbnail: new Image(),
       positions: [],
+      locationPersonList: {},
+      locationObjectList: {},
+      locationOtherList: {},
+      isQuantity: false,
+      toolTipShow: false,
+      toolTipLabel: '',
+      toolTipStyle: {
+        'left': null,
+        'top': null,
+        'border-color': DISP.TX_NUM.TOOLTIP_BORDERCOLOR,
+        'border-radius': '' + DISP.TX_NUM.TOOLTIP_ROUNDRECT + 'px',
+        'font': DISP.TX_NUM.TOOLTIP_FONT,
+        'background-color': DISP.TX_NUM.TOOLTIP_BGCOLOR,
+        'color': DISP.TX_NUM.TOOLTIP_COLOR,
+      },
     }
   },
   computed: {
@@ -481,11 +510,25 @@ export default {
       this.detectedCount = 0 // 検知カウントリセット
 
       const absentZonePosition = this.setAbsentZoneTx()
-      const position = this.setNomalTx()
-      this.positions = position
 
-      this.stage.update()
-      this.reShowTxDetail(position, absentZonePosition)
+      // 数量ボタン押下時
+      if (this.isQuantity){
+        const position = this.setQuantityTx()
+        this.positions = position
+        this.stage.update()
+        this.stage.enableMouseOver()
+        this.reShowTxDetail(position, absentZonePosition)
+
+        // パラメータリセット
+        this.locationPersonList = {}
+        this.locationObjectList = {}
+        this.locationOtherList = {}
+      } else {
+        const position = this.setNomalTx()
+        this.positions = position
+        this.stage.update()
+        this.reShowTxDetail(position, absentZonePosition)
+      }
     },
     setNomalTx() {
       let position = PositionHelper.getPositions()
@@ -505,18 +548,10 @@ export default {
     showTx(pos) {
       const tx = this.txsMap[pos.btx_id]
       Util.debug('showTx', pos, tx && tx.sensor)
-      if (!tx) {
-        console.warn('tx not found. btx_id=' + pos.btx_id)
+      if (!this.isShowTx(tx, pos)) {
         return
       }
-      if (!NumberUtil.bitON(tx.disp, TX.DISP.POS)) {
-        Util.debug('tx is not allowed to show', tx)
-        return
-      }
-      if (pos.noSelectedTx && !this.isFixTx(tx)) {
-        Util.debug('tx is not allowed to show', tx)
-        return
-      }
+
       let magnet = null
       if (tx.sensorId === SENSOR.MAGNET) {
         magnet = this.magnetSensors && this.magnetSensors.find((sensor) => sensor.btxid == tx.btxId || sensor.btx_id == tx.btxId)
@@ -837,6 +872,192 @@ export default {
     onDetailFilter(list){
       this.selectedDetail = list
     },
+
+    setQuantityTx() {
+      let position = PositionHelper.getPositions()
+      const ratio = 1 / this.canvasScale
+      position = PositionHelper.adjustPosition(position, ratio, this.locations, this.selectedArea)
+
+      position.forEach((pos) => {
+        const tx = this.txsMap[pos.btx_id]
+        let locationKey = pos.location.locationId
+
+        Util.debug('showTx', pos, tx && tx.sensor)
+        if (!this.isShowTx(tx, pos)) {
+          return
+        }
+        
+        // 固定座席の場合、TXが保持している位置に集計する
+        if (this.isFixTx(tx)) {
+          locationKey = pos.tx.location.locationId
+        }
+        
+        if (tx.potType == CATEGORY.PERSON) {
+          let locationVal = this.locationPersonList[locationKey]
+          if (!Util.hasValue(locationVal)) {
+            this.locationPersonList[locationKey] = 1
+          } else {
+            this.locationPersonList[locationKey]++
+          }
+        } else if (tx.potType == CATEGORY.THING) {
+          let locationVal = this.locationObjectList[locationKey]
+          if (!Util.hasValue(locationVal)) {
+            this.locationObjectList[locationKey] = 1
+          } else {
+            this.locationObjectList[locationKey]++
+          }
+        } else {
+          let locationVal = this.locationOtherList[locationKey]
+          if (!Util.hasValue(locationVal)) {
+            this.locationOtherList[locationKey] = 1
+          } else {
+            this.locationOtherList[locationKey]++
+          }
+        }
+
+        this.detectedCount++  // 検知数カウント増加
+      })
+
+      this.locations.forEach((location) => {
+        let txBtn = this.icons['loc_' + location.locationId]
+        txBtn = this.createQuantityTxBtn(location, SHAPE.SQUARE, DISP.TX_NUM.COLOR, DISP.TX_NUM.BGCOLOR)
+        txBtn.color = DISP.TX_NUM.COLOR
+        txBtn.bgColor = DISP.TX_NUM.BGCOLOR
+        txBtn.transparent
+
+        txBtn.cursor = 'pointer'
+
+      this.txCont.addChild(txBtn)
+      })
+
+      return position
+    },
+    createQuantityTxBtn(location, shape, color, bgColor, isAbsent = false){ // position
+      let txBtn = this.createQuantityTxIcon(location.locationId, shape, color, bgColor)
+      txBtn.btxId = location.locationId
+
+      // ツールチップ作成
+      // 場所名
+      txBtn.locationName = location.locationName
+      // 場所タイプ
+      txBtn.locationTypeName = this.getLocationTypeOptions(location.locationType)
+      txBtn.on('mouseover', this.iconMouseOver)
+      txBtn.on('mouseout', this.iconMouseOut)
+      
+      this.icons['loc_' + location.locationId] = txBtn
+
+      txBtn.x = location.x
+      txBtn.y = location.y
+
+      return txBtn
+    },
+    createQuantityTxIcon(locationId, shape, color, bgColor){ // position
+      const txRadius = DISP.TX_NUM.R / this.getMapScale()
+
+      // 人数
+      var locationPerson = this.locationPersonList[locationId]
+      if (!NumberUtil.isNumber(locationPerson)) {
+        locationPerson = 0
+      }
+      locationPerson = locationPerson + this.$i18n.tnl('label.peopleNum')
+      // 品数
+      var locationObject = this.locationObjectList[locationId]
+      if (!NumberUtil.isNumber(locationObject)) {
+        locationObject = 0
+      }
+      locationObject = locationObject + this.$i18n.tnl('label.objectNum')
+      // その他
+      var locationOther = this.locationOtherList[locationId]
+      if (!NumberUtil.isNumber(locationOther)) {
+        locationOther = 0
+      }
+      locationOther = this.$i18n.tnl('label.other') + ":" + locationOther
+
+      var label = locationPerson + "\r\n" + locationObject + "\r\n" + locationOther
+
+      return IconHelper.createIcon(
+        label, txRadius, txRadius, color, bgColor, {
+          circle: shape == SHAPE.CIRCLE,
+          roundRect: shape == SHAPE.SQUARE,
+          strokeColor: ColorUtil.getRGBA(DISP.TX_NUM.STROKE_COLOR, 4),
+          strokeStyle: DISP.TX_NUM.STROKE_WIDTH,
+          fontSize: DISP.TX_NUM.TX_FONT,
+          textBaseline: DISP.TX_NUM.TEXT_BASELINE
+        })
+    },
+    changeIconsQuantity(e) {// 数量ボタン押下時の処理
+      e.target.blur()
+      if (!this.isQuantity) {
+        this.isQuantity = true
+
+        this.locationPersonList = {}
+        this.locationObjectList = {}
+        this.locationOtherList = {}
+        this.showTxAll()
+      }
+    },
+    changeIconsIndividual(e) {// 個別ボタン押下時の処理
+      e.target.blur()
+      if (this.isQuantity) {
+        this.isQuantity = false
+        
+        this.showTxAll()
+      }
+    },
+    iconMouseOver(event){
+      this.createTooltip(event, event.target.parent)
+    },
+    iconMouseOut(){
+      this.removeTooltip()
+    },
+    createTooltipInfo(nativeEvent, container){
+      const pageElement = document.getElementById('bd-page')
+      return {
+        fontSize: StyleHelper.getFont2Size(DISP.TX_NUM.TOOLTIP_FONT),
+        locationName: this.$i18n.tnl('label.locationName') + ':' + container.locationName,
+        locationTypeName: this.$i18n.tnl('label.locationTypeName') + ':' + container.locationTypeName,
+
+        baseX: window.pageXOffset + nativeEvent.clientX - Util.getValue(pageElement, 'offsetLeft', 0),
+        baseY: window.pageYOffset + nativeEvent.clientY - Util.getValue(pageElement, 'offsetTop', 0),
+        isDispRight: container.x * 2 <= this.stage.canvas.width,
+      }
+    },
+    createTooltip(event, container) {
+      const tooltipInfo = this.createTooltipInfo(event.nativeEvent, container)
+
+      this.toolTipLabel = [tooltipInfo.locationName, tooltipInfo.locationTypeName]
+      this.toolTipShow = true
+      this.$nextTick(() => {
+        const toolTipElement = document.getElementById('toolTipComponent')
+        const left = tooltipInfo.baseX + (tooltipInfo.isDispRight? 8: -1 * Util.getValue(toolTipElement, 'clientWidth', 0) - 4)
+        const top = tooltipInfo.baseY - Util.getValue(toolTipElement, 'clientHeight', 0) - 4
+        this.toolTipStyle.left = '' + left + 'px'
+        this.toolTipStyle.top = '' + top + 'px'
+      })
+    },
+    removeTooltip() {
+      this.toolTipShow = false
+      this.toolTipStyle.left = null
+      this.toolTipStyle.top = null
+    },
+    getLocationTypeOptions(locationType) {
+      return Util.getValue(OptionHelper.getLocationTypeOptions().find(val => val.value == locationType), 'text', '')
+    },
+    isShowTx(tx, pos) {
+      if (!tx) {
+        console.warn('tx not found. btx_id=' + pos.btx_id)
+        return false
+      }
+      if (!NumberUtil.bitON(tx.disp, TX.DISP.POS)) {
+        Util.debug('tx is not allowed to show', tx)
+        return false
+      }
+      if (pos.noSelectedTx && !this.isFixTx(tx)) {
+        Util.debug('tx is not allowed to show', tx)
+        return false
+      }
+      return true
+    }
   }
 }
 </script>
@@ -889,6 +1110,13 @@ $right-pane-left-px: $right-pane-left * 1px;
       height: calc(70vh - 100px);
     }
   }
+}
+
+.legend-button-active {
+  border: none;
+  color: #fff;
+  background-color: #6c757d !important;
+  line-height: 1 !important;
 }
 
 </style>
