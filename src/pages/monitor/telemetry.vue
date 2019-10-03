@@ -13,6 +13,7 @@ import { APP } from '../../sub/constant/config'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as CsvUtil from '../../sub/util/CsvUtil'
+import * as Util from '../../sub/util/Util'
 import { getCharSet } from '../../sub/helper/base/CharSetHelper'
 import * as ConfigHelper from '../../sub/helper/dataproc/ConfigHelper'
 import * as DetectStateHelper from '../../sub/helper/domain/DetectStateHelper'
@@ -200,7 +201,9 @@ export default {
       const map = {}
       this.exbs.forEach((e) => {
         const deviceId = APP.SVC.POS.EXSERVER ? e.deviceId.toString() : e.deviceId.toString(16)
-        map[deviceId] = e.location.locationName
+        if(Util.hasValue(e.location)){
+          map[deviceId] = e.location.locationName
+        }
       })
 
       return telemetrys.map((e) => {
