@@ -115,6 +115,17 @@
       </b-form>
     </b-row>
 
+    <b-row v-if="pQuantity" class="mt-2">
+      <b-form>
+        <b-form-row class="ml-sm-4 ml-2 mr-1">
+          <b-button-group>
+            <b-button v-t="'label.individualTx'" :variant="theme" :class="isQuantity? 'mb-2': 'mb-2 legend-button-active'" @click="changeIconsIndividual"/> 
+            <b-button v-t="'label.quantity'" :variant="theme" :class="isQuantity? 'mb-2 legend-button-active': 'mb-2'" @click="changeIconsQuantity" /> 
+          </b-button-group>
+        </b-form-row>
+      </b-form>
+    </b-row>
+
     <b-row class="mt-3">
       <canvas v-if="!showMeditag" v-show="isLoading || !isHeatmap" id="map" ref="map" @click="closeVueSelect" />
       <b-col v-if="showMeditag" v-show="isLoading || !isHeatmap">
@@ -152,9 +163,10 @@ import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import { APP, DISP, DEV, APP_SERVICE, EXCLOUD } from '../../sub/constant/config'
-import { SENSOR, TX } from '../../sub/constant/Constants'
+import { SENSOR, TX, CATEGORY, SHAPE } from '../../sub/constant/Constants'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
+import * as ColorUtil from '../../sub/util/ColorUtil'
 import * as DateUtil from '../../sub/util/DateUtil'
 import * as DomUtil from '../../sub/util/DomUtil'
 import * as NumberUtil from '../../sub/util/NumberUtil'
@@ -169,6 +181,7 @@ import * as HttpHelper from '../../sub/helper/base/HttpHelper'
 import * as IconHelper from '../../sub/helper/ui/IconHelper'
 import * as MessageHelper from '../../sub/helper/domain/MessageHelper'
 import * as MenuHelper from '../../sub/helper/dataproc/MenuHelper'
+import * as OptionHelper from '../../sub/helper/dataproc/OptionHelper'
 import * as PositionHelper from '../../sub/helper/domain/PositionHelper'
 import * as ProhibitHelper from '../../sub/helper/domain/ProhibitHelper'
 import * as SensorHelper from '../../sub/helper/domain/SensorHelper'
@@ -304,6 +317,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    pQuantity: {
+      type: Boolean,
+      default: false,
+    }
   },
   data() {
     return {
@@ -355,6 +372,10 @@ export default {
       iconAlphaMin: 0.1,
       fixHeight: DISP.THERMOH.ALERT_FIX_HEIGHT,
       chartTitle: '',
+      locationPersonList: {},
+      locationObjectList: {},
+      locationOtherList: {},
+      isQuantity: false,
       toolTipShow: false,
       toolTipLabel: '',
       toolTipStyle: {
@@ -527,13 +548,68 @@ export default {
       return Util.hasValue(this.positionedTxMap.meditag)
     },
     iconMouseOver(event){
-      if(APP.SENSOR.USE_THERMOH_TOOLTIP){
+      if(this.pQuantity){
+        this.createTooltip(event, event.target.parent)
+      }else if(APP.SENSOR.USE_THERMOH_TOOLTIP){
         this.createThermoTooltip(event, event.target.parent)
       }
     },
     iconMouseOut(){
-      if(APP.SENSOR.USE_THERMOH_TOOLTIP){
+      if(this.pQuantity){
+        this.removeTooltip()
+      }else if(APP.SENSOR.USE_THERMOH_TOOLTIP){
         this.removeThermoTooltip()
+      }
+    },
+    createTooltipInfo(nativeEvent, container){
+      const pageElement = document.getElementById('bd-page')
+      return {
+        fontSize: StyleHelper.getFont2Size(DISP.TX_NUM.TOOLTIP_FONT),
+        locationName: this.$i18n.tnl('label.locationName') + ':' + container.locationName,
+        locationTypeName: this.$i18n.tnl('label.locationTypeName') + ':' + container.locationTypeName,
+        baseX: window.pageXOffset + nativeEvent.clientX - Util.getValue(pageElement, 'offsetLeft', 0),
+        baseY: window.pageYOffset + nativeEvent.clientY - Util.getValue(pageElement, 'offsetTop', 0),
+        isDispRight: container.x * 2 <= this.stage.canvas.width,
+      }
+    },
+    createTooltip(event, container) {
+      const tooltipInfo = this.createTooltipInfo(event.nativeEvent, container)
+      this.toolTipLabel = [tooltipInfo.locationName, tooltipInfo.locationTypeName]
+      this.toolTipShow = true
+      this.$nextTick(() => {
+        const toolTipElement = document.getElementById('toolTipComponent')
+        const left = tooltipInfo.baseX + (tooltipInfo.isDispRight? 8: -1 * Util.getValue(toolTipElement, 'clientWidth', 0) - 4)
+        const top = tooltipInfo.baseY - Util.getValue(toolTipElement, 'clientHeight', 0) - 4
+        this.toolTipStyle = this.createTooltipSetting(true)
+        this.toolTipStyle.left = '' + left + 'px'
+        this.toolTipStyle.top = '' + top + 'px'
+      })
+    },
+    removeTooltip() {
+      this.toolTipShow = false
+      this.toolTipStyle.left = null
+      this.toolTipStyle.top = null
+    },
+    getLocationTypeOptions(locationType) {
+      return Util.getValue(OptionHelper.getLocationTypeOptions().find(val => val.value == locationType), 'text', '')
+    },
+    createTooltipSetting(isQuantity) {
+      return isQuantity? {
+        'left': null,
+        'top': null,
+        'border-color': DISP.TX_NUM.TOOLTIP_BORDERCOLOR,
+        'border-radius': '' + DISP.TX_NUM.TOOLTIP_ROUNDRECT + 'px',
+        'font': DISP.TX_NUM.TOOLTIP_FONT,
+        'background-color': DISP.TX_NUM.TOOLTIP_BGCOLOR,
+        'color': DISP.TX_NUM.TOOLTIP_COLOR,
+      }: {
+        'left': null,
+        'top': null,
+        'border-color': DISP.THERMOH.TOOLTIP_BORDERCOLOR,
+        'border-radius': '' + DISP.THERMOH.TOOLTIP_ROUNDRECT + 'px',
+        'font': DISP.THERMOH.TOOLTIP_FONT,
+        'background-color': DISP.THERMOH.TOOLTIP_BGCOLOR,
+        'color': DISP.THERMOH.TOOLTIP_COLOR,
       }
     },
     removeThermoTooltip() {
@@ -550,6 +626,7 @@ export default {
         const toolTipElement = document.getElementById('toolTipComponent')
         const left = tooltipInfo.baseX + (tooltipInfo.isDispRight? 8: -1 * Util.getValue(toolTipElement, 'clientWidth', 0) - 4)
         const top = tooltipInfo.baseY - Util.getValue(toolTipElement, 'clientHeight', 0) - 4
+        this.toolTipStyle = this.createTooltipSetting(false)
         this.toolTipStyle.left = '' + left + 'px'
         this.toolTipStyle.top = '' + top + 'px'
       })
@@ -820,6 +897,129 @@ export default {
       this.txCont.addChild(txBtn)
       this.detectedCount++  // 検知数カウント増加
     },
+    setQuantityTx() {
+      let position = PositionHelper.getPositions()
+      const ratio = 1 / this.canvasScale
+      position = PositionHelper.adjustPosition(position, ratio, this.locations, this.selectedArea)
+      
+      position.forEach((pos) => {
+        
+        const tx = this.txsMap[pos.btx_id]
+        let locationKey = pos.location.locationId
+        Util.debug('showTx', pos, tx && tx.sensor)
+        if (!PositionHelper.checkTxAllow(pos, tx, this.selectedArea, false, this.pOnlyFixTx)){
+          return
+        }
+
+        // 固定座席の場合、TXが保持している位置に集計する
+        if (PositionHelper.isFixTx(tx)) {
+          locationKey = pos.tx.location.locationId
+        }
+
+        if (tx.potType == CATEGORY.PERSON) {
+          let locationVal = this.locationPersonList[locationKey]
+          if (!Util.hasValue(locationVal)) {
+            this.locationPersonList[locationKey] = 1
+          } else {
+            this.locationPersonList[locationKey]++
+          }
+        } else if (tx.potType == CATEGORY.THING) {
+          let locationVal = this.locationObjectList[locationKey]
+          if (!Util.hasValue(locationVal)) {
+            this.locationObjectList[locationKey] = 1
+          } else {
+            this.locationObjectList[locationKey]++
+          }
+        } else {
+          let locationVal = this.locationOtherList[locationKey]
+          if (!Util.hasValue(locationVal)) {
+            this.locationOtherList[locationKey] = 1
+          } else {
+            this.locationOtherList[locationKey]++
+          }
+        }
+
+        this.detectedCount++  // 検知数カウント増加
+      })
+
+      this.locations.forEach((location) => {
+        let txBtn = this.icons['loc_' + location.locationId]
+        txBtn = this.createQuantityTxBtn(location, SHAPE.SQUARE, DISP.TX_NUM.COLOR, DISP.TX_NUM.BGCOLOR)
+        txBtn.color = DISP.TX_NUM.COLOR
+        txBtn.bgColor = DISP.TX_NUM.BGCOLOR
+        txBtn.transparent
+        txBtn.cursor = 'pointer'
+        this.txCont.addChild(txBtn)
+      })
+      return position
+    },
+    createQuantityTxBtn(location, shape, color, bgColor, isAbsent = false){ // position
+      let txBtn = this.createQuantityTxIcon(location.locationId, shape, color, bgColor)
+      txBtn.btxId = location.locationId
+
+      // ツールチップ作成
+      // 場所名
+      txBtn.locationName = location.locationName
+      // 場所タイプ
+      txBtn.locationTypeName = this.getLocationTypeOptions(location.locationType)
+      txBtn.on('mouseover', this.iconMouseOver)
+      txBtn.on('mouseout', this.iconMouseOut)
+      
+      this.icons['loc_' + location.locationId] = txBtn
+
+      txBtn.x = location.x
+      txBtn.y = location.y
+      return txBtn
+    },
+    createQuantityTxIcon(locationId, shape, color, bgColor){ // position
+      const txRadius = DISP.TX_NUM.R / this.getMapScale()
+      // 人数
+      var locationPerson = this.locationPersonList[locationId]
+      if (!NumberUtil.isNumber(locationPerson)) {
+        locationPerson = 0
+      }
+      locationPerson = locationPerson + this.$i18n.tnl('label.peopleNum')
+      // 品数
+      var locationObject = this.locationObjectList[locationId]
+      if (!NumberUtil.isNumber(locationObject)) {
+        locationObject = 0
+      }
+      locationObject = locationObject + this.$i18n.tnl('label.objectNum')
+      // その他
+      var locationOther = this.locationOtherList[locationId]
+      if (!NumberUtil.isNumber(locationOther)) {
+        locationOther = 0
+      }
+      locationOther = this.$i18n.tnl('label.other') + ":" + locationOther
+      var label = locationPerson + "\r\n" + locationObject + "\r\n" + locationOther
+      return IconHelper.createIcon(
+        label, txRadius, txRadius, color, bgColor, {
+          circle: shape == SHAPE.CIRCLE,
+          roundRect: shape == SHAPE.SQUARE,
+          strokeColor: ColorUtil.getRGBA(DISP.TX_NUM.STROKE_COLOR, 4),
+          strokeStyle: DISP.TX_NUM.STROKE_WIDTH,
+          fontSize: DISP.TX_NUM.TX_FONT,
+          textBaseline: DISP.TX_NUM.TEXT_BASELINE
+        })
+    },
+    changeIconsQuantity(e) {// 数量ボタン押下時の処理
+      e.target.blur()
+      if (!this.isQuantity) {
+        this.isQuantity = true
+        this.locationPersonList = {}
+        this.locationObjectList = {}
+        this.locationOtherList = {}
+        this.showTxAll()
+      }
+    },
+    changeIconsIndividual(e) {// 個別ボタン押下時の処理
+      e.target.blur()
+      if (this.isQuantity) {
+        this.isQuantity = false
+        
+        this.showTxAll()
+      }
+    },
     showTxAll() {
       if(!Util.hasValue(this.pShowTxSensorIds)){
         return
@@ -832,10 +1032,24 @@ export default {
       this.detectedCount = 0
 
       const absentZonePosition = this.pShowAbsent? this.setAbsentZoneTx(): []
-      const position = this.setNomalTx()
-      this.positions = position
 
-      this.reShowTxDetail(position, absentZonePosition)
+      // 数量ボタン押下時
+      if (this.isQuantity){
+        const position = this.setQuantityTx()
+        this.positions = position
+        this.stage.update()
+        this.stage.enableMouseOver()
+        this.reShowTxDetail(position, absentZonePosition)
+        // パラメータリセット
+        this.locationPersonList = {}
+        this.locationObjectList = {}
+        this.locationOtherList = {}
+      } else {
+        const position = this.setNomalTx()
+        this.positions = position
+        this.stage.update()
+        this.reShowTxDetail(position, absentZonePosition)
+      }
     },
     showExb(exb) {
       const icon = IconHelper.createExbIcon(exb, this.pShowExbSensorIds, this.getMapScale(), this.stage)
@@ -1125,6 +1339,13 @@ $right-pane-left-px: $right-pane-left * 1px;
       height: calc(70vh - 100px);
     }
   }
+}
+
+.legend-button-active {
+  border: none;
+  color: #fff;
+  background-color: #6c757d !important;
+  line-height: 1 !important;
 }
 
 </style>

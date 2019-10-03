@@ -118,3 +118,14 @@ export const getRectInfoFromCenterPos = (x, y, width, height) => {
     centerX: x, centerY: y,
   }
 }
+
+/**
+ * パラメータが整数値かどうか判定する。
+ * @method
+ * @param {Object} num
+ * @return {Boolean} 整数値の場合true
+ */
+export const isNumber = (num)  => {
+  var numberFormat = new RegExp(/^[0-9]+$/);
+  return numberFormat.test(num);
+}

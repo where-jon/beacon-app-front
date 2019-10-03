@@ -177,3 +177,16 @@ export const removeInterval = () => {
   }
 }
 
+/**
+ * パラメータが「undefined」か判定する。
+ * @method
+ * @param {Object} param
+ * @return {Boolean}「undefined」の場合true
+ */
+export const isUndefined = (param) => {
+  if (param === undefined) {
+    return true
+  }
+  return false
+}
+
