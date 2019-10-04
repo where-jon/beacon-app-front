@@ -160,7 +160,7 @@ export default {
   mixins: [commonmixin, showmapmixin],
   data () {
     return {
-      items: ViewHelper.createBreadCrumbItems('develop', 'installation'),
+      items: ViewHelper.createBreadCrumbItems('monitor', 'installation'),
       useGroup: MenuHelper.useMaster('group') && ArrayUtil.includesIgnoreCase(APP.TX.WITH, 'group'),
       useCategory: MenuHelper.useMaster('category') && ArrayUtil.includesIgnoreCase(APP.TX.WITH, 'category'),
       modeRssi: true,

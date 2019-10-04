@@ -905,6 +905,11 @@ export const MENU = [
         path: 'telemetry',
         icon: 'battery-three-quarters',
       },
+      {
+        key: 'installation',
+        path: 'installation',
+        icon: 'ruler-combined',
+      },
     ]
   },
   {
@@ -1015,11 +1020,6 @@ export const MENU = [
       key: 'system',
       path: 'system',
       icon: 'cogs',
-    },
-    {
-      key: 'installation',
-      path: 'installation',
-      icon: 'ruler-combined',
     },
     ]
   },
