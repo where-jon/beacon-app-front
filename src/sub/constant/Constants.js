@@ -1016,6 +1016,11 @@ export const MENU = [
       path: 'system',
       icon: 'cogs',
     },
+    {
+      key: 'installation',
+      path: 'installation',
+      icon: 'ruler-combined',
+    },
     ]
   },
   {
@@ -1044,11 +1049,6 @@ export const MENU = [
         key: 'env',
         path: 'serverenv',
         icon: 'cog',
-      },
-      {
-        key: 'installation',
-        path: 'installation',
-        icon: 'ruler-combined',
       },
     ],
   },
