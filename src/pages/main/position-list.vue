@@ -118,15 +118,15 @@ export default {
 
         const locationMap = {}
         this.locations.forEach(l => {
-          if(Util.hasValue(l.posId)){
-            locationMap[l.posId] = l
+          if(Util.hasValue(l.locationId)){
+            locationMap[l.locationId] = l
           }
         })
 
         positions = positions.map(pos => {
           prohibitCheck = minorMap[pos.minor] != null
 
-          const location = locationMap[pos.pos_id]
+          const location = locationMap[pos.location.locationId]
           return {
             ...pos,
             // powerLevel: this.getPowerLevel(pos),
