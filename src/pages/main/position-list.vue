@@ -117,7 +117,6 @@ export default {
         }
 
         const locationMap = {}
-        console.log('locations', this.locations)
         this.locations.forEach(l => {
           if(Util.hasValue(l.locationId)){
             locationMap[l.locationId] = l
