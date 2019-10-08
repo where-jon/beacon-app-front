@@ -8,13 +8,22 @@ class Common {
   }
 
   async getI18n() {
-    const locale = this.getLocalStorage(document.domain + '-locale')
-    const messages = await axios.get(`/plugin/${locale}.json`)
+    const defaultLocale = 'ja'
+    let locale = null
     const localeMessages = {}
-    localeMessages[locale] = messages.data
+    try {
+      locale = this.getLocalStorage(document.domain + '-locale')
+      if (!locale || locale.length < 1) {
+        locale = navigator.locale
+      }
+      const messages = await axios.get(`/plugin/${locale}.json`)
+      localeMessages[locale] = messages.data
+    } catch (e) {
+      console.error(e)
+    }
     return new VueI18n({
       locale: locale,
-      fallbackLocale: 'ja',
+      fallbackLocale: defaultLocale,
       messages: localeMessages
     })
   }
