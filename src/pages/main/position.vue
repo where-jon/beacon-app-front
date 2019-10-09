@@ -43,7 +43,7 @@ export default {
   },
   computed: {
     captionList(){
-      return this.isInstallation ? ['develop', 'installation']: ['main', 'showPosition']
+      return this.isInstallation ? ['monitor', 'installation']: ['main', 'showPosition']
     },
     txSensors(){
       return this.sensorOptionsTx.map(val => val.value)

@@ -520,6 +520,7 @@
     "monitorGW": "Monitor Gateway",
     "monitorTX": "Monitor Tx",
     "monitorEXB": "Monitor EXB",
+    "monitorInstallation": "Support Installation",
     "summary": "Summary/Analyze",
     "SumUtilizationRatio": "Used ratio",
     "SumNumUsers": "Used number",
