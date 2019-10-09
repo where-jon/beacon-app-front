@@ -34,7 +34,7 @@
               <label v-t="'label.role'" />
               <b-form-input :value="loginUser.role" :readonly="true" type="text" />
             </b-form-group>
-            <b-form-group>
+            <b-form-group v-if="!disabledTheme">
               <label v-t="'label.theme'" />
               <b-form-select v-model="selectedTheme" :options="themes" class="mb-3" @change="themeSelected" />
             </b-form-group>
@@ -171,6 +171,9 @@ export default {
           return this.errorMessages[key].length
         })
         .reduce((prev, cur, i, a) => { return prev + cur }) > 0
+    },
+    disabledTheme() {
+      return APP.SETTING.DISABLED_THEME
     },
     showEmail() {
       return ArrayUtil.includesIgnoreCase(APP.USER.WITH, 'email')
