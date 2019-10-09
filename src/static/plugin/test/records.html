@@ -12,6 +12,7 @@
     }
   </style>
   <script src="/plugin/js/vue.min.js"></script>
+  <script src="/plugin/js/vue-i18n.min.js"></script>
   <script src="/plugin/js/axios.min.js"></script>
   <script src="/plugin/js/bootstrap-vue.min.js"></script>
   <script src="/plugin/js/md5.min.js"></script>
@@ -32,65 +33,68 @@
     </b-container>
   </div>
   <script>
-    const app = new Vue({
-      el: '#app',
-      data() {
-        return {
-          fields: [
-            {
-              key: 'potId',
-              label: 'POT ID',
-            },
-            {
-              key: 'thumbnail',
-              label: 'Thumbnail',
-            },
-            {
-              key: 'name',
-              label: 'POT Name',
-            },
-            {
-              key: 'group',
-              label: 'Group',
-            },
-            {
-              key: 'category',
-              label: 'Category'
-            }
-          ],
-          items: [],
-          breadcrumbItems: [
-            {
-              text: 'プラグイン',
-              href: '#'
-            },
-            {
-              text: 'POTテスト表示',
-              href: 'active'
-            }
-          ],
-          urlBase: null
-        }
-      },
-      async mounted() {
-        this.urlBase = window.localStorage.getItem('api-base-url')
-        const common = new Common()
-        const config = {
-          headers: {
-            apiKey: common.getApiKey()
+    (async () => {
+      const common = new Common()
+      const i18n = await common.getI18n()
+      const app = new Vue({
+        el: '#app',
+        data() {
+          return {
+            fields: [
+              {
+                key: 'potId',
+                label: i18n.t("label.potId"),
+              },
+              {
+                key: 'thumbnail',
+                label: i18n.t("label.thumbnail"),
+              },
+              {
+                key: 'name',
+                label: i18n.t("label.potName"),
+              },
+              {
+                key: 'group',
+                label: i18n.t("label.group"),
+              },
+              {
+                key: 'category',
+                label: i18n.t("label.category"),
+              }
+            ],
+            items: [],
+            breadcrumbItems: [
+              {
+                text: i18n.t("label.breadcrumbTitle1"),
+                href: '#'
+              },
+              {
+                text: i18n.t("label.breadcrumbTitle2"),
+                href: 'active'
+              }
+            ],
+            urlBase: null
           }
-        }
-        const pots = await common.apServiceClient.get(this.urlBase + '/plugin/pot', config)
-        this.items = pots.data.map((pot) => {
-          return {potId: pot.potId, name: pot.potName, group: pot.groupName, category: pot.categoryName, existThumbnail: pot.existThumbnail}
-        })
-      },
-      methods: {
-        thumbnail(row) {
-          return this.urlBase + '/plugin/potThumbnail/' + row.potId
-        }
-      },
-    })
+        },
+        async mounted() {
+          this.urlBase = window.localStorage.getItem('api-base-url')
+          const config = {
+            headers: {
+              apiKey: common.getApiKey()
+            }
+          }
+          const pots = await common.apServiceClient.get(this.urlBase + '/basic/pot', config)
+          this.items = pots.data.map((pot) => {
+            return {potId: pot.potId, name: pot.potName, group: pot.groupName, category: pot.categoryName, existThumbnail: pot.existThumbnail}
+          })
+        },
+        methods: {
+          thumbnail(row) {
+            return this.urlBase + '/basic/pot/potThumbnail/' + row.potId
+          }
+        },
+      })
+    })()
   </script>
 </body>
 </html>

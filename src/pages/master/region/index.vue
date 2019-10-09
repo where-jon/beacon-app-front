@@ -31,14 +31,15 @@ export default {
         bulkEditPath: '/master/region/bulkedit',
         appServicePath: '/core/region',
         csvOut: true,
-        custumCsvColumns: ['regionName', 'meshId', 'description'],
+        custumCsvColumns: ['ID', 'regionName', 'meshId', 'description'],
         fields: ViewHelper.addLabelByKey(this.$i18n, [ 
+          {key: 'regionCd', label: 'id', sortable: true },
           {key: 'regionName', sortable: true },
           {key: 'meshId', sortable: true},
           {key: 'description', sortable: true },
           {key: 'actions', thStyle: {width:'130px !important'} }
         ]),
-        sortBy: 'regionName',
+        sortBy: 'regionCd',
         initTotalRows: this.$store.state.app_service.regions.length
       },
       items: ViewHelper.createBreadCrumbItems('master', 'region'),
@@ -50,6 +51,9 @@ export default {
     ]),
   },
   methods: {
+    customCsvData(val){
+      val.ID = val.regionCd
+    },
     async onSaved(param){
       StateHelper.setForceFetch('user', true)
       const result = await RegionHelper.autoSwitchRegion(this.regions)
