@@ -7,7 +7,10 @@
 
 <script>
 import { mapState } from 'vuex'
+import { PATTERN } from '../../../sub/constant/Constants'
+import * as Util from '../../../sub/util/Util'
 import * as AuthHelper from '../../../sub/helper/base/AuthHelper'
+import * as BulkHelper from '../../../sub/helper/dataproc/BulkHelper'
 import * as LocalStorageHelper from '../../../sub/helper/base/LocalStorageHelper'
 import * as RegionHelper from '../../../sub/helper/domain/RegionHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
@@ -36,6 +39,12 @@ export default {
     ]),
   },
   methods: {
+    onRestruct(entity, dummyKey){
+      if(Util.hasValue(entity.ID)){
+        BulkHelper.setStringKey(entity, 'regionCd', entity.ID, PATTERN.REGEXP.MASTER_CD)
+      }
+      return dummyKey
+    },
     async onSaving() {
       await this.$refs.bulkEdit.bulkSave({numberList: ['regionId', 'meshId']})
     },

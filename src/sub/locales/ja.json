@@ -339,6 +339,7 @@
 
     "region": "リージョン",
     "regionId": "リージョンID",
+    "regionCd": "ID",
     "regionName": "リージョン名",
     "meshId": "メッシュID",
 

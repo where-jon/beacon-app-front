@@ -6,6 +6,10 @@
 
       <b-form v-if="show" @submit.prevent="save">
         <b-form-group>
+          <label v-t="'label.id'" />
+          <input v-model="form.regionCd" :readonly="!isEditable" type="text" maxlength="20" class="form-control" :pattern="cdPattern" required>
+        </b-form-group>
+        <b-form-group>
           <label v-t="'label.regionName'" />
           <input v-model="form.regionName" :readonly="!isEditable" type="text" maxlength="20" class="form-control" required>
         </b-form-group>
@@ -30,6 +34,7 @@
 
 <script>
 import { mapState } from 'vuex'
+import { PATTERN } from '../../../sub/constant/Constants'
 import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
 import * as AuthHelper from '../../../sub/helper/base/AuthHelper'
@@ -55,7 +60,7 @@ export default {
       appServicePath: '/core/region',
       items: ViewHelper.createBreadCrumbItems('master', {text: 'region', href: '/master/region'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.region.regionId)),
       form: Util.extract(this.$store.state.app_service.region,
-        ['regionId', 'regionName', 'meshId', 'description']),
+        ['regionId', 'regionCd', 'regionName', 'meshId', 'description']),
     }
   },
   computed: {
@@ -63,16 +68,23 @@ export default {
       return Util.hasValue(this.form.regionId)
     },
     ...mapState('app_service', [
-      'region',
+      'region', 'regions',
     ]),
+    cdPattern(){
+      return PATTERN.MASTER_CD
+    },
   },
   mounted(){
     ValidateHelper.setCustomValidationMessage()
+    if(!Util.hasValue(this.form.regionCd)){
+      this.form.regionCd = StateHelper.createMasterCd('region', this.regions, this.region)
+    }
   },
   methods: {
     async onSaving() {
       let entity = {
         regionId: Util.hasValue(this.form.regionId)? this.form.regionId: -1,
+        regionCd: this.form.regionCd,
         regionName: this.form.regionName,
         meshId: this.form.meshId,
         description: this.form.description,
@@ -82,7 +94,10 @@ export default {
     async onSaved(){
       StateHelper.setForceFetch('user', true)
       await AuthHelper.switchAppService()
-    }
+    },
+    onBeforeReload(){
+      this.form.regionCd = StateHelper.createMasterCd('region', this.regions, this.region)
+    },
   }
 }
 </script>
