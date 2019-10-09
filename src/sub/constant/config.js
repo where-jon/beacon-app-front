@@ -144,6 +144,9 @@ export const APP = { // 機能面に関する設定
   CATEGORY: {
     TYPES: [1,2],   // 選択可能な種別（1人,2物,3ゾーン）
   },
+  SETTING: {
+    DISABLED_THEME: false,
+  },
   NOTIFY: {
     // 通知媒体
     MIDIUM_TYPES: [0,1],   // 選択可能な種別（1メール,2slack）
