@@ -1,6 +1,6 @@
 <template>
   <div id="mapContainer" class="container-fluid">
-    <virtual
+    <ex-map
       :p-caption-list="captionList"
       :p-show-exb-sensor-ids="exbSensors"
       :p-merge-sensor-ids="mergeSensors"
@@ -10,11 +10,11 @@
 
 <script>
 import { SENSOR } from '../../sub/constant/Constants'
-import virtual from '../../components/page/virtual.vue'
+import exMap from '../../components/page/ex-map.vue'
 
 export default {
   components: {
-    virtual,
+    exMap,
   },
   computed: {
     captionList(){

@@ -1,6 +1,6 @@
 <template>
   <div id="mapContainer" class="container-fluid">
-    <virtual
+    <ex-map
       :p-caption-list="captionList"
       :p-show-tx-sensor-ids="txSensors"
       :p-merge-sensor-ids="mergeSensors"
@@ -28,11 +28,11 @@ import { SENSOR, EXTRA_NAV } from '../../sub/constant/Constants'
 import * as Util from '../../sub/util/Util'
 import * as SensorHelper from '../../sub/helper/domain/SensorHelper'
 import commonmixin from '../../components/mixin/commonmixin.vue'
-import virtual from '../../components/page/virtual.vue'
+import exMap from '../../components/page/ex-map.vue'
 
 export default {
   components: {
-    virtual,
+    exMap,
   },
   mixins: [commonmixin],
   props: {

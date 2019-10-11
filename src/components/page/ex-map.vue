@@ -213,110 +213,133 @@ export default {
   },
   mixins: [commonmixin, reloadmixin, showmapmixin],
   props: {
-    // common
+    // common : ブレッドクラム情報
     pCaptionList: {
       type: Array,
       required: true,
     },
+    // Txアイコンを表示するセンサーID
     pShowTxSensorIds: {
       type: Array,
       default: () => [],
     },
+    // EXBアイコンを表示するセンサーID
+    // ※pir画面のマグネットTxはEXBアイコンとして扱っている
     pShowExbSensorIds: {
       type: Array,
       default: () => [],
     },
+    // Tx,EXBアイコンにセンサ情報をマージし、追加機能を付与するセンサーID
     pMergeSensorIds: {
       type: Array,
       default: () => [],
     },
+    // Txをクリックした場合、ポップアップを出す
     pShowDetail: {
       type: Boolean,
       default: false,
     },
+    // 画面右部にMEDiTAG一覧を表示する
     pShowMeditagList: {
       type: Boolean,
       default: false,
     },
+    // 検知数を表示
     pShowDetected: {
       type: Boolean,
       default: false,
     },
-    // installation only
+    // installation : 設置支援
     pInstallation: {
       type: Boolean,
       default: false,
     },
-    // analysis only
+    // analysis : 分析画面用の画面処理にする
     pAnalysis: {
       type: Boolean,
       default: false,
     },
-    // analysis only
+    // analysis : 「個人」絞り込みを有効にする
     pAnalysisIndividual: {
       type: Boolean,
       default: false,
     },
+    // ブレッドクラムに表示するサブメニュー一覧
     pExtraNavList: {
       type: Array,
       default: () => [],
     },
+    // 禁止区域を使用
     pShowProhibit: {
       type: Boolean,
       default: false,
     },
+    // 持ち出し検知を使用
     pShowLost: {
       type: Boolean,
       default: false,
     },
+    // 不在区域を使用
     pShowAbsent: {
       type: Boolean,
       default: false,
     },
+    // 初期状態をヒートマップにする
     pDefaultHeatmap: {
       type: Boolean,
       default: false,
     },
+    // 通常マップとヒートマップを切り替える機能を付与する
     pChangeableHeatmap: {
       type: Boolean,
       default: false,
     },
+    // ヒートマップを使用する
     pShowHeatmap: {
       type: Boolean,
       default: false,
     },
+    // マスタによる絞込み
     pFilterList: {
       type: Array,
       default: () => [],
     },
+    // マスタ以外による絞り込み
     pExtraFilterList: {
       type: Array,
       default: () => [],
     },
+    // ブレッドクラムのサブメニュー現在地
     pShortName: {
       type: String,
       default: '',
     },
+    // センサ情報と位置情報の自動リロードを別々に行う
     pSplitAutoReload: {
       type: Boolean,
       default: false,
     },
+    // プラグインによる詳細絞込みを行う
     pUsePluginFilter: {
       type: Boolean,
       default: false,
     },
+    // 温湿度アラートを使用する
     pThermohWarn: {
       type: Boolean,
       default: false,
     },
+    // 固定座席Txのみ使用する
     pOnlyFixTx: {
       type: Boolean,
       default: false,
     },
+    // 絞込み結果を無視する。※絞込みを使用しないメイン画面（温湿度）も絞込み結果が反映されているための措置
     pDisabledFilter: {
       type: Boolean,
       default: false,
     },
+    // 数量表示を使用する
     pQuantity: {
       type: Boolean,
       default: false,
@@ -326,56 +349,65 @@ export default {
     return {
       items: ViewHelper.createBreadCrumbItems(...this.pCaptionList),
       message: '',
-      isProhibitView: true,
       showMeditag: this.pShowMeditagList && !this.pInstallation,
       shortName: Util.hasValue(this.pShortName)? this.$i18n.tnl('label.' + this.pShortName): '',
+      reloadState: {isLoad: false, initialize: false, prevent: false}, // isLoad:ロード中 initialize:画面初期化時にロードする prevent:ユーザ操作によるリロード中に自動リロードしない措置
+      firstTime: true, // 画面初期化後の初回処理判定
+      isShowRight: false, // MEDiTAG一覧表示位置
+      isShowBottom: false,
+      isMounted: false, // mountメソッド通過後
+      modeRssi: false,
+      isPause: false,
+      isHeatmap: this.pDefaultHeatmap,
+      isLoading: false,
+      noImageErrorKey: 'noMapImage',
+      loadStates: ['sensor', 'category', 'group', 'tx', 'exb', 'location', 'pot', 'absentDisplayZones'],
+      detectedCount: 0,
+      thumbnailUrl: APP_SERVICE.BASE_URL + EXCLOUD.POT_THUMBNAIL_URL,
+      keepExbPosition: false,
+      preloadThumbnail: new Image(),
+      positions: [],
+      toggleCallBack: () => this.reset(),
+      // 分析用の検索条件
       form: {
         datetimeFrom: null,
         datetimeTo: null,
         potId: null,
       },
-      extraOptions: {
-        individual: []
-      },
+      // アイコン情報
       icons: {},
+      exbIcons: [],
+      txIcons: [],
+      // リスト→map変換
       txsMap: {},
       locationsMap: {},
       potsMap: {},
       sensorMap: {},
       positionedExbMap: {},
       positionedTxMap: {},
-      exbIcons: [],
-      txIcons: [],
+      // 凡例
       legendItems: null,
+      // 検知
+      isProhibitView: true,
       prohibitDetectList: null,
       lostUnDetectList: null,
-      reloadState: {isLoad: false, initialize: false, prevent: false},
-      firstTime: true,
-      isShowRight: false,
-      isShowBottom: false,
-      isMounted: false,
-      modeRssi: false,
-      isPause: false,
-      isShownChart: false,
-      isHeatmap: this.pDefaultHeatmap,
-      isLoading: false,
       showDismissibleAlert: false,
       prohibitInterval: null,
       lostInterval: null,
-      noImageErrorKey: 'noMapImage',
-      loadStates: ['sensor', 'category', 'group', 'tx', 'exb', 'location', 'pot', 'absentDisplayZones'],
-      detectedCount: 0,
-      thumbnailUrl: APP_SERVICE.BASE_URL + EXCLOUD.POT_THUMBNAIL_URL,
+      // 温湿度
+      isShownChart: false, // 温湿度モーダル表示
       iconTicker: null,
       iconInterval: 100,
       warnMessage: null,
-      iconAlphaMin: 0.1,
+      iconAlphaMin: 0.1, // 透過度が0の場合はクリック不可のため
       fixHeight: DISP.THERMOH.ALERT_FIX_HEIGHT,
       chartTitle: '',
+      // 数量表示
       locationPersonList: {},
       locationObjectList: {},
       locationOtherList: {},
       isQuantity: false,
+      // ツールチップ
       toolTipShow: false,
       toolTipLabel: '',
       toolTipStyle: {
@@ -387,10 +419,6 @@ export default {
         'background-color': DISP.THERMOH.TOOLTIP_BGCOLOR,
         'color': DISP.THERMOH.TOOLTIP_COLOR,
       },
-      keepExbPosition: false,
-      preloadThumbnail: new Image(),
-      positions: [],
-      toggleCallBack: () => this.reset(),
     }
   },
   computed: {
@@ -516,6 +544,7 @@ export default {
     this.removeTick()
   },
   methods: {
+    // 検索項目の使用判定
     isUseFilter(masterName){
       return MenuHelper.useMaster(masterName) && ArrayUtil.includesIgnoreCase(APP.POT.WITH, masterName)
     },
@@ -526,7 +555,7 @@ export default {
       return DISP.TX.R_ABSOLUTE? this.canvasScale: 1
     },
     getFilterOptions(masterName){
-      return this[masterName + 'Options']
+      return this[masterName + 'Options'] // commonmixin参照
     },
     getExtraFilterOptions(masterName){
       const getFunc = this[StringUtil.concatCamel('get', masterName, 'options')]
@@ -561,6 +590,7 @@ export default {
         this.removeThermoTooltip()
       }
     },
+    // 数量ツールチップ情報作成
     createTooltipInfo(nativeEvent, container){
       const pageElement = document.getElementById('bd-page')
       return {
@@ -572,6 +602,7 @@ export default {
         isDispRight: container.x * 2 <= this.stage.canvas.width,
       }
     },
+    // 数量ツールチップ表示
     createTooltip(event, container) {
       const tooltipInfo = this.createTooltipInfo(event.nativeEvent, container)
       this.toolTipLabel = [tooltipInfo.locationName, tooltipInfo.locationTypeName]
@@ -585,6 +616,7 @@ export default {
         this.toolTipStyle.top = '' + top + 'px'
       })
     },
+    // 数量ツールチップ非表示
     removeTooltip() {
       this.toolTipShow = false
       this.toolTipStyle.left = null
@@ -593,6 +625,7 @@ export default {
     getLocationTypeOptions(locationType) {
       return Util.getValue(OptionHelper.getLocationTypeOptions().find(val => val.value == locationType), 'text', '')
     },
+    // true;数量の設定 false:温湿度の設定
     createTooltipSetting(isQuantity) {
       return isQuantity? {
         'left': null,
@@ -612,11 +645,13 @@ export default {
         'color': DISP.THERMOH.TOOLTIP_COLOR,
       }
     },
+    // 温湿度ツールチップ非表示
     removeThermoTooltip() {
       this.toolTipShow = false
       this.toolTipStyle.left = null
       this.toolTipStyle.top = null
     },
+    // 温湿度ツールチップ表示
     createThermoTooltip(event, container) {
       const tooltipInfo = TooltipHelper.createThermoTooltipInfo(event.nativeEvent, container, this.stage)
 
@@ -631,16 +666,19 @@ export default {
         this.toolTipStyle.top = '' + top + 'px'
       })
     },
+    // 温湿度アイコン点滅開始
     addTick(){
       this.removeTick()
       this.iconTicker = setInterval(this.iconTick, this.iconInterval)
     },
+    // 温湿度アイコン点滅終了
     removeTick(){
       if(this.iconTicker){
         clearInterval(this.iconTicker)
         this.iconTicker = null
       }
     },
+    // 温湿度アイコン点滅
     iconTick() {
       const allIcons = [this.exbIcons, this.txIcons]
       allIcons.forEach(icons => {
@@ -662,6 +700,7 @@ export default {
       })
       this.stage.update()
     },
+    // 温湿度モーダル
     showChart(device, sensorData) {
       SensorHelper.showThermoHumidityChart('dayChart', sensorData.data)
       this.isShownChart = true
@@ -672,9 +711,11 @@ export default {
         description: device.description? ` : ${StringUtil.cutOnLong(device.description, 10)}`: ''
       })
     },
+    // 分析用検索日付の自動入力
     changeDatetimeFrom(newVal = this.form.datetimeFrom) {
       this.form.datetimeTo = newVal? DateUtil.getDatetime(newVal, {minutes: APP.ANALYSIS.DATETIME_INTERVAL}): null
     },
+    // Txアイコンを選択した場合のポップアップ
     setupSelectedTx (tx, x, y, isDispThumbnail) {
       const map = DomUtil.getRect('#map')
       const containerParent = DomUtil.getRect('#mapContainer', 'parentNode')
@@ -1087,6 +1128,7 @@ export default {
           .forEach(tx => this.showExbTx(tx))
       }
     },
+    // ポップアップの自動非表示
     resetDetail() { // p, pir, position
       if (!this.showingDetailTime || new Date().getTime() - this.showingDetailTime > 100) {
         const selectedTx = {}
@@ -1108,7 +1150,7 @@ export default {
         await PositionHelper.storePositionHistory(this.count, alwaysTxs? true: false)
       }
     },
-    // analysis only
+    // 分析用検索条件のバリデーション
     validate() {
       const enableCategory = this.isUseFilter('category')
       const enableGroup = this.isUseFilter('group')
@@ -1125,7 +1167,7 @@ export default {
       ].filter(val => val && val.names.length >= 1))
       return ValidateHelper.formatValidateMessage(errors)
     },
-    // analysis only
+    // 分析用のヒートマップ作成
     createAnalysisHeatmap(){
       const mapSrc = StateHelper.getMapImage(this.getInitAreaOption())
       const refMap = this.$refs.map
@@ -1136,7 +1178,7 @@ export default {
         map.style.height = String(refMap.height * this.canvasScale) + 'px'
       })
     },
-    // analysis only
+    // 分析用の表示処理
     async analyseData() {
       this.showProgress()
       StateHelper.initShowMessage()

@@ -1,6 +1,6 @@
 <template>
   <div id="mapContainer" class="container-fluid">
-    <virtual
+    <ex-map
       :p-caption-list="captionList"
       :p-filter-list="filterList"
       :p-extra-filter-list="extraFilterList"
@@ -11,11 +11,11 @@
 </template>
 
 <script>
-import virtual from '../../components/page/virtual.vue'
+import exMap from '../../components/page/ex-map.vue'
 
 export default {
   components: {
-    virtual,
+    exMap,
   },
   computed: {
     captionList(){
