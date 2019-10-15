@@ -104,7 +104,7 @@ export default {
           }
           if (this.again) {
             this.form = {}
-            Util.applyDef(this.form, this.defValue)
+            Util.applyDef(this.form, this.defValue, this)
             if(this.onBeforeReload) {
               VueSelectHelper.clearVueSelect(this.vueSelected)
               this.onBeforeReload()

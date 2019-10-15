@@ -18,14 +18,15 @@ export const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
  * @method
  * @param {Object} obj マージ先
  * @param {Object} def マージ元
+ * @param {Object} vm vueオブジェクト
  * @return {Object} 失敗した場合にobjを返す。正常終了時はnull
  */
-export const applyDef = (obj, def) => {
+export const applyDef = (obj, def, vm) => {
   if (!obj || !def) return obj
 
   _.forEach(def, (val, key) => {
     if (obj[key] === undefined) {
-      obj[key] = val
+      vm? vm.$set(obj, key, val) : obj[key] = val
     }
   })
 }
