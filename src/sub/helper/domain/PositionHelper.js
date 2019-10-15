@@ -753,7 +753,7 @@ export const adjustPosition = (positions, ratio, locations = [], selectedMapId =
     positions.forEach(pos => {
       const isFixPosition = hasTxLocation(pos) && selectedMapId && pos.tx.location.areaId == selectedMapId
       if (!isFixPosition) {
-        if (pos.location.locationId == location.locationId && pos.timestamp
+        if (pos.location && pos.location.locationId == location.locationId && pos.timestamp
           &&(new Date(pos.timestamp) > new Date().getTime() - APP.POS.LOST_TIME)) {
           samePos.push(pos)
         }
@@ -771,7 +771,7 @@ export const adjustPosition = (positions, ratio, locations = [], selectedMapId =
     return (self.findIndex(function(val) {
       return (x.btx_id === val.btx_id)
     }) === i)
-  }).filter(e => selectedMapId === null || e.location.areaId == selectedMapId)
+  }).filter(e => selectedMapId === null || (e.location && e.location.areaId == selectedMapId))
 }
 
 /**
