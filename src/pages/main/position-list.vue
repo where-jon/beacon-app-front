@@ -126,7 +126,7 @@ export default {
         positions = positions.map(pos => {
           prohibitCheck = minorMap[pos.minor] != null
 
-          const location = locationMap[pos.location.locationId]
+          const location = pos.location? locationMap[pos.location.locationId]: {}
           return {
             ...pos,
             // powerLevel: this.getPowerLevel(pos),
