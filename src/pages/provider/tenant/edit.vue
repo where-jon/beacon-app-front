@@ -96,6 +96,12 @@
         </b-form-group>
         <div v-if="!hasId && show" class="form-row">
           <b-form-row class="mb-3">
+            <label v-t="'label.id'" class="mr-3" />
+            <input v-model="form.regionCd" :readonly="!isEditable" type="text" maxlength="20" class="form-control" :pattern="cdPattern" required>
+          </b-form-row>
+        </div>
+        <div v-if="!hasId && show" class="form-row">
+          <b-form-row class="mb-3">
             <label v-t="'label.regionName'" class="mr-3" />
             <input v-model="form.regionName" :readonly="!isEditable" type="text" maxlength="20" class="form-control" required>
           </b-form-row>
@@ -145,6 +151,7 @@
 <script>
 import { mapState } from 'vuex'
 import { EXCLOUD } from '../../../sub/constant/config'
+import { PATTERN } from '../../../sub/constant/Constants'
 import * as DateUtil from '../../../sub/util/DateUtil'
 import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
@@ -184,7 +191,7 @@ export default {
         {key: 'subCheck', label: 'dummy', thStyle: {width:'4px !important'} },
         {key: 'featureName', label: 'dummy'},
       ]),
-      form: Util.extract(this.$store.state.app_service.tenant, ['tenantId', 'tenantCd', 'tenantName', 'sysAdminLoginId', 'sysAdminPass', 'adminLoginId', 'adminPass', 'userLoginId', 'userPass', 'regionName', 'meshId', 'createDt', 'delFlg']),
+      form: Util.extract(this.$store.state.app_service.tenant, ['tenantId', 'tenantCd', 'tenantName', 'sysAdminLoginId', 'sysAdminPass', 'adminLoginId', 'adminPass', 'userLoginId', 'userPass', 'regionCd', 'regionName', 'meshId', 'createDt', 'delFlg']),
       settingParams: {
         name: 'setting',
         fields: [ 
@@ -212,7 +219,10 @@ export default {
     ]),
     createDt(){
       return DateUtil.formatDate(this.form.createDt)
-    }
+    },
+    cdPattern(){
+      return PATTERN.MASTER_CD
+    },
   },
   async created(){
     const currentFeatureList = this.tenant && this.tenant.tenantFeatureList? this.tenant.tenantFeatureList: []
@@ -344,7 +354,7 @@ export default {
           Util.hasValue(this.form.adminLoginId)? {userId: dummyKey--, loginId: this.form.adminLoginId, pass: this.form.adminPass, role: { roleId: dummyKey--, roleName: 'ADMIN' }}: null,
           Util.hasValue(this.form.userLoginId)? {userId: dummyKey--, loginId: this.form.userLoginId, pass: this.form.userPass, role: { roleId: dummyKey--, roleName: 'USER' }}: null,
         ].filter(val => val): null,
-        region: !Util.hasValue(this.form.tenantId)? {regionId: dummyKey--, regionName: this.form.regionName, meshId: Util.hasValue(this.form.meshId)? this.form.meshId: null}: null,
+        region: !Util.hasValue(this.form.tenantId)? {regionId: dummyKey--, regionCd: this.form.regionCd, regionName: this.form.regionName, meshId: Util.hasValue(this.form.meshId)? this.form.meshId: null}: null,
         defaultExcloudBaseUrl: defaultConfig.EXCLOUD.BASE_URL,
         excloudBaseUrl: EXCLOUD.BASE_URL,
         tenantFeatureList: this.convertSendParam().map(val => {
