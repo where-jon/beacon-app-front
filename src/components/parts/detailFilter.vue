@@ -67,6 +67,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    componentId: {
+      type: String,
+      default: 'default',
+    },
   },
   data() {
     return {
@@ -83,15 +87,27 @@ export default {
     loadStates() {
       return ['area', 'category', 'group', 'tx', 'exb', 'pot', 'location', 'zone', 'sensor']
     },
+    condition: {
+      get() {
+        const key = 'detailFilterCondition_' + this.componentId
+        if(this.$store.state.main[key]){
+          return JSON.parse(JSON.stringify(this.$store.state.main[key]))
+        }
+        return null
+      },
+      set(val) {
+        const key = 'detailFilterCondition_' + this.componentId
+        this.replaceMain({[key]: val})
+      },
+    },
   },
   async mounted() {
     await Promise.all(this.loadStates.map(state => StateHelper.load(state)))
     this.fetchPlugin()
-    this.filter = this.saveFilter && Util.hasValue(this.selectedDetailFilter) && this.selectedDetailFilter.some(val => Util.hasValue(val))
   },
   beforeDestroy() {
     if(this.saveFilter){
-      this.selectedDetailFilter = this.pluginJson.map(plugin => plugin.value)
+      this.condition = { ...this.$data }
     }
   },
   methods: {
@@ -135,12 +151,14 @@ export default {
         if(this.useVueSelect(val) || this.useSelect(val)){
           this.$set(val, 'options', await this.getPluginOptions(val))
         }
-        if(this.saveFilter && Util.hasValue(Util.getValue(this, 'selectedDetailFilter.' + index, null))){
-          this.$set(val, 'value', this.selectedDetailFilter[index])
-        }
       })
     },
     fetchPlugin(){
+      if(this.condition){
+        Object.keys(this.$data).forEach(key => this.$set(this.$data, key, this.condition[key]))
+        this.initExec()
+        return
+      }
       PluginHelper.load(this.pluginName, result => {
         this.pluginHtml = result
         this.$nextTick(() => {
@@ -188,6 +206,12 @@ export default {
       }).join('&')
       const list = await HttpHelper.getAppService(`/${this.pluginRequest}/filter?${encodeURI(query)}${Util.hasValue(query)? '&': ''}_=${new Date().getTime()}`)
       this.$emit('detailFilter', list.map(val => val.value))
+    },
+    initExec(){
+      this.$nextTick(async () => {
+        await this.execOk()
+        this.isOk = false
+      })
     },
   }
 }
