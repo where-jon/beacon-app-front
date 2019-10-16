@@ -548,6 +548,17 @@ export default {
         }
       })
     },
+    createSendArea(){
+      const currentArea = this.areas.find(area => area.areaId == this.oldSelectedArea)
+      const ret = {
+        areaId: this.oldSelectedArea,
+        areaCd: currentArea.areaCd,
+        areaName: currentArea.areaName,
+        mapRatio: this.mapRatio,
+        ignoreMap: 1,
+      }
+      return ret
+    },
     async save() {
       this.showProgress()
       this.message = ''
@@ -564,7 +575,7 @@ export default {
         }
 
         if (this.mapRatioChanged && this.mapRatio != null) {
-          await AppServiceHelper.save('/core/area', {areaId: this.selectedArea, mapRatio: this.mapRatio}, UPDATE_ONLY_NN.EMPTY_ZERO)
+          await AppServiceHelper.save('/core/area', this.createSendArea(), UPDATE_ONLY_NN.EMPTY_ZERO)
           await StateHelper.load('area', true)
         }
         this.message = this.$i18n.tnl('message.completed', {target: this.$i18n.tnl('label.save')})
