@@ -1313,7 +1313,7 @@ export default {
       }
     },
     onMapLoaded(size){
-      if(APP.SENSOR.USE_MEDITAG && this.positionedTxMap.meditag){
+      if(APP.SENSOR.USE_MEDITAG && this.showMeditag){
         const parent = document.getElementById('mapContainer')
         const rightPaneWidth = 300
         this.isShowRight = parent.clientWidth - size.width >= rightPaneWidth
