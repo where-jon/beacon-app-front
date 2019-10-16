@@ -42,7 +42,7 @@
             </b-form-row>
           </template>
           <b-form-row v-if="useDetailFilter" class="mr-4 mb-2">
-            <detail-filter @detailFilter="onDetailFilter" />
+            <detail-filter component-id="list" save-filter @detailFilter="onDetailFilter" />
           </b-form-row>
           <div v-if="params.extraFilter" class="w-100 mb-2 " />
         </b-form-row>
