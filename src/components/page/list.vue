@@ -242,6 +242,7 @@ import * as DetectStateHelper from '../../sub/helper/domain/DetectStateHelper'
 import * as LocalStorageHelper from '../../sub/helper/base/LocalStorageHelper'
 import * as MenuHelper from '../../sub/helper/dataproc/MenuHelper'
 import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
+import * as VueSelectHelper from '../../sub/helper/ui/VueSelectHelper'
 import commonmixin from '../mixin/commonmixin.vue'
 import alert from '../parts/alert.vue'
 import settinginput from '../parts/settinginput.vue'
@@ -469,6 +470,9 @@ export default {
           const oVal = Util.getValue(oldVal[key], 'value', null)
           const nVal = Util.getValue(newVal[key], 'value', null)
           this.filter.extra[key] = nVal
+          if(this.useCommonFilter(key)){
+            this[this.getCommonFilterKey(key)] = nVal
+          }
           if(oVal != nVal){
             this.extraFilterSpec[key].change()
           }
@@ -486,9 +490,21 @@ export default {
     this.replaceAS({listMessage: null})
     this.$parent.$options.methods.fetchData.apply(this.$parent)
     if (this.params.extraFilter) {
+      const vSelectOptionMap = {}
+      this.extraFilterSpec.forEach(val => vSelectOptionMap[val.key] = val.options)
+
       this.params.extraFilter.filter((str) => !(str === 'detectState'))
         .forEach(str => {
-          StateHelper.load(str)
+          StateHelper.load(str).then(() => {
+            if(!this.useCommonFilter(str)){
+              return
+            }
+            const vSelectOption = vSelectOptionMap[str]
+            const selectedVal = this[this.getCommonFilterKey(str)]
+            if(selectedVal){
+              this.vueSelected[str] = VueSelectHelper.getVueSelectData(vSelectOption, selectedVal)
+            }
+          })
         })
     }
     this.sortBy = this.params.sortBy? this.params.sortBy: null
@@ -519,6 +535,12 @@ export default {
     },
     thumbnail(row) {
       return this.$parent.$options.methods.thumbnail.call(this.$parent, row)
+    },
+    useCommonFilter(key){
+      return Util.getValue(this.params, 'commonFilter', []).some(v => v == key)
+    },
+    getCommonFilterKey(key){
+      return StringUtil.concatCamel('selected', key)
     },
     setEmptyMessage(){
       this.message = null
