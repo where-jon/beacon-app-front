@@ -61,12 +61,14 @@ export const setApp = (pStore, pI18n) => {
  * @method
  * @param {Boolean} [showAllTime = false] 検知されていないデバイスの情報も取得する
  * @param {Boolean} [notFilterByTimestamp = false] 時間による排他制御をされていない情報を取得する
+ * @param {Number} [showTxNoOwner]
  * @param {Number} [selectedCategory]
  * @param {Number} [selectedGroup]
  * @param {Number} [selectedDetail]
  * @return {Object[]}
  */
-export const getPositions = (showAllTime = false, notFilterByTimestamp = false,
+export const getPositions = (showAllTime = false, notFilterByTimestamp = false, 
+    showTxNoOwner = APP.POS.SHOW_TX_NO_OWNER,
     selectedCategory = store.state.main.selectedCategory, selectedGroup = store.state.main.selectedGroup,
     selectedDetail = store.state.main.selectedDetail) => { // p, position-display, rssimap, position-list, position, ProhibitHelper
   const positionHistores = store.state.main.positionHistores
@@ -79,7 +81,29 @@ export const getPositions = (showAllTime = false, notFilterByTimestamp = false,
     const now = !DEV.USE_MOCK_EXC? new Date().getTime(): mock.positions_conf.start + count++ * mock.positions_conf.interval  // for mock
     positions = correctPosId(orgPositions, now, notFilterByTimestamp)
   }
+  positions = positionOwnerFilter(positions, showTxNoOwner)
   return showAllTime ? positions : positionFilter(positions, selectedGroup, selectedCategory, selectedDetail)
+}
+
+/**
+ * 位置情報に対し、potの所有状態で絞込みを行う。
+ * @method
+ * @param {Object[]} positions 
+ * @param {Boolean} showTxNoOwner 
+ * @return {Object[]}
+ */
+const positionOwnerFilter = (positions, showTxNoOwner) => { //p 
+  const txs = store.state.app_service.txs
+  const txsMap = {}
+  txs.forEach(tx => txsMap[tx.btxId] = tx)
+
+  return _(positions).filter(pos => {
+    const tx = txsMap[pos.btx_id]
+    if (tx && !showTxNoOwner) {
+      return tx.potId? true: false
+    }
+    return true
+  }).value()
 }
 
 /**
@@ -767,7 +791,7 @@ export const adjustPosition = (positions, ratio, locations = [], selectedMapId =
     positions.forEach(pos => {
       const isFixPosition = hasTxLocation(pos) && selectedMapId && pos.tx.location.areaId == selectedMapId
       if (!isFixPosition) {
-        if (pos.location.locationId == location.locationId && pos.timestamp
+        if (pos.location && pos.location.locationId == location.locationId && pos.timestamp
           &&(new Date(pos.timestamp) > new Date().getTime() - APP.POS.LOST_TIME)) {
           samePos.push(pos)
         }
@@ -785,7 +809,7 @@ export const adjustPosition = (positions, ratio, locations = [], selectedMapId =
     return (self.findIndex(function(val) {
       return (x.btx_id === val.btx_id)
     }) === i)
-  }).filter(e => selectedMapId === null || e.location.areaId == selectedMapId)
+  }).filter(e => selectedMapId === null || (e.location && e.location.areaId == selectedMapId))
 }
 
 /**

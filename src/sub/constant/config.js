@@ -59,6 +59,7 @@ export const APP = { // 機能面に関する設定
     LOST_GROUPS: null, // 重要部品設定GROUPID[1,2,3]の形
     USE_LEGEND: false, // 凡例を表示
     SHOW_DETECTED_COUNT: false, // 検知数を表示
+    SHOW_TX_NO_OWNER: true, // POTと紐付いていないタグを表示する
 
     WITH: {
       CATEGORY: true, // 位置表示(地図)にカテゴリを表示
