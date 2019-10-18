@@ -836,12 +836,18 @@
           "EXSERVER": "EXServerを使用する::EXServerを使用します。",
           "CACHE_TIME": "サーバキャッシュ有効時間::サーバが蓄積しているキャッシュデータの有効時間をミリ秒単位で設定します。"
         },
-        "PROXIMITY":{
+        "PROXIMITY": {
           "USE_TXAIR": "TXAirの交流分析::TXAirの交流分析を行うか設定します。",
           "USE_MEETING_ROOM": "会議室単位での交流分析::会議室単位での交流分析を行うか設定します。",
           "EXCLOUD_RAWLOG_DIR": "syslogのファイルパス::マウントしたsyslogへのファイルパスを設定します。",
           "BLANK_RANGE": "継続交流時間::交流分析バッチの継続交流時間をミリ秒単位で設定します。",
           "MIN_RANGE": "最小交流時間::交流分析バッチの最小交流時間をミリ秒単位で設定します。"
+        },
+        "WORKLOAD": {
+          "PAUSE_TIMEOUT": "交流集計の中断を判定する時間::OUT時間が指定秒更新されていない場合に中断とみなします。"
+        },
+        "PROCESS": {
+          "LOCATION_TYPE_TO_RELEASE_TX_POT": "タグとPOTの紐付けを解除する場所::タグとPOTの紐付けを解除する場所のタイプを設定します。"
         }
       },
       "BATCH": {
