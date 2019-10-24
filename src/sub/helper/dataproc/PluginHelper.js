@@ -56,6 +56,30 @@ export const load = (filePath, callbackHtml, callbackJson) => {
 export const isTextboxTag = plugin => plugin.tag.toLowerCase() == 'p-textbox'
 
 /**
+ * カスタム数値テキストボックスタグか確認する
+ * @method
+ * @param {Object} plugin
+ * @return {Boolean}
+ */
+export const isNumberTextboxTag = plugin => plugin.tag.toLowerCase() == 'p-number'
+
+/**
+ * カスタムチェックボックスタグか確認する
+ * @method
+ * @param {Object} plugin
+ * @return {Boolean}
+ */
+export const isCheckboxTag = plugin => plugin.tag.toLowerCase() == 'p-check'
+
+/**
+ * カスタム日付タグか確認する
+ * @method
+ * @param {Object} plugin
+ * @return {Boolean}
+ */
+export const isDateTag = plugin => plugin.tag.toLowerCase() == 'p-date'
+
+/**
  * カスタムプルダウンタグか確認する
  * @method
  * @param {Object} plugin

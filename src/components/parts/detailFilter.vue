@@ -13,7 +13,7 @@
 
       <span v-if="pluginJson" id="pluginJson">
         <b-form @submit.prevent>
-          <b-form-row v-for="(plugin, index) in pluginJson" :key="index" class="my-1 ml-2 ml-sm-0">
+          <b-form-row v-for="(plugin, index) in pluginJson" :key="index" class="my-2 ml-2 ml-sm-0">
             <label class="ml-sm-4 ml-2 mr-1">
               {{ $t('label.' + plugin.name) }}
             </label>
@@ -29,17 +29,40 @@
             </span>
 
             <span v-if="useSelect(plugin)">
-              <b-form-select v-model="plugin.value" :options="plugin.options" class="extra-filter" />
+              <b-form-select v-model="plugin.value" :options="plugin.options" size="sm" class="extra-filter" />
             </span>
 
             <span v-if="useTextBox(plugin)">
               <b-input-group>
-                <input v-model="plugin.value" class="form-control align-self-center" :maxlength="plugin.max">
+                <input v-model="plugin.value" class="form-control form-control-sm align-self-center" :maxlength="plugin.max">
                 <b-input-group-append>
                   <b-button v-t="'label.clear'" :disabled="!plugin.value" variant="secondary" class="align-self-center" @click="$set(plugin, 'value', '')" />
                 </b-input-group-append>
               </b-input-group>
             </span>
+
+            <span v-if="useNumberTextBox(plugin)">
+              <b-input-group>
+                <input v-model="plugin.value" type="number" class="form-control form-control-sm align-self-center text-right" :maxlength="plugin.max" :min="plugin.min" :max="plugin.max" :step="plugin.step">
+              </b-input-group>
+            </span>
+
+            <span v-if="useDate(plugin)">
+              <b-input-group>
+                <date-picker v-model="plugin.value" value-format="timestamp" size="small" type="date" class="mr-2 inputdatefrom" />
+              </b-input-group>
+            </span>
+
+            <span v-if="useCheckBox(plugin)">
+              <b-input-group>
+                <b-form-checkbox-group v-model="plugin.value" :options="plugin.options" class="ml-4" />
+              </b-input-group>
+            </span>
+
+            <label v-if="hasValue(plugin.suffix)" class="ml-sm-2 ml-1 mr-1">
+              {{ $t('label.' + plugin.suffix) }}
+            </label>
+
           </b-form-row>
         </b-form>
       </span>
@@ -49,14 +72,20 @@
 
 <script>
 import _ from 'lodash'
+import { DatePicker } from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
 import commonmixin from '../../components/mixin/commonmixin.vue'
 import * as Util from '../../sub/util/Util'
 import * as AppServiceHelper from '../../sub/helper/dataproc/AppServiceHelper'
 import * as HttpHelper from '../../sub/helper/base/HttpHelper'
 import * as PluginHelper from '../../sub/helper/dataproc/PluginHelper'
 import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
+import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 
 export default {
+  components: {
+    DatePicker,
+  },
   mixins: [ commonmixin ],
   props: {
     pluginName: {
@@ -103,6 +132,7 @@ export default {
   },
   async mounted() {
     await Promise.all(this.loadStates.map(state => StateHelper.load(state)))
+    ViewHelper.importElementUI()
     this.fetchPlugin()
   },
   beforeDestroy() {
@@ -111,6 +141,9 @@ export default {
     }
   },
   methods: {
+    hasValue(val){
+      return Util.hasValue(val)
+    },
     getOptionName(plugin){
       return Util.getValue(plugin, 'option', plugin.name)
     },
@@ -126,12 +159,21 @@ export default {
     useTextBox(plugin){
       return PluginHelper.isTextboxTag(plugin)
     },
+    useNumberTextBox(plugin){
+      return PluginHelper.isNumberTextboxTag(plugin)
+    },
+    useCheckBox(plugin){
+      return PluginHelper.isCheckboxTag(plugin)
+    },
+    useDate(plugin){
+      return PluginHelper.isDateTag(plugin)
+    },
     hasFilterValue(){
       return this.pluginJson.some(plugin => {
-        if(this.useSelect(plugin) || this.useTextBox(plugin)){
-          return Util.hasValue(plugin.value)
+        if(this.useVueSelect(plugin)){
+          return Util.hasValue(Util.getValue(plugin.value, 'value', null))
         }
-        return Util.hasValue(Util.getValue(plugin.value, 'value', null))
+        return Util.hasValue(plugin.value)
       })
     },
     async getPluginOptions(plugin){
@@ -148,7 +190,7 @@ export default {
       this.pluginRequest = Util.getValue(resultObj, 'request', '')
       this.pluginJson = Util.getValue(resultObj, 'ui', [])
       this.pluginJson.forEach(async (val, index) => {
-        if(this.useVueSelect(val) || this.useSelect(val)){
+        if(this.useVueSelect(val) || this.useSelect(val) || this.useCheckBox(val)){
           this.$set(val, 'options', await this.getPluginOptions(val))
         }
       })
@@ -169,24 +211,43 @@ export default {
     },
     execInit(){
       this.pluginJson.forEach(val => {
-        if(this.useSelect(val) || this.useTextBox(val)){
-          this.$set(val, 'oldValue', val.value)
+        if(this.useVueSelect(val)){
+          this.$set(val, 'oldValue', Util.hasValue(val.value)? { ...val.value }: null)
           return
         }
-        this.$set(val, 'oldValue', Util.hasValue(val.value)? { ...val.value }: null)
+        this.$set(val, 'oldValue', val.value)
       })
     },
     execHide(){
       if(!this.isOk){
         this.pluginJson.forEach(val => {
-          if(this.useSelect(val) || this.useTextBox(val)){
-            this.$set(val, 'value', val.oldValue)
+          if(this.useVueSelect(val)){
+            this.$set(val, 'value', Util.hasValue(val.oldValue)? { ...val.oldValue }: null)
             return
           }
-          this.$set(val, 'value', Util.hasValue(val.oldValue)? { ...val.oldValue }: null)
+          this.$set(val, 'value', val.oldValue)
         })
       }
       this.isOk = false
+    },
+    createQueryParam(plugin){
+      const key = '' + plugin.name + '='
+      if(this.useSelect(plugin)){
+        return key + (plugin.value? plugin.value: 0)
+      }
+      if(this.useTextBox(plugin)){
+        return key + (Util.hasValue(plugin.value)? plugin.value: '')
+      }
+      if(this.useNumberTextBox(plugin)){
+        return key + (Util.hasValue(plugin.value)? plugin.value: '')
+      }
+      if(this.useCheckBox(plugin)){
+        return key + JSON.stringify(Util.hasValue(plugin.value)? plugin.value: [])
+      }
+      if(this.useDate(plugin)){
+        return key + (Util.hasValue(plugin.value)? plugin.value: '')
+      }
+      return key + Util.getValue(plugin.value, 'value', 0)
     },
     async execOk(){
       this.isOk = true
@@ -194,16 +255,7 @@ export default {
       if(!Util.hasValue(this.pluginRequest)){
         return
       }
-      const query = this.pluginJson.map(plugin => {
-        const key = '' + plugin.name + '='
-        if(this.useSelect(plugin)){
-          return key + (plugin.value? plugin.value: 0)
-        }
-        if(this.useTextBox(plugin)){
-          return key + (Util.hasValue(plugin.value)? plugin.value: '')
-        }
-        return key + Util.getValue(plugin.value, 'value', 0)
-      }).join('&')
+      const query = this.pluginJson.map(plugin => this.createQueryParam(plugin)).join('&')
       const list = await HttpHelper.getAppService(`/${this.pluginRequest}/filter?${encodeURI(query)}${Util.hasValue(query)? '&': ''}_=${new Date().getTime()}`)
       this.$emit('detailFilter', list.map(val => val.value))
     },
