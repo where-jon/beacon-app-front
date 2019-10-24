@@ -240,8 +240,8 @@ export const APP_SERVICE = { // used if APP.LOGIN_MODE == APP_SERVICE
 }
 
 export const EXCLOUD = {
-  // BASE_URL: 'https://nsome8q880.execute-api.ap-northeast-1.amazonaws.com/prod', // used if APP.LOGIN_MODE != APP_SERVICE
-  BASE_URL: 'https://jfgo7xyh6h.execute-api.ap-northeast-1.amazonaws.com/prod', // used if APP.LOGIN_MODE != APP_SERVICE
+  BASE_URL: 'https://nsome8q880.execute-api.ap-northeast-1.amazonaws.com/prod', // used if APP.LOGIN_MODE != APP_SERVICE
+  // BASE_URL: 'https://jfgo7xyh6h.execute-api.ap-northeast-1.amazonaws.com/prod', // used if APP.LOGIN_MODE != APP_SERVICE
 
   withCredentials: true, // false if APP.LOGIN_MODE != APP_SERVICE
   // POSITION_URL: EXCLOUD.BASE_URL + "/beacon/position-kalman?_=",

@@ -6,14 +6,20 @@ const config = {
   // redirectUri: MSTEAMS_APP.REDIRECT_URL,
   redirectUri: 'http://localhost:3000/main/position',
   cacheLocation: "localStorage",
-  navigateToLoginRequestUrl: false,
+  navigateToLoginRequestUrl: false
 }
+
+
 const authContext = new AuthenticationContext(config)
 
 export const getToken = () => {
   // この2つを事前にやらないとトークンが取得できない糞仕様
   const user = authContext.getCachedUser()
   authContext.handleWindowCallback()
+
+  console.log(user)
+
+  // config.extraQueryParameters = "scope=openid+profile+https%3A%2F%2Fgraph.microsoft.com%2F.default&login_hint=" + encodeURIComponent()
 
   const token = authContext.getCachedToken(config.clientId);
   if (token) {

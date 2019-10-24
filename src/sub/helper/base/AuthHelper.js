@@ -236,8 +236,8 @@ export const switchAppService = async () => {
 export const login = async (login) => {
   Util.debug({login})
   store.commit('replace', login)
-  LocalStorageHelper.setLocalStorage('login', JSON.stringify({...login, dt: new Date().getTime()}))
-}
+  LocalStorageHelper.setLocalStorage('login', JSON.stringify({...login, loginId:login.loginId.length>50? login.username: login.loginId, dt: new Date().getTime()}))
+ }
 
 /**
  * 各ストレージからログイン情報を削除する。
