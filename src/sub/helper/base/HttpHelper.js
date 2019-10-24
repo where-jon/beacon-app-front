@@ -96,6 +96,17 @@ export const getAppServiceNoCrd = async (path, config, ignoreError) => {
   }
 }
 
+export const postAppServiceNoCrd = async (path, param, config, ignoreError) => {
+  try {
+    let res = await axiosNoCrd.post(APP_SERVICE.BASE_URL + addTimeToPath(path), param, addApiKey(config))
+    return res.data
+  } catch (e) {
+    if (!ignoreError) {
+      handleError(e, path)
+    }
+  }
+}
+
 /**
  * GETリクエストを送信する。
  * @method

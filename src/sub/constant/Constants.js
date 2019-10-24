@@ -1065,3 +1065,12 @@ export const PLUGIN_CONSTANTS = {
   PLUGIN_KEY_PREFIX: 'plugin-index',
   VIEW_URL_PREFIX: '/plugin/'
 }
+
+export const TENANT = {
+  STATUS: {
+    INVALID_TOKEN: -2,
+    NOT_REGISTERED: -1,
+    REGISTERED: 0,
+    DISABLED: 1
+  }
+}
