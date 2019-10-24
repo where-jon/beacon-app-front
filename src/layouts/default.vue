@@ -2,16 +2,16 @@
   <div>
     <m-nav />
     <b-container fluid>
-      <!-- <b-row v-if="!isLoginPage" class="flex-xl-nowrap2">
+      <b-row v-if="!isLoginPage" class="flex-xl-nowrap2">
         <b-col v-if="getShowSideBar()" id="bd-sidebar" :class="sidebarClasses" md="2" xl="2" class="d-none d-sm-none d-md-block">
           <m-sidebar />
         </b-col>
         <b-col id="bd-page" :md="getShowSideBar()? 10: 12" class="pl-0 pr-0">
           <b-container fluid>
             <b-row>
-              <b-col class="pl-md-5 pl-xl-5 pr-xl-5 bd-content"> -->
+              <b-col class="pl-md-5 pl-xl-5 pr-xl-5 bd-content">
                 <nuxt />
-                <!-- <div v-if="showProgress" class="spinner-parent">
+                <div v-if="showProgress" class="spinner-parent">
                   <vue-simple-spinner size="large" line-fg-color="#a09e9e" line-bg-color="#dee2e6" />
                 </div>
               </b-col>
@@ -21,9 +21,9 @@
       </b-row>
       <nuxt v-else />
       <!-- modal -->
-      <!-- <b-modal id="modalRootError" :title="$t('label.error')" ok-only>
+      <b-modal id="modalRootError" :title="$t('label.error')" ok-only>
         {{ errorMessage }}
-      </b-modal> -->
+      </b-modal>
     </b-container>
   </div>
 </template>

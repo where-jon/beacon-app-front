@@ -48,8 +48,10 @@ export default {
     }
   },
   async mounted() {
+    console.log('@@@@@@@@@@@@@@@@@ azLogin')
     try {
-      const token = await AADHelper.getIdToken()
+      const token = await AADHelper.getToken()
+      console.log(token)
       AuthHelper.setApp(this.$router, this.$store)
       const tenantStatus = await AuthHelper.getADTenantStatus(token)
       switch (tenantStatus) {
