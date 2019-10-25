@@ -39,6 +39,8 @@ export default function (context) {
     return
   }
 
+  console.log('loginPage', APP.MENU.LOGIN_PAGE, context.route.path)
+
   if (context.route.path == APP.MENU.AZLOGIN_PAGE) { // ADログインの場合、ログイページ書き換え
     APP.MENU.LOGIN_PAGE = APP.MENU.AZLOGIN_PAGE
     return
