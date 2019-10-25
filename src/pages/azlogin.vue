@@ -50,23 +50,24 @@ export default {
   async mounted() {
     console.log('@@@@@@@@@@@@@@@@@ azLogin')
     try {
-      const token = await AADHelper.getToken()
-      console.log(token)
-      AuthHelper.setApp(this.$router, this.$store)
-      const tenantStatus = await AuthHelper.getADTenantStatus(token)
-      switch (tenantStatus) {
-        case TENANT.STATUS.REGISTERED:
-          this.$router.push(APP.MENU.TOP_PAGE)
-          break
-        case TENANT.STATUS.NOT_REGISTERED:
-          this.notRegistered = true
-          break
-        case TENANT.STATUS.DISABLED:
-          this.disabled = true
-          break
-        default:
-          this.invalidToken = true
-      }
+      const token = await AADHelper.getToken(async (token) => {
+        console.log(token)
+        AuthHelper.setApp(this.$router, this.$store)
+        const tenantStatus = await AuthHelper.getADTenantStatus(token)
+        switch (tenantStatus) {
+          case TENANT.STATUS.REGISTERED:
+            this.$router.push(APP.MENU.TOP_PAGE)
+            break
+          case TENANT.STATUS.NOT_REGISTERED:
+            this.notRegistered = true
+            break
+          case TENANT.STATUS.DISABLED:
+            this.disabled = true
+            break
+          default:
+            this.invalidToken = true
+        }
+      })
     } catch (e) {
       console.log('error ↓')
       console.log(e)

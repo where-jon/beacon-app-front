@@ -29,7 +29,11 @@ export const APP = { // 機能面に関する設定
     TOP_PAGE: '/main/position', // トップページパス　must not be / otherwise recursive infinitely
     // ページ遷移設定
     LOGIN_PAGE: '/login', // ログインページパス　if no login then /
+    AZLOGIN_PAGE: '/azlogin', // ログインページパス　if no login then /
     ERROR_PAGE: '/error', // エラーページパス　if no login then /
+  },
+  SETTING: {
+    DISABLED_THEME: false,
   },
   GATEWAY: {
     LOST_TIME: 30 * 60 * 1000, // 消失とみなす時間（ミリ秒）

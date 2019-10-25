@@ -3,34 +3,65 @@ import AuthenticationContext from '../../adal'
 
 const config = {
   clientId: MSTEAMS_APP.APP_ID,
-  // redirectUri: MSTEAMS_APP.REDIRECT_URL,
-  redirectUri: 'http://localhost:3000/main/position',
+  redirectUri: MSTEAMS_APP.REDIRECT_URL,
+  // redirectUri: 'http://localhost:3000/azlogin',
   cacheLocation: "localStorage",
-  navigateToLoginRequestUrl: false
+  navigateToLoginRequestUrl: false,
+  resourceId: 'https://graph.microsoft.com',
+  // popUp: true
 }
-
 
 const authContext = new AuthenticationContext(config)
 
-export const getToken = () => {
-  // この2つを事前にやらないとトークンが取得できない糞仕様
-  const user = authContext.getCachedUser()
-  authContext.handleWindowCallback()
+export const getToken = (cbIdToken, cbAccessToken) => {
 
-  console.log(user)
-
-  // config.extraQueryParameters = "scope=openid+profile+https%3A%2F%2Fgraph.microsoft.com%2F.default&login_hint=" + encodeURIComponent()
-
-  const token = authContext.getCachedToken(config.clientId);
-  if (token) {
-    return token
+  var user = authContext.getCachedUser()
+  if (user) {
+    console.error('user', user)
+    const token = authContext.getCachedToken(config.clientId)
+    if (token) {
+      cbIdToken && cbIdToken(token)
+    }
+    else {
+      authContext._renewIdToken((err, idToken) => {
+        console.log('renewal', idToken)
+        if (!err) {
+          cbIdToken && cbIdToken(idToken)
+          return
+        }
+        console.error('Renewal failed: ' + err)
+      })  
+    }
   }
-  authContext._renewIdToken(function (err, idToken) {
-      if (!err) {
-        return idToken
+  else {
+    authContext.login()
+  }
+
+  config.callback = (errorDesc, token, error, tokenType) => {
+    console.error(errorDesc, token, error, tokenType)
+    cbAccessToken(token)
+  }  
+
+  authContext.acquireToken(config.resourceId, (errorDesc, token, error) => {
+    if (error) {
+      console.error(error)
+      if (config.popUp) {
+        authContext.acquireTokenPopup(config.resourceId, null, null,  (errorDesc, token, error) => {
+          if (error) {
+            console.error(error)
+            return
+          }
+          cbAccessToken && cbAccessToken(token)   
+        })
       }
-      console.log("Renewal failed: " + err);
-  });
+      else {
+        authContext.acquireTokenRedirect(config.resourceId, null, null)
+      }
+    }
+    else {
+      cbAccessToken && cbAccessToken(token)
+    }
+  })
 }
 
 export const getIdToken = async () => {
