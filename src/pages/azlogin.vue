@@ -84,6 +84,7 @@ export default {
       console.log('error ↓')
       console.log(e)
     }
+    APP.MENU.LOGIN_PAGE = APP.MENU.AZLOGIN_PAGE
   },
   methods: {
     office365Login() {
