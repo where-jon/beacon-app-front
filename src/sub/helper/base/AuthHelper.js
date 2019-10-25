@@ -312,7 +312,6 @@ export const getRegionId = (def = 0) => {
  */
 export const isSingleTenant = () => getTenantCd()? false: true
 
-export const getADTenantStatus = async (token) => {
-  let params = new URLSearchParams()
-  return await HttpHelper.getAppServiceNoCrd(`/meta/tenant/statusOrAdRegister?token=${token}&tenantName=WHERE`)
+export const getADTenantStatus = async (token, register = 0, tenantName = '') => {
+  return await HttpHelper.getAppServiceNoCrd(`/meta/tenant/statusOrAdRegister?token=${token}&register=${register}&tenantName=${tenantName}`)
 }

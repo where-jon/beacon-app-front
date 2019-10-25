@@ -44,16 +44,20 @@ export default {
   },
   computed: {
     isInputTenantName() {
-      return this.tenantName.length > 5
+      return this.tenantName.length > 0
     }
   },
   async mounted() {
     console.log('@@@@@@@@@@@@@@@@@ azLogin')
     try {
-      const token = await AADHelper.getToken(async (token) => {
+      const token = await AADHelper.getToken(async (token, user) => {
         console.log(token)
         AuthHelper.setApp(this.$router, this.$store)
-        const tenantStatus = await AuthHelper.getADTenantStatus(token)
+        let tenantStatus = await AuthHelper.getADTenantStatus(token)
+        if (tenantStatus == TENANT.STATUS.NOT_REGISTERED
+            && location.search.includes('admin_consent=True') && user && user.profile && location.search.includes(user.profile.tid)) {
+            tenantStatus = await AuthHelper.getADTenantStatus(token, 1, this.tenantName)
+        }
         switch (tenantStatus) {
           case TENANT.STATUS.REGISTERED:
             this.$router.push(APP.MENU.TOP_PAGE)

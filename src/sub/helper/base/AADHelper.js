@@ -18,16 +18,16 @@ export const getToken = (cbIdToken, cbAccessToken) => {
 
   var user = authContext.getCachedUser()
   if (user) {
-    console.error('user', user)
+    console.log('user', user)
     const token = authContext.getCachedToken(config.clientId)
     if (token) {
-      cbIdToken && cbIdToken(token)
+      cbIdToken && cbIdToken(token, user)
     }
     else {
       authContext._renewIdToken((err, idToken) => {
         console.log('renewal', idToken)
         if (!err) {
-          cbIdToken && cbIdToken(idToken)
+          cbIdToken && cbIdToken(idToken, user)
           return
         }
         console.error('Renewal failed: ' + err)
@@ -63,26 +63,5 @@ export const getToken = (cbIdToken, cbAccessToken) => {
     else {
       cbAccessToken && cbAccessToken(token)
     }
-  })
-}
-
-export const getIdToken = async () => {
-  return new Promise((resolve, reject) => {
-    const user = authContext.getCachedUser()
-    authContext.handleWindowCallback()
-    authContext.acquireToken(config.clientId, (error, token) => {
-      if (!error) {
-        resolve(token)
-      } else {
-        reject(error)
-      }
-    })
-    // authContext.acquireToken('https://graph.microsoft.com', (error, token) => {
-    //   if (!error) {
-    //     resolve(token)
-    //   } else {
-    //     reject(error)
-    //   }
-    // })
   })
 }
