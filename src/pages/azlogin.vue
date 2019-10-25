@@ -29,6 +29,7 @@
 <script>
 import * as AADHelper from '../sub/helper/base/AADHelper'
 import * as AuthHelper from '../sub/helper/base/AuthHelper'
+import * as LocalStorageHelper from '../sub/helper/base/LocalStorageHelper'
 import { APP, MSTEAMS_APP } from '../sub/constant/config'
 import { TENANT } from '../sub/constant/Constants'
 
@@ -49,6 +50,7 @@ export default {
   },
   async mounted() {
     console.log('@@@@@@@@@@@@@@@@@ azLogin')
+    this.tenantName = LocalStorageHelper.popLocalStorage('tenantName')
     try {
       const token = await AADHelper.getToken(async (token, user) => {
         console.log(token, user)
@@ -79,6 +81,7 @@ export default {
   },
   methods: {
     office365Login() {
+      LocalStorageHelper.setLocalStorage('tenantName', this.tenantName)
       location.href = this.adminConsentUrl
     }
   }
