@@ -10,7 +10,7 @@ export default {
     if (!MSTEAMS_APP.IS_COOPERATION) {
       this.$router.push(APP.MENU.TOP_PAGE)  // redirect
     } else {
-      this.$router.push('/azlogin')  // redirect
+      this.$router.push('/azlogin/')  // redirect
     }
   }
 }
