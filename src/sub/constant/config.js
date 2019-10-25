@@ -29,8 +29,8 @@ export const APP = { // 機能面に関する設定
     TOP_PAGE: '/main/position', // トップページパス　must not be / otherwise recursive infinitely
     // ページ遷移設定
     LOGIN_PAGE: '/login', // ログインページパス　if no login then /
-    AZLOGIN_PAGE: '/azlogin', // ログインページパス　if no login then /
-    ERROR_PAGE: '/error', // エラーページパス　if no login then /
+    AZLOGIN_PAGE: '/azlogin/', // ログインページパス
+    ERROR_PAGE: '/error/', // エラーページパス
   },
   SETTING: {
     DISABLED_THEME: false,
@@ -541,7 +541,7 @@ export const Tx = [
 export const MSTEAMS_APP = {
   IS_COOPERATION: true,
   APP_ID: "dd3ea682-9b02-49ec-9d15-c63cee38c792",
-  REDIRECT_URL: "https://msteams.dev.exbeacon.com/azlogin",
+  REDIRECT_URL: "https://msteams.dev.exbeacon.com/azlogin/",
   ADMINCONSENT_URL_BASE: "https://login.microsoftonline.com/common/adminconsent"
 }
 
