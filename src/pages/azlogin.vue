@@ -56,8 +56,7 @@ export default {
         console.log(token, user)
         AuthHelper.setApp(this.$router, this.$store)
         let tenantStatus = await AuthHelper.getADTenantStatus(token)
-        if (tenantStatus == TENANT.STATUS.NOT_REGISTERED
-            && location.search.includes('admin_consent=True') && user && user.profile && location.search.includes(user.profile.tid)) {
+        if (tenantStatus == TENANT.STATUS.NOT_REGISTERED && location.search.includes('admin_consent=True')) {
             tenantStatus = await AuthHelper.getADTenantStatus(token, 1, this.tenantName)
         }
         switch (tenantStatus) {
