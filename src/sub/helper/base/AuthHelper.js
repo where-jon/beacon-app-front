@@ -164,9 +164,11 @@ export const authByAppService = async (loginId, password, success, err) => {
     const allRegionMove = Util.getValue(userInfo, 'user.role.roleFeatureList', []).some(val => val.feature.featureName == FEATURE.NAME.ALL_REGION && val.mode != 0)
     // Login process
     let isAd = false
-    if (loginId.length>50) {
+    if (loginId.length>50) { // AD Loginの場合
       loginId = userInfo.user.name
       isAd = true
+      // eslint-disable-next-line require-atomic-updates
+      APP.MENU.LOGIN_PAGE = APP.MENU.AZLOGIN_PAGE
     }
     await login({loginId, role: userInfo.user.role, featureList: userInfo.featureList, tenantFeatureList: userInfo.tenantFeatureList, isAd,
       menu: userInfo.menu, currentRegion: userInfo.currentRegion, frontRev: revInfo.frontRev, serviceRev: revInfo.serviceRev, tenantAdmin: data.tenantAdmin,

@@ -30,8 +30,6 @@ export default async (context, inject) => {
     console.error(e) // ignore
   }
 
-  console.error(config.APP.MENU.LOGIN_PAGE)
-
   // load map image
   setTimeout(() => {
     AuthHelper.checkSession()
