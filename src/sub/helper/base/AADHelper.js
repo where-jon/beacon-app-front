@@ -5,11 +5,31 @@ const config = {
   clientId: MSTEAMS_APP.APP_ID,
   redirectUri: MSTEAMS_APP.REDIRECT_URL,
   // redirectUri: 'http://localhost:3000/azlogin',
-  cacheLocation: "localStorage",
+  cacheLocation: 'localStorage',
   navigateToLoginRequestUrl: false,
   resourceId: 'https://graph.microsoft.com',
   loadFrameTimeout: 20000,
-  // popUp: true
+  popUp: true,
+  displayCall: function (urlNavigate) {
+    var popupWindow = window.open(urlNavigate, 'login', 'width=483, height=600')
+    if (popupWindow && popupWindow.focus)
+      popupWindow.focus()
+    var registeredRedirectUri = this.redirectUri
+    var pollTimer = window.setInterval(function () {
+      if (!popupWindow || popupWindow.closed || popupWindow.closed === undefined) {
+        window.clearInterval(pollTimer)
+      }
+      try {
+        if (popupWindow.document.URL.indexOf(registeredRedirectUri) != -1) {
+          window.clearInterval(pollTimer)
+          window.location.hash = popupWindow.location.hash
+          authContext.handleWindowCallback()
+          popupWindow.close()
+        }
+      } catch (e) {
+      }
+    }, 20)
+  }
 }
 
 const authContext = new AuthenticationContext(config)
