@@ -374,6 +374,7 @@ export default {
             delFlg: (val.checked && !val.disabled)? 0: 1,
           }
         }),
+        status: this.form.status,
       }
       if(settingEntities.length != 0){
         entity.settingList = settingEntities.map(val => ({...val, settingId: val.settingId <= 0? dummyKey--: val.settingId}))
