@@ -541,7 +541,7 @@ export const Tx = [
 export const MSTEAMS_APP = {
   IS_COOPERATION: true,
   APP_ID: "dd3ea682-9b02-49ec-9d15-c63cee38c792",
-  REDIRECT_URL: "https://msteams.dev.exbeacon.com/",
+  REDIRECT_URL: "https://msteams.dev.exbeacon.com/azlogin",
   ADMINCONSENT_URL_BASE: "https://login.microsoftonline.com/common/adminconsent"
 }
 
