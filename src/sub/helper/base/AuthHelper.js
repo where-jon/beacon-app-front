@@ -163,7 +163,7 @@ export const authByAppService = async (loginId, password, success, err) => {
     const userRegionIdList = Util.getValue(userInfo, 'user.userRegionList', []).map(val => val.userRegionPK.regionId)
     const allRegionMove = Util.getValue(userInfo, 'user.role.roleFeatureList', []).some(val => val.feature.featureName == FEATURE.NAME.ALL_REGION && val.mode != 0)
     // Login process
-    await login({loginId, username:userInfo.user.name, role: userInfo.user.role, featureList: userInfo.featureList, tenantFeatureList: userInfo.tenantFeatureList, 
+    await login({loginId:login.loginId.length>50? userInfo.user.name: login.loginId, username:userInfo.user.name, role: userInfo.user.role, featureList: userInfo.featureList, tenantFeatureList: userInfo.tenantFeatureList, 
       menu: userInfo.menu, currentRegion: userInfo.currentRegion, frontRev: revInfo.frontRev, serviceRev: revInfo.serviceRev, tenantAdmin: data.tenantAdmin,
       isProvider: userInfo.user.providerUserId != null, currentTenant: userInfo.tenant, userRegionIdList: userRegionIdList, allRegionMove: allRegionMove, apiKey: data.apiKey })
     success()
@@ -229,6 +229,9 @@ export const switchAppService = async () => {
 
 /**
  * ログイン情報を各ストレージに保存する
+ * 
+ * ADユーザIDはトークンのため、名前に変更する。
+ * 
  * @method
  * @async
  * @param {Object} login ログイン情報
@@ -236,7 +239,7 @@ export const switchAppService = async () => {
 export const login = async (login) => {
   Util.debug({login})
   store.commit('replace', login)
-  LocalStorageHelper.setLocalStorage('login', JSON.stringify({...login, loginId:login.loginId.length>50? login.username: login.loginId, dt: new Date().getTime()}))
+  LocalStorageHelper.setLocalStorage('login', JSON.stringify({...login, dt: new Date().getTime()}))
  }
 
 /**
