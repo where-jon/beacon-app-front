@@ -51,7 +51,7 @@ export default {
     console.log('@@@@@@@@@@@@@@@@@ azLogin')
     try {
       const token = await AADHelper.getToken(async (token, user) => {
-        console.log(token)
+        console.log(token, user)
         AuthHelper.setApp(this.$router, this.$store)
         let tenantStatus = await AuthHelper.getADTenantStatus(token)
         if (tenantStatus == TENANT.STATUS.NOT_REGISTERED
