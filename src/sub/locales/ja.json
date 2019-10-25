@@ -849,6 +849,9 @@
         },
         "PROCESS": {
           "LOCATION_TYPE_TO_RELEASE_TX_POT": "タグとPOTの紐付けを解除する場所::タグとPOTの紐付けを解除する場所のタイプを設定します。"
+        },
+        "AD": {
+          "GROUP_NAMES": "ここで指定された正規表現文字列に合致するグループのみが、Active Directoryから同期されます。::Active Directoryを使用する場合のみに適用。"
         }
       },
       "BATCH": {
@@ -890,6 +893,9 @@
         },
         "PROHIBIT_ZONE": {
           "INTERVAL": "禁止区域アラートバッチの実行間隔::禁止区域アラートバッチの実行間隔をミリ秒単位で設定します。"
+        },
+        "AD_SYNC": {
+          "CRON": "AD同期バッチ処理時間指定::指定された時刻にActive Directoryとの同期処理を行います。"
         }
       }
     },
