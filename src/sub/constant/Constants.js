@@ -458,6 +458,11 @@ export const NOTIFY_STATE = {
   }
 }
 
+export const TENANT_STATE = {
+  ENABLED: 1,
+  DISABLED: 0
+}
+
 export const ERROR_STATE = {
   NOT_REGIST: 'foreignKey',
   OVER_SIZE: 'uploadImgMax'
@@ -603,6 +608,12 @@ export const SETTING = {
             EXCLOUD_RAWLOG_DIR: SETTING.STRING,
             BLANK_RANGE: SETTING.NUMBER,
             MIN_RANGE: SETTING.NUMBER,
+          },
+          WORKLOAD: {
+            PAUSE_TIMEOUT: SETTING.NUMBER,
+          },
+          PROCESS: {
+            LOCATION_TYPE_TO_RELEASE_TX_POT: SETTING.NUMBER,
           },
         },
         BATCH: {

@@ -49,11 +49,11 @@ export default {
     heatmapData() {
       let positions = 
         _.reduce(this.positionHistories, (ary, hist) => {
-          if (ary[hist.posId]) {
-            ary[hist.posId].value++
+          if (ary[hist.locationId]) {
+            ary[hist.locationId].value++
           } else {
-            ary[hist.posId] = {
-              posId: hist.posId,
+            ary[hist.locationId] = {
+              locationId: hist.locationId,
               x: Math.round(hist.x * this.canvasScale),
               y: Math.round(hist.y * this.canvasScale),
               value: 1,

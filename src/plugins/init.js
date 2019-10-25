@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import * as config from '../sub/constant/config'
+import { SETTING } from '../sub/constant/Constants'
 import * as Util from '../sub/util/Util'
 import * as AuthHelper from '../sub/helper/base/AuthHelper'
 import * as ConfigHelper from '../sub/helper/dataproc/ConfigHelper'
@@ -10,6 +11,10 @@ import * as MenuHelper from '../sub/helper/dataproc/MenuHelper'
 export default async (context, inject) => {
   console.log('App Init') // If you need common initialize procedure, write here.
   LocalStorageHelper.setLocalStorage('defaultConfig', JSON.stringify(config))
+  LocalStorageHelper.setLocalStorage('defaultConfigInfo', JSON.stringify({
+    type: SETTING.getType(),
+    svc: SETTING.getDefault(),
+  }))
   MenuHelper.setStore(context.store)
   HttpHelper.setApp(context)
   await ConfigHelper.loadConfigJson()

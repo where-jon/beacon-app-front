@@ -135,7 +135,7 @@ export default {
         await Promise.all(this.loadStates.map(StateHelper.load))
         // positionデータ取得
         await PositionHelper.storePositionHistory(null, true, true)
-        this.replaceAS({positions: PositionHelper.getPositions(false, false, null, null, null)})
+        this.replaceAS({positions: PositionHelper.getPositions(false, false, true, null, null, null)})
 
         if (Util.hasValue(APP.POS.PROHIBIT_ALERT) && Util.hasValue(APP.POS.PROHIBIT_GROUPS)) {
           ProhibitHelper.setProhibitDetect('display', this)
