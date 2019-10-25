@@ -261,12 +261,14 @@ export const logout = () => {
   }
   else {
     LocalStorageHelper.removeLocalStorage('login')
-    store.commit('clearAll')
-    store.commit('app_service/clearAll')
-    store.commit('main/clearAll')
-    store.commit('setting/clearAll')
+    if (store) {
+      store.commit('clearAll')
+      store.commit('app_service/clearAll')
+      store.commit('main/clearAll')
+      store.commit('setting/clearAll')  
+    }
   }
-  router.push(APP.MENU.LOGIN_PAGE)  
+  router && router.push(APP.MENU.LOGIN_PAGE)  
   if (APP.LOGIN_MODE == LOGIN_MODE.APP_SERVICE) {
     HttpHelper.getAppService('/logout', null, true)        
   }
