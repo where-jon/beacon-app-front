@@ -45,12 +45,12 @@ export default {
   },
   computed: {
     isInputTenantName() {
-      return this.tenantName.length > 0
+      return this.tenantName && this.tenantName.length > 0
     }
   },
   async mounted() {
     console.log('@@@@@@@@@@@@@@@@@ azLogin')
-    this.tenantName = LocalStorageHelper.popLocalStorage('tenantName')
+    this.tenantName = this.tenantName || LocalStorageHelper.popLocalStorage('tenantName')
     try {
       const token = await AADHelper.getToken(async (token, user) => {
         console.log(token, user)
