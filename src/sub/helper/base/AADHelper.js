@@ -38,31 +38,32 @@ export const getToken = (cbIdToken, cbAccessToken) => {
     authContext.login()
   }
 
-  // config.callback = (errorDesc, token, error, tokenType) => {
-  //   console.error(errorDesc, token, error, tokenType)
-  //   cbAccessToken(token)
-  // }  
+  config.callback = (errorDesc, token, error, tokenType) => {
+    console.error(errorDesc, token, error, tokenType)
+    cbAccessToken(token)
+  }  
 
-  // authContext.acquireToken(config.resourceId, (errorDesc, token, error) => {
-  //   if (error) {
-  //     console.error(error)
-  //     if (config.popUp) {
-  //       authContext.acquireTokenPopup(config.resourceId, null, null,  (errorDesc, token, error) => {
-  //         if (error) {
-  //           console.error(error)
-  //           return
-  //         }
-  //         cbAccessToken && cbAccessToken(token)   
-  //       })
-  //     }
-  //     else {
-  //       authContext.acquireTokenRedirect(config.resourceId, null, null)
-  //     }
-  //   }
-  //   else {
-  //     cbAccessToken && cbAccessToken(token)
-  //   }
-  // })
+  authContext.handleWindowCallback()
+  authContext.acquireToken(config.resourceId, (errorDesc, token, error) => {
+    if (error) {
+      console.error(error)
+      if (config.popUp) {
+        authContext.acquireTokenPopup(config.resourceId, null, null,  (errorDesc, token, error) => {
+          if (error) {
+            console.error(error)
+            return
+          }
+          cbAccessToken && cbAccessToken(token)   
+        })
+      }
+      else {
+        authContext.acquireTokenRedirect(config.resourceId, null, null)
+      }
+    }
+    else {
+      cbAccessToken && cbAccessToken(token)
+    }
+  })
 }
 
 export const getIdToken = async () => {

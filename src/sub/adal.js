@@ -196,7 +196,7 @@ var AuthenticationContext = (function () {
   if (typeof window !== 'undefined') {
       window.Logging = {
           piiLoggingEnabled: false,
-          level: 0,
+          level: 4,
           log: function (message) { 
             console.log(message);
           }
