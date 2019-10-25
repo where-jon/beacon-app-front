@@ -61,7 +61,14 @@ export default {
         }
         switch (tenantStatus) {
           case TENANT.STATUS.REGISTERED:
-            this.$router.push(APP.MENU.TOP_PAGE)
+            AuthHelper.auth(token, 'password',
+              ()=>{
+                this.$router.push(APP.MENU.TOP_PAGE)
+              },
+              (e)=>{
+                console.error(e)
+              }
+            )
             break
           case TENANT.STATUS.NOT_REGISTERED:
             this.notRegistered = true

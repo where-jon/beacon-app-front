@@ -39,7 +39,12 @@ export default function (context) {
     return
   }
 
-  if (context.route.path == APP.MENU.LOGIN_PAGE || context.route.path == APP.MENU.ERROR_PAGE || context.route.path == APP.MENU.AZLOGIN_PAGE) { // Login Page is always OK
+  if (context.route.path == APP.MENU.AZLOGIN_PAGE) { // ADログインの場合、ログイページ書き換え
+    APP.MENU.LOGIN_PAGE = APP.MENU.AZLOGIN_PAGE
+    return
+  }
+
+  if (context.route.path == APP.MENU.LOGIN_PAGE || context.route.path == APP.MENU.ERROR_PAGE) { // Login Page is always OK
     return
   }
   if(context.route.path == '/'){
