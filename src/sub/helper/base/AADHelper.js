@@ -8,6 +8,7 @@ const config = {
   cacheLocation: "localStorage",
   navigateToLoginRequestUrl: false,
   resourceId: 'https://graph.microsoft.com',
+  loadFrameTimeout: 20000,
   // popUp: true
 }
 

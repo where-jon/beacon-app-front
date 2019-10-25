@@ -197,7 +197,9 @@ var AuthenticationContext = (function () {
       window.Logging = {
           piiLoggingEnabled: false,
           level: 0,
-          log: function (message) { }
+          log: function (message) { 
+            console.log(message);
+          }
       };
   }
 
