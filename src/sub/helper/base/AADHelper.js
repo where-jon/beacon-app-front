@@ -1,5 +1,6 @@
 import { MSTEAMS_APP } from '../../constant/config'
 import AuthenticationContext from '../../adal'
+import * as microsoftTeams from '@microsoft/teams-js'
 
 const config = {
   clientId: MSTEAMS_APP.APP_ID,
@@ -40,6 +41,8 @@ if (window.navigator.userAgent.includes('Teams/')) {
 const authContext = new AuthenticationContext(config)
 
 export const getToken = (cbIdToken, cbAccessToken) => {
+
+  microsoftTeams.initialize()
 
   var user = authContext.getCachedUser()
   if (user) {

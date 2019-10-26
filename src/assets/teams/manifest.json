@@ -1,14 +1,14 @@
 {
     "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.5/MicrosoftTeams.schema.json",
-    "manifestVersion": "1.5",
-    "version": "1.3.0.1",
+    "manifestVersion": "devPreview",
+    "version": "1.3.0.2",
     "id": "dd3ea682-9b02-49ec-9d15-c63cee38c792",
     "packageName": "exoffice.test3",
     "developer": {
         "name": "m_nishiyama",
-        "websiteUrl": "https://msteams.dev.exbeacon.com/azlogin/",
-        "privacyUrl": "https://msteams.dev.exbeacon.com/azlogin/",
-        "termsOfUseUrl": "https://msteams.dev.exbeacon.com/azlogin/"
+        "websiteUrl": "https://msteams.dev.exbeacon.com/azlogin/?_=1",
+        "privacyUrl": "https://msteams.dev.exbeacon.com/azlogin/?_=1",
+        "termsOfUseUrl": "https://msteams.dev.exbeacon.com/azlogin/?_=1"
     },
     "name": {
         "short": "EXOfficeテストアプリ",
@@ -33,7 +33,8 @@
         }
     ],   
     "validDomains": [
-        "msteams.dev.exbeacon.com"
+        "msteams.dev.exbeacon.com",
+        "msteams-data.dev.exbeacon.com"
     ],
     "webApplicationInfo": {
         "id": "dd3ea682-9b02-49ec-9d15-c63cee38c792",
