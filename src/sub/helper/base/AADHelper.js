@@ -33,7 +33,7 @@ const config = {
 }
 
 if (window.navigator.userAgent.includes('Teams/')) {
-  delete config.popUp
+  // delete config.popUp
 }
 
 const authContext = new AuthenticationContext(config)
