@@ -1,6 +1,7 @@
 import { APP } from '../sub/constant/config'
 import { LOGIN_MODE, FORCE_PUSH_MENU, ROLE_FEATURE } from '../sub/constant/Constants'
 import * as BrowserUtil from '../sub/util/BrowserUtil'
+import * as ArrayUtil from '../sub/util/ArrayUtil'
 import * as Util from '../sub/util/Util'
 import * as AuthHelper from '../sub/helper/base/AuthHelper'
 import * as BulkHelper from '../sub/helper/dataproc/BulkHelper'
@@ -44,7 +45,7 @@ export default function (context) {
     return
   }
 
-  if (context.route.path == APP.MENU.LOGIN_PAGE || context.route.path == APP.MENU.ERROR_PAGE) { // Login Page is always OK
+  if (ArrayUtil.equalsAny(context.route.path, [APP.MENU.LOGIN_PAGE, APP.MENU.LOGIN_PAGE + '/', APP.MENU.AZTOP_PAGE, APP.MENU.ERROR_PAGE, APP.MENU.ERROR_PAGE + '/'])) { // Login Page is always OK
     return
   }
   if(context.route.path == '/'){

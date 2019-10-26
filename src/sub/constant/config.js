@@ -29,7 +29,8 @@ export const APP = { // 機能面に関する設定
     TOP_PAGE: '/main/position', // トップページパス　must not be / otherwise recursive infinitely
     // ページ遷移設定
     LOGIN_PAGE: '/login', // ログインページパス　if no login then /
-    AZLOGIN_PAGE: '/azlogin/', // ログインページパス
+    AZTOP_PAGE: '/aztop/', // ADトップページパス
+    AZLOGIN_PAGE: '/azlogin/', // ADログインページパス
     ERROR_PAGE: '/error/', // エラーページパス
   },
   SETTING: {

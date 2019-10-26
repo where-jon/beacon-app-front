@@ -23,6 +23,7 @@
       </b-form-group>
     </div>
     <div v-if="disabled">{{ $t('config.MSTEAMS.INVALID_TENANT') }}<br />{{ $t('config.MSTEAMS.INVALID_TENANT_CONTACT') }}</div>
+    <div v-if="notShown" v-html="$t('config.MSTEAMS.IF_NOT_SHOWN')"></div>
   </b-container>
 </template>
 
@@ -46,6 +47,9 @@ export default {
   computed: {
     isInputTenantName() {
       return this.tenantName && this.tenantName.length > 0
+    },
+    notShown() {
+      return !this.notRegistered && !this.disabled && !this.invalidToken
     }
   },
   async mounted() {
@@ -81,8 +85,8 @@ export default {
         }
       })
     } catch (e) {
-      console.log('error ↓')
-      console.log(e)
+      console.error('azlogin error', e)
+      this.invalidToken = true
     }
     APP.MENU.LOGIN_PAGE = APP.MENU.AZLOGIN_PAGE
   },

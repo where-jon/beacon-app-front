@@ -255,9 +255,13 @@ export const login = async (login) => {
  * @async
  */
 export const logout = () => {
+  if (APP.LOGIN_MODE == LOGIN_MODE.APP_SERVICE) {
+    HttpHelper.getAppService('/logout', null, true)        
+  }
   const login = LocalStorageHelper.getLogin()
   if (login && login.isAd) {
     window.localStorage.clear()
+    router && router.push(APP.MENU.AZTOP_PAGE)  
   }
   else {
     LocalStorageHelper.removeLocalStorage('login')
@@ -267,10 +271,7 @@ export const logout = () => {
       store.commit('main/clearAll')
       store.commit('setting/clearAll')  
     }
-  }
-  router && router.push(APP.MENU.LOGIN_PAGE)  
-  if (APP.LOGIN_MODE == LOGIN_MODE.APP_SERVICE) {
-    HttpHelper.getAppService('/logout', null, true)        
+    router && router.push(APP.MENU.LOGIN_PAGE)  
   }
 }
 
