@@ -9,7 +9,7 @@ const config = {
   navigateToLoginRequestUrl: false,
   resourceId: 'https://graph.microsoft.com',
   loadFrameTimeout: 20000,
-  popUp: true,
+  popUp: false,
   displayCall: function (urlNavigate) {
     var popupWindow = window.open(urlNavigate, 'login', 'width=483, height=600')
     if (popupWindow && popupWindow.focus)

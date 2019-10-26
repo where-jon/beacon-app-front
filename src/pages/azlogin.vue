@@ -53,6 +53,7 @@ export default {
     }
   },
   async mounted() {
+    window.alert(location.href)
     console.log('@@@@@@@@@@@@@@@@@ azLogin')
     this.tenantName = this.tenantName || LocalStorageHelper.popLocalStorage('tenantName')
     try {
