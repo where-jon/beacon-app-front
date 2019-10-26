@@ -32,6 +32,11 @@ const config = {
   }
 }
 
+if (window.navigator.userAgent.includes('Teams/')) {
+  delete config.popUp
+  delete config.displayCall
+}
+
 const authContext = new AuthenticationContext(config)
 
 export const getToken = (cbIdToken, cbAccessToken) => {
