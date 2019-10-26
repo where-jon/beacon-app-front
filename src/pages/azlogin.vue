@@ -73,12 +73,14 @@ export default {
   },
   methods: {
     async afterGetToken(token, user) {
+      window.alert(token)
       console.log(token, user)
       AuthHelper.setApp(this.$router, this.$store)
       let tenantStatus = await AuthHelper.getADTenantStatus(token)
       if (tenantStatus == TENANT.STATUS.NOT_REGISTERED && location.search.includes('admin_consent=True')) {
           tenantStatus = await AuthHelper.getADTenantStatus(token, 1, this.tenantName)
       }
+      window.alert(tenantStatus)
       switch (tenantStatus) {
         case TENANT.STATUS.REGISTERED:
           AuthHelper.auth(token, 'password',
