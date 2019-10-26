@@ -41,7 +41,8 @@ export default {
       tenantName: '',
       notRegistered: false,
       disabled: false,
-      invalidToken: false
+      invalidToken: false,
+      hasToken: false
     }
   },
   computed: {
@@ -57,34 +58,12 @@ export default {
     this.tenantName = this.tenantName || LocalStorageHelper.popLocalStorage('tenantName')
     try {
       const token = await AADHelper.getToken(async (token, user) => {
-        console.log(token, user)
-        AuthHelper.setApp(this.$router, this.$store)
-        let tenantStatus = await AuthHelper.getADTenantStatus(token)
-        if (tenantStatus == TENANT.STATUS.NOT_REGISTERED && location.search.includes('admin_consent=True')) {
-            tenantStatus = await AuthHelper.getADTenantStatus(token, 1, this.tenantName)
-        }
-        switch (tenantStatus) {
-          case TENANT.STATUS.REGISTERED:
-            AuthHelper.auth(token, 'password',
-              ()=>{
-                this.$router.push(APP.MENU.TOP_PAGE)
-              },
-              (e)=>{
-                console.error(e)
-              }
-            )
-            break
-          case TENANT.STATUS.NOT_REGISTERED:
-            this.notRegistered = true
-            break
-          case TENANT.STATUS.DISABLED:
-            this.disabled = true
-            break
-          default:
-            this.invalidToken = true
-        }
+        this.hasToken = true
+        this.afterGetToken(token, user)
       }, (acToken) =>{
-        window.alert(acToken)
+        if (!this.hasToken) {
+          this.afterGetToken(token)
+        }
       })
     } catch (e) {
       console.error('azlogin error', e)
@@ -93,6 +72,34 @@ export default {
     APP.MENU.LOGIN_PAGE = APP.MENU.AZLOGIN_PAGE
   },
   methods: {
+    async afterGetToken(token, user) {
+      console.log(token, user)
+      AuthHelper.setApp(this.$router, this.$store)
+      let tenantStatus = await AuthHelper.getADTenantStatus(token)
+      if (tenantStatus == TENANT.STATUS.NOT_REGISTERED && location.search.includes('admin_consent=True')) {
+          tenantStatus = await AuthHelper.getADTenantStatus(token, 1, this.tenantName)
+      }
+      switch (tenantStatus) {
+        case TENANT.STATUS.REGISTERED:
+          AuthHelper.auth(token, 'password',
+            ()=>{
+              this.$router.push(APP.MENU.TOP_PAGE)
+            },
+            (e)=>{
+              console.error(e)
+            }
+          )
+          break
+        case TENANT.STATUS.NOT_REGISTERED:
+          this.notRegistered = true
+          break
+        case TENANT.STATUS.DISABLED:
+          this.disabled = true
+          break
+        default:
+          this.invalidToken = true
+      }
+    },
     office365Login() {
       LocalStorageHelper.setLocalStorage('tenantName', this.tenantName)
       location.href = this.adminConsentUrl
