@@ -752,14 +752,14 @@ var AuthenticationContext = (function () {
     * @param {string}   resource  ResourceUri identifying the target resource
     * @param {string}   extraQueryParameters  extraQueryParameters to add to the authentication request
     */
-  AuthenticationContext.prototype.acquireTokenRedirect = function (resource, extraQueryParameters, claims) {
+  AuthenticationContext.prototype.acquireTokenRedirect = function (resource, extraQueryParameters, claims, callback) {
       if (this._isEmpty(resource)) {
           this.warn('resource is required');
           callback('resource is required', null, 'resource is required');
           return;
       }
 
-      var callback = this.callback;
+      // var callback = this.callback;
 
       if (!this._user) {
           this.warn('User login is required');

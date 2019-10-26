@@ -1,50 +1,45 @@
 import { MSTEAMS_APP } from '../../constant/config'
 import AuthenticationContext from '../../adal'
 
+const config = {
+  clientId: MSTEAMS_APP.APP_ID,
+  redirectUri: MSTEAMS_APP.REDIRECT_URL,
+  // redirectUri: 'http://localhost:3000/azlogin',
+  cacheLocation: 'localStorage',
+  navigateToLoginRequestUrl: false,
+  resourceId: 'https://graph.microsoft.com',
+  loadFrameTimeout: 20000,
+  popUp: true,
+  displayCall: function (urlNavigate) {
+    var popupWindow = window.open(urlNavigate, 'login', 'width=483, height=600')
+    if (popupWindow && popupWindow.focus)
+      popupWindow.focus()
+    var registeredRedirectUri = this.redirectUri
+    var pollTimer = window.setInterval(function () {
+      if (!popupWindow || popupWindow.closed || popupWindow.closed === undefined) {
+        window.clearInterval(pollTimer)
+      }
+      try {
+        if (popupWindow.document.URL.indexOf(registeredRedirectUri) != -1) {
+          window.clearInterval(pollTimer)
+          window.location.hash = popupWindow.location.hash
+          authContext.handleWindowCallback()
+          popupWindow.close()
+        }
+      } catch (e) {
+      }
+    }, 20)
+  }
+}
+
+if (window.navigator.userAgent.includes('Teams/')) {
+  delete config.popUp
+}
+
+const authContext = new AuthenticationContext(config)
 
 export const getToken = (cbIdToken, cbAccessToken) => {
 
-  const config = {
-    clientId: MSTEAMS_APP.APP_ID,
-    redirectUri: MSTEAMS_APP.REDIRECT_URL,
-    // redirectUri: 'http://localhost:3000/azlogin',
-    cacheLocation: 'localStorage',
-    navigateToLoginRequestUrl: false,
-    resourceId: 'https://graph.microsoft.com',
-    loadFrameTimeout: 20000,
-    displayCall: (urlNavigate) => {
-      var popupWindow = window.open(urlNavigate, 'login', 'width=483, height=600')
-      if (popupWindow && popupWindow.focus)
-        popupWindow.focus()
-      var registeredRedirectUri = this.redirectUri
-      var pollTimer = window.setInterval(function () {
-        if (!popupWindow || popupWindow.closed || popupWindow.closed === undefined) {
-          window.clearInterval(pollTimer)
-        }
-        try {
-          if (popupWindow.document.URL.indexOf(registeredRedirectUri) != -1) {
-            window.clearInterval(pollTimer)
-            window.location.hash = popupWindow.location.hash
-            authContext.handleWindowCallback()
-            popupWindow.close()
-          }
-        } catch (e) {
-        }
-      }, 20)
-    },
-    callback: (errorDesc, token, error, tokenType) => {
-      console.error(errorDesc, token, error, tokenType)
-      window.alert(token)
-      cbAccessToken(token)
-    }  
-  }
-  
-  if (!window.navigator.userAgent.includes('Teams/')) {
-    config.popUp = true
-  }
-  
-  const authContext = new AuthenticationContext(config)
-  
   var user = authContext.getCachedUser()
   if (user) {
     console.log('user', user)
@@ -81,7 +76,13 @@ export const getToken = (cbIdToken, cbAccessToken) => {
         })
       }
       else {
-        authContext.acquireTokenRedirect(config.resourceId, null, null)
+        authContext.acquireTokenRedirect(config.resourceId, null, null, (errorDesc, token, error, tokenType) => {
+          if (error) {
+            console.error(errorDesc, token, error, tokenType)
+            return
+          }
+          cbAccessToken && cbAccessToken(token)
+        })
       }
     }
     else {
