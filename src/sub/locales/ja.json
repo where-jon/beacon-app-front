@@ -90,7 +90,7 @@
     "area": "エリア",
     "exb": "EXBeacon",
     "location": "配置場所",
-    "locationSetting": "場所定義",
+    "locationSetting": "場所配置",
     "locationList": "場所一覧",
     "develop": "開発用",
     "env": "環境変数",
