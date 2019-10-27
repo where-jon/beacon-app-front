@@ -60,14 +60,12 @@ export const getToken = (cbIdToken, cbAccessToken) => {
     }
   }
   else {
-    window.alert('login')
     authContext.login()
   }
 
   authContext.handleWindowCallback()
   authContext.acquireToken(config.resourceId, (errorDesc, token, error) => {
     if (error) {
-      window.alert(error)
       console.error(error)
       if (config.popUp) {
         authContext.acquireTokenPopup(config.resourceId, null, null,  (errorDesc, token, error) => {
@@ -79,7 +77,6 @@ export const getToken = (cbIdToken, cbAccessToken) => {
         })
       }
       else {
-        window.alert('redirect')
         authContext.acquireTokenRedirect(config.resourceId, null, null, (errorDesc, token, error, tokenType) => {
           if (error) {
             console.error(errorDesc, token, error, tokenType)
