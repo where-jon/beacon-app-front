@@ -24,7 +24,7 @@
     </div>
     <div v-if="disabled">{{ $t('config.MSTEAMS.INVALID_TENANT') }}<br />{{ $t('config.MSTEAMS.INVALID_TENANT_CONTACT') }}</div>
     <div v-if="notShown"><div v-html="$t('config.MSTEAMS.IF_NOT_SHOWN')"></div><br/><button onclick='location.reload();'>{{ $t('label.reload') }}</button></div>
-    <div><a href="/login">sysadmin login</a></div>
+    <div><a href="/login/">sysadmin login</a></div>
   </b-container>
 </template>
 
