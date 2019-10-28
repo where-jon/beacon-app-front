@@ -189,7 +189,6 @@ export default {
       'lostZones',
       'absentDisplayZones',
       'txs',
-      'thumbnailUrls',
     ]),
     ...mapState([
       'reload',
