@@ -189,6 +189,7 @@ export default {
       'lostZones',
       'absentDisplayZones',
       'txs',
+      'thumbnailUrls',
     ]),
     ...mapState([
       'reload',
@@ -784,7 +785,7 @@ export default {
         // サムネイル表示あり
         this.preloadThumbnail.onload = () => setupSelectedTx(true)
         this.preloadThumbnail.src = null // iOSでonloadが一度しか呼ばれないので対策
-        this.preloadThumbnail.src = tx.existThumbnail ? this.thumbnailUrl.replace('{id}', tx.potId) : '/default.png'
+        this.preloadThumbnail.src = tx.existThumbnail ? this.thumbnailUrl.replace('{id}', tx.potId) + new Date().getTime() : '/default.png'
       } else {
         // サムネイル表示無し
         setupSelectedTx(false)
