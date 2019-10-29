@@ -104,6 +104,7 @@ export default {
       this.validationParam.exbList = vExbList
       this.form.locationId = location.locationId
       this.form.locationCd = location.locationCd
+      this.form.locationType = location.locationType
       this.form.locationName = location.locationName
       this.vueSelected.exbIdList = Util.getValue(location, 'exbList', []).map(exb => VueSelectHelper.getVueSelectData(this.exbOptions, exb.exbId)).sort((a, b) => a.label < b.label? -1: 1)
     },
@@ -113,11 +114,14 @@ export default {
       const locNameMap = {}
       this.validationParam.locationList.forEach(location => {
         if(location.locationId != this.form.locationId){
-          locCdMap[location.locationCd] = true
+          if(!locCdMap[location.locationCd]){
+            locCdMap[location.locationCd] = []
+          }
+          locCdMap[location.locationCd].push(location.locationType)
           locNameMap[location.locationName] = true
         }
       })
-      if(locCdMap[this.form.locationCd]){
+      if(locCdMap[this.form.locationCd] && locCdMap[this.form.locationCd].some(type => type == this.form.locationType)){
         this.messageList.push(this.$i18n.tnl('message.bulkUniqueFailed', { col: this.$i18n.tnl('label.locationCd'), value: this.form.locationCd }))
       }
       if(locNameMap[this.form.locationName]){
