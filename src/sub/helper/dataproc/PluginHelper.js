@@ -64,6 +64,14 @@ export const isTextboxTag = plugin => plugin.tag.toLowerCase() == 'p-textbox'
 export const isNumberTextboxTag = plugin => plugin.tag.toLowerCase() == 'p-number'
 
 /**
+ * カスタム数値範囲テキストボックスタグか確認する
+ * @method
+ * @param {Object} plugin
+ * @return {Boolean}
+ */
+export const isNumberRangeTag = plugin => plugin.tag.toLowerCase() == 'p-number-range'
+
+/**
  * カスタムチェックボックスタグか確認する
  * @method
  * @param {Object} plugin
