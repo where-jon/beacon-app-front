@@ -1,5 +1,5 @@
 import { APP } from '../sub/constant/config'
-import { LOGIN_MODE, FORCE_PUSH_MENU, ROLE_FEATURE } from '../sub/constant/Constants'
+import { LOGIN_MODE, FORCE_PUSH_MENU, ROLE_FEATURE, LOCAL_STORAGE } from '../sub/constant/Constants'
 import * as BrowserUtil from '../sub/util/BrowserUtil'
 import * as Util from '../sub/util/Util'
 import * as AnalysisHelper from '../sub/helper/domain/AnalysisHelper'
@@ -21,6 +21,22 @@ import * as TooltipHelper from '../sub/helper/domain/TooltipHelper'
 import * as ValidateHelper from '../sub/helper/dataproc/ValidateHelper'
 import * as ViewHelper from '../sub/helper/ui/ViewHelper'
 import * as VueSelectHelper from '../sub/helper/ui/VueSelectHelper'
+
+const getRedirectUrl = route => {
+  const param = { path: route.path, fullPath: route.fullPath }
+
+  if(Util.hasValue(Object.keys(route.query))) {
+    LocalStorageHelper.setLocalStorage(LOCAL_STORAGE.KEY.REDIRECT_URL, JSON.stringify(param))
+    return
+  }
+
+  const popParam = LocalStorageHelper.popLocalStorage(LOCAL_STORAGE.KEY.REDIRECT_URL)
+  if(!Util.hasValue(popParam) || param.path != popParam.path) {
+    return
+  }
+
+  return popParam.fullPath
+}
 
 export default function (context) {
   Util.debug('checkAuth')
@@ -48,7 +64,14 @@ export default function (context) {
     return
   }
 
+  const redirectUrl = getRedirectUrl(context.route)
+
   if (context.route.path == APP.MENU.LOGIN_PAGE || context.route.path == APP.MENU.ERROR_PAGE) { // Login Page is always OK
+    return
+  }
+
+  if (Util.hasValue(redirectUrl)) {
+    context.app.router.push(redirectUrl)
     return
   }
   if(context.route.path == '/'){
