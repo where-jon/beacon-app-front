@@ -1,7 +1,7 @@
 <template>
   <div class="movieWraper">
     <div class="iframeWrap">
-      <iframe v-if="viewUrl" :id="pluginIframeId" width="100%" height="100%" :src="viewUrl" @load="loadCompleteFunc" allowfullscreen></iframe>
+      <iframe v-if="viewUrl" width="100%" height="100%" :src="viewUrl" @load="loadCompleteFunc" allowfullscreen></iframe>
     </div>
   </div>
 </template>
@@ -22,9 +22,6 @@ export default {
     }
   },
   computed: {
-    pluginIframeId() {
-      return 'pluginIframe'
-    },
     viewUrl: {
       get: function() {
         return this.url
