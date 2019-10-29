@@ -157,11 +157,11 @@ export const createGradient = (gradientArray = null) => {
  */
 export const creteAnalysisHeatmapData = (dataList, mapScale) =>{
   let positions = _.reduce(dataList, (ary, hist) => {
-      if (ary[hist.posId]) {
-        ary[hist.posId].value++
+      if (ary[hist.locationId]) {
+        ary[hist.locationId].value++
       } else {
-        ary[hist.posId] = {
-          posId: hist.posId,
+        ary[hist.locationId] = {
+          locationId: hist.locationId,
           x: Math.round(hist.x * mapScale),
           y: Math.round(hist.y * mapScale),
           value: 1,

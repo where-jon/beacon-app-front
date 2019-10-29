@@ -113,6 +113,13 @@
           </b-form-row>
         </div>
 
+        <b-form-row class="mb-3">
+          <b-col sm="5">
+            <label v-t="'label.status'" />
+            <b-form-select v-model="form.status" :options="statusOptions" />
+          </b-col>
+        </b-form-row>
+
         <b-form-row class="mb-2">
           <b-button v-t="'label.featureSetting'" :variant="theme" type="button" class="mr-2 my-1" @click="showFeatureEdit" />
         </b-form-row>
@@ -151,7 +158,7 @@
 <script>
 import { mapState } from 'vuex'
 import { EXCLOUD } from '../../../sub/constant/config'
-import { PATTERN } from '../../../sub/constant/Constants'
+import { PATTERN, TENANT_STATE } from '../../../sub/constant/Constants'
 import * as DateUtil from '../../../sub/util/DateUtil'
 import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
@@ -191,7 +198,7 @@ export default {
         {key: 'subCheck', label: 'dummy', thStyle: {width:'4px !important'} },
         {key: 'featureName', label: 'dummy'},
       ]),
-      form: Util.extract(this.$store.state.app_service.tenant, ['tenantId', 'tenantCd', 'tenantName', 'sysAdminLoginId', 'sysAdminPass', 'adminLoginId', 'adminPass', 'userLoginId', 'userPass', 'regionCd', 'regionName', 'meshId', 'createDt', 'delFlg']),
+      form: Util.extract(this.$store.state.app_service.tenant, ['tenantId', 'tenantCd', 'tenantName', 'sysAdminLoginId', 'sysAdminPass', 'adminLoginId', 'adminPass', 'userLoginId', 'userPass', 'regionCd', 'regionName', 'meshId', 'createDt', 'delFlg', 'status']),
       settingParams: {
         name: 'setting',
         fields: [ 
@@ -208,6 +215,10 @@ export default {
       targetTenantId: null,
       defaultCheckFeatureNames: ['positionmap', 'positionlist', 'positionstack'],
       isFirst: true,
+      statusOptions:[
+        {text: this.$i18n.tnl('label.enabledType'), value: TENANT_STATE.ENABLED},
+        {text: this.$i18n.tnl('label.disabledType'), value: TENANT_STATE.DISABLED}
+      ],
     }
   },
   computed: {
@@ -363,6 +374,7 @@ export default {
             delFlg: (val.checked && !val.disabled)? 0: 1,
           }
         }),
+        status: this.form.status,
       }
       if(settingEntities.length != 0){
         entity.settingList = settingEntities.map(val => ({...val, settingId: val.settingId <= 0? dummyKey--: val.settingId}))

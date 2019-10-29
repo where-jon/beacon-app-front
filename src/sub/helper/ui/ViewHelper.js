@@ -9,6 +9,7 @@ import _ from 'lodash'
 import { APP } from '../../constant/config'
 import * as StringUtil from '../../util/StringUtil'
 import * as Util from '../../util/Util'
+import * as BulkHelper from '../dataproc/BulkHelper'
 
 let i18n
 
@@ -130,10 +131,21 @@ export const getSubmitErrorMessage = (e, showLine, crud, masterIdName) => {
   }
   if(e.bulkError) {
     return _.map(_.orderBy(e.bulkError, ['line'], ['asc']), err => {
-      let col = modifyColName(err.col.trim())
-      return i18n.tline('message.bulk' + err.type + 'Failed',
-        {line: err.line, col: i18n.tnl(`label.${col}`), value: StringUtil.sanitize(err.value, true), min: err.min, max: err.max, candidates: err.candidates, num: err.num, unit: err.unit? i18n.tnl(`label.${err.unit}Unit`): '', target: err.target? i18n.tnl(`label.${err.target}`): ''},
-        showLine)
+      BulkHelper.editBulkError(err)
+      const readingPoint = i18n.tnl(`message.readingPoint`)
+      const col = err.cols? err.cols.map(c => i18n.tnl(`label.${c.trim()}`)).join(readingPoint): i18n.tnl(`label.${modifyColName(err.col.trim())}`)
+      const value = err.values? err.values.join(readingPoint) : err.value
+      return i18n.tline('message.bulk' + err.type + 'Failed', {
+        line: err.line,
+        col: col,
+        value: StringUtil.sanitize(value, true),
+        min: err.min,
+        max: err.max,
+        candidates: err.candidates,
+        num: err.num,
+        unit: err.unit? i18n.tnl(`label.${err.unit}Unit`): '',
+        target: err.target? i18n.tnl(`label.${err.target}`): ''
+      }, showLine)
     }).filter((val, idx, arr) => arr.indexOf(val) == idx)
   }
   return i18n.terror('message.' + crud + 'Failed', {target: i18n.tnl('label.' + masterIdName), code: e.message})
