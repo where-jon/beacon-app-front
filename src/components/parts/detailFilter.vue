@@ -47,6 +47,16 @@
               </b-input-group>
             </span>
 
+            <span v-if="useNumberRangeBox(plugin)">
+              <b-input-group>
+                <input v-model="plugin.value" type="number" class="form-control form-control-sm align-self-center text-right" :maxlength="plugin.max" :min="plugin.min" :max="plugin.max" :step="plugin.step">
+                <label v-if="hasValue(plugin.unit)" class="ml-sm-2 ml-1 mr-1">
+                  {{ $t('label.' + plugin.unit) }}
+                </label>
+                <b-form-select v-model="plugin.extValue.type" :options="numberRangeOption" size="sm" class="extra-filter" />
+              </b-input-group>
+            </span>
+
             <span v-if="useDate(plugin)">
               <b-input-group>
                 <date-picker v-model="plugin.value" value-format="timestamp" size="small" type="date" class="mr-2 inputdatefrom" />
@@ -116,6 +126,12 @@ export default {
     loadStates() {
       return ['area', 'category', 'group', 'tx', 'exb', 'pot', 'location', 'zone', 'sensor']
     },
+    numberRangeOption() {
+      return [
+        { value: 0, text: this.$i18n.tnl('label.more') },
+        { value: 1, text: this.$i18n.tnl('label.less') },
+      ]
+    },
     condition: {
       get() {
         const key = 'detailFilterCondition_' + this.componentId
@@ -162,6 +178,9 @@ export default {
     useNumberTextBox(plugin){
       return PluginHelper.isNumberTextboxTag(plugin)
     },
+    useNumberRangeBox(plugin){
+      return PluginHelper.isNumberRangeTag(plugin)
+    },
     useCheckBox(plugin){
       return PluginHelper.isCheckboxTag(plugin)
     },
@@ -193,6 +212,9 @@ export default {
         if(this.useVueSelect(val) || this.useSelect(val) || this.useCheckBox(val)){
           this.$set(val, 'options', await this.getPluginOptions(val))
         }
+        if(this.useNumberRangeBox(val)){
+          this.$set(val, 'extValue', { type: 0 })
+        }
       })
     },
     fetchPlugin(){
@@ -211,6 +233,7 @@ export default {
     },
     execInit(){
       this.pluginJson.forEach(val => {
+        this.$set(val, 'oldExtValue', Util.hasValue(val.extValue)? { ...val.extValue }: {})
         if(this.useVueSelect(val)){
           this.$set(val, 'oldValue', Util.hasValue(val.value)? { ...val.value }: null)
           return
@@ -221,6 +244,7 @@ export default {
     execHide(){
       if(!this.isOk){
         this.pluginJson.forEach(val => {
+          this.$set(val, 'extValue', Util.hasValue(val.oldExtValue)? { ...val.oldExtValue }: {})
           if(this.useVueSelect(val)){
             this.$set(val, 'value', Util.hasValue(val.oldValue)? { ...val.oldValue }: null)
             return
@@ -240,6 +264,9 @@ export default {
       }
       if(this.useNumberTextBox(plugin)){
         return key + (Util.hasValue(plugin.value)? plugin.value: '')
+      }
+      if(this.useNumberRangeBox(plugin)){
+        return key + JSON.stringify(Util.hasValue(plugin.value)? { value: plugin.value, type: plugin.extValue.type }: {})
       }
       if(this.useCheckBox(plugin)){
         return key + JSON.stringify(Util.hasValue(plugin.value)? plugin.value: [])
