@@ -6,6 +6,7 @@
 import { APP, DISP } from '../../constant/config'
 import { DETECT_STATE, ALERT_STATE, ZONE } from '../../constant/Constants'
 import * as PositionHelper from './PositionHelper'
+import * as ViewHelper from '../ui/ViewHelper'
 
 let i18n
 
@@ -21,8 +22,8 @@ export const setApp = pi18n => {
 /**
  * 重要部品指定区域の検知情報を取得する。
  * @method
- * @param {Object[]} position 
- * @param {Object[]} lostZones 
+ * @param {Object[]} position
+ * @param {Object[]} lostZones
  * @return {Object[]}
  */
 export const getLostUnDetectList = (position, lostZones) => {
@@ -61,7 +62,7 @@ export const getLostUnDetectList = (position, lostZones) => {
 /**
  * 禁止区域のアラートメッセージを作成する。
  * @method
- * @param {Object[]} prohibitDetectList 
+ * @param {Object[]} prohibitDetectList
  * @return {String}
  */
 export const getProhibitMessage = prohibitDetectList => {
@@ -88,8 +89,8 @@ export const getProhibitMessage = prohibitDetectList => {
 /**
  * 禁止区域の検知情報を取得する。
  * @method
- * @param {Object[]} position 
- * @param {Object[]} prohibitZones 
+ * @param {Object[]} position
+ * @param {Object[]} prohibitZones
  * @return {Object[]}
  */
 export const getProhibitDetectList = (position, prohibitZones) => {
@@ -154,8 +155,8 @@ export const getProhibitDetectList = (position, prohibitZones) => {
 /**
  * 禁止区域の検知情報を作成し、コンポーネントに設定する。
  * @method
- * @param {String} viewName 
- * @param {VueComponent} vueComponent 
+ * @param {String} viewName
+ * @param {VueComponent} vueComponent
  */
 export const setProhibitDetect = (viewName, vueComponent, positions = []) => {
   const prohibitDetectList = getProhibitDetectList(
@@ -164,15 +165,15 @@ export const setProhibitDetect = (viewName, vueComponent, positions = []) => {
   vueComponent.prohibitDetectList = prohibitDetectList ? prohibitDetectList : null
   const lostUnDetectList = getLostUnDetectList(PositionHelper.getPositions(),vueComponent.lostZones)
   if(vueComponent.prohibitDetectList){
-    vueComponent.prohibitDetectList = lostUnDetectList? prohibitDetectList.concat(lostUnDetectList) : vueComponent.prohibitDetectList
+    vueComponent.prohibitDetectList = lostUnDetectList? prohibitDetectList.concat(lostUnDetectList): vueComponent.prohibitDetectList
   }else{
-    vueComponent.prohibitDetectList =lostUnDetectList ? lostUnDetectList : null
+    vueComponent.prohibitDetectList = lostUnDetectList? lostUnDetectList: null
   }
   vueComponent.message = getProhibitMessage(vueComponent.prohibitDetectList)
-  vueComponent.showDismissibleAlert = vueComponent.message ? true: false
+  vueComponent.showDismissibleAlert = vueComponent.message? true: false
   if(viewName == 'pos'){
     clearInterval(vueComponent.prohibitInterval)  // 点滅クリア
     // 禁止区域に検知されたら点滅させる
-    vueComponent.showDismissibleAlert? vueComponent.prohibitInterval = setInterval(vueComponent.twinkle, DISP.PROHIBIT_TWINKLE_TIME): false
+    vueComponent.showDismissibleAlert? vueComponent.prohibitInterval = setInterval(() => ViewHelper.twinkleProhibit(vueComponent.stage, vueComponent.icons, vueComponent.prohibitDetectList), DISP.PROHIBIT_TWINKLE_TIME): false
   }
 }

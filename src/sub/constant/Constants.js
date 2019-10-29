@@ -1,4 +1,4 @@
-// Various constants or types come here. Basically constants does not change by environment. 
+// Various constants or types come here. Basically constants does not change by environment.
 
 import * as LocalStorageHelper from '../helper/base/LocalStorageHelper'
 
@@ -184,7 +184,7 @@ export const CATEGORY = {
   PERSON: 1,
   THING: 2,
   ZONE: 3,
-  getTypes(){ 
+  getTypes(){
     return [
       {value: CATEGORY.PERSON, text: i18n.tnl('label.person')},
       {value: CATEGORY.THING, text: i18n.tnl('label.thing')},
@@ -200,7 +200,7 @@ export const PROCESS_SUM = {
   PROCESSING: {value: 2, label: 'processing'},
   NOT_SMOOTH: {value: 3, label: 'notSmooth', error: true},
   LATE: {value: 4, label: 'processLate', error: true},
-  getTypes(){ 
+  getTypes(){
     return [
       {value: CATEGORY.THING, text: i18n.tnl('label.thing')},
       {value: CATEGORY.PERSON, text: i18n.tnl('label.person')},
@@ -232,7 +232,7 @@ export const SHAPE = {
 export const ZONE = {
   COORDINATE: 0,
   NON_COORDINATE: 1,
-  getTypes(){ 
+  getTypes(){
     return [
       {value: ZONE.COORDINATE, text: i18n.tnl('label.coordinate')},
       {value: ZONE.NON_COORDINATE, text: i18n.tnl('label.nonCoordinate')},
@@ -487,7 +487,7 @@ export const TX_VIEW_TYPES = {
 }
 
 export const POSITION_STACK_TYPES = {
-  getTypes(){ 
+  getTypes(){
     return [
       {text: i18n.tnl('label.area'), value: 1, className: 'area'},
       {text: i18n.tnl('label.zone'), value: 2, className: 'zone'},
@@ -548,13 +548,13 @@ export const SETTING = {
         },
         POS_LIST: {
           WITH: SETTING.STRING_LIST,
-        }, 
+        },
         TX: {
           WITH: SETTING.STRING_LIST,
-        }, 
+        },
         EXB: {
           SENSOR: SETTING.NUMBER_LIST,
-        }, 
+        },
         LOCATION: {
           WITH: SETTING.STRING_LIST,
           TYPE: {
@@ -563,11 +563,11 @@ export const SETTING = {
         },
         USER: {
           WITH: SETTING.STRING_LIST,
-        }, 
+        },
         POT: {
           WITH: SETTING.STRING_LIST,
           EXT_DEF: SETTING.JSON,
-        }, 
+        },
         CATEGORY: {
           TYPES: SETTING.NUMBER_LIST,
         },
@@ -593,8 +593,8 @@ export const SETTING = {
           SLACK_TOKEN: SETTING.STRING,
           STAY_SUM: {
             START: SETTING.NUMBER,
-            END: SETTING.NUMBER, 
-            INTERVAL: SETTING.NUMBER, 
+            END: SETTING.NUMBER,
+            INTERVAL: SETTING.NUMBER,
             CALC_BY: SETTING.STRING,
             ADJUST_TIME: SETTING.NUMBER,
             REAL_TIME: SETTING.BOOLEAN,
@@ -693,9 +693,9 @@ export const SETTING = {
         },
         SVC: {
           STAY_SUM: {
-            STAY_SUM_START: 0, 
-            STAY_SUM_END: 2400, 
-            STAY_SUM_INTERVAL: 5, 
+            STAY_SUM_START: 0,
+            STAY_SUM_END: 2400,
+            STAY_SUM_INTERVAL: 5,
             STAY_SUM_CALC_BY: "location",
             STAY_SUM_ADJUST_TIME: 4,
           },
@@ -706,7 +706,7 @@ export const SETTING = {
         },
       },
     }
-  },  
+  },
 }
 
 export const FORCE_PUSH_MENU = [
@@ -801,7 +801,7 @@ export const MENU = [
       key: 'ledOperation',
       path: 'led',
       icon: 'lightbulb',
-    }
+    },
     ]
   },
   {

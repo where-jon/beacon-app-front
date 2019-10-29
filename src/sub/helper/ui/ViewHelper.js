@@ -3,6 +3,7 @@
  * @module helper/ui/ViewHelper
  */
 
+import { Container } from 'createjs-module'
 import elementLocale from 'element-ui/lib/locale'
 import _ from 'lodash'
 import { APP } from '../../constant/config'
@@ -32,8 +33,8 @@ export const importElementUI = () => {
 /**
  * ラベルを言語化する。ラベルが定義されていない場合、keyプロパティ値を言語化してラベルとする。
  * @method
- * @param {Object} i18n 
- * @param {Object[]} objArr 
+ * @param {Object} i18n
+ * @param {Object[]} objArr
  * @return {Object[]}
  */
 export const addLabelByKey = (i18n, objArr) => {
@@ -80,7 +81,7 @@ export const getDetailCaptionKey = id => {
 /**
  * 実際の主キー名を、表示上の主キー名に変換する。
  * @method
- * @param {String} col 
+ * @param {String} col
  * @return {String}
  */
 export const modifyColName = col => {
@@ -96,8 +97,8 @@ export const modifyColName = col => {
 /**
  * 実際の主キー名に応じて、表示上の主キー名が保有する値を取得する。
  * @method
- * @param {String} col 
- * @param {Any} val 
+ * @param {String} col
+ * @param {Any} val
  * @return {Any}
  */
 export const modifyVal = (col, val) => {
@@ -115,10 +116,10 @@ export const modifyVal = (col, val) => {
 /**
  * サブミット時にエラーが発生した場合のメッセージを作成する。
  * @method
- * @param {Exception} e 
- * @param {Number} showLine 
- * @param {String} crud 
- * @param {String} masterIdName 
+ * @param {Exception} e
+ * @param {Number} showLine
+ * @param {String} crud
+ * @param {String} masterIdName
  * @return {String}
  */
 export const getSubmitErrorMessage = (e, showLine, crud, masterIdName) => {
@@ -164,7 +165,7 @@ export const clearFileComponentAll = () => {
 /**
  * 全てのbuttonタグを有効化/無効化する。
  * @method
- * @param {Boolean} disabled 
+ * @param {Boolean} disabled
  * @return {Boolean}
  */
 export const disabledButtons = disabled => {
@@ -174,4 +175,32 @@ export const disabledButtons = disabled => {
     buttonList[idx].disabled = disabled
   }
   return disabled
+}
+
+/**
+ * 点滅用の定期処理メソッド
+ * @method
+ * @param {Object} createJsStage
+ * @param {Object[]} icons
+ * @param {Object[]} prohibitDetectList
+ */
+export const twinkleProhibit = (createJsStage, icons, prohibitDetectList) => {
+  Object.values(icons).forEach(icon => prohibitDetectList.some(tx => tx.minor == icon.btxId)? icon.visible = !icon.visible: icon.visible = true)
+  createJsStage.update()
+}
+
+/**
+ * createJSコンテナを作成し、ステージに追加する。
+ * @method
+ * @param {Object} createJsStage
+ * @param {Number} width
+ * @param {Number} height
+ * @return {Object} コンテナオブジェクト
+ */
+export const addContainerOnStage = (createJsStage, width, height) => {
+  const cont = new Container()
+  cont.width = width
+  cont.height = height
+  createJsStage.addChild(cont)
+  return cont
 }
