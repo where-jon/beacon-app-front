@@ -7,8 +7,9 @@
 
 <script>
 import { mapState } from 'vuex'
-import { CATEGORY } from '../../../sub/constant/Constants'
+import { LOCAL_STORAGE, CATEGORY } from '../../../sub/constant/Constants'
 import * as Util from '../../../sub/util/Util'
+import * as LocalStorageHelper from '../../../sub/helper/base/LocalStorageHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
@@ -23,15 +24,22 @@ export default {
     return {
       name: 'category',
       id: 'categoryId',
-      backPath: '/master/category',
       appServicePath: '/basic/category',
-      items: ViewHelper.createBreadCrumbItems('master', {text: 'category', href: '/master/category'}, 'bulkRegister'),
     }
   },
   computed: {
     ...mapState('app_service', [
       'category', 'categories'
     ]),
+    indexProp() {
+      return LocalStorageHelper.getLocalStorage(LOCAL_STORAGE.KEY.MASTER_INDEX)
+    },
+    backPath() {
+      return this.indexProp.path
+    },
+    items() {
+      return ViewHelper.createBreadCrumbItems('master', {text: 'category', href: this.backPath}, 'bulkRegister')
+    },
     categoryTypes(){
       return CATEGORY.getTypes()
     },

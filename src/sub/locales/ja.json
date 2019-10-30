@@ -246,6 +246,8 @@
     "operationType": "操作種別",
         
     "pot": "人＆物",
+    "personPot": "人",
+    "thingPot": "物",
     "potId": "ID",
     "potCd": "ID",
     "potName": "名前",
@@ -277,6 +279,8 @@
     "email": "メール",
 
     "category": "カテゴリ",
+    "personCategory": "人カテゴリ",
+    "thingCategory": "物カテゴリ",
     "categoryId": "カテゴリID",
     "categoryCd": "ID",
     "categoryName": "カテゴリ名",

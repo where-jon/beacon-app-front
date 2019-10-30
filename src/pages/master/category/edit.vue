@@ -41,10 +41,11 @@
 <script>
 import { mapState } from 'vuex'
 import { APP } from '../../../sub/constant/config'
-import { CATEGORY, SHAPE } from '../../../sub/constant/Constants'
+import { LOCAL_STORAGE, CATEGORY, SHAPE } from '../../../sub/constant/Constants'
 import * as ColorUtil from '../../../sub/util/ColorUtil'
 import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
+import * as LocalStorageHelper from '../../../sub/helper/base/LocalStorageHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as ValidateHelper from '../../../sub/helper/dataproc/ValidateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
@@ -66,13 +67,8 @@ export default {
     return {
       name: 'category',
       id: 'categoryId',
-      backPath: '/master/category',
       appServicePath: '/basic/category',
-      items: ViewHelper.createBreadCrumbItems('master', {text: 'category', href: '/master/category'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.category.categoryId)),
       form: Util.extract(category, ['categoryId', 'categoryCd', 'categoryName', 'categoryType', 'display', 'description']),
-      defValue: {
-        'categoryType': APP.CATEGORY.TYPES[0],
-      },
       defaultColor: '#000000',
       defaultBgColor: '#ffffff',
       oldType: Util.getValue(category, 'categoryType', null),
@@ -85,6 +81,18 @@ export default {
     ...mapState('app_service', [
       'category', 'categories',
     ]),
+    indexProp() {
+      return LocalStorageHelper.getLocalStorage(LOCAL_STORAGE.KEY.MASTER_INDEX)
+    },
+    backPath() {
+      return this.indexProp.path
+    },
+    defValue() {
+      return { 'categoryType': this.indexProp.type }
+    },
+    items() {
+      return ViewHelper.createBreadCrumbItems('master', {text: 'category', href: this.backPath}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.pot.potId))
+    },
     categoryTypes(){
       return CATEGORY.getTypes().filter(val => APP.CATEGORY.TYPES.includes(val.value))
     },
@@ -93,9 +101,9 @@ export default {
     },
   },
   created() {
-    this.onBeforeReload()
+    this.onBeforeReload(true)
   },
-  async mounted() {
+  mounted() {
     Util.applyDef(this.form, this.defValue)
     if(!Util.hasValue(this.form.categoryCd)){
       const categoryList = this.categories.filter(category => category.systemUse == 0)
@@ -104,9 +112,11 @@ export default {
     ValidateHelper.setCustomValidationMessage()
   },
   methods: {
-    onBeforeReload(){
+    onBeforeReload(isInit){
       if (this.form) {
-        this.form.categoryType = this.oldType? this.oldType: this.categoryTypes[0].value
+        if(!isInit) {
+          this.form.categoryType = this.oldType? this.oldType: this.categoryTypes[0].value
+        }
         this.form.displayShape = this.oldShape? this.oldShape: this.shapes[0].value
         this.form.displayColor = ColorUtil.colorCd4display(this.oldColor? this.oldColor: null, this.defaultColor)
         this.form.displayBgColor = ColorUtil.colorCd4display(this.oldBgColor? this.oldBgColor: null, this.defaultBgColor)
