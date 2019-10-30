@@ -983,14 +983,15 @@ export default {
         this.detectedCount++  // 検知数カウント増加
       })
 
-      this.locations.forEach((location) => {
-        let txBtn = this.icons['loc_' + location.locationId]
-        txBtn = this.createQuantityTxBtn(location, SHAPE.SQUARE, DISP.TX_NUM.COLOR, DISP.TX_NUM.BGCOLOR)
-        txBtn.color = DISP.TX_NUM.COLOR
-        txBtn.bgColor = DISP.TX_NUM.BGCOLOR
-        txBtn.transparent
-        txBtn.cursor = 'pointer'
-        this.txCont.addChild(txBtn)
+      _.filter(this.locations, (location) => { return location.areaId == this.selectedArea})
+        .forEach((location) => {
+          let txBtn = this.icons['loc_' + location.locationId]
+          txBtn = this.createQuantityTxBtn(location, SHAPE.SQUARE, DISP.TX_NUM.COLOR, DISP.TX_NUM.BGCOLOR)
+          txBtn.color = DISP.TX_NUM.COLOR
+          txBtn.bgColor = DISP.TX_NUM.BGCOLOR
+          txBtn.transparent
+          txBtn.cursor = 'pointer'
+          this.txCont.addChild(txBtn)
       })
       return position
     },
