@@ -529,6 +529,10 @@ export default {
     }
     this.changeArea(this.selectedArea)
     document.addEventListener('touchstart', this.touchEnd)
+    // Canvas内クリックからの伝搬を止める
+    document.getElementById('map').addEventListener('click', function(e) {
+      e.stopPropagation()
+    })
     ViewHelper.importElementUI()
     const date = DateUtil.getDefaultDate()
     this.form.datetimeFrom = DateUtil.getDatetime(date, {
@@ -759,7 +763,6 @@ export default {
     txOnClick(evt){
       evt.stopPropagation()
       this.showReady = false
-      this.showingDetailTime = new Date().getTime()
       const txBtn = evt.currentTarget
       this.showDetail(txBtn.btxId, txBtn.x, txBtn.y)
     },
@@ -887,7 +890,6 @@ export default {
       const txBtnInfo = this.updateZoneTxBtn(pos, tx, meditag, magnet)
       const txBtn = txBtnInfo.txBtn
       if(this.reloadSelectedTx.btxId == txBtnInfo.zoneBtx_id){
-        this.showingDetailTime = new Date().getTime()
         this.showDetail(txBtn.txId, txBtn.x, txBtn.y)
       }
       this.txCont.addChild(txBtn)
@@ -931,7 +933,6 @@ export default {
       pos.transparent = pos.transparent || ((isAbsentZone || PositionHelper.isOtherFloorFixTx(tx, pos.location)) && PositionHelper.isFixTx(tx))
       const txBtn = this.updateTxBtn(pos, tx, meditag, magnet)
       if(this.reloadSelectedTx.btxId == pos.btx_id){
-        this.showingDetailTime = new Date().getTime()
         this.showDetail(txBtn.btxId, txBtn.x, txBtn.y)
       }
       this.txIcons.push({ button: txBtn, device: tx, config: txBtn.iconInfo, sign: -1 })
@@ -1130,10 +1131,8 @@ export default {
     },
     // ポップアップの自動非表示
     resetDetail() { // p, pir, position
-      if (!this.showingDetailTime || new Date().getTime() - this.showingDetailTime > 100) {
-        const selectedTx = {}
-        this.replaceMain({ selectedTx })
-      }
+      const selectedTx = {}
+      this.replaceMain({ selectedTx })
     },
     async fetchPosition(payload){
       if(!payload.disabledOther){
