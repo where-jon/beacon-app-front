@@ -1019,20 +1019,19 @@ export default {
       if (!NumberUtil.isNumber(locationPerson)) {
         locationPerson = 0
       }
-      locationPerson = locationPerson + this.$i18n.tnl('label.peopleNum')
       // 品数
       var locationObject = this.locationObjectList[locationId]
       if (!NumberUtil.isNumber(locationObject)) {
         locationObject = 0
       }
-      locationObject = locationObject + this.$i18n.tnl('label.objectNum')
       // その他
       var locationOther = this.locationOtherList[locationId]
       if (!NumberUtil.isNumber(locationOther)) {
         locationOther = 0
       }
-      locationOther = this.$i18n.tnl('label.other') + ":" + locationOther
-      var label = locationPerson + "\r\n" + locationObject + "\r\n" + locationOther
+      var label = this.$i18n.tnl('label.peopleNum') + locationPerson + "\r\n" 
+        + this.$i18n.tnl('label.objectNum') + locationObject + "\r\n" 
+        + this.$i18n.tnl('label.other') + ':' + locationOther
       return IconHelper.createIcon(
         label, txRadius, txRadius, color, bgColor, {
           circle: shape == SHAPE.CIRCLE,
