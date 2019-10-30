@@ -35,6 +35,9 @@ export default {
       'pot', 'pots'
     ]),
   },
+  async created() {
+    await StateHelper.load('pot')
+  },
   methods: {
     onSaved(){
       StateHelper.setForceFetch('tx', true)
