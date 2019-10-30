@@ -94,6 +94,10 @@ export default {
       get() { return this.$store.state.main.selectedDetail},
       set(val) { this.replaceMain({'selectedDetail': val})},
     },
+    selectedFreeWord: {
+      get() { return this.$store.state.main.selectedFreeWord},
+      set(val) { this.replaceMain({'selectedFreeWord': val})},
+    },
   },
   methods: {
     ...mapMutations('app_service', [

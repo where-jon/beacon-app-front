@@ -54,6 +54,17 @@
               <date-picker v-model="form.datetimeTo" :clearable="false" type="datetime" class="mr-2 inputdateto" required />
             </b-form-row>
           </b-form-row>
+          <b-form-row v-else-if="item == 'freeWord'" class="my-1 ml-2 ml-sm-0">
+            <b-form-row class="ml-sm-4 ml-2 mr-1">
+              <label v-t="'label.filter'" class="mr-2" />
+              <b-input-group>
+                <input v-model="selectedFreeWord" class="form-control align-self-center" :maxlength="maxFilterLength">
+                <b-input-group-append>
+                  <b-btn v-t="'label.clear'" :disabled="!selectedFreeWord" variant="secondary" class="align-self-center" @click="selectedFreeWord = ''" />
+                </b-input-group-append>
+              </b-input-group>
+            </b-form-row>
+          </b-form-row>
           <b-form-row v-else class="my-1 ml-2 ml-sm-0">
             <label class="ml-sm-4 ml-2 mr-1">
               {{ $t('label.' + item) }}
@@ -448,9 +459,13 @@ export default {
       const ret = SensorHelper.getSensorFromBtxId('meditag', this.positionedTxMap.meditag, this.selectedTx.btxId)
       return ret? [ret]: []
     },
+    maxFilterLength() {
+      return 1000
+    },
     filter() {
       return this.pFilterList
         .concat(this.isUseDetailFilter()? 'detail': null)
+        .concat(this.pExtraFilterList)
         .filter(val => val)
         .map(pFilter => this[StringUtil.concatCamel('selected', pFilter)])
     },
