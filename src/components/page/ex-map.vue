@@ -1046,6 +1046,7 @@ export default {
     },
     changeIconsQuantity(e) {// 数量ボタン押下時の処理
       e.target.blur()
+      this.resetDetail()
       if (!this.isQuantity) {
         this.isQuantity = true
         this.locationPersonList = {}
@@ -1056,6 +1057,7 @@ export default {
     },
     changeIconsIndividual(e) {// 個別ボタン押下時の処理
       e.target.blur()
+      this.resetDetail()
       if (this.isQuantity) {
         this.isQuantity = false
         
