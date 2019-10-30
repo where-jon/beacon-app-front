@@ -649,8 +649,8 @@
 
     "individualTx": "個別",
     "quantity": "数量",
-    "peopleNum": "人",
-    "objectNum": "個",
+    "peopleNum": "人:",
+    "objectNum": "物:",
     "locationTypeName": "場所タイプ名",
 
     "---------------- Pot Extension sample ---------------":"",
