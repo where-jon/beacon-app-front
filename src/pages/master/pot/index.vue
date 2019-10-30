@@ -53,7 +53,7 @@ export default {
       'pots',
       'roles',
       'forceFetchPot',
-      'updatedPotThumbnail',
+      'updatedPotThumbnailList',
       'thumbnailUrls',
     ]),
   },
@@ -62,7 +62,7 @@ export default {
 
       const urls = this.pots.map( pot => {
         let url = ""
-        if (this.updatedPotThumbnail && this.updatedPotThumbnail === pot.potId) {
+        if (this.updatedPotThumbnailList && this.updatedPotThumbnailList.some(t => t === pot.potId)) {
           const addUrlParam = new Date().getTime()
           url = pot.existThumbnail ? this.thumbnailUrl.replace('{id}', pot.potId) + addUrlParam : null
         }else{
@@ -73,6 +73,7 @@ export default {
         }
         return { potId : pot.potId, url }
       })
+      this.replaceAS({updatedPotThumbnailList: []})
       this.thumbnailUrlMap = {}
       urls.forEach(url => this.thumbnailUrlMap[url.potId] = url.url)
       this.replaceAS({thumbnailUrls: this.thumbnailUrlMap})
