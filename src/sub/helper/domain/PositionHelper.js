@@ -6,11 +6,13 @@
 import * as mock from '../../../assets/mock/mock'
 import { APP, DISP, DEV } from '../../constant/config'
 import { TX_VIEW_TYPES, DETECT_STATE, SHAPE, TX, SENSOR } from '../../constant/Constants'
+import * as ArrayUtil from '../../util/ArrayUtil'
 import * as DateUtil from '../../util/DateUtil'
 import * as NumberUtil from '../../util/NumberUtil'
 import * as Util from '../../util/Util'
 import * as EXCloudHelper from '../dataproc/EXCloudHelper'
 import * as DetectStateHelper from './DetectStateHelper'
+import * as MenuHelper from '../dataproc/MenuHelper'
 import * as SensorHelper from './SensorHelper'
 import * as StyleHelper from '../ui/StyleHelper'
 
@@ -65,12 +67,15 @@ export const setApp = (pStore, pI18n) => {
  * @param {Number} [selectedCategory]
  * @param {Number} [selectedGroup]
  * @param {Number} [selectedDetail]
+ * @param {Number} [selectedFreWord]
  * @return {Object[]}
  */
 export const getPositions = (showAllTime = false, notFilterByTimestamp = false, 
     showTxNoOwner = APP.POS.SHOW_TX_NO_OWNER,
     selectedCategory = store.state.main.selectedCategory, selectedGroup = store.state.main.selectedGroup,
-    selectedDetail = store.state.main.selectedDetail) => { // p, position-display, rssimap, position-list, position, ProhibitHelper
+    selectedDetail = store.state.main.selectedDetail,
+    selectedFreeWord = store.state.main.selectedFreeWord) => { // p, position-display, rssimap, position-list, position, ProhibitHelper
+
   const positionHistores = store.state.main.positionHistores
   const orgPositions = store.state.main.orgPositions
 
@@ -82,7 +87,7 @@ export const getPositions = (showAllTime = false, notFilterByTimestamp = false,
     positions = correctPosId(orgPositions, now, notFilterByTimestamp)
   }
   positions = positionOwnerFilter(positions, showTxNoOwner)
-  return showAllTime ? positions : positionFilter(positions, selectedGroup, selectedCategory, selectedDetail)
+  return showAllTime ? positions : positionFilter(positions, selectedGroup, selectedCategory, selectedDetail, selectedFreeWord)
 }
 
 /**
@@ -106,15 +111,34 @@ const positionOwnerFilter = (positions, showTxNoOwner) => { //p
   }).value()
 }
 
+const positionFilterFreeWord = (pos, freeWord) => {
+  const columnList = [
+    APP.TX.BTX_MINOR == 'minor'? 'minor': 'btx_id',
+    APP.TX.BTX_MINOR == 'both'? 'minor': null,
+    ArrayUtil.includesIgnoreCase(APP.POT.WITH, 'potCd')? 'tx.potCd': null,
+    'tx.potName',
+    ArrayUtil.includesIgnoreCase(APP.POS_LIST.WITH, 'tel')? 'tx.extValue.tel': null,
+    MenuHelper.useMaster('category') && APP.POS.WITH.CATEGORY? 'tx.categoryName': null,
+    MenuHelper.useMaster('group') && APP.POS.WITH.GROUP? 'tx.groupName': null,
+    'state',
+    APP.POSITION_WITH_AREA? 'location.areaName': null,
+    'location.locationName',
+    'updatetime',
+  ].filter(val => val)
+  return columnList.some(column => (new RegExp(freeWord, 'i')).test(Util.getValue(pos, column, null)))
+}
+
 /**
  * 位置情報に対し、カテゴリとグループで絞込みを行う。
  * @method
  * @param {Object[]} positions
  * @param {Number} groupId
  * @param {Number} categoryId
+ * @param {Number[]} txIdList
+ * @param {String} freeWord
  * @return {Object[]}
  */
-const positionFilter = (positions, groupId, categoryId, txIdList) => { //p
+const positionFilter = (positions, groupId, categoryId, txIdList, freeWord) => { //p
   const txs = store.state.app_service.txs
 
   const txsMap = {}
@@ -124,6 +148,7 @@ const positionFilter = (positions, groupId, categoryId, txIdList) => { //p
     let grpHit = true
     let catHit = true
     let detailHit = true
+    let freeWordHit = true
     if (tx) {
       if (groupId) {
         grpHit = groupId == tx.groupId
@@ -134,8 +159,11 @@ const positionFilter = (positions, groupId, categoryId, txIdList) => { //p
       if (txIdList != null) {
         detailHit = txIdList.includes(tx.txId)
       }
+      if (freeWord != null) {
+        freeWordHit = positionFilterFreeWord(pos, freeWord)
+      }
     }
-    return grpHit && catHit && detailHit
+    return grpHit && catHit && detailHit && freeWordHit
   }).value()
 }
 

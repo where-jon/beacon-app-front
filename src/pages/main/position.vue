@@ -12,6 +12,7 @@
       :p-show-lost="showLost"
       p-show-absent
       :p-filter-list="filterList"
+      :p-extra-filter-list="extraFilterList"
       :p-short-name="shortName"
       p-split-auto-reload
       :p-use-plugin-filter="useDetailFilter"
@@ -56,6 +57,9 @@ export default {
     },
     filterList(){
       return [APP.POS.WITH.GROUP? 'group': null, APP.POS.WITH.CATEGORY? 'category': null].filter(val => val)
+    },
+    extraFilterList() {
+      return ['freeWord']
     },
     shortName(){
       return 'showPositionShort'
