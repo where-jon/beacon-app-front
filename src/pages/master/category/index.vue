@@ -1,12 +1,12 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" />
-    <m-list :params="params" :list="categoryList" />
+    <ex-master p-name="category" :p-type="pType" :p-params="params" :p-list="categoryList" />
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
+import { LOCAL_STORAGE, CATEGORY } from '../../../sub/constant/Constants'
 import * as ColorUtil from '../../../sub/util/ColorUtil'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as StyleHelper from '../../../sub/helper/ui/StyleHelper'
@@ -14,11 +14,21 @@ import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import reloadmixin from '../../../components/mixin/reloadmixin.vue'
 import mList from '../../../components/page/list.vue'
+import exMaster from '../../../components/page/ex-master.vue'
 
 export default {
+  props: {
+    pType: {
+      type: Number,
+      required: true,
+    },
+    pPath: {
+      type: String,
+      required: true,
+    },
+  },
   components: {
-    breadcrumb,
-    mList, 
+    exMaster,
   },
   mixins: [reloadmixin],
   data() {
@@ -26,7 +36,7 @@ export default {
       params: {
         name: 'category',
         id: 'categoryId',
-        indexPath: '/master/category',
+        indexPath: this.pPath,
         editPath: '/master/category/edit',
         bulkEditPath: '/master/category/bulkedit',
         appServicePath: '/basic/category',

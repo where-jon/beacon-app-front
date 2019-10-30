@@ -9,8 +9,9 @@
 import { mapState } from 'vuex'
 import _ from 'lodash'
 import { APP } from '../../../sub/constant/config'
-import { CATEGORY } from '../../../sub/constant/Constants'
+import { LOCAL_STORAGE, CATEGORY } from '../../../sub/constant/Constants'
 import * as Util from '../../../sub/util/Util'
+import * as LocalStorageHelper from '../../../sub/helper/base/LocalStorageHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import * as PotHelper from '../../../sub/helper/domain/PotHelper'
@@ -26,9 +27,7 @@ export default {
     return {
       name: 'pot',
       id: 'potId',
-      backPath: '/master/pot',
       appServicePath: '/basic/pot',
-      items: ViewHelper.createBreadCrumbItems('master', {text: 'pot', href: '/master/pot'}, 'bulkRegister'),
       category: _.slice(CATEGORY.getTypes(), 0, 2).filter((val) => APP.CATEGORY.TYPES.includes(val.value)),
     }
   },
@@ -36,6 +35,15 @@ export default {
     ...mapState('app_service', [
       'pot', 'pots', 'potImages', 'categories', 'groups', 'txs'
     ]),
+    indexProp() {
+      return LocalStorageHelper.getLocalStorage(LOCAL_STORAGE.KEY.MASTER_INDEX)
+    },
+    backPath() {
+      return this.indexProp.path
+    },
+    items() {
+      return ViewHelper.createBreadCrumbItems('master', {text: 'pot', href: this.backPath}, 'bulkRegister')
+    },
   },
   async created() {
     await StateHelper.load('pot')

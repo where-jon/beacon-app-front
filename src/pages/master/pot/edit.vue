@@ -117,7 +117,7 @@
 import { mapState } from 'vuex'
 import _ from 'lodash'
 import { APP, EXCLOUD, APP_SERVICE } from '../../../sub/constant/config'
-import { CATEGORY, SENSOR, USER } from '../../../sub/constant/Constants'
+import { LOCAL_STORAGE, CATEGORY, SENSOR, USER } from '../../../sub/constant/Constants'
 import * as StringUtil from '../../../sub/util/StringUtil'
 import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
@@ -147,9 +147,7 @@ export default {
     return {
       name: 'pot',
       id: 'potId',
-      backPath: '/master/pot',
       appServicePath: '/basic/pot',
-      items: ViewHelper.createBreadCrumbItems('master', {text: 'pot', href: '/master/pot'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.pot.potId)),
       showEmail: false,
       editShowUser: false,
       form: {
@@ -170,9 +168,6 @@ export default {
         role: null,
         txs: []
       },
-      defValue: {
-        'potType': APP.CATEGORY.TYPES[0] != 3? APP.CATEGORY.TYPES[0]: null,
-      },
       roleOptions: [],
       category: _.slice(CATEGORY.getTypes(), 0, 2).filter((val) => APP.CATEGORY.TYPES.includes(val.value)),
       txIds: Array(APP.POT.TX_MAX),
@@ -184,6 +179,18 @@ export default {
   computed: {
     hasId(){
       return Util.hasValue(this.form.potId)
+    },
+    indexProp() {
+      return LocalStorageHelper.getLocalStorage(LOCAL_STORAGE.KEY.MASTER_INDEX)
+    },
+    backPath() {
+      return this.indexProp.path
+    },
+    defValue() {
+      return { 'potType': this.indexProp.type }
+    },
+    items() {
+      return ViewHelper.createBreadCrumbItems('master', {text: 'pot', href: this.backPath}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.pot.potId))
     },
     categoryOptions() {
       return StateHelper.getOptionsFromState('category', false, true,

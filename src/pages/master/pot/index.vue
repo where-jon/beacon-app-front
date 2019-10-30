@@ -1,13 +1,13 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" />
-    <m-list :params="params" :list="pots" />
+    <ex-master p-name="pot" :p-type="pType" :p-params="params" :p-list="pots" />
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
 import { APP, EXCLOUD, APP_SERVICE } from '../../../sub/constant/config'
+import { LOCAL_STORAGE, CATEGORY } from '../../../sub/constant/Constants'
 import * as ArrayUtil from '../../../sub/util/ArrayUtil'
 import * as Util from '../../../sub/util/Util'
 import * as MenuHelper from '../../../sub/helper/dataproc/MenuHelper'
@@ -16,12 +16,21 @@ import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import * as PotHelper from '../../../sub/helper/domain/PotHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import reloadmixin from '../../../components/mixin/reloadmixin.vue'
-import mList from '../../../components/page/list.vue'
+import exMaster from '../../../components/page/ex-master.vue'
 
 export default {
+  props: {
+    pType: {
+      type: Number,
+      required: true,
+    },
+    pPath: {
+      type: String,
+      required: true,
+    },
+  },
   components: {
-    breadcrumb,
-    mList,
+    exMaster,
   },
   mixins: [reloadmixin],
   data() {
@@ -29,7 +38,7 @@ export default {
       params: {
         name: 'pot',
         id: 'potId',
-        indexPath: '/master/pot',
+        indexPath: this.pPath,
         editPath: '/master/pot/edit',
         appServicePath: '/basic/pot',
         bulkEditPath: '/master/pot/bulkEdit',
@@ -77,7 +86,7 @@ export default {
       urls.forEach(url => this.thumbnailUrlMap[url.potId] = url.url)
       this.replaceAS({thumbnailUrls: this.thumbnailUrlMap})
 
-  },
+},
   methods: {
     getCustomCsvColumns(){
       return [

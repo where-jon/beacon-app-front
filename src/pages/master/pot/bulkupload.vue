@@ -8,9 +8,11 @@
 <script>
 import { mapState } from 'vuex'
 import { APP } from '../../../sub/constant/config'
+import { LOCAL_STORAGE } from '../../../sub/constant/Constants'
 import * as BrowserUtil from '../../../sub/util/BrowserUtil'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
 import * as ImageHelper from '../../../sub/helper/base/ImageHelper'
+import * as LocalStorageHelper from '../../../sub/helper/base/LocalStorageHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
@@ -25,15 +27,22 @@ export default {
     return {
       name: 'pot',
       id: 'potId',
-      backPath: '/master/pot',
       appServicePath: '/basic/pot',
-      items: ViewHelper.createBreadCrumbItems('master', {text: 'pot', href: '/master/pot'}, 'bulkUpload'),
     }
   },
   computed: {
     ...mapState('app_service', [
       'pot', 'pots'
     ]),
+    indexProp() {
+      return LocalStorageHelper.getLocalStorage(LOCAL_STORAGE.KEY.MASTER_INDEX)
+    },
+    backPath() {
+      return this.indexProp.path
+    },
+    items() {
+      return ViewHelper.createBreadCrumbItems('master', {text: 'pot', href: this.backPath}, 'bulkUpload')
+    },
   },
   methods: {
     onSaved(){
