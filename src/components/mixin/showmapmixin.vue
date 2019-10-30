@@ -31,7 +31,6 @@ export default {
       canvasScale: 1, // p, rssimap, position, thermohumidity, heatmap-position
       reloadSelectedTx: {}, // pir, position
       showReady: false, //  pir, positio
-      showingDetailTime: null, //  pir, position
       showIconMinWidth: POSITION.SHOW_ICON_MIN_WIDTH, // pir, position
 
       showTryCount: 0, // p
@@ -202,6 +201,10 @@ export default {
       if (Touch.isSupported()) {
         Touch.enable(this.stage)
       }
+      // イベント伝搬設定
+      this.stage.on('click', (evt) => {
+        this.resetDetail()
+      })
 
       const bitmap = new Bitmap(bg)
       bitmap.scaleY = bitmap.scaleX = 1
