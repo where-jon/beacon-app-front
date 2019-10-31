@@ -774,9 +774,6 @@ export const adjustPosition = (positions, ratio, locations = [], selectedMapId =
     const samePos = []
     const fixPos = []
 
-    console.log('@@ positions')
-    console.log(positions)
-
     positions.forEach(pos => {
       const isFixPosition = hasTxLocation(pos) && selectedMapId && pos.tx.location.areaId == selectedMapId
       if (!isFixPosition) {
@@ -791,10 +788,6 @@ export const adjustPosition = (positions, ratio, locations = [], selectedMapId =
 
     const same = (!samePos || samePos.length == 0) ? [] : getPositionsToOverlap(location, ratio, samePos)
     const fix = (!fixPos || fixPos.length == 0) ? [] : getCoordinateFix(ratio, fixPos)
-    console.log('@@ same')
-    console.log(same)
-    console.log('@@ fix')
-    console.log(fix)
     return [...same, ...fix]
   })
 
