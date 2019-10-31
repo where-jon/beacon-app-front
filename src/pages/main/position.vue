@@ -810,6 +810,7 @@ export default {
           class: balloonClass,
           name: tx.potName ? tx.potName : '',
           tel: tx.extValue ? tx.extValue.tel ? tx.extValue.tel : '': '',
+          potCd: tx.potCd ? tx.potCd: '',
           timestamp: position ? this.getFinalReceiveTime(new Date(position.timestamp)) : '',
           thumbnail: isDispThumbnail ? this.preloadThumbnail.src : '',
           category: tx.categoryName? tx.categoryName : '',
