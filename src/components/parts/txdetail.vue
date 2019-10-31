@@ -105,6 +105,9 @@ export default {
       return !this.isDisableThumbnail()
     },
   },
+  mounted() {
+    microsoftTeams.initialize()
+  },
   updated() {
     this.popupHeight = this.getPopupHeight()
     this.left = this.getLeft()
