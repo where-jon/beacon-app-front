@@ -29,6 +29,12 @@ const config = {
       } catch (e) {
       }
     }, 20)
+  },
+  callback: function(errorDesc, token, error, tokenType) {
+    console.log(errorDesc, token, error, tokenType, this.cbIdToken)
+    if (this.cbIdToken) {
+      this.cbIdToken(token)
+    }
   }
 }
 
@@ -40,6 +46,8 @@ if (window.navigator.userAgent.includes('Teams/')) {
 const authContext = new AuthenticationContext(config)
 
 export const getToken = (cbIdToken, cbAccessToken) => {
+
+  authContext.cbIdToken = cbIdToken
 
   var user = authContext.getCachedUser()
   if (user) {
