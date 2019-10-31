@@ -1,0 +1,39 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-with, initial-scale=1, shrink-to-fit=no">
+  <meta http-equiv="content-type" content="text/html; charset = UTF-8">
+  <style>
+    body {
+      background-color: #588bc1;
+      color: white;
+    }
+  </style>
+  <title>EXOffice configuration</title>
+</head>
+<body>
+  <script src='https://statics.teams.microsoft.com/sdk/v1.0/js/MicrosoftTeams.min.js'></script>
+  <script type="text/javascript">
+
+  microsoftTeams.initialize();
+
+  microsoftTeams.settings.registerOnSaveHandler(function(saveEvent){
+        microsoftTeams.settings.setSettings({
+            entityId: "exofficeProd",
+            suggestedDisplayName: "EXOffice",
+            contentUrl: "https://xxx.saas.msteams.exbeacon.com/",
+            websiteUrl: "https://xxx.saas.msteams.exbeacon.com/"
+        });
+        saveEvent.notifySuccess();
+    });
+
+  microsoftTeams.settings.setValidityState(true);
+
+</script>
+
+EXOffice for Teams 
+
+</body>
+</html>
