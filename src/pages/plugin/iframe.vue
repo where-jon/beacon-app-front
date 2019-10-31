@@ -1,8 +1,6 @@
 <template>
-  <div class="movieWraper">
-    <div class="iframeWrap">
-      <iframe v-if="viewUrl" width="100%" height="100%" :src="viewUrl" @load="loadCompleteFunc" allowfullscreen></iframe>
-    </div>
+  <div class="iframeWrap">
+    <iframe v-if="viewUrl" width="100%" height="100%" :src="viewUrl" @load="loadCompleteFunc" allowfullscreen></iframe>
   </div>
 </template>
 
@@ -60,12 +58,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.movieWraper {
-    position: relative;
-    width: calc(100% - 10px);
-    margin: 0 0 0 0;
-}
-
 .iframeWrap{
     height: 0;
     padding-bottom: 65%;
