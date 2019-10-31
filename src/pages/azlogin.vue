@@ -81,7 +81,7 @@ export default {
           location.reload()
         }
       }
-    }, 500)
+    }, 2000)
   },
   methods: {
     async afterGetToken(token, user) {
