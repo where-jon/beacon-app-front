@@ -71,7 +71,7 @@ export const getToken = (cbIdToken, cbAccessToken) => {
     authContext.login()
   }
 
-  alert('before handleWindowCallback')
+  window.alert('before handleWindowCallback')
   authContext.handleWindowCallback()
   authContext.acquireToken(config.resourceId, (errorDesc, token, error) => {
     if (error) {

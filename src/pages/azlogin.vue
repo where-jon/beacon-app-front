@@ -58,6 +58,7 @@ export default {
     console.log('@@@@@@@@@@@@@@@@@ azLogin')
     this.tenantName = this.tenantName || LocalStorageHelper.popLocalStorage('tenantName')
     try {
+      window.alert('before getToken')
       const token = await AADHelper.getToken(async (token, user) => {
         this.hasToken = true
         this.afterGetToken(token, user)
