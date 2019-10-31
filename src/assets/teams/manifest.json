@@ -1,14 +1,14 @@
 {
     "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.5/MicrosoftTeams.schema.json",
-    "manifestVersion": "devPreview",
-    "version": "1.3.0.3",
-    "id": "dd3ea682-9b02-49ec-9d15-c63cee38c792",
-    "packageName": "exoffice.test3",
+    "manifestVersion": "1.5",
+    "version": "1.3.0.0",
+    "id": "b7913d3a-4ce3-4258-8e11-c39c3f10a1cd",
+    "packageName": "msteams.exbeacon.com",
     "developer": {
-        "name": "m_nishiyama",
-        "websiteUrl": "https://msteams.dev.exbeacon.com/azlogin/?_=1",
-        "privacyUrl": "https://msteams.dev.exbeacon.com/azlogin/?_=1",
-        "termsOfUseUrl": "https://msteams.dev.exbeacon.com/azlogin/?_=1"
+        "name": "WHERE",
+        "websiteUrl": "https://xxx.saas.msteams.exbeacon.com/azlogin/?_=1",
+        "privacyUrl": "https://xxx.saas.msteams.exbeacon.com/azlogin/?_=1",
+        "termsOfUseUrl": "https://xxx.saas.msteams.exbeacon.com/azlogin/?_=1"
     },
     "name": {
         "short": "EXOfficeテストアプリ",
@@ -25,7 +25,7 @@
     "accentColor": "#60A18E",
     "configurableTabs": [
         {
-            "configurationUrl": "https://exbeacon-evalkit.s3-ap-northeast-1.amazonaws.com/config.html",
+            "configurationUrl": "https://xxx.saas.msteams.exbeacon.com/config.html",
             "canUpdateConfiguration": true,
             "scopes": [
                 "team"
@@ -33,11 +33,11 @@
         }
     ],   
     "validDomains": [
-        "msteams.dev.exbeacon.com",
-        "msteams-data.dev.exbeacon.com"
+        "*.saas.msteams.exbeacon.com",
+        "msteams-data.saas.exbeacon.com"
     ],
     "webApplicationInfo": {
-        "id": "dd3ea682-9b02-49ec-9d15-c63cee38c792",
+        "id": "b7913d3a-4ce3-4258-8e11-c39c3f10a1cd",
         "resource": "https://graph.microsoft.com"
     }
 }
