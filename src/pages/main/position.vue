@@ -79,6 +79,7 @@
         </div>
       </b-form>
     </b-row>
+    <!--
     <b-row class="mt-2">
       <b-form>
         <b-form-row class="ml-sm-4 ml-2 mr-1">
@@ -89,6 +90,7 @@
         </b-form-row>
       </b-form>
     </b-row>
+    -->
     <b-row class="mt-3">
       <canvas v-if="!showMeditag" id="map" ref="map" @click="closeVueSelect" />
       <b-col v-if="showMeditag">
