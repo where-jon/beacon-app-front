@@ -174,10 +174,10 @@ export default {
     },
     moveToChat(evt) {
       evt.stopPropagation()
-      microsoftTeams.getContext((context) => {
-        console.log(context)
-      });
-      // console.log(this.selectedTx)
+      if (!this.selectedTx.potCd) {
+        return
+      }
+      microsoftTeams.executeDeepLink(`https://teams.microsoft.com/l/chat/0/0?users=${this.selectedTx.potCd}`)
     },
   },
 }
