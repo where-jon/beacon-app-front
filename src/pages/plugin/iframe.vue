@@ -1,6 +1,6 @@
 <template>
   <div class="iframeWrap">
-    <iframe v-if="viewUrl" width="100%" height="100%" :src="viewUrl" @load="loadCompleteFunc" allowfullscreen></iframe>
+    <iframe v-if="viewUrl" ref="parentFrame" width="100%" :style="iframeStyle" :src="viewUrl" @load="loadCompleteFunc" allowfullscreen></iframe>
   </div>
 </template>
 
@@ -8,6 +8,7 @@
 import * as Util from '../../sub/util/Util'
 import { APP_SERVICE } from '../../sub/constant/config'
 import { PLUGIN_CONSTANTS } from '../../sub/constant/Constants'
+import { EventBus } from '../../sub/helper/base/EventHelper'
 import * as LocalStorageHelper from '../../sub/helper/base/LocalStorageHelper'
 import commonmixin from '../../components/mixin/commonmixin.vue'
 
@@ -16,7 +17,8 @@ export default {
   data() {
     return {
       url: null,
-      VIEW_URL_PREFIX: '/plugin/'
+      VIEW_URL_PREFIX: '/plugin/',
+      scrollHeight: '100%',
     }
   },
   computed: {
@@ -27,13 +29,31 @@ export default {
       set: function(newVal) {
         return newVal
       }
-    }
+    },
+    iframeStyle() {
+      return {
+        height: typeof this.scrollHeight == 'number'? (this.scrollHeight) + 'px': this.scrollHeight,
+        overflow: 'hidden',
+        'overflow-x': 'hidden',
+        'overflow-y': 'hidden',
+      }
+    },
   },
   watch: {
     '$route' (to, from) {
       this.url = LocalStorageHelper.getLocalStorage(PLUGIN_CONSTANTS.PLUGIN_KEY_PREFIX + '-' + to.fullPath.split('=')[1])
       this.$nextTick(() => this.showProgress())
     }
+  },
+  created() {
+    EventBus.$off('pluginUpdate')
+    EventBus.$on('pluginUpdate', () => {
+      try {
+        const childFrame = this.$refs.parentFrame.contentWindow.document.body
+        this.scrollHeight = childFrame.scrollHeight + 64
+        EventBus.$emit('pluginUpdateDefault', this.scrollHeight)
+      } catch(e) {}
+    })
   },
   mounted() {
     const query = PLUGIN_CONSTANTS.PLUGIN_KEY_PREFIX + '='
