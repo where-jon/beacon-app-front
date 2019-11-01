@@ -79,6 +79,47 @@ export const createMasterCd = (masterType, masterList, masterData = null) => {
 }
 
 /**
+ * 重複のないデータを作成する。
+ * @method
+ * @param {Object[]} masterList
+ * @param {Object} obj
+ * @param {String} column
+ * @param {String} type
+ * @param {Number} sign
+ * @return {Object}
+ */
+export const createNoConflictValue = (masterList, obj, column, type, sign = 1) => {
+  if(!masterList.some(master => master[column] == obj[column])){
+    return obj[column]
+  }
+  for(let cnt = 1; cnt < 65536; cnt++) {
+    const value = type == 'number'? obj[column] + (cnt * sign): obj[column] + '-' + cnt
+    if(!masterList.some(master => master[column] == value)){
+      return value
+    }
+  }
+  return obj[column]
+}
+
+ /**
+ * Tx配置設定の新規データを作成する。
+ * @method
+ * @param {Object} tx
+ * @return {Object}
+ */
+export const createLocationFromTx = tx => {
+  const txs = store.state.app_service.txs
+  if(!txs){
+    return tx
+  }
+  return {
+    locationId: tx.btxId * -1,
+    locationCd: createNoConflictValue(txs, { locationCd: tx.btxId * -1 }, 'locationCd', 'string', -1),
+    locationName: createNoConflictValue(txs, { locationName: Util.getValue(tx, 'location.locationName', SensorHelper.createTxLocationDummyName(tx)) }, 'locationName', 'string'),
+  }
+}
+
+/**
  * センサ名を取得する。
  * @method
  * @param {Object} sensor 
