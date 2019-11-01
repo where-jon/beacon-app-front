@@ -78,6 +78,9 @@ export default {
     zoneOptions() {
       return StateHelper.getOptionsFromState('zone', false, true)
     },
+    filterSelectedList() {
+      return ['area', 'group', 'category', 'detail', 'freeWord']
+    },
     selectedArea: {
       get() { return this.$store.state.main.selectedArea},
       set(val) { this.replaceMain({'selectedArea': val})},

@@ -147,6 +147,9 @@ export default {
     },
   },
   async mounted() {
+    if(this.popInit()) {
+      this.condition = null
+    }
     await Promise.all(this.loadStates.map(state => StateHelper.load(state)))
     ViewHelper.importElementUI()
     this.fetchPlugin()
@@ -159,6 +162,11 @@ export default {
   methods: {
     hasValue(val){
       return Util.hasValue(val)
+    },
+    popInit(){
+      const ret = this.$store.state.main.initDetailFilter
+      this.replaceMain({initDetailFilter: null})
+      return ret
     },
     getOptionName(plugin){
       return Util.getValue(plugin, 'option', plugin.name)
