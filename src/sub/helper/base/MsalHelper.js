@@ -1,5 +1,5 @@
 
-import Msal from 'msal'
+import * as Msal from 'msal'
 
 // initialize MSAL
 const msalConfig = {
@@ -12,7 +12,7 @@ const msalConfig = {
     cacheLocation: 'localStorage',
     storeAuthStateInCookie: false
   }
-};
+}
 
 const loginRequest = {
   scopes: ['openid', 'profile', 'User.Read']
