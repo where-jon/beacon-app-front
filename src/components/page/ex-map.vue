@@ -473,8 +473,10 @@ export default {
   watch: {
     filter() {
       this.reloadSelectedTx = {}
-      this.showTxAll()
-      this.stage && this.stage.update()
+      if(this.stage){
+        this.showTxAll()
+        this.stage.update()
+      }
     },
     'vueSelected.area': {
       handler: function(newVal, oldVal){

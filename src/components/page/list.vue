@@ -258,6 +258,7 @@ import * as LocalStorageHelper from '../../sub/helper/base/LocalStorageHelper'
 import * as MenuHelper from '../../sub/helper/dataproc/MenuHelper'
 import * as OptionHelper from '../../sub/helper/dataproc/OptionHelper'
 import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
+import * as VueSelectHelper from '../../sub/helper/ui/VueSelectHelper'
 import commonmixin from '../mixin/commonmixin.vue'
 import detailFilter from '../../components/parts/detailFilter.vue'
 import alert from '../parts/alert.vue'
@@ -498,6 +499,9 @@ export default {
           if(oVal != nVal){
             this.extraFilterSpec[key].change()
           }
+          if(['category', 'group'].some(k => k == key)) {
+            this[StringUtil.concatCamel('selected', key)] = nVal
+          }
         })
       },
       deep: true,
@@ -506,16 +510,18 @@ export default {
   async created() {
     await StateHelper.load('region')
   },
-  mounted() {
+  async mounted() {
     const strageMessage = LocalStorageHelper.popLocalStorage('listMessage')
     this.message = Util.hasValue(strageMessage)? strageMessage: this.listMessage
     this.replaceAS({listMessage: null})
     this.$parent.$options.methods.fetchData.apply(this.$parent)
     if (this.params.extraFilter) {
-      this.params.extraFilter.filter((str) => !(str === 'detectState'))
-        .forEach(str => {
-          StateHelper.load(str)
-        })
+      const filterColumnList = this.params.extraFilter.filter(str => str != 'detectState')
+      await Promise.all(filterColumnList.map(state => StateHelper.load(state)))
+      filterColumnList.filter(state => ['category', 'group'].some(s => s == state)).forEach(state => {
+        const selectedKey = StringUtil.concatCamel('selected', state)
+        this.vueSelected[state] = VueSelectHelper.getVueSelectData(this[state + 'Options'], this[selectedKey])
+      })
     }
     this.sortBy = this.params.sortBy? this.params.sortBy: null
     this.replace({showWarn: false})
