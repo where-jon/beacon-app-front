@@ -13,7 +13,7 @@
           <label v-t="'label.categoryName'" />
           <input v-model="form.categoryName" :readonly="!isEditable" type="text" maxlength="40" class="form-control" required>
         </b-form-group>
-        <b-form-group>
+        <b-form-group v-if="pTypeList.length > 1">
           <label v-t="'label.categoryType'" />
           <b-form-select v-model="form.categoryType" :options="categoryTypes" :disabled="!isEditable" :readonly="!isEditable" required />
         </b-form-group>
@@ -41,11 +41,11 @@
 <script>
 import { mapState } from 'vuex'
 import { APP } from '../../../sub/constant/config'
-import { LOCAL_STORAGE, CATEGORY, SHAPE } from '../../../sub/constant/Constants'
+import { CATEGORY, SHAPE } from '../../../sub/constant/Constants'
 import * as ColorUtil from '../../../sub/util/ColorUtil'
+import * as StringUtil from '../../../sub/util/StringUtil'
 import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
-import * as LocalStorageHelper from '../../../sub/helper/base/LocalStorageHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as ValidateHelper from '../../../sub/helper/dataproc/ValidateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
@@ -56,6 +56,20 @@ import alert from '../../../components/parts/alert.vue'
 import colorPicker from '../../../components/parts/colorpicker'
 
 export default {
+  props: {
+    pName: {
+      type: String,
+      default: '',
+    },
+    pPath: {
+      type: String,
+      default: '/master/category',
+    },
+    pTypeList: {
+      type: Array,
+      default: () => [CATEGORY.PERSON, CATEGORY.THING, CATEGORY.ZONE],
+    },
+  },
   components: {
     breadcrumb,
     alert,
@@ -81,17 +95,14 @@ export default {
     ...mapState('app_service', [
       'category', 'categories',
     ]),
-    indexProp() {
-      return LocalStorageHelper.getLocalStorage(LOCAL_STORAGE.KEY.MASTER_INDEX)
-    },
     backPath() {
-      return this.indexProp.path
+      return this.pPath
     },
     defValue() {
-      return { 'categoryType': this.indexProp.type }
+      return { 'categoryType': this.pTypeList[0] }
     },
     items() {
-      return ViewHelper.createBreadCrumbItems('master', {text: 'category', href: this.backPath}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.pot.potId))
+      return ViewHelper.createBreadCrumbItems('master', {text: StringUtil.concatCamel('category', this.pName), href: this.backPath}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.category.categoryId))
     },
     categoryTypes(){
       return CATEGORY.getTypes().filter(val => APP.CATEGORY.TYPES.includes(val.value))

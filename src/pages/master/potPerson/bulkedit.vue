@@ -1,23 +1,26 @@
 <template>
   <div class="container-fluid">
-    <pot-index :p-type="potType" :p-path="indexPath" />
+    <pot-bulk-edit :p-name="name" :p-type-list="typeList" :p-path="indexPath" />
   </div>
 </template>
 
 <script>
 import { CATEGORY } from '../../../sub/constant/Constants'
-import potIndex from './index.vue'
+import potBulkEdit from '../pot/bulkedit.vue'
 
 export default {
   components: {
-    potIndex,
+    potBulkEdit,
   },
   computed: {
-    potType() {
-      return CATEGORY.PERSON
+    name() {
+      return 'person'
+    },
+    typeList() {
+      return [CATEGORY.PERSON]
     },
     indexPath() {
-      return '/master/pot/personIndex'
+      return '/master/potPerson'
     },
   },
 }

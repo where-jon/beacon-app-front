@@ -8,17 +8,31 @@
 <script>
 import { mapState } from 'vuex'
 import { APP } from '../../../sub/constant/config'
-import { LOCAL_STORAGE } from '../../../sub/constant/Constants'
+import { CATEGORY } from '../../../sub/constant/Constants'
 import * as BrowserUtil from '../../../sub/util/BrowserUtil'
+import * as StringUtil from '../../../sub/util/StringUtil'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
 import * as ImageHelper from '../../../sub/helper/base/ImageHelper'
-import * as LocalStorageHelper from '../../../sub/helper/base/LocalStorageHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkupload from '../../../components/page/bulkupload.vue'
 
 export default {
+  props: {
+    pName: {
+      type: String,
+      default: '',
+    },
+    pPath: {
+      type: String,
+      default: '/master/pot',
+    },
+    pTypeList: {
+      type: Array,
+      default: () => [CATEGORY.PERSON, CATEGORY.THING],
+    },
+  },
   components: {
     breadcrumb,
     bulkupload,
@@ -34,15 +48,15 @@ export default {
     ...mapState('app_service', [
       'pot', 'pots'
     ]),
-    indexProp() {
-      return LocalStorageHelper.getLocalStorage(LOCAL_STORAGE.KEY.MASTER_INDEX)
-    },
     backPath() {
-      return this.indexProp.path
+      return this.pPath
     },
     items() {
-      return ViewHelper.createBreadCrumbItems('master', {text: 'pot', href: this.backPath}, 'bulkUpload')
+      return ViewHelper.createBreadCrumbItems('master', {text: StringUtil.concatCamel('pot', this.pName), href: this.backPath}, 'bulkUpload')
     },
+  },
+  async mounted() {
+    await StateHelper.load('pot')
   },
   methods: {
     onSaved(){
@@ -50,7 +64,7 @@ export default {
       StateHelper.setForceFetch('user', true)
     },
     search(key) {
-      const target = this.pots.find(val => val.potCd == key)
+      const target = this.pots.find(val => val.potCd == key && this.pTypeList.includes(val.potType))
       return target? {
         id: target.potId,
         name: target.potName,

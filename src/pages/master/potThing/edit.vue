@@ -1,23 +1,26 @@
 <template>
   <div class="container-fluid">
-    <category-index :p-type="categoryType" :p-path="indexPath" />
+    <pot-edit :p-name="name" :p-type-list="typeList" :p-path="indexPath" />
   </div>
 </template>
 
 <script>
 import { CATEGORY } from '../../../sub/constant/Constants'
-import categoryIndex from './index.vue'
+import potEdit from '../pot/edit.vue'
 
 export default {
   components: {
-    categoryIndex,
+    potEdit,
   },
   computed: {
-    categoryType() {
-      return CATEGORY.THING
+    name() {
+      return 'thing'
+    },
+    typeList() {
+      return [CATEGORY.THING]
     },
     indexPath() {
-      return '/master/category/thingIndex'
+      return '/master/potThing'
     },
   },
 }

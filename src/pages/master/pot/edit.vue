@@ -117,7 +117,7 @@
 import { mapState } from 'vuex'
 import _ from 'lodash'
 import { APP, EXCLOUD, APP_SERVICE } from '../../../sub/constant/config'
-import { LOCAL_STORAGE, CATEGORY, SENSOR, USER } from '../../../sub/constant/Constants'
+import { CATEGORY, SENSOR, USER } from '../../../sub/constant/Constants'
 import * as StringUtil from '../../../sub/util/StringUtil'
 import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
@@ -136,6 +136,20 @@ import chromeInput from '../../../components/parts/chromeinput.vue'
 import extform from '../../../components/parts/extform.vue'
 
 export default {
+  props: {
+    pName: {
+      type: String,
+      default: '',
+    },
+    pPath: {
+      type: String,
+      default: '/master/pot',
+    },
+    pTypeList: {
+      type: Array,
+      default: () => [CATEGORY.PERSON, CATEGORY.THING],
+    },
+  },
   components: {
     breadcrumb,
     alert,
@@ -169,7 +183,7 @@ export default {
         txs: []
       },
       roleOptions: [],
-      category: _.slice(CATEGORY.getTypes(), 0, 2).filter((val) => APP.CATEGORY.TYPES.includes(val.value)),
+      category: _.slice(CATEGORY.getTypes(), 0, 2).filter(val => APP.CATEGORY.TYPES.includes(val.value) && this.pTypeList.includes(val.value)),
       txIds: Array(APP.POT.TX_MAX),
       btxIds: Array(APP.POT.TX_MAX),
       minors: Array(APP.POT.TX_MAX),
@@ -180,17 +194,14 @@ export default {
     hasId(){
       return Util.hasValue(this.form.potId)
     },
-    indexProp() {
-      return LocalStorageHelper.getLocalStorage(LOCAL_STORAGE.KEY.MASTER_INDEX)
-    },
     backPath() {
-      return this.indexProp.path
+      return this.pPath
     },
     defValue() {
-      return { 'potType': this.indexProp.type }
+      return { 'potType': this.pTypeList[0] }
     },
     items() {
-      return ViewHelper.createBreadCrumbItems('master', {text: 'pot', href: this.backPath}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.pot.potId))
+      return ViewHelper.createBreadCrumbItems('master', {text: StringUtil.concatCamel('pot', this.pName), href: this.backPath}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.pot.potId))
     },
     categoryOptions() {
       return StateHelper.getOptionsFromState('category', false, true,

@@ -9,9 +9,9 @@
 import { mapState } from 'vuex'
 import _ from 'lodash'
 import { APP } from '../../../sub/constant/config'
-import { LOCAL_STORAGE, CATEGORY } from '../../../sub/constant/Constants'
+import { CATEGORY } from '../../../sub/constant/Constants'
+import * as StringUtil from '../../../sub/util/StringUtil'
 import * as Util from '../../../sub/util/Util'
-import * as LocalStorageHelper from '../../../sub/helper/base/LocalStorageHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import * as PotHelper from '../../../sub/helper/domain/PotHelper'
@@ -19,6 +19,20 @@ import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
 
 export default {
+  props: {
+    pName: {
+      type: String,
+      default: '',
+    },
+    pPath: {
+      type: String,
+      default: '/master/pot',
+    },
+    pTypeList: {
+      type: Array,
+      default: () => [CATEGORY.PERSON, CATEGORY.THING],
+    },
+  },
   components: {
     breadcrumb,
     bulkedit,
@@ -28,21 +42,18 @@ export default {
       name: 'pot',
       id: 'potId',
       appServicePath: '/basic/pot',
-      category: _.slice(CATEGORY.getTypes(), 0, 2).filter((val) => APP.CATEGORY.TYPES.includes(val.value)),
+      category: _.slice(CATEGORY.getTypes(), 0, 2).filter(val => APP.CATEGORY.TYPES.includes(val.value) && this.pTypeList.includes(val.value)),
     }
   },
   computed: {
     ...mapState('app_service', [
       'pot', 'pots', 'potImages', 'categories', 'groups', 'txs'
     ]),
-    indexProp() {
-      return LocalStorageHelper.getLocalStorage(LOCAL_STORAGE.KEY.MASTER_INDEX)
-    },
     backPath() {
-      return this.indexProp.path
+      return this.pPath
     },
     items() {
-      return ViewHelper.createBreadCrumbItems('master', {text: 'pot', href: this.backPath}, 'bulkRegister')
+      return ViewHelper.createBreadCrumbItems('master', {text: StringUtil.concatCamel('pot', this.pName), href: this.backPath}, 'bulkRegister')
     },
   },
   async created() {
@@ -92,6 +103,7 @@ export default {
       return dummyKey
     },
     onRestruct(entity, dummyKey){
+      entity.extValue = {}
       if(Util.hasValue(entity.ruby)){
         Util.setValue(entity, 'extValue.ruby', entity.ruby)
       }
@@ -103,7 +115,7 @@ export default {
         entity['potTypeOneOf'] = this.category.map(cat => cat.value)
       }
       if(!Util.hasValue(entity.potType) && !Util.hasValue(entity.categoryName)){
-        entity.potType = CATEGORY.PERSON
+        entity.potType = this.pTypeList[0]
       }
       entity.potCd = entity.ID
 

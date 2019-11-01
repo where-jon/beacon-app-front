@@ -15,7 +15,6 @@ export const LOGIN_MODE = {
 export const LOCAL_STORAGE = {
   KEY: {
     REDIRECT_URL: 'redirectUrl',
-    MASTER_INDEX: 'masterIndex',
   }
 }
 
@@ -855,28 +854,38 @@ export const MENU = [
         icon: 'map-pin',
       },
       {
-        key: 'personPot',
-        path: 'pot/personIndex',
+        key: 'pot',
+        path: 'pot',
         icon: 'id-card',
       },
       {
-        key: 'thingPot',
-        path: 'pot/thingIndex',
+        key: 'potPerson',
+        path: 'potPerson',
+        icon: 'id-card',
+      },
+      {
+        key: 'potThing',
+        path: 'potThing',
         icon: 'cubes',
       },
       {
-        key: 'personCategory',
-        path: 'category/personIndex',
-        icon: 'users',
-      },
-      {
-        key: 'thingCategory',
-        path: 'category/thingIndex',
+        key: 'category',
+        path: 'category',
         icon: 'object-group',
       },
       {
-        key: 'zoneCategory',
-        path: 'category/zoneIndex',
+        key: 'categoryPerson',
+        path: 'categoryPerson',
+        icon: 'users',
+      },
+      {
+        key: 'categoryThing',
+        path: 'categoryThing',
+        icon: 'object-group',
+      },
+      {
+        key: 'categoryZone',
+        path: 'categoryZone',
         icon: 'object-ungroup',
       },
       {

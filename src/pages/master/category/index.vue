@@ -1,30 +1,33 @@
 <template>
   <div class="container-fluid">
-    <ex-master p-name="category" :p-type="pType" :p-params="params" :p-list="categoryList" />
+    <ex-master p-master-name="category" :p-category-name="pName" :p-type-list="pTypeList" :p-params="params" :p-list="categoryList" />
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
-import { LOCAL_STORAGE, CATEGORY } from '../../../sub/constant/Constants'
+import { CATEGORY } from '../../../sub/constant/Constants'
 import * as ColorUtil from '../../../sub/util/ColorUtil'
+import * as StringUtil from '../../../sub/util/StringUtil'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as StyleHelper from '../../../sub/helper/ui/StyleHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
-import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import reloadmixin from '../../../components/mixin/reloadmixin.vue'
-import mList from '../../../components/page/list.vue'
 import exMaster from '../../../components/page/ex-master.vue'
 
 export default {
   props: {
-    pType: {
-      type: Number,
-      required: true,
+    pName: {
+      type: String,
+      default: '',
     },
     pPath: {
       type: String,
-      required: true,
+      default: '/master/category',
+    },
+    pTypeList: {
+      type: Array,
+      default: () => [CATEGORY.PERSON, CATEGORY.THING, CATEGORY.ZONE],
     },
   },
   components: {
@@ -37,8 +40,8 @@ export default {
         name: 'category',
         id: 'categoryId',
         indexPath: this.pPath,
-        editPath: '/master/category/edit',
-        bulkEditPath: '/master/category/bulkedit',
+        editPath: this.pPath + '/edit',
+        bulkEditPath: this.pPath + '/bulkedit',
         appServicePath: '/basic/category',
         csvOut: true,
         custumCsvColumns: ['ID', 'categoryName', 'categoryTypeName', 'color', 'bgColor', 'display.shape', 'description'],
@@ -53,13 +56,12 @@ export default {
         sortBy: 'categoryCd',
         initTotalRows: this.categoryLength
       },
-      items: ViewHelper.createBreadCrumbItems('master', 'category'),
       categoryStyles: [],
     }
   },
   computed: {
     categoryList() {
-      return this.$store.state.app_service.categories.filter((category)=> !category.systemUse)
+      return this.$store.state.app_service.categories.filter(category => !category.systemUse)
     },
     categoryLength() {
       return this.categoryList().length
@@ -89,7 +91,7 @@ export default {
       this.hideProgress()
     },
     style(row) {
-      const categoryStyle = this.categoryStyles.find((val) => val.entity.categoryId == row.categoryId)
+      const categoryStyle = this.categoryStyles.find(val => val.entity.categoryId == row.categoryId)
       return categoryStyle? categoryStyle.style: null
     },
     customCsvData(val){
