@@ -61,6 +61,9 @@ export default {
     this.url = this.getPluginIndex()
     this.$nextTick(() => this.showProgress())
   },
+  beforeDestroy() {
+    EventBus.$emit('pluginUpdateDefault')
+  },
   methods: {
     getPluginIndex() {
       const query = PLUGIN_CONSTANTS.PLUGIN_KEY_PREFIX + '='
