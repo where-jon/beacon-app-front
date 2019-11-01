@@ -191,7 +191,7 @@
           <div class="empty-icon d-inline-flex" /><!-- 横幅0の「支柱」 -->
           <div class="d-inline-flex flex-wrap">
             <div v-for="position in row.item.positions" :key="position.areaId"
-                 :style="position.display" :class="'d-inline-flex m-1 '+ position.blinking" @click.stop="mapDisplay(position)"
+                 :style="position.display" :class="'d-inline-flex m-1 '+ position.blinking" @click.stop="mapDisplay(position, true)"
             >
               {{ position.label }}
             </div>
@@ -843,7 +843,7 @@ export default {
       }
     },
     // 位置把握(一覧)から在席表示に遷移する
-    async mapDisplay(item) {
+    async mapDisplay(item, filterReset) {
       const tx = item.tx
       const selectedTx = {
         btxId: tx.btxId,
@@ -853,6 +853,10 @@ export default {
       const txOk = await this.$parent.$options.methods.checkDetectedTx.call(this.$parent, tx)
       if (txOk) {
         this.replaceMain({selectedTx})
+      }
+      if(filterReset) {
+        this.filterSelectedList.forEach(selected => this[StringUtil.concatCamel('selected', selected)] = null)
+        this.replaceMain({ initDetailFilter: true })
       }
       this.replaceMain({selectedArea})
       this.$router.push('/main/position')
