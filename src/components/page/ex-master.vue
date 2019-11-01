@@ -6,8 +6,7 @@
 </template>
 
 <script>
-import { LOCAL_STORAGE } from '../../sub/constant/Constants'
-import * as LocalStorageHelper from '../../sub/helper/base/LocalStorageHelper'
+import * as StringUtil from '../../sub/util/StringUtil'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../layout/breadcrumb.vue'
 import reloadmixin from '../mixin/reloadmixin.vue'
@@ -15,12 +14,16 @@ import mList from './list.vue'
 
 export default {
   props: {
-    pName: {
+    pMasterName: {
       type: String,
       required: true,
     },
-    pType: {
-      type: Number,
+    pCategoryName: {
+      type: String,
+      required: true,
+    },
+    pTypeList: {
+      type: Array,
       required: true,
     },
     pParams: {
@@ -39,15 +42,14 @@ export default {
   mixins: [reloadmixin],
   computed: {
     items() {
-      return ViewHelper.createBreadCrumbItems('master', this.pName)
+      return ViewHelper.createBreadCrumbItems('master', StringUtil.concatCamel(this.pMasterName, this.pCategoryName))
     },
     filteredList() {
-      return this.pList.filter(element => element[this.pName + 'Type'] == this.pType)
+      return this.pList.filter(element => this.pTypeList.includes(element[this.pMasterName + 'Type']))
     },
   },
   created() {
     this.pParams.initTotalRows = this.filteredList.length
-    LocalStorageHelper.setLocalStorage(LOCAL_STORAGE.KEY.MASTER_INDEX, JSON.stringify({path: this.pParams.indexPath, type: this.pType}))
   },
   methods: {
     customCsvData(val){

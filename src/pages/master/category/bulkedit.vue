@@ -7,15 +7,29 @@
 
 <script>
 import { mapState } from 'vuex'
-import { LOCAL_STORAGE, CATEGORY } from '../../../sub/constant/Constants'
+import { CATEGORY } from '../../../sub/constant/Constants'
+import * as StringUtil from '../../../sub/util/StringUtil'
 import * as Util from '../../../sub/util/Util'
-import * as LocalStorageHelper from '../../../sub/helper/base/LocalStorageHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
 
 export default {
+  props: {
+    pName: {
+      type: String,
+      default: '',
+    },
+    pPath: {
+      type: String,
+      default: '/master/category',
+    },
+    pTypeList: {
+      type: Array,
+      default: () => [CATEGORY.PERSON, CATEGORY.THING, CATEGORY.ZONE],
+    },
+  },
   components: {
     breadcrumb,
     bulkedit,
@@ -31,17 +45,14 @@ export default {
     ...mapState('app_service', [
       'category', 'categories'
     ]),
-    indexProp() {
-      return LocalStorageHelper.getLocalStorage(LOCAL_STORAGE.KEY.MASTER_INDEX)
-    },
     backPath() {
-      return this.indexProp.path
+      return this.pPath
     },
     items() {
-      return ViewHelper.createBreadCrumbItems('master', {text: 'category', href: this.backPath}, 'bulkRegister')
+      return ViewHelper.createBreadCrumbItems('master', {text: StringUtil.concatCamel('category', this.pName), href: this.backPath}, 'bulkRegister')
     },
     categoryTypes(){
-      return CATEGORY.getTypes()
+      return CATEGORY.getTypes().filter(c => this.pTypeList.includes(c.value))
     },
   },
   async created() {

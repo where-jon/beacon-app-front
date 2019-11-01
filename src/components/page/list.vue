@@ -406,10 +406,11 @@ export default {
       if (!this.params.extraFilter) {
         return {}
       }
-      return this.params.extraFilter.map((key) => {
+      return this.params.extraFilter.map(key => {
+        const optionFilter = this.params.extraFilterFunc && this.params.extraFilterFunc[key]? this.params.extraFilterFunc[key]: options => options
         return {
           key: key,
-          options: this[key + 'Options'],
+          options: optionFilter(this[key + 'Options']),
           change: this.params[key + 'Change']? this.params[key + 'Change']: () => {},
           show: this.params.showOnlyHas && this.params.showOnlyHas.includes(key)? Util.hasValue(this[key + 'Options'].filter((val) => val.value != null)): true,
         }
