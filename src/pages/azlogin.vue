@@ -30,7 +30,7 @@
 
 <script>
 import * as AADHelper from '../sub/helper/base/AADHelper'
-import * as MsalHelper from '../sub/helper/base/MsalHelper'
+// import * as MsalHelper from '../sub/helper/base/MsalHelper'
 import * as AuthHelper from '../sub/helper/base/AuthHelper'
 import * as LocalStorageHelper from '../sub/helper/base/LocalStorageHelper'
 import { APP, MSTEAMS_APP } from '../sub/constant/config'
@@ -59,7 +59,7 @@ export default {
     console.log('@@@@@@@@@@@@@@@@@ azLogin')
     this.tenantName = this.tenantName || LocalStorageHelper.popLocalStorage('tenantName')
     try {
-      MsalHelper.signIn()
+      // MsalHelper.signIn()
       const token = await AADHelper.getToken(async (token, user) => {
         this.hasToken = true
         this.afterGetToken(token, user)
