@@ -44,7 +44,7 @@ export const signIn = (callback) => {
     const account = myMSALObj.getAccount()
     if (account) {// avoid duplicate code execution on page load in case of iframe and popup window.
       console.log(account)
-      callback(account.idToken, account.userName)
+      callback(base64(account.idToken), account.userName)
     }
     else {
       console.error('get account failed')
@@ -77,6 +77,13 @@ export const getCachedToken = () => {
   const account = myMSALObj.getAccount()
   if (account && (!isIE || !myMSALObj.isCallback(window.location.hash))) {// avoid duplicate code execution on page load in case of iframe and popup window.
     console.log(account)
-    return account.idToken
+    return base64(account.idToken)
   }
+}
+
+const base64 = json => {
+  const jsonStr = JSON.stringify(json)
+  const jsonB64 = Buffer.from(jsonStr).toString('base64')
+  const jsonB64NoPadding = jsonB64.replace(/={1,2}$/, '')
+  return jsonB64NoPadding
 }
