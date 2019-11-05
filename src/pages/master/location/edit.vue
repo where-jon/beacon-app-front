@@ -54,18 +54,16 @@
               @change="onChangeTxSetting"
             />
             <b-form-group v-show="useZone">
-              <b-form-row>
-                <label v-t="'label.zoneClass'" class="d-flex align-items-center" />
-                <v-select v-model="vueSelected.zone" :options="getZoneClassOptions()" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-2 vue-options-lg">
-                  <template slot="no-options">
-                    {{ vueSelectNoMatchingOptions }}
-                  </template>
-                </v-select>
-              </b-form-row>
-              <b-form-row>
-                <label v-t="'label.zoneBlock'" class="d-flex align-items-center" />
-                <v-select :value="getZoneBlockItems()" :options="zoneBlockOptions" disabled multiple class="vue-options-multi" />
-              </b-form-row>
+              <label v-t="'label.zoneClass'" />
+              <v-select v-model="vueSelected.zone" :options="getZoneClassOptions()" :disabled="!isEditable" :readonly="!isEditable" class="vue-options-lg">
+                <template slot="no-options">
+                  {{ vueSelectNoMatchingOptions }}
+                </template>
+              </v-select>
+            </b-form-group>
+            <b-form-group v-show="useZone">
+              <label v-t="'label.zoneBlock'" />
+              <v-select :value="getZoneBlockItems()" :options="zoneBlockOptions" disabled multiple class="vue-options-multi" />
             </b-form-group>
 
             <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
