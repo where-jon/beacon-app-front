@@ -29,8 +29,8 @@
 </template>
 
 <script>
-import * as AADHelper from '../sub/helper/base/AADHelper'
-// import * as MsalHelper from '../sub/helper/base/MsalHelper'
+// import * as AADHelper from '../sub/helper/base/AADHelper'
+import * as MsalHelper from '../sub/helper/base/MsalHelper'
 import * as AuthHelper from '../sub/helper/base/AuthHelper'
 import * as LocalStorageHelper from '../sub/helper/base/LocalStorageHelper'
 import { APP, MSTEAMS_APP } from '../sub/constant/config'
@@ -59,15 +59,23 @@ export default {
     console.log('@@@@@@@@@@@@@@@@@ azLogin')
     this.tenantName = this.tenantName || LocalStorageHelper.popLocalStorage('tenantName')
     try {
-      // MsalHelper.signIn()
-      const token = await AADHelper.getToken(async (token, user) => {
-        this.hasToken = true
+      let token = MsalHelper.getCachedToken()
+      if (token) {
         this.afterGetToken(token, user)
-      }, (acToken) =>{
-        if (!this.hasToken) {
-          this.afterGetToken(token)
-        }
-      })
+      }
+      else {
+        MsalHelper.signIn((token, user) => {
+          this.afterGetToken(token, user)
+        })
+      }
+      // const token = await AADHelper.getToken(async (token, user) => {
+      //   this.hasToken = true
+      //   this.afterGetToken(token, user)
+      // }, (acToken) =>{
+      //   if (!this.hasToken) {
+      //     this.afterGetToken(token)
+      //   }
+      // })
     } catch (e) {
       console.error('azlogin error', e)
       this.invalidToken = true
@@ -87,6 +95,7 @@ export default {
   },
   methods: {
     async afterGetToken(token, user) {
+      this.hasToken = true
       console.log(token, user)
       AuthHelper.setApp(this.$router, this.$store)
       let tenantStatus = await AuthHelper.getADTenantStatus(token)

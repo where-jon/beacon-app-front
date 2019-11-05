@@ -36,11 +36,18 @@ myMSALObj.handleRedirectCallback((error, response) => {
 })
 
 // signin and acquire a token silently with POPUP flow. Fall back in case of failure with silent acquisition to popup
-export const signIn = () => {
+export const signIn = (callback) => {
   myMSALObj.loginPopup(loginRequest).then((loginResponse) => {
     //Login Success
     console.log(loginResponse)
-    console.log(myMSALObj.getAccount().userName)
+    const account = myMSALObj.getAccount()
+    if (account) {// avoid duplicate code execution on page load in case of iframe and popup window.
+      console.log(account)
+      callback(account.idToken, account.userName)
+    }
+    else {
+      console.error('get account failed')
+    }
   }).catch((error) => {
     console.log(error)
   })
@@ -52,26 +59,23 @@ export const signOut = () => {
   myMSALObj.logout()
 }
 
-export const init = () => {
+export const getCachedToken = () => {
   // Browser check variables
   const ua = window.navigator.userAgent
   const msie = ua.indexOf('MSIE ')
   const msie11 = ua.indexOf('Trident/')
-  const msedge = ua.indexOf('Edge/')
+  // const msedge = ua.indexOf('Edge/')
   const isIE = msie > 0 || msie11 > 0
-  const isEdge = msedge > 0
+  // const isEdge = msedge > 0
 
   //If you support IE, our recommendation is that you sign-in using Redirect APIs
   //If you as a developer are testing using Edge InPrivate mode, please add "isEdge" to the if check
-  if (!isIE) {
-    if (myMSALObj.getAccount()) {// avoid duplicate code execution on page load in case of iframe and popup window.
-      console.log(myMSALObj.getAccount())
-    }
-  }
-  else {
+  if (isIE) {
     myMSALObj.loginRedirect(loginRequest)
-    if (myMSALObj.getAccount() && !myMSALObj.isCallback(window.location.hash)) {// avoid duplicate code execution on page load in case of iframe and popup window.
-      console.log(myMSALObj.getAccount())
-    }
+  }
+  const account = myMSALObj.getAccount()
+  if (account && (!isIE || !myMSALObj.isCallback(window.location.hash))) {// avoid duplicate code execution on page load in case of iframe and popup window.
+    console.log(account)
+    return account.idToken
   }
 }
