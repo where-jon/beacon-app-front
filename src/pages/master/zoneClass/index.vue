@@ -31,14 +31,15 @@ export default {
         bulkEditPath: '/master/zoneClass/bulkedit',
         appServicePath: '/core/zone',
         csvOut: true,
-        custumCsvColumns: ['zoneName', 'areaName', 'categoryName'],
+        custumCsvColumns: ['ID', 'zoneName', 'areaName', 'categoryName'],
         fields: ViewHelper.addLabelByKey(this.$i18n, [ 
+          {key: 'zoneCd', label: 'id', sortable: true },
           {key: 'zoneName', sortable: true },
           {key: 'areaName', sortable: true},
           {key: 'dispCategoryName', label: 'categoryName', sortable: true},
           {key: 'actions', thStyle: {width:'130px !important'} }
         ]),
-        sortBy: 'zoneName',
+        sortBy: 'zoneCd',
         initTotalRows: this.zoneLength
       },
       items: ViewHelper.createBreadCrumbItems('master', 'zoneClass'),
@@ -57,6 +58,9 @@ export default {
     ]),
   },
   methods: {
+    customCsvData(val){
+      val.ID = val.zoneCd
+    },
     onSaved(){
       StateHelper.setForceFetch('tx', true)
       StateHelper.setForceFetch('exb', true)

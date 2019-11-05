@@ -1,4 +1,4 @@
-// Various constants or types come here. Basically constants does not change by environment. 
+// Various constants or types come here. Basically constants does not change by environment.
 
 import * as LocalStorageHelper from '../helper/base/LocalStorageHelper'
 
@@ -10,6 +10,12 @@ export const LOGIN_MODE = {
   APP_SERVICE: 0,
   LOCAL: 1,
   NO_LOGIN: 2
+}
+
+export const LOCAL_STORAGE = {
+  KEY: {
+    REDIRECT_URL: 'redirectUrl',
+  }
 }
 
 export const THEME = [
@@ -51,8 +57,10 @@ export const PATTERN = {
   NUMBER: '^-?[0-9]+[.]?[0-9]*$',
   NUMBER_LIST: '^(-?[0-9]+[.]?[0-9]*)+(,-?[0-9]+[.]?[0-9]*)*$',
   MASTER_CD: '^[a-zA-Z0-9_\\-\\.]*$',
+  LOCATION_CD: '^[a-zA-Z0-9_\\-]*$',
   REGEXP: {
     MASTER_CD: /^[a-zA-Z0-9_\-.]*$/,
+    LOCATION_CD: /^[a-zA-Z0-9_\\-]*$/,
   },
 }
 
@@ -64,6 +72,7 @@ export const BULK = {
     AREA: { ALLOW: ['areaId', 'areaName', 'ID'], DISALLOW: ['deviceId', 'deviceIdX', 'zoneName'] },
     EXB: { ALLOW: ['exbId', 'locationName', 'deviceId'] },
     TX: { ALLOW: ['txId', 'btxId', 'minor'] },
+    LOCATION: { ALLOW: ['locationId', 'locationCd', 'locationName'] },
     POT: { ALLOW: ['potId', 'potName', 'potCd'] },
     CATEGORY: { ALLOW: ['categoryId', 'categoryName', 'display'] },
     GROUP: { ALLOW: ['groupId', 'groupName', 'display'] },
@@ -163,11 +172,25 @@ export const txViewTypes = [
   {value: 3, text: 'pattern3'},
 ]
 
+export const EXB = {
+  TYPE: {
+    NONE_DIRECT: 0,
+    DIRECT: 1,
+  },
+  getTypes() {
+    return [
+      { value: null, text: '' },
+      { value: 0, text: i18n.tnl('label.noneDirect') },
+      { value: 1, text: i18n.tnl('label.direct') },
+    ]
+  }
+}
+
 export const CATEGORY = {
   PERSON: 1,
   THING: 2,
   ZONE: 3,
-  getTypes(){ 
+  getTypes(){
     return [
       {value: CATEGORY.PERSON, text: i18n.tnl('label.person')},
       {value: CATEGORY.THING, text: i18n.tnl('label.thing')},
@@ -183,7 +206,7 @@ export const PROCESS_SUM = {
   PROCESSING: {value: 2, label: 'processing'},
   NOT_SMOOTH: {value: 3, label: 'notSmooth', error: true},
   LATE: {value: 4, label: 'processLate', error: true},
-  getTypes(){ 
+  getTypes(){
     return [
       {value: CATEGORY.THING, text: i18n.tnl('label.thing')},
       {value: CATEGORY.PERSON, text: i18n.tnl('label.person')},
@@ -215,7 +238,7 @@ export const SHAPE = {
 export const ZONE = {
   COORDINATE: 0,
   NON_COORDINATE: 1,
-  getTypes(){ 
+  getTypes(){
     return [
       {value: ZONE.COORDINATE, text: i18n.tnl('label.coordinate')},
       {value: ZONE.NON_COORDINATE, text: i18n.tnl('label.nonCoordinate')},
@@ -441,6 +464,11 @@ export const NOTIFY_STATE = {
   }
 }
 
+export const TENANT_STATE = {
+  ENABLED: 1,
+  DISABLED: 0
+}
+
 export const ERROR_STATE = {
   NOT_REGIST: 'foreignKey',
   OVER_SIZE: 'uploadImgMax'
@@ -465,7 +493,7 @@ export const TX_VIEW_TYPES = {
 }
 
 export const POSITION_STACK_TYPES = {
-  getTypes(){ 
+  getTypes(){
     return [
       {text: i18n.tnl('label.area'), value: 1, className: 'area'},
       {text: i18n.tnl('label.zone'), value: 2, className: 'zone'},
@@ -503,6 +531,187 @@ export const SETTING = {
       {text: i18n.tnl('label.boolean'), value: 'boolean'},
       {text: 'json', value: 'json'},
     ]
+  },
+  getType() {
+    return {
+      APP: {
+        POS: {
+          MOVING_AVERAGE_TIME: SETTING.NUMBER,
+          PROHIBIT_GROUPS: SETTING.NUMBER_LIST,
+          PROHIBIT_ALERT: SETTING.STRING_LIST,
+          LOST_ALERT: SETTING.STRING_LIST,
+          LOST_GROUPS: SETTING.NUMBER_LIST,
+          PROHIBIT: {
+            DUPLICATE_MAIL_TIME: SETTING.NUMBER,
+          },
+          LOST: {
+            DUPLICATE_MAIL_TIME: SETTING.NUMBER,
+          },
+        },
+        SENSOR: {
+          EXB_SENSOR: SETTING.NUMBER_LIST,
+          TX_SENSOR: SETTING.NUMBER_LIST,
+        },
+        POS_LIST: {
+          WITH: SETTING.STRING_LIST,
+        },
+        TX: {
+          WITH: SETTING.STRING_LIST,
+        },
+        EXB: {
+          SENSOR: SETTING.NUMBER_LIST,
+        },
+        LOCATION: {
+          WITH: SETTING.STRING_LIST,
+          TYPE: {
+            WITH: SETTING.STRING_LIST,
+          },
+        },
+        USER: {
+          WITH: SETTING.STRING_LIST,
+        },
+        POT: {
+          WITH: SETTING.STRING_LIST,
+          EXT_DEF: SETTING.JSON,
+        },
+        CATEGORY: {
+          TYPES: SETTING.NUMBER_LIST,
+        },
+        NOTIFY: {
+          MIDIUM_TYPES: SETTING.NUMBER_LIST,
+          STATE_TYPES: SETTING.NUMBER_LIST,
+        },
+        STAY_SUM: {
+          SCALE_TIMES: SETTING.NUMBER_LIST,
+        },
+        TX_MON: {
+          WITH: SETTING.STRING_LIST,
+          WITH_SENSOR: SETTING.NUMBER_LIST,
+        },
+        SENSOR_LIST: {
+          WITH: SETTING.STRING_LIST,
+        },
+        TXDETAIL: {
+          ITEMS: SETTING.STRING_LIST,
+        },
+        SVC: {
+          SLACK_CHANNEL: SETTING.STRING,
+          SLACK_TOKEN: SETTING.STRING,
+          STAY_SUM: {
+            START: SETTING.NUMBER,
+            END: SETTING.NUMBER,
+            INTERVAL: SETTING.NUMBER,
+            CALC_BY: SETTING.STRING,
+            ADJUST_TIME: SETTING.NUMBER,
+            REAL_TIME: SETTING.BOOLEAN,
+          },
+          POS: {
+            CACHE_TIME: SETTING.NUMBER,
+          },
+          PROXIMITY: {
+            USE_TXAIR: SETTING.BOOLEAN,
+            USE_MEETING_ROOM: SETTING.BOOLEAN,
+            EXCLOUD_RAWLOG_DIR: SETTING.STRING,
+            BLANK_RANGE: SETTING.NUMBER,
+            MIN_RANGE: SETTING.NUMBER,
+          },
+          WORKLOAD: {
+            PAUSE_TIMEOUT: SETTING.NUMBER,
+          },
+          PROCESS: {
+            LOCATION_TYPE_TO_RELEASE_TX_POT: SETTING.NUMBER,
+          },
+        },
+        BATCH: {
+          POSITION: {
+            INTERVAL: SETTING.NUMBER,
+          },
+          SENSOR_1: {
+            INTERVAL: SETTING.NUMBER,
+          },
+          SENSOR_2: {
+            INTERVAL: SETTING.NUMBER,
+          },
+          SENSOR_3: {
+            INTERVAL: SETTING.NUMBER,
+          },
+          SENSOR_5: {
+            INTERVAL: SETTING.NUMBER,
+          },
+          SENSOR_6: {
+            INTERVAL: SETTING.NUMBER,
+          },
+          SENSOR_8: {
+            INTERVAL: SETTING.NUMBER,
+          },
+          MONITOR: {
+            INTERVAL: SETTING.NUMBER,
+          },
+          UTILIZATION: {
+            CRON: SETTING.STRING,
+          },
+          STAY_SUM: {
+            CRON: SETTING.STRING,
+          },
+          PROXIMITY: {
+            CRON: SETTING.STRING,
+          },
+          LOST_ZONE: {
+            INTERVAL: SETTING.NUMBER,
+          },
+          PROHIBIT_ZONE: {
+            INTERVAL: SETTING.NUMBER,
+          },
+        },
+      },
+      DISP: {
+        TX: {
+          ABSENT_ZONE_DISPLAY_TYPES: SETTING.STRING_LIST,
+        },
+        THERMOH: {
+          PATTERN: SETTING.STRING_LIST,
+          HUMIDITY_PATTERN: SETTING.STRING_LIST,
+        },
+        POSITION_HISTORY: {
+          HEADERS: SETTING.STRING_LIST,
+        },
+        MEDITAG: {
+          STRESS_BG: SETTING.STRING_LIST,
+        },
+      },
+      DEV: {
+        SIMULATION: SETTING.NUMBER,
+        SIMULATION_MOVE_PERCENT: SETTING.NUMBER,
+        SIMULATION_MOVE_AREA_PERCENT: SETTING.NUMBER,
+      },
+    }
+  },
+  getDefault() {
+    return {
+      APP: {
+        POS: {
+          PROHIBIT: {
+            DUPLICATE_MAIL_TIME: 180000
+          },
+          LOST: {
+            DUPLICATE_MAIL_TIME: 180000
+          }
+        },
+        SVC: {
+          STAY_SUM: {
+            STAY_SUM_START: 0,
+            STAY_SUM_END: 2400,
+            STAY_SUM_INTERVAL: 5,
+            STAY_SUM_CALC_BY: "location",
+            STAY_SUM_ADJUST_TIME: 4,
+          },
+          PROXIMITY:{
+            BLANK_RANGE: 60000,
+            MIN_RANGE: 60000,
+          },
+        },
+      },
+    }
   },
 }
 
@@ -598,7 +807,7 @@ export const MENU = [
       key: 'ledOperation',
       path: 'led',
       icon: 'lightbulb',
-    }
+    },
     ]
   },
   {
@@ -631,13 +840,17 @@ export const MENU = [
       },
       {
         key: 'locationSetting',
-        path: 'location',
+        path: 'location/position',
         icon: 'map',
-        // icon: 'fas fa-map-pin',
+      },
+      {
+        key: 'locationList',
+        path: 'location',
+        icon: 'location-arrow',
       },
       {
         key: 'txLocationSetting',
-        path: 'txlocation',
+        path: 'txlocation/position',
         icon: 'map-pin',
       },
       {
@@ -646,9 +859,34 @@ export const MENU = [
         icon: 'id-card',
       },
       {
+        key: 'potPerson',
+        path: 'potPerson',
+        icon: 'id-card',
+      },
+      {
+        key: 'potThing',
+        path: 'potThing',
+        icon: 'cubes',
+      },
+      {
         key: 'category',
         path: 'category',
         icon: 'object-group',
+      },
+      {
+        key: 'categoryPerson',
+        path: 'categoryPerson',
+        icon: 'users',
+      },
+      {
+        key: 'categoryThing',
+        path: 'categoryThing',
+        icon: 'object-group',
+      },
+      {
+        key: 'categoryZone',
+        path: 'categoryZone',
+        icon: 'object-ungroup',
       },
       {
         key: 'group',
@@ -679,6 +917,12 @@ export const MENU = [
         key: 'notifyTemplate',
         path: 'notifyTemplate',
         icon: 'envelope',
+      },
+      {
+        key: 'gateway',
+        path: 'gateway',
+        icon: 'road',
+        exserver: true,
       },
     ]
   },
@@ -856,4 +1100,10 @@ export const SYSTEM_ZONE_CATEGORY_NAME = {
   ABSENT: 'ABSENT',
   PROHIBIT: 'PROHIBIT',
   ABSENT_DISPLAY: 'ABSENT_DISPLAY',
+}
+
+export const PLUGIN_CONSTANTS = {
+  IFRAME_BASE_DIR: 'plugin/',
+  PLUGIN_KEY_PREFIX: 'plugin-index',
+  VIEW_URL_PREFIX: '/plugin/'
 }

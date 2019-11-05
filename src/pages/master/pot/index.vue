@@ -1,27 +1,39 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" />
-    <m-list :params="params" :list="pots" />
+    <ex-master p-master-name="pot" :p-category-name="pName" :p-type-list="pTypeList" :p-params="params" :p-list="pots" />
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
 import { APP, EXCLOUD, APP_SERVICE } from '../../../sub/constant/config'
+import { CATEGORY } from '../../../sub/constant/Constants'
 import * as ArrayUtil from '../../../sub/util/ArrayUtil'
 import * as Util from '../../../sub/util/Util'
 import * as MenuHelper from '../../../sub/helper/dataproc/MenuHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import * as PotHelper from '../../../sub/helper/domain/PotHelper'
-import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import reloadmixin from '../../../components/mixin/reloadmixin.vue'
-import mList from '../../../components/page/list.vue'
+import exMaster from '../../../components/page/ex-master.vue'
 
 export default {
+  props: {
+    pName: {
+      type: String,
+      default: '',
+    },
+    pPath: {
+      type: String,
+      default: '/master/pot',
+    },
+    pTypeList: {
+      type: Array,
+      default: () => [CATEGORY.PERSON, CATEGORY.THING],
+    },
+  },
   components: {
-    breadcrumb,
-    mList,
+    exMaster,
   },
   mixins: [reloadmixin],
   data() {
@@ -29,20 +41,20 @@ export default {
       params: {
         name: 'pot',
         id: 'potId',
-        indexPath: '/master/pot',
-        editPath: '/master/pot/edit',
+        indexPath: this.pPath,
+        editPath: this.pPath + '/edit',
         appServicePath: '/basic/pot',
-        bulkEditPath: '/master/pot/bulkEdit',
-        bulkUploadPath: '/master/pot/bulkUpload',
+        bulkEditPath: this.pPath + '/bulkEdit',
+        bulkUploadPath: this.pPath + '/bulkUpload',
         csvOut: true,
         custumCsvColumns: this.getCustomCsvColumns(),
         fields: this.getFields(),
         extraFilter: this.getExtraFilter(),
+        extraFilterFunc: this.getExtraFilterFunc(),
         sortBy: 'ID',
         initTotalRows: this.$store.state.app_service.pots.length,
       },
       name: 'pot',
-      items: ViewHelper.createBreadCrumbItems('master', 'pot'),
       extValueDefault: {},
       thumbnailUrl: APP_SERVICE.BASE_URL + EXCLOUD.POT_THUMBNAIL_URL,
       thumbnailUrlMap: {}
@@ -52,13 +64,14 @@ export default {
     ...mapState('app_service', [
       'pots',
       'roles',
+      'categories',
       'forceFetchPot',
       'updatedPotThumbnailList',
       'thumbnailUrls',
     ]),
   },
   async created() {
-      await Promise.all(['pots'].map(StateHelper.load))
+      await Promise.all(['pot', 'category'].map(state => StateHelper.load(state)))
 
       const urls = this.pots.map( pot => {
         let url = ""
@@ -78,7 +91,7 @@ export default {
       urls.forEach(url => this.thumbnailUrlMap[url.potId] = url.url)
       this.replaceAS({thumbnailUrls: this.thumbnailUrlMap})
 
-  },
+},
   methods: {
     getCustomCsvColumns(){
       return [
@@ -124,7 +137,12 @@ export default {
       StateHelper.setForceFetch('user', true)
     },
     getExtraFilter(){
-      return [MenuHelper.isEnabledMenu('group') && ArrayUtil.includesIgnoreCase(APP.POT.WITH, 'group')? 'group': null, MenuHelper.isEnabledMenu('category') && ArrayUtil.includesIgnoreCase(APP.POT.WITH, 'category')? 'category': null].filter((val) => val)
+      return [MenuHelper.isEnabledMenu('group') && ArrayUtil.includesIgnoreCase(APP.POT.WITH, 'group')? 'group': null, MenuHelper.isEnabledMenu('category') && ArrayUtil.includesIgnoreCase(APP.POT.WITH, 'category')? 'category': null].filter(val => val)
+    },
+    getExtraFilterFunc(){
+      return {
+        category: options => options.filter(option => this.categories.find(category => category.categoryId == option.value && this.pTypeList.includes(category.categoryType)))
+      }
     },
     async fetchData(payload) {
       try {

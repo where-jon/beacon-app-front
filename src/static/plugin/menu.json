@@ -1,0 +1,15 @@
+[
+  {
+    "key": "recordsTest",
+    "icon": "list-ul",
+    "order": 0,
+    "base": "test/",
+    "pages": [
+      {
+        "key": "hitoMono",
+        "path": "records.html",
+        "icon": "list-ul"
+      }
+    ]
+  }
+]

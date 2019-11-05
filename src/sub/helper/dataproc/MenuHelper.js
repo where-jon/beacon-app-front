@@ -3,11 +3,13 @@
  * @module helper/dataproc/MenuHelper
  */
 
-import { ROLE_FEATURE, MENU } from '../../constant/Constants'
+import { ROLE_FEATURE, MENU, PLUGIN_CONSTANTS } from '../../constant/Constants'
 import * as StringUtil from '../../util/StringUtil'
 import * as Util from '../../util/Util'
 import * as AuthHelper from '../base/AuthHelper'
 import * as LocalStorageHelper from '../base/LocalStorageHelper'
+import axios from 'axios'
+import { APP } from '../../constant/config'
 
 let store
 
@@ -30,9 +32,12 @@ export const setStore = pStore => {
  * @param {Boolean} isTenantAdmin 
  * @return {Object[]}
  */
-export const fetchNav = (masterFeatureList, tenantFeatureList, featureList, isProvider, isTenantAdmin) => {
+export const fetchNav = async (masterFeatureList, tenantFeatureList, featureList, isProvider, isTenantAdmin) => {
   let retNav = _.map(MENU, group => {
     let pages = _.filter(group.pages, page => {
+      if(page.exserver && !APP.SVC.POS.EXSERVER){ // EXSERVERは静的に設定する必要有り
+        return false
+      }
       if (isTenantAdmin && group.tenantOnly) {
         return true
       }
@@ -59,7 +64,51 @@ export const fetchNav = (masterFeatureList, tenantFeatureList, featureList, isPr
   retNav = _.filter(retNav, group => {
     return group.pages.length > 0
   })
-  return retNav
+
+  // プラグインメニュー項目をmenu.jsonからロードする
+  return await loadPluginMenuItems(retNav, masterFeatureList, tenantFeatureList, featureList, isProvider, isTenantAdmin)
+}
+
+const loadPluginMenuItems = async (orgMenuItems, masterFeatureList, tenantFeatureList, featureList, isProvider, isTenantAdmin) => {
+
+  const iframeBaseDir = PLUGIN_CONSTANTS.IFRAME_BASE_DIR
+  const pluginKeyPrefix = PLUGIN_CONSTANTS.PLUGIN_KEY_PREFIX
+  const pluginPathPrefix = PLUGIN_CONSTANTS.VIEW_URL_PREFIX
+  const splice = Array.prototype.splice
+
+  return await axios.get(iframeBaseDir + 'menu.json').then(res => {
+    const length = orgMenuItems.length
+    res.data
+    .filter((d) => {
+      if (isTenantAdmin || isProvider) {
+        return true
+      }
+      const path = pluginPathPrefix + d.base
+      return featureOk(path, tenantFeatureList) && getMode(path, featureList) & ROLE_FEATURE.MODE.SYS_ALL
+    })
+    .map((d) => {
+      const orgBase = d.base
+      d.base = iframeBaseDir
+      d.pages = d.pages.filter((p) => featureOk(pluginPathPrefix + orgBase + p.path, masterFeatureList))
+      d.pages.forEach((p, index, array) => {
+        if (p.path && p.path.length > 0) {
+          p.path = orgBase + p.path
+          LocalStorageHelper.setLocalStorage(pluginKeyPrefix + '-' + index, pluginPathPrefix  + p.path)
+          // iframeページ経由でpluginページにアクセスするため、パスのベースをiframeページパスに置き換える
+          p.path = `iframe?${pluginKeyPrefix}=${index}`
+        }
+      })
+      return d
+    })
+    .filter((d) => d.order !== null && d.order !== undefined && d.order < length && d.pages.length > 0)
+    .forEach((d) => splice.apply(orgMenuItems, [d.order,0].concat([d])))
+    const nonOrders = res.data.filter((d) => d.order === null || d.order === undefined || d.order >= length)
+    return orgMenuItems.concat(nonOrders)
+  })
+  .catch(error => {
+    console.error(error)
+    return orgMenuItems
+  })
 }
 
 /**

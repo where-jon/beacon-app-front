@@ -76,6 +76,7 @@
     "line": "Line: {line}",
     "linage": "Lineage",
     "help": "Help",
+    "status": "Status",
 
     "---------------- App exbeacon ---------------":"",
 
@@ -89,12 +90,10 @@
     "area": "Area",
     "exb": "EXBeacon",
     "location": "EXB Location",
-    "locationSetting": "EXB Location",
     "develop": "Developer",
     "env": "Environment Variables",
     "detectedProhibitZone": "Detected ProhibitZone",
     "detectedLostZone": "Detected LostZone",
-
     "exbId": "EXB ID",
     "exbName": "EXB name",
     "deviceId": "Device ID",
@@ -507,7 +506,6 @@
     "masterArea": "Area",
     "masterExb": "EXB",
     "masterTx": "Tx",
-    "masterLocation": "EXB Location",
     "masterPot": "Person or Thing",
     "masterCategory": "Category",
     "masterGroup": "Group",
@@ -517,6 +515,7 @@
     "masterZoneBlock": "Zone(Block)",
     "masterTenant": "Tenant",
     "masterRoleFeature": "Feature",
+    "masterGateway": "Gateway",
     "UsageSituation": "Utilization",
     "Monitor": "Monitor",
     "monitorGW": "Monitor Gateway",
@@ -864,11 +863,7 @@
       },
       "EXB_LOC": {
         "SIZE": {
-          "W": "EXB icon size (width) of EXB layout setting screen::Set up the width of EXB icon displayed on EXB setting screen.",
-          "H": "EXB icon size (height) of EXB layout setting screen::Set up the height of EXB icon displayed on EXB setting screen"
-        },
-        "BGCOLOR": "EXB icon background color of EXB layout setting screen::Set up the background color of EXB icon displayed on the EXB setting screen. Set up with a color code including #.",
-        "COLOR": "EXB icon text color of EXB layout setting screen::Set up the EXB icon color displayed EXB setting screen. Set up with color code including #."
+        }
       },
       "TX_LOC": {
         "SIZE": {
@@ -953,184 +948,6 @@
       "BASE_URL": "EXCloud URL::Set up EXCloud URL."
     },
 
-    "TYPE": {
-      "APP": {
-       "MAIL": {
-          "TYPE": "string",
-          "ID": "string",
-          "PASSWORD": "string",
-          "SMTP_HOST": "string",
-          "SMTP_PORT": "number",
-          "SMTP_AUTH": "boolean",
-          "SMTP_STARTTLS": "boolean"
-        },
-        "POS": {
-          "MOVING_AVERAGE_TIME": "number",
-          "PROHIBIT_GROUPS": "numberList",
-          "PROHIBIT_ALERT": "stringList",
-          "LOST_ALERT": "stringList",
-          "LOST_GROUPS": "numberList",
-          "PROHIBIT": {
-            "DUPLICATE_MAIL_TIME": "number"
-          },
-          "LOST": {
-            "DUPLICATE_MAIL_TIME": "number"
-          }
-        },
-        "SENSOR": {
-          "EXB_SENSOR": "numberList",
-          "TX_SENSOR": "numberList"
-        },
-        "POS_LIST": {
-          "WITH": "stringList"
-        },
-        "TX": {
-          "WITH": "stringList"
-        },
-        "EXB": {
-          "SENSOR": "numberList",
-          "WITH": "stringList"
-        },
-        "USER": {
-          "WITH": "stringList"
-        },
-        "POT": {
-          "WITH": "stringList",
-          "EXT_DEF": "json"
-        },
-        "CATEGORY": {
-          "TYPES": "numberList"
-        },
-        "NOTIFY": {
-          "MIDIUM_TYPES": "numberList",
-          "STATE_TYPES": "numberList"
-        },
-        "STAY_SUM": {
-          "SCALE_TIMES": "numberList"
-        },
-        "TX_MON": {
-          "WITH": "stringList",
-          "WITH_SENSOR": "numberList"
-        },
-        "SENSOR_LIST": {
-          "WITH": "stringList"
-        },
-        "TXDETAIL": {
-          "ITEMS": "stringList"
-        },
-        "SVC": {
-          "SLACK_CHANNEL": "string",
-          "SLACK_TOKEN": "string",
-          "STAY_SUM": {
-            "START": "number",
-            "END": "number",
-            "INTERVAL": "number",
-            "CALC_BY": "string",
-            "ADJUST_TIME": "number",
-            "REAL_TIME": "boolean"
-          },
-          "POS": {
-            "CACHE_TIME": "number"
-          },
-          "PROXIMITY":{
-            "USE_TXAIR": "boolean",
-            "USE_MEETING_ROOM": "boolean",
-            "EXCLOUD_RAWLOG_DIR": "string",
-            "BLANK_RANGE": "number",
-            "MIN_RANGE": "number"
-          }
-        },
-        "BATCH": {
-          "POSITION": {
-            "INTERVAL": "number"
-          },
-          "SENSOR_1": {
-            "INTERVAL": "number"
-          },
-          "SENSOR_2": {
-            "INTERVAL": "number"
-          },
-          "SENSOR_3": {
-            "INTERVAL": "number"
-          },
-          "SENSOR_5": {
-            "INTERVAL": "number"
-          },
-          "SENSOR_6": {
-            "INTERVAL": "number"
-          },
-          "SENSOR_8": {
-            "INTERVAL": "number"
-          },
-          "MONITOR": {
-            "INTERVAL": "number"
-          },
-          "UTILIZATION": {
-            "CRON": "string"
-          },
-          "STAY_SUM": {
-            "CRON": "string"
-          },
-          "PROXIMITY": {
-            "CRON": "string"
-          }
-        }
-      },
-      "DISP": {
-        "TX": {
-          "ABSENT_ZONE_DISPLAY_TYPES": "stringList"
-        },
-        "THERMOH": {
-          "PATTERN": "stringList",
-          "HUMIDITY_PATTERN": "stringList"
-        },
-        "POSITION_HISTORY": {
-          "HEADERS": "stringList"
-        },
-        "MEDITAG": {
-          "STRESS_BG": "stringList"
-        }
-      },
-      "DEV": {
-        "SIMULATION": "number",
-        "SIMULATION_MOVE_PERCENT": "number",
-        "SIMULATION_MOVE_AREA_PERCENT": "number"
-      }
-    },
-    "DEFAULT": {
-      "APP": {
-        "MAIL": {
-          "TYPE": "type",
-          "ID": "id",
-          "PASSWORD": "password",
-          "SMTP_HOST": "host",
-          "SMTP_PORT": "port",
-          "SMTP_AUTH": "auth",
-          "SMTP_STARTTLS": "tls"
-        },
-        "POS": {
-          "PROHIBIT": {
-            "DUPLICATE_MAIL_TIME": "180000"
-          },
-          "LOST": {
-            "DUPLICATE_MAIL_TIME": "180000"
-          }
-        },
-        "SVC": {
-          "STAY_SUM": {
-            "STAY_SUM_START": "0",
-            "STAY_SUM_END": "2400",
-            "STAY_SUM_INTERVAL": "5",
-            "STAY_SUM_CALC_BY": "location",
-            "STAY_SUM_ADJUST_TIME": "4"
-          },
-          "PROXIMITY":{
-            "BLANK_RANGE": "60000",
-            "MIN_RANGE": "60000"
-          }
-        }
-      }
-    },
     "OPTIONS": {
       "SETTING_CATEGORY": {
         "COMMON": "Common",
@@ -1148,7 +965,6 @@
         "TXDETAIL": "Tx Deatils",
         "TX_LOC": "Tx Location icon",
         "EXB": "EXB",
-        "EXB_LOC": "EXB Location icon",
         "USER": "User",
         "POT": "People or Things",
         "CATEGORY": "Category",
@@ -1250,7 +1066,6 @@
         "minor": "minor::minor",
         "deviceId": "deviceId::Device ID",
         "deviceIdX": "deviceIdX::Device ID(Hex)",
-        "locationName": "locationName::EXB name",
         "posId": "posId::posId",
         "areaName": "areaName::Area name",
         "x": "x::X",
@@ -1266,7 +1081,7 @@
         "dispPir": "dispPir::Show on pir",
         "dispAlways": "dispAlways::Show always"
       },
-      "EXB": {
+      "LOCATION": {
         "posId": "posId::posId",
         "zone": "zone::Zone name"
       },

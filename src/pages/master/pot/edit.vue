@@ -136,6 +136,20 @@ import chromeInput from '../../../components/parts/chromeinput.vue'
 import extform from '../../../components/parts/extform.vue'
 
 export default {
+  props: {
+    pName: {
+      type: String,
+      default: '',
+    },
+    pPath: {
+      type: String,
+      default: '/master/pot',
+    },
+    pTypeList: {
+      type: Array,
+      default: () => [CATEGORY.PERSON, CATEGORY.THING],
+    },
+  },
   components: {
     breadcrumb,
     alert,
@@ -147,9 +161,7 @@ export default {
     return {
       name: 'pot',
       id: 'potId',
-      backPath: '/master/pot',
       appServicePath: '/basic/pot',
-      items: ViewHelper.createBreadCrumbItems('master', {text: 'pot', href: '/master/pot'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.pot.potId)),
       showEmail: false,
       editShowUser: false,
       form: {
@@ -170,11 +182,8 @@ export default {
         role: null,
         txs: []
       },
-      defValue: {
-        'potType': APP.CATEGORY.TYPES[0] != 3? APP.CATEGORY.TYPES[0]: null,
-      },
       roleOptions: [],
-      category: _.slice(CATEGORY.getTypes(), 0, 2).filter((val) => APP.CATEGORY.TYPES.includes(val.value)),
+      category: _.slice(CATEGORY.getTypes(), 0, 2).filter(val => APP.CATEGORY.TYPES.includes(val.value) && this.pTypeList.includes(val.value)),
       txIds: Array(APP.POT.TX_MAX),
       btxIds: Array(APP.POT.TX_MAX),
       minors: Array(APP.POT.TX_MAX),
@@ -184,6 +193,15 @@ export default {
   computed: {
     hasId(){
       return Util.hasValue(this.form.potId)
+    },
+    backPath() {
+      return this.pPath
+    },
+    defValue() {
+      return { 'potType': this.pTypeList[0] }
+    },
+    items() {
+      return ViewHelper.createBreadCrumbItems('master', {text: StringUtil.concatCamel('pot', this.pName), href: this.backPath}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.pot.potId))
     },
     categoryOptions() {
       return StateHelper.getOptionsFromState('category', false, true,

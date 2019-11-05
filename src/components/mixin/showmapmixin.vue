@@ -31,7 +31,6 @@ export default {
       canvasScale: 1, // p, rssimap, position, thermohumidity, heatmap-position
       reloadSelectedTx: {}, // pir, position
       showReady: false, //  pir, positio
-      showingDetailTime: null, //  pir, position
       showIconMinWidth: POSITION.SHOW_ICON_MIN_WIDTH, // pir, position
 
       showTryCount: 0, // p
@@ -45,7 +44,7 @@ export default {
   async created() {
     await StateHelper.load('area')
     this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions, this.selectedArea, !Util.hasValue(this.selectedArea))
-    this.selectedArea = this.getInitAreaOption()
+    this.selectedArea = Util.getValue(this, 'vueSelected.area.value', this.getInitAreaOption())
     this.loadComplete = true
     this.defineResizeEvent(this.$route.path)
   },
@@ -68,39 +67,38 @@ export default {
   },
   methods: {
     defineResizeEvent(path) {
-      if (StringUtil.startsWithAny(path, ['/main','/sum','/develop/installation'])) {
-        let timer = 0
-        let currentWidth = window.innerWidth
-        this.onResize = () => {
-          if (path != this.$route.path) {
-            window.removeEventListener('resize', this.onResize)
-            clearTimeout(timer)
-            return
-          }
-          this.icons = {} // リサイズ時にアイコンキャッシュをクリア
-          if (timer > 0) {
-            clearTimeout(timer)
-          } 
-          timer = setTimeout( async () => {
-            if (currentWidth === window.innerWidth && BrowserUtil.isAndroidOrIOS()) {
-              // モバイル端末だと表示の直後にリサイズイベントが発生してしまうため、
-              // 画面横幅が変わっていなければ処理をキャンセル
-              return
-            } else {
-              currentWidth = window.innerWidth
-            }
-            this.reset()
-            if (this.stage) {
-              this.stage.removeAllChildren()
-              this.stage.update()
-              this.$nextTick(async () => {
-                await this.fetchData(null, true)
-              })
-            }
-          }, 200)
-        }
-        window.addEventListener('resize', this.onResize)
+      if (!StringUtil.startsWithAny(path, ['/main','/sum','/develop/installation'])) {
+        return
       }
+      let timer = 0
+      let currentWidth = window.innerWidth
+      this.onResize = () => {
+        if (path != this.$route.path) {
+          window.removeEventListener('resize', this.onResize)
+          clearTimeout(timer)
+          return
+        }
+        this.icons = {} // リサイズ時にアイコンキャッシュをクリア
+        if (timer > 0) {
+          clearTimeout(timer)
+        }
+        timer = setTimeout( async () => {
+          if (currentWidth === window.innerWidth && BrowserUtil.isAndroidOrIOS()) {
+            // モバイル端末だと表示の直後にリサイズイベントが発生してしまうため、
+            // 画面横幅が変わっていなければ処理をキャンセル
+            return
+          } else {
+            currentWidth = window.innerWidth
+          }
+          this.reset()
+          if (this.stage) {
+            this.stage.removeAllChildren()
+            this.stage.update()
+            this.$nextTick(async () => await this.fetchData(null, true))
+          }
+        }, 200)
+      }
+      window.addEventListener('resize', this.onResize)
     },
     getInitAreaOption(){ // p
       return this.selectedArea? this.selectedArea : Util.hasValue(this.areaOptions)? this.areaOptions[0].value: null
@@ -133,7 +131,7 @@ export default {
         }
         return
       }
-      
+
       if (!StateHelper.getMapImage(this.getInitAreaOption())) {
         if (this.showTryCount < 10) {
           VueUtil.nextTickEx(this, () => {
@@ -169,7 +167,7 @@ export default {
         return
       }
 
-      if (this.stage) { 
+      if (this.stage) {
         this.stage.removeAllChildren()
         if (this.txCont) {
           this.txCont.removeAllChildren()
@@ -181,7 +179,7 @@ export default {
           this.exbCon = null
         }
       }
-      
+
       this.mapWidth = bg.width
       this.mapHeight = bg.height
       this.isShownMapImage = true
@@ -203,6 +201,10 @@ export default {
       if (Touch.isSupported()) {
         Touch.enable(this.stage)
       }
+      // イベント伝搬設定
+      this.stage.on('click', (evt) => {
+        this.resetDetail()
+      })
 
       const bitmap = new Bitmap(bg)
       bitmap.scaleY = bitmap.scaleX = 1
@@ -210,7 +212,7 @@ export default {
       bitmap.height = canvas.height
       this.stage.addChild(bitmap)
 
-      this.stage.update() 
+      this.stage.update()
       this.bitmap = bitmap
       this.oldSelectedArea = this.selectedArea
 
@@ -224,37 +226,32 @@ export default {
       }
     },
     async changeArea(val) { // analysissearch, rssimap, pir, position, thermohumiidty, loc, tx
-      if (val) {
-        this.icons = {} // キャッシュをクリア
-        try {
-          await StateHelper.loadAreaImage(val, true)
-          const area = _.find(this.areas, (area) => {
-            return area.areaId == val
-          })
-          if (StateHelper.getMapImage(area.areaId)) {
-            if(!Util.getValue(this, 'selectedTx.btxId', null)){
-              this.reset()
-            }
-            this.selectedArea = val
-            this.fetchData && await this.fetchData()
+      if (!val) {
+        return
+      }
+      this.icons = {} // キャッシュをクリア
+      try {
+        await StateHelper.loadAreaImage(val, true)
+        const area = _.find(this.areas, area => area.areaId == val)
+        if (StateHelper.getMapImage(area.areaId)) {
+          if(!Util.getValue(this, 'selectedTx.btxId', null)){
+            this.reset()
           }
-          else {
-            Util.debug('No mapImage in changeArea.')
-            this.noImageErrorKey && this.showErrorModal({key: this.noImageErrorKey})
-            this.$nextTick(() => {
-              this.selectedArea = this.oldSelectedArea
-            })
-          }
-        } catch (e) {
-          // マップ画像が見つからなかった(status 404)
-          if (e.message.indexOf('404') > -1) {
-            this.showErrorModal({key: this.noImageErrorKey})
-            if (this.initMap) {
-              this.initMap()
-            }
-          }
+          this.selectedArea = val
+          this.fetchData && await this.fetchData()
         }
-      }      
+        else {
+          Util.debug('No mapImage in changeArea.')
+          this.noImageErrorKey && this.showErrorModal({key: this.noImageErrorKey})
+          this.$nextTick(() => this.selectedArea = this.oldSelectedArea)
+        }
+      } catch (e) {
+        // マップ画像が見つからなかった(status 404)
+        if (e.message.indexOf('404') > -1) {
+          this.showErrorModal({key: this.noImageErrorKey})
+          this.initMap && this.initMap()
+        }
+      }
     },
     // forceUpdateRealWidth() { // rssimap, loc, tx, flowline　多分不要
     //   if (!this.realWidth) { // Due to force update computed property mapRatio

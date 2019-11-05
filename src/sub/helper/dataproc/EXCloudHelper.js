@@ -7,6 +7,7 @@ import _ from 'lodash'
 import moment from 'moment'
 import * as mock from '../../../assets/mock/mock'
 import { DEV, APP, EXCLOUD, APP_SERVICE } from '../../constant/config'
+import * as Util from '../../util/Util'
 import * as HttpHelper from '../base/HttpHelper'
 
 /**
@@ -28,8 +29,8 @@ export const getDispTime = pos => pos.updatetime? pos.updatetime: pos.timestamp
 /**
  * EXCloudのURLを取得する。
  * @method
- * @param {String} excloudUrl 
- * @return {String} 
+ * @param {String} excloudUrl
+ * @return {String}
  */
 export const url = excloudUrl => {
   if (excloudUrl.startsWith('http')) {
@@ -42,25 +43,27 @@ export const url = excloudUrl => {
  * 位置情報を取得する。
  * @method
  * @async
- * @param {Object[]} exbs 
- * @param {Object[]} txs 
- * @param {Object[]} pMock 
+ * @param {Object[]} locations
+ * @param {Object[]} exbs
+ * @param {Object[]} txs
+ * @param {Object[]} pMock
  * @param {Boolean} [isAll = false]
  * @return {Object[]}
  */
-export const fetchPosition = async (exbs, txs, pMock, isAll = false) => {
+export const fetchPosition = async (locations, exbs, txs, pMock, isAll = false) => {
   let data = pMock? pMock: DEV.USE_MOCK_EXC? mock.position:
     await HttpHelper.getExCloud(url(EXCLOUD.POSITION_URL) + new Date().getTime())
 
-  let pos = _(data)
+    let pos = _(data)
     .filter(val => isAll || (DEV.NOT_FILTER_TX || txs && txs.some(tx => tx.btxId == val.btx_id)))
-    .filter(val => isAll || (exbs && exbs.some(exb => exb.location.posId == val.pos_id)))
+    .filter(val => isAll || (locations && locations.some(location => location.posId == val.pos_id)))
     .map(val => {
       let tx = _.find(txs, tx => tx.btxId == val.btx_id)
+      let location = _.find(locations, location => location.posId == val.pos_id)
       let exb = _.find(exbs, exb => exb.location.posId == val.pos_id)
       let label = tx && tx.displayName? tx.displayName: val.btx_id
-      return {btx_id: val.btx_id, minor: val.minor, power_level: val.power_level, 
-        pos_id: val.pos_id, label, exb, tx, nearest: val.nearest, updatetime: dateform(val.updatetime), timestamp: dateform(val.updatetime)}
+      return {btx_id: val.btx_id, minor: val.minor, power_level: val.power_level,
+        pos_id: val.pos_id, label, location, exb, tx, nearest: val.nearest, updatetime: dateform(val.updatetime), timestamp: dateform(val.updatetime)}
     })
     .compact().value()
 
@@ -77,32 +80,33 @@ export const fetchPosition = async (exbs, txs, pMock, isAll = false) => {
  * 位置情報の履歴を取得する。
  * @method
  * @async
- * @param {Object[]} exbs 
- * @param {Object[]} txs 
- * @param {Boolean} allShow 
- * @param {Object[]} pMock 
+ * @param {Object[]} locations
+ * @param {Object[]} exbs
+ * @param {Object[]} txs
+ * @param {Boolean} allShow
+ * @param {Object[]} pMock
  * @return {Object[]}
  */
-export const fetchPositionHistory = async (exbs, txs, allShow, pMock) => {
+export const fetchPositionHistory = async (locations, exbs, txs, allShow, pMock) => {
   let data = pMock? pMock: DEV.USE_MOCK_EXC? mock.position:
     await HttpHelper.getExCloud(url(EXCLOUD.POSITION_HISTORY_FETCH_URL.replace('{allFetch}', allShow? '1': '0')) + new Date().getTime())
   const txIdMap = {}
   txs.forEach(t => txIdMap[t.txId] = t)
   const exbIdMap = {}
+  exbs.forEach(e => exbIdMap[e.exbId] = e)
   const locationIdMap = {}
-  exbs.forEach(e => {
-    exbIdMap[e.exbId] = e
-    locationIdMap[e.location.locationId] = e
-  })
+  locations.forEach(l => locationIdMap[l.locationId] = l)
+
   return _(data).filter(val => allShow || DEV.NOT_FILTER_TX || txs && txIdMap[val.txId])
-    .filter(val => allShow || exbs && locationIdMap[val.locationId])
+    .filter(val => allShow || Util.hasValue(val.locationId) && locationIdMap[val.locationId])
     .map(val => {
       let tx = txIdMap[val.txId]
+      let location = Util.getValue(tx, 'location', null) && 0 < tx.location.x * tx.location.y? tx.location: locationIdMap[val.locationId]
       let exb = exbIdMap[val.exbId]
       let label = tx? tx.displayName? tx.displayName: tx.btxId: ''
-      return { btx_id: tx? tx.btxId: '',  minor: val.minor, pos_id: exb ? exb.posId : -1, tx_id: val.txId,
+      return { btx_id: tx? tx.btxId: '', minor: val.minor, pos_id: location? location.posId : -1, tx_id: val.txId,
         x: val.x, y: val.y,
-        label, exb, tx, updatetime: dateform(val.positionDt), timestamp:dateform(val.positionDt)}
+        label, location: location, exb, tx, updatetime: dateform(val.positionDt), timestamp:dateform(val.positionDt)}
     }).compact().value()
 }
 
@@ -110,8 +114,8 @@ export const fetchPositionHistory = async (exbs, txs, allShow, pMock) => {
  * 位置情報を取得する。
  * @method
  * @async
- * @param {Object[]} exbs 
- * @param {Object[]} txs 
+ * @param {Object[]} exbs
+ * @param {Object[]} txs
  * @return {Object[]}
  */
 export const fetchPositionList = async (exbs, txs) => {
@@ -132,7 +136,7 @@ export const fetchPositionList = async (exbs, txs) => {
  * センサ情報を取得する。
  * @method
  * @async
- * @param {Number} sensorId 
+ * @param {Number} sensorId
  * @return {Object[]}
  */
 export const fetchSensor = async (sensorId) => {
@@ -200,7 +204,7 @@ export const fetchTelemetry = async () => {
  * LEDを操作するAPIをリクエストする。
  * @method
  * @async
- * @param {Object} param 
+ * @param {Object} param
  * @return {Object}
  */
 export const postLed = async (param) => {
@@ -213,8 +217,8 @@ export const postLed = async (param) => {
  * EXCloudから情報を取得するためにリクエストを行う。
  * @method
  * @async
- * @param {String} type 
- * @param {String} yyyymmdd 
+ * @param {String} type
+ * @param {String} yyyymmdd
  * @return {Object[]}
  */
 export const fetchDlList = async (type, yyyymmdd) => {

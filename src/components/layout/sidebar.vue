@@ -14,7 +14,7 @@
           </li>
           <vue-slide-up-down :active="selectedItem === i">
             <li v-for="page in group.pages" :key="page.key" :class="menuItemClasses">
-              <router-link :to="'/' + group.base + page.path" class="bd-toc-link">
+              <router-link :to="'/' + group.base + page.path" class="bd-toc-link" @click.native="clickMenuItem">
                 <font-awesome-icon :icon="iconClass(page.icon)" fixed-width class="ml-3" />&nbsp;{{ $t("label." + (page.label? page.label: page.key)) }}
               </router-link>
             </li>
@@ -73,6 +73,9 @@ export default {
     iconClass(icon) {
       return icon
     },
+    clickMenuItem(e) {
+      this.$nuxt.$emit('MENU_ITEM_CLICK', 'test')
+    }
   },
   templates: {
     'vue-slide-up-down':VueSlideUpDown

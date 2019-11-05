@@ -15,12 +15,13 @@ import * as HttpHelper from '../base/HttpHelper'
  * @async
  * @param {String} target 
  * @param {String} sortBy 
+ * @param {Object} option 
  * @param {Object[]} pMock 
  * @return {Object[]}
  */
-export const fetchList = async (target, sortBy, pMock) => {
+export const fetchList = async (target, sortBy, option, pMock) => {
   let data = pMock? pMock: DEV.USE_MOCK_APS? mock[target]:
-    await HttpHelper.getAppService(target + '?_=' + new Date().getTime())
+    await HttpHelper.getAppService(target + '?_=' + new Date().getTime(), {}, null, option)
   if (!sortBy) {
     return data
   }

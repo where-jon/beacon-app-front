@@ -10,6 +10,7 @@ import { mapState } from 'vuex'
 import _ from 'lodash'
 import { APP } from '../../../sub/constant/config'
 import { CATEGORY } from '../../../sub/constant/Constants'
+import * as StringUtil from '../../../sub/util/StringUtil'
 import * as Util from '../../../sub/util/Util'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
@@ -18,6 +19,20 @@ import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
 
 export default {
+  props: {
+    pName: {
+      type: String,
+      default: '',
+    },
+    pPath: {
+      type: String,
+      default: '/master/pot',
+    },
+    pTypeList: {
+      type: Array,
+      default: () => [CATEGORY.PERSON, CATEGORY.THING],
+    },
+  },
   components: {
     breadcrumb,
     bulkedit,
@@ -26,16 +41,20 @@ export default {
     return {
       name: 'pot',
       id: 'potId',
-      backPath: '/master/pot',
       appServicePath: '/basic/pot',
-      items: ViewHelper.createBreadCrumbItems('master', {text: 'pot', href: '/master/pot'}, 'bulkRegister'),
-      category: _.slice(CATEGORY.getTypes(), 0, 2).filter((val) => APP.CATEGORY.TYPES.includes(val.value)),
+      category: _.slice(CATEGORY.getTypes(), 0, 2).filter(val => APP.CATEGORY.TYPES.includes(val.value) && this.pTypeList.includes(val.value)),
     }
   },
   computed: {
     ...mapState('app_service', [
       'pot', 'pots', 'potImages', 'categories', 'groups', 'txs'
     ]),
+    backPath() {
+      return this.pPath
+    },
+    items() {
+      return ViewHelper.createBreadCrumbItems('master', {text: StringUtil.concatCamel('pot', this.pName), href: this.backPath}, 'bulkRegister')
+    },
   },
   async created() {
     await StateHelper.load('pot')
@@ -84,6 +103,7 @@ export default {
       return dummyKey
     },
     onRestruct(entity, dummyKey){
+      entity.extValue = {}
       if(Util.hasValue(entity.ruby)){
         Util.setValue(entity, 'extValue.ruby', entity.ruby)
       }
@@ -95,7 +115,7 @@ export default {
         entity['potTypeOneOf'] = this.category.map(cat => cat.value)
       }
       if(!Util.hasValue(entity.potType) && !Util.hasValue(entity.categoryName)){
-        entity.potType = CATEGORY.PERSON
+        entity.potType = this.pTypeList[0]
       }
       entity.potCd = entity.ID
 

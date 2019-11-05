@@ -41,6 +41,9 @@
               </b-form-row>
             </b-form-row>
           </template>
+          <b-form-row v-if="useDetailFilter" class="mr-4 mb-2">
+            <detail-filter component-id="list" save-filter @detailFilter="onDetailFilter" />
+          </b-form-row>
           <div v-if="params.extraFilter" class="w-100 mb-2 " />
         </b-form-row>
         <b-form-row v-if="params.delFilter" class="mb-2">
@@ -144,6 +147,18 @@
             {{ zoneName }}
           </div>
         </template>
+        <!-- EXBタイプ名 -->
+        <template slot="exbTypeName" slot-scope="row">
+          <div>
+            {{ getDispExbType(row.item) }}
+          </div>
+        </template>
+        <!-- タイプ名 -->
+        <template slot="locationTypeName" slot-scope="row">
+          <div>
+            {{ getDispLocationType(row.item) }}
+          </div>
+        </template>
         <!-- センサ名 -->
         <template slot="sensorIdName" slot-scope="row">
           <div v-for="(sensorIdName, index) in row.item.sensorIdNames" :key="index">
@@ -176,7 +191,7 @@
           <div class="empty-icon d-inline-flex" /><!-- 横幅0の「支柱」 -->
           <div class="d-inline-flex flex-wrap">
             <div v-for="position in row.item.positions" :key="position.areaId"
-                 :style="position.display" :class="'d-inline-flex m-1 '+ position.blinking" @click.stop="mapDisplay(position)"
+                 :style="position.display" :class="'d-inline-flex m-1 '+ position.blinking" @click.stop="mapDisplay(position, true)"
             >
               {{ position.label }}
             </div>
@@ -229,7 +244,7 @@
 <script>
 
 import { mapState, mapMutations } from 'vuex'
-import { CATEGORY, SENSOR } from '../../sub/constant/Constants'
+import { CATEGORY, SENSOR, EXB } from '../../sub/constant/Constants'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as CsvUtil from '../../sub/util/CsvUtil'
@@ -241,14 +256,17 @@ import { getCharSet } from '../../sub/helper/base/CharSetHelper'
 import * as DetectStateHelper from '../../sub/helper/domain/DetectStateHelper'
 import * as LocalStorageHelper from '../../sub/helper/base/LocalStorageHelper'
 import * as MenuHelper from '../../sub/helper/dataproc/MenuHelper'
+import * as OptionHelper from '../../sub/helper/dataproc/OptionHelper'
 import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import * as VueSelectHelper from '../../sub/helper/ui/VueSelectHelper'
 import commonmixin from '../mixin/commonmixin.vue'
+import detailFilter from '../../components/parts/detailFilter.vue'
 import alert from '../parts/alert.vue'
 import settinginput from '../parts/settinginput.vue'
 
 export default {
   components: {
+    detailFilter,
     alert,
     settinginput,
   },
@@ -285,7 +303,11 @@ export default {
     maxFilterLength: {
       type: [String, Number],
       default: 20,
-    }
+    },
+    useDetailFilter: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -303,6 +325,7 @@ export default {
           detectState: null,
           settingCategory: '',
         },
+        detail: null,
         del: false,
         allShow: false,
       },
@@ -384,10 +407,11 @@ export default {
       if (!this.params.extraFilter) {
         return {}
       }
-      return this.params.extraFilter.map((key) => {
+      return this.params.extraFilter.map(key => {
+        const optionFilter = this.params.extraFilterFunc && this.params.extraFilterFunc[key]? this.params.extraFilterFunc[key]: options => options
         return {
           key: key,
-          options: this[key + 'Options'],
+          options: optionFilter(this[key + 'Options']),
           change: this.params[key + 'Change']? this.params[key + 'Change']: () => {},
           show: this.params.showOnlyHas && this.params.showOnlyHas.includes(key)? Util.hasValue(this[key + 'Options'].filter((val) => val.value != null)): true,
         }
@@ -429,6 +453,9 @@ export default {
     },
     areaOptions() {
       return StateHelper.getOptionsFromState('area', false, true)
+    },
+    locationTypeOptions() {
+      return OptionHelper.getLocationTypeOptions()
     },
     detectStateOptions() {
       let options = DetectStateHelper.getTypes()
@@ -476,6 +503,9 @@ export default {
           if(oVal != nVal){
             this.extraFilterSpec[key].change()
           }
+          if(['category', 'group'].some(k => k == key)) {
+            this[StringUtil.concatCamel('selected', key)] = nVal
+          }
         })
       },
       deep: true,
@@ -484,28 +514,18 @@ export default {
   async created() {
     await StateHelper.load('region')
   },
-  mounted() {
+  async mounted() {
     const strageMessage = LocalStorageHelper.popLocalStorage('listMessage')
     this.message = Util.hasValue(strageMessage)? strageMessage: this.listMessage
     this.replaceAS({listMessage: null})
     this.$parent.$options.methods.fetchData.apply(this.$parent)
     if (this.params.extraFilter) {
-      const vSelectOptionMap = {}
-      this.extraFilterSpec.forEach(val => vSelectOptionMap[val.key] = val.options)
-
-      this.params.extraFilter.filter((str) => !(str === 'detectState'))
-        .forEach(str => {
-          StateHelper.load(str).then(() => {
-            if(!this.useCommonFilter(str)){
-              return
-            }
-            const vSelectOption = vSelectOptionMap[str]
-            const selectedVal = this[this.getCommonFilterKey(str)]
-            if(selectedVal){
-              this.vueSelected[str] = VueSelectHelper.getVueSelectData(vSelectOption, selectedVal)
-            }
-          })
-        })
+      const filterColumnList = this.params.extraFilter.filter(str => str != 'detectState')
+      await Promise.all(filterColumnList.map(state => StateHelper.load(state)))
+      filterColumnList.filter(state => ['category', 'group'].some(s => s == state)).forEach(state => {
+        const selectedKey = StringUtil.concatCamel('selected', state)
+        this.vueSelected[state] = VueSelectHelper.getVueSelectData(this[state + 'Options'], this[selectedKey])
+      })
     }
     this.sortBy = this.params.sortBy? this.params.sortBy: null
     this.replace({showWarn: false})
@@ -632,6 +652,12 @@ export default {
     },
     getDispCategoryName(category){
       return StateHelper.getDispCategoryName(category)
+    },
+    getDispExbType(exb){
+      return Util.getValue(EXB.getTypes().find(val => val.value == exb.exbType), 'text', '')
+    },
+    getDispLocationType(location){
+      return Util.getValue(this.locationTypeOptions.find(val => val.value == location.locationType), 'text', '')
     },
     getAnotherPageParam(name, item) {
       const pageParam = this.anotherPageParams.find((val) => val.name == name)
@@ -760,6 +786,12 @@ export default {
       }
       return true
     },
+    filterDetail(originItem){
+      if(this.filter.detail == null){
+        return true
+      }
+      return this.filter.detail.some(id => id == originItem.txId)
+    },
     filterGrid(originItem) {
       const regBool = this.filterGridGeneral(originItem)
       // 追加フィルタ
@@ -767,7 +799,8 @@ export default {
       const delBool = this.filterGridDel(originItem)
       const allShowBool = this.filterAllShow(originItem)
       const parentBool = this.filterParent(originItem)
-      return regBool && extBool && delBool && allShowBool && parentBool
+      const detailBool = this.filterDetail(originItem)
+      return regBool && extBool && delBool && allShowBool && parentBool && detailBool
     },
     onFiltered(filteredItems) {
       this.totalRows = filteredItems.length
@@ -820,7 +853,7 @@ export default {
       }
     },
     // 位置把握(一覧)から在席表示に遷移する
-    async mapDisplay(item) {
+    async mapDisplay(item, filterReset) {
       const tx = item.tx
       const selectedTx = {
         btxId: tx.btxId,
@@ -831,9 +864,16 @@ export default {
       if (txOk) {
         this.replaceMain({selectedTx})
       }
+      if(filterReset) {
+        this.filterSelectedList.forEach(selected => this[StringUtil.concatCamel('selected', selected)] = null)
+        this.replaceMain({ initDetailFilter: true })
+      }
       this.replaceMain({selectedArea})
       this.$router.push('/main/position')
-    }
+    },
+    onDetailFilter(list){
+      this.filter.detail = list
+    },
   }
 }
 

@@ -79,6 +79,47 @@ export const createMasterCd = (masterType, masterList, masterData = null) => {
 }
 
 /**
+ * 重複のないデータを作成する。
+ * @method
+ * @param {Object[]} masterList
+ * @param {Object} obj
+ * @param {String} column
+ * @param {String} type
+ * @param {Number} sign
+ * @return {Object}
+ */
+export const createNoConflictValue = (masterList, obj, column, type, sign = 1) => {
+  if(!masterList.some(master => master[column] == obj[column])){
+    return obj[column]
+  }
+  for(let cnt = 1; cnt < 65536; cnt++) {
+    const value = type == 'number'? obj[column] + (cnt * sign): obj[column] + '-' + cnt
+    if(!masterList.some(master => master[column] == value)){
+      return value
+    }
+  }
+  return obj[column]
+}
+
+ /**
+ * Tx配置設定の新規データを作成する。
+ * @method
+ * @param {Object} tx
+ * @return {Object}
+ */
+export const createLocationFromTx = tx => {
+  const txs = store.state.app_service.txs
+  if(!txs){
+    return tx
+  }
+  return {
+    locationId: tx.btxId * -1,
+    locationCd: createNoConflictValue(txs, { locationCd: tx.btxId * -1 }, 'locationCd', 'string', -1),
+    locationName: createNoConflictValue(txs, { locationName: Util.getValue(tx, 'location.locationName', SensorHelper.createTxLocationDummyName(tx)) }, 'locationName', 'string'),
+  }
+}
+
+/**
  * センサ名を取得する。
  * @method
  * @param {Object} sensor 
@@ -432,6 +473,27 @@ const appStateConf = {
   locations: {
     path: '/core/location',
     sort: 'locationId',
+    beforeCommit: arr => {
+      return arr.map(location => {
+        const locationZoneList = Util.getValue(location, 'locationZoneList', [])
+        const zoneTypeMap = {}
+        Util.getValue(location, 'locationZoneList', []).forEach(locationZone => {
+          const key = '' + locationZone.zoneType
+          if(!zoneTypeMap[key]){
+            zoneTypeMap[key] = []
+          }
+          zoneTypeMap[key].push(locationZone.zoneName)
+        })
+        return {
+          ...location,
+          zoneClass: zoneTypeMap['' + ZONE.NON_COORDINATE],
+          zoneBlock: zoneTypeMap['' + ZONE.COORDINATE],
+          isAbsentZone: location.categoryName === SYSTEM_ZONE_CATEGORY_NAME.ABSENT,
+          zoneIdList: locationZoneList.map(val => Util.getValue(val, 'locationZonePK.zoneId', null)).filter(val => val),
+          zoneCategoryIdList: locationZoneList.map(val => Util.getValue(val, 'categoryId', null)).filter(val => val),
+        }
+      })
+    }
   },
   zones: {
     path: '/core/zone',
@@ -440,13 +502,7 @@ const appStateConf = {
       return  arr.map(val => {
         const category = Util.getValue(val, 'zoneCategoryList.0.category', null)
         return {
-          zoneId: val.zoneId,
-          zoneName: val.zoneName,
-          zoneType: val.zoneType,
-          x: val.x,
-          y: val.y,
-          w: val.w,
-          h: val.h,
+          ...val,
           areaId: Util.hasValue(val.area)? val.area.areaId: null,
           areaName: Util.hasValue(val.area)? val.area.areaName: null,
           locationId: Util.hasValue(val.locationZoneList)? val.locationZoneList[0].locationZonePK.locationId: null,
@@ -509,8 +565,9 @@ const appStateConf = {
  * @async
  * @param {String} target マスタ種類
  * @param {Boolean} force 強制取得する
+ * @param {Object} option 追加設定
  */
-export const load = async (target, force) => {
+export const load = async (target, force, option) => {
   const forceFetchTarget = target
   if (!target.endsWith('s')) {
     target = target.endsWith('y')? target.slice(0, -1) + 'ies' : target + 's'
@@ -524,7 +581,7 @@ export const load = async (target, force) => {
   let arr = store.state.app_service[target]
   const expiredKey = `${target}Expired`
   if (!arr || arr.length == 0 || force || getForceFetch(forceFetchTarget) || DateUtil.isExpired(store.state.app_service[expiredKey])) {
-    arr = await AppServiceHelper.fetchList(path, sort)
+    arr = await AppServiceHelper.fetchList(path, sort, option)
     if (beforeCommit) {
       arr = beforeCommit(arr)
     }

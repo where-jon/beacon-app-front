@@ -3,6 +3,7 @@
 import { mapState, mapMutations, mapActions } from 'vuex'
 import { CATEGORY } from '../../sub/constant/Constants'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
+import * as ConfigHelper from '../../sub/helper/dataproc/ConfigHelper'
 import * as MenuHelper from '../../sub/helper/dataproc/MenuHelper'
 import * as OptionHelper from '../../sub/helper/dataproc/OptionHelper'
 import * as ThemeHelper from '../../sub/helper/ui/ThemeHelper'
@@ -19,6 +20,8 @@ export default {
       'zones',
       'categories',
       'groups',
+      'locations',
+      'sensors',
     ]),
     ...mapState([
       'showAlert',
@@ -60,6 +63,24 @@ export default {
     areaOptions() {
       return StateHelper.getOptionsFromState('area', false, true)
     },
+    potOptions() {
+      return StateHelper.getOptionsFromState('pot', false, true)
+    },
+    locationOptions() {
+      return StateHelper.getOptionsFromState('location', false, true)
+    },
+    exbOptions() {
+      return StateHelper.getOptionsFromState('exb', ConfigHelper.includesDeviceType('deviceId')? 'deviceId': 'deviceIdX', true)
+    },
+    txOptions() {
+      return StateHelper.getOptionsFromState('tx', ConfigHelper.includesBtxMinor('btxId')? 'btxId': 'minor', true)
+    },
+    zoneOptions() {
+      return StateHelper.getOptionsFromState('zone', false, true)
+    },
+    filterSelectedList() {
+      return ['area', 'group', 'category', 'detail', 'freeWord']
+    },
     selectedArea: {
       get() { return this.$store.state.main.selectedArea},
       set(val) { this.replaceMain({'selectedArea': val})},
@@ -72,23 +93,31 @@ export default {
       get() { return this.$store.state.main.selectedCategory},
       set(val) { this.replaceMain({'selectedCategory': val})},
     },
+    selectedDetail: {
+      get() { return this.$store.state.main.selectedDetail},
+      set(val) { this.replaceMain({'selectedDetail': val})},
+    },
+    selectedFreeWord: {
+      get() { return this.$store.state.main.selectedFreeWord},
+      set(val) { this.replaceMain({'selectedFreeWord': val})},
+    },
   },
   methods: {
     ...mapMutations('app_service', [
-      'replaceAS', 
-      'clear', 
+      'replaceAS',
+      'clear',
     ]),
     ...mapMutations([
-      'replace', 
+      'replace',
     ]),
     ...mapActions([
       'showErrorModal'
     ]),
     ...mapMutations('main', [
-      'replaceMain', 
+      'replaceMain',
     ]),
     ...mapMutations('setting', [
-      'replaceSetting', 
+      'replaceSetting',
     ]),
     ...mapActions([
       'showProgress',
@@ -102,6 +131,11 @@ export default {
     },
     closeVueSelect(){
       VueSelectHelper.closeVueSelect()
+    },
+    getIndividualOptions(categoryId, groupId) {
+      return StateHelper.getOptionsFromState('pot', false, true,
+        pot => pot.potType == CATEGORY.PERSON && (!categoryId || pot.categoryId == categoryId) && (!groupId || pot.groupId == groupId)
+      )
     },
   }
 }

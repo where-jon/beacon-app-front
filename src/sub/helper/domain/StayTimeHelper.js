@@ -33,6 +33,7 @@ export const getStayBaseSec = () => {
 
 /**
  * グラフを表示する
+ * @method
  * @param {*} obj 
  * @param {*} sumData 
  */
@@ -158,6 +159,7 @@ export const reduceToOther = (obj, stackIds, sumData, axisIds) => {
 
 /**
  * 指定したファイルをダウンロードする
+ * @method
  * @param {*} obj 
  * @param {*} filename 
  */

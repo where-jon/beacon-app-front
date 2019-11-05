@@ -44,7 +44,7 @@ export default {
       },
       anotherPageParams: [
         { name: 'zone', id: 'zoneList', jumpPath: '/master/zoneBlock/', sendParamNames: ['areaId']},
-        { name: 'location', id: 'locationList', jumpPath: '/master/location/', sendParamNames: ['areaId']}, 
+        { name: 'location', id: 'locationList', jumpPath: '/master/location/position', sendParamNames: ['areaId']}, 
       ],
       items: ViewHelper.createBreadCrumbItems('master', 'area'),
       areaList: [],
