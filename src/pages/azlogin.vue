@@ -61,7 +61,7 @@ export default {
     try {
       let token = MsalHelper.getCachedToken()
       if (token) {
-        this.afterGetToken(token, user)
+        this.afterGetToken(token)
       }
       else {
         MsalHelper.signIn((token, user) => {
