@@ -1,6 +1,7 @@
 
 import * as Msal from 'msal'
 import { MSTEAMS_APP } from '../../constant/config'
+import { Date } from 'core-js'
 
 // initialize MSAL
 const msalConfig = {
@@ -77,6 +78,10 @@ export const getCachedToken = () => {
   const account = myMSALObj.getAccount()
   if (account && (!isIE || !myMSALObj.isCallback(window.location.hash))) {// avoid duplicate code execution on page load in case of iframe and popup window.
     console.log(account)
+    if (account.idToken.exp * 1000 < new Date().getTime()) {
+      console.warn('id token exipired')
+      return null
+    }
     return account.idToken
   }
 }

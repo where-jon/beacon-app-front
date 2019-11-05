@@ -97,15 +97,15 @@ export default {
     async afterGetToken(token, user) {
       this.hasToken = true
       console.log(token, user)
-      const idToken = LocalStorageHelper.getLocalStorage("msal.idtoken")
+      const idToken = LocalStorageHelper.getLocalStorage('msal.idtoken')
       AuthHelper.setApp(this.$router, this.$store)
       let tenantStatus = await AuthHelper.getADTenantStatus(idToken)
       if (tenantStatus == TENANT.STATUS.NOT_REGISTERED && location.search.includes('admin_consent=True')) {
-          tenantStatus = await AuthHelper.getADTenantStatus(token, 1, this.tenantName)
+          tenantStatus = await AuthHelper.getADTenantStatus(idToken, 1, this.tenantName)
       }
       switch (tenantStatus) {
         case TENANT.STATUS.REGISTERED:
-          AuthHelper.auth(token, 'password',
+          AuthHelper.auth(idToken, 'password',
             ()=>{
               this.$router.push(APP.MENU.TOP_PAGE)
             },
