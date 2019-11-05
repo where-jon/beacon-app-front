@@ -97,8 +97,9 @@ export default {
     async afterGetToken(token, user) {
       this.hasToken = true
       console.log(token, user)
+      const idToken = LocalStorageHelper.getLocalStorage("msal.idtoken")
       AuthHelper.setApp(this.$router, this.$store)
-      let tenantStatus = await AuthHelper.getADTenantStatus(token)
+      let tenantStatus = await AuthHelper.getADTenantStatus(idToken)
       if (tenantStatus == TENANT.STATUS.NOT_REGISTERED && location.search.includes('admin_consent=True')) {
           tenantStatus = await AuthHelper.getADTenantStatus(token, 1, this.tenantName)
       }
