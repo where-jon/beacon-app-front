@@ -1,10 +1,11 @@
 
 import * as Msal from 'msal'
+import { MSTEAMS_APP } from '../../constant/config'
 
 // initialize MSAL
 const msalConfig = {
   auth: {
-    clientId: 'fcfc143f-c8c8-454e-ab72-fdf2e49f862f',
+    clientId: MSTEAMS_APP.APP_ID,
     authority: 'https://login.microsoftonline.com/common',
     validateAuthority: true
   },
