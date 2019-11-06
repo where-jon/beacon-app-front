@@ -23,16 +23,17 @@
       </b-form-group>
     </div>
     <div v-if="disabled">{{ $t('config.MSTEAMS.INVALID_TENANT') }}<br />{{ $t('config.MSTEAMS.INVALID_TENANT_CONTACT') }}</div>
-    <div v-if="notShown"><div v-html="$t('config.MSTEAMS.IF_NOT_SHOWN')"></div><br/><button onclick='location.reload();'>{{ $t('label.reload') }}</button></div>
-    <div><a href="#" @click="signIn">Sign In</a></div>
-    <div><a href="/login/">sysadmin login</a></div>
+    <div v-if="notShown">
+      <div v-html="$t('config.MSTEAMS.IF_NOT_SHOWN')"></div><br/>
+      <div><a href="#" @click="signIn">Sign In</a></div>
+      <a href="#" onclick='location.reload();'>{{ $t('label.reload') }}</a>
+    </div>
   </b-container>
 </template>
 
 <script>
-// import * as AADHelper from '../sub/helper/base/AADHelper'
-// import * as MsalHelper from '../sub/helper/base/MsalHelper'
-import * as microsoftTeams from "@microsoft/teams-js"
+import * as AADHelper from '../../sub/helper/base/AADHelper'
+// import * as MsalHelper from '../../sub/helper/base/MsalHelper'
 import * as AuthHelper from '../../sub/helper/base/AuthHelper'
 import * as LocalStorageHelper from '../../sub/helper/base/LocalStorageHelper'
 import { APP, MSTEAMS_APP } from '../../sub/constant/config'
@@ -59,7 +60,7 @@ export default {
   },
   mounted() {
     console.log('@@@@@@@@@@@@@@@@@ azLogin')
-    microsoftTeams.initialize()
+    AADHelper.init()
     this.tenantName = this.tenantName || LocalStorageHelper.popLocalStorage('tenantName')
     APP.MENU.LOGIN_PAGE = APP.MENU.AZLOGIN_PAGE
   },
@@ -67,19 +68,16 @@ export default {
     signIn() {
       console.log('azLogin SignIn')
       try {
-        microsoftTeams.authentication.authenticate({
-            url: window.location.origin + "/azlogin/start/",
-            width: 600,
-            height: 535,
-            successCallback: (result) => {
-              console.log(result)
-              this.afterGetToken(result.idToken)
-            },
-            failureCallback: (reason) => {
-              console.error(reason)
-              this.invalidToken = true
-            }
-        })
+        AADHelper.signIn(
+          (result) => {
+            console.log(result)
+            this.afterGetToken(result.idToken)
+          },
+          (reason) => {
+            console.error(reason)
+            this.invalidToken = true
+          }
+        )
       } catch (e) {
         console.error('azlogin error', e)
         this.invalidToken = true
