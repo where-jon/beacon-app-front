@@ -23,7 +23,7 @@ export default {
             client_id: MSTEAMS_APP.APP_ID,
             response_type: "id_token token",
             response_mode: "fragment",
-            resource: "https://graph.microsoft.com/User.Read openid",
+            resource: "https://graph.microsoft.com/openid",
             redirect_uri: window.location.origin + "/azlogin/end/",
             nonce: this._guid(),
             state: state,
