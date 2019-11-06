@@ -9,7 +9,6 @@ import { APP, MSTEAMS_APP } from '../../sub/constant/config'
 
 export default {
   async mounted() {
-    alert("end")
     microsoftTeams.initialize();
     localStorage.removeItem("aad.error");
     let hashParams = this.getHashParameters();

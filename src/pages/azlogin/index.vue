@@ -66,52 +66,23 @@ export default {
           width: 600,
           height: 535,
           successCallback: (result) => {
-              console.log(result)
+            console.log(result)
+            this.afterGetToken(result.idToken)
           },
           failureCallback: (reason) => {
-              console.error(reason)
+            console.error(reason)
+            this.invalidToken = true
           }
       })
-
-      // let token = MsalHelper.getCachedToken()
-      // if (token) {
-      //   this.afterGetToken(token)
-      // }
-      // else {
-      //   MsalHelper.signIn((token, user) => {
-      //     this.afterGetToken(token, user)
-      //   })
-      // }
-      // const token = await AADHelper.getToken(async (token, user) => {
-      //   this.hasToken = true
-      //   this.afterGetToken(token, user)
-      // }, (acToken) =>{
-      //   if (!this.hasToken) {
-      //     this.afterGetToken(token)
-      //   }
-      // })
     } catch (e) {
       console.error('azlogin error', e)
       this.invalidToken = true
     }
     APP.MENU.LOGIN_PAGE = APP.MENU.AZLOGIN_PAGE
-    // const lastReload = LocalStorageHelper.getLocalStorage('lastReload')
-    // setTimeout(()=>{
-    //   if (this.notShown) {
-    //     const now = new Date().getTime()
-    //     console.log(now, lastReload)
-    //     if (!lastReload || lastReload < now - 300000) {
-    //       LocalStorageHelper.setLocalStorage('lastReload', now)
-    //       location.reload()
-    //     }
-    //   }
-    // }, 2000)
   },
   methods: {
-    async afterGetToken(token, user) {
+    async afterGetToken(idToken) {
       this.hasToken = true
-      console.log(token, user)
-      const idToken = LocalStorageHelper.getLocalStorage('msal.idtoken')
       AuthHelper.setApp(this.$router, this.$store)
       let tenantStatus = await AuthHelper.getADTenantStatus(idToken)
       if (tenantStatus == TENANT.STATUS.NOT_REGISTERED && location.search.includes('admin_consent=True')) {
