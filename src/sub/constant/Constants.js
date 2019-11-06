@@ -12,12 +12,6 @@ export const LOGIN_MODE = {
   NO_LOGIN: 2
 }
 
-export const LOCAL_STORAGE = {
-  KEY: {
-    REDIRECT_URL: 'redirectUrl',
-  }
-}
-
 export const THEME = [
   {id: 1,  name: 'default', color: '#588BC1'},
   {id: 2,  name: 'earthcolor', color: '#5C7886'},
