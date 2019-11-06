@@ -95,17 +95,17 @@ export default {
       this.invalidToken = true
     }
     APP.MENU.LOGIN_PAGE = APP.MENU.AZLOGIN_PAGE
-    const lastReload = LocalStorageHelper.getLocalStorage('lastReload')
-    setTimeout(()=>{
-      if (this.notShown) {
-        const now = new Date().getTime()
-        console.log(now, lastReload)
-        if (!lastReload || lastReload < now - 300000) {
-          LocalStorageHelper.setLocalStorage('lastReload', now)
-          location.reload()
-        }
-      }
-    }, 2000)
+    // const lastReload = LocalStorageHelper.getLocalStorage('lastReload')
+    // setTimeout(()=>{
+    //   if (this.notShown) {
+    //     const now = new Date().getTime()
+    //     console.log(now, lastReload)
+    //     if (!lastReload || lastReload < now - 300000) {
+    //       LocalStorageHelper.setLocalStorage('lastReload', now)
+    //       location.reload()
+    //     }
+    //   }
+    // }, 2000)
   },
   methods: {
     async afterGetToken(token, user) {

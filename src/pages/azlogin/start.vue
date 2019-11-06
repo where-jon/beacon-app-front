@@ -32,7 +32,7 @@ export default {
             login_hint: context.loginHint,
         };
 
-        let authorizeEndpoint = "https://login.microsoftonline.com/" + context.tid + "/oauth2/authorize?" + toQueryString(queryParams);
+        let authorizeEndpoint = "https://login.microsoftonline.com/" + context.tid + "/oauth2/authorize?" + this.toQueryString(queryParams);
         window.location.assign(authorizeEndpoint);
     })   
     alert("start fin")
