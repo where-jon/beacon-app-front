@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-t="$t('config.MSTEAMS.AZTOP')" />
-    <div><a href="../azlogin/">EXOffice Login</a></div>
+    <div><a href="/azlogin/">EXOffice Login</a></div>
   </div>
 </template>
 

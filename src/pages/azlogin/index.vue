@@ -30,11 +30,12 @@
 
 <script>
 // import * as AADHelper from '../sub/helper/base/AADHelper'
-import * as MsalHelper from '../sub/helper/base/MsalHelper'
-import * as AuthHelper from '../sub/helper/base/AuthHelper'
-import * as LocalStorageHelper from '../sub/helper/base/LocalStorageHelper'
-import { APP, MSTEAMS_APP } from '../sub/constant/config'
-import { TENANT } from '../sub/constant/Constants'
+// import * as MsalHelper from '../sub/helper/base/MsalHelper'
+import * as microsoftTeams from "@microsoft/teams-js"
+import * as AuthHelper from '../../sub/helper/base/AuthHelper'
+import * as LocalStorageHelper from '../../sub/helper/base/LocalStorageHelper'
+import { APP, MSTEAMS_APP } from '../../sub/constant/config'
+import { TENANT } from '../../sub/constant/Constants'
 
 export default {
   data() {
@@ -59,15 +60,28 @@ export default {
     console.log('@@@@@@@@@@@@@@@@@ azLogin')
     this.tenantName = this.tenantName || LocalStorageHelper.popLocalStorage('tenantName')
     try {
-      let token = MsalHelper.getCachedToken()
-      if (token) {
-        this.afterGetToken(token)
-      }
-      else {
-        MsalHelper.signIn((token, user) => {
-          this.afterGetToken(token, user)
-        })
-      }
+      microsoftTeams.initialize()
+      microsoftTeams.authentication.authenticate({
+          url: window.location.origin + "/azlogin/start/",
+          width: 600,
+          height: 535,
+          successCallback: function (result) {
+              console.log(result)
+          },
+          failureCallback: function (reason) {
+              console.error(reason)
+          }
+      })
+
+      // let token = MsalHelper.getCachedToken()
+      // if (token) {
+      //   this.afterGetToken(token)
+      // }
+      // else {
+      //   MsalHelper.signIn((token, user) => {
+      //     this.afterGetToken(token, user)
+      //   })
+      // }
       // const token = await AADHelper.getToken(async (token, user) => {
       //   this.hasToken = true
       //   this.afterGetToken(token, user)

@@ -40,12 +40,12 @@ export default function (context) {
     return
   }
 
-  if (context.route.path == APP.MENU.AZLOGIN_PAGE) { // ADログインの場合、ログイページ書き換え
+  if (context.route.path.startsWith(APP.MENU.AZLOGIN_PAGE)) { // ADログインの場合、ログイページ書き換え
     APP.MENU.LOGIN_PAGE = APP.MENU.AZLOGIN_PAGE
     return
   }
 
-  if (ArrayUtil.equalsAny(context.route.path, [APP.MENU.LOGIN_PAGE, APP.MENU.LOGIN_PAGE + '/', APP.MENU.AZTOP_PAGE, APP.MENU.ERROR_PAGE, APP.MENU.ERROR_PAGE + '/'])) { // Login Page is always OK
+  if (ArrayUtil.equalsAny(context.route.path, [APP.MENU.LOGIN_PAGE, APP.MENU.LOGIN_PAGE + '/', APP.MENU.ERROR_PAGE, APP.MENU.ERROR_PAGE + '/'])) { // Login Page is always OK
     return
   }
   if(context.route.path == '/'){
