@@ -65,10 +65,10 @@ export default {
           url: window.location.origin + "/azlogin/start/",
           width: 600,
           height: 535,
-          successCallback: function (result) {
+          successCallback: (result) => {
               console.log(result)
           },
-          failureCallback: function (reason) {
+          failureCallback: (reason) => {
               console.error(reason)
           }
       })

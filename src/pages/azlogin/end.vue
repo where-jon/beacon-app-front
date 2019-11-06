@@ -12,7 +12,7 @@ export default {
     alert("end")
     microsoftTeams.initialize();
     localStorage.removeItem("aad.error");
-    let hashParams = getHashParameters();
+    let hashParams = this.getHashParameters();
     if (hashParams["error"]) {
         // Authentication/authorization failed
         localStorage.setItem("aad.error", JSON.stringify(hashParams));
@@ -38,16 +38,18 @@ export default {
         localStorage.setItem("aad.error", JSON.stringify(hashParams));
         microsoftTeams.authentication.notifyFailure("UnexpectedFailure");
     }
+  },
     // Parse hash parameters into key-value pairs
-    function getHashParameters() {
-        let hashParams = {};
-        location.hash.substr(1).split("&").forEach(function(item) {
-            let s = item.split("="),
-            k = s[0],
-            v = s[1] && decodeURIComponent(s[1]);
-            hashParams[k] = v;
-        });
-        return hashParams;
+  methods: {
+    getHashParameters() {
+      let hashParams = {};
+      location.hash.substr(1).split("&").forEach((item) => {
+          let s = item.split("="),
+          k = s[0],
+          v = s[1] && decodeURIComponent(s[1]);
+          hashParams[k] = v;
+      });
+      return hashParams;
     }
   }
 }

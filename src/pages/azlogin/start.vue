@@ -12,10 +12,10 @@ export default {
   async mounted() {
     alert("start")
     microsoftTeams.initialize()
-    microsoftTeams.getContext(function (context) {
+    microsoftTeams.getContext((context) => {
     alert(context)
         // Generate random state string and store it, so we can verify it in the callback
-        let state = _guid(); // _guid() is a helper function in the sample
+        let state = this._guid(); // _guid() is a helper function in the sample
         localStorage.setItem("aad.state", state);
         localStorage.removeItem("aad.error");
         // Go to the Azure AD authorization endpoint
@@ -25,7 +25,7 @@ export default {
             response_mode: "fragment",
             resource: "https://graph.microsoft.com/User.Read openid",
             redirect_uri: window.location.origin + "/azlogin/end/",
-            nonce: _guid(),
+            nonce: this._guid(),
             state: state,
             // The context object is populated by Teams; the loginHint attribute
             // is used as hinting information
