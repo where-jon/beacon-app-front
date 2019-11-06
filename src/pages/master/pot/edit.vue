@@ -570,7 +570,7 @@ export default {
     },
     doSubmit(evt) {
       if (this.form.thumbnail) {
-        this.replaceAS({updatedPotThumbnail: this.form.potId})
+        this.replaceAS({updatedPotThumbnailList: [this.form.potId]})
       }
       this.save(evt)
     }

@@ -63,7 +63,7 @@ export const fetchPosition = async (locations, exbs, txs, pMock, isAll = false) 
       let exb = _.find(exbs, exb => exb.location.posId == val.pos_id)
       let label = tx && tx.displayName? tx.displayName: val.btx_id
       return {btx_id: val.btx_id, minor: val.minor, power_level: val.power_level,
-        pos_id: val.pos_id, label, location, exb, tx, nearest: val.nearest, updatetime: dateform(val.updatetime)}
+        pos_id: val.pos_id, label, location, exb, tx, nearest: val.nearest, updatetime: dateform(val.updatetime), timestamp: dateform(val.updatetime)}
     })
     .compact().value()
 

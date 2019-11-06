@@ -497,6 +497,9 @@ export default {
           const oVal = Util.getValue(oldVal[key], 'value', null)
           const nVal = Util.getValue(newVal[key], 'value', null)
           this.filter.extra[key] = nVal
+          if(this.useCommonFilter(key)){
+            this[this.getCommonFilterKey(key)] = nVal
+          }
           if(oVal != nVal){
             this.extraFilterSpec[key].change()
           }
@@ -552,6 +555,12 @@ export default {
     },
     thumbnail(row) {
       return this.$parent.$options.methods.thumbnail.call(this.$parent, row)
+    },
+    useCommonFilter(key){
+      return Util.getValue(this.params, 'commonFilter', []).some(v => v == key)
+    },
+    getCommonFilterKey(key){
+      return StringUtil.concatCamel('selected', key)
     },
     setEmptyMessage(){
       this.message = null

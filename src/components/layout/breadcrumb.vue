@@ -9,7 +9,7 @@
           </li>
         </ol>
       </div>
-      <div v-if="useLegend && legendItems" ref="legendButton" class="col-auto px-0">
+      <div v-if="useLegend && legendItems" ref="legendButton" class="col-auto px-1">
         <b-button v-if="showLegend" class="legend-button-active" @click="switchLegend">
           {{ $i18n.tnl('label.legend') }}
         </b-button>
@@ -166,7 +166,7 @@ export default {
       this.setColor('dropdown-menu', color)
       this.setColor('dropdown-item', color)
     },
-    switchLegend(){
+    switchLegend(e){
       this.showLegend = !this.showLegend
       if(this.showLegend){
         document.addEventListener('mousedown', this.touchStart)
@@ -176,6 +176,7 @@ export default {
         document.addEventListener('touchend', this.touchEnd)
       }
       else{
+        e.target.blur()
         document.removeEventListener('mousedown', this.touchStart)
         document.removeEventListener('mouseup', this.touchEnd)
         document.removeEventListener('touchstart', this.touchStart)

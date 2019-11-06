@@ -58,6 +58,9 @@ export default {
   async mounted() {
     await StateHelper.load('pot')
   },
+  async created() {
+    await StateHelper.load('pot')
+  },
   methods: {
     onSaved(){
       StateHelper.setForceFetch('tx', true)

@@ -95,7 +95,10 @@ export default {
       //
       viewList: [],
       fields: [],
-      fields1: SensorHelper.getFields1(),
+      fields1: SensorHelper.getFields1([
+        { key: 'locationName', forceShow: true },
+        'posId',
+      ]),
       fields2: SensorHelper.getFields2(),
       fields5: SensorHelper.getFields5(),
       fields6: SensorHelper.getFields6(),

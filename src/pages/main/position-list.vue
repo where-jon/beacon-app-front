@@ -59,6 +59,10 @@ export default {
           MenuHelper.useMaster('group') && APP.POS.WITH.GROUP? 'group' : null,
           MenuHelper.useMaster('category') && APP.POS.WITH.CATEGORY? 'category' : null,
           APP.POSITION_WITH_AREA? 'area' : null]).compact().value(),
+        commonFilter: _([
+          MenuHelper.useMaster('group') && APP.POS.WITH.GROUP? 'group' : null,
+          MenuHelper.useMaster('category') && APP.POS.WITH.CATEGORY? 'category' : null,
+        ]).compact().value(),
         initTotalRows: this.$store.state.app_service.positionList.length,
         disableTableButtons: true,
       },
@@ -104,7 +108,7 @@ export default {
         }
         await Promise.all(this.loadStates.map(StateHelper.load))
         await PositionHelper.storePositionHistory(0, true)
-        let positions = PositionHelper.getPositions(true)
+        let positions = PositionHelper.getPositions(true, true)
         Util.debug(positions)
 
         let prohibitCheck = false

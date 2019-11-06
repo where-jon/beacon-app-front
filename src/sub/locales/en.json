@@ -654,6 +654,15 @@
         "UNDETECT_TIME": "Undetected status decision time (EXB status monitoring):: Devices that have passed the time set from the last reception time will be undetected.Set up in milliseconds.",
         "WITH_POWER_LEVEL": "Use battery level in EXB status monitoring screen::Display battery level in EXB status monitoring screen.★"
       },
+       "MAIL": {
+          "TYPE": "TYPE for mail setting",
+          "ID": "ID for mail setting",
+          "PASSWORD": "PASSWORD for email settings",
+          "SMTP_HOST": "Mail setting HOST",
+          "SMTP_PORT": "Mail setting Port",
+          "SMTP_AUTH": "Authentication for email settings",
+          "SMTP_STARTTLS": "TLS for email settings"
+      },
       "POS": {
         "AUTO_RELOAD": "Position history automatic reload interval::Set the interval for performing automatic reloading of position history in the position (map) screen in milliseconds. ★",
         "TRANSPARENT_TIME": "Semi-transparent status decision time::The device which has passed the set up time from the last reception time will become semi-transparent.Set up in milliseconds.",
@@ -972,7 +981,8 @@
         "SVC": "Server",
         "BATCH": "Batch",
         "SIMULATION": "For Demostration",
-        "OTHER": "Others"
+        "OTHER": "Others",
+        "MAIL": "Mail"
       },
       "SENSOR_NONE": {
         "0": "0::Not set"
