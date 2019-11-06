@@ -59,6 +59,7 @@ export default {
   },
   mounted() {
     console.log('@@@@@@@@@@@@@@@@@ azLogin')
+    microsoftTeams.initialize()
     this.tenantName = this.tenantName || LocalStorageHelper.popLocalStorage('tenantName')
     APP.MENU.LOGIN_PAGE = APP.MENU.AZLOGIN_PAGE
   },
@@ -66,7 +67,6 @@ export default {
     signIn() {
       console.log('azLogin SignIn')
       try {
-        microsoftTeams.initialize()
         microsoftTeams.authentication.authenticate({
             url: window.location.origin + "/azlogin/start/",
             width: 600,
