@@ -626,6 +626,7 @@
     "mobile": "Mobile",
     "entrydate": "Entry date",
     "score": "Score",
+    "adminConsent": "Admin Consent",
 
     "dummy": ""
   },
@@ -1244,6 +1245,14 @@
     "resetFromTo": "Because{from}has changed,{to}is now unselected",
     "underDegree": "under ℃",
     "overDegree": "over ℃",
+
+    "MSTEAMS": {
+      "USER_GUIDE1": "In order to use EXOffice, you have to grant this application a permission to read your organization's groups and users on your Office365.",
+      "USER_GUIDE2": "Enter your organization name, click the button below and sign in with administrator of Office365.",
+      "INVALID_TENANT": "To use this EXOffice, a contract is required with WHERE Inc. If you already signed the contract, please let us know.",
+      "INVALID_TENANT_CONTACT": "Contact: http://where123.jp/contact/",
+      "IF_NOT_SHOWN": "To show EXOffice, click Sign In button below. If it does not work, try again after reload this page."
+    },
 
     "dummy": "" 
   },

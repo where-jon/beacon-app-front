@@ -261,7 +261,7 @@ export const logout = () => {
   const login = LocalStorageHelper.getLogin()
   if (login && login.isAd) {
     window.localStorage.clear()
-    router && router.push(APP.MENU.AZTOP_PAGE)  
+    router && router.push(APP.MENU.AZLOGIN_PAGE)  
   }
   else {
     LocalStorageHelper.removeLocalStorage('login')
