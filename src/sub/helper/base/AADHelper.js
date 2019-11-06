@@ -15,6 +15,18 @@ export const signIn = (successCallback, failureCallback) => {
   })
 }
 
+export const getCachedToken = () => {
+  const keys = localStorage.getItem('adal.token.keys')
+  if (!keys) {
+    return null
+  }
+  const expire = localStorage.getItem('adal.expiration.key' + keys.split('|')[0])
+  if (!expire || expire * 1000 - new Date().getTime() < 0) {
+    return null
+  }
+  return localStorage.getItem('adal.idtoken')
+}
+
 export const getContext = () => {
   init()
   microsoftTeams.getContext((context) => {

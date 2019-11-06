@@ -75,16 +75,22 @@ export default {
       console.log('azLogin SignIn')
       try {
         if (BrowserUtil.inIframe())  { // Teams内での表示
-          AADHelper.signIn(
-            (result) => {
-              console.log(result)
-              this.afterGetToken(result.idToken)
-            },
-            (reason) => {
-              console.error(reason)
-              this.invalidToken = true
-            }
-          )
+          const token = AADHelper.getCachedToken()
+          if (token) {
+            this.afterGetToken(token)
+          }
+          else {
+            AADHelper.signIn(
+              (result) => {
+                console.log(result)
+                this.afterGetToken(result.idToken)
+              },
+              (reason) => {
+                console.error(reason)
+                this.invalidToken = true
+              }
+            )
+          }
         }
         else { // Webページでの表示
           let token = MsalHelper.getCachedToken()
