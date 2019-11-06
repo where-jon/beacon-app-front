@@ -24,6 +24,7 @@
     </div>
     <div v-if="disabled">{{ $t('config.MSTEAMS.INVALID_TENANT') }}<br />{{ $t('config.MSTEAMS.INVALID_TENANT_CONTACT') }}</div>
     <div v-if="notShown"><div v-html="$t('config.MSTEAMS.IF_NOT_SHOWN')"></div><br/><button onclick='location.reload();'>{{ $t('label.reload') }}</button></div>
+    <div><a href="#" @click="signIn">Sign In</a></div>
     <div><a href="/login/">sysadmin login</a></div>
   </b-container>
 </template>
@@ -56,31 +57,34 @@ export default {
       return !this.notRegistered && !this.disabled && !this.invalidToken
     }
   },
-  async mounted() {
+  mounted() {
     console.log('@@@@@@@@@@@@@@@@@ azLogin')
     this.tenantName = this.tenantName || LocalStorageHelper.popLocalStorage('tenantName')
-    try {
-      microsoftTeams.initialize()
-      microsoftTeams.authentication.authenticate({
-          url: window.location.origin + "/azlogin/start/",
-          width: 600,
-          height: 535,
-          successCallback: (result) => {
-            console.log(result)
-            this.afterGetToken(result.idToken)
-          },
-          failureCallback: (reason) => {
-            console.error(reason)
-            this.invalidToken = true
-          }
-      })
-    } catch (e) {
-      console.error('azlogin error', e)
-      this.invalidToken = true
-    }
     APP.MENU.LOGIN_PAGE = APP.MENU.AZLOGIN_PAGE
   },
   methods: {
+    signIn() {
+      console.log('azLogin SignIn')
+      try {
+        microsoftTeams.initialize()
+        microsoftTeams.authentication.authenticate({
+            url: window.location.origin + "/azlogin/start/",
+            width: 600,
+            height: 535,
+            successCallback: (result) => {
+              console.log(result)
+              this.afterGetToken(result.idToken)
+            },
+            failureCallback: (reason) => {
+              console.error(reason)
+              this.invalidToken = true
+            }
+        })
+      } catch (e) {
+        console.error('azlogin error', e)
+        this.invalidToken = true
+      }
+    },
     async afterGetToken(idToken) {
       this.hasToken = true
       AuthHelper.setApp(this.$router, this.$store)
