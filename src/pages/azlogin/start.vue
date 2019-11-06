@@ -10,10 +10,8 @@ import { APP, MSTEAMS_APP } from '../../sub/constant/config'
 
 export default {
   async mounted() {
-    alert("start")
     microsoftTeams.initialize()
     microsoftTeams.getContext((context) => {
-    alert(context)
         // Generate random state string and store it, so we can verify it in the callback
         let state = this._guid(); // _guid() is a helper function in the sample
         localStorage.setItem("aad.state", state);
@@ -23,7 +21,7 @@ export default {
             client_id: MSTEAMS_APP.APP_ID,
             response_type: "id_token token",
             response_mode: "fragment",
-            resource: "https://graph.microsoft.com/openid",
+            resource: "https://graph.microsoft.com",
             redirect_uri: window.location.origin + "/azlogin/end/",
             nonce: this._guid(),
             state: state,
@@ -35,7 +33,6 @@ export default {
         let authorizeEndpoint = "https://login.microsoftonline.com/" + context.tid + "/oauth2/authorize?" + this.toQueryString(queryParams);
         window.location.assign(authorizeEndpoint);
     })   
-    alert("start fin")
   },
   methods: {
     toQueryString(queryParams) {
