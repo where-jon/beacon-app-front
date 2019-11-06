@@ -731,7 +731,7 @@
         "EXT_DEF": "Person & thing extension item::Define extension items that can be set to people & thing in JSON format."
       },
       "CATEGORY": {
-        "TYPES": "Types that can be selected on the category screen::Set up the types that can be selected on the category screen. The possible to set up values are as follows.{CATEGORY_TYPES}"
+        "TYPES": ""
       },
       "NOTIFY": {
         "MIDIUM_TYPES": "Selectable notification media on notification template screen::Set up the types that can be selected on the category screen. The possible to set up values are as follows.{NOTIFY_MIDIUM}",
