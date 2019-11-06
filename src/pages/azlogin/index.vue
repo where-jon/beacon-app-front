@@ -69,39 +69,39 @@ export default {
     AADHelper.init()
     this.tenantName = this.tenantName || LocalStorageHelper.popLocalStorage('tenantName')
     APP.MENU.LOGIN_PAGE = APP.MENU.AZLOGIN_PAGE
+    if (BrowserUtil.inIframe())  { // Teams内での表示
+      const token = AADHelper.getCachedToken()
+      if (token) {
+        this.afterGetToken(token)
+      }
+    }
+    else {
+      let token = MsalHelper.getCachedToken()
+      if (token) {
+        this.afterGetToken(localStorage.getItem('msal.idtoken'))
+      }
+    }
   },
   methods: {
     signIn() {
       console.log('azLogin SignIn')
       try {
         if (BrowserUtil.inIframe())  { // Teams内での表示
-          const token = AADHelper.getCachedToken()
-          if (token) {
-            this.afterGetToken(token)
-          }
-          else {
-            AADHelper.signIn(
-              (result) => {
-                console.log(result)
-                this.afterGetToken(result.idToken)
-              },
-              (reason) => {
-                console.error(reason)
-                this.invalidToken = true
-              }
-            )
-          }
+          AADHelper.signIn(
+            (result) => {
+              console.log(result)
+              this.afterGetToken(result.idToken)
+            },
+            (reason) => {
+              console.error(reason)
+              this.invalidToken = true
+            }
+          )
         }
         else { // Webページでの表示
-          let token = MsalHelper.getCachedToken()
-          if (token) {
+          MsalHelper.signIn((token, user) => {
             this.afterGetToken(localStorage.getItem('msal.idtoken'))
-          }
-          else {
-            MsalHelper.signIn((token, user) => {
-              this.afterGetToken(localStorage.getItem('msal.idtoken'))
-            })
-          }
+          })
         }
       } catch (e) {
         console.error('azlogin error', e)
