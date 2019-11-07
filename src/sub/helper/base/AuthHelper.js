@@ -165,7 +165,7 @@ export const authByAppService = async (loginId, password, success, err) => {
     // Login process
     let isAd = false
     if (loginId.length>50) { // AD Loginの場合
-      loginId = userInfo.user.name
+      loginId = userInfo.user.loginId
       isAd = true
       // eslint-disable-next-line require-atomic-updates
       APP.MENU.LOGIN_PAGE = APP.MENU.AZLOGIN_PAGE
