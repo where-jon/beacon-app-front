@@ -26,6 +26,13 @@ export const getCachedToken = () => {
   return idtoken
 }
 
+export const getContextForMobile = (callback) => {
+  microsoftTeams.getContext((context) => {
+    console.log({context})
+    callback(context)
+  })
+}
+
 export const getContext = () => {
   init()
   microsoftTeams.getContext((context) => {

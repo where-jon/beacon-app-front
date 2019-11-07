@@ -88,9 +88,11 @@ export default {
   methods: {
     signIn() {
       console.log('azLogin SignIn')
-      try {
-        alert('inIframe:' + BrowserUtil.inIframe())
-        if (BrowserUtil.inIframe())  { // Teams内での表示
+      if (BrowserUtil.inIframe())  { // Teams内での表示
+        if (BrowserUtil.isMobile()) {
+          this.mobileLogin()
+        }
+        else {
           AADHelper.signIn(
             (result) => {
               console.log(result)
@@ -102,15 +104,24 @@ export default {
             }
           )
         }
-        else { // Webページでの表示
-          MsalHelper.signIn((token, user) => {
-            this.afterGetToken(localStorage.getItem('msal.idtoken'))
-          })
-        }
-      } catch (e) {
-        console.error('azlogin error', e)
-        this.invalidToken = true
       }
+      else { // Webページでの表示
+        MsalHelper.signIn((token, user) => {
+          this.afterGetToken(localStorage.getItem('msal.idtoken'))
+        })
+      }
+    },
+    mobileLogin() {
+      AADHelper.getContextForMobile((context) => {
+        await AuthHelper.auth('MOBILE:' + JSON.stringify(context), 'password',
+          ()=>{
+            this.$router.push(APP.MENU.TOP_PAGE)
+          },
+          (e)=>{
+            console.error(e)
+          }
+        )
+      })
     },
     async afterGetToken(idToken) {
       this.hasToken = true
