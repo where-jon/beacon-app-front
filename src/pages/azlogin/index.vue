@@ -88,6 +88,7 @@ export default {
   methods: {
     signIn() {
       console.log('azLogin SignIn. inIframe=', BrowserUtil.inIframe(), 'isMobile=', BrowserUtil.isMobile())
+      alert(window.navigator.userAgent)
       if (BrowserUtil.isMobile() && AADHelper.isTeamsApp()) { // Teamsアプリモバイル版の場合
         this.mobileLogin()
       }
