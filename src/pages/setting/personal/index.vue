@@ -17,12 +17,12 @@
             -->
             <b-form-group v-show="showName">
               <label v-t="'label.name'" />
-              <input v-model="loginUser.name" :readonly="!isChange" :state="errorMessages.name.length > 0 ? false : null" type="text" class="form-control" maxlength="20">
+              <input v-model="loginUser.name" :readonly="isChange" :state="errorMessages.name.length > 0 ? false : null" type="text" class="form-control" maxlength="20">
               <p v-for="(val, key) in errorMessages.name" :key="key" v-t="val" class="error" />
             </b-form-group>
             <b-form-group v-show="showEmail">
               <label v-t="'label.email'" />
-              <input v-model="loginUser.email" :readonly="!isChange" :state="errorMessages.email.length > 0 ? false : null" type="email" class="form-control">
+              <input v-model="loginUser.email" :readonly="isChange" :state="errorMessages.email.length > 0 ? false : null" type="email" class="form-control">
               <p v-for="(val, key) in errorMessages.email" :key="key" v-t="val" class="error" />
             </b-form-group>
             <!--
@@ -83,13 +83,15 @@
           </b-form>
         </b-col>
       </b-row>
-      <!-- MS Teams版では常にキャンセル・変更ボタンを表示 -->
+      <!-- MS Teams版では常にキャンセル・変更ボタンを非表示 -->
+      <!--
       <b-row v-show="isChange" :style="{ marginTop: '30px' }">
         <b-form-group class="col text-center">
           <b-button v-t="'label.cancel'" type="button" class="mr-4 mb-2 input-btn" variant="outline-danger" @click="handleCancelButton" />
           <b-button v-t="'label.modify'" :variant="theme" type="button" class="ml-4 mb-2 input-btn" @click="onSubmit" />
         </b-form-group>
       </b-row>
+      -->
     </div>
   </div>
 </template>
