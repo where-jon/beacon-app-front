@@ -36,6 +36,7 @@
             </v-select>
           </span>
           <b-button v-t="'label.bulkAdd'" :variant="theme" :disabled="settingStart" size="sm" class="mt-mobile mb-2" @click="bulkAdd" /> 
+          <b-button v-if="editable" v-t="'label.save'" :variant="theme" :disabled="!isChanged" size="sm" class="mt-mobile mb-2 ml-2" @click="save" /> 
         </b-form-row>
       </b-form-row>
     </b-form>
@@ -61,7 +62,6 @@
       </b-form-row>
       <b-form-row class="mb-3 ml-1">
         <b-button v-t="settingStart?'label.settingNow':'label.settingStart'" :variant="theme" :class="{'mt-mobile':true, 'mt-mobile-button': true, 'mr-2':true, blink:settingStart}" size="sm" @click="ratioSettingStart" /> 
-        <b-button v-if="editable" v-t="'label.save'" :variant="theme" :disabled="!isChanged" size="sm" @click="save" /> 
       </b-form-row>
     </b-form>
     <div class="mt-3">
