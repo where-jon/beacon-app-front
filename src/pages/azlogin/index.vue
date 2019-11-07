@@ -82,8 +82,8 @@ export default {
     }
     else {
       AADHelper.init()
+      this.finishInit = true
     }
-    this.finishInit = true
   },
   methods: {
     signIn() {
@@ -130,12 +130,15 @@ export default {
           )
           break
         case TENANT.STATUS.NOT_REGISTERED:
+          this.finishInit = true
           this.notRegistered = true
           break
         case TENANT.STATUS.DISABLED:
+          this.finishInit = true
           this.disabled = true
           break
         default:
+          this.finishInit = true
           this.invalidToken = true
       }
     },
