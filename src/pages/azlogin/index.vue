@@ -88,6 +88,7 @@ export default {
   methods: {
     signIn() {
       console.log('azLogin SignIn. inIframe=', BrowserUtil.inIframe(), 'isMobile=', BrowserUtil.isMobile())
+      alert('azLogin SignIn. inIframe=' + BrowserUtil.inIframe() + ' isMobile=' + BrowserUtil.isMobile())
       if (BrowserUtil.isMobile() && AADHelper.isTeamsApp()) { // Teamsアプリモバイル版の場合
         this.mobileLogin()
       }
@@ -111,6 +112,7 @@ export default {
     },
     mobileLogin() {
       AADHelper.getContextForMobile((context) => {
+        alert(context.tid)
         AuthHelper.auth('MOBILE:' + JSON.stringify(context), 'password',
           ()=>{
             this.$router.push(APP.MENU.TOP_PAGE)
