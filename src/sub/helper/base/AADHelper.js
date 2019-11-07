@@ -29,6 +29,7 @@ export const getCachedToken = () => {
 export const getContext = () => {
   init()
   microsoftTeams.getContext((context) => {
+    console.log({context})
     // Generate random state string and store it, so we can verify it in the callback
     let state = _guid() // _guid() is a helper function in the sample
     localStorage.setItem('aad.state', state)

@@ -89,6 +89,7 @@ export default {
     signIn() {
       console.log('azLogin SignIn')
       try {
+        alert('inIframe:' + BrowserUtil.inIframe())
         if (BrowserUtil.inIframe())  { // Teams内での表示
           AADHelper.signIn(
             (result) => {
