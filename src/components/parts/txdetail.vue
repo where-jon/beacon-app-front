@@ -39,7 +39,8 @@
         </div>
         <div class="descriptionSensor">
           <div v-for="item in getDispItems()" :key="item.key">
-            {{ item.val }}
+            <div v-if="item.key !== 'name'">{{ item.val }}</div>
+            <div v-else><a href="#" @click="moveToChat">{{ item.val }}</a></div>
           </div>
         </div>
       </div>
