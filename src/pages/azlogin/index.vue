@@ -23,6 +23,7 @@
       </b-form-group>
     </div>
     <div v-if="disabled">{{ $t('message.MSTEAMS.INVALID_TENANT') }}<br />{{ $t('message.MSTEAMS.INVALID_TENANT_CONTACT') }}</div>
+    <div v-if="!finishInit"><br />{{ $t('message.MSTEAMS.WAIT_A_MOMENT') }}</div>
     <div v-if="notShown">
       <p></p>
       <div v-html="$t('message.MSTEAMS.IF_NOT_SHOWN')"></div><br/>
@@ -119,7 +120,7 @@ export default {
       }
       switch (tenantStatus) {
         case TENANT.STATUS.REGISTERED:
-          AuthHelper.auth(idToken, 'password',
+          await AuthHelper.auth(idToken, 'password',
             ()=>{
               this.$router.push(APP.MENU.TOP_PAGE)
             },
