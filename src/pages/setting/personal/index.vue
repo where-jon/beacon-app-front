@@ -8,11 +8,13 @@
         <b-col md="10" offset-md="1">
           <pagetitle title="label.login-user-profile" />
           <b-form>
+            <!-- MS Teams版ではログインID欄非表示
             <b-form-group>
               <label v-t="'label.loginId'" />
               <b-form-input v-model="loginUser.loginId" :state="errorMessages.loginId.length > 0 ? false : null" type="text" maxlength="16" readonly />
               <p v-for="(val, key) in errorMessages.loginId" :key="key" v-t="val" class="error" />
             </b-form-group>
+            -->
             <b-form-group v-show="showName">
               <label v-t="'label.name'" />
               <input v-model="loginUser.name" :readonly="!isChange" :state="errorMessages.name.length > 0 ? false : null" type="text" class="form-control" maxlength="20">
@@ -48,12 +50,12 @@
             </b-form-group>
             <!-- プロフィール・パスワードを変更するボタン -->
             <b-form-group v-if="isUpdatable">
+              <!-- MS Teams版ではパスワード変更不可
               <b-button v-show="!isChange" v-t="'label.changeProfilePassword'" :variant="theme" 
                         type="button" class="btn-block" @click="isChange = true"
               />
               <b-card v-show="isChange" bg-variant="light">
                 <b-form-group :label="$i18n.tnl('label.changePassword')" breakpoint="lg" label-size="md">
-                  <!-- 現在のパスワード -->
                   <b-form-group :label="$i18n.tnl('label.passwordCurrent')" label-class="text-sm-right" label-for="password-current">
                     <b-form-input id="password-current" v-model="loginUser.password"
                                   :state="errorMessages.password.length > 0 ? false : null" type="password"
@@ -64,12 +66,10 @@
                     </p>
                   </b-form-group>
 
-                  <!-- 変更パスワード -->
                   <b-form-group :label="$i18n.tnl('label.passwordUpdate')" label-class="text-sm-right" label-for="password-update">
                     <b-form-input id="password-update" v-model="loginUser.passwordUpdate" type="password" maxlength="16" />
                   </b-form-group>
 
-                  <!-- 確認パスワード -->
                   <b-form-group :label="$i18n.tnl('label.passwordConfirm')" label-class="text-sm-right" label-for="password-confirm">
                     <b-form-input id="password-confirm" v-model="loginUser.passwordConfirm" type="password" maxlength="16" />
                   </b-form-group>
@@ -78,10 +78,12 @@
                   {{ passErrorMessage }}
                 </b-alert>
               </b-card>
+              -->
             </b-form-group>
           </b-form>
         </b-col>
       </b-row>
+      <!-- MS Teams版では常にキャンセル・変更ボタンを表示 -->
       <b-row v-show="isChange" :style="{ marginTop: '30px' }">
         <b-form-group class="col text-center">
           <b-button v-t="'label.cancel'" type="button" class="mr-4 mb-2 input-btn" variant="outline-danger" @click="handleCancelButton" />
@@ -157,7 +159,7 @@ export default {
         passwordUpdate: '',
         passwordConfirm: '',
       },
-      isChange: false,
+      isChange: true,
     }
   },
   computed: {
