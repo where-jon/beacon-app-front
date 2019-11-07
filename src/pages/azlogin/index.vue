@@ -66,20 +66,20 @@ export default {
   },
   mounted() {
     console.log('@@@@@@@@@@@@@@@@@ azLogin')
-    AADHelper.init()
     this.tenantName = this.tenantName || LocalStorageHelper.popLocalStorage('tenantName')
     APP.MENU.LOGIN_PAGE = APP.MENU.AZLOGIN_PAGE
+    let token
     if (BrowserUtil.inIframe())  { // Teams内での表示
-      const token = AADHelper.getCachedToken()
-      if (token) {
-        this.afterGetToken(token)
-      }
+      token = AADHelper.getCachedToken()
     }
     else {
-      let token = MsalHelper.getCachedToken()
-      if (token) {
-        this.afterGetToken(localStorage.getItem('msal.idtoken'))
-      }
+      token = MsalHelper.getCachedToken() && localStorage.getItem('msal.idtoken')
+    }
+    if (token) {
+      this.afterGetToken(token)        
+    }
+    else {
+      AADHelper.init()
     }
   },
   methods: {
