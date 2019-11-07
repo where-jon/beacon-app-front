@@ -16,19 +16,14 @@ export const signIn = (successCallback, failureCallback) => {
 }
 
 export const getCachedToken = () => {
-  console.log({localStorage}, {location})
-  const keys = localStorage.getItem('adal.token.keys')
-  console.log({keys})
-  if (!keys) {
-    return null
-  }
-  const expire = localStorage.getItem('adal.expiration.key' + keys.split('|')[0])
+  const expire = localStorage.getItem('aad.expire')
   console.log({expire})
   if (!expire || expire * 1000 - new Date().getTime() < 0) {
     return null
   }
-  console.log(localStorage.getItem('adal.idtoken'))
-  return localStorage.getItem('adal.idtoken')
+  const idtoken = localStorage.getItem('aad.id_token')
+  console.log({idtoken})
+  return idtoken
 }
 
 export const getContext = () => {
@@ -129,6 +124,8 @@ export const tokenEnd = () => {
       microsoftTeams.authentication.notifyFailure('StateDoesNotMatch')
     } else {
       // Success -- return token information to the parent page
+      localStorage.setItem('aad.expire', hashParams['expires_in'])
+      localStorage.setItem('aad.id_token', hashParams['id_token'])
       microsoftTeams.authentication.notifySuccess({
         idToken: hashParams['id_token'],
         accessToken: hashParams['access_token'],
