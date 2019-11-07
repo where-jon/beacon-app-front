@@ -88,22 +88,20 @@ export default {
   methods: {
     signIn() {
       console.log('azLogin SignIn. inIframe=', BrowserUtil.inIframe(), 'isMobile=', BrowserUtil.isMobile())
+      if (BrowserUtil.isMobile() && AADHelper.isTeamsApp()) { // Teamsアプリモバイル版の場合
+        this.mobileLogin()
+      }
       if (BrowserUtil.inIframe()) { // Teams内での表z示
-        if (BrowserUtil.isMobile()) {
-          this.mobileLogin()
-        }
-        else {
-          AADHelper.signIn(
-            (result) => {
-              console.log(result)
-              this.afterGetToken(result.idToken)
-            },
-            (reason) => {
-              console.error(reason)
-              this.invalidToken = true
-            }
-          )
-        }
+        AADHelper.signIn(
+          (result) => {
+            console.log(result)
+            this.afterGetToken(result.idToken)
+          },
+          (reason) => {
+            console.error(reason)
+            this.invalidToken = true
+          }
+        )
       }
       else { // Webページでの表示
         MsalHelper.signIn((token, user) => {

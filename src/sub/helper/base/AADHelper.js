@@ -15,6 +15,8 @@ export const signIn = (successCallback, failureCallback) => {
   })
 }
 
+export const isTeamsApp = () =>  window.navigator.userAgent.includes('Teams/')
+
 export const getCachedToken = () => {
   const expire = localStorage.getItem('aad.expire')
   console.log({expire})
