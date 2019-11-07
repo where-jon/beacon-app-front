@@ -16,6 +16,7 @@ export const signIn = (successCallback, failureCallback) => {
 }
 
 export const getCachedToken = () => {
+  console.log({localStorage}, {location})
   const keys = localStorage.getItem('adal.token.keys')
   console.log({keys})
   if (!keys) {
