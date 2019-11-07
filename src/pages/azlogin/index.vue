@@ -88,10 +88,6 @@ export default {
   methods: {
     signIn() {
       console.log('azLogin SignIn. inIframe=', BrowserUtil.inIframe(), 'isMobile=', BrowserUtil.isMobile())
-      alert(window.navigator.userAgent)
-      if (BrowserUtil.isMobile() && AADHelper.isTeamsApp()) { // Teamsアプリモバイル版の場合
-        this.mobileLogin()
-      }
       if (BrowserUtil.inIframe()) { // Teams内での表z示
         AADHelper.signIn(
           (result) => {
@@ -104,6 +100,9 @@ export default {
           }
         )
       }
+      else if (BrowserUtil.isMobile()) { // モバイル版の場合 UserAgentにTeamsが入っていないのでTeamsアプリかブラウザかは判断できない
+        this.mobileLogin()
+      }
       else { // Webページでの表示
         MsalHelper.signIn((token, user) => {
           this.afterGetToken(localStorage.getItem('msal.idtoken'))
@@ -111,7 +110,6 @@ export default {
       }
     },
     mobileLogin() {
-      alert("mobileLogin")
       AADHelper.getContextForMobile((context) => {
         alert(context.tid)
         AuthHelper.auth('MOBILE:' + JSON.stringify(context), 'password',
@@ -125,7 +123,6 @@ export default {
       })
     },
     async afterGetToken(idToken) {
-      alert("afterGetToken")
       this.hasToken = true
       AuthHelper.setApp(this.$router, this.$store)
       let tenantStatus = await AuthHelper.getADTenantStatus(idToken)
