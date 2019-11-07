@@ -64,7 +64,7 @@ export default {
       return !this.notRegistered && !this.disabled && !this.invalidToken
     }
   },
-  mounted() {
+  async mounted() {
     console.log('@@@@@@@@@@@@@@@@@ azLogin')
     this.tenantName = this.tenantName || LocalStorageHelper.popLocalStorage('tenantName')
     APP.MENU.LOGIN_PAGE = APP.MENU.AZLOGIN_PAGE
