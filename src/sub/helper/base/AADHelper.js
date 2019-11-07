@@ -17,13 +17,16 @@ export const signIn = (successCallback, failureCallback) => {
 
 export const getCachedToken = () => {
   const keys = localStorage.getItem('adal.token.keys')
+  console.log({keys})
   if (!keys) {
     return null
   }
   const expire = localStorage.getItem('adal.expiration.key' + keys.split('|')[0])
+  console.log({expire})
   if (!expire || expire * 1000 - new Date().getTime() < 0) {
     return null
   }
+  console.log(localStorage.getItem('adal.idtoken'))
   return localStorage.getItem('adal.idtoken')
 }
 
