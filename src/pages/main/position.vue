@@ -723,9 +723,9 @@ export default {
     },
     showDetail(btxId, x, y) {
       // アラート表示でずれるので遅延実行を行う
-      this.$nextTick(async () => {
+      setTimeout( () => {
         this.showDetailImp(btxId, x, y)
-      })
+      }, 500)
     },
     showDetailImp(btxId, x, y) { // (p,) position
       // 地図エリアとゾーン表示で重複しているTXIDの場合、元のTXIDを取得する
