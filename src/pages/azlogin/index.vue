@@ -89,7 +89,7 @@ export default {
     signIn() {
       console.log('azLogin SignIn. inIframe=', BrowserUtil.inIframe(), 'isMobile=', BrowserUtil.isMobile())
       if (BrowserUtil.inIframe())  { // Teams内での表示
-        if (BrowserUtil.isMobile() || true) {
+        if (BrowserUtil.isMobile()||true) {
           this.mobileLogin()
         }
         else {
