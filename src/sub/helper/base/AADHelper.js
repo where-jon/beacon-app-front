@@ -18,7 +18,7 @@ export const signIn = (successCallback, failureCallback) => {
 export const getCachedToken = () => {
   const expire = localStorage.getItem('aad.expire')
   console.log({expire})
-  if (!expire || expire * 1000 - new Date().getTime() < 0) {
+  if (!expire || expire - new Date().getTime() < 0) {
     return null
   }
   const idtoken = localStorage.getItem('aad.id_token')
@@ -124,7 +124,7 @@ export const tokenEnd = () => {
       microsoftTeams.authentication.notifyFailure('StateDoesNotMatch')
     } else {
       // Success -- return token information to the parent page
-      localStorage.setItem('aad.expire', hashParams['expires_in'])
+      localStorage.setItem('aad.expire', new Date().getTime() + hashParams['expires_in'] * 1000)
       localStorage.setItem('aad.id_token', hashParams['id_token'])
       microsoftTeams.authentication.notifySuccess({
         idToken: hashParams['id_token'],
