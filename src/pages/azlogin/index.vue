@@ -53,6 +53,7 @@ export default {
       notRegistered: false,
       disabled: false,
       invalidToken: false,
+      finishInit: false,
       hasToken: false
     }
   },
@@ -61,10 +62,10 @@ export default {
       return this.tenantName && this.tenantName.length > 0
     },
     notShown() {
-      return !this.notRegistered && !this.disabled && !this.invalidToken
+      return this.finishInit && !this.notRegistered && !this.disabled && !this.invalidToken
     }
   },
-  async mounted() {
+  mounted() {
     console.log('@@@@@@@@@@@@@@@@@ azLogin')
     this.tenantName = this.tenantName || LocalStorageHelper.popLocalStorage('tenantName')
     APP.MENU.LOGIN_PAGE = APP.MENU.AZLOGIN_PAGE
@@ -81,6 +82,7 @@ export default {
     else {
       AADHelper.init()
     }
+    this.finishInit = true
   },
   methods: {
     signIn() {
