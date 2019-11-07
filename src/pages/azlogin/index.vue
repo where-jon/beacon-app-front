@@ -49,7 +49,6 @@ import { TENANT } from '../../sub/constant/Constants'
 export default {
   data() {
     return {
-      adminConsentUrl: MSTEAMS_APP.ADMINCONSENT_URL_BASE + '?client_id=' + MSTEAMS_APP.APP_ID + '&redirect_uri=' + MSTEAMS_APP.REDIRECT_URL,
       tenantName: '',
       notRegistered: false,
       disabled: false,
@@ -75,6 +74,7 @@ export default {
       token = AADHelper.getCachedToken()
     }
     else {
+      MsalHelper.init()
       token = MsalHelper.getCachedToken() && localStorage.getItem('msal.idtoken')
     }
     if (token) {
@@ -156,7 +156,8 @@ export default {
       LocalStorageHelper.setLocalStorage('tenantName', this.tenantName)
       const left = (screen.width - 600) / 2
       const top = ( screen.height - 535) / 2
-      var popupWindow = window.open(this.adminConsentUrl, 'Admin consent', "width=600, height=535, top= " + top + ", left=" + left)
+      const adminConsentUrl = MSTEAMS_APP.ADMINCONSENT_URL_BASE + '?client_id=' + MSTEAMS_APP.APP_ID + '&redirect_uri=' + MSTEAMS_APP.REDIRECT_URL
+      var popupWindow = window.open(adminConsentUrl, 'Admin consent', "width=600, height=535, top= " + top + ", left=" + left)
       if (!popupWindow) {
           console.error('window open error')
           alert('Opening popupWindow failed.')

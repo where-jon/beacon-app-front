@@ -3,39 +3,41 @@ import * as Msal from 'msal'
 import { MSTEAMS_APP } from '../../constant/config'
 import { Date } from 'core-js'
 
-// initialize MSAL
-const msalConfig = {
-  auth: {
-    clientId: MSTEAMS_APP.APP_ID,
-    authority: 'https://login.microsoftonline.com/common',
-    validateAuthority: true
-  },
-  cache: {
-    cacheLocation: 'localStorage',
-    storeAuthStateInCookie: false
-  }
-}
-
 const loginRequest = {
   scopes: ['openid', 'profile', 'User.Read']
 }
 
 // instantiate MSAL
-const myMSALObj = new Msal.UserAgentApplication(msalConfig)
+let myMSALObj
 
-// register callback for redirect usecases
-myMSALObj.handleRedirectCallback((error, response) => {
-  if (error) {
-    console.log(error)
-  } else {
-    if (response.tokenType === 'id_token') {
-      console.log(response)
+export const init = () => {
+  myMSALObj = new Msal.UserAgentApplication({
+    auth: {
+      clientId: MSTEAMS_APP.APP_ID,
+      authority: 'https://login.microsoftonline.com/common',
+      validateAuthority: true
+    },
+    cache: {
+      cacheLocation: 'localStorage',
+      storeAuthStateInCookie: false
     }
-    else {
-      console.log('token type is:' + response.tokenType)
+  })
+
+  // register callback for redirect usecases
+  myMSALObj.handleRedirectCallback((error, response) => {
+    if (error) {
+      console.log(error)
+    } else {
+      if (response.tokenType === 'id_token') {
+        console.log(response)
+      }
+      else {
+        console.log('token type is:' + response.tokenType)
+      }
     }
-  }
-})
+  })
+}
+
 
 // signin and acquire a token silently with POPUP flow. Fall back in case of failure with silent acquisition to popup
 export const signIn = (callback) => {
