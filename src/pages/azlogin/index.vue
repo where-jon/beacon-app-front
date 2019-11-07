@@ -144,7 +144,17 @@ export default {
     },
     adminConsent() {
       LocalStorageHelper.setLocalStorage('tenantName', this.tenantName)
-      location.href = this.adminConsentUrl
+      const left = (screen.width - 600) / 2
+      const top = ( screen.height - 535) / 2
+      var popupWindow = window.open(this.adminConsentUrl, 'Admin consent', "width=600, height=535, top= " + top + ", left=" + left)
+      if (!popupWindow) {
+          console.error('window open error')
+          alert('Opening popupWindow failed.')
+          return
+      }
+      if (popupWindow.focus) {
+          popupWindow.focus()
+      }
     }
   }
 }

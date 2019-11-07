@@ -1248,7 +1248,7 @@
 
     "MSTEAMS": {
       "USER_GUIDE1": "In order to use EXOffice, you have to grant this application a permission to read your organization's groups and users on your Office365.",
-      "USER_GUIDE2": "Enter your organization name, click the button below and sign in with administrator of Office365.",
+      "USER_GUIDE2": "Enter your organization name, click the button below and sign in with administrator of Office365. This operation should be done on PC.",
       "INVALID_TENANT": "To use this EXOffice, a contract is required with WHERE Inc. If you already signed the contract, please let us know.",
       "WAIT_A_MOMENT": "Now Loading...",
       "INVALID_TENANT_CONTACT": "Contact: http://where123.jp/contact/",
