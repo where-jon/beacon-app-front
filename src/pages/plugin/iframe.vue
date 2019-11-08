@@ -49,8 +49,10 @@ export default {
     EventBus.$off('pluginUpdate')
     EventBus.$on('pluginUpdate', () => {
       try {
+        const pageHeight = document.documentElement.clientHeight
         const childFrame = this.$refs.parentFrame.contentWindow.document.body
-        this.scrollHeight = childFrame.scrollHeight + 64
+        const childHeight = childFrame.scrollHeight + 64
+        this.scrollHeight = pageHeight > childHeight? pageHeight: childHeight
         EventBus.$emit('pluginUpdateDefault', this.scrollHeight)
       } catch(e) {}
     })
