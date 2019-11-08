@@ -280,7 +280,7 @@ export default {
 
 .description {
   float: left;
-  width: 160px;
+  width: 170px;
   height: 125px;
   font-weight: bold;
   padding-left: 10px;
