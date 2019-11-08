@@ -1081,7 +1081,7 @@ export const TENANT = {
   STATUS: {
     INVALID_TOKEN: -2,
     NOT_REGISTERED: -1,
-    REGISTERED: 0,
-    DISABLED: 1
+    REGISTERED: 1,
+    DISABLED: 0
   }
 }
