@@ -17,7 +17,7 @@
       p-split-auto-reload
       :p-use-plugin-filter="useDetailFilter"
       :p-installation="isInstallation"
-      p-quantity
+      :p-quantity="!isInstallation"
       @rssi="rssiFunc"
     />
   </div>
