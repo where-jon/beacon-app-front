@@ -6,12 +6,15 @@
     <alert v-model="alertData.isAlert" :message="alertData.message" :fix="fixHeight" :prohibit="alertData.isAlert" :prohibit-view="isProhibitView" :alert-style="alertStyle" />
     <b-row class="mt-2 ml-3">
       <b-form inline class="mt-2" @submit.prevent>
+        <!--
         <b-form-row class="my-1 ml-2 ml-sm-0">
           <label v-t="'label.positionStackType'" class="mr-2 mt-1" />
           <span>
             <b-form-select v-model="positionType" :options="positionTypeOptions" />
           </span>
         </b-form-row>
+        -->
+        <!--
         <b-form-row v-if="isShow('zone')" class="my-1 ml-2 ml-sm-0">
           <label v-t="'label.zoneCategory'" class="ml-sm-4 ml-2 mr-1 mt-1" />
           <span :title="vueSelectTitle(vueSelected.zoneCategory)">
@@ -25,6 +28,7 @@
             </v-select>
           </span>
         </b-form-row>
+        -->
       </b-form>
     </b-row>
     <position-display v-show="isShow('area')" ref="areaPosition" master-name="area" :alert-data="alertData" />
