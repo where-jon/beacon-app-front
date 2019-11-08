@@ -208,6 +208,12 @@ export default {
       const options = this[optionKey + 'Options']
 
       const ret = options != null? options: await AppServiceHelper.fetchList(`/${this.pluginRequest}/option/${optionKey}`)
+      if(plugin.lang != null){
+        ret.forEach(r => {
+          r.label = this.$i18n.tnl('label.' + r.label)
+          r.text = this.$i18n.tnl('label.' + r.text)
+        })
+      }
       if(this.useSelect(plugin) && !ret.some(r => r.value == null)){
         ret.unshift({ value: null, text: '', label: '' })
       }
