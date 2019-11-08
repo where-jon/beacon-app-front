@@ -72,8 +72,6 @@ export default {
       AADHelper.init()
       this.finishInit = true
     }
-    this.notShown = false
-    this.notRegistered = true
   },
   methods: {
     signIn() {
