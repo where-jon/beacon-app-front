@@ -1,26 +1,14 @@
 <template>
   <b-container fluid>
-    <div v-if="notRegistered">
-      <b-form-group>
-        <b-row>
-          <b-col cols="6" offset-md="1">
-            {{ $t('message.MSTEAMS.USER_GUIDE1') }}<br />{{ $t('message.MSTEAMS.USER_GUIDE2') }}
-          </b-col>
-        </b-row>
-      </b-form-group>
-      <b-form-group>
-        <b-row>
-          <b-col cols="2"><label class="control-label float-right">{{ $t('label.tenantName') }}</label></b-col>
-          <b-col cols="4"><input type="text" class="form-control" maxlength="64" v-model="tenantName" /></b-col>
-        </b-row>
-      </b-form-group>
-      <b-form-group>
-        <b-row>
-          <b-col cols="2" offset-md="3">
-            <button class="btn btn-primary btn-large" :disabled="!isInputTenantName" @click="adminConsent">{{ $t('label.adminConsent') }}</button>
-          </b-col>
-        </b-row>
-      </b-form-group>
+    <div class="not-registered" v-if="notRegistered">
+      <b-row>
+        {{ $t('message.MSTEAMS.USER_GUIDE1') }}<br />{{ $t('message.MSTEAMS.USER_GUIDE2') }}
+      </b-row>
+      <b-form inline class="tenant">
+        <label class="tenant-name">{{ $t('label.tenantName') }}</label>
+        <input type="text" class="form-control" maxlength="64" size="40" v-model="tenantName" />
+        <button class="btn btn-primary btn-large approval" :disabled="!isInputTenantName" @click="adminConsent">{{ $t('label.adminConsent') }}</button>
+      </b-form>
     </div>
     <div v-if="disabled">{{ $t('message.MSTEAMS.INVALID_TENANT') }}<br />{{ $t('message.MSTEAMS.INVALID_TENANT_CONTACT') }}</div>
     <div v-if="!finishInit"><br />{{ $t('message.MSTEAMS.WAIT_A_MOMENT') }}</div>
@@ -84,6 +72,8 @@ export default {
       AADHelper.init()
       this.finishInit = true
     }
+    this.notShown = false
+    this.notRegistered = true
   },
   methods: {
     signIn() {
@@ -212,5 +202,21 @@ export default {
   color: #fff;
   transition: background .3s;
   -webkit-transition: background .3s;
+}
+
+div.not-registered {
+  margin-top: 20px;
+}
+
+form.tenant {
+  margin-top: 20px;
+}
+
+label.tenant-name {
+  margin-right: 10px;
+}
+
+button.approval {
+  margin-left: 10px;
 }
 </style>>
