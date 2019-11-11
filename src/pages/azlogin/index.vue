@@ -108,7 +108,8 @@ export default {
             this.$router.push(APP.MENU.TOP_PAGE)
           },
           (e)=>{
-            alert('erroooooooooooooor')
+            alert(e.message)
+            alert(e.toString())
             console.error(e)
           }
         )
