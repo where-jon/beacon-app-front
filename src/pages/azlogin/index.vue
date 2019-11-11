@@ -90,7 +90,6 @@ export default {
         )
       }
       else if (BrowserUtil.isMobile()) { // モバイル版の場合 UserAgentにTeamsが入っていないのでTeamsアプリかブラウザかは判断できない
-        alert('mobile')
         this.mobileLogin()
       }
       else { // Webページでの表示
@@ -101,7 +100,6 @@ export default {
     },
     mobileLogin() {
       AADHelper.getContextForMobile((context) => {
-        alert('getContextForMobile')
         context.authTimestamp = new Date().getTime()
         // const encryptedContext = CryptoJS.AES(JSON.stringify(context), MSTEAMS_APP.AES_KEY)
         // AuthHelper.auth('MOBILE:' + encryptedContext, 'password',
@@ -110,6 +108,7 @@ export default {
             this.$router.push(APP.MENU.TOP_PAGE)
           },
           (e)=>{
+            alert('erroooooooooooooor')
             console.error(e)
           }
         )
