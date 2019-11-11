@@ -351,22 +351,22 @@ export default {
       }
     },
     getExbPosition() {
-      return this.exbs.filter((exb) => exb.location.areaId === this.selectedArea && exb.location.x && exb.location.y > 0)
+      return this.exbs.filter(exb => exb.location && exb.location.areaId === this.selectedArea && exb.location.x && exb.location.y > 0)
     },
     async getNearest(exbs) {
       const positions = await HttpHelper.getExCloud(EXCloudHelper.url(EXCLOUD.POSITION_URL) + new Date().getTime())
       const xymap = {}
-      exbs.forEach((e) => xymap[e.deviceId] = {x: e.x, y: e.y})
-      return positions.filter((position) => exbs.some((exb) => exb.deviceId === position.device_id))
-        .map((position) => {
-          position.nearest.forEach((n) => {
+      exbs.forEach(e => xymap[e.deviceId] = {x: e.x, y: e.y})
+      return positions.filter(position => exbs.some(exb => exb.deviceId === position.device_id))
+        .map(position => {
+          position.nearest && position.nearest.forEach(n => {
             const target = xymap[n.device_id]
             if (target) {
               n.x = target.x
               n.y = target.y
             }
           })
-          return {btx_id: position.btx_id, nearest: position.nearest}
+          return {btx_id: position.btx_id, nearest: position.nearest? position.nearest: []}
         })
     },
     dispRssiIcons(btxId) {
