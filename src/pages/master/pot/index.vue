@@ -100,7 +100,7 @@ export default {
         'potName',
         'potType',
         'displayName',
-      ].concat(PotHelper.createCustomColumn(true).map(val => val.key))
+      ].concat(PotHelper.createCustomColumn(this.pName, true).map(val => val.key))
         .concat(['userId', 'loginId', 'roleName', 'pass', 'email',])
         .filter(val => val)
     },
@@ -127,7 +127,7 @@ export default {
         {key: 'thumbnail', tdClass: 'thumb-rowdata' },
         {key: 'txIdName', label:'tx', sortable: true, tdClass: 'thumb-rowdata' },
         {key: 'displayName', sortable: true, tdClass: 'thumb-rowdata'},
-      ].concat(PotHelper.createCustomColumn())
+      ].concat(PotHelper.createCustomColumn(this.pName))
         .concat([
           {key: 'actions', thStyle: {'min-width':'130px !important'} , tdClass: 'thumb-rowdata'},
         ]))

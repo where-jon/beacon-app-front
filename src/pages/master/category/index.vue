@@ -21,6 +21,10 @@ export default {
       type: String,
       default: '',
     },
+    pShowIcon: {
+      type: Boolean,
+      default: true,
+    },
     pPath: {
       type: String,
       default: '/master/category',
@@ -48,11 +52,11 @@ export default {
         fields: ViewHelper.addLabelByKey(this.$i18n, [ 
           {key: 'categoryCd', label: 'id', sortable: true },
           {key: 'categoryName', sortable: true },
-          {key: 'categoryTypeName', label: 'categoryType', sortable: true },
-          {key: 'style', label: 'display' },
+          !this.pName? {key: 'categoryTypeName', label: 'categoryType', sortable: true }: null,
+          this.pShowIcon? {key: 'style', label: 'display' }: null,
           {key: 'description' },
           {key: 'actions', thStyle: {width:'130px !important'} }
-        ]),
+        ]).filter(val => val),
         sortBy: 'categoryCd',
         initTotalRows: this.categoryLength
       },

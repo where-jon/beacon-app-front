@@ -107,7 +107,7 @@ export default {
       if(Util.hasValue(entity.ruby)){
         Util.setValue(entity, 'extValue.ruby', entity.ruby)
       }
-      PotHelper.getPotExtKeys().forEach(ext => {
+      PotHelper.getPotExtKeys(this.pName).forEach(ext => {
         Util.setValue(entity, 'extValue.' + ext, entity[ext])
       })
 

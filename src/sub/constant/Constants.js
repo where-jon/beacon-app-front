@@ -568,6 +568,14 @@ export const SETTING = {
           WITH: SETTING.STRING_LIST,
           EXT_DEF: SETTING.JSON,
         },
+        PERSON: {
+          WITH: SETTING.STRING_LIST,
+          EXT_DEF: SETTING.JSON,
+        },
+        THING: {
+          WITH: SETTING.STRING_LIST,
+          EXT_DEF: SETTING.JSON,
+        },
         CATEGORY: {
           TYPES: SETTING.NUMBER_LIST,
         },
