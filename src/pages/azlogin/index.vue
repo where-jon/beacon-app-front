@@ -33,6 +33,7 @@ import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as LocalStorageHelper from '../../sub/helper/base/LocalStorageHelper'
 import { APP, MSTEAMS_APP } from '../../sub/constant/config'
 import { TENANT } from '../../sub/constant/Constants'
+import * as CryptoJS from 'crypto-js'
 
 export default {
   data() {
@@ -98,10 +99,10 @@ export default {
       }
     },
     mobileLogin() {
-      console.log('@@@@@@@@@@ mobileLogin')
       AADHelper.getContextForMobile((context) => {
         context.authTimestamp = new Date().getTime()
-        AuthHelper.auth('MOBILE:' + JSON.stringify(context), 'password',
+        const encryptedContext = CryptoJS.AES(JSON.stringify(context), MSTEAMS_APP.AES_KEY)
+        AuthHelper.auth('MOBILE:' + encryptedContext, 'password',
           ()=>{
             this.$router.push(APP.MENU.TOP_PAGE)
           },
