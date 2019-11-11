@@ -118,13 +118,16 @@ export default {
             locCdMap[location.locationCd] = []
           }
           locCdMap[location.locationCd].push(location.locationType)
-          locNameMap[location.locationName] = true
+          if(!locNameMap[location.locationName]){
+            locNameMap[location.locationName] = []
+          }
+          locNameMap[location.locationName].push(location.locationType)
         }
       })
       if(locCdMap[this.form.locationCd] && locCdMap[this.form.locationCd].some(type => type == this.form.locationType)){
         this.messageList.push(this.$i18n.tnl('message.bulkUniqueFailed', { col: this.$i18n.tnl('label.locationCd'), value: this.form.locationCd }))
       }
-      if(locNameMap[this.form.locationName]){
+      if(locNameMap[this.form.locationName] && locNameMap[this.form.locationName].some(type => type == this.form.locationType)){
         this.messageList.push(this.$i18n.tnl('message.bulkUniqueFailed', { col: this.$i18n.tnl('label.locationName'), value: this.form.locationName }))
       }
       return this.successUpdate()
