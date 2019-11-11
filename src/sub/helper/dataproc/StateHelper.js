@@ -12,6 +12,7 @@ import * as StringUtil from '../../util/StringUtil'
 import * as Util from '../../util/Util'
 import * as AppServiceHelper from './AppServiceHelper'
 import * as ConfigHelper from './ConfigHelper'
+import * as OptionHelper from './OptionHelper'
 import * as SensorHelper from '../domain/SensorHelper'
 
 
@@ -484,8 +485,10 @@ const appStateConf = {
           }
           zoneTypeMap[key].push(locationZone.zoneName)
         })
+        const locationTypeOptions = OptionHelper.getLocationTypeOptions()
         return {
           ...location,
+          locationTypeName: Util.getValue(locationTypeOptions.find(val => val.value == location.locationType), 'text', ''),
           zoneClass: zoneTypeMap['' + ZONE.NON_COORDINATE],
           zoneBlock: zoneTypeMap['' + ZONE.COORDINATE],
           isAbsentZone: location.categoryName === SYSTEM_ZONE_CATEGORY_NAME.ABSENT,
