@@ -98,7 +98,9 @@ export default {
       }
     },
     mobileLogin() {
+      console.log('@@@@@@@@@@ mobileLogin')
       AADHelper.getContextForMobile((context) => {
+        context.authTimestamp = new Date().getTime()
         AuthHelper.auth('MOBILE:' + JSON.stringify(context), 'password',
           ()=>{
             this.$router.push(APP.MENU.TOP_PAGE)
