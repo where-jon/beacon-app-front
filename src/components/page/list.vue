@@ -153,12 +153,6 @@
             {{ getDispExbType(row.item) }}
           </div>
         </template>
-        <!-- タイプ名 -->
-        <template slot="locationTypeName" slot-scope="row">
-          <div>
-            {{ getDispLocationType(row.item) }}
-          </div>
-        </template>
         <!-- センサ名 -->
         <template slot="sensorIdName" slot-scope="row">
           <div v-for="(sensorIdName, index) in row.item.sensorIdNames" :key="index">
@@ -454,9 +448,6 @@ export default {
     areaOptions() {
       return StateHelper.getOptionsFromState('area', false, true)
     },
-    locationTypeOptions() {
-      return OptionHelper.getLocationTypeOptions()
-    },
     detectStateOptions() {
       let options = DetectStateHelper.getTypes()
       options.unshift({value:null, text:''})
@@ -655,9 +646,6 @@ export default {
     },
     getDispExbType(exb){
       return Util.getValue(EXB.getTypes().find(val => val.value == exb.exbType), 'text', '')
-    },
-    getDispLocationType(location){
-      return Util.getValue(this.locationTypeOptions.find(val => val.value == location.locationType), 'text', '')
     },
     getAnotherPageParam(name, item) {
       const pageParam = this.anotherPageParams.find((val) => val.name == name)
