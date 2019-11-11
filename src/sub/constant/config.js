@@ -546,6 +546,6 @@ export const MSTEAMS_APP = {
   REDIRECT_URL: 'https://msteams.dev.exbeacon.com/azlogin/end/',
   APP_ID: 'dd3ea682-9b02-49ec-9d15-c63cee38c792',
   ADMINCONSENT_URL_BASE: 'https://login.microsoftonline.com/common/adminconsent',
-  AES_KEY: '93361405B5'
+  AES_KEY: '93361405B57C62DF33873146A7215790256978125098DF0A197CF2'
 }
 
