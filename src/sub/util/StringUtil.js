@@ -71,7 +71,7 @@ export const toLowerCaseTop = str => `${str.slice(0, 1).toLowerCase()}${str.slic
  * @param  {...String} strs
  * @return {String}
  */
-export const concatCamel = (...strs) => strs.map((str, idx) => idx == 0? str: `${str.charAt(0).toUpperCase()}${str.slice(1)}`).join('')
+export const concatCamel = (...strs) => strs.filter(val => val).map((str, idx) => idx == 0? str: `${str.charAt(0).toUpperCase()}${str.slice(1)}`).join('')
 
 /**
  * キャメルケースにした文字列を取得する。
