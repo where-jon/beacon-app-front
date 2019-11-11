@@ -23,6 +23,10 @@ export default {
     DatePicker,
   },
   props: {
+    pName: {
+      type: String,
+      default: '',
+    },
     form: {
       type: Object,
       required: true,
@@ -39,7 +43,7 @@ export default {
   },
   computed: {
     extList() {
-      const ret = PotHelper.getPotExt()
+      const ret = PotHelper.getPotExt(this.pName)
       ret.forEach(e => {
         if (!e.format) {
           if (e.type == 'int') {

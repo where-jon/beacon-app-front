@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <category-index :p-name="name" :p-type-list="typeList" :p-path="indexPath" />
+    <category-index :p-name="name" :p-type-list="typeList" :p-path="indexPath" :p-show-icon="false" />
   </div>
 </template>
 

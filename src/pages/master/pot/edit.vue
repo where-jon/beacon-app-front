@@ -36,7 +36,7 @@
               <label v-t="'label.potName'" />
               <input v-model="form.potName" :readonly="!isEditable" type="text" maxlength="100" class="form-control" required>
             </b-form-group>
-            <b-form-group v-show="isShown('POT.WITH', 'ruby')">
+            <b-form-group v-show="isShownWith('ruby')">
               <label v-t="'label.ruby'" />
               <input v-model="form.ruby" :readonly="!isEditable" type="text" maxlength="20" class="form-control">
             </b-form-group>
@@ -44,7 +44,7 @@
               <label v-t="'label.displayName'" />
               <input v-model="form.displayName" :readonly="!isEditable" type="text" maxlength="3" class="form-control">
             </b-form-group>
-            <b-form-group v-show="isShown('POT.WITH', 'group')">
+            <b-form-group v-show="isShownWith('group')">
               <label v-t="'label.group'" />
               <v-select v-model="vueSelected.group" :options="groupOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 vue-options-lg">
                 <template slot="no-options">
@@ -52,7 +52,7 @@
                 </template>
               </v-select>
             </b-form-group>
-            <b-form-group v-show="isShown('POT.WITH', 'category')">
+            <b-form-group v-show="isShownWith('category')">
               <label v-t="'label.category'" />
               <v-select v-model="vueSelected.category" :options="categoryOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 vue-options-lg">
                 <template slot="no-options">
@@ -60,7 +60,7 @@
                 </template>
               </v-select>
             </b-form-group>
-            <extform :is-editable="isEditable" :form="form" />
+            <extform :p-name="pName" :is-editable="isEditable" :form="form" />
             <b-form-group>
               <label v-t="'label.thumbnail'" />
               <b-form-file v-if="isEditable" ref="inputThumbnail" v-model="form.thumbnailTemp" :placeholder="$t('message.selectFile') " accept="image/jpeg, image/png, image/gif" @change="readImage" />
@@ -69,12 +69,12 @@
               </b-button>
               <img v-show="form.existThumbnail" ref="thumbnail" :src="thumbnailSrc" width="100" class="mt-1 ml-3">
             </b-form-group>
-            <b-form-group v-if="isShown('POT.WITH', 'description')">
+            <b-form-group v-if="isShownWith('description')">
               <label v-t="'label.description'" />
               <b-form-textarea v-model="form.description" :rows="3" :max-rows="6" :readonly="!isEditable" maxlength="1000" />
             </b-form-group>
 
-            <b-form-group v-if="isShown('POT.WITH', 'user')">
+            <b-form-group v-if="isShownWith('user')">
               <b-form-checkbox v-model="editShowUser" :value="true" :unchecked-value="false" @change="nextShowEmailCheck()">
                 <span v-text="$i18n.tnl('label.editUserInfo')" />
               </b-form-checkbox>
@@ -168,7 +168,7 @@ export default {
         ...Util.extract(this.$store.state.app_service.pot,
           ['potId', 'potCd', 'potName', 'potType', 'extValue.ruby',
             'displayName', 'potGroupList.0.group.groupId', 'potCategoryList.0.category.categoryId',
-            'existThumbnail', 'description', ...PotHelper.getPotExtKeys(true)])
+            'existThumbnail', 'description', ...PotHelper.getPotExtKeys(this.pName, true)])
       },
       userForm: {
         userId: null, loginId: null, pass: null, roleId: null, email: null,
@@ -184,9 +184,9 @@ export default {
       },
       roleOptions: [],
       category: _.slice(CATEGORY.getTypes(), 0, 2).filter(val => APP.CATEGORY.TYPES.includes(val.value) && this.pTypeList.includes(val.value)),
-      txIds: Array(APP.POT.TX_MAX),
-      btxIds: Array(APP.POT.TX_MAX),
-      minors: Array(APP.POT.TX_MAX),
+      txIds: Array(PotHelper.getSetting(this.pName).TX_MAX),
+      btxIds: Array(PotHelper.getSetting(this.pName).TX_MAX),
+      minors: Array(PotHelper.getSetting(this.pName).TX_MAX),
       thumbnailUrl: APP_SERVICE.BASE_URL + EXCLOUD.POT_THUMBNAIL_URL,
     }
   },
@@ -316,6 +316,10 @@ export default {
     VueSelectHelper.disabledAllSubmit()
   },
   methods: {
+    isShownWith(column) {
+      const settingName = PotHelper.getSettingName(this.pName)
+      return this.isShown(settingName + '.WITH', column)
+    },
     initPotTxList(){
       this.vueSelected.txs = []
       this.form.potTxList = this.pot.potTxList? this.pot.potTxList.map((val, idx) => {
@@ -325,7 +329,9 @@ export default {
           txId: val.potTxPK.txId,
         }
       }): []
-      const maxTx = APP.POT.MULTI_TX? APP.POT.TX_MAX: 1
+
+      const settings = PotHelper.getSetting(this.pName)
+      const maxTx = settings.MULTI_TX? settings.TX_MAX: 1
       for(let cnt = this.form.potTxList.length; cnt < maxTx; cnt++){
         this.vueSelected.txs.push(VueSelectHelper.getVueSelectData(this.getTxOptions(cnt), null))
         this.form.potTxList.push({
@@ -335,7 +341,8 @@ export default {
       }
     },
     getTxIndex(index){
-      return APP.POT.MULTI_TX? 1 < APP.POT.TX_MAX? `${index + 1}`: '': ''
+      const settings = PotHelper.getSetting(this.pName)
+      return settings.MULTI_TX? 1 < settings.TX_MAX? `${index + 1}`: '': ''
     },
     watchIds(newVal, idName){
       this.form.potTxList.forEach((potTx, idx) => {
@@ -509,7 +516,7 @@ export default {
         thumbnail: this.form.thumbnail,
         description: this.form.description,
       }
-      PotHelper.getPotExtKeys().forEach(key => {
+      PotHelper.getPotExtKeys(this.pName).forEach(key => {
         entity.extValue[key] = this.form[key]
       })
 

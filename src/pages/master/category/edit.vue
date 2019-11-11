@@ -13,16 +13,18 @@
           <label v-t="'label.categoryName'" />
           <input v-model="form.categoryName" :readonly="!isEditable" type="text" maxlength="40" class="form-control" required>
         </b-form-group>
-        <b-form-group v-if="pTypeList.length > 1">
+        <b-form-group v-if="!pName && pTypeList.length > 1">
           <label v-t="'label.categoryType'" />
           <b-form-select v-model="form.categoryType" :options="categoryTypes" :disabled="!isEditable" :readonly="!isEditable" required />
         </b-form-group>
-        <b-form-group>
+        <b-form-group v-if="!selectZone && pShowIcon">
           <label v-t="'label.shape'" />
           <b-form-select v-model="form.displayShape" :options="shapes" :disabled="!isEditable" :readonly="!isEditable" required />
         </b-form-group>
-        <color-picker :caption="'label.textColor'" :name="'displayColor'" />
-        <color-picker :caption="'label.bgColor'" :name="'displayBgColor'" />
+        <span  v-if="!selectZone && pShowIcon">
+          <color-picker :caption="'label.textColor'" :name="'displayColor'" />
+          <color-picker :caption="'label.bgColor'" :name="'displayBgColor'" />
+        </span>
         <b-form-group>
           <label v-t="'label.description'" />
           <b-form-textarea v-model="form.description" :rows="3" :max-rows="6" :readonly="!isEditable" maxlength="1000" />
@@ -60,6 +62,10 @@ export default {
     pName: {
       type: String,
       default: '',
+    },
+    pShowIcon: {
+      type: Boolean,
+      default: true,
     },
     pPath: {
       type: String,
@@ -109,6 +115,9 @@ export default {
     },
     shapes(){
       return SHAPE.getShapes()
+    },
+    selectZone(){
+      return this.form.categoryType == CATEGORY.ZONE
     },
   },
   created() {
