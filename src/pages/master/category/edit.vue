@@ -10,7 +10,7 @@
           <input v-model="form.categoryCd" :readonly="!isEditable" type="text" maxlength="20" class="form-control">
         </b-form-group>
         <b-form-group>
-          <label v-t="'label.categoryName'" />
+          <label v-t="'label.' + categoryTypeName" />
           <input v-model="form.categoryName" :readonly="!isEditable" type="text" maxlength="40" class="form-control" required>
         </b-form-group>
         <b-form-group v-if="!pName && pTypeList.length > 1">
@@ -118,6 +118,12 @@ export default {
     },
     selectZone(){
       return this.form.categoryType == CATEGORY.ZONE
+    },
+    dispName() {
+      return StringUtil.concatCamel('category', this.pName)
+    },
+    categoryTypeName() {
+      return StringUtil.concatCamel(this.pName, 'categoryName')
     },
   },
   created() {

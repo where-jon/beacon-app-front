@@ -100,7 +100,7 @@ export default {
           if(this.bulkUpload && this.name == 'pot') {
             this.replaceAS({updatedPotThumbnailList: this.form.thumbnails.map(t => t.id)})
           }
-          this.message = this.$i18n.tnl('message.' + this.crud + 'Completed', {target: this.$i18n.tnl('label.' + this.name)})
+          this.message = this.$i18n.tnl('message.' + this.crud + 'Completed', {target: this.$i18n.tnl('label.' + (this.dispName? this.dispName: this.name))})
           this.replace({showInfo: true})
           if(this.onSaved) {
             this.onSaved()

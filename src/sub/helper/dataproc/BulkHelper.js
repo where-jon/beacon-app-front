@@ -215,6 +215,9 @@ export const getErrorColumnName = (name, col) => {
   if(['areaCd', 'categoryCd', 'groupCd'].includes(col)){
     return 'id'
   }
+  if(col == 'categoryName' && /^category.+$/.test(name)){
+    return StringUtil.concatCamel(name.replace(/category/, '').toLowerCase(), 'categoryName')
+  }
   return col
 }
 

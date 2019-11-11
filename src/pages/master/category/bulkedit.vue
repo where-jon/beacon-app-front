@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid">
     <breadcrumb :items="items" />
-    <bulkedit :id="id" ref="bulkEdit" :name="name" :back-path="backPath" :app-service-path="appServicePath" />
+    <bulkedit :id="id" ref="bulkEdit" :name="name" :bulk-disp-name="dispName" :back-path="backPath" :app-service-path="appServicePath" />
   </div>
 </template>
 
@@ -54,6 +54,9 @@ export default {
     categoryTypes(){
       return CATEGORY.getTypes().filter(c => this.pTypeList.includes(c.value))
     },
+    dispName() {
+      return StringUtil.concatCamel('category', this.pName)
+    }
   },
   async created() {
     await StateHelper.load('category')

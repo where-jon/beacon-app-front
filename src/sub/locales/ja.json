@@ -285,6 +285,8 @@
     "categoryId": "カテゴリID",
     "categoryCd": "ID",
     "categoryName": "カテゴリ名",
+    "personCategoryName": "人カテゴリ名",
+    "thingCategoryName": "物カテゴリ名",
     "categoryType": "種別",
     "parentCategoryId": "親カテゴリID",
     "shape": "形",

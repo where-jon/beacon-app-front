@@ -51,7 +51,7 @@ export default {
         custumCsvColumns: ['ID', 'categoryName', 'categoryTypeName', 'color', 'bgColor', 'display.shape', 'description'],
         fields: ViewHelper.addLabelByKey(this.$i18n, [ 
           {key: 'categoryCd', label: 'id', sortable: true },
-          {key: 'categoryName', sortable: true },
+          {key: 'categoryName', label: StringUtil.concatCamel(this.pName, 'categoryName'), sortable: true },
           !this.pName? {key: 'categoryTypeName', label: 'categoryType', sortable: true }: null,
           this.pShowIcon? {key: 'style', label: 'display' }: null,
           {key: 'description' },
