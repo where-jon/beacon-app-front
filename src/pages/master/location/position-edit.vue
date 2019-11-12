@@ -12,7 +12,7 @@
           <b-form v-if="show" @submit.prevent="execUpdate">
             <b-form-group>
               <label v-t="'label.id'" />
-              <input v-model="form.locationCd" :readonly="!isEditable" type="text" maxlength="20" class="form-control" :pattern="cdPattern" required>
+              <input v-model="form.locationCd" :readonly="!isEditable" type="text" :maxlength="validationMap.locationCd" class="form-control" :pattern="cdPattern" required>
             </b-form-group>
             <b-form-group>
               <label v-t="'label.locationName'" />
@@ -20,7 +20,7 @@
             </b-form-group>
             <b-form-group>
               <label v-t="'label.exb'" />
-              <v-select v-model="vueSelected.exbIdList" :options="exbOptions" :disabled="!isEditable" multiple :close-on-select="false" class="vue-options-multi">
+              <v-select v-model="vueSelected.exbIdList" :options="iExbOptions" :disabled="!isEditable" multiple :close-on-select="false" class="vue-options-multi">
                 <template slot="no-options">
                   {{ vueSelectNoMatchingOptions }}
                 </template>
@@ -41,6 +41,7 @@ import { mapState } from 'vuex'
 import { PATTERN } from '../../../sub/constant/Constants'
 import * as Util from '../../../sub/util/Util'
 import * as ConfigHelper from '../../../sub/helper/dataproc/ConfigHelper'
+import * as HttpHelper from '../../../sub/helper/base/HttpHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as VueSelectHelper from '../../../sub/helper/ui/VueSelectHelper'
 import commonmixin from '../../../components/mixin/commonmixin.vue'
@@ -67,6 +68,9 @@ export default {
         locationList: [],
         exbList: [],
       },
+      validationMap: {
+        locationCd: null,
+      },
       messageList: [],
     }
   },
@@ -77,7 +81,7 @@ export default {
     cdPattern(){
       return PATTERN.LOCATION_CD
     },
-    exbOptions() {
+    iExbOptions() {
       return StateHelper.getOptionsFromState(
         'exb',
         ConfigHelper.includesDeviceType('deviceId')? 'deviceId': 'deviceIdX',
@@ -94,7 +98,14 @@ export default {
       deep: true,
     },
   },
+  async mounted() {
+    await this.fetchValidationData()
+  },
   methods: {
+    async fetchValidationData(){
+      const validationData = await HttpHelper.getAppService('/core/location/validation')
+      this.validationMap.locationCd = Util.getValue(validationData, 'max', 20)
+    },
     successUpdate(){
       return !Util.hasValue(this.messageList)
     },
@@ -106,7 +117,7 @@ export default {
       this.form.locationCd = location.locationCd
       this.form.locationType = location.locationType
       this.form.locationName = location.locationName
-      this.vueSelected.exbIdList = Util.getValue(location, 'exbList', []).map(exb => VueSelectHelper.getVueSelectData(this.exbOptions, exb.exbId)).sort((a, b) => a.label < b.label? -1: 1)
+      this.vueSelected.exbIdList = Util.getValue(location, 'exbList', []).map(exb => VueSelectHelper.getVueSelectData(this.iExbOptions, exb.exbId)).sort((a, b) => a.label < b.label? -1: 1)
     },
     validation(){
       this.messageList = []
