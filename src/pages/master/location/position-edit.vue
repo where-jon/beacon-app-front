@@ -104,7 +104,7 @@ export default {
   methods: {
     async fetchValidationData(){
       const validationData = await HttpHelper.getAppService('/core/location/validation')
-      this.validationMap.locationCd = Util.getValue(validationData, 'max', null)
+      this.validationMap.locationCd = Util.getValue(validationData, 'max', 20)
     },
     successUpdate(){
       return !Util.hasValue(this.messageList)
