@@ -5,9 +5,10 @@
 </template>
 
 <script>
-import * as Util from '../../sub/util/Util'
 import { APP_SERVICE } from '../../sub/constant/config'
 import { PLUGIN_CONSTANTS } from '../../sub/constant/Constants'
+import * as BrowserUtil from '../../sub/util/BrowserUtil'
+import * as Util from '../../sub/util/Util'
 import { EventBus } from '../../sub/helper/base/EventHelper'
 import * as LocalStorageHelper from '../../sub/helper/base/LocalStorageHelper'
 import commonmixin from '../../components/mixin/commonmixin.vue'
@@ -56,6 +57,8 @@ export default {
         EventBus.$emit('pluginUpdateDefault', this.scrollHeight)
       } catch(e) {}
     })
+    EventBus.$off('pluginDownload')
+    EventBus.$on('pluginDownload', url => BrowserUtil.executeFileDL(url))
   },
   mounted() {
     const query = PLUGIN_CONSTANTS.PLUGIN_KEY_PREFIX + '='
