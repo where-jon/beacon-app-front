@@ -1034,30 +1034,34 @@ export default {
     createQuantityTxIcon(locationId, shape, color, bgColor){ // position
       const txRadius = DISP.TX_NUM.R / this.getMapScale()
       // 人数
-      var locationPerson = this.locationPersonList[locationId]
+      let locationPerson = this.locationPersonList[locationId]
       if (!NumberUtil.isNumber(locationPerson)) {
         locationPerson = 0
       }
       // 品数
-      var locationObject = this.locationObjectList[locationId]
+      let locationObject = this.locationObjectList[locationId]
       if (!NumberUtil.isNumber(locationObject)) {
         locationObject = 0
       }
       // その他
-      var locationOther = this.locationOtherList[locationId]
+      let locationOther = this.locationOtherList[locationId]
       if (!NumberUtil.isNumber(locationOther)) {
         locationOther = 0
       }
-      var label = this.$i18n.tnl('label.peopleNum') + locationPerson + "\r\n" 
-        + this.$i18n.tnl('label.objectNum') + locationObject + "\r\n" 
-        + this.$i18n.tnl('label.other') + ':' + locationOther
+      const line = [
+        this.$i18n.tnl('label.peopleNum') + locationPerson,
+        this.$i18n.tnl('label.objectNum') + locationObject,
+        this.$i18n.tnl('label.other') + ':' + locationOther,
+      ]
+      const label = line.join('\r\n')
+      const fontSize = line.map(str => StyleHelper.getFont2Size(StyleHelper.getInRectFontSize(str, txRadius, txRadius))).reduce((a, b) => a < b? a: b)
       return IconHelper.createIcon(
         label, txRadius, txRadius, color, bgColor, {
           circle: shape == SHAPE.CIRCLE,
           roundRect: shape == SHAPE.SQUARE,
           strokeColor: ColorUtil.getRGBA(DISP.TX_NUM.STROKE_COLOR, 4),
           strokeStyle: DISP.TX_NUM.STROKE_WIDTH,
-          fontSize: DISP.TX_NUM.TX_FONT,
+          fontSize: fontSize * 2,
           textBaseline: DISP.TX_NUM.TEXT_BASELINE
         })
     },

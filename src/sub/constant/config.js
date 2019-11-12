@@ -322,13 +322,13 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   },
   // 位置表示(数量)：TX
   TX_NUM: {
-    R: 35, // Txの半径
+    R: 30, // Txの半径
     ROUNDRECT_RADIUS: 13, // Tx角丸表示時のRADIUS
     BGCOLOR: '#ff7f50', // Tx表示時のデフォルト背景色
     COLOR: '#000000', // Tx表示時のデフォルト文字色
     STROKE_COLOR: '#cccccc', // Tx表示時のデフォルト枠線色
     STROKE_WIDTH: 1, // Tx表示時のデフォルト枠線幅
-    TX_FONT_SIZE: 50, // Tx表示時のフォントサイズ
+    // TX_FONT_SIZE: 26, // Tx表示時のフォントサイズ
     TEXT_BASELINE: 'ideographic',// Tx表示時のフォントの表示位置
 
     // ツールチップ内の表示要素
