@@ -219,9 +219,7 @@ export default {
       }
       return ret
     },
-    finalizePlugin(resultObj){
-      this.pluginRequest = Util.getValue(resultObj, 'request', '')
-      this.pluginJson = Util.getValue(resultObj, 'ui', [])
+    reflreshPlugin(){
       this.pluginJson.forEach(async (val, index) => {
         if(this.useVueSelect(val) || this.useSelect(val) || this.useCheckBox(val)){
           this.$set(val, 'options', await this.getPluginOptions(val))
@@ -230,6 +228,11 @@ export default {
           this.$set(val, 'extValue', { type: 0 })
         }
       })
+    },
+    finalizePlugin(resultObj){
+      this.pluginRequest = Util.getValue(resultObj, 'request', '')
+      this.pluginJson = Util.getValue(resultObj, 'ui', [])
+      this.reflreshPlugin()
     },
     fetchPlugin(){
       if(this.condition){
@@ -301,6 +304,7 @@ export default {
       this.$emit('detailFilter', list.map(val => val.value))
     },
     initExec(){
+      this.reflreshPlugin()
       this.$nextTick(async () => {
         await this.execOk()
         this.isOk = false
