@@ -1001,8 +1001,8 @@ export default {
         this.detectedCount++  // 検知数カウント増加
       })
 
-      _.filter(this.locations, (location) => { return location.areaId == this.selectedArea})
-        .forEach((location) => {
+      _.filter(this.locations, location => location.areaId == this.selectedArea && location.x != null && location.y != null)
+        .forEach(location => {
           let txBtn = this.icons['loc_' + location.locationId]
           txBtn = this.createQuantityTxBtn(location, SHAPE.SQUARE, DISP.TX_NUM.COLOR, DISP.TX_NUM.BGCOLOR)
           txBtn.color = DISP.TX_NUM.COLOR
