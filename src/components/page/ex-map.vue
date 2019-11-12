@@ -736,6 +736,11 @@ export default {
     changeDatetimeFrom(newVal = this.form.datetimeFrom) {
       this.form.datetimeTo = newVal? DateUtil.getDatetime(newVal, {minutes: APP.ANALYSIS.DATETIME_INTERVAL}): null
     },
+    async refreshTxInfo(){
+      await StateHelper.load('tx', true)
+      this.txsMap = {}
+      this.txs.forEach(t => this.txsMap[t.btxId] = t)
+    },
     // Txアイコンを選択した場合のポップアップ
     setupSelectedTx (tx, x, y, isDispThumbnail) {
       const map = DomUtil.getRect('#map')
@@ -1255,6 +1260,7 @@ export default {
         const reloadButton = document.getElementById('spinner')
         if(!this.firstTime && reloadButton){
           this.reloadState.isLoad = true
+          await this.refreshTxInfo()
         }
         this.exbIcons = []
         this.txIcons = []
