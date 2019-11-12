@@ -149,11 +149,11 @@ export default {
       await Promise.all(['exb','tx'].map(StateHelper.load))
       return positions.map((e) => {
         const tx = this.txs.find((tx) => tx.btxId == e.btx_id)
-        const exb = this.exbs.find((exb) => exb.location.posId == e.pos_id)
+        const exb = this.exbs.find((exb) => exb.deviceId == e.device_id)
         return {
           ...e,
           name: tx != null ? tx.potName : '—',
-          finalReceiveLocation: exb? exb.location.locationName  : '',
+          finalReceiveLocation: (exb && exb.location) ? exb.location.locationName  : '',
           finalReceiveTimestamp: this.getTimestamp(e.updatetime),
           powerLevel: this.$refs.monitorTable.getPositionPowerLevelLabel(e.power_level),
           state: this.$refs.monitorTable.getStateLabel('tx', e.updatetime),
