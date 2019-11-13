@@ -101,9 +101,8 @@ export default {
     mobileLogin() {
       AADHelper.getContextForMobile((context) => {
         context.authTimestamp = new Date().getTime()
-        // const encryptedContext = CryptoJS.AES(JSON.stringify(context), MSTEAMS_APP.AES_KEY)
-        // AuthHelper.auth('MOBILE:' + encryptedContext, 'password',
-        AuthHelper.auth('MOBILE:' + context, 'password',
+        const base64 = btoa(unescape(encodeURIComponent(JSON.stringify(context))))
+        AuthHelper.auth('MOBILE:' + base64, 'password',
           ()=>{
             this.$router.push(APP.MENU.TOP_PAGE)
           },
