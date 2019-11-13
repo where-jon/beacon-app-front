@@ -29,7 +29,7 @@ export default {
       id: 'exbId',
       backPath: '/master/exb',
       appServicePath: '/core/exb',
-      items: ViewHelper.createBreadCrumbItems('master', {text: 'exb', href: '/master/exb'}, 'bulkRegister'),
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'masterExb', href: '/master/exb'}, 'bulkRegister'),
     }
   },
   computed: {

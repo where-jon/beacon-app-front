@@ -41,7 +41,7 @@ export default {
         sortBy: ConfigHelper.includesDeviceType('deviceId')? 'deviceId': ConfigHelper.includesDeviceType('deviceIdX')? 'deviceIdX': 'locationName',
         initTotalRows: this.$store.state.app_service.exbs.length
       },
-      items: ViewHelper.createBreadCrumbItems('master', 'exb'),
+      items: ViewHelper.createBreadCrumbItems('master', 'masterExb'),
     }
   },
   computed: {

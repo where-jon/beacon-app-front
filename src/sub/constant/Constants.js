@@ -830,11 +830,13 @@ export const MENU = [
       },
       {
         key: 'exb',
+        label: 'masterExb',
         path: 'exb',
         icon: 'hdd',
       },
       {
         key: 'tx',
+        label: 'masterTx',
         path: 'tx',
         // icon: 'fal fa-location',
         // icon: 'fas fa-user-tag',

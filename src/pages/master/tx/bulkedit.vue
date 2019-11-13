@@ -29,7 +29,7 @@ export default {
       id: 'txId',
       backPath: '/master/tx',
       appServicePath: '/core/tx',
-      items: ViewHelper.createBreadCrumbItems('master', {text: 'tx', href: '/master/tx'}, 'bulkRegister'),
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'masterTx', href: '/master/tx'}, 'bulkRegister'),
     }
   },
   computed: {

@@ -37,7 +37,7 @@ export default {
         sortBy: APP.TX.BTX_MINOR != 'minor'? 'btxId': 'minor',
         initTotalRows: this.$store.state.app_service.txs.length
       },
-      items: ViewHelper.createBreadCrumbItems('master', 'tx'),
+      items: ViewHelper.createBreadCrumbItems('master', 'masterTx'),
     }
   },
   computed: {
