@@ -12,6 +12,7 @@ import * as StringUtil from '../../util/StringUtil'
 import * as Util from '../../util/Util'
 import * as AppServiceHelper from './AppServiceHelper'
 import * as ConfigHelper from './ConfigHelper'
+import * as LocaleHelper from '../base/LocaleHelper'
 import * as OptionHelper from './OptionHelper'
 import * as SensorHelper from '../domain/SensorHelper'
 
@@ -57,7 +58,7 @@ export const createMasterCd = (masterType, masterList, masterData = null) => {
       if(curLength <= cnt){
         return prev
       }
-      const comp = StringUtil.compareStrNum(prevAry[cnt], curAry[cnt])
+      const comp = StringUtil.sortByString(prevAry[cnt], curAry[cnt], LocaleHelper.getSystemLocale())
       if(comp < 0){
         return cur
       }
@@ -312,7 +313,7 @@ const appStateConf = {
   areas: {
     path: '/core/area',
     sort: 'areaCd',
-    beforeCommit: arr => arr.sort((a, b) => StringUtil.sortByString(a.areaCd, b.areaCd))
+    beforeCommit: arr => arr.sort((a, b) => StringUtil.sortByString(a.areaCd, b.areaCd, LocaleHelper.getSystemLocale()))
   },
   exbs: {
     path: '/core/exb/withLocation',
@@ -394,7 +395,7 @@ const appStateConf = {
           extValue: pot.extValue? pot.extValue: '',
           ...extValues
         }
-      }).sort((a, b) => StringUtil.sortByString(a.potCd, b.potCd))
+      }).sort((a, b) => StringUtil.sortByString(a.potCd, b.potCd, LocaleHelper.getSystemLocale()))
       // omit images to avoid being filtering target
     }
   },
@@ -411,7 +412,7 @@ const appStateConf = {
         shapeName: val.display? getShapeName(val.display.shape): null,
         categoryTypeName: getCategoryTypeName(val),
         systemCategoryName: val.systemUse != 0? val.categoryName.toLowerCase(): null,
-      })).sort((a, b) => StringUtil.sortByString(a.categoryCd, b.categoryCd))
+      })).sort((a, b) => StringUtil.sortByString(a.categoryCd, b.categoryCd, LocaleHelper.getSystemLocale()))
     }
   },
   groups: {
@@ -424,7 +425,7 @@ const appStateConf = {
         color: val.display? val.display.color: null,
         bgColor: val.systemUse == 1? getSystemUseBgColor(val): getCategoryDisplayBgColor(val),
         shapeName: val.display? getShapeName(val.display.shape): null,
-      })).sort((a, b) => StringUtil.sortByString(a.groupCd, b.groupCd))
+      })).sort((a, b) => StringUtil.sortByString(a.groupCd, b.groupCd, LocaleHelper.getSystemLocale()))
     }
   },
   users: {

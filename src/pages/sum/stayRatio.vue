@@ -38,7 +38,7 @@
       </b-form>
       <slot />
       <b-row class="mt-3" />
-      <b-table :items="viewList" :fields="fields" :current-page="currentPage" :per-page="perPage" :sort-by.sync="sortBy" stacked="md" striped hover outlined />
+      <b-table :items="viewList" :fields="fields" :current-page="currentPage" :per-page="perPage" :sort-by.sync="sortBy" :sort-compare="defaultSortCompare" stacked="md" striped hover outlined />
       <b-row>
         <b-col md="6" class="mt-1 mb-3">
           <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" class="my-0" />
