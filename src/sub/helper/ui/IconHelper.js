@@ -82,6 +82,7 @@ export const createText = (text, font, color, option = {}) => {
   label.color = color
   label.textAlign = Util.getValue(option, 'textAlign', 'center')
   label.textBaseline = Util.getValue(option, 'textBaseline', 'middle')
+  label.regY  = Util.getValue(option, 'regY', 0)
   return label
 }
 

@@ -328,8 +328,6 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     COLOR: '#000000', // Tx表示時のデフォルト文字色
     STROKE_COLOR: '#cccccc', // Tx表示時のデフォルト枠線色
     STROKE_WIDTH: 1, // Tx表示時のデフォルト枠線幅
-    // TX_FONT_SIZE: 26, // Tx表示時のフォントサイズ
-    TEXT_BASELINE: 'ideographic',// Tx表示時のフォントの表示位置
 
     // ツールチップ内の表示要素
     TOOLTIP_ITEMS: {
