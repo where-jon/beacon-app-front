@@ -1067,7 +1067,7 @@ export default {
           strokeColor: ColorUtil.getRGBA(DISP.TX_NUM.STROKE_COLOR, 4),
           strokeStyle: DISP.TX_NUM.STROKE_WIDTH,
           fontSize: fontSize * 2,
-          textBaseline: DISP.TX_NUM.TEXT_BASELINE
+          regY: txRadius / 2,
         })
     },
     changeIconsQuantity(e) {// 数量ボタン押下時の処理
