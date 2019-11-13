@@ -50,7 +50,7 @@ export default {
     EventBus.$off('pluginUpdate')
     EventBus.$on('pluginUpdate', () => {
       try {
-        const pageHeight = document.documentElement.clientHeight
+        const pageHeight = document.getElementById('bd-page').clientHeight
         const childFrame = this.$refs.parentFrame.contentWindow.document.body
         const childHeight = childFrame.scrollHeight + 64
         this.scrollHeight = pageHeight > childHeight? pageHeight: childHeight
