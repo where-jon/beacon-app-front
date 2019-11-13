@@ -109,7 +109,7 @@ export default {
       id: 'exbId',
       backPath: '/master/exb',
       appServicePath: '/core/exb',
-      items: ViewHelper.createBreadCrumbItems('master', {text: 'exb', href: '/master/exb'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.exb.exbId)),
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'masterExb', href: '/master/exb'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.exb.exbId)),
       form: Util.extract(this.$store.state.app_service.exb, [
         'exbId', 'deviceId', 'location.areaId', 'locationId', 'exbSensorList',
         'exbType', 'threshold1', 'threshold2', 'adjust1', 'adjust2'

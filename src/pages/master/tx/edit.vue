@@ -123,7 +123,7 @@ export default {
       id: 'txId',
       backPath: '/master/tx',
       appServicePath: '/core/tx',
-      items: ViewHelper.createBreadCrumbItems('master', {text: 'tx', href: '/master/tx'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.tx.txId)),
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'masterTx', href: '/master/tx'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.tx.txId)),
       form: Util.extract(this.$store.state.app_service.tx, [
         'txId', 'btxId', 'major', 'minor', 'potTxList.0.pot.displayName', 'mapImage', 'dispPos', 'dispPir', 'dispAlways',
         'txSensorList.0.sensor.sensorId', 'locationId', 'location.locationName', 'location.x', 'location.y', 'location',
