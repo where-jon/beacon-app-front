@@ -114,10 +114,13 @@ export const getDefaultValue = (key, isTenant = false) => {
  * @param {String} key 
  * @return {String}
  */
-export const getDefaultValType = key => {
+export const getDefaultValType = (key, forceType) => {
   const type = Util.getValue(SETTING.getType(), key, null)
   if(type != null && SETTING.VALUES.includes(type)){
     return type
+  }
+  if(forceType){
+    return forceType
   }
   const defaultValue = getDefaultValue(key, true)
   if(defaultValue != null && typeof defaultValue != 'object'){
@@ -168,8 +171,8 @@ export const getI18ConfigInner = (config, isTenant, parentKey = '', list = []) =
       getI18ConfigInner(data, isTenant, key + '.', list)
       return
     }
-    const setting = {key: key, valType: getDefaultValType(key)}
     const params = data.split('::')
+    const setting = {key: key, valType: getDefaultValType(key, params[2])}
     list.push(createSetting(setting, isTenant, {keyName: params[0], title: convertTitle(params[1]), isParent: false}))
   })
   return list
