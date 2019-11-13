@@ -1,19 +1,28 @@
 {
     "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.5/MicrosoftTeams.schema.json",
-    "manifestVersion": "devPreview",
-    "version": "1.3.0.3",
+    "manifestVersion": "1.5",
+    "version": "1.3.0.4",
     "id": "fcfc143f-c8c8-454e-ab72-fdf2e49f862f",
     "packageName": "msteams.exbeacon.com",
     "developer": {
         "name": "Kyowa Exeo Corporation",
         "websiteUrl": "https://www.exeo.co.jp",
         "privacyUrl": "https://www.exeo.co.jp/company/ppolicy.html",
-        "termsOfUseUrl": "https://where123.jp/solutions/office",
+        "termsOfUseUrl": "https://www.exeo.co.jp/jigyou/ng/exbeacon.html",
         "mpnId": "4562888"
+    },
+    "localizationInfo": {
+      "defaultLanguageTag": "ja-jp",
+      "additionalLanguages": [
+        {
+          "languageTag": "ja-jp",
+          "file": "ja-jp.json"
+        }
+      ]
     },
     "name": {
         "short": "EXOffice",
-        "full": "EXOffice"
+        "full": "EXBeacon Platform for EXOffice"
     },
     "description": {
         "short": "Office application for worker/things locating service with beacon tags/platform",
