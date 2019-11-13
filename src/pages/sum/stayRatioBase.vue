@@ -155,7 +155,7 @@
       </b-form>
       <slot />
       <b-row class="mt-3" />
-      <b-table :items="viewList" :fields="fields" :current-page="currentPage" :per-page="perPage" :sort-by.sync="sortBy" stacked="md" striped hover outlined>
+      <b-table :items="viewList" :fields="fields" :current-page="currentPage" :per-page="perPage" :sort-by.sync="sortBy" :sort-compare="defaultSortCompare" stacked="md" striped hover outlined>
         <template v-for="field in fields" slot-scope="data" :slot="`HEAD_${field.key}`">
           <span v-html="data.label" :key="field.key"></span><span v-if="field.bgColor" :style="`color: ${field.bgColor};`" :key="field.key">■</span>
         </template>

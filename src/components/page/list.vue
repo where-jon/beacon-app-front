@@ -574,10 +574,7 @@ export default {
       if(key == 'txIdName'){
         return ArrayUtil.sortByArray(aData.txIdNames, bData.txIdNames)
       }
-      if(['regionName', 'areaCd', 'potCd', 'categoryCd', 'groupCd'].includes(key)){
-        return StringUtil.sortByString(aData[key], bData[key])
-      }
-      return null
+      return this.defaultSortCompare(aData, bData, key)
     },
     async switchTenant(item){
       await AuthHelper.switchTenant(item.tenantId)

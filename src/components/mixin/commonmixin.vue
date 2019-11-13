@@ -3,7 +3,9 @@
 import { mapState, mapMutations, mapActions } from 'vuex'
 import { CATEGORY } from '../../sub/constant/Constants'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
+import * as StringUtil from '../../sub/util/StringUtil'
 import * as ConfigHelper from '../../sub/helper/dataproc/ConfigHelper'
+import * as LocaleHelper from '../../sub/helper/base/LocaleHelper'
 import * as MenuHelper from '../../sub/helper/dataproc/MenuHelper'
 import * as OptionHelper from '../../sub/helper/dataproc/OptionHelper'
 import * as ThemeHelper from '../../sub/helper/ui/ThemeHelper'
@@ -136,6 +138,9 @@ export default {
       return StateHelper.getOptionsFromState('pot', false, true,
         pot => pot.potType == CATEGORY.PERSON && (!categoryId || pot.categoryId == categoryId) && (!groupId || pot.groupId == groupId)
       )
+    },
+    defaultSortCompare(a, b, key) {
+      return StringUtil.sortByString(a[key], b[key], LocaleHelper.getSystemLocale())
     },
   }
 }

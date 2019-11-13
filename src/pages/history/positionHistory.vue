@@ -58,7 +58,7 @@
         </b-form>
         <slot />
         <b-row class="mt-3" />
-        <b-table :items="viewList" :fields="fields" :current-page="currentPage" :per-page="perPage" :sort-by.sync="sortBy" stacked="md" striped hover outlined />
+        <b-table :items="viewList" :fields="fields" :current-page="currentPage" :per-page="perPage" :sort-by.sync="sortBy" :sort-compare="defaultSortCompare" stacked="md" striped hover outlined />
         <b-row>
           <b-col md="6" class="my-1">
             {{ footerMessage }}

@@ -97,6 +97,7 @@ import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper
 import * as ConfigHelper from '../../../sub/helper/dataproc/ConfigHelper'
 import * as HttpHelper from '../../../sub/helper/base/HttpHelper'
 import * as IconHelper from '../../../sub/helper/ui/IconHelper'
+import * as LocaleHelper from '../../../sub/helper/base/LocaleHelper'
 import * as OptionHelper from '../../../sub/helper/dataproc/OptionHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as StyleHelper from '../../../sub/helper/ui/StyleHelper'
@@ -241,10 +242,10 @@ export default {
     getLocationExbOptions(){
       if(this.isDispLocation()){
         return OptionHelper.getLocationOptions(this.work.locationList, this.form.locationDisp)
-          .sort((a, b) => !Util.hasValue(b.value)? 1: StringUtil.compareStrNum(a.label, b.label))
+          .sort((a, b) => !Util.hasValue(b.value)? 1: StringUtil.sortByString(a.label, b.label, LocaleHelper.getSystemLocale()))
       }
       return OptionHelper.getLocationExbOptions(this.work.exbList, this.form.locationDisp)
-        .sort((a, b) => StringUtil.compareStrNum(a.label, b.label))
+        .sort((a, b) => StringUtil.sortByString(a.label, b.label, LocaleHelper.getSystemLocale()))
     },
     getPositionedLocationList(){
       return this.work.locationList.filter(location => Util.hasValue(this.selectedArea) && this.selectedArea == Util.getValue(location, 'areaId', null))
