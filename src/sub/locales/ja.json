@@ -349,7 +349,6 @@
 
     "region": "リージョン",
     "regionId": "リージョンID",
-    "regionCd": "ID",
     "regionName": "リージョン名",
     "meshId": "メッシュID",
 
@@ -676,6 +675,7 @@
     "recordsTest": "レコード表示テスト",
     "hitoMono": "人・物レコード",
     "sample": "サンプル",
+    "adminConsent": "管理者承認",
     "dummy": ""
   },
   "config": {
@@ -811,9 +811,6 @@
       },
       "CATEGORY": {
         "TYPES": "カテゴリ詳細画面で選択可能な種別::カテゴリ詳細画面で使用可能な種別を設定します。設定可能な値は次の通りです。{CATEGORY_TYPES}"
-      },
-      "SETTING": {
-        "DISABLED_THEME": "テーマカラーを設定しない::個人設定画面でテーマカラーを設定できないようにします。"
       },
       "NOTIFY": {
         "MIDIUM_TYPES": "通知テンプレート画面で選択可能な通知媒体::通知テンプレート画面で選択可能な通知媒体を設定します。設定可能な値は次の通りです。{NOTIFY_MIDIUM}",
@@ -1379,6 +1376,14 @@
     "underDegree": "℃未満",
     "overDegree": "℃以上",
 
+    "MSTEAMS": {
+      "USER_GUIDE1": "EXOfficeを利用するには、お客様のOffice365におけるグループおよびユーザ情報へ本アプリがアクセスすることを許可していただく必要があります。",
+      "USER_GUIDE2": "Office365のテナントの管理者でログインしていただき、権限を付与していただけるようお願いいたします。なお、この操作はPCで行ってください。",
+      "INVALID_TENANT": "本アプリ（EXOffice）を利用するには、サービス提供者（株式会社WHERE）と利用契約を結ぶ必要があります。すでに利用契約を結ばれている場合には、その旨ご一報ください。",
+      "WAIT_A_MOMENT": "初期処理中...",
+      "INVALID_TENANT_CONTACT": "連絡先：https://where123.jp/contact/",
+      "IF_NOT_SHOWN": "EXOfficeを表示するには以下のサインイン・ボタンをクリックしてください。もしそれでも表示されない場合は、リロードを行ってから実行してください。"
+    },
     "dummy": "" 
   },
   "helpDescription": {

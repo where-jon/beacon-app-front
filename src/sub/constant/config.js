@@ -29,7 +29,11 @@ export const APP = { // 機能面に関する設定
     TOP_PAGE: '/main/position', // トップページパス　must not be / otherwise recursive infinitely
     // ページ遷移設定
     LOGIN_PAGE: '/login', // ログインページパス　if no login then /
-    ERROR_PAGE: '/error', // エラーページパス　if no login then /
+    AZLOGIN_PAGE: '/azlogin/', // ADログインページパス
+    ERROR_PAGE: '/error/', // エラーページパス
+  },
+  SETTING: {
+    DISABLED_THEME: false,
   },
   GATEWAY: {
     LOST_TIME: 30 * 60 * 1000, // 消失とみなす時間（ミリ秒）
@@ -45,7 +49,7 @@ export const APP = { // 機能面に関する設定
     TRANSPARENT_TIME: 60 * 1000, // 半透明：現在時刻から経過した段階で半透明（ミリ秒）
     LOST_TIME: 10 * 60 * 1000, // 消失とみなす時間（ミリ秒）
     UNDETECT_TIME: 60 * 60 * 1000, // 未検知とみなす時間（ミリ秒）
-    USE_POSITION_HISTORY: true, // 位置情報にT_POSITION_HISTORYを使う
+    USE_POSITION_HISTORY: false, // 位置情報にT_POSITION_HISTORYを使う
     TX_POS_ONE_TO_ONE: false, // 1つの場所に1TXのみ存在可能
     RSSI_MIN: -99, // RSSI下限値
     MOVING_AVERAGE: 5, // 5回分移動平均
@@ -177,9 +181,6 @@ export const APP = { // 機能面に関する設定
   CATEGORY: {
     TYPES: [1,2],   // 選択可能な種別（1人,2物,3ゾーン）
   },
-  SETTING: {
-    DISABLED_THEME: false,
-  },
   NOTIFY: {
     // 通知媒体
     MIDIUM_TYPES: [0,1],   // 選択可能な種別（1メール,2slack）
@@ -271,11 +272,13 @@ export const APP = { // 機能面に関する設定
 
 // URL関連設定
 export const APP_SERVICE = { // used if APP.LOGIN_MODE == APP_SERVICE
+  // BASE_URL: 'https://msteams-data.dev.exbeacon.com',
   BASE_URL: 'http://localhost:8080',
 }
 
 export const EXCLOUD = {
   BASE_URL: 'https://nsome8q880.execute-api.ap-northeast-1.amazonaws.com/prod', // used if APP.LOGIN_MODE != APP_SERVICE
+  // BASE_URL: 'https://jfgo7xyh6h.execute-api.ap-northeast-1.amazonaws.com/prod', // used if APP.LOGIN_MODE != APP_SERVICE
 
   withCredentials: true, // false if APP.LOGIN_MODE != APP_SERVICE
   // POSITION_URL: EXCLOUD.BASE_URL + "/beacon/position-kalman?_=",
@@ -295,8 +298,8 @@ export const EXCLOUD = {
 
 export const DISP = { // 表示系設定（表示・色・フォント・サイズ）
   MENU: {
-    SHOW_NAV: false, // show nav  
-    SHOW_SIDEBAR: true, // show sidebar  
+    SHOW_NAV: true, // show nav  
+    SHOW_SIDEBAR: false, // show sidebar  
     SHOW_LOGO: true, // show logo (or show title text)
     THEME: 'default', // デフォルトのテーマ
   },
@@ -565,3 +568,15 @@ export const Tx = [
   {id: 799},
   {id: 800},
 ]
+
+export const MSTEAMS_APP = {
+  IS_COOPERATION: true,
+  // APP_ID: 'fcfc143f-c8c8-454e-ab72-fdf2e49f862f',
+  // REDIRECT_URL: 'https://xxx.saas.msteams.exbeacon.com/azlogin/adminend/',
+  // REDIRECT_URL: 'https://msteams.dev.exbeacon.com/azlogin/end/',
+  REDIRECT_URL: 'https://msteams.dev.exbeacon.com/azlogin/end/',
+  APP_ID: 'dd3ea682-9b02-49ec-9d15-c63cee38c792',
+  ADMINCONSENT_URL_BASE: 'https://login.microsoftonline.com/common/adminconsent',
+  AES_KEY: '93361405B57C62DF33873146A7215790256978125098DF0A197CF2'
+}
+
