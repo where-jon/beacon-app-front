@@ -126,7 +126,8 @@
       </b-form>
     </b-row>
 
-    <b-row v-if="pQuantity" class="mt-2">
+    <!-- 個別/数量 -->
+    <b-row v-if="pQuantity && !isMsTeams" class="mt-2">
       <b-form>
         <b-form-row class="ml-sm-4 ml-2 mr-1">
           <b-button-group>
@@ -173,7 +174,7 @@
 import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import { APP, DISP, DEV, APP_SERVICE, EXCLOUD } from '../../sub/constant/config'
+import { APP, DISP, DEV, APP_SERVICE, EXCLOUD, MSTEAMS_APP } from '../../sub/constant/config'
 import { SENSOR, TX, CATEGORY, SHAPE } from '../../sub/constant/Constants'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
@@ -371,6 +372,7 @@ export default {
       isPause: false,
       isHeatmap: this.pDefaultHeatmap,
       isLoading: false,
+      isMsTeams: MSTEAMS_APP.IS_COOPERATION,
       noImageErrorKey: 'noMapImage',
       loadStates: ['sensor', 'category', 'group', 'tx', 'exb', 'location', 'pot', 'absentDisplayZones'],
       detectedCount: 0,
