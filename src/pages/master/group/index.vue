@@ -7,7 +7,9 @@
 
 <script>
 import { mapState } from 'vuex'
+import { SHAPE } from '../../../sub/constant/Constants'
 import * as ColorUtil from '../../../sub/util/ColorUtil'
+import * as Util from '../../../sub/util/Util'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as StyleHelper from '../../../sub/helper/ui/StyleHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
@@ -31,7 +33,7 @@ export default {
         bulkEditPath: '/master/group/bulkedit',
         appServicePath: '/basic/group',
         csvOut: true,
-        custumCsvColumns: ['ID', 'groupName', 'ruby', 'color', 'bgColor', 'display.shape', 'description'],
+        custumCsvColumns: ['ID', 'groupName', 'ruby', 'color', 'bgColor', 'shape', 'description'],
         fields: ViewHelper.addLabelByKey(this.$i18n, [ 
           {key: 'groupCd', label: 'id', sortable: true },
           {key: 'groupName', sortable: true },
@@ -77,8 +79,9 @@ export default {
     },
     customCsvData(val){
       val.ID = val.groupCd
-      val.color = ColorUtil.colorCd4display(val.display.color)
-      val.bgColor = ColorUtil.colorCd4display(val.display.bgColor)
+      val.color = ColorUtil.colorCd4display(Util.getValue(val, 'display.color', '000000'))
+      val.bgColor = ColorUtil.colorCd4display(Util.getValue(val, 'display.bgColor', 'FFFFFF'))
+      val.shape = Util.getValue(val, 'display.shape', SHAPE.SQUARE)
     },
   }
 }
