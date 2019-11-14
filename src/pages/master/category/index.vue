@@ -6,9 +6,10 @@
 
 <script>
 import { mapState } from 'vuex'
-import { CATEGORY } from '../../../sub/constant/Constants'
+import { CATEGORY, SHAPE } from '../../../sub/constant/Constants'
 import * as ColorUtil from '../../../sub/util/ColorUtil'
 import * as StringUtil from '../../../sub/util/StringUtil'
+import * as Util from '../../../sub/util/Util'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as StyleHelper from '../../../sub/helper/ui/StyleHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
@@ -48,7 +49,7 @@ export default {
         bulkEditPath: this.pPath + '/bulkedit',
         appServicePath: '/basic/category',
         csvOut: true,
-        custumCsvColumns: ['ID', 'categoryName', 'categoryTypeName', 'color', 'bgColor', 'display.shape', 'description'],
+        custumCsvColumns: ['ID', 'categoryName', 'categoryTypeName', 'color', 'bgColor', 'shape', 'description'],
         fields: ViewHelper.addLabelByKey(this.$i18n, [ 
           {key: 'categoryCd', label: 'id', sortable: true },
           {key: 'categoryName', label: StringUtil.concatCamel(this.pName, 'categoryName'), sortable: true },
@@ -100,8 +101,9 @@ export default {
     },
     customCsvData(val){
       val.ID = val.categoryCd
-      val.color = ColorUtil.colorCd4display(val.display.color)
-      val.bgColor = ColorUtil.colorCd4display(val.display.bgColor)
+      val.color = ColorUtil.colorCd4display(Util.getValue(val, 'display.color', '000000'))
+      val.bgColor = ColorUtil.colorCd4display(Util.getValue(val, 'display.bgColor', 'FFFFFF'))
+      val.shape = Util.getValue(val, 'display.shape', SHAPE.SQUARE)
     },
   }
 }
