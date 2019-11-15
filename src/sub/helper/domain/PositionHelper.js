@@ -1029,7 +1029,11 @@ export const createTxDetailInfo = (x, y, tx, canvasScale, offset, containerRect,
     isDispRight: x + offset.x + 100 < window.innerWidth,
   }
   if(tx.extValue){
-    Object.keys(tx.extValue).forEach( key => { ret[key] = i18n.tnl('label.' + key) + ':' + tx.extValue[key] } )
+    Object.keys(tx.extValue).forEach( key => { 
+      if(!ret[key]){ // 既にあるキーは書き換えない
+        ret[key] = i18n.tnl('label.' + key) + ':' + tx.extValue[key] 
+      }
+    } )
   }
   return ret
 }
