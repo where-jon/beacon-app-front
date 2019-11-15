@@ -339,10 +339,6 @@ export default {
         await PositionHelper.storePositionHistory(this.count, isAllfetch)
       }
 
-      if(payload.disabledOther){
-        return
-      }
-
       if (APP.SENSOR.USE_MEDITAG) {
         let meditagSensors = await EXCloudHelper.fetchSensor(SENSOR.MEDITAG)
         this.meditagSensors = _(meditagSensors)
@@ -402,7 +398,6 @@ export default {
     showMapImage(disableErrorPopup, payload) {
       const cPayload = {
         disabledPosition: Util.getValue(payload, 'disabledPosition', false),
-        disabledOther: Util.getValue(payload, 'disabledOther', false),
         disabledProgress: Util.getValue(payload, 'disabledProgress', false),
       }
       this.showMapImageDef(async () => {
