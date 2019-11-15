@@ -28,7 +28,7 @@
                 </template>
               </v-select>
             </b-form-group>
-            <b-form-group>
+            <b-form-group v-if="isShown('LOCATION.WITH', 'posId')">
               <label v-t="'label.posId'" />
               <input v-model="form.posId" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control" >
             </b-form-group>
