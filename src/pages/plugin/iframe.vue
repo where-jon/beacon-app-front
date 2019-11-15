@@ -88,7 +88,6 @@ export default {
 <style scoped lang="scss">
 .iframeWrap{
     height: 0;
-    padding-bottom: 65%;
 }
 
 iframe {
