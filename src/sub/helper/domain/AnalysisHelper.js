@@ -74,7 +74,7 @@ export const analysePositionInfos = potInfos => {
     for(let idx = 1; idx < potInfo.length; idx++){
       const prev = potInfo[idx - 1]
       const current = potInfo[idx]
-      if(prev.posId == current.posId){
+      if(prev.locationId == current.locationId){
         continue
       }
       const positionInfoKey = prev.x < current.x ? `${prev.x},${prev.y}-${current.x},${current.y}` : `${current.x},${current.y}-${prev.x},${prev.y}`
@@ -88,6 +88,7 @@ export const analysePositionInfos = potInfos => {
       positionInfos[positionInfoKey].count++
     }
   })
+  console.error({positionInfos})
   return analyseWeightInfos(positionInfos)
 }
 
@@ -100,6 +101,7 @@ export const analysePositionInfos = potInfos => {
 export const analyseFlowline = results => {
   const potInfos = analysePotInfos(results)
   const positionInfos = analysePositionInfos(potInfos)
+  console.error({results}, {potInfos}, {positionInfos})
   return {potInfos: potInfos, positionInfos: positionInfos}
 }
 
