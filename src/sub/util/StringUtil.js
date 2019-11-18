@@ -44,8 +44,8 @@ export const sortByString = (a, b, locale) => {
     const bNum = Number(b)
     return aNum < bNum? -1: aNum > bNum? 1: 0
   }
-  const aCodeArr = a.split('')
-  const bCodeArr = b.split('')
+  const aCodeArr = a.toString().split('')
+  const bCodeArr = b.toString().split('')
   for(let cnt = 0; cnt < aCodeArr.length && cnt < bCodeArr.length; cnt++){
     const result = localeCompare(aCodeArr[cnt], bCodeArr[cnt], locale)
     if(result != 0){

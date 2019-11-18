@@ -147,21 +147,11 @@
             {{ zoneName }}
           </div>
         </template>
-        <!-- EXBタイプ名 -->
-        <template slot="exbTypeName" slot-scope="row">
-          <div>
-            {{ getDispExbType(row.item) }}
-          </div>
-        </template>
         <!-- センサ名 -->
-        <template slot="sensorIdName" slot-scope="row">
-          <div v-for="(sensorIdName, index) in row.item.sensorIdNames" :key="index">
-            {{ $i18n.tnl('label.' + sensorIdName) }}
+        <template slot="sensorIdNameLangs" slot-scope="row">
+          <div v-for="(sensorIdName, index) in row.item.sensorIdNameLangs" :key="index">
+            {{ sensorIdName }}
           </div>
-        </template>
-        <!-- センサ名 -->
-        <template slot="dispCategoryName" slot-scope="row">
-          <span class="row" v-text="getDispCategoryName(row.item)" />
         </template>
         <!-- 電池レベル -->
         <template slot="powerLevel" slot-scope="row">
@@ -637,12 +627,6 @@ export default {
       this.replaceAS({[this.name]: entity})
       this.replaceAS({editPage: this.currentPage})
       this.$router.push(this.editPath)
-    },
-    getDispCategoryName(category){
-      return StateHelper.getDispCategoryName(category)
-    },
-    getDispExbType(exb){
-      return Util.getValue(EXB.getTypes().find(val => val.value == exb.exbType), 'text', '')
     },
     getAnotherPageParam(name, item) {
       const pageParam = this.anotherPageParams.find((val) => val.name == name)

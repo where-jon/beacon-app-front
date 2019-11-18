@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid">
     <breadcrumb :items="items" />
-    <m-list :params="params" :list="exbs" />
+    <m-list :params="params" :list="exbViewList" />
   </div>
 </template>
 
@@ -49,6 +49,12 @@ export default {
       'exbs',
       'exbImages',
     ]),
+    exbViewList() {
+      return this.exbs.map(exb => {
+        exb.sensorIdNameLangs = exb.sensorIdNames.map(name => this.$i18n.tnl('label.' + name))
+        return exb
+      })
+    },
   },
   methods: {
     createIdColumn(){
@@ -67,7 +73,7 @@ export default {
       return ViewHelper.addLabelByKey(this.$i18n, this.createIdColumn()
         .concat([
           {key: 'exbTypeName', label:'exbType', sortable: true,},
-          {key: 'sensorIdName', label:'type', sortable: true,},
+          {key: 'sensorIdNameLangs', label:'type', sortable: true,},
           {key: 'locationName', label:'locationName', sortable: true,},
           {key: 'areaName', label:'area', sortable: true,},
           {key: 'actions', thStyle: {width: '130px !important'} }
