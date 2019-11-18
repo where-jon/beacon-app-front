@@ -1201,7 +1201,8 @@
       },
       "LOCATION": {
         "posId": "posId::posId",
-        "zone": "zone::ゾーン名"
+        "zoneBlock": "zoneBlock::ゾーン(区画)",
+        "zoneClass": "zoneClass::ゾーン(分類)"
       },
       "LOCATION_TYPE": {
         "number": "数値::DBに登録される値",

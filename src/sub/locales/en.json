@@ -1083,7 +1083,8 @@
       },
       "LOCATION": {
         "posId": "posId::posId",
-        "zone": "zone::Zone name"
+        "zoneBlock": "",
+        "zoneClass": ""
       },
       "USER": {
         "email": "email::Email",

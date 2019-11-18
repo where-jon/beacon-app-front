@@ -113,8 +113,8 @@ export default {
       backPath: '/master/location',
       appServicePath: '/core/location',
       items: ViewHelper.createBreadCrumbItems('master', {text: 'locationList', href: '/master/location'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.location.locationId)),
-      useZoneClass: MenuHelper.isMenuEntry('/master/zoneClass'),
-      useZoneBlock: MenuHelper.isMenuEntry('/master/zoneBlock'),
+      useZoneClass: MenuHelper.isMenuEntry('/master/zoneClass') && this.isShown('LOCATION.WITH', 'zoneClass'),
+      useZoneBlock: MenuHelper.isMenuEntry('/master/zoneBlock') && this.isShown('LOCATION.WITH', 'zoneBlock'),
       form: Util.extract(this.$store.state.app_service.location, [
         'locationId', 'locationCd', 'locationType', 'locationName',
         'areaId', 'posId', 'x', 'y',

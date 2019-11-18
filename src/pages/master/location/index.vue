@@ -68,10 +68,12 @@ export default {
       const ret = []
       APP.LOCATION.WITH.forEach(val => {
         const column = {key: val, label: val, sortable: true}
-        if(['zone'].includes(val)){
+        if('zoneClass' == val){
           if(MenuHelper.isMenuEntry('/master/zoneClass')){
             ret.push(Object.assign({}, column, {key: 'zoneClass', label: 'zoneClass'}))
           }
+        }
+        if('zoneBlock' == val){
           if(!isDownload && MenuHelper.isMenuEntry('/master/zoneBlock')){
             ret.push(Object.assign({}, column, {key: 'zoneBlock', label: 'zoneBlock'}))
           }
