@@ -113,7 +113,7 @@ export const APP = { // 機能面に関する設定
   },
   // 場所関連設定
   LOCATION: {
-    WITH: ['posId', 'zone'],
+    WITH: ['posId', 'zoneClass', 'zoneBlock'],
     TYPE: {
       WITH: [],
     },
