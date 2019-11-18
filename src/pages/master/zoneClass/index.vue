@@ -48,7 +48,11 @@ export default {
   computed: {
     zoneList() {
       Util.table(this.$store.state.app_service.zones)
-      return this.$store.state.app_service.zones.filter((zone)=> zone.zoneType ==  ZONE.NON_COORDINATE)
+      return this.$store.state.app_service.zones.filter(zone => {
+        const category = Util.getValue(zone, 'zoneCategoryList.0.category', {})
+        zone.dispCategoryName = StateHelper.getDispCategoryName(category)
+        return zone.zoneType ==  ZONE.NON_COORDINATE
+      })
     },
     zoneLength() {
       return this.zoneList().length
@@ -68,7 +72,7 @@ export default {
     async fetchData(payload) {
       try {
         this.showProgress()
-        await StateHelper.load('zone')
+        await Promise.all(['zone', 'category'].map(master => StateHelper.load(master)))
         if (payload && payload.done) {
           payload.done()
         }
