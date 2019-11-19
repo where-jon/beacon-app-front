@@ -13,12 +13,6 @@
     },
     "localizationInfo": {
       "defaultLanguageTag": "ja-jp",
-      "additionalLanguages": [
-        {
-          "languageTag": "ja-jp",
-          "file": "ja-jp.json"
-        }
-      ]
     },
     "name": {
         "short": "EXOffice",
@@ -26,7 +20,7 @@
     },
     "description": {
         "short": "Office application for worker/things locating service with beacon tags/platform",
-        "full": "The advanced locating solutions, for office workers, including \"Office Worker Locator\", \"Meeting Room Management\", \"Entry Management\", and \"Workers' Flow Analysis\", etc., are available on one platform with Bluetooth-LE beacon tags on workers(human), or on things/packages. 1. Locating Solutions: \"Office Worker Locator\" application is in service at Phase -1, and \"Meeting Room Management\" and other applications will follow at Phase-2 in the plan.1.1 \"Office Worker Locator\": EXOffice on MS-Teams users might see the activity and the location of other Team-members (whether they are at the desk/in the office, and to whom talk) with \"Office Workerssss Locator\" function. Knowing other members situation, a Team member would deside communication tools, either to call, to chat , or to visit their desks.1.2 \"Meeting Room Managment\": (Option to be added in Phase-2) Monitoring the meeting room reserved by a Team member, the member might monitor the usage of the rooms, and reserve a vacant room for a sudden meeting. 1.3 \"Entry Management for Security\": (Option to be added in Phase-2) Sensoring the tag on Workers' ID card, the system recognizes their entering and  leaving office. Adding other sensors, users might enjoy other functions, including \"Working Hours Management\", and \"Restroom Vacancy Monitoring\". 2. Analytics: Optional service to be provided by EXEO and WHERE Inc.:Monitoring and Using stored Multi-Sensor Data in IoT Database, WHERE Inc. would analyze data, and provide assessment and consulting services to the enterprise of EXOffice users. Remark: Prior to use EXOffice, it requires pre-configulations of the Infrastructure consists of EXBeacon Platform. In details, please ask support desk with EXEO, or WHERE Inc."
+        "full": "The advanced locating solutions, for office workers, including \"Office Worker Locator\", \"Meeting Room Management\", \"Entry Management\", and \"Workers' Flow Analysis\", etc., are available on one platform with Bluetooth-LE beacon tags on workers(human), or on things/packages.EXOffice empowers MS-Teams users to communicate with other Teams-members with the real-time locating functions, including. 1. Locating Solutions: \"Office Worker Locator\" application is in service at Phase -1, and \"Meeting Room Management\" and other applications will follow at Phase-2 in the plan.1.1 \"Office Worker Locator\": EXOffice on MS-Teams users might see the activity and the location of other Team-members (whether they are at the desk/in the office, and to whom talk) with \"Office Workerssss Locator\" function. Knowing other members situation, a Team member would deside communication tools, either to call, to chat , or to visit their desks.1.2 \"Meeting Room Managment\": (Option to be added in Phase-2) Monitoring the meeting room reserved by a Team member, the member might monitor the usage of the rooms, and reserve a vacant room for a sudden meeting. 1.3 \"Entry Management for Security\": (Option to be added in Phase-2) Sensoring the tag on Workers' ID card, the system recognizes their entering and  leaving office. Adding other sensors, users might enjoy other functions, including \"Working Hours Management\", and \"Restroom Vacancy Monitoring\". 2. Analytics: Optional service to be provided by EXEO and WHERE Inc.:Monitoring and Using stored Multi-Sensor Data in IoT Database, WHERE Inc. would analyze data, and provide assessment and consulting services to the enterprise of EXOffice users.The registered users tap ÅgEXOfficeÅh Tab, then sign-in to EXOffice Application. All EXOffice users should be registered before signing in the application. Remark: Prior to use EXOffice, it requires pre-configulations of the Infrastructure consists of EXBeacon Platform. In details, please ask support desk with EXEO, or WHERE Inc."
     },
     "icons": {
         "outline": "outline.png",
