@@ -395,7 +395,8 @@ export default {
       const minusY = this.RSSI_ICON_HEIGHT / this.canvasScale * 2
       const pow = Math.pow(10, this.RSSI_SCALE)
 
-      target.nearest.filter((t) => t.x && t.y).forEach((t, i, a) => {
+      const now = new Date().getTime()
+      target.nearest.filter((t) => t.x && t.y && t.timestamp >= now - APP.POS.LOST_TIME).forEach((t, i, a) => {
         const rssi = Math.floor(t.rssi * pow) / pow 
         new RssiIcon(this.rssiCon, rssi, 1/this.canvasScale, i).add(t.x - minusX, t.y - minusY)
         this.stage.setChildIndex(this.rssiCon, this.stage.numChildren-1)
