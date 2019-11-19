@@ -923,7 +923,7 @@ export const MENU = [
         icon: 'envelope',
       },
       {
-        key: 'gateway',
+        key: 'masterGateway',
         path: 'gateway',
         icon: 'road',
         exserver: true,

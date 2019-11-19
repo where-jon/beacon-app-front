@@ -39,7 +39,7 @@ export default {
         sortBy: 'deviceid',
         initTotalRows: 0
       },
-      items: ViewHelper.createBreadCrumbItems('master', 'gateway'),
+      items: ViewHelper.createBreadCrumbItems('master', 'masterGateway'),
       gateways: []
     }
   },
