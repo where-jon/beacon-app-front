@@ -81,7 +81,6 @@
   },
   "ava": {
     "require": [
-      "babel-register",
       "./src/test/setup-browser-env.js"
     ]
   }
