@@ -77,10 +77,12 @@
     "jsdom": "^15.1.1",
     "nodemon": "^1.18.9",
     "url-search-params-polyfill": "^7.0.0",
-    "vue-template-compiler": "^2.5.16"
+    "vue-template-compiler": "^2.5.16",
+    "esm": "^3.2.25"
   },
   "ava": {
     "require": [
+      "esm",
       "./src/test/setup-browser-env.js"
     ]
   }
