@@ -36,9 +36,9 @@
     "info": "INFO",
 
     "---------------- App common ---------------":"",
-    "login": "Login",
-    "logout": "Logout",
-    "loginId": "Login ID",
+    "login": "Signin",
+    "logout": "Signout",
+    "loginId": "Signin ID",
     "user": "User",
     "userId": "User ID",
     "id": "ID",
@@ -182,7 +182,7 @@
     "newsContent":"Content",
 
     "---------------- App setting ---------------":"",
-    "login-user-profile": "Login user profile",
+    "login-user-profile": "Signin user profile",
     "default": "Corporate",
     "earthcolor": "Earth color",
     "autumn": "Autumn",
