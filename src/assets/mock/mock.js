@@ -39,7 +39,7 @@ export const position = [
     ]
   }
 ]
-
+let now = new Date().getTime()
 export const insertPosition =[
   {btx_id:121, pos_id:4, label:'MAG', rssi:-60, timestamp:now, count:2},
 ]
@@ -85,7 +85,7 @@ positions[35] = [{'btx_id':1,'minor':1,'pos_id':-1,'device_id':2,'updatetime':'2
 
 export const sensor = []
 
-let now = new Date().getTime()
+now = new Date().getTime()
 sensor[1] = [
   {'deviceid':22017,'timestamp':now,'temperature':15.69,'humidity':52},
   {'deviceid':22018,'timestamp':now,'temperature':26.03,'humidity':90},
