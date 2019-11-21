@@ -57,13 +57,17 @@ export default {
     },
   },
   methods: {
+    getUseExbType() {
+      return ArrayUtil.includesIgnoreCase(APP.EXB.WITH, 'exbType')
+    },
     createIdColumn(){
       return ['deviceId', 'deviceIdX'].filter(val => ConfigHelper.includesDeviceType(val))
         .map(val => ({key: val, label: val, sortable: true}))
     },
     getCustumCsvColumns(){
       return this.createIdColumn().map(val => val.key)
-        .concat(['exbType', 'threshold1', 'threshold2', 'adjust1', 'adjust2', 'sensor', 'locationCd', 'locationName']).filter(val => val)
+        .concat([this.getUseExbType()? 'exbType': null, 'threshold1', 'threshold2', 'adjust1', 'adjust2', 'sensor', 'locationCd', 'locationName'])
+        .filter(val => val)
     },
     customCsvData(val){
       val.sensor = val.sensorIdNames.map(name => this.$i18n.tnl('label.' + name)).join(';')
@@ -72,12 +76,12 @@ export default {
     getFields(){
       return ViewHelper.addLabelByKey(this.$i18n, this.createIdColumn()
         .concat([
-          {key: 'exbTypeName', label:'exbType', sortable: true,},
+          this.getUseExbType()? {key: 'exbTypeName', label:'exbType', sortable: true,}: null,
           {key: 'sensorIdNameLangs', label:'type', sortable: true,},
           {key: 'locationName', label:'locationName', sortable: true,},
           {key: 'areaName', label:'area', sortable: true,},
           {key: 'actions', thStyle: {width: '130px !important'} }
-        ])
+        ]).filter(val => val)
       )
     },
     async fetchData(payload) {
