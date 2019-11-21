@@ -126,7 +126,7 @@ export const APP = { // 機能面に関する設定
   POSITION_WITH_AREA: true, // エリアを表示
   // POT関連設定
   POT: {
-    WITH: ['category', 'user', 'ruby', 'description'],
+    WITH: ['thumbnail', 'category', 'user', 'ruby', 'description'],
     MULTI_TX: false,         // 複数Tx使用
     TX_MAX: 2,   // 所持Tx最大数
     // 拡張項目定義（サンプル）
@@ -142,7 +142,7 @@ export const APP = { // 機能面に関する設定
     ],
   },
   PERSON: {
-    WITH: ['category', 'user', 'ruby', 'description'],
+    WITH: ['thumbnail', 'category', 'user', 'ruby', 'description'],
     MULTI_TX: false,         // 複数Tx使用
     TX_MAX: 2,   // 所持Tx最大数
     // 拡張項目定義（サンプル）
@@ -158,7 +158,7 @@ export const APP = { // 機能面に関する設定
     ],
   },
   THING: {
-    WITH: ['category', 'user', 'ruby', 'description'],
+    WITH: ['thumbnail', 'category', 'user', 'ruby', 'description'],
     MULTI_TX: false,         // 複数Tx使用
     TX_MAX: 2,   // 所持Tx最大数
     // 拡張項目定義（サンプル）
