@@ -94,9 +94,11 @@ export default {
       this.thumbnailUrlMap = {}
       urls.forEach(url => this.thumbnailUrlMap[url.potId] = url.url)
       this.replaceAS({thumbnailUrls: this.thumbnailUrlMap})
-
-},
+  },
   methods: {
+    getFullName(){
+      return this.pName? this.pName: 'pot'
+    },
     getCustomCsvColumns(){
       return [
         'ID',
@@ -128,13 +130,13 @@ export default {
       return ViewHelper.addLabelByKey(this.$i18n, [ 
         {key: 'potCd', sortable: true , tdClass: 'thumb-rowdata'},
         {key: 'potName', sortable: true , tdClass: 'thumb-rowdata'},
-        {key: 'thumbnail', tdClass: 'thumb-rowdata' },
+        ArrayUtil.includesIgnoreCase(APP[this.getFullName().toUpperCase()].WITH, 'thumbnail')? {key: 'thumbnail', tdClass: 'thumb-rowdata' }: null,
         {key: 'txIdName', label:'tx', sortable: true, tdClass: 'thumb-rowdata' },
         {key: 'displayName', sortable: true, tdClass: 'thumb-rowdata'},
       ].concat(PotHelper.createCustomColumn(this.pName))
         .concat([
           {key: 'actions', thStyle: {'min-width':'130px !important'} , tdClass: 'thumb-rowdata'},
-        ]))
+        ])).filter(val => val)
     },
     onSaved(){
       StateHelper.setForceFetch('tx', true)

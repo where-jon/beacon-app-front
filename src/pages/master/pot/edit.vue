@@ -61,7 +61,7 @@
               </v-select>
             </b-form-group>
             <extform :p-name="pName" :is-editable="isEditable" :form="form" />
-            <b-form-group>
+            <b-form-group v-if="isShownWith('thumbnail')">
               <label v-t="'label.thumbnail'" />
               <b-form-file v-if="isEditable" ref="inputThumbnail" v-model="form.thumbnailTemp" :placeholder="$t('message.selectFile') " accept="image/jpeg, image/png, image/gif" @change="readImage" />
               <b-button v-if="isEditable && form.existThumbnail" :variant="theme" type="button" class="float-right mt-3" @click="clearImage">
