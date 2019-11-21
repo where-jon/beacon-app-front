@@ -145,6 +145,10 @@ export default {
       type: String,
       default: '/master/pot',
     },
+    pAppServicePath: {
+      type: String,
+      default: '/basic/pot',
+    },
     pTypeList: {
       type: Array,
       default: () => [CATEGORY.PERSON, CATEGORY.THING],
@@ -161,7 +165,6 @@ export default {
     return {
       name: 'pot',
       id: 'potId',
-      appServicePath: '/basic/pot',
       showEmail: false,
       editShowUser: false,
       form: {
@@ -536,7 +539,7 @@ export default {
       })
       entity.potTxList = potTxList
       entity.deleteThumbnail = this.form.deleteThumbnail
-      return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
+      return await AppServiceHelper.bulkSave(this.pAppServicePath, [entity])
     },
     getNameByteLangth(){
       const fileElement = Util.getValue(document.getElementsByClassName('custom-file'), '0', null)

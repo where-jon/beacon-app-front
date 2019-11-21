@@ -27,6 +27,10 @@ export default {
       type: String,
       default: '/master/pot',
     },
+    pAppServicePath: {
+      type: String,
+      default: '/basic/pot',
+    },
     pTypeList: {
       type: Array,
       default: () => [CATEGORY.PERSON, CATEGORY.THING],
@@ -43,7 +47,7 @@ export default {
         id: 'potId',
         indexPath: this.pPath,
         editPath: this.pPath + '/edit',
-        appServicePath: '/basic/pot',
+        appServicePath: this.pAppServicePath,
         bulkEditPath: this.pPath + '/bulkEdit',
         bulkUploadPath: this.pPath + '/bulkUpload',
         csvOut: true,

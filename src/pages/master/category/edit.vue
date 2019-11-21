@@ -71,6 +71,10 @@ export default {
       type: String,
       default: '/master/category',
     },
+    pAppServicePath: {
+      type: String,
+      default: '/basic/category',
+    },
     pTypeList: {
       type: Array,
       default: () => [CATEGORY.PERSON, CATEGORY.THING, CATEGORY.ZONE],
@@ -87,7 +91,6 @@ export default {
     return {
       name: 'category',
       id: 'categoryId',
-      appServicePath: '/basic/category',
       form: Util.extract(category, ['categoryId', 'categoryCd', 'categoryName', 'categoryType', 'display', 'description']),
       defaultColor: '#000000',
       defaultBgColor: '#ffffff',
@@ -172,7 +175,7 @@ export default {
       this.oldShape = this.form.displayShape
       this.oldColor = this.form.displayColor
       this.oldBgColor = this.form.displayBgColor
-      return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
+      return await AppServiceHelper.bulkSave(this.pAppServicePath, [entity])
     },
   },
 }
