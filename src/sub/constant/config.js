@@ -106,6 +106,7 @@ export const APP = { // 機能面に関する設定
   },
   // EXB関連設定
   EXB: {
+    WITH: [],
     SENSOR: [1,2,3,4,8], // EXBのタイプに設定可能なセンサーID
     DEVICEID_TYPE: 'deviceId',
     MULTI_SENSOR: true,

@@ -23,7 +23,7 @@
               </b-form-checkbox>
             </b-form-group>
             -->
-            <b-form-group>
+            <b-form-group v-if="isShown('EXB.WITH', 'exbType')">
               <label v-t="'label.exbType'" />
               <b-form-select v-model="form.exbType" :options="exbTypeOptions" :disabled="!isEditable" :readonly="!isEditable" class="ml-3 col-4" />
             </b-form-group>
