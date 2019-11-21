@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <category-edit :p-name="name" :p-type-list="typeList" :p-path="indexPath" :p-show-icon="false" />
+    <category-edit :p-name="name" :p-type-list="typeList" :p-path="indexPath" :p-app-service-path="appServicePath" :p-show-icon="false" />
   </div>
 </template>
 
@@ -21,6 +21,9 @@ export default {
     },
     indexPath() {
       return '/master/categoryZone'
+    },
+    appServicePath() {
+      return '/basic/personCategory'
     },
   },
 }

@@ -30,6 +30,10 @@ export default {
       type: String,
       default: '/master/category',
     },
+    pAppServicePath: {
+      type: String,
+      default: '/basic/category',
+    },
     pTypeList: {
       type: Array,
       default: () => [CATEGORY.PERSON, CATEGORY.THING, CATEGORY.ZONE],
@@ -47,7 +51,7 @@ export default {
         indexPath: this.pPath,
         editPath: this.pPath + '/edit',
         bulkEditPath: this.pPath + '/bulkedit',
-        appServicePath: '/basic/category',
+        appServicePath: this.pAppServicePath,
         csvOut: true,
         custumCsvColumns: ['ID', 'categoryName', 'categoryTypeName', 'color', 'bgColor', 'shape', 'description'],
         fields: ViewHelper.addLabelByKey(this.$i18n, [ 
