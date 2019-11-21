@@ -86,6 +86,13 @@
       "esm",
       "canvas",
       "./src/test/setup-browser-env.js"
+    ],
+    "files": [
+      "src/test/**/*",
+      "!src/test/setup-browser-env.js"
+    ],
+    "helpers": [
+      "src/test/setup-browser-env.js"
     ]
   }
 }
