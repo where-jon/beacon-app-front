@@ -540,7 +540,7 @@ export const Tx = [
 ]
 
 export const MSTEAMS_APP = {
-  IS_COOPERATION: false,
+  IS_COOPERATION: true,
   // APP_ID: 'fcfc143f-c8c8-454e-ab72-fdf2e49f862f',
   // REDIRECT_URL: 'https://xxx.saas.msteams.exbeacon.com/azlogin/adminend/',
   // REDIRECT_URL: 'https://msteams.dev.exbeacon.com/azlogin/end/',
