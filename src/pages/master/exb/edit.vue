@@ -130,8 +130,8 @@ export default {
     },
     adjustParams() {
       return [
-        { key: 'threshold1', min: -100, max: 0 },
-        { key: 'threshold2', min: -100, max: 0 },
+        { key: 'threshold1', min: -65535, max: 0 },
+        { key: 'threshold2', min: -65535, max: 0 },
         { key: 'adjust1', min: -50, max: 50 },
         { key: 'adjust2', min: -50, max: 50 },
       ]
