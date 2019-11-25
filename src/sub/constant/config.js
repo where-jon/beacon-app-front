@@ -267,7 +267,7 @@ export const EXCLOUD = {
 export const DISP = { // 表示系設定（表示・色・フォント・サイズ）
   MENU: {
     SHOW_NAV: true, // show nav  
-    SHOW_SIDEBAR: true, // show sidebar
+    SHOW_SIDEBAR: false, // show sidebar
     SHOW_LOGO: true, // show logo (or show title text)
     THEME: 'default', // デフォルトのテーマ
   },
