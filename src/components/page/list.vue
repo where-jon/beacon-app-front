@@ -669,7 +669,7 @@ export default {
       }
       try{
         const regExp = new RegExp('.*' + this.filter.reg + '.*', 'i')
-        const param = this.params.fields.concat(this.params.addFilterFields? this.params.addFilterFields.map(field => ({key: field})): []).map((val) => Util.getValue(originItem, val.key, ''))
+        const param = this.params.fields.filter(field => Util.getValue(field, 'filterable', true)).concat(this.params.addFilterFields? this.params.addFilterFields.map(field => ({key: field})): []).map(val => Util.getValue(originItem, val.key, ''))
         return regExp.test(JSON.stringify(param))
       }
       catch(e){
