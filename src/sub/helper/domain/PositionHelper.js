@@ -123,7 +123,6 @@ const positionFilterFreeWord = (pos, freeWord) => {
     'state',
     APP.POSITION_WITH_AREA? 'location.areaName': null,
     'location.locationName',
-    'updatetime',
   ].filter(val => val)
   return columnList.some(column => (new RegExp(freeWord, 'i')).test(Util.getValue(pos, column, null)))
 }
