@@ -701,11 +701,11 @@ export const SETTING = {
         },
         SVC: {
           STAY_SUM: {
-            STAY_SUM_START: 0,
-            STAY_SUM_END: 2400,
-            STAY_SUM_INTERVAL: 5,
-            STAY_SUM_CALC_BY: "location",
-            STAY_SUM_ADJUST_TIME: 4,
+            START: 0,
+            END: 2400,
+            INTERVAL: 60,
+            CALC_BY: "location",
+            ADJUST_TIME: 4,
           },
           PROXIMITY:{
             BLANK_RANGE: 60000,
