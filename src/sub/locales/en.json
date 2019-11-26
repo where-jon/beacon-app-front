@@ -242,8 +242,8 @@
     "finalReceiveLocation": "Last position",
     "mapDisplay": "Map display",
 
-    "positionStack": "Position (Whole)",
-    "positionStackShort": "Whole",
+    "positionStack": "Position (Detected)",
+    "positionStackShort": "Detected",
     "positionStackType": "Type",
 
     "password": "Password",
