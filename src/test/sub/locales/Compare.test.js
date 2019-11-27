@@ -29,7 +29,10 @@ const compare = (lang1, lang2, keys = [], result = []) => {
 test('compare', async t => {
   console.log('\n> ----- compare start -----\n')
   const result = compare(ja, en)
-  result.forEach(val => console.log(val))
+  console.log('\n')
+  console.log(result.join('\n'))
+  console.log('\n')
   console.log('\n> ----- compare success -----\n')
+  console.log('\n')
   t.true(true)
 })
