@@ -85,6 +85,9 @@ export const getPositions = (showAllTime = false, notFilterByTimestamp = false,
   } else {
     const now = !DEV.USE_MOCK_EXC? new Date().getTime(): mock.positions_conf.start + count++ * mock.positions_conf.interval  // for mock
     positions = correctPosId(orgPositions, now, notFilterByTimestamp)
+    // PositionHistoryを使用せず、かつ言語設定が切り替わった場合、
+    // 言語設定に合った正しいステータス名がセットされないので改めてセットする。
+    setDetectState(positions, false) 
   }
   positions = positionOwnerFilter(positions, showTxNoOwner)
   return showAllTime ? positions : positionFilter(positions, selectedGroup, selectedCategory, selectedDetail, selectedFreeWord)
