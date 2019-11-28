@@ -11,7 +11,7 @@ import * as MenuHelper from '../sub/helper/dataproc/MenuHelper'
 export default async (context, inject) => {
   console.log('App Init') // If you need common initialize procedure, write here.
   LocalStorageHelper.setLocalStorage('defaultConfig', JSON.stringify(config))
-  LocalStorageHelper.setLocalStorage('defaultConfigInfo', JSON.stringify({
+  LocalStorageHelper.setLocalStorage('defaultConfigConstants', JSON.stringify({
     type: SETTING.getType(),
     svc: SETTING.getDefault(),
   }))

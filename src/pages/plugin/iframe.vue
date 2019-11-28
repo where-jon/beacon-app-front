@@ -11,6 +11,7 @@ import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as Util from '../../sub/util/Util'
 import { EventBus } from '../../sub/helper/base/EventHelper'
 import * as LocalStorageHelper from '../../sub/helper/base/LocalStorageHelper'
+import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import commonmixin from '../../components/mixin/commonmixin.vue'
 
 export default {
@@ -64,6 +65,7 @@ export default {
     EventBus.$on('pluginDownload', url => BrowserUtil.executeFileDL(url))
   },
   mounted() {
+    StateHelper.setForceFetch('setting', true)
     const query = PLUGIN_CONSTANTS.PLUGIN_KEY_PREFIX + '='
     LocalStorageHelper.setLocalStorage('api-base-url', APP_SERVICE.BASE_URL)
     this.url = this.getPluginIndex()
