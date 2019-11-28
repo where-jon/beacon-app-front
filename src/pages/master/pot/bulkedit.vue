@@ -34,7 +34,7 @@ export default {
     },
     pTypeList: {
       type: Array,
-      default: () => [CATEGORY.PERSON, CATEGORY.THING],
+      default: () => [CATEGORY.PERSON, CATEGORY.THING, CATEGORY.OTHER],
     },
   },
   components: {
@@ -45,7 +45,7 @@ export default {
     return {
       name: 'pot',
       id: 'potId',
-      category: _.slice(CATEGORY.getTypes(), 0, 2).filter(val => APP.CATEGORY.TYPES.includes(val.value) && this.pTypeList.includes(val.value)),
+      category: CATEGORY.getTypes().filter(val => APP.CATEGORY.TYPES.includes(val.value) && this.pTypeList.includes(val.value)),
     }
   },
   computed: {

@@ -180,6 +180,19 @@ export const EXB = {
   }
 }
 
+export const POT_TYPE = {
+  PERSON: 1,
+  THING: 2,
+  OTHER: 3,
+  getTypes(){
+    return [
+      {value: POT_TYPE.PERSON, text: i18n.tnl('label.person')},
+      {value: POT_TYPE.THING, text: i18n.tnl('label.thing')},
+      {value: POT_TYPE.OTHER, text: i18n.tnl('label.thingOther')},
+    ]
+  },
+}
+
 export const CATEGORY = {
   PERSON: 1,
   THING: 2,
@@ -870,6 +883,11 @@ export const MENU = [
       {
         key: 'potThing',
         path: 'potThing',
+        icon: 'cubes',
+      },
+      {
+        key: 'potOther',
+        path: 'potOther',
         icon: 'cubes',
       },
       {
