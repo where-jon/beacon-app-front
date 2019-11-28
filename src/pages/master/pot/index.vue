@@ -7,7 +7,7 @@
 <script>
 import { mapState } from 'vuex'
 import { APP, EXCLOUD, APP_SERVICE } from '../../../sub/constant/config'
-import { CATEGORY } from '../../../sub/constant/Constants'
+import { POT_TYPE } from '../../../sub/constant/Constants'
 import * as ArrayUtil from '../../../sub/util/ArrayUtil'
 import * as Util from '../../../sub/util/Util'
 import * as MenuHelper from '../../../sub/helper/dataproc/MenuHelper'
@@ -33,7 +33,7 @@ export default {
     },
     pTypeList: {
       type: Array,
-      default: () => [CATEGORY.PERSON, CATEGORY.THING, CATEGORY.OTHER],
+      default: () => [POT_TYPE.PERSON, POT_TYPE.THING, POT_TYPE.OTHER],
     },
   },
   components: {
