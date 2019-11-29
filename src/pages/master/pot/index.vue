@@ -56,6 +56,7 @@ export default {
         extraFilter: this.getExtraFilter(),
         extraFilterFunc: this.getExtraFilterFunc(),
         sortBy: 'ID',
+        addFilterFields: ['txIdNames'],
         initTotalRows: this.$store.state.app_service.pots.length,
       },
       name: 'pot',
