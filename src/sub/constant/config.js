@@ -192,7 +192,7 @@ export const APP = { // 機能面に関する設定
   },
   // category
   CATEGORY: {
-    TYPES: [1,2,3],   // 選択可能な種別（1人,2物,3ゾーン）
+    TYPES: [1,2],   // 選択可能な種別（1人,2物,3ゾーン）
   },
   SETTING: {
     DISABLED_THEME: false,
