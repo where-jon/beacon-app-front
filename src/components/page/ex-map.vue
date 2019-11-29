@@ -980,14 +980,14 @@ export default {
           locationKey = pos.tx.location.locationId
         }
 
-        if (tx.potType == CATEGORY.PERSON) {
+        if (tx.potType == POT_TYPE.PERSON) {
           let locationVal = this.locationPersonList[locationKey]
           if (!Util.hasValue(locationVal)) {
             this.locationPersonList[locationKey] = 1
           } else {
             this.locationPersonList[locationKey]++
           }
-        } else if (tx.potType == CATEGORY.THING) {
+        } else if (tx.potType == POT_TYPE.THING) {
           let locationVal = this.locationObjectList[locationKey]
           if (!Util.hasValue(locationVal)) {
             this.locationObjectList[locationKey] = 1

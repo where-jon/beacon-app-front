@@ -9,7 +9,7 @@
 import { mapState } from 'vuex'
 import _ from 'lodash'
 import { APP } from '../../../sub/constant/config'
-import { CATEGORY } from '../../../sub/constant/Constants'
+import { CATEGORY, POT_TYPE } from '../../../sub/constant/Constants'
 import * as StringUtil from '../../../sub/util/StringUtil'
 import * as Util from '../../../sub/util/Util'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
@@ -34,7 +34,7 @@ export default {
     },
     pTypeList: {
       type: Array,
-      default: () => [CATEGORY.PERSON, CATEGORY.THING],
+      default: () => [POT_TYPE.PERSON, POT_TYPE.THING, POT_TYPE.OTHER],
     },
   },
   components: {
@@ -45,7 +45,7 @@ export default {
     return {
       name: 'pot',
       id: 'potId',
-      category: _.slice(CATEGORY.getTypes(), 0, 2).filter(val => APP.CATEGORY.TYPES.includes(val.value) && this.pTypeList.includes(val.value)),
+      category: CATEGORY.getTypes().filter(val => APP.CATEGORY.TYPES.includes(val.value) && this.pTypeList.includes(val.value)),
     }
   },
   computed: {

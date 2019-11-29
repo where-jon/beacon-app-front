@@ -117,7 +117,7 @@
 import { mapState } from 'vuex'
 import _ from 'lodash'
 import { APP, EXCLOUD, APP_SERVICE } from '../../../sub/constant/config'
-import { CATEGORY, SENSOR, USER } from '../../../sub/constant/Constants'
+import { CATEGORY, SENSOR, USER, POT_TYPE } from '../../../sub/constant/Constants'
 import * as StringUtil from '../../../sub/util/StringUtil'
 import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
@@ -151,7 +151,7 @@ export default {
     },
     pTypeList: {
       type: Array,
-      default: () => [CATEGORY.PERSON, CATEGORY.THING],
+      default: () => [POT_TYPE.PERSON, POT_TYPE.THING, POT_TYPE.OTHER],
     },
   },
   components: {
@@ -186,7 +186,7 @@ export default {
         txs: []
       },
       roleOptions: [],
-      category: _.slice(CATEGORY.getTypes(), 0, 2).filter(val => APP.CATEGORY.TYPES.includes(val.value) && this.pTypeList.includes(val.value)),
+      category: POT_TYPE.getTypes().filter(val => APP.CATEGORY.TYPES.includes(val.value) && this.pTypeList.includes(val.value)),
       txIds: Array(PotHelper.getSetting(this.pName).TX_MAX),
       btxIds: Array(PotHelper.getSetting(this.pName).TX_MAX),
       minors: Array(PotHelper.getSetting(this.pName).TX_MAX),
