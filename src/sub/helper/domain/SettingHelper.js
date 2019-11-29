@@ -209,7 +209,7 @@ export const mergeSettings = settings => {
   const categoryObjs = i18n.tnl('config.OPTIONS.SETTING_CATEGORY')
   const ret = []
   Object.keys(categoryObjs).forEach(categoryKey => {
-    if(categoryKey == 'OTHER'){
+    if(categoryKey == SETTING.OTHER_CATEGORY){
       return
     }
     ret.push({key: categoryObjs[categoryKey], isParent: true, categoryKey: categoryKey, _rowVariant: 'secondary'})
@@ -222,8 +222,8 @@ export const mergeSettings = settings => {
     settings = settings.filter(setting => !setting.key.match(regExp))
   })
   if(settings.length != 0){
-    ret.push({key: categoryObjs['OTHER'], isParent: true,  categoryKey: 'OTHER', _rowVariant: 'secondary'})
-    settings.forEach(setting => ret.push({...setting, categoryKey: 'OTHER'}))
+    ret.push({key: categoryObjs[SETTING.OTHER_CATEGORY], isParent: true,  categoryKey: SETTING.OTHER_CATEGORY, _rowVariant: 'secondary'})
+    settings.forEach(setting => ret.push({...setting, categoryKey: SETTING.OTHER_CATEGORY}))
   }
   return ret
 }

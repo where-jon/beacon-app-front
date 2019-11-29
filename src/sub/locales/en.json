@@ -1098,7 +1098,7 @@
         "SVC": "Server",
         "BATCH": "Batch",
         "SIMULATION": "For Demostration",
-        "OTHER": "Others",
+        "OTHER_CATEGORY": "Others",
         "MAIL": "Mail"
       },
       "SENSOR_NONE": {

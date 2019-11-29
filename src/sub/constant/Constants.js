@@ -531,6 +531,7 @@ export const SETTING = {
   BOOLEAN: 'boolean',
   JSON: 'json',
   SELECT: 'select',
+  OTHER_CATEGORY: 'OTHER_CATEGORY',
   getOptions(){
     return [
       {text: i18n.tnl('label.string'), value: 'string'},

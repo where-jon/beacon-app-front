@@ -542,7 +542,7 @@
     "masterPot": "人＆物",
     "masterPotPerson": "人",
     "masterPotThing": "物",
-    "masterPotThingOther": "物(その他)",
+    "masterPotOther": "物(その他)",
     "masterCategory": "カテゴリ",
     "masterCategoryPerson": "人カテゴリ",
     "masterCategoryThing": "物カテゴリ",
@@ -810,6 +810,12 @@
         "MULTI_TX": "物に複数のTxを登録する::物画面で複数のTxを登録可能にします。",
         "TX_MAX": "物に登録するTxの最大数::物画面で登録可能なTxの最大数を設定します。",
         "EXT_DEF": "物拡張項目::物に設定可能な拡張項目をJSON形式で定義します。"
+      },
+      "OTHER": {
+        "WITH": "物(その他)画面で使用する項目::物(その他)画面で使用する項目を設定します。設定可能な値は次の通りです。★{POT}",
+        "MULTI_TX": "物(その他)に複数のTxを登録する::物(その他)画面で複数のTxを登録可能にします。",
+        "TX_MAX": "物(その他)に登録するTxの最大数::物(その他)画面で登録可能なTxの最大数を設定します。",
+        "EXT_DEF": "物(その他)拡張項目::物(その他)に設定可能な拡張項目をJSON形式で定義します。"
       },
       "CATEGORY": {
         "TYPES": "カテゴリ詳細画面で選択可能な種別::カテゴリ詳細画面で使用可能な種別を設定します。設定可能な値は次の通りです。{CATEGORY_TYPES}"
@@ -1086,6 +1092,7 @@
         "POT": "人＆物",
         "PERSON": "人",
         "THING": "物",
+        "OTHER": "物(その他)",
         "CATEGORY": "カテゴリ",
         "NOTIFY": "通知",
         "GATEWAY": "ゲートウェイ",
@@ -1100,7 +1107,7 @@
         "SVC": "サーバ",
         "BATCH": "バッチ",
         "SIMULATION": "デモ用",
-        "OTHER": "その他",
+        "OTHER_CATEGORY": "その他",
         "MAIL": "メール"
       },
       "SENSOR_NONE": {
