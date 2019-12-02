@@ -204,10 +204,22 @@ export const CATEGORY = {
       {value: CATEGORY.PERSON, text: i18n.tnl('label.person')},
       {value: CATEGORY.THING, text: i18n.tnl('label.thing')},
       {value: CATEGORY.ZONE, text: i18n.tnl('label.zone')},
+      {value: CATEGORY.OTHER, text: i18n.tnl('label.potOther')},
     ]
   },
-  POT_AVAILABLE: [1, 2],
+  POT_AVAILABLE: [1, 2, 5],
   ZONE_AVAILABLE: [3],
+}
+
+export const TYPE_RELATION = {
+  getPotCategory() {
+    return {
+      [POT_TYPE.PERSON]: CATEGORY.PERSON,
+      [POT_TYPE.THING]: CATEGORY.THING,
+      [POT_TYPE.ZONE]: CATEGORY.ZONE,
+      [POT_TYPE.OTHER]: CATEGORY.OTHER,
+    }
+  }
 }
 
 export const PROCESS_SUM = {
