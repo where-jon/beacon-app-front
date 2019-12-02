@@ -36,7 +36,7 @@ export default {
     },
     pTypeList: {
       type: Array,
-      default: () => [CATEGORY.PERSON, CATEGORY.THING, CATEGORY.ZONE],
+      default: () => [CATEGORY.PERSON, CATEGORY.THING, CATEGORY.ZONE, CATEGORY.OTHER],
     },
   },
   components: {
