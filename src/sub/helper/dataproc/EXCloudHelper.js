@@ -56,11 +56,11 @@ export const fetchPosition = async (locations, exbs, txs, pMock, isAll = false) 
 
     let pos = _(data)
     .filter(val => isAll || (DEV.NOT_FILTER_TX || txs && txs.some(tx => tx.btxId == val.btx_id)))
-    .filter(val => isAll || (locations && locations.some(location => location.posId == val.pos_id)))
+    .filter(val => isAll || (exbs && exbs.some(exb => exb.deviceId == val.device_id)))
     .map(val => {
       let tx = _.find(txs, tx => tx.btxId == val.btx_id)
-      let location = _.find(locations, location => location.posId == val.pos_id)
-      let exb = _.find(exbs, exb => exb.location.posId == val.pos_id)
+      let exb = _.find(exbs, exb => exb.deviceId == val.device_id)
+      let location = _.find(locations, location => location.locationId == exb.locationId)
       let label = tx && tx.displayName? tx.displayName: val.btx_id
       return {btx_id: val.btx_id, minor: val.minor, power_level: val.power_level,
         pos_id: val.pos_id, label, location, exb, tx, nearest: val.nearest, updatetime: dateform(val.updatetime), timestamp: dateform(val.updatetime)}
@@ -104,7 +104,7 @@ export const fetchPositionHistory = async (locations, exbs, txs, allShow, pMock)
       let location = Util.getValue(tx, 'location', null) && 0 < tx.location.x * tx.location.y? tx.location: locationIdMap[val.locationId]
       let exb = exbIdMap[val.exbId]
       let label = tx? tx.displayName? tx.displayName: tx.btxId: ''
-      return { btx_id: tx? tx.btxId: '', minor: val.minor, pos_id: location? location.posId : -1, tx_id: val.txId,
+      return { btx_id: tx? tx.btxId: '', minor: val.minor, device_id: exb? exb.deviceId : -1, tx_id: val.txId,
         x: val.x, y: val.y,
         label, location: location, exb, tx, updatetime: dateform(val.positionDt), timestamp:dateform(val.positionDt)}
     }).compact().value()
@@ -125,7 +125,7 @@ export const fetchPositionList = async (exbs, txs) => {
     .map(val => {
       let tx = _.find(txs, tx => tx.btxId == val.btx_id)
       if (!DEV.NOT_FILTER_TX || !tx) { return null}
-      let exb = _.find(exbs, exb => exb.location.posId == val.pos_id)
+      let exb = _.find(exbs, exb => exb.deviceId == val.device_id)
       if (!exb) { return null}
       let label = tx && tx.displayName? tx.displayName: val.btx_id
       return {...val, tx: tx, exb: exb, label, updatetime: dateform(val.updatetime)}
