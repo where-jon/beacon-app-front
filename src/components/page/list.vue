@@ -147,6 +147,27 @@
             {{ zoneName }}
           </div>
         </template>
+        <template slot="zoneType" slot-scope="row">
+          <div>
+            {{ row.item.zoneTypeName }}
+          </div>
+        </template>
+        <template slot="guardNames" slot-scope="row">
+          <div v-for="(guardName, index) in row.item.guardNames" :key="index">
+            {{ guardName }}
+          </div>
+        </template>
+        <template slot="doorNames" slot-scope="row">
+          <div v-for="(doorName, index) in row.item.doorNames" :key="index">
+            {{ doorName }}
+          </div>
+        </template>
+        <!-- カテゴリ名 -->
+        <template slot="auth" slot-scope="row">
+          <div v-for="(categoryName, index) in row.item.authCategoryNames" :key="index">
+            {{ categoryName }}
+          </div>
+        </template>
         <!-- EXBタイプ名 -->
         <template slot="exbTypeName" slot-scope="row">
           <div>
@@ -793,10 +814,11 @@ export default {
     },
     async execDelete(id) {
       this.replace({showInfo: false})
+      const pageName = this.params.dispName? this.params.dispName: this.params.name
       try {
         await AppServiceHelper.deleteEntity(this.appServicePath, id)
         await StateHelper.load(this.params.name, true)
-        this.message = this.$i18n.tnl('message.deleteCompleted', {target: this.$i18n.tnl('label.' + this.params.name)})
+        this.message = this.$i18n.tnl('message.deleteCompleted', {target: this.$i18n.tnl('label.' + pageName)})
         if(this.$parent.$options.methods.onSaved){
           this.$parent.$options.methods.onSaved.call(this.$parent, {message: this.message})
         }
@@ -833,7 +855,7 @@ export default {
           this.replace({showAlert: true})
         }
         else{
-          this.error = this.$i18n.terror('message.deleteFailed', {target: this.$i18n.tnl('label.' + this.params.name), code: e.response.status})
+          this.error = this.$i18n.terror('message.deleteFailed', {target: this.$i18n.tnl('label.' + pageName), code: e.response.status})
         }
       }
     },

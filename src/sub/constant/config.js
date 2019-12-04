@@ -85,6 +85,9 @@ export const APP = { // 機能面に関する設定
     USE_PRESSURE: true, // 圧力センサの使用
     SHOW_MAGNET_ON_PIR: false, // 人感センサ画面でマグネットセンサを表示
     MAGNET_ON_IS_USED: true, // マグネットセンサーONのとき使用中とするか
+    LED: {
+      AUTO_OFF_TIME: 300, // 点灯させたLEDに対し、指定秒後に消灯する
+    },
     // 温湿度
     USE_HUMIDITY_ALERT: true, // 湿度アラートの使用
     USE_THERMOH_HEATMAP: true, // ヒートマップの使用
@@ -180,6 +183,10 @@ export const APP = { // 機能面に関する設定
   // category
   CATEGORY: {
     TYPES: [1,2],   // 選択可能な種別（1人,2物,3ゾーン）
+  },
+  // zone
+  ZONE: {
+    TYPES: [1],   // 選択可能な種別（0, 1: 通常, 2: 警戒ゾーン, 3: ドア）
   },
   NOTIFY: {
     // 通知媒体

@@ -7,7 +7,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import { CATEGORY } from '../../../sub/constant/Constants'
+import { CATEGORY, BULK, ZONE } from '../../../sub/constant/Constants'
 import * as StringUtil from '../../../sub/util/StringUtil'
 import * as Util from '../../../sub/util/Util'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
@@ -52,7 +52,7 @@ export default {
       return ViewHelper.createBreadCrumbItems('master', {text: StringUtil.concatCamel('category', this.pName), href: this.backPath}, 'bulkRegister')
     },
     categoryTypes(){
-      return CATEGORY.getTypes().filter(c => this.pTypeList.includes(c.value))
+      return CATEGORY.getTypes(true).filter(c => this.pTypeList.includes(c.value))
     },
     dispName() {
       return StringUtil.concatCamel('category', this.pName)
@@ -62,6 +62,27 @@ export default {
     await StateHelper.load('category')
   },
   methods: {
+    restructZone(entity, dummyKey){
+      const zoneCategoryList = []
+      if(Util.hasValue(entity.guardNames)){
+        const guardList = entity.guardNames.split(BULK.SPLITTER).map(zoneName => ({
+          zoneCategoryPK: {zoneId: dummyKey--, categoryId: dummyKey--},
+          zoneName: zoneName,
+          zoneType: ZONE.GUARD,
+        }))
+        zoneCategoryList.push(...guardList)
+      }
+      if(Util.hasValue(entity.doorNames)){
+        const guardList = entity.doorNames.split(BULK.SPLITTER).map(zoneName => ({
+          zoneCategoryPK: {zoneId: dummyKey--, categoryId: dummyKey--},
+          zoneName: zoneName,
+          zoneType: ZONE.DOOR,
+        }))
+        zoneCategoryList.push(...guardList)
+      }
+      entity.zoneCategoryList = zoneCategoryList
+      return dummyKey
+    },
     onRestruct(entity, dummyKey){
       if(Util.hasValueAny(entity.shape, entity.color, entity.bgColor)){
         Util.setValue(entity, 'display.shape', entity.shape)
@@ -72,6 +93,7 @@ export default {
         const categoryType = this.categoryTypes.find(type => type.text == entity.categoryTypeName)
         entity.categoryType = categoryType? categoryType.value: 0
       }
+      dummyKey = this.restructZone(entity, dummyKey)
       entity.categoryCd = entity.ID
       return dummyKey
     },

@@ -57,7 +57,7 @@ export default {
         this.$parent.$options.methods.customCsvData.call(this.$parent, val)
       }
     },
-    onSaved(){
+    onSaved(val){
       if(this.$parent.$options.methods.onSaved){
         this.$parent.$options.methods.onSaved.call(this.$parent, val)
       }
