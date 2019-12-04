@@ -197,15 +197,16 @@ export const CATEGORY = {
   PERSON: 1,
   THING: 2,
   ZONE: 3,
-  // 4は予約済み
+  AUTH: 4,
   OTHER: 5,
-  getTypes(){
+  getTypes(includeAuth){
     return [
       {value: CATEGORY.PERSON, text: i18n.tnl('label.person')},
       {value: CATEGORY.THING, text: i18n.tnl('label.thing')},
       {value: CATEGORY.ZONE, text: i18n.tnl('label.zone')},
+      includeAuth? {value: CATEGORY.AUTH, text: i18n.tnl('label.auth')}: null,
       {value: CATEGORY.OTHER, text: i18n.tnl('label.potOther')},
-    ]
+    ].filter(val => val)
   },
   POT_AVAILABLE: [1, 2, 5],
   ZONE_AVAILABLE: [3],
@@ -259,10 +260,19 @@ export const SHAPE = {
 export const ZONE = {
   COORDINATE: 0,
   NON_COORDINATE: 1,
+  GUARD: 2,
+  DOOR: 3,
   getTypes(){
     return [
       {value: ZONE.COORDINATE, text: i18n.tnl('label.coordinate')},
       {value: ZONE.NON_COORDINATE, text: i18n.tnl('label.nonCoordinate')},
+    ]
+  },
+  getOptions(){
+    return [
+      { value: ZONE.NON_COORDINATE, text: i18n.tnl('label.normal') },
+      { value: ZONE.GUARD, text: i18n.tnl('label.zoneGuard') },
+      { value: ZONE.DOOR, text: i18n.tnl('label.zoneDoor') },
     ]
   },
   MIN_WIDTH: 50,
@@ -607,6 +617,9 @@ export const SETTING = {
         CATEGORY: {
           TYPES: SETTING.NUMBER_LIST,
         },
+        ZONE: {
+          TYPES: SETTING.NUMBER_LIST,
+        },
         NOTIFY: {
           MIDIUM_TYPES: SETTING.NUMBER_LIST,
           STATE_TYPES: SETTING.NUMBER_LIST,
@@ -926,6 +939,11 @@ export const MENU = [
         icon: 'object-ungroup',
       },
       {
+        key: 'categoryAuth',
+        path: 'categoryAuth',
+        icon: 'key',
+      },
+      {
         key: 'group',
         path: 'group',
         icon: 'sitemap',
@@ -1143,4 +1161,13 @@ export const PLUGIN_CONSTANTS = {
   IFRAME_BASE_DIR: 'plugin/',
   PLUGIN_KEY_PREFIX: 'plugin-index',
   VIEW_URL_PREFIX: '/plugin/'
+}
+
+export const TENANT = {
+  STATUS: {
+    INVALID_TOKEN: -2,
+    NOT_REGISTERED: -1,
+    REGISTERED: 1,
+    DISABLED: 0
+  }
 }

@@ -117,6 +117,9 @@ export default {
       if(Util.hasValue(val.txList)){
         val[id] = val.txList.map(tx => tx[id]).join(';')
       }
+      if(Util.hasValue(val.authCategoryNames)){
+        val.auth = val.authCategoryNames.join(';')
+      }
       if(Util.hasValue(val.potUserList)){
         val.loginId = val.potUserList[0].user.loginId
         val.email = val.potUserList[0].user.email

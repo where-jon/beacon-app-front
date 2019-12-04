@@ -6,7 +6,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import { CATEGORY, SHAPE } from '../../../sub/constant/Constants'
+import { CATEGORY, SHAPE, BULK } from '../../../sub/constant/Constants'
 import * as ColorUtil from '../../../sub/util/ColorUtil'
 import * as StringUtil from '../../../sub/util/StringUtil'
 import * as Util from '../../../sub/util/Util'
@@ -21,6 +21,14 @@ export default {
     pName: {
       type: String,
       default: '',
+    },
+    pShowAuth: {
+      type: Boolean,
+      default: false,
+    },
+    pShowDescription: {
+      type: Boolean,
+      default: true,
     },
     pShowIcon: {
       type: Boolean,
@@ -47,19 +55,25 @@ export default {
     return {
       params: {
         name: 'category',
+        dispName: StringUtil.concatCamel('category', this.pName),
         id: 'categoryId',
         indexPath: this.pPath,
         editPath: this.pPath + '/edit',
         bulkEditPath: this.pPath + '/bulkedit',
         appServicePath: this.pAppServicePath,
         csvOut: true,
-        custumCsvColumns: ['ID', 'categoryName', 'categoryTypeName', 'color', 'bgColor', 'shape', 'description'],
+        custumCsvColumns: [
+          'ID', 'categoryName', 'categoryTypeName', 'color', 'bgColor', 'display.shape', 'description',
+          this.pShowAuth? 'guardNames': null,
+          this.pShowAuth? 'doorNames': null].filter(val => val),
         fields: ViewHelper.addLabelByKey(this.$i18n, [ 
-          {key: 'categoryCd', label: 'id', sortable: true },
-          {key: 'categoryName', label: StringUtil.concatCamel(this.pName, 'categoryName'), sortable: true },
-          !this.pName? {key: 'categoryTypeName', label: 'categoryType', sortable: true }: null,
-          this.pShowIcon? {key: 'style', label: 'display' }: null,
-          {key: 'description' },
+          { key: 'categoryCd', label: 'id', sortable: true },
+          { key: 'categoryName', label: StringUtil.concatCamel(this.pName, 'categoryName'), sortable: true },
+          !this.pName? { key: 'categoryTypeName', label: 'categoryType', sortable: true }: null,
+          this.pShowIcon? { key: 'style', label: 'display' }: null,
+          this.pShowAuth? { key: 'guardNames' , label: 'zoneGuard' }: null,
+          this.pShowAuth? { key: 'doorNames' , label: 'zoneDoor' }: null,
+          this.pShowDescription? { key: 'description' }: null,
           {key: 'actions', thStyle: {width:'130px !important'} }
         ]).filter(val => val),
         sortBy: 'categoryCd',
@@ -105,9 +119,10 @@ export default {
     },
     customCsvData(val){
       val.ID = val.categoryCd
-      val.color = ColorUtil.colorCd4display(Util.getValue(val, 'display.color', '000000'))
-      val.bgColor = ColorUtil.colorCd4display(Util.getValue(val, 'display.bgColor', 'FFFFFF'))
-      val.shape = Util.getValue(val, 'display.shape', SHAPE.SQUARE)
+      val.color = ColorUtil.colorCd4display(Util.getValue(val, 'display.color', null))
+      val.bgColor = ColorUtil.colorCd4display(Util.getValue(val, 'display.bgColor', null))
+      val.guardNames = val.guardNames.join(BULK.SPLITTER)
+      val.doorNames = val.doorNames.join(BULK.SPLITTER)
     },
   }
 }

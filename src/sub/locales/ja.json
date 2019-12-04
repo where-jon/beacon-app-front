@@ -198,6 +198,8 @@
     "zoneCd": "ID",
     "zoneName": "ゾーン名",
     "zoneType": "ゾーンタイプ",
+    "zoneGuard": "監視対象ゾーン",
+    "zoneDoor": "施錠部屋ゾーン",
 
     "---------------- App news ---------------":"",
     "news": "お知らせメンテナンス",
@@ -283,6 +285,7 @@
     "categoryPerson": "人カテゴリ",
     "categoryThing": "物カテゴリ",
     "categoryZone": "ゾーンカテゴリ",
+    "categoryAuth": "権限管理",
     "categoryId": "カテゴリID",
     "categoryCd": "ID",
     "categoryName": "カテゴリ名",
@@ -292,6 +295,7 @@
     "parentCategoryId": "親カテゴリID",
     "shape": "形",
     "shapeName": "形",
+    "authCategoryName": "権限名",
 
     "group": "グループ",
     "groupId": "グループID",
@@ -350,7 +354,6 @@
 
     "region": "リージョン",
     "regionId": "リージョンID",
-    "regionCd": "ID",
     "regionName": "リージョン名",
     "meshId": "メッシュID",
 
@@ -447,6 +450,7 @@
     "person": "人",
     "thing": "物",
     "zone": "ゾーン",
+    "auth": "権限",
 
     "circle": "丸",
     "square": "四角",
@@ -547,6 +551,7 @@
     "masterCategoryPerson": "人カテゴリ",
     "masterCategoryThing": "物カテゴリ",
     "masterCategoryZone": "ゾーンカテゴリ",
+    "masterCategoryAuth": "権限管理",
     "masterGroup": "グループ",
     "masterUser": "ユーザ",
     "masterRole": "ロール",
@@ -678,6 +683,7 @@
     "recordsTest": "レコード表示テスト",
     "hitoMono": "人・物レコード",
     "sample": "サンプル",
+    "adminConsent": "管理者承認",
     "dummy": ""
   },
   "config": {
@@ -759,6 +765,9 @@
         "USE_PRESSURE": "圧力センサを使用する::圧力センサを使用します。★",
         "SHOW_MAGNET_ON_PIR": "人感センサ画面でマグネットセンサを使用する::人感センサ画面でマグネットセンサを使用します。",
         "MAGNET_ON_IS_USED": "マグネットセンサの表示設定::trueに設定した場合、センサがONの状態で「使用」と表示されます。falseに設定した場合、センサがOFFの状態で「使用」と表示されます。",
+        "LED": {
+          "AUTO_OFF_TIME": "LED自動消灯時間::LEDを点灯してから、自動消灯するまでの時間を秒単位で設定します。0を指定した場合、自動消灯は行いません。"
+        },
         "USE_HUMIDITY_ALERT": "温湿度画面で湿度アラートを使用する::温湿度画面で湿度アラートを使用します。",
         "USE_THERMOH_HEATMAP": "温湿度画面でヒートマップを使用する::温湿度画面でヒートマップの切り替えが可能になります。",
         "USE_THERMOH_TOOLTIP": "温湿度画面でツールチップを使用する::温湿度画面でカーソルを合わせたデバイスの情報をツールチップで表示できるようにします。",
@@ -820,8 +829,8 @@
       "CATEGORY": {
         "TYPES": "カテゴリ詳細画面で選択可能な種別::カテゴリ詳細画面で使用可能な種別を設定します。設定可能な値は次の通りです。{CATEGORY_TYPES}"
       },
-      "SETTING": {
-        "DISABLED_THEME": "テーマカラーを設定しない::個人設定画面でテーマカラーを設定できないようにします。"
+      "ZONE": {
+        "TYPES": "ゾーン(分類)詳細画面で選択可能な種別::ゾーン(分類)詳細画面で使用可能な種別を設定します。設定可能な値は次の通りです。{ZONE_TYPES}"
       },
       "NOTIFY": {
         "MIDIUM_TYPES": "通知テンプレート画面で選択可能な通知媒体::通知テンプレート画面で選択可能な通知媒体を設定します。設定可能な値は次の通りです。{NOTIFY_MIDIUM}",
@@ -1094,6 +1103,7 @@
         "THING": "物",
         "OTHER": "物(その他)",
         "CATEGORY": "カテゴリ",
+        "ZONE": "ゾーン",
         "NOTIFY": "通知",
         "GATEWAY": "ゲートウェイ",
         "TX_MON": "Tx状態監視",
@@ -1128,6 +1138,11 @@
         "2": "2::物",
         "3": "3::ゾーン",
         "5": "5::物(その他)"
+      },
+      "ZONE_TYPES": {
+        "1": "1::通常",
+        "2": "2::警戒ゾーン",
+        "3": "3::ドア"
       },
       "NOTIFY_MIDIUM": {
         "0": "0::メール",
@@ -1230,7 +1245,8 @@
         "group": "group::グループ",
         "category": "category::カテゴリ",
         "description": "description::備考",
-        "user": "user::ユーザ登録機能"
+        "user": "user::ユーザ登録機能",
+        "auth": "auth::権限"
       },
       "TX_MON": {
         "btxId": "btxId::btxId",
@@ -1390,6 +1406,14 @@
     "underDegree": "℃未満",
     "overDegree": "℃以上",
 
+    "MSTEAMS": {
+      "USER_GUIDE1": "EXOfficeを利用するには、お客様のOffice365におけるグループおよびユーザ情報へ本アプリがアクセスすることを許可していただく必要があります。",
+      "USER_GUIDE2": "Office365のテナントの管理者でログインしていただき、権限を付与していただけるようお願いいたします。なお、この操作はPCで行ってください。",
+      "INVALID_TENANT": "本アプリ（EXOffice）を利用するには、サービス提供者（株式会社WHERE）と利用契約を結ぶ必要があります。すでに利用契約を結ばれている場合には、その旨ご一報ください。",
+      "WAIT_A_MOMENT": "初期処理中...",
+      "INVALID_TENANT_CONTACT": "連絡先：https://where123.jp/contact/",
+      "IF_NOT_SHOWN": "EXOfficeを表示するには以下のサインイン・ボタンをクリックしてください。もしそれでも表示されない場合は、リロードを行ってから実行してください。"
+    },
     "dummy": "" 
   },
   "helpDescription": {

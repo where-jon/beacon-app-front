@@ -25,7 +25,11 @@ export default async (context, inject) => {
     if (setting == null) {
       setting = await HttpHelper.getAppServiceNoCrd('/meta/setting/byTenant/' + AuthHelper.getTenantCd('default') + '/' + AuthHelper.getRegionId())
     }
-    ConfigHelper.applyAppServiceSetting(setting)  
+    ConfigHelper.applyAppServiceSetting(setting) 
+    if (login && login.isAd) {
+      // eslint-disable-next-line require-atomic-updates
+      config.APP.MENU.LOGIN_PAGE = config.APP.MENU.AZLOGIN_PAGE
+    }
   }
   catch (e) {
     console.error(e) // ignore

@@ -18,8 +18,9 @@
             <img v-else src="/default.png" width="auto" :height="imageHeight">
           </div>
           <div class="description">
-            <div v-for="(item, index) in getDispItems()" :key="index">
-              {{ item }}
+            <div v-for="item in getDispItems()" :key="item.key">
+              <div v-if="item.key !== 'name'">{{ item.val }}</div>
+              <div v-else><a href="#" @click="moveToChat">{{ item.val }}</a></div>
             </div>
           </div>
         </div>
@@ -37,8 +38,9 @@
           <img v-else src="/default.png" width="auto" height="116">
         </div>
         <div class="descriptionSensor">
-          <div v-for="(item, index) in getDispItems()" :key="index">
-            {{ item }}
+          <div v-for="item in getDispItems()" :key="item.key">
+            <div v-if="item.key !== 'name'">{{ item.val }}</div>
+            <div v-else><a href="#" @click="moveToChat">{{ item.val }}</a></div>
           </div>
         </div>
       </div>
@@ -55,6 +57,7 @@ import * as NumberUtil from '../../sub/util/NumberUtil'
 import * as StringUtil from '../../sub/util/StringUtil'
 import meditag from './meditag.vue'
 import txdetailmodal from './txdetailmodal.vue'
+import * as microsoftTeams from "@microsoft/teams-js"
 
 const loadImage = (src, fixHeight) => {
   if(!src){
@@ -103,6 +106,9 @@ export default {
       return !this.isDisableThumbnail()
     },
   },
+  mounted() {
+    microsoftTeams.initialize()
+  },
   updated() {
     this.popupHeight = this.getPopupHeight()
     this.left = this.getLeft()
@@ -124,7 +130,12 @@ export default {
       return containerWidth <= this.selectedTx.orgLeft + this.meditagWidth
     },
     getDispItems () {
-      return APP.TXDETAIL.ITEMS.map(e => StringUtil.cutOnLongByte(this.selectedTx[e], 38))
+      return APP.TXDETAIL.ITEMS.map(e => {
+        return {
+          key: e,
+          val: StringUtil.cutOnLongByte(this.selectedTx[e], 38)
+        }
+      })
     },
     getProhibitAlertHeight () {
       const prohibitMessageElement= document.getElementsByClassName('alert-dismissible')[0]
@@ -161,6 +172,13 @@ export default {
     },
     drawShadow(color){
       return NumberUtil.luminance(ColorUtil.colorCd4db(color)) > 240
+    },
+    moveToChat(evt) {
+      evt.stopPropagation()
+      if (!this.selectedTx.potCd) {
+        return
+      }
+      microsoftTeams.executeDeepLink(`https://teams.microsoft.com/l/chat/0/0?users=${this.selectedTx.potCd}`)
     },
   },
 }

@@ -78,6 +78,19 @@ export const isIe = () => {
 }
 
 /**
+ * iFrame内にいるかチェックする。
+ * @method
+ * @return {Boolean}
+ */
+export const inIframe = () => {
+  try {
+    return window.self !== window.top
+  } catch (e) {
+    return true
+  }
+}
+
+/**
  * ブラウザの言語設定を取得する。
  * @method
  * @return {String}

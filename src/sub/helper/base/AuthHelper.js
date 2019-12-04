@@ -163,7 +163,14 @@ export const authByAppService = async (loginId, password, success, err) => {
     const userRegionIdList = Util.getValue(userInfo, 'user.userRegionList', []).map(val => val.userRegionPK.regionId)
     const allRegionMove = Util.getValue(userInfo, 'user.role.roleFeatureList', []).some(val => val.feature.featureName == FEATURE.NAME.ALL_REGION && val.mode != 0)
     // Login process
-    await login({loginId, username:userInfo.user.name, role: userInfo.user.role, featureList: userInfo.featureList, tenantFeatureList: userInfo.tenantFeatureList, 
+    let isAd = false
+    if (loginId.length>50) { // AD Loginの場合
+      loginId = userInfo.user.loginId
+      isAd = true
+      // eslint-disable-next-line require-atomic-updates
+      APP.MENU.LOGIN_PAGE = APP.MENU.AZLOGIN_PAGE
+    }
+    await login({loginId, role: userInfo.user.role, featureList: userInfo.featureList, tenantFeatureList: userInfo.tenantFeatureList, isAd,
       menu: userInfo.menu, currentRegion: userInfo.currentRegion, frontRev: revInfo.frontRev, serviceRev: revInfo.serviceRev, tenantAdmin: data.tenantAdmin,
       isProvider: userInfo.user.providerUserId != null, currentTenant: userInfo.tenant, userRegionIdList: userRegionIdList, allRegionMove: allRegionMove, apiKey: data.apiKey })
     success()
@@ -229,6 +236,9 @@ export const switchAppService = async () => {
 
 /**
  * ログイン情報を各ストレージに保存する
+ * 
+ * ADユーザIDはトークンのため、名前に変更する。
+ * 
  * @method
  * @async
  * @param {Object} login ログイン情報
@@ -237,7 +247,7 @@ export const login = async (login) => {
   Util.debug({login})
   store.commit('replace', login)
   LocalStorageHelper.setLocalStorage('login', JSON.stringify({...login, dt: new Date().getTime()}))
-}
+ }
 
 /**
  * 各ストレージからログイン情報を削除する。
@@ -245,14 +255,23 @@ export const login = async (login) => {
  * @async
  */
 export const logout = () => {
-  LocalStorageHelper.removeLocalStorage('login')
-  store.commit('clearAll')
-  store.commit('app_service/clearAll')
-  store.commit('main/clearAll')
-  store.commit('setting/clearAll')
-  router.push(APP.MENU.LOGIN_PAGE)
   if (APP.LOGIN_MODE == LOGIN_MODE.APP_SERVICE) {
     HttpHelper.getAppService('/logout', null, true)        
+  }
+  const login = LocalStorageHelper.getLogin()
+  if (login && login.isAd) {
+    window.localStorage.clear()
+    router && router.push(APP.MENU.AZLOGIN_PAGE)  
+  }
+  else {
+    LocalStorageHelper.removeLocalStorage('login')
+    if (store) {
+      store.commit('clearAll')
+      store.commit('app_service/clearAll')
+      store.commit('main/clearAll')
+      store.commit('setting/clearAll')  
+    }
+    router && router.push(APP.MENU.LOGIN_PAGE)  
   }
 }
 
@@ -311,3 +330,7 @@ export const getRegionId = (def = 0) => {
  * @return {Boolean}
  */
 export const isSingleTenant = () => getTenantCd()? false: true
+
+export const getADTenantStatus = async (token, register = 0, tenantName = '') => {
+  return await HttpHelper.getAppServiceNoCrd(`/meta/tenant/statusOrAdRegister?token=${token}&register=${register}&tenantName=${tenantName}`)
+}
