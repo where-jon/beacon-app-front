@@ -275,7 +275,7 @@ export const craeteBulkWarnMessage = bulkErrorList => {
   const retList = []
   bulkErrorList.filter(bulkError => ['Unique', 'MultiUnique'].some(u => u == bulkError.type)).forEach(bulkError => {
     // 場所タイプ選択肢が登録されていない場合は、通常の一意制約警告ーに変換
-    if(bulkError.cols.some(c => c == 'locationType')){
+    if(bulkError.cols && bulkError.cols.some(c => c == 'locationType')){
       const locationTypeVal = bulkError.values[bulkError.cols.findIndex(c => c == 'locationType')]
       if(!Util.hasValue(locationTypeList) || !locationTypeVal){
         const newCol = bulkError.cols.find(c => c != 'locationType')
