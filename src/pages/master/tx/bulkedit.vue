@@ -80,7 +80,7 @@ export default {
           potId: Util.getValue(pot, 'potId', dummyKey),
           potCd: Util.getValue(pot, 'potCd', this.createDefaultName(dummyKey)),
           potName: Util.getValue(pot, 'potName', this.createDefaultName(dummyKey--)),
-          potType: Util.getValue(pot, 'potType', CATEGORY.getTypes()[0].value),
+          potType: Util.getValue(pot, 'potType', POT_TYPE.getTypes()[0].value),
           extValue: Util.getValue(pot, 'extValue', null),
         }
       }])

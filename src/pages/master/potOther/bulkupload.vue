@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { CATEGORY } from '../../../sub/constant/Constants'
+import { POT_TYPE } from '../../../sub/constant/Constants'
 import potBulkUpload from '../pot/bulkupload.vue'
 
 export default {
@@ -14,16 +14,16 @@ export default {
   },
   computed: {
     name() {
-      return 'person'
+      return 'other'
     },
     typeList() {
-      return [CATEGORY.PERSON]
+      return [POT_TYPE.OTHER]
     },
     indexPath() {
-      return '/master/potPerson'
+      return '/master/potOther'
     },
     appServicePath() {
-      return '/basic/personPot'
+      return '/basic/pot'
     },
   },
 }

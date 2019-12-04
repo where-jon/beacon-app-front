@@ -53,7 +53,7 @@ export const getPotExtKeys = (potTypeName, addPrefix) => {
  */
 export const createCustomColumn = (potTypeName, isCsv) => {
   const settings = getSetting(potTypeName)
-  return settings.WITH.map(val => {
+  return settings.WITH.filter(val => val != 'thumbnail').map(val => {
     if(['user'].includes(val)){
       return null
     }

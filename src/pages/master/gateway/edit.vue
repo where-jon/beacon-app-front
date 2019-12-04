@@ -60,7 +60,7 @@ export default {
       id: 'deviceid',
       backPath: '/master/gateway',
       appServicePath: '/core/excloud/gwlist',
-      items: ViewHelper.createBreadCrumbItems('master', {text: 'gateway', href: '/master/gateway'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.exb.exbId)),
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'masterGateway', href: '/master/gateway'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.exb.exbId)),
       form: {'deviceId':null, 'meshId':null},
       mutex: false,
       deviceId: null,

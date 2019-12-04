@@ -66,11 +66,11 @@ export const dateRange = (start, end, by) => {
 /**
  * 日付フォーマットを行う。
  * @method
- * @param {Number|Date} timestamp 任意のエポック秒またはDateオブジェクト。エポック秒の場合はコンソール警告が出る。
+ * @param {Number|Date} timestamp 任意のエポック秒またはDateオブジェクト。
  * @param {String} [format = 'YYYY/MM/DD HH:mm:ss'] 表記はmoment.jsに準拠。
  * @return {String}
  */
-export const formatDate = (timestamp, format = 'YYYY/MM/DD HH:mm:ss') => timestamp? moment(timestamp).format(format): ''
+export const formatDate = (timestamp, format = 'YYYY/MM/DD HH:mm:ss') => timestamp? moment(typeof timestamp == 'object'? timestamp: new Date(timestamp)).format(format): ''
 
 /**
  * 時刻フォーマットを行う。

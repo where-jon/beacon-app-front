@@ -6,7 +6,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import { CATEGORY, BULK } from '../../../sub/constant/Constants'
+import { CATEGORY, SHAPE, BULK } from '../../../sub/constant/Constants'
 import * as ColorUtil from '../../../sub/util/ColorUtil'
 import * as StringUtil from '../../../sub/util/StringUtil'
 import * as Util from '../../../sub/util/Util'
@@ -38,9 +38,13 @@ export default {
       type: String,
       default: '/master/category',
     },
+    pAppServicePath: {
+      type: String,
+      default: '/basic/category',
+    },
     pTypeList: {
       type: Array,
-      default: () => [CATEGORY.PERSON, CATEGORY.THING, CATEGORY.ZONE],
+      default: () => [CATEGORY.PERSON, CATEGORY.THING, CATEGORY.ZONE, CATEGORY.OTHER],
     },
   },
   components: {
@@ -56,7 +60,7 @@ export default {
         indexPath: this.pPath,
         editPath: this.pPath + '/edit',
         bulkEditPath: this.pPath + '/bulkedit',
-        appServicePath: '/basic/category',
+        appServicePath: this.pAppServicePath,
         csvOut: true,
         custumCsvColumns: [
           'ID', 'categoryName', 'categoryTypeName', 'color', 'bgColor', 'display.shape', 'description',

@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { CATEGORY } from '../../../sub/constant/Constants'
+import { POT_TYPE } from '../../../sub/constant/Constants'
 import potEdit from '../pot/edit.vue'
 
 export default {
@@ -14,16 +14,16 @@ export default {
   },
   computed: {
     name() {
-      return 'thing'
+      return 'other'
     },
     typeList() {
-      return [CATEGORY.THING]
+      return [POT_TYPE.OTHER]
     },
     indexPath() {
-      return '/master/potThing'
+      return '/master/potOther'
     },
     appServicePath() {
-      return '/basic/thingPot'
+      return '/basic/pot'
     },
   },
 }

@@ -5,7 +5,7 @@
 
 import _ from 'lodash'
 import { APP, DISP } from '../../constant/config'
-import { CATEGORY, ZONE, SHAPE, FEATURE, NOTIFY_STATE, SYSTEM_ZONE_CATEGORY_NAME} from '../../constant/Constants'
+import { EXB, CATEGORY, ZONE, SHAPE, FEATURE, NOTIFY_STATE, SYSTEM_ZONE_CATEGORY_NAME} from '../../constant/Constants'
 import * as ArrayUtil from '../../util/ArrayUtil'
 import * as DateUtil from '../../util/DateUtil'
 import * as StringUtil from '../../util/StringUtil'
@@ -336,6 +336,7 @@ const appStateConf = {
           zoneCategoryIdList: locationZoneList.map(val => Util.getValue(val, 'categoryId', null)).filter(val => val),
           zoneClass: Util.getValue(location, 'locationZoneList', []).filter(val => val.zoneType == ZONE.NON_COORDINATE).map(val => val.zoneName),
           zoneBlock: Util.getValue(location, 'locationZoneList', []).filter(val => val.zoneType == ZONE.COORDINATE).map(val => val.zoneName),
+          exbTypeName: Util.getValue(EXB.getTypes().find(val => val.value == exb.exbType), 'text', ''),
         }
       })
     }

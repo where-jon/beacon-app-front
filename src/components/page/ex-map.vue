@@ -174,8 +174,8 @@
 import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+import { SENSOR, TX, CATEGORY, POT_TYPE, SHAPE } from '../../sub/constant/Constants'
 import { APP, DISP, DEV, APP_SERVICE, EXCLOUD, MSTEAMS_APP } from '../../sub/constant/config'
-import { SENSOR, TX, CATEGORY, SHAPE } from '../../sub/constant/Constants'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as ColorUtil from '../../sub/util/ColorUtil'
@@ -982,14 +982,14 @@ export default {
           locationKey = pos.tx.location.locationId
         }
 
-        if (tx.potType == CATEGORY.PERSON) {
+        if (tx.potType == POT_TYPE.PERSON) {
           let locationVal = this.locationPersonList[locationKey]
           if (!Util.hasValue(locationVal)) {
             this.locationPersonList[locationKey] = 1
           } else {
             this.locationPersonList[locationKey]++
           }
-        } else if (tx.potType == CATEGORY.THING) {
+        } else if (tx.potType == POT_TYPE.THING) {
           let locationVal = this.locationObjectList[locationKey]
           if (!Util.hasValue(locationVal)) {
             this.locationObjectList[locationKey] = 1

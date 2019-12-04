@@ -89,7 +89,7 @@ export default {
     async fetchData(payload) {
       try {
         this.showProgress()
-        await StateHelper.load('zone')
+        await Promise.all(['zone', 'category'].map(master => StateHelper.load(master)))
         if (payload && payload.done) {
           payload.done()
         }

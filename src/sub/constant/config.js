@@ -113,6 +113,7 @@ export const APP = { // 機能面に関する設定
   },
   // EXB関連設定
   EXB: {
+    WITH: [],
     SENSOR: [1,2,3,4,8], // EXBのタイプに設定可能なセンサーID
     DEVICEID_TYPE: 'deviceId',
     MULTI_SENSOR: true,
@@ -120,7 +121,7 @@ export const APP = { // 機能面に関する設定
   },
   // 場所関連設定
   LOCATION: {
-    WITH: ['posId', 'zone'],
+    WITH: ['posId', 'zoneClass', 'zoneBlock'],
     TYPE: {
       WITH: [],
     },
@@ -133,9 +134,10 @@ export const APP = { // 機能面に関する設定
   POSITION_WITH_AREA: true, // エリアを表示
   // POT関連設定
   POT: {
-    WITH: ['category', 'user', 'ruby', 'description'],
+    WITH: ['thumbnail', 'category', 'user', 'ruby', 'description'],
     MULTI_TX: false,         // 複数Tx使用
     TX_MAX: 2,   // 所持Tx最大数
+    TYPES: [1, 2, 3],   // 選択可能な種別（1人,2物,3物(その他)）
     // 拡張項目定義（サンプル）
     EXT_DEF: [
       {key: 'post', type: 'string', showlist: true, sort: true},
@@ -149,7 +151,7 @@ export const APP = { // 機能面に関する設定
     ],
   },
   PERSON: {
-    WITH: ['category', 'user', 'ruby', 'description'],
+    WITH: ['thumbnail', 'category', 'user', 'ruby', 'description'],
     MULTI_TX: false,         // 複数Tx使用
     TX_MAX: 2,   // 所持Tx最大数
     // 拡張項目定義（サンプル）
@@ -165,7 +167,23 @@ export const APP = { // 機能面に関する設定
     ],
   },
   THING: {
-    WITH: ['category', 'user', 'ruby', 'description'],
+    WITH: ['thumbnail', 'category', 'user', 'ruby', 'description'],
+    MULTI_TX: false,         // 複数Tx使用
+    TX_MAX: 2,   // 所持Tx最大数
+    // 拡張項目定義（サンプル）
+    EXT_DEF: [
+      {key: 'post', type: 'string', showlist: true, sort: true},
+      {key: 'tel', type: 'tel', showlist: true, sort: true},
+      {key: 'mobile', type: 'tel', showlist: false, sort: false},
+      {key: 'entrydate', type: 'date', showlist: true, sort: false},
+      {key: 'salary', type: 'int', min: 0, max: 1200000, showlist: false, sort: false},
+      {key: 'score', type: 'float', default: 50, min: -100, max: 100, showlist: false, sort: false},
+      {key: 'manager', type: 'boolean', default: 'はい', checked:'はい', unchecked:' ', showlist: true, sort: false},
+      {key: 'address', type: 'string', default:'Tokyo', required: true, length:10, format: '[a-zA-Z]+', showlist: false, sort: false},
+    ],
+  },
+  OTHER: {
+    WITH: ['thumbnail', 'category', 'user', 'ruby', 'description'],
     MULTI_TX: false,         // 複数Tx使用
     TX_MAX: 2,   // 所持Tx最大数
     // 拡張項目定義（サンプル）

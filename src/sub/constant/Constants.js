@@ -180,21 +180,47 @@ export const EXB = {
   }
 }
 
+export const POT_TYPE = {
+  PERSON: 1,
+  THING: 2,
+  OTHER: 3,
+  getTypes(){
+    return [
+      {value: POT_TYPE.PERSON, text: i18n.tnl('label.person')},
+      {value: POT_TYPE.THING, text: i18n.tnl('label.thing')},
+      {value: POT_TYPE.OTHER, text: i18n.tnl('label.potOther')},
+    ]
+  },
+}
+
 export const CATEGORY = {
   PERSON: 1,
   THING: 2,
   ZONE: 3,
   AUTH: 4,
+  OTHER: 5,
   getTypes(includeAuth){
     return [
       {value: CATEGORY.PERSON, text: i18n.tnl('label.person')},
       {value: CATEGORY.THING, text: i18n.tnl('label.thing')},
       {value: CATEGORY.ZONE, text: i18n.tnl('label.zone')},
       includeAuth? {value: CATEGORY.AUTH, text: i18n.tnl('label.auth')}: null,
+      {value: CATEGORY.OTHER, text: i18n.tnl('label.potOther')},
     ].filter(val => val)
   },
-  POT_AVAILABLE: [1, 2],
+  POT_AVAILABLE: [1, 2, 5],
   ZONE_AVAILABLE: [3],
+}
+
+export const TYPE_RELATION = {
+  getPotCategory() {
+    return {
+      [POT_TYPE.PERSON]: CATEGORY.PERSON,
+      [POT_TYPE.THING]: CATEGORY.THING,
+      [POT_TYPE.ZONE]: CATEGORY.ZONE,
+      [POT_TYPE.OTHER]: CATEGORY.OTHER,
+    }
+  }
 }
 
 export const PROCESS_SUM = {
@@ -527,6 +553,7 @@ export const SETTING = {
   BOOLEAN: 'boolean',
   JSON: 'json',
   SELECT: 'select',
+  OTHER_CATEGORY: 'OTHER_CATEGORY',
   getOptions(){
     return [
       {text: i18n.tnl('label.string'), value: 'string'},
@@ -715,11 +742,11 @@ export const SETTING = {
         },
         SVC: {
           STAY_SUM: {
-            STAY_SUM_START: 0,
-            STAY_SUM_END: 2400,
-            STAY_SUM_INTERVAL: 5,
-            STAY_SUM_CALC_BY: "location",
-            STAY_SUM_ADJUST_TIME: 4,
+            START: 0,
+            END: 2400,
+            INTERVAL: 60,
+            CALC_BY: "location",
+            ADJUST_TIME: 4,
           },
           PROXIMITY:{
             BLANK_RANGE: 60000,
@@ -887,6 +914,11 @@ export const MENU = [
         icon: 'cubes',
       },
       {
+        key: 'potOther',
+        path: 'potOther',
+        icon: 'cubes',
+      },
+      {
         key: 'category',
         path: 'category',
         icon: 'object-group',
@@ -942,7 +974,7 @@ export const MENU = [
         icon: 'envelope',
       },
       {
-        key: 'gateway',
+        key: 'masterGateway',
         path: 'gateway',
         icon: 'road',
         exserver: true,

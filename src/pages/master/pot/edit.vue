@@ -24,9 +24,9 @@
                 </b-form-group>
               </b-form>
             </span>
-            <b-form-group v-show="category.length > 1">
+            <b-form-group v-show="potTypeOptions.length > 1">
               <label v-t="'label.categoryType'" />
-              <b-form-radio-group v-model="form.potType" :options="category" :disabled="!isEditable" :required="category.length > 1" />
+              <b-form-radio-group v-model="form.potType" :options="potTypeOptions" :disabled="!isEditable" :required="potTypeOptions.length > 1" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.potCd'" />
@@ -69,7 +69,7 @@
               </v-select>
             </b-form-group>
             <extform :p-name="pName" :is-editable="isEditable" :form="form" />
-            <b-form-group>
+            <b-form-group v-if="isShownWith('thumbnail')">
               <label v-t="'label.thumbnail'" />
               <b-form-file v-if="isEditable" ref="inputThumbnail" v-model="form.thumbnailTemp" :placeholder="$t('message.selectFile') " accept="image/jpeg, image/png, image/gif" @change="readImage" />
               <b-button v-if="isEditable && form.existThumbnail" :variant="theme" type="button" class="float-right mt-3" @click="clearImage">
@@ -125,7 +125,7 @@
 import { mapState } from 'vuex'
 import _ from 'lodash'
 import { APP, EXCLOUD, APP_SERVICE } from '../../../sub/constant/config'
-import { CATEGORY, SENSOR, USER } from '../../../sub/constant/Constants'
+import { SENSOR, USER, POT_TYPE, TYPE_RELATION } from '../../../sub/constant/Constants'
 import * as StringUtil from '../../../sub/util/StringUtil'
 import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
@@ -153,9 +153,13 @@ export default {
       type: String,
       default: '/master/pot',
     },
+    pAppServicePath: {
+      type: String,
+      default: '/basic/pot',
+    },
     pTypeList: {
       type: Array,
-      default: () => [CATEGORY.PERSON, CATEGORY.THING],
+      default: () => [POT_TYPE.PERSON, POT_TYPE.THING, POT_TYPE.OTHER],
     },
   },
   components: {
@@ -169,7 +173,6 @@ export default {
     return {
       name: 'pot',
       id: 'potId',
-      appServicePath: '/basic/pot',
       showEmail: false,
       editShowUser: false,
       form: {
@@ -192,7 +195,7 @@ export default {
         authCategories: [],
       },
       roleOptions: [],
-      category: _.slice(CATEGORY.getTypes(), 0, 2).filter(val => APP.CATEGORY.TYPES.includes(val.value) && this.pTypeList.includes(val.value)),
+      potTypeOptions: POT_TYPE.getTypes().filter(val => APP.POT.TYPES.includes(val.value) && this.pTypeList.includes(val.value)),
       txIds: Array(PotHelper.getSetting(this.pName).TX_MAX),
       btxIds: Array(PotHelper.getSetting(this.pName).TX_MAX),
       minors: Array(PotHelper.getSetting(this.pName).TX_MAX),
@@ -214,7 +217,7 @@ export default {
     },
     categoryOptions() {
       return StateHelper.getOptionsFromState('category', false, true,
-        category => category.categoryType === this.form.potType
+        category => category.categoryType === TYPE_RELATION.getPotCategory()[this.form.potType]
       )
     },
     ...mapState('app_service', [
@@ -241,7 +244,7 @@ export default {
     'form.potType': function(newVal, oldVal){
       if(newVal != oldVal){
         this.form.selectedCategory = null
-        this.form.categoryId = null
+        this.vueSelected.category = null
       }
     },
     'vueSelected.txs': {
@@ -575,7 +578,7 @@ export default {
       })
       entity.potTxList = potTxList
       entity.deleteThumbnail = this.form.deleteThumbnail
-      return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
+      return await AppServiceHelper.bulkSave(this.pAppServicePath, [entity])
     },
     getNameByteLangth(){
       const fileElement = Util.getValue(document.getElementsByClassName('custom-file'), '0', null)

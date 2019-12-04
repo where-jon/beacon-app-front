@@ -7,7 +7,7 @@
 <script>
 import { mapState } from 'vuex'
 import { APP, EXCLOUD, APP_SERVICE } from '../../../sub/constant/config'
-import { CATEGORY } from '../../../sub/constant/Constants'
+import { POT_TYPE } from '../../../sub/constant/Constants'
 import * as ArrayUtil from '../../../sub/util/ArrayUtil'
 import * as Util from '../../../sub/util/Util'
 import * as MenuHelper from '../../../sub/helper/dataproc/MenuHelper'
@@ -27,9 +27,13 @@ export default {
       type: String,
       default: '/master/pot',
     },
+    pAppServicePath: {
+      type: String,
+      default: '/basic/pot',
+    },
     pTypeList: {
       type: Array,
-      default: () => [CATEGORY.PERSON, CATEGORY.THING],
+      default: () => [POT_TYPE.PERSON, POT_TYPE.THING, POT_TYPE.OTHER],
     },
   },
   components: {
@@ -43,7 +47,7 @@ export default {
         id: 'potId',
         indexPath: this.pPath,
         editPath: this.pPath + '/edit',
-        appServicePath: '/basic/pot',
+        appServicePath: this.pAppServicePath,
         bulkEditPath: this.pPath + '/bulkEdit',
         bulkUploadPath: this.pPath + '/bulkUpload',
         csvOut: true,
@@ -52,6 +56,7 @@ export default {
         extraFilter: this.getExtraFilter(),
         extraFilterFunc: this.getExtraFilterFunc(),
         sortBy: 'ID',
+        addFilterFields: ['txIdNames'],
         initTotalRows: this.$store.state.app_service.pots.length,
       },
       name: 'pot',
@@ -92,6 +97,9 @@ export default {
       this.replaceAS({thumbnailUrls: this.thumbnailUrlMap})
   },
   methods: {
+    getFullName(){
+      return this.pName? this.pName: 'pot'
+    },
     getCustomCsvColumns(){
       return [
         'ID',
@@ -126,13 +134,13 @@ export default {
       return ViewHelper.addLabelByKey(this.$i18n, [ 
         {key: 'potCd', sortable: true , tdClass: 'thumb-rowdata'},
         {key: 'potName', sortable: true , tdClass: 'thumb-rowdata'},
-        {key: 'thumbnail', tdClass: 'thumb-rowdata' },
+        ArrayUtil.includesIgnoreCase(APP[this.getFullName().toUpperCase()].WITH, 'thumbnail')? {key: 'thumbnail', tdClass: 'thumb-rowdata' }: null,
         {key: 'txIdName', label:'tx', sortable: true, tdClass: 'thumb-rowdata' },
         {key: 'displayName', sortable: true, tdClass: 'thumb-rowdata'},
       ].concat(PotHelper.createCustomColumn(this.pName))
         .concat([
           {key: 'actions', thStyle: {'min-width':'130px !important'} , tdClass: 'thumb-rowdata'},
-        ]))
+        ])).filter(val => val)
     },
     onSaved(){
       StateHelper.setForceFetch('tx', true)

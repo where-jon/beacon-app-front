@@ -1,6 +1,6 @@
 <template>
   <div class="iframeWrap">
-    <iframe v-if="viewUrl" ref="parentFrame" width="100%" :style="iframeStyle" :src="viewUrl" @load="loadCompleteFunc" allowfullscreen></iframe>
+    <iframe v-if="viewUrl" ref="parentFrame" width="100%" :style="iframeStyle" @load="loadCompleteFunc" allowfullscreen></iframe>
   </div>
 </template>
 
@@ -11,6 +11,7 @@ import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as Util from '../../sub/util/Util'
 import { EventBus } from '../../sub/helper/base/EventHelper'
 import * as LocalStorageHelper from '../../sub/helper/base/LocalStorageHelper'
+import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import commonmixin from '../../components/mixin/commonmixin.vue'
 
 export default {
@@ -43,7 +44,10 @@ export default {
   watch: {
     '$route' (to, from) {
       this.url = LocalStorageHelper.getLocalStorage(PLUGIN_CONSTANTS.PLUGIN_KEY_PREFIX + '-' + to.fullPath.split('=')[1])
-      this.$nextTick(() => this.showProgress())
+      this.$nextTick(() => {
+        this.refreshIframeSrc()
+        this.showProgress()
+      })
     }
   },
   created() {
@@ -61,10 +65,14 @@ export default {
     EventBus.$on('pluginDownload', url => BrowserUtil.executeFileDL(url))
   },
   mounted() {
+    StateHelper.setForceFetch('setting', true)
     const query = PLUGIN_CONSTANTS.PLUGIN_KEY_PREFIX + '='
     LocalStorageHelper.setLocalStorage('api-base-url', APP_SERVICE.BASE_URL)
     this.url = this.getPluginIndex()
-    this.$nextTick(() => this.showProgress())
+    this.$nextTick(() => {
+      this.refreshIframeSrc()
+      this.showProgress()
+    })
   },
   beforeDestroy() {
     EventBus.$emit('pluginUpdateDefault')
@@ -81,6 +89,11 @@ export default {
     loadCompleteFunc() {
       this.$nextTick(() => this.hideProgress())
     },
+    refreshIframeSrc() {
+      if(this.$refs.parentFrame) {
+        this.$refs.parentFrame.contentWindow.location.replace(this.url)
+      }
+    },
   }
 }
 </script>
@@ -88,7 +101,6 @@ export default {
 <style scoped lang="scss">
 .iframeWrap{
     height: 0;
-    padding-bottom: 65%;
 }
 
 iframe {

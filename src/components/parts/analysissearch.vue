@@ -200,7 +200,7 @@ export default {
   methods: {
     updatePotOption(categoryId, groupId) {
       this.potOptions = StateHelper.getOptionsFromState('pot', false, true, 
-        pot => pot.potType == CATEGORY.PERSON && (!categoryId || pot.categoryId == categoryId) && (!groupId || pot.groupId == groupId)
+        pot => pot.potType == POT_TYPE.PERSON && (!categoryId || pot.categoryId == categoryId) && (!groupId || pot.groupId == groupId)
       )
     },
     changeCategory(newVal = this.form.categoryId) {

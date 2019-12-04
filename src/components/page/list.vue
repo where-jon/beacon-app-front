@@ -175,14 +175,10 @@
           </div>
         </template>
         <!-- センサ名 -->
-        <template slot="sensorIdName" slot-scope="row">
-          <div v-for="(sensorIdName, index) in row.item.sensorIdNames" :key="index">
-            {{ $i18n.tnl('label.' + sensorIdName) }}
+        <template slot="sensorIdNameLangs" slot-scope="row">
+          <div v-for="(sensorIdName, index) in row.item.sensorIdNameLangs" :key="index">
+            {{ sensorIdName }}
           </div>
-        </template>
-        <!-- センサ名 -->
-        <template slot="dispCategoryName" slot-scope="row">
-          <span class="row" v-text="getDispCategoryName(row.item)" />
         </template>
         <!-- 電池レベル -->
         <template slot="powerLevel" slot-scope="row">
@@ -659,12 +655,6 @@ export default {
       this.replaceAS({editPage: this.currentPage})
       this.$router.push(this.editPath)
     },
-    getDispCategoryName(category){
-      return StateHelper.getDispCategoryName(category)
-    },
-    getDispExbType(exb){
-      return Util.getValue(EXB.getTypes().find(val => val.value == exb.exbType), 'text', '')
-    },
     getAnotherPageParam(name, item) {
       const pageParam = this.anotherPageParams.find((val) => val.name == name)
       return pageParam && item[pageParam.id]? pageParam: null
@@ -706,7 +696,7 @@ export default {
       }
       try{
         const regExp = new RegExp('.*' + this.filter.reg + '.*', 'i')
-        const param = this.params.fields.concat(this.params.addFilterFields? this.params.addFilterFields.map(field => ({key: field})): []).map((val) => Util.getValue(originItem, val.key, ''))
+        const param = this.params.fields.filter(field => Util.getValue(field, 'filterable', true)).concat(this.params.addFilterFields? this.params.addFilterFields.map(field => ({key: field})): []).map(val => Util.getValue(originItem, val.key, ''))
         return regExp.test(JSON.stringify(param))
       }
       catch(e){

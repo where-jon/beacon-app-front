@@ -96,9 +96,13 @@ export default {
       type: String,
       default: '/master/category',
     },
+    pAppServicePath: {
+      type: String,
+      default: '/basic/category',
+    },
     pTypeList: {
       type: Array,
-      default: () => [CATEGORY.PERSON, CATEGORY.THING, CATEGORY.ZONE],
+      default: () => [CATEGORY.PERSON, CATEGORY.THING, CATEGORY.ZONE, CATEGORY.OTHER],
     },
   },
   components: {
@@ -249,7 +253,7 @@ export default {
       this.oldShape = this.form.displayShape
       this.oldColor = this.form.displayColor
       this.oldBgColor = this.form.displayBgColor
-      return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
+      return await AppServiceHelper.bulkSave(this.pAppServicePath, [entity])
     },
   },
 }

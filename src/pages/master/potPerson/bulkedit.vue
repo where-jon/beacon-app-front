@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <pot-bulk-edit :p-name="name" :p-type-list="typeList" :p-path="indexPath" />
+    <pot-bulk-edit :p-name="name" :p-type-list="typeList" :p-path="indexPath" :p-app-service-path="appServicePath" />
   </div>
 </template>
 
@@ -21,6 +21,9 @@ export default {
     },
     indexPath() {
       return '/master/potPerson'
+    },
+    appServicePath() {
+      return '/basic/personPot'
     },
   },
 }

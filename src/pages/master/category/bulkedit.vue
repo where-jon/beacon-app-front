@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid">
     <breadcrumb :items="items" />
-    <bulkedit :id="id" ref="bulkEdit" :name="name" :bulk-disp-name="dispName" :back-path="backPath" :app-service-path="appServicePath" />
+    <bulkedit :id="id" ref="bulkEdit" :name="name" :bulk-disp-name="dispName" :back-path="backPath" :app-service-path="pAppServicePath" />
   </div>
 </template>
 
@@ -25,6 +25,10 @@ export default {
       type: String,
       default: '/master/category',
     },
+    pAppServicePath: {
+      type: String,
+      default: '/basic/category',
+    },
     pTypeList: {
       type: Array,
       default: () => [CATEGORY.PERSON, CATEGORY.THING, CATEGORY.ZONE],
@@ -38,7 +42,6 @@ export default {
     return {
       name: 'category',
       id: 'categoryId',
-      appServicePath: '/basic/category',
     }
   },
   computed: {

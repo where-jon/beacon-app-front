@@ -77,7 +77,9 @@
     "linage": "Lineage",
     "help": "Help",
     "status": "Status",
-
+    "less": "Less",
+    "more": "More",
+    
     "---------------- App exbeacon ---------------":"",
 
     "locate": "Positioning",
@@ -90,12 +92,19 @@
     "area": "Area",
     "exb": "EXBeacon",
     "location": "EXB Location",
+    "locationSetting": "Location setting",
+    "locationList": "Location list",
     "develop": "Developer",
     "env": "Environment Variables",
     "detectedProhibitZone": "Detected ProhibitZone",
     "detectedLostZone": "Detected LostZone",
     "exbId": "EXB ID",
     "exbName": "EXB name",
+    "exbType": "Directivity",
+    "threshold1": "Threshold 1",
+    "threshold2": "Threshold 2",
+    "adjust1": "Adjustment value 1",
+    "adjust2": "Adjustment value 2",
     "deviceId": "Device ID",
     "deviceIdX": "Device ID (Hex)",
     "deviceNum": "Device No",
@@ -104,7 +113,9 @@
     "power-good": "Enough",
     "power-warning": "Decrease",
     "power-poor": "Replace",
-
+    "noneDirect": "Non-directional",
+    "direct": "Directivity",
+    
     "tx": "Tx",
     "txId": "TxID",
     "txName": "Name",
@@ -114,10 +125,21 @@
     "minorPowerLevel": "Minor(Battery level)",
 
     "locationId": "Position ID",
+    "locationCd": "ID",
+    "locationCdComp": "Location ID",
     "locationName": "Name",
     "locationX": "X",
     "locationY": "Y",
     "locationZ": "Z",
+    "locationType": "Type",
+    "work": "Work",
+    "wip": "Work in process",
+    "release": "Automatic tagging release",
+    "storage": "Storage",
+    "selectLocationDisp": "Select Type",
+    "selectLocationPlace": "Select location",
+    "emptyLocation": "New locaiton",
+    "initLocation": "Location",
     "txViewType": "TX display format",
     "txIconColumns": "Horizontal",
     "txIconLines": "Vertical",
@@ -173,6 +195,7 @@
     "Empty": "Empty",
 
     "zoneId": "Zone ID",
+    "zoneCd": "ID",
     "zoneName": "Zone name",
     "zoneType": "Zone type",
 
@@ -223,6 +246,8 @@
     "operationType": "Operation type",
         
     "pot": "People or Things",
+    "potPerson": "Person",
+    "potThing": "Thing",
     "potId": "ID",
     "potCd": "ID",
     "potName": "Name",
@@ -254,9 +279,14 @@
     "email": "email",
 
     "category": "Category",
+    "categoryPerson": "Person category",
+    "categoryThing": "Thing category",
+    "categoryZone": "Zone category",
     "categoryId": "Category ID",
     "categoryCd": "ID",
     "categoryName": "Category name",
+    "personCategoryName": "Persong category name",
+    "thingCategoryName": "Thing category name",
     "categoryType": "Category type",
     "parentCategoryId": " Parent category ID ",
     "shape": "Shape ",
@@ -319,6 +349,7 @@
 
     "region": "Region",
     "regionId": "Region ID",
+    "regionCd": "ID",
     "regionName": " Region name",
     "meshId": "Mesh ID",
 
@@ -506,8 +537,14 @@
     "masterArea": "Area",
     "masterExb": "EXB",
     "masterTx": "Tx",
+    "masterLocation": "Location setting",
     "masterPot": "Person or Thing",
+    "masterPotPerson": "Person",
+    "masterPotThing": "Thing",
     "masterCategory": "Category",
+    "masterCategoryPerson": "Person category",
+    "masterCategoryThing": "Thing category",
+    "masterCategoryZone": "Zone category",
     "masterGroup": "Group",
     "masterUser": "User",
     "masterRole": "Role",
@@ -546,6 +583,7 @@
     "Core": "Core",
     "Zone": "Zone",
     "EXBeacon": "EXB",
+    "EXBeaconX": "EXB(Hexadicimal)",
     "ExCloud": "ExCloud",
     "Area": "Area",
     "Location": "EXB Location",
@@ -617,7 +655,16 @@
 
     "success": "Success",
     "failed": "Failed",
-    
+
+    "close": "Close",
+
+
+    "individualTx": "Individual",
+    "quantity": "Quantity",
+    "peopleNum": "People:",
+    "objectNum": "Object:",
+    "locationTypeName": "Location type name",
+
     "---------------- Pot Extension sample ---------------": "",
     "sex": "Sex",
     "address": "Address",
@@ -626,6 +673,9 @@
     "mobile": "Mobile",
     "entrydate": "Entry date",
     "score": "Score",
+    "recordsTest": "Record display test",
+    "hitoMono": "Person and Thing record",
+    "sample": "Sample",
     "adminConsent": "Admin Consent",
 
     "dummy": ""
@@ -682,6 +732,7 @@
         "LOST_GROUPS": "Critical parts group setting::Set up the group ID to be handled a critical parts.",
         "USE_LEGEND": "Use legend::Display the legend on the position (map) screen.★",
         "SHOW_DETECTED_COUNT": "Display the number of detections::Display the number of detected device on the position(map)screen.★",
+        "SHOW_TX_NO_OWNER": "Display Tx not related to person & thing::Display Tx not relate to person & thing",
         "WITH": {
           "CATEGORY": "Use category in position (map) screen::Display category in position (map) screen",
           "GROUP": "Use group in position (map) screen::Display group in position (map) screen"
@@ -691,6 +742,9 @@
         },
         "LOST": {
           "DUPLICATE_MAIL_TIME": "Duplicate alert notification limit (E-mail)::Prevents notification by e-mail when an alert with the same content is sent within the set up time. Set up in milliseconds."
+        },
+        "PLUGIN": {
+          "FILTER": "Use detailed filter on position screen::Use plug-in to display detailed filter on position screen"
         }
       },
       "SENSOR": {
@@ -726,10 +780,15 @@
       },
       "EXB": {
         "SENSOR": "Type of EXBeacon sensor::Set up the type of EXBeacon sensor.The possible to set up values are as follows. ★{SENSOR}",
-        "WITH": "Item used on EXBeacon screen::Set up the item used on EXBeacon screen. The possible to setup values are as follows.★{EXB}",
         "DEVICEID_TYPE": "Use device ID and device ID (hexadecimal) on EXBeacon screen::Use device ID, device ID (hexadecimal) or both on EXBeacon screen. Set up deviceId, deviceIdX, or both",
         "MULTI_SENSOR": "Set up multiple sensors in EXBeacon::Multiple sensors can be set on the EXBeacon screen.",
         "SENSOR_MAX": "Maximum number of sensors set in EXBeacon::Set up the maximum number of sensors that can be set on the EXBeacon screen."
+      },
+      "LOCATION": {
+        "WITH": "Items used in the location layout screen::Set up the items used in the location layout screen. Possible to set up values ​​are ★{LOCATION}",
+        "TYPE": {
+          "WITH": "Location type choices::Set up location type choices. Numeric value and string like「1:work,2:wip,3:qa,4:storage」Set the values ​​separated by colons. The explanation about the setting value is {LOCATION_TYPE}"
+        }
       },
       "USER": {
         "WITH": "Items used on the user screen::Set up the items used on the user screen. The possible to set up values are as follows. ★{USER}"
@@ -740,8 +799,23 @@
         "TX_MAX": "Maximum number of Tx to be registered in person & thing::Enable registration of multiple Tx on person & thing screen.",
         "EXT_DEF": "Person & thing extension item::Define extension items that can be set to people & thing in JSON format."
       },
+      "PERSON": {
+        "WITH": "Items used on the person screen::Set up the items used on the person screen. Possible to set up values ​​are★{POT}",
+        "MULTI_TX": "Register multiple Tx for a person :: Enable multiple Tx registration on the person screen",
+        "TX_MAX": "Maximum number of Tx to be registered for person :: Set up the maximum number of Tx that can be registered on the person screen",
+        "EXT_DEF": "Person extended items :: Defines extension items that can be set for person in JSON format"
+      },
+      "THING": {
+        "WITH": "Items to be used on the object screen :: Set up the items to be used on the object screen. Possible to set up values ​​are ★{POT}",
+        "MULTI_TX": "Register multiple Tx to the object :: Enable multiple Tx to be registered on the object screen",
+        "TX_MAX": "Maximum number of Tx registered in the object :: Set up the maximum number of Tx that can be registered in the object screen.",
+        "EXT_DEF": "Expansion Item :: Defines the extension items that can be set for the object in JSON format."
+      },
       "CATEGORY": {
-        "TYPES": ""
+        "TYPES": "Types that can be selected on the category details screen :: Set up the types that can be used on the category details screen. Possible to set up values ​​are{CATEGORY_TYPES}"
+      },
+      "SETTING": {
+        "DISABLED_THEME": "Do not set theme color :: Disable theme color setting in personal settings screen"
       },
       "NOTIFY": {
         "MIDIUM_TYPES": "Selectable notification media on notification template screen::Set up the types that can be selected on the category screen. The possible to set up values are as follows.{NOTIFY_MIDIUM}",
@@ -762,7 +836,8 @@
         "UNIT_MINUTE": "Display setting for stay time summary (minute)::If the maximum value in axis units exceeds the set second, the display of stay time total is displayed in time units.",
         "FROM": "Start time of staying time summary(hour and minute)::Set up the start of staying time summary. Setting value is「hour × 100 + minute × 1」.",
         "TO": "End time of staying time summary(hour and minute)::Set up the end time of staying time summary. Setting value is「hour × 100 + minute × 1」.",
-        "SCALE_TIMES": "Stay rate screen graph scale time (hours)::Set up time (hours) to be displayed on stay rate screen graph scale (ignore if not match)."
+        "SCALE_TIMES": "Stay rate screen graph scale time (hours)::Set up time (hours) to be displayed on stay rate screen graph scale (ignore if not match).",
+        "GRAPH_LIMIT": "Actual value of daily stay analysis graph (%) :: If the data time for the total time to be aggregated is less than the set percentage, it will not be displayed on the graph."
       },
       "TX_MON": {
         "WITH": "Item used Tx monitoring screen:: Set up the item used Tx monitor screen. The possible to set up values are as follows.★{TX_MON}",
@@ -805,6 +880,15 @@
           "EXCLOUD_RAWLOG_DIR": "File path syslog:: Set up the file path to the mounted syslog.",
           "BLANK_RANGE": "Continues transaction time::Set up the transaction time of the transactional analysis batch in milliseconds",
           "MIN_RANGE": "Minimum transcation time::Set up the minimum transaction time of the transactional analysis batch in milliseconds."
+        },
+        "WORKLOAD": {
+          "PAUSE_TIMEOUT": "Time for judging interruption of AC tabulation :: If the OUT time has not been updated for the specified number of seconds, it is considered to be interrupted."
+        },
+        "PROCESS": {
+          "LOCATION_TYPE_TO_RELEASE_TX_POT": "Tag and POT unlinking location :: Set up the type of tag and POT unlinking location."
+        },
+        "AD": {
+          "GROUP_NAMES": "Only groups that match the regular expression string specified here will be synchronized from Active Directory.::Applies only when using Active Directory."
         }
       },
       "BATCH": {
@@ -840,6 +924,15 @@
         },
         "PROXIMITY": {
           "CRON": "Time for Cron to do transactional analysis::Set up the time for Cron to do transcational analysis. Set in time Cron format time.<br>APP.SVC.STAY_SUM.REAL_TIME：Can not be used togthere with transactional analysis<br>APP.BATCH.PROXIMITY.CRON：When setting, turn off regular batch processing of stay time."
+        },
+        "LOST_ZONE": {
+          "INTERVAL": "Important component take-out detection alert batch execution interval :: Set up the execution interval of the important component take-out detection alert batch in milliseconds."
+        },
+        "PROHIBIT_ZONE": {
+          "INTERVAL": "Prohibited Zone Alert Batch Execution Interval :: Set up the prohibited interval alert batch execution interval in milliseconds."
+        },
+        "AD_SYNC": {
+          "CRON": "AD synchronous batch processing time specification :: Synchronize with Active Directory at the specified time."
         }
       }
     },
@@ -862,9 +955,30 @@
         "DISPLAY_PRIORITY": "Tx icon display color::Set up the color to be applied to the Tx icon display color from the display color set in the category or group. Possible to set up values are {COLOR_TYPE}",
         "ABSENT_ZONE_DISPLAY_TYPES": "Type of Tx icon to be displayed for absence display zone::undetected: undetected, lost:lost, absent:absent zone"
       },
+      "TX_NUM": {
+        "R": "Tx quantity icon radius :: Set up the size of Tx displayed on the position (map) screen ★",
+        "ROUNDRECT_RADIUS": "Tx Quantity Icon Rounded Radius :: Set up the roundness of the four corners for the Tx set in the rounded rectangle icon.",
+        "BGCOLOR": "Default background color for Tx quantity icons :: Set up the background color of Tx icons to which neither category nor group belongs. Set up with a color code including #.",
+        "COLOR": "Default text color of Tx quantity icon :: Set up the text color of Tx icon that does not belong to category or group. Set up by color code including #.",
+        "STROKE_COLOR": "Default border color of Tx quantity icon :: Set up the border color of Tx icon that does not belong to category or group. Set up  with color code including #.",
+        "STROKE_WIDTH": "Default border width of Tx quantity icon :: Set up the border width of Tx icons that do not belong to any category or group. Set up with a color code including #.",
+        "TOOLTIP_ITEMS": {
+          "TX_LOCATION_NAME": "Display when selecting quantity on the position(map) screen :: Display the location name in the tooltip displayed when selecting the quantity on the position (map) screen.",
+          "TX_LOCATION_TYPE": "Display when selecting quantity on the position (map) screen :: Display the location type name in the tooltip displayed when selecting the quantity on the position (map) screen."
+        },
+        "TOOLTIP_FONT": "Tooltip font displayed when selecting quantity on position (map) screen :: Set up the font of tooltip displayed when selecting quantity on position (map) screen. Font size And set the font type.",
+        "TOOLTIP_COLOR": "Font color of tooltip displayed when selecting quantity on position (map) screen :: Set up the font color of tooltip displayed when selecting quantity on position(map) screen. Set up with color code including #. ",
+        "TOOLTIP_BORDERCOLOR": "Set up the border color of tooltip to be displayed when selecting quantity on position (map) screen. Set up with color code including #. ",
+        "TOOLTIP_BGCOLOR": "Tooltip background color displayed when selecting quantity on the position (map) screen :: Set up the background color of the tooltip displayed when selecting the quantity on the position (map) screen. Set up with a color code including #. ",
+        "TOOLTIP_ROUNDRECT": "Tooltip round radius displayed when selecting quantity on the position (map) screen::Sets up the roundness of the four corners of the tooltip displayed when selecting the quantity on the position (map) screen."
+      },
       "EXB_LOC": {
         "SIZE": {
-        }
+          "W": "Icon size (width)on Location setting screen::Set up the width of the icon displayed on the location setting screen.",
+          "H": "Icon size (height) on Location setting screen::Set up the height of the icon displayed on the location setting screen."
+        },
+        "BGCOLOR": "Icon Background Color on Location Setting Screen::Set up the background color of the icon displayed on the location setting screen. Set up with a color code including #.",
+        "COLOR": "Icon text color on the location setting screen::Set up the text color of the icon displayed on the location setting screen. Set up with a color code including #."
       },
       "TX_LOC": {
         "SIZE": {
@@ -966,8 +1080,12 @@
         "TXDETAIL": "Tx Deatils",
         "TX_LOC": "Tx Location icon",
         "EXB": "EXB",
+        "EXB_LOC": "Location setting icon",
+        "LOCATION": "Location",
         "USER": "User",
         "POT": "People or Things",
+        "PERSON": "Person",
+        "THING": "Thing",
         "CATEGORY": "Category",
         "NOTIFY": "Notification",
         "GATEWAY": "Gateway",
@@ -982,7 +1100,7 @@
         "SVC": "Server",
         "BATCH": "Batch",
         "SIMULATION": "For Demostration",
-        "OTHER": "Others",
+        "OTHER_CATEGORY": "Others",
         "MAIL": "Mail"
       },
       "SENSOR_NONE": {
@@ -1067,6 +1185,7 @@
         "minor": "minor::minor",
         "deviceId": "deviceId::Device ID",
         "deviceIdX": "deviceIdX::Device ID(Hex)",
+        "locationName": "LocationName::Location name",
         "posId": "posId::posId",
         "areaName": "areaName::Area name",
         "x": "x::X",
@@ -1084,7 +1203,12 @@
       },
       "LOCATION": {
         "posId": "posId::posId",
-        "zone": "zone::Zone name"
+        "zoneBlock": "zoneBlock::Zone(Block)",
+        "zoneClass": "zoneClass::Zone(Classification)"
+      },
+      "LOCATION_TYPE": {
+        "number": "Numeric::Value registered in DB",
+        "string": "String::Display string key"
       },
       "USER": {
         "email": "email::Email",
@@ -1189,7 +1313,9 @@
     "mapRatioSetting": "Sets the ratio of the actual distance (in millimeters) to the size of the map image (in px). First, click in order the two points on the map where you know the actual distance, then set the value in mm in the field of actual width, and press the setting button.",
     "unsavedData": " OK to discard all unsaved data?",
     "bulkUniqueWarn": "When exchanging{col}, registered with another{col} and registered again with the correct{col}",
+    "bulkMultiUniqueWarn": "When exchanging the combination of{col}register it with another combination once and register with the correct combination again",
     "bulkUniqueFailed": "{col} ({value}) is already in use.",
+    "bulkMultiUniqueFailed": "The {col}（{value}）combination is already in use",
     "bulkOneOfFailed": "{col} ({value}) must be one of the values of [{candidates}].",
     "bulkRangeFailed": "{col} ({value}) must be between {min} and {max}.",
     "bulkSizeFailed": "{col} ({value}) must be the number of characters {min} to {max}.",

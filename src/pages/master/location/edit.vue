@@ -28,7 +28,7 @@
                 </template>
               </v-select>
             </b-form-group>
-            <b-form-group>
+            <b-form-group v-if="isShown('LOCATION.WITH', 'posId')">
               <label v-t="'label.posId'" />
               <input v-model="form.posId" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control" >
             </b-form-group>
@@ -53,7 +53,7 @@
               :vertical="form.txViewType ? form.txViewType.vertical : txIconsVertical"
               @change="onChangeTxSetting"
             />
-            <b-form-group v-show="useZone">
+            <b-form-group v-show="useZoneClass">
               <label v-t="'label.zoneClass'" />
               <v-select v-model="vueSelected.zone" :options="getZoneClassOptions()" :disabled="!isEditable" :readonly="!isEditable" class="vue-options-lg">
                 <template slot="no-options">
@@ -61,7 +61,7 @@
                 </template>
               </v-select>
             </b-form-group>
-            <b-form-group v-show="useZone">
+            <b-form-group v-show="useZoneBlock">
               <label v-t="'label.zoneBlock'" />
               <v-select :value="getZoneBlockItems()" :options="zoneBlockOptions" disabled multiple class="vue-options-multi" />
             </b-form-group>
@@ -113,7 +113,8 @@ export default {
       backPath: '/master/location',
       appServicePath: '/core/location',
       items: ViewHelper.createBreadCrumbItems('master', {text: 'locationList', href: '/master/location'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.location.locationId)),
-      useZone: MenuHelper.isMenuEntry('/master/zoneClass'),
+      useZoneClass: MenuHelper.isMenuEntry('/master/zoneClass') && this.isShown('LOCATION.WITH', 'zoneClass'),
+      useZoneBlock: MenuHelper.isMenuEntry('/master/zoneBlock') && this.isShown('LOCATION.WITH', 'zoneBlock'),
       form: Util.extract(this.$store.state.app_service.location, [
         'locationId', 'locationCd', 'locationType', 'locationName',
         'areaId', 'posId', 'x', 'y',

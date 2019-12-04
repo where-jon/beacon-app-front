@@ -28,6 +28,10 @@ export default {
       type: String,
       default: '/master/pot',
     },
+    pAppServicePath: {
+      type: String,
+      default: '/basic/pot',
+    },
     pTypeList: {
       type: Array,
       default: () => [CATEGORY.PERSON, CATEGORY.THING],
@@ -41,7 +45,6 @@ export default {
     return {
       name: 'pot',
       id: 'potId',
-      appServicePath: '/basic/pot',
     }
   },
   computed: {
@@ -91,7 +94,7 @@ export default {
       }, APP.POT_THUMBNAIL_MAX)
     },
     async save(thumbnails) {
-      return await AppServiceHelper.bulkSave(this.appServicePath, thumbnails)
+      return await AppServiceHelper.bulkSave(this.pAppServicePath, thumbnails)
     },
   }
 }

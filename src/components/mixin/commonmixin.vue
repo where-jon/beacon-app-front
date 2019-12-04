@@ -139,7 +139,7 @@ export default {
     },
     getIndividualOptions(categoryId, groupId) {
       return StateHelper.getOptionsFromState('pot', false, true,
-        pot => pot.potType == CATEGORY.PERSON && (!categoryId || pot.categoryId == categoryId) && (!groupId || pot.groupId == groupId)
+        pot => pot.potType == POT_TYPE.PERSON && (!categoryId || pot.categoryId == categoryId) && (!groupId || pot.groupId == groupId)
       )
     },
     defaultSortCompare(a, b, key) {
