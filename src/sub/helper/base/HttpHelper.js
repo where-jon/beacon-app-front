@@ -71,7 +71,7 @@ const addApiKey = (config = {}) => {
     config.headers = {}
   }
   if (apiKey || context.app.store.state.apiKey) {
-    config.headers.apiKey = md5(apiKey || context.app.store.state.apiKey)
+    config.headers['x-apiKey'] = md5(apiKey || context.app.store.state.apiKey)
   }
   return config
 }

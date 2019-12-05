@@ -54,13 +54,13 @@ export const fetchPosition = async (locations, exbs, txs, pMock, isAll = false) 
   let data = pMock? pMock: DEV.USE_MOCK_EXC? mock.position:
     await HttpHelper.getExCloud(url(EXCLOUD.POSITION_URL) + new Date().getTime())
 
-    let pos = _(data)
+  let pos = _(data)
     .filter(val => isAll || (DEV.NOT_FILTER_TX || txs && txs.some(tx => tx.btxId == val.btx_id)))
     .filter(val => isAll || (exbs && exbs.some(exb => exb.deviceId == val.device_id)))
     .map(val => {
       let tx = _.find(txs, tx => tx.btxId == val.btx_id)
       let exb = _.find(exbs, exb => exb.deviceId == val.device_id)
-      let location = _.find(locations, location => location.locationId == exb.locationId)
+      let location = exb && _.find(locations, location => location.locationId == exb.locationId)
       let label = tx && tx.displayName? tx.displayName: val.btx_id
       return {btx_id: val.btx_id, minor: val.minor, power_level: val.power_level,
         pos_id: val.pos_id, label, location, exb, tx, nearest: val.nearest, updatetime: dateform(val.updatetime), timestamp: dateform(val.updatetime)}
