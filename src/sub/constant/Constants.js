@@ -50,11 +50,11 @@ export const KEYCODE = {
 export const PATTERN = {
   NUMBER: '^-?[0-9]+[.]?[0-9]*$',
   NUMBER_LIST: '^(-?[0-9]+[.]?[0-9]*)+(,-?[0-9]+[.]?[0-9]*)*$',
-  MASTER_CD: '^[a-zA-Z0-9_\\-\\.]*$',
-  LOCATION_CD: '^[a-zA-Z0-9_\\-]*$',
+  MASTER_CD: '^[a-zA-Z0-9_\\-\\.:]*$',
+  LOCATION_CD: '^[a-zA-Z0-9_\\-:]*$',
   REGEXP: {
-    MASTER_CD: /^[a-zA-Z0-9_\-.]*$/,
-    LOCATION_CD: /^[a-zA-Z0-9_\\-]*$/,
+    MASTER_CD: /^[a-zA-Z0-9_\-.:]*$/,
+    LOCATION_CD: /^[a-zA-Z0-9_\-:]*$/,
   },
 }
 
