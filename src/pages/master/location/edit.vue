@@ -233,7 +233,8 @@ export default {
     },
     getZoneClassOptions(){
       return StateHelper.getOptionsFromState('zone', false, true,
-        zone => zone.x == null && zone.y == null && zone.areaId === this.form.areaId)
+        zone => zone.x == null && zone.y == null && ([this.form.areaId, null].includes(zone.areaId))
+      )
     },
     getZoneBlockItems(){
       return StateHelper.getOptionsFromState('zone', false, true,
