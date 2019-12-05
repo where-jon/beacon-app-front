@@ -55,7 +55,7 @@
             />
             <b-form-group v-show="useZoneClass">
               <label v-t="'label.zoneClass'" />
-              <v-select v-model="vueSelected.zone" :options="getZoneClassOptions()" :disabled="!isEditable" :readonly="!isEditable" class="vue-options-lg">
+              <v-select v-model="vueSelected.zones" :options="getZoneClassOptions()" :disabled="!isEditable" :readonly="!isEditable" multiple :close-on-select="false" class="vue-options-multi">
                 <template slot="no-options">
                   {{ vueSelectNoMatchingOptions }}
                 </template>
@@ -122,7 +122,7 @@ export default {
       ]),
       vueSelected: {
         area: null,
-        zone: null,
+        zones: [],
       },
       txIconsDispFormat: 1,
       txIconsHorizon: 5,
@@ -142,7 +142,7 @@ export default {
       return OptionHelper.getLocationTypeOptions()
     },
     zoneBlockOptions(){
-      return StateHelper.getOptionsFromState('zone', false, true, zone => zone.zoneType == ZONE.COORDINATE)
+      return StateHelper.getOptionsFromState('zone', false, true, zone => zone.x != null && zone.y != null)
     },
     ...mapState('app_service', [
       'areas', 'zones', 'exbs', 'location', 'locations',
@@ -161,19 +161,22 @@ export default {
     'vueSelected.area': {
       handler: function(newVal, oldVal){
         this.form.areaId = Util.getValue(newVal, 'value', null)
-        this.vueSelected.zone = null
-        if(this.checkWarn && Util.hasValue(this.form.zoneId) && Util.getValue(oldVal, 'value', null) != null){
+        this.vueSelected.zones = []
+        if(this.checkWarn && Util.hasValue(this.form.locationZoneList) && Util.getValue(oldVal, 'value', null) != null){
           this.showAreaWarn = true
         }
       },
       deep: true,
     },
-    'vueSelected.zone': {
+    'vueSelected.zones': {
       handler: function(newVal, oldVal){
-        this.form.zoneId = Util.getValue(newVal, 'value', null)
-        if(this.showAreaWarn && Util.hasValue(this.form.zoneId)){
-          this.showAreaWarn = false
-        }
+        this.$nextTick(() => {
+          const nVal = Util.hasValue(newVal)? newVal.filter(val => val): []
+          this.form.locationZoneList = nVal.map(val => ({locationZonePK: {zoneId: val.value}}))
+          if(this.showAreaWarn && Util.hasValue(this.form.locationZoneList)){
+            this.showAreaWarn = false
+          }
+        })
       },
       deep: true,
     },
@@ -204,8 +207,11 @@ export default {
             zoneMap[zone.zoneId] = zone
           }
         })
-        const target = locationZoneList.find(locationZone => zoneMap[Util.getValue(locationZone, 'locationZonePK.zoneId', -1)])
-        this.vueSelected.zone = VueSelectHelper.getVueSelectData(this.getZoneClassOptions(), Util.getValue(target, 'locationZonePK.zoneId', null))
+        if(Util.hasValue(this.form.locationZoneList)){
+          this.vueSelected.zones = this.form.locationZoneList.map(locationZone => 
+            VueSelectHelper.getVueSelectData(this.getZoneClassOptions(), locationZone.locationZonePK.zoneId)
+          ).filter(option => option).sort((a, b) => a.label < b.label? -1: 1)
+        }
       }
     })
 
@@ -264,10 +270,10 @@ export default {
       }
 
       entity.deviceIdList = this.exbs.filter(exb => exb.locationId == entity.locationId).map(exb => exb.deviceId)
-      entity.locationZoneList = [this.form.zoneId].filter(val => val).map(zoneId => ({
+      entity.locationZoneList = Util.getValue(this.form, 'locationZoneList', []).map(locationZone => ({
         locationZonePK: {
           locationId: this.form.locationId? this.form.locationId: dummyKey--,
-          zoneId: zoneId
+          zoneId: locationZone.locationZonePK.zoneId
         }
       }))
       return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
