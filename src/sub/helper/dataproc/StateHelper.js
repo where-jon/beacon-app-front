@@ -492,7 +492,9 @@ const appStateConf = {
           if(!zoneTypeMap[key]){
             zoneTypeMap[key] = []
           }
-          zoneTypeMap[key].push(locationZone.zoneName)
+          if (!zoneTypeMap[key].includes(locationZone.zoneName)) {
+            zoneTypeMap[key].push(locationZone.zoneName)
+          }
         })
         const locationTypeOptions = OptionHelper.getLocationTypeOptions()
         return {
