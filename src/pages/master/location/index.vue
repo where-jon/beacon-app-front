@@ -72,6 +72,7 @@ export default {
           if(MenuHelper.isMenuEntry('/master/zoneClass')){
             ret.push(Object.assign({}, column, {key: 'zoneClass', label: 'zoneClass'}))
           }
+          return
         }
         if('zoneBlock' == val){
           if(!isDownload && MenuHelper.isMenuEntry('/master/zoneBlock')){

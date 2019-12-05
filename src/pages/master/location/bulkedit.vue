@@ -83,7 +83,6 @@ export default {
           zone: {
             zoneId: Util.getValue(zone, 'zoneId', dummyKey--),
             zoneName: name,
-            zoneType: ZONE.NON_COORDINATE,
           }
         }
         locationZoneList.push(locationZone)
