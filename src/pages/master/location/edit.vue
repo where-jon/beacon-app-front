@@ -142,7 +142,7 @@ export default {
       return OptionHelper.getLocationTypeOptions()
     },
     zoneBlockOptions(){
-      return StateHelper.getOptionsFromState('zone', false, true, zone => zone.zoneType == ZONE.COORDINATE)
+      return StateHelper.getOptionsFromState('zone', false, true, zone => zone.x != null && zone.y == null)
     },
     ...mapState('app_service', [
       'areas', 'zones', 'exbs', 'location', 'locations',
@@ -161,8 +161,8 @@ export default {
     'vueSelected.area': {
       handler: function(newVal, oldVal){
         this.form.areaId = Util.getValue(newVal, 'value', null)
-        this.vueSelected.zone = null
-        if(this.checkWarn && Util.hasValue(this.form.zoneId) && Util.getValue(oldVal, 'value', null) != null){
+        this.vueSelected.zones = null
+        if(this.checkWarn && Util.hasValue(this.form.locationZoneList) && Util.getValue(oldVal, 'value', null) != null){
           this.showAreaWarn = true
         }
       },
@@ -170,8 +170,9 @@ export default {
     },
     'vueSelected.zones': {
       handler: function(newVal, oldVal){
-        this.form.locationZoneList = newVal.map(val => ({locationZonePK: {zoneId: val.value}}))
-        if(this.showAreaWarn && Util.hasValue(this.form.zoneId)){
+        const nVal = Util.hasValue(newVal)? newVal: []
+        this.form.locationZoneList = nVal.map(val => ({locationZonePK: {zoneId: val.value}}))
+        if(this.showAreaWarn && Util.hasValue(this.form.locationZoneList)){
           this.showAreaWarn = false
         }
       },
@@ -205,7 +206,13 @@ export default {
           }
         })
         if(Util.hasValue(this.form.locationZoneList)){
-          this.vueSelected.zones = this.form.locationZoneList.map(locationZone => VueSelectHelper.getVueSelectData(this.getZoneClassOptions(), locationZone.locationZonePK.zoneId)).sort((a, b) => a.label < b.label? -1: 1)
+          this.vueSelected.zones = this.form.locationZoneList.map(locationZone => 
+            VueSelectHelper.getVueSelectData(this.getZoneClassOptions(), locationZone.locationZonePK.zoneId)
+          ).filter(option => 
+            Util.hasValue(option)
+          ).sort((a, b) => 
+            a.label < b.label? -1: 1
+          )
         }
       }
     })
