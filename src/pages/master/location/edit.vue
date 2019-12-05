@@ -122,7 +122,7 @@ export default {
       ]),
       vueSelected: {
         area: null,
-        zones: null,
+        zones: [],
       },
       txIconsDispFormat: 1,
       txIconsHorizon: 5,
@@ -161,7 +161,7 @@ export default {
     'vueSelected.area': {
       handler: function(newVal, oldVal){
         this.form.areaId = Util.getValue(newVal, 'value', null)
-        this.vueSelected.zones = null
+        this.vueSelected.zones = []
         if(this.checkWarn && Util.hasValue(this.form.locationZoneList) && Util.getValue(oldVal, 'value', null) != null){
           this.showAreaWarn = true
         }
@@ -170,11 +170,13 @@ export default {
     },
     'vueSelected.zones': {
       handler: function(newVal, oldVal){
-        const nVal = Util.hasValue(newVal)? newVal: []
-        this.form.locationZoneList = nVal.map(val => ({locationZonePK: {zoneId: val.value}}))
-        if(this.showAreaWarn && Util.hasValue(this.form.locationZoneList)){
-          this.showAreaWarn = false
-        }
+        this.$nextTick(() => {
+          const nVal = Util.hasValue(newVal)? newVal.filter(val => val): []
+          this.form.locationZoneList = nVal.map(val => ({locationZonePK: {zoneId: val.value}}))
+          if(this.showAreaWarn && Util.hasValue(this.form.locationZoneList)){
+            this.showAreaWarn = false
+          }
+        })
       },
       deep: true,
     },
@@ -208,11 +210,7 @@ export default {
         if(Util.hasValue(this.form.locationZoneList)){
           this.vueSelected.zones = this.form.locationZoneList.map(locationZone => 
             VueSelectHelper.getVueSelectData(this.getZoneClassOptions(), locationZone.locationZonePK.zoneId)
-          ).filter(option => 
-            Util.hasValue(option)
-          ).sort((a, b) => 
-            a.label < b.label? -1: 1
-          )
+          ).filter(option => option).sort((a, b) => a.label < b.label? -1: 1)
         }
       }
     })
