@@ -55,7 +55,7 @@
             />
             <b-form-group v-show="useZoneClass">
               <label v-t="'label.zoneClass'" />
-              <v-select v-model="vueSelected.zone" :options="getZoneClassOptions()" :disabled="!isEditable" :readonly="!isEditable" class="vue-options-lg">
+              <v-select v-model="vueSelected.zones" :options="getZoneClassOptions()" :disabled="!isEditable" :readonly="!isEditable" multiple :close-on-select="false" class="vue-options-multi">
                 <template slot="no-options">
                   {{ vueSelectNoMatchingOptions }}
                 </template>
@@ -122,7 +122,7 @@ export default {
       ]),
       vueSelected: {
         area: null,
-        zone: null,
+        zones: null,
       },
       txIconsDispFormat: 1,
       txIconsHorizon: 5,
@@ -168,9 +168,9 @@ export default {
       },
       deep: true,
     },
-    'vueSelected.zone': {
+    'vueSelected.zones': {
       handler: function(newVal, oldVal){
-        this.form.zoneId = Util.getValue(newVal, 'value', null)
+        this.form.locationZoneList = newVal.map(val => ({locationZonePK: {zoneId: val.value}}))
         if(this.showAreaWarn && Util.hasValue(this.form.zoneId)){
           this.showAreaWarn = false
         }
@@ -204,8 +204,9 @@ export default {
             zoneMap[zone.zoneId] = zone
           }
         })
-        const target = locationZoneList.find(locationZone => zoneMap[Util.getValue(locationZone, 'locationZonePK.zoneId', -1)])
-        this.vueSelected.zone = VueSelectHelper.getVueSelectData(this.getZoneClassOptions(), Util.getValue(target, 'locationZonePK.zoneId', null))
+        if(Util.hasValue(this.form.locationZoneList)){
+          this.vueSelected.zones = this.form.locationZoneList.map(locationZone => VueSelectHelper.getVueSelectData(this.getZoneClassOptions(), locationZone.locationZonePK.zoneId)).sort((a, b) => a.label < b.label? -1: 1)
+        }
       }
     })
 
@@ -264,10 +265,10 @@ export default {
       }
 
       entity.deviceIdList = this.exbs.filter(exb => exb.locationId == entity.locationId).map(exb => exb.deviceId)
-      entity.locationZoneList = [this.form.zoneId].filter(val => val).map(zoneId => ({
+      entity.locationZoneList = Util.getValue(this.form, 'locationZoneList', []).map(locationZone => ({
         locationZonePK: {
           locationId: this.form.locationId? this.form.locationId: dummyKey--,
-          zoneId: zoneId
+          zoneId: locationZone.locationZonePK.zoneId
         }
       }))
       return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
