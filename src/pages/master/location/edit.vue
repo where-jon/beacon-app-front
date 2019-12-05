@@ -200,7 +200,7 @@ export default {
       if(Util.hasValue(locationZoneList)){
         const zoneMap = {}
         this.zones.forEach(zone => {
-          if(zone.zoneType == ZONE.NON_COORDINATE){
+          if(zone.x == null && zone.y == null){
             zoneMap[zone.zoneId] = zone
           }
         })
@@ -227,11 +227,11 @@ export default {
     },
     getZoneClassOptions(){
       return StateHelper.getOptionsFromState('zone', false, true,
-        zone => zone.zoneType == ZONE.NON_COORDINATE && zone.areaId === this.form.areaId)
+        zone => zone.x == null && zone.y == null && zone.areaId === this.form.areaId)
     },
     getZoneBlockItems(){
       return StateHelper.getOptionsFromState('zone', false, true,
-        zone => zone.zoneType == ZONE.COORDINATE && zone.areaId === this.form.areaId && NumberUtil.inRange(zone, this.form))
+        zone => zone.x != null && zone.y != null && zone.areaId === this.form.areaId && NumberUtil.inRange(zone, this.form))
     },
     onChangeTxSetting(param) {
       this.txIconsDispFormat = param.format
