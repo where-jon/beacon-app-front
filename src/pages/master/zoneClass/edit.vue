@@ -36,7 +36,7 @@
           </b-form-row>
           <b-form-row>
             <b-col sm="5">
-              <v-select v-model="vueSelected.area" :options="areaNames" :disabled="!isEditable" :clearable="false" class="vue-options-lg">
+              <v-select v-model="vueSelected.area" :options="areaNames" :disabled="!isEditable" class="vue-options-lg">
                 <template slot="no-options">
                   {{ vueSelectNoMatchingOptions }}
                 </template>
@@ -166,8 +166,6 @@ export default {
     await this.initAreaNames()
     await this.initCategoryNames()
     this.initForm()
-    this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaNames, this.form.areaId, !Util.hasValue(this.form.areaId))
-    this.vueSelected.category = VueSelectHelper.getVueSelectData(this.categoryNames, this.form.categoryId)
   },
   mounted(){
     ValidateHelper.setCustomValidationMessage()
@@ -188,8 +186,11 @@ export default {
 
       const zoneCategoryList = Util.getValue(this.form, 'zoneCategoryList', [])
       const zoneCategory = zoneCategoryList.find(zoneCategory => categoryMap[zoneCategory.zoneCategoryPK.categoryId] == CATEGORY.ZONE)
-      this.form.categoryId = zoneCategory? zoneCategory.zoneCategoryPK.categoryId: null
+      this.form.categoryId = Util.getValue(zoneCategory, 'zoneCategoryPK.categoryId', null)
       this.form.zoneCategoryList = zoneCategoryList.filter(zoneCategory => categoryMap[zoneCategory.zoneCategoryPK.categoryId] != CATEGORY.ZONE)
+
+      this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaNames, this.form.areaId)
+      this.vueSelected.category = VueSelectHelper.getVueSelectData(this.categoryNames, this.form.categoryId)
     },
     initAreaNames() {
       this.areaNames = StateHelper.getOptionsFromState('area', false, true)
@@ -207,7 +208,7 @@ export default {
       StateHelper.setForceFetch('category', true)
     },
     async onBeforeReload(){
-      this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaNames, null, true)
+      this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaNames, null)
       this.vueSelected.category = VueSelectHelper.getVueSelectData(this.categoryNames, null)
       this.form.zoneCd = StateHelper.createMasterCd('zone', this.zones, this.zone)
     },

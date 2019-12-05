@@ -1,13 +1,13 @@
 <template>
   <div class="container-fluid">
-    <ex-master p-master-name="zone" :p-category-name="pName" :p-type-list="pTypeList" :p-params="params" :p-list="zones" />
+    <ex-master p-master-name="zone" :p-category-name="pName" :p-type-list="pTypeList" :p-params="params" :p-list="zoneList" />
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
 import { APP } from '../../../sub/constant/config'
-import { ZONE } from '../../../sub/constant/Constants'
+import { ZONE, CATEGORY } from '../../../sub/constant/Constants'
 import * as Util from '../../../sub/util/Util'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
@@ -68,7 +68,11 @@ export default {
   computed: {
     zoneList() {
       Util.table(this.$store.state.app_service.zones)
-      return this.$store.state.app_service.zones.filter(zone => this.pTypeList.includes(zone.zoneType))
+      return this.$store.state.app_service.zones.filter(zone => {
+        const zoneCategory = Util.getValue(zone, 'zoneCategoryList', []).find(zoneCategory => Util.getValue(zoneCategory, 'category.categoryType', null) == CATEGORY.ZONE)
+        zone.dispCategoryName = StateHelper.getDispCategoryName(Util.getValue(zoneCategory, 'category', {}))
+        return this.pTypeList.includes(zone.zoneType)
+      })
     },
     zoneLength() {
       return this.zoneList().length
