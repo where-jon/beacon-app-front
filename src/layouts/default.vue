@@ -11,15 +11,15 @@
             <b-row>
               <b-col class="pl-md-5 pl-xl-5 pr-xl-5 bd-content">
                 <nuxt />
-                <div v-if="showProgress" class="spinner-parent">
-                  <vue-simple-spinner size="large" line-fg-color="#a09e9e" line-bg-color="#dee2e6" />
-                </div>
               </b-col>
             </b-row>
           </b-container>
         </b-col>
       </b-row>
       <nuxt v-else />
+      <div v-if="showProgress" class="spinner-parent">
+        <vue-simple-spinner size="large" line-fg-color="#a09e9e" line-bg-color="#dee2e6" />
+      </div>
       <!-- modal -->
       <b-modal id="modalRootError" :title="$t('label.error')" ok-only>
         {{ errorMessage }}

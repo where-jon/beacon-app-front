@@ -104,6 +104,7 @@ export default {
       'replace', 
     ]),
     onSubmit() {
+      this.showProgress()
       AuthHelper.setApp(this.$router, this.$store)
       AuthHelper.auth(this.userId, this.password, async ()=>{
         this.$router.push(APP.MENU.TOP_PAGE)
@@ -112,10 +113,12 @@ export default {
         const charSet = LocalStorageHelper.getLocalStorage(this.userId + '-charSet')
         this.replace({pass: this.password})
         this.replaceSetting({theme, charSet})
+        this.hideProgress()
       },
       () => {
         console.error('failed')
         this.message = this.$i18n.tnl('message.loginFailed')
+        this.hideProgress()
       })
     },
     tdClass(key) {
