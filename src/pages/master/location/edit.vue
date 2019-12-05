@@ -142,7 +142,7 @@ export default {
       return OptionHelper.getLocationTypeOptions()
     },
     zoneBlockOptions(){
-      return StateHelper.getOptionsFromState('zone', false, true, zone => zone.x != null && zone.y == null)
+      return StateHelper.getOptionsFromState('zone', false, true, zone => zone.x != null && zone.y != null)
     },
     ...mapState('app_service', [
       'areas', 'zones', 'exbs', 'location', 'locations',
