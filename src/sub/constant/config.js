@@ -121,7 +121,7 @@ export const APP = { // 機能面に関する設定
   },
   // 場所関連設定
   LOCATION: {
-    WITH: ['posId', 'zoneClass', 'zoneBlock'],
+    WITH: ['zoneClass', 'zoneBlock'],
     TYPE: {
       WITH: [],
     },
