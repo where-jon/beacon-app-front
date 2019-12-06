@@ -206,6 +206,7 @@ export default {
       StateHelper.setForceFetch('tx', true)
       StateHelper.setForceFetch('exb', true)
       StateHelper.setForceFetch('category', true)
+      StateHelper.setForceFetch('location', true)
     },
     async onBeforeReload(){
       this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaNames, null)
