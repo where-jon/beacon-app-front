@@ -208,9 +208,9 @@ export default {
           }
         })
         if(Util.hasValue(this.form.locationZoneList)){
-          this.vueSelected.zones = this.form.locationZoneList.map(locationZone => 
+          this.vueSelected.zones = _(this.form.locationZoneList).map(locationZone => 
             VueSelectHelper.getVueSelectData(this.getZoneClassOptions(), locationZone.locationZonePK.zoneId)
-          ).filter(option => option).sort((a, b) => a.label < b.label? -1: 1)
+          ).filter(option => option).sort((a, b) => a.label < b.label? -1: 1).uniqWith(_.isEqual).value()
         }
       }
     })
