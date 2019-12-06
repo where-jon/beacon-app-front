@@ -88,7 +88,7 @@ export const analysePositionInfos = potInfos => {
       positionInfos[positionInfoKey].count++
     }
   })
-  console.error({positionInfos})
+  Util.debug({positionInfos})
   return analyseWeightInfos(positionInfos)
 }
 
@@ -101,7 +101,7 @@ export const analysePositionInfos = potInfos => {
 export const analyseFlowline = results => {
   const potInfos = analysePotInfos(results)
   const positionInfos = analysePositionInfos(potInfos)
-  console.error({results}, {potInfos}, {positionInfos})
+  Util.debug({results}, {potInfos}, {positionInfos})
   return {potInfos: potInfos, positionInfos: positionInfos}
 }
 
