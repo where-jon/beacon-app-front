@@ -61,9 +61,10 @@ export const getStyleDisplay1 = (val, option = {reverceColor: false, fixSize: tr
  * @param {String} text
  * @param {Number} width 最大幅
  * @param {Number} height 最大高さ
+ * @param {Number} maxFontSize 最大フォントサイズ
  * @return {String}
  */
-export const getInRectFontSize = (text, width, height) => {
+export const getInRectFontSize = (text, width, height, maxFontSize) => {
   if(!Util.hasValue(text)){
     return getAdjustFontSize(() => 0)
   }
@@ -74,7 +75,8 @@ export const getInRectFontSize = (text, width, height) => {
   const metrix = context.measureText(text)
   const w = Math.floor(dummyFontSize * width / metrix.width)
   const h = Math.floor(dummyFontSize * height / dummyFontSize) - 5
-  return getAdjustFontSize(() => (w > h? h: w) - 1)
+  const inRectSize = (w > h? h: w) - 1
+  return getAdjustFontSize(() => maxFontSize != null && maxFontSize < inRectSize? maxFontSize: inRectSize)
 }
 
 /**

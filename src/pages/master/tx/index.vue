@@ -75,10 +75,8 @@ export default {
         APP.TX.BTX_MINOR == 'both'? 'minor': null,
         'sensor',
       ].concat(this.createCustomColumn().map(val => val.key)).concat([
-        ArrayUtil.includesIgnoreCase(APP.TX.WITH, 'location')? 'areaName': null,
+        ArrayUtil.includesIgnoreCase(APP.TX.WITH, 'location')? 'locationCd': null,
         ArrayUtil.includesIgnoreCase(APP.TX.WITH, 'location')? 'locationName': null,
-        ArrayUtil.includesIgnoreCase(APP.TX.WITH, 'location')? 'x': null,
-        ArrayUtil.includesIgnoreCase(APP.TX.WITH, 'location')? 'y': null,
       ]).filter((val, idx, ary) => val && ary.indexOf(val) == idx)
     },
     getFields(){

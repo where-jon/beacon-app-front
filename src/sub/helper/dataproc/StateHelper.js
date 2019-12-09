@@ -166,6 +166,19 @@ export const getDeviceId = device => {
 }
 
 /**
+ * 配置画面上のTx選択肢ラベルを作成する。
+ * @method
+ * @param {Object} tx 
+ * @return {String}
+ */
+export const getLocationTxName = (tx, addPotName = true) => {
+  if(!tx){
+    return ''
+  }
+  return '' + (tx.minor? tx.minor: tx.btxId) + (addPotName && tx.potName? '(' + tx.potName + ')': '')
+}
+
+/**
  * 設定により、TxのbtxIdまたはminor値を取得する。
  * @method
  * @param {Object} tx 

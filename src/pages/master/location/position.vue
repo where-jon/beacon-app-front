@@ -1,6 +1,6 @@
 <template>
   <div id="locationSetting" class="container-fluid">
-    <breadcrumb :items="items" />
+    <breadcrumb :items="items" :legend-items="legend.items" />
     <alert :message="message" />
 
     <b-form inline class="mt-2" @submit.prevent>
@@ -25,8 +25,8 @@
         <b-form-select v-model="form.locationDisp" :options="locationDispOptions" :disabled="settingStart" class="mr-2 mb-2" @change="changeLocationDisp" />
         <label v-t="'label.selectLocationPlace'" class="mt-mobile mr-2 mb-2" />
         <b-form-row>
-          <span :title="vueSelectTitle(vueSelected.locationExb)">
-            <v-select v-model="vueSelected.locationExb" :options="getLocationExbOptions()" :disabled="settingStart" size="sm" class="mb-2 mt-mobile vue-options" :style="vueSelectStyle" @input="showLocationOnMap">
+          <span :title="vueSelectTitle(vueSelected.locationPos)">
+            <v-select v-model="vueSelected.locationPos" :options="getLocationPosOptions()" :disabled="settingStart" size="sm" class="mb-2 mt-mobile vue-options" :style="vueSelectStyle" @input="showLocationOnMap">
               <template slot="selected-option" slot-scope="option">
                 {{ vueSelectCutOn(option) }}
               </template>
@@ -88,7 +88,7 @@
 import { mapState } from 'vuex'
 import { Shape, Container, Text } from 'createjs-module'
 import { APP, DISP } from '../../../sub/constant/config'
-import { UPDATE_ONLY_NN } from '../../../sub/constant/Constants'
+import { UPDATE_ONLY_NN, SETTING, SHAPE } from '../../../sub/constant/Constants'
 import * as ArrayUtil from '../../../sub/util/ArrayUtil'
 import * as BrowserUtil from '../../../sub/util/BrowserUtil'
 import * as StringUtil from '../../../sub/util/StringUtil'
@@ -99,6 +99,7 @@ import * as HttpHelper from '../../../sub/helper/base/HttpHelper'
 import * as IconHelper from '../../../sub/helper/ui/IconHelper'
 import * as LocaleHelper from '../../../sub/helper/base/LocaleHelper'
 import * as OptionHelper from '../../../sub/helper/dataproc/OptionHelper'
+import * as SensorHelper from '../../../sub/helper/domain/SensorHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as StyleHelper from '../../../sub/helper/ui/StyleHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
@@ -123,23 +124,24 @@ export default {
       items: ViewHelper.createBreadCrumbItems('master', 'locationSetting'),
       vueSelected: {
         area: null,
-        locationExb: null,
+        locationPos: null,
       },
       form: {
         locationDisp: null,
-        locationExb: null,
+        locationPos: null,
         location: null,
       },
       work: {
         locationList: [],
         exbList: [],
+        txList: [],
+      },
+      legend: {
+        items: [],
       },
       message: '',
       dummyKey: -1,
 
-      exbOptions: [],
-      exbDispOptions: [],
-      exbDisp: 'deviceIdX',
       realWidth: null,
       pixelWidth: null,
       mapRatioChanged: false,
@@ -180,6 +182,43 @@ export default {
     locationDispOptions(){
       return OptionHelper.getLocationDispOptions()
     },
+    legendItems() {
+      const patternMap = {}
+      const exbLocPatternList = [APP.LOCATION.TYPE.WITH, DISP.EXB_LOC.BGCOLOR_PATTERN, DISP.EXB_LOC.BGCOLOR_PATTERN_NOTX]
+      const noTxLabel = this.$i18n.tnl('label.locationNoTx')
+
+      exbLocPatternList.forEach((patternList, idx) => {
+        patternList.forEach(pattern => {
+          const params = pattern.split(SETTING.SPLITTER)
+          if(!Util.hasValue(params[0])) {
+            return
+          }
+          if(patternMap[params[0]] == null) {
+            patternMap[params[0]] = {}
+          }
+          patternMap[params[0]][idx == 0? 'key': idx == 1? 'bgColor': 'bgColorNoTx'] = params[1]
+        })
+      })
+      patternMap['-'] = {
+        key: 'other', bgColor: DISP.EXB_LOC.BGCOLOR_DEFAULT, bgColorNoTx: DISP.EXB_LOC.BGCOLOR_DEFAULT_NOTX
+      }
+      const commonStyle = {
+        color: DISP.EXB_LOC.COLOR,
+        shape: SHAPE.SQUARE,
+      }
+      return Object.keys(patternMap).map(locationType => {
+        const relationTxLabel = this.$i18n.tnl('label.' + patternMap[locationType].key)
+        return {
+          id: locationType,
+          items: [
+            { id: locationType + '-Tx', text: 'A', style: StyleHelper.getStyleDisplay1({ ...commonStyle, bgColor: Util.getValue(patternMap[locationType], 'bgColor', DISP.EXB_LOC.BGCOLOR_DEFAULT) }) },
+            { id: locationType + '-TxDesc', text: relationTxLabel, style: {} },
+            { id: locationType + '-NoTx', text: 'A', style: StyleHelper.getStyleDisplay1({ ...commonStyle, bgColor: Util.getValue(patternMap[locationType], 'bgColorNoTx', DISP.EXB_LOC.BGCOLOR_DEFAULT_NOTX) }) },
+            { id: locationType + '-NoTxDesc', text: relationTxLabel + noTxLabel, style: {} },
+          ]
+        }
+      })
+    },
   },
   watch: {
     'vueSelected.area': {
@@ -188,9 +227,9 @@ export default {
       },
       deep: true,
     },
-    'vueSelected.locationExb': {
+    'vueSelected.locationPos': {
       handler: function(newVal, oldVal){
-        this.form.locationExb = Util.getValue(newVal, 'value', null)
+        this.form.locationPos = Util.getValue(newVal, 'value', null)
       },
       deep: true,
     },
@@ -204,9 +243,10 @@ export default {
     }
   },
   async mounted() {
-    await Promise.all(['area', 'exb', 'location'].map(StateHelper.load))
+    await Promise.all(['area', 'exb', 'tx', 'location'].map(StateHelper.load))
     this.form.locationDisp = Util.getValue(this.locationDispOptions, '0.value', null)
     this.vueSelected.area = this.initAreaId
+    this.legend.items = this.legendItems
     this.replaceAS({pageSendParam: null})
     this.$nextTick(async () => {
       this.changeArea()
@@ -229,29 +269,36 @@ export default {
       this.mapRatio = null
       this.revTrgCnt = []
       this.lineCnt = null
-
-      this.positionedExb = []
-      this.exbOptions = []
     },
     isDispLocation(){
       return ['locationName', 'locationCd'].includes(this.form.locationDisp)
     },
     isDispExb(){
-      return ['deivceId', 'deviceIdX'].includes(this.form.locationDisp)
+      return ['deviceId', 'deviceIdX'].includes(this.form.locationDisp)
     },
-    getLocationExbOptions(){
+    isDispTx(){
+      return ['txName'].includes(this.form.locationDisp)
+    },
+    // 場所選択選択肢
+    getLocationPosOptions(){
       if(this.isDispLocation()){
         return OptionHelper.getLocationOptions(this.work.locationList, this.form.locationDisp)
           .sort((a, b) => !Util.hasValue(b.value)? 1: StringUtil.sortByString(a.label, b.label, LocaleHelper.getSystemLocale()))
       }
-      return OptionHelper.getLocationExbOptions(this.work.exbList, this.form.locationDisp)
+      const isExb = this.isDispExb()
+      const deviceType = isExb? 'exb': 'tx'
+      const deviceList = isExb? this.work.exbList: this.work.txList
+      const deviceColumn = isExb? this.form.locationDisp: device => StateHelper.getLocationTxName(device)
+      return OptionHelper.getLocationDeviceOptions(deviceList, deviceType, deviceColumn)
         .sort((a, b) => StringUtil.sortByString(a.label, b.label, LocaleHelper.getSystemLocale()))
     },
+    // 現在エリアに存在する場所
     getPositionedLocationList(){
       return this.work.locationList.filter(location => Util.hasValue(this.selectedArea) && this.selectedArea == Util.getValue(location, 'areaId', null))
     },
+    // 種類を変更した場合に実行
     changeLocationDisp(newVal){
-      this.vueSelected.locationExb = null
+      this.vueSelected.locationPos = null
       if(!this.locationCon){
         return
       }
@@ -267,39 +314,54 @@ export default {
         if (!locationButton) {
           continue
         }
+        const graphics = locationButton.getChildAt(0)
+        if (graphics) {
+          IconHelper.refreshLocationIcon(graphics, locationButton.location, DISP.EXB_LOC, this.canvasScale)
+        }
         const text = locationButton.getChildAt(1)
         if (text) {
-          text.text = StringUtil.cutOnLongByte(locationButton.location[newVal], this.DISPLAY_NAME_BYTE_LENGTH)
-          text.font = StyleHelper.getInRectFontSize(text.text, DISP.EXB_LOC.SIZE.W / this.canvasScale, DISP.EXB_LOC.SIZE.H / this.canvasScale)
+          IconHelper.refreshLocationIconText(text, locationButton.location, newVal, this.DISPLAY_NAME_BYTE_LENGTH, DISP.EXB_LOC, this.canvasScale)
         }
       }
       this.stage.update()
     },
-    refleshLocationList(){
+    // アイコン内の全情報を最新化：フェッチ、詳細ポップアップ確定、削除後
+    refleshDeviceLocationList(deviceList){
       const locationMap = {}
-      this.work.exbList.forEach(exb => {
-        if(Util.hasValue(exb.locationId)){
-          if(!locationMap[exb.locationId]){
-            locationMap[exb.locationId] = []
+      deviceList.forEach(device => {
+        if(Util.hasValue(device.locationId)){
+          if(!locationMap[device.locationId]){
+            locationMap[device.locationId] = []
           }
-          locationMap[exb.locationId].push(exb)
+          locationMap[device.locationId].push(device)
         }
       })
+      return locationMap
+    },
+    refleshLocationList(){
+      const locationExbMap = this.refleshDeviceLocationList(this.work.exbList)
+      const locationTxMap = this.refleshDeviceLocationList(this.work.txList)
       this.work.locationList.forEach(location => {
-        const exbList = locationMap[location.locationId]? locationMap[location.locationId]: []
+        const exbList = locationExbMap[location.locationId]? locationExbMap[location.locationId]: []
         const exbNum = exbList.length
         location.exbList = exbList
         location.deviceId = Util.getValue(exbList, '0.deviceId', '') + (1 < exbNum? '+': '')
         location.deviceIdX = Util.getValue(exbList, '0.deviceIdX', '') + (1 < exbNum? '+': '')
+
+        const txList = locationTxMap[location.locationId]? locationTxMap[location.locationId]: []
+        location.txList = txList
+        location.txName = StateHelper.getLocationTxName(Util.getValue(txList, '0', null), false) + (1 < txList.length? '+': '')
       })
       this.changeLocationDisp(this.form.locationDisp)
     },
+    // 初期処理、読み込む、保存後
     fetchData(payload) {
       try {
         if (payload && payload.done) {
           payload.done()
         }
         this.work.exbList = _.cloneDeep(this.exbs)
+        this.work.txList = _.cloneDeep(this.txs)
         this.work.locationList = _.cloneDeep(this.locations)
         this.refleshLocationList()
         this.showMapImage()
@@ -308,6 +370,7 @@ export default {
         console.error(e)
       }
     },
+    // 地図
     showMapImage() {
       this.showMapImageDef(() => {
         if (!this.locationCon) {
@@ -358,6 +421,7 @@ export default {
     setChangeArea() {
       this.isChangeArea = true
     },
+    // アイコン
     showLocation(location) {
       const offsetY = (DISP.EXB_LOC.SIZE.H / 2 + this.ICON_ARROW_HEIGHT) / this.canvasScale
       const locationButton = IconHelper.createLocationIcon(location, this.form.locationDisp, this.DISPLAY_NAME_BYTE_LENGTH, DISP.EXB_LOC, this.canvasScale)
@@ -400,30 +464,31 @@ export default {
         y: y,
         isChanged: true,
         exbList: [],
+        txList: [],
       }
       this.work.locationList.push(newLocation)
       return newLocation
     },
     createLocation(masterId, x, y){
-      if(this.isDispLocation()){
-        const target = this.work.locationList.find(location => location.locationId == masterId)
-        if(target){
-          target.areaId = this.oldSelectedArea
-          target.x = x
-          target.y = y
-          target.isChanged = true
-          return target
-        }
+      const target = this.work.locationList.find(location => location.locationId == masterId)
+      if(!target){
         return this.createEmptyLocation(x, y)
       }
+      target.areaId = this.oldSelectedArea
+      target.x = x
+      target.y = y
+      target.isChanged = true
+      return target
+    },
+    createExbLocation(masterId, x, y){
       const newLocation = this.createEmptyLocation(x, y)
       const initExb = this.work.exbList.find(exb => exb.exbId == masterId)
       if(!initExb){
         return newLocation
       }
-      const deviceId = '' + initExb.deviceId
       initExb.locationId = newLocation.locationId
 
+      const deviceId = '' + initExb.deviceId
       newLocation.locationCd = deviceId
       newLocation.locationName = deviceId
       newLocation.deviceId = initExb.deviceId
@@ -431,12 +496,36 @@ export default {
       newLocation.exbList.push(initExb)
       return newLocation
     },
+    createTxLocation(masterId, x, y){
+      const newLocation = this.createEmptyLocation(x, y)
+      const initTx = this.work.txList.find(tx => tx.txId == masterId)
+      if(!initTx){
+        return newLocation
+      }
+      initTx.locationId = newLocation.locationId
+
+      const deviceId = '' + initTx.btxId
+      newLocation.locationCd = SensorHelper.createTxLocationDummyName(initTx)
+      newLocation.locationName = SensorHelper.createTxLocationDummyName(initTx)
+      newLocation.txName = StateHelper.getLocationTxName(initTx, false)
+      newLocation.txList.push(initTx)
+      return newLocation
+    },
+    createNewLocation(masterId, x, y){
+      if(this.isDispLocation()){
+        return this.createLocation(masterId, x, y)
+      }
+      if(this.isDispExb()){
+        return this.createExbLocation(masterId, x, y)
+      }
+      return this.createTxLocation(masterId, x, y)
+    },
     showLocationOnMap(val, x = 50, y = 40) {
       const masterId = Util.getValue(val, 'value', null)
       if (masterId == null) {
         return
       }
-      const location = this.createLocation(masterId, x, y)
+      const location = this.createNewLocation(masterId, x, y)
       this.isChanged = true
       this.showLocation(location)
       this.stage.update()
@@ -445,7 +534,7 @@ export default {
       let counter = 0
       let y = 40
       const mapMaxPosX = this.mapWidth
-      this.getLocationExbOptions().filter(val => Util.hasValue(val.value)).forEach(val => {
+      this.getLocationPosOptions().filter(val => Util.hasValue(val.value)).forEach(val => {
         let x = 30 + counter++ * 60
         if (x > mapMaxPosX) {
           x = 30
@@ -455,9 +544,13 @@ export default {
         this.showLocationOnMap(val, x, y)
       })
     },
+    // 詳細ポップアップ
     showEditPopup(location){
       this.form.location = location
-      this.$refs.locationEdit.setParam(location, this.work.locationList, this.work.exbList.filter(exb => !Util.hasValue(exb.locationId) || exb.locationId == location.locationId))
+      this.$refs.locationEdit.setParam(location, this.work.locationList,
+        this.work.exbList.filter(exb => !Util.hasValue(exb.locationId) || exb.locationId == location.locationId),
+        this.work.txList.filter(tx => !Util.hasValue(tx.locationId) || tx.locationId == location.locationId)
+      )
       this.$root.$emit('bv::show::modal', 'modalEdit')
     },
     onUpdate(form){
@@ -470,6 +563,14 @@ export default {
         }
         else if(!Util.hasValue(exb.locationId) && form.exbIdList.includes(exb.exbId)){
           exb.locationId = form.locationId
+        }
+      })
+      this.work.txList.forEach(tx => {
+        if(tx.locationId == form.locationId && !form.txIdList.includes(tx.txId)){
+          tx.locationId = null
+        }
+        else if(!Util.hasValue(tx.locationId) && form.txIdList.includes(tx.txId)){
+          tx.locationId = form.locationId
         }
       })
       this.refleshLocationList()
@@ -489,8 +590,14 @@ export default {
           exb.locationId = null
         }
       })
+      this.work.txList.forEach(tx => {
+        if(tx.locationId == formLocation.locationId){
+          tx.locationId = null
+        }
+      })
       this.refleshLocationList()
     },
+    // マップ比率
     ratioSettingStart() {
       this.settingStart = !this.settingStart
       if (!this.settingStart) {
@@ -563,6 +670,7 @@ export default {
 
       return revTrgCnt
     },
+    // 保存周り
     createErrorMessage(e){
       if (e.key) {
         return this.$i18n.tnl('message.' + e.type, {key: this.$i18n.tnl('label.' + StringUtil.snake2camel(e.key)), val: e.val})
@@ -576,6 +684,8 @@ export default {
            isChanged: false,
            exbList: [],
            exbIdList: Util.getValue(location, 'exbList', []).map(val => val.exbId),
+           txList: [],
+           txIdList: Util.getValue(location, 'txList', []).map(val => val.txId),
            x: Math.round(location.x),
            y: Math.round(location.y),
         }
@@ -602,6 +712,7 @@ export default {
         if (param.length > 0) {
           await HttpHelper.postAppService('/core/location/updateLocation', param)
           await StateHelper.load('exb', true)
+          await StateHelper.load('tx', true)
           await StateHelper.load('location', true)
         }
 
@@ -621,6 +732,7 @@ export default {
       }
       this.hideProgress()
     },
+    // ツールチップ
     removeTooltip() {
       this.toolTipShow = false
       this.toolTipStyle.left = null
@@ -635,6 +747,7 @@ export default {
         locationCdLabel: this.$i18n.tnl('label.locationCdComp') + ':' + location.locationCd,
         locationNameLabel: this.$i18n.tnl('label.locationName') + ':' + location.locationName,
         deviceIdLabel: this.$i18n.tnl('label.' + keyObj.labelKey) + ':' + location.exbList.map(exb => exb[keyObj.valKey]).join(', '),
+        txNameLabel: this.$i18n.tnl('label.tx') + ':' + location.txList.map(tx => StateHelper.getLocationTxName(tx, false)).join(', '),
         baseX: window.pageXOffset + nativeEvent.clientX - Util.getValue(pageElement, 'offsetLeft', 0),
         baseY: window.pageYOffset + nativeEvent.clientY - Util.getValue(pageElement, 'offsetTop', 0),
         isDispRight: container.x * 2 <= this.stage.canvas.width,
@@ -643,7 +756,7 @@ export default {
     createTooltip(event, container) {
       const tooltipInfo = this.createTooltipInfo(event.nativeEvent, container)
 
-      this.toolTipLabel = [tooltipInfo.locationCdLabel, tooltipInfo.locationNameLabel, tooltipInfo.deviceIdLabel].filter(val => val)
+      this.toolTipLabel = [tooltipInfo.locationCdLabel, tooltipInfo.locationNameLabel, tooltipInfo.deviceIdLabel, tooltipInfo.txNameLabel].filter(val => val)
       this.toolTipShow = true
       this.$nextTick(() => {
         const toolTipElement = document.getElementById('toolTipComponent')

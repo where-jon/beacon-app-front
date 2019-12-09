@@ -328,7 +328,7 @@ export default {
     createExbIcon(exb) {
       const exbBtn = new Container()
       const s = new Shape()
-      s.graphics.beginFill(DISP.EXB_LOC.BGCOLOR).drawCircle(0, 0, DISP.EXB_LOC.RSSI_RADIUS / this.canvasScale, DISP.EXB_LOC.RSSI_RADIUS / this.canvasScale)
+      s.graphics.beginFill(DISP.EXB_LOC.RSSI_BGCOLOR).drawCircle(0, 0, DISP.EXB_LOC.RSSI_RADIUS / this.canvasScale, DISP.EXB_LOC.RSSI_RADIUS / this.canvasScale)
       exbBtn.addChild(s)
       const label = new Text(this.getExbDisp(exb.deviceId))
       label.font = 20 / this.canvasScale + 'px ' + DISP.EXB_LOC.FONT
