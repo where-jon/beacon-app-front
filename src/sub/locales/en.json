@@ -976,17 +976,7 @@
         "SIZE": {
           "W": "Icon size (width)on Location setting screen::Set up the width of the icon displayed on the location setting screen.",
           "H": "Icon size (height) on Location setting screen::Set up the height of the icon displayed on the location setting screen."
-        },
-        "BGCOLOR": "Icon Background Color on Location Setting Screen::Set up the background color of the icon displayed on the location setting screen. Set up with a color code including #.",
-        "COLOR": "Icon text color on the location setting screen::Set up the text color of the icon displayed on the location setting screen. Set up with a color code including #."
-      },
-      "TX_LOC": {
-        "SIZE": {
-          "W": "Tx icon size(width) of Tx layout setting::Set up the width of Tx icon displayed on Tx setting screen.",
-          "H": "Tx icon size(height) of Tx layout setting::Set up the height of Tx icon displayed on Tx setting screen."
-        },
-        "BGCOLOR": "Tx icon background color of Tx layout setting screen::Set up the background color of Tx icon displayed on the Tx setting screen. Set up with a color code including #",
-        "COLOR": "Tx icon text color of Tx layout setting screen::Set up the Tx icon text color displayed Tx setting screen. Set up with color code including."
+        }
       },
       "THERMOH": {
         "TOOLTIP_ITEMS": {
@@ -1078,7 +1068,6 @@
         "SENSOR_LIST": "Sensor List",
         "TX": "Tx",
         "TXDETAIL": "Tx Deatils",
-        "TX_LOC": "Tx Location icon",
         "EXB": "EXB",
         "EXB_LOC": "Location setting icon",
         "LOCATION": "Location",

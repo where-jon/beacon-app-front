@@ -545,6 +545,7 @@ export const FONT = {
 }
 
 export const SETTING = {
+  SPLITTER: ':',
   VALUES: ['string', 'stringList', 'number', 'numberList', 'boolean', 'json'],
   STRING: 'string',
   STRING_LIST: 'stringList',
@@ -710,6 +711,10 @@ export const SETTING = {
       DISP: {
         TX: {
           ABSENT_ZONE_DISPLAY_TYPES: SETTING.STRING_LIST,
+        },
+        EXB_LOC: {
+          BGCOLOR_PATTERN: SETTING.STRING_LIST,
+          BGCOLOR_PATTERN_NOTX: SETTING.STRING_LIST,
         },
         THERMOH: {
           PATTERN: SETTING.STRING_LIST,
@@ -892,11 +897,6 @@ export const MENU = [
         key: 'locationList',
         path: 'location',
         icon: 'location-arrow',
-      },
-      {
-        key: 'txLocationSetting',
-        path: 'txlocation/position',
-        icon: 'map-pin',
       },
       {
         key: 'pot',

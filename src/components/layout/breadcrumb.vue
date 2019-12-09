@@ -176,7 +176,7 @@ export default {
         document.addEventListener('touchend', this.touchEnd)
       }
       else{
-        e.target.blur()
+        e && e.target && e.target.blur()
         document.removeEventListener('mousedown', this.touchStart)
         document.removeEventListener('mouseup', this.touchEnd)
         document.removeEventListener('touchstart', this.touchStart)

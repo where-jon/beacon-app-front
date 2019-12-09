@@ -70,18 +70,24 @@
                 <span v-text="$i18n.tnl('label.dispAlways')" />
               </b-form-checkbox>
             </b-form-group>
-            <b-form-group v-if="form.x != null || form.y != null">
-              <label v-t="'label.locationZoneName'" />
-              <input v-model="form.locationName" :readonly="!isEditable" type="text" maxlength="20" class="form-control" :required="form.x != null || form.y != null">
-            </b-form-group>
-            <b-form-group v-if="form.x != null">
-              <label v-t="'label.locationX'" />
-              <input v-model="form.x" :readonly="!isEditable" type="number" min="0" class="form-control">
-            </b-form-group>
-            <b-form-group v-if="form.y != null">
-              <label v-t="'label.locationY'" />
-              <input v-model="form.y" :readonly="!isEditable" type="number" min="0" class="form-control">
-            </b-form-group>
+            <b-form-row class="mb-3">
+              <b-col>
+                <label v-t="'label.area'" />
+                <v-select v-model="vueSelected.area" :options="areaOptions" :disabled="!isEditable" :readonly="!isEditable" class="vue-options-lg">
+                  <template slot="no-options">
+                    {{ vueSelectNoMatchingOptions }}
+                  </template>
+                </v-select>
+              </b-col>
+              <b-col>
+                <label v-t="'label.locationName'" />
+                <v-select v-model="vueSelected.location" :options="getLocationOptions()" :disabled="!isEditable" :readonly="!isEditable" class="vue-options-lg">
+                  <template slot="no-options">
+                    {{ vueSelectNoMatchingOptions }}
+                  </template>
+                </v-select>
+              </b-col>
+            </b-form-row>
             <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
             <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="doBeforeSubmit(false)">
               {{ $i18n.tnl(`label.${isUpdate? 'update': 'register'}`) }}
@@ -126,7 +132,8 @@ export default {
       items: ViewHelper.createBreadCrumbItems('master', {text: 'masterTx', href: '/master/tx'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.tx.txId)),
       form: Util.extract(this.$store.state.app_service.tx, [
         'txId', 'btxId', 'major', 'minor', 'potTxList.0.pot.displayName', 'mapImage', 'dispPos', 'dispPir', 'dispAlways',
-        'txSensorList.0.sensor.sensorId', 'locationId', 'location.locationName', 'location.x', 'location.y', 'location',
+        'txSensorList.0.sensor.sensorId',
+        'locationId', 'location.areaId',
         'potTxList.0.pot.potId', 'potTxList.0.pot.potCd', 'potTxList.0.pot.displayName', 'potTxList.0.pot.description',
         'potTxList.0.pot.potCategoryList.0.category.categoryId',
         'potTxList.0.pot.potGroupList.0.group.groupId',
@@ -134,6 +141,8 @@ export default {
       vueSelected: {
         category: null,
         group: null,
+        area: null,
+        location: null,
       },
       defValue: {
         'dispPos': 1,
@@ -180,16 +189,35 @@ export default {
       },
       deep: true,
     },
+    'vueSelected.area': {
+      handler: function(newVal, oldVal){
+        this.form.areaId = Util.getValue(newVal, 'value', null)
+        this.vueSelected.location = null
+      },
+      deep: true,
+    },
+    'vueSelected.location': {
+      handler: function(newVal, oldVal){
+        this.form.locationId = Util.getValue(newVal, 'value', null)
+      },
+      deep: true,
+    },
   },
   async mounted() {
     Util.applyDef(this.form, this.defValue)
     StateHelper.load('sensor')
-    await Promise.all(['category', 'group'].map(StateHelper.load))
+    await Promise.all(['category', 'group', 'area', 'location'].map(StateHelper.load))
     this.vueSelected.category = VueSelectHelper.getVueSelectData(this.categoryOptions, this.form.categoryId)
     this.vueSelected.group = VueSelectHelper.getVueSelectData(this.groupOptions, this.form.groupId)
+    this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions, this.form.areaId)
+    this.$nextTick(() => this.vueSelected.location = VueSelectHelper.getVueSelectData(this.getLocationOptions(), this.form.locationId))
     ValidateHelper.setCustomValidationMessage()
+    VueSelectHelper.disabledAllSubmit()
   },
   methods: {
+    getLocationOptions(){
+      return StateHelper.getOptionsFromState('location', false, true, location => location.areaId == this.form.areaId)
+    },
     showTx(col) {
       switch(APP.TX.BTX_MINOR) {
       case 'both':
@@ -205,6 +233,8 @@ export default {
       this.form.sensorId = null
       this.vueSelected.category = VueSelectHelper.getVueSelectData(this.categoryOptions, null)
       this.vueSelected.group = VueSelectHelper.getVueSelectData(this.groupOptions, null)
+      this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions, null)
+      this.vueSelected.location = null
     },
     onSaved(){
       StateHelper.setForceFetch('pot', true)
@@ -225,18 +255,10 @@ export default {
         pot.potUserList = null // ここではpotUser関連は登録しない
         pot.user = null
       }
-      if (this.form.location) {
-        var location = _.cloneDeep(this.form.location)
-        location.locationName = Util.getValue(this.form, 'locationName', SensorHelper.createTxLocationDummyName(this.form))
-        location.posId = this.form.btxId * -1
-        location.x = Util.hasValue(this.form.x)? this.form.x: null
-        location.y = Util.hasValue(this.form.y)? this.form.y: null
-      }
       const entity = {
         ...this.form,
         txId,
         disp,
-        location,
         potTxList: pot? [{potTxPK:{txId, potId: pot.potId}, pot}]: null,
         txSensorList: this.form.sensorId? [
           {txSensorPK: {sensorId: this.form.sensorId}}

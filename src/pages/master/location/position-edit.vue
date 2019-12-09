@@ -26,6 +26,14 @@
                 </template>
               </v-select>
             </b-form-group>
+            <b-form-group>
+              <label v-t="'label.tx'" />
+              <v-select v-model="vueSelected.txIdList" :options="iTxOptions" :disabled="!isEditable" multiple :close-on-select="false" class="vue-options-multi">
+                <template slot="no-options">
+                  {{ vueSelectNoMatchingOptions }}
+                </template>
+              </v-select>
+            </b-form-group>
 
             <b-button v-if="isDeleteable" v-t="'label.delete'" type="button" variant="outline-danger" class="mr-2 my-1" @click="execDelete" />
             <b-button v-if="isEditable" v-t="'label.update'" :variant="theme" type="submit" class="mr-2 my-1" />
@@ -57,16 +65,19 @@ export default {
     return {
       vueSelected: {
         exbIdList: null,
+        txIdList: null,
       },
       form: {
         locationId: null,
         locationCd: null,
         locationName: null,
         exbIdList: [],
+        txIdList: [],
       },
       validationParam: {
         locationList: [],
         exbList: [],
+        txList: [],
       },
       validationMap: {
         locationCd: null,
@@ -76,7 +87,7 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'exb', 'location'
+      'exb', 'tx', 'location'
     ]),
     cdPattern(){
       return PATTERN.LOCATION_CD
@@ -89,11 +100,25 @@ export default {
         exb => this.validationParam.exbList.some(val => val.exbId == exb.exbId)
       )
     },
+    iTxOptions() {
+      return StateHelper.getOptionsFromState(
+        'tx',
+        tx => StateHelper.getLocationTxName(tx),
+        true,
+        tx => this.validationParam.txList.some(val => val.txId == tx.txId)
+      )
+    },
   },
   watch: {
     'vueSelected.exbIdList': {
       handler: function(newVal, oldVal){
         this.form.exbIdList = newVal.map(val => val.value)
+      },
+      deep: true,
+    },
+    'vueSelected.txIdList': {
+      handler: function(newVal, oldVal){
+        this.form.txIdList = newVal.map(val => val.value)
       },
       deep: true,
     },
@@ -109,15 +134,17 @@ export default {
     successUpdate(){
       return !Util.hasValue(this.messageList)
     },
-    setParam(location, vLocationList, vExbList){
+    setParam(location, vLocationList, vExbList, vTxList){
       this.messageList = []
       this.validationParam.locationList = vLocationList
       this.validationParam.exbList = vExbList
+      this.validationParam.txList = vTxList
       this.form.locationId = location.locationId
       this.form.locationCd = location.locationCd
       this.form.locationType = location.locationType
       this.form.locationName = location.locationName
       this.vueSelected.exbIdList = Util.getValue(location, 'exbList', []).map(exb => VueSelectHelper.getVueSelectData(this.iExbOptions, exb.exbId)).sort((a, b) => a.label < b.label? -1: 1)
+      this.vueSelected.txIdList = Util.getValue(location, 'txList', []).map(tx => VueSelectHelper.getVueSelectData(this.iTxOptions, tx.txId)).sort((a, b) => a.label < b.label? -1: 1)
     },
     validation(){
       this.messageList = []
