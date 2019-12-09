@@ -76,7 +76,7 @@ const loadPluginMenuItems = async (orgMenuItems, masterFeatureList, tenantFeatur
   const pluginPathPrefix = PLUGIN_CONSTANTS.VIEW_URL_PREFIX
   const splice = Array.prototype.splice
 
-  return await axios.get(iframeBaseDir + 'menu.json').then(res => {
+  return await axios.get(location.origin + '/' + iframeBaseDir + 'menu.json').then(res => {
     const length = orgMenuItems.length
     res.data
     .filter((d) => {
