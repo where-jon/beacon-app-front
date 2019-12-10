@@ -125,6 +125,10 @@ export const APP = { // 機能面に関する設定
     TYPE: {
       WITH: [],
     },
+    // 拡張項目定義（サンプル）
+    EXT_DEF: [
+      {key: 'description', type: 'string', length: 100, showlist: true, sort: true },
+    ],
   },
   // USER関連設定
   USER: {

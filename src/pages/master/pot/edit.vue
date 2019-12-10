@@ -68,7 +68,7 @@
                 </template>
               </v-select>
             </b-form-group>
-            <extform :p-name="pName" :is-editable="isEditable" :form="form" />
+            <extform :is-editable="isEditable" :form="form" :p-ext-value="extValue" />
             <b-form-group v-if="isShownWith('thumbnail')">
               <label v-t="'label.thumbnail'" />
               <b-form-file v-if="isEditable" ref="inputThumbnail" v-model="form.thumbnailTemp" :placeholder="$t('message.selectFile') " accept="image/jpeg, image/png, image/gif" @change="readImage" />
@@ -238,6 +238,9 @@ export default {
         this.thumbnailUrl.replace('{id}', this.form.potId) + new Date().getTime() :
         // サムネイル欄から画像ファイル選択で表示する場合(base64を指定)
         (this.form.thumbnail ? this.form.thumbnail : '')
+    },
+    extValue() {
+      return PotHelper.getPotExt(this.pName)
     },
   },
   watch: {

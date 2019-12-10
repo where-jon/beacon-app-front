@@ -12,6 +12,7 @@ import { ZONE, PATTERN, BULK } from '../../../sub/constant/Constants'
 import * as NumberUtil from '../../../sub/util/NumberUtil'
 import * as Util from '../../../sub/util/Util'
 import * as BulkHelper from '../../../sub/helper/dataproc/BulkHelper'
+import * as ExtValueHelper from '../../../sub/helper/domain/ExtValueHelper'
 import * as OptionHelper from '../../../sub/helper/dataproc/OptionHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
@@ -108,6 +109,7 @@ export default {
         entity.txViewTypeName = entity.txViewType
         entity.txViewType = null
       }
+      ExtValueHelper.copyToChild(entity, APP.LOCATION)
       dummyKey = this.restructZone(entity, dummyKey)
       dummyKey = this.restructExb(entity, dummyKey)
       return dummyKey
