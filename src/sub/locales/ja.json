@@ -199,8 +199,8 @@
     "zoneCd": "ID",
     "zoneName": "ゾーン名",
     "zoneType": "ゾーンタイプ",
-    "zoneGuard": "監視対象ゾーン",
-    "zoneDoor": "施錠部屋ゾーン",
+    "zoneGuard": "警戒区域",
+    "zoneDoor": "施錠部屋",
 
     "---------------- App news ---------------":"",
     "news": "お知らせメンテナンス",
