@@ -33,6 +33,18 @@ export const LOCALE = [
   {id: 3,  name: 'en'},
 ]
 
+export const TIME_ZONE = {
+  data: {
+    JST: 'Asia/Tokyo',
+    UTC: 'Etc/UTC',
+    IST: 'Asia/Kolkata',
+  },
+  getData(tz = 'UTC') {
+    const key = tz.toUpperCase()
+    return TIME_ZONE.data[key] == null? TIME_ZONE.data.UTC: TIME_ZONE.data[key]
+  },
+}
+
 export const USER = {
   DUMMY: {
     PASS: 'dummy',
