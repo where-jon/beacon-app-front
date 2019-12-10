@@ -1,7 +1,7 @@
 
 <script>
 import { mapState, mapMutations, mapActions } from 'vuex'
-import { CATEGORY } from '../../sub/constant/Constants'
+import { CATEGORY, POT_TYPE } from '../../sub/constant/Constants'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as StringUtil from '../../sub/util/StringUtil'
 import * as ConfigHelper from '../../sub/helper/dataproc/ConfigHelper'
