@@ -12,6 +12,7 @@ import * as StringUtil from '../../util/StringUtil'
 import * as Util from '../../util/Util'
 import * as AppServiceHelper from './AppServiceHelper'
 import * as ConfigHelper from './ConfigHelper'
+import * as ExtValueHelper from '../domain/ExtValueHelper'
 import * as LocaleHelper from '../base/LocaleHelper'
 import * as OptionHelper from './OptionHelper'
 import * as SensorHelper from '../domain/SensorHelper'
@@ -509,6 +510,7 @@ const appStateConf = {
             zoneTypeMap[key].push(locationZone.zoneName)
           }
         })
+        ExtValueHelper.copyToParent(location)
         const locationTypeOptions = OptionHelper.getLocationTypeOptions()
         return {
           ...location,

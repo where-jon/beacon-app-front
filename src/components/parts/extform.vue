@@ -15,7 +15,6 @@ import Vue from 'vue'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import * as Util from '../../sub/util/Util'
-import * as PotHelper from '../../sub/helper/domain/PotHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 
 export default {
@@ -23,16 +22,16 @@ export default {
     DatePicker,
   },
   props: {
-    pName: {
-      type: String,
-      default: '',
-    },
     form: {
       type: Object,
       required: true,
     },
     isEditable: {
       type: Boolean,
+      required: true,
+    },
+    pExtValue: {
+      type: Array,
       required: true,
     },
   },
@@ -43,8 +42,7 @@ export default {
   },
   computed: {
     extList() {
-      const ret = PotHelper.getPotExt(this.pName)
-      ret.forEach(e => {
+      this.pExtValue.forEach(e => {
         if (!e.format) {
           if (e.type == 'int') {
             e.format = '[-]?[0-9]*'
@@ -80,7 +78,7 @@ export default {
         }
       })
       Vue.set(this, 'firstShow', false)
-      return ret
+      return this.pExtValue
     }, 
   },
   mounted() {

@@ -599,6 +599,7 @@ export const SETTING = {
           TYPE: {
             WITH: SETTING.STRING_LIST,
           },
+          EXT_DEF: SETTING.JSON,
         },
         USER: {
           WITH: SETTING.STRING_LIST,

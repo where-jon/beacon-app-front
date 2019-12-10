@@ -46,6 +46,8 @@
               </b-form-checkbox>
             </b-form-group>
 
+            <extform :is-editable="isEditable" :form="form" :p-ext-value="extValue" />
+
             <settingtxview
               :is-editable="isEditable"
               :disp-format="form.txViewType ? form.txViewType.displayFormat : txIconsDispFormat"
@@ -85,6 +87,7 @@ import { ZONE, PATTERN } from '../../../sub/constant/Constants'
 import * as NumberUtil from '../../../sub/util/NumberUtil'
 import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
+import * as ExtValueHelper from '../../../sub/helper/domain/ExtValueHelper'
 import * as MenuHelper from '../../../sub/helper/dataproc/MenuHelper'
 import * as OptionHelper from '../../../sub/helper/dataproc/OptionHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
@@ -96,6 +99,7 @@ import commonmixin from '../../../components/mixin/commonmixin.vue'
 import editmixin from '../../../components/mixin/editmixin.vue'
 import alert from '../../../components/parts/alert.vue'
 import autoAlert from '../../../components/parts/autoAlert.vue'
+import extform from '../../../components/parts/extform.vue'
 import settingtxview from '../../../components/parts/settingtxview.vue'
 
 export default {
@@ -103,6 +107,7 @@ export default {
     breadcrumb,
     alert,
     autoAlert,
+    extform,
     settingtxview,
   },
   mixins: [commonmixin, editmixin],
@@ -119,6 +124,7 @@ export default {
         'locationId', 'locationCd', 'locationType', 'locationName',
         'areaId', 'posId', 'x', 'y',
         'visible', 'txViewType', 'locationZoneList',
+        ...ExtValueHelper.getExtValueKeys(APP.LOCATION, true)
       ]),
       vueSelected: {
         area: null,
@@ -155,6 +161,9 @@ export default {
     },
     cdPattern(){
       return PATTERN.LOCATION_CD
+    },
+    extValue() {
+      return ExtValueHelper.getExtValue(APP.LOCATION)
     },
   },
   watch: {
@@ -265,10 +274,12 @@ export default {
           horizon: this.txIconsHorizon,
           vertical: this.txIconsVertical
         },
+        extValue: {},
         posId: this.form.posId,
         x: this.form.x,
         y: this.form.y,
       }
+      ExtValueHelper.getExtValueKeys(APP.LOCATION).forEach(key => entity.extValue[key] = this.form[key])
 
       entity.deviceIdList = this.exbs.filter(exb => exb.locationId == entity.locationId).map(exb => exb.deviceId)
       entity.locationZoneList = Util.getValue(this.form, 'locationZoneList', []).map(locationZone => ({
