@@ -30,6 +30,21 @@ export const getExtValueKeys = (masterSetting, prefix) => {
 }
 
 /**
+ * 一覧に表示するか。
+ * @method
+ * @param {Object} masterSetting
+ * @param {String} key
+ * @return {Boolean}
+ */
+export const isShowList = (masterSetting, key) => {
+  const target = getExtValue(masterSetting).find(ev => ev.key == key)
+  if(!target) {
+    return true
+  }
+  return target.showlist
+}
+
+/**
  * 拡張値カラム情報を親階層にコピーする。
  * @method
  * @param {Object} obj

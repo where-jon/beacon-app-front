@@ -11,6 +11,7 @@ import { APP } from '../../../sub/constant/config'
 import { LOCATION, BULK } from '../../../sub/constant/Constants'
 import * as Util from '../../../sub/util/Util'
 import * as ConfigHelper from '../../../sub/helper/dataproc/ConfigHelper'
+import * as ExtValueHelper from '../../../sub/helper/domain/ExtValueHelper'
 import * as MenuHelper from '../../../sub/helper/dataproc/MenuHelper'
 import * as OptionHelper from '../../../sub/helper/dataproc/OptionHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
@@ -67,6 +68,9 @@ export default {
     createCustomColumn(isDownload){
       const ret = []
       APP.LOCATION.WITH.forEach(val => {
+        if(!ExtValueHelper.isShowList(APP.LOCATION, val)) {
+          return
+        }
         const column = {key: val, label: val, sortable: true}
         if('zoneClass' == val){
           if(MenuHelper.isMenuEntry('/master/zoneClass')){
