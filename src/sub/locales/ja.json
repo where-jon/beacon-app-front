@@ -201,6 +201,8 @@
     "zoneType": "ゾーンタイプ",
     "zoneGuard": "警戒区域",
     "zoneDoor": "施錠部屋",
+    "led_device_id": "LED点灯デバイスID",
+    "led_no": "LED番号",
 
     "---------------- App news ---------------":"",
     "news": "お知らせメンテナンス",
