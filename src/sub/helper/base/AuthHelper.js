@@ -160,7 +160,11 @@ export const authByAppService = async (loginId, password, success, err) => {
 
     const regionId = LocalStorageHelper.getLocalStorage(KEY.CURRENT.REGION)
     if(Util.hasValue(regionId)){
-      await HttpHelper.putAppService(`/core/region/current/${regionId}`)
+      const regionRes = await HttpHelper.putAppService(`/core/region/current/${regionId}`)
+      if(Util.getValue(regionRes, 'status', null)) {
+        LocalStorageHelper.removeLocalStorage(KEY.CURRENT.REGION)
+        LocalStorageHelper.removeLocalStorage(KEY.CURRENT.AREA)
+      }
     }
 
     const userInfo = await getUserInfo(data.tenantAdmin)
