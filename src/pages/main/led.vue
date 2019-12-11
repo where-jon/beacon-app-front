@@ -138,18 +138,12 @@ export default {
       try {
         this.showProgress()
         await StateHelper.load('exb')
-        let deviceIds = _.filter(this.exbs,
-          exb => exb.sensorIds.includes(SENSOR.LED)
-        )
-          .map(
-            exb => {
-              return {
-                text:(exb.deviceId) + ' (0x' + exb.deviceId.toString(16) + ')',
-                label:(exb.deviceId) + ' (0x' + exb.deviceId.toString(16) + ')',
-                value: exb.deviceId
-              }
-            }
-          )
+        const deviceIds = _.filter(this.exbs, exb => exb.sensorIds.includes(SENSOR.LED))
+          .map(exb => {
+            const locationName = Util.hasValue(exb.locationName)? (exb.locationName) + ' : ': ''
+            const label = locationName + (exb.deviceId) + ' (0x' + exb.deviceId.toString(16) + ')'
+            return { text: label, label: label, value: exb.deviceId }
+          })
 
         if (deviceIds && deviceIds.length == 1) {
           this.vueSelected.deviceId = VueSelectHelper.getVueSelectData(deviceIds, null, true)
