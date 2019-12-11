@@ -68,6 +68,21 @@ export default {
       })
       return dummyKey
     },
+    restructTx(entity, dummyKey){
+      ['minor', 'btxId'].forEach(key => {
+        if(!Util.hasValue(entity[key])){
+          return
+        }
+        const keyList = entity[key].split(BULK.SPLITTER)
+        if(keyList.some(val => isNaN(val))){
+          entity[key + 'Name'] = entity[key]
+        }
+        else{
+          entity[key + 'List'] = keyList.map(val => Number(val))
+        }
+      })
+      return dummyKey
+    },
     restructZone(entity, dummyKey){
       if(!Util.hasValue(entity.zoneClass)){
         return dummyKey
@@ -112,6 +127,7 @@ export default {
       ExtValueHelper.copyToChild(entity, APP.LOCATION)
       dummyKey = this.restructZone(entity, dummyKey)
       dummyKey = this.restructExb(entity, dummyKey)
+      dummyKey = this.restructTx(entity, dummyKey)
       return dummyKey
     },
   }
