@@ -55,6 +55,24 @@
               :vertical="form.txViewType ? form.txViewType.vertical : txIconsVertical"
               @change="onChangeTxSetting"
             />
+
+            <b-form-group>
+              <label v-t="'label.exb'" />
+              <v-select v-model="vueSelected.exbIdList" :options="iExbOptions" :disabled="!isEditable" multiple :close-on-select="false" class="vue-options-multi">
+                <template slot="no-options">
+                  {{ vueSelectNoMatchingOptions }}
+                </template>
+              </v-select>
+            </b-form-group>
+            <b-form-group>
+              <label v-t="'label.tx'" />
+              <v-select v-model="vueSelected.txIdList" :options="iTxOptions" :disabled="!isEditable" multiple :close-on-select="false" class="vue-options-multi">
+                <template slot="no-options">
+                  {{ vueSelectNoMatchingOptions }}
+                </template>
+              </v-select>
+            </b-form-group>
+
             <b-form-group v-show="useZoneClass">
               <label v-t="'label.zoneClass'" />
               <v-select v-model="vueSelected.zones" :options="getZoneClassOptions()" :disabled="!isEditable" :readonly="!isEditable" multiple :close-on-select="false" class="vue-options-multi">
@@ -87,6 +105,7 @@ import { ZONE, PATTERN } from '../../../sub/constant/Constants'
 import * as NumberUtil from '../../../sub/util/NumberUtil'
 import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
+import * as ConfigHelper from '../../../sub/helper/dataproc/ConfigHelper'
 import * as ExtValueHelper from '../../../sub/helper/domain/ExtValueHelper'
 import * as MenuHelper from '../../../sub/helper/dataproc/MenuHelper'
 import * as OptionHelper from '../../../sub/helper/dataproc/OptionHelper'
@@ -124,10 +143,13 @@ export default {
         'locationId', 'locationCd', 'locationType', 'locationName',
         'areaId', 'posId', 'x', 'y',
         'visible', 'txViewType', 'locationZoneList',
+        'exbIds', 'txIds', 
         ...ExtValueHelper.getExtValueKeys(APP.LOCATION, true)
       ]),
       vueSelected: {
         area: null,
+        exbIdList: [],
+        txIdList: [],
         zones: [],
       },
       txIconsDispFormat: 1,
@@ -146,6 +168,22 @@ export default {
     },
     locationTypeOptions(){
       return OptionHelper.getLocationTypeOptions()
+    },
+    iExbOptions() {
+      return StateHelper.getOptionsFromState(
+        'exb',
+        ConfigHelper.includesDeviceType('deviceId')? 'deviceId': 'deviceIdX',
+        true,
+        exb => !Util.hasValue(exb.location) || exb.location.locationId == this.form.locationId
+      )
+    },
+    iTxOptions() {
+      return StateHelper.getOptionsFromState(
+        'tx',
+        tx => StateHelper.getLocationTxName(tx),
+        true,
+        tx => !Util.hasValue(tx.location) || tx.location.locationId == this.form.locationId
+      )
     },
     zoneBlockOptions(){
       return StateHelper.getOptionsFromState('zone', false, true, zone => zone.x != null && zone.y != null)
@@ -174,6 +212,18 @@ export default {
         if(this.checkWarn && Util.hasValue(this.form.locationZoneList) && Util.getValue(oldVal, 'value', null) != null){
           this.showAreaWarn = true
         }
+      },
+      deep: true,
+    },
+    'vueSelected.exbIdList': {
+      handler: function(newVal, oldVal){
+        this.form.exbIds = newVal.map(val => val.value)
+      },
+      deep: true,
+    },
+    'vueSelected.txIdList': {
+      handler: function(newVal, oldVal){
+        this.form.txIds = newVal.map(val => val.value)
       },
       deep: true,
     },
@@ -210,6 +260,16 @@ export default {
     this.$nextTick(() => {
       const locationZoneList = this.form.locationZoneList
       if(Util.hasValue(locationZoneList)){
+        if(Util.hasValue(this.form.exbIds)){
+          this.vueSelected.exbIdList = _(this.form.exbIds).map(exbId => 
+            VueSelectHelper.getVueSelectData(this.iExbOptions, exbId)
+          ).filter(option => option).sort((a, b) => a.label < b.label? -1: 1).uniqWith(_.isEqual).value()
+        }
+        if(Util.hasValue(this.form.txIds)){
+          this.vueSelected.txIdList = _(this.form.txIds).map(txId => 
+            VueSelectHelper.getVueSelectData(this.iTxOptions, txId)
+          ).filter(option => option).sort((a, b) => a.label < b.label? -1: 1).uniqWith(_.isEqual).value()
+        }
         const zoneMap = {}
         this.zones.forEach(zone => {
           if(zone.x == null && zone.y == null){
@@ -278,10 +338,11 @@ export default {
         posId: this.form.posId,
         x: this.form.x,
         y: this.form.y,
+        exbIdList: this.form.exbIds,
+        txIdList: this.form.txIds,
       }
       ExtValueHelper.getExtValueKeys(APP.LOCATION).forEach(key => entity.extValue[key] = this.form[key])
 
-      entity.deviceIdList = this.exbs.filter(exb => exb.locationId == entity.locationId).map(exb => exb.deviceId)
       entity.locationZoneList = Util.getValue(this.form, 'locationZoneList', []).map(locationZone => ({
         locationZonePK: {
           locationId: this.form.locationId? this.form.locationId: dummyKey--,

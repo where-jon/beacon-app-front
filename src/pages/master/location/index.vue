@@ -92,6 +92,7 @@ export default {
       return ['ID', 'locationName', this.isShowLocationType()? 'locationTypeName': null, 'areaName', 'x', 'y', 'txViewType', 'visible']
         .concat(this.createCustomColumn(true).map(val => val.key))
         .concat(['deviceId', 'deviceIdX'].filter(val => ConfigHelper.includesDeviceType(val)))
+        .concat(APP.TX.BTX_MINOR == 'minor'? 'minor': 'btxId')
         .filter(val => val)
     },
     customCsvData(val){
@@ -101,13 +102,16 @@ export default {
       if(Util.hasValue(val.txViewType)){
         val.txViewType = JSON.stringify(val.txViewType)
       }
-      const deviceIdList = this.exbs.filter(exb => exb.locationId == val.locationId).map(val => val.deviceId)
+      const deviceIdList = this.exbs.filter(exb => Util.getValue(val, 'exbIds', []).includes(exb.exbId)).map(val => val.deviceId)
       if(ConfigHelper.includesDeviceType('deviceId')){
         val.deviceId = deviceIdList.join(BULK.SPLITTER)
       }
       if(ConfigHelper.includesDeviceType('deviceIdX')){
         val.deviceIdX = deviceIdList.map(val => val.toString(16)).join(BULK.SPLITTER)
       }
+      const txKey = APP.TX.BTX_MINOR == 'minor'? 'minor': 'btxId'
+      const txList = this.txs.filter(tx => Util.getValue(val, 'txIds', []).includes(tx.txId)).map(val => val[txKey])
+      val[txKey] = txList.join(';')
     },
     async fetchData(payload) {
       try {
