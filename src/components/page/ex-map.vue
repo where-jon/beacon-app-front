@@ -174,7 +174,7 @@
 import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import { SENSOR, TX, CATEGORY, POT_TYPE, SHAPE } from '../../sub/constant/Constants'
+import { SENSOR, TX, CATEGORY, POT_TYPE, SHAPE, KEY } from '../../sub/constant/Constants'
 import { APP, DISP, DEV, APP_SERVICE, EXCLOUD, MSTEAMS_APP } from '../../sub/constant/config'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
@@ -191,6 +191,7 @@ import * as EXCloudHelper from '../../sub/helper/dataproc/EXCloudHelper'
 import * as HeatmapHelper from '../../sub/helper/ui/HeatmapHelper'
 import * as HttpHelper from '../../sub/helper/base/HttpHelper'
 import * as IconHelper from '../../sub/helper/ui/IconHelper'
+import * as LocalStorageHelper from '../../sub/helper/base/LocalStorageHelper'
 import * as MessageHelper from '../../sub/helper/domain/MessageHelper'
 import * as MenuHelper from '../../sub/helper/dataproc/MenuHelper'
 import * as OptionHelper from '../../sub/helper/dataproc/OptionHelper'
@@ -483,6 +484,7 @@ export default {
     'vueSelected.area': {
       handler: function(newVal, oldVal){
         this.selectedArea = Util.getValue(newVal, 'value', null)
+        LocalStorageHelper.setLocalStorage(KEY.CURRENT.AREA, this.selectedArea)
         if(this.isMounted && this.selectedArea != null){
           this.changeArea(this.selectedArea)
         }

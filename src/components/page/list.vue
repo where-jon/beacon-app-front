@@ -255,7 +255,7 @@
 <script>
 
 import { mapState, mapMutations } from 'vuex'
-import { CATEGORY, SENSOR, EXB } from '../../sub/constant/Constants'
+import { CATEGORY, SENSOR, EXB, KEY } from '../../sub/constant/Constants'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as CsvUtil from '../../sub/util/CsvUtil'
@@ -518,11 +518,18 @@ export default {
       },
       deep: true,
     },
+    selectedArea: function(newVal, oldVal) {
+      LocalStorageHelper.setLocalStorage(KEY.CURRENT.AREA, newVal)
+    },
   },
   async created() {
     await StateHelper.load('region')
   },
   async mounted() {
+    const currentArea = LocalStorageHelper.getLocalStorage(KEY.CURRENT.AREA)
+    if(Util.hasValue(currentArea)) {
+      this.selectedArea = currentArea
+    }
     const strageMessage = LocalStorageHelper.popLocalStorage('listMessage')
     this.message = Util.hasValue(strageMessage)? strageMessage: this.listMessage
     this.replaceAS({listMessage: null})
@@ -530,7 +537,7 @@ export default {
     if (this.params.extraFilter) {
       const filterColumnList = this.params.extraFilter.filter(str => str != 'detectState')
       await Promise.all(filterColumnList.map(state => StateHelper.load(state)))
-      filterColumnList.filter(state => ['category', 'group'].some(s => s == state)).forEach(state => {
+      filterColumnList.filter(state => ['category', 'group', 'area'].some(s => s == state)).forEach(state => {
         const selectedKey = StringUtil.concatCamel('selected', state)
         this.vueSelected[state] = VueSelectHelper.getVueSelectData(this[state + 'Options'], this[selectedKey])
       })

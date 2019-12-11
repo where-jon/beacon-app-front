@@ -248,7 +248,8 @@ export const getThemeClasses = selectedTheme => {
  * @return {Boolean}
  */
 export const useMaster = feature => {
-  if (LocalStorageHelper.getLogin().tenantAdmin) {
+  const login = LocalStorageHelper.getLogin()
+  if (login && login.tenantAdmin) {
     return true
   }
   const featureList = store.state.tenantFeatureList
