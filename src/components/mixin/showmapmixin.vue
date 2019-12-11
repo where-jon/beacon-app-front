@@ -2,13 +2,14 @@
 <script>
 import { Stage,Touch,Bitmap } from 'createjs-module'
 import { DISP } from '../../sub/constant/config'
-import { POSITION } from '../../sub/constant/Constants'
+import { POSITION, KEY } from '../../sub/constant/Constants'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as Util from '../../sub/util/Util'
 import * as VueUtil from '../../sub/util/VueUtil'
 import * as StringUtil from '../../sub/util/StringUtil'
-import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import * as AreaMapHelper from '../../sub/helper/domain/AreaMapHelper'
+import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
+import * as LocalStorageHelper from '../../sub/helper/base/LocalStorageHelper'
 import * as VueSelectHelper from '../../sub/helper/ui/VueSelectHelper'
 import reloadmixin from './reloadmixin.vue'
 import commonmixin from './commonmixin.vue'
@@ -43,6 +44,10 @@ export default {
   },
   async created() {
     await StateHelper.load('area')
+    const currentArea = LocalStorageHelper.getLocalStorage(KEY.CURRENT.AREA)
+    if(Util.hasValue(currentArea)) {
+      this.selectedArea = currentArea
+    }
     this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions, this.selectedArea, !Util.hasValue(this.selectedArea))
     this.selectedArea = Util.getValue(this, 'vueSelected.area.value', this.getInitAreaOption())
     this.loadComplete = true

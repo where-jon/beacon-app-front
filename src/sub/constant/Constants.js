@@ -47,6 +47,13 @@ export const KEYCODE = {
   ENTER: 13
 }
 
+export const KEY = {
+  CURRENT: {
+    REGION: 'currentRegion',
+    AREA: 'currentArea',
+  },
+}
+
 export const PATTERN = {
   NUMBER: '^-?[0-9]+[.]?[0-9]*$',
   NUMBER_LIST: '^(-?[0-9]+[.]?[0-9]*)+(,-?[0-9]+[.]?[0-9]*)*$',
