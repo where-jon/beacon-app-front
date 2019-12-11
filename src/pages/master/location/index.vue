@@ -68,7 +68,7 @@ export default {
     createCustomColumn(isDownload){
       const ret = []
       APP.LOCATION.WITH.forEach(val => {
-        if(!ExtValueHelper.isShowList(APP.LOCATION, val)) {
+        if(!isDownload && !ExtValueHelper.isShowList(APP.LOCATION, val)) {
           return
         }
         const column = {key: val, label: val, sortable: true}
