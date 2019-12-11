@@ -5,7 +5,7 @@
       <alert :message="message" :force-hide="true" />
 
       <b-form @submit.prevent="save">
-        <b-form-group :label="$t('label.deviceId')">
+        <b-form-group :label="$t('label.device')">
           <v-select v-model="vueSelected.deviceId" :options="deviceIds" :disable="!isEditable" :clearable="false" class="vue-options-lg">
             <template slot="no-options">
               {{ vueSelectNoMatchingOptions }}
