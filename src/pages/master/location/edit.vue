@@ -40,11 +40,6 @@
               <label v-t="'label.locationY'" />
               <input v-model="form.y" :readonly="!isEditable" type="number" min="0" max="99999" class="form-control">
             </b-form-group>
-            <b-form-group>
-              <b-form-checkbox v-model="form.visible" value="true" unchecked-value="false" :disabled="!isEditable" :readonly="!isEditable">
-                {{ $t('label.visible') }}
-              </b-form-checkbox>
-            </b-form-group>
 
             <extform :is-editable="isEditable" :form="form" :p-ext-value="extValue" />
 
@@ -142,7 +137,7 @@ export default {
       form: Util.extract(this.$store.state.app_service.location, [
         'locationId', 'locationCd', 'locationType', 'locationName',
         'areaId', 'posId', 'x', 'y',
-        'visible', 'txViewType', 'locationZoneList',
+        'txViewType', 'locationZoneList',
         'exbIds', 'txIds', 
         ...ExtValueHelper.getExtValueKeys(APP.LOCATION, true)
       ]),
@@ -328,7 +323,6 @@ export default {
         locationType: this.form.locationType,
         areaId: this.form.areaId,
         locationName: this.form.locationName,
-        visible: this.form.visible,
         txViewType: {
           displayFormat: this.txIconsDispFormat,
           horizon: this.txIconsHorizon,

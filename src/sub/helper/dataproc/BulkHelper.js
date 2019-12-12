@@ -572,7 +572,6 @@ export const createParamLocation = (entity, dummyKey) => {
   Util.setValue(ret, 'locationCd', entity.locationCd)
   Util.setValue(ret, 'areaName', entity.areaName)
   Util.setValue(ret, 'locationName', entity.locationName)
-  Util.setValue(ret, 'visible', entity.visible)
   Util.setValue(ret, 'txViewType', entity.txViewType)
   Util.setValue(ret, 'posId', entity.posId)
   Util.setValue(ret, 'posIdName', entity.posIdName)
