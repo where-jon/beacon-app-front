@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import Vue from 'vue'
 import * as config from '../sub/constant/config'
 import { SETTING } from '../sub/constant/Constants'
 import * as Util from '../sub/util/Util'
@@ -50,7 +51,15 @@ export default async (context, inject) => {
   }, 3000)
   
 }
-  
+
+Vue.filter('number_format', (value) => {
+  if (!value) {
+    return value
+  }
+  let formatter = new Intl.NumberFormat('ja-JP')
+  return formatter.format(value)
+})
+
 if (String.prototype.includes) {
   console.info('Adding methods. Don\'t use methods in IE before this is called.')
   String.prototype.includes = function(search, start) {

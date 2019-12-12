@@ -277,6 +277,13 @@
     "positionStackShort": "全体",
     "positionStackType": "区分",
 
+    "enterTable": "入退場表",
+    "personCount": "人",
+    "enter": "現在入場者数",
+    "today_enter": "本日の出面",
+    "total_enter": "総出面",
+    "elapsed_time": "無事故無災害の記録",
+
     "password": "パスワード",
     "passwordCurrent": "現在のパスワード",
     "passwordUpdate": "変更パスワード",

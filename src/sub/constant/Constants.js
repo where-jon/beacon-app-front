@@ -846,6 +846,11 @@ export const MENU = [
       icon: 'building',
     },
     {
+      key: 'enterTable',
+      path: 'enter-table',
+      icon: 'table',
+    },
+    {
       key: 'pirMenu',
       path: 'pir',
       icon: 'users',

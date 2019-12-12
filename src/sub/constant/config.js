@@ -275,6 +275,9 @@ export const APP = { // 機能面に関する設定
       EXSERVER: false, // EXServerを使う
     },
   },
+  ENTER: {
+    START_TIME: 1576148292834, // unix time msec
+  },
 
   
   // 将来実装予定項目 START
@@ -468,6 +471,14 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     MAP: {
       MIN_HEIGHT: 32,
     },
+  },
+  ENTER: {
+    ROW_CNT: 15, // 表の行数
+    COL_CNT: 7, // 表の列数
+    LOST_COLOR: 'gray', // 消失者の文字色
+    ABSENT_BGCOLOR: 'rgb(255,153,153)', // 退場者の背景色 
+    ENTER_BGCOLOR: 'rgb(217,217,217)', // 入場者の背景色
+    AUTO_PAGER_MSEC: 10000, // 自動ページャー更新間隔(ミリ秒)
   },
 
   FONT_ICON_ADJUST_SCALE: 1.0, // アイコン内テキストのフォントサイズ係数
