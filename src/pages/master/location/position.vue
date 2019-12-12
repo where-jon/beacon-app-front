@@ -88,7 +88,7 @@
 import { mapState } from 'vuex'
 import { Shape, Container, Text } from 'createjs-module'
 import { APP, DISP } from '../../../sub/constant/config'
-import { UPDATE_ONLY_NN, SETTING, SHAPE } from '../../../sub/constant/Constants'
+import { UPDATE_ONLY_NN, SETTING, SHAPE, SENSOR } from '../../../sub/constant/Constants'
 import * as ArrayUtil from '../../../sub/util/ArrayUtil'
 import * as BrowserUtil from '../../../sub/util/BrowserUtil'
 import * as StringUtil from '../../../sub/util/StringUtil'
@@ -184,19 +184,17 @@ export default {
     },
     legendItems() {
       const patternMap = {}
-      const exbLocPatternList = [APP.LOCATION.TYPE.WITH, DISP.EXB_LOC.BGCOLOR_PATTERN, DISP.EXB_LOC.BGCOLOR_PATTERN_NOTX]
+      const sensorList = SENSOR.NAMES.filter(v => v).map(v => '' + v + SETTING.SPLITTER + v)
+      const exbLocPatternList = [APP.LOCATION.TYPE.WITH.concat(sensorList), DISP.EXB_LOC.BGCOLOR_PATTERN, DISP.EXB_LOC.BGCOLOR_PATTERN_NOTX]
       const noTxLabel = this.$i18n.tnl('label.locationNoTx')
 
       exbLocPatternList.forEach((patternList, idx) => {
-        patternList.forEach(pattern => {
-          const params = pattern.split(SETTING.SPLITTER)
-          if(!Util.hasValue(params[0])) {
-            return
+        ConfigHelper.parseKeyValue(patternList).forEach(pattern => {
+          const key = pattern.key
+          if(patternMap[key] == null) {
+            patternMap[key] = {}
           }
-          if(patternMap[params[0]] == null) {
-            patternMap[params[0]] = {}
-          }
-          patternMap[params[0]][idx == 0? 'key': idx == 1? 'bgColor': 'bgColorNoTx'] = params[1]
+          patternMap[key][idx == 0? 'key': idx == 1? 'bgColor': 'bgColorNoTx'] = pattern.value
         })
       })
       patternMap['-'] = {
@@ -206,7 +204,9 @@ export default {
         color: DISP.EXB_LOC.COLOR,
         shape: SHAPE.SQUARE,
       }
-      return Object.keys(patternMap).map(locationType => {
+      return Object.keys(patternMap).filter(type => {
+        return patternMap[type].bgColor != null || patternMap[type].bgColorNoTx != null
+      }).map(locationType => {
         const relationTxLabel = this.$i18n.tnl('label.' + patternMap[locationType].key)
         return {
           id: locationType,

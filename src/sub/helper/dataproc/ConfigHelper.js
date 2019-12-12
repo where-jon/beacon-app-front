@@ -6,6 +6,7 @@
 import axios from 'axios'
 import _ from 'lodash'
 import * as config from '../../constant/config'
+import { SETTING } from '../../constant/Constants'
 import * as Util from '../../util/Util'
 import * as LocalStorageHelper from '../base/LocalStorageHelper'
 
@@ -150,3 +151,22 @@ export const includesDeviceType = deviceType => includesOrBoth(deviceType, confi
  * @return {Boolean}
  */
 export const includesBtxMinor = btxMinor => includesOrBoth(btxMinor, config.APP.TX.BTX_MINOR)
+
+/**
+ * 「a:b」の形式で保存されているデータを分解する
+ * @method
+ * @param {String|String[]} keyValueString 
+ * @return {Object[]}
+ */
+export const parseKeyValue = keyValueString => {
+  const isSingle = typeof keyValueString == 'string'
+  const list = isSingle? [keyValueString]: keyValueString
+  const ret = list.map(kv => {
+    const params = kv.split(SETTING.SPLITTER).map(v => v.trim())
+    if(!Util.hasValue(params[0])) {
+      return
+    }
+    return { key: params[0], value: params[1] }
+  })
+  return isSingle? ret[0]: ret
+}
