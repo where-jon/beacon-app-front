@@ -571,7 +571,7 @@ export default {
       location.reload()
     },
     getItem(key){
-      if(this.$parent.$options.methods.getItem){
+      if(this.$parent.$options.methods && this.$parent.$options.methods.getItem){
         return this.$parent.$options.methods.getItem.call(this.$parent, key)
       }
       return {}
@@ -592,7 +592,7 @@ export default {
       return ret
     },
     clearAction(key){
-      if(this.$parent.$options.methods.clearAction){
+      if(this.$parent.$options.methods && this.$parent.$options.methods.clearAction){
         this.$parent.$options.methods.clearAction.call(this.$parent, key)
       }
     },
@@ -608,7 +608,7 @@ export default {
       headers.unshift('updateKey')
       headers.push('delFlg')
       const list = this.list.map((val) => ({...val, updateKey: val[this.id], delFlg: 0}))
-      if(this.$parent.$options.methods.customCsvData){
+      if(this.$parent.$options.methods && this.$parent.$options.methods.customCsvData){
         list.forEach((val) => {
           this.$parent.$options.methods.customCsvData.call(this.$parent, val)
         })
@@ -621,7 +621,7 @@ export default {
     async edit(item, index, target) {
       this.setEmptyMessage()
       let entity = item != null? await AppServiceHelper.fetch(this.appServicePath, item[this.id]): {}
-      if (this.$parent.$options.methods.convBeforeEdit) {
+      if (this.$parent.$options.methods && this.$parent.$options.methods.convBeforeEdit) {
         entity = this.$parent.$options.methods.convBeforeEdit.call(this.$parent, entity)
       }
       this.replaceAS({[this.name]: entity})
@@ -781,7 +781,7 @@ export default {
         await AppServiceHelper.deleteEntity(this.appServicePath, id)
         await StateHelper.load(this.params.name, true)
         this.message = this.$i18n.tnl('message.deleteCompleted', {target: this.$i18n.tnl('label.' + this.params.name)})
-        if(this.$parent.$options.methods.onSaved){
+        if(this.$parent.$options.methods && this.$parent.$options.methods.onSaved){
           this.$parent.$options.methods.onSaved.call(this.$parent, {message: this.message})
         }
         this.replace({showInfo: true})

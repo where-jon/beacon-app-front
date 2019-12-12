@@ -53,27 +53,27 @@ export default {
   },
   methods: {
     customCsvData(val){
-      if(this.$parent.$options.methods.customCsvData){
+      if(this.$parent.$options.methods && this.$parent.$options.methods.customCsvData){
         this.$parent.$options.methods.customCsvData.call(this.$parent, val)
       }
     },
     onSaved(val){
-      if(this.$parent.$options.methods.onSaved){
+      if(this.$parent.$options.methods && this.$parent.$options.methods.onSaved){
         this.$parent.$options.methods.onSaved.call(this.$parent, val)
       }
     },
     async fetchData(payload) {
-      if(this.$parent.$options.methods.fetchData){
+      if(this.$parent.$options.methods && this.$parent.$options.methods.fetchData){
         await this.$parent.$options.methods.fetchData.call(this.$parent, payload)
       }
     },
     thumbnail(row) {
-      if(this.$parent.$options.methods.thumbnail){
+      if(this.$parent.$options.methods && this.$parent.$options.methods.thumbnail){
         return this.$parent.$options.methods.thumbnail.call(this.$parent, row)
       }
     },
     style(row) {
-      if(this.$parent.$options.methods.style){
+      if(this.$parent.$options.methods && this.$parent.$options.methods.style){
         return this.$parent.$options.methods.style.call(this.$parent, row)
       }
     },
