@@ -89,7 +89,7 @@ export default {
       return ret
     },
     getCustumCsvColumns(){
-      return ['ID', 'locationName', this.isShowLocationType()? 'locationTypeName': null, 'areaName', 'x', 'y', 'txViewType', 'visible']
+      return ['ID', 'locationName', this.isShowLocationType()? 'locationTypeName': null, 'areaName', 'x', 'y', 'txViewType']
         .concat(this.createCustomColumn(true).map(val => val.key))
         .concat(['deviceId', 'deviceIdX'].filter(val => ConfigHelper.includesDeviceType(val)))
         .concat(APP.TX.BTX_MINOR == 'minor'? 'minor': 'btxId')

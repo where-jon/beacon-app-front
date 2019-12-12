@@ -49,7 +49,7 @@ export default {
   },
   methods: {
     async onSaving() {
-      await this.$refs.bulkEdit.bulkSave({numberList: ['posId', 'x', 'y'], booleanList: ['visible'], nullableList: ['posId', 'x', 'y']})
+      await this.$refs.bulkEdit.bulkSave({numberList: ['posId', 'x', 'y'], nullableList: ['posId', 'x', 'y']})
     },
     restructExb(entity, dummyKey){
       ['deviceId', 'deviceIdX'].forEach(key => {
