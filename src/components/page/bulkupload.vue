@@ -103,7 +103,7 @@ export default {
                   thumbnail: `data:image/${key.slice(key.lastIndexOf('.') + 1)};base64,${bVal}`,
                   size: bVal.length,
                 }
-                if(this.$parent.$options.methods.addLoadImage){
+                if(this.$parent.$options.methods && this.$parent.$options.methods.addLoadImage){
                   this.$parent.$options.methods.addLoadImage.call(this.$parent, imgInfo)
                 }
                 this.form.thumbnails.push(imgInfo)

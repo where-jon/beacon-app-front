@@ -150,7 +150,7 @@ export default {
       return ''
     },
     async fetchData(payload) {
-      if(this.$parent.$options.methods.fetchData){
+      if(this.$parent.$options.methods && this.$parent.$options.methods.fetchData){
         await this.$parent.$options.methods.fetchData.call(this.$parent, payload)
       }
     },
