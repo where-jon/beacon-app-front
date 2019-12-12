@@ -116,7 +116,7 @@ export default {
     async fetchData(payload) {
       try {
         this.showProgress()
-        await Promise.all(['location', 'exb'].map(StateHelper.load))
+        await Promise.all(['location', 'exb', 'tx'].map(StateHelper.load))
         if (payload && payload.done) {
           payload.done()
         }
