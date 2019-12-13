@@ -186,7 +186,7 @@ export default {
       const patternMap = {}
       const sensorList = SENSOR.NAMES.filter(v => v).map(v => '' + v + SETTING.SPLITTER + v)
       const exbLocPatternList = [APP.LOCATION.TYPE.WITH.concat(sensorList), DISP.EXB_LOC.BGCOLOR_PATTERN, DISP.EXB_LOC.BGCOLOR_PATTERN_NOTX]
-      const noTxLabel = this.$i18n.tnl('label.locationNoTx')
+      const hasTxLabel = this.$i18n.tnl('label.locationHasTx')
 
       exbLocPatternList.forEach((patternList, idx) => {
         ConfigHelper.parseKeyValue(patternList).forEach(pattern => {
@@ -211,10 +211,10 @@ export default {
         return {
           id: locationType,
           items: [
-            { id: locationType + '-Tx', text: 'A', style: StyleHelper.getStyleDisplay1({ ...commonStyle, bgColor: Util.getValue(patternMap[locationType], 'bgColor', DISP.EXB_LOC.BGCOLOR_DEFAULT) }) },
-            { id: locationType + '-TxDesc', text: relationTxLabel, style: {} },
             { id: locationType + '-NoTx', text: 'A', style: StyleHelper.getStyleDisplay1({ ...commonStyle, bgColor: Util.getValue(patternMap[locationType], 'bgColorNoTx', DISP.EXB_LOC.BGCOLOR_DEFAULT_NOTX) }) },
-            { id: locationType + '-NoTxDesc', text: relationTxLabel + noTxLabel, style: {} },
+            { id: locationType + '-NoTxDesc', text: relationTxLabel, style: {} },
+            { id: locationType + '-HasTx', text: 'A', style: StyleHelper.getStyleDisplay1({ ...commonStyle, bgColor: Util.getValue(patternMap[locationType], 'bgColor', DISP.EXB_LOC.BGCOLOR_DEFAULT) }) },
+            { id: locationType + '-HasTxDesc', text: relationTxLabel + hasTxLabel, style: {} },
           ]
         }
       })
