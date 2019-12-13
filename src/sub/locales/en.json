@@ -345,7 +345,7 @@
     "changeProfilePassword": "Change password",
     "changePassword": "Change password",
   
-    "system": "System settings",
+    "systemChild": "System settings",
 
     "region": "Region",
     "regionId": "Region ID",
@@ -571,7 +571,7 @@
     "SensorHistoryExc": "Sensor History",
     "Setting": "Setting",
     "Personal": "Personal Setting",
-    "System": "System Setting",
+    "SystemChild": "System Setting",
     "Develop": "Developer",
     "Meta": "Meta",
     "Role": "Role",

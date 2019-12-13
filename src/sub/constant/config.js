@@ -278,6 +278,9 @@ export const APP = { // 機能面に関する設定
   ENTER: {
     START_TIME: 1576148292834, // unix time msec
   },
+  MANAGE: {
+    SETTING_CATEGORY: [], // 表示するシステム設定カテゴリ
+  },
 
   
   // 将来実装予定項目 START

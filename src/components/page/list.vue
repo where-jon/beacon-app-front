@@ -475,7 +475,12 @@ export default {
       if(!options){
         return [{value: null, text: ''}]
       }
-      const ret = Object.keys(options).map(key => ({value: key, text: options[key]}))
+      const filterFunc = Util.getValue(this.params, 'settingCategory', null)
+      const ret = Object.keys(options).filter(key =>
+        filterFunc? filterFunc(key): true
+      ).map(key =>
+        ({value: key, text: options[key]})
+      )
       ret.unshift({value: null, text: ''})
       return ret
     },
