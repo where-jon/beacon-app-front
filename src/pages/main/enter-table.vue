@@ -41,6 +41,7 @@ import { APP, DISP } from '../../sub/constant/config'
 import * as Util from '../../sub/util/Util'
 import * as StringUtil from '../../sub/util/StringUtil'
 import * as PositionHelper from '../../sub/helper/domain/PositionHelper'
+import * as AppServiceHelper from '../../sub/helper/dataproc/AppServiceHelper'
 import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
@@ -58,8 +59,8 @@ export default {
       personList: [],
       currentPage: 1,
       currentEnterCount: 0, // 不在ゾーンにいない人の数
-      todaysEnterCount: 0, // 今日入場した数 TODO: 要実装
-      totalEnterCount: 0, // 述べ入場人数 TODO: 要バッチ実装
+      todaysEnterCount: 0, // 今日入場した数
+      totalEnterCount: 0, // 述べ入場人数
       elapsedTime: 0, // APP.ENTER.START_TIME以降の時間
       items: ViewHelper.createBreadCrumbItems('main', 'enterTable'),
       shortName: this.$i18n.t('label.enterTable'),
@@ -87,6 +88,10 @@ export default {
 
         this.populateTableData(positions)
         this.elapsedTime = Math.floor((new Date().getTime() - Number(APP.ENTER.START_TIME || 0)) / (1000 * 60 * 60))
+
+        let detectCount = await AppServiceHelper.fetch('/core/positionHistory/detectCount', '')
+        this.todaysEnterCount = detectCount.todaysEnterCount
+        this.totalEnterCount = detectCount.totalEnterCount
 
         if (payload && payload.done) {
           payload.done()
@@ -145,7 +150,7 @@ export default {
       })
       Util.debug(groupPotList)
 
-      const ROW_CNT = DISP.ENTER.ROW_CNT
+      const ROW_CNT = Math.max(Math.floor((window.innerHeight - 320) / 42), 3)
       const COL_CNT = DISP.ENTER.COL_CNT
       const personList = []
       let lastGroup
@@ -163,7 +168,7 @@ export default {
         
         let offset = ROW_CNT * COL_CNT * page
         let row = (idx - offset) % ROW_CNT
-        let col = Math.floor((idx - offset) / COL_CNT)
+        let col = Math.floor((idx - offset) / ROW_CNT)
 
         if (row == ROW_CNT - 1 && groupPot.isGroup) return
         if (row == 0 && !groupPot.isGroup) {
@@ -208,11 +213,15 @@ export default {
 .td {
   border: 2px solid white;
   padding: .5rem;
-  width: 200px;
+  @media screen and (min-width: 1350px) {
+    min-width: 150px;
+  }
 }
 
 table {
   border-collapse: collapse;
+  table-layout: auto;
+  width: 100%;
 }
 
 .nowrap {
@@ -227,7 +236,6 @@ table {
   display: grid;
   display: -ms-grid;
   margin-bottom: 10px;
-  margin-right: 3%;
 }
 
 .smallBox {
@@ -258,7 +266,10 @@ table {
     background-color: rgb(217,217,217);
   }
   .numval {
-    font-size: 1.8em;
+    font-size: 1.6em;
+    @media (max-width: 769px) {
+      font-size: 1.2em;
+    }
     text-align: center;
     padding: 1px 1px;
   }
