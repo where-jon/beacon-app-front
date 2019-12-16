@@ -360,7 +360,8 @@
     "changeProfilePassword": "パスワードを変更する",
     "changePassword": "パスワードを変更する",
 
-    "system": "システム設定",
+    "system": "システム設定(管理用)",
+    "systemChild": "システム設定",
 
     "region": "リージョン",
     "regionId": "リージョンID",
@@ -501,6 +502,7 @@
     "number": "数値",
     "numberList": "数値リスト",
     "boolean": "真偽値",
+    "datetime": "日時",
 
     "---------------- Added at 1.1 ---------------":"",
 
@@ -588,7 +590,8 @@
     "SensorHistoryExc": "センサ情報",
     "Setting": "設定",
     "Personal": "個人設定",
-    "System": "システム設定",
+    "System": "システム設定(管理用)",
+    "SystemChild": "システム設定",
     "Develop": "開発用",
     "Meta": "メタ",
     "Role": "ロール",
@@ -960,6 +963,9 @@
         "AD_SYNC": {
           "CRON": "AD同期バッチ処理時間指定::指定された時刻にActive Directoryとの同期処理を行います。"
         }
+      },
+      "MANAGE": {
+        "SETTING_CATEGORY": "公開するシステム設定::顧客用のシステム設定画面に表示するカテゴリを設定します。"
       }
     },
     "DISP": {
@@ -1123,6 +1129,7 @@
         "SVC": "サーバ",
         "BATCH": "バッチ",
         "SIMULATION": "デモ用",
+        "MANAGE": "管理用",
         "OTHER_CATEGORY": "その他",
         "MAIL": "メール"
       },

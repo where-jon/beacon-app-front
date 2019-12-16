@@ -110,6 +110,6 @@ export default {
 
 <style scoped lang="scss">
   .feature{
-    width: 256px;
+    width: 288px;
   }
 </style>

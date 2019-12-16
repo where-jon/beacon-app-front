@@ -56,20 +56,14 @@ export const adjustValType = valType => {
   if(['number', 'int'].includes(type)){
     return SETTING.NUMBER
   }
-  if(['string'].includes(type)){
-    return SETTING.STRING
-  }
   if(['numberlist', 'numlist'].includes(type)){
     return SETTING.NUMBER_LIST
   }
   if(['stringlist', 'strlist'].includes(type)){
     return SETTING.STRING_LIST
   }
-  if(['boolean'].includes(type)){
-    return SETTING.BOOLEAN
-  }
-  if(['json'].includes(type)){
-    return SETTING.JSON
+  if(['boolean', 'json', 'date', 'datetime', 'time'].includes(type)){
+    return type
   }
   return SETTING.STRING
 }
@@ -130,6 +124,19 @@ export const getDefaultValType = (key, forceType) => {
 }
 
 /**
+ * カテゴリを判定する。
+ * @method
+ * @param {Object} setting 
+ * @return {String}
+ */
+export const getCategoryKey = setting => {
+  const categoryObjs = i18n.tnl('config.OPTIONS.SETTING_CATEGORY')
+  const categoryKeys = categoryObjs? Object.keys(categoryObjs): []
+  const key = Util.getValue(setting, 'key', '').split('.')[1]
+  return key && categoryKeys.includes(key)? key: SETTING.OTHER_CATEGORY
+}
+
+/**
  * 設定項目を作成する。
  * @method
  * @param {Object} setting 
@@ -144,7 +151,8 @@ export const createSetting = (setting, isTenant, option) => {
     ...setting,
     valType: valType,
     valTypeDisp: i18n.tnl('label.' + valType),
-    defaultVal: defaultVal && defaultVal.toString? defaultVal.toString(): defaultVal
+    defaultVal: defaultVal && defaultVal.toString? defaultVal.toString(): defaultVal,
+    categoryKey: getCategoryKey(setting)
   }
   if(option){
     Object.keys(option).forEach(key => {

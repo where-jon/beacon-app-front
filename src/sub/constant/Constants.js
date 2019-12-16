@@ -554,12 +554,15 @@ export const FONT = {
 
 export const SETTING = {
   SPLITTER: ':',
-  VALUES: ['string', 'stringList', 'number', 'numberList', 'boolean', 'json'],
+  VALUES: ['string', 'stringList', 'number', 'numberList', 'boolean', 'date', 'datetime', 'time', 'json'],
   STRING: 'string',
   STRING_LIST: 'stringList',
   NUMBER: 'number',
   NUMBER_LIST: 'numberList',
   BOOLEAN: 'boolean',
+  DATE: 'date',
+  DATETIME: 'datetime',
+  TIME: 'time',
   JSON: 'json',
   SELECT: 'select',
   OTHER_CATEGORY: 'OTHER_CATEGORY',
@@ -570,6 +573,9 @@ export const SETTING = {
       {text: i18n.tnl('label.number'), value: 'number'},
       {text: i18n.tnl('label.numberList'), value: 'numberList'},
       {text: i18n.tnl('label.boolean'), value: 'boolean'},
+      {text: i18n.tnl('label.date'), value: 'date'},
+      {text: i18n.tnl('label.datetime'), value: 'datetime'},
+      {text: i18n.tnl('label.time'), value: 'time'},
       {text: 'json', value: 'json'},
     ]
   },
@@ -716,6 +722,9 @@ export const SETTING = {
             INTERVAL: SETTING.NUMBER,
           },
         },
+        MANAGE: {
+          SETTING_CATEGORY: SETTING.STRING_LIST,
+        }
       },
       DISP: {
         TX: {
@@ -1126,6 +1135,11 @@ export const MENU = [
       key: 'personal',
       path: 'personal',
       icon: 'user-cog',
+    },
+    {
+      key: 'systemChild',
+      path: 'appSystem',
+      icon: 'cogs',
     },
     {
       key: 'system',
