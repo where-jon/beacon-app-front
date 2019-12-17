@@ -255,6 +255,7 @@
 <script>
 
 import { mapState, mapMutations } from 'vuex'
+import { APP } from '../../sub/constant/config'
 import { CATEGORY, SENSOR, EXB, KEY } from '../../sub/constant/Constants'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
@@ -334,6 +335,7 @@ export default {
           zone: '',
           zoneCategory: '',
           detectState: null,
+          keyCategory: '',
           settingCategory: '',
         },
         detail: null,
@@ -470,18 +472,22 @@ export default {
       options.unshift({value:null, text:''})
       return options
     },
-    settingCategoryOptions() {
-      const options = this.$i18n.tnl('config.OPTIONS.SETTING_CATEGORY')
-      if(!options){
-        return [{value: null, text: ''}]
+    keyCategoryOptions() {
+      const options = this.$i18n.tnl('config.OPTIONS.KEY_CATEGORY')
+      if(!Util.hasValue(options)) {
+        return [{ value: null, text: '' }]
       }
-      const filterFunc = Util.getValue(this.params, 'settingCategory', null)
-      const ret = Object.keys(options).filter(key =>
-        filterFunc? filterFunc(key): true
-      ).map(key =>
-        ({value: key, text: options[key]})
-      )
-      ret.unshift({value: null, text: ''})
+      const ret = Object.keys(options).map(key => ({value: key, text: options[key]}))
+      ret.unshift({ value: null, text: '' })
+      return ret
+    },
+    settingCategoryOptions() {
+      const options = APP.MANAGE.SETTING_CATEGORY
+      if(!Util.hasValue(options)) {
+        return [{ value: null, text: '' }]
+      }
+      const ret = options.map(key => ({value: key, text: key}))
+      ret.unshift({ value: null, text: '' })
       return ret
     },
     loginId() {
@@ -752,12 +758,20 @@ export default {
             return false
           }
           break
+        case 'keyCategory':
+          if (extra.keyCategory){
+            if(originItem.isParent){
+              return false
+            }
+            return originItem.categoryKey == extra.keyCategory
+          }
+          break
         case 'settingCategory':
           if (extra.settingCategory){
             if(originItem.isParent){
               return false
             }
-            return originItem.categoryKey == extra.settingCategory
+            return originItem.category == extra.settingCategory
           }
           break
         }

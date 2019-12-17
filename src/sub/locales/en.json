@@ -493,6 +493,7 @@
     "settingDescription": "* A description will be displayed if you move the cursor to the key and item name.",
     "allShowFilter": "Show all items",
     "settingCategory": "Category",
+    "keyCategory": "Kind",
     "favoriteMark": "★",
     "provider": "Provider",
     "locale": "Language",
@@ -1054,7 +1055,7 @@
     },
 
     "OPTIONS": {
-      "SETTING_CATEGORY": {
+      "KEY_CATEGORY": {
         "COMMON": "Common",
         "SYS": "System",
         "MENU": "Menu",

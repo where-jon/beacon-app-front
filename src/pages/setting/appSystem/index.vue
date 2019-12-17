@@ -1,12 +1,11 @@
 
 <template>
   <div class="container-fluid">
-    <system-setting :p-breadcrumb-items="breadcrumbItems" :filter-func="settingFilter" />
+    <system-setting :p-breadcrumb-items="breadcrumbItems" use-setting-category-filter/>
   </div>
 </template>
 
 <script>
-import { APP } from '../../../sub/constant/config'
 import systemSetting from '../../../components/page/systemSetting.vue'
 
 export default {
@@ -15,13 +14,8 @@ export default {
   },
   computed: {
     breadcrumbItems() {
-      return ['setting', 'system']
+      return ['setting', 'systemChild']
     },
-  },
-  methods: {
-    settingFilter(setting) {
-      return APP.MANAGE.SETTING_CATEGORY.map(val => val.toUpperCase()).includes(setting.categoryKey)
-    }
   },
 }
 </script>
