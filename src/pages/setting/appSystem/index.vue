@@ -6,7 +6,6 @@
 </template>
 
 <script>
-import { APP } from '../../../sub/constant/config'
 import systemSetting from '../../../components/page/systemSetting.vue'
 
 export default {
