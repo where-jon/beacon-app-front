@@ -1,7 +1,7 @@
 
 <template>
   <div class="container-fluid">
-    <system-setting :p-breadcrumb-items="breadcrumbItems" :filter-func="settingFilter" />
+    <system-setting :p-breadcrumb-items="breadcrumbItems" use-setting-category-filter/>
   </div>
 </template>
 
@@ -15,13 +15,8 @@ export default {
   },
   computed: {
     breadcrumbItems() {
-      return ['setting', 'system']
+      return ['setting', 'systemChild']
     },
-  },
-  methods: {
-    settingFilter(setting) {
-      return APP.MANAGE.SETTING_CATEGORY.map(val => val.toUpperCase()).includes(setting.categoryKey)
-    }
   },
 }
 </script>

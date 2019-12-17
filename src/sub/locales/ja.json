@@ -510,6 +510,7 @@
     "settingDescription": "* キー名、項目名にカーソルを合わせると説明が表示されます。",
     "allShowFilter": "すべての項目を表示する",
     "settingCategory": "カテゴリ",
+    "keyCategory": "種別",
     "favoriteMark": "★",
     "provider": "プロバイダ",
     "locale": "言語設定",
@@ -1092,7 +1093,7 @@
     },
 
     "OPTIONS": {
-      "SETTING_CATEGORY": {
+      "KEY_CATEGORY": {
         "COMMON": "共通",
         "SYS": "システム",
         "MENU": "メニュー",

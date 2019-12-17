@@ -101,11 +101,15 @@ export default {
       type: Function,
       default: null,
     },
-    filterFunc: {
-      type: Function,
-      default: null,
-    },
     useRegistForm: {
+      type: Boolean,
+      default: false,
+    },
+    useKeyCategoryFilter: {
+      type: Boolean,
+      default: false,
+    },
+    useSettingCategoryFilter: {
       type: Boolean,
       default: false,
     },
@@ -124,13 +128,12 @@ export default {
         ]),
         initTotalRows: this.totalRows,
         formId: 'updateForm',
-        allShowFilter: true,
+        allShowFilter: !this.useSettingCategoryFilter,
         disableTableButtons: true,
         addFilterFields: ['title', 'inputData'],
         allDispFields: ['title', 'defaultVal'],
-        extraFilter: ['settingCategory'],
+        extraFilter: [this.useKeyCategoryFilter? 'keyCategory': null, this.useSettingCategoryFilter? 'settingCategory': null].filter(val => val),
         tableDescription: 'settingDescription',
-        settingCategory: this.filterFunc? category => this.filterFunc({ categoryKey: category }): null,
       },
       name: 'setting',
       id: 'settingId',
@@ -206,8 +209,8 @@ export default {
           this.oldSettingEntities = this.callee? _.cloneDeep(this.pSettingList): this.settings
         }
         this.settingList = SettingHelper.createSettingList(this.callee? this.pSettingList: this.settings, this.callee)
-        if(this.filterFunc) {
-          this.settingList = this.settingList.filter(setting => this.filterFunc(setting))
+        if(this.useSettingCategoryFilter) {
+          this.settingList = this.settingList.filter(setting => setting.isParent || setting.category != null)
         }
         this.settingList.forEach(setting => this.addInputData(setting))
         this.initFilter()

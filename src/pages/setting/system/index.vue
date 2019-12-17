@@ -1,7 +1,7 @@
 
 <template>
   <div class="container-fluid">
-    <system-setting :p-breadcrumb-items="breadcrumbItems" use-regist-form />
+    <system-setting :p-breadcrumb-items="breadcrumbItems" use-regist-form use-key-category-filter />
   </div>
 </template>
 

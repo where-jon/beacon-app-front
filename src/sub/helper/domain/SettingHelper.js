@@ -130,7 +130,7 @@ export const getDefaultValType = (key, forceType) => {
  * @return {String}
  */
 export const getCategoryKey = setting => {
-  const categoryObjs = i18n.tnl('config.OPTIONS.SETTING_CATEGORY')
+  const categoryObjs = i18n.tnl('config.OPTIONS.KEY_CATEGORY')
   const categoryKeys = categoryObjs? Object.keys(categoryObjs): []
   const key = Util.getValue(setting, 'key', '').split('.')[1]
   return key && categoryKeys.includes(key)? key: SETTING.OTHER_CATEGORY
@@ -214,7 +214,7 @@ export const getI18Config = isTenant => {
  * @return {Object[]}
  */
 export const mergeSettings = settings => {
-  const categoryObjs = i18n.tnl('config.OPTIONS.SETTING_CATEGORY')
+  const categoryObjs = i18n.tnl('config.OPTIONS.KEY_CATEGORY')
   const ret = []
   Object.keys(categoryObjs).forEach(categoryKey => {
     if(categoryKey == SETTING.OTHER_CATEGORY){
