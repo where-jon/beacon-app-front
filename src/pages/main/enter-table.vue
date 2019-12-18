@@ -74,11 +74,13 @@ export default {
       autoPager: false,
       autoPagerPlay: false,
       modalInfo: { title: this.$i18n.tnl('label.confirm'), content: '', id:'' },
-      loadStates: ['tx', 'exb', 'location', 'pot'],
+      loadStates: ['category', 'zone', 'tx', 'exb', 'location', 'pot'],
     }
   },
   computed: {
     ...mapState('app_service', [
+      'categories',
+      'zones',
       'txs',
       'pots',
       'locations',
@@ -137,6 +139,8 @@ export default {
       var curGroupId = ""
       this.currentEnterCount = 0
 
+      const absentCategory = this.categories.find(e => e.systemUse == 1 && e.categoryCd == 'ABSENT')
+      const absentZoneList = this.zones.filter(e => absentCategory && e.categoryId == absentCategory.categoryId)
       _(this.pots).map(pot => {
         let pos = positions.find(pos => pos.tx_id == pot.txId)
         const location = pos && pos.location? locationMap[pos.location.locationId]: {}
@@ -144,7 +148,7 @@ export default {
           potId: pot.potId,
           potName: pot.potName,
           locationId: location.locationId,
-          isAbsentZone: location.isAbsentZone,
+          isAbsentZone: _.some(absentZoneList, e => _.some(e.locationZoneList, loc => loc.locationZonePK.locationId == location.locationId)),
           groupCd: pot.group && pot.group.groupCd,
           groupName: pot.group && pot.group.groupName || this.$i18n.tnl('label.other'),
           color: pot.group? '#' + Util.getValue(pot, 'group.display.color').val: DISP.TX.COLOR,

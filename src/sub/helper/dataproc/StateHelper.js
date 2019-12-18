@@ -500,7 +500,7 @@ const appStateConf = {
       return arr.map(location => {
         const locationZoneList = Util.getValue(location, 'locationZoneList', [])
         const zoneTypeMap = {}
-        Util.getValue(location, 'locationZoneList', []).forEach(locationZone => {
+        locationZoneList.forEach(locationZone => {
           const zoneType = ZONE.getOptions().find(option => option.value == locationZone.zoneType)? ZONE.NON_COORDINATE: ZONE.COORDINATE
           const key = '' + zoneType
           if(!zoneTypeMap[key]){
