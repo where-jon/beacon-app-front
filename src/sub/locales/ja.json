@@ -1343,6 +1343,7 @@
     "MSTEAMS": {
       "USER_GUIDE1": "EXOfficeを利用するには、お客様のOffice365におけるグループおよびユーザ情報へ本アプリがアクセスすることを許可していただく必要があります。",
       "USER_GUIDE2": "Office365のテナントの管理者でサインインしていただき、権限を付与していただけるようお願いいたします。なお、この操作はPCで行ってください。",
+      "USER_GUIDE3": "ご利用にはEXOfficeのアカウントが必要です。詳しくはEXOfficeヘルプ　exoffice_sup@en2.exeo.co.jp へお問合せください。",
       "INVALID_TENANT": "本アプリ（EXOffice）を利用するには、サービス提供者（株式会社WHERE）と利用契約を結ぶ必要があります。すでに利用契約を結ばれている場合には、その旨ご一報ください。",
       "WAIT_A_MOMENT": "初期処理中...",
       "INVALID_TENANT_CONTACT": "連絡先：https://where123.jp/contact/",

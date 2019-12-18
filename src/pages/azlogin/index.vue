@@ -2,7 +2,8 @@
   <b-container fluid>
     <div class="not-registered" v-if="notRegistered">
       <b-row>
-        {{ $t('message.MSTEAMS.USER_GUIDE1') }}<br />{{ $t('message.MSTEAMS.USER_GUIDE2') }}
+        {{ $t('message.MSTEAMS.USER_GUIDE1') }}<br />{{ $t('message.MSTEAMS.USER_GUIDE2') }}<br />
+        {{ $t('message.MSTEAMS.USER_GUIDE3') }}
       </b-row>
       <b-form inline class="tenant">
         <label class="tenant-name">{{ $t('label.tenantName') }}</label>
