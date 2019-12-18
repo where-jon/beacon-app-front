@@ -31,6 +31,12 @@
           </b-dropdown-item>
         </b-nav-item-dropdown>
       </div>
+      <div class="col-auto reload-button-container">
+        <a v-if="autoPager" id="autoPager" href="#" @click="toggleAutoPager">
+          <font-awesome-icon v-if="isAutoPagerPlaying" icon="pause" />
+          <font-awesome-icon v-else icon="play" />
+        </a>
+      </div>
       <div class="col-auto reload-button-container ">
         <a v-if="reload" id="reload" href="#" @click="clickReload">
           <font-awesome-icon id="spinner" icon="sync-alt" :class="state.isLoad ? 'fa-spin' : ''" />
@@ -65,6 +71,14 @@ export default {
       type: Boolean,
       default: false
     },
+    autoPager: {
+      type: Boolean,
+      default: false
+    },
+    autoPagerPlay: {
+      type: Boolean,
+      default: false
+    },
     autoReload: {
       type: Boolean,
       default: true
@@ -90,6 +104,7 @@ export default {
     return {
       showLegend: false,
       touchLegend: false,
+      isAutoPagerPlaying: this.autoPagerPlay,
       useLegend: APP.POS.USE_LEGEND,
     }
   },
@@ -155,6 +170,10 @@ export default {
           AuthHelper.checkSession()
         }
       })
+    },
+    toggleAutoPager(e) {
+      this.isAutoPagerPlaying = !this.isAutoPagerPlaying
+      EventBus.$emit('toggleAutoPager', this.isAutoPagerPlaying)
     },
     setColor(className, color) {
       [].forEach.call(document.getElementsByClassName(className), (e) => {

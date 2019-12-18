@@ -1332,6 +1332,7 @@
     "noMapImage": "マップイメージが登録されていません。",
     "deleteConfirm": "{target}を削除してもよろしいですか？",
     "completeDeleteConfirm": "{target}を完全に削除します。よろしいですか？",
+    "exitConfirm": "{target}を強制退場にしてもよろしいですか？",
     "completed": "{target}が完了しました。",
     "failed": "{target}に失敗しました。（{code}）",
     "overLength": "{target}には{length}以内の文字列を入力してください。",

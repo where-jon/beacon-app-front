@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" :reload="reload" :short-name="shortName" />
+    <breadcrumb :items="items" :reload="reload" :autoPager="autoPager" :autoPagerPlay="autoPagerPlay" :short-name="shortName" />
     <div class="countDisplay">
       <div class="smallBox enter">
         <span><img src="~/assets/icon/person.svg" width="32" height="32"><span style="margin-left: 5px;" v-t="'label.enter'" /></span>
@@ -21,8 +21,8 @@
     </div>
     <div style="clear:both;">
       <table>
-        <tr v-for="(row, rindex) in personList[currentPage - 1]" :key="rindex">
-          <td v-for="(col, cindex) in row" :key="cindex" class="td nowrap" :style="{backgroundColor: col.bgColor, color: col.color, textAlign: col.textAlign}">{{ col.label }}</td>
+        <tr v-for="(row, rindex) in personGroupList[currentPage - 1]" :key="rindex">
+          <td v-for="(col, cindex) in row" :key="cindex" class="td nowrap" :style="{backgroundColor: col.bgColor, color: col.color, textAlign: col.textAlign}" @click.stop="exitConfirm(rindex, cindex, $event.target)">{{ col.label }}</td>
         </tr>
       </table>
     </div>
@@ -32,6 +32,10 @@
         <b-pagination v-model="currentPage" :total-rows="totalPages" :per-page="perPage" class="my-0" />
       </b-col>
     </b-row>
+    <!-- modal -->
+    <b-modal id="modalInfo" :title="modalInfo.title" @ok="execExit(modalInfo.id)">
+      {{ modalInfo.content }}
+    </b-modal>
   </div>
 </template>
 
@@ -46,6 +50,7 @@ import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import reloadmixin from '../../components/mixin/reloadmixin.vue'
+import { EventBus } from '../../sub/helper/base/EventHelper'
 
 export default {
   components: {
@@ -56,7 +61,7 @@ export default {
     return {
       totalPages: 1,
       perPage: 1,
-      personList: [],
+      personGroupList: [],
       currentPage: 1,
       currentEnterCount: 0, // 不在ゾーンにいない人の数
       todaysEnterCount: 0, // 今日入場した数
@@ -65,6 +70,10 @@ export default {
       items: ViewHelper.createBreadCrumbItems('main', 'enterTable'),
       shortName: this.$i18n.t('label.enterTable'),
       reload: true,
+      timer: null,
+      autoPager: false,
+      autoPagerPlay: false,
+      modalInfo: { title: this.$i18n.tnl('label.confirm'), content: '', id:'' },
       loadStates: ['tx', 'exb', 'location', 'pot'],
     }
   },
@@ -75,6 +84,13 @@ export default {
       'locations',
       'positionList',
     ]),
+  },
+  created() {
+    this.autoPagerPlay = APP.ENTER.AUTO_PAGE == 2
+    EventBus.$off('toggleAutoPager')
+    EventBus.$on('toggleAutoPager', (param)=>{
+      this.toggleAutoPager(param)
+    })
   },
   methods: {
     async fetchData(payload) {
@@ -97,8 +113,11 @@ export default {
           payload.done()
         }
 
-        if (this.totalPages > 1) {
-          this.startAutoPager()
+        if (this.totalPages > 1 && APP.ENTER.AUTO_PAGE > 0) {
+          this.autoPager = true
+          if (this.autoPagerPlay) {
+            this.startAutoPager()
+          }
         }
       }
       catch(e) {
@@ -123,10 +142,8 @@ export default {
         const location = pos && pos.location? locationMap[pos.location.locationId]: {}
         return {
           potId: pot.potId,
-          potCd: pot.potCd,
           potName: pot.potName,
           locationId: location.locationId,
-          locationName: location.locationName,
           isAbsentZone: location.isAbsentZone,
           groupCd: pot.group && pot.group.groupCd,
           groupName: pot.group && pot.group.groupName || this.$i18n.tnl('label.other'),
@@ -146,16 +163,18 @@ export default {
         }
         groupPotList.push({isGroup:false, label: StringUtil.cutOnLong(pot.potName, 10), textAlign: 'center',
           groupName:pot.groupName, color: pot.isLost? DISP.ENTER.LOST_COLOR: 'black', 
+          potId: pot.potId, isAbsentZone: pot.isAbsentZone,
           bgColor: pot.isAbsentZone? DISP.ENTER.ABSENT_BGCOLOR: DISP.ENTER.ENTER_BGCOLOR})
       })
       Util.debug(groupPotList)
 
       const ROW_CNT = Math.max(Math.floor((window.innerHeight - 320) / 42), 3)
       const COL_CNT = DISP.ENTER.COL_CNT
-      const personList = []
+      const personGroupList = []
       let lastGroup
       let page = 0
       let idx = -1
+      let col = 0
 
       groupPotList.forEach((groupPot) => {
         idx++
@@ -168,30 +187,43 @@ export default {
         
         let offset = ROW_CNT * COL_CNT * page
         let row = (idx - offset) % ROW_CNT
-        let col = Math.floor((idx - offset) / ROW_CNT)
+        col = Math.floor((idx - offset) / ROW_CNT)
 
         if (row == ROW_CNT - 1 && groupPot.isGroup) return
         if (row == 0 && !groupPot.isGroup) {
-          this.setList(personList, page, row, col, lastGroup)
+          this.setList(personGroupList, page, row, col, lastGroup)
           idx++
           row++            
         }
-        this.setList(personList, page, row, col, groupPot)
+        this.setList(personGroupList, page, row, col, groupPot)
       })
 
+      for (col++;col<COL_CNT;col++) {
+        this.setList(personGroupList, page, 0, col, {})
+      }
+
       this.totalPages = page + 1
-      this.personList = personList
+      this.personGroupList = personGroupList
+    },
+    toggleAutoPager(isAutoPagerPlaying) {
+      if (isAutoPagerPlaying) {
+        this.startAutoPager()
+      }
+      else {
+        if (this.timer) {
+          clearTimeout(this.timer)
+        }
+      }
     },
     startAutoPager() {
-      setTimeout(async () =>{
+      this.timer = setTimeout(async () =>{
         if (this.currentPage == this.totalPages) {
-          await this.fetchData()
           this.currentPage = 0
         }
         else {
           this.currentPage++
-          this.startAutoPager()
         }
+        this.startAutoPager()
       }, DISP.ENTER.AUTO_PAGER_MSEC)
     },
     setList(list, page, row, col, val) {
@@ -203,6 +235,18 @@ export default {
         list[page][row] = {}
       }
       list[page][row][col] = val
+    },
+    exitConfirm(rindex, cindex, button) {
+      const personGroup = this.personGroupList[this.currentPage - 1][rindex][cindex]
+      if (personGroup && personGroup.potId && !personGroup.isGroup && !personGroup.isAbsentZone) {
+        this.modalInfo.content = this.$i18n.tnl('message.exitConfirm', {target: personGroup.label})
+        this.modalInfo.id = personGroup.potId
+        this.$root.$emit('bv::show::modal', 'modalInfo', button)
+      }
+    },
+    async execExit(potId) {
+      await AppServiceHelper.update('/core/positionHistory/saveAtAbsentZone/' + potId)
+      this.fetchData()
     }
   }
 }

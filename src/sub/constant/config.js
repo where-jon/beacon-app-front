@@ -276,6 +276,7 @@ export const APP = { // 機能面に関する設定
     },
   },
   ENTER: {
+    AUTO_PAGE: 1, // 0:Disable, 1:Enable & Default Pause, 2:Enable && Default Start
     START_TIME: 1576148292834, // unix time msec
   },
   MANAGE: {
