@@ -228,7 +228,7 @@ export default {
           this.currentPage++
         }
         this.startAutoPager()
-      }, DISP.ENTER.AUTO_PAGER_MSEC)
+      }, APP.ENTER.AUTO_PAGER_MSEC)
     },
     setList(list, page, row, col, val) {
       Util.debug(page, row, col, val.label)

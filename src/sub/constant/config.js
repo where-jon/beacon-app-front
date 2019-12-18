@@ -278,6 +278,7 @@ export const APP = { // 機能面に関する設定
   ENTER: {
     AUTO_PAGE: 1, // 0:Disable, 1:Enable & Default Pause, 2:Enable && Default Start
     START_TIME: 1576148292834, // unix time msec
+    AUTO_PAGER_MSEC: 10000, // 自動ページャー更新間隔(ミリ秒)
   },
   MANAGE: {
     SETTING_CATEGORY: [], // 表示するシステム設定カテゴリ
@@ -481,7 +482,6 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     LOST_COLOR: 'gray', // 消失者の文字色
     ABSENT_BGCOLOR: 'rgb(255,153,153)', // 退場者の背景色 
     ENTER_BGCOLOR: 'rgb(217,217,217)', // 入場者の背景色
-    AUTO_PAGER_MSEC: 10000, // 自動ページャー更新間隔(ミリ秒)
   },
 
   FONT_ICON_ADJUST_SCALE: 1.0, // アイコン内テキストのフォントサイズ係数
