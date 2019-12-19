@@ -653,6 +653,9 @@ export const SETTING = {
         TXDETAIL: {
           ITEMS: SETTING.STRING_LIST,
         },
+        ENTER: {
+          START_TIME: SETTING.DATETIME,
+        },
         SVC: {
           SLACK_CHANNEL: SETTING.STRING,
           SLACK_TOKEN: SETTING.STRING,
