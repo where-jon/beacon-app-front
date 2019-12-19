@@ -150,7 +150,7 @@
           {{ validationMessage }}
         </div>
       </b-alert>
-      <system-setting ref="systemSetting" :p-setting-list="editSettingList" :regist-func="(setting) => onRegistSubmit(setting)" use-regist-form />
+      <system-setting ref="systemSetting" :p-setting-list="editSettingList" :regist-func="(setting) => onRegistSubmit(setting)" use-regist-form use-key-category-filter use-init-filter />
     </b-modal>
   </div>
 </template>

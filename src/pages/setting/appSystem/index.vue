@@ -1,7 +1,7 @@
 
 <template>
   <div class="container-fluid">
-    <system-setting :p-breadcrumb-items="breadcrumbItems" use-setting-category-filter/>
+    <system-setting :p-breadcrumb-items="breadcrumbItems" :page-path="authPath" use-setting-category-filter/>
   </div>
 </template>
 
@@ -15,6 +15,9 @@ export default {
   computed: {
     breadcrumbItems() {
       return ['setting', 'systemChild']
+    },
+    authPath() {
+      return '/setting/appSystem'
     },
   },
 }
