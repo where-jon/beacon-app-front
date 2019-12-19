@@ -69,6 +69,22 @@ export const adjustValType = valType => {
 }
 
 /**
+ * 指定した設定項目のデフォルトカテゴリを取得する。
+ * @method
+ * @param {String} key 
+ * @return {String}
+ */
+export const getDefaultSettingCategory = key => {
+  const tenantSettingList = Util.getValue(
+    LocalStorageHelper.getLogin(),
+    'currentTenant.settingList',
+    []
+  )
+  const tenantDefault = tenantSettingList.find(setting => setting.key == key)
+  return tenantDefault? tenantDefault.category: ''
+}
+
+/**
  * 指定した設定項目のデフォルト値を取得する。
  * @method
  * @param {String} key 
@@ -147,12 +163,14 @@ export const getCategoryKey = setting => {
 export const createSetting = (setting, isTenant, option) => {
   const valType = adjustValType(setting.valType)
   const defaultVal = getDefaultValue(setting.key, isTenant)
+  const defaultSettingCategory = getDefaultSettingCategory(setting.key)
   const ret = {
     ...setting,
     valType: valType,
     valTypeDisp: i18n.tnl('label.' + valType),
     defaultVal: defaultVal && defaultVal.toString? defaultVal.toString(): defaultVal,
-    categoryKey: getCategoryKey(setting)
+    categoryKey: getCategoryKey(setting),
+    category: defaultSettingCategory? defaultSettingCategory: setting.category,
   }
   if(option){
     Object.keys(option).forEach(key => {

@@ -113,6 +113,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    useInitFilter: {
+      type: Boolean,
+      default: false,
+    },
+    pagePath: {
+      type: String,
+      default: '/setting/system',
+    },
   },
   data () {
     return {
@@ -138,8 +146,8 @@ export default {
       name: 'setting',
       id: 'settingId',
       appServicePath: '/meta/setting',
-      backPath: '/setting/system',
-      featurePath: '/setting/system',
+      backPath: this.pagePath,
+      featurePath: this.pagePath,
       items: ViewHelper.createBreadCrumbItems(...this.pBreadcrumbItems),
       newForm: {key: '', valType: null, value: null},
       settingList: [],
@@ -223,7 +231,7 @@ export default {
     initFilter(){
       const noData = this[this.callee? 'pSettingList': 'settingList'].find(setting => Util.hasValue(setting.settingId))? false: true
       this.$refs.mList.filter.allShow = noData
-      this.$refs.mList.filter.reg = noData? this.$i18n.tnl('label.favoriteMark'): ''
+      this.$refs.mList.filter.reg = noData && this.useInitFilter? this.$i18n.tnl('label.favoriteMark'): ''
     },
     formatList(str, formatFunc){
       return str.split(',').filter(val => val.trim().length != 0).map(val => formatFunc(val.trim())).join(',')
