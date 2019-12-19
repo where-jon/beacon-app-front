@@ -57,7 +57,7 @@ export default {
   },
   mounted() {
     console.log('@@@@@@@@@@@@@@@@@ azLogin')
-    this.tenantName = this.tenantName || LocalStorageHelper.popLocalStorage('tenantName')
+    this.tenantName = this.tenantName || LocalStorageHelper.getLocalStorage('tenantName')
     APP.MENU.LOGIN_PAGE = APP.MENU.AZLOGIN_PAGE
     let token
     if (BrowserUtil.inIframe())  { // Teams内での表示
