@@ -274,6 +274,12 @@ export const APP = { // 機能面に関する設定
     POS: {
       EXSERVER: false, // EXServerを使う
     },
+    TOILET: {
+      LED: {
+        ENABLE: false,
+        RGB: -1,
+      }
+    },
   },
   ENTER: {
     AUTO_PAGE: 1, // 0:Disable, 1:Enable & Default Pause, 2:Enable && Default Start
