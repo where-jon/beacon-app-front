@@ -156,7 +156,7 @@ export default {
           isLost: pos && pos.isLost,
           timestamp: pos && pos.timestamp
         }
-      }).sortBy(pot => pot.groupCd)
+      }).sortBy(['groupCd', 'potName'])
       .forEach(pot => {
         if (pot.groupCd !== curGroupId) {
           curGroupId = pot.groupCd
