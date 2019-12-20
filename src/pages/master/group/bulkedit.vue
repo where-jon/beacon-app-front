@@ -7,7 +7,9 @@
 
 <script>
 import { mapState } from 'vuex'
+import { APP } from '../../../sub/constant/config'
 import * as Util from '../../../sub/util/Util'
+import * as ExtValueHelper from '../../../sub/helper/domain/ExtValueHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
@@ -42,6 +44,7 @@ export default {
         Util.setValue(entity, 'display.color', entity.color)
         Util.setValue(entity, 'display.bgColor', entity.bgColor)
       }
+      ExtValueHelper.copyToChild(entity, APP.GROUP)
       entity.groupCd = entity.ID
       return dummyKey
     },

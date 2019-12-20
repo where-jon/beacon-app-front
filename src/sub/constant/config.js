@@ -205,10 +205,28 @@ export const APP = { // 機能面に関する設定
   // category
   CATEGORY: {
     TYPES: [1,2],   // 選択可能な種別（1人,2物,3ゾーン）
+    WITH: [],
+    // 拡張項目定義（サンプル）
+    EXT_DEF: [
+      {key: 'ruby', type: 'string', length: 20, showlist: true, sort: true },
+    ],
+  },
+  // group
+  GROUP: {
+    WITH: ['ruby'],
+    // 拡張項目定義（サンプル）
+    EXT_DEF: [
+      {key: 'ruby', type: 'string', length: 20, showlist: true, sort: true },
+    ],
   },
   // zone
   ZONE: {
+    WITH: [],
     TYPES: [1],   // 選択可能な種別（0, 1: 通常, 2: 警戒ゾーン, 3: ドア）
+    // 拡張項目定義（サンプル）
+    EXT_DEF: [
+      {key: 'description', type: 'string', length: 100, showlist: true, sort: true },
+    ],
   },
   NOTIFY: {
     // 通知媒体

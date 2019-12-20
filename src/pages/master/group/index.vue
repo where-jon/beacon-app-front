@@ -7,9 +7,11 @@
 
 <script>
 import { mapState } from 'vuex'
+import { APP } from '../../../sub/constant/config'
 import { SHAPE } from '../../../sub/constant/Constants'
 import * as ColorUtil from '../../../sub/util/ColorUtil'
 import * as Util from '../../../sub/util/Util'
+import * as ExtValueHelper from '../../../sub/helper/domain/ExtValueHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as StyleHelper from '../../../sub/helper/ui/StyleHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
@@ -33,15 +35,8 @@ export default {
         bulkEditPath: '/master/group/bulkedit',
         appServicePath: '/basic/group',
         csvOut: true,
-        custumCsvColumns: ['ID', 'groupName', 'ruby', 'color', 'bgColor', 'shape', 'description'],
-        fields: ViewHelper.addLabelByKey(this.$i18n, [ 
-          {key: 'groupCd', label: 'id', sortable: true },
-          {key: 'groupName', sortable: true },
-          {key: 'ruby', sortable: true },
-          {key: 'style', label: 'display' } ,
-          {key: 'description' },
-          {key: 'actions', thStyle: {width:'130px !important'} }
-        ]),
+        custumCsvColumns: this.getCustumCsvColumns(),
+        fields: this.getFields(),
         sortBy: 'groupCd',
         initTotalRows: this.$store.state.app_service.groups.length
       },
@@ -55,6 +50,34 @@ export default {
     ]),
   },
   methods: {
+    getFields(){
+      return ViewHelper.addLabelByKey(this.$i18n, [ 
+        {key: 'groupCd', label: 'id', sortable: true },
+        {key: 'groupName', sortable: true }
+      ].concat(this.createCustomColumn())
+        .concat([
+          {key: 'style', label: 'display' } ,
+          {key: 'description' },
+          {key: 'actions', thStyle: {width:'130px !important'} }
+        ])
+        .filter(val => val))
+    },
+    createCustomColumn(isDownload){
+      const ret = []
+      APP.GROUP.WITH.forEach(val => {
+        if(!isDownload && !ExtValueHelper.isShowList(APP.GROUP, val)) {
+          return
+        }
+        ret.push({key: val, label: val, sortable: true})
+      })
+      return ret
+    },
+    getCustumCsvColumns(){
+      return ['ID', 'groupName']
+        .concat(this.createCustomColumn(true).map(val => val.key))
+        .concat(['color', 'bgColor', 'shape', 'description'])
+        .filter(val => val)
+    },
     onSaved(){
       StateHelper.setForceFetch('pot', true)
       StateHelper.setForceFetch('tx', true)

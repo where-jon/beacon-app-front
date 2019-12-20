@@ -632,9 +632,14 @@ export const SETTING = {
         },
         CATEGORY: {
           TYPES: SETTING.NUMBER_LIST,
+          WITH: SETTING.STRING_LIST,
+        },
+        GROUP: {
+          WITH: SETTING.STRING_LIST,
         },
         ZONE: {
           TYPES: SETTING.NUMBER_LIST,
+          WITH: SETTING.STRING_LIST,
         },
         NOTIFY: {
           MIDIUM_TYPES: SETTING.NUMBER_LIST,

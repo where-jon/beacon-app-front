@@ -17,6 +17,9 @@
           <label v-t="'label.categoryType'" />
           <b-form-select v-model="form.categoryType" :options="categoryTypes" :disabled="!isEditable" :readonly="!isEditable" required />
         </b-form-group>
+
+        <extform :is-editable="isEditable" :form="form" :p-ext-value="extValue" />
+
         <b-form-group v-if="!selectZone && pShowIcon">
           <label v-t="'label.shape'" />
           <b-form-select v-model="form.displayShape" :options="shapes" :disabled="!isEditable" :readonly="!isEditable" required />
@@ -64,6 +67,7 @@ import * as ColorUtil from '../../../sub/util/ColorUtil'
 import * as StringUtil from '../../../sub/util/StringUtil'
 import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
+import * as ExtValueHelper from '../../../sub/helper/domain/ExtValueHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as ValidateHelper from '../../../sub/helper/dataproc/ValidateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
@@ -73,6 +77,7 @@ import commonmixin from '../../../components/mixin/commonmixin.vue'
 import editmixin from '../../../components/mixin/editmixin.vue'
 import alert from '../../../components/parts/alert.vue'
 import colorPicker from '../../../components/parts/colorpicker'
+import extform from '../../../components/parts/extform.vue'
 
 export default {
   props: {
@@ -109,6 +114,7 @@ export default {
     breadcrumb,
     alert,
     colorPicker,
+    extform,
   },
   mixins: [commonmixin, editmixin],
   data() {
@@ -117,7 +123,11 @@ export default {
       name: 'category',
       id: 'categoryId',
       appServicePath: '/basic/category',
-      form: Util.extract(category, ['categoryId', 'categoryCd', 'categoryName', 'categoryType', 'display', 'zoneCategoryList', 'description']),
+      form: Util.extract(category, [
+        'categoryId', 'categoryCd', 'categoryName', 'categoryType',
+        'display', 'zoneCategoryList', 'description',
+        ...ExtValueHelper.getExtValueKeys(APP.CATEGORY, true)
+      ]),
       defaultColor: '#000000',
       defaultBgColor: '#ffffff',
       oldType: Util.getValue(category, 'categoryType', null),
@@ -157,6 +167,9 @@ export default {
     },
     categoryTypeName() {
       return StringUtil.concatCamel(this.pName, 'categoryName')
+    },
+    extValue() {
+      return ExtValueHelper.getExtValue(APP.CATEGORY)
     },
   },
   watch: {
@@ -241,6 +254,7 @@ export default {
         categoryCd: this.form.categoryCd,
         categoryName: this.form.categoryName,
         categoryType: this.form.categoryType,
+        extValue: {},
         description: this.form.description,
         display: {
           shape: `${this.form.displayShape}`,
@@ -249,6 +263,7 @@ export default {
         },
         zoneCategoryList: this.structZoneCategory(() => dummyKey--)
       }
+      ExtValueHelper.getExtValueKeys(APP.CATEGORY).forEach(key => entity.extValue[key] = this.form[key])
       this.oldType = this.form.categoryType
       this.oldShape = this.form.displayShape
       this.oldColor = this.form.displayColor

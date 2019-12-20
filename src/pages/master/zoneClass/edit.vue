@@ -30,6 +30,8 @@
           </b-form-row>
         </b-form-group>
 
+        <extform :is-editable="isEditable" :form="form" :p-ext-value="extValue" />
+
         <b-form-group>
           <b-form-row>
             <label v-t="'label.areaName'" class="control-label" />
@@ -74,6 +76,7 @@ import { CATEGORY, ZONE, SYSTEM_ZONE_CATEGORY_NAME, PATTERN } from '../../../sub
 import * as StringUtil from '../../../sub/util/StringUtil'
 import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
+import * as ExtValueHelper from '../../../sub/helper/domain/ExtValueHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as ValidateHelper from '../../../sub/helper/dataproc/ValidateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
@@ -82,6 +85,7 @@ import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import commonmixin from '../../../components/mixin/commonmixin.vue'
 import editmixin from '../../../components/mixin/editmixin.vue'
 import alert from '../../../components/parts/alert.vue'
+import extform from '../../../components/parts/extform.vue'
 
 export default {
   props: {
@@ -109,13 +113,18 @@ export default {
   components: {
     breadcrumb,
     alert,
+    extform,
   },
   mixins: [commonmixin, editmixin],
   data() {
     return {
       name: 'zone',
       id: 'zoneId',
-      form: Util.extract(this.$store.state.app_service.zone, ['zoneId', 'zoneCd', 'zoneType', 'zoneName', 'areaId', 'locationZoneList.0.locationZonePK.locationId', 'zoneCategoryList']),
+      form: Util.extract(this.$store.state.app_service.zone, [
+        'zoneId', 'zoneCd', 'zoneType', 'zoneName',
+        'areaId', 'locationZoneList.0.locationZonePK.locationId', 'zoneCategoryList',
+        ...ExtValueHelper.getExtValueKeys(APP.ZONE, true)
+      ]),
       vueSelected: {
         area: null,
         category: null,
@@ -142,6 +151,9 @@ export default {
     },
     defValue() {
       return { 'zoneType': Util.getValue(this.zoneTypeOptions, '0.value', ZONE.NON_COORDINATE) }
+    },
+    extValue() {
+      return ExtValueHelper.getExtValue(APP.ZONE)
     },
     ...mapState('app_service', [
       'zone',
@@ -219,11 +231,13 @@ export default {
         zoneId: zoneId,
         zoneCd: this.form.zoneCd,
         zoneName: this.form.zoneName,
+        extValue: {},
         zoneType: this.form.zoneType,
         areaId: this.form.areaId,
         locationZoneList: this.form.locationId? [{locationZonePK: {zoneId: zoneId, locationId: this.form.locationId}}]: null,
         zoneCategoryList: this.form.zoneCategoryList
       }
+      ExtValueHelper.getExtValueKeys(APP.ZONE).forEach(key => entity.extValue[key] = this.form[key])
       if(this.form.categoryId) {
         entity.zoneCategoryList.push({ zoneCategoryPK: {zoneId: zoneId, categoryId: this.form.categoryId} })
       }
