@@ -82,7 +82,7 @@ export const save = async (target, entity, updateOnlyNN = UPDATE_ONLY_NN.NONE) =
   const path = target
   var params = new URLSearchParams()
   _.forEach(entity, (value, key) => {
-    params.append(key, value || '')
+    params.append(key, value != null? value: '')
   })
 
   let data = DEV.USE_MOCK_APS? mock[target]:
@@ -104,7 +104,7 @@ export const update = async (target, entity, updateOnlyNN = UPDATE_ONLY_NN.NONE)
   const path = target
   var params = new URLSearchParams()
   _.forEach(entity, (value, key) => {
-    params.append(key, value || '')
+    params.append(key, value != null? value: '')
   })
 
   let data = DEV.USE_MOCK_APS? mock[target]:
