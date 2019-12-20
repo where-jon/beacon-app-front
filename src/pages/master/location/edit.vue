@@ -253,29 +253,27 @@ export default {
     }
 
     this.$nextTick(() => {
+      if(Util.hasValue(this.form.exbIds)){
+        this.vueSelected.exbIdList = _(this.form.exbIds).map(exbId => 
+          VueSelectHelper.getVueSelectData(this.iExbOptions, exbId)
+        ).filter(option => option).sort((a, b) => a.label < b.label? -1: 1).uniqWith(_.isEqual).value()
+      }
+      if(Util.hasValue(this.form.txIds)){
+        this.vueSelected.txIdList = _(this.form.txIds).map(txId => 
+          VueSelectHelper.getVueSelectData(this.iTxOptions, txId)
+        ).filter(option => option).sort((a, b) => a.label < b.label? -1: 1).uniqWith(_.isEqual).value()
+      }
       const locationZoneList = this.form.locationZoneList
       if(Util.hasValue(locationZoneList)){
-        if(Util.hasValue(this.form.exbIds)){
-          this.vueSelected.exbIdList = _(this.form.exbIds).map(exbId => 
-            VueSelectHelper.getVueSelectData(this.iExbOptions, exbId)
-          ).filter(option => option).sort((a, b) => a.label < b.label? -1: 1).uniqWith(_.isEqual).value()
-        }
-        if(Util.hasValue(this.form.txIds)){
-          this.vueSelected.txIdList = _(this.form.txIds).map(txId => 
-            VueSelectHelper.getVueSelectData(this.iTxOptions, txId)
-          ).filter(option => option).sort((a, b) => a.label < b.label? -1: 1).uniqWith(_.isEqual).value()
-        }
         const zoneMap = {}
         this.zones.forEach(zone => {
           if(zone.x == null && zone.y == null){
             zoneMap[zone.zoneId] = zone
           }
         })
-        if(Util.hasValue(this.form.locationZoneList)){
-          this.vueSelected.zones = _(this.form.locationZoneList).map(locationZone => 
-            VueSelectHelper.getVueSelectData(this.getZoneClassOptions(), locationZone.locationZonePK.zoneId)
-          ).filter(option => option).sort((a, b) => a.label < b.label? -1: 1).uniqWith(_.isEqual).value()
-        }
+        this.vueSelected.zones = _(locationZoneList).map(locationZone => 
+          VueSelectHelper.getVueSelectData(this.getZoneClassOptions(), locationZone.locationZonePK.zoneId)
+        ).filter(option => option).sort((a, b) => a.label < b.label? -1: 1).uniqWith(_.isEqual).value()
       }
     })
 
