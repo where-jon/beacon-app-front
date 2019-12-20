@@ -175,6 +175,7 @@ export default {
       firstTime: true,
       reloadState: {isLoad: false},
       noImageErrorKey: 'noMapImage',
+      posCache: [],
     }
   },
   computed: {
@@ -251,6 +252,7 @@ export default {
         this.stage.removeChild(this.exbCon)
       }
       this.stage.update()
+      this.posCache = []
     },
     showMapImage(disableErrorPopup, payload) {
       this.showMapImageDef(async () => {
@@ -342,8 +344,16 @@ export default {
       exbBtn.addChild(label)
       exbBtn.deviceId = exb.deviceId
       exbBtn.exbId = exb.exbId
-      exbBtn.x = exb.x
-      exbBtn.y = exb.y
+      const posKey = exb.x+"-"+exb.y
+      if(this.posCache[posKey]){
+        exbBtn.x = this.posCache[posKey].x
+        exbBtn.y = this.posCache[posKey].y + h * 2
+        this.posCache[posKey] = { x: exbBtn.x, y: exbBtn.y }
+      }else{
+        exbBtn.x = exb.x
+        exbBtn.y = exb.y
+        this.posCache[posKey] = {x: exb.x, y: exb.y}
+      }
       return exbBtn
     },
     getExbDisp(deviceId) {
