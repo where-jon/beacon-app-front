@@ -9,6 +9,7 @@ import { mapState } from 'vuex'
 import { APP } from '../../../sub/constant/config'
 import { ZONE, CATEGORY } from '../../../sub/constant/Constants'
 import * as Util from '../../../sub/util/Util'
+import * as ExtValueHelper from '../../../sub/helper/domain/ExtValueHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
@@ -51,15 +52,8 @@ export default {
         bulkEditPath: this.pPath + '/bulkedit',
         appServicePath: this.pAppServicePath,
         csvOut: true,
-        custumCsvColumns: ['ID', 'zoneTypeName', 'zoneName', 'areaName', 'categoryName'],
-        fields: ViewHelper.addLabelByKey(this.$i18n, [ 
-          {key: 'zoneCd', label: 'id', sortable: true },
-          {key: 'zoneType', sortable: true },
-          {key: 'zoneName', sortable: true },
-          {key: 'areaName', sortable: true},
-          {key: 'dispCategoryName', label: 'categoryName', sortable: true},
-          {key: 'actions', thStyle: {width:'130px !important'} }
-        ]),
+        custumCsvColumns: this.getCustumCsvColumns(),
+        fields: this.getFields(),
         sortBy: 'zoneCd',
         initTotalRows: this.zoneLength
       },
@@ -82,6 +76,35 @@ export default {
     ]),
   },
   methods: {
+    getFields(){
+      return ViewHelper.addLabelByKey(this.$i18n, [ 
+        {key: 'zoneCd', label: 'id', sortable: true },
+        {key: 'zoneType', sortable: true },
+        {key: 'zoneName', sortable: true }
+      ].concat(this.createCustomColumn())
+        .concat([
+          {key: 'areaName', sortable: true},
+          {key: 'dispCategoryName', label: 'categoryName', sortable: true},
+        ])
+        .concat([ {key: 'actions', thStyle: {width:'130px !important'} } ])
+        .filter(val => val))
+    },
+    createCustomColumn(isDownload){
+      const ret = []
+      APP.ZONE.WITH.forEach(val => {
+        if(!isDownload && !ExtValueHelper.isShowList(APP.ZONE, val)) {
+          return
+        }
+        ret.push({key: val, label: val, sortable: true})
+      })
+      return ret
+    },
+    getCustumCsvColumns(){
+      return ['ID', 'zoneTypeName', 'zoneName']
+        .concat(this.createCustomColumn(true).map(val => val.key))
+        .concat(['areaName', 'categoryName'])
+        .filter(val => val)
+    },
     customCsvData(val){
       val.ID = val.zoneCd
     },

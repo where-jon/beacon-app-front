@@ -12,6 +12,7 @@ import { ZONE, PATTERN } from '../../../sub/constant/Constants'
 import * as StringUtil from '../../../sub/util/StringUtil'
 import * as Util from '../../../sub/util/Util'
 import * as BulkHelper from '../../../sub/helper/dataproc/BulkHelper'
+import * as ExtValueHelper from '../../../sub/helper/domain/ExtValueHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
@@ -72,6 +73,7 @@ export default {
       if(Util.hasValue(entity.ID)){
         BulkHelper.setStringKey(entity, 'zoneCd', entity.ID, PATTERN.REGEXP.MASTER_CD)
       }
+      ExtValueHelper.copyToChild(entity, APP.ZONE)
       return dummyKey
     },
     onSaved(){

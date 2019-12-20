@@ -7,9 +7,11 @@
 
 <script>
 import { mapState } from 'vuex'
+import { APP } from '../../../sub/constant/config'
 import { CATEGORY, BULK, ZONE } from '../../../sub/constant/Constants'
 import * as StringUtil from '../../../sub/util/StringUtil'
 import * as Util from '../../../sub/util/Util'
+import * as ExtValueHelper from '../../../sub/helper/domain/ExtValueHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
@@ -96,6 +98,7 @@ export default {
         const categoryType = this.categoryTypes.find(type => type.text == entity.categoryTypeName)
         entity.categoryType = categoryType? categoryType.value: 0
       }
+      ExtValueHelper.copyToChild(entity, APP.CATEGORY)
       dummyKey = this.restructZone(entity, dummyKey)
       entity.categoryCd = entity.ID
       return dummyKey

@@ -421,7 +421,7 @@ const appStateConf = {
     beforeCommit: arr => {
       return arr.map(val => {
         const zoneCategoryList = Util.getValue(val, 'zoneCategoryList', [])
-        return {
+        return Util.merge({
           ...val,
           categoryName: val.categoryName,
           shape: val.display? val.display.shape: null,
@@ -432,7 +432,7 @@ const appStateConf = {
           systemCategoryName: val.systemUse != 0? val.categoryName.toLowerCase(): null,
           guardNames: zoneCategoryList.filter(zc => zc.zoneType == ZONE.GUARD).map(zoneCategory => Util.getValue(zoneCategory, 'zoneName', '')).sort((a, b) => a < b? -1: 1),
           doorNames: zoneCategoryList.filter(zc => zc.zoneType == ZONE.DOOR).map(zoneCategory => Util.getValue(zoneCategory, 'zoneName', '')).sort((a, b) => a < b? -1: 1),
-        }
+        }, val.extValue)
       }).sort((a, b) => StringUtil.sortByString(a.categoryCd, b.categoryCd, LocaleHelper.getSystemLocale()))
     }
   },
@@ -440,13 +440,15 @@ const appStateConf = {
     path: '/basic/group',
     sort: 'groupCd',
     beforeCommit: arr => {
-      return arr.map(val => ({
-        ...val,
-        shape: val.display? val.display.shape: null,
-        color: val.display? val.display.color: null,
-        bgColor: val.systemUse == 1? getSystemUseBgColor(val): getCategoryDisplayBgColor(val),
-        shapeName: val.display? getShapeName(val.display.shape): null,
-      })).sort((a, b) => StringUtil.sortByString(a.groupCd, b.groupCd, LocaleHelper.getSystemLocale()))
+      return arr.map(val => (
+        Util.merge({
+          ...val,
+          shape: val.display? val.display.shape: null,
+          color: val.display? val.display.color: null,
+          bgColor: val.systemUse == 1? getSystemUseBgColor(val): getCategoryDisplayBgColor(val),
+          shapeName: val.display? getShapeName(val.display.shape): null,
+        }, val.extValue)
+      )).sort((a, b) => StringUtil.sortByString(a.groupCd, b.groupCd, LocaleHelper.getSystemLocale()))
     }
   },
   users: {
@@ -532,7 +534,7 @@ const appStateConf = {
         const zoneCategory = Util.getValue(val, 'zoneCategoryList', []).find(zoneCategory => Util.getValue(zoneCategory, 'category.categoryType', null) == CATEGORY.ZONE)
         const category = zoneCategory? zoneCategory.category: null
         const zoneType = ZONE.getOptions().find(option => option.value == val.zoneType)
-        return {
+        return Util.merge({
           ...val,
           zoneTypeName: zoneType? zoneType.text: '',
           areaId: Util.hasValue(val.area)? val.area.areaId: null,
@@ -543,7 +545,7 @@ const appStateConf = {
           categoryName: category? category.categoryName: null,
           zoneCategoryIdList: Util.getValue(val, 'zoneCategoryList', []).map(val => Util.getValue(val, 'zoneCategoryPK.categoryId', null)).filter(val => val),
           systemCategoryName: category? category.systemUse != 0? category.categoryName.toLowerCase(): null: null,
-        }
+        }, val.extValue)
       })
     }
   },
