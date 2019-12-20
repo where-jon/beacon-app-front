@@ -265,12 +265,6 @@ export default {
       }
       const locationZoneList = this.form.locationZoneList
       if(Util.hasValue(locationZoneList)){
-        const zoneMap = {}
-        this.zones.forEach(zone => {
-          if(zone.x == null && zone.y == null){
-            zoneMap[zone.zoneId] = zone
-          }
-        })
         this.vueSelected.zones = _(locationZoneList).map(locationZone => 
           VueSelectHelper.getVueSelectData(this.getZoneClassOptions(), locationZone.locationZonePK.zoneId)
         ).filter(option => option).sort((a, b) => a.label < b.label? -1: 1).uniqWith(_.isEqual).value()
