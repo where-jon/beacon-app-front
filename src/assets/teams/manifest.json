@@ -1,13 +1,13 @@
 ﻿{
     "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.5/MicrosoftTeams.schema.json",
     "manifestVersion": "1.5",
-    "version": "1.3.0.4",
+    "version": "1.3.0.5",
     "id": "fcfc143f-c8c8-454e-ab72-fdf2e49f862f",
     "packageName": "msteams.exbeacon.com",
     "developer": {
         "name": "Kyowa Exeo Corporation",
         "websiteUrl": "https://www.exeo.co.jp",
-        "privacyUrl": "https://www.exeo.co.jp/jigyou/ni-mcrsft/pdf/PP(EXOfficeアプリ).pdf",
+        "privacyUrl": "https://www.exeo.co.jp/jigyou/ni-mcrsft/pdf/PP(EXOfficeアプリ)_HP用2.pdf",
         "termsOfUseUrl": "https://www.exeo.co.jp/jigyou/ni-mcrsft/pdf/TOU(EXOfficeForMicrosoftTeams)_rel3.pdf",
         "mpnId": "4562888"
     },
