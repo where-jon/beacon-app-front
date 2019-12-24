@@ -23,7 +23,7 @@ export default {
       return '/master/categoryThing'
     },
     appServicePath() {
-      return '/basic/personCategory'
+      return '/basic/thingCategory'
     },
   },
 }

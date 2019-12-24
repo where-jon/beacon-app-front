@@ -67,11 +67,9 @@ export const createCustomColumn = (potTypeName, isCsv) => {
     const ret = {key: val, label: val, tdClass: 'thumb-rowdata'}
     // extValue.rubyなど.を含むとソートできないため.は抜きにする
     if (val == 'ruby'){
-      ret.key = 'extValue' + val
       ret.sortable = true
     }
     else if (ext) {
-      ret.key = 'extValue' + ext.key
       ret.sortable = ext.sort
     }
     else {
