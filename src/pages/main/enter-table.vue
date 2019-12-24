@@ -153,7 +153,7 @@ export default {
           groupName: pot.group && pot.group.groupName || this.$i18n.tnl('label.other'),
           color: pot.group? '#' + Util.getValue(pot, 'group.display.color').val: DISP.TX.COLOR,
           bgColor: pot.group? '#' + Util.getValue(pot, 'group.display.bgColor').val: DISP.TX.BGCOLOR,
-          isLost: pos && pos.isLost,
+          isLost: !pos || pos.isLost,
           timestamp: pos && pos.timestamp
         }
       }).sortBy(['groupCd', 'potName'])
