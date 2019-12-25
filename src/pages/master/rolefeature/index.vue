@@ -99,11 +99,6 @@ export default {
       FEATURE.getTypeOptions().forEach(option => retMap.type[option.value.toString()] = option.text)
       return retMap
     },
-    editResponse(data) {
-      data.forEach(val => {
-        val.sensorNames = Util.getValue(val, 'sensorNames', '').split(BULK.SPLITTER)
-      })
-    },
     getEditKey(item) {
       return item.updateKey.split(BULK.SPLITTER).join('/')
     },

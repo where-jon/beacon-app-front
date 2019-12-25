@@ -10,10 +10,10 @@
             <!-- 標準絞り込みフィルタ -->
             <label v-t="'label.filter'" class="mr-2" />
             <b-input-group>
+              <input v-model="filter.reg" class="form-control align-self-center" :maxlength="maxFilterLength">
               <button v-if="compactMode" @click="fetchDataCompact()">
                 <font-awesome-icon class="" icon="search" fixed-width />
               </button>
-              <input v-model="filter.reg" class="form-control align-self-center" :maxlength="maxFilterLength">
               <b-input-group-append>
                 <b-btn v-t="'label.clear'" :disabled="!filter.reg" variant="secondary" class="align-self-center" @click="filter.reg = ''" />
               </b-input-group-append>
@@ -519,7 +519,7 @@ export default {
     this.message = Util.hasValue(strageMessage)? strageMessage: this.listMessage
     this.replaceAS({listMessage: null})
     if(this.compactMode) {
-      await this.exportList()
+      await this.showList()
     } else {
       this.$parent.$options.methods.fetchData.apply(this.$parent)
     }
@@ -617,7 +617,7 @@ export default {
     async createListParam() {
       return this.$parent.$options.methods && this.$parent.$options.methods.createListParams? await this.$parent.$options.methods.createListParams.call(this.$parent): {}
     },
-    async exportList() {
+    async showList() {
       if(!Util.hasValue(this.sortBy)) {
         this.sortBy = this.old.sortBy
         this.sortDesc = this.old.sortDesc
@@ -635,7 +635,6 @@ export default {
         this.totalRows = response.count
         this.old.sortBy = this.sortBy
         this.old.sortDesc = this.sortDesc
-        this.replaceAS({[StringUtil.concatCamel(this.name, 'cd')]: response.cd})
       }
       catch(e) {
         console.error(e)
@@ -643,7 +642,6 @@ export default {
       this.hideProgress()
     },
     async exportCsv() {
-      this.setEmptyMessage()
       const params = await this.createListParam()
       BrowserUtil.executeFileDL(
         APP_SERVICE.BASE_URL
@@ -654,7 +652,7 @@ export default {
       )
     },
     fetchDataCompact() {
-      this.$nextTick(async () => await this.exportList())
+      this.$nextTick(() => this.showList())
     },
     style(index) {
       return this.$parent.$options.methods.style.call(this.$parent, index)
@@ -666,13 +664,13 @@ export default {
         const masterId = this.compactMode? this.$parent.$options.methods && this.$parent.$options.methods.getEditKey? this.$parent.$options.methods.getEditKey.call(this.$parent, item): item.updateKey: item[this.id]
         entity = await AppServiceHelper.fetch(this.appServicePath, masterId)
       } else {
+        // masterCdの最大値を算出するために全件データが必要
         await StateHelper.load(this.name)
       }
       if (this.$parent.$options.methods && this.$parent.$options.methods.convBeforeEdit) {
         entity = this.$parent.$options.methods.convBeforeEdit.call(this.$parent, entity)
       }
-      this.replaceAS({[this.name]: entity})
-      this.replaceAS({editPage: this.currentPage})
+      this.replaceAS({[this.name]: entity, editPage: this.currentPage})
       this.$router.push(this.editPath)
     },
     getAnotherPageParam(name, item) {
@@ -838,7 +836,7 @@ export default {
         }
         this.replace({showInfo: true})
         if(this.compactMode) {
-          await this.exportList()
+          await this.showList()
         } else {
           await this.$parent.$options.methods.fetchData.apply(this.$parent)
         }
