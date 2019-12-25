@@ -65,7 +65,7 @@ export const applyAppServiceSetting = (settingArr, defaultConfig = null) => {
   if (!settingArr) return
 
   let updateData = _.reduce(settingArr, (result, setting) => {
-    let key = (setting.category? setting.category + '.': '') + setting.key
+    let key = setting.key
     let val = setting.value
     let valType = setting.valType? setting.valType.toLowerCase(): null
     if (val && valType) {
