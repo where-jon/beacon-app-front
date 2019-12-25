@@ -170,7 +170,7 @@ export default {
           potId: pot.potId, isAbsentZone: pot.isAbsentZone,
           bgColor: pot.isAbsentZone? DISP.ENTER.ABSENT_BGCOLOR: DISP.ENTER.ENTER_BGCOLOR})
       })
-      Util.debug(groupPotList)
+      Util.debug(groupPotList, APP.ENTER, DISP.ENTER)
 
       const ROW_CNT = Math.max(Math.floor((window.innerHeight - 320) / 42), 3)
       const COL_CNT = DISP.ENTER.COL_CNT
