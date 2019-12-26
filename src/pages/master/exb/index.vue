@@ -1,22 +1,21 @@
 <template>
   <div class="container-fluid">
     <breadcrumb :items="items" />
-    <m-list :params="params" :list="exbViewList" />
+    <m-list :params="params" compact-mode />
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
 import { APP } from '../../../sub/constant/config'
-import { EXB } from '../../../sub/constant/Constants'
+import { EXB, BULK } from '../../../sub/constant/Constants'
 import * as ArrayUtil from '../../../sub/util/ArrayUtil'
 import * as Util from '../../../sub/util/Util'
 import * as ConfigHelper from '../../../sub/helper/dataproc/ConfigHelper'
-import * as MenuHelper from '../../../sub/helper/dataproc/MenuHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
-import reloadmixin from '../../../components/mixin/reloadmixin.vue'
+import commonmixin from '../../../components/mixin/commonmixin.vue'
 import mList from '../../../components/page/list.vue'
 
 export default {
@@ -24,7 +23,7 @@ export default {
     breadcrumb,
     mList, 
   },
-  mixins: [reloadmixin],
+  mixins: [commonmixin],
   data() {
     return {
       params: {
@@ -36,25 +35,11 @@ export default {
         bulkEditPath: '/master/exb/bulkedit',
         appServicePath: '/core/exb',
         csvOut: true,
-        custumCsvColumns: this.getCustumCsvColumns(),
         fields: this.getFields(),
         sortBy: ConfigHelper.includesDeviceType('deviceId')? 'deviceId': ConfigHelper.includesDeviceType('deviceIdX')? 'deviceIdX': 'locationName',
-        initTotalRows: this.$store.state.app_service.exbs.length
       },
       items: ViewHelper.createBreadCrumbItems('master', 'masterExb'),
     }
-  },
-  computed: {
-    ...mapState('app_service', [
-      'exbs',
-      'exbImages',
-    ]),
-    exbViewList() {
-      return this.exbs.map(exb => {
-        exb.sensorIdNameLangs = exb.sensorIdNames.map(name => this.$i18n.tnl('label.' + name))
-        return exb
-      })
-    },
   },
   methods: {
     getUseExbType() {
@@ -64,38 +49,27 @@ export default {
       return ['deviceId', 'deviceIdX'].filter(val => ConfigHelper.includesDeviceType(val))
         .map(val => ({key: val, label: val, sortable: true}))
     },
-    getCustumCsvColumns(){
-      return this.createIdColumn().map(val => val.key)
-        .concat([this.getUseExbType()? 'exbType': null, 'threshold1', 'threshold2', 'adjust1', 'adjust2', 'sensor', 'locationCd', 'locationName'])
-        .filter(val => val)
+    async createListParams(){
+      await Promise.all(['sensor'].map(state => StateHelper.load(state)))
+      const retMap = { sensor: {} }
+      this.sensorOptionsExb.forEach(option => retMap.sensor[option.value? option.value.toString(): '0'] = option.text)
+      return retMap
     },
-    customCsvData(val){
-      val.sensor = val.sensorIdNames.map(name => this.$i18n.tnl('label.' + name)).join(';')
-      val.exbType = Util.getValue(EXB.getTypes().find(type => type.value == val.exbType), 'text', null)
+    editResponse(data) {
+      data.forEach(val => {
+        val.sensorNames = Util.getValue(val, 'sensorNames', '').split(BULK.SPLITTER)
+      })
     },
     getFields(){
       return ViewHelper.addLabelByKey(this.$i18n, this.createIdColumn()
         .concat([
           this.getUseExbType()? {key: 'exbTypeName', label:'exbType', sortable: true,}: null,
-          {key: 'sensorIdNameLangs', label:'type', sortable: true,},
+          {key: 'sensorNames', label:'type', sortable: true,},
           {key: 'locationName', label:'locationName', sortable: true,},
           {key: 'areaName', label:'area', sortable: true,},
           {key: 'actions', thStyle: {width: '130px !important'} }
         ]).filter(val => val)
       )
-    },
-    async fetchData(payload) {
-      try {
-        this.showProgress()
-        await StateHelper.load('exb')
-        if (payload && payload.done) {
-          payload.done()
-        }
-      }
-      catch(e) {
-        console.error(e)
-      }
-      this.hideProgress()
     },
   }
 }

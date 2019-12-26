@@ -1,18 +1,17 @@
 <template>
   <div class="container-fluid">
     <breadcrumb :items="items" />
-    <m-list :params="params" :list="zoneList" />
+    <m-list :params="params" compact-mode />
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
-import { ZONE } from '../../../sub/constant/Constants'
 import * as Util from '../../../sub/util/Util'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
-import reloadmixin from '../../../components/mixin/reloadmixin.vue'
+import commonmixin from '../../../components/mixin/commonmixin.vue'
 import mList from '../../../components/page/list.vue'
 
 export default {
@@ -20,7 +19,7 @@ export default {
     breadcrumb,
     mList, 
   },
-  mixins: [reloadmixin],
+  mixins: [commonmixin],
   data() {
     return {
       params: {
@@ -31,56 +30,22 @@ export default {
         bulkEditPath: '/master/zoneClass/bulkedit',
         appServicePath: '/core/zone',
         csvOut: true,
-        custumCsvColumns: ['ID', 'zoneName', 'areaName', 'categoryName'],
         fields: ViewHelper.addLabelByKey(this.$i18n, [ 
-          {key: 'zoneCd', label: 'id', sortable: true },
+          {key: 'ID', label: 'id', sortable: true },
           {key: 'zoneName', sortable: true },
           {key: 'areaName', sortable: true},
-          {key: 'dispCategoryName', label: 'categoryName', sortable: true},
+          {key: 'categoryName', label: 'categoryName', sortable: true},
           {key: 'actions', thStyle: {width:'130px !important'} }
         ]),
-        sortBy: 'zoneCd',
-        initTotalRows: this.zoneLength
+        sortBy: 'ID',
       },
       items: ViewHelper.createBreadCrumbItems('master', 'zoneClass'),
     }
   },
-  computed: {
-    zoneList() {
-      Util.table(this.$store.state.app_service.zones)
-      return this.$store.state.app_service.zones.filter(zone => {
-        const category = Util.getValue(zone, 'zoneCategoryList.0.category', {})
-        zone.dispCategoryName = StateHelper.getDispCategoryName(category)
-        return zone.zoneType ==  ZONE.NON_COORDINATE
-      })
-    },
-    zoneLength() {
-      return this.zoneList().length
-    },
-    ...mapState('app_service', [
-      'zones',
-    ]),
-  },
   methods: {
-    customCsvData(val){
-      val.ID = val.zoneCd
-    },
     onSaved(){
       StateHelper.setForceFetch('tx', true)
       StateHelper.setForceFetch('exb', true)
-    },
-    async fetchData(payload) {
-      try {
-        this.showProgress()
-        await Promise.all(['zone', 'category'].map(master => StateHelper.load(master)))
-        if (payload && payload.done) {
-          payload.done()
-        }
-      }
-      catch(e) {
-        console.error(e)
-      }
-      this.hideProgress()
     },
   }
 }

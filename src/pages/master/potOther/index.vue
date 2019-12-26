@@ -23,7 +23,7 @@ export default {
       return '/master/potOther'
     },
     appServicePath() {
-      return '/basic/pot'
+      return '/basic/otherPot'
     },
   },
 }

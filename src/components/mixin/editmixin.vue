@@ -93,7 +93,7 @@ export default {
         this.showProgress()
         try {
           await this.onSaving()
-          await StateHelper.load(this.name, true)
+          StateHelper.setForceFetch(this.name, true)
           if (this.name == 'area' && this.form.mapImage) {
             await ImageHelper.loadImageArea(this.form.areaId)
           }

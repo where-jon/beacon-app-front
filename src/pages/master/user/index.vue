@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid">
     <breadcrumb :items="items" />
-    <m-list :params="params" :list="users" />
+    <m-list :params="params" compact-mode />
   </div>
 </template>
 
@@ -31,17 +31,14 @@ export default {
         bulkEditPath: '/master/user/bulkedit',
         appServicePath: '/meta/user',
         csvOut: true,
-        custumCsvColumns: this.getCustomCsvColumns(),
         fields: this.getFields(),
         sortBy: 'loginId',
-        initTotalRows: this.$store.state.app_service.users.length
       },
       items: ViewHelper.createBreadCrumbItems('master', 'user'),
     }
   },
   computed: {
     ...mapState('app_service', [
-      'users',
       'regions',
     ]),
   },
@@ -51,15 +48,6 @@ export default {
   methods: {
     createCustomColumn(){
       return APP.USER.WITH.map(val => ({key: val == 'region'? 'regionNames': val, label: val, sortable: true}))
-    },
-    getCustomCsvColumns(){
-      return ['loginId', 'pass']
-        .concat(this.createCustomColumn().map(val => val.key))
-        .concat('roleName', 'description')
-        .filter(val => val)
-    },
-    customCsvData(val){
-      val.regionNames = val.regionNames.join(';')
     },
     getFields(){
       return ViewHelper.addLabelByKey(this.$i18n, [ 
@@ -73,19 +61,6 @@ export default {
     },
     onSaved(){
       StateHelper.setForceFetch('pot', true)
-    },
-    async fetchData(payload) {
-      try {
-        this.showProgress()
-        await StateHelper.load('user')
-        if (payload && payload.done) {
-          payload.done()
-        }
-      }
-      catch(e) {
-        console.error(e)
-      }
-      this.hideProgress()
     },
   }
 }

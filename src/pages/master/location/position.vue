@@ -390,7 +390,7 @@ export default {
       this.locationCon.addChild(locationButton)
     },
     createEmptyLocation(x, y){
-      const masterCd = StateHelper.createMasterCd('location', this.work.locationList)
+      const masterCd = StateHelper.createMasterCd('location')
       const newLocation = {
         locationId: this.dummyKey--,
         locationCd: masterCd,
