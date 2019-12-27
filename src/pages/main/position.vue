@@ -141,6 +141,7 @@ export default {
   },
   data() {
     return {
+      isHandleScroll:false,
       fixHeight: DISP.THERMOH.ALERT_FIX_HEIGHT,
       isProhibitView: true,
       items: !this.isInstallation ? ViewHelper.createBreadCrumbItems('main', 'showPosition') : ViewHelper.createBreadCrumbItems('monitor', 'installation'),
@@ -274,12 +275,23 @@ export default {
     this.startOtherAutoReload()
     this.changeArea(this.selectedArea)
     this.isMounted = true
+    window.addEventListener('touchmove',this.handleScroll)
+    window.addEventListener('touchend',this.handleEnd)
   },
   beforeDestroy() {
     clearInterval(this.prohibitInterval)  // 点滅クリア
     this.resetDetail()
   },
   methods: {
+    handleScroll(){
+      this.isHandleScroll = true
+    },
+    handleEnd(){
+      if(this.isHandleScroll && this.showDismissibleAlert){
+        this.showMapImage()
+      }
+      this.isHandleScroll = false
+    },
     loadLegends () {
       if(!['category', 'group'].includes(DISP.TX.DISPLAY_PRIORITY)){
         return
@@ -452,7 +464,7 @@ export default {
     },
     onReset(){
       this.isShowRight = false
-      this.isShowBottom = false      
+      this.isShowBottom = false
     },
     showTxAll() {
 
@@ -516,7 +528,7 @@ export default {
       const display = this.getDisplay(tx)
       const color = meditag? '#000': this.isMagnetOn(magnet)? display.bgColor : display.color
       const bgColor = meditag? meditag.bg: this.isMagnetOn(magnet)? display.color: display.bgColor
-      
+
       // フリーアドレスTXが不在エリア検知の場合は以降処理を行わない
       if (exb && exb.isAbsentZone && !this.isFixTx(tx)) {
         return
