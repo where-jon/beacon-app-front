@@ -19,7 +19,8 @@
     "lintfix": "eslint --ext .js,.vue . --fix",
     "precommit": "npm run lint",
     "heroku-postbuild": "npm run build",
-    "compareLocale": "npm run test src/test/sub/locales/Compare.test.js"
+    "compareLocale": "npm run test src/test/sub/locales/Compare.test.js",
+    "doc": "jsdoc -c .jsdoc-conf.json"
   },
   "config": {
     "nuxt": {
@@ -46,6 +47,7 @@
     "lodash": "^4.17.11",
     "md5": "^2.2.1",
     "moment": "^2.24.0",
+    "moment-timezone": "^0.5.27",
     "node-sass": "^4.12.0",
     "nuxt": "^2.8.1",
     "nuxt-fontawesome": "^0.4.0",
@@ -71,14 +73,27 @@
     "eslint-friendly-formatter": "^4.0.1",
     "eslint-loader": "^2.1.2",
     "eslint-plugin-vue": "^5.2.3",
+    "jsdoc": "^3.6.2",
+    "jsdoc-vuejs": "^3.0.0",
     "jsdom": "^15.1.1",
     "nodemon": "^1.18.9",
-    "url-search-params-polyfill": "^7.0.0"
+    "url-search-params-polyfill": "^7.0.0",
+    "vue-template-compiler": "^2.5.16",
+    "esm": "^3.2.25",
+    "canvas": "^2.6.0"
   },
   "ava": {
     "require": [
-      "babel-register",
+      "esm",
+      "canvas",
       "./src/test/setup-browser-env.js"
+    ],
+    "files": [
+      "src/test/**/*",
+      "!src/test/setup-browser-env.js"
+    ],
+    "helpers": [
+      "src/test/setup-browser-env.js"
     ]
   }
 }

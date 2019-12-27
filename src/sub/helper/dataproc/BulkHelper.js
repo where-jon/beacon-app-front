@@ -4,7 +4,7 @@
  */
 
 import _ from 'lodash'
-import { BULK, ROLE_FEATURE, CHAR_SET } from '../../constant/Constants'
+import { BULK, ROLE_FEATURE, CHAR_SET, CATEGORY } from '../../constant/Constants'
 import * as ArrayUtil from '../../util/ArrayUtil'
 import * as CsvUtil from '../../util/CsvUtil'
 import * as StringUtil from '../../util/StringUtil'
@@ -123,7 +123,7 @@ export const setStringKey = (entity, headerName, val, regExp = null, nullable = 
     return nullable? entity: addInvalid(entity, headerName, val)
   }
   entity[headerName] = val
-  return regExp && !regExp.test(val)? addInvalid(entity, headerName): entity
+  return regExp && !regExp.test(val)? addInvalid(entity, headerName, val): entity
 }
 
 /**
@@ -215,7 +215,50 @@ export const getErrorColumnName = (name, col) => {
   if(['areaCd', 'categoryCd', 'groupCd'].includes(col)){
     return 'id'
   }
+  if(col == 'categoryName' && /^category.+$/.test(name)){
+    return StringUtil.concatCamel(name.replace(/category/, '').toLowerCase(), 'categoryName')
+  }
   return col
+}
+
+/**
+ * 一括登録時のエラーを編集する。複数項目で一意制約を行っている場合などで使用する。
+ * @method
+ * @param {Object} err 
+ * @return {Object}
+ */
+export const editBulkError = err => {
+  if(!Util.hasValue(err.cols) || !Util.hasValue(err.values)){
+    return
+  }
+  if(err.type != 'MultiUnique'){
+    return err
+  }
+  const options = {
+    categoryType: CATEGORY.getTypes(),
+    locationType: OptionHelper.getLocationTypeOptions(),
+  }
+  // 場所タイプ選択肢が登録されていない場合は、通常の一意制約エラーに変換
+  if(err.cols.some(c => c == 'locationType')){
+    const locationTypeVal = err.values[err.cols.findIndex(c => c == 'locationType')]
+    if(!Util.hasValue(options.locationType) || !locationTypeVal){
+      const newCol = err.cols.find(c => c != 'locationType')
+      err.col = newCol
+      err.value = err.values[err.cols.findIndex(c => c == newCol)]
+      err.type = 'Unique'
+      err.cols = null
+      err.values = null
+      return err
+    }
+  }
+  err.cols.forEach((col, idx) => {
+    if(!Object.keys(options).some(key => key == col)){
+      return
+    }
+    const type = options[col].find(t => t.value == err.values[idx])
+    err.values[idx] = type? type.text: ''
+  })
+  return err
 }
 
 /**
@@ -228,14 +271,30 @@ export const craeteBulkWarnMessage = bulkErrorList => {
   if(!Util.hasValue(bulkErrorList)){
     return []
   }
+  const locationTypeList = OptionHelper.getLocationTypeOptions()
   const retList = []
-  bulkErrorList.filter(bulkError => bulkError.type == 'Unique')
-    .forEach(bulkError => {
-      if(!retList.some(ret => ret.type == bulkError.type && ret.col == bulkError.col)){
-        retList.push({type: bulkError.type, col: bulkError.col})
+  bulkErrorList.filter(bulkError => ['Unique', 'MultiUnique'].some(u => u == bulkError.type)).forEach(bulkError => {
+    // 場所タイプ選択肢が登録されていない場合は、通常の一意制約警告ーに変換
+    if(bulkError.cols && bulkError.cols.some(c => c == 'locationType')){
+      const locationTypeVal = bulkError.values[bulkError.cols.findIndex(c => c == 'locationType')]
+      if(!Util.hasValue(locationTypeList) || !locationTypeVal){
+        const newCol = bulkError.cols.find(c => c != 'locationType')
+        bulkError.col = newCol
+        bulkError.value = bulkError.values[bulkError.cols.findIndex(c => c == newCol)]
+        bulkError.type = 'Unique'
+        bulkError.cols = null
+        bulkError.values = null
       }
-    })
-  return retList.map(ret => i18n.tnl('message.bulk' + ret.type + 'Warn', {col: i18n.tnl('label.' + ret.col)}))
+    }
+    const cols = bulkError.col? [bulkError.col]: bulkError.cols
+    if(!retList.some(ret => ret.type == bulkError.type && ret.cols.every(rc => cols.some(c => c == rc)))){
+      retList.push({type: bulkError.type, cols: cols})
+    }
+  })
+  return retList.map(ret => {
+    const col = ret.cols.map(c => i18n.tnl('label.' + c)).join(i18n.tnl('message.readingPoint'))
+    return i18n.tnl('message.bulk' + ret.type + 'Warn', {col: col})
+  })
 }
 
 /**
@@ -248,13 +307,17 @@ export const craeteBulkWarnMessage = bulkErrorList => {
  */
 export const getBulkErrorMessage = (e, name, showLine) => {
   if(e.bulkError) {
+    const readingPoint = i18n.tnl(`message.readingPoint`)
     const warnMessageList = craeteBulkWarnMessage(e.bulkError)
     const errorMessageList = _.map(_.orderBy(e.bulkError, ['line'], ['asc']), err => {
-      const col = err.col.trim()
+      editBulkError(err)
+      const cols = err.cols? err.cols: [err.col]
+      const value = err.values? err.values.join(readingPoint) : err.value
+
       return i18n.tline('message.bulk' + err.type + 'Failed', {
         line: err.line,
-        col: i18n.tnl(`label.${getErrorColumnName(name, col)}`),
-        value: Util.hasValue(err.value)? StringUtil.sanitize(err.value): err.value,
+        col: cols.map(c => i18n.tnl(`label.${getErrorColumnName(name, c.trim())}`)).join(readingPoint),
+        value: StringUtil.sanitize(value, true),
         min: err.min,
         max: err.max,
         candidates: err.candidates,
@@ -409,7 +472,7 @@ export const setCsvParamList = (vueComponent, masterIdName, readerParam, csvLine
       }
       const entity = {}
       dummyKey = setCsvParam(masterIdName, header, csvLine, dummyKey, entity, option)
-      if(vueComponent.$parent.$options.methods.onRestruct) {
+      if(vueComponent.$parent.$options.methods && vueComponent.$parent.$options.methods.onRestruct) {
         dummyKey = vueComponent.$parent.$options.methods.onRestruct.call(vueComponent.$parent, entity, dummyKey)
       }
       sameDataCheck(readerParam.sameLine, lineIdx, readerParam.entities, entity)
@@ -506,6 +569,7 @@ export const createParamSensor = (masterType, sensorNames, dummyKey) => {
 export const createParamLocation = (entity, dummyKey) => {
   const ret = {}
   Util.setValue(ret, 'locationId', dummyKey--)
+  Util.setValue(ret, 'locationCd', entity.locationCd)
   Util.setValue(ret, 'areaName', entity.areaName)
   Util.setValue(ret, 'locationName', entity.locationName)
   Util.setValue(ret, 'visible', entity.visible)

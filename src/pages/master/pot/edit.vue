@@ -24,9 +24,9 @@
                 </b-form-group>
               </b-form>
             </span>
-            <b-form-group v-show="category.length > 1">
+            <b-form-group v-show="potTypeOptions.length > 1">
               <label v-t="'label.categoryType'" />
-              <b-form-radio-group v-model="form.potType" :options="category" :disabled="!isEditable" :required="category.length > 1" />
+              <b-form-radio-group v-model="form.potType" :options="potTypeOptions" :disabled="!isEditable" :required="potTypeOptions.length > 1" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.potCd'" />
@@ -36,7 +36,7 @@
               <label v-t="'label.potName'" />
               <input v-model="form.potName" :readonly="!isEditable" type="text" maxlength="100" class="form-control" required>
             </b-form-group>
-            <b-form-group v-show="isShown('POT.WITH', 'ruby')">
+            <b-form-group v-show="isShownWith('ruby')">
               <label v-t="'label.ruby'" />
               <input v-model="form.ruby" :readonly="!isEditable" type="text" maxlength="20" class="form-control">
             </b-form-group>
@@ -44,7 +44,7 @@
               <label v-t="'label.displayName'" />
               <input v-model="form.displayName" :readonly="!isEditable" type="text" maxlength="3" class="form-control">
             </b-form-group>
-            <b-form-group v-show="isShown('POT.WITH', 'group')">
+            <b-form-group v-show="isShownWith('group')">
               <label v-t="'label.group'" />
               <v-select v-model="vueSelected.group" :options="groupOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 vue-options-lg">
                 <template slot="no-options">
@@ -52,7 +52,7 @@
                 </template>
               </v-select>
             </b-form-group>
-            <b-form-group v-show="isShown('POT.WITH', 'category')">
+            <b-form-group v-show="isShownWith('category')">
               <label v-t="'label.category'" />
               <v-select v-model="vueSelected.category" :options="categoryOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 vue-options-lg">
                 <template slot="no-options">
@@ -60,8 +60,8 @@
                 </template>
               </v-select>
             </b-form-group>
-            <extform :is-editable="isEditable" :form="form" />
-            <b-form-group>
+            <extform :p-name="pName" :is-editable="isEditable" :form="form" />
+            <b-form-group v-if="isShownWith('thumbnail')">
               <label v-t="'label.thumbnail'" />
               <b-form-file v-if="isEditable" ref="inputThumbnail" v-model="form.thumbnailTemp" :placeholder="$t('message.selectFile') " accept="image/jpeg, image/png, image/gif" @change="readImage" />
               <b-button v-if="isEditable && form.existThumbnail" :variant="theme" type="button" class="float-right mt-3" @click="clearImage">
@@ -69,12 +69,12 @@
               </b-button>
               <img v-show="form.existThumbnail" ref="thumbnail" :src="thumbnailSrc" width="100" class="mt-1 ml-3">
             </b-form-group>
-            <b-form-group v-if="isShown('POT.WITH', 'description')">
+            <b-form-group v-if="isShownWith('description')">
               <label v-t="'label.description'" />
               <b-form-textarea v-model="form.description" :rows="3" :max-rows="6" :readonly="!isEditable" maxlength="1000" />
             </b-form-group>
 
-            <b-form-group v-if="isShown('POT.WITH', 'user')">
+            <b-form-group v-if="isShownWith('user')">
               <b-form-checkbox v-model="editShowUser" :value="true" :unchecked-value="false" @change="nextShowEmailCheck()">
                 <span v-text="$i18n.tnl('label.editUserInfo')" />
               </b-form-checkbox>
@@ -117,7 +117,7 @@
 import { mapState } from 'vuex'
 import _ from 'lodash'
 import { APP, EXCLOUD, APP_SERVICE } from '../../../sub/constant/config'
-import { CATEGORY, SENSOR, USER } from '../../../sub/constant/Constants'
+import { SENSOR, USER, POT_TYPE, TYPE_RELATION } from '../../../sub/constant/Constants'
 import * as StringUtil from '../../../sub/util/StringUtil'
 import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
@@ -136,6 +136,24 @@ import chromeInput from '../../../components/parts/chromeinput.vue'
 import extform from '../../../components/parts/extform.vue'
 
 export default {
+  props: {
+    pName: {
+      type: String,
+      default: '',
+    },
+    pPath: {
+      type: String,
+      default: '/master/pot',
+    },
+    pAppServicePath: {
+      type: String,
+      default: '/basic/pot',
+    },
+    pTypeList: {
+      type: Array,
+      default: () => [POT_TYPE.PERSON, POT_TYPE.THING, POT_TYPE.OTHER],
+    },
+  },
   components: {
     breadcrumb,
     alert,
@@ -147,16 +165,13 @@ export default {
     return {
       name: 'pot',
       id: 'potId',
-      backPath: '/master/pot',
-      appServicePath: '/basic/pot',
-      items: ViewHelper.createBreadCrumbItems('master', {text: 'pot', href: '/master/pot'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.pot.potId)),
       showEmail: false,
       editShowUser: false,
       form: {
         ...Util.extract(this.$store.state.app_service.pot,
           ['potId', 'potCd', 'potName', 'potType', 'extValue.ruby',
             'displayName', 'potGroupList.0.group.groupId', 'potCategoryList.0.category.categoryId',
-            'existThumbnail', 'description', ...PotHelper.getPotExtKeys(true)])
+            'existThumbnail', 'description', ...PotHelper.getPotExtKeys(this.pName, true)])
       },
       userForm: {
         userId: null, loginId: null, pass: null, roleId: null, email: null,
@@ -170,14 +185,11 @@ export default {
         role: null,
         txs: []
       },
-      defValue: {
-        'potType': APP.CATEGORY.TYPES[0] != 3? APP.CATEGORY.TYPES[0]: null,
-      },
       roleOptions: [],
-      category: _.slice(CATEGORY.getTypes(), 0, 2).filter((val) => APP.CATEGORY.TYPES.includes(val.value)),
-      txIds: Array(APP.POT.TX_MAX),
-      btxIds: Array(APP.POT.TX_MAX),
-      minors: Array(APP.POT.TX_MAX),
+      potTypeOptions: POT_TYPE.getTypes().filter(val => APP.POT.TYPES.includes(val.value) && this.pTypeList.includes(val.value)),
+      txIds: Array(PotHelper.getSetting(this.pName).TX_MAX),
+      btxIds: Array(PotHelper.getSetting(this.pName).TX_MAX),
+      minors: Array(PotHelper.getSetting(this.pName).TX_MAX),
       thumbnailUrl: APP_SERVICE.BASE_URL + EXCLOUD.POT_THUMBNAIL_URL,
     }
   },
@@ -185,9 +197,18 @@ export default {
     hasId(){
       return Util.hasValue(this.form.potId)
     },
+    backPath() {
+      return this.pPath
+    },
+    defValue() {
+      return { 'potType': this.pTypeList[0] }
+    },
+    items() {
+      return ViewHelper.createBreadCrumbItems('master', {text: StringUtil.concatCamel('pot', this.pName), href: this.backPath}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.pot.potId))
+    },
     categoryOptions() {
       return StateHelper.getOptionsFromState('category', false, true,
-        category => category.categoryType === this.form.potType
+        category => category.categoryType === TYPE_RELATION.getPotCategory()[this.form.potType]
       )
     },
     ...mapState('app_service', [
@@ -214,7 +235,7 @@ export default {
     'form.potType': function(newVal, oldVal){
       if(newVal != oldVal){
         this.form.selectedCategory = null
-        this.form.categoryId = null
+        this.vueSelected.category = null
       }
     },
     'vueSelected.txs': {
@@ -298,6 +319,10 @@ export default {
     VueSelectHelper.disabledAllSubmit()
   },
   methods: {
+    isShownWith(column) {
+      const settingName = PotHelper.getSettingName(this.pName)
+      return this.isShown(settingName + '.WITH', column)
+    },
     initPotTxList(){
       this.vueSelected.txs = []
       this.form.potTxList = this.pot.potTxList? this.pot.potTxList.map((val, idx) => {
@@ -307,7 +332,9 @@ export default {
           txId: val.potTxPK.txId,
         }
       }): []
-      const maxTx = APP.POT.MULTI_TX? APP.POT.TX_MAX: 1
+
+      const settings = PotHelper.getSetting(this.pName)
+      const maxTx = settings.MULTI_TX? settings.TX_MAX: 1
       for(let cnt = this.form.potTxList.length; cnt < maxTx; cnt++){
         this.vueSelected.txs.push(VueSelectHelper.getVueSelectData(this.getTxOptions(cnt), null))
         this.form.potTxList.push({
@@ -317,7 +344,8 @@ export default {
       }
     },
     getTxIndex(index){
-      return APP.POT.MULTI_TX? 1 < APP.POT.TX_MAX? `${index + 1}`: '': ''
+      const settings = PotHelper.getSetting(this.pName)
+      return settings.MULTI_TX? 1 < settings.TX_MAX? `${index + 1}`: '': ''
     },
     watchIds(newVal, idName){
       this.form.potTxList.forEach((potTx, idx) => {
@@ -491,7 +519,7 @@ export default {
         thumbnail: this.form.thumbnail,
         description: this.form.description,
       }
-      PotHelper.getPotExtKeys().forEach(key => {
+      PotHelper.getPotExtKeys(this.pName).forEach(key => {
         entity.extValue[key] = this.form[key]
       })
 
@@ -511,7 +539,7 @@ export default {
       })
       entity.potTxList = potTxList
       entity.deleteThumbnail = this.form.deleteThumbnail
-      return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
+      return await AppServiceHelper.bulkSave(this.pAppServicePath, [entity])
     },
     getNameByteLangth(){
       const fileElement = Util.getValue(document.getElementsByClassName('custom-file'), '0', null)

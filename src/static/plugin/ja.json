@@ -1,0 +1,14 @@
+{
+  "label": {
+    "title": "EXBeacon Platform",
+    "potId": "POT ID",
+    "thumbnail": "サムネイル",
+    "potName": "POT名",
+    "group": "グループ",
+    "category": "カテゴリー",
+    "breadcrumbTitle1": "プラグイン",
+    "breadcrumbTitle2": "POTテスト表示"
+  },
+  "messages": {
+  }
+}

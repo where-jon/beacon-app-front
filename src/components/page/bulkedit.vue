@@ -44,6 +44,14 @@ export default {
       type: String,
       required: true,
     },
+    bulkName: {
+      type: String,
+      default: null,
+    },
+    bulkDispName: {
+      type: String,
+      default: null,
+    },
     id: {
       type: String,
       required: true,
@@ -103,24 +111,26 @@ export default {
       evt.preventDefault()
       this.$nextTick(async () => {
         this.showProgress()
+        const name = Util.getValue(this, 'bulkName', this.name)
+        const dispName = Util.getValue(this, 'bulkDispName', name)
         try {
-          if(this.$parent.$options.methods.onSaving){
+          if(this.$parent.$options.methods && this.$parent.$options.methods.onSaving){
             await this.$parent.$options.methods.onSaving.call(this.$parent)
           }
           else{
             await this.bulkSave()
           }
           await StateHelper.load(this.name, true)
-          this.message = this.$i18n.tnl('message.bulkRegisterCompleted', {target: this.$i18n.tnl('label.' + this.name)})
+          this.message = this.$i18n.tnl('message.bulkRegisterCompleted', {target: this.$i18n.tnl('label.' + dispName)})
           this.replace({showInfo: true})
-          if(this.$parent.$options.methods.onSaved) {
+          if(this.$parent.$options.methods && this.$parent.$options.methods.onSaved) {
             this.$parent.$options.methods.onSaved.call(this.$parent)
           }
           this.editAgain()
         }
         catch(e) {
           console.error(e)
-          this.message = BulkHelper.getBulkErrorMessage(e, this.name, this.showLine)
+          this.message = BulkHelper.getBulkErrorMessage(e, dispName, this.showLine)
           this.replace({showAlert: true})
           window.scrollTo(0, 0)
         }
@@ -158,7 +168,7 @@ export default {
       this.replaceAS({showLine: true})
       BulkHelper.entityKeyCheck(this.name, readerParam.entities)
       await AppServiceHelper.bulkSave(this.appServicePath, readerParam.entities, UPDATE_ONLY_NN.NONE, IGNORE.ON)
-      if(this.$parent.$options.methods.onSaved) {
+      if(this.$parent.$options.methods && this.$parent.$options.methods.onSaved) {
         this.$parent.$options.methods.onSaved.call(this.$parent)
       }
     },

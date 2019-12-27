@@ -2,11 +2,14 @@ import { APP } from '../sub/constant/config'
 import { LOGIN_MODE, FORCE_PUSH_MENU, ROLE_FEATURE } from '../sub/constant/Constants'
 import * as BrowserUtil from '../sub/util/BrowserUtil'
 import * as Util from '../sub/util/Util'
+import * as AnalysisHelper from '../sub/helper/domain/AnalysisHelper'
 import * as AuthHelper from '../sub/helper/base/AuthHelper'
 import * as BulkHelper from '../sub/helper/dataproc/BulkHelper'
 import * as HttpHelper from '../sub/helper/base/HttpHelper'
+import * as IconHelper from '../sub/helper/ui/IconHelper'
 import * as LocaleHelper from '../sub/helper/base/LocaleHelper'
 import * as LocalStorageHelper from '../sub/helper/base/LocalStorageHelper'
+import * as MessageHelper from '../sub/helper/domain/MessageHelper'
 import * as MenuHelper from '../sub/helper/dataproc/MenuHelper'
 import * as OptionHelper from '../sub/helper/dataproc/OptionHelper'
 import * as ProhibitHelper from '../sub/helper/domain/ProhibitHelper'
@@ -14,6 +17,7 @@ import * as PositionHelper from '../sub/helper/domain/PositionHelper'
 import * as SensorHelper from '../sub/helper/domain/SensorHelper'
 import * as SettingHelper from '../sub/helper/domain/SettingHelper'
 import * as StateHelper from '../sub/helper/dataproc/StateHelper'
+import * as TooltipHelper from '../sub/helper/domain/TooltipHelper'
 import * as ValidateHelper from '../sub/helper/dataproc/ValidateHelper'
 import * as ViewHelper from '../sub/helper/ui/ViewHelper'
 import * as VueSelectHelper from '../sub/helper/ui/VueSelectHelper'
@@ -23,15 +27,20 @@ export default function (context) {
   const lang = LocaleHelper.getLocale(process.browser? BrowserUtil.getLangShort(): 'ja')
   context.app.i18n.locale = context.app.i18n.messages[lang]? lang: 'en'
 
+  AnalysisHelper.setApp(context.app.i18n)
   AuthHelper.setApp(context.app.router, context.app.store)
   StateHelper.setApp(context.app.store, context.app.i18n)
-  PositionHelper.setApp(context.app.store)
+  PositionHelper.setApp(context.app.store, context.app.i18n)
   ViewHelper.setApp(context.app.i18n)
   HttpHelper.setApp(context)
+  IconHelper.setApp(context.app.i18n)
+  SensorHelper.setApp(context.app.i18n)
   SettingHelper.setApp(context.app.i18n)
   BulkHelper.setApp(context.app.i18n)
+  MessageHelper.setApp(context.app.i18n)
   OptionHelper.setApp(context.app.i18n)
   ProhibitHelper.setApp(context.app.i18n)
+  TooltipHelper.setApp(context.app.i18n)
   ValidateHelper.setApp(context.app.i18n)
   SensorHelper.setApp(context.app.i18n)
   VueSelectHelper.setApp(context.app.i18n)
@@ -42,6 +51,7 @@ export default function (context) {
   if (context.route.path == APP.MENU.LOGIN_PAGE || context.route.path == APP.MENU.ERROR_PAGE) { // Login Page is always OK
     return
   }
+
   if(context.route.path == '/'){
     context.app.router.push(APP.MENU.LOGIN_PAGE)
     return
@@ -53,7 +63,11 @@ export default function (context) {
     return
   }
   if(context.route.path.slice(-1) == '/'){
-    context.app.router.push(`${context.route.path.slice(0, -1)}${context.route.hash? '': '#'}`)
+    const query = HttpHelper.createQuery(context.route.query)
+    if(Util.hasValue(query)) {
+      context.redirect(context.route.path.slice(0, -1))
+    }
+    context.app.router.push(`${context.route.path.slice(0, -1)}${Util.hasValue(query)? '?' + query: ''}${context.route.hash? '': '#'}`)
   }
   // check tenant feature
   let tenantFeatureList = context.store.state.tenantFeatureList

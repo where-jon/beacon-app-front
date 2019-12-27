@@ -1,18 +1,19 @@
 <template>
   <div class="container-fluid">
     <breadcrumb :items="items" />
-    <m-list :params="params" :list="txs" />
+    <m-list :params="params" compact-mode />
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
 import { APP } from '../../../sub/constant/config'
-import * as ArrayUtil from '../../../sub/util/ArrayUtil'
+import { BULK } from '../../../sub/constant/Constants'
+import * as Util from '../../../sub/util/Util'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
-import reloadmixin from '../../../components/mixin/reloadmixin.vue'
+import commonmixin from '../../../components/mixin/commonmixin.vue'
 import mList from '../../../components/page/list.vue'
 
 export default {
@@ -20,7 +21,7 @@ export default {
     breadcrumb,
     mList,
   },
-  mixins: [reloadmixin],
+  mixins: [commonmixin],
   data() {
     return {
       params: {
@@ -32,21 +33,11 @@ export default {
         bulkEditPath: '/master/tx/bulkedit',
         appServicePath: '/core/tx',
         csvOut: true,
-        custumCsvColumns: this.getCustumCsvColumns(),
         fields: this.getFields(),
         sortBy: APP.TX.BTX_MINOR != 'minor'? 'btxId': 'minor',
-        initTotalRows: this.$store.state.app_service.txs.length
       },
-      items: ViewHelper.createBreadCrumbItems('master', 'tx'),
+      items: ViewHelper.createBreadCrumbItems('master', 'masterTx'),
     }
-  },
-  computed: {
-    ...mapState('app_service', [
-      'txs',
-      'txImages',
-    ]),
-  },
-  mounted() {
   },
   methods: {
     createCustomColumn(){
@@ -68,25 +59,22 @@ export default {
         return ret
       }).filter(val => val)
     },
-    getCustumCsvColumns(){
-      return [
-        APP.TX.BTX_MINOR == 'minor'? 'minor': null,
-        APP.TX.BTX_MINOR != 'minor'? 'btxId': null,
-        APP.TX.BTX_MINOR == 'both'? 'minor': null,
-        'sensor',
-      ].concat(this.createCustomColumn().map(val => val.key)).concat([
-        ArrayUtil.includesIgnoreCase(APP.TX.WITH, 'location')? 'areaName': null,
-        ArrayUtil.includesIgnoreCase(APP.TX.WITH, 'location')? 'locationName': null,
-        ArrayUtil.includesIgnoreCase(APP.TX.WITH, 'location')? 'x': null,
-        ArrayUtil.includesIgnoreCase(APP.TX.WITH, 'location')? 'y': null,
-      ]).filter((val, idx, ary) => val && ary.indexOf(val) == idx)
+    createListParams(){
+      const retMap = { sensor: {} }
+      this.sensorOptionsTx.forEach(option => retMap.sensor[option.value? option.value.toString(): '0'] = option.text)
+      return retMap
+    },
+    editResponse(data) {
+      data.forEach(val => {
+        val.sensorNames = Util.getValue(val, 'sensorNames', '').split(BULK.SPLITTER)
+      })
     },
     getFields(){
       return ViewHelper.addLabelByKey(this.$i18n, [
         APP.TX.BTX_MINOR == 'minor'? {key: 'minor', sortable: true, tdClass: 'action-rowdata' }: null,
         APP.TX.BTX_MINOR != 'minor'? {key: 'btxId', sortable: true, tdClass: 'action-rowdata' }: null,
         APP.TX.BTX_MINOR == 'both'? {key: 'minor', sortable: true, tdClass: 'action-rowdata' }: null,
-        {key: 'sensor', label:'type', sortable: true, tdClass: 'action-rowdata'},
+        {key: 'sensorNames', label:'type', sortable: true, tdClass: 'action-rowdata'},
       ].concat(this.createCustomColumn())
         .concat([
           {key: 'actions', thStyle: {width: '130px !important'}, tdClass: 'action-rowdata' }
@@ -108,22 +96,8 @@ export default {
         tx.dispPir = 0
         tx.dispAlways = 0
       }
-      
       return tx
     },
-    async fetchData(payload) {
-      try {
-        this.showProgress()
-        await StateHelper.load('tx')
-        if (payload && payload.done) {
-          payload.done()
-        }
-      }
-      catch(e) {
-        console.error(e)
-      }
-      this.hideProgress()
-    }
   }
 }
 </script>

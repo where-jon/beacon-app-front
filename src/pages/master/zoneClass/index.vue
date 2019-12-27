@@ -1,18 +1,17 @@
 <template>
   <div class="container-fluid">
     <breadcrumb :items="items" />
-    <m-list :params="params" :list="zoneList" />
+    <m-list :params="params" compact-mode />
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
-import { ZONE } from '../../../sub/constant/Constants'
 import * as Util from '../../../sub/util/Util'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
-import reloadmixin from '../../../components/mixin/reloadmixin.vue'
+import commonmixin from '../../../components/mixin/commonmixin.vue'
 import mList from '../../../components/page/list.vue'
 
 export default {
@@ -20,7 +19,7 @@ export default {
     breadcrumb,
     mList, 
   },
-  mixins: [reloadmixin],
+  mixins: [commonmixin],
   data() {
     return {
       params: {
@@ -31,48 +30,22 @@ export default {
         bulkEditPath: '/master/zoneClass/bulkedit',
         appServicePath: '/core/zone',
         csvOut: true,
-        custumCsvColumns: ['zoneName', 'areaName', 'categoryName'],
         fields: ViewHelper.addLabelByKey(this.$i18n, [ 
+          {key: 'ID', label: 'id', sortable: true },
           {key: 'zoneName', sortable: true },
           {key: 'areaName', sortable: true},
-          {key: 'dispCategoryName', label: 'categoryName', sortable: true},
+          {key: 'categoryName', label: 'categoryName', sortable: true},
           {key: 'actions', thStyle: {width:'130px !important'} }
         ]),
-        sortBy: 'zoneName',
-        initTotalRows: this.zoneLength
+        sortBy: 'ID',
       },
       items: ViewHelper.createBreadCrumbItems('master', 'zoneClass'),
     }
-  },
-  computed: {
-    zoneList() {
-      Util.table(this.$store.state.app_service.zones)
-      return this.$store.state.app_service.zones.filter((zone)=> zone.zoneType ==  ZONE.NON_COORDINATE)
-    },
-    zoneLength() {
-      return this.zoneList().length
-    },
-    ...mapState('app_service', [
-      'zones',
-    ]),
   },
   methods: {
     onSaved(){
       StateHelper.setForceFetch('tx', true)
       StateHelper.setForceFetch('exb', true)
-    },
-    async fetchData(payload) {
-      try {
-        this.showProgress()
-        await StateHelper.load('zone')
-        if (payload && payload.done) {
-          payload.done()
-        }
-      }
-      catch(e) {
-        console.error(e)
-      }
-      this.hideProgress()
     },
   }
 }

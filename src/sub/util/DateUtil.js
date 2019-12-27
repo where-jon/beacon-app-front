@@ -4,8 +4,10 @@
  */
 
 import moment from 'moment'
+import momentTz from 'moment-timezone'
 import { APP, DEV } from '../constant/config'
-import { hasValue, debug } from './Util'
+import { TIME_ZONE } from '../constant/Constants'
+import { hasValue } from './Util'
 
 /**
  * フォーマットした日時情報を取得する。
@@ -66,11 +68,11 @@ export const dateRange = (start, end, by) => {
 /**
  * 日付フォーマットを行う。
  * @method
- * @param {Number|Date} timestamp 任意のエポック秒またはDateオブジェクト。エポック秒の場合はコンソール警告が出る。
+ * @param {Number|Date} timestamp 任意のエポック秒またはDateオブジェクト。
  * @param {String} [format = 'YYYY/MM/DD HH:mm:ss'] 表記はmoment.jsに準拠。
  * @return {String}
  */
-export const formatDate = (timestamp, format = 'YYYY/MM/DD HH:mm:ss') => timestamp? moment(timestamp).format(format): ''
+export const formatDate = (timestamp, format = 'YYYY/MM/DD HH:mm:ss') => timestamp? moment(typeof timestamp == 'object'? timestamp: new Date(timestamp)).format(format): ''
 
 /**
  * 時刻フォーマットを行う。
@@ -102,22 +104,20 @@ export const formatTime = (time, format = 'HH:mm:ss') => {
 export const isExpired = time => time != null? time < (new Date()).getTime(): false
 
 /**
+ * タイムゾーン対応のmomentオブジェクトを取得する。
+ * @method
+ * @param {String} [tz = APP.COMMON.TIME_ZONE]
+ * @return {Object}
+ */
+export const getDateWithTimeZone = (tz = APP.COMMON.TIME_ZONE) => momentTz.tz(TIME_ZONE.getData(tz))
+
+/**
  * 現在日付の午前0時を示すエポック秒を返す。
  * @method
+ * @param {String} [tz = APP.COMMON.TIME_ZONE]
  * @return {Number}
  */
-export const getMidnightMs = () => {
-  const now = new Date()
-  const dayMs = 24 * 60 * 60 * 1000
-  const offset = APP.COMMON.TIME_ZONE * 60 * 60 * 1000
-  const nowToday = Math.floor(now.getTime() / dayMs)
-  const midnight = (nowToday * dayMs) + offset
-  debug('calcurating midnight. now is ', now)
-  debug(now.getTime())
-  debug('midnight is ', midnight)
-  debug(new Date(midnight))
-  return midnight
-}
+export const getMidnightMs = (tz = APP.COMMON.TIME_ZONE) => getDateWithTimeZone(tz).startOf('day').unix() * 1000
 
 /**
  * 日時を文字列にフォーマットする。

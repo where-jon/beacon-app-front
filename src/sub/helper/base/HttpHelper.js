@@ -103,11 +103,13 @@ export const getAppServiceNoCrd = async (path, config, ignoreError) => {
  * @param {String} path 
  * @param {Object} config axiosの設定
  * @param {Boolean} ignoreError 
+ * @param {Object} option 追加設定
  * @return {Any}
  */
-export const getAppService = async (path, config, ignoreError) => {
+export const getAppService = async (path, config, ignoreError, option) => {
   try {
-    let res = await apServiceClient.get(APP_SERVICE.BASE_URL + addTimeToPath(path), addApiKey(config))
+    const header = Util.getValue(option, 'noApiKey', false)? {}: addApiKey(config)
+    const res = await apServiceClient.get(APP_SERVICE.BASE_URL + addTimeToPath(path), header)
     return res.data
   } catch (e) {
     if (!ignoreError) {
@@ -349,3 +351,11 @@ export const addTimeToPath = path => {
   }
   return path + (path.includes('?')? '&': '?') + '_=' + new Date().getTime()
 }
+
+/**
+ * オブジェクトからクエリを作成する。
+ * @method
+ * @param {Object} query
+ * @return {String}
+ */
+export const createQuery = query => Object.keys(query).map(key => `${key}=${query[key]}`).join('&')

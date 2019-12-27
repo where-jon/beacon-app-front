@@ -5,7 +5,7 @@ test('snake2camel', t => {
   t.true(StringUtil.snake2camel('test_string') == 'testString')
 })
 
-test('snake2camel', async t => {
+test('snake2camel2', async t => {
   t.true(StringUtil.snake2camel('test_string') == 'testString')
 })
 

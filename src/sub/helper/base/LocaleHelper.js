@@ -3,6 +3,7 @@
  * @module helper/base/LocaleHelper
  */
 
+import * as BrowserUtil from '../../util/BrowserUtil'
 import * as HttpHelper from './HttpHelper'
 import * as LocalStorageHelper from './LocalStorageHelper'
 
@@ -16,6 +17,13 @@ export const getLocale = (defaultLocale = '') => {
   const locale = LocalStorageHelper.getLocalStorage(`${document.domain}-locale`)
   return locale? locale : defaultLocale
 }
+
+/**
+ * システムが使用する言語情報を取得する。
+ * @method
+ * @return {String}
+ */
+export const getSystemLocale = () => getLocale(BrowserUtil.getLangShort())
 
 /**
  * 言語情報を設定する。

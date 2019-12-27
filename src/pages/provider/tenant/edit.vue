@@ -96,6 +96,12 @@
         </b-form-group>
         <div v-if="!hasId && show" class="form-row">
           <b-form-row class="mb-3">
+            <label v-t="'label.id'" class="mr-3" />
+            <input v-model="form.regionCd" :readonly="!isEditable" type="text" maxlength="20" class="form-control" :pattern="cdPattern" required>
+          </b-form-row>
+        </div>
+        <div v-if="!hasId && show" class="form-row">
+          <b-form-row class="mb-3">
             <label v-t="'label.regionName'" class="mr-3" />
             <input v-model="form.regionName" :readonly="!isEditable" type="text" maxlength="20" class="form-control" required>
           </b-form-row>
@@ -106,6 +112,13 @@
             <input v-model="form.meshId" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control" required>
           </b-form-row>
         </div>
+
+        <b-form-row class="mb-3">
+          <b-col sm="5">
+            <label v-t="'label.status'" />
+            <b-form-select v-model="form.status" :options="statusOptions" />
+          </b-col>
+        </b-form-row>
 
         <b-form-row class="mb-2">
           <b-button v-t="'label.featureSetting'" :variant="theme" type="button" class="mr-2 my-1" @click="showFeatureEdit" />
@@ -145,6 +158,7 @@
 <script>
 import { mapState } from 'vuex'
 import { EXCLOUD } from '../../../sub/constant/config'
+import { PATTERN, TENANT_STATE } from '../../../sub/constant/Constants'
 import * as DateUtil from '../../../sub/util/DateUtil'
 import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
@@ -184,7 +198,7 @@ export default {
         {key: 'subCheck', label: 'dummy', thStyle: {width:'4px !important'} },
         {key: 'featureName', label: 'dummy'},
       ]),
-      form: Util.extract(this.$store.state.app_service.tenant, ['tenantId', 'tenantCd', 'tenantName', 'sysAdminLoginId', 'sysAdminPass', 'adminLoginId', 'adminPass', 'userLoginId', 'userPass', 'regionName', 'meshId', 'createDt', 'delFlg']),
+      form: Util.extract(this.$store.state.app_service.tenant, ['tenantId', 'tenantCd', 'tenantName', 'sysAdminLoginId', 'sysAdminPass', 'adminLoginId', 'adminPass', 'userLoginId', 'userPass', 'regionCd', 'regionName', 'meshId', 'createDt', 'delFlg', 'status']),
       settingParams: {
         name: 'setting',
         fields: [ 
@@ -201,6 +215,10 @@ export default {
       targetTenantId: null,
       defaultCheckFeatureNames: ['positionmap', 'positionlist', 'positionstack'],
       isFirst: true,
+      statusOptions:[
+        {text: this.$i18n.tnl('label.enabledType'), value: TENANT_STATE.ENABLED},
+        {text: this.$i18n.tnl('label.disabledType'), value: TENANT_STATE.DISABLED}
+      ],
     }
   },
   computed: {
@@ -212,7 +230,10 @@ export default {
     ]),
     createDt(){
       return DateUtil.formatDate(this.form.createDt)
-    }
+    },
+    cdPattern(){
+      return PATTERN.MASTER_CD
+    },
   },
   async created(){
     const currentFeatureList = this.tenant && this.tenant.tenantFeatureList? this.tenant.tenantFeatureList: []
@@ -344,7 +365,7 @@ export default {
           Util.hasValue(this.form.adminLoginId)? {userId: dummyKey--, loginId: this.form.adminLoginId, pass: this.form.adminPass, role: { roleId: dummyKey--, roleName: 'ADMIN' }}: null,
           Util.hasValue(this.form.userLoginId)? {userId: dummyKey--, loginId: this.form.userLoginId, pass: this.form.userPass, role: { roleId: dummyKey--, roleName: 'USER' }}: null,
         ].filter(val => val): null,
-        region: !Util.hasValue(this.form.tenantId)? {regionId: dummyKey--, regionName: this.form.regionName, meshId: Util.hasValue(this.form.meshId)? this.form.meshId: null}: null,
+        region: !Util.hasValue(this.form.tenantId)? {regionId: dummyKey--, regionCd: this.form.regionCd, regionName: this.form.regionName, meshId: Util.hasValue(this.form.meshId)? this.form.meshId: null}: null,
         defaultExcloudBaseUrl: defaultConfig.EXCLOUD.BASE_URL,
         excloudBaseUrl: EXCLOUD.BASE_URL,
         tenantFeatureList: this.convertSendParam().map(val => {
@@ -353,6 +374,7 @@ export default {
             delFlg: (val.checked && !val.disabled)? 0: 1,
           }
         }),
+        status: this.form.status,
       }
       if(settingEntities.length != 0){
         entity.settingList = settingEntities.map(val => ({...val, settingId: val.settingId <= 0? dummyKey--: val.settingId}))

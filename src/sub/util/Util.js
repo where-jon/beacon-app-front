@@ -18,14 +18,15 @@ export const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
  * @method
  * @param {Object} obj マージ先
  * @param {Object} def マージ元
+ * @param {Object} vm vueオブジェクト
  * @return {Object} 失敗した場合にobjを返す。正常終了時はnull
  */
-export const applyDef = (obj, def) => {
+export const applyDef = (obj, def, vm) => {
   if (!obj || !def) return obj
 
   _.forEach(def, (val, key) => {
     if (obj[key] === undefined) {
-      obj[key] = val
+      vm? vm.$set(obj, key, val) : obj[key] = val
     }
   })
 }
@@ -33,8 +34,8 @@ export const applyDef = (obj, def) => {
 /**
  * オブジェクトから指定した要素のみ取り出す。
  * @method
- * @param {Object} obj 
- * @param {String[]} fields 
+ * @param {Object} obj
+ * @param {String[]} fields
  * @return {Object} 失敗した場合はobjを返す。正常終了時は成果物を返す。
  */
 export const extract = (obj, fields) => {
@@ -58,7 +59,10 @@ export const extract = (obj, fields) => {
  * @param {String[]} excludeKeys マージ対象から除外するプロパティ名
  * @return {Object}
  */
-export const merge = (dest, src, excludeKeys) => {
+export const merge = (dest, src, excludeKeys = []) => {
+  if(src == null){
+    return dest
+  }
   const temp = Object.assign({}, src)
   excludeKeys.forEach(key => delete temp[key])
   return Object.assign(dest, temp)
@@ -112,7 +116,7 @@ export const hasValueAny = (...obj) => obj.some(val => hasValue(val))
 /**
  * オプジェクトから階層を辿って値を取得する。
  * @method
- * @param {Object} obj 
+ * @param {Object} obj
  * @param {String} path オブジェクトのメンバー以下を.でつなげる。配列は添字を使う。
  * @param {*} def 省略すると、値と最後のキー値のペアを返す。省略しないとnullのときdefを返す
  */
@@ -133,7 +137,7 @@ export const getValue = (obj, path, def) => {
 /**
  * オプジェクトから階層を辿って値を設定する。
  * @method
- * @param {Object} obj 
+ * @param {Object} obj
  * @param {String} path オブジェクトのメンバー以下を.でつなげる。配列は添字を使う。
  * @param {*} val
  */
@@ -172,5 +176,18 @@ export const removeInterval = () => {
   while (intervals.length > 0) {
     window.clearInterval(intervals.shift())
   }
+}
+
+/**
+ * パラメータが「undefined」か判定する。
+ * @method
+ * @param {Object} param
+ * @return {Boolean}「undefined」の場合true
+ */
+export const isUndefined = (param) => {
+  if (param === undefined) {
+    return true
+  }
+  return false
 }
 

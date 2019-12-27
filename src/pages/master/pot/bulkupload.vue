@@ -8,7 +8,9 @@
 <script>
 import { mapState } from 'vuex'
 import { APP } from '../../../sub/constant/config'
+import { CATEGORY } from '../../../sub/constant/Constants'
 import * as BrowserUtil from '../../../sub/util/BrowserUtil'
+import * as StringUtil from '../../../sub/util/StringUtil'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
 import * as ImageHelper from '../../../sub/helper/base/ImageHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
@@ -17,6 +19,24 @@ import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkupload from '../../../components/page/bulkupload.vue'
 
 export default {
+  props: {
+    pName: {
+      type: String,
+      default: '',
+    },
+    pPath: {
+      type: String,
+      default: '/master/pot',
+    },
+    pAppServicePath: {
+      type: String,
+      default: '/basic/pot',
+    },
+    pTypeList: {
+      type: Array,
+      default: () => [CATEGORY.PERSON, CATEGORY.THING],
+    },
+  },
   components: {
     breadcrumb,
     bulkupload,
@@ -25,15 +45,21 @@ export default {
     return {
       name: 'pot',
       id: 'potId',
-      backPath: '/master/pot',
-      appServicePath: '/basic/pot',
-      items: ViewHelper.createBreadCrumbItems('master', {text: 'pot', href: '/master/pot'}, 'bulkUpload'),
     }
   },
   computed: {
     ...mapState('app_service', [
       'pot', 'pots'
     ]),
+    backPath() {
+      return this.pPath
+    },
+    items() {
+      return ViewHelper.createBreadCrumbItems('master', {text: StringUtil.concatCamel('pot', this.pName), href: this.backPath}, 'bulkUpload')
+    },
+  },
+  async mounted() {
+    await StateHelper.load('pot')
   },
   async created() {
     await StateHelper.load('pot')
@@ -44,7 +70,7 @@ export default {
       StateHelper.setForceFetch('user', true)
     },
     search(key) {
-      const target = this.pots.find(val => val.potCd == key)
+      const target = this.pots.find(val => val.potCd == key && this.pTypeList.includes(val.potType))
       return target? {
         id: target.potId,
         name: target.potName,
@@ -68,7 +94,7 @@ export default {
       }, APP.POT_THUMBNAIL_MAX)
     },
     async save(thumbnails) {
-      return await AppServiceHelper.bulkSave(this.appServicePath, thumbnails)
+      return await AppServiceHelper.bulkSave(this.pAppServicePath, thumbnails)
     },
   }
 }

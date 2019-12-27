@@ -8,7 +8,7 @@
 <script>
 import { mapState } from 'vuex'
 import { APP } from '../../../sub/constant/config'
-import { IGNORE, CATEGORY } from '../../../sub/constant/Constants'
+import { IGNORE, CATEGORY, POT_TYPE } from '../../../sub/constant/Constants'
 import * as ArrayUtil from '../../../sub/util/ArrayUtil'
 import * as Util from '../../../sub/util/Util'
 import * as BulkHelper from '../../../sub/helper/dataproc/BulkHelper'
@@ -29,7 +29,7 @@ export default {
       id: 'txId',
       backPath: '/master/tx',
       appServicePath: '/core/tx',
-      items: ViewHelper.createBreadCrumbItems('master', {text: 'tx', href: '/master/tx'}, 'bulkRegister'),
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'masterTx', href: '/master/tx'}, 'bulkRegister'),
     }
   },
   computed: {
@@ -80,7 +80,7 @@ export default {
           potId: Util.getValue(pot, 'potId', dummyKey),
           potCd: Util.getValue(pot, 'potCd', this.createDefaultName(dummyKey)),
           potName: Util.getValue(pot, 'potName', this.createDefaultName(dummyKey--)),
-          potType: Util.getValue(pot, 'potType', CATEGORY.getTypes()[0].value),
+          potType: Util.getValue(pot, 'potType', POT_TYPE.getTypes()[0].value),
           extValue: Util.getValue(pot, 'extValue', null),
         }
       }])
@@ -137,7 +137,7 @@ export default {
         return dummyKey
       }
       const param = BulkHelper.createParamLocation(
-        {...entity, posId: entity.btxId * -1, locationName: Util.hasValue(entity.locationName)? entity.locationName: SensorHelper.createTxLocationDummyName(entity)},
+        {...entity, locationCd: entity.btxId * -1, locationName: Util.hasValue(entity.locationName)? entity.locationName: SensorHelper.createTxLocationDummyName(entity)},
         dummyKey
       )
       entity.location = param.location

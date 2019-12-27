@@ -3,11 +3,13 @@
  * @module helper/ui/ViewHelper
  */
 
+import { Container } from 'createjs-module'
 import elementLocale from 'element-ui/lib/locale'
 import _ from 'lodash'
 import { APP } from '../../constant/config'
 import * as StringUtil from '../../util/StringUtil'
 import * as Util from '../../util/Util'
+import * as BulkHelper from '../dataproc/BulkHelper'
 
 let i18n
 
@@ -31,8 +33,8 @@ export const importElementUI = () => {
 /**
  * ラベルを言語化する。ラベルが定義されていない場合、keyプロパティ値を言語化してラベルとする。
  * @method
- * @param {Object} i18n 
- * @param {Object[]} objArr 
+ * @param {Object} i18n
+ * @param {Object[]} objArr
  * @return {Object[]}
  */
 export const addLabelByKey = (i18n, objArr) => {
@@ -79,7 +81,7 @@ export const getDetailCaptionKey = id => {
 /**
  * 実際の主キー名を、表示上の主キー名に変換する。
  * @method
- * @param {String} col 
+ * @param {String} col
  * @return {String}
  */
 export const modifyColName = col => {
@@ -95,8 +97,8 @@ export const modifyColName = col => {
 /**
  * 実際の主キー名に応じて、表示上の主キー名が保有する値を取得する。
  * @method
- * @param {String} col 
- * @param {Any} val 
+ * @param {String} col
+ * @param {Any} val
  * @return {Any}
  */
 export const modifyVal = (col, val) => {
@@ -114,10 +116,10 @@ export const modifyVal = (col, val) => {
 /**
  * サブミット時にエラーが発生した場合のメッセージを作成する。
  * @method
- * @param {Exception} e 
- * @param {Number} showLine 
- * @param {String} crud 
- * @param {String} masterIdName 
+ * @param {Exception} e
+ * @param {Number} showLine
+ * @param {String} crud
+ * @param {String} masterIdName
  * @return {String}
  */
 export const getSubmitErrorMessage = (e, showLine, crud, masterIdName) => {
@@ -129,10 +131,21 @@ export const getSubmitErrorMessage = (e, showLine, crud, masterIdName) => {
   }
   if(e.bulkError) {
     return _.map(_.orderBy(e.bulkError, ['line'], ['asc']), err => {
-      let col = modifyColName(err.col.trim())
-      return i18n.tline('message.bulk' + err.type + 'Failed', 
-        {line: err.line, col: i18n.tnl(`label.${col}`), value: StringUtil.sanitize(err.value, true), min: err.min, max: err.max, candidates: err.candidates, num: err.num, unit: err.unit? i18n.tnl(`label.${err.unit}Unit`): '', target: err.target? i18n.tnl(`label.${err.target}`): ''},
-        showLine)
+      BulkHelper.editBulkError(err)
+      const readingPoint = i18n.tnl(`message.readingPoint`)
+      const col = err.cols? err.cols.map(c => i18n.tnl(`label.${c.trim()}`)).join(readingPoint): i18n.tnl(`label.${modifyColName(err.col.trim())}`)
+      const value = err.values? err.values.join(readingPoint) : err.value
+      return i18n.tline('message.bulk' + err.type + 'Failed', {
+        line: err.line,
+        col: col,
+        value: StringUtil.sanitize(value, true),
+        min: err.min,
+        max: err.max,
+        candidates: err.candidates,
+        num: err.num,
+        unit: err.unit? i18n.tnl(`label.${err.unit}Unit`): '',
+        target: err.target? i18n.tnl(`label.${err.target}`): ''
+      }, showLine)
     }).filter((val, idx, arr) => arr.indexOf(val) == idx)
   }
   return i18n.terror('message.' + crud + 'Failed', {target: i18n.tnl('label.' + masterIdName), code: e.message})
@@ -152,7 +165,7 @@ export const clearFileComponentAll = () => {
 /**
  * 全てのbuttonタグを有効化/無効化する。
  * @method
- * @param {Boolean} disabled 
+ * @param {Boolean} disabled
  * @return {Boolean}
  */
 export const disabledButtons = disabled => {
@@ -162,4 +175,32 @@ export const disabledButtons = disabled => {
     buttonList[idx].disabled = disabled
   }
   return disabled
+}
+
+/**
+ * 点滅用の定期処理メソッド
+ * @method
+ * @param {Object} createJsStage
+ * @param {Object[]} icons
+ * @param {Object[]} prohibitDetectList
+ */
+export const twinkleProhibit = (createJsStage, icons, prohibitDetectList) => {
+  Object.values(icons).forEach(icon => prohibitDetectList.some(tx => tx.minor == icon.btxId)? icon.visible = !icon.visible: icon.visible = true)
+  createJsStage.update()
+}
+
+/**
+ * createJSコンテナを作成し、ステージに追加する。
+ * @method
+ * @param {Object} createJsStage
+ * @param {Number} width
+ * @param {Number} height
+ * @return {Object} コンテナオブジェクト
+ */
+export const addContainerOnStage = (createJsStage, width, height) => {
+  const cont = new Container()
+  cont.width = width
+  cont.height = height
+  createJsStage.addChild(cont)
+  return cont
 }

@@ -5,13 +5,15 @@
 
 import _ from 'lodash'
 import { APP, DISP } from '../../constant/config'
-import { CATEGORY, ZONE, SHAPE, FEATURE, NOTIFY_STATE, SYSTEM_ZONE_CATEGORY_NAME} from '../../constant/Constants'
+import { EXB, CATEGORY, ZONE, SHAPE, FEATURE, NOTIFY_STATE, SYSTEM_ZONE_CATEGORY_NAME} from '../../constant/Constants'
 import * as ArrayUtil from '../../util/ArrayUtil'
 import * as DateUtil from '../../util/DateUtil'
 import * as StringUtil from '../../util/StringUtil'
 import * as Util from '../../util/Util'
 import * as AppServiceHelper from './AppServiceHelper'
 import * as ConfigHelper from './ConfigHelper'
+import * as LocaleHelper from '../base/LocaleHelper'
+import * as OptionHelper from './OptionHelper'
 import * as SensorHelper from '../domain/SensorHelper'
 
 
@@ -56,7 +58,7 @@ export const createMasterCd = (masterType, masterList, masterData = null) => {
       if(curLength <= cnt){
         return prev
       }
-      const comp = StringUtil.compareStrNum(prevAry[cnt], curAry[cnt])
+      const comp = StringUtil.sortByString(prevAry[cnt], curAry[cnt], LocaleHelper.getSystemLocale())
       if(comp < 0){
         return cur
       }
@@ -76,6 +78,47 @@ export const createMasterCd = (masterType, masterList, masterData = null) => {
     }
     return ret + (/^[0-9]+$/.test(cur)? StringUtil.addWithPadding(cur, 1): cur.concat(1))
   }, '')
+}
+
+/**
+ * 重複のないデータを作成する。
+ * @method
+ * @param {Object[]} masterList
+ * @param {Object} obj
+ * @param {String} column
+ * @param {String} type
+ * @param {Number} sign
+ * @return {Object}
+ */
+export const createNoConflictValue = (masterList, obj, column, type, sign = 1) => {
+  if(!masterList.some(master => master[column] == obj[column])){
+    return obj[column]
+  }
+  for(let cnt = 1; cnt < 65536; cnt++) {
+    const value = type == 'number'? obj[column] + (cnt * sign): obj[column] + '-' + cnt
+    if(!masterList.some(master => master[column] == value)){
+      return value
+    }
+  }
+  return obj[column]
+}
+
+ /**
+ * Tx配置設定の新規データを作成する。
+ * @method
+ * @param {Object} tx
+ * @return {Object}
+ */
+export const createLocationFromTx = tx => {
+  const txs = store.state.app_service.txs
+  if(!txs){
+    return tx
+  }
+  return {
+    locationId: tx.btxId * -1,
+    locationCd: createNoConflictValue(txs, { locationCd: tx.btxId * -1 }, 'locationCd', 'string', -1),
+    locationName: createNoConflictValue(txs, { locationName: Util.getValue(tx, 'location.locationName', SensorHelper.createTxLocationDummyName(tx)) }, 'locationName', 'string'),
+  }
 }
 
 /**
@@ -270,7 +313,7 @@ const appStateConf = {
   areas: {
     path: '/core/area',
     sort: 'areaCd',
-    beforeCommit: arr => arr.sort((a, b) => StringUtil.sortByString(a.areaCd, b.areaCd))
+    beforeCommit: arr => arr.sort((a, b) => StringUtil.sortByString(a.areaCd, b.areaCd, LocaleHelper.getSystemLocale()))
   },
   exbs: {
     path: '/core/exb/withLocation',
@@ -293,6 +336,7 @@ const appStateConf = {
           zoneCategoryIdList: locationZoneList.map(val => Util.getValue(val, 'categoryId', null)).filter(val => val),
           zoneClass: Util.getValue(location, 'locationZoneList', []).filter(val => val.zoneType == ZONE.NON_COORDINATE).map(val => val.zoneName),
           zoneBlock: Util.getValue(location, 'locationZoneList', []).filter(val => val.zoneType == ZONE.COORDINATE).map(val => val.zoneName),
+          exbTypeName: Util.getValue(EXB.getTypes().find(val => val.value == exb.exbType), 'text', ''),
         }
       })
     }
@@ -352,7 +396,7 @@ const appStateConf = {
           extValue: pot.extValue? pot.extValue: '',
           ...extValues
         }
-      }).sort((a, b) => StringUtil.sortByString(a.potCd, b.potCd))
+      }).sort((a, b) => StringUtil.sortByString(a.potCd, b.potCd, LocaleHelper.getSystemLocale()))
       // omit images to avoid being filtering target
     }
   },
@@ -369,7 +413,7 @@ const appStateConf = {
         shapeName: val.display? getShapeName(val.display.shape): null,
         categoryTypeName: getCategoryTypeName(val),
         systemCategoryName: val.systemUse != 0? val.categoryName.toLowerCase(): null,
-      })).sort((a, b) => StringUtil.sortByString(a.categoryCd, b.categoryCd))
+      })).sort((a, b) => StringUtil.sortByString(a.categoryCd, b.categoryCd, LocaleHelper.getSystemLocale()))
     }
   },
   groups: {
@@ -382,7 +426,7 @@ const appStateConf = {
         color: val.display? val.display.color: null,
         bgColor: val.systemUse == 1? getSystemUseBgColor(val): getCategoryDisplayBgColor(val),
         shapeName: val.display? getShapeName(val.display.shape): null,
-      })).sort((a, b) => StringUtil.sortByString(a.groupCd, b.groupCd))
+      })).sort((a, b) => StringUtil.sortByString(a.groupCd, b.groupCd, LocaleHelper.getSystemLocale()))
     }
   },
   users: {
@@ -432,6 +476,29 @@ const appStateConf = {
   locations: {
     path: '/core/location',
     sort: 'locationId',
+    beforeCommit: arr => {
+      return arr.map(location => {
+        const locationZoneList = Util.getValue(location, 'locationZoneList', [])
+        const zoneTypeMap = {}
+        Util.getValue(location, 'locationZoneList', []).forEach(locationZone => {
+          const key = '' + locationZone.zoneType
+          if(!zoneTypeMap[key]){
+            zoneTypeMap[key] = []
+          }
+          zoneTypeMap[key].push(locationZone.zoneName)
+        })
+        const locationTypeOptions = OptionHelper.getLocationTypeOptions()
+        return {
+          ...location,
+          locationTypeName: Util.getValue(locationTypeOptions.find(val => val.value == location.locationType), 'text', ''),
+          zoneClass: zoneTypeMap['' + ZONE.NON_COORDINATE],
+          zoneBlock: zoneTypeMap['' + ZONE.COORDINATE],
+          isAbsentZone: location.categoryName === SYSTEM_ZONE_CATEGORY_NAME.ABSENT,
+          zoneIdList: locationZoneList.map(val => Util.getValue(val, 'locationZonePK.zoneId', null)).filter(val => val),
+          zoneCategoryIdList: locationZoneList.map(val => Util.getValue(val, 'categoryId', null)).filter(val => val),
+        }
+      })
+    }
   },
   zones: {
     path: '/core/zone',
@@ -440,13 +507,7 @@ const appStateConf = {
       return  arr.map(val => {
         const category = Util.getValue(val, 'zoneCategoryList.0.category', null)
         return {
-          zoneId: val.zoneId,
-          zoneName: val.zoneName,
-          zoneType: val.zoneType,
-          x: val.x,
-          y: val.y,
-          w: val.w,
-          h: val.h,
+          ...val,
           areaId: Util.hasValue(val.area)? val.area.areaId: null,
           areaName: Util.hasValue(val.area)? val.area.areaName: null,
           locationId: Util.hasValue(val.locationZoneList)? val.locationZoneList[0].locationZonePK.locationId: null,
@@ -509,8 +570,9 @@ const appStateConf = {
  * @async
  * @param {String} target マスタ種類
  * @param {Boolean} force 強制取得する
+ * @param {Object} option 追加設定
  */
-export const load = async (target, force) => {
+export const load = async (target, force, option) => {
   const forceFetchTarget = target
   if (!target.endsWith('s')) {
     target = target.endsWith('y')? target.slice(0, -1) + 'ies' : target + 's'
@@ -524,7 +586,7 @@ export const load = async (target, force) => {
   let arr = store.state.app_service[target]
   const expiredKey = `${target}Expired`
   if (!arr || arr.length == 0 || force || getForceFetch(forceFetchTarget) || DateUtil.isExpired(store.state.app_service[expiredKey])) {
-    arr = await AppServiceHelper.fetchList(path, sort)
+    arr = await AppServiceHelper.fetchList(path, sort, option)
     if (beforeCommit) {
       arr = beforeCommit(arr)
     }

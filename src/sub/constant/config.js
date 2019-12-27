@@ -15,8 +15,8 @@ export const APP = { // 機能面に関する設定
   LOGIN_MODE: LOGIN_MODE.APP_SERVICE, // ログインモード(なし、ローカル、AppService)
   SAAS_DOMAIN: '.saas.',
   COMMON: {
-    VERSION: 'Version 1.2.2', // バージョン　this application version
-    TIME_ZONE: -9, // 午前0時を決定するためのタイムゾーン(時)
+    VERSION: 'Version 1.3', // バージョン　this application version
+    TIME_ZONE: 'JST', // 午前0時を決定するためのタイムゾーン
     AUTO_RELOAD: 60000, // 自動リロード間隔(ミリ秒)
   },
   SYS: {
@@ -59,10 +59,15 @@ export const APP = { // 機能面に関する設定
     LOST_GROUPS: null, // 重要部品設定GROUPID[1,2,3]の形
     USE_LEGEND: false, // 凡例を表示
     SHOW_DETECTED_COUNT: false, // 検知数を表示
+    SHOW_TX_NO_OWNER: true, // POTと紐付いていないタグを表示する
 
     WITH: {
       CATEGORY: true, // 位置表示(地図)にカテゴリを表示
       GROUP: false, // 位置表示(地図)にグループを表示
+    },
+
+    PLUGIN: {
+      FILTER: false,
     },
   },
   SENSOR: {
@@ -101,11 +106,18 @@ export const APP = { // 機能面に関する設定
   },
   // EXB関連設定
   EXB: {
+    WITH: [],
     SENSOR: [1,2,3,4,8], // EXBのタイプに設定可能なセンサーID
-    WITH: ['posId', 'zone'],
     DEVICEID_TYPE: 'deviceId',
     MULTI_SENSOR: true,
     SENSOR_MAX: 2,   // センサー種類最大数
+  },
+  // 場所関連設定
+  LOCATION: {
+    WITH: ['posId', 'zoneClass', 'zoneBlock'],
+    TYPE: {
+      WITH: [],
+    },
   },
   // USER関連設定
   USER: {
@@ -115,7 +127,56 @@ export const APP = { // 機能面に関する設定
   POSITION_WITH_AREA: true, // エリアを表示
   // POT関連設定
   POT: {
-    WITH: ['category', 'user', 'ruby', 'description'],
+    WITH: ['thumbnail', 'category', 'user', 'ruby', 'description'],
+    MULTI_TX: false,         // 複数Tx使用
+    TX_MAX: 2,   // 所持Tx最大数
+    TYPES: [1, 2, 3],   // 選択可能な種別（1人,2物,3物(その他)）
+    // 拡張項目定義（サンプル）
+    EXT_DEF: [
+      {key: 'post', type: 'string', showlist: true, sort: true},
+      {key: 'tel', type: 'tel', showlist: true, sort: true},
+      {key: 'mobile', type: 'tel', showlist: false, sort: false},
+      {key: 'entrydate', type: 'date', showlist: true, sort: false},
+      {key: 'salary', type: 'int', min: 0, max: 1200000, showlist: false, sort: false},
+      {key: 'score', type: 'float', default: 50, min: -100, max: 100, showlist: false, sort: false},
+      {key: 'manager', type: 'boolean', default: 'はい', checked:'はい', unchecked:' ', showlist: true, sort: false},
+      {key: 'address', type: 'string', default:'Tokyo', required: true, length:10, format: '[a-zA-Z]+', showlist: false, sort: false},
+    ],
+  },
+  PERSON: {
+    WITH: ['thumbnail', 'category', 'user', 'ruby', 'description'],
+    MULTI_TX: false,         // 複数Tx使用
+    TX_MAX: 2,   // 所持Tx最大数
+    // 拡張項目定義（サンプル）
+    EXT_DEF: [
+      {key: 'post', type: 'string', showlist: true, sort: true},
+      {key: 'tel', type: 'tel', showlist: true, sort: true},
+      {key: 'mobile', type: 'tel', showlist: false, sort: false},
+      {key: 'entrydate', type: 'date', showlist: true, sort: false},
+      {key: 'salary', type: 'int', min: 0, max: 1200000, showlist: false, sort: false},
+      {key: 'score', type: 'float', default: 50, min: -100, max: 100, showlist: false, sort: false},
+      {key: 'manager', type: 'boolean', default: 'はい', checked:'はい', unchecked:' ', showlist: true, sort: false},
+      {key: 'address', type: 'string', default:'Tokyo', required: true, length:10, format: '[a-zA-Z]+', showlist: false, sort: false},
+    ],
+  },
+  THING: {
+    WITH: ['thumbnail', 'category', 'user', 'ruby', 'description'],
+    MULTI_TX: false,         // 複数Tx使用
+    TX_MAX: 2,   // 所持Tx最大数
+    // 拡張項目定義（サンプル）
+    EXT_DEF: [
+      {key: 'post', type: 'string', showlist: true, sort: true},
+      {key: 'tel', type: 'tel', showlist: true, sort: true},
+      {key: 'mobile', type: 'tel', showlist: false, sort: false},
+      {key: 'entrydate', type: 'date', showlist: true, sort: false},
+      {key: 'salary', type: 'int', min: 0, max: 1200000, showlist: false, sort: false},
+      {key: 'score', type: 'float', default: 50, min: -100, max: 100, showlist: false, sort: false},
+      {key: 'manager', type: 'boolean', default: 'はい', checked:'はい', unchecked:' ', showlist: true, sort: false},
+      {key: 'address', type: 'string', default:'Tokyo', required: true, length:10, format: '[a-zA-Z]+', showlist: false, sort: false},
+    ],
+  },
+  OTHER: {
+    WITH: ['thumbnail', 'category', 'user', 'ruby', 'description'],
     MULTI_TX: false,         // 複数Tx使用
     TX_MAX: 2,   // 所持Tx最大数
     // 拡張項目定義（サンプル）
@@ -133,6 +194,9 @@ export const APP = { // 機能面に関する設定
   // category
   CATEGORY: {
     TYPES: [1,2],   // 選択可能な種別（1人,2物,3ゾーン）
+  },
+  SETTING: {
+    DISABLED_THEME: false,
   },
   NOTIFY: {
     // 通知媒体
@@ -225,7 +289,7 @@ export const APP = { // 機能面に関する設定
 
 // URL関連設定
 export const APP_SERVICE = { // used if APP.LOGIN_MODE == APP_SERVICE
-  BASE_URL: 'http://localhost:8080'
+  BASE_URL: 'http://localhost:8080',
 }
 
 export const EXCLOUD = {
@@ -274,6 +338,26 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     DISPLAY_PRIORITY: 'category', // TX表示の際に参照するdisplay方法
     ABSENT_ZONE_DISPLAY_TYPES: ['undetected','lost','absent'],   // undetected:未検知, lost:消失, absent:不在ゾーン）
   },
+  // 位置表示(数量)：TX
+  TX_NUM: {
+    R: 30, // Txの半径
+    ROUNDRECT_RADIUS: 13, // Tx角丸表示時のRADIUS
+    BGCOLOR: '#ff7f50', // Tx表示時のデフォルト背景色
+    COLOR: '#000000', // Tx表示時のデフォルト文字色
+    STROKE_COLOR: '#cccccc', // Tx表示時のデフォルト枠線色
+    STROKE_WIDTH: 1, // Tx表示時のデフォルト枠線幅
+
+    // ツールチップ内の表示要素
+    TOOLTIP_ITEMS: {
+      TX_LOCATION_NAME: true, // 場所名
+      TX_LOCATION_TYPE: true, // 場所タイプ
+    },
+    TOOLTIP_FONT: '12px Arial', // ツールチップフォント
+    TOOLTIP_COLOR: '#000000', // ツールチップ文字色
+    TOOLTIP_BORDERCOLOR: '#888888', // ツールチップ枠線色
+    TOOLTIP_BGCOLOR: '#FFFDE6', // ツールチップ背景色
+    TOOLTIP_ROUNDRECT: 16, // ツールチップ角丸半径
+  },
   EXB_LOC: {
     // EXB配置設定のEXB表示サイズ
     SIZE: {
@@ -283,7 +367,6 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     BGCOLOR: '#76ccf7', // EXB配置設定のEXB表示背景色
     COLOR: '#000', // EXB配置設定のEXB表示文字色
     FONT: 'Arial', // EXB配置設定のEXB表示フォント
-    RSSI_RADIUS: 0,
   },
   TX_LOC: {
     // TX配置設定のTX表示サイズ
@@ -381,7 +464,7 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   FONT_ICON_ADJUST_SCALE: 1.0, // アイコン内テキストのフォントサイズ係数
   IS_SCALE_ICON_TEXT: false, // アイコン内のテキストを自動スケールさせる
   DUMMY_ICON_TEXT: 'あああ',
-  SHOW_MAP_RATIO: true,
+  SHOW_MAP_RATIO: false, // 寸法設定を表示する
 
   MAP_FIT: 'both', // マップを画面表示範囲内にフィットさせるか。width or height or both
   MAP_FIT_MOBILE: 'width', // (モバイル)マップを画面表示範囲内にフィットさせるか。width or height or both
@@ -434,9 +517,13 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   },
 
   INSTALLATION: { // 設置支援
-    RSSI_ICON_WIDTH: 100,
-    RSSI_ICON_HEIGHT: 20,
+    WIDTH: 50,
+    HEIGHT: 20,
+    BG_COLOR: ['#dc143c', '#ff4500', '#ff6347', '#7F7F7F'],
+    FONT_COLOR: ['white', 'white', 'white', 'white'],
+    FONT_SIZE: 15,
   },
+
   // 禁止区域関連設定
   PROHIBIT_TWINKLE_TIME: 1500, // 点滅間隔(ミリ秒)
   // システム設定カテゴリ

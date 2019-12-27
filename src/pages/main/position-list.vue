@@ -4,7 +4,7 @@
                 :reload="reload" :short-name="shortName"
     />
     <alert v-model="showDismissibleAlert" :message="message" :fix="fixHeight" :prohibit=showDismissibleAlert :prohibit-view="isProhibitView" :alert-style="alertStyle" />
-    <m-list :params="params" :list="positionList" :alert-force-hide=true />
+    <m-list :params="params" :list="positionList" :alert-force-hide=true :use-detail-filter="useDetailFilter" />
   </div>
 </template>
 
@@ -51,7 +51,7 @@ export default {
           {key: 'state', sortable: true, tdClass: 'action-rowdata'},
           APP.POSITION_WITH_AREA ? {key: 'areaName', label: 'area', sortable: true, tdClass: 'action-rowdata'} : null,
           {key: 'locationName', label: 'finalReceiveLocation', sortable: true, tdClass: 'action-rowdata'},
-          {key: 'updatetime', label: 'finalReceiveTimestamp', sortable: true, tdClass: 'action-rowdata'},
+          {key: 'updatetime', label: 'finalReceiveTimestamp', sortable: true, filterable: false, tdClass: 'action-rowdata'},
           // {key: 'powerLevel', label: 'powerLevel', tdClass: 'action-rowdata', 'class': 'text-md-center'},
           {key: 'mapDisplay', tdClass: 'action-rowdata'},
         ]),
@@ -74,14 +74,14 @@ export default {
       prohibitDetectList : null,
       showDismissibleAlert: false,
       count: 0, // mockテスト用
-      loadStates: ['tx', 'exb', 'area'],
+      loadStates: ['tx', 'exb', 'location', 'area'],
     }
   },
   computed: {
     ...mapState('app_service', [
       'txs',
       'areas',
-      'exbs',
+      'locations',
       'positionList',
       'prohibits',
       'lostZones',
@@ -90,6 +90,9 @@ export default {
       return {
         'font-weight': DISP.THERMOH.ALERT_WEIGHT,
       }
+    },
+    useDetailFilter(){
+      return APP.POS.PLUGIN.FILTER
     },
   },
   methods: {
@@ -117,13 +120,17 @@ export default {
           this.prohibitDetectList? this.prohibitDetectList.forEach((p) => minorMap[p.minor] = p) : null
         }
 
-        const exbMap = {}
-        this.exbs.forEach((e) => exbMap[e.posId] = e)
+        const locationMap = {}
+        this.locations.forEach(l => {
+          if(Util.hasValue(l.locationId)){
+            locationMap[l.locationId] = l
+          }
+        })
 
-        positions = positions.map((pos) => {
+        positions = positions.map(pos => {
           prohibitCheck = minorMap[pos.minor] != null
 
-          const exb = exbMap[pos.pos_id]
+          const location = pos.location? locationMap[pos.location.locationId]: {}
           return {
             ...pos,
             // powerLevel: this.getPowerLevel(pos),
@@ -133,14 +140,14 @@ export default {
             tel: Util.getValue(pos, 'tx.extValue.tel', null),
             categoryName: Util.getValue(pos, 'tx.categoryName', null),
             groupName: Util.getValue(pos, 'tx.groupName', null),
-            areaName: Util.getValue(pos, 'exb.areaName', null),
-            locationName: Util.getValue(pos, 'exb.locationName', null),
+            areaName: Util.getValue(pos, 'location.areaName', null),
+            locationName: Util.getValue(pos, 'location.locationName', null),
             // 追加フィルタ用
             groupId: Util.getValue(pos, 'tx.groupId').val,
             categoryId: Util.getValue(pos, 'tx.categoryId').val,
-            areaId: Util.getValue(pos, 'exb.areaId').val,
+            areaId: Util.getValue(pos, 'location.areaId').val,
             blinking : prohibitCheck? 'blinking' : null,
-            isDisableArea: exb? exb.isAbsentZone: false,
+            isDisableArea: Util.getValue(location, 'isAbsentZone', false),
           }
         })
         Util.debug(positions)

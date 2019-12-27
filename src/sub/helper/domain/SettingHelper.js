@@ -97,7 +97,7 @@ export const getDefaultValue = (key, isTenant = false) => {
   if(!Util.hasValue(defaultConfig)){
     return null
   }
-  const langDefValue = i18n.tdef('config.DEFAULT.' + key)
+  const langDefValue = Util.getValue(SETTING.getDefault(), key, null)
   if(langDefValue != null){
     return langDefValue
   }
@@ -114,10 +114,13 @@ export const getDefaultValue = (key, isTenant = false) => {
  * @param {String} key 
  * @return {String}
  */
-export const getDefaultValType = key => {
-  const type = i18n.tdef('config.TYPE.' + key)
+export const getDefaultValType = (key, forceType) => {
+  const type = Util.getValue(SETTING.getType(), key, null)
   if(type != null && SETTING.VALUES.includes(type)){
     return type
+  }
+  if(forceType){
+    return forceType
   }
   const defaultValue = getDefaultValue(key, true)
   if(defaultValue != null && typeof defaultValue != 'object'){
@@ -168,8 +171,8 @@ export const getI18ConfigInner = (config, isTenant, parentKey = '', list = []) =
       getI18ConfigInner(data, isTenant, key + '.', list)
       return
     }
-    const setting = {key: key, valType: getDefaultValType(key)}
     const params = data.split('::')
+    const setting = {key: key, valType: getDefaultValType(key, params[2])}
     list.push(createSetting(setting, isTenant, {keyName: params[0], title: convertTitle(params[1]), isParent: false}))
   })
   return list
@@ -188,7 +191,7 @@ export const getI18Config = isTenant => {
   }
   const ret = {}
   Object.keys(configObjs).forEach(configKey => {
-    if(/^(TYPE|DEFAULT|OPTIONS)(\..+)*$/g.test(configKey)){
+    if(/^(OPTIONS)(\..+)*$/g.test(configKey)){
       return
     }
     ret[configKey] = configObjs[configKey]
@@ -206,7 +209,7 @@ export const mergeSettings = settings => {
   const categoryObjs = i18n.tnl('config.OPTIONS.SETTING_CATEGORY')
   const ret = []
   Object.keys(categoryObjs).forEach(categoryKey => {
-    if(categoryKey == 'OTHER'){
+    if(categoryKey == SETTING.OTHER_CATEGORY){
       return
     }
     ret.push({key: categoryObjs[categoryKey], isParent: true, categoryKey: categoryKey, _rowVariant: 'secondary'})
@@ -219,8 +222,8 @@ export const mergeSettings = settings => {
     settings = settings.filter(setting => !setting.key.match(regExp))
   })
   if(settings.length != 0){
-    ret.push({key: categoryObjs['OTHER'], isParent: true,  categoryKey: 'OTHER', _rowVariant: 'secondary'})
-    settings.forEach(setting => ret.push({...setting, categoryKey: 'OTHER'}))
+    ret.push({key: categoryObjs[SETTING.OTHER_CATEGORY], isParent: true,  categoryKey: SETTING.OTHER_CATEGORY, _rowVariant: 'secondary'})
+    settings.forEach(setting => ret.push({...setting, categoryKey: SETTING.OTHER_CATEGORY}))
   }
   return ret
 }

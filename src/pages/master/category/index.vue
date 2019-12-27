@@ -1,62 +1,65 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" />
-    <m-list :params="params" :list="categoryList" />
+    <ex-master p-master-name="category" :p-category-name="pName" :p-type-list="pTypeList" :p-params="params" />
   </div>
 </template>
 
 <script>
-import { mapState } from 'vuex'
-import * as ColorUtil from '../../../sub/util/ColorUtil'
+import { CATEGORY } from '../../../sub/constant/Constants'
+import * as StringUtil from '../../../sub/util/StringUtil'
+import * as Util from '../../../sub/util/Util'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as StyleHelper from '../../../sub/helper/ui/StyleHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
-import breadcrumb from '../../../components/layout/breadcrumb.vue'
-import reloadmixin from '../../../components/mixin/reloadmixin.vue'
-import mList from '../../../components/page/list.vue'
+import exMaster from '../../../components/page/ex-master.vue'
 
 export default {
-  components: {
-    breadcrumb,
-    mList, 
+  props: {
+    pName: {
+      type: String,
+      default: '',
+    },
+    pShowIcon: {
+      type: Boolean,
+      default: true,
+    },
+    pPath: {
+      type: String,
+      default: '/master/category',
+    },
+    pAppServicePath: {
+      type: String,
+      default: '/basic/category',
+    },
+    pTypeList: {
+      type: Array,
+      default: () => [CATEGORY.PERSON, CATEGORY.THING, CATEGORY.ZONE, CATEGORY.OTHER],
+    },
   },
-  mixins: [reloadmixin],
+  components: {
+    exMaster,
+  },
   data() {
     return {
       params: {
         name: 'category',
         id: 'categoryId',
-        indexPath: '/master/category',
-        editPath: '/master/category/edit',
-        bulkEditPath: '/master/category/bulkedit',
-        appServicePath: '/basic/category',
+        indexPath: this.pPath,
+        editPath: this.pPath + '/edit',
+        bulkEditPath: this.pPath + '/bulkedit',
+        appServicePath: this.pAppServicePath,
         csvOut: true,
-        custumCsvColumns: ['ID', 'categoryName', 'categoryTypeName', 'color', 'bgColor', 'display.shape', 'description'],
         fields: ViewHelper.addLabelByKey(this.$i18n, [ 
-          {key: 'categoryCd', label: 'id', sortable: true },
-          {key: 'categoryName', sortable: true },
-          {key: 'categoryTypeName', label: 'categoryType', sortable: true },
-          {key: 'style', label: 'display' },
+          {key: 'ID', label: 'id', sortable: true },
+          {key: 'categoryName', label: StringUtil.concatCamel(this.pName, 'categoryName'), sortable: true },
+          !this.pName? {key: 'categoryTypeName', label: 'categoryType', sortable: true }: null,
+          this.pShowIcon? {key: 'style', label: 'display' }: null,
           {key: 'description' },
           {key: 'actions', thStyle: {width:'130px !important'} }
-        ]),
-        sortBy: 'categoryCd',
-        initTotalRows: this.categoryLength
+        ]).filter(val => val),
+        sortBy: 'ID',
       },
-      items: ViewHelper.createBreadCrumbItems('master', 'category'),
-      categoryStyles: [],
     }
-  },
-  computed: {
-    categoryList() {
-      return this.$store.state.app_service.categories.filter((category)=> !category.systemUse)
-    },
-    categoryLength() {
-      return this.categoryList().length
-    },
-    ...mapState('app_service', [
-      'categories',
-    ]),
   },
   methods: {
     onSaved(){
@@ -64,28 +67,13 @@ export default {
       StateHelper.setForceFetch('tx', true)
       StateHelper.setForceFetch('zone', true)
     },
-    async fetchData(payload) {
-      try {
-        this.showProgress()
-        await StateHelper.load('category')
-        this.categoryStyles = StyleHelper.getStyleDisplay(this.categories)
-        if (payload && payload.done) {
-          payload.done()
-        }
-      }
-      catch(e) {
-        console.error(e)
-      }
-      this.hideProgress()
+    createListParams(){
+      const retMap = { categoryType: {} }
+      CATEGORY.getTypes().forEach(option => retMap.categoryType[option.value? option.value.toString(): '0'] = option.text)
+      return retMap
     },
     style(row) {
-      const categoryStyle = this.categoryStyles.find((val) => val.entity.categoryId == row.categoryId)
-      return categoryStyle? categoryStyle.style: null
-    },
-    customCsvData(val){
-      val.ID = val.categoryCd
-      val.color = ColorUtil.colorCd4display(val.display.color)
-      val.bgColor = ColorUtil.colorCd4display(val.display.bgColor)
+      return StyleHelper.getStyleDisplay1(row)
     },
   }
 }

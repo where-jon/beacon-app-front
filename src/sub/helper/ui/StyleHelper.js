@@ -6,13 +6,14 @@
 import { DISP } from '../../constant/config'
 import { SHAPE, FONT } from '../../constant/Constants'
 import * as ColorUtil from '../../util/ColorUtil'
+import * as StringUtil from '../../util/StringUtil'
 import * as Util from '../../util/Util'
 
 
 /**
  * カテゴリ、グループのサンプル矩形スタイルを取得する。
  * @method
- * @param {Object[]} entity 
+ * @param {Object[]} entity
  * @return {Object[]}
  */
 export const getStyleDisplay = entity => entity.map(val => ({entity: val, style: getStyleDisplay1(val)}))
@@ -20,8 +21,8 @@ export const getStyleDisplay = entity => entity.map(val => ({entity: val, style:
 /**
  * サンプル矩形スタイルを取得する。
  * @method
- * @param {{shape: Number, color: String, bgColor: String}} val 
- * @param {{reverceColor: Boolean, fixSize: Boolean}} [option = {reverceColor: false, fixSize: true}] 
+ * @param {{shape: Number, color: String, bgColor: String}} val
+ * @param {{reverceColor: Boolean, fixSize: Boolean}} [option = {reverceColor: false, fixSize: true}]
  * @return {Object}
  */
 export const getStyleDisplay1 = (val, option = {reverceColor: false, fixSize: true}) => {
@@ -111,3 +112,17 @@ export const inLabel = (iconRadius, font, useLabel) => {
   return iconRadius >= fontSize * 1.5
 }
 
+/**
+ * 位置表示用のアイコンスタイルを取得する。
+ * @method
+ * @param {Object} tx
+ * @return {{color: String, bgColor: String, shape: Number}}
+ */
+export const getPositionDisplay = tx => {
+  const display = Util.getValue(tx, DISP.TX.DISPLAY_PRIORITY + '.display', {})
+  return {
+    color: StringUtil.addPrefix(display.color || DISP.TX.COLOR, '#'),
+    bgColor: StringUtil.addPrefix(display.bgColor || DISP.TX.BGCOLOR, '#'),
+    shape: display.shape || SHAPE.CIRCLE
+  }
+}
