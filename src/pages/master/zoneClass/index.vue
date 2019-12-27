@@ -58,13 +58,13 @@ export default {
   methods: {
     getFields(){
       return ViewHelper.addLabelByKey(this.$i18n, [ 
-        {key: 'zoneCd', label: 'id', sortable: true },
-        {key: 'zoneType', sortable: true },
+        {key: 'ID', label: 'id', sortable: true },
+        {key: 'zoneTypeName', label: 'zoneType', sortable: true },
         {key: 'zoneName', sortable: true }
       ].concat(this.createCustomColumn())
         .concat([
           {key: 'areaName', sortable: true},
-          {key: 'dispCategoryName', label: 'categoryName', sortable: true},
+          {key: 'categoryName', label: 'categoryName', sortable: true},
         ])
         .concat([ {key: 'actions', thStyle: {width:'130px !important'} } ])
         .filter(val => val))
@@ -78,6 +78,11 @@ export default {
         ret.push({key: val, label: val, sortable: true})
       })
       return ret
+    },
+    createListParams(){
+      const retMap = { type: {} }
+      ZONE.getOptions().forEach(option => retMap.type[option.value? option.value.toString(): '0'] = option.text)
+      return retMap
     },
     onSaved(){
       StateHelper.setForceFetch('tx', true)

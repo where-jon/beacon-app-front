@@ -155,11 +155,6 @@
             {{ zoneName }}
           </div>
         </template>
-        <template slot="zoneType" slot-scope="row">
-          <div>
-            {{ row.item.zoneTypeName }}
-          </div>
-        </template>
         <template slot="guardNames" slot-scope="row">
           <div v-for="(guardName, index) in row.item.guardNames" :key="index">
             {{ guardName }}

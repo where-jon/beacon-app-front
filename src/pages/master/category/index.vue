@@ -63,7 +63,7 @@ export default {
         appServicePath: this.pAppServicePath,
         csvOut: true,
         fields: this.getFields(),
-        sortBy: 'categoryCd',
+        sortBy: 'ID',
       },
     }
   },
@@ -110,7 +110,7 @@ export default {
     },
     createListParams(){
       const retMap = { categoryType: {} }
-      CATEGORY.getTypes().forEach(option => retMap.categoryType[option.value? option.value.toString(): '0'] = option.text)
+      CATEGORY.getTypes(true).forEach(option => retMap.categoryType[option.value? option.value.toString(): '0'] = option.text)
       return retMap
     },
     style(row) {

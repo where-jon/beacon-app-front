@@ -82,6 +82,7 @@ export default {
     editResponse(data) {
       data.forEach(val => {
         val.txIdNames = Util.getValue(val, 'btxId', Util.getValue(val, 'minor', '')).split(BULK.SPLITTER)
+        val.authCategoryNames = Util.getValue(val, 'auth', '').split(BULK.SPLITTER)
       })
     },
     getFields(){
