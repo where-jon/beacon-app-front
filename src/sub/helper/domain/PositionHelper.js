@@ -961,6 +961,8 @@ export const checkTxAllow = (pos, tx, areaId, isAbsent = false, onlyFixPos = fal
 
 /**
  * 無効な場所の情報をデバッグログに表示する。
+ * 
+ * TODO: posId to deviceId
  * @method
  * @param {Object[]} locationList
  */

@@ -345,7 +345,7 @@
     "changeProfilePassword": "Change password",
     "changePassword": "Change password",
   
-    "system": "System settings",
+    "systemChild": "System settings",
 
     "region": "Region",
     "regionId": "Region ID",
@@ -493,6 +493,7 @@
     "settingDescription": "* A description will be displayed if you move the cursor to the key and item name.",
     "allShowFilter": "Show all items",
     "settingCategory": "Category",
+    "keyCategory": "Kind",
     "favoriteMark": "★",
     "provider": "Provider",
     "locale": "Language",
@@ -571,7 +572,7 @@
     "SensorHistoryExc": "Sensor History",
     "Setting": "Setting",
     "Personal": "Personal Setting",
-    "System": "System Setting",
+    "SystemChild": "System Setting",
     "Develop": "Developer",
     "Meta": "Meta",
     "Role": "Role",
@@ -676,6 +677,8 @@
     "recordsTest": "Record display test",
     "hitoMono": "Person and Thing record",
     "sample": "Sample",
+    "adminConsent": "Admin Consent",
+
     "dummy": ""
   },
   "config": {
@@ -973,17 +976,7 @@
         "SIZE": {
           "W": "Icon size (width)on Location setting screen::Set up the width of the icon displayed on the location setting screen.",
           "H": "Icon size (height) on Location setting screen::Set up the height of the icon displayed on the location setting screen."
-        },
-        "BGCOLOR": "Icon Background Color on Location Setting Screen::Set up the background color of the icon displayed on the location setting screen. Set up with a color code including #.",
-        "COLOR": "Icon text color on the location setting screen::Set up the text color of the icon displayed on the location setting screen. Set up with a color code including #."
-      },
-      "TX_LOC": {
-        "SIZE": {
-          "W": "Tx icon size(width) of Tx layout setting::Set up the width of Tx icon displayed on Tx setting screen.",
-          "H": "Tx icon size(height) of Tx layout setting::Set up the height of Tx icon displayed on Tx setting screen."
-        },
-        "BGCOLOR": "Tx icon background color of Tx layout setting screen::Set up the background color of Tx icon displayed on the Tx setting screen. Set up with a color code including #",
-        "COLOR": "Tx icon text color of Tx layout setting screen::Set up the Tx icon text color displayed Tx setting screen. Set up with color code including."
+        }
       },
       "THERMOH": {
         "TOOLTIP_ITEMS": {
@@ -1061,7 +1054,7 @@
     },
 
     "OPTIONS": {
-      "SETTING_CATEGORY": {
+      "KEY_CATEGORY": {
         "COMMON": "Common",
         "SYS": "System",
         "MENU": "Menu",
@@ -1075,7 +1068,6 @@
         "SENSOR_LIST": "Sensor List",
         "TX": "Tx",
         "TXDETAIL": "Tx Deatils",
-        "TX_LOC": "Tx Location icon",
         "EXB": "EXB",
         "EXB_LOC": "Location setting icon",
         "LOCATION": "Location",
@@ -1378,6 +1370,15 @@
     "resetFromTo": "Because{from}has changed,{to}is now unselected",
     "underDegree": "under ℃",
     "overDegree": "over ℃",
+
+    "MSTEAMS": {
+      "USER_GUIDE1": "In order to use EXOffice, you have to grant this application a permission to read your organization's groups and users on your Office365.",
+      "USER_GUIDE2": "Enter your organization name, click the button below and sign in with administrator of Office365. This operation should be done on PC.",
+      "INVALID_TENANT": "To use this EXOffice, a contract is required with WHERE Inc. If you already signed the contract, please let us know.",
+      "WAIT_A_MOMENT": "Now Loading...",
+      "INVALID_TENANT_CONTACT": "Contact: http://where123.jp/contact/",
+      "IF_NOT_SHOWN": "To show EXOffice, click Sign In button below. If it does not work, try again after reload this page."
+    },
 
     "dummy": "" 
   },

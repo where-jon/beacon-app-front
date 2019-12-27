@@ -14,6 +14,7 @@ import * as ColorUtil from '../../util/ColorUtil'
 import * as NumberUtil from '../../util/NumberUtil'
 import * as StringUtil from '../../util/StringUtil'
 import * as Util from '../../util/Util'
+import * as ConfigHelper from '../dataproc/ConfigHelper'
 import * as PositionHelper from '../domain/PositionHelper'
 import * as SensorHelper from '../domain/SensorHelper'
 import * as StyleHelper from './StyleHelper'
@@ -27,6 +28,28 @@ let i18n
  */
 export const setApp = pi18n => {
   i18n = pi18n
+}
+
+/**
+ * 場所配置アイコンの背景色を取得する。
+ * @method
+ * @param {Object} location
+ * @param {Object} locationInfo 設定値「DISP.**_LOC」を使用する
+ * @return {String}
+ */
+export const getLocationColor = (location, locationInfo) => {
+  const sensorNameList = Util.getValue(location, 'txList', [])
+    .concat(Util.getValue(location, 'exbList', []))
+    .map(device => device.sensorName)
+
+  const hasTx = Util.hasValue(location.txList)
+  const patternList = hasTx? locationInfo.BGCOLOR_PATTERN: locationInfo.BGCOLOR_PATTERN_NOTX
+  const target = ConfigHelper.parseKeyValue(patternList).find(pattern => {
+    return location.locationType == pattern.key || sensorNameList.some(sensorName => sensorName == pattern.key)
+  }) 
+
+  const defaultPattern = hasTx? locationInfo.BGCOLOR_DEFAULT: locationInfo.BGCOLOR_DEFAULT_NOTX
+  return target? target.value: defaultPattern
 }
 
 /**
@@ -140,22 +163,20 @@ export const createIcon = (text, width, height, color, bgColor, option = {}) => 
 }
 
 /**
- * 位置アイコンを作成する。
+ * 場所アイコンを更新する。
  * @method
+ * @param {Object} icon
  * @param {Object} location
- * @param {Object} locationInfo
- * @param {Number} maxLength
  * @param {Object} locationInfo 設定値「DISP.**_LOC」を使用する
  * @param {Number} mapScale
  * @return {Object}
  */
-export const createLocationIcon = (location, key, maxLength, locationInfo, mapScale) => {
+export const refreshLocationIcon = (icon, location, locationInfo, mapScale) => {
   const rect = NumberUtil.getRectInfoFromCenterPos(0, 0, locationInfo.SIZE.W / mapScale, locationInfo.SIZE.H / mapScale)
   const iconArrowWidth = locationInfo.SIZE.W / 3 / mapScale
   const iconArrowHeight = locationInfo.SIZE.H / 3 / mapScale
 
-  const icon = new Shape()
-  icon.graphics.beginFill(locationInfo.BGCOLOR)
+  icon.graphics.beginFill(getLocationColor(location, locationInfo))
   icon.graphics.moveTo(rect.left, rect.top)
   icon.graphics.lineTo(rect.right, rect.top)
   icon.graphics.lineTo(rect.right, rect.bottom)
@@ -164,13 +185,47 @@ export const createLocationIcon = (location, key, maxLength, locationInfo, mapSc
   icon.graphics.lineTo(rect.right - iconArrowWidth - iconArrowWidth, rect.bottom)
   icon.graphics.lineTo(rect.left, rect.bottom)
   icon.graphics.lineTo(rect.left, rect.top)
+}
 
-  const text = StringUtil.cutOnLongByte(location[key], maxLength)
-  const label = new Text(text)
-  label.font = StyleHelper.getInRectFontSize(text, rect.width, rect.height)
+/**
+ * 場所アイコンのテキストを更新する。
+ * @method
+ * @param {Object} label
+ * @param {Object} location
+ * @param {Object} key
+ * @param {Number} maxLength
+ * @param {Object} locationInfo 設定値「DISP.**_LOC」を使用する
+ * @param {Number} mapScale
+ * @return {Object}
+ */
+export const refreshLocationIconText = (label, location, key, maxLength, locationInfo, mapScale) => {
+  const rect = NumberUtil.getRectInfoFromCenterPos(0, 0, locationInfo.SIZE.W / mapScale, locationInfo.SIZE.H / mapScale)
+  label.text = StringUtil.cutOnLongByte(location[key], maxLength)
+  label.font = StyleHelper.getInRectFontSize(label.text, rect.width, rect.height, locationInfo.MAX_FONT_SIZE)
   label.color = locationInfo.COLOR
   label.textAlign = 'center'
   label.textBaseline = 'middle'
+}
+
+/**
+ * 位置アイコンを作成する。
+ * @method
+ * @param {Object} location
+ * @param {Object} key
+ * @param {Number} maxLength
+ * @param {Object} locationInfo 設定値「DISP.**_LOC」を使用する
+ * @param {Number} mapScale
+ * @return {Object}
+ */
+export const createLocationIcon = (location, key, maxLength, locationInfo, mapScale) => {
+  const rect = NumberUtil.getRectInfoFromCenterPos(0, 0, locationInfo.SIZE.W / mapScale, locationInfo.SIZE.H / mapScale)
+  const iconArrowHeight = locationInfo.SIZE.H / 3 / mapScale
+
+  const icon = new Shape()
+  refreshLocationIcon(icon, location, locationInfo, mapScale)
+
+  const label = new Text()
+  refreshLocationIconText(label, location, key, maxLength, locationInfo, mapScale)
 
   const button = new Container()
   button.addChild(icon)

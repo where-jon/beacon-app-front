@@ -227,6 +227,8 @@ export default {
         await StateHelper.load('zone', true)
         StateHelper.setForceFetch('tx', true)
         StateHelper.setForceFetch('exb', true)
+        StateHelper.setForceFetch('category', true)
+        StateHelper.setForceFetch('location', true)
       } catch (e) {
         e.bulkError = e.response.data
         this.message = ViewHelper.getSubmitErrorMessage(e, this.showLine, this.crud, this.name)

@@ -71,7 +71,7 @@ const addApiKey = (config = {}) => {
     config.headers = {}
   }
   if (apiKey || context.app.store.state.apiKey) {
-    config.headers.apiKey = md5(apiKey || context.app.store.state.apiKey)
+    config.headers['x-apiKey'] = md5(apiKey || context.app.store.state.apiKey)
   }
   return config
 }
@@ -88,6 +88,17 @@ const addApiKey = (config = {}) => {
 export const getAppServiceNoCrd = async (path, config, ignoreError) => {
   try {
     let res = await axiosNoCrd.get(APP_SERVICE.BASE_URL + addTimeToPath(path), addApiKey(config))
+    return res.data
+  } catch (e) {
+    if (!ignoreError) {
+      handleError(e, path)
+    }
+  }
+}
+
+export const postAppServiceNoCrd = async (path, param, config, ignoreError) => {
+  try {
+    let res = await axiosNoCrd.post(APP_SERVICE.BASE_URL + addTimeToPath(path), param, addApiKey(config))
     return res.data
   } catch (e) {
     if (!ignoreError) {

@@ -6,6 +6,7 @@
 import axios from 'axios'
 import _ from 'lodash'
 import * as config from '../../constant/config'
+import { SETTING } from '../../constant/Constants'
 import * as Util from '../../util/Util'
 import * as LocalStorageHelper from '../base/LocalStorageHelper'
 
@@ -64,7 +65,7 @@ export const applyAppServiceSetting = (settingArr, defaultConfig = null) => {
   if (!settingArr) return
 
   let updateData = _.reduce(settingArr, (result, setting) => {
-    let key = (setting.category? setting.category + '.': '') + setting.key
+    let key = setting.key
     let val = setting.value
     let valType = setting.valType? setting.valType.toLowerCase(): null
     if (val && valType) {
@@ -86,26 +87,28 @@ export const updateConfig = (updateData, defaultConfig = null) => {
   _(updateData).forEach((val, propKey) => {
     let curKey = config
     let curDefaultConfig = defaultConfig
-    propKey.split('.').forEach((key, idx, arr) => {
-      if (idx == arr.length - 1) {
-        if(val != null){
-          curKey[key] = val
+    if (propKey.split) {
+      propKey.split('.').forEach((key, idx, arr) => {
+        if (idx == arr.length - 1) {
+          if(val != null){
+            curKey[key] = val
+          }
+          else if(curDefaultConfig && curDefaultConfig[key]){
+            curKey[key] = curDefaultConfig[key]
+          }
+          else{
+            delete curKey[key]
+          }
         }
-        else if(curDefaultConfig && curDefaultConfig[key]){
-          curKey[key] = curDefaultConfig[key]
+        else {
+          if (!curKey[key]) {
+            curKey[key] = {}
+          }
+          curKey = curKey[key]
+          curDefaultConfig = curDefaultConfig? curDefaultConfig[key]: null
         }
-        else{
-          delete curKey[key]
-        }
-      }
-      else {
-        if (!curKey[key]) {
-          curKey[key] = {}
-        }
-        curKey = curKey[key]
-        curDefaultConfig = curDefaultConfig? curDefaultConfig[key]: null
-      }
-    })
+      })
+    }
   })
   Util.debug({config})
 }
@@ -150,3 +153,22 @@ export const includesDeviceType = deviceType => includesOrBoth(deviceType, confi
  * @return {Boolean}
  */
 export const includesBtxMinor = btxMinor => includesOrBoth(btxMinor, config.APP.TX.BTX_MINOR)
+
+/**
+ * 「a:b」の形式で保存されているデータを分解する
+ * @method
+ * @param {String|String[]} keyValueString 
+ * @return {Object[]}
+ */
+export const parseKeyValue = keyValueString => {
+  const isSingle = typeof keyValueString == 'string'
+  const list = isSingle? [keyValueString]: keyValueString
+  const ret = list.map(kv => {
+    const params = kv.split(SETTING.SPLITTER).map(v => v.trim())
+    if(!Util.hasValue(params[0])) {
+      return
+    }
+    return { key: params[0], value: params[1] }
+  })
+  return isSingle? ret[0]: ret
+}

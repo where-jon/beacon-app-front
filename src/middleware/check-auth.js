@@ -1,6 +1,7 @@
 import { APP } from '../sub/constant/config'
 import { LOGIN_MODE, FORCE_PUSH_MENU, ROLE_FEATURE } from '../sub/constant/Constants'
 import * as BrowserUtil from '../sub/util/BrowserUtil'
+import * as ArrayUtil from '../sub/util/ArrayUtil'
 import * as Util from '../sub/util/Util'
 import * as AnalysisHelper from '../sub/helper/domain/AnalysisHelper'
 import * as AuthHelper from '../sub/helper/base/AuthHelper'
@@ -48,7 +49,12 @@ export default function (context) {
     return
   }
 
-  if (context.route.path == APP.MENU.LOGIN_PAGE || context.route.path == APP.MENU.ERROR_PAGE) { // Login Page is always OK
+  if (context.route.path.startsWith(APP.MENU.AZLOGIN_PAGE)) { // ADログインの場合、ログイページ書き換え
+    APP.MENU.LOGIN_PAGE = APP.MENU.AZLOGIN_PAGE
+    return
+  }
+
+  if (ArrayUtil.equalsAny(context.route.path, [APP.MENU.LOGIN_PAGE, APP.MENU.LOGIN_PAGE + '/', APP.MENU.ERROR_PAGE, APP.MENU.ERROR_PAGE + '/'])) { // Login Page is always OK
     return
   }
 

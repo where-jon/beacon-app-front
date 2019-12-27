@@ -29,7 +29,11 @@ export const APP = { // 機能面に関する設定
     TOP_PAGE: '/main/position', // トップページパス　must not be / otherwise recursive infinitely
     // ページ遷移設定
     LOGIN_PAGE: '/login', // ログインページパス　if no login then /
-    ERROR_PAGE: '/error', // エラーページパス　if no login then /
+    AZLOGIN_PAGE: '/azlogin/', // ADログインページパス
+    ERROR_PAGE: '/error/', // エラーページパス
+  },
+  SETTING: {
+    DISABLED_THEME: false,
   },
   GATEWAY: {
     LOST_TIME: 30 * 60 * 1000, // 消失とみなす時間（ミリ秒）
@@ -81,6 +85,9 @@ export const APP = { // 機能面に関する設定
     USE_PRESSURE: true, // 圧力センサの使用
     SHOW_MAGNET_ON_PIR: false, // 人感センサ画面でマグネットセンサを表示
     MAGNET_ON_IS_USED: true, // マグネットセンサーONのとき使用中とするか
+    LED: {
+      AUTO_OFF_TIME: 300, // 点灯させたLEDに対し、指定秒後に消灯する
+    },
     // 温湿度
     USE_HUMIDITY_ALERT: true, // 湿度アラートの使用
     USE_THERMOH_HEATMAP: true, // ヒートマップの使用
@@ -114,10 +121,14 @@ export const APP = { // 機能面に関する設定
   },
   // 場所関連設定
   LOCATION: {
-    WITH: ['posId', 'zoneClass', 'zoneBlock'],
+    WITH: ['zoneClass', 'zoneBlock'],
     TYPE: {
       WITH: [],
     },
+    // 拡張項目定義（サンプル）
+    EXT_DEF: [
+      {key: 'description', type: 'string', length: 100, showlist: true, sort: true },
+    ],
   },
   // USER関連設定
   USER: {
@@ -194,9 +205,28 @@ export const APP = { // 機能面に関する設定
   // category
   CATEGORY: {
     TYPES: [1,2],   // 選択可能な種別（1人,2物,3ゾーン）
+    WITH: [],
+    // 拡張項目定義（サンプル）
+    EXT_DEF: [
+      {key: 'ruby', type: 'string', length: 20, showlist: true, sort: true },
+    ],
   },
-  SETTING: {
-    DISABLED_THEME: false,
+  // group
+  GROUP: {
+    WITH: ['ruby'],
+    // 拡張項目定義（サンプル）
+    EXT_DEF: [
+      {key: 'ruby', type: 'string', length: 20, showlist: true, sort: true },
+    ],
+  },
+  // zone
+  ZONE: {
+    WITH: [],
+    TYPES: [1],   // 選択可能な種別（0, 1: 通常, 2: 警戒ゾーン, 3: ドア）
+    // 拡張項目定義（サンプル）
+    EXT_DEF: [
+      {key: 'description', type: 'string', length: 100, showlist: true, sort: true },
+    ],
   },
   NOTIFY: {
     // 通知媒体
@@ -262,6 +292,20 @@ export const APP = { // 機能面に関する設定
     POS: {
       EXSERVER: false, // EXServerを使う
     },
+    TOILET: {
+      LED: {
+        ENABLE: false,
+        RGB: -1,
+      }
+    },
+  },
+  ENTER: {
+    AUTO_PAGE: 1, // 0:Disable, 1:Enable & Default Pause, 2:Enable && Default Start
+    START_TIME: 1576148292834, // unix time msec
+    AUTO_PAGER_MSEC: 10000, // 自動ページャー更新間隔(ミリ秒)
+  },
+  MANAGE: {
+    SETTING_CATEGORY: [], // 表示するシステム設定カテゴリ
   },
 
   
@@ -289,11 +333,13 @@ export const APP = { // 機能面に関する設定
 
 // URL関連設定
 export const APP_SERVICE = { // used if APP.LOGIN_MODE == APP_SERVICE
+  // BASE_URL: 'https://msteams-data.dev.exbeacon.com',
   BASE_URL: 'http://localhost:8080',
 }
 
 export const EXCLOUD = {
   BASE_URL: 'https://nsome8q880.execute-api.ap-northeast-1.amazonaws.com/prod', // used if APP.LOGIN_MODE != APP_SERVICE
+  // BASE_URL: 'https://jfgo7xyh6h.execute-api.ap-northeast-1.amazonaws.com/prod', // used if APP.LOGIN_MODE != APP_SERVICE
 
   withCredentials: true, // false if APP.LOGIN_MODE != APP_SERVICE
   // POSITION_URL: EXCLOUD.BASE_URL + "/beacon/position-kalman?_=",
@@ -313,7 +359,7 @@ export const EXCLOUD = {
 
 export const DISP = { // 表示系設定（表示・色・フォント・サイズ）
   MENU: {
-    SHOW_NAV: false, // show nav  
+    SHOW_NAV: true, // show nav  
     SHOW_SIDEBAR: true, // show sidebar  
     SHOW_LOGO: true, // show logo (or show title text)
     THEME: 'default', // デフォルトのテーマ
@@ -359,25 +405,20 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     TOOLTIP_ROUNDRECT: 16, // ツールチップ角丸半径
   },
   EXB_LOC: {
-    // EXB配置設定のEXB表示サイズ
+    // 場所配置設定のEXB表示サイズ
     SIZE: {
       W: 60,
       H: 30
     },
-    BGCOLOR: '#76ccf7', // EXB配置設定のEXB表示背景色
-    COLOR: '#000', // EXB配置設定のEXB表示文字色
-    FONT: 'Arial', // EXB配置設定のEXB表示フォント
-  },
-  TX_LOC: {
-    // TX配置設定のTX表示サイズ
-    SIZE: {
-      W: 60,
-      H: 30
-    },
-    BGCOLOR: '#76ccf7', // TX配置設定のTX表示背景色
-    COLOR: '#000', // TX配置設定のTX表示文字色
-    FONT: 'Arial', // TX配置設定のTX表示フォント
-    ALPHA: 1.0, // TX配置設定のTX表示フォント
+    BGCOLOR_DEFAULT: '#76ccf7', // 場所配置設定のアイコン表示背景色(デフォルト)
+    BGCOLOR_DEFAULT_NOTX: '#76ccf7', // 場所配置設定のアイコン表示背景色(デフォルト)
+    COLOR: '#000', // 場所配置設定のアイコン表示文字色
+    FONT: 'Arial', // 場所配置設定のアイコン表示フォント
+    RSSI_BGCOLOR: '#76ccf7',
+    RSSI_RADIUS: 0,
+    MAX_FONT_SIZE: 26, // 場所配置設定のアイコン表示最大フォントサイズ
+    BGCOLOR_PATTERN: [], // 場所配置設定のアイコン表示背景色(種類別:Tx関連時)
+    BGCOLOR_PATTERN_NOTX: [], // 場所配置設定のアイコン表示背景色(種類別:Tx未関連時)
   },
   THERMOH: {
     // ツールチップ内の表示要素
@@ -459,6 +500,12 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     MAP: {
       MIN_HEIGHT: 32,
     },
+  },
+  ENTER: {
+    COL_CNT: 7, // 表の列数
+    LOST_COLOR: 'gray', // 消失者の文字色
+    ABSENT_BGCOLOR: 'rgb(255,153,153)', // 退場者の背景色 
+    ENTER_BGCOLOR: 'rgb(217,217,217)', // 入場者の背景色
   },
 
   FONT_ICON_ADJUST_SCALE: 1.0, // アイコン内テキストのフォントサイズ係数
@@ -586,3 +633,15 @@ export const Tx = [
   {id: 799},
   {id: 800},
 ]
+
+export const MSTEAMS_APP = {
+  IS_COOPERATION: false,
+  // APP_ID: 'fcfc143f-c8c8-454e-ab72-fdf2e49f862f',
+  // REDIRECT_URL: 'https://xxx.saas.msteams.exbeacon.com/azlogin/adminend/',
+  // REDIRECT_URL: 'https://msteams.dev.exbeacon.com/azlogin/end/',
+  REDIRECT_URL: 'https://msteams.dev.exbeacon.com/azlogin/end/',
+  APP_ID: 'dd3ea682-9b02-49ec-9d15-c63cee38c792',
+  ADMINCONSENT_URL_BASE: 'https://login.microsoftonline.com/common/adminconsent',
+  AES_KEY: '93361405B57C62DF33873146A7215790256978125098DF0A197CF2'
+}
+

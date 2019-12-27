@@ -5,9 +5,13 @@
 </template>
 
 <script>
-import { CATEGORY } from '../../../sub/constant/Constants'
+import { mapState } from 'vuex'
+import { APP } from '../../../sub/constant/config'
+import { CATEGORY, SHAPE, BULK } from '../../../sub/constant/Constants'
+import * as ColorUtil from '../../../sub/util/ColorUtil'
 import * as StringUtil from '../../../sub/util/StringUtil'
 import * as Util from '../../../sub/util/Util'
+import * as ExtValueHelper from '../../../sub/helper/domain/ExtValueHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as StyleHelper from '../../../sub/helper/ui/StyleHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
@@ -18,6 +22,14 @@ export default {
     pName: {
       type: String,
       default: '',
+    },
+    pShowAuth: {
+      type: Boolean,
+      default: false,
+    },
+    pShowDescription: {
+      type: Boolean,
+      default: true,
     },
     pShowIcon: {
       type: Boolean,
@@ -43,25 +55,54 @@ export default {
     return {
       params: {
         name: 'category',
+        dispName: StringUtil.concatCamel('category', this.pName),
         id: 'categoryId',
         indexPath: this.pPath,
         editPath: this.pPath + '/edit',
         bulkEditPath: this.pPath + '/bulkedit',
         appServicePath: this.pAppServicePath,
         csvOut: true,
-        fields: ViewHelper.addLabelByKey(this.$i18n, [ 
-          {key: 'ID', label: 'id', sortable: true },
-          {key: 'categoryName', label: StringUtil.concatCamel(this.pName, 'categoryName'), sortable: true },
-          !this.pName? {key: 'categoryTypeName', label: 'categoryType', sortable: true }: null,
-          this.pShowIcon? {key: 'style', label: 'display' }: null,
-          {key: 'description' },
-          {key: 'actions', thStyle: {width:'130px !important'} }
-        ]).filter(val => val),
-        sortBy: 'ID',
+        fields: this.getFields(),
+        sortBy: 'categoryCd',
       },
     }
   },
   methods: {
+    getFields(){
+      return ViewHelper.addLabelByKey(this.$i18n, [ 
+        { key: 'ID', label: 'id', sortable: true },
+        { key: 'categoryName', label: StringUtil.concatCamel(this.pName, 'categoryName'), sortable: true },
+        !this.pName? { key: 'categoryTypeName', label: 'categoryType', sortable: true }: null
+      ].concat(this.createCustomColumn())
+        .concat([
+          this.pShowIcon? { key: 'style', label: 'display' }: null,
+          this.pShowAuth? { key: 'guardNames' , label: 'zoneGuard' }: null,
+          this.pShowAuth? { key: 'doorNames' , label: 'zoneDoor' }: null,
+          this.pShowDescription? { key: 'description' }: null,
+        ])
+        .concat([ {key: 'actions', thStyle: {width:'130px !important'} } ])
+        .filter(val => val))
+    },
+    createCustomColumn(isDownload){
+      const ret = []
+      APP.CATEGORY.WITH.forEach(val => {
+        if(!isDownload && !ExtValueHelper.isShowList(APP.CATEGORY, val)) {
+          return
+        }
+        ret.push({key: val, label: val, sortable: true})
+      })
+      return ret
+    },
+    getCustumCsvColumns(){
+      return [
+          'ID', 'categoryName', 'categoryTypeName'
+      ].concat(this.createCustomColumn(true).map(val => val.key))
+        .concat(['color', 'bgColor', 'display.shape', 'description',
+          this.pShowAuth? 'guardNames': null,
+          this.pShowAuth? 'doorNames': null
+        ])
+        .filter(val => val)
+    },
     onSaved(){
       StateHelper.setForceFetch('pot', true)
       StateHelper.setForceFetch('tx', true)

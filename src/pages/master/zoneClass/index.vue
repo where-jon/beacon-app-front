@@ -1,23 +1,43 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" />
-    <m-list :params="params" compact-mode />
+    <ex-master p-master-name="zone" :p-category-name="pName" :p-type-list="pTypeList" :p-params="params" />
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
+import { APP } from '../../../sub/constant/config'
+import { ZONE, CATEGORY } from '../../../sub/constant/Constants'
 import * as Util from '../../../sub/util/Util'
+import * as ExtValueHelper from '../../../sub/helper/domain/ExtValueHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import commonmixin from '../../../components/mixin/commonmixin.vue'
 import mList from '../../../components/page/list.vue'
+import exMaster from '../../../components/page/ex-master.vue'
 
 export default {
+  props: {
+    pName: {
+      type: String,
+      default: 'class',
+    },
+    pPath: {
+      type: String,
+      default: '/master/zoneClass',
+    },
+    pAppServicePath: {
+      type: String,
+      default: '/core/zone',
+    },
+    pTypeList: {
+      type: Array,
+      default: () => APP.ZONE.TYPES,
+    },
+  },
   components: {
-    breadcrumb,
-    mList, 
+    exMaster,
   },
   mixins: [commonmixin],
   data() {
@@ -25,27 +45,44 @@ export default {
       params: {
         name: 'zone',
         id: 'zoneId',
-        indexPath: '/master/zoneClass',
-        editPath: '/master/zoneClass/edit',
-        bulkEditPath: '/master/zoneClass/bulkedit',
-        appServicePath: '/core/zone',
+        indexPath: this.pPath,
+        editPath: this.pPath + '/edit',
+        bulkEditPath: this.pPath + '/bulkedit',
+        appServicePath: this.pAppServicePath,
         csvOut: true,
-        fields: ViewHelper.addLabelByKey(this.$i18n, [ 
-          {key: 'ID', label: 'id', sortable: true },
-          {key: 'zoneName', sortable: true },
-          {key: 'areaName', sortable: true},
-          {key: 'categoryName', label: 'categoryName', sortable: true},
-          {key: 'actions', thStyle: {width:'130px !important'} }
-        ]),
+        fields: this.getFields(),
         sortBy: 'ID',
       },
-      items: ViewHelper.createBreadCrumbItems('master', 'zoneClass'),
     }
   },
   methods: {
+    getFields(){
+      return ViewHelper.addLabelByKey(this.$i18n, [ 
+        {key: 'zoneCd', label: 'id', sortable: true },
+        {key: 'zoneType', sortable: true },
+        {key: 'zoneName', sortable: true }
+      ].concat(this.createCustomColumn())
+        .concat([
+          {key: 'areaName', sortable: true},
+          {key: 'dispCategoryName', label: 'categoryName', sortable: true},
+        ])
+        .concat([ {key: 'actions', thStyle: {width:'130px !important'} } ])
+        .filter(val => val))
+    },
+    createCustomColumn(isDownload){
+      const ret = []
+      APP.ZONE.WITH.forEach(val => {
+        if(!isDownload && !ExtValueHelper.isShowList(APP.ZONE, val)) {
+          return
+        }
+        ret.push({key: val, label: val, sortable: true})
+      })
+      return ret
+    },
     onSaved(){
       StateHelper.setForceFetch('tx', true)
       StateHelper.setForceFetch('exb', true)
+      StateHelper.setForceFetch('category', true)
     },
   }
 }

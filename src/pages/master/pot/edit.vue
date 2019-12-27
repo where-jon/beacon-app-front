@@ -60,7 +60,15 @@
                 </template>
               </v-select>
             </b-form-group>
-            <extform :p-name="pName" :is-editable="isEditable" :form="form" />
+            <b-form-group v-show="isShownWith('auth')">
+              <label v-t="'label.auth'" />
+              <v-select v-model="vueSelected.authCategories" :options="authCategoryOptions" :disabled="!isEditable" multiple :close-on-select="false" class="vue-options-multi">
+                <template slot="no-options">
+                  {{ vueSelectNoMatchingOptions }}
+                </template>
+              </v-select>
+            </b-form-group>
+            <extform :is-editable="isEditable" :form="form" :p-ext-value="extValue" />
             <b-form-group v-if="isShownWith('thumbnail')">
               <label v-t="'label.thumbnail'" />
               <b-form-file v-if="isEditable" ref="inputThumbnail" v-model="form.thumbnailTemp" :placeholder="$t('message.selectFile') " accept="image/jpeg, image/png, image/gif" @change="readImage" />
@@ -170,7 +178,7 @@ export default {
       form: {
         ...Util.extract(this.$store.state.app_service.pot,
           ['potId', 'potCd', 'potName', 'potType', 'extValue.ruby',
-            'displayName', 'potGroupList.0.group.groupId', 'potCategoryList.0.category.categoryId',
+            'displayName', 'potGroupList.0.group.groupId', 'potCategoryList',
             'existThumbnail', 'description', ...PotHelper.getPotExtKeys(this.pName, true)])
       },
       userForm: {
@@ -183,7 +191,8 @@ export default {
         group: null,
         category: null,
         role: null,
-        txs: []
+        txs: [],
+        authCategories: [],
       },
       roleOptions: [],
       potTypeOptions: POT_TYPE.getTypes().filter(val => APP.POT.TYPES.includes(val.value) && this.pTypeList.includes(val.value)),
@@ -230,6 +239,9 @@ export default {
         // サムネイル欄から画像ファイル選択で表示する場合(base64を指定)
         (this.form.thumbnail ? this.form.thumbnail : '')
     },
+    extValue() {
+      return PotHelper.getPotExt(this.pName)
+    },
   },
   watch: {
     'form.potType': function(newVal, oldVal){
@@ -264,6 +276,12 @@ export default {
       },
       deep: true,
     },
+    'vueSelected.authCategories': {
+      handler: function(newVal, oldVal){
+        this.form.authCategoryIdList = newVal.map(val => val.value)
+      },
+      deep: true,
+    },
     txIds: function(newVal, oldVal) {
       this.watchIds(newVal, 'txId')
     },
@@ -276,6 +294,7 @@ export default {
   },
   async created(){
     await StateHelper.load('role')
+    this.initForm()
     this.roleOptions = StateHelper.getOptionsFromState('role', false, true)
 
     const potUser = Util.hasValue(this.pot.potUserList)? this.pot.potUserList[0]: null
@@ -322,6 +341,25 @@ export default {
     isShownWith(column) {
       const settingName = PotHelper.getSettingName(this.pName)
       return this.isShown(settingName + '.WITH', column)
+    },
+    initForm() {
+      if(!Util.hasValue(this.form.potCategoryList)){
+        return
+      }
+
+      const targetPotCategory = this.form.potCategoryList.find(potCategory => {
+        return this.categoryOptions.some(option => option.value == Util.getValue(potCategory, 'category.categoryId', null))
+      })
+      if(Util.hasValue(targetPotCategory)){
+        this.vueSelected.category = VueSelectHelper.getVueSelectData(this.categoryOptions, Util.getValue(targetPotCategory, 'category.categoryId', null))
+      }
+
+      const targetAuthPotCategories = this.form.potCategoryList.filter(potCategory => {
+        return this.authCategoryOptions.some(option => option.value == Util.getValue(potCategory, 'category.categoryId', null))
+      })
+      if(Util.hasValue(targetAuthPotCategories)){
+        this.vueSelected.authCategories = targetAuthPotCategories.map(potCategory => VueSelectHelper.getVueSelectData(this.authCategoryOptions, Util.getValue(potCategory, 'category.categoryId', null))).sort((a, b) => a.label < b.label? -1: 1)
+      }
     },
     initPotTxList(){
       this.vueSelected.txs = []
@@ -522,6 +560,10 @@ export default {
       PotHelper.getPotExtKeys(this.pName).forEach(key => {
         entity.extValue[key] = this.form[key]
       })
+      if(Util.hasValue(this.form.authCategoryIdList)){
+        const authCategoryList = this.form.authCategoryIdList.map(authCategoryId => ({ potCategoryPK: { categoryId: authCategoryId } }))
+        entity.potCategoryList.push(...authCategoryList)
+      }
 
       const minorsMap = {}
       this.txs.forEach(t => minorsMap[t.txId] = t.minor)

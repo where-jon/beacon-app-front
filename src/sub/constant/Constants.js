@@ -59,6 +59,13 @@ export const KEYCODE = {
   ENTER: 13
 }
 
+export const KEY = {
+  CURRENT: {
+    REGION: 'currentRegion',
+    AREA: 'currentArea',
+  },
+}
+
 export const PATTERN = {
   NUMBER: '^-?[0-9]+[.]?[0-9]*$',
   NUMBER_LIST: '^(-?[0-9]+[.]?[0-9]*)+(,-?[0-9]+[.]?[0-9]*)*$',
@@ -209,15 +216,16 @@ export const CATEGORY = {
   PERSON: 1,
   THING: 2,
   ZONE: 3,
-  // 4は予約済み
+  AUTH: 4,
   OTHER: 5,
-  getTypes(){
+  getTypes(includeAuth){
     return [
       {value: CATEGORY.PERSON, text: i18n.tnl('label.person')},
       {value: CATEGORY.THING, text: i18n.tnl('label.thing')},
       {value: CATEGORY.ZONE, text: i18n.tnl('label.zone')},
+      includeAuth? {value: CATEGORY.AUTH, text: i18n.tnl('label.auth')}: null,
       {value: CATEGORY.OTHER, text: i18n.tnl('label.potOther')},
-    ]
+    ].filter(val => val)
   },
   POT_AVAILABLE: [1, 2, 5],
   ZONE_AVAILABLE: [3],
@@ -271,10 +279,19 @@ export const SHAPE = {
 export const ZONE = {
   COORDINATE: 0,
   NON_COORDINATE: 1,
+  GUARD: 2,
+  DOOR: 3,
   getTypes(){
     return [
       {value: ZONE.COORDINATE, text: i18n.tnl('label.coordinate')},
       {value: ZONE.NON_COORDINATE, text: i18n.tnl('label.nonCoordinate')},
+    ]
+  },
+  getOptions(){
+    return [
+      { value: ZONE.NON_COORDINATE, text: i18n.tnl('label.normal') },
+      { value: ZONE.GUARD, text: i18n.tnl('label.zoneGuard') },
+      { value: ZONE.DOOR, text: i18n.tnl('label.zoneDoor') },
     ]
   },
   MIN_WIDTH: 50,
@@ -297,7 +314,8 @@ export const SENSOR = {
     OFF: 0,
     ON: 4,
   },
-  STRING: ['','temperature','pir','thermopile','led','meditag','magnet','button','pressure','omr-env','omr-tp-human','omr-tp-env']
+  STRING: ['','temperature','pir','thermopile','led','meditag','magnet','button','pressure','omr-env','omr-tp-human','omr-tp-env'],
+  NAMES: ['','thermohumidity','pir','thermopile','led','meditag','magnet','button','pressure','omr-env','omr-tp-human','omr-tp-env']
 }
 
 export const SUM_UNIT = {
@@ -547,12 +565,16 @@ export const FONT = {
 }
 
 export const SETTING = {
-  VALUES: ['string', 'stringList', 'number', 'numberList', 'boolean', 'json'],
+  SPLITTER: ':',
+  VALUES: ['string', 'stringList', 'number', 'numberList', 'boolean', 'date', 'datetime', 'time', 'json'],
   STRING: 'string',
   STRING_LIST: 'stringList',
   NUMBER: 'number',
   NUMBER_LIST: 'numberList',
   BOOLEAN: 'boolean',
+  DATE: 'date',
+  DATETIME: 'datetime',
+  TIME: 'time',
   JSON: 'json',
   SELECT: 'select',
   OTHER_CATEGORY: 'OTHER_CATEGORY',
@@ -563,6 +585,9 @@ export const SETTING = {
       {text: i18n.tnl('label.number'), value: 'number'},
       {text: i18n.tnl('label.numberList'), value: 'numberList'},
       {text: i18n.tnl('label.boolean'), value: 'boolean'},
+      {text: i18n.tnl('label.date'), value: 'date'},
+      {text: i18n.tnl('label.datetime'), value: 'datetime'},
+      {text: i18n.tnl('label.time'), value: 'time'},
       {text: 'json', value: 'json'},
     ]
   },
@@ -600,6 +625,7 @@ export const SETTING = {
           TYPE: {
             WITH: SETTING.STRING_LIST,
           },
+          EXT_DEF: SETTING.JSON,
         },
         USER: {
           WITH: SETTING.STRING_LIST,
@@ -618,6 +644,14 @@ export const SETTING = {
         },
         CATEGORY: {
           TYPES: SETTING.NUMBER_LIST,
+          WITH: SETTING.STRING_LIST,
+        },
+        GROUP: {
+          WITH: SETTING.STRING_LIST,
+        },
+        ZONE: {
+          TYPES: SETTING.NUMBER_LIST,
+          WITH: SETTING.STRING_LIST,
         },
         NOTIFY: {
           MIDIUM_TYPES: SETTING.NUMBER_LIST,
@@ -635,6 +669,9 @@ export const SETTING = {
         },
         TXDETAIL: {
           ITEMS: SETTING.STRING_LIST,
+        },
+        ENTER: {
+          START_TIME: SETTING.DATETIME,
         },
         SVC: {
           SLACK_CHANNEL: SETTING.STRING,
@@ -705,10 +742,17 @@ export const SETTING = {
             INTERVAL: SETTING.NUMBER,
           },
         },
+        MANAGE: {
+          SETTING_CATEGORY: SETTING.STRING_LIST,
+        }
       },
       DISP: {
         TX: {
           ABSENT_ZONE_DISPLAY_TYPES: SETTING.STRING_LIST,
+        },
+        EXB_LOC: {
+          BGCOLOR_PATTERN: SETTING.STRING_LIST,
+          BGCOLOR_PATTERN_NOTX: SETTING.STRING_LIST,
         },
         THERMOH: {
           PATTERN: SETTING.STRING_LIST,
@@ -831,6 +875,11 @@ export const MENU = [
       icon: 'building',
     },
     {
+      key: 'enterTable',
+      path: 'enter-table',
+      icon: 'table',
+    },
+    {
       key: 'pirMenu',
       path: 'pir',
       icon: 'users',
@@ -893,11 +942,6 @@ export const MENU = [
         icon: 'location-arrow',
       },
       {
-        key: 'txLocationSetting',
-        path: 'txlocation/position',
-        icon: 'map-pin',
-      },
-      {
         key: 'pot',
         path: 'pot',
         icon: 'id-card',
@@ -936,6 +980,11 @@ export const MENU = [
         key: 'categoryZone',
         path: 'categoryZone',
         icon: 'object-ungroup',
+      },
+      {
+        key: 'categoryAuth',
+        path: 'categoryAuth',
+        icon: 'key',
       },
       {
         key: 'group',
@@ -1108,6 +1157,11 @@ export const MENU = [
       icon: 'user-cog',
     },
     {
+      key: 'systemChild',
+      path: 'appSystem',
+      icon: 'cogs',
+    },
+    {
       key: 'system',
       path: 'system',
       icon: 'cogs',
@@ -1155,4 +1209,13 @@ export const PLUGIN_CONSTANTS = {
   IFRAME_BASE_DIR: 'plugin/',
   PLUGIN_KEY_PREFIX: 'plugin-index',
   VIEW_URL_PREFIX: '/plugin/'
+}
+
+export const TENANT = {
+  STATUS: {
+    INVALID_TOKEN: -2,
+    NOT_REGISTERED: -1,
+    REGISTERED: 1,
+    DISABLED: 0
+  }
 }

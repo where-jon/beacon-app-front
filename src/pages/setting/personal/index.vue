@@ -8,19 +8,21 @@
         <b-col md="10" offset-md="1">
           <pagetitle title="label.login-user-profile" />
           <b-form>
-            <b-form-group>
+            <!-- MS Teams版ではログインID欄非表示 -->
+            <b-form-group v-if="!isMsTeams">
               <label v-t="'label.loginId'" />
               <b-form-input v-model="loginUser.loginId" :state="errorMessages.loginId.length > 0 ? false : null" type="text" maxlength="16" readonly />
               <p v-for="(val, key) in errorMessages.loginId" :key="key" v-t="val" class="error" />
             </b-form-group>
+
             <b-form-group v-show="showName">
               <label v-t="'label.name'" />
-              <input v-model="loginUser.name" :readonly="!isChange" :state="errorMessages.name.length > 0 ? false : null" type="text" class="form-control" maxlength="20">
+              <input v-model="loginUser.name" :readonly="isChange" :state="errorMessages.name.length > 0 ? false : null" type="text" class="form-control" maxlength="20">
               <p v-for="(val, key) in errorMessages.name" :key="key" v-t="val" class="error" />
             </b-form-group>
             <b-form-group v-show="showEmail">
               <label v-t="'label.email'" />
-              <input v-model="loginUser.email" :readonly="!isChange" :state="errorMessages.email.length > 0 ? false : null" type="email" class="form-control">
+              <input v-model="loginUser.email" :readonly="isChange" :state="errorMessages.email.length > 0 ? false : null" type="email" class="form-control">
               <p v-for="(val, key) in errorMessages.email" :key="key" v-t="val" class="error" />
             </b-form-group>
             <!--
@@ -48,41 +50,42 @@
             </b-form-group>
             <!-- プロフィール・パスワードを変更するボタン -->
             <b-form-group v-if="isUpdatable">
-              <b-button v-show="!isChange" v-t="'label.changeProfilePassword'" :variant="theme" 
-                        type="button" class="btn-block" @click="isChange = true"
-              />
-              <b-card v-show="isChange" bg-variant="light">
-                <b-form-group :label="$i18n.tnl('label.changePassword')" breakpoint="lg" label-size="md">
-                  <!-- 現在のパスワード -->
-                  <b-form-group :label="$i18n.tnl('label.passwordCurrent')" label-class="text-sm-right" label-for="password-current">
-                    <b-form-input id="password-current" v-model="loginUser.password"
-                                  :state="errorMessages.password.length > 0 ? false : null" type="password"
-                                  maxlength="16"
-                    />
-                    <p v-for="(val, key) in errorMessages.password" :key="key" class="error">
-                      {{ val }}
-                    </p>
-                  </b-form-group>
+              <!-- MS Teams版ではパスワード変更不可-->
+              <div v-if="!isMsTeams">
+                <b-button v-show="!isChange" v-t="'label.changeProfilePassword'" :variant="theme" 
+                          type="button" class="btn-block" @click="isChange = true"
+                />
+                <b-card v-show="isChange" bg-variant="light">
+                  <b-form-group :label="$i18n.tnl('label.changePassword')" breakpoint="lg" label-size="md">
+                    <b-form-group :label="$i18n.tnl('label.passwordCurrent')" label-class="text-sm-right" label-for="password-current">
+                      <b-form-input id="password-current" v-model="loginUser.password"
+                                    :state="errorMessages.password.length > 0 ? false : null" type="password"
+                                    maxlength="16"
+                      />
+                      <p v-for="(val, key) in errorMessages.password" :key="key" class="error">
+                        {{ val }}
+                      </p>
+                    </b-form-group>
 
-                  <!-- 変更パスワード -->
-                  <b-form-group :label="$i18n.tnl('label.passwordUpdate')" label-class="text-sm-right" label-for="password-update">
-                    <b-form-input id="password-update" v-model="loginUser.passwordUpdate" type="password" maxlength="16" />
-                  </b-form-group>
+                    <b-form-group :label="$i18n.tnl('label.passwordUpdate')" label-class="text-sm-right" label-for="password-update">
+                      <b-form-input id="password-update" v-model="loginUser.passwordUpdate" type="password" maxlength="16" />
+                    </b-form-group>
 
-                  <!-- 確認パスワード -->
-                  <b-form-group :label="$i18n.tnl('label.passwordConfirm')" label-class="text-sm-right" label-for="password-confirm">
-                    <b-form-input id="password-confirm" v-model="loginUser.passwordConfirm" type="password" maxlength="16" />
+                    <b-form-group :label="$i18n.tnl('label.passwordConfirm')" label-class="text-sm-right" label-for="password-confirm">
+                      <b-form-input id="password-confirm" v-model="loginUser.passwordConfirm" type="password" maxlength="16" />
+                    </b-form-group>
                   </b-form-group>
-                </b-form-group>
-                <b-alert :show="passErrorMessage !== null" variant="danger" dismissible>
-                  {{ passErrorMessage }}
-                </b-alert>
-              </b-card>
+                  <b-alert :show="passErrorMessage !== null" variant="danger" dismissible>
+                    {{ passErrorMessage }}
+                  </b-alert>
+                </b-card>
+              </div>
             </b-form-group>
           </b-form>
         </b-col>
       </b-row>
-      <b-row v-show="isChange" :style="{ marginTop: '30px' }">
+      <!-- MS Teams版では常にキャンセル・変更ボタンを非表示 -->
+      <b-row v-if="!isMsTeams" v-show="isChange" :style="{ marginTop: '30px' }">
         <b-form-group class="col text-center">
           <b-button v-t="'label.cancel'" type="button" class="mr-4 mb-2 input-btn" variant="outline-danger" @click="handleCancelButton" />
           <b-button v-t="'label.modify'" :variant="theme" type="button" class="ml-4 mb-2 input-btn" @click="onSubmit" />
@@ -94,7 +97,7 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex'
-import { APP } from '../../../sub/constant/config'
+import { APP, MSTEAMS_APP } from '../../../sub/constant/config'
 import { THEME, CHAR_SET, LOCALE } from '../../../sub/constant/Constants'
 import * as ArrayUtil from '../../../sub/util/ArrayUtil'
 import { getLangShort } from '../../../sub/util/BrowserUtil'
@@ -157,7 +160,8 @@ export default {
         passwordUpdate: '',
         passwordConfirm: '',
       },
-      isChange: false,
+      isChange: true,
+      isMsTeams: MSTEAMS_APP.IS_COOPERATION,
     }
   },
   computed: {

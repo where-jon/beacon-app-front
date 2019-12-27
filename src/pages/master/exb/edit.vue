@@ -44,22 +44,24 @@
                 </b-form-group>
               </span>
             </b-form-group>
-            <b-form-group>
-              <label v-t="'label.area'" />
-              <v-select v-model="vueSelected.area" :options="areaOptions" :disabled="!isEditable" :readonly="!isEditable" class="vue-options-lg">
-                <template slot="no-options">
-                  {{ vueSelectNoMatchingOptions }}
-                </template>
-              </v-select>
-            </b-form-group>
-            <b-form-group>
-              <label v-t="'label.locationName'" />
-              <v-select v-model="vueSelected.location" :options="getLocationOptions()" :disabled="!isEditable" :readonly="!isEditable" class="vue-options-lg">
-                <template slot="no-options">
-                  {{ vueSelectNoMatchingOptions }}
-                </template>
-              </v-select>
-            </b-form-group>
+            <b-form-row class="mb-3">
+              <b-col>
+                <label v-t="'label.area'" />
+                <v-select v-model="vueSelected.area" :options="areaOptions" :disabled="!isEditable" :readonly="!isEditable" class="vue-options-lg">
+                  <template slot="no-options">
+                    {{ vueSelectNoMatchingOptions }}
+                  </template>
+                </v-select>
+              </b-col>
+              <b-col>
+                <label v-t="'label.locationName'" />
+                <v-select v-model="vueSelected.location" :options="getLocationOptions()" :disabled="!isEditable" :readonly="!isEditable" class="vue-options-lg">
+                  <template slot="no-options">
+                    {{ vueSelectNoMatchingOptions }}
+                  </template>
+                </v-select>
+              </b-col>
+            </b-form-row>
 
             <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
             <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="doBeforeSubmit(false)">
@@ -125,9 +127,6 @@ export default {
     }
   },
   computed: {
-    areaOptions() {
-      return StateHelper.getOptionsFromState('area', false, true)
-    },
     adjustParams() {
       return [
         { key: 'threshold1', min: -65535, max: 0 },

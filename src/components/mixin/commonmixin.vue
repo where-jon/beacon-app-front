@@ -47,6 +47,9 @@ export default {
     categoryOptions() {
       return OptionHelper.getCategoryOptions(CATEGORY.POT_AVAILABLE)
     },
+    authCategoryOptions() {
+      return OptionHelper.getCategoryOptions([CATEGORY.AUTH])
+    },
     vueSelectStyle(){
       return VueSelectHelper.getVueSelectStyle()
     },
@@ -141,6 +144,28 @@ export default {
     },
     defaultSortCompare(a, b, key) {
       return StringUtil.sortByString(a[key], b[key], LocaleHelper.getSystemLocale())
+    },
+    refreshTimer(key, time, func) {
+      const now = (new Date()).getTime()
+      return this.$store.state.main.timers.filter(timer => {
+        if(key && timer.key == key) {
+          clearTimeout(timer.id)
+          return false
+        }
+        if(timer.start + timer.expired < now) {
+          return false
+        }
+        return true
+      })
+    },
+    pushTimer(key, time, func) {
+      const timers = this.refreshTimer(key)
+      timers.push({ key: key, id: setTimeout(func, time), start: (new Date()).getTime(), expired: time })
+      this.replaceMain({ 'timers': timers })
+    },
+    popTimer(key) {
+      const timers = this.refreshTimer(key)
+      this.replaceMain({ 'timers': timers })
     },
   }
 }

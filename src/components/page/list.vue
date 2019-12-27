@@ -155,6 +155,33 @@
             {{ zoneName }}
           </div>
         </template>
+        <template slot="zoneType" slot-scope="row">
+          <div>
+            {{ row.item.zoneTypeName }}
+          </div>
+        </template>
+        <template slot="guardNames" slot-scope="row">
+          <div v-for="(guardName, index) in row.item.guardNames" :key="index">
+            {{ guardName }}
+          </div>
+        </template>
+        <template slot="doorNames" slot-scope="row">
+          <div v-for="(doorName, index) in row.item.doorNames" :key="index">
+            {{ doorName }}
+          </div>
+        </template>
+        <!-- カテゴリ名 -->
+        <template slot="auth" slot-scope="row">
+          <div v-for="(categoryName, index) in row.item.authCategoryNames" :key="index">
+            {{ categoryName }}
+          </div>
+        </template>
+        <!-- EXBタイプ名 -->
+        <template slot="exbTypeName" slot-scope="row">
+          <div>
+            {{ getDispExbType(row.item) }}
+          </div>
+        </template>
         <!-- センサ名 -->
         <template slot="sensorNames" slot-scope="row">
           <div v-for="(sensorIdName, index) in row.item.sensorNames" :key="index">
@@ -236,8 +263,8 @@
 <script>
 
 import { mapState, mapMutations } from 'vuex'
-import { APP_SERVICE } from '../../sub/constant/config'
-import { CATEGORY, SENSOR, EXB } from '../../sub/constant/Constants'
+import { APP, APP_SERVICE } from '../../sub/constant/config'
+import { CATEGORY, SENSOR, EXB, KEY } from '../../sub/constant/Constants'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as CsvUtil from '../../sub/util/CsvUtil'
@@ -321,6 +348,7 @@ export default {
           zone: '',
           zoneCategory: '',
           detectState: null,
+          keyCategory: '',
           settingCategory: '',
         },
         detail: null,
@@ -462,13 +490,22 @@ export default {
       options.unshift({value:null, text:''})
       return options
     },
-    settingCategoryOptions() {
-      const options = this.$i18n.tnl('config.OPTIONS.SETTING_CATEGORY')
-      if(!options){
-        return [{value: null, text: ''}]
+    keyCategoryOptions() {
+      const options = this.$i18n.tnl('config.OPTIONS.KEY_CATEGORY')
+      if(!Util.hasValue(options)) {
+        return [{ value: null, text: '' }]
       }
       const ret = Object.keys(options).map(key => ({value: key, text: options[key]}))
-      ret.unshift({value: null, text: ''})
+      ret.unshift({ value: null, text: '' })
+      return ret
+    },
+    settingCategoryOptions() {
+      const options = APP.MANAGE.SETTING_CATEGORY
+      if(!Util.hasValue(options)) {
+        return [{ value: null, text: '' }]
+      }
+      const ret = options.map(key => ({value: key, text: key}))
+      ret.unshift({ value: null, text: '' })
       return ret
     },
     loginId() {
@@ -510,11 +547,18 @@ export default {
       },
       deep: true,
     },
+    selectedArea: function(newVal, oldVal) {
+      LocalStorageHelper.setLocalStorage(KEY.CURRENT.AREA, newVal)
+    },
   },
   async created() {
     await StateHelper.load('region')
   },
   async mounted() {
+    const currentArea = LocalStorageHelper.getLocalStorage(KEY.CURRENT.AREA)
+    if(Util.hasValue(currentArea)) {
+      this.selectedArea = currentArea
+    }
     const strageMessage = LocalStorageHelper.popLocalStorage('listMessage')
     this.message = Util.hasValue(strageMessage)? strageMessage: this.listMessage
     this.replaceAS({listMessage: null})
@@ -526,7 +570,7 @@ export default {
     if (this.params.extraFilter) {
       const filterColumnList = this.params.extraFilter.filter(str => str != 'detectState')
       await Promise.all(filterColumnList.map(state => StateHelper.load(state)))
-      filterColumnList.filter(state => ['category', 'group'].some(s => s == state)).forEach(state => {
+      filterColumnList.filter(state => ['category', 'group', 'area'].some(s => s == state)).forEach(state => {
         const selectedKey = StringUtil.concatCamel('selected', state)
         this.vueSelected[state] = VueSelectHelper.getVueSelectData(this[state + 'Options'], this[selectedKey])
       })
@@ -759,12 +803,20 @@ export default {
             return false
           }
           break
+        case 'keyCategory':
+          if (extra.keyCategory){
+            if(originItem.isParent){
+              return false
+            }
+            return originItem.categoryKey == extra.keyCategory
+          }
+          break
         case 'settingCategory':
           if (extra.settingCategory){
             if(originItem.isParent){
               return false
             }
-            return originItem.categoryKey == extra.settingCategory
+            return originItem.category == extra.settingCategory
           }
           break
         }
@@ -823,6 +875,7 @@ export default {
     },
     async execDelete(id) {
       this.replace({showInfo: false})
+      const pageName = this.params.dispName? this.params.dispName: this.params.name
       try {
         await AppServiceHelper.deleteEntity(this.appServicePath, id)
         if(this.compactMode) {
@@ -871,7 +924,7 @@ export default {
           this.replace({showAlert: true})
         }
         else{
-          this.error = this.$i18n.terror('message.deleteFailed', {target: this.$i18n.tnl('label.' + this.params.name), code: e.response.status})
+          this.error = this.$i18n.terror('message.deleteFailed', {target: this.$i18n.tnl('label.' + pageName), code: e.response.status})
         }
       }
     },

@@ -13,10 +13,9 @@
           <label v-t="'label.groupName'" />
           <input v-model="form.groupName" :readonly="!isEditable" type="text" maxlength="20" class="form-control" required>
         </b-form-group>
-        <b-form-group>
-          <label v-t="'label.ruby'" />
-          <input v-model="form.ruby" :readonly="!isEditable" type="text" class="form-control" maxlength="20">
-        </b-form-group>
+
+        <extform :is-editable="isEditable" :form="form" :p-ext-value="extValue" />
+
         <b-form-group>
           <label v-t="'label.shape'" />
           <b-form-select v-model="form.displayShape" :options="shapes" :disabled="!isEditable" :readonly="!isEditable" required />
@@ -40,10 +39,12 @@
 
 <script>
 import { mapState } from 'vuex'
+import { APP } from '../../../sub/constant/config'
 import { SHAPE } from '../../../sub/constant/Constants'
 import * as ColorUtil from '../../../sub/util/ColorUtil'
 import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
+import * as ExtValueHelper from '../../../sub/helper/domain/ExtValueHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as ValidateHelper from '../../../sub/helper/dataproc/ValidateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
@@ -52,12 +53,14 @@ import commonmixin from '../../../components/mixin/commonmixin.vue'
 import editmixin from '../../../components/mixin/editmixin.vue'
 import alert from '../../../components/parts/alert.vue'
 import colorPicker from '../../../components/parts/colorpicker.vue'
+import extform from '../../../components/parts/extform.vue'
 
 export default {
   components: {
     breadcrumb,
     alert,
     colorPicker,
+    extform,
   },
   mixins: [commonmixin, editmixin],
   data() {
@@ -68,7 +71,10 @@ export default {
       backPath: '/master/group',
       appServicePath: '/basic/group',
       items: ViewHelper.createBreadCrumbItems('master', {text: 'group', href: '/master/group'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.group.groupId)),
-      form: Util.extract(this.$store.state.app_service.group, ['groupId', 'groupCd', 'groupName', 'ruby', 'display', 'description']),
+      form: Util.extract(this.$store.state.app_service.group, [
+        'groupId', 'groupCd', 'groupName', 'display', 'description',
+        ...ExtValueHelper.getExtValueKeys(APP.GROUP, true)
+      ]),
       defaultColor: '#000000',
       defaultBgColor: '#ffffff',
       oldShape: Util.getValue(group, 'display.shape', null),
@@ -82,6 +88,9 @@ export default {
     ]),
     shapes(){
       return SHAPE.getShapes()
+    },
+    extValue() {
+      return ExtValueHelper.getExtValue(APP.GROUP)
     },
   },
   created() {
@@ -112,6 +121,7 @@ export default {
         groupCd: this.form.groupCd,
         groupName: this.form.groupName,
         ruby: this.form.ruby,
+        extValue: {},
         description: this.form.description,
         display: {
           shape: `${this.form.displayShape}`,
@@ -119,6 +129,7 @@ export default {
           bgColor: ColorUtil.colorCd4display(this.form.displayBgColor),
         },
       }
+      ExtValueHelper.getExtValueKeys(APP.GROUP).forEach(key => entity.extValue[key] = this.form[key])
       this.oldShape = this.form.displayShape
       this.oldColor = this.form.displayColor
       this.oldBgColor = this.form.displayBgColor

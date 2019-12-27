@@ -132,17 +132,6 @@ export default {
       }
       return dummyKey
     },
-    restructLocation(entity, dummyKey){
-      if(!ArrayUtil.includesIgnoreCase(APP.TX.WITH, 'location')){
-        return dummyKey
-      }
-      const param = BulkHelper.createParamLocation(
-        {...entity, locationCd: entity.btxId * -1, locationName: Util.hasValue(entity.locationName)? entity.locationName: SensorHelper.createTxLocationDummyName(entity)},
-        dummyKey
-      )
-      entity.location = param.location
-      return param.dummyKey
-    },
     onRestruct(entity, dummyKey){
       dummyKey = this.restructTx(entity, dummyKey)
       dummyKey = this.restructPot(entity, dummyKey)
@@ -153,7 +142,6 @@ export default {
         }
         dummyKey = param.dummyKey
       }
-      dummyKey = this.restructLocation(entity, dummyKey)
       return dummyKey
     },
     onSaved(){

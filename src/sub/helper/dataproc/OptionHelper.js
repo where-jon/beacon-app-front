@@ -155,6 +155,7 @@ export const getLocationDispOptions = () => {
     { text: i18n.tnl('label.locationCdComp'), value: 'locationCd' },
     ConfigHelper.includesDeviceType('deviceId')? { text: i18n.tnl('label.EXBeacon'), value: 'deviceId' }: null,
     ConfigHelper.includesDeviceType('deviceIdX')? { text: i18n.tnl('label.EXBeaconX'), value: 'deviceIdX' }: null,
+    { text: i18n.tnl('label.tx'), value: 'txName' },
   ].filter(val => val)
 }
 
@@ -177,18 +178,20 @@ export const getLocationOptions = (workLocationList, column) => {
 }
 
 /**
- * 場所選択（EXB）の選択肢を取得する。
+ * 場所選択（デバイス）の選択肢を取得する。
  * @method
- * @param {Object[]} workExbList 
+ * @param {Object[]} workDeviceList 
+ * @param {String} deviceType 
  * @param {String} column 
  * @return {Object[]}
  */
-export const getLocationExbOptions = (workExbList, column) => {
-  return StateHelper.getOptionsFromState('exb',
+export const getLocationDeviceOptions = (workDeviceList, deviceType, column) => {
+  return StateHelper.getOptionsFromState(deviceType,
     column,
     true,
-    exb => {
-      const target = workExbList.find(val => val.exbId == exb.exbId)
+    device => {
+      const pKey = deviceType + 'Id'
+      const target = workDeviceList.find(val => val[pKey] == device[pKey])
       return target? !Util.hasValue(target.locationId): false
     }
   )

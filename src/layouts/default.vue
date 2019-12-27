@@ -11,15 +11,15 @@
             <b-row>
               <b-col class="pl-md-5 pl-xl-5 pr-xl-5 bd-content">
                 <nuxt />
-                <div v-if="showProgress" class="spinner-parent">
-                  <vue-simple-spinner size="large" line-fg-color="#a09e9e" line-bg-color="#dee2e6" />
-                </div>
               </b-col>
             </b-row>
           </b-container>
         </b-col>
       </b-row>
       <nuxt v-else />
+      <div v-if="showProgress" class="spinner-parent">
+        <vue-simple-spinner size="large" line-fg-color="#a09e9e" line-bg-color="#dee2e6" />
+      </div>
       <!-- modal -->
       <b-modal id="modalRootError" :title="$t('label.error')" ok-only>
         {{ errorMessage }}
@@ -42,7 +42,7 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { fas } from '@fortawesome/free-solid-svg-icons'
 
-import { APP, DISP, DEV, EXCLOUD } from '../sub/constant/config'
+import { APP, DISP, DEV, EXCLOUD, MSTEAMS_APP } from '../sub/constant/config'
 import { getLangShort } from '../sub/util/BrowserUtil'
 import { EventBus } from '../sub/helper/base/EventHelper'
 import * as LocaleHelper from '../sub/helper/base/LocaleHelper'
@@ -130,7 +130,8 @@ export default {
       this.setColor('dropdown-item', color)
     },
     getShowSideBar(){
-      return this.conf.disp.MENU.SHOW_SIDEBAR
+      // MS Teams内で実行する場合、サイドバーを表示しない
+      return this.conf.disp.MENU.SHOW_SIDEBAR && (!MSTEAMS_APP.IS_COOPERATION)
     },
   },
   head() { // browser tab title

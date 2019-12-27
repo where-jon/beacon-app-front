@@ -12,6 +12,7 @@ import { ZONE, PATTERN, BULK } from '../../../sub/constant/Constants'
 import * as NumberUtil from '../../../sub/util/NumberUtil'
 import * as Util from '../../../sub/util/Util'
 import * as BulkHelper from '../../../sub/helper/dataproc/BulkHelper'
+import * as ExtValueHelper from '../../../sub/helper/domain/ExtValueHelper'
 import * as OptionHelper from '../../../sub/helper/dataproc/OptionHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
@@ -48,7 +49,7 @@ export default {
   },
   methods: {
     async onSaving() {
-      await this.$refs.bulkEdit.bulkSave({numberList: ['posId', 'x', 'y'], booleanList: ['visible'], nullableList: ['posId', 'x', 'y']})
+      await this.$refs.bulkEdit.bulkSave({numberList: ['posId', 'x', 'y'], nullableList: ['posId', 'x', 'y']})
     },
     restructExb(entity, dummyKey){
       ['deviceId', 'deviceIdX'].forEach(key => {
@@ -63,6 +64,21 @@ export default {
         }
         else{
           entity[key + 'List'] = deviceIdList.map(val => isHex? val: Number(val))
+        }
+      })
+      return dummyKey
+    },
+    restructTx(entity, dummyKey){
+      ['minor', 'btxId'].forEach(key => {
+        if(!Util.hasValue(entity[key])){
+          return
+        }
+        const keyList = entity[key].split(BULK.SPLITTER)
+        if(keyList.some(val => isNaN(val))){
+          entity[key + 'Name'] = entity[key]
+        }
+        else{
+          entity[key + 'List'] = keyList.map(val => Number(val))
         }
       })
       return dummyKey
@@ -83,7 +99,6 @@ export default {
           zone: {
             zoneId: Util.getValue(zone, 'zoneId', dummyKey--),
             zoneName: name,
-            zoneType: ZONE.NON_COORDINATE,
           }
         }
         locationZoneList.push(locationZone)
@@ -109,8 +124,10 @@ export default {
         entity.txViewTypeName = entity.txViewType
         entity.txViewType = null
       }
+      ExtValueHelper.copyToChild(entity, APP.LOCATION)
       dummyKey = this.restructZone(entity, dummyKey)
       dummyKey = this.restructExb(entity, dummyKey)
+      dummyKey = this.restructTx(entity, dummyKey)
       return dummyKey
     },
   }

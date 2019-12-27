@@ -12,6 +12,7 @@ import * as StringUtil from '../../util/StringUtil'
 import * as Util from '../../util/Util'
 import * as AppServiceHelper from './AppServiceHelper'
 import * as ConfigHelper from './ConfigHelper'
+import * as ExtValueHelper from '../domain/ExtValueHelper'
 import * as LocaleHelper from '../base/LocaleHelper'
 import * as OptionHelper from './OptionHelper'
 import * as SensorHelper from '../domain/SensorHelper'
@@ -166,6 +167,19 @@ export const getDeviceId = device => {
 }
 
 /**
+ * 配置画面上のTx選択肢ラベルを作成する。
+ * @method
+ * @param {Object} tx 
+ * @return {String}
+ */
+export const getLocationTxName = (tx, addPotName = true) => {
+  if(!tx){
+    return ''
+  }
+  return '' + (tx.minor? tx.minor: tx.btxId) + (addPotName && tx.potName? '(' + tx.potName + ')': '')
+}
+
+/**
  * 設定により、TxのbtxIdまたはminor値を取得する。
  * @method
  * @param {Object} tx 
@@ -240,7 +254,7 @@ export const getTxParams = txList => {
  * @return {String}
  */
 export const getCategoryTypeName = category => {
-  const categoryTypeName = CATEGORY.getTypes().find(tval => tval.value === category.categoryType)
+  const categoryTypeName = CATEGORY.getTypes(true).find(tval => tval.value === category.categoryType)
   return categoryTypeName != null? categoryTypeName.text: null
 }
 
@@ -391,6 +405,7 @@ const appStateConf = {
           btxId: pot.btxId,
           minor: pot.minor,
           ruby: pot.extValue? pot.extValue.ruby: null,
+          authCategoryNames: Util.getValue(pot, 'authCategoryList', []).map(v => v.categoryName),
           // 以下、nuxt2.8.1にアップグレードした場合、thisがundefinedとなり、エラーが発生するためコメントアウト
           // extValue: pot.extValue? pot.extValue: this.extValueDefault,
           extValue: pot.extValue? pot.extValue: '',
@@ -404,29 +419,36 @@ const appStateConf = {
     path: '/basic/category',
     sort: 'categoryCd',
     beforeCommit: arr => {
-      return arr.map(val => ({
-        ...val,
-        categoryName: val.categoryName,
-        shape: val.display? val.display.shape: null,
-        color: val.display? val.display.color: null,
-        bgColor: val.systemUse == 1? getSystemUseBgColor(val): getCategoryDisplayBgColor(val),
-        shapeName: val.display? getShapeName(val.display.shape): null,
-        categoryTypeName: getCategoryTypeName(val),
-        systemCategoryName: val.systemUse != 0? val.categoryName.toLowerCase(): null,
-      })).sort((a, b) => StringUtil.sortByString(a.categoryCd, b.categoryCd, LocaleHelper.getSystemLocale()))
+      return arr.map(val => {
+        const zoneCategoryList = Util.getValue(val, 'zoneCategoryList', [])
+        return Util.merge({
+          ...val,
+          categoryName: val.categoryName,
+          shape: val.display? val.display.shape: null,
+          color: val.display? val.display.color: null,
+          bgColor: val.systemUse == 1? getSystemUseBgColor(val): getCategoryDisplayBgColor(val),
+          shapeName: val.display? getShapeName(val.display.shape): null,
+          categoryTypeName: getCategoryTypeName(val),
+          systemCategoryName: val.systemUse != 0? val.categoryName.toLowerCase(): null,
+          guardNames: zoneCategoryList.filter(zc => zc.zoneType == ZONE.GUARD).map(zoneCategory => Util.getValue(zoneCategory, 'zoneName', '')).sort((a, b) => a < b? -1: 1),
+          doorNames: zoneCategoryList.filter(zc => zc.zoneType == ZONE.DOOR).map(zoneCategory => Util.getValue(zoneCategory, 'zoneName', '')).sort((a, b) => a < b? -1: 1),
+        }, val.extValue)
+      }).sort((a, b) => StringUtil.sortByString(a.categoryCd, b.categoryCd, LocaleHelper.getSystemLocale()))
     }
   },
   groups: {
     path: '/basic/group',
     sort: 'groupCd',
     beforeCommit: arr => {
-      return arr.map(val => ({
-        ...val,
-        shape: val.display? val.display.shape: null,
-        color: val.display? val.display.color: null,
-        bgColor: val.systemUse == 1? getSystemUseBgColor(val): getCategoryDisplayBgColor(val),
-        shapeName: val.display? getShapeName(val.display.shape): null,
-      })).sort((a, b) => StringUtil.sortByString(a.groupCd, b.groupCd, LocaleHelper.getSystemLocale()))
+      return arr.map(val => (
+        Util.merge({
+          ...val,
+          shape: val.display? val.display.shape: null,
+          color: val.display? val.display.color: null,
+          bgColor: val.systemUse == 1? getSystemUseBgColor(val): getCategoryDisplayBgColor(val),
+          shapeName: val.display? getShapeName(val.display.shape): null,
+        }, val.extValue)
+      )).sort((a, b) => StringUtil.sortByString(a.groupCd, b.groupCd, LocaleHelper.getSystemLocale()))
     }
   },
   users: {
@@ -480,13 +502,17 @@ const appStateConf = {
       return arr.map(location => {
         const locationZoneList = Util.getValue(location, 'locationZoneList', [])
         const zoneTypeMap = {}
-        Util.getValue(location, 'locationZoneList', []).forEach(locationZone => {
-          const key = '' + locationZone.zoneType
+        locationZoneList.forEach(locationZone => {
+          const zoneType = ZONE.getOptions().find(option => option.value == locationZone.zoneType)? ZONE.NON_COORDINATE: ZONE.COORDINATE
+          const key = '' + zoneType
           if(!zoneTypeMap[key]){
             zoneTypeMap[key] = []
           }
-          zoneTypeMap[key].push(locationZone.zoneName)
+          if (!zoneTypeMap[key].includes(locationZone.zoneName)) {
+            zoneTypeMap[key].push(locationZone.zoneName)
+          }
         })
+        ExtValueHelper.copyToParent(location)
         const locationTypeOptions = OptionHelper.getLocationTypeOptions()
         return {
           ...location,
@@ -505,9 +531,12 @@ const appStateConf = {
     sort: 'zoneName',
     beforeCommit: arr => {
       return  arr.map(val => {
-        const category = Util.getValue(val, 'zoneCategoryList.0.category', null)
-        return {
+        const zoneCategory = Util.getValue(val, 'zoneCategoryList', []).find(zoneCategory => Util.getValue(zoneCategory, 'category.categoryType', null) == CATEGORY.ZONE)
+        const category = zoneCategory? zoneCategory.category: null
+        const zoneType = ZONE.getOptions().find(option => option.value == val.zoneType)
+        return Util.merge({
           ...val,
+          zoneTypeName: zoneType? zoneType.text: '',
           areaId: Util.hasValue(val.area)? val.area.areaId: null,
           areaName: Util.hasValue(val.area)? val.area.areaName: null,
           locationId: Util.hasValue(val.locationZoneList)? val.locationZoneList[0].locationZonePK.locationId: null,
@@ -516,7 +545,7 @@ const appStateConf = {
           categoryName: category? category.categoryName: null,
           zoneCategoryIdList: Util.getValue(val, 'zoneCategoryList', []).map(val => Util.getValue(val, 'zoneCategoryPK.categoryId', null)).filter(val => val),
           systemCategoryName: category? category.systemUse != 0? category.categoryName.toLowerCase(): null: null,
-        }
+        }, val.extValue)
       })
     }
   },

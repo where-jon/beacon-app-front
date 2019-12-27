@@ -9,7 +9,7 @@
 import { mapState } from 'vuex'
 import _ from 'lodash'
 import { APP } from '../../../sub/constant/config'
-import { CATEGORY, POT_TYPE } from '../../../sub/constant/Constants'
+import { CATEGORY, POT_TYPE, BULK } from '../../../sub/constant/Constants'
 import * as StringUtil from '../../../sub/util/StringUtil'
 import * as Util from '../../../sub/util/Util'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
@@ -121,6 +121,14 @@ export default {
         entity.potType = this.pTypeList[0]
       }
       entity.potCd = entity.ID
+
+      if(Util.hasValue(entity.auth)){
+        entity.potCategoryList = entity.auth.split(BULK.SPLITTER).map(val => ({
+          potCategoryPK: { potId: dummyKey--, categoryId: dummyKey-- },
+          categoryName: val,
+          categoryType: CATEGORY.AUTH
+        }))
+      }
 
       dummyKey = this.restructTx(entity, dummyKey)
       dummyKey = this.restructUser(entity, dummyKey)

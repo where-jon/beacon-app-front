@@ -143,6 +143,7 @@
     "txViewType": "Tx表示形式",
     "txIconColumns": "横",
     "txIconLines": "縦",
+    "locationHasTx": "(Tx配置)",
 
     "map": "マップ",
     "areaId": "エリアID",
@@ -198,6 +199,10 @@
     "zoneCd": "ID",
     "zoneName": "ゾーン名",
     "zoneType": "ゾーンタイプ",
+    "zoneGuard": "警戒区域",
+    "zoneDoor": "施錠部屋",
+    "led_device_id": "LED点灯デバイスID",
+    "led_no": "LED番号",
 
     "---------------- App news ---------------":"",
     "news": "お知らせメンテナンス",
@@ -272,6 +277,13 @@
     "positionStackShort": "全体",
     "positionStackType": "区分",
 
+    "enterTable": "入退場表",
+    "personCount": "人",
+    "enter": "現在入場者数",
+    "today_enter": "本日の出面",
+    "total_enter": "総出面",
+    "elapsed_time": "無事故無災害の記録",
+
     "password": "パスワード",
     "passwordCurrent": "現在のパスワード",
     "passwordUpdate": "変更パスワード",
@@ -283,6 +295,7 @@
     "categoryPerson": "人カテゴリ",
     "categoryThing": "物カテゴリ",
     "categoryZone": "ゾーンカテゴリ",
+    "categoryAuth": "権限管理",
     "categoryId": "カテゴリID",
     "categoryCd": "ID",
     "categoryName": "カテゴリ名",
@@ -292,6 +305,7 @@
     "parentCategoryId": "親カテゴリID",
     "shape": "形",
     "shapeName": "形",
+    "authCategoryName": "権限名",
 
     "group": "グループ",
     "groupId": "グループID",
@@ -346,11 +360,11 @@
     "changeProfilePassword": "パスワードを変更する",
     "changePassword": "パスワードを変更する",
 
-    "system": "システム設定",
+    "system": "システム設定(管理用)",
+    "systemChild": "システム設定",
 
     "region": "リージョン",
     "regionId": "リージョンID",
-    "regionCd": "ID",
     "regionName": "リージョン名",
     "meshId": "メッシュID",
 
@@ -447,6 +461,7 @@
     "person": "人",
     "thing": "物",
     "zone": "ゾーン",
+    "auth": "権限",
 
     "circle": "丸",
     "square": "四角",
@@ -487,6 +502,7 @@
     "number": "数値",
     "numberList": "数値リスト",
     "boolean": "真偽値",
+    "datetime": "日時",
 
     "---------------- Added at 1.1 ---------------":"",
 
@@ -494,6 +510,7 @@
     "settingDescription": "* キー名、項目名にカーソルを合わせると説明が表示されます。",
     "allShowFilter": "すべての項目を表示する",
     "settingCategory": "カテゴリ",
+    "keyCategory": "種別",
     "favoriteMark": "★",
     "provider": "プロバイダ",
     "locale": "言語設定",
@@ -547,6 +564,7 @@
     "masterCategoryPerson": "人カテゴリ",
     "masterCategoryThing": "物カテゴリ",
     "masterCategoryZone": "ゾーンカテゴリ",
+    "masterCategoryAuth": "権限管理",
     "masterGroup": "グループ",
     "masterUser": "ユーザ",
     "masterRole": "ロール",
@@ -573,7 +591,8 @@
     "SensorHistoryExc": "センサ情報",
     "Setting": "設定",
     "Personal": "個人設定",
-    "System": "システム設定",
+    "System": "システム設定(管理用)",
+    "SystemChild": "システム設定",
     "Develop": "開発用",
     "Meta": "メタ",
     "Role": "ロール",
@@ -678,6 +697,7 @@
     "recordsTest": "レコード表示テスト",
     "hitoMono": "人・物レコード",
     "sample": "サンプル",
+    "adminConsent": "管理者承認",
     "dummy": ""
   },
   "config": {
@@ -759,6 +779,9 @@
         "USE_PRESSURE": "圧力センサを使用する::圧力センサを使用します。★",
         "SHOW_MAGNET_ON_PIR": "人感センサ画面でマグネットセンサを使用する::人感センサ画面でマグネットセンサを使用します。",
         "MAGNET_ON_IS_USED": "マグネットセンサの表示設定::trueに設定した場合、センサがONの状態で「使用」と表示されます。falseに設定した場合、センサがOFFの状態で「使用」と表示されます。",
+        "LED": {
+          "AUTO_OFF_TIME": "LED自動消灯時間::LEDを点灯してから、自動消灯するまでの時間を秒単位で設定します。0を指定した場合、自動消灯は行いません。"
+        },
         "USE_HUMIDITY_ALERT": "温湿度画面で湿度アラートを使用する::温湿度画面で湿度アラートを使用します。",
         "USE_THERMOH_HEATMAP": "温湿度画面でヒートマップを使用する::温湿度画面でヒートマップの切り替えが可能になります。",
         "USE_THERMOH_TOOLTIP": "温湿度画面でツールチップを使用する::温湿度画面でカーソルを合わせたデバイスの情報をツールチップで表示できるようにします。",
@@ -788,7 +811,8 @@
         "WITH": "場所配置画面で使用する項目::場所配置画面で使用する項目を設定します。設定可能な値は次の通りです。★{LOCATION}",
         "TYPE": {
           "WITH": "場所タイプの選択肢::場所タイプの選択肢を設定します。「1:work,2:wip,3:qa,4:storage」のように、数値と文字列をコロン区切りで設定してください。設定値に関する説明は次の通りです。{LOCATION_TYPE}"
-        }
+        },
+        "EXT_DEF": "場所拡張項目::場所に設定可能な拡張項目をJSON形式で定義します。"
       },
       "USER": {
         "WITH": "ユーザ画面で使用する項目::ユーザ画面で使用する項目を設定します。設定可能な値は次の通りです。★{USER}"
@@ -818,10 +842,18 @@
         "EXT_DEF": "物(その他)拡張項目::物(その他)に設定可能な拡張項目をJSON形式で定義します。"
       },
       "CATEGORY": {
-        "TYPES": "カテゴリ詳細画面で選択可能な種別::カテゴリ詳細画面で使用可能な種別を設定します。設定可能な値は次の通りです。{CATEGORY_TYPES}"
+        "TYPES": "カテゴリ詳細画面で選択可能な種別::カテゴリ詳細画面で使用可能な種別を設定します。設定可能な値は次の通りです。{CATEGORY_TYPES}",
+        "WITH": "カテゴリ画面で使用する項目::カテゴリ画面で使用する項目を設定します。",
+        "EXT_DEF": "カテゴリ拡張項目::カテゴリに設定可能な拡張項目をJSON形式で定義します。"
       },
-      "SETTING": {
-        "DISABLED_THEME": "テーマカラーを設定しない::個人設定画面でテーマカラーを設定できないようにします。"
+      "GROUP": {
+        "WITH": "グループ画面で使用する項目::グループ画面で使用する項目を設定します。",
+        "EXT_DEF": "グループ拡張項目::グループに設定可能な拡張項目をJSON形式で定義します。"
+      },
+      "ZONE": {
+        "TYPES": "ゾーン(分類)詳細画面で選択可能な種別::ゾーン(分類)詳細画面で使用可能な種別を設定します。設定可能な値は次の通りです。{ZONE_TYPES}",
+        "WITH": "ゾーン(分類)画面で使用する項目::ゾーン(分類)画面で使用する項目を設定します。",
+        "EXT_DEF": "ゾーン拡張項目::ゾーンに設定可能な拡張項目をJSON形式で定義します。"
       },
       "NOTIFY": {
         "MIDIUM_TYPES": "通知テンプレート画面で選択可能な通知媒体::通知テンプレート画面で選択可能な通知媒体を設定します。設定可能な値は次の通りです。{NOTIFY_MIDIUM}",
@@ -895,7 +927,18 @@
         },
         "AD": {
           "GROUP_NAMES": "ここで指定された正規表現文字列に合致するグループのみが、Active Directoryから同期されます。::Active Directoryを使用する場合のみに適用。"
+        },
+        "TOILET": {
+          "LED": {
+            "ENABLE": "トイレLED点灯機能::トイレLED点灯機能を使用します。",
+            "RGB": "トイレLED点灯色::トイレLED点灯時の色を指定します。"
+          }
         }
+      },
+      "ENTER": {
+        "AUTO_PAGE": "入退場表のページャー自動遷移::ページングされている場合に自動遷移します。設定可能な値は次の通りです。{ENTER_AUTO_PAGE}",
+        "START_TIME": "入退場表の無事故無違反開始日時::無事故無違反の開始日時をUNIX TIME(ミリ秒)で指定します。",
+        "AUTO_PAGER_MSEC": "[入退場表]自動ページャー更新間隔(ミリ秒)::[入退場表]自動ページャー更新間隔(ミリ秒)を指定します。"
       },
       "BATCH": {
         "POSITION": {
@@ -940,6 +983,9 @@
         "AD_SYNC": {
           "CRON": "AD同期バッチ処理時間指定::指定された時刻にActive Directoryとの同期処理を行います。"
         }
+      },
+      "MANAGE": {
+        "SETTING_CATEGORY": "公開するシステム設定::顧客用のシステム設定画面に表示するカテゴリを設定します。"
       }
     },
     "DISP": {
@@ -983,16 +1029,12 @@
           "W": "場所配置設定画面のアイコンサイズ(幅)::場所設定画面に表示されるアイコンの幅を設定します。",
           "H": "場所配置設定画面のアイコンサイズ(高さ)::場所設定画面に表示されるアイコンの高さを設定します。"
         },
-        "BGCOLOR": "場所配置設定画面のアイコン背景色::場所設定画面に表示されるアイコンの背景色を設定します。#を含めたカラーコードで設定します。",
-        "COLOR": "場所配置設定画面のアイコン文字色::場所設定画面に表示されるアイコンの文字色を設定します。#を含めたカラーコードで設定します。"
-      },
-      "TX_LOC": {
-        "SIZE": {
-          "W": "Tx配置設定画面のTxアイコンサイズ(幅)::Tx設定画面に表示されるTxアイコンの幅を設定します。",
-          "H": "Tx配置設定画面のTxアイコンサイズ(高さ)::Tx設定画面に表示されるTxアイコンの高さを設定します。"
-        },
-        "BGCOLOR": "Tx配置設定画面のTxアイコン背景色::Tx設定画面に表示されるTxアイコンの背景色を設定します。#を含めたカラーコードで設定します。",
-        "COLOR": "Tx配置設定画面のTxアイコン文字色::Tx設定画面に表示されるTxアイコン文字色を設定します。#を含めたカラーコードで設定します。"
+        "BGCOLOR_DEFAULT": "場所配置設定画面のアイコン背景色(Tx関連時)::場所設定画面に表示される、Txに関連付けされているアイコンのデフォルト背景色を設定します。#を含めたカラーコードで設定します。",
+        "BGCOLOR_DEFAULT_NOTX": "場所配置設定画面のアイコン背景色(Tx未関連時)::場所設定画面に表示される、Txに関連付けされていないアイコンのデフォルト背景色を設定します。#を含めたカラーコードで設定します。",
+        "COLOR": "場所配置設定画面のアイコン文字色::場所設定画面に表示されるアイコンの文字色を設定します。#を含めたカラーコードで設定します。",
+        "MAX_FONT_SIZE": "場所配置設定画面のアイコン最大フォント::場所設定画面に表示されるアイコンの最大文字サイズを設定します。",
+        "BGCOLOR_PATTERN": "場所配置設定画面のアイコン背景色(Tx関連時)::場所設定画面に表示される、Txに関連付けされているアイコンの背景色を設定します。場所タイプおよびセンサの種類ごとに指定する事ができます。「1:#FFFFFF,2:#FFFFFF,pir:#FFFFFF,magnet:#FFFFFF」のように、場所の種類を表す値と#を含めたカラーコードをコロン区切りで設定してください。センサの種類については以下の値が設定可能です。{SENSOR_TYPE}",
+        "BGCOLOR_PATTERN_NOTX": "場所配置設定画面のアイコン背景色(Tx未関連時)::場所設定画面に表示される、Txに関連付けされていないアイコンの背景色を設定します。場所タイプおよびセンサの種類ごとに指定する事ができます。「1:#FFFFFF,2:#FFFFFF,pir:#FFFFFF,magnet:#FFFFFF」のように、場所の種類を表す値と#を含めたカラーコードをコロン区切りで設定してください。センサの種類については以下の値が設定可能です。{SENSOR_TYPE}"
       },
       "THERMOH": {
         "TOOLTIP_ITEMS": {
@@ -1058,6 +1100,12 @@
           "ABSENT": "背景色(不在区域)カラーコード::システム設定カテゴリ(不在区域)の背景色を設定します。",
           "PROHIBIT": "背景色(危険区域)カラーコード::システム設定カテゴリ(危険区域)の背景色を設定します。"
         }
+      },
+      "ENTER": {
+        "COL_CNT": "[入退場表]表示カラム数::[入退場表]表示カラム数を指定します。",
+        "LOST_COLOR": "[入退場表]消失者の文字色::[入退場表]消失者の文字色を色名、HEXまたはRGBで指定します。",
+        "ABSENT_BGCOLOR": "[入退場表]退場者の背景色::[入退場表]退場者の背景色を色名、HEXまたはRGBで指定します。",
+        "ENTER_BGCOLOR": "[入退場表]入場者の背景色::[入退場表]入場者の背景色を色名、HEXまたはRGBで指定します。"
       }
     },
     "DEV": {
@@ -1070,7 +1118,7 @@
     },
 
     "OPTIONS": {
-      "SETTING_CATEGORY": {
+      "KEY_CATEGORY": {
         "COMMON": "共通",
         "SYS": "システム",
         "MENU": "メニュー",
@@ -1084,7 +1132,6 @@
         "SENSOR_LIST": "センサ一覧",
         "TX": "Tx",
         "TXDETAIL": "Tx詳細情報",
-        "TX_LOC": "Tx配置設定アイコン",
         "EXB": "EXB",
         "EXB_LOC": "場所配置設定アイコン",
         "LOCATION": "場所",
@@ -1094,6 +1141,8 @@
         "THING": "物",
         "OTHER": "物(その他)",
         "CATEGORY": "カテゴリ",
+        "GROUP": "グループ",
+        "ZONE": "ゾーン",
         "NOTIFY": "通知",
         "GATEWAY": "ゲートウェイ",
         "TX_MON": "Tx状態監視",
@@ -1107,6 +1156,7 @@
         "SVC": "サーバ",
         "BATCH": "バッチ",
         "SIMULATION": "デモ用",
+        "MANAGE": "管理用",
         "OTHER_CATEGORY": "その他",
         "MAIL": "メール"
       },
@@ -1128,6 +1178,11 @@
         "2": "2::物",
         "3": "3::ゾーン",
         "5": "5::物(その他)"
+      },
+      "ZONE_TYPES": {
+        "1": "1::通常",
+        "2": "2::警戒ゾーン",
+        "3": "3::ドア"
       },
       "NOTIFY_MIDIUM": {
         "0": "0::メール",
@@ -1230,7 +1285,8 @@
         "group": "group::グループ",
         "category": "category::カテゴリ",
         "description": "description::備考",
-        "user": "user::ユーザ登録機能"
+        "user": "user::ユーザ登録機能",
+        "auth": "auth::権限"
       },
       "TX_MON": {
         "btxId": "btxId::btxId",
@@ -1271,6 +1327,21 @@
       "COLOR_TYPE": {
         "category": "category::カテゴリ",
         "group": "group::グループ"
+      },
+      "SENSOR_TYPE": {
+        "thermohumidity": "thermohumidity::温湿度",
+        "pir": "pir::人感センサ",
+        "thermopile": "thermopile::サーモパイル",
+        "led": "led::LED",
+        "meditag": "meditag::MEDiTAG",
+        "magnet": "magnet::マグネット",
+        "button": "button::ボタン",
+        "pressure": "pressure::圧力センサ"
+      },
+      "ENTER_AUTO_PAGE": {
+        "0": "0::無効",
+        "1": "1::有効（デフォルトオフ）",
+        "2": "2::有効（デフォルトオン）"
       }
     }
   },
@@ -1292,6 +1363,7 @@
     "noMapImage": "マップイメージが登録されていません。",
     "deleteConfirm": "{target}を削除してもよろしいですか？",
     "completeDeleteConfirm": "{target}を完全に削除します。よろしいですか？",
+    "exitConfirm": "{target}を強制退場にしてもよろしいですか？",
     "completed": "{target}が完了しました。",
     "failed": "{target}に失敗しました。（{code}）",
     "overLength": "{target}には{length}以内の文字列を入力してください。",
@@ -1390,6 +1462,14 @@
     "underDegree": "℃未満",
     "overDegree": "℃以上",
 
+    "MSTEAMS": {
+      "USER_GUIDE1": "EXOfficeを利用するには、お客様のOffice365におけるグループおよびユーザ情報へ本アプリがアクセスすることを許可していただく必要があります。",
+      "USER_GUIDE2": "Office365のテナントの管理者でログインしていただき、権限を付与していただけるようお願いいたします。なお、この操作はPCで行ってください。",
+      "INVALID_TENANT": "本アプリ（EXOffice）を利用するには、サービス提供者（株式会社WHERE）と利用契約を結ぶ必要があります。すでに利用契約を結ばれている場合には、その旨ご一報ください。",
+      "WAIT_A_MOMENT": "初期処理中...",
+      "INVALID_TENANT_CONTACT": "連絡先：https://where123.jp/contact/",
+      "IF_NOT_SHOWN": "EXOfficeを表示するには以下のサインイン・ボタンをクリックしてください。もしそれでも表示されない場合は、リロードを行ってから実行してください。"
+    },
     "dummy": "" 
   },
   "helpDescription": {

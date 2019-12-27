@@ -5,7 +5,7 @@
       <alert :message="message" :force-hide="true" />
 
       <b-form @submit.prevent="save">
-        <b-form-group :label="$t('label.deviceId')">
+        <b-form-group :label="$t('label.device')">
           <v-select v-model="vueSelected.deviceId" :options="deviceIds" :disable="!isEditable" :clearable="false" class="vue-options-lg">
             <template slot="no-options">
               {{ vueSelectNoMatchingOptions }}
@@ -69,6 +69,7 @@
 
 <script>
 import { mapState } from 'vuex'
+import { APP } from '../../sub/constant/config'
 import { LED_COLORS, LED_BLINK_TYPES, SENSOR } from '../../sub/constant/Constants'
 import * as Util from '../../sub/util/Util'
 import * as EXCloudHelper from '../../sub/helper/dataproc/EXCloudHelper'
@@ -137,18 +138,12 @@ export default {
       try {
         this.showProgress()
         await StateHelper.load('exb')
-        let deviceIds = _.filter(this.exbs,
-          exb => exb.sensorIds.includes(SENSOR.LED)
-        )
-          .map(
-            exb => {
-              return {
-                text:(exb.deviceId) + ' (0x' + exb.deviceId.toString(16) + ')',
-                label:(exb.deviceId) + ' (0x' + exb.deviceId.toString(16) + ')',
-                value: exb.deviceId
-              }
-            }
-          )
+        const deviceIds = _.filter(this.exbs, exb => exb.sensorIds.includes(SENSOR.LED))
+          .map(exb => {
+            const locationName = Util.hasValue(exb.locationName)? (exb.locationName) + ' : ': ''
+            const label = locationName + (exb.deviceId) + ' (0x' + exb.deviceId.toString(16) + ')'
+            return { text: label, label: label, value: exb.deviceId }
+          })
 
         if (deviceIds && deviceIds.length == 1) {
           this.vueSelected.deviceId = VueSelectHelper.getVueSelectData(deviceIds, null, true)
@@ -166,20 +161,32 @@ export default {
       }
       this.hideProgress()
     },
-    async onSaving() {
+    createEntity(isOn) {
       var rgb = 0
       for (var i of this.form.colors) {
         rgb += i
       }
-      let entity = [{
+      return [{
         deviceid: this.form.deviceId,
         rgb1: rgb,
-        pattern1: this.lightOnCandidate ? this.form.blink : 0,
+        pattern1: isOn? this.form.blink: 0,
         rgb2: 0,
         pattern2: 0,
       }]
+    },
+    async onSaving() {
+      const entity = this.createEntity(this.lightOnCandidate)
       Util.debug('led send: ', entity)
       await EXCloudHelper.postLed(entity)
+
+      const timerKey = 'led-' + entity[0].deviceid
+      if(APP.SENSOR.LED.AUTO_OFF_TIME > 0) {
+        if(this.lightOnCandidate) {
+          this.pushTimer(timerKey, APP.SENSOR.LED.AUTO_OFF_TIME * 1000, () => EXCloudHelper.postLed(this.createEntity(false)))
+        } else {
+          this.popTimer(timerKey)
+        }
+      }
     },
     buttonClick(bool) {
       this.lightOnCandidate = bool
