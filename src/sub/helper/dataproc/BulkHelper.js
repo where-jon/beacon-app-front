@@ -347,26 +347,20 @@ export const csvHeaderCheck = header => {
  * 主キーが存在するか確認する。
  * @method
  * @param {String} masterName
- * @param {Object[]} entities
+ * @param {String[]} headers
  * @throws {Exception} エラーメッセージ
  */
-export const entityKeyCheck = (masterName, entities) => {
+export const entityKeyCheck = (masterName, headers) => {
   const requireNames = StringUtil.camel2snake(masterName).toUpperCase()
-  entities.forEach(entity => {
-    BULK.REQUIRE[requireNames].ALLOW.forEach(allowName => {
-      if(typeof entity[allowName] === 'undefined') {
-        throw Error(i18n.tnl('message.invalidFile'))
-      }
-    })
-    if(!BULK.REQUIRE[requireNames].DISALLOW){
-      return
-    }
-    BULK.REQUIRE[requireNames].DISALLOW.forEach(disAllowName => {
-      if(typeof entity[disAllowName] !== 'undefined') {
-        throw Error(i18n.tnl('message.invalidFile'))
-      }
-    })
-  })
+
+  const arrowHeaders = Util.getValue(BULK.REQUIRE, requireNames + '.ALLOW', [])
+  if(!arrowHeaders.every(allowName => headers.includes(allowName))) {
+    throw Error(i18n.tnl('message.invalidFile'))
+  }
+  const disArrowHeaders = Util.getValue(BULK.REQUIRE, requireNames + '.DISALLOW', [])
+  if(disArrowHeaders.some(disAllowName => headers.includes(disAllowName))) {
+    throw Error(i18n.tnl('message.invalidFile'))
+  }
 }
 
 /**
@@ -468,6 +462,7 @@ export const setCsvParamList = (vueComponent, masterIdName, readerParam, csvLine
       if (lineIdx == 0) {
         header = csvLine
         csvHeaderCheck(header)
+        readerParam.headers = header
         return
       }
       const entity = {}
