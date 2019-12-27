@@ -151,7 +151,7 @@ export default {
         throw new Error(this.$t('message.emptyFile'))
       }
       const reader = new FileReader()
-      const readerParam = {readFin: false, error: null, entities: [], sameLine: []}
+      const readerParam = {readFin: false, error: null, entities: [], headers: [], sameLine: []}
       this.setReaderOnload(reader, readerParam, option)
       reader.readAsArrayBuffer(this.form.csvFile)
       if (!readerParam.readFin) {
@@ -166,7 +166,7 @@ export default {
       }
 
       this.replaceAS({showLine: true})
-      BulkHelper.entityKeyCheck(this.name, readerParam.entities)
+      BulkHelper.entityKeyCheck(this.name, readerParam.headers)
       await AppServiceHelper.bulkSave(this.appServicePath, readerParam.entities, UPDATE_ONLY_NN.NONE, IGNORE.ON)
       if(this.$parent.$options.methods && this.$parent.$options.methods.onSaved) {
         this.$parent.$options.methods.onSaved.call(this.$parent)
