@@ -8,8 +8,14 @@ import { Container, Shape, Text, Bitmap } from 'createjs-module'
 import cold from '../../../assets/icon/cold.png'
 import comfort from '../../../assets/icon/comfort.png'
 import hot from '../../../assets/icon/hot.png'
+import toiletM from '../../../assets/icon/beat.svg'
+import toiletF from '../../../assets/icon/step.svg'
+import toiletC from '../../../assets/icon/down.svg'
+import toiletP from '../../../assets/icon/cold.png'
+import toiletUse from '../../../assets/icon/hot.png'
+import toiletEmpty from '../../../assets/icon/cold.png'
 import { APP, DISP } from '../../constant/config'
-import { SHAPE, TX, SENSOR, DISCOMFORT } from '../../constant/Constants'
+import { SHAPE, TX, SENSOR, DISCOMFORT, FONT, SYSTEM_ZONE_CATEGORY_NAME } from '../../constant/Constants'
 import * as ColorUtil from '../../util/ColorUtil'
 import * as NumberUtil from '../../util/NumberUtil'
 import * as StringUtil from '../../util/StringUtil'
@@ -583,4 +589,188 @@ export const createExbIcon = (exb, exbSensorIdList, mapScale, stage) => {
   exbBtn.x = exb.x
   exbBtn.y = exb.y
   return exbBtn
+}
+
+/**
+ * トイレアイコンを取得する。
+ * @method
+ * @param {String} type
+ * @return {Object}
+ */
+export const getToiletImage = type => {
+  const typeUpper = type.toUpperCase()
+  if(typeUpper == SYSTEM_ZONE_CATEGORY_NAME.TOILET_M) {
+    return toiletM
+  }
+  if(typeUpper == SYSTEM_ZONE_CATEGORY_NAME.TOILET_F) {
+    return toiletF
+  }
+  if(typeUpper == SYSTEM_ZONE_CATEGORY_NAME.TOILET_C) {
+    return toiletC
+  }
+  if(typeUpper == SYSTEM_ZONE_CATEGORY_NAME.TOILET_P) {
+    return toiletP
+  }
+  return ''
+}
+
+/**
+ * トイレカウント（数値）アイコンを編集する。
+ * @method
+ * @param {Object} stage
+ * @param {Number} count
+ * @param {Number} allCount
+ */
+export const editToiletNumIcon = (stage, emptyCount, allCount) => {
+  const container = stage.getChildAt(0).getChildByName('info')
+  if(!container) {
+    return
+  }
+  const allCountContainer = container.getChildByName('allCount')
+  if(allCountContainer) {
+    allCountContainer.text = allCount <= 0? '-': allCount
+  }
+  const countContainer = container.getChildByName('count')
+  if(countContainer) {
+    countContainer.text = allCount <= 0? '-': emptyCount
+    countContainer.color = allCount > 0 && emptyCount <= 0? '#FF0000': '#000000'
+  }
+}
+
+/**
+ * トイレカウント（マーク）アイコンを編集する。
+ * @method
+ * @param {Object} stage
+ * @param {Number} emptyCount
+ * @param {Number} allCount
+ */
+export const editToiletMarkIcon = (stage, emptyCount, allCount) => {
+  const container = stage.getChildAt(0).getChildByName('info')
+  if(!container) {
+    return
+  }
+  let useCount = allCount - emptyCount
+
+  const markList = container.children
+  const markLength = markList.length
+  for(let idx = 0; idx < markLength; idx++) {
+    const mark = markList[idx]
+    mark.image.src = useCount-- <= 0? toiletEmpty: toiletUse
+    mark.visible = idx < allCount
+  }
+}
+
+/**
+ * トイレカウントアイコンを編集する。
+ * @method
+ * @param {Object} stage
+ * @param {Number} count
+ * @param {Number} allCount
+ */
+export const editToiletIcon = (stage, count, allCount) => {
+  const container = stage.getChildAt(0).getChildByName('info')
+  if(!container) {
+    return
+  }
+  if(container.type == 'number') {
+    editToiletNumIcon(stage, count, allCount)
+    return
+  }
+  if(container.type == 'mark') {
+    editToiletMarkIcon(stage, count, allCount)
+    return
+  }
+}
+
+/**
+ * トイレカウント（数値）のアイコンを作成する。
+ * @method
+ * @return {Object}
+ */
+export const createToiletNumIcon = () => {
+  let left = 0
+
+  const infoIcon = new Container()
+  infoIcon.name = 'info'
+  infoIcon.type = 'number'
+
+  const emptyString = new Text(i18n.tnl('label.emptyToilet'), FONT.OPTION.BOLD + DISP.TOILET.BASE_FONT_SIZE * 0.7 + FONT.TYPE)
+  emptyString.x = left
+  infoIcon.addChild(emptyString)
+  left = emptyString.getBounds().width
+
+  const count = new Text(99, FONT.OPTION.BOLD + DISP.TOILET.BASE_FONT_SIZE + FONT.TYPE)
+  count.x = left + DISP.TOILET.BASE_FONT_SIZE * 1.5
+  count.textAlign = 'right'
+  count.name = 'count'
+  infoIcon.addChild(count)
+  left = count.x
+
+  const allCount = new Text(99, FONT.OPTION.BOLD + DISP.TOILET.BASE_FONT_SIZE * 0.7 + FONT.TYPE)
+  allCount.x = left + DISP.TOILET.BASE_FONT_SIZE * 0.8
+  allCount.y = DISP.TOILET.BASE_FONT_SIZE * 1.5
+  allCount.textBaseline = 'alphabetic'
+  allCount.name = 'allCount'
+  infoIcon.addChild(allCount)
+
+  const slash = new Shape()
+  slash.graphics.beginStroke('#000')
+  slash.graphics.setStrokeStyle(2)
+  slash.graphics.moveTo(left, DISP.TOILET.BASE_FONT_SIZE * 1.5)
+  slash.graphics.lineTo(left + DISP.TOILET.BASE_FONT_SIZE, DISP.TOILET.BASE_FONT_SIZE * 0.5)
+  infoIcon.addChild(slash)
+
+  count.text = ''
+  allCount.text = ''
+  return infoIcon
+}
+
+/**
+ * トイレカウント（マーク）のアイコンを作成する。
+ * @method
+ * @return {Object}
+ */
+export const createToiletMarkIcon = maxSize => {
+  const infoIcon = new Container()
+  infoIcon.name = 'info'
+  infoIcon.type = 'mark'
+
+  const maxRow = Math.ceil(maxSize / DISP.TOILET.MARK_COLUMN_NUM)
+  for(let h = 0; h < maxRow; h++) {
+    for(let w = 0; w < DISP.TOILET.MARK_COLUMN_NUM; w++) {
+      const img = new Bitmap(toiletEmpty)
+      img.image.onload = () => {
+        img.scaleX = img.scaleY = DISP.TOILET.BASE_MARK_R / img.image.width
+        img.x = DISP.TOILET.BASE_MARK_R * (w + 0.5) + w
+        img.y = DISP.TOILET.BASE_MARK_R * (h + 0.5) + h
+        img.stage.update()
+      }
+      infoIcon.addChild(img)
+    }
+  }
+  return infoIcon
+}
+
+/**
+ * カウント用のアイコンを作成する。
+ * @method
+ * @param {String} type
+ * @param {Number} mode
+ * @return {Object}
+ */
+export const createToiletIcon = (type, mode, maxSize) => {
+  const parentIcon = new Container()
+  const infoIcon = mode == 0? createToiletNumIcon(): createToiletMarkIcon(maxSize)
+
+  const img = new Bitmap(getToiletImage(type))
+  img.image.onload = () => {
+    img.scaleX = img.scaleY = 48 / img.image.width
+    img.stage.update()
+    infoIcon.x = img.image.width * img.scaleX
+    infoIcon.stage.update()
+  }
+  parentIcon.addChild(img)
+  parentIcon.addChild(infoIcon)
+
+  return parentIcon
 }

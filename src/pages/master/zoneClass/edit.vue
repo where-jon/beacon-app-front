@@ -77,6 +77,7 @@ import * as StringUtil from '../../../sub/util/StringUtil'
 import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
 import * as ExtValueHelper from '../../../sub/helper/domain/ExtValueHelper'
+import * as MenuHelper from '../../../sub/helper/dataproc/MenuHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as ValidateHelper from '../../../sub/helper/dataproc/ValidateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
@@ -155,6 +156,9 @@ export default {
     extValue() {
       return ExtValueHelper.getExtValue(APP.ZONE)
     },
+    useToilet() {
+      return MenuHelper.isEnabledMenu('toiletStatus')
+    },
     ...mapState('app_service', [
       'zone',
     ]),
@@ -211,7 +215,15 @@ export default {
       this.categoryNames = StateHelper.getOptionsFromState('category',
         category => StateHelper.getDispCategoryName(category),
         true, 
-        category => !CATEGORY.POT_AVAILABLE.includes(category.categoryType) && category.categoryType != CATEGORY.AUTH && category.categoryName != SYSTEM_ZONE_CATEGORY_NAME.ABSENT_DISPLAY
+        category => {
+          if(CATEGORY.POT_AVAILABLE.concat(CATEGORY.AUTH).includes(category.categoryType)){
+            return false
+          }
+          if(!this.useToilet && SYSTEM_ZONE_CATEGORY_NAME.getToiletNames().includes(category.categoryName)){
+            return false
+          }
+          return category.categoryName != SYSTEM_ZONE_CATEGORY_NAME.ABSENT_DISPLAY
+        }
       )
     },
     onSaved(){
