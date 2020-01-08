@@ -172,7 +172,7 @@ export default {
         this.filterIdOptions = this.zones.map(e => ({value: e.zoneId,label: e.zoneName}))
         break
       case 'zoneCategory':
-        this.filterIdOptions = this.categories.filter(e => e.categoryType == 3).map(e => ({value: e.categoryId, label: e.categoryName}))
+        this.filterIdOptions = this.categories.filter(e => e.categoryType == 3).map(e => ({value: e.categoryId, label: StateHelper.getDispCategoryName(e)}))
         break
       default:
         this.filterIdOptions = []
@@ -225,8 +225,18 @@ export default {
         return
       }
 
+      const categoryMap = {}
+      this.categories.forEach(c => categoryMap[c.categoryName] = StateHelper.getDispCategoryName(c))
+      sumData.forEach(data => {
+        ['axis', 'stack'].forEach(column => {
+          const catName = data[column]
+          if(Util.hasValue(catName) && Util.hasValue(categoryMap[catName])) {
+            data[column] = categoryMap[catName]
+          }
+        })
+      })
       // show Chart
-      let err = StayTimeHelper.showChart(this, sumData)
+      const err = StayTimeHelper.showChart(this, sumData)
       if (err) {
         this.message = this.$i18n.t('message.' + err)
         this.replace({showAlert: true})

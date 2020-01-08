@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid">
     <breadcrumb :items="items" />
-    <m-list :params="params" :list="groups" />
+    <m-list :params="params" compact-mode />
   </div>
 </template>
 
@@ -16,7 +16,7 @@ import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as StyleHelper from '../../../sub/helper/ui/StyleHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
-import reloadmixin from '../../../components/mixin/reloadmixin.vue'
+import commonmixin from '../../../components/mixin/commonmixin.vue'
 import mList from '../../../components/page/list.vue'
 
 export default {
@@ -24,7 +24,7 @@ export default {
     breadcrumb,
     mList, 
   },
-  mixins: [reloadmixin],
+  mixins: [commonmixin],
   data() {
     return {
       params: {
@@ -35,24 +35,16 @@ export default {
         bulkEditPath: '/master/group/bulkedit',
         appServicePath: '/basic/group',
         csvOut: true,
-        custumCsvColumns: this.getCustumCsvColumns(),
         fields: this.getFields(),
-        sortBy: 'groupCd',
-        initTotalRows: this.$store.state.app_service.groups.length
+        sortBy: 'ID',
       },
       items: ViewHelper.createBreadCrumbItems('master', 'group'),
-      groupStyles: [],
     }
-  },
-  computed: {
-    ...mapState('app_service', [
-      'groups',
-    ]),
   },
   methods: {
     getFields(){
       return ViewHelper.addLabelByKey(this.$i18n, [ 
-        {key: 'groupCd', label: 'id', sortable: true },
+        {key: 'ID', label: 'id', sortable: true },
         {key: 'groupName', sortable: true }
       ].concat(this.createCustomColumn())
         .concat([
@@ -82,29 +74,8 @@ export default {
       StateHelper.setForceFetch('pot', true)
       StateHelper.setForceFetch('tx', true)
     },
-    async fetchData(payload) {
-      try {
-        this.showProgress()
-        await StateHelper.load('group')
-        this.groupStyles = StyleHelper.getStyleDisplay(this.groups)
-        if (payload && payload.done) {
-          payload.done()
-        }
-      }
-      catch(e) {
-        console.error(e)
-      }
-      this.hideProgress()
-    },
     style(row) {
-      const groupStyle = this.groupStyles.find((val) => val.entity.groupId == row.groupId)
-      return groupStyle? groupStyle.style: null
-    },
-    customCsvData(val){
-      val.ID = val.groupCd
-      val.color = ColorUtil.colorCd4display(Util.getValue(val, 'display.color', '000000'))
-      val.bgColor = ColorUtil.colorCd4display(Util.getValue(val, 'display.bgColor', 'FFFFFF'))
-      val.shape = Util.getValue(val, 'display.shape', SHAPE.SQUARE)
+      return StyleHelper.getStyleDisplay1(row)
     },
   }
 }

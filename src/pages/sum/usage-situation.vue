@@ -232,7 +232,7 @@ export default {
     }
     this.categoryOptionList = this.categories.filter((c) => c.categoryType === CATEGORY.ZONE)
       .sort((a, b) => a.categoryId < b.categoryId ? -1 : 1)
-      .map((c) => { return {label: c.categoryName, value: c.categoryId}})
+      .map((c) => { return {label: StateHelper.getDispCategoryName(c), value: c.categoryId}})
     this.vModelCategory = this.categoryOptionList[0].value
     await StateHelper.load('zone')
   },
@@ -273,6 +273,14 @@ export default {
     },
     createViewList(aModeId, fetchList){
       const viewList = []
+      const categoryMap = {}
+      this.categories.forEach(c => categoryMap[c.categoryName] = StateHelper.getDispCategoryName(c))
+      fetchList.forEach(data => {
+        if(Util.hasValue(data.zoneCategoryName) && Util.hasValue(categoryMap[data.zoneCategoryName])) {
+          data.zoneCategoryName = categoryMap[data.zoneCategoryName]
+        }
+      })
+
       for (let line of fetchList) {
         const thisLine = []
         if (aModeId == 1) {

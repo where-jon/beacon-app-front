@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <category-index :p-name="name" :p-type-list="typeList" :p-path="indexPath" :p-show-icon="false" :p-show-description="false" p-show-auth />
+    <category-index :p-name="name" :p-type-list="typeList" :p-path="indexPath" :p-app-service-path="appServicePath" :p-show-icon="false" :p-show-description="false" p-show-auth />
   </div>
 </template>
 
@@ -21,6 +21,9 @@ export default {
     },
     indexPath() {
       return '/master/categoryAuth'
+    },
+    appServicePath() {
+      return '/basic/authCategory'
     },
   },
 }

@@ -16,7 +16,7 @@ export const APP = { // 機能面に関する設定
   SAAS_DOMAIN: '.saas.',
   COMMON: {
     VERSION: 'Version 1.3', // バージョン　this application version
-    TIME_ZONE: -9, // 午前0時を決定するためのタイムゾーン(時)
+    TIME_ZONE: 'JST', // 午前0時を決定するためのタイムゾーン
     AUTO_RELOAD: 60000, // 自動リロード間隔(ミリ秒)
   },
   SYS: {
@@ -564,9 +564,13 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   },
 
   INSTALLATION: { // 設置支援
-    RSSI_ICON_WIDTH: 100,
-    RSSI_ICON_HEIGHT: 20,
+    WIDTH: 50,
+    HEIGHT: 20,
+    BG_COLOR: ['#dc143c', '#ff4500', '#ff6347', '#7F7F7F'],
+    FONT_COLOR: ['white', 'white', 'white', 'white'],
+    FONT_SIZE: 15,
   },
+
   // 禁止区域関連設定
   PROHIBIT_TWINKLE_TIME: 1500, // 点滅間隔(ミリ秒)
   // システム設定カテゴリ

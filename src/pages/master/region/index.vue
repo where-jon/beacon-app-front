@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid">
     <breadcrumb :items="items" />
-    <m-list :params="params" :list="regions" />
+    <m-list :params="params" compact-mode />
   </div>
 </template>
 
@@ -31,16 +31,14 @@ export default {
         bulkEditPath: '/master/region/bulkedit',
         appServicePath: '/core/region',
         csvOut: true,
-        custumCsvColumns: ['ID', 'regionName', 'meshId', 'description'],
         fields: ViewHelper.addLabelByKey(this.$i18n, [ 
-          {key: 'regionCd', label: 'id', sortable: true },
+          {key: 'ID', label: 'id', sortable: true },
           {key: 'regionName', sortable: true },
           {key: 'meshId', sortable: true},
           {key: 'description', sortable: true },
           {key: 'actions', thStyle: {width:'130px !important'} }
         ]),
-        sortBy: 'regionCd',
-        initTotalRows: this.$store.state.app_service.regions.length
+        sortBy: 'ID',
       },
       items: ViewHelper.createBreadCrumbItems('master', 'region'),
     }
@@ -51,9 +49,6 @@ export default {
     ]),
   },
   methods: {
-    customCsvData(val){
-      val.ID = val.regionCd
-    },
     async onSaved(param){
       StateHelper.setForceFetch('user', true)
       const result = await RegionHelper.autoSwitchRegion(this.regions)
@@ -61,19 +56,6 @@ export default {
         LocalStorageHelper.setLocalStorage('listMessage', param.message)
         location.reload()
       }
-    },
-    async fetchData(payload) {
-      try {
-        this.showProgress()
-        await StateHelper.load('region')
-        if (payload && payload.done) {
-          payload.done()
-        }
-      }
-      catch(e) {
-        console.error(e)
-      }
-      this.hideProgress()
     },
   }
 }

@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <ex-master p-master-name="category" :p-category-name="pName" :p-type-list="pTypeList" :p-params="params" :p-list="categoryList" />
+    <ex-master p-master-name="category" :p-category-name="pName" :p-type-list="pTypeList" :p-params="params" />
   </div>
 </template>
 
@@ -15,7 +15,6 @@ import * as ExtValueHelper from '../../../sub/helper/domain/ExtValueHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as StyleHelper from '../../../sub/helper/ui/StyleHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
-import reloadmixin from '../../../components/mixin/reloadmixin.vue'
 import exMaster from '../../../components/page/ex-master.vue'
 
 export default {
@@ -52,7 +51,6 @@ export default {
   components: {
     exMaster,
   },
-  mixins: [reloadmixin],
   data() {
     return {
       params: {
@@ -64,29 +62,15 @@ export default {
         bulkEditPath: this.pPath + '/bulkedit',
         appServicePath: this.pAppServicePath,
         csvOut: true,
-        custumCsvColumns: this.getCustumCsvColumns(),
         fields: this.getFields(),
-        sortBy: 'categoryCd',
-        initTotalRows: this.categoryLength
+        sortBy: 'ID',
       },
-      categoryStyles: [],
     }
-  },
-  computed: {
-    categoryList() {
-      return this.$store.state.app_service.categories.filter(category => !category.systemUse)
-    },
-    categoryLength() {
-      return this.categoryList().length
-    },
-    ...mapState('app_service', [
-      'categories',
-    ]),
   },
   methods: {
     getFields(){
       return ViewHelper.addLabelByKey(this.$i18n, [ 
-        { key: 'categoryCd', label: 'id', sortable: true },
+        { key: 'ID', label: 'id', sortable: true },
         { key: 'categoryName', label: StringUtil.concatCamel(this.pName, 'categoryName'), sortable: true },
         !this.pName? { key: 'categoryTypeName', label: 'categoryType', sortable: true }: null
       ].concat(this.createCustomColumn())
@@ -124,30 +108,13 @@ export default {
       StateHelper.setForceFetch('tx', true)
       StateHelper.setForceFetch('zone', true)
     },
-    async fetchData(payload) {
-      try {
-        this.showProgress()
-        await StateHelper.load('category')
-        this.categoryStyles = StyleHelper.getStyleDisplay(this.categories)
-        if (payload && payload.done) {
-          payload.done()
-        }
-      }
-      catch(e) {
-        console.error(e)
-      }
-      this.hideProgress()
+    createListParams(){
+      const retMap = { categoryType: {} }
+      CATEGORY.getTypes(true).forEach(option => retMap.categoryType[option.value? option.value.toString(): '0'] = option.text)
+      return retMap
     },
     style(row) {
-      const categoryStyle = this.categoryStyles.find(val => val.entity.categoryId == row.categoryId)
-      return categoryStyle? categoryStyle.style: null
-    },
-    customCsvData(val){
-      val.ID = val.categoryCd
-      val.color = ColorUtil.colorCd4display(Util.getValue(val, 'display.color', null))
-      val.bgColor = ColorUtil.colorCd4display(Util.getValue(val, 'display.bgColor', null))
-      val.guardNames = val.guardNames.join(BULK.SPLITTER)
-      val.doorNames = val.doorNames.join(BULK.SPLITTER)
+      return StyleHelper.getStyleDisplay1(row)
     },
   }
 }

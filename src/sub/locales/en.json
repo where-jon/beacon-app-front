@@ -685,7 +685,6 @@
     "APP": {
       "COMMON": {
         "VERSION": "Version information::Set up the version information.",
-        "TIME_ZONE": "Timezone::Set up the timezone for determining midnight at the time difference unit.",
         "AUTO_RELOAD": "Automatic reload interval::Set up the automatic reload interval in milliseconds.★"
       },
       "SYS": {

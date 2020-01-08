@@ -11,6 +11,9 @@
             <label v-t="'label.filter'" class="mr-2" />
             <b-input-group>
               <input v-model="filter.reg" class="form-control align-self-center" :maxlength="maxFilterLength">
+              <button v-if="compactMode" @click="fetchDataCompact()">
+                <font-awesome-icon class="" icon="search" fixed-width />
+              </button>
               <b-input-group-append>
                 <b-btn v-t="'label.clear'" :disabled="!filter.reg" variant="secondary" class="align-self-center" @click="filter.reg = ''" />
               </b-input-group-append>
@@ -83,8 +86,13 @@
       <b-row class="mt-3" />
 
       <!-- table -->
-      <b-table :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" :filter="filterGrid" :bordered="params.bordered" :sort-by.sync="sortBy" :sort-compare="sortCompare" :sort-desc.sync="sortDesc" :empty-filtered-text="emptyMessage" show-empty
-               stacked="md" striped hover outlined caption-top @filtered="onFiltered"
+      <b-table :items="items" :fields="fields"
+                :current-page="compactMode? 1: currentPage" :per-page="perPage"
+                :filter="compactMode? () => true: filterGrid" :bordered="params.bordered"
+                :sort-by.sync="sortBy" :sort-compare="compactMode? () => 0: sortCompare" :sort-desc.sync="sortDesc" :empty-filtered-text="emptyMessage"
+                show-empty stacked="md" striped hover outlined caption-top
+                @filtered="compactMode? () => {}: onFiltered"
+                @sort-changed="compactMode? fetchDataCompact(): () => {}"
       >
         <template v-if="params.tableDescription" slot="table-caption">
           {{ $i18n.tnl('label.' + params.tableDescription) }}
@@ -147,11 +155,6 @@
             {{ zoneName }}
           </div>
         </template>
-        <template slot="zoneType" slot-scope="row">
-          <div>
-            {{ row.item.zoneTypeName }}
-          </div>
-        </template>
         <template slot="guardNames" slot-scope="row">
           <div v-for="(guardName, index) in row.item.guardNames" :key="index">
             {{ guardName }}
@@ -175,8 +178,8 @@
           </div>
         </template>
         <!-- センサ名 -->
-        <template slot="sensorIdNameLangs" slot-scope="row">
-          <div v-for="(sensorIdName, index) in row.item.sensorIdNameLangs" :key="index">
+        <template slot="sensorNames" slot-scope="row">
+          <div v-for="(sensorIdName, index) in row.item.sensorNames" :key="index">
             {{ sensorIdName }}
           </div>
         </template>
@@ -234,7 +237,7 @@
       <!-- pager -->
       <b-row>
         <b-col v-if="usePagenation" md="6" class="mt-1 mb-3">
-          <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" class="my-0" />
+          <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" class="my-0" @input="compactMode? fetchDataCompact(): () => {}" />
         </b-col>
         <!-- bulk upload button -->
         <b-col v-if="isBulkRegistable && params.bulkUploadPath && !iosOrAndroid" md="6" class="my-1">
@@ -255,7 +258,7 @@
 <script>
 
 import { mapState, mapMutations } from 'vuex'
-import { APP } from '../../sub/constant/config'
+import { APP, APP_SERVICE } from '../../sub/constant/config'
 import { CATEGORY, SENSOR, EXB, KEY } from '../../sub/constant/Constants'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
@@ -290,7 +293,7 @@ export default {
     },
     list: {
       type: Array,
-      required: true,
+      default: () => [],
     },
     isFluid: {
       type: Boolean,
@@ -320,11 +323,16 @@ export default {
       type: Boolean,
       default: false,
     },
+    compactMode: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
       currentPage: 1,
       totalRows: 0,
+      dataItemList: [],
       filter: {
         reg: '',
         extra: {
@@ -349,6 +357,10 @@ export default {
         zone: null,
         zoneCategory: null,
       },
+      old: {
+        sortBy: null,
+        sortDesc: false,
+      },
       emptyMessage: this.$i18n.tnl('message.listEmpty'),
       modalInfo: { title: '', content: '', id:'' },
       file: null,
@@ -363,7 +375,8 @@ export default {
   },
   computed: {
     items() {
-      return this.list.map((item) => {
+      const dataList = this.compactMode? this.dataItemList: this.list
+      return dataList.map(item => {
         return _.reduce(item, (result, val, key) => {
           const isAllDisp = Util.hasValue(this.params.allDispFields) && this.params.allDispFields.includes(key)
           result[key] = isAllDisp? val: StringUtil.cutOnLong(val, 50)
@@ -544,7 +557,11 @@ export default {
     const strageMessage = LocalStorageHelper.popLocalStorage('listMessage')
     this.message = Util.hasValue(strageMessage)? strageMessage: this.listMessage
     this.replaceAS({listMessage: null})
-    this.$parent.$options.methods.fetchData.apply(this.$parent)
+    if(this.compactMode) {
+      await this.showList()
+    } else {
+      this.$parent.$options.methods.fetchData.apply(this.$parent)
+    }
     if (this.params.extraFilter) {
       const filterColumnList = this.params.extraFilter.filter(str => str != 'detectState')
       await Promise.all(filterColumnList.map(state => StateHelper.load(state)))
@@ -554,16 +571,13 @@ export default {
       })
     }
     this.sortBy = this.params.sortBy? this.params.sortBy: null
-    this.replace({showWarn: false})
-    this.replace({showAlert: this.showError})
-    this.replace({showInfo: this.showMessage})
+    this.replace({showWarn: false, showAlert: this.showError, showInfo: this.showMessage})
 
     this.$nextTick(() => {
       if(this.moveEditPage && this.editPage){
         this.currentPage = this.editPage
       }
-      this.replaceAS({editPage: null})
-      this.replaceAS({moveEditPage: false})
+      this.replaceAS({editPage: null, moveEditPage: false})
     })
   },
   methods: {
@@ -591,9 +605,7 @@ export default {
     setEmptyMessage(){
       this.message = null
       this.error = null
-      this.replace({showWarn: false})
-      this.replace({showAlert: false})
-      this.replace({showInfo: false})
+      this.replace({showWarn: false, showAlert: false, showInfo: false})
       this.$forceUpdate()
     },
     isCurrentTenant(item){
@@ -616,7 +628,7 @@ export default {
       location.reload()
     },
     getItem(key){
-      if(this.$parent.$options.methods.getItem){
+      if(this.$parent.$options.methods && this.$parent.$options.methods.getItem){
         return this.$parent.$options.methods.getItem.call(this.$parent, key)
       }
       return {}
@@ -637,50 +649,77 @@ export default {
       return ret
     },
     clearAction(key){
-      if(this.$parent.$options.methods.clearAction){
+      if(this.$parent.$options.methods && this.$parent.$options.methods.clearAction){
         this.$parent.$options.methods.clearAction.call(this.$parent, key)
       }
     },
-    exportCsv() {
-      this.setEmptyMessage()
-      let headers
-      if (this.params.custumCsvColumns) {
-        headers = this.params.custumCsvColumns
-      } else {
-        headers = _(this.params.fields).map((val) => val.key).uniqWith(_.isEqual).value()
+    async createListParam() {
+      return this.$parent.$options.methods && this.$parent.$options.methods.createListParams? await this.$parent.$options.methods.createListParams.call(this.$parent): {}
+    },
+    async showList() {
+      if(!Util.hasValue(this.sortBy)) {
+        this.sortBy = this.old.sortBy
+        this.sortDesc = this.old.sortDesc
+        return
       }
-      headers = headers.filter((val) => !['style', 'thumbnail', 'actions', 'updateAction'].includes(val))
-      headers.unshift('updateKey')
-      headers.push('delFlg')
-      const list = this.list.map((val) => ({...val, updateKey: val[this.id], delFlg: 0}))
-      if(this.$parent.$options.methods.customCsvData){
-        list.forEach((val) => {
-          this.$parent.$options.methods.customCsvData.call(this.$parent, val)
-        })
+      this.showProgress()
+      try {
+        const params = await this.createListParam()
+        params.word = this.filter.reg
+        params.category = this.selectedCategory
+        params.group = this.selectedGroup
+        const response = await AppServiceHelper.fetchCompactList(`${this.appServicePath}/listdownload/${this.perPage}/${this.currentPage}/${this.sortBy}/${this.sortDesc? 'desc': 'asc'}` , params)
+        this.$parent.$options.methods && this.$parent.$options.methods.editResponse && await this.$parent.$options.methods.editResponse.call(this.$parent, response.data)
+        this.dataItemList = response.data
+        this.totalRows = response.count
+        this.old.sortBy = this.sortBy
+        this.old.sortDesc = this.sortDesc
       }
-      BrowserUtil.fileDL(this.params.name + '.csv', CsvUtil.converToCsv(list, headers), getCharSet(this.loginId))
+      catch(e) {
+        console.error(e)
+      }
+      this.hideProgress()
+    },
+    async exportCsv() {
+      const params = await this.createListParam()
+      BrowserUtil.executeFileDL(
+        APP_SERVICE.BASE_URL
+        + this.params.appServicePath
+        + '/csvdownload'
+        + '?charset=' + getCharSet(this.$store.state.loginId)
+        + '&params=' + encodeURI(JSON.stringify(params))
+      )
+    },
+    fetchDataCompact() {
+      this.$nextTick(() => this.showList())
     },
     style(index) {
       return this.$parent.$options.methods.style.call(this.$parent, index)
     },
     async edit(item, index, target) {
       this.setEmptyMessage()
-      let entity = item != null? await AppServiceHelper.fetch(this.appServicePath, item[this.id]): {}
-      if (this.$parent.$options.methods.convBeforeEdit) {
+      let entity = {}
+      if(item != null) {
+        const masterId = this.compactMode? this.$parent.$options.methods && this.$parent.$options.methods.getEditKey? this.$parent.$options.methods.getEditKey.call(this.$parent, item): item.updateKey: item[this.id]
+        entity = await AppServiceHelper.fetch(this.appServicePath, masterId)
+      } else {
+        // masterCdの最大値を算出するために全件データが必要
+        await StateHelper.load(this.name)
+      }
+      if (this.$parent.$options.methods && this.$parent.$options.methods.convBeforeEdit) {
         entity = this.$parent.$options.methods.convBeforeEdit.call(this.$parent, entity)
       }
-      this.replaceAS({[this.name]: entity})
-      this.replaceAS({editPage: this.currentPage})
+      this.replaceAS({[this.name]: entity, editPage: this.currentPage})
       this.$router.push(this.editPath)
     },
     getAnotherPageParam(name, item) {
-      const pageParam = this.anotherPageParams.find((val) => val.name == name)
+      const pageParam = this.anotherPageParams.find(val => val.name == name)
       return pageParam && item[pageParam.id]? pageParam: null
     },
     async jumpAnotherPage(name, item) {
       const pageParam = this.getAnotherPageParam(name, item)
       const pageSendParam = {}
-      pageParam.sendParamNames.forEach((val) => pageSendParam[val] = item[val])
+      pageParam.sendParamNames.forEach(val => pageSendParam[val] = item[val])
       this.replaceAS({pageSendParam: pageSendParam})
       this.$router.push(pageParam.jumpPath)
     },
@@ -694,10 +733,11 @@ export default {
     },
     deleteConfirm(item, index, button) {
       this.setEmptyMessage()
+      const masterId = this.compactMode? item.updateKey: item[this.id]
       this.modalInfo.title = this.$i18n.tnl('label.confirm')
       const confirmName = this.params.confirmName? this.params.confirmName: Util.getValue(this.params, 'name', '') + 'Name'
       this.modalInfo.content = this.$i18n.tnl(this.params.delFilter && item.delFlg != 0? 'message.completeDeleteConfirm': 'message.deleteConfirm', {target: `${this.$i18n.tnl('label.' + confirmName)}:${item[confirmName]}`})
-      this.modalInfo.id = item[this.id]
+      this.modalInfo.id = masterId
       this.$root.$emit('bv::show::modal', 'modalInfo', button)
     },
     resetModal () {
@@ -833,13 +873,21 @@ export default {
       const pageName = this.params.dispName? this.params.dispName: this.params.name
       try {
         await AppServiceHelper.deleteEntity(this.appServicePath, id)
-        await StateHelper.load(this.params.name, true)
-        this.message = this.$i18n.tnl('message.deleteCompleted', {target: this.$i18n.tnl('label.' + pageName)})
-        if(this.$parent.$options.methods.onSaved){
+        if(this.compactMode) {
+          StateHelper.setForceFetch(this.params.name, true)
+        } else {
+          await StateHelper.load(this.params.name, true)
+        }
+        this.message = this.$i18n.tnl('message.deleteCompleted', {target: this.$i18n.tnl('label.' + this.params.name)})
+        if(this.$parent.$options.methods && this.$parent.$options.methods.onSaved){
           this.$parent.$options.methods.onSaved.call(this.$parent, {message: this.message})
         }
         this.replace({showInfo: true})
-        await this.$parent.$options.methods.fetchData.apply(this.$parent)
+        if(this.compactMode) {
+          await this.showList()
+        } else {
+          await this.$parent.$options.methods.fetchData.apply(this.$parent)
+        }
       } catch (e) {
         this.message = null
         if(e && e.response && e.response.data && ArrayUtil.isArray(e.response.data.errorList)){

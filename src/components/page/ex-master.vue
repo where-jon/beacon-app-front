@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid">
     <breadcrumb :items="items" />
-    <m-list :params="pParams" :list="filteredList" />
+    <m-list :params="pParams" compact-mode />
   </div>
 </template>
 
@@ -9,7 +9,7 @@
 import * as StringUtil from '../../sub/util/StringUtil'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../layout/breadcrumb.vue'
-import reloadmixin from '../mixin/reloadmixin.vue'
+import commonmixin from '../mixin/commonmixin.vue'
 import mList from './list.vue'
 
 export default {
@@ -30,50 +30,41 @@ export default {
       type: Object,
       required: true,
     },
-    pList: {
-      type: Array,
-      required: true,
-    },
   },
   components: {
     breadcrumb,
     mList,
   },
-  mixins: [reloadmixin],
+  mixins: [commonmixin],
   computed: {
     items() {
       return ViewHelper.createBreadCrumbItems('master', StringUtil.concatCamel(this.pMasterName, this.pCategoryName))
     },
-    filteredList() {
-      return this.pList.filter(element => this.pTypeList.includes(element[this.pMasterName + 'Type']))
-    },
-  },
-  created() {
-    this.pParams.initTotalRows = this.filteredList.length
   },
   methods: {
-    customCsvData(val){
-      if(this.$parent.$options.methods.customCsvData){
-        this.$parent.$options.methods.customCsvData.call(this.$parent, val)
+    createListParams(){
+      if(this.$parent.$options.methods && this.$parent.$options.methods.createListParams){
+        return this.$parent.$options.methods.createListParams.call(this.$parent)
+      }
+      return {}
+    },
+    editResponse(data) {
+      if(this.$parent.$options.methods && this.$parent.$options.methods.editResponse){
+        this.$parent.$options.methods.editResponse.call(this.$parent, data)
       }
     },
     onSaved(val){
-      if(this.$parent.$options.methods.onSaved){
+      if(this.$parent.$options.methods && this.$parent.$options.methods.onSaved){
         this.$parent.$options.methods.onSaved.call(this.$parent, val)
       }
     },
-    async fetchData(payload) {
-      if(this.$parent.$options.methods.fetchData){
-        await this.$parent.$options.methods.fetchData.call(this.$parent, payload)
-      }
-    },
     thumbnail(row) {
-      if(this.$parent.$options.methods.thumbnail){
+      if(this.$parent.$options.methods && this.$parent.$options.methods.thumbnail){
         return this.$parent.$options.methods.thumbnail.call(this.$parent, row)
       }
     },
     style(row) {
-      if(this.$parent.$options.methods.style){
+      if(this.$parent.$options.methods && this.$parent.$options.methods.style){
         return this.$parent.$options.methods.style.call(this.$parent, row)
       }
     },
