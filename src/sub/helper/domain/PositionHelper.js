@@ -901,6 +901,7 @@ export const setDetectState = (positions, usePositionHistory = false) => {
 
     position.detectState = DetectStateHelper.getState('tx', updatetime, rssi) // nearestのtimestampを使用
     position.state = DetectStateHelper.getLabel(position.detectState)
+    position.isUnDetect = DetectStateHelper.isUndetect(position.detectState)
     position.noSelectedTx = (position.detectState != DETECT_STATE.DETECTED)
   })
 

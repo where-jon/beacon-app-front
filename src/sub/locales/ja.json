@@ -284,6 +284,13 @@
     "total_enter": "総出面",
     "elapsed_time": "無事故無災害の記録",
 
+    "toiletStatus": "トイレ満空表示",
+    "toilet_m": "男子",
+    "toilet_f": "女子",
+    "toilet_p": "多目的",
+    "toilet_c": "共用",
+    "emptyToilet": "空き",
+
     "password": "パスワード",
     "passwordCurrent": "現在のパスワード",
     "passwordUpdate": "変更パスワード",
@@ -550,6 +557,7 @@
     "Thermohumidity": "温湿度(メイン)",
     "PositionList": "位置表示(一覧)",
     "Led": "LED",
+    "ToiletStatus": "トイレ満空表示",
     "Master": "マスタ",
     "masterRegion": "リージョン",
     "masterArea": "エリア",
@@ -986,6 +994,9 @@
       },
       "MANAGE": {
         "SETTING_CATEGORY": "公開するシステム設定::顧客用のシステム設定画面に表示するカテゴリを設定します。"
+      },
+      "TOILET": {
+        "AUTO_RELOAD": "トイレ満空表示画面で自動リロードを行う::トイレ満空表示画面で自動リロードを行います。"
       }
     },
     "DISP": {
@@ -1106,6 +1117,9 @@
         "LOST_COLOR": "[入退場表]消失者の文字色::[入退場表]消失者の文字色を色名、HEXまたはRGBで指定します。",
         "ABSENT_BGCOLOR": "[入退場表]退場者の背景色::[入退場表]退場者の背景色を色名、HEXまたはRGBで指定します。",
         "ENTER_BGCOLOR": "[入退場表]入場者の背景色::[入退場表]入場者の背景色を色名、HEXまたはRGBで指定します。"
+      },
+      "TOILET": {
+        "DISPLAY_MODE": "トイレ表示モード::トイレ満空表示画面に表示される空き状態の表示方法を設定します。設定可能な値は次の通りです。{TOILET_DISPLAY}"
       }
     },
     "DEV": {
@@ -1342,6 +1356,10 @@
         "0": "0::無効",
         "1": "1::有効（デフォルトオフ）",
         "2": "2::有効（デフォルトオン）"
+      },
+      "TOILET_DISPLAY": {
+        "0": "0::数値で表示する",
+        "1": "1::アイコンで表示する"
       }
     }
   },

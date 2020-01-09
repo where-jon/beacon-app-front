@@ -33,6 +33,22 @@ export const setApp = (pStore, pi18n) => {
 }
 
 /**
+ * マスタデータをmapに変換する。
+ * @method
+ * @param {String} keyName キー名
+ * @param {Object[]} masterList マスタ種類に属するデータリスト
+ * @return {Object}
+ */
+export const convertMasterMap = (keyName, masterList) => {
+  const ret = {}
+  masterList.forEach(val => {
+    const masterId = val[keyName]
+    ret[masterId] = val
+  })
+  return ret
+}
+
+/**
  * マスタコードを作成する。
  * @method
  * @param {String} masterType マスタ種類
@@ -542,7 +558,7 @@ const appStateConf = {
           locationId: Util.hasValue(val.locationZoneList)? val.locationZoneList[0].locationZonePK.locationId: null,
           locationName: Util.hasValue(val.locationZoneList)? val.locationZoneList[0].location.locationName: null,
           categoryId: Util.hasValue(val.zoneCategoryList)? val.zoneCategoryList[0].zoneCategoryPK.categoryId: null,
-          categoryName: category? category.categoryName: null,
+          categoryName: Util.getValue(val, 'zoneCategoryList.0.category.categoryName', null),
           zoneCategoryIdList: Util.getValue(val, 'zoneCategoryList', []).map(val => Util.getValue(val, 'zoneCategoryPK.categoryId', null)).filter(val => val),
           systemCategoryName: category? category.systemUse != 0? category.categoryName.toLowerCase(): null: null,
         }, val.extValue)

@@ -74,6 +74,7 @@ export const PATTERN = {
   REGEXP: {
     MASTER_CD: /^[a-zA-Z0-9_\-.:]*$/,
     LOCATION_CD: /^[a-zA-Z0-9_\-:]*$/,
+    TOILET_CATEGORY: /^TOILET_.+$/i,
   },
 }
 
@@ -561,6 +562,9 @@ export const FONT = {
   SIZE: {
     MIN: 6,
   },
+  OPTION: {
+    BOLD: ' bold ',
+  },
   TYPE: 'px sans-serif',
 }
 
@@ -899,6 +903,11 @@ export const MENU = [
       path: 'led',
       icon: 'lightbulb',
     },
+    {
+      key: 'toiletStatus',
+      path: 'toilet',
+      icon: 'toilet',
+    },
     ]
   },
   {
@@ -1203,6 +1212,19 @@ export const SYSTEM_ZONE_CATEGORY_NAME = {
   ABSENT: 'ABSENT',
   PROHIBIT: 'PROHIBIT',
   ABSENT_DISPLAY: 'ABSENT_DISPLAY',
+  TOILET_M: 'TOILET_M',
+  TOILET_F: 'TOILET_F',
+  TOILET_C: 'TOILET_C',
+  TOILET_P: 'TOILET_P',
+
+  getToiletNames() {
+    return [
+      SYSTEM_ZONE_CATEGORY_NAME.TOILET_M,
+      SYSTEM_ZONE_CATEGORY_NAME.TOILET_F,
+      SYSTEM_ZONE_CATEGORY_NAME.TOILET_C,
+      SYSTEM_ZONE_CATEGORY_NAME.TOILET_P,
+    ]
+  },
 }
 
 export const PLUGIN_CONSTANTS = {
