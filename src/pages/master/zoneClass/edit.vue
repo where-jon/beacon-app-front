@@ -142,12 +142,11 @@ export default {
       this.areaNames = StateHelper.getOptionsFromState('area', false, true)
     },
     async initCategoryNames() {
-      await StateHelper.load('category')
-      this.categoryNames = StateHelper.getOptionsFromState('category',
-        category => StateHelper.getDispCategoryName(category),
-        true, 
-        category => !CATEGORY.POT_AVAILABLE.includes(category.categoryType) && category.categoryName != SYSTEM_ZONE_CATEGORY_NAME.ABSENT_DISPLAY
-      )
+      const arr = await AppServiceHelper.fetchList('/basic/category/type/3')
+      this.categoryNames = arr.sort(v => v.categoryCd).map(v => {
+        const name = v.systemUse == 1 ? this.$i18n.tnl('label.' + v.categoryName.toLowerCase()) : v.categoryName
+        return { text: name, label: name, value: v.categoryId} 
+      })
     },
     onSaved(){
       StateHelper.setForceFetch('tx', true)
