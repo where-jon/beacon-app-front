@@ -90,7 +90,7 @@ export const APP = { // 機能面に関する設定
     },
     // 温湿度
     USE_HUMIDITY_ALERT: true, // 湿度アラートの使用
-    USE_THERMOH_HEATMAP: true, // ヒートマップの使用
+    USE_THERMOH_HEATMAP: false, // ヒートマップの使用
     USE_THERMOH_TOOLTIP: false, // ツールチップを使用する
     TEMPERATURE: {
       LINE_HOUR_START: 0,  // 温湿度グラフの開始時間
@@ -455,12 +455,13 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
       DANGER: 500, // 危険アイコン点滅周期(ミリ秒)
     },
     ALPHA: 1, // アルファ値(0:透明～1:不透明)
-    PATTERN: ['19 #5b9bd5', '25 #6eb290', '26 #ffd966', '27 #ff9966', '31 #ff5050', '32 #ffd966 $WARN', '#ff2525 $DANGER'], // 温度アイコンパターン（順不同。数値：閾値。先頭が#：カラーコード。先頭が$：点滅パターン。OR：閾値に同値を含む。）
+    PATTERN: ['19 #5b9bd5', '26 #ffd966', '31 #ff5050', '#ff2525 $DANGER'], // 温度アイコンパターン（順不同。数値：閾値。先頭が#：カラーコード。先頭が$：点滅パターン。OR：閾値に同値を含む。）
     HUMIDITY_PATTERN: ['LESS 30', 'LESS 50', 'MORE 85'], // 湿度アラートパターン（順不同。数値：閾値。LESS：閾値以下の場合に警告。MORE：閾値以上の場合に警告）
   
     TEMPERATURE_MAX: 28,  // 温湿度ヒートマップ最大値
     TEMPERATURE_MIN: 0,   // 温湿度ヒートマップ最小値
     TEMPERATURE_RADIUS: 150,   // 温湿度ヒートマップ直径
+    TEMPERATURE_DECIMAL_DIGITS:1,   // 温度小数桁（ゼロパディング）
   },
   PIR: {
     R_SIZE: 26,  // PIR表示時の円の半径
