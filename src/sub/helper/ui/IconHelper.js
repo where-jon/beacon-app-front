@@ -509,7 +509,7 @@ export const getThermohFont = (ft = DISP.THERMOH.FONT, mapScale) => {
  * @return {Object}
  */
 export const createThermoLabel = (device, mapScale) => {
-  const text = NumberUtil.formatTemperature(device.temperature).toFixed(DISP.THERMOH.TEMPERATURE_DECIMAL_DIGITS) + i18n.tnl('label.temperatureUnit') + '\n' + NumberUtil.formatHumidity(device.humidity) + i18n.tnl('label.humidityUnit')
+  const text = NumberUtil.formatTemperature(device.temperature) + i18n.tnl('label.temperatureUnit') + '\n' + NumberUtil.formatHumidity(device.humidity) + i18n.tnl('label.humidityUnit')
   const label = new Text(text)
   label.font = getThermohFont(DISP.THERMOH.FONT, mapScale)
   label.color = DISP.THERMOH.COLOR
