@@ -34,8 +34,12 @@ export default {
   ** Nuxt.js modules
   */
   modules: [
-    'nuxt-fontawesome'
+    'nuxt-fontawesome',
+    '@nuxtjs/sentry'
   ],
+  sentry: {
+    dsn: process.env.SENTRY_DSN
+  },
   router: {
     base: '/',
     middleware: ['reset', 'check-auth']
@@ -46,14 +50,14 @@ export default {
   build: {
     babel: {
       presets: [
-         [
-           '@babel/preset-env',
-           {
-             targets: [">0.25% in JP", "not ie <= 10", "not op_mini all"],
-             useBuiltIns: 'usage',
-             corejs: 3
-           }
-         ]
+        [
+          '@babel/preset-env',
+          {
+            targets: ['>0.25% in JP', 'not ie <= 10', 'not op_mini all'],
+            useBuiltIns: 'usage',
+            corejs: 3
+          }
+        ]
       ]
     },
     extend (config, { isDev, isClient }) {

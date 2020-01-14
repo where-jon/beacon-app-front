@@ -188,6 +188,7 @@ export default {
         console.error(e)
       }
       this.hideProgress()
+      konohageee()
     },
   },
 }
