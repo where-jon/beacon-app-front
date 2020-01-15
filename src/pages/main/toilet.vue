@@ -8,16 +8,16 @@
       <template slot="HEAD_zoneName">
         <div />
       </template>
-      <template slot="toilet_m" slot-scope="row">
+      <template slot="male" slot-scope="row">
         <canvas :id="createCanvasKey(row.index, row.field.key)" :width="canvasInfo.w" :height="canvasInfo.h" />
       </template>
-      <template slot="toilet_f" slot-scope="row">
+      <template slot="female" slot-scope="row">
         <canvas :id="createCanvasKey(row.index, row.field.key)" :width="canvasInfo.w" :height="canvasInfo.h" />
       </template>
-      <template slot="toilet_p" slot-scope="row">
+      <template slot="multip" slot-scope="row">
         <canvas :id="createCanvasKey(row.index, row.field.key)" :width="canvasInfo.w" :height="canvasInfo.h" />
       </template>
-      <template slot="toilet_c" slot-scope="row">
+      <template slot="share" slot-scope="row">
         <canvas :id="createCanvasKey(row.index, row.field.key)" :width="canvasInfo.w" :height="canvasInfo.h" />
       </template>
     </b-table>
@@ -29,11 +29,10 @@ import { mapState } from 'vuex'
 import _ from 'lodash'
 import { Stage } from 'createjs-module'
 import { APP, DISP } from '../../sub/constant/config'
-import { CATEGORY, SENSOR, SYSTEM_ZONE_CATEGORY_NAME, PATTERN } from '../../sub/constant/Constants'
+import { SENSOR, LOCATION } from '../../sub/constant/Constants'
 import * as Util from '../../sub/util/Util'
 import * as EXCloudHelper from '../../sub/helper/dataproc/EXCloudHelper'
 import * as IconHelper from '../../sub/helper/ui/IconHelper'
-import * as PositionHelper from '../../sub/helper/domain/PositionHelper'
 import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
@@ -82,10 +81,10 @@ export default {
       return ViewHelper.addLabelByKey(this.$i18n, [
         { key: 'areaName', show: true },
         { key: 'zoneName', show: true },
-        { key: 'toilet_m', show: true, thClass: 'text-center', tdClass: 'text-center' },
-        { key: 'toilet_f', show: true, thClass: 'text-center', tdClass: 'text-center' },
-        { key: 'toilet_p', thClass: 'text-center', tdClass: 'text-center' },
-        { key: 'toilet_c', thClass: 'text-center', tdClass: 'text-center' },
+        { key: 'male', show: true, thClass: 'text-center', tdClass: 'text-center' },
+        { key: 'female', show: true, thClass: 'text-center', tdClass: 'text-center' },
+        { key: 'multip', thClass: 'text-center', tdClass: 'text-center' },
+        { key: 'share', thClass: 'text-center', tdClass: 'text-center' },
       ])
     },
   },
@@ -98,7 +97,7 @@ export default {
     },
     // ここから描画用
     getStage(type, key, dataList) {
-      if(this.stageMap[key]) {
+      if (this.stageMap[key]) {
         return this.stageMap[key]
       }
       const stage = new Stage(key)
@@ -109,9 +108,7 @@ export default {
     },
     drawCanvas() {
       this.dataList.forEach((data, index, ary) => {
-        Object.keys(data).filter(key => 
-          PATTERN.REGEXP.TOILET_CATEGORY.test(key)
-        ).forEach(key => {
+        Object.keys(data).forEach(key => {
           const toiletInfo = data[key]
           const stage = this.getStage(key, this.createCanvasKey(index, key.toUpperCase()), ary)
           IconHelper.editToiletIcon(stage, toiletInfo.emptyCount, toiletInfo.allCount)
@@ -122,8 +119,8 @@ export default {
     // ここから集計用
     createToiletCountInfo(toiletList, type) {
       return {
-        emptyCount: toiletList.reduce((prev, cur) => cur.categoryName == type && cur.isDetect? prev + 1: prev, 0),
-        allCount: toiletList.reduce((prev, cur) => cur.categoryName == type? prev + 1: prev, 0),
+        emptyCount: toiletList.reduce((prev, cur) => cur.toiletType == type && !cur.isDetect? prev + 1: prev, 0),
+        allCount: toiletList.reduce((prev, cur) => cur.toiletType == type? prev + 1: prev, 0),
       }
     },
     mergeToiletData(pirDataList, magnetDataList) {
@@ -136,10 +133,10 @@ export default {
         return {
           areaName: first.areaName,
           zoneName: first.zoneName,
-          toilet_m: this.createToiletCountInfo(val, SYSTEM_ZONE_CATEGORY_NAME.TOILET_M),
-          toilet_f: this.createToiletCountInfo(val, SYSTEM_ZONE_CATEGORY_NAME.TOILET_F),
-          toilet_c: this.createToiletCountInfo(val, SYSTEM_ZONE_CATEGORY_NAME.TOILET_C),
-          toilet_p: this.createToiletCountInfo(val, SYSTEM_ZONE_CATEGORY_NAME.TOILET_P),
+          male: this.createToiletCountInfo(val, LOCATION.EXT_VALUE.TOILET.MALE),
+          female: this.createToiletCountInfo(val, LOCATION.EXT_VALUE.TOILET.FEMALE),
+          share: this.createToiletCountInfo(val, LOCATION.EXT_VALUE.TOILET.SHARE),
+          multip: this.createToiletCountInfo(val, LOCATION.EXT_VALUE.TOILET.MULTIP),
         }
       })
     },
@@ -149,25 +146,23 @@ export default {
       }: {
         pKey: 'txId', list: this.txs, front: 'btxId', server: 'btx_id', detect: 'magnet'
       }
-      this.showToiletTypeMap = {}
 
       const exCloudSensors = await EXCloudHelper.fetchSensor(sensorId)
       const deviceMap = StateHelper.convertMasterMap(key.front, key.list)
       return exCloudSensors.map(sensor => {
         const device = deviceMap[sensor[key.server]]
         const toiletZone = Util.getValue(device, 'toiletZone', {})
-        const toiletCategory = Util.getValue(toiletZone, 'toiletCategory', {})
+        const toiletType = Util.getValue(device, deviceType == 'exb'? 'extValue.toilet': 'locExtValue.toilet', '')
         return toiletZone? {
           [key.pKey]: device[key.pKey],
           isDetect: sensor[key.detect] > 0,
           areaId: device.areaId, areaName: device.areaName,
           zoneId: toiletZone.zoneId, zoneName: toiletZone.zoneName,
-          categoryId: toiletCategory.categoryId, categoryName: toiletCategory.categoryName,
+          toiletType,
         }: null
-      }).filter(val => (
-        val && PATTERN.REGEXP.TOILET_CATEGORY.test(val.categoryName)
-      )).map(val => {
-        this.showToiletTypeMap[val.categoryName.toLowerCase()] = true
+      }).filter(val => val && val.toiletType
+      ).map(val => {
+        this.showToiletTypeMap[val.toiletType] = true
         return val
       })
     },
@@ -188,7 +183,6 @@ export default {
         console.error(e)
       }
       this.hideProgress()
-      konohageee()
     },
   },
 }

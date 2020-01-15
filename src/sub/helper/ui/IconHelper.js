@@ -10,12 +10,12 @@ import comfort from '../../../assets/icon/comfort.png'
 import hot from '../../../assets/icon/hot.png'
 import toiletM from '../../../assets/icon/male.svg'
 import toiletF from '../../../assets/icon/female.svg'
-import toiletC from '../../../assets/icon/share.svg'
+import toiletS from '../../../assets/icon/share.svg'
 import toiletP from '../../../assets/icon/multipurpose.svg'
 import toiletUse from '../../../assets/icon/inuse.png'
 import toiletEmpty from '../../../assets/icon/notuse.png'
 import { APP, DISP } from '../../constant/config'
-import { SHAPE, TX, SENSOR, DISCOMFORT, FONT, SYSTEM_ZONE_CATEGORY_NAME } from '../../constant/Constants'
+import { SHAPE, TX, SENSOR, DISCOMFORT, FONT, LOCATION } from '../../constant/Constants'
 import * as ColorUtil from '../../util/ColorUtil'
 import * as NumberUtil from '../../util/NumberUtil'
 import * as StringUtil from '../../util/StringUtil'
@@ -598,17 +598,16 @@ export const createExbIcon = (exb, exbSensorIdList, mapScale, stage) => {
  * @return {Object}
  */
 export const getToiletImage = type => {
-  const typeUpper = type.toUpperCase()
-  if(typeUpper == SYSTEM_ZONE_CATEGORY_NAME.TOILET_M) {
+  if(type == LOCATION.EXT_VALUE.TOILET.MALE) {
     return toiletM
   }
-  if(typeUpper == SYSTEM_ZONE_CATEGORY_NAME.TOILET_F) {
+  if(type == LOCATION.EXT_VALUE.TOILET.FEMALE) {
     return toiletF
   }
-  if(typeUpper == SYSTEM_ZONE_CATEGORY_NAME.TOILET_C) {
-    return toiletC
+  if(type == LOCATION.EXT_VALUE.TOILET.SHARE) {
+    return toiletS
   }
-  if(typeUpper == SYSTEM_ZONE_CATEGORY_NAME.TOILET_P) {
+  if(type == LOCATION.EXT_VALUE.TOILET.MULTIP) {
     return toiletP
   }
   return ''

@@ -285,10 +285,11 @@
     "elapsed_time": "無事故無災害の記録",
 
     "toiletStatus": "トイレ満空表示",
-    "toilet_m": "男子",
-    "toilet_f": "女子",
-    "toilet_p": "多目的",
-    "toilet_c": "共用",
+    "toilet": "トイレ",
+    "male": "男子",
+    "female": "女子",
+    "share": "共用",
+    "multip": "多目的",
     "emptyToilet": "空き",
 
     "password": "パスワード",

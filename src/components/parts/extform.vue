@@ -55,7 +55,11 @@ export default {
           }
         }
         if (e.type == 'list') {
-          e.options = e.format.split('|').map(e => ({label: e, text: e, value: e}))
+          e.options = e.format.split('|').map(e => {
+            let label = this.$i18n.tnl('label.' + e)
+            if (!label) label = e
+            return {label, text: label, value: e}
+          })
         }
         if (e.default && !this.form[e.key] && !Util.hasValue(this.form.potId) && this.firstShow) {
           Vue.set(this.form, e.key, e.default)

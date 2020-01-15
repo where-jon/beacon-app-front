@@ -216,10 +216,10 @@ export default {
         category => StateHelper.getDispCategoryName(category),
         true, 
         category => {
-          if(CATEGORY.POT_AVAILABLE.concat(CATEGORY.AUTH).includes(category.categoryType)){
+          if (CATEGORY.POT_AVAILABLE.concat(CATEGORY.AUTH).includes(category.categoryType)) {
             return false
           }
-          if(!this.useToilet && SYSTEM_ZONE_CATEGORY_NAME.getToiletNames().includes(category.categoryName)){
+          if (!this.useToilet && SYSTEM_ZONE_CATEGORY_NAME.TOILET == category.categoryName) {
             return false
           }
           return category.categoryName != SYSTEM_ZONE_CATEGORY_NAME.ABSENT_DISPLAY

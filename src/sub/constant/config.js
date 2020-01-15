@@ -128,6 +128,7 @@ export const APP = { // 機能面に関する設定
     // 拡張項目定義（サンプル）
     EXT_DEF: [
       {key: 'description', type: 'string', length: 100, showlist: true, sort: true },
+      {key: 'toilet', type: 'list', format: 'male|female|share|multip', showlist: true, sort: false},
     ],
   },
   // USER関連設定
@@ -512,7 +513,7 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     ENTER_BGCOLOR: 'rgb(217,217,217)', // 入場者の背景色
   },
   TOILET: {
-    DISPLAY_MODE: 0, // 表示モード
+    DISPLAY_MODE: 0, // 表示モード 0:数値, 1:アイコン
     BASE_FONT_SIZE: 24, // 基準フォントサイズ
     BASE_MARK_R: 16, // 基準空室アイコンサイズ
     MARK_COLUMN_NUM: 5, // アイコン表示最大列

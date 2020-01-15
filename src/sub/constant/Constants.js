@@ -74,7 +74,6 @@ export const PATTERN = {
   REGEXP: {
     MASTER_CD: /^[a-zA-Z0-9_\-.:]*$/,
     LOCATION_CD: /^[a-zA-Z0-9_\-:]*$/,
-    TOILET_CATEGORY: /^TOILET_.+$/i,
   },
 }
 
@@ -197,6 +196,17 @@ export const EXB = {
       { value: 0, text: i18n.tnl('label.noneDirect') },
       { value: 1, text: i18n.tnl('label.direct') },
     ]
+  }
+}
+
+export const LOCATION = {
+  EXT_VALUE: {
+    TOILET: {
+      MALE: 'male',
+      FEMALE: 'female',
+      SHARE: 'share',
+      MULTIP: 'multip',    
+    }
   }
 }
 
@@ -1212,19 +1222,7 @@ export const SYSTEM_ZONE_CATEGORY_NAME = {
   ABSENT: 'ABSENT',
   PROHIBIT: 'PROHIBIT',
   ABSENT_DISPLAY: 'ABSENT_DISPLAY',
-  TOILET_M: 'TOILET_M',
-  TOILET_F: 'TOILET_F',
-  TOILET_C: 'TOILET_C',
-  TOILET_P: 'TOILET_P',
-
-  getToiletNames() {
-    return [
-      SYSTEM_ZONE_CATEGORY_NAME.TOILET_M,
-      SYSTEM_ZONE_CATEGORY_NAME.TOILET_F,
-      SYSTEM_ZONE_CATEGORY_NAME.TOILET_C,
-      SYSTEM_ZONE_CATEGORY_NAME.TOILET_P,
-    ]
-  },
+  TOILET: 'TOILET',
 }
 
 export const PLUGIN_CONSTANTS = {

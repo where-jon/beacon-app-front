@@ -87,6 +87,10 @@ export default {
     },
     editResponse(data) {
       data.forEach(val => {
+        if (val.toilet) {
+          let label = this.$i18n.tnl('label.' + val.toilet) 
+          val.toilet = label? label: val.toilet
+        }
         val.zoneClass = Util.getValue(val, 'zoneClass', '').split(BULK.SPLITTER)
         val.zoneBlock = Util.getValue(val, 'zoneBlock', '').split(BULK.SPLITTER)
       })
