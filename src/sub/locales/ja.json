@@ -1068,7 +1068,12 @@
     "EXCLOUD": {
       "BASE_URL": "EXCloudのURL::EXCloudのURLを設定します。"
     },
-
+    "EXSERVER": {
+      "BASE_URL": "EXServerのURL::EXServerのURLを設定します。",
+      "MULTI_API": "EXServer3点測位API::EXServerの３点測位APIを利用します。",
+      "TIME_RANGE": "EXServer取得時間範囲::EXServerから取得する時間の範囲を指定します。",
+      "MAX_DEVICES": "EXServerデバイス数::EXServerにて同時に測位するEXBの数を指定します。"
+    },
     "OPTIONS": {
       "SETTING_CATEGORY": {
         "COMMON": "共通",
