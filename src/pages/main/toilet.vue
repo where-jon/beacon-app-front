@@ -151,8 +151,8 @@ export default {
       const deviceMap = StateHelper.convertMasterMap(key.front, key.list)
       return exCloudSensors.map(sensor => {
         const device = deviceMap[sensor[key.server]]
-        const toiletZone = Util.getValue(device, 'toiletZone', {})
-        const toiletType = Util.getValue(device, deviceType == 'exb'? 'extValue.toilet': 'locExtValue.toilet', '')
+        const toiletZone = Util.getValue(device, 'toiletZone', null)
+        const toiletType = Util.getValue(device, deviceType == 'exb'? 'extValue.toilet': 'locExtValue.toilet', null)
         return toiletZone? {
           [key.pKey]: device[key.pKey],
           isDetect: sensor[key.detect] > 0,
