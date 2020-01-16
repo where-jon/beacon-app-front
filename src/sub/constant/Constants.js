@@ -726,6 +726,12 @@ export const SETTING = {
         SIMULATION_MOVE_PERCENT: SETTING.NUMBER,
         SIMULATION_MOVE_AREA_PERCENT: SETTING.NUMBER,
       },
+      EXSERVER: {
+        BASE_URL: SETTING.STRING,
+        MULTI_API: SETTING.BOOLEAN,
+        TIME_RANGE: SETTING.NUMBER,
+        MAX_DEVICES: SETTING.NUMBER,
+      },
     }
   },
   getDefault() {
