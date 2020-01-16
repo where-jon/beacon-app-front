@@ -748,7 +748,6 @@
         }
       },
       "SENSOR": {
-        "EXB_SENSOR": "Sensor type::Set up the sensor ID used by the server.Possible to set up value are as follows.★{SENSOR}",
         "TX_SENSOR": "Tx sensor type::Set up the type of Tx sesor. Possible to set up value are as follows.★{SENSOR}",
         "MEDITAG": {
           "DOWN_RED_TIME": "Falls notice time::When a MEDiTAG user falls over, the MEDiTAG will be displayed in a red frame for a set up time only. Set up in milliseconds."

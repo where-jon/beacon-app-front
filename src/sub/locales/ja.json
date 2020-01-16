@@ -777,7 +777,6 @@
         }
       },
       "SENSOR": {
-        "EXB_SENSOR": "センサの種類::サーバが使用するセンサIDを設定します。設定可能な値は次の通りです。★{SENSOR_NONE}{SENSOR}",
         "TX_SENSOR": "Txセンサの種類::Txセンサの種類を設定します。設定可能な値は次の通りです。★{SENSOR_NONE}{SENSOR}",
         "MEDITAG": {
           "DOWN_RED_TIME": "転倒通知時間::MEDiTAG使用者が転倒した時、設定した時間だけMEDiTAGが赤枠で表示されます。ミリ秒単位で設定します。"

@@ -622,7 +622,6 @@ export const SETTING = {
           },
         },
         SENSOR: {
-          EXB_SENSOR: SETTING.NUMBER_LIST,
           TX_SENSOR: SETTING.NUMBER_LIST,
         },
         POS_LIST: {
