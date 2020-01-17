@@ -150,7 +150,8 @@ export default {
         this.form.displayColor = ColorUtil.colorCd4display(this.oldColor? this.oldColor: null, this.defaultColor)
         this.form.displayBgColor = ColorUtil.colorCd4display(this.oldBgColor? this.oldBgColor: null, this.defaultBgColor)
         const categoryList = this.categories.filter(category => category.systemUse == 0)
-        this.form.categoryCd = StateHelper.createMasterCd('category', categoryList, this.category)
+        // TODO:大容量のときはcategoryマスタを保持できないのでいったんコメントアウト
+        //this.form.categoryCd = StateHelper.createMasterCd('category', categoryList, this.category)
       }
     },
     onSaved(){
