@@ -64,6 +64,7 @@ export default {
           MenuHelper.useMaster('category') && APP.POS.WITH.CATEGORY? 'category' : null,
         ]).compact().value(),
         initTotalRows: this.$store.state.app_service.positionList.length,
+        totalRows: this.$store.state.app_service.positionList.length,
         disableTableButtons: true,
       },
       items: ViewHelper.createBreadCrumbItems('main', 'positionList'),
@@ -150,6 +151,7 @@ export default {
             isDisableArea: Util.getValue(location, 'isAbsentZone', false),
           }
         })
+        this.params.totalRows = positions.length
         Util.debug(positions)
         this.replaceAS({positionList: positions})
         if (payload && payload.done) {
