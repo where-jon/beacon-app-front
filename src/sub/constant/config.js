@@ -316,6 +316,7 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     SHOW_NAV: false, // show nav  
     SHOW_SIDEBAR: true, // show sidebar  
     SHOW_LOGO: true, // show logo (or show title text)
+    SHOW_HELP: true,
     THEME: 'default', // デフォルトのテーマ
   },
   // 位置表示：TX
