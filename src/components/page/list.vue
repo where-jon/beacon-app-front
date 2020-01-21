@@ -91,7 +91,7 @@
                 :filter="compactMode? () => true: filterGrid" :bordered="params.bordered"
                 :sort-by.sync="sortBy" :sort-compare="compactMode? () => 0: sortCompare" :sort-desc.sync="sortDesc" :empty-filtered-text="emptyMessage"
                 show-empty stacked="md" striped hover outlined caption-top
-                @filtered="compactMode? () => {}: onFiltered"
+                @filtered="onFiltered"
                 @sort-changed="compactMode? fetchDataCompact(): () => {}"
       >
         <template v-if="params.tableDescription" slot="table-caption">
@@ -818,6 +818,9 @@ export default {
       return regBool && extBool && delBool && allShowBool && parentBool && detailBool
     },
     onFiltered(filteredItems) {
+      if(this.compactMode) {
+        return {}
+      }
       this.totalRows = filteredItems.length
       this.currentPage = 1
     },

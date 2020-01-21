@@ -89,7 +89,7 @@ export const getPositions = (showAllTime = false, notFilterByTimestamp = false,
     // 言語設定に合った正しいステータス名がセットされないので改めてセットする。
     setDetectState(positions, false) 
   }
-  positions = positionOwnerFilter(positions, showTxNoOwner)
+  //positions = positionOwnerFilter(positions, showTxNoOwner)
   return showAllTime ? positions : positionFilter(positions, selectedGroup, selectedCategory, selectedDetail, selectedFreeWord)
 }
 
@@ -195,6 +195,7 @@ export const storePositionHistory = async (count, allShow = false, fixSize = fal
     // 移動平均数分のポジションデータを保持する
     positions = await EXCloudHelper.fetchPosition(locations, exbs, txs, pMock, allShow)
   }
+  console.log('position2', positions)
   // 検知状態の取得
   setDetectState(positions, APP.POS.USE_POSITION_HISTORY)
   // 在席表示と同じ、表示txを取得する。
