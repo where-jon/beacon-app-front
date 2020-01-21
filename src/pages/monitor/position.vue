@@ -2,7 +2,7 @@
   <div class="container-fluid">
     <breadcrumb :items="items" :reload="true" :state="reloadState" @reload="fetchData" />
     <div v-show="!reloadState.isLoad" class="container">
-      <monitor-table ref="monitorTable" type="position" :vue-table-mode="isDev" :all-count="allCount" :headers="headers" :datas="positions" :tr-class="getClass" />
+      <monitor-table ref="monitorTable" type="position" :vue-table-mode="isDev" :all-count="allCount" :fields="fields" :list="positions" :tr-class="getClass" />
     </div>
   </div>
 </template>
@@ -39,11 +39,15 @@ export default {
   data () {
     return {
       items: ViewHelper.createBreadCrumbItems('monitor', 'position'),
-      headers: this.getHeaders(),
+      fields: this.getHeaders(),
       positions: [],
       reloadState: { isLoad: false },
       csvHeaders: this.getCsvHeaders(),
-    }
+      params: {
+        name: 'position-list',
+        id: 'positionListId',
+      },
+}
   },
   computed: {
     ...mapState('app_service', [
@@ -71,15 +75,11 @@ export default {
       return name
     },
     getHeaders(){
-      if(this.isDev){
-        return ViewHelper.addLabelByKey(null, [
-          { key: 'btx_id' }, { key: 'device_id' }, { key: 'pos_id' }, { key: 'phase' }, { key: 'power_level' }, { key: 'updatetime' }, { key: 'nearest1' }, { key: 'nearest2' }, { key: 'nearest3' },
-        ])
-      }
       return ViewHelper.addLabelByKey(this.$i18n, APP.TX_MON.WITH.map(val => ({
-        key: this.convertColumnName(val)
+        key: this.convertColumnName(val), sortable: true, tdClass: 'action-rowdata'
       })).concat([
-        { key: 'finalReceiveTimestamp' }, { key: 'state' }
+        { key: 'finalReceiveTimestamp', sortable: true, tdClass: 'action-rowdata' },
+        { key: 'state' , sortable: true, tdClass: 'action-rowdata'},
       ]).filter(val => val))
     },
     getCsvHeaders(){

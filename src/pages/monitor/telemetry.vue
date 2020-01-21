@@ -2,7 +2,7 @@
   <div class="container-fluid">
     <breadcrumb :items="items" :reload="true" :state="reloadState" @reload="fetchData" />
     <div v-show="!reloadState.isLoad" class="container">
-      <monitor-table ref="monitorTable" type="telemetry" :vue-table-mode="isDev" :all-count="allCount" :headers="headers" :datas="telemetrys" :tr-class="getClass" :td-class="getTdClass" />
+      <monitor-table ref="monitorTable" type="telemetry" :vue-table-mode="isDev" :all-count="allCount" :fields="fields" :list="telemetrys" :tr-class="getClass" :td-class="getTdClass" />
     </div>
   </div>
 </template>
@@ -40,7 +40,7 @@ export default {
   data () {
     return {
       items: ViewHelper.createBreadCrumbItems('monitor', 'telemetry'),
-      headers: this.getHeaders(),
+      fields: this.getHeaders(),
       telemetrys: [],
       reloadState: { isLoad: false },
       csvHeaders: this.getCsvHeaders(),
@@ -82,11 +82,11 @@ export default {
           { key: 'hour3_count' },
           { key: 'ibeacon_received' },
         ]: [
-          ConfigHelper.includesDeviceType('deviceId')? { key: 'deviceId' }: null,
-          ConfigHelper.includesDeviceType('deviceIdX')? { key: 'deviceIdX' }: null,
-          { key: 'name', label: 'locationName'},
-          APP.TELEMETRY.WITH_POWER_LEVEL? { key: 'powerLevel' }: null,
-          { key: 'timestamp', label: 'finalReceiveTimestamp'},
+          ConfigHelper.includesDeviceType('deviceId')? { key: 'deviceId' ,sortable: true, tdClass: 'action-rowdata' }: null,
+          ConfigHelper.includesDeviceType('deviceIdX')? { key: 'deviceIdX' ,sortable: true, tdClass: 'action-rowdata' }: null,
+          { key: 'name', label: 'locationName' ,sortable: true, tdClass: 'action-rowdata'},
+          APP.TELEMETRY.WITH_POWER_LEVEL? { key: 'powerLevel' ,sortable: true, tdClass: 'action-rowdata' }: null,
+          { key: 'timestamp', label: 'finalReceiveTimestamp' ,sortable: true, tdClass: 'action-rowdata'},
           { key: 'state' },
         ].filter((val) => val))
     },

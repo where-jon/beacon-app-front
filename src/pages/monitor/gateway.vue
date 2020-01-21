@@ -2,7 +2,7 @@
   <div class="container-fluid">
     <breadcrumb :items="items" :reload="true" :state="reloadState" @reload="fetchData" />
     <div v-show="!reloadState.isLoad" class="container">
-      <monitor-table ref="monitorTable" type="gw" :all-count="allCount" :headers="headers" :datas="gateways" :tr-class="getClass" />
+      <monitor-table ref="monitorTable" type="gw" :all-count="allCount" :fields="fields" :list="gateways" :tr-class="getClass" :p-extra-filter-list="extraFilterList" max-filter-length="40" />
     </div>
   </div>
 </template>
@@ -35,7 +35,7 @@ export default {
   data () {
     return {
       items: ViewHelper.createBreadCrumbItems('monitor', 'gateway'),
-      headers: ViewHelper.addLabelByKey(this.isDev? null: this.$i18n, APP.SVC.POS.EXSERVER?[
+      fields: ViewHelper.addLabelByKey(this.isDev? null: this.$i18n, APP.SVC.POS.EXSERVER?[
         { key: 'deviceid', label: this.isDev? 'deviceid': 'deviceId'},
         { key: 'updated', label: this.isDev? 'updated': 'finalReceiveTimestamp'},
         { key: 'state'},
