@@ -4,7 +4,7 @@
                 :reload="reload" :short-name="shortName"
     />
     <alert v-model="showDismissibleAlert" :message="message" :fix="fixHeight" :prohibit=showDismissibleAlert :prohibit-view="isProhibitView" :alert-style="alertStyle" />
-    <m-list :params="params" :list="positionList" :alert-force-hide=true :use-detail-filter="useDetailFilter" />
+    <m-list :params="params" :totalRows="totalRows" :list="positionList" :alert-force-hide=true :use-detail-filter="useDetailFilter" />
   </div>
 </template>
 
@@ -63,9 +63,9 @@ export default {
           MenuHelper.useMaster('group') && APP.POS.WITH.GROUP? 'group' : null,
           MenuHelper.useMaster('category') && APP.POS.WITH.CATEGORY? 'category' : null,
         ]).compact().value(),
-        initTotalRows: this.$store.state.app_service.positionList.length,
         disableTableButtons: true,
       },
+      totalRows: 0,
       items: ViewHelper.createBreadCrumbItems('main', 'positionList'),
       message: '',
       extraNavSpec: EXTRA_NAV,
@@ -150,6 +150,7 @@ export default {
             isDisableArea: Util.getValue(location, 'isAbsentZone', false),
           }
         })
+        this.totalRows = positions.length
         Util.debug(positions)
         this.replaceAS({positionList: positions})
         if (payload && payload.done) {
