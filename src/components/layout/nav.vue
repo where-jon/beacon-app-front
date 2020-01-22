@@ -67,7 +67,7 @@
                 <b-dropdown-item href="#" @click="move('/setting/personal')">
                   <font-awesome-icon icon="user-cog" fixed-width />&nbsp;&nbsp;{{ $t('label.personal') }}
                 </b-dropdown-item>
-                <b-dropdown-item href="#" @click="openHelp">
+                <b-dropdown-item href="#" v-if="showHelp" @click="openHelp">
                   <font-awesome-icon icon="question-circle" fixed-width />&nbsp;&nbsp;{{ $t('label.help') }}
                 </b-dropdown-item>
                 <b-dropdown-item href="#" @click="logout">
@@ -91,7 +91,7 @@
                 <b-dropdown-item href="#" @click="move('/setting/personal')">
                   <font-awesome-icon icon="user-cog" fixed-width />&nbsp;&nbsp;{{ $t('label.personal') }}
                 </b-dropdown-item>
-                <b-dropdown-item href="#" @click="openHelp">
+                <b-dropdown-item href="#" v-if="showHelp" @click="openHelp">
                   <font-awesome-icon icon="question-circle" fixed-width />&nbsp;&nbsp;{{ $t('label.help') }}
                 </b-dropdown-item>
                 <b-dropdown-item href="#" @click="logout">
@@ -154,6 +154,9 @@ export default {
     },
     linkUrl(){
       return APP.MENU.SHOW_MENU_LINK_URL
+    },
+    showHelp(){
+      return DISP.MENU.SHOW_HELP
     },
     ...mapState('app_service', [
       'pots', 'regions',
