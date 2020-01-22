@@ -383,8 +383,8 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     // TX_FONT: '20px Arial', // Tx表示時のフォント
     DIV_2: 1, // Txが重なった際に２つ上下左右に並べる場合にずらす倍率
     DIV_3: 0.5, // Txが重なった際に３つ左右に並べる場合にずらす倍率
-    HORIZON: 5, // TXアイコンタイル表示時の列数
-    VERTICAL: 5, // TXアイコンタイル表示時の行数
+    HORIZON: 10, // TXアイコンタイル表示時の列数
+    VERTICAL: 10, // TXアイコンタイル表示時の行数
     DISPLAY_PRIORITY: 'category', // TX表示の際に参照するdisplay方法
     ABSENT_ZONE_DISPLAY_TYPES: ['undetected','lost','absent'],   // undetected:未検知, lost:消失, absent:不在ゾーン）
   },
