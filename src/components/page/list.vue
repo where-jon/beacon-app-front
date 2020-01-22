@@ -376,6 +376,9 @@ export default {
   computed: {
     items() {
       const dataList = this.compactMode? this.dataItemList: this.list
+      if(!dataList){
+        return []
+      }
       return dataList.map(item => {
         return _.reduce(item, (result, val, key) => {
           const isAllDisp = Util.hasValue(this.params.allDispFields) && this.params.allDispFields.includes(key)
@@ -669,7 +672,9 @@ export default {
         params.category = this.selectedCategory
         params.group = this.selectedGroup
         const response = await AppServiceHelper.fetchCompactList(`${this.appServicePath}/listdownload/${this.perPage}/${this.currentPage}/${this.sortBy}/${this.sortDesc? 'desc': 'asc'}` , params)
-        this.$parent.$options.methods && this.$parent.$options.methods.editResponse && await this.$parent.$options.methods.editResponse.call(this.$parent, response.data)
+        if( this.$parent.$options.methods && this.$parent.$options.methods.editResponse && response.data) {
+          await this.$parent.$options.methods.editResponse.call(this.$parent, response.data)
+        }
         this.dataItemList = response.data
         this.totalRows = response.count
         this.old.sortBy = this.sortBy
