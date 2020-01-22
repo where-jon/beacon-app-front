@@ -313,7 +313,7 @@ export const SENSOR = {
   TEMPERATURE: 1,
   PIR: 2,
   THERMOPILE: 3,
-  LED: 4,
+  LED_TYPE2: 4,
   MEDITAG: 5,
   MAGNET: 6,
   BUTTON: 7,
@@ -321,12 +321,13 @@ export const SENSOR = {
   OMR_ENV: 9,
   OMR_TP_HUMAN: 10,
   OMR_TP_ENV: 11,
+  LED_TYPE5: 12,
   MAGNET_STATUS: {
     OFF: 0,
     ON: 4,
   },
-  STRING: ['','temperature','pir','thermopile','led','meditag','magnet','button','pressure','omr-env','omr-tp-human','omr-tp-env'],
-  NAMES: ['','thermohumidity','pir','thermopile','led','meditag','magnet','button','pressure','omr-env','omr-tp-human','omr-tp-env']
+  STRING: ['','temperature','pir','thermopile','led_type2','meditag','magnet','button','pressure','omr-env','omr-tp-human','omr-tp-env','led_type5'],
+  NAMES: ['','thermohumidity','pir','thermopile','led_type2','meditag','magnet','button','pressure','omr-env','omr-tp-human','omr-tp-env','led_type5']
 }
 
 export const SUM_UNIT = {
@@ -465,6 +466,7 @@ export const LED_COLORS = {
 }
 
 export const LED_BLINK_TYPES = {
+  ON: 0,
   CHANGE_SLOW: 1,
   CHANGE_FAST: 2,
   BLINK_SLOW: 3,

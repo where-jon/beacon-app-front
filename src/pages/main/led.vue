@@ -12,6 +12,13 @@
             </template>
           </v-select>
         </b-form-group>
+        <b-form-group v-if="deviceType == 5" :label="$t('label.ledNo')">
+          <select v-model="ledNo">
+            <option v-for="option in ledNoOptions" :key="option.value" :value="option.value">
+              {{ option.text }}
+            </option>
+          </select>
+        </b-form-group>
         <b-form-group :label="$t('label.ledColor')">
           <b-form-checkbox-group v-model="form.colors">
             <b-form-checkbox :value="ledColors.BLUE" :readonly="!isEditable" class="checkBlue">
@@ -42,10 +49,13 @@
         </b-form-group>
         <b-form-group :label="$t('label.blink')">
           <b-form-radio-group v-model="form.blink">
-            <b-form-radio :value="ledBlinkTypes.CHANGE_SLOW" :readonly="!isEditable">
+            <b-form-radio v-if="deviceType == 5" :value="ledBlinkTypes.ON" :readonly="!isEditable">
+              {{ $t('label.ledOn') }}
+            </b-form-radio>
+            <b-form-radio v-if="deviceType == 2" :value="ledBlinkTypes.CHANGE_SLOW" :readonly="!isEditable">
               {{ $t('label.changeSlow') }}
             </b-form-radio>
-            <b-form-radio :value="ledBlinkTypes.CHANGE_FAST" :readonly="!isEditable">
+            <b-form-radio v-if="deviceType == 2" :value="ledBlinkTypes.CHANGE_FAST" :readonly="!isEditable">
               {{ $t('label.changeFast') }}
             </b-form-radio>
             <b-form-radio :value="ledBlinkTypes.BLINK_SLOW" :readonly="!isEditable">
@@ -57,10 +67,10 @@
           </b-form-radio-group>
         </b-form-group>
         <b-button v-show="isEditable" v-t="'label.start'" :variant="theme"
-                  :disabled="noDevice" type="submit" class="my-1" @click="buttonClick(true)"
+                  :disabled="!deviceType" type="submit" class="my-1" @click="buttonClick(true)"
         />
         <b-button v-show="isEditable" v-t="'label.end'" :variant="theme" 
-                  :disabled="noDevice" type="submit" class="ml-2 my-1" @click="buttonClick(false)"
+                  :disabled="!deviceType" type="submit" class="ml-2 my-1" @click="buttonClick(false)"
         />
       </b-form>
     </b-container>
@@ -105,27 +115,39 @@ export default {
       ledColors: LED_COLORS,
       ledBlinkTypes: LED_BLINK_TYPES,
       lightOnCandidate: false,
-      noDevice: false,
       again: false,
+      ledNo: 1,
+      ledNoOptions: [1,2,3].map(e => ({text: e, value: e}))
     }
   },
   computed: {
     ...mapState('app_service', [
       'exbs',
     ]),
+    deviceType() {
+      if (!this.form.deviceId) return null
+      return this.exbs.find(exb => exb.deviceId == this.form.deviceId).sensorIds.includes(SENSOR.LED_TYPE2)? 2: 5
+    },
   },
   watch: {
     'vueSelected.deviceId': {
       handler: function(newVal, oldVal){
         this.form.deviceId = Util.getValue(newVal, 'value', null)
+        this.form.colors = [2]
+        this.form.blink = this.deviceType == 2? 1: 0
       },
       deep: true,
     },
     'form.colors': function(newVal, oldVal) {
       // チェックの数が0にされたら値を元に戻す。
       if (newVal.length == 0) {
-        this.form.colors.push(oldVal[0])
+        this.$nextTick(() => {
+          this.form.colors = [oldVal[0]]
+        })
         return
+      }
+      if (this.deviceType == 5 && newVal.length > 1) { // Type5の場合、一つのみチェック
+        this.form.colors = [newVal[newVal.length - 1]]
       }
     },
   },
@@ -138,7 +160,7 @@ export default {
       try {
         this.showProgress()
         await StateHelper.load('exb')
-        const deviceIds = _.filter(this.exbs, exb => exb.sensorIds.includes(SENSOR.LED))
+        const deviceIds = _.filter(this.exbs, exb => exb.sensorIds.includes(SENSOR.LED_TYPE2) || exb.sensorIds.includes(SENSOR.LED_TYPE5))
           .map(exb => {
             const locationName = Util.hasValue(exb.locationName)? (exb.locationName) + ' : ': ''
             const label = locationName + (exb.deviceId) + ' (0x' + exb.deviceId.toString(16) + ')'
@@ -148,7 +170,6 @@ export default {
         if (deviceIds && deviceIds.length == 1) {
           this.vueSelected.deviceId = VueSelectHelper.getVueSelectData(deviceIds, null, true)
         } else if(!Util.hasValue(deviceIds)) {
-          this.noDevice = true
           this.showErrorModal({key: 'noLedDevice'})
         }
 
@@ -164,14 +185,19 @@ export default {
     createEntity(isOn) {
       var rgb = 0
       for (var i of this.form.colors) {
-        rgb += i
+        if (this.deviceType == 2) {
+          rgb += i
+        }
+        else {
+          rgb = Math.log2(i)
+        }
       }
+      const no = this.deviceType == 5? this.ledNo: 1
       return [{
+        deviceType: this.deviceType,
         deviceid: this.form.deviceId,
-        rgb1: rgb,
-        pattern1: isOn? this.form.blink: 0,
-        rgb2: 0,
-        pattern2: 0,
+        ['rgb' + no]: !isOn && this.deviceType == 5? 0: rgb,
+        ['pattern' + no]: isOn? this.form.blink: 0,
       }]
     },
     async onSaving() {

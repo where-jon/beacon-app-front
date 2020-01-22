@@ -83,7 +83,7 @@ export const APP = { // 機能面に関する設定
     USE_MEDITAG: false, // メディタグの使用
     USE_MAGNET: false, // マグネットセンサの使用
     USE_PRESSURE: true, // 圧力センサの使用
-    SHOW_MAGNET_ON_PIR: false, // 人感センサ画面でマグネットセンサを表示
+    SHOW_MAGNET_ON_PIR: false, // 利用状況画面でマグネットセンサを表示
     MAGNET_ON_IS_USED: true, // マグネットセンサーONのとき使用中とするか
     LED: {
       AUTO_OFF_TIME: 300, // 点灯させたLEDに対し、指定秒後に消灯する

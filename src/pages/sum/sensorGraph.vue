@@ -166,7 +166,7 @@ export default {
       sumUnitOptions: [],
       exbOptions: [],
       txOptions: [],
-      exbType: [SENSOR.PIR, SENSOR.THERMOPILE, SENSOR.LED],
+      exbType: [SENSOR.PIR, SENSOR.THERMOPILE, SENSOR.LED_TYPE2, SENSOR.LED_TYPE5],
       txType: [SENSOR.MEDITAG, SENSOR.MAGNET],
       deviceType: DEVICE.EXB,
       showSumTarget: true,
