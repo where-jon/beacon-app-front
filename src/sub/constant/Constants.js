@@ -750,6 +750,12 @@ export const SETTING = {
           PROXIMITY: {
             CRON: SETTING.STRING,
           },
+          AD_SYNC: {
+            CRON: SETTING.STRING,
+          },
+          ENTER_COUNT: {
+            CRON: SETTING.STRING,
+          },
           LOST_ZONE: {
             INTERVAL: SETTING.NUMBER,
           },
