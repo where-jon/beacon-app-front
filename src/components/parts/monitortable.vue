@@ -1,46 +1,59 @@
 <template>
-  <div>
-    <b-row align-h="end">
+  <b-form inline @submit.prevent>
+    <b-container>
       <!-- 絞り込みフィルタ -->
-      <b-form-row class="ml-sm-4 ml-2 mr-1">
-        <b-input-group >
-          <label v-t="'label.filter'" class="mr-2  align-self-center" />
-          <input v-model="filter.reg" class="form-control align-self-center" :maxlength="maxFilterLength">
-          <b-input-group-append>
-            <b-btn v-t="'label.clear'" :disabled="!filter.reg" variant="secondary" class="align-self-center" @click="filter.reg = ''" />
-          </b-input-group-append>
-        </b-input-group>
-      </b-form-row>
-      <!-- 総件数カウンタ -->
-      <all-count :count="allCount" />
-      <!-- ダウンロード-->
-      <b-col v-if="bulkReferenceable" md="2" class="mb-3 mr-3">
-        <b-button v-if="!iosOrAndroid" v-t="'label.download'" :variant="theme" @click="download()" class="download-button" />
-      </b-col>
-    </b-row>
-    <b-table :fields="fields" :items="items" 
-                  :current-page="currentPage" 
-                  :per-page="perPage" 
-                  :filter="filterGrid" 
-                  :sort-by.sync="sortBy" 
-                  :sort-compare="sortCompare" 
-                  :sort-desc.sync="sortDesc" 
-                  :empty-filtered-text="emptyMessage" 
-                  show-empty stacked="md" 
-                  striped 
-                  hover 
-                  outlined 
-                  caption-top 
-                  @filtered="onFiltered"
-                  @sort-changed="() => {}"
-    />
-    <!-- pager -->
-    <b-row>
-      <b-col md="6" class="mt-1 mb-3">
-        <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" class="my-0" @input="() => {}" />
-      </b-col>
-    </b-row>
-  </div>
+      <b-row class="mb-2">
+        <b-form-row  class="mr-4 mb-2">
+          <label v-t="'label.filter'" class="mr-2" />
+          <b-input-group >
+            <input v-model="filter.reg" class="form-control align-self-center" :maxlength="maxFilterLength">
+            <b-input-group-append>
+              <b-btn v-t="'label.clear'" :disabled="!filter.reg" variant="secondary" class="align-self-center" @click="filter.reg = ''" />
+            </b-input-group-append>
+          </b-input-group>
+        </b-form-row>
+        <!-- 総件数カウンタ -->
+        <all-count :count="allCount"  />
+        <!-- ダウンロード-->
+        <b-col v-if="bulkReferenceable" md="2">
+          <b-button v-if="!iosOrAndroid" v-t="'label.download'" :variant="theme" @click="download()" class="download-button" />
+        </b-col>
+      </b-row>
+      <b-table :fields="fields" :items="items" 
+                    :current-page="currentPage" 
+                    :per-page="perPage" 
+                    :filter="filterGrid" 
+                    :sort-by.sync="sortBy" 
+                    :sort-compare="sortCompare" 
+                    :sort-desc.sync="sortDesc" 
+                    :empty-filtered-text="emptyMessage" 
+                    show-empty stacked="md" 
+                    striped 
+                    hover 
+                    outlined 
+                    caption-top 
+                    @filtered="onFiltered"
+                    @sort-changed="() => {}"
+      >
+        <template slot="powerLevel" slot-scope="row">
+          <span :class="getPositionPowerLevelClass(row.item.power_level)">
+            {{ getPositionPowerLevelLabel(row.item.power_level) }}
+          </span>
+        </template>
+        <template slot="state" slot-scope="row">
+          <span :class="getStateClass(row.item.updatetime)">
+            {{ row.item.state }}
+          </span>
+        </template>
+      </b-table>
+      <!-- pager -->
+      <b-row>
+        <b-col md="6" class="mt-1 mb-3">
+          <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" class="my-0" @input="() => {}" />
+        </b-col>
+      </b-row>
+    </b-container>
+  </b-form>
 </template>
 
 <script>
@@ -145,6 +158,8 @@ export default {
     getPositionPowerLevelClass(val) {
       const LEVEL_CLASS_MAP = {good:'success', warning:'warning', poor:'danger'}
       const powerLevel = TelemetryHelper.getPositionPowerLevel(val)
+      console.log(val)
+      console.log(powerLevel)
       if (powerLevel) {
         return this.badgeClassPrefix + LEVEL_CLASS_MAP[powerLevel]
       }

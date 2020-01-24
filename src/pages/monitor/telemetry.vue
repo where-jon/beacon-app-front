@@ -2,7 +2,7 @@
   <div class="container-fluid">
     <breadcrumb :items="items" :reload="true" :state="reloadState" @reload="fetchData" />
     <div v-show="!reloadState.isLoad" class="container">
-      <monitor-table ref="monitorTable" type="telemetry" :vue-table-mode="isDev" :all-count="allCount" :fields="fields" :list="telemetrys" :tr-class="getClass" :td-class="getTdClass" />
+      <monitor-table ref="monitorTable" type="telemetry" :all-count="allCount" :fields="fields" :list="telemetrys" :tr-class="getClass" :td-class="getTdClass" max-filter-length="40" />
     </div>
   </div>
 </template>
@@ -31,12 +31,6 @@ export default {
     monitorTable,
   },
   mixins: [commonmixin, reloadmixin],
-  props: {
-    isDev: {
-      type: Boolean,
-      default: false
-    }
-  },
   data () {
     return {
       items: ViewHelper.createBreadCrumbItems('monitor', 'telemetry'),
@@ -56,32 +50,12 @@ export default {
   },
   mounted() {
     this.fetchData()
-    if (!this.isDev) {
-      return
-    }
-    this.items = ViewHelper.createBreadCrumbItems('develop', 'telemetry')
+    return
   },
   methods: {
     getHeaders(){
-      return ViewHelper.addLabelByKey(this.isDev? null: this.$i18n,
-        this.isDev? [
-          { key: 'meshid_deviceid' },
-          { key: 'deviceid' },
-          { key: 'description' },
-          { key: 'timestamp' },
-          { key: 'firm_ver' },
-          { key: 'power_level' },
-          { key: 'ibeacon_major' },
-          { key: 'ibeacon_minor' },
-          { key: 'ibeacon_txpower' },
-          { key: 'ibeacon_interval' },
-          { key: 'hour168_count' },
-          { key: 'hour24_count' },
-          { key: 'hour12_count' },
-          { key: 'hour6_count' },
-          { key: 'hour3_count' },
-          { key: 'ibeacon_received' },
-        ]: [
+      return ViewHelper.addLabelByKey(this.$i18n,
+        [
           ConfigHelper.includesDeviceType('deviceId')? { key: 'deviceId' ,sortable: true, tdClass: 'action-rowdata' }: null,
           ConfigHelper.includesDeviceType('deviceIdX')? { key: 'deviceIdX' ,sortable: true, tdClass: 'action-rowdata' }: null,
           { key: 'name', label: 'locationName' ,sortable: true, tdClass: 'action-rowdata'},
@@ -91,26 +65,7 @@ export default {
         ].filter((val) => val))
     },
     getCsvHeaders(){
-      return this.isDev?
-        {
-          meshid_deviceid: 'meshid_deviceid',
-          deviceid: 'deviceid',
-          description: 'description',
-          timestamp: 'timestamp',
-          firm_ver: 'firm_ver',
-          power_level: 'power_level',
-          ibeacon_major: 'ibeacon_major',
-          ibeacon_minor: 'ibeacon_minor',
-          ibeacon_txpower: 'ibeacon_txpower',
-          ibeacon_interval: 'ibeacon_interval',
-          hour168_count: 'hour168_count',
-          hour24_count: 'hour24_count',
-          hour12_count: 'hour12_count',
-          hour6_count: 'hour6_count',
-          hour3_count: 'hour3_count',
-          ibeacon_received: 'ibeacon_received',
-        }:
-        {
+      return {
           deviceId: ConfigHelper.includesDeviceType('deviceId')? 'deviceId': null,
           deviceIdX: ConfigHelper.includesDeviceType('deviceIdX')? 'deviceId(HEX)': null,
           name: 'finalRevceivePlace',
@@ -143,8 +98,8 @@ export default {
       return DetectStateHelper.isUndetect(state) ? 'undetect' : (index % 2 === 1 ? 'odd' : '')
     },
     getTdClass (index, val, key) {
-      const tdClass = !this.isDev && key === this.label_powerLevel ? 'powerlevel' : ''
-      return tdClass + ' ' + (!this.isDev && (key === this.label_state || key === this.label_timestamp) ? 'exb-state' : '')
+      const tdClass = key === this.label_powerLevel ? 'powerlevel' : ''
+      return tdClass + ' ' + ((key === this.label_state || key === this.label_timestamp) ? 'exb-state' : '')
     },
     download() {
       const records = this.telemetrys.map(e => {
@@ -157,26 +112,6 @@ export default {
       BrowserUtil.fileDL('telemetry.csv', CsvUtil.converToCsv(records, null, this.getCsvHeaderList()), getCharSet(this.$store.state.loginId))
     },
     getCsvHeaderList(){
-      if (this.isDev) {
-        return [
-          'meshid_deviceid',
-          'deviceid',
-          'description',
-          'timestamp',
-          'firm_ver',
-          'power_level',
-          'ibeacon_major',
-          'ibeacon_minor',
-          'ibeacon_txpower',
-          'ibeacon_interval',
-          'hour168_count',
-          'hour24_count',
-          'hour12_count',
-          'hour6_count',
-          'hour3_count',
-          'ibeacon_received',
-        ]
-      }
       const ret = []
       if (ConfigHelper.includesDeviceType('deviceId')) {
         ret.push(this.$i18n.tnl('label.deviceId'))
@@ -194,9 +129,6 @@ export default {
       return ret
     },
     async makeTelemetryRecords(telemetrys) {
-      if (this.isDev) {
-        return telemetrys
-      }
       await StateHelper.load('exb')
       const map = {}
       this.exbs.forEach((e) => {

@@ -2,7 +2,7 @@
   <div class="container-fluid">
     <breadcrumb :items="items" :reload="true" :state="reloadState" @reload="fetchData" />
     <div v-show="!reloadState.isLoad" class="container">
-      <monitor-table ref="monitorTable" type="position" :vue-table-mode="isDev" :all-count="allCount" :fields="fields" :list="positions" :tr-class="getClass" />
+      <monitor-table ref="monitorTable" type="position" :all-count="allCount" :fields="fields" :list="positions" :tr-class="getClass" max-filter-length="40" />
     </div>
   </div>
 </template>
@@ -30,12 +30,6 @@ export default {
     monitorTable,
   },
   mixins: [commonmixin, reloadmixin],
-  props: {
-    isDev: {
-      type: Boolean,
-      default: false
-    }
-  },
   data () {
     return {
       items: ViewHelper.createBreadCrumbItems('monitor', 'position'),
@@ -47,7 +41,7 @@ export default {
         name: 'position-list',
         id: 'positionListId',
       },
-}
+    }
   },
   computed: {
     ...mapState('app_service', [
@@ -59,9 +53,6 @@ export default {
   },
   mounted() {
     this.fetchData()
-    if (!this.isDev) {
-      return
-    }
     this.items = ViewHelper.createBreadCrumbItems('develop', 'position')
   },
   methods: {
@@ -83,20 +74,6 @@ export default {
       ]).filter(val => val))
     },
     getCsvHeaders(){
-      if(this.isDev){
-        return {
-          'btx_id': 'btx_id',
-          'device_id': 'device_id',
-          'pos_id': 'pos_id',
-          'phase': 'phase',
-          'power_level': 'power_level',
-          'updatetime': 'updatetime',
-          'nearest1': 'nearest1',
-          'nearest2': 'nearest2',
-          'nearest3': 'nearest3',
-        }
-      }
-
       const ret = {}
       APP.TX_MON.WITH.forEach(val => {
         ret[this.convertColumnName(val)] = val == 'btxId'? 'btx_id': val
@@ -136,16 +113,6 @@ export default {
       this.isLoad = false
     },
     async makePositionRecords(positions) {
-      if (this.isDev) {
-        return positions.map((position) =>{
-          return {
-            ...position,
-            nearest1: position.nearest && position.nearest.length > 0? position.nearest[0]: null,
-            nearest2: position.nearest && position.nearest.length > 1? position.nearest[1]: null,
-            nearest3: position.nearest && position.nearest.length > 2? position.nearest[2]: null,
-          }
-        })
-      }
       await Promise.all(['exb','tx'].map(StateHelper.load))
       return positions.map(e => {
         const tx = this.txs.find(tx => tx.btxId == e.btx_id)
@@ -162,11 +129,7 @@ export default {
       })
     },
     async margeSensorRecords(positions){
-      if(this.isDev){
-        return positions
-      }
       const sensorHistories = await this.fetchSensorHistory()
-
       const ret = positions.map(position => {
         if(!Util.hasValue(position.sensorIds)){
           return position
@@ -229,21 +192,6 @@ export default {
       )
     },
     getCsvHeaderList() {
-      if(this.isDev){
-        return [
-          'btx_id',
-          'device_id',
-          'pos_id',
-          'phase',
-          'power_level',
-          'updatetime',
-          'nearest1',
-          'nearest2',
-          'nearest3',
-          '\n'
-        ]
-      }
-      
       const ret = []
       APP.TX_MON.WITH.forEach((key) => {
         if (key == 'locationName') {

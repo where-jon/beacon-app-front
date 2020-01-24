@@ -2,7 +2,7 @@
   <div class="container-fluid">
     <breadcrumb :items="items" :reload="true" :state="reloadState" @reload="fetchData" />
     <div v-show="!reloadState.isLoad" class="container">
-      <monitor-table ref="monitorTable" type="gw" :all-count="allCount" :fields="fields" :list="gateways" :tr-class="getClass" :p-extra-filter-list="extraFilterList" max-filter-length="40" />
+      <monitor-table ref="monitorTable" type="gw" :all-count="allCount" :fields="fields" :list="gateways" :tr-class="getClass" max-filter-length="40" />
     </div>
   </div>
 </template>
@@ -26,34 +26,28 @@ export default {
     monitorTable,
   },
   mixins: [commonmixin, reloadmixin],
-  props: {
-    isDev: {
-      type: Boolean,
-      default: false
-    }
-  },
   data () {
     return {
       items: ViewHelper.createBreadCrumbItems('monitor', 'gateway'),
-      fields: ViewHelper.addLabelByKey(this.isDev? null: this.$i18n, APP.SVC.POS.EXSERVER?[
-        { key: 'deviceid', label: this.isDev? 'deviceid': 'deviceId'},
-        { key: 'updated', label: this.isDev? 'updated': 'finalReceiveTimestamp'},
-        { key: 'state'},
+      fields: ViewHelper.addLabelByKey(this.$i18n, APP.SVC.POS.EXSERVER?[
+        { key: 'deviceid', label: 'deviceId', sortable: true, tdClass: 'action-rowdata'},
+        { key: 'updated', label: 'finalReceiveTimestamp', sortable: true, tdClass: 'action-rowdata'},
+        { key: 'state', sortable: true, tdClass: 'action-rowdata'},
       ]:[
-        { key: 'num' , label: 'no'},
-        { key: 'deviceid', label: this.isDev? 'deviceid': 'deviceId'},
-        { key: 'updated', label: this.isDev? 'updated': 'finalReceiveTimestamp'},
+        { key: 'num' , label: 'no', sortable: true, tdClass: 'action-rowdata'},
+        { key: 'deviceid', label: 'deviceId', sortable: true, tdClass: 'action-rowdata'},
+        { key: 'updated', label: 'finalReceiveTimestamp', sortable: true, tdClass: 'action-rowdata'},
         { key: 'state'},
       ]),
       gateways: [],
       csvHeaders: APP.SVC.POS.EXSERVER ? {
         'deviceid': 'deviceid',
-        'updated': this.isDev? 'updated': 'timestamp',
+        'updated': 'timestamp',
         'state': 'state',
       } : {
         'num': 'num',
         'deviceid': 'deviceid',
-        'updated': this.isDev? 'updated': 'timestamp',
+        'updated': 'timestamp',
         'state': 'state',
       },
       reloadState: { isLoad: false },
@@ -66,9 +60,6 @@ export default {
   },
   mounted() {
     this.fetchData()
-    if (!this.isDev) {
-      return
-    }
     this.items = ViewHelper.createBreadCrumbItems('develop', 'gateway')
   },
   methods: {
@@ -115,15 +106,15 @@ export default {
     },
     getCsvHeaderList() {
       return APP.SVC.POS.EXSERVER ? [
-        this.isDev? 'deviceid': this.$i18n.tnl('label.deviceId'),
-        this.isDev? 'updated': this.$i18n.tnl('label.finalReceiveTimestamp'),
-        this.isDev? 'state': this.$i18n.tnl('label.state'),
+        this.$i18n.tnl('label.deviceId'),
+        this.$i18n.tnl('label.finalReceiveTimestamp'),
+        this.$i18n.tnl('label.state'),
         '\n'
       ]: [
-        this.isDev? 'no': this.$i18n.tnl('label.no'),
-        this.isDev? 'deviceid': this.$i18n.tnl('label.deviceId'),
-        this.isDev? 'updated': this.$i18n.tnl('label.finalReceiveTimestamp'),
-        this.isDev? 'state': this.$i18n.tnl('label.state'),
+        this.$i18n.tnl('label.no'),
+        this.$i18n.tnl('label.deviceId'),
+        this.$i18n.tnl('label.finalReceiveTimestamp'),
+        this.$i18n.tnl('label.state'),
         '\n'
       ]
     }
