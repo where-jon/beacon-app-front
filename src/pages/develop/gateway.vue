@@ -28,7 +28,7 @@ export default {
   mixins: [commonmixin, reloadmixin],
   data () {
     return {
-      items: ViewHelper.createBreadCrumbItems('monitor', 'gateway'),
+      items: ViewHelper.createBreadCrumbItems('develop', 'gateway'),
       headers: ViewHelper.addLabelByKey(null, APP.SVC.POS.EXSERVER?[
         { key: 'deviceid', label: 'deviceid'},
         { key: 'updated', label: 'updated'},

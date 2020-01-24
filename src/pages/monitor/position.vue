@@ -53,7 +53,6 @@ export default {
   },
   mounted() {
     this.fetchData()
-    this.items = ViewHelper.createBreadCrumbItems('develop', 'position')
   },
   methods: {
     convertColumnName(name){

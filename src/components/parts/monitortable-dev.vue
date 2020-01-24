@@ -86,10 +86,6 @@ export default {
   },
   mixins: [commonmixin, reloadmixin],
   props: {
-    isDev: {
-      type: Boolean,
-      default: false
-    },
     vueTableMode: {
       type: Boolean,
       default: false

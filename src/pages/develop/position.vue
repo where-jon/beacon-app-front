@@ -2,7 +2,7 @@
   <div class="container-fluid">
     <breadcrumb :items="items" :reload="true" :state="reloadState" @reload="fetchData" />
     <div v-show="!reloadState.isLoad" class="container">
-      <monitor-table ref="monitorTable" type="position" :all-count="allCount" :headers="headers" :datas="positions" :tr-class="getClass" />
+      <monitor-table ref="monitorTable" type="position" :vue-table-mode="isDev" :all-count="allCount" :headers="headers" :datas="positions" :tr-class="getClass" />
     </div>
   </div>
 </template>
@@ -32,7 +32,8 @@ export default {
   mixins: [commonmixin, reloadmixin],
   data () {
     return {
-      items: ViewHelper.createBreadCrumbItems('monitor', 'position'),
+      isDev: true,
+      items: ViewHelper.createBreadCrumbItems('develop', 'position'),
       headers: this.getHeaders(),
       positions: [],
       reloadState: { isLoad: false },

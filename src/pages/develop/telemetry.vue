@@ -2,7 +2,7 @@
   <div class="container-fluid">
     <breadcrumb :items="items" :reload="true" :state="reloadState" @reload="fetchData" />
     <div v-show="!reloadState.isLoad" class="container">
-      <monitor-table ref="monitorTable" type="telemetry" :all-count="allCount" :headers="headers" :datas="telemetrys" :tr-class="getClass" :td-class="getTdClass" />
+      <monitor-table ref="monitorTable" type="telemetry" :vue-table-mode="isDev" :all-count="allCount" :headers="headers" :datas="telemetrys" :tr-class="getClass" :td-class="getTdClass" />
     </div>
   </div>
 </template>
@@ -33,7 +33,8 @@ export default {
   mixins: [commonmixin, reloadmixin],
   data () {
     return {
-      items: ViewHelper.createBreadCrumbItems('monitor', 'telemetry'),
+      isDev: true,
+      items: ViewHelper.createBreadCrumbItems('develop', 'telemetry'),
       headers: this.getHeaders(),
       telemetrys: [],
       reloadState: { isLoad: false },
@@ -55,7 +56,7 @@ export default {
   methods: {
     getHeaders(){
       return ViewHelper.addLabelByKey(null,
-         [
+        [
           { key: 'meshid_deviceid' },
           { key: 'deviceid' },
           { key: 'description' },
@@ -72,7 +73,7 @@ export default {
           { key: 'hour6_count' },
           { key: 'hour3_count' },
           { key: 'ibeacon_received' },
-        ].filter((val) => val))
+        ])
     },
     getCsvHeaders(){
       return {
@@ -119,7 +120,7 @@ export default {
     },
     getTdClass (index, val, key) {
       const tdClass = ''
-      return tdClass + ' '
+      return tdClass
     },
     download() {
       const records = this.telemetrys.map(e => {
