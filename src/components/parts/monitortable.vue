@@ -1,80 +1,67 @@
 <template>
-  <div>
-    <b-row align-h="end">
-      <all-count :count="allCount" />
-      <b-col v-if="bulkReferenceable" md="2" class="mb-3 mr-3">
-        <b-button v-if="!iosOrAndroid" v-t="'label.download'" :variant="theme" @click="download()" class="download-button" />
-      </b-col>
-    </b-row>
-    <div class="table-area">
-      <table v-if="!vueTableMode" class="table table-hover">
-        <thead>
-          <tr>
-            <th v-for="(header, index) in headers" :key="index" scope="col">
-              {{ header.label }}
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(data, dataIndex) in datas" :key="dataIndex" :class="trClass(data, dataIndex)">
-            <td v-for="(header, headerIndex) in headers" :key="headerIndex" :class="tdClass(dataIndex, header, headerIndex)">
-              <span v-if="header.key == 'state' && type == 'gw'">
-                <span :class="getStateClass('gw', data.updated)">
-                  {{ getStateLabel('gw', data.updated) }}
-                </span>
-              </span>
-              <span v-else-if="header.key == 'state' && type == 'position'">
-                <span :class="getStateClass('tx', data.updatetime)">
-                  {{ data.state }}
-                </span>
-              </span>
-              <span v-else-if="header.key == 'powerLevel' && type == 'position'">
-                <span :class="getPositionPowerLevelClass(data.power_level)">
-                  {{ getPositionPowerLevelLabel(data.power_level) }}
-                </span>
-              </span>
-              <span v-else-if="header.key == 'powerLevel' && type == 'telemetry'">
-                <font-awesome-icon :icon="['fas', getTelemetryPowerLevelClass(data.powerLevel)]" :class="getTelemetryPowerLevelClass(data.powerLevel, true)" />{{ data.powerLevel }}
-              </span>
-              <span v-else-if="header.key == 'state' && type == 'telemetry'" :class="getStateClass('exb', data.timestamp)">
-                {{ data[header.key] }}
-              </span>
-              <span v-else>
-                {{ data[header.key] }}
-              </span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <vue-scrolling-table v-else>
-        <template slot="thead">
-          <th v-for="(header, index) in headers" :key="index" scope="col">
-            {{ header.label }}
-          </th>
+  <b-form inline @submit.prevent>
+    <b-container>
+      <!-- 絞り込みフィルタ -->
+      <b-row class="mb-2">
+        <b-form-row  class="mr-4 mb-2">
+          <label v-t="'label.filter'" class="mr-2" />
+          <b-input-group >
+            <input v-model="filter.reg" class="form-control align-self-center" :maxlength="maxFilterLength">
+            <b-input-group-append>
+              <b-btn v-t="'label.clear'" :disabled="!filter.reg" variant="secondary" class="align-self-center" @click="filter.reg = ''" />
+            </b-input-group-append>
+          </b-input-group>
+        </b-form-row>
+        <!-- 総件数カウンタ -->
+        <all-count :count="allCount"  />
+        <!-- ダウンロード-->
+        <b-col v-if="bulkReferenceable" md="2">
+          <b-button v-if="!iosOrAndroid" v-t="'label.download'" :variant="theme" @click="download()" class="download-button" />
+        </b-col>
+      </b-row>
+      <b-table :fields="fields" :items="items" 
+                    :current-page="currentPage" 
+                    :per-page="perPage" 
+                    :filter="filterGrid" 
+                    :sort-by.sync="sortBy" 
+                    :sort-compare="sortCompare" 
+                    :sort-desc.sync="sortDesc" 
+                    :empty-filtered-text="emptyMessage" 
+                    show-empty stacked="md" 
+                    striped 
+                    hover 
+                    outlined 
+                    caption-top 
+                    @filtered="onFiltered"
+                    @sort-changed="() => {}"
+      >
+        <template slot="powerLevel" slot-scope="row">
+          <span :class="getPositionPowerLevelClass(row.item.power_level)">
+            {{ getPositionPowerLevelLabel(row.item.power_level) }}
+          </span>
         </template>
-        <template slot="tbody">
-          <tr v-for="(data, index) in datas" :key="index">
-            <td v-for="(header, headerIndex) in headers" :key="headerIndex" scope="row">
-              <span v-if="header.key.includes('nearest') && type == 'position'">
-                <div v-for="(value, key) in data[header.key]" :key="key">
-                  {{ key }}:{{ value }}
-                </div>
-              </span>
-              <span v-else>
-                {{ data[header.key] }}
-              </span>
-            </td>
-          </tr>
+        <template slot="state" slot-scope="row">
+          <span :class="getStateClass(row.item.updatetime)">
+            {{ row.item.state }}
+          </span>
         </template>
-      </vue-scrolling-table>
-    </div>
-  </div>
+      </b-table>
+      <!-- pager -->
+      <b-row>
+        <b-col md="6" class="mt-1 mb-3">
+          <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" class="my-0" @input="() => {}" />
+        </b-col>
+      </b-row>
+    </b-container>
+  </b-form>
 </template>
 
 <script>
 import VueScrollingTable from 'vue-scrolling-table'
 import * as DetectStateHelper from '../../sub/helper/domain/DetectStateHelper'
 import * as TelemetryHelper from '../../sub/helper/domain/TelemetryHelper'
+import * as StringUtil from '../../sub/util/StringUtil'
+import * as Util from '../../sub/util/Util'
 import commonmixin from '../mixin/commonmixin.vue'
 import reloadmixin from '../mixin/reloadmixin.vue'
 import allCount from './allcount.vue'
@@ -102,13 +89,13 @@ export default {
       type: Number,
       default: 0
     },
-    headers: {
+    fields: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
-    datas: {
+    list: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     trClass: {
       type: Function,
@@ -118,11 +105,38 @@ export default {
       type: Function,
       default: () => ''
     },
-  },
+    perPage: {
+      type: [String, Number],
+      default: 10,
+    },
+    maxFilterLength: {
+      type: [String, Number],
+      default: 20,
+    },
+},
   data () {
     return {
       badgeClassPrefix: 'badge badge-pill badge-',
+      currentPage: 1,
+      totalRows: 0,
+      filter: {
+        reg: '',
+      },
+      emptyMessage: this.$i18n.tnl('message.listEmpty'),
+      sortBy: null,
+      sortDesc: false,
+      sortCompare: (aData, bData, key) => this.sortCompareCustom(aData, bData, key),
     }
+  },
+  computed: {
+    items() {
+      return this.list.map(item => {
+        return _.reduce(item, (result, val  , key) => {
+          result[key] =  StringUtil.cutOnLong(val, 50)
+          return result
+        }, {})
+      })
+    },
   },
   methods: {
     getTelemetryPowerLevelClass(val, isPowerState = false){
@@ -144,6 +158,8 @@ export default {
     getPositionPowerLevelClass(val) {
       const LEVEL_CLASS_MAP = {good:'success', warning:'warning', poor:'danger'}
       const powerLevel = TelemetryHelper.getPositionPowerLevel(val)
+      console.log(val)
+      console.log(powerLevel)
       if (powerLevel) {
         return this.badgeClassPrefix + LEVEL_CLASS_MAP[powerLevel]
       }
@@ -157,7 +173,34 @@ export default {
     download() {
       this.$parent.$options.methods.download.call(this.$parent)
     },
-  }
+    filterGridGeneral(originItem){
+      if(originItem.isParent){
+        return this.items.find(item => !item.isParent && item.categoryKey == originItem.categoryKey && this.filterGrid(item))? true: false
+      }
+      if(!this.filter.reg){
+        return true
+      }
+      try{
+        const regExp = new RegExp('.*' + this.filter.reg + '.*', 'i')
+        const param = this.fields.filter(field => Util.getValue(field, 'filterable', true)).concat(this.addFilterFields? this.addFilterFields.map(field => ({key: field})): []).map(val => Util.getValue(originItem, val.key, ''))
+        return regExp.test(JSON.stringify(param))
+      }
+      catch(e){
+        return false
+      }
+    },
+    onFiltered(filteredItems) {
+      this.totalRows = filteredItems.length
+      this.currentPage = 1
+    },
+    filterGrid(originItem) {
+      const regBool = this.filterGridGeneral(originItem)
+      return regBool
+    },
+    sortCompareCustom(aData, bData, key){
+      return this.defaultSortCompare(aData, bData, key)
+    },
+}
 }
 </script>
 
