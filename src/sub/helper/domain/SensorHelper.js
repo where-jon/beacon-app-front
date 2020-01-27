@@ -996,14 +996,17 @@ export const createThermoLegends = () => {
   const thermoPatternConfig = getThermoPatternConfig()
   var index = 1
   var lastBase = null
+  var styleBase = null
   return _.map(thermoPatternConfig, config => {
     const style = { shape: SHAPE.CIRCLE, bgColor: config.color, color: DISP.TX.COLOR }
     const msg = config.base? config.base + i18n.tnl('message.underDegree'): lastBase + i18n.tnl('message.overDegree')
     lastBase = config.base
+    styleBase = StyleHelper.getStyleDisplay1(style)
+    styleBase['animation'] = 'legend-flash ' + config.flash + 'ms linear infinite'
     return {
       id: index++,
       items: [
-        { id: 1, text: '', style: StyleHelper.getStyleDisplay1(style) },
+        { id: 1, text: '', style: styleBase },
         { id: 2, text: msg, style: {} },
       ]
     }
