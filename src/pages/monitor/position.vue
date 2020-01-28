@@ -70,6 +70,7 @@ export default {
       })).concat([
         { key: 'finalReceiveTimestamp', sortable: true, tdClass: 'action-rowdata' },
         { key: 'state' , sortable: true, tdClass: 'action-rowdata'},
+        { key: 'powerLevelTimestamp' , sortable: true, tdClass: 'action-rowdata'},
       ]).filter(val => val))
     },
     getCsvHeaders(){
@@ -124,6 +125,7 @@ export default {
           powerLevel: this.$refs.monitorTable.getPositionPowerLevelLabel(e.power_level),
           state: this.$refs.monitorTable.getStateLabel('tx', e.updatetime),
           sensorIds: Util.getValue(tx, 'txSensorList', []).map(txSensor => txSensor.sensor.sensorId),
+          powerLevelTimestamp: this.getTimestamp(e.power_level_timestamp),
         }
       })
     },

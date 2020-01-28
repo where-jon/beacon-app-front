@@ -115,6 +115,7 @@
     "power-poor": "充電/交換",
     "noneDirect": "非指向性",
     "direct": "指向性",
+    "powerLevelTimestamp": "電池残量通知時刻",
 
     "tx": "Tx",
     "txId": "TxID",
