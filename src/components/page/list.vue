@@ -156,12 +156,12 @@
           </div>
         </template>
         <template slot="guardNames" slot-scope="row">
-          <div v-for="(guardName, index) in row.item.guardNames" :key="index">
+          <div v-for="(guardName, index) in row.item.guardNames.split(';')" :key="index">
             {{ guardName }}
           </div>
         </template>
         <template slot="doorNames" slot-scope="row">
-          <div v-for="(doorName, index) in row.item.doorNames" :key="index">
+          <div v-for="(doorName, index) in row.item.doorNames.split(';')" :key="index">
             {{ doorName }}
           </div>
         </template>
