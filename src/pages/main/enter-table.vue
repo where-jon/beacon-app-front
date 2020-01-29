@@ -156,8 +156,8 @@ export default {
           isLost: !pos || pos.isLost,
           timestamp: pos && pos.timestamp
         }
-      }).sortBy(['groupCd', 'potCd'])
-      .forEach(pot => {
+      }).sortBy(['groupCd', 'potCd']
+      ).forEach(pot => {
         if (pot.groupCd !== curGroupId) {
           curGroupId = pot.groupCd
           groupPotList.push({isGroup:true, label: pot.groupName, color: pot.color, bgColor: pot.bgColor, textAlign: 'left'})
@@ -193,7 +193,10 @@ export default {
         let row = (idx - offset) % ROW_CNT
         col = Math.floor((idx - offset) / ROW_CNT)
 
-        if (row == ROW_CNT - 1 && groupPot.isGroup) return
+        if (row == ROW_CNT - 1 && groupPot.isGroup) {
+          this.setList(personGroupList, page, row, col, {label:'', bgColor: 'rgb(242,242,242)'})
+          return
+        }
         if (row == 0 && !groupPot.isGroup) {
           this.setList(personGroupList, page, row, col, lastGroup)
           idx++
