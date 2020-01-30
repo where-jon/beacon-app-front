@@ -15,7 +15,7 @@
                 <font-awesome-icon class="" icon="search" fixed-width />
               </button>
               <b-input-group-append>
-                <b-btn v-t="'label.clear'" :disabled="!filter.reg" variant="secondary" class="align-self-center" @click="filter.reg = ''" />
+                <b-btn v-t="'label.clear'" :disabled="!filter.reg" variant="secondary" class="align-self-center" @click="filter.reg = ''; compactMode? fetchDataCompact(): () => {}" />
               </b-input-group-append>
             </b-input-group>
           </b-form-row>
@@ -542,6 +542,7 @@ export default {
             this[StringUtil.concatCamel('selected', key)] = nVal
           }
         })
+        this.compactMode? this.fetchDataCompact(): () => {}
       },
       deep: true,
     },

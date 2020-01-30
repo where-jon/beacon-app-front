@@ -89,6 +89,14 @@ export default {
       StateHelper.setForceFetch('exb', true)
       StateHelper.setForceFetch('category', true)
     },
+    editResponse(data) {
+      data.forEach(val => {
+        if (val.categoryName) {
+          let label = this.$i18n.tnl('label.' + val.categoryName.toLowerCase()) 
+          val.categoryName = label? label: val.categoryName
+        }
+      })
+    },
   }
 }
 </script>
