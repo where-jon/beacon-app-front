@@ -874,7 +874,6 @@
           "REAL_TIME": "Update stay time real time::Calculate stay time after positioning process in real time. If this setting is TRUE, periodic batch process is basically turned off."
         },
         "POS": {
-          "EXSERVER": "Use EXServer::Use EXServer.",
           "CACHE_TIME": "Server cache effective time::Set up the effective time of cache data accumulated by the server in milliseconds."
         },
         "PROXIMITY":{
@@ -1045,8 +1044,11 @@
           "ABSENT": "Background color (absent area) color code::Set up the background color of the system setting category (absent area)",
           "PROHIBIT": "Background color (prohibit area) color code:: Sets up the background color of the system setting category (prohibit area)."
         }
+      },
+      "POS": {
+        "EXSERVER": "Use EXServer::Use EXServer."
       }
-    },
+  },
     "DEV": {
       "SIMULATION": "Use temporary data::Perform position using temporary data.",
       "SIMULATION_MOVE_PERCENT": "Move probability::Set up the move probability as a percentage.",

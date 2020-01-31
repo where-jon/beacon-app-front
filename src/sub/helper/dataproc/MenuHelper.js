@@ -9,7 +9,7 @@ import * as Util from '../../util/Util'
 import * as AuthHelper from '../base/AuthHelper'
 import * as LocalStorageHelper from '../base/LocalStorageHelper'
 import axios from 'axios'
-import { APP } from '../../constant/config'
+import { DISP } from '../../constant/config'
 
 let store
 
@@ -35,7 +35,7 @@ export const setStore = pStore => {
 export const fetchNav = async (masterFeatureList, tenantFeatureList, featureList, isProvider, isTenantAdmin) => {
   let retNav = _.map(MENU, group => {
     let pages = _.filter(group.pages, page => {
-      if(page.exserver && !APP.SVC.POS.EXSERVER){ // EXSERVERは静的に設定する必要有り
+      if(page.exserver && !DISP.POS.EXSERVER){ // EXSERVERは静的に設定する必要有り
         return false
       }
       if (isTenantAdmin && group.tenantOnly) {

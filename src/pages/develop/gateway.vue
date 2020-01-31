@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import { APP } from '../../sub/constant/config'
+import { DISP } from '../../sub/constant/config'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as CsvUtil from '../../sub/util/CsvUtil'
 import { getCharSet } from '../../sub/helper/base/CharSetHelper'
@@ -29,7 +29,7 @@ export default {
   data () {
     return {
       items: ViewHelper.createBreadCrumbItems('develop', 'gateway'),
-      headers: ViewHelper.addLabelByKey(null, APP.SVC.POS.EXSERVER?[
+      headers: ViewHelper.addLabelByKey(null, DISP.POS.EXSERVER?[
         { key: 'deviceid', label: 'deviceid'},
         { key: 'updated', label: 'updated'},
         { key: 'state'},
@@ -40,7 +40,7 @@ export default {
         { key: 'state'},
       ]),
       gateways: [],
-      csvHeaders: APP.SVC.POS.EXSERVER ? {
+      csvHeaders: DISP.POS.EXSERVER ? {
         'deviceid': 'deviceid',
         'updated': 'updated',
         'state': 'state',
@@ -75,7 +75,7 @@ export default {
           payload.done()
         }
         this.gateways = gateways.map(e => {
-          if(APP.SVC.POS.EXSERVER){
+          if(DISP.POS.EXSERVER){
             const state = this.$refs.monitorTable.getStateLabel('gw', e.timestamp*1000)
             return { ...e, state: state }
           }else{
@@ -105,7 +105,7 @@ export default {
       )
     },
     getCsvHeaderList() {
-      return APP.SVC.POS.EXSERVER ? [
+      return DISP.POS.EXSERVER ? [
         'deviceid',
         'updated',
         'state',

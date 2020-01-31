@@ -291,9 +291,6 @@ export const APP = { // 機能面に関する設定
     },
   },
   SVC: {
-    POS: {
-      EXSERVER: false, // EXServerを使う
-    },
     TOILET: {
       LED: {
         ENABLE: false,
@@ -594,7 +591,11 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
       ABSENT: '', // 背景色カラーコード
       PROHIBIT: '', // 背景色カラーコード  
     }
-  }
+  },
+
+  POS: {
+    EXSERVER: false, // EXServerを使う
+  },
 }
 
 // used when APP.LOGIN_MODE != APP_SERVICE with excloud old api -----------------------------------------------------

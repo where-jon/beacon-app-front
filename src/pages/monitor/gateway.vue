@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import { APP } from '../../sub/constant/config'
+import { DISP } from '../../sub/constant/config'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as CsvUtil from '../../sub/util/CsvUtil'
 import { getCharSet } from '../../sub/helper/base/CharSetHelper'
@@ -29,7 +29,7 @@ export default {
   data () {
     return {
       items: ViewHelper.createBreadCrumbItems('monitor', 'gateway'),
-      fields: ViewHelper.addLabelByKey(this.$i18n, APP.SVC.POS.EXSERVER?[
+      fields: ViewHelper.addLabelByKey(this.$i18n, DISP.POS.EXSERVER?[
         { key: 'deviceid', label: 'deviceId', sortable: true, tdClass: 'action-rowdata'},
         { key: 'updated', label: 'finalReceiveTimestamp', sortable: true, tdClass: 'action-rowdata'},
         { key: 'state', sortable: true, tdClass: 'action-rowdata'},
@@ -40,7 +40,7 @@ export default {
         { key: 'state'},
       ]),
       gateways: [],
-      csvHeaders: APP.SVC.POS.EXSERVER ? {
+      csvHeaders: DISP.POS.EXSERVER ? {
         'deviceid': 'deviceid',
         'updated': 'timestamp',
         'state': 'state',
@@ -74,7 +74,7 @@ export default {
           payload.done()
         }
         this.gateways = gateways.map(e => {
-          if(APP.SVC.POS.EXSERVER){
+          if(DISP.POS.EXSERVER){
             const state = this.$refs.monitorTable.getStateLabel('gw', e.timestamp*1000)
             return { ...e, state: state }
           }else{
@@ -104,7 +104,7 @@ export default {
       )
     },
     getCsvHeaderList() {
-      return APP.SVC.POS.EXSERVER ? [
+      return DISP.POS.EXSERVER ? [
         this.$i18n.tnl('label.deviceId'),
         this.$i18n.tnl('label.finalReceiveTimestamp'),
         this.$i18n.tnl('label.state'),

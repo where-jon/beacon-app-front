@@ -6,7 +6,7 @@
 import _ from 'lodash'
 import moment from 'moment'
 import * as mock from '../../../assets/mock/mock'
-import { DEV, APP, EXCLOUD, APP_SERVICE } from '../../constant/config'
+import { DEV, DISP, EXCLOUD, APP_SERVICE } from '../../constant/config'
 import * as Util from '../../util/Util'
 import * as HttpHelper from '../base/HttpHelper'
 
@@ -177,7 +177,7 @@ export const fetchGateway = async () => {
     await HttpHelper.getExCloud(url(EXCLOUD.GATEWAY_URL) + new Date().getTime())
   return _(data)
     .map(val => {
-      if(APP.SVC.POS.EXSERVER){
+      if(DISP.POS.EXSERVER){
         return {...val, updated: dateform(val.timestamp * 1000)}
       }else{
         return {...val, updated: dateform(val.timestamp)}
@@ -198,7 +198,7 @@ export const fetchTelemetry = async () => {
   return _(data)
     // .filter((val) => EXB.some((exb) => exb.pos_id == val.pos_id))
     .map(val => {
-      let timestamp = APP.SVC.POS.EXSERVER ? val.timestamp * 1000 : val.timestamp
+      let timestamp = DISP.POS.EXSERVER ? val.timestamp * 1000 : val.timestamp
       return {...val, timestamp: dateform(timestamp), ibeacon_received: dateform(val.ibeacon_received)}
     })
     .compact().value()
