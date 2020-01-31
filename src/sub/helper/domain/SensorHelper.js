@@ -868,7 +868,7 @@ export const createTxLegends = (txList, categoryList, groupList) => {
     ]
   }))
   // グループ、カテゴリに全てのTXが紐付いている場合は、デフォルトを非表示
-  if(!hasAllTxCategoryOrGrouop(txList)){
+  if(!hasAllTxDisplayInfo(txList)){
     const defaultStyle = { shape: SHAPE.CIRCLE, bgColor: DISP.TX.BGCOLOR, color: DISP.TX.COLOR }
     ret.push({
       id: 0,
@@ -1035,12 +1035,17 @@ export const getTodayThermoHumidityInfo = async (id, isExb) => {
 }
 
 /**
- * 全てのTxがカテゴリまたはグループが紐付いているか確認する
+ * 全てのTxが優先設定の表示情報に紐付いているか確認する
  * @method
  * @param {Object[]} txList
  * @return {Boolean}
  */
-export const hasAllTxCategoryOrGrouop = txList =>{
-  const idInfo = txList.filter(val => (val.categoryId || val.groupId ))
-  return txList.length == idInfo.length
+export const hasAllTxDisplayInfo = txList =>{
+  var displayInfo = null
+  if (DISP.TX.DISPLAY_PRIORITY == 'category'){
+    displayInfo = txList.filter(val => (val.categoryId ))
+  }else {
+    displayInfo = txList.filter(val => (val.groupId ))
+  }
+  return txList.length == displayInfo.length
 }
