@@ -249,6 +249,7 @@
     "pot": "People or Things",
     "potPerson": "Person",
     "potThing": "Thing",
+    "potOther": "Thing(Other)",
     "potId": "ID",
     "potCd": "ID",
     "potName": "Name",
