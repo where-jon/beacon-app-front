@@ -34,12 +34,9 @@ export const extraCheckCsvObj = papaResult => {
  * csv形式の文字列をcsvオブジェクトに変換する。
  * @method
  * @param {String} str csv形式の文字列
- * @param {String} forceCharSet strをこの文字コードとして扱う
  * @return {Object} papaparseの結果オブジェクト
  */
-export const csv2Obj = (str, forceCharSet) => {
-  str = str.replace('\xEF\xBB\xBF', '') // remove bom
-  str = convert2Unicode(str, forceCharSet)
+export const csv2Obj = (str) => {
   str = removeCrLfDup(str)
   return extraCheckCsvObj(convertCsv2Obj(str))
 }
