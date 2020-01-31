@@ -121,7 +121,7 @@ export default {
           name: tx != null ? tx.potName : '—',
           finalReceiveLocation: Util.getValue(exb, 'location.locationName', ''),
           finalReceiveTimestamp: this.getTimestamp(e.updatetime),
-          powerLevel: this.$refs.monitorTable.getPositionPowerLevelLabel(e.power_level),
+          powerLevel: this.$refs.monitorTable.getPositionPowerLevelLabel ? this.$refs.monitorTable.getPositionPowerLevelLabel(e.power_level) : null,
           state: this.$refs.monitorTable.getStateLabel('tx', e.updatetime),
           sensorIds: Util.getValue(tx, 'txSensorList', []).map(txSensor => txSensor.sensor.sensorId),
         }

@@ -64,6 +64,20 @@ export const getAllSensorOptions = (ignoreIds = [SENSOR.LED_TYPE2, SENSOR.LED_TY
 }
 
 /**
+ * センサの選択肢を取得する。
+ * @method
+ * @param {Number[]} ignoreIds
+ * @return {Object[]}
+ */
+export const getGraphSensorOptions = (ignoreIds = [SENSOR.LED, SENSOR.BUTTON]) => {
+  return StateHelper.getOptionsFromState('sensor', 
+    sensor => i18n.tnl('label.' + sensor.sensorName),
+    true,
+    sensor => SensorHelper.availableSensorGraph().includes(sensor.sensorId) && !ignoreIds.includes(sensor.sensorId)
+  )
+}
+
+/**
  * グループの選択肢を取得する。
  * @method
  * @return {Object[]}

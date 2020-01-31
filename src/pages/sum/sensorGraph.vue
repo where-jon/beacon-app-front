@@ -11,7 +11,7 @@
               <span v-t="'label.sensor'" class="d-flex align-items-center" />
             </b-form-row>
             <b-form-row>
-              <b-form-select v-model="form.sensorId" :options="sensorOptions" class="ml-2 inputSelect" required @change="changeSensorId" />
+              <b-form-select v-model="form.sensorId" :options="sensorGraphOptions" class="ml-2 inputSelect" required @change="changeSensorId" />
             </b-form-row>
           </b-form-row>
         </b-form-group>
@@ -203,6 +203,13 @@ export default {
           'dt',
           APP.SENSORGRAPH.CSV_IMMEDIATE? 'pressVol(lat)': null, 'pressVol(max)', 'pressVol(avg)', 'pressVol(min)',
         ].filter(val => val),
+        omr_env: [
+          'dt',
+          APP.SENSORGRAPH.CSV_IMMEDIATE? 'humidity(lat)': null, 'humidity(max)', 'humidity(avg)', 'humidity(min)',
+          APP.SENSORGRAPH.CSV_IMMEDIATE? 'temperature(lat)': null, 'temperature(max)', 'temperature(avg)', 'temperature(min)',
+          APP.SENSORGRAPH.CSV_IMMEDIATE? 'soundNoise(lat)': null, 'soundNoise(max)', 'soundNoise(avg)', 'soundNoise(min)',
+          APP.SENSORGRAPH.CSV_IMMEDIATE? 'ambientLight(lat)': null, 'ambientLight(max)', 'ambientLight(avg)', 'ambientLight(min)',
+        ].filter(val => val),
       },
     }
   },
@@ -377,10 +384,13 @@ export default {
         down: this.add(a.down, b.down),
         magnet: this.add(a.magnet, b.magnet),
         pressVol: this.add(a.pressVol, b.pressVol),
+        soundNoise: this.add(a.soundNoise, b.soundNoise),
+        ambientLight: this.add(a.ambientLight, b.ambientLight),
       }))
       const count = {
         temperature: 0, humidity: 0, count: 0, step: 0, beat: 0, stress: 0,
         low: 0, high: 0, pressure: 0, downLatest: 0, down: 0, magnet: 0, pressVol: 0,
+        soundNoise: 0, ambientLight: 0
       }
       dataList.forEach((data) => {
         Object.keys(data).forEach(key => {
@@ -410,6 +420,8 @@ export default {
         down: this.compare(a.down, b.down) < 0? a.down: b.down,
         magnet: this.compare(a.magnet, b.magnet) < 0? a.magnet: b.magnet,
         pressVol: this.compare(a.pressVol, b.pressVol) < 0? a.pressVol: b.pressVol,
+        soundNoise: this.compare(a.soundNoise, b.soundNoise) < 0? a.soundNoise: b.soundNoise,
+        ambientLight: this.compare(a.ambientLight, b.ambientLight) < 0? a.ambientLight: b.ambientLight,
       }))
     },
     createMinDataList(sensorKey, dataList){
@@ -428,6 +440,8 @@ export default {
         down: this.compare(a.down, b.down) > 0? a.down: b.down,
         magnet: this.compare(a.magnet, b.magnet) > 0? a.magnet: b.magnet,
         pressVol: this.compare(a.pressVol, b.pressVol) > 0? a.pressVol: b.pressVol,
+        soundNoise: this.compare(a.soundNoise, b.soundNoise) > 0? a.soundNoise: b.soundNoise,
+        ambientLight: this.compare(a.ambientLight, b.ambientLight) > 0? a.ambientLight: b.ambientLight,
       }))
     },
     createCsvData(sensorKey, immediate, average, max, min){
@@ -483,6 +497,24 @@ export default {
         ret['pressVol(max)'] = max.pressVol
         ret['pressVol(avg)'] = average.pressVol
         ret['pressVol(min)'] = min.pressVol
+      }
+      if(this.form.sensorId == SENSOR.OMR_ENV){
+        ret['humidity(lat)'] = immediate.humidity
+        ret['humidity(max)'] = max.humidity
+        ret['humidity(avg)'] = average.humidity
+        ret['humidity(min)'] = min.humidity
+        ret['temperature(lat)'] = immediate.temperature
+        ret['temperature(max)'] = max.temperature
+        ret['temperature(avg)'] = average.temperature
+        ret['temperature(min)'] = min.temperature
+        ret['soundNoise(lat)'] = immediate.soundNoise
+        ret['soundNoise(max)'] = max.soundNoise
+        ret['soundNoise(avg)'] = average.soundNoise
+        ret['soundNoise(min)'] = min.soundNoise
+        ret['ambientLight(lat)'] = immediate.ambientLight
+        ret['ambientLight(max)'] = max.ambientLight
+        ret['ambientLight(avg)'] = average.ambientLight
+        ret['ambientLight(min)'] = min.ambientLight
       }
       return ret
     },
@@ -595,7 +627,8 @@ export default {
           this.dataSensorId == SENSOR.THERMOPILE? this.headers.thermopile: 
             this.dataSensorId == SENSOR.MEDITAG? this.headers.meditag: 
               this.dataSensorId == SENSOR.MAGNET? this.headers.magnet: 
-                this.dataSensorId == SENSOR.PRESSURE? this.headers.pressure: null
+                this.dataSensorId == SENSOR.PRESSURE? this.headers.pressure: 
+                  this.dataSensorId == SENSOR.OMR_ENV? this.headers.omr_env: null
 
       BrowserUtil.fileDL(
         'sensorGraph.csv',

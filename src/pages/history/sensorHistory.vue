@@ -103,6 +103,7 @@ export default {
       fields5: SensorHelper.getFields5(),
       fields6: SensorHelper.getFields6(),
       fields8: SensorHelper.getFields8(),
+      fields9: SensorHelper.getFields9(),
       currentPage: 1,
       perPage: 20,
       limitViewRows: 100,
@@ -177,6 +178,12 @@ export default {
       if (senHist.sensorId == SENSOR.PRESSURE) {
         senHist.pressVol = senHist.value.press_vol
       }
+      if (senHist.sensorId == SENSOR.OMR_ENV) {
+        senHist.humidity = senHist.value.humidity
+        senHist.temperature = senHist.value.temperature
+        senHist.soundNoise = senHist.value.sound_noise
+        senHist.ambientLight = senHist.value.ambient_light
+      }
     },
     async displayImpl(){
       this.replace({showAlert: false})
@@ -222,6 +229,9 @@ export default {
       }
       if (aSensorId == SENSOR.PRESSURE) {
         return this.fields8
+      }
+      if (aSensorId == SENSOR.OMR_ENV) {
+        return this.fields9
       }
       return this.fields1
     },
