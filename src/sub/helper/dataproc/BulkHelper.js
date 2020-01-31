@@ -396,10 +396,8 @@ export const csvCharsetCheck = (csvString, bulkCharset) => {
  */
 export const convertBulkCsvObj = (loginId, arrayBuffer) => {
   try{
-    const csvString = ArrayUtil.arrayBuffer2str(arrayBuffer)
     const bulkCharset = CharSetHelper.detectBulkCharSet(loginId)
-    csvCharsetCheck(csvString, bulkCharset)
-    return CsvUtil.csv2Obj(csvString, bulkCharset)
+    return CsvUtil.csv2Obj(arrayBuffer, bulkCharset)
   }
   catch(e){
     throw e
