@@ -140,10 +140,13 @@ export const fetchPositionList = async (exbs, txs) => {
  * @param {Number} sensorId
  * @return {Object[]}
  */
-export const fetchSensor = async (sensorId) => {
+export const fetchSensor = async (sensorId, doCompact=true) => {
   let data = DEV.USE_MOCK_EXC? mock.sensor[sensorId]:
     await HttpHelper.getExCloud(url(EXCLOUD.SENSOR_URL).replace('{id}', sensorId) + new Date().getTime())
-  return _(data).compact().value()
+  if(doCompact){
+    return _(data).compact().value()
+  }
+  return data
 }
 
 /**

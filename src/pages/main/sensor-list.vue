@@ -83,6 +83,8 @@ export default {
         minor: Util.getValue(device, 'minor', ''),
         temperature: NumberUtil.formatTemperature(Util.getValue(device, 'temperature', '')),
         humidity: NumberUtil.formatHumidity(Util.getValue(device, 'humidity', '')),
+        ambientLight: Util.getValue(device, 'ambientLight', ''),
+        soundNoise: Util.getValue(device, 'soundNoise', ''),
         count: Util.getValue(device, 'count', ''),
         high: Util.getValue(device, 'high', ''),
         low: Util.getValue(device, 'low', ''),
@@ -102,7 +104,13 @@ export default {
         this.params.initTotalRows = 0
         this.showProgress()
 
-        const exCluodSensors = await EXCloudHelper.fetchSensor(this.selectedSensor)
+        let exCluodSensors = await EXCloudHelper.fetchSensor(this.selectedSensor, false)
+        // オムロン系はレスポンスが違うので変換する
+        if(this.selectedSensor == SENSOR.OMR_ENV){
+          exCluodSensors = exCluodSensors.sensors.map(sensor => {
+            return {...sensor, deviceid: sensor.pos_id, btx_id: sensor.sensor_id, updatetime: sensor.timestamp}
+          })
+        }
         const positionHistory = await PositionHelper.storePositionHistory()
         const positionedExb = PositionHelper.getPositionedExbWithSensor(this.selectedArea,
           exb => exb.sensorIds.includes(this.selectedSensor),
@@ -112,9 +120,10 @@ export default {
         let positionedTx = PositionHelper.getPositionedTx(this.selectedArea,
           tx => tx.sensorId == this.selectedSensor,
           tx => {
+            const sensor = exCluodSensors.find(sensor => (sensor.btxid == tx.btxId || sensor.btx_id == tx.btxId) && (sensor.timestamp || sensor.updatetime))
             const ret = {
               id: this.selectedSensor,
-              ...exCluodSensors.find(sensor => (sensor.btxid == tx.btxId || sensor.btx_id == tx.btxId) && (sensor.timestamp || sensor.updatetime)),
+              ...sensor,
             }
             if(this.selectedSensor == SENSOR.MEDITAG){
               const pos = positionHistory.find(position => position.txId == tx.txId || position.btx_id == tx.btxId)

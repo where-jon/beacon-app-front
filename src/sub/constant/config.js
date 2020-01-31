@@ -75,7 +75,7 @@ export const APP = { // 機能面に関する設定
     },
   },
   SENSOR: {
-    TX_SENSOR: [1,5,6,7], // TXのタイプに設定可能なセンサーID
+    TX_SENSOR: [1,5,6,7,9], // TXのタイプに設定可能なセンサーID
     MEDITAG: {
       DOWN_RED_TIME: 60000, // MEDiTAG使用時：転倒時赤枠の表示時間
     },
@@ -272,7 +272,8 @@ export const APP = { // 機能面に関する設定
     WITH: ['posId', 'deviceId', 'deviceIdX'],
   },
   SENSORGRAPH: {
-    WITH_DEVICE: true,             // 画面上でデバイスを使用するか否か
+    SENSOR: [1,2,3,4,5,6,7,8,9],        // グラフで利用するセンサー一覧
+    WITH_DEVICE: true,                // 画面上でデバイスを使用するか否か
     CSV_IMMEDIATE: false,             // csvで直近値を出力するか否か
   },
   HISTORY_EXC: {
@@ -535,6 +536,8 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   LED_LINE_COLOR: '#fc5800',// LEDセンサグラフの線色
   MAGNET_LINE_COLOR: '#fc5800',// マグネットセンサグラフの線色
   PRESSURE_LINE_COLOR: '#fc5800',// 圧力センサグラフの線色
+  AMBIENT_LIGHT_COLOR: '#AC787C',// 照度センサグラフの線色
+  SOUND_NOISE_COLOR: '#95A4DE',// 騒音センサグラフの線色
   H_BLOOD_PRESSURE_LINE_COLOR: '#fc5800',// MEDiTAGセンサグラフの線色
   L_BLOOD_PRESSURE_LINE_COLOR: '#7da6e8',// 湿度グラフの線色
   HEART_RATE_LINE_COLOR: '#7de8a6',// 湿度グラフの線色

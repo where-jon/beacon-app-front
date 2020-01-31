@@ -56,6 +56,9 @@ export default {
     sensorOptions() {
       return OptionHelper.getAllSensorOptions()
     },
+    sensorGraphOptions() {
+      return OptionHelper.getGraphSensorOptions()
+    },
     sensorOptionsExb() {
       return OptionHelper.getExbOptions()
     },

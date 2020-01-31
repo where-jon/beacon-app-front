@@ -199,6 +199,14 @@ export const getDiscomfortColor = (temperature, humidity) => {
 export const availableSensorAll = () =>  _([...APP.EXB.SENSOR, ...APP.SENSOR.TX_SENSOR]).sort().uniqWith(_.isEqual).value()
 
 /**
+ * 有効なセンサグラフIDを全て取得する。
+ * @method
+ * @return {Number[]}
+ */
+export const availableSensorGraph = () =>  _([...APP.SENSORGRAPH.SENSOR]).sort().value()
+
+
+/**
  * 有効なセンサが1つしかないか確認する。1つしかない場合は、そのIDを取得する。
  * @method
  * @return {Boolean|Number}
@@ -277,13 +285,12 @@ export const createChartGraphDatasets = (yAxisID, label, chartData, targetId, bo
 /**
  * チャートグラフの設定を作成する。
  * @method
- * @param {{id: String, label: String, ticks: Object}} left グラフ左側に表示する項目。詳細はchart.js参照
- * @param {{id: String, label: String, ticks: Object}} right グラフ右側に表示する項目。詳細はchart.js参照
+ * @param {{id: String, label: String, ticks: Object}} scales グラフ表示する項目。詳細はchart.js参照
  * @param {Boolean} [isResponsive = false] モバイル用
  * @return {Object}
  */
-export const createChartGraphOptions = (left, right, isResponsive = false) => {
-  return ChartHelper.createChartGraphOptions(left, right, isResponsive)
+export const createChartGraphOptions = (scales, isResponsive = false) => {
+  return ChartHelper.createChartGraphOptions(scales, isResponsive)
 }
 
 /**
@@ -303,16 +310,60 @@ export const createChartThermohumidityOptions = (chartData, by, isResponsive = f
         createChartGraphDatasets('temperature', i18n.tnl('label.temperature'), chartData, 'temperature', DISP.TEMPERATURE_LINE_COLOR, by)
           .concat(createChartGraphDatasets('humidity', i18n.tnl('label.humidity'), chartData, 'humidity', DISP.HUMIDITY_LINE_COLOR, by))
     },
-    options: createChartGraphOptions(
+    options: createChartGraphOptions([
       {
         id: 'temperature',
         label: i18n.tnl('label.temperature') + ' (℃)',
         ticks: { min: 0, max: 40 },
+        position: 'left'
       }, {
         id: 'humidity',
         label: i18n.tnl('label.humidity') + ' (%)',
         ticks: { min: 0, max: 100, stepSize: 25},
-      },
+        position: 'right'
+      }],
+      isResponsive
+    )
+  }
+}
+
+export const createChartOmrEnvOptions = (chartData, by, isResponsive = false) => {
+  return {
+    type:'line', 
+    data:{
+      labels: chartData.map(val => val.key),
+      datasets: 
+        createChartGraphDatasets('temperature', i18n.tnl('label.temperature'), chartData, 'temperature', DISP.TEMPERATURE_LINE_COLOR, by)
+        .concat(createChartGraphDatasets('humidity', i18n.tnl('label.humidity'), chartData, 'humidity', DISP.HUMIDITY_LINE_COLOR, by))
+        .concat(createChartGraphDatasets('ambientLight', i18n.tnl('label.ambientLight'), chartData, 'ambientLight', DISP.AMBIENT_LIGHT_COLOR, by))
+        .concat(createChartGraphDatasets('soundNoise', i18n.tnl('label.soundNoise'), chartData, 'soundNoise', DISP.SOUND_NOISE_COLOR, by))
+    },
+    options: createChartGraphOptions([
+        {
+          id: 'temperature',
+          label: i18n.tnl('label.temperature') + ' (℃)',
+          ticks: { min: 0, max: 40 },
+          position: 'left'
+        }, 
+        {
+          id: 'humidity',
+          label: i18n.tnl('label.humidity') + ' (%)',
+          ticks: { min: 0, max: 100, stepSize: 25},
+          position: 'right'
+        },
+        {
+          id: 'ambientLight',
+          label: i18n.tnl('label.ambientLight'),
+          ticks: { min: 0, max: 1000, stepSize: 200},
+          position: 'left'
+        },
+        {
+          id: 'soundNoise',
+          label: i18n.tnl('label.soundNoise'),
+          ticks: { min: 0, max: 100, stepSize: 25},
+          position: 'right'
+        }
+      ],
       isResponsive
     )
   }
@@ -334,7 +385,7 @@ export const createChartPirOptions = (chartData, by, isResponsive = false) => {
       datasets:
         createChartGraphDatasets('pir', i18n.tnl('label.pir'), chartData, 'count', DISP.PIR_LINE_COLOR, by)
     },
-    options: createChartGraphOptions(
+    options: createChartGraphOptions([
       {
         id: 'pir',
         label: i18n.tnl('label.detectedCount'),
@@ -342,7 +393,8 @@ export const createChartPirOptions = (chartData, by, isResponsive = false) => {
           min: 0,
           max: calcChartMax(chartData, 'count', by, 2)
         },
-      },
+        position: 'left'
+      }],
       null,
       isResponsive
     )
@@ -365,15 +417,16 @@ export const createChartThermopileOptions = (chartData, by, isResponsive = false
       datasets:
         createChartGraphDatasets('thermopile', i18n.tnl('label.thermopile'), chartData, 'count', DISP.THERMOPILE_LINE_COLOR, by)
     },
-    options: createChartGraphOptions(
+    options: createChartGraphOptions([
       {
         id: 'thermopile',
         label: i18n.tnl('label.detectedCount'),
         ticks: {
           min: 0,
           max: calcChartMax(chartData, 'count', by, 2)
-        }
-      },
+        },
+        position: 'left'
+      }],
       null,
       isResponsive
     )
@@ -396,7 +449,7 @@ export const createChartMagnetOptions = (chartData, by, isResponsive = false) =>
       datasets:
         createChartGraphDatasets('magnet', i18n.tnl('label.magnet'), chartData, 'magnet', DISP.MAGNET_LINE_COLOR, by)
     },
-    options: createChartGraphOptions(
+    options: createChartGraphOptions([
       {
         id: 'magnet',
         label: '',
@@ -406,8 +459,9 @@ export const createChartMagnetOptions = (chartData, by, isResponsive = false) =>
           callback: function(value, index, values){
             return value == SENSOR.MAGNET_STATUS.ON? i18n.tnl('label.InUse'): value == SENSOR.MAGNET_STATUS.OFF? i18n.tnl('label.notUse'): ''
           }
-        }
-      },
+        },
+        position: 'left'
+      }],
       null,
       isResponsive
     )
@@ -430,7 +484,7 @@ export const createChartPressureOptions = (chartData, by, isResponsive = false) 
       datasets:
         createChartGraphDatasets('pressure', i18n.tnl('label.pressure'), chartData, 'pressVol', DISP.PRESSURE_LINE_COLOR, by)
     },
-    options: createChartGraphOptions(
+    options: createChartGraphOptions([
       {
         id: 'pressure',
         label: i18n.tnl('label.pressVol'),
@@ -438,7 +492,8 @@ export const createChartPressureOptions = (chartData, by, isResponsive = false) 
           min: 0,
           max: calcChartMax(chartData, 'pressVol', by, 2)
         },
-      },
+        position: 'left'
+      }],
       null,
       isResponsive
     )
@@ -463,16 +518,18 @@ export const createChartMeditagOptions = (chartData, by, isResponsive = false) =
           .concat(createChartGraphDatasets('blood_pressure', i18n.tnl('label.l_blood_pressure'), chartData, 'low', DISP.L_BLOOD_PRESSURE_LINE_COLOR, by))
           .concat(createChartGraphDatasets('heart_rate', i18n.tnl('label.heart_rate'), chartData, 'beat', DISP.HEART_RATE_LINE_COLOR, by))
     },
-    options: createChartGraphOptions(
+    options: createChartGraphOptions([
       {
         id: 'blood_pressure',
         label: i18n.tnl('label.blood_pressure'),
         ticks: { min: 0, max: DISP.BLOOD_PRESSURE_MAX, stepSize: DISP.BLOOD_PRESSURE_STEP },
+        position: 'left'
       }, {
         id: 'heart_rate',
         label: i18n.tnl('label.heart_rate'),
         ticks: { min: 0, max: DISP.HEART_RATE_MAX, stepSize: DISP.HEART_RATE_STEP },
-      },
+        position: 'right'
+      }],
       isResponsive
     )
   }
@@ -497,16 +554,18 @@ export const createChartSubMeditagOptions = (chartData, by, isResponsive = false
         createChartGraphDatasets('step', i18n.tnl('label.step'), chartData, 'step', DISP.STEP_LINE_COLOR, by)
           .concat(createChartGraphDatasets('down_count', i18n.tnl('label.down_count'), chartData, 'down', DISP.DOWN_COUNT_LINE_COLOR, by))
     },
-    options: createChartGraphOptions(
+    options: createChartGraphOptions([
       {
         id: 'step',
         label: i18n.tnl('label.step'),
         ticks: { min: 0, max: stepMax },
+        position: 'left'
       }, {
         id: 'down_count',
         label: i18n.tnl('label.down_count'),
         ticks: { min: 0, max: downMax },
-      },
+        position: 'right'
+      }],
       isResponsive
     )
   }
@@ -535,7 +594,8 @@ export const createChartGraph = (canvasId, sensorId, chartData, by, isResponsive
         sensorId == SENSOR.MAGNET? createChartMagnetOptions(chartData, by, isResponsive):
           sensorId == SENSOR.MEDITAG? createChartMeditagOptions(chartData, by, isResponsive):
             sensorId == SENSOR.PRESSURE? createChartPressureOptions(chartData, by, isResponsive):
-              createChartThermohumidityOptions(chartData, by, isResponsive)
+              sensorId == SENSOR.OMR_ENV? createChartOmrEnvOptions(chartData, by, isResponsive):
+                createChartThermohumidityOptions(chartData, by, isResponsive)
   )
   chart.update()
   if(sensorId == SENSOR.MEDITAG){
@@ -643,7 +703,7 @@ export const getMagnetStateKey = (magnetState) => i18n.tnl(`label.${magnetState 
 export const getFields1 = (addColumnList = []) => {
   return addLabelByKey(i18n, [
     {key: 'sensorDt', sortable: true, label:'dt'},
-    {key: 'locationPotName', sortable: true, label:'potName'},
+    {key: 'potName', sortable: true, label:'potName'},
     ArrayUtil.includesIgnoreCase(APP.SENSOR_LIST.WITH, 'deviceId') && ConfigHelper.includesDeviceType('deviceId')? {key: 'deviceId', sortable: true }: null,
     ArrayUtil.includesIgnoreCase(APP.SENSOR_LIST.WITH, 'deviceIdX') && ConfigHelper.includesDeviceType('deviceIdX')? {key: 'deviceIdX', sortable: true }: null,
   ].concat(addColumnList.map(column => {
@@ -723,6 +783,26 @@ export const getFields8 = () => {
 }
 
 /**
+ * オムロン環境センサの一覧表示で使用するテーブルの項目を取得する。
+ * @method
+ * @return {Object[]}
+ */
+export const getFields9 = () => {
+  return addLabelByKey(i18n, [
+    {key: 'sensorDt', sortable: true, label:'dt'},
+    {key: 'potName', sortable: true, label:'potName'},
+    ConfigHelper.includesDeviceType('deviceId')? {key: 'deviceId', sortable: true }: null,
+    ConfigHelper.includesDeviceType('deviceIdX')? {key: 'deviceIdX', sortable: true }: null,
+    { key: 'locationName', forceShow: true },
+    {key: 'areaName', label:'area', sortable: true,},
+    {key: 'temperature', sortable: true},
+    {key: 'humidity', sortable: true},
+    {key: 'ambientLight', sortable: true},
+    {key: 'soundNoise', sortable: true},
+  ])
+}
+
+/**
  * 指定したセンサで使用するテーブルの項目を取得する。
  * @method
  * @param {Number} sensorId
@@ -746,6 +826,9 @@ export const getFields = (sensorId) => {
   }
   if(sensorId == SENSOR.PRESSURE){
     return getFields8()
+  }
+  if(sensorId == SENSOR.OMR_ENV){
+    return getFields9()
   }
   return getFields1()
 }
