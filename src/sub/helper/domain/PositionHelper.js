@@ -89,7 +89,7 @@ export const getPositions = (showAllTime = false, notFilterByTimestamp = false,
     // 言語設定に合った正しいステータス名がセットされないので改めてセットする。
     setDetectState(positions, false) 
   }
-  //positions = positionOwnerFilter(positions, showTxNoOwner)
+  positions = positionOwnerFilter(positions, showTxNoOwner)
   return showAllTime ? positions : positionFilter(positions, selectedGroup, selectedCategory, selectedDetail, selectedFreeWord)
 }
 
