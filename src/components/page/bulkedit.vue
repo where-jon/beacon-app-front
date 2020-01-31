@@ -157,7 +157,8 @@ export default {
       const reader = new FileReader()
       const readerParam = {readFin: false, error: null, entities: [], headers: [], sameLine: []}
       this.setReaderOnload(reader, readerParam, option)
-      reader.readAsText(this.form.csvFile)
+      const charSet = CHAR_SET.find(e => e.id == this.csvCharSet)
+      reader.readAsText(this.form.csvFile, charSet.name)
       for(var i=0; i<10; i++){
         if(readerParam.readFin){
           break
