@@ -44,6 +44,10 @@ export default {
       type: String,
       required: true,
     },
+    pName: {
+      type: String,
+      default: null,
+    },
     bulkName: {
       type: String,
       default: null,
@@ -166,7 +170,7 @@ export default {
       }
 
       this.replaceAS({showLine: true})
-      BulkHelper.entityKeyCheck(this.name, readerParam.headers)
+      BulkHelper.entityKeyCheck(this.name, this.pName, readerParam.headers)
       await AppServiceHelper.bulkSave(this.appServicePath, readerParam.entities, UPDATE_ONLY_NN.NONE, IGNORE.ON)
       if(this.$parent.$options.methods && this.$parent.$options.methods.onSaved) {
         this.$parent.$options.methods.onSaved.call(this.$parent)

@@ -350,9 +350,12 @@ export const csvHeaderCheck = header => {
  * @param {String[]} headers
  * @throws {Exception} エラーメッセージ
  */
-export const entityKeyCheck = (masterName, headers) => {
-  const requireNames = StringUtil.camel2snake(masterName).toUpperCase()
-
+export const entityKeyCheck = (masterName, pMasterName, headers) => {
+  if (pMasterName && Util.getValue(BULK.REQUIRE, StringUtil.camel2snake(pMasterName).toUpperCase() + '.ALLOW')) {
+    masterName = pMasterName
+  }
+  let requireNames = StringUtil.camel2snake(masterName).toUpperCase()
+  
   const arrowHeaders = Util.getValue(BULK.REQUIRE, requireNames + '.ALLOW', [])
   if(!arrowHeaders.every(allowName => headers.includes(allowName))) {
     throw Error(i18n.tnl('message.invalidFile'))

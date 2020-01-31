@@ -45,7 +45,6 @@ export default {
     return {
       name: 'pot',
       id: 'potId',
-      category: CATEGORY.getTypes().filter(val => APP.CATEGORY.TYPES.includes(val.value) && this.pTypeList.includes(val.value)),
     }
   },
   computed: {
@@ -114,9 +113,10 @@ export default {
         Util.setValue(entity, 'extValue.' + ext, entity[ext])
       })
 
-      if(!isNaN(entity.potType) && !this.category.find(cat => cat.value == entity.potType)){
-        entity['potTypeOneOf'] = this.category.map(cat => cat.value)
+      if(!isNaN(entity.potType) && !APP.POT.TYPES.includes(entity.potType)){
+        entity['potTypeOneOf'] = APP.POT.TYPES
       }
+
       if(!Util.hasValue(entity.potType) && !Util.hasValue(entity.categoryName)){
         entity.potType = this.pTypeList[0]
       }
