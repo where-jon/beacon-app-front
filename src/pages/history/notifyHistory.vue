@@ -237,7 +237,7 @@ export default {
         {key: 'lastRcvDatetimes', sortable: true,label:'finalReceiveTime' },
         {key: 'notifyResult', sortable: true,label:'notifyResult' },
       ]),
-      fields8: ViewHelper.addLabelByKey(this.$i18n, [  // 重要部品持ち出しアラート
+      fields8: ViewHelper.addLabelByKey(this.$i18n, [  // 重要物品持ち出しアラート
         {key: 'positionDt', sortable: true, label:'dt'},
         {key: 'notifyTo', sortable: true,label:'notifyTo' },
         {key: 'minors', sortable: true,label:'minor' },

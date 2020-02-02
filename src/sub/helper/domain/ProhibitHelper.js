@@ -20,7 +20,7 @@ export const setApp = pi18n => {
 }
 
 /**
- * 重要部品指定区域の検知情報を取得する。
+ * 重要物品指定区域の検知情報を取得する。
  * @method
  * @param {Object[]} position
  * @param {Object[]} lostZones

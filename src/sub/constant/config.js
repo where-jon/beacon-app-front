@@ -58,9 +58,9 @@ export const APP = { // 機能面に関する設定
     // 禁止区域関連設定
     PROHIBIT_ALERT : null,  // 文字列リストで画面かバッチに通知するか判断["screen","mail","led"]
     PROHIBIT_GROUP_ZONE: null, // 禁止区域非許可{"groupCd":"GR1", "zoneCd":["Z1"]}のJSON配列の形
-    // 重要部品関連設定
+    // 重要物品関連設定
     LOST_ALERT : null,  // 文字列リストで画面かバッチに通知するか判断["screen","mail"]
-    LOST_GROUP_ZONE: null, // 重要部品設定{"groupCd":"GR1", "zoneCd":["Z1"]}のJSON配列の形
+    LOST_GROUP_ZONE: null, // 重要物品設定{"groupCd":"GR1", "zoneCd":["Z1"]}のJSON配列の形
     USE_LEGEND: false, // 凡例を表示
     SHOW_DETECTED_COUNT: false, // 検知数を表示
     SHOW_TX_NO_OWNER: true, // POTと紐付いていないタグを表示する
@@ -235,7 +235,7 @@ export const APP = { // 機能面に関する設定
     // 通知媒体
     MIDIUM_TYPES: [0,1],   // 選択可能な種別（1メール,2slack）
     // 通知
-    STATE_TYPES: [0,1,2,4,5], // 選択可能な種別（0 TXボタン通知,1 アラート系, 2 ユーザ登録・更新 , 3 sos, 4 進入禁止, 5 重要部品 ）
+    STATE_TYPES: [0,1,2,4,5], // 選択可能な種別（0 TXボタン通知,1 アラート系, 2 ユーザ登録・更新 , 3 sos, 4 進入禁止, 5 重要物品 ）
   },
   // 動線分析関連設定
   ANALYSIS: {
