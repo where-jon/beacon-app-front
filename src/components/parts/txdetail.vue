@@ -19,8 +19,8 @@
           </div>
           <div class="description">
             <div v-for="item in getDispItems()" :key="item.key">
-              <div v-if="item.key !== 'name'">{{ item.val }}</div>
-              <div v-else><a href="#" v-if="inMsTeams" @click="moveToChat">{{ item.val }}</a></div>
+              <div v-if="item.key !== 'name' || !inMsTeams">{{ item.val }}</div>
+              <div v-else><a href="#" @click="moveToChat">{{ item.val }}</a></div>
             </div>
           </div>
         </div>
