@@ -4,9 +4,9 @@
  */
 
 import { APP, DISP } from '../../constant/config'
-import { DETECT_STATE, ALERT_STATE, ZONE } from '../../constant/Constants'
-import * as PositionHelper from './PositionHelper'
+import { ALERT_STATE, DETECT_STATE } from '../../constant/Constants'
 import * as ViewHelper from '../ui/ViewHelper'
+import * as PositionHelper from './PositionHelper'
 
 let i18n
 
@@ -28,27 +28,23 @@ export const setApp = pi18n => {
  */
 export const getLostUnDetectList = (position, lostZones) => {
   const isScreen = APP.POS.LOST_ALERT? APP.POS.LOST_ALERT.some(val => val == ALERT_STATE.SCREEN): false
-  if (!isScreen || !APP.POS.LOST_GROUPS || lostZones[0] == null) {
+  if (!isScreen || !APP.POS.LOST_GROUP_ZONE || lostZones[0] == null) {
     return null
   }
-  const groups = APP.POS.LOST_GROUPS
+  const groupZoneList = APP.POS.LOST_GROUP_ZONE
   let lostUnDetectList = []
-  const detectPosition  = position.filter(pos => pos.tx && pos.tx.group && pos.exb)
   lostZones.forEach((lostZone) => {
-    detectPosition.forEach((pos) => {
-      const isGroup = groups.some(group => pos.tx.group.groupId ? pos.tx.group.groupId == group : false)
-      if(isGroup && pos.exb.areaId) {
-        if( pos.detectState != DETECT_STATE.DETECTED || pos.exb.areaId != lostZone.areaId   // 検知エリアが違う
-        || ( pos.exb.areaId == lostZone.areaId && lostZone.zoneType == ZONE.COORDINATE && pos.exb.x != null && pos.exb.y != null  // 検知エリア同一で座標設定の場合
-        && lostZone.x != null && lostZone.y != null && lostZone.w != null && lostZone.h != null
-        && !(pos.exb.x >= lostZone.x && pos.exb.x <= lostZone.x + lostZone.w
-        && pos.exb.y >= lostZone.y && pos.exb.y <= lostZone.y + lostZone.h))){
+    position.forEach((pos) => {
+      const group = groupZoneList.find(e => e.groupCd && pos.tx.group && pos.tx.group.groupCd == e.groupCd)
+      if (group && group.zoneCd.includes(lostZone.zoneCd)) {
+        if( pos.detectState != DETECT_STATE.DETECTED || pos.exb.zoneCd != lostZone.zoneCd) {
           lostUnDetectList.push({
             isLost: true,
             btxId: pos.btx_id,
             minor: pos.minor,
             potName: pos.tx.potName,
-            areaName: pos.exb.locationName,
+            areaName: pos.exb.areaName,
+            locationName: pos.exb.locationName,
             zoneName: lostZone.zoneName,
             lastDetectedTime: pos.timestamp
           })
@@ -68,7 +64,7 @@ export const getLostUnDetectList = (position, lostZones) => {
 export const getProhibitMessage = prohibitDetectList => {
   const isProhibitScreen = APP.POS.PROHIBIT_ALERT? APP.POS.PROHIBIT_ALERT.some(val => val == ALERT_STATE.SCREEN): false
   const isLostScreen = APP.POS.LOST_ALERT? APP.POS.LOST_ALERT.some(val => val == ALERT_STATE.SCREEN): false
-  if ((!isProhibitScreen && !isLostScreen) || (!APP.POS.PROHIBIT_GROUPS && !APP.POS.LOST_GROUPS) || !prohibitDetectList) {
+  if ((!isProhibitScreen && !isLostScreen) || (!APP.POS.PROHIBIT_GROUP_ZONE && !APP.POS.LOST_GROUP_ZONE) || !prohibitDetectList) {
     return ''   // message空
   }
   const prohibitTitle = i18n.tnl('label.detectedProhibitZone')
@@ -78,12 +74,11 @@ export const getProhibitMessage = prohibitDetectList => {
   const labelTime = i18n.tnl('label.finalReceiveTimestamp')
   const labelFinalLocation = i18n.tnl('label.finalReceiveLocation')
   const labelZone =  i18n.tnl('label.zoneName')
-
-  console.log(prohibitDetectList)
+  const labelToBeZone =  i18n.tnl('label.toBeZone')
 
   return prohibitDetectList.map(data => data.isLost
-    ? `<${lostTitle} : ${labelPotName} : ${data.potName} ${labelFinalLocation} : ${data.areaName} ${labelTime} : ${data.lastDetectedTime}>`
-    :`<${prohibitTitle} : ${labelPotName} : ${data.potName} ${labelArea} : ${data.areaName} ${labelZone} : ${data.zoneName}>` ).join(' ')
+    ? `<${lostTitle} [${labelPotName}] ${data.potName} [${labelToBeZone}] ${data.zoneName} [${labelFinalLocation}] ${data.locationName} [${labelTime}] ${data.lastDetectedTime}>`
+    :`<${prohibitTitle} [${labelPotName}] ${data.potName} [${labelArea}] ${data.areaName} [${labelZone}] ${data.zoneName}>` ).join(' ')
 }
 
 /**
@@ -95,48 +90,18 @@ export const getProhibitMessage = prohibitDetectList => {
  */
 export const getProhibitDetectList = (position, prohibitZones) => {
   const isScreen = APP.POS.PROHIBIT_ALERT? APP.POS.PROHIBIT_ALERT.some(val => val == ALERT_STATE.SCREEN): false
-  if (!isScreen || !APP.POS.PROHIBIT_GROUPS || prohibitZones[0] == null) {
+  if (!isScreen || !APP.POS.PROHIBIT_GROUP_ZONE || prohibitZones[0] == null) {
     return null
   }
-  const groups = APP.POS.PROHIBIT_GROUPS
+
+  const groupZoneList = APP.POS.PROHIBIT_GROUP_ZONE
   let detectList = []
-  const isContainZoneBlock = (posX, posY, zone) => {
-    if (!posX || !posY) {
-      return false
-    }
-
-    if (!zone.x || !zone.y || !zone.w || !zone.h) {
-      return false
-    }
-
-    return posX >= zone.x && posX <= zone.x + zone.w &&
-    posY >= zone.y && posY <= zone.y + zone.h
-  }
-
-  const isMatchZoneClassify = (posX, posY, zone) => {
-    if (!posX || !posY || !zone.x || !zone.y) {
-      return false
-    }
-    return posX === zone.x && posY === zone.y
-  }
-
   const detectPosition  = position.filter(pos => pos.tx && pos.tx.group && pos.exb && pos.detectState == DETECT_STATE.DETECTED)
   prohibitZones.forEach(prohibitZone => {
     detectPosition.forEach(pos => {
-      const isGroup = groups.some(group => pos.tx.group.groupId ? pos.tx.group.groupId == group : false)
-      const a = (prohibitZone.zoneType == ZONE.COORDINATE && pos.exb.x != null && pos.exb.y != null
-        && prohibitZone.x != null && prohibitZone.y != null && prohibitZone.w != null && prohibitZone.h != null
-        && pos.exb.x >= prohibitZone.x && pos.exb.x <= prohibitZone.x + prohibitZone.w
-        && pos.exb.y >= prohibitZone.y && pos.exb.y <= prohibitZone.y + prohibitZone.h)
-      if(isGroup && pos.exb.areaId ? pos.exb.areaId == prohibitZone.areaId : false) {
-
-        const isProhibit = prohibitZone.zoneType === ZONE.COORDINATE ?
-        // ゾーン(区画)内に位置情報のx,yが含まれているか?
-        isContainZoneBlock(pos.exb.x, pos.exb.y, prohibitZone) :
-        // ゾーン(分類)のx,yとEXBのx,yが一致するか？
-        isMatchZoneClassify(pos.exb.x, pos.exb.y, prohibitZone)
-
-        if (isProhibit) {
+      const group = groupZoneList.find(e => e.groupCd && pos.tx.group.groupCd == e.groupCd)
+      if (group && group.zoneCd.includes(prohibitZone.zoneCd)) {
+        if (pos.exb.zoneCd == prohibitZone.zoneCd) {
           detectList.push({
             btxId: pos.btx_id,
             minor: pos.minor,

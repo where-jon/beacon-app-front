@@ -57,10 +57,10 @@ export const APP = { // 機能面に関する設定
     MULTI_POSITIONING_NUM: 3,     // 多点測位の点数
     // 禁止区域関連設定
     PROHIBIT_ALERT : null,  // 文字列リストで画面かバッチに通知するか判断["screen","mail","led"]
-    PROHIBIT_GROUPS: null, // 禁止区域非許可GROUPID[1,2,3]の形
+    PROHIBIT_GROUP_ZONE: null, // 禁止区域非許可{"groupCd":"GR1", "zoneCd":["Z1"]}のJSON配列の形
     // 重要部品関連設定
     LOST_ALERT : null,  // 文字列リストで画面かバッチに通知するか判断["screen","mail"]
-    LOST_GROUPS: null, // 重要部品設定GROUPID[1,2,3]の形
+    LOST_GROUP_ZONE: null, // 重要部品設定{"groupCd":"GR1", "zoneCd":["Z1"]}のJSON配列の形
     USE_LEGEND: false, // 凡例を表示
     SHOW_DETECTED_COUNT: false, // 検知数を表示
     SHOW_TX_NO_OWNER: true, // POTと紐付いていないタグを表示する
@@ -129,6 +129,8 @@ export const APP = { // 機能面に関する設定
     EXT_DEF: [
       {key: 'description', type: 'string', length: 100, showlist: true, sort: true },
       {key: 'toilet', type: 'list', format: 'male|female|share|multip', showlist: true, sort: false},
+      {key:'led_no',type:'int',min:1,max:5,showlist:false},
+      {key:'led_device_id',type:'string',format:'^[0-9]+(,[0-9]+)*$',showlist:false},
     ],
   },
   // USER関連設定

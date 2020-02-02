@@ -1294,7 +1294,7 @@ export default {
           this.reloadState.prevent = false
         }
 
-        if (this.pShowProhibit && Util.hasValue(APP.POS.PROHIBIT_GROUPS)) {
+        if (this.pShowProhibit && Util.hasValue(APP.POS.PROHIBIT_GROUP_ZONE)) {
           ProhibitHelper.setProhibitDetect('pos', this, this.positions)
           this.replace({ showAlert: this.showDismissibleAlert })
         }

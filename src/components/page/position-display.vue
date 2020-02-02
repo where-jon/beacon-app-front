@@ -137,7 +137,8 @@ export default {
         await PositionHelper.storePositionHistory(null, true, true)
         this.replaceAS({positions: PositionHelper.getPositions(false, false, true, null, null, null, null)})
 
-        if (Util.hasValue(APP.POS.PROHIBIT_ALERT) && Util.hasValue(APP.POS.PROHIBIT_GROUPS)) {
+        if (Util.hasValue(APP.POS.PROHIBIT_ALERT)
+          && (Util.hasValue(APP.POS.PROHIBIT_GROUP_ZONE)||Util.hasValue(APP.POS.LOST_GROUP_ZONE))) {
           ProhibitHelper.setProhibitDetect('display', this)
         }
 

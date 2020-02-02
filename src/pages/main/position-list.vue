@@ -114,7 +114,8 @@ export default {
         let prohibitCheck = false
         const minorMap = {}
 
-        if (Util.hasValue(APP.POS.PROHIBIT_ALERT) && Util.hasValue(APP.POS.PROHIBIT_GROUPS)) {
+        if (Util.hasValue(APP.POS.PROHIBIT_ALERT)
+          && (Util.hasValue(APP.POS.PROHIBIT_GROUP_ZONE)||Util.hasValue(APP.POS.LOST_GROUP_ZONE))) {
           ProhibitHelper.setProhibitDetect('list', this)
           this.replace({showAlert: this.showDismissibleAlert})
           this.prohibitDetectList? this.prohibitDetectList.forEach((p) => minorMap[p.minor] = p) : null
@@ -130,7 +131,7 @@ export default {
         positions = positions.map(pos => {
           prohibitCheck = minorMap[pos.minor] != null
 
-          const location = pos.location? locationMap[pos.location.locationId]: {}
+          const location = pos.exb.location? locationMap[pos.exb.location.locationId]: {}
           return {
             ...pos,
             // powerLevel: this.getPowerLevel(pos),
@@ -140,12 +141,12 @@ export default {
             tel: Util.getValue(pos, 'tx.extValue.tel', null),
             categoryName: Util.getValue(pos, 'tx.categoryName', null),
             groupName: Util.getValue(pos, 'tx.groupName', null),
-            areaName: Util.getValue(pos, 'location.areaName', null),
-            locationName: Util.getValue(pos, 'location.locationName', null),
+            areaName: Util.getValue(location, 'areaName', null),
+            locationName: Util.getValue(location, 'locationName', null),
             // 追加フィルタ用
             groupId: Util.getValue(pos, 'tx.groupId').val,
             categoryId: Util.getValue(pos, 'tx.categoryId').val,
-            areaId: Util.getValue(pos, 'location.areaId').val,
+            areaId: Util.getValue(location, 'areaId').val,
             blinking : prohibitCheck? 'blinking' : null,
             isDisableArea: Util.getValue(location, 'isAbsentZone', false),
           }

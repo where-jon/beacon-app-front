@@ -102,6 +102,7 @@ export const fetchPositionHistory = async (locations, exbs, txs, allShow, pMock)
     .filter(val => allShow || Util.hasValue(val.locationId) && locationIdMap[val.locationId])
     .map(val => {
       let tx = txIdMap[val.txId]
+      // FIXME: これはtxのlocationになっている。txの下に置かないと混同する。
       let location = Util.getValue(tx, 'location', null) && 0 < tx.location.x * tx.location.y? tx.location: locationIdMap[val.locationId]
       let exb = exbIdMap[val.exbId]
       let label = tx? tx.displayName? tx.displayName: tx.btxId: ''
