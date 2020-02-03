@@ -3,7 +3,7 @@
     <b-container>
       <!-- 絞り込みフィルタ -->
       <b-row class="mb-2">
-        <b-form-row  class="mr-4 mb-2">
+        <b-form-row  md="2" class="mr-4 mb-2">
           <label v-t="'label.filter'" class="mr-2" />
           <b-input-group >
             <input v-model="filter.reg" class="form-control align-self-center" :maxlength="maxFilterLength">
@@ -13,12 +13,11 @@
           </b-input-group>
         </b-form-row>
         <!-- 総件数カウンタ -->
-        <all-count :count="allCount"  />
+        <all-count :count="allCount" />
         <!-- ダウンロード-->
-        <b-col v-if="bulkReferenceable" md="2">
-          <b-button v-if="!iosOrAndroid" v-t="'label.download'" :variant="theme" @click="download()" class="download-button" />
+        <b-col v-if="bulkReferenceable" md="5">
+          <b-button v-if="!iosOrAndroid" v-t="'label.download'" :variant="theme" @click="download()" class="download-button float-right" />
         </b-col>
-      </b-row>
       <b-table :fields="fields" :items="items" 
                     :current-page="currentPage" 
                     :per-page="perPage" 
@@ -57,6 +56,7 @@
         <b-col md="6" class="mt-1 mb-3">
           <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" class="my-0" @input="() => {}" />
         </b-col>
+      </b-row>
       </b-row>
     </b-container>
   </b-form>
