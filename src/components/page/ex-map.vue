@@ -969,7 +969,6 @@ export default {
       let position = PositionHelper.getPositions()
       const ratio = 1 / this.canvasScale
       position = PositionHelper.adjustPosition(position, ratio, this.locations, this.selectedArea)
-      
       position.forEach((pos) => {
         
         const tx = this.txsMap[pos.btx_id]
@@ -1102,10 +1101,9 @@ export default {
         this.txCont = ViewHelper.addContainerOnStage(this.stage, this.bitmap.width, this.bitmap.height)
       }
       this.txCont.removeAllChildren()
-      PositionHelper.disableLocationsCheck(this.locations)
       this.detectedCount = 0
 
-      const absentZonePosition = this.pShowAbsent? this.setAbsentZoneTx(): []
+      const absentZonePosition = this.pShowAbsent? this.setAbsentZoneTx(): [] // FIXME: 
 
       // 数量ボタン押下時
       if (this.isQuantity){

@@ -71,25 +71,14 @@ export const setApp = (pStore, pI18n) => {
  * @return {Object[]}
  */
 export const getPositions = (showAllTime = false, notFilterByTimestamp = false, 
-    showTxNoOwner = APP.POS.SHOW_TX_NO_OWNER,
-    selectedCategory = store.state.main.selectedCategory, selectedGroup = store.state.main.selectedGroup,
-    selectedDetail = store.state.main.selectedDetail,
-    selectedFreeWord = store.state.main.selectedFreeWord) => { // p, position-display, rssimap, position-list, position, ProhibitHelper
+  showTxNoOwner = APP.POS.SHOW_TX_NO_OWNER,
+  selectedCategory = store.state.main.selectedCategory, selectedGroup = store.state.main.selectedGroup,
+  selectedDetail = store.state.main.selectedDetail,
+  selectedFreeWord = store.state.main.selectedFreeWord) => { // p, position-display, rssimap, position-list, position, ProhibitHelper
 
   const positionHistores = store.state.main.positionHistores
-  const orgPositions = store.state.main.orgPositions
 
-  let positions = []
-  if (APP.POS.USE_POSITION_HISTORY) {
-    positions = positionHistores
-  } else {
-    const now = !DEV.USE_MOCK_EXC? new Date().getTime(): mock.positions_conf.start + count++ * mock.positions_conf.interval  // for mock
-    positions = correctPosId(orgPositions, now, notFilterByTimestamp)
-    // PositionHistoryを使用せず、かつ言語設定が切り替わった場合、
-    // 言語設定に合った正しいステータス名がセットされないので改めてセットする。
-    setDetectState(positions, false) 
-  }
-  positions = positionOwnerFilter(positions, showTxNoOwner)
+  let positions = positionOwnerFilter(positionHistores, showTxNoOwner)
   return showAllTime ? positions : positionFilter(positions, selectedGroup, selectedCategory, selectedDetail, selectedFreeWord)
 }
 
@@ -184,48 +173,17 @@ export const storePositionHistory = async (count, allShow = false, fixSize = fal
   const locations = store.state.app_service.locations
   const exbs = store.state.app_service.exbs
   const txs = store.state.app_service.txs
-  const positionHistores = store.state.main.positionHistores
-  const orgPositions = store.state.main.orgPositions
 
-  let positions = []
-  if (APP.POS.USE_POSITION_HISTORY) {
-    // Serverで計算された位置情報を得る
-    positions = await EXCloudHelper.fetchPositionHistory(locations, exbs, txs, allShow, pMock)
-  } else {
-    // 移動平均数分のポジションデータを保持する
-    positions = await EXCloudHelper.fetchPosition(locations, exbs, txs, pMock, allShow)
-  }
+  let positions = await EXCloudHelper.fetchPositionHistory(locations, exbs, txs, allShow, pMock)
   console.log('position2', positions)
   // 検知状態の取得
-  setDetectState(positions, APP.POS.USE_POSITION_HISTORY)
+  setDetectState(positions)
   // 在席表示と同じ、表示txを取得する。
-  positions = getShowTxPositions(positionHistores, orgPositions, positions, allShow)
+  positions = getShowTxPositions(positions, allShow)
   // スタイルをセット
   positions = setPositionStyle(positions, fixSize)
-  if (APP.POS.USE_POSITION_HISTORY) {
-    // this.replaceMain({positionHistores: positions})
-    store.commit('main/replaceMain', {positionHistores: positions})
-  } else {
-    // this.replaceMain({orgPositions: []})
-    store.commit('main/replaceMain', {orgPositions: []})
-    pushOrgPositions(orgPositions, positions)
-  }
+  store.commit('main/replaceMain', {positionHistores: positions})
   return positions
-}
-
-/**
- * 移動平均情報を整理し、vueステートを更新する。
- * @method
- * @param {Object[]} pOrgPositions
- * @param {Object[]} positions
- */
-const pushOrgPositions = (pOrgPositions, positions) => {
-  let orgPositions = _.clone(pOrgPositions)
-  if (orgPositions.length >= APP.POS.MOVING_AVERAGE) {
-    orgPositions.shift()
-  }
-  orgPositions.push(positions)
-  store.commit('main/replaceMain', {orgPositions})
 }
 
 /**
@@ -257,18 +215,14 @@ const setPositionStyle = (positions, fixSize = false) => { // p
 /**
  * Txの表示フラグに従い、位置情報を整理する。
  * @method
- * @param {Object[]} positionHistores
- * @param {Object[]} orgPositions
  * @param {Object[]} positions
  * @param {Boolean} [allShow = false]
  * @return {Object[]}
  */
-const getShowTxPositions = (positionHistores, orgPositions, positions, allShow = false) => { // p
+const getShowTxPositions = (positions, allShow = false) => { // p
   const now = !DEV.USE_MOCK_EXC ? new Date().getTime(): mock.positions_conf.start + count++ * mock.positions_conf.interval
-  //const correctPositions = APP.POS.USE_POSITION_HISTORY? positionHistores: correctPosId(orgPositions, now)
-  const correctPositions = positions // ここでpositionHistoresを使う必要はない
   const cPosMap = {}
-  correctPositions.forEach(c => cPosMap[c.btx_id] = c)
+  positions.forEach(c => cPosMap[c.btx_id] = c)
   return _(positions)
     .filter(pos => allShow || (pos.tx && NumberUtil.bitON(pos.tx.disp, TX.DISP.POS)))
     .map(pos => {
@@ -686,128 +640,7 @@ const getCoordinateZone = (absentDisplayZone, ratio, samePos) => {
   })
 }
 
-/**
- * 過去の位置データの移動平均、RSSIによるフィルタリング、時間によるフィルタリングで位置を決定
- * @method
- * @param {Object[]} orgPositions
- * @param {Number} now
- * @param {Boolean} [showAllTime = false]
- * @return {Object[]}
- */
-export const correctPosId = (orgPositions, now, showAllTime = false) => {
-  Util.debug(now, orgPositions)
-  let positions = correctNearestPositions(orgPositions, now, showAllTime)
 
-  Util.table('足切り＆単純ソート後', positions)
-  positions = correctSumCount(positions)
-
-  Util.table('btxId&posIdグルーピング後', positions)
-
-  // 上記の順番で取り出す
-  positions = correctPair(positions, now)
-
-  if (DEV.DEBUG > 1 && mock.insertPosition) {
-    console.warn('insert mock position')
-    positions = positions.concat(mock.insertPosition)
-  }
-
-  // EXB.forEach((exb) => { // EXBのpos_idが配列にない場合（＝空き状態）追加
-  //   if (!usedPos.includes(exb.pos_id)) {
-  //     positions.push({pos_id: exb.pos_id, btx_id: 0})
-  //   }
-  // })
-
-  Util.table('各TX単位(最終)', positions)
-  orgPositions.forEach(orgPositionList => {
-    orgPositionList.forEach(orgPosition => {
-      _.forEach(orgPosition, (orgValue, orgKey) => {
-        positions.forEach(position => {
-          if(orgPosition.btx_id == position.btx_id && position[orgKey] == null){
-            position[orgKey] = orgValue
-          }
-        })
-      })
-    })
-  })
-  return positions
-}
-
-/**
- * nearestから位置情報を作成する。
- * @method
- * @param {Object[]} orgPositions
- * @param {Number} now
- * @param {Boolean} [showAllTime = false]
- * @return {Object[]}
- */
-export const correctNearestPositions = (orgPositions, now, showAllTime = false) => {
-  return _.chain(orgPositions).reduce((result, positions, idx) => { // MOVING_AVERAGE回の測位データを集約し、nearestをフラットにして１階層のオブジェエクト配列にする
-    _.forEach(positions, pos => {
-      _.forEach(pos.nearest, val => {
-        result.push({btx_id:pos.btx_id, pos_id:val.place_id, label:pos.label, rssi:val.rssi, timestamp:val.timestamp})
-      })
-    })
-    return result
-  }, [])
-    .uniqWith(_.isEqual) // 重複除去
-    .filter(val => {
-      if (DEV.DEBUG) {
-        const method = now - val.timestamp > APP.POS.LOST_TIME || val.rssi < APP.POS.RSSI_MIN? 'warn': 'log'
-        console[method]('btxId', val.btx_id, DateUtil.formatDate(val.timestamp), (now - val.timestamp) / 1000 + '秒前', 'RSSI: ' + Math.round(val.rssi * 100)/ 100)
-      }
-      return true
-    })
-    .filter(val => val.rssi >= APP.POS.RSSI_MIN && (showAllTime || val.timestamp >= now - APP.POS.LOST_TIME)) // RSSI値、指定時刻でフィルタ
-    .orderBy(['btx_id', 'pos_id', 'timestamp']) // btx_id, pos_id, timestampでソート
-    .value()
-}
-
-/**
- * btx_id,pos_idグループでsum(rssi), countを集計する。
- * @method
- * @param {Object[]} orgPositions
- * @return {Object[]}
- */
-export const correctSumCount = orgPositions => {
-  return _.chain(orgPositions).reduce((result, pos) => { // btx_id,pos_idグループでsum(rssi), countを集計（lodashのgroupByは複数には対応していない）
-    const prev = _.find(result, val => val.btx_id == pos.btx_id && val.pos_id == pos.pos_id)
-    if (prev) {
-      prev.rssiTotal += pos.rssi
-      prev.count++
-      prev.rssiAvg = prev.rssiTotal / prev.count
-      prev.timestamp = pos.timestamp
-    }
-    else {
-      result.push({...pos, count:1, rssiTotal:pos.rssi, rssiAvg:pos.rssi})
-    }
-    return result
-  }, [])
-    .map((val => ({...val, count: val.count > 1? 2: 1}))) // count 2以上は2とみなす（1回のみとは区別）
-    .orderBy(['count', 'rssiAvg', 'pos_id', 'btx_id'], ['desc','desc','asc','asc']) // 記録回数（多）、RSSI（強）、pos_id、btx_idでソート
-    .value()
-}
-
-/**
- * 回数とRSSI値の強い順にpos_idとbtx_idのペアを作成する。
- * @method
- * @param {Object[]} orgPositions
- * @param {Number} now
- * @return {Object[]}
- */
-export const correctPair = (orgPositions, now) => {
-  const usedTx = []
-  const usedPos = []  // １つの場所に１TXの場合
-  return _.reduce(orgPositions, (result, val) => { // 回数とRSSI値の強い順にpos_idとbtx_idのペアを決めていく
-    if (!usedTx.includes(val.btx_id) && (!APP.POS.TX_POS_ONE_TO_ONE || !usedPos.includes(val.pos_id))) {
-      usedTx.push(val.btx_id)
-      if (APP.POS.TX_POS_ONE_TO_ONE) {
-        usedPos.push(val.pos_id)
-      }
-      result.push({...val, rssi:val.rssiAvg, transparent: isTransparent(val.timestamp, now), isLost: isLost(val.timestamp, now)})
-    }
-    return result
-  }, [])
-}
 
 /**
  * 位置情報の補正を行う。
@@ -818,8 +651,9 @@ export const correctPair = (orgPositions, now) => {
  * @param {Number} [selectedMapId = null]
  * @return {Object[]}
  */
-export const adjustPosition = (positions, ratio, locations = [], selectedMapId = null) => {
-  const records = locations.filter(location => location.areaId != null && (selectedMapId == null || selectedMapId == location.areaId)).map(location => {
+export const adjustPosition = (positions, ratio, locations = [], selectedMapId = null) => { // FIXME: ここが謎すぎる。FixPositionと分ける selectedMapIdがnull可なのは？
+  const selectedAreasLocations = locations.filter(location => location.areaId != null && (selectedMapId == null || selectedMapId == location.areaId))
+  const records = selectedAreasLocations.map(location => {
     const samePos = []
     const fixPos = []
 
@@ -888,9 +722,8 @@ export const hasDisplayType = (typeKey) => {
  * 検知情報を設定する。
  * @method
  * @param {Object[]} positions
- * @param {Boolean} [usePositionHistory = false]
  */
-export const setDetectState = (positions, usePositionHistory = false) => {
+export const setDetectState = (positions) => {
 
   _.forEach(positions, position => {
     let updatetime = null
@@ -900,7 +733,7 @@ export const setDetectState = (positions, usePositionHistory = false) => {
         .sort((a, b) => a.timestamp < b.timestamp? -1: a.timestamp > b.timestamp? 1: 0).last()
       updatetime = nearest.timestamp
       rssi = nearest.rssi
-    }else if(usePositionHistory){
+    } else {
       updatetime = position.timestamp
     }
 
@@ -963,25 +796,6 @@ export const checkTxAllow = (pos, tx, areaId, isAbsent = false, onlyFixPos = fal
     return false
   }
   return true
-}
-
-/**
- * 無効な場所の情報をデバッグログに表示する。
- * 
- * TODO: posId to deviceId
- * @method
- * @param {Object[]} locationList
- */
-export const disableLocationsCheck = locationList => {
-  // for debug
-  const disabledLocations = {}
-  _.filter(locationList, location => Util.hasValue(location.posId) && (!location.x || location.y <= 0)).forEach(l => disabledLocations[l.posId] = l)
-  getPositions().forEach(pos => {
-    const location = disabledLocations[pos.pos_id]
-    if(location){
-      Util.debug('Found at disabled location', pos, location)
-    }
-  })
 }
 
 /**
@@ -1189,7 +1003,7 @@ export const getPositionsWithAdjust = (areaId, ratio, disabledFilter = false) =>
 
   const position = disabledFilter? getPositions(false, false, null, null, null): getPositions()
   if(APP.POS.USE_MULTI_POSITIONING){
-    // ３点測位はUSE_POSITION_HISTORYには非対応
+    // ３点測位はUSE_POSITION_HISTORYには非対応 FIXME:要対応
     return adjustMultiPosition(position, areaId)
   }
   return adjustPosition(position, ratio, locations, areaId)
