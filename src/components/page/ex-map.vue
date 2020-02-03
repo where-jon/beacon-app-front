@@ -213,6 +213,7 @@ import detailFilter from '../../components/parts/detailFilter.vue'
 import meditag from '../../components/parts/meditag.vue'
 import ToolTip from '../../components/parts/toolTip.vue'
 import txdetail from '../../components/parts/txdetail.vue'
+import moment from 'moment'
 
 export default {
   components: {
@@ -226,6 +227,10 @@ export default {
   },
   mixins: [commonmixin, reloadmixin, showmapmixin],
   props: {
+    pShowMRoomStatus: {
+      type: Boolean,
+      default: false,
+    },
     // common : ブレッドクラム情報
     pCaptionList: {
       type: Array,
@@ -969,7 +974,6 @@ export default {
       let position = PositionHelper.getPositions()
       const ratio = 1 / this.canvasScale
       position = PositionHelper.adjustPosition(position, ratio, this.locations, this.selectedArea)
-      
       position.forEach((pos) => {
         
         const tx = this.txsMap[pos.btx_id]
@@ -1095,7 +1099,7 @@ export default {
       }
     },
     showTxAll() {
-      if(!Util.hasValue(this.pShowTxSensorIds)){
+      if(!Util.hasValue(this.pShowTxSensorIds) || this.pShowMRoomStatus){
         return
       }
       if (!this.txCont) {
@@ -1125,8 +1129,8 @@ export default {
         this.reShowTxDetail(position, absentZonePosition)
       }
     },
-    showExb(exb) {
-      const icon = IconHelper.createExbIcon(exb, this.pShowExbSensorIds, this.getMapScale(), this.stage)
+    showExb(exb, bgColor = null) {
+      const icon = IconHelper.createExbIcon(exb, this.pShowExbSensorIds, this.getMapScale(), this.stage, bgColor, this.pShowMRoomStatus)
       if(!icon){
         return
       }
@@ -1144,15 +1148,72 @@ export default {
         this.exbCon.addChild(icon)
       }
     },
+    getBgColorByMRoomStatus(exb, locationMRoomMap, positionMap) {
+      let bgColor = DISP.PLAN.NO_ACTUAL_NO_PLAN_BG_COLOR
+      const locationId = exb.locationId
+      if (locationMRoomMap[locationId]) {
+        const mr = locationMRoomMap[exb.locationId]
+        if (exb.zoneId && exb.zoneId == mr.zoneId) {
+          const plans = mr.plans
+          if (plans.length == 0) {
+            if (positionMap[locationId]) {
+              bgColor = DISP.PLAN.ACTUAL_OUT_OF_PLAN_BG_COLOR
+            }
+          } else {
+            if (positionMap[locationId]) {
+              const positions = positionMap[locationId]
+              let hasPlan = false
+              for (let idx in positions) {
+                const pos = positions[idx]
+                const updTime = moment(pos.updatetime).valueOf()
+                for (let pIdx in plans) {
+                  const plan = plans[pIdx]
+                  if (plan.startDt <= updTime && updTime <= plan.endDt) {
+                    hasPlan = true
+                    break
+                  }
+                }
+                if (hasPlan) {
+                  break
+                }
+              }
+              if (hasPlan) {
+                bgColor = DISP.PLAN.ACTUAL_IN_PLAN_BG_COLOR
+              } else {
+                bgColor = DISP.PLAN.ACTUAL_OUT_OF_PLAN_BG_COLOR
+              }
+            } else {
+              bgColor = DISP.PLAN.NO_ACTUAL_IN_PLAN_BG_COLOR
+            }
+          }
+        }
+      }
+      return bgColor
+    },
     showExbAll() {
       if(!Util.hasValue(this.pShowExbSensorIds)){
         return
       }
+      const locationMRoomMap = this.$store.state.main.locationMRoomPlanMap
+      const positions = this.$store.state.main.positionHistores
+      const positionMap = positions.reduce((accum, pos) => {
+        if (!accum[pos.location.locationId]) {
+          accum[pos.location.locationId] = []
+        }
+        accum[pos.location.locationId].push(pos)
+        return accum
+      }, {})
       if (!this.exbCon) {
         this.exbCon = ViewHelper.addContainerOnStage(this.stage, this.bitmap.width, this.bitmap.height)
       }
       this.exbCon.removeAllChildren()
-      _.forEach(this.positionedExbMap, exbList => exbList.forEach(exb => this.showExb(exb)))
+      Object.keys(this.positionedExbMap).forEach( key => this.positionedExbMap[key].forEach(exb => {
+        let bgColor = null
+        if (this.pShowMRoomStatus) {
+          bgColor = this.getBgColorByMRoomStatus(exb, locationMRoomMap, positionMap)
+        }
+        this.showExb(exb, bgColor)
+      }))
       this.keepExbPosition = false
       //　表示条件：マグネットセンサ、固定位置登録＆同一エリア、PIR画面表示設定
       if(SensorHelper.includesSensorId(this.pShowExbSensorIds, SENSOR.MAGNET) && APP.SENSOR.SHOW_MAGNET_ON_PIR){
@@ -1178,7 +1239,7 @@ export default {
       }
       if(!payload.disabledPosition){
         const alwaysTxs = this.txs.some(tx => tx.areaId == this.selectedArea && NumberUtil.bitON(tx.disp, TX.DISP.ALWAYS))
-        await PositionHelper.storePositionHistory(this.count, alwaysTxs? true: false)
+        await PositionHelper.storePositionHistory(this.count, alwaysTxs? true: false, false, this.pShowMRoomStatus)
       }
     },
     // 分析用検索条件のバリデーション
@@ -1315,6 +1376,18 @@ export default {
         }
       }, disableErrorPopup)
     },
+    async fetchMRoomPlan() {
+      const now = moment()
+      const startDt = now.format('YYYY-MM-DDT00:00:00.000')
+      const endDt = now.format('YYYY-MM-DDT23:59:59.999')
+      const url = `/office/plans/m-rooms?startDt=${startDt}&endDt=${endDt}&filterType=area&filterId=${this.selectedArea}`
+      const data = await HttpHelper.getAppService(url)
+      const locationMap = data.reduce((accum, elm) => {
+        elm.locationIds.forEach(locationId => accum[locationId] = elm)
+        return accum
+      }, {})
+      this.$store.commit('main/replaceMain', {locationMRoomPlanMap: locationMap})
+    },
     // common
     async fetchData(payload, disableErrorPopup) {
       this.reloadState.prevent = true
@@ -1332,6 +1405,9 @@ export default {
             this.legendItems = this.$parent.$options.methods.getLegendItems.call(this.$parent, this)
           }
         })
+        if (this.pShowMRoomStatus) {
+          await this.fetchMRoomPlan()
+        }
         this.showMapImage(disableErrorPopup, payload)
         if (payload && payload.done) {
           payload.done()

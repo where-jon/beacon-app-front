@@ -15,6 +15,7 @@ import * as DetectStateHelper from './DetectStateHelper'
 import * as MenuHelper from '../dataproc/MenuHelper'
 import * as SensorHelper from './SensorHelper'
 import * as StyleHelper from '../ui/StyleHelper'
+import moment from 'moment'
 
 const iconsUnitNum = 9
 const tileLayoutIconsNum = 5
@@ -178,7 +179,7 @@ const positionFilter = (positions, groupId, categoryId, txIdList, freeWord) => {
  * @param {Boolean} [fixSize = false] 固定サイズ用の幅と高さをcssに適用する。
  * @return {Object[]}
  */
-export const storePositionHistory = async (count, allShow = false, fixSize = false) => { // position-display, pir, position-list, position, sensor-list
+export const storePositionHistory = async (count, allShow = false, fixSize = false, showMRoom = false) => { // position-display, pir, position-list, position, sensor-list
   const pMock = DEV.USE_MOCK_EXC? mock.positions[count]: null
 
   const locations = store.state.app_service.locations
@@ -186,11 +187,15 @@ export const storePositionHistory = async (count, allShow = false, fixSize = fal
   const txs = store.state.app_service.txs
   const positionHistores = store.state.main.positionHistores
   const orgPositions = store.state.main.orgPositions
+  const locationMRoomPlanMap = showMRoom ? store.state.main.locationMRoomPlanMap : null
 
   let positions = []
   if (APP.POS.USE_POSITION_HISTORY) {
     // Serverで計算された位置情報を得る
     positions = await EXCloudHelper.fetchPositionHistory(locations, exbs, txs, allShow, pMock)
+    if (showMRoom) {
+      positions = positions.filter(pos => pos.location && locationMRoomPlanMap[pos.location.locationId])
+    }
   } else {
     // 移動平均数分のポジションデータを保持する
     positions = await EXCloudHelper.fetchPosition(locations, exbs, txs, pMock, allShow)

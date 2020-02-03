@@ -6,6 +6,13 @@ let i18n
 
 export const setI18n = (pI18n) => i18n = pI18n
 
+export const PLAN_TARGET_TYPE = {
+  ZONE: 0,
+  LOCATION: 1,
+  POT_THING: 2,
+  POT_PERSON: 3
+}
+
 export const LOGIN_MODE = {
   APP_SERVICE: 0,
   LOCAL: 1,
@@ -928,6 +935,11 @@ export const MENU = [
       icon: 'lightbulb',
     },
     {
+      key: 'plan',
+      path: 'plan',
+      icon: 'calendar-alt',
+    },
+    {
       key: 'toiletStatus',
       path: 'toilet',
       icon: 'toilet',
@@ -1141,6 +1153,11 @@ export const MENU = [
         path: 'proximityGraph',
         icon: 'chart-bar',
       },
+      {
+        key: 'planActual',
+        path: 'planActual',
+        icon: 'chart-bar',
+      },
     ]
   },
   {
@@ -1175,6 +1192,12 @@ export const MENU = [
       key: 'notifyHistory',
       path: 'notifyHistory',
       feature: '/history/notifyHistory',
+      icon: 'history',
+    },
+    {
+      key: 'planActualHistory',
+      path: 'planActualHistory',
+      feature: '/history/planActualHistory',
       icon: 'history',
     },
     ]

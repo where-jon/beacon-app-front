@@ -11,6 +11,7 @@ export const state = () => ({
   sample: 'sample', // sample
   positionHistores: [],
   timers: [],
+  locationMRoomPlanMap: []
 })
 
 const initState = state()

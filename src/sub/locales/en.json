@@ -201,6 +201,20 @@
     "zoneName": "Zone name",
     "zoneType": "Zone type",
 
+    "today": "today",
+    "week": "week",
+    "schedule": "schedule",
+    "duplicateSchedule": "duplicate",
+    "planName": "title",
+    "select": "select",
+    "remove": "remove",
+    "participant": "participant",
+    "registeredPerson": "registered person",
+    "indicator": "indicator",
+    "planNormalMode": "normal mode",
+    "planMeetingRoomMode": "meeting room mode",
+    "syncWithOutlook": "sync with outlook",
+
     "---------------- App news ---------------":"",
     "news":"<News>",
     "newsDt":"News date",
@@ -311,6 +325,7 @@
     "sensorName": "Sensor name",
     "detectCount": "Number of detections (detection count)",
     "detectedCount": "Number of detections",
+    "planActualHistory": "Plan actual history",
     
     "proximity": "Interactions",
     "proximityId": "Interaction ID",
@@ -685,7 +700,11 @@
     "sample": "Sample",
     "adminConsent": "Admin Consent",
 
-    "dummy": ""
+    "dummy": "",
+    "plan": "plan",
+    "planActual": "planActual",
+    "actual": "actual"
+
   },
   "config": {
     "APP": {
@@ -1388,6 +1407,8 @@
       "INVALID_TENANT_CONTACT": "Contact: http://where123.jp/contact/",
       "IF_NOT_SHOWN": "To show EXOffice, click Sign In button below. If it does not work, try again after reload this page."
     },
+
+    "alreadyReserved": "already reserved.",
 
     "dummy": "" 
   },
