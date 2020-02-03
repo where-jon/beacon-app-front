@@ -34,29 +34,32 @@
                     @filtered="onFiltered"
                     @sort-changed="() => {}"
       >
-        <template slot="powerLevel" slot-scope="row">
-          <span :class="getPositionPowerLevelClass(row.item.power_level)">
-            {{ getPositionPowerLevelLabel(row.item.power_level) }}
-          </span>
-        </template>
-        <template slot="state" slot-scope="row">
-          <span v-if="type == 'gw'" :class="getStateClass(type ,row.item.updated)">
-            {{ getStateLabel('gw', row.item.updated) }}
-          </span>
-          <span v-if="type == 'tx'" :class="getStateClass(type ,row.item.updatetime)">
-            {{ row.item.state }}
-          </span>
-          <span v-if="type == 'exb'" :class="getStateClass(type ,row.item.timestamp)">
-            {{ row.item.state }}
-          </span>
-        </template>
-      </b-table>
-      <!-- pager -->
-      <b-row>
-        <b-col md="6" class="mt-1 mb-3">
-          <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" class="my-0" @input="() => {}" />
-        </b-col>
-      </b-row>
+          <template slot="powerLevel" slot-scope="row">
+            <span  v-if="type == 'tx'" :class="getPositionPowerLevelClass(row.item.power_level)">
+              {{ getPositionPowerLevelLabel(row.item.power_level) }}
+            </span>
+            <span  v-if="type == 'exb'" :class="getPositionPowerLevelClass(row.item.power_level)">
+              <font-awesome-icon :icon="['fas', getTelemetryPowerLevelClass(row.item.powerLevel)]" :class="getTelemetryPowerLevelClass(row.item.powerLevel, true)" />{{ row.item.powerLevel }}
+            </span>
+          </template>
+          <template slot="state" slot-scope="row">
+            <span v-if="type == 'gw'" :class="getStateClass(type ,row.item.updated)">
+              {{ getStateLabel('gw', row.item.updated) }}
+            </span>
+            <span v-if="type == 'tx'" :class="getStateClass(type ,row.item.updatetime)">
+              {{ row.item.state }}
+            </span>
+            <span v-if="type == 'exb'" :class="getStateClass(type ,row.item.timestamp)">
+              {{ row.item.state }}
+            </span>
+          </template>
+        </b-table>
+        <!-- pager -->
+        <b-row>
+          <b-col md="6" class="mt-1 mb-3">
+            <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" class="my-0" @input="() => {}" />
+          </b-col>
+        </b-row>
       </b-row>
     </b-container>
   </b-form>
