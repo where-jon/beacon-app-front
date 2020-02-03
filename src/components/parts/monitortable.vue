@@ -41,7 +41,13 @@
           </span>
         </template>
         <template slot="state" slot-scope="row">
-          <span :class="getStateClass(row.item.updatetime)">
+          <span v-if="type == 'gw'" :class="getStateClass(type ,row.item.updated)">
+            {{ getStateLabel('gw', row.item.updated) }}
+          </span>
+          <span v-if="type == 'tx'" :class="getStateClass(type ,row.item.updatetime)">
+            {{ row.item.state }}
+          </span>
+          <span v-if="type == 'exb'" :class="getStateClass(type ,row.item.timestamp)">
             {{ row.item.state }}
           </span>
         </template>
