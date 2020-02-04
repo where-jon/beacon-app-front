@@ -53,7 +53,7 @@ export default {
           {key: 'locationName', label: 'finalReceiveLocation', sortable: true, tdClass: 'action-rowdata'},
           {key: 'updatetime', label: 'finalReceiveTimestamp', sortable: true, filterable: false, tdClass: 'action-rowdata'},
           // {key: 'powerLevel', label: 'powerLevel', tdClass: 'action-rowdata', 'class': 'text-md-center'},
-          {key: 'mapDisplay', tdClass: 'action-rowdata'},
+          ArrayUtil.includesIgnoreCase(APP.POS_LIST.WITH, 'mapDisplay')? {key: 'mapDisplay', tdClass: 'action-rowdata'}: null,
         ]),
         extraFilter: _(['detectState',
           MenuHelper.useMaster('group') && APP.POS.WITH.GROUP? 'group' : null,
