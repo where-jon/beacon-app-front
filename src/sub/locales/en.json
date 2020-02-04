@@ -1190,7 +1190,8 @@
         "y": "y::Y"
       },
       "POS_LIST": {
-        "tel": "tel::Tel"
+        "tel": "tel::Tel",
+        "mapDisplay": "mapDisplay::Map display"
       },
       "TX": {
         "major": "major::major",
