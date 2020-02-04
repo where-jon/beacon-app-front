@@ -125,10 +125,10 @@ export const getProhibitDetectList = (position, prohibitZones) => {
  */
 export const setProhibitDetect = (viewName, vueComponent, positions = []) => {
   const prohibitDetectList = getProhibitDetectList(
-    positions.length > 0 ? positions : PositionHelper.getPositions(), vueComponent.prohibits
+    positions.length > 0 ? positions : PositionHelper.filterPositions(), vueComponent.prohibits
   )
   vueComponent.prohibitDetectList = prohibitDetectList ? prohibitDetectList : null
-  const lostUnDetectList = getLostUnDetectList(PositionHelper.getPositions(),vueComponent.lostZones)
+  const lostUnDetectList = getLostUnDetectList(PositionHelper.filterPositions(),vueComponent.lostZones)
   if(vueComponent.prohibitDetectList){
     vueComponent.prohibitDetectList = lostUnDetectList? prohibitDetectList.concat(lostUnDetectList): vueComponent.prohibitDetectList
   }else{

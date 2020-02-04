@@ -58,8 +58,9 @@ export default {
       listName: StringUtil.single2multi(this.masterName),
       eachListName: StringUtil.concatCamel('each', StringUtil.single2multi(this.masterName)),
       prohibitDetectList : null,
-      loadStates: ['area', 'zone', 'tx', 'location', 'lostZones','prohibit'],
+      loadStates: ['area', 'zone', 'tx', 'location', 'lostZones','prohibit', 'category', 'group', 'exb', 'pot'],
       showDismissibleAlert: false,
+      positions: [],
     }
   },
   computed: {
@@ -68,7 +69,6 @@ export default {
       'areas',
       'zones',
       'locations',
-      'positions',
       'prohibits',
       'lostZones',
     ]),
@@ -134,8 +134,8 @@ export default {
         this.showProgress()
         await Promise.all(this.loadStates.map(StateHelper.load))
         // positionデータ取得
-        await PositionHelper.storePositionHistory(null, true, true)
-        this.replaceAS({positions: PositionHelper.getPositions(false, false, true, null, null, null, null)})
+        await PositionHelper.loadPosition(null, true, true)
+        this.positions = PositionHelper.filterPositions(false, true, null, null, null, null)
 
         if (Util.hasValue(APP.POS.PROHIBIT_ALERT)
           && (Util.hasValue(APP.POS.PROHIBIT_GROUP_ZONE)||Util.hasValue(APP.POS.LOST_GROUP_ZONE))) {

@@ -40,9 +40,6 @@ export const position = [
   }
 ]
 let now = new Date().getTime()
-export const insertPosition =[
-  {btx_id:121, pos_id:4, label:'MAG', rssi:-60, timestamp:now, count:2},
-]
 
 export const positions_conf = {start: 1536318071987, interval: 6000}
 export const positions = []

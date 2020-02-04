@@ -54,9 +54,8 @@ export const isUndetect = state => {
  * @param {Number|Date} updatetime 
  * @return {Number}
  */
-export const getState = (type, updatetime, rssi = null) => {
+export const getState = (type, updatetime) => {
   if (!updatetime) return DETECT_STATE.NONE
-  if (rssi != null && rssi < APP.POS.RSSI_MIN) return DETECT_STATE.UNDETECT
 
   let UNDETECT_TIME
   let LOST_TIME
@@ -76,7 +75,7 @@ export const getState = (type, updatetime, rssi = null) => {
   }
 
   const now = !DEV.USE_MOCK_EXC? new Date().getTime(): mock.positions_conf.start
-  const time = now - new Date(updatetime).getTime()
+  const time = now - updatetime
   let state = time > UNDETECT_TIME? DETECT_STATE.UNDETECT:
     time > LOST_TIME? DETECT_STATE.LOST:
       DETECT_STATE.DETECTED

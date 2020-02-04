@@ -100,8 +100,8 @@ export default {
         this.replace({showAlert: false})
         this.showProgress()
         await Promise.all(this.loadStates.map(StateHelper.load))
-        await PositionHelper.storePositionHistory(0, true)
-        let positions = PositionHelper.getPositions(true, true)
+        await PositionHelper.loadPosition(0, true)
+        let positions = PositionHelper.filterPositions(true)
         Util.debug(positions)
 
         this.populateTableData(positions)

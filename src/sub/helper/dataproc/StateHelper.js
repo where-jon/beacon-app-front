@@ -359,7 +359,7 @@ const appStateConf = {
           x: location? Math.round(location.x * 10)/10: null,
           y: location? Math.round(location.y * 10)/10: null,
           sensor: i18n.tnl('label.' + Util.getValue(exb, 'sensorName', 'normal')),
-          isAbsentZone: exb.zoneCategoryName === SYSTEM_ZONE_CATEGORY_NAME.ABSENT,
+          isAbsentZone: exb.zoneCategoryName === SYSTEM_ZONE_CATEGORY_NAME.ABSENT, // FIXME: 複数ゾーン対応可能
           sensorIds: sensors.map(val => val.sensorId),
           sensorIdNames: sensors.map(val => val.sensorName),
           zoneIdList: locationZoneList.map(val => Util.getValue(val, 'locationZonePK.zoneId', null)).filter(val => val),
@@ -536,6 +536,7 @@ const appStateConf = {
           zoneClass: zoneTypeMap['' + ZONE.NON_COORDINATE],
           zoneBlock: zoneTypeMap['' + ZONE.COORDINATE],
           isAbsentZone: location.categoryName === SYSTEM_ZONE_CATEGORY_NAME.ABSENT,
+          isFixedPosZone: location.categoryName === SYSTEM_ZONE_CATEGORY_NAME.FIXED_POS,
           zoneIdList: locationZoneList.map(val => Util.getValue(val, 'locationZonePK.zoneId', null)).filter(val => val),
           zoneCategoryIdList: locationZoneList.map(val => Util.getValue(val, 'categoryId', null)).filter(val => val),
         }

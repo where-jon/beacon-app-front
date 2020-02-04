@@ -279,7 +279,7 @@ export const createPositionRectInfo = (pos, bgColor) => {
  */
 export const createPositionTxIcon = (pos, shape, color, bgColor, mapScale) => {
   const rectInfo = createPositionRectInfo(pos, bgColor)
-  const txRadius = DISP.TX.R / mapScale
+  const txRadius = (pos.isFixedPosition? DISP.TX.FIXED_POS.R: DISP.TX.R) / mapScale
   return createIcon(
     pos.label, txRadius, txRadius, color, rectInfo.bgColor, {
       circle: shape == SHAPE.CIRCLE,

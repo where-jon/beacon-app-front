@@ -322,7 +322,7 @@ export const createChartThermohumidityOptions = (chartData, by, isResponsive = f
         ticks: { min: 0, max: 100, stepSize: 25},
         position: 'right'
       }],
-      isResponsive
+    isResponsive
     )
   }
 }
@@ -334,37 +334,37 @@ export const createChartOmrEnvOptions = (chartData, by, isResponsive = false) =>
       labels: chartData.map(val => val.key),
       datasets: 
         createChartGraphDatasets('temperature', i18n.tnl('label.temperature'), chartData, 'temperature', DISP.TEMPERATURE_LINE_COLOR, by)
-        .concat(createChartGraphDatasets('humidity', i18n.tnl('label.humidity'), chartData, 'humidity', DISP.HUMIDITY_LINE_COLOR, by))
-        .concat(createChartGraphDatasets('ambientLight', i18n.tnl('label.ambientLight'), chartData, 'ambientLight', DISP.AMBIENT_LIGHT_COLOR, by))
-        .concat(createChartGraphDatasets('soundNoise', i18n.tnl('label.soundNoise'), chartData, 'soundNoise', DISP.SOUND_NOISE_COLOR, by))
+          .concat(createChartGraphDatasets('humidity', i18n.tnl('label.humidity'), chartData, 'humidity', DISP.HUMIDITY_LINE_COLOR, by))
+          .concat(createChartGraphDatasets('ambientLight', i18n.tnl('label.ambientLight'), chartData, 'ambientLight', DISP.AMBIENT_LIGHT_COLOR, by))
+          .concat(createChartGraphDatasets('soundNoise', i18n.tnl('label.soundNoise'), chartData, 'soundNoise', DISP.SOUND_NOISE_COLOR, by))
     },
     options: createChartGraphOptions([
-        {
-          id: 'temperature',
-          label: i18n.tnl('label.temperature') + ' (℃)',
-          ticks: { min: 0, max: 40 },
-          position: 'left'
-        }, 
-        {
-          id: 'humidity',
-          label: i18n.tnl('label.humidity') + ' (%)',
-          ticks: { min: 0, max: 100, stepSize: 25},
-          position: 'right'
-        },
-        {
-          id: 'ambientLight',
-          label: i18n.tnl('label.ambientLight'),
-          ticks: { min: 0, max: 1000, stepSize: 200},
-          position: 'left'
-        },
-        {
-          id: 'soundNoise',
-          label: i18n.tnl('label.soundNoise'),
-          ticks: { min: 0, max: 100, stepSize: 25},
-          position: 'right'
-        }
-      ],
-      isResponsive
+      {
+        id: 'temperature',
+        label: i18n.tnl('label.temperature') + ' (℃)',
+        ticks: { min: 0, max: 40 },
+        position: 'left'
+      }, 
+      {
+        id: 'humidity',
+        label: i18n.tnl('label.humidity') + ' (%)',
+        ticks: { min: 0, max: 100, stepSize: 25},
+        position: 'right'
+      },
+      {
+        id: 'ambientLight',
+        label: i18n.tnl('label.ambientLight'),
+        ticks: { min: 0, max: 1000, stepSize: 200},
+        position: 'left'
+      },
+      {
+        id: 'soundNoise',
+        label: i18n.tnl('label.soundNoise'),
+        ticks: { min: 0, max: 100, stepSize: 25},
+        position: 'right'
+      }
+    ],
+    isResponsive
     )
   }
 }
@@ -395,8 +395,8 @@ export const createChartPirOptions = (chartData, by, isResponsive = false) => {
         },
         position: 'left'
       }],
-      null,
-      isResponsive
+    null,
+    isResponsive
     )
   }
 }
@@ -427,8 +427,8 @@ export const createChartThermopileOptions = (chartData, by, isResponsive = false
         },
         position: 'left'
       }],
-      null,
-      isResponsive
+    null,
+    isResponsive
     )
   }
 }
@@ -462,8 +462,8 @@ export const createChartMagnetOptions = (chartData, by, isResponsive = false) =>
         },
         position: 'left'
       }],
-      null,
-      isResponsive
+    null,
+    isResponsive
     )
   }
 }
@@ -494,8 +494,8 @@ export const createChartPressureOptions = (chartData, by, isResponsive = false) 
         },
         position: 'left'
       }],
-      null,
-      isResponsive
+    null,
+    isResponsive
     )
   }
 }
@@ -530,7 +530,7 @@ export const createChartMeditagOptions = (chartData, by, isResponsive = false) =
         ticks: { min: 0, max: DISP.HEART_RATE_MAX, stepSize: DISP.HEART_RATE_STEP },
         position: 'right'
       }],
-      isResponsive
+    isResponsive
     )
   }
 }
@@ -566,7 +566,7 @@ export const createChartSubMeditagOptions = (chartData, by, isResponsive = false
         ticks: { min: 0, max: downMax },
         position: 'right'
       }],
-      isResponsive
+    isResponsive
     )
   }
 }

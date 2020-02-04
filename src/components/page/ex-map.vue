@@ -808,22 +808,23 @@ export default {
         return ret
       }
       // 既に該当btx_idのTXアイコンが作成済みか?
-      let txBtn = this.icons[pos.btx_id]
+      // console.error(pos.btx_id + '_' + pos.isFixedPosition, pos.x, pos.y)
+      let txBtn = this.icons[pos.btx_id + '_' + pos.isFixedPosition]
       if (!txBtn || txBtn.color != color || txBtn.bgColor != bgColor || txBtn.transparent != pos.transparent) {
         // 作成されていない場合、新規作成してからiconsに登録
         txBtn = IconHelper.createTxBtn(pos, display.shape, color, bgColor, this.getMapScale())
         txBtn.on('click', evt => this.txOnClick(evt))
-        this.icons[pos.btx_id] = txBtn
+        this.icons[pos.btx_id + '_' + pos.isFixedPosition] = txBtn
       } else {
         // 作成済みの場合、座標値のみセットする
         txBtn.x = pos.x
         txBtn.y = pos.y
       }
-      if (PositionHelper.isFixTx(tx, this.selectedArea)) {
-        Util.debug('fixed location', tx)
-        txBtn.x = tx.location.x
-        txBtn.y = tx.location.y
-      }
+      // if (PositionHelper.isFixTx(tx, this.selectedArea)) {
+      //   Util.debug('fixed location', tx)
+      //   txBtn.x = tx.location.x
+      //   txBtn.y = tx.location.y
+      // }
       return txBtn
     },
     updateZoneTxBtn(pos, tx, meditag, magnet){
@@ -852,16 +853,33 @@ export default {
       }
       return { txBtn, zoneBtx_id }
     },
-    setNomalTx() {
+    setNomalTx(absentZonePosition) {
       if(!Util.hasValue(this.pShowTxSensorIds)){
         return
       }
-      let position = PositionHelper.getPositionsWithAdjust(this.selectedArea, 1 / this.canvasScale, this.pDisabledFilter)
-      if (APP.SENSOR.USE_MEDITAG && this.positionedTxMap.meditag) { // TODO: 場所OK???
+
+      // 表示Txのフィルタリング
+      let position = this.pDisabledFilter? PositionHelper.filterPositions(false, false, null, null, null): PositionHelper.filterPositions()
+      // 表示Txの画面上の座標位置の決定
+      if(APP.POS.USE_MULTI_POSITIONING){
+        // ３点測位はUSE_POSITION_HISTORYには非対応 TODO:要対応
+        position = PositionHelper.calcCoordinatesForMultiPosition(position, this.selectedArea)
+      }
+      else {
+        position = PositionHelper.addFixedPosition(position, this.locations, this.selectedArea)
+        position = PositionHelper.calcScreenCoordinates(position, 1 / this.canvasScale, this.locations, this.selectedArea, true)
+      }
+
+      if (APP.SENSOR.USE_MEDITAG && this.positionedTxMap.meditag) { // FIXME: 実装場所移す
         position = SensorHelper.setStress(position, this.positionedTxMap.meditag)
       }
+
+      // Txアイコンを表示する
       position.forEach(pos => this.showTx(pos))
-      return position
+      this.positions = position
+      this.stage.update()
+      this.reShowTxDetail(position, absentZonePosition)
+
     },
     setAbsentZoneTx() {
       if (!this.pShowAbsent) {
@@ -873,7 +891,7 @@ export default {
         return
       }
       const ratio = DISP.TX.R_ABSOLUTE? 1 / this.canvasScale: 1
-      const absentZonePositions = PositionHelper.adjustZonePosition(PositionHelper.getPositions(false, true), ratio, this.locations, absentDisplayZone)
+      const absentZonePositions = PositionHelper.calcCoordinatesForZone(PositionHelper.filterPositions(false, true), ratio, this.locations, absentDisplayZone)
 
       absentZonePositions.forEach(pos => this.showAbsentZoneTx(pos))
       return absentZonePositions
@@ -921,8 +939,9 @@ export default {
       this.txCont.addChild(txBtn)
     },
     showTx(pos) {
-      let tx = this.txsMap[pos.btx_id]
-      if(!SensorHelper.includesSensorId(this.pShowTxSensorIds, tx.sensorId)){
+      // console.error('showTx', pos.minor, pos.isFixedPosition, pos.x, pos.y, pos.tx, this.pShowTxSensorIds)
+      let tx = pos.tx
+      if (!SensorHelper.includesSensorId(this.pShowTxSensorIds, tx.sensorId)) {
         return
       }
       if(!PositionHelper.checkTxAllow(pos, tx, this.selectedArea, false, this.pOnlyFixTx)){
@@ -949,14 +968,14 @@ export default {
           return null
         }
       }
-      // フリーアドレスTXが不在エリア検知の場合は以降処理を行わない
+      // フリーアドレスTXが不在エリア検知の場合は以降処理を行わない FIXME:
       const isFixTx = PositionHelper.isFixTx(tx, this.selectedArea)
       const isAbsentZone = Util.getValue(pos, 'location.isAbsentZone', false)
       if (isAbsentZone && !isFixTx) {
         return
       }
 
-      pos.transparent = pos.transparent || ((isAbsentZone || PositionHelper.isOtherFloorFixTx(tx, pos.location)) && PositionHelper.isFixTx(tx))
+      pos.transparent = pos.transparent || isAbsentZone // FIXME:
       const txBtn = this.updateTxBtn(pos, tx, meditag, magnet)
       if(this.reloadSelectedTx.btxId == pos.btx_id){
         this.showDetail(txBtn.btxId, txBtn.x, txBtn.y)
@@ -965,16 +984,18 @@ export default {
       this.txCont.addChild(txBtn)
       this.detectedCount++  // 検知数カウント増加
     },
-    setQuantityTx() {
-      let position = PositionHelper.getPositions()
-      const ratio = 1 / this.canvasScale
-      position = PositionHelper.adjustPosition(position, ratio, this.locations, this.selectedArea)
+    setQuantityTx(absentZonePosition) {
+      let position = PositionHelper.filterPositions()
+      console.error({position})
+      position = PositionHelper.calcScreenCoordinates(position, 1 / this.canvasScale, this.locations, this.selectedArea)
+      console.error({position})
       position.forEach((pos) => {
-        
+        console.error({pos})
         const tx = this.txsMap[pos.btx_id]
         let locationKey = pos.location.locationId
         Util.debug('showTx', pos, tx && tx.sensor)
         if (!PositionHelper.checkTxAllow(pos, tx, this.selectedArea, false, this.pOnlyFixTx)){
+          console.error('notallow')
           return
         }
 
@@ -1009,6 +1030,8 @@ export default {
         this.detectedCount++  // 検知数カウント増加
       })
 
+      console.error(this.locationOtherList)
+
       _.filter(this.locations, location => location.areaId == this.selectedArea && location.x != null && location.y != null)
         .forEach(location => {
           let txBtn = this.icons['loc_' + location.locationId]
@@ -1018,8 +1041,17 @@ export default {
           txBtn.transparent
           txBtn.cursor = 'pointer'
           this.txCont.addChild(txBtn)
-      })
-      return position
+        })
+
+      this.positions = position
+      this.stage.update()
+      this.stage.enableMouseOver()
+      this.reShowTxDetail(position, absentZonePosition)
+      // パラメータリセット
+      this.locationPersonList = {}
+      this.locationObjectList = {}
+      this.locationOtherList = {}
+
     },
     createQuantityTxBtn(location, shape, color, bgColor, isAbsent = false){ // position
       let txBtn = this.createQuantityTxIcon(location.locationId, shape, color, bgColor)
@@ -1107,20 +1139,9 @@ export default {
 
       // 数量ボタン押下時
       if (this.isQuantity){
-        const position = this.setQuantityTx()
-        this.positions = position
-        this.stage.update()
-        this.stage.enableMouseOver()
-        this.reShowTxDetail(position, absentZonePosition)
-        // パラメータリセット
-        this.locationPersonList = {}
-        this.locationObjectList = {}
-        this.locationOtherList = {}
+        this.setQuantityTx(absentZonePosition)
       } else {
-        const position = this.setNomalTx()
-        this.positions = position
-        this.stage.update()
-        this.reShowTxDetail(position, absentZonePosition)
+        this.setNomalTx(absentZonePosition)
       }
     },
     showExb(exb) {
@@ -1163,21 +1184,6 @@ export default {
     resetDetail() { // p, pir, position
       const selectedTx = {}
       this.replaceMain({ selectedTx })
-    },
-    async fetchPosition(payload){
-      if(!payload.disabledOther){
-        const sensorObj = await PositionHelper.fetchPositionWithSensor(this.selectedArea, this.pShowTxSensorIds, this.pShowExbSensorIds, this.pMergeSensorIds)
-        this.sensorMap = sensorObj.sensorMap
-        this.positionedTxMap = sensorObj.positionedTxMap
-        this.positionedExbMap = sensorObj.positionedExbMap
-      }
-      if(!Util.hasValue(this.pShowTxSensorIds)){
-        return
-      }
-      if(!payload.disabledPosition){
-        const alwaysTxs = this.txs.some(tx => tx.areaId == this.selectedArea && NumberUtil.bitON(tx.disp, TX.DISP.ALWAYS))
-        await PositionHelper.storePositionHistory(this.count, alwaysTxs? true: false)
-      }
     },
     // 分析用検索条件のバリデーション
     validate() {
@@ -1248,19 +1254,14 @@ export default {
       this.hideProgress()
     },
     // common
-    showMapImage(disableErrorPopup, payload) {
-      const cPayload = {
-        disabledPosition: Util.getValue(payload, 'disabledPosition', false),
-        disabledOther: Util.getValue(payload, 'disabledOther', false),
-        disabledProgress: Util.getValue(payload, 'disabledProgress', false),
-      }
+    showMapImage(disableErrorPopup, payload = {}) {
       this.showMapImageDef(async () => {
         if(this.pAnalysis){
           this.reloadState.prevent = false
           this.createAnalysisHeatmap()
           return
         }
-        if(!cPayload.disabledProgress){
+        if(!payload.disabledProgress){
           this.showProgress()
         }
         const reloadButton = document.getElementById('spinner')
@@ -1271,7 +1272,18 @@ export default {
         this.exbIcons = []
         this.txIcons = []
         this.keepExbPosition = false
-        await this.fetchPosition(cPayload)
+
+        if (!payload.disabledOther){
+          const sensorObj = await PositionHelper.fetchPositionWithSensor(this.selectedArea, this.pShowTxSensorIds, this.pShowExbSensorIds, this.pMergeSensorIds)
+          this.sensorMap = sensorObj.sensorMap
+          this.positionedTxMap = sensorObj.positionedTxMap
+          this.positionedExbMap = sensorObj.positionedExbMap
+        }
+        if (Util.hasValue(this.pShowTxSensorIds) && !payload.disabledPosition){
+          const alwaysTxs = this.txs.some(tx => tx.areaId == this.selectedArea && NumberUtil.bitON(tx.disp, TX.DISP.ALWAYS))
+          await PositionHelper.loadPosition(this.count, alwaysTxs)
+        }
+
         this.stage.on('click', evt => this.resetDetail())
 
         this.showExbAll()
@@ -1308,7 +1320,7 @@ export default {
           this.reloadState.isLoad = false
         }
         this.firstTime = false
-        if(!cPayload.disabledProgress){
+        if(!payload.disabledProgress){
           this.hideProgress()
         }
       }, disableErrorPopup)

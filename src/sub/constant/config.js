@@ -1,7 +1,7 @@
 // configuration for app
 // Basically using const but values are not primitive but objects or arrays because it may change from outside.
 
-import { DETECT_STATE, LOGIN_MODE } from './Constants'
+import { DETECT_STATE, LOGIN_MODE, SHAPE } from './Constants'
 
 export const DEV = { // 開発デバッグ関連
   DEBUG: 0, // デバッグモード (0:なし、1以上デバッグレベル)
@@ -387,6 +387,16 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     VERTICAL: 10, // TXアイコンタイル表示時の行数
     DISPLAY_PRIORITY: 'category', // TX表示の際に参照するdisplay方法
     ABSENT_ZONE_DISPLAY_TYPES: ['undetected','lost','absent'],   // undetected:未検知, lost:消失, absent:不在ゾーン）
+    FIXED_POS: {
+      APPLY_COLOR: true, // この設定を適用するか。falseの場合、カテゴリ/グループの色と不在時の透過を用いる
+      SHAPE: SHAPE.CIRCLE,
+      R: 10,
+      COLOR: '#FFFFFF',
+      IN_ZONE_BGCOLOR: '#4472C4', // 固定ゾーンにいる場合
+      OUT_ZONE_BGCOLOR: '#C00000', // 固定ゾーン外の同一エリアに居る場合
+      UNDETECT_BGCOLOR: '#B78811', // 未検知
+      LOST_BGCOLOR: '#3D3D3D', // 消失
+    }
   },
   // 位置表示(数量)：TX
   TX_NUM: {

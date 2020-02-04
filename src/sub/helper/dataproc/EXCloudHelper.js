@@ -4,10 +4,9 @@
  */
 
 import _ from 'lodash'
-import moment from 'moment'
 import * as mock from '../../../assets/mock/mock'
 import { DEV, DISP, EXCLOUD, APP_SERVICE } from '../../constant/config'
-import * as Util from '../../util/Util'
+import * as DateUtil from '../../util/DateUtil'
 import * as HttpHelper from '../base/HttpHelper'
 
 /**
@@ -16,7 +15,7 @@ import * as HttpHelper from '../base/HttpHelper'
  * @param {Number|Date} time 任意のエポック秒またはDateオブジェクト。エポック秒の場合はコンソール警告が出る。
  * @return {String}
  */
-export const dateform = time => time? moment(time).format('YYYY/MM/DD HH:mm:ss'): ''
+export const dateform = time => DateUtil.dateform(time)
 
 /**
  * 表示用の時間を取得する。
@@ -51,29 +50,9 @@ export const url = excloudUrl => {
  * @param {Object[]} pMock
  * @return {Object[]}
  */
-export const fetchPositionHistory = async (locations, exbs, txs, allShow, pMock) => {
-  let data = pMock? pMock: DEV.USE_MOCK_EXC? mock.position:
+export const fetchPositionHistory = async (allShow, pMock) => {
+  return pMock? pMock: DEV.USE_MOCK_EXC? mock.position:
     await HttpHelper.getExCloud(url(EXCLOUD.POSITION_HISTORY_FETCH_URL.replace('{allFetch}', allShow? '1': '0')) + new Date().getTime())
-  const txIdMap = {}
-  txs.forEach(t => txIdMap[t.txId] = t)
-  const exbIdMap = {}
-  exbs.forEach(e => exbIdMap[e.exbId] = e)
-  const locationIdMap = {}
-  locations.forEach(l => locationIdMap[l.locationId] = l)
-  console.log('data', data)
-
-  return _(data).filter(val => allShow || DEV.NOT_FILTER_TX || txs && txIdMap[val.txId])
-    .filter(val => allShow || Util.hasValue(val.locationId) && locationIdMap[val.locationId])
-    .map(val => {
-      let tx = txIdMap[val.txId]
-      // FIXME: これはtxのlocationになっている。txの下に置かないと混同する。
-      let location = Util.getValue(tx, 'location', null) && 0 < tx.location.x * tx.location.y? tx.location: locationIdMap[val.locationId]
-      let exb = exbIdMap[val.exbId]
-      let label = tx? tx.displayName? tx.displayName: tx.btxId: ''
-      return { btx_id: tx? tx.btxId: '', minor: val.minor, device_id: exb? exb.deviceId : -1, tx_id: val.txId,
-        x: val.x, y: val.y,
-        label, location: location, exb, tx, updatetime: dateform(val.positionDt), timestamp:dateform(val.positionDt)}
-    }).compact().value()
 }
 
 /**

@@ -111,7 +111,7 @@ export default {
             return {...sensor, deviceid: sensor.pos_id, btx_id: sensor.sensor_id, updatetime: sensor.timestamp}
           })
         }
-        const positionHistory = await PositionHelper.storePositionHistory()
+        const positionHistory = await PositionHelper.loadPosition()
         const positionedExb = PositionHelper.getPositionedExbWithSensor(this.selectedArea,
           exb => exb.sensorIds.includes(this.selectedSensor),
           exb => ({id: this.selectedSensor, ...exCluodSensors.find(sensor => sensor.deviceid == exb.deviceId && (sensor.timestamp || sensor.updatetime))}),

@@ -4,17 +4,17 @@
  */
 
 import * as mock from '../../../assets/mock/mock'
-import { APP, DISP, DEV } from '../../constant/config'
-import { TX_VIEW_TYPES, DETECT_STATE, SHAPE, TX, SENSOR } from '../../constant/Constants'
+import { APP, DEV, DISP } from '../../constant/config'
+import { DETECT_STATE, SENSOR, SHAPE, TX, TX_VIEW_TYPES } from '../../constant/Constants'
 import * as ArrayUtil from '../../util/ArrayUtil'
 import * as DateUtil from '../../util/DateUtil'
 import * as NumberUtil from '../../util/NumberUtil'
 import * as Util from '../../util/Util'
 import * as EXCloudHelper from '../dataproc/EXCloudHelper'
-import * as DetectStateHelper from './DetectStateHelper'
 import * as MenuHelper from '../dataproc/MenuHelper'
-import * as SensorHelper from './SensorHelper'
 import * as StyleHelper from '../ui/StyleHelper'
+import * as DetectStateHelper from './DetectStateHelper'
+import * as SensorHelper from './SensorHelper'
 
 const iconsUnitNum = 9
 const tileLayoutIconsNum = 5
@@ -43,7 +43,6 @@ const defaultDisplay = {
   shape: SHAPE.CIRCLE,
 }
 
-let count = 0
 let store // TODO: ここでstoreに直接アクセスするのは望ましくないのでStateHelper経由にする。
 let i18n
 
@@ -59,10 +58,9 @@ export const setApp = (pStore, pI18n) => {
 }
 
 /**
- * 位置情報を取得する。
+ * 位置情報を絞り込んで返す。
  * @method
  * @param {Boolean} [showAllTime = false] 検知されていないデバイスの情報も取得する
- * @param {Boolean} [notFilterByTimestamp = false] 時間による排他制御をされていない情報を取得する
  * @param {Number} [showTxNoOwner]
  * @param {Number} [selectedCategory]
  * @param {Number} [selectedGroup]
@@ -70,38 +68,24 @@ export const setApp = (pStore, pI18n) => {
  * @param {Number} [selectedFreWord]
  * @return {Object[]}
  */
-export const getPositions = (showAllTime = false, notFilterByTimestamp = false, 
+export const filterPositions = (showAllTime = false, 
   showTxNoOwner = APP.POS.SHOW_TX_NO_OWNER,
   selectedCategory = store.state.main.selectedCategory, selectedGroup = store.state.main.selectedGroup,
   selectedDetail = store.state.main.selectedDetail,
   selectedFreeWord = store.state.main.selectedFreeWord) => { // p, position-display, rssimap, position-list, position, ProhibitHelper
 
-  const positionHistores = store.state.main.positionHistores
+  let positions = store.state.main.positions
+  const txs = store.state.app_service.txs
 
-  let positions = positionOwnerFilter(positionHistores, showTxNoOwner)
+  if (!showTxNoOwner) { // potの所有状態で絞込み(TX未登録やPotと紐付いていない場合は表示しない)
+    positions = _(positions).filter(pos => {
+      const tx = txs.find(tx => tx.btx_id == pos.btx_id)
+      return tx && tx.potId
+    })
+  }
   return showAllTime ? positions : positionFilter(positions, selectedGroup, selectedCategory, selectedDetail, selectedFreeWord)
 }
 
-/**
- * 位置情報に対し、potの所有状態で絞込みを行う。
- * @method
- * @param {Object[]} positions 
- * @param {Boolean} showTxNoOwner 
- * @return {Object[]}
- */
-const positionOwnerFilter = (positions, showTxNoOwner) => { //p 
-  const txs = store.state.app_service.txs
-  const txsMap = {}
-  txs.forEach(tx => txsMap[tx.btxId] = tx)
-
-  return _(positions).filter(pos => {
-    const tx = txsMap[pos.btx_id]
-    if (tx && !showTxNoOwner) {
-      return tx.potId? true: false
-    }
-    return true
-  }).value()
-}
 
 const positionFilterFreeWord = (pos, freeWord) => {
   const columnList = [
@@ -130,10 +114,8 @@ const positionFilterFreeWord = (pos, freeWord) => {
  * @return {Object[]}
  */
 const positionFilter = (positions, groupId, categoryId, txIdList, freeWord) => { //p
-  const txs = store.state.app_service.txs
 
-  const txsMap = {}
-  txs.forEach(tx => txsMap[tx.btxId] = tx)
+  const txsMap = _(store.state.app_service.txs).keyBy('txId').value()
   return _(positions).filter(pos => {
     const tx = txsMap[pos.btx_id]
     let grpHit = true
@@ -159,7 +141,7 @@ const positionFilter = (positions, groupId, categoryId, txIdList, freeWord) => {
 }
 
 /**
- * 位置情報の履歴を取得し、vueステートに保管する。
+ * 位置情報を取得し、vueステートに保管する。
  * @method
  * @async
  * @param {Number} count mock用
@@ -167,97 +149,48 @@ const positionFilter = (positions, groupId, categoryId, txIdList, freeWord) => {
  * @param {Boolean} [fixSize = false] 固定サイズ用の幅と高さをcssに適用する。
  * @return {Object[]}
  */
-export const storePositionHistory = async (count, allShow = false, fixSize = false) => { // position-display, pir, position-list, position, sensor-list
+export const loadPosition = async (count, allShow = false, fixSize = false) => { // position-display, pir, position-list, position, sensor-list
   const pMock = DEV.USE_MOCK_EXC? mock.positions[count]: null
 
-  const locations = store.state.app_service.locations
-  const exbs = store.state.app_service.exbs
-  const txs = store.state.app_service.txs
-
-  let positions = await EXCloudHelper.fetchPositionHistory(locations, exbs, txs, allShow, pMock)
+  let positions = await EXCloudHelper.fetchPositionHistory(allShow, pMock)
   console.log('position2', positions)
-  // 検知状態の取得
-  setDetectState(positions)
-  // 在席表示と同じ、表示txを取得する。
-  positions = getShowTxPositions(positions, allShow)
-  // スタイルをセット
-  positions = setPositionStyle(positions, fixSize)
-  store.commit('main/replaceMain', {positionHistores: positions})
+  const now = !DEV.USE_MOCK_EXC ? new Date().getTime(): mock.positions_conf.start + count++ * mock.positions_conf.interval
+
+  const txIdMap = _(store.state.app_service.txs).keyBy('txId').value()
+  const exbIdMap = _(store.state.app_service.exbs).keyBy('exbId').value()
+  const locationIdMap = _(store.state.app_service.locations).keyBy('locationId').value()
+
+  positions = _(positions).filter(pos => allShow || DEV.NOT_FILTER_TX || txIdMap[pos.txId])
+    .filter(pos => allShow || Util.hasValue(pos.locationId) && locationIdMap[pos.locationId] && (pos.tx && NumberUtil.bitON(pos.tx.disp, TX.DISP.POS)))
+    .map(pos => {
+      let tx = txIdMap[pos.txId]
+      // 固定位置の場合,txのlocation、そうではない場合exbのlocation
+      let location = tx.location && 0 < tx.location.x * tx.location.y? tx.location: locationIdMap[pos.locationId]
+      let exb = exbIdMap[pos.exbId]
+      let label = tx.displayName? tx.displayName: tx.btxId
+
+      // 検知状態の設定
+      setDetectState(pos)
+
+      // スタイルをセット
+      let display = Util.getValue(pos.tx, DISP.TX.DISPLAY_PRIORITY + '.display', defaultDisplay)
+      display = StyleHelper.getStyleDisplay1({...display, label}, {fixSize})
+      if (pos.transparent) {
+        display.opacity = 0.6
+      }
+  
+      return { btx_id: tx.btxId, minor: pos.minor, device_id: exb? exb.deviceId : -1, tx_id: pos.txId, posx: pos.x, posy: pos.y,
+        label, location, exb, tx, updatetime: DateUtil.dateform(pos.positionDt), timestamp:DateUtil.dateform(pos.positionDt),
+        transparent: pos.transparent? pos.transparent: isTransparent(pos.timestamp, now),
+        detectState: pos.detectState, isLost: isLost(pos.timestamp, now),
+        display
+      }
+    }).compact().value()
+
+  store.commit('main/replaceMain', {positions})
   return positions
 }
 
-/**
- * 位置情報にcssスタイル情報を設定する。
- * @method
- * @param {Object[]} positions
- * @param {Boolean} [fixSize = false] 固定サイズ用の幅と高さをcssに適用する。
- * @return {Object[]}
- */
-const setPositionStyle = (positions, fixSize = false) => { // p
-  return _.map(positions, pos => {
-    // 設定により、カテゴリとグループのどちらの設定で表示するかが変わる。
-    let display
-    if (pos.tx) {
-      display = Util.getValue(pos.tx, DISP.TX.DISPLAY_PRIORITY + '.display', null)
-    }
-    display = display || defaultDisplay
-    display = StyleHelper.getStyleDisplay1({...display, label: pos.label}, {fixSize: fixSize})
-    if (pos.transparent) {
-      display.opacity = 0.6
-    }
-    return {
-      ...pos,
-      display,
-    }
-  })
-}
-
-/**
- * Txの表示フラグに従い、位置情報を整理する。
- * @method
- * @param {Object[]} positions
- * @param {Boolean} [allShow = false]
- * @return {Object[]}
- */
-const getShowTxPositions = (positions, allShow = false) => { // p
-  const now = !DEV.USE_MOCK_EXC ? new Date().getTime(): mock.positions_conf.start + count++ * mock.positions_conf.interval
-  const cPosMap = {}
-  positions.forEach(c => cPosMap[c.btx_id] = c)
-  return _(positions)
-    .filter(pos => allShow || (pos.tx && NumberUtil.bitON(pos.tx.disp, TX.DISP.POS)))
-    .map(pos => {
-      let cPos = cPosMap[pos.btx_id]
-      if (cPos || allShow) {
-        return {
-          ...pos,
-          transparent: !cPos? true: cPos.transparent? cPos.transparent: isTransparent(cPos.timestamp, now),
-          isLost: !cPos? true: isLost(cPos.timestamp, now)
-        }
-      }
-      return null
-    }).compact().value()
-}
-
-/**
- * EXBの配置位置情報を取得する。
- * @method
- * @param {Number} selectedArea
- * @return {Object[]}
- */
-export const getPositionedExb = selectedArea => { // pir, position
-  const exbs = store.state.app_service.exbs
-
-  Util.debug('Raw exb', exbs, selectedArea)
-  let positionedExb = _(_.cloneDeep(exbs)).filter(exb => {
-    return Util.hasValue(exb.location) && exb.location.areaId == selectedArea && exb.location.x && exb.location.y > 0
-  }).value()
-  Util.debug('positionedExb', positionedExb)
-  if (positionedExb.length == 0) {
-    console.warn('positionedExb is empty. check if exbs are enabled')
-  }
-
-  return positionedExb
-}
 
 /**
  * センサ情報を使用し、EXBの配置位置情報を取得する。
@@ -329,7 +262,7 @@ export const getPositionedTx = (selectedArea, sensorFilterFunc, findSensorFunc, 
       const location = tx.locationId? locationMap[tx.locationId]: {}
       const zoneIdList = Util.getValue(location, 'zoneIdList', [])
       const zoneCategoryIdList = Util.getValue(location, 'zoneCategoryIdList', [])
-      return {
+      return { // FIXME: ...で書き換えられないか
         txId: tx.txId, btxId: tx.btxId,
         x: tx.location? tx.location.x: null, y: tx.location? tx.location.y: null,
         humidity: sensor? sensor.humidity: null,
@@ -407,19 +340,12 @@ const getRadiusDiamond = (index, radius) => (index % 2 !== 0 && index % 6 !== 0)
 const hasTxLocation = pos => pos && pos.tx && pos.tx.location && pos.tx.location.x && pos.tx.location.y
 
 /**
- * Tx固定表示座標の情報を取得する。
- * @method
- * @param {Number} ratio
- * @param {Object[]} fixPositions
- * @return {Object[]}
+ * その位置のTXが指定エリアの固定位置を持っているか
+ * 
+ * @param {*} pos 
+ * @param {*} selectedMapId 
  */
-const getCoordinateFix = (ratio, fixPositions) => {
-  const ret = []
-  fixPositions.forEach(fixPosition => {
-    ret.push(hasTxLocation(fixPosition)? {...fixPosition, x: fixPosition.tx.location.x, y: fixPosition.tx.location.y}: null)
-  })
-  return ret.filter(val => val)
-}
+const isFixedPosOnArea = (pos, selectedAreaId) => !!(hasTxLocation(pos) && selectedAreaId && pos.tx.location.areaId == selectedAreaId)
 
 /**
  * デフォルトレイアウトのTXアイコン配置座標の配列を取得する
@@ -429,7 +355,7 @@ const getCoordinateFix = (ratio, fixPositions) => {
  * @param {Object[]} samePos 同じ場所に配置するTXオブジェクトの配列
  * @return {Object[]}
  */
-const getCoordinateDefault = (location, ratio, samePos) => {
+const calcCoordinatesDefault = (location, ratio, samePos) => {
   let baseX = location.x
   let baseY = location.y
   let txR = DISP.TX.R * ratio
@@ -482,7 +408,7 @@ const getCoordinateDefault = (location, ratio, samePos) => {
  * @param {Object[]} positions 場所の配置座標配列
  * @return {Object[]}
  */
-const getCoordinateTile = (ratio, orgX, orgY, positions, viewType) => {
+const calcCoordinatesTile = (ratio, orgX, orgY, positions, viewType) => {
   return partitioningArray(positions, viewType.horizon).flatMap((array, i, a) => {
     return array.map((b, j, c) => {
       return {...b, x: orgX + DISP.TX.R * 2 * ratio * j, y: orgY + DISP.TX.R * 2 * ratio * i }
@@ -499,7 +425,7 @@ const getCoordinateTile = (ratio, orgX, orgY, positions, viewType) => {
  * @param {Boolean} [isDiamond = false] trueの場合、ひし形に配置
  * @return {{x: Number, y: Number}}
  */
-const getCoordinateSquare = (ratio, index, x, y, isDiamond = false) => {
+const calcCoordinatesSquare = (ratio, index, x, y, isDiamond = false) => {
   const i = index % iconsUnitNum
   if (i < 1) {
     return {x: x, y: y}
@@ -519,7 +445,7 @@ const getCoordinateSquare = (ratio, index, x, y, isDiamond = false) => {
  * @param {Number} radius 原点からのアイコン配置距離(半径)
  * @return {{x: Number, y: Number}}
  */
-const getCoordinateSpiral = (index, x, y, theta, radius) => {
+const calcCoordinatesSpiral = (index, x, y, theta, radius) => {
   const radian = theta * PIdiv180
   return {
     x: index > 0 ? x + radius * Math.cos(radian) : x,
@@ -536,19 +462,19 @@ const getCoordinateSpiral = (index, x, y, theta, radius) => {
  * @param {Object} viewType アイコン配置タイプ
  * @return {Object|Object[]}
  */
-const getCoordinate = (ratio, orgX, orgY, positions, viewType) => {
+const calcCoordinates = (ratio, orgX, orgY, positions, viewType) => {
   if (viewType.displayFormat === TX_VIEW_TYPES.TILE) {
-    return getCoordinateTile(ratio, orgX, orgY, positions, viewType)
+    return calcCoordinatesTile(ratio, orgX, orgY, positions, viewType)
   }
   return positions.length > 1 ? positions.map((e, i, a) => {
     const xy = (() => {
       switch (viewType.displayFormat) {
       case TX_VIEW_TYPES.SQUARE :
-        return getCoordinateSquare(ratio, i, orgX, orgY)
+        return calcCoordinatesSquare(ratio, i, orgX, orgY)
       case TX_VIEW_TYPES.DIAMOND :
-        return getCoordinateSquare(ratio, i, orgX, orgY, true)
+        return calcCoordinatesSquare(ratio, i, orgX, orgY, true)
       case TX_VIEW_TYPES.SPIRAL :
-        return getCoordinateSpiral(i, orgX, orgY, 360 / positions.length * i, DISP.TX.R * 2 * ratio)
+        return calcCoordinatesSpiral(i, orgX, orgY, 360 / positions.length * i, DISP.TX.R * 2 * ratio)
       default :
         return {x: orgX, y: orgY}
       }
@@ -566,18 +492,19 @@ const getCoordinate = (ratio, orgX, orgY, positions, viewType) => {
  * @param {Object[]} samePos TXアイコン座標配列
  * @return {Object[]}
  */
-const getPositionsToOverlap = (location, ratio, samePos) => {
+const calcCoordinatesWhenOverlap = (location, ratio, samePos) => {
+  if (!samePos || samePos.length == 0) return []
   const viewType = getTxViewType(location.txViewType)
   if (viewType.displayFormat === TX_VIEW_TYPES.DEFAULT ||
     !Object.keys(TX_VIEW_TYPES).find(key => viewType.displayFormat === TX_VIEW_TYPES[key])) {
-    return getCoordinateDefault(location, ratio, samePos)
+    return calcCoordinatesDefault(location, ratio, samePos)
   }
   const maxIcons = viewType.horizon * viewType.vertical
   let baseX = location.x
   let baseY = location.y
   const c = partitioningArray(samePos, viewType.displayFormat !== TX_VIEW_TYPES.TILE ? iconsUnitNum : maxIcons)
   return c.flatMap((e, i, a) => {
-    const coordinate = getCoordinate(ratio, baseX, baseY, e, viewType)
+    const coordinate = calcCoordinates(ratio, baseX, baseY, e, viewType)
     baseX += DISP.TX.R
     baseY += DISP.TX.R
     return coordinate
@@ -612,7 +539,7 @@ const getTxViewType = txViewType => {
  * @param {*} ratio ウインドウ縮小割合
  * @param {*} samePos 同じ場所に配置するTXオブジェクトの配列
  */
-const getCoordinateZone = (absentDisplayZone, ratio, samePos) => {
+const calcCoordinatesZone = (absentDisplayZone, ratio, samePos) => {
   const txSize = DISP.TX.R * 2
   // ゾーン開始位置が１つ目のTX中央にくるのでずらしておく
   const orgX = absentDisplayZone.x + (DISP.TX.R * ratio)
@@ -642,8 +569,58 @@ const getCoordinateZone = (absentDisplayZone, ratio, samePos) => {
 
 
 
+export const addFixedPosition = (orgPositions, locations = [], selectedMapId = null) => {
+  let positions = _.cloneDeep(orgPositions)
+  // エリア上の場所を抽出
+  // locations.forEach(loc => console.error(loc.locationName, loc.isFixedPosZone))
+  // positions.forEach(pos => console.error(pos.minor))
+  const additionalPos = []
+  // 表示対象となるTxのposを抽出
+  positions.forEach(pos => {
+    pos.isFixedPosition = isFixedPosOnArea(pos, selectedMapId)
+    // console.error(pos.minor, pos.isFixedPosition, selectedMapId, Util.getValue(pos, 'tx.location.areaId', null))
+
+    if (pos.isFixedPosition) { // txが場所固定されており、現在位置が場所固定ゾーンにいる場合（txの固定場所のゾーンでなくても同じエリアの固定ゾーンであれば）
+      pos.inFixedZone = pos.exb.location.isFixedPosZone // 今いる場所が固定場所ゾーンに入っているか
+      // 固定場所ゾーンにいず、かつ同じエリアにいて、検知状態の場合、フリーアドレスとしても表示
+      if (!pos.inFixedZone && isInTheArea(pos, locations, selectedMapId) && pos.detectState == DETECT_STATE.DETECTED) {
+        // console.error(pos.inFixedZone)
+        const addPos = _.cloneDeep(pos)
+        addPos.isFixedPosition = false
+        addPos.location = pos.exb.location
+        addPos.isAddtional = true
+        additionalPos.push(addPos)
+      }
+      pos.location = pos.tx.location
+      if (DISP.TX.FIXED_POS.APPLY_COLOR) {
+        let bgColor = DISP.TX.FIXED_POS.UNDETECT_BGCOLOR
+        // console.error('detectState',pos.detectState)
+        switch (pos.detectState) {
+        case DETECT_STATE.DETECTED:
+          bgColor = pos.inFixedZone? DISP.TX.FIXED_POS.IN_ZONE_BGCOLOR: DISP.TX.FIXED_POS.OUT_ZONE_BGCOLOR
+          break
+        case DETECT_STATE.LOST:
+          bgColor = DISP.TX.FIXED_POS.LOST_BGCOLOR
+          break
+        }
+        pos.tx.display = {
+          color: DISP.TX.FIXED_POS.COLOR,
+          bgColor,
+          shape: DISP.TX.FIXED_POS.SHAPE,        
+        }
+      }
+      else {
+        pos.transparent = !pos.inFixedZone
+      }
+    }
+  })
+
+  if (additionalPos.length > 0) positions.push(...additionalPos)
+  return positions
+}
+
 /**
- * 位置情報の補正を行う。
+ * 画面上の表示位置の設定を行う。
  * @method
  * @param {Object[]} positions
  * @param {Number} ratio
@@ -651,34 +628,16 @@ const getCoordinateZone = (absentDisplayZone, ratio, samePos) => {
  * @param {Number} [selectedMapId = null]
  * @return {Object[]}
  */
-export const adjustPosition = (positions, ratio, locations = [], selectedMapId = null) => { // FIXME: ここが謎すぎる。FixPositionと分ける selectedMapIdがnull可なのは？
-  const selectedAreasLocations = locations.filter(location => location.areaId != null && (selectedMapId == null || selectedMapId == location.areaId))
-  const records = selectedAreasLocations.map(location => {
-    const samePos = []
-    const fixPos = []
+export const calcScreenCoordinates = (positions, ratio, locations = [], selectedMapId = null, includeFixedPos = false) => {
+  const targetPos = positions.filter(pos => isInTheArea(pos, locations, selectedMapId) || includeFixedPos && pos.isFixedPosition)
+  const targetLocations = locations.filter(location => location.areaId != null && (selectedMapId == null || selectedMapId == location.areaId))
 
-    positions.forEach(pos => {
-      const isFixPosition = hasTxLocation(pos) && selectedMapId && pos.tx.location.areaId == selectedMapId
-      if (!isFixPosition) {
-        if (pos.location && pos.location.locationId == location.locationId && pos.timestamp
-          &&(new Date(pos.timestamp) > new Date().getTime() - APP.POS.LOST_TIME)) {
-          samePos.push(pos)
-        }
-      } else {
-        fixPos.push(pos)
-      }
-    })
-
-    const same = (!samePos || samePos.length == 0) ? [] : getPositionsToOverlap(location, ratio, samePos)
-    const fix = (!fixPos || fixPos.length == 0) ? [] : getCoordinateFix(ratio, fixPos)
-    return [...same, ...fix]
-  })
-
-  return records.filter(e => e).flatMap(e => e).filter(function (x, i, self) {
-    return (self.findIndex(function(val) {
-      return (x.btx_id === val.btx_id)
-    }) === i)
-  }).filter(e => selectedMapId === null || (e.location && e.location.areaId == selectedMapId))
+  // 各Txの表示座標位置を設定
+  return _(targetLocations).map(location => { // FIXME: 固定対応
+    const samePos = targetPos.filter(pos => pos.location.locationId == location.locationId)
+    // console.error('samePos', samePos.map(e => e.minor))
+    return calcCoordinatesWhenOverlap(location, ratio, samePos)
+  }).filter(e => e).flatMap(e => e).tap(Util.debug).value()
 }
 
 /**
@@ -688,15 +647,11 @@ export const adjustPosition = (positions, ratio, locations = [], selectedMapId =
  * @param {Number} ratio
  * @return {Object[]}
  */
-export const adjustMultiPosition = (positions, selectedArea) => {
-  const ret = []
-  positions.filter(pos => pos.location && pos.location.areaId == selectedArea).map(pos => {
-    ret.push( {...pos, x: pos.x, y: pos.y} )
-  })
-  return ret
+export const calcCoordinatesForMultiPosition = (positions, selectedArea) => {
+  return positions.filter(pos => pos.location && pos.location.areaId == selectedArea).map(pos => ({...pos, x: pos.x, y: pos.y}))
 }
 
-export const adjustZonePosition = (positions, ratio, locations = [], absentDisplayZone) => {
+export const calcCoordinatesForZone = (positions, ratio, locations = [], absentDisplayZone) => {
   return locations.map(location => {
     // 不在表示用ゾーンへ表示するTXを抽出する
     const samePos = _.sortBy(positions, position => position.label)
@@ -705,7 +660,7 @@ export const adjustZonePosition = (positions, ratio, locations = [], absentDispl
         (hasDisplayType('absent') && position.location && position.location.isAbsentZone) ||
         (hasDisplayType('undetected') && DetectStateHelper.isUndetect(position.detectState))
       })
-    const same = (!samePos || samePos.length == 0) ? [] : getCoordinateZone(absentDisplayZone, ratio, samePos)
+    const same = (!samePos || samePos.length == 0) ? [] : calcCoordinatesZone(absentDisplayZone, ratio, samePos)
     return [...same]
   }).filter(e => e).flatMap(e => e).filter(function (x, i, self) {
     return (self.findIndex(function(val) {
@@ -721,28 +676,13 @@ export const hasDisplayType = (typeKey) => {
 /**
  * 検知情報を設定する。
  * @method
- * @param {Object[]} positions
+ * @param {Object[]} pos
  */
-export const setDetectState = (positions) => {
-
-  _.forEach(positions, position => {
-    let updatetime = null
-    let rssi = null
-    if (Util.hasValue(position.nearest)) {
-      const nearest = _(position.nearest).map(val => ({timestamp: val.timestamp, rssi: val.rssi}))
-        .sort((a, b) => a.timestamp < b.timestamp? -1: a.timestamp > b.timestamp? 1: 0).last()
-      updatetime = nearest.timestamp
-      rssi = nearest.rssi
-    } else {
-      updatetime = position.timestamp
-    }
-
-    position.detectState = DetectStateHelper.getState('tx', updatetime, rssi) // nearestのtimestampを使用
-    position.state = DetectStateHelper.getLabel(position.detectState)
-    position.isUnDetect = DetectStateHelper.isUndetect(position.detectState)
-    position.noSelectedTx = (position.detectState != DETECT_STATE.DETECTED)
-  })
-
+export const setDetectState = (pos) => {
+  pos.detectState = DetectStateHelper.getState('tx', pos.positionDt)
+  pos.state = DetectStateHelper.getLabel(pos.detectState)
+  pos.isUnDetect = DetectStateHelper.isUndetect(pos.detectState)
+  pos.noSelectedTx = (pos.detectState != DETECT_STATE.DETECTED)
 }
 
 /**
@@ -830,7 +770,7 @@ export const isOtherFloorFixTx = (tx, location) => tx && tx.location && location
  */
 export const createTxDetailInfo = (x, y, tx, canvasScale, offset, containerRect, preloadThumbnail) => {
   const display = StyleHelper.getPositionDisplay(tx)
-  const position = getPositions().find(e => e.btx_id === tx.btxId)
+  const position = filterPositions().find(e => e.btx_id === tx.btxId)
   const ret = {
     btxId: tx.btxId,
     minor: i18n.tnl('label.minor') + ':' + tx.btxId,
@@ -990,21 +930,10 @@ export const fetchPositionWithSensor = async (areaId, showTxSensorIds = [], show
   }
 }
 
-/**
- * 補正済み位置情報を取得する。
- * @method
- * @param {Number} areaId
- * @param {Number} ratio
- * @param {Boolean} [disabledFilter = false]
- * @return {Object}
- */
-export const getPositionsWithAdjust = (areaId, ratio, disabledFilter = false) => {
-  const locations = store.state.app_service.locations
-
-  const position = disabledFilter? getPositions(false, false, null, null, null): getPositions()
-  if(APP.POS.USE_MULTI_POSITIONING){
-    // ３点測位はUSE_POSITION_HISTORYには非対応 FIXME:要対応
-    return adjustMultiPosition(position, areaId)
-  }
-  return adjustPosition(position, ratio, locations, areaId)
+// エリア内にいるかを返す
+export const isInTheArea = (pos, locations, selectedMapId) => {
+  const targetLocations = locations.filter(location => location.areaId != null && (selectedMapId == null || selectedMapId == location.areaId))
+  return pos.exb.location && _.some(targetLocations, location => pos.exb.location.locationId == location.locationId)
+    && pos.timestamp && (new Date(pos.timestamp) > new Date().getTime() - APP.POS.LOST_TIME)
 }
+

@@ -91,9 +91,9 @@ export const table = (label, log) => {
  * @method
  * @param {...Any} log
  */
-export const debug = function(log) {
+export const debug = (log) => {
   if (DEV.DEBUG) {
-    console.debug(...arguments)
+    console.log(log)
   }
 }
 

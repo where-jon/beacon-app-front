@@ -277,7 +277,7 @@ export default {
             return exbBtn
           })
 
-          let positions = PositionHelper.getPositions(false, false, true)
+          let positions = PositionHelper.filterPositions(false)
           this.nearest = await this.getNearest(this.exbBtns)
           this.nearest = this.nearest.filter((n) => positions.some((pos) => pos.btx_id === n.btx_id))
 

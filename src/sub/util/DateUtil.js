@@ -104,6 +104,14 @@ export const formatTime = (time, format = 'HH:mm:ss') => {
 export const isExpired = time => time != null? time < (new Date()).getTime(): false
 
 /**
+ * 日付フォーマットを行う。
+ * @method
+ * @param {Number|Date} time 任意のエポック秒またはDateオブジェクト。エポック秒の場合はコンソール警告が出る。
+ * @return {String}
+ */
+export const dateform = time => time? moment(time).format('YYYY/MM/DD HH:mm:ss'): ''
+
+/**
  * タイムゾーン対応のmomentオブジェクトを取得する。
  * @method
  * @param {String} [tz = APP.COMMON.TIME_ZONE]
