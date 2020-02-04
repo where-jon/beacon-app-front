@@ -184,3 +184,19 @@ export const getEntityFromIds = (list, entity, ids) => {
   return null
 }
 
+/**
+ * 配列をnumで指定された要素数で区切る
+ * @method
+ * @param {Object[]} array パーティショニング元配列
+ * @param {Number} num 1つのパーティションの要素数
+ * @return {Object[]}
+ */
+export const partitioningArray = (array, num) => {
+  const len = array.length
+  const c = []
+  for (let i = 0 ; i < len ; i += num) {
+    c.push(array.slice(i, (i + num)))
+  }
+  return c
+}
+

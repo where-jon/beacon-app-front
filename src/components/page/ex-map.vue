@@ -174,7 +174,7 @@
 import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import { SENSOR, TX, CATEGORY, POT_TYPE, SHAPE, KEY } from '../../sub/constant/Constants'
+import { SENSOR, TX, CATEGORY, POT_TYPE, SHAPE, KEY, DETECT_STATE } from '../../sub/constant/Constants'
 import { APP, DISP, DEV, APP_SERVICE, EXCLOUD, MSTEAMS_APP } from '../../sub/constant/config'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
@@ -408,6 +408,7 @@ export default {
       showDismissibleAlert: false,
       prohibitInterval: null,
       lostInterval: null,
+      absentZonePosition: null, // 不在表示ゾーン
       // 温湿度
       isShownChart: false, // 温湿度モーダル表示
       iconTicker: null,
@@ -548,7 +549,7 @@ export default {
       this.startPositionAutoReload()
       this.startOtherAutoReload()
     }
-    this.changeArea(this.selectedArea)
+    this.changeArea(this.selectedArea) // ここが処理の起点。this.fetchData()が呼ばれ、showMapImage()が呼ばれる
     document.addEventListener('touchstart', this.touchEnd)
     // Canvas内クリックからの伝搬を止める
     document.getElementById('map').addEventListener('click', function(e) {
@@ -794,8 +795,8 @@ export default {
     },
     updateTxBtn(pos, tx, meditag, magnet){
       const display = StyleHelper.getPositionDisplay(tx)
-      const color = PositionHelper.getTxIconColor(display, meditag, magnet)
-      const bgColor = PositionHelper.getTxIconBgColor(display, meditag, magnet)
+      const color = StyleHelper.getTxIconColor(display, meditag, magnet)
+      const bgColor = StyleHelper.getTxIconBgColor(display, meditag, magnet)
 
       if(SensorHelper.includesSensorId(this.pMergeSensorIds, SENSOR.TEMPERATURE) && tx.sensorId == SENSOR.TEMPERATURE){
         const ret = IconHelper.createThermohIcon(tx, this.getMapScale(), this.stage)
@@ -829,8 +830,8 @@ export default {
     },
     updateZoneTxBtn(pos, tx, meditag, magnet){
       const display = StyleHelper.getPositionDisplay(tx)
-      const color = PositionHelper.getTxIconColor(display, meditag, magnet)
-      const bgColor = PositionHelper.getTxIconBgColor(display, meditag, magnet)
+      const color = StyleHelper.getTxIconColor(display, meditag, magnet)
+      const bgColor = StyleHelper.getTxIconBgColor(display, meditag, magnet)
 
       // 既に該当btx_idのTXアイコンが作成済みか?
       const zoneBtx_id = PositionHelper.zoneBtxIdAddNumber + pos.btx_id
@@ -853,13 +854,11 @@ export default {
       }
       return { txBtn, zoneBtx_id }
     },
-    setNomalTx(absentZonePosition) {
+    showNomalTx(position) {
       if(!Util.hasValue(this.pShowTxSensorIds)){
         return
       }
 
-      // 表示Txのフィルタリング
-      let position = this.pDisabledFilter? PositionHelper.filterPositions(false, false, null, null, null): PositionHelper.filterPositions()
       // 表示Txの画面上の座標位置の決定
       if(APP.POS.USE_MULTI_POSITIONING){
         // ３点測位はUSE_POSITION_HISTORYには非対応 TODO:要対応
@@ -878,10 +877,10 @@ export default {
       position.forEach(pos => this.showTx(pos))
       this.positions = position
       this.stage.update()
-      this.reShowTxDetail(position, absentZonePosition)
+      this.reShowTxDetail(position)
 
     },
-    setAbsentZoneTx() {
+    showAbsentZoneTxAll() {
       if (!this.pShowAbsent) {
         return
       }
@@ -891,12 +890,10 @@ export default {
         return
       }
       const ratio = DISP.TX.R_ABSOLUTE? 1 / this.canvasScale: 1
-      const absentZonePositions = PositionHelper.calcCoordinatesForZone(PositionHelper.filterPositions(false, true), ratio, this.locations, absentDisplayZone)
-
-      absentZonePositions.forEach(pos => this.showAbsentZoneTx(pos))
-      return absentZonePositions
+      this.absentZonePositions = PositionHelper.calcCoordinatesForZone(PositionHelper.filterPositions(false, true), ratio, this.locations, absentDisplayZone)
+      this.absentZonePositions.forEach(pos => this.showAbsentZoneTx(pos))
     },
-    reShowTxDetail(position, absentPositions){ // position
+    reShowTxDetail(position){ // position
       if (!this.pShowDetail) {
         return
       }
@@ -905,7 +902,7 @@ export default {
       }
 
       const tx = this.selectedTx
-      const selectedAbsentTxPosition = _.find(absentPositions, pos => pos.btx_id == tx.btxId)
+      const selectedAbsentTxPosition = _.find(this.absentZonePosition, pos => pos.btx_id == tx.btxId)
       // 不在表示用ゾーンに表示されている方を優先して表示する
       if (selectedAbsentTxPosition) {
         this.showDetail(tx.btxId, selectedAbsentTxPosition.x, selectedAbsentTxPosition.y)
@@ -982,27 +979,25 @@ export default {
       }
       this.txIcons.push({ button: txBtn, device: tx, config: txBtn.iconInfo, sign: -1 })
       this.txCont.addChild(txBtn)
-      this.detectedCount++  // 検知数カウント増加
     },
-    setQuantityTx(absentZonePosition) {
-      let position = PositionHelper.filterPositions()
-      console.error({position})
+    showQuantityTx(position) {
+      position = PositionHelper.addFixedPosition(position, this.locations, this.selectedArea)
       position = PositionHelper.calcScreenCoordinates(position, 1 / this.canvasScale, this.locations, this.selectedArea)
-      console.error({position})
       position.forEach((pos) => {
-        console.error({pos})
+        console.error(pos)
+        if (pos.hasAnother) return
         const tx = this.txsMap[pos.btx_id]
         let locationKey = pos.location.locationId
-        Util.debug('showTx', pos, tx && tx.sensor)
+        // Util.debug('showTx', pos, tx && tx.sensor)
         if (!PositionHelper.checkTxAllow(pos, tx, this.selectedArea, false, this.pOnlyFixTx)){
           console.error('notallow')
           return
         }
 
         // 固定座席の場合、TXが保持している位置に集計する
-        if (PositionHelper.isFixTx(tx)) {
-          locationKey = pos.tx.location.locationId
-        }
+        // if (PositionHelper.isFixTx(tx)) {
+        //   locationKey = pos.tx.location.locationId
+        // }
 
         if (tx.potType == POT_TYPE.PERSON) {
           let locationVal = this.locationPersonList[locationKey]
@@ -1026,8 +1021,6 @@ export default {
             this.locationOtherList[locationKey]++
           }
         }
-
-        this.detectedCount++  // 検知数カウント増加
       })
 
       console.error(this.locationOtherList)
@@ -1046,7 +1039,7 @@ export default {
       this.positions = position
       this.stage.update()
       this.stage.enableMouseOver()
-      this.reShowTxDetail(position, absentZonePosition)
+      this.reShowTxDetail(position)
       // パラメータリセット
       this.locationPersonList = {}
       this.locationObjectList = {}
@@ -1133,15 +1126,19 @@ export default {
         this.txCont = ViewHelper.addContainerOnStage(this.stage, this.bitmap.width, this.bitmap.height)
       }
       this.txCont.removeAllChildren()
-      this.detectedCount = 0
 
-      const absentZonePosition = this.pShowAbsent? this.setAbsentZoneTx(): [] // FIXME: 
+      if (this.pShowAbsent) { // 不在表示用ゾーン
+        this.showAbsentZoneTxAll()
+      }
 
-      // 数量ボタン押下時
-      if (this.isQuantity){
-        this.setQuantityTx(absentZonePosition)
-      } else {
-        this.setNomalTx(absentZonePosition)
+      // 表示Txのフィルタリング
+      let position = this.pDisabledFilter? PositionHelper.filterPositions(false, false, null, null, null): PositionHelper.filterPositions()
+      this.detectedCount = PositionHelper.getDetectCount(position, this.selectedArea)  // 検知数カウント増加
+
+      if (this.isQuantity) { // 数量ボタン押下時
+        this.showQuantityTx(position)
+      } else { // 個別ボタン押下時
+        this.showNomalTx(position)
       }
     },
     showExb(exb) {
@@ -1254,7 +1251,7 @@ export default {
       this.hideProgress()
     },
     // common
-    showMapImage(disableErrorPopup, payload = {}) {
+    showMapImage(disableErrorPopup, payload = {}) { // TODO: refactor:callbackはonShownMapImageにして無名関数にしない。処理を整理。
       this.showMapImageDef(async () => {
         if(this.pAnalysis){
           this.reloadState.prevent = false

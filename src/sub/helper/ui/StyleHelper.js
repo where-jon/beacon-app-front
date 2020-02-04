@@ -7,6 +7,7 @@ import { DISP } from '../../constant/config'
 import { SHAPE, FONT } from '../../constant/Constants'
 import * as ColorUtil from '../../util/ColorUtil'
 import * as StringUtil from '../../util/StringUtil'
+import * as SensorHelper from '../domain/SensorHelper'
 import * as Util from '../../util/Util'
 
 
@@ -128,3 +129,44 @@ export const getPositionDisplay = tx => {
     shape: display.shape || SHAPE.CIRCLE
   }
 }
+
+/**
+ * 位置表示Txアイコンの文字色を取得する。
+ * @method
+ * @param {Object} display
+ * @param {Object} meditag
+ * @param {Object} magnet
+ * @return {String}
+ */
+export const getTxIconColor = (display, meditag, magnet) => meditag? '#000': SensorHelper.isMagnetOn(magnet)? display.bgColor : display.color
+
+/**
+ * 位置表示Txアイコンの背景色を取得する。
+ * @method
+ * @param {Object} display
+ * @param {Object} meditag
+ * @param {Object} magnet
+ * @return {String}
+ */
+export const getTxIconBgColor = (display, meditag, magnet) => meditag? meditag.bg: SensorHelper.isMagnetOn(magnet)? display.color: display.bgColor
+
+/**
+ * 長方形配置時の、原点からの距離(半径)を取得する
+ * @method
+ * @param {Number} index
+ * @param {Number} radius
+ * @return {Number}
+ */
+export const getRadiusSquare = (index, radius) => index % 2 === 0 ? radius : Math.sqrt(Math.pow(radius, 2) * 2)
+
+/**
+ * ひし形配置時の、原点からの距離(半径)を取得する
+ * @method
+ * @param {Number} index
+ * @param {Number} radius
+ * @return {Number}
+ */
+export const getRadiusDiamond = (index, radius) => (index % 2 !== 0 && index % 6 !== 0) ? radius : radius * 1.5
+
+
+
