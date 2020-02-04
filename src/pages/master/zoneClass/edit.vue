@@ -218,16 +218,17 @@ export default {
         return { text: name, label: name, value: v.categoryId} 
       })
     },
-    onSaved(){
+    async onSaved(){
       StateHelper.setForceFetch('tx', true)
       StateHelper.setForceFetch('exb', true)
       StateHelper.setForceFetch('category', true)
       StateHelper.setForceFetch('location', true)
+      await StateHelper.load('zone', true)
+      this.$set(this.form, 'zoneCd', StateHelper.createMasterCd('zone', this.zones, this.zone))
     },
     async onBeforeReload(){
       this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaNames, null)
       this.vueSelected.category = VueSelectHelper.getVueSelectData(this.categoryNames, null)
-      this.form.zoneCd = StateHelper.createMasterCd('zone', this.zones, this.zone)
     },
     async onSaving() {
       const zoneId = Util.hasValue(this.form.zoneId)? this.form.zoneId: -1

@@ -169,12 +169,13 @@ export default {
       })
     },
     onBeforeReload(){
-      this.form.areaCd = StateHelper.createMasterCd('area', this.areas, this.area)
     },
-    onSaved(){
+    async onSaved(){
       StateHelper.setForceFetch('tx', true)
       StateHelper.setForceFetch('exb', true)
       StateHelper.setForceFetch('zone', true)
+      await StateHelper.load('areas', true)
+      this.$set(this.form, 'areaCd', StateHelper.createMasterCd('area', this.areas, this.area))
     },
     beforeSubmit(again){
       if(this.mapUpdate){
