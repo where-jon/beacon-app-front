@@ -630,6 +630,10 @@ export const SETTING = {
         POS_LIST: {
           WITH: SETTING.STRING_LIST,
         },
+        POS_STACK: {
+          ADJUST_POPUP: SETTING.STRING_LIST,
+          USE_POPUP: SETTING.BOOLEAN,
+        },
         TX: {
           WITH: SETTING.STRING_LIST,
         },

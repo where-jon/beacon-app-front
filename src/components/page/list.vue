@@ -204,16 +204,20 @@
         <template slot="icons" slot-scope="row">
           <div class="empty-icon d-inline-flex" /><!-- 横幅0の「支柱」 -->
           <div class="d-inline-flex flex-wrap">
-            <!-- <div v-for="position in row.item.positions" :key="position.areaId"
-                 :style="position.display" :class="'d-inline-flex m-1 '+ position.blinking" @click.stop="mapDisplay(position, true)"
-            >
-              {{ position.label }}
-            </div> -->
-            <div v-for="position in row.item.positions" :key="position.areaId"
-                 :style="position.display" :class="'d-inline-flex m-1 '+ position.blinking" @click="txOnClick($event,position.tx)"
-            >
-              {{ position.label }}
-            </div>
+            <span v-if="useTxPopup">
+              <div v-for="position in row.item.positions" :key="position.areaId"
+                  :style="position.display" :class="'d-inline-flex m-1 '+ position.blinking" @click="txOnClick($event,position.tx)"
+              >
+                {{ position.label }}
+              </div>
+            </span>
+            <span v-else>
+              <div v-for="position in row.item.positions" :key="position.areaId"
+                  :style="position.display" :class="'d-inline-flex m-1 '+ position.blinking" @click.stop="mapDisplay(position, true)"
+              >
+                {{ position.label }}
+              </div>
+            </span>
           </div>
         </template>
         <!-- 設定用 -->
@@ -355,6 +359,7 @@ export default {
       showReady: false, //  pir, positio
       preloadThumbnail: new Image(),
       thumbnailUrl: APP_SERVICE.BASE_URL + EXCLOUD.POT_THUMBNAIL_URL,
+      useTxPopup: APP.POS_STACK.USE_POPUP,
       filter: {
         reg: '',
         extra: {

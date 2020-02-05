@@ -852,7 +852,6 @@ export const createTxDetailInfo = (x, y, tx, canvasScale, offset, containerRect,
     color: display.color,
     isDispRight: x + offset.x + 100 < window.innerWidth,
   }
-  console.log( ret)
   if(tx.extValue){
     Object.keys(tx.extValue).forEach( key => { 
       if(!ret[key]){ // 既にあるキーは書き換えない
