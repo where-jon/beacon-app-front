@@ -400,7 +400,7 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   },
   // 位置表示(数量)：TX
   TX_NUM: {
-    R: 30, // Txの半径
+    R: 20, // Txの半径
     ROUNDRECT_RADIUS: 13, // Tx角丸表示時のRADIUS
     BGCOLOR: '#ff7f50', // Tx表示時のデフォルト背景色
     COLOR: '#000000', // Tx表示時のデフォルト文字色

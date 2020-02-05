@@ -306,7 +306,10 @@ export default {
         }
       }, disableErrorPopup)
     },
-    async fetchData(payload, disableErrorPopup) {
+    async fetchData(payload) {
+      this.onChangeAreaDone(payload)
+    },
+    async onChangeAreaDone(payload, disableErrorPopup) {
       this.showReady = false
       const disabledProgress = Util.getValue(payload, 'disabledProgress', false)
       try {

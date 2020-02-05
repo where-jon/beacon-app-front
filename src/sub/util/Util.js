@@ -114,6 +114,13 @@ export const hasValue = obj => obj != null && obj.length !== 0
 export const hasValueAny = (...obj) => obj.some(val => hasValue(val))
 
 /**
+ * 値が存在する最初の値を返す。
+ * 
+ * @param  {...any} obj 
+ */
+export const firstValue = (...obj) => obj.find(val => hasValue(val))
+
+/**
  * オプジェクトから階層を辿って値を取得する。
  * @method
  * @param {Object} obj

@@ -1,3 +1,4 @@
+/* eslint-disable require-atomic-updates */
 /**
  * センサに関するヘルパーモジュール
  * @module helper/domain/SensorHelper
@@ -964,12 +965,13 @@ export const createTxLegends = (txList, categoryList, groupList) => {
 
 /**
  * 指定したセンサIDを含むか確認する。undefinedとnullは通常として扱う
+ * checkIdをつけた場合、targetSensorIdと一致するか確認する
  * @method
  * @param {Number[]} sensorIdList
  * @param {Number} targetSensorId
  * @return {Boolean}
  */
-export const includesSensorId = (sensorIdList, targetSensorId) => sensorIdList.some(sensorId => sensorId == targetSensorId)
+export const match = (sensorIdList, targetSensorId, checkId) => sensorIdList.some(sensorId => sensorId == targetSensorId) && (!checkId || checkId == targetSensorId)
 
 /**
  * サーバからセンサ情報を取得する。
@@ -978,7 +980,11 @@ export const includesSensorId = (sensorIdList, targetSensorId) => sensorIdList.s
  * @param {Object} sensorInfo
  * @return {Object[]}
  */
-export const fetchSensor = async sensorInfo => sensorInfo.data = sensorInfo.enable? await EXCloudHelper.fetchSensor(sensorInfo.id): []
+export const fetchSensor = async (sensorInfo) => {
+  if (sensorInfo.enable !== false) {
+    sensorInfo.data =  await EXCloudHelper.fetchSensor(sensorInfo.id)
+  }
+}
 
 /**
  * 指定したセンサ情報をサーバから取得する。
@@ -988,36 +994,18 @@ export const fetchSensor = async sensorInfo => sensorInfo.data = sensorInfo.enab
  * @return {Object[]}
  */
 export const fetchAllSensor = async (sensorIds) => {
-  const ret = [
-    { id: SENSOR.TEMPERATURE, name: SENSOR.STRING[SENSOR.TEMPERATURE], enable: sensorIds.includes(SENSOR.TEMPERATURE) },
-    { id: SENSOR.PIR, name: SENSOR.STRING[SENSOR.PIR], enable: sensorIds.includes(SENSOR.PIR) },
-    { id: SENSOR.THERMOPILE, name: SENSOR.STRING[SENSOR.THERMOPILE], enable: sensorIds.includes(SENSOR.THERMOPILE) && APP.SENSOR.USE_THERMOPILE },
-    { id: SENSOR.MEDITAG, name: SENSOR.STRING[SENSOR.MEDITAG], enable: sensorIds.includes(SENSOR.MEDITAG) && APP.SENSOR.USE_MEDITAG },
-    { id: SENSOR.MAGNET, name: SENSOR.STRING[SENSOR.MAGNET], enable: sensorIds.includes(SENSOR.MAGNET) && APP.SENSOR.USE_MAGNET },
-    { id: SENSOR.PRESSURE, name: SENSOR.STRING[SENSOR.PRESSURE], enable: sensorIds.includes(SENSOR.PRESSURE) && APP.SENSOR.USE_PRESSURE }
-  ]
-  await Promise.all(ret.map(fetchSensor))
-  return ret
+  const sensorInfos = [
+    { id: SENSOR.TEMPERATURE},
+    { id: SENSOR.PIR },
+    { id: SENSOR.THERMOPILE, enable: APP.SENSOR.USE_THERMOPILE },
+    { id: SENSOR.MEDITAG, enable: APP.SENSOR.USE_MEDITAG},
+    { id: SENSOR.MAGNET, enable: APP.SENSOR.USE_MAGNET },
+    { id: SENSOR.PRESSURE, enable: APP.SENSOR.USE_PRESSURE }
+  ].filter(e => sensorIds.includes(e.id)).map(e => ({...e, name: SENSOR.STRING[e.id]}))
+  await Promise.all(sensorInfos.map(fetchSensor))
+  return sensorInfos
 }
 
-/**
- * 優先順位の高いセンサ情報を取得する。
- * @method
- * @param {Object} sensorDataMap
- * @param {Number[]} primarySensorList
- * @return {Object}
- */
-export const getPrimarySensor = (sensorDataMap, primarySensorList) => {
-  const primaryLength = primarySensorList.length
-  for(let idx = 0; idx < primaryLength; idx++){
-    const sensorId = primarySensorList[idx]
-    const sensorType = SENSOR.STRING[sensorId]
-    if(sensorDataMap[sensorType]){
-      return { id: sensorId, ...sensorDataMap[sensorType] }
-    }
-  }
-  return null
-}
 
 /**
  * ヒートマップで使用するデータを作成する。

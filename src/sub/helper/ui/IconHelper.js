@@ -553,7 +553,7 @@ export const createThermohIcon = (device, mapScale, stage) => {
  * @return {Object}
  */
 export const createExbIcon = (exb, exbSensorIdList, mapScale, stage) => {
-  if (!SensorHelper.includesSensorId(exbSensorIdList, exb.sensorId)) {
+  if (!SensorHelper.match(exbSensorIdList, exb.sensorId)) {
     return null
   }
   let exbBtn = null

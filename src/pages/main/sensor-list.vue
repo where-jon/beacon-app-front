@@ -112,35 +112,8 @@ export default {
           })
         }
         const positionHistory = await PositionHelper.loadPosition()
-        const positionedExb = PositionHelper.getPositionedExbWithSensor(this.selectedArea,
-          exb => exb.sensorIds.includes(this.selectedSensor),
-          exb => ({id: this.selectedSensor, ...exCluodSensors.find(sensor => sensor.deviceid == exb.deviceId && (sensor.timestamp || sensor.updatetime))}),
-          null, true
-        )
-        let positionedTx = PositionHelper.getPositionedTx(this.selectedArea,
-          tx => tx.sensorId == this.selectedSensor,
-          tx => {
-            const sensor = exCluodSensors.find(sensor => (sensor.btxid == tx.btxId || sensor.btx_id == tx.btxId) && (sensor.timestamp || sensor.updatetime))
-            const ret = {
-              id: this.selectedSensor,
-              ...sensor,
-            }
-            if(this.selectedSensor == SENSOR.MEDITAG){
-              const pos = positionHistory.find(position => position.txId == tx.txId || position.btx_id == tx.btxId)
-              if(!ret.areaId){
-                ret.areaId = pos && pos.exb? pos.exb.areaId: null
-              }
-              if(!ret.zoneId){
-                ret.zoneId = pos && pos.exb? pos.exb.zoneId: null
-              }
-              if(!ret.zoneCategoryId){
-                ret.zoneCategoryId = pos && pos.exb? pos.exb.zoneCategoryId: null
-              }
-            }
-            return ret
-          },
-          null, true, this.selectedSensor == SENSOR.MEDITAG
-        )
+        const positionedExb = PositionHelper.getPositionedExbWithSensor(this.selectedSensor, exCluodSensors)
+        let positionedTx = PositionHelper.getPositionedTxWithSensor(this.selectedSensor, exCluodSensors, positionHistory)
 
         this.sensorList = positionedExb.concat(positionedTx)
           .map(device => this.createDeviceInfo(device))

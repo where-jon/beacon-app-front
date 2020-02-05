@@ -99,7 +99,7 @@ export default {
           if (this.stage) {
             this.stage.removeAllChildren()
             this.stage.update()
-            this.$nextTick(async () => await this.fetchData(null, true))
+            this.$nextTick(async () => await this.onChangeAreaDone(null, true))
           }
         }, 200)
       }
@@ -243,7 +243,7 @@ export default {
             this.reset()
           }
           this.selectedArea = val
-          this.fetchData && await this.fetchData()
+          this.onChangeAreaDone && await this.onChangeAreaDone()
         }
         else {
           Util.debug('No mapImage in changeArea.')
