@@ -83,8 +83,8 @@ export const BULK = {
   REQUIRE: {
     REGION: { ALLOW: ['updateKey', 'ID', 'regionName', 'meshId'] },
     AREA: { ALLOW: ['updateKey', 'ID', 'areaName'], DISALLOW: ['deviceId', 'deviceIdX', 'zoneName'] },
-    EXB: { ALLOW: ['updateKey', 'threshold1', 'sensor'] },
-    TX: { ALLOW: ['updateKey', 'sensor'], DISALLOW: ['threshold1'] },
+    EXB: { ALLOW: ['updateKey', 'threshold1'] },
+    TX: { ALLOW: ['updateKey'], DISALLOW: ['threshold1'] },
     LOCATION: { ALLOW: ['updateKey', 'ID', 'locationName', 'txViewType'] },
     POT: { ALLOW: ['updateKey', 'ID', 'potName', 'potType'] },
     CATEGORY: { ALLOW: ['updateKey', 'ID', 'categoryName', 'categoryTypeName', 'color', 'bgColor', 'shape' ] },

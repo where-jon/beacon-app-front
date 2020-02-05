@@ -46,7 +46,7 @@ export default {
     },
     async onSaving() {
       await Promise.all(['category', 'group', 'pot'].map(StateHelper.load))
-      await this.$refs.bulkEdit.bulkSave({numberList: ['btxId', 'major', 'minor', 'disp', 'x', 'y'], nullableList: ['locationName', 'x', 'y']})
+      await this.$refs.bulkEdit.bulkSave({numberList: ['btxId', 'major', 'minor', 'disp', 'x', 'y'], nullableList: ['locationName', 'x', 'y', 'sensorNames']})
     },
     restructTx(entity, dummyKey){
       if(APP.TX.BTX_MINOR == 'minor'){
@@ -135,8 +135,8 @@ export default {
     onRestruct(entity, dummyKey){
       dummyKey = this.restructTx(entity, dummyKey)
       dummyKey = this.restructPot(entity, dummyKey)
-      if(Util.hasValue(entity.sensor)){
-        const param = BulkHelper.createParamSensor('tx', entity.sensor, dummyKey)
+      if(Util.hasValue(entity.sensorNames)){
+        const param = BulkHelper.createParamSensor('tx', entity.sensorNames, dummyKey)
         if(param.sensorList.length != 0){
           entity.txSensorList = param.sensorList
         }
