@@ -949,23 +949,23 @@ export default {
       let magnet = false
       if (SensorHelper.match(this.pMergeSensorIds, SENSOR.MAGNET, tx.sensorId)) {
         magnet = SensorHelper.getSensorFromBtxId('magnet', this.sensorMap.magnet, tx.btxId)
-        if(!magnet){
-          return {res:false}
-        }
+        // if(!magnet){
+        //   return {res:false}
+        // }
       }
       let meditag = null
       if (SensorHelper.match(this.pMergeSensorIds, SENSOR.MEDITAG, tx.sensorId) && APP.SENSOR.USE_MEDITAG) {
         meditag = SensorHelper.getSensorFromBtxId('meditag', this.sensorMap.meditag, tx.btxId)
-        if(!meditag){
-          return {res:false}
-        }
+        // if(!meditag){
+        //   return {res:false}
+        // }
       }
       return {res:true, temperature, magnet, meditag}
     },
     showTx(pos) {
       let {res, temperature, meditag, magnet} = this.checkTxSensor(pos)
       if (!res) {
-        return false
+        return
       }
       if (temperature) {
         pos.tx = Util.merge(Util.merge({}, pos.tx), temperature, ['areaId', 'areaName', 'x', 'y'])
