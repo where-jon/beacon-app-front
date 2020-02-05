@@ -70,7 +70,7 @@ export default {
         zoneCategory: null,
       },
       styles: [],
-      positionType: POSITION_STACK_TYPES.AREA,
+      positionType: DISP.POS_STACK.TYPE,
     }
   },
   computed: {
