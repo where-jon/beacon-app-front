@@ -493,12 +493,14 @@ export default {
       this.userForm.roleId = maxRole? maxRole.value: null
       this.vueSelected.role = VueSelectHelper.getVueSelectData(this.roleOptions, maxRole? maxRole.value: null)
 
-      this.form.potCd = StateHelper.createMasterCd('pot', this.pots, this.pot)
+      //this.form.potCd = StateHelper.createMasterCd('pot', this.pots, this.pot)
       this.initPotTxList()
     },
-    onSaved(){
+    async onSaved(){
       StateHelper.setForceFetch('tx', true)
       StateHelper.setForceFetch('user', true)
+      await StateHelper.load('pots', true)
+      this.$set(this.form, 'potCd', StateHelper.createMasterCd('pot', this.pots, this.pot))
     },
     setDummyParam(dummyUser, paramName, showForm){
       dummyUser[paramName] = showForm? this.userForm[paramName]: this.hasUserId? this.oldUserForm[paramName]: dummyUser[paramName]
