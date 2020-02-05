@@ -104,6 +104,13 @@ export const APP = { // 機能面に関する設定
   POS_LIST: {
     WITH: [''],
   },
+  // 位置表示(全体)
+  POS_STACK: {
+    ADJUST_POPUP: {   // ポップアップの調整　設定した座標だけマイナス
+      X: 15,                   // X座標　増加分、右に移動
+      Y: 5,                     // Y座標　増加分、下に移動
+    },  // Txアイコンクリック時にポップアップ表示するかどうか
+  },
   // TX関連設定
   TX: {
     WITH: ['major', 'dispFlg', 'location', 'dispPir'],
