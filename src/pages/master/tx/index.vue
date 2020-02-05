@@ -59,7 +59,8 @@ export default {
         return ret
       }).filter(val => val)
     },
-    createListParams(){
+    async createListParams(){
+      await Promise.all(['sensor'].map(state => StateHelper.load(state)))
       const retMap = { sensor: {} }
       this.sensorOptionsTx.forEach(option => retMap.sensor[option.value? option.value.toString(): '0'] = option.text)
       return retMap
