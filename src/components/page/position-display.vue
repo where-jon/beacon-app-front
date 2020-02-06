@@ -6,6 +6,7 @@
 
 <script>
 import { APP } from '../../sub/constant/config'
+import { SYSTEM_ZONE_CATEGORY_NAME } from '../../sub/constant/Constants'
 import { mapState } from 'vuex'
 import * as StringUtil from '../../sub/util/StringUtil'
 import * as Util from '../../sub/util/Util'
@@ -105,6 +106,8 @@ export default {
         }
       })
 
+      const absentZone = _.find(this.zones, zone => zone.categoryName == SYSTEM_ZONE_CATEGORY_NAME.ABSENT_DISPLAY)
+
       _.forEach(positions, pos => {
         const location = locationMap[pos.pos_id]
         prohibitDetectList? prohibitDetectList.some(data => {
@@ -114,11 +117,19 @@ export default {
           }
         }): false
         pos.isDisableArea = Util.getValue(location, 'isAbsentZone', false)
-        const posMasterIds = this.displayZone? Util.getValue(pos, 'location.' + this.id + 'List', [null]): [Util.getValue(pos, 'location.' + this.id, null)]
+        const posMasterIds = this.displayZone? Util.getValue(pos, 'location.zoneIdList', [null]): [Util.getValue(pos, 'location.areaId', null)]
         posMasterIds.forEach(posMasterId => {
-          const obj = Util.hasValue(posMasterId)? tempMasterMap[posMasterId]: tempMasterExt
+          const hasMasterId = Util.hasValue(posMasterId)
+          const obj = hasMasterId ? tempMasterMap[posMasterId]: tempMasterExt
           if(!pos.noSelectedTx && !Util.getValue(location, 'isAbsentZone', false)){
             obj.positions.push(pos)
+          }else if(absentZone){
+            // 不在ゾーンへの登録
+            if(hasMasterId){
+              tempMasterMap[absentZone.zoneId].positions.push(pos)
+            }else{
+              tempMasterExt[absentZone.zoneId].positions.push(pos)
+            }
           }
         })
       })

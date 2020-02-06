@@ -605,6 +605,11 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   POS: {
     EXSERVER: false, // EXServerを使う
   },
+
+  // 位置表示（全体）
+  POS_STACK: {
+    TYPE: 1// 表示方法
+  },
 }
 
 // used when APP.LOGIN_MODE != APP_SERVICE with excloud old api -----------------------------------------------------
