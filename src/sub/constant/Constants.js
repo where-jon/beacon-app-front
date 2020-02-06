@@ -665,13 +665,16 @@ export const SETTING = {
         CATEGORY: {
           TYPES: SETTING.NUMBER_LIST,
           WITH: SETTING.STRING_LIST,
+          EXT_DEF: SETTING.JSON,
         },
         GROUP: {
           WITH: SETTING.STRING_LIST,
+          EXT_DEF: SETTING.JSON,
         },
         ZONE: {
           TYPES: SETTING.NUMBER_LIST,
           WITH: SETTING.STRING_LIST,
+          EXT_DEF: SETTING.JSON,
         },
         NOTIFY: {
           MIDIUM_TYPES: SETTING.NUMBER_LIST,
@@ -770,6 +773,9 @@ export const SETTING = {
         },
         MANAGE: {
           SETTING_CATEGORY: SETTING.STRING_LIST,
+        },
+        OTHER: {
+          EXT_DEF: SETTING.JSON,
         }
       },
       DISP: {
