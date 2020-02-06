@@ -1314,7 +1314,8 @@
         "y": "y::Y座標"
       },
       "POS_LIST": {
-        "tel": "tel::電話番号"
+        "tel": "tel::電話番号",
+        "mapDisplay": "mapDisplay::マップ表示"
       },
       "TX": {
         "major": "major::major",

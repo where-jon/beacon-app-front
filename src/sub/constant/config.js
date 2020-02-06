@@ -102,7 +102,7 @@ export const APP = { // 機能面に関する設定
   },
   // 位置表示(一覧)
   POS_LIST: {
-    WITH: [''],
+    WITH: ['mapDisplay'],  // 表示対象の文字列を配列に追加で列を表示する。mapDisplay:「マップ表示」列、tel:「電話番号」列
   },
   // 位置表示(全体)
   POS_STACK: {
