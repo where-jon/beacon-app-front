@@ -317,4 +317,14 @@ export default {
     background-color: #6c757d !important;
     line-height: 1 !important;
   }
+
+  @keyframes legend-flash {
+  0%,100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+ }
+
 </style>
