@@ -127,8 +127,6 @@ export default {
             // 不在ゾーンへの登録
             if(hasMasterId){
               tempMasterMap[absentZone.zoneId].positions.push(pos)
-            }else{
-              tempMasterExt[absentZone.zoneId].positions.push(pos)
             }
           }
         })

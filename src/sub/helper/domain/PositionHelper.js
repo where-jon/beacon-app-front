@@ -175,7 +175,6 @@ export const storePositionHistory = async (count, allShow = false, fixSize = fal
   const txs = store.state.app_service.txs
 
   let positions = await EXCloudHelper.fetchPositionHistory(locations, exbs, txs, allShow, pMock)
-  console.log('position2', positions)
   // 検知状態の取得
   setDetectState(positions)
   // 在席表示と同じ、表示txを取得する。

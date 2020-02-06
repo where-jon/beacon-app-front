@@ -60,7 +60,6 @@ export const fetchPositionHistory = async (locations, exbs, txs, allShow, pMock)
   exbs.forEach(e => exbIdMap[e.exbId] = e)
   const locationIdMap = {}
   locations.forEach(l => locationIdMap[l.locationId] = l)
-  console.log('data', data)
 
   return _(data).filter(val => allShow || DEV.NOT_FILTER_TX || txs && txIdMap[val.txId])
     .filter(val => allShow || Util.hasValue(val.locationId) && locationIdMap[val.locationId])
