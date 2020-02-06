@@ -128,7 +128,7 @@ export default {
           }
         })
 
-        positions = positions.map(pos => {
+        positions = positions.filter(pos => pos.exb && pos.exb.location).map(pos => {
           prohibitCheck = minorMap[pos.minor] != null
 
           const location = pos.exb.location? locationMap[pos.exb.location.locationId]: {}
