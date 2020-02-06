@@ -13,7 +13,7 @@
       <!-- right -->
       <div class="tui-full-calendar-timegrid-right" :style="{'margin-left': styles.leftWidth}">
           <div class="tui-full-calendar-timegrid-h-grid">
-            <div v-for="(timeSlot, idx) in timeSlots" :key="idx" class="tui-full-calendar-timegrid-gridline" :style="{height: styles.oneHourHeight, 'border-bottom': styles.borderBottom}">
+            <div v-for="(timeSlot, idx) in timeSlots" :key="idx" class="tui-full-calendar-timegrid-gridline" :style="{height: styles.oneHourHeight}">
               <div class="tui-full-calendar-timegrid-gridline-half" :style="{height: styles.halfHourHeight, 'border-bottom': styles.halfHourBorderBottomone}"></div>
             </div>
           </div>
@@ -93,11 +93,10 @@ export default {
   methods: {
     setCalendarHeight() {
       const container = document.getElementById('vlayout-area')
-      const cl = document.getElementById('calendar-layout')
       if (BrowserUtil.isAndroidOrIOS()) {
         container.style.height = '250px'
       } else {
-        const h = document.documentElement.clientHeight - (cl.offsetTop) - 150
+        const h = document.documentElement.clientHeight - container.getBoundingClientRect().top - 30
         container.style.height = `${h}px`
       }
     },
@@ -124,6 +123,7 @@ export default {
     getStyles() {
       const theme = this.theme
       const styles = {}
+
       if (theme) {
         styles.borderBottom = theme.week.timegridHorizontalLine.borderBottom || theme.common.border
         styles.halfHourBorderBottom = theme.week.timegridHalfHour.borderBottom || theme.common.border
@@ -161,6 +161,8 @@ export default {
         styles.currentTimeRightBorderTop = theme.week.currentTimeLineFuture.border
 
         styles.borderRight = theme.week.timegrid.borderRight || theme.common.border
+
+        styles.halfHourBorderBottomone = '1px dashed #e5e5e5'
       }
 
       return styles
@@ -169,4 +171,18 @@ export default {
 }
 </script>
 <style>
+.tui-full-calendar-vlayout-container {
+  position: relative;
+  border-left: 1px solid #e5e5e5;
+  border-right: 1px solid #e5e5e5;
+  border-bottom: 1px solid #e5e5e5;
+}
+.tui-full-calendar-timegrid-hour span {
+  position: absolute;
+  top: -11px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  line-height: 25px;
+}
 </style>

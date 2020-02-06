@@ -1,24 +1,21 @@
 <template>
 <div v-if="event.schedule" class="tui-full-calendar-floating-layer" style="position: absolute;">
-  <div class="tui-full-calendar-popup tui-full-calendar-popup-detail">
+  <div class="tui-full-calendar-popup tui-full-calendar-popup-detail" :style="{'border-top': `10px solid ${event.schedule.basicColor}`}">
     <div class="tui-full-calendar-popup-container">
       <div class="tui-full-calendar-popup-section tui-full-calendar-section-header">
-        <div>
           <span class="tui-full-calendar-schedule-private tui-full-calendar-icon tui-full-calendar-ic-private"></span>
-          <span class="tui-full-calendar-schedule-title">{{ event.schedule.title }}</span>
-        </div>
-        <div class="tui-full-calendar-popup-detail-date tui-full-calendar-content">{{ calendarContent }}</div>
+          <span class="tui-full-calendar-schedule-title" :style="{color: event.schedule.basicColor}">{{ event.schedule.title }}</span>
       </div>
       <div class="tui-full-calendar-section-detail">
-          <div v-if="event.schedule.location" class="tui-full-calendar-popup-detail-item"><span class="tui-full-calendar-icon tui-full-calendar-ic-location-b"></span><span class="tui-full-calendar-content">{{ event.schedule.location }}</span></div>
-          <div v-if="event.schedule.attendees" class="tui-full-calendar-popup-detail-item tui-full-calendar-popup-detail-item-indent"><span class="tui-full-calendar-icon tui-full-calendar-ic-user-b"></span><span class="tui-full-calendar-content">{{ (event.schedule.attendees || []).join(', ') }}</span></div>
-          <div v-if="event.calendar" class="tui-full-calendar-popup-detail-item"><span class="tui-full-calendar-icon tui-full-calendar-calendar-dot" style="{'background-color': event.schedule.bgColor}"></span><span class="tui-full-calendar-content">{{ calendar.name }}</span></div>
-          <div v-if="event.schedule.body" class="tui-full-calendar-popup-detail-item tui-full-calendar-popup-detail-item-separate"><span class="tui-full-calendar-content">{{ event.schedule.body }}</span></div>
+        <div class="tui-full-calendar-popup-detail-item"><div class="popup-left"><img src="~/assets/icon/clock.svg" class="popup-icon"></div><div class="popup-right"><span class="tui-full-calendar-content">{{ calendarContent }}</span></div></div>
+        <div v-if="event.schedule.location" class="tui-full-calendar-popup-detail-item"><div class="popup-left"><img src="~/assets/icon/location.svg" class="popup-icon"></div><div class="popup-right"><span class="tui-full-calendar-content">{{ event.schedule.location }}</span></div></div>
+        <div v-if="event.schedule.attendees" class="tui-full-calendar-popup-detail-item"><div class="popup-left"><img src="~/assets/icon/person.svg" class="popup-icon"></div><div class="popup-right"><span class="tui-full-calendar-content">{{ (event.schedule.attendees || []).join(', ') }}</span></div></div>
+        <div v-if="event.schedule.body" class="tui-full-calendar-popup-detail-item"><div class="popup-left"><img src="~/assets/icon/memo.svg" class="popup-icon"></div><div id="popup-content" class="popup-right tui-full-calendar-content"></div></div>
       </div>
       <div v-if="!event.schedule.isReadOnly" class="tui-full-calendar-section-button">
-        <button class="tui-full-calendar-popup-edit" @click="onClickEdit"><span class="tui-full-calendar-icon tui-full-calendar-ic-edit"></span><span class="tui-full-calendar-content">{{ 'Edit' }}</span></button>
+        <button class="tui-full-calendar-popup-edit" @click="onClickEdit"><div class="popup-left"><img src="~/assets/icon/edit.svg" class="popup-icon"></div><div class="popup-right"><span class="tui-full-calendar-content">{{ 'Edit' }}</span></div></button>
         <div class="tui-full-calendar-popup-vertical-line"></div>
-        <button class="tui-full-calendar-popup-delete" @click="onClickDelete"><span class="tui-full-calendar-icon tui-full-calendar-ic-delete"></span><span class="tui-full-calendar-content">{{ 'Delete' }}</span></button>
+        <button class="tui-full-calendar-popup-delete" @click="onClickDelete"><img src="~/assets/icon/trash.svg" class="popup-icon" style="width: 0.8rem; height: 0.8rem;"><span class="tui-full-calendar-content">{{ 'Delete' }}</span></button>
       </div>
     </div>
     <div class="tui-full-calendar-popup-top-line" style="{'background-color': event.schedule.bgColor}"></div>
@@ -53,8 +50,8 @@ export default {
   },
   computed: {
     calendarContent() {
-      const start = moment(this.event.schedule.start).format("YYYY-MM-DD HH:mm")
-      const end = moment(this.event.schedule.end).format("YYYY-MM-DD HH:mm")
+      const start = moment(this.event.schedule.start).format("YYYY/MM/DD (ddd) HH:mm")
+      const end = moment(this.event.schedule.end).format("HH:mm")
       return `${start} - ${end}`
     }
   },
@@ -64,6 +61,11 @@ export default {
   },
   async mounted() {
     this._setPopupPositionAndArrowDirection()
+    const elm = document.getElementById('popup-content')
+    if (elm) {
+      elm.innerHTML = this.event.schedule.body
+      // elm.textContent = this.event.schedule.body
+    }
   },
   updated() {
   },
@@ -163,4 +165,18 @@ export default {
 }
 </script>
 <style>
+.popup-icon {
+  width: 1rem;
+  height: 1rem;
+}
+.tui-full-calendar-popup-detail-item {
+  /* height: auto; */
+}
+.popup-left {
+  display: table-cell;
+  width: 1.5rem;
+}
+.popup-right {
+  display: table-cell;
+}
 </style>

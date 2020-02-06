@@ -60,7 +60,7 @@ export const theme = {
     'week.dayname.borderTop': '1px solid #e5e5e5',
     'week.dayname.borderBottom': '1px solid #e5e5e5',
     'week.dayname.borderLeft': '1px solid #e5e5e5',
-    'week.dayname.paddingLeft': '0',
+    'week.dayname.paddingLeft': '1rem',
     'week.dayname.backgroundColor': 'inherit',
     'week.dayname.textAlign': 'left',
     'week.today.color': 'inherit',
@@ -86,7 +86,7 @@ export const theme = {
     'week.timegridLeft.width': '72px',
     'week.timegridLeft.backgroundColor': 'inherit',
     'week.timegridLeft.borderRight': '1px solid #e5e5e5',
-    'week.timegridLeft.fontSize': '11px',
+    'week.timegridLeft.fontSize': '1rem',
 
     'week.timegridOneHour.height': '52px',
     'week.timegridHalfHour.height': '26px',

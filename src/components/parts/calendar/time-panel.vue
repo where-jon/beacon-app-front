@@ -19,7 +19,7 @@
                   {{ schedule.title }}
                 </div>
               </div>
-              <div class="tui-full-calendar-time-resize-handle handle-x" :style="{'margin-left': styles.paddingLeft}">&nbsp;</div>
+              <div v-if="!schedule.isReadOnly" class="tui-full-calendar-time-resize-handle handle-x" :style="{'margin-left': styles.paddingLeft}">&nbsp;</div>
             </div>
           </div>
         </div>

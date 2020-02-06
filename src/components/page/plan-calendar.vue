@@ -51,13 +51,17 @@ export default {
   },
   mounted() {
     this.timeSlots = [...Array(24).keys()].map((hour) => {
-      const meridiem = hour >= 12 ? 'pm' : 'am'
-      if (hour > 12) {
-          hour = hour - 12;
-      }
-      return { 
-        hidden: hour == 0 ? true : false,
-        label: `${hour} ${meridiem}`
+      // const meridiem = hour >= 12 ? 'pm' : 'am'
+      // if (hour > 12) {
+      //     hour = hour - 12;
+      // }
+      // return { 
+      //   hidden: hour == 0 ? true : false,
+      //   label: `${hour} ${meridiem}`
+      // }
+      return {
+        hidden: hour == 0 || hour == 24 ? true : false,
+        label: hour
       }
     })
   },

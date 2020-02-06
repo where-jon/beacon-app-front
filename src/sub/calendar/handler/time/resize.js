@@ -66,6 +66,10 @@ TimeResize.prototype._onDragStart = function(dragStartEventData) {
     var id = domutil.getData(blockElement, 'id');
     var plan = this.planMap[id];
 
+    if (plan.isReadOnly) {
+        return;
+    }
+
     getScheduleDataFunc = this._getScheduleDataFunc = this.retriveScheduleData(timeView, this.day);
     scheduleData = this._dragStart = getScheduleDataFunc(
         dragStartEventData.originEvent, {

@@ -95,7 +95,7 @@
         :title="$t('label.schedule')"
         header-class="editPlanHeader"
       >
-      <edit-plan :name="name" :id="id" :appServicePath="appServicePath" :plan="targetPlan" :zoneOpts="zoneOpts" :locationOpts="locationOpts" :potPersonOpts="filteredPotPersonOpts" :potThingOpts="potThingOpts" :vueSelected="editVueSelected" @doneSave="onEditSave" @delete="onEditDelete"/>
+      <edit-plan :name="name" :id="id" :appServicePath="appServicePath" :currentUser="currentUser" :plan="targetPlan" :zoneOpts="zoneOpts" :locationOpts="locationOpts" :potPersonOpts="filterPotPersonOpts" :potThingOpts="potThingOpts" :vueSelected="editVueSelected" @doneSave="onEditSave" @delete="onEditDelete"/>
       </b-modal>
     </div>
   </div>
@@ -110,6 +110,7 @@ import * as HttpHelper from '../../sub/helper/base/HttpHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import * as AppServiceHelper from '../../sub/helper/dataproc/AppServiceHelper.js'
+import * as LocaleHelper from '../../sub/helper/base/LocaleHelper'
 import * as Util from '../../sub/util/Util'
 import { CATEGORY, UPDATE_ONLY_NN } from '../../sub/constant/Constants'
 import { DISP } from '../../sub/constant/config'
@@ -185,7 +186,6 @@ export default {
       loadStates: ['area', 'zone', 'location', 'group', 'category', 'pot'],
       options: [],
       potPersonOpts: [],
-      filteredPotPersonOpts: [],
       potThingOpts: [],
 
       // フィルター
@@ -225,6 +225,8 @@ export default {
         timeRange: [],
         userId: null,
         userName: null,
+        potId: null,
+        potName: null,
         zoneId: null,
         locationId: null,
         potThingId: null,
@@ -255,7 +257,18 @@ export default {
       '--noActualBgColor': DISP.PLAN.NO_ACTUAL_IN_PLAN_BG_COLOR,
       '--actualOutOfPlanBgColor': DISP.PLAN.ACTUAL_OUT_OF_PLAN_BG_COLOR,
       }
-    }
+    },
+    filterPotPersonOpts() {
+      const doFilter = !this.currentUser ? false : this.currentUser.isAd
+        ? this.targetPlan.potId == null || this.targetPlan.potId == this.currentUser.adPot.potId ? true : false
+        : this.targetPlan.userId == null || this.targetPlan.userId == this.currentUser.userId ? true : false
+      return doFilter
+        ? this.potPersonOpts.filter(opt => {
+            const potId = opt.value
+            return !this.currentUserPotIds.includes(potId)
+          })
+        : this.potPersonOpts
+    },
   },
   watch: {
     planModeFilter: {
@@ -350,8 +363,12 @@ export default {
     domevent.on(document.body, 'mousedown', this.onMouseDown, this);
     if (!this.currentUser) {
       this.currentUser = await AppServiceHelper.getCurrentUser()
-      if (this.currentUser.potUserList) {
-        this.currentUserPotIds = this.currentUser.potUserList.map(e => e.potUserPK.potId)
+      if (this.currentUser.isAd) {
+        this.currentUserPotIds = [this.currentUser.adPot.potId]
+      } else {
+        if (this.currentUser.potUserList) {
+          this.currentUserPotIds = this.currentUser.potUserList.map(e => e.potUserPK.potId)
+        }
       }
     }
     this.headerOptsWeekSchedule = this.getNormalHeader(moment(this.today).day(0).toDate())
@@ -424,6 +441,12 @@ export default {
       this.preDate = dt
     },
     getNormalHeader(date) {
+      if (LocaleHelper.getSystemLocale() == 'ja') {
+        moment.updateLocale('ja', {
+            weekdays: ["日曜日","月曜日","火曜日","水曜日","木曜日","金曜日","土曜日"],
+            weekdaysShort: ["日","月","火","水","木","金","土"],
+        }) 
+      }
       const sunday = moment(date).day(0)
       return [...Array(7).keys()].map(i => {
         const dt = moment(sunday).add(i, 'd')
@@ -539,17 +562,6 @@ export default {
         },
       })
     },
-    filterPotPersonOpts() {
-      if (this.targetPlan.userId == null || this.targetPlan.userId == this.currentUser.userId) {
-        const self = this
-        this.filteredPotPersonOpts = this.potPersonOpts.filter((e) => {
-          const potId = Util.getValue(e, 'value', null)
-          return !self.currentUserPotIds.includes(potId)
-        })
-      } else {
-        this.filteredPotPersonOpts = this.potPersonOpts
-      }
-    },
     initEdit() {
       this.targetPlan.planId = null
       this.targetPlan.planName = null
@@ -558,6 +570,8 @@ export default {
       this.targetPlan.timeRange = []
       this.targetPlan.userId = null
       this.targetPlan.userName = null
+      this.targetPlan.potId = null
+      this.targetPlan.potName = null
       this.targetPlan.zoneId = null
       this.targetPlan.locationId = null
       this.targetPlan.potThingId = null
@@ -573,11 +587,16 @@ export default {
     },
     onCreateSchedule(event) {
       this.initEdit()
-      this.filterPotPersonOpts()
       this.targetPlan.date = moment(event.start).format("YYYY-MM-DD")
       this.targetPlan.timeRange = [moment(event.start).format("HH:mm:00"), moment(event.end).format("HH:mm:00")]
-      this.targetPlan.userId = this.currentUser.userId
-      this.targetPlan.userName = this.currentUser.name
+      if (this.currentUser.isAd) {
+        this.targetPlan.potId = this.currentUser.adPot.potId
+        this.targetPlan.potName = this.currentUser.adPot.potName
+      } else {
+        this.targetPlan.userId = this.currentUser.userId
+        this.targetPlan.userName = this.currentUser.name
+      }
+      
       this.targetPlan.editable = true
       this.targetPlan.currentUserPotIds = this.currentUserPotIds
       if (event.hasOwnProperty('headerId')) {
@@ -604,6 +623,8 @@ export default {
         : [moment(event.start).format("HH:mm:00"), moment(event.end).format("HH:mm:00")]
       this.targetPlan.userId = plan.userId
       this.targetPlan.userName = plan.userName
+      this.targetPlan.potId = plan.userPotId
+      this.targetPlan.potName = plan.userPotName
       this.targetPlan.currentUserPotIds = this.currentUserPotIds
       const self = this
       plan.details.forEach((e) => {
@@ -622,24 +643,39 @@ export default {
           self.targetPlan.potPersonIds.push(e.potId)
         }
       })
+      
       if (!isClick) {
+        const potPersonIds = this.targetPlan.potPersonIds
+        this.targetPlan.potPersonIds = potPersonIds.join()
         return
       }
-      this.filterPotPersonOpts()
+
       let arr = this.zoneOpts.filter(opt => opt.value == this.targetPlan.zoneId)
       this.editVueSelected.zone = arr.length == 1 ? arr[0] : null
+
       arr = this.locationOpts.filter(opt => opt.value == this.targetPlan.locationId)
       this.editVueSelected.location = arr.length == 1 ? arr[0] : null
+
       arr = this.potThingOpts.filter(opt => opt.value == self.targetPlan.potThingId)
       this.editVueSelected.potThing = arr.length == 1 ? arr[0] : null
-      arr = this.potPersonOpts.filter((e) => {
-        const potId = Util.getValue(e, 'value', null)
-        const f = self.targetPlan.userId == self.currentUser.userId ? !self.currentUserPotIds.includes(potId) : true
-        return self.targetPlan.potPersonIds.includes(potId) && f
+
+      arr = this.potPersonOpts.filter(e => {
+        return this.targetPlan.potPersonIds.includes(e.value)
       })
+      if (this.currentUser.isAd) {
+        if (this.targetPlan.potId == this.currentUser.adPot.potId) {
+          arr = arr.filter(e => !this.currentUserPotIds.includes(e.value))
+        }
+      } else {
+        if (this.targetPlan.userId == this.currentUser.usersId) {
+          arr = arr.filter(e => !this.currentUserPotIds.includes(e.value))
+        }
+      }
       this.editVueSelected.potPersonList = arr
 
-      this.targetPlan.editable = this.currentUser.userId == plan.userId ? true : false
+      this.targetPlan.editable = this.currentUser.isAd 
+        ? this.currentUser.adPot.adId == plan.adId ? true : false
+        : this.currentUser.userId == plan.userId ? true : false
       this.showEdit = true
     },
     async onDragSchedule(e) {
@@ -723,7 +759,7 @@ export default {
 .tui-full-calendar-popup-edit,
 .tui-full-calendar-popup-delete {
   display: inline-block;
-  padding: 7px 9px 11px 9px;
+  padding: 9px 9px 0px 9px;
   width: calc(50% - 2px);
   outline: none;
   background: none;

@@ -139,4 +139,15 @@ export default {
 }
 </script>
 <style>
+.tui-full-calendar-dayname-layout {
+  border-left: 1px solid #e5e5e5;
+  border-right: 1px solid #e5e5e5;
+}
+.tui-full-calendar-dayname-date {
+  font-size: 1.5rem;
+}
+.tui-full-calendar-dayname-name {
+  /* font-weight: bold; */
+  font-size: 1rem;
+}
 </style>

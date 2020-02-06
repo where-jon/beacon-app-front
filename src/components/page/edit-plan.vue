@@ -15,7 +15,7 @@
         </b-form-row>
         <!-- 出席者 -->
         <b-form-row class="mt-3 mb-3">
-            <b-col cols="1" align="middle"><img src="~/assets/icon/user.svg" class="edit-plan-icon"></b-col>
+            <b-col cols="1" align="middle"><img src="~/assets/icon/person.svg" class="edit-plan-icon"></b-col>
             <b-col cols="11">
             <div>
           <multiselect v-model="vueSelected.potPersonList" :hide-selected="true" tag-placeholder="" :select-label="$t('label.select')" :deselect-label="$t('label.remove')" :placeholder="participantMessage" label="label" track-by="value" :options="potPersonOpts" :multiple="true" :taggable="false" :disabled="!plan.editable"></multiselect>
@@ -31,7 +31,7 @@
         </b-form-row>
         <!-- 日時 -->
         <b-form-row class="mt-3 mb-3">
-            <b-col cols="1" align="middle"><img src="~/assets/icon/clock-circular-outline.svg" class="edit-plan-icon"></b-col>
+            <b-col cols="1" align="middle"><img src="~/assets/icon/clock.svg" class="edit-plan-icon"></b-col>
             <b-col cols="4">
             <date-picker
               v-model="plan.date"
@@ -76,7 +76,7 @@
         </b-form-row>
         <!-- 会議室 -->
         <b-form-row v-if="!plan.isLocation" class="mt-3">
-          <b-col cols="1" align="middle"><img src="~/assets/icon/placeholder.svg" class="edit-plan-icon"></b-col>
+          <b-col cols="1" align="middle"><img src="~/assets/icon/location.svg" class="edit-plan-icon"></b-col>
           <b-col cols="11">
           <v-select v-model="vueSelected.zone" :options="zoneOpts" class="inputSelect vue-options" :style="vueSelectStyle" :disabled="!plan.editable">
             <template slot="selected-option" slot-scope="option">
@@ -98,7 +98,7 @@
         </b-form-row>
         <!-- 場所 -->
         <b-form-row v-if="plan.isLocation" class="mt-3">
-          <b-col cols="1" align="middle"><img src="~/assets/icon/placeholder.svg" class="edit-plan-icon"></b-col>
+          <b-col cols="1" align="middle"><img src="~/assets/icon/location.svg" class="edit-plan-icon"></b-col>
           <b-col cols="11">
           <v-select v-model="vueSelected.location" :options="locationOpts" class="inputSelect vue-options" :style="vueSelectStyle" :disabled="!plan.editable">
             <template slot="selected-option" slot-scope="option">
@@ -149,7 +149,7 @@
         <!-- 登録者 -->
         <b-form-row class="mt-3 mb-3">
           <b-col>
-          <span>{{ $t('label.registeredPerson') }}:&nbsp;<span style="font-weight: bold;">{{ plan.userName }}</span></span>
+          <span>{{ $t('label.registeredPerson') }}:&nbsp;<span style="font-weight: bold;">{{ userName }}</span></span>
           </b-col>
         </b-form-row>
         <!-- ボタン -->
@@ -191,6 +191,7 @@ export default {
     potThingOpts: null,
     potPersonOpts: null,
     vueSelected: null,
+    currentUser: null,
   },
   data () {
     return {
@@ -247,6 +248,9 @@ export default {
     },
   },
   computed: {
+    userName() {
+      return this.currentUser && this.currentUser.isAd ? this.plan.potName : this.plan.userName
+    },
     planNameMessage() {
       return this.$t('message.required', {target: this.$t('label.planName')})
     },
@@ -317,28 +321,10 @@ export default {
         : this.plan.currentUserPotIds
       this.plan.potPersonIds = potPersonIds.join()
 
-      const potPersonNames = potPersonIds.map(potId => {
-        const arr = this.potPersonOpts.filter(opt => opt.value == potId).map(opt => opt.value)
-        return arr.length == 1 ? arr[0] : ""
-      })
-      this.plan.potPersonNames = potPersonNames.join()
-
-      if (this.plan.zoneId) {
-        const arr = this.zoneOpts.filter(opt => opt.value == this.plan.zoneId).map(opt => opt.value)
-        this.plan.zoneName = arr.length == 1 ? arr[0] : ""
-      }
-      if (this.plan.locationId) {
-        const arr = this.locationOpts.filter(opt => opt.value == this.plan.locationId).map(opt => opt.value)
-        this.plan.locationName = arr.length == 1 ? arr[0] : ""
-      }
-      if (this.plan.potThingId) {
-        const arr = this.potThingOpts.filter(opt => opt.value == this.plan.potThingId).map(opt => opt.value)
-        this.plan.potThingName = arr.length == 1 ? arr[0] : ""
-      }
-      
       if (this.plan.planId == null) {
         return await AppServiceHelper.save(this.appServicePath, this.plan, this.updateOnlyNN)
       }
+
       return await AppServiceHelper.update(this.appServicePath, this.plan)
     },
     async onDelete (event) {
