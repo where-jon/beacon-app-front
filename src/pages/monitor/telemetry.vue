@@ -2,7 +2,7 @@
   <div class="container-fluid">
     <breadcrumb :items="items" :reload="true" :state="reloadState" @reload="fetchData" />
     <div v-show="!reloadState.isLoad" class="container">
-      <monitor-table ref="monitorTable" type="telemetry" :all-count="allCount" :fields="fields" :list="telemetrys" :tr-class="getClass" :td-class="getTdClass" max-filter-length="40" />
+      <monitor-table ref="monitorTable" type="exb" :all-count="allCount" :fields="fields" :list="telemetrys" :tr-class="getClass" :td-class="getTdClass" max-filter-length="40" />
     </div>
   </div>
 </template>

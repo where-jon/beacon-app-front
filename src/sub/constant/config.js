@@ -102,7 +102,15 @@ export const APP = { // 機能面に関する設定
   },
   // 位置表示(一覧)
   POS_LIST: {
-    WITH: [''],
+    WITH: ['mapDisplay'],  // 表示対象の文字列を配列に追加で列を表示する。mapDisplay:「マップ表示」列、tel:「電話番号」列
+  },
+  // 位置表示(全体)
+  POS_STACK: {
+    USE_POPUP: false,   // Txアイコンクリック時にポップアップ表示する
+    ADJUST_POPUP: {   // ポップアップの調整　設定した座標だけマイナス
+      X: 15,                   // X座標　増加分、右に移動
+      Y: 5,                     // Y座標　増加分、下に移動
+    },
   },
   // TX関連設定
   TX: {
@@ -606,6 +614,11 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
 
   POS: {
     EXSERVER: false, // EXServerを使う
+  },
+
+  // 位置表示（全体）
+  POS_STACK: {
+    TYPE: 1// 表示方法
   },
 }
 

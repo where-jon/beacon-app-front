@@ -271,6 +271,11 @@ export default {
       this.oldBgColor = this.form.displayBgColor
       return await AppServiceHelper.bulkSave(this.pAppServicePath, [entity])
     },
+    async onSaved(){
+      await StateHelper.load('categories', true)
+      const categoryList = this.categories.filter(category => category.systemUse == 0)
+      this.$set(this.form, 'categoryCd', StateHelper.createMasterCd('category', categoryList, this.category))
+    }
   },
 }
 </script>

@@ -108,12 +108,14 @@ export default {
         this.form.displayShape = this.oldShape? this.oldShape: this.shapes[0].value
         this.form.displayColor = ColorUtil.colorCd4display(this.oldColor? this.oldColor: null, this.defaultColor)
         this.form.displayBgColor = ColorUtil.colorCd4display(this.oldBgColor? this.oldBgColor: null, this.defaultBgColor)
-        this.form.groupCd = StateHelper.createMasterCd('group', this.groups, this.group)
       }
     },
-    onSaved(){
+    async onSaved(){
       StateHelper.setForceFetch('pot', true)
       StateHelper.setForceFetch('tx', true)
+      await StateHelper.load('groups', true)
+      const groupId = StateHelper.createMasterCd('group', this.groups, this.group)
+      this.$set(this.form, 'groupCd', groupId)
     },
     async onSaving() {
       const entity = {
