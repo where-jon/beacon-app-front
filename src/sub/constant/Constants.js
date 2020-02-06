@@ -595,6 +595,7 @@ export const SETTING = {
   JSON: 'json',
   SELECT: 'select',
   OTHER_CATEGORY: 'OTHER_CATEGORY',
+  DATE_NOTATION: 'YYYY-MM-DD HH:mm:ss',
   getOptions(){
     return [
       {text: i18n.tnl('label.string'), value: 'string'},
