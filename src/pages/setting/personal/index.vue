@@ -160,7 +160,7 @@ export default {
         passwordUpdate: '',
         passwordConfirm: '',
       },
-      isChange: true,
+      isChange: false,
       isMsTeams: MSTEAMS_APP.IS_COOPERATION,
     }
   },
@@ -307,6 +307,12 @@ export default {
         this.$i18n.tnl('label.loginId'),
         this.$i18n.tnl('message.invalidLoginId')
       )
+
+      if(!Util.hasValue(this.loginUser.password)){
+        errorMessages.password = [this.$i18n.tnl('message.invalidPassword')]
+        return
+      }
+
       errorMessages.password = this.validateLoginIdPassword(
         this.loginUser.password,
         this.$i18n.tnl('label.password'),
