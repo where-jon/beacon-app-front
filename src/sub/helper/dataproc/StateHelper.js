@@ -537,8 +537,9 @@ const appStateConf = {
           zoneClass: zoneTypeMap['' + ZONE.NON_COORDINATE],
           zoneBlock: zoneTypeMap['' + ZONE.COORDINATE],
           isAbsentZone: location.categoryName === SYSTEM_ZONE_CATEGORY_NAME.ABSENT,
+          isFixedPosZone: location.categoryName === SYSTEM_ZONE_CATEGORY_NAME.FIXED_POS,
           zoneIdList: locationZoneList.map(val => Util.getValue(val, 'locationZonePK.zoneId', null)).filter(val => val),
-          zoneCategoryIdList: locationZoneList.map(val => Util.getValue(val, 'categoryId', null)).filter(val => val),
+          zoneCategoryIdList: [location.categoryId], 
         }
       })
     }

@@ -5,7 +5,7 @@
 
 import * as mock from '../../../assets/mock/mock'
 import { APP, DEV, DISP } from '../../constant/config'
-import { DETECT_STATE, SENSOR, SHAPE, TX, TX_VIEW_TYPES } from '../../constant/Constants'
+import { DETECT_STATE, SHAPE, TX, TX_VIEW_TYPES } from '../../constant/Constants'
 import * as ArrayUtil from '../../util/ArrayUtil'
 import * as DateUtil from '../../util/DateUtil'
 import * as NumberUtil from '../../util/NumberUtil'
@@ -14,7 +14,6 @@ import * as EXCloudHelper from '../dataproc/EXCloudHelper'
 import * as MenuHelper from '../dataproc/MenuHelper'
 import * as StyleHelper from '../ui/StyleHelper'
 import * as DetectStateHelper from './DetectStateHelper'
-import * as SensorHelper from './SensorHelper'
 
 const iconsUnitNum = 9
 const tileLayoutIconsNum = 5
@@ -43,7 +42,7 @@ const defaultDisplay = {
   shape: SHAPE.CIRCLE,
 }
 
-let store // TODO: ここでstoreに直接アクセスするのは望ましくないのでStateHelper経由にする。
+let store
 let i18n
 
 /**
@@ -73,7 +72,7 @@ export const loadPosition = async (count, allShow = false, fixSize = false) => {
   const pMock = DEV.USE_MOCK_EXC? mock.positions[count]: null
 
   let positions = await EXCloudHelper.fetchPositionHistory(allShow, pMock)
-  console.log('position2', positions)
+  Util.debug('fetchPositionHistory', positions)
   const now = !DEV.USE_MOCK_EXC ? new Date().getTime(): mock.positions_conf.start + count++ * mock.positions_conf.interval
 
   const txIdMap = _(store.state.app_service.txs).keyBy('txId').value()
@@ -99,7 +98,7 @@ export const loadPosition = async (count, allShow = false, fixSize = false) => {
         display.opacity = 0.6
       }
   
-      return { btx_id: tx.btxId, minor: pos.minor, device_id: exb? exb.deviceId : -1, tx_id: pos.txId, posx: pos.x, posy: pos.y,
+      return { btx_id: tx.btxId, minor: pos.minor, device_id: exb? exb.deviceId : -1, tx_id: pos.txId, posx: pos.x, posy: pos.y, // TODO: 昔のIFなので全部txIdなど内部形式にする
         label, location, exb, tx, updatetime: DateUtil.dateform(pos.positionDt), timestamp:DateUtil.dateform(pos.positionDt),
         transparent: pos.transparent? pos.transparent: isTransparent(pos.timestamp, now),
         detectState: pos.detectState, isLost: isLost(pos.timestamp, now),
@@ -126,13 +125,13 @@ export const loadPosition = async (count, allShow = false, fixSize = false) => {
  * @param {Number} [selectedFreWord]
  * @return {Object[]}
  */
-export const filterPositions = (showAllTime = false, 
+export const filterPositions = (positions = store.state.main.positions,
+  showAllTime = false, 
   showTxNoOwner = APP.POS.SHOW_TX_NO_OWNER,
   selectedCategory = store.state.main.selectedCategory, selectedGroup = store.state.main.selectedGroup,
   selectedDetail = store.state.main.selectedDetail,
   selectedFreeWord = store.state.main.selectedFreeWord) => { // p, position-display, rssimap, position-list, position, ProhibitHelper
 
-  let positions = store.state.main.positions
   const txs = store.state.app_service.txs
 
   if (!showTxNoOwner) { // potの所有状態で絞込み(TX未登録やPotと紐付いていない場合は表示しない)
@@ -172,8 +171,7 @@ const positionFilterFreeWord = (pos, freeWord) => {
  * @return {Object[]}
  */
 const positionFilter = (positions, groupId, categoryId, txIdList, freeWord) => { //p
-
-  const txsMap = _(store.state.app_service.txs).keyBy('txId').value()
+  const txsMap = _(store.state.app_service.txs).keyBy('btxId').value()
   return _(positions).filter(pos => {
     const tx = txsMap[pos.btx_id]
     let grpHit = true
@@ -199,12 +197,6 @@ const positionFilter = (positions, groupId, categoryId, txIdList, freeWord) => {
 }
 
 
-export const getDetectCount = (positions, selectedAreaId) => {
-  return positions.filter(pos => (pos.detectState == DETECT_STATE.LOST || pos.detectState == DETECT_STATE.DETECTED)
-    && pos.exb.location.areaId == selectedAreaId
-  ).length
-}
-
 
 
 // ---- 小メソッド
@@ -215,15 +207,16 @@ export const getDetectCount = (positions, selectedAreaId) => {
  * @param {Object} pos
  * @return {Boolean}
  */
-const hasTxLocation = pos => pos && pos.tx && pos.tx.location && pos.tx.location.x && pos.tx.location.y
+export const hasTxLocation = tx => tx && tx.location && tx.location.x && tx.location.y && tx.location.x * tx.location.y > 0
 
 /**
- * その位置のTXが指定エリアの固定位置を持っているか
- * 
- * @param {*} pos 
- * @param {*} selectedMapId 
+ * 指定したエリアにTxが固定配置されているか確認する。
+ * @method
+ * @param {Object} tx
+ * @param {Number} areaId
+ * @return {Boolean}
  */
-const isFixedPosOnArea = (pos, selectedAreaId) => !!(hasTxLocation(pos) && selectedAreaId && pos.tx.location.areaId == selectedAreaId)
+export const isFixedPosOnArea = (tx, areaId) => hasTxLocation(tx) && tx.location.areaId == areaId
 
 
 /**
@@ -260,6 +253,17 @@ const getTxViewType = txViewType => {
     }
 }
 
+/**
+ * 検知数を返す
+ * 
+ * @param {*} positions 
+ * @param {*} areaId 
+ */
+export const getDetectCount = (positions, areaId) => {
+  return positions.filter(pos => (pos.detectState == DETECT_STATE.LOST || pos.detectState == DETECT_STATE.DETECTED)
+    && pos.exb.location.areaId == areaId
+  ).length
+}
 
 /**
  * 検知情報を設定する。
@@ -274,27 +278,25 @@ export const setDetectState = (pos) => {
 }
 
 /**
- * 透過状態にするか判定する。
+ * 透過状態か判定する。
  * @method
  * @param {Number} timestamp
  * @param {Number} now
  * @return {Boolean}
  */
 export const isTransparent = (timestamp, now) => {
-  const date = new Date(timestamp)
-  return date.getTime() < now - APP.POS.TRANSPARENT_TIME
+  return new Date(timestamp).getTime() < now - APP.POS.TRANSPARENT_TIME
 }
 
 /**
- * 消失状態にするか判定する。
+ * 消失状態か判定する。
  * @method
  * @param {Number} timestamp
  * @param {Number} now
  * @return {Boolean}
  */
 export const isLost = (timestamp, now) => {
-  const date = new Date(timestamp)
-  return date.getTime() < now - APP.POS.LOST_TIME
+  return new Date(timestamp).getTime() < now - APP.POS.LOST_TIME
 }
 
 /**
@@ -307,7 +309,6 @@ export const isLost = (timestamp, now) => {
  * @return {Boolean}
  */
 export const checkTxAllow = (pos, tx, areaId, isAbsent = false, onlyFixPos = false) => {
-  Util.debug('showTx', pos, tx && tx.sensor)
   if (!tx) {
     console.warn('tx not found. btx_id=' + pos.btx_id)
     return false
@@ -319,30 +320,12 @@ export const checkTxAllow = (pos, tx, areaId, isAbsent = false, onlyFixPos = fal
     Util.debug('tx is not allowed to show', tx)
     return false
   }
-  if ((pos.noSelectedTx || onlyFixPos) && !isFixTx(tx, areaId)) {
+  if ((pos.noSelectedTx || onlyFixPos) && !isFixedPosOnArea(tx, areaId)) {
     Util.debug('tx is not allowed to show', tx)
     return false
   }
   return true
 }
-
-/**
- * 指定したエリアにTxが固定配置されているか確認する。
- * @method
- * @param {Object} tx
- * @param {Number} areaId
- * @return {Boolean}
- */
-export const isFixTx = (tx, areaId) => tx && tx.location && tx.location.areaId == areaId && tx.location.x * tx.location.y > 0
-
-/**
- * 指定したEXBと同じエリアにTxが固定配置されているか確認する。
- * @method
- * @param {Object} tx
- * @param {Object} location
- * @return {Boolean}
- */
-export const isOtherFloorFixTx = (tx, location) => tx && tx.location && location && tx.location.areaId != location.areaId && tx.location.x * tx.location.y > 0
 
 
 // ------- 固定表示 -------
@@ -358,19 +341,15 @@ export const isOtherFloorFixTx = (tx, location) => tx && tx.location && location
 export const addFixedPosition = (orgPositions, locations = [], selectedMapId = null) => {
   let positions = _.cloneDeep(orgPositions)
   // エリア上の場所を抽出
-  // locations.forEach(loc => console.error(loc.locationName, loc.isFixedPosZone))
-  // positions.forEach(pos => console.error(pos.minor))
   const additionalPos = []
   // 表示対象となるTxのposを抽出
   positions.forEach(pos => {
-    pos.isFixedPosition = isFixedPosOnArea(pos, selectedMapId)
-    // console.error(pos.minor, pos.isFixedPosition, selectedMapId, Util.getValue(pos, 'tx.location.areaId', null))
+    pos.isFixedPosition = isFixedPosOnArea(pos.tx, selectedMapId)
 
     if (pos.isFixedPosition) { // txが場所固定されており、現在位置が場所固定ゾーンにいる場合（txの固定場所のゾーンでなくても同じエリアの固定ゾーンであれば）
       pos.inFixedZone = pos.exb.isFixedPosZone // 今いる場所が固定場所ゾーンに入っているか
       // 固定場所ゾーンにいず、かつ同じエリアにいて、検知状態の場合、フリーアドレスとしても表示
       if (!pos.inFixedZone && isInTheArea(pos, locations, selectedMapId) && pos.detectState == DETECT_STATE.DETECTED) {
-        // console.error(pos.inFixedZone)
         const addPos = _.cloneDeep(pos)
         addPos.isFixedPosition = false
         addPos.location = pos.exb.location
@@ -382,7 +361,6 @@ export const addFixedPosition = (orgPositions, locations = [], selectedMapId = n
       pos.location = pos.tx.location
       if (DISP.TX.FIXED_POS.APPLY_COLOR) {
         let bgColor = DISP.TX.FIXED_POS.UNDETECT_BGCOLOR
-        // console.error('detectState',pos.detectState)
         switch (pos.detectState) {
         case DETECT_STATE.DETECTED:
           bgColor = pos.inFixedZone? DISP.TX.FIXED_POS.IN_ZONE_BGCOLOR: DISP.TX.FIXED_POS.OUT_ZONE_BGCOLOR
@@ -404,6 +382,7 @@ export const addFixedPosition = (orgPositions, locations = [], selectedMapId = n
   })
 
   if (additionalPos.length > 0) positions.push(...additionalPos)
+
   return positions
 }
 
@@ -427,8 +406,8 @@ export const calcScreenCoordinates = (positions, ratio, locations = [], selected
   return _(targetLocations).map(location => {
     const samePos = targetPos.filter(pos => pos.location.locationId == location.locationId)
     // console.error('samePos', samePos.map(e => e.minor))
-    const hasFixedPos = samePos.some(pos => pos.isFixedPosition)
-    const txR = hasFixedPos? DISP.TX.FIXED_POS.R: DISP.TX.R
+    const txR = location.isFixedPosZone? DISP.TX.FIXED_POS.R: DISP.TX.R
+    samePos.forEach(pos => pos.txR = txR)
     return calcCoordinatesWhenOverlap(location, ratio, samePos, txR)
   }).compact().flatMap(e => e).tap(Util.debug).value()
 }
@@ -662,6 +641,8 @@ const calcCoordinatesZone = (absentDisplayZone, ratio, samePos) => {
 
 /**
  * 三点測位を行う場合の座標補正を行う。
+ * FIXME: 要確認
+ * 
  * @method
  * @param {Object[]} positions
  * @param {Number} ratio
@@ -673,7 +654,7 @@ export const calcCoordinatesForMultiPosition = (positions, selectedArea) => {
 
 
 
-// ---- TX詳細
+// --------- TX詳細 ---------
 
 
 /**
@@ -724,156 +705,3 @@ export const createTxDetailInfo = (x, y, tx, canvasScale, offset, containerRect,
 
 
 
-
-// --- TODO: 以下要リファクタリング
-
-/**
- * センサ情報を取得し、TXやEXB等の情報を付加する。
- * @method
- * @param {Number[]} [showTxSensorIds = []]
- * @param {Number[]} [showExbSensorIds = []]
- * @param {Number[]} [mergeSensorIds = []]
- * @return {Object}
- */
-export const fetchSensorInfo = async (selectedAreaId, targetSensorIds = []) => {
-  const txs = store.state.app_service.txs
-  const exbs = store.state.app_service.exbs
-  const txMap = _(txs).keyBy('btxId').value()
-  const locationMap = _(store.state.app_service.locations).keyBy('locationId')
-  const sensorInfos = await SensorHelper.fetchAllSensor(targetSensorIds)
-
-  const sensorMap = {}
-  sensorInfos.forEach(sensor => {
-    let sensorInfo = _(sensor.data).filter(sensor => {
-      const tx = txMap[sensor.btx_id]
-      const exb = exbs.find(exb => exb.deviceId == sensor.deviceid) 
-      const hasTime = sensor.timestamp || sensor.updatetime
-      // const fixedPos = tx.location && tx.location.x && tx.location.y > 0
-      return (tx || exb) && hasTime
-    }
-    ).map(sensor => addSensorInfo(sensor, txMap, exbs, locationMap))
-
-    // pir: val.count >= DISP.PIR.MIN_COUNT
-    // exb.sensorId == SENSOR.PRESSURE? exb.pressVol <= DISP.PRESSURE.VOL_MIN || DISP.PRESSURE.EMPTY_SHOW: exb.count > 0 || DISP.PIR.EMPTY_SHOW
-    // APP.SENSOR.SHOW_MAGNET_ON_PIR) 
-    sensorMap[sensor.name] = sensorInfo.sortBy(sensor => 
-      sensor.sensorId == SENSOR.MEDITAG && (new Date().getTime() - sensor.downLatest < APP.SENSOR.MEDITAG.DOWN_RED_TIME)?
-        sensor.downLatest * -1
-        : sensor.btx_id
-    ).value()
-  })
-
-  // console.warn(sensorMap)
-  return sensorMap
-
-}
-
-const addSensorInfo = (sensor, txMap, exbs, locationMap, pos) => {
-  const tx = txMap[sensor.btx_id]
-  const exb = exbs.find(exb => exb.deviceId == sensor.deviceid) 
-  const location = sensor.btx_id? (tx? tx.location: {}): exb? exb.location: {}
-  const zoneIdList = Util.getValue(location, 'zoneIdList', [])
-  const zoneCategoryIdList = Util.getValue(location, 'zoneCategoryIdList', [])
-
-  return {
-    id: sensor.sensorId,
-    ...sensor,
-    sensorId: sensor? sensor.id: null,
-    label: Util.getValue(txMap[sensor.btx_id], 'displayName', sensor.btx_id), 
-    ...tx,
-    ...exb,
-    bg: SensorHelper.getStressBg(sensor.stress), 
-    down: sensor.down? sensor.down: 0,
-    count: sensor? sensor.count: 0,
-    pressVol: sensor? sensor.press_vol: 0,
-    x: location.x,
-    y: location.y,
-    updatetime: Util.firstValue(sensor.updatetime, sensor.timestamp),
-    ambientLight: sensor? sensor.ambient_light: null,
-    soundNoise: sensor? sensor.sound_noise: null,
-    areaId: Util.firstValue(sensor.areaId, Util.getValue(tx, 'location.areaId', null)),
-    zoneId: Util.firstValue(sensor.zoneId, Util.getValue(pos, 'exb.zoneId', null)),
-    zoneIdList: Util.firstValue(Util.getValue(sensor, 'zoneIdList', zoneIdList), zoneIdList),
-    zoneCategoryId: Util.firstValue(sensor.zoneCategoryId, Util.getValue(pos, 'exb.zoneCategoryId', null)),
-    zoneCategoryIdList: Util.firstValue(Util.getValue(sensor, 'zoneCategoryIdList', zoneCategoryIdList), zoneCategoryIdList),
-  }
-}
-
-
-/**
- * センサ情報を使用し、EXBの配置位置情報を取得する。
- * @method
- * @param {Number} selectedArea
- * @param {Function} sensorFilterFunc
- * @param {Function} findSensorFunc
- * @param {Function} showSensorFunc
- * @param {Boolean} allArea
- * @return {Object[]}
- */
-export const getPositionedExbWithSensor = (selectedSensorId, exCluodSensors) => { // pir, sensor-list, thermohumidity
-  const exbs = store.state.app_service.exbs
-
-  return _(exbs).filter(exb => {
-    return exb.location && exb.location.x && exb.location.y > 0
-  })
-    .filter(exb => exb.sensorIds.includes(selectedSensorId))
-    .map(exb => {
-      const sensor = {...exCluodSensors.find(sensor => sensor.deviceid == exb.deviceId && (sensor.timestamp || sensor.updatetime))}
-      return {
-        id: selectedSensorId, 
-        ...exb,
-        ...sensor,
-        x: exb.location.x,
-        y: exb.location.y,
-        count: sensor? sensor.count: 0,
-        pressVol: sensor? sensor.press_vol: 0,
-        sensorId: sensor? sensor.id: null,
-        ambientLight: sensor? sensor.ambient_light: null,
-        soundNoise: sensor? sensor.sound_noise: null,
-        updatetime: sensor? sensor.updatetime? sensor.updatetime: sensor.timestamp: null,
-      }
-    })
-    .value()
-}
-
-/**
- * センサ情報を使用し、Txの配置位置情報を取得する。
- * @method
- * @param {Number} selectedArea
- * @param {Function} sensorFilterFunc
- * @param {Function} findSensorFunc
- * @param {Function} showSensorFunc
- * @param {Boolean} allArea
- * @param {Boolean} allPosition
- * @return {Object[]}
- */
-export const getPositionedTxWithSensor = (selectedSensor, exCluodSensors, positionHistory) => { // sensor-list, thermohumidity
-  const txs = store.state.app_service.txs
-  const allPosition = selectedSensor == SENSOR.MEDITAG
-  return _(txs)
-    .filter(tx => allPosition || tx.location && tx.location.x && tx.location.y > 0) // MEDiTAG以外は固定位置のTXのみ
-    .filter(tx => selectedSensor == null || tx.sensorId == selectedSensor)
-    .map(tx => {
-      const pos = positionHistory.find(position => position.txId == tx.txId || position.btx_id == tx.btxId)
-      const sensor = exCluodSensors.find(sensor => (sensor.btxid == tx.btxId || sensor.btx_id == tx.btxId) && (sensor.timestamp || sensor.updatetime))
-      const zoneIdList = Util.getValue(location, 'zoneIdList', [])
-      const zoneCategoryIdList = Util.getValue(location, 'zoneCategoryIdList', [])
-      return {
-        id: selectedSensor,
-        ...tx,
-        ...sensor,
-        areaId: Util.firstValue(sensor.areaId, Util.getValue(tx, 'location.areaId', null)),
-        zoneId: Util.firstValue(sensor.zoneId, Util.getValue(pos, 'exb.zoneId', null)),
-        zoneCategoryId: Util.firstValue(sensor.zoneCategoryId, Util.getValue(pos, 'exb.zoneCategoryId', null)),
-        x: tx.location? tx.location.x: null,
-        y: tx.location? tx.location.y: null,
-        sensorId: sensor? sensor.id: null,
-        updatetime: Util.firstValue(sensor.updatetime, sensor.timestamp),
-        ambientLight: sensor? sensor.ambient_light: null,
-        soundNoise: sensor? sensor.sound_noise: null,
-        zoneIdList: allPosition? Util.getValue(sensor, 'zoneIdList', zoneIdList): zoneIdList,
-        zoneCategoryIdList: allPosition? Util.getValue(sensor, 'zoneCategoryIdList', zoneCategoryIdList): zoneCategoryIdList,
-      }
-    })
-    .value()
-}

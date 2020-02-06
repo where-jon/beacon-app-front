@@ -4,7 +4,6 @@ import * as Util from '../sub/util/Util'
 export const state = () => ({
   pots: [],
   pot: {},
-  positionList: [],
   positions: [],
   sensors: [],
   potImages: [],

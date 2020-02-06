@@ -31,11 +31,11 @@ export default function (context) {
   AnalysisHelper.setApp(context.app.i18n)
   AuthHelper.setApp(context.app.router, context.app.store)
   StateHelper.setApp(context.app.store, context.app.i18n)
+  SensorHelper.setApp(context.app.store, context.app.i18n)
   PositionHelper.setApp(context.app.store, context.app.i18n)
   ViewHelper.setApp(context.app.i18n)
   HttpHelper.setApp(context)
   IconHelper.setApp(context.app.i18n)
-  SensorHelper.setApp(context.app.i18n)
   SettingHelper.setApp(context.app.i18n)
   BulkHelper.setApp(context.app.i18n)
   MessageHelper.setApp(context.app.i18n)
@@ -43,7 +43,6 @@ export default function (context) {
   ProhibitHelper.setApp(context.app.i18n)
   TooltipHelper.setApp(context.app.i18n)
   ValidateHelper.setApp(context.app.i18n)
-  SensorHelper.setApp(context.app.i18n)
   VueSelectHelper.setApp(context.app.i18n)
   if (!process.browser) {
     return

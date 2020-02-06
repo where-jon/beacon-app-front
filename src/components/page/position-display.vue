@@ -135,7 +135,7 @@ export default {
         await Promise.all(this.loadStates.map(StateHelper.load))
         // positionデータ取得
         await PositionHelper.loadPosition(null, true, true)
-        this.positions = PositionHelper.filterPositions(false, true, null, null, null, null)
+        this.positions = PositionHelper.filterPositions(undefined, false, true, null, null, null, null)
 
         if (Util.hasValue(APP.POS.PROHIBIT_ALERT)
           && (Util.hasValue(APP.POS.PROHIBIT_GROUP_ZONE)||Util.hasValue(APP.POS.LOST_GROUP_ZONE))) {

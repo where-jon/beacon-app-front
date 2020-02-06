@@ -84,7 +84,6 @@ export default {
       'txs',
       'pots',
       'locations',
-      'positionList',
     ]),
   },
   created() {
@@ -101,7 +100,7 @@ export default {
         this.showProgress()
         await Promise.all(this.loadStates.map(StateHelper.load))
         await PositionHelper.loadPosition(0, true)
-        let positions = PositionHelper.filterPositions(true)
+        let positions = PositionHelper.filterPositions(undefined, true)
         Util.debug(positions)
 
         this.populateTableData(positions)

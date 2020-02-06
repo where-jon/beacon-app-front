@@ -75,6 +75,7 @@ export default {
       showDismissibleAlert: false,
       count: 0, // mockテスト用
       loadStates: ['tx', 'exb', 'location', 'area'],
+      positionList: [],
     }
   },
   computed: {
@@ -82,7 +83,6 @@ export default {
       'txs',
       'areas',
       'locations',
-      'positionList',
       'prohibits',
       'lostZones',
     ]),
@@ -108,8 +108,8 @@ export default {
         }
         await Promise.all(this.loadStates.map(StateHelper.load))
         await PositionHelper.loadPosition(0, true)
-        let positions = PositionHelper.filterPositions(true)
-        Util.debug(positions)
+        let positions = PositionHelper.filterPositions(undefined, true)
+        Util.debug('after filter', positions)
 
         let prohibitCheck = false
         const minorMap = {}
@@ -152,8 +152,7 @@ export default {
           }
         })
         this.totalRows = positions.length
-        Util.debug(positions)
-        this.replaceAS({positionList: positions})
+        this.positionList = positions
         if (payload && payload.done) {
           payload.done()
         }
