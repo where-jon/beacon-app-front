@@ -861,6 +861,49 @@ export const createTxDetailInfo = (x, y, tx, canvasScale, offset, containerRect,
   }
   return ret
 }
+/**
+ * 位置表示（全体）のTx詳細に必要な情報を取得する。
+ * @method
+ * @param {Number} x
+ * @param {Number} y
+ * @param {Object} tx
+ * @param {{x: Number, y: Number}} offset
+ * @param {Object} preloadThumbnail
+ * @return {Object}
+ */
+export const createTxDetailInfoOnStack = (x, y, tx, offset, preloadThumbnail) => {
+  const display = StyleHelper.getPositionDisplay(tx)
+  const position = getPositions().find(e => e.btx_id === tx.btxId)
+  const ret = {
+    btxId: tx.btxId,
+    minor: i18n.tnl('label.minor') + ':' + tx.btxId,
+    major: tx.major? i18n.tnl('label.major') + ':' + tx.major : '',
+    // TX詳細ポップアップ内部で表示座標計算する際に必要
+    orgLeft: x - offset.x + APP.POS_STACK.ADJUST_POPUP.X,
+    orgTop: y - offset.y + APP.POS_STACK.ADJUST_POPUP.Y,
+    scale:  null ,
+    containerWidth: null,
+    containerHeight: null,
+    class: !tx.btxId ? '': 'balloon-u', // 上表示のみに固定,
+    name: Util.getValue(tx, 'potName', ''),
+    tel: Util.getValue(tx, 'extValue.tel', ''),
+    timestamp: position ? DateUtil.formatDate(new Date(position.timestamp)) : '',
+    thumbnail: Util.getValue(preloadThumbnail, 'src', ''),
+    category: Util.getValue(tx, 'categoryName', ''),
+    group: Util.getValue(tx, 'groupName', ''),
+    bgColor: display.bgColor,
+    color: display.color,
+    isDispRight: x + offset.x + 100 < window.innerWidth,
+  }
+  if(tx.extValue){
+    Object.keys(tx.extValue).forEach( key => { 
+      if(!ret[key]){ // 既にあるキーは書き換えない
+        ret[key] = i18n.tnl('label.' + key) + ':' + tx.extValue[key] 
+      }
+    } )
+  }
+  return ret
+}
 
 /**
  * 位置表示Txアイコンの文字色を取得する。
