@@ -31,7 +31,9 @@ export const setApp = (pStore, pi18n) => {
  * マスタエンティティをロードする
  */
 export const loadMaster = async () => {
+  console.error('fetch', new Date())
   const masterAll = await HttpHelper.getAppService('/core/region/masterall')
+  console.error('parse', new Date())
   const res = Papa.parse(masterAll)
   if (res.errors.length > 0) {
     res.errors.forEach(e => {
@@ -40,11 +42,17 @@ export const loadMaster = async () => {
     return
   }
 
-  const masters = buildMasters(res.data)
-  Util.debug({masters})
-  buildRelation(masters)
+  console.log('build', new Date())
+  const {masters, idmaps} = buildMasters(res.data)
+  // Util.debug({masters})
+  console.log('relation', new Date())
+  buildRelation(masters, idmaps)
+  console.log('add', new Date())
   addInfo(masters)
+  console.log('commit', new Date())
+  Util.debug({masters})
   storeCommit(masters)
+  console.log('end', new Date())
 }
 
 /**
@@ -54,6 +62,7 @@ export const loadMaster = async () => {
  */
 const buildMasters = (data) => {
   let masters = {}
+  let idmaps = {}
   let currentMaster
   let currentColumn
   let isData
@@ -139,13 +148,42 @@ const buildMasters = (data) => {
     if (!isData) {
       currentColumn = row.map(col => StringUtil.snake2camel(col))
       masters[currentMaster] = []
+      idmaps[currentMaster] = []
     }
     else {
-      masters[currentMaster].push(convert(row, currentColumn))
+      const obj = convert(row, currentColumn)
+      masters[currentMaster].push(obj)
+      if (/[A-Z]/.test(currentMaster)) { // 関連テーブルは配列のマップ
+        if (!idmaps[currentMaster][row[0]]) {
+          idmaps[currentMaster][row[0]] = []
+        }
+        idmaps[currentMaster][row[0]].push(row[1])
+
+        if (!idmaps[currentMaster + '_Rev']) {
+          idmaps[currentMaster + '_Rev'] = {}
+        }
+        if (!idmaps[currentMaster + '_Rev'][row[1]]) {
+          idmaps[currentMaster + '_Rev'][row[1]] = []
+        }
+        idmaps[currentMaster + '_Rev'][row[1]].push(row[0])
+
+        if (currentMaster == 'locationZone') {
+          if (!idmaps[currentMaster + '_Val']) {
+            idmaps[currentMaster + '_Val'] = {}
+          }
+          if (!idmaps[currentMaster + '_Val'][row[0]]) {
+            idmaps[currentMaster + '_Val'][row[0]] = []
+          }
+          idmaps[currentMaster + '_Val'][row[0]].push(obj)
+        }
+      }
+      else {
+        idmaps[currentMaster][row[0]] = obj
+      }
     }
   })
   
-  return masters
+  return {masters, idmaps}
 }
 
 /**
@@ -187,71 +225,71 @@ const convert = (row, colNames) => {
  * 
  * @param {*} masters 
  */
-const buildRelation = (masters) => {
+const buildRelation = (masters, idmaps) => {
   Object.keys(masters).forEach(key => {
-    Util.debug(key)
+    // Util.debug(key)
     const list = masters[key]
     switch(key) {
     case 'pot':
       list.forEach(e => {
-        e.txList = relate(e, 'potId', masters.potTx, 'txId', masters.tx)
-        e.group = relate(e, 'potId', masters.potGroup, 'groupId', masters.group)[0]
-        e.category = relate(e, 'potId', masters.potCategory, 'categoryId', masters.category)[0]
-        e.user = relate(e, 'potId', masters.potUser, 'userId', masters.user)[0]
-        Util.debug(e)
+        e.txList = relate(e, 'potId', idmaps.potTx, 'txId', idmaps.tx)
+        e.group = relate(e, 'potId', idmaps.potGroup, 'groupId', idmaps.group)[0]
+        e.category = relate(e, 'potId', idmaps.potCategory, 'categoryId', idmaps.category)[0]
+        e.user = relate(e, 'potId', idmaps.potUser, 'userId', idmaps.user)[0]
+        // Util.debug(e)
       })
       break
     case 'tx':
       list.forEach(e => {
-        e.sensorList = relate(e, 'txId', masters.txSensor, 'sensorId', masters.sensor)
-        e.pot = relate(e, 'txId', masters.potTx, 'potId', masters.pot)[0]
-        e.location = relate(e, 'locationId', masters.location)[0]
-        Util.debug(e)
+        e.sensorList = relate(e, 'txId', idmaps.txSensor, 'sensorId', idmaps.sensor)
+        e.pot = relate(e, 'txId', idmaps.potTx, 'potId', idmaps.pot)[0]
+        e.location = relate(e, 'locationId', idmaps.location)
+        // Util.debug(e)
       })  
       break
     case 'exb':
       list.forEach(e => {
-        e.sensorList = relate(e, 'exbId', masters.exbSensor, 'sensorId', masters.sensor)
-        e.location = relate(e, 'locationId', masters.location)[0]
-        Util.debug(e)
+        e.sensorList = relate(e, 'exbId', idmaps.exbSensor, 'sensorId', idmaps.sensor)
+        e.location = relate(e, 'locationId', idmaps.location)
+        //Util.debug(e)
       })  
       break
     case 'location':
       list.forEach(e => {
-        e.zoneList = relate(e, 'locationId', masters.locationZone, 'zoneId', masters.zone)
-        e.locationZoneList = relate(e, 'locationId', masters.locationZone)
-        e.area = relate(e, 'areaId', masters.area)[0]
-        Util.debug(e)
+        e.zoneList = relate(e, 'locationId', idmaps.locationZone, 'zoneId', idmaps.zone)
+        e.locationZoneList = relate(e, 'locationId', idmaps['locationZone_Val'])
+        e.area = relate(e, 'areaId', idmaps.area)
+        //Util.debug(e)
       })  
       break
     case 'zone':
       list.forEach(e => {
-        e.area = relate(e, 'areaId', masters.area)[0]
-        e.categoryList = relate(e, 'zoneId', masters.zoneCategory, 'categoryId', masters.category)
-        Util.debug(e)
+        e.area = relate(e, 'areaId', idmaps.area)
+        e.categoryList = relate(e, 'zoneId', idmaps.zoneCategory, 'categoryId', idmaps.category)
+        //Util.debug(e)
       })  
       break
     case 'category':
       list.forEach(e => {
-        e.zoneList = relate(e, 'categoryId', masters.zoneCategory, 'zoneId', masters.zone)
-        Util.debug(e)
+        e.zoneList = relate(e, 'categoryId', idmaps.zoneCategory, 'zoneId', idmaps.zone)
+        //Util.debug(e)
       })  
       break
     case 'group':
       list.forEach(e => {
-        Util.debug(e)
+        //Util.debug(e)
       })  
       break
     case 'region':
       list.forEach(e => {
-        Util.debug(e)
+        //Util.debug(e)
       })  
       break
     case 'user':
       list.forEach(e => {
-        e.pot = relate(e, 'userId', masters.potUser, 'potId', masters.pot)[0]
-        e.role = relate(e, 'roleId', masters.role)[0]
-        Util.debug(e)
+        e.pot = relate(e, 'userId', idmaps.potUser, 'potId', idmaps.pot)[0]
+        e.role = relate(e, 'roleId', idmaps.role)
+        //Util.debug(e)
       })  
       break
     }
@@ -267,16 +305,19 @@ const buildRelation = (masters) => {
  * @param {*} targetId 更に関連するエンティティ（関連テーブル経由で結合するエンティティ）の結合キー
  * @param {*} targetList 更に関連するエンティティのリスト
  */
-const relate = (e, relateId, relationList, targetId, targetList) => {
-  if (!relationList) return []
-  const relations = relationList.filter(r => r[relateId] == e[relateId])
-  if (!relations) return []
+const relate = (e, relateId, relationMap, targetId, targetMap) => {
+  if (!relationMap) return null
+  const relations = relationMap[e[relateId]]
 
   if (!targetId) { // 関連テーブルを挟まない場合はここで返す
+    if (!relations) return null
     return relations
   }
 
-  const target = targetList.filter(t => relations.find(r => r[targetId] == t[targetId]))
+  if (!relations) return []
+
+  const target = relations.map(rId => targetMap[rId]).filter(e => e)
+  // targetList.filter(t => relations.find(r => r[targetId] == t[targetId]))
   return target? target: []
 }
 
@@ -395,7 +436,6 @@ const addInfo = (masters) => {
       list.forEach(zone => {
         const category = Util.v(zone, 'categoryList.0', {})
         const zoneType = ZONE.getOptions().find(option => option.value == zone.zoneType)
-        console.error(category)
         Util.merge(zone, {
           zoneTypeName: zoneType? zoneType.text: '',
           areaId: Util.v(zone, 'area.areaId'),
@@ -450,7 +490,6 @@ const addInfo = (masters) => {
 
 const storeCommit = (masters) => {
   Object.keys(masters).forEach(key => {
-    console.warn('commit', StringUtil.single2multi(key), masters[key])
     StateHelper.storeCommit(StringUtil.single2multi(key), masters[key])
   })
 }
