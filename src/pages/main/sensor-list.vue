@@ -13,6 +13,7 @@ import * as PositionHelper from '../../sub/helper/domain/PositionHelper'
 import * as SensorHelper from '../../sub/helper/domain/SensorHelper'
 import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
+import * as NumberUtil from '../../sub/util/NumberUtil'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import reloadmixin from '../../components/mixin/reloadmixin.vue'
 import mList from '../../components/page/list.vue'
@@ -50,7 +51,8 @@ export default {
     ]),
   },
   async created() {
-    await Promise.all(['category', 'sensor', 'location', 'area', 'tx', 'exb'].map(StateHelper.load))
+    // await Promise.all(['category', 'sensor', 'location', 'area', 'tx', 'exb'].map(StateHelper.load))
+    // await Promise.all([].map(StateHelper.load))
   },
   mounted() {
     this.sensorChange(this.selectedSensor)
@@ -79,7 +81,13 @@ export default {
         const positionedExb = SensorHelper.getPositionedExbWithSensor(this.selectedSensor, exCluodSensors)
         let positionedTx = SensorHelper.getPositionedTxWithSensor(this.selectedSensor, exCluodSensors, positions)
 
-        this.sensorList = positionedExb.concat(positionedTx)
+        this.sensorList = positionedExb.concat(positionedTx).map(sensor =>{
+          return {
+            ...sensor,
+            temperature: NumberUtil.formatTemperature(sensor.temperature),
+            humidity: NumberUtil.formatHumidity(sensor.humidity),
+          }
+        })
         this.params.initTotalRows = this.sensorList.length
 
         if (payload && payload.done) {

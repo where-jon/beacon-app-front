@@ -13,6 +13,7 @@ import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
 import * as ImageHelper from '../../../sub/helper/base/ImageHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkupload from '../../../components/page/bulkupload.vue'
@@ -37,10 +38,11 @@ export default {
     ]),
   },
   methods: {
-    onSaved(){
-      StateHelper.setForceFetch('tx', true)
-      StateHelper.setForceFetch('exb', true)
-      StateHelper.setForceFetch('zone', true)
+    async onSaved(){
+      // StateHelper.setForceFetch('tx', true)
+      // StateHelper.setForceFetch('exb', true)
+      // StateHelper.setForceFetch('zone', true)
+      await MasterHelper.loadMaster()
     },
     search(key) {
       const target = this.areas.find(val => val.areaCd == key)

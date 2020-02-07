@@ -80,7 +80,7 @@ export const loadPosition = async (count, allShow = false, fixSize = false) => {
   const locationIdMap = _(store.state.app_service.locations).keyBy('locationId').value()
 
   positions = _(positions).filter(pos => allShow || DEV.NOT_FILTER_TX || txIdMap[pos.txId])
-    .filter(pos => allShow || Util.hasValue(pos.locationId) && locationIdMap[pos.locationId] && (pos.tx && NumberUtil.bitON(pos.tx.disp, TX.DISP.POS)))
+    .filter(pos => allShow || Util.hasValue(pos.locationId) && locationIdMap[pos.locationId] && (txIdMap[pos.txId] && NumberUtil.bitON(txIdMap[pos.txId].disp, TX.DISP.POS)))
     .map(pos => {
       let tx = txIdMap[pos.txId]
       // 固定位置の場合,txのlocation、そうではない場合exbのlocation
@@ -98,10 +98,10 @@ export const loadPosition = async (count, allShow = false, fixSize = false) => {
         display.opacity = 0.6
       }
   
-      return { btx_id: tx.btxId, minor: pos.minor, device_id: exb? exb.deviceId : -1, tx_id: pos.txId, posx: pos.x, posy: pos.y, // TODO: 昔のIFなので全部txIdなど内部形式にする
+      return { ...pos, btx_id: tx.btxId, device_id: exb? exb.deviceId : -1, tx_id: pos.txId, posx: pos.x, posy: pos.y, // TODO: 昔のIFなので全部txIdなど内部形式にする
         label, location, exb, tx, updatetime: DateUtil.dateform(pos.positionDt), timestamp:DateUtil.dateform(pos.positionDt),
         transparent: pos.transparent? pos.transparent: isTransparent(pos.timestamp, now),
-        detectState: pos.detectState, isLost: isLost(pos.timestamp, now),
+        isLost: isLost(pos.timestamp, now),
         display
       }
     }).compact().value()
@@ -133,6 +133,7 @@ export const filterPositions = (positions = store.state.main.positions,
   selectedFreeWord = store.state.main.selectedFreeWord) => { // p, position-display, rssimap, position-list, position, ProhibitHelper
 
   const txs = store.state.app_service.txs
+  console.warn(positions, selectedGroup, selectedCategory, selectedDetail, selectedFreeWord)
 
   if (!showTxNoOwner) { // potの所有状態で絞込み(TX未登録やPotと紐付いていない場合は表示しない)
     positions = positions.filter(pos => {
@@ -148,16 +149,16 @@ const positionFilterFreeWord = (pos, freeWord) => {
   const columnList = [
     APP.TX.BTX_MINOR == 'minor'? 'minor': 'btx_id',
     APP.TX.BTX_MINOR == 'both'? 'minor': null,
-    ArrayUtil.includesIgnoreCase(APP.POT.WITH, 'potCd')? 'tx.potCd': null,
-    'tx.potName',
-    ArrayUtil.includesIgnoreCase(APP.POS_LIST.WITH, 'tel')? 'tx.extValue.tel': null,
-    MenuHelper.useMaster('category') && APP.POS.WITH.CATEGORY? 'tx.categoryName': null,
-    MenuHelper.useMaster('group') && APP.POS.WITH.GROUP? 'tx.groupName': null,
+    ArrayUtil.includesIgnoreCase(APP.POT.WITH, 'potCd')? 'tx.pot.potCd': null,
+    'tx.pot.potName',
+    ArrayUtil.includesIgnoreCase(APP.POS_LIST.WITH, 'tel')? 'tx.pot.extValue.tel': null,
+    MenuHelper.useMaster('category') && APP.POS.WITH.CATEGORY? 'tx.pot.category.categoryName': null,
+    MenuHelper.useMaster('group') && APP.POS.WITH.GROUP? 'tx.pot.groupName': null,
     'state',
-    APP.POSITION_WITH_AREA? 'location.areaName': null,
+    APP.POSITION_WITH_AREA? 'location.area.areaName': null,
     'location.locationName',
   ].filter(val => val)
-  return columnList.some(column => (new RegExp(freeWord, 'i')).test(Util.getValue(pos, column, null)))
+  return columnList.some(column => (new RegExp(freeWord, 'i')).test(Util.getValue(pos, column)))
 }
 
 /**
@@ -183,7 +184,7 @@ const positionFilter = (positions, groupId, categoryId, txIdList, freeWord) => {
         grpHit = groupId == tx.groupId
       }
       if (categoryId) {
-        catHit = categoryId == tx.categoryId
+        catHit = categoryId == Util.getValue(tx, 'pot.category.categoryId')
       }
       if (txIdList != null) {
         detailHit = txIdList.includes(tx.txId)
@@ -407,6 +408,7 @@ export const calcScreenCoordinates = (positions, ratio, locations = [], selected
     const samePos = targetPos.filter(pos => pos.location.locationId == location.locationId)
     // console.error('samePos', samePos.map(e => e.minor))
     const txR = location.isFixedPosZone? DISP.TX.FIXED_POS.R: DISP.TX.R
+    console.error(txR)
     samePos.forEach(pos => pos.txR = txR)
     return calcCoordinatesWhenOverlap(location, ratio, samePos, txR)
   }).compact().flatMap(e => e).tap(Util.debug).value()

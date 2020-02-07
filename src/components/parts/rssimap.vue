@@ -96,6 +96,7 @@ import * as HttpHelper from '../../sub/helper/base/HttpHelper'
 import * as MenuHelper from '../../sub/helper/dataproc/MenuHelper'
 import * as PositionHelper from '../../sub/helper/domain/PositionHelper'
 import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import commonmixin from '../mixin/commonmixin.vue'
@@ -183,7 +184,7 @@ export default {
       'reload',
     ]),
     categoryOptionsForPot() {
-      return StateHelper.getOptionsFromState('category', false, true,
+      return MasterHelper.getOptionsFromState('category', false, true,
         category => CATEGORY.POT_AVAILABLE.includes(category.categoryType)
       )
     },
@@ -241,7 +242,7 @@ export default {
   },
   async mounted() {
     this.reloadState.isLoad = false
-    await Promise.all(['category', 'group'].map(StateHelper.load))
+    // await Promise.all(['category', 'group'].map(StateHelper.load))
   },
   methods: {
     initMap() {
@@ -288,7 +289,7 @@ export default {
             this.dispRssiIcons(this.targetTx)
           }
 
-          await StateHelper.load('tx')
+          // await StateHelper.load('tx')
 
           if (payload && payload.done) {
             payload.done()

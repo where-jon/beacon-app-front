@@ -552,14 +552,11 @@ export const createThermohIcon = (device, mapScale, stage) => {
  * @return {Object}
  */
 export const createExbIcon = (exb, exbSensorIdList, mapScale, stage) => {
-  if (!SensorHelper.match(exbSensorIdList, exb.sensorId)) {
-    return null
-  }
   let exbBtn = null
-  if(exb.sensorId == SENSOR.TEMPERATURE){
+  if (SensorHelper.match(exb.sensorIds, SENSOR.TEMPERATURE, exbSensorIdList)) {
     exbBtn = createThermohIcon(exb, mapScale, stage)
   }
-  else if (exb.sensorId == SENSOR.THERMOPILE && exb.count != null) {
+  else if (SensorHelper.match(exb.sensorIds, SENSOR.THERMOPILE, exbSensorIdList) && exb.count != null) {
     // not use?
     // if (exb.count > 10) {
     //   w = DISP.THERMOPILE_L_SIZE
@@ -575,13 +572,17 @@ export const createExbIcon = (exb, exbSensorIdList, mapScale, stage) => {
     exbBtn = createCountButton(exb.count, mapScale)
     exbBtn.cursor = ''
   }
-  else if (exb.sensorId == SENSOR.PRESSURE && exb.pressVol != null) {
+  else if (SensorHelper.match(exb.sensorIds, SENSOR.PRESSURE, exbSensorIdList) && exb.pressVol != null) {
     exbBtn = createUseStateIcon(exb.sensorId, exb.pressVol, mapScale)
     exbBtn.cursor = ''
   }
-  else {
+  else if (SensorHelper.match(exb.sensorIds, SENSOR.PIR, exbSensorIdList)) {
     exbBtn = createUseStateIcon(exb.sensorId, exb.count, mapScale)
     exbBtn.cursor = ''
+  }
+  else {
+    console.error('Sensor Not match', exb.sensorIds, exbSensorIdList)
+    return
   }
   exbBtn.deviceId = exb.deviceId
   exbBtn.exbId = exb.exbId

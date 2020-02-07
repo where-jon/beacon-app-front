@@ -117,7 +117,7 @@ export default {
     }
   },
   mounted() {
-    StateHelper.load('sensor')
+    // StateHelper.load('sensor')
     this.loadDate()
   },
   methods: {

@@ -39,6 +39,7 @@ import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
 import * as AuthHelper from '../../../sub/helper/base/AuthHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as ValidateHelper from '../../../sub/helper/dataproc/ValidateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
@@ -75,9 +76,10 @@ export default {
     },
   },
   mounted(){
+    console.error(this.$store.state.app_service.region)
     ValidateHelper.setCustomValidationMessage()
     if(!Util.hasValue(this.form.regionCd)){
-      this.form.regionCd = StateHelper.createMasterCd('region', this.regions, this.region)
+      this.form.regionCd = MasterHelper.createMasterCd('region', this.regions, this.region)
     }
   },
   methods: {
@@ -92,11 +94,12 @@ export default {
       return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
     },
     async onSaved(){
-      StateHelper.setForceFetch('user', true)
+      // StateHelper.setForceFetch('user', true)
+      await MasterHelper.loadMaster()
       await AuthHelper.switchAppService()
     },
     onBeforeReload(){
-      this.form.regionCd = StateHelper.createMasterCd('region', this.regions, this.region)
+      this.form.regionCd = MasterHelper.createMasterCd('region', this.regions, this.region)
     },
   }
 }

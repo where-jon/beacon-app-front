@@ -13,6 +13,7 @@ import * as StringUtil from '../../../sub/util/StringUtil'
 import * as Util from '../../../sub/util/Util'
 import * as ExtValueHelper from '../../../sub/helper/domain/ExtValueHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as StyleHelper from '../../../sub/helper/ui/StyleHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import exMaster from '../../../components/page/ex-master.vue'
@@ -103,10 +104,11 @@ export default {
         ])
         .filter(val => val)
     },
-    onSaved(){
-      StateHelper.setForceFetch('pot', true)
-      StateHelper.setForceFetch('tx', true)
-      StateHelper.setForceFetch('zone', true)
+    async Saved(){
+      await MasterHelper.loadMaster()
+      // StateHelper.setForceFetch('pot', true)
+      // StateHelper.setForceFetch('tx', true)
+      // StateHelper.setForceFetch('zone', true)
     },
     createListParams(){
       const retMap = { categoryType: {} }

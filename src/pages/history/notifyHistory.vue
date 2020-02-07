@@ -166,6 +166,7 @@ import { getCharSet } from '../../sub/helper/base/CharSetHelper'
 import * as HttpHelper from '../../sub/helper/base/HttpHelper'
 import * as LocalStorageHelper from '../../sub/helper/base/LocalStorageHelper'
 import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import commonmixin from '../../components/mixin/commonmixin.vue'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
@@ -283,8 +284,8 @@ export default {
       return _.slice(NOTIFY_STATE.getOptions()).filter((val) => APP.NOTIFY.STATE_TYPES.includes(val.index))
     },
     txOptions() {
-      let result =  StateHelper.getOptionsFromState('tx',
-        tx => StateHelper.getTxIdName(tx),
+      let result =  MasterHelper.getOptionsFromState('tx',
+        tx => MasterHelper.getTxIdName(tx),
         true
       )
       return result
@@ -322,7 +323,7 @@ export default {
   },
   mounted() {
     ViewHelper.importElementUI()
-    StateHelper.load('tx')
+    // StateHelper.load('tx')
     this.changeTx(this.form.txId)
     this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.viewList.length, maxRows: this.limitViewRows})}`
   },

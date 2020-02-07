@@ -287,6 +287,7 @@ import * as LocalStorageHelper from '../../sub/helper/base/LocalStorageHelper'
 import * as MenuHelper from '../../sub/helper/dataproc/MenuHelper'
 import * as OptionHelper from '../../sub/helper/dataproc/OptionHelper'
 import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
 import * as VueSelectHelper from '../../sub/helper/ui/VueSelectHelper'
 import * as PositionHelper from '../../sub/helper/domain/PositionHelper'
 import * as SensorHelper from '../../sub/helper/domain/SensorHelper'
@@ -490,25 +491,25 @@ export default {
       'selectedarea',
     ]),
     categoryOptions() {
-      return StateHelper.getOptionsFromState('category', false, true, 
+      return MasterHelper.getOptionsFromState('category', false, true, 
         category => CATEGORY.POT_AVAILABLE.includes(category.categoryType)
       )
     },
     zoneOptions() {
-      return StateHelper.getOptionsFromState('zone', false, true)
+      return MasterHelper.getOptionsFromState('zone', false, true)
     },
     zoneCategoryOptions() {
-      return StateHelper.getOptionsFromState('category',
-        category => StateHelper.getDispCategoryName(category),
+      return MasterHelper.getOptionsFromState('category',
+        category => MasterHelper.getDispCategoryName(category),
         true, 
         category => CATEGORY.ZONE_AVAILABLE.includes(category.categoryType)
       )
     },
     groupOptions() {
-      return StateHelper.getOptionsFromState('group', false, true)
+      return MasterHelper.getOptionsFromState('group', false, true)
     },
     areaOptions() {
-      return StateHelper.getOptionsFromState('area', false, true)
+      return MasterHelper.getOptionsFromState('area', false, true)
     },
     detectStateOptions() {
       let options = DetectStateHelper.getTypes()
@@ -585,7 +586,7 @@ export default {
     },
   },
   async created() {
-    await StateHelper.load('region')
+    // await StateHelper.load('region')
   },
   async mounted() {
     const currentArea = LocalStorageHelper.getLocalStorage(KEY.CURRENT.AREA)
@@ -602,7 +603,8 @@ export default {
     }
     if (this.params.extraFilter) {
       const filterColumnList = this.params.extraFilter.filter(str => str != 'detectState')
-      await Promise.all(filterColumnList.map(state => StateHelper.load(state)))
+      console.error('要チェック', {filterColumnList})
+      // await Promise.all(filterColumnList.map(state => StateHelper.load(state)))
       filterColumnList.filter(state => ['category', 'group', 'area'].some(s => s == state)).forEach(state => {
         const selectedKey = StringUtil.concatCamel('selected', state)
         this.vueSelected[state] = VueSelectHelper.getVueSelectData(this[state + 'Options'], this[selectedKey])
@@ -743,12 +745,14 @@ export default {
     async edit(item, index, target) {
       this.setEmptyMessage()
       let entity = {}
+      console.error(this.name, {item, index, target})
       if(item != null) {
         const masterId = this.compactMode? this.$parent.$options.methods && this.$parent.$options.methods.getEditKey? this.$parent.$options.methods.getEditKey.call(this.$parent, item): item.updateKey: item[this.id]
         entity = await AppServiceHelper.fetch(this.appServicePath, masterId)
       } else {
         // masterCdの最大値を算出するために全件データが必要
-        await StateHelper.load(this.name)
+        console.error('要チェック', this.name)
+        // await StateHelper.load(this.name)
       }
       if (this.$parent.$options.methods && this.$parent.$options.methods.convBeforeEdit) {
         entity = this.$parent.$options.methods.convBeforeEdit.call(this.$parent, entity)
@@ -921,10 +925,11 @@ export default {
       try {
         await AppServiceHelper.deleteEntity(this.appServicePath, id)
         if(this.compactMode) {
-          StateHelper.setForceFetch(this.params.name, true)
+          // StateHelper.setForceFetch(this.params.name, true)
         } else {
-          await StateHelper.load(this.params.name, true)
+          // await StateHelper.load(this.params.name, true)
         }
+        await MasterHelper.loadMaster()
         this.message = this.$i18n.tnl('message.deleteCompleted', {target: this.$i18n.tnl('label.' + this.params.name)})
         if(this.$parent.$options.methods && this.$parent.$options.methods.onSaved){
           this.$parent.$options.methods.onSaved.call(this.$parent, {message: this.message})

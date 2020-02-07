@@ -9,7 +9,7 @@
 import { mapState } from 'vuex'
 import * as LocalStorageHelper from '../../../sub/helper/base/LocalStorageHelper'
 import * as RegionHelper from '../../../sub/helper/domain/RegionHelper'
-import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import reloadmixin from '../../../components/mixin/reloadmixin.vue'
@@ -50,7 +50,8 @@ export default {
   },
   methods: {
     async onSaved(param){
-      StateHelper.setForceFetch('user', true)
+      // StateHelper.setForceFetch('user', true)
+      await MasterHelper.loadMaster()
       const result = await RegionHelper.autoSwitchRegion(this.regions)
       if(result){
         LocalStorageHelper.setLocalStorage('listMessage', param.message)

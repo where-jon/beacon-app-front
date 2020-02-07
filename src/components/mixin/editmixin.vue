@@ -9,6 +9,7 @@ import * as ImageHelper from '../../sub/helper/base/ImageHelper'
 import * as LocalStorageHelper from '../../sub/helper/base/LocalStorageHelper'
 import * as MenuHelper from '../../sub/helper/dataproc/MenuHelper'
 import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import * as VueSelectHelper from '../../sub/helper/ui/VueSelectHelper'
 import commonmixin from './commonmixin.vue'
@@ -93,7 +94,8 @@ export default {
         this.showProgress()
         try {
           await this.onSaving()
-          StateHelper.setForceFetch(this.name, true)
+          // StateHelper.setForceFetch(this.name, true)
+          // await MasterHelper.loadMaster() // TODO: ここで行えば各箇所では不要
           if (this.name == 'area' && this.form.mapImage) {
             await ImageHelper.loadImageArea(this.form.areaId)
           }

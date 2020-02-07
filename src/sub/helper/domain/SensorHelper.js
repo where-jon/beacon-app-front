@@ -18,7 +18,7 @@ import * as ChartHelper from '../ui/ChartHelper'
 import * as ConfigHelper from '../dataproc/ConfigHelper'
 import * as EXCloudHelper from '../dataproc/EXCloudHelper'
 import * as HeatmapHelper from '../ui/HeatmapHelper'
-import * as StateHelper from '../dataproc/StateHelper'
+import * as MasterHelper from '../domain/MasterHelper'
 import * as StyleHelper from '../ui/StyleHelper'
 import * as PositionHelper from './PositionHelper'
 import { addLabelByKey } from '../ui/ViewHelper'
@@ -849,8 +849,8 @@ export const getSensors = exbSensorList => {
     return [{ sensorId: null, sensorName: 'normal' }]
   }
   return exbSensorList.map(exbSensor => ({
-    sensorId: Util.getValue(exbSensor, 'exbSensorPK.sensorId', null),
-    sensorName: Util.getValue(exbSensor, 'sensorName', null),
+    sensorId: Util.getValue(exbSensor, 'sensorId'),
+    sensorName: Util.getValue(exbSensor, 'sensorName'),
   })).filter(val => val.sensorId)
 }
 
@@ -920,7 +920,7 @@ export const getMagnetGroupTypes = txList => txList.filter(val => val.groupId &&
  * @param {Object[]} categoryList
  * @return {Object[]}
  */
-export const getCategoryLegendElements = categoryList => categoryList.filter(category => !category.systemUse).map(val => ({ id: val.categoryId, name: StateHelper.getDispCategoryName(val), ...val,}))
+export const getCategoryLegendElements = categoryList => categoryList.filter(category => !category.systemUse).map(val => ({ id: val.categoryId, name: MasterHelper.getDispCategoryName(val), ...val,}))
 
 /**
  * グループの汎用を表示するための情報を取得する。
@@ -975,7 +975,10 @@ export const createTxLegends = (txList, categoryList, groupList) => {
  * @param {Number} targetSensorId
  * @return {Boolean}
  */
-export const match = (sensorIdList, targetSensorId, checkId) => sensorIdList.some(sensorId => sensorId == targetSensorId) && (!checkId || checkId == targetSensorId)
+export const match = (sensorIdList, targetSensorId, checkId) => {
+  return sensorIdList.some(sensorId => sensorId == targetSensorId)
+    && (!checkId || checkId == targetSensorId || checkId.includes && checkId.includes(targetSensorId))
+}
 
 /**
  * サーバからセンサ情報を取得する。
@@ -1132,7 +1135,6 @@ export const fetchSensorInfo = async (targetSensorIds = []) => {
       return (tx || exb) && hasTime
     }
     ).map(sensor => addSensorInfo(sensor, txMap, exbMap))
-
     // pir: val.count >= DISP.PIR.MIN_COUNT // TODO: 元のソースにあったfilter条件。多分不要。
     // exb.sensorId == SENSOR.PRESSURE? exb.pressVol <= DISP.PRESSURE.VOL_MIN || DISP.PRESSURE.EMPTY_SHOW: exb.count > 0 || DISP.PIR.EMPTY_SHOW
     // APP.SENSOR.SHOW_MAGNET_ON_PIR) 
@@ -1151,17 +1153,19 @@ export const fetchSensorInfo = async (targetSensorIds = []) => {
 const addSensorInfo = (sensor, txMap, exbMap, pos) => {
   const exb = exbMap && exbMap[sensor.deviceid]
   let tx = txMap && txMap[sensor.btx_id]
-  let location, areaId, zoneIdList, zoneCategoryIdList
+  let location, areaId, areaName, zoneIdList, zoneCategoryIdList
   if (tx && pos && !PositionHelper.hasTxLocation(pos.tx)) { // MEDiTAGのように固定TXではない場合、現在いるエリア、ゾーン、ゾーンカテゴリ
     areaId = pos.exb.areaId
+    areaName = Util.getValue(pos, 'exb.location.area.areaName')
     location = pos.exb.location
     zoneIdList = pos.exb.zoneIdList
     zoneCategoryIdList = pos.exb.zoneCategoryIdList
   }
   else {
     location = sensor.btx_id? (tx? tx.location: {}): exb? exb.location: {}
-    location = store.state.app_service.locations.find(e => e.locationId == location.locationId)
+    // location = store.state.app_service.locations.find(e => e.locationId == location.locationId)
     areaId = location.areaId
+    areaName = Util.getValue(location, 'area.areaName')
     zoneIdList = Util.hasValue(location.zoneIdList)? location.zoneIdList: []
     zoneCategoryIdList = Util.hasValue(location.zoneCategoryIdList)? location.zoneCategoryIdList: []      
   }
@@ -1186,10 +1190,10 @@ const addSensorInfo = (sensor, txMap, exbMap, pos) => {
     soundNoise: sensor.sound_noise,
     sensorDt: DateUtil.formatDate(updatetime),
     potName,
-    temperature: NumberUtil.formatTemperature(sensor.temperature),
-    humidity: NumberUtil.formatHumidity(sensor.humidity),
     state: getMagnetStateKey(sensor.magnet),
+    deviceId: exb && exb.deviceId? exb.deviceId: '',
     areaId,
+    areaName,
     zoneIdList,
     zoneCategoryIdList,
   }

@@ -74,7 +74,8 @@ export default {
       autoPager: false,
       autoPagerPlay: false,
       modalInfo: { title: this.$i18n.tnl('label.confirm'), content: '', id:'' },
-      loadStates: ['category', 'zone', 'tx', 'exb', 'location', 'pot'],
+      // loadStates: ['category', 'zone', 'tx', 'exb', 'location', 'pot'],
+      loadStates: []
     }
   },
   computed: {
@@ -150,8 +151,8 @@ export default {
           isAbsentZone: !pos || _.some(absentZoneList, e => _.some(e.locationZoneList, loc => loc.locationZonePK.locationId == location.locationId)),
           groupCd: pot.group && pot.group.groupCd,
           groupName: pot.group && pot.group.groupName || this.$i18n.tnl('label.other'),
-          color: pot.group? '#' + Util.getValue(pot, 'group.display.color').val: DISP.TX.COLOR,
-          bgColor: pot.group? '#' + Util.getValue(pot, 'group.display.bgColor').val: DISP.TX.BGCOLOR,
+          color: pot.group? '#' + Util.getValue(pot, 'group.display.color'): DISP.TX.COLOR,
+          bgColor: pot.group? '#' + Util.getValue(pot, 'group.display.bgColor'): DISP.TX.BGCOLOR,
           isLost: !pos || pos.isLost,
           timestamp: pos && pos.timestamp
         }

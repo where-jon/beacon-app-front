@@ -264,7 +264,7 @@ export default {
     },
   },
   async created() {
-    await Promise.all(['sensor', 'tx', 'exb'].map(StateHelper.load))
+    // await Promise.all(['sensor', 'tx', 'exb'].map(StateHelper.load))
     this.form.sensorId = SENSOR.TEMPERATURE
     this.form.sumUnit = SUM_UNIT.getOptions()[1].value
     this.form.sumTarget = SUM_TARGET.AVERAGE

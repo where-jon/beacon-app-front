@@ -101,6 +101,7 @@ import * as LocaleHelper from '../../../sub/helper/base/LocaleHelper'
 import * as OptionHelper from '../../../sub/helper/dataproc/OptionHelper'
 import * as SensorHelper from '../../../sub/helper/domain/SensorHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as StyleHelper from '../../../sub/helper/ui/StyleHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import * as VueSelectHelper from '../../../sub/helper/ui/VueSelectHelper'
@@ -243,7 +244,7 @@ export default {
     }
   },
   async mounted() {
-    await Promise.all(['area', 'exb', 'tx', 'location'].map(StateHelper.load))
+    // await Promise.all(['area', 'exb', 'tx', 'location'].map(StateHelper.load))
     this.form.locationDisp = Util.getValue(this.locationDispOptions, '0.value', null)
     this.vueSelected.area = this.initAreaId
     this.legend.items = this.legendItems
@@ -288,7 +289,7 @@ export default {
       const isExb = this.isDispExb()
       const deviceType = isExb? 'exb': 'tx'
       const deviceList = isExb? this.work.exbList: this.work.txList
-      const deviceColumn = isExb? this.form.locationDisp: device => StateHelper.getLocationTxName(device)
+      const deviceColumn = isExb? this.form.locationDisp: device => MasterHelper.getLocationTxName(device)
       return OptionHelper.getLocationDeviceOptions(deviceList, deviceType, deviceColumn)
         .sort((a, b) => StringUtil.sortByString(a.label, b.label, LocaleHelper.getSystemLocale()))
     },
@@ -350,7 +351,7 @@ export default {
 
         const txList = locationTxMap[location.locationId]? locationTxMap[location.locationId]: []
         location.txList = txList
-        location.txName = StateHelper.getLocationTxName(Util.getValue(txList, '0', null), false) + (1 < txList.length? '+': '')
+        location.txName = MasterHelper.getLocationTxName(Util.getValue(txList, '0', null), false) + (1 < txList.length? '+': '')
       })
       this.changeLocationDisp(this.form.locationDisp)
     },
@@ -454,7 +455,7 @@ export default {
       this.locationCon.addChild(locationButton)
     },
     createEmptyLocation(x, y){
-      const masterCd = StateHelper.createMasterCd('location')
+      const masterCd = MasterHelper.createMasterCd('location')
       const newLocation = {
         locationId: this.dummyKey--,
         locationCd: masterCd,
@@ -507,7 +508,7 @@ export default {
       const deviceId = '' + initTx.btxId
       newLocation.locationCd = SensorHelper.createTxLocationDummyName(initTx)
       newLocation.locationName = SensorHelper.createTxLocationDummyName(initTx)
-      newLocation.txName = StateHelper.getLocationTxName(initTx, false)
+      newLocation.txName = MasterHelper.getLocationTxName(initTx, false)
       newLocation.txList.push(initTx)
       return newLocation
     },
@@ -711,14 +712,16 @@ export default {
 
         if (param.length > 0) {
           await HttpHelper.postAppService('/core/location/updateLocation', param)
-          await StateHelper.load('exb', true)
-          await StateHelper.load('tx', true)
-          await StateHelper.load('location', true)
+          await MasterHelper.loadMaster()
+          // await StateHelper.load('exb', true)
+          // await StateHelper.load('tx', true)
+          // await StateHelper.load('location', true)
         }
 
         if (this.mapRatioChanged && this.mapRatio != null) {
           await AppServiceHelper.save('/core/area', this.createSendArea(), UPDATE_ONLY_NN.EMPTY_ZERO)
-          await StateHelper.load('area', true)
+          await MasterHelper.loadMaster()
+          // await StateHelper.load('area', true)
         }
         this.message = this.$i18n.tnl('message.completed', {target: this.$i18n.tnl('label.save')})
         this.replace({showInfo: true})
@@ -747,7 +750,7 @@ export default {
         locationCdLabel: this.$i18n.tnl('label.locationCdComp') + ':' + location.locationCd,
         locationNameLabel: this.$i18n.tnl('label.locationName') + ':' + location.locationName,
         deviceIdLabel: this.$i18n.tnl('label.' + keyObj.labelKey) + ':' + location.exbList.map(exb => exb[keyObj.valKey]).join(', '),
-        txNameLabel: this.$i18n.tnl('label.tx') + ':' + location.txList.map(tx => StateHelper.getLocationTxName(tx, false)).join(', '),
+        txNameLabel: this.$i18n.tnl('label.tx') + ':' + location.txList.map(tx => MasterHelper.getLocationTxName(tx, false)).join(', '),
         baseX: window.pageXOffset + nativeEvent.clientX - Util.getValue(pageElement, 'offsetLeft', 0),
         baseY: window.pageYOffset + nativeEvent.clientY - Util.getValue(pageElement, 'offsetTop', 0),
         isDispRight: container.x * 2 <= this.stage.canvas.width,

@@ -13,6 +13,7 @@ import { CATEGORY, POT_TYPE, BULK } from '../../../sub/constant/Constants'
 import * as StringUtil from '../../../sub/util/StringUtil'
 import * as Util from '../../../sub/util/Util'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import * as PotHelper from '../../../sub/helper/domain/PotHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
@@ -59,11 +60,11 @@ export default {
     },
   },
   async created() {
-    await StateHelper.load('pot')
+    // await StateHelper.load('pot')
   },
   methods: {
     async onSaving() {
-      await Promise.all(['pot', 'category', 'group', 'tx'].map(StateHelper.load))
+      // await Promise.all(['pot', 'category', 'group', 'tx'].map(StateHelper.load))
       await this.$refs.bulkEdit.bulkSave({numberList: 'potType'})
     },
     restructTx(entity, dummyKey){
@@ -134,9 +135,10 @@ export default {
       dummyKey = this.restructUser(entity, dummyKey)
       return dummyKey
     },
-    onSaved(){
-      StateHelper.setForceFetch('tx', true)
-      StateHelper.setForceFetch('user', true)
+    async onSaved(){
+      // StateHelper.setForceFetch('tx', true)
+      // StateHelper.setForceFetch('user', true)
+      await MasterHelper.loadMaster()
     },
   }
 }

@@ -10,6 +10,7 @@ import { mapState } from 'vuex'
 import { BULK } from '../../../sub/constant/Constants'
 import * as Util from '../../../sub/util/Util'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
@@ -60,8 +61,9 @@ export default {
       }
       return dummyKey
     },
-    onSaved(){
-      StateHelper.setForceFetch('pot', true)
+    async onSaved(){
+      await MasterHelper.loadMaster()
+      // StateHelper.setForceFetch('pot', true)
     },
   }
 }

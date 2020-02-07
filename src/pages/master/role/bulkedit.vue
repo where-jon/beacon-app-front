@@ -8,6 +8,7 @@
 <script>
 import { mapState } from 'vuex'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
@@ -32,8 +33,9 @@ export default {
     ]),
   },
   methods: {
-    onSaved(){
-      StateHelper.setForceFetch('user', true)
+    async onSaved(){
+      // StateHelper.setForceFetch('user', true)
+      await MasterHelper.loadMaster()
     },
   }
 }

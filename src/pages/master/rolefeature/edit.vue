@@ -120,7 +120,7 @@ export default {
   async created() {
     this.roleFeature.featureId = Util.hasValue(this.form.featureId)? this.form.featureId: null
     await this.resetFeatureNames()
-    this.vueSelected.feature = VueSelectHelper.getVueSelectData(this.featureNames, Util.getValue(this, 'form.featureId', Util.getValue(this.featureNames, '0', {}).value))
+    this.vueSelected.feature = VueSelectHelper.getVueSelectData(this.featureNames, Util.getValue(this, 'form.featureId', Util.getValue(this.featureNames, '0', {})))
     this.selectedModes = []
     this.modes.forEach(mode => {
       if(this.form.mode & mode.value || this.form.mode == mode.value){

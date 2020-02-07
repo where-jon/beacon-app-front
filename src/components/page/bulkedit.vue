@@ -95,7 +95,7 @@ export default {
       this.message = message
       this.replace({showInfo: true})
     }
-    StateHelper.load('sensor')
+    // StateHelper.load('sensor')
   },
   methods: {
     backToList(event, path) {
@@ -124,7 +124,7 @@ export default {
           else{
             await this.bulkSave()
           }
-          await StateHelper.load(this.name, true)
+          // await StateHelper.load(this.name, true)
           this.message = this.$i18n.tnl('message.bulkRegisterCompleted', {target: this.$i18n.tnl('label.' + dispName)})
           this.replace({showInfo: true})
           if(this.$parent.$options.methods && this.$parent.$options.methods.onSaved) {

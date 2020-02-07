@@ -59,7 +59,8 @@ export default {
       listName: StringUtil.single2multi(this.masterName),
       eachListName: StringUtil.concatCamel('each', StringUtil.single2multi(this.masterName)),
       prohibitDetectList : null,
-      loadStates: ['area', 'zone', 'tx', 'location', 'lostZones','prohibit', 'category', 'group', 'exb', 'pot'],
+      // loadStates: ['area', 'zone', 'tx', 'location', 'lostZones','prohibit', 'category', 'group', 'exb', 'pot'],
+      // loadStates: ['lostZones','prohibit'],
       showDismissibleAlert: false,
       positions: [],
     }
@@ -143,6 +144,12 @@ export default {
       try {
         this.replace({showAlert:false})
         this.showProgress()
+        if (APP.POS.PROHIBIT_ALERT) {
+          this.loadStates.push('prohibit')
+        }
+        if (APP.POS.LOST_ALERT) {
+          this.loadStates.push('lostZones')
+        }
         await Promise.all(this.loadStates.map(StateHelper.load))
         // positionデータ取得
         await PositionHelper.loadPosition(null, true, true)

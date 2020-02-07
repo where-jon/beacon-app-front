@@ -9,6 +9,7 @@
 import { mapState } from 'vuex'
 import { APP } from '../../../sub/constant/config'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import reloadmixin from '../../../components/mixin/reloadmixin.vue'
@@ -43,7 +44,7 @@ export default {
     ]),
   },
   async created() {
-    await StateHelper.load('region')
+    // await StateHelper.load('region')
   },
   methods: {
     createCustomColumn(){
@@ -59,8 +60,9 @@ export default {
           {key: 'actions', thStyle: {width:'130px !important'} }
         ]))
     },
-    onSaved(){
-      StateHelper.setForceFetch('pot', true)
+    async onSaved(){
+      await MasterHelper.loadMaster()
+      // StateHelper.setForceFetch('pot', true)
     },
   }
 }

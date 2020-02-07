@@ -30,6 +30,7 @@ import { mapState } from 'vuex'
 import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as ValidateHelper from '../../../sub/helper/dataproc/ValidateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
@@ -77,8 +78,9 @@ export default {
     ValidateHelper.setCustomValidationMessage()
   },
   methods: {
-    onSaved(){
-      StateHelper.setForceFetch('user', true)
+    async onSaved(){
+      await MasterHelper.loadMaster()
+      // StateHelper.setForceFetch('user', true)
     },
     async onSaving() {
       let entity = {

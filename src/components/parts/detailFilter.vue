@@ -124,7 +124,8 @@ export default {
       return ['area', 'category', 'group', 'tx', 'exb', 'pot', 'location', 'zone']
     },
     loadStates() {
-      return ['area', 'category', 'group', 'tx', 'exb', 'pot', 'location', 'zone', 'sensor']
+      // return ['area', 'category', 'group', 'tx', 'exb', 'pot', 'location', 'zone', 'sensor']
+      return []
     },
     numberRangeOption() {
       return [
@@ -150,7 +151,7 @@ export default {
     if(this.popInit()) {
       this.condition = null
     }
-    await Promise.all(this.loadStates.map(state => StateHelper.load(state)))
+    // await Promise.all(this.loadStates.map(state => StateHelper.load(state)))
     ViewHelper.importElementUI()
     this.fetchPlugin()
   },

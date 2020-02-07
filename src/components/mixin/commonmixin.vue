@@ -10,7 +10,7 @@ import * as MenuHelper from '../../sub/helper/dataproc/MenuHelper'
 import * as OptionHelper from '../../sub/helper/dataproc/OptionHelper'
 import * as ThemeHelper from '../../sub/helper/ui/ThemeHelper'
 import * as VueSelectHelper from '../../sub/helper/ui/VueSelectHelper'
-import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
 
 export default {
   computed: {
@@ -69,22 +69,22 @@ export default {
       return VueSelectHelper.vueSelectNoMatchingOptions()
     },
     areaOptions() {
-      return StateHelper.getOptionsFromState('area', false, true)
+      return MasterHelper.getOptionsFromState('area', false, true)
     },
     potOptions() {
-      return StateHelper.getOptionsFromState('pot', false, true)
+      return MasterHelper.getOptionsFromState('pot', false, true)
     },
     locationOptions() {
-      return StateHelper.getOptionsFromState('location', false, true)
+      return MasterHelper.getOptionsFromState('location', false, true)
     },
     exbOptions() {
-      return StateHelper.getOptionsFromState('exb', ConfigHelper.includesDeviceType('deviceId')? 'deviceId': 'deviceIdX', true)
+      return MasterHelper.getOptionsFromState('exb', ConfigHelper.includesDeviceType('deviceId')? 'deviceId': 'deviceIdX', true)
     },
     txOptions() {
-      return StateHelper.getOptionsFromState('tx', ConfigHelper.includesBtxMinor('btxId')? 'btxId': 'minor', true)
+      return MasterHelper.getOptionsFromState('tx', ConfigHelper.includesBtxMinor('btxId')? 'btxId': 'minor', true)
     },
     zoneOptions() {
-      return StateHelper.getOptionsFromState('zone', false, true)
+      return MasterHelper.getOptionsFromState('zone', false, true)
     },
     filterSelectedList() {
       return ['area', 'group', 'category', 'detail', 'freeWord']
@@ -141,7 +141,7 @@ export default {
       VueSelectHelper.closeVueSelect()
     },
     getIndividualOptions(categoryId, groupId) {
-      return StateHelper.getOptionsFromState('pot', false, true,
+      return MasterHelper.getOptionsFromState('pot', false, true,
         pot => pot.potType == POT_TYPE.PERSON && (!categoryId || pot.categoryId == categoryId) && (!groupId || pot.groupId == groupId)
       )
     },

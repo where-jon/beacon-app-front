@@ -112,6 +112,7 @@ import * as Util from '../../sub/util/Util'
 import * as AppServiceHelper from '../../sub/helper/dataproc/AppServiceHelper'
 import { getCharSet } from '../../sub/helper/base/CharSetHelper'
 import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import commonmixin from '../../components/mixin/commonmixin.vue'
@@ -226,15 +227,15 @@ export default {
     ViewHelper.importElementUI()
     this.vModelYearMonth = this.yearMonthOptions[0].value
     this.yearMonthChange(this.vModelYearMonth)
-    await StateHelper.load('category')
+    // await StateHelper.load('category')
     if (this.categories.length < 1) {
       return
     }
     this.categoryOptionList = this.categories.filter((c) => c.categoryType === CATEGORY.ZONE)
       .sort((a, b) => a.categoryId < b.categoryId ? -1 : 1)
-      .map((c) => { return {label: StateHelper.getDispCategoryName(c), value: c.categoryId}})
+      .map((c) => { return {label: MasterHelper.getDispCategoryName(c), value: c.categoryId}})
     this.vModelCategory = this.categoryOptionList[0].value
-    await StateHelper.load('zone')
+    // await StateHelper.load('zone')
   },
   methods: {
     yearMonthChange(val) {
@@ -274,7 +275,7 @@ export default {
     createViewList(aModeId, fetchList){
       const viewList = []
       const categoryMap = {}
-      this.categories.forEach(c => categoryMap[c.categoryName] = StateHelper.getDispCategoryName(c))
+      this.categories.forEach(c => categoryMap[c.categoryName] = MasterHelper.getDispCategoryName(c))
       fetchList.forEach(data => {
         if(Util.hasValue(data.zoneCategoryName) && Util.hasValue(categoryMap[data.zoneCategoryName])) {
           data.zoneCategoryName = categoryMap[data.zoneCategoryName]

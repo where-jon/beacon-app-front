@@ -34,6 +34,7 @@ import * as Util from '../../sub/util/Util'
 import * as EXCloudHelper from '../../sub/helper/dataproc/EXCloudHelper'
 import * as IconHelper from '../../sub/helper/ui/IconHelper'
 import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import reloadmixin from '../../components/mixin/reloadmixin.vue'
@@ -68,7 +69,8 @@ export default {
       return ViewHelper.createBreadCrumbItems('main', 'toiletStatus')
     },
     loadStates() {
-      return ['area', 'zone', 'location', 'tx', 'exb']
+      // return ['area', 'zone', 'location', 'tx', 'exb']
+      return []
     },
     imgInfo() {
       return { w: 32, h: 96 }
@@ -148,7 +150,7 @@ export default {
       }
 
       const exCloudSensors = await EXCloudHelper.fetchSensor(sensorId)
-      const deviceMap = StateHelper.convertMasterMap(key.front, key.list)
+      const deviceMap = MasterHelper.convertMasterMap(key.front, key.list)
       return exCloudSensors.map(sensor => {
         const device = deviceMap[sensor[key.server]]
         const toiletZone = Util.getValue(device, 'toiletZone', null)
@@ -169,7 +171,7 @@ export default {
     async fetchData(payload){
       try {
         this.showProgress()
-        await Promise.all(this.loadStates.map(state => StateHelper.load(state)))
+        // await Promise.all(this.loadStates.map(state => StateHelper.load(state)))
         const pirDataList = await this.fetchSensorData(SENSOR.PIR, 'exb')
         const magnetDataList = await this.fetchSensorData(SENSOR.MAGNET, 'tx')
         this.dataList = this.mergeToiletData(pirDataList, magnetDataList)

@@ -87,6 +87,7 @@ import { getCharSet } from '../../sub/helper/base/CharSetHelper'
 import * as HttpHelper from '../../sub/helper/base/HttpHelper'
 import * as MenuHelper from '../../sub/helper/dataproc/MenuHelper'
 import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import commonmixin from '../../components/mixin/commonmixin.vue'
@@ -139,7 +140,7 @@ export default {
       'txs', 'exbs'
     ]),
     txOptions() {
-      return StateHelper.getOptionsFromState('tx',
+      return MasterHelper.getOptionsFromState('tx',
         tx => tx.minor ? '' + tx.minor : 'txid=' + tx.txId,
         true
       )
@@ -148,22 +149,22 @@ export default {
       return MenuHelper.isEnabledMenu('group') && ArrayUtil.includesIgnoreCase(APP.POT.WITH, 'group')
     },
     groupOptions() {
-      return StateHelper.getOptionsFromState('group',
+      return MasterHelper.getOptionsFromState('group',
         group => group.groupName,
         true
       )
     },
   },
   created() {
-    StateHelper.load('group')
+    // StateHelper.load('group')
     const date = DateUtil.getDefaultDate()
     this.form.datetimeFrom = DateUtil.getDatetime(date, {hours: -1})
     this.form.datetimeTo = DateUtil.getDatetime(date)
   },
   mounted() {
     ViewHelper.importElementUI()
-    StateHelper.load('tx')
-    StateHelper.load('exb')
+    // StateHelper.load('tx')
+    // StateHelper.load('exb')
     this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.viewList.length, maxRows: this.limitViewRows})}`
   },
   methods: {

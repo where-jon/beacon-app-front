@@ -372,7 +372,8 @@ export default {
       isLoading: false,
       isMsTeams: MSTEAMS_APP.IS_COOPERATION,
       noImageErrorKey: 'noMapImage',
-      loadStates: ['sensor', 'category', 'group', 'tx', 'exb', 'location', 'pot', 'absentDisplayZones'],
+      // loadStates: ['sensor', 'category', 'group', 'tx', 'exb', 'location', 'pot', 'absentDisplayZones'],
+      loadStates: ['absentDisplayZones'],
       detectedCount: 0,
       thumbnailUrl: APP_SERVICE.BASE_URL + EXCLOUD.POT_THUMBNAIL_URL,
       keepExbPosition: false,
@@ -735,7 +736,7 @@ export default {
       this.form.datetimeTo = newVal? DateUtil.getDatetime(newVal, {minutes: APP.ANALYSIS.DATETIME_INTERVAL}): null
     },
     async refreshTxInfo(){
-      await StateHelper.load('tx', true)
+      // await StateHelper.load('tx', true)
       this.txsMap = {}
       this.txs.forEach(t => this.txsMap[t.btxId] = t)
     },
@@ -1112,6 +1113,7 @@ export default {
       }
     },
     showExb(exb) {
+      console.error({exb}, this.pShowExbSensorIds)
       const icon = IconHelper.createExbIcon(exb, this.pShowExbSensorIds, this.getMapScale(), this.stage)
       if(!icon){
         return

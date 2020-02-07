@@ -43,7 +43,7 @@ export const extract = (obj, fields) => {
 
   let ret = {}
   _.forEach(fields, field => {
-    let {val, lastKey} = getValue(obj, field)
+    let {val, lastKey} = getValueWithKey(obj, field)
     ret[lastKey] = val
   })
 
@@ -120,6 +120,17 @@ export const hasValueAny = (...obj) => obj.some(val => hasValue(val))
  */
 export const firstValue = (...obj) => obj.find(val => hasValue(val))
 
+
+/**
+ * オプジェクトから階層を辿って値を取得する。
+ * 
+ * @param {*} obj 
+ * @param {*} path 
+ * @param {*} def 
+ */
+export const getValue = (obj, path, def = null) =>  getValueWithKey(obj, path, def)
+export const v = (obj, path, def = null) =>  getValueWithKey(obj, path, def)
+
 /**
  * オプジェクトから階層を辿って値を取得する。
  * @method
@@ -127,7 +138,7 @@ export const firstValue = (...obj) => obj.find(val => hasValue(val))
  * @param {String} path オブジェクトのメンバー以下を.でつなげる。配列は添字を使う。
  * @param {*} def 省略すると、値と最後のキー値のペアを返す。省略しないとnullのときdefを返す
  */
-export const getValue = (obj, path, def) => {
+export const getValueWithKey = (obj, path, def) => {
   let pathSpl = path.split('.')
   let val = obj
   let lastKey

@@ -105,6 +105,7 @@ import * as ExtValueHelper from '../../../sub/helper/domain/ExtValueHelper'
 import * as MenuHelper from '../../../sub/helper/dataproc/MenuHelper'
 import * as OptionHelper from '../../../sub/helper/dataproc/OptionHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as ValidateHelper from '../../../sub/helper/dataproc/ValidateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import * as VueSelectHelper from '../../../sub/helper/ui/VueSelectHelper'
@@ -156,7 +157,7 @@ export default {
   },
   computed: {
     areaOptions() {
-      return StateHelper.getOptionsFromState('area', false, true)
+      return MasterHelper.getOptionsFromState('area', false, true)
     },
     showLocationTypeOptions(){
       return 0 < APP.LOCATION.TYPE.WITH.length
@@ -165,7 +166,7 @@ export default {
       return OptionHelper.getLocationTypeOptions()
     },
     iExbOptions() {
-      return StateHelper.getOptionsFromState(
+      return MasterHelper.getOptionsFromState(
         'exb',
         ConfigHelper.includesDeviceType('deviceId')? 'deviceId': 'deviceIdX',
         true,
@@ -173,15 +174,15 @@ export default {
       )
     },
     iTxOptions() {
-      return StateHelper.getOptionsFromState(
+      return MasterHelper.getOptionsFromState(
         'tx',
-        tx => StateHelper.getLocationTxName(tx),
+        tx => MasterHelper.getLocationTxName(tx),
         true,
         tx => !Util.hasValue(tx.location) || tx.location.locationId == this.form.locationId
       )
     },
     zoneBlockOptions(){
-      return StateHelper.getOptionsFromState('zone', false, true, zone => zone.x != null && zone.y != null)
+      return MasterHelper.getOptionsFromState('zone', false, true, zone => zone.x != null && zone.y != null)
     },
     ...mapState('app_service', [
       'areas', 'zones', 'exbs', 'location', 'locations',
@@ -243,13 +244,13 @@ export default {
   },
   async mounted() {
     this.checkWarnOn()
-    await Promise.all(['area', 'zone', 'exb', 'tx', 'locations'].map(StateHelper.load))
+    // await Promise.all(['area', 'zone', 'exb', 'tx', 'locations'].map(StateHelper.load))
     this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions, this.form.areaId)
     if(!Util.hasValue(this.form.locationType)){
       this.form.locationType = Util.getValue(this.locationTypeOptions, '0.value', null)
     }
     if(!Util.hasValue(this.form.locationCd)){
-      this.form.locationCd = StateHelper.createMasterCd('location', this.locations, this.location)
+      this.form.locationCd = MasterHelper.createMasterCd('location', this.locations, this.location)
     }
 
     this.$nextTick(() => {
@@ -288,12 +289,12 @@ export default {
       })
     },
     getZoneClassOptions(){
-      return StateHelper.getOptionsFromState('zone', false, true,
+      return MasterHelper.getOptionsFromState('zone', false, true,
         zone => zone.x == null && zone.y == null && ([this.form.areaId, null].includes(zone.areaId))
       )
     },
     getZoneBlockItems(){
-      return StateHelper.getOptionsFromState('zone', false, true,
+      return MasterHelper.getOptionsFromState('zone', false, true,
         zone => zone.x != null && zone.y != null && zone.areaId === this.form.areaId && NumberUtil.inRange(zone, this.form))
     },
     onChangeTxSetting(param) {
@@ -337,8 +338,9 @@ export default {
       return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
     },
     async onSaved(){
-      await StateHelper.load('locations', true)
-      this.$set(this.form, 'locationCd', StateHelper.createMasterCd('location', this.locations, this.location))
+      // await StateHelper.load('locations', true)
+      await MasterHelper.loadMaster()
+      this.$set(this.form, 'locationCd', MasterHelper.createMasterCd('location', this.locations, this.location))
     }
   }
 }

@@ -159,7 +159,7 @@ export default {
     async fetchData(payload) {
       try {
         this.showProgress()
-        await StateHelper.load('exb')
+        // await StateHelper.load('exb')
         const deviceIds = _.filter(this.exbs, exb => exb.sensorIds.includes(SENSOR.LED_TYPE2) || exb.sensorIds.includes(SENSOR.LED_TYPE5))
           .map(exb => {
             const locationName = Util.hasValue(exb.locationName)? (exb.locationName) + ' : ': ''

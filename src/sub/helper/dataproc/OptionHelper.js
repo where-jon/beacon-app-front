@@ -9,6 +9,7 @@ import * as Util from '../../util/Util'
 import * as ConfigHelper from './ConfigHelper'
 import * as SensorHelper from '../domain/SensorHelper'
 import * as StateHelper from './StateHelper'
+import * as MasterHelper from '../domain/MasterHelper'
 
 let i18n
 
@@ -28,7 +29,7 @@ export const setApp = pi18n => {
  * @return {Object[]}
  */
 export const getExbOptions = (isBlank = false) => {
-  return StateHelper.getOptionsFromState('sensor',
+  return MasterHelper.getOptionsFromState('sensor',
     sensor => i18n.tnl('label.' + sensor.sensorName),
     {value: null, text: isBlank? i18n.tnl('label.null'): i18n.tnl('label.normal')},
     sensor => APP.EXB.SENSOR.includes(sensor.sensorId)
@@ -42,7 +43,7 @@ export const getExbOptions = (isBlank = false) => {
  * @return {Object[]}
  */
 export const getTxOptions = (isBlank = false) => {
-  return StateHelper.getOptionsFromState('sensor',
+  return MasterHelper.getOptionsFromState('sensor',
     sensor => i18n.tnl('label.' + sensor.sensorName),
     {value: null, text: isBlank? i18n.tnl('label.null'): i18n.tnl('label.normal')},
     sensor => APP.SENSOR.TX_SENSOR.includes(sensor.sensorId)
@@ -56,7 +57,7 @@ export const getTxOptions = (isBlank = false) => {
  * @return {Object[]}
  */
 export const getAllSensorOptions = (ignoreIds = [SENSOR.LED_TYPE2, SENSOR.LED_TYPE5, SENSOR.BUTTON]) => {
-  return StateHelper.getOptionsFromState('sensor', 
+  return MasterHelper.getOptionsFromState('sensor', 
     sensor => i18n.tnl('label.' + sensor.sensorName),
     true,
     sensor => SensorHelper.availableSensorAll().includes(sensor.sensorId) && !ignoreIds.includes(sensor.sensorId)
@@ -70,7 +71,7 @@ export const getAllSensorOptions = (ignoreIds = [SENSOR.LED_TYPE2, SENSOR.LED_TY
  * @return {Object[]}
  */
 export const getGraphSensorOptions = (ignoreIds = [SENSOR.LED, SENSOR.BUTTON]) => {
-  return StateHelper.getOptionsFromState('sensor', 
+  return MasterHelper.getOptionsFromState('sensor', 
     sensor => i18n.tnl('label.' + sensor.sensorName),
     true,
     sensor => SensorHelper.availableSensorGraph().includes(sensor.sensorId) && !ignoreIds.includes(sensor.sensorId)
@@ -83,7 +84,7 @@ export const getGraphSensorOptions = (ignoreIds = [SENSOR.LED, SENSOR.BUTTON]) =
  * @return {Object[]}
  */
 export const getGroupOptions = () => {
-  return StateHelper.getOptionsFromState('group', false, true)
+  return MasterHelper.getOptionsFromState('group', false, true)
 }
 
 /**
@@ -93,7 +94,7 @@ export const getGroupOptions = () => {
  * @return {Object[]}
  */
 export const getCategoryOptions = (includeTypes = []) => {
-  return StateHelper.getOptionsFromState('category',
+  return MasterHelper.getOptionsFromState('category',
     false,
     true,
     category => !Util.hasValue(includeTypes) || includeTypes.includes(category.categoryType)
@@ -108,8 +109,8 @@ export const getCategoryOptions = (includeTypes = []) => {
  */
 export const getZoneCategoryOptions = zoneCategoryList => {
   const zoneCategoryIds = zoneCategoryList.filter(zoneCategory => zoneCategory.categoryId >= 0).map(zoneCategory => zoneCategory.categoryId)
-  return StateHelper.getOptionsFromState('category',
-    category => StateHelper.getDispCategoryName(category),
+  return MasterHelper.getOptionsFromState('category',
+    category => MasterHelper.getDispCategoryName(category),
     true,
     category => zoneCategoryIds.includes(`${category.categoryId}`)
   )
@@ -151,7 +152,7 @@ export const getSensorOptions = (entity, isBlank) => {
     ids = APP.SENSOR.TX_SENSOR
   }
 
-  return StateHelper.getOptionsFromState('sensor',
+  return MasterHelper.getOptionsFromState('sensor',
     sensor => i18n.tnl('label.' + sensor.sensorName),
     {value: null, text: isBlank? i18n.tnl('label.null'): i18n.tnl('label.normal')},
     sensor => ids.includes(sensor.sensorId)
@@ -181,7 +182,7 @@ export const getLocationDispOptions = () => {
  * @return {Object[]}
  */
 export const getLocationOptions = (workLocationList, column) => {
-  return StateHelper.getOptionsFromState('location',
+  return MasterHelper.getOptionsFromState('location',
     column,
     {value: '', text: i18n.tnl('label.emptyLocation'), label: i18n.tnl('label.emptyLocation')},
     location => {
@@ -200,7 +201,7 @@ export const getLocationOptions = (workLocationList, column) => {
  * @return {Object[]}
  */
 export const getLocationDeviceOptions = (workDeviceList, deviceType, column) => {
-  return StateHelper.getOptionsFromState(deviceType,
+  return MasterHelper.getOptionsFromState(deviceType,
     column,
     true,
     device => {

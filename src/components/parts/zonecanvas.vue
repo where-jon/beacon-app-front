@@ -8,6 +8,7 @@ import { ZONE, PATTERN } from '../../sub/constant/Constants'
 import * as Util from '../../sub/util/Util'
 import * as AppServiceHelper from '../../sub/helper/dataproc/AppServiceHelper'
 import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
 
 class Zone {
   constructor(prop) {
@@ -376,7 +377,7 @@ export default {
     }
   },
   mounted () {
-    StateHelper.load('zone')
+    // StateHelper.load('zone')
     const drawArea = document.getElementById('stage')
     this.stage = new Konva.Stage({
       container: 'stage',
@@ -446,7 +447,7 @@ export default {
     getNewZoneCd(){
       const zones = this.$store.state.app_service.zones
       const dispZones = zones.concat(this.zones.list.map(zone => ({zoneCd: zone.cd})))
-      return StateHelper.createMasterCd('zone', dispZones)
+      return MasterHelper.createMasterCd('zone', dispZones)
     },
     getNewZoneName(){
       if(!this.zones){
@@ -456,7 +457,7 @@ export default {
       if(!Util.hasValue(list)){
         return 'Zone1'
       }
-      return StateHelper.createMasterCd('zone', list)
+      return MasterHelper.createMasterCd('zone', list)
     },
     emitZone(zone) {
       this.$emit('selected', {

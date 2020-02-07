@@ -129,7 +129,7 @@ export default {
       return ret
     },
     async makeTelemetryRecords(telemetrys) {
-      await StateHelper.load('exb')
+      // await StateHelper.load('exb')
       const map = {}
       this.exbs.forEach((e) => {
         const deviceId = DISP.POS.EXSERVER ? e.deviceId.toString() : e.deviceId.toString(16)

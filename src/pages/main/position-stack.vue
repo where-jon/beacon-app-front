@@ -40,6 +40,7 @@
 import { EXTRA_NAV, POSITION_STACK_TYPES, CATEGORY } from '../../sub/constant/Constants'
 import * as Util from '../../sub/util/Util'
 import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import reloadmixin from '../../components/mixin/reloadmixin.vue'
@@ -86,8 +87,8 @@ export default {
       return this.fix > 0
     },
     zoneCategoryOptions() {
-      return StateHelper.getOptionsFromState('category',
-        category => StateHelper.getDispCategoryName(category),
+      return MasterHelper.getOptionsFromState('category',
+        category => MasterHelper.getDispCategoryName(category),
         true, 
         category => CATEGORY.ZONE_AVAILABLE.includes(category.categoryType)
       )
@@ -102,7 +103,7 @@ export default {
     },
   },
   async mounted() {
-    await StateHelper.load('category')
+    // await StateHelper.load('category')
   },
   methods: {
     isShow(type){
